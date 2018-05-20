@@ -1,108 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752367AbeETOxR (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 10:53:17 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:55936 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751555AbeETOxP (ORCPT
+        id S1752531AbeETOzE (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 10:55:04 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:33659 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751631AbeETOzA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 10:53:15 -0400
-X-Google-Smtp-Source: AB8JxZoWs+Cqpvx2CEcBp+7L+x5yB9PBBNhvVA5iWNwIzNBOrtpMoucGH+6pKEQetE4pLGB6k46/ag==
-Subject: Re: [PATCH v1 1/5] ARM: trusted_foundations: Implement L2 cache
- initialization callback
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Peter Geis <pgwipeout@gmail.com>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-References: <20180520101542.12206-1-digetx@gmail.com>
- <20180520101542.12206-2-digetx@gmail.com>
- <20180520140805.GL17671@n2100.armlinux.org.uk>
-From: Dmitry Osipenko <digetx@gmail.com>
+        Sun, 20 May 2018 10:55:00 -0400
+X-Google-Smtp-Source: AB8JxZo/ucIuUIHyjL0zRgD+ccSkwx220BTH/d9CG5wA+gC9sMUuj0rp6V78zPO6svMbDUx5r5uv0Q==
+Subject: Re: [PATCH net-next] net: dsa: b53: Extend platform data to include
+ DSA ports
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: netdev@vger.kernel.org, vivien.didelot@savoirfairelinux.com,
+        open list <linux-kernel@vger.kernel.org>
+References: <20180519225510.23820-1-f.fainelli@gmail.com>
+ <20180520014250.GB14906@lunn.ch>
+ <051D2EF2-0B1E-4F03-B803-6A74E6E0BF44@gmail.com>
+ <20180520140602.GB24330@lunn.ch>
+From: Florian Fainelli <f.fainelli@gmail.com>
 Openpgp: preference=signencrypt
-Autocrypt: addr=digetx@gmail.com; prefer-encrypt=mutual; keydata=
- xsBNBFpX5TwBCADQhg+lBnTunWSPbP5I+rM9q6EKPm5fu2RbqyVAh/W3fRvLyghdb58Yrmjm
- KpDYUhBIZvAQoFLEL1IPAgJBtmPvemO1XUGPxfYNh/3BlcDFBAgERrI3BfA/6pk7SAFn8u84
- p+J1TW4rrPYcusfs44abJrn8CH0GZKt2AZIsGbGQ79O2HHXKHr9V95ZEPWH5AR0UtL6wxg6o
- O56UNG3rIzSL5getRDQW3yCtjcqM44mz6GPhSE2sxNgqureAbnzvr4/93ndOHtQUXPzzTrYB
- z/WqLGhPdx5Ouzn0Q0kSVCQiqeExlcQ7i7aKRRrELz/5/IXbCo2O+53twlX8xOps9iMfABEB
- AAHNIkRtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT7CwJQEEwEIAD4WIQSczHcO
- 3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgIDAQIeAQIX
- gAAKCRDTNNaPsNRzvFjTCACqAh1M9/YPq73/ai5h2ExDquTgJnjegL8KL2yHL3G+XINwzN5E
- nPI7esoYm+zVWDJbv3UuRqylpookLNSRA01yyvkaMcipB/B128UnqmUiGRqezj9QE20yIauo
- uHRuwHPE2q+UkfUhRX9iuOaEyQtZDiCa0myMjmRkJ+Z8ZetclEPG8dYZu47w04phuMlu1QAt
- a0gkZOaMKvXgj21ushALS6nYnvm7HiIPQXfnEXThartatRvFdmbG4PCn0IoICkQBizwJtXrL
- HEjELIFap0M8krVJlUoZTFaZnaZkGpUDWikeFtAuie2KuIxmVBYPM4X7pM3eP3AVvIPGS7EE
- UUFuzsBNBFpX5TwBCADFNDou220thijaLLGaQsebWjzc/gPRxMixIpk856MRyRaQin+IbGD6
- YskMb5ZSD3nS88LIKNfY4MMH0LwfYztI++ICG2vdFLkbBt78E+LqEa+kZ9072l4W5KO3mWQo
- +jMfxXbpgGlc7iuEReDgl8iyZ27r51kSW665CYvvu2YJhLqgdj6QM1lN2D1UnhEhkkU+pRAj
- 1rJVOxdfJaQNQS4+204p3TrURovzNGkN/brqakpNIcqGOAGQqb8F0tuwwuP7ERq/BzDNkbdr
- qJOrVC/wkHRq1jfabQczWKf8MwYOvivR3HY8d3CpSQxmUXDtdOWfg0XGm1dxYnVfqPjuJaZt
- ABEBAAHCwHwEGAEIACYWIQSczHcO3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbDAUJA8JnAAAK
- CRDTNNaPsNRzvJzuB/9d+sxcwHbO8ZDcgaLX9N+bXFqN9fIRVmBUyWa+qqTSREA4uVAtYcRT
- lfPE2OQ7aMFxaYPwo+/z5SLpu8HcEhN/FG9uIkfYwK0mdCO0vgvlfvBJm4VHe7C6vyAeEPJQ
- DKbBvdgeqFqO+PsLkk2sawF/9sontMJ5iFfjNDj4UeAo4VsdlduTBZv5hHFvIbv/p7jKH6OT
- 90FsgUSVbShh7SH5OzAcgqSy4kxuS1AHizWo6P3f9vei987LZWTyhuEuhJsOfivDsjKIq7qQ
- c5eR+JJtyLEA0Jt4cQGhpzHtWB0yB3XxXzHVa4QUp00BNVWyiJ/t9JHT4S5mdyLfcKm7ddc9
-Message-ID: <a5b6a37c-68e7-eb8b-fb78-2942fe501f28@gmail.com>
-Date: Sun, 20 May 2018 17:53:11 +0300
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+Message-ID: <56391605-8576-4de0-7162-b73343afdb7d@gmail.com>
+Date: Sun, 20 May 2018 07:54:57 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180520140805.GL17671@n2100.armlinux.org.uk>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180520140602.GB24330@lunn.ch>
+Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20.05.2018 17:08, Russell King - ARM Linux wrote:
-> On Sun, May 20, 2018 at 01:15:38PM +0300, Dmitry Osipenko wrote:
->> Implement L2 cache initialization firmware callback that should be invoked
->> early in boot to enable cache HW.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  arch/arm/firmware/trusted_foundations.c | 23 +++++++++++++++++++++++
->>  1 file changed, 23 insertions(+)
->>
->> diff --git a/arch/arm/firmware/trusted_foundations.c b/arch/arm/firmware/trusted_foundations.c
->> index 3fb1b5a1dce9..198ce5c75ca0 100644
->> --- a/arch/arm/firmware/trusted_foundations.c
->> +++ b/arch/arm/firmware/trusted_foundations.c
->> @@ -18,8 +18,13 @@
->>  #include <linux/init.h>
->>  #include <linux/of.h>
->>  #include <asm/firmware.h>
->> +#include <asm/outercache.h>
->>  #include <asm/trusted_foundations.h>
->>  
->> +#define TF_CACHE_MAINT		0xfffff100
->> +
->> +#define TF_CACHE_INIT		1
->> +
->>  #define TF_SET_CPU_BOOT_ADDR_SMC 0xfffff200
->>  
->>  #define TF_CPU_PM		0xfffffffc
->> @@ -63,9 +68,27 @@ static int tf_prepare_idle(void)
->>  	return 0;
->>  }
->>  
->> +#ifdef CONFIG_CACHE_L2X0
->> +static void tf_cache_write_sec(unsigned long val, unsigned int reg)
->> +{
->> +	pr_warn("%s: Ignoring write [0x%x]: 0x%08lx\n", __func__, reg, val);
-> 
-> Why at warning level?  Is this some issue that the user needs to be
-> warned about?
-> 
 
-If cache-l2x0 code will be changed in the future in a way that it will try to do
-something using the secure-registers, then user should be informed about that
-incident as we are ignoring the accesses to secure-registers and this may lead
-to an undesired consequences. If a such change in cache-l2x0 will happen, then
-we will have to take some action by either fixing the invalid accesses or
-silencing the warning message if will be appropriate. For now I'd prefer to have
-verbosity in the KMSG to masking the potential problems.
+
+On 05/20/2018 07:06 AM, Andrew Lunn wrote:
+> On Sat, May 19, 2018 at 08:14:41PM -0700, Florian Fainelli wrote:
+>> On May 19, 2018 6:42:50 PM PDT, Andrew Lunn <andrew@lunn.ch> wrote:
+>>> On Sat, May 19, 2018 at 03:55:10PM -0700, Florian Fainelli wrote:
+>>>> Provide a means for !OF platforms to supply their DSA platform data
+>>>> configuration using the dsa_platform_data structure.
+>>>
+>>> Hi Florian
+>>>
+>>> It seems a bit odd adding the header file, but no code. Yes, this will
+>>> help simplify the merge dependencies for the ZII boards next cycle,
+>>> but can we have the actual code as well?
+>>
+>> The existing b53_common.c file already makes use of platform data the only thing that was missing was a dsa_chip_data structure correctly placed for the core DSA layer to obtain port information. This was present from day one in the b53 driver because it is also the mechanism used by the bus specific drivers to pass information to the core b53 driver file.
+> 
+> Ah. It would of been good to say that in the commit message.
+
+Make sense, v2 coming. Thanks!
+-- 
+Florian
