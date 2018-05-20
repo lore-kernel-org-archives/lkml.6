@@ -1,128 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752542AbeETDtE (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 23:49:04 -0400
-Received: from alln-iport-7.cisco.com ([173.37.142.94]:13671 "EHLO
-        alln-iport-7.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752459AbeETDtB (ORCPT
+        id S1752564AbeETDvf (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 23:51:35 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:42920 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752459AbeETDvc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 23:49:01 -0400
-X-IronPort-AV: E=Sophos;i="5.49,421,1520899200";
-   d="scan'208";a="116550154"
-Date: Sat, 19 May 2018 20:39:40 -0700
-From: Stefan M Schaeckeler <sschaeck@cisco.com>
-To: David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc: sschaeck@cisco.com
-Subject: [PATCH] mtd: mtdoops: optionally dump boottime
-Message-ID: <20180520033940.GA35444@sjc-ads-587.cisco.com>
+        Sat, 19 May 2018 23:51:32 -0400
+Subject: Re: [ANNOUNCE] Kconfiglib menuconfig implementation
+From: Randy Dunlap <rdunlap@infradead.org>
+To: Ulf Magnusson <ulfalizer@gmail.com>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <CAFkk2KRTnRpi5thUGTM2+LZMyitggdJtiOBO7E0pTn93fz6-SQ@mail.gmail.com>
+ <d4c3b2ab-385d-fe7a-bdb1-2d497d620de5@infradead.org>
+ <CAFkk2KRozscmd4kQSJKwKmY3WpTody7S5XZZObf8SKLF62k6+w@mail.gmail.com>
+ <CAFkk2KRkEt3+786QvyjzPPAm+3HDe2+ydzZJpshfdKyUDQVfuw@mail.gmail.com>
+ <CAFkk2KRvSxu+x-nb045=3L63KEk5h9URr5QYLPoYp6rqqTR4qA@mail.gmail.com>
+ <3d9be2f2-3fbe-411b-8529-0e0847f01346@infradead.org>
+ <CAFkk2KRWon_S--dxYw82cDyGXKTFA6jxrrQwstzLvHPs=6-dqQ@mail.gmail.com>
+ <c4ec710f-b2bd-b9f0-c33a-159aa53ca73c@infradead.org>
+Message-ID: <3c56dfdf-d196-da34-35db-42b3675039dd@infradead.org>
+Date: Sat, 19 May 2018 20:51:30 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.20 (2009-12-10)
+In-Reply-To: <c4ec710f-b2bd-b9f0-c33a-159aa53ca73c@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Optionally dump boottime on the mtd device in the form of
+On 05/19/2018 08:45 PM, Randy Dunlap wrote:
+> On 05/08/2018 09:59 AM, Ulf Magnusson wrote:
+>> Hello,
+>>
+>> I've added incremental search for jumping directly to a symbol now.
+>> Regular expressions are supported as well.
+>>
+>> Some screenshots below:
+>>
+>> https://raw.githubusercontent.com/ulfalizer/Kconfiglib/screenshots/screenshots/ss10.png
+>> https://raw.githubusercontent.com/ulfalizer/Kconfiglib/screenshots/screenshots/ss11.png
+>> https://raw.githubusercontent.com/ulfalizer/Kconfiglib/screenshots/screenshots/ss13.png
+>>
+>> The last screenshot shows how things might look after you jump to a
+>> symbol. The jumped-to symbol wasn't visible in this case, so show-all
+>> mode was turned on automatically.
+> 
+> Hi Ulf,
+> 
+> 
+> Hm, OK, I used the trick that you supplied a few weeks ago and I have the UI now.
+> 
+>     ARCH=x86 SRCARCH=x86 KERNELVERSION=`make kernelversion` \
+>         Kconfiglib/menuconfig.py
+> 
+> so yes, a real Makefile target would be nice. :)
 
-<0>[   0.000000] Boot time mm/dd/yyyy hh:mm:ss
 
-Time-stamps of oops messages are in seconds since boottime. Recording also
-the boottime helps correlating oopses with other events having occured at
-the same time. This correlation will be otherwise lost after (multiple)
-reboots.
+Enter: / (search)
+then:  * (Bang) [this was just an unlucky typo on my part]
 
-Signed-off-by: Stefan M Schaeckeler <sschaeck@cisco.com>
----
- drivers/mtd/mtdoops.c | 38 +++++++++++++++++++++++++++++++++++---
- 1 file changed, 35 insertions(+), 3 deletions(-)
+Traceback (most recent call last):
+  File "/home/rdunlap/scripts/menuconfig.py", line 1447, in _jump_to_dialog
+    for regex in s.split()]
+  File "/home/rdunlap/scripts/menuconfig.py", line 1447, in <listcomp>
+    for regex in s.split()]
+  File "/usr/lib64/python3.4/re.py", line 223, in compile
+    return _compile(pattern, flags)
+  File "/usr/lib64/python3.4/re.py", line 294, in _compile
+    p = sre_compile.compile(pattern, flags)
+  File "/usr/lib64/python3.4/sre_compile.py", line 568, in compile
+    p = sre_parse.parse(p, flags)
+  File "/usr/lib64/python3.4/sre_parse.py", line 780, in parse
+    p = _parse_sub(source, pattern, 0)
+  File "/usr/lib64/python3.4/sre_parse.py", line 377, in _parse_sub
+    itemsappend(_parse(source, state))
+  File "/usr/lib64/python3.4/sre_parse.py", line 586, in _parse
+    raise error("nothing to repeat")
+sre_constants.error: nothing to repeat
 
-diff --git a/drivers/mtd/mtdoops.c b/drivers/mtd/mtdoops.c
-index 9f25111..11f93aa 100644
---- a/drivers/mtd/mtdoops.c
-+++ b/drivers/mtd/mtdoops.c
-@@ -54,6 +54,11 @@ module_param(dump_oops, int, 0600);
- MODULE_PARM_DESC(dump_oops,
- 		"set to 1 to dump oopses, 0 to only dump panics (default 1)");
- 
-+static bool dump_boottime = false;
-+module_param(dump_boottime, bool, 0400);
-+MODULE_PARM_DESC(dump_boottime,
-+		"set to 1 to dump boottime, 0 to disable (default 0)");
-+
- static struct mtdoops_context {
- 	struct kmsg_dumper dump;
- 
-@@ -69,6 +74,10 @@ static struct mtdoops_context {
- 	void *oops_buf;
- } oops_cxt;
- 
-+/* fake kernel message syslog level and monotonic timestamp */
-+#define boottime_prefix "<0>[   0.000000] Boot time "
-+static char boottime[100] = {0};
-+
- static void mark_page_used(struct mtdoops_context *cxt, int page)
- {
- 	set_bit(page, cxt->oops_page_used);
-@@ -285,13 +294,17 @@ static void mtdoops_do_dump(struct kmsg_dumper *dumper,
- {
- 	struct mtdoops_context *cxt = container_of(dumper,
- 			struct mtdoops_context, dump);
-+	u8 boot_len = strlen(boottime); /* 0 if dump_boottime is not set */
- 
- 	/* Only dump oopses if dump_oops is set */
- 	if (reason == KMSG_DUMP_OOPS && !dump_oops)
- 		return;
- 
--	kmsg_dump_get_buffer(dumper, true, cxt->oops_buf + MTDOOPS_HEADER_SIZE,
--			     record_size - MTDOOPS_HEADER_SIZE, NULL);
-+	strncpy(cxt->oops_buf + MTDOOPS_HEADER_SIZE, boottime, boot_len);
-+
-+	kmsg_dump_get_buffer(dumper, true, cxt->oops_buf + MTDOOPS_HEADER_SIZE +
-+			     boot_len, record_size - (MTDOOPS_HEADER_SIZE +
-+			     boot_len), NULL);
- 
- 	/* Panics must be written immediately */
- 	if (reason != KMSG_DUMP_OOPS)
-@@ -350,7 +363,13 @@ static void mtdoops_notify_add(struct mtd_info *mtd)
- 	cxt->mtd = mtd;
- 	cxt->oops_pages = (int)mtd->size / record_size;
- 	find_next_position(cxt);
--	printk(KERN_INFO "mtdoops: Attached to MTD device %d\n", mtd->index);
-+	if (dump_boottime) {
-+	    printk(KERN_INFO "mtdoops: Attached to MTD device %d "
-+		   "dumping boottime\n", mtd->index);
-+	} else {
-+	    printk(KERN_INFO "mtdoops: Attached to MTD device %d "
-+		   "not dumping boottime\n", mtd->index);
-+	}
- }
- 
- static void mtdoops_notify_remove(struct mtd_info *mtd)
-@@ -379,6 +398,19 @@ static int __init mtdoops_init(void)
- 	struct mtdoops_context *cxt = &oops_cxt;
- 	int mtd_index;
- 	char *endp;
-+	struct timespec64 bt;
-+	struct tm tm_val;
-+
-+	if (dump_boottime) {
-+	    /* Precompute boot time ahead of an oops */
-+	    getboottime64(&bt);
-+	    time_to_tm(bt.tv_sec, 0, &tm_val);
-+
-+	    snprintf(boottime, sizeof(boottime),
-+		     boottime_prefix "%02d/%02d/%4d %02d:%02d:%02d\n",
-+		     tm_val.tm_mon + 1, tm_val.tm_mday, tm_val.tm_year + 1900,
-+		     tm_val.tm_hour, tm_val.tm_min, tm_val.tm_sec);
-+	}
- 
- 	if (strlen(mtddev) == 0) {
- 		printk(KERN_ERR "mtdoops: mtd device (mtddev=name/number) must be supplied\n");
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/rdunlap/scripts/menuconfig.py", line 2389, in <module>
+    menuconfig(Kconfig("Kconfig" if len(sys.argv) < 2 else sys.argv[1]))
+  File "/home/rdunlap/scripts/menuconfig.py", line 340, in menuconfig
+    print(curses.wrapper(_menuconfig))
+  File "/usr/lib64/python3.4/curses/__init__.py", line 94, in wrapper
+    return func(stdscr, *args, **kwds)
+  File "/home/rdunlap/scripts/menuconfig.py", line 483, in _menuconfig
+    _jump_to_dialog()
+  File "/home/rdunlap/scripts/menuconfig.py", line 1466, in _jump_to_dialog
+    bad_re = e.msg
+AttributeError: 'error' object has no attribute 'msg'
+
+
+
 -- 
-2.10.3.dirty
+~Randy
