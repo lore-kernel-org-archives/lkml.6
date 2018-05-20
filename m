@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752564AbeETDvf (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 23:51:35 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42920 "EHLO
+        id S1750926AbeETEDK (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 00:03:10 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43074 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752459AbeETDvc (ORCPT
+        with ESMTP id S1750742AbeETEDI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 23:51:32 -0400
+        Sun, 20 May 2018 00:03:08 -0400
 Subject: Re: [ANNOUNCE] Kconfiglib menuconfig implementation
 From: Randy Dunlap <rdunlap@infradead.org>
 To: Ulf Magnusson <ulfalizer@gmail.com>
@@ -20,8 +20,8 @@ References: <CAFkk2KRTnRpi5thUGTM2+LZMyitggdJtiOBO7E0pTn93fz6-SQ@mail.gmail.com>
  <3d9be2f2-3fbe-411b-8529-0e0847f01346@infradead.org>
  <CAFkk2KRWon_S--dxYw82cDyGXKTFA6jxrrQwstzLvHPs=6-dqQ@mail.gmail.com>
  <c4ec710f-b2bd-b9f0-c33a-159aa53ca73c@infradead.org>
-Message-ID: <3c56dfdf-d196-da34-35db-42b3675039dd@infradead.org>
-Date: Sat, 19 May 2018 20:51:30 -0700
+Message-ID: <1378afb3-2b0e-da7a-5721-a8fa727e4382@infradead.org>
+Date: Sat, 19 May 2018 21:03:07 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
@@ -53,6 +53,7 @@ On 05/19/2018 08:45 PM, Randy Dunlap wrote:
 > Hi Ulf,
 > 
 > 
+> 
 > Hm, OK, I used the trick that you supplied a few weeks ago and I have the UI now.
 > 
 >     ARCH=x86 SRCARCH=x86 KERNELVERSION=`make kernelversion` \
@@ -60,45 +61,26 @@ On 05/19/2018 08:45 PM, Randy Dunlap wrote:
 > 
 > so yes, a real Makefile target would be nice. :)
 
+I want to see all kconfig symbols that end with "_DEBUG" (so excluding
+_DEBUGFS).  Using:
 
-Enter: / (search)
-then:  * (Bang) [this was just an unlucky typo on my part]
+/.*_DEBUG$
 
-Traceback (most recent call last):
-  File "/home/rdunlap/scripts/menuconfig.py", line 1447, in _jump_to_dialog
-    for regex in s.split()]
-  File "/home/rdunlap/scripts/menuconfig.py", line 1447, in <listcomp>
-    for regex in s.split()]
-  File "/usr/lib64/python3.4/re.py", line 223, in compile
-    return _compile(pattern, flags)
-  File "/usr/lib64/python3.4/re.py", line 294, in _compile
-    p = sre_compile.compile(pattern, flags)
-  File "/usr/lib64/python3.4/sre_compile.py", line 568, in compile
-    p = sre_parse.parse(p, flags)
-  File "/usr/lib64/python3.4/sre_parse.py", line 780, in parse
-    p = _parse_sub(source, pattern, 0)
-  File "/usr/lib64/python3.4/sre_parse.py", line 377, in _parse_sub
-    itemsappend(_parse(source, state))
-  File "/usr/lib64/python3.4/sre_parse.py", line 586, in _parse
-    raise error("nothing to repeat")
-sre_constants.error: nothing to repeat
+shows me 6 symbols:
+ATH9K_COMMON_DEBUG
+DVB_B2C2_FLEXCOP_DEBUG
+HAVE_DMA_API_DEBUG
+IP_DCCP_TFRC_DEBUG
+NFS_DEBUG
+PM_SLEEP_DEBUG
 
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/home/rdunlap/scripts/menuconfig.py", line 2389, in <module>
-    menuconfig(Kconfig("Kconfig" if len(sys.argv) < 2 else sys.argv[1]))
-  File "/home/rdunlap/scripts/menuconfig.py", line 340, in menuconfig
-    print(curses.wrapper(_menuconfig))
-  File "/usr/lib64/python3.4/curses/__init__.py", line 94, in wrapper
-    return func(stdscr, *args, **kwds)
-  File "/home/rdunlap/scripts/menuconfig.py", line 483, in _menuconfig
-    _jump_to_dialog()
-  File "/home/rdunlap/scripts/menuconfig.py", line 1466, in _jump_to_dialog
-    bad_re = e.msg
-AttributeError: 'error' object has no attribute 'msg'
+so where are the other (approx.) 176?
+see:
+$ find . -name Kconfig\* | xargs grep "config.*_DEBUG$" | grep -v \.orig | wc
+    182     364    9179
 
 
+Anyway, something for you to look at. :)
 
 -- 
 ~Randy
