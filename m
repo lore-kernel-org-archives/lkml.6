@@ -1,107 +1,219 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752547AbeETI3U (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 04:29:20 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:38001 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751683AbeETI3Q (ORCPT
+        id S1752550AbeETIbd (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 04:31:33 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:58329 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751167AbeETIba (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 04:29:16 -0400
-X-Google-Smtp-Source: AB8JxZoJ6NsnKHCYCW1f3L+ty/mGVuF5RxH5DOFNVUxuSXRjeOyNBchDIRgcn+9ahttg+GtueUJf5Q==
-From: Joel Fernandes <joelaf@google.com>
-X-Google-Original-From: Joel Fernandes <joel@joelfernandes.org>
-To: linux-kernel@vger.kernel.org
-Cc: "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>, byungchul.park@lge.com,
-        kernel-team@android.com, Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>
-Subject: [PATCH] rcu: Speed up calling of RCU tasks callbacks
-Date: Sun, 20 May 2018 01:28:55 -0700
-Message-Id: <20180520082856.70676-1-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+        Sun, 20 May 2018 04:31:30 -0400
+Date: Sun, 20 May 2018 10:31:28 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>
+Subject: [GIT pull] locking fixes for 4.17
+Message-ID: <alpine.DEB.2.21.1805201028330.1599@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Linus,
 
-RCU tasks callbacks can take atleast 1 second before the callbacks are
-executed. This happens even if the hold-out tasks enter their quiescent states
-quickly. I noticed this when I was testing trampoline callback execution.
+please pull the latest locking-urgent-for-linus git tree from:
 
-To test the trampoline freeing, I wrote a simple script:
-cd /sys/kernel/debug/tracing/
-echo '*:traceon' > set_ftrace_filter;
-echo '!*:traceon' > set_ftrace_filter;
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking-urgent-for-linus
 
-With this patch:
-real    0m0.256s
-user    0m0.000s
-sys     0m0.226s
+Two fixes to address shortcomings of the rwsem/percpu-rwsem lock debugging
+code which emits false positive warnings when the rwsem is anonymously
+locked and unlocked.
 
-Without this patch:
-real    0m1.313s
-user    0m0.000s
-sys     0m0.222s
+Thanks,
 
-That's a great than 5X speed up in performance. In order to accomplish
-this, I am waiting very briefly for around 2 scheduler ticks worth of
-time before entering the hold-out checking loop. The loop still
-preserves its checking of held tasks every 1 second as before, incase
-this first test doesn't succeed.
+	tglx
 
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Peter Zilstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>
-Cc: byungchul.park@lge.com
-Cc: kernel-team@android.com
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
----
- kernel/rcu/update.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+------------------>
+Waiman Long (2):
+      locking/rwsem: Add a new RWSEM_ANONYMOUSLY_OWNED flag
+      locking/percpu-rwsem: Annotate rwsem ownership transfer by setting RWSEM_OWNER_UNKNOWN
 
-diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
-index 5783bdf86e5a..d221db4ab3f4 100644
---- a/kernel/rcu/update.c
-+++ b/kernel/rcu/update.c
-@@ -743,6 +743,12 @@ static int __noreturn rcu_tasks_kthread(void *arg)
- 		 */
- 		synchronize_srcu(&tasks_rcu_exit_srcu);
+
+ include/linux/percpu-rwsem.h |  6 +++++-
+ include/linux/rwsem.h        |  6 ++++++
+ kernel/locking/rwsem-xadd.c  | 19 +++++++++----------
+ kernel/locking/rwsem.c       |  2 --
+ kernel/locking/rwsem.h       | 30 +++++++++++++++++++++---------
+ 5 files changed, 41 insertions(+), 22 deletions(-)
+
+diff --git a/include/linux/percpu-rwsem.h b/include/linux/percpu-rwsem.h
+index b1f37a89e368..79b99d653e03 100644
+--- a/include/linux/percpu-rwsem.h
++++ b/include/linux/percpu-rwsem.h
+@@ -133,7 +133,7 @@ static inline void percpu_rwsem_release(struct percpu_rw_semaphore *sem,
+ 	lock_release(&sem->rw_sem.dep_map, 1, ip);
+ #ifdef CONFIG_RWSEM_SPIN_ON_OWNER
+ 	if (!read)
+-		sem->rw_sem.owner = NULL;
++		sem->rw_sem.owner = RWSEM_OWNER_UNKNOWN;
+ #endif
+ }
  
-+		/*
-+		 * Wait a little bit incase held tasks are released
-+		 * during their next timer ticks.
-+		 */
-+		schedule_timeout_interruptible(2);
+@@ -141,6 +141,10 @@ static inline void percpu_rwsem_acquire(struct percpu_rw_semaphore *sem,
+ 					bool read, unsigned long ip)
+ {
+ 	lock_acquire(&sem->rw_sem.dep_map, 0, 1, read, 1, NULL, ip);
++#ifdef CONFIG_RWSEM_SPIN_ON_OWNER
++	if (!read)
++		sem->rw_sem.owner = current;
++#endif
+ }
+ 
+ #endif
+diff --git a/include/linux/rwsem.h b/include/linux/rwsem.h
+index 56707d5ff6ad..ab93b6eae696 100644
+--- a/include/linux/rwsem.h
++++ b/include/linux/rwsem.h
+@@ -44,6 +44,12 @@ struct rw_semaphore {
+ #endif
+ };
+ 
++/*
++ * Setting bit 0 of the owner field with other non-zero bits will indicate
++ * that the rwsem is writer-owned with an unknown owner.
++ */
++#define RWSEM_OWNER_UNKNOWN	((struct task_struct *)-1L)
 +
+ extern struct rw_semaphore *rwsem_down_read_failed(struct rw_semaphore *sem);
+ extern struct rw_semaphore *rwsem_down_read_failed_killable(struct rw_semaphore *sem);
+ extern struct rw_semaphore *rwsem_down_write_failed(struct rw_semaphore *sem);
+diff --git a/kernel/locking/rwsem-xadd.c b/kernel/locking/rwsem-xadd.c
+index e795908f3607..a90336779375 100644
+--- a/kernel/locking/rwsem-xadd.c
++++ b/kernel/locking/rwsem-xadd.c
+@@ -352,16 +352,15 @@ static inline bool rwsem_can_spin_on_owner(struct rw_semaphore *sem)
+ 	struct task_struct *owner;
+ 	bool ret = true;
+ 
++	BUILD_BUG_ON(!rwsem_has_anonymous_owner(RWSEM_OWNER_UNKNOWN));
++
+ 	if (need_resched())
+ 		return false;
+ 
+ 	rcu_read_lock();
+ 	owner = READ_ONCE(sem->owner);
+-	if (!rwsem_owner_is_writer(owner)) {
+-		/*
+-		 * Don't spin if the rwsem is readers owned.
+-		 */
+-		ret = !rwsem_owner_is_reader(owner);
++	if (!owner || !is_rwsem_owner_spinnable(owner)) {
++		ret = !owner;	/* !owner is spinnable */
+ 		goto done;
+ 	}
+ 
+@@ -382,11 +381,11 @@ static noinline bool rwsem_spin_on_owner(struct rw_semaphore *sem)
+ {
+ 	struct task_struct *owner = READ_ONCE(sem->owner);
+ 
+-	if (!rwsem_owner_is_writer(owner))
+-		goto out;
++	if (!is_rwsem_owner_spinnable(owner))
++		return false;
+ 
+ 	rcu_read_lock();
+-	while (sem->owner == owner) {
++	while (owner && (READ_ONCE(sem->owner) == owner)) {
  		/*
- 		 * Each pass through the following loop scans the list
- 		 * of holdout tasks, removing any that are no longer
-@@ -755,7 +761,6 @@ static int __noreturn rcu_tasks_kthread(void *arg)
- 			int rtst;
- 			struct task_struct *t1;
- 
--			schedule_timeout_interruptible(HZ);
- 			rtst = READ_ONCE(rcu_task_stall_timeout);
- 			needreport = rtst > 0 &&
- 				     time_after(jiffies, lastreport + rtst);
-@@ -768,6 +773,11 @@ static int __noreturn rcu_tasks_kthread(void *arg)
- 				check_holdout_task(t, needreport, &firstreport);
- 				cond_resched();
- 			}
+ 		 * Ensure we emit the owner->on_cpu, dereference _after_
+ 		 * checking sem->owner still matches owner, if that fails,
+@@ -408,12 +407,12 @@ static noinline bool rwsem_spin_on_owner(struct rw_semaphore *sem)
+ 		cpu_relax();
+ 	}
+ 	rcu_read_unlock();
+-out:
 +
-+			if (list_empty(&rcu_tasks_holdouts))
-+				break;
-+
-+			schedule_timeout_interruptible(HZ);
- 		}
+ 	/*
+ 	 * If there is a new owner or the owner is not set, we continue
+ 	 * spinning.
+ 	 */
+-	return !rwsem_owner_is_reader(READ_ONCE(sem->owner));
++	return is_rwsem_owner_spinnable(READ_ONCE(sem->owner));
+ }
  
- 		/*
--- 
-2.17.0.441.gb46fe60e1d-goog
+ static bool rwsem_optimistic_spin(struct rw_semaphore *sem)
+diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
+index 30465a2f2b6c..bc1e507be9ff 100644
+--- a/kernel/locking/rwsem.c
++++ b/kernel/locking/rwsem.c
+@@ -221,5 +221,3 @@ void up_read_non_owner(struct rw_semaphore *sem)
+ EXPORT_SYMBOL(up_read_non_owner);
+ 
+ #endif
+-
+-
+diff --git a/kernel/locking/rwsem.h b/kernel/locking/rwsem.h
+index a17cba8d94bb..b9d0e72aa80f 100644
+--- a/kernel/locking/rwsem.h
++++ b/kernel/locking/rwsem.h
+@@ -1,20 +1,24 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * The owner field of the rw_semaphore structure will be set to
+- * RWSEM_READ_OWNED when a reader grabs the lock. A writer will clear
++ * RWSEM_READER_OWNED when a reader grabs the lock. A writer will clear
+  * the owner field when it unlocks. A reader, on the other hand, will
+  * not touch the owner field when it unlocks.
+  *
+- * In essence, the owner field now has the following 3 states:
++ * In essence, the owner field now has the following 4 states:
+  *  1) 0
+  *     - lock is free or the owner hasn't set the field yet
+  *  2) RWSEM_READER_OWNED
+  *     - lock is currently or previously owned by readers (lock is free
+  *       or not set by owner yet)
+- *  3) Other non-zero value
+- *     - a writer owns the lock
++ *  3) RWSEM_ANONYMOUSLY_OWNED bit set with some other bits set as well
++ *     - lock is owned by an anonymous writer, so spinning on the lock
++ *       owner should be disabled.
++ *  4) Other non-zero value
++ *     - a writer owns the lock and other writers can spin on the lock owner.
+  */
+-#define RWSEM_READER_OWNED	((struct task_struct *)1UL)
++#define RWSEM_ANONYMOUSLY_OWNED	(1UL << 0)
++#define RWSEM_READER_OWNED	((struct task_struct *)RWSEM_ANONYMOUSLY_OWNED)
+ 
+ #ifdef CONFIG_DEBUG_RWSEMS
+ # define DEBUG_RWSEMS_WARN_ON(c)	DEBUG_LOCKS_WARN_ON(c)
+@@ -51,14 +55,22 @@ static inline void rwsem_set_reader_owned(struct rw_semaphore *sem)
+ 		WRITE_ONCE(sem->owner, RWSEM_READER_OWNED);
+ }
+ 
+-static inline bool rwsem_owner_is_writer(struct task_struct *owner)
++/*
++ * Return true if the a rwsem waiter can spin on the rwsem's owner
++ * and steal the lock, i.e. the lock is not anonymously owned.
++ * N.B. !owner is considered spinnable.
++ */
++static inline bool is_rwsem_owner_spinnable(struct task_struct *owner)
+ {
+-	return owner && owner != RWSEM_READER_OWNED;
++	return !((unsigned long)owner & RWSEM_ANONYMOUSLY_OWNED);
+ }
+ 
+-static inline bool rwsem_owner_is_reader(struct task_struct *owner)
++/*
++ * Return true if rwsem is owned by an anonymous writer or readers.
++ */
++static inline bool rwsem_has_anonymous_owner(struct task_struct *owner)
+ {
+-	return owner == RWSEM_READER_OWNED;
++	return (unsigned long)owner & RWSEM_ANONYMOUSLY_OWNED;
+ }
+ #else
+ static inline void rwsem_set_owner(struct rw_semaphore *sem)
