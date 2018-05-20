@@ -1,92 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751318AbeETHvV (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 03:51:21 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:37012 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751094AbeETHvS (ORCPT
+        id S1751513AbeETIA6 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 04:00:58 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:34649 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751292AbeETIA4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 03:51:18 -0400
-X-Google-Smtp-Source: AB8JxZpUcO9fKXDt07zm0AwRRMaTQr91f+29bVop7lEYxC2BPiDtzxIzc9hBUgByE/Zfm1momC5rXqSSiSJxcxbIXRQ=
-MIME-Version: 1.0
-In-Reply-To: <1378afb3-2b0e-da7a-5721-a8fa727e4382@infradead.org>
-References: <CAFkk2KRTnRpi5thUGTM2+LZMyitggdJtiOBO7E0pTn93fz6-SQ@mail.gmail.com>
- <d4c3b2ab-385d-fe7a-bdb1-2d497d620de5@infradead.org> <CAFkk2KRozscmd4kQSJKwKmY3WpTody7S5XZZObf8SKLF62k6+w@mail.gmail.com>
- <CAFkk2KRkEt3+786QvyjzPPAm+3HDe2+ydzZJpshfdKyUDQVfuw@mail.gmail.com>
- <CAFkk2KRvSxu+x-nb045=3L63KEk5h9URr5QYLPoYp6rqqTR4qA@mail.gmail.com>
- <3d9be2f2-3fbe-411b-8529-0e0847f01346@infradead.org> <CAFkk2KRWon_S--dxYw82cDyGXKTFA6jxrrQwstzLvHPs=6-dqQ@mail.gmail.com>
- <c4ec710f-b2bd-b9f0-c33a-159aa53ca73c@infradead.org> <1378afb3-2b0e-da7a-5721-a8fa727e4382@infradead.org>
-From: Ulf Magnusson <ulfalizer@gmail.com>
-Date: Sun, 20 May 2018 09:51:17 +0200
-Message-ID: <CAFkk2KStOwHKmFLpNVA1GNscvi-0wihJVM_uaYNemoy6XWDxiQ@mail.gmail.com>
-Subject: Re: [ANNOUNCE] Kconfiglib menuconfig implementation
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Sun, 20 May 2018 04:00:56 -0400
+X-Google-Smtp-Source: AB8JxZpkAAvXYQ5U80vqcRwDuSO/opqPXr49zJnEFa7eiubz+4iyRUUK6KhNEfe3nJtVgd17CqVhGA==
+From: Varsha Rao <rvarsha016@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Nicholas Mc Guire <der.herr@hofr.at>
+Cc: Varsha Rao <rvarsha016@gmail.com>
+Subject: [PATCH] x86: platform: uv: Remove extra parentheses
+Date: Sun, 20 May 2018 13:30:12 +0530
+Message-Id: <20180520080012.8215-1-rvarsha016@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 20, 2018 at 6:03 AM, Randy Dunlap <rdunlap@infradead.org> wrote:
-> On 05/19/2018 08:45 PM, Randy Dunlap wrote:
->> On 05/08/2018 09:59 AM, Ulf Magnusson wrote:
->>> Hello,
->>>
->>> I've added incremental search for jumping directly to a symbol now.
->>> Regular expressions are supported as well.
->>>
->>> Some screenshots below:
->>>
->>> https://raw.githubusercontent.com/ulfalizer/Kconfiglib/screenshots/screenshots/ss10.png
->>> https://raw.githubusercontent.com/ulfalizer/Kconfiglib/screenshots/screenshots/ss11.png
->>> https://raw.githubusercontent.com/ulfalizer/Kconfiglib/screenshots/screenshots/ss13.png
->>>
->>> The last screenshot shows how things might look after you jump to a
->>> symbol. The jumped-to symbol wasn't visible in this case, so show-all
->>> mode was turned on automatically.
->>
->> Hi Ulf,
->>
->>
->>
->> Hm, OK, I used the trick that you supplied a few weeks ago and I have the UI now.
->>
->>     ARCH=x86 SRCARCH=x86 KERNELVERSION=`make kernelversion` \
->>         Kconfiglib/menuconfig.py
->>
->> so yes, a real Makefile target would be nice. :)
->
-> I want to see all kconfig symbols that end with "_DEBUG" (so excluding
-> _DEBUGFS).  Using:
->
-> /.*_DEBUG$
->
-> shows me 6 symbols:
-> ATH9K_COMMON_DEBUG
-> DVB_B2C2_FLEXCOP_DEBUG
-> HAVE_DMA_API_DEBUG
-> IP_DCCP_TFRC_DEBUG
-> NFS_DEBUG
-> PM_SLEEP_DEBUG
->
-> so where are the other (approx.) 176?
-> see:
-> $ find . -name Kconfig\* | xargs grep "config.*_DEBUG$" | grep -v \.orig | wc
->     182     364    9179
->
->
-> Anyway, something for you to look at. :)
->
-> --
-> ~Randy
+Remove extra parentheses to fix the extraneous parentheses clang
+warning.
 
-I changed it to search the symbol name and the prompt separately:
-https://github.com/ulfalizer/Kconfiglib/commit/e0905818ef376c977d0a4540ea72d61b8f554bb5
+Suggested-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Signed-off-by: Varsha Rao <rvarsha016@gmail.com>
+---
+ arch/x86/platform/uv/tlb_uv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Should work the way you expected now. It's more intuitive for the prompt too. :)
-
-Can just do 'debug$' by the way. No '.*' required.
-
-Cheers,
-Ulf
+diff --git a/arch/x86/platform/uv/tlb_uv.c b/arch/x86/platform/uv/tlb_uv.c
+index b36caae0fb2f..b96d38288c60 100644
+--- a/arch/x86/platform/uv/tlb_uv.c
++++ b/arch/x86/platform/uv/tlb_uv.c
+@@ -615,7 +615,7 @@ static int uv2_3_wait_completion(struct bau_desc *bau_desc,
+ 
+ 	/* spin on the status MMR, waiting for it to go idle */
+ 	while (descriptor_stat != UV2H_DESC_IDLE) {
+-		if ((descriptor_stat == UV2H_DESC_SOURCE_TIMEOUT)) {
++		if (descriptor_stat == UV2H_DESC_SOURCE_TIMEOUT) {
+ 			/*
+ 			 * A h/w bug on the destination side may
+ 			 * have prevented the message being marked
+-- 
+2.17.0
