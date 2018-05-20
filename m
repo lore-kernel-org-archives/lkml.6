@@ -1,104 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752604AbeETV2J (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 17:28:09 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46094 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751451AbeETV2H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 17:28:07 -0400
-Subject: Re: [PATCH v6 00/12] KVM: arm/arm64: Allow multiple GICv3
- redistributor regions
-To: Marc Zyngier <marc.zyngier@arm.com>
-References: <1525088918-8600-1-git-send-email-eric.auger@redhat.com>
- <20180520144310.378a1712@why.wild-wind.fr.eu.org>
-Cc: eric.auger.pro@gmail.com, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu, cdall@kernel.org,
-        peter.maydell@linaro.org, andre.przywara@arm.com, drjones@redhat.com,
-        wei@redhat.com
-From: Auger Eric <eric.auger@redhat.com>
-Message-ID: <4c1617e2-2cee-d6d7-b2ae-135347c2fbb7@redhat.com>
-Date: Sun, 20 May 2018 23:28:01 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        id S1751708AbeETVd5 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 17:33:57 -0400
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:40410 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751067AbeETVdz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 May 2018 17:33:55 -0400
+X-Google-Smtp-Source: AB8JxZqOVgMLnuz+gQVQyzC8RXnHGfcWyzVAqlL6YTzc99UMsksFkPX188gW4aiQMSPnCEEYm6pKmQ==
+Date: Sun, 20 May 2018 18:33:49 -0300
+From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+To: Or Gerlitz <gerlitz.or@gmail.com>
+Cc: Vlad Buslov <vladbu@mellanox.com>,
+        Linux Netdev List <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
+        Pablo Neira Ayuso <pablo@netfilter.org>, kadlec@blackhole.kfki.hu,
+        Florian Westphal <fw@strlen.de>, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Eric Dumazet <edumazet@google.com>, keescook@chromium.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        Yevgeny Kliteynik <kliteyn@mellanox.com>
+Subject: Re: [PATCH 13/14] net: sched: use unique idr insert function in
+ unlocked actions
+Message-ID: <20180520213349.GC26212@localhost.localdomain>
+References: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
+ <1526308035-12484-14-git-send-email-vladbu@mellanox.com>
+ <20180519222028.GF5488@localhost.localdomain>
+ <CAJ3xEMhNC91YFcy-Qi+vk--DwSZ5wZdYMNp=-7mHUk9oag9HSg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180520144310.378a1712@why.wild-wind.fr.eu.org>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJ3xEMhNC91YFcy-Qi+vk--DwSZ5wZdYMNp=-7mHUk9oag9HSg@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
+On Mon, May 21, 2018 at 12:13:06AM +0300, Or Gerlitz wrote:
+> On Sun, May 20, 2018 at 1:20 AM, Marcelo Ricardo Leitner
+> <marcelo.leitner@gmail.com> wrote:
+> > On Mon, May 14, 2018 at 05:27:14PM +0300, Vlad Buslov wrote:
+> >> Substitute calls to action insert function with calls to action insert
+> >> unique function that warns if insertion overwrites index in idr.
+> >
+> > I know this patch may be gone on V2, but a general comment, please use
+> > the function names themselves instead of a textualized version. I.e.,
+> > s/action insert unique/tcf_idr_insert_unique/
+>
+> disagree. While doing reviews I found out that if I ask the developer
+> to use higher
+> level / descriptive language and specifically to avoid putting
+> variable / function names in
+> patch titles and change logs, the quality gets ++ big time, vs if the
+> developer is allowed to say
+>
+> net/mlx5: Changed add_vovo_bobo()
+>
+> Added variable do_it_right to add_vovo_bobo(), now we are terribly good.
 
-On 05/20/2018 03:43 PM, Marc Zyngier wrote:
-> Hi Eric,
-> 
-> On Mon, 30 Apr 2018 13:48:26 +0200
-> Eric Auger <eric.auger@redhat.com> wrote:
-> 
->> At the moment the KVM VGICv3 only supports a single redistributor
->> region (whose base address is set through the GICv3 kvm device
->> KVM_DEV_ARM_VGIC_GRP_ADDR/KVM_VGIC_V3_ADDR_TYPE_REDIST). There,
->> all the redistributors are laid out contiguously. The size of this
->> single redistributor region is not set explicitly but instead
->> induced at a late stage by the number of online vcpus.
->>
->> The GIC specification does not mandate all redistributors to be
->> contiguous. Moreover DT and ACPI were specified so that multiple
->> redistributors regions can be defined.
->>
->> The current interface brings a limitation on QEMU where ARM
->> virt machine available GPA holes only allowed to assign a
->> redistributor region fitting a max of 123 vcpus. Overcoming this
->> limitation would force either to create a new machine or relocate
->> the single rdist region or allow the allocation of multiple rdist
->> regions.
->>
->> This series enables this last alternative. A new GICv3 KVM device
->> KVM_DEV_ARM_VGIC_GRP_ADDR/KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION allows
->> to register individual redistributor regions whose size is defined
->> explicitly. Those rdist regions then are filled by vcpu rdist frames
->> according to the need. The vgic init and related base address checks
->> are impacted.
-> 
-> I've taken this series for a test run, and noticed that it breaks
-> kvmtool:
-> 
-> <quote>
-> maz@sy-borg:~$ ./kvmtool/lkvm run -c 1 -k Image --irqchip=gicv3
->   # lkvm run -k Image -m 256 -c 1 --name guest-4929
->   Info: Loaded kernel to 0x80080000 (20126208 bytes)
->   Info: Placing fdt at 0x8fe00000 - 0x8fffffff
->   Info: virtio-mmio.devices=0x200@0x10000:36
-> 
->   Info: virtio-mmio.devices=0x200@0x10200:37
-> 
->   Info: virtio-mmio.devices=0x200@0x10400:38
-> 
-> KVM_RUN failed: No such device or address
-> </quote>
-> 
-> Backing out the series results in a working setup.
-> 
-> I presume that the changes in the init has resulted in a stricter
-> initialization order that matches the QEMU flow, but that kvmtool
-> doesn't follow.
-> 
-> Could you please have a look at this? I'd like to have it in for 4.18,
-> just without regressions... ;-)
+In your example I agree that it is not helping and it is even allowing
+such empty changelog, just as in the section I highlighted, the
+descriptive language is also not helping IMHO.
 
-Understood. Just sent a v7, tested with lkvm this time. It fixes the
-issue for me. Also tested with qemu using the legacy RDIST and new
-multiple RDIST API. I Took the risk to remove kvm_vgic_vcpu_early_init()
-as it looks weird to me this gets called after the kvm_vgic_vcpu_init. I
-was not able to figure out the rationale behind having this separate
-init function. Hope I did not miss another use case.
+I had to read it 3 times to make sure I wasn't missing a modifier word
+when comparing the two functions and well, it's just saying
+"Substitute calls to foo function to bar function". I don't see how
+the textualized version helps in this case while, at least in this
+one, I would have visually recognized the function names way faster.
 
-Thanks
-
-Eric
-> 
-> Thanks,
-> 
-> 	M.
-> 
+Sounds like 2 bad examples for either approach.
