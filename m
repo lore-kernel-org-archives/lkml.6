@@ -1,107 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751451AbeETHbH (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 03:31:07 -0400
-Received: from mailout8.siol.net ([213.250.19.135]:48408 "EHLO mail.siol.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750883AbeETHbF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 03:31:05 -0400
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Julian Calaby <julian.calaby@gmail.com>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        "Mailing List, Arm" <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [linux-sunxi] [PATCH 10/15] drm/sun4i: Add support for R40 TV TCONs
-Date: Sun, 20 May 2018 09:30:22 +0200
-Message-ID: <8079031.6V9S5xCcmc@jernej-laptop>
-In-Reply-To: <CAGRGNgXbKGhnern4=_W9W5dKM54H5B1dnAD7up-23rUAMWWCSw@mail.gmail.com>
-References: <20180519183127.2718-1-jernej.skrabec@siol.net> <CAGRGNgWumzhiiwJenOXRuRN0i-_2uY=YR5L+9m70HW2ibF=C7w@mail.gmail.com> <CAGRGNgXbKGhnern4=_W9W5dKM54H5B1dnAD7up-23rUAMWWCSw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        id S1751026AbeETHld (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 03:41:33 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:36863 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750800AbeETHlb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 May 2018 03:41:31 -0400
+X-Google-Smtp-Source: AB8JxZq/tb2rbw5Cu2WnzWnkCHbRb/LiXtZqnXu7ntyQRlwYc+ffHvbZ8A4jsd3ySEk9QUweumqXmg==
+From: Varsha Rao <rvarsha016@gmail.com>
+To: Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
+        ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Nicholas Mc Guire <der.herr@hofr.at>
+Cc: Varsha Rao <rvarsha016@gmail.com>
+Subject: [PATCH] ocfs2: dlm: Remove extra parentheses
+Date: Sun, 20 May 2018 13:11:14 +0530
+Message-Id: <20180520074114.7760-1-rvarsha016@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Remove unnecessary parentheses to fix the clang warning of extraneous
+parentheses.
 
-Dne nedelja, 20. maj 2018 ob 04:09:52 CEST je Julian Calaby napisal(a):
-> Hi Jernej,
-> 
-> On Sun, May 20, 2018 at 11:57 AM, Julian Calaby <julian.calaby@gmail.com> 
-wrote:
-> > Hi Jernej,
-> > 
-> > On Sun, May 20, 2018 at 4:31 AM, Jernej Skrabec <jernej.skrabec@siol.net> 
-wrote:
-> >> R40 display pipeline has a lot of possible configurations. HDMI can be
-> >> connected to 2 different TCONs (out of 4) and mixers can be connected to
-> >> any TCON. All this must be configured in TCON TOP.
-> >> 
-> >> Along with definition of TCON capabilities also add mux callback, which
-> >> can configure this complex pipeline.
-> >> 
-> >> For now, only TCON TV is supported.
-> >> 
-> >> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> >> ---
-> >> 
-> >>  drivers/gpu/drm/sun4i/sun4i_tcon.c | 39 ++++++++++++++++++++++++++++++
-> >>  1 file changed, 39 insertions(+)
-> >> 
-> >> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> >> b/drivers/gpu/drm/sun4i/sun4i_tcon.c index e0c562ce1c22..81b9551e4f78
-> >> 100644
-> >> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> >> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> >> @@ -1274,6 +1274,31 @@ static int sun6i_tcon_set_mux(struct sun4i_tcon
-> >> *tcon,>> 
-> >>         return 0;
-> >>  
-> >>  }
-> >> 
-> >> +static int sun8i_r40_tcon_tv_set_mux(struct sun4i_tcon *tcon,
-> >> +                                    const struct drm_encoder *encoder,
-> >> +                                    int index)
-> >> +{
-> >> +       if (encoder->encoder_type == DRM_MODE_ENCODER_TMDS)
-> >> +               sun8i_tcon_top_set_hdmi_src(tcon->tcon_top, index);
-> >> +
-> >> +       sun8i_tcon_top_de_config(tcon->tcon_top, tcon->id,
-> >> +                                tcon_type_tv, index);
-> >> +
-> >> +       return 0;
-> >> +}
-> >> +
-> >> +static int sun8i_r40_tcon_tv_set_mux_0(struct sun4i_tcon *tcon,
-> >> +                                      const struct drm_encoder *encoder)
-> >> +{
-> >> +       return sun8i_r40_tcon_tv_set_mux(tcon, encoder, 0);
-> >> +}
-> >> +
-> >> +static int sun8i_r40_tcon_tv_set_mux_1(struct sun4i_tcon *tcon,
-> >> +                                      const struct drm_encoder *encoder)
-> >> +{
-> >> +       return sun8i_r40_tcon_tv_set_mux(tcon, encoder, 1);
-> >> +}
-> > 
-> > Are TCON-TOPs going to be a common thing in new SoCs from Allwinner?
-> > If so, maybe we should add an index to the TCON quirks and have a
-> > common TCON-TOP set_mux function.
-> 
-> Actually, that only moves it up a level. Should it be a devicetree property?
-> 
+Suggested-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Signed-off-by: Varsha Rao <rvarsha016@gmail.com>
+---
+ fs/ocfs2/dlm/dlmthread.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-TCON-TOP is besides R40 part of two newest Allwinner SoCs, H6 and A63. 
-However, they have only one TV TCON and one LCD TCON, so indexes are not 
-needed for them (always 0). This makes R40 somewhat special. I don't think it 
-makes sense to expand everything just for one SoC.
-
-Best regards,
-Jernej
+diff --git a/fs/ocfs2/dlm/dlmthread.c b/fs/ocfs2/dlm/dlmthread.c
+index 838a06d4066a..074d5de17bb2 100644
+--- a/fs/ocfs2/dlm/dlmthread.c
++++ b/fs/ocfs2/dlm/dlmthread.c
+@@ -531,7 +531,7 @@ void __dlm_dirty_lockres(struct dlm_ctxt *dlm, struct dlm_lock_resource *res)
+ 	assert_spin_locked(&res->spinlock);
+ 
+ 	/* don't shuffle secondary queues */
+-	if ((res->owner == dlm->node_num)) {
++	if (res->owner == dlm->node_num) {
+ 		if (res->state & (DLM_LOCK_RES_MIGRATING |
+ 				  DLM_LOCK_RES_BLOCK_DIRTY))
+ 		    return;
+-- 
+2.17.0
