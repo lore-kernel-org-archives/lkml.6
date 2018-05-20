@@ -1,152 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751318AbeETL1R (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 07:27:17 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:41962 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750928AbeETL1P (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 07:27:15 -0400
-X-Google-Smtp-Source: AB8JxZr4eJHS3E9lGSS0drR+szRipqU3NEw8KGRMG5dIRHtBVcMXjrjiGP5f/1rmeuO8UCbL0XCb5992tnbVA6Rm/O8=
+        id S1751331AbeETLsz (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 07:48:55 -0400
+Received: from gloria.sntech.de ([95.129.55.99]:41464 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750936AbeETLsx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 May 2018 07:48:53 -0400
+From: Heiko Stuebner <heiko@sntech.de>
+To: Peter Rosin <peda@axentia.se>
+Cc: linux-kernel@vger.kernel.org, Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Sandy Huang <hjc@rock-chips.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH 2/3] drm/rockchip: lvds: avoid duplicating drm_bridge_attach
+Date: Sun, 20 May 2018 13:48:39 +0200
+Message-ID: <2076868.NHBhtu2M9j@phil>
+In-Reply-To: <20180502074025.12421-3-peda@axentia.se>
+References: <20180502074025.12421-1-peda@axentia.se> <20180502074025.12421-3-peda@axentia.se>
 MIME-Version: 1.0
-In-Reply-To: <CAG=yYwk2TcRwLX3nQis+u+WUhmt63ikBQFoCFAAiwir8eowfgw@mail.gmail.com>
-References: <CAG=yYwkWt9bbKVWD93YT2S3jFQCt7s5yV7gxOw=JScFJtgO0NA@mail.gmail.com>
- <CAHp75Vc4FhSOfyN=UG=xXNOH6C4JUpnfMh9+Mp1_FiM44F0FtA@mail.gmail.com> <CAG=yYwk2TcRwLX3nQis+u+WUhmt63ikBQFoCFAAiwir8eowfgw@mail.gmail.com>
-From: Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>
-Date: Sun, 20 May 2018 16:57:13 +0530
-Message-ID: <CAG=yYwnkCaO95SW4J81fd2UDD6j9OP6=e+QrgXLVn804GeZoHg@mail.gmail.com>
-Subject: Re: PROBLEM: "ACPI Error: Method parse/execution failed" and "ACPI
- BIOS Error (bug): Failure looking up" related
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Robert Moore <robert.moore@intel.com>, erik.schmauss@intel.com,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Len Brown <lenb@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>, devel@acpica.org,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ignore this "i did not find this message in a typical 4.9.x kernel"  line
+Am Mittwoch, 2. Mai 2018, 09:40:24 CEST schrieb Peter Rosin:
+> drm_bridge_attach takes care of these assignments, so there is no need
+> to open-code them a second time.
+> 
+> Signed-off-by: Peter Rosin <peda@axentia.se>
 
-On Sun, May 20, 2018 at 4:05 PM, Jeffrin Thalakkottoor
-<jeffrin@rajagiritech.edu.in> wrote:
-> as far as i know , may be there is not much change in system behavior.
-> i just found these messages during boot time
-> i did not find this message in a typical 4.9.x kernel
->
->
->
-> On Mon, May 14, 2018 at 4:04 AM, Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
->> On Sun, May 13, 2018 at 5:20 PM, Jeffrin Thalakkottoor
->> <jeffrin@rajagiritech.edu.in> wrote:
->>> hello ,
->>>
->>> the error from "dmesg -l err"  related ...
->>>
->>> ------------------------------------------------------------------------------------------------->
->>>
->>> [    1.709950] ACPI BIOS Error (bug): Failure looking up
->>> [\_SB.PCI0.LPCB.HEC.ECWT], AE_NOT_FOUND (20180313/psargs-330)
->>> [    1.710045] ACPI Error: Method parse/execution failed
->>> \_TZ.FN00._ON, AE_NOT_FOUND (20180313/psparse-516)
->>> [    1.710208] ACPI BIOS Error (bug): Failure looking up
->>> [\_SB.PCI0.LPCB.HEC.ECWT], AE_NOT_FOUND (20180313/psargs-330)
->>> [    1.710267] ACPI Error: Method parse/execution failed
->>> \_TZ.FN00._ON, AE_NOT_FOUND (20180313/psparse-516)
->>> [    1.710338] acpi PNP0C0B:00: Failed to set initial power state
->>> [    1.710846] ACPI BIOS Error (bug): Failure looking up
->>> [\_SB.PCI0.LPCB.HEC.ECRD], AE_NOT_FOUND (20180313/psargs-330)
->>> [    1.710938] ACPI Error: Method parse/execution failed
->>> \_TZ.TZ00._TMP, AE_NOT_FOUND (20180313/psparse-516)
->>> [    1.711588] ACPI BIOS Error (bug): Failure looking up
->>> [\_SB.PCI0.LPCB.HEC.ECRD], AE_NOT_FOUND (20180313/psargs-330)
->>> [    1.711681] ACPI Error: Method parse/execution failed
->>> \_TZ.TZ00._TMP, AE_NOT_FOUND (20180313/psparse-516)
->>> [    1.711960] ACPI BIOS Error (bug): Failure looking up
->>> [\_SB.PCI0.LPCB.HEC.ECRD], AE_NOT_FOUND (20180313/psargs-330)
->>> [    1.712054] ACPI Error: Method parse/execution failed
->>> \_TZ.TZ01._TMP, AE_NOT_FOUND (20180313/psparse-516)
->>> [    1.712471] ACPI BIOS Error (bug): Failure looking up
->>> [\_SB.PCI0.LPCB.HEC.ECRD], AE_NOT_FOUND (20180313/psargs-330)
->>> [    1.712552] ACPI Error: Method parse/execution failed
->>> \_TZ.TZ01._TMP, AE_NOT_FOUND (20180313/psparse-516)
->>>
->>> ----------------------------------------------------------------------------------------------------->
->>>
->>
->> Is there any regressions or change in behaviour due to which these
->> messages are printed out? If so, which regressions you are pointing
->> out?
->>
->>>
->>>
->>> $awk -f scripts/ver_linux
->>> If some fields are empty or look unusual you may have an old version.
->>> Compare to the current minimal requirements in Documentation/Changes.
->>>
->>> Linux debian 4.17.0-rc4+ #24 SMP Sat May 12 19:26:27 IST 2018 x86_64 GNU/Linux
->>>
->>> GNU Make            4.2.1
->>> Binutils            2.30
->>> Util-linux          2.31.1
->>> Mount                2.31.1
->>> Linux C Library      2.27
->>> Dynamic linker (ldd) 2.27
->>> readlink: missing operand
->>> Try 'readlink --help' for more information.
->>> Procps              3.3.14
->>> Kbd                  2.0.4
->>> Console-tools        2.0.4
->>> Sh-utils            8.28
->>> Udev                238
->>> Modules Loaded      ac acpi_pad acpi_thermal_rel ahci autofs4 battery
->>> binfmt_misc bluetooth bnep btbcm btintel btrfs btrtl btusb button
->>> cdrom cfg80211 cmac coretemp cpuid crc32c_intel crc32_pclmul
->>> crct10dif_pclmul cryptd drm drm_kms_helper ecdh_generic efi_pstore
->>> efivarfs efivars ehci_hcd ehci_pci evdev fan fat fuse
->>> ghash_clmulni_intel hid hp_wireless hp_wmi i2c_algo_bit i2c_hid
->>> i2c_i801 i915 int3400_thermal int340x_thermal_zone intel_cstate
->>> intel_pch_thermal intel_powerclamp intel_rapl intel_rapl_perf
->>> intel_soc_dts_iosf intel_uncore ip_tables irqbypass
->>> iTCO_vendor_support iTCO_wdt joydev kvm kvm_intel libahci libata
->>> libcrc32c loop lp lpc_ich media mei mei_me mfd_core mii nls_ascii
->>> nls_cp437 parport parport_pc pcspkr ppdev processor_thermal_device
->>> psmouse r8169 raid6_pq rfcomm rfkill scsi_mod sd_mod serio_raw sg
->>> shpchp snd snd_hda_codec snd_hda_codec_generic snd_hda_codec_hdmi
->>> snd_hda_codec_realtek snd_hda_core snd_hda_intel snd_hwdep snd_pcm
->>> snd_timer soundcore sparse_keymap sr_mod sunrpc thermal usbcore
->>> uvcvideo vfat video videobuf2_common videobuf2_memops videobuf2_v4l2
->>> videobuf2_vmalloc videodev wl wmi wmi_bmof x86_pkg_temp_thermal xfs
->>> xhci_hcd xhci_pci xor x_tables xxhash zstd_compress zstd_decompress
->>>
->>>
->>> $uname -a
->>> Linux debian 4.17.0-rc4+ #24 SMP Sat May 12 19:26:27 IST 2018 x86_64 GNU/Linux
->>> $
->>>
->>> Reported-by: Jeffrin Jose T  <jeffrin@rajagiritech.edu.in>
->>>
->>> --
->>> software engineer
->>> rajagiri school of engineering and technology
->>
->>
->>
->> --
->> With Best Regards,
->> Andy Shevchenko
->
->
->
-> --
-> software engineer
-> rajagiri school of engineering and technology
+applied to drm-misc-next
 
 
-
--- 
-software engineer
-rajagiri school of engineering and technology
+Thanks
+Heiko
