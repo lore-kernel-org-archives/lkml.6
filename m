@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751929AbeETU1l (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 16:27:41 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:32821 "EHLO mail.bootlin.com"
+        id S1751691AbeETU1k (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 16:27:40 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:32817 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751486AbeETU1i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751434AbeETU1i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 20 May 2018 16:27:38 -0400
 From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 To: linux-rtc@vger.kernel.org
@@ -15,54 +15,59 @@ Cc: linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         linux-arm-kernel@lists.infradead.org,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 2/2] rtc: brcmstb-waketimer: add range
-Date: Sun, 20 May 2018 22:27:30 +0200
-Message-Id: <20180520202730.28172-2-alexandre.belloni@bootlin.com>
+Subject: [PATCH 1/2] rtc: brcmstb-waketimer: switch to rtc_register_device
+Date: Sun, 20 May 2018 22:27:29 +0200
+Message-Id: <20180520202730.28172-1-alexandre.belloni@bootlin.com>
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180520202730.28172-1-alexandre.belloni@bootlin.com>
-References: <20180520202730.28172-1-alexandre.belloni@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let the core handle the range.
+Switch to devm_rtc_allocate_device/rtc_register_device.
 
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- drivers/rtc/rtc-brcmstb-waketimer.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ drivers/rtc/rtc-brcmstb-waketimer.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/rtc/rtc-brcmstb-waketimer.c b/drivers/rtc/rtc-brcmstb-waketimer.c
-index ba49d9bcff12..f4010a75f2be 100644
+index bdd6674a1054..ba49d9bcff12 100644
 --- a/drivers/rtc/rtc-brcmstb-waketimer.c
 +++ b/drivers/rtc/rtc-brcmstb-waketimer.c
-@@ -145,9 +145,6 @@ static int brcmstb_waketmr_settime(struct device *dev,
+@@ -229,6 +229,10 @@ static int brcmstb_waketmr_probe(struct platform_device *pdev)
+ 	if (IS_ERR(timer->base))
+ 		return PTR_ERR(timer->base);
  
- 	sec = rtc_tm_to_time64(tm);
- 
--	if (sec > U32_MAX || sec < 0)
--		return -EINVAL;
--
- 	writel_relaxed(sec, timer->base + BRCMSTB_WKTMR_COUNTER);
- 
- 	return 0;
-@@ -184,9 +181,6 @@ static int brcmstb_waketmr_setalarm(struct device *dev,
- 	else
- 		sec = 0;
- 
--	if (sec > U32_MAX || sec < 0)
--		return -EINVAL;
--
- 	brcmstb_waketmr_set_alarm(timer, sec);
- 
- 	return 0;
-@@ -266,6 +260,7 @@ static int brcmstb_waketmr_probe(struct platform_device *pdev)
++	timer->rtc = devm_rtc_allocate_device(dev);
++	if (IS_ERR(timer->rtc))
++		return PTR_ERR(timer->rtc);
++
+ 	/*
+ 	 * Set wakeup capability before requesting wakeup interrupt, so we can
+ 	 * process boot-time "wakeups" (e.g., from S5 soft-off)
+@@ -261,11 +265,11 @@ static int brcmstb_waketmr_probe(struct platform_device *pdev)
+ 	timer->reboot_notifier.notifier_call = brcmstb_waketmr_reboot;
  	register_reboot_notifier(&timer->reboot_notifier);
  
- 	timer->rtc->ops = &brcmstb_waketmr_ops;
-+	timer->rtc->range_max = U32_MAX;
+-	timer->rtc = rtc_device_register("brcmstb-waketmr", dev,
+-					 &brcmstb_waketmr_ops, THIS_MODULE);
+-	if (IS_ERR(timer->rtc)) {
++	timer->rtc->ops = &brcmstb_waketmr_ops;
++
++	ret = rtc_register_device(timer->rtc);
++	if (ret) {
+ 		dev_err(dev, "unable to register device\n");
+-		ret = PTR_ERR(timer->rtc);
+ 		goto err_notifier;
+ 	}
  
- 	ret = rtc_register_device(timer->rtc);
- 	if (ret) {
+@@ -288,7 +292,6 @@ static int brcmstb_waketmr_remove(struct platform_device *pdev)
+ 	struct brcmstb_waketmr *timer = dev_get_drvdata(&pdev->dev);
+ 
+ 	unregister_reboot_notifier(&timer->reboot_notifier);
+-	rtc_device_unregister(timer->rtc);
+ 
+ 	return 0;
+ }
 -- 
 2.17.0
