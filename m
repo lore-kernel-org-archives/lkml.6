@@ -1,50 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752698AbeETGxM (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 02:53:12 -0400
-Received: from sauhun.de ([88.99.104.3]:41462 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750912AbeETGui (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 02:50:38 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-i2c@vger.kernel.org
-Cc: Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] i2c: ibm_iic: don't check number of messages in the driver
-Date: Sun, 20 May 2018 08:50:33 +0200
-Message-Id: <20180520065035.7920-2-wsa@the-dreams.de>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180520065035.7920-1-wsa@the-dreams.de>
-References: <20180520065035.7920-1-wsa@the-dreams.de>
+        id S1751451AbeETHbH (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 03:31:07 -0400
+Received: from mailout8.siol.net ([213.250.19.135]:48408 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750883AbeETHbF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 May 2018 03:31:05 -0400
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: Julian Calaby <julian.calaby@gmail.com>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        "Mailing List, Arm" <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [linux-sunxi] [PATCH 10/15] drm/sun4i: Add support for R40 TV TCONs
+Date: Sun, 20 May 2018 09:30:22 +0200
+Message-ID: <8079031.6V9S5xCcmc@jernej-laptop>
+In-Reply-To: <CAGRGNgXbKGhnern4=_W9W5dKM54H5B1dnAD7up-23rUAMWWCSw@mail.gmail.com>
+References: <20180519183127.2718-1-jernej.skrabec@siol.net> <CAGRGNgWumzhiiwJenOXRuRN0i-_2uY=YR5L+9m70HW2ibF=C7w@mail.gmail.com> <CAGRGNgXbKGhnern4=_W9W5dKM54H5B1dnAD7up-23rUAMWWCSw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit 1eace8344c02 ("i2c: add param sanity check to
-i2c_transfer()"), the I2C core does this check now. We can remove it
-from drivers.
+Hi,
 
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
----
+Dne nedelja, 20. maj 2018 ob 04:09:52 CEST je Julian Calaby napisal(a):
+> Hi Jernej,
+> 
+> On Sun, May 20, 2018 at 11:57 AM, Julian Calaby <julian.calaby@gmail.com> 
+wrote:
+> > Hi Jernej,
+> > 
+> > On Sun, May 20, 2018 at 4:31 AM, Jernej Skrabec <jernej.skrabec@siol.net> 
+wrote:
+> >> R40 display pipeline has a lot of possible configurations. HDMI can be
+> >> connected to 2 different TCONs (out of 4) and mixers can be connected to
+> >> any TCON. All this must be configured in TCON TOP.
+> >> 
+> >> Along with definition of TCON capabilities also add mux callback, which
+> >> can configure this complex pipeline.
+> >> 
+> >> For now, only TCON TV is supported.
+> >> 
+> >> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> >> ---
+> >> 
+> >>  drivers/gpu/drm/sun4i/sun4i_tcon.c | 39 ++++++++++++++++++++++++++++++
+> >>  1 file changed, 39 insertions(+)
+> >> 
+> >> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> >> b/drivers/gpu/drm/sun4i/sun4i_tcon.c index e0c562ce1c22..81b9551e4f78
+> >> 100644
+> >> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> >> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> >> @@ -1274,6 +1274,31 @@ static int sun6i_tcon_set_mux(struct sun4i_tcon
+> >> *tcon,>> 
+> >>         return 0;
+> >>  
+> >>  }
+> >> 
+> >> +static int sun8i_r40_tcon_tv_set_mux(struct sun4i_tcon *tcon,
+> >> +                                    const struct drm_encoder *encoder,
+> >> +                                    int index)
+> >> +{
+> >> +       if (encoder->encoder_type == DRM_MODE_ENCODER_TMDS)
+> >> +               sun8i_tcon_top_set_hdmi_src(tcon->tcon_top, index);
+> >> +
+> >> +       sun8i_tcon_top_de_config(tcon->tcon_top, tcon->id,
+> >> +                                tcon_type_tv, index);
+> >> +
+> >> +       return 0;
+> >> +}
+> >> +
+> >> +static int sun8i_r40_tcon_tv_set_mux_0(struct sun4i_tcon *tcon,
+> >> +                                      const struct drm_encoder *encoder)
+> >> +{
+> >> +       return sun8i_r40_tcon_tv_set_mux(tcon, encoder, 0);
+> >> +}
+> >> +
+> >> +static int sun8i_r40_tcon_tv_set_mux_1(struct sun4i_tcon *tcon,
+> >> +                                      const struct drm_encoder *encoder)
+> >> +{
+> >> +       return sun8i_r40_tcon_tv_set_mux(tcon, encoder, 1);
+> >> +}
+> > 
+> > Are TCON-TOPs going to be a common thing in new SoCs from Allwinner?
+> > If so, maybe we should add an index to the TCON quirks and have a
+> > common TCON-TOP set_mux function.
+> 
+> Actually, that only moves it up a level. Should it be a devicetree property?
+> 
 
-Only build tested.
+TCON-TOP is besides R40 part of two newest Allwinner SoCs, H6 and A63. 
+However, they have only one TV TCON and one LCD TCON, so indexes are not 
+needed for them (always 0). This makes R40 somewhat special. I don't think it 
+makes sense to expand everything just for one SoC.
 
- drivers/i2c/busses/i2c-ibm_iic.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-ibm_iic.c b/drivers/i2c/busses/i2c-ibm_iic.c
-index 961c5f42d956..6f6e1dfe7cce 100644
---- a/drivers/i2c/busses/i2c-ibm_iic.c
-+++ b/drivers/i2c/busses/i2c-ibm_iic.c
-@@ -561,9 +561,6 @@ static int iic_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
- 
- 	DBG2("%d: iic_xfer, %d msg(s)\n", dev->idx, num);
- 
--	if (!num)
--		return 0;
--
- 	/* Check the sanity of the passed messages.
- 	 * Uhh, generic i2c layer is more suitable place for such code...
- 	 */
--- 
-2.11.0
+Best regards,
+Jernej
