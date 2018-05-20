@@ -1,67 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751535AbeETNYF (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 09:24:05 -0400
-Received: from mail-lf0-f51.google.com ([209.85.215.51]:32770 "EHLO
-        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751162AbeETNYE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 09:24:04 -0400
-X-Google-Smtp-Source: AB8JxZqaV6E12PVeiwYq0tUNw5IaQg9urmB17HDInJHZ7MKed1WA4yLi3JH3aNM0keUvkFGhrAAenE2tWpSJ0IxN1Ws=
+        id S1751486AbeETNnT (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 09:43:19 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39960 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750928AbeETNnR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 May 2018 09:43:17 -0400
+Date: Sun, 20 May 2018 14:43:10 +0100
+From: Marc Zyngier <marc.zyngier@arm.com>
+To: Eric Auger <eric.auger@redhat.com>
+Cc: <eric.auger.pro@gmail.com>, <linux-kernel@vger.kernel.org>,
+        <kvm@vger.kernel.org>, <kvmarm@lists.cs.columbia.edu>,
+        <cdall@kernel.org>, <peter.maydell@linaro.org>,
+        <andre.przywara@arm.com>, <drjones@redhat.com>, <wei@redhat.com>
+Subject: Re: [PATCH v6 00/12] KVM: arm/arm64: Allow multiple GICv3
+ redistributor regions
+Message-ID: <20180520144310.378a1712@why.wild-wind.fr.eu.org>
+In-Reply-To: <1525088918-8600-1-git-send-email-eric.auger@redhat.com>
+References: <1525088918-8600-1-git-send-email-eric.auger@redhat.com>
+Organization: ARM Ltd
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-From: Gabriel C <nix.or.die@gmail.com>
-Date: Sun, 20 May 2018 15:23:32 +0200
-Message-ID: <CAEJqkgjMdeeiF+apcAGKdOJQRvaq8SLFsS2dvpuapY1DQn6oTA@mail.gmail.com>
-Subject: smpboot seems to be confused on dual EPYC system
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: X86 ML <x86@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi Eric,
 
-I have an H11DSi-NT board with 2 *  EPYC 7281 16C/32T CPUs.
+On Mon, 30 Apr 2018 13:48:26 +0200
+Eric Auger <eric.auger@redhat.com> wrote:
 
-On that box for some reason spmboot things '4' logical packages
-are possible.
+> At the moment the KVM VGICv3 only supports a single redistributor
+> region (whose base address is set through the GICv3 kvm device
+> KVM_DEV_ARM_VGIC_GRP_ADDR/KVM_VGIC_V3_ADDR_TYPE_REDIST). There,
+> all the redistributors are laid out contiguously. The size of this
+> single redistributor region is not set explicitly but instead
+> induced at a late stage by the number of online vcpus.
+> 
+> The GIC specification does not mandate all redistributors to be
+> contiguous. Moreover DT and ACPI were specified so that multiple
+> redistributors regions can be defined.
+> 
+> The current interface brings a limitation on QEMU where ARM
+> virt machine available GPA holes only allowed to assign a
+> redistributor region fitting a max of 123 vcpus. Overcoming this
+> limitation would force either to create a new machine or relocate
+> the single rdist region or allow the allocation of multiple rdist
+> regions.
+> 
+> This series enables this last alternative. A new GICv3 KVM device
+> KVM_DEV_ARM_VGIC_GRP_ADDR/KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION allows
+> to register individual redistributor regions whose size is defined
+> explicitly. Those rdist regions then are filled by vcpu rdist frames
+> according to the need. The vgic init and related base address checks
+> are impacted.
 
-Max CPUs can be 128 ( 2 * 32C/64T ), however only 2 CPUs are possible
-not 4 and therefor there is no way to add other 64 hotplug CPUs.
-( not even sure cpu hotplug will work here )
+I've taken this series for a test run, and noticed that it breaks
+kvmtool:
 
-$ dmesg | egrep "smpboot|NR_CPUS|CPUs"
-[    0.000000] smpboot: Allowing 128 CPUs, 64 hotplug CPUs
-[    0.000000] setup_percpu: NR_CPUS:8192 nr_cpumask_bits:128
-nr_cpu_ids:128 nr_node_ids:8
-[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=128, Nodes=8
-[    0.000000]  RCU restricting CPUs from NR_CPUS=8192 to nr_cpu_ids=128.
-[    0.037000] smpboot: CPU0: AMD EPYC 7281 16-Core Processor (family:
-0x17, model: 0x1, stepping: 0x2)
-[    0.048005] smp: Bringing up secondary CPUs ...
-[    0.055042] .... node  #0, CPUs:          #1   #2   #3
-[    0.079029] .... node  #1, CPUs:     #4   #5   #6   #7
-[    0.111049] .... node  #2, CPUs:     #8   #9  #10  #11
-[    0.143050] .... node  #3, CPUs:    #12  #13  #14  #15
-[    0.175031] .... node  #4, CPUs:    #16  #17  #18  #19
-[    0.217031] .... node  #5, CPUs:    #20  #21  #22  #23
-[    0.249062] .... node  #6, CPUs:    #24  #25  #26  #27
-[    0.281058] .... node  #7, CPUs:    #28  #29  #30  #31
-[    0.313028] .... node  #0, CPUs:    #32  #33  #34  #35
-[    0.345028] .... node  #1, CPUs:    #36  #37  #38  #39
-[    0.377046] .... node  #2, CPUs:    #40  #41  #42  #43
-[    0.409043] .... node  #3, CPUs:    #44  #45  #46  #47
-[    0.441028] .... node  #4, CPUs:    #48  #49  #50  #51
-[    0.473029] .... node  #5, CPUs:    #52  #53  #54  #55
-[    0.505060] .... node  #6, CPUs:    #56  #57  #58  #59
-[    0.537052] .... node  #7, CPUs:    #60  #61  #62  #63
-[    0.562171] smp: Brought up 8 nodes, 64 CPUs
-[    0.562171] smpboot: Max logical packages: 4
-[    0.562171] smpboot: Total of 64 processors activated (268089.53 BogoMIPS)
+<quote>
+maz@sy-borg:~$ ./kvmtool/lkvm run -c 1 -k Image --irqchip=gicv3
+  # lkvm run -k Image -m 256 -c 1 --name guest-4929
+  Info: Loaded kernel to 0x80080000 (20126208 bytes)
+  Info: Placing fdt at 0x8fe00000 - 0x8fffffff
+  Info: virtio-mmio.devices=0x200@0x10000:36
 
-Can someone have a look ?
+  Info: virtio-mmio.devices=0x200@0x10200:37
 
-Best Regards,
+  Info: virtio-mmio.devices=0x200@0x10400:38
 
-Gabriel C
+KVM_RUN failed: No such device or address
+</quote>
+
+Backing out the series results in a working setup.
+
+I presume that the changes in the init has resulted in a stricter
+initialization order that matches the QEMU flow, but that kvmtool
+doesn't follow.
+
+Could you please have a look at this? I'd like to have it in for 4.18,
+just without regressions... ;-)
+
+Thanks,
+
+	M.
+-- 
+Without deviation from the norm, progress is not possible.
