@@ -1,105 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752519AbeETQZ0 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 12:25:26 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57812 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751162AbeETQZX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 12:25:23 -0400
-Date: Mon, 21 May 2018 00:25:14 +0800
-From: Wei Xu <wexu@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: mst@redhat.com, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jfreimann@redhat.com,
-        tiwei.bie@intel.com
-Subject: Re: [RFC V4 PATCH 0/8] Packed ring layout for vhost
-Message-ID: <20180520162514.GA21958@wei-ubt>
-References: <1526473941-16199-1-git-send-email-jasowang@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526473941-16199-1-git-send-email-jasowang@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1752590AbeETQcR (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 12:32:17 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:60782 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751537AbeETQcJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 May 2018 12:32:09 -0400
+From: Paul Cercueil <paul@crapouillou.net>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: James Hogan <jhogan@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH 3/6] clk: ingenic: jz4770: Change OTG from custom to standard gated clock
+Date: Sun, 20 May 2018 16:31:14 +0000
+Message-Id: <20180520163117.14125-3-paul@crapouillou.net>
+In-Reply-To: <20180520163117.14125-1-paul@crapouillou.net>
+References: <20180520163117.14125-1-paul@crapouillou.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 08:32:13PM +0800, Jason Wang wrote:
-> Hi all:
-> 
-> This RFC implement packed ring layout. The code were tested with
-> Tiwei's RFC V3 ahttps://lkml.org/lkml/2018/4/25/34. Some fixups and
-> tweaks were needed on top of Tiwei's code to make it run for event
-> index.
+We now have the means to express the specificities of the OTG clock with
+the common CGU code.
 
-Could you please show the change based on Tiwei's code to easy other's
-test?
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ drivers/clk/ingenic/jz4770-cgu.c | 42 ++++----------------------------
+ 1 file changed, 5 insertions(+), 37 deletions(-)
 
-> 
-> Pktgen reports about 20% improvement on PPS (event index is off). More
-> testing is ongoing.
-> 
-> Notes for tester:
-> 
-> - Start from this version, vhost need qemu co-operation to work
->   correctly. Or you can comment out the packed specific code for
->   GET/SET_VRING_BASE.
-
-Do you mean the code in vhost_virtqueue_start/stop? Both Tiwei's and your v3
-work fortunately correctly which should be avoided since the ring should be
-definitely different.
-
-Wei
-
-> 
-> Changes from V3:
-> - Fix math on event idx checking
-> - Sync last avail wrap counter through GET/SET_VRING_BASE
-> - remove desc_event prefix in the driver/device structure
-> 
-> Changes from V2:
-> - do not use & in checking desc_event_flags
-> - off should be most significant bit
-> - remove the workaround of mergeable buffer for dpdk prototype
-> - id should be in the last descriptor in the chain
-> - keep _F_WRITE for write descriptor when adding used
-> - device flags updating should use ADDR_USED type
-> - return error on unexpected unavail descriptor in a chain
-> - return false in vhost_ve_avail_empty is descriptor is available
-> - track last seen avail_wrap_counter
-> - correctly examine available descriptor in get_indirect_packed()
-> - vhost_idx_diff should return u16 instead of bool
-> 
-> Changes from V1:
-> 
-> - Refactor vhost used elem code to avoid open coding on used elem
-> - Event suppression support (compile test only).
-> - Indirect descriptor support (compile test only).
-> - Zerocopy support.
-> - vIOMMU support.
-> - SCSI/VSOCK support (compile test only).
-> - Fix several bugs
-> 
-> Jason Wang (8):
->   vhost: move get_rx_bufs to vhost.c
->   vhost: hide used ring layout from device
->   vhost: do not use vring_used_elem
->   vhost_net: do not explicitly manipulate vhost_used_elem
->   vhost: vhost_put_user() can accept metadata type
->   virtio: introduce packed ring defines
->   vhost: packed ring support
->   vhost: event suppression for packed ring
-> 
->  drivers/vhost/net.c                | 136 ++----
->  drivers/vhost/scsi.c               |  62 +--
->  drivers/vhost/vhost.c              | 861 ++++++++++++++++++++++++++++++++-----
->  drivers/vhost/vhost.h              |  47 +-
->  drivers/vhost/vsock.c              |  42 +-
->  include/uapi/linux/virtio_config.h |   9 +
->  include/uapi/linux/virtio_ring.h   |  32 ++
->  7 files changed, 928 insertions(+), 261 deletions(-)
-> 
-> -- 
-> 2.7.4
-> 
+diff --git a/drivers/clk/ingenic/jz4770-cgu.c b/drivers/clk/ingenic/jz4770-cgu.c
+index c78d369b9403..226c8016f6b0 100644
+--- a/drivers/clk/ingenic/jz4770-cgu.c
++++ b/drivers/clk/ingenic/jz4770-cgu.c
+@@ -42,7 +42,6 @@
+ 
+ /* bits within the OPCR register */
+ #define OPCR_SPENDH		BIT(5)		/* UHC PHY suspend */
+-#define OPCR_SPENDN		BIT(7)		/* OTG PHY suspend */
+ 
+ /* bits within the USBPCR1 register */
+ #define USBPCR1_UHC_POWER	BIT(5)		/* UHC PHY power down */
+@@ -83,37 +82,6 @@ static const struct clk_ops jz4770_uhc_phy_ops = {
+ 	.is_enabled = jz4770_uhc_phy_is_enabled,
+ };
+ 
+-static int jz4770_otg_phy_enable(struct clk_hw *hw)
+-{
+-	void __iomem *reg_opcr		= cgu->base + CGU_REG_OPCR;
+-
+-	writel(readl(reg_opcr) | OPCR_SPENDN, reg_opcr);
+-
+-	/* Wait for the clock to be stable */
+-	udelay(50);
+-	return 0;
+-}
+-
+-static void jz4770_otg_phy_disable(struct clk_hw *hw)
+-{
+-	void __iomem *reg_opcr		= cgu->base + CGU_REG_OPCR;
+-
+-	writel(readl(reg_opcr) & ~OPCR_SPENDN, reg_opcr);
+-}
+-
+-static int jz4770_otg_phy_is_enabled(struct clk_hw *hw)
+-{
+-	void __iomem *reg_opcr		= cgu->base + CGU_REG_OPCR;
+-
+-	return !!(readl(reg_opcr) & OPCR_SPENDN);
+-}
+-
+-static const struct clk_ops jz4770_otg_phy_ops = {
+-	.enable = jz4770_otg_phy_enable,
+-	.disable = jz4770_otg_phy_disable,
+-	.is_enabled = jz4770_otg_phy_is_enabled,
+-};
+-
+ static const s8 pll_od_encoding[8] = {
+ 	0x0, 0x1, -1, 0x2, -1, -1, -1, 0x3,
+ };
+@@ -410,6 +378,11 @@ static const struct ingenic_cgu_clk_info jz4770_cgu_clocks[] = {
+ 		.parents = { JZ4770_CLK_MMC2_MUX, },
+ 		.gate = { CGU_REG_CLKGR0, 12 },
+ 	},
++	[JZ4770_CLK_OTG_PHY] = {
++		"usb_phy", CGU_CLK_GATE,
++		.parents = { JZ4770_CLK_OTG },
++		.gate = { CGU_REG_OPCR, 7, true, 50 },
++	},
+ 
+ 	/* Custom clocks */
+ 
+@@ -418,11 +391,6 @@ static const struct ingenic_cgu_clk_info jz4770_cgu_clocks[] = {
+ 		.parents = { JZ4770_CLK_UHC, -1, -1, -1 },
+ 		.custom = { &jz4770_uhc_phy_ops },
+ 	},
+-	[JZ4770_CLK_OTG_PHY] = {
+-		"usb_phy", CGU_CLK_CUSTOM,
+-		.parents = { JZ4770_CLK_OTG, -1, -1, -1 },
+-		.custom = { &jz4770_otg_phy_ops },
+-	},
+ 
+ 	[JZ4770_CLK_EXT512] = {
+ 		"ext/512", CGU_CLK_FIXDIV,
+-- 
+2.17.0
