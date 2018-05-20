@@ -1,121 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751761AbeETOjj (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 10:39:39 -0400
-Received: from asavdk3.altibox.net ([109.247.116.14]:54019 "EHLO
-        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751555AbeETOji (ORCPT
+        id S1751929AbeETOog (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 10:44:36 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:36720 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751555AbeETOod (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 10:39:38 -0400
-Date: Sun, 20 May 2018 16:39:33 +0200
-From: Sam Ravnborg <sam@ravnborg.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-kbuild@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>, linux-kernel@vger.kernel.org,
-        Nicholas Piggin <npiggin@gmail.com>, Kees Cook <keescook@chromium.org>,
-        Emese Revfy <re.emese@gmail.com>, x86@kernel.org
-Subject: Re: [PATCH v4 05/31] kconfig: remove string expansion for mainmenu
- after yyparse()
-Message-ID: <20180520143933.GA9826@ravnborg.org>
-References: <1526537830-22606-1-git-send-email-yamada.masahiro@socionext.com>
- <1526537830-22606-6-git-send-email-yamada.masahiro@socionext.com>
+        Sun, 20 May 2018 10:44:33 -0400
+X-Google-Smtp-Source: AB8JxZozueAtPywDAyQiiSze6EubrbXF0XYdIRu0I443WHDF0T6IvDTvbkpxDM+iiEui8AnotENrH5PlVsnnngkWtd0=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526537830-22606-6-git-send-email-yamada.masahiro@socionext.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=dqr19Wo4 c=1 sm=1 tr=0
-        a=ddpE2eP9Sid01c7MzoqXPA==:117 a=ddpE2eP9Sid01c7MzoqXPA==:17
-        a=kj9zAlcOel0A:10 a=c-n4J4-pAAAA:8 a=cm27Pg_UAAAA:8 a=pGLkceISAAAA:8
-        a=CgTsw72b9cj2pn2SOOgA:9 a=CjuIK1q_8ugA:10 a=L0NDqeB7ZLmQzAogN4cw:22
-        a=xmb-EsYY8bH0VWELuYED:22
+In-Reply-To: <5456625.lDWjtgZygK@z50>
+References: <20180518210954.29044-1-jmkrzyszt@gmail.com> <3427199.r4OBoDP6Xz@z50>
+ <CAHp75VcUxjubx=zOGyCjmpjCk5RBLPCaHcaOieDie9LdTCa+5g@mail.gmail.com> <5456625.lDWjtgZygK@z50>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sun, 20 May 2018 17:44:31 +0300
+Message-ID: <CAHp75Ved2nw1JKnXT2Jxnw4XLsby1eVJU6cfBjE2sp4LP4Kwmg@mail.gmail.com>
+Subject: Re: [PATCH 5/6] mtd: rawnand: ams-delta: use GPIO lookup table
+To: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc: Tony Lindgren <tony@atomide.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Mark Brown <broonie@kernel.org>, Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Richard Weinberger <richard@nod.at>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Jarkko Nikula <jarkko.nikula@bitmer.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-input <linux-input@vger.kernel.org>,
+        "open list:MEMORY TECHNOLOGY..." <linux-mtd@lists.infradead.org>,
+        linux-fbdev@vger.kernel.org,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 17, 2018 at 03:16:44PM +0900, Masahiro Yamada wrote:
-> Now that environments are expanded in the lexer, conf_parse() does
-> not need to expand them explicitly.
-> 
-> The hack introduced by commit 0724a7c32a54 ("kconfig: Don't leak
-> main menus during parsing") can go away.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> Reviewed-by: Ulf Magnusson <ulfalizer@gmail.com>
-> ---
-> 
-> Changes in v4: None
-> Changes in v3: None
-> Changes in v2:
->   - Simplify the patch.  Just remove the text expansion.
-> 
->  scripts/kconfig/zconf.y | 24 +++++-------------------
->  1 file changed, 5 insertions(+), 19 deletions(-)
-> 
-> diff --git a/scripts/kconfig/zconf.y b/scripts/kconfig/zconf.y
-> index 3a4a0fa..22e318c 100644
-> --- a/scripts/kconfig/zconf.y
-> +++ b/scripts/kconfig/zconf.y
-> @@ -109,7 +109,7 @@ static struct menu *current_menu, *current_entry;
->  %%
->  input: nl start | start;
->  
-> -start: mainmenu_stmt stmt_list | no_mainmenu_stmt stmt_list;
-> +start: mainmenu_stmt stmt_list | stmt_list;
->  
->  /* mainmenu entry */
->  
-> @@ -118,19 +118,6 @@ mainmenu_stmt: T_MAINMENU prompt nl
->  	menu_add_prompt(P_MENU, $2, NULL);
->  };
->  
-> -/* Default main menu, if there's no mainmenu entry */
-> -
-> -no_mainmenu_stmt: /* empty */
-> -{
-> -	/*
-> -	 * Hack: Keep the main menu title on the heap so we can safely free it
-> -	 * later regardless of whether it comes from the 'prompt' in
-> -	 * mainmenu_stmt or here
-> -	 */
-> -	menu_add_prompt(P_MENU, xstrdup("Linux Kernel Configuration"), NULL);
-> -};
-> -
-> -
->  stmt_list:
->  	  /* empty */
->  	| stmt_list common_stmt
-> @@ -528,7 +515,6 @@ word_opt: /* empty */			{ $$ = NULL; }
->  
->  void conf_parse(const char *name)
->  {
-> -	const char *tmp;
->  	struct symbol *sym;
->  	int i;
->  
-> @@ -544,10 +530,10 @@ void conf_parse(const char *name)
->  	if (!modules_sym)
->  		modules_sym = sym_find( "n" );
->  
-> -	tmp = rootmenu.prompt->text;
-> -	rootmenu.prompt->text = _(rootmenu.prompt->text);
-> -	rootmenu.prompt->text = sym_expand_string_value(rootmenu.prompt->text);
-> -	free((char*)tmp);
-> +	if (!menu_has_prompt(&rootmenu)) {
-> +		current_entry = &rootmenu;
-> +		menu_add_prompt(P_MENU, "Linux Kernel Configuration", NULL);
+On Sun, May 20, 2018 at 12:55 AM, Janusz Krzysztofik
+<jmkrzyszt@gmail.com> wrote:
+> On Saturday, May 19, 2018 8:00:38 PM CEST Andy Shevchenko wrote:
+>> On Sat, May 19, 2018 at 2:15 AM, Janusz Krzysztofik <jmkrzyszt@gmail.com>
+> wrote:
 
-Could this be something less specific?
-To help the other users of kconfig out is the wild.
+>> NULL check in practice discards the _optional part of gpiod_get(). So,
+>> either you use non-optional variant and decide how to handle an
+>> errors, or user _optional w/o NULL check.
+>
+> OK, I'm going to use something like the below while submitting v2:
+>
+> -       gpiod_rdy = devm_gpiod_get_optional(&pdev->dev, "rdy", GPIOD_IN);
+> -       if (!IS_ERR_OR_NULL(gpiod_rdy)) {
+> -               this->dev_ready = ams_delta_nand_ready;
+> -       } else {
+> -               this->dev_ready = NULL;
+> -               pr_notice("Couldn't request gpio for Delta NAND ready.\n");
+> +       priv->gpiod_rdy = devm_gpiod_get_optional(&pdev->dev, "rdy",
+> +                                                 GPIOD_IN);
+> +       if (IS_ERR(priv->gpiod_rdy)) {
+> +               err = PTR_ERR(priv->gpiod_nwp);
+> +               dev_warn(&pdev->dev, "RDY GPIO request failed (%d)\n", err);
+> +               goto err_gpiod;
+>         }
+>
+> +       if (priv->gpiod_rdy)
+> +               this->dev_ready = ams_delta_nand_ready;
 
-For example:
+This makes sense.
 
-	menu_add_prompt(P_MENU, _("Main menu"), NULL);
+Though, I completely dislike "rdy" name of GPIO. Where is it documented?
 
-Note, the added _() to make the text translateable.
+>> >> > +err_gpiod:
+>> >> > +       if (err == -ENODEV || err == -ENOENT)
+>> >> > +               err = -EPROBE_DEFER;
+>> >>
+>> >> Hmm...
+>> >
+>> > Amstrad Delta uses gpio-mmio driver. Unfortunatelty that driver is not
+>> > availble before device init phase, unlike other crucial GPIO drivers which
+>> > are initialized earlier, e.g. during the postcore or at latetst the
+>> > subsys phase. Hence, devices which depend on GPIO pins provided by
+>> > gpio-mmio must either be declared late or fail softly so they get another
+>> > chance of being probed succesfully.
+>> >
+>> > I thought of replacing the gpio-mmio platform driver with bgpio functions
+>> > it exports but for now I haven't implemented it, not even shared the
+>> > idea.
+>> >
+>> > Does it really hurt to return -EPROBE_DEFER if a GPIO pin can't be
+>> > obtained?
+>> I'm only concerned if it would be an infinite defer in the case when
+>> driver will never appear.
+>> But I don't remember the details.
+>
+> Deferred probes are handled effectively during late_initcall, no risk of
+> infinite defer, see drivers/base/dd.c for details.
 
-	Sam
+Yes, but the code you provided in patch looks somehow suspicious. OK,
+I let Linus decide whtat to do with that.
+
+-- 
+With Best Regards,
+Andy Shevchenko
