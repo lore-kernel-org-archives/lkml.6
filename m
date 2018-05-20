@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752631AbeETNvi (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 09:51:38 -0400
-Received: from mail-eopbgr40065.outbound.protection.outlook.com ([40.107.4.65]:65469
+        id S1752549AbeETNui (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 09:50:38 -0400
+Received: from mail-eopbgr40075.outbound.protection.outlook.com ([40.107.4.75]:20992
         "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751410AbeETNuu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 09:50:50 -0400
+        id S1752509AbeETNua (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 May 2018 09:50:30 -0400
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=nipun.gupta@nxp.com;
 From: Nipun Gupta <nipun.gupta@nxp.com>
@@ -21,9 +21,9 @@ Cc: hch@lst.de, joro@8bytes.org, m.szyprowski@samsung.com,
         linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org,
         bharat.bhushan@nxp.com, stuyoder@gmail.com, leoyang.li@nxp.com,
         Nipun Gupta <nipun.gupta@nxp.com>
-Subject: [PATCH 5/7 v5] bus: fsl-mc: support dma configure for devices on fsl-mc bus
-Date: Sun, 20 May 2018 19:19:49 +0530
-Message-Id: <1526824191-7000-6-git-send-email-nipun.gupta@nxp.com>
+Subject: [PATCH 1/7 v5] Docs: dt: add fsl-mc iommu-map device-tree binding
+Date: Sun, 20 May 2018 19:19:45 +0530
+Message-Id: <1526824191-7000-2-git-send-email-nipun.gupta@nxp.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1526824191-7000-1-git-send-email-nipun.gupta@nxp.com>
 References: <1526824191-7000-1-git-send-email-nipun.gupta@nxp.com>
@@ -36,48 +36,48 @@ X-ClientProxiedBy: BM1PR01CA0075.INDPRD01.PROD.OUTLOOK.COM
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0401MB2429;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0401MB2429;3:MzZxNRa+0UhPSRBxTHSDB+gIlElMnYbc/L70/VdR6f+Wi9zsMFZBwUA2rNn0Jw4RhAUyFJPvIsFS0ymCFrOjFl3zRVkNi+AoheeD22FmnlSb8gc2f3wro/Tc4RK/Av2GtbZztbZIF3cebDZsphCbmVRjtMiEtg1RMgMaaEZ6skLUqocmDQ5mce0HBHobmJ4cAkzCnPE5YOHTutQ68g4+Sw/Qadn5O19lP5NEPl2pLljkgohZ22sak3v1aeqxn1op;25:EQ6JfTgjApUt/QXgtykducOCo/Q34JJ3Zz9bqjbC42LRMsQQhUU4bhbyR6tLe56OEVuiRr1VeCOGGOkdEiGNk/UJ3jCdrCYSLc4t8N9pCW7b4kqqAW+ZiuAsVXD4fk6lPTq+xEB08MlSFS/vZrnURQq0YJzjvbjEpkaI3PIeRUwuv+XGT1efMQKD7ZnJnld+3weNGwtWfyIot3LJXyHoXm1out+6v05W90XvOBnDn0qHcwRdwT9JT5gx5BQB3lKGGXnz2Tw9xOUT2sB1o1yQ1TWJpZUPA1UDvm9SX+s3ZU9PAJvMxRomLYlsg/wc7oLNPyfqwbi8JuALUUaiYqS2lw==;31:7Inxn1hvNk8jOd0pOpKvTmuWjuwLoRLiiSh1s2oVLXgkqOIuAVK3A/1RowQJ7E0EgQ+jQdsOhYvkRIvKqNTFCREJphk8If7ernCtAy7jP03U4RgrpWAlnERPQtrgJvrbwgu0s97sekm2d7SZQ20I48qHj+aBzr2Wa1FMacGzO4QA61uMZRr9t7ULSLjXVsY4nlRuQMHdKMLtXvaAkXlIXgMb5oZMbMS0ycsOsEpaUdY=
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0401MB2429;3:we2Q5nW4B1mvLfceGQH9xU+6HYy3A/8sh1aVn5VYtq7az+V23dhd2lW2cLh/+8j6YbOGTJ9esvrP2LbRPyizINL9NLYNwP7saQHiVlIe6aA1IJMr/Zz6oIaGqFmYAZYzvu0F22qFbEen6fBCkjQPR7J+Yuj9YPuh7IRaZq4wUSlvRne6++sPEDoLWr9Z9JL60/1NIWm4WS9UxAh62qtUN/bQFBj7NB79mm4RG9MbnzB/zCv/u98E6uJXBFmw0DAg;25:DY9VXazCfKTbRcfD6ENcRw3ZWPJoPH7jYusXu2nsbzjIeb2S9NgMclGIWOj29Q3x7T/P8oeyQwt/rUdmRIw/1gnTXOsi54/aT61sFLKYB1qLF/Bo6YugJmd9rllNjqvF7DJZF2ygciv3+w7eoRd6VDuZ812RfGhAFJOzuAYqVpL2IMUPF0XSLkr+uW1l09PyqxydENIAYxpMY93fzIuHA+VvkfauNqyyum/4FPazw/Bm9pov5CZ6WxvELXibIn2Kp+U4HO/ga7cQ+td0XaTnBxpTYp0xnYpDtqQAB5o3DETDyVXxhmkvf7X3cQirR/hdFgakvWDzVzP06l++CsfTzw==;31:coPLw2S4z7CM0sPNz/IP2yiYFdHFUJxo6/feMNmGM3vZvr7aJGAU+iqcm2j67zwgOKXWbKSNWj5cDvAkkAGAqbgEXXNGV7nS4kyeGjodr3yaY8bxEqe+1m0t0vlnm61Zi6KT6kcs0KzfcyB1/hepVCXYefLHD0AR/cFN4FNee/3G6G+vGjcdBk0a8rShYnx/MbrvdFx18TPAt73d3D6qLTVQJ5mPKSQvfrELjrOnSYI=
 X-MS-TrafficTypeDiagnostic: VI1PR0401MB2429:
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0401MB2429;20:hE4W886UkMl8sgmRHs7OxH2nCAPdHeI5GGbNSArr2CdiqgTK841IbvSYA31UmNTB21VOuTBvklVCoSeaes0ktUFGXmhKXmJEaReaTFffrPM536dh5shDvnuyJPnDESIh510dF7RxQV6n7SO9Mrm6RvCvtJ/4cqG6LUCUV25quHz/TkzWx2kjKRSA2HXXCtTA5tqOx8I4tFw320Up8kRG689VQtrhJL4AU+s1LRInkjm3eqqKTgTIHhspm3FcmfmbFeIZF8VFDG0E9fg4MHC03ZYT9ScA+LitwMuSiJPY16RKwpAP9ygQ6J6YpMqPcL1XgeaI0HGHldRPrF6/nJFlT89OUslyHzxVPn82LFWEPB1V+ERi7gv2hnPzU3BWuoCRU95GuzX/c5Rm6HDi1Z2umXnt5OkvCm394TXxApehCH/5fGMVJWfqHeSO9fuoGqpmHqReRs9bbwwsqihq3MhSEYsRhVq4f9tSeCHwG+HafSmpFHp4jpnSygfT+s0gZxGW;4:i/6VITjjYPwvuX73hpSxF/F3oJ9LAH+Rn3fjNCiVz90kzOhQs/4rGUMuKNxGTvGkMVgZpYriMHTC50GEgFkJk/cWd9peUc0h+L/L0rD9pAuyVClWwtCgShvEA7EqVJ4P5FfIURfFHUvpZP8hHC/XAAF4IWWfnwRT09MfSZf/7UB0gNepkZW9llIQhzinPIF+eBaiynS5Bfm2OqfIQ9ZmrO2WhS0hQ0OBiEiR3ZCGWKapDoJQF0Z3Pg3RoDRx3YMNO7CAXkwlnQMCDq6zl30r0uQuHJGBFbJ8cIq+lGJ6Ed8ZYoznRR6O3rj8T9lLT4qQ
-X-Microsoft-Antispam-PRVS: <VI1PR0401MB2429178AB9828F127626BDDEE6960@VI1PR0401MB2429.eurprd04.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0401MB2429;20:LTDchMq2JKTizoAN5k8RDXWF4r99aBS3CsJbltkP3x8PhbhyLE+9uZFZBShbMj0Ttzs0rJSfOytC9DJzUliYsc1O2nemch6ct0bWW5+bRBI8yEVPyTmSffAN3s0S5Tob20n09gE36+tFmZHtnklnBRS4GaI5svyROmtOF+1RCk5xvuGh7X2z83xFy1brcEBusYz4yvrZ9qcfsZQsKKPVUfYNlGgiyPVizaxyGEcs9xefGbw/eNrCi++frGZ5tkI6ZjIY1NEJgGJBHIfzSQ2UgEb6YAc0Yy4/flmv3wXUQnR2VtKNbqpfaH87dEYegBc5hGUlkvd7tW5Jl87ibvgg++8rQQSwsJP3JH2N0K8CJd8MspQNIK30KviXgmOO1Kxbr09QCHcuxyR6WOe5kIw7qVc0Q5nb+s9+e33aNz8+2RPGw/LOlYeN/QiUO4mQhFn68PSM/FTUSkrW4NZ0z5BIzCYd5vwFkE2UWMeKqtK0E88JL5z9EWYDvdVoa0sjBtCi;4:kMlrE1hjemaH3M+QOHQFXtDZVhJ+3d60E3fFJTUtsiK1v2h9pB40wFcsU9SSO/jtdFQYuB/PRrOFbiRmj2jU3A3Ec8X8DsonKyATu/o+yT2f2fT6SnL9pTRiK9AARJVpN6rXSneICc4UdzI58kesA1A5MZKs5sBIz93lWOXe+ensR+XsynBYZ+tTggLmXZRvlFIxN2QdIGgyZbv6Y000yoEjQvb7ZkXYXdSMvzytDFlxDkChcwc0QPWiciIIZzhYs6+kYx1bEncJS4sdOCRGDudJ01j3M7Y5Bu7O/dzHWz1s9z67e1QO2lFIBvzMMUa8BzSMnYrGTlfDUphzNTrz5hkdhlRSQ9FaDRYxofF/6CA=
+X-Microsoft-Antispam-PRVS: <VI1PR0401MB2429FC35047A7439244429CEE6960@VI1PR0401MB2429.eurprd04.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(185117386973197)(275809806118684);
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(93006095)(93001095)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:VI1PR0401MB2429;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0401MB2429;
 X-Forefront-PRVS: 06780E24F8
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(346002)(376002)(39860400002)(39380400002)(396003)(366004)(189003)(199004)(316002)(50466002)(50226002)(47776003)(3846002)(86362001)(39060400002)(66066001)(6116002)(8936002)(16526019)(8676002)(7416002)(53936002)(6512007)(48376002)(486006)(186003)(26005)(44832011)(478600001)(81166006)(81156014)(76176011)(5660300001)(7736002)(52116002)(16586007)(51416003)(6486002)(97736004)(36756003)(68736007)(305945005)(4326008)(106356001)(446003)(25786009)(5009440100003)(11346002)(55236004)(6506007)(386003)(105586002)(476003)(2616005)(2906002)(956004)(110426005);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0401MB2429;H:b27504-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR0401MB2429;23:dg21S0xLPraw+JFZGkDwWGeTp/2Ja8YuRNYt4iS?=
- =?us-ascii?Q?dJx7ivCoqtRrYsJ0YWLWlu3U0+e1tzrOZvZLZQ+Cp8c35G/6npNB6nU+41cK?=
- =?us-ascii?Q?siLfIOv4lPpiNYSj2jiMAuF0WtTlBOb1G5OW1Xsfejwjkc3FhpL3ELuhEFtx?=
- =?us-ascii?Q?xqmdoMMUL0b+XKYBIqIE1CeGB030g5pY45JJfzDfcZ28YATA1DXynJXh8n1h?=
- =?us-ascii?Q?AFmjMCZJFDmqAa8DtVtaqSDUpax/ZA322AIvadEQJB/FoHLrs8gZUOEC5wd4?=
- =?us-ascii?Q?f5EurEKxDTAbURTb3/s8a4YAUe2QntiTRtN9QwiOXkl/xLUC05gTH0Lp86M0?=
- =?us-ascii?Q?xW+Iw6oDXNwzWtC/+J6Nsqqj4I4SQ+mRxuyMwUqWmJOkgmhsFisERwzeUObx?=
- =?us-ascii?Q?wOwPYQkvc79zeyXKns6cQq1abkoDVf5suW/6jvErFtXu9c0VVNgpJ+rkJaNc?=
- =?us-ascii?Q?IDmgRqAWr54UXkWu8X2wFikx/iAw+NP8ovGHwi88lGpDO4rluCChk1zhMVNR?=
- =?us-ascii?Q?p0q68VMTy8AKKPUeVuPgGrKTAzrXM7d9Mw1VT4CqrZqqAbg8nDhMqk0hUHNH?=
- =?us-ascii?Q?H/elqSwDP+Ld0N/ltM61bnen/MrsOm/VI17Wv7VlWiVd7aRwUU9K74IayChX?=
- =?us-ascii?Q?BaMf5SI0hTGwvYeHQ1dtgeqEguQDfaG1K7ikMp69RGMsbUXXhN1cZTQXORje?=
- =?us-ascii?Q?pbcuycNpSwMnQ5XlYx9JArdCUh+8dJQE+HTea5EdNA/U6lIxeI48zLSnkT3f?=
- =?us-ascii?Q?T8rzWCQutJPuWxLJLzLWb45T3wVONgAbsJYbnHHh5AagYhUisY28Mo1LB7BS?=
- =?us-ascii?Q?0Hqb+gs0tkzkW98zz4IR3ZwvUMYvu+IfHB2eo/N0swVQI8thIO70ijYii1sL?=
- =?us-ascii?Q?TwJkK3YcYEjC4lgN2SzT4gfIkWu4KXseA3TivDVuJLO0KbuyQLhh2QaY5YIo?=
- =?us-ascii?Q?vbVjopD6c0yyWSw0DDcpkw9NSky1LqVBMghcq5hgeUxY3fnd+6MIKXYmZ2So?=
- =?us-ascii?Q?2a4lmFnmPx3tTbUJkkygbTbdTTdZCwR+eU8KVHagH6CBfOyMBQcFVarFs60t?=
- =?us-ascii?Q?llInYvSI6ExFajGljXcP7VUXQEnO1qgIE9nZ0RPKnKKe9PQqPtJ2LOELy2zH?=
- =?us-ascii?Q?eNYxpHdYrUzlQ+Pld4n9MxL5QJAWqHBWcCt/a7p1jL9fIQT6kBQVEhpsd5RV?=
- =?us-ascii?Q?uQdQPouGAa7soAmcHUZ8QqckgxbePfxt/y7x6t9xtbhbD123prp1MccY+kUp?=
- =?us-ascii?Q?WrhuyDMra33IVNRorJd0nm+duQf/mg/133buuKs9E9J31X49TKFXMpwBoLxu?=
- =?us-ascii?Q?vpg=3D=3D?=
-X-Microsoft-Antispam-Message-Info: aXE+ubPGZ8gmNg5ikMfy6x6Uo1FXXhdSo4AVUwsnhgVJs9DRnDJMlPKXey45+yVyh+OYONR9csD32xbFitL5A7j484PDf1PlxKd1eoWj/OBYg42FWjJY7Ju7cRXIKxQoCb7PYenBP+lZ9eKlA0eSEyN5oE0XIZgpYtXVUYZuiX1XZZXuqQkM1HiOT2J5phcT
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0401MB2429;6:RiO3+C2y9XZF9F0aw97EUYhijOw+bMIJfzE6qY5vf28YY1FtFbvfyJfE7k+C1FlF1nwTPXHZWMUc0vlso8gDfZfsdtOg7PbZLjLBaJlRh3W22IpkbQFBB8U3Old1W45+Ct3U5VWDq4jFjobqRuQumWttlu4o9xQEvGnhN9tZIAEai5PwjNO208J7wtNCBE1Iz55OhIPciwsE/Oey0ZNqYvlV36oPZRGXUseR26ENbELqQd0FoIRtKuL5Mq3prcDZpjplfngQBC69ks9KsTxs6cl/AOELujYV13tRNpQAMNtyV2JomnmpWa5B0HLNA0YVbva1Q1poMhaX/wMilY2SAvUqzf5jpDmq2rj4coozqXSNdV9blPn5vTlcibOELDjNgFgg66kN3yhF5F3VvzZTZ1BwsngvYAOAX3AgqmonHFgd4+mLc2GJZgySobaBX3/lI4laqztZ2dVB+hSsu/BjlA==;5:NZa29Tqp79rodAqIis5jSw3O9eAi9hxQZiVeNqhZgMxRXuoaFimQQEMl0qAELKT/G/4sZ+ALB6rcCfTTRdSnsEFRHqXXRFD0rhsokJuIXhpr7NU2EKO1+wGjzllJ7qODm5P6fjbjkeUZ7UoaqmY49tcOas1EhLyEaPEYOVPhVdA=;24:CxKnKGllRJFwqXl/L+pHVXP3BDlF0lVP5q+YDvVWSKYRGiTSimfUEMIM66KKOJEdqwoPimW77uYjiXOXym2e327yphmwgij81nnuGXdxCS8=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(346002)(376002)(39860400002)(39380400002)(396003)(366004)(189003)(199004)(316002)(50466002)(50226002)(47776003)(3846002)(86362001)(39060400002)(66066001)(6116002)(8936002)(575784001)(16526019)(8676002)(7416002)(53936002)(6512007)(48376002)(486006)(186003)(26005)(44832011)(478600001)(81166006)(81156014)(76176011)(5660300001)(7736002)(52116002)(16586007)(51416003)(6486002)(97736004)(36756003)(68736007)(305945005)(4326008)(6666003)(106356001)(446003)(25786009)(5009440100003)(11346002)(55236004)(6506007)(386003)(105586002)(476003)(2616005)(2906002)(956004)(110426005);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0401MB2429;H:b27504-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR0401MB2429;23:IIi7cf+T9eafLAcvcHVCuzXKPjYyBPOL38lq/+u?=
+ =?us-ascii?Q?JwoHu30NoM7NikpCvmIbzYfmCE2Lq1qOlW8tpGeybS7yixVIfqguuFMx5ddj?=
+ =?us-ascii?Q?rh4VU3kjIM16yFZvqni4MSOs/amsAqIw7BfXn87hYiIeT2PAXXkWie7DzHx3?=
+ =?us-ascii?Q?4x82DiHFbB922GSfW1FOPd0Yia4gpqBD3cdXcuHS6Iw0P+tqT6uel//yMCkR?=
+ =?us-ascii?Q?5R8uRfQvjNpdiX2/khDMD1LEslUo5Gi0matYIoAIC91YmO+1NohVj/9/YxxH?=
+ =?us-ascii?Q?u2YxbHfqh4XRmiN8P4etnUWfFhi9mvEggieVDgFV9BcStPdLh4+VR+Rw6LaU?=
+ =?us-ascii?Q?25Ew9j2Lm0vh9KbBYS3deEqcoGkpELAan8pgSX7uRapbMa4D57fzxnuZrJ4o?=
+ =?us-ascii?Q?Wf3ge3ai2bUowgss3k3TrkKMs7K1sQR0K7/R6nDmRcf+M9Ue0pTk//ZvN6NK?=
+ =?us-ascii?Q?g/PPmU460sTZfX5e0G/W4CKl6WAGpdmoO1HSBrl7AuM5doLZA4DLnxD5BhKm?=
+ =?us-ascii?Q?mgsTMC+oCRt7+ZgRad8utmQUoWNJXYd5xAEjL/wSnxFnE2yRTSbWgtTEB6j/?=
+ =?us-ascii?Q?QhBEfrnx8+lcH7Uui2SZ5k+sGZ26GNJ+pyVaNS086Ix7C2eqQcsWAIOY3vbC?=
+ =?us-ascii?Q?2xLkrQSdO8UeQ3ZtneEIVXq2aJaiPg5n9KDZ5mCo2WkRpsBHyDJ+/lWCrz6n?=
+ =?us-ascii?Q?vDh2iZNErzWqFu5UJZ+wbG+lTXf8zJznUUot6mCoSKESFYo7BiL0qxqybrnJ?=
+ =?us-ascii?Q?H5J+JIJqFvublfSKcRt/495kxZZyX/YpcqeJXsDTcrCT+PZIW+BX/eAq3V83?=
+ =?us-ascii?Q?o4IKQcMjxpaVbNeFpfdk9xvSr+xpAMEI0xrlS0dADBCl1FEMb1SM7GpkZ03/?=
+ =?us-ascii?Q?nYB7JZT92HNtiZtEE1jC+MxEWdq1dbnpHiSDow5yEVnP8lq5LJiIkf/Qw/H4?=
+ =?us-ascii?Q?PZdQUaXi+OyPW9NNIDb2YS/YQtu7x1Hv92dfYqWKTr1X5HfXUBZtMd6aIQYQ?=
+ =?us-ascii?Q?fGyZ6+UzAnxtosTuBHVCY99pEvhadqxwVqACuwoO50hqNzwgYHAtyzIsPd0b?=
+ =?us-ascii?Q?+HrhHjD7VdiH6kdwu4CkEF8LVNu/tWwBVWNMGfDO961aPIp+zLG0HzS+4nmI?=
+ =?us-ascii?Q?ow/EQnCT3UfnDuzgzKkYN4alaTPrKvsj9zzYTwctA8W5yBpkm2evTpiBWka4?=
+ =?us-ascii?Q?k6PAxACfqoOMLu9znzMt/p3vjGvrEv2ttWzU1ffaFeheJ1izCu2AjaSxFLcD?=
+ =?us-ascii?Q?z7B6sY/97DMuPnsVnSeQtWAiM9bnZ1uLS6IYYpsGAMfkfTXkIiSTzNcgQ+81?=
+ =?us-ascii?Q?BSUbQtxC08fR1/28sQrppZZiBnUjnlgN0sfFLfN43U0Dc?=
+X-Microsoft-Antispam-Message-Info: TB4xoZUN5ed9dlJIXe06+BujYYFtIjzcypuQ9C3d647k6XQF6m4pn9yIxNQUxstZRY8tAQ6Y0bVlwOYrKaJU6M+LsZBQa+GjcBHNAhYrSPBv+wj0ELyDKxRBjHzV+pVpFNGTvoYfuXbehFEPbJ4eLIkti4i8HGWG112wpUCgsqh1osXMtRxJ5RzryxvujN+C
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0401MB2429;6:5Zl7B7+dNRH5CYX+tXKhnEEHZYVHNzMZqzKWffoDMIMfUmqabqJBvRa8a4WizN0p4EXf+7HIyK8H0FlN5Oab7ssJrY1EcNNFlKNFHkBEK8tQqxfDVuvY47p+Oj0WK2ThqZkC62r1jUDN+uzVXGr+W/B7+PYmiFv85e6mUO8Fm5xdk4hiu6tZOdWLpDi8s2Oc897YqtQd0EBZMuAx7a7RRJQpPpxIwE2iTZn7udzpC2abxIp7u5Ys2no7qMSIWeVPfUEikaOjOqYTOyvaPdvBQsP52WeBFZuaYw+LB0Vt1GNirk3+Irflq1plAE4m5Hl73fCN6ZVOXDABXimxSSvT7rcnJsBASlZhZxrQNOlR9ivYoJvU/Bv5ZtF8I46norQ6EOplV+p+XYaWoUhlOWeykATBS1LbDvq58QzbSNIy1d2jfMat1vlNRVDYGO/HXnMLpPhyf2ZF03c7mbeZAJ2rwQ==;5:6No1LtH8Fk8JPvHZLoIsud3V3MN5mDZ2YSsIsOvuqLDqsaKnn3/LJ3lJJLLDY04dapq7UH+HKCAuLc02VdppxTqfNoq3ugJciaymdU206vCk/auHGxB2nTlafW2Ec6EcZa9/diWOgZwaI6FsaNY/9BHSC8lMfYMqpAkQel1N7o4=;24:oEatpSkJEyGVCCPk7gSWWswza+NTENZcSK/7iY39tNSurE3cTjru9k1cwKsP274Jf2EpFEFqBGyrq6xb23Dsp33iyyINEKj8FGMDSZSenVY=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0401MB2429;7:EdrjtVmsXzBmf8jlIWE3kw6f8NuwWFWGq/I9syznZ9GFzK7NEhpomQW4jjTmGtJ0tSmIVzpL0oV6sfcLIZmzRTgjHPK2Gx3JPyZ6aTdDUKSlsV6luAV6AN36kNj1AW302kz38RJGo311wqXI5e/6EOZ6ZFzzExIZ966bOob+p8CP9vY1j2/kA+yJG1ZJhzKBmvPfjXpJydcqc+CTPqiUvoSZHrSu2sgmMDx1PEkvjoqW1Fv6+1dnNGH0vtrlxQIv
-X-MS-Office365-Filtering-Correlation-Id: 7b8fac6d-6f46-490e-0086-08d5be58b00e
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0401MB2429;7:DR0rWUQKIO9tPbwoI7MBYhJ7a8Kb0kdfcty0HWxUqruGNxS9X4McNctkDTsZmIIwGdS+4SG4jc9cn1VwEQF/bHWz+n+2XVJxqxjEcEn8Bu+tX8mIfoco4QDl9f2W4vNVU9JeD4YE2upuQCK/2DauIDWcgQGckUz3BZ41UhfFpZoAijw2AbxpZXHKBlf4mMzwTSOf64M3QK0YlIhujCys1IAqT/Ex1Sh45LO3UrdBa4pO9oaVhvLlMycuN+Gxe4A4
+X-MS-Office365-Filtering-Correlation-Id: c4045ca5-77ba-42b2-fe90-08d5be58a407
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 May 2018 13:50:42.5712
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 May 2018 13:50:22.3992
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7b8fac6d-6f46-490e-0086-08d5be58b00e
+X-MS-Exchange-CrossTenant-Network-Message-Id: c4045ca5-77ba-42b2-fe90-08d5be58a407
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0401MB2429
@@ -85,55 +85,80 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support of dma configuration for devices on fsl-mc
-bus using 'dma_configure' callback for busses. Also, directly calling
-arch_setup_dma_ops is removed from the fsl-mc bus.
+The existing IOMMU bindings cannot be used to specify the relationship
+between fsl-mc devices and IOMMUs. This patch adds a generic binding for
+mapping fsl-mc devices to IOMMUs, using iommu-map property.
 
 Signed-off-by: Nipun Gupta <nipun.gupta@nxp.com>
-Reviewed-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/bus/fsl-mc/fsl-mc-bus.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ .../devicetree/bindings/misc/fsl,qoriq-mc.txt      | 39 ++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
-diff --git a/drivers/bus/fsl-mc/fsl-mc-bus.c b/drivers/bus/fsl-mc/fsl-mc-bus.c
-index 5d8266c..fa43c7d 100644
---- a/drivers/bus/fsl-mc/fsl-mc-bus.c
-+++ b/drivers/bus/fsl-mc/fsl-mc-bus.c
-@@ -127,6 +127,16 @@ static int fsl_mc_bus_uevent(struct device *dev, struct kobj_uevent_env *env)
- 	return 0;
- }
+diff --git a/Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt b/Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
+index 6611a7c..8cbed4f 100644
+--- a/Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
++++ b/Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
+@@ -9,6 +9,25 @@ blocks that can be used to create functional hardware objects/devices
+ such as network interfaces, crypto accelerator instances, L2 switches,
+ etc.
  
-+static int fsl_mc_dma_configure(struct device *dev)
-+{
-+	struct device *dma_dev = dev;
++For an overview of the DPAA2 architecture and fsl-mc bus see:
++drivers/staging/fsl-mc/README.txt
 +
-+	while (dev_is_fsl_mc(dma_dev))
-+		dma_dev = dma_dev->parent;
++As described in the above overview, all DPAA2 objects in a DPRC share the
++same hardware "isolation context" and a 10-bit value called an ICID
++(isolation context id) is expressed by the hardware to identify
++the requester.
 +
-+	return of_dma_configure(dev, dma_dev->of_node, 0);
-+}
++The generic 'iommus' property is insufficient to describe the relationship
++between ICIDs and IOMMUs, so an iommu-map property is used to define
++the set of possible ICIDs under a root DPRC and how they map to
++an IOMMU.
 +
- static ssize_t modalias_show(struct device *dev, struct device_attribute *attr,
- 			     char *buf)
- {
-@@ -148,6 +158,7 @@ struct bus_type fsl_mc_bus_type = {
- 	.name = "fsl-mc",
- 	.match = fsl_mc_bus_match,
- 	.uevent = fsl_mc_bus_uevent,
-+	.dma_configure  = fsl_mc_dma_configure,
- 	.dev_groups = fsl_mc_dev_groups,
- };
- EXPORT_SYMBOL_GPL(fsl_mc_bus_type);
-@@ -633,10 +644,6 @@ int fsl_mc_device_add(struct fsl_mc_obj_desc *obj_desc,
- 			goto error_cleanup_dev;
- 	}
++For generic IOMMU bindings, see
++Documentation/devicetree/bindings/iommu/iommu.txt.
++
++For arm-smmu binding, see:
++Documentation/devicetree/bindings/iommu/arm,smmu.txt.
++
+ Required properties:
  
--	/* Objects are coherent, unless 'no shareability' flag set. */
--	if (!(obj_desc->flags & FSL_MC_OBJ_FLAG_NO_MEM_SHAREABILITY))
--		arch_setup_dma_ops(&mc_dev->dev, 0, 0, NULL, true);
--
- 	/*
- 	 * The device-specific probe callback will get invoked by device_add()
- 	 */
+     - compatible
+@@ -88,14 +107,34 @@ Sub-nodes:
+               Value type: <phandle>
+               Definition: Specifies the phandle to the PHY device node associated
+                           with the this dpmac.
++Optional properties:
++
++- iommu-map: Maps an ICID to an IOMMU and associated iommu-specifier
++  data.
++
++  The property is an arbitrary number of tuples of
++  (icid-base,iommu,iommu-base,length).
++
++  Any ICID i in the interval [icid-base, icid-base + length) is
++  associated with the listed IOMMU, with the iommu-specifier
++  (i - icid-base + iommu-base).
+ 
+ Example:
+ 
++        smmu: iommu@5000000 {
++               compatible = "arm,mmu-500";
++               #iommu-cells = <2>;
++               stream-match-mask = <0x7C00>;
++               ...
++        };
++
+         fsl_mc: fsl-mc@80c000000 {
+                 compatible = "fsl,qoriq-mc";
+                 reg = <0x00000008 0x0c000000 0 0x40>,    /* MC portal base */
+                       <0x00000000 0x08340000 0 0x40000>; /* MC control reg */
+                 msi-parent = <&its>;
++                /* define map for ICIDs 23-64 */
++                iommu-map = <23 &smmu 23 41>;
+                 #address-cells = <3>;
+                 #size-cells = <1>;
+ 
 -- 
 1.9.1
