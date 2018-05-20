@@ -1,67 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751559AbeETUlN (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 16:41:13 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:60896 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751067AbeETUlL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 16:41:11 -0400
-Date: Sun, 20 May 2018 22:40:32 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>
-Cc: Tony Luck <tony.luck@intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        linux-edac@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
-Subject: Re: PROBLEM: mce: [Hardware Error] from dmesg -l emerg
-Message-ID: <20180520204032.GA19845@pd.tnic>
-References: <CAG=yYwmnHgAvauZLxfFcUEACF_J+qh4d2tvYY=AdjHvyeSFK_A@mail.gmail.com>
- <20180514162752.GG23049@pd.tnic>
- <CAG=yYwk-dbMF_7eS9bUraAru8b4fyCosxp+MpQA=1ZYH0nd_hg@mail.gmail.com>
+        id S1752604AbeETVNL (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 17:13:11 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:42173 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751725AbeETVNI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 May 2018 17:13:08 -0400
+X-Google-Smtp-Source: AB8JxZqwQ5NDl+eacifw+I4UOg11LZgLabFybAjiwx91F2JVQY8Dk9q5dsRv0flWLDcmr9LDVrnKu8zx4lAN8hsE6+s=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAG=yYwk-dbMF_7eS9bUraAru8b4fyCosxp+MpQA=1ZYH0nd_hg@mail.gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180519222028.GF5488@localhost.localdomain>
+References: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
+ <1526308035-12484-14-git-send-email-vladbu@mellanox.com> <20180519222028.GF5488@localhost.localdomain>
+From: Or Gerlitz <gerlitz.or@gmail.com>
+Date: Mon, 21 May 2018 00:13:06 +0300
+Message-ID: <CAJ3xEMhNC91YFcy-Qi+vk--DwSZ5wZdYMNp=-7mHUk9oag9HSg@mail.gmail.com>
+Subject: Re: [PATCH 13/14] net: sched: use unique idr insert function in
+ unlocked actions
+To: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Cc: Vlad Buslov <vladbu@mellanox.com>,
+        Linux Netdev List <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
+        Pablo Neira Ayuso <pablo@netfilter.org>, kadlec@blackhole.kfki.hu,
+        Florian Westphal <fw@strlen.de>, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Eric Dumazet <edumazet@google.com>, keescook@chromium.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        Yevgeny Kliteynik <kliteyn@mellanox.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 20, 2018 at 05:27:32PM +0530, Jeffrin Thalakkottoor wrote:
-> output for "dmesg | mcelog --ascii"  command related
+On Sun, May 20, 2018 at 1:20 AM, Marcelo Ricardo Leitner
+<marcelo.leitner@gmail.com> wrote:
+> On Mon, May 14, 2018 at 05:27:14PM +0300, Vlad Buslov wrote:
+>> Substitute calls to action insert function with calls to action insert
+>> unique function that warns if insertion overwrites index in idr.
+>
+> I know this patch may be gone on V2, but a general comment, please use
+> the function names themselves instead of a textualized version. I.e.,
+> s/action insert unique/tcf_idr_insert_unique/
 
-Ok, but please do not top-post.
+disagree. While doing reviews I found out that if I ask the developer
+to use higher
+level / descriptive language and specifically to avoid putting
+variable / function names in
+patch titles and change logs, the quality gets ++ big time, vs if the
+developer is allowed to say
 
-...
+net/mlx5: Changed add_vovo_bobo()
 
-> Hardware event. This is not a software error.
-> CPU 0 BANK 0 TSC dead
-> STATUS 0 MCGSTATUS 0
-> line timer enabled
-> smpboot: CPU0: Intel(R) Pentium(R) CPU 3825U @ 1.90GHz (family: 0x6,
-> model: 0x3d, stepping: 0x4)
-> Machine check events logged
-> Hardware event. This is not a software error.
-> CPU 0 BANK 0
-> TIME 1526815774 Sun May 20 16:59:34 2018
-> MCG status:
-> MCi status:
-> Machine check not valid
-> Corrected error
-> MCA: No Error
-> STATUS 0 MCGSTATUS 0
-> CPUID Vendor Intel Family 6 Model 61
-> (Fields were incomplete)
-
-Looks like mcelog has trouble decoding this. Have you updated mcelog to
-the latest version in your distro?
-
-> SOCKET 0 APIC 0 microcode 2a
-
-@Tony, I'm hoping you'll be more successful in decoding the error by
-hand.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Added variable do_it_right to add_vovo_bobo(), now we are terribly good.
