@@ -1,63 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752727AbeETXL6 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 19:11:58 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:44700 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751615AbeETXLv (ORCPT
+        id S1752595AbeETXOP (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 19:14:15 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:35219 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751500AbeETXON (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 19:11:51 -0400
-X-Google-Smtp-Source: AB8JxZqUOu081KSZMafmyvZEz88ib4Lk5K5//nE7UHCnNBkwFrAYQxkl4IL2h1yzFuprxhpDxtrt/Ft2Bk2Q37TkEC0=
+        Sun, 20 May 2018 19:14:13 -0400
+X-Google-Smtp-Source: AB8JxZqi1R28nNyvnRm06G8l19WYbnZjQn1pGz2HfwJOLHKdccIBVUYnvQfyRFhtNsn+7JxnwmUCYqYFyf7ukqpHnZI=
 MIME-Version: 1.0
-In-Reply-To: <87603i0vtx.fsf@notabene.neil.brown.name>
-References: <20180520222558.7053-1-kent.overstreet@gmail.com> <87603i0vtx.fsf@notabene.neil.brown.name>
-From: Kent Overstreet <kent.overstreet@gmail.com>
-Date: Sun, 20 May 2018 19:11:48 -0400
-Message-ID: <CAC7rs0vUCMuCvNez4Rr0M=OFEokKbL92e_R-M3nJ-gfoaLhgxw@mail.gmail.com>
-Subject: Re: [PATCH 00/13] convert block layer to bioset_init()/mempool_init()
-To: NeilBrown <neilb@suse.com>
-Cc: Shaohua Li <shli@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>, Coly Li <colyli@suse.de>,
-        Mike Snitzer <snitzer@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>, Chris Mason <clm@fb.com>,
-        bacik@fb.com, linux-xfs@vger.kernel.org,
-        Lars Ellenberg <drbd-dev@lists.linbit.com>,
-        linux-btrfs@vger.kernel.org,
-        "open list:SOFTWARE RAID (Multiple Disks) SUPPORT"
-        <linux-raid@vger.kernel.org>
+In-Reply-To: <CAF=yD-+Ai35L2=dGZzpjYYavBmBGNFXd-q9ju93WrPuewnhELg@mail.gmail.com>
+References: <20180518120826.GA19515@dragonet.kaist.ac.kr> <293d029c-b14c-a625-3703-97a5754e99f1@gmail.com>
+ <20180518.114433.390752642781753429.davem@davemloft.net> <CAF=yD-Kb4ZfJ3sMAnWEOB_s9Y=TTnLbRZxrDPiGZLO=trPjY5Q@mail.gmail.com>
+ <CAF=yD-LvZk+gdyf_Kq1j+hoJBmFnTKgR=DResvMAC7tEJCgGJw@mail.gmail.com>
+ <CAF=yD-+QLz63Z6h5OpC-ar+nHvpCpkVi79h9Vtn=7fzmHCK8Lg@mail.gmail.com> <CAF=yD-+Ai35L2=dGZzpjYYavBmBGNFXd-q9ju93WrPuewnhELg@mail.gmail.com>
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date: Sun, 20 May 2018 19:13:31 -0400
+Message-ID: <CAF=yD-JObh3u+41V609=zph0XfcgOxpmqm3hL5WPKWFrSnnV3Q@mail.gmail.com>
+Subject: Re: WARNING in ip_recv_error
+To: David Miller <davem@davemloft.net>
+Cc: Eric Dumazet <eric.dumazet@gmail.com>,
+        DaeLyong Jeong <threeearcat@gmail.com>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Network Development <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Byoungyoung Lee <byoungyoung@purdue.edu>,
+        Kyungtae Kim <kt0755@gmail.com>, bammanag@purdue.edu,
+        Willem de Bruijn <willemb@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks - sending it to him
+On Fri, May 18, 2018 at 2:59 PM, Willem de Bruijn
+<willemdebruijn.kernel@gmail.com> wrote:
+> On Fri, May 18, 2018 at 2:46 PM, Willem de Bruijn
+> <willemdebruijn.kernel@gmail.com> wrote:
+>> On Fri, May 18, 2018 at 2:44 PM, Willem de Bruijn
+>> <willemdebruijn.kernel@gmail.com> wrote:
+>>> On Fri, May 18, 2018 at 1:09 PM, Willem de Bruijn
+>>> <willemdebruijn.kernel@gmail.com> wrote:
+>>>> On Fri, May 18, 2018 at 11:44 AM, David Miller <davem@davemloft.net> wrote:
+>>>>> From: Eric Dumazet <eric.dumazet@gmail.com>
+>>>>> Date: Fri, 18 May 2018 08:30:43 -0700
+>>>>>
+>>>>>> We probably need to revert Willem patch (7ce875e5ecb8562fd44040f69bda96c999e38bbc)
+>>>>>
+>>>>> Is it really valid to reach ip_recv_err with an ipv6 socket?
+>>>>
+>>>> I guess the issue is that setsockopt IPV6_ADDRFORM is not an
+>>>> atomic operation, so that the socket is neither fully ipv4 nor fully
+>>>> ipv6 by the time it reaches ip_recv_error.
+>>>>
+>>>>   sk->sk_socket->ops = &inet_dgram_ops;
+>>>>   < HERE >
+>>>>   sk->sk_family = PF_INET;
+>>>>
+>>>> Even calling inet_recv_error to demux would not necessarily help.
+>>>>
+>>>> Safest would be to look up by skb->protocol, similar to what
+>>>> ipv6_recv_error does to handle v4-mapped-v6.
+>>>>
+>>>> Or to make that function safe with PF_INET and swap the order
+>>>> of the above two operations.
+>>>>
+>>>> All sound needlessly complicated for this rare socket option, but
+>>>> I don't have a better idea yet. Dropping on the floor is not nice,
+>>>> either.
+>>>
+>>> Ensuring that ip_recv_error correctly handles packets from either
+>>> socket and removing the warning should indeed be good.
+>>>
+>>> It is robust against v4-mapped packets from an AF_INET6 socket,
+>>> but see caveat on reconnect below.
+>>>
+>>> The code between ipv6_recv_error for v4-mapped addresses and
+>>> ip_recv_error is essentially the same, the main difference being
+>>> whether to return network headers as sockaddr_in with SOL_IP
+>>> or sockaddr_in6 with SOL_IPV6.
+>>>
+>>> There are very few other locations in the stack that explicitly test
+>>> sk_family in this way and thus would be vulnerable to races with
+>>> IPV6_ADDRFORM.
+>>>
+>>> I'm not sure whether it is possible for a udpv6 socket to queue a
+>>> real ipv6 packet on the error queue, disconnect, connect to an
+>>> ipv4 address, call IPV6_ADDRFORM and then call ip_recv_error
+>>> on a true ipv6 packet. That would return buggy data, e.g., in
+>>> msg_name.
+>>
+>> In do_ipv6_setsockopt IPV6_ADDRFORM we can test that the
+>> error queue is empty, and then take its lock for the duration of the
+>> operation.
+>
+> Actually, no reason to hold the lock. This setsockopt holds the socket
+> lock, which connect would need, too. So testing that the queue
+> is empty after testing that it is connected to a v4 address is
+> sufficient to ensure that no ipv6 packets are queued for reception.
+>
+> diff --git a/net/ipv6/ipv6_sockglue.c b/net/ipv6/ipv6_sockglue.c
+> index 4d780c7f0130..a975d6311341 100644
+> --- a/net/ipv6/ipv6_sockglue.c
+> +++ b/net/ipv6/ipv6_sockglue.c
+> @@ -199,6 +199,11 @@ static int do_ipv6_setsockopt(struct sock *sk,
+> int level, int optname,
+>
+>                         if (ipv6_only_sock(sk) ||
+>                             !ipv6_addr_v4mapped(&sk->sk_v6_daddr)) {
+>                                 retv = -EADDRNOTAVAIL;
+>                                 break;
+>                         }
+>
+> +                       if (!skb_queue_empty(&sk->sk_error_queue)) {
+> +                               retv = -EBUSY;
+> +                               break;
+> +                       }
+> +
+>                         fl6_free_socklist(sk);
+>                         __ipv6_sock_mc_close(sk);
+>
+> After this it should be safe to remove the warning in ip_recv_error.
 
-On Sun, May 20, 2018 at 7:08 PM, NeilBrown <neilb@suse.com> wrote:
-> On Sun, May 20 2018, Kent Overstreet wrote:
->
->> Jens - this series does the rest of the conversions that Christoph wanted, and
->> drops bioset_create().
->>
->> Only lightly tested, but the changes are pretty mechanical. Based on your
->> for-next tree.
->>
->> It's also in the for-jens branch at https://evilpiepirate.org/git/bcachefs.git
->>
->> Kent Overstreet (12):
->>   block: convert bounce, q->bio_split to bioset_init()/mempool_init()
->>   drbd: convert to bioset_init()/mempool_init()
->>   pktcdvd: convert to bioset_init()/mempool_init()
->>   lightnvm: convert to bioset_init()/mempool_init()
->>   bcache: convert to bioset_init()/mempool_init()
->>   md: convert to bioset_init()/mempool_init()
->
-> Hi Kent,
->  this conversion looks really good, thanks for Ccing me on it.
->  However as Shaohua Li is now the maintainer of md, it probably should
->  have gone to him as well.
->
-> Thanks,
-> NeilBrown
+Hmm.. nope.
+
+This ensures that the socket cannot produce any new true v6 packets.
+But it does not guarantee that they are not already in the system, e.g.
+queued in tc, and will find their way to the error queue later.
+
+We'll have to just be able to handle ipv6 packets in ip_recv_error.
+Since IPV6_ADDRFORM is used to pass to legacy v4-only
+processes and those likely are only confused by SOL_IPV6
+error messages, it is probably best to just drop them and perhaps
+WARN_ONCE.
