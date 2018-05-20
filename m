@@ -1,76 +1,151 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752668AbeETXBC (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 19:01:02 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:34472 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751732AbeETXA7 (ORCPT
+        id S1752662AbeETXFl (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 19:05:41 -0400
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:39728 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751990AbeETXFh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 19:00:59 -0400
-X-Google-Smtp-Source: AB8JxZqGsAgoFATqR3205u4yVZvwlCYzxeLQyzYSChsPeL7E1WIJE2GTcdzqE0JzhQPxwk9cz0eUVg==
-Date: Sun, 20 May 2018 19:00:55 -0400
-From: Kent Overstreet <kent.overstreet@gmail.com>
-To: Bart Van Assche <Bart.VanAssche@wdc.com>
-Cc: "mingo@kernel.org" <mingo@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "axboe@kernel.dk" <axboe@kernel.dk>
-Subject: Re: [PATCH 00/10] Misc block layer patches for bcachefs
-Message-ID: <20180520230055.GD11495@kmo-pixel>
-References: <20180509013358.16399-1-kent.overstreet@gmail.com>
- <a26feed52ec6ed371b3d3b0567e31d1ff4fc31cb.camel@wdc.com>
- <20180518090636.GA14738@kmo-pixel>
- <8f62d8f870c6b66e90d3e7f57acee481acff57f5.camel@wdc.com>
- <20180520221733.GA11495@kmo-pixel>
- <bb4fd32d0baa6554615a7ec3b45cc2b89424328e.camel@wdc.com>
- <20180520223116.GB11495@kmo-pixel>
- <b0aa2a8737b2d826fea58dc0bc113ddce50f018a.camel@wdc.com>
+        Sun, 20 May 2018 19:05:37 -0400
+X-Google-Smtp-Source: AB8JxZpUni7MepqJEdqsymV9hUSn2+Cv5DtipKSbeiNC7SBK/lfhrNV+CFwlJQs7XLOuQxZeXwdD6bxcurwE7eHv+zY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b0aa2a8737b2d826fea58dc0bc113ddce50f018a.camel@wdc.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <CAF=yD-JbiE0W6pv77DUO0pYrJCYfgszm6zwCEfkv8HedvRfujQ@mail.gmail.com>
+References: <20180518080308.GA28587@dragonet.kaist.ac.kr> <CAF=yD-JbiE0W6pv77DUO0pYrJCYfgszm6zwCEfkv8HedvRfujQ@mail.gmail.com>
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date: Sun, 20 May 2018 19:04:55 -0400
+Message-ID: <CAF=yD-+jS5BJKHEDp+K4fB41YnY1mR8ksVg98oWPJV=mG01pfg@mail.gmail.com>
+Subject: Re: WARNING in __static_key_slow_dec
+To: DaeRyong Jeong <threeearcat@gmail.com>
+Cc: David Miller <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Network Development <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Byoungyoung Lee <byoungyoung@purdue.edu>,
+        Kyungtae Kim <kt0755@gmail.com>, bammanag@purdue.edu
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 20, 2018 at 10:35:29PM +0000, Bart Van Assche wrote:
-> On Sun, 2018-05-20 at 18:31 -0400, Kent Overstreet wrote:
-> > On Sun, May 20, 2018 at 10:19:13PM +0000, Bart Van Assche wrote:
-> > > On Sun, 2018-05-20 at 18:17 -0400, Kent Overstreet wrote:
-> > > > On Fri, May 18, 2018 at 03:12:27PM +0000, Bart Van Assche wrote:
-> > > > > On Fri, 2018-05-18 at 05:06 -0400, Kent Overstreet wrote:
-> > > > > > On Thu, May 17, 2018 at 08:54:57PM +0000, Bart Van Assche wrote:
-> > > > > > > With Jens' latest for-next branch I hit the kernel warning shown below. Can
-> > > > > > > you have a look?
-> > > > > > 
-> > > > > > Any hints on how to reproduce it?
-> > > > > 
-> > > > > Sure. This is how I triggered it:
-> > > > > * Clone https://github.com/bvanassche/srp-test.
-> > > > > * Follow the instructions in README.md.
-> > > > > * Run srp-test/run_tests -c -r 10
-> > > > 
-> > > > Can you bisect it? I don't have infiniband hardware handy...
-> > > 
-> > > Hello Kent,
-> > > 
-> > > Have you noticed that the test I described uses the rdma_rxe driver and hence that
-> > > no InfiniBand hardware is needed to run that test?
-> > 
-> > No, I'm not terribly familiar with infiniband stuff....
-> > 
-> > Do you have some sort of self contained test/qemu recipe? I would really rather
-> > not have to figure out how to configure multipath, and infiniband, and I'm not
-> > even sure what else is needed based on that readme...
-> 
-> Hello Kent,
-> 
-> Please have another look at the srp-test README. The instructions in that document
-> are easy to follow. No multipath nor any InfiniBand knowledge is required. The test
-> even can be run in a virtual machine in case you would be worried about potential
-> impact of the test on the rest of the system.
+On Fri, May 18, 2018 at 4:30 PM, Willem de Bruijn
+<willemdebruijn.kernel@gmail.com> wrote:
+> On Fri, May 18, 2018 at 4:03 AM, DaeRyong Jeong <threeearcat@gmail.com> wrote:
+>> We report the crash: WARNING in __static_key_slow_dec
+>>
+>> This crash has been found in v4.8 using RaceFuzzer (a modified
+>> version of Syzkaller), which we describe more at the end of this
+>> report.
+>> Even though v4.8 is the relatively old version, we did manual verification
+>> and we think the bug still exists.
+>> Our analysis shows that the race occurs when invoking two syscalls
+>> concurrently, setsockopt() with optname SO_TIMESTAMPING and ioctl() with
+>> cmd SIOCGSTAMPNS.
+>>
+>>
+>> Diagnosis:
+>> We think if timestamp was previously enabled with
+>> SOCK_TIMESTAMPING_RX_SOFTWARE flag, the concurrent execution of
+>> sock_disable_timestamp() and sock_enable_timestamp() causes the crash.
+>>
+>>
+>> Thread interleaving:
+>> (Assume sk->flag has the SOCK_TIMESTAMPING_RX_SOFTWARE flag by the
+>> previous setsockopt() call with SO_TIMESTAMPING)
+>>
+>> CPU0 (sock_disable_timestamp())                 CPU1 (sock_enable_timestamp())
+>> =====                                           =====
+>> (flag == 1UL << SOCK_TIMESTAMPING_RX_SOFTWARE)  (flag == SOCK_TIMESTAMP)
+>>
+>>                                                 if (!sock_flag(sk, flag)) {
+>>                                                         unsigned long previous_flags = sk->sk_flags;
+>>
+>> if (sk->sk_flags & flags) {
+>>         sk->sk_flags &= ~flags;
+>>         if (sock_needs_netstamp(sk) &&
+>>             !(sk->sk_flags & SK_FLAGS_TIMESTAMP))
+>>                 net_disable_timestamp();
+>>                                                         sock_set_flag(sk, flag);
+>>
+>>                                                         if (sock_needs_netstamp(sk) &&
+>>                                                             !(previous_flags & SK_FLAGS_TIMESTAMP))
+>>                                                                 net_enable_timestamp();
+>>                                                         /* Here, net_enable_timestamp() is not called because
+>>                                                          * previous_flags has the SOCK_TIMESTAMPING_RX_SOFTWARE
+>>                                                          * flag
+>>                                                          */
+>> /* After the race, sk->sk has the flag SOCK_TIMESTAMP, but
+>>  * net_enable_timestamp() is not called one more time.
+>>  * Consequently, when the socket is closed, __sk_destruct()
+>>  * calls net_disable_timestamp() that leads WARNING.
+>>  */
+>
+> Thanks for the detailed analysis.
+>
+> Indeed the updates to sk->sk_flags and calls to net_(dis|en)able_timestamp
+> should happen atomically, but this is not the case. The setsockopt
+> path holds the socket lock, but not all ioctl paths.
+>
+> Perhaps we can take lock_sock_fast in sock_get_timestamp and
+> variants.
 
-Your readme refers to kernel config options that don't even exist in the current
-kernel
+Some callers of sock_get_timestamp already hold the socket lock,
+e.g., ax25_ioctl, so that is out.
+
+There is some known non-determinism in this path. Callers of
+sock_get_timestamp do not necessarily expect a valid sk_stamp
+when they enable the timestamp, so that function can continue
+to test sk_flags lockless.
+
+net_enable_timestamp enables timestamping using a static_branch
+and possibly a workqueue, so already does not complete synchronously
+in the sock_enable_timestamp call.
+
+The only requirement is that updates to sk_flags do not race. This
+should be solvable with cmpxchg. The situation is slightly complicated
+because sk_flags has two bits that may toggle timestamping. Only the
+first bit set must trigger a call to net_enable_timestamp and only the
+last bit cleared must call net_disable_timestamp.
+
+Something like
+
+-static bool sock_needs_netstamp(const struct sock *sk)
++static bool sock_needs_netstamp(const struct sock *sk, unsigned long flags)
+ {
+        switch (sk->sk_family) {
+        case AF_UNSPEC:
+        case AF_UNIX:
+                return false;
+        default:
+-               return true;
++               return (flags & SK_FLAGS_TIMESTAMP);
+        }
+ }
+
+-static void sock_disable_timestamp(struct sock *sk, unsigned long flags)
++static void sock_disable_timestamp(struct sock *sk, unsigned long flag)
+ {
+-       if (sk->sk_flags & flags) {
+-               sk->sk_flags &= ~flags;
+-               if (sock_needs_netstamp(sk) &&
+-                   !(sk->sk_flags & SK_FLAGS_TIMESTAMP))
+-                       net_disable_timestamp();
+-       }
++       unsigned long prev;
++
++       do {
++               prev = READ_ONCE(sk->sk_flags);
++
++               if (!(prev & flag))
++                       return;
++
++               if (cmpxchg(&sk->sk_flags, prev, prev & ~flag) == prev)
++                       break;
++       } while (1);
++
++       /* disable only if this operation removed the last tstamp flag */
++       if (!sock_needs_netstamp(sk, prev & ~flag))
++               net_disable_timestamp();
+ }
+
+and analogous for enable.
