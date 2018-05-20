@@ -1,41 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752629AbeETW7y (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 18:59:54 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:46920 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751167AbeETW7x (ORCPT
+        id S1752668AbeETXBC (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 19:01:02 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:34472 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751732AbeETXA7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 18:59:53 -0400
-Date: Sun, 20 May 2018 18:59:51 -0400 (EDT)
-Message-Id: <20180520.185951.2147212615548538271.davem@davemloft.net>
-To: f.fainelli@gmail.com
-Cc: netdev@vger.kernel.org, andrew@lunn.ch,
-        vivien.didelot@savoirfairelinux.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2] net: dsa: b53: Extend platform data to
- include DSA ports
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180520155630.23432-1-f.fainelli@gmail.com>
-References: <20180520155630.23432-1-f.fainelli@gmail.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Sun, 20 May 2018 19:00:59 -0400
+X-Google-Smtp-Source: AB8JxZqGsAgoFATqR3205u4yVZvwlCYzxeLQyzYSChsPeL7E1WIJE2GTcdzqE0JzhQPxwk9cz0eUVg==
+Date: Sun, 20 May 2018 19:00:55 -0400
+From: Kent Overstreet <kent.overstreet@gmail.com>
+To: Bart Van Assche <Bart.VanAssche@wdc.com>
+Cc: "mingo@kernel.org" <mingo@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "axboe@kernel.dk" <axboe@kernel.dk>
+Subject: Re: [PATCH 00/10] Misc block layer patches for bcachefs
+Message-ID: <20180520230055.GD11495@kmo-pixel>
+References: <20180509013358.16399-1-kent.overstreet@gmail.com>
+ <a26feed52ec6ed371b3d3b0567e31d1ff4fc31cb.camel@wdc.com>
+ <20180518090636.GA14738@kmo-pixel>
+ <8f62d8f870c6b66e90d3e7f57acee481acff57f5.camel@wdc.com>
+ <20180520221733.GA11495@kmo-pixel>
+ <bb4fd32d0baa6554615a7ec3b45cc2b89424328e.camel@wdc.com>
+ <20180520223116.GB11495@kmo-pixel>
+ <b0aa2a8737b2d826fea58dc0bc113ddce50f018a.camel@wdc.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b0aa2a8737b2d826fea58dc0bc113ddce50f018a.camel@wdc.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
-Date: Sun, 20 May 2018 08:56:30 -0700
-
-> The b53 driver already defines and internally uses platform data to let the
-> glue drivers specify parameters such as the chip id.  What we were missing was
-> a way to tell the core DSA layer about the ports and their type.
+On Sun, May 20, 2018 at 10:35:29PM +0000, Bart Van Assche wrote:
+> On Sun, 2018-05-20 at 18:31 -0400, Kent Overstreet wrote:
+> > On Sun, May 20, 2018 at 10:19:13PM +0000, Bart Van Assche wrote:
+> > > On Sun, 2018-05-20 at 18:17 -0400, Kent Overstreet wrote:
+> > > > On Fri, May 18, 2018 at 03:12:27PM +0000, Bart Van Assche wrote:
+> > > > > On Fri, 2018-05-18 at 05:06 -0400, Kent Overstreet wrote:
+> > > > > > On Thu, May 17, 2018 at 08:54:57PM +0000, Bart Van Assche wrote:
+> > > > > > > With Jens' latest for-next branch I hit the kernel warning shown below. Can
+> > > > > > > you have a look?
+> > > > > > 
+> > > > > > Any hints on how to reproduce it?
+> > > > > 
+> > > > > Sure. This is how I triggered it:
+> > > > > * Clone https://github.com/bvanassche/srp-test.
+> > > > > * Follow the instructions in README.md.
+> > > > > * Run srp-test/run_tests -c -r 10
+> > > > 
+> > > > Can you bisect it? I don't have infiniband hardware handy...
+> > > 
+> > > Hello Kent,
+> > > 
+> > > Have you noticed that the test I described uses the rdma_rxe driver and hence that
+> > > no InfiniBand hardware is needed to run that test?
+> > 
+> > No, I'm not terribly familiar with infiniband stuff....
+> > 
+> > Do you have some sort of self contained test/qemu recipe? I would really rather
+> > not have to figure out how to configure multipath, and infiniband, and I'm not
+> > even sure what else is needed based on that readme...
 > 
-> Place a dsa_chip_data structure at the beginning of b53_platform_data for
-> dsa_register_switch() to access it. This does not require modifications to
-> b53_common.c which will pass platform_data trough.
+> Hello Kent,
 > 
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> Please have another look at the srp-test README. The instructions in that document
+> are easy to follow. No multipath nor any InfiniBand knowledge is required. The test
+> even can be run in a virtual machine in case you would be worried about potential
+> impact of the test on the rest of the system.
 
-Applied, thanks.
+Your readme refers to kernel config options that don't even exist in the current
+kernel
