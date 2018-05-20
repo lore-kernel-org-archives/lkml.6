@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752640AbeETGwO (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 02:52:14 -0400
-Received: from sauhun.de ([88.99.104.3]:41510 "EHLO pokefinder.org"
+        id S1752674AbeETGwp (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 02:52:45 -0400
+Received: from sauhun.de ([88.99.104.3]:41492 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751523AbeETGun (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 02:50:43 -0400
+        id S1751472AbeETGum (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 May 2018 02:50:42 -0400
 From: Wolfram Sang <wsa@the-dreams.de>
 To: linux-i2c@vger.kernel.org
 Cc: Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>,
+        Sergey Kozlov <serjk@netup.ru>, Abylay Ospan <aospan@netup.ru>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/7] media: cx231xx: don't check number of messages in the driver
-Date: Sun, 20 May 2018 08:50:34 +0200
-Message-Id: <20180520065039.7989-4-wsa@the-dreams.de>
+Subject: [PATCH 1/7] media: netup_unidvb: don't check number of messages in the driver
+Date: Sun, 20 May 2018 08:50:32 +0200
+Message-Id: <20180520065039.7989-2-wsa@the-dreams.de>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180520065039.7989-1-wsa@the-dreams.de>
 References: <20180520065039.7989-1-wsa@the-dreams.de>
@@ -30,21 +31,24 @@ Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 
 Only build tested.
 
- drivers/media/usb/cx231xx/cx231xx-i2c.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/media/pci/netup_unidvb/netup_unidvb_i2c.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/drivers/media/usb/cx231xx/cx231xx-i2c.c b/drivers/media/usb/cx231xx/cx231xx-i2c.c
-index 6e1bef2a45bb..15a91169e749 100644
---- a/drivers/media/usb/cx231xx/cx231xx-i2c.c
-+++ b/drivers/media/usb/cx231xx/cx231xx-i2c.c
-@@ -376,8 +376,6 @@ static int cx231xx_i2c_xfer(struct i2c_adapter *i2c_adap,
- 	struct cx231xx *dev = bus->dev;
- 	int addr, rc, i, byte;
+diff --git a/drivers/media/pci/netup_unidvb/netup_unidvb_i2c.c b/drivers/media/pci/netup_unidvb/netup_unidvb_i2c.c
+index b13e319d24b7..5f1613aec93c 100644
+--- a/drivers/media/pci/netup_unidvb/netup_unidvb_i2c.c
++++ b/drivers/media/pci/netup_unidvb/netup_unidvb_i2c.c
+@@ -214,11 +214,6 @@ static int netup_i2c_xfer(struct i2c_adapter *adap,
+ 	struct netup_i2c *i2c = i2c_get_adapdata(adap);
+ 	u16 reg;
  
--	if (num <= 0)
--		return 0;
- 	mutex_lock(&dev->i2c_lock);
- 	for (i = 0; i < num; i++) {
- 
+-	if (num <= 0) {
+-		dev_dbg(i2c->adap.dev.parent,
+-			"%s(): num == %d\n", __func__, num);
+-		return -EINVAL;
+-	}
+ 	spin_lock_irqsave(&i2c->lock, flags);
+ 	if (i2c->state != STATE_DONE) {
+ 		dev_dbg(i2c->adap.dev.parent,
 -- 
 2.11.0
