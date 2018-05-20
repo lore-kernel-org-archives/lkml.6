@@ -1,79 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752256AbeETVk6 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 17:40:58 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:34083 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751504AbeETVk4 (ORCPT
+        id S1751656AbeETWRl (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 18:17:41 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:45093 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751030AbeETWRi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 17:40:56 -0400
-X-Google-Smtp-Source: AB8JxZoz60WnwL/E39Hs2Q/VTL6XbZ46nrcSYVccuqbA4Diys1w79o6kOhLeIw0ahReSHnrSqcRjfUGPeTNj/hWXFkw=
+        Sun, 20 May 2018 18:17:38 -0400
+X-Google-Smtp-Source: AB8JxZqqvNpRjEmOIfdokaUUe5+zr+p0l+aFEIH/D9FJcZsLe3ltsfkK6XU9HN1CSgKeJKCwtGNdyQ==
+Date: Sun, 20 May 2018 18:17:33 -0400
+From: Kent Overstreet <kent.overstreet@gmail.com>
+To: Bart Van Assche <Bart.VanAssche@wdc.com>
+Cc: "mingo@kernel.org" <mingo@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "axboe@kernel.dk" <axboe@kernel.dk>
+Subject: Re: [PATCH 00/10] Misc block layer patches for bcachefs
+Message-ID: <20180520221733.GA11495@kmo-pixel>
+References: <20180509013358.16399-1-kent.overstreet@gmail.com>
+ <a26feed52ec6ed371b3d3b0567e31d1ff4fc31cb.camel@wdc.com>
+ <20180518090636.GA14738@kmo-pixel>
+ <8f62d8f870c6b66e90d3e7f57acee481acff57f5.camel@wdc.com>
 MIME-Version: 1.0
-In-Reply-To: <20180520213349.GC26212@localhost.localdomain>
-References: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
- <1526308035-12484-14-git-send-email-vladbu@mellanox.com> <20180519222028.GF5488@localhost.localdomain>
- <CAJ3xEMhNC91YFcy-Qi+vk--DwSZ5wZdYMNp=-7mHUk9oag9HSg@mail.gmail.com> <20180520213349.GC26212@localhost.localdomain>
-From: Or Gerlitz <gerlitz.or@gmail.com>
-Date: Mon, 21 May 2018 00:40:54 +0300
-Message-ID: <CAJ3xEMji3Mjb7sWnZyqt2nYjQ9c8s6Ok8DVTSwVdGqS1EVOjtg@mail.gmail.com>
-Subject: Re: [PATCH 13/14] net: sched: use unique idr insert function in
- unlocked actions
-To: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Cc: Vlad Buslov <vladbu@mellanox.com>,
-        Linux Netdev List <netdev@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Jamal Hadi Salim <jhs@mojatatu.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
-        Pablo Neira Ayuso <pablo@netfilter.org>, kadlec@blackhole.kfki.hu,
-        Florian Westphal <fw@strlen.de>, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Eric Dumazet <edumazet@google.com>, keescook@chromium.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        Yevgeny Kliteynik <kliteyn@mellanox.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8f62d8f870c6b66e90d3e7f57acee481acff57f5.camel@wdc.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 12:33 AM, Marcelo Ricardo Leitner
-<marcelo.leitner@gmail.com> wrote:
-> On Mon, May 21, 2018 at 12:13:06AM +0300, Or Gerlitz wrote:
->> On Sun, May 20, 2018 at 1:20 AM, Marcelo Ricardo Leitner
->> <marcelo.leitner@gmail.com> wrote:
->> > On Mon, May 14, 2018 at 05:27:14PM +0300, Vlad Buslov wrote:
->> >> Substitute calls to action insert function with calls to action insert
->> >> unique function that warns if insertion overwrites index in idr.
->> >
->> > I know this patch may be gone on V2, but a general comment, please use
->> > the function names themselves instead of a textualized version. I.e.,
->> > s/action insert unique/tcf_idr_insert_unique/
->>
->> disagree. While doing reviews I found out that if I ask the developer
->> to use higher
->> level / descriptive language and specifically to avoid putting
->> variable / function names in
->> patch titles and change logs, the quality gets ++ big time, vs if the
->> developer is allowed to say
->>
->> net/mlx5: Changed add_vovo_bobo()
->>
->> Added variable do_it_right to add_vovo_bobo(), now we are terribly good.
->
-> In your example I agree that it is not helping and it is even allowing
-> such empty changelog, just as in the section I highlighted, the
-> descriptive language is also not helping IMHO.
->
-> I had to read it 3 times to make sure I wasn't missing a modifier word
-> when comparing the two functions and well, it's just saying
-> "Substitute calls to foo function to bar function". I don't see how
-> the textualized version helps in this case while, at least in this
-> one, I would have visually recognized the function names way faster.
->
-> Sounds like 2 bad examples for either approach.
+On Fri, May 18, 2018 at 03:12:27PM +0000, Bart Van Assche wrote:
+> On Fri, 2018-05-18 at 05:06 -0400, Kent Overstreet wrote:
+> > On Thu, May 17, 2018 at 08:54:57PM +0000, Bart Van Assche wrote:
+> > > With Jens' latest for-next branch I hit the kernel warning shown below. Can
+> > > you have a look?
+> > 
+> > Any hints on how to reproduce it?
+> 
+> Sure. This is how I triggered it:
+> * Clone https://github.com/bvanassche/srp-test.
+> * Follow the instructions in README.md.
+> * Run srp-test/run_tests -c -r 10
 
-Properly written descriptive language is maybe harder to come up with
-(specifically for those of us who are not native english speakers, like me)
-but is more expressive and helpful for reviews and maintenance. Lets try
-to add Vlad to come up with the right higher language and not ask him to
-quote function and variable named.
+Can you bisect it? I don't have infiniband hardware handy...
