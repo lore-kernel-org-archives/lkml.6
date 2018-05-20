@@ -1,45 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751682AbeETWhf (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 18:37:35 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:46750 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751102AbeETWhb (ORCPT
+        id S1752370AbeETWnL (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 18:43:11 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:43332 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751030AbeETWnI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 18:37:31 -0400
-Date: Sun, 20 May 2018 18:37:30 -0400 (EDT)
-Message-Id: <20180520.183730.1550159916165131561.davem@davemloft.net>
-To: wang6495@umn.edu
-Cc: kjlu@umn.edu, mac@melware.de, isdn@linux-pingi.de,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] isdn: eicon: fix a missing-check bug
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <1526679228-1596-1-git-send-email-wang6495@umn.edu>
-References: <1526679228-1596-1-git-send-email-wang6495@umn.edu>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-7
+        Sun, 20 May 2018 18:43:08 -0400
+X-Google-Smtp-Source: AB8JxZqHGvPOt+k7mzEuM98xI6sdnbW02cO/CTNJNcQmGpKfL7wjxAIGWg8n9f+jjLDF7CcUja1AhA==
+Date: Sun, 20 May 2018 19:43:02 -0300
+From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+To: Or Gerlitz <gerlitz.or@gmail.com>
+Cc: Vlad Buslov <vladbu@mellanox.com>,
+        Linux Netdev List <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
+        Pablo Neira Ayuso <pablo@netfilter.org>, kadlec@blackhole.kfki.hu,
+        Florian Westphal <fw@strlen.de>, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Eric Dumazet <edumazet@google.com>, keescook@chromium.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        Yevgeny Kliteynik <kliteyn@mellanox.com>
+Subject: Re: [PATCH 13/14] net: sched: use unique idr insert function in
+ unlocked actions
+Message-ID: <20180520224302.GD26212@localhost.localdomain>
+References: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
+ <1526308035-12484-14-git-send-email-vladbu@mellanox.com>
+ <20180519222028.GF5488@localhost.localdomain>
+ <CAJ3xEMhNC91YFcy-Qi+vk--DwSZ5wZdYMNp=-7mHUk9oag9HSg@mail.gmail.com>
+ <20180520213349.GC26212@localhost.localdomain>
+ <CAJ3xEMji3Mjb7sWnZyqt2nYjQ9c8s6Ok8DVTSwVdGqS1EVOjtg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJ3xEMji3Mjb7sWnZyqt2nYjQ9c8s6Ok8DVTSwVdGqS1EVOjtg@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4KMbejI016404
 
-From: Wenwen Wang <wang6495@umn.edu>
-Date: Fri, 18 May 2018 16:33:47 -0500
+On Mon, May 21, 2018 at 12:40:54AM +0300, Or Gerlitz wrote:
+> On Mon, May 21, 2018 at 12:33 AM, Marcelo Ricardo Leitner
+> <marcelo.leitner@gmail.com> wrote:
+> > On Mon, May 21, 2018 at 12:13:06AM +0300, Or Gerlitz wrote:
+> >> On Sun, May 20, 2018 at 1:20 AM, Marcelo Ricardo Leitner
+> >> <marcelo.leitner@gmail.com> wrote:
+> >> > On Mon, May 14, 2018 at 05:27:14PM +0300, Vlad Buslov wrote:
+> >> >> Substitute calls to action insert function with calls to action insert
+> >> >> unique function that warns if insertion overwrites index in idr.
+> >> >
+> >> > I know this patch may be gone on V2, but a general comment, please use
+> >> > the function names themselves instead of a textualized version. I.e.,
+> >> > s/action insert unique/tcf_idr_insert_unique/
+> >>
+> >> disagree. While doing reviews I found out that if I ask the developer
+> >> to use higher
+> >> level / descriptive language and specifically to avoid putting
+> >> variable / function names in
+> >> patch titles and change logs, the quality gets ++ big time, vs if the
+> >> developer is allowed to say
+> >>
+> >> net/mlx5: Changed add_vovo_bobo()
+> >>
+> >> Added variable do_it_right to add_vovo_bobo(), now we are terribly good.
+> >
+> > In your example I agree that it is not helping and it is even allowing
+> > such empty changelog, just as in the section I highlighted, the
+> > descriptive language is also not helping IMHO.
+> >
+> > I had to read it 3 times to make sure I wasn't missing a modifier word
+> > when comparing the two functions and well, it's just saying
+> > "Substitute calls to foo function to bar function". I don't see how
+> > the textualized version helps in this case while, at least in this
+> > one, I would have visually recognized the function names way faster.
+> >
+> > Sounds like 2 bad examples for either approach.
+>
+> Properly written descriptive language is maybe harder to come up with
+> (specifically for those of us who are not native english speakers, like me)
+> but is more expressive and helpful for reviews and maintenance. Lets try
+> to add Vlad to come up with the right higher language and not ask him to
+> quote function and variable named.
 
-> In divasmain.c, the function divas_write() firstly invokes the function
-> diva_xdi_open_adapter() to open the adapter that matches with the adapter
-> number provided by the user, and then invokes the function diva_xdi_write()
-> to perform the write operation using the matched adapter. The two functions
-> diva_xdi_open_adapter() and diva_xdi_write() are located in diva.c.
-
-This doesn't even compile:
-
-In file included from drivers/isdn/hardware/eicon/divasmain.c:30:
-drivers/isdn/hardware/eicon/diva.h:23:18: error: unknown type name ¡diva_xdi_um_cfg_cmd_t¢
-      int length, diva_xdi_um_cfg_cmd_t *msg,
-                  ^~~~~~~~~~~~~~~~~~~~~
-drivers/isdn/hardware/eicon/diva.h:27:20: error: unknown type name ¡diva_xdi_um_cfg_cmd_t¢
-        int length, diva_xdi_um_cfg_cmd_t *msg,
-                    ^~~~~~~~~~~~~~~~~~~~~
+Alright.
