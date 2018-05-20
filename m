@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751641AbeETNt1 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 09:49:27 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:34721 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751428AbeETNtR (ORCPT
+        id S1751862AbeETNtr (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 09:49:47 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:45589 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751162AbeETNtP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 09:49:17 -0400
-X-Google-Smtp-Source: AB8JxZqyc/oz7bYJiKnXxkTawBJC//O/ASVIm7vdrknvePof5fznen5n0kHiIfh4A1Dc37jjCi04Qw==
+        Sun, 20 May 2018 09:49:15 -0400
+X-Google-Smtp-Source: AB8JxZqhyvieD2B6tvIXfvTvaN36iNLlcY8ZoC9ewaFFlc8V6h5/exGh5he5Z207N+0YCYoPG2b07Q==
 From: Dmitry Osipenko <digetx@gmail.com>
 To: Hans Verkuil <hverkuil@xs4all.nl>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -15,9 +15,9 @@ To: Hans Verkuil <hverkuil@xs4all.nl>,
         Jonathan Hunter <jonathanh@nvidia.com>
 Cc: linux-tegra@vger.kernel.org, linux-media@vger.kernel.org,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/2] ARM: dts: tegra30: Add Memory Client reset to VDE
-Date: Sun, 20 May 2018 16:48:46 +0300
-Message-Id: <20180520134846.31046-3-digetx@gmail.com>
+Subject: [PATCH v1] media: staging: tegra-vde: Reset memory client
+Date: Sun, 20 May 2018 16:48:45 +0300
+Message-Id: <20180520134846.31046-2-digetx@gmail.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180520134846.31046-1-digetx@gmail.com>
 References: <20180520134846.31046-1-digetx@gmail.com>
@@ -25,34 +25,91 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hook up Memory Client reset of the Video Decoder to the decoders DT node.
+DMA requests must be blocked before resetting VDE HW, otherwise it is
+possible to get a memory corruption or a machine hang. Use the reset
+control provided by the Memory Controller to block DMA before resetting
+the VDE HW.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/boot/dts/tegra30.dtsi | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/staging/media/tegra-vde/tegra-vde.c | 42 +++++++++++++++++++--
+ 1 file changed, 38 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index 09087b9c5e26..3300ff976053 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -404,7 +404,8 @@
- 			     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>; /* SXE interrupt */
- 		interrupt-names = "sync-token", "bsev", "sxe";
- 		clocks = <&tegra_car TEGRA30_CLK_VDE>;
--		resets = <&tegra_car 61>;
-+		reset-names = "vde", "mc";
-+		resets = <&tegra_car 61>, <&mc TEGRA30_MC_RESET_VDE>;
- 	};
+diff --git a/drivers/staging/media/tegra-vde/tegra-vde.c b/drivers/staging/media/tegra-vde/tegra-vde.c
+index 90177a59b97c..6dd3bf4481be 100644
+--- a/drivers/staging/media/tegra-vde/tegra-vde.c
++++ b/drivers/staging/media/tegra-vde/tegra-vde.c
+@@ -73,6 +73,7 @@ struct tegra_vde {
+ 	struct mutex lock;
+ 	struct miscdevice miscdev;
+ 	struct reset_control *rst;
++	struct reset_control *rst_mc;
+ 	struct gen_pool *iram_pool;
+ 	struct completion decode_completion;
+ 	struct clk *clk;
+@@ -850,9 +851,23 @@ static int tegra_vde_ioctl_decode_h264(struct tegra_vde *vde,
+ 	 * We rely on the VDE registers reset value, otherwise VDE
+ 	 * causes bus lockup.
+ 	 */
++	ret = reset_control_assert(vde->rst_mc);
++	if (ret) {
++		dev_err(dev, "DEC start: Failed to assert MC reset: %d\n",
++			ret);
++		goto put_runtime_pm;
++	}
++
+ 	ret = reset_control_reset(vde->rst);
+ 	if (ret) {
+-		dev_err(dev, "Failed to reset HW: %d\n", ret);
++		dev_err(dev, "DEC start: Failed to reset HW: %d\n", ret);
++		goto put_runtime_pm;
++	}
++
++	ret = reset_control_deassert(vde->rst_mc);
++	if (ret) {
++		dev_err(dev, "DEC start: Failed to deassert MC reset: %d\n",
++			ret);
+ 		goto put_runtime_pm;
+ 	}
  
- 	apbmisc@70000800 {
-@@ -712,6 +713,7 @@
- 		interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
+@@ -880,9 +895,21 @@ static int tegra_vde_ioctl_decode_h264(struct tegra_vde *vde,
+ 		ret = timeout;
+ 	}
  
- 		#iommu-cells = <1>;
-+		#reset-cells = <1>;
- 	};
+-	err = reset_control_assert(vde->rst);
+-	if (err)
+-		dev_err(dev, "Failed to assert HW reset: %d\n", err);
++	/*
++	 * At first reset memory client to avoid resetting VDE HW in the
++	 * middle of DMA which could result into memory corruption or hang
++	 * the whole system.
++	 */
++	err = reset_control_assert(vde->rst_mc);
++	if (!err) {
++		err = reset_control_assert(vde->rst);
++		if (err)
++			dev_err(dev,
++				"DEC end: Failed to assert HW reset: %d\n",
++				err);
++	} else {
++		dev_err(dev, "DEC end: Failed to assert MC reset: %d\n", err);
++	}
  
- 	fuse@7000f800 {
+ put_runtime_pm:
+ 	pm_runtime_mark_last_busy(dev);
+@@ -1074,6 +1101,13 @@ static int tegra_vde_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
+ 
++	vde->rst_mc = devm_reset_control_get_optional(dev, "mc");
++	if (IS_ERR(vde->rst_mc)) {
++		err = PTR_ERR(vde->rst_mc);
++		dev_err(dev, "Could not get MC reset %d\n", err);
++		return err;
++	}
++
+ 	irq = platform_get_irq_byname(pdev, "sync-token");
+ 	if (irq < 0)
+ 		return irq;
 -- 
 2.17.0
