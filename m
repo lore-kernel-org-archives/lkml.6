@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751310AbeETFSp (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 01:18:45 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:35288 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750836AbeETFSn (ORCPT
+        id S1751513AbeETFS6 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 01:18:58 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:36709 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751347AbeETFSw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 01:18:43 -0400
-X-Google-Smtp-Source: AB8JxZqSCMK1NMi7eqZVwl+WLJ2r5n2qYtIlwNE6jvo+qm1P/6OA2rcYzWNKecgu/21G3j+aBnH9mw==
+        Sun, 20 May 2018 01:18:52 -0400
+X-Google-Smtp-Source: AB8JxZqzM9vhiTpqCYatQYAtN5y7QM83fnQ4J5xecLQTymSHlaBLH1wE0l9bZOUNwmn9Jn7e3KiMZQ==
 From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To: linus.walleij@linaro.org, robh+dt@kernel.org, afaerber@suse.de
 Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
@@ -17,57 +17,56 @@ Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 0/5] Add gpio support for Action Semi S900 SoC
-Date: Sun, 20 May 2018 10:47:31 +0530
-Message-Id: <20180520051736.4842-1-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v2 1/5] dt-bindings: pinctrl: Add gpio bindings for Actions S900 SoC
+Date: Sun, 20 May 2018 10:47:32 +0530
+Message-Id: <20180520051736.4842-2-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180520051736.4842-1-manivannan.sadhasivam@linaro.org>
+References: <20180520051736.4842-1-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset adds gpio support for Actions Semi S900 SoC by extending
-the pinctrl driver. There were previous patches submitted for adding a
-standalone gpio driver based on gpiolib. But later on it has been realised
-that the gpio functionality is closely tied with pinctrl subsystem for this
-OWL family processors. So, having a separate gpio driver will make it hard
-to add further functionalities in future. Hence, we decided to drop the
-previous patches below adding a standalone gpio support:
+Add gpio bindings for Actions Semi S900 SoC.
 
-dt-bindings: gpio: Add gpio nodes for Actions S900 SoC
-arm64: dts: actions: Add S900 gpio nodes
-arm64: dts: actions: Add gpio line names to Bubblegum-96 board
-gpio: Add gpio driver for Actions OWL S900 SoC
-MAINTAINERS: Add Actions Semi S900 pinctrl and gpio entries
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ .../devicetree/bindings/pinctrl/actions,s900-pinctrl.txt | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-This patchset consits of incremental patches which will apply with the
-previous pinctrl series: Add Actions Semi S900 pinctrl and gpio support,
-excluding the dropped patches mentioned above.
-
-Thanks,
-Mani
-
-Changes in v2:
-
-* Removed gpiochip_add_pin_range() function and added gpio-ranges property
-  in DT.
-* Added Reviewed-by tag from Andy.
-
-Manivannan Sadhasivam (5):
-  dt-bindings: pinctrl: Add gpio bindings for Actions S900 SoC
-  arm64: dts: actions: Add gpio properties to pinctrl node for S900
-  arm64: dts: actions: Add gpio line names to Bubblegum-96 board
-  pinctrl: actions: Add gpio support for Actions S900 SoC
-  MAINTAINERS: Add Actions Semi S900 pinctrl entries
-
- .../bindings/pinctrl/actions,s900-pinctrl.txt      |  16 ++
- MAINTAINERS                                        |   2 +
- arch/arm64/boot/dts/actions/s900-bubblegum-96.dts  | 175 ++++++++++++++++++
- arch/arm64/boot/dts/actions/s900.dtsi              |   3 +
- drivers/pinctrl/actions/Kconfig                    |   1 +
- drivers/pinctrl/actions/pinctrl-owl.c              | 198 +++++++++++++++++++++
- drivers/pinctrl/actions/pinctrl-owl.h              |  20 +++
- drivers/pinctrl/actions/pinctrl-s900.c             |  29 ++-
- 8 files changed, 443 insertions(+), 1 deletion(-)
-
+diff --git a/Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt
+index fb87c7d74f2e..8fb5a53775e8 100644
+--- a/Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt
+@@ -8,6 +8,17 @@ Required Properties:
+ - reg:          Should contain the register base address and size of
+                 the pin controller.
+ - clocks:       phandle of the clock feeding the pin controller
++- gpio-controller: Marks the device node as a GPIO controller.
++- gpio-ranges: Specifies the mapping between gpio controller and
++               pin-controller pins.
++- #gpio-cells: Should be two. The first cell is the gpio pin number
++               and the second cell is used for optional parameters.
++- interrupt-controller: Marks the device node as an interrupt controller.
++- #interrupt-cells: Specifies the number of cells needed to encode an
++                    interrupt.  Shall be set to 2.  The first cell
++                    defines the interrupt number, the second encodes
++                    the trigger flags described in
++                    bindings/interrupt-controller/interrupts.txt
+ 
+ Please refer to pinctrl-bindings.txt in this directory for details of the
+ common pinctrl bindings used by client devices, including the meaning of the
+@@ -164,6 +175,11 @@ Example:
+                   compatible = "actions,s900-pinctrl";
+                   reg = <0x0 0xe01b0000 0x0 0x1000>;
+                   clocks = <&cmu CLK_GPIO>;
++                  gpio-controller;
++                  gpio-ranges = <&pinctrl 0 0 146>;
++                  #gpio-cells = <2>;
++                  interrupt-controller;
++                  #interrupt-cells = <2>;
+ 
+                   uart2-default: uart2-default {
+                           pinmux {
 -- 
 2.14.1
