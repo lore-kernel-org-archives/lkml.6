@@ -1,84 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751669AbeETPf3 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 11:35:29 -0400
-Received: from smtprelay0120.hostedemail.com ([216.40.44.120]:34138 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751348AbeETPf1 (ORCPT
+        id S1752375AbeETPhs (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 11:37:48 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:40893 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751348AbeETPho (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 11:35:27 -0400
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,rostedt@goodmis.org,:::::::::::::::,RULES_HIT:41:355:379:541:599:800:960:966:973:988:989:1183:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2196:2199:2393:2553:2559:2562:2693:3138:3139:3140:3141:3142:3353:3865:3866:3867:3868:3871:3872:3874:4385:5007:6261:7875:7901:7903:8660:8957:9040:10004:10394:10400:10848:10967:11026:11232:11658:11914:12296:12740:12760:12895:13069:13148:13161:13190:13229:13230:13311:13357:13439:13972:14181:14659:14721:21080:21324:21433:21627:30012:30054:30090:30091,0,RBL:172.56.27.111:@goodmis.org:.lbl8.mailshell.net-62.14.0.190 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
-X-HE-Tag: angle90_13df00abf0661
-X-Filterd-Recvd-Size: 2710
-Date: Sun, 20 May 2018 11:28:43 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Joel Fernandes <joel@joelfernandes.org>, byungchul.park@lge.com,
-        mathieu.desnoyers@efficios.com, Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org,
-        kernel-team@android.com
-Subject: Re: Tasks RCU vs Preempt RCU
-Message-ID: <20180520112843.57079857@grimm.local.home>
-In-Reply-To: <20180520004938.GZ3803@linux.vnet.ibm.com>
-References: <20180518183623.GA163151@joelaf.mtv.corp.google.com>
-        <20180519022918.GV3803@linux.vnet.ibm.com>
-        <20180519225905.GB134184@joelaf.mtv.corp.google.com>
-        <20180520004938.GZ3803@linux.vnet.ibm.com>
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sun, 20 May 2018 11:37:44 -0400
+X-Google-Smtp-Source: AB8JxZrJdBIZaar0zhgBK+HVN1URMZCtIifBS37vdf1nw5jg8hGUMJqeZFcbi3g+jPOPz0vLgpGiUg==
+From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Tony Lindgren <tony@atomide.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Mark Brown <broonie@kernel.org>, Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Richard Weinberger <richard@nod.at>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Jarkko Nikula <jarkko.nikula@bitmer.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-input <linux-input@vger.kernel.org>,
+        "open list:MEMORY TECHNOLOGY..." <linux-mtd@lists.infradead.org>,
+        linux-fbdev@vger.kernel.org,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>
+Subject: Re: [PATCH 5/6] mtd: rawnand: ams-delta: use GPIO lookup table
+Date: Sun, 20 May 2018 17:37:44 +0200
+Message-ID: <3505791.x6nWYTo8eb@z50>
+In-Reply-To: <CAHp75Ved2nw1JKnXT2Jxnw4XLsby1eVJU6cfBjE2sp4LP4Kwmg@mail.gmail.com>
+References: <20180518210954.29044-1-jmkrzyszt@gmail.com> <5456625.lDWjtgZygK@z50> <CAHp75Ved2nw1JKnXT2Jxnw4XLsby1eVJU6cfBjE2sp4LP4Kwmg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sunday, May 20, 2018 4:44:31 PM CEST Andy Shevchenko wrote:
+> On Sun, May 20, 2018 at 12:55 AM, Janusz Krzysztofik
+> 
+> <jmkrzyszt@gmail.com> wrote:
+> > On Saturday, May 19, 2018 8:00:38 PM CEST Andy Shevchenko wrote:
+> >> On Sat, May 19, 2018 at 2:15 AM, Janusz Krzysztofik <jmkrzyszt@gmail.com>
+> > 
+> > wrote:
+> >> NULL check in practice discards the _optional part of gpiod_get(). So,
+> >> either you use non-optional variant and decide how to handle an
+> >> errors, or user _optional w/o NULL check.
+> > 
+> > OK, I'm going to use something like the below while submitting v2:
+> > 
+> > -       gpiod_rdy = devm_gpiod_get_optional(&pdev->dev, "rdy", GPIOD_IN);
+> > -       if (!IS_ERR_OR_NULL(gpiod_rdy)) {
+> > -               this->dev_ready = ams_delta_nand_ready;
+> > -       } else {
+> > -               this->dev_ready = NULL;
+> > -               pr_notice("Couldn't request gpio for Delta NAND
+> > ready.\n");
+> > +       priv->gpiod_rdy = devm_gpiod_get_optional(&pdev->dev, "rdy",
+> > +                                                 GPIOD_IN);
+> > +       if (IS_ERR(priv->gpiod_rdy)) {
+> > +               err = PTR_ERR(priv->gpiod_nwp);
+> > +               dev_warn(&pdev->dev, "RDY GPIO request failed (%d)\n",
+> > err); +               goto err_gpiod;
+> > 
+> >         }
+> > 
+> > +       if (priv->gpiod_rdy)
+> > +               this->dev_ready = ams_delta_nand_ready;
+> 
+> This makes sense.
+> 
+> Though, I completely dislike "rdy" name of GPIO. Where is it documented?
 
-[ Steve interrupts his time off ]
+No documentation files for Amstrad Delta nor for its NAND driver specifically 
+exist under Documentation/. However, there exist some for generic GPIO NAND 
+driver where the pin name "rdy" is used explicitly:
+Documentation/driver-api/gpio/drivers-on-gpio.rst
+Documentation/devicetree/bindings/mtd/gpio-control-nand.txt
+You can find that mnemonic used across drivers/mtd/nand/, standalone or as a 
+suffix, including the Amstrad Delta NAND driver before the change discussed.
 
-On Sat, 19 May 2018 17:49:38 -0700
-"Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+To be honest, I don't like it much either, but I'm just using it instead of 
+inventing something new.
 
-> I suggested to Steven that the rcu_read_lock() and rcu_read_unlock() might
-> be outside of the trampoline, but this turned out to be infeasible.  Not
-> that I remember why!  ;-)
-
-Because the trampoline itself is what needs to be freed. The trampoline
-is what mcount/fentry or an optimized kprobe jumps to.
-
-
-<func>:
-	nop
-
-[ enable function tracing ]
-
-<func>:
-	call func_tramp --> set up stack
-			    call function_tracer()
-			    pop stack
-			    ret
-
-			    ^^^^^
-			    This is the trampoline
-
-There's no way to know when a task will be on the trampoline or not.
-The trampoline is allocated, and we need RCU_tasks to know when we can
-free it. The only way to make a "wrapper" is to modify more of the code
-text to do whatever before calling the trampoline, which is
-impractical.
-
-The allocated trampolines were added as an optimization, where two
-registered callback functions from ftrace that are attached to two
-different functions don't call the same trampoline which would have to
-do a loop and a hash lookup to know what callback to call per function.
-If a callback is the only one attached to a specific function, then a
-trampoline is allocated and will call that callback directly, keeping
-the overhead down.
-
-There is no feasible way to know when a task is on a trampoline
-without adding overhead that negates the speed up we receive by making
-individual trampolines to begin with.
-
--- Steve
-
-[ Steve resumes his time off ]
+Thanks,
+Janusz
