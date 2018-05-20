@@ -1,62 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752550AbeETQRJ (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 12:17:09 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:38795 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751935AbeETQRG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 12:17:06 -0400
-X-Google-Smtp-Source: AB8JxZp7DHTUz3zsYjQCe+fYfw2lSFwYKO5iBwUzLMbB94SDqAMYaY9t73jw03if3v+yi+rSBBfjn1z9aOTJEj34qZY=
+        id S1752519AbeETQZ0 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 12:25:26 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57812 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751162AbeETQZX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 May 2018 12:25:23 -0400
+Date: Mon, 21 May 2018 00:25:14 +0800
+From: Wei Xu <wexu@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jfreimann@redhat.com,
+        tiwei.bie@intel.com
+Subject: Re: [RFC V4 PATCH 0/8] Packed ring layout for vhost
+Message-ID: <20180520162514.GA21958@wei-ubt>
+References: <1526473941-16199-1-git-send-email-jasowang@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <3505791.x6nWYTo8eb@z50>
-References: <20180518210954.29044-1-jmkrzyszt@gmail.com> <5456625.lDWjtgZygK@z50>
- <CAHp75Ved2nw1JKnXT2Jxnw4XLsby1eVJU6cfBjE2sp4LP4Kwmg@mail.gmail.com> <3505791.x6nWYTo8eb@z50>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sun, 20 May 2018 19:17:04 +0300
-Message-ID: <CAHp75Vdp5A58JMTf8vaET84QEzzZ_T7eKLUYfWV9qpWt5ptYCA@mail.gmail.com>
-Subject: Re: [PATCH 5/6] mtd: rawnand: ams-delta: use GPIO lookup table
-To: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc: Tony Lindgren <tony@atomide.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Mark Brown <broonie@kernel.org>, Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Richard Weinberger <richard@nod.at>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Jarkko Nikula <jarkko.nikula@bitmer.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-input <linux-input@vger.kernel.org>,
-        "open list:MEMORY TECHNOLOGY..." <linux-mtd@lists.infradead.org>,
-        linux-fbdev@vger.kernel.org,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1526473941-16199-1-git-send-email-jasowang@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 20, 2018 at 6:37 PM, Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
-> On Sunday, May 20, 2018 4:44:31 PM CEST Andy Shevchenko wrote:
+On Wed, May 16, 2018 at 08:32:13PM +0800, Jason Wang wrote:
+> Hi all:
+> 
+> This RFC implement packed ring layout. The code were tested with
+> Tiwei's RFC V3 ahttps://lkml.org/lkml/2018/4/25/34. Some fixups and
+> tweaks were needed on top of Tiwei's code to make it run for event
+> index.
 
->> Though, I completely dislike "rdy" name of GPIO. Where is it documented?
->
-> No documentation files for Amstrad Delta nor for its NAND driver specifically
-> exist under Documentation/. However, there exist some for generic GPIO NAND
-> driver where the pin name "rdy" is used explicitly:
-> Documentation/driver-api/gpio/drivers-on-gpio.rst
-> Documentation/devicetree/bindings/mtd/gpio-control-nand.txt
-> You can find that mnemonic used across drivers/mtd/nand/, standalone or as a
-> suffix, including the Amstrad Delta NAND driver before the change discussed.
+Could you please show the change based on Tiwei's code to easy other's
+test?
 
-> To be honest, I don't like it much either, but I'm just using it instead of
-> inventing something new.
+> 
+> Pktgen reports about 20% improvement on PPS (event index is off). More
+> testing is ongoing.
+> 
+> Notes for tester:
+> 
+> - Start from this version, vhost need qemu co-operation to work
+>   correctly. Or you can comment out the packed specific code for
+>   GET/SET_VRING_BASE.
 
-OK, that's what I was looking for. Since it's already in use and
-documented, then it's fine for me.
+Do you mean the code in vhost_virtqueue_start/stop? Both Tiwei's and your v3
+work fortunately correctly which should be avoided since the ring should be
+definitely different.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Wei
+
+> 
+> Changes from V3:
+> - Fix math on event idx checking
+> - Sync last avail wrap counter through GET/SET_VRING_BASE
+> - remove desc_event prefix in the driver/device structure
+> 
+> Changes from V2:
+> - do not use & in checking desc_event_flags
+> - off should be most significant bit
+> - remove the workaround of mergeable buffer for dpdk prototype
+> - id should be in the last descriptor in the chain
+> - keep _F_WRITE for write descriptor when adding used
+> - device flags updating should use ADDR_USED type
+> - return error on unexpected unavail descriptor in a chain
+> - return false in vhost_ve_avail_empty is descriptor is available
+> - track last seen avail_wrap_counter
+> - correctly examine available descriptor in get_indirect_packed()
+> - vhost_idx_diff should return u16 instead of bool
+> 
+> Changes from V1:
+> 
+> - Refactor vhost used elem code to avoid open coding on used elem
+> - Event suppression support (compile test only).
+> - Indirect descriptor support (compile test only).
+> - Zerocopy support.
+> - vIOMMU support.
+> - SCSI/VSOCK support (compile test only).
+> - Fix several bugs
+> 
+> Jason Wang (8):
+>   vhost: move get_rx_bufs to vhost.c
+>   vhost: hide used ring layout from device
+>   vhost: do not use vring_used_elem
+>   vhost_net: do not explicitly manipulate vhost_used_elem
+>   vhost: vhost_put_user() can accept metadata type
+>   virtio: introduce packed ring defines
+>   vhost: packed ring support
+>   vhost: event suppression for packed ring
+> 
+>  drivers/vhost/net.c                | 136 ++----
+>  drivers/vhost/scsi.c               |  62 +--
+>  drivers/vhost/vhost.c              | 861 ++++++++++++++++++++++++++++++++-----
+>  drivers/vhost/vhost.h              |  47 +-
+>  drivers/vhost/vsock.c              |  42 +-
+>  include/uapi/linux/virtio_config.h |   9 +
+>  include/uapi/linux/virtio_ring.h   |  32 ++
+>  7 files changed, 928 insertions(+), 261 deletions(-)
+> 
+> -- 
+> 2.7.4
+> 
