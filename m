@@ -1,73 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751691AbeETU1k (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 16:27:40 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:32817 "EHLO mail.bootlin.com"
+        id S1751559AbeETUlN (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 16:41:13 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:60896 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751434AbeETU1i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 16:27:38 -0400
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: linux-rtc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-        Brian Norris <computersforpeace@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 1/2] rtc: brcmstb-waketimer: switch to rtc_register_device
-Date: Sun, 20 May 2018 22:27:29 +0200
-Message-Id: <20180520202730.28172-1-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.17.0
+        id S1751067AbeETUlL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 May 2018 16:41:11 -0400
+Date: Sun, 20 May 2018 22:40:32 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>
+Cc: Tony Luck <tony.luck@intel.com>, Thomas Gleixner <tglx@linutronix.de>,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        linux-edac@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
+Subject: Re: PROBLEM: mce: [Hardware Error] from dmesg -l emerg
+Message-ID: <20180520204032.GA19845@pd.tnic>
+References: <CAG=yYwmnHgAvauZLxfFcUEACF_J+qh4d2tvYY=AdjHvyeSFK_A@mail.gmail.com>
+ <20180514162752.GG23049@pd.tnic>
+ <CAG=yYwk-dbMF_7eS9bUraAru8b4fyCosxp+MpQA=1ZYH0nd_hg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAG=yYwk-dbMF_7eS9bUraAru8b4fyCosxp+MpQA=1ZYH0nd_hg@mail.gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switch to devm_rtc_allocate_device/rtc_register_device.
+On Sun, May 20, 2018 at 05:27:32PM +0530, Jeffrin Thalakkottoor wrote:
+> output for "dmesg | mcelog --ascii"  command related
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/rtc/rtc-brcmstb-waketimer.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+Ok, but please do not top-post.
 
-diff --git a/drivers/rtc/rtc-brcmstb-waketimer.c b/drivers/rtc/rtc-brcmstb-waketimer.c
-index bdd6674a1054..ba49d9bcff12 100644
---- a/drivers/rtc/rtc-brcmstb-waketimer.c
-+++ b/drivers/rtc/rtc-brcmstb-waketimer.c
-@@ -229,6 +229,10 @@ static int brcmstb_waketmr_probe(struct platform_device *pdev)
- 	if (IS_ERR(timer->base))
- 		return PTR_ERR(timer->base);
- 
-+	timer->rtc = devm_rtc_allocate_device(dev);
-+	if (IS_ERR(timer->rtc))
-+		return PTR_ERR(timer->rtc);
-+
- 	/*
- 	 * Set wakeup capability before requesting wakeup interrupt, so we can
- 	 * process boot-time "wakeups" (e.g., from S5 soft-off)
-@@ -261,11 +265,11 @@ static int brcmstb_waketmr_probe(struct platform_device *pdev)
- 	timer->reboot_notifier.notifier_call = brcmstb_waketmr_reboot;
- 	register_reboot_notifier(&timer->reboot_notifier);
- 
--	timer->rtc = rtc_device_register("brcmstb-waketmr", dev,
--					 &brcmstb_waketmr_ops, THIS_MODULE);
--	if (IS_ERR(timer->rtc)) {
-+	timer->rtc->ops = &brcmstb_waketmr_ops;
-+
-+	ret = rtc_register_device(timer->rtc);
-+	if (ret) {
- 		dev_err(dev, "unable to register device\n");
--		ret = PTR_ERR(timer->rtc);
- 		goto err_notifier;
- 	}
- 
-@@ -288,7 +292,6 @@ static int brcmstb_waketmr_remove(struct platform_device *pdev)
- 	struct brcmstb_waketmr *timer = dev_get_drvdata(&pdev->dev);
- 
- 	unregister_reboot_notifier(&timer->reboot_notifier);
--	rtc_device_unregister(timer->rtc);
- 
- 	return 0;
- }
+...
+
+> Hardware event. This is not a software error.
+> CPU 0 BANK 0 TSC dead
+> STATUS 0 MCGSTATUS 0
+> line timer enabled
+> smpboot: CPU0: Intel(R) Pentium(R) CPU 3825U @ 1.90GHz (family: 0x6,
+> model: 0x3d, stepping: 0x4)
+> Machine check events logged
+> Hardware event. This is not a software error.
+> CPU 0 BANK 0
+> TIME 1526815774 Sun May 20 16:59:34 2018
+> MCG status:
+> MCi status:
+> Machine check not valid
+> Corrected error
+> MCA: No Error
+> STATUS 0 MCGSTATUS 0
+> CPUID Vendor Intel Family 6 Model 61
+> (Fields were incomplete)
+
+Looks like mcelog has trouble decoding this. Have you updated mcelog to
+the latest version in your distro?
+
+> SOCKET 0 APIC 0 microcode 2a
+
+@Tony, I'm hoping you'll be more successful in decoding the error by
+hand.
+
 -- 
-2.17.0
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
