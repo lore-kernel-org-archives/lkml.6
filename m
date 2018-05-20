@@ -1,74 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752561AbeESW7J (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 18:59:09 -0400
-Received: from mail-pg0-f49.google.com ([74.125.83.49]:44877 "EHLO
-        mail-pg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752045AbeESW7H (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 18:59:07 -0400
-X-Google-Smtp-Source: AB8JxZoo6qSXqhIHhXQl5iRxVreq64M0b9KxP527uDfC3UGXf4PmtituduHr+1odZrFnFaDLRS3zzQ==
-Date: Sat, 19 May 2018 15:59:05 -0700
-From: Joel Fernandes <joel@joelfernandes.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: rostedt@goodmis.org, byungchul.park@lge.com,
-        mathieu.desnoyers@efficios.com, Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org,
-        kernel-team@android.com
-Subject: Re: Tasks RCU vs Preempt RCU
-Message-ID: <20180519225905.GB134184@joelaf.mtv.corp.google.com>
-References: <20180518183623.GA163151@joelaf.mtv.corp.google.com>
- <20180519022918.GV3803@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180519022918.GV3803@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1752522AbeETARj (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 20:17:39 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37060 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752389AbeETARh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 May 2018 20:17:37 -0400
+From: Mark Salter <msalter@redhat.com>
+To: Will Deacon <will.deacon@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [RHEL-8] arm64: add missing early clobber in atomic64_dec_if_positive()
+Date: Sat, 19 May 2018 20:17:26 -0400
+Message-Id: <20180520001726.27808-1-msalter@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 18, 2018 at 07:29:18PM -0700, Paul E. McKenney wrote:
-> On Fri, May 18, 2018 at 11:36:23AM -0700, Joel Fernandes wrote:
-> > Hi,
-> > 
-> > I was thinking about tasks-RCU and why its needed. Since preempt-RCU allows
-> > tasks to be preempted in read-sections, can we not just reuse that mechanism
-> > for the trampolines since we track all preempted tasks so we would wait on
-> > all tasks preempted within a trampoline?
-> > 
-> > I am trying to understand what will _not_ work if we did that.. I'm guessing
-> > the answer is that that would mean the trampoline has to be wrapped with
-> > rcu_read_{lock,unlock} which may add some overhead, but please let me know
-> > if I'm missing something else..
-> > 
-> > The advantage I guess is possible elimination of an RCU variant, and also
-> > possibly eliminating the tasks RCU thread that monitors.. Anyway I was
-> > thinking more in terms of the effort of reduction of the RCU flavors etc and
-> > reducing complexity ideas.
-> 
-> The problem is that if they are preempted while executing in a trampoline,
-> RCU-preempt doesn't queue them nor does it wait on them.
+When running a kernel compiled with gcc8 on a machine using LSE, I
+get:
 
-Not if they are wrapped with rcu_read_lock and rcu_read_unlock? From what I
-can see, you are preparing a list of blocked tasks that would keep the grace period
-from finishing in rcu_preempt_ctxt_queue?
+ Unable to handle kernel paging request at virtual address 11111122222221
+ Mem abort info:
+   ESR = 0x96000021
+   Exception class = DABT (current EL), IL = 32 bits
+   SET = 0, FnV = 0
+   EA = 0, S1PTW = 0
+ Data abort info:
+   ISV = 0, ISS = 0x00000021
+   CM = 0, WnR = 0
+ [0011111122222221] address between user and kernel address ranges
+ Internal error: Oops: 96000021 [#1] SMP
+ ...
+ pstate: 20400009 (nzCv daif +PAN -UAO)
+ pc : test_atomic64+0x1360/0x155c
+ lr : 0x1111111122222222
+ sp : ffff00000bc6fd60
+ x29: ffff00000bc6fd60 x28: 0000000000000000
+ x27: 0000000000000000 x26: ffff000008f04460
+ x25: ffff000008de0584 x24: ffff000008e91060
+ x23: aaa31337c001d00e x22: 999202269ddfadeb
+ x21: aaa31337c001d00c x20: bbb42448e223f22f
+ x19: aaa31337c001d00d x18: 0000000000000010
+ x17: 0000000000000222 x16: 00000000000010e0
+ x15: ffffffffffffffff x14: ffff000009233c08
+ x13: ffff000089925a8f x12: ffff000009925a97
+ x11: ffff00000927f000 x10: ffff00000bc6fac0
+ x9 : 00000000ffffffd0 x8 : ffff00000853fdf8
+ x7 : 00000000deadbeef x6 : ffff00000bc6fda0
+ x5 : aaa31337c001d00d x4 : deadbeefdeafcafe
+ x3 : aaa31337c001d00d x2 : aaa31337c001d00e
+ x1 : 1111111122222222 x0 : 1111111122222221
+ Process swapper/0 (pid: 1, stack limit = 0x000000008209f908)
+ Call trace:
+  test_atomic64+0x1360/0x155c
+  test_atomics_init+0x10/0x28
+  do_one_initcall+0x134/0x160
+  kernel_init_freeable+0x18c/0x21c
+  kernel_init+0x18/0x108
+  ret_from_fork+0x10/0x1c
+ Code: f90023e1 f940001e f10007c0 540000ab (c8fefc00)
+ ---[ end trace 29569e7320c6e926 ]---
 
-> And the problem with wrapping them with rcu_read_{lock,unlock} is that
-> there would be a point before the trampoline executed rcu_read_lock()
-> but while it was on the trampoline.  Nothing good comes from this.  ;-)
+The fault happens at the casal insn of inlined atomic64_dec_if_positive().
+The inline asm code in that function has:
 
-Yes, I see what you're saying. The data being protected and freed in this
-case is the code so relying on it to do the rcu_read_lock seems infeasible.
-Conceptually atleast, I feel this can be fixed by cleverly implementing
-trampolines such that the rcu_read_lock isn't done during the trampoline
-execution. But I am not very experienced with how the trampolines work to say
-definitely whether it is or isn't possible or worth it. But atleast I felt it
-was a worthwhile food for thought ;)
+	"1:	ldr	x30, %[v]\n"
+	"	subs	%[ret], x30, #1\n"
+	"	b.lt	2f\n"
+	"	casal	x30, %[ret], %[v]\n"
+	"	sub	x30, x30, #1\n"
+	"	sub	x30, x30, %[ret]\n"
+	"	cbnz	x30, 1b\n"
+	"2:")
+	: [ret] "+r" (x0), [v] "+Q" (v->counter)
 
-I actually want to trace out the trampoline executing as it pertains to RCU,
-with your latest rcu/dev.. I think it will be fun :)
+gcc8 used register x0 for both [ret] and [v] and the subs was
+clobbering [v] before it was used for casal. Gcc is free to do
+this because [ret] lacks an early clobber modifier. So add one
+to tell gcc a separate register is needed for [v].
 
-thanks!
+Signed-off-by: Mark Salter <msalter@redhat.com>
+---
+ arch/arm64/include/asm/atomic_lse.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- - Joel
+diff --git a/arch/arm64/include/asm/atomic_lse.h b/arch/arm64/include/asm/atomic_lse.h
+index 9ef0797380cb..99fa69c9c3cf 100644
+--- a/arch/arm64/include/asm/atomic_lse.h
++++ b/arch/arm64/include/asm/atomic_lse.h
+@@ -435,7 +435,7 @@ static inline long atomic64_dec_if_positive(atomic64_t *v)
+ 	"	sub	x30, x30, %[ret]\n"
+ 	"	cbnz	x30, 1b\n"
+ 	"2:")
+-	: [ret] "+r" (x0), [v] "+Q" (v->counter)
++	: [ret] "+&r" (x0), [v] "+Q" (v->counter)
+ 	:
+ 	: __LL_SC_CLOBBERS, "cc", "memory");
+ 
+-- 
+2.17.0
