@@ -1,28 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752614AbeETVXO (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 17:23:14 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55496 "EHLO mx1.redhat.com"
+        id S1752770AbeETVZf (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 17:25:35 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49610 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752367AbeETVXK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 17:23:10 -0400
+        id S1751067AbeETVXM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 May 2018 17:23:12 -0400
 From: Eric Auger <eric.auger@redhat.com>
 To: eric.auger.pro@gmail.com, eric.auger@redhat.com,
         linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
         kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
         christoffer.dall@arm.com, peter.maydell@linaro.org
 Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
-Subject: [PATCH v7 04/13] KVM: arm/arm64: Helper to locate free rdist index
-Date: Sun, 20 May 2018 23:22:43 +0200
-Message-Id: <1526851372-13009-5-git-send-email-eric.auger@redhat.com>
+Subject: [PATCH v7 05/13] KVM: arm/arm64: Revisit Redistributor TYPER last bit computation
+Date: Sun, 20 May 2018 23:22:44 +0200
+Message-Id: <1526851372-13009-6-git-send-email-eric.auger@redhat.com>
 In-Reply-To: <1526851372-13009-1-git-send-email-eric.auger@redhat.com>
 References: <1526851372-13009-1-git-send-email-eric.auger@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We introduce vgic_v3_rdist_free_slot to help identifying
-where we can place a new 2x64KB redistributor.
+The TYPER of an redistributor reflects whether the rdist is
+the last one of the redistributor region. Let's compare the TYPER
+GPA against the address of the last occupied slot within the
+redistributor region.
 
 Signed-off-by: Eric Auger <eric.auger@redhat.com>
 Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
@@ -30,83 +32,33 @@ Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
 ---
 
 v3 -> v4:
-- add details to vgic_v3_rdist_free_slot kernel doc comment
-- Added Christoffer's R-b
+- added Christoffer's R-b
 ---
- virt/kvm/arm/vgic/vgic-mmio-v3.c |  3 +--
- virt/kvm/arm/vgic/vgic-v3.c      | 23 +++++++++++++++++++++++
- virt/kvm/arm/vgic/vgic.h         | 11 +++++++++++
- 3 files changed, 35 insertions(+), 2 deletions(-)
+ virt/kvm/arm/vgic/vgic-mmio-v3.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/virt/kvm/arm/vgic/vgic-mmio-v3.c b/virt/kvm/arm/vgic/vgic-mmio-v3.c
-index d1aab18..49ca176 100644
+index 49ca176..ce5c927 100644
 --- a/virt/kvm/arm/vgic/vgic-mmio-v3.c
 +++ b/virt/kvm/arm/vgic/vgic-mmio-v3.c
-@@ -593,8 +593,7 @@ int vgic_register_redist_iodev(struct kvm_vcpu *vcpu)
- 	 * function for all VCPUs when the base address is set.  Just return
- 	 * without doing any work for now.
- 	 */
--	rdreg = list_first_entry(&vgic->rd_regions,
--				 struct vgic_redist_region, list);
-+	rdreg = vgic_v3_rdist_free_slot(&vgic->rd_regions);
- 	if (!rdreg)
- 		return 0;
- 
-diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
-index 0bb019f..6a1c932 100644
---- a/virt/kvm/arm/vgic/vgic-v3.c
-+++ b/virt/kvm/arm/vgic/vgic-v3.c
-@@ -453,6 +453,29 @@ bool vgic_v3_check_base(struct kvm *kvm)
- 	return false;
- }
- 
-+/**
-+ * vgic_v3_rdist_free_slot - Look up registered rdist regions and identify one
-+ * which has free space to put a new rdist region.
-+ *
-+ * @rd_regions: redistributor region list head
-+ *
-+ * A redistributor regions maps n redistributors, n = region size / (2 x 64kB).
-+ * Stride between redistributors is 0 and regions are filled in the index order.
-+ *
-+ * Return: the redist region handle, if any, that has space to map a new rdist
-+ * region.
-+ */
-+struct vgic_redist_region *vgic_v3_rdist_free_slot(struct list_head *rd_regions)
-+{
-+	struct vgic_redist_region *rdreg;
-+
-+	list_for_each_entry(rdreg, rd_regions, list) {
-+		if (!vgic_v3_redist_region_full(rdreg))
-+			return rdreg;
-+	}
-+	return NULL;
-+}
-+
- int vgic_v3_map_resources(struct kvm *kvm)
+@@ -184,12 +184,17 @@ static unsigned long vgic_mmio_read_v3r_typer(struct kvm_vcpu *vcpu,
+ 					      gpa_t addr, unsigned int len)
  {
- 	int ret = 0;
-diff --git a/virt/kvm/arm/vgic/vgic.h b/virt/kvm/arm/vgic/vgic.h
-index 32c25d4..fddd57f 100644
---- a/virt/kvm/arm/vgic/vgic.h
-+++ b/virt/kvm/arm/vgic/vgic.h
-@@ -265,6 +265,17 @@ static inline int vgic_v3_max_apr_idx(struct kvm_vcpu *vcpu)
- 	}
- }
+ 	unsigned long mpidr = kvm_vcpu_get_mpidr_aff(vcpu);
++	struct vgic_cpu *vgic_cpu = &vcpu->arch.vgic_cpu;
++	struct vgic_redist_region *rdreg = vgic_cpu->rdreg;
+ 	int target_vcpu_id = vcpu->vcpu_id;
++	gpa_t last_rdist_typer = rdreg->base + GICR_TYPER +
++			(rdreg->free_index - 1) * KVM_VGIC_V3_REDIST_SIZE;
+ 	u64 value;
  
-+static inline bool
-+vgic_v3_redist_region_full(struct vgic_redist_region *region)
-+{
-+	if (!region->count)
-+		return false;
+ 	value = (u64)(mpidr & GENMASK(23, 0)) << 32;
+ 	value |= ((target_vcpu_id & 0xffff) << 8);
+-	if (target_vcpu_id == atomic_read(&vcpu->kvm->online_vcpus) - 1)
 +
-+	return (region->free_index >= region->count);
-+}
-+
-+struct vgic_redist_region *vgic_v3_rdist_free_slot(struct list_head *rdregs);
-+
- int vgic_its_resolve_lpi(struct kvm *kvm, struct vgic_its *its,
- 			 u32 devid, u32 eventid, struct vgic_irq **irq);
- struct vgic_its *vgic_msi_to_its(struct kvm *kvm, struct kvm_msi *msi);
++	if (addr == last_rdist_typer)
+ 		value |= GICR_TYPER_LAST;
+ 	if (vgic_has_its(vcpu->kvm))
+ 		value |= GICR_TYPER_PLPIS;
 -- 
 2.5.5
