@@ -1,170 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752706AbeETXcL (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 19:32:11 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:49488 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751639AbeETXcJ (ORCPT
+        id S1752662AbeETXf0 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 19:35:26 -0400
+Received: from tyo161.gate.nec.co.jp ([114.179.232.161]:53289 "EHLO
+        tyo161.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751639AbeETXfZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 19:32:09 -0400
-Subject: Re: [PATCH v2 5/5] kconfig: refactor ncurses package checks for
- building nconf
-To: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kbuild@vger.kernel.org
-Cc: "Luis R . Rodriguez" <mcgrof@suse.com>,
-        Ulf Magnusson <ulfalizer@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
-        linux-kernel@vger.kernel.org
-References: <1526804213-8238-1-git-send-email-yamada.masahiro@socionext.com>
- <1526804213-8238-6-git-send-email-yamada.masahiro@socionext.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <6ddb1db4-97e5-44a0-e154-be1140fffa16@infradead.org>
-Date: Sun, 20 May 2018 16:31:58 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Sun, 20 May 2018 19:35:25 -0400
+From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+To: Mike Kravetz <mike.kravetz@oracle.com>
+CC: "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Nadia Yvette Chambers <nyc@holomorphy.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] MAINTAINERS: Change hugetlbfs maintainer and update
+ files
+Thread-Topic: [PATCH] MAINTAINERS: Change hugetlbfs maintainer and update
+ files
+Thread-Index: AQHT7vry4FsNjjBGU0KHqX9d+z4uJKQ4rmQA
+Date: Sun, 20 May 2018 23:23:52 +0000
+Message-ID: <20180520232352.GA7925@hori1.linux.bs1.fc.nec.co.jp>
+References: <20180518225236.19079-1-mike.kravetz@oracle.com>
+In-Reply-To: <20180518225236.19079-1-mike.kravetz@oracle.com>
+Accept-Language: en-US, ja-JP
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.51.8.81]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <D04C778E8AF1AA4A9AF674E22FB7FA72@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-In-Reply-To: <1526804213-8238-6-git-send-email-yamada.masahiro@socionext.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/20/2018 01:16 AM, Masahiro Yamada wrote:
-> Building nconf requires ncurses, but its presence is not checked.
-> Check and configure necessary packages by a shell script like the
-> other GUI frontends.
+On Fri, May 18, 2018 at 03:52:36PM -0700, Mike Kravetz wrote:
+> The current hugetlbfs maintainer has not been active for more than
+> a few years.  I have been been active in this area for more than
+> two years and plan to remain active in the foreseeable future.
 > 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Also, update the hugetlbfs entry to include linux-mm mail list and
+> additional hugetlbfs related files.  hugetlb.c and hugetlb.h are
+> not 100% hugetlbfs, but a majority of their content is hugetlbfs
+> related.
+> 
+> Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+
+Thank you for taking responsibility on this!
+
+Acked-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+
 > ---
+>  MAINTAINERS | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
 > 
-> Changes in v2:
->   - Add fallback code in case distributions cannot find
->     ncurses by pkg-config.
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 9051a9ca24a2..c7a5eb074eb1 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -6564,9 +6564,15 @@ F:	Documentation/networking/hinic.txt
+>  F:	drivers/net/ethernet/huawei/hinic/
+>  
+>  HUGETLB FILESYSTEM
+> -M:	Nadia Yvette Chambers <nyc@holomorphy.com>
+> +M:	Mike Kravetz <mike.kravetz@oracle.com>
+> +L:	linux-mm@kvack.org
+>  S:	Maintained
+>  F:	fs/hugetlbfs/
+> +F:	mm/hugetlb.c
+> +F:	include/linux/hugetlb.h
+> +F:	Documentation/admin-guide/mm/hugetlbpage.rst
+> +F:	Documentation/vm/hugetlbfs_reserv.rst
+> +F:	Documentation/ABI/testing/sysfs-kernel-mm-hugepages
+>  
+>  HVA ST MEDIA DRIVER
+>  M:	Jean-Christophe Trotin <jean-christophe.trotin@st.com>
+> -- 
+> 2.13.6
 > 
-
-Hi,
-
-Patch 4/5 for mconf works for me, but this one is failing.
-
-
-$ make ARCH=x86_64 O=xx64 nconfig
-make[1]: Entering directory '/home/rdunlap/lnx/next/linux-next-20180517/xx64'
-  GEN     ./Makefile
-  UPD     scripts/kconfig/.nconf-cfg
-  HOSTCC  scripts/kconfig/nconf.o
-In file included from ../scripts/kconfig/nconf.c:15:0:
-../scripts/kconfig/nconf.h:19:18: fatal error: menu.h: No such file or directory
- #include <menu.h>
-                  ^
-compilation terminated.
-scripts/Makefile.host:107: recipe for target 'scripts/kconfig/nconf.o' failed
-make[2]: *** [scripts/kconfig/nconf.o] Error 1
-/home/rdunlap/lnx/next/linux-next-20180517/Makefile:525: recipe for target 'nconfig' failed
-make[1]: *** [nconfig] Error 2
-make[1]: Leaving directory '/home/rdunlap/lnx/next/linux-next-20180517/xx64'
-Makefile:146: recipe for target 'sub-make' failed
-make: *** [sub-make] Error 2
-
-
-xx64/scripts/kconfig/.nconf-cfg contains:
-libs="-lncursesw -lmenuw -lpanelw"
-
-There are several menu.h files in /usr/include:
-$ find . -name menu.h
-./ncurses6/ncursesw/menu.h
-./ncurses6/ncurses/menu.h
-./ncursesw/menu.h
-./claws-mail/gtk/menu.h
-./ncurses/menu.h
-
-
->  scripts/kconfig/Makefile     | 16 ++++++++--------
->  scripts/kconfig/nconf-cfg.sh | 34 ++++++++++++++++++++++++++++++++++
->  2 files changed, 42 insertions(+), 8 deletions(-)
->  create mode 100644 scripts/kconfig/nconf-cfg.sh
 > 
-> diff --git a/scripts/kconfig/Makefile b/scripts/kconfig/Makefile
-> index 25a3d25..b90e801 100644
-> --- a/scripts/kconfig/Makefile
-> +++ b/scripts/kconfig/Makefile
-> @@ -176,15 +176,12 @@ help:
->  # ===========================================================================
->  # Shared Makefile for the various kconfig executables:
->  # conf:	  Used for defconfig, oldconfig and related targets
-> -# nconf:  Used for the nconfig target.
-> -#         Utilizes ncurses
->  # object files used by all kconfig flavours
->  
->  conf-objs	:= conf.o  zconf.tab.o
-> -nconf-objs     := nconf.o zconf.tab.o nconf.gui.o
->  kxgettext-objs	:= kxgettext.o zconf.tab.o
->  
-> -hostprogs-y := conf nconf kxgettext
-> +hostprogs-y := conf kxgettext
->  
->  targets		+= zconf.lex.c
->  clean-files	+= gconf.glade.h
-> @@ -199,10 +196,13 @@ HOST_EXTRACXXFLAGS += $(shell $(CONFIG_SHELL) $(srctree)/$(src)/check.sh $(HOSTC
->  HOSTCFLAGS_zconf.lex.o	:= -I$(src)
->  HOSTCFLAGS_zconf.tab.o	:= -I$(src)
->  
-> -HOSTLOADLIBES_nconf	= $(shell \
-> -				pkg-config --libs menuw panelw ncursesw 2>/dev/null \
-> -				|| pkg-config --libs menu panel ncurses 2>/dev/null \
-> -				|| echo "-lmenu -lpanel -lncurses"  )
-> +# nconf: Used for the nconfig target based on ncurses
-> +hostprogs-y	+= nconf
-> +nconf-objs	:= nconf.o zconf.tab.o nconf.gui.o
-> +
-> +HOSTLOADLIBES_nconf	= $(shell . $(obj)/.nconf-cfg && echo $$libs)
-> +
-> +$(obj)/nconf.o: $(obj)/.nconf-cfg
->  
->  # mconf: Used for the menuconfig target based on lxdialog
->  hostprogs-y	+= mconf
-> diff --git a/scripts/kconfig/nconf-cfg.sh b/scripts/kconfig/nconf-cfg.sh
-> new file mode 100644
-> index 0000000..8eb7948
-> --- /dev/null
-> +++ b/scripts/kconfig/nconf-cfg.sh
-> @@ -0,0 +1,34 @@
-> +#!/bin/sh
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +PKG="ncursesw menuw panelw"
-> +PKG2="ncurses menu panel"
-> +
-> +if pkg-config --exists $PKG; then
-> +	echo libs=\"$(pkg-config --libs $PKG)\"
-> +	exit 0
-> +fi
-> +
-> +if pkg-config --exists $PKG2; then
-> +	echo libs=\"$(pkg-config --libs $PKG2)\"
-> +	exit 0
-> +fi
-> +
-> +# Unfortunately, some distributions (e.g. openSUSE) cannot find ncurses
-> +# by pkg-config.
-> +if [ -f /usr/include/ncursesw/ncurses.h ]; then
-> +	echo libs=\"-lncursesw -lmenuw -lpanelw\"
-> +	exit 0
-> +fi
-> +
-> +if [ -f /usr/include/ncurses.h ]; then
-> +	echo libs=\"-lncurses -lmenu -lpanel\"
-> +	exit 0
-> +fi
-> +
-> +echo >&2 "*"
-> +echo >&2 "* Unable to find the ncurses."
-> +echo >&2 "* Install ncurses (ncurses-devel or libncurses-dev"
-> +echo >&2 "* depending on your distribution)"
-> +echo >&2 "*"
-> +exit 1
-> 
-
-
--- 
-~Randy
