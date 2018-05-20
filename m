@@ -1,90 +1,257 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752375AbeETPhs (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 11:37:48 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:40893 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751348AbeETPho (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 11:37:44 -0400
-X-Google-Smtp-Source: AB8JxZrJdBIZaar0zhgBK+HVN1URMZCtIifBS37vdf1nw5jg8hGUMJqeZFcbi3g+jPOPz0vLgpGiUg==
-From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Tony Lindgren <tony@atomide.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Mark Brown <broonie@kernel.org>, Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Richard Weinberger <richard@nod.at>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Jarkko Nikula <jarkko.nikula@bitmer.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-input <linux-input@vger.kernel.org>,
-        "open list:MEMORY TECHNOLOGY..." <linux-mtd@lists.infradead.org>,
-        linux-fbdev@vger.kernel.org,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>
-Subject: Re: [PATCH 5/6] mtd: rawnand: ams-delta: use GPIO lookup table
-Date: Sun, 20 May 2018 17:37:44 +0200
-Message-ID: <3505791.x6nWYTo8eb@z50>
-In-Reply-To: <CAHp75Ved2nw1JKnXT2Jxnw4XLsby1eVJU6cfBjE2sp4LP4Kwmg@mail.gmail.com>
-References: <20180518210954.29044-1-jmkrzyszt@gmail.com> <5456625.lDWjtgZygK@z50> <CAHp75Ved2nw1JKnXT2Jxnw4XLsby1eVJU6cfBjE2sp4LP4Kwmg@mail.gmail.com>
+        id S1752256AbeETPnB (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 11:43:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50286 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751348AbeETPm7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 May 2018 11:42:59 -0400
+Date: Sun, 20 May 2018 16:42:53 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: benjamin.gaignard@st.com, fabrice.gasnier@st.com,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v6 4/9] counter: 104-quad-8: Add Generic Counter
+ interface support
+Message-ID: <20180520164253.5432d2a4@archlinux>
+In-Reply-To: <881ede525a87ef68fad76cc757ce0ba72df03e5a.1526487615.git.vilhelm.gray@gmail.com>
+References: <cover.1526487615.git.vilhelm.gray@gmail.com>
+        <881ede525a87ef68fad76cc757ce0ba72df03e5a.1526487615.git.vilhelm.gray@gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sunday, May 20, 2018 4:44:31 PM CEST Andy Shevchenko wrote:
-> On Sun, May 20, 2018 at 12:55 AM, Janusz Krzysztofik
-> 
-> <jmkrzyszt@gmail.com> wrote:
-> > On Saturday, May 19, 2018 8:00:38 PM CEST Andy Shevchenko wrote:
-> >> On Sat, May 19, 2018 at 2:15 AM, Janusz Krzysztofik <jmkrzyszt@gmail.com>
-> > 
-> > wrote:
-> >> NULL check in practice discards the _optional part of gpiod_get(). So,
-> >> either you use non-optional variant and decide how to handle an
-> >> errors, or user _optional w/o NULL check.
-> > 
-> > OK, I'm going to use something like the below while submitting v2:
-> > 
-> > -       gpiod_rdy = devm_gpiod_get_optional(&pdev->dev, "rdy", GPIOD_IN);
-> > -       if (!IS_ERR_OR_NULL(gpiod_rdy)) {
-> > -               this->dev_ready = ams_delta_nand_ready;
-> > -       } else {
-> > -               this->dev_ready = NULL;
-> > -               pr_notice("Couldn't request gpio for Delta NAND
-> > ready.\n");
-> > +       priv->gpiod_rdy = devm_gpiod_get_optional(&pdev->dev, "rdy",
-> > +                                                 GPIOD_IN);
-> > +       if (IS_ERR(priv->gpiod_rdy)) {
-> > +               err = PTR_ERR(priv->gpiod_nwp);
-> > +               dev_warn(&pdev->dev, "RDY GPIO request failed (%d)\n",
-> > err); +               goto err_gpiod;
-> > 
-> >         }
-> > 
-> > +       if (priv->gpiod_rdy)
-> > +               this->dev_ready = ams_delta_nand_ready;
-> 
-> This makes sense.
-> 
-> Though, I completely dislike "rdy" name of GPIO. Where is it documented?
+On Wed, 16 May 2018 13:51:25 -0400
+William Breathitt Gray <vilhelm.gray@gmail.com> wrote:
 
-No documentation files for Amstrad Delta nor for its NAND driver specifically 
-exist under Documentation/. However, there exist some for generic GPIO NAND 
-driver where the pin name "rdy" is used explicitly:
-Documentation/driver-api/gpio/drivers-on-gpio.rst
-Documentation/devicetree/bindings/mtd/gpio-control-nand.txt
-You can find that mnemonic used across drivers/mtd/nand/, standalone or as a 
-suffix, including the Amstrad Delta NAND driver before the change discussed.
+> This patch adds support for the Generic Counter interface to the
+> 104-QUAD-8 driver. The existing 104-QUAD-8 device interface should not
+> be affected by this patch; all changes are intended as supplemental
+> additions as perceived by the user.
+> 
+> Generic Counter Counts are created for the eight quadrature channel
+> counts, as well as their respective quadrature A and B Signals (which
+> are associated via respective Synapse structures) and respective index
+> Signals.
+> 
+> The new Generic Counter interface sysfs attributes are intended to
+> expose the same functionality and data available via the existing
+> 104-QUAD-8 IIO device interface; the Generic Counter interface serves
+> to provide the respective functionality and data in a standard way
+> expected of counter devices.
+> 
+> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 
-To be honest, I don't like it much either, but I'm just using it instead of 
-inventing something new.
+A few general comments that applied just as well to the original driver
+as they do to the modified version.
 
-Thanks,
-Janusz
+I wonder if this would be easier to review as two patches.
+Move the driver then add the counter interfaces?
+
+Right now people kind of have to review the old IIO driver and
+all the new stuff which is a big job..
+
+Jonathan
+> ---
+>  MAINTAINERS                      |    4 +-
+>  drivers/counter/104-quad-8.c     | 1335 ++++++++++++++++++++++++++++++
+>  drivers/counter/Kconfig          |   21 +
+>  drivers/counter/Makefile         |    2 +
+>  drivers/iio/counter/104-quad-8.c |  596 -------------
+>  drivers/iio/counter/Kconfig      |   17 -
+>  drivers/iio/counter/Makefile     |    1 -
+>  7 files changed, 1360 insertions(+), 616 deletions(-)
+>  create mode 100644 drivers/counter/104-quad-8.c
+>  delete mode 100644 drivers/iio/counter/104-quad-8.c
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 7a01aa63fb33..f11bf7885aeb 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -266,12 +266,12 @@ L:	linux-gpio@vger.kernel.org
+>  S:	Maintained
+>  F:	drivers/gpio/gpio-104-idio-16.c
+>  
+> -ACCES 104-QUAD-8 IIO DRIVER
+> +ACCES 104-QUAD-8 DRIVER
+>  M:	William Breathitt Gray <vilhelm.gray@gmail.com>
+>  L:	linux-iio@vger.kernel.org
+>  S:	Maintained
+>  F:	Documentation/ABI/testing/sysfs-bus-iio-counter-104-quad-8
+> -F:	drivers/iio/counter/104-quad-8.c
+> +F:	drivers/counter/104-quad-8.c
+>  
+>  ACCES PCI-IDIO-16 GPIO DRIVER
+>  M:	William Breathitt Gray <vilhelm.gray@gmail.com>
+> diff --git a/drivers/counter/104-quad-8.c b/drivers/counter/104-quad-8.c
+> new file mode 100644
+> index 000000000000..7c72fb72d660
+> --- /dev/null
+> +++ b/drivers/counter/104-quad-8.c
+> @@ -0,0 +1,1335 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+
+If you are happy with SPDX drop the GPL text below to keep things
+short.
+
+> +/*
+> + * IIO driver for the ACCES 104-QUAD-8
+> + * Copyright (C) 2016 William Breathitt Gray
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License, version 2, as
+> + * published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful, but
+> + * WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+> + * General Public License for more details.
+> + *
+> + * This driver supports the ACCES 104-QUAD-8 and ACCES 104-QUAD-4.
+> + */
+> +#include <linux/bitops.h>
+...
+> +static int quad8_probe(struct device *dev, unsigned int id)
+> +{
+> +	struct iio_dev *indio_dev;
+> +	struct quad8_iio *quad8iio;
+> +	int i, j;
+> +	unsigned int base_offset;
+> +	int err;
+> +
+> +	if (!devm_request_region(dev, base[id], QUAD8_EXTENT, dev_name(dev))) {
+> +		dev_err(dev, "Unable to lock port addresses (0x%X-0x%X)\n",
+> +			base[id], base[id] + QUAD8_EXTENT);
+> +		return -EBUSY;
+> +	}
+> +
+> +	/* Allocate IIO device; this also allocates driver data structure */
+> +	indio_dev = devm_iio_device_alloc(dev, sizeof(*quad8iio));
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +
+> +	/* Initialize IIO device */
+> +	indio_dev->info = &quad8_info;
+> +	indio_dev->modes = INDIO_DIRECT_MODE;
+> +	indio_dev->num_channels = ARRAY_SIZE(quad8_channels);
+> +	indio_dev->channels = quad8_channels;
+> +	indio_dev->name = dev_name(dev);
+> +	indio_dev->dev.parent = dev;
+> +
+> +	/* Initialize Counter device and driver data */
+> +	quad8iio = iio_priv(indio_dev);
+> +	quad8iio->counter.name = dev_name(dev);
+> +	quad8iio->counter.parent = dev;
+> +	quad8iio->counter.ops = &quad8_ops;
+> +	quad8iio->counter.counts = quad8_counts;
+> +	quad8iio->counter.num_counts = ARRAY_SIZE(quad8_counts);
+> +	quad8iio->counter.signals = quad8_signals;
+> +	quad8iio->counter.num_signals = ARRAY_SIZE(quad8_signals);
+> +	quad8iio->counter.priv = quad8iio;
+> +	quad8iio->base = base[id];
+> +
+> +	/* Reset all counters and disable interrupt function */
+> +	outb(0x01, base[id] + 0x11);
+> +	/* Set initial configuration for all counters */
+> +	for (i = 0; i < QUAD8_NUM_COUNTERS; i++) {
+> +		base_offset = base[id] + 2 * i;
+> +		/* Reset Byte Pointer */
+> +		outb(0x01, base_offset + 1);
+
+I'm going to be fussy.  There are lots of values
+in here that look like register bits and you could exchange much of
+this documentation for a some good defines...
+
+Taking base_offset + 1 bits 5 and 6 look to select the actual register
+and the rest of them do the control.
+
+Anyhow, not critical but the readability of this code could be improved
+somewhat.
+
+> +		/* Reset Preset Register */
+> +		for (j = 0; j < 3; j++)
+> +			outb(0x00, base_offset);
+> +		/* Reset Borrow, Carry, Compare, and Sign flags */
+> +		outb(0x04, base_offset + 1);
+> +		/* Reset Error flag */
+> +		outb(0x06, base_offset + 1);
+> +		/* Binary encoding; Normal count; non-quadrature mode */
+> +		outb(0x20, base_offset + 1);
+> +		/* Disable A and B inputs; preset on index; FLG1 as Carry */
+> +		outb(0x40, base_offset + 1);
+> +		/* Disable index function; negative index polarity */
+> +		outb(0x60, base_offset + 1);
+> +	}
+> +	/* Enable all counters */
+> +	outb(0x00, base[id] + 0x11);
+> +
+> +	/* Register IIO device */
+> +	err = devm_iio_device_register(dev, indio_dev);
+> +	if (err)
+> +		return err;
+> +
+> +	/* Register Counter device */
+> +	return devm_counter_register(dev, &quad8iio->counter);
+> +}
+> +
+> +static struct isa_driver quad8_driver = {
+> +	.probe = quad8_probe,
+> +	.driver = {
+> +		.name = "104-quad-8"
+> +	}
+> +};
+> +
+> +module_isa_driver(quad8_driver, num_quad8);
+> +
+> +MODULE_AUTHOR("William Breathitt Gray <vilhelm.gray@gmail.com>");
+> +MODULE_DESCRIPTION("ACCES 104-QUAD-8 IIO driver");
+> +MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/counter/Kconfig b/drivers/counter/Kconfig
+> index 65fa92abd5a4..73f03372484f 100644
+> --- a/drivers/counter/Kconfig
+> +++ b/drivers/counter/Kconfig
+> @@ -16,3 +16,24 @@ menuconfig COUNTER
+>  	  consumption. The Generic Counter interface enables drivers to support
+>  	  and expose a common set of components and functionality present in
+>  	  counter devices.
+> +
+> +if COUNTER
+> +
+> +config 104_QUAD_8
+> +	tristate "ACCES 104-QUAD-8 driver"
+> +	depends on PC104 && X86 && IIO
+> +	select ISA_BUS_API
+> +	help
+> +	  Say yes here to build support for the ACCES 104-QUAD-8 quadrature
+> +	  encoder counter/interface device family (104-QUAD-8, 104-QUAD-4).
+> +
+> +	  Performing a write to a counter's IIO_CHAN_INFO_RAW sets the counter and
+> +	  also clears the counter's respective error flag. Although the counters
+> +	  have a 25-bit range, only the lower 24 bits may be set, either directly
+> +	  or via a counter's preset attribute. Interrupts are not supported by
+> +	  this driver.
+
+This text probably wants to be updated to reflect the new counter subsystem support..
+
+> +
+> +	  The base port addresses for the devices may be configured via the base
+> +	  array module parameter.
+> +
+> +endif # COUNTER
+> diff --git a/drivers/counter/Makefile b/drivers/counter/Makefile
+> index ad1ba7109cdc..23a4f6263e45 100644
+> --- a/drivers/counter/Makefile
+> +++ b/drivers/counter/Makefile
+> @@ -6,3 +6,5 @@
+>  
+>  obj-$(CONFIG_COUNTER) += counter.o
+>  counter-y := generic-counter.o
+> +
+> +obj-$(CONFIG_104_QUAD_8)	+= 104-quad-8.o
+> diff --git a/drivers/iio/counter/104-quad-8.c b/drivers/iio/counter/104-quad-8.c
+...
