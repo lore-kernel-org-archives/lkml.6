@@ -1,92 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754250AbeEUV6U (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 17:58:20 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:35732 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754047AbeEUV6P (ORCPT
+        id S932096AbeEUV7y (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 17:59:54 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:38552 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754092AbeEUV7t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 17:58:15 -0400
-X-Google-Smtp-Source: AB8JxZpuGHJ46uaU450d6k0Ria3ZZvX8lcsrli+cGF+2mHH/g//76wXh2yduI+ZCUXc0TrKDMqjpR7/vbdvIGsiTO9g=
-MIME-Version: 1.0
-In-Reply-To: <1526903890-35761-19-git-send-email-xieyisheng1@huawei.com>
-References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com> <1526903890-35761-19-git-send-email-xieyisheng1@huawei.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 22 May 2018 00:58:14 +0300
-Message-ID: <CAHp75VfnJQBdXiVuv9OOT6w=wD5rKDCJKA7M2iyxxmQndNhoRA@mail.gmail.com>
-Subject: Re: [PATCH 18/33] power: supply: use match_string() helper
-To: Yisheng Xie <xieyisheng1@huawei.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 21 May 2018 17:59:49 -0400
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To: x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] Fix SSBD not being exposed to guests. (v1)
+Date: Mon, 21 May 2018 17:54:48 -0400
+Message-Id: <20180521215449.26423-1-konrad.wilk@oracle.com>
+X-Mailer: git-send-email 2.13.4
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8900 signatures=668700
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=583
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805210256
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 2:57 PM, Yisheng Xie <xieyisheng1@huawei.com> wrote:
-> match_string() returns the index of an array for a matching string,
-> which can be used intead of open coded variant.
->
+Hi,
 
-This doesn't make code looks better anyhow. I even think it makes it
-worse to read.
-That's why I dropped my version of the change (and yes, I missed the
-type conversion which looks here just ugly).
+Without this patch, when launching QEMU with -cpu +ssbd I ended up
+with a warning seeing that the CPU does not support - which in fact it does.
 
-Sebastian, if my opinion makes any difference here, I would say NAK to this one.
+The issue was the X86_FEATURE_ -  the kvm_cpuid_7_0_edx_x86_features
+had bit 17 set (X86_FEATURE_SSBD), while the right bit should have been
+bit 31 ( X86_FEATURE_SPEC_CTRL_SSBD). That meant the masking:
 
-> Cc: Sebastian Reichel <sre@kernel.org>
-> Cc: linux-pm@vger.kernel.org
-> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
-> ---
->  drivers/power/supply/power_supply_core.c | 16 ++++++----------
->  1 file changed, 6 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/supply/power_supply_core.c
-> index feac7b0..84da3a2 100644
-> --- a/drivers/power/supply/power_supply_core.c
-> +++ b/drivers/power/supply/power_supply_core.c
-> @@ -36,8 +36,6 @@
->  static bool __power_supply_is_supplied_by(struct power_supply *supplier,
->                                          struct power_supply *supply)
->  {
-> -       int i;
-> -
->         if (!supply->supplied_from && !supplier->supplied_to)
->                 return false;
->
-> @@ -45,18 +43,16 @@ static bool __power_supply_is_supplied_by(struct power_supply *supplier,
->         if (supply->supplied_from) {
->                 if (!supplier->desc->name)
->                         return false;
-> -               for (i = 0; i < supply->num_supplies; i++)
-> -                       if (!strcmp(supplier->desc->name, supply->supplied_from[i]))
-> -                               return true;
-> +               return match_string((const char **)supply->supplied_from,
-> +                                   supply->num_supplies,
-> +                                   supplier->desc->name) >= 0;
->         } else {
->                 if (!supply->desc->name)
->                         return false;
-> -               for (i = 0; i < supplier->num_supplicants; i++)
-> -                       if (!strcmp(supplier->supplied_to[i], supply->desc->name))
-> -                               return true;
-> +               return match_string((const char **)supplier->supplied_to,
-> +                                   supplier->num_supplicants,
-> +                                   supply->desc->name) >= 0;
->         }
-> -
-> -       return false;
->  }
->
->  static int __power_supply_changed_work(struct device *dev, void *data)
-> --
-> 1.7.12.4
->
+	entry->edx &= kvm_cpuid_7_0_edx_x86_features;
 
+would nicely clear the SSBD bit.
 
+This fixes:
+Fixes: 52817587e706 ("x86/cpufeatures: Disentangle SSBD enumeration")
 
--- 
-With Best Regards,
-Andy Shevchenko
+ arch/x86/kvm/cpuid.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+Konrad Rzeszutek Wilk (1):
+      KVM: VMX: Expose SSBD properly to guests.
