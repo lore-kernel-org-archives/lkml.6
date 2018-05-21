@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752814AbeEUOp7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 10:45:59 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:38815 "EHLO
+        id S1752841AbeEUOqB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 10:46:01 -0400
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:42863 "EHLO
         relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751133AbeEUOpw (ORCPT
+        with ESMTP id S1752569AbeEUOpy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 10:45:52 -0400
+        Mon, 21 May 2018 10:45:54 -0400
 X-Originating-IP: 2.224.242.101
 From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
@@ -15,10 +15,12 @@ To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
 Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 0/3] arm64: dts: Draak: Enable video inputs and VIN4
-Date: Mon, 21 May 2018 16:45:39 +0200
-Message-Id: <1526913942-15426-1-git-send-email-jacopo+renesas@jmondi.org>
+Subject: [PATCH v4 1/3] dt-bindings: media: rcar-vin: Add R8A77995 support
+Date: Mon, 21 May 2018 16:45:40 +0200
+Message-Id: <1526913942-15426-2-git-send-email-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1526913942-15426-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1526913942-15426-1-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -26,43 +28,28 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-  this series enables HDMI, CVBS and VIN4 for R8A77995 Draak board.
+Add compatible string for R-Car D3 R8A7795 to list of SoCs supported by
+rcar-vin driver.
 
-Compared to v3, the analog video decoder ADV7180 is now described in bindings
-with the compatible string "adi,adv7180cp" and its port nodes definition
-has been res-structured according to the chip bindings as reported by
-Laurent on v3.
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ Documentation/devicetree/bindings/media/rcar_vin.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-Bindings have been copi^W^Winspired from Gen2 Gose board, the only Gen2 board
-using the "adv7180cp" compatible string.
-
-Example of how to switch to HDMI input is still available here:
-git://jmondi.org/linux d3/media-master/salvator-x-dts_csi2/d3-hdmi
-
-And the series still depends on
-[PATCH v3 0/9] rcar-vin: Add support for parallel input on Gen3
-
-Thanks
-   j
-
-Jacopo Mondi (3):
-  dt-bindings: media: rcar-vin: Add R8A77995 support
-  arm64: dts: renesas: draak: Describe CVBS input
-  arm64: dts: renesas: draak: Describe HDMI input
-
-v3 -> v4:
-- Use 'adi,adv7180cp' in [3/3] as detailed in the commit message
-- Add Laurent's R-b tag to [2/3]
-
-v2 -> v3:
-- Add comment to CVBS and HDMI inputs
-- Add missing Signed-off-by to [2/3]
-- Add Niklas' tag
-
- .../devicetree/bindings/media/rcar_vin.txt         |   1 +
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts     | 117 +++++++++++++++++++++
- 2 files changed, 118 insertions(+)
-
---
+diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
+index a19517e1..5c6f2a7 100644
+--- a/Documentation/devicetree/bindings/media/rcar_vin.txt
++++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
+@@ -22,6 +22,7 @@ on Gen3 platforms to a CSI-2 receiver.
+    - "renesas,vin-r8a7795" for the R8A7795 device
+    - "renesas,vin-r8a7796" for the R8A7796 device
+    - "renesas,vin-r8a77970" for the R8A77970 device
++   - "renesas,vin-r8a77995" for the R8A77995 device
+    - "renesas,rcar-gen2-vin" for a generic R-Car Gen2 or RZ/G1 compatible
+      device.
+ 
+-- 
 2.7.4
