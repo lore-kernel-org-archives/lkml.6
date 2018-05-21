@@ -1,83 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753216AbeEUPvC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 11:51:02 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59546 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753146AbeEUPu6 (ORCPT
+        id S1753322AbeEUPvV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 11:51:21 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:56006 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753155AbeEUPvS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 11:50:58 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Guneshwor Singh <guneshwor.o.singh@intel.com>,
-        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: intel: skylake: fix spelling mistake: "Homogenous" -> "Homogeneous"" to the asoc tree
-In-Reply-To: <20180521093548.18491-1-colin.king@canonical.com>
-Message-Id: <E1fKn55-0007We-Ju@debutante>
-Date: Mon, 21 May 2018 16:50:39 +0100
+        Mon, 21 May 2018 11:51:18 -0400
+Date: Mon, 21 May 2018 11:51:15 -0400 (EDT)
+Message-Id: <20180521.115115.102542572797022222.davem@davemloft.net>
+To: antoine.tenart@bootlin.com
+Cc: linux@armlinux.org.uk, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+        maxime.chevallier@bootlin.com, gregory.clement@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
+        ymarkman@marvell.com, mw@semihalf.com
+Subject: Re: [PATCH net-next 0/2] net: sfp: small improvements
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180517082907.14420-1-antoine.tenart@bootlin.com>
+References: <20180517082907.14420-1-antoine.tenart@bootlin.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+From: Antoine Tenart <antoine.tenart@bootlin.com>
+Date: Thu, 17 May 2018 10:29:05 +0200
 
-   ASoC: intel: skylake: fix spelling mistake: "Homogenous" -> "Homogeneous"
+> This series was part of the mvpp2 phylink one but as we reworked it to
+> use fixed-link on the DB boards, the SFP commits weren't needed
+> anymore for our use case. Two of the three patches still are needed I
+> believe (I ditched the one about non-wired SFP cages), so they are sent
+> here in a separate series.
 
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 7608102ee610cb4a65b38a4e1319e22c7ebeb04b Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Mon, 21 May 2018 10:35:48 +0100
-Subject: [PATCH] ASoC: intel: skylake: fix spelling mistake: "Homogenous" ->
- "Homogeneous"
-
-Trivial fix to spelling mistake in snprintf literal string
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/intel/skylake/skl-debug.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/intel/skylake/skl-debug.c b/sound/soc/intel/skylake/skl-debug.c
-index a016455a6ddb..302b40e63e6c 100644
---- a/sound/soc/intel/skylake/skl-debug.c
-+++ b/sound/soc/intel/skylake/skl-debug.c
-@@ -142,8 +142,8 @@ static ssize_t module_read(struct file *file, char __user *user_buf,
- 			mconfig->max_out_queue, ret, false);
- 
- 	ret += snprintf(buf + ret, MOD_BUF - ret,
--			"Other:\n\tDomain %d\n\tHomogenous Input %s\n\t"
--			"Homogenous Output %s\n\tIn Queue Mask %d\n\t"
-+			"Other:\n\tDomain %d\n\tHomogeneous Input %s\n\t"
-+			"Homogeneous Output %s\n\tIn Queue Mask %d\n\t"
- 			"Out Queue Mask %d\n\tDMA ID %d\n\tMem Pages %d\n\t"
- 			"Module Type %d\n\tModule State %d\n",
- 			mconfig->domain,
--- 
-2.17.0
+Based upon the discussion of patch #1, it seems there is a desire to make
+the i2c-bus property mandatory since it isn't clear if access to the SFP
+module without it really all that doable.
