@@ -1,55 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753246AbeEUQDq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 12:03:46 -0400
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:59151 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752657AbeEUQC3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 12:02:29 -0400
-X-IronPort-AV: E=Sophos;i="5.49,426,1520870400";
-   d="scan'208";a="79445400"
-From: adam.manzanares@wdc.com
-To: viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        axboe@kernel.dk, bcrl@kvack.org
-Cc: tglx@linutronix.de, mingo@kernel.org, pombredanne@nexb.com,
-        kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
-        bigeasy@linutronix.de, jack@suse.cz, darrick.wong@oracle.com,
-        rgoldwyn@suse.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-aio@kvack.org,
-        linux-api@vger.kernel.org, hch@infradread.org,
-        Adam Manzanares <adam.manzanares@wdc.com>
-Subject: [PATCH v5 4/5] fs: blkdev set bio prio from kiocb prio
-Date: Mon, 21 May 2018 09:01:46 -0700
-Message-Id: <20180521160147.2372-5-adam.manzanares@wdc.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180521160147.2372-1-adam.manzanares@wdc.com>
-References: <20180521160147.2372-1-adam.manzanares@wdc.com>
+        id S1753096AbeEUQJS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 12:09:18 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53586 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752985AbeEUQJQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 12:09:16 -0400
+Date: Mon, 21 May 2018 12:09:14 -0400
+From: Mike Snitzer <snitzer@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        hch@infradead.org, colyli@suse.de, darrick.wong@oracle.com, clm@fb.com,
+        bacik@fb.com, linux-xfs@vger.kernel.org, drbd-dev@lists.linbit.com,
+        linux-btrfs@vger.kernel.org, linux-raid@vger.kernel.org,
+        neilb@suse.com
+Subject: Re: [PATCH 00/13] convert block layer to bioset_init()/mempool_init()
+Message-ID: <20180521160907.GA19553@redhat.com>
+References: <20180521140348.GA19069@redhat.com>
+ <686d7df6-c7d1-48a6-b7ff-48dc8aff6a62@kernel.dk>
+ <20180521143132.GB19194@redhat.com>
+ <2bbeeb1a-8b99-b06a-eb9b-eb8523c16460@kernel.dk>
+ <20180521144703.GA19303@redhat.com>
+ <4b343aef-e11c-73ba-1d88-7e73ca838cad@kernel.dk>
+ <20180521150439.GA19379@redhat.com>
+ <61e30dcf-a01c-f47d-087a-12930caf9aef@kernel.dk>
+ <20180521151817.GA19454@redhat.com>
+ <d01a150a-7752-f6ce-78f2-17a65c1e6fa5@kernel.dk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d01a150a-7752-f6ce-78f2-17a65c1e6fa5@kernel.dk>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adam Manzanares <adam.manzanares@wdc.com>
+On Mon, May 21 2018 at 11:36am -0400,
+Jens Axboe <axboe@kernel.dk> wrote:
 
-Now that kiocb has an ioprio field copy this over to the bio when it is
-created from the kiocb.
+> On 5/21/18 9:18 AM, Mike Snitzer wrote:
+> > On Mon, May 21 2018 at 11:09am -0400,
+> > Jens Axboe <axboe@kernel.dk> wrote:
+> > 
+> >> On 5/21/18 9:04 AM, Mike Snitzer wrote:
+> >>> On Mon, May 21 2018 at 10:52am -0400,
+> >>> Jens Axboe <axboe@kernel.dk> wrote:
+> >>>
+...
+> >>>> IMHO you're making a big deal out of something that should not be.
+> >>>
+> >>> I raised an issue that had seemingly not been considered at all.  Not
+> >>> making a big deal.  Raising it for others' benefit.
+> >>>
+> >>>> If the dm bits are that sensitive and cache line honed to perfection
+> >>>> already due to previous regressions in that area, then it might
+> >>>> not be a bad idea to have some compile checks for false cacheline
+> >>>> sharing between sensitive members, or spilling of a sub-struct
+> >>>> into multiple cachelines.
+> >>>>
+> >>>> It's not like this was pushed behind your back. It's posted for
+> >>>> review. It's quite possible the net change is a win for dm. Let's
+> >>>> focus on getting it reviewed, rather than pontificate on what
+> >>>> could potentially go all wrong with this.
+> >>>
+> >>> Why are you making this personal?  Or purely about DM?  I'm merely
+> >>> pointing out this change isn't something that can be given a quick
+> >>> blanket "looks good".
+> >>
+> >> I'm not making this personal at all?! You raised a (valid) concern,
+> >> I'm merely stating why I don't think it's a high risk issue. I'm
+> >> assuming your worry is related to dm, as those are the reports
+> >> that would ultimately land on your desk.
+> > 
+> > Then we'll just agree to disagree with what this implies: "It's not like
+> > this was pushed behind your back."
+> 
+> I'm afraid you've lost me now - it was not pushed behind your back,
+> it was posted for review, with you on the CC list. Not trying to
+> be deliberately dense here, I just don't see what our disagreement is.
 
-Signed-off-by: Adam Manzanares <adam.manzanares@wdc.com>
----
- fs/block_dev.c | 1 +
- 1 file changed, 1 insertion(+)
+You're having an off day ;)  Mondays and all?
 
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index 7ec920e27065..da1e94d2bb75 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -355,6 +355,7 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
- 		bio->bi_write_hint = iocb->ki_hint;
- 		bio->bi_private = dio;
- 		bio->bi_end_io = blkdev_bio_end_io;
-+		bio->bi_ioprio = iocb->ki_ioprio;
- 
- 		ret = bio_iov_iter_get_pages(bio, iter);
- 		if (unlikely(ret)) {
--- 
-2.15.1
+I just raised an alignment concern that needs to be considered during
+review by all stakeholders.  Wasn't upset at all.  Maybe my email tone
+came off otherwise?
+
+And then you got confused by me pointing out how it was weird for you to
+suggest I felt this stuff was pushed behind my back.. and went on to
+think I really think that.  It's almost like you're a confused hypnotist
+seeding me with paranoid dilutions. ;)
+
+/me waits for Jens to snap his fingers so he can just slowly step away
+from this line of discussion that is solidly dead now...
+
+> > Reality is I'm fine with the change.  Just think there is follow-on work
+> > (now or later) that is needed.
+> 
+> It's not hard to run the quick struct layout checks or alignment. If
+> there's a concern, that should be done now, instead of being deferred to
+> later. There's no point merging something that we expect to have
+> follow-on work. If that's the case, then it should not be merged. There
+> are no dependencies in the patchset, except that the last patch
+> obviously can't be applied until all of the previous ones are in.
+
+Cool, sounds good.
+
+> I took a quick look at the struct mapped_device layout, which I'm
+> assuming is the most important on the dm side. It's pretty big to
+> begin with, obviously this makes it bigger since we're now
+> embedding the bio_sets. On my config, doesn't show any false sharing
+> that would be problematic, or layout changes that would worry me. FWIW.
+
+Great, thanks, do you happen to have a tree you can push so others can
+get a quick compile and look at the series fully applied?
+
+BTW, I'm upstream DM maintainer but I have a role in caring for related
+subsystems (e.g. block core, etc) in downstream releases.. *cough* RHEL.
+So this alignment concern wasn't ever purely about DM.
+
+Mike
