@@ -1,81 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752655AbeEUDOG (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 23:14:06 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:35022 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752291AbeEUDOD (ORCPT
+        id S1752714AbeEUDOP (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 23:14:15 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43158 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752311AbeEUDON (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 23:14:03 -0400
-X-Google-Smtp-Source: AB8JxZqKMOEGhIFfxx1+G7aauQh6+hNhimg57C63sTpty5IE9uzFdqKurcUmu4LSTOJzWdfFVs1xQNKncdQbv0Q2okU=
+        Sun, 20 May 2018 23:14:13 -0400
+Subject: Re: [ANNOUNCE] Kconfiglib menuconfig implementation
+To: Ulf Magnusson <ulfalizer@gmail.com>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <CAFkk2KRTnRpi5thUGTM2+LZMyitggdJtiOBO7E0pTn93fz6-SQ@mail.gmail.com>
+ <d4c3b2ab-385d-fe7a-bdb1-2d497d620de5@infradead.org>
+ <CAFkk2KRozscmd4kQSJKwKmY3WpTody7S5XZZObf8SKLF62k6+w@mail.gmail.com>
+ <CAFkk2KRkEt3+786QvyjzPPAm+3HDe2+ydzZJpshfdKyUDQVfuw@mail.gmail.com>
+ <CAFkk2KRvSxu+x-nb045=3L63KEk5h9URr5QYLPoYp6rqqTR4qA@mail.gmail.com>
+ <3d9be2f2-3fbe-411b-8529-0e0847f01346@infradead.org>
+ <CAFkk2KRWon_S--dxYw82cDyGXKTFA6jxrrQwstzLvHPs=6-dqQ@mail.gmail.com>
+ <c4ec710f-b2bd-b9f0-c33a-159aa53ca73c@infradead.org>
+ <1378afb3-2b0e-da7a-5721-a8fa727e4382@infradead.org>
+ <CAFkk2KS=bYn3t-764CEy+sq9E8FUbWH=L-yQbDhAYQpnrgmsiQ@mail.gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <4a4b12fc-ab54-20c4-7aa7-a83c4faecf25@infradead.org>
+Date: Sun, 20 May 2018 19:45:22 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180514.093504.1396660355199793729.davem@davemloft.net>
-References: <20180514032839.32079-1-acelan.kao@canonical.com> <20180514.093504.1396660355199793729.davem@davemloft.net>
-From: AceLan Kao <acelan.kao@canonical.com>
-Date: Mon, 21 May 2018 11:14:00 +0800
-Message-ID: <CAFv23Q=RGo5Tw4sL5GiYM69xeGUPReiBE290rnzCvOPezQinCg@mail.gmail.com>
-Subject: Re: [PATCH v2] Revert "alx: remove WoL support"
-To: David Miller <davem@davemloft.net>
-Cc: James Cliburn <jcliburn@gmail.com>,
-        Chris Snook <chris.snook@gmail.com>, rakesh@tuxera.com,
-        netdev@vger.kernel.org, Emily Chien <emily.chien@canonical.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAFkk2KS=bYn3t-764CEy+sq9E8FUbWH=L-yQbDhAYQpnrgmsiQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David,
-
-We are willing to fix the issue, but we don't have a machine to reproduce it,
-and the WoL feature has been removed 5 years ago, it's hard to find
-those buggy machines.
-
-WoL is a feature that is only used by a very small group of people,
-and the wake up issue
-looks like only happens on some platforms. Which means only small part
-of the group of people are affected.
-So, it's not a serious issue worth to remove it from alx driver.
-
-As the commit describes, WoL is required to pass E-Start 6.1, and
-taking secure boot into account,
-we can't keep distributing "alx driver with WoL" dkms package, so we
-really need this feature to be built in the kernel.
-
-There are some solutions to fix it.
-1. Add WoL feature back, and we will try our best to fix the wake up
-issue if we encounter it or users report it.
-2. Add WoL feature back and add an driver option to disable it by
-default, so that it won't create any regression and user can enable it
-by kernel cmdline.
-3. Add WoL feature back and create a white list in the driver, we'll
-add those platforms we tested to the list.
-4. or create a blacklist to list machines which are reported buggy.
-Could you let me know which solution is more feasible for you?
-Thanks.
-
-Best regards,
-AceLan Kao.
-
-2018-05-14 21:35 GMT+08:00 David Miller <davem@davemloft.net>:
-> From: AceLan Kao <acelan.kao@canonical.com>
-> Date: Mon, 14 May 2018 11:28:39 +0800
->
->> This reverts commit bc2bebe8de8ed4ba6482c9cc370b0dd72ffe8cd2.
+On 05/19/2018 09:47 PM, Ulf Magnusson wrote:
+> On Sun, May 20, 2018 at 6:03 AM, Randy Dunlap <rdunlap@infradead.org> wrote:
+>> On 05/19/2018 08:45 PM, Randy Dunlap wrote:
+>>> On 05/08/2018 09:59 AM, Ulf Magnusson wrote:
+>>>> Hello,
+>>>>
+>>>> I've added incremental search for jumping directly to a symbol now.
+>>>> Regular expressions are supported as well.
+>>>>
+>>>> Some screenshots below:
+>>>>
+>>>> https://raw.githubusercontent.com/ulfalizer/Kconfiglib/screenshots/screenshots/ss10.png
+>>>> https://raw.githubusercontent.com/ulfalizer/Kconfiglib/screenshots/screenshots/ss11.png
+>>>> https://raw.githubusercontent.com/ulfalizer/Kconfiglib/screenshots/screenshots/ss13.png
+>>>>
+>>>> The last screenshot shows how things might look after you jump to a
+>>>> symbol. The jumped-to symbol wasn't visible in this case, so show-all
+>>>> mode was turned on automatically.
+>>>
+>>> Hi Ulf,
+>>>
+>>>
+>>>
+>>> Hm, OK, I used the trick that you supplied a few weeks ago and I have the UI now.
+>>>
+>>>     ARCH=x86 SRCARCH=x86 KERNELVERSION=`make kernelversion` \
+>>>         Kconfiglib/menuconfig.py
+>>>
+>>> so yes, a real Makefile target would be nice. :)
 >>
->> The WoL feature is a must to pass Energy Star 6.1 and above,
->> the power consumption will be measured during S3 with WoL is enabled.
+>> I want to see all kconfig symbols that end with "_DEBUG" (so excluding
+>> _DEBUGFS).  Using:
 >>
->> Reverting "alx: remove WoL support", and will try to fix the unintentional
->> wake up issue when WoL is enabled.
+>> /.*_DEBUG$
 >>
->> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=61651
+>> shows me 6 symbols:
+>> ATH9K_COMMON_DEBUG
+>> DVB_B2C2_FLEXCOP_DEBUG
+>> HAVE_DMA_API_DEBUG
+>> IP_DCCP_TFRC_DEBUG
+>> NFS_DEBUG
+>> PM_SLEEP_DEBUG
 >>
->> Signed-off-by: AceLan Kao <acelan.kao@canonical.com>
->
-> First, we must fix the problem that caused WoL to be disabled.
->
-> Then, and only then, can you re-enable it.
->
-> Thank you.
+>> so where are the other (approx.) 176?
+>> see:
+>> $ find . -name Kconfig\* | xargs grep "config.*_DEBUG$" | grep -v \.orig | wc
+>>     182     364    9179
+>>
+>>
+>> Anyway, something for you to look at. :)
+>>
+>> --
+>> ~Randy
+> 
+> It's related to how the search is done. Searching for "DEBUG\b" (word
+> boundary) instead will find all of them.
+> 
+> A string is generated for each symbol. For symbols with prompts, this
+> string includes the prompt as well, so you get e.g.
+> 
+>     AB8500_DEBUG "Enable debug info via debugfs"
+> 
+> Those strings are then searched/displayed.
+> 
+> What you got with your search was all symbols whose names end in
+> "_DEBUG" that don't have a prompt.
+> 
+> The nice thing about searching both the name and the prompt is that
+> e.g. "debugfs ab8500" will find the symbol above. I'm also planning to
+> add menus to the search, by generating 'menu: "menu title"' strings
+> for them.
+> 
+> It's a bit awkward/unintuitive that what you tried doesn't work
+> though. Maybe the symbol name could be searched separately from the
+> prompt, though I'd be a bit sad to abandon the super simple
+> single-string-per-entry implementation approach. :)
+
+Hi Ulf,
+
+What else are you planning to do with /(search)?
+
+
+/syscall lists 20 or so symbols. It would be nice if each one of those
+showed its current setting [y,n,maybe^Wm].
+
+
+I like Toggle show-all mode.  When I use xconfig, I usually turn on most
+of its options, including one like that.
+
+-- 
+~Randy
