@@ -1,74 +1,196 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753542AbeEUSPu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 14:15:50 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:45396 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753255AbeEUSPo (ORCPT
+        id S1751516AbeEUSQ6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 14:16:58 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:34908 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750960AbeEUSQu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 14:15:44 -0400
-X-Google-Smtp-Source: AB8JxZoEjTU2Edt+bxOJ4EwqgHzf6wJCUKWswmDZMMRyqJ9faf2MThWwL897K+4k4g4bYLkcI6Fneg==
-Subject: Re: INFO: rcu detected stall in corrupted
-To: Eric Dumazet <eric.dumazet@gmail.com>,
-        David Miller <davem@davemloft.net>,
-        syzbot+f116bc1994efe725d51b@syzkaller.appspotmail.com
-Cc: kuznet@ms2.inr.ac.ru, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        yoshfuji@linux-ipv6.org, dsahern@kernel.org, roopa@cumulusnetworks.com
-References: <00000000000007eb20056cbb245f@google.com>
- <20180521.140924.2255125685012645769.davem@davemloft.net>
- <f8d0d282-1e75-d86a-8872-e32b57a6ec14@gmail.com>
-From: David Ahern <dsahern@gmail.com>
-Message-ID: <dada303b-bad2-212d-adb5-cfde28476a23@gmail.com>
-Date: Mon, 21 May 2018 12:15:41 -0600
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.8.0
+        Mon, 21 May 2018 14:16:50 -0400
+X-Google-Smtp-Source: AB8JxZqvtHc43GuOD14i32n96J0rW4D0LdfykG9+13FausIbow0TvT7KGyzkgQI9CNHoKAjWkpoFnA==
+Date: Mon, 21 May 2018 21:16:45 +0300
+From: Vladimir Davydov <vdavydov.dev@gmail.com>
+To: Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc: akpm@linux-foundation.org, shakeelb@google.com,
+        viro@zeniv.linux.org.uk, hannes@cmpxchg.org, mhocko@kernel.org,
+        tglx@linutronix.de, pombredanne@nexb.com, stummala@codeaurora.org,
+        gregkh@linuxfoundation.org, sfr@canb.auug.org.au, guro@fb.com,
+        mka@chromium.org, penguin-kernel@I-love.SAKURA.ne.jp,
+        chris@chris-wilson.co.uk, longman@redhat.com, minchan@kernel.org,
+        ying.huang@intel.com, mgorman@techsingularity.net, jbacik@fb.com,
+        linux@roeck-us.net, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        willy@infradead.org, lirongqing@baidu.com, aryabinin@virtuozzo.com
+Subject: Re: [PATCH v6 12/17] mm: Set bit in memcg shrinker bitmap on first
+ list_lru item apearance
+Message-ID: <20180521181645.gmtm3fscygrltrdr@esperanza>
+References: <152663268383.5308.8660992135988724014.stgit@localhost.localdomain>
+ <152663302275.5308.7476660277265020067.stgit@localhost.localdomain>
+ <20180520075558.6ls4yzrkou63orkb@esperanza>
+ <2a0ca70d-12bb-8087-9897-9cb33f676177@virtuozzo.com>
 MIME-Version: 1.0
-In-Reply-To: <f8d0d282-1e75-d86a-8872-e32b57a6ec14@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2a0ca70d-12bb-8087-9897-9cb33f676177@virtuozzo.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/21/18 12:13 PM, Eric Dumazet wrote:
+On Mon, May 21, 2018 at 12:31:34PM +0300, Kirill Tkhai wrote:
+> On 20.05.2018 10:55, Vladimir Davydov wrote:
+> > On Fri, May 18, 2018 at 11:43:42AM +0300, Kirill Tkhai wrote:
+> >> Introduce set_shrinker_bit() function to set shrinker-related
+> >> bit in memcg shrinker bitmap, and set the bit after the first
+> >> item is added and in case of reparenting destroyed memcg's items.
+> >>
+> >> This will allow next patch to make shrinkers be called only,
+> >> in case of they have charged objects at the moment, and
+> >> to improve shrink_slab() performance.
+> >>
+> >> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+> >> ---
+> >>  include/linux/memcontrol.h |   14 ++++++++++++++
+> >>  mm/list_lru.c              |   22 ++++++++++++++++++++--
+> >>  2 files changed, 34 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> >> index e51c6e953d7a..7ae1b94becf3 100644
+> >> --- a/include/linux/memcontrol.h
+> >> +++ b/include/linux/memcontrol.h
+> >> @@ -1275,6 +1275,18 @@ static inline int memcg_cache_id(struct mem_cgroup *memcg)
+> >>  
+> >>  extern int memcg_expand_shrinker_maps(int new_id);
+> >>  
+> >> +static inline void memcg_set_shrinker_bit(struct mem_cgroup *memcg,
+> >> +					  int nid, int shrinker_id)
+> >> +{
+> > 
+> >> +	if (shrinker_id >= 0 && memcg && memcg != root_mem_cgroup) {
+> > 
+> > Nit: I'd remove these checks from this function and require the caller
+> > to check that shrinker_id >= 0 and memcg != NULL or root_mem_cgroup.
+> > See below how the call sites would look then.
+> > 
+> >> +		struct memcg_shrinker_map *map;
+> >> +
+> >> +		rcu_read_lock();
+> >> +		map = rcu_dereference(memcg->nodeinfo[nid]->shrinker_map);
+> >> +		set_bit(shrinker_id, map->map);
+> >> +		rcu_read_unlock();
+> >> +	}
+> >> +}
+> >>  #else
+> >>  #define for_each_memcg_cache_index(_idx)	\
+> >>  	for (; NULL; )
+> >> @@ -1297,6 +1309,8 @@ static inline void memcg_put_cache_ids(void)
+> >>  {
+> >>  }
+> >>  
+> >> +static inline void memcg_set_shrinker_bit(struct mem_cgroup *memcg,
+> >> +					  int nid, int shrinker_id) { }
+> >>  #endif /* CONFIG_MEMCG_KMEM */
+> >>  
+> >>  #endif /* _LINUX_MEMCONTROL_H */
+> >> diff --git a/mm/list_lru.c b/mm/list_lru.c
+> >> index cab8fad7f7e2..7df71ab0de1c 100644
+> >> --- a/mm/list_lru.c
+> >> +++ b/mm/list_lru.c
+> >> @@ -31,6 +31,11 @@ static void list_lru_unregister(struct list_lru *lru)
+> >>  	mutex_unlock(&list_lrus_mutex);
+> >>  }
+> >>  
+> >> +static int lru_shrinker_id(struct list_lru *lru)
+> >> +{
+> >> +	return lru->shrinker_id;
+> >> +}
+> >> +
+> >>  static inline bool list_lru_memcg_aware(struct list_lru *lru)
+> >>  {
+> >>  	/*
+> >> @@ -94,6 +99,11 @@ static void list_lru_unregister(struct list_lru *lru)
+> >>  {
+> >>  }
+> >>  
+> >> +static int lru_shrinker_id(struct list_lru *lru)
+> >> +{
+> >> +	return -1;
+> >> +}
+> >> +
+> >>  static inline bool list_lru_memcg_aware(struct list_lru *lru)
+> >>  {
+> >>  	return false;
+> >> @@ -119,13 +129,17 @@ bool list_lru_add(struct list_lru *lru, struct list_head *item)
+> >>  {
+> >>  	int nid = page_to_nid(virt_to_page(item));
+> >>  	struct list_lru_node *nlru = &lru->node[nid];
+> >> +	struct mem_cgroup *memcg;
+> >>  	struct list_lru_one *l;
+> >>  
+> >>  	spin_lock(&nlru->lock);
+> >>  	if (list_empty(item)) {
+> >> -		l = list_lru_from_kmem(nlru, item, NULL);
+> >> +		l = list_lru_from_kmem(nlru, item, &memcg);
+> >>  		list_add_tail(item, &l->list);
+> >> -		l->nr_items++;
+> >> +		/* Set shrinker bit if the first element was added */
+> >> +		if (!l->nr_items++)
+> >> +			memcg_set_shrinker_bit(memcg, nid,
+> >> +					       lru_shrinker_id(lru));
+> > 
+> > This would turn into
+> > 
+> > 	if (!l->nr_items++ && memcg)
+> > 		memcg_set_shrinker_bit(memcg, nid, lru_shrinker_id(lru));
+> > 
+> > Note, you don't need to check that lru_shrinker_id(lru) is >= 0 here as
+> > the fact that memcg != NULL guarantees that. Also, memcg can't be
+> > root_mem_cgroup here as kmem objects allocated for the root cgroup go
+> > unaccounted.
+> > 
+> >>  		nlru->nr_items++;
+> >>  		spin_unlock(&nlru->lock);
+> >>  		return true;
+> >> @@ -520,6 +534,7 @@ static void memcg_drain_list_lru_node(struct list_lru *lru, int nid,
+> >>  	struct list_lru_node *nlru = &lru->node[nid];
+> >>  	int dst_idx = dst_memcg->kmemcg_id;
+> >>  	struct list_lru_one *src, *dst;
+> >> +	bool set;
+> >>  
+> >>  	/*
+> >>  	 * Since list_lru_{add,del} may be called under an IRQ-safe lock,
+> >> @@ -531,7 +546,10 @@ static void memcg_drain_list_lru_node(struct list_lru *lru, int nid,
+> >>  	dst = list_lru_from_memcg_idx(nlru, dst_idx);
+> >>  
+> >>  	list_splice_init(&src->list, &dst->list);
+> >> +	set = (!dst->nr_items && src->nr_items);
+> >>  	dst->nr_items += src->nr_items;
+> >> +	if (set)
+> >> +		memcg_set_shrinker_bit(dst_memcg, nid, lru_shrinker_id(lru));
+> > 
+> > This would turn into
+> > 
+> > 	if (set && dst_idx >= 0)
+> > 		memcg_set_shrinker_bit(dst_memcg, nid, lru_shrinker_id(lru));
+> > 
+> > Again, the shrinker is guaranteed to be memcg aware in this function and
+> > dst_memcg != NULL.
+> > 
+> > IMHO such a change would make the code a bit more straightforward.
 > 
-> 
-> On 05/21/2018 11:09 AM, David Miller wrote:
->> From: syzbot <syzbot+f116bc1994efe725d51b@syzkaller.appspotmail.com>
->> Date: Mon, 21 May 2018 11:05:02 -0700
->>
->>>  find_match+0x244/0x13a0 net/ipv6/route.c:691
->>>  find_rr_leaf net/ipv6/route.c:729 [inline]
->>>  rt6_select net/ipv6/route.c:779 [inline]
->>
->> Hmmm, endless loop in find_rr_leaf or similar?
->>
-> 
-> 
-> I do not think so, this really looks like SCTP specific 
-> , we now have dozens of traces all sharing :
-> 
->  sctp_transport_route+0xad/0x450 net/sctp/transport.c:293
->  sctp_packet_config+0xb89/0xfd0 net/sctp/output.c:123
->  sctp_outq_flush+0x79c/0x4370 net/sctp/outqueue.c:894
->  sctp_outq_uncork+0x6a/0x80 net/sctp/outqueue.c:776
->  sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1820 [inline]
->  sctp_side_effects net/sctp/sm_sideeffect.c:1220 [inline]
->  sctp_do_sm+0x596/0x7160 net/sctp/sm_sideeffect.c:1191
->  sctp_generate_heartbeat_event+0x218/0x450 net/sctp/sm_sideeffect.c:406
->  call_timer_fn+0x230/0x940 kernel/time/timer.c:1326 
-> 
-> 
-> Some kind of infinite loop.
-> 
-> When the hrtimer fires, it can point to any code that sits below but does not necessarily have a bug.
-> 
+> IMHO, this makes the code less readable. Using single generic function with
+> generic check is easier, then using two different checks for different places.
+> Next a person, who will modify the logic, does not have to think about particulars
+> of strange checks in list_lru_add() and memcg_drain_list_lru_node(), if he/she
 
-Just so we are looking at the right tree, the original message shows:
+I'd prefer them to think through all corner cases before touching this
+code :-)
 
-> HEAD commit:    771c577c23ba Linux 4.17-rc6
-> git tree:       upstream
+> does not involved in the change of maps logic. Memory cgroup is already fell
+> into many corner cases, let's do not introduce them in new places.
 
-I take that to mean this is Linus' tree.
+The reason why I'd rather move those checks from memcg_set_shrinker_bit
+to call sites is that now looking at the function code makes me wonder
+why this function has to turn into a no-op if shrinker_id < 0 or memcg
+is NULL, why these corner cases are even possible. To understand that, I
+have to look at all places where this function is called, which are
+located in a different source file. This is rather inconvenient IMO. But
+I guess it's bikesheding so I don't insist.
