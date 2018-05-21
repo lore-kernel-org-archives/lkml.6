@@ -1,61 +1,75 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1526648325; cv=none;
+Return-Path: <broonie@sirena.org.uk>
+X-Google-Smtp-Source: AB8JxZqbLPAqZJopYHL15PHssLCvpucek1Nip0LNApXOTzdy05Z0QpAn9lnjq/zVtmzzJpCRDlyc
+ARC-Seal: i=1; a=rsa-sha256; t=1526917667; cv=none;
         d=google.com; s=arc-20160816;
-        b=fFUepZb+u/C6FANJaw/0FWljuvHK8mvH+ukI88cSZiqqafy6olLMqyrZaLaeV181q0
-         ysU0bRL34TLZczGYxa6GwVwOpUKm48eLF2KKv1zNGNJTHLEtNXO2zyvzsZFjsZHv6KNR
-         YMB9fv36Me53ZmP8dcNTe+RXZkvoUktnWSgAASLGXVgMWZqKNZvSlrWDE7UwD7/oDzBH
-         h3wP2ITvivLNkDIZzmD7my7WLfOn2780t2v9RAQXs+ns7zGCp84eM5Bkk4KRztajfNmU
-         NAw7gMo7u/01vjM7sSJEJw0f029k6WKTdkQJNQnIOrSz7Kv6vkBiXxCh9UMUS/EJZnJ4
-         nhVQ==
+        b=N9DhriRzCiOZu6Y4kwQmFVTJ/rmKzRgCg8RzlBCekPJuIYN0a8U8pgZHXtL0LssogJ
+         w5ojiXaTXhJgMvuulW9PonmeFt7Czmn7kQD2UjZD2plt51oI6kqe32B+yClD1DTLehXf
+         l800HEBs2/Ovm2Rd9qCQpnKgmLp3BmoSk2hKHLwUwNImPury/HFhWGlw4M+1zFEhBKE4
+         b9RnFEwBgG5tlxMaajT8wq9fcC/nozmTRDoNC5kg0D6DdY7zh6DsdZNY8n8AsYnITYSB
+         g2N0ZhF8pmNLoNmn563gkO5DFdP/nKy5Uw0HIcRaOHutpJ1iJMcVcVfqF54C7OMLFXp/
+         sgHQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=PZ/7geR5TrCajSvXWxjhlIX/2ON5bfupQ4XEDp7h1Ro=;
-        b=nMvjzMqahLmlanv5NisuNQsoodqYrTePxdPQMno741vLbPNgrzSwzO4UgR8opSkNaL
-         2ibUdKH+R9F3m77mFyYncDsWJ/b1eAs7haJXM4ELcty38dNm+VcI/Go3S/sBQ8hHFfB1
-         3I+BcMX0+BbOqH309EHuzJKGjTfY9wHFF4iNwGuaulL37rN4VP7eRPuObxNxhJME3RCG
-         v+EsmusTBz7UaI7ZvqPp8ZJEIAE631H15R+NGCoCjqg5ICZZ7s5Ki7ZsHyMtSii1ewu3
-         WK5MBSzMaykXJ7B9ahhBNa9/+rw40dujVKySTSH8WQGr8wZKmW1pvJymlBdVeYmLxd+J
-         0p5Q==
+        h=date:message-id:in-reply-to:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=YmVQlyAUHiTORA3zYDl4Q8iJQ8/ZLqhallI6s8eC6Iw=;
+        b=PoyHcDSG/lLqj3k2kEtMj/4ZIEPIde3HaIUveFDiH8vLIfLuJuxW4qkfpQ9OVGKb3d
+         cM+Cmt/H14NyGZ7InZEbjx5WTf14mkTs8TcRiuQlCIjxFsgUubj9orBJ5Ba7amqHLdYO
+         3GVu9SjAaJ9pU+1VyWv+9879ySAY4xEQyxljCAk3BRbp6RMzT0J/Rr2eaa3UwvjG0OpT
+         ez6DMgYgPCiFaqBLGn3yDf1IA84Bz7h+JM7xfj2aPEogJyEyXiy72yjNqnkmdkRk/J8l
+         bvV44oc/quBW9DpGwmeJoAW7QaQnkqTyDe+QdIylfgZAwaSVj8x/UiTJ6jFfMmzBT+vS
+         aJfw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=D07/9YG4;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=Fa5BotqR;
+       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=D07/9YG4;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZpRr+/K48yYjwOcBZnTjQViWCmiPuZoeULPlvWh7gbR6aOl5dzvHAntq0GCEDHpn1OJtnfpkg==
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To: broonie@kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	bgoswami@codeaurora.org
-Cc: robh+dt@kernel.org,
-	gregkh@linuxfoundation.org,
-	david.brown@linaro.org,
-	mark.rutland@arm.com,
-	lgirdwood@gmail.com,
-	plai@codeaurora.org,
-	tiwai@suse.com,
-	perex@perex.cz,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rohkumar@qti.qualcomm.com,
-	spatakok@qti.qualcomm.com,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v9 07/15] ASoC: qdsp6: q6asm: Add support to memory map and unmap
-Date: Fri, 18 May 2018 13:56:02 +0100
-Message-Id: <20180518125610.26200-8-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180518125610.26200-1-srinivas.kandagatla@linaro.org>
-References: <20180518125610.26200-1-srinivas.kandagatla@linaro.org>
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=Fa5BotqR;
+       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+From: Mark Brown <broonie@kernel.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>, broonie@kernel.org, linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org, bgoswami@codeaurora.org, mark.rutland@arm.com, devicetree@vger.kernel.org, rohkumar@qti.qualcomm.com, gregkh@linuxfoundation.org, plai@codeaurora.org, lgirdwood@gmail.com, tiwai@suse.com, david.brown@linaro.org, robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org, spatakok@qti.qualcomm.com, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: qdsp6: q6asm: Add support to memory map and unmap" to the asoc tree
+In-Reply-To: <20180518125610.26200-8-srinivas.kandagatla@linaro.org>
+Message-Id: <E1fKn2I-0007A6-0f@debutante>
+Date: Mon, 21 May 2018 16:47:46 +0100
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600806794888819226?=
-X-GMAIL-MSGID: =?utf-8?q?1600806794888819226?=
+X-GMAIL-THRID: =?utf-8?q?1601089219618380943?=
+X-GMAIL-MSGID: =?utf-8?q?1601089219618380943?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
+
+The patch
+
+   ASoC: qdsp6: q6asm: Add support to memory map and unmap
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From a2a5d30218fdf6ad869248ef46bf35b912dc1686 Mon Sep 17 00:00:00 2001
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Date: Fri, 18 May 2018 13:56:02 +0100
+Subject: [PATCH] ASoC: qdsp6: q6asm: Add support to memory map and unmap
 
 This patch adds support to memory map and unmap regions commands in
 q6asm module.
@@ -63,8 +77,9 @@ q6asm module.
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Reviewed-and-tested-by: Rohit kumar <rohitkr@codeaurora.org>
 Reviewed-by: Banajit Goswami <bgoswami@codeaurora.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/qcom/qdsp6/q6asm.c | 347 +++++++++++++++++++++++++++++++++++++++++++
+ sound/soc/qcom/qdsp6/q6asm.c | 347 +++++++++++++++++++++++++++++++++++
  sound/soc/qcom/qdsp6/q6asm.h |   5 +
  2 files changed, 352 insertions(+)
 
@@ -479,4 +494,4 @@ index b7816e6384e7..8c317b7b63c3 100644
 +int q6asm_unmap_memory_regions(unsigned int dir, struct audio_client *ac);
  #endif /* __Q6_ASM_H__ */
 -- 
-2.16.2
+2.17.0
