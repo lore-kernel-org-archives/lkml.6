@@ -1,38 +1,91 @@
-Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrQZ7BXtQnXxjaZoABiQUP7F15Vk41wvHKW3zpjTlQIs5NJyeW5xhX0US/1PiNu8Q3z7fp5
-ARC-Seal: i=1; a=rsa-sha256; t=1526937727; cv=none;
-        d=google.com; s=arc-20160816;
-        b=xtp9+xsvTeX42ZMEHCHYMCYweLgZ1Otyt7Dtnqnm/W+zcZsrylhjYJN5Y9C1odoLYY
-         CuneglyqJZ2rqkvba9g8XkzkeHxxTfLDUiyaVonmrvYI8Rt3gzULiKV2uNasMSjJm9DO
-         61V5j3bbFcFTigHhZIZRJRNRrDGiBrrzYn5+4agTaqzMN52oIr+0/SJLvKn8zMWnwWml
-         covXut+TQv291xVUTSR7Ldahh4sHKFLxHCBGVlMtYDfCdcRbDoSyMY9/a6Tv2JkrxNju
-         05jNoddY4MY6QAlYyXFDoW+fGCFN6sxk+G/TdZL7qP33Pn1VbktszAhSbliI2y23Mz5s
-         /KPA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=OXIgyPkSe+gsJbMicl/S3wxLVMhO+WhDQKjjM5KfBOw=;
-        b=YbtlZUW7iEU0JctgIrNRzqrWySVlLBVcK9kVL7/i0gCjvl+rq83zWx96Rh7OvVfWKg
-         s7BIrn+3kdIwtDNWlSolRC4Tr+VG0a05pBmq0icUG+/vCK/+nypRLucXlBSWaW+B+xzP
-         fblKB1WFJDIX3bgu+kk4QsbH+5T5wK0fRbQh6/LoZXl+2Mzgv3u4driHjnPr/ra3Yanu
-         2+VtuaX7CbZhBwAWYs4FOQ2Hsj0XFzFk81+8JwfLYkxAolI8fnskudsc8ixRRO4DRYsB
-         Sq/m8rtxSssoL87zzGXhDk1RzKT3RCFlUZ5/lfkXO5Sc+nivkOgXEIm3PKxLyzGiSmIs
-         J7VQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=MbMScOFR;
-       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=MbMScOFR;
-       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1340521-1526937726-2-15581103429116116132
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1526937725; b=HPgZIVZSxZXl1L4CRJ51c69heUz9Vke+d8PGhZ821el+Q6yZ7g
+    J56V01/vJk9fBCrWB0pKYPs5Ldi1fRgZKsK2KvE73NPGi8a6qfJKCBe7BOXHaJeB
+    F155QzFWmUzGFZp5O2hh+kL7ExvMbF7kUaZQWFj66RWsZrrm8hXsOUGVHKJ0obkU
+    iPiStcazPUchIEDUgFkAk9ht7pC+ZRfsGrfJk/VLtxvOG4TS9hnIzkJgWcVwY82/
+    +lhF+WwYmgMaRR5wibSe82QStsWEL+AmTo3nvpqHLS9w6jMN+n8BMJMVK06TrdEH
+    tvXP4sji64VujvYCh7Isu7JJo3lJ2i19LTMA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1526937725; bh=ZxYD3o5wbbqOLOViq0kGmKWEf4274s
+    ZSivJRnAkO8Tk=; b=jpGdISncSSvbtFHCojh2cmdo4W7SeEkt7460hRbW1VA2+1
+    cTQNZfmS82cW3wt1ZOZ33wo+d8SqdQTMjhGwb+J+k0YXi8xKaZrd4RJDCofAVUQG
+    UrHN6+Abgy6iKW4Dc1BaaCCL8A54i2XSJ0qpyGy2MikXF0pYrkAafrxccVtraekg
+    VPW+3Tr+sGn3JdYGuaIjIvGGP0+fA9MFd6QPv5W0nMfD2ak4n0dXH5scU4DKwpN1
+    Vkc5d/9bpkxBePgSKvPOyppCIRjGtQUbQgVC6QtD81KipyeY+O9+M5gWfH8vCzlB
+    8bwBIEt4R9h6Cvd1p4OSFgZn3Xj3+JwmdF1YzXQA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+    header.i=@kernel.org header.b=whu9/iUZ x-bits=1024 x-keytype=rsa
+    x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+    header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=linuxfoundation.org header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+      header.i=@kernel.org header.b=whu9/iUZ x-bits=1024 x-keytype=rsa
+      x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+      header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=linuxfoundation.org header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfHg9OnhrTVIHBHQqJoOtVUJ9TkvyB7gQOpPgREzllvxi2D7DjUvZnlsL1uZVSTxlCUPNh99/4pzYswcPCkJ7yhHfMx1eiDsECaTrPWPnWmzf22GyXZKC
+    o1dKEDjLajSX+XmpKl+NwNurVk/mn62+SHXYhl4wiIJKQiVJ4mEs0QcBFR9uVF7LvaINTVEDqPZFM6Y4hJ+fklQP//eaXGYhSdW9eANYutpaVnIlLDAA4ojG
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=ag1SF4gXAAAA:8 a=aaWAvk4bQpD_yfzoylIA:9 a=QEXdDO2ut3YA:10
+    a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751054AbeEUVWC (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 21 May 2018 17:22:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36930 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753950AbeEUVV7 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 21 May 2018 17:21:59 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Kees Cook <keescook@chromium.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.14 72/95] x86/speculation: Make "seccomp" the default mode for Speculative Store Bypass
-Date: Mon, 21 May 2018 23:12:02 +0200
-Message-Id: <20180521210500.745059783@linuxfoundation.org>
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.14 69/95] seccomp: Use PR_SPEC_FORCE_DISABLE
+Date: Mon, 21 May 2018 23:11:59 +0200
+Message-Id: <20180521210500.404913927@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210447.219380974@linuxfoundation.org>
 References: <20180521210447.219380974@linuxfoundation.org>
@@ -40,10 +93,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109894850235462?=
-X-GMAIL-MSGID: =?utf-8?q?1601110254817689240?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,155 +103,27 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kees Cook <keescook@chromium.org>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit f21b53b20c754021935ea43364dbf53778eeba32 upstream
+commit b849a812f7eb92e96d1c8239b06581b2cfd8b275 upstream
 
-Unless explicitly opted out of, anything running under seccomp will have
-SSB mitigations enabled. Choosing the "prctl" mode will disable this.
+Use PR_SPEC_FORCE_DISABLE in seccomp() because seccomp does not allow to
+widen restrictions.
 
-[ tglx: Adjusted it to the new arch_seccomp_spec_mitigate() mechanism ]
-
-Signed-off-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/admin-guide/kernel-parameters.txt |   26 ++++++++++++-------
- arch/x86/include/asm/nospec-branch.h            |    1 
- arch/x86/kernel/cpu/bugs.c                      |   32 +++++++++++++++++-------
- 3 files changed, 41 insertions(+), 18 deletions(-)
+ kernel/seccomp.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3954,19 +3954,27 @@
- 			This parameter controls whether the Speculative Store
- 			Bypass optimization is used.
+--- a/kernel/seccomp.c
++++ b/kernel/seccomp.c
+@@ -239,7 +239,7 @@ static inline void spec_mitigate(struct
+ 	int state = arch_prctl_spec_ctrl_get(task, which);
  
--			on     - Unconditionally disable Speculative Store Bypass
--			off    - Unconditionally enable Speculative Store Bypass
--			auto   - Kernel detects whether the CPU model contains an
--				 implementation of Speculative Store Bypass and
--				 picks the most appropriate mitigation.
--			prctl  - Control Speculative Store Bypass per thread
--				 via prctl. Speculative Store Bypass is enabled
--				 for a process by default. The state of the control
--				 is inherited on fork.
-+			on      - Unconditionally disable Speculative Store Bypass
-+			off     - Unconditionally enable Speculative Store Bypass
-+			auto    - Kernel detects whether the CPU model contains an
-+				  implementation of Speculative Store Bypass and
-+				  picks the most appropriate mitigation. If the
-+				  CPU is not vulnerable, "off" is selected. If the
-+				  CPU is vulnerable the default mitigation is
-+				  architecture and Kconfig dependent. See below.
-+			prctl   - Control Speculative Store Bypass per thread
-+				  via prctl. Speculative Store Bypass is enabled
-+				  for a process by default. The state of the control
-+				  is inherited on fork.
-+			seccomp - Same as "prctl" above, but all seccomp threads
-+				  will disable SSB unless they explicitly opt out.
- 
- 			Not specifying this option is equivalent to
- 			spec_store_bypass_disable=auto.
- 
-+			Default mitigations:
-+			X86:	If CONFIG_SECCOMP=y "seccomp", otherwise "prctl"
-+
- 	spia_io_base=	[HW,MTD]
- 	spia_fio_base=
- 	spia_pedr=
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -233,6 +233,7 @@ enum ssb_mitigation {
- 	SPEC_STORE_BYPASS_NONE,
- 	SPEC_STORE_BYPASS_DISABLE,
- 	SPEC_STORE_BYPASS_PRCTL,
-+	SPEC_STORE_BYPASS_SECCOMP,
- };
- 
- extern char __indirect_thunk_start[];
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -416,22 +416,25 @@ enum ssb_mitigation_cmd {
- 	SPEC_STORE_BYPASS_CMD_AUTO,
- 	SPEC_STORE_BYPASS_CMD_ON,
- 	SPEC_STORE_BYPASS_CMD_PRCTL,
-+	SPEC_STORE_BYPASS_CMD_SECCOMP,
- };
- 
- static const char *ssb_strings[] = {
- 	[SPEC_STORE_BYPASS_NONE]	= "Vulnerable",
- 	[SPEC_STORE_BYPASS_DISABLE]	= "Mitigation: Speculative Store Bypass disabled",
--	[SPEC_STORE_BYPASS_PRCTL]	= "Mitigation: Speculative Store Bypass disabled via prctl"
-+	[SPEC_STORE_BYPASS_PRCTL]	= "Mitigation: Speculative Store Bypass disabled via prctl",
-+	[SPEC_STORE_BYPASS_SECCOMP]	= "Mitigation: Speculative Store Bypass disabled via prctl and seccomp",
- };
- 
- static const struct {
- 	const char *option;
- 	enum ssb_mitigation_cmd cmd;
- } ssb_mitigation_options[] = {
--	{ "auto",	SPEC_STORE_BYPASS_CMD_AUTO },  /* Platform decides */
--	{ "on",		SPEC_STORE_BYPASS_CMD_ON },    /* Disable Speculative Store Bypass */
--	{ "off",	SPEC_STORE_BYPASS_CMD_NONE },  /* Don't touch Speculative Store Bypass */
--	{ "prctl",	SPEC_STORE_BYPASS_CMD_PRCTL }, /* Disable Speculative Store Bypass via prctl */
-+	{ "auto",	SPEC_STORE_BYPASS_CMD_AUTO },    /* Platform decides */
-+	{ "on",		SPEC_STORE_BYPASS_CMD_ON },      /* Disable Speculative Store Bypass */
-+	{ "off",	SPEC_STORE_BYPASS_CMD_NONE },    /* Don't touch Speculative Store Bypass */
-+	{ "prctl",	SPEC_STORE_BYPASS_CMD_PRCTL },   /* Disable Speculative Store Bypass via prctl */
-+	{ "seccomp",	SPEC_STORE_BYPASS_CMD_SECCOMP }, /* Disable Speculative Store Bypass via prctl and seccomp */
- };
- 
- static enum ssb_mitigation_cmd __init ssb_parse_cmdline(void)
-@@ -481,8 +484,15 @@ static enum ssb_mitigation_cmd __init __
- 
- 	switch (cmd) {
- 	case SPEC_STORE_BYPASS_CMD_AUTO:
--		/* Choose prctl as the default mode */
--		mode = SPEC_STORE_BYPASS_PRCTL;
-+	case SPEC_STORE_BYPASS_CMD_SECCOMP:
-+		/*
-+		 * Choose prctl+seccomp as the default mode if seccomp is
-+		 * enabled.
-+		 */
-+		if (IS_ENABLED(CONFIG_SECCOMP))
-+			mode = SPEC_STORE_BYPASS_SECCOMP;
-+		else
-+			mode = SPEC_STORE_BYPASS_PRCTL;
- 		break;
- 	case SPEC_STORE_BYPASS_CMD_ON:
- 		mode = SPEC_STORE_BYPASS_DISABLE;
-@@ -530,12 +540,14 @@ static void ssb_select_mitigation()
+ 	if (state > 0 && (state & PR_SPEC_PRCTL))
+-		arch_prctl_spec_ctrl_set(task, which, PR_SPEC_DISABLE);
++		arch_prctl_spec_ctrl_set(task, which, PR_SPEC_FORCE_DISABLE);
  }
  
- #undef pr_fmt
-+#define pr_fmt(fmt)     "Speculation prctl: " fmt
- 
- static int ssb_prctl_set(struct task_struct *task, unsigned long ctrl)
- {
- 	bool update;
- 
--	if (ssb_mode != SPEC_STORE_BYPASS_PRCTL)
-+	if (ssb_mode != SPEC_STORE_BYPASS_PRCTL &&
-+	    ssb_mode != SPEC_STORE_BYPASS_SECCOMP)
- 		return -ENXIO;
- 
- 	switch (ctrl) {
-@@ -583,7 +595,8 @@ int arch_prctl_spec_ctrl_set(struct task
- #ifdef CONFIG_SECCOMP
- void arch_seccomp_spec_mitigate(struct task_struct *task)
- {
--	ssb_prctl_set(task, PR_SPEC_FORCE_DISABLE);
-+	if (ssb_mode == SPEC_STORE_BYPASS_SECCOMP)
-+		ssb_prctl_set(task, PR_SPEC_FORCE_DISABLE);
- }
- #endif
- 
-@@ -592,6 +605,7 @@ static int ssb_prctl_get(struct task_str
- 	switch (ssb_mode) {
- 	case SPEC_STORE_BYPASS_DISABLE:
- 		return PR_SPEC_DISABLE;
-+	case SPEC_STORE_BYPASS_SECCOMP:
- 	case SPEC_STORE_BYPASS_PRCTL:
- 		if (task_spec_ssb_force_disable(task))
- 			return PR_SPEC_PRCTL | PR_SPEC_FORCE_DISABLE;
+ static inline void seccomp_assign_mode(struct task_struct *task,
