@@ -1,81 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751234AbeEUKI1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 06:08:27 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46088 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750859AbeEUKIY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 06:08:24 -0400
-Date: Mon, 21 May 2018 11:08:14 +0100
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: honghui.zhang@mediatek.com, marc.zyngier@arm.com, bhelgaas@google.com,
-        matthias.bgg@gmail.com, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        yingjoe.chen@mediatek.com, eddie.huang@mediatek.com,
-        ryder.lee@mediatek.com, hongkun.cao@mediatek.com,
-        youlin.pei@mediatek.com, yong.wu@mediatek.com, yt.shen@mediatek.com,
-        sean.wang@mediatek.com, xinping.qian@mediatek.com
-Subject: Re: [PATCH v7 2/2] PCI: mediatek: Using chained IRQ to setup IRQ
- handle
-Message-ID: <20180521100814.GA30668@e107981-ln.cambridge.arm.com>
-References: <1525412853-24367-1-git-send-email-honghui.zhang@mediatek.com>
- <1525412853-24367-3-git-send-email-honghui.zhang@mediatek.com>
- <20180518195154.GB41790@bhelgaas-glaptop.roam.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180518195154.GB41790@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1751483AbeEUKJe (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 06:09:34 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:46183 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751075AbeEUKJa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 06:09:30 -0400
+X-Google-Smtp-Source: AB8JxZoX039IcNObj8FWOrRGaKyvPeGLqjcDvHWiFWz6VHbMXUUuWxBn3anCP34eVhy//qAy4s3OjA==
+From: Jian-Hong Pan <jian-hong@endlessm.com>
+To: Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux@endlessm.com
+Cc: Jian-Hong Pan <jian-hong@endlessm.com>
+Subject: [PATCH] Bluetooth: Add a new Realtek 8723DE ID 2ff8:b011
+Date: Mon, 21 May 2018 18:09:20 +0800
+Message-Id: <20180521100920.7998-1-jian-hong@endlessm.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 18, 2018 at 02:51:54PM -0500, Bjorn Helgaas wrote:
-> On Fri, May 04, 2018 at 01:47:33PM +0800, honghui.zhang@mediatek.com wrote:
-> > From: Honghui Zhang <honghui.zhang@mediatek.com>
-> > 
-> > Using irq_chip solution to setup IRQs in order to consist
-> > with IRQ framework.
-> > 
-> > Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
-> > Acked-by: Ryder Lee <ryder.lee@mediatek.com>
-> > ---
-> >  drivers/pci/host/pcie-mediatek.c | 206 ++++++++++++++++++++++-----------------
-> >  1 file changed, 115 insertions(+), 91 deletions(-)
-> > 
-> > diff --git a/drivers/pci/host/pcie-mediatek.c b/drivers/pci/host/pcie-mediatek.c
-> > index c3dc549..dabf1086 100644
-> > --- a/drivers/pci/host/pcie-mediatek.c
-> > +++ b/drivers/pci/host/pcie-mediatek.c
-> > ...
-> 
-> > -static int mtk_pcie_msi_map(struct irq_domain *domain, unsigned int irq,
-> > -			    irq_hw_number_t hwirq)
-> > +static struct msi_domain_info mtk_msi_domain_info = {
-> 
-> I think this patch should be amended to include this:
-> 
-> diff --git a/drivers/pci/host/Kconfig b/drivers/pci/host/Kconfig
-> index 0d0177ce436c..368b70d9371b 100644
-> --- a/drivers/pci/host/Kconfig
-> +++ b/drivers/pci/host/Kconfig
-> @@ -193,7 +193,7 @@ config PCIE_MEDIATEK
->  	bool "MediaTek PCIe controller"
->  	depends on (ARM || ARM64) && (ARCH_MEDIATEK || COMPILE_TEST)
->  	depends on OF
-> -	depends on PCI
-> +	depends on PCI_MSI_IRQ_DOMAIN
->  	select PCIEPORTBUS
->  	help
->  	  Say Y here if you want to enable PCIe controller support on
-> 
-> 
-> Lorenzo, if you want to fold that in and update your branch, I can pull it.
-> If not, I can add a patch on top, which should only break compile-testing
-> bisection.
+Without this patch we cannot turn on the Bluethooth adapter on ASUS
+E406MA.
 
-I folded the patch above and pushed into pci/mediatek, thanks !
+T:  Bus=01 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=12   MxCh= 0
+D:  Ver= 1.10 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=2ff8 ProdID=b011 Rev= 2.00
+S:  Manufacturer=Realtek
+S:  Product=802.11n WLAN Adapter
+S:  SerialNumber=00e04c000001
+C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=500mA
+I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
 
-Lorenzo
+Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+---
+ drivers/bluetooth/btusb.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index 91882f54c7bd..292b1ea066ca 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -373,6 +373,9 @@ static const struct usb_device_id blacklist_table[] = {
+ 	/* Additional Realtek 8723BU Bluetooth devices */
+ 	{ USB_DEVICE(0x7392, 0xa611), .driver_info = BTUSB_REALTEK },
+ 
++	/* Additional Realtek 8723DE Bluetooth devices */
++	{ USB_DEVICE(0x2ff8, 0xb011), .driver_info = BTUSB_REALTEK },
++
+ 	/* Additional Realtek 8821AE Bluetooth devices */
+ 	{ USB_DEVICE(0x0b05, 0x17dc), .driver_info = BTUSB_REALTEK },
+ 	{ USB_DEVICE(0x13d3, 0x3414), .driver_info = BTUSB_REALTEK },
+-- 
+2.11.0
