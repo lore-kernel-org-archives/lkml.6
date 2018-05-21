@@ -1,96 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752971AbeEUQTA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 12:19:00 -0400
-Received: from gateway33.websitewelcome.com ([192.185.145.239]:29101 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752698AbeEUQSz (ORCPT
+        id S1753169AbeEUQU6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 12:20:58 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:53189 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752825AbeEUQUv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 12:18:55 -0400
-X-Authority-Reason: nr=8
-Subject: Re: [PATCH 01/11] media: tm6000: fix potential Spectre variant 1
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <3d4973141e218fb516422d3d831742d55aaa5c04.1524499368.git.gustavo@embeddedor.com>
- <20180423152455.363d285c@vento.lan>
- <3ab9c4c9-0656-a08e-740e-394e2e509ae9@embeddedor.com>
- <20180423161742.66f939ba@vento.lan>
- <99e158c0-1273-2500-da9e-b5ab31cba889@embeddedor.com>
- <20180426204241.03a42996@vento.lan>
- <df8010f1-6051-7ff4-5f0e-4a436e900ec5@embeddedor.com>
- <20180515085953.65bfa107@vento.lan> <20180515141655.idzuh2jfdkuu5grs@mwanda>
- <f342d8d6-b5e6-0cbf-d002-9561b79c90e4@embeddedor.com>
- <20180515193936.m25kzyeknsk2bo2c@mwanda>
- <0f31a60b-911d-0140-3546-98317e2a0557@embeddedor.com>
- <d34cf31f-6dc5-ee2d-ea6d-513dd5e8e5c3@embeddedor.com>
- <20180517083440.14e6b975@vento.lan> <20180517084324.3242c257@vento.lan>
- <20180517091340.7d8c62b2@vento.lan>
- <5921004a-a7d3-59c9-2ef4-b6a490390d3f@embeddedor.com>
-Message-ID: <b3c23490-4113-c56f-8511-eea6cb054c48@embeddedor.com>
-Date: Mon, 21 May 2018 11:18:52 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 21 May 2018 12:20:51 -0400
+X-Google-Smtp-Source: AB8JxZrZhS0xdL4cGvCbpzUIZNVP7UvkbnulHFyYWm04/AnXAob2qK5PqBgCxYHSghuy2WiEGzZUZQ==
+Subject: Re: [PATCH 00/13] convert block layer to bioset_init()/mempool_init()
+To: Mike Snitzer <snitzer@redhat.com>
+Cc: Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        hch@infradead.org, colyli@suse.de, darrick.wong@oracle.com, clm@fb.com,
+        bacik@fb.com, linux-xfs@vger.kernel.org, drbd-dev@lists.linbit.com,
+        linux-btrfs@vger.kernel.org, linux-raid@vger.kernel.org,
+        neilb@suse.com
+References: <20180521140348.GA19069@redhat.com>
+ <686d7df6-c7d1-48a6-b7ff-48dc8aff6a62@kernel.dk>
+ <20180521143132.GB19194@redhat.com>
+ <2bbeeb1a-8b99-b06a-eb9b-eb8523c16460@kernel.dk>
+ <20180521144703.GA19303@redhat.com>
+ <4b343aef-e11c-73ba-1d88-7e73ca838cad@kernel.dk>
+ <20180521150439.GA19379@redhat.com>
+ <61e30dcf-a01c-f47d-087a-12930caf9aef@kernel.dk>
+ <20180521151817.GA19454@redhat.com>
+ <d01a150a-7752-f6ce-78f2-17a65c1e6fa5@kernel.dk>
+ <20180521160907.GA19553@redhat.com>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <f9e3714c-b7c9-d5f6-4018-2a87dd5babb2@kernel.dk>
+Date: Mon, 21 May 2018 10:20:47 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <5921004a-a7d3-59c9-2ef4-b6a490390d3f@embeddedor.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180521160907.GA19553@redhat.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.192.46.223
-X-Source-L: No
-X-Exim-ID: 1fKnWP-003yuN-Rc
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.70]) [187.192.46.223]:43416
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 05/17/2018 01:08 PM, Gustavo A. R. Silva wrote:
+On 5/21/18 10:09 AM, Mike Snitzer wrote:
+> On Mon, May 21 2018 at 11:36am -0400,
+> Jens Axboe <axboe@kernel.dk> wrote:
 > 
-> BTW, Mauro, you sent a patch to fix an spectre v1 issue in this file 
-> yesterday: dvb_ca_en50221.c:1480, but it seems there is another instance 
-> of the same issue some lines above:
+>> On 5/21/18 9:18 AM, Mike Snitzer wrote:
+>>> On Mon, May 21 2018 at 11:09am -0400,
+>>> Jens Axboe <axboe@kernel.dk> wrote:
+>>>
+>>>> On 5/21/18 9:04 AM, Mike Snitzer wrote:
+>>>>> On Mon, May 21 2018 at 10:52am -0400,
+>>>>> Jens Axboe <axboe@kernel.dk> wrote:
+>>>>>
+> ...
+>>>>>> IMHO you're making a big deal out of something that should not be.
+>>>>>
+>>>>> I raised an issue that had seemingly not been considered at all.  Not
+>>>>> making a big deal.  Raising it for others' benefit.
+>>>>>
+>>>>>> If the dm bits are that sensitive and cache line honed to perfection
+>>>>>> already due to previous regressions in that area, then it might
+>>>>>> not be a bad idea to have some compile checks for false cacheline
+>>>>>> sharing between sensitive members, or spilling of a sub-struct
+>>>>>> into multiple cachelines.
+>>>>>>
+>>>>>> It's not like this was pushed behind your back. It's posted for
+>>>>>> review. It's quite possible the net change is a win for dm. Let's
+>>>>>> focus on getting it reviewed, rather than pontificate on what
+>>>>>> could potentially go all wrong with this.
+>>>>>
+>>>>> Why are you making this personal?  Or purely about DM?  I'm merely
+>>>>> pointing out this change isn't something that can be given a quick
+>>>>> blanket "looks good".
+>>>>
+>>>> I'm not making this personal at all?! You raised a (valid) concern,
+>>>> I'm merely stating why I don't think it's a high risk issue. I'm
+>>>> assuming your worry is related to dm, as those are the reports
+>>>> that would ultimately land on your desk.
+>>>
+>>> Then we'll just agree to disagree with what this implies: "It's not like
+>>> this was pushed behind your back."
+>>
+>> I'm afraid you've lost me now - it was not pushed behind your back,
+>> it was posted for review, with you on the CC list. Not trying to
+>> be deliberately dense here, I just don't see what our disagreement is.
 > 
-> diff --git a/drivers/media/dvb-core/dvb_ca_en50221.c 
-> b/drivers/media/dvb-core/dvb_ca_en50221.c
-> index 1310526..7edd9db 100644
-> --- a/drivers/media/dvb-core/dvb_ca_en50221.c
-> +++ b/drivers/media/dvb-core/dvb_ca_en50221.c
-> @@ -1398,6 +1398,7 @@ static int dvb_ca_en50221_io_do_ioctl(struct file 
-> *file,
+> You're having an off day ;)  Mondays and all?
 > 
->                  info->type = CA_CI_LINK;
->                  info->flags = 0;
-> +               slot = array_index_nospec(slot, ca->slot_count + 1);
->                  sl = &ca->slot_info[slot];
->                  if ((sl->slot_state != DVB_CA_SLOTSTATE_NONE) &&
->                      (sl->slot_state != DVB_CA_SLOTSTATE_INVALID)) {
+> I just raised an alignment concern that needs to be considered during
+> review by all stakeholders.  Wasn't upset at all.  Maybe my email tone
+> came off otherwise?
 > 
+> And then you got confused by me pointing out how it was weird for you to
+> suggest I felt this stuff was pushed behind my back.. and went on to
+> think I really think that.  It's almost like you're a confused hypnotist
+> seeding me with paranoid dilutions. ;)
 > 
+> /me waits for Jens to snap his fingers so he can just slowly step away
+> from this line of discussion that is solidly dead now...
 
-Hi Mauro,
+Mike, wtf are you talking about.
 
-Just to let you know, I was running smatch during the weekend and the 
-tool is still reporting all these Spectre media warnings (and a lot more):
+>>> Reality is I'm fine with the change.  Just think there is follow-on work
+>>> (now or later) that is needed.
+>>
+>> It's not hard to run the quick struct layout checks or alignment. If
+>> there's a concern, that should be done now, instead of being deferred to
+>> later. There's no point merging something that we expect to have
+>> follow-on work. If that's the case, then it should not be merged. There
+>> are no dependencies in the patchset, except that the last patch
+>> obviously can't be applied until all of the previous ones are in.
+> 
+> Cool, sounds good.
+> 
+>> I took a quick look at the struct mapped_device layout, which I'm
+>> assuming is the most important on the dm side. It's pretty big to
+>> begin with, obviously this makes it bigger since we're now
+>> embedding the bio_sets. On my config, doesn't show any false sharing
+>> that would be problematic, or layout changes that would worry me. FWIW.
+> 
+> Great, thanks, do you happen to have a tree you can push so others can
+> get a quick compile and look at the series fully applied?
 
-https://patchwork.linuxtv.org/project/linux-media/list/?submitter=7277
+I do not, I simply ran a quick analysis of the layout, then applied the
+full patchset, and repeated that exercise. Literally a 5 minute thing.
+I haven't applied the series, so haven't pushed anything out.
 
-Thanks
---
-Gustavo
+> BTW, I'm upstream DM maintainer but I have a role in caring for related
+> subsystems (e.g. block core, etc) in downstream releases.. *cough* RHEL.
+> So this alignment concern wasn't ever purely about DM.
+
+I tend to care about that too...
+
+-- 
+Jens Axboe
