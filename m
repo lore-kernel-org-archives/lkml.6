@@ -1,37 +1,39 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZradZGb0kObBpHv30T4l1+OvURUULgIWQlU/IhVEpKIh24hqVheW0Q/wpt2x4Umg1gnW+DY
-ARC-Seal: i=1; a=rsa-sha256; t=1526938008; cv=none;
+X-Google-Smtp-Source: AB8JxZpMF3aysVj0pJqmLSC883tsrGrMWtFdGFlPYgyX3MCgwHQ05bZF0K14awBEqYjXNH3fZL88
+ARC-Seal: i=1; a=rsa-sha256; t=1526938005; cv=none;
         d=google.com; s=arc-20160816;
-        b=OA2yFLU91v0pYkEgwm+eHoe0KXGR0qMdkCtobBZIdFjM3FuJ1cP133GWy5ewR8/qly
-         n6ezjoHtHR5FPTb4k0Dto3Cpnx5nZh9uGqumgMN/oK+wBBn6POwXt4haNfQKuoQ36aRh
-         YFOgALwKZ2lEVxiy9xIxNDZ9yXPcaU9sQ05aOBoAUXelEmaCnCndOb8v1H8sZmMMD8i9
-         dk9pM9ihk3z+u0fS8EHbHzrCX3XClLZTQWFKNBsUO+8VUDPc94KO0fNplR30s9wCNGiA
-         zuP25AUeIX1DWmM2cbotYf9i5QBdNUt3SiA434NZjWlPxHT7xVcDun1nrTlEojT6TI0C
-         Peqg==
+        b=tRLQZaMKKlmPPW7q7MzVamTdoP3izmmz2+BEXcnQ0P4ZBX9Dpn2JQxsAsJvKL75h1S
+         dqSy9fvY2jFIYCrb5fLCVNzGC9bhCKZ/LFCXGZf/NcMZi+ym4/0+E9CFKsRrDbhNQ/Gq
+         lTOj3aTD6bSNFKyEBpiErFMNzhRRKXhoelacdnBj2pxVWGYR+3XzmL4dfP02NtOCdH5d
+         dHHlXSpT3nmvkpt9JIdc3742r8GsrgLlG3HE8jy6adrF1s443u67JNUF2t/LJH3D6lnV
+         1SIkOwu0/MkMirIP9SCgMas5pCIyn86gfRUWZFjgVe6gW9nhKDEKZaBSMU7Vnfd4kEDl
+         k+Fg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=nTLTXQZ9e4UgZysgaPzDwDpWTpsd3P9WJMVnUbjBEQ8=;
-        b=T42wqoM3VNryZ5dM96enUYHn7+RFVHYAGrDIdkw0Z6JDorrsaQLbazF+j7spXE/3tt
-         L4iuZ/n4FuyJIn2FqpTaEigYAmyWVmbR3UGsBKEmjI2x3liqAQW39eEhMrYd54ibjqcG
-         cGTGgXNyfVec9y5MNLxDE0OPveUFbG/eTb/vh6LK2CqqsALK0eHysg4aOUbYhgknCqw4
-         vL4bQuUH+j7B5vskHwWDqBLeHBrHQkQdxW/9KtZFeoh0ffZqMoThILOCIhStdNSFhZu3
-         F6Mc5FDTRCGsnFKbpoVrvUZdGvSAKuyj1Wj9M9wbnvoCEBuC3Tt0y6JsQEuDenz9pNMc
-         bgwQ==
+        bh=cEuZhW5JV3N5zMyUmzbKqyBTzZu3M27V1H/bps29uD8=;
+        b=ndoQxCF3NJALzdAposCg5IDFHTH+0nVi43HKz4RKHTBlTgtbdjdq+4OaktwD/Jxfcs
+         GmRhf38kuZ9ZgQOQgV8uBRW1hsO9fj/6/1lCz3zwlAifkH/xGvqBQOfuPbHeyMDovUw3
+         LlIZkrzqbDrBjC99/hiDwgPU4oRjHU5aWuGdrA17KahLRzO1mO0M7UVM+FXRWgO0Hcbp
+         DKdJKJUVIxfhVSa+JasD/FCB210phEeWiDz+tX+2wqHtDh0DnByXpUaxHS9VbmI//jxB
+         IHk0MuVaY2QZNJczPXP3PmwxE0zCoJA6XaIScITEPmxi0bPqfFz0qlkk77mkvC2aKP1t
+         Gx3w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=SEhobMx8;
+       dkim=pass header.i=@kernel.org header.s=default header.b=wZO5hANp;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=SEhobMx8;
+       dkim=pass header.i=@kernel.org header.s=default header.b=wZO5hANp;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.16 107/110] x86/speculation, KVM: Implement support for VIRT_SPEC_CTRL/LS_CFG
-Date: Mon, 21 May 2018 23:12:44 +0200
-Message-Id: <20180521210515.018994479@linuxfoundation.org>
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@suse.de>,
+	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: [PATCH 4.16 098/110] x86/cpufeatures: Add FEATURE_ZEN
+Date: Mon, 21 May 2018 23:12:35 +0200
+Message-Id: <20180521210514.347457274@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -41,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109963617470446?=
-X-GMAIL-MSGID: =?utf-8?q?1601110548804194570?=
+X-GMAIL-THRID: =?utf-8?q?1601109936296040323?=
+X-GMAIL-MSGID: =?utf-8?q?1601110546261209463?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,73 +54,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 47c61b3955cf712cadfc25635bf9bc174af030ea upstream
+commit d1035d971829dcf80e8686ccde26f94b0a069472 upstream
 
-Add the necessary logic for supporting the emulated VIRT_SPEC_CTRL MSR to
-x86_virt_spec_ctrl().  If either X86_FEATURE_LS_CFG_SSBD or
-X86_FEATURE_VIRT_SPEC_CTRL is set then use the new guest_virt_spec_ctrl
-argument to check whether the state must be modified on the host. The
-update reuses speculative_store_bypass_update() so the ZEN-specific sibling
-coordination can be reused.
+Add a ZEN feature bit so family-dependent static_cpu_has() optimizations
+can be built for ZEN.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/spec-ctrl.h |    6 ++++++
- arch/x86/kernel/cpu/bugs.c       |   30 ++++++++++++++++++++++++++++++
- 2 files changed, 36 insertions(+)
+ arch/x86/include/asm/cpufeatures.h |    1 +
+ arch/x86/kernel/cpu/amd.c          |    1 +
+ 2 files changed, 2 insertions(+)
 
---- a/arch/x86/include/asm/spec-ctrl.h
-+++ b/arch/x86/include/asm/spec-ctrl.h
-@@ -53,6 +53,12 @@ static inline u64 ssbd_tif_to_spec_ctrl(
- 	return (tifn & _TIF_SSBD) >> (TIF_SSBD - SPEC_CTRL_SSBD_SHIFT);
- }
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -218,6 +218,7 @@
+ #define X86_FEATURE_IBRS		( 7*32+25) /* Indirect Branch Restricted Speculation */
+ #define X86_FEATURE_IBPB		( 7*32+26) /* Indirect Branch Prediction Barrier */
+ #define X86_FEATURE_STIBP		( 7*32+27) /* Single Thread Indirect Branch Predictors */
++#define X86_FEATURE_ZEN			( 7*32+28) /* "" CPU is AMD family 0x17 (Zen) */
  
-+static inline unsigned long ssbd_spec_ctrl_to_tif(u64 spec_ctrl)
-+{
-+	BUILD_BUG_ON(TIF_SSBD < SPEC_CTRL_SSBD_SHIFT);
-+	return (spec_ctrl & SPEC_CTRL_SSBD) << (TIF_SSBD - SPEC_CTRL_SSBD_SHIFT);
-+}
-+
- static inline u64 ssbd_tif_to_amd_ls_cfg(u64 tifn)
+ /* Virtualization flags: Linux defined, word 8 */
+ #define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -812,6 +812,7 @@ static void init_amd_bd(struct cpuinfo_x
+ 
+ static void init_amd_zn(struct cpuinfo_x86 *c)
  {
- 	return (tifn & _TIF_SSBD) ? x86_amd_ls_cfg_ssbd_mask : 0ULL;
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -162,6 +162,36 @@ x86_virt_spec_ctrl(u64 guest_spec_ctrl,
- 			wrmsrl(MSR_IA32_SPEC_CTRL, msrval);
- 		}
- 	}
-+
-+	/*
-+	 * If SSBD is not handled in MSR_SPEC_CTRL on AMD, update
-+	 * MSR_AMD64_L2_CFG or MSR_VIRT_SPEC_CTRL if supported.
-+	 */
-+	if (!static_cpu_has(X86_FEATURE_LS_CFG_SSBD) &&
-+	    !static_cpu_has(X86_FEATURE_VIRT_SSBD))
-+		return;
-+
-+	/*
-+	 * If the host has SSBD mitigation enabled, force it in the host's
-+	 * virtual MSR value. If its not permanently enabled, evaluate
-+	 * current's TIF_SSBD thread flag.
-+	 */
-+	if (static_cpu_has(X86_FEATURE_SPEC_STORE_BYPASS_DISABLE))
-+		hostval = SPEC_CTRL_SSBD;
-+	else
-+		hostval = ssbd_tif_to_spec_ctrl(ti->flags);
-+
-+	/* Sanitize the guest value */
-+	guestval = guest_virt_spec_ctrl & SPEC_CTRL_SSBD;
-+
-+	if (hostval != guestval) {
-+		unsigned long tif;
-+
-+		tif = setguest ? ssbd_spec_ctrl_to_tif(guestval) :
-+				 ssbd_spec_ctrl_to_tif(hostval);
-+
-+		speculative_store_bypass_update(tif);
-+	}
- }
- EXPORT_SYMBOL_GPL(x86_virt_spec_ctrl);
- 
++	set_cpu_cap(c, X86_FEATURE_ZEN);
+ 	/*
+ 	 * Fix erratum 1076: CPB feature bit not being set in CPUID. It affects
+ 	 * all up to and including B1.
