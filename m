@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753457AbeEURFH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 13:05:07 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:44320 "EHLO
+        id S1753342AbeEURF2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 13:05:28 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:44306 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753255AbeEURBp (ORCPT
+        with ESMTP id S1753290AbeEURBm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 13:01:45 -0400
+        Mon, 21 May 2018 13:01:42 -0400
 From: Ezequiel Garcia <ezequiel@collabora.com>
 To: linux-media@vger.kernel.org
 Cc: kernel@collabora.com, Hans Verkuil <hverkuil@xs4all.nl>,
@@ -17,9 +17,9 @@ Cc: kernel@collabora.com, Hans Verkuil <hverkuil@xs4all.nl>,
         Brian Starkey <brian.starkey@arm.com>, linux-kernel@vger.kernel.org,
         Gustavo Padovan <gustavo.padovan@collabora.com>,
         Ezequiel Garcia <ezequiel@collabora.com>
-Subject: [PATCH v10 04/16] omap3isp: group device capabilities
-Date: Mon, 21 May 2018 13:59:34 -0300
-Message-Id: <20180521165946.11778-5-ezequiel@collabora.com>
+Subject: [PATCH v10 03/16] hackrf: group device capabilities
+Date: Mon, 21 May 2018 13:59:33 -0300
+Message-Id: <20180521165946.11778-4-ezequiel@collabora.com>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180521165946.11778-1-ezequiel@collabora.com>
 References: <20180521165946.11778-1-ezequiel@collabora.com>
@@ -29,39 +29,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Gustavo Padovan <gustavo.padovan@collabora.com>
 
-Instead of putting V4L2_CAP_STREAMING everywhere, set device_caps
-earlier with this value.
-
-v2: move cap->capabilities assignment down (Hans Verkuil)
+Instead of putting V4L2_CAP_STREAMING and V4L2_CAP_READWRITE
+everywhere, set device_caps earlier with these values.
 
 Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
 ---
- drivers/media/platform/omap3isp/ispvideo.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/media/usb/hackrf/hackrf.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/media/platform/omap3isp/ispvideo.c b/drivers/media/platform/omap3isp/ispvideo.c
-index a751c89a3ea8..db9aae222134 100644
---- a/drivers/media/platform/omap3isp/ispvideo.c
-+++ b/drivers/media/platform/omap3isp/ispvideo.c
-@@ -658,13 +658,15 @@ isp_video_querycap(struct file *file, void *fh, struct v4l2_capability *cap)
- 	strlcpy(cap->card, video->video.name, sizeof(cap->card));
- 	strlcpy(cap->bus_info, "media", sizeof(cap->bus_info));
+diff --git a/drivers/media/usb/hackrf/hackrf.c b/drivers/media/usb/hackrf/hackrf.c
+index 7eb53517a82f..6d692fb3e8dd 100644
+--- a/drivers/media/usb/hackrf/hackrf.c
++++ b/drivers/media/usb/hackrf/hackrf.c
+@@ -909,18 +909,15 @@ static int hackrf_querycap(struct file *file, void *fh,
  
--	cap->capabilities = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_VIDEO_OUTPUT
--		| V4L2_CAP_STREAMING | V4L2_CAP_DEVICE_CAPS;
-+	cap->device_caps = V4L2_CAP_STREAMING;
+ 	dev_dbg(&intf->dev, "\n");
  
- 	if (video->type == V4L2_BUF_TYPE_VIDEO_CAPTURE)
--		cap->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING;
-+		cap->device_caps |= V4L2_CAP_VIDEO_CAPTURE;
++	cap->device_caps = V4L2_CAP_STREAMING | V4L2_CAP_READWRITE;
+ 	if (vdev->vfl_dir == VFL_DIR_RX)
+-		cap->device_caps = V4L2_CAP_SDR_CAPTURE | V4L2_CAP_TUNER |
+-				   V4L2_CAP_STREAMING | V4L2_CAP_READWRITE;
+-
++		cap->device_caps |= V4L2_CAP_SDR_CAPTURE | V4L2_CAP_TUNER;
  	else
--		cap->device_caps = V4L2_CAP_VIDEO_OUTPUT | V4L2_CAP_STREAMING;
-+		cap->device_caps |= V4L2_CAP_VIDEO_OUTPUT;
-+
-+	cap->capabilities = cap->device_caps | V4L2_CAP_VIDEO_CAPTURE |
-+		V4L2_CAP_VIDEO_OUTPUT | V4L2_CAP_DEVICE_CAPS;
+-		cap->device_caps = V4L2_CAP_SDR_OUTPUT | V4L2_CAP_MODULATOR |
+-				   V4L2_CAP_STREAMING | V4L2_CAP_READWRITE;
++		cap->device_caps |= V4L2_CAP_SDR_OUTPUT | V4L2_CAP_MODULATOR;
  
- 	return 0;
- }
+ 	cap->capabilities = V4L2_CAP_SDR_CAPTURE | V4L2_CAP_TUNER |
+ 			    V4L2_CAP_SDR_OUTPUT | V4L2_CAP_MODULATOR |
+-			    V4L2_CAP_STREAMING | V4L2_CAP_READWRITE |
+-			    V4L2_CAP_DEVICE_CAPS;
++			    V4L2_CAP_DEVICE_CAPS | cap->device_caps;
+ 	strlcpy(cap->driver, KBUILD_MODNAME, sizeof(cap->driver));
+ 	strlcpy(cap->card, dev->rx_vdev.name, sizeof(cap->card));
+ 	usb_make_path(dev->udev, cap->bus_info, sizeof(cap->bus_info));
 -- 
 2.16.3
