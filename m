@@ -1,79 +1,730 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753285AbeEUPWo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 11:22:44 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:38813 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752671AbeEUPVD (ORCPT
+        id S1753299AbeEUPXG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 11:23:06 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:40611 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751843AbeEUPXB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 11:21:03 -0400
-X-Google-Smtp-Source: AB8JxZpSkPXvcqAUK9o9XGeMcu/P9ybaNKlnCr528GgHKJ8a/+kSRZdFBGmd2TcfskEDuqnohiXM5A==
-Subject: Re: [PATCH net-next 6/7] net: dsa: qca8k: Replace GPL boilerplate by
- SPDX
-To: =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <vokac.m@gmail.com>,
-        netdev@vger.kernel.org, michal.vokac@ysoft.com
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        vivien.didelot@savoirfairelinux.com, andrew@lunn.ch,
-        mark.rutland@arm.com, robh+dt@kernel.org, davem@davemloft.net
-References: <1526909293-56377-1-git-send-email-michal.vokac@ysoft.com>
- <1526909293-56377-7-git-send-email-michal.vokac@ysoft.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-Message-ID: <200f2431-63c1-bafe-8802-3a117fbf8433@gmail.com>
-Date: Mon, 21 May 2018 08:20:59 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 21 May 2018 11:23:01 -0400
+X-Google-Smtp-Source: AB8JxZrTprdFjopB91Sjg1AXJ+Aey+vLLJt9zlATRaWZEPPt6yGlztir94EwUCAIUaGcerp5x5/CER/NquRu+MgYlF8=
 MIME-Version: 1.0
-In-Reply-To: <1526909293-56377-7-git-send-email-michal.vokac@ysoft.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1526895424-22894-5-git-send-email-hl@rock-chips.com>
+References: <1526895424-22894-1-git-send-email-hl@rock-chips.com> <1526895424-22894-5-git-send-email-hl@rock-chips.com>
+From: Enric Balletbo Serra <eballetbo@gmail.com>
+Date: Mon, 21 May 2018 17:22:59 +0200
+Message-ID: <CAFqH_50w7NoUTaYpmCFDsuafie2a4v5Dirs5KbsV26ff5xEpGg@mail.gmail.com>
+Subject: Re: [PATCH v6 5/5] drm/rockchip: support dp training outside dp firmware
+To: Lin Huang <hl@rock-chips.com>
+Cc: Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
+        Chris Zhong <zyw@rock-chips.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Doug Anderson <dianders@chromium.org>,
+        Brian Norris <briannorris@chromium.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        daniel.vetter@intel.com, jani.nikula@linux.intel.com,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Lin,
 
+2018-05-21 11:37 GMT+02:00 Lin Huang <hl@rock-chips.com>:
+> DP firmware uses fixed phy config values to do training, but some
+> boards need to adjust these values to fit for their unique hardware
+> design. So get phy config values from dts and use software link training
+> instead of relying on firmware, if software training fail, keep firmware
+> training as a fallback if sw training fails.
+>
+> Signed-off-by: Chris Zhong <zyw@rock-chips.com>
+> Signed-off-by: Lin Huang <hl@rock-chips.com>
+> Reviewed-by: Sean Paul <seanpaul@chromium.org>
+> ---
+> Changes in v2:
+> - update patch following Enric suggest
+> Changes in v3:
+> - use variable fw_training instead sw_training_success
+> - base on DP SPCE, if training fail use lower link rate to retry training
+> Changes in v4:
+> - improve cdn_dp_get_lower_link_rate() and cdn_dp_software_train_link() follow Sean suggest
+> Changes in v5:
+> - fix some whitespcae issue
+> Changes in v6:
+> - None
+>
+>  drivers/gpu/drm/rockchip/Makefile               |   3 +-
+>  drivers/gpu/drm/rockchip/cdn-dp-core.c          |  24 +-
+>  drivers/gpu/drm/rockchip/cdn-dp-core.h          |   2 +
+>  drivers/gpu/drm/rockchip/cdn-dp-link-training.c | 420 ++++++++++++++++++++++++
+>  drivers/gpu/drm/rockchip/cdn-dp-reg.c           |  31 +-
+>  drivers/gpu/drm/rockchip/cdn-dp-reg.h           |  38 ++-
+>  6 files changed, 505 insertions(+), 13 deletions(-)
+>  create mode 100644 drivers/gpu/drm/rockchip/cdn-dp-link-training.c
+>
+> diff --git a/drivers/gpu/drm/rockchip/Makefile b/drivers/gpu/drm/rockchip/Makefile
+> index a314e21..b932f62 100644
+> --- a/drivers/gpu/drm/rockchip/Makefile
+> +++ b/drivers/gpu/drm/rockchip/Makefile
+> @@ -9,7 +9,8 @@ rockchipdrm-y := rockchip_drm_drv.o rockchip_drm_fb.o \
+>  rockchipdrm-$(CONFIG_DRM_FBDEV_EMULATION) += rockchip_drm_fbdev.o
+>
+>  rockchipdrm-$(CONFIG_ROCKCHIP_ANALOGIX_DP) += analogix_dp-rockchip.o
+> -rockchipdrm-$(CONFIG_ROCKCHIP_CDN_DP) += cdn-dp-core.o cdn-dp-reg.o
+> +rockchipdrm-$(CONFIG_ROCKCHIP_CDN_DP) += cdn-dp-core.o cdn-dp-reg.o \
+> +                                       cdn-dp-link-training.o
+>  rockchipdrm-$(CONFIG_ROCKCHIP_DW_HDMI) += dw_hdmi-rockchip.o
+>  rockchipdrm-$(CONFIG_ROCKCHIP_DW_MIPI_DSI) += dw-mipi-dsi.o
+>  rockchipdrm-$(CONFIG_ROCKCHIP_INNO_HDMI) += inno_hdmi.o
+> diff --git a/drivers/gpu/drm/rockchip/cdn-dp-core.c b/drivers/gpu/drm/rockchip/cdn-dp-core.c
+> index cce64c1..d9d0d4d 100644
+> --- a/drivers/gpu/drm/rockchip/cdn-dp-core.c
+> +++ b/drivers/gpu/drm/rockchip/cdn-dp-core.c
+> @@ -629,11 +629,13 @@ static void cdn_dp_encoder_enable(struct drm_encoder *encoder)
+>                         goto out;
+>                 }
+>         }
+> -
+> -       ret = cdn_dp_set_video_status(dp, CONTROL_VIDEO_IDLE);
+> -       if (ret) {
+> -               DRM_DEV_ERROR(dp->dev, "Failed to idle video %d\n", ret);
+> -               goto out;
+> +       if (dp->use_fw_training == true) {
 
-On 05/21/2018 06:28 AM, Michal Vokáč wrote:
-> Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
+You don't need to compare to true. Simply do:
 
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+if (dp->use_fw_training)
 
-I don't know if we need all people who contributed to that driver to
-agree on that, this is not a license change, so it should be okay I presume?
+> +               ret = cdn_dp_set_video_status(dp, CONTROL_VIDEO_IDLE);
+> +               if (ret) {
+> +                       DRM_DEV_ERROR(dp->dev,
+> +                                     "Failed to idle video %d\n", ret);
+> +                       goto out;
+> +               }
+>         }
+>
+>         ret = cdn_dp_config_video(dp);
+> @@ -642,11 +644,15 @@ static void cdn_dp_encoder_enable(struct drm_encoder *encoder)
+>                 goto out;
+>         }
+>
+> -       ret = cdn_dp_set_video_status(dp, CONTROL_VIDEO_VALID);
+> -       if (ret) {
+> -               DRM_DEV_ERROR(dp->dev, "Failed to valid video %d\n", ret);
+> -               goto out;
+> +       if (dp->use_fw_training == true) {
 
--- 
-Florian
+if (dp->use_fw_training)
+
+> +               ret = cdn_dp_set_video_status(dp, CONTROL_VIDEO_VALID);
+> +               if (ret) {
+> +                       DRM_DEV_ERROR(dp->dev,
+> +                               "Failed to valid video %d\n", ret);
+> +                       goto out;
+> +               }
+>         }
+> +
+>  out:
+>         mutex_unlock(&dp->lock);
+>  }
+> diff --git a/drivers/gpu/drm/rockchip/cdn-dp-core.h b/drivers/gpu/drm/rockchip/cdn-dp-core.h
+> index 46159b2..77a9793 100644
+> --- a/drivers/gpu/drm/rockchip/cdn-dp-core.h
+> +++ b/drivers/gpu/drm/rockchip/cdn-dp-core.h
+> @@ -84,6 +84,7 @@ struct cdn_dp_device {
+>         bool connected;
+>         bool active;
+>         bool suspended;
+> +       bool use_fw_training;
+>
+>         const struct firmware *fw;      /* cdn dp firmware */
+>         unsigned int fw_version;        /* cdn fw version */
+> @@ -106,6 +107,7 @@ struct cdn_dp_device {
+>         u8 ports;
+>         u8 lanes;
+>         int active_port;
+> +       u8 train_set[4];
+>
+>         u8 dpcd[DP_RECEIVER_CAP_SIZE];
+>         bool sink_has_audio;
+> diff --git a/drivers/gpu/drm/rockchip/cdn-dp-link-training.c b/drivers/gpu/drm/rockchip/cdn-dp-link-training.c
+> new file mode 100644
+> index 0000000..73c3290
+> --- /dev/null
+> +++ b/drivers/gpu/drm/rockchip/cdn-dp-link-training.c
+> @@ -0,0 +1,420 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
+> + * Author: Chris Zhong <zyw@rock-chips.com>
+> + */
+> +
+> +#include <linux/device.h>
+> +#include <linux/delay.h>
+> +#include <linux/phy/phy.h>
+> +#include <soc/rockchip/rockchip_phy_typec.h>
+> +
+> +#include "cdn-dp-core.h"
+> +#include "cdn-dp-reg.h"
+> +
+> +static void cdn_dp_set_signal_levels(struct cdn_dp_device *dp)
+> +{
+> +       struct cdn_dp_port *port = dp->port[dp->active_port];
+> +       struct rockchip_typec_phy *tcphy = phy_get_drvdata(port->phy);
+> +
+> +       int rate = drm_dp_bw_code_to_link_rate(dp->link.rate);
+> +       u8 swing = (dp->train_set[0] & DP_TRAIN_VOLTAGE_SWING_MASK) >>
+> +                  DP_TRAIN_VOLTAGE_SWING_SHIFT;
+> +       u8 pre_emphasis = (dp->train_set[0] & DP_TRAIN_PRE_EMPHASIS_MASK)
+> +                         >> DP_TRAIN_PRE_EMPHASIS_SHIFT;
+> +
+> +       tcphy->typec_phy_config(port->phy, rate, dp->link.num_lanes,
+> +                               swing, pre_emphasis);
+> +}
+> +
+> +static int cdn_dp_set_pattern(struct cdn_dp_device *dp, uint8_t dp_train_pat)
+> +{
+> +       u32 phy_config, global_config;
+> +       int ret;
+> +       uint8_t pattern = dp_train_pat & DP_TRAINING_PATTERN_MASK;
+> +
+> +       global_config = NUM_LANES(dp->link.num_lanes - 1) | SST_MODE |
+> +                       GLOBAL_EN | RG_EN | ENC_RST_DIS | WR_VHSYNC_FALL;
+> +
+> +       phy_config = DP_TX_PHY_ENCODER_BYPASS(0) |
+> +                    DP_TX_PHY_SKEW_BYPASS(0) |
+> +                    DP_TX_PHY_DISPARITY_RST(0) |
+> +                    DP_TX_PHY_LANE0_SKEW(0) |
+> +                    DP_TX_PHY_LANE1_SKEW(1) |
+> +                    DP_TX_PHY_LANE2_SKEW(2) |
+> +                    DP_TX_PHY_LANE3_SKEW(3) |
+> +                    DP_TX_PHY_10BIT_ENABLE(0);
+> +
+> +       if (pattern != DP_TRAINING_PATTERN_DISABLE) {
+> +               global_config |= NO_VIDEO;
+> +               phy_config |= DP_TX_PHY_TRAINING_ENABLE(1) |
+> +                             DP_TX_PHY_SCRAMBLER_BYPASS(1) |
+> +                             DP_TX_PHY_TRAINING_PATTERN(pattern);
+> +       }
+> +
+> +       ret = cdn_dp_reg_write(dp, DP_FRAMER_GLOBAL_CONFIG, global_config);
+> +       if (ret) {
+> +               DRM_ERROR("fail to set DP_FRAMER_GLOBAL_CONFIG, error: %d\n",
+> +                         ret);
+> +               return ret;
+> +       }
+> +
+> +       ret = cdn_dp_reg_write(dp, DP_TX_PHY_CONFIG_REG, phy_config);
+> +       if (ret) {
+> +               DRM_ERROR("fail to set DP_TX_PHY_CONFIG_REG, error: %d\n",
+> +                         ret);
+> +               return ret;
+> +       }
+> +
+> +       ret = cdn_dp_reg_write(dp, DPTX_LANE_EN, BIT(dp->link.num_lanes) - 1);
+> +       if (ret) {
+> +               DRM_ERROR("fail to set DPTX_LANE_EN, error: %d\n", ret);
+> +               return ret;
+> +       }
+> +
+> +       if (drm_dp_enhanced_frame_cap(dp->dpcd))
+> +               ret = cdn_dp_reg_write(dp, DPTX_ENHNCD, 1);
+> +       else
+> +               ret = cdn_dp_reg_write(dp, DPTX_ENHNCD, 0);
+> +       if (ret)
+> +               DRM_ERROR("failed to set DPTX_ENHNCD, error: %x\n", ret);
+> +
+> +       return ret;
+> +}
+> +
+> +static u8 cdn_dp_pre_emphasis_max(u8 voltage_swing)
+> +{
+> +       switch (voltage_swing & DP_TRAIN_VOLTAGE_SWING_MASK) {
+> +       case DP_TRAIN_VOLTAGE_SWING_LEVEL_0:
+> +               return DP_TRAIN_PRE_EMPH_LEVEL_3;
+> +       case DP_TRAIN_VOLTAGE_SWING_LEVEL_1:
+> +               return DP_TRAIN_PRE_EMPH_LEVEL_2;
+> +       case DP_TRAIN_VOLTAGE_SWING_LEVEL_2:
+> +               return DP_TRAIN_PRE_EMPH_LEVEL_1;
+> +       default:
+> +               return DP_TRAIN_PRE_EMPH_LEVEL_0;
+> +       }
+> +}
+> +
+> +static void cdn_dp_get_adjust_train(struct cdn_dp_device *dp,
+> +                                   uint8_t link_status[DP_LINK_STATUS_SIZE])
+> +{
+> +       int i;
+> +       uint8_t v = 0, p = 0;
+> +       uint8_t preemph_max;
+> +
+> +       for (i = 0; i < dp->link.num_lanes; i++) {
+> +               v = max(v, drm_dp_get_adjust_request_voltage(link_status, i));
+> +               p = max(p, drm_dp_get_adjust_request_pre_emphasis(link_status,
+> +                                                                 i));
+> +       }
+> +
+> +       if (v >= VOLTAGE_LEVEL_2)
+> +               v = VOLTAGE_LEVEL_2 | DP_TRAIN_MAX_SWING_REACHED;
+> +
+> +       preemph_max = cdn_dp_pre_emphasis_max(v);
+> +       if (p >= preemph_max)
+> +               p = preemph_max | DP_TRAIN_MAX_PRE_EMPHASIS_REACHED;
+> +
+> +       for (i = 0; i < dp->link.num_lanes; i++)
+> +               dp->train_set[i] = v | p;
+> +}
+> +
+> +/*
+> + * Pick training pattern for channel equalization. Training Pattern 3 for HBR2
+> + * or 1.2 devices that support it, Training Pattern 2 otherwise.
+> + */
+> +static u32 cdn_dp_select_chaneq_pattern(struct cdn_dp_device *dp)
+> +{
+> +       u32 training_pattern = DP_TRAINING_PATTERN_2;
+> +
+> +       /*
+> +        * cdn dp support HBR2 also support TPS3. TPS3 support is also mandatory
+> +        * for downstream devices that support HBR2. However, not all sinks
+> +        * follow the spec.
+> +        */
+> +       if (drm_dp_tps3_supported(dp->dpcd))
+> +               training_pattern = DP_TRAINING_PATTERN_3;
+> +       else
+> +               DRM_DEBUG_KMS("5.4 Gbps link rate without sink TPS3 support\n");
+> +
+> +       return training_pattern;
+> +}
+> +
+> +
+> +static bool cdn_dp_link_max_vswing_reached(struct cdn_dp_device *dp)
+> +{
+> +       int lane;
+> +
+> +       for (lane = 0; lane < dp->link.num_lanes; lane++)
+> +               if ((dp->train_set[lane] & DP_TRAIN_MAX_SWING_REACHED) == 0)
+> +                       return false;
+> +
+> +       return true;
+> +}
+> +
+> +static int cdn_dp_update_link_train(struct cdn_dp_device *dp)
+> +{
+> +       int ret;
+> +
+> +       cdn_dp_set_signal_levels(dp);
+> +
+> +       ret = drm_dp_dpcd_write(&dp->aux, DP_TRAINING_LANE0_SET,
+> +                               dp->train_set, dp->link.num_lanes);
+> +       if (ret != dp->link.num_lanes)
+> +               return -EINVAL;
+> +
+> +       return 0;
+> +}
+> +
+> +static int cdn_dp_set_link_train(struct cdn_dp_device *dp,
+> +                                 uint8_t dp_train_pat)
+> +{
+> +       uint8_t buf[sizeof(dp->train_set) + 1];
+> +       int ret, len;
+> +
+> +       buf[0] = dp_train_pat;
+> +       if ((dp_train_pat & DP_TRAINING_PATTERN_MASK) ==
+> +           DP_TRAINING_PATTERN_DISABLE) {
+> +               /* don't write DP_TRAINING_LANEx_SET on disable */
+> +               len = 1;
+> +       } else {
+> +               /* DP_TRAINING_LANEx_SET follow DP_TRAINING_PATTERN_SET */
+> +               memcpy(buf + 1, dp->train_set, dp->link.num_lanes);
+> +               len = dp->link.num_lanes + 1;
+> +       }
+> +
+> +       ret = drm_dp_dpcd_write(&dp->aux, DP_TRAINING_PATTERN_SET,
+> +                               buf, len);
+> +       if (ret != len)
+> +               return -EINVAL;
+> +
+> +       return 0;
+> +}
+> +
+> +static int cdn_dp_reset_link_train(struct cdn_dp_device *dp,
+> +                                   uint8_t dp_train_pat)
+> +{
+> +       int ret;
+> +
+> +       memset(dp->train_set, 0, sizeof(dp->train_set));
+> +
+> +       cdn_dp_set_signal_levels(dp);
+> +
+> +       ret = cdn_dp_set_pattern(dp, dp_train_pat);
+> +       if (ret)
+> +               return ret;
+> +
+> +       return cdn_dp_set_link_train(dp, dp_train_pat);
+> +}
+> +
+> +/* Enable corresponding port and start training pattern 1 */
+> +static int cdn_dp_link_training_clock_recovery(struct cdn_dp_device *dp)
+> +{
+> +       u8 voltage;
+> +       u8 link_status[DP_LINK_STATUS_SIZE];
+> +       u32 voltage_tries, max_vswing_tries;
+> +       int ret;
+> +
+> +       /* clock recovery */
+> +       ret = cdn_dp_reset_link_train(dp, DP_TRAINING_PATTERN_1 |
+> +                                         DP_LINK_SCRAMBLING_DISABLE);
+> +       if (ret) {
+> +               DRM_ERROR("failed to start link train\n");
+> +               return ret;
+> +       }
+> +
+> +       voltage_tries = 1;
+> +       max_vswing_tries = 0;
+> +       for (;;) {
+> +               drm_dp_link_train_clock_recovery_delay(dp->dpcd);
+> +               if (drm_dp_dpcd_read_link_status(&dp->aux, link_status) !=
+> +                   DP_LINK_STATUS_SIZE) {
+> +                       DRM_ERROR("failed to get link status\n");
+> +                       return -EINVAL;
+> +               }
+> +
+> +               if (drm_dp_clock_recovery_ok(link_status, dp->link.num_lanes)) {
+> +                       DRM_DEBUG_KMS("clock recovery OK\n");
+> +                       return 0;
+> +               }
+> +
+> +               if (voltage_tries >= 5) {
+> +                       DRM_DEBUG_KMS("Same voltage tried 5 times\n");
+> +                       return -EINVAL;
+> +               }
+> +
+> +               if (max_vswing_tries >= 1) {
+> +                       DRM_DEBUG_KMS("Max Voltage Swing reached\n");
+> +                       return -EINVAL;
+> +               }
+> +
+> +               voltage = dp->train_set[0] & DP_TRAIN_VOLTAGE_SWING_MASK;
+> +
+> +               /* Update training set as requested by target */
+> +               cdn_dp_get_adjust_train(dp, link_status);
+> +               if (cdn_dp_update_link_train(dp)) {
+> +                       DRM_ERROR("failed to update link training\n");
+> +                       return -EINVAL;
+> +               }
+> +
+> +               if ((dp->train_set[0] & DP_TRAIN_VOLTAGE_SWING_MASK) ==
+> +                   voltage)
+> +                       ++voltage_tries;
+> +               else
+> +                       voltage_tries = 1;
+> +
+> +               if (cdn_dp_link_max_vswing_reached(dp))
+> +                       ++max_vswing_tries;
+> +       }
+> +}
+> +
+> +static int cdn_dp_link_training_channel_equalization(struct cdn_dp_device *dp)
+> +{
+> +       int tries, ret;
+> +       u32 training_pattern;
+> +       uint8_t link_status[DP_LINK_STATUS_SIZE];
+> +
+> +       training_pattern = cdn_dp_select_chaneq_pattern(dp);
+> +       training_pattern |= DP_LINK_SCRAMBLING_DISABLE;
+> +
+> +       ret = cdn_dp_set_pattern(dp, training_pattern);
+> +       if (ret)
+> +               return ret;
+> +
+> +       ret = cdn_dp_set_link_train(dp, training_pattern);
+> +       if (ret) {
+> +               DRM_ERROR("failed to start channel equalization\n");
+> +               return ret;
+> +       }
+> +
+> +       for (tries = 0; tries < 5; tries++) {
+> +               drm_dp_link_train_channel_eq_delay(dp->dpcd);
+> +               if (drm_dp_dpcd_read_link_status(&dp->aux, link_status) !=
+> +                   DP_LINK_STATUS_SIZE) {
+> +                       DRM_ERROR("failed to get link status\n");
+> +                       break;
+> +               }
+> +
+> +               /* Make sure clock is still ok */
+> +               if (!drm_dp_clock_recovery_ok(link_status,
+> +                                             dp->link.num_lanes)) {
+> +                       DRM_DEBUG_KMS("Clock recovery check failed\n");
+> +                       break;
+> +               }
+> +
+> +               if (drm_dp_channel_eq_ok(link_status,  dp->link.num_lanes)) {
+> +                       DRM_DEBUG_KMS("Channel EQ done\n");
+> +                       return 0;
+> +               }
+> +
+> +               /* Update training set as requested by target */
+> +               cdn_dp_get_adjust_train(dp, link_status);
+> +               if (cdn_dp_update_link_train(dp)) {
+> +                       DRM_ERROR("failed to update link training\n");
+> +                       break;
+> +               }
+> +       }
+> +
+> +       /* Try 5 times, else fail and try at lower BW */
+> +       if (tries == 5)
+> +               DRM_DEBUG_KMS("Channel equalization failed 5 times\n");
+> +
+> +       return -EINVAL;
+> +}
+> +
+> +static int cdn_dp_stop_link_train(struct cdn_dp_device *dp)
+> +{
+> +       int ret = cdn_dp_set_pattern(dp, DP_TRAINING_PATTERN_DISABLE);
+> +
+> +       if (ret)
+> +               return ret;
+> +
+> +       return cdn_dp_set_link_train(dp, DP_TRAINING_PATTERN_DISABLE);
+> +}
+> +
+> +static int cdn_dp_get_lower_link_rate(struct cdn_dp_device *dp)
+> +{
+> +       switch (dp->link.rate) {
+> +       case DP_LINK_BW_1_62:
+> +               return -EINVAL;
+> +       case DP_LINK_BW_2_7:
+> +               dp->link.rate = DP_LINK_BW_1_62;
+> +               break;
+> +       case DP_LINK_BW_5_4:
+> +               dp->link.rate = DP_LINK_BW_2_7;
+> +               break;
+> +       default:
+> +               dp->link.rate = DP_LINK_BW_5_4;
+> +               break;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +int cdn_dp_software_train_link(struct cdn_dp_device *dp)
+> +{
+> +       int ret, stop_err;
+> +       u8 link_config[2];
+> +       u32 rate, sink_max, source_max;
+> +
+> +       ret = drm_dp_dpcd_read(&dp->aux, DP_DPCD_REV, dp->dpcd,
+> +                              sizeof(dp->dpcd));
+> +       if (ret < 0) {
+> +               DRM_DEV_ERROR(dp->dev, "Failed to get caps %d\n", ret);
+> +               return ret;
+> +       }
+> +
+> +       source_max = dp->lanes;
+> +       sink_max = drm_dp_max_lane_count(dp->dpcd);
+> +       dp->link.num_lanes = min(source_max, sink_max);
+> +
+> +       source_max = drm_dp_bw_code_to_link_rate(CDN_DP_MAX_LINK_RATE);
+> +       sink_max = drm_dp_max_link_rate(dp->dpcd);
+> +       rate = min(source_max, sink_max);
+> +       dp->link.rate = drm_dp_link_rate_to_bw_code(rate);
+> +
+> +       link_config[0] = 0;
+> +       link_config[1] = 0;
+> +       if (dp->dpcd[DP_MAIN_LINK_CHANNEL_CODING] & 0x01)
+> +               link_config[1] = DP_SET_ANSI_8B10B;
+> +       drm_dp_dpcd_write(&dp->aux, DP_DOWNSPREAD_CTRL, link_config, 2);
+> +
+> +       while (true) {
+> +
+> +               /* Write the link configuration data */
+> +               link_config[0] = dp->link.rate;
+> +               link_config[1] = dp->link.num_lanes;
+> +               if (drm_dp_enhanced_frame_cap(dp->dpcd))
+> +                       link_config[1] |= DP_LANE_COUNT_ENHANCED_FRAME_EN;
+> +               drm_dp_dpcd_write(&dp->aux, DP_LINK_BW_SET, link_config, 2);
+> +
+> +               ret = cdn_dp_link_training_clock_recovery(dp);
+> +               if (ret) {
+> +                       if (!cdn_dp_get_lower_link_rate(dp))
+> +                               continue;
+> +
+> +                       DRM_ERROR("training clock recovery failed: %d\n", ret);
+> +                       break;
+> +               }
+> +
+> +               ret = cdn_dp_link_training_channel_equalization(dp);
+> +               if (ret) {
+> +                       if (!cdn_dp_get_lower_link_rate(dp))
+> +                               continue;
+> +
+> +                       DRM_ERROR("training channel eq failed: %d\n", ret);
+> +                       break;
+> +               }
+> +
+> +               break;
+> +       }
+> +
+> +       stop_err = cdn_dp_stop_link_train(dp);
+> +       if (stop_err) {
+> +               DRM_ERROR("stop training fail, error: %d\n", stop_err);
+> +               return stop_err;
+> +       }
+> +
+> +       return ret;
+> +}
+> diff --git a/drivers/gpu/drm/rockchip/cdn-dp-reg.c b/drivers/gpu/drm/rockchip/cdn-dp-reg.c
+> index 979355d..e1273e6 100644
+> --- a/drivers/gpu/drm/rockchip/cdn-dp-reg.c
+> +++ b/drivers/gpu/drm/rockchip/cdn-dp-reg.c
+> @@ -17,7 +17,9 @@
+>  #include <linux/delay.h>
+>  #include <linux/io.h>
+>  #include <linux/iopoll.h>
+> +#include <linux/phy/phy.h>
+>  #include <linux/reset.h>
+> +#include <soc/rockchip/rockchip_phy_typec.h>
+>
+>  #include "cdn-dp-core.h"
+>  #include "cdn-dp-reg.h"
+> @@ -189,7 +191,7 @@ static int cdn_dp_mailbox_send(struct cdn_dp_device *dp, u8 module_id,
+>         return 0;
+>  }
+>
+> -static int cdn_dp_reg_write(struct cdn_dp_device *dp, u16 addr, u32 val)
+> +int cdn_dp_reg_write(struct cdn_dp_device *dp, u16 addr, u32 val)
+>  {
+>         u8 msg[6];
+>
+> @@ -609,6 +611,31 @@ int cdn_dp_train_link(struct cdn_dp_device *dp)
+>  {
+>         int ret;
+>
+> +       /*
+> +        * DP firmware uses fixed phy config values to do training, but some
+> +        * boards need to adjust these values to fit for their unique hardware
+> +        * design. So if the phy is using custom config values, do software
+> +        * link training instead of relying on firmware, if software training
+> +        * fail, keep firmware training as a fallback if sw training fails.
+> +        */
+> +       ret = cdn_dp_software_train_link(dp);
+> +       if (ret) {
+> +               DRM_DEV_ERROR(dp->dev,
+> +                       "Failed to do software training %d\n", ret);
+> +               goto do_fw_training;
+> +       }
+
+If I understand correctly you are changing current behavior. Before
+this patch, we use always firmware link training, and after this
+patch, we always use software link training. If fails we use the
+firmware link training.
+
+AFAIK my Samsung Chromebook Plus works well with firmware link
+training, so there are any benefits of use software link training
+instead of firmware link training?
+
+Looks to me that we should only do software link training on these
+platforms that need it, so on those that define the phy-config
+property in their DT and use by default firmware link training.
+
+> +       ret = cdn_dp_reg_write(dp, SOURCE_HDTX_CAR, 0xf);
+> +       if (ret) {
+> +               DRM_DEV_ERROR(dp->dev,
+> +               "Failed to write SOURCE_HDTX_CAR register %d\n", ret);
+> +               goto do_fw_training;
+> +       }
+> +       dp->use_fw_training = false;
+> +       return 0;
+> +
+> +do_fw_training:
+> +       dp->use_fw_training = true;
+> +       DRM_DEV_DEBUG_KMS(dp->dev, "use fw training\n");
+>         ret = cdn_dp_training_start(dp);
+>         if (ret) {
+>                 DRM_DEV_ERROR(dp->dev, "Failed to start training %d\n", ret);
+> @@ -623,7 +650,7 @@ int cdn_dp_train_link(struct cdn_dp_device *dp)
+>
+>         DRM_DEV_DEBUG_KMS(dp->dev, "rate:0x%x, lanes:%d\n", dp->link.rate,
+>                           dp->link.num_lanes);
+> -       return ret;
+> +       return 0;
+>  }
+>
+>  int cdn_dp_set_video_status(struct cdn_dp_device *dp, int active)
+> diff --git a/drivers/gpu/drm/rockchip/cdn-dp-reg.h b/drivers/gpu/drm/rockchip/cdn-dp-reg.h
+> index 6580b11..3420771 100644
+> --- a/drivers/gpu/drm/rockchip/cdn-dp-reg.h
+> +++ b/drivers/gpu/drm/rockchip/cdn-dp-reg.h
+> @@ -137,7 +137,7 @@
+>  #define HPD_EVENT_MASK                 0x211c
+>  #define HPD_EVENT_DET                  0x2120
+>
+> -/* dpyx framer addr */
+> +/* dptx framer addr */
+>  #define DP_FRAMER_GLOBAL_CONFIG                0x2200
+>  #define DP_SW_RESET                    0x2204
+>  #define DP_FRAMER_TU                   0x2208
+> @@ -431,6 +431,40 @@
+>  /* Reference cycles when using lane clock as reference */
+>  #define LANE_REF_CYC                           0x8000
+>
+> +/* register CM_VID_CTRL */
+> +#define LANE_VID_REF_CYC(x)                    (((x) & (BIT(24) - 1)) << 0)
+> +#define NMVID_MEAS_TOLERANCE(x)                        (((x) & 0xf) << 24)
+> +
+> +/* register DP_TX_PHY_CONFIG_REG */
+> +#define DP_TX_PHY_TRAINING_ENABLE(x)           ((x) & 1)
+> +#define DP_TX_PHY_TRAINING_TYPE_PRBS7          (0 << 1)
+> +#define DP_TX_PHY_TRAINING_TYPE_TPS1           (1 << 1)
+> +#define DP_TX_PHY_TRAINING_TYPE_TPS2           (2 << 1)
+> +#define DP_TX_PHY_TRAINING_TYPE_TPS3           (3 << 1)
+> +#define DP_TX_PHY_TRAINING_TYPE_TPS4           (4 << 1)
+> +#define DP_TX_PHY_TRAINING_TYPE_PLTPAT         (5 << 1)
+> +#define DP_TX_PHY_TRAINING_TYPE_D10_2          (6 << 1)
+> +#define DP_TX_PHY_TRAINING_TYPE_HBR2CPAT       (8 << 1)
+> +#define DP_TX_PHY_TRAINING_PATTERN(x)          ((x) << 1)
+> +#define DP_TX_PHY_SCRAMBLER_BYPASS(x)          (((x) & 1) << 5)
+> +#define DP_TX_PHY_ENCODER_BYPASS(x)            (((x) & 1) << 6)
+> +#define DP_TX_PHY_SKEW_BYPASS(x)               (((x) & 1) << 7)
+> +#define DP_TX_PHY_DISPARITY_RST(x)             (((x) & 1) << 8)
+> +#define DP_TX_PHY_LANE0_SKEW(x)                (((x) & 7) << 9)
+> +#define DP_TX_PHY_LANE1_SKEW(x)                (((x) & 7) << 12)
+> +#define DP_TX_PHY_LANE2_SKEW(x)                (((x) & 7) << 15)
+> +#define DP_TX_PHY_LANE3_SKEW(x)                (((x) & 7) << 18)
+> +#define DP_TX_PHY_10BIT_ENABLE(x)              (((x) & 1) << 21)
+> +
+> +/* register DP_FRAMER_GLOBAL_CONFIG */
+> +#define NUM_LANES(x)           ((x) & 3)
+> +#define SST_MODE               (0 << 2)
+> +#define RG_EN                  (0 << 4)
+> +#define GLOBAL_EN              BIT(3)
+> +#define NO_VIDEO               BIT(5)
+> +#define ENC_RST_DIS            BIT(6)
+> +#define WR_VHSYNC_FALL         BIT(7)
+> +
+>  enum voltage_swing_level {
+>         VOLTAGE_LEVEL_0,
+>         VOLTAGE_LEVEL_1,
+> @@ -476,6 +510,7 @@ int cdn_dp_set_host_cap(struct cdn_dp_device *dp, u8 lanes, bool flip);
+>  int cdn_dp_event_config(struct cdn_dp_device *dp);
+>  u32 cdn_dp_get_event(struct cdn_dp_device *dp);
+>  int cdn_dp_get_hpd_status(struct cdn_dp_device *dp);
+> +int cdn_dp_reg_write(struct cdn_dp_device *dp, u16 addr, u32 val);
+>  ssize_t cdn_dp_dpcd_write(struct cdn_dp_device *dp, u32 addr,
+>                           u8 *data, u16 len);
+>  ssize_t cdn_dp_dpcd_read(struct cdn_dp_device *dp, u32 addr,
+> @@ -489,4 +524,5 @@ int cdn_dp_config_video(struct cdn_dp_device *dp);
+>  int cdn_dp_audio_stop(struct cdn_dp_device *dp, struct audio_info *audio);
+>  int cdn_dp_audio_mute(struct cdn_dp_device *dp, bool enable);
+>  int cdn_dp_audio_config(struct cdn_dp_device *dp, struct audio_info *audio);
+> +int cdn_dp_software_train_link(struct cdn_dp_device *dp);
+>  #endif /* _CDN_DP_REG_H */
+> --
+> 2.7.4
+>
