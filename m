@@ -1,38 +1,37 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZokY0DLxWliJSV2Z+8v2T2+N0NHUjotEgmvFpOzJazApfoMsEBpHMVSt5wd38A5uuV80Qbr
-ARC-Seal: i=1; a=rsa-sha256; t=1526937716; cv=none;
+X-Google-Smtp-Source: AB8JxZrvR1MCaiE3plOLO3MzVbMOgem/caeIIIjvCvrWHLPvPpsD/c0lySuQhWRpRhZ2tJ4Rgux4
+ARC-Seal: i=1; a=rsa-sha256; t=1526937710; cv=none;
         d=google.com; s=arc-20160816;
-        b=bsRpiSumCvF6da/jfWVSx7QaDrSbJVZ1qxIH4WyxuBQSw8Yk29CUxIfpaI4KKmQ7Wv
-         kip5OeJC0zPyKFaA54zwoy9XIRf8f6LnOCYtIL1Tel8ovbKuVVn82ObE3iQ9DH1YKvSQ
-         6HweTe81ZJTv2yjOtJ392YHsN0VO6PA31YsvIKQtyjK1gJiZNV1431ePrJRHm0lbmXzY
-         KEHfTCSF9cLYqmCnBBeOp2hIFLQ7tFHIIzMHuZRpTb2+kVe6fs2ZUuLXnmTT2xfpeBtG
-         ExphYtahezS6HtbEVUcC51gpmNVMXllRu3We9abcm4R/k6q3uS6z8OGeEVZR6JId0+PO
-         /Klg==
+        b=J1wRL9vsY0iMhg+hXklGLS5Y1ogL1XRbFgxRbxMoQ8ct3K7s3kG9OK83E4VfbJfj1+
+         Tot8n8osszvqeE79iQK2zyX1Ukn7J10yi2dXAXAMmJviyvPzxjqlvpjE+MElJhi2BeR+
+         pLmxNQ1+akrlcViU5stPihbNVdZKTpmzNEz16Fz0pND3zzC6svfQJfD+rKSultG04GpE
+         222ZYhQi4to3k90KZRRPZ2Iqt+CtzHbnoaXavLlDyOkNGyuMWDkvf9gfSVJT6cjXtdiK
+         1HuFS1QZ4tl+Ac0SMTjWcNRTUPMleZHPC8ExbzifMVPPKiPIUUSKstZTU0XsGCEgynfu
+         UWwg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=BwHocBgHy2GasWzaMfzodG+GZg770piwRHMuSFjlgq8=;
-        b=nD/zei7gk/4pJYH81t1aixVNWM0uIbGoEarDLFCYWj3HfhpjNX7e6fauSchOP+ZL9v
-         NkYy9XUxa5nyVapDknuKU0jwr4Ks5PXpjOUtMkVcYF2VesXq6W5en8lB36VPav/2ltO5
-         UeVO67H5BvIo4xOqaU+RTBqIgwdFkYkipNfIuV5nfYqLGt2tFN73FuOOAXOS2UH8seqU
-         iJkT5uDemHapzIe1E7gn3mBH707/jdhspTHSyenM+WUYVXI+OxY3ZVEaymMMtFVSFdNm
-         SldICz67KEjYI2r+3uUAKzp/jq9VR9WjmCqiXIYnHMqynB91i/IYDauexnHF+WrInoai
-         dgWQ==
+        bh=l6+8InCZpc7veoLxKewU7KiStvC2PvNhQJwCgRrCHm0=;
+        b=pVb6ES49JVLxpTQ1vH0oVNJa8kSrtcHioi0/5DB3aOaaMHhxHE9NA55pquokiLRTvI
+         CGOQYkmwX11mnBjcI9IXsAkneumzGF/uh95fJCSdLxAWcrOr5ek39r32znmJysv+96RO
+         P2XIza5Jz4VhW3IauBvXVlR8A1mkeEda7ubObs8rMasV9OJg3q9b00QXCKpb23JKZzc6
+         Oyly227Na2KaFhALyttCSsLk0t4FV3HDTsS/ynbNk6cNxEyINwvC/cUOnu+KrHdFRg3R
+         4Vr2AXDEEq4f59hwp8Jf0joIctF+FGzwvybxu/wIrKZ7jXN01tUZN9ANG9ZWers9oL5E
+         lEBg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=LaizM/vT;
+       dkim=pass header.i=@kernel.org header.s=default header.b=sJqtBUiF;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=LaizM/vT;
+       dkim=pass header.i=@kernel.org header.s=default header.b=sJqtBUiF;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
 	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.14 95/95] x86/bugs: Rename SSBD_NO to SSB_NO
-Date: Mon, 21 May 2018 23:12:25 +0200
-Message-Id: <20180521210503.578070858@linuxfoundation.org>
+Subject: [PATCH 4.14 93/95] x86/speculation, KVM: Implement support for VIRT_SPEC_CTRL/LS_CFG
+Date: Mon, 21 May 2018 23:12:23 +0200
+Message-Id: <20180521210503.396581233@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210447.219380974@linuxfoundation.org>
 References: <20180521210447.219380974@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109970459860027?=
-X-GMAIL-MSGID: =?utf-8?q?1601110243340009935?=
+X-GMAIL-THRID: =?utf-8?q?1601109963617470446?=
+X-GMAIL-MSGID: =?utf-8?q?1601110236616885177?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,40 +50,75 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 240da953fcc6a9008c92fae5b1f727ee5ed167ab upstream
+commit 47c61b3955cf712cadfc25635bf9bc174af030ea upstream
 
-The "336996 Speculative Execution Side Channel Mitigations" from
-May defines this as SSB_NO, hence lets sync-up.
+Add the necessary logic for supporting the emulated VIRT_SPEC_CTRL MSR to
+x86_virt_spec_ctrl().  If either X86_FEATURE_LS_CFG_SSBD or
+X86_FEATURE_VIRT_SPEC_CTRL is set then use the new guest_virt_spec_ctrl
+argument to check whether the state must be modified on the host. The
+update reuses speculative_store_bypass_update() so the ZEN-specific sibling
+coordination can be reused.
 
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/msr-index.h |    2 +-
- arch/x86/kernel/cpu/common.c     |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/spec-ctrl.h |    6 ++++++
+ arch/x86/kernel/cpu/bugs.c       |   30 ++++++++++++++++++++++++++++++
+ 2 files changed, 36 insertions(+)
 
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -70,7 +70,7 @@
- #define MSR_IA32_ARCH_CAPABILITIES	0x0000010a
- #define ARCH_CAP_RDCL_NO		(1 << 0)   /* Not susceptible to Meltdown */
- #define ARCH_CAP_IBRS_ALL		(1 << 1)   /* Enhanced IBRS support */
--#define ARCH_CAP_SSBD_NO		(1 << 4)   /*
-+#define ARCH_CAP_SSB_NO			(1 << 4)   /*
- 						    * Not susceptible to Speculative Store Bypass
- 						    * attack, so no Speculative Store Bypass
- 						    * control required.
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -941,7 +941,7 @@ static void __init cpu_set_bug_bits(stru
- 		rdmsrl(MSR_IA32_ARCH_CAPABILITIES, ia32_cap);
+--- a/arch/x86/include/asm/spec-ctrl.h
++++ b/arch/x86/include/asm/spec-ctrl.h
+@@ -53,6 +53,12 @@ static inline u64 ssbd_tif_to_spec_ctrl(
+ 	return (tifn & _TIF_SSBD) >> (TIF_SSBD - SPEC_CTRL_SSBD_SHIFT);
+ }
  
- 	if (!x86_match_cpu(cpu_no_spec_store_bypass) &&
--	   !(ia32_cap & ARCH_CAP_SSBD_NO))
-+	   !(ia32_cap & ARCH_CAP_SSB_NO))
- 		setup_force_cpu_bug(X86_BUG_SPEC_STORE_BYPASS);
++static inline unsigned long ssbd_spec_ctrl_to_tif(u64 spec_ctrl)
++{
++	BUILD_BUG_ON(TIF_SSBD < SPEC_CTRL_SSBD_SHIFT);
++	return (spec_ctrl & SPEC_CTRL_SSBD) << (TIF_SSBD - SPEC_CTRL_SSBD_SHIFT);
++}
++
+ static inline u64 ssbd_tif_to_amd_ls_cfg(u64 tifn)
+ {
+ 	return (tifn & _TIF_SSBD) ? x86_amd_ls_cfg_ssbd_mask : 0ULL;
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -162,6 +162,36 @@ x86_virt_spec_ctrl(u64 guest_spec_ctrl,
+ 			wrmsrl(MSR_IA32_SPEC_CTRL, msrval);
+ 		}
+ 	}
++
++	/*
++	 * If SSBD is not handled in MSR_SPEC_CTRL on AMD, update
++	 * MSR_AMD64_L2_CFG or MSR_VIRT_SPEC_CTRL if supported.
++	 */
++	if (!static_cpu_has(X86_FEATURE_LS_CFG_SSBD) &&
++	    !static_cpu_has(X86_FEATURE_VIRT_SSBD))
++		return;
++
++	/*
++	 * If the host has SSBD mitigation enabled, force it in the host's
++	 * virtual MSR value. If its not permanently enabled, evaluate
++	 * current's TIF_SSBD thread flag.
++	 */
++	if (static_cpu_has(X86_FEATURE_SPEC_STORE_BYPASS_DISABLE))
++		hostval = SPEC_CTRL_SSBD;
++	else
++		hostval = ssbd_tif_to_spec_ctrl(ti->flags);
++
++	/* Sanitize the guest value */
++	guestval = guest_virt_spec_ctrl & SPEC_CTRL_SSBD;
++
++	if (hostval != guestval) {
++		unsigned long tif;
++
++		tif = setguest ? ssbd_spec_ctrl_to_tif(guestval) :
++				 ssbd_spec_ctrl_to_tif(hostval);
++
++		speculative_store_bypass_update(tif);
++	}
+ }
+ EXPORT_SYMBOL_GPL(x86_virt_spec_ctrl);
  
- 	if (x86_match_cpu(cpu_no_speculation))
