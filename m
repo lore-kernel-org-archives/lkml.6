@@ -1,39 +1,39 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrDqdnsqiP2mXRjsvKZMx7MkdlZ1ZI2vf5CdpsB4cOa0w8lPFKTqG/qNxNXLzVAfRThtzQZ
-ARC-Seal: i=1; a=rsa-sha256; t=1526937464; cv=none;
+X-Google-Smtp-Source: AB8JxZriS4RkvISGxFWryN0oVCaZuJgAGkpNgirg2iTMHEpSrnlzHNRSnza8HI/YNVhGWrk1dlBx
+ARC-Seal: i=1; a=rsa-sha256; t=1526937456; cv=none;
         d=google.com; s=arc-20160816;
-        b=Xq2EIlWcg7jwEUxYqXCl58m9IWMwAQZpI1oj5zJBh4I1vFXXeUNsm391lsvYlwHq5u
-         muFa7rTUVzC5MhQQXPkEZgh9TX+/wd521mtFKMIQii/t6iaSeey2TUjGhSYIZQZxfVZg
-         aWQ5AmJU+eN80rfwtohrNB6VDUtV4oGRVSjpqZpjd6vIfsxZnyadwvaG1SP7CjoY0Lh0
-         5l8zpyGxjJANl6MEM/FfCZsshqLsP2AAOiZ4SqShdTeHu7oEKYhwVHdPKyAEmC8EC+fX
-         23mjiLk+xY9hcE6sU10hS7GBOkaqpDfOCwQM5TvoNsDcKL4JdqTyQNQUiJ4Pfn8enKmv
-         kLgQ==
+        b=TPD6SP/HAbKLVleLLHp0BygC4VIPxv5exi8PVpH3vXALs5tye1qETOOpDaSOLbZcsq
+         A0BeM1NFfEp75Z5tyZxleciHEodSnc4tVGX2D4jkEFY8H7GWsLLLIWjXv5mYld8sZXcL
+         ME6FudljQKFynEYrVz1dLH8QGzU3hNVvMlpgJ2aCpwCt2AduZoSaDyBJImdNBTI4P8OS
+         qrx7pdWlB3HdBF7foKysBmGH3FuLCco0nUrXHgTol0F3tLFWzfWFmjl4EXgEet3WgjDz
+         6Ef/chIga9PX5jdSF1Hq5kQLtcqXyGjXTPE3QvarG0+1+6o64JmbsSGXJvRTrKHNntm2
+         TuPw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=Osp5fIiBqkxJ+6fbrC9txzDDwfCEiA6UYl0JOkhX5wI=;
-        b=IBOPYubsGBDh+1gB3Qd5cg9zLCk754A760/nJKYlr7XfUyVSAvVJxgZv8Bws6ZkcBN
-         G31JCPqnJdN7TvRo7V93i+8fJSZ9HZG01coAovph8VUedQDQLAdBmiJdC6RqWtV5NGbA
-         ugqZ+PwduV5wMJpXGGVS89hqUdjnh5x0/EGzWIZ/KmZSDc0iP1KFQObmPdq2CKtH8k20
-         ISOHV0M6EzJAxbazOWBQ2TrbvrUXLv6T6t7g/9zPFeAncKsxCktRi3JLvYQXu3T43yPc
-         ipabwuMa+73NJaxy+51shlzW1L7brZjC+Opcsdv9w6+3/v5l+FxlBJBvcyfn7i471fIE
-         xgdg==
+        bh=iA3u8GrttN6o4xk/EIHd11zpjYkyQD/4bGmbpgNn0Ts=;
+        b=MADJzlETAjTcCiRDCKrxrb7qI/FpUGIrGyNryzC4E5WNHQ6pSRKcGB5HADxpXkeX/7
+         gFY7QPr6x46GCtwcpMKVe2XV8Wdlv57CcnySseOutwJ+aQszqMxR+6xzmzqBno29Tc0l
+         x1vWFdNEp7vDiO/rkIF0hFxYXdSIhQVWCGi0tOgABFAteO1rPwac1xgr7iuJQ+lQN19R
+         sn1gaeB9TFEY9FvrdLQtk/B2dR8WB/iuq28YXevc7E9M4xTWolnnkhQn3vhatKJrYeav
+         Ig28L7zLzOl9X3yvZx5uVkxpwxOHLiq6lJ8lEvrOHsx/MlwOIC6FanGR6XakmRgmvCA/
+         qIqg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=pIA1i19E;
+       dkim=pass header.i=@kernel.org header.s=default header.b=EpdSO7BT;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=pIA1i19E;
+       dkim=pass header.i=@kernel.org header.s=default header.b=EpdSO7BT;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Kees Cook <keescook@chromium.org>,
+	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 58/87] x86/bugs: Make boot modes __ro_after_init
-Date: Mon, 21 May 2018 23:11:34 +0200
-Message-Id: <20180521210425.408013198@linuxfoundation.org>
+Subject: [PATCH 4.9 87/87] x86/bugs: Rename SSBD_NO to SSB_NO
+Date: Mon, 21 May 2018 23:12:03 +0200
+Message-Id: <20180521210427.343116922@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210420.222671977@linuxfoundation.org>
 References: <20180521210420.222671977@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109978852317350?=
-X-GMAIL-MSGID: =?utf-8?q?1601109978852317350?=
+X-GMAIL-THRID: =?utf-8?q?1601109970459860027?=
+X-GMAIL-MSGID: =?utf-8?q?1601109970459860027?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,38 +52,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kees Cook <keescook@chromium.org>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-commit f9544b2b076ca90d887c5ae5d74fab4c21bb7c13 upstream
+commit 240da953fcc6a9008c92fae5b1f727ee5ed167ab upstream
 
-There's no reason for these to be changed after boot.
+The "336996 Speculative Execution Side Channel Mitigations" from
+May defines this as SSB_NO, hence lets sync-up.
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/bugs.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/msr-index.h |    2 +-
+ arch/x86/kernel/cpu/common.c     |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -128,7 +128,8 @@ static const char *spectre_v2_strings[]
- #undef pr_fmt
- #define pr_fmt(fmt)     "Spectre V2 : " fmt
+--- a/arch/x86/include/asm/msr-index.h
++++ b/arch/x86/include/asm/msr-index.h
+@@ -63,7 +63,7 @@
+ #define MSR_IA32_ARCH_CAPABILITIES	0x0000010a
+ #define ARCH_CAP_RDCL_NO		(1 << 0)   /* Not susceptible to Meltdown */
+ #define ARCH_CAP_IBRS_ALL		(1 << 1)   /* Enhanced IBRS support */
+-#define ARCH_CAP_SSBD_NO		(1 << 4)   /*
++#define ARCH_CAP_SSB_NO			(1 << 4)   /*
+ 						    * Not susceptible to Speculative Store Bypass
+ 						    * attack, so no Speculative Store Bypass
+ 						    * control required.
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -926,7 +926,7 @@ static void __init cpu_set_bug_bits(stru
+ 		rdmsrl(MSR_IA32_ARCH_CAPABILITIES, ia32_cap);
  
--static enum spectre_v2_mitigation spectre_v2_enabled = SPECTRE_V2_NONE;
-+static enum spectre_v2_mitigation spectre_v2_enabled __ro_after_init =
-+	SPECTRE_V2_NONE;
+ 	if (!x86_match_cpu(cpu_no_spec_store_bypass) &&
+-	   !(ia32_cap & ARCH_CAP_SSBD_NO))
++	   !(ia32_cap & ARCH_CAP_SSB_NO))
+ 		setup_force_cpu_bug(X86_BUG_SPEC_STORE_BYPASS);
  
- void x86_spec_ctrl_set(u64 val)
- {
-@@ -406,7 +407,7 @@ retpoline_auto:
- #undef pr_fmt
- #define pr_fmt(fmt)	"Speculative Store Bypass: " fmt
- 
--static enum ssb_mitigation ssb_mode = SPEC_STORE_BYPASS_NONE;
-+static enum ssb_mitigation ssb_mode __ro_after_init = SPEC_STORE_BYPASS_NONE;
- 
- /* The kernel command line selection */
- enum ssb_mitigation_cmd {
+ 	if (x86_match_cpu(cpu_no_speculation))
