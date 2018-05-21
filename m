@@ -1,40 +1,40 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqyvOtbkM+8Kfh4Zl6cTgkIp8CnS+duvP5P1bluvCni+G9Tx5RMcTyiy9n9I+MS8MdVWeWc
-ARC-Seal: i=1; a=rsa-sha256; t=1526937760; cv=none;
+X-Google-Smtp-Source: AB8JxZpIwiRvIH4HDkuaNB+Mso0T+FfpOuJhmKMUJD1tYL3i5LFlv7SxcOGA1Yac5DEiq6dvgVsm
+ARC-Seal: i=1; a=rsa-sha256; t=1526937757; cv=none;
         d=google.com; s=arc-20160816;
-        b=LvEshBLE1Oisropwe7yyZ3Tv0R7H7+rROgoJE3X00uVmmoDJz1BCAElO9p0Nb61hoC
-         rDlU8ExV8gXiYYvLVNCayrtSvjpapH/9vzkGaJmv9bokEHgvmY/Z0hnLZuTPfwDrf2GZ
-         y1TZe8XbfpFoWTUePZLllQZT1a7x85U05CiYkFjzWrI2Wo9U2S/sWNPdfywi7nOwlwxc
-         7sAZyee297+MrJ8RgZQyOJtOk5Lj/w40+/KSdvBhkmEx+vtj4xcsPFBP7BEBICV5NEbD
-         Ux/8HC7tsOkOXat6gkSPgD6m/2jr2QGlSXTs4Z7YJDM8bEZZVXSEm9kVsdxJdmByA1cH
-         T70Q==
+        b=X+tJnqlmJrUdLWfpSIoqeN2joa2J1T67/6r/RXdeCAsofmQIA4U6pTg0jBjTN07UhA
+         b1VT4ep9Akvb3gP1CCSpqanC57WPt465RlqUYyeojrijVor+OuAwQFVm1wFz2bn1pOL5
+         KRnkZ4x0WH/FWAqBJ93qnUxRRQt9UxlpjbpMmUY39QOIvslPncnMEweI6wUCxMiGafuv
+         LT6+s4jdzz3bulVl/n3pkvJXIYf8B7x06PQShy+wI0yZV/mUReGHNHVSn1/PgPMTviQz
+         duu4G1Bd3LgScG1P+vBo980k8jTgznaB2DRqtpcbvG6kC7YGK9aSf7aei8ymLjdCRLOx
+         aSsw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=VpVIckQujiMgb4ng3kuR40qcGe5SVBRpF7BvSXfPFss=;
-        b=XrBxlWvjRpreM2COwxdB/QHJPD2iHI3OYffXbDK7CjTiocrdOj7CUNxI89A0YKi2Sa
-         eN1BUTvChN6mSxesN9/hAA0icCpzzHm/BrHvqA4fxlIkC7ye9q+vabB0rPSdIbUWpRG9
-         5MWIeiHCFmOR5XtA4teU2S/4lNMYBo046hrmpG6jVpgyTwKs1pxJdo2D7Mcltnnwq68g
-         RJiMsIg96DEJWvJ48Q3u3EGGJjMhEeM5pyGrEmMk3iBJHq+Se5KJa1I1qn9n0NOXMfhE
-         eqnEJD/nYcXsYO++YJCGFTb+prIvzjvMyXOsAWVi0cqm+bd4VZt87tD4Yx6uuZ4GYE4d
-         a14A==
+        bh=ubAMv9Tfl6xfpdIB0wazJD4tS00pQGzeCNbYzmwNZVE=;
+        b=PcJ2zJuQhaNUPG7Dlt4by61qBvaN6kaR/6LqaK4S1sqCbG2dDnI0kMYZsuV3yNEPPu
+         AWgN4JwW68ytyEZ1EseJ4en4GoxZ5v5mHQpAMnrWStnpsIhvtMy57WIEfkUg+KDHr4KB
+         iBhSY4+9k+hmVUVD+d1BRpp0XnCDiMZ+6HTeA1go1ZqiwGlXQEOCKvfz0v5ViYnstdeT
+         imx3jrN51tnno2A+9B/dmXT3diJPyDQuTsgPbVI/i9DEdNYHnPFBWjlm3Ce7rE2M8V3o
+         9a/rV/orb4o2rgZZ2At7XooXjx2aA/523OP/lVCzZ1/srScdjRRTqV3/OTaZp21yVeTE
+         a6TA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=RftsbDGC;
+       dkim=pass header.i=@kernel.org header.s=default header.b=y/gLa/x/;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=RftsbDGC;
+       dkim=pass header.i=@kernel.org header.s=default header.b=y/gLa/x/;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Jan Glauber <jan.glauber@caviumnetworks.com>,
-	Andre Przywara <andre.przywara@arm.com>,
 	Christoffer Dall <christoffer.dall@arm.com>,
+	Andre Przywara <andre.przywara@arm.com>,
 	Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.16 016/110] KVM: arm/arm64: VGIC/ITS: Promote irq_lock() in update_affinity
-Date: Mon, 21 May 2018 23:11:13 +0200
-Message-Id: <20180521210505.360653406@linuxfoundation.org>
+Subject: [PATCH 4.16 015/110] KVM: arm/arm64: Properly protect VGIC locks from IRQs
+Date: Mon, 21 May 2018 23:11:12 +0200
+Message-Id: <20180521210505.290599689@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -44,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601110289431283482?=
-X-GMAIL-MSGID: =?utf-8?q?1601110289431283482?=
+X-GMAIL-THRID: =?utf-8?q?1601110286546689184?=
+X-GMAIL-MSGID: =?utf-8?q?1601110286546689184?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,39 +55,173 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Andre Przywara <andre.przywara@arm.com>
 
-commit 9c4188762f7fee032abf8451fd9865a9abfc5516 upstream.
+commit 388d4359680b56dba82fe2ffca05871e9fd2b73e upstream.
 
-Apparently the development of update_affinity() overlapped with the
-promotion of irq_lock to be _irqsave, so the patch didn't convert this
-lock over. This will make lockdep complain.
+As Jan reported [1], lockdep complains about the VGIC not being bullet
+proof. This seems to be due to two issues:
+- When commit 006df0f34930 ("KVM: arm/arm64: Support calling
+  vgic_update_irq_pending from irq context") promoted irq_lock and
+  ap_list_lock to _irqsave, we forgot two instances of irq_lock.
+  lockdeps seems to pick those up.
+- If a lock is _irqsave, any other locks we take inside them should be
+  _irqsafe as well. So the lpi_list_lock needs to be promoted also.
 
-Fix this by disabling IRQs around the lock.
+This fixes both issues by simply making the remaining instances of those
+locks _irqsave.
+One irq_lock is addressed in a separate patch, to simplify backporting.
+
+[1] http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/575718.html
 
 Cc: stable@vger.kernel.org
-Fixes: 08c9fd042117 ("KVM: arm/arm64: vITS: Add a helper to update the affinity of an LPI")
+Fixes: 006df0f34930 ("KVM: arm/arm64: Support calling vgic_update_irq_pending from irq context")
 Reported-by: Jan Glauber <jan.glauber@caviumnetworks.com>
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
 Acked-by: Christoffer Dall <christoffer.dall@arm.com>
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- virt/kvm/arm/vgic/vgic-its.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ virt/kvm/arm/vgic/vgic-debug.c |    5 +++--
+ virt/kvm/arm/vgic/vgic-its.c   |   10 ++++++----
+ virt/kvm/arm/vgic/vgic.c       |   22 ++++++++++++++--------
+ 3 files changed, 23 insertions(+), 14 deletions(-)
 
---- a/virt/kvm/arm/vgic/vgic-its.c
-+++ b/virt/kvm/arm/vgic/vgic-its.c
-@@ -350,10 +350,11 @@ static int vgic_copy_lpi_list(struct kvm
- static int update_affinity(struct vgic_irq *irq, struct kvm_vcpu *vcpu)
- {
- 	int ret = 0;
+--- a/virt/kvm/arm/vgic/vgic-debug.c
++++ b/virt/kvm/arm/vgic/vgic-debug.c
+@@ -211,6 +211,7 @@ static int vgic_debug_show(struct seq_fi
+ 	struct vgic_state_iter *iter = (struct vgic_state_iter *)v;
+ 	struct vgic_irq *irq;
+ 	struct kvm_vcpu *vcpu = NULL;
 +	unsigned long flags;
+ 
+ 	if (iter->dist_id == 0) {
+ 		print_dist_state(s, &kvm->arch.vgic);
+@@ -227,9 +228,9 @@ static int vgic_debug_show(struct seq_fi
+ 		irq = &kvm->arch.vgic.spis[iter->intid - VGIC_NR_PRIVATE_IRQS];
+ 	}
  
 -	spin_lock(&irq->irq_lock);
 +	spin_lock_irqsave(&irq->irq_lock, flags);
- 	irq->target_vcpu = vcpu;
+ 	print_irq_state(s, irq, vcpu);
 -	spin_unlock(&irq->irq_lock);
 +	spin_unlock_irqrestore(&irq->irq_lock, flags);
  
- 	if (irq->hw) {
- 		struct its_vlpi_map map;
+ 	return 0;
+ }
+--- a/virt/kvm/arm/vgic/vgic-its.c
++++ b/virt/kvm/arm/vgic/vgic-its.c
+@@ -52,6 +52,7 @@ static struct vgic_irq *vgic_add_lpi(str
+ {
+ 	struct vgic_dist *dist = &kvm->arch.vgic;
+ 	struct vgic_irq *irq = vgic_get_irq(kvm, NULL, intid), *oldirq;
++	unsigned long flags;
+ 	int ret;
+ 
+ 	/* In this case there is no put, since we keep the reference. */
+@@ -71,7 +72,7 @@ static struct vgic_irq *vgic_add_lpi(str
+ 	irq->intid = intid;
+ 	irq->target_vcpu = vcpu;
+ 
+-	spin_lock(&dist->lpi_list_lock);
++	spin_lock_irqsave(&dist->lpi_list_lock, flags);
+ 
+ 	/*
+ 	 * There could be a race with another vgic_add_lpi(), so we need to
+@@ -99,7 +100,7 @@ static struct vgic_irq *vgic_add_lpi(str
+ 	dist->lpi_list_count++;
+ 
+ out_unlock:
+-	spin_unlock(&dist->lpi_list_lock);
++	spin_unlock_irqrestore(&dist->lpi_list_lock, flags);
+ 
+ 	/*
+ 	 * We "cache" the configuration table entries in our struct vgic_irq's.
+@@ -315,6 +316,7 @@ static int vgic_copy_lpi_list(struct kvm
+ {
+ 	struct vgic_dist *dist = &vcpu->kvm->arch.vgic;
+ 	struct vgic_irq *irq;
++	unsigned long flags;
+ 	u32 *intids;
+ 	int irq_count, i = 0;
+ 
+@@ -330,7 +332,7 @@ static int vgic_copy_lpi_list(struct kvm
+ 	if (!intids)
+ 		return -ENOMEM;
+ 
+-	spin_lock(&dist->lpi_list_lock);
++	spin_lock_irqsave(&dist->lpi_list_lock, flags);
+ 	list_for_each_entry(irq, &dist->lpi_list_head, lpi_list) {
+ 		if (i == irq_count)
+ 			break;
+@@ -339,7 +341,7 @@ static int vgic_copy_lpi_list(struct kvm
+ 			continue;
+ 		intids[i++] = irq->intid;
+ 	}
+-	spin_unlock(&dist->lpi_list_lock);
++	spin_unlock_irqrestore(&dist->lpi_list_lock, flags);
+ 
+ 	*intid_ptr = intids;
+ 	return i;
+--- a/virt/kvm/arm/vgic/vgic.c
++++ b/virt/kvm/arm/vgic/vgic.c
+@@ -40,9 +40,13 @@ struct vgic_global kvm_vgic_global_state
+  * kvm->lock (mutex)
+  *   its->cmd_lock (mutex)
+  *     its->its_lock (mutex)
+- *       vgic_cpu->ap_list_lock
+- *         kvm->lpi_list_lock
+- *           vgic_irq->irq_lock
++ *       vgic_cpu->ap_list_lock		must be taken with IRQs disabled
++ *         kvm->lpi_list_lock		must be taken with IRQs disabled
++ *           vgic_irq->irq_lock		must be taken with IRQs disabled
++ *
++ * As the ap_list_lock might be taken from the timer interrupt handler,
++ * we have to disable IRQs before taking this lock and everything lower
++ * than it.
+  *
+  * If you need to take multiple locks, always take the upper lock first,
+  * then the lower ones, e.g. first take the its_lock, then the irq_lock.
+@@ -69,8 +73,9 @@ static struct vgic_irq *vgic_get_lpi(str
+ {
+ 	struct vgic_dist *dist = &kvm->arch.vgic;
+ 	struct vgic_irq *irq = NULL;
++	unsigned long flags;
+ 
+-	spin_lock(&dist->lpi_list_lock);
++	spin_lock_irqsave(&dist->lpi_list_lock, flags);
+ 
+ 	list_for_each_entry(irq, &dist->lpi_list_head, lpi_list) {
+ 		if (irq->intid != intid)
+@@ -86,7 +91,7 @@ static struct vgic_irq *vgic_get_lpi(str
+ 	irq = NULL;
+ 
+ out_unlock:
+-	spin_unlock(&dist->lpi_list_lock);
++	spin_unlock_irqrestore(&dist->lpi_list_lock, flags);
+ 
+ 	return irq;
+ }
+@@ -127,19 +132,20 @@ static void vgic_irq_release(struct kref
+ void vgic_put_irq(struct kvm *kvm, struct vgic_irq *irq)
+ {
+ 	struct vgic_dist *dist = &kvm->arch.vgic;
++	unsigned long flags;
+ 
+ 	if (irq->intid < VGIC_MIN_LPI)
+ 		return;
+ 
+-	spin_lock(&dist->lpi_list_lock);
++	spin_lock_irqsave(&dist->lpi_list_lock, flags);
+ 	if (!kref_put(&irq->refcount, vgic_irq_release)) {
+-		spin_unlock(&dist->lpi_list_lock);
++		spin_unlock_irqrestore(&dist->lpi_list_lock, flags);
+ 		return;
+ 	};
+ 
+ 	list_del(&irq->lpi_list);
+ 	dist->lpi_list_count--;
+-	spin_unlock(&dist->lpi_list_lock);
++	spin_unlock_irqrestore(&dist->lpi_list_lock, flags);
+ 
+ 	kfree(irq);
+ }
