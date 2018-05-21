@@ -1,133 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751616AbeEUFoy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 01:44:54 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:36108 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751195AbeEUFop (ORCPT
+        id S1751446AbeEUFot (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 01:44:49 -0400
+Received: from server1.vittgam.net ([213.239.197.142]:29361 "EHLO
+        mail.vittgam.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751186AbeEUFon (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 01:44:45 -0400
-X-Google-Smtp-Source: AB8JxZo7mEZXlttJPqYz++r2vqvTq5qN/G6QRHv7FIrY5M0scfnWd9vbXjvSPpd64/ZjDz4Bg89jxw==
-Subject: Re: [Xen-devel][RFC 2/3] xen/grant-table: Extend API to work with DMA
- buffers
-To: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        jgross@suse.com, konrad.wilk@oracle.com
-Cc: daniel.vetter@intel.com, dongwon.kim@intel.com,
-        matthew.d.roper@intel.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180517082604.14828-1-andr2000@gmail.com>
- <20180517082604.14828-3-andr2000@gmail.com>
- <28532709-6c87-f048-be6a-3c4ba02ae56f@oracle.com>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <097da8bd-2cfc-0916-451d-dec3e4d2a52e@gmail.com>
-Date: Mon, 21 May 2018 08:44:40 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <28532709-6c87-f048-be6a-3c4ba02ae56f@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Mon, 21 May 2018 01:44:43 -0400
+X-DKIM: OpenDKIM Filter v2.4.2 mail.vittgam.net w4L5iZ9B083096
+X-VittGamMilter-Outgoing-SubjectPrefix: [linux-kernel]
+X-VittGamMilter-Outgoing-OriginalSubject: [PATCH RESEND] platform/chrome: cros_ec_lpc: Add support for newer Google devices using custom coreboot firmware or stock SeaBIOS.
+Date: Mon, 21 May 2018 07:44:35 +0200
+Message-Id: <201805210544.w4L5iZ9B083096@mail.vittgam.net>
+From: "Vittorio Gambaletta (VittGam)" <linuxbugs@vittgam.net>
+To: <linux-kernel@vger.kernel.org>, <bleung@chromium.org>,
+        <bleung@google.com>, <olof@lixom.net>
+Cc: "Salvatore Bellizzi" <lkml@seppia.net>, <groeck@chromium.org>,
+        <groeck@google.com>, <dmitry.torokhov@gmail.com>
+Subject: [PATCH RESEND] platform/chrome: cros_ec_lpc: Add support for newer Google devices using custom coreboot firmware or stock SeaBIOS.
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/19/2018 01:19 AM, Boris Ostrovsky wrote:
-> On 05/17/2018 04:26 AM, Oleksandr Andrushchenko wrote:
->> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->>
->> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->> ---
->>   drivers/xen/grant-table.c | 49 +++++++++++++++++++++++++++++++++++++++
->>   include/xen/grant_table.h |  7 ++++++
->>   2 files changed, 56 insertions(+)
->>
->> diff --git a/drivers/xen/grant-table.c b/drivers/xen/grant-table.c
->> index bb36b1e1dbcc..c27bcc420575 100644
->> --- a/drivers/xen/grant-table.c
->> +++ b/drivers/xen/grant-table.c
->> @@ -729,6 +729,55 @@ void gnttab_free_pages(int nr_pages, struct page **pages)
->>   }
->>   EXPORT_SYMBOL(gnttab_free_pages);
->>   
->> +int gnttab_dma_alloc_pages(struct device *dev, bool coherent,
->> +			   int nr_pages, struct page **pages,
->> +			   void **vaddr, dma_addr_t *dev_bus_addr)
->> +{
->> +	int i;
->> +	int ret;
->> +
->> +	ret = alloc_dma_xenballooned_pages(dev, coherent, nr_pages, pages,
->> +					   vaddr, dev_bus_addr);
->> +	if (ret < 0)
->> +		return ret;
->> +
->> +	for (i = 0; i < nr_pages; i++) {
->> +#if BITS_PER_LONG < 64
->> +		struct xen_page_foreign *foreign;
->> +
->> +		foreign = kzalloc(sizeof(*foreign), GFP_KERNEL);
->> +		if (!foreign) {
->> +			gnttab_dma_free_pages(dev, flags, nr_pages, pages,
->> +					      *vaddr, *dev_bus_addr);
->> +			return -ENOMEM;
->> +		}
->> +		set_page_private(pages[i], (unsigned long)foreign);
->> +#endif
->> +		SetPagePrivate(pages[i]);
->> +	}
->> +	return 0;
->> +}
->> +EXPORT_SYMBOL(gnttab_dma_alloc_pages);
->> +
->> +void gnttab_dma_free_pages(struct device *dev, bool coherent,
->> +			   int nr_pages, struct page **pages,
->> +			   void *vaddr, dma_addr_t dev_bus_addr)
->> +{
->> +	int i;
->> +
->> +	for (i = 0; i < nr_pages; i++) {
->> +		if (PagePrivate(pages[i])) {
->> +#if BITS_PER_LONG < 64
->> +			kfree((void *)page_private(pages[i]));
->> +#endif
->> +			ClearPagePrivate(pages[i]);
->> +		}
->> +	}
->> +	free_dma_xenballooned_pages(dev, coherent, nr_pages, pages,
->> +				    vaddr, dev_bus_addr);
->> +}
->> +EXPORT_SYMBOL(gnttab_dma_free_pages);
->
-> Given that these routines look almost exactly like their non-dma
-> counterparts I wonder whether common code could be factored out.
-Yes, this can be done
-> -boris
->
->
->
->
->> +
->>   /* Handling of paged out grant targets (GNTST_eagain) */
->>   #define MAX_DELAY 256
->>   static inline void
->> diff --git a/include/xen/grant_table.h b/include/xen/grant_table.h
->> index 34b1379f9777..20ee2b5ba965 100644
->> --- a/include/xen/grant_table.h
->> +++ b/include/xen/grant_table.h
->> @@ -195,6 +195,13 @@ void gnttab_free_auto_xlat_frames(void);
->>   int gnttab_alloc_pages(int nr_pages, struct page **pages);
->>   void gnttab_free_pages(int nr_pages, struct page **pages);
->>   
->> +int gnttab_dma_alloc_pages(struct device *dev, bool coherent,
->> +			   int nr_pages, struct page **pages,
->> +			   void **vaddr, dma_addr_t *dev_bus_addr);
->> +void gnttab_dma_free_pages(struct device *dev, bool coherent,
->> +			   int nr_pages, struct page **pages,
->> +			   void *vaddr, dma_addr_t dev_bus_addr);
->> +
->>   int gnttab_map_refs(struct gnttab_map_grant_ref *map_ops,
->>   		    struct gnttab_map_grant_ref *kmap_ops,
->>   		    struct page **pages, unsigned int count);
+Custom coreboot firmware does not contain "Google_*" as BIOS
+version string; also, booting through stock SeaBIOS will present
+an empty BIOS version string to Linux. So the generic match at
+the top would not work.
+
+A previous patch added the "GOOGLE" match for DMI system vendor,
+but newer machines such as Skylake-based Caroline use "Google"
+instead.
+
+Also amend the previous comment adding a note that this is needed
+for stock SeaBIOS too.
+
+Signed-off-by: Vittorio Gambaletta <linuxbugs@vittgam.net>
+Signed-off-by: Salvatore Bellizzi <lkml@seppia.net>
+
+---
+
+--- a/drivers/platform/chrome/cros_ec_lpc.c
++++ b/drivers/platform/chrome/cros_ec_lpc.c
+@@ -347,7 +347,8 @@
+ 	},
+ 	{
+ 		/*
+-		 * If the box is running custom coreboot firmware then the
++		 * If the box is running custom coreboot firmware,
++		 * or is booting Linux through stock SeaBIOS, then the
+ 		 * DMI BIOS version string will not be matched by "Google_",
+ 		 * but the system vendor string will still be matched by
+ 		 * "GOOGLE".
+@@ -358,6 +359,16 @@
+ 		},
+ 	},
+ 	{
++		/*
++		 * Newer machines use "Google" instead of "GOOGLE" as
++		 * DMI system vendor string.
++		 */
++		.matches = {
++			DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
++			DMI_MATCH(DMI_SYS_VENDOR, "Google"),
++		},
++	},
++	{
+ 		/* x86-link, the Chromebook Pixel. */
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
