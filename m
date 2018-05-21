@@ -1,95 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752536AbeEUMmN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 08:42:13 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:33932 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751039AbeEUMmI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 08:42:08 -0400
-X-Google-Smtp-Source: AB8JxZoYaGfqW73kGqXilrVybtUVhbNUqnylgRiBTudVvb70JMhXwNg0/C7Hy4DL6kaY1TXTxmntLYTX0/+XJtEVfpU=
+        id S1751276AbeEUMos (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 08:44:48 -0400
+Received: from mga07.intel.com ([134.134.136.100]:31974 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750999AbeEUMop (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 08:44:45 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,426,1520924400";
+   d="scan'208";a="201112075"
+Subject: Re: [PATCH v2]: perf/x86: store user space frame-pointer value on a
+ sample
+To: Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>
+Cc: Ingo Molnar <mingo@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-perf-users@vger.kernel.org
+References: <31205dc8-b756-e12b-0249-2ed06c2db9c9@linux.intel.com>
+ <20180509145436.GV12217@hirez.programming.kicks-ass.net>
+ <3ecedd91-1c01-6fc5-4648-89eaf5ff0930@linux.intel.com>
+ <20180510101406.GA12217@hirez.programming.kicks-ass.net>
+From: Alexey Budankov <alexey.budankov@linux.intel.com>
+Message-ID: <0594eaea-0cab-ea04-c258-5f4770ffeee6@linux.intel.com>
+Date: Mon, 21 May 2018 15:44:40 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180521104008.z6ei5zjve7u5iwho@lakrids.cambridge.arm.com>
-References: <20180425090047.6485-1-ganapatrao.kulkarni@cavium.com>
- <20180425090047.6485-3-ganapatrao.kulkarni@cavium.com> <20180426105938.y6unpt36lisb7kbr@lakrids.cambridge.arm.com>
- <CAKTKpr7Q7T9ZCTBi=LQR=XaAoihbBA3OKCO7yFobzNmR8EfyjQ@mail.gmail.com>
- <CAKTKpr61zBW_D6v_Ck1Lcp0NJ4wPFOpgbiM5aU_EtuiFU-qp4Q@mail.gmail.com>
- <20180521103712.gofbrjdtghfwolmd@lakrids.cambridge.arm.com> <20180521104008.z6ei5zjve7u5iwho@lakrids.cambridge.arm.com>
-From: Ganapatrao Kulkarni <gklkml16@gmail.com>
-Date: Mon, 21 May 2018 18:12:07 +0530
-Message-ID: <CAKTKpr7rBj2Ai5jsPgfH308GYNviQm1GWNnkvOhBD_Zak34+-Q@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] ThunderX2: Add Cavium ThunderX2 SoC UNCORE PMU driver
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Will Deacon <Will.Deacon@arm.com>, jnair@caviumnetworks.com,
-        Robert Richter <Robert.Richter@cavium.com>, Vadim.Lomovtsev@cavium.com,
-        Jan.Glauber@cavium.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180510101406.GA12217@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 4:10 PM, Mark Rutland <mark.rutland@arm.com> wrote:
-> On Mon, May 21, 2018 at 11:37:12AM +0100, Mark Rutland wrote:
->> Hi Ganapat,
->>
->>
->> Sorry for the delay in replying; I was away most of last week.
->>
->> On Tue, May 15, 2018 at 04:03:19PM +0530, Ganapatrao Kulkarni wrote:
->> > On Sat, May 5, 2018 at 12:16 AM, Ganapatrao Kulkarni <gklkml16@gmail.com> wrote:
->> > > On Thu, Apr 26, 2018 at 4:29 PM, Mark Rutland <mark.rutland@arm.com> wrote:
->> > >> On Wed, Apr 25, 2018 at 02:30:47PM +0530, Ganapatrao Kulkarni wrote:
->>
->> > >>> +static int alloc_counter(struct thunderx2_pmu_uncore_channel *pmu_uncore)
->> > >>> +{
->> > >>> +     int counter;
->> > >>> +
->> > >>> +     raw_spin_lock(&pmu_uncore->lock);
->> > >>> +     counter = find_first_zero_bit(pmu_uncore->counter_mask,
->> > >>> +                             pmu_uncore->uncore_dev->max_counters);
->> > >>> +     if (counter == pmu_uncore->uncore_dev->max_counters) {
->> > >>> +             raw_spin_unlock(&pmu_uncore->lock);
->> > >>> +             return -ENOSPC;
->> > >>> +     }
->> > >>> +     set_bit(counter, pmu_uncore->counter_mask);
->> > >>> +     raw_spin_unlock(&pmu_uncore->lock);
->> > >>> +     return counter;
->> > >>> +}
->> > >>> +
->> > >>> +static void free_counter(struct thunderx2_pmu_uncore_channel *pmu_uncore,
->> > >>> +                                     int counter)
->> > >>> +{
->> > >>> +     raw_spin_lock(&pmu_uncore->lock);
->> > >>> +     clear_bit(counter, pmu_uncore->counter_mask);
->> > >>> +     raw_spin_unlock(&pmu_uncore->lock);
->> > >>> +}
->> > >>
->> > >> I don't believe that locking is required in either of these, as the perf
->> > >> core serializes pmu::add() and pmu::del(), where these get called.
->> >
->> > without this locking, i am seeing "BUG: scheduling while atomic" when
->> > i run perf with more events together than the maximum counters
->> > supported
->>
->> Did you manage to get to the bottom of this?
->>
->> Do you have a backtrace?
->>
->> It looks like in your latest posting you reserve counters through the
->> userspace ABI, which doesn't seem right to me, and I'd like to
->> understand the problem.
->
-> Looks like I misunderstood -- those are still allocated kernel-side.
->
-> I'll follow that up in the v5 posting.
+Hi Peter,
 
-please review v5.
->
-> Thanks,
-> Mark.
+On 10.05.2018 13:14, Peter Zijlstra wrote:
+> On Thu, May 10, 2018 at 12:42:38PM +0300, Alexey Budankov wrote:
+>>> The Changelog needs to state that user_regs->bp is in fact valid and
+>>
+>> That actually was tested on binaries compiled without and with BP exposed 
+>> and in the latter case proved the value of that change.
+> 
+> Mostly works is not the same as 'always initialized', if there are entry
+> paths that do not store that register, then using the value might leak
+> values from the kernel stack, which would be bad.
+> 
+> But like said, I think much of the kernel entry code was sanitized with
+> the PTI effort and I suspect things are in fact fine now, but lets wait
+> for Andy to confirm.
 
-thanks
-Ganapat
+It looks like, these days, all registers are saved on system calls, just 
+like you anticipated.
+
+So BP register value might be stored into the Perf trace on a sample. 
+
+Andy?
+
+Thanks,
+Alexey
+
+> 
