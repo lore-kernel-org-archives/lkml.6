@@ -1,28 +1,28 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZp56R1BhvDbly9J6wybIX8uvXNPhe3VRW7kwRTzlv3qx0TQYBMKXMsyFzzPFRcfaZQr5DIE
-ARC-Seal: i=1; a=rsa-sha256; t=1526937937; cv=none;
+X-Google-Smtp-Source: AB8JxZqDhYNHGEGZqJ/w2whVWbmUSPcPVs/fgDaP6qAf2jEaD3gQDF1k7AUowTA1wlHzpTTJJNpF
+ARC-Seal: i=1; a=rsa-sha256; t=1526937932; cv=none;
         d=google.com; s=arc-20160816;
-        b=xqd/PUpvLi6iQ+48Xjr1xqEGeaTzBkZj7stPsV1oi6Q6k885PTRs8ouqxbkXizXOmz
-         ljDsoV9o/5Q7Zn18Hc9UuOB7CqsZ6qYfmyZ8rcsYAeuAJT0vequ1dGu6mFHRA3Qkqe1C
-         jE/raO6KMVyHkzSF4TylzlEpyjYqwXukfkNochMGAdUBluRuLQ/BQui4ZXgy8Klyh50Z
-         HP1vOTTlwHtDDCvxb6mfI93hun1eX0FSDnxx0ebzkHz3aCnV+kcnbYJ72pgvOca5gg0p
-         kz6bVJfKhMjwQzDCbaJ6wsOmWo1jyeLsJ1bM8nDJFebBO+/QxLxUGL1dhM5JnT3s5fbj
-         9KkQ==
+        b=SngIvjGlvPZwgHXyW2JOASR9KOIwaks/WKiRYjh2AcQ/5gX5mOUzjGQ4ndqP1S2nXS
+         Ca/Km8SMRLcFu1PKTt2MDgbcBwUEOtzuX+GzCNDMVf1Yalp+RR0TYZKVUrC8x4ZphTZk
+         ApwBbKEMCX4mQZPhP4a57VEOs0b/hk8C8Y8mHQp8u7Z2Xms0DdgAZfhJlz5e6jlPvKYa
+         mjcr5N4wXksPqbuNUTKk3F5aIgVNl3IIro6Kf1g2GN6EezSyCCDfJg0y/ZMJWXscqP3h
+         M/8Ds/n9o1roKR9QluP9lPZbXVjbr8w2vTcnBqDPZwtLS3KSJRMincnHKtI9UxZydhXx
+         PcuQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=wLTyQXI+WMKGdmzm+z7UZ7ym9jMYUfvKOG/YujwPtmE=;
-        b=NTy1cvspCqvAmv1Kt0CfcevHDDqGte/rUOTFQbIAdHtIOsffo5YPCpmIrfi/8h8asO
-         wWM2ksHgyIS2gKPXg+vPG+8Opw4yHDuZNDyoy8PpB69Fnw1oumiZSPP1nhUt8DwJxed5
-         yFHmDXHXsfm4DUiFtYQ3WnJjpdvAlvgz6mZX8GlxKHa95uBA2mFprLpl9dzbQoEywjuw
-         Hjd0oSt81OaIYydDHIA2Hg/ao0TuTWXHn0RMSpTH6lrEaStw6GoRea98rZakazvfCEtZ
-         Bl6tq/LJ90I22745c4z95SrfJ6OOER9meOwj7ke0nnogFiSMzjk8LQef6OtwUx921W+h
-         1QNA==
+        bh=e6c4duRE+ZH+UbsUKx+0oVmngMphFKOlINvbWnBkbJg=;
+        b=fr1RA1jOTfIwT9GLtS4+ULfGOcGCOgEx80qTDbM8m+oDm82R6ufx4cSHtmSGt7K+sa
+         xeuAU54vwzj9QgC1eNJSV82yfGn/Sz9P8HWCfO07v9xBL2SVEJKKC5LbDHj3zoA+Icse
+         hJH2lM9UZjSt6oEMrVWQHRH2sOx5JPrGMOIxk1KoPagslXBlRMXUC2naMqpirtNZWS4E
+         3MpJn2PSgsc6Vp//xK2hKo4gt6AU3LIVYEzSUwicpeEfJYgem3VPJwHYgZPDeE2UxyZi
+         M2zYH4L+IssQIkIfAp7NBlY1KYiEgHXVrkzYEE+5pBAjwHkWVsaB4w2zGey6EwviwDNh
+         iPhA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=VROeeg8B;
+       dkim=pass header.i=@kernel.org header.s=default header.b=m4xQRGGV;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=VROeeg8B;
+       dkim=pass header.i=@kernel.org header.s=default header.b=m4xQRGGV;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
@@ -30,9 +30,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Kees Cook <keescook@chromium.org>,
 	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.16 081/110] x86/bugs: Make boot modes __ro_after_init
-Date: Mon, 21 May 2018 23:12:18 +0200
-Message-Id: <20180521210513.417039784@linuxfoundation.org>
+Subject: [PATCH 4.16 079/110] proc: Provide details on speculation flaw mitigations
+Date: Mon, 21 May 2018 23:12:16 +0200
+Message-Id: <20180521210513.220298217@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109978852317350?=
-X-GMAIL-MSGID: =?utf-8?q?1601110474811676615?=
+X-GMAIL-THRID: =?utf-8?q?1601109972788944421?=
+X-GMAIL-MSGID: =?utf-8?q?1601110469237733001?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,35 +53,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Kees Cook <keescook@chromium.org>
 
-commit f9544b2b076ca90d887c5ae5d74fab4c21bb7c13 upstream
+commit fae1fa0fc6cca8beee3ab8ed71d54f9a78fa3f64 upstream
 
-There's no reason for these to be changed after boot.
+As done with seccomp and no_new_privs, also show speculation flaw
+mitigation state in /proc/$pid/status.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/bugs.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/proc/array.c |   22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -129,7 +129,8 @@ static const char *spectre_v2_strings[]
- #undef pr_fmt
- #define pr_fmt(fmt)     "Spectre V2 : " fmt
+--- a/fs/proc/array.c
++++ b/fs/proc/array.c
+@@ -85,6 +85,7 @@
+ #include <linux/delayacct.h>
+ #include <linux/seq_file.h>
+ #include <linux/pid_namespace.h>
++#include <linux/prctl.h>
+ #include <linux/ptrace.h>
+ #include <linux/tracehook.h>
+ #include <linux/string_helpers.h>
+@@ -347,6 +348,27 @@ static inline void task_seccomp(struct s
+ #ifdef CONFIG_SECCOMP
+ 	seq_put_decimal_ull(m, "\nSeccomp:\t", p->seccomp.mode);
+ #endif
++	seq_printf(m, "\nSpeculation Store Bypass:\t");
++	switch (arch_prctl_spec_ctrl_get(p, PR_SPEC_STORE_BYPASS)) {
++	case -EINVAL:
++		seq_printf(m, "unknown");
++		break;
++	case PR_SPEC_NOT_AFFECTED:
++		seq_printf(m, "not vulnerable");
++		break;
++	case PR_SPEC_PRCTL | PR_SPEC_DISABLE:
++		seq_printf(m, "thread mitigated");
++		break;
++	case PR_SPEC_PRCTL | PR_SPEC_ENABLE:
++		seq_printf(m, "thread vulnerable");
++		break;
++	case PR_SPEC_DISABLE:
++		seq_printf(m, "globally mitigated");
++		break;
++	default:
++		seq_printf(m, "vulnerable");
++		break;
++	}
+ 	seq_putc(m, '\n');
+ }
  
--static enum spectre_v2_mitigation spectre_v2_enabled = SPECTRE_V2_NONE;
-+static enum spectre_v2_mitigation spectre_v2_enabled __ro_after_init =
-+	SPECTRE_V2_NONE;
- 
- void x86_spec_ctrl_set(u64 val)
- {
-@@ -407,7 +408,7 @@ retpoline_auto:
- #undef pr_fmt
- #define pr_fmt(fmt)	"Speculative Store Bypass: " fmt
- 
--static enum ssb_mitigation ssb_mode = SPEC_STORE_BYPASS_NONE;
-+static enum ssb_mitigation ssb_mode __ro_after_init = SPEC_STORE_BYPASS_NONE;
- 
- /* The kernel command line selection */
- enum ssb_mitigation_cmd {
