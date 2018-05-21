@@ -1,92 +1,38 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1344077-1526937781-2-571671138782450018
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES enroda, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526937780; b=GODowbf2zf3fk3yb1D070xkuZZWhpZfGQfN2mgRVMfs7oYqTWi
-    lcCTX/iar+GBXbrJtNFLW3JfVrUXVWhX67iXjDNsNkpanucpSRJzY7vaPA0YkNSF
-    SDhhJJV4aU9z7k/mHyvR006CwycBMdS4+J7+GqC76dPmqjnslKkQRMtsahfi/KtH
-    fVAzMhJ7W8ZHWpGpzqRLdql6NZHQwCIva8p0wIfgjwh0ytTSQ5H5nQOR1nEgD/RJ
-    1DUqhmA2Y94E4qt1qxrrkCforeZpZxeoUBH+WD9uCdD6jNPsR0YkFu87CiIKEWoF
-    LMWhvOHxk5HbWj/dP7G8XS7sfAC9+63jlQgQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1526937780; bh=r0FqWwRt8/I6VFfX02r7TwDSAC7O0n
-    FnhTJWMJzPmuY=; b=Sliekh60kzT6jP6w3Cux9ezK+gyMueucx8JcpXpiVTJWEj
-    gquXxL9MBfRyPSjFelAYV5fvW9hz6ClD0OhgKhK9E9EVqxtIKBGgfxGhDVBP5Kq3
-    mlFHW1V+xLQ1UdijOlBdLghUNN5VBX1f2XnX/G6LRbGIlR0KIeCm9vmjsI7VBZfC
-    7FwEir3Mqv8VS+oImtOrLQtoruWvk4rCaTZduqjW05mLnFHUDrG9YX6xCgXR75pQ
-    GtpPBl86p8VatVrS/ZvliI5KHl6GZl3sOu4srDWXk+V79cZ/VZKTdvRki5KspG/E
-    XFsWjBRj9Tvb/3pOsSLRdlgSCZYrV0IsmB8fORJw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=E7OFPHJ6 x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linuxfoundation.org header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=E7OFPHJ6 x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linuxfoundation.org header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfH3vv8ZDUjW5ls0qVRfCwY7TXqVo/bPMD6hRB0Fi6rjoIbY7LQfXjZslyt6Iqaz77B14KfDTNIv+AGtQn9Xp1hO61eX6YRzjm0LqkexuVDEScqa+R/Kg
-    lowPbCKBmfOnY2t/x5oVUdiS1WkLTTqvGiZJbLCXqkOVymVkQTD+uP2ecO2t6Gmj4d3galIVq23X1BknRE1i0J1exLBuYwHhoDBmL3vkcuuxIUEuTS3L8oPj
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=hD80L64hAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=KslZaVS1h0vLkMwhe8wA:9
-    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754316AbeEUVWz (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 21 May 2018 17:22:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37730 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754305AbeEUVWv (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 21 May 2018 17:22:51 -0400
+Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZp4t8fW3No5Pro6cqq1KRMBh8yauEeH4fLFivXbfDjuRbxHczYwHjuzekSaPO0iCRNeT1lR
+ARC-Seal: i=1; a=rsa-sha256; t=1526937779; cv=none;
+        d=google.com; s=arc-20160816;
+        b=CowxkwBEzWCTx0wkXL6Bkc5SWsDKEVirO5nkZhj8s9cFhRdhsaLngijFu/Sy+EudWP
+         jRFSauqG4xkIdig6AEz2cHs7FyhkwT0jOUJAdx+P6g2CNhtHUh08qTVAh1ndnnhB3yaN
+         rl3FSEeg4Oo+8IjrQaQuHGFLpLxxQ67noBRrcQr9TjCAS0l7RqMJDpA9MMODIJL924pK
+         C3sLuhc2gSsYcCEmgn2XJYxNAeNWOQOv09mYItq+XZQZOC8JIEsZGrpJQ5jia9T5cav0
+         Z3H6bUj7jY5jIlufnMVcmJ57kyVWJEUWF5Ghl5VJUxqz4LLCDY6wxqG9SxrKMLtbhoUk
+         YKeg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=HU2M2JbZ3VzASzUqEkr17pnRTRGot2kf40bviCU2MAM=;
+        b=BRLrUF5Q3YnCkE+aqBL0gAldAxLsQLYBrOdLrYfbc5+hU+ps2cZqxMmfUZgEjMRFdD
+         R90HCMJFnz+u5q3R76ZVGFf8AT351oOL0tqIXlLlZjPu2Y/KoLT/yu/OvYCOG6ly68Ub
+         M5Wt0IAy6JEgI/7KM7a8E+cvqYLzQ0OofQdEfdk5ypgDlbi2vkTL7qBV0SBeKOGL7p9X
+         4H9KvwyKAQHhG+Uur2uwZJCvJk6hLSd8AtoIfjEqTQ6pqMtN1mprfBJWH5shUFb2/Tny
+         yr/pD7Tbrw+3o9JBDpYn3quf/rmguGpTD55z0xnmZdevdfQNdFjw6XPhqGhmb0j3mQze
+         UeVg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=T1wtziou;
+       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=T1wtziou;
+       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH 4.16 002/110] usbip: usbip_host: refine probe and disconnect debug msgs to be useful
-Date: Mon, 21 May 2018 23:10:59 +0200
-Message-Id: <20180521210504.023378330@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Juergen Gross <jgross@suse.com>,
+	"Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.16 022/110] tracing/x86/xen: Remove zero data size trace events trace_xen_mmu_flush_tlb{_all}
+Date: Mon, 21 May 2018 23:11:19 +0200
+Message-Id: <20180521210505.832255089@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -94,9 +40,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1601109886542706508?=
+X-GMAIL-MSGID: =?utf-8?q?1601110308574973936?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -104,38 +51,97 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shuah Khan <shuahkh@osg.samsung.com>
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-commit 28b68acc4a88dcf91fd1dcf2577371dc9bf574cc upstream.
+commit 45dd9b0666a162f8e4be76096716670cf1741f0e upstream.
 
-Refine probe and disconnect debug msgs to be useful and say what is
-in progress.
+Doing an audit of trace events, I discovered two trace events in the xen
+subsystem that use a hack to create zero data size trace events. This is not
+what trace events are for. Trace events add memory footprint overhead, and
+if all you need to do is see if a function is hit or not, simply make that
+function noinline and use function tracer filtering.
 
-Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
-Cc: stable <stable@vger.kernel.org>
+Worse yet, the hack used was:
+
+ __array(char, x, 0)
+
+Which creates a static string of zero in length. There's assumptions about
+such constructs in ftrace that this is a dynamic string that is nul
+terminated. This is not the case with these tracepoints and can cause
+problems in various parts of ftrace.
+
+Nuke the trace events!
+
+Link: http://lkml.kernel.org/r/20180509144605.5a220327@gandalf.local.home
+
+Cc: stable@vger.kernel.org
+Fixes: 95a7d76897c1e ("xen/mmu: Use Xen specific TLB flush instead of the generic one.")
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/usbip/stub_dev.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/xen/mmu.c         |    4 +---
+ arch/x86/xen/mmu_pv.c      |    4 +---
+ include/trace/events/xen.h |   16 ----------------
+ 3 files changed, 2 insertions(+), 22 deletions(-)
 
---- a/drivers/usb/usbip/stub_dev.c
-+++ b/drivers/usb/usbip/stub_dev.c
-@@ -302,7 +302,7 @@ static int stub_probe(struct usb_device
- 	struct bus_id_priv *busid_priv;
- 	int rc;
+--- a/arch/x86/xen/mmu.c
++++ b/arch/x86/xen/mmu.c
+@@ -42,13 +42,11 @@ xmaddr_t arbitrary_virt_to_machine(void
+ }
+ EXPORT_SYMBOL_GPL(arbitrary_virt_to_machine);
  
--	dev_dbg(&udev->dev, "Enter\n");
-+	dev_dbg(&udev->dev, "Enter probe\n");
+-static void xen_flush_tlb_all(void)
++static noinline void xen_flush_tlb_all(void)
+ {
+ 	struct mmuext_op *op;
+ 	struct multicall_space mcs;
  
- 	/* check we should claim or not by busid_table */
- 	busid_priv = get_busid_priv(udev_busid);
-@@ -404,7 +404,7 @@ static void stub_disconnect(struct usb_d
- 	struct bus_id_priv *busid_priv;
- 	int rc;
+-	trace_xen_mmu_flush_tlb_all(0);
+-
+ 	preempt_disable();
  
--	dev_dbg(&udev->dev, "Enter\n");
-+	dev_dbg(&udev->dev, "Enter disconnect\n");
+ 	mcs = xen_mc_entry(sizeof(*op));
+--- a/arch/x86/xen/mmu_pv.c
++++ b/arch/x86/xen/mmu_pv.c
+@@ -1280,13 +1280,11 @@ unsigned long xen_read_cr2_direct(void)
+ 	return this_cpu_read(xen_vcpu_info.arch.cr2);
+ }
  
- 	busid_priv = get_busid_priv(udev_busid);
- 	if (!busid_priv) {
+-static void xen_flush_tlb(void)
++static noinline void xen_flush_tlb(void)
+ {
+ 	struct mmuext_op *op;
+ 	struct multicall_space mcs;
+ 
+-	trace_xen_mmu_flush_tlb(0);
+-
+ 	preempt_disable();
+ 
+ 	mcs = xen_mc_entry(sizeof(*op));
+--- a/include/trace/events/xen.h
++++ b/include/trace/events/xen.h
+@@ -352,22 +352,6 @@ DECLARE_EVENT_CLASS(xen_mmu_pgd,
+ DEFINE_XEN_MMU_PGD_EVENT(xen_mmu_pgd_pin);
+ DEFINE_XEN_MMU_PGD_EVENT(xen_mmu_pgd_unpin);
+ 
+-TRACE_EVENT(xen_mmu_flush_tlb_all,
+-	    TP_PROTO(int x),
+-	    TP_ARGS(x),
+-	    TP_STRUCT__entry(__array(char, x, 0)),
+-	    TP_fast_assign((void)x),
+-	    TP_printk("%s", "")
+-	);
+-
+-TRACE_EVENT(xen_mmu_flush_tlb,
+-	    TP_PROTO(int x),
+-	    TP_ARGS(x),
+-	    TP_STRUCT__entry(__array(char, x, 0)),
+-	    TP_fast_assign((void)x),
+-	    TP_printk("%s", "")
+-	);
+-
+ TRACE_EVENT(xen_mmu_flush_tlb_one_user,
+ 	    TP_PROTO(unsigned long addr),
+ 	    TP_ARGS(addr),
