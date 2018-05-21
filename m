@@ -1,61 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752695AbeEUKf2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 06:35:28 -0400
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:23360 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752771AbeEUKd0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 06:33:26 -0400
-X-IronPort-AV: E=Sophos;i="5.49,426,1520924400";
-   d="scan'208";a="12288591"
-From: Eugen Hristev <eugen.hristev@microchip.com>
-To: <jic23@kernel.org>, <ludovic.desroches@microchip.com>,
-        <alexandre.belloni@bootlin.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
-        <linux-input@vger.kernel.org>, <nicolas.ferre@microchip.com>,
-        <dmitry.torokhov@gmail.com>, <robh@kernel.org>
-CC: Eugen Hristev <eugen.hristev@microchip.com>
-Subject: [PATCH v6 3/9] dt-bindings: input: touchscreen: add minimum pressure touchscreen property
-Date: Mon, 21 May 2018 13:27:51 +0300
-Message-ID: <1526898477-9952-4-git-send-email-eugen.hristev@microchip.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1526898477-9952-1-git-send-email-eugen.hristev@microchip.com>
-References: <1526898477-9952-1-git-send-email-eugen.hristev@microchip.com>
+        id S1752247AbeEUKhX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 06:37:23 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46722 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750883AbeEUKhR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 06:37:17 -0400
+Date: Mon, 21 May 2018 11:37:12 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Ganapatrao Kulkarni <gklkml16@gmail.com>
+Cc: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Will Deacon <Will.Deacon@arm.com>, jnair@caviumnetworks.com,
+        Robert Richter <Robert.Richter@cavium.com>, Vadim.Lomovtsev@cavium.com,
+        Jan.Glauber@cavium.com
+Subject: Re: [PATCH v4 2/2] ThunderX2: Add Cavium ThunderX2 SoC UNCORE PMU
+ driver
+Message-ID: <20180521103712.gofbrjdtghfwolmd@lakrids.cambridge.arm.com>
+References: <20180425090047.6485-1-ganapatrao.kulkarni@cavium.com>
+ <20180425090047.6485-3-ganapatrao.kulkarni@cavium.com>
+ <20180426105938.y6unpt36lisb7kbr@lakrids.cambridge.arm.com>
+ <CAKTKpr7Q7T9ZCTBi=LQR=XaAoihbBA3OKCO7yFobzNmR8EfyjQ@mail.gmail.com>
+ <CAKTKpr61zBW_D6v_Ck1Lcp0NJ4wPFOpgbiM5aU_EtuiFU-qp4Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKTKpr61zBW_D6v_Ck1Lcp0NJ4wPFOpgbiM5aU_EtuiFU-qp4Q@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a common touchscreen optional property that will specify
-the minimum pressure applied to the screen that is needed
-such that the driver will report the touch event.
+Hi Ganapat,
 
-Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
-Changes in v5:
- - Modified property name to touchscreen-min-pressure from
-touchscreen-threshold-property
 
- Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt | 3 +++
- 1 file changed, 3 insertions(+)
+Sorry for the delay in replying; I was away most of last week.
 
-diff --git a/Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt b/Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt
-index 537643e..d092d5d 100644
---- a/Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt
-+++ b/Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt
-@@ -7,6 +7,9 @@ Optional properties for Touchscreens:
- 				  (in pixels)
-  - touchscreen-max-pressure	: maximum reported pressure (arbitrary range
- 				  dependent on the controller)
-+ - touchscreen-min-pressure	: minimum pressure on the touchscreen to be
-+				  achieved in order for the touchscreen
-+				  driver to report a touch event.
-  - touchscreen-fuzz-x		: horizontal noise value of the absolute input
- 				  device (in pixels)
-  - touchscreen-fuzz-y		: vertical noise value of the absolute input
--- 
-2.7.4
+On Tue, May 15, 2018 at 04:03:19PM +0530, Ganapatrao Kulkarni wrote:
+> On Sat, May 5, 2018 at 12:16 AM, Ganapatrao Kulkarni <gklkml16@gmail.com> wrote:
+> > On Thu, Apr 26, 2018 at 4:29 PM, Mark Rutland <mark.rutland@arm.com> wrote:
+> >> On Wed, Apr 25, 2018 at 02:30:47PM +0530, Ganapatrao Kulkarni wrote:
+
+> >>> +static int alloc_counter(struct thunderx2_pmu_uncore_channel *pmu_uncore)
+> >>> +{
+> >>> +     int counter;
+> >>> +
+> >>> +     raw_spin_lock(&pmu_uncore->lock);
+> >>> +     counter = find_first_zero_bit(pmu_uncore->counter_mask,
+> >>> +                             pmu_uncore->uncore_dev->max_counters);
+> >>> +     if (counter == pmu_uncore->uncore_dev->max_counters) {
+> >>> +             raw_spin_unlock(&pmu_uncore->lock);
+> >>> +             return -ENOSPC;
+> >>> +     }
+> >>> +     set_bit(counter, pmu_uncore->counter_mask);
+> >>> +     raw_spin_unlock(&pmu_uncore->lock);
+> >>> +     return counter;
+> >>> +}
+> >>> +
+> >>> +static void free_counter(struct thunderx2_pmu_uncore_channel *pmu_uncore,
+> >>> +                                     int counter)
+> >>> +{
+> >>> +     raw_spin_lock(&pmu_uncore->lock);
+> >>> +     clear_bit(counter, pmu_uncore->counter_mask);
+> >>> +     raw_spin_unlock(&pmu_uncore->lock);
+> >>> +}
+> >>
+> >> I don't believe that locking is required in either of these, as the perf
+> >> core serializes pmu::add() and pmu::del(), where these get called.
+> 
+> without this locking, i am seeing "BUG: scheduling while atomic" when
+> i run perf with more events together than the maximum counters
+> supported
+
+Did you manage to get to the bottom of this?
+
+Do you have a backtrace?
+
+It looks like in your latest posting you reserve counters through the
+userspace ABI, which doesn't seem right to me, and I'd like to
+understand the problem.
+
+Thanks,
+Mark.
