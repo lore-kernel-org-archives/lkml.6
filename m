@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752835AbeEUMPf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 08:15:35 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:38694 "EHLO huawei.com"
+        id S1752847AbeEUMPx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 08:15:53 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:38664 "EHLO huawei.com"
         rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752095AbeEUMJF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 08:09:05 -0400
+        id S1751514AbeEUMJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 08:09:04 -0400
 From: Yisheng Xie <xieyisheng1@huawei.com>
 To: <linux-kernel@vger.kernel.org>
 CC: Yisheng Xie <xieyisheng1@huawei.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Tejun Heo <tj@kernel.org>, <linux-ide@vger.kernel.org>
-Subject: [PATCH 10/33] pata_hpt37x: use match_string() helper
-Date: Mon, 21 May 2018 19:57:47 +0800
-Message-ID: <1526903890-35761-11-git-send-email-xieyisheng1@huawei.com>
+        Adrian Hunter <adrian.hunter@intel.com>, Hu Ziji <huziji@marvell.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, <linux-mmc@vger.kernel.org>
+Subject: [PATCH 16/33] mmc: sdhci-xenon: use match_string() helper
+Date: Mon, 21 May 2018 19:57:53 +0800
+Message-ID: <1526903890-35761-17-git-send-email-xieyisheng1@huawei.com>
 X-Mailer: git-send-email 1.7.12.4
 In-Reply-To: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
 References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
@@ -28,40 +28,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 match_string() returns the index of an array for a matching string,
 which can be used intead of open coded variant.
 
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: linux-ide@vger.kernel.org
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Hu Ziji <huziji@marvell.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-mmc@vger.kernel.org
 Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
 ---
- drivers/ata/pata_hpt37x.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+ drivers/mmc/host/sdhci-xenon-phy.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/ata/pata_hpt37x.c b/drivers/ata/pata_hpt37x.c
-index 3ba843f..ef8aaeb 100644
---- a/drivers/ata/pata_hpt37x.c
-+++ b/drivers/ata/pata_hpt37x.c
-@@ -224,17 +224,14 @@ static int hpt_dma_blacklisted(const struct ata_device *dev, char *modestr,
- 			       const char * const list[])
+diff --git a/drivers/mmc/host/sdhci-xenon-phy.c b/drivers/mmc/host/sdhci-xenon-phy.c
+index ec87943..a35804b 100644
+--- a/drivers/mmc/host/sdhci-xenon-phy.c
++++ b/drivers/mmc/host/sdhci-xenon-phy.c
+@@ -814,15 +814,10 @@ static int xenon_add_phy(struct device_node *np, struct sdhci_host *host,
  {
- 	unsigned char model_num[ATA_ID_PROD_LEN + 1];
--	int i = 0;
-+	int i;
+ 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+ 	struct xenon_priv *priv = sdhci_pltfm_priv(pltfm_host);
+-	int i, ret;
++	int ret;
  
- 	ata_id_c_string(dev->id, model_num, ATA_ID_PROD, sizeof(model_num));
- 
--	while (list[i] != NULL) {
--		if (!strcmp(list[i], model_num)) {
--			pr_warn("%s is not supported for %s\n",
--				modestr, list[i]);
--			return 1;
+-	for (i = 0; i < NR_PHY_TYPES; i++) {
+-		if (!strcmp(phy_name, phy_types[i])) {
+-			priv->phy_type = i;
+-			break;
 -		}
--		i++;
-+	i = match_string(list, -1, model_num);
-+	if (i >= 0) {
-+		pr_warn("%s is not supported for %s\n", modestr, list[i]);
-+		return 1;
- 	}
- 	return 0;
- }
+-	}
+-	if (i == NR_PHY_TYPES) {
++	priv->phy_type = match_string(phy_types, NR_PHY_TYPES, phy_name);
++	if (priv->phy_type < 0) {
+ 		dev_err(mmc_dev(host->mmc),
+ 			"Unable to determine PHY name %s. Use default eMMC 5.1 PHY\n",
+ 			phy_name);
 -- 
 1.7.12.4
