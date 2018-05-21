@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753007AbeEUL0i (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 07:26:38 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39376 "EHLO
+        id S1753037AbeEUL0s (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 07:26:48 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:40234 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752966AbeEUL0a (ORCPT
+        with ESMTP id S1752815AbeEUL0m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 07:26:30 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C077860AD4
+        Mon, 21 May 2018 07:26:42 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A332960F92
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
 From: Ilia Lin <ilialin@codeaurora.org>
@@ -22,9 +22,9 @@ Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         rnayak@codeaurora.org, ilialin@codeaurora.org,
         amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
         celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: [PATCH v9 08/15] clk: qcom: Add ACD path to CPU clock driver for msm8996
-Date: Mon, 21 May 2018 14:25:25 +0300
-Message-Id: <1526901932-9514-9-git-send-email-ilialin@codeaurora.org>
+Subject: [PATCH v9 10/15] cpufreq: Add Kryo CPU scaling driver
+Date: Mon, 21 May 2018 14:25:27 +0300
+Message-Id: <1526901932-9514-11-git-send-email-ilialin@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1526901932-9514-1-git-send-email-ilialin@codeaurora.org>
 References: <1526901932-9514-1-git-send-email-ilialin@codeaurora.org>
@@ -32,217 +32,242 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The PMUX for each duplex allows for selection of ACD clock source.
-The DVM (Dynamic Variation Monitor) will flag an error
-when a voltage droop event is detected. This flagged error
-enables ACD to provide a div-by-2 clock, sourced from the primary PLL.
-The duplex will be provided the divided clock
-until a pre-programmed delay has expired.
-
-This change configures ACD during the probe and switches
-the PMUXes to the ACD clock source.
+In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
+the CPU frequency subset and voltage value of each OPP varies
+based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
+defines the voltage and frequency value based on the msm-id in SMEM
+and speedbin blown in the efuse combination.
+The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
+to provide the OPP framework with required information.
+This is used to determine the voltage and frequency value for each OPP of
+operating-points-v2 table when it is parsed by the OPP framework.
 
 Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- drivers/clk/qcom/clk-cpu-8996.c | 75 +++++++++++++++++++++++++++++++++++------
- 1 file changed, 65 insertions(+), 10 deletions(-)
+ drivers/cpufreq/Kconfig.arm          |  10 +++
+ drivers/cpufreq/Makefile             |   1 +
+ drivers/cpufreq/cpufreq-dt-platdev.c |   3 +
+ drivers/cpufreq/qcom-cpufreq-kryo.c  | 164 +++++++++++++++++++++++++++++++++++
+ 4 files changed, 178 insertions(+)
+ create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
 
-diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
-index ff5c0a5..0a908d8 100644
---- a/drivers/clk/qcom/clk-cpu-8996.c
-+++ b/drivers/clk/qcom/clk-cpu-8996.c
-@@ -53,9 +53,11 @@
-  */
+diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+index de55c7d..0bfd40e 100644
+--- a/drivers/cpufreq/Kconfig.arm
++++ b/drivers/cpufreq/Kconfig.arm
+@@ -124,6 +124,16 @@ config ARM_OMAP2PLUS_CPUFREQ
+ 	depends on ARCH_OMAP2PLUS
+ 	default ARCH_OMAP2PLUS
  
- #include <linux/clk.h>
-+#include <linux/clk-provider.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
-+#include <soc/qcom/kryo-l2-accessors.h>
- 
- #include "clk-alpha-pll.h"
- #include "clk-regmap.h"
-@@ -69,6 +71,11 @@ enum _pmux_input {
- };
- 
- #define DIV_2_THRESHOLD		600000000
-+#define PWRCL_REG_OFFSET 0x0
-+#define PERFCL_REG_OFFSET 0x80000
-+#define MUX_OFFSET	0x40
-+#define ALT_PLL_OFFSET	0x100
-+#define SSSCTL_OFFSET 0x160
- 
- static const u8 prim_pll_regs[PLL_OFF_MAX_REGS] = {
-        [PLL_OFF_L_VAL] = 0x04,
-@@ -107,7 +114,7 @@ enum _pmux_input {
- };
- 
- static struct clk_alpha_pll perfcl_pll = {
--	.offset = 0x80000,
-+	.offset = PERFCL_REG_OFFSET,
- 	.regs = prim_pll_regs,
- 	.flags = SUPPORTS_DYNAMIC_UPDATE | SUPPORTS_FSM_MODE,
- 	.clkr.hw.init = &(struct clk_init_data){
-@@ -119,7 +126,7 @@ enum _pmux_input {
- };
- 
- static struct clk_alpha_pll pwrcl_pll = {
--	.offset = 0x0,
-+	.offset = PWRCL_REG_OFFSET,
- 	.regs = prim_pll_regs,
- 	.flags = SUPPORTS_DYNAMIC_UPDATE | SUPPORTS_FSM_MODE,
- 	.clkr.hw.init = &(struct clk_init_data){
-@@ -149,7 +156,7 @@ enum _pmux_input {
- };
- 
- static struct clk_alpha_pll perfcl_alt_pll = {
--	.offset = 0x80100,
-+	.offset = PERFCL_REG_OFFSET + ALT_PLL_OFFSET,
- 	.regs = alt_pll_regs,
- 	.vco_table = alt_pll_vco_modes,
- 	.num_vco = ARRAY_SIZE(alt_pll_vco_modes),
-@@ -163,7 +170,7 @@ enum _pmux_input {
- };
- 
- static struct clk_alpha_pll pwrcl_alt_pll = {
--	.offset = 0x100,
-+	.offset = PWRCL_REG_OFFSET + ALT_PLL_OFFSET,
- 	.regs = alt_pll_regs,
- 	.vco_table = alt_pll_vco_modes,
- 	.num_vco = ARRAY_SIZE(alt_pll_vco_modes),
-@@ -176,6 +183,9 @@ enum _pmux_input {
- 	},
- };
- 
-+void __iomem *base;
-+static void qcom_cpu_clk_msm8996_acd_init(void __iomem *base);
++config ARM_QCOM_CPUFREQ_KRYO
++	bool "Qualcomm Kryo based CPUFreq"
++	depends on QCOM_QFPROM
++	depends on QCOM_SMEM
++	select PM_OPP
++	help
++	  This adds the CPUFreq driver for Qualcomm Kryo SoC based boards.
 +
- /* Mux'es */
- 
- struct clk_cpu_8996_mux {
-@@ -253,6 +263,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
- 	switch (event) {
- 	case PRE_RATE_CHANGE:
- 		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, ALT_INDEX);
-+		qcom_cpu_clk_msm8996_acd_init(base);
- 		break;
- 	case POST_RATE_CHANGE:
- 		if (cnd->new_rate < DIV_2_THRESHOLD)
-@@ -260,7 +271,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
- 							  DIV_2_INDEX);
- 		else
- 			ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw,
--							  PLL_INDEX);
-+							  ACD_INDEX);
- 		break;
- 	default:
- 		ret = 0;
-@@ -276,7 +287,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
- };
- 
- static struct clk_cpu_8996_mux pwrcl_smux = {
--	.reg = 0x40,
-+	.reg = PWRCL_REG_OFFSET + MUX_OFFSET,
- 	.shift = 2,
- 	.width = 2,
- 	.clkr.hw.init = &(struct clk_init_data) {
-@@ -292,7 +303,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
- };
- 
- static struct clk_cpu_8996_mux perfcl_smux = {
--	.reg = 0x80040,
-+	.reg = PERFCL_REG_OFFSET + MUX_OFFSET,
- 	.shift = 2,
- 	.width = 2,
- 	.clkr.hw.init = &(struct clk_init_data) {
-@@ -308,7 +319,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
- };
- 
- static struct clk_cpu_8996_mux pwrcl_pmux = {
--	.reg = 0x40,
-+	.reg = PWRCL_REG_OFFSET + MUX_OFFSET,
- 	.shift = 0,
- 	.width = 2,
- 	.pll = &pwrcl_pll.clkr.hw,
-@@ -329,7 +340,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
- };
- 
- static struct clk_cpu_8996_mux perfcl_pmux = {
--	.reg = 0x80040,
-+	.reg = PERFCL_REG_OFFSET + MUX_OFFSET,
- 	.shift = 0,
- 	.width = 2,
- 	.pll = &perfcl_pll.clkr.hw,
-@@ -393,6 +404,10 @@ struct clk_regmap *clks[] = {
- 	clk_alpha_pll_configure(&perfcl_alt_pll, regmap, &altpll_config);
- 	clk_alpha_pll_configure(&pwrcl_alt_pll, regmap, &altpll_config);
- 
-+	/* Enable alt PLLs */
-+	clk_prepare_enable(pwrcl_alt_pll.clkr.hw.clk);
-+	clk_prepare_enable(perfcl_alt_pll.clkr.hw.clk);
++	  If in doubt, say N.
 +
- 	ret = clk_notifier_register(pwrcl_pmux.clkr.hw.clk, &pwrcl_pmux.nb);
- 	if (ret)
- 		return ret;
-@@ -402,10 +417,48 @@ struct clk_regmap *clks[] = {
- 	return ret;
- }
+ config ARM_S3C_CPUFREQ
+ 	bool
+ 	help
+diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+index 8d24ade..fb4a2ec 100644
+--- a/drivers/cpufreq/Makefile
++++ b/drivers/cpufreq/Makefile
+@@ -65,6 +65,7 @@ obj-$(CONFIG_MACH_MVEBU_V7)		+= mvebu-cpufreq.o
+ obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+= omap-cpufreq.o
+ obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+= pxa2xx-cpufreq.o
+ obj-$(CONFIG_PXA3xx)			+= pxa3xx-cpufreq.o
++obj-$(CONFIG_ARM_QCOM_CPUFREQ_KRYO)	+= qcom-cpufreq-kryo.o
+ obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+= s3c2410-cpufreq.o
+ obj-$(CONFIG_ARM_S3C2412_CPUFREQ)	+= s3c2412-cpufreq.o
+ obj-$(CONFIG_ARM_S3C2416_CPUFREQ)	+= s3c2416-cpufreq.o
+diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+index 3b585e4..77d6ab8 100644
+--- a/drivers/cpufreq/cpufreq-dt-platdev.c
++++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+@@ -118,6 +118,9 @@
  
-+#define CPU_AFINITY_MASK 0xFFF
-+#define PWRCL_CPU_REG_MASK 0x3
-+#define PERFCL_CPU_REG_MASK 0x103
+ 	{ .compatible = "nvidia,tegra124", },
+ 
++	{ .compatible = "qcom,apq8096", },
++	{ .compatible = "qcom,msm8996", },
 +
-+#define L2ACDCR_REG 0x580ULL
-+#define L2ACDTD_REG 0x581ULL
-+#define L2ACDDVMRC_REG 0x584ULL
-+#define L2ACDSSCR_REG 0x589ULL
+ 	{ .compatible = "st,stih407", },
+ 	{ .compatible = "st,stih410", },
+ 
+diff --git a/drivers/cpufreq/qcom-cpufreq-kryo.c b/drivers/cpufreq/qcom-cpufreq-kryo.c
+new file mode 100644
+index 0000000..9087db3
+--- /dev/null
++++ b/drivers/cpufreq/qcom-cpufreq-kryo.c
+@@ -0,0 +1,164 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ */
 +
-+static DEFINE_SPINLOCK(acd_lock);
++/*
++ * In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
++ * the CPU frequency subset and voltage value of each OPP varies
++ * based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
++ * defines the voltage and frequency value based on the msm-id in SMEM
++ * and speedbin blown in the efuse combination.
++ * The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
++ * to provide the OPP framework with required information.
++ * This is used to determine the voltage and frequency value for each OPP of
++ * operating-points-v2 table when it is parsed by the OPP framework.
++ */
 +
-+static void qcom_cpu_clk_msm8996_acd_init(void __iomem *base)
++#include <linux/cpu.h>
++#include <linux/err.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/nvmem-consumer.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/pm_opp.h>
++#include <linux/slab.h>
++#include <linux/soc/qcom/smem.h>
++
++#define MSM_ID_SMEM	137
++#define SILVER_LEAD	0
++#define GOLD_LEAD	2
++
++enum _msm_id {
++	MSM8996V3 = 0xF6ul,
++	APQ8096V3 = 0x123ul,
++	MSM8996SG = 0x131ul,
++	APQ8096SG = 0x138ul,
++};
++
++enum _msm8996_version {
++	MSM8996_V3,
++	MSM8996_SG,
++	NUM_OF_MSM8996_VERSIONS,
++};
++
++static enum _msm8996_version __init qcom_cpufreq_kryo_get_msm_id(void)
 +{
-+	u64 hwid;
-+	unsigned long flags;
++	size_t len;
++	u32 *msm_id;
++	enum _msm8996_version version;
 +
-+	spin_lock_irqsave(&acd_lock, flags);
++	msm_id = qcom_smem_get(QCOM_SMEM_HOST_ANY, MSM_ID_SMEM, &len);
++	/* The first 4 bytes are format, next to them is the actual msm-id */
++	msm_id++;
 +
-+	hwid = read_cpuid_mpidr() & CPU_AFINITY_MASK;
-+
-+	kryo_l2_set_indirect_reg(L2ACDTD_REG, 0x00006A11);
-+	kryo_l2_set_indirect_reg(L2ACDDVMRC_REG, 0x000E0F0F);
-+	kryo_l2_set_indirect_reg(L2ACDSSCR_REG, 0x00000601);
-+
-+	if (PWRCL_CPU_REG_MASK == (hwid | PWRCL_CPU_REG_MASK)) {
-+		writel(0xF, base + PWRCL_REG_OFFSET + SSSCTL_OFFSET);
-+		wmb();
-+		kryo_l2_set_indirect_reg(L2ACDCR_REG, 0x002C5FFD);
++	switch ((enum _msm_id)*msm_id) {
++	case MSM8996V3:
++	case APQ8096V3:
++		version = MSM8996_V3;
++		break;
++	case MSM8996SG:
++	case APQ8096SG:
++		version = MSM8996_SG;
++		break;
++	default:
++		version = NUM_OF_MSM8996_VERSIONS;
 +	}
 +
-+	if (PERFCL_CPU_REG_MASK == (hwid | PERFCL_CPU_REG_MASK)) {
-+		kryo_l2_set_indirect_reg(L2ACDCR_REG, 0x002C5FFD);
-+		writel(0xF, base + PERFCL_REG_OFFSET + SSSCTL_OFFSET);
-+		wmb();
-+	}
-+
-+	spin_unlock_irqrestore(&acd_lock, flags);
++	return version;
 +}
 +
- static int qcom_cpu_clk_msm8996_driver_probe(struct platform_device *pdev)
- {
- 	int ret;
--	void __iomem *base;
- 	struct resource *res;
- 	struct regmap *regmap;
- 	struct clk_hw_onecell_data *data;
-@@ -429,6 +482,8 @@ static int qcom_cpu_clk_msm8996_driver_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
-+	qcom_cpu_clk_msm8996_acd_init(base);
++static int __init qcom_cpufreq_kryo_driver_init(void)
++{
++	struct device *cpu_dev_silver, *cpu_dev_gold;
++	struct opp_table *opp_silver, *opp_gold;
++	enum _msm8996_version msm8996_version;
++	struct nvmem_cell *speedbin_nvmem;
++	struct platform_device *pdev;
++	struct device_node *np;
++	u8 *speedbin;
++	u32 versions;
++	size_t len;
++	int ret;
 +
- 	data->hws[0] = &pwrcl_pmux.clkr.hw;
- 	data->hws[1] = &perfcl_pmux.clkr.hw;
- 	data->num = 2;
++	cpu_dev_silver = get_cpu_device(SILVER_LEAD);
++	if (NULL == cpu_dev_silver)
++		return -ENODEV;
++
++	cpu_dev_gold = get_cpu_device(GOLD_LEAD);
++	if (NULL == cpu_dev_gold)
++		return -ENODEV;
++
++	msm8996_version = qcom_cpufreq_kryo_get_msm_id();
++	if (NUM_OF_MSM8996_VERSIONS == msm8996_version) {
++		dev_err(cpu_dev_silver, "Not Snapdragon 820/821!");
++		return -ENODEV;
++	}
++
++	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev_silver);
++	if (IS_ERR(np))
++		return PTR_ERR(np);
++
++	if (!of_device_is_compatible(np, "operating-points-v2-kryo-cpu")) {
++		ret = -ENOENT;
++		goto free_np;
++	}
++
++	speedbin_nvmem = of_nvmem_cell_get(np, NULL);
++	if (IS_ERR(speedbin_nvmem)) {
++		ret = PTR_ERR(speedbin_nvmem);
++		dev_err(cpu_dev_silver, "Could not get nvmem cell: %d\n", ret);
++		goto free_np;
++	}
++
++	speedbin = nvmem_cell_read(speedbin_nvmem, &len);
++	nvmem_cell_put(speedbin_nvmem);
++
++	switch (msm8996_version) {
++	case MSM8996_V3:
++		versions = 1 << (unsigned int)(*speedbin);
++		break;
++	case MSM8996_SG:
++		versions = 1 << ((unsigned int)(*speedbin) + 4);
++		break;
++	default:
++		BUG();
++		break;
++	}
++
++	opp_silver = dev_pm_opp_set_supported_hw(cpu_dev_silver,&versions,1);
++	if (IS_ERR(opp_silver)) {
++		dev_err(cpu_dev_silver, "Failed to set supported hardware\n");
++		ret = PTR_ERR(opp_silver);
++		goto free_np;
++	}
++
++	opp_gold = dev_pm_opp_set_supported_hw(cpu_dev_gold,&versions,1);
++	if (IS_ERR(opp_gold)) {
++		dev_err(cpu_dev_gold, "Failed to set supported hardware\n");
++		ret = PTR_ERR(opp_gold);
++		goto free_opp_silver;
++	}
++
++	pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
++	if (!IS_ERR(pdev))
++		return 0;
++
++	ret = PTR_ERR(pdev);
++	dev_err(cpu_dev_silver, "Failed to register platform device\n");
++	dev_pm_opp_put_supported_hw(opp_gold);
++
++free_opp_silver:
++	dev_pm_opp_put_supported_hw(opp_silver);
++
++free_np:
++	of_node_put(np);
++
++	return ret;
++}
++late_initcall(qcom_cpufreq_kryo_driver_init);
++
++MODULE_DESCRIPTION("Qualcomm Technologies, Inc. Kryo CPUfreq driver");
++MODULE_LICENSE("GPL v2");
 -- 
 1.9.1
