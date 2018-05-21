@@ -1,83 +1,267 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752717AbeEUKVV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 06:21:21 -0400
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:35615 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751181AbeEUKUu (ORCPT
+        id S1751271AbeEUKbi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 06:31:38 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39832 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751025AbeEUKbf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 06:20:50 -0400
-X-IronPort-AV: E=Sophos;i="5.49,426,1520895600";
-   d="scan'208";a="327708873"
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-To: Peter Rosin <peda@axentia.se>
-Cc: kernel-janitors@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Himanshu Jha <himanshujha199640@gmail.com>
-Subject: [PATCH 1/3] i2c: mux: pca954x: merge calls to of_match_device and of_device_get_match_data
-Date: Mon, 21 May 2018 11:49:08 +0200
-Message-Id: <1526896150-27134-2-git-send-email-Julia.Lawall@lip6.fr>
+        Mon, 21 May 2018 06:31:35 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C670E6021A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
+From: Ilia Lin <ilialin@codeaurora.org>
+To: viresh.kumar@linaro.org
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] cpufreq: Add Kryo CPU scaling driver
+Date: Mon, 21 May 2018 13:31:30 +0300
+Message-Id: <1526898690-4018-1-git-send-email-ilialin@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1526896150-27134-1-git-send-email-Julia.Lawall@lip6.fr>
-References: <1526896150-27134-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
+References: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Drop call to of_match_device, which is subsumed by the subsequent
-call to of_device_get_match_data.  The code becomes simpler, and a
-temporary variable can be dropped.
+In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
+the CPU frequency subset and voltage value of each OPP varies
+based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
+defines the voltage and frequency value based on the msm-id in SMEM
+and speedbin blown in the efuse combination.
+The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
+to provide the OPP framework with required information.
+This is used to determine the voltage and frequency value for each OPP of
+operating-points-v2 table when it is parsed by the OPP framework.
 
-The semantic match that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r@
-local idexpression match;
-identifier i;
-expression x, dev, e, e1;
-@@
--        match@i = of_match_device(x, dev);
--        if (match) e = of_device_get_match_data(dev);
--        else e = e1;
-+        e = of_device_get_match_data(dev);
-+        if (!e) e = e1;
-
-@@
-identifier r.i;
-@@
-- const struct of_device_id *i;
-... when != i
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- drivers/i2c/muxes/i2c-mux-pca954x.c |    7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/cpufreq/Kconfig.arm          |  10 +++
+ drivers/cpufreq/Makefile             |   1 +
+ drivers/cpufreq/cpufreq-dt-platdev.c |   3 +
+ drivers/cpufreq/qcom-cpufreq-kryo.c  | 164 +++++++++++++++++++++++++++++++++++
+ 4 files changed, 178 insertions(+)
+ create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
 
-diff --git a/drivers/i2c/muxes/i2c-mux-pca954x.c b/drivers/i2c/muxes/i2c-mux-pca954x.c
-index 09bafd3..ced840f 100644
---- a/drivers/i2c/muxes/i2c-mux-pca954x.c
-+++ b/drivers/i2c/muxes/i2c-mux-pca954x.c
-@@ -373,7 +373,6 @@ static int pca954x_probe(struct i2c_client *client,
- 	int num, force, class;
- 	struct i2c_mux_core *muxc;
- 	struct pca954x *data;
--	const struct of_device_id *match;
- 	int ret;
+diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+index de55c7d..0bfd40e 100644
+--- a/drivers/cpufreq/Kconfig.arm
++++ b/drivers/cpufreq/Kconfig.arm
+@@ -124,6 +124,16 @@ config ARM_OMAP2PLUS_CPUFREQ
+ 	depends on ARCH_OMAP2PLUS
+ 	default ARCH_OMAP2PLUS
  
- 	if (!i2c_check_functionality(adap, I2C_FUNC_SMBUS_BYTE))
-@@ -394,10 +393,8 @@ static int pca954x_probe(struct i2c_client *client,
- 	if (IS_ERR(gpio))
- 		return PTR_ERR(gpio);
++config ARM_QCOM_CPUFREQ_KRYO
++	bool "Qualcomm Kryo based CPUFreq"
++	depends on QCOM_QFPROM
++	depends on QCOM_SMEM
++	select PM_OPP
++	help
++	  This adds the CPUFreq driver for Qualcomm Kryo SoC based boards.
++
++	  If in doubt, say N.
++
+ config ARM_S3C_CPUFREQ
+ 	bool
+ 	help
+diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+index 8d24ade..fb4a2ec 100644
+--- a/drivers/cpufreq/Makefile
++++ b/drivers/cpufreq/Makefile
+@@ -65,6 +65,7 @@ obj-$(CONFIG_MACH_MVEBU_V7)		+= mvebu-cpufreq.o
+ obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+= omap-cpufreq.o
+ obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+= pxa2xx-cpufreq.o
+ obj-$(CONFIG_PXA3xx)			+= pxa3xx-cpufreq.o
++obj-$(CONFIG_ARM_QCOM_CPUFREQ_KRYO)	+= qcom-cpufreq-kryo.o
+ obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+= s3c2410-cpufreq.o
+ obj-$(CONFIG_ARM_S3C2412_CPUFREQ)	+= s3c2412-cpufreq.o
+ obj-$(CONFIG_ARM_S3C2416_CPUFREQ)	+= s3c2416-cpufreq.o
+diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+index 3b585e4..77d6ab8 100644
+--- a/drivers/cpufreq/cpufreq-dt-platdev.c
++++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+@@ -118,6 +118,9 @@
  
--	match = of_match_device(of_match_ptr(pca954x_of_match), &client->dev);
--	if (match)
--		data->chip = of_device_get_match_data(&client->dev);
--	else
-+	data->chip = of_device_get_match_data(&client->dev);
-+	if (!data->chip)
- 		data->chip = &chips[id->driver_data];
+ 	{ .compatible = "nvidia,tegra124", },
  
- 	if (data->chip->id.manufacturer_id != I2C_DEVICE_ID_NONE) {
++	{ .compatible = "qcom,apq8096", },
++	{ .compatible = "qcom,msm8996", },
++
+ 	{ .compatible = "st,stih407", },
+ 	{ .compatible = "st,stih410", },
+ 
+diff --git a/drivers/cpufreq/qcom-cpufreq-kryo.c b/drivers/cpufreq/qcom-cpufreq-kryo.c
+new file mode 100644
+index 0000000..4e002d0b
+--- /dev/null
++++ b/drivers/cpufreq/qcom-cpufreq-kryo.c
+@@ -0,0 +1,164 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ */
++
++/*
++ * In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
++ * the CPU frequency subset and voltage value of each OPP varies
++ * based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
++ * defines the voltage and frequency value based on the msm-id in SMEM
++ * and speedbin blown in the efuse combination.
++ * The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
++ * to provide the OPP framework with required information.
++ * This is used to determine the voltage and frequency value for each OPP of
++ * operating-points-v2 table when it is parsed by the OPP framework.
++ */
++
++#include <linux/cpu.h>
++#include <linux/err.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/nvmem-consumer.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/pm_opp.h>
++#include <linux/slab.h>
++#include <linux/soc/qcom/smem.h>
++
++#define MSM_ID_SMEM	137
++#define SILVER_LEAD	0
++#define GOLD_LEAD	2
++
++enum _msm_id {
++	MSM8996V3 = 0xF6ul,
++	APQ8096V3 = 0x123ul,
++	MSM8996SG = 0x131ul,
++	APQ8096SG = 0x138ul,
++};
++
++enum _msm8996_version {
++	MSM8996_V3,
++	MSM8996_SG,
++	NUM_OF_MSM8996_VERSIONS,
++};
++
++static enum _msm8996_version __init qcom_cpufreq_kryo_get_msm_id(void)
++{
++	size_t len;
++	u32 *msm_id;
++	enum _msm8996_version version;
++
++	msm_id = qcom_smem_get(QCOM_SMEM_HOST_ANY, MSM_ID_SMEM, &len);
++	/* The first 4 bytes are format, next to them is the actual msm-id */
++	msm_id++;
++
++	switch ((enum _msm_id)*msm_id) {
++	case MSM8996V3:
++	case APQ8096V3:
++		version = MSM8996_V3;
++		break;
++	case MSM8996SG:
++	case APQ8096SG:
++		version = MSM8996_SG;
++		break;
++	default:
++		version = NUM_OF_MSM8996_VERSIONS;
++	}
++
++	return version;
++}
++
++static int __init qcom_cpufreq_kryo_driver_init(void)
++{
++	struct device *cpu_dev_silver, *cpu_dev_gold;
++	struct opp_table *opp_silver, *opp_gold;
++	enum _msm8996_version msm8996_version;
++	struct nvmem_cell *speedbin_nvmem;
++	struct platform_device *pdev;
++	struct device_node *np;
++	u8 *speedbin;
++	u32 versions;
++	size_t len;
++	int ret;
++
++	cpu_dev_silver = get_cpu_device(SILVER_LEAD);
++	if (NULL == cpu_dev_silver)
++		return -ENODEV;
++
++	cpu_dev_gold = get_cpu_device(SILVER_LEAD);
++	if (NULL == cpu_dev_gold)
++		return -ENODEV;
++
++	msm8996_version = qcom_cpufreq_kryo_get_msm_id();
++	if (NUM_OF_MSM8996_VERSIONS == msm8996_version) {
++		dev_err(cpu_dev_silver, "Not Snapdragon 820/821!");
++		return -ENODEV;
++	}
++
++	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev_silver);
++	if (IS_ERR(np))
++		return PTR_ERR(np);
++
++	if (!of_device_is_compatible(np, "operating-points-v2-kryo-cpu")) {
++		ret = -ENOENT;
++		goto free_np;
++	}
++
++	speedbin_nvmem = of_nvmem_cell_get(np, NULL);
++	if (IS_ERR(speedbin_nvmem)) {
++		ret = PTR_ERR(speedbin_nvmem);
++		dev_err(cpu_dev_silver, "Could not get nvmem cell: %d\n", ret);
++		goto free_np;
++	}
++
++	speedbin = nvmem_cell_read(speedbin_nvmem, &len);
++	nvmem_cell_put(speedbin_nvmem);
++
++	switch (msm8996_version) {
++	case MSM8996_V3:
++		versions = 1 << (unsigned int)(*speedbin);
++		break;
++	case MSM8996_SG:
++		versions = 1 << ((unsigned int)(*speedbin) + 4);
++		break;
++	default:
++		BUG();
++		break;
++	}
++
++	opp_silver = dev_pm_opp_set_supported_hw(cpu_dev_silver,&versions,1);
++	if (IS_ERR(opp_silver)) {
++		dev_err(cpu_dev_silver, "Failed to set supported hardware\n");
++		ret = PTR_ERR(opp_silver);
++		goto free_np;
++	}
++
++	opp_gold = dev_pm_opp_set_supported_hw(cpu_dev_gold,&versions,1);
++	if (IS_ERR(opp_gold)) {
++		dev_err(cpu_dev_gold, "Failed to set supported hardware\n");
++		ret = PTR_ERR(opp_gold);
++		goto free_opp_silver;
++	}
++
++	pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
++	if (!IS_ERR(pdev))
++		return 0;
++
++	ret = PTR_ERR(pdev);
++	dev_err(cpu_dev_silver, "Failed to register platform device\n");
++	dev_pm_opp_put_supported_hw(opp_gold);
++
++free_opp_silver:
++	dev_pm_opp_put_supported_hw(opp_silver);
++
++free_np:
++	of_node_put(np);
++
++	return ret;
++}
++late_initcall(qcom_cpufreq_kryo_driver_init);
++
++MODULE_DESCRIPTION("Qualcomm Technologies, Inc. Kryo CPUfreq driver");
++MODULE_LICENSE("GPL v2");
+-- 
+1.9.1
