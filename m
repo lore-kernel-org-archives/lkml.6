@@ -1,92 +1,39 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1344077-1526938025-2-16325950061671574293
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526938024; b=axafcsRZSN0+UNjwgqNf099F/VLFH7lQsvvnVDUKhoQEGw9Elg
-    bgQgyJSFEXqXEfMtXUL+fknwjZ21X35Hw7mXjrYhfgORWIeO3rPFtOibCZShNQ39
-    ioIYfGBDNEdJH+DktuOXx67OyDR8ZWShT+y3K7iLrfs8brhM/pK/rKXHWHsvXw5K
-    4fNE8UbRUPFoJtV1gtHFSyutSbtpy37P65klQZiGWYWx+tMaEpqS3Xsx+JH1auP4
-    KS6YVtjhfTI/pJ00MhoX9TdzjCghMbOPbS153R2NiJEjI/9oVWTlBX91/7DBy+Tm
-    QOzokBUBG/uvVNB/UzfAnot7MaMYDzpkh/Yg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1526938024; bh=1oZ0t6gpftp9iJm02ejBBZoTWFPvfY
-    8LoDmYv3SaunE=; b=kPe4E6gCSJbot90X6RG5XsDOfyVHLP43bAhX8ky2mwwIkS
-    LTiijynUhQxlDk2A/pOuvyFTWuBDM9/5mEKWNXUHHdcD2U4IZ6Lv6oXM+t44onbR
-    yl76D5Jw75J3CrxgAyDEthwfrSTqejTkt0LvreKQReUpgq/nN3LfJzWnK1rPQxUG
-    I8Lic63BV6H92rNKcmUjBhQ1fpEPpKFtcvB8HcarbXqANAdqXwEPGoDV5YqpN1Jm
-    xpJgCNJqTZR0Wn6RpaXTygtegJf0PjV9qXGenmvsPieTrY9u7VSUk4kj3eyzL+X7
-    5Du6Q2F5/yXqOH8HltCvSnbgtX44OhC39jvI/0qQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=yn0r8fzb x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linuxfoundation.org header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=yn0r8fzb x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linuxfoundation.org header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEcROfoayUTlRa6h9xv3zADT+kFuGBwg+A8thwBmpsljGd6JYhfoYQSnzNDIuKvYKHx6nJcFhGru4D89E5Ie6GyD1tB6nmQY8K8ykoua0zUeeAFz5BX8
-    qn21ktJxHDLVNKdStoiXM/Z/K0/nmecatBRnK/PATIY4V0Bobo7e4OiRs4eKDQylJRDceWf4TSGer0d16H1xAvbdsZ9FAv5/Thk1e7gt30yY6aaXMey69Ce0
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=0KWrXloaP-1o7eCutvEA:9 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932263AbeEUV06 (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 21 May 2018 17:26:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41768 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932660AbeEUV04 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 21 May 2018 17:26:56 -0400
+Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZoR3wRDUlB7YAMnkw4DxHT4/nll2RtuZj+FoXbDKf8PlLl4CDT5et537PiwJsfo8QT5/iiQ
+ARC-Seal: i=1; a=rsa-sha256; t=1526938024; cv=none;
+        d=google.com; s=arc-20160816;
+        b=zPeP2JXrqiL4Rxz5vMUL9LHp6kObzFNzX3LjkkJT99EceAAXfFpf2re9A2Ek8yzXc9
+         1H4l+tyULWYooAvUlECh82QwxLA+plMg4t4u8MBnewoW9htBx9Ekh9aB2gMzyFgyxmhc
+         ibfXBKmfS+Sly0qP8+4RtGjXzz3eqZBjQf0qJkGVu5zdfeyrIaONm9KzAClmTHOGBLUy
+         V+ylD2Oskw4sUTLrrEJ52iu/CnpHxPqSMO5tG9U2Am9T7HQ89hBLutvp/8HRhSOwMd0j
+         Bea6FsnUA/Pbl9rOEq/cASMHBOB+UqujgkYXvFIt6vM3KgR7zE10bc/wElKjkxHq4yUi
+         WcMg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=FtADI9RsjA2TFpUlxTGPes9BgfW+reTVrKmohV88Qtc=;
+        b=LOX57Keb2xt+AjDEBjUlklSPnfmDlQQdpW54drljxO8tbYhHQqMTLVTLeHIZoSZChq
+         sS1FCSTfC/obrcE8UZJ1UR9LQ0KlfwseM+F0TZQO3JnrbnhrBx0X6LS5CbqxdLoKPhj1
+         CcLXiEn4t5qTrtDwEJZayMYL277l5E3IopGdF1ZUPTm7MesYCjWGce/7B9gC0U9J6MHU
+         T0md5fmgIzs7gdmR9I2ahwXbvayK4xyQcL6FSASKTpOQdGQSel9k1cZbpNcKwx+bRxYy
+         ADlBbBZyv/6l1MApz7Vq3OkAuqVNgSL7kRrzoF7/1HYMXmbAVPL0qLpPOX0yHJtZsOep
+         Vcxg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=2GudnV59;
+       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=2GudnV59;
+       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.16 110/110] bpf: Prevent memory disambiguation attack
-Date: Mon, 21 May 2018 23:12:47 +0200
-Message-Id: <20180521210515.145840770@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@suse.de>
+Subject: [PATCH 4.16 101/110] x86/speculation: Add virtualized speculative store bypass disable support
+Date: Mon, 21 May 2018 23:12:38 +0200
+Message-Id: <20180521210514.610099742@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -94,9 +41,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1601109944454534636?=
+X-GMAIL-MSGID: =?utf-8?q?1601110566198394471?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -104,136 +52,91 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alexei Starovoitov <ast@kernel.org>
+From: Tom Lendacky <thomas.lendacky@amd.com>
 
-commit af86ca4e3088fe5eacf2f7e58c01fa68ca067672 upstream
+commit 11fb0683493b2da112cd64c9dada221b52463bf7 upstream
 
-Detect code patterns where malicious 'speculative store bypass' can be used
-and sanitize such patterns.
+Some AMD processors only support a non-architectural means of enabling
+speculative store bypass disable (SSBD).  To allow a simplified view of
+this to a guest, an architectural definition has been created through a new
+CPUID bit, 0x80000008_EBX[25], and a new MSR, 0xc001011f.  With this, a
+hypervisor can virtualize the existence of this definition and provide an
+architectural method for using SSBD to a guest.
 
- 39: (bf) r3 = r10
- 40: (07) r3 += -216
- 41: (79) r8 = *(u64 *)(r7 +0)   // slow read
- 42: (7a) *(u64 *)(r10 -72) = 0  // verifier inserts this instruction
- 43: (7b) *(u64 *)(r8 +0) = r3   // this store becomes slow due to r8
- 44: (79) r1 = *(u64 *)(r6 +0)   // cpu speculatively executes this load
- 45: (71) r2 = *(u8 *)(r1 +0)    // speculatively arbitrary 'load byte'
-                                 // is now sanitized
+Add the new CPUID feature, the new MSR and update the existing SSBD
+support to use this MSR when present.
 
-Above code after x86 JIT becomes:
- e5: mov    %rbp,%rdx
- e8: add    $0xffffffffffffff28,%rdx
- ef: mov    0x0(%r13),%r14
- f3: movq   $0x0,-0x48(%rbp)
- fb: mov    %rdx,0x0(%r14)
- ff: mov    0x0(%rbx),%rdi
-103: movzbq 0x0(%rdi),%rsi
-
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/bpf_verifier.h |    1 
- kernel/bpf/verifier.c        |   59 ++++++++++++++++++++++++++++++++++++++++---
- 2 files changed, 57 insertions(+), 3 deletions(-)
+ arch/x86/include/asm/cpufeatures.h |    1 +
+ arch/x86/include/asm/msr-index.h   |    2 ++
+ arch/x86/kernel/cpu/bugs.c         |    4 +++-
+ arch/x86/kernel/process.c          |   13 ++++++++++++-
+ 4 files changed, 18 insertions(+), 2 deletions(-)
 
---- a/include/linux/bpf_verifier.h
-+++ b/include/linux/bpf_verifier.h
-@@ -146,6 +146,7 @@ struct bpf_insn_aux_data {
- 		s32 call_imm;			/* saved imm field of call insn */
- 	};
- 	int ctx_field_size; /* the ctx field size for load insn, maybe 0 */
-+	int sanitize_stack_off; /* stack slot to be cleared */
- 	bool seen; /* this insn was processed by the verifier */
- };
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -282,6 +282,7 @@
+ #define X86_FEATURE_AMD_IBPB		(13*32+12) /* "" Indirect Branch Prediction Barrier */
+ #define X86_FEATURE_AMD_IBRS		(13*32+14) /* "" Indirect Branch Restricted Speculation */
+ #define X86_FEATURE_AMD_STIBP		(13*32+15) /* "" Single Thread Indirect Branch Predictors */
++#define X86_FEATURE_VIRT_SSBD		(13*32+25) /* Virtualized Speculative Store Bypass Disable */
  
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -970,7 +970,7 @@ static bool register_is_null(struct bpf_
-  */
- static int check_stack_write(struct bpf_verifier_env *env,
- 			     struct bpf_func_state *state, /* func where register points to */
--			     int off, int size, int value_regno)
-+			     int off, int size, int value_regno, int insn_idx)
+ /* Thermal and Power Management Leaf, CPUID level 0x00000006 (EAX), word 14 */
+ #define X86_FEATURE_DTHERM		(14*32+ 0) /* Digital Thermal Sensor */
+--- a/arch/x86/include/asm/msr-index.h
++++ b/arch/x86/include/asm/msr-index.h
+@@ -347,6 +347,8 @@
+ #define MSR_AMD64_SEV_ENABLED_BIT	0
+ #define MSR_AMD64_SEV_ENABLED		BIT_ULL(MSR_AMD64_SEV_ENABLED_BIT)
+ 
++#define MSR_AMD64_VIRT_SPEC_CTRL	0xc001011f
++
+ /* Fam 17h MSRs */
+ #define MSR_F17H_IRPERF			0xc00000e9
+ 
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -205,7 +205,9 @@ static void x86_amd_ssb_disable(void)
  {
- 	struct bpf_func_state *cur; /* state of the current function */
- 	int i, slot = -off - 1, spi = slot / BPF_REG_SIZE, err;
-@@ -1009,8 +1009,33 @@ static int check_stack_write(struct bpf_
- 		state->stack[spi].spilled_ptr = cur->regs[value_regno];
- 		state->stack[spi].spilled_ptr.live |= REG_LIVE_WRITTEN;
+ 	u64 msrval = x86_amd_ls_cfg_base | x86_amd_ls_cfg_ssbd_mask;
  
--		for (i = 0; i < BPF_REG_SIZE; i++)
-+		for (i = 0; i < BPF_REG_SIZE; i++) {
-+			if (state->stack[spi].slot_type[i] == STACK_MISC &&
-+			    !env->allow_ptr_leaks) {
-+				int *poff = &env->insn_aux_data[insn_idx].sanitize_stack_off;
-+				int soff = (-spi - 1) * BPF_REG_SIZE;
+-	if (boot_cpu_has(X86_FEATURE_LS_CFG_SSBD))
++	if (boot_cpu_has(X86_FEATURE_VIRT_SSBD))
++		wrmsrl(MSR_AMD64_VIRT_SPEC_CTRL, SPEC_CTRL_SSBD);
++	else if (boot_cpu_has(X86_FEATURE_LS_CFG_SSBD))
+ 		wrmsrl(MSR_AMD64_LS_CFG, msrval);
+ }
+ 
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -388,6 +388,15 @@ static __always_inline void amd_set_core
+ }
+ #endif
+ 
++static __always_inline void amd_set_ssb_virt_state(unsigned long tifn)
++{
++	/*
++	 * SSBD has the same definition in SPEC_CTRL and VIRT_SPEC_CTRL,
++	 * so ssbd_tif_to_spec_ctrl() just works.
++	 */
++	wrmsrl(MSR_AMD64_VIRT_SPEC_CTRL, ssbd_tif_to_spec_ctrl(tifn));
++}
 +
-+				/* detected reuse of integer stack slot with a pointer
-+				 * which means either llvm is reusing stack slot or
-+				 * an attacker is trying to exploit CVE-2018-3639
-+				 * (speculative store bypass)
-+				 * Have to sanitize that slot with preemptive
-+				 * store of zero.
-+				 */
-+				if (*poff && *poff != soff) {
-+					/* disallow programs where single insn stores
-+					 * into two different stack slots, since verifier
-+					 * cannot sanitize them
-+					 */
-+					verbose(env,
-+						"insn %d cannot access two stack slots fp%d and fp%d",
-+						insn_idx, *poff, soff);
-+					return -EINVAL;
-+				}
-+				*poff = soff;
-+			}
- 			state->stack[spi].slot_type[i] = STACK_SPILL;
-+		}
- 	} else {
- 		u8 type = STACK_MISC;
+ static __always_inline void intel_set_ssb_state(unsigned long tifn)
+ {
+ 	u64 msr = x86_spec_ctrl_base | ssbd_tif_to_spec_ctrl(tifn);
+@@ -397,7 +406,9 @@ static __always_inline void intel_set_ss
  
-@@ -1685,7 +1710,7 @@ static int check_mem_access(struct bpf_v
- 
- 		if (t == BPF_WRITE)
- 			err = check_stack_write(env, state, off, size,
--						value_regno);
-+						value_regno, insn_idx);
- 		else
- 			err = check_stack_read(env, state, off, size,
- 					       value_regno);
-@@ -5156,6 +5181,34 @@ static int convert_ctx_accesses(struct b
- 		else
- 			continue;
- 
-+		if (type == BPF_WRITE &&
-+		    env->insn_aux_data[i + delta].sanitize_stack_off) {
-+			struct bpf_insn patch[] = {
-+				/* Sanitize suspicious stack slot with zero.
-+				 * There are no memory dependencies for this store,
-+				 * since it's only using frame pointer and immediate
-+				 * constant of zero
-+				 */
-+				BPF_ST_MEM(BPF_DW, BPF_REG_FP,
-+					   env->insn_aux_data[i + delta].sanitize_stack_off,
-+					   0),
-+				/* the original STX instruction will immediately
-+				 * overwrite the same stack slot with appropriate value
-+				 */
-+				*insn,
-+			};
-+
-+			cnt = ARRAY_SIZE(patch);
-+			new_prog = bpf_patch_insn_data(env, i + delta, patch, cnt);
-+			if (!new_prog)
-+				return -ENOMEM;
-+
-+			delta    += cnt - 1;
-+			env->prog = new_prog;
-+			insn      = new_prog->insnsi + i + delta;
-+			continue;
-+		}
-+
- 		if (env->insn_aux_data[i + delta].ptr_type != PTR_TO_CTX)
- 			continue;
- 
+ static __always_inline void __speculative_store_bypass_update(unsigned long tifn)
+ {
+-	if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD))
++	if (static_cpu_has(X86_FEATURE_VIRT_SSBD))
++		amd_set_ssb_virt_state(tifn);
++	else if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD))
+ 		amd_set_core_ssb_state(tifn);
+ 	else
+ 		intel_set_ssb_state(tifn);
