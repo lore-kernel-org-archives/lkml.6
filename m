@@ -1,70 +1,139 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753145AbeEUL1x (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 07:27:53 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:41602 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752836AbeEUL1s (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 07:27:48 -0400
-X-Google-Smtp-Source: AB8JxZrrxBM56JDdOg9tExJltE8n/QvbMUFENmpkOEE0nV0dHzNNE/oXS72L1+hvl8QYmutE0OAGfSDE5YdYrGEUL+w=
+        id S1753158AbeEUL2S (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 07:28:18 -0400
+Received: from foss.arm.com ([217.140.101.70]:47390 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753147AbeEUL2L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 07:28:11 -0400
+Subject: Re: [RFT v2 1/4] perf cs-etm: Generate sample for missed packets
+To: Leo Yan <leo.yan@linaro.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Tor Jeremiassen <tor@ti.com>,
+        mike.leach@linaro.org, kim.phillips@arm.com,
+        coresight@lists.linaro.org
+Cc: Mike Leach <mike.leach@arm.com>
+References: <1526892748-326-1-git-send-email-leo.yan@linaro.org>
+ <1526892748-326-2-git-send-email-leo.yan@linaro.org>
+From: Robert Walker <robert.walker@arm.com>
+Message-ID: <bc320d6d-a21d-b5a4-e30d-511bb69aba32@arm.com>
+Date: Mon, 21 May 2018 12:27:42 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <afc54477ac8bd9a69cfa8754270342cfc8487109.camel@linux.intel.com>
-References: <20180514080640.12515-1-linus.walleij@linaro.org>
- <20180514080640.12515-2-linus.walleij@linaro.org> <afc54477ac8bd9a69cfa8754270342cfc8487109.camel@linux.intel.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 21 May 2018 13:27:47 +0200
-Message-ID: <CACRpkdaJ7UjpXKDEi2jR65vzt-Fp42U5PnMGkuw5r-H83ggbSA@mail.gmail.com>
-Subject: Re: [PATCH 01/19 v3] regulator: fixed: Convert to use GPIO descriptor only
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Alexander Shiyan <shc_work@mail.ru>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>, Tony Lindgren <tony@atomide.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Philipp Zabel <philipp.zabel@gmail.com>,
-        Daniel Mack <zonque@gmail.com>, Marc Zyngier <marc.zyngier@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Russell King <rmk+kernel@armlinux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1526892748-326-2-git-send-email-leo.yan@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 1:03 PM, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
-> On Mon, 2018-05-14 at 10:06 +0200, Linus Walleij wrote:
+Hi Leo,
 
->> The hunk hitting the x86 BCM43xx driver is especially tricky as the
->> number
->> comes out of SFI which is a mystery to me. I definately need someone
->> to
->> look at this. (Hi Andy.)
->
-> Since there is no link to repo with a branch and I wasn't Cc'ed to cover
-> letter, asking here for a such. I would then pull it and test on real
-> hardware.
+On 21/05/18 09:52, Leo Yan wrote:
+> Commit e573e978fb12 ("perf cs-etm: Inject capabilitity for CoreSight
+> traces") reworks the samples generation flow from CoreSight trace to
+> match the correct format so Perf report tool can display the samples
+> properly.  But the change has side effect for packet handling, it only
+> generate samples when 'prev_packet->last_instr_taken_branch' is true,
+> this results in the start tracing packet and exception packets are
+> dropped.
+> 
+> This patch checks extra two conditions for complete samples:
+> 
+> - If 'prev_packet->sample_type' is zero we can use this condition to
+>    get to know this is the start tracing packet; for this case, the start
+>    packet's end_addr is zero as well so we need to handle it in the
+>    function cs_etm__last_executed_instr();
+> 
 
-I'm sorry about this.
-This branch:
-https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/log/?h=gpio-descriptors-regulator
+I think you also need to add something in to handle discontinuities in
+trace - for example it is possible to configure the ETM to only trace
+execution in specific code regions or to trace a few cycles every so
+often. In these cases, prev_packet->sample_type will not be zero, but 
+whatever the previous packet was.  You will get a CS_ETM_TRACE_ON packet 
+in such cases, generated by an I_TRACE_ON element in the trace stream.
+You also get this on exception return.
 
-Has all the patches.
+However, you should also keep the test for prev_packet->sample_type == 0
+as you may not see a CS_ETM_TRACE_ON when decoding a buffer that has
+wrapped.
 
-git pull git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-gpio-descriptors-regulator
+Regards
 
-will bring in the patches to a testing branch.
+Rob
 
-> The code itself looks good, so:
->
-> Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->
-> for Intel MID bits.
-
-Thanks!
-
-Yours,
-Linus Walleij
+> - If 'prev_packet->exc' is true, we can know the previous packet is
+>    exception handling packet so need to generate sample for exception
+>    flow.
+> 
+> Fixes: e573e978fb12 ("perf cs-etm: Inject capabilitity for CoreSight traces")
+> Cc: Mike Leach <mike.leach@arm.com>
+> Cc: Robert Walker <robert.walker@arm.com>
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> ---
+>   tools/perf/util/cs-etm.c | 35 ++++++++++++++++++++++++++++-------
+>   1 file changed, 28 insertions(+), 7 deletions(-)
+> 
+> diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+> index 822ba91..378953b 100644
+> --- a/tools/perf/util/cs-etm.c
+> +++ b/tools/perf/util/cs-etm.c
+> @@ -495,6 +495,13 @@ static inline void cs_etm__reset_last_branch_rb(struct cs_etm_queue *etmq)
+>   static inline u64 cs_etm__last_executed_instr(struct cs_etm_packet *packet)
+>   {
+>   	/*
+> +	 * The packet is the start tracing packet if the end_addr is zero,
+> +	 * returns 0 for this case.
+> +	 */
+> +	if (!packet->end_addr)
+> +		return 0;
+> +
+> +	/*
+>   	 * The packet records the execution range with an exclusive end address
+>   	 *
+>   	 * A64 instructions are constant size, so the last executed
+> @@ -897,13 +904,27 @@ static int cs_etm__sample(struct cs_etm_queue *etmq)
+>   		etmq->period_instructions = instrs_over;
+>   	}
+>   
+> -	if (etm->sample_branches &&
+> -	    etmq->prev_packet &&
+> -	    etmq->prev_packet->sample_type == CS_ETM_RANGE &&
+> -	    etmq->prev_packet->last_instr_taken_branch) {
+> -		ret = cs_etm__synth_branch_sample(etmq);
+> -		if (ret)
+> -			return ret;
+> +	if (etm->sample_branches && etmq->prev_packet) {
+> +		bool generate_sample = false;
+> +
+> +		/* Generate sample for start tracing packet */
+> +		if (etmq->prev_packet->sample_type == 0)
+> +			generate_sample = true;
+> +
+> +		/* Generate sample for exception packet */
+> +		if (etmq->prev_packet->exc == true)
+> +			generate_sample = true;
+> +
+> +		/* Generate sample for normal branch packet */
+> +		if (etmq->prev_packet->sample_type == CS_ETM_RANGE &&
+> +		    etmq->prev_packet->last_instr_taken_branch)
+> +			generate_sample = true;
+> +
+> +		if (generate_sample) {
+> +			ret = cs_etm__synth_branch_sample(etmq);
+> +			if (ret)
+> +				return ret;
+> +		}
+>   	}
+>   
+>   	if (etm->sample_branches || etm->synth_opts.last_branch) {
+> 
