@@ -1,39 +1,38 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZp4AICy5qFlB28/OpKsAisLmU1o8cywplbTy0h/3ks1tbiFXrd9OahYQJCLsXiyRpG3OmRE
-ARC-Seal: i=1; a=rsa-sha256; t=1526938040; cv=none;
+X-Google-Smtp-Source: AB8JxZqSRlMc1Ugi28ZGQL+utJvspxH0I0kGdLfu/8P0X0MgDbnRxCnFP5Osm6aUfgn6tD3qhkrQ
+ARC-Seal: i=1; a=rsa-sha256; t=1526938038; cv=none;
         d=google.com; s=arc-20160816;
-        b=D3s6FLWzUxeNzZWeSGV3SUBp6QS1lk8cKmwYBoS//E2ScJOVLFrqMOXKi3+JcuM5kO
-         YFYaCayj0YB7hkY2AaZ687K6LNBLyd7TgwnFtyLBSCNprnlRCALGpkZ4iaDUFWpR4PoA
-         N7acLjeHXzMkWUDqpzpseyTo7guELaE0kHnFpgE5T4LsCIvjFMCKZRk2PgOY5ZJWrAyr
-         X+77pzi28knz+/h2QIxJZHygSg81Qx35BvZN2pjWgz+EscRWXhG+sFxcUGiRk8Nn3H0l
-         FcLKMLHmV8pJVHWJaFMLZo4rIcZPzMbkruHMcatUhhh8pYrHdCQywsW5FpDErZVMsZgK
-         nXng==
+        b=0/xdAIEvjZL6OnDUd5h2UZE04hTjY5f2a88DXuVJNCTt8E2Ikc6+hwIEa2hv2FxGCc
+         DooW1I87/VeXwH2qyj2JGVgwYdzEmSRb8GjG5X47ROzfHtjYmXQ6qmYiHBOGbIpi9C88
+         naNTKaWAQNpE0sIaAivQMHeyeXWIMrxKM1vRLv9luNticZzNAF2jYw4bvcM1MR9evLCV
+         3Rwi/WhVBMLIcaDZ7g6yjTGAZ/T67/0MUMrzcEQe86LCtQFT9eZIPZVdr6lUn2VMRasx
+         +Pf9O29SNuCcdNOKLUiWUDPeGdUGIRYxYe+nPC4pihTU2EuHmLbywO7QPrbv3e5Z+sZs
+         FZgQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=Ubg3BVArs6FWIoqPY/yrnuIY9EMEFvBf8t1juDVcD3s=;
-        b=qU+sQ++JjMxSeQnXuLpGoYvd3v5hiud3eFKyjyVr5+10ToT4vaLluaG3S5NoiVNFIz
-         dKUda+8qIABfzJ9miWnYcKPSNN6kwoDoGiQIZrSJxZCgUcrGrzh6+EoTZTywyUDWY51Q
-         a683DRGp345p6kzc5TX8LnBwP+YKOswBqE2CwYCRBTSLVS0LizDSnU3jubGZil42Qk+T
-         +XNvmvObIrqZ7Ga1ukr8R9R5qP+16TTn5LRane1dvpl+zSRvqOV18o447Ok0E/AR6Lzm
-         GyMhBqeodEZG0lMiS0yd/x0emHOyn8/LOujPTFV8Wt8ZCxfEcRL7LHAZp5zlzqALtyft
-         IubQ==
+        bh=4sYlBrAEKWJhCA4drEUOJarakGxwdXWI/hLxU5Y9YVE=;
+        b=RwUEPiShifc3cOUolG2gVbQQvm+WriKqQtJfoyX6oKz3iTZxlTDRbvb80XvoX02eyh
+         F+RsU8W/9tWch7hAAURJhPSavP+ZKWElWRis1HyvL4Q+Iky8yDFTh2aY1kUfJbmsltl8
+         3X8ztowO63v3mbZYonLZY5GRh/e/iB59hRA/OgWOCxXhyiFyF4jgZ8DuXDxCRs0lvNcB
+         Kefp6Y42TNY57VoPfu238mGrSF3qmjlGecLNeAj8+cn8f4w8fDbDUxPRzY/VMVZB5QoJ
+         xDTPuMtDHHSt5QJ5RMFOH7dqd/rsxdGviTr/hB5g6lk6ADpurRVllZSeLDTPnRp36mx7
+         HCqA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=eFLyjKjl;
+       dkim=pass header.i=@kernel.org header.s=default header.b=j1DNA9gO;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=eFLyjKjl;
+       dkim=pass header.i=@kernel.org header.s=default header.b=j1DNA9gO;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@suse.de>,
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Subject: [PATCH 4.16 097/110] x86/cpufeatures: Disentangle SSBD enumeration
-Date: Mon, 21 May 2018 23:12:34 +0200
-Message-Id: <20180521210514.282653573@linuxfoundation.org>
+	Borislav Petkov <bp@suse.de>
+Subject: [PATCH 4.16 106/110] x86/bugs: Rework spec_ctrl base and mask logic
+Date: Mon, 21 May 2018 23:12:43 +0200
+Message-Id: <20180521210514.955223636@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109930629084365?=
-X-GMAIL-MSGID: =?utf-8?q?1601110583251544791?=
+X-GMAIL-THRID: =?utf-8?q?1601109960928055699?=
+X-GMAIL-MSGID: =?utf-8?q?1601110580804590619?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,146 +53,87 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 52817587e706686fcdb27f14c1b000c92f266c96 upstream
+commit be6fcb5478e95bb1c91f489121238deb3abca46a upstream
 
-The SSBD enumeration is similarly to the other bits magically shared
-between Intel and AMD though the mechanisms are different.
+x86_spec_ctrL_mask is intended to mask out bits from a MSR_SPEC_CTRL value
+which are not to be modified. However the implementation is not really used
+and the bitmask was inverted to make a check easier, which was removed in
+"x86/bugs: Remove x86_spec_ctrl_set()"
 
-Make X86_FEATURE_SSBD synthetic and set it depending on the vendor specific
-features or family dependent setup.
+Aside of that it is missing the STIBP bit if it is supported by the
+platform, so if the mask would be used in x86_virt_spec_ctrl() then it
+would prevent a guest from setting STIBP.
 
-Change the Intel bit to X86_FEATURE_SPEC_CTRL_SSBD to denote that SSBD is
-controlled via MSR_SPEC_CTRL and fix up the usage sites.
+Add the STIBP bit if supported and use the mask in x86_virt_spec_ctrl() to
+sanitize the value which is supplied by the guest.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/cpufeatures.h |    7 +++----
- arch/x86/kernel/cpu/amd.c          |    7 +------
- arch/x86/kernel/cpu/bugs.c         |   10 +++++-----
- arch/x86/kernel/cpu/common.c       |    3 +++
- arch/x86/kernel/cpu/intel.c        |    1 +
- arch/x86/kernel/process.c          |    2 +-
- 6 files changed, 14 insertions(+), 16 deletions(-)
+ arch/x86/kernel/cpu/bugs.c |   26 +++++++++++++++++++-------
+ 1 file changed, 19 insertions(+), 7 deletions(-)
 
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -207,15 +207,14 @@
- #define X86_FEATURE_INTEL_PPIN		( 7*32+14) /* Intel Processor Inventory Number */
- #define X86_FEATURE_CDP_L2		( 7*32+15) /* Code and Data Prioritization L2 */
- #define X86_FEATURE_MSR_SPEC_CTRL	( 7*32+16) /* "" MSR SPEC_CTRL is implemented */
--
-+#define X86_FEATURE_SSBD		( 7*32+17) /* Speculative Store Bypass Disable */
- #define X86_FEATURE_MBA			( 7*32+18) /* Memory Bandwidth Allocation */
- #define X86_FEATURE_RSB_CTXSW		( 7*32+19) /* "" Fill RSB on context switches */
- #define X86_FEATURE_SEV			( 7*32+20) /* AMD Secure Encrypted Virtualization */
--
- #define X86_FEATURE_USE_IBPB		( 7*32+21) /* "" Indirect Branch Prediction Barrier enabled */
- #define X86_FEATURE_USE_IBRS_FW		( 7*32+22) /* "" Use IBRS during runtime firmware calls */
- #define X86_FEATURE_SPEC_STORE_BYPASS_DISABLE	( 7*32+23) /* "" Disable Speculative Store Bypass. */
--#define X86_FEATURE_AMD_SSBD		( 7*32+24)  /* "" AMD SSBD implementation */
-+#define X86_FEATURE_LS_CFG_SSBD		( 7*32+24)  /* "" AMD SSBD implementation via LS_CFG MSR */
- #define X86_FEATURE_IBRS		( 7*32+25) /* Indirect Branch Restricted Speculation */
- #define X86_FEATURE_IBPB		( 7*32+26) /* Indirect Branch Prediction Barrier */
- #define X86_FEATURE_STIBP		( 7*32+27) /* Single Thread Indirect Branch Predictors */
-@@ -338,7 +337,7 @@
- #define X86_FEATURE_SPEC_CTRL		(18*32+26) /* "" Speculation Control (IBRS + IBPB) */
- #define X86_FEATURE_INTEL_STIBP		(18*32+27) /* "" Single Thread Indirect Branch Predictors */
- #define X86_FEATURE_ARCH_CAPABILITIES	(18*32+29) /* IA32_ARCH_CAPABILITIES MSR (Intel) */
--#define X86_FEATURE_SSBD		(18*32+31) /* Speculative Store Bypass Disable */
-+#define X86_FEATURE_SPEC_CTRL_SSBD	(18*32+31) /* "" Speculative Store Bypass Disable */
- 
- /*
-  * BUG word(s)
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -570,8 +570,8 @@ static void bsp_init_amd(struct cpuinfo_
- 		 * avoid RMW. If that faults, do not enable SSBD.
- 		 */
- 		if (!rdmsrl_safe(MSR_AMD64_LS_CFG, &x86_amd_ls_cfg_base)) {
-+			setup_force_cpu_cap(X86_FEATURE_LS_CFG_SSBD);
- 			setup_force_cpu_cap(X86_FEATURE_SSBD);
--			setup_force_cpu_cap(X86_FEATURE_AMD_SSBD);
- 			x86_amd_ls_cfg_ssbd_mask = 1ULL << bit;
- 		}
- 	}
-@@ -919,11 +919,6 @@ static void init_amd(struct cpuinfo_x86
- 	/* AMD CPUs don't reset SS attributes on SYSRET, Xen does. */
- 	if (!cpu_has(c, X86_FEATURE_XENPV))
- 		set_cpu_bug(c, X86_BUG_SYSRET_SS_ATTRS);
--
--	if (boot_cpu_has(X86_FEATURE_AMD_SSBD)) {
--		set_cpu_cap(c, X86_FEATURE_SSBD);
--		set_cpu_cap(c, X86_FEATURE_AMD_SSBD);
--	}
- }
- 
- #ifdef CONFIG_X86_32
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -159,8 +159,8 @@ void x86_spec_ctrl_set_guest(u64 guest_s
- 	if (!static_cpu_has(X86_FEATURE_MSR_SPEC_CTRL))
- 		return;
+@@ -42,7 +42,7 @@ EXPORT_SYMBOL_GPL(x86_spec_ctrl_base);
+  * The vendor and possibly platform specific bits which can be modified in
+  * x86_spec_ctrl_base.
+  */
+-static u64 __ro_after_init x86_spec_ctrl_mask = ~SPEC_CTRL_IBRS;
++static u64 __ro_after_init x86_spec_ctrl_mask = SPEC_CTRL_IBRS;
  
--	/* Intel controls SSB in MSR_SPEC_CTRL */
--	if (static_cpu_has(X86_FEATURE_SPEC_CTRL))
-+	/* SSBD controlled in MSR_SPEC_CTRL */
-+	if (static_cpu_has(X86_FEATURE_SPEC_CTRL_SSBD))
- 		host |= ssbd_tif_to_spec_ctrl(current_thread_info()->flags);
+ /*
+  * AMD specific MSR info for Speculative Store Bypass control.
+@@ -68,6 +68,10 @@ void __init check_bugs(void)
+ 	if (boot_cpu_has(X86_FEATURE_MSR_SPEC_CTRL))
+ 		rdmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
  
- 	if (host != guest_spec_ctrl)
-@@ -176,8 +176,8 @@ void x86_spec_ctrl_restore_host(u64 gues
- 	if (!static_cpu_has(X86_FEATURE_MSR_SPEC_CTRL))
- 		return;
- 
--	/* Intel controls SSB in MSR_SPEC_CTRL */
--	if (static_cpu_has(X86_FEATURE_SPEC_CTRL))
-+	/* SSBD controlled in MSR_SPEC_CTRL */
-+	if (static_cpu_has(X86_FEATURE_SPEC_CTRL_SSBD))
- 		host |= ssbd_tif_to_spec_ctrl(current_thread_info()->flags);
- 
- 	if (host != guest_spec_ctrl)
-@@ -189,7 +189,7 @@ static void x86_amd_ssb_disable(void)
- {
- 	u64 msrval = x86_amd_ls_cfg_base | x86_amd_ls_cfg_ssbd_mask;
- 
--	if (boot_cpu_has(X86_FEATURE_AMD_SSBD))
-+	if (boot_cpu_has(X86_FEATURE_LS_CFG_SSBD))
- 		wrmsrl(MSR_AMD64_LS_CFG, msrval);
- }
- 
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -767,6 +767,9 @@ static void init_speculation_control(str
- 	if (cpu_has(c, X86_FEATURE_INTEL_STIBP))
- 		set_cpu_cap(c, X86_FEATURE_STIBP);
- 
-+	if (cpu_has(c, X86_FEATURE_SPEC_CTRL_SSBD))
-+		set_cpu_cap(c, X86_FEATURE_SSBD);
++	/* Allow STIBP in MSR_SPEC_CTRL if supported */
++	if (boot_cpu_has(X86_FEATURE_STIBP))
++		x86_spec_ctrl_mask |= SPEC_CTRL_STIBP;
 +
- 	if (cpu_has(c, X86_FEATURE_AMD_IBRS)) {
- 		set_cpu_cap(c, X86_FEATURE_IBRS);
- 		set_cpu_cap(c, X86_FEATURE_MSR_SPEC_CTRL);
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -191,6 +191,7 @@ static void early_init_intel(struct cpui
- 		setup_clear_cpu_cap(X86_FEATURE_MSR_SPEC_CTRL);
- 		setup_clear_cpu_cap(X86_FEATURE_INTEL_STIBP);
- 		setup_clear_cpu_cap(X86_FEATURE_SSBD);
-+		setup_clear_cpu_cap(X86_FEATURE_SPEC_CTRL_SSBD);
- 	}
+ 	/* Select the proper spectre mitigation before patching alternatives */
+ 	spectre_v2_select_mitigation();
  
- 	/*
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -283,7 +283,7 @@ static __always_inline void __speculativ
+@@ -136,18 +140,26 @@ static enum spectre_v2_mitigation spectr
+ void
+ x86_virt_spec_ctrl(u64 guest_spec_ctrl, u64 guest_virt_spec_ctrl, bool setguest)
  {
- 	u64 msr;
++	u64 msrval, guestval, hostval = x86_spec_ctrl_base;
+ 	struct thread_info *ti = current_thread_info();
+-	u64 msr, host = x86_spec_ctrl_base;
  
--	if (static_cpu_has(X86_FEATURE_AMD_SSBD)) {
-+	if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD)) {
- 		msr = x86_amd_ls_cfg_base | ssbd_tif_to_amd_ls_cfg(tifn);
- 		wrmsrl(MSR_AMD64_LS_CFG, msr);
- 	} else {
+ 	/* Is MSR_SPEC_CTRL implemented ? */
+ 	if (static_cpu_has(X86_FEATURE_MSR_SPEC_CTRL)) {
++		/*
++		 * Restrict guest_spec_ctrl to supported values. Clear the
++		 * modifiable bits in the host base value and or the
++		 * modifiable bits from the guest value.
++		 */
++		guestval = hostval & ~x86_spec_ctrl_mask;
++		guestval |= guest_spec_ctrl & x86_spec_ctrl_mask;
++
+ 		/* SSBD controlled in MSR_SPEC_CTRL */
+ 		if (static_cpu_has(X86_FEATURE_SPEC_CTRL_SSBD))
+-			host |= ssbd_tif_to_spec_ctrl(ti->flags);
++			hostval |= ssbd_tif_to_spec_ctrl(ti->flags);
+ 
+-		if (host != guest_spec_ctrl) {
+-			msr = setguest ? guest_spec_ctrl : host;
+-			wrmsrl(MSR_IA32_SPEC_CTRL, msr);
++		if (hostval != guestval) {
++			msrval = setguest ? guestval : hostval;
++			wrmsrl(MSR_IA32_SPEC_CTRL, msrval);
+ 		}
+ 	}
+ }
+@@ -493,7 +505,7 @@ static enum ssb_mitigation __init __ssb_
+ 		switch (boot_cpu_data.x86_vendor) {
+ 		case X86_VENDOR_INTEL:
+ 			x86_spec_ctrl_base |= SPEC_CTRL_SSBD;
+-			x86_spec_ctrl_mask &= ~SPEC_CTRL_SSBD;
++			x86_spec_ctrl_mask |= SPEC_CTRL_SSBD;
+ 			wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
+ 			break;
+ 		case X86_VENDOR_AMD:
