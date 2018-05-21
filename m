@@ -1,28 +1,28 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZo4lZNwqds2RHQXGIZmHr5Hb1qA2aK8qzaV8Jdwz4zR44hMOe8xodfAosf+6vSUJIIL3sFV
-ARC-Seal: i=1; a=rsa-sha256; t=1526937589; cv=none;
+X-Google-Smtp-Source: AB8JxZoUliJUf/H9QxFGspI+CQK6fR1jPMOLZ/FnZOh1bRXm3EQWlPOCT+weSqDRx+8k1GnQ9bmC
+ARC-Seal: i=1; a=rsa-sha256; t=1526937587; cv=none;
         d=google.com; s=arc-20160816;
-        b=bhHayLI/rfrNJkyms8Tf2SdiklgGbW9YtF2Gpu5gCiGTlv0sA6dixqGmrys99+sliM
-         4q96Snk6uro7pZbgGZonpQWidHytPZnHHcaWpZON4blztDtfEfI/dbv5BgYLJVZRrTDE
-         mc6s/TZ7EY/TpsjwPoS5rXkhoQ9IyryMf53/HZWCrSieDv0UoQW4mzOTr2jXMLDoi37i
-         NoAHEBLXEi0ZRvwX/atChfVwlv49VW0yzr1kx9IvJ/Idf2euevNcpTHEaRPXlOB/AuV9
-         28c4/1pHhBl7URxiog/7HBaDGod4dQrCAejgF/L56/h5a0okXkeeCe3Nm6iMm9RAf4fj
-         a4ng==
+        b=HtbOGneiYzY8bQVNsiGktwicUPyb2t6Q7sFP5molqs0jmloFIRf4E2chva9MIQvK8z
+         +jI0AJAk66sLbJeCWopNrLidoq1t2P4hIehoZSgR1/+TrDIYcXMiPZpnAQWSl1j202FG
+         hvDHax0Oo/Lq07I+M8ifM4CbgOgotjSZJEun5a9Vtr9MTVT4tF9kvFpGQNc1Cy7cJ0ui
+         qrbuNoPmT5x669xcO4OGsUVeQbqhXl+2RuoF6zRXQZ46eWBw3+nr0HW0HwNRY58Bj/DQ
+         P2p9qifY32ptKcprYU+soxSEqmTAwe4T9/nYqxbrYjB278lHqlUvZo3YBUvJfmiCmrPo
+         rj2Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=DaajS0mELmu0vOGJl7Js1cAsmKvoVaUnUMfofWQBPv0=;
-        b=zrSJ1U4gwNT/60bdmL+jkHvyrlIGREyKOhhFZKeizN9XdP3/lUa4xTLTb+BeHzKKes
-         fOMlByxyuoMIcqJwNqEMGQEUXAHycPP+SfadvTHLnUpdBrMCcsUWe/ZXTeXJnlX9BqqT
-         z2QylyTFsdE40lbDavW8jZPIPzgZW5V8mFvvYW0rkMPi6fNCwPVqQ/HCBuyc2/S8Q7wy
-         cm6jhky97K1152OHdQ+tsbjDBDjxnMGiKZfGcWlg2Srgt26KOx9d2Yqk657LlCVBJq+H
-         W+Gj0+1sHAACdIUr4jmf/dySdQh36qQ9gX/pueFHcBeEGglABEoa9n6XwzqdmyRFlmUD
-         ozAg==
+        bh=FB989A0DZJsnqkEDdaBemxvRWRalCcAVVwdN+BalQG8=;
+        b=CHcaTxwlvlebL54SkWjQHpjw3DoQuk/zaxHykDPNySVjQGAKoxVrj56j38DQGA8NFb
+         pRUwcPNYB75OR3mJi1Ibpj6E1NKdV9dyyVUOrHgieJ0IvzIkROSsD4RswoOsA9OTRSLr
+         wDbvB5ibntzq7IMv/3kv9ICKopSRuAMLAsObwnKHGxulBfR8ppF8Sw/x1x4+PrJ/Q1im
+         uQw6A6XAZT2U1wWTxsg8FNSjYehoGkRJbwdaYiB1uzH3L2wt1JHwkqKsOcQlYc3zHbv5
+         9Ed4JLqxHsimwjqojq4tBkXWYN5TNXbvCiJAtZGMIFCGymnb8sNSpXkTxQb9foi9OF9J
+         FjEA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=tI0H3qXL;
+       dkim=pass header.i=@kernel.org header.s=default header.b=kkZsk6wg;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=tI0H3qXL;
+       dkim=pass header.i=@kernel.org header.s=default header.b=kkZsk6wg;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
@@ -32,9 +32,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 50/95] x86/bugs: Concentrate bug reporting into a separate function
-Date: Mon, 21 May 2018 23:11:40 +0200
-Message-Id: <20180521210457.884316039@linuxfoundation.org>
+Subject: [PATCH 4.14 49/95] x86/bugs: Concentrate bug detection into a separate function
+Date: Mon, 21 May 2018 23:11:39 +0200
+Message-Id: <20180521210457.765126913@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210447.219380974@linuxfoundation.org>
 References: <20180521210447.219380974@linuxfoundation.org>
@@ -44,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109827159806887?=
-X-GMAIL-MSGID: =?utf-8?q?1601110110570084522?=
+X-GMAIL-THRID: =?utf-8?q?1601109824365345903?=
+X-GMAIL-MSGID: =?utf-8?q?1601110107328045143?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,10 +55,10 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-commit d1059518b4789cabe34bb4b714d07e6089c82ca1 upstream
+commit 4a28bfe3267b68e22c663ac26185aa16c9b879ef upstream
 
-Those SysFS functions have a similar preamble, as such make common
-code to handle them.
+Combine the various logic which goes through all those
+x86_cpu_id matching structures in one function.
 
 Suggested-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
@@ -67,71 +67,54 @@ Reviewed-by: Borislav Petkov <bp@suse.de>
 Reviewed-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/bugs.c |   46 +++++++++++++++++++++++++++++++--------------
- 1 file changed, 32 insertions(+), 14 deletions(-)
+ arch/x86/kernel/cpu/common.c |   21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -314,30 +314,48 @@ retpoline_auto:
- #undef pr_fmt
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -894,21 +894,27 @@ static const __initconst struct x86_cpu_
+ 	{}
+ };
  
- #ifdef CONFIG_SYSFS
--ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr, char *buf)
-+
-+ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
-+			char *buf, unsigned int bug)
+-static bool __init cpu_vulnerable_to_meltdown(struct cpuinfo_x86 *c)
++static void __init cpu_set_bug_bits(struct cpuinfo_x86 *c)
  {
--	if (!boot_cpu_has_bug(X86_BUG_CPU_MELTDOWN))
-+	if (!boot_cpu_has_bug(bug))
- 		return sprintf(buf, "Not affected\n");
--	if (boot_cpu_has(X86_FEATURE_PTI))
--		return sprintf(buf, "Mitigation: PTI\n");
+ 	u64 ia32_cap = 0;
+ 
++	if (x86_match_cpu(cpu_no_speculation))
++		return;
 +
-+	switch (bug) {
-+	case X86_BUG_CPU_MELTDOWN:
-+		if (boot_cpu_has(X86_FEATURE_PTI))
-+			return sprintf(buf, "Mitigation: PTI\n");
++	setup_force_cpu_bug(X86_BUG_SPECTRE_V1);
++	setup_force_cpu_bug(X86_BUG_SPECTRE_V2);
 +
-+		break;
-+
-+	case X86_BUG_SPECTRE_V1:
-+		return sprintf(buf, "Mitigation: __user pointer sanitization\n");
-+
-+	case X86_BUG_SPECTRE_V2:
-+		return sprintf(buf, "%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
-+			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
-+			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
-+			       spectre_v2_module_string());
-+
-+	default:
-+		break;
-+	}
-+
- 	return sprintf(buf, "Vulnerable\n");
+ 	if (x86_match_cpu(cpu_no_meltdown))
+-		return false;
++		return;
+ 
+ 	if (cpu_has(c, X86_FEATURE_ARCH_CAPABILITIES))
+ 		rdmsrl(MSR_IA32_ARCH_CAPABILITIES, ia32_cap);
+ 
+ 	/* Rogue Data Cache Load? No! */
+ 	if (ia32_cap & ARCH_CAP_RDCL_NO)
+-		return false;
++		return;
+ 
+-	return true;
++	setup_force_cpu_bug(X86_BUG_CPU_MELTDOWN);
  }
  
-+ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr, char *buf)
-+{
-+	return cpu_show_common(dev, attr, buf, X86_BUG_CPU_MELTDOWN);
-+}
-+
- ssize_t cpu_show_spectre_v1(struct device *dev, struct device_attribute *attr, char *buf)
- {
--	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V1))
--		return sprintf(buf, "Not affected\n");
--	return sprintf(buf, "Mitigation: __user pointer sanitization\n");
-+	return cpu_show_common(dev, attr, buf, X86_BUG_SPECTRE_V1);
- }
+ /*
+@@ -958,12 +964,7 @@ static void __init early_identify_cpu(st
  
- ssize_t cpu_show_spectre_v2(struct device *dev, struct device_attribute *attr, char *buf)
- {
--	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
--		return sprintf(buf, "Not affected\n");
--
--	return sprintf(buf, "%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
--		       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
--		       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
--		       spectre_v2_module_string());
-+	return cpu_show_common(dev, attr, buf, X86_BUG_SPECTRE_V2);
- }
- #endif
+ 	setup_force_cpu_cap(X86_FEATURE_ALWAYS);
+ 
+-	if (!x86_match_cpu(cpu_no_speculation)) {
+-		if (cpu_vulnerable_to_meltdown(c))
+-			setup_force_cpu_bug(X86_BUG_CPU_MELTDOWN);
+-		setup_force_cpu_bug(X86_BUG_SPECTRE_V1);
+-		setup_force_cpu_bug(X86_BUG_SPECTRE_V2);
+-	}
++	cpu_set_bug_bits(c);
+ 
+ 	fpu__init_system(c);
+ 
