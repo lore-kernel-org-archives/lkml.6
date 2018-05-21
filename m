@@ -1,53 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751843AbeEUNRS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 09:17:18 -0400
-Received: from foss.arm.com ([217.140.101.70]:49612 "EHLO foss.arm.com"
+        id S1752641AbeEUNVU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 09:21:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57970 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751081AbeEUNRP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 09:17:15 -0400
-Date: Mon, 21 May 2018 14:17:41 +0100
-From: Will Deacon <will.deacon@arm.com>
-To: Ilia Lin <ilialin@codeaurora.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-        mark.rutland@arm.com, viresh.kumar@linaro.org, nm@ti.com,
-        lgirdwood@gmail.com, broonie@kernel.org, andy.gross@linaro.org,
-        david.brown@linaro.org, catalin.marinas@arm.com, rjw@rjwysocki.net,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        rnayak@codeaurora.org, linux-pm@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        amit.kucheria@linaro.org, tfinkel@codeaurora.org,
-        nicolas.dechesne@linaro.org, celster@codeaurora.org,
-        linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v9 01/15] soc: qcom: Separate kryo l2 accessors from PMU
- driver
-Message-ID: <20180521131740.GI19713@arm.com>
-References: <1526901932-9514-1-git-send-email-ilialin@codeaurora.org>
- <1526901932-9514-2-git-send-email-ilialin@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526901932-9514-2-git-send-email-ilialin@codeaurora.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S1750970AbeEUNVT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 09:21:19 -0400
+From: Michal Suchanek <msuchanek@suse.de>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>, Breno Leitao <leitao@debian.org>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Vaibhav Jain <vaibhav@linux.vnet.ibm.com>,
+        "Guilherme G. Piccoli" <gpiccoli@linux.vnet.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Cc: Michal Suchanek <msuchanek@suse.de>
+Subject: [PATCH] powerpc/xmon: really enable xmon when a breakpoint is set
+Date: Mon, 21 May 2018 15:21:08 +0200
+Message-Id: <20180521132108.7938-1-msuchanek@suse.de>
+X-Mailer: git-send-email 2.13.6
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 02:25:18PM +0300, Ilia Lin wrote:
-> The driver provides kernel level API for other drivers
-> to access the MSM8996 L2 cache registers.
-> Separating the L2 access code from the PMU driver and
-> making it public to allow other drivers use it.
-> The accesses must be separated with a single spinlock,
-> maintained in this driver.
-> 
-> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-> ---
->  drivers/perf/Kconfig                 |  1 +
->  drivers/perf/qcom_l2_pmu.c           | 90 ++++++++++--------------------------
+When single-stepping kernel code from xmon without a debug hook enabled
+the kernel crashes. This can happen when kernel starts with xmon on
+crash disabled but xmon is entered using sysrq.
 
-I'm fine with the perf bits:
+Commit e1368d0c9edb ("powerpc/xmon: Setup debugger hooks when first
+break-point is set") adds force_enable_xmon function that prints
+"xmon: Enabling debugger hooks" but does not enable them.
 
-Acked-by: Will Deacon <will.deacon@arm.com>
+Add the call to xmon_init to install the debugger hooks in
+force_enable_xmon and also call force_enable_xmon when single-stepping
+in xmon.
 
-Will
+Fixes: e1368d0c9edb ("powerpc/xmon: Setup debugger hooks when first
+break-point is set")
+
+Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+---
+ arch/powerpc/xmon/xmon.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/powerpc/xmon/xmon.c b/arch/powerpc/xmon/xmon.c
+index a0842f1ff72c..504bd1c3d8b0 100644
+--- a/arch/powerpc/xmon/xmon.c
++++ b/arch/powerpc/xmon/xmon.c
+@@ -179,6 +179,9 @@ static const char *getvecname(unsigned long vec);
+ 
+ static int do_spu_cmd(void);
+ 
++static void xmon_init(int enable);
++static inline void force_enable_xmon(void);
++
+ #ifdef CONFIG_44x
+ static void dump_tlb_44x(void);
+ #endif
+@@ -1094,6 +1097,7 @@ static int do_step(struct pt_regs *regs)
+ 	unsigned int instr;
+ 	int stepped;
+ 
++	force_enable_xmon();
+ 	/* check we are in 64-bit kernel mode, translation enabled */
+ 	if ((regs->msr & (MSR_64BIT|MSR_PR|MSR_IR)) == (MSR_64BIT|MSR_IR)) {
+ 		if (mread(regs->nip, &instr, 4) == 4) {
+@@ -1275,6 +1279,7 @@ static inline void force_enable_xmon(void)
+ 	if (!xmon_on) {
+ 		printf("xmon: Enabling debugger hooks\n");
+ 		xmon_on = 1;
++		xmon_init(1);
+ 	}
+ }
+ 
+-- 
+2.13.6
