@@ -1,206 +1,198 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751079AbeEUG6Y (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 02:58:24 -0400
-Received: from mta-p5.oit.umn.edu ([134.84.196.205]:45468 "EHLO
-        mta-p5.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750965AbeEUG6V (ORCPT
+        id S1751185AbeEUG7r (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 02:59:47 -0400
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:33088 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750867AbeEUG7p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 02:58:21 -0400
-X-Google-Smtp-Source: AB8JxZpzhA0qfY/Xq1tMEtytuFq/fawxaczZkwWGfYLQidjzm5cuRUH2kXABPeSTBIkGJ6W9wNLyZg==
-From: Wenwen Wang <wang6495@umn.edu>
-To: Wenwen Wang <wang6495@umn.edu>
-Cc: Kangjie Lu <kjlu@umn.edu>, Armin Schindler <mac@melware.de>,
-        Karsten Keil <isdn@linux-pingi.de>,
-        netdev@vger.kernel.org (open list:ISDN SUBSYSTEM),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3] isdn: eicon: fix a missing-check bug
-Date: Mon, 21 May 2018 01:58:07 -0500
-Message-Id: <1526885887-9759-1-git-send-email-wang6495@umn.edu>
-X-Mailer: git-send-email 2.7.4
+        Mon, 21 May 2018 02:59:45 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w4L6xQOw005932
+X-Nifty-SrcIP: [209.85.217.178]
+X-Google-Smtp-Source: AB8JxZqn/8TdegrnEGK3itvNYPaL9OMXsvDFwZ/0A/AhkCKh6EpalX0AKbDXWsPsL5uAFq3qY0xTPAylsWD723+3Y3A=
+MIME-Version: 1.0
+In-Reply-To: <8bcb4bb6-dec7-3883-6a0c-52f8030c3674@infradead.org>
+References: <1526804213-8238-1-git-send-email-yamada.masahiro@socionext.com>
+ <1526804213-8238-6-git-send-email-yamada.masahiro@socionext.com>
+ <7819f81c-2de6-4202-1349-ae4ce01caa26@infradead.org> <CAK7LNARzdUZ3=PWwM_SC-t6XEoCgGEBfh4kj_KMv9WUquAHJ0g@mail.gmail.com>
+ <170f1ce7-c192-96cd-f593-89f534d239bc@infradead.org> <CAK7LNAQYpfNn666z8tJUeLB53kyHdfr06HiLaAizihnuZv6cRQ@mail.gmail.com>
+ <8bcb4bb6-dec7-3883-6a0c-52f8030c3674@infradead.org>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Mon, 21 May 2018 15:58:45 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQKKEvjQchXJ=QMOq9ZDtATPAq6YpycXR1-9bM55a1t3w@mail.gmail.com>
+Message-ID: <CAK7LNAQKKEvjQchXJ=QMOq9ZDtATPAq6YpycXR1-9bM55a1t3w@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] kconfig: refactor ncurses package checks for
+ building nconf
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        "Luis R . Rodriguez" <mcgrof@suse.com>,
+        Ulf Magnusson <ulfalizer@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4L6xrkm016186
 
-In divasmain.c, the function divas_write() firstly invokes the function
-diva_xdi_open_adapter() to open the adapter that matches with the adapter
-number provided by the user, and then invokes the function diva_xdi_write()
-to perform the write operation using the matched adapter. The two functions
-diva_xdi_open_adapter() and diva_xdi_write() are located in diva.c.
+Randy,
 
-In diva_xdi_open_adapter(), the user command is copied to the object 'msg'
-from the userspace pointer 'src' through the function pointer 'cp_fn',
-which eventually calls copy_from_user() to do the copy. Then, the adapter
-number 'msg.adapter' is used to find out a matched adapter from the
-'adapter_queue'. A matched adapter will be returned if it is found.
-Otherwise, NULL is returned to indicate the failure of the verification on
-the adapter number.
 
-As mentioned above, if a matched adapter is returned, the function
-diva_xdi_write() is invoked to perform the write operation. In this
-function, the user command is copied once again from the userspace pointer
-'src', which is the same as the 'src' pointer in diva_xdi_open_adapter() as
-both of them are from the 'buf' pointer in divas_write(). Similarly, the
-copy is achieved through the function pointer 'cp_fn', which finally calls
-copy_from_user(). After the successful copy, the corresponding command
-processing handler of the matched adapter is invoked to perform the write
-operation.
+2018-05-21 15:24 GMT+09:00 Randy Dunlap <rdunlap@infradead.org>:
+> On 05/20/2018 09:58 PM, Masahiro Yamada wrote:
+>> 2018-05-21 13:51 GMT+09:00 Randy Dunlap <rdunlap@infradead.org>:
+>>> On 05/20/2018 09:48 PM, Masahiro Yamada wrote:
+>>>> 2018-05-21 8:41 GMT+09:00 Randy Dunlap <rdunlap@infradead.org>:
+>>>>> On 05/20/2018 01:16 AM, Masahiro Yamada wrote:
+>>>>>> Building nconf requires ncurses, but its presence is not checked.
+>>>>>> Check and configure necessary packages by a shell script like the
+>>>>>> other GUI frontends.
+>>>>>>
+>>>>>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>>>>>> ---
+>>>>>>
+>>>>>
+>>>>>> diff --git a/scripts/kconfig/nconf-cfg.sh b/scripts/kconfig/nconf-cfg.sh
+>>>>>> new file mode 100644
+>>>>>> index 0000000..8eb7948
+>>>>>> --- /dev/null
+>>>>>> +++ b/scripts/kconfig/nconf-cfg.sh
+>>>>>> @@ -0,0 +1,34 @@
+>>>>>> +#!/bin/sh
+>>>>>> +# SPDX-License-Identifier: GPL-2.0
+>>>>>> +
+>>>>>> +PKG="ncursesw menuw panelw"
+>>>>>> +PKG2="ncurses menu panel"
+>>>>>> +
+>>>>>> +if pkg-config --exists $PKG; then
+>>>>>> +     echo libs=\"$(pkg-config --libs $PKG)\"
+>>>>>> +     exit 0
+>>>>>> +fi
+>>>>>> +
+>>>>>> +if pkg-config --exists $PKG2; then
+>>>>>> +     echo libs=\"$(pkg-config --libs $PKG2)\"
+>>>>>> +     exit 0
+>>>>>> +fi
+>>>>>> +
+>>>>>
+>>>>> I guess this one needs clags, especially -I, like the mconf patch contains...
+>>>>
+>>>>
+>>>>
+>>>> I thought so.
+>>>>
+>>>> But, the current scripts/kconfig/Makefile
+>>>> adds 'pkg-config --libs' to nconf,
+>>>> but does nothing about 'pkg-config --cflags' for nconf.
+>>>> Therefore, I kept the current behavior just in case.
+>>>>
+>>>>
+>>>> The nconfig in the current version is not working for you, right?
+>>>
+>>> That's correct.
+>>>
+>>>
+>>> Info:
+>>>
+>>> $ make ARCH=x86_64 O=xx64 nconfig
+>>> make[1]: Entering directory '/home/rdunlap/lnx/next/linux-next-20180517/xx64'
+>>>   GEN     ./Makefile
+>>>   UPD     scripts/kconfig/.nconf-cfg
+>>>   HOSTCC  scripts/kconfig/nconf.o
+>>> In file included from ../scripts/kconfig/nconf.c:15:0:
+>>> ../scripts/kconfig/nconf.h:19:18: fatal error: menu.h: No such file or directory
+>>>  #include <menu.h>
+>>>                   ^
+>>> compilation terminated.
+>>> scripts/Makefile.host:107: recipe for target 'scripts/kconfig/nconf.o' failed
+>>> make[2]: *** [scripts/kconfig/nconf.o] Error 1
+>>> /home/rdunlap/lnx/next/linux-next-20180517/Makefile:525: recipe for target 'nconfig' failed
+>>> make[1]: *** [nconfig] Error 2
+>>> make[1]: Leaving directory '/home/rdunlap/lnx/next/linux-next-20180517/xx64'
+>>> Makefile:146: recipe for target 'sub-make' failed
+>>> make: *** [sub-make] Error 2
+>>>
+>>>
+>>> xx64/scripts/kconfig/.nconf-cfg contains:
+>>> libs="-lncursesw -lmenuw -lpanelw"
+>>>
+>>
+>> Sorry, I mean
+>> the nconfig in the Linus tree is not working, right?
+>
+> It works just fine.  In a new linux-4.17-rc6 tree:
+>
+> $ make ARCH=x86_64 O=xx64 V=1 nconfig
+> make -C /home/rdunlap/lnx/lnx-417-rc6/xx64 KBUILD_SRC=/home/rdunlap/lnx/lnx-417-rc6 \
+> -f /home/rdunlap/lnx/lnx-417-rc6/Makefile nconfig
+> make[1]: Entering directory '/home/rdunlap/lnx/lnx-417-rc6/xx64'
+> make -f ../scripts/Makefile.build obj=scripts/basic
+> rm -f .tmp_quiet_recordmcount
+> ln -fsn .. source
+> /bin/sh ../scripts/mkmakefile \
+>     .. . 4 17
+>   GEN     ./Makefile
+> make -f ../scripts/Makefile.build obj=scripts/kconfig nconfig
+>   gcc -Wp,-MD,scripts/kconfig/.nconf.o.d -Iscripts/kconfig -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer -std=gnu89  -I/usr/include/ncursesw -DCURSES_LOC="<curses.h>" -DNCURSES_WIDECHAR=1 -DLOCALE -c -o scripts/kconfig/nconf.o ../scripts/kconfig/nconf.c
+>   gcc -Wp,-MD,scripts/kconfig/.nconf.gui.o.d -Iscripts/kconfig -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer -std=gnu89  -I/usr/include/ncursesw -DCURSES_LOC="<curses.h>" -DNCURSES_WIDECHAR=1 -DLOCALE -c -o scripts/kconfig/nconf.gui.o ../scripts/kconfig/nconf.gui.c
+>   gcc  -o scripts/kconfig/nconf scripts/kconfig/nconf.o scripts/kconfig/zconf.tab.o scripts/kconfig/nconf.gui.o  -lmenu -lpanel -lncurses
+> scripts/kconfig/nconf  Kconfig
+> make[1]: Leaving directory '/home/rdunlap/lnx/lnx-417-rc6/xx64'
+>
 
-It is obvious that there are two copies here from userspace, one is in
-diva_xdi_open_adapter(), and one is in diva_xdi_write(). Plus, both of
-these two copies share the same source userspace pointer, i.e., the 'buf'
-pointer in divas_write(). Given that a malicious userspace process can race
-to change the content pointed by the 'buf' pointer, this can pose potential
-security issues. For example, in the first copy, the user provides a valid
-adapter number to pass the verification process and a valid adapter can be
-found. Then the user can modify the adapter number to an invalid number.
-This way, the user can bypass the verification process of the adapter
-number and inject inconsistent data.
+Ah, I see.
 
-This patch reuses the data copied in
-diva_xdi_open_adapter() and passes it to diva_xdi_write(). This way, the
-above issues can be avoided.
+The output from check-lxdialog.sh is passed
+to all objects:
 
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
----
- drivers/isdn/hardware/eicon/diva.c      | 22 +++++++++++++++-------
- drivers/isdn/hardware/eicon/diva.h      |  5 +++--
- drivers/isdn/hardware/eicon/divasmain.c | 18 +++++++++++-------
- 3 files changed, 29 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/isdn/hardware/eicon/diva.c b/drivers/isdn/hardware/eicon/diva.c
-index 944a7f3..1b25d8b 100644
---- a/drivers/isdn/hardware/eicon/diva.c
-+++ b/drivers/isdn/hardware/eicon/diva.c
-@@ -388,10 +388,10 @@ void divasa_xdi_driver_unload(void)
- **  Receive and process command from user mode utility
- */
- void *diva_xdi_open_adapter(void *os_handle, const void __user *src,
--			    int length,
-+			    int length, void *mptr,
- 			    divas_xdi_copy_from_user_fn_t cp_fn)
- {
--	diva_xdi_um_cfg_cmd_t msg;
-+	diva_xdi_um_cfg_cmd_t *msg = (diva_xdi_um_cfg_cmd_t *)mptr;
- 	diva_os_xdi_adapter_t *a = NULL;
- 	diva_os_spin_lock_magic_t old_irql;
- 	struct list_head *tmp;
-@@ -401,21 +401,21 @@ void *diva_xdi_open_adapter(void *os_handle, const void __user *src,
- 			 length, sizeof(diva_xdi_um_cfg_cmd_t)))
- 			return NULL;
- 	}
--	if ((*cp_fn) (os_handle, &msg, src, sizeof(msg)) <= 0) {
-+	if ((*cp_fn) (os_handle, msg, src, sizeof(*msg)) <= 0) {
- 		DBG_ERR(("A: A(?) open, write error"))
- 			return NULL;
- 	}
- 	diva_os_enter_spin_lock(&adapter_lock, &old_irql, "open_adapter");
- 	list_for_each(tmp, &adapter_queue) {
- 		a = list_entry(tmp, diva_os_xdi_adapter_t, link);
--		if (a->controller == (int)msg.adapter)
-+		if (a->controller == (int)msg->adapter)
- 			break;
- 		a = NULL;
- 	}
- 	diva_os_leave_spin_lock(&adapter_lock, &old_irql, "open_adapter");
- 
- 	if (!a) {
--		DBG_ERR(("A: A(%d) open, adapter not found", msg.adapter))
-+		DBG_ERR(("A: A(%d) open, adapter not found", msg->adapter))
- 			}
- 
- 	return (a);
-@@ -437,8 +437,10 @@ void diva_xdi_close_adapter(void *adapter, void *os_handle)
- 
- int
- diva_xdi_write(void *adapter, void *os_handle, const void __user *src,
--	       int length, divas_xdi_copy_from_user_fn_t cp_fn)
-+	       int length, void *mptr,
-+	       divas_xdi_copy_from_user_fn_t cp_fn)
- {
-+	diva_xdi_um_cfg_cmd_t *msg = (diva_xdi_um_cfg_cmd_t *)mptr;
- 	diva_os_xdi_adapter_t *a = (diva_os_xdi_adapter_t *) adapter;
- 	void *data;
- 
-@@ -459,7 +461,13 @@ diva_xdi_write(void *adapter, void *os_handle, const void __user *src,
- 			return (-2);
- 	}
- 
--	length = (*cp_fn) (os_handle, data, src, length);
-+	if (msg) {
-+		*(diva_xdi_um_cfg_cmd_t *)data = *msg;
-+		length = (*cp_fn) (os_handle, (char *)data + sizeof(*msg),
-+				   src + sizeof(*msg), length - sizeof(*msg));
-+	} else {
-+		length = (*cp_fn) (os_handle, data, src, length);
-+	}
- 	if (length > 0) {
- 		if ((*(a->interface.cmd_proc))
- 		    (a, (diva_xdi_um_cfg_cmd_t *) data, length)) {
-diff --git a/drivers/isdn/hardware/eicon/diva.h b/drivers/isdn/hardware/eicon/diva.h
-index b067032..1ad7665 100644
---- a/drivers/isdn/hardware/eicon/diva.h
-+++ b/drivers/isdn/hardware/eicon/diva.h
-@@ -20,10 +20,11 @@ int diva_xdi_read(void *adapter, void *os_handle, void __user *dst,
- 		  int max_length, divas_xdi_copy_to_user_fn_t cp_fn);
- 
- int diva_xdi_write(void *adapter, void *os_handle, const void __user *src,
--		   int length, divas_xdi_copy_from_user_fn_t cp_fn);
-+		   int length, void *msg,
-+		   divas_xdi_copy_from_user_fn_t cp_fn);
- 
- void *diva_xdi_open_adapter(void *os_handle, const void __user *src,
--			    int length,
-+			    int length, void *msg,
- 			    divas_xdi_copy_from_user_fn_t cp_fn);
- 
- void diva_xdi_close_adapter(void *adapter, void *os_handle);
-diff --git a/drivers/isdn/hardware/eicon/divasmain.c b/drivers/isdn/hardware/eicon/divasmain.c
-index b9980e8..b6a3950 100644
---- a/drivers/isdn/hardware/eicon/divasmain.c
-+++ b/drivers/isdn/hardware/eicon/divasmain.c
-@@ -591,19 +591,22 @@ static int divas_release(struct inode *inode, struct file *file)
- static ssize_t divas_write(struct file *file, const char __user *buf,
- 			   size_t count, loff_t *ppos)
- {
-+	diva_xdi_um_cfg_cmd_t msg;
- 	int ret = -EINVAL;
- 
- 	if (!file->private_data) {
- 		file->private_data = diva_xdi_open_adapter(file, buf,
--							   count,
-+							   count, &msg,
- 							   xdi_copy_from_user);
--	}
--	if (!file->private_data) {
--		return (-ENODEV);
-+		if (!file->private_data)
-+			return (-ENODEV);
-+		ret = diva_xdi_write(file->private_data, file,
-+				     buf, count, &msg, xdi_copy_from_user);
-+	} else {
-+		ret = diva_xdi_write(file->private_data, file,
-+				     buf, count, NULL, xdi_copy_from_user);
- 	}
- 
--	ret = diva_xdi_write(file->private_data, file,
--			     buf, count, xdi_copy_from_user);
- 	switch (ret) {
- 	case -1:		/* Message should be removed from rx mailbox first */
- 		ret = -EBUSY;
-@@ -622,11 +625,12 @@ static ssize_t divas_write(struct file *file, const char __user *buf,
- static ssize_t divas_read(struct file *file, char __user *buf,
- 			  size_t count, loff_t *ppos)
- {
-+	diva_xdi_um_cfg_cmd_t msg;
- 	int ret = -EINVAL;
- 
- 	if (!file->private_data) {
- 		file->private_data = diva_xdi_open_adapter(file, buf,
--							   count,
-+							   count, &msg,
- 							   xdi_copy_from_user);
- 	}
- 	if (!file->private_data) {
+# lxdialog stuff
+check-lxdialog  := $(srctree)/$(src)/lxdialog/check-lxdialog.sh
+
+# Use recursively expanded variables so we do not call gcc unless
+# we really need to do so. (Do not call gcc as part of make mrproper)
+HOST_EXTRACFLAGS += $(shell $(CONFIG_SHELL) $(check-lxdialog) -ccflags) \
+                    -DLOCALE
+
+
+
+
+
+In fact, the ncurses options are passed even to the text-based
+scripts/kconfig/conf.
+
+
+
+masahiro@pug:~/ref/linux$ make V=1 oldconfig
+make -f ./scripts/Makefile.build obj=scripts/basic
+rm -f .tmp_quiet_recordmcount
+make -f ./scripts/Makefile.build obj=scripts/kconfig oldconfig
+  gcc -Wp,-MD,scripts/kconfig/.conf.o.d -Wall -Wmissing-prototypes
+-Wstrict-prototypes -O2 -fomit-frame-pointer -std=gnu89
+-D_GNU_SOURCE -I/usr/include/ncursesw -DCURSES_LOC="<ncurses.h>"
+-DNCURSES_WIDECHAR=1 -DLOCALE   -c -o scripts/kconfig/conf.o
+scripts/kconfig/conf.c
+  bison -oscripts/kconfig/zconf.tab.c -t -l scripts/kconfig/zconf.y
+  flex -oscripts/kconfig/zconf.lex.c -L scripts/kconfig/zconf.l
+  gcc -Wp,-MD,scripts/kconfig/.zconf.tab.o.d -Wall
+-Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer
+-std=gnu89    -D_GNU_SOURCE -I/usr/include/ncursesw
+-DCURSES_LOC="<ncurses.h>" -DNCURSES_WIDECHAR=1 -DLOCALE
+-Iscripts/kconfig -c -o scripts/kconfig/zconf.tab.o
+scripts/kconfig/zconf.tab.c
+  gcc  -o scripts/kconfig/conf scripts/kconfig/conf.o
+scripts/kconfig/zconf.tab.o
+scripts/kconfig/conf  --oldconfig Kconfig
+
+
+
+I am fixing it, but forgot to mention that in my commit log.
+
+Thanks!
+
+
+
+
 -- 
-2.7.4
+Best Regards
+Masahiro Yamada
