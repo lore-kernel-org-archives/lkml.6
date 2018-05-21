@@ -1,67 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752830AbeEUO7S (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 10:59:18 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37672 "EHLO mx1.redhat.com"
+        id S1752846AbeEUPBj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 11:01:39 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57238 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752569AbeEUO7P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 10:59:15 -0400
-Date: Mon, 21 May 2018 17:59:14 +0300
+        id S1751722AbeEUPBh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 11:01:37 -0400
+Date: Mon, 21 May 2018 18:01:36 +0300
 From: "Michael S. Tsirkin" <mst@redhat.com>
 To: Jason Wang <jasowang@redhat.com>
 Cc: virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net 3/4] virtio-net: reset num_buf to 1 after linearizing
- packet
-Message-ID: <20180521174725-mutt-send-email-mst@kernel.org>
+        linux-kernel@vger.kernel.org,
+        John Fastabend <john.fastabend@gmail.com>
+Subject: Re: [PATCH net 4/4] virito-net: fix leaking page for gso packet
+ during mergeable XDP
+Message-ID: <20180521175919-mutt-send-email-mst@kernel.org>
 References: <1526891706-18516-1-git-send-email-jasowang@redhat.com>
- <1526891706-18516-4-git-send-email-jasowang@redhat.com>
+ <1526891706-18516-5-git-send-email-jasowang@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1526891706-18516-4-git-send-email-jasowang@redhat.com>
+In-Reply-To: <1526891706-18516-5-git-send-email-jasowang@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 04:35:05PM +0800, Jason Wang wrote:
-> If we successfully linearize the packets, num_buf were set to zero
-> which was wrong since we now have only 1 buffer to be used for e.g in
-> the error path of receive_mergeable(). Zero num_buf will lead the code
-> try to pop the buffers of next packet and drop it. Fixing this by set
-> num_buf to 1 if we successfully linearize the packet.
+On Mon, May 21, 2018 at 04:35:06PM +0800, Jason Wang wrote:
+> We need to drop refcnt to xdp_page if we see a gso packet. Otherwise
+> it will be leaked. Fixing this by moving the check of gso packet above
+> the linearizing logic.
 > 
-> Fixes: 4941d472bf95 ("virtio-net: do not reset during XDP set")
+> Cc: John Fastabend <john.fastabend@gmail.com>
+> Fixes: 72979a6c3590 ("virtio_net: xdp, add slowpath case for non contiguous buffers")
 > Signed-off-by: Jason Wang <jasowang@redhat.com>
+
+typo in subject
+
 > ---
->  drivers/net/virtio_net.c | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/net/virtio_net.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
 > 
 > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> index 6260d65..165a922 100644
+> index 165a922..f8db809 100644
 > --- a/drivers/net/virtio_net.c
 > +++ b/drivers/net/virtio_net.c
-> @@ -722,6 +722,7 @@ static struct sk_buff *receive_mergeable(struct net_device *dev,
->  						      &len);
->  			if (!xdp_page)
->  				goto err_xdp;
-> +			num_buf = 1;
+> @@ -707,6 +707,14 @@ static struct sk_buff *receive_mergeable(struct net_device *dev,
+>  		void *data;
+>  		u32 act;
+>  
+> +		/* Transient failure which in theory could occur if
+> +		 * in-flight packets from before XDP was enabled reach
+> +		 * the receive path after XDP is loaded. In practice I
+> +		 * was not able to create this condition.
 
-So this is tweaked here for the benefit of err_skb below.
-That's confusing and we won't remember to change it
-if we change the error handling.
+BTW we should probably drop the last sentence. It says in theory, should be enough.
 
-How about fixing the error path?
-
-
--        while (--num_buf) {
-+        while (num_buf-- > 1) {
-
-Seems more robust to me.
-
-
->  			offset = VIRTIO_XDP_HEADROOM;
->  		} else {
+> +		 */
+> +		if (unlikely(hdr->hdr.gso_type))
+> +			goto err_xdp;
+> +
+>  		/* This happens when rx buffer size is underestimated
+>  		 * or headroom is not enough because of the buffer
+>  		 * was refilled before XDP is set. This should only
+> @@ -728,14 +736,6 @@ static struct sk_buff *receive_mergeable(struct net_device *dev,
 >  			xdp_page = page;
+>  		}
+>  
+> -		/* Transient failure which in theory could occur if
+> -		 * in-flight packets from before XDP was enabled reach
+> -		 * the receive path after XDP is loaded. In practice I
+> -		 * was not able to create this condition.
+> -		 */
+> -		if (unlikely(hdr->hdr.gso_type))
+> -			goto err_xdp;
+> -
+>  		/* Allow consuming headroom but reserve enough space to push
+>  		 * the descriptor on if we get an XDP_TX return code.
+>  		 */
 > -- 
 > 2.7.4
