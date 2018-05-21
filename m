@@ -1,59 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752858AbeEUOck (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 10:32:40 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36562 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752766AbeEUOcj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 10:32:39 -0400
-Date: Mon, 21 May 2018 17:32:38 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH net-next 06/12] tuntap: enable premmption early
-Message-ID: <20180521173230-mutt-send-email-mst@kernel.org>
-References: <1526893473-20128-1-git-send-email-jasowang@redhat.com>
- <1526893473-20128-7-git-send-email-jasowang@redhat.com>
+        id S1752883AbeEUOc7 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 10:32:59 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:53566 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752650AbeEUOc4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 10:32:56 -0400
+Date: Mon, 21 May 2018 16:32:54 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        Andy Gross <andy.gross@linaro.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 03/14] dt-bindings: qcom_nandc: make
+ nand-ecc-strength optional
+Message-ID: <20180521163254.71ade105@xps13>
+In-Reply-To: <1525350041-22995-4-git-send-email-absahu@codeaurora.org>
+References: <1525350041-22995-1-git-send-email-absahu@codeaurora.org>
+        <1525350041-22995-4-git-send-email-absahu@codeaurora.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526893473-20128-7-git-send-email-jasowang@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 05:04:27PM +0800, Jason Wang wrote:
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
+Hi Abhishek,
 
-typo in subject
+On Thu,  3 May 2018 17:50:30 +0530, Abhishek Sahu
+<absahu@codeaurora.org> wrote:
 
-> ---
->  drivers/net/tun.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-> index 44d4f3d..24ecd82 100644
-> --- a/drivers/net/tun.c
-> +++ b/drivers/net/tun.c
-> @@ -1697,6 +1697,8 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
->  			goto err_xdp;
->  		}
->  	}
-> +	rcu_read_unlock();
-> +	preempt_enable();
->  
->  	skb = build_skb(buf, buflen);
->  	if (!skb) {
-> @@ -1710,9 +1712,6 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
->  	get_page(alloc_frag->page);
->  	alloc_frag->offset += buflen;
->  
-> -	rcu_read_unlock();
-> -	preempt_enable();
-> -
->  	return skb;
->  
->  err_redirect:
-> -- 
-> 2.7.4
+> Now, nand-ecc-strength is optional. If specified in DT, then
+> controller will use this ECC strength otherwise ECC strength will
+> be calculated according to chip requirement and available OOB size.
+
+Same comment as before: don't start the commit log with "now,".
+
+Thanks,
+Miquèl
