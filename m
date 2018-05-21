@@ -1,98 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751076AbeEUIAg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 04:00:36 -0400
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:47485 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750923AbeEUIAf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 04:00:35 -0400
-X-Originating-IP: 2.224.242.101
-Date: Mon, 21 May 2018 10:00:30 +0200
-From: jacopo mondi <jacopo@jmondi.org>
-To: Peter Rosin <peda@axentia.se>
-Cc: linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        Jyri Sarha <jsarha@ti.com>, dri-devel@lists.freedesktop.org,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v3 17/26] drm/bridge: thc63lvd1024: provide an owner
- .odev device
-Message-ID: <20180521080030.GB4432@w540>
-References: <20180516101510.13215-1-peda@axentia.se>
- <20180516101510.13215-18-peda@axentia.se>
+        id S1751162AbeEUICB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 04:02:01 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:37765 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750945AbeEUIB7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 04:01:59 -0400
+Date: Mon, 21 May 2018 10:01:47 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: wens@csie.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 04/15] dt-bindings: display: sunxi-drm: Add TCON TOP
+ description
+Message-ID: <20180521080147.72esi2kwzcvzmetk@flea>
+References: <20180519183127.2718-1-jernej.skrabec@siol.net>
+ <20180519183127.2718-5-jernej.skrabec@siol.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="RASg3xLB4tUQ4RcS"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="6ml3nrfyv2c4gred"
 Content-Disposition: inline
-In-Reply-To: <20180516101510.13215-18-peda@axentia.se>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180519183127.2718-5-jernej.skrabec@siol.net>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---RASg3xLB4tUQ4RcS
-Content-Type: text/plain; charset=utf-8
+--6ml3nrfyv2c4gred
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Peter,
+Hi,
 
-On Wed, May 16, 2018 at 12:15:01PM +0200, Peter Rosin wrote:
-> The .of_node member is going away.
->
-> Signed-off-by: Peter Rosin <peda@axentia.se>
+On Sat, May 19, 2018 at 08:31:16PM +0200, Jernej Skrabec wrote:
+> TCON TOP main purpose is to configure whole display pipeline. It
+> determines relationships between mixers and TCONs, selects source TCON
+> for HDMI, muxes LCD and TV encoder GPIO output,
 
-For this specific driver
+I'm not sure you mean GPIO here, but rather pin?
 
-Acked-by: Jacopo Mondi <jacopo@jmondi.org>
-
-Thanks
-   j
-
+> selects TV encoder clock source and contains additional TV TCON and
+> DSI gates.
+>=20
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 > ---
->  drivers/gpu/drm/bridge/thc63lvd1024.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/bridge/thc63lvd1024.c b/drivers/gpu/drm/bridge/thc63lvd1024.c
-> index c8b9edd5a7f4..4765c9c45aef 100644
-> --- a/drivers/gpu/drm/bridge/thc63lvd1024.c
-> +++ b/drivers/gpu/drm/bridge/thc63lvd1024.c
-> @@ -167,8 +167,8 @@ static int thc63_probe(struct platform_device *pdev)
->  	if (ret)
->  		return ret;
->
-> +	thc63->bridge.odev = &pdev->dev;
->  	thc63->bridge.driver_private = thc63;
-> -	thc63->bridge.of_node = pdev->dev.of_node;
->  	thc63->bridge.funcs = &thc63_bridge_func;
->
->  	drm_bridge_add(&thc63->bridge);
-> --
-> 2.11.0
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>  .../bindings/display/sunxi/sun4i-drm.txt      | 20 +++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.tx=
+t b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> index 3346c1e2a7a0..a099957ab62a 100644
+> --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> @@ -187,6 +187,26 @@ And on the A23, A31, A31s and A33, you need one more=
+ clock line:
+>     - 'lvds-alt': An alternative clock source, separate from the TCON cha=
+nnel 0
+>                   clock, that can be used to drive the LVDS clock
+> =20
+> +TCON TOP
+> +--------
+> +
+> +TCON TOPs main purpose is to configure whole display pipeline. It determ=
+ines
+> +relationships between mixers and TCONs, selects source TCON for HDMI, mu=
+xes
+> +LCD and TV encoder GPIO output, selects TV encoder clock source and cont=
+ains
+> +additional TV TCON and DSI gates.
+> +
+> +Required properties:
+> +  - compatible: value must be one of:
+> +    * allwinner,sun8i-r40-tcon-top
+> +  - reg: base address and size of the memory-mapped region.
+> +  - clocks: phandle to the clocks feeding the TCON TOP
+> +    * bus: TCON TOP interface clock
+> +  - clock-names: clock name mentioned above
+> +  - resets: phandle to the reset line driving the DRC
+> +    * rst: TCON TOP reset line
+> +  - reset-names: reset name mentioned above
+> +  - #clock-cells : must contain 1
+> +
 
---RASg3xLB4tUQ4RcS
+I guess you should better describe the OF-graph endpoints, and the
+clocks output. Just using the binding additions here doesn't allow to
+get a clear idea of how the DT should look like.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--6ml3nrfyv2c4gred
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
 
-iQIcBAEBAgAGBQJbAnyeAAoJEHI0Bo8WoVY8VVsQAK/CUrGWGVxadXAPmgZITp0t
-EiAszh7gYOvxLraJZk8Uw4XWudTWrL85mam0+B+4vKYFflQGoLVgC5E1j5x3vwDU
-suKa2qhuIxLf3OwnSehYmHuxOcGfN2+3PiTYsTrRJRaQlBJXxxoXJbnK9esTlzNP
-8mJlP8+TVUlUpZUEMsSTar19xLN8wQ0Vpwb6Os9i4tQgxa3IP497tuOh+P7K6vP/
-uZyX88pOnN2gNaFdWSkfAqIlLL0NRv147TD7JOv/r34RhuYDkKUX3AWRdpCvAGsQ
-XPSnLsuYau8QfgALxD/h5WoWuOhu0MHqLQCekYBy9HR8XZVQMYI+wrrv++Ra9yPN
-+wrRB8sI7hgPOwRVnD1065rQ8+CUgvCx74t4nnB7XqPUzyCPZlig13QKkFAGUWBT
-THUwNbhWgHIYPTGT3odDjyEv9flh7I8VGjjKxhhvSJRRTijcew5R9hdW6YLYJ/EQ
-LYaeKENQfTq2IyMveUcAKi/qx2NogpZh22nOuedySWRATi7LrLtwp1/hbwB/Fcwu
-+/eOkWf6hK7yILJSbX8eQG8rp7ECn/4uS+FGOjJ+EUOBXCa98DBdH4ctMGHdGlK1
-S0ajpoo0O9KUhceg/eYpDoUZ24Q1KvfTwxHYz70dFcJbP6WYF7ELsYbbzk0TIDhL
-ctcJDnqA6yFY+TUZVYVZ
-=cKjF
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsCfOsACgkQ0rTAlCFN
+r3Tr2g//TSH3w+DxFk8kkj0BXT7kxlxYgUNAyh+wzKXYhv/akZEXRBYODGylh+hS
+aJLX45Eg+xHK6xGWS+u5sm4WboUgmxtMfxYnS06dFPtWWeMDFpDeN7JgdLMWSuh2
+GktruPv7EsOCre7IUVUhtGaXyouz6jHQA7glGXvXtf3WbJqAwQ+8gMonrT7p3xZP
+yh9oDtjtOvlV0cOv2fPMAU1WF63ly8AqCXFhuMmDHNR371sqoj2z/LZqCNjULC8E
+FV3APQ/YmZrMBeXEcRCPcg+LoapYKAtGlCuMCxflPKRX4NIzMDYjB7x9ZreKiDM7
+NpSL3bY/whrcmM+c3MnmzO4f7qO5bYLOxqmEP42WYilZybnATqYdt2EFr4QBI/zI
+WWP4IKLcSARHZ0/gJjJw7UrFUF01iEjL7BlyEPpv2KX1usl9jSOkTpNTDTJIf1nb
+mBKFdQYTr45zED44wcj30lieuhK4L6U3zOhCxvtp/1z6XzAX9eIxMdc9P1abXHJj
+op2wJzBTIw6kH7im4cXXEQ7XzqAbLKQn63rjcvyYlxDWpzI2WlAdBKRqIj3vVLgw
+/NKz0ClGx41W0aATVceOIWVBNLFf4XQ2qMqOQp//K35TFkBOk63MOwaOjCxYZ+Lk
+V6rRA1bYofnxBTMytXVbnJfDjwAAVeVrOITkQPDR4qPvJOY40xg=
+=W+4R
 -----END PGP SIGNATURE-----
 
---RASg3xLB4tUQ4RcS--
+--6ml3nrfyv2c4gred--
