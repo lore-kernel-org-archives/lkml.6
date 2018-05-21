@@ -1,201 +1,201 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1525870838; cv=none;
+Return-Path: <broonie@sirena.org.uk>
+X-Google-Smtp-Source: AB8JxZpX4wUaO2JTEbaHHluwacnvgL1lrRXZNvLVTOzlwBjrDA4MoxK4/A/X3ua5BgD39cHKdhsM
+ARC-Seal: i=1; a=rsa-sha256; t=1526917631; cv=none;
         d=google.com; s=arc-20160816;
-        b=bazwro7E0J6RqTmlZqWrdhsiE1G2uA5dZUwe7AP9VorNKK+aHudXTuTt+xFpYxgOqj
-         9QxuMokcIvtjRXluDlZLh69SHdIkee5EKivruBSKcOiIsk+Kazlcls1/LZgaohStY6CD
-         pG6X4yXvnC/FybJhzD/CyoSzmZyblngyjsTSOB9rzD41mPKeIizc5Ye0103CLpwjjL2i
-         SLXN9jcJ/rXOhZPIcOjwWQ02lVhK9ov+WKppNrQb/8WnHTgMM7JyFQGdisJTbiPpT/J+
-         FnaTEotVv2hoLflhq3n5BYIMlpoC0SQFIpfxeBHUnJlVRba3rwPZWlLqmcLOG6Vb3WYC
-         VQFg==
+        b=CKRReiJy5fay4gEL+lYNfSR2Xi7CBAZds4UGkKK4/HzB7DnmQsdgMY88ultylTer4C
+         vr1nnjCE5ZfYQIlWMpyx9yQnuKLrTVCuOXEhdHQqtfUbjfzd0VIpnAlmMJCsyZP3lnzt
+         82JcdKrC/pYdoXETguYfgAgxTTZLn3WKx0qaJaQ/RxEEtIgXE/8tp3CwRHShc1+gsAYM
+         wfvP45suVbV+5/lbZJblfTkjgGy1kWyZmsWhwNC1+ZZXjaoEXJrMnxhoZwzL5HOcxfFU
+         O8vy+sg15Wn2ueW7Kyxuyy0iAc61xJKHTYitGTt7mBQV2DClR082t8OClxY7z4Ilua4W
+         EbAg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=KZrt5teWAbacRWTd8ubWhWGRHumLg8s+/jHOxAiG3FI=;
-        b=b5hepGvrWHCQrnvReUJZrH/RdvCuP1kGjLyLcQrSzA9OrV1QOlRA4ktqNe6jGaWgkU
-         8Evf+LIEy0UCZoMoYMdQPdLM5bJ/n6/Il0UY0/EqQQoYd2zuhb1simF5a2ml4D0Td8r0
-         gZ4nyfuNr9vp2SNOkfgPIoFLm3mSCqDrqjFI2eGI6LFc6gTI4l4dXSyKPE/ET7UE/bSb
-         NgwqKML6JzdD+B1JvyOkd6fKv50nRX2Z5SAZL2SRssO88sh42/2T2ssuhzLvpwBrICit
-         6uSh9b0h4MR95sz+RAYkQS4Va17Bk0VELUqQrKD01s9rPgF7jjlGTuKKWvYhwRp6S4xe
-         UPXQ==
+        h=date:message-id:in-reply-to:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=9p/bvz/clAF4tfANlS8+aGX/we4XqJguxF3Kk3V3g20=;
+        b=lf8Q6dwOrBb0nzuGa+jQ5w9gBpbSuU5cuUYr3PaZF5CdTm8G34RZOJRMi32i3J8xkO
+         xUh+ugf1Cv8/jQ9An8BeOzp6+0deOdrs/qvyTWGI3KoFZfgFD9KE7TQonjQIeayyDQMv
+         wND6crWGkTshNLSyL+q9Ttmu9T7Lp9zOWP6uhGENqE4wU44Zsqcfuno6zijjSsC0LhYV
+         Y/vUDqUu2Gve3Ir0rfL5chhxfVP9ndLUwNoxqkPkFT4k4nEK4ZBEwUSWdSEI8yaaTQcT
+         mcPTt8toYekV9GqWNqt946KQ8cL6aKy25mufePmlSlagf/6z489d7lL8F/on0FJAISuK
+         9l2A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=b0SW7P6F;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=azsfbmA1;
+       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=b0SW7P6F;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZqo3YUH8569uHPGRIxI35y8CprWWe5AX2EPtoHDZSNnYk3b+Yn1Vl4usSrmxzcVGqi0YcMMWA==
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To: andy.gross@linaro.org,
-	broonie@kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	robh+dt@kernel.org,
-	bgoswami@codeaurora.org
-Cc: gregkh@linuxfoundation.org,
-	david.brown@linaro.org,
-	mark.rutland@arm.com,
-	lgirdwood@gmail.com,
-	plai@codeaurora.org,
-	tiwai@suse.com,
-	perex@perex.cz,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rohkumar@qti.qualcomm.com,
-	spatakok@qti.qualcomm.com,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v8 01/24] soc: qcom dt-bindings: Add APR bus bindings
-Date: Wed,  9 May 2018 13:56:12 +0100
-Message-Id: <20180509125635.5653-2-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180509125635.5653-1-srinivas.kandagatla@linaro.org>
-References: <20180509125635.5653-1-srinivas.kandagatla@linaro.org>
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=azsfbmA1;
+       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+From: Mark Brown <broonie@kernel.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>, andy.gross@linaro.org, broonie@kernel.org, linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org, robh+dt@kernel.org, bgoswami@codeaurora.org, mark.rutland@arm.com, devicetree@vger.kernel.org, rohkumar@qti.qualcomm.com, gregkh@linuxfoundation.org, plai@codeaurora.org, tiwai@suse.com, lgirdwood@gmail.com, david.brown@linaro.org, linux-arm-kernel@lists.infradead.org, spatakok@qti.qualcomm.com, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: qdsp6: dt-bindings: Add apq8096 machine bindings" to the asoc tree
+In-Reply-To: <20180426094606.4775-23-srinivas.kandagatla@linaro.org>
+Message-Id: <E1fKn1d-00070i-Rf@debutante>
+Date: Mon, 21 May 2018 16:47:05 +0100
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599991540582654944?=
-X-GMAIL-MSGID: =?utf-8?q?1599991540582654944?=
+X-GMAIL-THRID: =?utf-8?q?1601089182030577661?=
+X-GMAIL-MSGID: =?utf-8?q?1601089182030577661?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch add dt bindings for Qualcomm APR (Asynchronous Packet Router)
-bus driver. This bus is used for communicating with DSP which provides
-audio and various other services to cpu.
+The patch
+
+   ASoC: qdsp6: dt-bindings: Add apq8096 machine bindings
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From be64027d18b163b971756af18d520cde6d21bb9f Mon Sep 17 00:00:00 2001
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Date: Fri, 18 May 2018 13:56:09 +0100
+Subject: [PATCH] ASoC: qdsp6: dt-bindings: Add apq8096 machine bindings
+
+Add devicetree bindings documentation file for Qualcomm apq8096 sound card.
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Reviewed-by: Banajit Goswami <bgoswami@codeaurora.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- .../devicetree/bindings/soc/qcom/qcom,apr.txt      | 84 ++++++++++++++++++++++
- include/dt-bindings/soc/qcom,apr.h                 | 28 ++++++++
- 2 files changed, 112 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
- create mode 100644 include/dt-bindings/soc/qcom,apr.h
+ .../bindings/sound/qcom,apq8096.txt           | 109 ++++++++++++++++++
+ 1 file changed, 109 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/qcom,apq8096.txt
 
-diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
+diff --git a/Documentation/devicetree/bindings/sound/qcom,apq8096.txt b/Documentation/devicetree/bindings/sound/qcom,apq8096.txt
 new file mode 100644
-index 000000000000..bcc612cc7423
+index 000000000000..aa54e49fc8a2
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
-@@ -0,0 +1,84 @@
-+Qualcomm APR (Asynchronous Packet Router) binding
++++ b/Documentation/devicetree/bindings/sound/qcom,apq8096.txt
+@@ -0,0 +1,109 @@
++* Qualcomm Technologies APQ8096 ASoC sound card driver
 +
-+This binding describes the Qualcomm APR. APR is a IPC protocol for
-+communication between Application processor and QDSP. APR is mainly
-+used for audio/voice services on the QDSP.
++This binding describes the APQ8096 sound card, which uses qdsp for audio.
 +
 +- compatible:
 +	Usage: required
 +	Value type: <stringlist>
-+	Definition: must be "qcom,apr-v<VERSION-NUMBER>", example "qcom,apr-v2"
++	Definition: must be "qcom,apq8096-sndcard"
 +
-+- reg
++- qcom,audio-routing:
++	Usage: Optional
++	Value type: <stringlist>
++	Definition:  A list of the connections between audio components.
++		  Each entry is a pair of strings, the first being the
++		  connection's sink, the second being the connection's
++		  source. Valid names could be power supplies, MicBias
++		  of codec and the jacks on the board:
++		  Valid names include:
++
++		Board Connectors:
++			"Headphone Left"
++			"Headphone Right"
++			"Earphone"
++			"Line Out1"
++			"Line Out2"
++			"Line Out3"
++			"Line Out4"
++			"Analog Mic1"
++			"Analog Mic2"
++			"Analog Mic3"
++			"Analog Mic4"
++			"Analog Mic5"
++			"Analog Mic6"
++			"Digital Mic2"
++			"Digital Mic3"
++
++		Audio pins and MicBias on WCD9335 Codec:
++			"MIC_BIAS1
++			"MIC_BIAS2"
++			"MIC_BIAS3"
++			"MIC_BIAS4"
++			"AMIC1"
++			"AMIC2"
++			"AMIC3"
++			"AMIC4"
++			"AMIC5"
++			"AMIC6"
++			"AMIC6"
++			"DMIC1"
++			"DMIC2"
++			"DMIC3"
++= dailinks
++Each subnode of sndcard represents either a dailink, and subnodes of each
++dailinks would be cpu/codec/platform dais.
++
++- link-name:
 +	Usage: required
-+	Value type: <u32>
-+	Definition: Destination processor ID.
-+	Possible values are :
-+			1 - APR simulator
-+			2 - PC
-+			3 - MODEM
-+			4 - ADSP
-+			5 - APPS
-+			6 - MODEM2
-+			7 - APPS2
++	Value type: <string>
++	Definition: User friendly name for dai link
 +
-+= APR SERVICES
-+Each subnode of the APR node represents service tied to this apr. The name
-+of the nodes are not important. The properties of these nodes are defined
-+by the individual bindings for the specific service
-+- All APR services MUST contain the following property:
-+
-+- reg
++= CPU, PLATFORM, CODEC dais subnodes
++- cpu:
 +	Usage: required
-+	Value type: <u32>
-+	Definition: APR Service ID
-+	Possible values are :
-+			3 - DSP Core Service
-+			4 - Audio Front End Service.
-+			5 - Voice Stream Manager Service.
-+			6 - Voice processing manager.
-+			7 - Audio Stream Manager Service.
-+			8 - Audio Device Manager Service.
-+			9 - Multimode voice manager.
-+			10 - Core voice stream.
-+			11 - Core voice processor.
-+			12 - Ultrasound stream manager.
-+			13 - Listen stream manager.
++	Value type: <subnode>
++	Definition: cpu dai sub-node
 +
-+= EXAMPLE
-+The following example represents a QDSP based sound card on a MSM8996 device
-+which uses apr as communication between Apps and QDSP.
++- codec:
++	Usage: Optional
++	Value type: <subnode>
++	Definition: codec dai sub-node
 +
-+	apr@4 {
-+		compatible = "qcom,apr-v2";
-+		reg = <APR_DOMAIN_ADSP>;
++- platform:
++	Usage: Optional
++	Value type: <subnode>
++	Definition: platform dai sub-node
 +
-+		q6core@3 {
-+			compatible = "qcom,q6core";
-+			reg = <APR_SVC_ADSP_CORE>;
-+		};
++- sound-dai:
++	Usage: required
++	Value type: <phandle with arguments>
++	Definition: dai phandle/s and port of CPU/CODEC/PLATFORM node.
 +
-+		q6afe@4 {
-+			compatible = "qcom,q6afe";
-+			reg = <APR_SVC_AFE>;
++Example:
 +
-+			dais {
-+				#sound-dai-cells = <1>;
-+				hdmi@1 {
-+					reg = <1>;
-+				};
-+			};
-+		};
++audio {
++	compatible = "qcom,apq8096-sndcard";
++	qcom,model = "DB820c";
 +
-+		q6asm@7 {
-+			compatible = "qcom,q6asm";
-+			reg = <APR_SVC_ASM>;
-+			...
-+		};
-+
-+		q6adm@8 {
-+			compatible = "qcom,q6adm";
-+			reg = <APR_SVC_ADM>;
-+			...
++	mm1-dai-link {
++		link-name = "MultiMedia1";
++		cpu {
++			sound-dai = <&q6asmdai MSM_FRONTEND_DAI_MULTIMEDIA1>;
 +		};
 +	};
-diff --git a/include/dt-bindings/soc/qcom,apr.h b/include/dt-bindings/soc/qcom,apr.h
-new file mode 100644
-index 000000000000..006362400c0f
---- /dev/null
-+++ b/include/dt-bindings/soc/qcom,apr.h
-@@ -0,0 +1,28 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __DT_BINDINGS_QCOM_APR_H
-+#define __DT_BINDINGS_QCOM_APR_H
 +
-+/* Domain IDs */
-+#define APR_DOMAIN_SIM		0x1
-+#define APR_DOMAIN_PC		0x2
-+#define APR_DOMAIN_MODEM	0x3
-+#define APR_DOMAIN_ADSP		0x4
-+#define APR_DOMAIN_APPS		0x5
-+#define APR_DOMAIN_MAX		0x6
++	hdmi-dai-link {
++		link-name = "HDMI Playback";
++		cpu {
++			sound-dai = <&q6afe HDMI_RX>;
++		};
 +
-+/* ADSP service IDs */
-+#define APR_SVC_ADSP_CORE	0x3
-+#define APR_SVC_AFE		0x4
-+#define APR_SVC_VSM		0x5
-+#define APR_SVC_VPM		0x6
-+#define APR_SVC_ASM		0x7
-+#define APR_SVC_ADM		0x8
-+#define APR_SVC_ADSP_MVM	0x09
-+#define APR_SVC_ADSP_CVS	0x0A
-+#define APR_SVC_ADSP_CVP	0x0B
-+#define APR_SVC_USM		0x0C
-+#define APR_SVC_LSM		0x0D
-+#define APR_SVC_VIDC		0x16
-+#define APR_SVC_MAX		0x17
++		platform {
++			sound-dai = <&q6adm>;
++		};
 +
-+#endif /* __DT_BINDINGS_QCOM_APR_H */
++		codec {
++			sound-dai = <&hdmi 0>;
++		};
++	};
++};
 -- 
-2.16.2
+2.17.0
