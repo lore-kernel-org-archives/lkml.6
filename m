@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1340521-1526937564-2-3834429239370727167
+X-Cyrus-Session-Id: sloti22d1t05-1340521-1526937563-5-18037492522509920990
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526937563; b=DyB9WOxXSYJC2KTFjxSoviCu7TvqrZ2Wgj8uthpG6zb5gaMWG4
-    lIsISppRqB0GndyDdX0DUI7uOJVbgkTt1kxnFiDsZmaQpA/tsRl++L34l3tg+2OR
-    vMNp0XAc3yYn2ghAQZPe6mfboiSdwDMbfMOKJhJXovbv3aL0GwDo9E76Ieh667J1
-    A5BnzP5hJHUMSraLEF7jNlxkVsMW9HFilGQhFyPuMhphtVX6ltBVdgv5G2bdKK7S
-    MqZXfS01UI+tz8++qBhRMym5AXvoJQ02Sx85+FCLp6PHVB/4JPddN8+qM2gxwUyC
-    cHxiRnAf9GN27vh1JnqoIY1pVvK5G4XnImSg==
+    1526937563; b=YAQ/HoSHwvRcuOhKCbSXwBlCh9mmVNKY9qYeLPfCDApEkjBtdE
+    bIvPleg9RlP3vRsRO3A9WoX0Had8CQ37Gm36C++ePw9aB4OHRG1YhUxst2aJ2Y2/
+    kD7c+6UdOKeClRziwnDqKCn6lwq/Xs/FUjZPPQRlYvZ4Jt/kZZHLzlsb6iSgGIFZ
+    wGGTbwKxl2rweHI90Yd2X5Z9GkNP4No8RMalDhSLjjhIfeB0P/0EDv3uwCU5dEaj
+    1eND2WMmf93aShm+92HvCpAaoLm/tR2pCvBqrUVpRGhnhybAzqGmuSWKFPKH5jHS
+    giPnDh0mN0QtesTQ0Jrz0plBDiw6d2ChC2Iw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1526937563; bh=bK+ANZ5gJDqKhZg8QGHvLzeQ5+r6fQ
-    mLIhyCzwhKiXk=; b=VJnGp/POZNIpJM/1T2sCsUAUB1ljENlbru905b9BCaovOA
-    4rrniUT4jPOZxOqnK4F/CFHcN5BdKWwef12QNzUP5lfSyjcMLwmH6NzeRYyzhbqS
-    bFEPMb6n7jp0fS2CmR+UWPzXu9jx1zA+9WWOf+gT5l+/GkFSC9Zz0sltyLBzlUjy
-    WokeQ5uhdJSXYTqDWE08gV1SKSRjOJjaqTHUnhBEhkjuneGhEBkJVJKKABcahooW
-    /Wsvh34ORoybRjLefpVwHJp7wyVc4DE5ltYhIpxWwnSBlxYlfYQeXOKkz2riYnKD
-    VJRqcIttHVmmTR36W2JJVTdVoThuKixRLahoCV1g==
+    :list-id; s=fm2; t=1526937563; bh=JwqvhcjZUgJ/0nvkfqT3rwTR2jzMNf
+    w/bxuxjwDrQgc=; b=SqBR8+a5rLqgkPztwaAwKGI9Qntk44EhkcktHhyeawA5gq
+    nSt0BJhV6oxYPuHT98yBv8jNnCUgkWrXFbP4KzBlJbUki2UZHX4CgYfLuLeWY21C
+    yr+w8zbTOz22b4Dpjc6qRarjdsG6thKZlsyqCZJXyrZ11LYloq3Mymu3/BpYR9/k
+    DlaaS3XEAi+2SUayKm63qiHsn/O3PWpUKH96r7RzvFDDtgaSXuHQT3vkrouESBJH
+    xrUMgXqkstFE0Fd09W70KxGkZyJQ1wFRI1VNKztD+MMzTTS4OvsMBkcMFFsD38TJ
+    ZnajFXjAq0iE9igTuVgZsgQd3F5+g7FuSzL1Xurw==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=Ke1KCs/w x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=Tvn/RG1/ x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -48,7 +48,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
 Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=Ke1KCs/w x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=Tvn/RG1/ x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,30 +64,31 @@ Authentication-Results: mx2.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFYVk/WH/Xffpz+96FFdja4nRDuhoApjV1jTBCYU20sfozDqAa6YMkQrEUgorVT9LZgbio/S+aFdTHF8cOS7mV9IyR7ogLevpyUTMucFcm3i2CUteQp7
-    /m5xRZeVThHm73chuOWIAtsXFq7IoycU0C6063FawZX0qaFTL1iIr+XVLHgCMGuwgPoLyJo4ndhYc0+HM9Hgab0azHROb3ldsRvd/DpaL7YLYIdUOAqS2897
+X-CM-Envelope: MS4wfGynhNzHb5QQjpylk77kFBXi5zT8R9h++daVqQJk9+2zXTDRhlBYKZ+nyDWIvlo+jhpdB6MjwKbVLF7nS0NBSSwYlNQgt1lBuFBwf3OXUT+FM4JXcKVU
+    rX84AP8Asc0SMYDES551EEasqazCeRpMakjfcv00XoCsEI7m0IuYMuexlRCdItiHuB+/35nOQ1lzvcUy7c4Ee/hV1jheWTGM5Eb+fzBxMYkJz6WWschMUrsE
 X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=7J7wI5G0n_s90aWr2ecA:9
-    a=6aqBm-lsDSLTv4n4:21 a=oarUXJnYZj5-zp8d:21 a=QEXdDO2ut3YA:10
+    a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=BLZoak4jdz2zqNjCJHsA:9
+    a=hTJd3nM-DXW1XHX1:21 a=Hg-IJv2aXcJdoT2Z:21 a=QEXdDO2ut3YA:10
     a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752736AbeEUVTV (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 21 May 2018 17:19:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34284 "EHLO mail.kernel.org"
+        id S1752859AbeEUVTU (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 21 May 2018 17:19:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34306 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753713AbeEUVTO (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 21 May 2018 17:19:14 -0400
+        id S1752933AbeEUVTR (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 21 May 2018 17:19:17 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 08/95] ALSA: control: fix a redundant-copy issue
-Date: Mon, 21 May 2018 23:10:58 +0200
-Message-Id: <20180521210448.999627759@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.14 09/95] spi: pxa2xx: Allow 64-bit DMA
+Date: Mon, 21 May 2018 23:10:59 +0200
+Message-Id: <20180521210449.243652283@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210447.219380974@linuxfoundation.org>
 References: <20180521210447.219380974@linuxfoundation.org>
@@ -105,43 +106,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Wenwen Wang <wang6495@umn.edu>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-commit 3f12888dfae2a48741c4caa9214885b3aaf350f9 upstream.
+commit efc4a13724b852ddaa3358402a8dec024ffbcb17 upstream.
 
-In snd_ctl_elem_add_compat(), the fields of the struct 'data' need to be
-copied from the corresponding fields of the struct 'data32' in userspace.
-This is achieved by invoking copy_from_user() and get_user() functions. The
-problem here is that the 'type' field is copied twice. One is by
-copy_from_user() and one is by get_user(). Given that the 'type' field is
-not used between the two copies, the second copy is *completely* redundant
-and should be removed for better performance and cleanup. Also, these two
-copies can cause inconsistent data: as the struct 'data32' resides in
-userspace and a malicious userspace process can race to change the 'type'
-field between the two copies to cause inconsistent data. Depending on how
-the data is used in the future, such an inconsistency may cause potential
-security risks.
+Currently the 32-bit device address only is supported for DMA. However,
+starting from Intel Sunrisepoint PCH the DMA address of the device FIFO
+can be 64-bit.
 
-For above reasons, we should take out the second copy.
+Change the respective variable to be compatible with DMA engine
+expectations, i.e. to phys_addr_t.
 
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: 34cadd9c1bcb ("spi: pxa2xx: Add support for Intel Sunrisepoint")
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/control_compat.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/spi/spi-pxa2xx.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/core/control_compat.c
-+++ b/sound/core/control_compat.c
-@@ -396,8 +396,7 @@ static int snd_ctl_elem_add_compat(struc
- 	if (copy_from_user(&data->id, &data32->id, sizeof(data->id)) ||
- 	    copy_from_user(&data->type, &data32->type, 3 * sizeof(u32)))
- 		goto error;
--	if (get_user(data->owner, &data32->owner) ||
--	    get_user(data->type, &data32->type))
-+	if (get_user(data->owner, &data32->owner))
- 		goto error;
- 	switch (data->type) {
- 	case SNDRV_CTL_ELEM_TYPE_BOOLEAN:
+--- a/drivers/spi/spi-pxa2xx.h
++++ b/drivers/spi/spi-pxa2xx.h
+@@ -38,7 +38,7 @@ struct driver_data {
+ 
+ 	/* SSP register addresses */
+ 	void __iomem *ioaddr;
+-	u32 ssdr_physical;
++	phys_addr_t ssdr_physical;
+ 
+ 	/* SSP masks*/
+ 	u32 dma_cr1;
