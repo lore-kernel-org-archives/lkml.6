@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752847AbeEUMPx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 08:15:53 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:38664 "EHLO huawei.com"
+        id S1752923AbeEUMQF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 08:16:05 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:38662 "EHLO huawei.com"
         rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751514AbeEUMJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751251AbeEUMJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 21 May 2018 08:09:04 -0400
 From: Yisheng Xie <xieyisheng1@huawei.com>
 To: <linux-kernel@vger.kernel.org>
 CC: Yisheng Xie <xieyisheng1@huawei.com>,
-        Adrian Hunter <adrian.hunter@intel.com>, Hu Ziji <huziji@marvell.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, <linux-mmc@vger.kernel.org>
-Subject: [PATCH 16/33] mmc: sdhci-xenon: use match_string() helper
-Date: Mon, 21 May 2018 19:57:53 +0800
-Message-ID: <1526903890-35761-17-git-send-email-xieyisheng1@huawei.com>
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>
+Subject: [PATCH 14/33] clk: use match_string() helper
+Date: Mon, 21 May 2018 19:57:51 +0800
+Message-ID: <1526903890-35761-15-git-send-email-xieyisheng1@huawei.com>
 X-Mailer: git-send-email 1.7.12.4
 In-Reply-To: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
 References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
@@ -28,37 +28,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 match_string() returns the index of an array for a matching string,
 which can be used intead of open coded variant.
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Hu Ziji <huziji@marvell.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-mmc@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org
 Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
 ---
- drivers/mmc/host/sdhci-xenon-phy.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ drivers/clk/clk.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci-xenon-phy.c b/drivers/mmc/host/sdhci-xenon-phy.c
-index ec87943..a35804b 100644
---- a/drivers/mmc/host/sdhci-xenon-phy.c
-+++ b/drivers/mmc/host/sdhci-xenon-phy.c
-@@ -814,15 +814,10 @@ static int xenon_add_phy(struct device_node *np, struct sdhci_host *host,
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 7af555f..4469eca 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2171,7 +2171,6 @@ void clk_hw_reparent(struct clk_hw *hw, struct clk_hw *new_parent)
+ bool clk_has_parent(struct clk *clk, struct clk *parent)
  {
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
- 	struct xenon_priv *priv = sdhci_pltfm_priv(pltfm_host);
--	int i, ret;
-+	int ret;
+ 	struct clk_core *core, *parent_core;
+-	unsigned int i;
  
--	for (i = 0; i < NR_PHY_TYPES; i++) {
--		if (!strcmp(phy_name, phy_types[i])) {
--			priv->phy_type = i;
--			break;
--		}
--	}
--	if (i == NR_PHY_TYPES) {
-+	priv->phy_type = match_string(phy_types, NR_PHY_TYPES, phy_name);
-+	if (priv->phy_type < 0) {
- 		dev_err(mmc_dev(host->mmc),
- 			"Unable to determine PHY name %s. Use default eMMC 5.1 PHY\n",
- 			phy_name);
+ 	/* NULL clocks should be nops, so return success if either is NULL. */
+ 	if (!clk || !parent)
+@@ -2184,11 +2183,8 @@ bool clk_has_parent(struct clk *clk, struct clk *parent)
+ 	if (core->parent == parent_core)
+ 		return true;
+ 
+-	for (i = 0; i < core->num_parents; i++)
+-		if (strcmp(core->parent_names[i], parent_core->name) == 0)
+-			return true;
+-
+-	return false;
++	return match_string(core->parent_names,
++			    core->num_parents, parent_core->name) >= 0;
+ }
+ EXPORT_SYMBOL_GPL(clk_has_parent);
+ 
 -- 
 1.7.12.4
