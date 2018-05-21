@@ -1,127 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751117AbeEUULZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 16:11:25 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:33985 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751027AbeEUULW (ORCPT
+        id S1751214AbeEUUMd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 16:12:33 -0400
+Received: from paleale.coelho.fi ([176.9.41.70]:45440 "EHLO
+        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750993AbeEUUMb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 16:11:22 -0400
-X-Google-Smtp-Source: AB8JxZrsbFTIskfTbnWHHeFT4gkYGggDRa8xHrxP7wUU4mlUvepLlZO4E4qy5wIqQppWTZbpRlF99/DaTyp4lScb9To=
-MIME-Version: 1.0
-In-Reply-To: <20180521165803.GA15717@agluck-desk>
-References: <CAG=yYwmnHgAvauZLxfFcUEACF_J+qh4d2tvYY=AdjHvyeSFK_A@mail.gmail.com>
- <20180514162752.GG23049@pd.tnic> <CAG=yYwk-dbMF_7eS9bUraAru8b4fyCosxp+MpQA=1ZYH0nd_hg@mail.gmail.com>
- <20180520204032.GA19845@pd.tnic> <CAG=yYw=bdgsTSW80R1Wt9uUTtXeMwX5macbjrPBNzVLihk-Ufw@mail.gmail.com>
- <20180521165803.GA15717@agluck-desk>
-From: Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>
-Date: Tue, 22 May 2018 01:41:20 +0530
-Message-ID: <CAG=yYw=OQ7zpyK-5iqg7uQvcykTvuhQfX=RFg3GpQGvCRowd=Q@mail.gmail.com>
-Subject: Re: PROBLEM: mce: [Hardware Error] from dmesg -l emerg
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        linux-edac@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
+        Mon, 21 May 2018 16:12:31 -0400
+Message-ID: <bd408cb86db243289ce32d16adea003245facefa.camel@coelho.fi>
+From: Luca Coelho <luca@coelho.fi>
+To: Yisheng Xie <xieyisheng1@huawei.com>, linux-kernel@vger.kernel.org
+Cc: Kalle Valo <kvalo@codeaurora.org>,
+        Intel Linux Wireless <linuxwifi@intel.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Date: Mon, 21 May 2018 23:12:22 +0300
+In-Reply-To: <1526903890-35761-8-git-send-email-xieyisheng1@huawei.com>
+References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
+         <1526903890-35761-8-git-send-email-xieyisheng1@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.2-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 91.156.4.241
+X-SA-Exim-Mail-From: luca@coelho.fi
+Subject: Re: [PATCH 07/33] iwlwifi: mvm: use match_string() helper
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on farmhouse.coelho.fi)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> (*) Can you send a snip from the raw dmesg output that starts
-> a couple of lines before:
->
->
->         ... [Hardware Error]: CPU 0: Machine Check: 0 Bank: 5 ...
->
-> and continues a couple of lines past
->
->         ... [Hardware Error]: PROCESSOR 0:306d4 ...
->
-> and I'll take a look at why mcelog choked.
+On Mon, 2018-05-21 at 19:57 +0800, Yisheng Xie wrote:
+> match_string() returns the index of an array for a matching string,
+> which can be used intead of open coded variant.
+> 
+> Cc: Kalle Valo <kvalo@codeaurora.org>
+> Cc: Intel Linux Wireless <linuxwifi@intel.com>
+> Cc: Johannes Berg <johannes.berg@intel.com>
+> Cc: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+> Cc: linux-wireless@vger.kernel.org
+> Cc: netdev@vger.kernel.org
+> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+> ---
+>  drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c | 11 +++--------
+>  1 file changed, 3 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c
+> b/drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c
+> index 0e6401c..e8249a6 100644
+> --- a/drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c
+> +++ b/drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c
+> @@ -671,14 +671,9 @@ static ssize_t iwl_dbgfs_bt_cmd_read(struct file
+> *file, char __user *user_buf,
+>  	};
+>  	int ret, bt_force_ant_mode;
+>  
+> -	for (bt_force_ant_mode = 0;
+> -	     bt_force_ant_mode < ARRAY_SIZE(modes_str);
+> -	     bt_force_ant_mode++) {
+> -		if (!strcmp(buf, modes_str[bt_force_ant_mode]))
+> -			break;
+> -	}
+> -
+> -	if (bt_force_ant_mode >= ARRAY_SIZE(modes_str))
+> +	bt_force_ant_mode = match_string(modes_str,
+> +					 ARRAY_SIZE(modes_str),
+> buf);
+> +	if (bt_force_ant_mode < 0)
+>  		return -EINVAL;
+>  
+>  	ret = 0;
 
+Looks fine, I'll push this to our internal tree for review and take a
+closer look at what the match_string() function does exactly.
 
+Thanks for the patch.
 
-------------------------------------------------------------------------------------------------------------------------------------->
-$sudo dmesg -r | grep -B 30 "Bank"
-x2apic: IRQ remapping doesn't support X2APIC mode
-..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
-tsc: Fast TSC calibration using PIT
-tsc: Detected 1895.567 MHz processor
-clocksource: tsc-early: mask: 0xffffffffffffffff max_cycles:
-0x36a5a03c965, max_idle_ns: 881590412318 ns
-Calibrating delay loop (skipped), value calculated using timer
-frequency.. 3791.13 BogoMIPS (lpj=7582268)
-pid_max: default: 32768 minimum: 301
-Security Framework initialized
-Yama: becoming mindful.
-AppArmor: AppArmor initialized
-Dentry cache hash table entries: 524288 (order: 10, 4194304 bytes)
-Inode-cache hash table entries: 262144 (order: 9, 2097152 bytes)
-Mount-cache hash table entries: 8192 (order: 4, 65536 bytes)
-Mountpoint-cache hash table entries: 8192 (order: 4, 65536 bytes)
-CPU: Physical Processor ID: 0
-CPU: Processor Core ID: 0
-ENERGY_PERF_BIAS: Set to 'normal', was 'performance'
-ENERGY_PERF_BIAS: View and update with x86_energy_perf_policy(8)
-mce: CPU supports 7 MCE banks
-CPU0: Thermal monitoring enabled (TM1)
-process: using mwait in idle threads
-Last level iTLB entries: 4KB 64, 2MB 8, 4MB 8
-Last level dTLB entries: 4KB 64, 2MB 0, 4MB 0, 1GB 4
-Spectre V2 : Mitigation: Full generic retpoline
-Spectre V2 : Spectre v2 mitigation: Enabling Indirect Branch Prediction Barrier
-Spectre V2 : Enabling Restricted Speculation for firmware calls
-Freeing SMP alternatives memory: 32K
-TSC deadline timer enabled
-smpboot: CPU0: Intel(R) Pentium(R) CPU 3825U @ 1.90GHz (family: 0x6,
-model: 0x3d, stepping: 0x4)
-mce: [Hardware Error]: Machine check events logged
-mce: [Hardware Error]: CPU 0: Machine Check: 0 Bank 5: ee0000000040110b
-$
----------------------------------------------------------------------------------------------------------------------------------------------->
-
-
-
-$sudo dmesg -r | grep -A 30 "0:306d4"
-mce: [Hardware Error]: PROCESSOR 0:306d4 TIME 1526932210 SOCKET 0 APIC
-0 microcode 2a
-Performance Events: PEBS fmt2+, Broadwell events, 16-deep LBR,
-full-width counters, Intel PMU driver.
-... version:                3
-... bit width:              48
-... generic registers:      4
-... value mask:             0000ffffffffffff
-... max period:             00007fffffffffff
-... fixed-purpose events:   3
-... event mask:             000000070000000f
-Hierarchical SRCU implementation.
-NMI watchdog: Enabled. Permanently consumes one hw-PMU counter.
-smp: Bringing up secondary CPUs ...
-x86: Booting SMP configuration:
-.... node  #0, CPUs:      #1 #2 #3
-smp: Brought up 1 node, 4 CPUs
-smpboot: Max logical packages: 1
-smpboot: Total of 4 processors activated (15164.53 BogoMIPS)
-devtmpfs: initialized
-x86/mm: Memory block size: 128MB
-PM: Registering ACPI NVS region [mem 0x9cc8e000-0x9cf8dfff] (3145728 bytes)
-clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff,
-max_idle_ns: 7645041785100000 ns
-futex hash table entries: 1024 (order: 4, 65536 bytes)
-pinctrl core: initialized pinctrl subsystem
-NET: Registered protocol family 16
-audit: initializing netlink subsys (disabled)
-audit: type=2000 audit(1526932210.048:1): state=initialized
-audit_enabled=0 res=1
-cpuidle: using governor ladder
-cpuidle: using governor menu
-Simple Boot Flag at 0x44 set to 0x1
-ACPI FADT declares the system doesn't support PCIe ASPM, so disable it
-ACPI: bus type PCI registered
-$
------------------------------------------------------------------------------------------------------------------------->
-
-
--- 
-software engineer
-rajagiri school of engineering and technology
+--
+Cheers,
+Luca.
