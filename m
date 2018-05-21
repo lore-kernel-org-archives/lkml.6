@@ -1,447 +1,519 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751271AbeEUJBV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 05:01:21 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:46208 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751027AbeEUJBS (ORCPT
+        id S1751446AbeEUJBo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 05:01:44 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:42105 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751087AbeEUJBk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 05:01:18 -0400
-X-Google-Smtp-Source: AB8JxZpUhzV4jt6RbMmc29E5f0eWbLhzH9KSd5hlrLpldQPwI6FQZPhUuBYZpQbNLUOmgQxfRy51hA==
-Date: Mon, 21 May 2018 14:31:13 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Taniya Das <tdas@codeaurora.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        robh@kernel.org, Rajendra Nayak <rnayak@codeaurora.org>,
-        Amit Nischal <anischal@codeaurora.org>, devicetree@vger.kernel.org,
-        skannan@codeaurora.org, amit.kucheria@linaro.org
-Subject: Re: [PATCH v2 2/2] cpufreq: qcom-fw: Add support for QCOM cpufreq FW
- driver
-Message-ID: <20180521090113.qo2lrafjrh2xi6va@vireshk-i7>
-References: <1526751291-17873-1-git-send-email-tdas@codeaurora.org>
- <1526751291-17873-3-git-send-email-tdas@codeaurora.org>
+        Mon, 21 May 2018 05:01:40 -0400
+X-Google-Smtp-Source: AB8JxZovgiZA4cUnC+CG2zXvEA9VhtdsW1D2Oa5B1Bl8dDeMQYlnxMtcL7mSMLL8DWow+p6csFbOsw==
+Subject: Re: [PATCH v2 5/5] media: platform: Add Chrome OS EC CEC driver
+To: Enric Balletbo Serra <eballetbo@gmail.com>
+Cc: David Airlie <airlied@linux.ie>, Hans Verkuil <hans.verkuil@cisco.com>,
+        Lee Jones <lee.jones@linaro.org>, Olof Johansson <olof@lixom.net>,
+        Sean Paul <seanpaul@google.com>, sadolfsson@google.com,
+        intel-gfx@lists.freedesktop.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Fabien Parent <fparent@baylibre.com>, Felix Ekblom <felixe@google.com>,
+        =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>,
+        Benson Leung <bleung@google.com>, darekm@google.com,
+        linux-media@vger.kernel.org
+References: <1526648704-16873-1-git-send-email-narmstrong@baylibre.com>
+ <1526648704-16873-6-git-send-email-narmstrong@baylibre.com>
+ <CAFqH_52m+_PZWOyvwfTDmJ4Lgr=efFqW2k8DoBk1dn97AGv5pg@mail.gmail.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
+ GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
+ RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
+ NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
+ 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
+ ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
+ YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
+ GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
+ coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
+ SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
+ YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
+ mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
+ zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
+ 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
+ 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
+ RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
+ C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
+ Acmp6h8g
+Organization: Baylibre
+Message-ID: <a4df63e0-a4a2-ee13-5429-126c1df74910@baylibre.com>
+Date: Mon, 21 May 2018 11:01:37 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526751291-17873-3-git-send-email-tdas@codeaurora.org>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <CAFqH_52m+_PZWOyvwfTDmJ4Lgr=efFqW2k8DoBk1dn97AGv5pg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19-05-18, 23:04, Taniya Das wrote:
-> The CPUfreq FW present in some QCOM chipsets offloads the steps necessary
-> for changing the frequency of CPUs. The driver implements the cpufreq
-> driver interface for this firmware.
+Hi Enric,
+
+On 18/05/2018 17:02, Enric Balletbo Serra wrote:
+> Hi Neil,
 > 
-> Signed-off-by: Saravana Kannan <skannan@codeaurora.org>
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
->  drivers/cpufreq/Kconfig.arm       |   9 ++
->  drivers/cpufreq/Makefile          |   1 +
->  drivers/cpufreq/qcom-cpufreq-fw.c | 317 ++++++++++++++++++++++++++++++++++++++
->  3 files changed, 327 insertions(+)
->  create mode 100644 drivers/cpufreq/qcom-cpufreq-fw.c
+> 2018-05-18 15:05 GMT+02:00 Neil Armstrong <narmstrong@baylibre.com>:
+>> The Chrome OS Embedded Controller can expose a CEC bus, this patch add the
 > 
-> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-> index 96b35b8..571f6b4 100644
-> --- a/drivers/cpufreq/Kconfig.arm
-> +++ b/drivers/cpufreq/Kconfig.arm
-> @@ -301,3 +301,12 @@ config ARM_PXA2xx_CPUFREQ
->  	  This add the CPUFreq driver support for Intel PXA2xx SOCs.
+> A minor nit, there is a "consensus" on tell cros-ec as "ChromeOS
+> Embedded Controller" or "ChromeOS EC". Yes, I know that you can see in
+> the kernel many other ways to refer to the ChromeOS EC, but to
+> standardize a little bit, could you replace all occurrences s/Chrome
+> OS/ChromeOS/. Thanks.
+
+Ok, I'll do a cleanup.
+
 > 
->  	  If in doubt, say N.
-> +
-> +config ARM_QCOM_CPUFREQ_FW
-> +	bool "QCOM CPUFreq FW driver"
-
-During last review I didn't say that this driver shouldn't be a
-module, but that you need to fix things to make it a module. I am fine
-though if you don't want this to be a module ever.
-
-> +	help
-> +	 Support for the CPUFreq FW driver.
-> +	 The CPUfreq FW preset in some QCOM chipsets offloads the steps
-> +	 necessary for changing the frequency of CPUs. The driver
-> +	 implements the cpufreq driver interface for this firmware.
-> +	 Say Y if you want to support CPUFreq FW.
-> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-> index 8d24ade..a3edbce 100644
-> --- a/drivers/cpufreq/Makefile
-> +++ b/drivers/cpufreq/Makefile
-> @@ -85,6 +85,7 @@ obj-$(CONFIG_ARM_TEGRA124_CPUFREQ)	+= tegra124-cpufreq.o
->  obj-$(CONFIG_ARM_TEGRA186_CPUFREQ)	+= tegra186-cpufreq.o
->  obj-$(CONFIG_ARM_TI_CPUFREQ)		+= ti-cpufreq.o
->  obj-$(CONFIG_ARM_VEXPRESS_SPC_CPUFREQ)	+= vexpress-spc-cpufreq.o
-> +obj-$(CONFIG_ARM_QCOM_CPUFREQ_FW)	+= qcom-cpufreq-fw.o
+>> driver for such feature of the Embedded Controller.
+>>
+>> This driver is part of the cros-ec MFD and will be add as a sub-device when
+>> the feature bit is exposed by the EC.
+>>
+>> The controller will only handle a single logical address and handles
+>> all the messages retries and will only expose Success or Error.
+>>
+>> The controller will be tied to the HDMI CEC notifier by using the platform
+>> DMI Data and the i915 device name and connector name.
+>>
+>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+>> ---
+>>  drivers/media/platform/Kconfig                   |  11 +
+>>  drivers/media/platform/Makefile                  |   2 +
+>>  drivers/media/platform/cros-ec-cec/Makefile      |   1 +
+>>  drivers/media/platform/cros-ec-cec/cros-ec-cec.c | 347 +++++++++++++++++++++++
+>>  4 files changed, 361 insertions(+)
+>>  create mode 100644 drivers/media/platform/cros-ec-cec/Makefile
+>>  create mode 100644 drivers/media/platform/cros-ec-cec/cros-ec-cec.c
+>>
+>> diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
+>> index c7a1cf8..e55a8ed2 100644
+>> --- a/drivers/media/platform/Kconfig
+>> +++ b/drivers/media/platform/Kconfig
+>> @@ -546,6 +546,17 @@ menuconfig CEC_PLATFORM_DRIVERS
+>>
+>>  if CEC_PLATFORM_DRIVERS
+>>
+>> +config VIDEO_CROS_EC_CEC
+>> +       tristate "Chrome OS EC CEC driver"
 > 
+> here
 > 
->  ##################################################################################
-> diff --git a/drivers/cpufreq/qcom-cpufreq-fw.c b/drivers/cpufreq/qcom-cpufreq-fw.c
-> new file mode 100644
-> index 0000000..0e66de0
-> --- /dev/null
-> +++ b/drivers/cpufreq/qcom-cpufreq-fw.c
-> @@ -0,0 +1,317 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-> + */
-> +
-> +#include <linux/cpufreq.h>
-> +#include <linux/init.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_platform.h>
-> +
-> +#define INIT_RATE			300000000UL
-> +#define XO_RATE				19200000UL
-> +#define LUT_MAX_ENTRIES			40U
-> +#define CORE_COUNT_VAL(val)		((val & GENMASK(18, 16)) >> 16)
-> +#define LUT_ROW_SIZE			32
-> +
-> +struct cpufreq_qcom {
-> +	struct cpufreq_frequency_table *table;
-> +	struct device *dev;
-> +	void __iomem *perf_base;
-> +	void __iomem *lut_base;
-> +	cpumask_t related_cpus;
-> +	unsigned int max_cores;
-> +};
-> +
-> +static struct cpufreq_qcom *qcom_freq_domain_map[NR_CPUS];
-> +
-> +static int
-> +qcom_cpufreq_fw_target_index(struct cpufreq_policy *policy, unsigned int index)
-> +{
-> +	struct cpufreq_qcom *c = policy->driver_data;
-> +
-> +	if (index >= LUT_MAX_ENTRIES) {
-> +		dev_err(c->dev,
-> +			"Passing an index (%u) that's greater than max (%d)\n",
-> +					index, LUT_MAX_ENTRIES - 1);
-> +		return -EINVAL;
-> +	}
+>> +       depends on MFD_CROS_EC || COMPILE_TEST
+>> +       select CEC_CORE
+>> +       select CEC_NOTIFIER
+>> +       ---help---
+>> +         If you say yes here you will get support for the
+>> +         Chrome OS Embedded Controller's CEC.
+> 
+> here
+> 
+>> +         The CEC bus is present in the HDMI connector and enables communication
+>> +         between compatible devices.
+>> +
+>>  config VIDEO_MESON_AO_CEC
+>>         tristate "Amlogic Meson AO CEC driver"
+>>         depends on ARCH_MESON || COMPILE_TEST
+>> diff --git a/drivers/media/platform/Makefile b/drivers/media/platform/Makefile
+>> index 932515d..830696f 100644
+>> --- a/drivers/media/platform/Makefile
+>> +++ b/drivers/media/platform/Makefile
+>> @@ -92,3 +92,5 @@ obj-$(CONFIG_VIDEO_QCOM_CAMSS)                += qcom/camss-8x16/
+>>  obj-$(CONFIG_VIDEO_QCOM_VENUS)         += qcom/venus/
+>>
+>>  obj-y                                  += meson/
+>> +
+>> +obj-y                                  += cros-ec-cec/
+>> diff --git a/drivers/media/platform/cros-ec-cec/Makefile b/drivers/media/platform/cros-ec-cec/Makefile
+>> new file mode 100644
+>> index 0000000..9ce97f9
+>> --- /dev/null
+>> +++ b/drivers/media/platform/cros-ec-cec/Makefile
+>> @@ -0,0 +1 @@
+>> +obj-$(CONFIG_VIDEO_CROS_EC_CEC) += cros-ec-cec.o
+>> diff --git a/drivers/media/platform/cros-ec-cec/cros-ec-cec.c b/drivers/media/platform/cros-ec-cec/cros-ec-cec.c
+>> new file mode 100644
+>> index 0000000..7e1e275
+>> --- /dev/null
+>> +++ b/drivers/media/platform/cros-ec-cec/cros-ec-cec.c
+>> @@ -0,0 +1,347 @@
+>> +// SPDX-License-Identifier: GPL-2.0+
+>> +/*
+>> + * CEC driver for Chrome OS Embedded Controller
+> 
+> and here
+> 
+>> + *
+>> + * Copyright (c) 2018 BayLibre, SAS
+>> + * Author: Neil Armstrong <narmstrong@baylibre.com>
+>> + */
+>> +
+>> +#include <linux/kernel.h>
+>> +#include <linux/module.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/dmi.h>
+>> +#include <linux/pci.h>
+>> +#include <linux/cec.h>
+>> +#include <linux/slab.h>
+>> +#include <linux/interrupt.h>
+>> +#include <media/cec.h>
+>> +#include <media/cec-notifier.h>
+>> +#include <linux/mfd/cros_ec.h>
+>> +#include <linux/mfd/cros_ec_commands.h>
+>> +
+>> +#define DRV_NAME       "cros-ec-cec"
+>> +
+>> +/**
+>> + * struct cros_ec_cec - Driver data for EC CEC
+>> + *
+>> + * @cros_ec: Pointer to EC device
+>> + * @notifier: Notifier info for responding to EC events
+>> + * @adap: CEC adapter
+>> + * @notify: CEC notifier pointer
+>> + * @rx_msg: storage for a received message
+>> + */
+>> +struct cros_ec_cec {
+>> +       struct cros_ec_device *cros_ec;
+>> +       struct notifier_block notifier;
+>> +       struct cec_adapter *adap;
+>> +       struct cec_notifier *notify;
+>> +       struct cec_msg rx_msg;
+>> +};
+>> +
+>> +static void handle_cec_message(struct cros_ec_cec *cros_ec_cec)
+>> +{
+>> +       struct cros_ec_device *cros_ec = cros_ec_cec->cros_ec;
+>> +       uint8_t *cec_message = cros_ec->event_data.data.cec_message;
+>> +       unsigned int len = cros_ec->event_size;
+>> +
+>> +       cros_ec_cec->rx_msg.len = len;
+>> +       memcpy(cros_ec_cec->rx_msg.msg, cec_message, len);
+>> +
+>> +       cec_received_msg(cros_ec_cec->adap, &cros_ec_cec->rx_msg);
+>> +}
+>> +
+>> +static void handle_cec_event(struct cros_ec_cec *cros_ec_cec)
+>> +{
+>> +       struct cros_ec_device *cros_ec = cros_ec_cec->cros_ec;
+>> +       uint32_t events = cros_ec->event_data.data.cec_events;
+>> +
+>> +       if (events & EC_MKBP_CEC_SEND_OK)
+>> +               cec_transmit_attempt_done(cros_ec_cec->adap,
+>> +                                         CEC_TX_STATUS_OK);
+>> +
+>> +       /* FW takes care of all retries, tell core to avoid more retries */
+>> +       if (events & EC_MKBP_CEC_SEND_FAILED)
+>> +               cec_transmit_attempt_done(cros_ec_cec->adap,
+>> +                                         CEC_TX_STATUS_MAX_RETRIES |
+>> +                                         CEC_TX_STATUS_NACK);
+>> +}
+>> +
+>> +static int cros_ec_cec_event(struct notifier_block *nb,
+>> +                            unsigned long queued_during_suspend,
+>> +                            void *_notify)
+>> +{
+>> +       struct cros_ec_cec *cros_ec_cec;
+>> +       struct cros_ec_device *cros_ec;
+>> +
+>> +       cros_ec_cec = container_of(nb, struct cros_ec_cec, notifier);
+>> +       cros_ec = cros_ec_cec->cros_ec;
+>> +
+>> +       if (cros_ec->event_data.event_type == EC_MKBP_CEC_EVENT) {
+>> +               handle_cec_event(cros_ec_cec);
+>> +               return NOTIFY_OK;
+>> +       }
+>> +
+>> +       if (cros_ec->event_data.event_type == EC_MKBP_EVENT_CEC_MESSAGE) {
+>> +               handle_cec_message(cros_ec_cec);
+>> +               return NOTIFY_OK;
+>> +       }
+>> +
+>> +       return NOTIFY_DONE;
+>> +}
+>> +
+>> +static int cros_ec_cec_set_log_addr(struct cec_adapter *adap, u8 logical_addr)
+>> +{
+>> +       struct cros_ec_cec *cros_ec_cec = adap->priv;
+>> +       struct cros_ec_device *cros_ec = cros_ec_cec->cros_ec;
+>> +       struct {
+>> +               struct cros_ec_command msg;
+>> +               struct ec_params_cec_set data;
+>> +       } __packed msg = {};
+>> +       int ret;
+>> +
+>> +       msg.msg.command = EC_CMD_CEC_SET;
+>> +       msg.msg.outsize = sizeof(msg.data);
+>> +       msg.data.cmd = CEC_CMD_LOGICAL_ADDRESS;
+>> +       msg.data.address = logical_addr;
+>> +
+>> +       ret = cros_ec_cmd_xfer_status(cros_ec, &msg.msg);
+>> +       if (ret < 0) {
+>> +               dev_err(cros_ec->dev,
+>> +                       "error setting CEC logical address on EC: %d\n", ret);
+>> +               return ret;
+>> +       }
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int cros_ec_cec_transmit(struct cec_adapter *adap, u8 attempts,
+>> +                               u32 signal_free_time, struct cec_msg *cec_msg)
+>> +{
+>> +       struct cros_ec_cec *cros_ec_cec = adap->priv;
+>> +       struct cros_ec_device *cros_ec = cros_ec_cec->cros_ec;
+>> +       struct {
+>> +               struct cros_ec_command msg;
+>> +               struct ec_params_cec_write data;
+>> +       } __packed msg = {};
+>> +       int ret;
+>> +
+>> +       msg.msg.command = EC_CMD_CEC_WRITE_MSG;
+>> +       msg.msg.outsize = cec_msg->len;
+>> +       memcpy(msg.data.msg, cec_msg->msg, cec_msg->len);
+>> +
+>> +       ret = cros_ec_cmd_xfer_status(cros_ec, &msg.msg);
+>> +       if (ret < 0) {
+>> +               dev_err(cros_ec->dev,
+>> +                       "error writing CEC msg on EC: %d\n", ret);
+>> +               return ret;
+>> +       }
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int cros_ec_cec_adap_enable(struct cec_adapter *adap, bool enable)
+>> +{
+>> +       struct cros_ec_cec *cros_ec_cec = adap->priv;
+>> +       struct cros_ec_device *cros_ec = cros_ec_cec->cros_ec;
+>> +       struct {
+>> +               struct cros_ec_command msg;
+>> +               struct ec_params_cec_set data;
+>> +       } __packed msg = {};
+>> +       int ret;
+>> +
+>> +       msg.msg.command = EC_CMD_CEC_SET;
+>> +       msg.msg.outsize = sizeof(msg.data);
+>> +       msg.data.cmd = CEC_CMD_ENABLE;
+>> +       msg.data.enable = enable;
+>> +
+>> +       ret = cros_ec_cmd_xfer_status(cros_ec, &msg.msg);
+>> +       if (ret < 0) {
+>> +               dev_err(cros_ec->dev,
+>> +                       "error %sabling CEC on EC: %d\n",
+>> +                       (enable ? "en" : "dis"), ret);
+>> +               return ret;
+>> +       }
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static const struct cec_adap_ops cros_ec_cec_ops = {
+>> +       .adap_enable = cros_ec_cec_adap_enable,
+>> +       .adap_log_addr = cros_ec_cec_set_log_addr,
+>> +       .adap_transmit = cros_ec_cec_transmit,
+>> +};
+>> +
+>> +#ifdef CONFIG_PM_SLEEP
+>> +static int cros_ec_cec_suspend(struct device *dev)
+>> +{
+>> +       struct platform_device *pdev = to_platform_device(dev);
+>> +       struct cros_ec_cec *cros_ec_cec = dev_get_drvdata(&pdev->dev);
+>> +
+>> +       if (device_may_wakeup(dev))
+>> +               enable_irq_wake(cros_ec_cec->cros_ec->irq);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int cros_ec_cec_resume(struct device *dev)
+>> +{
+>> +       struct platform_device *pdev = to_platform_device(dev);
+>> +       struct cros_ec_cec *cros_ec_cec = dev_get_drvdata(&pdev->dev);
+>> +
+>> +       if (device_may_wakeup(dev))
+>> +               disable_irq_wake(cros_ec_cec->cros_ec->irq);
+>> +
+>> +       return 0;
+>> +}
+>> +#endif
+>> +
+>> +static SIMPLE_DEV_PM_OPS(cros_ec_cec_pm_ops,
+>> +       cros_ec_cec_suspend, cros_ec_cec_resume);
+>> +
+>> +#if IS_ENABLED(CONFIG_PCI) && IS_ENABLED(CONFIG_DMI)
+>> +
+>> +/*
+>> + * The Firmware only handles a single CEC interface tied to a single HDMI
+>> + * connector we specify along with the DRM device name handling the HDMI output
+>> + */
+>> +
+>> +struct cec_dmi_match {
+>> +       char *sys_vendor;
+>> +       char *product_name;
+>> +       char *devname;
+>> +       char *conn;
+>> +};
+>> +
+>> +static const struct cec_dmi_match cec_dmi_match_table[] = {
+>> +       /* Google Fizz */
+>> +       { "Google", "Fizz", "0000:00:02.0", "Port B" },
+>> +};
+>> +
+>> +static int cros_ec_cec_get_notifier(struct device *dev,
+>> +                                   struct cec_notifier **notify)
+>> +{
+>> +       int i;
+>> +
+>> +       for (i = 0 ; i < ARRAY_SIZE(cec_dmi_match_table) ; ++i) {
+>> +               const struct cec_dmi_match *m = &cec_dmi_match_table[i];
+>> +
+>> +               if (dmi_match(DMI_SYS_VENDOR, m->sys_vendor) &&
+>> +                   dmi_match(DMI_PRODUCT_NAME, m->product_name)) {
+>> +                       struct device *d;
+>> +
+>> +                       /* Find the device, bail out if not yet registered */
+>> +                       d = bus_find_device_by_name(&pci_bus_type, NULL,
+>> +                                                   m->devname);
+>> +                       if (!d)
+>> +                               return -EPROBE_DEFER;
+>> +
+>> +                       *notify = cec_notifier_get_conn(d, m->conn);
+>> +                       return 0;
+>> +               }
+>> +       }
+>> +
+>> +       /* Hardware support must be added in the cec_dmi_match_table */
+>> +       dev_warn(dev, "CEC notifier not configured for this hardware\n");
+>> +
+>> +       return -ENODEV;
+>> +}
+>> +
+>> +#else
+>> +
+>> +static int cros_ec_cec_get_notifier(struct device *dev,
+>> +                                   struct cec_notifier **notify)
+>> +{
+>> +       return -ENODEV;
+>> +}
+>> +
+>> +#endif
+>> +
+>> +static int cros_ec_cec_probe(struct platform_device *pdev)
+>> +{
+>> +       struct cros_ec_dev *ec_dev = dev_get_drvdata(pdev->dev.parent);
+>> +       struct cros_ec_device *cros_ec = ec_dev->ec_dev;
+>> +       struct cros_ec_cec *cros_ec_cec;
+>> +       int ret;
+>> +
+>> +       cros_ec_cec = devm_kzalloc(&pdev->dev, sizeof(*cros_ec_cec),
+>> +                                  GFP_KERNEL);
+>> +       if (!cros_ec_cec)
+>> +               return -ENOMEM;
+>> +
+>> +       platform_set_drvdata(pdev, cros_ec_cec);
+>> +       cros_ec_cec->cros_ec = cros_ec;
+>> +
+>> +       ret = cros_ec_cec_get_notifier(&pdev->dev, &cros_ec_cec->notify);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       ret = device_init_wakeup(&pdev->dev, 1);
+>> +       if (ret) {
+>> +               dev_err(&pdev->dev, "failed to initialize wakeup\n");
+>> +               return ret;
+>> +       }
+>> +
+>> +       cros_ec_cec->adap = cec_allocate_adapter(&cros_ec_cec_ops, cros_ec_cec,
+>> +                                                DRV_NAME, CEC_CAP_DEFAULTS, 1);
+>> +       if (IS_ERR(cros_ec_cec->adap))
+>> +               return PTR_ERR(cros_ec_cec->adap);
+>> +
+>> +       /* Get CEC events from the EC. */
+>> +       cros_ec_cec->notifier.notifier_call = cros_ec_cec_event;
+>> +       ret = blocking_notifier_chain_register(&cros_ec->event_notifier,
+>> +                                              &cros_ec_cec->notifier);
+>> +       if (ret) {
+>> +               dev_err(&pdev->dev, "failed to register notifier\n");
+>> +               cec_delete_adapter(cros_ec_cec->adap);
+>> +               return ret;
+>> +       }
+>> +
+>> +       ret = cec_register_adapter(cros_ec_cec->adap, &pdev->dev);
+>> +       if (ret < 0) {
+>> +               cec_delete_adapter(cros_ec_cec->adap);
+>> +               return ret;
+>> +       }
+>> +
+>> +       cec_register_cec_notifier(cros_ec_cec->adap, cros_ec_cec->notify);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int cros_ec_cec_remove(struct platform_device *pdev)
+>> +{
+>> +       struct cros_ec_cec *cros_ec_cec = platform_get_drvdata(pdev);
+>> +       struct device *dev = &pdev->dev;
+>> +       int ret;
+>> +
+>> +       ret = blocking_notifier_chain_unregister(
+>> +                       &cros_ec_cec->cros_ec->event_notifier,
+>> +                       &cros_ec_cec->notifier);
+>> +
+>> +       if (ret) {
+>> +               dev_err(dev, "failed to unregister notifier\n");
+>> +               return ret;
+>> +       }
+>> +
+>> +       cec_unregister_adapter(cros_ec_cec->adap);
+>> +
+>> +       if (cros_ec_cec->notify)
+>> +               cec_notifier_put(cros_ec_cec->notify);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static struct platform_driver cros_ec_cec_driver = {
+>> +       .probe = cros_ec_cec_probe,
+>> +       .remove  = cros_ec_cec_remove,
+>> +       .driver = {
+>> +               .name = DRV_NAME,
+>> +               .pm = &cros_ec_cec_pm_ops,
+>> +       },
+>> +};
+>> +
+>> +module_platform_driver(cros_ec_cec_driver);
+>> +
+>> +MODULE_DESCRIPTION("CEC driver for Chrome OS ECs");
+>> +MODULE_AUTHOR("Neil Armstrong <narmstrong@baylibre.com>");
+>> +MODULE_LICENSE("GPL");
+>> +MODULE_ALIAS("platform:" DRV_NAME);
+>> --
+>> 2.7.4
+>>
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> 
+> The patch looks good to me, so
+> 
+> Reviewed-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> 
 
-This is never going to happen unless there is a bug in cpufreq core.
-You are allocating only 40 entries for the cpufreq table and this will
-always be 0-39. None of the other drivers is checking this I believe
-and neither should you. This is the only routine which will get call
-very frequently and we better not add unnecessary stuff here.
-
-> +	writel_relaxed(index, c->perf_base);
-> +
-> +	/* Make sure the write goes through before proceeding */
-> +	mb();
-
-Btw what happens right after this is done ? Are we guaranteed that the
-frequency is updated in the hardware after this ? What about enabling
-fast-switch for your platform ? Look at drivers/cpufreq/scmi-cpufreq.c
-to see how that is done.
-
-> +	return 0;
-> +}
-> +
-> +static unsigned int qcom_cpufreq_fw_get(unsigned int cpu)
-> +{
-> +	struct cpufreq_qcom *c;
-> +	unsigned int index;
-> +
-> +	c = qcom_freq_domain_map[cpu];
-> +	if (!c)
-> +		return -ENODEV;
-
-Return 0 on error here.
-
-> +
-> +	index = readl_relaxed(c->perf_base);
-> +	index = min(index, LUT_MAX_ENTRIES - 1);
-
-Will the hardware ever read a value over 39 here ?
-
-> +
-> +	return c->table[index].frequency;
-> +}
-> +
-> +static int qcom_cpufreq_fw_cpu_init(struct cpufreq_policy *policy)
-> +{
-> +	struct cpufreq_qcom *c;
-> +
-> +	c = qcom_freq_domain_map[policy->cpu];
-> +	if (!c) {
-> +		pr_err("No scaling support for CPU%d\n", policy->cpu);
-> +		return -ENODEV;
-> +	}
-> +
-> +	cpumask_copy(policy->cpus, &c->related_cpus);
-> +	policy->freq_table = c->table;
-> +	policy->driver_data = c;
-> +
-> +	return 0;
-> +}
-> +
-> +static struct freq_attr *qcom_cpufreq_fw_attr[] = {
-> +	&cpufreq_freq_attr_scaling_available_freqs,
-> +	&cpufreq_freq_attr_scaling_boost_freqs,
-> +	NULL
-> +};
-> +
-> +static struct cpufreq_driver cpufreq_qcom_fw_driver = {
-> +	.flags		= CPUFREQ_STICKY | CPUFREQ_NEED_INITIAL_FREQ_CHECK |
-> +			  CPUFREQ_HAVE_GOVERNOR_PER_POLICY,
-> +	.verify		= cpufreq_generic_frequency_table_verify,
-> +	.target_index	= qcom_cpufreq_fw_target_index,
-> +	.get		= qcom_cpufreq_fw_get,
-> +	.init		= qcom_cpufreq_fw_cpu_init,
-> +	.name		= "qcom-cpufreq-fw",
-> +	.attr		= qcom_cpufreq_fw_attr,
-> +	.boost_enabled	= true,
-> +};
-> +
-> +static int qcom_read_lut(struct platform_device *pdev,
-> +			 struct cpufreq_qcom *c)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	u32 data, src, lval, i, core_count, prev_cc;
-> +
-> +	c->table = devm_kcalloc(dev, LUT_MAX_ENTRIES + 1,
-> +				sizeof(*c->table), GFP_KERNEL);
-> +	if (!c->table)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < LUT_MAX_ENTRIES; i++) {
-> +		data = readl_relaxed(c->lut_base + i * LUT_ROW_SIZE);
-> +		src = ((data & GENMASK(31, 30)) >> 30);
-> +		lval = (data & GENMASK(7, 0));
-> +		core_count = CORE_COUNT_VAL(data);
-> +
-> +		if (!src)
-> +			c->table[i].frequency = INIT_RATE / 1000;
-> +		else
-> +			c->table[i].frequency = XO_RATE * lval / 1000;
-> +
-> +		c->table[i].driver_data = c->table[i].frequency;
-
-Why do you need to use driver_data here? Why can't you simple use
-frequency field in the below conditional expressions ?
-
-> +
-> +		dev_dbg(dev, "index=%d freq=%d, core_count %d\n",
-> +			i, c->table[i].frequency, core_count);
-> +
-> +		if (core_count != c->max_cores)
-> +			c->table[i].frequency = CPUFREQ_ENTRY_INVALID;
-> +
-> +		/*
-> +		 * Two of the same frequencies with the same core counts means
-> +		 * end of table.
-> +		 */
-> +		if (i > 0 && c->table[i - 1].driver_data ==
-> +			c->table[i].driver_data && prev_cc == core_count) {
-> +			struct cpufreq_frequency_table *prev = &c->table[i - 1];
-> +
-> +			if (prev->frequency == CPUFREQ_ENTRY_INVALID) {
-
-There can only be a single boost frequency at max ?
-
-> +				prev->flags = CPUFREQ_BOOST_FREQ;
-> +				prev->frequency = prev->driver_data;
-
-Okay you are using driver_data as a local variable to keep this value
-safe which you might have overwritten. Maybe use a simple variable
-prev_freq for this. It would be much more readable in that case and
-you wouldn't end up abusing the driver_data field.
-
-> +			}
-> +
-> +			break;
-> +		}
-> +		prev_cc = core_count;
-> +	}
-> +	c->table[i].frequency = CPUFREQ_TABLE_END;
-
-Wouldn't you end up writing on c->table[40].frequency here if there
-are 40 frequency value present ?
-
-> +
-> +	return 0;
-> +}
-> +
-> +static int qcom_get_related_cpus(struct device_node *np, struct cpumask *m)
-> +{
-> +	struct device_node *dev_phandle;
-> +	struct device *cpu_dev;
-> +	int cpu, i = 0;
-> +
-> +	dev_phandle = of_parse_phandle(np, "qcom,cpulist", i++);
-> +	while (dev_phandle) {
-> +		for_each_possible_cpu(cpu) {
-> +			cpu_dev = get_cpu_device(cpu);
-> +			if (cpu_dev && cpu_dev->of_node == dev_phandle) {
-
-You can use of_cpu_device_node_get() here.
-
-> +				cpumask_set_cpu(cpu, m);
-> +				break;
-> +			}
-> +		}
-> +		dev_phandle = of_parse_phandle(np, "qcom,cpulist", i++);
-> +	}
-> +
-> +	if (cpumask_empty(m))
-> +		return -ENOENT;
-> +
-> +	return 0;
-> +}
-> +
-> +static int qcom_cpu_resources_init(struct platform_device *pdev,
-> +				   struct device_node *np)
-> +{
-> +	struct cpufreq_qcom *c;
-> +	struct resource res;
-> +	struct device *dev = &pdev->dev;
-> +	void __iomem *en_base;
-> +	int cpu, index, ret;
-> +
-> +	c = devm_kzalloc(dev, sizeof(*c), GFP_KERNEL);
-> +	if (!c)
-> +		return -ENOMEM;
-> +
-> +	index = of_property_match_string(np, "reg-names", "en_base");
-> +	if (index < 0)
-> +		return index;
-> +
-> +	if (of_address_to_resource(np, index, &res))
-> +		return -ENOMEM;
-> +
-> +	en_base = devm_ioremap(dev, res.start, resource_size(&res));
-> +	if (!en_base) {
-> +		dev_err(dev, "Unable to map %s en-base\n", np->name);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	/* FW should be in enabled state to proceed */
-> +	if (!(readl_relaxed(en_base) & 0x1)) {
-> +		dev_err(dev, "%s firmware not enabled\n", np->name);
-> +		return -ENODEV;
-> +	}
-> +
-> +	devm_iounmap(&pdev->dev, en_base);
-> +
-> +	index = of_property_match_string(np, "reg-names", "perf_base");
-> +	if (index < 0)
-> +		return index;
-> +
-> +	if (of_address_to_resource(np, index, &res))
-> +		return -ENOMEM;
-> +
-> +	c->perf_base = devm_ioremap(dev, res.start, resource_size(&res));
-> +	if (!c->perf_base) {
-> +		dev_err(dev, "Unable to map %s perf-base\n", np->name);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	index = of_property_match_string(np, "reg-names", "lut_base");
-> +	if (index < 0)
-> +		return index;
-> +
-> +	if (of_address_to_resource(np, index, &res))
-> +		return -ENOMEM;
-> +
-> +	c->lut_base = devm_ioremap(dev, res.start, resource_size(&res));
-> +	if (!c->lut_base) {
-> +		dev_err(dev, "Unable to map %s lut-base\n", np->name);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	ret = qcom_get_related_cpus(np, &c->related_cpus);
-> +	if (ret) {
-> +		dev_err(dev, "%s failed to get core phandles\n", np->name);
-> +		return ret;
-> +	}
-> +
-> +	c->max_cores = cpumask_weight(&c->related_cpus);
-> +
-> +	ret = qcom_read_lut(pdev, c);
-> +	if (ret) {
-> +		dev_err(dev, "%s failed to read LUT\n", np->name);
-> +		return ret;
-> +	}
-> +
-> +	for_each_cpu(cpu, &c->related_cpus)
-> +		qcom_freq_domain_map[cpu] = c;
-> +
-> +	return 0;
-> +}
-> +
-> +static int qcom_resources_init(struct platform_device *pdev)
-> +{
-> +	struct device_node *np;
-> +	int ret;
-> +
-> +	if (!of_get_available_child_count(pdev->dev.of_node))
-> +		return -ENODEV;
-> +
-> +	for_each_available_child_of_node(pdev->dev.of_node, np) {
-> +		if (of_device_is_compatible(np, "cpufreq")) {
-> +			ret = qcom_cpu_resources_init(pdev, np);
-> +			if (ret)
-> +				return ret;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int qcom_cpufreq_fw_driver_probe(struct platform_device *pdev)
-> +{
-> +	int rc;
-> +
-> +	/* Get the bases of cpufreq for domains */
-> +	rc = qcom_resources_init(pdev);
-> +	if (rc) {
-> +		dev_err(&pdev->dev, "CPUFreq resource init failed\n");
-> +		return rc;
-> +	}
-> +
-> +	rc = cpufreq_register_driver(&cpufreq_qcom_fw_driver);
-> +	if (rc) {
-> +		dev_err(&pdev->dev, "CPUFreq FW driver failed to register\n");
-> +		return rc;
-> +	}
-> +
-> +	dev_info(&pdev->dev, "QCOM CPUFreq FW driver inited\n");
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id match_table[] = {
-> +	{ .compatible = "qcom,cpufreq-fw" },
-> +	{}
-> +};
-> +
-> +static struct platform_driver qcom_cpufreq_fw_driver = {
-> +	.probe = qcom_cpufreq_fw_driver_probe,
-> +	.driver = {
-> +		.name = "qcom-cpufreq-fw",
-> +		.of_match_table = match_table,
-> +		.owner = THIS_MODULE,
-> +	},
-> +};
-> +
-> +static int __init qcom_cpufreq_fw_init(void)
-> +{
-> +	return platform_driver_register(&qcom_cpufreq_fw_driver);
-> +}
-> +subsys_initcall(qcom_cpufreq_fw_init);
-> +
-> +MODULE_DESCRIPTION("QCOM CPU Frequency FW");
-> +MODULE_LICENSE("GPL v2");
-> --
-> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-> of the Code Aurora Forum, hosted by the  Linux Foundation.
-
--- 
-viresh
+Thanks,
+Neil
