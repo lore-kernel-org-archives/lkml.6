@@ -1,116 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753137AbeEUL1p (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 07:27:45 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:41426 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753075AbeEUL1E (ORCPT
+        id S1753145AbeEUL1x (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 07:27:53 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:41602 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752836AbeEUL1s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 07:27:04 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5CD1E602BC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
-From: Ilia Lin <ilialin@codeaurora.org>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-        mark.rutland@arm.com, viresh.kumar@linaro.org, nm@ti.com,
-        lgirdwood@gmail.com, broonie@kernel.org, andy.gross@linaro.org,
-        david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com,
-        rjw@rjwysocki.net, linux-clk@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        rnayak@codeaurora.org, ilialin@codeaurora.org,
-        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-        celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: [PATCH v9 14/15] dt-bindings: qcom_spmi: Document SAW support
-Date: Mon, 21 May 2018 14:25:31 +0300
-Message-Id: <1526901932-9514-15-git-send-email-ilialin@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1526901932-9514-1-git-send-email-ilialin@codeaurora.org>
-References: <1526901932-9514-1-git-send-email-ilialin@codeaurora.org>
+        Mon, 21 May 2018 07:27:48 -0400
+X-Google-Smtp-Source: AB8JxZrrxBM56JDdOg9tExJltE8n/QvbMUFENmpkOEE0nV0dHzNNE/oXS72L1+hvl8QYmutE0OAGfSDE5YdYrGEUL+w=
+MIME-Version: 1.0
+In-Reply-To: <afc54477ac8bd9a69cfa8754270342cfc8487109.camel@linux.intel.com>
+References: <20180514080640.12515-1-linus.walleij@linaro.org>
+ <20180514080640.12515-2-linus.walleij@linaro.org> <afc54477ac8bd9a69cfa8754270342cfc8487109.camel@linux.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 21 May 2018 13:27:47 +0200
+Message-ID: <CACRpkdaJ7UjpXKDEi2jR65vzt-Fp42U5PnMGkuw5r-H83ggbSA@mail.gmail.com>
+Subject: Re: [PATCH 01/19 v3] regulator: fixed: Convert to use GPIO descriptor only
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>, Tony Lindgren <tony@atomide.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Philipp Zabel <philipp.zabel@gmail.com>,
+        Daniel Mack <zonque@gmail.com>, Marc Zyngier <marc.zyngier@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Russell King <rmk+kernel@armlinux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document the DT bindings for the SAW regulators.
+On Mon, May 14, 2018 at 1:03 PM, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+> On Mon, 2018-05-14 at 10:06 +0200, Linus Walleij wrote:
 
-The saw-leader is the only property that is configurable in DT.
+>> The hunk hitting the x86 BCM43xx driver is especially tricky as the
+>> number
+>> comes out of SFI which is a mystery to me. I definately need someone
+>> to
+>> look at this. (Hi Andy.)
+>
+> Since there is no link to repo with a branch and I wasn't Cc'ed to cover
+> letter, asking here for a such. I would then pull it and test on real
+> hardware.
 
-The saw-slave property allows ganging (grouping) of
-several regulators so that their outputs can be combined.
+I'm sorry about this.
+This branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/log/?h=gpio-descriptors-regulator
 
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../bindings/regulator/qcom,spmi-regulator.txt     | 45 ++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
+Has all the patches.
 
-diff --git a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
-index 57d2c65..406f2e5 100644
---- a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
-+++ b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
-@@ -110,6 +110,11 @@ Qualcomm SPMI Regulators
- 	Definition: Reference to regulator supplying the input pin, as
- 		    described in the data sheet.
- 
-+- qcom,saw-reg:
-+	Usage: optional
-+	Value type: <phandle>
-+	Description: Reference to syscon node defining the SAW registers.
-+
- 
- The regulator node houses sub-nodes for each regulator within the device. Each
- sub-node is identified using the node's name, with valid values listed for each
-@@ -201,6 +206,17 @@ see regulator.txt - with additional custom properties described below:
- 			2 = 0.55 uA
- 			3 = 0.75 uA
- 
-+- qcom,saw-slave:
-+	Usage: optional
-+	Value type: <boo>
-+	Description: SAW controlled gang slave. Will not be configured.
-+
-+- qcom,saw-leader:
-+	Usage: optional
-+	Value type: <boo>
-+	Description: SAW controlled gang leader. Will be configured as
-+		     SAW regulator.
-+
- Example:
- 
- 	regulators {
-@@ -221,3 +237,32 @@ Example:
- 
- 		....
- 	};
-+
-+Example 2:
-+
-+	saw3: syscon@9A10000 {
-+		compatible = "syscon";
-+		reg = <0x9A10000 0x1000>;
-+	};
-+
-+	...
-+
-+	spm-regulators {
-+		compatible = "qcom,pm8994-regulators";
-+		qcom,saw-reg = <&saw3>;
-+		s8 {
-+			qcom,saw-slave;
-+		};
-+		s9 {
-+			qcom,saw-slave;
-+		};
-+		s10 {
-+			qcom,saw-slave;
-+		};
-+		pm8994_s11_saw: s11 {
-+			qcom,saw-leader;
-+			regulator-always-on;
-+			regulator-min-microvolt = <900000>;
-+			regulator-max-microvolt = <1140000>;
-+		};
-+	};
--- 
-1.9.1
+git pull git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+gpio-descriptors-regulator
+
+will bring in the patches to a testing branch.
+
+> The code itself looks good, so:
+>
+> Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>
+> for Intel MID bits.
+
+Thanks!
+
+Yours,
+Linus Walleij
