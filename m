@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752739AbeEUOVz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 10:21:55 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:41647 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751504AbeEUOVv (ORCPT
+        id S1752817AbeEUOWB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 10:22:01 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:51925 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752669AbeEUOVz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 10:21:51 -0400
-X-Google-Smtp-Source: AB8JxZrpI5EfbT1trCl910GM+4lKarQDIpPI/VqXHFBM1EHzmzJea17z/RjXT6uNIFR7cT5vB8TvwQ==
+        Mon, 21 May 2018 10:21:55 -0400
+X-Google-Smtp-Source: AB8JxZqVg/mOLQjOibJuNRaerADwKKHXwYlvvj7bp2SnnPgykoJJ4Op8H2GIOw6eQfpHF7LC1nRouA==
 From: Neil Armstrong <narmstrong@baylibre.com>
 To: airlied@linux.ie, hans.verkuil@cisco.com, lee.jones@linaro.org,
         olof@lixom.net, seanpaul@google.com
@@ -15,89 +15,146 @@ Cc: Neil Armstrong <narmstrong@baylibre.com>, sadolfsson@google.com,
         felixe@google.com, bleung@google.com, darekm@google.com,
         marcheu@chromium.org, fparent@baylibre.com,
         dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        eballetbo@gmail.com
-Subject: [PATCH v4 0/5] Add ChromeOS EC CEC Support
-Date: Mon, 21 May 2018 16:21:41 +0200
-Message-Id: <1526912506-18406-1-git-send-email-narmstrong@baylibre.com>
+        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 2/5] drm/i915: hdmi: add CEC notifier to intel_hdmi
+Date: Mon, 21 May 2018 16:21:43 +0200
+Message-Id: <1526912506-18406-3-git-send-email-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1526912506-18406-1-git-send-email-narmstrong@baylibre.com>
+References: <1526912506-18406-1-git-send-email-narmstrong@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi All,
+This patchs adds the cec_notifier feature to the intel_hdmi part
+of the i915 DRM driver. It uses the HDMI DRM connector name to differentiate
+between each HDMI ports.
+The changes will allow the i915 HDMI code to notify EDID and HPD changes
+to an eventual CEC adapter.
 
-The new Google "Fizz" Intel-based ChromeOS device is gaining CEC support
-through it's Embedded Controller, to enable the Linux CEC Core to communicate
-with it and get the CEC Physical Address from the correct HDMI Connector, the
-following must be added/changed:
-- Add the CEC sub-device registration in the ChromeOS EC MFD Driver
-- Add the CEC related commands and events definitions into the EC MFD driver
-- Add a way to get a CEC notifier with it's (optional) connector name
-- Add the CEC notifier to the i915 HDMI driver
-- Add the proper ChromeOS EC CEC Driver
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+---
+ drivers/gpu/drm/i915/Kconfig         |  1 +
+ drivers/gpu/drm/i915/intel_display.h | 20 ++++++++++++++++++++
+ drivers/gpu/drm/i915/intel_drv.h     |  2 ++
+ drivers/gpu/drm/i915/intel_hdmi.c    | 13 +++++++++++++
+ 4 files changed, 36 insertions(+)
 
-The CEC notifier with the connector name is the tricky point, since even on
-Device-Tree platforms, there is no way to distinguish between multiple HDMI
-connectors from the same DRM driver. The solution I implemented is pretty
-simple and only adds an optional connector name to eventually distinguish
-an HDMI connector notifier from another if they share the same device.
-
-Feel free to comment this patchset !
-
-Changes since v3 (incorrectly reported as v2):
- - Renamed "Chrome OS" to "ChromeOS"
- - Updated cros_ec_commands.h new structs definitions to kernel doc format
- - Added Reviwed-By tags
-
-Changes since v2:
- - Add i915 port_identifier() and use this stable name as cec_notifier conn name
- - Fixed and cleaned up the CEC commands and events handling
- - Rebased the CEC sub-device registration on top of Enric's serie
- - Fixed comments typo on cec driver
- - Protected the DMI match only with PCI and DMI Kconfigs
-
-Changes since v1:
- - Added cec_notifier_put to intel_hdmi
- - Fixed all small reported issues on the EC CEC driver
- - Moved the cec_notifier_get out of the #if .. #else .. #endif
-
-Changes since RFC:
- - Moved CEC sub-device registration after CEC commands and events definitions patch
- - Removed get_notifier_get_byname
- - Added CEC_CORE select into i915 Kconfig
- - Removed CEC driver fallback if notifier is not configured on HW, added explicit warn
- - Fixed CEC core return type on error
- - Moved to cros-ec-cec media platform directory
- - Use bus_find_device() to find the pci i915 device instead of get_notifier_get_byname()
- - Fix Logical Address setup
- - Added comment about HW support
- - Removed memset of msg structures
-
-Neil Armstrong (5):
-  media: cec-notifier: Get notifier by device and connector name
-  drm/i915: hdmi: add CEC notifier to intel_hdmi
-  mfd: cros-ec: Introduce CEC commands and events definitions.
-  mfd: cros_ec_dev: Add CEC sub-device registration
-  media: platform: Add ChromeOS EC CEC driver
-
- drivers/gpu/drm/i915/Kconfig                     |   1 +
- drivers/gpu/drm/i915/intel_display.h             |  20 ++
- drivers/gpu/drm/i915/intel_drv.h                 |   2 +
- drivers/gpu/drm/i915/intel_hdmi.c                |  13 +
- drivers/media/cec/cec-notifier.c                 |  11 +-
- drivers/media/platform/Kconfig                   |  11 +
- drivers/media/platform/Makefile                  |   2 +
- drivers/media/platform/cros-ec-cec/Makefile      |   1 +
- drivers/media/platform/cros-ec-cec/cros-ec-cec.c | 347 +++++++++++++++++++++++
- drivers/mfd/cros_ec_dev.c                        |  16 ++
- drivers/platform/chrome/cros_ec_proto.c          |  40 ++-
- include/linux/mfd/cros_ec.h                      |   2 +-
- include/linux/mfd/cros_ec_commands.h             | 103 +++++++
- include/media/cec-notifier.h                     |  27 +-
- 14 files changed, 580 insertions(+), 16 deletions(-)
- create mode 100644 drivers/media/platform/cros-ec-cec/Makefile
- create mode 100644 drivers/media/platform/cros-ec-cec/cros-ec-cec.c
-
+diff --git a/drivers/gpu/drm/i915/Kconfig b/drivers/gpu/drm/i915/Kconfig
+index dfd9588..2d65d56 100644
+--- a/drivers/gpu/drm/i915/Kconfig
++++ b/drivers/gpu/drm/i915/Kconfig
+@@ -23,6 +23,7 @@ config DRM_I915
+ 	select SYNC_FILE
+ 	select IOSF_MBI
+ 	select CRC32
++	select CEC_CORE if CEC_NOTIFIER
+ 	help
+ 	  Choose this option if you have a system that has "Intel Graphics
+ 	  Media Accelerator" or "HD Graphics" integrated graphics,
+diff --git a/drivers/gpu/drm/i915/intel_display.h b/drivers/gpu/drm/i915/intel_display.h
+index 4e7418b..c68d1c8 100644
+--- a/drivers/gpu/drm/i915/intel_display.h
++++ b/drivers/gpu/drm/i915/intel_display.h
+@@ -126,6 +126,26 @@ enum port {
+ 
+ #define port_name(p) ((p) + 'A')
+ 
++static inline const char *port_identifier(enum port port)
++{
++	switch (port) {
++	case PORT_A:
++		return "Port A";
++	case PORT_B:
++		return "Port B";
++	case PORT_C:
++		return "Port C";
++	case PORT_D:
++		return "Port D";
++	case PORT_E:
++		return "Port E";
++	case PORT_F:
++		return "Port F";
++	default:
++		return "<invalid>";
++	}
++}
++
+ enum dpio_channel {
+ 	DPIO_CH0,
+ 	DPIO_CH1
+diff --git a/drivers/gpu/drm/i915/intel_drv.h b/drivers/gpu/drm/i915/intel_drv.h
+index d436858..b50e51b 100644
+--- a/drivers/gpu/drm/i915/intel_drv.h
++++ b/drivers/gpu/drm/i915/intel_drv.h
+@@ -39,6 +39,7 @@
+ #include <drm/drm_dp_mst_helper.h>
+ #include <drm/drm_rect.h>
+ #include <drm/drm_atomic.h>
++#include <media/cec-notifier.h>
+ 
+ /**
+  * __wait_for - magic wait macro
+@@ -1001,6 +1002,7 @@ struct intel_hdmi {
+ 	bool has_audio;
+ 	bool rgb_quant_range_selectable;
+ 	struct intel_connector *attached_connector;
++	struct cec_notifier *notifier;
+ };
+ 
+ struct intel_dp_mst_encoder;
+diff --git a/drivers/gpu/drm/i915/intel_hdmi.c b/drivers/gpu/drm/i915/intel_hdmi.c
+index 1baef4a..d522b5b 100644
+--- a/drivers/gpu/drm/i915/intel_hdmi.c
++++ b/drivers/gpu/drm/i915/intel_hdmi.c
+@@ -1868,6 +1868,8 @@ intel_hdmi_set_edid(struct drm_connector *connector)
+ 		connected = true;
+ 	}
+ 
++	cec_notifier_set_phys_addr_from_edid(intel_hdmi->notifier, edid);
++
+ 	return connected;
+ }
+ 
+@@ -1876,6 +1878,7 @@ intel_hdmi_detect(struct drm_connector *connector, bool force)
+ {
+ 	enum drm_connector_status status;
+ 	struct drm_i915_private *dev_priv = to_i915(connector->dev);
++	struct intel_hdmi *intel_hdmi = intel_attached_hdmi(connector);
+ 
+ 	DRM_DEBUG_KMS("[CONNECTOR:%d:%s]\n",
+ 		      connector->base.id, connector->name);
+@@ -1891,6 +1894,9 @@ intel_hdmi_detect(struct drm_connector *connector, bool force)
+ 
+ 	intel_display_power_put(dev_priv, POWER_DOMAIN_GMBUS);
+ 
++	if (status != connector_status_connected)
++		cec_notifier_phys_addr_invalidate(intel_hdmi->notifier);
++
+ 	return status;
+ }
+ 
+@@ -2031,6 +2037,8 @@ static void chv_hdmi_pre_enable(struct intel_encoder *encoder,
+ 
+ static void intel_hdmi_destroy(struct drm_connector *connector)
+ {
++	if (intel_attached_hdmi(connector)->notifier)
++		cec_notifier_put(intel_attached_hdmi(connector)->notifier);
+ 	kfree(to_intel_connector(connector)->detect_edid);
+ 	drm_connector_cleanup(connector);
+ 	kfree(connector);
+@@ -2358,6 +2366,11 @@ void intel_hdmi_init_connector(struct intel_digital_port *intel_dig_port,
+ 		u32 temp = I915_READ(PEG_BAND_GAP_DATA);
+ 		I915_WRITE(PEG_BAND_GAP_DATA, (temp & ~0xf) | 0xd);
+ 	}
++
++	intel_hdmi->notifier = cec_notifier_get_conn(dev->dev,
++						     port_identifier(port));
++	if (!intel_hdmi->notifier)
++		DRM_DEBUG_KMS("CEC notifier get failed\n");
+ }
+ 
+ void intel_hdmi_init(struct drm_i915_private *dev_priv,
 -- 
 2.7.4
