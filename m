@@ -1,267 +1,468 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751271AbeEUKbi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 06:31:38 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39832 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751025AbeEUKbf (ORCPT
+        id S1751685AbeEUKca (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 06:32:30 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:36400 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750944AbeEUKc0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 06:31:35 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C670E6021A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
-From: Ilia Lin <ilialin@codeaurora.org>
-To: viresh.kumar@linaro.org
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] cpufreq: Add Kryo CPU scaling driver
-Date: Mon, 21 May 2018 13:31:30 +0300
-Message-Id: <1526898690-4018-1-git-send-email-ilialin@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
-References: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
+        Mon, 21 May 2018 06:32:26 -0400
+X-Google-Smtp-Source: AB8JxZoJp5IgG88drtbfoXxWL/YaWqkIv0hAk7VbWOHgjdjNa6eSf7J+XARiollwXSsPCKWxec7IHA==
+Date: Mon, 21 May 2018 16:02:23 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: rjw@rjwysocki.net, edubezval@gmail.com, kevin.wangtao@linaro.org,
+        leo.yan@linaro.org, vincent.guittot@linaro.org,
+        linux-kernel@vger.kernel.org, javi.merino@kernel.org,
+        rui.zhang@intel.com, linux-pm@vger.kernel.org,
+        daniel.thompson@linaro.org
+Subject: Re: [PATCH V3] powercap/drivers/idle_injection: Add an idle
+ injection framework
+Message-ID: <20180521103223.asejwsaf7pnrs777@vireshk-i7>
+References: <1526655056-24592-1-git-send-email-daniel.lezcano@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1526655056-24592-1-git-send-email-daniel.lezcano@linaro.org>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
-the CPU frequency subset and voltage value of each OPP varies
-based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
-defines the voltage and frequency value based on the msm-id in SMEM
-and speedbin blown in the efuse combination.
-The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
-to provide the OPP framework with required information.
-This is used to determine the voltage and frequency value for each OPP of
-operating-points-v2 table when it is parsed by the OPP framework.
+On 18-05-18, 16:50, Daniel Lezcano wrote:
+> Initially, the cpu_cooling device for ARM was changed by adding a new
+> policy inserting idle cycles. The intel_powerclamp driver does a
+> similar action.
+> 
+> Instead of implementing idle injections privately in the cpu_cooling
+> device, move the idle injection code in a dedicated framework and give
+> the opportunity to other frameworks to make use of it.
 
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- drivers/cpufreq/Kconfig.arm          |  10 +++
- drivers/cpufreq/Makefile             |   1 +
- drivers/cpufreq/cpufreq-dt-platdev.c |   3 +
- drivers/cpufreq/qcom-cpufreq-kryo.c  | 164 +++++++++++++++++++++++++++++++++++
- 4 files changed, 178 insertions(+)
- create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
+I thought you agreed to move above in the comments section ?
 
-diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-index de55c7d..0bfd40e 100644
---- a/drivers/cpufreq/Kconfig.arm
-+++ b/drivers/cpufreq/Kconfig.arm
-@@ -124,6 +124,16 @@ config ARM_OMAP2PLUS_CPUFREQ
- 	depends on ARCH_OMAP2PLUS
- 	default ARCH_OMAP2PLUS
- 
-+config ARM_QCOM_CPUFREQ_KRYO
-+	bool "Qualcomm Kryo based CPUFreq"
-+	depends on QCOM_QFPROM
-+	depends on QCOM_SMEM
-+	select PM_OPP
-+	help
-+	  This adds the CPUFreq driver for Qualcomm Kryo SoC based boards.
-+
-+	  If in doubt, say N.
-+
- config ARM_S3C_CPUFREQ
- 	bool
- 	help
-diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-index 8d24ade..fb4a2ec 100644
---- a/drivers/cpufreq/Makefile
-+++ b/drivers/cpufreq/Makefile
-@@ -65,6 +65,7 @@ obj-$(CONFIG_MACH_MVEBU_V7)		+= mvebu-cpufreq.o
- obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+= omap-cpufreq.o
- obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+= pxa2xx-cpufreq.o
- obj-$(CONFIG_PXA3xx)			+= pxa3xx-cpufreq.o
-+obj-$(CONFIG_ARM_QCOM_CPUFREQ_KRYO)	+= qcom-cpufreq-kryo.o
- obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+= s3c2410-cpufreq.o
- obj-$(CONFIG_ARM_S3C2412_CPUFREQ)	+= s3c2412-cpufreq.o
- obj-$(CONFIG_ARM_S3C2416_CPUFREQ)	+= s3c2416-cpufreq.o
-diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-index 3b585e4..77d6ab8 100644
---- a/drivers/cpufreq/cpufreq-dt-platdev.c
-+++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-@@ -118,6 +118,9 @@
- 
- 	{ .compatible = "nvidia,tegra124", },
- 
-+	{ .compatible = "qcom,apq8096", },
-+	{ .compatible = "qcom,msm8996", },
-+
- 	{ .compatible = "st,stih407", },
- 	{ .compatible = "st,stih410", },
- 
-diff --git a/drivers/cpufreq/qcom-cpufreq-kryo.c b/drivers/cpufreq/qcom-cpufreq-kryo.c
-new file mode 100644
-index 0000000..4e002d0b
---- /dev/null
-+++ b/drivers/cpufreq/qcom-cpufreq-kryo.c
-@@ -0,0 +1,164 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ */
-+
-+/*
-+ * In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
-+ * the CPU frequency subset and voltage value of each OPP varies
-+ * based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
-+ * defines the voltage and frequency value based on the msm-id in SMEM
-+ * and speedbin blown in the efuse combination.
-+ * The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
-+ * to provide the OPP framework with required information.
-+ * This is used to determine the voltage and frequency value for each OPP of
-+ * operating-points-v2 table when it is parsed by the OPP framework.
-+ */
-+
-+#include <linux/cpu.h>
-+#include <linux/err.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/nvmem-consumer.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_opp.h>
-+#include <linux/slab.h>
-+#include <linux/soc/qcom/smem.h>
-+
-+#define MSM_ID_SMEM	137
-+#define SILVER_LEAD	0
-+#define GOLD_LEAD	2
-+
-+enum _msm_id {
-+	MSM8996V3 = 0xF6ul,
-+	APQ8096V3 = 0x123ul,
-+	MSM8996SG = 0x131ul,
-+	APQ8096SG = 0x138ul,
-+};
-+
-+enum _msm8996_version {
-+	MSM8996_V3,
-+	MSM8996_SG,
-+	NUM_OF_MSM8996_VERSIONS,
-+};
-+
-+static enum _msm8996_version __init qcom_cpufreq_kryo_get_msm_id(void)
-+{
-+	size_t len;
-+	u32 *msm_id;
-+	enum _msm8996_version version;
-+
-+	msm_id = qcom_smem_get(QCOM_SMEM_HOST_ANY, MSM_ID_SMEM, &len);
-+	/* The first 4 bytes are format, next to them is the actual msm-id */
-+	msm_id++;
-+
-+	switch ((enum _msm_id)*msm_id) {
-+	case MSM8996V3:
-+	case APQ8096V3:
-+		version = MSM8996_V3;
-+		break;
-+	case MSM8996SG:
-+	case APQ8096SG:
-+		version = MSM8996_SG;
-+		break;
-+	default:
-+		version = NUM_OF_MSM8996_VERSIONS;
-+	}
-+
-+	return version;
-+}
-+
-+static int __init qcom_cpufreq_kryo_driver_init(void)
-+{
-+	struct device *cpu_dev_silver, *cpu_dev_gold;
-+	struct opp_table *opp_silver, *opp_gold;
-+	enum _msm8996_version msm8996_version;
-+	struct nvmem_cell *speedbin_nvmem;
-+	struct platform_device *pdev;
-+	struct device_node *np;
-+	u8 *speedbin;
-+	u32 versions;
-+	size_t len;
-+	int ret;
-+
-+	cpu_dev_silver = get_cpu_device(SILVER_LEAD);
-+	if (NULL == cpu_dev_silver)
-+		return -ENODEV;
-+
-+	cpu_dev_gold = get_cpu_device(SILVER_LEAD);
-+	if (NULL == cpu_dev_gold)
-+		return -ENODEV;
-+
-+	msm8996_version = qcom_cpufreq_kryo_get_msm_id();
-+	if (NUM_OF_MSM8996_VERSIONS == msm8996_version) {
-+		dev_err(cpu_dev_silver, "Not Snapdragon 820/821!");
-+		return -ENODEV;
-+	}
-+
-+	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev_silver);
-+	if (IS_ERR(np))
-+		return PTR_ERR(np);
-+
-+	if (!of_device_is_compatible(np, "operating-points-v2-kryo-cpu")) {
-+		ret = -ENOENT;
-+		goto free_np;
-+	}
-+
-+	speedbin_nvmem = of_nvmem_cell_get(np, NULL);
-+	if (IS_ERR(speedbin_nvmem)) {
-+		ret = PTR_ERR(speedbin_nvmem);
-+		dev_err(cpu_dev_silver, "Could not get nvmem cell: %d\n", ret);
-+		goto free_np;
-+	}
-+
-+	speedbin = nvmem_cell_read(speedbin_nvmem, &len);
-+	nvmem_cell_put(speedbin_nvmem);
-+
-+	switch (msm8996_version) {
-+	case MSM8996_V3:
-+		versions = 1 << (unsigned int)(*speedbin);
-+		break;
-+	case MSM8996_SG:
-+		versions = 1 << ((unsigned int)(*speedbin) + 4);
-+		break;
-+	default:
-+		BUG();
-+		break;
-+	}
-+
-+	opp_silver = dev_pm_opp_set_supported_hw(cpu_dev_silver,&versions,1);
-+	if (IS_ERR(opp_silver)) {
-+		dev_err(cpu_dev_silver, "Failed to set supported hardware\n");
-+		ret = PTR_ERR(opp_silver);
-+		goto free_np;
-+	}
-+
-+	opp_gold = dev_pm_opp_set_supported_hw(cpu_dev_gold,&versions,1);
-+	if (IS_ERR(opp_gold)) {
-+		dev_err(cpu_dev_gold, "Failed to set supported hardware\n");
-+		ret = PTR_ERR(opp_gold);
-+		goto free_opp_silver;
-+	}
-+
-+	pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
-+	if (!IS_ERR(pdev))
-+		return 0;
-+
-+	ret = PTR_ERR(pdev);
-+	dev_err(cpu_dev_silver, "Failed to register platform device\n");
-+	dev_pm_opp_put_supported_hw(opp_gold);
-+
-+free_opp_silver:
-+	dev_pm_opp_put_supported_hw(opp_silver);
-+
-+free_np:
-+	of_node_put(np);
-+
-+	return ret;
-+}
-+late_initcall(qcom_cpufreq_kryo_driver_init);
-+
-+MODULE_DESCRIPTION("Qualcomm Technologies, Inc. Kryo CPUfreq driver");
-+MODULE_LICENSE("GPL v2");
+> The framework relies on the smpboot kthreads which handles via its
+> mainloop the common code for hotplugging and [un]parking.
+> 
+> This code was previously tested with the cpu cooling device and went
+> through several iterations. It results now in split code and API
+> exported in the header file. It was tested with the cpu cooling device
+> with success.
+> 
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> ---
+>  V3:
+>    - Fixed typos (Viresh Kumar)
+>    - Removed extra blank line (Viresh Kumar)
+>    - Added full stop (Viresh Kumar)
+>    - Fixed Return kerneldoc format (Viresh Kumar)
+>    - Fixed multiple kthreads initialization (Viresh Kumar)
+>    - Fixed rollbacking the actions in the unregister function (Viresh Kumar)
+>    - Make idle injection kthreads name hardcoded
+>    - Kthreads are created in the initcall process
+> 
+>  V2: Fixed checkpatch warnings
+> ---
+>  drivers/powercap/Kconfig          |  10 ++
+>  drivers/powercap/Makefile         |   1 +
+>  drivers/powercap/idle_injection.c | 326 ++++++++++++++++++++++++++++++++++++++
+>  include/linux/idle_injection.h    |  29 ++++
+>  4 files changed, 366 insertions(+)
+>  create mode 100644 drivers/powercap/idle_injection.c
+>  create mode 100644 include/linux/idle_injection.h
+> 
+> diff --git a/drivers/powercap/Kconfig b/drivers/powercap/Kconfig
+> index 85727ef..a767ef2 100644
+> --- a/drivers/powercap/Kconfig
+> +++ b/drivers/powercap/Kconfig
+> @@ -29,4 +29,14 @@ config INTEL_RAPL
+>  	  controller, CPU core (Power Plance 0), graphics uncore (Power Plane
+>  	  1), etc.
+>  
+> +config IDLE_INJECTION
+> +	bool "Idle injection framework"
+> +	depends on CPU_IDLE
+> +	default n
+> +	help
+> +	  This enables support for the idle injection framework. It
+> +	  provides a way to force idle periods on a set of specified
+> +	  CPUs for power capping. Idle period can be injected
+> +	  synchronously on a set of specified CPUs or alternatively
+> +	  on a per CPU basis.
+>  endif
+> diff --git a/drivers/powercap/Makefile b/drivers/powercap/Makefile
+> index 0a21ef3..c3bbfee 100644
+> --- a/drivers/powercap/Makefile
+> +++ b/drivers/powercap/Makefile
+> @@ -1,2 +1,3 @@
+>  obj-$(CONFIG_POWERCAP)	+= powercap_sys.o
+>  obj-$(CONFIG_INTEL_RAPL) += intel_rapl.o
+> +obj-$(CONFIG_IDLE_INJECTION) += idle_injection.o
+> diff --git a/drivers/powercap/idle_injection.c b/drivers/powercap/idle_injection.c
+> new file mode 100644
+> index 0000000..a5fe205
+> --- /dev/null
+> +++ b/drivers/powercap/idle_injection.c
+> @@ -0,0 +1,326 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * drivers/powercap/idle_injection.c
+> + *
+> + * Copyright 2018 Linaro Limited
+> + *
+> + * Author: Daniel Lezcano <daniel.lezcano@linaro.org>
+> + *
+> + * The idle injection framework proposes a way to force a cpu to enter
+> + * an idle state during a specified amount of time for a specified
+> + * period.
+> + *
+> + * It relies on the smpboot kthreads which handles, via its main loop,
+> + * the common code for hotplugging and [un]parking.
+> + *
+> + * At init time, all the kthreads are created and parked.
+> + *
+> + * A cpumask is specified as parameter for the idle injection
+> + * registering function. The kthreads will be synchronized regarding
+> + * this cpumask.
+> + *
+> + * The idle + run duration is specified via the helpers and then the
+> + * idle injection can be started at this point.
+> + *
+> + * A kthread will call play_idle() with the specified idle duration
+> + * from above and then will schedule itself. The latest CPU belonging
+> + * to the group is in charge of setting the timer for the next idle
+> + * injection deadline.
+> + *
+> + * The task handling the timer interrupt will wakeup all the kthreads
+> + * belonging to the cpumask.
+> + */
+> +#include <linux/cpu.h>
+> +#include <linux/freezer.h>
+> +#include <linux/hrtimer.h>
+> +#include <linux/sched.h>
+> +#include <linux/slab.h>
+> +#include <linux/smpboot.h>
+> +
+> +#include <uapi/linux/sched/types.h>
+> +
+> +/**
+> + * struct idle_injection_thread - task on/off switch structure
+> + * @tsk: a pointer to a task_struct injecting the idle cycles
+> + * @should_run: a integer used as a boolean by the smpboot kthread API
+> + */
+> +struct idle_injection_thread {
+> +	struct task_struct *tsk;
+> +	int should_run;
+> +};
+> +
+> +/**
+> + * struct idle_injection_device - data for the idle injection
+> + * @cpumask: a cpumask containing the list of CPUs managed by the device
+> + * @timer: a hrtimer giving the tempo for the idle injection
+> + * @count: an atomic to keep track of the last task exiting the idle cycle
+> + * @idle_duration_ms: an atomic specifying the idle duration
+> + * @run_duration_ms: an atomic specifying the running duration
+> + */
+> +struct idle_injection_device {
+> +	cpumask_var_t cpumask;
+> +	struct hrtimer timer;
+> +	atomic_t count;
+> +	atomic_t idle_duration_ms;
+> +	atomic_t run_duration_ms;
+> +};
+> +
+> +static DEFINE_PER_CPU(struct idle_injection_thread, idle_injection_thread);
+> +static DEFINE_PER_CPU(struct idle_injection_device *, idle_injection_device);
+> +
+> +/**
+> + * idle_injection_wakeup - Wake up all idle injection threads
+> + * @ii_dev: the idle injection device
+> + *
+> + * Every idle injection task belonging to the idle injection device
+> + * and running on an online CPU will be wake up by this call.
+> + */
+> +static void idle_injection_wakeup(struct idle_injection_device *ii_dev)
+> +{
+> +	struct idle_injection_thread *iit;
+> +	int cpu;
+> +
+> +	for_each_cpu_and(cpu, ii_dev->cpumask, cpu_online_mask) {
+> +		iit = per_cpu_ptr(&idle_injection_thread, cpu);
+> +		iit->should_run = 1;
+> +		wake_up_process(iit->tsk);
+> +	}
+> +}
+> +
+> +/**
+> + * idle_injection_wakeup_fn - idle injection timer callback
+> + * @timer: a hrtimer structure
+> + *
+> + * This function is called when the idle injection timer expires which
+> + * will wake up the idle injection tasks and these ones, in turn, play
+> + * idle a specified amount of time.
+> + *
+> + * Return: HRTIMER_NORESTART.
+> + */
+> +static enum hrtimer_restart idle_injection_wakeup_fn(struct hrtimer *timer)
+> +{
+> +	struct idle_injection_device *ii_dev =
+> +		container_of(timer, struct idle_injection_device, timer);
+> +
+> +	idle_injection_wakeup(ii_dev);
+> +
+> +	return HRTIMER_NORESTART;
+> +}
+> +
+> +/**
+> + * idle_injection_fn - idle injection routine
+> + * @cpu: the CPU number the tasks belongs to
+> + *
+> + * The idle injection routine will stay idle the specified amount of
+> + * time
+> + */
+> +static void idle_injection_fn(unsigned int cpu)
+> +{
+> +	struct idle_injection_device *ii_dev;
+> +	struct idle_injection_thread *iit;
+> +	int run_duration_ms, idle_duration_ms;
+> +
+> +	ii_dev = per_cpu(idle_injection_device, cpu);
+> +
+> +	iit = per_cpu_ptr(&idle_injection_thread, cpu);
+> +
+> +	/*
+> +	 * Boolean used by the smpboot mainloop and used as a flip-flop
+
+You never replied to my comment in previous posting where I suggested
+s/mainloop/main loop/ . Maybe my comment is wrong, but it needs to be
+Nak'd.
+
+> +	 * in this function
+> +	 */
+> +	iit->should_run = 0;
+> +
+> +	atomic_inc(&ii_dev->count);
+> +
+> +	idle_duration_ms = atomic_read(&ii_dev->idle_duration_ms);
+> +
+> +	play_idle(idle_duration_ms);
+> +
+> +	/*
+> +	 * The last CPU waking up is in charge of setting the timer. If
+> +	 * the CPU is hotplugged, the timer will move to another CPU
+> +	 * (which may not belong to the same cluster) but that is not a
+> +	 * problem as the timer will be set again by another CPU
+> +	 * belonging to the cluster. This mechanism is self adaptive.
+> +	 */
+> +	if (!atomic_dec_and_test(&ii_dev->count))
+> +		return;
+> +
+> +	run_duration_ms = atomic_read(&ii_dev->run_duration_ms);
+
+This reads as if it is okay to have run_duration_ms set as 0, so we
+run idle loop only once. Which is fine, but why do you mandate this to
+be non-zero in idle_injection_start() ?
+
+> +	if (!run_duration_ms)
+> +		return;
+> +
+> +	hrtimer_start(&ii_dev->timer, ms_to_ktime(run_duration_ms),
+> +		      HRTIMER_MODE_REL_PINNED);
+> +}
+> +
+> +/**
+> + * idle_injection_set_duration - idle and run duration helper
+> + * @run_duration_ms: an unsigned int giving the running time in milliseconds
+> + * @idle_duration_ms: an unsigned int giving the idle time in milliseconds
+> + */
+> +void idle_injection_set_duration(struct idle_injection_device *ii_dev,
+> +				 unsigned int run_duration_ms,
+> +				 unsigned int idle_duration_ms)
+> +{
+> +	atomic_set(&ii_dev->run_duration_ms, run_duration_ms);
+> +	atomic_set(&ii_dev->idle_duration_ms, idle_duration_ms);
+
+You check for valid values of these in idle_injection_start() but not
+here, why ?
+
+> +}
+> +
+> +/**
+> + * idle_injection_get_duration - idle and run duration helper
+> + * @run_duration_ms: a pointer to an unsigned int to store the running time
+> + * @idle_duration_ms: a pointer to an unsigned int to store the idle time
+> + */
+> +void idle_injection_get_duration(struct idle_injection_device *ii_dev,
+> +				 unsigned int *run_duration_ms,
+> +				 unsigned int *idle_duration_ms)
+> +{
+> +	*run_duration_ms = atomic_read(&ii_dev->run_duration_ms);
+> +	*idle_duration_ms = atomic_read(&ii_dev->idle_duration_ms);
+> +}
+> +
+> +/**
+> + * idle_injection_start - starts the idle injections
+> + * @ii_dev: a pointer to an idle_injection_device structure
+> + *
+> + * The function starts the idle injection cycles by first waking up
+> + * all the tasks the ii_dev is attached to and let them handle the
+> + * idle-run periods.
+> + *
+> + * Return: -EINVAL if the idle or the running durations are not set.
+> + */
+> +int idle_injection_start(struct idle_injection_device *ii_dev)
+> +{
+> +	if (!atomic_read(&ii_dev->idle_duration_ms))
+> +		return -EINVAL;
+> +
+> +	if (!atomic_read(&ii_dev->run_duration_ms))
+> +		return -EINVAL;
+> +
+> +	pr_debug("Starting injecting idle cycles on CPUs '%*pbl'\n",
+> +		 cpumask_pr_args(ii_dev->cpumask));
+> +
+> +	idle_injection_wakeup(ii_dev);
+> +
+> +	return 0;
+> +}
+> +
+> +/**
+> + * idle_injection_stop - stops the idle injections
+> + * @ii_dev: a pointer to an idle injection_device structure
+> + *
+> + * The function stops the idle injection by canceling the timer in
+> + * charge of waking up the tasks to inject idle and unset the idle and
+> + * running durations.
+> + */
+> +void idle_injection_stop(struct idle_injection_device *ii_dev)
+> +{
+> +	pr_debug("Stopping injecting idle cycles on CPUs '%*pbl'\n",
+> +		 cpumask_pr_args(ii_dev->cpumask));
+> +
+> +	hrtimer_cancel(&ii_dev->timer);
+
+How are we sure that idle_injection_fn() isn't running at this point
+and it would start the timer cancelled here again ?
+
+> +
+> +	idle_injection_set_duration(ii_dev, 0, 0);
+
+And why exactly this this required ? Why shouldn't we allow this
+sequence to work:
+
+idle_injection_set_duration()
+idle_injection_start()
+idle_injection_stop()
+idle_injection_start()
+idle_injection_stop()
+idle_injection_start()
+idle_injection_stop()
+
+> +}
+> +
+> +/**
+> + * idle_injection_setup - initialize the current task as a RT task
+> + * @cpu: the CPU number where the kthread is running on (not used)
+> + *
+> + * Called one time, this function is in charge of setting the task
+> + * scheduler parameters.
+> + */
+> +static void idle_injection_setup(unsigned int cpu)
+> +{
+> +	struct sched_param param = { .sched_priority = MAX_USER_RT_PRIO / 2 };
+> +
+> +	set_freezable();
+> +
+> +	sched_setscheduler(current, SCHED_FIFO, &param);
+> +}
+> +
+> +/**
+> + * idle_injection_should_run - function helper for the smpboot API
+> + * @cpu: the CPU number where the kthread is running on
+> + *
+> + * Return: a boolean telling if the thread can run.
+> + */
+> +static int idle_injection_should_run(unsigned int cpu)
+> +{
+> +	struct idle_injection_thread *iit =
+> +		per_cpu_ptr(&idle_injection_thread, cpu);
+> +
+> +	return iit->should_run;
+> +}
+> +
+> +/**
+> + * idle_injection_register - idle injection init routine
+> + * @cpumask: the list of CPUs managed by the idle injection device
+> + *
+> + * This is the initialization function in charge of creating the
+> + * initializing the timer and allocate the structures. It does not
+> + * starts the idle injection cycles.
+> + *
+> + * Return: NULL if an allocation fails.
+> + */
+> +struct idle_injection_device *idle_injection_register(struct cpumask *cpumask)
+> +{
+> +	struct idle_injection_device *ii_dev;
+> +	int cpu;
+> +
+> +	ii_dev = kzalloc(sizeof(*ii_dev), GFP_KERNEL);
+> +	if (!ii_dev)
+> +		return NULL;
+> +
+> +	if (!alloc_cpumask_var(&ii_dev->cpumask, GFP_KERNEL))
+> +		goto out_free_ii_dev;
+> +	cpumask_copy(ii_dev->cpumask, cpumask);
+> +
+> +	hrtimer_init(&ii_dev->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+> +
+> +	ii_dev->timer.function = idle_injection_wakeup_fn;
+> +
+> +	for_each_cpu(cpu, cpumask)
+> +		per_cpu(idle_injection_device, cpu) = ii_dev;
+
+Not sure but do we need protection against registration done twice for
+a CPU ?
+
+> +
+> +	return ii_dev;
+> +
+> +out_free_ii_dev:
+> +	kfree(ii_dev);
+> +	return NULL;
+> +}
+> +
+> +/**
+> + * idle_injection_unregister - Unregister the idle injection device
+> + * @ii_dev: a pointer to an idle injection device
+> + *
+> + * The function is in charge of stopping the idle injections,
+> + * unregister the kthreads and free the allocated memory in the
+> + * register function.
+> + */
+> +void idle_injection_unregister(struct idle_injection_device *ii_dev)
+> +{
+> +	int cpu;
+> +
+> +	idle_injection_stop(ii_dev);
+> +
+> +	for_each_cpu(cpu, ii_dev->cpumask)
+> +		per_cpu(idle_injection_device, cpu) = NULL;
+> +
+> +	kfree(ii_dev);
+> +}
+> +
+> +static struct smp_hotplug_thread idle_injection_threads = {
+> +	.store = &idle_injection_thread.tsk,
+> +	.setup = idle_injection_setup,
+> +	.thread_fn = idle_injection_fn,
+> +	.thread_comm = "idle_inject/%u",
+> +	.thread_should_run = idle_injection_should_run,
+> +};
+> +
+> +static int __init idle_injection_init(void)
+> +{
+> +	return smpboot_register_percpu_thread(&idle_injection_threads);
+> +}
+> +early_initcall(idle_injection_init);
+
 -- 
-1.9.1
+viresh
