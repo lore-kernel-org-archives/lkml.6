@@ -1,38 +1,92 @@
-Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZoTi7Pcu2t+VoPahmXGaNfAY/aPXUI0sAOLRex6YPhdTdNo8rMc6Fthn8zuH85jV29nhRrQ
-ARC-Seal: i=1; a=rsa-sha256; t=1526937781; cv=none;
-        d=google.com; s=arc-20160816;
-        b=y8OilTf/d8Tfj4I2BAUo3HN89WgJSK6S+LgnYIukXSnToOuvz+JVuL2vsinhnmPHzH
-         QcCUUXWSqt8bnxaHnm8HxXjSQWK6fyCZ4FUqSS3/+fZ/SLuXqLZj9h57jwr3kNqiqIe1
-         JdwDMRrLtKT3FvWIAWKu+CJ4tP8CLDV3tO6nvAJl2ZEhVow6BNoi6Q/+ttQIQJcw02iE
-         sBglMPPmLVNZE1LsDlItHz/p5O4rxGPH2CBPBpHQFnM/ucphTtLTIoGOYpMKwuv0SQCb
-         n2TOGlQP/aOiwwgOnbIGxXXi7MQT16WTtxczoJjCjWtjX6Bon8SOsHHovFtTeta/yP5T
-         HMJA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=yog8J7Qo2JFEmYEMZxNelD05518A1NlO2ni6S9Fb7z0=;
-        b=nUo9VmJ6x2CVZ/zv2TRQIWrE0x1/DfvVkSZxtDSrfLLToNUI0+JEEnWf3b3dWdJVgU
-         +V+SpEz4gDXpmX6W9AQxAAJECIkkvI2f7G5w+62JFGm715aXbc0YRcaNMzVc7MUwgTcB
-         /Rs4DgOKfGfTGWlbip/WMkRYcQL1opb+TTAg6ssfuBLB0DfRDC7m90zGMkCCIp/lC8M2
-         zStQanhp7YhUqFW5NpKmMx/ehXrzUzAfDOCvlKxCzCYjmokxf2GiN5OhGReexFOngihL
-         8hfFbjl7ViUy1UfHjw5DEf0AYEE3043PIvmJk+lYk47A6r0iPiUD1tB5gp3yubjonXtc
-         5JKg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=h7+A7qZW;
-       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=h7+A7qZW;
-       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1344077-1526937781-2-571671138782450018
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES enroda, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1526937780; b=GODowbf2zf3fk3yb1D070xkuZZWhpZfGQfN2mgRVMfs7oYqTWi
+    lcCTX/iar+GBXbrJtNFLW3JfVrUXVWhX67iXjDNsNkpanucpSRJzY7vaPA0YkNSF
+    SDhhJJV4aU9z7k/mHyvR006CwycBMdS4+J7+GqC76dPmqjnslKkQRMtsahfi/KtH
+    fVAzMhJ7W8ZHWpGpzqRLdql6NZHQwCIva8p0wIfgjwh0ytTSQ5H5nQOR1nEgD/RJ
+    1DUqhmA2Y94E4qt1qxrrkCforeZpZxeoUBH+WD9uCdD6jNPsR0YkFu87CiIKEWoF
+    LMWhvOHxk5HbWj/dP7G8XS7sfAC9+63jlQgQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1526937780; bh=r0FqWwRt8/I6VFfX02r7TwDSAC7O0n
+    FnhTJWMJzPmuY=; b=Sliekh60kzT6jP6w3Cux9ezK+gyMueucx8JcpXpiVTJWEj
+    gquXxL9MBfRyPSjFelAYV5fvW9hz6ClD0OhgKhK9E9EVqxtIKBGgfxGhDVBP5Kq3
+    mlFHW1V+xLQ1UdijOlBdLghUNN5VBX1f2XnX/G6LRbGIlR0KIeCm9vmjsI7VBZfC
+    7FwEir3Mqv8VS+oImtOrLQtoruWvk4rCaTZduqjW05mLnFHUDrG9YX6xCgXR75pQ
+    GtpPBl86p8VatVrS/ZvliI5KHl6GZl3sOu4srDWXk+V79cZ/VZKTdvRki5KspG/E
+    XFsWjBRj9Tvb/3pOsSLRdlgSCZYrV0IsmB8fORJw==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+    header.i=@kernel.org header.b=E7OFPHJ6 x-bits=1024 x-keytype=rsa
+    x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+    header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=linuxfoundation.org header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+      header.i=@kernel.org header.b=E7OFPHJ6 x-bits=1024 x-keytype=rsa
+      x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+      header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=linuxfoundation.org header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfH3vv8ZDUjW5ls0qVRfCwY7TXqVo/bPMD6hRB0Fi6rjoIbY7LQfXjZslyt6Iqaz77B14KfDTNIv+AGtQn9Xp1hO61eX6YRzjm0LqkexuVDEScqa+R/Kg
+    lowPbCKBmfOnY2t/x5oVUdiS1WkLTTqvGiZJbLCXqkOVymVkQTD+uP2ecO2t6Gmj4d3galIVq23X1BknRE1i0J1exLBuYwHhoDBmL3vkcuuxIUEuTS3L8oPj
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=hD80L64hAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=KslZaVS1h0vLkMwhe8wA:9
+    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1754316AbeEUVWz (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 21 May 2018 17:22:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37730 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754305AbeEUVWv (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 21 May 2018 17:22:51 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	"Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.16 023/110] vsprintf: Replace memory barrier with static_key for random_ptr_key update
-Date: Mon, 21 May 2018 23:11:20 +0200
-Message-Id: <20180521210505.930147328@linuxfoundation.org>
+        stable@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>
+Subject: [PATCH 4.16 002/110] usbip: usbip_host: refine probe and disconnect debug msgs to be useful
+Date: Mon, 21 May 2018 23:10:59 +0200
+Message-Id: <20180521210504.023378330@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -40,10 +94,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601110311606408170?=
-X-GMAIL-MSGID: =?utf-8?q?1601110311606408170?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,127 +104,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Shuah Khan <shuahkh@osg.samsung.com>
 
-commit 85f4f12d51397f1648e1f4350f77e24039b82d61 upstream.
+commit 28b68acc4a88dcf91fd1dcf2577371dc9bf574cc upstream.
 
-Reviewing Tobin's patches for getting pointers out early before
-entropy has been established, I noticed that there's a lone smp_mb() in
-the code. As with most lone memory barriers, this one appears to be
-incorrectly used.
+Refine probe and disconnect debug msgs to be useful and say what is
+in progress.
 
-We currently basically have this:
-
-	get_random_bytes(&ptr_key, sizeof(ptr_key));
-	/*
-	 * have_filled_random_ptr_key==true is dependent on get_random_bytes().
-	 * ptr_to_id() needs to see have_filled_random_ptr_key==true
-	 * after get_random_bytes() returns.
-	 */
-	smp_mb();
-	WRITE_ONCE(have_filled_random_ptr_key, true);
-
-And later we have:
-
-	if (unlikely(!have_filled_random_ptr_key))
-		return string(buf, end, "(ptrval)", spec);
-
-/* Missing memory barrier here. */
-
-	hashval = (unsigned long)siphash_1u64((u64)ptr, &ptr_key);
-
-As the CPU can perform speculative loads, we could have a situation
-with the following:
-
-	CPU0				CPU1
-	----				----
-				   load ptr_key = 0
-   store ptr_key = random
-   smp_mb()
-   store have_filled_random_ptr_key
-
-				   load have_filled_random_ptr_key = true
-
-				    BAD BAD BAD! (you're so bad!)
-
-Because nothing prevents CPU1 from loading ptr_key before loading
-have_filled_random_ptr_key.
-
-But this race is very unlikely, but we can't keep an incorrect smp_mb() in
-place. Instead, replace the have_filled_random_ptr_key with a static_branch
-not_filled_random_ptr_key, that is initialized to true and changed to false
-when we get enough entropy. If the update happens in early boot, the
-static_key is updated immediately, otherwise it will have to wait till
-entropy is filled and this happens in an interrupt handler which can't
-enable a static_key, as that requires a preemptible context. In that case, a
-work_queue is used to enable it, as entropy already took too long to
-establish in the first place waiting a little more shouldn't hurt anything.
-
-The benefit of using the static key is that the unlikely branch in
-vsprintf() now becomes a nop.
-
-Link: http://lkml.kernel.org/r/20180515100558.21df515e@gandalf.local.home
-
-Cc: stable@vger.kernel.org
-Fixes: ad67b74d2469d ("printk: hash addresses printed with %p")
-Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- lib/vsprintf.c |   26 +++++++++++++++-----------
- 1 file changed, 15 insertions(+), 11 deletions(-)
+ drivers/usb/usbip/stub_dev.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/lib/vsprintf.c
-+++ b/lib/vsprintf.c
-@@ -1659,19 +1659,22 @@ char *pointer_string(char *buf, char *en
- 	return number(buf, end, (unsigned long int)ptr, spec);
- }
+--- a/drivers/usb/usbip/stub_dev.c
++++ b/drivers/usb/usbip/stub_dev.c
+@@ -302,7 +302,7 @@ static int stub_probe(struct usb_device
+ 	struct bus_id_priv *busid_priv;
+ 	int rc;
  
--static bool have_filled_random_ptr_key __read_mostly;
-+static DEFINE_STATIC_KEY_TRUE(not_filled_random_ptr_key);
- static siphash_key_t ptr_key __read_mostly;
+-	dev_dbg(&udev->dev, "Enter\n");
++	dev_dbg(&udev->dev, "Enter probe\n");
  
--static void fill_random_ptr_key(struct random_ready_callback *unused)
-+static void enable_ptr_key_workfn(struct work_struct *work)
- {
- 	get_random_bytes(&ptr_key, sizeof(ptr_key));
--	/*
--	 * have_filled_random_ptr_key==true is dependent on get_random_bytes().
--	 * ptr_to_id() needs to see have_filled_random_ptr_key==true
--	 * after get_random_bytes() returns.
--	 */
--	smp_mb();
--	WRITE_ONCE(have_filled_random_ptr_key, true);
-+	/* Needs to run from preemptible context */
-+	static_branch_disable(&not_filled_random_ptr_key);
-+}
-+
-+static DECLARE_WORK(enable_ptr_key_work, enable_ptr_key_workfn);
-+
-+static void fill_random_ptr_key(struct random_ready_callback *unused)
-+{
-+	/* This may be in an interrupt handler. */
-+	queue_work(system_unbound_wq, &enable_ptr_key_work);
- }
+ 	/* check we should claim or not by busid_table */
+ 	busid_priv = get_busid_priv(udev_busid);
+@@ -404,7 +404,7 @@ static void stub_disconnect(struct usb_d
+ 	struct bus_id_priv *busid_priv;
+ 	int rc;
  
- static struct random_ready_callback random_ready = {
-@@ -1685,7 +1688,8 @@ static int __init initialize_ptr_random(
- 	if (!ret) {
- 		return 0;
- 	} else if (ret == -EALREADY) {
--		fill_random_ptr_key(&random_ready);
-+		/* This is in preemptible context */
-+		enable_ptr_key_workfn(&enable_ptr_key_work);
- 		return 0;
- 	}
+-	dev_dbg(&udev->dev, "Enter\n");
++	dev_dbg(&udev->dev, "Enter disconnect\n");
  
-@@ -1699,7 +1703,7 @@ static char *ptr_to_id(char *buf, char *
- 	unsigned long hashval;
- 	const int default_width = 2 * sizeof(ptr);
- 
--	if (unlikely(!have_filled_random_ptr_key)) {
-+	if (static_branch_unlikely(&not_filled_random_ptr_key)) {
- 		spec.field_width = default_width;
- 		/* string length must be less than default_width */
- 		return string(buf, end, "(ptrval)", spec);
+ 	busid_priv = get_busid_priv(udev_busid);
+ 	if (!busid_priv) {
