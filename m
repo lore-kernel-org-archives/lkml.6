@@ -1,91 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753283AbeEUQ6H (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 12:58:07 -0400
-Received: from mga11.intel.com ([192.55.52.93]:2467 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752693AbeEUQ6E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 12:58:04 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,426,1520924400";
-   d="scan'208";a="56238336"
-Date: Mon, 21 May 2018 09:58:03 -0700
-From: "Luck, Tony" <tony.luck@intel.com>
-To: Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>
-Cc: Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        linux-edac@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
-Subject: Re: PROBLEM: mce: [Hardware Error] from dmesg -l emerg
-Message-ID: <20180521165803.GA15717@agluck-desk>
-References: <CAG=yYwmnHgAvauZLxfFcUEACF_J+qh4d2tvYY=AdjHvyeSFK_A@mail.gmail.com>
- <20180514162752.GG23049@pd.tnic>
- <CAG=yYwk-dbMF_7eS9bUraAru8b4fyCosxp+MpQA=1ZYH0nd_hg@mail.gmail.com>
- <20180520204032.GA19845@pd.tnic>
- <CAG=yYw=bdgsTSW80R1Wt9uUTtXeMwX5macbjrPBNzVLihk-Ufw@mail.gmail.com>
+        id S1753295AbeEUQ6a (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 12:58:30 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60888 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753077AbeEUQ62 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 12:58:28 -0400
+From: Steve Grubb <sgrubb@redhat.com>
+To: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc: Richard Guy Briggs <rgb@redhat.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        containers@lists.linux-foundation.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, paul@paul-moore.com
+Subject: Re: [PATCH] audit: add containerid support for IMA-audit
+Date: Mon, 21 May 2018 12:58:28 -0400
+Message-ID: <2397631.78oLu0QVqb@x2>
+Organization: Red Hat
+In-Reply-To: <efb6c164-febe-67bb-43a9-795476c4902f@linux.vnet.ibm.com>
+References: <1520257393.10396.291.camel@linux.vnet.ibm.com> <20180308112104.z67wohdvjqemy7wy@madcap2.tricolour.ca> <efb6c164-febe-67bb-43a9-795476c4902f@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAG=yYw=bdgsTSW80R1Wt9uUTtXeMwX5macbjrPBNzVLihk-Ufw@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 05:31:52PM +0530, Jeffrin Thalakkottoor wrote:
-> > Ok, but please do not top-post.
+On Thursday, May 17, 2018 10:18:13 AM EDT Stefan Berger wrote:
+> > audit_log_container_info() then releasing the local context.  This
+> > version of the record has additional concerns covered here:
+> > https://github.com/linux-audit/audit-kernel/issues/52
 > 
-> Ok
+> Following the discussion there and the concern with breaking user space,
+> how can we split up the AUDIT_INTEGRITY_RULE that is used in
+> ima_audit_measurement() and ima_parse_rule(), without 'breaking user
+> space'?
 > 
-> > Looks like mcelog has trouble decoding this. Have you updated mcelog to
-> > the latest version in your distro?
-> .
-> mcelog                               153+dfsg-1
+> A message produced by ima_parse_rule() looks like this here:
+> 
+> type=INTEGRITY_RULE msg=audit(1526566213.870:305): action="dont_measure"
+> fsmagic="0x9fa0" res=1
 
-So this is looking like another case where an error is
-logged during BIOS bringup, and Linux finds the error
-when it scans all machine check banks during boot.
+Why is action and fsmagic being logged as untrusted strings? Untrusted 
+strings are used when an unprivileged user can affect the contents of the 
+field such as creating a file with space or special characters in the name.
 
-The earlier logs you sent showed a value of ee0000000040110b
-in the machine check bank status register. Not sure why
-mcelog had trouble with this(*).
+Also, subject and object information is missing. Who loaded this rule?
 
-Upper bits say: VALID OVER UC MISCV ADDRV
+> in contrast to that an INTEGRITY_PCR record type:
+> 
+> type=INTEGRITY_PCR msg=audit(1526566235.193:334): pid=1615 uid=0 auid=0
+> ses=2 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+> op="invalid_pcr" cause="open_writers" comm="scp"
+> name="/var/log/audit/audit.log" dev="dm-0" ino=1962625 res=1
 
-Low 16 (MCACOD) bits say: FILTER CACHE ERR GENERIC LEVEL=3
+Why is op & cause being logged as an untrusted string? This also has 
+incomplete subject information.
 
-So BIOS did something to trigger some issues in the L3
-cache (more than once since the overflow and filter bits
-are both set).
+> Should some of the fields from INTEGRITY_PCR also appear in
+> INTEGRITY_RULE? If so, which ones? 
 
-I think (but am not 100% sure because I don't have an
-internal decoder that knows about this specific CPU model)
-that the error was a write-back to MMIO (this matches other
-cases where we've seen BIOS trigger some error and left the
-logs for Linux to find at boot).  It's not quite the same
-because the address logged for you is 160000080, where the
-previous cases has addresses below 4GB. But some platforms
-include MMIO above 4GB, so this is still plausible.
+pid, uid, auid, tty, session, subj, comm, exe, res.  <- these are required to 
+be searchable
 
-Advice we have given before is to attempt to log a bug
-against the BIOS with the vendor of your system. But the
-last person to try this reported no success.
+> We could probably refactor the current  integrity_audit_message() and have
+> ima_parse_rule() call into it to get those fields as well. I suppose adding
+> new fields to it wouldn't be considered breaking user space?
 
-Or, you could ignore it. It appears to not have any
-side effects.
+The audit user space utilities pretty much expects those fields in that order 
+for any IMA originating events. You can add things like op or cause before 
+that. The reason why you can do that is those additional fields are not 
+required to be searchable by common criteria.
 
--Tony
-
-(*) Can you send a snip from the raw dmesg output that starts
-a couple of lines before:
-
-
-	... [Hardware Error]: CPU 0: Machine Check: 0 Bank: 5 ...
-
-and continues a couple of lines past
-
-	... [Hardware Error]: PROCESSOR 0:306d4 ...
-
-and I'll take a look at why mcelog choked.
+-Steve
