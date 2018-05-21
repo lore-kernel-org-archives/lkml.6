@@ -1,41 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752903AbeEUP1p (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 11:27:45 -0400
-Received: from ms.lwn.net ([45.79.88.28]:47454 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752311AbeEUP1n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 11:27:43 -0400
-Date: Mon, 21 May 2018 09:27:41 -0600
-From: Jonathan Corbet <corbet@lwn.net>
-To: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc: linux-doc <linux-doc@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/3] docs/vm: transhuge: split userspace bits to
- admin-guide/mm
-Message-ID: <20180521092741.40f2cbd7@lwn.net>
-In-Reply-To: <1526285620-453-1-git-send-email-rppt@linux.vnet.ibm.com>
-References: <1526285620-453-1-git-send-email-rppt@linux.vnet.ibm.com>
-Organization: LWN.net
+        id S1752920AbeEUPaD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 11:30:03 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52734 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752657AbeEUPaB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 11:30:01 -0400
+Subject: Re: [PATCH 6/6] arm64: perf: Add support for chaining counters
+To: Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        will.deacon@arm.com
+References: <1526638943-2110-1-git-send-email-suzuki.poulose@arm.com>
+ <1526638943-2110-7-git-send-email-suzuki.poulose@arm.com>
+ <32f2d870-9b9c-0b10-880f-cc99cf969bf6@arm.com>
+ <5d53fe1d-dbd9-2aad-73bd-0c4284540240@arm.com>
+ <c8cb9280-c93d-89c4-43ed-179de8d46dfd@arm.com>
+ <f7ffdcfb-5a32-9a55-32a5-4f8770e23aa0@arm.com>
+ <22ea8f48-dc74-6d84-6085-b41447a79a6d@arm.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <a859c5a1-538a-3dc8-b66e-a767de145501@arm.com>
+Date: Mon, 21 May 2018 16:29:58 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <22ea8f48-dc74-6d84-6085-b41447a79a6d@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 14 May 2018 11:13:37 +0300
-Mike Rapoport <rppt@linux.vnet.ibm.com> wrote:
+On 21/05/18 15:41, Suzuki K Poulose wrote:
+> On 21/05/18 15:00, Robin Murphy wrote:
+>> On 21/05/18 14:42, Suzuki K Poulose wrote:
+>>> On 18/05/18 16:57, Suzuki K Poulose wrote:
+>>>> Hi Robin,
+>>>>
+>>>> On 18/05/18 14:49, Robin Murphy wrote:
+>>>>> On 18/05/18 11:22, Suzuki K Poulose wrote:
+>>>>>> Add support for chained event counters. PMUv3 allows chaining
+>>>>>> a pair of adjacent PMU counters (with the lower counter number
+>>>>>> being always "even"). The low counter is programmed to count
+>>>>>> the event of interest and the high counter(odd numbered) is
+>>>>>> programmed with a special event code (0x1e - Chain). Thus
+>>>>>> we need special allocation schemes to make the full use of
+>>>>>> available counters. So, we allocate the counters from either
+>>>>>> ends. i.e, chained counters are allocated from the lower
+>>>>>> end in pairs of two and the normal counters are allocated
+>>>>>> from the higher number. Also makes necessary changes to
+>>>>>> handle the chained events as a single event with 2 counters.
+>>>>>>
+>>>>>> Cc: Mark Rutland <mark.rutland@arm.com>
+>>>>>> Cc: Will Deacon <will.deacon@arm.com>
+>>>>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>>>
+>>>>
+>>>>>>   /*
+>>>>>> @@ -845,8 +1016,14 @@ static int __armv8_pmuv3_map_event(struct 
+>>>>>> perf_event *event,
+>>>>>>                          &armv8_pmuv3_perf_cache_map,
+>>>>>>                          ARMV8_PMU_EVTYPE_EVENT);
+>>>>>> -    if (hw_event_id == ARMV8_PMUV3_PERFCTR_CPU_CYCLES)
+>>>>>> +    if (hw_event_id == ARMV8_PMUV3_PERFCTR_CPU_CYCLES) {
+>>>>>> +        /* Prevent chaining for cycle counter */
+>>>>>
+>>>>> Why? Sure, we want to avoid executing the chaining logic if we're 
+>>>>> scheduling a cycles event in the dedicated counter (which is 
+>>>>> perhaps what the comment above wanted to say), but if one ends up 
+>>>>> allocated into a regular counter (e.g. if the user asks for 
+>>>>> multiple cycle counts with different filters), then I don't see any 
+>>>>> reason to forbid that being chained.
+>>>>
+>>>> Ah, I didn't think about that case. I was under the assumption that the
+>>>> cycles are *only* placed on the cycle counter. I will take care of 
+>>>> that.
+>>>> Thanks for the review.
+>>>
+>>> Robin, Mark, Will
+>>>
+>>> One potential problem I see with allowing chaining of the cycle counter
+>>> *and* the promotion of cycle event to 64bit by default is when the user
+>>> may actually be able to count 1 less event (due to the promotion of
+>>> cycle event to 64bit and thus forcing to use chain, if the cycle counter
+>>> is unavailable).
+>>
+>> Right, I didn't mean to imply we should inject the "chain" attr 
+>> automatically for all cycles events, just that we shouldn't be 
+>> rejecting it if the user does explicitly set it (but then just ignore 
+>> it if using the dedicated counter).
+> 
+> Right, I was not talking about the automatic "chain" for cycles events. The
+> problem is we don't know if we would get the "cycle" counter for the given
+> event until it is "added", at which point we have already decided
+> whether the event is 32bit or 64bit. So, we cannot really delay the 
+> decision
+> until that. Thats where this comes up. Given a cycle event (without an 
+> explicit
+> chain request), do we treat it as a 64bit event or not ? If we do, we could
+> 
+> 1) get the Cycle counter, all is fine.
+> 
+> 2) If not, fallback to Chaining. The user looses a counter.
 
-> Here are minor updates to transparent hugepage docs. Except from minor
-> formatting and spelling updates, these patches re-arrange the transhuge.rst
-> so that userspace interface description will not be interleaved with the
-> implementation details and it would be possible to split the userspace
-> related bits to Documentation/admin-guide/mm, which is done by the third
-> patch.
+Ah, I think I see where our wires might be getting crossed here - taking 
+a second look at patch #4 I see you're inherently associating 
+ARMPMU_EVT_LONG with the ARMV8_PMUV3_PERFCTR_CPU_CYCLES event ID. What 
+I'm thinking of is that we would only set that flag if and when we've 
+allocated the cycle counter or a chained pair of regular counters (i.e. 
+in get_event_idx() or later). In other words, it becomes a property of 
+the counter(s) backing the event, rather than of the hardware event 
+itself, which I think makes logical sense.
 
-Looks good, I've applied the set, after adding a changelog for #3.
+>>> So one option is to drop automatic promotion of the cycle counter to
+>>> 64bit and do it only when it is requested by the user and use either the
+>>> Cycle counter (preferred) or fall back to chaining. That way, the user
+>>> has the control over the number of events he can count using the given
+>>> set of counters.
+>>
+>> Naively, there doesn't seem to be any inherent harm in always using 
+>> 64-bit arithmetic for the dedicated counter, but it would mean that 
+>> with multiple (non-chained) cycles events, some would be taking an 
+>> interrupt every few seconds while one would effectively never 
+>> overflow. I guess the question is whether that matters or not.
+>>
+> 
+> The problem is we can't have a mask per counter as we don't know where
+> the event would be placed until it is added. Or we should delay the
+> period initialisation/update to post get_event_idx().
 
-Thanks,
+...but does indeed mean that we can't initialise period stuff until we 
+know where the event has been placed. I reckon that is a reasonable 
+thing to do, but let's see what Mark and Will think.
 
-jon
+(I guess there's also an ugly compromise in which we could re-run the 
+sample_period setup logic as a special case when allocating the cycle 
+counter, but even I don't like the idea of that)
+
+Robin.
