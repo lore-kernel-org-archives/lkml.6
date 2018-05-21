@@ -1,113 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751141AbeEUVNm (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 17:13:42 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:43881 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750837AbeEUVNj (ORCPT
+        id S1754554AbeEUVcS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 17:32:18 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:27027 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754477AbeEUVcN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 17:13:39 -0400
-X-Google-Smtp-Source: AB8JxZpEu7SQFg1rW7lzcYMGbMZbUKZlACJWcCxRvQnAHeLmXrQ8kWGIasgWEdAF7xAyAp6El1ASgvSC7lk8R2FQKs4=
+        Mon, 21 May 2018 17:32:13 -0400
+Subject: Re: [PATCH v7 2/2] leds: lm3601x: Introduce the lm3601x LED driver
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>
+References: <20180521180927.18472-1-dmurphy@ti.com>
+ <20180521180927.18472-2-dmurphy@ti.com>
+ <CAHp75VcShgaFoJVqbTGBXrrgEr-7JQcCLK4Qy-jydE5++f4VAQ@mail.gmail.com>
+From: Dan Murphy <dmurphy@ti.com>
+Message-ID: <e0ab0db2-2922-fde0-55f5-1d84d0505878@ti.com>
+Date: Mon, 21 May 2018 16:32:06 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180521205751.GA19282@agluck-desk>
-References: <CAG=yYwmnHgAvauZLxfFcUEACF_J+qh4d2tvYY=AdjHvyeSFK_A@mail.gmail.com>
- <20180514162752.GG23049@pd.tnic> <CAG=yYwk-dbMF_7eS9bUraAru8b4fyCosxp+MpQA=1ZYH0nd_hg@mail.gmail.com>
- <20180520204032.GA19845@pd.tnic> <CAG=yYw=bdgsTSW80R1Wt9uUTtXeMwX5macbjrPBNzVLihk-Ufw@mail.gmail.com>
- <20180521165803.GA15717@agluck-desk> <CAG=yYw=OQ7zpyK-5iqg7uQvcykTvuhQfX=RFg3GpQGvCRowd=Q@mail.gmail.com>
- <20180521205751.GA19282@agluck-desk>
-From: Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>
-Date: Tue, 22 May 2018 02:43:37 +0530
-Message-ID: <CAG=yYwmgceOCf3TeefFN-i54Z4Qxsp7asD0uhqah5P7md94kWw@mail.gmail.com>
-Subject: Re: PROBLEM: mce: [Hardware Error] from dmesg -l emerg
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        linux-edac@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAHp75VcShgaFoJVqbTGBXrrgEr-7JQcCLK4Qy-jydE5++f4VAQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 2:27 AM, Luck, Tony <tony.luck@intel.com> wrote:
-> How about this:
->
-> $ sudo dmesg -r | grep -C 30 Bank
->
-> -Tony
+Andy
 
--------------------------------------------------------------------------------------->
-$sudo dmesg -r | grep -C 30 Bank
-x2apic: IRQ remapping doesn't support X2APIC mode
-..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
-tsc: Fast TSC calibration using PIT
-tsc: Detected 1895.567 MHz processor
-clocksource: tsc-early: mask: 0xffffffffffffffff max_cycles:
-0x36a5a03c965, max_idle_ns: 881590412318 ns
-Calibrating delay loop (skipped), value calculated using timer
-frequency.. 3791.13 BogoMIPS (lpj=7582268)
-pid_max: default: 32768 minimum: 301
-Security Framework initialized
-Yama: becoming mindful.
-AppArmor: AppArmor initialized
-Dentry cache hash table entries: 524288 (order: 10, 4194304 bytes)
-Inode-cache hash table entries: 262144 (order: 9, 2097152 bytes)
-Mount-cache hash table entries: 8192 (order: 4, 65536 bytes)
-Mountpoint-cache hash table entries: 8192 (order: 4, 65536 bytes)
-CPU: Physical Processor ID: 0
-CPU: Processor Core ID: 0
-ENERGY_PERF_BIAS: Set to 'normal', was 'performance'
-ENERGY_PERF_BIAS: View and update with x86_energy_perf_policy(8)
-mce: CPU supports 7 MCE banks
-CPU0: Thermal monitoring enabled (TM1)
-process: using mwait in idle threads
-Last level iTLB entries: 4KB 64, 2MB 8, 4MB 8
-Last level dTLB entries: 4KB 64, 2MB 0, 4MB 0, 1GB 4
-Spectre V2 : Mitigation: Full generic retpoline
-Spectre V2 : Spectre v2 mitigation: Enabling Indirect Branch Prediction Barrier
-Spectre V2 : Enabling Restricted Speculation for firmware calls
-Freeing SMP alternatives memory: 32K
-TSC deadline timer enabled
-smpboot: CPU0: Intel(R) Pentium(R) CPU 3825U @ 1.90GHz (family: 0x6,
-model: 0x3d, stepping: 0x4)
-mce: [Hardware Error]: Machine check events logged
-mce: [Hardware Error]: CPU 0: Machine Check: 0 Bank 5: ee0000000040110b
-mce: [Hardware Error]: TSC 0 ADDR 160000080 MISC 5040008086
-mce: [Hardware Error]: PROCESSOR 0:306d4 TIME 1526932210 SOCKET 0 APIC
-0 microcode 2a
-Performance Events: PEBS fmt2+, Broadwell events, 16-deep LBR,
-full-width counters, Intel PMU driver.
-... version:                3
-... bit width:              48
-... generic registers:      4
-... value mask:             0000ffffffffffff
-... max period:             00007fffffffffff
-... fixed-purpose events:   3
-... event mask:             000000070000000f
-Hierarchical SRCU implementation.
-NMI watchdog: Enabled. Permanently consumes one hw-PMU counter.
-smp: Bringing up secondary CPUs ...
-x86: Booting SMP configuration:
-.... node  #0, CPUs:      #1 #2 #3
-smp: Brought up 1 node, 4 CPUs
-smpboot: Max logical packages: 1
-smpboot: Total of 4 processors activated (15164.53 BogoMIPS)
-devtmpfs: initialized
-x86/mm: Memory block size: 128MB
-PM: Registering ACPI NVS region [mem 0x9cc8e000-0x9cf8dfff] (3145728 bytes)
-clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff,
-max_idle_ns: 7645041785100000 ns
-futex hash table entries: 1024 (order: 4, 65536 bytes)
-pinctrl core: initialized pinctrl subsystem
-NET: Registered protocol family 16
-audit: initializing netlink subsys (disabled)
-audit: type=2000 audit(1526932210.048:1): state=initialized
-audit_enabled=0 res=1
-cpuidle: using governor ladder
-cpuidle: using governor menu
-Simple Boot Flag at 0x44 set to 0x1
-$
--------------------------------------------------------------------------->
+Thanks for the review.  I was pretty sure I missed somethings.
+
+On 05/21/2018 03:44 PM, Andy Shevchenko wrote:
+> On Mon, May 21, 2018 at 9:09 PM, Dan Murphy <dmurphy@ti.com> wrote:
+>> Introduce the family of LED devices that can
+>> drive a torch, strobe or IR LED.
+>>
+>> The LED driver can be configured with a strobe
+>> timer to execute a strobe flash.  The IR LED
+>> brightness is controlled via the torch brightness
+>> register.
+>>
+>> The data sheet for each the LM36010 and LM36011
+>> LED drivers can be found here:
+>> http://www.ti.com/product/LM36010
+>> http://www.ti.com/product/LM36011
+> 
+> Thanks for an update. My comments below.
+> 
+>> +config LEDS_LM3601X
+>> +       tristate "LED support for LM3601x Chips"
+>> +       depends on LEDS_CLASS && I2C && OF
+> 
+> Now OF here is superfluous.
+
+This is the first one I missed.
+
+ACK
+
+> 
+>> +       depends on LEDS_CLASS_FLASH
+>> +       select REGMAP_I2C
+>> +       help
+>> +         This option enables support for the TI LM3601x family
+>> +         of flash, torch and indicator classes.
+> 
+>> +#define LM3601X_TIMEOUT_MASK   0x1e
+>> +#define LM3601X_ENABLE_MASK    0x03
+> 
+> I dunno if GENMASK() will be better here.
+
+I could probably make it more readable as well.
+
+I am thinking
+
+#define LM3601X_ENABLE_MASK (LM3601X_MODE_TORCH | LM3601X_MODE_IR_DRV)
+
+> 
+>> +#define LM3601X_LOWER_STEP_US  40000
+>> +#define LM3601X_UPPER_STEP_US  200000
+>> +#define LM3601X_MIN_TIMEOUT_US 40000
+>> +#define LM3601X_MAX_TIMEOUT_US 1600000
+> 
+>> +#define LM3601X_TIMEOUT_XOVER  400000
+> 
+> Missed unit?
+
+Ack
+
+> 
+>> +       ret = regmap_update_bits(led->regmap, LM3601X_ENABLE_REG,
+>> +                               LM3601X_MODE_TORCH | LM3601X_MODE_IR_DRV,
+>> +                               led_mode_val);
+> 
+>> +               ret = regmap_update_bits(led->regmap, LM3601X_ENABLE_REG,
+>> +                                       LM3601X_MODE_TORCH | LM3601X_MODE_IR_DRV,
+>> +                                       LM3601X_MODE_STROBE);
+> 
+> Perhaps
+> #define ..._MODE_TORCH_WITH_IR   (..._TOCRH | ..._IR_DRV)
+> ?
+> 
+
+This was defined already I just did not use the #define but I will probably
+replace this with the LM3601X_ENABLE_MASK #define
+
+>> +static int lm3601x_probe(struct i2c_client *client,
+>> +                       const struct i2c_device_id *id)
+>> +{
+>> +       struct lm3601x_led *led;
+>> +       int err;
+> 
+>> +       err = lm3601x_parse_node(led, client->dev.of_node);
+>> +       if (err < 0)
+> 
+>> +               return -ENODEV;
+> 
+> Shouldn't be
+> 
+> return err;
+
+Ack.  But I might just get rid of err altogether when I make the change below to
+return the status of the register.
+
+> 
+> ?
+> 
+>> +       err = lm3601x_register_leds(led);
+>> +
+>> +       return err;
+> 
+> I will leave this to maintainers since you seems have strong
+> objections against more or less standard pattern, i.e.
+> 
+> return lm3601x_register_leds();
+
+ACk.  I was going to change that but I was concerned about loosing err.
+But I can change it.
+
+> 
+>> +}
+> 
+
 
 -- 
-software engineer
-rajagiri school of engineering and technology
+------------------
+Dan Murphy
