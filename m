@@ -1,45 +1,44 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqRQ/SgS9wUFIcw9JiFAORbaBwHc5fSUHR7vxbNn2hbiYvhqrCjJbxKBsLRRfF4vgB4vi7Y
-ARC-Seal: i=1; a=rsa-sha256; t=1526937907; cv=none;
+X-Google-Smtp-Source: AB8JxZqQcstmd18Ly2e9SSJUxQnLnCa4M/dglB/m1mGd1rDO2juRgMCk8r8+GSeJ5LDSJBmbX3LR
+ARC-Seal: i=1; a=rsa-sha256; t=1526937904; cv=none;
         d=google.com; s=arc-20160816;
-        b=hAS35VCaiy6cI1ikbdeIwJNc4LnjmipQhDnDc0NjHtuxws5AI1D5cIDNSGyqny1WJk
-         CqOhsCcqjKC2NW5B/fiEcKLNohDsLsGwlnjNz5zyJq2B1BuGtbjfnY16kyzvLcKkoXtu
-         PAYlEgRvqbVJX4n0lhmywNwrqKIs3DykUPIPiYQamdipRTZM8QWQCvD/4MyHzom8y6Qp
-         Xe35kZdRXYesxqMrOlZPJ+owVjCjWN6Hhf1p/Wc1pQzA6jQaCoeegIwD7fw/WdV4irTs
-         ZBjmAbMwgbC/I5fH0sCVpR+NnSWPHXLIK1gnB8l9VboMxMuj1YnS75s8/P8si4rVm+K1
-         +sVA==
+        b=DG+mNEimYyvck17oHBMo+NqW/cdMeZ8eKsCinbP+nSDvhI7mndkyPjZhZutUC1vi9L
+         a+F7MeccTXSLqiXShLzM9t/4Fx7AXX9Knu7HQ/kZDOvEtcr1/Ch8WWXFVc+Wyc4J1Br7
+         5OWFeqL8RJC3PDeplxyBnCfXXbejPiSG4WcKnVSnbim42i04caJC+FLXDxaXo5O9PBLt
+         VBqD90a1vsmrx8Rz/XLNhvGPkFMz4qOPUeUch13XlmaRG+kpUbQ6NfcRyDY6CT4csxmq
+         +KCQb4/pNnAJ8eKIXd/XoAMwvBUdv5XelIQWmI31N5VZoACeHC5OB3pwanbYCFCYDoLL
+         7MSw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=Ed7hAdiKdjMACtzoaF1VKyJjKkel3cY4wCL9NOy+RKQ=;
-        b=dG7u/kgaYgRhWPJKXGuyS+tfn7OgaPxOV4xITt5IkRhrRExfF+5bfIcuXqA2GbI34o
-         QlG55ylKhZFaBVhzMdhaT3Ifj6bf2I6QIhuwWjgMfS+tMcc2WXmC+Eys+3dZTEi5I261
-         +/QyphCOcHm2vC+NM810tedYpg8IKXHgDVSlwOfkhxYTUGRWGI/hHG6Ye4e3fOhHhlT8
-         5efKgebhT3b7qCKjYglJVLfLCu8Ry0cFFJJQIgBrVBArjOUvpSGPyiNwb2hBrmdMNVpm
-         1W6p5lQDKG4rj/0Rn0dkIOvtXqyx2E70QtMlsPQvVhokhcUh+Z5ULUsSI8p62nu0BPQI
-         8Kwg==
+        bh=1WSOpdBCeOBe52y9+5uKY/EmvTCX7Tbb0WXsXuBFu0M=;
+        b=VHjJsv1SINKw6H+fhH2z8xsT3/5Ffd+oL6vawxQeg1wK8gsm4y94zxxgQpovo7YpAF
+         mULM6AmNu71f9DNnkVgs352uH5qxrgtp59k97EYbv7wBwvFdtrd71divLItcw2MC27GA
+         uojIknVt5YfxbmFjXxAaNMOneh0kOBYG7kNUFnRXuoQP94PiwN2w6P1P0QDHEFM/SXV4
+         4/myRr2Koi6YoVuFdcUTayKo+O3Zysga8age0cc93hNUxmJqDR8FS5KEuvBofcgICmv1
+         S6xkIFkm7Lf6OZ1c0yB6Xbpd/0f1HMK6y+ETgV6p6MEantalHpqpVUnNGi7gG74b2JHv
+         0bUQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=aErsSBXh;
+       dkim=pass header.i=@kernel.org header.s=default header.b=w0M+eMl+;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=aErsSBXh;
+       dkim=pass header.i=@kernel.org header.s=default header.b=w0M+eMl+;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ross Zwisler <ross.zwisler@linux.intel.com>,
-	"CR, Sapthagirish" <sapthagirish.cr@intel.com>,
-	Jan Kara <jack@suse.cz>,
-	Matthew Wilcox <willy@infradead.org>,
-	Christoph Hellwig <hch@lst.de>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Dave Chinner <david@fromorbit.com>,
+	Matthew Wilcox <mawilcox@microsoft.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Kees Cook <keescook@chromium.org>,
+	Yury Norov <ynorov@caviumnetworks.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.16 037/110] radix tree: fix multi-order iteration race
-Date: Mon, 21 May 2018 23:11:34 +0200
-Message-Id: <20180521210507.009374384@linuxfoundation.org>
+Subject: [PATCH 4.16 036/110] lib/test_bitmap.c: fix bitmap optimisation tests to report errors correctly
+Date: Mon, 21 May 2018 23:11:33 +0200
+Message-Id: <20180521210506.912667866@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -49,8 +48,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601110042369790052?=
-X-GMAIL-MSGID: =?utf-8?q?1601110442981889535?=
+X-GMAIL-THRID: =?utf-8?q?1601110038722851247?=
+X-GMAIL-MSGID: =?utf-8?q?1601110440478592234?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -58,117 +57,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ross Zwisler <ross.zwisler@linux.intel.com>
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-commit 9f418224e8114156d995b98fa4e0f4fd21f685fe upstream.
+commit 1e3054b98c5415d5cb5f8824fc33b548ae5644c3 upstream.
 
-Fix a race in the multi-order iteration code which causes the kernel to
-hit a GP fault.  This was first seen with a production v4.15 based
-kernel (4.15.6-300.fc27.x86_64) utilizing a DAX workload which used
-order 9 PMD DAX entries.
+I had neglected to increment the error counter when the tests failed,
+which made the tests noisy when they fail, but not actually return an
+error code.
 
-The race has to do with how we tear down multi-order sibling entries
-when we are removing an item from the tree.  Remember for example that
-an order 2 entry looks like this:
-
-  struct radix_tree_node.slots[] = [entry][sibling][sibling][sibling]
-
-where 'entry' is in some slot in the struct radix_tree_node, and the
-three slots following 'entry' contain sibling pointers which point back
-to 'entry.'
-
-When we delete 'entry' from the tree, we call :
-
-  radix_tree_delete()
-    radix_tree_delete_item()
-      __radix_tree_delete()
-        replace_slot()
-
-replace_slot() first removes the siblings in order from the first to the
-last, then at then replaces 'entry' with NULL.  This means that for a
-brief period of time we end up with one or more of the siblings removed,
-so:
-
-  struct radix_tree_node.slots[] = [entry][NULL][sibling][sibling]
-
-This causes an issue if you have a reader iterating over the slots in
-the tree via radix_tree_for_each_slot() while only under
-rcu_read_lock()/rcu_read_unlock() protection.  This is a common case in
-mm/filemap.c.
-
-The issue is that when __radix_tree_next_slot() => skip_siblings() tries
-to skip over the sibling entries in the slots, it currently does so with
-an exact match on the slot directly preceding our current slot.
-Normally this works:
-
-                                      V preceding slot
-  struct radix_tree_node.slots[] = [entry][sibling][sibling][sibling]
-                                              ^ current slot
-
-This lets you find the first sibling, and you skip them all in order.
-
-But in the case where one of the siblings is NULL, that slot is skipped
-and then our sibling detection is interrupted:
-
-                                             V preceding slot
-  struct radix_tree_node.slots[] = [entry][NULL][sibling][sibling]
-                                                    ^ current slot
-
-This means that the sibling pointers aren't recognized since they point
-all the way back to 'entry', so we think that they are normal internal
-radix tree pointers.  This causes us to think we need to walk down to a
-struct radix_tree_node starting at the address of 'entry'.
-
-In a real running kernel this will crash the thread with a GP fault when
-you try and dereference the slots in your broken node starting at
-'entry'.
-
-We fix this race by fixing the way that skip_siblings() detects sibling
-nodes.  Instead of testing against the preceding slot we instead look
-for siblings via is_sibling_entry() which compares against the position
-of the struct radix_tree_node.slots[] array.  This ensures that sibling
-entries are properly identified, even if they are no longer contiguous
-with the 'entry' they point to.
-
-Link: http://lkml.kernel.org/r/20180503192430.7582-6-ross.zwisler@linux.intel.com
-Fixes: 148deab223b2 ("radix-tree: improve multiorder iterators")
-Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
-Reported-by: CR, Sapthagirish <sapthagirish.cr@intel.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Chinner <david@fromorbit.com>
-Cc: <stable@vger.kernel.org>
+Link: http://lkml.kernel.org/r/20180509114328.9887-1-mpe@ellerman.id.au
+Fixes: 3cc78125a081 ("lib/test_bitmap.c: add optimisation tests")
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Reported-by: Michael Ellerman <mpe@ellerman.id.au>
+Tested-by: Michael Ellerman <mpe@ellerman.id.au>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Cc: Yury Norov <ynorov@caviumnetworks.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: <stable@vger.kernel.org>	[4.13+]
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- lib/radix-tree.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ lib/test_bitmap.c |   21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
 
---- a/lib/radix-tree.c
-+++ b/lib/radix-tree.c
-@@ -1612,11 +1612,9 @@ static void set_iter_tags(struct radix_t
- static void __rcu **skip_siblings(struct radix_tree_node **nodep,
- 			void __rcu **slot, struct radix_tree_iter *iter)
- {
--	void *sib = node_to_entry(slot - 1);
--
- 	while (iter->index < iter->next_index) {
- 		*nodep = rcu_dereference_raw(*slot);
--		if (*nodep && *nodep != sib)
-+		if (*nodep && !is_sibling_entry(iter->node, *nodep))
- 			return slot;
- 		slot++;
- 		iter->index = __radix_tree_iter_add(iter, 1);
-@@ -1631,7 +1629,7 @@ void __rcu **__radix_tree_next_slot(void
- 				struct radix_tree_iter *iter, unsigned flags)
- {
- 	unsigned tag = flags & RADIX_TREE_ITER_TAG_MASK;
--	struct radix_tree_node *node = rcu_dereference_raw(*slot);
-+	struct radix_tree_node *node;
+--- a/lib/test_bitmap.c
++++ b/lib/test_bitmap.c
+@@ -329,23 +329,32 @@ static void noinline __init test_mem_opt
+ 	unsigned int start, nbits;
  
- 	slot = skip_siblings(&node, slot, iter);
+ 	for (start = 0; start < 1024; start += 8) {
+-		memset(bmap1, 0x5a, sizeof(bmap1));
+-		memset(bmap2, 0x5a, sizeof(bmap2));
+ 		for (nbits = 0; nbits < 1024 - start; nbits += 8) {
++			memset(bmap1, 0x5a, sizeof(bmap1));
++			memset(bmap2, 0x5a, sizeof(bmap2));
++
+ 			bitmap_set(bmap1, start, nbits);
+ 			__bitmap_set(bmap2, start, nbits);
+-			if (!bitmap_equal(bmap1, bmap2, 1024))
++			if (!bitmap_equal(bmap1, bmap2, 1024)) {
+ 				printk("set not equal %d %d\n", start, nbits);
+-			if (!__bitmap_equal(bmap1, bmap2, 1024))
++				failed_tests++;
++			}
++			if (!__bitmap_equal(bmap1, bmap2, 1024)) {
+ 				printk("set not __equal %d %d\n", start, nbits);
++				failed_tests++;
++			}
  
+ 			bitmap_clear(bmap1, start, nbits);
+ 			__bitmap_clear(bmap2, start, nbits);
+-			if (!bitmap_equal(bmap1, bmap2, 1024))
++			if (!bitmap_equal(bmap1, bmap2, 1024)) {
+ 				printk("clear not equal %d %d\n", start, nbits);
+-			if (!__bitmap_equal(bmap1, bmap2, 1024))
++				failed_tests++;
++			}
++			if (!__bitmap_equal(bmap1, bmap2, 1024)) {
+ 				printk("clear not __equal %d %d\n", start,
+ 									nbits);
++				failed_tests++;
++			}
+ 		}
+ 	}
+ }
