@@ -1,28 +1,28 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZr+4/FLKXcZ17gxL6TJ7JLbv8wuWWEiOaeMNkc61espk6a5bRFHth0n1D5PBI/Dc164f1CY
-ARC-Seal: i=1; a=rsa-sha256; t=1526937705; cv=none;
+X-Google-Smtp-Source: AB8JxZrJFcnHNGAaEmUnH5OVwGQM9Eh1jsPJPAOnOSStVDWylJ+Bc/oYscpQSJm9Xk9deRPElkME
+ARC-Seal: i=1; a=rsa-sha256; t=1526937702; cv=none;
         d=google.com; s=arc-20160816;
-        b=PTd7CdLPZBplZdp2WYlUg6z3xlkzLIs3E24CgTjtynoVKrcj0sabbFDtxZv0mWjMcF
-         74Gb6x11zsmyVbOpb7OJKTPnbIyE58fkDd7hLD+wlL0V3tsjG3XT4dUz1jFJQ3fG2esU
-         0v2B2QWxK2qQGH4BZ8shVO+Y5WE/kxitUQVLj8iIX3k2oq0DMhCO1acT2QEfMlHF3W8H
-         O7q5buLUo4K2klWhvmPuxRxbIfddpzJXVHlCd1D58wKUCJdE41nCHVr2w19ZJuJFlCxe
-         PSDS/gfa7K0CZFVJGzd2Khd3WmHDwvuiC8u4kngq8gKffLjggI8E5vIpPFvkgN68Xnnp
-         pe1w==
+        b=VRD3IboGXD3FYeTzpkYqMh4PnXkFRrtD617hMWniQevJHgANML4scAQH1tObSb0ZSa
+         DzFMev35/qnSx41We2DrI5ZP65+q5aBK2z1lorJcLYBCz46a1+UCxWP3SLSdBY/TmWee
+         nv+iSqhii3GXhuDYlKSsMN8tUzZphOc99L7ZY0/g6lyytxNntQZoRO5/zP8qvhCkO06/
+         juzD9aTCoASYi8U4JsNSIKprJyxKY9vwCgGBTOeA7eDXOaY1UcRe/a+Jg/Rj3xqFgiv+
+         onnqI11IgeRK2Ie+USGC+W8xFf18vgTODNzN5QrdENYru6Z0E/4uwNVLap1/ffwaICfe
+         UgXA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=DD2rGL0wauJcKtvPBalXImBuVdLqaflB52TW3r+mUTs=;
-        b=vwvfFxsbR+rKXYiR+cNw7UZ13WpWgctxbQm2DcA3YLw1CGt9T9TZdzk+g2HWRXp18p
-         JQcSiuz6PQKK8xZ05KMqPqikI1fB+lhw1O7vjnXaCid/fmcFlcu9RIccLeXv4XSoWbJD
-         ZHgWjlFHQdkvDqv1PdpNcYKcAksHuz3DspqtsUcByJn1HYwSt0OnSHdo6AwzTIhWl+1d
-         FYeuGNW6J6bGzW68FNQJXnKAIBO7UUyzLnY2SCSBaAuO9KdcJKM6ZaUCF1eynwMm7FbI
-         1X3DqmN1/qRXQEYlpjDfjHHGHK//85Uzk7aL0i9iOocieA3KZRAlXIM06kRxXJ2L2XNU
-         NsYQ==
+        bh=XUcny4tn/K9Whkgac6vQpOT9wFGdfMSj+Hwm+ZtR5vs=;
+        b=nQf2vSK3sNrGYPvdFUEs9xAPLy1B+pZz3MgV5vDwA152qBz/8GH3gsuztWXsPhG4oZ
+         MZDFnWHQflB57e29Zml/pw9r1yEsZy6zZarJapeu4IqhwZ0hvvAI2SxBsGIxWIY7Dupt
+         79lhneoRkEg5uI6py2i98LijkDDk6glovm0SWCk2j1aAnjebbZK+8ry3FL6qXmrzMORM
+         kEzf0tIgAhVh7x3apMiz1BJJGAr2QVDnfQHxK95tMTmoVyPwBiEOM4hEVcm9cKj28Y72
+         /CiLVhnaRekdqzrmzI2LXXBqT3WbK2rE9kegQqIkhmgMYVEia2EyxM2IC0qjIgRNwuWp
+         7mDg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=waRvOV6D;
+       dkim=pass header.i=@kernel.org header.s=default header.b=l3cnTKWo;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=waRvOV6D;
+       dkim=pass header.i=@kernel.org header.s=default header.b=l3cnTKWo;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
@@ -31,9 +31,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Borislav Petkov <bp@suse.de>,
 	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Subject: [PATCH 4.14 91/95] x86/bugs: Remove x86_spec_ctrl_set()
-Date: Mon, 21 May 2018 23:12:21 +0200
-Message-Id: <20180521210503.232306563@linuxfoundation.org>
+Subject: [PATCH 4.14 90/95] x86/bugs: Expose x86_spec_ctrl_base directly
+Date: Mon, 21 May 2018 23:12:20 +0200
+Message-Id: <20180521210503.139626357@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210447.219380974@linuxfoundation.org>
 References: <20180521210447.219380974@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109958602156561?=
-X-GMAIL-MSGID: =?utf-8?q?1601110231423206205?=
+X-GMAIL-THRID: =?utf-8?q?1601109955955970722?=
+X-GMAIL-MSGID: =?utf-8?q?1601110228353535743?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,66 +54,108 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 4b59bdb569453a60b752b274ca61f009e37f4dae upstream
+commit fa8ac4988249c38476f6ad678a4848a736373403 upstream
 
-x86_spec_ctrl_set() is only used in bugs.c and the extra mask checks there
-provide no real value as both call sites can just write x86_spec_ctrl_base
-to MSR_SPEC_CTRL. x86_spec_ctrl_base is valid and does not need any extra
-masking or checking.
+x86_spec_ctrl_base is the system wide default value for the SPEC_CTRL MSR.
+x86_spec_ctrl_get_default() returns x86_spec_ctrl_base and was intended to
+prevent modification to that variable. Though the variable is read only
+after init and globaly visible already.
+
+Remove the function and export the variable instead.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Borislav Petkov <bp@suse.de>
 Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/nospec-branch.h |    2 --
- arch/x86/kernel/cpu/bugs.c           |   13 ++-----------
- 2 files changed, 2 insertions(+), 13 deletions(-)
+ arch/x86/include/asm/nospec-branch.h |   16 +++++-----------
+ arch/x86/include/asm/spec-ctrl.h     |    3 ---
+ arch/x86/kernel/cpu/bugs.c           |   11 +----------
+ 3 files changed, 6 insertions(+), 24 deletions(-)
 
 --- a/arch/x86/include/asm/nospec-branch.h
 +++ b/arch/x86/include/asm/nospec-branch.h
-@@ -217,8 +217,6 @@ enum spectre_v2_mitigation {
+@@ -217,16 +217,7 @@ enum spectre_v2_mitigation {
  	SPECTRE_V2_IBRS,
  };
  
--extern void x86_spec_ctrl_set(u64);
--
+-/*
+- * The Intel specification for the SPEC_CTRL MSR requires that we
+- * preserve any already set reserved bits at boot time (e.g. for
+- * future additions that this kernel is not currently aware of).
+- * We then set any additional mitigation bits that we want
+- * ourselves and always use this as the base for SPEC_CTRL.
+- * We also use this when handling guest entry/exit as below.
+- */
+ extern void x86_spec_ctrl_set(u64);
+-extern u64 x86_spec_ctrl_get_default(void);
+ 
  /* The Speculative Store Bypass disable variants */
  enum ssb_mitigation {
- 	SPEC_STORE_BYPASS_NONE,
+@@ -278,6 +269,9 @@ static inline void indirect_branch_predi
+ 	alternative_msr_write(MSR_IA32_PRED_CMD, val, X86_FEATURE_USE_IBPB);
+ }
+ 
++/* The Intel SPEC CTRL MSR base value cache */
++extern u64 x86_spec_ctrl_base;
++
+ /*
+  * With retpoline, we must use IBRS to restrict branch prediction
+  * before calling into firmware.
+@@ -286,7 +280,7 @@ static inline void indirect_branch_predi
+  */
+ #define firmware_restrict_branch_speculation_start()			\
+ do {									\
+-	u64 val = x86_spec_ctrl_get_default() | SPEC_CTRL_IBRS;		\
++	u64 val = x86_spec_ctrl_base | SPEC_CTRL_IBRS;			\
+ 									\
+ 	preempt_disable();						\
+ 	alternative_msr_write(MSR_IA32_SPEC_CTRL, val,			\
+@@ -295,7 +289,7 @@ do {									\
+ 
+ #define firmware_restrict_branch_speculation_end()			\
+ do {									\
+-	u64 val = x86_spec_ctrl_get_default();				\
++	u64 val = x86_spec_ctrl_base;					\
+ 									\
+ 	alternative_msr_write(MSR_IA32_SPEC_CTRL, val,			\
+ 			      X86_FEATURE_USE_IBRS_FW);			\
+--- a/arch/x86/include/asm/spec-ctrl.h
++++ b/arch/x86/include/asm/spec-ctrl.h
+@@ -47,9 +47,6 @@ void x86_spec_ctrl_restore_host(u64 gues
+ extern u64 x86_amd_ls_cfg_base;
+ extern u64 x86_amd_ls_cfg_ssbd_mask;
+ 
+-/* The Intel SPEC CTRL MSR base value cache */
+-extern u64 x86_spec_ctrl_base;
+-
+ static inline u64 ssbd_tif_to_spec_ctrl(u64 tifn)
+ {
+ 	BUILD_BUG_ON(TIF_SSBD < SPEC_CTRL_SSBD_SHIFT);
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -133,15 +133,6 @@ static const char *spectre_v2_strings[]
- static enum spectre_v2_mitigation spectre_v2_enabled __ro_after_init =
- 	SPECTRE_V2_NONE;
+@@ -36,6 +36,7 @@ static void __init ssb_select_mitigation
+  * writes to SPEC_CTRL contain whatever reserved bits have been set.
+  */
+ u64 __ro_after_init x86_spec_ctrl_base;
++EXPORT_SYMBOL_GPL(x86_spec_ctrl_base);
  
--void x86_spec_ctrl_set(u64 val)
+ /*
+  * The vendor and possibly platform specific bits which can be modified in
+@@ -141,16 +142,6 @@ void x86_spec_ctrl_set(u64 val)
+ }
+ EXPORT_SYMBOL_GPL(x86_spec_ctrl_set);
+ 
+-u64 x86_spec_ctrl_get_default(void)
 -{
--	if (val & x86_spec_ctrl_mask)
--		WARN_ONCE(1, "SPEC_CTRL MSR value 0x%16llx is unknown.\n", val);
--	else
--		wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base | val);
+-	u64 msrval = x86_spec_ctrl_base;
+-
+-	if (static_cpu_has(X86_FEATURE_SPEC_CTRL))
+-		msrval |= ssbd_tif_to_spec_ctrl(current_thread_info()->flags);
+-	return msrval;
 -}
--EXPORT_SYMBOL_GPL(x86_spec_ctrl_set);
+-EXPORT_SYMBOL_GPL(x86_spec_ctrl_get_default);
 -
  void
  x86_virt_spec_ctrl(u64 guest_spec_ctrl, u64 guest_virt_spec_ctrl, bool setguest)
  {
-@@ -503,7 +494,7 @@ static enum ssb_mitigation __init __ssb_
- 		case X86_VENDOR_INTEL:
- 			x86_spec_ctrl_base |= SPEC_CTRL_SSBD;
- 			x86_spec_ctrl_mask &= ~SPEC_CTRL_SSBD;
--			x86_spec_ctrl_set(SPEC_CTRL_SSBD);
-+			wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
- 			break;
- 		case X86_VENDOR_AMD:
- 			x86_amd_ssb_disable();
-@@ -615,7 +606,7 @@ int arch_prctl_spec_ctrl_get(struct task
- void x86_spec_ctrl_setup_ap(void)
- {
- 	if (boot_cpu_has(X86_FEATURE_MSR_SPEC_CTRL))
--		x86_spec_ctrl_set(x86_spec_ctrl_base & ~x86_spec_ctrl_mask);
-+		wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
- 
- 	if (ssb_mode == SPEC_STORE_BYPASS_DISABLE)
- 		x86_amd_ssb_disable();
