@@ -1,95 +1,40 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1340521-1526937443-2-1414694374180100820
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES ensvro, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526937442; b=dhXfr8A4Mu7aEi94eyFcpIyAMe8FGPTqxSV4dKRc3wsTCWlYua
-    EJQkgbnRV7R8EipG13pp+vCxbE1HVdABEqXauv7sIVY4k/HUsLd8chHxmfAm01sY
-    lfDoq+W/LxjW4InBjDTSGZNjRpcrL/c5jG/xbA/Vh+ASHi8Z7hYFakGC1HKxi5Ui
-    l8JHYyk7hjhh5I6VaeocB3YjSIeYCRQAND5ZvGot94M9SXgq6TAhHVxd+t0+clhV
-    f6PZ67GeFjJMx4Kd0dFuxR1oXCkSzMb9NaPegmRxLpAvGJcZpfsNaP83iccY3LQK
-    thdFMTBvfItKLtuP9Ag68331DUSe1WqQHETw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1526937442; bh=sc34PKf5zlZ2xfARpNiLHxWbR9EZtt
-    pDKyBBKib3PLs=; b=DpZ5SgXnpGi342UblpJfoaReQPVqI+Li7rXEvnUAlcx/OJ
-    veI+O8RJp1Gl5cvU/6XPg4u+UORruFyyRBY6Cg1gbh69hcPwrY3IvUPjFRDihVlj
-    hxBdcRDALk0N/3Y3eB6h4TvJ9sJlKrGO/nFkQKU/H/ZUSfxg0yXmk0t3QuhFUA1R
-    RjZw+qhxKQjjsRn34QC3inrdJg/jMYOVie1RP+ZUfXVW0bj+R0hqhktwPfAc1MYv
-    guaCOGn8/MbBiOYV2tVMSsMUNh9uUdrBud4QGiTz/K3dD6yYg0uWe5XMZoCynYP3
-    AITZGAtRlKwqQCJ13weG2E/iqS7RqRNI6OKQ7QOw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=1/zWeej3 x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linuxfoundation.org header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=1/zWeej3 x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linuxfoundation.org header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGq5GVN3f5sqOf/vFb77Dk6iwl3qLuTHmWTlTWJi08UMsT79H/b/Rvs5wqTuNgBPx+QLbwEFAh7tb3Fxc79pBxQkySHUqyCiMBp7UozjrTk0RfzwP+/+
-    ZJf5oHAv5KhYdmwq9fywwTih4ylMSmxzrz+NBUGylc8uZKa8g1EJ4i2Aph9s2NMj+DA88apgTR7Dx5aaMm8uUFl2qTtFUTIo86OcmwJk30OG7osclUSLMFRG
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=yPCof4ZbAAAA:8 a=pBOR-ozoAAAA:8 a=ag1SF4gXAAAA:8 a=eUy5aBkwU2Vtkc7FqPQA:9
-    a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753190AbeEUVRS (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 21 May 2018 17:17:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60648 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753166AbeEUVRO (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 21 May 2018 17:17:14 -0400
+Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZr+cSrNw3Cd8GSNMSArx9JTclQwk7Jkby/5Bw517uB+LMvICwKZuvyzbXewsRiH8E1gi6YL
+ARC-Seal: i=1; a=rsa-sha256; t=1526937442; cv=none;
+        d=google.com; s=arc-20160816;
+        b=QEEpc/BkSOucNfmM71TurgHGG/RuvWBSaMtmPk7MHcj1oUJ7xBTuXsEvV266yD29mv
+         5lJbPzeahDo41SEpizYY+TycNyDGoBHrhGpMmtUw9Y6L8YIjHGs93LWUsfieQwtMsMnr
+         wY2ZjKvPqEF7SmtF1NrpsWKlfHYE9SGUInHAitW0BMuwtypUs+lLLeSAPxe5yldOAhiu
+         H/8ZXAq35B5+5Q8br1ZM7IgnrtRIA821Ayh5RiAr7phtvooYNVmKVXrDY4yTTYQNhEx6
+         Y7/ZQPFzm6BMdex1IoLdZWfF2NBHsPVMk+7JQmquju7TpFbtUmw92at6afvDWWbjPo4N
+         Uapg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=ToQrIKZm/BLRcPbrayANtql2Bo0CEx6+F62OB5gWdjg=;
+        b=P9V0IvbVK3J6QLtwTml3Xolkiq8K9WRDcZBxnYn6yBj6tqANMBz9oLAeRzWEEv5tOo
+         +hutGQTGHWeX0x3vI4n0SH8EAu84SfMNAlvJx5pNj96j2HnkupCg+FQYv7H8dCT0joIw
+         p+3LmsMdpsxSzPGrSNJgBBkrQGSsc6LwgeqFnLknhwiUH31QGhpu+aL0qKY08gLMpp/i
+         TnvzZkf4Oxtlh9TXQFMm6TOtpNfe2PaQVwRjMmwxEQllFfofhK8aWqZkMMriNLr01ZQ+
+         PfngJ7gfVsap7jTK9KUjVssyHcG1UUkRNbXRAiOIjL4G6BGmkLMdXOCs+0eOMDUo6p8I
+         /MLQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=bQHQU6mh;
+       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=bQHQU6mh;
+       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@suse.de>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 80/87] x86/speculation: Rework speculative_store_bypass_update()
-Date: Mon, 21 May 2018 23:11:56 +0200
-Message-Id: <20180521210426.902565725@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@suse.de>,
+	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+	David Woodhouse <dwmw@amazon.co.uk>
+Subject: [PATCH 4.9 82/87] x86/bugs: Expose x86_spec_ctrl_base directly
+Date: Mon, 21 May 2018 23:11:58 +0200
+Message-Id: <20180521210427.008568976@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210420.222671977@linuxfoundation.org>
 References: <20180521210420.222671977@linuxfoundation.org>
@@ -97,9 +42,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1601109955955970722?=
+X-GMAIL-MSGID: =?utf-8?q?1601109955955970722?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -109,13 +55,14 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 0270be3e34efb05a88bc4c422572ece038ef3608 upstream
+commit fa8ac4988249c38476f6ad678a4848a736373403 upstream
 
-The upcoming support for the virtual SPEC_CTRL MSR on AMD needs to reuse
-speculative_store_bypass_update() to avoid code duplication. Add an
-argument for supplying a thread info (TIF) value and create a wrapper
-speculative_store_bypass_update_current() which is used at the existing
-call site.
+x86_spec_ctrl_base is the system wide default value for the SPEC_CTRL MSR.
+x86_spec_ctrl_get_default() returns x86_spec_ctrl_base and was intended to
+prevent modification to that variable. Though the variable is read only
+after init and globaly visible already.
+
+Remove the function and export the variable instead.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Borislav Petkov <bp@suse.de>
@@ -123,49 +70,94 @@ Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/spec-ctrl.h |    7 ++++++-
- arch/x86/kernel/cpu/bugs.c       |    2 +-
- arch/x86/kernel/process.c        |    4 ++--
- 3 files changed, 9 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/nospec-branch.h |   16 +++++-----------
+ arch/x86/include/asm/spec-ctrl.h     |    3 ---
+ arch/x86/kernel/cpu/bugs.c           |   11 +----------
+ 3 files changed, 6 insertions(+), 24 deletions(-)
 
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -217,16 +217,7 @@ enum spectre_v2_mitigation {
+ 	SPECTRE_V2_IBRS,
+ };
+ 
+-/*
+- * The Intel specification for the SPEC_CTRL MSR requires that we
+- * preserve any already set reserved bits at boot time (e.g. for
+- * future additions that this kernel is not currently aware of).
+- * We then set any additional mitigation bits that we want
+- * ourselves and always use this as the base for SPEC_CTRL.
+- * We also use this when handling guest entry/exit as below.
+- */
+ extern void x86_spec_ctrl_set(u64);
+-extern u64 x86_spec_ctrl_get_default(void);
+ 
+ /* The Speculative Store Bypass disable variants */
+ enum ssb_mitigation {
+@@ -278,6 +269,9 @@ static inline void indirect_branch_predi
+ 	alternative_msr_write(MSR_IA32_PRED_CMD, val, X86_FEATURE_USE_IBPB);
+ }
+ 
++/* The Intel SPEC CTRL MSR base value cache */
++extern u64 x86_spec_ctrl_base;
++
+ /*
+  * With retpoline, we must use IBRS to restrict branch prediction
+  * before calling into firmware.
+@@ -286,7 +280,7 @@ static inline void indirect_branch_predi
+  */
+ #define firmware_restrict_branch_speculation_start()			\
+ do {									\
+-	u64 val = x86_spec_ctrl_get_default() | SPEC_CTRL_IBRS;		\
++	u64 val = x86_spec_ctrl_base | SPEC_CTRL_IBRS;			\
+ 									\
+ 	preempt_disable();						\
+ 	alternative_msr_write(MSR_IA32_SPEC_CTRL, val,			\
+@@ -295,7 +289,7 @@ do {									\
+ 
+ #define firmware_restrict_branch_speculation_end()			\
+ do {									\
+-	u64 val = x86_spec_ctrl_get_default();				\
++	u64 val = x86_spec_ctrl_base;					\
+ 									\
+ 	alternative_msr_write(MSR_IA32_SPEC_CTRL, val,			\
+ 			      X86_FEATURE_USE_IBRS_FW);			\
 --- a/arch/x86/include/asm/spec-ctrl.h
 +++ b/arch/x86/include/asm/spec-ctrl.h
-@@ -42,6 +42,11 @@ extern void speculative_store_bypass_ht_
- static inline void speculative_store_bypass_ht_init(void) { }
- #endif
+@@ -47,9 +47,6 @@ void x86_spec_ctrl_restore_host(u64 gues
+ extern u64 x86_amd_ls_cfg_base;
+ extern u64 x86_amd_ls_cfg_ssbd_mask;
  
--extern void speculative_store_bypass_update(void);
-+extern void speculative_store_bypass_update(unsigned long tif);
-+
-+static inline void speculative_store_bypass_update_current(void)
-+{
-+	speculative_store_bypass_update(current_thread_info()->flags);
-+}
- 
- #endif
+-/* The Intel SPEC CTRL MSR base value cache */
+-extern u64 x86_spec_ctrl_base;
+-
+ static inline u64 ssbd_tif_to_spec_ctrl(u64 tifn)
+ {
+ 	BUILD_BUG_ON(TIF_SSBD < SPEC_CTRL_SSBD_SHIFT);
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -597,7 +597,7 @@ static int ssb_prctl_set(struct task_str
- 	 * mitigation until it is next scheduled.
- 	 */
- 	if (task == current && update)
--		speculative_store_bypass_update();
-+		speculative_store_bypass_update_current();
+@@ -35,6 +35,7 @@ static void __init ssb_select_mitigation
+  * writes to SPEC_CTRL contain whatever reserved bits have been set.
+  */
+ u64 __ro_after_init x86_spec_ctrl_base;
++EXPORT_SYMBOL_GPL(x86_spec_ctrl_base);
  
- 	return 0;
+ /*
+  * The vendor and possibly platform specific bits which can be modified in
+@@ -140,16 +141,6 @@ void x86_spec_ctrl_set(u64 val)
  }
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -338,10 +338,10 @@ static __always_inline void __speculativ
- 		intel_set_ssb_state(tifn);
- }
+ EXPORT_SYMBOL_GPL(x86_spec_ctrl_set);
  
--void speculative_store_bypass_update(void)
-+void speculative_store_bypass_update(unsigned long tif)
+-u64 x86_spec_ctrl_get_default(void)
+-{
+-	u64 msrval = x86_spec_ctrl_base;
+-
+-	if (static_cpu_has(X86_FEATURE_SPEC_CTRL))
+-		msrval |= ssbd_tif_to_spec_ctrl(current_thread_info()->flags);
+-	return msrval;
+-}
+-EXPORT_SYMBOL_GPL(x86_spec_ctrl_get_default);
+-
+ void
+ x86_virt_spec_ctrl(u64 guest_spec_ctrl, u64 guest_virt_spec_ctrl, bool setguest)
  {
- 	preempt_disable();
--	__speculative_store_bypass_update(current_thread_info()->flags);
-+	__speculative_store_bypass_update(tif);
- 	preempt_enable();
- }
- 
