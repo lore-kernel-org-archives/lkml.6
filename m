@@ -1,38 +1,95 @@
-Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpqc1XJ8QVF8jZc/3ilE837lvADJ01IxKL810cdzDdCHRPjiASIKKPmSeQQ+tnkNchQChLR
-ARC-Seal: i=1; a=rsa-sha256; t=1526938011; cv=none;
-        d=google.com; s=arc-20160816;
-        b=N1stYoWB5SHxbdTSj48sE2xXZ2jdYR9LwzrbY7k8ro6NnyEw6cCR/dh0KoOKwiO8Mo
-         aIrbGVWfzTcrDP/1zXDrubQRjUQVwAgq7SoMFA1p94TfDAz3a5iqT4fxBhyY2mZzvSBo
-         vSlGXTWznOYiLRjcI1/LYWF2ESrlE4Jay9A0iBgRgrLsHm2nYxjBxVmRIctrAmY5bmkv
-         vL7tDm93UnoVQ6t7EDResHm4WBmFLbG4IU+D82b4nvjpUNqmO1F7f+GMNLLMolf0A09+
-         4fX3OpD+9YCPxlCA/2pVH5cxioOZ0uU894c6xrnoq1PETBD2ZCqDBr4orIyvKpKLzZ5K
-         MJCQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=/bqyO57jCB4JhaMl9GpYvEoL/jiQpPCFdHpYlSgqnoE=;
-        b=yRKI6JqPtRhEWUdX5lYynhWwe4qXRG1LXCh4GMkKaN6FSRorQYg9DdrfJg7dTodUUY
-         g2nhj2XJ2amO2EJcGE4ZYUXByilywC35VOeoPkm6kdVKePGffvFIoNJmx28wshLqQwKI
-         lZbtcOXbQ6l57alkgWUoNANbgTfuhzIDtan+IJB1pQ1yn3iK5p4DzzJ0jSrugfuphTgw
-         Q5agXGYop7YfYx0BCORAdtgAvkKdAZuMudeuqRgPfnOz4Lrl32+3e9c0Ew8x0jrb/xqd
-         iEo1Ehc3TobvbdUGq28l4qPu4blIkbFFzhRTmJHl/fir9J8cVAmE3gabmADgfpVtBXY7
-         FCJg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=HiSuqo+s;
-       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=HiSuqo+s;
-       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1340521-1526938010-2-6396560646142665513
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES encada, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1526938009; b=j8qjPrjlegERzdhPGKDHaGCxwAWk8Jznxb8abZl8Glcj4AgchA
+    OC5UxrsNwFPjfV+5ntHoQLI7VTRVatb26MJc9z0S4mLfG6m8Nw72bHTIb7NodXfU
+    oOBgJyJOi6dXKy2ErcIzWan67yG4boMzeiH1ITHWyljHtd3ZhIxMw/Pb8lEP8iwi
+    A338rITy2izKU+goR4qhgJmzoojUUX5c5gX6C0C/4rVoLZh7u+OZgv/LbH/ZWLhg
+    bEi47gz55PKC/0/shFa3kgnuN5AG4Si1+hvrPe7SdtzTIpv+ULeXIzkkkrsIMyd9
+    KuyHxKlomMLNVrpzHzkVntYXPgKl3jlaB/DQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1526938009; bh=2lIDQ0B5ziFBqev0Jm/qzGl2RSqz3P
+    e9Zrbw1Bi50K0=; b=mS1fiN4sNj3iZ8rHe7vimGJE1VJgcPjgBjt2m+7xH/AcFI
+    XZufbH0KR6WBX4THgFvTlWquRSw+LN16UqU/Sd1GR455uPOynwyeDvCZmV8LRs/D
+    S6duwWE0rLBBexkYrmHddNN3zewHi+rejdoXDHsYg8ajKe46jCn2cvM6Nvx2Zt8i
+    CijE9N9VSqzpBfNF9sKqU6pR8R1Oy2t/RO90grvVu+3KpkLX10tLMB5lfst/q1w3
+    jDRTvFl+0v7r3NhkIiB0uHEIPYlyPrlpWceXaCXXlfJHU+xGkGWtgTgezNfmUUTC
+    MKVbba/pREwjw8abvNGHVpCBEoWDky612PGhfIEg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+    header.i=@kernel.org header.b=c8MAmvmE x-bits=1024 x-keytype=rsa
+    x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+    header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=linuxfoundation.org header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+      header.i=@kernel.org header.b=c8MAmvmE x-bits=1024 x-keytype=rsa
+      x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+      header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=linuxfoundation.org header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfHXc+f3rqTZ5MmjDOQgjeZOWCbNhy55UCr+b4+ojIwKne1m9Flx+R9IZSL+H7aoVSQg0GsFk/6jVQ1had+3lVGV6I6cN83eJnw+N4M6ri4yT7HQVi6lZ
+    wUz27l+kQEE/yFo6agdPCxFbrHOBly/+ouV0RDL6epUIOhjwbHVP/EwyODIxQPFptoNA76PmjOIOfi8zEmwW6Q3Gv+FJV94xucwyI1HjuySqpZRt+dgm92si
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=3YBwCez8VKC7PNCDsb0A:9
+    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S932615AbeEUV0m (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 21 May 2018 17:26:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41490 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932569AbeEUV0k (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 21 May 2018 17:26:40 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.16 108/110] KVM: SVM: Implement VIRT_SPEC_CTRL support for SSBD
-Date: Mon, 21 May 2018 23:12:45 +0200
-Message-Id: <20180521210515.061159078@linuxfoundation.org>
+        stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.16 072/110] x86/bugs/AMD: Add support to disable RDS on Fam[15,16,17]h if requested
+Date: Mon, 21 May 2018 23:12:09 +0200
+Message-Id: <20180521210512.520180832@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -40,10 +97,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109967439224188?=
-X-GMAIL-MSGID: =?utf-8?q?1601110552244201410?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,204 +107,185 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tom Lendacky <thomas.lendacky@amd.com>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-commit bc226f07dcd3c9ef0b7f6236fe356ea4a9cb4769 upstream
+commit 764f3c21588a059cd783c6ba0734d4db2d72822d upstream
 
-Expose the new virtualized architectural mechanism, VIRT_SSBD, for using
-speculative store bypass disable (SSBD) under SVM.  This will allow guests
-to use SSBD on hardware that uses non-architectural mechanisms for enabling
-SSBD.
+AMD does not need the Speculative Store Bypass mitigation to be enabled.
 
-[ tglx: Folded the migration fixup from Paolo Bonzini ]
+The parameters for this are already available and can be done via MSR
+C001_1020. Each family uses a different bit in that MSR for this.
 
-Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+[ tglx: Expose the bit mask via a variable and move the actual MSR fiddling
+  	into the bugs code as that's the right thing to do and also required
+	to prepare for dynamic enable/disable ]
+
+Suggested-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/kvm_host.h |    2 +-
- arch/x86/kernel/cpu/common.c    |    3 ++-
- arch/x86/kvm/cpuid.c            |   11 +++++++++--
- arch/x86/kvm/svm.c              |   21 +++++++++++++++++++--
- arch/x86/kvm/vmx.c              |   18 +++++++++++++++---
- arch/x86/kvm/x86.c              |   13 ++++---------
- 6 files changed, 50 insertions(+), 18 deletions(-)
+ arch/x86/include/asm/cpufeatures.h   |    1 +
+ arch/x86/include/asm/nospec-branch.h |    4 ++++
+ arch/x86/kernel/cpu/amd.c            |   26 ++++++++++++++++++++++++++
+ arch/x86/kernel/cpu/bugs.c           |   27 ++++++++++++++++++++++++++-
+ arch/x86/kernel/cpu/common.c         |    4 ++++
+ 5 files changed, 61 insertions(+), 1 deletion(-)
 
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -933,7 +933,7 @@ struct kvm_x86_ops {
- 	int (*hardware_setup)(void);               /* __init */
- 	void (*hardware_unsetup)(void);            /* __exit */
- 	bool (*cpu_has_accelerated_tpr)(void);
--	bool (*cpu_has_high_real_mode_segbase)(void);
-+	bool (*has_emulated_msr)(int index);
- 	void (*cpuid_update)(struct kvm_vcpu *vcpu);
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -215,6 +215,7 @@
+ #define X86_FEATURE_USE_IBPB		( 7*32+21) /* "" Indirect Branch Prediction Barrier enabled */
+ #define X86_FEATURE_USE_IBRS_FW		( 7*32+22) /* "" Use IBRS during runtime firmware calls */
+ #define X86_FEATURE_SPEC_STORE_BYPASS_DISABLE	( 7*32+23) /* "" Disable Speculative Store Bypass. */
++#define X86_FEATURE_AMD_RDS		(7*32+24)  /* "" AMD RDS implementation */
  
- 	int (*vm_init)(struct kvm *kvm);
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -767,7 +767,8 @@ static void init_speculation_control(str
- 	if (cpu_has(c, X86_FEATURE_INTEL_STIBP))
- 		set_cpu_cap(c, X86_FEATURE_STIBP);
+ /* Virtualization flags: Linux defined, word 8 */
+ #define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -244,6 +244,10 @@ enum ssb_mitigation {
+ 	SPEC_STORE_BYPASS_DISABLE,
+ };
  
--	if (cpu_has(c, X86_FEATURE_SPEC_CTRL_SSBD))
-+	if (cpu_has(c, X86_FEATURE_SPEC_CTRL_SSBD) ||
-+	    cpu_has(c, X86_FEATURE_VIRT_SSBD))
- 		set_cpu_cap(c, X86_FEATURE_SSBD);
++/* AMD specific Speculative Store Bypass MSR data */
++extern u64 x86_amd_ls_cfg_base;
++extern u64 x86_amd_ls_cfg_rds_mask;
++
+ extern char __indirect_thunk_start[];
+ extern char __indirect_thunk_end[];
  
- 	if (cpu_has(c, X86_FEATURE_AMD_IBRS)) {
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -374,7 +374,7 @@ static inline int __do_cpuid_ent(struct
- 
- 	/* cpuid 0x80000008.ebx */
- 	const u32 kvm_cpuid_8000_0008_ebx_x86_features =
--		F(AMD_IBPB) | F(AMD_IBRS);
-+		F(AMD_IBPB) | F(AMD_IBRS) | F(VIRT_SSBD);
- 
- 	/* cpuid 0xC0000001.edx */
- 	const u32 kvm_cpuid_C000_0001_edx_x86_features =
-@@ -642,13 +642,20 @@ static inline int __do_cpuid_ent(struct
- 			g_phys_as = phys_as;
- 		entry->eax = g_phys_as | (virt_as << 8);
- 		entry->edx = 0;
--		/* IBRS and IBPB aren't necessarily present in hardware cpuid */
-+		/*
-+		 * IBRS, IBPB and VIRT_SSBD aren't necessarily present in
-+		 * hardware cpuid
-+		 */
- 		if (boot_cpu_has(X86_FEATURE_AMD_IBPB))
- 			entry->ebx |= F(AMD_IBPB);
- 		if (boot_cpu_has(X86_FEATURE_AMD_IBRS))
- 			entry->ebx |= F(AMD_IBRS);
-+		if (boot_cpu_has(X86_FEATURE_VIRT_SSBD))
-+			entry->ebx |= F(VIRT_SSBD);
- 		entry->ebx &= kvm_cpuid_8000_0008_ebx_x86_features;
- 		cpuid_mask(&entry->ebx, CPUID_8000_0008_EBX);
-+		if (boot_cpu_has(X86_FEATURE_LS_CFG_SSBD))
-+			entry->ebx |= F(VIRT_SSBD);
- 		break;
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -10,6 +10,7 @@
+ #include <asm/processor.h>
+ #include <asm/apic.h>
+ #include <asm/cpu.h>
++#include <asm/nospec-branch.h>
+ #include <asm/smp.h>
+ #include <asm/pci-direct.h>
+ #include <asm/delay.h>
+@@ -554,6 +555,26 @@ static void bsp_init_amd(struct cpuinfo_
+ 		rdmsrl(MSR_FAM10H_NODE_ID, value);
+ 		nodes_per_socket = ((value >> 3) & 7) + 1;
  	}
- 	case 0x80000019:
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -3971,6 +3971,13 @@ static int svm_get_msr(struct kvm_vcpu *
- 
- 		msr_info->data = svm->spec_ctrl;
- 		break;
-+	case MSR_AMD64_VIRT_SPEC_CTRL:
-+		if (!msr_info->host_initiated &&
-+		    !guest_cpuid_has(vcpu, X86_FEATURE_VIRT_SSBD))
-+			return 1;
 +
-+		msr_info->data = svm->virt_spec_ctrl;
-+		break;
- 	case MSR_F15H_IC_CFG: {
- 
- 		int family, model;
-@@ -4105,6 +4112,16 @@ static int svm_set_msr(struct kvm_vcpu *
- 			break;
- 		set_msr_interception(svm->msrpm, MSR_IA32_PRED_CMD, 0, 1);
- 		break;
-+	case MSR_AMD64_VIRT_SPEC_CTRL:
-+		if (!msr->host_initiated &&
-+		    !guest_cpuid_has(vcpu, X86_FEATURE_VIRT_SSBD))
-+			return 1;
++	if (c->x86 >= 0x15 && c->x86 <= 0x17) {
++		unsigned int bit;
 +
-+		if (data & ~SPEC_CTRL_SSBD)
-+			return 1;
-+
-+		svm->virt_spec_ctrl = data;
-+		break;
- 	case MSR_STAR:
- 		svm->vmcb->save.star = data;
- 		break;
-@@ -5635,7 +5652,7 @@ static bool svm_cpu_has_accelerated_tpr(
- 	return false;
- }
- 
--static bool svm_has_high_real_mode_segbase(void)
-+static bool svm_has_emulated_msr(int index)
- {
- 	return true;
- }
-@@ -6859,7 +6876,7 @@ static struct kvm_x86_ops svm_x86_ops __
- 	.hardware_enable = svm_hardware_enable,
- 	.hardware_disable = svm_hardware_disable,
- 	.cpu_has_accelerated_tpr = svm_cpu_has_accelerated_tpr,
--	.cpu_has_high_real_mode_segbase = svm_has_high_real_mode_segbase,
-+	.has_emulated_msr = svm_has_emulated_msr,
- 
- 	.vcpu_create = svm_create_vcpu,
- 	.vcpu_free = svm_free_vcpu,
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -9231,9 +9231,21 @@ static void vmx_handle_external_intr(str
- }
- STACK_FRAME_NON_STANDARD(vmx_handle_external_intr);
- 
--static bool vmx_has_high_real_mode_segbase(void)
-+static bool vmx_has_emulated_msr(int index)
- {
--	return enable_unrestricted_guest || emulate_invalid_guest_state;
-+	switch (index) {
-+	case MSR_IA32_SMBASE:
++		switch (c->x86) {
++		case 0x15: bit = 54; break;
++		case 0x16: bit = 33; break;
++		case 0x17: bit = 10; break;
++		default: return;
++		}
 +		/*
-+		 * We cannot do SMM unless we can run the guest in big
-+		 * real mode.
++		 * Try to cache the base value so further operations can
++		 * avoid RMW. If that faults, do not enable RDS.
 +		 */
-+		return enable_unrestricted_guest || emulate_invalid_guest_state;
-+	case MSR_AMD64_VIRT_SPEC_CTRL:
-+		/* This is AMD only.  */
-+		return false;
-+	default:
-+		return true;
++		if (!rdmsrl_safe(MSR_AMD64_LS_CFG, &x86_amd_ls_cfg_base)) {
++			setup_force_cpu_cap(X86_FEATURE_RDS);
++			setup_force_cpu_cap(X86_FEATURE_AMD_RDS);
++			x86_amd_ls_cfg_rds_mask = 1ULL << bit;
++		}
 +	}
  }
  
- static bool vmx_mpx_supported(void)
-@@ -12297,7 +12309,7 @@ static struct kvm_x86_ops vmx_x86_ops __
- 	.hardware_enable = hardware_enable,
- 	.hardware_disable = hardware_disable,
- 	.cpu_has_accelerated_tpr = report_flexpriority,
--	.cpu_has_high_real_mode_segbase = vmx_has_high_real_mode_segbase,
-+	.has_emulated_msr = vmx_has_emulated_msr,
+ static void early_detect_mem_encrypt(struct cpuinfo_x86 *c)
+@@ -898,6 +919,11 @@ static void init_amd(struct cpuinfo_x86
+ 	/* AMD CPUs don't reset SS attributes on SYSRET, Xen does. */
+ 	if (!cpu_has(c, X86_FEATURE_XENPV))
+ 		set_cpu_bug(c, X86_BUG_SYSRET_SS_ATTRS);
++
++	if (boot_cpu_has(X86_FEATURE_AMD_RDS)) {
++		set_cpu_cap(c, X86_FEATURE_RDS);
++		set_cpu_cap(c, X86_FEATURE_AMD_RDS);
++	}
+ }
  
- 	.vcpu_create = vmx_create_vcpu,
- 	.vcpu_free = vmx_free_vcpu,
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -1045,6 +1045,7 @@ static u32 emulated_msrs[] = {
- 	MSR_SMI_COUNT,
- 	MSR_PLATFORM_INFO,
- 	MSR_MISC_FEATURES_ENABLES,
-+	MSR_AMD64_VIRT_SPEC_CTRL,
- };
+ #ifdef CONFIG_X86_32
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -41,6 +41,13 @@ static u64 __ro_after_init x86_spec_ctrl
+  */
+ static u64 __ro_after_init x86_spec_ctrl_mask = ~SPEC_CTRL_IBRS;
  
- static unsigned num_emulated_msrs;
-@@ -2843,7 +2844,7 @@ int kvm_vm_ioctl_check_extension(struct
- 		 * fringe case that is not enabled except via specific settings
- 		 * of the module parameters.
- 		 */
--		r = kvm_x86_ops->cpu_has_high_real_mode_segbase();
-+		r = kvm_x86_ops->has_emulated_msr(MSR_IA32_SMBASE);
++/*
++ * AMD specific MSR info for Speculative Store Bypass control.
++ * x86_amd_ls_cfg_rds_mask is initialized in identify_boot_cpu().
++ */
++u64 __ro_after_init x86_amd_ls_cfg_base;
++u64 __ro_after_init x86_amd_ls_cfg_rds_mask;
++
+ void __init check_bugs(void)
+ {
+ 	identify_boot_cpu();
+@@ -52,7 +59,8 @@ void __init check_bugs(void)
+ 
+ 	/*
+ 	 * Read the SPEC_CTRL MSR to account for reserved bits which may
+-	 * have unknown values.
++	 * have unknown values. AMD64_LS_CFG MSR is cached in the early AMD
++	 * init code as it is not enumerated and depends on the family.
+ 	 */
+ 	if (boot_cpu_has(X86_FEATURE_IBRS))
+ 		rdmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
+@@ -154,6 +162,14 @@ void x86_spec_ctrl_restore_host(u64 gues
+ }
+ EXPORT_SYMBOL_GPL(x86_spec_ctrl_restore_host);
+ 
++static void x86_amd_rds_enable(void)
++{
++	u64 msrval = x86_amd_ls_cfg_base | x86_amd_ls_cfg_rds_mask;
++
++	if (boot_cpu_has(X86_FEATURE_AMD_RDS))
++		wrmsrl(MSR_AMD64_LS_CFG, msrval);
++}
++
+ #ifdef RETPOLINE
+ static bool spectre_v2_bad_module;
+ 
+@@ -443,6 +459,11 @@ static enum ssb_mitigation_cmd __init __
+ 
+ 	switch (cmd) {
+ 	case SPEC_STORE_BYPASS_CMD_AUTO:
++		/*
++		 * AMD platforms by default don't need SSB mitigation.
++		 */
++		if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
++			break;
+ 	case SPEC_STORE_BYPASS_CMD_ON:
+ 		mode = SPEC_STORE_BYPASS_DISABLE;
  		break;
- 	case KVM_CAP_VAPIC:
- 		r = !kvm_x86_ops->cpu_has_accelerated_tpr();
-@@ -4522,14 +4523,8 @@ static void kvm_init_msr_list(void)
- 	num_msrs_to_save = j;
+@@ -469,6 +490,7 @@ static enum ssb_mitigation_cmd __init __
+ 			x86_spec_ctrl_set(SPEC_CTRL_RDS);
+ 			break;
+ 		case X86_VENDOR_AMD:
++			x86_amd_rds_enable();
+ 			break;
+ 		}
+ 	}
+@@ -490,6 +512,9 @@ void x86_spec_ctrl_setup_ap(void)
+ {
+ 	if (boot_cpu_has(X86_FEATURE_IBRS))
+ 		x86_spec_ctrl_set(x86_spec_ctrl_base & ~x86_spec_ctrl_mask);
++
++	if (ssb_mode == SPEC_STORE_BYPASS_DISABLE)
++		x86_amd_rds_enable();
+ }
  
- 	for (i = j = 0; i < ARRAY_SIZE(emulated_msrs); i++) {
--		switch (emulated_msrs[i]) {
--		case MSR_IA32_SMBASE:
--			if (!kvm_x86_ops->cpu_has_high_real_mode_segbase())
--				continue;
--			break;
--		default:
--			break;
--		}
-+		if (!kvm_x86_ops->has_emulated_msr(emulated_msrs[i]))
-+			continue;
- 
- 		if (j < i)
- 			emulated_msrs[j] = emulated_msrs[i];
+ #ifdef CONFIG_SYSFS
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -934,6 +934,10 @@ static const __initconst struct x86_cpu_
+ 	{ X86_VENDOR_CENTAUR,	5,					},
+ 	{ X86_VENDOR_INTEL,	5,					},
+ 	{ X86_VENDOR_NSC,	5,					},
++	{ X86_VENDOR_AMD,	0x12,					},
++	{ X86_VENDOR_AMD,	0x11,					},
++	{ X86_VENDOR_AMD,	0x10,					},
++	{ X86_VENDOR_AMD,	0xf,					},
+ 	{ X86_VENDOR_ANY,	4,					},
+ 	{}
+ };
