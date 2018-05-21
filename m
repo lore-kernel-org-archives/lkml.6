@@ -1,127 +1,262 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753614AbeEUSEU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 14:04:20 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58158 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753595AbeEUSEP (ORCPT
+        id S1753633AbeEUSFG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 14:05:06 -0400
+Received: from mail-io0-f199.google.com ([209.85.223.199]:38973 "EHLO
+        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753270AbeEUSFD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 14:04:15 -0400
-Subject: Re: [PATCH] audit: add containerid support for IMA-audit
-To: Steve Grubb <sgrubb@redhat.com>, Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Richard Guy Briggs <rgb@redhat.com>,
-        containers@lists.linux-foundation.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, paul@paul-moore.com
-References: <1520257393.10396.291.camel@linux.vnet.ibm.com>
- <20180518155659.porewd6moctumkys@madcap2.tricolour.ca>
- <1526661264.3404.55.camel@linux.vnet.ibm.com> <5705556.pzqfGOkdjC@x2>
-From: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Date: Mon, 21 May 2018 14:04:08 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 21 May 2018 14:05:03 -0400
+X-Google-Smtp-Source: AB8JxZrOTNqyT9Pq7iKuxPcLlHsQi0nQrX7I3dt5gfwq12diF9rkLmeQh2yx3R5/K6XIUkM9LnRkwaOuBgmJvMXS33SpxuOiQQhz
 MIME-Version: 1.0
-In-Reply-To: <5705556.pzqfGOkdjC@x2>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-MW
-X-TM-AS-GCONF: 00
-x-cbid: 18052118-0008-0000-0000-000009D37E11
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009062; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000261; SDB=6.01035634; UDB=6.00529728; IPR=6.00814762;
- MB=3.00021227; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-21 18:04:12
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052118-0009-0000-0000-000047621721
-Message-Id: <7abd3460-0797-f003-12c7-7329beb0835b@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-21_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805210214
+Date: Mon, 21 May 2018 11:05:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000007eb20056cbb245f@google.com>
+Subject: INFO: rcu detected stall in corrupted
+From: syzbot <syzbot+f116bc1994efe725d51b@syzkaller.appspotmail.com>
+To: davem@davemloft.net, kuznet@ms2.inr.ac.ru,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/21/2018 01:21 PM, Steve Grubb wrote:
-> On Friday, May 18, 2018 12:34:24 PM EDT Mimi Zohar wrote:
->> On Fri, 2018-05-18 at 11:56 -0400, Richard Guy Briggs wrote:
->>> On 2018-05-18 10:39, Mimi Zohar wrote:
->>>> On Fri, 2018-05-18 at 09:54 -0400, Stefan Berger wrote:
->>>>> On 05/18/2018 08:53 AM, Mimi Zohar wrote:
->>>> [..]
->>>>
->>>>>>>>> If so, which ones? We could probably refactor the current
->>>>>>>>> integrity_audit_message() and have ima_parse_rule() call into it
->>>>>>>>> to get
->>>>>>>>> those fields as well. I suppose adding new fields to it wouldn't
->>>>>>>>> be
->>>>>>>>> considered breaking user space?
->>>>>>>> Changing the order of existing fields or inserting fields could
->>>>>>>> break
->>>>>>>> stuff and is strongly discouraged without a good reason, but
->>>>>>>> appending
->>>>>>>> fields is usually the right way to add information.
->>>>>>>>
->>>>>>>> There are exceptions, and in this case, I'd pick the "more
->>>>>>>> standard" of
->>>>>>>> the formats for AUDIT_INTEGRITY_RULE (ima_audit_measurement?) and
->>>>>>>> stick
->>>>>>>> with that, abandoning the other format, renaming the less
->>>>>>>> standard
->>>>>>>> version of the record (ima_parse_rule?) and perhpas adopting that
->>>>>>>> abandonned format for the new record type while using
->>>>>>>> current->audit_context.
->>>>>> This sounds right, other than "type=INTEGRITY_RULE" (1805) for
->>>>>> ima_audit_measurement().  Could we rename type=1805 to be
->>>>> So do we want to change both? I thought that what
->>>>> ima_audit_measurement() produces looks ok but may not have a good
->>>>> name
->>>>> for the 'type'. Now in this case I would not want to 'break user
->>>>> space'.
->>>>> The only change I was going to make was to what ima_parse_rule()
->>>>> produces.
->>>> The only change for now is separating the IMA policy rules from the
->>>> IMA-audit messages.
->>>>
->>>> Richard, when the containerid is appended to the IMA-audit messages,
->>>> would we make the audit type name change then?
->>> No, go ahead and make the change now.  I'm expecting that the
->>> containerid record will just be another auxiliary record and should not
->>> affect you folks.
->> To summarize, we need to disambiguate the 1805, as both
->> ima_parse_rule() and ima_audit_measurement() are using the same number
->> with different formats.  The main usage of 1805 that we are aware of
->> is ima_audit_measurement().  Yet the "type=" name for
->> ima_audit_measurement() should be INTEGRITY_IMA_AUDIT, not
->> INTEGRITY_RULE.
->>
->> option 1: breaks both uses
->> 1805 - INTEGRITY_IMA_AUDIT - ima_audit_measurement()
->> 1806 - INTEGRITY_POLICY_RULE - ima_parse_rule()
->>
->> option 2: breaks the most common usage
->> 1805 - INTEGRITY_RULE - ima_parse_rule()
->> 1806 - INTEGRITY_IMA_AUDIT - ima_audit_measurement()
->>
->> option 3: leaves the most common usage with the wrong name, and breaks
->> the other less common usage
->> 1805 - INTEGRITY_RULE - ima_audit_measurement()
->> 1806 - INTEGRITY_POLICY_RULE - ima_parse_rule()
->>
->> So option 3 is the best option?
->  From a user space perspective, I don't care as long the event is well formed
+Hello,
 
-Are you saying this because of the tools you referred to that require 
-proper ordering and all fields need to be available?
+syzbot found the following crash on:
 
-> (No unnecessary untrusted string logging) and we have the required fields for
-> searching: pid, uid, auid, tty, session, subj, comm, exe, & res. And the
-> object is identifiable in the event.
+HEAD commit:    771c577c23ba Linux 4.17-rc6
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17134357800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=982e2df1b9e60b02
+dashboard link: https://syzkaller.appspot.com/bug?extid=f116bc1994efe725d51b
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+userspace arch: i386
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=14e5a7cf800000
 
-There's at least one documented user that showed the existing format...
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+f116bc1994efe725d51b@syzkaller.appspotmail.com
 
-https://www.fireeye.com/blog/threat-research/2016/11/extending_linux_exec.html
+IPv6: ADDRCONF(NETDEV_UP): veth1: link is not ready
+IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
+IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
+8021q: adding VLAN 0 to HW filter on device team0
+8021q: adding VLAN 0 to HW filter on device team0
+INFO: rcu_sched self-detected stall on CPU
+INFO: rcu_sched detected stalls on CPUs/tasks:
+	0-...!: (124975 ticks this GP) idle=a36/1/4611686018427387906  
+softirq=14002/14002 fqs=10
+	
+	0-...!: (124975 ticks this GP) idle=a36/1/4611686018427387906  
+softirq=14002/14002 fqs=10
+	
+  (t=125002 jiffies g=7347 c=7346 q=349000)
+(detected by 1, t=125002 jiffies, g=7347, c=7346, q=349000)
+rcu_sched kthread starved for 124927 jiffies! g7347 c7346 f0x2  
+RCU_GP_WAIT_FQS(3) ->state=0x0 ->cpu=1
+Sending NMI from CPU 1 to CPUs 0:
+RCU grace-period kthread stack dump:
+NMI backtrace for cpu 0
+CPU: 0 PID: 8 Comm: ksoftirqd/0 Not tainted 4.17.0-rc6+ #86
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:get_current arch/x86/include/asm/current.h:15 [inline]
+RIP: 0010:write_comp_data+0xa/0x70 kernel/kcov.c:121
+RSP: 0018:ffff8801dae06d30 EFLAGS: 00000006
+RAX: 0000000000010105 RBX: 0000000000000006 RCX: ffffffff876bdc58
+RDX: 0000000000000000 RSI: 0000000000000005 RDI: 0000000000000001
+RBP: ffff8801dae06d68 R08: ffff8801d9a9c200 R09: fffffbfff14da4bc
+R10: fffffbfff14da4bc R11: ffffffff8a6d25e0 R12: ffffffff88644220
+R13: 0000000000000000 R14: 0000000000000001 R15: 0000000000000008
+FS:  0000000000000000(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f595e194270 CR3: 00000001b09c2000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  <IRQ>
+  vsnprintf+0x1b8/0x1b40 lib/vsprintf.c:2252
+  sprintf+0xa7/0xd0 lib/vsprintf.c:2498
+  print_time kernel/printk/printk.c:1223 [inline]
+  print_prefix+0x26a/0x3f0 kernel/printk/printk.c:1246
+  msg_print_text+0xca/0x1c0 kernel/printk/printk.c:1273
+  console_unlock+0x4f5/0x1100 kernel/printk/printk.c:2369
+  vprintk_emit+0x6ad/0xdd0 kernel/printk/printk.c:1907
+  vprintk_default+0x28/0x30 kernel/printk/printk.c:1947
+  vprintk_func+0x7a/0xe7 kernel/printk/printk_safe.c:379
+  printk+0x9e/0xba kernel/printk/printk.c:1980
+  rcu_check_gp_kthread_starvation+0x325/0x3a4 kernel/rcu/tree.c:1353
+  print_cpu_stall kernel/rcu/tree.c:1523 [inline]
+  check_cpu_stall.isra.61.cold.80+0x364/0x59a kernel/rcu/tree.c:1593
+  __rcu_pending kernel/rcu/tree.c:3356 [inline]
+  rcu_pending kernel/rcu/tree.c:3401 [inline]
+  rcu_check_callbacks+0x21b/0xad0 kernel/rcu/tree.c:2763
+  update_process_times+0x2d/0x70 kernel/time/timer.c:1636
+  tick_sched_handle+0x9f/0x180 kernel/time/tick-sched.c:164
+  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1274
+  __run_hrtimer kernel/time/hrtimer.c:1398 [inline]
+  __hrtimer_run_queues+0x3e3/0x10a0 kernel/time/hrtimer.c:1460
+  hrtimer_interrupt+0x2f3/0x750 kernel/time/hrtimer.c:1518
+  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
+  smp_apic_timer_interrupt+0x15d/0x710 arch/x86/kernel/apic/apic.c:1050
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
+  </IRQ>
+RIP: 0010:__sanitizer_cov_trace_pc+0x1/0x50 kernel/kcov.c:94
+RSP: 0018:ffff8801d9aad680 EFLAGS: 00000293 ORIG_RAX: ffffffffffffff13
+RAX: 0000000000000103 RBX: 0000000000000002 RCX: ffffffff867e02e0
+RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000005
+RBP: ffff8801d9aad7e0 R08: ffff8801d9a9c200 R09: ffff8801d9aadaf0
+R10: ffffed003b5c46c2 R11: ffff8801dae23613 R12: ffff8801ce597c40
+R13: 0000000000000000 R14: 0000000000000002 R15: 0000000000000000
+  find_match+0x244/0x13a0 net/ipv6/route.c:691
+  find_rr_leaf net/ipv6/route.c:729 [inline]
+  rt6_select net/ipv6/route.c:779 [inline]
+  ip6_pol_route+0x946/0x3d40 net/ipv6/route.c:1705
+  ip6_pol_route_output+0x54/0x70 net/ipv6/route.c:1969
+  fib6_rule_lookup+0x211/0x6d0 net/ipv6/fib6_rules.c:89
+  ip6_route_output_flags+0x2c5/0x350 net/ipv6/route.c:1997
+  ip6_dst_lookup_tail+0x47b/0x1b30 net/ipv6/ip6_output.c:995
+  ip6_dst_lookup_flow+0xc1/0x260 net/ipv6/ip6_output.c:1096
+  sctp_v6_get_dst+0x16b4/0x20b0 net/sctp/ipv6.c:327
+  sctp_transport_route+0xad/0x450 net/sctp/transport.c:293
+  sctp_packet_config+0xb89/0xfd0 net/sctp/output.c:123
+  sctp_outq_flush+0x79c/0x4370 net/sctp/outqueue.c:894
+  ? trace_hardirqs_off
+Lost 148 message(s)!
+rcu_sched kthread starved for 124927 jiffies! g7347 c7346 f0x2  
+RCU_GP_WAIT_FQS(3) ->state=0x0 ->cpu=1
+rcu_sched       R
+RCU grace-period kthread stack dump:
+rcu_sched       R
+   running task
+   running task    23896     9      2 0x80000000
+23896     9      2 0x80000000
+Call Trace:
+Call Trace:
+  context_switch kernel/sched/core.c:2859 [inline]
+  __schedule+0x801/0x1e30 kernel/sched/core.c:3501
+  context_switch kernel/sched/core.c:2859 [inline]
+  __schedule+0x801/0x1e30 kernel/sched/core.c:3501
+  schedule+0xef/0x430 kernel/sched/core.c:3545
+  schedule+0xef/0x430 kernel/sched/core.c:3545
+  schedule_timeout+0x138/0x240 kernel/time/timer.c:1801
+  schedule_timeout+0x138/0x240 kernel/time/timer.c:1801
+  rcu_gp_kthread+0x6b5/0x1940 kernel/rcu/tree.c:2231
+  rcu_gp_kthread+0x6b5/0x1940 kernel/rcu/tree.c:2231
+  kthread+0x345/0x410 kernel/kthread.c:240
+  kthread+0x345/0x410 kernel/kthread.c:240
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+NMI backtrace for cpu 0
+CPU: 0 PID: 8 Comm: ksoftirqd/0 Not tainted 4.17.0-rc6+ #86
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  <IRQ>
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  nmi_cpu_backtrace.cold.4+0x19/0xce lib/nmi_backtrace.c:103
+  nmi_trigger_cpumask_backtrace+0x151/0x192 lib/nmi_backtrace.c:62
+  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+  trigger_single_cpu_backtrace include/linux/nmi.h:156 [inline]
+  rcu_dump_cpu_stacks+0x175/0x1c2 kernel/rcu/tree.c:1376
+  print_cpu_stall kernel/rcu/tree.c:1525 [inline]
+  check_cpu_stall.isra.61.cold.80+0x36c/0x59a kernel/rcu/tree.c:1593
+  __rcu_pending kernel/rcu/tree.c:3356 [inline]
+  rcu_pending kernel/rcu/tree.c:3401 [inline]
+  rcu_check_callbacks+0x21b/0xad0 kernel/rcu/tree.c:2763
+  update_process_times+0x2d/0x70 kernel/time/timer.c:1636
+  tick_sched_handle+0x9f/0x180 kernel/time/tick-sched.c:164
+  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1274
+  __run_hrtimer kernel/time/hrtimer.c:1398 [inline]
+  __hrtimer_run_queues+0x3e3/0x10a0 kernel/time/hrtimer.c:1460
+  hrtimer_interrupt+0x2f3/0x750 kernel/time/hrtimer.c:1518
+  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
+  smp_apic_timer_interrupt+0x15d/0x710 arch/x86/kernel/apic/apic.c:1050
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
+  </IRQ>
+RIP: 0010:__sanitizer_cov_trace_pc+0x1/0x50 kernel/kcov.c:94
+RSP: 0018:ffff8801d9aad680 EFLAGS: 00000293 ORIG_RAX: ffffffffffffff13
+RAX: 0000000000000103 RBX: 0000000000000002 RCX: ffffffff867e02e0
+RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000005
+RBP: ffff8801d9aad7e0 R08: ffff8801d9a9c200 R09: ffff8801d9aadaf0
+R10: ffffed003b5c46c2 R11: ffff8801dae23613 R12: ffff8801ce597c40
+R13: 0000000000000000 R14: 0000000000000002 R15: 0000000000000000
+  find_match+0x244/0x13a0 net/ipv6/route.c:691
+  find_rr_leaf net/ipv6/route.c:729 [inline]
+  rt6_select net/ipv6/route.c:779 [inline]
+  ip6_pol_route+0x946/0x3d40 net/ipv6/route.c:1705
+  ip6_pol_route_output+0x54/0x70 net/ipv6/route.c:1969
+  fib6_rule_lookup+0x211/0x6d0 net/ipv6/fib6_rules.c:89
+  ip6_route_output_flags+0x2c5/0x350 net/ipv6/route.c:1997
+  ip6_dst_lookup_tail+0x47b/0x1b30 net/ipv6/ip6_output.c:995
+  ip6_dst_lookup_flow+0xc1/0x260 net/ipv6/ip6_output.c:1096
+  sctp_v6_get_dst+0x16b4/0x20b0 net/sctp/ipv6.c:327
+  sctp_transport_route+0xad/0x450 net/sctp/transport.c:293
+  sctp_packet_config+0xb89/0xfd0 net/sctp/output.c:123
+  sctp_outq_flush+0x79c/0x4370 net/sctp/outqueue.c:894
+  sctp_outq_uncork+0x6a/0x80 net/sctp/outqueue.c:776
+  sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1820 [inline]
+  sctp_side_effects net/sctp/sm_sideeffect.c:1220 [inline]
+  sctp_do_sm+0x596/0x7160 net/sctp/sm_sideeffect.c:1191
+  sctp_generate_heartbeat_event+0x218/0x450 net/sctp/sm_sideeffect.c:406
+  call_timer_fn+0x230/0x940 kernel/time/timer.c:1326
+  expire_timers kernel/time/timer.c:1363 [inline]
+  __run_timers+0x79e/0xc50 kernel/time/timer.c:1666
+  run_timer_softirq+0x4c/0x70 kernel/time/timer.c:1692
+  __do_softirq+0x2e0/0xaf5 kernel/softirq.c:285
+  run_ksoftirqd+0x86/0x100 kernel/softirq.c:646
+  smpboot_thread_fn+0x417/0x870 kernel/smpboot.c:164
+  kthread+0x345/0x410 kernel/kthread.c:240
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.929  
+msecs
+BUG: workqueue lockup - pool cpus=0-1 flags=0x4 nice=0 stuck for 127s!
+Showing busy workqueues and worker pools:
+workqueue events: flags=0x0
+   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=10/256
+     pending: pcpu_balance_workfn, defense_work_handler,  
+defense_work_handler, defense_work_handler, defense_work_handler,  
+defense_work_handler, defense_work_handler, check_corruption,  
+vmstat_shepherd, cache_reap
+workqueue events_power_efficient: flags=0x80
+   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
+     pending: check_lifetime
+workqueue mm_percpu_wq: flags=0x8
+   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
+     pending: vmstat_update
+workqueue writeback: flags=0x4e
+   pwq 4: cpus=0-1 flags=0x4 nice=0 active=4/256
+     pending: wb_workfn, wb_workfn, wb_workfn, wb_workfn
+workqueue kblockd: flags=0x18
+   pwq 1: cpus=0 node=0 flags=0x0 nice=-20 active=1/256
+     pending: blk_mq_timeout_work
+workqueue ib_addr: flags=0xa0002
+   pwq 4: cpus=0-1 flags=0x4 nice=0 active=1/1
+     pending: process_req
+workqueue gid-cache-wq: flags=0xa0002
+   pwq 4: cpus=0-1 flags=0x4 nice=0 active=1/1
+     pending: update_gid_event_work_handler
+     delayed: netdevice_event_work_handler
+workqueue ipv6_addrconf: flags=0x40008
+   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/1
+     pending: addrconf_dad_work
+     delayed: addrconf_dad_work, addrconf_dad_work, addrconf_dad_work,  
+addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work,  
+addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work,  
+addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work,  
+addrconf_dad_work, addrconf_dad_work, addrconf_dad_work
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
