@@ -1,94 +1,38 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1340521-1526937469-2-2309018944248101736
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES enfrro, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526937468; b=QkqONPI/6IrrdcO9Q4BeJZdC8kYrnIy1Ek4uXgdAV0IX+e5lmw
-    tb2VVfKSyft8HC0E5+NemevNCsKnjQmeFPqRe8ctURbkNWTmFa5FiPtAJ3iY9DRD
-    gWfUTgmeYZe3cm+GgeXIHGX9Ifkh3aY4s5KvOr9q61vLmSPc+smGEhO+uzXL3Uck
-    54mrgM9I22Rrdr607NSYFHEXC73u8CmhIZYOeNKScu6hwMOe9OI5jFIkQ/oeECjW
-    V1R3yUKriss2NTK1xQoWvJ71bKW5EBY1VsbsifpmFt0j+jh0OQGignq53qPCeDW7
-    7XygIgHLwri7I3v1ANbvwYSxFMOPtUTrOlZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1526937468; bh=/hEJwz0EQNb4jTAkJzX3jKlU5FUjMB
-    58mnsAsnWY1b4=; b=PUl6XXrkiqv6AOvG5pSwq8DTyWpYxws5U1Nnabu9SjTW/h
-    8G0yAvo3iDpl2K+yQ5hpMRSxbS1cj/6mrJj0B5iSI8a1ATciLJyVLvgXZAE9/GVO
-    /Jd25t8CY+MW7eJ0saf6Vz8Gb1swQwxC0Il/CX7J3Z5tes1CEPMqVzTlXfrZhedF
-    OXYIJ8bV1chsmPwAL2f/AI6TRy+UUTUJJyQA+Yb4xdWCMzakT45/jbVPJ3e76fVM
-    9l98KZcPYLYM8YfIZ9NHeszoBrCgc8pVP6yN6FGw2dDpD0rSxTzgj7liczmj4E6L
-    aqbXEILmi1h7eiJ+saz66s/gUAE15Eg3TjJ3+9lQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=PLt4L7Zm x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linuxfoundation.org header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=PLt4L7Zm x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linuxfoundation.org header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfI5CcGyazsgG0IIGUm477lXi+4ciFrpIdre5fryjJ62lUBCir3BHaU9F23Iog8v2dxNWHzFAdDaQuhwY4CC63HI/0XhBq6TDIGJ8Tugz7OCFjhDCys8h
-    ayCRwhMZhk6Lxl4CKVU6KofjdGL8qG/oooYpuwa6fAwmwtwHW9H7lFyWqo3SvheOs5RAwAY+Maj2Vc/ICLDCKUF02hZnnUtQn5oNRfyC9IFQcVkFJio7UO6K
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=cm27Pg_UAAAA:8 a=pBOR-ozoAAAA:8 a=ag1SF4gXAAAA:8 a=k5_1euZgLRBG61PYFQoA:9
-    a=QEXdDO2ut3YA:10 a=xmb-EsYY8bH0VWELuYED:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753314AbeEUVRn (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 21 May 2018 17:17:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32812 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752771AbeEUVRj (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 21 May 2018 17:17:39 -0400
+Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZpMPRSNVLajLGU7coHsVZi8U5XzprmZ/b9vISZVKUudNCqqequCqUxW6NqBlTlWMUSkU8RJ
+ARC-Seal: i=1; a=rsa-sha256; t=1526937467; cv=none;
+        d=google.com; s=arc-20160816;
+        b=lsz0aZDQva74Bwk4vZtwot05ctBuIrXHp8MSY8Lya1/s9X1pTh59FKhwTh/Ze0ry0O
+         De5gNRoh872Ac0NdWrLlMtHrxtiwQOr7veMqbV/D8mepjJe99xvD6tEvaS0cy35IxonN
+         zp2WEX7dyhFgEm5s4GViC7mtycfLSM2pybG6Pf1icGBNZ+NxZ4mUYWoZxC+ZFh/eht4a
+         IUx4WWA+Ls5FjSZwB8XZGwKJncppaaI44bibyDATKQQKIEOTXzvFmV5n7zG2AUAnQIS7
+         FdHq8MilQbO9/PFzije7LRVHdxjvtbVie146x9O5YldVfLQOSGKAIGBCXEX+gChaGPLu
+         1Tjg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=bOjoI9SJ/WZpc7byDnO8sq6cwRnyAl5s5fZb8v7A/GM=;
+        b=aAbCoAILx/3Wip3tjH9KlPRoo+lsyNQbel0B9m8r4mkdAlqeDc3/172vuuZckmG9bq
+         6EAyzJePUhtYySE5zr8p9Qah6+CmwJrjUpsxOqAGi+9snnPDZC1aDyr3UYSg0K7tMKFG
+         AcsTo0a33/X5q9rEy5cB00frAITb4mw34Nbnq5g3U23rgCty0G4GVueTx3ycLdMblHMX
+         PoS7eIfdwakVK3+Yn9EHPdr3Soekfk0fEa4ZQ/73Km9tpUUzzlY496qzvgB6kCKPnAkn
+         d990moQXJKK2HhxiVRMzxCnsbqBwCUokDitw0ruPdIUhJJZQJR5tED9QK61Q5HcGqgt4
+         GhfA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=o4QyC4X3;
+       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=o4QyC4X3;
+       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 56/87] proc: Provide details on speculation flaw mitigations
-Date: Mon, 21 May 2018 23:11:32 +0200
-Message-Id: <20180521210425.274266119@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	David Woodhouse <dwmw@amazon.co.uk>
+Subject: [PATCH 4.9 59/87] prctl: Add force disable speculation
+Date: Mon, 21 May 2018 23:11:35 +0200
+Message-Id: <20180521210425.491766021@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210420.222671977@linuxfoundation.org>
 References: <20180521210420.222671977@linuxfoundation.org>
@@ -96,9 +40,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1601109981361107472?=
+X-GMAIL-MSGID: =?utf-8?q?1601109981361107472?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -106,59 +51,205 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kees Cook <keescook@chromium.org>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit fae1fa0fc6cca8beee3ab8ed71d54f9a78fa3f64 upstream
+commit 356e4bfff2c5489e016fdb925adbf12a1e3950ee upstream
 
-As done with seccomp and no_new_privs, also show speculation flaw
-mitigation state in /proc/$pid/status.
+For certain use cases it is desired to enforce mitigations so they cannot
+be undone afterwards. That's important for loader stubs which want to
+prevent a child from disabling the mitigation again. Will also be used for
+seccomp(). The extra state preserving of the prctl state for SSB is a
+preparatory step for EBPF dymanic speculation control.
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/proc/array.c |   24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
+ Documentation/spec_ctrl.txt |   34 +++++++++++++++++++++-------------
+ arch/x86/kernel/cpu/bugs.c  |   35 +++++++++++++++++++++++++----------
+ fs/proc/array.c             |    3 +++
+ include/linux/sched.h       |    9 +++++++++
+ include/uapi/linux/prctl.h  |    1 +
+ 5 files changed, 59 insertions(+), 23 deletions(-)
 
---- a/fs/proc/array.c
-+++ b/fs/proc/array.c
-@@ -80,6 +80,7 @@
- #include <linux/delayacct.h>
- #include <linux/seq_file.h>
- #include <linux/pid_namespace.h>
-+#include <linux/prctl.h>
- #include <linux/ptrace.h>
- #include <linux/tracehook.h>
- #include <linux/string_helpers.h>
-@@ -345,8 +346,29 @@ static inline void task_seccomp(struct s
+--- a/Documentation/spec_ctrl.txt
++++ b/Documentation/spec_ctrl.txt
+@@ -25,19 +25,21 @@ PR_GET_SPECULATION_CTRL
+ -----------------------
+ 
+ PR_GET_SPECULATION_CTRL returns the state of the speculation misfeature
+-which is selected with arg2 of prctl(2). The return value uses bits 0-2 with
++which is selected with arg2 of prctl(2). The return value uses bits 0-3 with
+ the following meaning:
+ 
+-==== ================ ===================================================
+-Bit  Define           Description
+-==== ================ ===================================================
+-0    PR_SPEC_PRCTL    Mitigation can be controlled per task by
+-                      PR_SET_SPECULATION_CTRL
+-1    PR_SPEC_ENABLE   The speculation feature is enabled, mitigation is
+-                      disabled
+-2    PR_SPEC_DISABLE  The speculation feature is disabled, mitigation is
+-                      enabled
+-==== ================ ===================================================
++==== ===================== ===================================================
++Bit  Define                Description
++==== ===================== ===================================================
++0    PR_SPEC_PRCTL         Mitigation can be controlled per task by
++                           PR_SET_SPECULATION_CTRL
++1    PR_SPEC_ENABLE        The speculation feature is enabled, mitigation is
++                           disabled
++2    PR_SPEC_DISABLE       The speculation feature is disabled, mitigation is
++                           enabled
++3    PR_SPEC_FORCE_DISABLE Same as PR_SPEC_DISABLE, but cannot be undone. A
++                           subsequent prctl(..., PR_SPEC_ENABLE) will fail.
++==== ===================== ===================================================
+ 
+ If all bits are 0 the CPU is not affected by the speculation misfeature.
+ 
+@@ -47,9 +49,11 @@ misfeature will fail.
+ 
+ PR_SET_SPECULATION_CTRL
+ -----------------------
++
+ PR_SET_SPECULATION_CTRL allows to control the speculation misfeature, which
+ is selected by arg2 of :manpage:`prctl(2)` per task. arg3 is used to hand
+-in the control value, i.e. either PR_SPEC_ENABLE or PR_SPEC_DISABLE.
++in the control value, i.e. either PR_SPEC_ENABLE or PR_SPEC_DISABLE or
++PR_SPEC_FORCE_DISABLE.
+ 
+ Common error codes
+ ------------------
+@@ -70,10 +74,13 @@ Value   Meaning
+ 0       Success
+ 
+ ERANGE  arg3 is incorrect, i.e. it's neither PR_SPEC_ENABLE nor
+-        PR_SPEC_DISABLE
++        PR_SPEC_DISABLE nor PR_SPEC_FORCE_DISABLE
+ 
+ ENXIO   Control of the selected speculation misfeature is not possible.
+         See PR_GET_SPECULATION_CTRL.
++
++EPERM   Speculation was disabled with PR_SPEC_FORCE_DISABLE and caller
++        tried to enable it again.
+ ======= =================================================================
+ 
+ Speculation misfeature controls
+@@ -84,3 +91,4 @@ Speculation misfeature controls
+    * prctl(PR_GET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, 0, 0, 0);
+    * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, PR_SPEC_ENABLE, 0, 0);
+    * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, PR_SPEC_DISABLE, 0, 0);
++   * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, PR_SPEC_FORCE_DISABLE, 0, 0);
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -532,21 +532,37 @@ static void ssb_select_mitigation()
+ 
+ static int ssb_prctl_set(struct task_struct *task, unsigned long ctrl)
  {
- #ifdef CONFIG_SECCOMP
- 	seq_put_decimal_ull(m, "Seccomp:\t", p->seccomp.mode);
--	seq_putc(m, '\n');
- #endif
-+	seq_printf(m, "\nSpeculation Store Bypass:\t");
-+	switch (arch_prctl_spec_ctrl_get(p, PR_SPEC_STORE_BYPASS)) {
-+	case -EINVAL:
-+		seq_printf(m, "unknown");
-+		break;
-+	case PR_SPEC_NOT_AFFECTED:
-+		seq_printf(m, "not vulnerable");
-+		break;
-+	case PR_SPEC_PRCTL | PR_SPEC_DISABLE:
-+		seq_printf(m, "thread mitigated");
-+		break;
-+	case PR_SPEC_PRCTL | PR_SPEC_ENABLE:
-+		seq_printf(m, "thread vulnerable");
+-	bool rds = !!test_tsk_thread_flag(task, TIF_RDS);
++	bool update;
+ 
+ 	if (ssb_mode != SPEC_STORE_BYPASS_PRCTL)
+ 		return -ENXIO;
+ 
+-	if (ctrl == PR_SPEC_ENABLE)
+-		clear_tsk_thread_flag(task, TIF_RDS);
+-	else
+-		set_tsk_thread_flag(task, TIF_RDS);
++	switch (ctrl) {
++	case PR_SPEC_ENABLE:
++		/* If speculation is force disabled, enable is not allowed */
++		if (task_spec_ssb_force_disable(task))
++			return -EPERM;
++		task_clear_spec_ssb_disable(task);
++		update = test_and_clear_tsk_thread_flag(task, TIF_RDS);
 +		break;
 +	case PR_SPEC_DISABLE:
-+		seq_printf(m, "globally mitigated");
++		task_set_spec_ssb_disable(task);
++		update = !test_and_set_tsk_thread_flag(task, TIF_RDS);
++		break;
++	case PR_SPEC_FORCE_DISABLE:
++		task_set_spec_ssb_disable(task);
++		task_set_spec_ssb_force_disable(task);
++		update = !test_and_set_tsk_thread_flag(task, TIF_RDS);
 +		break;
 +	default:
-+		seq_printf(m, "vulnerable");
-+		break;
++		return -ERANGE;
 +	}
-+	seq_putc(m, '\n');
- }
  
- static inline void task_context_switch_counts(struct seq_file *m,
+ 	/*
+ 	 * If being set on non-current task, delay setting the CPU
+ 	 * mitigation until it is next scheduled.
+ 	 */
+-	if (task == current && rds != !!test_tsk_thread_flag(task, TIF_RDS))
++	if (task == current && update)
+ 		speculative_store_bypass_update();
+ 
+ 	return 0;
+@@ -558,7 +574,9 @@ static int ssb_prctl_get(struct task_str
+ 	case SPEC_STORE_BYPASS_DISABLE:
+ 		return PR_SPEC_DISABLE;
+ 	case SPEC_STORE_BYPASS_PRCTL:
+-		if (test_tsk_thread_flag(task, TIF_RDS))
++		if (task_spec_ssb_force_disable(task))
++			return PR_SPEC_PRCTL | PR_SPEC_FORCE_DISABLE;
++		if (task_spec_ssb_disable(task))
+ 			return PR_SPEC_PRCTL | PR_SPEC_DISABLE;
+ 		return PR_SPEC_PRCTL | PR_SPEC_ENABLE;
+ 	default:
+@@ -571,9 +589,6 @@ static int ssb_prctl_get(struct task_str
+ int arch_prctl_spec_ctrl_set(struct task_struct *task, unsigned long which,
+ 			     unsigned long ctrl)
+ {
+-	if (ctrl != PR_SPEC_ENABLE && ctrl != PR_SPEC_DISABLE)
+-		return -ERANGE;
+-
+ 	switch (which) {
+ 	case PR_SPEC_STORE_BYPASS:
+ 		return ssb_prctl_set(task, ctrl);
+--- a/fs/proc/array.c
++++ b/fs/proc/array.c
+@@ -355,6 +355,9 @@ static inline void task_seccomp(struct s
+ 	case PR_SPEC_NOT_AFFECTED:
+ 		seq_printf(m, "not vulnerable");
+ 		break;
++	case PR_SPEC_PRCTL | PR_SPEC_FORCE_DISABLE:
++		seq_printf(m, "thread force mitigated");
++		break;
+ 	case PR_SPEC_PRCTL | PR_SPEC_DISABLE:
+ 		seq_printf(m, "thread mitigated");
+ 		break;
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -2354,6 +2354,8 @@ static inline void memalloc_noio_restore
+ #define PFA_SPREAD_PAGE  1      /* Spread page cache over cpuset */
+ #define PFA_SPREAD_SLAB  2      /* Spread some slab caches over cpuset */
+ #define PFA_LMK_WAITING  3      /* Lowmemorykiller is waiting */
++#define PFA_SPEC_SSB_DISABLE		4	/* Speculative Store Bypass disabled */
++#define PFA_SPEC_SSB_FORCE_DISABLE	5	/* Speculative Store Bypass force disabled*/
+ 
+ 
+ #define TASK_PFA_TEST(name, func)					\
+@@ -2380,6 +2382,13 @@ TASK_PFA_CLEAR(SPREAD_SLAB, spread_slab)
+ TASK_PFA_TEST(LMK_WAITING, lmk_waiting)
+ TASK_PFA_SET(LMK_WAITING, lmk_waiting)
+ 
++TASK_PFA_TEST(SPEC_SSB_DISABLE, spec_ssb_disable)
++TASK_PFA_SET(SPEC_SSB_DISABLE, spec_ssb_disable)
++TASK_PFA_CLEAR(SPEC_SSB_DISABLE, spec_ssb_disable)
++
++TASK_PFA_TEST(SPEC_SSB_FORCE_DISABLE, spec_ssb_force_disable)
++TASK_PFA_SET(SPEC_SSB_FORCE_DISABLE, spec_ssb_force_disable)
++
+ /*
+  * task->jobctl flags
+  */
+--- a/include/uapi/linux/prctl.h
++++ b/include/uapi/linux/prctl.h
+@@ -207,5 +207,6 @@ struct prctl_mm_map {
+ # define PR_SPEC_PRCTL			(1UL << 0)
+ # define PR_SPEC_ENABLE			(1UL << 1)
+ # define PR_SPEC_DISABLE		(1UL << 2)
++# define PR_SPEC_FORCE_DISABLE		(1UL << 3)
+ 
+ #endif /* _LINUX_PRCTL_H */
