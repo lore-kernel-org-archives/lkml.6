@@ -1,37 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752604AbeEUKDH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 06:03:07 -0400
-Received: from ozlabs.org ([203.11.71.1]:35527 "EHLO ozlabs.org"
+        id S1752657AbeEUKDY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 06:03:24 -0400
+Received: from ozlabs.org ([203.11.71.1]:46911 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752885AbeEUKB1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 06:01:27 -0400
+        id S1752880AbeEUKB2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 06:01:28 -0400
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: c068e6b8caa0c796535cb12f64767cc521b20508
-In-Reply-To: <20180510215919.27808-2-j.neuschaefer@gmx.net>
-To: =?utf-8?q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        linuxppc-dev@lists.ozlabs.org
+X-powerpc-patch-commit: 96f391cf40ee5c9201cc7b55abe3903761e6a2e2
+In-Reply-To: <20180410063437.217D2653BC@po15720vm.idsi0.si.c-s.fr>
+To: Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, Scott Wood <oss@buserror.net>
 From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc: Mathieu Malaterre <malat@debian.org>, linux-kernel@vger.kernel.org,
-        =?utf-8?q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Paul Mackerras <paulus@samba.org>, Joel Stanley <joel@jms.id.au>
-Subject: Re: [1/2] powerpc: flipper-pic: Don't match all IRQ domains
-Message-Id: <40qDnc0ywpz9s3Z@ozlabs.org>
-Date: Mon, 21 May 2018 20:01:23 +1000 (AEST)
+Cc: Shile Zhang <shile.zhang@nokia.com>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: Revert "powerpc/64: Fix checksum folding in csum_add()"
+Message-Id: <40qDnZ2Vrmz9s31@ozlabs.org>
+Date: Mon, 21 May 2018 20:01:22 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-05-10 at 21:59:18 UTC, =?utf-8?q?Jonathan_Neusch=C3=A4fer?= wrote:
-> On the Wii, there is a secondary IRQ controller (hlwd-pic), so
-> flipper-pic's match operation should not be hardcoded to return 1.
-> In fact, the default matching logic is sufficient, and we can completely
-> omit flipper_pic_match.
+On Tue, 2018-04-10 at 06:34:37 UTC, Christophe Leroy wrote:
+> This reverts commit 6ad966d7303b70165228dba1ee8da1a05c10eefe.
 > 
-> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+> That commit was pointless, because csum_add() sums two 32 bits
+> values, so the sum is 0x1fffffffe at the maximum.
+> And then when adding upper part (1) and lower part (0xfffffffe),
+> the result is 0xffffffff which doesn't carry.
+> Any lower value will not carry either.
+> 
+> And behind the fact that this commit is useless, it also kills the
+> whole purpose of having an arch specific inline csum_add()
+> because the resulting code gets even worse than what is obtained
+> with the generic implementation of csum_add()
+> 
+> 0000000000000240 <.csum_add>:
+>  240:	38 00 ff ff 	li      r0,-1
+>  244:	7c 84 1a 14 	add     r4,r4,r3
+>  248:	78 00 00 20 	clrldi  r0,r0,32
+>  24c:	78 89 00 22 	rldicl  r9,r4,32,32
+>  250:	7c 80 00 38 	and     r0,r4,r0
+>  254:	7c 09 02 14 	add     r0,r9,r0
+>  258:	78 09 00 22 	rldicl  r9,r0,32,32
+>  25c:	7c 00 4a 14 	add     r0,r0,r9
+>  260:	78 03 00 20 	clrldi  r3,r0,32
+>  264:	4e 80 00 20 	blr
+> 
+> In comparison, the generic implementation of csum_add() gives:
+> 
+> 0000000000000290 <.csum_add>:
+>  290:	7c 63 22 14 	add     r3,r3,r4
+>  294:	7f 83 20 40 	cmplw   cr7,r3,r4
+>  298:	7c 10 10 26 	mfocrf  r0,1
+>  29c:	54 00 ef fe 	rlwinm  r0,r0,29,31,31
+>  2a0:	7c 60 1a 14 	add     r3,r0,r3
+>  2a4:	78 63 00 20 	clrldi  r3,r3,32
+>  2a8:	4e 80 00 20 	blr
+> 
+> And the reverted implementation for PPC64 gives:
+> 
+> 0000000000000240 <.csum_add>:
+>  240:	7c 84 1a 14 	add     r4,r4,r3
+>  244:	78 80 00 22 	rldicl  r0,r4,32,32
+>  248:	7c 80 22 14 	add     r4,r0,r4
+>  24c:	78 83 00 20 	clrldi  r3,r4,32
+>  250:	4e 80 00 20 	blr
+> 
+> Fixes: 6ad966d7303b7 ("powerpc/64: Fix checksum folding in csum_add()")
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> Acked-by: Paul Mackerras <paulus@ozlabs.org>
 
-Series applied to powerpc next, thanks.
+Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/c068e6b8caa0c796535cb12f64767c
+https://git.kernel.org/powerpc/c/96f391cf40ee5c9201cc7b55abe390
 
 cheers
