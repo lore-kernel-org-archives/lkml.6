@@ -1,37 +1,38 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpJcY4CwadDdSnsoov3/acEURKJJ6SxDG04CU2OrwoAey6KjBN/AoKIeTdus6xQ6WCyENJi
-ARC-Seal: i=1; a=rsa-sha256; t=1526937543; cv=none;
+X-Google-Smtp-Source: AB8JxZrNb9kt9SyqenWvaa9uSkjUb6vVUo0IYxsrBh4JE6or5P+o1vcOR/K4VKDVpQvoSL6yhW9T
+ARC-Seal: i=1; a=rsa-sha256; t=1526937541; cv=none;
         d=google.com; s=arc-20160816;
-        b=EHhty4iAamQRdjjMHep1qrfB80SaDDcqb2cpVXUCNzzsLz8avs4ePdmGqkhE5omN8F
-         ChVNhVXUIsR1pQtmUOFIuBYTm9jbQi+rkO87TmddmoIEg157iLF6uI+izO9zRY6pdtzc
-         0lnDVHNUh/woCnx3x6tX60YHZgtbpkiWR87y5kAlqztPqM4ZJxY49uB/CqnQZhI792C/
-         Yxqbb0L446eiPlsaIzAL/BAAZBG3bK+L/Aa78VehfZSq6RcmEDHzOZPcuTANsulzl6WQ
-         5oPDzFyuyBfH82ZJn1ZG9Ttzh9YYHccfhdjTu/la/kOYdzlCRDlcepTYX6C4g1YClnpC
-         3tkw==
+        b=tyKXn30Ycp9KoByqjQ2dUtyy5Vwg4dyTZBrYaTlMRpsCeeyu03bvJPR33VpRFYlL18
+         cYgPVE+gVtFJfd+1JB8vlGKGcJhhwFtsWu3xDBn44hXDCADYiFVLqt+qGSWU21b3X02U
+         Wq3eRK/guV4fLf6uN37JpqxseOKEz3UdPLJfpw24rozMOIG87KseZxqS4+4BoRxEyDuU
+         aPiQSL41cxU1e8YJOuU8aqrjsXFvrAwSchmbzeuwqgJz4ocHVvzKjZDlJoihDvTvGuOa
+         WFhWeS8oJAEhPpzAjt9ADO48vMB5SMK3j4DhPllZGGpxGQYgPBQqcOTbjT1sSefSf1LI
+         nw+g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=jShmOqm9cg1leNkMkQdJJyjzN09CY+Gji3cIL8pbUvg=;
-        b=h7AJob6pMVR/ORsweQkRYqvdQh5VE9TMi/oA7zpDfMAGFOEtUlnlZkps50DugIpoN3
-         LzYsyc6uUPtFLynmPCcZpsCokz2NdNVGlB5rmuuYSoKuAA9fQDhSA4LEgn53/MnYGX1N
-         hs6GQ5wOfyQ8GF3KUMe/aIyCswU9eHj1p1WNjBgAq+eoFAW31DbILOsb+Kj5GhKY/Ese
-         HWr6FkmAQlsOaLnCBIi+JyZOLZHP0TB1U/vO1PC4iI8H0pN/V3pkMPnROH7M14TkUT43
-         dN/EvMC3oyDLZXScB+P6VLiORKai14H/joaH1VXM7Poyza6FEhJwoXYmHid8IAMTJoeL
-         mYCg==
+        bh=LLeDi1kYTeiGdpzrnZy9KBnDLp/hGcb1S2PrinnQJ78=;
+        b=ZJ6gbBDfETBMF8uBwqdHPLcCJPcynHVX9edEvCui/TWdLSycNGjyaWXXqgVTvGDem5
+         jMxP+LObeHgIkx3ToLN2gdNocPvaLvewSiawfiBrUQg3vCTm/nuz5YzKqWXxbfR/4ZxB
+         gEuMKwu0FSFoDzPdhCXmFfNfvgbdivtqfv6vqO4DWjuDVSOH7QKv9tYJj8boqMwh1SMq
+         4gs1aX6cmoJL+2vTfNE4+j+M8FNAxfaN1ffh3ST4opOu53NPrc7DOsVXFwaNZkSAadiP
+         fEXphXCqwrKrxUefVixFJGXE3au1HQeEOEHFqjoid07Bzis1fvE9orVruje77kk49SIH
+         S2yA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=dj0LszeH;
+       dkim=pass header.i=@kernel.org header.s=default header.b=p+gevhv+;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=dj0LszeH;
+       dkim=pass header.i=@kernel.org header.s=default header.b=p+gevhv+;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Shuah Khan (Samsung OSG)" <shuah@kernel.org>
-Subject: [PATCH 4.14 04/95] usbip: usbip_host: fix NULL-ptr deref and use-after-free errors
-Date: Mon, 21 May 2018 23:10:54 +0200
-Message-Id: <20180521210448.063225974@linuxfoundation.org>
+	Julian Wiedmann <jwi@linux.ibm.com>,
+	Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 4.14 30/95] s390/qdio: dont release memory in qdio_setup_irq()
+Date: Mon, 21 May 2018 23:11:20 +0200
+Message-Id: <20180521210454.392416413@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210447.219380974@linuxfoundation.org>
 References: <20180521210447.219380974@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109763681798750?=
-X-GMAIL-MSGID: =?utf-8?q?1601110062029877661?=
+X-GMAIL-THRID: =?utf-8?q?1601109877906061998?=
+X-GMAIL-MSGID: =?utf-8?q?1601110059458237408?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,296 +51,63 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+From: Julian Wiedmann <jwi@linux.ibm.com>
 
-commit 22076557b07c12086eeb16b8ce2b0b735f7a27e7 upstream.
+commit 2e68adcd2fb21b7188ba449f0fab3bee2910e500 upstream.
 
-usbip_host updates device status without holding lock from stub probe,
-disconnect and rebind code paths. When multiple requests to import a
-device are received, these unprotected code paths step all over each
-other and drive fails with NULL-ptr deref and use-after-free errors.
+Calling qdio_release_memory() on error is just plain wrong. It frees
+the main qdio_irq struct, when following code still uses it.
 
-The driver uses a table lock to protect the busid array for adding and
-deleting busids to the table. However, the probe, disconnect and rebind
-paths get the busid table entry and update the status without holding
-the busid table lock. Add a new finer grain lock to protect the busid
-entry. This new lock will be held to search and update the busid entry
-fields from get_busid_idx(), add_match_busid() and del_match_busid().
+Also, no other error path in qdio_establish() does this. So trust
+callers to clean up via qdio_free() if some step of the QDIO
+initialization fails.
 
-match_busid_show() does the same to access the busid entry fields.
-
-get_busid_priv() changed to return the pointer to the busid entry holding
-the busid lock. stub_probe(), stub_disconnect() and stub_device_rebind()
-call put_busid_priv() to release the busid lock before returning. This
-changes fixes the unprotected code paths eliminating the race conditions
-in updating the busid entries.
-
-Reported-by: Jakub Jirasek
-Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
-Cc: stable <stable@vger.kernel.org>
+Fixes: 779e6e1c724d ("[S390] qdio: new qdio driver.")
+Cc: <stable@vger.kernel.org> #v2.6.27+
+Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/usbip/stub.h      |    2 ++
- drivers/usb/usbip/stub_dev.c  |   33 +++++++++++++++++++++++----------
- drivers/usb/usbip/stub_main.c |   40 +++++++++++++++++++++++++++++++++++-----
- 3 files changed, 60 insertions(+), 15 deletions(-)
+ drivers/s390/cio/qdio_setup.c |   10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
---- a/drivers/usb/usbip/stub.h
-+++ b/drivers/usb/usbip/stub.h
-@@ -87,6 +87,7 @@ struct bus_id_priv {
- 	struct stub_device *sdev;
- 	struct usb_device *udev;
- 	char shutdown_busid;
-+	spinlock_t busid_lock;
- };
- 
- /* stub_priv is allocated from stub_priv_cache */
-@@ -97,6 +98,7 @@ extern struct usb_device_driver stub_dri
- 
- /* stub_main.c */
- struct bus_id_priv *get_busid_priv(const char *busid);
-+void put_busid_priv(struct bus_id_priv *bid);
- int del_match_busid(char *busid);
- void stub_device_cleanup_urbs(struct stub_device *sdev);
- 
---- a/drivers/usb/usbip/stub_dev.c
-+++ b/drivers/usb/usbip/stub_dev.c
-@@ -314,7 +314,7 @@ static int stub_probe(struct usb_device
- 	struct stub_device *sdev = NULL;
- 	const char *udev_busid = dev_name(&udev->dev);
- 	struct bus_id_priv *busid_priv;
+--- a/drivers/s390/cio/qdio_setup.c
++++ b/drivers/s390/cio/qdio_setup.c
+@@ -456,7 +456,6 @@ int qdio_setup_irq(struct qdio_initializ
+ {
+ 	struct ciw *ciw;
+ 	struct qdio_irq *irq_ptr = init_data->cdev->private->qdio_data;
 -	int rc;
-+	int rc = 0;
  
- 	dev_dbg(&udev->dev, "Enter probe\n");
- 
-@@ -331,13 +331,15 @@ static int stub_probe(struct usb_device
- 		 * other matched drivers by the driver core.
- 		 * See driver_probe_device() in driver/base/dd.c
- 		 */
--		return -ENODEV;
-+		rc = -ENODEV;
-+		goto call_put_busid_priv;
+ 	memset(&irq_ptr->qib, 0, sizeof(irq_ptr->qib));
+ 	memset(&irq_ptr->siga_flag, 0, sizeof(irq_ptr->siga_flag));
+@@ -493,16 +492,14 @@ int qdio_setup_irq(struct qdio_initializ
+ 	ciw = ccw_device_get_ciw(init_data->cdev, CIW_TYPE_EQUEUE);
+ 	if (!ciw) {
+ 		DBF_ERROR("%4x NO EQ", irq_ptr->schid.sch_no);
+-		rc = -EINVAL;
+-		goto out_err;
++		return -EINVAL;
  	}
+ 	irq_ptr->equeue = *ciw;
  
- 	if (udev->descriptor.bDeviceClass == USB_CLASS_HUB) {
- 		dev_dbg(&udev->dev, "%s is a usb hub device... skip!\n",
- 			 udev_busid);
--		return -ENODEV;
-+		rc = -ENODEV;
-+		goto call_put_busid_priv;
+ 	ciw = ccw_device_get_ciw(init_data->cdev, CIW_TYPE_AQUEUE);
+ 	if (!ciw) {
+ 		DBF_ERROR("%4x NO AQ", irq_ptr->schid.sch_no);
+-		rc = -EINVAL;
+-		goto out_err;
++		return -EINVAL;
  	}
+ 	irq_ptr->aqueue = *ciw;
  
- 	if (!strcmp(udev->bus->bus_name, "vhci_hcd")) {
-@@ -345,13 +347,16 @@ static int stub_probe(struct usb_device
- 			"%s is attached on vhci_hcd... skip!\n",
- 			udev_busid);
- 
--		return -ENODEV;
-+		rc = -ENODEV;
-+		goto call_put_busid_priv;
- 	}
- 
- 	/* ok, this is my device */
- 	sdev = stub_device_alloc(udev);
--	if (!sdev)
--		return -ENOMEM;
-+	if (!sdev) {
-+		rc = -ENOMEM;
-+		goto call_put_busid_priv;
-+	}
- 
- 	dev_info(&udev->dev,
- 		"usbip-host: register new device (bus %u dev %u)\n",
-@@ -383,7 +388,9 @@ static int stub_probe(struct usb_device
- 	}
- 	busid_priv->status = STUB_BUSID_ALLOC;
- 
--	return 0;
-+	rc = 0;
-+	goto call_put_busid_priv;
-+
- err_files:
- 	usb_hub_release_port(udev->parent, udev->portnum,
- 			     (struct usb_dev_state *) udev);
-@@ -393,6 +400,9 @@ err_port:
- 
- 	busid_priv->sdev = NULL;
- 	stub_device_free(sdev);
-+
-+call_put_busid_priv:
-+	put_busid_priv(busid_priv);
- 	return rc;
+@@ -510,9 +507,6 @@ int qdio_setup_irq(struct qdio_initializ
+ 	irq_ptr->orig_handler = init_data->cdev->handler;
+ 	init_data->cdev->handler = qdio_int_handler;
+ 	return 0;
+-out_err:
+-	qdio_release_memory(irq_ptr);
+-	return rc;
  }
  
-@@ -431,7 +441,7 @@ static void stub_disconnect(struct usb_d
- 	/* get stub_device */
- 	if (!sdev) {
- 		dev_err(&udev->dev, "could not get device");
--		return;
-+		goto call_put_busid_priv;
- 	}
- 
- 	dev_set_drvdata(&udev->dev, NULL);
-@@ -446,12 +456,12 @@ static void stub_disconnect(struct usb_d
- 				  (struct usb_dev_state *) udev);
- 	if (rc) {
- 		dev_dbg(&udev->dev, "unable to release port\n");
--		return;
-+		goto call_put_busid_priv;
- 	}
- 
- 	/* If usb reset is called from event handler */
- 	if (usbip_in_eh(current))
--		return;
-+		goto call_put_busid_priv;
- 
- 	/* shutdown the current connection */
- 	shutdown_busid(busid_priv);
-@@ -464,6 +474,9 @@ static void stub_disconnect(struct usb_d
- 
- 	if (busid_priv->status == STUB_BUSID_ALLOC)
- 		busid_priv->status = STUB_BUSID_ADDED;
-+
-+call_put_busid_priv:
-+	put_busid_priv(busid_priv);
- }
- 
- #ifdef CONFIG_PM
---- a/drivers/usb/usbip/stub_main.c
-+++ b/drivers/usb/usbip/stub_main.c
-@@ -40,6 +40,8 @@ static spinlock_t busid_table_lock;
- 
- static void init_busid_table(void)
- {
-+	int i;
-+
- 	/*
- 	 * This also sets the bus_table[i].status to
- 	 * STUB_BUSID_OTHER, which is 0.
-@@ -47,6 +49,9 @@ static void init_busid_table(void)
- 	memset(busid_table, 0, sizeof(busid_table));
- 
- 	spin_lock_init(&busid_table_lock);
-+
-+	for (i = 0; i < MAX_BUSID; i++)
-+		spin_lock_init(&busid_table[i].busid_lock);
- }
- 
- /*
-@@ -58,15 +63,20 @@ static int get_busid_idx(const char *bus
- 	int i;
- 	int idx = -1;
- 
--	for (i = 0; i < MAX_BUSID; i++)
-+	for (i = 0; i < MAX_BUSID; i++) {
-+		spin_lock(&busid_table[i].busid_lock);
- 		if (busid_table[i].name[0])
- 			if (!strncmp(busid_table[i].name, busid, BUSID_SIZE)) {
- 				idx = i;
-+				spin_unlock(&busid_table[i].busid_lock);
- 				break;
- 			}
-+		spin_unlock(&busid_table[i].busid_lock);
-+	}
- 	return idx;
- }
- 
-+/* Returns holding busid_lock. Should call put_busid_priv() to unlock */
- struct bus_id_priv *get_busid_priv(const char *busid)
- {
- 	int idx;
-@@ -74,13 +84,21 @@ struct bus_id_priv *get_busid_priv(const
- 
- 	spin_lock(&busid_table_lock);
- 	idx = get_busid_idx(busid);
--	if (idx >= 0)
-+	if (idx >= 0) {
- 		bid = &(busid_table[idx]);
-+		/* get busid_lock before returning */
-+		spin_lock(&bid->busid_lock);
-+	}
- 	spin_unlock(&busid_table_lock);
- 
- 	return bid;
- }
- 
-+void put_busid_priv(struct bus_id_priv *bid)
-+{
-+	spin_unlock(&bid->busid_lock);
-+}
-+
- static int add_match_busid(char *busid)
- {
- 	int i;
-@@ -93,15 +111,19 @@ static int add_match_busid(char *busid)
- 		goto out;
- 	}
- 
--	for (i = 0; i < MAX_BUSID; i++)
-+	for (i = 0; i < MAX_BUSID; i++) {
-+		spin_lock(&busid_table[i].busid_lock);
- 		if (!busid_table[i].name[0]) {
- 			strlcpy(busid_table[i].name, busid, BUSID_SIZE);
- 			if ((busid_table[i].status != STUB_BUSID_ALLOC) &&
- 			    (busid_table[i].status != STUB_BUSID_REMOV))
- 				busid_table[i].status = STUB_BUSID_ADDED;
- 			ret = 0;
-+			spin_unlock(&busid_table[i].busid_lock);
- 			break;
- 		}
-+		spin_unlock(&busid_table[i].busid_lock);
-+	}
- 
- out:
- 	spin_unlock(&busid_table_lock);
-@@ -122,6 +144,8 @@ int del_match_busid(char *busid)
- 	/* found */
- 	ret = 0;
- 
-+	spin_lock(&busid_table[idx].busid_lock);
-+
- 	if (busid_table[idx].status == STUB_BUSID_OTHER)
- 		memset(busid_table[idx].name, 0, BUSID_SIZE);
- 
-@@ -129,6 +153,7 @@ int del_match_busid(char *busid)
- 	    (busid_table[idx].status != STUB_BUSID_ADDED))
- 		busid_table[idx].status = STUB_BUSID_REMOV;
- 
-+	spin_unlock(&busid_table[idx].busid_lock);
- out:
- 	spin_unlock(&busid_table_lock);
- 
-@@ -141,9 +166,12 @@ static ssize_t match_busid_show(struct d
- 	char *out = buf;
- 
- 	spin_lock(&busid_table_lock);
--	for (i = 0; i < MAX_BUSID; i++)
-+	for (i = 0; i < MAX_BUSID; i++) {
-+		spin_lock(&busid_table[i].busid_lock);
- 		if (busid_table[i].name[0])
- 			out += sprintf(out, "%s ", busid_table[i].name);
-+		spin_unlock(&busid_table[i].busid_lock);
-+	}
- 	spin_unlock(&busid_table_lock);
- 	out += sprintf(out, "\n");
- 
-@@ -218,7 +246,7 @@ static void stub_device_rebind(void)
- 	}
- 	spin_unlock(&busid_table_lock);
- 
--	/* now run rebind */
-+	/* now run rebind - no need to hold locks. driver files are removed */
- 	for (i = 0; i < MAX_BUSID; i++) {
- 		if (busid_table[i].name[0] &&
- 		    busid_table[i].shutdown_busid) {
-@@ -248,6 +276,8 @@ static ssize_t rebind_store(struct devic
- 
- 	/* mark the device for deletion so probe ignores it during rescan */
- 	bid->status = STUB_BUSID_OTHER;
-+	/* release the busid lock */
-+	put_busid_priv(bid);
- 
- 	ret = do_rebind((char *) buf, bid);
- 	if (ret < 0)
+ void qdio_print_subchannel_info(struct qdio_irq *irq_ptr,
