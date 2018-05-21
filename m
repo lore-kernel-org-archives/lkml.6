@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752706AbeEUJFS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 05:05:18 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43678 "EHLO mx1.redhat.com"
+        id S1752357AbeEUJE4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 05:04:56 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54666 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752653AbeEUJFL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 05:05:11 -0400
+        id S1751557AbeEUJEp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 05:04:45 -0400
 From: Jason Wang <jasowang@redhat.com>
 To: mst@redhat.com, jasowang@redhat.com
 Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
         netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH net-next 07/12] tuntap: simplify error handling in tun_build_skb()
-Date: Mon, 21 May 2018 17:04:28 +0800
-Message-Id: <1526893473-20128-8-git-send-email-jasowang@redhat.com>
+Subject: [RFC PATCH net-next 01/12] vhost_net: introduce helper to initialize tx iov iter
+Date: Mon, 21 May 2018 17:04:22 +0800
+Message-Id: <1526893473-20128-2-git-send-email-jasowang@redhat.com>
 In-Reply-To: <1526893473-20128-1-git-send-email-jasowang@redhat.com>
 References: <1526893473-20128-1-git-send-email-jasowang@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -21,92 +21,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Jason Wang <jasowang@redhat.com>
 ---
- drivers/net/tun.c | 36 ++++++++++++++----------------------
- 1 file changed, 14 insertions(+), 22 deletions(-)
+ drivers/vhost/net.c | 34 +++++++++++++++++++++++-----------
+ 1 file changed, 23 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-index 24ecd82..f6e0f96 100644
---- a/drivers/net/tun.c
-+++ b/drivers/net/tun.c
-@@ -1612,7 +1612,7 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
- 				     int len, int *skb_xdp)
- {
- 	struct page_frag *alloc_frag = &current->task_frag;
--	struct sk_buff *skb;
-+	struct sk_buff *skb = NULL;
- 	struct bpf_prog *xdp_prog;
- 	int buflen = SKB_DATA_ALIGN(sizeof(struct skb_shared_info));
- 	unsigned int delta = 0;
-@@ -1638,6 +1638,9 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
- 	if (copied != len)
- 		return ERR_PTR(-EFAULT);
- 
-+	get_page(alloc_frag->page);
-+	alloc_frag->offset += buflen;
-+
- 	/* There's a small window that XDP may be set after the check
- 	 * of xdp_prog above, this should be rare and for simplicity
- 	 * we do XDP on skb in case the headroom is not enough.
-@@ -1665,24 +1668,16 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
- 
- 		switch (act) {
- 		case XDP_REDIRECT:
--			get_page(alloc_frag->page);
--			alloc_frag->offset += buflen;
- 			err = xdp_do_redirect(tun->dev, &xdp, xdp_prog);
- 			xdp_do_flush_map();
- 			if (err)
--				goto err_redirect;
--			rcu_read_unlock();
--			preempt_enable();
--			return NULL;
-+				goto err_xdp;
-+			goto out;
- 		case XDP_TX:
--			get_page(alloc_frag->page);
--			alloc_frag->offset += buflen;
- 			if (tun_xdp_tx(tun->dev, &xdp))
--				goto err_redirect;
-+				goto err_xdp;
- 			tun_xdp_flush(tun->dev);
--			rcu_read_unlock();
--			preempt_enable();
--			return NULL;
-+			goto out;
- 		case XDP_PASS:
- 			delta = orig_data - xdp.data;
- 			len = xdp.data_end - xdp.data;
-@@ -1702,25 +1697,22 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
- 
- 	skb = build_skb(buf, buflen);
- 	if (!skb) {
--		rcu_read_unlock();
--		preempt_enable();
--		return ERR_PTR(-ENOMEM);
-+		skb = ERR_PTR(-ENOMEM);
-+		goto out;
- 	}
- 
- 	skb_reserve(skb, pad - delta);
- 	skb_put(skb, len);
--	get_page(alloc_frag->page);
--	alloc_frag->offset += buflen;
- 
- 	return skb;
- 
--err_redirect:
--	put_page(alloc_frag->page);
- err_xdp:
-+	alloc_frag->offset -= buflen;
-+	put_page(alloc_frag->page);
-+out:
- 	rcu_read_unlock();
- 	preempt_enable();
--	this_cpu_inc(tun->pcpu_stats->rx_dropped);
--	return NULL;
-+	return skb;
+diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+index c4b49fc..15d191a 100644
+--- a/drivers/vhost/net.c
++++ b/drivers/vhost/net.c
+@@ -459,6 +459,26 @@ static bool vhost_exceeds_maxpend(struct vhost_net *net)
+ 	       min_t(unsigned int, VHOST_MAX_PEND, vq->num >> 2);
  }
  
- /* Get packet from user space buffer */
++static size_t init_iov_iter(struct vhost_virtqueue *vq, struct iov_iter *iter,
++			    size_t hdr_size, int out)
++{
++	/* Skip header. TODO: support TSO. */
++	size_t len = iov_length(vq->iov, out);
++
++	iov_iter_init(iter, WRITE, vq->iov, out, len);
++	iov_iter_advance(iter, hdr_size);
++	/* Sanity check */
++	if (!iov_iter_count(iter)) {
++		vq_err(vq, "Unexpected header len for TX: "
++			"%zd expected %zd\n",
++			len, hdr_size);
++		return -EFAULT;
++	}
++	len = iov_iter_count(iter);
++
++	return len;
++}
++
+ /* Expects to be always run from workqueue - which acts as
+  * read-size critical section for our kind of RCU. */
+ static void handle_tx(struct vhost_net *net)
+@@ -521,18 +541,10 @@ static void handle_tx(struct vhost_net *net)
+ 			       "out %d, int %d\n", out, in);
+ 			break;
+ 		}
+-		/* Skip header. TODO: support TSO. */
+-		len = iov_length(vq->iov, out);
+-		iov_iter_init(&msg.msg_iter, WRITE, vq->iov, out, len);
+-		iov_iter_advance(&msg.msg_iter, hdr_size);
+-		/* Sanity check */
+-		if (!msg_data_left(&msg)) {
+-			vq_err(vq, "Unexpected header len for TX: "
+-			       "%zd expected %zd\n",
+-			       len, hdr_size);
++
++		len = init_iov_iter(vq, &msg.msg_iter, hdr_size, out);
++		if (len < 0)
+ 			break;
+-		}
+-		len = msg_data_left(&msg);
+ 
+ 		zcopy_used = zcopy && len >= VHOST_GOODCOPY_LEN
+ 				   && !vhost_exceeds_maxpend(net)
 -- 
 2.7.4
