@@ -1,39 +1,39 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZriS4RkvISGxFWryN0oVCaZuJgAGkpNgirg2iTMHEpSrnlzHNRSnza8HI/YNVhGWrk1dlBx
-ARC-Seal: i=1; a=rsa-sha256; t=1526937456; cv=none;
+X-Google-Smtp-Source: AB8JxZrYE7tMwtUYxjJr5bnfaq0h5Qrn7kOjbJiV32VwAzmZiV1MJxPABxQTR3eshvHluC3qAy6R
+ARC-Seal: i=1; a=rsa-sha256; t=1526937453; cv=none;
         d=google.com; s=arc-20160816;
-        b=TPD6SP/HAbKLVleLLHp0BygC4VIPxv5exi8PVpH3vXALs5tye1qETOOpDaSOLbZcsq
-         A0BeM1NFfEp75Z5tyZxleciHEodSnc4tVGX2D4jkEFY8H7GWsLLLIWjXv5mYld8sZXcL
-         ME6FudljQKFynEYrVz1dLH8QGzU3hNVvMlpgJ2aCpwCt2AduZoSaDyBJImdNBTI4P8OS
-         qrx7pdWlB3HdBF7foKysBmGH3FuLCco0nUrXHgTol0F3tLFWzfWFmjl4EXgEet3WgjDz
-         6Ef/chIga9PX5jdSF1Hq5kQLtcqXyGjXTPE3QvarG0+1+6o64JmbsSGXJvRTrKHNntm2
-         TuPw==
+        b=dGU98Kxn1QGGbY5mr6t7lz8jB4CN+qbLZt3spRUTpScxJIbrfkBwFSAdOaRM9D2sHg
+         K2fex3IiyKXSKww/thKdDTVHV1fgtpi5JxpYkLqIJzJ3w3XkoTVaQxBSBxkRnQHif50m
+         v8iQOgJZTAskZOeRDgHhAsRin4cvir1+ngOI6UjU3BeZEFT7lOtobmffP4RkxTVBQ0K1
+         GDB74g/rhRHPM4ZI7Lrmtd5e/p1LLKO1rZ+VR4gPU0GVihJdxY81GAyi0DUbYU8bjQak
+         u8H6RB4DZcJrrta20J6vGuRuftYQtXtQSpV8I+pIRaCgHQ7/NM0sOKNVNdHbF11/kBnQ
+         otuw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=iA3u8GrttN6o4xk/EIHd11zpjYkyQD/4bGmbpgNn0Ts=;
-        b=MADJzlETAjTcCiRDCKrxrb7qI/FpUGIrGyNryzC4E5WNHQ6pSRKcGB5HADxpXkeX/7
-         gFY7QPr6x46GCtwcpMKVe2XV8Wdlv57CcnySseOutwJ+aQszqMxR+6xzmzqBno29Tc0l
-         x1vWFdNEp7vDiO/rkIF0hFxYXdSIhQVWCGi0tOgABFAteO1rPwac1xgr7iuJQ+lQN19R
-         sn1gaeB9TFEY9FvrdLQtk/B2dR8WB/iuq28YXevc7E9M4xTWolnnkhQn3vhatKJrYeav
-         Ig28L7zLzOl9X3yvZx5uVkxpwxOHLiq6lJ8lEvrOHsx/MlwOIC6FanGR6XakmRgmvCA/
-         qIqg==
+        bh=CiDOBdZQr1TSo7T6oTFnwrHLbnqUitvbAM6bJZdTweI=;
+        b=LCQFgrLgXos+n9JnZAOUT3pKWoSUHtrOZbhmwrjW9CG14Y4FaVt0LZSmGGw9AJus0e
+         8z5uXBRb2W2GEeQMfFZYZdmwfJI+HmHm05HUIO3FKiec+ayyjN555E+WDgaxLPrJUn3Z
+         Y3vrvgJt8VXEQ70LI7twvqlAmHTizpWrX1q2mqFbVmpm0QDASufGceoJJfEduCdWSc8R
+         CEwvtff8qMuXHaIWMhS1cOz3dozMd+fKbX3cpON1RE0/owgHo6pq4KRh0PYSSj2aa7eK
+         Wue/SfR6sfkt52W1/f1alhU5NdfbYtrv6y1jRCWRGJ2eqJSDmMAbT4NLVYz57xo8Tnqg
+         ZUOw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=EpdSO7BT;
+       dkim=pass header.i=@kernel.org header.s=default header.b=19BN/iHt;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=EpdSO7BT;
+       dkim=pass header.i=@kernel.org header.s=default header.b=19BN/iHt;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 87/87] x86/bugs: Rename SSBD_NO to SSB_NO
-Date: Mon, 21 May 2018 23:12:03 +0200
-Message-Id: <20180521210427.343116922@linuxfoundation.org>
+Subject: [PATCH 4.9 86/87] KVM: SVM: Implement VIRT_SPEC_CTRL support for SSBD
+Date: Mon, 21 May 2018 23:12:02 +0200
+Message-Id: <20180521210427.284646761@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210420.222671977@linuxfoundation.org>
 References: <20180521210420.222671977@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109970459860027?=
-X-GMAIL-MSGID: =?utf-8?q?1601109970459860027?=
+X-GMAIL-THRID: =?utf-8?q?1601109967439224188?=
+X-GMAIL-MSGID: =?utf-8?q?1601109967439224188?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,41 +52,224 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+From: Tom Lendacky <thomas.lendacky@amd.com>
 
-commit 240da953fcc6a9008c92fae5b1f727ee5ed167ab upstream
+commit bc226f07dcd3c9ef0b7f6236fe356ea4a9cb4769 upstream
 
-The "336996 Speculative Execution Side Channel Mitigations" from
-May defines this as SSB_NO, hence lets sync-up.
+Expose the new virtualized architectural mechanism, VIRT_SSBD, for using
+speculative store bypass disable (SSBD) under SVM.  This will allow guests
+to use SSBD on hardware that uses non-architectural mechanisms for enabling
+SSBD.
 
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+[ tglx: Folded the migration fixup from Paolo Bonzini ]
+
+Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/msr-index.h |    2 +-
- arch/x86/kernel/cpu/common.c     |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/kvm_host.h |    2 +-
+ arch/x86/kernel/cpu/common.c    |    3 ++-
+ arch/x86/kvm/cpuid.c            |   11 +++++++++--
+ arch/x86/kvm/cpuid.h            |    9 +++++++++
+ arch/x86/kvm/svm.c              |   21 +++++++++++++++++++--
+ arch/x86/kvm/vmx.c              |   18 +++++++++++++++---
+ arch/x86/kvm/x86.c              |   13 ++++---------
+ 7 files changed, 59 insertions(+), 18 deletions(-)
 
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -63,7 +63,7 @@
- #define MSR_IA32_ARCH_CAPABILITIES	0x0000010a
- #define ARCH_CAP_RDCL_NO		(1 << 0)   /* Not susceptible to Meltdown */
- #define ARCH_CAP_IBRS_ALL		(1 << 1)   /* Enhanced IBRS support */
--#define ARCH_CAP_SSBD_NO		(1 << 4)   /*
-+#define ARCH_CAP_SSB_NO			(1 << 4)   /*
- 						    * Not susceptible to Speculative Store Bypass
- 						    * attack, so no Speculative Store Bypass
- 						    * control required.
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -864,7 +864,7 @@ struct kvm_x86_ops {
+ 	int (*hardware_setup)(void);               /* __init */
+ 	void (*hardware_unsetup)(void);            /* __exit */
+ 	bool (*cpu_has_accelerated_tpr)(void);
+-	bool (*cpu_has_high_real_mode_segbase)(void);
++	bool (*has_emulated_msr)(int index);
+ 	void (*cpuid_update)(struct kvm_vcpu *vcpu);
+ 
+ 	int (*vm_init)(struct kvm *kvm);
 --- a/arch/x86/kernel/cpu/common.c
 +++ b/arch/x86/kernel/cpu/common.c
-@@ -926,7 +926,7 @@ static void __init cpu_set_bug_bits(stru
- 		rdmsrl(MSR_IA32_ARCH_CAPABILITIES, ia32_cap);
+@@ -735,7 +735,8 @@ static void init_speculation_control(str
+ 	if (cpu_has(c, X86_FEATURE_INTEL_STIBP))
+ 		set_cpu_cap(c, X86_FEATURE_STIBP);
  
- 	if (!x86_match_cpu(cpu_no_spec_store_bypass) &&
--	   !(ia32_cap & ARCH_CAP_SSBD_NO))
-+	   !(ia32_cap & ARCH_CAP_SSB_NO))
- 		setup_force_cpu_bug(X86_BUG_SPEC_STORE_BYPASS);
+-	if (cpu_has(c, X86_FEATURE_SPEC_CTRL_SSBD))
++	if (cpu_has(c, X86_FEATURE_SPEC_CTRL_SSBD) ||
++	    cpu_has(c, X86_FEATURE_VIRT_SSBD))
+ 		set_cpu_cap(c, X86_FEATURE_SSBD);
  
- 	if (x86_match_cpu(cpu_no_speculation))
+ 	if (cpu_has(c, X86_FEATURE_AMD_IBRS)) {
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -357,7 +357,7 @@ static inline int __do_cpuid_ent(struct
+ 
+ 	/* cpuid 0x80000008.ebx */
+ 	const u32 kvm_cpuid_8000_0008_ebx_x86_features =
+-		F(AMD_IBPB) | F(AMD_IBRS);
++		F(AMD_IBPB) | F(AMD_IBRS) | F(VIRT_SSBD);
+ 
+ 	/* cpuid 0xC0000001.edx */
+ 	const u32 kvm_cpuid_C000_0001_edx_x86_features =
+@@ -618,13 +618,20 @@ static inline int __do_cpuid_ent(struct
+ 			g_phys_as = phys_as;
+ 		entry->eax = g_phys_as | (virt_as << 8);
+ 		entry->edx = 0;
+-		/* IBRS and IBPB aren't necessarily present in hardware cpuid */
++		/*
++		 * IBRS, IBPB and VIRT_SSBD aren't necessarily present in
++		 * hardware cpuid
++		 */
+ 		if (boot_cpu_has(X86_FEATURE_AMD_IBPB))
+ 			entry->ebx |= F(AMD_IBPB);
+ 		if (boot_cpu_has(X86_FEATURE_AMD_IBRS))
+ 			entry->ebx |= F(AMD_IBRS);
++		if (boot_cpu_has(X86_FEATURE_VIRT_SSBD))
++			entry->ebx |= F(VIRT_SSBD);
+ 		entry->ebx &= kvm_cpuid_8000_0008_ebx_x86_features;
+ 		cpuid_mask(&entry->ebx, CPUID_8000_0008_EBX);
++		if (boot_cpu_has(X86_FEATURE_LS_CFG_SSBD))
++			entry->ebx |= F(VIRT_SSBD);
+ 		break;
+ 	}
+ 	case 0x80000019:
+--- a/arch/x86/kvm/cpuid.h
++++ b/arch/x86/kvm/cpuid.h
+@@ -190,6 +190,15 @@ static inline bool guest_cpuid_has_arch_
+ 	return best && (best->edx & bit(X86_FEATURE_ARCH_CAPABILITIES));
+ }
+ 
++static inline bool guest_cpuid_has_virt_ssbd(struct kvm_vcpu *vcpu)
++{
++	struct kvm_cpuid_entry2 *best;
++
++	best = kvm_find_cpuid_entry(vcpu, 0x80000008, 0);
++	return best && (best->ebx & bit(X86_FEATURE_VIRT_SSBD));
++}
++
++
+ 
+ /*
+  * NRIPS is provided through cpuidfn 0x8000000a.edx bit 3
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -3557,6 +3557,13 @@ static int svm_get_msr(struct kvm_vcpu *
+ 
+ 		msr_info->data = svm->spec_ctrl;
+ 		break;
++	case MSR_AMD64_VIRT_SPEC_CTRL:
++		if (!msr_info->host_initiated &&
++		    !guest_cpuid_has_virt_ssbd(vcpu))
++			return 1;
++
++		msr_info->data = svm->virt_spec_ctrl;
++		break;
+ 	case MSR_IA32_UCODE_REV:
+ 		msr_info->data = 0x01000065;
+ 		break;
+@@ -3691,6 +3698,16 @@ static int svm_set_msr(struct kvm_vcpu *
+ 			break;
+ 		set_msr_interception(svm->msrpm, MSR_IA32_PRED_CMD, 0, 1);
+ 		break;
++	case MSR_AMD64_VIRT_SPEC_CTRL:
++		if (!msr->host_initiated &&
++		    !guest_cpuid_has_virt_ssbd(vcpu))
++			return 1;
++
++		if (data & ~SPEC_CTRL_SSBD)
++			return 1;
++
++		svm->virt_spec_ctrl = data;
++		break;
+ 	case MSR_STAR:
+ 		svm->vmcb->save.star = data;
+ 		break;
+@@ -5150,7 +5167,7 @@ static bool svm_cpu_has_accelerated_tpr(
+ 	return false;
+ }
+ 
+-static bool svm_has_high_real_mode_segbase(void)
++static bool svm_has_emulated_msr(int index)
+ {
+ 	return true;
+ }
+@@ -5467,7 +5484,7 @@ static struct kvm_x86_ops svm_x86_ops __
+ 	.hardware_enable = svm_hardware_enable,
+ 	.hardware_disable = svm_hardware_disable,
+ 	.cpu_has_accelerated_tpr = svm_cpu_has_accelerated_tpr,
+-	.cpu_has_high_real_mode_segbase = svm_has_high_real_mode_segbase,
++	.has_emulated_msr = svm_has_emulated_msr,
+ 
+ 	.vcpu_create = svm_create_vcpu,
+ 	.vcpu_free = svm_free_vcpu,
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -8691,9 +8691,21 @@ static void vmx_handle_external_intr(str
+ 	}
+ }
+ 
+-static bool vmx_has_high_real_mode_segbase(void)
++static bool vmx_has_emulated_msr(int index)
+ {
+-	return enable_unrestricted_guest || emulate_invalid_guest_state;
++	switch (index) {
++	case MSR_IA32_SMBASE:
++		/*
++		 * We cannot do SMM unless we can run the guest in big
++		 * real mode.
++		 */
++		return enable_unrestricted_guest || emulate_invalid_guest_state;
++	case MSR_AMD64_VIRT_SPEC_CTRL:
++		/* This is AMD only.  */
++		return false;
++	default:
++		return true;
++	}
+ }
+ 
+ static bool vmx_mpx_supported(void)
+@@ -11346,7 +11358,7 @@ static struct kvm_x86_ops vmx_x86_ops __
+ 	.hardware_enable = hardware_enable,
+ 	.hardware_disable = hardware_disable,
+ 	.cpu_has_accelerated_tpr = report_flexpriority,
+-	.cpu_has_high_real_mode_segbase = vmx_has_high_real_mode_segbase,
++	.has_emulated_msr = vmx_has_emulated_msr,
+ 
+ 	.vcpu_create = vmx_create_vcpu,
+ 	.vcpu_free = vmx_free_vcpu,
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -1002,6 +1002,7 @@ static u32 emulated_msrs[] = {
+ 	MSR_IA32_MCG_CTL,
+ 	MSR_IA32_MCG_EXT_CTL,
+ 	MSR_IA32_SMBASE,
++	MSR_AMD64_VIRT_SPEC_CTRL,
+ };
+ 
+ static unsigned num_emulated_msrs;
+@@ -2664,7 +2665,7 @@ int kvm_vm_ioctl_check_extension(struct
+ 		 * fringe case that is not enabled except via specific settings
+ 		 * of the module parameters.
+ 		 */
+-		r = kvm_x86_ops->cpu_has_high_real_mode_segbase();
++		r = kvm_x86_ops->has_emulated_msr(MSR_IA32_SMBASE);
+ 		break;
+ 	case KVM_CAP_COALESCED_MMIO:
+ 		r = KVM_COALESCED_MMIO_PAGE_OFFSET;
+@@ -4226,14 +4227,8 @@ static void kvm_init_msr_list(void)
+ 	num_msrs_to_save = j;
+ 
+ 	for (i = j = 0; i < ARRAY_SIZE(emulated_msrs); i++) {
+-		switch (emulated_msrs[i]) {
+-		case MSR_IA32_SMBASE:
+-			if (!kvm_x86_ops->cpu_has_high_real_mode_segbase())
+-				continue;
+-			break;
+-		default:
+-			break;
+-		}
++		if (!kvm_x86_ops->has_emulated_msr(emulated_msrs[i]))
++			continue;
+ 
+ 		if (j < i)
+ 			emulated_msrs[j] = emulated_msrs[i];
