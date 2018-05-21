@@ -1,144 +1,154 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751788AbeEUDA5 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 23:00:57 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38182 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750883AbeEUDA4 (ORCPT
+        id S1751892AbeEUDGG (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 23:06:06 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:35004 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751117AbeEUDGE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 23:00:56 -0400
-Date: Sun, 20 May 2018 20:02:25 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Joel Fernandes <joelaf@google.com>
-Cc: linux-kernel@vger.kernel.org,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Boqun Feng <boqun.feng@gmail.com>, byungchul.park@lge.com,
-        kernel-team@android.com, Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>
-Subject: Re: [PATCH v2] rcu: Speed up calling of RCU tasks callbacks
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180521004324.68371-1-joel@joelfernandes.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180521004324.68371-1-joel@joelfernandes.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18052103-0008-0000-0000-0000030A5835
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009058; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000261; SDB=6.01035332; UDB=6.00529548; IPR=6.00814461;
- MB=3.00021219; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-21 03:00:53
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052103-0009-0000-0000-00003951AA63
-Message-Id: <20180521030225.GA3803@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-21_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805210034
+        Sun, 20 May 2018 23:06:04 -0400
+X-Google-Smtp-Source: AB8JxZqgNoqB9z6zhZ3lA7/4GbuIGGwOuGm66Jnc7lB6RyOXl4LRY6ZM2cnuH1+CseukqFKwQYdnvg==
+From: Jia He <hejianet@gmail.com>
+To: Christoffer Dall <christoffer.dall@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu
+Cc: Suzuki.Poulose@arm.com, linux-kernel@vger.kernel.org,
+        Jia He <hejianet@gmail.com>, jia.he@hxt-semitech.com
+Subject: [PATCH v3] KVM: arm/arm64: add WARN_ON if size is not PAGE_SIZE aligned in unmap_stage2_range
+Date: Mon, 21 May 2018 11:05:30 +0800
+Message-Id: <1526871930-1231-1-git-send-email-hejianet@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 20, 2018 at 05:43:24PM -0700, Joel Fernandes wrote:
-> From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
-> 
-> RCU tasks callbacks can take atleast 1 second before the callbacks are
-> executed. This happens even if the hold-out tasks enter their quiescent states
-> quickly. I noticed this when I was testing trampoline callback execution.
-> 
-> To test the trampoline freeing, I wrote a simple script:
-> cd /sys/kernel/debug/tracing/
-> echo '__schedule_bug:traceon' > set_ftrace_filter;
-> echo '!__schedule_bug:traceon' > set_ftrace_filter;
-> 
-> In the background I had simple bash while loop:
-> while [ 1 ]; do x=1; done &
-> 
-> Total time of completion of above commands in seconds:
-> 
-> With this patch:
-> real    0m0.179s
-> user    0m0.000s
-> sys     0m0.054s
-> 
-> Without this patch:
-> real    0m1.098s
-> user    0m0.000s
-> sys     0m0.053s
-> 
-> That's a great than 6X speed up in performance. In order to accomplish
-> this, I am waiting for HZ/10 time before entering the hold-out checking
-> loop. The loop still preserves its checking of held tasks every 1 second
-> as before, incase this first test doesn't succeed.
-> 
-> Cc: Steven Rostedt <rostedt@goodmis.org>
+There is a panic in armv8a server(QDF2400) under memory pressure tests
+(start 20 guests and run memhog in the host).
 
-Seems straightforward enough.  The commit log needs a bit of cleanup
-("atleast", "great than", ...).
+---------------------------------begin--------------------------------
+[35380.800950] BUG: Bad page state in process qemu-kvm  pfn:dd0b6
+[35380.805825] page:ffff7fe003742d80 count:-4871 mapcount:-2126053375
+mapping:          (null) index:0x0
+[35380.815024] flags: 0x1fffc00000000000()
+[35380.818845] raw: 1fffc00000000000 0000000000000000 0000000000000000
+ffffecf981470000
+[35380.826569] raw: dead000000000100 dead000000000200 ffff8017c001c000
+0000000000000000
+[35380.805825] page:ffff7fe003742d80 count:-4871 mapcount:-2126053375
+mapping:          (null) index:0x0
+[35380.815024] flags: 0x1fffc00000000000()
+[35380.818845] raw: 1fffc00000000000 0000000000000000 0000000000000000
+ffffecf981470000
+[35380.826569] raw: dead000000000100 dead000000000200 ffff8017c001c000
+0000000000000000
+[35380.834294] page dumped because: nonzero _refcount
+[35380.839069] Modules linked in: vhost_net vhost tap ebtable_filter
+ebtables ip6table_filter ip6_tables iptable_filter fcoe libfcoe libfc
+8021q garp mrp stp llc scsi_transport_fc openvswitch nf_conntrack_ipv6
+nf_nat_ipv6 nf_conntrack_ipv4 nf_defrag_ipv4 nf_nat_ipv4 nf_defrag_ipv6
+nf_nat nf_conntrack vfat fat rpcrdma ib_isert iscsi_target_mod ib_iser
+libiscsi scsi_transport_iscsi ib_srpt target_core_mod ib_srp
+scsi_transport_srp ib_ipoib rdma_ucm ib_ucm ib_uverbs ib_umad rdma_cm
+ib_cm iw_cm mlx5_ib ib_core crc32_ce ipmi_ssif tpm_tis tpm_tis_core sg
+nfsd auth_rpcgss nfs_acl lockd grace sunrpc dm_multipath ip_tables xfs
+libcrc32c mlx5_core mlxfw devlink ahci_platform libahci_platform libahci
+qcom_emac sdhci_acpi sdhci hdma mmc_core hdma_mgmt i2c_qup dm_mirror
+dm_region_hash dm_log dm_mod
+[35380.908341] CPU: 29 PID: 18323 Comm: qemu-kvm Tainted: G W
+4.14.15-5.hxt.aarch64 #1
+[35380.917107] Hardware name: <snip for confidential issues>
+[35380.930909] Call trace:
+[35380.933345] [<ffff000008088f00>] dump_backtrace+0x0/0x22c
+[35380.938723] [<ffff000008089150>] show_stack+0x24/0x2c
+[35380.943759] [<ffff00000893c078>] dump_stack+0x8c/0xb0
+[35380.948794] [<ffff00000820ab50>] bad_page+0xf4/0x154
+[35380.953740] [<ffff000008211ce8>] free_pages_check_bad+0x90/0x9c
+[35380.959642] [<ffff00000820c430>] free_pcppages_bulk+0x464/0x518
+[35380.965545] [<ffff00000820db98>] free_hot_cold_page+0x22c/0x300
+[35380.971448] [<ffff0000082176fc>] __put_page+0x54/0x60
+[35380.976484] [<ffff0000080b1164>] unmap_stage2_range+0x170/0x2b4
+[35380.982385] [<ffff0000080b12d8>] kvm_unmap_hva_handler+0x30/0x40
+[35380.988375] [<ffff0000080b0104>] handle_hva_to_gpa+0xb0/0xec
+[35380.994016] [<ffff0000080b2644>] kvm_unmap_hva_range+0x5c/0xd0
+[35380.999833] [<ffff0000080a8054>]
+kvm_mmu_notifier_invalidate_range_start+0x60/0xb0
+[35381.007387] [<ffff000008271f44>]
+__mmu_notifier_invalidate_range_start+0x64/0x8c
+[35381.014765] [<ffff0000082547c8>] try_to_unmap_one+0x78c/0x7a4
+[35381.020493] [<ffff000008276d04>] rmap_walk_ksm+0x124/0x1a0
+[35381.025961] [<ffff0000082551b4>] rmap_walk+0x94/0x98
+[35381.030909] [<ffff0000082555e4>] try_to_unmap+0x100/0x124
+[35381.036293] [<ffff00000828243c>] unmap_and_move+0x480/0x6fc
+[35381.041847] [<ffff000008282b6c>] migrate_pages+0x10c/0x288
+[35381.047318] [<ffff00000823c164>] compact_zone+0x238/0x954
+[35381.052697] [<ffff00000823c944>] compact_zone_order+0xc4/0xe8
+[35381.058427] [<ffff00000823d25c>] try_to_compact_pages+0x160/0x294
+[35381.064503] [<ffff00000820f074>]
+__alloc_pages_direct_compact+0x68/0x194
+[35381.071187] [<ffff000008210138>] __alloc_pages_nodemask+0xc20/0xf7c
+[35381.077437] [<ffff0000082709e4>] alloc_pages_vma+0x1a4/0x1c0
+[35381.083080] [<ffff000008285b68>]
+do_huge_pmd_anonymous_page+0x128/0x324
+[35381.089677] [<ffff000008248a24>] __handle_mm_fault+0x71c/0x7e8
+[35381.095492] [<ffff000008248be8>] handle_mm_fault+0xf8/0x194
+[35381.101049] [<ffff000008240dcc>] __get_user_pages+0x124/0x34c
+[35381.106777] [<ffff000008241870>] populate_vma_page_range+0x90/0x9c
+[35381.112941] [<ffff000008241940>] __mm_populate+0xc4/0x15c
+[35381.118322] [<ffff00000824b294>] SyS_mlockall+0x100/0x164
+[35381.123705] Exception stack(0xffff800dce5f3ec0 to 0xffff800dce5f4000)
+[35381.130128] 3ec0: 0000000000000003 d6e6024cc9b87e00 0000aaaabe94f000
+0000000000000000
+[35381.137940] 3ee0: 0000000000000002 0000000000000000 0000000000000000
+0000aaaacf6fc3c0
+[35381.145753] 3f00: 00000000000000e6 0000aaaacf6fc490 0000ffffeeeab0f0
+d6e6024cc9b87e00
+[35381.153565] 3f20: 0000000000000000 0000aaaabe81b3c0 0000000000000020
+00009e53eff806b5
+[35381.161379] 3f40: 0000aaaabe94de48 0000ffffa7c269b0 0000000000000011
+0000ffffeeeabf68
+[35381.169190] 3f60: 0000aaaaceacfe60 0000aaaabe94f000 0000aaaabe9ba358
+0000aaaabe7ffb80
+[35381.177003] 3f80: 0000aaaabe9ba000 0000aaaabe959f64 0000000000000000
+0000aaaabe94f000
+[35381.184815] 3fa0: 0000000000000000 0000ffffeeeabdb0 0000aaaabe5f3bf8
+0000ffffeeeabdb0
+[35381.192628] 3fc0: 0000ffffa7c269b8 0000000060000000 0000000000000003
+00000000000000e6
+[35381.200440] 3fe0: 0000000000000000 0000000000000000 0000000000000000
+0000000000000000
+[35381.208254] [<ffff00000808339c>] __sys_trace_return+0x0/0x4
+[35381.213809] Disabling lock debugging due to kernel taint
+--------------------------------end--------------------------------------
 
-Steve, thoughts?  Any reason why this would be a problem?
+The root cause might be what I fixed at [1]. But from arm kvm points of
+view, it would be better we caught the exception earlier and clearer.
 
-							Thanx, Paul
+If the size is not PAGE_SIZE aligned, unmap_stage2_range might unmap the
+wrong(more or less) page range. Hence it caused the "BUG: Bad page
+state"
 
-> Cc: Peter Zilstra <peterz@infradead.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
-> Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>
-> Cc: byungchul.park@lge.com
-> Cc: kernel-team@android.com
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> ---
-> Changes since v1->v2:
->  - Changed total wait time to HZ/10 instead of 2 jiffies
->  - Updated the commands to reproduce issue
-> 
->  kernel/rcu/update.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
-> index 5783bdf86e5a..a28698e44b08 100644
-> --- a/kernel/rcu/update.c
-> +++ b/kernel/rcu/update.c
-> @@ -743,6 +743,12 @@ static int __noreturn rcu_tasks_kthread(void *arg)
->  		 */
->  		synchronize_srcu(&tasks_rcu_exit_srcu);
-> 
-> +		/*
-> +		 * Wait a little bit incase held tasks are released
-> +		 * during their next timer ticks.
-> +		 */
-> +		schedule_timeout_interruptible(HZ/10);
-> +
->  		/*
->  		 * Each pass through the following loop scans the list
->  		 * of holdout tasks, removing any that are no longer
-> @@ -755,7 +761,6 @@ static int __noreturn rcu_tasks_kthread(void *arg)
->  			int rtst;
->  			struct task_struct *t1;
-> 
-> -			schedule_timeout_interruptible(HZ);
->  			rtst = READ_ONCE(rcu_task_stall_timeout);
->  			needreport = rtst > 0 &&
->  				     time_after(jiffies, lastreport + rtst);
-> @@ -768,6 +773,11 @@ static int __noreturn rcu_tasks_kthread(void *arg)
->  				check_holdout_task(t, needreport, &firstreport);
->  				cond_resched();
->  			}
-> +
-> +			if (list_empty(&rcu_tasks_holdouts))
-> +				break;
-> +
-> +			schedule_timeout_interruptible(HZ);
->  		}
-> 
->  		/*
-> -- 
-> 2.17.0.441.gb46fe60e1d-goog
-> 
+[1] https://lkml.org/lkml/2018/5/3/1042
+
+Signed-off-by: jia.he@hxt-semitech.com
+Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+---
+v3: resend after dropping patch 2/2 of the series
+
+ virt/kvm/arm/mmu.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+index 7f6a944..8dac311 100644
+--- a/virt/kvm/arm/mmu.c
++++ b/virt/kvm/arm/mmu.c
+@@ -297,6 +297,8 @@ static void unmap_stage2_range(struct kvm *kvm, phys_addr_t start, u64 size)
+ 	phys_addr_t next;
+ 
+ 	assert_spin_locked(&kvm->mmu_lock);
++	WARN_ON(size & ~PAGE_MASK);
++
+ 	pgd = kvm->arch.pgd + stage2_pgd_index(addr);
+ 	do {
+ 		/*
+-- 
+1.8.3.1
