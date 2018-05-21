@@ -1,1200 +1,924 @@
 Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1331374-1527765062-2-5830391430877947050
+X-Cyrus-Session-Id: sloti22d1t05-1090829-1526924396-2-5310071154929870403
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-fsdevel-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527765062; b=MOCpTDKFlQvDsFJ/GDtNBC9PoKzLJEdoYSA+4v+LyV7UK6SHR9
-    SwS5LJ3rHoYgmFU76u80Gd6egyLYBZW9SomrwL2YU53di9wz2TW+uy7bvS03hLJy
-    x/c7VgJmoYegLSR9ffqBQwruqaAdmW6h+FX6+FhLFoXvmBuo3rrsanHf+VZKLbm6
-    KO2DVEh0eRJLE1kQlBaX93snEm82TPdlUN8xHvWJvdq3F40RBgZxSpd6073MxMro
-    3LZbxe1hAfymPnAgBK6RC/KAR3QPT2tcgv6sI/F3tzIKt3wQ4v/7VRSuv3BoW9i3
-    zpMPJtHcSSay7IMFI6pFLz3WNBhG4y422Kig==
+    1526924396; b=dQPTbc3zbXNyKvCfVhc62Iq9oADIhMcLhVS4CjxT2veTIYCa/B
+    75va60OTeDOXwXDCWQcSWgb3Q/4YXiTYLpeZnkoCeJj4ISOSNQYV474LSHUdtsVJ
+    nPa7/0v4Pu4KjMM7b//5p3WB+ZSxg0A/PI/R98mGqWhgzJDnkUy2oiBeNX+QgXkq
+    jnG3zQWn2ssUvoJTtmIukjWkljQtfKLcfrgO002UqOiLs8Jr2YLIgibrq3T5/pXo
+    S/UjDVbGDdVt0pRwcEKLqdX9veFoH2GxEkg4fZKu8KAujNVKtctiMK8ltd7zBsf4
+    RWbuE8tuoCMeKC9imN6nKMlabmJQJPILRo9A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :mime-version:content-type:sender:list-id; s=fm2; t=1527765062;
-    bh=GVDJZIyuZ8jYuhj93BPvx94IM1lxQLs/CXq0Zi6ZVgs=; b=jmEQcUoqfqpx
-    ZkVKQ8NhBA2zGh7g48/rvWsTCL9UEuxjcK1LReceswHA0jJq/zmygRKdzxXfPquA
-    zkAP3hkZ21iT8y7k7FtstIsFLEaB9V0MLbHADYvFSfaRDfWw8b1T1jNv1DIUKB4Y
-    gdYbSs1USFNKlQ0mNNeTIa1x3UJxXkIjm0NSYbB/gmsnJvUlTUXaulaCGIO9iC2J
-    z3exkxp21jkXf+kXtUR+SmutBH6dvdNh1Jjlk9y3jYAaPW1n174BQbLQ2IoSGh8t
-    9V9N34DryZOPI/fqJjXmwAVLZaQkdztluRX+NvH6wT8S/QwabSDNmJv7S9bwf8dP
-    Uwz/lnrkdw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=fm2; t=1526924396; bh=
+    9rhP+SBTJKYZQwnXuWJRqgoiY6nE2FKnofx2K1B2O9Q=; b=P+6jw4/H1LpHF3H+
+    NnWwatJL5uD65/21faA/t0UoGcTJ6V9oNMJ5Ch1Gr7ouhgMr04ND9a0FLJjmbxD9
+    yh7w73IVKXikHVh+5FXNGPvo4HDJhjVw5I/Rgv00ZN57/Vl7IX9t6HsQNH6WCR+E
+    KJZIThXfvwUCWP7Ub4N4JtjmoaT54QQaSG/bC6SOqgCp/e5EySit8egN9njGGbDl
+    sF7JC188FLqqRoOFVNPE+REqmalxp4TobMqtatP+xrHBvrCqsBdsgLQp2Zi8JMhU
+    fW/f5syBkMA0mIyytit6nzw7GLPFBjgdC8XIiH2OGdNZSt7DO8p3ZgCzIa9zxAsM
+    0skqpA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=huawei.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=collabora.co.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=huawei.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx1.messagingengine.com;
+    header.domain=collabora.co.uk header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=51 state=0
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=huawei.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=collabora.co.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=huawei.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
+      header.domain=collabora.co.uk header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=51 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFJ6Yechj5SekSlI9YU542owbobj3vjchLjJsjIE8jQTXOHLKqPmpaks4GxLGNOZ4NG2WjK2N8uOwjYuMBXB7uj6JBQL4EVLPF7UTL0cjXQW1pHa188z
-    +XbJ8vc5YwJ+nKk/Jikc19NoKVLO2OS9DvT8O/xOxfBsT2j0ziX+6t2NkxvHwNmRK/F/sSzEg5K+O6h4bbxFbls7+oQY+4byYZWGM8dQACEfvyodW6NYQKYR
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Nu3FAB0SVHUA:10 a=VUJBJC2UJ8kA:10
-    a=i0EeH86SAAAA:8 a=VSa_WXT-AAAA:8 a=2MXv9ctrygkMUUo0M8kA:9
-    a=Qm0_rSmEpurtqmjdEHTP:22
+X-CM-Envelope: MS4wfID7sp3wlqkUlXTHIkYu7WjKTLyqrPFhEaHO86z+US398zZpKI/Ncj6skGYpAEFNZG9lACf8ZJuYILOF3sjU5KC1Q6bk9ZQwfBwobDrmuEKnP5qBlJqD
+    kg6PRSXtNOnpjQ2QcxUuLDZ0JnmcrOpxrVrBgSYqIdQGLovLf725G7v1rb/vk56bpuA0XQzZJ6Xy/B0nSx8K0Hg7DRA4SuHNTmjUIH0VnDLP3l9OTJ32pvXA
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=eJfxgxciAAAA:8
+    a=gvl4HP8tAAAA:8 a=te1EGT4yAAAA:8 a=ylgZzIc2wjLLKePqvRYA:9
+    a=GHhuhJD2cWfZ6DM7:21 a=pQzatsU9TKPWbW5S:21 a=8zTCMO8O4RsA:10
+    a=xM9caqqi1sUkTy8OJ5Uh:22 a=tRkgsvjveJ3YVe9fnr1q:22 a=RRElR4r2U1jGY2dU47NL:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754598AbeEaLLA (ORCPT <rfc822;linux@kroah.com>);
-        Thu, 31 May 2018 07:11:00 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:8168 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754441AbeEaLK7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 31 May 2018 07:10:59 -0400
-From: Gao Xiang <gaoxiang25@huawei.com>
-To: <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
-CC: <miaoxie@huawei.com>, <yuchao0@huawei.com>,
-        <sunqiuyang@huawei.com>, <fangwei1@huawei.com>,
-        <liguifu2@huawei.com>, <weidu.du@huawei.com>,
-        <chen.chun.yen@huawei.com>, <brooke.wangzhigang@hisilicon.com>,
-        <dongjinguang@huawei.com>, <gaoxiang25@huawei.com>
-Subject: [NOMERGE] [RFC PATCH 10/12] erofs: introduce xattr & acl support
-Date: Thu, 31 May 2018 19:10:26 +0800
-Message-ID: <1527765026-23585-1-git-send-email-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 1.9.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.162.55.131]
-X-CFilter-Loop: Reflected
+        id S1753296AbeEURjy (ORCPT <rfc822;linux@kroah.com>);
+        Mon, 21 May 2018 13:39:54 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:45446 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753310AbeEURhU (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 21 May 2018 13:37:20 -0400
+From: Gabriel Krisman Bertazi <krisman@collabora.co.uk>
+To: viro@ZenIV.linux.org.uk
+Cc: jra@google.com, tytso@mit.edu, olaf@sgi.com,
+        darrick.wong@oracle.com, kernel@lists.collabora.co.uk,
+        linux-fsdevel@vger.kernel.org, david@fromorbit.com, jack@suse.cz,
+        linux-kernel@vger.kernel.org,
+        Gabriel Krisman Bertazi <krisman@collabora.co.uk>
+Subject: [PATCH v2 12/15] nls: utf8norm: Introduce code for UTF-8 normalization
+Date: Mon, 21 May 2018 14:36:14 -0300
+Message-Id: <20180521173617.31625-13-krisman@collabora.co.uk>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180521173617.31625-1-krisman@collabora.co.uk>
+References: <20180521173617.31625-1-krisman@collabora.co.uk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This implements xattr and acl functionalities.
+From: Olaf Weber <olaf@sgi.com>
 
-Inline and shared xattrs are introduced for flexibility,
-In detail, if the same xattr occurs for many times
-on numbers of inodes or the value of xattr is so large
-that it isn't suitable for the xattr inline,
-shared xattr kept in the xattr meta will be used instead.
+Supporting functions for UTF-8 normalization are in utf8norm.c with the
+header utf8norm.h. Two normalization forms are supported: nfkdi and
+nfkdicf.
 
-Signed-off-by: Miao Xie <miaoxie@huawei.com>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+  nfkdi:
+   - Apply unicode normalization form NFKD.
+   - Remove any Default_Ignorable_Code_Point.
+
+  nfkdicf:
+   - Apply unicode normalization form NFKD.
+   - Remove any Default_Ignorable_Code_Point.
+   - Apply a full casefold (C + F).
+
+For the purposes of the code, a string is valid UTF-8 if:
+
+ - The values encoded are 0x1..0x10FFFF.
+ - The surrogate codepoints 0xD800..0xDFFFF are not encoded.
+ - The shortest possible encoding is used for all values.
+
+The supporting functions work on null-terminated strings (utf8 prefix)
+and on length-limited strings (utf8n prefix).
+
+>From the original SGI patch and for conformity with coding standards,
+the utf8data_t typedef was dropped, since it was just masking the struct
+keyword.  On other occasions, namely utf8leaf_t and utf8trie_t, I
+decided to keep it, since they are simple pointers to memory buffers,
+and using uchars here wouldn't provide any more meaningful information.
+
+Changes since RFC v2:
+  - Merge to NLS system
+
+Changes since RFC v1:
+  - utf8_version_is_supported receives maj, min and rev as separate
+  arguments. (Olaf Weber)
+
+Signed-off-by: Olaf Weber <olaf@sgi.com>
+Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.co.uk>
+  [Rebase to Mainline]
+  [Fix up checkpatch.pl warnings]
+  [Drop typedefs]
+  [Merge with NLS subsystem]
 ---
- fs/erofs/Kconfig    |  37 +++
- fs/erofs/Makefile   |   1 +
- fs/erofs/inode.c    |  61 +++++
- fs/erofs/internal.h |  20 ++
- fs/erofs/namei.c    |   7 +
- fs/erofs/super.c    |  29 +++
- fs/erofs/xattr.c    | 678 ++++++++++++++++++++++++++++++++++++++++++++++++++++
- fs/erofs/xattr.h    |  93 +++++++
- 8 files changed, 926 insertions(+)
- create mode 100644 fs/erofs/xattr.c
- create mode 100644 fs/erofs/xattr.h
+ fs/nls/Makefile         |   4 +
+ fs/nls/nls_utf8n-norm.c | 640 ++++++++++++++++++++++++++++++++++++++++
+ fs/nls/utf8n.h          | 112 +++++++
+ 3 files changed, 756 insertions(+)
+ create mode 100644 fs/nls/nls_utf8n-norm.c
+ create mode 100644 fs/nls/utf8n.h
 
-diff --git a/fs/erofs/Kconfig b/fs/erofs/Kconfig
-index 1c2f276..c244cf3 100644
---- a/fs/erofs/Kconfig
-+++ b/fs/erofs/Kconfig
-@@ -24,6 +24,43 @@ config EROFS_FS_DEBUG
+diff --git a/fs/nls/Makefile b/fs/nls/Makefile
+index 9eff2f058c7a..6ff62c0fe436 100644
+--- a/fs/nls/Makefile
++++ b/fs/nls/Makefile
+@@ -56,6 +56,10 @@ obj-$(CONFIG_NLS_MAC_ROMANIAN)  += mac-romanian.o
+ obj-$(CONFIG_NLS_MAC_ROMAN)     += mac-roman.o
+ obj-$(CONFIG_NLS_MAC_TURKISH)   += mac-turkish.o
  
- 	  For daily use, say N.
- 
-+config EROFS_FS_XATTR
-+	bool "EROFS extended attributes"
-+	depends on EROFS_FS
-+	default y
-+	help
-+	  Extended attributes are name:value pairs associated with inodes by
-+	  the kernel or by users (see the attr(5) manual page, or visit
-+	  <http://acl.bestbits.at/> for details).
++nls_utf8n-y += nls_utf8n-norm.o
++obj-$(CONFIG_NLS_UTF8_NORMALIZATION) += nls_utf8n.o
 +
-+	  If unsure, say N.
-+
-+config EROFS_FS_POSIX_ACL
-+	bool "EROFS Access Control Lists"
-+	depends on EROFS_FS_XATTR
-+	select FS_POSIX_ACL
-+	default y
-+	help
-+	  Posix Access Control Lists (ACLs) support permissions for users and
-+	  groups beyond the owner/group/world scheme.
-+
-+	  To learn more about Access Control Lists, visit the POSIX ACLs for
-+	  Linux website <http://acl.bestbits.at/>.
-+
-+	  If you don't know what Access Control Lists are, say N.
-+
-+config EROFS_FS_SECURITY
-+	bool "EROFS Security Labels"
-+	depends on EROFS_FS_XATTR
-+	help
-+	  Security labels provide an access control facility to support Linux
-+	  Security Models (LSMs) accepted by AppArmor, SELinux, Smack and TOMOYO
-+	  Linux. This option enables an extended attribute handler for file
-+	  security labels in the erofs filesystem, so that it requires enabling
-+	  the extended attribute support in advance.
-+
-+	  If you are not using a security module, say N.
-+
- config EROFS_FS_USE_VM_MAP_RAM
- 	bool "EROFS VM_MAP_RAM Support"
- 	depends on EROFS_FS
-diff --git a/fs/erofs/Makefile b/fs/erofs/Makefile
-index 61dfcae..9d7f90a 100644
---- a/fs/erofs/Makefile
-+++ b/fs/erofs/Makefile
-@@ -4,4 +4,5 @@ EXTRA_CFLAGS += -Wall -DEROFS_VERSION=\"$(EROFS_VERSION)\"
- 
- obj-$(CONFIG_EROFS_FS) += erofs.o
- erofs-objs := super.o inode.o data.o namei.o dir.o
-+erofs-$(CONFIG_EROFS_FS_XATTR) += xattr.o
- 
-diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
-index 94f8ce5..7391ef6 100644
---- a/fs/erofs/inode.c
-+++ b/fs/erofs/inode.c
-@@ -12,6 +12,7 @@
-  */
- #include "internal.h"
- #include <linux/slab.h>
-+#include "xattr.h"
- 
- /* no locking */
- static int read_inode(struct inode *inode, void *data)
-@@ -146,15 +147,26 @@ int fill_inode(struct inode *inode, int isdir)
- 	if (!err) {
- 		/* setup the new inode */
- 		if (S_ISREG(inode->i_mode)) {
-+#ifdef CONFIG_EROFS_FS_XATTR
-+			if (vi->xattr_isize)
-+				inode->i_op = &erofs_generic_xattr_iops;
-+#endif
- 			inode->i_fop = &generic_ro_fops;
- 		} else if (S_ISDIR(inode->i_mode)) {
- 			inode->i_op =
-+#ifdef CONFIG_EROFS_FS_XATTR
-+				vi->xattr_isize ? &erofs_dir_xattr_iops :
-+#endif
- 				&erofs_dir_iops;
- 			inode->i_fop = &erofs_dir_fops;
- 		} else if (S_ISLNK(inode->i_mode)) {
- 			/* by default, page_get_link is used for symlink */
- 			inode->i_op =
-+#ifdef CONFIG_EROFS_FS_XATTR
-+				&erofs_symlink_xattr_iops,
-+#else
- 				&page_symlink_inode_operations;
-+#endif
- 			inode_nohighmem(inode);
- 		} else {
- 			err = -EIO;
-@@ -203,6 +215,33 @@ struct inode *erofs_iget(struct super_block *sb,
- 	return inode;
- }
- 
-+#ifdef CONFIG_EROFS_FS_XATTR
-+const struct inode_operations erofs_generic_xattr_iops = {
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 9, 0))
-+	.getxattr = generic_getxattr,
-+	.listxattr = erofs_listxattr,
-+#endif
-+};
-+#endif
-+
-+#ifdef CONFIG_EROFS_FS_XATTR
-+const struct inode_operations erofs_symlink_xattr_iops = {
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 10, 0))
-+	.readlink = generic_readlink,
-+#endif
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 5, 0))
-+	.follow_link = page_follow_link_light,
-+	.put_link = page_put_link,
-+#else
-+	.get_link = page_get_link,
-+#endif
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 9, 0))
-+	.getxattr = generic_getxattr,
-+	.listxattr = erofs_listxattr,
-+#endif
-+};
-+#endif
-+
- #if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 2, 0))
- #include <linux/namei.h>
- 
-@@ -220,3 +259,25 @@ static void *erofs_follow_fast_link(struct dentry *dentry, struct nameidata *nd)
- };
- #endif
- 
-+#ifdef CONFIG_EROFS_FS_XATTR
-+const struct inode_operations erofs_fast_symlink_xattr_iops = {
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 10, 0))
-+	.readlink = generic_readlink,
-+#endif
-+
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 2, 0))
-+	.follow_link = erofs_follow_fast_link,
-+#else
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 5, 0))
-+	.follow_link = simple_follow_link,
-+#else
-+	.get_link = simple_get_link,
-+#endif
-+#endif
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 9, 0))
-+	.getxattr = generic_getxattr,
-+	.listxattr = erofs_listxattr,
-+#endif
-+};
-+#endif
-+
-diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-index 2a3cd45..1dd783c 100644
---- a/fs/erofs/internal.h
-+++ b/fs/erofs/internal.h
-@@ -50,6 +50,9 @@
- struct erofs_sb_info {
- 	u32 blocks;
- 	u32 meta_blkaddr;
-+#ifdef CONFIG_EROFS_FS_XATTR
-+	u32 xattr_blkaddr;
-+#endif
- 
- 	/* inode slot unit size in bit shift */
- 	unsigned char islotbits;
-@@ -72,6 +75,10 @@ struct erofs_sb_info {
- #define EROFS_SB(sb) ((struct erofs_sb_info *)(sb)->s_fs_info)
- #define EROFS_I_SB(inode) ((struct erofs_sb_info *)(inode)->i_sb->s_fs_info)
- 
-+/* Mount flags set via mount options or defaults */
-+#define EROFS_MOUNT_XATTR_USER		0x00000010
-+#define EROFS_MOUNT_POSIX_ACL		0x00000020
-+
- #define clear_opt(sbi, option)	((sbi)->mount_opt &= ~EROFS_MOUNT_##option)
- #define set_opt(sbi, option)	((sbi)->mount_opt |= EROFS_MOUNT_##option)
- #define test_opt(sbi, option)	((sbi)->mount_opt & EROFS_MOUNT_##option)
-@@ -259,14 +266,27 @@ int erofs_namei(struct inode *dir, struct qstr *name,
- extern const struct inode_operations simple_symlink_inode_operations;
- #endif
- 
-+#ifdef CONFIG_EROFS_FS_XATTR
-+extern const struct inode_operations erofs_symlink_xattr_iops;
-+extern const struct inode_operations erofs_fast_symlink_xattr_iops;
-+#endif
-+
- static inline void set_inode_fast_symlink(struct inode *inode)
- {
-+#ifdef CONFIG_EROFS_FS_XATTR
-+	inode->i_op = &erofs_fast_symlink_xattr_iops;
-+#else
- 	inode->i_op = &simple_symlink_inode_operations;
-+#endif
- }
- 
- static inline bool is_inode_fast_symlink(struct inode *inode)
- {
-+#ifdef CONFIG_EROFS_FS_XATTR
-+	return inode->i_op == &erofs_fast_symlink_xattr_iops;
-+#else
- 	return inode->i_op == &simple_symlink_inode_operations;
-+#endif
- }
- 
- static inline void *erofs_vmap(struct page **pages, unsigned int count)
-diff --git a/fs/erofs/namei.c b/fs/erofs/namei.c
-index 5a2ddb5..ae71584 100644
---- a/fs/erofs/namei.c
-+++ b/fs/erofs/namei.c
-@@ -11,6 +11,7 @@
-  * distribution for more details.
-  */
- #include "internal.h"
-+#include "xattr.h"
- 
- /* based on the value of qn->len is accurate */
- static inline int dirnamecmp(struct qstr *qn,
-@@ -239,5 +240,11 @@ struct dentry *erofs_lookup(struct inode *dir,
- 
- const struct inode_operations erofs_dir_xattr_iops = {
- 	.lookup = erofs_lookup,
-+#ifdef CONFIG_EROFS_FS_XATTR
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 9, 0))
-+	.getxattr = generic_getxattr,
-+	.listxattr = erofs_listxattr,
-+#endif
-+#endif
- };
- 
-diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index a2612e2..b41613f 100644
---- a/fs/erofs/super.c
-+++ b/fs/erofs/super.c
-@@ -14,6 +14,7 @@
- #include <linux/buffer_head.h>
- #include <linux/slab.h>
- #include <linux/statfs.h>
-+#include <linux/seq_file.h>
- #include "internal.h"
- 
- static struct kmem_cache *erofs_inode_cachep __read_mostly;
-@@ -106,6 +107,9 @@ static int superblock_read(struct super_block *sb)
- 
- 	sbi->blocks = le32_to_cpu(layout->blocks);
- 	sbi->meta_blkaddr = le32_to_cpu(layout->meta_blkaddr);
-+#ifdef CONFIG_EROFS_FS_XATTR
-+	sbi->xattr_blkaddr = le32_to_cpu(layout->xattr_blkaddr);
-+#endif
- 	sbi->islotbits = ffs(sizeof(struct erofs_inode_v1)) - 1;
- 
- 	sbi->root_nid = le64_to_cpu(layout->root_nid);
-@@ -130,6 +134,13 @@ static int superblock_read(struct super_block *sb)
- 
- static void default_options(struct erofs_sb_info *sbi)
- {
-+#ifdef CONFIG_EROFS_FS_XATTR
-+	set_opt(sbi, XATTR_USER);
-+#endif
-+
-+#ifdef CONFIG_EROFS_FS_POSIX_ACL
-+	set_opt(sbi, POSIX_ACL);
-+#endif
- }
- 
- static int erofs_read_super(struct super_block *sb,
-@@ -165,6 +176,10 @@ static int erofs_read_super(struct super_block *sb,
- 
- 	sb->s_op = &erofs_sops;
- 
-+#ifdef CONFIG_EROFS_FS_XATTR
-+	sb->s_xattr = erofs_xattr_handlers;
-+#endif
-+
- 	/* set erofs default mount options */
- 	default_options(sbi);
- 
-@@ -333,6 +348,20 @@ static int erofs_statfs(struct dentry *dentry, struct kstatfs *buf)
- 
- static int erofs_show_options(struct seq_file *seq, struct dentry *root)
- {
-+	struct erofs_sb_info *sbi __maybe_unused = EROFS_SB(root->d_sb);
-+
-+#ifdef CONFIG_EROFS_FS_XATTR
-+	if (test_opt(sbi, XATTR_USER))
-+		seq_puts(seq, ",user_xattr");
-+	else
-+		seq_puts(seq, ",nouser_xattr");
-+#endif
-+#ifdef CONFIG_EROFS_FS_POSIX_ACL
-+	if (test_opt(sbi, POSIX_ACL))
-+		seq_puts(seq, ",acl");
-+	else
-+		seq_puts(seq, ",noacl");
-+#endif
- 	return 0;
- }
- 
-diff --git a/fs/erofs/xattr.c b/fs/erofs/xattr.c
++$(obj)/nls_utf8n-norm.o: $(obj)/utf8data.h
+ $(obj)/utf8data.h: $(srctree)/$(src)/ucd/*.txt $(objtree)/scripts/mkutf8data FORCE
+ 	$(call cmd,mkutf8data)
+ quiet_cmd_mkutf8data = MKUTF8DATA $@
+diff --git a/fs/nls/nls_utf8n-norm.c b/fs/nls/nls_utf8n-norm.c
 new file mode 100644
-index 0000000..6ee0f0c
+index 000000000000..ca0bbf644b49
 --- /dev/null
-+++ b/fs/erofs/xattr.c
-@@ -0,0 +1,678 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/fs/nls/nls_utf8n-norm.c
+@@ -0,0 +1,640 @@
 +/*
-+ * linux/fs/erofs/xattr.c
++ * Copyright (c) 2014 SGI.
++ * All rights reserved.
 + *
-+ * Copyright (C) 2017-2018 HUAWEI, Inc.
-+ *             http://www.huawei.com/
-+ * Created by Gao Xiang <gaoxiang25@huawei.com>
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation.
 + *
-+ * This file is subject to the terms and conditions of the GNU General Public
-+ * License.  See the file COPYING in the main directory of the Linux
-+ * distribution for more details.
++ * This program is distributed in the hope that it would be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
 + */
-+#include <linux/slab.h>
-+#include <linux/security.h>
-+#include "xattr.h"
-+#include <linux/version.h>
 +
-+struct xattr_iter {
-+	struct super_block *sb;
-+	struct page *page;
-+	void *kaddr;
++#include "utf8n.h"
 +
-+	erofs_blk_t blkaddr;
-+	unsigned ofs;
++struct utf8data {
++	unsigned int maxage;
++	unsigned int offset;
 +};
 +
-+static inline void xattr_iter_end(struct xattr_iter *it, bool atomic)
++#define __INCLUDED_FROM_UTF8NORM_C__
++#include "utf8data.h"
++#undef __INCLUDED_FROM_UTF8NORM_C__
++
++int utf8version_is_supported(u8 maj, u8 min, u8 rev)
 +{
-+	/* only init_inode_xattrs use non-atomic once */
-+	if (unlikely(!atomic))
-+		kunmap(it->page);
-+	else
-+		kunmap_atomic(it->kaddr);
-+	unlock_page(it->page);
-+	put_page(it->page);
++	int i = ARRAY_SIZE(utf8agetab) - 1;
++	unsigned int sb_utf8version = UNICODE_AGE(maj, min, rev);
++
++	while (i >= 0 && utf8agetab[i] != 0) {
++		if (sb_utf8version == utf8agetab[i])
++			return 1;
++		i--;
++	}
++	return 0;
++}
++EXPORT_SYMBOL(utf8version_is_supported);
++
++/*
++ * UTF-8 valid ranges.
++ *
++ * The UTF-8 encoding spreads the bits of a 32bit word over several
++ * bytes. This table gives the ranges that can be held and how they'd
++ * be represented.
++ *
++ * 0x00000000 0x0000007F: 0xxxxxxx
++ * 0x00000000 0x000007FF: 110xxxxx 10xxxxxx
++ * 0x00000000 0x0000FFFF: 1110xxxx 10xxxxxx 10xxxxxx
++ * 0x00000000 0x001FFFFF: 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
++ * 0x00000000 0x03FFFFFF: 111110xx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
++ * 0x00000000 0x7FFFFFFF: 1111110x 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
++ *
++ * There is an additional requirement on UTF-8, in that only the
++ * shortest representation of a 32bit value is to be used.  A decoder
++ * must not decode sequences that do not satisfy this requirement.
++ * Thus the allowed ranges have a lower bound.
++ *
++ * 0x00000000 0x0000007F: 0xxxxxxx
++ * 0x00000080 0x000007FF: 110xxxxx 10xxxxxx
++ * 0x00000800 0x0000FFFF: 1110xxxx 10xxxxxx 10xxxxxx
++ * 0x00010000 0x001FFFFF: 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
++ * 0x00200000 0x03FFFFFF: 111110xx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
++ * 0x04000000 0x7FFFFFFF: 1111110x 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
++ *
++ * Actual unicode characters are limited to the range 0x0 - 0x10FFFF,
++ * 17 planes of 65536 values.  This limits the sequences actually seen
++ * even more, to just the following.
++ *
++ *          0 -     0x7F: 0                   - 0x7F
++ *       0x80 -    0x7FF: 0xC2 0x80           - 0xDF 0xBF
++ *      0x800 -   0xFFFF: 0xE0 0xA0 0x80      - 0xEF 0xBF 0xBF
++ *    0x10000 - 0x10FFFF: 0xF0 0x90 0x80 0x80 - 0xF4 0x8F 0xBF 0xBF
++ *
++ * Within those ranges the surrogates 0xD800 - 0xDFFF are not allowed.
++ *
++ * Note that the longest sequence seen with valid usage is 4 bytes,
++ * the same a single UTF-32 character.  This makes the UTF-8
++ * representation of Unicode strictly smaller than UTF-32.
++ *
++ * The shortest sequence requirement was introduced by:
++ *    Corrigendum #1: UTF-8 Shortest Form
++ * It can be found here:
++ *    http://www.unicode.org/versions/corrigendum1.html
++ *
++ */
++
++/*
++ * Return the number of bytes used by the current UTF-8 sequence.
++ * Assumes the input points to the first byte of a valid UTF-8
++ * sequence.
++ */
++static inline int utf8clen(const char *s)
++{
++	unsigned char c = *s;
++
++	return 1 + (c >= 0xC0) + (c >= 0xE0) + (c >= 0xF0);
 +}
 +
-+static void init_inode_xattrs(struct inode *inode)
++/*
++ * utf8trie_t
++ *
++ * A compact binary tree, used to decode UTF-8 characters.
++ *
++ * Internal nodes are one byte for the node itself, and up to three
++ * bytes for an offset into the tree.  The first byte contains the
++ * following information:
++ *  NEXTBYTE  - flag        - advance to next byte if set
++ *  BITNUM    - 3 bit field - the bit number to tested
++ *  OFFLEN    - 2 bit field - number of bytes in the offset
++ * if offlen == 0 (non-branching node)
++ *  RIGHTPATH - 1 bit field - set if the following node is for the
++ *                            right-hand path (tested bit is set)
++ *  TRIENODE  - 1 bit field - set if the following node is an internal
++ *                            node, otherwise it is a leaf node
++ * if offlen != 0 (branching node)
++ *  LEFTNODE  - 1 bit field - set if the left-hand node is internal
++ *  RIGHTNODE - 1 bit field - set if the right-hand node is internal
++ *
++ * Due to the way utf8 works, there cannot be branching nodes with
++ * NEXTBYTE set, and moreover those nodes always have a righthand
++ * descendant.
++ */
++typedef const unsigned char utf8trie_t;
++#define BITNUM		0x07
++#define NEXTBYTE	0x08
++#define OFFLEN		0x30
++#define OFFLEN_SHIFT	4
++#define RIGHTPATH	0x40
++#define TRIENODE	0x80
++#define RIGHTNODE	0x40
++#define LEFTNODE	0x80
++
++/*
++ * utf8leaf_t
++ *
++ * The leaves of the trie are embedded in the trie, and so the same
++ * underlying datatype: unsigned char.
++ *
++ * leaf[0]: The unicode version, stored as a generation number that is
++ *          an index into utf8agetab[].  With this we can filter code
++ *          points based on the unicode version in which they were
++ *          defined.  The CCC of a non-defined code point is 0.
++ * leaf[1]: Canonical Combining Class. During normalization, we need
++ *          to do a stable sort into ascending order of all characters
++ *          with a non-zero CCC that occur between two characters with
++ *          a CCC of 0, or at the begin or end of a string.
++ *          The unicode standard guarantees that all CCC values are
++ *          between 0 and 254 inclusive, which leaves 255 available as
++ *          a special value.
++ *          Code points with CCC 0 are known as stoppers.
++ * leaf[2]: Decomposition. If leaf[1] == 255, then leaf[2] is the
++ *          start of a NUL-terminated string that is the decomposition
++ *          of the character.
++ *          The CCC of a decomposable character is the same as the CCC
++ *          of the first character of its decomposition.
++ *          Some characters decompose as the empty string: these are
++ *          characters with the Default_Ignorable_Code_Point property.
++ *          These do affect normalization, as they all have CCC 0.
++ *
++ * The decompositions in the trie have been fully expanded.
++ *
++ * Casefolding, if applicable, is also done using decompositions.
++ *
++ * The trie is constructed in such a way that leaves exist for all
++ * UTF-8 sequences that match the criteria from the "UTF-8 valid
++ * ranges" comment above, and only for those sequences.  Therefore a
++ * lookup in the trie can be used to validate the UTF-8 input.
++ */
++typedef const unsigned char utf8leaf_t;
++
++#define LEAF_GEN(LEAF)	((LEAF)[0])
++#define LEAF_CCC(LEAF)	((LEAF)[1])
++#define LEAF_STR(LEAF)	((const char *)((LEAF) + 2))
++
++#define MINCCC		(0)
++#define MAXCCC		(254)
++#define STOPPER		(0)
++#define	DECOMPOSE	(255)
++
++/*
++ * Use trie to scan s, touching at most len bytes.
++ * Returns the leaf if one exists, NULL otherwise.
++ *
++ * A non-NULL return guarantees that the UTF-8 sequence starting at s
++ * is well-formed and corresponds to a known unicode code point.  The
++ * shorthand for this will be "is valid UTF-8 unicode".
++ */
++static utf8leaf_t *utf8nlookup(const struct utf8data *data, const char *s,
++			       size_t len)
 +{
-+	struct xattr_iter it;
-+	unsigned i;
-+	struct erofs_xattr_ibody_header *ih;
-+	struct erofs_sb_info *sbi;
-+	struct erofs_vnode *vi;
-+	bool atomic_map;
++	utf8trie_t	*trie = utf8data + data->offset;
++	int		offlen;
++	int		offset;
++	int		mask;
++	int		node;
 +
-+	if (likely(inode_has_inited_xattr(inode)))
-+		return;
-+
-+	vi = EROFS_V(inode);
-+	BUG_ON(!vi->xattr_isize);
-+
-+	sbi = EROFS_I_SB(inode);
-+	it.blkaddr = erofs_blknr(iloc(sbi, vi->nid) + vi->inode_isize);
-+	it.ofs = erofs_blkoff(iloc(sbi, vi->nid) + vi->inode_isize);
-+
-+	it.page = erofs_get_inline_page(inode, it.blkaddr);
-+	BUG_ON(IS_ERR(it.page));
-+
-+	/* read in shared xattr array (non-atomic, see kmalloc below) */
-+	it.kaddr = kmap(it.page);
-+	atomic_map = false;
-+
-+	ih = (struct erofs_xattr_ibody_header *)(it.kaddr + it.ofs);
-+
-+	vi->xattr_shared_count = ih->h_shared_count;
-+	vi->xattr_shared_xattrs = (unsigned *)kmalloc_array(
-+		vi->xattr_shared_count, sizeof(unsigned),
-+		GFP_KERNEL | __GFP_NOFAIL);
-+
-+	/* let's skip ibody header */
-+	it.ofs += sizeof(struct erofs_xattr_ibody_header);
-+
-+	for (i = 0; i < vi->xattr_shared_count; ++i) {
-+		if (unlikely(it.ofs >= EROFS_BLKSIZ)) {
-+			/* cannot be unaligned */
-+			BUG_ON(it.ofs != EROFS_BLKSIZ);
-+			xattr_iter_end(&it, atomic_map);
-+
-+			it.page = erofs_get_meta_page(inode->i_sb,
-+				++it.blkaddr, S_ISDIR(inode->i_mode));
-+			BUG_ON(IS_ERR(it.page));
-+
-+			it.kaddr = kmap_atomic(it.page);
-+			atomic_map = true;
-+			it.ofs = 0;
++	if (!data)
++		return NULL;
++	if (len == 0)
++		return NULL;
++	node = 1;
++	while (node) {
++		offlen = (*trie & OFFLEN) >> OFFLEN_SHIFT;
++		if (*trie & NEXTBYTE) {
++			if (--len == 0)
++				return NULL;
++			s++;
 +		}
-+		vi->xattr_shared_xattrs[i] =
-+			le32_to_cpu(*(__le32 *)(it.kaddr + it.ofs));
-+		it.ofs += sizeof(__le32);
-+	}
-+	xattr_iter_end(&it, atomic_map);
-+
-+	inode_set_inited_xattr(inode);
-+}
-+
-+struct xattr_iter_handlers {
-+	int (*entry)(struct xattr_iter *, struct erofs_xattr_entry *);
-+	int (*name)(struct xattr_iter *, unsigned, char *, unsigned);
-+	int (*alloc_buffer)(struct xattr_iter *, unsigned);
-+	void (*value)(struct xattr_iter *, unsigned, char *, unsigned);
-+};
-+
-+static void xattr_iter_fixup(struct xattr_iter *it)
-+{
-+	if (unlikely(it->ofs >= EROFS_BLKSIZ)) {
-+		xattr_iter_end(it, true);
-+
-+		it->blkaddr += erofs_blknr(it->ofs);
-+		it->page = erofs_get_meta_page(it->sb, it->blkaddr, false);
-+		BUG_ON(IS_ERR(it->page));
-+
-+		it->kaddr = kmap_atomic(it->page);
-+		it->ofs = erofs_blkoff(it->ofs);
-+	}
-+}
-+
-+static int inline_xattr_iter_begin(struct xattr_iter *it,
-+	struct inode *inode)
-+{
-+	unsigned xattr_header_sz, inline_xattr_ofs;
-+	struct erofs_vnode *vi = EROFS_V(inode);
-+	struct erofs_sb_info *sbi = EROFS_SB(inode->i_sb);
-+
-+	xattr_header_sz = inlinexattr_header_size(inode);
-+	if (unlikely(xattr_header_sz >= vi->xattr_isize)) {
-+		BUG_ON(xattr_header_sz > vi->xattr_isize);
-+		return -ENOATTR;
-+	}
-+
-+	inline_xattr_ofs = vi->inode_isize + xattr_header_sz;
-+
-+	it->blkaddr = erofs_blknr(iloc(sbi, vi->nid) + inline_xattr_ofs);
-+	it->ofs = erofs_blkoff(iloc(sbi, vi->nid) + inline_xattr_ofs);
-+
-+	it->page = erofs_get_inline_page(inode, it->blkaddr);
-+	BUG_ON(IS_ERR(it->page));
-+	it->kaddr = kmap_atomic(it->page);
-+
-+	return vi->xattr_isize - xattr_header_sz;
-+}
-+
-+static int xattr_foreach(struct xattr_iter *it,
-+	struct xattr_iter_handlers *op, unsigned *tlimit)
-+{
-+	struct erofs_xattr_entry entry;
-+	unsigned value_sz, processed, slice;
-+	int err;
-+
-+	/* 0. fixup blkaddr, ofs, ipage */
-+	xattr_iter_fixup(it);
-+
-+	/*
-+	 * 1. read xattr entry to the memory,
-+	 *    since we do EROFS_XATTR_ALIGN
-+	 *    therefore entry should be in the page
-+	 */
-+	entry = *(struct erofs_xattr_entry *)(it->kaddr + it->ofs);
-+	if (tlimit != NULL) {
-+		unsigned entry_sz = EROFS_XATTR_ENTRY_SIZE(&entry);
-+
-+		BUG_ON(*tlimit < entry_sz);
-+		*tlimit -= entry_sz;
-+	}
-+
-+	it->ofs += sizeof(struct erofs_xattr_entry);
-+	value_sz = le16_to_cpu(entry.e_value_size);
-+
-+	/* handle entry */
-+	err = op->entry(it, &entry);
-+	if (err) {
-+		it->ofs += entry.e_name_len + value_sz;
-+		goto out;
-+	}
-+
-+	/* 2. handle xattr name (ofs will finally be at the end of name) */
-+	processed = 0;
-+
-+	while (processed < entry.e_name_len) {
-+		if (it->ofs >= EROFS_BLKSIZ) {
-+			BUG_ON(it->ofs > EROFS_BLKSIZ);
-+
-+			xattr_iter_fixup(it);
-+			it->ofs = 0;
-+		}
-+
-+		slice = min_t(unsigned, PAGE_SIZE - it->ofs,
-+			entry.e_name_len - processed);
-+
-+		/* handle name */
-+		err = op->name(it, processed, it->kaddr + it->ofs, slice);
-+		if (err) {
-+			it->ofs += entry.e_name_len - processed + value_sz;
-+			goto out;
-+		}
-+
-+		it->ofs += slice;
-+		processed += slice;
-+	}
-+
-+	/* 3. handle xattr value */
-+	processed = 0;
-+
-+	if (op->alloc_buffer != NULL) {
-+		err = op->alloc_buffer(it, value_sz);
-+		if (err) {
-+			it->ofs += value_sz;
-+			goto out;
++		mask = 1 << (*trie & BITNUM);
++		if (*s & mask) {
++			/* Right leg */
++			if (offlen) {
++				/* Right node at offset of trie */
++				node = (*trie & RIGHTNODE);
++				offset = trie[offlen];
++				while (--offlen) {
++					offset <<= 8;
++					offset |= trie[offlen];
++				}
++				trie += offset;
++			} else if (*trie & RIGHTPATH) {
++				/* Right node after this node */
++				node = (*trie & TRIENODE);
++				trie++;
++			} else {
++				/* No right node. */
++				node = 0;
++				trie = NULL;
++			}
++		} else {
++			/* Left leg */
++			if (offlen) {
++				/* Left node after this node. */
++				node = (*trie & LEFTNODE);
++				trie += offlen + 1;
++			} else if (*trie & RIGHTPATH) {
++				/* No left node. */
++				node = 0;
++				trie = NULL;
++			} else {
++				/* Left node after this node */
++				node = (*trie & TRIENODE);
++				trie++;
++			}
 +		}
 +	}
++	return trie;
++}
 +
-+	while (processed < value_sz) {
-+		if (it->ofs >= EROFS_BLKSIZ) {
-+			BUG_ON(it->ofs > EROFS_BLKSIZ);
-+			xattr_iter_fixup(it);
-+			it->ofs = 0;
-+		}
++/*
++ * Use trie to scan s.
++ * Returns the leaf if one exists, NULL otherwise.
++ *
++ * Forwards to utf8nlookup().
++ */
++static utf8leaf_t *utf8lookup(const struct utf8data *data, const char *s)
++{
++	return utf8nlookup(data, s, (size_t)-1);
++}
 +
-+		slice = min_t(unsigned, PAGE_SIZE - it->ofs,
-+			value_sz - processed);
-+		op->value(it, processed, it->kaddr + it->ofs, slice);
-+		it->ofs += slice;
-+		processed += slice;
++/*
++ * Maximum age of any character in s.
++ * Return -1 if s is not valid UTF-8 unicode.
++ * Return 0 if only non-assigned code points are used.
++ */
++int utf8agemax(const struct utf8data *data, const char *s)
++{
++	utf8leaf_t	*leaf;
++	int		age = 0;
++	int		leaf_age;
++
++	if (!data)
++		return -1;
++	while (*s) {
++		leaf = utf8lookup(data, s);
++		if (!leaf)
++			return -1;
++
++		leaf_age = utf8agetab[LEAF_GEN(leaf)];
++		if (leaf_age <= data->maxage && leaf_age > age)
++			age = leaf_age;
++		s += utf8clen(s);
 +	}
-+
-+out:
-+	/* we assume that ofs is aligned with 4 bytes */
-+	it->ofs = EROFS_XATTR_ALIGN(it->ofs);
-+	return err;
++	return age;
 +}
++EXPORT_SYMBOL(utf8agemax);
 +
-+struct getxattr_iter {
-+	struct xattr_iter it;
-+
-+	char *buffer;
-+	int buffer_size, index;
-+	struct qstr name;
-+};
-+
-+static int xattr_entrymatch(struct xattr_iter *_it,
-+	struct erofs_xattr_entry *entry)
++/*
++ * Minimum age of any character in s.
++ * Return -1 if s is not valid UTF-8 unicode.
++ * Return 0 if non-assigned code points are used.
++ */
++int utf8agemin(const struct utf8data *data, const char *s)
 +{
-+	struct getxattr_iter *it = container_of(_it, struct getxattr_iter, it);
++	utf8leaf_t	*leaf;
++	int		age;
++	int		leaf_age;
 +
-+	return (it->index != entry->e_name_index ||
-+		it->name.len != entry->e_name_len) ? -ENOATTR : 0;
-+}
-+
-+static int xattr_namematch(struct xattr_iter *_it,
-+	unsigned processed, char *buf, unsigned len)
-+{
-+	struct getxattr_iter *it = container_of(_it, struct getxattr_iter, it);
-+
-+	return memcmp(buf, it->name.name + processed, len) ? -ENOATTR : 0;
-+}
-+
-+static int xattr_checkbuffer(struct xattr_iter *_it,
-+	unsigned value_sz)
-+{
-+	struct getxattr_iter *it = container_of(_it, struct getxattr_iter, it);
-+	int err = it->buffer_size < value_sz ? -ERANGE : 0;
-+
-+	it->buffer_size = value_sz;
-+	return it->buffer == NULL ? 1 : err;
-+}
-+
-+static void xattr_copyvalue(struct xattr_iter *_it,
-+	unsigned processed, char *buf, unsigned len)
-+{
-+	struct getxattr_iter *it = container_of(_it, struct getxattr_iter, it);
-+
-+	memcpy(it->buffer + processed, buf, len);
-+}
-+
-+struct xattr_iter_handlers find_xattr_handlers = {
-+	.entry = xattr_entrymatch,
-+	.name = xattr_namematch,
-+	.alloc_buffer = xattr_checkbuffer,
-+	.value = xattr_copyvalue
-+};
-+
-+static int inline_getxattr(struct inode *inode, struct getxattr_iter *it)
-+{
-+	int ret;
-+	unsigned remaining;
-+
-+	ret = inline_xattr_iter_begin(&it->it, inode);
-+	if (ret < 0)
-+		return ret;
-+
-+	remaining = ret;
-+	while (remaining) {
-+		if ((ret = xattr_foreach(&it->it,
-+			&find_xattr_handlers, &remaining)) >= 0)
-+			break;
++	if (!data)
++		return -1;
++	age = data->maxage;
++	while (*s) {
++		leaf = utf8lookup(data, s);
++		if (!leaf)
++			return -1;
++		leaf_age = utf8agetab[LEAF_GEN(leaf)];
++		if (leaf_age <= data->maxage && leaf_age < age)
++			age = leaf_age;
++		s += utf8clen(s);
 +	}
-+	xattr_iter_end(&it->it, true);
-+
-+	return ret < 0 ? ret : it->buffer_size;
++	return age;
 +}
++EXPORT_SYMBOL(utf8agemin);
 +
-+static int shared_getxattr(struct inode *inode, struct getxattr_iter *it)
++/*
++ * Maximum age of any character in s, touch at most len bytes.
++ * Return -1 if s is not valid UTF-8 unicode.
++ */
++int utf8nagemax(const struct utf8data *data, const char *s, size_t len)
 +{
-+	struct erofs_vnode *vi = EROFS_V(inode);
-+	struct erofs_sb_info *sbi = EROFS_SB(inode->i_sb);
-+	unsigned i;
-+	int ret = -ENOATTR;
++	utf8leaf_t	*leaf;
++	int		age = 0;
++	int		leaf_age;
 +
-+	for (i = 0; i < vi->xattr_shared_count; ++i) {
-+		erofs_blk_t blkaddr =
-+			xattrblock_addr(sbi, vi->xattr_shared_xattrs[i]);
-+
-+		it->it.ofs = xattrblock_offset(sbi, vi->xattr_shared_xattrs[i]);
-+
-+		if (!i || blkaddr != it->it.blkaddr) {
-+			if (i)
-+				xattr_iter_end(&it->it, true);
-+
-+			it->it.page = erofs_get_meta_page(inode->i_sb,
-+				blkaddr, false);
-+			BUG_ON(IS_ERR(it->it.page));
-+			it->it.kaddr = kmap_atomic(it->it.page);
-+			it->it.blkaddr = blkaddr;
-+		}
-+
-+		if ((ret = xattr_foreach(&it->it,
-+			&find_xattr_handlers, NULL)) >= 0)
-+			break;
++	if (!data)
++		return -1;
++	while (len && *s) {
++		leaf = utf8nlookup(data, s, len);
++		if (!leaf)
++			return -1;
++		leaf_age = utf8agetab[LEAF_GEN(leaf)];
++		if (leaf_age <= data->maxage && leaf_age > age)
++			age = leaf_age;
++		len -= utf8clen(s);
++		s += utf8clen(s);
 +	}
-+	if (vi->xattr_shared_count)
-+		xattr_iter_end(&it->it, true);
-+
-+	return ret < 0 ? ret : it->buffer_size;
++	return age;
 +}
++EXPORT_SYMBOL(utf8nagemax);
 +
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 5, 0))
-+static int erofs_xattr_get_prefix(struct erofs_sb_info *sbi,
-+	int type, const char **prefix)
++/*
++ * Maximum age of any character in s, touch at most len bytes.
++ * Return -1 if s is not valid UTF-8 unicode.
++ */
++int utf8nagemin(const struct utf8data *data, const char *s, size_t len)
 +{
-+	switch (type) {
-+	case EROFS_XATTR_INDEX_USER:
-+		if (!test_opt(sbi, XATTR_USER))
-+			return -EOPNOTSUPP;
-+		*prefix = XATTR_USER_PREFIX;
-+		return XATTR_USER_PREFIX_LEN;
++	utf8leaf_t	*leaf;
++	int		leaf_age;
++	int		age;
 +
-+	case EROFS_XATTR_INDEX_TRUSTED:
-+		if (!capable(CAP_SYS_ADMIN))
-+			return -EPERM;
-+		*prefix = XATTR_TRUSTED_PREFIX;
-+		return XATTR_TRUSTED_PREFIX_LEN;
-+
-+	case EROFS_XATTR_INDEX_SECURITY:
-+		*prefix = XATTR_SECURITY_PREFIX;
-+		return XATTR_SECURITY_PREFIX_LEN;
++	if (!data)
++		return -1;
++	age = data->maxage;
++	while (len && *s) {
++		leaf = utf8nlookup(data, s, len);
++		if (!leaf)
++			return -1;
++		leaf_age = utf8agetab[LEAF_GEN(leaf)];
++		if (leaf_age <= data->maxage && leaf_age < age)
++			age = leaf_age;
++		len -= utf8clen(s);
++		s += utf8clen(s);
 +	}
-+	return -EINVAL;
++	return age;
 +}
++EXPORT_SYMBOL(utf8nagemin);
 +
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 4, 0))
-+static size_t erofs_xattr_generic_list(struct dentry *dentry, char *list,
-+	size_t list_size, const char *name, size_t name_len, int type)
-+#else
-+static size_t erofs_xattr_generic_list(const struct xattr_handler *handler,
-+	struct dentry *dentry, char *list, size_t list_size,
-+	const char *name, size_t name_len)
-+#endif
++/*
++ * Length of the normalization of s.
++ * Return -1 if s is not valid UTF-8 unicode.
++ *
++ * A string of Default_Ignorable_Code_Point has length 0.
++ */
++ssize_t utf8len(const struct utf8data *data, const char *s)
 +{
-+	struct erofs_sb_info *sbi = EROFS_SB(dentry->d_sb);
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 4, 0))
-+	int type = handler->flags;
-+#endif
-+	int total_len, prefix_len;
-+	const char *prefix;
++	utf8leaf_t	*leaf;
++	size_t		ret = 0;
 +
-+	prefix_len = erofs_xattr_get_prefix(sbi, type, &prefix);
-+	if (prefix_len < 0)
-+		return prefix_len;
-+
-+	total_len = prefix_len + name_len + 1;
-+	if (list && total_len <= list_size) {
-+		memcpy(list, prefix, prefix_len);
-+		memcpy(list + prefix_len, name, name_len);
-+		list[prefix_len + name_len] = '\0';
++	if (!data)
++		return -1;
++	while (*s) {
++		leaf = utf8lookup(data, s);
++		if (!leaf)
++			return -1;
++		if (utf8agetab[LEAF_GEN(leaf)] > data->maxage)
++			ret += utf8clen(s);
++		else if (LEAF_CCC(leaf) == DECOMPOSE)
++			ret += strlen(LEAF_STR(leaf));
++		else
++			ret += utf8clen(s);
++		s += utf8clen(s);
 +	}
-+	return total_len;
-+}
-+
-+#else
-+static bool erofs_xattr_user_list(struct dentry *dentry)
-+{
-+	return test_opt(EROFS_SB(dentry->d_sb), XATTR_USER);
-+}
-+
-+static bool erofs_xattr_trusted_list(struct dentry *dentry)
-+{
-+	return capable(CAP_SYS_ADMIN);
-+}
-+#endif
-+
-+int erofs_getxattr(struct inode *inode, int index,
-+	const char *name,
-+	void *buffer, size_t buffer_size)
-+{
-+	int ret;
-+	struct getxattr_iter it;
-+
-+	if (unlikely(name == NULL))
-+		return -EINVAL;
-+
-+	init_inode_xattrs(inode);
-+
-+	it.index = index;
-+
-+	it.name.len = strlen(name);
-+	if (it.name.len > EROFS_NAME_LEN)
-+		return -ERANGE;
-+	it.name.name = name;
-+
-+	it.buffer = buffer;
-+	it.buffer_size = buffer_size;
-+
-+	it.it.sb = inode->i_sb;
-+	ret = inline_getxattr(inode, &it);
-+	if (ret == -ENOATTR)
-+		ret = shared_getxattr(inode, &it);
 +	return ret;
 +}
++EXPORT_SYMBOL(utf8len);
 +
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 4, 0))
-+static int erofs_xattr_generic_get(struct dentry *dentry,
-+	const char *name,
-+	void *buffer, size_t size, int type)
++/*
++ * Length of the normalization of s, touch at most len bytes.
++ * Return -1 if s is not valid UTF-8 unicode.
++ */
++ssize_t utf8nlen(const struct utf8data *data, const char *s, size_t len)
 +{
-+	struct inode *inode = d_inode(dentry);
-+#else
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 7, 0))
-+static int erofs_xattr_generic_get(const struct xattr_handler *handler,
-+	struct dentry *dentry, const char *name, void *buffer,
-+	size_t size)
-+{
-+	struct inode *inode = d_inode(dentry);
-+#else
-+static int erofs_xattr_generic_get(const struct xattr_handler *handler,
-+		struct dentry *unused, struct inode *inode,
-+		const char *name, void *buffer, size_t size)
-+{
-+#endif
-+#endif
-+	struct erofs_sb_info *sbi = EROFS_I_SB(inode);
++	utf8leaf_t	*leaf;
++	size_t		ret = 0;
 +
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 4, 0))
-+	switch (type) {
-+#else
-+	switch (handler->flags) {
-+#endif
-+
-+	case EROFS_XATTR_INDEX_USER:
-+		if (!test_opt(sbi, XATTR_USER))
-+			return -EOPNOTSUPP;
-+		break;
-+	case EROFS_XATTR_INDEX_TRUSTED:
-+		if (!capable(CAP_SYS_ADMIN))
-+			return -EPERM;
-+		break;
-+	case EROFS_XATTR_INDEX_SECURITY:
-+		break;
-+	default:
-+		return -EINVAL;
++	if (!data)
++		return -1;
++	while (len && *s) {
++		leaf = utf8nlookup(data, s, len);
++		if (!leaf)
++			return -1;
++		if (utf8agetab[LEAF_GEN(leaf)] > data->maxage)
++			ret += utf8clen(s);
++		else if (LEAF_CCC(leaf) == DECOMPOSE)
++			ret += strlen(LEAF_STR(leaf));
++		else
++			ret += utf8clen(s);
++		len -= utf8clen(s);
++		s += utf8clen(s);
 +	}
-+
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 4, 0))
-+	if (name[0] == '\0')
-+		return -EINVAL;
-+#endif
-+
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 4, 0))
-+	return erofs_getxattr(inode, type, name, buffer, size);
-+#else
-+	return erofs_getxattr(inode, handler->flags, name, buffer, size);
-+#endif
++	return ret;
 +}
++EXPORT_SYMBOL(utf8nlen);
 +
-+const struct xattr_handler erofs_xattr_user_handler = {
-+	.prefix	= XATTR_USER_PREFIX,
-+	.flags	= EROFS_XATTR_INDEX_USER,
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 5, 0))
-+	.list	= erofs_xattr_generic_list,
-+#else
-+	.list	= erofs_xattr_user_list,
-+#endif
-+
-+	.get	= erofs_xattr_generic_get,
-+};
-+
-+const struct xattr_handler erofs_xattr_trusted_handler = {
-+	.prefix	= XATTR_TRUSTED_PREFIX,
-+	.flags	= EROFS_XATTR_INDEX_TRUSTED,
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 5, 0))
-+	.list	= erofs_xattr_generic_list,
-+#else
-+	.list	= erofs_xattr_trusted_list,
-+#endif
-+	.get	= erofs_xattr_generic_get,
-+};
-+
-+#ifdef CONFIG_EROFS_FS_SECURITY
-+const struct xattr_handler __maybe_unused erofs_xattr_security_handler = {
-+	.prefix	= XATTR_SECURITY_PREFIX,
-+	.flags	= EROFS_XATTR_INDEX_SECURITY,
-+	.get	= erofs_xattr_generic_get,
-+};
-+#endif
-+
-+const struct xattr_handler *erofs_xattr_handlers[] = {
-+	&erofs_xattr_user_handler,
-+#ifdef CONFIG_EROFS_FS_POSIX_ACL
-+	&posix_acl_access_xattr_handler,
-+	&posix_acl_default_xattr_handler,
-+#endif
-+	&erofs_xattr_trusted_handler,
-+#ifdef CONFIG_EROFS_FS_SECURITY
-+	&erofs_xattr_security_handler,
-+#endif
-+	NULL,
-+};
-+
-+struct listxattr_iter {
-+	struct xattr_iter it;
-+
-+	struct dentry *dentry;
-+	char *buffer;
-+	int buffer_size, buffer_ofs;
-+};
-+
-+static int xattr_entrylist(struct xattr_iter *_it,
-+	struct erofs_xattr_entry *entry)
++/*
++ * Set up an utf8cursor for use by utf8byte().
++ *
++ *   u8c    : pointer to cursor.
++ *   data   : const struct utf8data to use for normalization.
++ *   s      : string.
++ *   len    : length of s.
++ *
++ * Returns -1 on error, 0 on success.
++ */
++int utf8ncursor(struct utf8cursor *u8c, const struct utf8data *data,
++		const char *s, size_t len)
 +{
-+	struct listxattr_iter *it =
-+		container_of(_it, struct listxattr_iter, it);
-+	unsigned prefix_len;
-+	const char *prefix;
-+
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 5, 0))
-+	struct erofs_sb_info *sbi = EROFS_SB(it->dentry->d_sb);
-+	int ret = erofs_xattr_get_prefix(sbi, entry->e_name_index, &prefix);
-+
-+	if (ret < 0)
-+		return 1;
-+
-+	prefix_len = ret;
-+#else
-+	const struct xattr_handler *h =
-+		erofs_xattr_handler(entry->e_name_index);
-+
-+	if (h == NULL || (h->list != NULL && !h->list(it->dentry)))
-+		return 1;
-+
-+	prefix = h->name;
-+	prefix_len = h->prefix ? strlen(prefix) : 0;
-+#endif
-+
-+	if (it->buffer == NULL) {
-+		it->buffer_ofs += prefix_len + entry->e_name_len + 1;
-+		return 1;
-+	}
-+
-+	if (it->buffer_ofs + prefix_len
-+		+ entry->e_name_len + 1 > it->buffer_size)
-+		return -ERANGE;
-+
-+	memcpy(it->buffer + it->buffer_ofs, prefix, prefix_len);
-+	it->buffer_ofs += prefix_len;
++	if (!data)
++		return -1;
++	if (!s)
++		return -1;
++	u8c->data = data;
++	u8c->s = s;
++	u8c->p = NULL;
++	u8c->ss = NULL;
++	u8c->sp = NULL;
++	u8c->len = len;
++	u8c->slen = 0;
++	u8c->ccc = STOPPER;
++	u8c->nccc = STOPPER;
++	/* Check we didn't clobber the maximum length. */
++	if (u8c->len != len)
++		return -1;
++	/* The first byte of s may not be an utf8 continuation. */
++	if (len > 0 && (*s & 0xC0) == 0x80)
++		return -1;
 +	return 0;
 +}
++EXPORT_SYMBOL(utf8ncursor);
 +
-+static int xattr_namelist(struct xattr_iter *_it,
-+	unsigned processed, char *buf, unsigned len)
++/*
++ * Set up an utf8cursor for use by utf8byte().
++ *
++ *   u8c    : pointer to cursor.
++ *   data   : const struct utf8data to use for normalization.
++ *   s      : NUL-terminated string.
++ *
++ * Returns -1 on error, 0 on success.
++ */
++int utf8cursor(struct utf8cursor *u8c, const struct utf8data *data,
++	       const char *s)
 +{
-+	struct listxattr_iter *it =
-+		container_of(_it, struct listxattr_iter, it);
-+
-+	memcpy(it->buffer + it->buffer_ofs, buf, len);
-+	it->buffer_ofs += len;
-+	return 0;
++	return utf8ncursor(u8c, data, s, (unsigned int)-1);
 +}
++EXPORT_SYMBOL(utf8cursor);
 +
-+static int xattr_skipvalue(struct xattr_iter *_it,
-+	unsigned value_sz)
++/*
++ * Get one byte from the normalized form of the string described by u8c.
++ *
++ * Returns the byte cast to an unsigned char on succes, and -1 on failure.
++ *
++ * The cursor keeps track of the location in the string in u8c->s.
++ * When a character is decomposed, the current location is stored in
++ * u8c->p, and u8c->s is set to the start of the decomposition. Note
++ * that bytes from a decomposition do not count against u8c->len.
++ *
++ * Characters are emitted if they match the current CCC in u8c->ccc.
++ * Hitting end-of-string while u8c->ccc == STOPPER means we're done,
++ * and the function returns 0 in that case.
++ *
++ * Sorting by CCC is done by repeatedly scanning the string.  The
++ * values of u8c->s and u8c->p are stored in u8c->ss and u8c->sp at
++ * the start of the scan.  The first pass finds the lowest CCC to be
++ * emitted and stores it in u8c->nccc, the second pass emits the
++ * characters with this CCC and finds the next lowest CCC. This limits
++ * the number of passes to 1 + the number of different CCCs in the
++ * sequence being scanned.
++ *
++ * Therefore:
++ *  u8c->p  != NULL -> a decomposition is being scanned.
++ *  u8c->ss != NULL -> this is a repeating scan.
++ *  u8c->ccc == -1   -> this is the first scan of a repeating scan.
++ */
++int utf8byte(struct utf8cursor *u8c)
 +{
-+	struct listxattr_iter *it =
-+		container_of(_it, struct listxattr_iter, it);
++	utf8leaf_t *leaf;
++	int ccc;
 +
-+	it->buffer[it->buffer_ofs++] = '\0';
-+	return 1;
-+}
-+
-+struct xattr_iter_handlers list_xattr_handlers = {
-+	.entry = xattr_entrylist,
-+	.name = xattr_namelist,
-+	.alloc_buffer = xattr_skipvalue,
-+	.value = NULL
-+};
-+
-+static int inline_listxattr(struct listxattr_iter *it)
-+{
-+	int ret;
-+	unsigned remaining;
-+
-+	ret = inline_xattr_iter_begin(&it->it, d_inode(it->dentry));
-+	if (ret < 0)
-+		return ret;
-+
-+	remaining = ret;
-+	while (remaining) {
-+		if ((ret = xattr_foreach(&it->it,
-+			&list_xattr_handlers, &remaining)) < 0)
-+			break;
-+	}
-+	xattr_iter_end(&it->it, true);
-+	return ret < 0 ? ret : it->buffer_ofs;
-+}
-+
-+static int shared_listxattr(struct listxattr_iter *it)
-+{
-+	struct inode *inode = d_inode(it->dentry);
-+	struct erofs_vnode *vi = EROFS_V(inode);
-+	struct erofs_sb_info *sbi = EROFS_I_SB(inode);
-+	unsigned i;
-+	int ret = 0;
-+
-+	for (i = 0; i < vi->xattr_shared_count; ++i) {
-+		erofs_blk_t blkaddr =
-+			xattrblock_addr(sbi, vi->xattr_shared_xattrs[i]);
-+
-+		it->it.ofs = xattrblock_offset(sbi, vi->xattr_shared_xattrs[i]);
-+		if (!i || blkaddr != it->it.blkaddr) {
-+			if (i)
-+				xattr_iter_end(&it->it, true);
-+
-+			it->it.page = erofs_get_meta_page(inode->i_sb,
-+				blkaddr, false);
-+			BUG_ON(IS_ERR(it->it.page));
-+			it->it.kaddr = kmap_atomic(it->it.page);
-+			it->it.blkaddr = blkaddr;
++	for (;;) {
++		/* Check for the end of a decomposed character. */
++		if (u8c->p && *u8c->s == '\0') {
++			u8c->s = u8c->p;
++			u8c->p = NULL;
 +		}
 +
-+		if ((ret = xattr_foreach(&it->it,
-+			&list_xattr_handlers, NULL)) < 0)
-+			break;
++		/* Check for end-of-string. */
++		if (!u8c->p && (u8c->len == 0 || *u8c->s == '\0')) {
++			/* There is no next byte. */
++			if (u8c->ccc == STOPPER)
++				return 0;
++			/* End-of-string during a scan counts as a stopper. */
++			ccc = STOPPER;
++			goto ccc_mismatch;
++		} else if ((*u8c->s & 0xC0) == 0x80) {
++			/* This is a continuation of the current character. */
++			if (!u8c->p)
++				u8c->len--;
++			return (unsigned char)*u8c->s++;
++		}
++
++		/* Look up the data for the current character. */
++		if (u8c->p)
++			leaf = utf8lookup(u8c->data, u8c->s);
++		else
++			leaf = utf8nlookup(u8c->data, u8c->s, u8c->len);
++
++		/* No leaf found implies that the input is a binary blob. */
++		if (!leaf)
++			return -1;
++
++		ccc = LEAF_CCC(leaf);
++		/* Characters that are too new have CCC 0. */
++		if (utf8agetab[LEAF_GEN(leaf)] > u8c->data->maxage) {
++			ccc = STOPPER;
++		} else if (ccc == DECOMPOSE) {
++			u8c->len -= utf8clen(u8c->s);
++			u8c->p = u8c->s + utf8clen(u8c->s);
++			u8c->s = LEAF_STR(leaf);
++			/* Empty decomposition implies CCC 0. */
++			if (*u8c->s == '\0') {
++				if (u8c->ccc == STOPPER)
++					continue;
++				ccc = STOPPER;
++				goto ccc_mismatch;
++			}
++			leaf = utf8lookup(u8c->data, u8c->s);
++		}
++
++		/*
++		 * If this is not a stopper, then see if it updates
++		 * the next canonical class to be emitted.
++		 */
++		if (ccc != STOPPER && u8c->ccc < ccc && ccc < u8c->nccc)
++			u8c->nccc = ccc;
++
++		/*
++		 * Return the current byte if this is the current
++		 * combining class.
++		 */
++		if (ccc == u8c->ccc) {
++			if (!u8c->p)
++				u8c->len--;
++			return (unsigned char)*u8c->s++;
++		}
++
++		/* Current combining class mismatch. */
++ccc_mismatch:
++		if (u8c->nccc == STOPPER) {
++			/*
++			 * Scan forward for the first canonical class
++			 * to be emitted.  Save the position from
++			 * which to restart.
++			 */
++			u8c->ccc = MINCCC - 1;
++			u8c->nccc = ccc;
++			u8c->sp = u8c->p;
++			u8c->ss = u8c->s;
++			u8c->slen = u8c->len;
++			if (!u8c->p)
++				u8c->len -= utf8clen(u8c->s);
++			u8c->s += utf8clen(u8c->s);
++		} else if (ccc != STOPPER) {
++			/* Not a stopper, and not the ccc we're emitting. */
++			if (!u8c->p)
++				u8c->len -= utf8clen(u8c->s);
++			u8c->s += utf8clen(u8c->s);
++		} else if (u8c->nccc != MAXCCC + 1) {
++			/* At a stopper, restart for next ccc. */
++			u8c->ccc = u8c->nccc;
++			u8c->nccc = MAXCCC + 1;
++			u8c->s = u8c->ss;
++			u8c->p = u8c->sp;
++			u8c->len = u8c->slen;
++		} else {
++			/* All done, proceed from here. */
++			u8c->ccc = STOPPER;
++			u8c->nccc = STOPPER;
++			u8c->sp = NULL;
++			u8c->ss = NULL;
++			u8c->slen = 0;
++		}
 +	}
-+	if (vi->xattr_shared_count)
-+		xattr_iter_end(&it->it, true);
-+
-+	return ret < 0 ? ret : it->buffer_ofs;
 +}
++EXPORT_SYMBOL(utf8byte);
 +
-+ssize_t erofs_listxattr(struct dentry *dentry,
-+	char *buffer, size_t buffer_size)
++const struct utf8data *utf8nfkdi(unsigned int maxage)
 +{
-+	int ret;
-+	struct listxattr_iter it;
++	int i = ARRAY_SIZE(utf8nfkdidata) - 1;
 +
-+	init_inode_xattrs(d_inode(dentry));
-+
-+	it.dentry = dentry;
-+	it.buffer = buffer;
-+	it.buffer_size = buffer_size;
-+	it.buffer_ofs = 0;
-+
-+	it.it.sb = dentry->d_sb;
-+
-+	ret = inline_listxattr(&it);
-+	if (ret < 0 && ret != -ENOATTR)
-+		return ret;
-+	return shared_listxattr(&it);
++	while (maxage < utf8nfkdidata[i].maxage)
++		i--;
++	if (maxage > utf8nfkdidata[i].maxage)
++		return NULL;
++	return &utf8nfkdidata[i];
 +}
++EXPORT_SYMBOL(utf8nfkdi);
 +
-diff --git a/fs/erofs/xattr.h b/fs/erofs/xattr.h
++const struct utf8data *utf8nfkdicf(unsigned int maxage)
++{
++	int i = ARRAY_SIZE(utf8nfkdicfdata) - 1;
++
++	while (maxage < utf8nfkdicfdata[i].maxage)
++		i--;
++	if (maxage > utf8nfkdicfdata[i].maxage)
++		return NULL;
++	return &utf8nfkdicfdata[i];
++}
++EXPORT_SYMBOL(utf8nfkdicf);
+diff --git a/fs/nls/utf8n.h b/fs/nls/utf8n.h
 new file mode 100644
-index 0000000..b93ccdf
+index 000000000000..0f5fc14d4fd2
 --- /dev/null
-+++ b/fs/erofs/xattr.h
-@@ -0,0 +1,93 @@
-+/* SPDX-License-Identifier: GPL-2.0
++++ b/fs/nls/utf8n.h
+@@ -0,0 +1,112 @@
++/*
++ * Copyright (c) 2014 SGI.
++ * All rights reserved.
 + *
-+ * linux/fs/erofs/xattr.h
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation.
 + *
-+ * Copyright (C) 2017-2018 HUAWEI, Inc.
-+ *             http://www.huawei.com/
-+ * Created by Gao Xiang <gaoxiang25@huawei.com>
++ * This program is distributed in the hope that it would be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
 + *
-+ * This file is subject to the terms and conditions of the GNU General Public
-+ * License.  See the file COPYING in the main directory of the Linux
-+ * distribution for more details.
 + */
-+#ifndef __EROFS_XATTR_H
-+#define __EROFS_XATTR_H
 +
-+#include "internal.h"
-+#include <linux/posix_acl_xattr.h>
-+#include <linux/xattr.h>
++#ifndef UTF8NORM_H
++#define UTF8NORM_H
 +
-+/* Attribute not found */
-+#define ENOATTR         ENODATA
++#include <linux/types.h>
++#include <linux/export.h>
++#include <linux/string.h>
++#include <linux/module.h>
 +
-+static inline unsigned inlinexattr_header_size(struct inode *inode)
-+{
-+	return sizeof(struct erofs_xattr_ibody_header)
-+		+ sizeof(u32) * EROFS_V(inode)->xattr_shared_count;
-+}
++/* Encoding a unicode version number as a single unsigned int. */
++#define UNICODE_MAJ_SHIFT		(16)
++#define UNICODE_MIN_SHIFT		(8)
 +
-+static inline erofs_blk_t
-+xattrblock_addr(struct erofs_sb_info *sbi, unsigned xattr_id)
-+{
-+#ifdef CONFIG_EROFS_FS_XATTR
-+	return sbi->xattr_blkaddr +
-+		xattr_id * sizeof(__u32) / EROFS_BLKSIZ;
-+#else
-+	return 0;
-+#endif
-+}
++#define UNICODE_AGE(MAJ, MIN, REV)			\
++	(((unsigned int)(MAJ) << UNICODE_MAJ_SHIFT) |	\
++	 ((unsigned int)(MIN) << UNICODE_MIN_SHIFT) |	\
++	 ((unsigned int)(REV)))
 +
-+static inline unsigned
-+xattrblock_offset(struct erofs_sb_info *sbi, unsigned xattr_id)
-+{
-+	return (xattr_id * sizeof(__u32)) % EROFS_BLKSIZ;
-+}
++/* Highest unicode version supported by the data tables. */
++extern int utf8version_is_supported(u8 maj, u8 min, u8 rev);
 +
-+extern const struct xattr_handler erofs_xattr_user_handler;
-+extern const struct xattr_handler erofs_xattr_trusted_handler;
-+#ifdef CONFIG_EROFS_FS_SECURITY
-+extern const struct xattr_handler erofs_xattr_security_handler;
-+#endif
++/*
++ * Look for the correct const struct utf8data for a unicode version.
++ * Returns NULL if the version requested is too new.
++ *
++ * Two normalization forms are supported: nfkdi and nfkdicf.
++ *
++ * nfkdi:
++ *  - Apply unicode normalization form NFKD.
++ *  - Remove any Default_Ignorable_Code_Point.
++ *
++ * nfkdicf:
++ *  - Apply unicode normalization form NFKD.
++ *  - Remove any Default_Ignorable_Code_Point.
++ *  - Apply a full casefold (C + F).
++ */
++extern const struct utf8data *utf8nfkdi(unsigned int maxage);
++extern const struct utf8data *utf8nfkdicf(unsigned int maxage);
 +
-+static inline const struct xattr_handler *erofs_xattr_handler(unsigned index)
-+{
-+static const struct xattr_handler *xattr_handler_map[] = {
-+	[EROFS_XATTR_INDEX_USER] = &erofs_xattr_user_handler,
-+#ifdef CONFIG_EROFS_FS_POSIX_ACL
-+	[EROFS_XATTR_INDEX_POSIX_ACL_ACCESS] = &posix_acl_access_xattr_handler,
-+	[EROFS_XATTR_INDEX_POSIX_ACL_DEFAULT] =
-+		&posix_acl_default_xattr_handler,
-+#endif
-+	[EROFS_XATTR_INDEX_TRUSTED] = &erofs_xattr_trusted_handler,
-+#ifdef CONFIG_EROFS_FS_SECURITY
-+	[EROFS_XATTR_INDEX_SECURITY] = &erofs_xattr_security_handler,
-+#endif
++/*
++ * Determine the maximum age of any unicode character in the string.
++ * Returns 0 if only unassigned code points are present.
++ * Returns -1 if the input is not valid UTF-8.
++ */
++extern int utf8agemax(const struct utf8data *data, const char *s);
++extern int utf8nagemax(const struct utf8data *data, const char *s, size_t len);
++
++/*
++ * Determine the minimum age of any unicode character in the string.
++ * Returns 0 if any unassigned code points are present.
++ * Returns -1 if the input is not valid UTF-8.
++ */
++extern int utf8agemin(const struct utf8data *data, const char *s);
++extern int utf8nagemin(const struct utf8data *data, const char *s, size_t len);
++
++/*
++ * Determine the length of the normalized from of the string,
++ * excluding any terminating NULL byte.
++ * Returns 0 if only ignorable code points are present.
++ * Returns -1 if the input is not valid UTF-8.
++ */
++extern ssize_t utf8len(const struct utf8data *data, const char *s);
++extern ssize_t utf8nlen(const struct utf8data *data, const char *s, size_t len);
++
++/*
++ * Cursor structure used by the normalizer.
++ */
++struct utf8cursor {
++	const struct utf8data	*data;
++	const char	*s;
++	const char	*p;
++	const char	*ss;
++	const char	*sp;
++	unsigned int	len;
++	unsigned int	slen;
++	short int	ccc;
++	short int	nccc;
 +};
-+	return index && index < ARRAY_SIZE(xattr_handler_map) ?
-+		xattr_handler_map[index] : NULL;
-+}
 +
-+#ifdef CONFIG_EROFS_FS_XATTR
++/*
++ * Initialize a utf8cursor to normalize a string.
++ * Returns 0 on success.
++ * Returns -1 on failure.
++ */
++extern int utf8cursor(struct utf8cursor *u8c, const struct utf8data *data,
++		      const char *s);
++extern int utf8ncursor(struct utf8cursor *u8c, const struct utf8data *data,
++		       const char *s, size_t len);
 +
-+extern const struct inode_operations erofs_generic_xattr_iops;
-+extern const struct inode_operations erofs_dir_xattr_iops;
++/*
++ * Get the next byte in the normalization.
++ * Returns a value > 0 && < 256 on success.
++ * Returns 0 when the end of the normalization is reached.
++ * Returns -1 if the string being normalized is not valid UTF-8.
++ */
++extern int utf8byte(struct utf8cursor *u8c);
 +
-+int erofs_getxattr(struct inode *, int, const char *, void *, size_t);
-+ssize_t erofs_listxattr(struct dentry *, char *, size_t);
-+#else
-+static int __maybe_unused erofs_getxattr(struct inode *inode, int index,
-+	const char *name,
-+	void *buffer, size_t buffer_size)
-+{
-+	return -ENOTSUPP;
-+}
-+
-+static ssize_t __maybe_unused erofs_listxattr(struct dentry *dentry,
-+	char *buffer, size_t buffer_size)
-+{
-+	return -ENOTSUPP;
-+}
-+#endif
-+
-+#endif
-+
++#endif /* UTF8NORM_H */
 -- 
-1.9.1
+2.17.0
