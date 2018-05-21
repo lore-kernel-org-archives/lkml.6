@@ -1,57 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751363AbeEUJfV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 05:35:21 -0400
-Received: from smtprelay0032.hostedemail.com ([216.40.44.32]:59610 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751027AbeEUJfU (ORCPT
+        id S1751300AbeEUJgC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 05:36:02 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:39606 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751027AbeEUJf7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 05:35:20 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::,RULES_HIT:41:355:379:541:599:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3872:3873:3874:4321:5007:7903:9707:10004:10400:10848:11232:11658:11914:12740:12760:12895:13069:13311:13357:13439:13548:13618:14181:14659:14721:21080:21088:21451:21627:30054:30070:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
-X-HE-Tag: wind05_2e5151cb4ec23
-X-Filterd-Recvd-Size: 1924
-Message-ID: <09146e67a7227a44e0cab612ea3c02e1bb5bb40b.camel@perches.com>
-Subject: Re: [PATCH v3 1/4] rcu: Add comment documenting how rcu_seq_snap
- works
-From: Joe Perches <joe@perches.com>
-To: Joel Fernandes <joel@joelfernandes.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Colin King <colin.king@canonical.com>
-Cc: Joel Fernandes <joelaf@google.com>, linux-kernel@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>, byungchul.park@lge.com,
-        kernel-team@android.com
-Date: Mon, 21 May 2018 02:35:16 -0700
-In-Reply-To: <20180521054826.GA137980@joelaf.mtv.corp.google.com>
-References: <20180521044220.123933-1-joel@joelfernandes.org>
-         <20180521044220.123933-2-joel@joelfernandes.org>
-         <b1f55cf4-c1cc-f755-ad4d-2bd69280cb42@infradead.org>
-         <20180521054826.GA137980@joelaf.mtv.corp.google.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 21 May 2018 05:35:59 -0400
+From: Colin King <colin.king@canonical.com>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Guneshwor Singh <guneshwor.o.singh@intel.com>,
+        alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: intel: skylake: fix spelling mistake: "Homogenous" -> "Homogeneous"
+Date: Mon, 21 May 2018 10:35:48 +0100
+Message-Id: <20180521093548.18491-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-05-20 at 22:48 -0700, Joel Fernandes wrote:
-> Also I realize I need some better automated tools to catch these issues
-> (spelling errors in commit, diffs etc). Probably checkpatch.pl should
-> have such checks for these common things too.
+From: Colin Ian King <colin.king@canonical.com>
 
-checkpatch already does typo checking using the input file
-scripts/spelling.txt.
+Trivial fix to spelling mistake in snprintf literal string
 
-You are welcome to add more typos to that file.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/intel/skylake/skl-debug.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-and fyi: 'incase||in case' is not there, perhaps because
-it is a alternate spelling of encase, but it does seem
-every use of "incase" in the kernel should be "in case"
-
-$ git grep -w -i incase | wc -l
-43
+diff --git a/sound/soc/intel/skylake/skl-debug.c b/sound/soc/intel/skylake/skl-debug.c
+index a016455a6ddb..302b40e63e6c 100644
+--- a/sound/soc/intel/skylake/skl-debug.c
++++ b/sound/soc/intel/skylake/skl-debug.c
+@@ -142,8 +142,8 @@ static ssize_t module_read(struct file *file, char __user *user_buf,
+ 			mconfig->max_out_queue, ret, false);
+ 
+ 	ret += snprintf(buf + ret, MOD_BUF - ret,
+-			"Other:\n\tDomain %d\n\tHomogenous Input %s\n\t"
+-			"Homogenous Output %s\n\tIn Queue Mask %d\n\t"
++			"Other:\n\tDomain %d\n\tHomogeneous Input %s\n\t"
++			"Homogeneous Output %s\n\tIn Queue Mask %d\n\t"
+ 			"Out Queue Mask %d\n\tDMA ID %d\n\tMem Pages %d\n\t"
+ 			"Module Type %d\n\tModule State %d\n",
+ 			mconfig->domain,
+-- 
+2.17.0
