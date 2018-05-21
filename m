@@ -1,77 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753252AbeEUML6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 08:11:58 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:39024 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753133AbeEUMLu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 08:11:50 -0400
-Date: Mon, 21 May 2018 13:11:41 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: ilialin@codeaurora.org
-Cc: viresh.kumar@linaro.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] cpufreq: Add Kryo CPU scaling driver
-Message-ID: <20180521121140.GO17671@n2100.armlinux.org.uk>
-References: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
- <1526898690-4018-1-git-send-email-ilialin@codeaurora.org>
- <20180521105428.GM17671@n2100.armlinux.org.uk>
- <000b01d3f0f3$aa961cc0$ffc25640$@codeaurora.org>
+        id S1753097AbeEUMMt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 08:12:49 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7711 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752966AbeEUMJT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 08:09:19 -0400
+From: Yisheng Xie <xieyisheng1@huawei.com>
+To: <linux-kernel@vger.kernel.org>
+CC: Yisheng Xie <xieyisheng1@huawei.com>, Ben Skeggs <bskeggs@redhat.com>,
+        David Airlie <airlied@linux.ie>, <dri-devel@lists.freedesktop.org>,
+        <nouveau@lists.freedesktop.org>
+Subject: [PATCH 21/33] drm/nouveau: use match_string() helper
+Date: Mon, 21 May 2018 19:57:58 +0800
+Message-ID: <1526903890-35761-22-git-send-email-xieyisheng1@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
+In-Reply-To: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
+References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000b01d3f0f3$aa961cc0$ffc25640$@codeaurora.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 02:05:41PM +0300, ilialin@codeaurora.org wrote:
-> You are right.
-> cpu_dev_silver != cpu_dev_gold, and I found this with my tests as well.
-> Thank you.
-> 
-> > -----Original Message-----
-> > From: Russell King - ARM Linux <linux@armlinux.org.uk>
-> > Sent: Monday, May 21, 2018 13:54
-> > To: Ilia Lin <ilialin@codeaurora.org>
-> > Cc: viresh.kumar@linaro.org; devicetree@vger.kernel.org; linux-
-> > pm@vger.kernel.org; linux-arm-msm@vger.kernel.org; linux-
-> > kernel@vger.kernel.org; linux-soc@vger.kernel.org; linux-
-> > clk@vger.kernel.org; linux-arm-kernel@lists.infradead.org
-> > Subject: Re: [PATCH] cpufreq: Add Kryo CPU scaling driver
-> > 
-> > On Mon, May 21, 2018 at 01:31:30PM +0300, Ilia Lin wrote:
-> > > +#define SILVER_LEAD	0
-> > > +#define GOLD_LEAD	2
-> > 
-> > Okay, two different values here, but "GOLD_LEAD" appears unused.
-> > 
-> > > +	cpu_dev_silver = get_cpu_device(SILVER_LEAD);
-> > > +	if (NULL == cpu_dev_silver)
-> > > +		return -ENODEV;
-> > > +
-> > > +	cpu_dev_gold = get_cpu_device(SILVER_LEAD);
-> > > +	if (NULL == cpu_dev_gold)
-> > > +		return -ENODEV;
-> > 
-> > get_cpu_device() takes the logical CPU number.  So the above gets CPU 0
-> > each time, and so cpu_dev_silver == cpu_dev_gold here.  So what's the
-> > point of the second get_cpu_device() ?  If it's supposed to be:
-> > 
-> > 	cpu_dev_gold = get_cpu_device(GOLD_LEAD);
-> > 
-> > That would get CPU 2, but in terms of these defines, it doesn't make that
-> > much sense.  What exactly does "silver lead" and "gold lead" refer to in
-> these
-> > definitions?
+match_string() returns the index of an array for a matching string,
+which can be used intead of open coded variant.
 
-I think you still need to explain this.
+Cc: Ben Skeggs <bskeggs@redhat.com>
+Cc: David Airlie <airlied@linux.ie>
+Cc: dri-devel@lists.freedesktop.org
+Cc: nouveau@lists.freedesktop.org
+Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+---
+ drivers/gpu/drm/nouveau/dispnv04/tvnv17.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
+diff --git a/drivers/gpu/drm/nouveau/dispnv04/tvnv17.c b/drivers/gpu/drm/nouveau/dispnv04/tvnv17.c
+index 6d99f11..a6b4c4a 100644
+--- a/drivers/gpu/drm/nouveau/dispnv04/tvnv17.c
++++ b/drivers/gpu/drm/nouveau/dispnv04/tvnv17.c
+@@ -644,14 +644,11 @@ static int nv17_tv_create_resources(struct drm_encoder *encoder,
+ 	int i;
+ 
+ 	if (nouveau_tv_norm) {
+-		for (i = 0; i < num_tv_norms; i++) {
+-			if (!strcmp(nv17_tv_norm_names[i], nouveau_tv_norm)) {
+-				tv_enc->tv_norm = i;
+-				break;
+-			}
+-		}
+-
+-		if (i == num_tv_norms)
++		i = match_string(nv17_tv_norm_names,
++				 num_tv_norms, nouveau_tv_norm);
++		if (i >= 0)
++			tv_enc->tv_norm = i;
++		else
+ 			NV_WARN(drm, "Invalid TV norm setting \"%s\"\n",
+ 				nouveau_tv_norm);
+ 	}
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+1.7.12.4
