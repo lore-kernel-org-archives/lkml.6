@@ -1,90 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751657AbeEUAtS (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 20:49:18 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:37615 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751094AbeEUAtO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 20:49:14 -0400
-X-ME-Proxy: <xmx:ihcCWzXiD0JZslhWby2_0hRE8hauXHrtStQ03dtClPicR5xXk8HOmQ>
-X-ME-Proxy: <xmx:ihcCW7zkIxkKF85J5g1xCu7TCoClJf93hei43HDvHEVz2bgUaLPbjQ>
-X-ME-Proxy: <xmx:ihcCWxOV8wDPkOLAdO4aGx-lItVl62jkXsbFPdzQ7VYUklUWGVuA8Q>
-X-ME-Proxy: <xmx:ihcCW84I8BBKb9xCyk8lnrMKuN0kyZiH2RD5sZsby-TdhK_-wrsIyQ>
-X-ME-Proxy: <xmx:ihcCWyO_nD1iM2SQLK6s7k7Iq81v9t8Vp3r3z9lpmVXMTBL8xDxOcw>
-X-ME-Proxy: <xmx:ihcCW5Qjdn3rGJQNsobiDi4cy5g0zPawuakz3Rrkbuo1UAn8QDQCCw>
-X-ME-Sender: <xms:ihcCW1AHXElQxjAN9Yu3S2vW-LCprjsLkLlQ7KuKR1acyNayxxU7Sg>
-Subject: Re: mmotm 2018-05-17-16-26 uploaded (autofs)
-From: Ian Kent <raven@themaw.net>
-To: Randy Dunlap <rdunlap@infradead.org>, akpm@linux-foundation.org,
-        broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au,
-        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        mm-commits@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
-References: <20180517232639.sD6Cz%akpm@linux-foundation.org>
- <19926e1e-6dba-3b9f-fd97-d9eb88bfb7dd@infradead.org>
- <49acf718-da2e-73dc-a3bf-c41d7546576e@themaw.net>
- <9e3dfece-46a0-8ab2-2c7e-3edf956703a8@infradead.org>
- <6441e45b-6216-a20a-5b1d-6f5663d701dd@themaw.net>
- <80c2dcf5-b9a9-3d75-7f6f-d0e9c1a11fb9@themaw.net>
- <22ae3b7e-bfbd-6537-9656-9fd429255d69@infradead.org>
- <d225202d-fcba-851d-63a6-ae6a1c3ae0e7@themaw.net>
-Message-ID: <11712bc6-9d45-7bb1-4e88-720ee3e312dd@themaw.net>
-Date: Mon, 21 May 2018 08:49:08 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751609AbeEUAzS (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 20:55:18 -0400
+Received: from imap.thunk.org ([74.207.234.97]:59594 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751063AbeEUAzQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 May 2018 20:55:16 -0400
+Date: Sun, 20 May 2018 20:55:02 -0400
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: Eric Biggers <ebiggers@google.com>
+Cc: linux-fscrypt@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Paul Crowley <paulcrowley@google.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Mikulas Patocka <mpatocka@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fscrypt: use unbound workqueue for decryption
+Message-ID: <20180521005502.GA4464@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Eric Biggers <ebiggers@google.com>, linux-fscrypt@vger.kernel.org,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Paul Crowley <paulcrowley@google.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Mikulas Patocka <mpatocka@redhat.com>, linux-kernel@vger.kernel.org
+References: <20180420233002.134687-1-ebiggers@google.com>
 MIME-Version: 1.0
-In-Reply-To: <d225202d-fcba-851d-63a6-ae6a1c3ae0e7@themaw.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180420233002.134687-1-ebiggers@google.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/05/18 08:43, Ian Kent wrote:
->>>
->>> It looks like adding:
->>> depends on AUTOFS_FS = n && AUTOFS_FS != m
->>
->> Hi.  Is there a typo on the line above?
+On Fri, Apr 20, 2018 at 04:30:02PM -0700, Eric Biggers wrote:
+> Improve fscrypt read performance by switching the decryption workqueue
+> from bound to unbound.  With the bound workqueue, when multiple bios
+> completed on the same CPU, they were decrypted on that same CPU.  But
+> with the unbound queue, they are now decrypted in parallel on any CPU.
+> 
+> Although fscrypt read performance can be tough to measure due to the
+> many sources of variation, this change is most beneficial when
+> decryption is slow, e.g. on CPUs without AES instructions.  For example,
+> I timed tarring up encrypted directories on f2fs.  On x86 with AES-NI
+> instructions disabled, the unbound workqueue improved performance by
+> about 25-35%, using 1 to NUM_CPUs jobs with 4 or 8 CPUs available.  But
+> with AES-NI enabled, performance was unchanged to within ~2%.
+> 
+> I also did the same test on a quad-core ARM CPU using xts-speck128-neon
+> encryption.  There performance was usually about 10% better with the
+> unbound workqueue, bringing it closer to the unencrypted speed.
+> 
+> The unbound workqueue may be worse in some cases due to worse locality,
+> but I think it's still the better default.  dm-crypt uses an unbound
+> workqueue by default too, so this change makes fscrypt match.
+> 
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-LOL, but your point is what does the AUTOFS_FS != m do!
+Applied, thanks.
 
-The answer should be nothing but ..... I'll have to play
-a little more.
-
-> 
-> Don't think so.
-> 
-> This was straight out of:
-> 
-> diff --git a/fs/autofs4/Kconfig b/fs/autofs4/Kconfig
-> index 53bc592a250d..2f9bafabac1b 100644
-> --- a/fs/autofs4/Kconfig
-> +++ b/fs/autofs4/Kconfig
-> @@ -1,6 +1,7 @@
->  config AUTOFS4_FS
->         tristate "Kernel automounter version 4 support (also supports v3 and v5)"
->         default n
-> +       depends on AUTOFS_FS = n && AUTOFS_FS != m
->         help
->           The automounter is a tool to automatically mount remote file systems
->           on demand. This implementation is partially kernel-based to reduce
-> @@ -30,3 +31,10 @@ config AUTOFS4_FS
->           - any "alias autofs autofs4" will need to be removed.
->  
->           Please configure AUTOFS_FS instead of AUTOFS4_FS from now on.
-> +
-> +         NOTE: Since the modules autofs and autofs4 use the same file system
-> +               type name of "autofs" only one can be built. The "depends"
-> +               above will result in AUTOFS4_FS not appearing in .config for
-> +               any setting of AUTOFS_FS other than n and AUTOFS4_FS will
-> +               appear under the AUTOFS_FS entry otherwise which is intended
-> +               to draw attention to the module rename change.
-> 
-> which appears to do what's needed about as well as can be done and deals
-> with the AUTOFS4_FS=y && AUTOFS_FS=y case.
-> 
-> Ian
-> 
+						- Ted
