@@ -1,38 +1,45 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrrf6cT8LbccpOmWXnFfmj/uf+GohZvFNR6EDJJEg9UbeAVuBgsItt4jmsRP7Gmo7VHFZg8
-ARC-Seal: i=1; a=rsa-sha256; t=1526937363; cv=none;
+X-Google-Smtp-Source: AB8JxZpSLHCIJd/XJf4RotvBjzfUUcP/XMOOhlfnpoq4ZYhmfYUl2DkRX72pXfAgnUgTBsqMspQY
+ARC-Seal: i=1; a=rsa-sha256; t=1526937360; cv=none;
         d=google.com; s=arc-20160816;
-        b=f7xPplFUSF7KDiiD4/p4ejbj+ccpw1h/mF14sAv9/kkKIZrJ0WISh0UutG/RRhfs3y
-         Puxpl7dKXaDwddv2GkPXzSxMmEvIrR9D3bO5OoTcSM85+eKEApBV2ZyWanUgtnS7uqR1
-         xc9G/1fiGOOjI95gP/5LAwWlCerWyTdKAsTk2FA+b0koZwmI8Lcqt22Thf2eS6kx9ZV9
-         4nIVlVaqlYUle2lna22qGCsg+VkWVOcMtFt5KVLNQ7O4yhROPmFx8YTps7sUyXb3Zhvs
-         0sW1dcxygwEntEpAywPV/Bs1xG5+L7vTKd38cqddpdm1RhLKhZG5y/K8cziY7PVUkoD2
-         +WRA==
+        b=DV0AYDp/y+LjiZA/1uWjXE2VfWykTEdguXzJOTGTM8DiYHcATnI+CIJGKEJ7LolTIP
+         B9CTPx/0FSF6C7bHTWb2UQOpy4CCk88Y7dOXxs/FqJqglQW1ebhlhp+2/By7rO8viXgR
+         DnhKFlrXXjybr4rnZU6+ibaZNw5js84hahsi6z1oUsIDk1mwkKgOWP2Y8bHwk8xC6PVc
+         IXIpb6mgoPzJrl+Q1hWZTdeS9Zhfyz6nkDlwQdy00GyHk6ppJa/fcMhnrNBkbhq7dtNf
+         2QeMTaMtdNWE/3LJeTpwlDjRck9JoYDsnRW5e+uT5Ou+8xzYwG6zskCBPw78ROp2SZXY
+         Fl8w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=Zdf3wUUQUB0mGfNOMRAW3ToUk4rmVnQ6asywtW78YG4=;
-        b=jPyzbsQO8GPHFDjhY1s4btxmBQZJBJh8aDp7r2QujPILTd3kuxyZrDBLekW4xNXXml
-         kFc7F9uCilF5mAz0JW/7SvptqmC/Xw5Sb/RKM6EDRIaYlAaOgw58od3pXim44RpM/DcL
-         DwGa4SSueIgqgeZCfbI/hOzWBSLPg+zfVfU8b5HTjSpjabhOfQz5JPaXuBxrSaGeZkx+
-         AyQrb0poU1ooK9Ly7rlzgPrctO75Du+dCoThKJL8n3vxHkL8MXrE/wyAimGU1H3RnSDg
-         nopd+iT9Az9noUFxYnoqak0eprcy+4eFQwek/UoG0QM0Ctqkoctt7v1BEKSn3+ZuoaFx
-         EYgg==
+        bh=/sgFgAQfefnrq+w2IqTESLp+EP4D7bM8lp/HBFQ47Ss=;
+        b=mz9mD5DoZaQBnfZyUpk+mBBqGylAd1fvrjxakhYD8xd4So3EpAmwxN2BAHDUEyXxQq
+         nTTmY5vs+D++JuqCzF7ycXmSgt4RiNST7WJaFGZNOCRESlJNvEyQWfIXV0vhjvf0kUoG
+         iLeEuKj2Vcy4WD1e9BH45Ky5J1cwNcqGyQGh/RWevEcMc67asmE+Jf2Z8i0rjq5DKREn
+         bWbtAKHlRqRBHwXz+uY3eYK5vvOHNCit8hAZMIu+RbVev+MNQ4TYpPzUHc6aXVa4e14l
+         UbCHIItL9m47liIE25DB3V/g7Oz+lk3LqJfSR2+ZMXfFNDe3HCzfiAA4eYwBJ5tH66H4
+         GIlA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=eVevyDJT;
+       dkim=pass header.i=@kernel.org header.s=default header.b=E1ChVXHa;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=eVevyDJT;
+       dkim=pass header.i=@kernel.org header.s=default header.b=E1ChVXHa;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Julian Wiedmann <jwi@linux.ibm.com>,
-	Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.9 20/87] s390/qdio: fix access to uninitialized qdio_q fields
-Date: Mon, 21 May 2018 23:10:56 +0200
-Message-Id: <20180521210422.154652994@linuxfoundation.org>
+	Pavel Tatashin <pasha.tatashin@oracle.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Steven Sistare <steven.sistare@oracle.com>,
+	Daniel Jordan <daniel.m.jordan@oracle.com>,
+	Mel Gorman <mgorman@techsingularity.net>,
+	Fengguang Wu <fengguang.wu@intel.com>,
+	Dennis Zhou <dennisszhou@gmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.9 19/87] mm: dont allow deferred pages with NEED_PER_CPU_KM
+Date: Mon, 21 May 2018 23:10:55 +0200
+Message-Id: <20180521210422.069818654@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210420.222671977@linuxfoundation.org>
 References: <20180521210420.222671977@linuxfoundation.org>
@@ -42,8 +49,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109872569829997?=
-X-GMAIL-MSGID: =?utf-8?q?1601109872569829997?=
+X-GMAIL-THRID: =?utf-8?q?1601109869699407044?=
+X-GMAIL-MSGID: =?utf-8?q?1601109869699407044?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,40 +58,88 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Julian Wiedmann <jwi@linux.ibm.com>
+From: Pavel Tatashin <pasha.tatashin@oracle.com>
 
-commit e521813468f786271a87e78e8644243bead48fad upstream.
+commit ab1e8d8960b68f54af42b6484b5950bd13a4054b upstream.
 
-Ever since CQ/QAOB support was added, calling qdio_free() straight after
-qdio_alloc() results in qdio_release_memory() accessing uninitialized
-memory (ie. q->u.out.use_cq and q->u.out.aobs). Followed by a
-kmem_cache_free() on the random AOB addresses.
+It is unsafe to do virtual to physical translations before mm_init() is
+called if struct page is needed in order to determine the memory section
+number (see SECTION_IN_PAGE_FLAGS).  This is because only in mm_init()
+we initialize struct pages for all the allocated memory when deferred
+struct pages are used.
 
-For older kernels that don't have 6e30c549f6ca, the same applies if
-qdio_establish() fails in the DEV_STATE_ONLINE check.
+My recent fix in commit c9e97a1997 ("mm: initialize pages on demand
+during boot") exposed this problem, because it greatly reduced number of
+pages that are initialized before mm_init(), but the problem existed
+even before my fix, as Fengguang Wu found.
 
-While initializing q->u.out.use_cq would be enough to fix this
-particular bug, the more future-proof change is to just zero-alloc the
-whole struct.
+Below is a more detailed explanation of the problem.
 
-Fixes: 104ea556ee7f ("qdio: support asynchronous delivery of storage blocks")
-Cc: <stable@vger.kernel.org> #v3.2+
-Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+We initialize struct pages in four places:
+
+1. Early in boot a small set of struct pages is initialized to fill the
+   first section, and lower zones.
+
+2. During mm_init() we initialize "struct pages" for all the memory that
+   is allocated, i.e reserved in memblock.
+
+3. Using on-demand logic when pages are allocated after mm_init call
+   (when memblock is finished)
+
+4. After smp_init() when the rest free deferred pages are initialized.
+
+The problem occurs if we try to do va to phys translation of a memory
+between steps 1 and 2.  Because we have not yet initialized struct pages
+for all the reserved pages, it is inherently unsafe to do va to phys if
+the translation itself requires access of "struct page" as in case of
+this combination: CONFIG_SPARSE && !CONFIG_SPARSE_VMEMMAP
+
+The following path exposes the problem:
+
+  start_kernel()
+   trap_init()
+    setup_cpu_entry_areas()
+     setup_cpu_entry_area(cpu)
+      get_cpu_gdt_paddr(cpu)
+       per_cpu_ptr_to_phys(addr)
+        pcpu_addr_to_page(addr)
+         virt_to_page(addr)
+          pfn_to_page(__pa(addr) >> PAGE_SHIFT)
+
+We disable this path by not allowing NEED_PER_CPU_KM with deferred
+struct pages feature.
+
+The problems are discussed in these threads:
+  http://lkml.kernel.org/r/20180418135300.inazvpxjxowogyge@wfg-t540p.sh.intel.com
+  http://lkml.kernel.org/r/20180419013128.iurzouiqxvcnpbvz@wfg-t540p.sh.intel.com
+  http://lkml.kernel.org/r/20180426202619.2768-1-pasha.tatashin@oracle.com
+
+Link: http://lkml.kernel.org/r/20180515175124.1770-1-pasha.tatashin@oracle.com
+Fixes: 3a80a7fa7989 ("mm: meminit: initialise a subset of struct pages if CONFIG_DEFERRED_STRUCT_PAGE_INIT is set")
+Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Steven Sistare <steven.sistare@oracle.com>
+Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc: Mel Gorman <mgorman@techsingularity.net>
+Cc: Fengguang Wu <fengguang.wu@intel.com>
+Cc: Dennis Zhou <dennisszhou@gmail.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/s390/cio/qdio_setup.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/s390/cio/qdio_setup.c
-+++ b/drivers/s390/cio/qdio_setup.c
-@@ -140,7 +140,7 @@ static int __qdio_allocate_qs(struct qdi
- 	int i;
- 
- 	for (i = 0; i < nr_queues; i++) {
--		q = kmem_cache_alloc(qdio_q_cache, GFP_KERNEL);
-+		q = kmem_cache_zalloc(qdio_q_cache, GFP_KERNEL);
- 		if (!q)
- 			return -ENOMEM;
- 
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -666,6 +666,7 @@ config DEFERRED_STRUCT_PAGE_INIT
+ 	depends on ARCH_SUPPORTS_DEFERRED_STRUCT_PAGE_INIT
+ 	depends on NO_BOOTMEM && MEMORY_HOTPLUG
+ 	depends on !FLATMEM
++	depends on !NEED_PER_CPU_KM
+ 	help
+ 	  Ordinarily all struct pages are initialised during early boot in a
+ 	  single thread. On very large machines this can take a considerable
