@@ -1,157 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751185AbeEUTOM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 15:14:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34500 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750930AbeEUTOA (ORCPT
+        id S1751516AbeEUTT7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 15:19:59 -0400
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:35570 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751101AbeEUTTy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 15:14:00 -0400
-Date: Mon, 21 May 2018 12:13:58 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Roman Kagan <rkagan@virtuozzo.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] idr: fix invalid ptr dereference on item delete
-Message-Id: <20180521121358.0d0c64a5ca9f34efab086fe8@linux-foundation.org>
-In-Reply-To: <20180519141445.GA9526@bombadil.infradead.org>
-References: <20180518175025.GD6361@bombadil.infradead.org>
-        <20180518153138.459c78a83c6bada41b4b187d@linux-foundation.org>
-        <20180519062635.GA6352@rkaganip.lan>
-        <20180519141445.GA9526@bombadil.infradead.org>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Mon, 21 May 2018 15:19:54 -0400
+X-Google-Smtp-Source: ADUXVKLouqtqA3RtGQroE1/OQaf4cllfWawBH2bPzgoDEBm7KtbsJHfs7fHmpSGNHG0PTuKErSbrVQ==
+Subject: Re: [PATCH 1/2] rtc: brcmstb-waketimer: switch to rtc_register_device
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-rtc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+        Brian Norris <computersforpeace@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org
+References: <20180520202730.28172-1-alexandre.belloni@bootlin.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+Message-ID: <2ceb0348-b030-d584-2a20-0bc678a83b14@gmail.com>
+Date: Mon, 21 May 2018 12:19:43 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180520202730.28172-1-alexandre.belloni@bootlin.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 19 May 2018 07:14:45 -0700 Matthew Wilcox <willy@infradead.org> wrote:
-
-> On Sat, May 19, 2018 at 09:26:36AM +0300, Roman Kagan wrote:
-> > On Fri, May 18, 2018 at 03:31:38PM -0700, Andrew Morton wrote:
-> > > On Fri, 18 May 2018 10:50:25 -0700 Matthew Wilcox <willy@infradead.org> wrote:
-> > > 
-> > > > If the radix tree underlying the IDR happens to be full and we attempt
-> > > > to remove an id which is larger than any id in the IDR, we will call
-> > > > __radix_tree_delete() with an uninitialised 'slot' pointer, at which
-> > > > point anything could happen.  This was easiest to hit with a single entry
-> > > > at id 0 and attempting to remove a non-0 id, but it could have happened
-> > > > with 64 entries and attempting to remove an id >= 64.
-> > > > 
-> > > > Fixes: 0a835c4f090a ("Reimplement IDR and IDA using the radix tree")
-> > > > Reported-by: syzbot+35666cba7f0a337e2e79@syzkaller.appspotmail.com
-> > > > Debugged-by: Roman Kagan <rkagan@virtuozzo.com>
-> > > > Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
-> > > 
-> > > Neither of the changelogs I'm seeing attempt to describe the end-user
-> > > impact of the bug.  People like to know that so they can decide which
-> > > kernel version(s) need patching, so please always remember it.
-> > 
-> > That's my fault, Matthew may not have seen the original discussion among
-> > the KVM folks.
-> > 
-> > > Looknig at the sysbot report, the impact is at least "privileged user
-> > > can trigger a WARN", but I assume there could be worse,
-> > 
-> > Unfortunately it is worse: the syzcaller test boils down to opening
-> > /dev/kvm, creating an eventfd, and calling a couple of KVM ioctls.  None
-> > of this requires superuser.  And the result is dereferencing an
-> > uninitialized pointer which is likely a crash.
-> > 
-> > > as-yet-undiscovered impacts.  So I'm thinking a cc:stable is needed,
-> > > yes?
-> > 
-> > Well the specific path caught by syzbot is via KVM_HYPERV_EVENTD ioctl
-> > which is new in 4.17.  But I guess there are other user-triggerable
-> > paths, so cc:stable is probably justified.
+On 05/20/2018 01:27 PM, Alexandre Belloni wrote:
+> Switch to devm_rtc_allocate_device/rtc_register_device.
 > 
-> We have around 250 calls to idr_remove() in the kernel today.  Many of
-> them pass an ID which is embedded in the object they're removing, so
-> they're safe.  Picking a few likely candidates:
-> 
-> drivers/firewire/core-cdev.c looks unsafe; the ID comes from an ioctl.
-> drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c is similar
-> drivers/atm/nicstar.c could be taken down by a handcrafted packet
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-OK, thanks, I sprinkled some of the above words into the changelog ad
-added cc:stable.
-
-
-From: Matthew Wilcox <mawilcox@microsoft.com>
-Subject: idr: fix invalid ptr dereference on item delete
-
-If the radix tree underlying the IDR happens to be full and we attempt to
-remove an id which is larger than any id in the IDR, we will call
-__radix_tree_delete() with an uninitialised 'slot' pointer, at which point
-anything could happen.  This was easiest to hit with a single entry at id
-0 and attempting to remove a non-0 id, but it could have happened with 64
-entries and attempting to remove an id >= 64.
-
-Roman said:
-
-  The syzcaller test boils down to opening /dev/kvm, creating an
-  eventfd, and calling a couple of KVM ioctls.  None of this requires
-  superuser.  And the result is dereferencing an uninitialized pointer
-  which is likely a crash.  The specific path caught by syzbot is via
-  KVM_HYPERV_EVENTD ioctl which is new in 4.17.  But I guess there are
-  other user-triggerable paths, so cc:stable is probably justified.
-
-Matthew added:
-
-  We have around 250 calls to idr_remove() in the kernel today.  Many
-  of them pass an ID which is embedded in the object they're removing,
-  so they're safe.  Picking a few likely candidates:
-
-  drivers/firewire/core-cdev.c looks unsafe; the ID comes from an ioctl.
-  drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c is similar
-  drivers/atm/nicstar.c could be taken down by a handcrafted packet
-
-Link: http://lkml.kernel.org/r/20180518175025.GD6361@bombadil.infradead.org
-Fixes: 0a835c4f090a ("Reimplement IDR and IDA using the radix tree")
-Reported-by: syzbot+35666cba7f0a337e2e79@syzkaller.appspotmail.com
-Debugged-by: Roman Kagan <rkagan@virtuozzo.com>
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
-
- lib/radix-tree.c                    |    4 +++-
- tools/testing/radix-tree/idr-test.c |    7 +++++++
- 2 files changed, 10 insertions(+), 1 deletion(-)
-
-diff -puN lib/radix-tree.c~idr-fix-invalid-ptr-dereference-on-item-delete lib/radix-tree.c
---- a/lib/radix-tree.c~idr-fix-invalid-ptr-dereference-on-item-delete
-+++ a/lib/radix-tree.c
-@@ -2034,10 +2034,12 @@ void *radix_tree_delete_item(struct radi
- 			     unsigned long index, void *item)
- {
- 	struct radix_tree_node *node = NULL;
--	void __rcu **slot;
-+	void __rcu **slot = NULL;
- 	void *entry;
- 
- 	entry = __radix_tree_lookup(root, index, &node, &slot);
-+	if (!slot)
-+		return NULL;
- 	if (!entry && (!is_idr(root) || node_tag_get(root, node, IDR_FREE,
- 						get_slot_offset(node, slot))))
- 		return NULL;
-diff -puN tools/testing/radix-tree/idr-test.c~idr-fix-invalid-ptr-dereference-on-item-delete tools/testing/radix-tree/idr-test.c
---- a/tools/testing/radix-tree/idr-test.c~idr-fix-invalid-ptr-dereference-on-item-delete
-+++ a/tools/testing/radix-tree/idr-test.c
-@@ -252,6 +252,13 @@ void idr_checks(void)
- 	idr_remove(&idr, 3);
- 	idr_remove(&idr, 0);
- 
-+	assert(idr_alloc(&idr, DUMMY_PTR, 0, 0, GFP_KERNEL) == 0);
-+	idr_remove(&idr, 1);
-+	for (i = 1; i < RADIX_TREE_MAP_SIZE; i++)
-+		assert(idr_alloc(&idr, DUMMY_PTR, 0, 0, GFP_KERNEL) == i);
-+	idr_remove(&idr, 1 << 30);
-+	idr_destroy(&idr);
-+
- 	for (i = INT_MAX - 3UL; i < INT_MAX + 1UL; i++) {
- 		struct item *item = item_create(i, 0);
- 		assert(idr_alloc(&idr, item, i, i + 10, GFP_KERNEL) == i);
-_
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+-- 
+Florian
