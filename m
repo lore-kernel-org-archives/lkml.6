@@ -1,39 +1,94 @@
-Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrhRJ71kNFY4ngrkM+UhG6FdG+53gL3JF3uyG1x/IGnYah3pF7L3VNJaN5uBVkflm9hI63t
-ARC-Seal: i=1; a=rsa-sha256; t=1526937997; cv=none;
-        d=google.com; s=arc-20160816;
-        b=o8RJXtnbSJHn9BNzQkkWziQxPAJQLMRfXtJaKPybtql9zn+QljFOeWs8OtBa51R9hz
-         F4ZwnZAFQd57UM2OC8l/71sPbKSmf0FMtBUdX2JlC8G8KC1JMr+Sc2sz6/ON3v1JNxvn
-         E0A/QWx4u7ql3frWSt6lsN2gJqDaAbxr0bgtcgSt9IKzCiTO0KkENbB9fgGQIrNZvHtr
-         /V9RYpR4UJffSx582aC7SzliqODewldhhEkuSjPNze6aTQT8v9sz/zBGZthWWAwiREJ6
-         KzOjme/U73LwQs8faYjzae//ksjbg6Ouwu049/bvo+WM6aXvgu4GzBCExUGUGoTj0Kii
-         VTbg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=2L+lScfIQu3P/dDRO45yYIsZM1UfFapfjkCumux88DQ=;
-        b=rmRNAK4sqxIXtkCO20jasZowcIDdz8P0dNN3puKutXboB9i+z/094iccod0dBrDKKe
-         9zNz4VCB//hstaPByrQvy4Ch5g2BaTv8a3Io+3WaMiGEFXXKjN4MDKQZqYfUzSBuuKj/
-         rqt1AXsEZ25BJxySi89WRfw2eyCJlpluFjmS7KW7JU3vUCH7Mi3BPpVj7VFQzX5++1v8
-         UesAW5niUkv7Ppvxt11ZSroyruNUw8a8TmR58tkUdlfy+lEWi0HN/EYQqxPNNrdxecKk
-         szeZjA20nNMJWijA/7CvV1X+iP6zcP7fZ9ZVp5hhsGOcJCfzqoHgtFjupFiG+ihV47na
-         jlZA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=OIh5M2+W;
-       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=OIh5M2+W;
-       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1344077-1526937996-2-15636807485623823910
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1526937995; b=matvAsNb/ahwiKLI+fFVP/b6lMB07UBZ1jTiKV4F7+x8Ikr/pX
+    fcdqYww/rF3OoNf8jM2OG/5v9flWOWSTqh7u3pfUWnC5atB3KPBoXUDAaAc3OfZr
+    dTQvLXc48fRAYtqJzN3hXUIB7HqnPXYUrqYmVZ6ztP/AQ/z8O2f/2+/GHviAmq9X
+    wVWyl4E9+fXMns0eFxZrgOvD5FNcH2FUjqPGwq3QXHrjMWBN5r/eZ9+Hf8BjAZgh
+    ZP5DWPrbymEykjLksPRjoEOf8vHBeB4hlz+um9dqw/ESLxd4vkO3CQvh0YjIc617
+    lAxXfXlxtGVhJgZdkX1kJ165+Rrho8dgH8WQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1526937995; bh=xBSRX4Yolhv4uuaMQnW10KbzHTta+T
+    GMri0yGGBQ4wA=; b=H/F6IsC8MKzh85PaQyrHlVkWXL6/oSuV0DzmOF0DjB4p95
+    0rVY7PnjDl+kYSyfa5DBtPEi5RyWwkK5tY91gVXzyrL7EO/NbOCSO9SoyhW60gWm
+    nqIcazu/1G2BaLXM4zJXsfs5HYzpRXUXdANVFguxUMS8L6T1TTL6v88HZzpwDiKF
+    sR8InCai55+WHV56xXCkS6le7v0IJoq0osbxBoqulQKUhf+QAawlLY2SUQc/Ami+
+    DJoER1zRkA7/PTXZ7TyOhb0AEI12De9eT1or/6PJCR5rXPs2WkFBwR1WIrFjjdA7
+    AefD2apJ8ZzPgRqBMzRSMWhhW8g8IlzkPPHjaiEg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+    header.i=@kernel.org header.b=2nvfq2tj x-bits=1024 x-keytype=rsa
+    x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+    header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=linuxfoundation.org header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+      header.i=@kernel.org header.b=2nvfq2tj x-bits=1024 x-keytype=rsa
+      x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+      header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=linuxfoundation.org header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfFrfAhCdriuH693aKk+cQwN0nZHd1B54iRbkQXROVqP5FQ+pLs/4lrnzqBKTnkOYpgORPt+BwYDZRDOIw3OpSO/CcXn5GJ+Tu9UC/Aw6mHwZPbkC/5Mf
+    S5sDuVd+RIfm97ngWJyFG1thYFI20P/pzfcNVhejSB1z+InI1Ixu7Mq3wdvfA6+CvUMtSAfNcWq3Xfl0W4yCRacAif8bSHhKCg2KKtGFWInV1uvbCY15ZXRm
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=SZ0p3u-7cUBWybIdt-MA:9
+    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S932570AbeEUV0c (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 21 May 2018 17:26:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41304 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932536AbeEUV03 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 21 May 2018 17:26:29 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.16 071/110] x86/bugs: Whitelist allowed SPEC_CTRL MSR values
-Date: Mon, 21 May 2018 23:12:08 +0200
-Message-Id: <20180521210512.449085078@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.16 068/110] x86/cpufeatures: Add X86_FEATURE_RDS
+Date: Mon, 21 May 2018 23:12:05 +0200
+Message-Id: <20180521210512.229504900@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -41,10 +96,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109850611268953?=
-X-GMAIL-MSGID: =?utf-8?q?1601110537721870005?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,62 +108,28 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-commit 1115a859f33276fe8afb31c60cf9d8e657872558 upstream
+commit 0cc5fa00b0a88dad140b4e5c2cead9951ad36822 upstream
 
-Intel and AMD SPEC_CTRL (0x48) MSR semantics may differ in the
-future (or in fact use different MSRs for the same functionality).
+Add the CPU feature bit CPUID.7.0.EDX[31] which indicates whether the CPU
+supports Reduced Data Speculation.
 
-As such a run-time mechanism is required to whitelist the appropriate MSR
-values.
-
-[ tglx: Made the variable __ro_after_init ]
+[ tglx: Split it out from a later patch ]
 
 Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/bugs.c |   11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/cpufeatures.h |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -35,6 +35,12 @@ static void __init ssb_select_mitigation
-  */
- static u64 __ro_after_init x86_spec_ctrl_base;
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -333,6 +333,7 @@
+ #define X86_FEATURE_SPEC_CTRL		(18*32+26) /* "" Speculation Control (IBRS + IBPB) */
+ #define X86_FEATURE_INTEL_STIBP		(18*32+27) /* "" Single Thread Indirect Branch Predictors */
+ #define X86_FEATURE_ARCH_CAPABILITIES	(18*32+29) /* IA32_ARCH_CAPABILITIES MSR (Intel) */
++#define X86_FEATURE_RDS			(18*32+31) /* Reduced Data Speculation */
  
-+/*
-+ * The vendor and possibly platform specific bits which can be modified in
-+ * x86_spec_ctrl_base.
-+ */
-+static u64 __ro_after_init x86_spec_ctrl_mask = ~SPEC_CTRL_IBRS;
-+
- void __init check_bugs(void)
- {
- 	identify_boot_cpu();
-@@ -117,7 +123,7 @@ static enum spectre_v2_mitigation spectr
- 
- void x86_spec_ctrl_set(u64 val)
- {
--	if (val & ~(SPEC_CTRL_IBRS | SPEC_CTRL_RDS))
-+	if (val & x86_spec_ctrl_mask)
- 		WARN_ONCE(1, "SPEC_CTRL MSR value 0x%16llx is unknown.\n", val);
- 	else
- 		wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base | val);
-@@ -459,6 +465,7 @@ static enum ssb_mitigation_cmd __init __
- 		switch (boot_cpu_data.x86_vendor) {
- 		case X86_VENDOR_INTEL:
- 			x86_spec_ctrl_base |= SPEC_CTRL_RDS;
-+			x86_spec_ctrl_mask &= ~SPEC_CTRL_RDS;
- 			x86_spec_ctrl_set(SPEC_CTRL_RDS);
- 			break;
- 		case X86_VENDOR_AMD:
-@@ -482,7 +489,7 @@ static void ssb_select_mitigation()
- void x86_spec_ctrl_setup_ap(void)
- {
- 	if (boot_cpu_has(X86_FEATURE_IBRS))
--		x86_spec_ctrl_set(x86_spec_ctrl_base & (SPEC_CTRL_IBRS | SPEC_CTRL_RDS));
-+		x86_spec_ctrl_set(x86_spec_ctrl_base & ~x86_spec_ctrl_mask);
- }
- 
- #ifdef CONFIG_SYSFS
+ /*
+  * BUG word(s)
