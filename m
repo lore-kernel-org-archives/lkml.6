@@ -1,125 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751559AbeEUMTA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 08:19:00 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:40850 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750970AbeEUMS5 (ORCPT
+        id S1751188AbeEUMZU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 08:25:20 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:44051 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751075AbeEUMZT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 08:18:57 -0400
-X-Google-Smtp-Source: AB8JxZorns2i7W9dQQGN4lktDKxedlPz+2l1mUaj6My5gSQ3OTLUC4vA4SIKQLG4ymoAUJeyC49mbA==
-Subject: Re: [PATCH v2 08/29] venus: hfi_venus: fix suspend function for venus
- 3xx versions
-To: Tomasz Figa <tfiga@chromium.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>, vgarodia@codeaurora.org
-References: <20180515075859.17217-1-stanimir.varbanov@linaro.org>
- <20180515075859.17217-9-stanimir.varbanov@linaro.org>
- <CAAFQd5AtfQL3-xz6MPSDOuXkJoZaVYU4PECJL0VOZjqYRoV-wQ@mail.gmail.com>
-From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <46683c10-bd18-b0f0-9b07-acc8cadb98a3@linaro.org>
-Date: Mon, 21 May 2018 15:18:54 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 21 May 2018 08:25:19 -0400
+Date: Mon, 21 May 2018 14:25:14 +0200
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <uwe@kleine-koenig.org>
+To: Ales Novak <alnovak@suse.cz>
+Cc: a.zummo@towertech.it, akpm@linux-foundation.org,
+        rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org,
+        jkosina@suse.cz
+Subject: Re: rtc: fix chardev initialization races
+Message-ID: <20180521122509.GA4251@taurus.defre.kleine-koenig.org>
+References: <1393410793-7315-1-git-send-email-alnovak@suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <CAAFQd5AtfQL3-xz6MPSDOuXkJoZaVYU4PECJL0VOZjqYRoV-wQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="+QahgC5+KEYLbs62"
+Content-Disposition: inline
+In-Reply-To: <1393410793-7315-1-git-send-email-alnovak@suse.cz>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tomasz,
 
-On 05/18/2018 06:14 PM, Tomasz Figa wrote:
-> On Tue, May 15, 2018 at 5:11 PM Stanimir Varbanov <
-> stanimir.varbanov@linaro.org> wrote:
-> 
->> This fixes the suspend function for Venus 3xx versions by
->> add a check for WFI (wait for interrupt) bit. This bit
->> is on when the ARM9 is idle and entered in low power mode.
-> 
->> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
->> ---
->>   drivers/media/platform/qcom/venus/hfi_venus.c    | 59
-> ++++++++++++++++--------
->>   drivers/media/platform/qcom/venus/hfi_venus_io.h |  1 +
->>   2 files changed, 41 insertions(+), 19 deletions(-)
-> 
->> diff --git a/drivers/media/platform/qcom/venus/hfi_venus.c
-> b/drivers/media/platform/qcom/venus/hfi_venus.c
->> index 53546174aab8..aac351f699a0 100644
->> --- a/drivers/media/platform/qcom/venus/hfi_venus.c
->> +++ b/drivers/media/platform/qcom/venus/hfi_venus.c
->> @@ -1447,7 +1447,7 @@ static int venus_suspend_3xx(struct venus_core
-> *core)
->>   {
->>          struct venus_hfi_device *hdev = to_hfi_priv(core);
->>          struct device *dev = core->dev;
->> -       u32 ctrl_status, wfi_status;
->> +       u32 ctrl_status, cpu_status;
->>          int ret;
->>          int cnt = 100;
-> 
->> @@ -1463,29 +1463,50 @@ static int venus_suspend_3xx(struct venus_core
-> *core)
->>                  return -EINVAL;
->>          }
-> 
->> -       ctrl_status = venus_readl(hdev, CPU_CS_SCIACMDARG0);
->> -       if (!(ctrl_status & CPU_CS_SCIACMDARG0_PC_READY)) {
->> -               wfi_status = venus_readl(hdev, WRAPPER_CPU_STATUS);
->> +       /*
->> +        * Power collapse sequence for Venus 3xx and 4xx versions:
->> +        * 1. Check for ARM9 and video core to be idle by checking WFI bit
->> +        *    (bit 0) in CPU status register and by checking Idle (bit
-> 30) in
->> +        *    Control status register for video core.
->> +        * 2. Send a command to prepare for power collapse.
->> +        * 3. Check for WFI and PC_READY bits.
->> +        */
->> +
->> +       while (--cnt) {
->> +               cpu_status = venus_readl(hdev, WRAPPER_CPU_STATUS);
->>                  ctrl_status = venus_readl(hdev, CPU_CS_SCIACMDARG0);
-> 
->> -               ret = venus_prepare_power_collapse(hdev, false);
->> -               if (ret) {
->> -                       dev_err(dev, "prepare for power collapse fail
-> (%d)\n",
->> -                               ret);
->> -                       return ret;
->> -               }
->> +               if (cpu_status & WRAPPER_CPU_STATUS_WFI &&
->> +                   ctrl_status & CPU_CS_SCIACMDARG0_INIT_IDLE_MSG_MASK)
->> +                       break;
-> 
->> -               cnt = 100;
->> -               while (cnt--) {
->> -                       wfi_status = venus_readl(hdev,
-> WRAPPER_CPU_STATUS);
->> -                       ctrl_status = venus_readl(hdev,
-> CPU_CS_SCIACMDARG0);
->> -                       if (ctrl_status & CPU_CS_SCIACMDARG0_PC_READY &&
->> -                           wfi_status & BIT(0))
->> -                               break;
->> -                       usleep_range(1000, 1500);
->> -               }
->> +               usleep_range(1000, 1500);
->>          }
-> 
-> To avoid opencoding the polling, I'd suggest doing a readx_poll_timeout()
-> trick:
+--+QahgC5+KEYLbs62
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I like the idea, will try to rework that and use readx_poll_timeout.
+On Wed, Feb 26, 2014 at 11:33:13AM +0100, Ales Novak wrote:
+> In many rtc modules, the chardevice file in rtc module probe is
+> being created prematurely. If the probe fails after the chardevice
+> file has been created (e.g. after rtc_device_register), it's possible
+> for a program to open() it, which subsequently can cause memory
+> corruption.
+>=20
+> The race looks like that (thanks Jiri):
+>=20
+> CPU0:                                CPU1:
+> sys_load_module()
+>  do_init_module()
+>   do_one_initcall()
+>    cmos_do_probe()
+>     rtc_device_register()
+>      __register_chrdev()
+>      cdev->owner =3D struct module*
+>                                      open("/dev/rtc0")
+>     rtc_device_unregister()
+>   module_put()
+>   free_module()
+>    module_free(mod->module_core)
+>    /* struct module *module is now
+>       freed */
+>                                       chrdev_open()
+>                                        spin_lock(cdev_lock)
+>                                        cdev_get()
+>                                         try_module_get()
+>                                          module_is_live()
+>                                          /* dereferences already
+>                                             freed struct module* */
 
-<snip>
+[Context: For a patch to rtc-pcf2127.c Alexandre Belloni asked not to
+fail after rtc_device_register successfully finished and pointed to this
+reasoning as explaination.]
 
--- 
-regards,
-Stan
+If there is really such a race then (I hope) there is
+something in the cdev code that needs fixing. According to my
+understanding, when rtc_device_unregister returned, the cdev is gone and
+so chrdev_open is supposed to fail.
+
+Otherwise the same problem can be triggered when the device is unbound
+and the module unloaded while another cpu opens the char dev.
+
+I added a msleep(5000) to chrdev_open like this:
+
+        if (current->pid !=3D 1) {
+                pr_info("%s:%d: sleeping to open race window\n", __func__, =
+__LINE__);
+                msleep(5000);
+                pr_info("%s:%d: done sleeping\n", __func__, __LINE__);
+        }
+
+before the spinlock is taken. If I trigger that (using
+
+	a =3D open("/dev/rtc0")
+
+in a Python shell) and then do rmmod rtc_pcf2127 (which is the driver
+backing my rtc0), I get:
+
+	OSError: [Errno 6] No such device or address: '/dev/rtc0'
+
+> This patch is proposing a solution, splitting the function
+> {devm_,}rtc_device_register into {devm_,}rtc_device_register{_fs,}.
+> The {devm_}rtc_device_register_fs which is creating the files, should
+> be called after it is clear that the probe will pass. It will set the
+> RTC_DEV_FILES_EXIST into rtc_device->flags.
+
+So this split is not a complete fix but only a work around for some
+cases at best.
+
+Maybe there isn't even a problem?
+
+Best regards
+Uwe
+=20
+
+--+QahgC5+KEYLbs62
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAlsCuqIACgkQwfwUeK3K
+7AnEhgf/Vj/D2FzcmADX0wvZM+0sq/9zEFviSDobEQ3EAqjedwEbyug8C5N5j/39
+wBHVrd61jpl5/W88KdB7YdwhlC+R3pSMm7Eu6GXfE/LmqMQsAFNVifFvnFw24GNg
+kawwzvJX5TPiEVRmgD3e5Y+HdJypSIr24RWHL6xUCMeLcnkvh8YnAKAVQxWmZgme
+xaGKBHo686djotKnE3UPEP1oOch22LlBLMm4FnhE+ReT8elufLtrqh3D1de8m74i
+bnaes7r5qrKx3x32w9pwTRSt5Awm/Tx2L3yWxK136fFDNpfFicDFsSTymjt+OBEi
+KW3WW/ZNUQctw7y+kJt8dARYfNbcwA==
+=o6r5
+-----END PGP SIGNATURE-----
+
+--+QahgC5+KEYLbs62--
