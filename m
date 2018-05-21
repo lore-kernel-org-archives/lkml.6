@@ -1,47 +1,204 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754452AbeEUV4B (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 17:56:01 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:46884 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754177AbeEUVz7 (ORCPT
+        id S1754319AbeEUV5U (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 17:57:20 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:58378 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754143AbeEUV5C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 17:55:59 -0400
-X-Google-Smtp-Source: AB8JxZryRVzvAmfeVKlx35wXyqk4jkeGfRrdGaPMpxyAS4csvKlBZTZXC1hZzYN+Ggqwrjn6jVwClGnmI5I7fLRf0cA=
-MIME-Version: 1.0
-In-Reply-To: <1526903890-35761-18-git-send-email-xieyisheng1@huawei.com>
-References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com> <1526903890-35761-18-git-send-email-xieyisheng1@huawei.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 22 May 2018 00:55:58 +0300
-Message-ID: <CAHp75Ve5yRKZK5mcCsRBKGevN6jPN++WnQZnc4eetOoKXvxR1w@mail.gmail.com>
-Subject: Re: [PATCH 17/33] pinctrl: armada-37xx: use match_string() helper
-To: Yisheng Xie <xieyisheng1@huawei.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+        Mon, 21 May 2018 17:57:02 -0400
+Message-ID: <1526939820.3215.32.camel@HansenPartnership.com>
+Subject: [GIT PULL] SCSI fixes for 4.17-rc6
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date: Mon, 21 May 2018 14:57:00 -0700
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 2:57 PM, Yisheng Xie <xieyisheng1@huawei.com> wrote:
-> match_string() returns the index of an array for a matching string,
-> which can be used intead of open coded variant.
+Two driver fixes (zfcp and target core), one information leak in sg and
+one build clean up.
 
-https://patchwork.kernel.org/patch/10378781/
+The patch is available here:
 
-> Cc: Jason Cooper <jason@lakedaemon.net>
-> Cc: Andrew Lunn <andrew@lunn.ch>
-> Cc: Gregory Clement <gregory.clement@bootlin.com>
-> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-gpio@vger.kernel.org
+git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
 
--- 
-With Best Regards,
-Andy Shevchenko
+The short changelog is:
+
+Alexander Potapenko (1):
+      scsi: sg: allocate with __GFP_ZERO in sg_build_indirect()
+
+Jens Remus (1):
+      scsi: zfcp: fix infinite iteration on ERP ready list
+
+Prasanna Kumar Kalever (1):
+      scsi: target: tcmu: fix error resetting qfull_time_out to default
+
+Randy Dunlap (1):
+      scsi: core: clean up generated file scsi_devinfo_tbl.c
+
+And the diffstat:
+
+ drivers/s390/scsi/zfcp_dbf.c      | 23 ++++++++++++++++++++++-
+ drivers/s390/scsi/zfcp_ext.h      |  5 ++++-
+ drivers/s390/scsi/zfcp_scsi.c     | 14 +++++++-------
+ drivers/scsi/Makefile             |  2 +-
+ drivers/scsi/sg.c                 |  2 +-
+ drivers/target/target_core_user.c |  2 ++
+ 6 files changed, 37 insertions(+), 11 deletions(-)
+
+With full diff below.
+
+James
+
+---
+
+diff --git a/drivers/s390/scsi/zfcp_dbf.c b/drivers/s390/scsi/zfcp_dbf.c
+index a8b831000b2d..18c4f933e8b9 100644
+--- a/drivers/s390/scsi/zfcp_dbf.c
++++ b/drivers/s390/scsi/zfcp_dbf.c
+@@ -4,7 +4,7 @@
+  *
+  * Debug traces for zfcp.
+  *
+- * Copyright IBM Corp. 2002, 2017
++ * Copyright IBM Corp. 2002, 2018
+  */
+ 
+ #define KMSG_COMPONENT "zfcp"
+@@ -308,6 +308,27 @@ void zfcp_dbf_rec_trig(char *tag, struct zfcp_adapter *adapter,
+ 	spin_unlock_irqrestore(&dbf->rec_lock, flags);
+ }
+ 
++/**
++ * zfcp_dbf_rec_trig_lock - trace event related to triggered recovery with lock
++ * @tag: identifier for event
++ * @adapter: adapter on which the erp_action should run
++ * @port: remote port involved in the erp_action
++ * @sdev: scsi device involved in the erp_action
++ * @want: wanted erp_action
++ * @need: required erp_action
++ *
++ * The adapter->erp_lock must not be held.
++ */
++void zfcp_dbf_rec_trig_lock(char *tag, struct zfcp_adapter *adapter,
++			    struct zfcp_port *port, struct scsi_device *sdev,
++			    u8 want, u8 need)
++{
++	unsigned long flags;
++
++	read_lock_irqsave(&adapter->erp_lock, flags);
++	zfcp_dbf_rec_trig(tag, adapter, port, sdev, want, need);
++	read_unlock_irqrestore(&adapter->erp_lock, flags);
++}
+ 
+ /**
+  * zfcp_dbf_rec_run_lvl - trace event related to running recovery
+diff --git a/drivers/s390/scsi/zfcp_ext.h b/drivers/s390/scsi/zfcp_ext.h
+index bf8ea4df2bb8..e5eed8aac0ce 100644
+--- a/drivers/s390/scsi/zfcp_ext.h
++++ b/drivers/s390/scsi/zfcp_ext.h
+@@ -4,7 +4,7 @@
+  *
+  * External function declarations.
+  *
+- * Copyright IBM Corp. 2002, 2016
++ * Copyright IBM Corp. 2002, 2018
+  */
+ 
+ #ifndef ZFCP_EXT_H
+@@ -35,6 +35,9 @@ extern int zfcp_dbf_adapter_register(struct zfcp_adapter *);
+ extern void zfcp_dbf_adapter_unregister(struct zfcp_adapter *);
+ extern void zfcp_dbf_rec_trig(char *, struct zfcp_adapter *,
+ 			      struct zfcp_port *, struct scsi_device *, u8, u8);
++extern void zfcp_dbf_rec_trig_lock(char *tag, struct zfcp_adapter *adapter,
++				   struct zfcp_port *port,
++				   struct scsi_device *sdev, u8 want, u8 need);
+ extern void zfcp_dbf_rec_run(char *, struct zfcp_erp_action *);
+ extern void zfcp_dbf_rec_run_lvl(int level, char *tag,
+ 				 struct zfcp_erp_action *erp);
+diff --git a/drivers/s390/scsi/zfcp_scsi.c b/drivers/s390/scsi/zfcp_scsi.c
+index 4d2ba5682493..22f9562f415c 100644
+--- a/drivers/s390/scsi/zfcp_scsi.c
++++ b/drivers/s390/scsi/zfcp_scsi.c
+@@ -4,7 +4,7 @@
+  *
+  * Interface to Linux SCSI midlayer.
+  *
+- * Copyright IBM Corp. 2002, 2017
++ * Copyright IBM Corp. 2002, 2018
+  */
+ 
+ #define KMSG_COMPONENT "zfcp"
+@@ -618,9 +618,9 @@ static void zfcp_scsi_rport_register(struct zfcp_port *port)
+ 	ids.port_id = port->d_id;
+ 	ids.roles = FC_RPORT_ROLE_FCP_TARGET;
+ 
+-	zfcp_dbf_rec_trig("scpaddy", port->adapter, port, NULL,
+-			  ZFCP_PSEUDO_ERP_ACTION_RPORT_ADD,
+-			  ZFCP_PSEUDO_ERP_ACTION_RPORT_ADD);
++	zfcp_dbf_rec_trig_lock("scpaddy", port->adapter, port, NULL,
++			       ZFCP_PSEUDO_ERP_ACTION_RPORT_ADD,
++			       ZFCP_PSEUDO_ERP_ACTION_RPORT_ADD);
+ 	rport = fc_remote_port_add(port->adapter->scsi_host, 0, &ids);
+ 	if (!rport) {
+ 		dev_err(&port->adapter->ccw_device->dev,
+@@ -642,9 +642,9 @@ static void zfcp_scsi_rport_block(struct zfcp_port *port)
+ 	struct fc_rport *rport = port->rport;
+ 
+ 	if (rport) {
+-		zfcp_dbf_rec_trig("scpdely", port->adapter, port, NULL,
+-				  ZFCP_PSEUDO_ERP_ACTION_RPORT_DEL,
+-				  ZFCP_PSEUDO_ERP_ACTION_RPORT_DEL);
++		zfcp_dbf_rec_trig_lock("scpdely", port->adapter, port, NULL,
++				       ZFCP_PSEUDO_ERP_ACTION_RPORT_DEL,
++				       ZFCP_PSEUDO_ERP_ACTION_RPORT_DEL);
+ 		fc_remote_port_delete(rport);
+ 		port->rport = NULL;
+ 	}
+diff --git a/drivers/scsi/Makefile b/drivers/scsi/Makefile
+index e29f9b8fd66d..56c940394729 100644
+--- a/drivers/scsi/Makefile
++++ b/drivers/scsi/Makefile
+@@ -182,7 +182,7 @@ zalon7xx-objs	:= zalon.o ncr53c8xx.o
+ NCR_Q720_mod-objs	:= NCR_Q720.o ncr53c8xx.o
+ 
+ # Files generated that shall be removed upon make clean
+-clean-files :=	53c700_d.h 53c700_u.h
++clean-files :=	53c700_d.h 53c700_u.h scsi_devinfo_tbl.c
+ 
+ $(obj)/53c700.o $(MODVERDIR)/$(obj)/53c700.ver: $(obj)/53c700_d.h
+ 
+diff --git a/drivers/scsi/sg.c b/drivers/scsi/sg.c
+index c198b96368dd..5c40d809830f 100644
+--- a/drivers/scsi/sg.c
++++ b/drivers/scsi/sg.c
+@@ -1894,7 +1894,7 @@ sg_build_indirect(Sg_scatter_hold * schp, Sg_fd * sfp, int buff_size)
+ 		num = (rem_sz > scatter_elem_sz_prev) ?
+ 			scatter_elem_sz_prev : rem_sz;
+ 
+-		schp->pages[k] = alloc_pages(gfp_mask, order);
++		schp->pages[k] = alloc_pages(gfp_mask | __GFP_ZERO, order);
+ 		if (!schp->pages[k])
+ 			goto out;
+ 
+diff --git a/drivers/target/target_core_user.c b/drivers/target/target_core_user.c
+index 4ad89ea71a70..4f26bdc3d1dc 100644
+--- a/drivers/target/target_core_user.c
++++ b/drivers/target/target_core_user.c
+@@ -2121,6 +2121,8 @@ static ssize_t tcmu_qfull_time_out_store(struct config_item *item,
+ 
+ 	if (val >= 0) {
+ 		udev->qfull_time_out = val * MSEC_PER_SEC;
++	} else if (val == -1) {
++		udev->qfull_time_out = val;
+ 	} else {
+ 		printk(KERN_ERR "Invalid qfull timeout value %d\n", val);
+ 		return -EINVAL;
