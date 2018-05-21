@@ -1,155 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751902AbeEUDrW (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 23:47:22 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:50054 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750836AbeEUDrT (ORCPT
+        id S1752311AbeEUDs2 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 23:48:28 -0400
+Received: from ext-host0001.ascade.co.jp ([218.224.228.194]:62050 "EHLO
+        ns.ascade.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751280AbeEUDsZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 23:47:19 -0400
-Subject: Re: [ANNOUNCE] Kconfiglib menuconfig implementation
-To: Ulf Magnusson <ulfalizer@gmail.com>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <CAFkk2KRTnRpi5thUGTM2+LZMyitggdJtiOBO7E0pTn93fz6-SQ@mail.gmail.com>
- <d4c3b2ab-385d-fe7a-bdb1-2d497d620de5@infradead.org>
- <CAFkk2KRozscmd4kQSJKwKmY3WpTody7S5XZZObf8SKLF62k6+w@mail.gmail.com>
- <CAFkk2KRkEt3+786QvyjzPPAm+3HDe2+ydzZJpshfdKyUDQVfuw@mail.gmail.com>
- <CAFkk2KRvSxu+x-nb045=3L63KEk5h9URr5QYLPoYp6rqqTR4qA@mail.gmail.com>
- <3d9be2f2-3fbe-411b-8529-0e0847f01346@infradead.org>
- <CAFkk2KRWon_S--dxYw82cDyGXKTFA6jxrrQwstzLvHPs=6-dqQ@mail.gmail.com>
- <c4ec710f-b2bd-b9f0-c33a-159aa53ca73c@infradead.org>
- <1378afb3-2b0e-da7a-5721-a8fa727e4382@infradead.org>
- <CAFkk2KS=bYn3t-764CEy+sq9E8FUbWH=L-yQbDhAYQpnrgmsiQ@mail.gmail.com>
- <4a4b12fc-ab54-20c4-7aa7-a83c4faecf25@infradead.org>
- <CAFkk2KTrC7DEe7dU4Jq13YBNWGDSa8KmMm0mpFvxokrKeMzCFg@mail.gmail.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <4310659d-e36f-63d3-88b3-e1c5235679b2@infradead.org>
-Date: Sun, 20 May 2018 20:47:15 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Sun, 20 May 2018 23:48:25 -0400
+Subject: Re: [PATCH v2 3/7] memcg: use compound_order rather than
+ hpage_nr_pages
+To: Punit Agrawal <punit.agrawal@arm.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>, David Rientjes <rientjes@google.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        Marc-Andre Lureau <marcandre.lureau@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, cgroups@vger.kernel.org
+References: <e863529b-7ce5-4fbe-8cff-581b5789a5f9@ascade.co.jp>
+ <262267fe-d98c-0b25-9013-3dafb52e8679@ascade.co.jp>
+ <87wow0zwja.fsf@e105922-lin.cambridge.arm.com>
+ <87sh6ozwc4.fsf@e105922-lin.cambridge.arm.com>
+From: TSUKADA Koutaro <tsukada@ascade.co.jp>
+Message-ID: <2053ac36-74df-b05e-d1ce-36f69dde2a47@ascade.co.jp>
+Date: Mon, 21 May 2018 12:48:22 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <CAFkk2KTrC7DEe7dU4Jq13YBNWGDSa8KmMm0mpFvxokrKeMzCFg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <87sh6ozwc4.fsf@e105922-lin.cambridge.arm.com>
+Content-Type: text/plain; charset=iso-2022-jp; format=flowed; delsp=yes
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/20/2018 08:33 PM, Ulf Magnusson wrote:
-> On Mon, May 21, 2018 at 4:45 AM, Randy Dunlap <rdunlap@infradead.org> wrote:
->> On 05/19/2018 09:47 PM, Ulf Magnusson wrote:
->>> On Sun, May 20, 2018 at 6:03 AM, Randy Dunlap <rdunlap@infradead.org> wrote:
->>>> On 05/19/2018 08:45 PM, Randy Dunlap wrote:
->>>>> On 05/08/2018 09:59 AM, Ulf Magnusson wrote:
->>>>>> Hello,
->>>>>>
->>>>>> I've added incremental search for jumping directly to a symbol now.
->>>>>> Regular expressions are supported as well.
->>>>>>
->>>>>> Some screenshots below:
->>>>>>
->>>>>> https://raw.githubusercontent.com/ulfalizer/Kconfiglib/screenshots/screenshots/ss10.png
->>>>>> https://raw.githubusercontent.com/ulfalizer/Kconfiglib/screenshots/screenshots/ss11.png
->>>>>> https://raw.githubusercontent.com/ulfalizer/Kconfiglib/screenshots/screenshots/ss13.png
->>>>>>
->>>>>> The last screenshot shows how things might look after you jump to a
->>>>>> symbol. The jumped-to symbol wasn't visible in this case, so show-all
->>>>>> mode was turned on automatically.
->>>>>
->>>>> Hi Ulf,
->>>>>
->>>>>
->>>>>
->>>>> Hm, OK, I used the trick that you supplied a few weeks ago and I have the UI now.
->>>>>
->>>>>     ARCH=x86 SRCARCH=x86 KERNELVERSION=`make kernelversion` \
->>>>>         Kconfiglib/menuconfig.py
->>>>>
->>>>> so yes, a real Makefile target would be nice. :)
->>>>
->>>> I want to see all kconfig symbols that end with "_DEBUG" (so excluding
->>>> _DEBUGFS).  Using:
->>>>
->>>> /.*_DEBUG$
->>>>
->>>> shows me 6 symbols:
->>>> ATH9K_COMMON_DEBUG
->>>> DVB_B2C2_FLEXCOP_DEBUG
->>>> HAVE_DMA_API_DEBUG
->>>> IP_DCCP_TFRC_DEBUG
->>>> NFS_DEBUG
->>>> PM_SLEEP_DEBUG
->>>>
->>>> so where are the other (approx.) 176?
->>>> see:
->>>> $ find . -name Kconfig\* | xargs grep "config.*_DEBUG$" | grep -v \.orig | wc
->>>>     182     364    9179
->>>>
->>>>
->>>> Anyway, something for you to look at. :)
->>>>
->>>> --
->>>> ~Randy
->>>
->>> It's related to how the search is done. Searching for "DEBUG\b" (word
->>> boundary) instead will find all of them.
->>>
->>> A string is generated for each symbol. For symbols with prompts, this
->>> string includes the prompt as well, so you get e.g.
->>>
->>>     AB8500_DEBUG "Enable debug info via debugfs"
->>>
->>> Those strings are then searched/displayed.
->>>
->>> What you got with your search was all symbols whose names end in
->>> "_DEBUG" that don't have a prompt.
->>>
->>> The nice thing about searching both the name and the prompt is that
->>> e.g. "debugfs ab8500" will find the symbol above. I'm also planning to
->>> add menus to the search, by generating 'menu: "menu title"' strings
->>> for them.
->>>
->>> It's a bit awkward/unintuitive that what you tried doesn't work
->>> though. Maybe the symbol name could be searched separately from the
->>> prompt, though I'd be a bit sad to abandon the super simple
->>> single-string-per-entry implementation approach. :)
+On 2018/05/19 2:51, Punit Agrawal wrote:
+> Punit Agrawal <punit.agrawal@arm.com> writes:
+> 
+>> Tsukada-san,
 >>
->> Hi Ulf,
+>> I am not familiar with memcg so can't comment about whether the patchset
+>> is the right way to solve the problem outlined in the cover letter but
+>> had a couple of comments about this patch.
 >>
->> What else are you planning to do with /(search)?
+>> TSUKADA Koutaro <tsukada@ascade.co.jp> writes:
+>>
+>>> The current memcg implementation assumes that the compound page is THP.
+>>> In order to be able to charge surplus hugepage, we use compound_order.
+>>>
+>>> Signed-off-by: TSUKADA Koutaro <tsukada@ascade.co.jp>
+>>
+>> Please move this before Patch 1/7. This is to prevent wrong accounting
+>> of pages to memcg for size != PMD_SIZE.
 > 
-> Here's the stuff I've thought of so far:
+> I just noticed that the default state is off so the change isn't enabled
+> until the sysfs node is exposed in the next patch. Please ignore this
+> comment.
 > 
->   - Display invisible symbols in red (to match show-all mode)
+> One below still applies.
 > 
->   - Search prompts of menus and comments as well
-> 
->   - Have [F1] show the help display without canceling the search,
->     so you can quickly scan through a bunch of symbols
-> 
-> Maybe you could get fancy with stuff like finding symbols that are
-> related to other symbols in particular ways too...
-> 
->> /syscall lists 20 or so symbols. It would be nice if each one of those
->> showed its current setting [y,n,maybe^Wm].
-> 
-> Nice idea. I added it:
-> https://github.com/ulfalizer/Kconfiglib/commit/3161affaa5bb8350a39bfd305c56171a25b02151
-> 
-> Works for strings/int/hex too.
+>>
+>>> ---
+>>>   memcontrol.c |   10 +++++-----
+>>>   1 file changed, 5 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+>>> index 2bd3df3..a8f1ff8 100644
+>>> --- a/mm/memcontrol.c
+>>> +++ b/mm/memcontrol.c
+>>> @@ -4483,7 +4483,7 @@ static int mem_cgroup_move_account(struct page *page,
+>>>   				   struct mem_cgroup *to)
+>>>   {
+>>>   	unsigned long flags;
+>>> -	unsigned int nr_pages = compound ? hpage_nr_pages(page) : 1;
+>>> +	unsigned int nr_pages = compound ? (1 << compound_order(page)) : 1;
+>>
+>> Instead of replacing calls to hpage_nr_pages(), is it possible to modify
+>> it to do the calculation?
 
-Thanks.
+Thank you for review my code and please just call me Tsukada.
 
->> I like Toggle show-all mode.  When I use xconfig, I usually turn on most
->> of its options, including one like that.
-> 
-> IIRC, xconfig doesn't make it very clear which symbols are invisible
-> in show-all mode. That's why I made them red.
+I think it is possible to modify the inside of itself rather than
+replacing the call to hpage_nr_pages().
 
-Yes, that's helpful.
+Inferring from the processing that hpage_nr_pages() desires, I thought
+that the definition of hpage_nr_pages() could be moved outside the
+CONFIG_TRANSPARENT_HUGEPAGE. It seems that THP and HugeTLBfs can be
+handled correctly because compound_order() is judged by seeing whether it
+is PageHead or not.
 
+Also, I would like to use compound_order() inside hpage_nr_pages(), but
+since huge_mm.h is included before mm.h where compound_order() is defined,
+move hpage_nr_pages to mm.h.
+
+Instead of patch 3/7, are the following patches implementing what you
+intended?
+
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index a8a1262..1186ab7 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -204,12 +204,6 @@ static inline spinlock_t *pud_trans_huge_lock(pud_t *pud,
+  	else
+  		return NULL;
+  }
+-static inline int hpage_nr_pages(struct page *page)
+-{
+-	if (unlikely(PageTransHuge(page)))
+-		return HPAGE_PMD_NR;
+-	return 1;
+-}
+
+  struct page *follow_devmap_pmd(struct vm_area_struct *vma, unsigned long addr,
+  		pmd_t *pmd, int flags);
+@@ -254,8 +248,6 @@ static inline bool thp_migration_supported(void)
+  #define HPAGE_PUD_MASK ({ BUILD_BUG(); 0; })
+  #define HPAGE_PUD_SIZE ({ BUILD_BUG(); 0; })
+
+-#define hpage_nr_pages(x) 1
+-
+  static inline bool transparent_hugepage_enabled(struct vm_area_struct *vma)
+  {
+  	return false;
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 1ac1f06..082f2ee 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -673,6 +673,12 @@ static inline unsigned int compound_order(struct page *page)
+  	return page[1].compound_order;
+  }
+
++static inline int hpage_nr_pages(struct page *page)
++{
++	VM_BUG_ON_PAGE(PageTail(page), page);
++	return (1 << compound_order(page));
++}
++
+  static inline void set_compound_order(struct page *page, unsigned int order)
+  {
+  	page[1].compound_order = order;
 
 -- 
-~Randy
+Thanks,
+Tsukada
