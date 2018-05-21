@@ -1,93 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753231AbeEUQ31 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 12:29:27 -0400
-Received: from mga17.intel.com ([192.55.52.151]:40329 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752882AbeEUQ3Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 12:29:24 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,426,1520924400";
-   d="scan'208";a="57749291"
-Date: Mon, 21 May 2018 09:29:23 -0700
-From: Jesse Brandeburg <jesse.brandeburg@intel.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: <mst@redhat.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>,
-        <virtualization@lists.linux-foundation.org>,
-        jesse.brandeburg@intel.com
-Subject: Re: [RFC PATCH net-next 02/12] vhost_net: introduce
- vhost_exceeds_weight()
-Message-ID: <20180521092923.00005cec@intel.com>
-In-Reply-To: <1526893473-20128-3-git-send-email-jasowang@redhat.com>
-References: <1526893473-20128-1-git-send-email-jasowang@redhat.com>
-        <1526893473-20128-3-git-send-email-jasowang@redhat.com>
-X-Mailer: Claws Mail 3.14.0 (GTK+ 2.24.30; i686-w64-mingw32)
+        id S1753037AbeEUQcp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 12:32:45 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:44166 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752824AbeEUQcm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 12:32:42 -0400
+Subject: Re: [Xen-devel] [RFC 1/3] xen/balloon: Allow allocating DMA buffers
+To: Oleksandr Andrushchenko <andr2000@gmail.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        jgross@suse.com, konrad.wilk@oracle.com
+Cc: daniel.vetter@intel.com, matthew.d.roper@intel.com,
+        dongwon.kim@intel.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180517082604.14828-1-andr2000@gmail.com>
+ <20180517082604.14828-2-andr2000@gmail.com>
+ <6a108876-19b7-49d0-3de2-9e10f984736c@oracle.com>
+ <9541926e-001a-e41e-317c-dbff6d687761@gmail.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <218e2bf7-490d-f89e-9866-27b7e3dbc835@oracle.com>
+Date: Mon, 21 May 2018 12:35:41 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <9541926e-001a-e41e-317c-dbff6d687761@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8900 signatures=668700
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805210197
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 May 2018 17:04:23 +0800 Jason wrote:
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
-> ---
->  drivers/vhost/net.c | 13 ++++++++-----
->  1 file changed, 8 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-> index 15d191a..de544ee 100644
-> --- a/drivers/vhost/net.c
-> +++ b/drivers/vhost/net.c
-> @@ -479,6 +479,12 @@ static size_t init_iov_iter(struct vhost_virtqueue *vq, struct iov_iter *iter,
->  	return len;
->  }
->  
-> +static bool vhost_exceeds_weight(int pkts, int total_len)
-> +{
-> +	return unlikely(total_len >= VHOST_NET_WEIGHT) ||
-> +	       unlikely(pkts >= VHOST_NET_PKT_WEIGHT);
+On 05/21/2018 01:40 AM, Oleksandr Andrushchenko wrote:
+> On 05/19/2018 01:04 AM, Boris Ostrovsky wrote:
+>> On 05/17/2018 04:26 AM, Oleksandr Andrushchenko wrote:
+>>> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>>
+>> A commit message would be useful.
+> Sure, v1 will have it
+>>
+>>> Signed-off-by: Oleksandr Andrushchenko
+>>> <oleksandr_andrushchenko@epam.com>
+>>>
+>>>       for (i = 0; i < nr_pages; i++) {
+>>> -        page = alloc_page(gfp);
+>>> -        if (page == NULL) {
+>>> -            nr_pages = i;
+>>> -            state = BP_EAGAIN;
+>>> -            break;
+>>> +        if (ext_pages) {
+>>> +            page = ext_pages[i];
+>>> +        } else {
+>>> +            page = alloc_page(gfp);
+>>> +            if (page == NULL) {
+>>> +                nr_pages = i;
+>>> +                state = BP_EAGAIN;
+>>> +                break;
+>>> +            }
+>>>           }
+>>>           scrub_page(page);
+>>>           list_add(&page->lru, &pages);
+>>> @@ -529,7 +565,7 @@ static enum bp_state
+>>> decrease_reservation(unsigned long nr_pages, gfp_t gfp)
+>>>       i = 0;
+>>>       list_for_each_entry_safe(page, tmp, &pages, lru) {
+>>>           /* XENMEM_decrease_reservation requires a GFN */
+>>> -        frame_list[i++] = xen_page_to_gfn(page);
+>>> +        frames[i++] = xen_page_to_gfn(page);
+>>>     #ifdef CONFIG_XEN_HAVE_PVMMU
+>>>           /*
+>>> @@ -552,18 +588,22 @@ static enum bp_state
+>>> decrease_reservation(unsigned long nr_pages, gfp_t gfp)
+>>>   #endif
+>>>           list_del(&page->lru);
+>>>   -        balloon_append(page);
+>>> +        if (!ext_pages)
+>>> +            balloon_append(page);
+>>
+>> So what you are proposing is not really ballooning. You are just
+>> piggybacking on existing interfaces, aren't you?
+> Sort of. Basically I need to {increase|decrease}_reservation, not
+> actually
+> allocating ballooned pages.
+> Do you think I can simply EXPORT_SYMBOL for
+> {increase|decrease}_reservation?
+> Any other suggestion?
 
-I was going to say just one unlikely, but then the caller of this
-function also says unlikely(vhost_exceeds...), so I think you should
-just drop the unlikely statements here (both of them)
 
-> +}
-> +
->  /* Expects to be always run from workqueue - which acts as
->   * read-size critical section for our kind of RCU. */
->  static void handle_tx(struct vhost_net *net)
-> @@ -570,7 +576,6 @@ static void handle_tx(struct vhost_net *net)
->  			msg.msg_control = NULL;
->  			ubufs = NULL;
->  		}
-> -
+I am actually wondering how much of that code you end up reusing. You
+pretty much create new code paths in both routines and common code ends
+up being essentially the hypercall. So the question is --- would it make
+sense to do all of this separately from the balloon driver?
 
-unrelated whitespace changes?
 
->  		total_len += len;
->  		if (total_len < VHOST_NET_WEIGHT &&
->  		    !vhost_vq_avail_empty(&net->dev, vq) &&
-> @@ -600,8 +605,7 @@ static void handle_tx(struct vhost_net *net)
->  		else
->  			vhost_zerocopy_signal_used(net, vq);
->  		vhost_net_tx_packet(net);
-> -		if (unlikely(total_len >= VHOST_NET_WEIGHT) ||
-> -		    unlikely(++sent_pkts >= VHOST_NET_PKT_WEIGHT)) {
-> +		if (unlikely(vhost_exceeds_weight(++sent_pkts, total_len))) {
->  			vhost_poll_queue(&vq->poll);
->  			break;
->  		}
-> @@ -887,8 +891,7 @@ static void handle_rx(struct vhost_net *net)
->  		if (unlikely(vq_log))
->  			vhost_log_write(vq, vq_log, log, vhost_len);
->  		total_len += vhost_len;
-> -		if (unlikely(total_len >= VHOST_NET_WEIGHT) ||
-> -		    unlikely(++recv_pkts >= VHOST_NET_PKT_WEIGHT)) {
-> +		if (unlikely(vhost_exceeds_weight(++recv_pkts, total_len))) {
->  			vhost_poll_queue(&vq->poll);
->  			goto out;
->  		}
+-boris
