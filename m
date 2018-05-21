@@ -1,46 +1,39 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqbeDNi0dnyDOLeoc2wrRPxTfxGgRqnU6CRXJQSztIRySch/S9lq6qhzzlqLp4CSZ/boYSW
-ARC-Seal: i=1; a=rsa-sha256; t=1526937251; cv=none;
+X-Google-Smtp-Source: AB8JxZozNXgjucwaq1UrrCQ4vSZ2I2d+kiYL5iM8G4vhytmDUrDovjA12tWbZw1xdpMXcF/js006
+ARC-Seal: i=1; a=rsa-sha256; t=1526937248; cv=none;
         d=google.com; s=arc-20160816;
-        b=mFHJ+Lg057coWSpXN81+M/jU1bhO7DPvntnXAH7PR92W4m9CZIU2IGJ0FvodRavddV
-         fBqPtfwf5zRfL8n8ifFBnSU2RLo1oD6nJBS3tc0x1c5Zwv599fUfuM8AJUSmy80l4qnJ
-         B3zgTBSeTdxM4eo3XrpQmfmfa03RyL0zXSFYOgE134Oww64SKXLjOK2rqRLmBxFMptDV
-         s7hOT4omL+7TQiHt1FPcx4jj0xOQRFLrprBh/IgZQKO6JJnMxK8AFnLWJwOaAF9RdivY
-         ZcQ/xfnz+4OQYKdMWmcYZlj6tLjgp0Zw5nkSP3wCewx6ZWMLVB4CSwVL++2oomXnT3V7
-         IScw==
+        b=FozvMo/ISrh/pc2t4soNUA1+EL20FZW8KchWs+C45Kro5JzIs4G8u6e8FuoxPZS/+t
+         bUAWUjCY9GP4vHkAdmsWGF1IxVB+kQxqOutkDvgYj5MT+nLzODKXU0950fP3DBnWEmMY
+         CKRMYkV/J/UXsoJXdZUKIVtEP7hJIOrzuoSELlGrpU0rbTSe0oI4qop/G0UqgVC1Zdu2
+         t1Tv7soyzUdU2Tr7Ci502MkhU7MOvWWWEYNyAb+JF2yTBRGyYUeqB5cbjANBrMI9TMT5
+         vlzUx7vRue5hVBYJFzcUBj6OQGZ61BKdJ4pgsIHX/Ufpv9g/0G4s8//NtUKgC4dtRHco
+         gYfQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=Fbuj46DzoGlf84fn0/TX0lpvw7cLHvdGx5HUr/a37dg=;
-        b=oOTzhOzOEcvGxOU3FaSQbZpy1EyeXO+wArFh66p4a/+BiARlcO9dMulxt28/KNAejF
-         OY5JKXmWTX7MUIxg9GqLgV1jE0tQuutp1pZLzPhbpWmoNSuogQ2DkiV+qFOnCaUyGT/u
-         l/RNNonEBkUJ+dm8hdWMamOZP/afmlucmuF/voglVEaOwLaoewHfIB1pwwbhk0h/5MZP
-         GnXCxomjqo+GL2glaREs1eTyVPynEIwvXk7+9RWcqwoYrluwoz5rkHmkDNF3u3J47CY4
-         fJZ3vTxaQ6MNrcUVqMAslQ2HFtkM/IsF1U6G+qGh8hE/KCrxUvgY4nJ9jcKVJx/BzMvf
-         d9PQ==
+        bh=qzzHeMv0RpHgg3RurN4HaiO7FzqTyH8jlEewURgujNU=;
+        b=K1M+lGKMvmrxIPL/7uWhwnq0dgl8SsbwIbMz/673qhfBKtwNMtuzUDNClv6TuNlnbl
+         yaX24Xt+86n551v3UsznLa6mWoUU26P1DYsoz/ajzhrd3EnSGJ2lpfB2vffnuNzwu8EL
+         qAowcL6C07XHPXdfmc6PcvH7ety11Ac0/DRhepAJ580IYWSPFwaklJMTWhnN90cjZsCf
+         ns5MjEezFvItXl1T4aVX5TcbOXaphPrkiEjeRgAJVyeXko2y8TRtS+ABSoPDWFRgVADN
+         zMwBx/VpO9qJwI1uRjKqibnWkQotosmO8y/TscOXeA6m9gzKvbWe5+KxExL8Ijah79Mu
+         yJuQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=REHj9IvG;
+       dkim=pass header.i=@kernel.org header.s=default header.b=STah/RUm;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=REHj9IvG;
+       dkim=pass header.i=@kernel.org header.s=default header.b=STah/RUm;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Waiman Long <Waiman.Long@hpe.com>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Stas Sergeev <stsp@list.ru>,
-	Scott J Norton <scott.norton@hpe.com>,
-	Douglas Hatch <doug.hatch@hpe.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Mel Gorman <mgorman@suse.de>
-Subject: [PATCH 4.9 14/87] signals: avoid unnecessary taking of sighand->siglock
-Date: Mon, 21 May 2018 23:10:50 +0200
-Message-Id: <20180521210421.524274294@linuxfoundation.org>
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Michal Suchanek <msuchanek@suse.de>
+Subject: [PATCH 4.9 13/87] powerpc: Dont preempt_disable() in show_cpuinfo()
+Date: Mon, 21 May 2018 23:10:49 +0200
+Message-Id: <20180521210421.462653316@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210420.222671977@linuxfoundation.org>
 References: <20180521210420.222671977@linuxfoundation.org>
@@ -50,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109754935892721?=
-X-GMAIL-MSGID: =?utf-8?q?1601109754935892721?=
+X-GMAIL-THRID: =?utf-8?q?1601109752390685238?=
+X-GMAIL-MSGID: =?utf-8?q?1601109752390685238?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -59,100 +52,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Waiman Long <Waiman.Long@hpe.com>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
-commit c7be96af89d4b53211862d8599b2430e8900ed92 upstream.
+commit 349524bc0da698ec77f2057cf4a4948eb6349265 upstream.
 
-When running certain database workload on a high-end system with many
-CPUs, it was found that spinlock contention in the sigprocmask syscalls
-became a significant portion of the overall CPU cycles as shown below.
+This causes warnings from cpufreq mutex code. This is also rather
+unnecessary and ineffective. If we really want to prevent concurrent
+unplug, we could take the unplug read lock but I don't see this being
+critical.
 
-  9.30%  9.30%  905387  dataserver  /proc/kcore 0x7fff8163f4d2
-  [k] _raw_spin_lock_irq
-            |
-            ---_raw_spin_lock_irq
-               |
-               |--99.34%-- __set_current_blocked
-               |          sigprocmask
-               |          sys_rt_sigprocmask
-               |          system_call_fastpath
-               |          |
-               |          |--50.63%-- __swapcontext
-               |          |          |
-               |          |          |--99.91%-- upsleepgeneric
-               |          |
-               |          |--49.36%-- __setcontext
-               |          |          ktskRun
-
-Looking further into the swapcontext function in glibc, it was found that
-the function always call sigprocmask() without checking if there are
-changes in the signal mask.
-
-A check was added to the __set_current_blocked() function to avoid taking
-the sighand->siglock spinlock if there is no change in the signal mask.
-This will prevent unneeded spinlock contention when many threads are
-trying to call sigprocmask().
-
-With this patch applied, the spinlock contention in sigprocmask() was
-gone.
-
-Link: http://lkml.kernel.org/r/1474979209-11867-1-git-send-email-Waiman.Long@hpe.com
-Signed-off-by: Waiman Long <Waiman.Long@hpe.com>
-Acked-by: Oleg Nesterov <oleg@redhat.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Stas Sergeev <stsp@list.ru>
-Cc: Scott J Norton <scott.norton@hpe.com>
-Cc: Douglas Hatch <doug.hatch@hpe.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Mel Gorman <mgorman@suse.de>
+Fixes: cd77b5ce208c ("powerpc/powernv/cpufreq: Fix the frequency read by /proc/cpuinfo")
+Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Acked-by: Michal Suchanek <msuchanek@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/signal.h |   17 +++++++++++++++++
- kernel/signal.c        |    7 +++++++
- 2 files changed, 24 insertions(+)
+ arch/powerpc/kernel/setup-common.c |   11 -----------
+ 1 file changed, 11 deletions(-)
 
---- a/include/linux/signal.h
-+++ b/include/linux/signal.h
-@@ -97,6 +97,23 @@ static inline int sigisemptyset(sigset_t
- 	}
- }
+--- a/arch/powerpc/kernel/setup-common.c
++++ b/arch/powerpc/kernel/setup-common.c
+@@ -228,14 +228,6 @@ static int show_cpuinfo(struct seq_file
+ 	unsigned short maj;
+ 	unsigned short min;
  
-+static inline int sigequalsets(const sigset_t *set1, const sigset_t *set2)
-+{
-+	switch (_NSIG_WORDS) {
-+	case 4:
-+		return	(set1->sig[3] == set2->sig[3]) &&
-+			(set1->sig[2] == set2->sig[2]) &&
-+			(set1->sig[1] == set2->sig[1]) &&
-+			(set1->sig[0] == set2->sig[0]);
-+	case 2:
-+		return	(set1->sig[1] == set2->sig[1]) &&
-+			(set1->sig[0] == set2->sig[0]);
-+	case 1:
-+		return	set1->sig[0] == set2->sig[0];
-+	}
-+	return 0;
-+}
-+
- #define sigmask(sig)	(1UL << ((sig) - 1))
- 
- #ifndef __HAVE_ARCH_SIG_SETOPS
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -2495,6 +2495,13 @@ void __set_current_blocked(const sigset_
- {
- 	struct task_struct *tsk = current;
- 
-+	/*
-+	 * In case the signal mask hasn't changed, there is nothing we need
-+	 * to do. The current->blocked shouldn't be modified by other task.
-+	 */
-+	if (sigequalsets(&tsk->blocked, newset))
-+		return;
-+
- 	spin_lock_irq(&tsk->sighand->siglock);
- 	__set_task_blocked(tsk, newset);
- 	spin_unlock_irq(&tsk->sighand->siglock);
+-	/* We only show online cpus: disable preempt (overzealous, I
+-	 * knew) to prevent cpu going down. */
+-	preempt_disable();
+-	if (!cpu_online(cpu_id)) {
+-		preempt_enable();
+-		return 0;
+-	}
+-
+ #ifdef CONFIG_SMP
+ 	pvr = per_cpu(cpu_pvr, cpu_id);
+ #else
+@@ -340,9 +332,6 @@ static int show_cpuinfo(struct seq_file
+ #ifdef CONFIG_SMP
+ 	seq_printf(m, "\n");
+ #endif
+-
+-	preempt_enable();
+-
+ 	/* If this is the last cpu, print the summary */
+ 	if (cpumask_next(cpu_id, cpu_online_mask) >= nr_cpu_ids)
+ 		show_cpuinfo_summary(m);
