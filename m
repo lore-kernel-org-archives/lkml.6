@@ -1,233 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752835AbeEUN6e (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 09:58:34 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:40074 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751178AbeEUN6b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 09:58:31 -0400
-X-Google-Smtp-Source: AB8JxZqBS56Q+g1P+pLMOSmfKNK8kn0UEuRkvMP8pXEFAk7FhEbetyo4Lq3beO3LWz2YswtLFCdZKg==
-Date: Mon, 21 May 2018 09:58:28 -0400
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: benjamin.gaignard@st.com, fabrice.gasnier@st.com,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v6 9/9] iio: counter: Remove IIO counter subdirectory
-Message-ID: <20180521135828.GD5723@sophia>
-References: <cover.1526487615.git.vilhelm.gray@gmail.com>
- <4c335e0eebfbaf6e86f41e0f2864d76993d90b13.1526487615.git.vilhelm.gray@gmail.com>
- <20180520165302.101d37ce@archlinux>
+        id S1752669AbeEUOAf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 10:00:35 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50108 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751280AbeEUOAf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 10:00:35 -0400
+Subject: Re: [PATCH 6/6] arm64: perf: Add support for chaining counters
+To: Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        will.deacon@arm.com
+References: <1526638943-2110-1-git-send-email-suzuki.poulose@arm.com>
+ <1526638943-2110-7-git-send-email-suzuki.poulose@arm.com>
+ <32f2d870-9b9c-0b10-880f-cc99cf969bf6@arm.com>
+ <5d53fe1d-dbd9-2aad-73bd-0c4284540240@arm.com>
+ <c8cb9280-c93d-89c4-43ed-179de8d46dfd@arm.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <f7ffdcfb-5a32-9a55-32a5-4f8770e23aa0@arm.com>
+Date: Mon, 21 May 2018 15:00:32 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180520165302.101d37ce@archlinux>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <c8cb9280-c93d-89c4-43ed-179de8d46dfd@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 20, 2018 at 04:53:02PM +0100, Jonathan Cameron wrote:
->On Wed, 16 May 2018 13:52:39 -0400
->William Breathitt Gray <vilhelm.gray@gmail.com> wrote:
->
->> This patch removes the IIO counter subdirectory which is now superceded
->> by the Counter subsystem. Deprecation warnings are added to the
->> documentation of the relevant IIO counter sysfs attributes.
->> 
->> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
->
->Please drop the directory when it becomes empty rather than in a later
->patch.  IIRC there are some issues with empty Makefiles that will
->make building inbetween tricky.
->
->For the deprecated markings.
->
->Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+On 21/05/18 14:42, Suzuki K Poulose wrote:
+> On 18/05/18 16:57, Suzuki K Poulose wrote:
+>> Hi Robin,
+>>
+>> On 18/05/18 14:49, Robin Murphy wrote:
+>>> On 18/05/18 11:22, Suzuki K Poulose wrote:
+>>>> Add support for chained event counters. PMUv3 allows chaining
+>>>> a pair of adjacent PMU counters (with the lower counter number
+>>>> being always "even"). The low counter is programmed to count
+>>>> the event of interest and the high counter(odd numbered) is
+>>>> programmed with a special event code (0x1e - Chain). Thus
+>>>> we need special allocation schemes to make the full use of
+>>>> available counters. So, we allocate the counters from either
+>>>> ends. i.e, chained counters are allocated from the lower
+>>>> end in pairs of two and the normal counters are allocated
+>>>> from the higher number. Also makes necessary changes to
+>>>> handle the chained events as a single event with 2 counters.
+>>>>
+>>>> Cc: Mark Rutland <mark.rutland@arm.com>
+>>>> Cc: Will Deacon <will.deacon@arm.com>
+>>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> 
+>>
+>>>>   /*
+>>>> @@ -845,8 +1016,14 @@ static int __armv8_pmuv3_map_event(struct 
+>>>> perf_event *event,
+>>>>                          &armv8_pmuv3_perf_cache_map,
+>>>>                          ARMV8_PMU_EVTYPE_EVENT);
+>>>> -    if (hw_event_id == ARMV8_PMUV3_PERFCTR_CPU_CYCLES)
+>>>> +    if (hw_event_id == ARMV8_PMUV3_PERFCTR_CPU_CYCLES) {
+>>>> +        /* Prevent chaining for cycle counter */
+>>>
+>>> Why? Sure, we want to avoid executing the chaining logic if we're 
+>>> scheduling a cycles event in the dedicated counter (which is perhaps 
+>>> what the comment above wanted to say), but if one ends up allocated 
+>>> into a regular counter (e.g. if the user asks for multiple cycle 
+>>> counts with different filters), then I don't see any reason to forbid 
+>>> that being chained.
+>>
+>> Ah, I didn't think about that case. I was under the assumption that the
+>> cycles are *only* placed on the cycle counter. I will take care of that.
+>> Thanks for the review.
+> 
+> Robin, Mark, Will
+> 
+> One potential problem I see with allowing chaining of the cycle counter
+> *and* the promotion of cycle event to 64bit by default is when the user
+> may actually be able to count 1 less event (due to the promotion of
+> cycle event to 64bit and thus forcing to use chain, if the cycle counter
+> is unavailable).
 
-I'll have the directory removal occur with the removal of the last
-module then when the directory becomes empty.
+Right, I didn't mean to imply we should inject the "chain" attr 
+automatically for all cycles events, just that we shouldn't be rejecting 
+it if the user does explicitly set it (but then just ignore it if using 
+the dedicated counter).
 
-Regarding the deprecation markings, should I select a specific kernel
-version to date the removal of these attributes, or leave the future
-date open as this patch is now?
+> So one option is to drop automatic promotion of the cycle counter to
+> 64bit and do it only when it is requested by the user and use either the
+> Cycle counter (preferred) or fall back to chaining. That way, the user
+> has the control over the number of events he can count using the given
+> set of counters.
 
-William Breathitt Gray
+Naively, there doesn't seem to be any inherent harm in always using 
+64-bit arithmetic for the dedicated counter, but it would mean that with 
+multiple (non-chained) cycles events, some would be taking an interrupt 
+every few seconds while one would effectively never overflow. I guess 
+the question is whether that matters or not.
 
->
->> ---
->>  Documentation/ABI/testing/sysfs-bus-iio          |  8 ++++++++
->>  .../ABI/testing/sysfs-bus-iio-counter-104-quad-8 | 16 ++++++++++++++++
->>  drivers/iio/Kconfig                              |  1 -
->>  drivers/iio/Makefile                             |  1 -
->>  drivers/iio/counter/Kconfig                      |  8 --------
->>  drivers/iio/counter/Makefile                     |  5 -----
->>  6 files changed, 24 insertions(+), 15 deletions(-)
->>  delete mode 100644 drivers/iio/counter/Kconfig
->>  delete mode 100644 drivers/iio/counter/Makefile
->> 
->> diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
->> index 731146c3b138..6115d97b075e 100644
->> --- a/Documentation/ABI/testing/sysfs-bus-iio
->> +++ b/Documentation/ABI/testing/sysfs-bus-iio
->> @@ -1637,6 +1637,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_countY_raw
->>  KernelVersion:	4.10
->>  Contact:	linux-iio@vger.kernel.org
->>  Description:
->> +		This interface is deprecated; please use the Counter subsystem.
->> +
->>  		Raw counter device counts from channel Y. For quadrature
->>  		counters, multiplication by an available [Y]_scale results in
->>  		the counts of a single quadrature signal phase from channel Y.
->> @@ -1645,6 +1647,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_indexY_raw
->>  KernelVersion:	4.10
->>  Contact:	linux-iio@vger.kernel.org
->>  Description:
->> +		This interface is deprecated; please use the Counter subsystem.
->> +
->>  		Raw counter device index value from channel Y. This attribute
->>  		provides an absolute positional reference (e.g. a pulse once per
->>  		revolution) which may be used to home positional systems as
->> @@ -1654,6 +1658,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_count_count_direction_available
->>  KernelVersion:	4.12
->>  Contact:	linux-iio@vger.kernel.org
->>  Description:
->> +		This interface is deprecated; please use the Counter subsystem.
->> +
->>  		A list of possible counting directions which are:
->>  		- "up"	: counter device is increasing.
->>  		- "down": counter device is decreasing.
->> @@ -1662,4 +1668,6 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_countY_count_direction
->>  KernelVersion:	4.12
->>  Contact:	linux-iio@vger.kernel.org
->>  Description:
->> +		This interface is deprecated; please use the Counter subsystem.
->> +
->>  		Raw counter device counters direction for channel Y.
->> diff --git a/Documentation/ABI/testing/sysfs-bus-iio-counter-104-quad-8 b/Documentation/ABI/testing/sysfs-bus-iio-counter-104-quad-8
->> index 7fac2c268d9a..bac3d0d48b7b 100644
->> --- a/Documentation/ABI/testing/sysfs-bus-iio-counter-104-quad-8
->> +++ b/Documentation/ABI/testing/sysfs-bus-iio-counter-104-quad-8
->> @@ -6,6 +6,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_index_synchronous_mode_available
->>  KernelVersion:	4.10
->>  Contact:	linux-iio@vger.kernel.org
->>  Description:
->> +		This interface is deprecated; please use the Counter subsystem.
->> +
->>  		Discrete set of available values for the respective counter
->>  		configuration are listed in this file.
->>  
->> @@ -13,6 +15,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_countY_count_mode
->>  KernelVersion:	4.10
->>  Contact:	linux-iio@vger.kernel.org
->>  Description:
->> +		This interface is deprecated; please use the Counter subsystem.
->> +
->>  		Count mode for channel Y. Four count modes are available:
->>  		normal, range limit, non-recycle, and modulo-n. The preset value
->>  		for channel Y is used by the count mode where required.
->> @@ -47,6 +51,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_countY_noise_error
->>  KernelVersion:	4.10
->>  Contact:	linux-iio@vger.kernel.org
->>  Description:
->> +		This interface is deprecated; please use the Counter subsystem.
->> +
->>  		Read-only attribute that indicates whether excessive noise is
->>  		present at the channel Y count inputs in quadrature clock mode;
->>  		irrelevant in non-quadrature clock mode.
->> @@ -55,6 +61,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_countY_preset
->>  KernelVersion:	4.10
->>  Contact:	linux-iio@vger.kernel.org
->>  Description:
->> +		This interface is deprecated; please use the Counter subsystem.
->> +
->>  		If the counter device supports preset registers, the preset
->>  		count for channel Y is provided by this attribute.
->>  
->> @@ -62,6 +70,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_countY_quadrature_mode
->>  KernelVersion:	4.10
->>  Contact:	linux-iio@vger.kernel.org
->>  Description:
->> +		This interface is deprecated; please use the Counter subsystem.
->> +
->>  		Configure channel Y counter for non-quadrature or quadrature
->>  		clock mode. Selecting non-quadrature clock mode will disable
->>  		synchronous load mode. In quadrature clock mode, the channel Y
->> @@ -83,6 +93,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_countY_set_to_preset_on_index
->>  KernelVersion:	4.10
->>  Contact:	linux-iio@vger.kernel.org
->>  Description:
->> +		This interface is deprecated; please use the Counter subsystem.
->> +
->>  		Whether to set channel Y counter with channel Y preset value
->>  		when channel Y index input is active, or continuously count.
->>  		Valid attribute values are boolean.
->> @@ -91,6 +103,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_indexY_index_polarity
->>  KernelVersion:	4.10
->>  Contact:	linux-iio@vger.kernel.org
->>  Description:
->> +		This interface is deprecated; please use the Counter subsystem.
->> +
->>  		Active level of channel Y index input; irrelevant in
->>  		non-synchronous load mode.
->>  
->> @@ -98,6 +112,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_indexY_synchronous_mode
->>  KernelVersion:	4.10
->>  Contact:	linux-iio@vger.kernel.org
->>  Description:
->> +		This interface is deprecated; please use the Counter subsystem.
->> +
->>  		Configure channel Y counter for non-synchronous or synchronous
->>  		load mode. Synchronous load mode cannot be selected in
->>  		non-quadrature clock mode.
->> diff --git a/drivers/iio/Kconfig b/drivers/iio/Kconfig
->> index d69e85a8bdc3..1152efad91a1 100644
->> --- a/drivers/iio/Kconfig
->> +++ b/drivers/iio/Kconfig
->> @@ -74,7 +74,6 @@ source "drivers/iio/afe/Kconfig"
->>  source "drivers/iio/amplifiers/Kconfig"
->>  source "drivers/iio/chemical/Kconfig"
->>  source "drivers/iio/common/Kconfig"
->> -source "drivers/iio/counter/Kconfig"
->>  source "drivers/iio/dac/Kconfig"
->>  source "drivers/iio/dummy/Kconfig"
->>  source "drivers/iio/frequency/Kconfig"
->> diff --git a/drivers/iio/Makefile b/drivers/iio/Makefile
->> index d8cba9c229c0..7bdd31f1b88f 100644
->> --- a/drivers/iio/Makefile
->> +++ b/drivers/iio/Makefile
->> @@ -20,7 +20,6 @@ obj-y += amplifiers/
->>  obj-y += buffer/
->>  obj-y += chemical/
->>  obj-y += common/
->> -obj-y += counter/
->>  obj-y += dac/
->>  obj-y += dummy/
->>  obj-y += gyro/
->> diff --git a/drivers/iio/counter/Kconfig b/drivers/iio/counter/Kconfig
->> deleted file mode 100644
->> index 95a7a0df6cac..000000000000
->> --- a/drivers/iio/counter/Kconfig
->> +++ /dev/null
->> @@ -1,8 +0,0 @@
->> -#
->> -# Counter devices
->> -#
->> -# When adding new entries keep the list in alphabetical order
->> -
->> -menu "Counters"
->> -
->> -endmenu
->> diff --git a/drivers/iio/counter/Makefile b/drivers/iio/counter/Makefile
->> deleted file mode 100644
->> index 8fd3d954775a..000000000000
->> --- a/drivers/iio/counter/Makefile
->> +++ /dev/null
->> @@ -1,5 +0,0 @@
->> -#
->> -# Makefile for IIO counter devices
->> -#
->> -
->> -# When adding new entries keep the list in alphabetical order
->
+Robin.
