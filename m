@@ -1,85 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752247AbeEUKhX (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 06:37:23 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46722 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750883AbeEUKhR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 06:37:17 -0400
-Date: Mon, 21 May 2018 11:37:12 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Ganapatrao Kulkarni <gklkml16@gmail.com>
-Cc: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Will Deacon <Will.Deacon@arm.com>, jnair@caviumnetworks.com,
-        Robert Richter <Robert.Richter@cavium.com>, Vadim.Lomovtsev@cavium.com,
-        Jan.Glauber@cavium.com
-Subject: Re: [PATCH v4 2/2] ThunderX2: Add Cavium ThunderX2 SoC UNCORE PMU
- driver
-Message-ID: <20180521103712.gofbrjdtghfwolmd@lakrids.cambridge.arm.com>
-References: <20180425090047.6485-1-ganapatrao.kulkarni@cavium.com>
- <20180425090047.6485-3-ganapatrao.kulkarni@cavium.com>
- <20180426105938.y6unpt36lisb7kbr@lakrids.cambridge.arm.com>
- <CAKTKpr7Q7T9ZCTBi=LQR=XaAoihbBA3OKCO7yFobzNmR8EfyjQ@mail.gmail.com>
- <CAKTKpr61zBW_D6v_Ck1Lcp0NJ4wPFOpgbiM5aU_EtuiFU-qp4Q@mail.gmail.com>
+        id S1752745AbeEUKho (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 06:37:44 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:35349 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752535AbeEUKhj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 06:37:39 -0400
+X-Google-Smtp-Source: AB8JxZplcnFGNNE60dajTh0QYXu2xhLANT4akWOsDpMyHD9D5KhdCKeCs1v7JdRMT7Wo+SkhqLfEZw==
+Date: Mon, 21 May 2018 16:07:36 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Ilia Lin <ilialin@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] cpufreq: Add Kryo CPU scaling driver
+Message-ID: <20180521103736.5bz7oulz5gpl24ea@vireshk-i7>
+References: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
+ <1526898690-4018-1-git-send-email-ilialin@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKTKpr61zBW_D6v_Ck1Lcp0NJ4wPFOpgbiM5aU_EtuiFU-qp4Q@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <1526898690-4018-1-git-send-email-ilialin@codeaurora.org>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ganapat,
+Would have been better if you would have updated the subject as:
 
+[PATCH v10 10/15] cpufreq: Add Kryo CPU scaling driver
 
-Sorry for the delay in replying; I was away most of last week.
-
-On Tue, May 15, 2018 at 04:03:19PM +0530, Ganapatrao Kulkarni wrote:
-> On Sat, May 5, 2018 at 12:16 AM, Ganapatrao Kulkarni <gklkml16@gmail.com> wrote:
-> > On Thu, Apr 26, 2018 at 4:29 PM, Mark Rutland <mark.rutland@arm.com> wrote:
-> >> On Wed, Apr 25, 2018 at 02:30:47PM +0530, Ganapatrao Kulkarni wrote:
-
-> >>> +static int alloc_counter(struct thunderx2_pmu_uncore_channel *pmu_uncore)
-> >>> +{
-> >>> +     int counter;
-> >>> +
-> >>> +     raw_spin_lock(&pmu_uncore->lock);
-> >>> +     counter = find_first_zero_bit(pmu_uncore->counter_mask,
-> >>> +                             pmu_uncore->uncore_dev->max_counters);
-> >>> +     if (counter == pmu_uncore->uncore_dev->max_counters) {
-> >>> +             raw_spin_unlock(&pmu_uncore->lock);
-> >>> +             return -ENOSPC;
-> >>> +     }
-> >>> +     set_bit(counter, pmu_uncore->counter_mask);
-> >>> +     raw_spin_unlock(&pmu_uncore->lock);
-> >>> +     return counter;
-> >>> +}
-> >>> +
-> >>> +static void free_counter(struct thunderx2_pmu_uncore_channel *pmu_uncore,
-> >>> +                                     int counter)
-> >>> +{
-> >>> +     raw_spin_lock(&pmu_uncore->lock);
-> >>> +     clear_bit(counter, pmu_uncore->counter_mask);
-> >>> +     raw_spin_unlock(&pmu_uncore->lock);
-> >>> +}
-> >>
-> >> I don't believe that locking is required in either of these, as the perf
-> >> core serializes pmu::add() and pmu::del(), where these get called.
+On 21-05-18, 13:31, Ilia Lin wrote:
+> In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
+> the CPU frequency subset and voltage value of each OPP varies
+> based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
+> defines the voltage and frequency value based on the msm-id in SMEM
+> and speedbin blown in the efuse combination.
+> The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
+> to provide the OPP framework with required information.
+> This is used to determine the voltage and frequency value for each OPP of
+> operating-points-v2 table when it is parsed by the OPP framework.
 > 
-> without this locking, i am seeing "BUG: scheduling while atomic" when
-> i run perf with more events together than the maximum counters
-> supported
+> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Did you manage to get to the bottom of this?
+Yes, I acked it earlier, but then comments came back. You should drop
+the tags in such cases normally.
 
-Do you have a backtrace?
+Anyway, the patch looks fine now.
 
-It looks like in your latest posting you reserve counters through the
-userspace ABI, which doesn't seem right to me, and I'd like to
-understand the problem.
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Thanks,
-Mark.
+-- 
+viresh
