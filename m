@@ -1,39 +1,47 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZo3eP9gwcquppojAN1vPvyutRD2iPMkzSzVOKGgkorYeTWrB2/mF5x2G3Ota2haYS8GA6IW
-ARC-Seal: i=1; a=rsa-sha256; t=1526937902; cv=none;
+X-Google-Smtp-Source: AB8JxZo93hFVYgETGLBN18fW9g3tMIAGc+2RbWIVdsBbRif4Oqf0JEeFOTfv9EZcf/L77AyHxk5n
+ARC-Seal: i=1; a=rsa-sha256; t=1526937899; cv=none;
         d=google.com; s=arc-20160816;
-        b=yFu4trZrKpo1fn34rXBegwyAndimSL220puTZ390t/WvrT0i9gJzeO9M7d1qHAwz1h
-         0jl6NlbxXqJcXrBQfJj23EE2eXoEr3Xl661mPvgHiD0wirBHH+/h/4vx7PX8N9kVdOeL
-         +rmul3mrZS1gRJLrLu64tqrl/GZHFwLWEv9kmVb4tH+MY6Aswbfw/Bq7+JYbtTGcsoQY
-         X5aYb0aZAalePhjMur2Ae08Fp9bHRPjygmg+lbFtlzhtSNYG2vDVUW0E8nxMfmEgnp6Y
-         T4DaNnmGw8dSfpVdZUrxCo+8O+RMCMthHI9ouLCPTpJB8BHCs0TbowMnXAU5ioXz3oEv
-         RnJA==
+        b=GPP4+F+buik0yv4AeKRWPDNehdd2PdeQ5QrMpZ8/n3nxDTLYYmO1TxPAI3Qo7ixSwx
+         tQ/8By9kyOZ+dt3pQdoiTJ+4+B+li2jcy6+ytMaT06ja0FDXVWs3KpNMPYE8kEYfqQhJ
+         AKJl8sU6Jmq8p/XHcFEXakiWXXvnI5Xl5bO5QmECfI6/612Dndr5RK1PTB4K+JZ0ZGzC
+         NM3QzTWc5uZnsvpRgAqmErsSvF0UgJV5v1i/wVxk2/bCV9MHTEWgAi/eJYNjUtkSFKHc
+         fJ5SY72KIwDt3s3QjtNnOo9PrDYmI2hb156oQ4m9EXfAr/JG3NRGQK733nPD7AWI6FYw
+         DtSQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=swFjaaDSNkQHv2w/N76rV3KVRlTJdpNYgLSkrnxxJIw=;
-        b=xJgQ9htHG24Es85GcKg3GMjcVEGo/nfHQ6blobQaCvyddNQPQ5c76kf2nYOM178GAN
-         3O2Hg6IkU6dINZXlbTKbVhGE12jHZhuN0jU6E09CGrqFphdJCPlPeGah25UALQLzJHYb
-         H5pq7rKmVEyV8lTfkiCV0vhmA9m/GRQjJCUwlBd4FRxk+KJJMKoJYp8Ui5t70uv3K5S8
-         u48mfI8x4V1+Fn34t6dCl0TwapoLdi2Ag8QmVwQC2N9yCjqGF6Obfi6X87sFigvNfQjK
-         pjSFoTAcKozls5xO6DmHk5t4REu6JJAzvelvA3pusBX/SG6g04Xp0uv0dXG93mJR3y89
-         3UMQ==
+        bh=TA8IuuZLXePI6EsWPZDYKnskGGngoqOWQ6BPSveCjuA=;
+        b=s/qAyy+lpW6fNQPmi0yvXLBd0GG3y3Tpo9bHIg2Obk6n8HU+X87cnSW3N3xa9hqpkg
+         euLOlV3zVRAbmKLor+HmcvCekslWP2A2EWExNGEEg7LzHg6hUMV8dGpEu00Kj50ywJuK
+         LhfWkItsaH+GC/iZigjh3gdxOSOdGljUGY1TrA330XQGpyWE+Weq4HcC5Wv+W5dfJD4s
+         uPHY1RCOMAw6wB8guYtlQoCbjHGWdCEtLcBGeuA0C07nu9sfsRyUNfa0k5VknZrA2iv2
+         jsDzqOrpayUBfNyBb4XAhOrLMFA1H194IcsisS7Eh/cjhoS+RcLwBoTD79LPP4ljYlVs
+         OR2Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=feo+kSOF;
+       dkim=pass header.i=@kernel.org header.s=default header.b=fsWQsMyf;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=feo+kSOF;
+       dkim=pass header.i=@kernel.org header.s=default header.b=fsWQsMyf;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.16 035/110] cpufreq: armada-37xx: driver relies on cpufreq-dt
-Date: Mon, 21 May 2018 23:11:32 +0200
-Message-Id: <20180521210506.829446267@linuxfoundation.org>
+	Dave Airlie <airlied@gmail.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Emil Velikov <emil.l.velikov@gmail.com>,
+	David Herrmann <dh.herrmann@gmail.com>,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Gustavo Padovan <gustavo@padovan.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Sean Paul <seanpaul@chromium.org>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Haneen Mohammed <hamohammed.sa@gmail.com>
+Subject: [PATCH 4.16 034/110] drm: Match sysfs name in link removal to link creation
+Date: Mon, 21 May 2018 23:11:31 +0200
+Message-Id: <20180521210506.763714233@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -43,8 +51,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601110437993449287?=
-X-GMAIL-MSGID: =?utf-8?q?1601110437993449287?=
+X-GMAIL-THRID: =?utf-8?q?1601110036205273170?=
+X-GMAIL-MSGID: =?utf-8?q?1601110434797612896?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,33 +60,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Miquel Raynal <miquel.raynal@bootlin.com>
+From: Haneen Mohammed <hamohammed.sa@gmail.com>
 
-commit 0cf442c6bcf572e04f5690340d5b8e62afcee2ca upstream.
+commit 7f6df440b8623c441c42d070bf592e2d2c1fa9bb upstream.
 
-Armada-37xx driver registers a cpufreq-dt driver. Not having
-CONFIG_CPUFREQ_DT selected leads to a silent abort during the probe.
-Prevent that situation by having the former depending on the latter.
+This patch matches the sysfs name used in the unlinking with the
+linking function. Otherwise, remove_compat_control_link() fails to remove
+sysfs created by create_compat_control_link() in drm_dev_register().
 
-Fixes: 92ce45fb875d7 (cpufreq: Add DVFS support for Armada 37xx)
-Cc: 4.16+ <stable@vger.kernel.org> # 4.16+
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Fixes: 6449b088dd51 ("drm: Add fake controlD* symlinks for backwards
+compat")
+Cc: Dave Airlie <airlied@gmail.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>
+Cc: Emil Velikov <emil.l.velikov@gmail.com>
+Cc: David Herrmann <dh.herrmann@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Daniel Vetter <daniel.vetter@intel.com>
+Cc: Gustavo Padovan <gustavo@padovan.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Sean Paul <seanpaul@chromium.org>
+Cc: David Airlie <airlied@linux.ie>
+Cc: dri-devel@lists.freedesktop.org
+Cc: <stable@vger.kernel.org> # v4.10+
+Signed-off-by: Haneen Mohammed <hamohammed.sa@gmail.com>
+[seanpaul added Fixes and Cc tags]
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180511041542.GA4253@haneen-vb
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/cpufreq/Kconfig.arm |    2 +-
+ drivers/gpu/drm/drm_drv.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/cpufreq/Kconfig.arm
-+++ b/drivers/cpufreq/Kconfig.arm
-@@ -20,7 +20,7 @@ config ACPI_CPPC_CPUFREQ
+--- a/drivers/gpu/drm/drm_drv.c
++++ b/drivers/gpu/drm/drm_drv.c
+@@ -716,7 +716,7 @@ static void remove_compat_control_link(s
+ 	if (!minor)
+ 		return;
  
- config ARM_ARMADA_37XX_CPUFREQ
- 	tristate "Armada 37xx CPUFreq support"
--	depends on ARCH_MVEBU
-+	depends on ARCH_MVEBU && CPUFREQ_DT
- 	help
- 	  This adds the CPUFreq driver support for Marvell Armada 37xx SoCs.
- 	  The Armada 37xx PMU supports 4 frequency and VDD levels.
+-	name = kasprintf(GFP_KERNEL, "controlD%d", minor->index);
++	name = kasprintf(GFP_KERNEL, "controlD%d", minor->index + 64);
+ 	if (!name)
+ 		return;
+ 
