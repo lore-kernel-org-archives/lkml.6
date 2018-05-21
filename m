@@ -1,80 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752781AbeEULpa (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 07:45:30 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47930 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752708AbeEULp1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 07:45:27 -0400
-Subject: Re: [PATCH v3 1/6] arm64: cpufeature: Allow early detect of specific
- features
-To: Julien Thierry <julien.thierry@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, marc.zyngier@arm.com,
-        mark.rutland@arm.com, christoffer.dall@arm.com, james.morse@arm.com,
-        joelaf@google.com, joel.opensrc@gmail.com, daniel.thompson@linaro.org,
-        catalin.marinas@arm.com, will.deacon@arm.com
-References: <1526902515-13769-1-git-send-email-julien.thierry@arm.com>
- <1526902515-13769-2-git-send-email-julien.thierry@arm.com>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <697af68e-3cee-4d0d-8493-106cc42eed3b@arm.com>
-Date: Mon, 21 May 2018 12:45:22 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <1526902515-13769-2-git-send-email-julien.thierry@arm.com>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1752750AbeEULrF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 07:47:05 -0400
+Received: from mout.gmx.net ([212.227.15.18]:36549 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751895AbeEULrB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 07:47:01 -0400
+From: Heinrich Schuchardt <xypron.glpk@gmx.de>
+To: Joe Perches <joe@perches.com>
+Cc: linux-kernel@vger.kernel.org, Heinrich Schuchardt <xypron.glpk@gmx.de>
+Subject: [BUG] get_maintainer: chmod handling
+Date: Mon, 21 May 2018 13:46:48 +0200
+Message-Id: <20180521114648.3972-1-xypron.glpk@gmx.de>
+X-Mailer: git-send-email 2.17.0
+X-Provags-ID: V03:K1:D5WRNAB8J8zhmTNr3ASq4JROS522rwWIt461VRgs0PW3wSzfzNB
+ piTy/nNl/i6Xgz7xPpiemJ11NrTFPoiTYUhAZp+9uVWnmrg5F7id3gBW54vLmzZK7H2DfVe
+ zcS3d81oebNNbWJMzsgA7W7lnXVNe1SPrZbpAjYksyNUK/OiE188HLniCDmP/c0qG+t2fUi
+ /+d5MyVpqj2k7oXkufa7A==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:sFY4b9Uqx6U=:VKz5cAKuTvFZoQogGgKbJ9
+ G6VVbUNfW16Vo5sAqH2rSEi3xtamkelwfbrutKiItSGM56HRtaASP9YpB+LRMAI3K5slEqswJ
+ nx+zOvQchgta59nLhDWOuCmjOnnu4eUhsrgaAbEJOuezqIaMK6jahhkwz8yWPpvDx4P60I6wp
+ 94HaVCTnflDBp1pHvBNlQgsmPjpYRLIv0+tN/uBp7O3YaCRlpGV0866IFGhboOGmgXVkgSoRq
+ 0O91ApKQeHcM3Z0L8d8ZOPoXQl0CzjTKiebuyngY1uZPN3B6TTOktI/fohQDPeP5rD6hE2pWv
+ 0rBh+KpT/r4yfTZborPIr0H6IfgMCAUIk7kB3q0NNKGHy07Fill0/n6U8GL8t+6gwNwWdfp4e
+ pKQ+opI84v7OR89jzyWmZ/7CnVp8YQtgYghXbVFk69ajTCnK5UFxVcCYvib7fKAUgpC4VU0wj
+ 2jQD7qEGLBkAxBkkSjRqtha8wH/KDeDLVdFXs0fDNpLzojx7u+qP7ovhoUlQP9j+OHDys3A0K
+ 3EzDVAgANW7x0YPxE6n32+JlRgUHbnKtg6yUrFbtk5nDB2/9CQtMXK6bkESvA9N42lCu7bXW/
+ icBp3kyBsradsEvfwqcFLdZz/qbpUM3YJZexCkOW1pp+G+/vXe7OXgyV+X1yjjtxT/rXeBFwA
+ qyGXfp7V7UVKn+VC0W5O0lGKJZ2VyEr696U8EwV4Y16zBqspgjAZJBN2IvhEcsv+YOnYUFzrU
+ sdjZF0H5yezDpituDK0CtZpIk3nw/4cwJWi0fvrNZob0tEM0AR49KVq4n9M=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/05/18 12:35, Julien Thierry wrote:
-> From: Daniel Thompson <daniel.thompson@linaro.org>
-> 
-> Currently it is not possible to detect features of the boot CPU
-> until the other CPUs have been brought up.
-> 
-> This prevents us from reacting to features of the boot CPU until
-> fairly late in the boot process. To solve this we allow a subset
-> of features (that are likely to be common to all clusters) to be
-> detected based on the boot CPU alone.
-> 
-> Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
-> [julien.thierry@arm.com: check non-boot cpu missing early features, avoid
-> 			 duplicates between early features and normal
-> 			 features]
-> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+This patch creates a false positive:
+file '0001-foo.patch' doesn't appear to be a patch.
 
-nit: Since this is completely different from what Daniel started with,
-you could simply reset the author to yourself. The boot CPU feature was
-added keeping this user in mind.
+Signed-off-by: Heinrich Schuchardt <xypron.glpk@gmx.de>
+---
+ samples/mic/noned/none | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ mode change 100755 => 100644 samples/mic/noned/none
 
-The patch as such looks good to me.
-
-Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-
-> ---
->   arch/arm64/kernel/cpufeature.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> index 9d1b06d..e03e897 100644
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@ -1030,7 +1030,7 @@ static void cpu_copy_el2regs(const struct arm64_cpu_capabilities *__unused)
->   	{
->   		.desc = "GIC system register CPU interface",
->   		.capability = ARM64_HAS_SYSREG_GIC_CPUIF,
-> -		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
-> +		.type = ARM64_CPUCAP_STRICT_BOOT_CPU_FEATURE,
->   		.matches = has_useable_gicv3_cpuif,
->   		.sys_reg = SYS_ID_AA64PFR0_EL1,
->   		.field_pos = ID_AA64PFR0_GIC_SHIFT,
-> --
-> 1.9.1
-> 
+diff --git a/samples/mic/noned/none b/samples/mic/noned/none
+old mode 100755
+new mode 100644
+-- 
+2.17.0
