@@ -1,10 +1,11 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1344077-1526938359-2-6127696418010842811
+X-Cyrus-Session-Id: sloti22d1t05-1344077-1526938358-5-207137015917061303
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -12,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526938358; b=Pi+ISXZw9hvbmZZHqb2+DQIS3mtgEykV2Z/0dmLBxZbYgh2mx+
-    x8hgALBACuwtsU0N5lRtGq9kSHjvktdTZhWHqpYtE5S0L0716bgotTiQytC83BYb
-    oZY6fSq+UDUqa/WIgzPr2Yk/qlV9zZhfXBJNLcv9nBIGviOCMWZkfcSK9Z/xdF8m
-    sbGea9DxOBfqztmgWVfYzWl5JKoYIwHDzrVIx/MURj6Zl45JgoXQy5sPBznlOKlo
-    u9ffnaPJO4EBKcLCfZza4e8753nuzb7ZRNbGkMR/hLfyiQjSoJIon02cFLgsA/fS
-    RGjpRH+n8K+dan2odMBqDOdufUuqyBJB1epQ==
+    1526938357; b=ZkzAGVGCunUe6CzKFbPodju/LFolP1ay/ES6DQkcm4y6BOBi+8
+    P5RH0toUQqqB1oasOr4IJio5sSbS2dDtxI9SOSdHdtY0W0RiHQ+B0nJTTZTlJQL9
+    LO0XpU1Jl0LIAi4fYwee+6IVAKPs2UC3DJpBU2MsVRp6QowkVZsfvW4r+uuGhfh/
+    0oHNW0/mVR5P8ddpjPN6BoW6d2g+Ig+qXgaifgRg6hPuMHAj3O5+LMlKZdBaItxK
+    Yh7TQ1FFfiKCemMRA99NJmD7/3RNja/BPCu+dXXy/BNq66vgNavWCG7h3Flmunz8
+    RcBxkx+U4cB08uf6R4o80Wg3fY9rbuZW+eeg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1526938358; bh=ED2NXexz9wyZT6R13T3U+XahbznUAq
-    g6+XxU+B/aoaw=; b=hTeyyANDhjRKqdQApvPvylOldLVXcVxU1+3zJMuNWdZ5oQ
-    0eFodl9W+gde0AtpupkGDIqcwJ6UUZ0YuuV9Rzwa0EgCA1qri6WEJn0BuZA2VnVS
-    t4dqWaVBvU8NxTnEBWJFOAkjyBfI+1BBBGBvYkX0ehYbnfSOCTm2ULteZUaM9hlt
-    y/9q35MdI+wFbk/KOHPyhiM9lC7d1ymIPB4KW1YkaaVRJswWf+ST7i7yWVEUNnMg
-    o1qcw2xwGZshVPsjqUUflgTYfFsJ6kCrJ9vIv+cqB6kVsyyYvThsGS/XLaL5ELRP
-    E2fTsFdvZEW6MGpgXx5YwOr5v3LB8NCPBoy2l+9Q==
+    :list-id; s=fm2; t=1526938357; bh=3bB2djRk1/REsQ2p6UN6JoX8aMXkf/
+    CuNPCLIIKDewU=; b=CPbncJ66xe6daURlInS7meUtyILtNpFQs5UCCBhwEB1yvo
+    3RKBuQ50pC+P2yswzb4HC+8qbhuQLB0v6OLPfvQpRFHvk9JLyLfUsjnHSH4FmNIX
+    oCsVOW7DA9AzVHYnZDpsXtDDbnVBbifhJVlzjVWbtk2APQpg9E4uwFtZKyZXDhRg
+    yBJJ2kmu1ISxznirQlg3+v3ygwNTOY+84pfOwESN0NbzFA6L8uzaT/Rp6Dau8IhP
+    KF2FnX3FrLe7FN2FzVQF7bljD+TVlX8nzQ2XuLuexDhXCOGXnDLGmJYoKny8LaqN
+    AWfxS2Kdwe4DqcqKwduBcIEjpqdKcDQ30DRZRfow==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=rBN7HxdR x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=Z1pPBAqC x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -48,7 +49,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
 Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=rBN7HxdR x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=Z1pPBAqC x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,30 +65,32 @@ Authentication-Results: mx3.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJtNAhzLxm7YRYWmMqN61xHvgl6SyxLzWyjPDuHx1UXPDOndPqFrpTpU2aO644nbaAdNUQOuaHN61CslO8Z8xvlAvURMJrNfR+HSN/EctjfDBKLiQDmT
-    w18NBUiqLTsexCuu4F9NwqLKG2O6nCT48Dz0GJVF1CK8PhFmAGqUoUM48uYweYcoUs2BaaaOsk8R69PDERo93Z4e9BS9VglXIbv3x/Qr7uuxjQ7BNSwN55GV
+X-CM-Envelope: MS4wfAknEB+Btw1LGoSXciUFFr9at4ajgVi6r7fpevaFQCobYtdwwIbZR6QckTWTy2/O4kaTWFJ9jVU1SAx6buZIvOSMwz8igPlva6EhD+RFSlyrzuugH74h
+    zI/NEKRtIEZLanpB7c68E7liDRvAyewEXSe9jfzna7U6qLOYJJk7tPo+Jn2kB4AoVFOAquyBn4X29yeEfmoXdNcs1Cu326+TV+3iVb83rGvhrsj9reqj4PrX
 X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=yPCof4ZbAAAA:8 a=ag1SF4gXAAAA:8 a=0EWn0uG7xdJw7G4bnVsA:9 a=QEXdDO2ut3YA:10
+    a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=cdRK08DBTGZch8pyC4sA:9
+    a=QEXdDO2ut3YA:10 a=_quyQ4yNhPQA:10 a=AjGcO6oz07-iQ99wixmX:22
     a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754462AbeEUV0Z (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 21 May 2018 17:26:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41230 "EHLO mail.kernel.org"
+        id S1751872AbeEUVcF (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 21 May 2018 17:32:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754460AbeEUV0X (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 21 May 2018 17:26:23 -0400
+        id S932510AbeEUV01 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 21 May 2018 17:26:27 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@suse.de>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Subject: [PATCH 4.16 096/110] x86/cpufeatures: Disentangle MSR_SPEC_CTRL enumeration from IBRS
-Date: Mon, 21 May 2018 23:12:33 +0200
-Message-Id: <20180521210514.238876214@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@suse.de>, Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.16 067/110] x86/bugs: Expose /sys/../spec_store_bypass
+Date: Mon, 21 May 2018 23:12:04 +0200
+Message-Id: <20180521210512.151824221@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -105,141 +108,132 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-commit 7eb8956a7fec3c1f0abc2a5517dada99ccc8a961 upstream
+commit c456442cd3a59eeb1d60293c26cbe2ff2c4e42cf upstream
 
-The availability of the SPEC_CTRL MSR is enumerated by a CPUID bit on
-Intel and implied by IBRS or STIBP support on AMD. That's just confusing
-and in case an AMD CPU has IBRS not supported because the underlying
-problem has been fixed but has another bit valid in the SPEC_CTRL MSR,
-the thing falls apart.
+Add the sysfs file for the new vulerability. It does not do much except
+show the words 'Vulnerable' for recent x86 cores.
 
-Add a synthetic feature bit X86_FEATURE_MSR_SPEC_CTRL to denote the
-availability on both Intel and AMD.
+Intel cores prior to family 6 are known not to be vulnerable, and so are
+some Atoms and some Xeon Phi.
 
-While at it replace the boot_cpu_has() checks with static_cpu_has() where
-possible. This prevents late microcode loading from exposing SPEC_CTRL, but
-late loading is already very limited as it does not reevaluate the
-mitigation options and other bits and pieces. Having static_cpu_has() is
-the simplest and least fragile solution.
+It assumes that older Cyrix, Centaur, etc. cores are immune.
 
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/cpufeatures.h |    1 +
- arch/x86/kernel/cpu/bugs.c         |   18 +++++++++++-------
- arch/x86/kernel/cpu/common.c       |    9 +++++++--
- arch/x86/kernel/cpu/intel.c        |    1 +
- 4 files changed, 20 insertions(+), 9 deletions(-)
+ Documentation/ABI/testing/sysfs-devices-system-cpu |    1 
+ arch/x86/include/asm/cpufeatures.h                 |    1 
+ arch/x86/kernel/cpu/bugs.c                         |    5 ++++
+ arch/x86/kernel/cpu/common.c                       |   23 +++++++++++++++++++++
+ drivers/base/cpu.c                                 |    8 +++++++
+ include/linux/cpu.h                                |    2 +
+ 6 files changed, 40 insertions(+)
 
+--- a/Documentation/ABI/testing/sysfs-devices-system-cpu
++++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
+@@ -453,6 +453,7 @@ What:		/sys/devices/system/cpu/vulnerabi
+ 		/sys/devices/system/cpu/vulnerabilities/meltdown
+ 		/sys/devices/system/cpu/vulnerabilities/spectre_v1
+ 		/sys/devices/system/cpu/vulnerabilities/spectre_v2
++		/sys/devices/system/cpu/vulnerabilities/spec_store_bypass
+ Date:		January 2018
+ Contact:	Linux kernel mailing list <linux-kernel@vger.kernel.org>
+ Description:	Information about CPU vulnerabilities
 --- a/arch/x86/include/asm/cpufeatures.h
 +++ b/arch/x86/include/asm/cpufeatures.h
-@@ -206,6 +206,7 @@
- #define X86_FEATURE_RETPOLINE_AMD	( 7*32+13) /* "" AMD Retpoline mitigation for Spectre variant 2 */
- #define X86_FEATURE_INTEL_PPIN		( 7*32+14) /* Intel Processor Inventory Number */
- #define X86_FEATURE_CDP_L2		( 7*32+15) /* Code and Data Prioritization L2 */
-+#define X86_FEATURE_MSR_SPEC_CTRL	( 7*32+16) /* "" MSR SPEC_CTRL is implemented */
+@@ -362,5 +362,6 @@
+ #define X86_BUG_CPU_MELTDOWN		X86_BUG(14) /* CPU is affected by meltdown attack and needs kernel page table isolation */
+ #define X86_BUG_SPECTRE_V1		X86_BUG(15) /* CPU is affected by Spectre variant 1 attack with conditional branches */
+ #define X86_BUG_SPECTRE_V2		X86_BUG(16) /* CPU is affected by Spectre variant 2 attack with indirect branches */
++#define X86_BUG_SPEC_STORE_BYPASS	X86_BUG(17) /* CPU is affected by speculative store bypass attack */
  
- #define X86_FEATURE_MBA			( 7*32+18) /* Memory Bandwidth Allocation */
- #define X86_FEATURE_RSB_CTXSW		( 7*32+19) /* "" Fill RSB on context switches */
+ #endif /* _ASM_X86_CPUFEATURES_H */
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -64,7 +64,7 @@ void __init check_bugs(void)
- 	 * have unknown values. AMD64_LS_CFG MSR is cached in the early AMD
- 	 * init code as it is not enumerated and depends on the family.
- 	 */
--	if (boot_cpu_has(X86_FEATURE_IBRS))
-+	if (boot_cpu_has(X86_FEATURE_MSR_SPEC_CTRL))
- 		rdmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
- 
- 	/* Select the proper spectre mitigation before patching alternatives */
-@@ -145,7 +145,7 @@ u64 x86_spec_ctrl_get_default(void)
+@@ -404,4 +404,9 @@ ssize_t cpu_show_spectre_v2(struct devic
  {
- 	u64 msrval = x86_spec_ctrl_base;
- 
--	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL)
-+	if (static_cpu_has(X86_FEATURE_SPEC_CTRL))
- 		msrval |= ssbd_tif_to_spec_ctrl(current_thread_info()->flags);
- 	return msrval;
+ 	return cpu_show_common(dev, attr, buf, X86_BUG_SPECTRE_V2);
  }
-@@ -155,10 +155,12 @@ void x86_spec_ctrl_set_guest(u64 guest_s
- {
- 	u64 host = x86_spec_ctrl_base;
- 
--	if (!boot_cpu_has(X86_FEATURE_IBRS))
-+	/* Is MSR_SPEC_CTRL implemented ? */
-+	if (!static_cpu_has(X86_FEATURE_MSR_SPEC_CTRL))
- 		return;
- 
--	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL)
-+	/* Intel controls SSB in MSR_SPEC_CTRL */
-+	if (static_cpu_has(X86_FEATURE_SPEC_CTRL))
- 		host |= ssbd_tif_to_spec_ctrl(current_thread_info()->flags);
- 
- 	if (host != guest_spec_ctrl)
-@@ -170,10 +172,12 @@ void x86_spec_ctrl_restore_host(u64 gues
- {
- 	u64 host = x86_spec_ctrl_base;
- 
--	if (!boot_cpu_has(X86_FEATURE_IBRS))
-+	/* Is MSR_SPEC_CTRL implemented ? */
-+	if (!static_cpu_has(X86_FEATURE_MSR_SPEC_CTRL))
- 		return;
- 
--	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL)
-+	/* Intel controls SSB in MSR_SPEC_CTRL */
-+	if (static_cpu_has(X86_FEATURE_SPEC_CTRL))
- 		host |= ssbd_tif_to_spec_ctrl(current_thread_info()->flags);
- 
- 	if (host != guest_spec_ctrl)
-@@ -631,7 +635,7 @@ int arch_prctl_spec_ctrl_get(struct task
- 
- void x86_spec_ctrl_setup_ap(void)
- {
--	if (boot_cpu_has(X86_FEATURE_IBRS))
-+	if (boot_cpu_has(X86_FEATURE_MSR_SPEC_CTRL))
- 		x86_spec_ctrl_set(x86_spec_ctrl_base & ~x86_spec_ctrl_mask);
- 
- 	if (ssb_mode == SPEC_STORE_BYPASS_DISABLE)
++
++ssize_t cpu_show_spec_store_bypass(struct device *dev, struct device_attribute *attr, char *buf)
++{
++	return cpu_show_common(dev, attr, buf, X86_BUG_SPEC_STORE_BYPASS);
++}
+ #endif
 --- a/arch/x86/kernel/cpu/common.c
 +++ b/arch/x86/kernel/cpu/common.c
-@@ -761,19 +761,24 @@ static void init_speculation_control(str
- 	if (cpu_has(c, X86_FEATURE_SPEC_CTRL)) {
- 		set_cpu_cap(c, X86_FEATURE_IBRS);
- 		set_cpu_cap(c, X86_FEATURE_IBPB);
-+		set_cpu_cap(c, X86_FEATURE_MSR_SPEC_CTRL);
- 	}
+@@ -918,10 +918,33 @@ static const __initconst struct x86_cpu_
+ 	{}
+ };
  
- 	if (cpu_has(c, X86_FEATURE_INTEL_STIBP))
- 		set_cpu_cap(c, X86_FEATURE_STIBP);
++static const __initconst struct x86_cpu_id cpu_no_spec_store_bypass[] = {
++	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_PINEVIEW	},
++	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_LINCROFT	},
++	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_PENWELL		},
++	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_CLOVERVIEW	},
++	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_CEDARVIEW	},
++	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_SILVERMONT1	},
++	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_AIRMONT		},
++	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_SILVERMONT2	},
++	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_MERRIFIELD	},
++	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_CORE_YONAH		},
++	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_XEON_PHI_KNL		},
++	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_XEON_PHI_KNM		},
++	{ X86_VENDOR_CENTAUR,	5,					},
++	{ X86_VENDOR_INTEL,	5,					},
++	{ X86_VENDOR_NSC,	5,					},
++	{ X86_VENDOR_ANY,	4,					},
++	{}
++};
++
+ static void __init cpu_set_bug_bits(struct cpuinfo_x86 *c)
+ {
+ 	u64 ia32_cap = 0;
  
--	if (cpu_has(c, X86_FEATURE_AMD_IBRS))
-+	if (cpu_has(c, X86_FEATURE_AMD_IBRS)) {
- 		set_cpu_cap(c, X86_FEATURE_IBRS);
-+		set_cpu_cap(c, X86_FEATURE_MSR_SPEC_CTRL);
-+	}
++	if (!x86_match_cpu(cpu_no_spec_store_bypass))
++		setup_force_cpu_bug(X86_BUG_SPEC_STORE_BYPASS);
++
+ 	if (x86_match_cpu(cpu_no_speculation))
+ 		return;
  
- 	if (cpu_has(c, X86_FEATURE_AMD_IBPB))
- 		set_cpu_cap(c, X86_FEATURE_IBPB);
- 
--	if (cpu_has(c, X86_FEATURE_AMD_STIBP))
-+	if (cpu_has(c, X86_FEATURE_AMD_STIBP)) {
- 		set_cpu_cap(c, X86_FEATURE_STIBP);
-+		set_cpu_cap(c, X86_FEATURE_MSR_SPEC_CTRL);
-+	}
+--- a/drivers/base/cpu.c
++++ b/drivers/base/cpu.c
+@@ -532,14 +532,22 @@ ssize_t __weak cpu_show_spectre_v2(struc
+ 	return sprintf(buf, "Not affected\n");
  }
  
- void get_cpu_cap(struct cpuinfo_x86 *c)
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -188,6 +188,7 @@ static void early_init_intel(struct cpui
- 		setup_clear_cpu_cap(X86_FEATURE_IBPB);
- 		setup_clear_cpu_cap(X86_FEATURE_STIBP);
- 		setup_clear_cpu_cap(X86_FEATURE_SPEC_CTRL);
-+		setup_clear_cpu_cap(X86_FEATURE_MSR_SPEC_CTRL);
- 		setup_clear_cpu_cap(X86_FEATURE_INTEL_STIBP);
- 		setup_clear_cpu_cap(X86_FEATURE_SSBD);
- 	}
++ssize_t __weak cpu_show_spec_store_bypass(struct device *dev,
++					  struct device_attribute *attr, char *buf)
++{
++	return sprintf(buf, "Not affected\n");
++}
++
+ static DEVICE_ATTR(meltdown, 0444, cpu_show_meltdown, NULL);
+ static DEVICE_ATTR(spectre_v1, 0444, cpu_show_spectre_v1, NULL);
+ static DEVICE_ATTR(spectre_v2, 0444, cpu_show_spectre_v2, NULL);
++static DEVICE_ATTR(spec_store_bypass, 0444, cpu_show_spec_store_bypass, NULL);
+ 
+ static struct attribute *cpu_root_vulnerabilities_attrs[] = {
+ 	&dev_attr_meltdown.attr,
+ 	&dev_attr_spectre_v1.attr,
+ 	&dev_attr_spectre_v2.attr,
++	&dev_attr_spec_store_bypass.attr,
+ 	NULL
+ };
+ 
+--- a/include/linux/cpu.h
++++ b/include/linux/cpu.h
+@@ -53,6 +53,8 @@ extern ssize_t cpu_show_spectre_v1(struc
+ 				   struct device_attribute *attr, char *buf);
+ extern ssize_t cpu_show_spectre_v2(struct device *dev,
+ 				   struct device_attribute *attr, char *buf);
++extern ssize_t cpu_show_spec_store_bypass(struct device *dev,
++					  struct device_attribute *attr, char *buf);
+ 
+ extern __printf(4, 5)
+ struct device *cpu_device_create(struct device *parent, void *drvdata,
