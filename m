@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753380AbeEURCF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 13:02:05 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:44384 "EHLO
+        id S1753401AbeEURCL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 13:02:11 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:44392 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753355AbeEURCB (ORCPT
+        with ESMTP id S1753376AbeEURCF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 13:02:01 -0400
+        Mon, 21 May 2018 13:02:05 -0400
 From: Ezequiel Garcia <ezequiel@collabora.com>
 To: linux-media@vger.kernel.org
 Cc: kernel@collabora.com, Hans Verkuil <hverkuil@xs4all.nl>,
@@ -17,9 +17,9 @@ Cc: kernel@collabora.com, Hans Verkuil <hverkuil@xs4all.nl>,
         Brian Starkey <brian.starkey@arm.com>, linux-kernel@vger.kernel.org,
         Gustavo Padovan <gustavo.padovan@collabora.com>,
         Ezequiel Garcia <ezequiel@collabora.com>
-Subject: [PATCH v10 08/16] v4l: mark unordered formats
-Date: Mon, 21 May 2018 13:59:38 -0300
-Message-Id: <20180521165946.11778-9-ezequiel@collabora.com>
+Subject: [PATCH v10 09/16] cobalt: add .is_unordered() for cobalt
+Date: Mon, 21 May 2018 13:59:39 -0300
+Message-Id: <20180521165946.11778-10-ezequiel@collabora.com>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180521165946.11778-1-ezequiel@collabora.com>
 References: <20180521165946.11778-1-ezequiel@collabora.com>
@@ -29,146 +29,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Gustavo Padovan <gustavo.padovan@collabora.com>
 
-Now that we've introduced the V4L2_FMT_FLAG_UNORDERED flag,
-mark the appropriate formats.
+The cobalt driver may reorder the capture buffers so we need to report
+it as such.
 
-v2: Set unordered flag before calling the driver callback.
+v3: set formats as unordered
+v2: use vb2_ops_set_unordered() helper
 
 Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
 Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
 ---
- drivers/media/v4l2-core/v4l2-ioctl.c | 74 +++++++++++++++++++++++++++---------
- 1 file changed, 57 insertions(+), 17 deletions(-)
+ drivers/media/pci/cobalt/cobalt-v4l2.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-index f48c505550e0..2135ac235a96 100644
---- a/drivers/media/v4l2-core/v4l2-ioctl.c
-+++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-@@ -1102,6 +1102,27 @@ static int v4l_enumoutput(const struct v4l2_ioctl_ops *ops,
- 	return ops->vidioc_enum_output(file, fh, p);
- }
+diff --git a/drivers/media/pci/cobalt/cobalt-v4l2.c b/drivers/media/pci/cobalt/cobalt-v4l2.c
+index e2a4c705d353..ccca1a96df90 100644
+--- a/drivers/media/pci/cobalt/cobalt-v4l2.c
++++ b/drivers/media/pci/cobalt/cobalt-v4l2.c
+@@ -430,6 +430,7 @@ static const struct vb2_ops cobalt_qops = {
+ 	.stop_streaming = cobalt_stop_streaming,
+ 	.wait_prepare = vb2_ops_wait_prepare,
+ 	.wait_finish = vb2_ops_wait_finish,
++	.is_unordered = vb2_ops_is_unordered,
+ };
  
-+static void v4l_fill_unordered_fmtdesc(struct v4l2_fmtdesc *fmt)
-+{
-+	switch (fmt->pixelformat) {
-+	case V4L2_PIX_FMT_MPEG:
-+	case V4L2_PIX_FMT_H264:
-+	case V4L2_PIX_FMT_H264_NO_SC:
-+	case V4L2_PIX_FMT_H264_MVC:
-+	case V4L2_PIX_FMT_H263:
-+	case V4L2_PIX_FMT_MPEG1:
-+	case V4L2_PIX_FMT_MPEG2:
-+	case V4L2_PIX_FMT_MPEG4:
-+	case V4L2_PIX_FMT_XVID:
-+	case V4L2_PIX_FMT_VC1_ANNEX_G:
-+	case V4L2_PIX_FMT_VC1_ANNEX_L:
-+	case V4L2_PIX_FMT_VP8:
-+	case V4L2_PIX_FMT_VP9:
-+	case V4L2_PIX_FMT_HEVC:
-+		fmt->flags |= V4L2_FMT_FLAG_UNORDERED;
-+	}
-+}
-+
- static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
- {
- 	const unsigned sz = sizeof(fmt->description);
-@@ -1310,61 +1331,80 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
- 
- 	if (descr)
- 		WARN_ON(strlcpy(fmt->description, descr, sz) >= sz);
--	fmt->flags = flags;
-+	fmt->flags |= flags;
- }
- 
--static int v4l_enum_fmt(const struct v4l2_ioctl_ops *ops,
--				struct file *file, void *fh, void *arg)
--{
--	struct v4l2_fmtdesc *p = arg;
--	int ret = check_fmt(file, p->type);
- 
--	if (ret)
--		return ret;
--	ret = -EINVAL;
-+static int __vidioc_enum_fmt(const struct v4l2_ioctl_ops *ops,
-+			     struct v4l2_fmtdesc *p,
-+			     struct file *file, void *fh)
-+{
-+	int ret = 0;
- 
- 	switch (p->type) {
- 	case V4L2_BUF_TYPE_VIDEO_CAPTURE:
- 		if (unlikely(!ops->vidioc_enum_fmt_vid_cap))
- 			break;
--		ret = ops->vidioc_enum_fmt_vid_cap(file, fh, arg);
-+		ret = ops->vidioc_enum_fmt_vid_cap(file, fh, p);
+ /* V4L2 ioctls */
+@@ -695,14 +696,17 @@ static int cobalt_enum_fmt_vid_cap(struct file *file, void *priv_fh,
+ 	case 0:
+ 		strlcpy(f->description, "YUV 4:2:2", sizeof(f->description));
+ 		f->pixelformat = V4L2_PIX_FMT_YUYV;
++		f->flags |= V4L2_FMT_FLAG_UNORDERED;
  		break;
- 	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
- 		if (unlikely(!ops->vidioc_enum_fmt_vid_cap_mplane))
- 			break;
--		ret = ops->vidioc_enum_fmt_vid_cap_mplane(file, fh, arg);
-+		ret = ops->vidioc_enum_fmt_vid_cap_mplane(file, fh, p);
+ 	case 1:
+ 		strlcpy(f->description, "RGB24", sizeof(f->description));
+ 		f->pixelformat = V4L2_PIX_FMT_RGB24;
++		f->flags |= V4L2_FMT_FLAG_UNORDERED;
  		break;
- 	case V4L2_BUF_TYPE_VIDEO_OVERLAY:
- 		if (unlikely(!ops->vidioc_enum_fmt_vid_overlay))
- 			break;
--		ret = ops->vidioc_enum_fmt_vid_overlay(file, fh, arg);
-+		ret = ops->vidioc_enum_fmt_vid_overlay(file, fh, p);
+ 	case 2:
+ 		strlcpy(f->description, "RGB32", sizeof(f->description));
+ 		f->pixelformat = V4L2_PIX_FMT_BGR32;
++		f->flags |= V4L2_FMT_FLAG_UNORDERED;
  		break;
- 	case V4L2_BUF_TYPE_VIDEO_OUTPUT:
- 		if (unlikely(!ops->vidioc_enum_fmt_vid_out))
- 			break;
--		ret = ops->vidioc_enum_fmt_vid_out(file, fh, arg);
-+		ret = ops->vidioc_enum_fmt_vid_out(file, fh, p);
- 		break;
- 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
- 		if (unlikely(!ops->vidioc_enum_fmt_vid_out_mplane))
- 			break;
--		ret = ops->vidioc_enum_fmt_vid_out_mplane(file, fh, arg);
-+		ret = ops->vidioc_enum_fmt_vid_out_mplane(file, fh, p);
- 		break;
- 	case V4L2_BUF_TYPE_SDR_CAPTURE:
- 		if (unlikely(!ops->vidioc_enum_fmt_sdr_cap))
- 			break;
--		ret = ops->vidioc_enum_fmt_sdr_cap(file, fh, arg);
-+		ret = ops->vidioc_enum_fmt_sdr_cap(file, fh, p);
- 		break;
- 	case V4L2_BUF_TYPE_SDR_OUTPUT:
- 		if (unlikely(!ops->vidioc_enum_fmt_sdr_out))
- 			break;
--		ret = ops->vidioc_enum_fmt_sdr_out(file, fh, arg);
-+		ret = ops->vidioc_enum_fmt_sdr_out(file, fh, p);
- 		break;
- 	case V4L2_BUF_TYPE_META_CAPTURE:
- 		if (unlikely(!ops->vidioc_enum_fmt_meta_cap))
- 			break;
--		ret = ops->vidioc_enum_fmt_meta_cap(file, fh, arg);
-+		ret = ops->vidioc_enum_fmt_meta_cap(file, fh, p);
- 		break;
- 	}
-+	return ret;
-+}
-+
-+static int v4l_enum_fmt(const struct v4l2_ioctl_ops *ops,
-+				struct file *file, void *fh, void *arg)
-+{
-+	struct v4l2_fmtdesc *p = arg;
-+	int ret = check_fmt(file, p->type);
-+
-+	if (ret)
-+		return ret;
-+	ret = -EINVAL;
-+
-+	ret = __vidioc_enum_fmt(ops, p, file, fh);
-+	if (ret)
-+		return ret;
-+	/*
-+	 * Set the unordered flag and call the driver
-+	 * again so it has the chance to clear the flag.
-+	 */
-+	v4l_fill_unordered_fmtdesc(p);
-+	ret = __vidioc_enum_fmt(ops, p, file, fh);
- 	if (ret == 0)
- 		v4l_fill_fmtdesc(p);
- 	return ret;
+ 	default:
+ 		return -EINVAL;
 -- 
 2.16.3
