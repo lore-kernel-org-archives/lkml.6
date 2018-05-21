@@ -1,162 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752572AbeEUB20 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 21:28:26 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:64887 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751514AbeEUB2X (ORCPT
+        id S1752627AbeEUBjS (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 21:39:18 -0400
+Received: from gateway20.websitewelcome.com ([192.185.54.2]:20874 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751514AbeEUBjQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 21:28:23 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w4L1S2ed018028
-X-Nifty-SrcIP: [209.85.213.50]
-X-Google-Smtp-Source: AB8JxZo8kGZps+w400pZ5KXSUOcrZiGkhOQAwZVsfZhcRZLllisPa8L8z7VjOSJhcGjPEleW6Bq/Ms7B0M4fYKLuKOk=
-MIME-Version: 1.0
-In-Reply-To: <CAFBinCADQsXoc6CUKabH6VX3ZBYb5apo-xBbe1w0BiO8wBAsPw@mail.gmail.com>
-References: <CAK7LNATZgJ4MxOFLUCNARWv3Zz=gpL-jGReDnBnArquiaXRWoQ@mail.gmail.com>
- <CAFBinCADQsXoc6CUKabH6VX3ZBYb5apo-xBbe1w0BiO8wBAsPw@mail.gmail.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Mon, 21 May 2018 10:27:21 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAR1b_F_eLEWAdQc3L=daGz=ttKq0mQP78BkjzTOssaXvw@mail.gmail.com>
-Message-ID: <CAK7LNAR1b_F_eLEWAdQc3L=daGz=ttKq0mQP78BkjzTOssaXvw@mail.gmail.com>
-Subject: Re: [reset-control] How to initialize hardware state with the shared
- reset line?
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        DTML <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        Sun, 20 May 2018 21:39:16 -0400
+X-Authority-Reason: nr=8
+Subject: Re: [PATCH] kernel: sys: fix potential Spectre v1
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Alexei Starovoitov <ast@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+References: <20180515030038.GA11822@embeddedor.com>
+ <20180515150859.1bccbd8d4543848b30fea859@linux-foundation.org>
+ <alpine.DEB.2.21.1805160027260.1605@nanos.tec.linutronix.de>
+ <CAPcyv4iksLzZ=eMjWw6Wi87F2OSXHd16gKRLExgGhx=Mdr+AwQ@mail.gmail.com>
+ <50481b83-4c03-f354-bd11-cef7aecdd85f@embeddedor.com>
+ <b5e5e160-6ac7-87c8-af1a-4eb88f1f020d@embeddedor.com>
+ <CAPcyv4iO67AG5ytc7gRBTnu6V8bdTOMb9eBwjGJtkGpMLKkpwg@mail.gmail.com>
+ <3d2e5771-c2c9-6e45-3e85-21c0bc86876e@embeddedor.com>
+Message-ID: <58df7ae3-8ef0-4f42-9ab2-b551d2ffff00@embeddedor.com>
+Date: Sun, 20 May 2018 19:50:21 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <3d2e5771-c2c9-6e45-3e85-21c0bc86876e@embeddedor.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.192.46.223
+X-Source-L: No
+X-Exim-ID: 1fKZ1r-002Q9l-Hu
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.70]) [187.192.46.223]:38158
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi.
 
 
-2018-05-20 19:57 GMT+09:00 Martin Blumenstingl
-<martin.blumenstingl@googlemail.com>:
-> Hi,
->
-> On Thu, May 10, 2018 at 11:16 AM, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
-> [snip]
->> I may be missing something, but
->> one solution might be reset hogging on the
->> reset provider side.  This allows us to describe
->> the initial state of reset lines in the reset controller.
+On 05/18/2018 03:44 PM, Gustavo A. R. Silva wrote:
+>>>
+>>> #ifndef sanitize_index_nospec
+>>> inline bool sanitize_index_nospec(unsigned long *index,
+>>>                                    unsigned long size)
+>>> {
+>>>          if (*index >= size)
+>>>                  return false;
+>>>          *index = array_index_nospec(*index, size);
+>>>
+>>>          return true;
+>>> }
+>>> #endif
 >>
->> The idea for "reset-hog" is similar to:
->>  - "gpio-hog" defined in
->>    Documentation/devicetree/bindings/gpio/gpio.txt
->>  - "assigned-clocks" defined in
->>    Documetation/devicetree/bindings/clock/clock-bindings.txt
+>> I think this is fine in concept, we already do something similar in
+>> mpls_label_ok(). Perhaps call it validate_index_nospec() since
+>> validation is something that can fail, but sanitization in theory is
+>> something that can always succeed.
 >>
+> 
+> OK. I got it.
+> 
+>> However, the problem is the data type of the index. I expect you would
+>> need to do this in a macro and use typeof() if you wanted this to be
+>> generally useful, and also watch out for multiple usage of a macro
+>> argument. Is it still worth it at that point?
 >>
->>
->> For example,
->>
->>    reset-controller {
->>             ....
->>
->>             line_a {
->>                   reset-hog;
->>                   resets = <1>;
->>                   reset-assert;
->>             };
->>    }
->>
->>
->> When the reset controller is registered,
->> the reset ID '1' is asserted.
->>
->>
->> So, all reset consumers that share the reset line '1'
->> will start from the asserted state
->> (i.e. defined state machine state).
-> I wonder if a "reset hog" can be board specific:
-> - GPIO hogs are definitely board specific (meson-gxbb-odroidc2.dts for
-> example uses it to take the USB hub out of reset)
-> - assigned-clock-parents (and the like) can also be board specific (I
-> made up a use-case since I don't know of any actual examples: board A
-> uses an external XTAL while board B uses some other internal
-> clock-source because it doesn't have an external XTAL)
->
-> however, can reset lines be board specific? or in other words: do we
-> need to describe them in device-tree?
+> 
+> Yeah. I think it is worth it. I'll work on this during the weekend and 
+> send a proper patch for review.
+> 
 
-Indeed.
+Dan,
 
-I did not come up with board-specific cases.
+What do you think about this first draft:
 
-The problem we are discussing is SoC-specific,
-and reset-controller drivers are definitely SoC-specific.
+diff --git a/include/linux/nospec.h b/include/linux/nospec.h
+index e791ebc..6154183 100644
+--- a/include/linux/nospec.h
++++ b/include/linux/nospec.h
+@@ -55,4 +55,16 @@ static inline unsigned long 
+array_index_mask_nospec(unsigned long index,
+                                                                        \
+         (typeof(_i)) (_i & _mask);                                     \
+  })
++
++#define validate_index_nospec(index, size)                            \
++({                                                                    \
++       typeof(index) *ptr = &(index);                                 \
++       typeof(size) _s = (size);                                      \
++                                                                      \
++       BUILD_BUG_ON(sizeof(*ptr) > sizeof(long));                     \
++       BUILD_BUG_ON(sizeof(_s) > sizeof(long));                       \
++                                                                      \
++       *ptr >= _s ? false :                                           \
++       (*ptr = array_index_nospec(*ptr, _s) ? true : true);           \
++})
+  #endif /* _LINUX_NOSPEC_H */
 
-So, I think the initial state can be coded in drivers instead of DT.
-
-
-> we could extend struct reset_controller_dev (= reset controller
-> driver) if they are not board specific:
-> - either assert all reset lines by default except if they are listed
-> in a new field (may break backwards compatibility, requires testing of
-> all reset controller drivers)
-
-This is quite simple, but I am afraid there are some cases where the forcible
-reset-assert is not preferred.
-
-For example, the earlycon.  When we use earlycon, we would expect it has been
-initialized by a boot-loader, or something.
-If it is reset-asserted on the while, the console output
-will not be good.
-
-
-
-> - specify a list of reset lines and their desired state (or to keep it
-> easy: specify a list of reset lines that should be asserted)
-> (I must admit that this is basically your idea but the definition is
-> moved from device-tree to the reset controller driver)
-
-Yes, I think the list of "reset line ID" and "init state" pairs
-would be nicer.
-
-
-> any "chip" specific differences could be expressed by using a
-> different of_device_id
->
-> one the other hand: your "reset hog" solution looks fine to me if
-> reset lines can be board specific
->
->> From the discussion with Martin Blumenstingl
->> (https://lkml.org/lkml/2018/4/28/115),
->> the problem for Amlogic is that
->> the reset line is "de-asserted" by default.
->> If so, the 'reset-hog' would fix the problem,
->> and DWC3 driver would be able to use
->> shared, level reset, I think.
-> I think you are right: if we could control the initial state then we
-> should be able to use level resets
-
-
-Even further, can we drop the shared reset_control_reset() support, maybe?
-(in other words, revert commit 7da33a37b48f11)
-
-
-Thanks for your comment!
-
-
->
-> Regards
-> Martin
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+Thanks
+--
+Gustavo
