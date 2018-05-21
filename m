@@ -1,45 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752711AbeEUOU6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 10:20:58 -0400
-Received: from mail-it0-f50.google.com ([209.85.214.50]:55975 "EHLO
-        mail-it0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752594AbeEUOUx (ORCPT
+        id S1752739AbeEUOVz (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 10:21:55 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:41647 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751504AbeEUOVv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 10:20:53 -0400
-X-Google-Smtp-Source: AB8JxZpxbLI2+bvsyqe+XwMAKAjlttwK133CdIWR6KOr4iAiuxj6lV6szLFK8Mx6jZVIFBxM2YIFtA==
-Subject: Re: [PATCH 00/13] convert block layer to bioset_init()/mempool_init()
-To: Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        hch@infradead.org, colyli@suse.de, snitzer@redhat.com,
-        darrick.wong@oracle.com, clm@fb.com, bacik@fb.com,
-        linux-xfs@vger.kernel.org, drbd-dev@lists.linbit.com,
-        linux-btrfs@vger.kernel.org, linux-raid@vger.kernel.org,
-        neilb@suse.com
-References: <20180520222558.7053-1-kent.overstreet@gmail.com>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <dd30e115-f1c7-aa13-bb82-bffece8d07d7@kernel.dk>
-Date: Mon, 21 May 2018 08:20:50 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <20180520222558.7053-1-kent.overstreet@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 21 May 2018 10:21:51 -0400
+X-Google-Smtp-Source: AB8JxZrpI5EfbT1trCl910GM+4lKarQDIpPI/VqXHFBM1EHzmzJea17z/RjXT6uNIFR7cT5vB8TvwQ==
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: airlied@linux.ie, hans.verkuil@cisco.com, lee.jones@linaro.org,
+        olof@lixom.net, seanpaul@google.com
+Cc: Neil Armstrong <narmstrong@baylibre.com>, sadolfsson@google.com,
+        felixe@google.com, bleung@google.com, darekm@google.com,
+        marcheu@chromium.org, fparent@baylibre.com,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        eballetbo@gmail.com
+Subject: [PATCH v4 0/5] Add ChromeOS EC CEC Support
+Date: Mon, 21 May 2018 16:21:41 +0200
+Message-Id: <1526912506-18406-1-git-send-email-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/20/18 4:25 PM, Kent Overstreet wrote:
-> Jens - this series does the rest of the conversions that Christoph wanted, and
-> drops bioset_create().
-> 
-> Only lightly tested, but the changes are pretty mechanical. Based on your
-> for-next tree.
+Hi All,
 
-Looks good to me. I'll let it simmer for a bit to give folks a chance
-to comment on it.
+The new Google "Fizz" Intel-based ChromeOS device is gaining CEC support
+through it's Embedded Controller, to enable the Linux CEC Core to communicate
+with it and get the CEC Physical Address from the correct HDMI Connector, the
+following must be added/changed:
+- Add the CEC sub-device registration in the ChromeOS EC MFD Driver
+- Add the CEC related commands and events definitions into the EC MFD driver
+- Add a way to get a CEC notifier with it's (optional) connector name
+- Add the CEC notifier to the i915 HDMI driver
+- Add the proper ChromeOS EC CEC Driver
+
+The CEC notifier with the connector name is the tricky point, since even on
+Device-Tree platforms, there is no way to distinguish between multiple HDMI
+connectors from the same DRM driver. The solution I implemented is pretty
+simple and only adds an optional connector name to eventually distinguish
+an HDMI connector notifier from another if they share the same device.
+
+Feel free to comment this patchset !
+
+Changes since v3 (incorrectly reported as v2):
+ - Renamed "Chrome OS" to "ChromeOS"
+ - Updated cros_ec_commands.h new structs definitions to kernel doc format
+ - Added Reviwed-By tags
+
+Changes since v2:
+ - Add i915 port_identifier() and use this stable name as cec_notifier conn name
+ - Fixed and cleaned up the CEC commands and events handling
+ - Rebased the CEC sub-device registration on top of Enric's serie
+ - Fixed comments typo on cec driver
+ - Protected the DMI match only with PCI and DMI Kconfigs
+
+Changes since v1:
+ - Added cec_notifier_put to intel_hdmi
+ - Fixed all small reported issues on the EC CEC driver
+ - Moved the cec_notifier_get out of the #if .. #else .. #endif
+
+Changes since RFC:
+ - Moved CEC sub-device registration after CEC commands and events definitions patch
+ - Removed get_notifier_get_byname
+ - Added CEC_CORE select into i915 Kconfig
+ - Removed CEC driver fallback if notifier is not configured on HW, added explicit warn
+ - Fixed CEC core return type on error
+ - Moved to cros-ec-cec media platform directory
+ - Use bus_find_device() to find the pci i915 device instead of get_notifier_get_byname()
+ - Fix Logical Address setup
+ - Added comment about HW support
+ - Removed memset of msg structures
+
+Neil Armstrong (5):
+  media: cec-notifier: Get notifier by device and connector name
+  drm/i915: hdmi: add CEC notifier to intel_hdmi
+  mfd: cros-ec: Introduce CEC commands and events definitions.
+  mfd: cros_ec_dev: Add CEC sub-device registration
+  media: platform: Add ChromeOS EC CEC driver
+
+ drivers/gpu/drm/i915/Kconfig                     |   1 +
+ drivers/gpu/drm/i915/intel_display.h             |  20 ++
+ drivers/gpu/drm/i915/intel_drv.h                 |   2 +
+ drivers/gpu/drm/i915/intel_hdmi.c                |  13 +
+ drivers/media/cec/cec-notifier.c                 |  11 +-
+ drivers/media/platform/Kconfig                   |  11 +
+ drivers/media/platform/Makefile                  |   2 +
+ drivers/media/platform/cros-ec-cec/Makefile      |   1 +
+ drivers/media/platform/cros-ec-cec/cros-ec-cec.c | 347 +++++++++++++++++++++++
+ drivers/mfd/cros_ec_dev.c                        |  16 ++
+ drivers/platform/chrome/cros_ec_proto.c          |  40 ++-
+ include/linux/mfd/cros_ec.h                      |   2 +-
+ include/linux/mfd/cros_ec_commands.h             | 103 +++++++
+ include/media/cec-notifier.h                     |  27 +-
+ 14 files changed, 580 insertions(+), 16 deletions(-)
+ create mode 100644 drivers/media/platform/cros-ec-cec/Makefile
+ create mode 100644 drivers/media/platform/cros-ec-cec/cros-ec-cec.c
 
 -- 
-Jens Axboe
+2.7.4
