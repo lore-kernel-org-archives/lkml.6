@@ -1,38 +1,49 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrMC3NgRreic+gkfbTrRQpN5ScwX/I2jMFIFBf5AfBeTSEDKTsfwEYNm7UIvWDvRq+MA1Ni
-ARC-Seal: i=1; a=rsa-sha256; t=1526937649; cv=none;
+X-Google-Smtp-Source: AB8JxZpf60EBXqjBEBmD6B7t/rhPgp74OAon60ewW2kpD3LhFT2gQmEaL+gOzwlrg92RAJdh6mJx
+ARC-Seal: i=1; a=rsa-sha256; t=1526937646; cv=none;
         d=google.com; s=arc-20160816;
-        b=Qwl4a8YPp7n1mSJJCH/3TIGPfnXQ8nEnlCQexdWY2p/mCzH2E6kMO4Azb6yPqwuq7l
-         8DuUUUqt/ln7H+fapUMqD8MlYvsz6M6b6J8av9o5OYUSw5XaBlrxCQkCeoIBfDNDUoav
-         1NzDravnhySXmM0TZ7mNUGuPLVSXFHi1ijcPqIMrvrSdYR77vN0raTQ39yIJ+OoVeCKR
-         C8pb/fDp7rBDEOjBT0Um/emE51jazXsIog5Lg9d6iCtraGm66x7K2uvDb/03gfDOKgPn
-         Uef/cOHQGv4eVSEFHlAOim4RAm6cARfAHyM6vhC5XSit0LeQIo6YGd8erisxFQ0rYcwt
-         M1mQ==
+        b=g29pcfqR5jDEMXHz3Zs0QghrXiqKlzNyoIHoDmRJRiA2xO4FHOt/ruRynRvStBM8Db
+         JscZD0Pq+RoM9R0g+pjV1NPI8VM9QNaBc5uPDbqAEIzJ78fVnS3rrAZXywY4JvRejwfW
+         I7a/PbWVx6sCPrXIlsIyhWOCEitvqPW06ydfzsj1MXM0A11KZxYmduecQag+XTzhKct1
+         GtcB/mVR+KwJwv/kqZ2ma/xA94glc9m8OIJfUjPYdxX1dv1rO4PDOTbaaz6srG7ejuKk
+         LFs3hLE1SAPTGiXwNSyBBSHohq8or3H0k2oU2tO5WSv6dL0/ajFDoIAABayVh4OA5twU
+         XUSQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=Ed3iR4DCSvc1MXHmJWb2arGptGwFg8h7K6CnLtQxzSc=;
-        b=cInU976slkbpAochDrNVlE6hSDdXDnpW47sGuOw8oaj/GSp1cv5NmAw5OWOqBUzX3a
-         764MPk1PMoze2yalmNOllGS0lCqmhNFAzvMzLd80oEt2y1AXEzN5fjH+t3e/FbjLElx9
-         UAHrEq/HCY587gL5tWWBVxKBnoTKSm5w6zIv65gl6//EdirByDZ6/Gt4w9gr3GRM/CWy
-         nX764X5wgJ/M03JlZeWPcrDNIgraVpmjC1a3eWJU/+o0J/rCCbT9O+iAfgvV43HHbbbK
-         vQ1rsATq8SX6rPBUb286wL7lSM0Y1qsMdDJLF6DNAhk6mhkXZ9ZBsnI4sryasOJNSL6i
-         FrEw==
+        bh=wC5CThO8YeFQ4U3xezCmvgYMCuzqPsVQfvNy7v2tltw=;
+        b=r8eShzDEybAvZpE6jftJsGvd2gKhyAxi+NAPaZbVZNmjueZx826nncXtJAUWGXYKl1
+         VGAVYzeyAMecuhdjN4buef/F2A4pPZHY23od/SiAm3JinNHWoY+sUCKuNAV7AodVrrV9
+         15MZ3QjG55hDer0OCerWVV610lHBT2Z9wtwqmE3qFUmxMqSs+if6yKrPmQT8SLLMng0Z
+         dh/BMx33z1YOR3oZdeRsEVfn9IsBMx7Y85+1QrXkAXeH0LwPn6gSil/a78u6N1YFgx6n
+         F1hjngDyFjHILWer+IBKS96aH0PM5Rm+0hBmIvrKRO9l3+7HrRI5yBlOgGbl0z/WBGJ4
+         O16w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=EkhJ1TQT;
+       dkim=pass header.i=@kernel.org header.s=default header.b=UYg8yazA;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=EkhJ1TQT;
+       dkim=pass header.i=@kernel.org header.s=default header.b=UYg8yazA;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Russell King <rmk+kernel@armlinux.org.uk>
-Subject: [PATCH 4.14 38/95] ARM: 8769/1: kprobes: Fix to use get_kprobe_ctlblk after irq-disabed
-Date: Mon, 21 May 2018 23:11:28 +0200
-Message-Id: <20180521210455.759624251@linuxfoundation.org>
+	Dexuan Cui <decui@microsoft.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Josh Poulson <jopoulso@microsoft.com>,
+	"Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Frederic Weisbecker <fweisbec@gmail.com>,
+	Rakib Mullick <rakib.mullick@gmail.com>,
+	Jork Loeser <Jork.Loeser@microsoft.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	KY Srinivasan <kys@microsoft.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Alexey Dobriyan <adobriyan@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>
+Subject: [PATCH 4.14 37/95] tick/broadcast: Use for_each_cpu() specially on UP kernels
+Date: Mon, 21 May 2018 23:11:27 +0200
+Message-Id: <20180521210455.517179176@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210447.219380974@linuxfoundation.org>
 References: <20180521210447.219380974@linuxfoundation.org>
@@ -42,8 +53,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109798325340068?=
-X-GMAIL-MSGID: =?utf-8?q?1601110172700688843?=
+X-GMAIL-THRID: =?utf-8?q?1601109796027859618?=
+X-GMAIL-MSGID: =?utf-8?q?1601110169362997305?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,52 +62,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Dexuan Cui <decui@microsoft.com>
 
-commit 69af7e23a6870df2ea6fa79ca16493d59b3eebeb upstream.
+commit 5596fe34495cf0f645f417eb928ef224df3e3cb4 upstream.
 
-Since get_kprobe_ctlblk() uses smp_processor_id() to access
-per-cpu variable, it hits smp_processor_id sanity check as below.
+for_each_cpu() unintuitively reports CPU0 as set independent of the actual
+cpumask content on UP kernels. This causes an unexpected PIT interrupt
+storm on a UP kernel running in an SMP virtual machine on Hyper-V, and as
+a result, the virtual machine can suffer from a strange random delay of 1~20
+minutes during boot-up, and sometimes it can hang forever.
 
-[    7.006928] BUG: using smp_processor_id() in preemptible [00000000] code: swapper/0/1
-[    7.007859] caller is debug_smp_processor_id+0x20/0x24
-[    7.008438] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.16.0-rc1-00192-g4eb17253e4b5 #1
-[    7.008890] Hardware name: Generic DT based system
-[    7.009917] [<c0313f0c>] (unwind_backtrace) from [<c030e6d8>] (show_stack+0x20/0x24)
-[    7.010473] [<c030e6d8>] (show_stack) from [<c0c64694>] (dump_stack+0x84/0x98)
-[    7.010990] [<c0c64694>] (dump_stack) from [<c071ca5c>] (check_preemption_disabled+0x138/0x13c)
-[    7.011592] [<c071ca5c>] (check_preemption_disabled) from [<c071ca80>] (debug_smp_processor_id+0x20/0x24)
-[    7.012214] [<c071ca80>] (debug_smp_processor_id) from [<c03335e0>] (optimized_callback+0x2c/0xe4)
-[    7.013077] [<c03335e0>] (optimized_callback) from [<bf0021b0>] (0xbf0021b0)
+Protect if by checking whether the cpumask is empty before entering the
+for_each_cpu() loop.
 
-To fix this issue, call get_kprobe_ctlblk() right after
-irq-disabled since that disables preemption.
+[ tglx: Use !IS_ENABLED(CONFIG_SMP) instead of #ifdeffery ]
 
-Fixes: 0dc016dbd820 ("ARM: kprobes: enable OPTPROBES for ARM 32")
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Josh Poulson <jopoulso@microsoft.com>
+Cc: "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Cc: Rakib Mullick <rakib.mullick@gmail.com>
+Cc: Jork Loeser <Jork.Loeser@microsoft.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: KY Srinivasan <kys@microsoft.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Link: https://lkml.kernel.org/r/KL1P15301MB000678289FE55BA365B3279ABF990@KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM
+Link: https://lkml.kernel.org/r/KL1P15301MB0006FA63BC22BEB64902EAA0BF930@KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/probes/kprobes/opt-arm.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ kernel/time/tick-broadcast.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/arch/arm/probes/kprobes/opt-arm.c
-+++ b/arch/arm/probes/kprobes/opt-arm.c
-@@ -165,13 +165,14 @@ optimized_callback(struct optimized_kpro
- {
- 	unsigned long flags;
- 	struct kprobe *p = &op->kp;
--	struct kprobe_ctlblk *kcb = get_kprobe_ctlblk();
-+	struct kprobe_ctlblk *kcb;
- 
- 	/* Save skipped registers */
- 	regs->ARM_pc = (unsigned long)op->kp.addr;
- 	regs->ARM_ORIG_r0 = ~0UL;
- 
- 	local_irq_save(flags);
-+	kcb = get_kprobe_ctlblk();
- 
- 	if (kprobe_running()) {
- 		kprobes_inc_nmissed_count(&op->kp);
+--- a/kernel/time/tick-broadcast.c
++++ b/kernel/time/tick-broadcast.c
+@@ -612,6 +612,14 @@ static void tick_handle_oneshot_broadcas
+ 	now = ktime_get();
+ 	/* Find all expired events */
+ 	for_each_cpu(cpu, tick_broadcast_oneshot_mask) {
++		/*
++		 * Required for !SMP because for_each_cpu() reports
++		 * unconditionally CPU0 as set on UP kernels.
++		 */
++		if (!IS_ENABLED(CONFIG_SMP) &&
++		    cpumask_empty(tick_broadcast_oneshot_mask))
++			break;
++
+ 		td = &per_cpu(tick_cpu_device, cpu);
+ 		if (td->evtdev->next_event <= now) {
+ 			cpumask_set_cpu(cpu, tmpmask);
