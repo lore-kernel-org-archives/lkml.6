@@ -1,121 +1,162 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751514AbeEUMxZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 08:53:25 -0400
-Received: from foss.arm.com ([217.140.101.70]:49160 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750970AbeEUMxX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 08:53:23 -0400
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: linux-kernel@vger.kernel.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-        Jeremy Linton <jeremy.linton@arm.com>,
-        Catalin Marinas <Catalin.Marinas@arm.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH v2] drivers: base: cacheinfo: use OF property_read_u32 instead of get_property,read_number
-Date: Mon, 21 May 2018 13:53:09 +0100
-Message-Id: <1526907189-10031-1-git-send-email-sudeep.holla@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1526898749-17263-1-git-send-email-sudeep.holla@arm.com>
-References: <1526898749-17263-1-git-send-email-sudeep.holla@arm.com>
+        id S1751368AbeEUM5q (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 08:57:46 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:44914 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750898AbeEUM5k (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 08:57:40 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 249A1602BC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
+From: <ilialin@codeaurora.org>
+To: "'Sudeep Holla'" <sudeep.holla@arm.com>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <robh@kernel.org>, <mark.rutland@arm.com>,
+        <viresh.kumar@linaro.org>, <nm@ti.com>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>, <andy.gross@linaro.org>,
+        <david.brown@linaro.org>, <catalin.marinas@arm.com>,
+        <will.deacon@arm.com>, <rjw@rjwysocki.net>,
+        <linux-clk@vger.kernel.org>
+Cc: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-soc@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <rnayak@codeaurora.org>, <amit.kucheria@linaro.org>,
+        <nicolas.dechesne@linaro.org>, <celster@codeaurora.org>,
+        <tfinkel@codeaurora.org>
+References: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org> <1526729701-8589-1-git-send-email-ilialin@codeaurora.org> <153cc316-dcb5-972f-5a2f-c91fe0f6348b@arm.com>
+In-Reply-To: <153cc316-dcb5-972f-5a2f-c91fe0f6348b@arm.com>
+Subject: RE: [PATCH] cpufreq: Add Kryo CPU scaling driver
+Date: Mon, 21 May 2018 15:57:10 +0300
+Message-ID: <000f01d3f103$3ff78ba0$bfe6a2e0$@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain;
+        charset="utf-8"
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQF4oTaoNxz6XIk2qh8MCLQUCquwggJzguYXAj6kKpSkyzIqQA==
+Content-Language: en-us
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4LCvojS007927
 
-of_property_read_u32 searches for a property in a device node and read
-a 32-bit value from it. Instead of using of_get_property to get the
-property and then read 32-bit value using of_read_number, we can
-simplify it by using of_property_read_u32.
 
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
----
- drivers/base/cacheinfo.c | 24 ++++++++++--------------
- 1 file changed, 10 insertions(+), 14 deletions(-)
 
-Hi Andy,
+> -----Original Message-----
+> From: Sudeep Holla <sudeep.holla@arm.com>
+> Sent: Monday, May 21, 2018 15:50
+> To: Ilia Lin <ilialin@codeaurora.org>; mturquette@baylibre.com;
+> sboyd@kernel.org; robh@kernel.org; mark.rutland@arm.com;
+> viresh.kumar@linaro.org; nm@ti.com; lgirdwood@gmail.com;
+> broonie@kernel.org; andy.gross@linaro.org; david.brown@linaro.org;
+> catalin.marinas@arm.com; will.deacon@arm.com; rjw@rjwysocki.net; linux-
+> clk@vger.kernel.org
+> Cc: Sudeep Holla <sudeep.holla@arm.com>; devicetree@vger.kernel.org;
+> linux-kernel@vger.kernel.org; linux-pm@vger.kernel.org; linux-arm-
+> msm@vger.kernel.org; linux-soc@vger.kernel.org; linux-arm-
+> kernel@lists.infradead.org; rnayak@codeaurora.org;
+> amit.kucheria@linaro.org; nicolas.dechesne@linaro.org;
+> celster@codeaurora.org; tfinkel@codeaurora.org
+> Subject: Re: [PATCH] cpufreq: Add Kryo CPU scaling driver
+> 
+> 
+> 
+> On 19/05/18 12:35, Ilia Lin wrote:
+> > In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO
+> > processors, the CPU frequency subset and voltage value of each OPP
+> > varies based on the silicon variant in use. Qualcomm Process Voltage
+> > Scaling Tables defines the voltage and frequency value based on the
+> > msm-id in SMEM and speedbin blown in the efuse combination.
+> > The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the
+> > SoC to provide the OPP framework with required information.
+> > This is used to determine the voltage and frequency value for each OPP
+> > of
+> > operating-points-v2 table when it is parsed by the OPP framework.
+> >
+> > Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+> > Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> > ---
+> >  drivers/cpufreq/Kconfig.arm          |  10 +++
+> >  drivers/cpufreq/Makefile             |   1 +
+> >  drivers/cpufreq/cpufreq-dt-platdev.c |   3 +
+> >  drivers/cpufreq/qcom-cpufreq-kryo.c  | 164
+> > +++++++++++++++++++++++++++++++++++
+> >  4 files changed, 178 insertions(+)
+> >  create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
+> >
+> 
+> [..]
+> 
+> > +
+> > +/*
+> > + * In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO
+> > +processors,
+> > + * the CPU frequency subset and voltage value of each OPP varies
+> > + * based on the silicon variant in use. Qualcomm Process Voltage
+> > +Scaling Tables
+> > + * defines the voltage and frequency value based on the msm-id in
+> > +SMEM
+> > + * and speedbin blown in the efuse combination.
+> > + * The qcom-cpufreq-kryo driver reads the msm-id and efuse value from
+> > +the SoC
+> > + * to provide the OPP framework with required information.
+> > + * This is used to determine the voltage and frequency value for each
+> > +OPP of
+> > + * operating-points-v2 table when it is parsed by the OPP framework.
+> > + */
+> > +
+> > +#include <linux/cpu.h>
+> > +#include <linux/err.h>
+> > +#include <linux/init.h>
+> > +#include <linux/kernel.h>
+> > +#include <linux/module.h>
+> > +#include <linux/nvmem-consumer.h>
+> > +#include <linux/of.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/pm_opp.h>
+> > +#include <linux/slab.h>
+> > +#include <linux/soc/qcom/smem.h>
+> > +
+> > +#define MSM_ID_SMEM	137
+> > +#define SILVER_LEAD	0
+> > +#define GOLD_LEAD	2
+> > +
+> 
+> So I gather form other emails, that these are physical cpu number(not even
+> unique identifier like MPIDR). Will this work on parts or platforms that need
+> to boot in GOLD LEAD cpus.
 
-Ignore my comment on compile errors error with Werror=incompatible-pointer-types
-I was so hung up on _u64 version and didn't realise that we were using 32-bit
-with of_read_number originally.
+The driver is for Kryo CPU, which (and AFAIK all multicore MSMs) always boots on the CPU0.
 
-Regards,
-Sudeep
+> 
+> [...]
+> 
+> > +
+> > +static int __init qcom_cpufreq_kryo_driver_init(void)
+> > +{
+> > +	struct device *cpu_dev_silver, *cpu_dev_gold;
+> > +	struct opp_table *opp_silver, *opp_gold;
+> > +	enum _msm8996_version msm8996_version;
+> > +	struct nvmem_cell *speedbin_nvmem;
+> > +	struct platform_device *pdev;
+> > +	struct device_node *np;
+> > +	u8 *speedbin;
+> > +	u32 versions;
+> > +	size_t len;
+> > +	int ret;
+> > +
+> > +	cpu_dev_silver = get_cpu_device(SILVER_LEAD);
+> > +	if (IS_ERR_OR_NULL(cpu_dev_silver))
+> > +		return PTR_ERR(cpu_dev_silver);
+> > +
+> > +	cpu_dev_gold = get_cpu_device(SILVER_LEAD);
+> 
+> s/SILVER/GOLD/ ?
 
-v1->v2:
-	- Replaced use of of_property_read_u64 with of_property_read_u32
-	- Also removed the local variables as Andy initially suggested
+Yes, you are right. This is already fixed in the respin.
 
-diff --git a/drivers/base/cacheinfo.c b/drivers/base/cacheinfo.c
-index 2880e2ab01f5..5d5b5988e88b 100644
---- a/drivers/base/cacheinfo.c
-+++ b/drivers/base/cacheinfo.c
-@@ -74,52 +74,48 @@ static inline int get_cacheinfo_idx(enum cache_type type)
- static void cache_size(struct cacheinfo *this_leaf, struct device_node *np)
- {
- 	const char *propname;
--	const __be32 *cache_size;
- 	int ct_idx;
-
- 	ct_idx = get_cacheinfo_idx(this_leaf->type);
- 	propname = cache_type_info[ct_idx].size_prop;
-
--	cache_size = of_get_property(np, propname, NULL);
--	if (cache_size)
--		this_leaf->size = of_read_number(cache_size, 1);
-+	if (of_property_read_u32(np, propname, &this_leaf->size))
-+		this_leaf->size = 0;
- }
-
- /* not cache_line_size() because that's a macro in include/linux/cache.h */
- static void cache_get_line_size(struct cacheinfo *this_leaf,
- 				struct device_node *np)
- {
--	const __be32 *line_size;
- 	int i, lim, ct_idx;
-
- 	ct_idx = get_cacheinfo_idx(this_leaf->type);
- 	lim = ARRAY_SIZE(cache_type_info[ct_idx].line_size_props);
-
- 	for (i = 0; i < lim; i++) {
-+		int ret;
-+		u32 line_size;
- 		const char *propname;
-
- 		propname = cache_type_info[ct_idx].line_size_props[i];
--		line_size = of_get_property(np, propname, NULL);
--		if (line_size)
-+		ret = of_property_read_u32(np, propname, &line_size);
-+		if (!ret) {
-+			this_leaf->coherency_line_size = line_size;
- 			break;
-+		}
- 	}
--
--	if (line_size)
--		this_leaf->coherency_line_size = of_read_number(line_size, 1);
- }
-
- static void cache_nr_sets(struct cacheinfo *this_leaf, struct device_node *np)
- {
- 	const char *propname;
--	const __be32 *nr_sets;
- 	int ct_idx;
-
- 	ct_idx = get_cacheinfo_idx(this_leaf->type);
- 	propname = cache_type_info[ct_idx].nr_sets_prop;
-
--	nr_sets = of_get_property(np, propname, NULL);
--	if (nr_sets)
--		this_leaf->number_of_sets = of_read_number(nr_sets, 1);
-+	if (of_property_read_u32(np, propname, &this_leaf->number_of_sets))
-+		this_leaf->number_of_sets = 0;
- }
-
- static void cache_associativity(struct cacheinfo *this_leaf)
---
-2.7.4
+> 
+> --
+> Regards,
+> Sudeep
