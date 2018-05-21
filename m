@@ -1,332 +1,233 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752742AbeEUNz5 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 09:55:57 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35102 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751115AbeEUNz4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 09:55:56 -0400
-Subject: Re: [PATCH v8 1/6] cpuset: Enable cpuset controller in default
- hierarchy
-To: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
-        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>
-References: <1526590545-3350-1-git-send-email-longman@redhat.com>
- <1526590545-3350-2-git-send-email-longman@redhat.com>
- <20180521115528.GR30654@e110439-lin>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <fbc71cfc-6801-0fda-b0c6-2a70f7c9fe25@redhat.com>
-Date: Mon, 21 May 2018 09:55:51 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1752835AbeEUN6e (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 09:58:34 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:40074 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751178AbeEUN6b (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 09:58:31 -0400
+X-Google-Smtp-Source: AB8JxZqBS56Q+g1P+pLMOSmfKNK8kn0UEuRkvMP8pXEFAk7FhEbetyo4Lq3beO3LWz2YswtLFCdZKg==
+Date: Mon, 21 May 2018 09:58:28 -0400
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: benjamin.gaignard@st.com, fabrice.gasnier@st.com,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v6 9/9] iio: counter: Remove IIO counter subdirectory
+Message-ID: <20180521135828.GD5723@sophia>
+References: <cover.1526487615.git.vilhelm.gray@gmail.com>
+ <4c335e0eebfbaf6e86f41e0f2864d76993d90b13.1526487615.git.vilhelm.gray@gmail.com>
+ <20180520165302.101d37ce@archlinux>
 MIME-Version: 1.0
-In-Reply-To: <20180521115528.GR30654@e110439-lin>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20180520165302.101d37ce@archlinux>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/21/2018 07:55 AM, Patrick Bellasi wrote:
-> Hi Waiman!
+On Sun, May 20, 2018 at 04:53:02PM +0100, Jonathan Cameron wrote:
+>On Wed, 16 May 2018 13:52:39 -0400
+>William Breathitt Gray <vilhelm.gray@gmail.com> wrote:
 >
-> I've started looking at the possibility to move Android to use cgroups
-> v2 and the availability of the cpuset controller makes this even more
-> promising.
+>> This patch removes the IIO counter subdirectory which is now superceded
+>> by the Counter subsystem. Deprecation warnings are added to the
+>> documentation of the relevant IIO counter sysfs attributes.
+>> 
+>> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 >
-> I'll try to give a run to this series on Android, meanwhile I have
-> some (hopefully not too much dummy) questions below.
+>Please drop the directory when it becomes empty rather than in a later
+>patch.  IIRC there are some issues with empty Makefiles that will
+>make building inbetween tricky.
 >
-> On 17-May 16:55, Waiman Long wrote:
->> Given the fact that thread mode had been merged into 4.14, it is now
->> time to enable cpuset to be used in the default hierarchy (cgroup v2)
->> as it is clearly threaded.
->>
->> The cpuset controller had experienced feature creep since its
->> introduction more than a decade ago. Besides the core cpus and mems
->> control files to limit cpus and memory nodes, there are a bunch of
->> additional features that can be controlled from the userspace. Some of
->> the features are of doubtful usefulness and may not be actively used.
->>
->> This patch enables cpuset controller in the default hierarchy with
->> a minimal set of features, namely just the cpus and mems and their
->> effective_* counterparts.  We can certainly add more features to the
->> default hierarchy in the future if there is a real user need for them
->> later on.
->>
->> Alternatively, with the unified hiearachy, it may make more sense
->> to move some of those additional cpuset features, if desired, to
->> memory controller or may be to the cpu controller instead of staying
->> with cpuset.
->>
->> Signed-off-by: Waiman Long <longman@redhat.com>
+>For the deprecated markings.
+>
+>Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+
+I'll have the directory removal occur with the removal of the last
+module then when the directory becomes empty.
+
+Regarding the deprecation markings, should I select a specific kernel
+version to date the removal of these attributes, or leave the future
+date open as this patch is now?
+
+William Breathitt Gray
+
+>
 >> ---
->>  Documentation/cgroup-v2.txt | 90 ++++++++++++++++++++++++++++++++++++++++++---
->>  kernel/cgroup/cpuset.c      | 48 ++++++++++++++++++++++--
->>  2 files changed, 130 insertions(+), 8 deletions(-)
->>
->> diff --git a/Documentation/cgroup-v2.txt b/Documentation/cgroup-v2.txt
->> index 74cdeae..cf7bac6 100644
->> --- a/Documentation/cgroup-v2.txt
->> +++ b/Documentation/cgroup-v2.txt
->> @@ -53,11 +53,13 @@ v1 is available under Documentation/cgroup-v1/.
->>         5-3-2. Writeback
->>       5-4. PID
->>         5-4-1. PID Interface Files
->> -     5-5. Device
->> -     5-6. RDMA
->> -       5-6-1. RDMA Interface Files
->> -     5-7. Misc
->> -       5-7-1. perf_event
->> +     5-5. Cpuset
->> +       5.5-1. Cpuset Interface Files
->> +     5-6. Device
->> +     5-7. RDMA
->> +       5-7-1. RDMA Interface Files
->> +     5-8. Misc
->> +       5-8-1. perf_event
->>       5-N. Non-normative information
->>         5-N-1. CPU controller root cgroup process behaviour
->>         5-N-2. IO controller root cgroup process behaviour
->> @@ -1435,6 +1437,84 @@ through fork() or clone(). These will return -EAGAIN if the creation
->>  of a new process would cause a cgroup policy to be violated.
+>>  Documentation/ABI/testing/sysfs-bus-iio          |  8 ++++++++
+>>  .../ABI/testing/sysfs-bus-iio-counter-104-quad-8 | 16 ++++++++++++++++
+>>  drivers/iio/Kconfig                              |  1 -
+>>  drivers/iio/Makefile                             |  1 -
+>>  drivers/iio/counter/Kconfig                      |  8 --------
+>>  drivers/iio/counter/Makefile                     |  5 -----
+>>  6 files changed, 24 insertions(+), 15 deletions(-)
+>>  delete mode 100644 drivers/iio/counter/Kconfig
+>>  delete mode 100644 drivers/iio/counter/Makefile
+>> 
+>> diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
+>> index 731146c3b138..6115d97b075e 100644
+>> --- a/Documentation/ABI/testing/sysfs-bus-iio
+>> +++ b/Documentation/ABI/testing/sysfs-bus-iio
+>> @@ -1637,6 +1637,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_countY_raw
+>>  KernelVersion:	4.10
+>>  Contact:	linux-iio@vger.kernel.org
+>>  Description:
+>> +		This interface is deprecated; please use the Counter subsystem.
+>> +
+>>  		Raw counter device counts from channel Y. For quadrature
+>>  		counters, multiplication by an available [Y]_scale results in
+>>  		the counts of a single quadrature signal phase from channel Y.
+>> @@ -1645,6 +1647,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_indexY_raw
+>>  KernelVersion:	4.10
+>>  Contact:	linux-iio@vger.kernel.org
+>>  Description:
+>> +		This interface is deprecated; please use the Counter subsystem.
+>> +
+>>  		Raw counter device index value from channel Y. This attribute
+>>  		provides an absolute positional reference (e.g. a pulse once per
+>>  		revolution) which may be used to home positional systems as
+>> @@ -1654,6 +1658,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_count_count_direction_available
+>>  KernelVersion:	4.12
+>>  Contact:	linux-iio@vger.kernel.org
+>>  Description:
+>> +		This interface is deprecated; please use the Counter subsystem.
+>> +
+>>  		A list of possible counting directions which are:
+>>  		- "up"	: counter device is increasing.
+>>  		- "down": counter device is decreasing.
+>> @@ -1662,4 +1668,6 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_countY_count_direction
+>>  KernelVersion:	4.12
+>>  Contact:	linux-iio@vger.kernel.org
+>>  Description:
+>> +		This interface is deprecated; please use the Counter subsystem.
+>> +
+>>  		Raw counter device counters direction for channel Y.
+>> diff --git a/Documentation/ABI/testing/sysfs-bus-iio-counter-104-quad-8 b/Documentation/ABI/testing/sysfs-bus-iio-counter-104-quad-8
+>> index 7fac2c268d9a..bac3d0d48b7b 100644
+>> --- a/Documentation/ABI/testing/sysfs-bus-iio-counter-104-quad-8
+>> +++ b/Documentation/ABI/testing/sysfs-bus-iio-counter-104-quad-8
+>> @@ -6,6 +6,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_index_synchronous_mode_available
+>>  KernelVersion:	4.10
+>>  Contact:	linux-iio@vger.kernel.org
+>>  Description:
+>> +		This interface is deprecated; please use the Counter subsystem.
+>> +
+>>  		Discrete set of available values for the respective counter
+>>  		configuration are listed in this file.
 >>  
+>> @@ -13,6 +15,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_countY_count_mode
+>>  KernelVersion:	4.10
+>>  Contact:	linux-iio@vger.kernel.org
+>>  Description:
+>> +		This interface is deprecated; please use the Counter subsystem.
+>> +
+>>  		Count mode for channel Y. Four count modes are available:
+>>  		normal, range limit, non-recycle, and modulo-n. The preset value
+>>  		for channel Y is used by the count mode where required.
+>> @@ -47,6 +51,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_countY_noise_error
+>>  KernelVersion:	4.10
+>>  Contact:	linux-iio@vger.kernel.org
+>>  Description:
+>> +		This interface is deprecated; please use the Counter subsystem.
+>> +
+>>  		Read-only attribute that indicates whether excessive noise is
+>>  		present at the channel Y count inputs in quadrature clock mode;
+>>  		irrelevant in non-quadrature clock mode.
+>> @@ -55,6 +61,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_countY_preset
+>>  KernelVersion:	4.10
+>>  Contact:	linux-iio@vger.kernel.org
+>>  Description:
+>> +		This interface is deprecated; please use the Counter subsystem.
+>> +
+>>  		If the counter device supports preset registers, the preset
+>>  		count for channel Y is provided by this attribute.
 >>  
->> +Cpuset
->> +------
+>> @@ -62,6 +70,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_countY_quadrature_mode
+>>  KernelVersion:	4.10
+>>  Contact:	linux-iio@vger.kernel.org
+>>  Description:
+>> +		This interface is deprecated; please use the Counter subsystem.
 >> +
->> +The "cpuset" controller provides a mechanism for constraining
->> +the CPU and memory node placement of tasks to only the resources
->> +specified in the cpuset interface files in a task's current cgroup.
->> +This is especially valuable on large NUMA systems where placing jobs
->> +on properly sized subsets of the systems with careful processor and
->> +memory placement to reduce cross-node memory access and contention
->> +can improve overall system performance.
-> Another quite important use-case for cpuset is Android, where they are
-> actively used to do both power-saving as well as performance tunings.
-> For example, depending on the status of an application, its threads
-> can be allowed to run on all available CPUS (e.g. foreground apps) or
-> be restricted only on few energy efficient CPUs (e.g. backgroud apps).
->
-> Since here we are at "rewriting" cpusets for v2, I think it's important
-> to keep this mobile world scenario into consideration.
->
-> For example, in this context, we are looking at the possibility to
-> update/tune cpuset.cpus with a relatively high rate, i.e. tens of
-> times per second. Not sure that's the same update rate usually
-> required for the large NUMA systems you cite above.  However, in this
-> case it's quite important to have really small overheads for these
-> operations.
-
-The cgroup interface isn't designed for high update throughput. Changing
-cpuset.cpus will require searching for the all the tasks in the cpuset
-and change its cpu mask. That isn't a fast operation, but it shouldn't
-be too bad either depending on how many tasks are in the cpuset.
-
-I would not suggest doing rapid changes to cpuset.cpus as a mean to tune
-the behavior of a task. So what exactly is the tuning you are thinking
-about? Is it moving a task from the a high-power cpu to a low power one
-or vice versa? If so, it is probably better to move the task from one
-cpuset of high-power cpus to another cpuset of low-power cpus.
-
+>>  		Configure channel Y counter for non-quadrature or quadrature
+>>  		clock mode. Selecting non-quadrature clock mode will disable
+>>  		synchronous load mode. In quadrature clock mode, the channel Y
+>> @@ -83,6 +93,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_countY_set_to_preset_on_index
+>>  KernelVersion:	4.10
+>>  Contact:	linux-iio@vger.kernel.org
+>>  Description:
+>> +		This interface is deprecated; please use the Counter subsystem.
 >> +
->> +The "cpuset" controller is hierarchical.  That means the controller
->> +cannot use CPUs or memory nodes not allowed in its parent.
+>>  		Whether to set channel Y counter with channel Y preset value
+>>  		when channel Y index input is active, or continuously count.
+>>  		Valid attribute values are boolean.
+>> @@ -91,6 +103,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_indexY_index_polarity
+>>  KernelVersion:	4.10
+>>  Contact:	linux-iio@vger.kernel.org
+>>  Description:
+>> +		This interface is deprecated; please use the Counter subsystem.
 >> +
->> +
->> +Cpuset Interface Files
->> +~~~~~~~~~~~~~~~~~~~~~~
->> +
->> +  cpuset.cpus
->> +	A read-write multiple values file which exists on non-root
->> +	cpuset-enabled cgroups.
->> +
->> +	It lists the CPUs allowed to be used by tasks within this
->> +	cgroup.  The CPU numbers are comma-separated numbers or
->> +	ranges.  For example:
->> +
->> +	  # cat cpuset.cpus
->> +	  0-4,6,8-10
->> +
->> +	An empty value indicates that the cgroup is using the same
->> +	setting as the nearest cgroup ancestor with a non-empty
->> +	"cpuset.cpus" or all the available CPUs if none is found.
-> Does that means that we can move tasks into a newly created group for
-> which we have not yet configured this value?
-> AFAIK, that's a different behavior wrt v1... and I like it better.
->
-
-For v2, if you haven't set up the cpuset.cpus, it defaults to the
-effective cpu list of its parent.
-
->> +
->> +	The value of "cpuset.cpus" stays constant until the next update
->> +	and won't be affected by any CPU hotplug events.
-> This also sounds interesting, does it means that we use the
-> cpuset.cpus mask to restrict online CPUs, whatever they are?
-
-cpuset.cpus holds the cpu list written by the users.
-cpuset.cpus.effective is the actual cpu mask that is being used. The
-effective cpu mask is always a subset of cpuset.cpus. They differ if not
-all the CPUs in cpuset.cpus are online.
-> I'll have a better look at the code, but my understanding of v1 is
-> that we spent a lot of effort to keep task cpu-affinity masks aligned
-> with the cpuset in which they live, and we do something similar at each
-> HP event, which ultimately generates a lot of overheads in systems
-> where: you have many HP events and/or cpuset.cpus change quite
-> frequently.
->
-> I hope to find some better behavior in this series.
->
-
-The behavior of CPU offline event should be similar in v2. Any HP event
-will cause the system to reset the cpu masks of task affected by the
-event. The online event, however, will be a bit different between v1 and
-v2. For v1, the online event won't restore the CPU back to those cpusets
-that had the onlined CPU previously. For v2, the v2, the online CPU will
-be restored back to those cpusets. So there is less work from the
-management layer, but overhead is still there in the kernel of doing the
-restore.
-
->> +
->> +  cpuset.cpus.effective
->> +	A read-only multiple values file which exists on non-root
->> +	cpuset-enabled cgroups.
->> +
->> +	It lists the onlined CPUs that are actually allowed to be
->> +	used by tasks within the current cgroup.  If "cpuset.cpus"
->> +	is empty, it shows all the CPUs from the parent cgroup that
->> +	will be available to be used by this cgroup.  Otherwise, it is
->> +	a subset of "cpuset.cpus".  Its value will be affected by CPU
->> +	hotplug events.
-> This looks similar to v1, isn't it?
-
-For v1, cpuset.cpus.effective is the same as cpuset.cpus unless you turn
-on the v2 mode when mounting the v1 cpuset. For v2, they differ. Please
-see the explanation above.
-
->> +
->> +  cpuset.mems
->> +	A read-write multiple values file which exists on non-root
->> +	cpuset-enabled cgroups.
->> +
->> +	It lists the memory nodes allowed to be used by tasks within
->> +	this cgroup.  The memory node numbers are comma-separated
->> +	numbers or ranges.  For example:
->> +
->> +	  # cat cpuset.mems
->> +	  0-1,3
->> +
->> +	An empty value indicates that the cgroup is using the same
->> +	setting as the nearest cgroup ancestor with a non-empty
->> +	"cpuset.mems" or all the available memory nodes if none
->> +	is found.
->> +
->> +	The value of "cpuset.mems" stays constant until the next update
->> +	and won't be affected by any memory nodes hotplug events.
->> +
->> +  cpuset.mems.effective
->> +	A read-only multiple values file which exists on non-root
->> +	cpuset-enabled cgroups.
->> +
->> +	It lists the onlined memory nodes that are actually allowed to
->> +	be used by tasks within the current cgroup.  If "cpuset.mems"
->> +	is empty, it shows all the memory nodes from the parent cgroup
->> +	that will be available to be used by this cgroup.  Otherwise,
->> +	it is a subset of "cpuset.mems".  Its value will be affected
->> +	by memory nodes hotplug events.
->> +
->> +
->>  Device controller
->>  -----------------
+>>  		Active level of channel Y index input; irrelevant in
+>>  		non-synchronous load mode.
 >>  
->> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
->> index b42037e..419b758 100644
->> --- a/kernel/cgroup/cpuset.c
->> +++ b/kernel/cgroup/cpuset.c
->> @@ -1823,12 +1823,11 @@ static s64 cpuset_read_s64(struct cgroup_subsys_state *css, struct cftype *cft)
->>  	return 0;
->>  }
->>  
+>> @@ -98,6 +112,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_indexY_synchronous_mode
+>>  KernelVersion:	4.10
+>>  Contact:	linux-iio@vger.kernel.org
+>>  Description:
+>> +		This interface is deprecated; please use the Counter subsystem.
+>> +
+>>  		Configure channel Y counter for non-synchronous or synchronous
+>>  		load mode. Synchronous load mode cannot be selected in
+>>  		non-quadrature clock mode.
+>> diff --git a/drivers/iio/Kconfig b/drivers/iio/Kconfig
+>> index d69e85a8bdc3..1152efad91a1 100644
+>> --- a/drivers/iio/Kconfig
+>> +++ b/drivers/iio/Kconfig
+>> @@ -74,7 +74,6 @@ source "drivers/iio/afe/Kconfig"
+>>  source "drivers/iio/amplifiers/Kconfig"
+>>  source "drivers/iio/chemical/Kconfig"
+>>  source "drivers/iio/common/Kconfig"
+>> -source "drivers/iio/counter/Kconfig"
+>>  source "drivers/iio/dac/Kconfig"
+>>  source "drivers/iio/dummy/Kconfig"
+>>  source "drivers/iio/frequency/Kconfig"
+>> diff --git a/drivers/iio/Makefile b/drivers/iio/Makefile
+>> index d8cba9c229c0..7bdd31f1b88f 100644
+>> --- a/drivers/iio/Makefile
+>> +++ b/drivers/iio/Makefile
+>> @@ -20,7 +20,6 @@ obj-y += amplifiers/
+>>  obj-y += buffer/
+>>  obj-y += chemical/
+>>  obj-y += common/
+>> -obj-y += counter/
+>>  obj-y += dac/
+>>  obj-y += dummy/
+>>  obj-y += gyro/
+>> diff --git a/drivers/iio/counter/Kconfig b/drivers/iio/counter/Kconfig
+>> deleted file mode 100644
+>> index 95a7a0df6cac..000000000000
+>> --- a/drivers/iio/counter/Kconfig
+>> +++ /dev/null
+>> @@ -1,8 +0,0 @@
+>> -#
+>> -# Counter devices
+>> -#
+>> -# When adding new entries keep the list in alphabetical order
 >> -
->>  /*
->>   * for the common functions, 'private' gives the type of file
->>   */
->>  
->> -static struct cftype files[] = {
->> +static struct cftype legacy_files[] = {
->>  	{
->>  		.name = "cpus",
->>  		.seq_show = cpuset_common_seq_show,
->> @@ -1931,6 +1930,47 @@ static s64 cpuset_read_s64(struct cgroup_subsys_state *css, struct cftype *cft)
->>  };
->>  
->>  /*
->> + * This is currently a minimal set for the default hierarchy. It can be
->> + * expanded later on by migrating more features and control files from v1.
->> + */
->> +static struct cftype dfl_files[] = {
->> +	{
->> +		.name = "cpus",
->> +		.seq_show = cpuset_common_seq_show,
->> +		.write = cpuset_write_resmask,
->> +		.max_write_len = (100U + 6 * NR_CPUS),
->> +		.private = FILE_CPULIST,
->> +		.flags = CFTYPE_NOT_ON_ROOT,
->> +	},
->> +
->> +	{
->> +		.name = "mems",
->> +		.seq_show = cpuset_common_seq_show,
->> +		.write = cpuset_write_resmask,
->> +		.max_write_len = (100U + 6 * MAX_NUMNODES),
->> +		.private = FILE_MEMLIST,
->> +		.flags = CFTYPE_NOT_ON_ROOT,
->> +	},
->> +
->> +	{
->> +		.name = "cpus.effective",
->> +		.seq_show = cpuset_common_seq_show,
->> +		.private = FILE_EFFECTIVE_CPULIST,
->> +		.flags = CFTYPE_NOT_ON_ROOT,
->> +	},
->> +
->> +	{
->> +		.name = "mems.effective",
->> +		.seq_show = cpuset_common_seq_show,
->> +		.private = FILE_EFFECTIVE_MEMLIST,
->> +		.flags = CFTYPE_NOT_ON_ROOT,
->> +	},
->> +
->> +	{ }	/* terminate */
->> +};
->> +
->> +
->> +/*
->>   *	cpuset_css_alloc - allocate a cpuset css
->>   *	cgrp:	control group that the new cpuset will be part of
->>   */
->> @@ -2104,8 +2144,10 @@ struct cgroup_subsys cpuset_cgrp_subsys = {
->>  	.post_attach	= cpuset_post_attach,
->>  	.bind		= cpuset_bind,
->>  	.fork		= cpuset_fork,
->> -	.legacy_cftypes	= files,
->> +	.legacy_cftypes	= legacy_files,
->> +	.dfl_cftypes	= dfl_files,
->>  	.early_init	= true,
->> +	.threaded	= true,
-> Which means that by default we can attach tasks instead of only
-> processes, right?
-
-Yes, you can control task placement on the thread level, not just process.
-
-Regards,
-Longman
+>> -menu "Counters"
+>> -
+>> -endmenu
+>> diff --git a/drivers/iio/counter/Makefile b/drivers/iio/counter/Makefile
+>> deleted file mode 100644
+>> index 8fd3d954775a..000000000000
+>> --- a/drivers/iio/counter/Makefile
+>> +++ /dev/null
+>> @@ -1,5 +0,0 @@
+>> -#
+>> -# Makefile for IIO counter devices
+>> -#
+>> -
+>> -# When adding new entries keep the list in alphabetical order
+>
