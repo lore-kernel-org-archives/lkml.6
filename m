@@ -1,129 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751184AbeEUSaV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 14:30:21 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34868 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750909AbeEUSaS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 14:30:18 -0400
-From: Steve Grubb <sgrubb@redhat.com>
-To: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc: Richard Guy Briggs <rgb@redhat.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        containers@lists.linux-foundation.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, paul@paul-moore.com
-Subject: Re: [PATCH] audit: add containerid support for IMA-audit
-Date: Mon, 21 May 2018 14:30:18 -0400
-Message-ID: <4015765.rtofcNpGHU@x2>
-Organization: Red Hat
-In-Reply-To: <21646a72-e782-e33a-9e75-5cc98b241f36@linux.vnet.ibm.com>
-References: <1520257393.10396.291.camel@linux.vnet.ibm.com> <2397631.78oLu0QVqb@x2> <21646a72-e782-e33a-9e75-5cc98b241f36@linux.vnet.ibm.com>
+        id S1751128AbeEUShs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 14:37:48 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:46537 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750977AbeEUSho (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 14:37:44 -0400
+X-Google-Smtp-Source: AB8JxZpDzyycLu2mgobcGfx0++PaZSbSlV3T4HDuR5xu8EL+U6tUY/CTICn55mU0FcBn95xNUsbgMw==
+Date: Mon, 21 May 2018 11:37:42 -0700
+From: Omar Sandoval <osandov@osandov.com>
+To: Bart Van Assche <Bart.VanAssche@wdc.com>
+Cc: "kent.overstreet@gmail.com" <kent.overstreet@gmail.com>,
+        "mingo@kernel.org" <mingo@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "axboe@kernel.dk" <axboe@kernel.dk>
+Subject: Re: [PATCH 00/10] Misc block layer patches for bcachefs
+Message-ID: <20180521183742.GC14774@vader>
+References: <20180518090636.GA14738@kmo-pixel>
+ <8f62d8f870c6b66e90d3e7f57acee481acff57f5.camel@wdc.com>
+ <20180520221733.GA11495@kmo-pixel>
+ <bb4fd32d0baa6554615a7ec3b45cc2b89424328e.camel@wdc.com>
+ <20180520223116.GB11495@kmo-pixel>
+ <b0aa2a8737b2d826fea58dc0bc113ddce50f018a.camel@wdc.com>
+ <20180520232139.GE11495@kmo-pixel>
+ <238bacfbc43245159c1586189a436efbb069306b.camel@wdc.com>
+ <20180520235853.GF11495@kmo-pixel>
+ <d3fbfaa667f5ac64c1f230249e3333594cb4a128.camel@wdc.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d3fbfaa667f5ac64c1f230249e3333594cb4a128.camel@wdc.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Stefan,
-
-On Monday, May 21, 2018 1:53:04 PM EDT Stefan Berger wrote:
-> On 05/21/2018 12:58 PM, Steve Grubb wrote:
-> > On Thursday, May 17, 2018 10:18:13 AM EDT Stefan Berger wrote:
-> >>> audit_log_container_info() then releasing the local context.  This
-> >>> version of the record has additional concerns covered here:
-> >>> https://github.com/linux-audit/audit-kernel/issues/52
-> >> 
-> >> Following the discussion there and the concern with breaking user space,
-> >> how can we split up the AUDIT_INTEGRITY_RULE that is used in
-> >> ima_audit_measurement() and ima_parse_rule(), without 'breaking user
-> >> space'?
-> >> 
-> >> A message produced by ima_parse_rule() looks like this here:
-> >> 
-> >> type=INTEGRITY_RULE msg=audit(1526566213.870:305): action="dont_measure"
-> >> fsmagic="0x9fa0" res=1
+On Mon, May 21, 2018 at 03:11:08PM +0000, Bart Van Assche wrote:
+> On Sun, 2018-05-20 at 19:58 -0400, Kent Overstreet wrote:
+> > On Sun, May 20, 2018 at 11:40:45PM +0000, Bart Van Assche wrote:
+> > > On Sun, 2018-05-20 at 19:21 -0400, Kent Overstreet wrote:
+> > > > I really have better things to do than debug someone else's tests...
+> > > > [ ... ]
+> > > > ../run_tests: line 65: cd: /lib/modules/4.16.0+/kernel/block: No such file or directory
+> > > 
+> > > Kernel v4.16 is too old to run these tests. The srp-test script needs the
+> > > following commit that went upstream in kernel v4.17-rc1:
+> > > 
+> > > 63cf1a902c9d ("IB/srpt: Add RDMA/CM support")
 > > 
-> > Why is action and fsmagic being logged as untrusted strings? Untrusted
-> > strings are used when an unprivileged user can affect the contents of the
-> > field such as creating a file with space or special characters in the
-> > name.
-> > 
-> > Also, subject and object information is missing. Who loaded this rule?
-> > 
-> >> in contrast to that an INTEGRITY_PCR record type:
-> >> 
-> >> type=INTEGRITY_PCR msg=audit(1526566235.193:334): pid=1615 uid=0 auid=0
-> >> ses=2 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
-> >> op="invalid_pcr" cause="open_writers" comm="scp"
-> >> name="/var/log/audit/audit.log" dev="dm-0" ino=1962625 res=1
-> > 
-> > Why is op & cause being logged as an untrusted string? This also has
-> > incomplete subject information.
+> > Same output on Jens' for-next branch.
 > 
-> It's calling audit_log_string() in both cases:
+> Others have been able to run the srp-test software with the instructions
+> provided earlier in this e-mail thread. Can you share the kernel messages from
+> around the time the test was run (dmesg, /var/log/messages or /var/log/syslog)?
 > 
-> https://elixir.bootlin.com/linux/latest/source/security/integrity/integrity
-> _audit.c#L48
-
-I see. Looking things over, I see that it seems like it should do the right 
-thing. But the original purpose for this function is here:
-
-https://elixir.bootlin.com/linux/latest/source/kernel/audit.c#L1944
-
-This is where it is logging an untrusted string and has to decide to encode 
-it or just place it in quotes. If it has quotes, that means it's an untrusted 
-string but has no control characters in it. I think you want to use 
-audit_log_format() for any string that is trustworthy.
-
-
-As an aside, I wonder why audit_log_string() is in the API when it is a 
-helper to audit_log_untrustedstring() ?  Without understanding the rules of 
-untrusted strings, it can't be used correctly without re-inventing 
-audit_log_untrustedstring() by hand.
-
-
-> >> Should some of the fields from INTEGRITY_PCR also appear in
-> >> INTEGRITY_RULE? If so, which ones?
-> > 
-> > pid, uid, auid, tty, session, subj, comm, exe, res.  <- these are
-> > required to be searchable
-> > 
-> >> We could probably refactor the current  integrity_audit_message() and
-> >> have ima_parse_rule() call into it to get those fields as well. I
-> >> suppose adding new fields to it wouldn't be considered breaking user
-> >> space?
-> > 
-> > The audit user space utilities pretty much expects those fields in that
-> > order for any IMA originating events. You can add things like op or
-> > cause before
->
-> We will call into audit_log_task, which will put the parameters into
-> correct order:
+> Thanks,
 > 
-> auid uid gid ses subj pid comm exe
+> Bart.
 
-I'm telling you what the correct order is.  :-)  A long time ago, the IMA 
-system had audit events with the order I'm mentioning. For example, here's 
-one from a log I collected back in 2013:
+Bart,
 
-type=INTEGRITY_PCR msg=audit(1327409021.813:21): pid=1 uid=0 auid=4294967295 
-ses=4294967295 subj=kernel op="add_template_measure" cause="hash_added" 
-comm="init" name="01parse-kernel.sh" dev=rootfs ino=5413 res=0
-
-it was missing "tty" and "exe", but the order is as I mentioned. The 
-expectation is that INTEGRITY events maintain this established order across 
-all events.
-
-Thanks,
--Steve
-
-
-> https://elixir.bootlin.com/linux/latest/source/kernel/auditsc.c#L2433
-> 
-> > that. The reason why you can do that is those additional fields are not
-> > required to be searchable by common criteria.
-> > 
-> > -Steve
+Have you made any progress in porting srp-test to blktests so we don't
+have to have this conversation again?
