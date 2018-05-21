@@ -1,63 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751025AbeEUSXK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 14:23:10 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:35125 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750773AbeEUSXH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 14:23:07 -0400
-X-Google-Smtp-Source: AB8JxZq1lqck1mGnFy2zpfBc+gEbXPbYwy4cOfvnj0i0fSZALorAcrNfjYQUfNZXJjLs0iYTqYXeIg==
-Date: Mon, 21 May 2018 23:55:20 +0530
-From: Souptick Joarder <jrdr.linux@gmail.com>
-To: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH v2] kernel: event: core: Change return type to vm_fault_t
-Message-ID: <20180521182520.GA19677@jordon-HP-15-Notebook-PC>
+        id S1751137AbeEUSYg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 14:24:36 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45344 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750781AbeEUSYe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 14:24:34 -0400
+Date: Mon, 21 May 2018 14:24:32 -0400
+From: Mike Snitzer <snitzer@redhat.com>
+To: Kent Overstreet <kent.overstreet@gmail.com>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, hch@infradead.org, colyli@suse.de,
+        darrick.wong@oracle.com, clm@fb.com, bacik@fb.com,
+        linux-xfs@vger.kernel.org, drbd-dev@lists.linbit.com,
+        linux-btrfs@vger.kernel.org, linux-raid@vger.kernel.org,
+        neilb@suse.com
+Subject: Re: [PATCH 00/13] convert block layer to bioset_init()/mempool_init()
+Message-ID: <20180521182427.GA20013@redhat.com>
+References: <20180521143132.GB19194@redhat.com>
+ <2bbeeb1a-8b99-b06a-eb9b-eb8523c16460@kernel.dk>
+ <20180521144703.GA19303@redhat.com>
+ <4b343aef-e11c-73ba-1d88-7e73ca838cad@kernel.dk>
+ <20180521150439.GA19379@redhat.com>
+ <61e30dcf-a01c-f47d-087a-12930caf9aef@kernel.dk>
+ <20180521151817.GA19454@redhat.com>
+ <d01a150a-7752-f6ce-78f2-17a65c1e6fa5@kernel.dk>
+ <20180521160907.GA19553@redhat.com>
+ <20180521173724.GG11495@kmo-pixel>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180521173724.GG11495@kmo-pixel>
 User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use new return type vm_fault_t for fault handler. For
-now, this is just documenting that the function returns
-a VM_FAULT value rather than an errno. Once all instances
-are converted, vm_fault_t will become a distinct type.
+On Mon, May 21 2018 at  1:37pm -0400,
+Kent Overstreet <kent.overstreet@gmail.com> wrote:
 
-Ref-> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
+> 
+> Uh, you came across as upset and paranoid to me too. Chalk it up to email? :)
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
----
-v2: Updated the change log.
-    Acked by Peter Zijlstra.
+Awesome.  See how easy it is to make someone with purely constructive
+questions and feedback come off as upset and paranoid?
 
- kernel/events/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+The tipping point occurs when bait is set with:
+"It's not like <insert complete non sequitur>".
+Then:
+"Let's focus on getting it reviewed, rather than pontificate on what
+could potentially go all wrong with this."
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 96db9ae..d09f1c4 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -4918,11 +4918,11 @@ void perf_event_update_userpage(struct perf_event *event)
- }
- EXPORT_SYMBOL_GPL(perf_event_update_userpage);
+Message received: less pontificating, more doing!
 
--static int perf_mmap_fault(struct vm_fault *vmf)
-+static vm_fault_t perf_mmap_fault(struct vm_fault *vmf)
- {
- 	struct perf_event *event = vmf->vma->vm_file->private_data;
- 	struct ring_buffer *rb;
--	int ret = VM_FAULT_SIGBUS;
-+	vm_fault_t ret = VM_FAULT_SIGBUS;
+And here I thought that focusing on what could go wrong (across all code
+touched) was review.  But OK, I'm the one that made this all weird ;)
 
- 	if (vmf->flags & FAULT_FLAG_MKWRITE) {
- 		if (vmf->pgoff == 0)
---
-1.9.1
+It is what it is at this point.
+
+> I personally don't care, I have no horse in this race. This particular patch
+> series wasn't my idea, Christoph wanted all these conversions done so
+> bioset_create() could be deleted. If you want us to hold off on the dm patch for
+> awhile until someone can get around to testing it or whatever (since I don't
+> have tests for everything I pushed) that would be perfectly fine by me.
+
+As I clarified already: this isn't about DM.
+
+Every single data structure change in this series should be reviewed for
+unforeseen alignment consequences.  Jens seemed to say that is
+worthwhile.  Not sure if he'll do it or we divide it up.  If we divide
+it up a temp topic branch should be published for others to inspect.
+
+Could be alignment hasn't been a historic concern for a bunch of the
+data structures changed in this series.. if so then all we can do is fix
+up any obvious potential for false sharing.
+
+Mike
