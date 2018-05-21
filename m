@@ -1,69 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932162AbeEUWAQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 18:00:16 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:42260 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750977AbeEUWAK (ORCPT
+        id S1754185AbeEUWAf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 18:00:35 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:41420 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753114AbeEUWAZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 18:00:10 -0400
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To: x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, stable@vger.kernel.org
-Subject: [PATCH] KVM: VMX: Expose SSBD properly to guests.
-Date: Mon, 21 May 2018 17:54:49 -0400
-Message-Id: <20180521215449.26423-2-konrad.wilk@oracle.com>
-X-Mailer: git-send-email 2.13.4
-In-Reply-To: <20180521215449.26423-1-konrad.wilk@oracle.com>
-References: <20180521215449.26423-1-konrad.wilk@oracle.com>
+        Mon, 21 May 2018 18:00:25 -0400
+X-Google-Smtp-Source: AB8JxZp5g2Fl9IFrvsXeAEfErIj3T0DaXmS8omkd1SHQ+2xhUkUAaZzUcD1PygvGzc+T18OLs16ekogH7x7zWmz6iS4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8900 signatures=668700
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805210256
+In-Reply-To: <1526903890-35761-20-git-send-email-xieyisheng1@huawei.com>
+References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com> <1526903890-35761-20-git-send-email-xieyisheng1@huawei.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 22 May 2018 01:00:23 +0300
+Message-ID: <CAHp75VfqEdoDZydwFmQaLiUN8cVtH3MbFHf3qixU8xUHXMwt1g@mail.gmail.com>
+Subject: Re: [PATCH 19/33] thermal: db8500: use match_string() helper
+To: Yisheng Xie <xieyisheng1@huawei.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Linux PM <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4LM0QYh011297
 
-The X86_FEATURE_SSBD is an synthetic CPU feature - that is
-it bit location has no relevance to the real CPUID 0x7.EBX[31]
-bit position. For that we need the new CPU feature name.
+On Mon, May 21, 2018 at 2:57 PM, Yisheng Xie <xieyisheng1@huawei.com> wrote:
+> match_string() returns the index of an array for a matching string,
+> which can be used intead of open coded variant.
 
-Fixes: 52817587e706 ("x86/cpufeatures: Disentangle SSBD enumeration")
+> +       i = match_string((const char **)trip_point->cdev_name,
 
-CC: Paolo Bonzini <pbonzini@redhat.com>
-Cc: "Radim Krčmář" <rkrcmar@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
----
- arch/x86/kvm/cpuid.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Casting looks ugly. You need to constify the variable itself.
 
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index ced851169730..598461e24be3 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -407,8 +407,8 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
- 
- 	/* cpuid 7.0.edx*/
- 	const u32 kvm_cpuid_7_0_edx_x86_features =
--		F(AVX512_4VNNIW) | F(AVX512_4FMAPS) | F(SPEC_CTRL) | F(SSBD) |
--		F(ARCH_CAPABILITIES);
-+		F(AVX512_4VNNIW) | F(AVX512_4FMAPS) | F(SPEC_CTRL) |
-+		F(SPEC_CTRL_SSBD) | F(ARCH_CAPABILITIES);
- 
- 	/* all calls to cpuid_count() should be made on the same cpu */
- 	get_cpu();
+> +                        COOLING_DEV_MAX, cdev->type);
+>
+> -       return -ENODEV;
+> +       return (i < 0) ? -ENODEV : 0;
+
+I would rather go with
+
+if (ret < 0)
+ return -ENODEV;
+
+return 0;
+
 -- 
-2.13.4
+With Best Regards,
+Andy Shevchenko
