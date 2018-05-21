@@ -1,38 +1,93 @@
-Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqoC3aSKDrqiUrMqsjdLcQJHLdBTheK4irZefnmwTxqtsVznLknkpOin50pE4gQzBBI3auL
-ARC-Seal: i=1; a=rsa-sha256; t=1526937565; cv=none;
-        d=google.com; s=arc-20160816;
-        b=gLsE71AZjeyTFK/GkBRzEsIcIhVwazvrKqskOqyGl5A/t39s2WLGEovYMtHR9umcJp
-         1a16G6bLeYsgOMqGhvUR38FHFR/2qdAM+QZgAhfoePaU4lT2w7lS8BEpsH6eWnfCEM53
-         wohbQUL3ZJvHPrq26lFFlbsT67n+ufIn6k3q1BG2rkkV5fk3jg7ExbjbiOZ++jgfZdrs
-         h8CvzUFkFYgUM+OE0xHa3Eh5m0jixgEexyIxw38J7ANPOShMKdm/ZxWxCWFyYHb7P2oZ
-         yipOe8woNGJg674UwXPC8fOVA7tMvqbEi/QYlAD6chA6izkNLQpreHWmATTxP72/7rnW
-         bA/g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=u/4kjz40eYrEFsF+6JS7NBn//QAAHIbEFat0uO0Bnrs=;
-        b=hT2g5tk6RDHwc6lbCsEP7I0V9HiUtbrJzN5+BuRhyGK+roj0T34cW4qPYl9igGRJia
-         rOM+SCevoQ4FRz704dwXaguDQGV74yvlNBKRYfkdDALzubVAGVbB4K7+iitzE5/8PR0b
-         tE/czT6VKZIsTL0jaUjQqQSVCTOfmIQLEtcbRJBHboGHWfMpQZ06Zu8wFohfOzQrB+nJ
-         T316TCRI1FygYl9tPgBMOCyyo/gl/N7GBWLrO5TJHWg6VgkIIt48jM/rHMrpiYPFum7I
-         2jIFgJKiI/qWlITpBQdSkSEREkgOdYe6lXrK+NmKbz+cWgWwjacGG8SepB1cM5o2RyA8
-         XxmA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=CNYIwULd;
-       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=CNYIwULd;
-       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1340521-1526937564-2-3834429239370727167
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1526937563; b=DyB9WOxXSYJC2KTFjxSoviCu7TvqrZ2Wgj8uthpG6zb5gaMWG4
+    lIsISppRqB0GndyDdX0DUI7uOJVbgkTt1kxnFiDsZmaQpA/tsRl++L34l3tg+2OR
+    vMNp0XAc3yYn2ghAQZPe6mfboiSdwDMbfMOKJhJXovbv3aL0GwDo9E76Ieh667J1
+    A5BnzP5hJHUMSraLEF7jNlxkVsMW9HFilGQhFyPuMhphtVX6ltBVdgv5G2bdKK7S
+    MqZXfS01UI+tz8++qBhRMym5AXvoJQ02Sx85+FCLp6PHVB/4JPddN8+qM2gxwUyC
+    cHxiRnAf9GN27vh1JnqoIY1pVvK5G4XnImSg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1526937563; bh=bK+ANZ5gJDqKhZg8QGHvLzeQ5+r6fQ
+    mLIhyCzwhKiXk=; b=VJnGp/POZNIpJM/1T2sCsUAUB1ljENlbru905b9BCaovOA
+    4rrniUT4jPOZxOqnK4F/CFHcN5BdKWwef12QNzUP5lfSyjcMLwmH6NzeRYyzhbqS
+    bFEPMb6n7jp0fS2CmR+UWPzXu9jx1zA+9WWOf+gT5l+/GkFSC9Zz0sltyLBzlUjy
+    WokeQ5uhdJSXYTqDWE08gV1SKSRjOJjaqTHUnhBEhkjuneGhEBkJVJKKABcahooW
+    /Wsvh34ORoybRjLefpVwHJp7wyVc4DE5ltYhIpxWwnSBlxYlfYQeXOKkz2riYnKD
+    VJRqcIttHVmmTR36W2JJVTdVoThuKixRLahoCV1g==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+    header.i=@kernel.org header.b=Ke1KCs/w x-bits=1024 x-keytype=rsa
+    x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+    header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=linuxfoundation.org header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+      header.i=@kernel.org header.b=Ke1KCs/w x-bits=1024 x-keytype=rsa
+      x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+      header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=linuxfoundation.org header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfFYVk/WH/Xffpz+96FFdja4nRDuhoApjV1jTBCYU20sfozDqAa6YMkQrEUgorVT9LZgbio/S+aFdTHF8cOS7mV9IyR7ogLevpyUTMucFcm3i2CUteQp7
+    /m5xRZeVThHm73chuOWIAtsXFq7IoycU0C6063FawZX0qaFTL1iIr+XVLHgCMGuwgPoLyJo4ndhYc0+HM9Hgab0azHROb3ldsRvd/DpaL7YLYIdUOAqS2897
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=7J7wI5G0n_s90aWr2ecA:9
+    a=6aqBm-lsDSLTv4n4:21 a=oarUXJnYZj5-zp8d:21 a=QEXdDO2ut3YA:10
+    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752736AbeEUVTV (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 21 May 2018 17:19:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34284 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753713AbeEUVTO (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 21 May 2018 17:19:14 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Filipe Manana <fdmanana@suse.com>,
-	David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 41/95] Btrfs: fix xattr loss after power failure
-Date: Mon, 21 May 2018 23:11:31 +0200
-Message-Id: <20180521210456.394614996@linuxfoundation.org>
+        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 08/95] ALSA: control: fix a redundant-copy issue
+Date: Mon, 21 May 2018 23:10:58 +0200
+Message-Id: <20180521210448.999627759@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210447.219380974@linuxfoundation.org>
 References: <20180521210447.219380974@linuxfoundation.org>
@@ -40,10 +95,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109807672624155?=
-X-GMAIL-MSGID: =?utf-8?q?1601110084514189182?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,78 +105,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Wenwen Wang <wang6495@umn.edu>
 
-commit 9a8fca62aacc1599fea8e813d01e1955513e4fad upstream.
+commit 3f12888dfae2a48741c4caa9214885b3aaf350f9 upstream.
 
-If a file has xattrs, we fsync it, to ensure we clear the flags
-BTRFS_INODE_NEEDS_FULL_SYNC and BTRFS_INODE_COPY_EVERYTHING from its
-inode, the current transaction commits and then we fsync it (without
-either of those bits being set in its inode), we end up not logging
-all its xattrs. This results in deleting all xattrs when replying the
-log after a power failure.
+In snd_ctl_elem_add_compat(), the fields of the struct 'data' need to be
+copied from the corresponding fields of the struct 'data32' in userspace.
+This is achieved by invoking copy_from_user() and get_user() functions. The
+problem here is that the 'type' field is copied twice. One is by
+copy_from_user() and one is by get_user(). Given that the 'type' field is
+not used between the two copies, the second copy is *completely* redundant
+and should be removed for better performance and cleanup. Also, these two
+copies can cause inconsistent data: as the struct 'data32' resides in
+userspace and a malicious userspace process can race to change the 'type'
+field between the two copies to cause inconsistent data. Depending on how
+the data is used in the future, such an inconsistency may cause potential
+security risks.
 
-Trivial reproducer
+For above reasons, we should take out the second copy.
 
-  $ mkfs.btrfs -f /dev/sdb
-  $ mount /dev/sdb /mnt
-
-  $ touch /mnt/foobar
-  $ setfattr -n user.xa -v qwerty /mnt/foobar
-  $ xfs_io -c "fsync" /mnt/foobar
-
-  $ sync
-
-  $ xfs_io -c "pwrite -S 0xab 0 64K" /mnt/foobar
-  $ xfs_io -c "fsync" /mnt/foobar
-  <power failure>
-
-  $ mount /dev/sdb /mnt
-  $ getfattr --absolute-names --dump /mnt/foobar
-  <empty output>
-  $
-
-So fix this by making sure all xattrs are logged if we log a file's inode
-item and neither the flags BTRFS_INODE_NEEDS_FULL_SYNC nor
-BTRFS_INODE_COPY_EVERYTHING were set in the inode.
-
-Fixes: 36283bf777d9 ("Btrfs: fix fsync xattr loss in the fast fsync path")
-Cc: <stable@vger.kernel.org> # 4.2+
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/tree-log.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ sound/core/control_compat.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -4669,6 +4669,7 @@ static int btrfs_log_inode(struct btrfs_
- 	struct extent_map_tree *em_tree = &inode->extent_tree;
- 	u64 logged_isize = 0;
- 	bool need_log_inode_item = true;
-+	bool xattrs_logged = false;
- 
- 	path = btrfs_alloc_path();
- 	if (!path)
-@@ -4971,6 +4972,7 @@ next_key:
- 	err = btrfs_log_all_xattrs(trans, root, inode, path, dst_path);
- 	if (err)
- 		goto out_unlock;
-+	xattrs_logged = true;
- 	if (max_key.type >= BTRFS_EXTENT_DATA_KEY && !fast_search) {
- 		btrfs_release_path(path);
- 		btrfs_release_path(dst_path);
-@@ -4983,6 +4985,11 @@ log_extents:
- 	btrfs_release_path(dst_path);
- 	if (need_log_inode_item) {
- 		err = log_inode_item(trans, log, dst_path, inode);
-+		if (!err && !xattrs_logged) {
-+			err = btrfs_log_all_xattrs(trans, root, inode, path,
-+						   dst_path);
-+			btrfs_release_path(path);
-+		}
- 		if (err)
- 			goto out_unlock;
- 	}
+--- a/sound/core/control_compat.c
++++ b/sound/core/control_compat.c
+@@ -396,8 +396,7 @@ static int snd_ctl_elem_add_compat(struc
+ 	if (copy_from_user(&data->id, &data32->id, sizeof(data->id)) ||
+ 	    copy_from_user(&data->type, &data32->type, 3 * sizeof(u32)))
+ 		goto error;
+-	if (get_user(data->owner, &data32->owner) ||
+-	    get_user(data->type, &data32->type))
++	if (get_user(data->owner, &data32->owner))
+ 		goto error;
+ 	switch (data->type) {
+ 	case SNDRV_CTL_ELEM_TYPE_BOOLEAN:
