@@ -1,156 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753278AbeEURKg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 13:10:36 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:36008 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753109AbeEURK3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 13:10:29 -0400
-X-Google-Smtp-Source: AB8JxZp9sXwEIAYjCRnT+nZujs4pi1jHFqtJPqBVddxqXkXM+OYh+SWvKD37dLxoBeOWeU6fvklfvQ==
-Date: Mon, 21 May 2018 22:42:41 +0530
-From: Souptick Joarder <jrdr.linux@gmail.com>
-To: l.stach@pengutronix.de, linux+etnaviv@armlinux.org.uk,
-        christian.gmeiner@gmail.com, airlied@linux.ie, willy@infradead.org,
-        daniel.vetter@ffwll.ch
-Cc: etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] gpu: drm: etnaviv: Change return type to vm_fault_t
-Message-ID: <20180521171241.GA18441@jordon-HP-15-Notebook-PC>
+        id S1753231AbeEURNJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 13:13:09 -0400
+Received: from foss.arm.com ([217.140.101.70]:53920 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753082AbeEURNF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 13:13:05 -0400
+Date: Mon, 21 May 2018 18:12:59 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        akpm@linux-foundation.org, will.deacon@arm.com,
+        torvalds@linux-foundation.org, paulmck@linux.vnet.ibm.com,
+        tglx@linutronix.de, hpa@zytor.com, linux-tip-commits@vger.kernel.org
+Subject: Re: [tip:locking/core] locking/atomics: Simplify the op definitions
+ in atomic.h some more
+Message-ID: <20180521171259.h6xsenh57zbumcox@lakrids.cambridge.arm.com>
+References: <20180505083635.622xmcvb42dw5xxh@gmail.com>
+ <tip-87d655a48dfe74293f72dc001ed042142cf00d44@git.kernel.org>
+ <20180509073327.GE12217@hirez.programming.kicks-ass.net>
+ <20180515083556.GA30420@gmail.com>
+ <20180515114144.GX12217@hirez.programming.kicks-ass.net>
+ <20180515154333.bszh4nuowhocozuc@lakrids.cambridge.arm.com>
+ <20180515171021.GI12217@hirez.programming.kicks-ass.net>
+ <20180515175307.m4xbkbicdrzo4qhb@lakrids.cambridge.arm.com>
+ <20180515181136.GR12217@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180515181136.GR12217@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use new return type vm_fault_t for fault handler. For
-now, this is just documenting that the function returns
-a VM_FAULT value rather than an errno. Once all instances
-are converted, vm_fault_t will become a distinct type.
+On Tue, May 15, 2018 at 08:11:36PM +0200, Peter Zijlstra wrote:
+> On Tue, May 15, 2018 at 06:53:08PM +0100, Mark Rutland wrote:
+> > On Tue, May 15, 2018 at 07:10:21PM +0200, Peter Zijlstra wrote:
+> > > On Tue, May 15, 2018 at 04:43:33PM +0100, Mark Rutland wrote:
+> > > > I *think* the table can encode enough info to generate atomic-long.h,
+> > > > atomic-instrumented.h, and the atomic.h ordering fallbacks. I'll need to
+> > > > flesh out the table and check that we don't end up clashing with
+> > > > some of the regular fallbacks.
+> > > 
+> > > Yes, details details ;-)
+> > > 
+> > > > # name	meta	args...
+> > > > #
+> > > > # Where meta contains a string of:
+> > > > # * B - bool: returns bool, fully ordered
+> > > > # * V - void: returns void, fully ordered
+> > > 
+> > > void retuns are relaxed
+> > 
+> > How about:
+> > 
+> >   V - void: returns void, no ordering variants (implicitly relaxed)
+> 
+> Works for me.
+> 
+> > > > # * I - int: returns base type, all orderings
+> > > > # * R - return: returns base type, all orderings
+> > > > # * F - fetch: returns base type, all orderings
+> > > > # * T - try: returns bool, all orderings
+> > > 
+> > > Little more verbose than mine, I think we can get there with X and XB
+> > > instead of I and T, but whatever :-)
+> > 
+> > Mhmm. I found it easier to do switch-like things this way, but it works
+> > regardless.
+> 
+> I'm a minimalist, but yeah whatever ;-)
+> 
+> > > > # Where args contains list of type[:name], where type is:
+> > > > # * v - pointer to atomic base type (atomic or atomic64)
+> > > > # * i - base type (int or long)
+> > > > # * I - pointer to base type (int or long)
+> > > > #
+> > > > add		VRF	i	v
+> > > > sub		VRF	i	v
+> > > > inc		VRF	v
+> > > > dec		VRF	v
+> > > > or		VF	i	v
+> > > > and		VF	i	v
+> > > > andnot		VF	i	v
+> > > > xor		VF	i	v
+> > > > xchg		I	v	i
+> > > > cmpxchg		I	v	i:old	i:new
+> > > > try_cmpxchg	T	v	I:old	i:new
+> > > > add_and_test	B	i	v
+> > > > sub_and_test	B	i	v
+> > > > dec_and_test	B	v
+> > > > inc_and_test	B	v
+> 
+> we might also want:
+> 
+> set		V	v	i
+> set_release	V	v	i
+> read		I	v
+> read_acquire	I	v
 
-Ref- commit 1c8f422059ae ("mm: change return type to vm_fault_t")
+Indeed!
 
-Previously vm_insert_page() returns err which driver
-mapped into VM_FAULT_* type. The new function 
-vmf_insert_page() will replace this inefficiency by
-returning VM_FAULT_* type.
+I concurrently fiddled with this and came to the below. I special-cased
+set and read for the purpose of preserving the acquire/release semantics
+in the meta table, but either way works.
 
-A non-fatal signal being delivered to a task which is
-in the middle of a page fault may well end up in an
-infinite loop, attempting to handle the page fault and
-failing forever.
+----
+# name	meta	args...
+#
+# Where meta contains a string of variants to generate.
+# Upper-case implies _{acquire,release,relaxed} variants.
+# Valid meta values are:
+# * B/b	- bool: returns bool
+# * v	- void: returns void
+# * I/i	- int: returns base type
+# * R	- return: returns base type (has _return variants)
+# * F	- fetch: returns base type (has fetch_ variants)
+# * l	- load: returns base type (has _acquire order variant)
+# * s	- store: returns void (has _release order variant)
+#
+# Where args contains list of type[:name], where type is:
+# * cv	- const pointer to atomic base type (atomic_t/atomic64_t/atomic_long_t)
+# * v	- pointer to atomic base type (atomic_t/atomic64_t/atomic_long_t)
+# * i	- base type (int/s64/long)
+# * I	- pointer to base type (int/s64/long)
+#
+read		l	cv
+set		s	v	i
+add		vRF	i	v
+sub		vRF	i	v
+inc		vRF	v
+dec		vRF	v
+and		vF	i	v
+andnot		vF	i	v
+or		vF	i	v
+xor		vF	i	v
+xchg		I	v	i
+cmpxchg		I	v	i:old	i:new
+try_cmpxchg	B	v	I:old	i:new
+sub_and_test	b	i	v
+dec_and_test	b	v
+inc_and_test	b	v
+add_negative	i	i	v
+add_unless	i	v	i:a	i:u
+inc_not_zero	i	v
+----
 
-On seeing NOPAGE, the fault handler believes the PTE
-is in the page table, so does nothing before it returns
-to arch code. It will end up returning to userspace if
-the signal is non-fatal, at which point it'll go right
-back into the page fault handler, and mutex_lock_interruptible()
-will immediately fail.  So we've converted a sleeping lock
-into the most expensive spinlock.
+... which seems to be sufficient to give me a working atomic-long.h
+using [1,2].
 
-I don't think the graphics drivers really want to be
-interrupted by any signal.  I think they want to be
-interruptible by fatal signals and should use the
-mutex_lock_killable / fatal_signal_pending family of
-functions. So mutex_lock_interruptible() is replaced
-by mutex_lock_killable()
+I have *most* of the atomic.h ordering variant generation, and most of
+atomic-instrumented.h, modulo a few special cases to be handled.
 
-vmf_error() is the newly introduce inline function
-in 4.17-rc6.
+I'm also not sure which functions are intended to be mandatory. I had
+hoped I could just wrap every atomic_foo in an ifdef, but not all arches
+have a #define for all functions, so that needs to be handled somehow.
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
----
- drivers/gpu/drm/etnaviv/etnaviv_drv.h |  3 ++-
- drivers/gpu/drm/etnaviv/etnaviv_gem.c | 31 ++++++-------------------------
- 2 files changed, 8 insertions(+), 26 deletions(-)
+Thanks,
+Mark.
 
-diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.h b/drivers/gpu/drm/etnaviv/etnaviv_drv.h
-index a54f0b7..f6777f0 100644
---- a/drivers/gpu/drm/etnaviv/etnaviv_drv.h
-+++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.h
-@@ -28,6 +28,7 @@
- #include <linux/list.h>
- #include <linux/types.h>
- #include <linux/sizes.h>
-+#include <linux/mm_types.h>
- 
- #include <drm/drmP.h>
- #include <drm/drm_crtc_helper.h>
-@@ -62,7 +63,7 @@ int etnaviv_ioctl_gem_submit(struct drm_device *dev, void *data,
- 		struct drm_file *file);
- 
- int etnaviv_gem_mmap(struct file *filp, struct vm_area_struct *vma);
--int etnaviv_gem_fault(struct vm_fault *vmf);
-+vm_fault_t etnaviv_gem_fault(struct vm_fault *vmf);
- int etnaviv_gem_mmap_offset(struct drm_gem_object *obj, u64 *offset);
- struct sg_table *etnaviv_gem_prime_get_sg_table(struct drm_gem_object *obj);
- void *etnaviv_gem_prime_vmap(struct drm_gem_object *obj);
-diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.c b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-index fcc969f..d9b13f0 100644
---- a/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-+++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-@@ -180,7 +180,7 @@ int etnaviv_gem_mmap(struct file *filp, struct vm_area_struct *vma)
- 	return obj->ops->mmap(obj, vma);
- }
- 
--int etnaviv_gem_fault(struct vm_fault *vmf)
-+vm_fault_t etnaviv_gem_fault(struct vm_fault *vmf)
- {
- 	struct vm_area_struct *vma = vmf->vma;
- 	struct drm_gem_object *obj = vma->vm_private_data;
-@@ -191,20 +191,19 @@ int etnaviv_gem_fault(struct vm_fault *vmf)
- 
- 	/*
- 	 * Make sure we don't parallel update on a fault, nor move or remove
--	 * something from beneath our feet.  Note that vm_insert_page() is
-+	 * something from beneath our feet.  Note that vmf_insert_page() is
- 	 * specifically coded to take care of this, so we don't have to.
- 	 */
--	ret = mutex_lock_interruptible(&etnaviv_obj->lock);
-+	ret = mutex_lock_killable(&etnaviv_obj->lock);
- 	if (ret)
--		goto out;
--
-+		return VM_FAULT_NOPAGE;
- 	/* make sure we have pages attached now */
- 	pages = etnaviv_gem_get_pages(etnaviv_obj);
- 	mutex_unlock(&etnaviv_obj->lock);
- 
- 	if (IS_ERR(pages)) {
- 		ret = PTR_ERR(pages);
--		goto out;
-+		return vmf_error(ret);
- 	}
- 
- 	/* We don't use vmf->pgoff since that has the fake offset: */
-@@ -215,25 +214,7 @@ int etnaviv_gem_fault(struct vm_fault *vmf)
- 	VERB("Inserting %p pfn %lx, pa %lx", (void *)vmf->address,
- 	     page_to_pfn(page), page_to_pfn(page) << PAGE_SHIFT);
- 
--	ret = vm_insert_page(vma, vmf->address, page);
--
--out:
--	switch (ret) {
--	case -EAGAIN:
--	case 0:
--	case -ERESTARTSYS:
--	case -EINTR:
--	case -EBUSY:
--		/*
--		 * EBUSY is ok: this just means that another thread
--		 * already did the job.
--		 */
--		return VM_FAULT_NOPAGE;
--	case -ENOMEM:
--		return VM_FAULT_OOM;
--	default:
--		return VM_FAULT_SIGBUS;
--	}
-+	return vmf_insert_page(vma, vmf->address, page);
- }
- 
- int etnaviv_gem_mmap_offset(struct drm_gem_object *obj, u64 *offset)
--- 
-1.9.1
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git/commit/?h=atomics/generated&id=6b44ecd77dbb7c3e518260d2e223a29c64c85740
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git/commit/?h=atomics/generated&id=432d8259040a67b7234c869c9298d042515958a2
