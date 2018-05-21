@@ -1,28 +1,28 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZoNpij/W1eiHMr9IWBvpmS1Xd1s7lGKURqZuBr+1naIeNci6kh7sSNOZWjrLNQI1uHa7ouu
-ARC-Seal: i=1; a=rsa-sha256; t=1526937864; cv=none;
+X-Google-Smtp-Source: AB8JxZrGH/7+CjlLVQf2PIAtCCsJM1Yacr8nCqdUWRuVeOdl7mNv3VTrEwEiyPs9KahZlHNTnzyC
+ARC-Seal: i=1; a=rsa-sha256; t=1526937861; cv=none;
         d=google.com; s=arc-20160816;
-        b=twdaUE344V5AhOHdMQ3/kPbZPffSDDcPfZP/yxQkdq8tJ2epCcLWKpCKU3XiztHhd0
-         oBc7gWQBZJDmDnQkN3DpdSGWKtYuSjR4qjPaTNoZ9Jarvhb/La8K7kCTqkKw58ELDfoa
-         KtQBGvTJUN9BJd7D4NnL544duDpNYf4/5WxoNhtOJLaeJUjZMWUuM5K0MhgVNyJg0ttb
-         rGlqnVV4aOwGq84D2DwPIjSTIMmEtLHqXMDbzw08iR51SGMsvVi23xPgkAvi1ybZFKAR
-         4IuNX+quzvOfifKZYR/e2LhKyI/3PKw0lGwrSHBqYBGHZSesU7jeEPmv//Ziqms2gtvB
-         kBFg==
+        b=pJHxorsTelDRTsQJhFpBkG0fVr/Tm+lIdbpG55GCcx5PiG930GdWKHWFt4A+u+D7tX
+         AKhfr2Ru0cjqpFhtKU/knApUfS5UOZ9TvR2rpOFD1Cf70Cr8AsgOvU79YY1zlP6gx0ve
+         C0PXKOy9jNtt4snRqczydZae3KFhdOpr6AR6AoJQCaGE/2DLyuJo360WqrFgXFFUE9Nw
+         wdDqi2qxOqGd2I9VKDhcyLDnoYhVEPAq+hm+dijmT65SsUhKIYqNJLbxA7jceVMlxYz8
+         CRdAH5cxuNOnmKM5qOg/cq/QPXzIOWYlVxGR/PgpiSASQBvJ9QdIdrVf3+nzrSWtkgE/
+         ee4Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=WkbeheK6R0/WTnlf1hTdjev+eWZQNby88WyzgGNxXjY=;
-        b=MYHHtKun4W7JlhdCPH0zOP9dcABHP6p1uX/HRe08qcvzYSl/3Wqui/p6LSBZQENLRr
-         9kW1qrcY4610DBZ0RlCedH0lbclaoLFOOwY11lHQihrBg026tWdHGRmCFHbYa0aoSvH8
-         eHwmc+fdOBm1ounDKr0GK5GfLDCKYpwS3a54UirY74P8MaQrwsjWX1+kQBBI6IBtF5Wc
-         C1Q4GxGODyjmT0RSU/Cz1Jx34G5PeHn+DqvKHSsKX2MQu15V4LPvYLrDEqF/BVzspPtj
-         Jz8jNZetlNc6FGn/JptTQW1GyYh0g+z4tTb3UVJnLq6MytiSMb9dzJJEFxvqhyZU32bY
-         BwNg==
+        bh=ETpoNsgvwBduGcwHXXBAbt6KijzqcY4Y2fc9KVJGo0Y=;
+        b=BjcPR55+CAbMOg5vZk/uyTnNyH0Y2+Vq6FvV1teEZBZur/aWSwXmyC4ikdfEkznevD
+         yyDPVlm3KpyKiXP3h6/ifJE15LxYOKnIjb2ZeWvV/xSwEjbR9Ob5NJpQzJKsGA2vsV2F
+         sdSl4LBB2J2bqRHA55S8CUZuYT6AfbWinhG+ql27FFrLZFeTtDdGxWLwzOs6utij2rBO
+         gbdpVkWwz8nYCZBq+bPvZMSn8vmulX8puD+bReM9RKyqFtZcS4VX0aj6Twjd8FH2tjd5
+         /gVlIJIkiIcUQX4vewhnt2aFrrSYbCd1bsaVhD4V92j0u/NjTfMz0lL7sL4hkdVh3Ez+
+         EjLQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=Co33qg4Y;
+       dkim=pass header.i=@kernel.org header.s=default header.b=KZmqSbsm;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=Co33qg4Y;
+       dkim=pass header.i=@kernel.org header.s=default header.b=KZmqSbsm;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
@@ -30,9 +30,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Masami Hiramatsu <mhiramat@kernel.org>,
 	Russell King <rmk+kernel@armlinux.org.uk>
-Subject: [PATCH 4.16 053/110] ARM: 8770/1: kprobes: Prohibit probing on optimized_callback
-Date: Mon, 21 May 2018 23:11:50 +0200
-Message-Id: <20180521210510.067746444@linuxfoundation.org>
+Subject: [PATCH 4.16 052/110] ARM: 8769/1: kprobes: Fix to use get_kprobe_ctlblk after irq-disabed
+Date: Mon, 21 May 2018 23:11:49 +0200
+Message-Id: <20180521210509.886524459@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109801592715270?=
-X-GMAIL-MSGID: =?utf-8?q?1601110398388823631?=
+X-GMAIL-THRID: =?utf-8?q?1601109798325340068?=
+X-GMAIL-MSGID: =?utf-8?q?1601110394470825001?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,12 +53,24 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Masami Hiramatsu <mhiramat@kernel.org>
 
-commit 70948c05fdde0aac32f9667856a88725c192fa40 upstream.
+commit 69af7e23a6870df2ea6fa79ca16493d59b3eebeb upstream.
 
-Prohibit probing on optimized_callback() because
-it is called from kprobes itself. If we put a kprobes
-on it, that will cause a recursive call loop.
-Mark it NOKPROBE_SYMBOL.
+Since get_kprobe_ctlblk() uses smp_processor_id() to access
+per-cpu variable, it hits smp_processor_id sanity check as below.
+
+[    7.006928] BUG: using smp_processor_id() in preemptible [00000000] code: swapper/0/1
+[    7.007859] caller is debug_smp_processor_id+0x20/0x24
+[    7.008438] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.16.0-rc1-00192-g4eb17253e4b5 #1
+[    7.008890] Hardware name: Generic DT based system
+[    7.009917] [<c0313f0c>] (unwind_backtrace) from [<c030e6d8>] (show_stack+0x20/0x24)
+[    7.010473] [<c030e6d8>] (show_stack) from [<c0c64694>] (dump_stack+0x84/0x98)
+[    7.010990] [<c0c64694>] (dump_stack) from [<c071ca5c>] (check_preemption_disabled+0x138/0x13c)
+[    7.011592] [<c071ca5c>] (check_preemption_disabled) from [<c071ca80>] (debug_smp_processor_id+0x20/0x24)
+[    7.012214] [<c071ca80>] (debug_smp_processor_id) from [<c03335e0>] (optimized_callback+0x2c/0xe4)
+[    7.013077] [<c03335e0>] (optimized_callback) from [<bf0021b0>] (0xbf0021b0)
+
+To fix this issue, call get_kprobe_ctlblk() right after
+irq-disabled since that disables preemption.
 
 Fixes: 0dc016dbd820 ("ARM: kprobes: enable OPTPROBES for ARM 32")
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
@@ -67,16 +79,24 @@ Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/probes/kprobes/opt-arm.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/probes/kprobes/opt-arm.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 --- a/arch/arm/probes/kprobes/opt-arm.c
 +++ b/arch/arm/probes/kprobes/opt-arm.c
-@@ -192,6 +192,7 @@ optimized_callback(struct optimized_kpro
- 
- 	local_irq_restore(flags);
- }
-+NOKPROBE_SYMBOL(optimized_callback)
- 
- int arch_prepare_optimized_kprobe(struct optimized_kprobe *op, struct kprobe *orig)
+@@ -165,13 +165,14 @@ optimized_callback(struct optimized_kpro
  {
+ 	unsigned long flags;
+ 	struct kprobe *p = &op->kp;
+-	struct kprobe_ctlblk *kcb = get_kprobe_ctlblk();
++	struct kprobe_ctlblk *kcb;
+ 
+ 	/* Save skipped registers */
+ 	regs->ARM_pc = (unsigned long)op->kp.addr;
+ 	regs->ARM_ORIG_r0 = ~0UL;
+ 
+ 	local_irq_save(flags);
++	kcb = get_kprobe_ctlblk();
+ 
+ 	if (kprobe_running()) {
+ 		kprobes_inc_nmissed_count(&op->kp);
