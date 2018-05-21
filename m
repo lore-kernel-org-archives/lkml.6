@@ -1,112 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752825AbeEUOxN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 10:53:13 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:43240 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752847AbeEUOxL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 10:53:11 -0400
-X-Google-Smtp-Source: AB8JxZr3p0DvbuaygosrcQgg6rguQ2W8nK5ga9bX/JWGUWnEWNXMgRIWQwEkwMmYIL3RGSQiJ4amQg==
-Subject: Re: [PATCH v2 04/29] venus: hfi_cmds: add set_properties for 4xx
- version
-To: Tomasz Figa <tfiga@chromium.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>, vgarodia@codeaurora.org
-References: <20180515075859.17217-1-stanimir.varbanov@linaro.org>
- <20180515075859.17217-5-stanimir.varbanov@linaro.org>
- <CAAFQd5Aw70jUdaNXwZzkf22u5-2bmmCNBO9FkpQLNPo_9nwSzQ@mail.gmail.com>
-From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <2bb37924-82cc-c38d-6f99-fd62d875c3ab@linaro.org>
-Date: Mon, 21 May 2018 17:53:08 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1753047AbeEUOxv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 10:53:51 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52046 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752743AbeEUOxs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 10:53:48 -0400
+From: Punit Agrawal <punit.agrawal@arm.com>
+To: TSUKADA Koutaro <tsukada@ascade.co.jp>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>, David Rientjes <rientjes@google.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        Marc-Andre Lureau <marcandre.lureau@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, cgroups@vger.kernel.org
+Subject: Re: [PATCH v2 3/7] memcg: use compound_order rather than hpage_nr_pages
+References: <e863529b-7ce5-4fbe-8cff-581b5789a5f9@ascade.co.jp>
+        <262267fe-d98c-0b25-9013-3dafb52e8679@ascade.co.jp>
+        <87wow0zwja.fsf@e105922-lin.cambridge.arm.com>
+        <87sh6ozwc4.fsf@e105922-lin.cambridge.arm.com>
+        <2053ac36-74df-b05e-d1ce-36f69dde2a47@ascade.co.jp>
+Date: Mon, 21 May 2018 15:53:46 +0100
+In-Reply-To: <2053ac36-74df-b05e-d1ce-36f69dde2a47@ascade.co.jp> (TSUKADA
+        Koutaro's message of "Mon, 21 May 2018 12:48:22 +0900")
+Message-ID: <87zi0txdol.fsf@e105922-lin.cambridge.arm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <CAAFQd5Aw70jUdaNXwZzkf22u5-2bmmCNBO9FkpQLNPo_9nwSzQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tomasz,
+TSUKADA Koutaro <tsukada@ascade.co.jp> writes:
 
-On 05/18/2018 05:16 PM, Tomasz Figa wrote:
-> On Tue, May 15, 2018 at 5:13 PM Stanimir Varbanov <
-> stanimir.varbanov@linaro.org> wrote:
-> 
->> Adds set_properties method to handle newer 4xx properties and
->> fall-back to 3xx for the rest.
-> 
->> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
->> ---
->>   drivers/media/platform/qcom/venus/hfi_cmds.c | 64
-> +++++++++++++++++++++++++++-
->>   1 file changed, 63 insertions(+), 1 deletion(-)
-> 
->> diff --git a/drivers/media/platform/qcom/venus/hfi_cmds.c
-> b/drivers/media/platform/qcom/venus/hfi_cmds.c
->> index 1cfeb7743041..6bd287154796 100644
->> --- a/drivers/media/platform/qcom/venus/hfi_cmds.c
->> +++ b/drivers/media/platform/qcom/venus/hfi_cmds.c
-> 
-> [snip]
-> 
->> +       case HFI_PROPERTY_CONFIG_VENC_MAX_BITRATE:
->> +               /* not implemented on Venus 4xx */
-> 
-> Shouldn't return -EINVAL here, similar to what
-> pkt_session_set_property_1x() does for unknown property?
+> On 2018/05/19 2:51, Punit Agrawal wrote:
+>> Punit Agrawal <punit.agrawal@arm.com> writes:
+>>
+>>> Tsukada-san,
+>>>
+>>> I am not familiar with memcg so can't comment about whether the patchset
+>>> is the right way to solve the problem outlined in the cover letter but
+>>> had a couple of comments about this patch.
+>>>
+>>> TSUKADA Koutaro <tsukada@ascade.co.jp> writes:
+>>>
+>>>> The current memcg implementation assumes that the compound page is THP.
+>>>> In order to be able to charge surplus hugepage, we use compound_order.
+>>>>
+>>>> Signed-off-by: TSUKADA Koutaro <tsukada@ascade.co.jp>
+>>>
+>>> Please move this before Patch 1/7. This is to prevent wrong accounting
+>>> of pages to memcg for size != PMD_SIZE.
+>>
+>> I just noticed that the default state is off so the change isn't enabled
+>> until the sysfs node is exposed in the next patch. Please ignore this
+>> comment.
+>>
+>> One below still applies.
+>>
+>>>
+>>>> ---
+>>>>   memcontrol.c |   10 +++++-----
+>>>>   1 file changed, 5 insertions(+), 5 deletions(-)
+>>>>
+>>>> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+>>>> index 2bd3df3..a8f1ff8 100644
+>>>> --- a/mm/memcontrol.c
+>>>> +++ b/mm/memcontrol.c
+>>>> @@ -4483,7 +4483,7 @@ static int mem_cgroup_move_account(struct page *page,
+>>>>   				   struct mem_cgroup *to)
+>>>>   {
+>>>>   	unsigned long flags;
+>>>> -	unsigned int nr_pages = compound ? hpage_nr_pages(page) : 1;
+>>>> +	unsigned int nr_pages = compound ? (1 << compound_order(page)) : 1;
+>>>
+>>> Instead of replacing calls to hpage_nr_pages(), is it possible to modify
+>>> it to do the calculation?
+>
+> Thank you for review my code and please just call me Tsukada.
+>
+> I think it is possible to modify the inside of itself rather than
+> replacing the call to hpage_nr_pages().
+>
+> Inferring from the processing that hpage_nr_pages() desires, I thought
+> that the definition of hpage_nr_pages() could be moved outside the
+> CONFIG_TRANSPARENT_HUGEPAGE. It seems that THP and HugeTLBfs can be
+> handled correctly because compound_order() is judged by seeing whether it
+> is PageHead or not.
+>
+> Also, I would like to use compound_order() inside hpage_nr_pages(), but
+> since huge_mm.h is included before mm.h where compound_order() is defined,
+> move hpage_nr_pages to mm.h.
+>
+> Instead of patch 3/7, are the following patches implementing what you
+> intended?
+>
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index a8a1262..1186ab7 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -204,12 +204,6 @@ static inline spinlock_t *pud_trans_huge_lock(pud_t *pud,
+>  	else
+>  		return NULL;
+>  }
+> -static inline int hpage_nr_pages(struct page *page)
+> -{
+> -	if (unlikely(PageTransHuge(page)))
+> -		return HPAGE_PMD_NR;
+> -	return 1;
+> -}
+>
+>  struct page *follow_devmap_pmd(struct vm_area_struct *vma, unsigned long addr,
+>  		pmd_t *pmd, int flags);
+> @@ -254,8 +248,6 @@ static inline bool thp_migration_supported(void)
+>  #define HPAGE_PUD_MASK ({ BUILD_BUG(); 0; })
+>  #define HPAGE_PUD_SIZE ({ BUILD_BUG(); 0; })
+>
+> -#define hpage_nr_pages(x) 1
+> -
+>  static inline bool transparent_hugepage_enabled(struct vm_area_struct *vma)
+>  {
+>  	return false;
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 1ac1f06..082f2ee 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -673,6 +673,12 @@ static inline unsigned int compound_order(struct page *page)
+>  	return page[1].compound_order;
+>  }
+>
+> +static inline int hpage_nr_pages(struct page *page)
+> +{
+> +	VM_BUG_ON_PAGE(PageTail(page), page);
+> +	return (1 << compound_order(page));
+> +}
+> +
+>  static inline void set_compound_order(struct page *page, unsigned int order)
+>  {
+>  	page[1].compound_order = order;
 
-Probably the right error code should be ENOTSUPP, but I kind of
-following the rule to silently not return the error to simplify the
-callers of set_property (otherwise I have to have a version conditional
-code in the callers).
-
-> 
->> +               break;
->> +       default:
->> +               ret = pkt_session_set_property_3xx(pkt, cookie, ptype,
-> pdata);
->> +               break;
-> 
-> nit: How about simply return pkt_session_set_property_3xx(pkt, cookie,
-> ptype, pdata); and removing the |ret| variable completely, since the return
-> below the switch can just return 0 all the time?
-
-OK, I will do that way.
-
-> 
->> +       }
->> +
->> +       return ret;
->> +}
->> +
->>   int pkt_session_get_property(struct hfi_session_get_property_pkt *pkt,
->>                               void *cookie, u32 ptype)
->>   {
->> @@ -1181,7 +1240,10 @@ int pkt_session_set_property(struct
-> hfi_session_set_property_pkt *pkt,
->>          if (hfi_ver == HFI_VERSION_1XX)
->>                  return pkt_session_set_property_1x(pkt, cookie, ptype,
-> pdata);
-> 
->> -       return pkt_session_set_property_3xx(pkt, cookie, ptype, pdata);
->> +       if (hfi_ver == HFI_VERSION_3XX)
->> +               return pkt_session_set_property_3xx(pkt, cookie, ptype,
-> pdata);
->> +
->> +       return pkt_session_set_property_4xx(pkt, cookie, ptype, pdata);
-> 
-> nit: Since we're adding third variant, I'd consider using function pointers
-> here, but no strong opinion.
-
-Let's keep that for future improvements.
-
--- 
-regards,
-Stan
+That looks a lot better. Thanks for giving it a go.
