@@ -1,84 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753129AbeEUO1q (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 10:27:46 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50918 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752803AbeEUOZb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 10:25:31 -0400
-From: Quentin Perret <quentin.perret@arm.com>
-To: peterz@infradead.org, rjw@rjwysocki.net, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Cc: mingo@redhat.com, dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
-        chris.redpath@arm.com, patrick.bellasi@arm.com,
-        valentin.schneider@arm.com, vincent.guittot@linaro.org,
-        thara.gopinath@linaro.org, viresh.kumar@linaro.org, tkjos@google.com,
-        joelaf@google.com, smuckle@google.com, adharmap@quicinc.com,
-        skannan@quicinc.com, pkondeti@codeaurora.org, juri.lelli@redhat.com,
-        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
-        currojerez@riseup.net, javi.merino@kernel.org, quentin.perret@arm.com
-Subject: [RFC PATCH v3 02/10] sched/cpufreq: Factor out utilization to frequency mapping
-Date: Mon, 21 May 2018 15:24:57 +0100
-Message-Id: <20180521142505.6522-3-quentin.perret@arm.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180521142505.6522-1-quentin.perret@arm.com>
-References: <20180521142505.6522-1-quentin.perret@arm.com>
+        id S1753145AbeEUO16 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 10:27:58 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41556 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752803AbeEUO1y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 10:27:54 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 852A160314
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tbaicar@codeaurora.org
+Subject: Re: [PATCH v6 2/2] acpi: apei: Do not panic() on PCIe errors reported
+ through GHES
+To: Alexandru Gagniuc <mr.nuke.me@gmail.com>, bp@alien8.de
+Cc: alex_gagniuc@dellteam.com, austin_bolen@dell.com, shyam_iyer@dell.com,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
+        Tony Luck <tony.luck@intel.com>, Will Deacon <will.deacon@arm.com>,
+        James Morse <james.morse@arm.com>, Shiju Jose <shiju.jose@huawei.com>,
+        "Jonathan (Zhixiong) Zhang" <zjzhang@codeaurora.org>,
+        Dongjiu Geng <gengdongjiu@huawei.com>, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180521135003.32459-1-mr.nuke.me@gmail.com>
+ <20180521135003.32459-3-mr.nuke.me@gmail.com>
+From: Tyler Baicar <tbaicar@codeaurora.org>
+Message-ID: <737bea6a-2f0e-e573-754e-2e410c34013e@codeaurora.org>
+Date: Mon, 21 May 2018 10:27:49 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180521135003.32459-3-mr.nuke.me@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The schedutil governor maps utilization values to frequencies by applying
-a 25% margin. Since this sort of mapping mechanism can be needed by other
-users (i.e. EAS), factor the utilization-to-frequency mapping code out
-of schedutil and move it to include/linux/sched/cpufreq.h to avoid code
-duplication. The new map_util_freq() function is inlined to avoid
-overheads.
+On 5/21/2018 9:49 AM, Alexandru Gagniuc wrote:
+> +/* PCIe errors should not cause a panic. */
+> +static int ghes_sec_pcie_severity(struct acpi_hest_generic_data *gdata)
+> +{
+> +	struct cper_sec_pcie *pcie_err = acpi_hest_get_payload(gdata);
+> +
+> +	if (pcie_err->validation_bits & CPER_PCIE_VALID_DEVICE_ID &&
+> +	    pcie_err->validation_bits & CPER_PCIE_VALID_AER_INFO &&
+> +	    IS_ENABLED(CONFIG_ACPI_APEI_PCIEAER))
+> +		return GHES_SEV_RECOVERABLE;
+> +
+> +	return ghes_cper_severity(gdata->error_severity);
+> +}
+> +
+> +/*
+> + * The severity field in the status block is an unreliable metric for the
+> + * severity. A more reliable way is to look at each subsection and see how safe
+> + * it is to call the approproate error handler.
+> + * We're not conerned with handling the error. We're concerned with being able
+> + * to notify an error handler by crossing the NMI/IRQ boundary, being able to
+> + * schedule_work, and so forth.
+> + *   - SEC_PCIE: All PCIe errors can be handled by AER.
+> + */
+> +static int ghes_severity(struct ghes *ghes)
+> +{
+> +	int worst_sev, sec_sev;
+> +	struct acpi_hest_generic_data *gdata;
+> +	const guid_t *section_type;
+> +	const struct acpi_hest_generic_status *estatus = ghes->estatus;
+> +
+> +	worst_sev = GHES_SEV_NO;
+> +	apei_estatus_for_each_section(estatus, gdata) {
+> +		section_type = (guid_t *)gdata->section_type;
+> +		sec_sev = ghes_cper_severity(gdata->error_severity);
+> +
+> +		if (guid_equal(section_type, &CPER_SEC_PCIE))
+> +			sec_sev = ghes_sec_pcie_severity(gdata);
+> +
+> +		worst_sev = max(worst_sev, sec_sev);
+> +	}
+> +
+> +	return worst_sev;
+> +}
+> +
+>   static void ghes_do_proc(struct ghes *ghes,
+>   			 const struct acpi_hest_generic_status *estatus)
+>   {
+> @@ -944,7 +986,7 @@ static int ghes_notify_nmi(unsigned int cmd, struct pt_regs *regs)
+>   			ret = NMI_HANDLED;
+>   		}
+>   
+> -		sev = ghes_cper_severity(ghes->estatus->error_severity);
+> +		sev = ghes_severity(ghes);
+Hello Alex,
 
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Quentin Perret <quentin.perret@arm.com>
----
- include/linux/sched/cpufreq.h    | 6 ++++++
- kernel/sched/cpufreq_schedutil.c | 3 ++-
- 2 files changed, 8 insertions(+), 1 deletion(-)
+There is a compile warning if CONFIG_HAVE_ACPI_APEI_NMI is not selected.
 
-diff --git a/include/linux/sched/cpufreq.h b/include/linux/sched/cpufreq.h
-index 59667444669f..afa940cd50dc 100644
---- a/include/linux/sched/cpufreq.h
-+++ b/include/linux/sched/cpufreq.h
-@@ -20,6 +20,12 @@ void cpufreq_add_update_util_hook(int cpu, struct update_util_data *data,
-                        void (*func)(struct update_util_data *data, u64 time,
- 				    unsigned int flags));
- void cpufreq_remove_update_util_hook(int cpu);
-+
-+static inline unsigned long map_util_freq(unsigned long util,
-+					unsigned long freq, unsigned long cap)
-+{
-+	return (freq + (freq >> 2)) * util / cap;
-+}
- #endif /* CONFIG_CPU_FREQ */
- 
- #endif /* _LINUX_SCHED_CPUFREQ_H */
-diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-index 63014cff76a5..4fdc6eb7c88b 100644
---- a/kernel/sched/cpufreq_schedutil.c
-+++ b/kernel/sched/cpufreq_schedutil.c
-@@ -13,6 +13,7 @@
- 
- #include "sched.h"
- 
-+#include <linux/sched/cpufreq.h>
- #include <trace/events/power.h>
- 
- struct sugov_tunables {
-@@ -163,7 +164,7 @@ static unsigned int get_next_freq(struct sugov_policy *sg_policy,
- 	unsigned int freq = arch_scale_freq_invariant() ?
- 				policy->cpuinfo.max_freq : policy->cur;
- 
--	freq = (freq + (freq >> 2)) * util / max;
-+	freq = map_util_freq(util, freq, max);
- 
- 	if (freq == sg_policy->cached_raw_freq && sg_policy->next_freq != UINT_MAX)
- 		return sg_policy->next_freq;
+   CC      drivers/acpi/apei/ghes.o
+drivers/acpi/apei/ghes.c:483:12: warning: ‘ghes_severity’ defined but not used 
+[-Wunused-function]
+  static int ghes_severity(struct ghes *ghes)
+             ^~~~~~~~~~~~~
+
+Thanks,
+Tyler
+
 -- 
-2.17.0
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project.
