@@ -1,61 +1,75 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1526648327; cv=none;
+Return-Path: <broonie@sirena.org.uk>
+X-Google-Smtp-Source: AB8JxZprlpIq28ir1mPEECugP1pRZyUNGM/RZmzDzVFU+vYMd89RrAsjC9WXTObdSEZgtT4aH94e
+ARC-Seal: i=1; a=rsa-sha256; t=1526917649; cv=none;
         d=google.com; s=arc-20160816;
-        b=n0sQqECULiCtPOUSCQgvGY5Is+maS7wdeCK60MniP72/M44rO/V1wfdALKCaxUh9wY
-         5qtIsqI6QbYYbOyTN0ujFS/edohnk55BPv0nlM8p3+y3VjUmhZWL0uA8gKAGg0g/H8fy
-         88Gzw2S1aUFUSiUz7SC3Wapg2vCuHsus9hagWsY4CPTxprxE5+Lde4FqRfZusTc3378C
-         yTOVBvjotpa1l6pIKcF+kBbe/MAc09Ls238Oz5J/96ubhEBdTUSvxYc087DswlKDJuMq
-         UkpBW51VCtyT0fEiFNRe2IK8p9RDKZfJPjFBC/du+sQ4x6tWvQQj37ivqhh1usjQPnoQ
-         Jlvg==
+        b=qq39uJkEHXlFR0Os2p2dRlcl+Jp4NMTDrEb7nGm7M/VPgucWBQ4al3muVM1pDqhZbP
+         uZ/SSUmR3IUWWhWd5Dx1+9W5VZTF47tBDRZWuLBla6bN5nFEcyjrTB0GKmcacPohLrUf
+         Y1lgagfdJacirXv6Te94q8fLHm9m20/vdrLGvCxscCILXvR408US66vAY1MajiyKYFTK
+         XLe9oIVvC3xja8X9+Sbn6rMd5Ek/P0yfcsxdC+NDBZTX2FVrWsogPp1dBMlsMJT1wOcm
+         lJ82BmYqQ+/q8kuwRrs3461FwvI0139bIK1Fdovt2hu6/wmay2/OULj/YxuzBSi/9hdE
+         /iQQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=WBNgcej44DjEEIR/k1G53+UcjUmOuP/vkXPSyDTAFio=;
-        b=0bjuapVK1Uo3CDOnxjT1CpWuVKnZfjSAQ/WbVWwJXeJYr4Y3wSxPC6Ndddg0zS65nK
-         +bbaZEYA22nvC1eKXhJhO6Ar1TfnVMr77Jy3a3IqNeJGj4k68CwZHhViIjN1ADzsYdCy
-         yU9MGA/uRTk8Xr+sZOxcN81d6/62JSWONuqTd60/4gjnH81QBulhVJj56FBE0j0e4kW3
-         eydcrd72koait5Rx7j3R8/5QnbpirwAG49Y/BhXc3ydezDIdqglhy2D33cTrXrUTc8Y8
-         gPV/riitq3Aw08BK/RGtK8CERLJ/KHySh0zvjgIFsSesrLmprrehzjxI7dab6RHjeiha
-         Ys/A==
+        h=date:message-id:in-reply-to:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=/kumSrzLLRVSdheSMH/+TeQv443NRrdggVGvo56SU+U=;
+        b=ckJy4JtLp5SIS/3p8vEPKaG6vA9c21X4F/Y5P8asZOMYghdY4BQvgUe0T/nqd0h/oO
+         /jO/4PzHTBia4GTHUbIU+c7UmXLb+v8X+R0HryxknMapdBf9FPhqgd+lpfonPScSqNWo
+         z9HPJ32Or8b7WUM/TX0nH9Y6IRu5E5EIYUYdOe96j2DU+b/EOs8h9Bsc1+a/2JD0xPXY
+         ndSov9NzC/v50bZS/oV1B5OLrUw4cLCVJdtTr+MSwhHYO3zOAPbMH7cRVR1LCzFscC+d
+         OLeHGJp9UUiz3xe9hSYy6Sn78yppsWtWJI7LLvc4ALzDAaBgyv41YpivMuDqIAJPxCp7
+         TJFQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=MbiTbpbg;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=LlcQ7LKd;
+       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=MbiTbpbg;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZoruhywSQtsjurXampXWYhpDUirEE5kRgMRxanlF5Oelv5oMrE3rF9BcrV/etUCQLP3OUcscg==
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To: broonie@kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	bgoswami@codeaurora.org
-Cc: robh+dt@kernel.org,
-	gregkh@linuxfoundation.org,
-	david.brown@linaro.org,
-	mark.rutland@arm.com,
-	lgirdwood@gmail.com,
-	plai@codeaurora.org,
-	tiwai@suse.com,
-	perex@perex.cz,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rohkumar@qti.qualcomm.com,
-	spatakok@qti.qualcomm.com,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v9 08/15] ASoC: qdsp6: q6asm: Add support to audio stream apis
-Date: Fri, 18 May 2018 13:56:03 +0100
-Message-Id: <20180518125610.26200-9-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180518125610.26200-1-srinivas.kandagatla@linaro.org>
-References: <20180518125610.26200-1-srinivas.kandagatla@linaro.org>
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=LlcQ7LKd;
+       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+From: Mark Brown <broonie@kernel.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>, broonie@kernel.org, linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org, bgoswami@codeaurora.org, mark.rutland@arm.com, devicetree@vger.kernel.org, rohkumar@qti.qualcomm.com, gregkh@linuxfoundation.org, plai@codeaurora.org, lgirdwood@gmail.com, tiwai@suse.com, david.brown@linaro.org, robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org, spatakok@qti.qualcomm.com, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: qdsp6: q6asm: Add support to audio stream apis" to the asoc tree
+In-Reply-To: <20180518125610.26200-9-srinivas.kandagatla@linaro.org>
+Message-Id: <E1fKn20-00078m-SE@debutante>
+Date: Mon, 21 May 2018 16:47:28 +0100
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600806796702201505?=
-X-GMAIL-MSGID: =?utf-8?q?1600806796702201505?=
+X-GMAIL-THRID: =?utf-8?q?1601089201574771589?=
+X-GMAIL-MSGID: =?utf-8?q?1601089201574771589?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
+
+The patch
+
+   ASoC: qdsp6: q6asm: Add support to audio stream apis
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 68fd8480bb7baaf361e983f75d8571f25e017c67 Mon Sep 17 00:00:00 2001
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Date: Fri, 18 May 2018 13:56:03 +0100
+Subject: [PATCH] ASoC: qdsp6: q6asm: Add support to audio stream apis
 
 This patch adds support to open, write and media format commands
 in the q6asm module.
@@ -63,8 +77,9 @@ in the q6asm module.
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Reviewed-and-tested-by: Rohit kumar <rohitkr@codeaurora.org>
 Reviewed-by: Banajit Goswami <bgoswami@codeaurora.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/qcom/qdsp6/q6asm.c | 802 ++++++++++++++++++++++++++++++++++++++++++-
+ sound/soc/qcom/qdsp6/q6asm.c | 802 ++++++++++++++++++++++++++++++++++-
  sound/soc/qcom/qdsp6/q6asm.h |  49 +++
  2 files changed, 850 insertions(+), 1 deletion(-)
 
@@ -989,4 +1004,4 @@ index 8c317b7b63c3..9f5fb573e4a0 100644
  int q6asm_map_memory_regions(unsigned int dir,
  			     struct audio_client *ac,
 -- 
-2.16.2
+2.17.0
