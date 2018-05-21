@@ -1,49 +1,47 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqPBSUibtNFtau0yaBGbxN+vC8Z0bvaeo8P7Heq6+1ktJNHcvaPsn7qy5/HqzHBHwEqRxfL
-ARC-Seal: i=1; a=rsa-sha256; t=1526937481; cv=none;
+X-Google-Smtp-Source: AB8JxZofG+kuyO6xl+qHye31IjwJDcS/H7ZTfZAitj9dlyK3dD71Zj0Q0+QFURpEtKIbTIJRl0gQ
+ARC-Seal: i=1; a=rsa-sha256; t=1526937477; cv=none;
         d=google.com; s=arc-20160816;
-        b=izh1jECw5IAEJ930sY8KIf9U+g4aE8Vo2quzpRNcq3tMixXmYOimyJAFQc5ujAez4a
-         aLAvl5MhAPxrFv5gviRmMmWAMU3cij2tj1ruOwTBoABLA94H0FSevaVA0TPvVQg69Elk
-         yNVsRCJIrGSJJNUn6tqPMSDxHNzjHDGq7xLNgvvmhcCOR8FICT3N1MN24rHImty0jIMR
-         3lcIELYtV2J0pFq63qhvztSqhpRbrjxSeu8KB29tvKG4slL8ON6CN+dQR5IoSI+iO6vW
-         GLO2pTd4XebcVgygM9jZwhGTFUSJrvuD0lBOhxodOwsVLXB50u2BxCEbvw/YkWS/XBB3
-         9V2Q==
+        b=egCIakiBXB7YTm+vnc4MnriD8weBqxJHgsVjhuAVlNN0vORRxlLnNrEGzOLBE+mqds
+         s44vHsuhpRPQurmZ9yKwbR79h52NoSzkiunr8Apoz518DCD/U/nNWJ6ykYrO+kRFgvwc
+         bjF99UoqPkqtiG4IL+eKJz95UeJRtYzKLdGqhB8bHE4NSJExgjaxZUuBmZ962/LtXIxC
+         Rukcep4wOY1tX3bBlqTHminiV5MPsNwB879UN29/6gsVzr9sjbpdZHuNC7+Ba+QZLyhi
+         SaByRKkZZgdaHDM4cRc9r69Rp8tUG9o4QCW86SnWNxlB4J0EDeOTRAjZWg+68zcJxwTq
+         vKjg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=jKsIrppvaE1iG0pQyTkbD+I1iO+AThMLRTeSTK9azRE=;
-        b=P2KeJoW46AhemXFU9Sq6H/2WibgryGlE23nujIqrB1ZTwF7vy/aHus28bveVCWRxhe
-         3MANkiddHHrYEFBjTl9PnEKgPvkJ+7jMV+YN/SZXpz/WKGdJKf9GcAaQpdsd0X/C8xh3
-         qfBDxMhnzXiYYrhF1xszd/6nrx7tVWNX6pmk3PQ9XocNlAZuCFIfnK8WT4lzip3J4/8W
-         umX8ERwyKoyorgasB4wEdH0++G5HCCPqGwsHGI06HIYbf53fi4s0yYJuePad9j75sqnF
-         iIdV3+w0zUM5+r1tgq3vLDKY7IxxEANhwyqydKHZJtd0YYyODtRatVfnKEojgY5b1hYq
-         kxVw==
+        bh=3AaWYplcBTtCWpfffcCuNFvd3n+31NsuYJKV7/HGZUE=;
+        b=RLjuBT2G2Q4KKMptg4/I561eZFskwEHf9MF+hwUWXyhxH4pkfKViJKiV55lak3U0jU
+         VnWLtQ6aRdFzYUMpJU2TZZVVcBF3fkHcukOBnqo/hyleMW0lFok0roMylkr1/hP9e1TZ
+         hk49uW6VA6B5Wk5LB6Ku1wAFSQ7LsI+segajC1GIYaDnVJQmccRNNHITApW8I0aoraIj
+         jEXVdwVYuYfObC/0aTc24s6FxP3vNEh/470CvJyp+hlezmEkudlKdToHngfqwujCTsRU
+         ifgs1WGMZQsHeWU8i+XZWcrA9Pu6vVZm8i70pdW+FRTuPzeleIfC4LEbs2hFNirFI6Au
+         JuUw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=KCtHccv6;
+       dkim=pass header.i=@kernel.org header.s=default header.b=rF/8q3dX;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=KCtHccv6;
+       dkim=pass header.i=@kernel.org header.s=default header.b=rF/8q3dX;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Kamal Dasu <kdasu.kdev@gmail.com>,
-	Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.14 10/95] spi: bcm-qspi: Avoid setting MSPI_CDRAM_PCS for spi-nor master
-Date: Mon, 21 May 2018 23:11:00 +0200
-Message-Id: <20180521210449.522980733@linuxfoundation.org>
+	Shuah Khan <shuahkh@osg.samsung.com>
+Subject: [PATCH 4.14 01/95] usbip: usbip_host: refine probe and disconnect debug msgs to be useful
+Date: Mon, 21 May 2018 23:10:51 +0200
+Message-Id: <20180521210447.506167817@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210447.219380974@linuxfoundation.org>
 References: <20180521210447.219380974@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109744177472829?=
-X-GMAIL-MSGID: =?utf-8?q?1601109996073523411?=
+X-GMAIL-THRID: =?utf-8?q?1601109741112049597?=
+X-GMAIL-MSGID: =?utf-8?q?1601109992761026804?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,66 +49,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kamal Dasu <kdasu.kdev@gmail.com>
+From: Shuah Khan <shuahkh@osg.samsung.com>
 
-commit 5eb9a07a4ae1008b67d8bcd47bddb3dae97456b7 upstream.
+commit 28b68acc4a88dcf91fd1dcf2577371dc9bf574cc upstream.
 
-Added fix for probing of spi-nor device non-zero chip selects. Set
-MSPI_CDRAM_PCS (peripheral chip select) with spi master for MSPI
-controller and not for MSPI/BSPI spi-nor master controller. Ensure
-setting of cs bit in chip select register on chip select change.
+Refine probe and disconnect debug msgs to be useful and say what is
+in progress.
 
-Fixes: fa236a7ef24048 ("spi: bcm-qspi: Add Broadcom MSPI driver")
-Signed-off-by: Kamal Dasu <kdasu.kdev@gmail.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
+Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/spi/spi-bcm-qspi.c |   24 ++++++++++++++++--------
- 1 file changed, 16 insertions(+), 8 deletions(-)
+ drivers/usb/usbip/stub_dev.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/spi/spi-bcm-qspi.c
-+++ b/drivers/spi/spi-bcm-qspi.c
-@@ -519,16 +519,19 @@ static void bcm_qspi_disable_bspi(struct
+--- a/drivers/usb/usbip/stub_dev.c
++++ b/drivers/usb/usbip/stub_dev.c
+@@ -316,7 +316,7 @@ static int stub_probe(struct usb_device
+ 	struct bus_id_priv *busid_priv;
+ 	int rc;
  
- static void bcm_qspi_chip_select(struct bcm_qspi *qspi, int cs)
- {
--	u32 data = 0;
-+	u32 rd = 0;
-+	u32 wr = 0;
+-	dev_dbg(&udev->dev, "Enter\n");
++	dev_dbg(&udev->dev, "Enter probe\n");
  
--	if (qspi->curr_cs == cs)
--		return;
- 	if (qspi->base[CHIP_SELECT]) {
--		data = bcm_qspi_read(qspi, CHIP_SELECT, 0);
--		data = (data & ~0xff) | (1 << cs);
--		bcm_qspi_write(qspi, CHIP_SELECT, 0, data);
-+		rd = bcm_qspi_read(qspi, CHIP_SELECT, 0);
-+		wr = (rd & ~0xff) | (1 << cs);
-+		if (rd == wr)
-+			return;
-+		bcm_qspi_write(qspi, CHIP_SELECT, 0, wr);
- 		usleep_range(10, 20);
- 	}
-+
-+	dev_dbg(&qspi->pdev->dev, "using cs:%d\n", cs);
- 	qspi->curr_cs = cs;
- }
+ 	/* check we should claim or not by busid_table */
+ 	busid_priv = get_busid_priv(udev_busid);
+@@ -418,7 +418,7 @@ static void stub_disconnect(struct usb_d
+ 	struct bus_id_priv *busid_priv;
+ 	int rc;
  
-@@ -755,8 +758,13 @@ static int write_to_hw(struct bcm_qspi *
- 			dev_dbg(&qspi->pdev->dev, "WR %04x\n", val);
- 		}
- 		mspi_cdram = MSPI_CDRAM_CONT_BIT;
--		mspi_cdram |= (~(1 << spi->chip_select) &
--			       MSPI_CDRAM_PCS);
-+
-+		if (has_bspi(qspi))
-+			mspi_cdram &= ~1;
-+		else
-+			mspi_cdram |= (~(1 << spi->chip_select) &
-+				       MSPI_CDRAM_PCS);
-+
- 		mspi_cdram |= ((tp.trans->bits_per_word <= 8) ? 0 :
- 				MSPI_CDRAM_BITSE_BIT);
+-	dev_dbg(&udev->dev, "Enter\n");
++	dev_dbg(&udev->dev, "Enter disconnect\n");
  
+ 	busid_priv = get_busid_priv(udev_busid);
+ 	if (!busid_priv) {
