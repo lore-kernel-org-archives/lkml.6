@@ -1,55 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752698AbeEUOaT convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 10:30:19 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:53505 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751643AbeEUOaQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 10:30:16 -0400
-Date: Mon, 21 May 2018 16:30:14 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Abhishek Sahu <absahu@codeaurora.org>
-Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        Andy Gross <andy.gross@linaro.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH v2 02/14] mtd: rawnand: denali: use helper function for
- ecc setup
-Message-ID: <20180521163014.355318d6@xps13>
-In-Reply-To: <1525350041-22995-3-git-send-email-absahu@codeaurora.org>
-References: <1525350041-22995-1-git-send-email-absahu@codeaurora.org>
-        <1525350041-22995-3-git-send-email-absahu@codeaurora.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1752713AbeEUObi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 10:31:38 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36594 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751504AbeEUObg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 10:31:36 -0400
+Date: Mon, 21 May 2018 10:31:35 -0400
+From: Mike Snitzer <snitzer@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        hch@infradead.org, colyli@suse.de, darrick.wong@oracle.com, clm@fb.com,
+        bacik@fb.com, linux-xfs@vger.kernel.org, drbd-dev@lists.linbit.com,
+        linux-btrfs@vger.kernel.org, linux-raid@vger.kernel.org,
+        neilb@suse.com
+Subject: Re: [PATCH 00/13] convert block layer to bioset_init()/mempool_init()
+Message-ID: <20180521143132.GB19194@redhat.com>
+References: <20180520222558.7053-1-kent.overstreet@gmail.com>
+ <20180521140348.GA19069@redhat.com>
+ <686d7df6-c7d1-48a6-b7ff-48dc8aff6a62@kernel.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <686d7df6-c7d1-48a6-b7ff-48dc8aff6a62@kernel.dk>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Abhishek,
+On Mon, May 21 2018 at 10:19am -0400,
+Jens Axboe <axboe@kernel.dk> wrote:
 
-On Thu,  3 May 2018 17:50:29 +0530, Abhishek Sahu
-<absahu@codeaurora.org> wrote:
+> On 5/21/18 8:03 AM, Mike Snitzer wrote:
+> > On Sun, May 20 2018 at  6:25pm -0400,
+> > Kent Overstreet <kent.overstreet@gmail.com> wrote:
+> > 
+> >> Jens - this series does the rest of the conversions that Christoph wanted, and
+> >> drops bioset_create().
+> >>
+> >> Only lightly tested, but the changes are pretty mechanical. Based on your
+> >> for-next tree.
+> > 
+> > By switching 'mempool_t *' to 'mempool_t' and 'bio_set *' to 'bio_set'
+> > you've altered the alignment of members in data structures.  So I'll
+> > need to audit all the data structures you've modified in DM.
+> > 
+> > Could we get the backstory on _why_ you're making this change?
+> > Would go a long way to helping me appreciate why this is a good use of
+> > anyone's time.
+> 
+> Yeah, it's in the first series, it gets rid of a pointer indirection.
 
-> Now, the NAND base layer has helper function for ecc
-> parameters setup which does the same thing.
+"Allows mempools to be embedded in other structs, getting rid of a
+pointer indirection from allocation fastpaths."
 
-Even if this message has a meaning in the series, I would prefer
-something more generic like:
+So this is about using contiguous memory or avoiding partial allocation
+failure?  Or both?
 
-"Use the NAND core helper function xxx() to tune the ECC parameters
-instead of the function locally defined."
+Or more to it?  Just trying to fully appreciate the theory behind the
+perceived associated benefit.
 
-With this change:
-
-Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
+I do think the increased risk of these embedded bio_set and mempool_t
+themselves crossing cachelines, or struct members that follow them doing
+so, really detracts from these types of changes.
 
 Thanks,
-Miquèl
+Mike
