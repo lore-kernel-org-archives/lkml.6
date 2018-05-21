@@ -1,84 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754399AbeEUVkX (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 17:40:23 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:42871 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754318AbeEUVj4 (ORCPT
+        id S1754617AbeEUVmc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 17:42:32 -0400
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:10744 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754393AbeEUVmZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 17:39:56 -0400
-Date: Mon, 21 May 2018 23:39:53 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Aaro Koskinen <aaro.koskinen@iki.fi>
-Cc: pali.rohar@gmail.com, sre@kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, khilman@kernel.org,
-        ivo.g.dimitrov.75@gmail.com, patrikbachan@gmail.com, serge@hallyn.com,
-        abcloriens@gmail.com, clayton@craftyguy.net, martijn@brixit.nl,
-        sakari.ailus@linux.intel.com,
-        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
-        Thorsten Leemhuis <regressions@leemhuis.info>
-Subject: Re: v4.17-rc1: regressions on N900, N950
-Message-ID: <20180521213952.GA11596@amd>
-References: <20180422074213.GA12428@amd>
- <20180423202940.ig6iud5lrbgnu35a@darkstar.musicnaut.iki.fi>
+        Mon, 21 May 2018 17:42:25 -0400
+X-IronPort-AV: E=Sophos;i="5.49,427,1520870400";
+   d="scan'208";a="181797259"
+From: Adam Manzanares <Adam.Manzanares@wdc.com>
+To: Jeff Moyer <jmoyer@redhat.com>
+CC: "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "axboe@kernel.dk" <axboe@kernel.dk>, "bcrl@kvack.org" <bcrl@kvack.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@kernel.org" <mingo@kernel.org>,
+        "pombredanne@nexb.com" <pombredanne@nexb.com>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "bigeasy@linutronix.de" <bigeasy@linutronix.de>,
+        "jack@suse.cz" <jack@suse.cz>,
+        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
+        "rgoldwyn@suse.com" <rgoldwyn@suse.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "hch@infradead.org" <hch@infradead.org>
+Subject: Re: [PATCH v5 0/5] AIO add per-command iopriority
+Thread-Topic: [PATCH v5 0/5] AIO add per-command iopriority
+Thread-Index: AQHT8R0g5NEFuHrm2Ua9FGsIz2NiwKQ6qoFggAAMcAA=
+Date: Mon, 21 May 2018 21:42:22 +0000
+Message-ID: <9791140b-1674-0e36-cbd9-f2bf8b6b25f5@wdc.com>
+References: <20180521160147.2372-1-adam.manzanares@wdc.com>
+ <x49fu2kvi9q.fsf@segfault.boston.devel.redhat.com>
+In-Reply-To: <x49fu2kvi9q.fsf@segfault.boston.devel.redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Adam.Manzanares@wdc.com;
+x-originating-ip: [199.255.44.250]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR04MB0170;7:bWmHzc0uYHEARs2+4ErwOqV6No4h3mN7Rf6B/VQTv0mm26IA1x5PvYxdWTG0c6hq4t+rplzwMYlkAbUYMc4Gpxt2wvRRcG4QtG1j+FPBEwAxJQd4brc4zRuXtYJ2Vs5qaNr55Q7EWbLBziAuCiaLIipsTt0ar4FuteZnwVoh8/tsHgCvnI69Qh1hcYrW1SRU+unhYQk56urfeRc7srF8bz5nfunvs9zSKm4K0EGdifW2xLBVQs6jISZP5Y7KLhbA;20:kVAmGQ6w4vrB9P0QwjKT/xEszfx3m8xxlWNEPmOxJ/JtZAedrBmyU1HKzeqRVLMbXvlI5ic6xBozX7/5FksYHqMLIa0H5rpZM4KgcHhS0w/5JxBILlLfolkr9aoBpxBk9Jxp2m4TYDSLUel2m0wkhCKd4vdWGj9vP022asv16MA=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DM5PR04MB0170;
+x-ms-traffictypediagnostic: DM5PR04MB0170:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <DM5PR04MB01704DEE85614333666BB54EF0950@DM5PR04MB0170.namprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231254)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:DM5PR04MB0170;BCL:0;PCL:0;RULEID:;SRVR:DM5PR04MB0170;
+x-forefront-prvs: 06793E740F
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39380400002)(366004)(346002)(39860400002)(376002)(199004)(189003)(229853002)(305945005)(81156014)(2900100001)(81166006)(6246003)(54906003)(5660300001)(105586002)(2906002)(66066001)(59450400001)(6512007)(316002)(6436002)(72206003)(6306002)(966005)(8676002)(36756003)(26005)(53936002)(7416002)(6486002)(6916009)(76176011)(102836004)(8936002)(186003)(3846002)(106356001)(6116002)(3660700001)(6506007)(31686004)(53546011)(3280700002)(25786009)(7736002)(476003)(14454004)(478600001)(99286004)(5250100002)(4326008)(68736007)(31696002)(446003)(486006)(11346002)(86362001)(97736004)(2616005);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR04MB0170;H:DM5PR04MB0282.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: B+0wV4lbSgOKDymUEnOWniH4lUgjQvfPduuDWii5GXRgv9HMKRIMIRr5FWvWVFKyN4Gba2XsLhn78l6vXGOiOwmd3HkEccQze98RRvVpwLVNW/CQWlWgMv2rn/oOkrVFkhsc5BWl+/52ZCbWwU6AUxDcePoT2OaJpEpoto7u9FDK9dEfmZOyZeK9CpitTkD4
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <43084E3A8FBF734AA54DCA567ADE63B2@namprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="OXfL5xGRrasGEqWY"
-Content-Disposition: inline
-In-Reply-To: <20180423202940.ig6iud5lrbgnu35a@darkstar.musicnaut.iki.fi>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+X-MS-Office365-Filtering-Correlation-Id: 763348e1-89e2-4cd5-4dc9-08d5bf63bc35
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 763348e1-89e2-4cd5-4dc9-08d5bf63bc35
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 May 2018 21:42:22.2445
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR04MB0170
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4LLgcUo007399
 
 
---OXfL5xGRrasGEqWY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-HI!
+On 5/21/18 1:57 PM, Jeff Moyer wrote:
+> Hi, Adam,
+> 
+> adam.manzanares@wdc.com writes:
+> 
+>> From: Adam Manzanares <adam.manzanares@wdc.com>
+>>
+>> This is the per-I/O equivalent of the ioprio_set system call.
+>> See the following link for performance implications on a SATA HDD:
+>> https://lkml.org/lkml/2016/12/6/495
+>>
+>> First patch factors ioprio_check_cap function out of ioprio_set system call to
+>> also be used by the aio ioprio interface.
+>>
+>> Second patch converts kiocb ki_hint field to a u16 to avoid kiocb bloat.
+>>
+>> Third patch passes ioprio hint from aio iocb to kiocb and inititalizes kiocb
+>> ioprio value appropriately when it is not explicitly set.
+>>
+>> Fourth patch enables the feature for blkdev.
+>>
+>> Fifth patch enables the feature for iomap direct IO
+>>
+>> Note: this work is based on top of linux-vfs/for-next
+> 
+> I'll cook up a libaio test case.  Can you put together a man-pages
+> update for this?
 
-> On Sun, Apr 22, 2018 at 09:42:13AM +0200, Pavel Machek wrote:
-> > v4.17-rc1 broke display for me on Nokia N900. (I don't know if system
-> > boots, but I can see on red flash LED that at least that driver
-> > succeeded. So it should not be early boot crash).
-> >=20
-> > v4.17-rc1 also broke boot on N950.
-> >=20
-> > Any ideas? Does it work for you?
->=20
-> Below config works for me on N900 and N950. (On N950, I need to disable to
-> display DTS entry as discussed in other threads.)
+Hello Jeff,
 
-Thanks... On N900 it works for me in v4.16, but display stays blank in
-v4.17-rc1...
+I'll send out a man-pages update soon.
 
-And I'm starting to suspect I have somehow special N900, or maybe
-special gcc version... Whether display on N900 works or not seems to
-depend on completely unrelated config options :-(. Maybe it is timing
-during boot or something.
+Thanks,
+Adam
 
-Best regards,
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---OXfL5xGRrasGEqWY
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlsDPKgACgkQMOfwapXb+vKRdgCgw/d5kwoj1Y0AWn9WFqGhnOz/
-3I8AmwTI02rWx45oZcEbv1PHdh7HqfB+
-=jt29
------END PGP SIGNATURE-----
-
---OXfL5xGRrasGEqWY--
+> 
+> Thanks!
+> Jeff
+> 
