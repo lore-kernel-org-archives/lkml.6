@@ -1,80 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751077AbeEUHNT (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 03:13:19 -0400
-Received: from lithops.sigma-star.at ([195.201.40.130]:40392 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750965AbeEUHNS (ORCPT
+        id S1751214AbeEUHOT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 03:14:19 -0400
+Received: from asavdk4.altibox.net ([109.247.116.15]:37268 "EHLO
+        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751039AbeEUHOS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 03:13:18 -0400
-From: Richard Weinberger <richard@nod.at>
-To: Stefan Schaeckeler <sschaeck@cisco.com>
-Cc: David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mtd: mtdoops: optionally dump boottime
-Date: Mon, 21 May 2018 09:13:09 +0200
-Message-ID: <5252756.S0IrdeWEj0@blindfold>
-In-Reply-To: <20180521022924.GA33758@sjc-ads-587.cisco.com>
-References: <20180521022924.GA33758@sjc-ads-587.cisco.com>
+        Mon, 21 May 2018 03:14:18 -0400
+Date: Mon, 21 May 2018 09:14:14 +0200
+From: Sam Ravnborg <sam@ravnborg.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nicholas Piggin <npiggin@gmail.com>, Kees Cook <keescook@chromium.org>,
+        Emese Revfy <re.emese@gmail.com>, X86 ML <x86@kernel.org>
+Subject: Re: [PATCH v4 07/31] kconfig: add built-in function support
+Message-ID: <20180521071414.GA9397@ravnborg.org>
+References: <1526537830-22606-1-git-send-email-yamada.masahiro@socionext.com>
+ <1526537830-22606-8-git-send-email-yamada.masahiro@socionext.com>
+ <20180520145031.GB9826@ravnborg.org>
+ <CAK7LNATM6s++TJ-VrbSwoMmP5FgVOmkUNGCwzZW=Re0WEr5EYQ@mail.gmail.com>
+ <20180521061613.GA21232@ravnborg.org>
+ <CAK7LNATw1VRjX9CcJVdAzi7YDhmMFpxmBQqs_PPSKJdMbAD=pg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK7LNATw1VRjX9CcJVdAzi7YDhmMFpxmBQqs_PPSKJdMbAD=pg@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=UpRNyd4B c=1 sm=1 tr=0
+        a=ddpE2eP9Sid01c7MzoqXPA==:117 a=ddpE2eP9Sid01c7MzoqXPA==:17
+        a=kj9zAlcOel0A:10 a=aKLBciwiZV40MlG6Tf0A:9 a=CjuIK1q_8ugA:10
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Stefan,
+Hi Masahiro,
 
-Am Montag, 21. Mai 2018, 04:29:24 CEST schrieb Stefan Schaeckeler:
-> Hello Richard and others,
-> 
-> > I get the use-case, but why is this only for mtdoops?
-> 
-> Powerpc's nvram module also stores oops messages and does so by adding an
-> additional timestamp, as well (search for kmsg_dump_get_buffer() in
-> arch/powerpc/kernel/nvram_64.c).
+> Hmm, your suggestion is more shell-oriented parsing.
+...
+> Probably, I found it was much more complex,
+> then I chose Make-like simpler one.
 
-Just one more reason to make it generic.
- 
-> This timestamp is the number of seconds since 1970 and stored as a 64 bit
-> integer in the nvram header. Basically, the last kmesg timestamp is a few ms
-> less than this additionally stored timestamp. Recording boottime would be more
-> elegant, I guess.
-> 
-> 
-> > IMHO this needs to go into generic code such that all kmsg dumpers can
-> > benefit from it.
-> 
-> This would be not that easy:
-> 
-> #1 kmsg_dump_get_buffer(...size...) returns the most recent <size> bytes.
-> Consecutive calls return older chunks. It would be natural to return the
-> boottime as the first line, e.g. in the last call, but some clients such as
-> mtdoops call kmsg_dump_get_buffer() only once. The returned buffer may be
-> complete including boottime, or not.
-> 
-> #2 consistency with other clients: nvram_64.c has the same requirement of
-> storing a kind of wall-time but does it in a completely different way: no
-> readable ascii text timestamp preprended to the kmsg buffer but a 64 bit
-> timestamp in its header. Note, I don't think we should make mtdoops behave like
-> nvram_64.c by storing the timestamp as a 64 bit integer (in its header) b/c
-> most people do a cat or string of the mtd device /dev/mtdX and a 64 bit integer
-> would just read as garbage.
+Agree that the simple one should be the best choice for now.
+We shall not add anything more complex unless it is really needed.
 
-I think this is the perfect opportunity to talk with other kmesg dump users on
-how to add a timestamp.
-As last resort we can always do it in our own way but I think making it generic
-is at lest worth a try...
-
-> I hope we can have separate implementations for recording additional
-> timestamps. Later, I'll send a patch with stylistic changes unless we
-> completely disagree on how to move forward.
-
-Both #1 and #2 aren't show-stoppers.
-
-Thanks,
-//richard
+	Sam
