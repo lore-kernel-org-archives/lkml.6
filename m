@@ -1,38 +1,38 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZonzAqIl9bEF0Gk2BpzokT9FoQCsjpG2OIJhy1b7eC/ZOmduGNUVvQbly5+ouf9mALFNhYG
-ARC-Seal: i=1; a=rsa-sha256; t=1526937657; cv=none;
+X-Google-Smtp-Source: AB8JxZodx92bML4Red/plDWf6NhB+dmJWgV6V8KVev8nROg6GDOR8bpV05p+EXvSOw3vnnaWPUk2
+ARC-Seal: i=1; a=rsa-sha256; t=1526937654; cv=none;
         d=google.com; s=arc-20160816;
-        b=SQAo22o74eqEGJXuIMtONAUVE67mSWUenyjgGiyZXqyIFowcGborm+ifHfA5LJfCHN
-         npj8skgfcUGuqKYMADrQVs5AB0qArIfWQRxpMMiTFffs3xFvOsn1danaL0wqLNXWrKev
-         rR2wx03TCSacrW14sC8Zh9sF0Mic6t7/13nYIKzIKxTJ9iF6hB3QNDHJ8cE7dF4L8F+M
-         pTuLs+tZFqhNs7dTfzHunnt33MN09f+pEHqss1TcxF4pJRZ5lfTQOwCtZFqWx2D59BrO
-         W+0mJLsDJQ8qCeY7EK989Q+vaI2w7WTYEiqUePqBRx1+bsOSe2/0UtJYi4jI14t33lX1
-         PwwA==
+        b=GSf3HQpvwHnPGXYoaqYx7nwxgyoUBU2FXrEik6epIc3VGCZvWFRqu54KmnGwHbuVlG
+         gN0yxsNNTovOQl1shHgBW7zp9wBhqn31XfR90+GuF1R6SRFgvQHP18dpRZ8Om6vl3Jxl
+         ueI1yIGMfb2kpKktAkW2Q66q1spP52GJ4qty46BgKLyN6IYycr4DvAYu8pBeky4D8SFL
+         TiysnxnMpmabLpa3dJJz4DCuwryrkzPNNmAx4Sai3YrcjQ+Z/rn/zCwkc7p7UfaAFkwQ
+         dCvl+i0//DwvEnKbm4NKU5cvWtGFIsKAA/EHhaCcDaaXKNFOxiOU9IaZYYmOXjuMKsWE
+         qQ8Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=GQb4EyIl+nBMPlaF7dv5T/s+2TKGmrRidhFuZB59pqc=;
-        b=GjvqUW7AV2ZwLC6k78xum7mfy1aUFi1I0pvlai7T1JsJA4+6h+pPEWnLT5KH8CaakV
-         GLBSqCwTil6MsLQcBrTWEfhOVV4LNoUChpvmInUkOPnRj2L7iut3y8D8jbRkKBLbT2cG
-         8GjATC/HYgW45WMCWRwuCsX6bi0X9oXgSp9litPxZbuRYWCdk6FXy8DIQ+2JHBmO1j1S
-         W0mWPidOfwr440i13US+GWfFlCN4/ILMpG4Q/KJDZFiDS7RqI5/LMpXp67Qf8ZXnniQN
-         yldr+ALteARMtMXkDnfXsoJcfD4+tSuaq6I8xOp445J66paUQHpBHsAMrAtwpxaxHF+u
-         7EJA==
+        bh=b8wBX3eQa0C4jnP0VCuHj4vBoCoCMim77RdP/g1NJUg=;
+        b=cRwOrukCCUdxCK8BEfDQJqzAW0kWFFTS9Sd3QJQXrkskxwDZ1fbLuxa1fpekkvk2CS
+         F9fhBN5r36GHPb9h2Qg6A/KY1s2c/OFj0dX/eVXdcPJujLiEzBUcAEsFNNf7HgAuaPPc
+         6oRr0DjjDaGZUYJMNSha1NlqwvQHz/Ihqkw2Hcxn8zM2NMTYEoTz2G707tojGbZh1wk6
+         9NQIFSq1yOEP7MwyWvZBJQ6M3QruMy36Gix40Sjg1wSUN+rfI/pEb3ZbtsP+IYh1QM4L
+         vLBy+AqSkqtBnYQpJC8ALzqRtPos1yvbVVtC+c5274MWavOs7s1PmWtixwS/3sKf/3Td
+         JiYg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=HAeE7Dx8;
+       dkim=pass header.i=@kernel.org header.s=default header.b=D5rpbRqb;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=HAeE7Dx8;
+       dkim=pass header.i=@kernel.org header.s=default header.b=D5rpbRqb;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
-	Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.14 31/95] s390: remove indirect branch from do_softirq_own_stack
-Date: Mon, 21 May 2018 23:11:21 +0200
-Message-Id: <20180521210454.500621061@linuxfoundation.org>
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Russell King <rmk+kernel@armlinux.org.uk>
+Subject: [PATCH 4.14 40/95] ARM: 8772/1: kprobes: Prohibit kprobes on get_user functions
+Date: Mon, 21 May 2018 23:11:30 +0200
+Message-Id: <20180521210456.141627200@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210447.219380974@linuxfoundation.org>
 References: <20180521210447.219380974@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109880764209307?=
-X-GMAIL-MSGID: =?utf-8?q?1601110180678570582?=
+X-GMAIL-THRID: =?utf-8?q?1601109804932649139?=
+X-GMAIL-MSGID: =?utf-8?q?1601110177983170258?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,36 +51,116 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-commit 9f18fff63cfd6f559daa1eaae60640372c65f84b upstream.
+commit 0d73c3f8e7f6ee2aab1bb350f60c180f5ae21a2c upstream.
 
-The inline assembly to call __do_softirq on the irq stack uses
-an indirect branch. This can be replaced with a normal relative
-branch.
+Since do_undefinstr() uses get_user to get the undefined
+instruction, it can be called before kprobes processes
+recursive check. This can cause an infinit recursive
+exception.
+Prohibit probing on get_user functions.
 
-Cc: stable@vger.kernel.org # 4.16
-Fixes: f19fbd5ed6 ("s390: introduce execute-trampolines for branches")
-Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Fixes: 24ba613c9d6c ("ARM kprobes: core code")
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/s390/kernel/irq.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ arch/arm/include/asm/assembler.h |   10 ++++++++++
+ arch/arm/lib/getuser.S           |   10 ++++++++++
+ 2 files changed, 20 insertions(+)
 
---- a/arch/s390/kernel/irq.c
-+++ b/arch/s390/kernel/irq.c
-@@ -176,10 +176,9 @@ void do_softirq_own_stack(void)
- 		new -= STACK_FRAME_OVERHEAD;
- 		((struct stack_frame *) new)->back_chain = old;
- 		asm volatile("   la    15,0(%0)\n"
--			     "   basr  14,%2\n"
-+			     "   brasl 14,__do_softirq\n"
- 			     "   la    15,0(%1)\n"
--			     : : "a" (new), "a" (old),
--			         "a" (__do_softirq)
-+			     : : "a" (new), "a" (old)
- 			     : "0", "1", "2", "3", "4", "5", "14",
- 			       "cc", "memory" );
- 	} else {
+--- a/arch/arm/include/asm/assembler.h
++++ b/arch/arm/include/asm/assembler.h
+@@ -536,4 +536,14 @@ THUMB(	orr	\reg , \reg , #PSR_T_BIT	)
+ #endif
+ 	.endm
+ 
++#ifdef CONFIG_KPROBES
++#define _ASM_NOKPROBE(entry)				\
++	.pushsection "_kprobe_blacklist", "aw" ;	\
++	.balign 4 ;					\
++	.long entry;					\
++	.popsection
++#else
++#define _ASM_NOKPROBE(entry)
++#endif
++
+ #endif /* __ASM_ASSEMBLER_H__ */
+--- a/arch/arm/lib/getuser.S
++++ b/arch/arm/lib/getuser.S
+@@ -38,6 +38,7 @@ ENTRY(__get_user_1)
+ 	mov	r0, #0
+ 	ret	lr
+ ENDPROC(__get_user_1)
++_ASM_NOKPROBE(__get_user_1)
+ 
+ ENTRY(__get_user_2)
+ 	check_uaccess r0, 2, r1, r2, __get_user_bad
+@@ -58,6 +59,7 @@ rb	.req	r0
+ 	mov	r0, #0
+ 	ret	lr
+ ENDPROC(__get_user_2)
++_ASM_NOKPROBE(__get_user_2)
+ 
+ ENTRY(__get_user_4)
+ 	check_uaccess r0, 4, r1, r2, __get_user_bad
+@@ -65,6 +67,7 @@ ENTRY(__get_user_4)
+ 	mov	r0, #0
+ 	ret	lr
+ ENDPROC(__get_user_4)
++_ASM_NOKPROBE(__get_user_4)
+ 
+ ENTRY(__get_user_8)
+ 	check_uaccess r0, 8, r1, r2, __get_user_bad8
+@@ -78,6 +81,7 @@ ENTRY(__get_user_8)
+ 	mov	r0, #0
+ 	ret	lr
+ ENDPROC(__get_user_8)
++_ASM_NOKPROBE(__get_user_8)
+ 
+ #ifdef __ARMEB__
+ ENTRY(__get_user_32t_8)
+@@ -91,6 +95,7 @@ ENTRY(__get_user_32t_8)
+ 	mov	r0, #0
+ 	ret	lr
+ ENDPROC(__get_user_32t_8)
++_ASM_NOKPROBE(__get_user_32t_8)
+ 
+ ENTRY(__get_user_64t_1)
+ 	check_uaccess r0, 1, r1, r2, __get_user_bad8
+@@ -98,6 +103,7 @@ ENTRY(__get_user_64t_1)
+ 	mov	r0, #0
+ 	ret	lr
+ ENDPROC(__get_user_64t_1)
++_ASM_NOKPROBE(__get_user_64t_1)
+ 
+ ENTRY(__get_user_64t_2)
+ 	check_uaccess r0, 2, r1, r2, __get_user_bad8
+@@ -114,6 +120,7 @@ rb	.req	r0
+ 	mov	r0, #0
+ 	ret	lr
+ ENDPROC(__get_user_64t_2)
++_ASM_NOKPROBE(__get_user_64t_2)
+ 
+ ENTRY(__get_user_64t_4)
+ 	check_uaccess r0, 4, r1, r2, __get_user_bad8
+@@ -121,6 +128,7 @@ ENTRY(__get_user_64t_4)
+ 	mov	r0, #0
+ 	ret	lr
+ ENDPROC(__get_user_64t_4)
++_ASM_NOKPROBE(__get_user_64t_4)
+ #endif
+ 
+ __get_user_bad8:
+@@ -131,6 +139,8 @@ __get_user_bad:
+ 	ret	lr
+ ENDPROC(__get_user_bad)
+ ENDPROC(__get_user_bad8)
++_ASM_NOKPROBE(__get_user_bad)
++_ASM_NOKPROBE(__get_user_bad8)
+ 
+ .pushsection __ex_table, "a"
+ 	.long	1b, __get_user_bad
