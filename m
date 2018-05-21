@@ -1,113 +1,156 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753252AbeEURJR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 13:09:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50633 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753065AbeEURJQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 13:09:16 -0400
-Date: Mon, 21 May 2018 19:06:32 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Huaisheng HS1 Ye <yehs1@lenovo.com>, Michal Hocko <mhocko@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "vbabka@suse.cz" <vbabka@suse.cz>,
-        "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
-        "pasha.tatashin@oracle.com" <pasha.tatashin@oracle.com>,
-        "alexander.levin@verizon.com" <alexander.levin@verizon.com>,
-        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-        "penguin-kernel@I-love.SAKURA.ne.jp"
-        <penguin-kernel@I-love.SAKURA.ne.jp>,
-        "colyli@suse.de" <colyli@suse.de>, NingTing Cheng <chengnt@lenovo.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [External]  Re: [PATCH 2/3] include/linux/gfp.h: use unsigned
- int in gfp_zone
-Message-ID: <20180521170632.GY6649@suse.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Matthew Wilcox <willy@infradead.org>,
-        Huaisheng HS1 Ye <yehs1@lenovo.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "vbabka@suse.cz" <vbabka@suse.cz>,
-        "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
-        "pasha.tatashin@oracle.com" <pasha.tatashin@oracle.com>,
-        "alexander.levin@verizon.com" <alexander.levin@verizon.com>,
-        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-        "penguin-kernel@I-love.SAKURA.ne.jp" <penguin-kernel@I-love.SAKURA.ne.jp>,
-        "colyli@suse.de" <colyli@suse.de>,
-        NingTing Cheng <chengnt@lenovo.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <HK2PR03MB168459A1C4FB2B7D3E1F6A4A92840@HK2PR03MB1684.apcprd03.prod.outlook.com>
- <20180506134814.GB7362@bombadil.infradead.org>
- <HK2PR03MB168447008C658172FFDA402992840@HK2PR03MB1684.apcprd03.prod.outlook.com>
- <20180506185532.GA13604@bombadil.infradead.org>
- <HK2PR03MB1684BF10B3B515BFABD35F8B929B0@HK2PR03MB1684.apcprd03.prod.outlook.com>
- <20180507184410.GA12361@bombadil.infradead.org>
- <20180507212500.bdphwfhk55w6vlbb@twin.jikos.cz>
- <20180508002547.GA16338@bombadil.infradead.org>
- <20180509093659.jalprmufpwspya26@twin.jikos.cz>
- <20180515115404.GD31599@bombadil.infradead.org>
+        id S1753278AbeEURKg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 13:10:36 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:36008 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753109AbeEURK3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 13:10:29 -0400
+X-Google-Smtp-Source: AB8JxZp9sXwEIAYjCRnT+nZujs4pi1jHFqtJPqBVddxqXkXM+OYh+SWvKD37dLxoBeOWeU6fvklfvQ==
+Date: Mon, 21 May 2018 22:42:41 +0530
+From: Souptick Joarder <jrdr.linux@gmail.com>
+To: l.stach@pengutronix.de, linux+etnaviv@armlinux.org.uk,
+        christian.gmeiner@gmail.com, airlied@linux.ie, willy@infradead.org,
+        daniel.vetter@ffwll.ch
+Cc: etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] gpu: drm: etnaviv: Change return type to vm_fault_t
+Message-ID: <20180521171241.GA18441@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180515115404.GD31599@bombadil.infradead.org>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 04:54:04AM -0700, Matthew Wilcox wrote:
-> > > Subject: btrfs: Allocate extents from ZONE_NORMAL
-> > > From: Matthew Wilcox <mawilcox@microsoft.com>
-> > > 
-> > > If anyone ever passes a GFP_DMA or GFP_MOVABLE allocation flag to
-> > > allocate_extent_state, it will try to allocate memory from the wrong zone.
-> > > We just want to allocate memory from ZONE_NORMAL, so use GFP_RECLAIM_MASK
-> > > to get what we want.
-> > 
-> > Looks good to me.
-> > 
-> > > Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
-> > > 
-> > > diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-> > > index e99b329002cf..4e4a67b7b29d 100644
-> > > --- a/fs/btrfs/extent_io.c
-> > > +++ b/fs/btrfs/extent_io.c
-> > > @@ -216,12 +216,7 @@ static struct extent_state *alloc_extent_state(gfp_t mask)
-> > >  {
-> > >  	struct extent_state *state;
-> > >  
-> > > -	/*
-> > > -	 * The given mask might be not appropriate for the slab allocator,
-> > > -	 * drop the unsupported bits
-> > > -	 */
-> > > -	mask &= ~(__GFP_DMA32|__GFP_HIGHMEM);
-> > 
-> > I've noticed there's GFP_SLAB_BUG_MASK that's basically open coded here,
-> > but this would not filter out the placement flags.
-> > 
-> > > -	state = kmem_cache_alloc(extent_state_cache, mask);
-> > 
-> > I'd prefer some comment here, it's not obvious why the mask is used.
-> 
-> Sorry, I dropped the ball on this.  Would you prefer:
-> 
->         /* Allocate from ZONE_NORMAL */
->         state = kmem_cache_alloc(extent_state_cache, mask & GFP_RECLAIM_MASK);
-> 
-> or
-> 
-> 	/*
-> 	 * Callers may pass in a mask which indicates they want to allocate
-> 	 * from a special zone, so clear those bits here rather than forcing
-> 	 * each caller to do it.  We only want to use their mask to indicate
-> 	 * what strategies the memory allocator can use to free memory.
-> 	 */
->         state = kmem_cache_alloc(extent_state_cache, mask & GFP_RECLAIM_MASK);
-> 
-> I tend to lean towards being more terse, but it's not about me, it's
-> about whoever reads this code next.
+Use new return type vm_fault_t for fault handler. For
+now, this is just documenting that the function returns
+a VM_FAULT value rather than an errno. Once all instances
+are converted, vm_fault_t will become a distinct type.
 
-I prefer the latter variant, it's clear that it's some MM stuff. Thanks.
+Ref- commit 1c8f422059ae ("mm: change return type to vm_fault_t")
+
+Previously vm_insert_page() returns err which driver
+mapped into VM_FAULT_* type. The new function 
+vmf_insert_page() will replace this inefficiency by
+returning VM_FAULT_* type.
+
+A non-fatal signal being delivered to a task which is
+in the middle of a page fault may well end up in an
+infinite loop, attempting to handle the page fault and
+failing forever.
+
+On seeing NOPAGE, the fault handler believes the PTE
+is in the page table, so does nothing before it returns
+to arch code. It will end up returning to userspace if
+the signal is non-fatal, at which point it'll go right
+back into the page fault handler, and mutex_lock_interruptible()
+will immediately fail.  So we've converted a sleeping lock
+into the most expensive spinlock.
+
+I don't think the graphics drivers really want to be
+interrupted by any signal.  I think they want to be
+interruptible by fatal signals and should use the
+mutex_lock_killable / fatal_signal_pending family of
+functions. So mutex_lock_interruptible() is replaced
+by mutex_lock_killable()
+
+vmf_error() is the newly introduce inline function
+in 4.17-rc6.
+
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+---
+ drivers/gpu/drm/etnaviv/etnaviv_drv.h |  3 ++-
+ drivers/gpu/drm/etnaviv/etnaviv_gem.c | 31 ++++++-------------------------
+ 2 files changed, 8 insertions(+), 26 deletions(-)
+
+diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.h b/drivers/gpu/drm/etnaviv/etnaviv_drv.h
+index a54f0b7..f6777f0 100644
+--- a/drivers/gpu/drm/etnaviv/etnaviv_drv.h
++++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.h
+@@ -28,6 +28,7 @@
+ #include <linux/list.h>
+ #include <linux/types.h>
+ #include <linux/sizes.h>
++#include <linux/mm_types.h>
+ 
+ #include <drm/drmP.h>
+ #include <drm/drm_crtc_helper.h>
+@@ -62,7 +63,7 @@ int etnaviv_ioctl_gem_submit(struct drm_device *dev, void *data,
+ 		struct drm_file *file);
+ 
+ int etnaviv_gem_mmap(struct file *filp, struct vm_area_struct *vma);
+-int etnaviv_gem_fault(struct vm_fault *vmf);
++vm_fault_t etnaviv_gem_fault(struct vm_fault *vmf);
+ int etnaviv_gem_mmap_offset(struct drm_gem_object *obj, u64 *offset);
+ struct sg_table *etnaviv_gem_prime_get_sg_table(struct drm_gem_object *obj);
+ void *etnaviv_gem_prime_vmap(struct drm_gem_object *obj);
+diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.c b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+index fcc969f..d9b13f0 100644
+--- a/drivers/gpu/drm/etnaviv/etnaviv_gem.c
++++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+@@ -180,7 +180,7 @@ int etnaviv_gem_mmap(struct file *filp, struct vm_area_struct *vma)
+ 	return obj->ops->mmap(obj, vma);
+ }
+ 
+-int etnaviv_gem_fault(struct vm_fault *vmf)
++vm_fault_t etnaviv_gem_fault(struct vm_fault *vmf)
+ {
+ 	struct vm_area_struct *vma = vmf->vma;
+ 	struct drm_gem_object *obj = vma->vm_private_data;
+@@ -191,20 +191,19 @@ int etnaviv_gem_fault(struct vm_fault *vmf)
+ 
+ 	/*
+ 	 * Make sure we don't parallel update on a fault, nor move or remove
+-	 * something from beneath our feet.  Note that vm_insert_page() is
++	 * something from beneath our feet.  Note that vmf_insert_page() is
+ 	 * specifically coded to take care of this, so we don't have to.
+ 	 */
+-	ret = mutex_lock_interruptible(&etnaviv_obj->lock);
++	ret = mutex_lock_killable(&etnaviv_obj->lock);
+ 	if (ret)
+-		goto out;
+-
++		return VM_FAULT_NOPAGE;
+ 	/* make sure we have pages attached now */
+ 	pages = etnaviv_gem_get_pages(etnaviv_obj);
+ 	mutex_unlock(&etnaviv_obj->lock);
+ 
+ 	if (IS_ERR(pages)) {
+ 		ret = PTR_ERR(pages);
+-		goto out;
++		return vmf_error(ret);
+ 	}
+ 
+ 	/* We don't use vmf->pgoff since that has the fake offset: */
+@@ -215,25 +214,7 @@ int etnaviv_gem_fault(struct vm_fault *vmf)
+ 	VERB("Inserting %p pfn %lx, pa %lx", (void *)vmf->address,
+ 	     page_to_pfn(page), page_to_pfn(page) << PAGE_SHIFT);
+ 
+-	ret = vm_insert_page(vma, vmf->address, page);
+-
+-out:
+-	switch (ret) {
+-	case -EAGAIN:
+-	case 0:
+-	case -ERESTARTSYS:
+-	case -EINTR:
+-	case -EBUSY:
+-		/*
+-		 * EBUSY is ok: this just means that another thread
+-		 * already did the job.
+-		 */
+-		return VM_FAULT_NOPAGE;
+-	case -ENOMEM:
+-		return VM_FAULT_OOM;
+-	default:
+-		return VM_FAULT_SIGBUS;
+-	}
++	return vmf_insert_page(vma, vmf->address, page);
+ }
+ 
+ int etnaviv_gem_mmap_offset(struct drm_gem_object *obj, u64 *offset)
+-- 
+1.9.1
