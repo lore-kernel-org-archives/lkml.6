@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753478AbeEUREe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 13:04:34 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:44348 "EHLO
+        id S1753457AbeEURFH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 13:05:07 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:44320 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753286AbeEURBy (ORCPT
+        with ESMTP id S1753255AbeEURBp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 13:01:54 -0400
+        Mon, 21 May 2018 13:01:45 -0400
 From: Ezequiel Garcia <ezequiel@collabora.com>
 To: linux-media@vger.kernel.org
 Cc: kernel@collabora.com, Hans Verkuil <hverkuil@xs4all.nl>,
@@ -17,9 +17,9 @@ Cc: kernel@collabora.com, Hans Verkuil <hverkuil@xs4all.nl>,
         Brian Starkey <brian.starkey@arm.com>, linux-kernel@vger.kernel.org,
         Gustavo Padovan <gustavo.padovan@collabora.com>,
         Ezequiel Garcia <ezequiel@collabora.com>
-Subject: [PATCH v10 06/16] vb2: add is_unordered callback for drivers
-Date: Mon, 21 May 2018 13:59:36 -0300
-Message-Id: <20180521165946.11778-7-ezequiel@collabora.com>
+Subject: [PATCH v10 04/16] omap3isp: group device capabilities
+Date: Mon, 21 May 2018 13:59:34 -0300
+Message-Id: <20180521165946.11778-5-ezequiel@collabora.com>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180521165946.11778-1-ezequiel@collabora.com>
 References: <20180521165946.11778-1-ezequiel@collabora.com>
@@ -29,91 +29,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Gustavo Padovan <gustavo.padovan@collabora.com>
 
-Explicit synchronization benefits a lot from ordered queues, they fit
-better in a pipeline with DRM for example so create a opt-in way for
-drivers notify videobuf2 that the queue is unordered.
+Instead of putting V4L2_CAP_STREAMING everywhere, set device_caps
+earlier with this value.
 
-Drivers don't need implement it if the queue is ordered.
-
-v5: rename it to vb2_ops_is_unordered() (Hans Verkuil)
-
-v4: go back to a bitfield property for the unordered property.
-
-v3: - make it bool (Hans)
-    - create vb2_ops_set_unordered() helper
-
-v2: - improve comments for is_unordered flag (Hans Verkuil)
+v2: move cap->capabilities assignment down (Hans Verkuil)
 
 Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
 ---
- drivers/media/common/videobuf2/videobuf2-core.c |  6 ++++++
- include/media/videobuf2-core.h                  | 16 ++++++++++++++++
- 2 files changed, 22 insertions(+)
+ drivers/media/platform/omap3isp/ispvideo.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/common/videobuf2/videobuf2-core.c b/drivers/media/common/videobuf2/videobuf2-core.c
-index 61e7b6407586..a9a0a9d1decb 100644
---- a/drivers/media/common/videobuf2/videobuf2-core.c
-+++ b/drivers/media/common/videobuf2/videobuf2-core.c
-@@ -691,6 +691,12 @@ void vb2_ops_wait_finish(struct vb2_queue *vq)
+diff --git a/drivers/media/platform/omap3isp/ispvideo.c b/drivers/media/platform/omap3isp/ispvideo.c
+index a751c89a3ea8..db9aae222134 100644
+--- a/drivers/media/platform/omap3isp/ispvideo.c
++++ b/drivers/media/platform/omap3isp/ispvideo.c
+@@ -658,13 +658,15 @@ isp_video_querycap(struct file *file, void *fh, struct v4l2_capability *cap)
+ 	strlcpy(cap->card, video->video.name, sizeof(cap->card));
+ 	strlcpy(cap->bus_info, "media", sizeof(cap->bus_info));
+ 
+-	cap->capabilities = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_VIDEO_OUTPUT
+-		| V4L2_CAP_STREAMING | V4L2_CAP_DEVICE_CAPS;
++	cap->device_caps = V4L2_CAP_STREAMING;
+ 
+ 	if (video->type == V4L2_BUF_TYPE_VIDEO_CAPTURE)
+-		cap->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING;
++		cap->device_caps |= V4L2_CAP_VIDEO_CAPTURE;
+ 	else
+-		cap->device_caps = V4L2_CAP_VIDEO_OUTPUT | V4L2_CAP_STREAMING;
++		cap->device_caps |= V4L2_CAP_VIDEO_OUTPUT;
++
++	cap->capabilities = cap->device_caps | V4L2_CAP_VIDEO_CAPTURE |
++		V4L2_CAP_VIDEO_OUTPUT | V4L2_CAP_DEVICE_CAPS;
+ 
+ 	return 0;
  }
- EXPORT_SYMBOL_GPL(vb2_ops_wait_finish);
- 
-+bool vb2_ops_is_unordered(struct vb2_queue *q)
-+{
-+	return true;
-+}
-+EXPORT_SYMBOL_GPL(vb2_ops_is_unordered);
-+
- int vb2_core_reqbufs(struct vb2_queue *q, enum vb2_memory memory,
- 		unsigned int *count)
- {
-diff --git a/include/media/videobuf2-core.h b/include/media/videobuf2-core.h
-index 137f72702101..71538ae2c255 100644
---- a/include/media/videobuf2-core.h
-+++ b/include/media/videobuf2-core.h
-@@ -376,6 +376,10 @@ struct vb2_buffer {
-  *			callback by calling vb2_buffer_done() with either
-  *			%VB2_BUF_STATE_DONE or %VB2_BUF_STATE_ERROR; may use
-  *			vb2_wait_for_all_buffers() function
-+ * @is_unordered:	tell if the queue is unordered, i.e. buffers can be
-+ *			dequeued in a different order from how they were queued.
-+ *			The default is assumed to be ordered and this function
-+ *			only needs to be implemented for unordered queues.
-  * @buf_queue:		passes buffer vb to the driver; driver may start
-  *			hardware operation on this buffer; driver should give
-  *			the buffer back by calling vb2_buffer_done() function;
-@@ -399,6 +403,7 @@ struct vb2_ops {
- 
- 	int (*start_streaming)(struct vb2_queue *q, unsigned int count);
- 	void (*stop_streaming)(struct vb2_queue *q);
-+	bool (*is_unordered)(struct vb2_queue *q);
- 
- 	void (*buf_queue)(struct vb2_buffer *vb);
- };
-@@ -421,6 +426,16 @@ void vb2_ops_wait_prepare(struct vb2_queue *vq);
-  */
- void vb2_ops_wait_finish(struct vb2_queue *vq);
- 
-+/**
-+ * vb2_ops_is_unordered - helper function to check if queue is unordered
-+ *
-+ * @vq: pointer to &struct vb2_queue
-+ *
-+ * This helper just returns true to notify that the driver can't deal with
-+ * ordered queues.
-+ */
-+bool vb2_ops_is_unordered(struct vb2_queue *q);
-+
- /**
-  * struct vb2_buf_ops - driver-specific callbacks.
-  *
-@@ -590,6 +605,7 @@ struct vb2_queue {
- 	u32				cnt_wait_finish;
- 	u32				cnt_start_streaming;
- 	u32				cnt_stop_streaming;
-+	u32				cnt_is_unordered;
- #endif
- };
- 
 -- 
 2.16.3
