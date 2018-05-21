@@ -1,73 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752701AbeEUCmh (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 22:42:37 -0400
-Received: from rcdn-iport-6.cisco.com ([173.37.86.77]:57644 "EHLO
-        rcdn-iport-6.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751094AbeEUCmg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 22:42:36 -0400
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0ASAgDYLgJb/4kNJK1aGgEBAQEBAgE?=
- =?us-ascii?q?BAQEIAQEBAYNDgV6ZGIF5dRqVLguEbIITITcVAQIBAQEBAQECbCiFKgQ7PwU?=
- =?us-ascii?q?WITQFGDGFKQUHAad+iD2CD4g1gVQ/gQ+BdmE1iCOCJAKNBItICY5MgUKGTIR?=
- =?us-ascii?q?6kHeBJTIigVJwFYJ/ghwajjeQcwEB?=
-X-IronPort-AV: E=Sophos;i="5.49,425,1520899200";
-   d="scan'208";a="398384548"
-Date: Sun, 20 May 2018 19:29:24 -0700
-From: Stefan Schaeckeler <sschaeck@cisco.com>
-To: Richard Weinberger <richard@nod.at>
-Cc: David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mtd: mtdoops: optionally dump boottime
-Message-ID: <20180521022924.GA33758@sjc-ads-587.cisco.com>
+        id S1751405AbeEUCpf (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 22:45:35 -0400
+Received: from imap.thunk.org ([74.207.234.97]:59954 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750742AbeEUCpd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 May 2018 22:45:33 -0400
+Date: Sun, 20 May 2018 22:45:24 -0400
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: Sean Fu <fxinrong@gmail.com>
+Cc: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ext4: Remove unnecessary NULL checks in ext4.
+Message-ID: <20180521024524.GG4464@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Sean Fu <fxinrong@gmail.com>, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1517915730-11198-1-git-send-email-fxinrong@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.20 (2009-12-10)
+In-Reply-To: <1517915730-11198-1-git-send-email-fxinrong@gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Richard and others,
+On Tue, Feb 06, 2018 at 07:15:30PM +0800, Sean Fu wrote:
+> NULL check is done in kmem_cache_destroy. So remove NULL checks in ext4.
+> 
+> Signed-off-by: Sean Fu <fxinrong@gmail.com>
 
-> I get the use-case, but why is this only for mtdoops?
+Thanks, applied.  I clarified the patch summary to be:
 
-Powerpc's nvram module also stores oops messages and does so by adding an
-additional timestamp, as well (search for kmsg_dump_get_buffer() in
-arch/powerpc/kernel/nvram_64.c).
+    ext4: remove NULL check before calling kmem_cache_destroy()
 
-This timestamp is the number of seconds since 1970 and stored as a 64 bit
-integer in the nvram header. Basically, the last kmesg timestamp is a few ms
-less than this additionally stored timestamp. Recording boottime would be more
-elegant, I guess.
-
-
-> IMHO this needs to go into generic code such that all kmsg dumpers can
-> benefit from it.
-
-This would be not that easy:
-
-#1 kmsg_dump_get_buffer(...size...) returns the most recent <size> bytes.
-Consecutive calls return older chunks. It would be natural to return the
-boottime as the first line, e.g. in the last call, but some clients such as
-mtdoops call kmsg_dump_get_buffer() only once. The returned buffer may be
-complete including boottime, or not.
-
-#2 consistency with other clients: nvram_64.c has the same requirement of
-storing a kind of wall-time but does it in a completely different way: no
-readable ascii text timestamp preprended to the kmsg buffer but a 64 bit
-timestamp in its header. Note, I don't think we should make mtdoops behave like
-nvram_64.c by storing the timestamp as a 64 bit integer (in its header) b/c
-most people do a cat or string of the mtd device /dev/mtdX and a 64 bit integer
-would just read as garbage.
-
-I hope we can have separate implementations for recording additional
-timestamps. Later, I'll send a patch with stylistic changes unless we
-completely disagree on how to move forward.
-
- Stefan
+    	  	      	    	   	   - Ted
