@@ -1,61 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753408AbeEURbR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 13:31:17 -0400
-Received: from mail-ot0-f180.google.com ([74.125.82.180]:35903 "EHLO
-        mail-ot0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753261AbeEURa6 (ORCPT
+        id S1753317AbeEURcY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 13:32:24 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:39850 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753097AbeEURcU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 13:30:58 -0400
-X-Google-Smtp-Source: AB8JxZq9tZkb1/47Ijl3To1Pf+W7v7V3kn/e/fHG95HG7NGatBvpijlHBXHwg3P7CxLBk31Cm1B81A==
-Subject: Re: [PATCHv8] gpio: Remove VLA from gpiolib
-To: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-hardening@lists.openwall.com,
-        Phil Reid <preid@electromag.com.au>
-References: <20180518175304.20414-1-labbott@redhat.com>
- <CAHp75VciKgqYV_DB=h+zaVkk2+dmKJDhT02M4K8T1VGJA6KM0g@mail.gmail.com>
- <CAMuHMdX878Vun9oCrECA+uW-ErEgzRx8Gp2wLkoLdKXR0nNKAw@mail.gmail.com>
- <CAHp75VezhMm9R64y2A6mobQVqbLMLUKtzxQHp7uRDTBTMMzpRw@mail.gmail.com>
-From: Laura Abbott <labbott@redhat.com>
-Message-ID: <fc2fb457-57eb-d929-1061-5bc00ee218a8@redhat.com>
-Date: Mon, 21 May 2018 10:30:55 -0700
+        Mon, 21 May 2018 13:32:20 -0400
+X-Google-Smtp-Source: AB8JxZo342VVCYleyJeNhwaWHgjpOV1VY5mlTX9wgMvjQRqFotA2FmZxt5FCIK3pd7Dam3RWI751Cw==
+Subject: Re: [Xen-devel] [RFC 1/3] xen/balloon: Allow allocating DMA buffers
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        jgross@suse.com, konrad.wilk@oracle.com
+Cc: daniel.vetter@intel.com, matthew.d.roper@intel.com,
+        dongwon.kim@intel.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180517082604.14828-1-andr2000@gmail.com>
+ <20180517082604.14828-2-andr2000@gmail.com>
+ <6a108876-19b7-49d0-3de2-9e10f984736c@oracle.com>
+ <9541926e-001a-e41e-317c-dbff6d687761@gmail.com>
+ <218e2bf7-490d-f89e-9866-27b7e3dbc835@oracle.com>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <a08e7d0d-f7d5-6b7e-979b-8a17060482f0@gmail.com>
+Date: Mon, 21 May 2018 20:32:15 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <CAHp75VezhMm9R64y2A6mobQVqbLMLUKtzxQHp7uRDTBTMMzpRw@mail.gmail.com>
+In-Reply-To: <218e2bf7-490d-f89e-9866-27b7e3dbc835@oracle.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/18/2018 02:12 PM, Andy Shevchenko wrote:
-> On Sat, May 19, 2018 at 12:05 AM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
->> On Fri, May 18, 2018 at 10:07 PM, Andy Shevchenko
->> <andy.shevchenko@gmail.com> wrote:
->>> On Fri, May 18, 2018 at 8:53 PM, Laura Abbott <labbott@redhat.com> wrote:
-> 
->>>> +               bits = mask + BITS_TO_LONGS(chip->ngpio);
->>>> +               memset(mask, 0, BITS_TO_LONGS(chip->ngpio) * sizeof(*mask));
->>>
->>> Wouldn't be better
->>>
->>> bitmap_zero(mask, chip->ngpio);
->>>
->>> ?
->>
->> chip->ngpio is never const, so bitmap_zero() would always fall back to
->> plain memset().
-> 
-> Yes. But it also much more readable and understandable here.
-> 
-
-I wasn't aware of that API. I'll switch to that.
+On 05/21/2018 07:35 PM, Boris Ostrovsky wrote:
+> On 05/21/2018 01:40 AM, Oleksandr Andrushchenko wrote:
+>> On 05/19/2018 01:04 AM, Boris Ostrovsky wrote:
+>>> On 05/17/2018 04:26 AM, Oleksandr Andrushchenko wrote:
+>>>> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>>> A commit message would be useful.
+>> Sure, v1 will have it
+>>>> Signed-off-by: Oleksandr Andrushchenko
+>>>> <oleksandr_andrushchenko@epam.com>
+>>>>
+>>>>        for (i = 0; i < nr_pages; i++) {
+>>>> -        page = alloc_page(gfp);
+>>>> -        if (page == NULL) {
+>>>> -            nr_pages = i;
+>>>> -            state = BP_EAGAIN;
+>>>> -            break;
+>>>> +        if (ext_pages) {
+>>>> +            page = ext_pages[i];
+>>>> +        } else {
+>>>> +            page = alloc_page(gfp);
+>>>> +            if (page == NULL) {
+>>>> +                nr_pages = i;
+>>>> +                state = BP_EAGAIN;
+>>>> +                break;
+>>>> +            }
+>>>>            }
+>>>>            scrub_page(page);
+>>>>            list_add(&page->lru, &pages);
+>>>> @@ -529,7 +565,7 @@ static enum bp_state
+>>>> decrease_reservation(unsigned long nr_pages, gfp_t gfp)
+>>>>        i = 0;
+>>>>        list_for_each_entry_safe(page, tmp, &pages, lru) {
+>>>>            /* XENMEM_decrease_reservation requires a GFN */
+>>>> -        frame_list[i++] = xen_page_to_gfn(page);
+>>>> +        frames[i++] = xen_page_to_gfn(page);
+>>>>      #ifdef CONFIG_XEN_HAVE_PVMMU
+>>>>            /*
+>>>> @@ -552,18 +588,22 @@ static enum bp_state
+>>>> decrease_reservation(unsigned long nr_pages, gfp_t gfp)
+>>>>    #endif
+>>>>            list_del(&page->lru);
+>>>>    -        balloon_append(page);
+>>>> +        if (!ext_pages)
+>>>> +            balloon_append(page);
+>>> So what you are proposing is not really ballooning. You are just
+>>> piggybacking on existing interfaces, aren't you?
+>> Sort of. Basically I need to {increase|decrease}_reservation, not
+>> actually
+>> allocating ballooned pages.
+>> Do you think I can simply EXPORT_SYMBOL for
+>> {increase|decrease}_reservation?
+>> Any other suggestion?
+>
+> I am actually wondering how much of that code you end up reusing. You
+> pretty much create new code paths in both routines and common code ends
+> up being essentially the hypercall.
+Well, I hoped that it would be easier to maintain if I modify existing code
+to support both use-cases, but I am also ok to create new routines if this
+seems to be reasonable - please let me know
+>   So the question is --- would it make
+> sense to do all of this separately from the balloon driver?
+This can be done, but which driver will host this code then? If we move from
+the balloon driver, then this could go to either gntdev or grant-table.
+What's your preference?
+>
+> -boris
+Thank you,
+Oleksandr
