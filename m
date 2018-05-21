@@ -1,99 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753208AbeEURA4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 13:00:56 -0400
-Received: from foss.arm.com ([217.140.101.70]:53754 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753006AbeEURAz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 13:00:55 -0400
-Date: Mon, 21 May 2018 18:00:50 +0100
-From: Patrick Bellasi <patrick.bellasi@arm.com>
-To: Joel Fernandes <joel@joelfernandes.org>
-Cc: "Joel Fernandes (Google.)" <joelaf@google.com>,
-        linux-kernel@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>, Todd Kjos <tkjos@google.com>,
-        claudio@evidence.eu.com, kernel-team@android.com,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2] schedutil: Allow cpufreq requests to be made even
- when kthread kicked
-Message-ID: <20180521170050.GT30654@e110439-lin>
-References: <20180518185501.173552-1-joel@joelfernandes.org>
- <20180521105055.GQ30654@e110439-lin>
- <20180521154957.GA14065@joelaf.mtv.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180521154957.GA14065@joelaf.mtv.corp.google.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1753264AbeEURBe (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 13:01:34 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:44268 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753065AbeEURBa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 13:01:30 -0400
+From: Ezequiel Garcia <ezequiel@collabora.com>
+To: linux-media@vger.kernel.org
+Cc: kernel@collabora.com, Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+        Shuah Khan <shuahkh@osg.samsung.com>, Pawel Osciak <pawel@osciak.com>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        Brian Starkey <brian.starkey@arm.com>, linux-kernel@vger.kernel.org,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>
+Subject: [PATCH v10 00/16] V4L2 Explicit Synchronization
+Date: Mon, 21 May 2018 13:59:30 -0300
+Message-Id: <20180521165946.11778-1-ezequiel@collabora.com>
+X-Mailer: git-send-email 2.16.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21-May 08:49, Joel Fernandes wrote:
-> On Mon, May 21, 2018 at 11:50:55AM +0100, Patrick Bellasi wrote:
-> > On 18-May 11:55, Joel Fernandes (Google.) wrote:
-> > > From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
-> > > 
-> > > Currently there is a chance of a schedutil cpufreq update request to be
-> > > dropped if there is a pending update request. This pending request can
-> > > be delayed if there is a scheduling delay of the irq_work and the wake
-> > > up of the schedutil governor kthread.
-> > > 
-> > > A very bad scenario is when a schedutil request was already just made,
-> > > such as to reduce the CPU frequency, then a newer request to increase
-> > > CPU frequency (even sched deadline urgent frequency increase requests)
-> > > can be dropped, even though the rate limits suggest that its Ok to
-> > > process a request. This is because of the way the work_in_progress flag
-> > > is used.
-> > > 
-> > > This patch improves the situation by allowing new requests to happen
-> > > even though the old one is still being processed. Note that in this
-> > > approach, if an irq_work was already issued, we just update next_freq
-> > > and don't bother to queue another request so there's no extra work being
-> > > done to make this happen.
-> > 
-> > Maybe I'm missing something but... is not this patch just a partial
-> > mitigation of the issue you descrive above?
-> > 
-> > If a DL freq increase is queued, with this patch we store the request
-> > but we don't actually increase the frequency until the next schedutil
-> > update, which can be one tick away... isn't it?
-> > 
-> > If that's the case, maybe something like the following can complete
-> > the cure?
-> 
-> We already discussed this and thought of this case, I think you missed a
-> previous thread [1]. The outer loop in the kthread_work subsystem will take
-> care of calling sugov_work again incase another request was queued which we
-> happen to miss.
+Hi all,
 
-Ok, I missed that thread... my bad.
+The most relevant change for this round is that all the work
+done in the fence callback is now moved to a workqueue,
+that runs with the queue lock held.
+ 
+Although this introduces some latency, it is however needed
+to take the vb2_queue mutex and safely call vb2 ops.
 
-However, [1] made me noticing that your solution works under the
-assumption that we keep queuing a new kworker job for each request we
-get, isn't it?
+Given the fence callback can be called fully asynchronously,
+and given it needs to be associated with a vb2_buffer,
+we now need to refcount vb2_buffer. This allows to safely "attach"
+the vb2_buffer to the fence callback.
 
-If that's the case, this means that if, for example, during a
-frequency switch you get a request to reduce the frequency (e.g.
-deadline task passing the 0-lag time) and right after a request to
-increase the frequency (e.g. the current FAIR task tick)... you will
-enqueue a freq drop followed by a freq increase and actually do two
-frequency hops?
+To prevent annoying deadlocks, and because the fence callback
+is called with the fence spinlock, it's best to avoid calling
+dma_fence_put in the fence callback itself. So the fence is now
+put in the DQBUF operation (or in cancel paths).
 
-> So I don't think more complexity is needed to handle the case
-> you're bringing up.
->
-> thanks!
-> 
->  - Joel
-> 
-> [1] https://lkml.org/lkml/2018/5/17/668
-> 
+Hopefully, I took care of all the feedback provided by
+Hans and Brian on v9. Please let me know if you guys catch
+anything else.
+
+Thanks!
+
+Changes from v9:
+
+ * Move fence callback to workqueue, and call vb2_start_streaming if needed.
+ * Refcount vb2_buffer.
+ * Check return of get_unused_fd.
+ * Increase seqno for out-fences that reuse the context.
+ * Go back to is_unordered callback.
+ * Mark unordered formats in cobalt driver.
+ * Improve CAP_FENCES check.
+ * Minor documentation changes.
+
+Ezequiel Garcia (1):
+  videobuf2: Make struct vb2_buffer refcounted
+
+Gustavo Padovan (15):
+  xilinx: regroup caps on querycap
+  hackrf: group device capabilities
+  omap3isp: group device capabilities
+  vb2: move vb2_ops functions to videobuf2-core.[ch]
+  vb2: add is_unordered callback for drivers
+  v4l: add unordered flag to format description ioctl
+  v4l: mark unordered formats
+  cobalt: add .is_unordered() for cobalt
+  vb2: mark codec drivers as unordered
+  vb2: add explicit fence user API
+  vb2: add in-fence support to QBUF
+  vb2: add out-fence support to QBUF
+  v4l: introduce the fences capability
+  v4l: Add V4L2_CAP_FENCES to drivers
+  v4l: Document explicit synchronization behavior
+
+ Documentation/media/uapi/v4l/buffer.rst            |  48 ++-
+ Documentation/media/uapi/v4l/vidioc-enum-fmt.rst   |   7 +
+ Documentation/media/uapi/v4l/vidioc-qbuf.rst       |  53 ++-
+ Documentation/media/uapi/v4l/vidioc-querybuf.rst   |  12 +-
+ Documentation/media/uapi/v4l/vidioc-querycap.rst   |   3 +
+ drivers/media/common/videobuf2/Kconfig             |   1 +
+ drivers/media/common/videobuf2/videobuf2-core.c    | 376 ++++++++++++++++++---
+ drivers/media/common/videobuf2/videobuf2-v4l2.c    |  65 +++-
+ drivers/media/dvb-core/dvb_vb2.c                   |   2 +-
+ drivers/media/pci/cobalt/cobalt-v4l2.c             |   4 +
+ drivers/media/platform/coda/coda-common.c          |   1 +
+ drivers/media/platform/exynos-gsc/gsc-m2m.c        |   3 +-
+ drivers/media/platform/m2m-deinterlace.c           |   3 +-
+ drivers/media/platform/mtk-mdp/mtk_mdp_m2m.c       |   3 +-
+ drivers/media/platform/mtk-vcodec/mtk_vcodec_dec.c |   1 +
+ .../media/platform/mtk-vcodec/mtk_vcodec_dec_drv.c |   2 +-
+ drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c |   1 +
+ .../media/platform/mtk-vcodec/mtk_vcodec_enc_drv.c |   3 +-
+ drivers/media/platform/mx2_emmaprp.c               |   3 +-
+ drivers/media/platform/omap3isp/ispvideo.c         |  10 +-
+ drivers/media/platform/qcom/venus/vdec.c           |   4 +-
+ drivers/media/platform/qcom/venus/venc.c           |   4 +-
+ drivers/media/platform/s5p-mfc/s5p_mfc_dec.c       |   1 +
+ drivers/media/platform/s5p-mfc/s5p_mfc_enc.c       |   1 +
+ drivers/media/platform/sh_veu.c                    |   3 +-
+ drivers/media/platform/xilinx/xilinx-dma.c         |  10 +-
+ drivers/media/usb/hackrf/hackrf.c                  |  11 +-
+ drivers/media/v4l2-core/v4l2-compat-ioctl32.c      |   4 +-
+ drivers/media/v4l2-core/v4l2-ioctl.c               |  98 +++++-
+ include/media/videobuf2-core.h                     |  76 ++++-
+ include/media/videobuf2-v4l2.h                     |  18 -
+ include/uapi/linux/videodev2.h                     |  10 +-
+ 32 files changed, 708 insertions(+), 133 deletions(-)
 
 -- 
-#include <best/regards.h>
-
-Patrick Bellasi
+2.16.3
