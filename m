@@ -1,62 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751473AbeEUU5m (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 16:57:42 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35826 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751214AbeEUU5k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 16:57:40 -0400
-From: Jeff Moyer <jmoyer@redhat.com>
-To: adam.manzanares@wdc.com
-Cc: viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        axboe@kernel.dk, bcrl@kvack.org, tglx@linutronix.de, mingo@kernel.org,
-        pombredanne@nexb.com, kstewart@linuxfoundation.org,
-        gregkh@linuxfoundation.org, bigeasy@linutronix.de, jack@suse.cz,
-        darrick.wong@oracle.com, rgoldwyn@suse.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-aio@kvack.org, linux-api@vger.kernel.org, hch@infradead.org
-Subject: Re: [PATCH v5 0/5] AIO add per-command iopriority
-In-Reply-To: <20180521160147.2372-1-adam.manzanares@wdc.com> (adam
-        manzanares's message of "Mon, 21 May 2018 09:01:42 -0700")
-References: <20180521160147.2372-1-adam.manzanares@wdc.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.3 (gnu/linux)
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-X-PCLoadLetter: What the f**k does that mean?
-Date: Mon, 21 May 2018 16:57:37 -0400
-Message-ID: <x49fu2kvi9q.fsf@segfault.boston.devel.redhat.com>
+        id S1751685AbeEUU6B (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 16:58:01 -0400
+Received: from mga14.intel.com ([192.55.52.115]:62742 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751547AbeEUU5x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 16:57:53 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,427,1520924400";
+   d="scan'208";a="51037062"
+Date: Mon, 21 May 2018 13:57:52 -0700
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>
+Cc: Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        linux-edac@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
+Subject: Re: PROBLEM: mce: [Hardware Error] from dmesg -l emerg
+Message-ID: <20180521205751.GA19282@agluck-desk>
+References: <CAG=yYwmnHgAvauZLxfFcUEACF_J+qh4d2tvYY=AdjHvyeSFK_A@mail.gmail.com>
+ <20180514162752.GG23049@pd.tnic>
+ <CAG=yYwk-dbMF_7eS9bUraAru8b4fyCosxp+MpQA=1ZYH0nd_hg@mail.gmail.com>
+ <20180520204032.GA19845@pd.tnic>
+ <CAG=yYw=bdgsTSW80R1Wt9uUTtXeMwX5macbjrPBNzVLihk-Ufw@mail.gmail.com>
+ <20180521165803.GA15717@agluck-desk>
+ <CAG=yYw=OQ7zpyK-5iqg7uQvcykTvuhQfX=RFg3GpQGvCRowd=Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAG=yYw=OQ7zpyK-5iqg7uQvcykTvuhQfX=RFg3GpQGvCRowd=Q@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Adam,
+I guess I didn't explain that very clearly.  I need all the lines
+in betweeen.
 
-adam.manzanares@wdc.com writes:
+How about this:
 
-> From: Adam Manzanares <adam.manzanares@wdc.com>
->
-> This is the per-I/O equivalent of the ioprio_set system call.
-> See the following link for performance implications on a SATA HDD:
-> https://lkml.org/lkml/2016/12/6/495
->
-> First patch factors ioprio_check_cap function out of ioprio_set system call to
-> also be used by the aio ioprio interface.
->
-> Second patch converts kiocb ki_hint field to a u16 to avoid kiocb bloat.
->
-> Third patch passes ioprio hint from aio iocb to kiocb and inititalizes kiocb
-> ioprio value appropriately when it is not explicitly set.
->
-> Fourth patch enables the feature for blkdev.
->
-> Fifth patch enables the feature for iomap direct IO
->
-> Note: this work is based on top of linux-vfs/for-next
+$ sudo dmesg -r | grep -C 30 Bank
 
-I'll cook up a libaio test case.  Can you put together a man-pages
-update for this?
-
-Thanks!
-Jeff
+-Tony
