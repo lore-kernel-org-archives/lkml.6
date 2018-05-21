@@ -1,87 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753240AbeEUMLz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 08:11:55 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:7717 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752990AbeEUMJY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 08:09:24 -0400
-From: Yisheng Xie <xieyisheng1@huawei.com>
-To: <linux-kernel@vger.kernel.org>
-CC: Yisheng Xie <xieyisheng1@huawei.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>,
-        <intel-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>
-Subject: [PATCH 22/33] drm/i915: use match_string() helper
-Date: Mon, 21 May 2018 19:57:59 +0800
-Message-ID: <1526903890-35761-23-git-send-email-xieyisheng1@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
-In-Reply-To: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
-References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
+        id S1753252AbeEUML6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 08:11:58 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:39024 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753133AbeEUMLu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 08:11:50 -0400
+Date: Mon, 21 May 2018 13:11:41 +0100
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: ilialin@codeaurora.org
+Cc: viresh.kumar@linaro.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] cpufreq: Add Kryo CPU scaling driver
+Message-ID: <20180521121140.GO17671@n2100.armlinux.org.uk>
+References: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
+ <1526898690-4018-1-git-send-email-ilialin@codeaurora.org>
+ <20180521105428.GM17671@n2100.armlinux.org.uk>
+ <000b01d3f0f3$aa961cc0$ffc25640$@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000b01d3f0f3$aa961cc0$ffc25640$@codeaurora.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-match_string() returns the index of an array for a matching string,
-which can be used intead of open coded variant.
+On Mon, May 21, 2018 at 02:05:41PM +0300, ilialin@codeaurora.org wrote:
+> You are right.
+> cpu_dev_silver != cpu_dev_gold, and I found this with my tests as well.
+> Thank you.
+> 
+> > -----Original Message-----
+> > From: Russell King - ARM Linux <linux@armlinux.org.uk>
+> > Sent: Monday, May 21, 2018 13:54
+> > To: Ilia Lin <ilialin@codeaurora.org>
+> > Cc: viresh.kumar@linaro.org; devicetree@vger.kernel.org; linux-
+> > pm@vger.kernel.org; linux-arm-msm@vger.kernel.org; linux-
+> > kernel@vger.kernel.org; linux-soc@vger.kernel.org; linux-
+> > clk@vger.kernel.org; linux-arm-kernel@lists.infradead.org
+> > Subject: Re: [PATCH] cpufreq: Add Kryo CPU scaling driver
+> > 
+> > On Mon, May 21, 2018 at 01:31:30PM +0300, Ilia Lin wrote:
+> > > +#define SILVER_LEAD	0
+> > > +#define GOLD_LEAD	2
+> > 
+> > Okay, two different values here, but "GOLD_LEAD" appears unused.
+> > 
+> > > +	cpu_dev_silver = get_cpu_device(SILVER_LEAD);
+> > > +	if (NULL == cpu_dev_silver)
+> > > +		return -ENODEV;
+> > > +
+> > > +	cpu_dev_gold = get_cpu_device(SILVER_LEAD);
+> > > +	if (NULL == cpu_dev_gold)
+> > > +		return -ENODEV;
+> > 
+> > get_cpu_device() takes the logical CPU number.  So the above gets CPU 0
+> > each time, and so cpu_dev_silver == cpu_dev_gold here.  So what's the
+> > point of the second get_cpu_device() ?  If it's supposed to be:
+> > 
+> > 	cpu_dev_gold = get_cpu_device(GOLD_LEAD);
+> > 
+> > That would get CPU 2, but in terms of these defines, it doesn't make that
+> > much sense.  What exactly does "silver lead" and "gold lead" refer to in
+> these
+> > definitions?
 
-Cc: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: David Airlie <airlied@linux.ie>
-Cc: intel-gfx@lists.freedesktop.org
-Cc: dri-devel@lists.freedesktop.org
-Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
----
- drivers/gpu/drm/i915/intel_pipe_crc.c | 22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
+I think you still need to explain this.
 
-diff --git a/drivers/gpu/drm/i915/intel_pipe_crc.c b/drivers/gpu/drm/i915/intel_pipe_crc.c
-index 1f5cd57..f6b1335 100644
---- a/drivers/gpu/drm/i915/intel_pipe_crc.c
-+++ b/drivers/gpu/drm/i915/intel_pipe_crc.c
-@@ -764,13 +764,12 @@ enum intel_pipe_crc_object {
- {
- 	int i;
- 
--	for (i = 0; i < ARRAY_SIZE(pipe_crc_objects); i++)
--		if (!strcmp(buf, pipe_crc_objects[i])) {
--			*o = i;
--			return 0;
--		}
-+	i = match_string(pipe_crc_objects, ARRAY_SIZE(pipe_crc_objects), buf);
-+	if (i < 0)
-+		return -EINVAL;
- 
--	return -EINVAL;
-+	*o = i;
-+	return 0;
- }
- 
- static int display_crc_ctl_parse_pipe(struct drm_i915_private *dev_priv,
-@@ -796,13 +795,12 @@ static int display_crc_ctl_parse_pipe(struct drm_i915_private *dev_priv,
- 		return 0;
- 	}
- 
--	for (i = 0; i < ARRAY_SIZE(pipe_crc_sources); i++)
--		if (!strcmp(buf, pipe_crc_sources[i])) {
--			*s = i;
--			return 0;
--		}
-+	i = match_string(pipe_crc_sources, ARRAY_SIZE(pipe_crc_sources), buf);
-+	if (i < 0)
-+		return -EINVAL;
- 
--	return -EINVAL;
-+	*s = i;
-+	return 0;
- }
- 
- static int display_crc_ctl_parse(struct drm_i915_private *dev_priv,
 -- 
-1.7.12.4
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+According to speedtest.net: 8.21Mbps down 510kbps up
