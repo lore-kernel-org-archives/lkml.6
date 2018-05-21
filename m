@@ -1,324 +1,215 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753570AbeEUR5W (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 13:57:22 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:33909 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753550AbeEUR5T (ORCPT
+        id S1753532AbeEUSB0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 14:01:26 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:36936 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753254AbeEUSBW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 13:57:19 -0400
-X-Google-Smtp-Source: AB8JxZrNs020esfTyyRxRbnTLUcgWYpVgH4miQdJ2FITXFeuKCn2AS7vEpiH/VRDyktYX1Z/CJl9tg==
-From: Laura Abbott <labbott@redhat.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-        Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Laura Abbott <labbott@redhat.com>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
-        Phil Reid <preid@electromag.com.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCHv9] gpio: Remove VLA from gpiolib
-Date: Mon, 21 May 2018 10:57:07 -0700
-Message-Id: <20180521175707.6653-1-labbott@redhat.com>
-X-Mailer: git-send-email 2.17.0
+        Mon, 21 May 2018 14:01:22 -0400
+X-Google-Smtp-Source: AB8JxZriB5ywgSXlAhhbGwJ1sXGIFXB09Uyag/DPAmOr0g6fj4aLgsBvfTJRH+OwS+UQjunuS/7lSSTX/U+bS0GhSPE=
+MIME-Version: 1.0
+In-Reply-To: <dc1fbe9c-8973-1c4d-0fbd-809c1ec0a6be@codeaurora.org>
+References: <cover.1526088081.git.collinsd@codeaurora.org> <41d5df73ddac772551d2966e0752bb0c357b1ded.1526088081.git.collinsd@codeaurora.org>
+ <CAD=FV=XegPeFR8pdZM-YiBBJjrbej=C+2biBt4zJKnE90uTYZA@mail.gmail.com>
+ <869aad59-1cc5-28ef-1fb5-4ef846696c40@codeaurora.org> <CAD=FV=U-QOQekUHj=ck57YJbTFdFjCAWr4t2A92x+fCNf+yV9A@mail.gmail.com>
+ <dc1fbe9c-8973-1c4d-0fbd-809c1ec0a6be@codeaurora.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 21 May 2018 11:01:20 -0700
+X-Google-Sender-Auth: SQD5Y1P9k9GzAjy7EXbXqTjXYOU
+Message-ID: <CAD=FV=XfSGs14VB464cvMGDNwGS4yvSXjN8itZLffm+Sj-D=ww@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] regulator: dt-bindings: add QCOM RPMh regulator bindings
+To: David Collins <collinsd@codeaurora.org>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The new challenge is to remove VLAs from the kernel
-(see https://lkml.org/lkml/2018/3/7/621) to eventually
-turn on -Wvla.
+Hi,
 
-Using a kmalloc array is the easy way to fix this but kmalloc is still
-more expensive than stack allocation. Introduce a fast path with a
-fixed size stack array to cover most chip with gpios below some fixed
-amount. The slow path dynamically allocates an array to cover those
-chips with a large number of gpios.
+On Fri, May 18, 2018 at 5:46 PM, David Collins <collinsd@codeaurora.org> wrote:
+> On 05/17/2018 06:01 PM, Doug Anderson wrote:
+>> On Thu, May 17, 2018 at 5:16 PM, David Collins <collinsd@codeaurora.org> wrote:
+>>> On 05/17/2018 02:22 PM, Doug Anderson wrote:
+>>>> On Fri, May 11, 2018 at 7:28 PM, David Collins <collinsd@codeaurora.org> wrote:
+>>>>> +- qcom,regulator-initial-microvolt
+>>>>> +       Usage:      optional; VRM regulators only
+>>>>> +       Value type: <u32>
+>>>>> +       Definition: Specifies the initial voltage in microvolts to request for a
+>>>>> +                   VRM regulator.
+>>>>
+>>>> Now that Mark has landed the patch adding support for the
+>>>> -ENOTRECOVERABLE error code from get_voltage() / get_voltage_sel(), do
+>>>> we still need the qcom,regulator-initial-microvolt property?
+>>>
+>>> Yes, this is still needed.  The -ENOTRECOVERABLE patch ensures that
+>>> qcom-rpmh-regulator devices can be registered even if
+>>> qcom,regulator-initial-microvolt is not specified.  However, that will
+>>> result in the regulators being configured for the minimum voltage
+>>> supported in the DT specified min/max range.  The
+>>> qcom,regulator-initial-microvolt property allows us to set a specific
+>>> voltage that is larger than the min constraint.
+>>
+>> Ah, OK.  In the device tree fragment I saw the initial was always
+>> equal to the min, so I wasn't sure if this was really needed in
+>> practice.  I presume it would only be important if a voltage was left
+>> high by the bootloader for some peripheral that needs to continue to
+>> function (and use the existing higher voltage) until a real device
+>> claims it.  For all other voltages, it should be fine if it's set to
+>> the min until a real device claims it.  Do you have real examples of
+>> devices like this in boards using sdm845?
+>
+> Something to keep in mind about the downstream rpmh-regulator driver is
+> that it caches the initial voltages specified in device tree and only
+> sends them after a consumer driver makes a regulator framework call. This
+> saves time during boot and ensures that requests are not made for
+> regulators that no Linux consumer cares about.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Phil Reid <preid@electromag.com.au>
-Reviewed-and-tested-by: Lukas Wunner <lukas@wunner.de>
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Signed-off-by: Laura Abbott <labbott@redhat.com>
----
-v9: switch to bitmap_zero
----
- drivers/gpio/Kconfig          | 12 ++++++
- drivers/gpio/gpiolib.c        | 76 +++++++++++++++++++++++++++--------
- drivers/gpio/gpiolib.h        |  2 +-
- include/linux/gpio/consumer.h | 10 +++--
- 4 files changed, 78 insertions(+), 22 deletions(-)
+You're saying that in the downstream driver you'd specify
+"initial-voltage" in the device tree and:
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index b960f6f35abd..71c0ab46f216 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -22,6 +22,18 @@ menuconfig GPIOLIB
- 
- if GPIOLIB
- 
-+config GPIOLIB_FASTPATH_LIMIT
-+	int "Maximum number of GPIOs for fast path"
-+	range 32 512
-+	default 512
-+	help
-+	   This adjusts the point at which certain APIs will switch from
-+	   using a stack allocated buffer to a dynamically allocated buffer.
-+
-+	   You shouldn't need to change this unless you really need to
-+	   optimize either stack space or performance. Change this carefully
-+	   since setting an incorrect value could cause stack corruption.
-+
- config OF_GPIO
- 	def_bool y
- 	depends on OF
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index d8ccb500872f..982f19d62496 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -61,6 +61,11 @@ static struct bus_type gpio_bus_type = {
- 	.name = "gpio",
- };
- 
-+/*
-+ * Number of GPIOs to use for the fast path in set array
-+ */
-+#define FASTPATH_NGPIO CONFIG_GPIOLIB_FASTPATH_LIMIT
-+
- /* gpio_lock prevents conflicts during gpio_desc[] table updates.
-  * While any GPIO is requested, its gpio_chip is not removable;
-  * each GPIO's "requested" flag serves as a lock and refcount.
-@@ -450,12 +455,11 @@ static long linehandle_ioctl(struct file *filep, unsigned int cmd,
- 			vals[i] = !!ghd.values[i];
- 
- 		/* Reuse the array setting function */
--		gpiod_set_array_value_complex(false,
-+		return gpiod_set_array_value_complex(false,
- 					      true,
- 					      lh->numdescs,
- 					      lh->descs,
- 					      vals);
--		return 0;
- 	}
- 	return -EINVAL;
- }
-@@ -1244,6 +1248,10 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
- 		goto err_free_descs;
- 	}
- 
-+	if (chip->ngpio > FASTPATH_NGPIO)
-+		chip_warn(chip, "line cnt %u is greater than fast path cnt %u\n",
-+		chip->ngpio, FASTPATH_NGPIO);
-+
- 	gdev->label = kstrdup_const(chip->label ?: "unknown", GFP_KERNEL);
- 	if (!gdev->label) {
- 		status = -ENOMEM;
-@@ -2719,16 +2727,28 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
- 
- 	while (i < array_size) {
- 		struct gpio_chip *chip = desc_array[i]->gdev->chip;
--		unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
--		unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
-+		unsigned long fastpath[2 * BITS_TO_LONGS(FASTPATH_NGPIO)];
-+		unsigned long *mask, *bits;
- 		int first, j, ret;
- 
-+		if (likely(chip->ngpio <= FASTPATH_NGPIO)) {
-+			mask = fastpath;
-+		} else {
-+			mask = kmalloc_array(2 * BITS_TO_LONGS(chip->ngpio),
-+					   sizeof(*mask),
-+					   can_sleep ? GFP_KERNEL : GFP_ATOMIC);
-+			if (!mask)
-+				return -ENOMEM;
-+		}
-+
-+		bits = mask + BITS_TO_LONGS(chip->ngpio);
-+		bitmap_zero(mask, chip->ngpio);
-+
- 		if (!can_sleep)
- 			WARN_ON(chip->can_sleep);
- 
- 		/* collect all inputs belonging to the same chip */
- 		first = i;
--		memset(mask, 0, sizeof(mask));
- 		do {
- 			const struct gpio_desc *desc = desc_array[i];
- 			int hwgpio = gpio_chip_hwgpio(desc);
-@@ -2739,8 +2759,11 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
- 			 (desc_array[i]->gdev->chip == chip));
- 
- 		ret = gpio_chip_get_multiple(chip, mask, bits);
--		if (ret)
-+		if (ret) {
-+			if (mask != fastpath)
-+				kfree(mask);
- 			return ret;
-+		}
- 
- 		for (j = first; j < i; j++) {
- 			const struct gpio_desc *desc = desc_array[j];
-@@ -2752,6 +2775,9 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
- 			value_array[j] = value;
- 			trace_gpio_value(desc_to_gpio(desc), 1, value);
- 		}
-+
-+		if (mask != fastpath)
-+			kfree(mask);
- 	}
- 	return 0;
- }
-@@ -2935,7 +2961,7 @@ static void gpio_chip_set_multiple(struct gpio_chip *chip,
- 	}
- }
- 
--void gpiod_set_array_value_complex(bool raw, bool can_sleep,
-+int gpiod_set_array_value_complex(bool raw, bool can_sleep,
- 				   unsigned int array_size,
- 				   struct gpio_desc **desc_array,
- 				   int *value_array)
-@@ -2944,14 +2970,26 @@ void gpiod_set_array_value_complex(bool raw, bool can_sleep,
- 
- 	while (i < array_size) {
- 		struct gpio_chip *chip = desc_array[i]->gdev->chip;
--		unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
--		unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
-+		unsigned long fastpath[2 * BITS_TO_LONGS(FASTPATH_NGPIO)];
-+		unsigned long *mask, *bits;
- 		int count = 0;
- 
-+		if (likely(chip->ngpio <= FASTPATH_NGPIO)) {
-+			mask = fastpath;
-+		} else {
-+			mask = kmalloc_array(2 * BITS_TO_LONGS(chip->ngpio),
-+					   sizeof(*mask),
-+					   can_sleep ? GFP_KERNEL : GFP_ATOMIC);
-+			if (!mask)
-+				return -ENOMEM;
-+		}
-+
-+		bits = mask + BITS_TO_LONGS(chip->ngpio);
-+		bitmap_zero(mask, chip->ngpio);
-+
- 		if (!can_sleep)
- 			WARN_ON(chip->can_sleep);
- 
--		memset(mask, 0, sizeof(mask));
- 		do {
- 			struct gpio_desc *desc = desc_array[i];
- 			int hwgpio = gpio_chip_hwgpio(desc);
-@@ -2982,7 +3020,11 @@ void gpiod_set_array_value_complex(bool raw, bool can_sleep,
- 		/* push collected bits to outputs */
- 		if (count != 0)
- 			gpio_chip_set_multiple(chip, mask, bits);
-+
-+		if (mask != fastpath)
-+			kfree(mask);
- 	}
-+	return 0;
- }
- 
- /**
-@@ -3057,13 +3099,13 @@ EXPORT_SYMBOL_GPL(gpiod_set_value);
-  * This function should be called from contexts where we cannot sleep, and will
-  * complain if the GPIO chip functions potentially sleep.
-  */
--void gpiod_set_raw_array_value(unsigned int array_size,
-+int gpiod_set_raw_array_value(unsigned int array_size,
- 			 struct gpio_desc **desc_array, int *value_array)
- {
- 	if (!desc_array)
--		return;
--	gpiod_set_array_value_complex(true, false, array_size, desc_array,
--				      value_array);
-+		return -EINVAL;
-+	return gpiod_set_array_value_complex(true, false, array_size,
-+					desc_array, value_array);
- }
- EXPORT_SYMBOL_GPL(gpiod_set_raw_array_value);
- 
-@@ -3383,14 +3425,14 @@ EXPORT_SYMBOL_GPL(gpiod_set_value_cansleep);
-  *
-  * This function is to be called from contexts that can sleep.
-  */
--void gpiod_set_raw_array_value_cansleep(unsigned int array_size,
-+int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
- 					struct gpio_desc **desc_array,
- 					int *value_array)
- {
- 	might_sleep_if(extra_checks);
- 	if (!desc_array)
--		return;
--	gpiod_set_array_value_complex(true, true, array_size, desc_array,
-+		return -EINVAL;
-+	return gpiod_set_array_value_complex(true, true, array_size, desc_array,
- 				      value_array);
- }
- EXPORT_SYMBOL_GPL(gpiod_set_raw_array_value_cansleep);
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index ad456b6f9d8b..1a8e20363861 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -188,7 +188,7 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
- 				  unsigned int array_size,
- 				  struct gpio_desc **desc_array,
- 				  int *value_array);
--void gpiod_set_array_value_complex(bool raw, bool can_sleep,
-+int gpiod_set_array_value_complex(bool raw, bool can_sleep,
- 				   unsigned int array_size,
- 				   struct gpio_desc **desc_array,
- 				   int *value_array);
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index dbd065963296..243112c7fa7d 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -116,7 +116,7 @@ int gpiod_get_raw_array_value(unsigned int array_size,
- 			      struct gpio_desc **desc_array,
- 			      int *value_array);
- void gpiod_set_raw_value(struct gpio_desc *desc, int value);
--void gpiod_set_raw_array_value(unsigned int array_size,
-+int gpiod_set_raw_array_value(unsigned int array_size,
- 			       struct gpio_desc **desc_array,
- 			       int *value_array);
- 
-@@ -134,7 +134,7 @@ int gpiod_get_raw_array_value_cansleep(unsigned int array_size,
- 				       struct gpio_desc **desc_array,
- 				       int *value_array);
- void gpiod_set_raw_value_cansleep(struct gpio_desc *desc, int value);
--void gpiod_set_raw_array_value_cansleep(unsigned int array_size,
-+int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
- 					struct gpio_desc **desc_array,
- 					int *value_array);
- 
-@@ -369,12 +369,13 @@ static inline void gpiod_set_raw_value(struct gpio_desc *desc, int value)
- 	/* GPIO can never have been requested */
- 	WARN_ON(1);
- }
--static inline void gpiod_set_raw_array_value(unsigned int array_size,
-+static inline int gpiod_set_raw_array_value(unsigned int array_size,
- 					     struct gpio_desc **desc_array,
- 					     int *value_array)
- {
- 	/* GPIO can never have been requested */
- 	WARN_ON(1);
-+	return 0;
- }
- 
- static inline int gpiod_get_value_cansleep(const struct gpio_desc *desc)
-@@ -423,12 +424,13 @@ static inline void gpiod_set_raw_value_cansleep(struct gpio_desc *desc,
- 	/* GPIO can never have been requested */
- 	WARN_ON(1);
- }
--static inline void gpiod_set_raw_array_value_cansleep(unsigned int array_size,
-+static inline int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
- 						struct gpio_desc **desc_array,
- 						int *value_array)
- {
- 	/* GPIO can never have been requested */
- 	WARN_ON(1);
-+	return 0;
- }
- 
- static inline int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
--- 
-2.17.0
+* This voltage would be reported by any subsequent get_voltage() calls
+
+* This voltage would _not_ be communicated to RPMh.
+
+That seems really strange because you're essentially going to be
+returning something from get_voltage() that could be a lie.  You don't
+know if the BIOS actually set the value or not but you'll claim that
+it did.  It also doesn't seem to match what I see in the downstream
+driver.  There I see it read "qcom,init-voltage" and then do a
+"rpmh_regulator_set_reg()".  Thus my reading of the downstream driver
+is that it should do the same requests that you're doing.
+
+
+> It is generally not safe to request all regulators to be set to the
+> minimum allowed voltage.  Special care will be needed with the upstream
+> qcom-rpmh-regulator driver to avoid disrupting the boot up state of
+> regulators that are needed by other subsystems.  Therefore, I would like
+> to keep the initial voltage feature supported.
+
+I was asking for specific examples.  Do you have any?
+
+
+BTW: have I already said how terrible of a design it is that you can't
+read back the voltages that the BIOS set?  If we could just read back
+what the BIOS set then everything would work great and we could stop
+talking about this.
+
+
+>>>>> +- qcom,allowed-drms-modes
+>>>>> +       Usage:      required if regulator-allow-set-load is specified;
+>>>>> +                   VRM regulators only
+>>>>> +       Value type: <prop-encoded-array>
+>>>>> +       Definition: A list of integers specifying the PMIC regulator modes which
+>>>>> +                   can be configured at runtime based upon consumer load needs.
+>>>>> +                   Supported values are RPMH_REGULATOR_MODE_* which are defined
+>>>>> +                   in [1] (i.e. 0 to 3).
+>>>>
+>>>> Why is this still here?  You moved it to the core regulator framework,
+>>>> right?  It's still in your examples too.  Shouldn't this be removed?
+>>>> It looks like the driver still needs this and it needs to be an exact
+>>>> duplicate of the common binding.  That doesn't seem right...
+>>>
+>>> The qcom,allowed-drms-modes property supports a different feature than the
+>>> regulator-allowed-modes property accepted in [2].  The latter specifies
+>>> the modes that may be used at all (e.g. in regulator_set_mode() calls) and
+>>> it lists the mode values in an unordered fashion.
+>>>
+>>> qcom,allowed-drms-modes defines a specific subset of the possible allowed
+>>> modes that should be set based on DRMS (e.g. in regulator_set_load()
+>>> calls).  Its values are listed in a specific order and must match 1-to-1
+>>> with qcom,drms-mode-max-microamps entries.
+>>>
+>>> It would probably be good to change the name of the property from
+>>> qcom,allowed-drms-modes to qcom,regulator-drms-modes.
+>>
+>> Ah, I see.  It's unfortunate that now we need to effectively list all
+>> modes twice.  Have you seen real-life examples where these sets of
+>> modes need to be different, or is this just theoretical?  If not can
+>> we start with one property (that controls both things) and if we
+>> really see that we need to specify different sets of modes for the two
+>> cases we can add a separate property?  ...actually, even if you do
+>> have real-life examples of where these need to be different, if 90% of
+>> the time they are the same it would still be nice to just have one
+>> property apply to both cases.
+>
+> I plan to keep qcom,regulator-drms-modes (and
+> qcom,drms-mode-max-microamps) around as a property specifically handled
+> for qcom-rpmh-regulator.  It serves a purpose that is distinct from that
+> of the generic regulator-allowed-modes.  Without it, there will not be a
+> way to utilize regulator_set_load() to configure the regulator modes.
+
+I guess we'll have to wait for Mark's opinion here.  If it were up to
+me I wouldn't accept things with two properties, but if Mark is happy
+with it then I won't yell.  To make it really clear what we're talking
+about, currently the bindings want you to specify both:
+
+regulator-allowed-modes =
+  <RPMH_REGULATOR_MODE_LPM
+   RPMH_REGULATOR_MODE_HPM>;
+qcom,allowed-drms-modes =
+  <RPMH_REGULATOR_MODE_LPM
+   RPMH_REGULATOR_MODE_HPM>;
+qcom,drms-mode-max-microamps = <1 500000>;
+
+...with the argument that "regulator-allowed-modes" is unordered and
+"qcom,allowed-drms-modes" is ordered and needs to match with
+"qcom,drms-mode-max-microamps".  ...and also (in theory) you could
+come up with an example where the set of allowed modes could be
+different sometimes.
+
+
+>>>>> +- qcom,drms-mode-max-microamps
+>>>>> +       Usage:      required if regulator-allow-set-load is specified;
+>>>>> +                   VRM regulators only
+>>>>> +       Value type: <prop-encoded-array>
+>>>>> +       Definition: A list of integers specifying the maximum allowed load
+>>>>> +                   current in microamps for each of the modes listed in
+>>>>> +                   qcom,allowed-drms-modes (matched 1-to-1 in order).  Elements
+>>>>> +                   must be specified in order from lowest to highest value.
+>>>>
+>>>> Any reason this can't go into the regulator core?  You'd basically
+>>>> just take the existing concept of rpmh_regulator_vrm_set_load() and
+>>>> put it in the core.
+>>>
+>>> This could be implemented in the core via new constraint elements parsed
+>>> in of_regulator and a helper function to specify in regulator_ops.
+>>> However, I'm not sure about the wide-spread applicability of this feature.
+>>>  I'd prefer to leave it in the driver unless Mark would like me to add it
+>>> into the core.
+>>
+>> You're already using pre-existing APIs around specifying the current
+>> and having the regulator core call you to map the total current into a
+>> mode.  That implies that this is applicable to others.  Adding this
+>> tiny amount of code to the core makes the pre-existing APIs generally
+>> useful.
+>
+> I don't see the benefit of making struct regulation_constraints more
+> complicated with DRMS mode and current arrays that would only every be
+> used by the qcom-rpmh-regulator driver.  Other regulator drivers are able
+> to hard code this information in the driver code using get_optimum_mode()
+> callbacks.
+
+IMO this belongs in the core since it's a generic mechanism and if
+drivers want to implement their own custom thing they can, but again
+whatever Mark says goes so I guess we'll leave it to him.
+
+
+> As a side note, changing qcom-rpmh-regulator to use a get_optimum_mode()
+> callback instead of a set_load() callback would probably be a good idea too.
+
+Yeah, I remember wondering this earlier and it seemed like it was 6 of
+one half dozen of the other.  ...the downside of using
+get_optimum_mode() is that it requires a valid input voltage to be
+supplied.  It also makes a handful of other calls that you probably
+don't need in your case.
+
+
+-Doug
