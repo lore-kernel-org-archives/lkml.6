@@ -1,76 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752102AbeEUODs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 10:03:48 -0400
-Received: from foss.arm.com ([217.140.101.70]:50152 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751021AbeEUODq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 10:03:46 -0400
-Date: Mon, 21 May 2018 15:03:36 +0100
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: honghui.zhang@mediatek.com, marc.zyngier@arm.com, bhelgaas@google.com,
-        matthias.bgg@gmail.com, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        yingjoe.chen@mediatek.com, eddie.huang@mediatek.com,
-        ryder.lee@mediatek.com, hongkun.cao@mediatek.com,
-        youlin.pei@mediatek.com, yong.wu@mediatek.com, yt.shen@mediatek.com,
-        sean.wang@mediatek.com, xinping.qian@mediatek.com
-Subject: Re: [PATCH v7 2/2] PCI: mediatek: Using chained IRQ to setup IRQ
- handle
-Message-ID: <20180521140336.GA3149@e107981-ln.cambridge.arm.com>
-References: <1525412853-24367-1-git-send-email-honghui.zhang@mediatek.com>
- <1525412853-24367-3-git-send-email-honghui.zhang@mediatek.com>
- <20180518195154.GB41790@bhelgaas-glaptop.roam.corp.google.com>
+        id S1752693AbeEUOEC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 10:04:02 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50624 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752572AbeEUOD6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 10:03:58 -0400
+Date: Mon, 21 May 2018 10:03:56 -0400
+From: Mike Snitzer <snitzer@redhat.com>
+To: Kent Overstreet <kent.overstreet@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        axboe@kernel.dk, hch@infradead.org, colyli@suse.de,
+        darrick.wong@oracle.com, clm@fb.com, bacik@fb.com,
+        linux-xfs@vger.kernel.org, drbd-dev@lists.linbit.com,
+        linux-btrfs@vger.kernel.org, linux-raid@vger.kernel.org,
+        neilb@suse.com
+Subject: Re: [PATCH 00/13] convert block layer to bioset_init()/mempool_init()
+Message-ID: <20180521140348.GA19069@redhat.com>
+References: <20180520222558.7053-1-kent.overstreet@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180518195154.GB41790@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180520222558.7053-1-kent.overstreet@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 18, 2018 at 02:51:54PM -0500, Bjorn Helgaas wrote:
-> On Fri, May 04, 2018 at 01:47:33PM +0800, honghui.zhang@mediatek.com wrote:
-> > From: Honghui Zhang <honghui.zhang@mediatek.com>
-> > 
-> > Using irq_chip solution to setup IRQs in order to consist
-> > with IRQ framework.
-> > 
-> > Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
-> > Acked-by: Ryder Lee <ryder.lee@mediatek.com>
-> > ---
-> >  drivers/pci/host/pcie-mediatek.c | 206 ++++++++++++++++++++++-----------------
-> >  1 file changed, 115 insertions(+), 91 deletions(-)
-> > 
-> > diff --git a/drivers/pci/host/pcie-mediatek.c b/drivers/pci/host/pcie-mediatek.c
-> > index c3dc549..dabf1086 100644
-> > --- a/drivers/pci/host/pcie-mediatek.c
-> > +++ b/drivers/pci/host/pcie-mediatek.c
-> > ...
-> 
-> > -static int mtk_pcie_msi_map(struct irq_domain *domain, unsigned int irq,
-> > -			    irq_hw_number_t hwirq)
-> > +static struct msi_domain_info mtk_msi_domain_info = {
-> 
-> I think this patch should be amended to include this:
-> 
-> diff --git a/drivers/pci/host/Kconfig b/drivers/pci/host/Kconfig
-> index 0d0177ce436c..368b70d9371b 100644
-> --- a/drivers/pci/host/Kconfig
-> +++ b/drivers/pci/host/Kconfig
-> @@ -193,7 +193,7 @@ config PCIE_MEDIATEK
->  	bool "MediaTek PCIe controller"
->  	depends on (ARM || ARM64) && (ARCH_MEDIATEK || COMPILE_TEST)
->  	depends on OF
-> -	depends on PCI
+On Sun, May 20 2018 at  6:25pm -0400,
+Kent Overstreet <kent.overstreet@gmail.com> wrote:
 
-Actually I amended your patch, since I do not think the deletion above
-belongs in this commit (I agree that's completely useless but that's
-not this patch that we should remove it).
+> Jens - this series does the rest of the conversions that Christoph wanted, and
+> drops bioset_create().
+> 
+> Only lightly tested, but the changes are pretty mechanical. Based on your
+> for-next tree.
 
-Lorenzo
+By switching 'mempool_t *' to 'mempool_t' and 'bio_set *' to 'bio_set'
+you've altered the alignment of members in data structures.  So I'll
+need to audit all the data structures you've modified in DM.
 
-> +	depends on PCI_MSI_IRQ_DOMAIN
+Could we get the backstory on _why_ you're making this change?
+Would go a long way to helping me appreciate why this is a good use of
+anyone's time.
+
+Thanks,
+Mike
