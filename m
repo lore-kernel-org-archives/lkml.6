@@ -1,155 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752605AbeEUB6b (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 21:58:31 -0400
-Received: from mail-ve1eur01on0058.outbound.protection.outlook.com ([104.47.1.58]:22336
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751837AbeEUB60 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 21:58:26 -0400
-From: Anson Huang <anson.huang@nxp.com>
-To: Shawn Guo <shawnguo@kernel.org>
-CC: "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] ARM: dts: imx7d: use operating-points-v2 for cpu
-Thread-Topic: [PATCH] ARM: dts: imx7d: use operating-points-v2 for cpu
-Thread-Index: AQHT7NGhvm49ZHWYj0e/fDj7/+3s8KQ4mLgAgADb76A=
-Date: Mon, 21 May 2018 01:58:21 +0000
-Message-ID: <AM3PR04MB1315E332CBFDA4151F6F3FA8F5950@AM3PR04MB1315.eurprd04.prod.outlook.com>
-References: <1526446097-7111-1-git-send-email-Anson.Huang@nxp.com>
- <20180520125048.GX26863@dragon>
-In-Reply-To: <20180520125048.GX26863@dragon>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com;
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM3PR04MB1409;7:H9zGOFlr6pt2kJLgm6Lmfx1/Y49G42DTRPFGx406GLEbOT4Wf9/70Pmh/+I+oDvriDUYpsd2PMQy+MF+q6PSWulf5xk6F8a+De5UWUZSjk0Ib8Ul+E9GyHLXZpjiIUnGj76bieF+jEwv4/Q9XBJBwsWvuHPscIkNaiR2t8O0Beu73OIE6Gjeyhq0BVaVMwCI2iR5YGhJFSMaWZwe04tiT7QM5Llcx0C0/cP0Mv+3dum0dOnOnQQWeN2z0DNJyXzm
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(2017052603328)(7153060)(7193020);SRVR:AM3PR04MB1409;
-x-ms-traffictypediagnostic: AM3PR04MB1409:
-x-microsoft-antispam-prvs: <AM3PR04MB140912A410858A96B7754AEDF5950@AM3PR04MB1409.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(185117386973197)(258649278758335);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(10201501046)(3002001)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:AM3PR04MB1409;BCL:0;PCL:0;RULEID:;SRVR:AM3PR04MB1409;
-x-forefront-prvs: 06793E740F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(39380400002)(366004)(39860400002)(396003)(199004)(189003)(13464003)(486006)(446003)(11346002)(106356001)(97736004)(478600001)(316002)(25786009)(105586002)(5660300001)(14454004)(66066001)(476003)(86362001)(54906003)(74316002)(53936002)(53546011)(8936002)(102836004)(6246003)(9686003)(76176011)(3846002)(3280700002)(7696005)(6506007)(59450400001)(2906002)(7736002)(2900100001)(44832011)(8676002)(3660700001)(55016002)(81166006)(81156014)(6916009)(68736007)(99286004)(6116002)(33656002)(6436002)(5250100002)(186003)(305945005)(229853002)(4326008)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR04MB1409;H:AM3PR04MB1315.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: vBqmdfNxPKYHpOvR2HokLbaqw5o1c8SCX9BzhVHNvIZajZsYvEcaJmZ2MtHNvssEuewYkxeeyAWSu87/bZs7/FNn2BRvqau9ISmL0VYpo3LzPLZCvTVXnqlD6tjDMYgu5U/fphfWwuBokTjpKgdPpW7QmT1xK4Oo1KrdSqBA3KRzIb+t+w4XmWtjV6HAGJ8E
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
+        id S1752542AbeEUCAk (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 22:00:40 -0400
+Received: from gateway22.websitewelcome.com ([192.185.47.109]:33889 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751030AbeEUCAh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 May 2018 22:00:37 -0400
+X-Authority-Reason: nr=8
+Subject: Re: [PATCH] kernel: sys: fix potential Spectre v1
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+References: <20180515030038.GA11822@embeddedor.com>
+ <20180515150859.1bccbd8d4543848b30fea859@linux-foundation.org>
+ <alpine.DEB.2.21.1805160027260.1605@nanos.tec.linutronix.de>
+ <CAPcyv4iksLzZ=eMjWw6Wi87F2OSXHd16gKRLExgGhx=Mdr+AwQ@mail.gmail.com>
+ <50481b83-4c03-f354-bd11-cef7aecdd85f@embeddedor.com>
+ <b5e5e160-6ac7-87c8-af1a-4eb88f1f020d@embeddedor.com>
+ <CAPcyv4iO67AG5ytc7gRBTnu6V8bdTOMb9eBwjGJtkGpMLKkpwg@mail.gmail.com>
+ <3d2e5771-c2c9-6e45-3e85-21c0bc86876e@embeddedor.com>
+ <58df7ae3-8ef0-4f42-9ab2-b551d2ffff00@embeddedor.com>
+Message-ID: <161a0513-1029-a76c-f967-1e606081599d@embeddedor.com>
+Date: Sun, 20 May 2018 21:00:26 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 82259c91-c130-4586-64e0-08d5bebe54b8
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 82259c91-c130-4586-64e0-08d5bebe54b8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 May 2018 01:58:21.6546
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR04MB1409
+In-Reply-To: <58df7ae3-8ef0-4f42-9ab2-b551d2ffff00@embeddedor.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.192.46.223
+X-Source-L: No
+X-Exim-ID: 1fKa7m-00337T-HA
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.70]) [187.192.46.223]:39216
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4L1wbjI030330
 
 
 
-Anson Huang
-Best Regards!
-
-
-> -----Original Message-----
-> From: Shawn Guo [mailto:shawnguo@kernel.org]
-> Sent: Sunday, May 20, 2018 8:51 PM
-> To: Anson Huang <anson.huang@nxp.com>
-> Cc: kernel@pengutronix.de; Fabio Estevam <fabio.estevam@nxp.com>;
-> robh+dt@kernel.org; mark.rutland@arm.com; dl-linux-imx
-> <linux-imx@nxp.com>; linux-arm-kernel@lists.infradead.org;
-> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH] ARM: dts: imx7d: use operating-points-v2 for cpu
+On 05/20/2018 07:50 PM, Gustavo A. R. Silva wrote:
 > 
-> On Wed, May 16, 2018 at 12:48:17PM +0800, Anson Huang wrote:
-> > This patch uses "operating-points-v2" instead of "operating-points" to
-> > be more fit with cpufreq-dt driver.
-> >
-> > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> > ---
-> >  arch/arm/boot/dts/imx7d.dtsi | 24 +++++++++++++++++++-----
-> >  1 file changed, 19 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/arch/arm/boot/dts/imx7d.dtsi
-> > b/arch/arm/boot/dts/imx7d.dtsi index 4c9877e..28980c8 100644
-> > --- a/arch/arm/boot/dts/imx7d.dtsi
-> > +++ b/arch/arm/boot/dts/imx7d.dtsi
-> > @@ -9,12 +9,8 @@
-> >  / {
-> >  	cpus {
-> >  		cpu0: cpu@0 {
-> > -			operating-points = <
-> > -				/* KHz	uV */
-> > -				996000	1075000
-> > -				792000	975000
-> > -			>;
-> >  			clock-frequency = <996000000>;
-> > +			operating-points-v2 = <&cpu0_opp_table>;
-> >  		};
-> >
-> >  		cpu1: cpu@1 {
-> > @@ -22,6 +18,24 @@
-> >  			device_type = "cpu";
-> >  			reg = <1>;
-> >  			clock-frequency = <996000000>;
-> > +			operating-points-v2 = <&cpu0_opp_table>;
-> > +		};
-> > +	};
-> > +
-> > +	cpu0_opp_table: opp_table0 {
 > 
-> Hyphen is recommended in node name.  Also the suffix 0 doesn't mean too
-> much here.  That said, a better node name would be 'opp-table'.
+> On 05/18/2018 03:44 PM, Gustavo A. R. Silva wrote:
+>>>>
+>>>> #ifndef sanitize_index_nospec
+>>>> inline bool sanitize_index_nospec(unsigned long *index,
+>>>>                                    unsigned long size)
+>>>> {
+>>>>          if (*index >= size)
+>>>>                  return false;
+>>>>          *index = array_index_nospec(*index, size);
+>>>>
+>>>>          return true;
+>>>> }
+>>>> #endif
+>>>
+>>> I think this is fine in concept, we already do something similar in
+>>> mpls_label_ok(). Perhaps call it validate_index_nospec() since
+>>> validation is something that can fail, but sanitization in theory is
+>>> something that can always succeed.
+>>>
+>>
+>> OK. I got it.
+>>
+>>> However, the problem is the data type of the index. I expect you would
+>>> need to do this in a macro and use typeof() if you wanted this to be
+>>> generally useful, and also watch out for multiple usage of a macro
+>>> argument. Is it still worth it at that point?
+>>>
+>>
+>> Yeah. I think it is worth it. I'll work on this during the weekend and 
+>> send a proper patch for review.
+>>
 > 
-> > +		compatible = "operating-points-v2";
-> > +		opp-shared;
-> > +
-> > +		opp-792000000 {
-> > +			opp-hz = /bits/ 64 <792000000>;
-> > +			opp-microvolt = <975000>;
-> > +			clock-latency-ns = <150000>;
-> > +		};
+> Dan,
 > 
-> We recommend to have a newline between nodes.
+> What do you think about this first draft:
 > 
-> I fixed them all and applied the patch.
-> 
-> Shawn
- 
-Thanks Shawn.
+> diff --git a/include/linux/nospec.h b/include/linux/nospec.h
+> index e791ebc..6154183 100644
+> --- a/include/linux/nospec.h
+> +++ b/include/linux/nospec.h
+> @@ -55,4 +55,16 @@ static inline unsigned long 
+> array_index_mask_nospec(unsigned long index,
+>                                                                         \
+>          (typeof(_i)) (_i & _mask);                                     \
+>   })
+> +
+> +#define validate_index_nospec(index, size)                            \
+> +({                                                                    \
+> +       typeof(index) *ptr = &(index);                                 \
+> +       typeof(size) _s = (size);                                      \
+> +                                                                      \
+> +       BUILD_BUG_ON(sizeof(*ptr) > sizeof(long));                     \
+> +       BUILD_BUG_ON(sizeof(_s) > sizeof(long));                       \
+> +                                                                      \
+> +       *ptr >= _s ? false :                                           \
+> +       (*ptr = array_index_nospec(*ptr, _s) ? true : true);           \
 
-Anson.
+This actually should be:
 
+((*ptr = array_index_nospec(*ptr, _s)) ? true : true);
 
-
+> +})
+>   #endif /* _LINUX_NOSPEC_H */
 > 
-> > +		opp-996000000 {
-> > +			opp-hz = /bits/ 64 <996000000>;
-> > +			opp-microvolt = <1075000>;
-> > +			clock-latency-ns = <150000>;
-> > +			opp-suspend;
-> >  		};
-> >  	};
-> >
-> > --
-> > 2.7.4
-> >
+> Thanks
+> -- 
+> Gustavo
