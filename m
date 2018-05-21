@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1340521-1526938177-2-9724406902007753350
+X-Cyrus-Session-Id: sloti22d1t05-1344077-1526938049-2-16991310150243643631
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526938176; b=iBrPCt0dIs9yvo7CFN/u3biQeEvtWw2Ye7CQN6n3WH6xaKdSNL
-    2wzo3DL2PUjy8Uuglk86UyuIkq/EaFLaHP3SWtOCxLde0iNNJzFZ3zGFkose22D4
-    YhfYih7jh7AbvruVm0wLle+N84CYfelA4sq1PIybu8vZbncKgEDPevPRE6cUxGR9
-    aNwB53gYYbZVwtUfwrABnoaTfa807m7WrFl2o1XEAJftbkIEsFPaJeW0A4nBnSgL
-    guMGUi7tEMenCnG8IKRpPGYtx35OBzHcVy8/r/woVVJirEkQ6gCC5UT3ihYUAZXS
-    Fa1q7X2dOxM1Aue9hDH8o+eu1bGGHp5c8EEg==
+    1526938048; b=jleWb+RREvwzpcJ0NF+IPI/tnbqGd8ffzxnM4USigfYgVVWLTq
+    d4c8C6a0cWJfOFA275RFsQvgGBU2w+lpzWnipX5OfLtwrnIyrrFvzIy5KjGQJ3hH
+    7CLDABz5ht8uxuXyUc4WJLBJM5LhJ+p5X2rv5hMtGfDeHx6tA7y2OFJwc1fDmb5m
+    fZsEjCKbp2kyt1g7cNvxVIfi9khuJOuWcenwpCB0ExbicilXOQY9CoVUur9USmgh
+    6JLQumzYpFkTN/daN1K0SoauhMDINsl+mLWIwLN2p1+me8ScQ5Ti051XrWFI74sO
+    xNIp6BHwYyzZUR9nkYdT8eVl1Z1+v+6KZbPw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1526938176; bh=uIO+mwcBbyTQGSKFfP3Rof/+CsA5rL
-    ypLeAu4T1ueTE=; b=J260IdP4jF3UsF4BFTH7j+jB32VYBMPwflu+NPApQDflmP
-    Z3HhGy/3rYxikBpRVSpYiFzGbCD7fRBw9mB0t3VjgPeNOgdVV1i2+hPbiSEw+wCT
-    17VioPLpUhTr9wYOkWSpSgRR8qshP1XXoif0rXJh3Y+h07wi1cVK8yg/RgWruCs2
-    z3SvZDS9y2neC1ELWvCP86PCFDJQ1zkTyd03SDhkgaSggZ8INGa3bJF4S3dEk4f+
-    kGVftv3045hb+QyprGXafRNTiNR2SgEZ0Skl9Fz5Owi850iErTXsLaOzRFOLYNOq
-    WtDgeR6XmeavBO9IFK7sulfW+RG/lLSP/AKqpjzQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1526938048; bh=pfcG+GE5lkNzga8JJxF5yG5EnIhFGB
+    bp3ai6106Ts0Y=; b=eMfrp8xoD67QPLjXomasNDu7/eSn29f4PwlJaJ96J4OApk
+    TN7ZwPsEAYd7RH5Sdt9MAsRSdgdy/R0HaGlqKgyhMmAPLNiw4/Nirf+VOy0eupFB
+    X+XRk5O/3OuqTtgtqeIixQxifB/AwAXDuA+5yAjpw7RVM+NwFT3YE5o4ZmxZdGxd
+    PaEjgiOANvUHaqirMyqcSUj9aVTIYc3M+Q0W6IROwHxp4200ynAK5Ckk9uiWdDnb
+    LfClqYMrK/fLPyCmPwzG8GG34ZW8wkzmgjgc0rmOOltDFcXv1F2VfVinsG+9FuuY
+    U2s8T1wsAS8WcMP00pYXqksDCKtHliez6cmM3dNw==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=yit7IGlp x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=KKXQVIGc x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=yit7IGlp x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=KKXQVIGc x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,30 +64,30 @@ Authentication-Results: mx1.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFEurNjJR6iOqNXTHIXZuYqMrm5ZSWkspheI/xITgV40JanYGNf1MQ5682dp6tEtFlLBqN8+wBJSM0D26rgSKHDXg04s8u12IEyD+I7i/ZRg7TYrmYqH
-    o7pa0dHAu8aaF3rI5ObRoinihlQgt44zuX3gL92jofrBwzFP1/64wIbDXvVFS4PX5z1iUTTRaTDJ1QIl++kwYKOMQX+q/YPmVUGFK3Ap09psPmgZEyoNbYOJ
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfKHZDVXd9S/w/KrhoQzRriX+dGMR0H0skixMp/SXGg+opO0QY9eT1//rkVl5zIuK2ujqPWMbDLk57mOtosZQeNQFqN74A26hqRmL2MuC6rkHuU2xBJvN
+    aY3wFAgjNtVNrV65irfI3kg/sffVVtHLjVMRXmE8jKyT6ppSc/0KH+Ft6qFfJ+hSD14q0fe7mfxfRiBdpO0i4Ik0h7h86pvG19hDEabhxtmNo4VpEMEN2DIL
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=yPCof4ZbAAAA:8 a=ag1SF4gXAAAA:8 a=Y8gORIMYy1lJ2uihekQA:9 a=QEXdDO2ut3YA:10
+    a=yPCof4ZbAAAA:8 a=ag1SF4gXAAAA:8 a=JuBd0jeNRUqeSgXHdO0A:9 a=QEXdDO2ut3YA:10
     a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932671AbeEUV1G (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 21 May 2018 17:27:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41858 "EHLO mail.kernel.org"
+        id S932726AbeEUV1S (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 21 May 2018 17:27:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42078 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932495AbeEUV1C (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 21 May 2018 17:27:02 -0400
+        id S932239AbeEUV1P (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 21 May 2018 17:27:15 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
         Borislav Petkov <bp@suse.de>,
         Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Subject: [PATCH 4.16 100/110] x86/bugs, KVM: Extend speculation control for VIRT_SPEC_CTRL
-Date: Mon, 21 May 2018 23:12:37 +0200
-Message-Id: <20180521210514.544607886@linuxfoundation.org>
+Subject: [PATCH 4.16 105/110] x86/bugs: Remove x86_spec_ctrl_set()
+Date: Mon, 21 May 2018 23:12:42 +0200
+Message-Id: <20180521210514.888843533@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -107,148 +107,66 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-commit ccbcd2674472a978b48c91c1fbfb66c0ff959f24 upstream
+commit 4b59bdb569453a60b752b274ca61f009e37f4dae upstream
 
-AMD is proposing a VIRT_SPEC_CTRL MSR to handle the Speculative Store
-Bypass Disable via MSR_AMD64_LS_CFG so that guests do not have to care
-about the bit position of the SSBD bit and thus facilitate migration.
-Also, the sibling coordination on Family 17H CPUs can only be done on
-the host.
-
-Extend x86_spec_ctrl_set_guest() and x86_spec_ctrl_restore_host() with an
-extra argument for the VIRT_SPEC_CTRL MSR.
-
-Hand in 0 from VMX and in SVM add a new virt_spec_ctrl member to the CPU
-data structure which is going to be used in later patches for the actual
-implementation.
+x86_spec_ctrl_set() is only used in bugs.c and the extra mask checks there
+provide no real value as both call sites can just write x86_spec_ctrl_base
+to MSR_SPEC_CTRL. x86_spec_ctrl_base is valid and does not need any extra
+masking or checking.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Borislav Petkov <bp@suse.de>
 Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/spec-ctrl.h |    9 ++++++---
- arch/x86/kernel/cpu/bugs.c       |   20 ++++++++++++++++++--
- arch/x86/kvm/svm.c               |   11 +++++++++--
- arch/x86/kvm/vmx.c               |    5 +++--
- 4 files changed, 36 insertions(+), 9 deletions(-)
+ arch/x86/include/asm/nospec-branch.h |    2 --
+ arch/x86/kernel/cpu/bugs.c           |   13 ++-----------
+ 2 files changed, 2 insertions(+), 13 deletions(-)
 
---- a/arch/x86/include/asm/spec-ctrl.h
-+++ b/arch/x86/include/asm/spec-ctrl.h
-@@ -10,10 +10,13 @@
-  * the guest has, while on VMEXIT we restore the host view. This
-  * would be easier if SPEC_CTRL were architecturally maskable or
-  * shadowable for guests but this is not (currently) the case.
-- * Takes the guest view of SPEC_CTRL MSR as a parameter.
-+ * Takes the guest view of SPEC_CTRL MSR as a parameter and also
-+ * the guest's version of VIRT_SPEC_CTRL, if emulated.
-  */
--extern void x86_spec_ctrl_set_guest(u64);
--extern void x86_spec_ctrl_restore_host(u64);
-+extern void x86_spec_ctrl_set_guest(u64 guest_spec_ctrl,
-+				    u64 guest_virt_spec_ctrl);
-+extern void x86_spec_ctrl_restore_host(u64 guest_spec_ctrl,
-+				       u64 guest_virt_spec_ctrl);
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -217,8 +217,6 @@ enum spectre_v2_mitigation {
+ 	SPECTRE_V2_IBRS,
+ };
  
- /* AMD specific Speculative Store Bypass MSR data */
- extern u64 x86_amd_ls_cfg_base;
+-extern void x86_spec_ctrl_set(u64);
+-
+ /* The Speculative Store Bypass disable variants */
+ enum ssb_mitigation {
+ 	SPEC_STORE_BYPASS_NONE,
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -151,7 +151,15 @@ u64 x86_spec_ctrl_get_default(void)
- }
- EXPORT_SYMBOL_GPL(x86_spec_ctrl_get_default);
+@@ -133,15 +133,6 @@ static const char *spectre_v2_strings[]
+ static enum spectre_v2_mitigation spectre_v2_enabled __ro_after_init =
+ 	SPECTRE_V2_NONE;
  
--void x86_spec_ctrl_set_guest(u64 guest_spec_ctrl)
-+/**
-+ * x86_spec_ctrl_set_guest - Set speculation control registers for the guest
-+ * @guest_spec_ctrl:		The guest content of MSR_SPEC_CTRL
-+ * @guest_virt_spec_ctrl:	The guest controlled bits of MSR_VIRT_SPEC_CTRL
-+ *				(may get translated to MSR_AMD64_LS_CFG bits)
-+ *
-+ * Avoids writing to the MSR if the content/bits are the same
-+ */
-+void x86_spec_ctrl_set_guest(u64 guest_spec_ctrl, u64 guest_virt_spec_ctrl)
+-void x86_spec_ctrl_set(u64 val)
+-{
+-	if (val & x86_spec_ctrl_mask)
+-		WARN_ONCE(1, "SPEC_CTRL MSR value 0x%16llx is unknown.\n", val);
+-	else
+-		wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base | val);
+-}
+-EXPORT_SYMBOL_GPL(x86_spec_ctrl_set);
+-
+ void
+ x86_virt_spec_ctrl(u64 guest_spec_ctrl, u64 guest_virt_spec_ctrl, bool setguest)
  {
- 	u64 host = x86_spec_ctrl_base;
- 
-@@ -168,7 +176,15 @@ void x86_spec_ctrl_set_guest(u64 guest_s
- }
- EXPORT_SYMBOL_GPL(x86_spec_ctrl_set_guest);
- 
--void x86_spec_ctrl_restore_host(u64 guest_spec_ctrl)
-+/**
-+ * x86_spec_ctrl_restore_host - Restore host speculation control registers
-+ * @guest_spec_ctrl:		The guest content of MSR_SPEC_CTRL
-+ * @guest_virt_spec_ctrl:	The guest controlled bits of MSR_VIRT_SPEC_CTRL
-+ *				(may get translated to MSR_AMD64_LS_CFG bits)
-+ *
-+ * Avoids writing to the MSR if the content/bits are the same
-+ */
-+void x86_spec_ctrl_restore_host(u64 guest_spec_ctrl, u64 guest_virt_spec_ctrl)
+@@ -503,7 +494,7 @@ static enum ssb_mitigation __init __ssb_
+ 		case X86_VENDOR_INTEL:
+ 			x86_spec_ctrl_base |= SPEC_CTRL_SSBD;
+ 			x86_spec_ctrl_mask &= ~SPEC_CTRL_SSBD;
+-			x86_spec_ctrl_set(SPEC_CTRL_SSBD);
++			wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
+ 			break;
+ 		case X86_VENDOR_AMD:
+ 			x86_amd_ssb_disable();
+@@ -615,7 +606,7 @@ int arch_prctl_spec_ctrl_get(struct task
+ void x86_spec_ctrl_setup_ap(void)
  {
- 	u64 host = x86_spec_ctrl_base;
+ 	if (boot_cpu_has(X86_FEATURE_MSR_SPEC_CTRL))
+-		x86_spec_ctrl_set(x86_spec_ctrl_base & ~x86_spec_ctrl_mask);
++		wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
  
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -192,6 +192,12 @@ struct vcpu_svm {
- 	} host;
- 
- 	u64 spec_ctrl;
-+	/*
-+	 * Contains guest-controlled bits of VIRT_SPEC_CTRL, which will be
-+	 * translated into the appropriate L2_CFG bits on the host to
-+	 * perform speculative control.
-+	 */
-+	u64 virt_spec_ctrl;
- 
- 	u32 *msrpm;
- 
-@@ -1910,6 +1916,7 @@ static void svm_vcpu_reset(struct kvm_vc
- 
- 	vcpu->arch.microcode_version = 0x01000065;
- 	svm->spec_ctrl = 0;
-+	svm->virt_spec_ctrl = 0;
- 
- 	if (!init_event) {
- 		svm->vcpu.arch.apic_base = APIC_DEFAULT_PHYS_BASE |
-@@ -5401,7 +5408,7 @@ static void svm_vcpu_run(struct kvm_vcpu
- 	 * is no need to worry about the conditional branch over the wrmsr
- 	 * being speculatively taken.
- 	 */
--	x86_spec_ctrl_set_guest(svm->spec_ctrl);
-+	x86_spec_ctrl_set_guest(svm->spec_ctrl, svm->virt_spec_ctrl);
- 
- 	asm volatile (
- 		"push %%" _ASM_BP "; \n\t"
-@@ -5525,7 +5532,7 @@ static void svm_vcpu_run(struct kvm_vcpu
- 	if (unlikely(!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL)))
- 		svm->spec_ctrl = native_read_msr(MSR_IA32_SPEC_CTRL);
- 
--	x86_spec_ctrl_restore_host(svm->spec_ctrl);
-+	x86_spec_ctrl_restore_host(svm->spec_ctrl, svm->virt_spec_ctrl);
- 
- 	reload_tss(vcpu);
- 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -9465,9 +9465,10 @@ static void __noclone vmx_vcpu_run(struc
- 	 * is no need to worry about the conditional branch over the wrmsr
- 	 * being speculatively taken.
- 	 */
--	x86_spec_ctrl_set_guest(vmx->spec_ctrl);
-+	x86_spec_ctrl_set_guest(vmx->spec_ctrl, 0);
- 
- 	vmx->__launched = vmx->loaded_vmcs->launched;
-+
- 	asm(
- 		/* Store host registers */
- 		"push %%" _ASM_DX "; push %%" _ASM_BP ";"
-@@ -9603,7 +9604,7 @@ static void __noclone vmx_vcpu_run(struc
- 	if (unlikely(!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL)))
- 		vmx->spec_ctrl = native_read_msr(MSR_IA32_SPEC_CTRL);
- 
--	x86_spec_ctrl_restore_host(vmx->spec_ctrl);
-+	x86_spec_ctrl_restore_host(vmx->spec_ctrl, 0);
- 
- 	/* Eliminate branch target predictions from guest mode */
- 	vmexit_fill_RSB();
+ 	if (ssb_mode == SPEC_STORE_BYPASS_DISABLE)
+ 		x86_amd_ssb_disable();
