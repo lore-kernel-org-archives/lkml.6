@@ -1,105 +1,309 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752198AbeEUKLR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 06:11:17 -0400
-Received: from foss.arm.com ([217.140.101.70]:46128 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751075AbeEUKLN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 06:11:13 -0400
-Date: Mon, 21 May 2018 11:11:08 +0100
-From: Patrick Bellasi <patrick.bellasi@arm.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>
-Subject: Re: [PATCH v3 2/2] cpufreq: schedutil: Cleanup and document iowait
- boost
-Message-ID: <20180521101108.GP30654@e110439-lin>
-References: <20180521085120.7902-1-patrick.bellasi@arm.com>
- <20180521085120.7902-3-patrick.bellasi@arm.com>
- <20180521095255.h62pdcf34bh344wu@vireshk-i7>
+        id S1752701AbeEUKLr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 06:11:47 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:55796 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752569AbeEUKLm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 06:11:42 -0400
+From: John Garry <john.garry@huawei.com>
+To: <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
+CC: <linux-scsi@vger.kernel.org>, <linuxarm@huawei.com>,
+        <linux-kernel@vger.kernel.org>, Xiang Chen <chenxiang66@hisilicon.com>,
+        "John Garry" <john.garry@huawei.com>
+Subject: [PATCH 06/13] scsi: hisi_sas: Create a scsi_host_template per HW module
+Date: Mon, 21 May 2018 18:09:18 +0800
+Message-ID: <1526897365-228549-7-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1526897365-228549-1-git-send-email-john.garry@huawei.com>
+References: <1526897365-228549-1-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180521095255.h62pdcf34bh344wu@vireshk-i7>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21-May 15:22, Viresh Kumar wrote:
-> On 21-05-18, 09:51, Patrick Bellasi wrote:
-> > diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-> > +static void sugov_iowait_boost(struct sugov_cpu *sg_cpu, u64 time,
-> > +			       unsigned int flags)
-> > +{
-> > +	bool set_iowait_boost = flags & SCHED_CPUFREQ_IOWAIT;
-> > +
-> > +	/* Reset boost if the CPU appears to have been idle enough */
-> > +	if (sg_cpu->iowait_boost &&
-> > +	    sugov_iowait_reset(sg_cpu, time, set_iowait_boost))
-> > +		return;
-> > +
-> > +	/* Boost only tasks waking up after IO */
-> > +	if (!set_iowait_boost)
-> > +		return;
-> > +
-> > +	/* Ensure boost doubles only one time at each request */
-> > +	if (sg_cpu->iowait_boost_pending)
-> > +		return;
-> > +	sg_cpu->iowait_boost_pending = true;
-> > +
-> > +	/* Double the boost at each request */
-> > +	if (sg_cpu->iowait_boost) {
-> > +		sg_cpu->iowait_boost <<= 1;
-> > +		if (sg_cpu->iowait_boost > sg_cpu->iowait_boost_max)
-> > +			sg_cpu->iowait_boost = sg_cpu->iowait_boost_max;
-> > +		return;
-> 
-> Maybe add "else" part of the if block and drop the "return" statement
-> here ?
+From: Xiang Chen <chenxiang66@hisilicon.com>
 
-If not "mandatory", I would prefer as it is: I'm running with a small
-stack size in my mind. :)
+When a SCSI host is registered, the SCSI mid-layer takes
+a reference to a module in Scsi_host.hostt.module. In doing
+this, we are prevented from removing the driver module for
+the host in dangerous scenario, like when a disk is mounted.
 
-This "bail out of a function as soon as possible" template allows me
-to see immediately that, for example in this function, once we decided
-to double the boost value there is anything more to do here.
+Currently there is only one scsi_host_template (sht) for
+all HW versions, and this is the main.c module. So this means
+that we can possibly remove the HW module in this dangerous
+scenario, as SCSI mid-layer is only referencing the main.c
+module.
 
-At the same time, the statement below it reads as the function
-default action.
+To fix this, create a sht per module, referencing that same
+module to create the Scsi host.
 
-Does it make any sense?
+Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
+Signed-off-by: John Garry <john.garry@huawei.com>
+---
+ drivers/scsi/hisi_sas/hisi_sas.h       |  8 +++++--
+ drivers/scsi/hisi_sas/hisi_sas_main.c  | 40 +++++++++-------------------------
+ drivers/scsi/hisi_sas/hisi_sas_v1_hw.c | 23 +++++++++++++++++++
+ drivers/scsi/hisi_sas/hisi_sas_v2_hw.c | 24 ++++++++++++++++++++
+ drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 24 +++++++++++++++++++-
+ 5 files changed, 86 insertions(+), 33 deletions(-)
 
-[...]
-
-> > +	/*
-> > +	 * Apply the current boost value: a CPU is boosted only if its current
-> > +	 * utilization is smaller then the current IO boost level.
-> > +	 */
-> >  	boost_util = sg_cpu->iowait_boost;
-> >  	boost_max = sg_cpu->iowait_boost_max;
-> > -
-> 
-> Maybe keep this blank line as is ?
-
-I've removed it because the above comment now refers to all these
-lines together.
-
-> >  	if (*util * boost_max < *max * boost_util) {
-> >  		*util = boost_util;
-> >  		*max = boost_max;
-> 
-> Otherwise looks good.
-> 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-
-Cheers
-
+diff --git a/drivers/scsi/hisi_sas/hisi_sas.h b/drivers/scsi/hisi_sas/hisi_sas.h
+index b4717bd..37c9a62 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas.h
++++ b/drivers/scsi/hisi_sas/hisi_sas.h
+@@ -248,6 +248,7 @@ struct hisi_sas_hw {
+ 				u8 reg_index, u8 reg_count, u8 *write_data);
+ 	int max_command_entries;
+ 	int complete_hdr_size;
++	struct scsi_host_template *sht;
+ };
+ 
+ struct hisi_hba {
+@@ -440,8 +441,6 @@ struct hisi_sas_slot_buf_table {
+ };
+ 
+ extern struct scsi_transport_template *hisi_sas_stt;
+-extern struct scsi_host_template *hisi_sas_sht;
+-
+ extern void hisi_sas_stop_phys(struct hisi_hba *hisi_hba);
+ extern int hisi_sas_alloc(struct hisi_hba *hisi_hba, struct Scsi_Host *shost);
+ extern void hisi_sas_free(struct hisi_hba *hisi_hba);
+@@ -456,6 +455,11 @@ extern int hisi_sas_probe(struct platform_device *pdev,
+ 			  const struct hisi_sas_hw *ops);
+ extern int hisi_sas_remove(struct platform_device *pdev);
+ 
++extern int hisi_sas_slave_configure(struct scsi_device *sdev);
++extern int hisi_sas_scan_finished(struct Scsi_Host *shost, unsigned long time);
++extern void hisi_sas_scan_start(struct Scsi_Host *shost);
++extern struct device_attribute *host_attrs[];
++extern int hisi_sas_host_reset(struct Scsi_Host *shost, int reset_type);
+ extern void hisi_sas_phy_down(struct hisi_hba *hisi_hba, int phy_no, int rdy);
+ extern void hisi_sas_slot_task_free(struct hisi_hba *hisi_hba,
+ 				    struct sas_task *task,
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
+index 0596553..7b8623b 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_main.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
+@@ -719,7 +719,7 @@ static int hisi_sas_dev_found(struct domain_device *device)
+ 	return rc;
+ }
+ 
+-static int hisi_sas_slave_configure(struct scsi_device *sdev)
++int hisi_sas_slave_configure(struct scsi_device *sdev)
+ {
+ 	struct domain_device *dev = sdev_to_domain_dev(sdev);
+ 	int ret = sas_slave_configure(sdev);
+@@ -731,15 +731,17 @@ static int hisi_sas_slave_configure(struct scsi_device *sdev)
+ 
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(hisi_sas_slave_configure);
+ 
+-static void hisi_sas_scan_start(struct Scsi_Host *shost)
++void hisi_sas_scan_start(struct Scsi_Host *shost)
+ {
+ 	struct hisi_hba *hisi_hba = shost_priv(shost);
+ 
+ 	hisi_hba->hw->phys_init(hisi_hba);
+ }
++EXPORT_SYMBOL_GPL(hisi_sas_scan_start);
+ 
+-static int hisi_sas_scan_finished(struct Scsi_Host *shost, unsigned long time)
++int hisi_sas_scan_finished(struct Scsi_Host *shost, unsigned long time)
+ {
+ 	struct hisi_hba *hisi_hba = shost_priv(shost);
+ 	struct sas_ha_struct *sha = &hisi_hba->sha;
+@@ -751,6 +753,7 @@ static int hisi_sas_scan_finished(struct Scsi_Host *shost, unsigned long time)
+ 	sas_drain_work(sha);
+ 	return 1;
+ }
++EXPORT_SYMBOL_GPL(hisi_sas_scan_finished);
+ 
+ static void hisi_sas_phyup_work(struct work_struct *work)
+ {
+@@ -1824,34 +1827,11 @@ void hisi_sas_kill_tasklets(struct hisi_hba *hisi_hba)
+ struct scsi_transport_template *hisi_sas_stt;
+ EXPORT_SYMBOL_GPL(hisi_sas_stt);
+ 
+-static struct device_attribute *host_attrs[] = {
++struct device_attribute *host_attrs[] = {
+ 	&dev_attr_phy_event_threshold,
+ 	NULL,
+ };
+-
+-static struct scsi_host_template _hisi_sas_sht = {
+-	.module			= THIS_MODULE,
+-	.name			= DRV_NAME,
+-	.queuecommand		= sas_queuecommand,
+-	.target_alloc		= sas_target_alloc,
+-	.slave_configure	= hisi_sas_slave_configure,
+-	.scan_finished		= hisi_sas_scan_finished,
+-	.scan_start		= hisi_sas_scan_start,
+-	.change_queue_depth	= sas_change_queue_depth,
+-	.bios_param		= sas_bios_param,
+-	.can_queue		= 1,
+-	.this_id		= -1,
+-	.sg_tablesize		= SG_ALL,
+-	.max_sectors		= SCSI_DEFAULT_MAX_SECTORS,
+-	.use_clustering		= ENABLE_CLUSTERING,
+-	.eh_device_reset_handler = sas_eh_device_reset_handler,
+-	.eh_target_reset_handler = sas_eh_target_reset_handler,
+-	.target_destroy		= sas_target_destroy,
+-	.ioctl			= sas_ioctl,
+-	.shost_attrs		= host_attrs,
+-};
+-struct scsi_host_template *hisi_sas_sht = &_hisi_sas_sht;
+-EXPORT_SYMBOL_GPL(hisi_sas_sht);
++EXPORT_SYMBOL_GPL(host_attrs);
+ 
+ static struct sas_domain_function_template hisi_sas_transport_ops = {
+ 	.lldd_dev_found		= hisi_sas_dev_found,
+@@ -2161,7 +2141,7 @@ static struct Scsi_Host *hisi_sas_shost_alloc(struct platform_device *pdev,
+ 	struct hisi_hba *hisi_hba;
+ 	struct device *dev = &pdev->dev;
+ 
+-	shost = scsi_host_alloc(hisi_sas_sht, sizeof(*hisi_hba));
++	shost = scsi_host_alloc(hw->sht, sizeof(*hisi_hba));
+ 	if (!shost) {
+ 		dev_err(dev, "scsi host alloc failed\n");
+ 		return NULL;
+@@ -2211,7 +2191,7 @@ static struct Scsi_Host *hisi_sas_shost_alloc(struct platform_device *pdev,
+ }
+ 
+ int hisi_sas_probe(struct platform_device *pdev,
+-			 const struct hisi_sas_hw *hw)
++		   const struct hisi_sas_hw *hw)
+ {
+ 	struct Scsi_Host *shost;
+ 	struct hisi_hba *hisi_hba;
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
+index 8fa79d0..8d5d857 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
+@@ -1788,6 +1788,28 @@ static int hisi_sas_v1_init(struct hisi_hba *hisi_hba)
+ 	return 0;
+ }
+ 
++static struct scsi_host_template sht_v1_hw = {
++	.name			= DRV_NAME,
++	.module			= THIS_MODULE,
++	.queuecommand		= sas_queuecommand,
++	.target_alloc		= sas_target_alloc,
++	.slave_configure	= hisi_sas_slave_configure,
++	.scan_finished		= hisi_sas_scan_finished,
++	.scan_start		= hisi_sas_scan_start,
++	.change_queue_depth	= sas_change_queue_depth,
++	.bios_param		= sas_bios_param,
++	.can_queue		= 1,
++	.this_id		= -1,
++	.sg_tablesize		= SG_ALL,
++	.max_sectors		= SCSI_DEFAULT_MAX_SECTORS,
++	.use_clustering		= ENABLE_CLUSTERING,
++	.eh_device_reset_handler = sas_eh_device_reset_handler,
++	.eh_target_reset_handler = sas_eh_target_reset_handler,
++	.target_destroy		= sas_target_destroy,
++	.ioctl			= sas_ioctl,
++	.shost_attrs		= host_attrs,
++};
++
+ static const struct hisi_sas_hw hisi_sas_v1_hw = {
+ 	.hw_init = hisi_sas_v1_init,
+ 	.setup_itct = setup_itct_v1_hw,
+@@ -1807,6 +1829,7 @@ static int hisi_sas_v1_init(struct hisi_hba *hisi_hba)
+ 	.get_wideport_bitmap = get_wideport_bitmap_v1_hw,
+ 	.max_command_entries = HISI_SAS_COMMAND_ENTRIES_V1_HW,
+ 	.complete_hdr_size = sizeof(struct hisi_sas_complete_v1_hdr),
++	.sht = &sht_v1_hw,
+ };
+ 
+ static int hisi_sas_v1_probe(struct platform_device *pdev)
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
+index fb0e966..8def327 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
+@@ -3501,6 +3501,29 @@ static int write_gpio_v2_hw(struct hisi_hba *hisi_hba, u8 reg_type,
+ 	return 0;
+ }
+ 
++
++static struct scsi_host_template sht_v2_hw = {
++	.name			= DRV_NAME,
++	.module			= THIS_MODULE,
++	.queuecommand		= sas_queuecommand,
++	.target_alloc		= sas_target_alloc,
++	.slave_configure	= hisi_sas_slave_configure,
++	.scan_finished		= hisi_sas_scan_finished,
++	.scan_start		= hisi_sas_scan_start,
++	.change_queue_depth	= sas_change_queue_depth,
++	.bios_param		= sas_bios_param,
++	.can_queue		= 1,
++	.this_id		= -1,
++	.sg_tablesize		= SG_ALL,
++	.max_sectors		= SCSI_DEFAULT_MAX_SECTORS,
++	.use_clustering		= ENABLE_CLUSTERING,
++	.eh_device_reset_handler = sas_eh_device_reset_handler,
++	.eh_target_reset_handler = sas_eh_target_reset_handler,
++	.target_destroy		= sas_target_destroy,
++	.ioctl			= sas_ioctl,
++	.shost_attrs		= host_attrs,
++};
++
+ static const struct hisi_sas_hw hisi_sas_v2_hw = {
+ 	.hw_init = hisi_sas_v2_init,
+ 	.setup_itct = setup_itct_v2_hw,
+@@ -3529,6 +3552,7 @@ static int write_gpio_v2_hw(struct hisi_hba *hisi_hba, u8 reg_type,
+ 	.soft_reset = soft_reset_v2_hw,
+ 	.get_phys_state = get_phys_state_v2_hw,
+ 	.write_gpio = write_gpio_v2_hw,
++	.sht = &sht_v2_hw,
+ };
+ 
+ static int hisi_sas_v2_probe(struct platform_device *pdev)
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+index a043d9c..13d2134 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+@@ -2015,6 +2015,28 @@ static int write_gpio_v3_hw(struct hisi_hba *hisi_hba, u8 reg_type,
+ 	return 0;
+ }
+ 
++static struct scsi_host_template sht_v3_hw = {
++	.name			= DRV_NAME,
++	.module			= THIS_MODULE,
++	.queuecommand		= sas_queuecommand,
++	.target_alloc		= sas_target_alloc,
++	.slave_configure	= hisi_sas_slave_configure,
++	.scan_finished		= hisi_sas_scan_finished,
++	.scan_start		= hisi_sas_scan_start,
++	.change_queue_depth	= sas_change_queue_depth,
++	.bios_param		= sas_bios_param,
++	.can_queue		= 1,
++	.this_id		= -1,
++	.sg_tablesize		= SG_ALL,
++	.max_sectors		= SCSI_DEFAULT_MAX_SECTORS,
++	.use_clustering		= ENABLE_CLUSTERING,
++	.eh_device_reset_handler = sas_eh_device_reset_handler,
++	.eh_target_reset_handler = sas_eh_target_reset_handler,
++	.target_destroy		= sas_target_destroy,
++	.ioctl			= sas_ioctl,
++	.shost_attrs		= host_attrs,
++};
++
+ static const struct hisi_sas_hw hisi_sas_v3_hw = {
+ 	.hw_init = hisi_sas_v3_init,
+ 	.setup_itct = setup_itct_v3_hw,
+@@ -2050,7 +2072,7 @@ static int write_gpio_v3_hw(struct hisi_hba *hisi_hba, u8 reg_type,
+ 	struct hisi_hba *hisi_hba;
+ 	struct device *dev = &pdev->dev;
+ 
+-	shost = scsi_host_alloc(hisi_sas_sht, sizeof(*hisi_hba));
++	shost = scsi_host_alloc(&sht_v3_hw, sizeof(*hisi_hba));
+ 	if (!shost) {
+ 		dev_err(dev, "shost alloc failed\n");
+ 		return NULL;
 -- 
-#include <best/regards.h>
-
-Patrick Bellasi
+1.9.1
