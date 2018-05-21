@@ -1,230 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752778AbeEUNmz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 09:42:55 -0400
-Received: from foss.arm.com ([217.140.101.70]:49826 "EHLO foss.arm.com"
+        id S1752819AbeEUNnF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 09:43:05 -0400
+Received: from foss.arm.com ([217.140.101.70]:49848 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752742AbeEUNmw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 09:42:52 -0400
-Subject: Re: [PATCH v11 0/4] iommu/arm-smmu: Add runtime pm/sleep support
-To: Vivek Gautam <vivek.gautam@codeaurora.org>, joro@8bytes.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, will.deacon@arm.com,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: rjw@rjwysocki.net, robdclark@gmail.com, sboyd@codeaurora.org,
-        sricharan@codeaurora.org, m.szyprowski@samsung.com,
-        architt@codeaurora.org, lukas@wunner.de, tfiga@chromium.org,
-        linux-arm-msm@vger.kernel.org
-References: <20180322102204.14760-1-vivek.gautam@codeaurora.org>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <dda4eee6-2144-7cbf-995b-d3f34a7c0184@arm.com>
-Date: Mon, 21 May 2018 14:42:46 +0100
+        id S1752783AbeEUNnB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 09:43:01 -0400
+Subject: Re: [PATCH 6/6] arm64: perf: Add support for chaining counters
+From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+To: Robin Murphy <robin.murphy@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        will.deacon@arm.com
+References: <1526638943-2110-1-git-send-email-suzuki.poulose@arm.com>
+ <1526638943-2110-7-git-send-email-suzuki.poulose@arm.com>
+ <32f2d870-9b9c-0b10-880f-cc99cf969bf6@arm.com>
+ <5d53fe1d-dbd9-2aad-73bd-0c4284540240@arm.com>
+Message-ID: <c8cb9280-c93d-89c4-43ed-179de8d46dfd@arm.com>
+Date: Mon, 21 May 2018 14:42:58 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180322102204.14760-1-vivek.gautam@codeaurora.org>
+In-Reply-To: <5d53fe1d-dbd9-2aad-73bd-0c4284540240@arm.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/03/18 10:22, Vivek Gautam wrote:
-> This series provides the support for turning on the arm-smmu's
-> clocks/power domains using runtime pm. This is done using the
-> recently introduced device links patches, which lets the smmu's
-> runtime to follow the master's runtime pm, so the smmu remains
-> powered only when the masters use it.
-> As not all implementations support clock/power gating, we are checking
-> for a valid 'smmu->dev's pm_domain' to conditionally enable the runtime
-> power management for such smmu implementations that can support it.
+On 18/05/18 16:57, Suzuki K Poulose wrote:
+> Hi Robin,
 > 
-> This series also adds support for Qcom's arm-smmu-v2 variant that
-> has different clocks and power requirements.
-> 
-> Took some reference from the exynos runtime patches [1].
-> 
-> With conditional runtime pm now, we avoid touching dev->power.lock
-> in fastpaths for smmu implementations that don't need to do anything
-> useful with pm_runtime.
-> This lets us to use the much-argued pm_runtime_get_sync/put_sync()
-> calls in map/unmap callbacks so that the clients do not have to
-> worry about handling any of the arm-smmu's power.
-> 
-> Previous version of this patch series is @ [5].
-> 
-> [v11]
->     * Some more cleanups for device link. We don't need an explicit
->       delete for device link from the driver, but just set the flag
->       DL_FLAG_AUTOREMOVE.
->       device_link_add() API description says -
->       "If the DL_FLAG_AUTOREMOVE is set, the link will be removed
->       automatically when the consumer device driver unbinds."
+> On 18/05/18 14:49, Robin Murphy wrote:
+>> On 18/05/18 11:22, Suzuki K Poulose wrote:
+>>> Add support for chained event counters. PMUv3 allows chaining
+>>> a pair of adjacent PMU counters (with the lower counter number
+>>> being always "even"). The low counter is programmed to count
+>>> the event of interest and the high counter(odd numbered) is
+>>> programmed with a special event code (0x1e - Chain). Thus
+>>> we need special allocation schemes to make the full use of
+>>> available counters. So, we allocate the counters from either
+>>> ends. i.e, chained counters are allocated from the lower
+>>> end in pairs of two and the normal counters are allocated
+>>> from the higher number. Also makes necessary changes to
+>>> handle the chained events as a single event with 2 counters.
+>>>
+>>> Cc: Mark Rutland <mark.rutland@arm.com>
+>>> Cc: Will Deacon <will.deacon@arm.com>
+>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-But then if the consumer subsequently rebinds, there's no opportunity to 
-recreate the link, and PM will just quietly stop functioning properly. 
-Given that it's a lot more reasonable for users to unload and reload 
-modules (or otherwise switch drivers) for a consumer device than it is 
-to unbind the SMMU driver or expect actual device hotplug, I'd rather do 
-nothing and theoretically leak links than autoremove them incorrectly.
+> 
+>>>   /*
+>>> @@ -845,8 +1016,14 @@ static int __armv8_pmuv3_map_event(struct perf_event *event,
+>>>                          &armv8_pmuv3_perf_cache_map,
+>>>                          ARMV8_PMU_EVTYPE_EVENT);
+>>> -    if (hw_event_id == ARMV8_PMUV3_PERFCTR_CPU_CYCLES)
+>>> +    if (hw_event_id == ARMV8_PMUV3_PERFCTR_CPU_CYCLES) {
+>>> +        /* Prevent chaining for cycle counter */
+>>
+>> Why? Sure, we want to avoid executing the chaining logic if we're scheduling a cycles event in the dedicated counter (which is perhaps what the comment above wanted to say), but if one ends up allocated into a regular counter (e.g. if the user asks for multiple cycle counts with different filters), then I don't see any reason to forbid that being chained.
+> 
+> Ah, I didn't think about that case. I was under the assumption that the
+> cycles are *only* placed on the cycle counter. I will take care of that.
+> Thanks for the review.
 
-AFAICS the previous discussion on this got as far as Lukas' suggestion 
-of adding an equivalent flag for supplier-managed links (which FWIW 
-sounds good to me), but seems to have stalled there.
+Robin, Mark, Will
 
-Robin.
+One potential problem I see with allowing chaining of the cycle counter
+*and* the promotion of cycle event to 64bit by default is when the user
+may actually be able to count 1 less event (due to the promotion of
+cycle event to 64bit and thus forcing to use chain, if the cycle counter
+is unavailable).
 
->     * Addressed the comments for 'smmu' in arm_smmu_map/unmap().
->     * Dropped the patch [10] that introduced device_link_del_dev() API.
-> 
-> [v10]
->     * Introduce device_link_del_dev() API to delete the link between
->       given consumer and supplier devices. The users of device link
->       do not need to store link pointer to delete the link later.
->       They can straightaway use this API by passing consumer and
->       supplier devices.
->     * Made corresponding changes to arm-smmu driver patch handling the
->       device links.
->     * Dropped the patch [9] that was adding device_link_find() API to
->       device core layer. device_link_del_dev() serves the purpose to
->       directly delete the link between two given devices.
-> 
-> [v9]
->     * Removed 'rpm_supported' flag, instead checking on pm_domain
->       to enable runtime pm.
->     * Creating device link only when the runtime pm is enabled, as we
->       don't need a device link besides managing the power dependency
->       between supplier and consumer devices.
->     * Introducing a patch to add device_link_find() API that finds
->       and existing link between supplier and consumer devices.
->       Also, made necessary change to device_link_add() to use this API.
->     * arm_smmu_remove_device() now uses this device_link_find() to find
->       the device link between smmu device and the master device, and then
->       delete this link.
->     * Dropped the destroy_domain_context() fix [8] as it was rather,
->       introducing catastrophically bad problem by destroying
->       'good dev's domain context.
->     * Added 'Reviwed-by' tag for Tomasz's review.
-> 
-> [v8]
->     * Major change -
->       - Added a flag 'rpm_supported' which each platform that supports
->         runtime pm, can enable, and we enable runtime_pm over arm-smmu
->         only when this flag is set.
->       - Adding the conditional pm_runtime_get/put() calls to .map, .unmap
->         and .attach_dev ops.
->       - Dropped the patch [6] that exported pm_runtim_get/put_suupliers(),
->         and also dropped the user driver patch [7] for these APIs.
-> 
->     * Clock code further cleanup
->       - doing only clk_bulk_enable() and clk_bulk_disable() in runtime pm
->         callbacks. We shouldn't be taking a slow path (clk_prepare/unprepare())
->         from these runtime pm callbacks. Thereby, moved clk_bulk_prepare() to
->         arm_smmu_device_probe(), and clk_bulk_unprepare() to
->         arm_smmu_device_remove().
->       - clk data filling to a common method arm_smmu_fill_clk_data() that
->         fills the clock ids and number of clocks.
-> 
->     * Addressed other nits and comments
->       - device_link_add() error path fixed.
->       - Fix for checking negative error value from pm_runtime_get_sync().
->       - Documentation redo.
-> 
->     * Added another patch fixing the error path in arm_smmu_attach_dev()
->       to destroy allocated domain context.
-> 
-> [v7]
->     * Addressed review comments given by Robin Murphy -
->       - Added device_link_del() in .remove_device path.
->       - Error path cleanup in arm_smmu_add_device().
->       - Added pm_runtime_get/put_sync() in .remove path, and replaced
->          pm_runtime_force_suspend() with pm_runtime_disable().
->       - clk_names cleanup in arm_smmu_init_clks()
->     * Added 'Reviewed-by' given by Rob H.
-> 
-> [V6]
->     * Added Ack given by Rafael to first patch in the series.
->     * Addressed Rob Herring's comment for adding soc specific compatible
->       string as well besides 'qcom,smmu-v2'.
-> 
-> [V5]
->     * Dropped runtime pm calls from "arm_smmu_unmap" op as discussed over
->       the list [3] for the last patch series.
->     * Added a patch to export pm_runtime_get/put_suppliers() APIs to the
->       series as agreed with Rafael [4].
->     * Added the related patch for msm drm iommu layer to use
->       pm_runtime_get/put_suppliers() APIs in msm_mmu_funcs.
->     * Dropped arm-mmu500 clock patch since that would break existing
->       platforms.
->     * Changed compatible 'qcom,msm8996-smmu-v2' to 'qcom,smmu-v2' to reflect
->       the IP version rather than the platform on which it is used.
->       The same IP is used across multiple platforms including msm8996,
->       and sdm845 etc.
->     * Using clock bulk APIs to handle the clocks available to the IP as
->       suggested by Stephen Boyd.
->     * The first patch in v4 version of the patch-series:
->       ("iommu/arm-smmu: Fix the error path in arm_smmu_add_device") has
->       already made it to mainline.
-> 
-> [V4]
->     * Reworked the clock handling part. We now take clock names as data
->       in the driver for supported compatible versions, and loop over them
->       to get, enable, and disable the clocks.
->     * Using qcom,msm8996 based compatibles for bindings instead of a generic
->       qcom compatible.
->     * Refactor MMU500 patch to just add the necessary clock names data and
->       corresponding bindings.
->     * Added the pm_runtime_get/put() calls in .unmap iommu op (fix added by
->       Stanimir on top of previous patch version.
->     * Added a patch to fix error path in arm_smmu_add_device()
->     * Removed patch 3/5 of V3 patch series that added qcom,smmu-v2 bindings.
-> 
-> [V3]
->     * Reworked the patches to keep the clocks init/enabling function
->       separately for each compatible.
-> 
->     * Added clocks bindings for MMU40x/500.
-> 
->     * Added a new compatible for qcom,smmu-v2 implementation and
->       the clock bindings for the same.
-> 
->     * Rebased on top of 4.11-rc1
-> 
-> [V2]
->     * Split the patches little differently.
-> 
->     * Addressed comments.
-> 
->     * Removed the patch #4 [2] from previous post
->       for arm-smmu context save restore. Planning to
->       post this separately after reworking/addressing Robin's
->       feedback.
-> 
->     * Reversed the sequence to disable clocks than enabling.
->       This was required for those cases where the
->       clocks are populated in a dependent order from DT.
-> 
-> [1] https://lkml.org/lkml/2016/10/20/70
-> [2] https://patchwork.kernel.org/patch/9389717/
-> [3] https://patchwork.kernel.org/patch/10204925/
-> [4] https://patchwork.kernel.org/patch/10102445/
-> [5] https://lkml.org/lkml/2018/3/14/127
-> [6] https://patchwork.kernel.org/patch/10204945/
-> [7] https://patchwork.kernel.org/patch/10204925/
-> [8] https://patchwork.kernel.org/patch/10254105/
-> [9] https://patchwork.kernel.org/patch/10277975/
-> [10] https://patchwork.kernel.org/patch/10281613/
-> 
-> Sricharan R (3):
->    iommu/arm-smmu: Add pm_runtime/sleep ops
->    iommu/arm-smmu: Invoke pm_runtime during probe, add/remove device
->    iommu/arm-smmu: Add the device_link between masters and smmu
-> 
-> Vivek Gautam (1):
->    iommu/arm-smmu: Add support for qcom,smmu-v2 variant
-> 
->   .../devicetree/bindings/iommu/arm,smmu.txt         |  42 +++++
->   drivers/iommu/arm-smmu.c                           | 178 +++++++++++++++++++--
->   2 files changed, 210 insertions(+), 10 deletions(-)
-> 
+So one option is to drop automatic promotion of the cycle counter to
+64bit and do it only when it is requested by the user and use either the
+Cycle counter (preferred) or fall back to chaining. That way, the user
+has the control over the number of events he can count using the given
+set of counters.
+
+Let me know your thoughts.
+
+Suzuki
