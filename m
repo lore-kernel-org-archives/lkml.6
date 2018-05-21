@@ -1,113 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751500AbeEUUob (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 16:44:31 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:43181 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751127AbeEUUo1 (ORCPT
+        id S1751569AbeEUUo5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 16:44:57 -0400
+Received: from mail-vk0-f43.google.com ([209.85.213.43]:39715 "EHLO
+        mail-vk0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750859AbeEUUoy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 16:44:27 -0400
-X-Google-Smtp-Source: AB8JxZrv7RgMLkZabXxp04MtnF7qxTnVcsRQvXLbG5AdrpfMC5yPL7semR9XFwuDfdhlQ7gSK3btfDiGciqZ9iGOnKU=
+        Mon, 21 May 2018 16:44:54 -0400
+X-Google-Smtp-Source: AB8JxZqkQfCLpDriKcd6CxqaBBG/vm16sc5WdNaB5zrbTe/YZ0n96D54CtaXsL3gHNIeyObPpmM9PNAzoV63E9CVQtU=
 MIME-Version: 1.0
-In-Reply-To: <20180521180927.18472-2-dmurphy@ti.com>
-References: <20180521180927.18472-1-dmurphy@ti.com> <20180521180927.18472-2-dmurphy@ti.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 21 May 2018 23:44:25 +0300
-Message-ID: <CAHp75VcShgaFoJVqbTGBXrrgEr-7JQcCLK4Qy-jydE5++f4VAQ@mail.gmail.com>
-Subject: Re: [PATCH v7 2/2] leds: lm3601x: Introduce the lm3601x LED driver
-To: Dan Murphy <dmurphy@ti.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>
+In-Reply-To: <20180521171415.00c56487@vento.lan>
+References: <20180521193951.GA16659@embeddedor.com> <20180521171415.00c56487@vento.lan>
+From: Devin Heitmueller <dheitmueller@kernellabs.com>
+Date: Mon, 21 May 2018 16:44:52 -0400
+Message-ID: <CAGoCfiwHPPJZABCtMgPzqvHNprnLn8qG9R0aT0b3Y8VfR_ta+g@mail.gmail.com>
+Subject: Re: [media] duplicate code in media drivers
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Devin Heitmueller <dheitmueller@linuxtv.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 9:09 PM, Dan Murphy <dmurphy@ti.com> wrote:
-> Introduce the family of LED devices that can
-> drive a torch, strobe or IR LED.
+>> diff -u -p drivers/media/dvb-frontends/au8522_decoder.c /tmp/nothing/media/dvb-frontends/au8522_decoder.c
+>> --- drivers/media/dvb-frontends/au8522_decoder.c
+>> +++ /tmp/nothing/media/dvb-frontends/au8522_decoder.c
+>> @@ -280,14 +280,9 @@ static void setup_decoder_defaults(struc
+>>                         AU8522_TOREGAAGC_REG0E5H_CVBS);
+>>         au8522_writereg(state, AU8522_REG016H, AU8522_REG016H_CVBS);
+>>
+>> -       if (is_svideo) {
+>>                 /* Despite what the table says, for the HVR-950q we still need
+>>                    to be in CVBS mode for the S-Video input (reason unknown). */
+>>                 /* filter_coef_type = 3; */
+>> -               filter_coef_type = 5;
+>> -       } else {
+>> -               filter_coef_type = 5;
+>> -       }
 >
-> The LED driver can be configured with a strobe
-> timer to execute a strobe flash.  The IR LED
-> brightness is controlled via the torch brightness
-> register.
->
-> The data sheet for each the LM36010 and LM36011
-> LED drivers can be found here:
-> http://www.ti.com/product/LM36010
-> http://www.ti.com/product/LM36011
+> Better ask Devin about this (c/c).
 
-Thanks for an update. My comments below.
+This was a case where the implementation didn't match the datasheet,
+and it wasn't clear why the filter coefficients weren't working
+properly.  Essentially I should have labeled that as a TODO or FIXME
+when I disabled the "right" value and forced it to always be five.  It
+was also likely that the filter coefficients would need to differ if
+taking video over the IF interface as opposed to CVBS/S-video, which
+is why I didn't want to get rid of the logic entirely.  That said, the
+only product I've ever seen with the tda18271 mated to the au8522 will
+likely never be supported for analog video under Linux for unrelated
+reasons.
 
-> +config LEDS_LM3601X
-> +       tristate "LED support for LM3601x Chips"
-> +       depends on LEDS_CLASS && I2C && OF
+That said, it's worked "good enough" since I wrote the code nine years
+ago, so if somebody wants to submit a patch to either get rid of the
+if() statement or mark it as a FIXME that will likely never actually
+get fixed, I wouldn't have an objection to either.
 
-Now OF here is superfluous.
-
-> +       depends on LEDS_CLASS_FLASH
-> +       select REGMAP_I2C
-> +       help
-> +         This option enables support for the TI LM3601x family
-> +         of flash, torch and indicator classes.
-
-> +#define LM3601X_TIMEOUT_MASK   0x1e
-> +#define LM3601X_ENABLE_MASK    0x03
-
-I dunno if GENMASK() will be better here.
-
-> +#define LM3601X_LOWER_STEP_US  40000
-> +#define LM3601X_UPPER_STEP_US  200000
-> +#define LM3601X_MIN_TIMEOUT_US 40000
-> +#define LM3601X_MAX_TIMEOUT_US 1600000
-
-> +#define LM3601X_TIMEOUT_XOVER  400000
-
-Missed unit?
-
-> +       ret = regmap_update_bits(led->regmap, LM3601X_ENABLE_REG,
-> +                               LM3601X_MODE_TORCH | LM3601X_MODE_IR_DRV,
-> +                               led_mode_val);
-
-> +               ret = regmap_update_bits(led->regmap, LM3601X_ENABLE_REG,
-> +                                       LM3601X_MODE_TORCH | LM3601X_MODE_IR_DRV,
-> +                                       LM3601X_MODE_STROBE);
-
-Perhaps
-#define ..._MODE_TORCH_WITH_IR   (..._TOCRH | ..._IR_DRV)
-?
-
-> +static int lm3601x_probe(struct i2c_client *client,
-> +                       const struct i2c_device_id *id)
-> +{
-> +       struct lm3601x_led *led;
-> +       int err;
-
-> +       err = lm3601x_parse_node(led, client->dev.of_node);
-> +       if (err < 0)
-
-> +               return -ENODEV;
-
-Shouldn't be
-
-return err;
-
-?
-
-> +       err = lm3601x_register_leds(led);
-> +
-> +       return err;
-
-I will leave this to maintainers since you seems have strong
-objections against more or less standard pattern, i.e.
-
-return lm3601x_register_leds();
-
-> +}
+Devin
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Devin J. Heitmueller - Kernel Labs
+http://www.kernellabs.com
