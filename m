@@ -1,37 +1,37 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZq0pGTfgA0v5tR7iwX/vwtyoiW9ji0/1Kn8EAy2VWMJ3yxOq+sop1loAdKk5APVNglLcZsU
-ARC-Seal: i=1; a=rsa-sha256; t=1526937259; cv=none;
+X-Google-Smtp-Source: AB8JxZr8RV6YGoRKpifTDB5CZ41yP3IpfYPfE4WevhQQsjFL1WGBoZHYE3Y/nDnfEaC0HSjaXgey
+ARC-Seal: i=1; a=rsa-sha256; t=1526937256; cv=none;
         d=google.com; s=arc-20160816;
-        b=I3envCc/4YpsWG9Du2y/KdDmxWZCCwBPbDtMgoWSfOh/iSFvUq87c2SSekk4KTocXv
-         PFOnE7FL3g0u7fovZYRImaNI2gGazOftl9dacjVXIRHraxlBnT0h5XDI8H7Qnekf4y3v
-         LRbexvGpdSytahcz6+9o/Rt0IbiKLwaW1Hp57PL7/0m2tWq1FnzGF9iLJpVKWB+RaE2s
-         bFoZJt7GPGRcXQwmoRDOPz+9JFiZZ2gzugBkD+TjmrMqa7lVRr/vjcoB0uM0CbOSBJYC
-         rKd2h9Ko/DGm7VPRyvrelSSs9h6yKZmCnUSdwwKx86caGKJAEmiid+4wT8zaP5Rt8day
-         2gXw==
+        b=W1ws8n2jnm25hT2VEJOhGbcEN/kYKraRW2XcEMQfDg3mE6aB//Z1uCcYtU3oWMW7RT
+         b6A3iptsTz9X97ZfDS9P/SXlGXTeBP4rpU632F6735cmOqg0AlU9A92iTPoiCGtKifTx
+         nhxw6uvj5jClt0KBFY6k5Aaxo7yvaPRGTLOuE3v6oo264uSRrRqOpvME5BNvzB4EiVGM
+         XLtE69FDEex7pPfzyq672Smkl2Io10okSL6UJywGM51hoI31FEUTIRdmr2VvZm4pEXzY
+         KLSzTXVjrb03oc8dAxdCvmPinQcIpFVrOXTpv0qAcb0RyAQVlXuCmrNBjAq1e6eHhuop
+         /x0w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=A2LAdUIP5ft+JjLHNatRYfxBwW/6my08kjtkaOOTPko=;
-        b=ZcKSKp10+IpD3BfGyiY4Qk6UD9l5tT1/xBqdrZqymgHiXBuY51qtmotys4VOY8v2my
-         JsRwTVT8lln8mHg0uPSyLNvS05krMBsz8aXZ9GQ8jBjl3ddwVlGDoEyzcWDzaPqBf8B/
-         7XQjMZlYQmx0AQL3S4BiGY4UYejPK5W1IHoP+vXi5aVirdvi8plCz2HzCTabj4Gzk4dl
-         6V8tA6tFNvnJ4JGl5xfElTZkkyEC4PppURTSGyD1qtQZG3O1GrdHtLliJz+hgSzsTDZl
-         xUZQPB+fuDaNZHNF3Z9hjzoeNL3xhMbj5D+0783kMoV10Oq0tU3+9MpwJO+/0VbhZY8X
-         pMmw==
+        bh=q9UHaKr50x/y0UEHenSk+ppu9n+fPXeMi6RmOFS8AG0=;
+        b=Aes8EqgKjLE+sDjPGffCV6P7pqMeMhdCbgBuk5DI0xuOxkK9VFrGl+yLokzAUGU2Q1
+         Y/8IOkF6XNiOXPwu/MUfnjo9xBqicu4jfAiDyHiU2ZyzuxoHknKs2HkaNDQmyR8Rr1S4
+         fYHVOnpo7wYXXAh42Rz5TgEYBPr7fsQ2uxCPJdvHRnzVHeCSxitwtmubJJgFU8hNTCw6
+         N/cl5/8BCbVw//9pkZvWBo0GttV+x93xCUFP/zl8AiDBeNHWoCIoKuIk9kL/h7aqFpvJ
+         XN7axaSWNavqpqjI60mas/LDRyCgNI2JJT1V/rU2GpBBNUTe29AW65ce4xQ++xNP0XPj
+         JVMw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=TMGY+IBO;
+       dkim=pass header.i=@kernel.org header.s=default header.b=Vx5MknxI;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=TMGY+IBO;
+       dkim=pass header.i=@kernel.org header.s=default header.b=Vx5MknxI;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	"Shuah Khan (Samsung OSG)" <shuah@kernel.org>
-Subject: [PATCH 4.9 04/87] usbip: usbip_host: fix NULL-ptr deref and use-after-free errors
-Date: Mon, 21 May 2018 23:10:40 +0200
-Message-Id: <20180521210420.592827543@linuxfoundation.org>
+Subject: [PATCH 4.9 03/87] usbip: usbip_host: run rebind from exit when module is removed
+Date: Mon, 21 May 2018 23:10:39 +0200
+Message-Id: <20180521210420.509211674@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210420.222671977@linuxfoundation.org>
 References: <20180521210420.222671977@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109763681798750?=
-X-GMAIL-MSGID: =?utf-8?q?1601109763681798750?=
+X-GMAIL-THRID: =?utf-8?q?1601109761016461702?=
+X-GMAIL-MSGID: =?utf-8?q?1601109761016461702?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,294 +52,131 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Shuah Khan (Samsung OSG) <shuah@kernel.org>
 
-commit 22076557b07c12086eeb16b8ce2b0b735f7a27e7 upstream.
+commit 7510df3f29d44685bab7b1918b61a8ccd57126a9 upstream.
 
-usbip_host updates device status without holding lock from stub probe,
-disconnect and rebind code paths. When multiple requests to import a
-device are received, these unprotected code paths step all over each
-other and drive fails with NULL-ptr deref and use-after-free errors.
+After removing usbip_host module, devices it releases are left without
+a driver. For example, when a keyboard or a mass storage device are
+bound to usbip_host when it is removed, these devices are no longer
+bound to any driver.
 
-The driver uses a table lock to protect the busid array for adding and
-deleting busids to the table. However, the probe, disconnect and rebind
-paths get the busid table entry and update the status without holding
-the busid table lock. Add a new finer grain lock to protect the busid
-entry. This new lock will be held to search and update the busid entry
-fields from get_busid_idx(), add_match_busid() and del_match_busid().
+Fix it to run device_attach() from the module exit routine to restore
+the devices to their original drivers. This includes cleanup changes
+and moving device_attach() code to a common routine to be called from
+rebind_store() and usbip_host_exit().
 
-match_busid_show() does the same to access the busid entry fields.
-
-get_busid_priv() changed to return the pointer to the busid entry holding
-the busid lock. stub_probe(), stub_disconnect() and stub_device_rebind()
-call put_busid_priv() to release the busid lock before returning. This
-changes fixes the unprotected code paths eliminating the race conditions
-in updating the busid entries.
-
-Reported-by: Jakub Jirasek
 Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
 Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/usbip/stub.h      |    2 ++
- drivers/usb/usbip/stub_dev.c  |   33 +++++++++++++++++++++++----------
- drivers/usb/usbip/stub_main.c |   40 +++++++++++++++++++++++++++++++++++-----
- 3 files changed, 60 insertions(+), 15 deletions(-)
+ drivers/usb/usbip/stub_dev.c  |    6 ----
+ drivers/usb/usbip/stub_main.c |   60 +++++++++++++++++++++++++++++++++++-------
+ 2 files changed, 52 insertions(+), 14 deletions(-)
 
---- a/drivers/usb/usbip/stub.h
-+++ b/drivers/usb/usbip/stub.h
-@@ -87,6 +87,7 @@ struct bus_id_priv {
- 	struct stub_device *sdev;
- 	struct usb_device *udev;
- 	char shutdown_busid;
-+	spinlock_t busid_lock;
- };
- 
- /* stub_priv is allocated from stub_priv_cache */
-@@ -97,6 +98,7 @@ extern struct usb_device_driver stub_dri
- 
- /* stub_main.c */
- struct bus_id_priv *get_busid_priv(const char *busid);
-+void put_busid_priv(struct bus_id_priv *bid);
- int del_match_busid(char *busid);
- void stub_device_cleanup_urbs(struct stub_device *sdev);
- 
 --- a/drivers/usb/usbip/stub_dev.c
 +++ b/drivers/usb/usbip/stub_dev.c
-@@ -314,7 +314,7 @@ static int stub_probe(struct usb_device
- 	struct stub_device *sdev = NULL;
- 	const char *udev_busid = dev_name(&udev->dev);
- 	struct bus_id_priv *busid_priv;
--	int rc;
-+	int rc = 0;
- 
- 	dev_dbg(&udev->dev, "Enter probe\n");
- 
-@@ -331,13 +331,15 @@ static int stub_probe(struct usb_device
- 		 * other matched drivers by the driver core.
- 		 * See driver_probe_device() in driver/base/dd.c
- 		 */
--		return -ENODEV;
-+		rc = -ENODEV;
-+		goto call_put_busid_priv;
- 	}
- 
- 	if (udev->descriptor.bDeviceClass == USB_CLASS_HUB) {
- 		dev_dbg(&udev->dev, "%s is a usb hub device... skip!\n",
- 			 udev_busid);
--		return -ENODEV;
-+		rc = -ENODEV;
-+		goto call_put_busid_priv;
- 	}
- 
- 	if (!strcmp(udev->bus->bus_name, "vhci_hcd")) {
-@@ -345,13 +347,16 @@ static int stub_probe(struct usb_device
- 			"%s is attached on vhci_hcd... skip!\n",
- 			udev_busid);
- 
--		return -ENODEV;
-+		rc = -ENODEV;
-+		goto call_put_busid_priv;
- 	}
- 
- 	/* ok, this is my device */
- 	sdev = stub_device_alloc(udev);
--	if (!sdev)
--		return -ENOMEM;
-+	if (!sdev) {
-+		rc = -ENOMEM;
-+		goto call_put_busid_priv;
-+	}
- 
- 	dev_info(&udev->dev,
- 		"usbip-host: register new device (bus %u dev %u)\n",
-@@ -383,7 +388,9 @@ static int stub_probe(struct usb_device
- 	}
- 	busid_priv->status = STUB_BUSID_ALLOC;
- 
--	return 0;
-+	rc = 0;
-+	goto call_put_busid_priv;
-+
- err_files:
- 	usb_hub_release_port(udev->parent, udev->portnum,
- 			     (struct usb_dev_state *) udev);
-@@ -393,6 +400,9 @@ err_port:
- 
+@@ -462,12 +462,8 @@ static void stub_disconnect(struct usb_d
  	busid_priv->sdev = NULL;
  	stub_device_free(sdev);
-+
-+call_put_busid_priv:
-+	put_busid_priv(busid_priv);
- 	return rc;
- }
  
-@@ -431,7 +441,7 @@ static void stub_disconnect(struct usb_d
- 	/* get stub_device */
- 	if (!sdev) {
- 		dev_err(&udev->dev, "could not get device");
--		return;
-+		goto call_put_busid_priv;
- 	}
- 
- 	dev_set_drvdata(&udev->dev, NULL);
-@@ -446,12 +456,12 @@ static void stub_disconnect(struct usb_d
- 				  (struct usb_dev_state *) udev);
- 	if (rc) {
- 		dev_dbg(&udev->dev, "unable to release port\n");
--		return;
-+		goto call_put_busid_priv;
- 	}
- 
- 	/* If usb reset is called from event handler */
- 	if (usbip_in_eh(current))
--		return;
-+		goto call_put_busid_priv;
- 
- 	/* shutdown the current connection */
- 	shutdown_busid(busid_priv);
-@@ -464,6 +474,9 @@ static void stub_disconnect(struct usb_d
- 
- 	if (busid_priv->status == STUB_BUSID_ALLOC)
+-	if (busid_priv->status == STUB_BUSID_ALLOC) {
++	if (busid_priv->status == STUB_BUSID_ALLOC)
  		busid_priv->status = STUB_BUSID_ADDED;
-+
-+call_put_busid_priv:
-+	put_busid_priv(busid_priv);
+-	} else {
+-		busid_priv->status = STUB_BUSID_OTHER;
+-		del_match_busid((char *)udev_busid);
+-	}
  }
  
  #ifdef CONFIG_PM
 --- a/drivers/usb/usbip/stub_main.c
 +++ b/drivers/usb/usbip/stub_main.c
-@@ -40,6 +40,8 @@ static spinlock_t busid_table_lock;
+@@ -28,6 +28,7 @@
+ #define DRIVER_DESC "USB/IP Host Driver"
  
- static void init_busid_table(void)
- {
-+	int i;
+ struct kmem_cache *stub_priv_cache;
 +
- 	/*
- 	 * This also sets the bus_table[i].status to
- 	 * STUB_BUSID_OTHER, which is 0.
-@@ -47,6 +49,9 @@ static void init_busid_table(void)
- 	memset(busid_table, 0, sizeof(busid_table));
- 
- 	spin_lock_init(&busid_table_lock);
-+
-+	for (i = 0; i < MAX_BUSID; i++)
-+		spin_lock_init(&busid_table[i].busid_lock);
- }
- 
  /*
-@@ -58,15 +63,20 @@ static int get_busid_idx(const char *bus
- 	int i;
- 	int idx = -1;
+  * busid_tables defines matching busids that usbip can grab. A user can change
+  * dynamically what device is locally used and what device is exported to a
+@@ -184,6 +185,51 @@ static ssize_t store_match_busid(struct
+ static DRIVER_ATTR(match_busid, S_IRUSR | S_IWUSR, show_match_busid,
+ 		   store_match_busid);
  
--	for (i = 0; i < MAX_BUSID; i++)
-+	for (i = 0; i < MAX_BUSID; i++) {
-+		spin_lock(&busid_table[i].busid_lock);
- 		if (busid_table[i].name[0])
- 			if (!strncmp(busid_table[i].name, busid, BUSID_SIZE)) {
- 				idx = i;
-+				spin_unlock(&busid_table[i].busid_lock);
- 				break;
- 			}
-+		spin_unlock(&busid_table[i].busid_lock);
-+	}
- 	return idx;
- }
- 
-+/* Returns holding busid_lock. Should call put_busid_priv() to unlock */
- struct bus_id_priv *get_busid_priv(const char *busid)
- {
- 	int idx;
-@@ -74,13 +84,21 @@ struct bus_id_priv *get_busid_priv(const
- 
- 	spin_lock(&busid_table_lock);
- 	idx = get_busid_idx(busid);
--	if (idx >= 0)
-+	if (idx >= 0) {
- 		bid = &(busid_table[idx]);
-+		/* get busid_lock before returning */
-+		spin_lock(&bid->busid_lock);
-+	}
- 	spin_unlock(&busid_table_lock);
- 
- 	return bid;
- }
- 
-+void put_busid_priv(struct bus_id_priv *bid)
++static int do_rebind(char *busid, struct bus_id_priv *busid_priv)
 +{
-+	spin_unlock(&bid->busid_lock);
++	int ret;
++
++	/* device_attach() callers should hold parent lock for USB */
++	if (busid_priv->udev->dev.parent)
++		device_lock(busid_priv->udev->dev.parent);
++	ret = device_attach(&busid_priv->udev->dev);
++	if (busid_priv->udev->dev.parent)
++		device_unlock(busid_priv->udev->dev.parent);
++	if (ret < 0) {
++		dev_err(&busid_priv->udev->dev, "rebind failed\n");
++		return ret;
++	}
++	return 0;
 +}
 +
- static int add_match_busid(char *busid)
- {
- 	int i;
-@@ -93,15 +111,19 @@ static int add_match_busid(char *busid)
- 		goto out;
- 	}
- 
--	for (i = 0; i < MAX_BUSID; i++)
-+	for (i = 0; i < MAX_BUSID; i++) {
-+		spin_lock(&busid_table[i].busid_lock);
- 		if (!busid_table[i].name[0]) {
- 			strlcpy(busid_table[i].name, busid, BUSID_SIZE);
- 			if ((busid_table[i].status != STUB_BUSID_ALLOC) &&
- 			    (busid_table[i].status != STUB_BUSID_REMOV))
- 				busid_table[i].status = STUB_BUSID_ADDED;
- 			ret = 0;
-+			spin_unlock(&busid_table[i].busid_lock);
- 			break;
- 		}
-+		spin_unlock(&busid_table[i].busid_lock);
-+	}
- 
- out:
- 	spin_unlock(&busid_table_lock);
-@@ -122,6 +144,8 @@ int del_match_busid(char *busid)
- 	/* found */
- 	ret = 0;
- 
-+	spin_lock(&busid_table[idx].busid_lock);
++static void stub_device_rebind(void)
++{
++#if IS_MODULE(CONFIG_USBIP_HOST)
++	struct bus_id_priv *busid_priv;
++	int i;
 +
- 	if (busid_table[idx].status == STUB_BUSID_OTHER)
- 		memset(busid_table[idx].name, 0, BUSID_SIZE);
- 
-@@ -129,6 +153,7 @@ int del_match_busid(char *busid)
- 	    (busid_table[idx].status != STUB_BUSID_ADDED))
- 		busid_table[idx].status = STUB_BUSID_REMOV;
- 
-+	spin_unlock(&busid_table[idx].busid_lock);
- out:
- 	spin_unlock(&busid_table_lock);
- 
-@@ -141,9 +166,12 @@ static ssize_t show_match_busid(struct d
- 	char *out = buf;
- 
- 	spin_lock(&busid_table_lock);
--	for (i = 0; i < MAX_BUSID; i++)
++	/* update status to STUB_BUSID_OTHER so probe ignores the device */
++	spin_lock(&busid_table_lock);
 +	for (i = 0; i < MAX_BUSID; i++) {
-+		spin_lock(&busid_table[i].busid_lock);
- 		if (busid_table[i].name[0])
- 			out += sprintf(out, "%s ", busid_table[i].name);
-+		spin_unlock(&busid_table[i].busid_lock);
++		if (busid_table[i].name[0] &&
++		    busid_table[i].shutdown_busid) {
++			busid_priv = &(busid_table[i]);
++			busid_priv->status = STUB_BUSID_OTHER;
++		}
 +	}
- 	spin_unlock(&busid_table_lock);
- 	out += sprintf(out, "\n");
- 
-@@ -219,7 +247,7 @@ static void stub_device_rebind(void)
- 	}
- 	spin_unlock(&busid_table_lock);
- 
--	/* now run rebind */
-+	/* now run rebind - no need to hold locks. driver files are removed */
- 	for (i = 0; i < MAX_BUSID; i++) {
- 		if (busid_table[i].name[0] &&
- 		    busid_table[i].shutdown_busid) {
-@@ -249,6 +277,8 @@ static ssize_t rebind_store(struct devic
- 
++	spin_unlock(&busid_table_lock);
++
++	/* now run rebind */
++	for (i = 0; i < MAX_BUSID; i++) {
++		if (busid_table[i].name[0] &&
++		    busid_table[i].shutdown_busid) {
++			busid_priv = &(busid_table[i]);
++			do_rebind(busid_table[i].name, busid_priv);
++		}
++	}
++#endif
++}
++
+ static ssize_t rebind_store(struct device_driver *dev, const char *buf,
+ 				 size_t count)
+ {
+@@ -204,16 +250,9 @@ static ssize_t rebind_store(struct devic
  	/* mark the device for deletion so probe ignores it during rescan */
  	bid->status = STUB_BUSID_OTHER;
-+	/* release the busid lock */
-+	put_busid_priv(bid);
  
- 	ret = do_rebind((char *) buf, bid);
- 	if (ret < 0)
+-	/* device_attach() callers should hold parent lock for USB */
+-	if (bid->udev->dev.parent)
+-		device_lock(bid->udev->dev.parent);
+-	ret = device_attach(&bid->udev->dev);
+-	if (bid->udev->dev.parent)
+-		device_unlock(bid->udev->dev.parent);
+-	if (ret < 0) {
+-		dev_err(&bid->udev->dev, "rebind failed\n");
++	ret = do_rebind((char *) buf, bid);
++	if (ret < 0)
+ 		return ret;
+-	}
+ 
+ 	/* delete device from busid_table */
+ 	del_match_busid((char *) buf);
+@@ -339,6 +378,9 @@ static void __exit usbip_host_exit(void)
+ 	 */
+ 	usb_deregister_device_driver(&stub_driver);
+ 
++	/* initiate scan to attach devices */
++	stub_device_rebind();
++
+ 	kmem_cache_destroy(stub_priv_cache);
+ }
+ 
