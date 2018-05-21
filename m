@@ -1,142 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751694AbeEUKye (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 06:54:34 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:47000 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750947AbeEUKyc (ORCPT
+        id S1752684AbeEUKyo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 06:54:44 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:37746 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751078AbeEUKyi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 06:54:32 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: jacopo mondi <jacopo@jmondi.org>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        niklas.soderlund@ragnatech.se, horms@verge.net.au, geert@glider.be,
-        magnus.damm@gmail.com, robh+dt@kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] arm64: dts: renesas: draak: Describe CVBS input
-Date: Mon, 21 May 2018 13:54:55 +0300
-Message-ID: <6943843.2osudLfTFd@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20180521095705.GC4432@w540>
-References: <1526654878-11143-1-git-send-email-jacopo+renesas@jmondi.org> <1569661.saMqNra8vc@avalon> <20180521095705.GC4432@w540>
+        Mon, 21 May 2018 06:54:38 -0400
+Date: Mon, 21 May 2018 11:54:28 +0100
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Ilia Lin <ilialin@codeaurora.org>
+Cc: viresh.kumar@linaro.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] cpufreq: Add Kryo CPU scaling driver
+Message-ID: <20180521105428.GM17671@n2100.armlinux.org.uk>
+References: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
+ <1526898690-4018-1-git-send-email-ilialin@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1526898690-4018-1-git-send-email-ilialin@codeaurora.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4LAseVB032538
 
-Hi Jacopo,
+On Mon, May 21, 2018 at 01:31:30PM +0300, Ilia Lin wrote:
+> +#define SILVER_LEAD	0
+> +#define GOLD_LEAD	2
 
-On Monday, 21 May 2018 12:57:05 EEST jacopo mondi wrote:
-> On Fri, May 18, 2018 at 06:12:15PM +0300, Laurent Pinchart wrote:
-> > On Friday, 18 May 2018 17:47:57 EEST Jacopo Mondi wrote:
-> >> Describe CVBS video input through analog video decoder ADV7180
-> >> connected to video input interface VIN4.
-> >> 
-> >> The video input signal path is shared with HDMI video input, and
-> >> selected by on-board switches SW-53 and SW-54 with CVBS input selected
-> >> by the default switches configuration.
-> >> 
-> >> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> >> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> >> 
-> >> ---
-> >> v2 -> v3:
-> >> - Add comment to describe the shared input video path
-> >> - Add my SoB and Niklas' R-b tags
-> >> ---
-> >> 
-> >>  arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 42 +++++++++++++++++++
-> >>  1 file changed, 42 insertions(+)
-> >> 
-> >> diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-> >> b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts index 9d73de8..95745fc
-> >> 100644
-> >> --- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-> >> +++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-> >> @@ -142,6 +142,11 @@
-> >>  		groups = "usb0";
-> >>  		function = "usb0";
-> >>  	};
-> >> +
-> >> +	vin4_pins_cvbs: vin4 {
-> >> +		groups = "vin4_data8", "vin4_sync", "vin4_clk";
-> >> +		function = "vin4";
-> >> +	};
-> >>  };
-> >>  
-> >>  &i2c0 {
-> >> @@ -154,6 +159,23 @@
-> >>  		reg = <0x50>;
-> >>  		pagesize = <8>;
-> >>  	};
-> >> +
-> >> +	analog-video@20 {
-> >> +		compatible = "adi,adv7180";
-> >> +		reg = <0x20>;
-> >> +
-> >> +		port {
-> > 
-> > The adv7180 DT bindings document the output port as 3 or 6 (respectively
-> > for the CP and ST versions of the chip). You should thus number the port.
-> > Apart from that the patch looks good.
-> 
-> I admit I have barely copied this from Gen-2 boards DTS, but reading
-> the driver code and binding description again, I think this is
-> correct, as the output port numbering and mandatory input port (which
-> is missing here) only apply to adv7180cp/st chip versions.
-> 
-> Here we describe plain adv7180, no need to number output ports afaict.
+Okay, two different values here, but "GOLD_LEAD" appears unused.
 
-Indeed, my bad.
+> +	cpu_dev_silver = get_cpu_device(SILVER_LEAD);
+> +	if (NULL == cpu_dev_silver)
+> +		return -ENODEV;
+> +
+> +	cpu_dev_gold = get_cpu_device(SILVER_LEAD);
+> +	if (NULL == cpu_dev_gold)
+> +		return -ENODEV;
 
-Shouldn't you however use "adi,adv7180cp" as that's the chip we are using ? 
-The "adi,adv7180" has no port documented in its DT bindings, so it shouldn't 
-have any port node at all.
+get_cpu_device() takes the logical CPU number.  So the above gets CPU 0
+each time, and so cpu_dev_silver == cpu_dev_gold here.  So what's the
+point of the second get_cpu_device() ?  If it's supposed to be:
 
-> >> +			/*
-> >> +			 * The VIN4 video input path is shared between
-> >> +			 * CVBS and HDMI inputs through SW[49-54] switches.
-> >> +			 *
-> >> +			 * CVBS is the default selection, link it to VIN4 here.
-> >> +			 */
-> >> +			adv7180_out: endpoint {
-> >> +				remote-endpoint = <&vin4_in>;
-> >> +			};
-> >> +		};
-> >> +	};
-> >>  };
-> >>  
-> >>  &i2c1 {
-> >> @@ -246,3 +268,23 @@
-> >>  	timeout-sec = <60>;
-> >>  	status = "okay";
-> >>  };
-> >> +
-> >> +&vin4 {
-> >> +	pinctrl-0 = <&vin4_pins_cvbs>;
-> >> +	pinctrl-names = "default";
-> >> +
-> >> +	status = "okay";
-> >> +
-> >> +	ports {
-> >> +		#address-cells = <1>;
-> >> +		#size-cells = <0>;
-> >> +
-> >> +		port@0 {
-> >> +			reg = <0>;
-> >> +
-> >> +			vin4_in: endpoint {
-> >> +				remote-endpoint = <&adv7180_out>;
-> >> +			};
-> >> +		};
-> >> +	};
-> >> +};
+	cpu_dev_gold = get_cpu_device(GOLD_LEAD);
+
+That would get CPU 2, but in terms of these defines, it doesn't make that
+much sense.  What exactly does "silver lead" and "gold lead" refer to in
+these definitions?
+
+> +	opp_silver = dev_pm_opp_set_supported_hw(cpu_dev_silver,&versions,1);
+> +	if (IS_ERR(opp_silver)) {
+> +		dev_err(cpu_dev_silver, "Failed to set supported hardware\n");
+> +		ret = PTR_ERR(opp_silver);
+> +		goto free_np;
+> +	}
+> +
+> +	opp_gold = dev_pm_opp_set_supported_hw(cpu_dev_gold,&versions,1);
+> +	if (IS_ERR(opp_gold)) {
+> +		dev_err(cpu_dev_gold, "Failed to set supported hardware\n");
+> +		ret = PTR_ERR(opp_gold);
+> +		goto free_opp_silver;
+> +	}
+
+Given that cpu_dev_silver == cpu_dev_gold, doesn't the second call to
+dev_pm_opp_set_supported_hw() always fail, as opp_table->supported_hw
+will be set by the first call?
+
+To me, this driver looks completely useless as it will always fail to
+initialise, and I question whether this code has even been runtime
+tested.
 
 -- 
-Regards,
-
-Laurent Pinchart
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+According to speedtest.net: 8.21Mbps down 510kbps up
