@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753602AbeEURgg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 13:36:36 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:45300 "EHLO
+        id S1753549AbeEURgy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 13:36:54 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:45314 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753449AbeEURgU (ORCPT
+        with ESMTP id S1753536AbeEURg0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 13:36:20 -0400
+        Mon, 21 May 2018 13:36:26 -0400
 From: Gabriel Krisman Bertazi <krisman@collabora.co.uk>
 To: viro@ZenIV.linux.org.uk
 Cc: jra@google.com, tytso@mit.edu, olaf@sgi.com, darrick.wong@oracle.com,
         kernel@lists.collabora.co.uk, linux-fsdevel@vger.kernel.org,
         david@fromorbit.com, jack@suse.cz, linux-kernel@vger.kernel.org,
         Gabriel Krisman Bertazi <krisman@collabora.co.uk>
-Subject: [PATCH v2 03/15] nls: Wrap charset hooks in ops structure
-Date: Mon, 21 May 2018 14:36:05 -0300
-Message-Id: <20180521173617.31625-4-krisman@collabora.co.uk>
+Subject: [PATCH v2 04/15] nls: Split default charset from NLS core
+Date: Mon, 21 May 2018 14:36:06 -0300
+Message-Id: <20180521173617.31625-5-krisman@collabora.co.uk>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521173617.31625-1-krisman@collabora.co.uk>
 References: <20180521173617.31625-1-krisman@collabora.co.uk>
@@ -23,1276 +23,258 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the exception of the struct declaration, this patch was generated
-by the following Coccinelle script:
-
-<smpl>
-
-@nlstable@
-identifier p;
-expression uni2char_fn;
-expression char2uni_fn;
-
-@@
-static struct nls_table p = {
--       .char2uni = char2uni_fn,
--       .uni2char = uni2char_fn,
-+       .ops = &charset_ops,
-};
-
-@createops@
-identifier nlstable.p;
-expression nlstable.uni2char_fn;
-expression nlstable.char2uni_fn;
-@@
-
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char_fn,
-+	.char2uni = char2uni_fn,
-+};
-+
-static struct nls_table p = {};
-
-@@
-struct nls_table *c;
-@@
-(
-- c->uni2char
-+ c->ops->uni2char
-|
-- c->char2uni
-+ c->ops->char2uni
-)
-
-</smpl>
+Changes since v1:
+  - Fix build as a module (kbuild test robot)
 
 Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.co.uk>
 ---
- fs/nls/mac-celtic.c     |  8 ++++++--
- fs/nls/mac-centeuro.c   |  8 ++++++--
- fs/nls/mac-croatian.c   |  8 ++++++--
- fs/nls/mac-cyrillic.c   |  8 ++++++--
- fs/nls/mac-gaelic.c     |  8 ++++++--
- fs/nls/mac-greek.c      |  8 ++++++--
- fs/nls/mac-iceland.c    |  8 ++++++--
- fs/nls/mac-inuit.c      |  8 ++++++--
- fs/nls/mac-roman.c      |  8 ++++++--
- fs/nls/mac-romanian.c   |  8 ++++++--
- fs/nls/mac-turkish.c    |  8 ++++++--
- fs/nls/nls_ascii.c      |  8 ++++++--
- fs/nls/nls_base.c       |  8 ++++++--
- fs/nls/nls_cp1250.c     |  8 ++++++--
- fs/nls/nls_cp1251.c     |  8 ++++++--
- fs/nls/nls_cp1255.c     |  8 ++++++--
- fs/nls/nls_cp437.c      |  8 ++++++--
- fs/nls/nls_cp737.c      |  8 ++++++--
- fs/nls/nls_cp775.c      |  8 ++++++--
- fs/nls/nls_cp850.c      |  8 ++++++--
- fs/nls/nls_cp852.c      |  8 ++++++--
- fs/nls/nls_cp855.c      |  8 ++++++--
- fs/nls/nls_cp857.c      |  8 ++++++--
- fs/nls/nls_cp860.c      |  8 ++++++--
- fs/nls/nls_cp861.c      |  8 ++++++--
- fs/nls/nls_cp862.c      |  8 ++++++--
- fs/nls/nls_cp863.c      |  8 ++++++--
- fs/nls/nls_cp864.c      |  8 ++++++--
- fs/nls/nls_cp865.c      |  8 ++++++--
- fs/nls/nls_cp866.c      |  8 ++++++--
- fs/nls/nls_cp869.c      |  8 ++++++--
- fs/nls/nls_cp874.c      |  8 ++++++--
- fs/nls/nls_cp932.c      |  8 ++++++--
- fs/nls/nls_cp936.c      |  8 ++++++--
- fs/nls/nls_cp949.c      |  8 ++++++--
- fs/nls/nls_cp950.c      |  8 ++++++--
- fs/nls/nls_euc-jp.c     |  8 ++++++--
- fs/nls/nls_iso8859-1.c  |  8 ++++++--
- fs/nls/nls_iso8859-13.c |  8 ++++++--
- fs/nls/nls_iso8859-14.c |  8 ++++++--
- fs/nls/nls_iso8859-15.c |  8 ++++++--
- fs/nls/nls_iso8859-2.c  |  8 ++++++--
- fs/nls/nls_iso8859-3.c  |  8 ++++++--
- fs/nls/nls_iso8859-4.c  |  8 ++++++--
- fs/nls/nls_iso8859-5.c  |  8 ++++++--
- fs/nls/nls_iso8859-6.c  |  8 ++++++--
- fs/nls/nls_iso8859-7.c  |  8 ++++++--
- fs/nls/nls_iso8859-9.c  |  8 ++++++--
- fs/nls/nls_koi8-r.c     |  8 ++++++--
- fs/nls/nls_koi8-ru.c    |  8 ++++++--
- fs/nls/nls_koi8-u.c     |  8 ++++++--
- fs/nls/nls_utf8.c       |  8 ++++++--
- fs/udf/unicode.c        |  4 ++--
- include/linux/nls.h     | 16 ++++++++++------
- 54 files changed, 324 insertions(+), 112 deletions(-)
+ fs/nls/Makefile                      |  1 +
+ fs/nls/nls_core.c                    | 94 ++++++++++++++++++++++++++++
+ fs/nls/{nls_base.c => nls_default.c} | 93 +++------------------------
+ 3 files changed, 102 insertions(+), 86 deletions(-)
+ create mode 100644 fs/nls/nls_core.c
+ rename fs/nls/{nls_base.c => nls_default.c} (90%)
 
-diff --git a/fs/nls/mac-celtic.c b/fs/nls/mac-celtic.c
-index 266c2d7d50bd..1b59b04f26f2 100644
---- a/fs/nls/mac-celtic.c
-+++ b/fs/nls/mac-celtic.c
-@@ -577,10 +577,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
+diff --git a/fs/nls/Makefile b/fs/nls/Makefile
+index ac54db297128..5f42ceff9d15 100644
+--- a/fs/nls/Makefile
++++ b/fs/nls/Makefile
+@@ -3,6 +3,7 @@
+ # Makefile for native language support
+ #
  
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "macceltic",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/mac-centeuro.c b/fs/nls/mac-centeuro.c
-index 9789c6057551..d5b8f38f97b6 100644
---- a/fs/nls/mac-centeuro.c
-+++ b/fs/nls/mac-centeuro.c
-@@ -507,10 +507,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
++nls_base-y := nls_core.o nls_default.o
+ obj-$(CONFIG_NLS)		+= nls_base.o
  
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
+ obj-$(CONFIG_NLS_CODEPAGE_437)	+= nls_cp437.o
+diff --git a/fs/nls/nls_core.c b/fs/nls/nls_core.c
+new file mode 100644
+index 000000000000..3f7de8f4c5b2
+--- /dev/null
++++ b/fs/nls/nls_core.c
+@@ -0,0 +1,94 @@
++/*
++ * linux/fs/nls/nls_core.c
++ *
++ * Native language support--charsets and unicode translations.
++ * By Gordon Chaffee 1996, 1997
++ *
++ * Unicode based case conversion 1999 by Wolfram Pienkoss
++ *
++ */
 +
- static struct nls_table table = {
- 	.charset	= "maccenteuro",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/mac-croatian.c b/fs/nls/mac-croatian.c
-index bb19e7a07d43..32de6accd526 100644
---- a/fs/nls/mac-croatian.c
-+++ b/fs/nls/mac-croatian.c
-@@ -577,10 +577,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
++#include <linux/module.h>
++#include <linux/string.h>
++#include <linux/nls.h>
++#include <linux/kernel.h>
++#include <linux/errno.h>
++#include <linux/kmod.h>
++#include <linux/spinlock.h>
 +
- static struct nls_table table = {
- 	.charset	= "maccroatian",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/mac-cyrillic.c b/fs/nls/mac-cyrillic.c
-index 2a7dea36acba..34d5c1c05ff1 100644
---- a/fs/nls/mac-cyrillic.c
-+++ b/fs/nls/mac-cyrillic.c
-@@ -472,10 +472,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
++static struct nls_table default_table;
++static struct nls_table *tables = &default_table;
++static DEFINE_SPINLOCK(nls_lock);
 +
- static struct nls_table table = {
- 	.charset	= "maccyrillic",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/mac-gaelic.c b/fs/nls/mac-gaelic.c
-index 77b001653588..2aabf5213176 100644
---- a/fs/nls/mac-gaelic.c
-+++ b/fs/nls/mac-gaelic.c
-@@ -542,10 +542,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
++int __register_nls(struct nls_table *nls, struct module *owner)
++{
++	struct nls_table ** tmp = &tables;
 +
- static struct nls_table table = {
- 	.charset	= "macgaelic",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/mac-greek.c b/fs/nls/mac-greek.c
-index 1eccf499e2eb..df62909ef57e 100644
---- a/fs/nls/mac-greek.c
-+++ b/fs/nls/mac-greek.c
-@@ -472,10 +472,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
++	if (nls->next)
++		return -EBUSY;
 +
- static struct nls_table table = {
- 	.charset	= "macgreek",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/mac-iceland.c b/fs/nls/mac-iceland.c
-index cbd0875c6d69..8daa68b995bc 100644
---- a/fs/nls/mac-iceland.c
-+++ b/fs/nls/mac-iceland.c
-@@ -577,10 +577,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
++	nls->owner = owner;
++	spin_lock(&nls_lock);
++	while (*tmp) {
++		if (nls == *tmp) {
++			spin_unlock(&nls_lock);
++			return -EBUSY;
++		}
++		tmp = &(*tmp)->next;
++	}
++	nls->next = tables;
++	tables = nls;
++	spin_unlock(&nls_lock);
++	return 0;
++}
++EXPORT_SYMBOL(__register_nls);
 +
- static struct nls_table table = {
- 	.charset	= "maciceland",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/mac-inuit.c b/fs/nls/mac-inuit.c
-index fba8357aaf03..b0799693502a 100644
---- a/fs/nls/mac-inuit.c
-+++ b/fs/nls/mac-inuit.c
-@@ -507,10 +507,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
++int unregister_nls(struct nls_table * nls)
++{
++	struct nls_table ** tmp = &tables;
 +
- static struct nls_table table = {
- 	.charset	= "macinuit",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/mac-roman.c b/fs/nls/mac-roman.c
-index b6a98a5208cd..ba358b864b05 100644
---- a/fs/nls/mac-roman.c
-+++ b/fs/nls/mac-roman.c
-@@ -612,10 +612,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
++	spin_lock(&nls_lock);
++	while (*tmp) {
++		if (nls == *tmp) {
++			*tmp = nls->next;
++			spin_unlock(&nls_lock);
++			return 0;
++		}
++		tmp = &(*tmp)->next;
++	}
++	spin_unlock(&nls_lock);
++	return -EINVAL;
++}
 +
- static struct nls_table table = {
- 	.charset	= "macroman",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/mac-romanian.c b/fs/nls/mac-romanian.c
-index 25547f023638..7a8a7f9a0bbc 100644
---- a/fs/nls/mac-romanian.c
-+++ b/fs/nls/mac-romanian.c
-@@ -577,10 +577,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
++static struct nls_table *find_nls(char *charset)
++{
++	struct nls_table *nls;
++	spin_lock(&nls_lock);
++	for (nls = tables; nls; nls = nls->next) {
++		if (!strcmp(nls_charset_name(nls), charset))
++			break;
++		if (nls->alias && !strcmp(nls->alias, charset))
++			break;
++	}
++	if (nls && !try_module_get(nls->owner))
++		nls = NULL;
++	spin_unlock(&nls_lock);
++	return nls;
++}
 +
- static struct nls_table table = {
- 	.charset	= "macromanian",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/mac-turkish.c b/fs/nls/mac-turkish.c
-index b5454bc7b7fa..eb3c5e53ec88 100644
---- a/fs/nls/mac-turkish.c
-+++ b/fs/nls/mac-turkish.c
-@@ -577,10 +577,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
++struct nls_table *load_nls(char *charset)
++{
++	return try_then_request_module(find_nls(charset), "nls_%s", charset);
++}
 +
- static struct nls_table table = {
- 	.charset	= "macturkish",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_ascii.c b/fs/nls/nls_ascii.c
-index a2620650d5e4..6bad3e779284 100644
---- a/fs/nls/nls_ascii.c
-+++ b/fs/nls/nls_ascii.c
-@@ -142,10 +142,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
++void unload_nls(struct nls_table *nls)
++{
++	if (nls)
++		module_put(nls->owner);
++}
 +
- static struct nls_table table = {
- 	.charset	= "ascii",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_base.c b/fs/nls/nls_base.c
-index e5d083b6e2b2..0bb0acf6893f 100644
++EXPORT_SYMBOL(unregister_nls);
++EXPORT_SYMBOL(unload_nls);
++EXPORT_SYMBOL(load_nls);
++
++MODULE_LICENSE("Dual BSD/GPL");
+diff --git a/fs/nls/nls_base.c b/fs/nls/nls_default.c
+similarity index 90%
+rename from fs/nls/nls_base.c
+rename to fs/nls/nls_default.c
+index 0bb0acf6893f..c5d7e8391b22 100644
 --- a/fs/nls/nls_base.c
-+++ b/fs/nls/nls_base.c
-@@ -520,10 +520,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
++++ b/fs/nls/nls_default.c
+@@ -1,5 +1,5 @@
+ /*
+- * linux/fs/nls/nls_base.c
++ * linux/fs/nls/nls_default.c
+  *
+  * Native language support--charsets and unicode translations.
+  * By Gordon Chaffee 1996, 1997
+@@ -8,23 +8,17 @@
+  *
+  */
  
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
++/*
++ * Sample implementation from Unicode home page.
++ * http://www.stonehand.com/unicode/standard/fss-utf.html
++ */
 +
- static struct nls_table default_table = {
- 	.charset	= "default",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_cp1250.c b/fs/nls/nls_cp1250.c
-index ace3e19d3407..08902e86fc8e 100644
---- a/fs/nls/nls_cp1250.c
-+++ b/fs/nls/nls_cp1250.c
-@@ -323,10 +323,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
-         return 1;
+ #include <linux/module.h>
+-#include <linux/string.h>
+-#include <linux/nls.h>
+-#include <linux/kernel.h>
+-#include <linux/errno.h>
+-#include <linux/kmod.h>
+-#include <linux/spinlock.h>
+ #include <asm/byteorder.h>
++#include <linux/nls.h>
+ 
+ static struct nls_table default_table;
+-static struct nls_table *tables = &default_table;
+-static DEFINE_SPINLOCK(nls_lock);
+ 
+-/*
+- * Sample implementation from Unicode home page.
+- * http://www.stonehand.com/unicode/standard/fss-utf.html
+- */
+ struct utf8_table {
+ 	int     cmask;
+ 	int     cval;
+@@ -232,73 +226,6 @@ int utf16s_to_utf8s(const wchar_t *pwcs, int inlen, enum utf16_endian endian,
  }
+ EXPORT_SYMBOL(utf16s_to_utf8s);
  
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "cp1250",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_cp1251.c b/fs/nls/nls_cp1251.c
-index 9273ddfd08a1..2bb88c8cc5bf 100644
---- a/fs/nls/nls_cp1251.c
-+++ b/fs/nls/nls_cp1251.c
-@@ -277,10 +277,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
+-int __register_nls(struct nls_table *nls, struct module *owner)
+-{
+-	struct nls_table ** tmp = &tables;
+-
+-	if (nls->next)
+-		return -EBUSY;
+-
+-	nls->owner = owner;
+-	spin_lock(&nls_lock);
+-	while (*tmp) {
+-		if (nls == *tmp) {
+-			spin_unlock(&nls_lock);
+-			return -EBUSY;
+-		}
+-		tmp = &(*tmp)->next;
+-	}
+-	nls->next = tables;
+-	tables = nls;
+-	spin_unlock(&nls_lock);
+-	return 0;	
+-}
+-EXPORT_SYMBOL(__register_nls);
+-
+-int unregister_nls(struct nls_table * nls)
+-{
+-	struct nls_table ** tmp = &tables;
+-
+-	spin_lock(&nls_lock);
+-	while (*tmp) {
+-		if (nls == *tmp) {
+-			*tmp = nls->next;
+-			spin_unlock(&nls_lock);
+-			return 0;
+-		}
+-		tmp = &(*tmp)->next;
+-	}
+-	spin_unlock(&nls_lock);
+-	return -EINVAL;
+-}
+-
+-static struct nls_table *find_nls(char *charset)
+-{
+-	struct nls_table *nls;
+-	spin_lock(&nls_lock);
+-	for (nls = tables; nls; nls = nls->next) {
+-		if (!strcmp(nls_charset_name(nls), charset))
+-			break;
+-		if (nls->alias && !strcmp(nls->alias, charset))
+-			break;
+-	}
+-	if (nls && !try_module_get(nls->owner))
+-		nls = NULL;
+-	spin_unlock(&nls_lock);
+-	return nls;
+-}
+-
+-struct nls_table *load_nls(char *charset)
+-{
+-	return try_then_request_module(find_nls(charset), "nls_%s", charset);
+-}
+-
+-void unload_nls(struct nls_table *nls)
+-{
+-	if (nls)
+-		module_put(nls->owner);
+-}
+-
+ static const wchar_t charset2uni[256] = {
+ 	/* 0x00*/
+ 	0x0000, 0x0001, 0x0002, 0x0003,
+@@ -543,10 +470,4 @@ struct nls_table *load_nls_default(void)
+ 	else
+ 		return &default_table;
  }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "cp1251",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_cp1255.c b/fs/nls/nls_cp1255.c
-index 1caf5dfed85b..c6bf8d575c5b 100644
---- a/fs/nls/nls_cp1255.c
-+++ b/fs/nls/nls_cp1255.c
-@@ -358,11 +358,15 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "cp1255",
- 	.alias		= "iso8859-8",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_cp437.c b/fs/nls/nls_cp437.c
-index 7ddb830da3fd..0f3f8bdbb62b 100644
---- a/fs/nls/nls_cp437.c
-+++ b/fs/nls/nls_cp437.c
-@@ -363,10 +363,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "cp437",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_cp737.c b/fs/nls/nls_cp737.c
-index c593f683a0cd..9383359ca25f 100644
---- a/fs/nls/nls_cp737.c
-+++ b/fs/nls/nls_cp737.c
-@@ -326,10 +326,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "cp737",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_cp775.c b/fs/nls/nls_cp775.c
-index 554c863745f2..6c787b9079ed 100644
---- a/fs/nls/nls_cp775.c
-+++ b/fs/nls/nls_cp775.c
-@@ -295,10 +295,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "cp775",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_cp850.c b/fs/nls/nls_cp850.c
-index 56cccd14b40b..50a57138a571 100644
---- a/fs/nls/nls_cp850.c
-+++ b/fs/nls/nls_cp850.c
-@@ -291,10 +291,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "cp850",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_cp852.c b/fs/nls/nls_cp852.c
-index 7cdc05ac1d40..0cbb199f1cd5 100644
---- a/fs/nls/nls_cp852.c
-+++ b/fs/nls/nls_cp852.c
-@@ -313,10 +313,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "cp852",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_cp855.c b/fs/nls/nls_cp855.c
-index 7426eea05663..530b77c86363 100644
---- a/fs/nls/nls_cp855.c
-+++ b/fs/nls/nls_cp855.c
-@@ -275,10 +275,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "cp855",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_cp857.c b/fs/nls/nls_cp857.c
-index 098309733ebd..0db642ec6f45 100644
---- a/fs/nls/nls_cp857.c
-+++ b/fs/nls/nls_cp857.c
-@@ -277,10 +277,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "cp857",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_cp860.c b/fs/nls/nls_cp860.c
-index 84224478e731..44a40dac26bd 100644
---- a/fs/nls/nls_cp860.c
-+++ b/fs/nls/nls_cp860.c
-@@ -340,10 +340,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "cp860",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_cp861.c b/fs/nls/nls_cp861.c
-index dc873e4be092..50e08174fc48 100644
---- a/fs/nls/nls_cp861.c
-+++ b/fs/nls/nls_cp861.c
-@@ -363,10 +363,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "cp861",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_cp862.c b/fs/nls/nls_cp862.c
-index d5263e3c5566..3505f3437972 100644
---- a/fs/nls/nls_cp862.c
-+++ b/fs/nls/nls_cp862.c
-@@ -397,10 +397,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "cp862",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_cp863.c b/fs/nls/nls_cp863.c
-index 051c9832e36a..e3489cdc0c04 100644
---- a/fs/nls/nls_cp863.c
-+++ b/fs/nls/nls_cp863.c
-@@ -357,10 +357,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "cp863",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_cp864.c b/fs/nls/nls_cp864.c
-index 97eb1273b2f7..d4185bc7f1bf 100644
---- a/fs/nls/nls_cp864.c
-+++ b/fs/nls/nls_cp864.c
-@@ -383,10 +383,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "cp864",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_cp865.c b/fs/nls/nls_cp865.c
-index 111214228525..9f468944e577 100644
---- a/fs/nls/nls_cp865.c
-+++ b/fs/nls/nls_cp865.c
-@@ -363,10 +363,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "cp865",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_cp866.c b/fs/nls/nls_cp866.c
-index ffdcbc3fc38d..ee46fd5a76b1 100644
---- a/fs/nls/nls_cp866.c
-+++ b/fs/nls/nls_cp866.c
-@@ -281,10 +281,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "cp866",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_cp869.c b/fs/nls/nls_cp869.c
-index 3b5a34589354..da29a4a53e1d 100644
---- a/fs/nls/nls_cp869.c
-+++ b/fs/nls/nls_cp869.c
-@@ -291,10 +291,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "cp869",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_cp874.c b/fs/nls/nls_cp874.c
-index 8dfaa10710fa..642659b9ed89 100644
---- a/fs/nls/nls_cp874.c
-+++ b/fs/nls/nls_cp874.c
-@@ -249,11 +249,15 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "cp874",
- 	.alias		= "tis-620",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_cp932.c b/fs/nls/nls_cp932.c
-index 67b7398e8483..3e7bdefdca90 100644
---- a/fs/nls/nls_cp932.c
-+++ b/fs/nls/nls_cp932.c
-@@ -7907,11 +7907,15 @@ static int char2uni(const unsigned char *rawstring, int boundlen,
- 		return -EINVAL;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "cp932",
- 	.alias		= "sjis",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_cp936.c b/fs/nls/nls_cp936.c
-index c96546cfec9f..b1fa2918992b 100644
---- a/fs/nls/nls_cp936.c
-+++ b/fs/nls/nls_cp936.c
-@@ -11085,11 +11085,15 @@ static int char2uni(const unsigned char *rawstring, int boundlen,
- 	return n;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "cp936",
- 	.alias		= "gb2312",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_cp949.c b/fs/nls/nls_cp949.c
-index 199171e97aa4..1d334095d86c 100644
---- a/fs/nls/nls_cp949.c
-+++ b/fs/nls/nls_cp949.c
-@@ -13920,11 +13920,15 @@ static int char2uni(const unsigned char *rawstring, int boundlen,
- 	return n;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "cp949",
- 	.alias		= "euc-kr",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_cp950.c b/fs/nls/nls_cp950.c
-index 8e1418708209..d936160a48f9 100644
---- a/fs/nls/nls_cp950.c
-+++ b/fs/nls/nls_cp950.c
-@@ -9456,11 +9456,15 @@ static int char2uni(const unsigned char *rawstring, int boundlen,
- 	return n;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "cp950",
- 	.alias		= "big5",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_euc-jp.c b/fs/nls/nls_euc-jp.c
-index eec257545f04..0af73982738b 100644
---- a/fs/nls/nls_euc-jp.c
-+++ b/fs/nls/nls_euc-jp.c
-@@ -549,10 +549,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen,
- 	return euc_offset;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "euc-jp",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- };
- 
- static int __init init_nls_euc_jp(void)
-diff --git a/fs/nls/nls_iso8859-1.c b/fs/nls/nls_iso8859-1.c
-index 69ac020d43b1..6212b2925fa0 100644
---- a/fs/nls/nls_iso8859-1.c
-+++ b/fs/nls/nls_iso8859-1.c
-@@ -233,10 +233,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "iso8859-1",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_iso8859-13.c b/fs/nls/nls_iso8859-13.c
-index afb3f8f275f0..8f0a23109207 100644
---- a/fs/nls/nls_iso8859-13.c
-+++ b/fs/nls/nls_iso8859-13.c
-@@ -261,10 +261,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "iso8859-13",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_iso8859-14.c b/fs/nls/nls_iso8859-14.c
-index 046370f0b6f0..80ab77f37480 100644
---- a/fs/nls/nls_iso8859-14.c
-+++ b/fs/nls/nls_iso8859-14.c
-@@ -317,10 +317,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "iso8859-14",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_iso8859-15.c b/fs/nls/nls_iso8859-15.c
-index 7e34a841a056..5c02f93e7b20 100644
---- a/fs/nls/nls_iso8859-15.c
-+++ b/fs/nls/nls_iso8859-15.c
-@@ -283,10 +283,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "iso8859-15",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_iso8859-2.c b/fs/nls/nls_iso8859-2.c
-index 7dd571181741..97afc1233da1 100644
---- a/fs/nls/nls_iso8859-2.c
-+++ b/fs/nls/nls_iso8859-2.c
-@@ -284,10 +284,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "iso8859-2",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_iso8859-3.c b/fs/nls/nls_iso8859-3.c
-index 740b75ec4493..f835fcec3aae 100644
---- a/fs/nls/nls_iso8859-3.c
-+++ b/fs/nls/nls_iso8859-3.c
-@@ -284,10 +284,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "iso8859-3",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_iso8859-4.c b/fs/nls/nls_iso8859-4.c
-index 8826021e32f5..14acb68fb013 100644
---- a/fs/nls/nls_iso8859-4.c
-+++ b/fs/nls/nls_iso8859-4.c
-@@ -284,10 +284,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "iso8859-4",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_iso8859-5.c b/fs/nls/nls_iso8859-5.c
-index 7c04057a1ad8..f559bbb25045 100644
---- a/fs/nls/nls_iso8859-5.c
-+++ b/fs/nls/nls_iso8859-5.c
-@@ -248,10 +248,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "iso8859-5",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_iso8859-6.c b/fs/nls/nls_iso8859-6.c
-index d4a881400d74..e3d7e28363b8 100644
---- a/fs/nls/nls_iso8859-6.c
-+++ b/fs/nls/nls_iso8859-6.c
-@@ -239,10 +239,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "iso8859-6",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_iso8859-7.c b/fs/nls/nls_iso8859-7.c
-index 37b75d825a75..49fd2b24e492 100644
---- a/fs/nls/nls_iso8859-7.c
-+++ b/fs/nls/nls_iso8859-7.c
-@@ -293,10 +293,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "iso8859-7",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_iso8859-9.c b/fs/nls/nls_iso8859-9.c
-index 557b98250d37..876696f89626 100644
---- a/fs/nls/nls_iso8859-9.c
-+++ b/fs/nls/nls_iso8859-9.c
-@@ -248,10 +248,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "iso8859-9",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_koi8-r.c b/fs/nls/nls_koi8-r.c
-index 811f232fccfb..6a85211402a8 100644
---- a/fs/nls/nls_koi8-r.c
-+++ b/fs/nls/nls_koi8-r.c
-@@ -299,10 +299,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "koi8-r",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_koi8-ru.c b/fs/nls/nls_koi8-ru.c
-index 32781252110d..c4e382fd0f13 100644
---- a/fs/nls/nls_koi8-ru.c
-+++ b/fs/nls/nls_koi8-ru.c
-@@ -51,10 +51,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen,
- 	return n;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "koi8-ru",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- };
- 
- static int __init init_nls_koi8_ru(void)
-diff --git a/fs/nls/nls_koi8-u.c b/fs/nls/nls_koi8-u.c
-index 7e029e4c188a..5f91e9cdb165 100644
---- a/fs/nls/nls_koi8-u.c
-+++ b/fs/nls/nls_koi8-u.c
-@@ -306,10 +306,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return 1;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "koi8-u",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= charset2lower,
- 	.charset2upper	= charset2upper,
- };
-diff --git a/fs/nls/nls_utf8.c b/fs/nls/nls_utf8.c
-index afcfbc4a14db..6988fffd5cf6 100644
---- a/fs/nls/nls_utf8.c
-+++ b/fs/nls/nls_utf8.c
-@@ -40,10 +40,14 @@ static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
- 	return n;
- }
- 
-+static const struct nls_ops charset_ops = {
-+	.uni2char = uni2char,
-+	.char2uni = char2uni,
-+};
-+
- static struct nls_table table = {
- 	.charset	= "utf8",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
-+	.ops = &charset_ops,
- 	.charset2lower	= identity,	/* no conversion */
- 	.charset2upper	= identity,
- };
-diff --git a/fs/udf/unicode.c b/fs/udf/unicode.c
-index f897e55f2cd0..b515bd50cb97 100644
---- a/fs/udf/unicode.c
-+++ b/fs/udf/unicode.c
-@@ -368,7 +368,7 @@ int udf_get_filename(struct super_block *sb, const uint8_t *sname, int slen,
- 	if (UDF_QUERY_FLAG(sb, UDF_FLAG_UTF8)) {
- 		conv_f = udf_uni2char_utf8;
- 	} else if (UDF_QUERY_FLAG(sb, UDF_FLAG_NLS_MAP)) {
--		conv_f = UDF_SB(sb)->s_nls_map->uni2char;
-+		conv_f = UDF_SB(sb)->s_nls_map->ops->uni2char;
- 	} else
- 		BUG();
- 
-@@ -387,7 +387,7 @@ int udf_put_filename(struct super_block *sb, const uint8_t *sname, int slen,
- 	if (UDF_QUERY_FLAG(sb, UDF_FLAG_UTF8)) {
- 		conv_f = udf_char2uni_utf8;
- 	} else if (UDF_QUERY_FLAG(sb, UDF_FLAG_NLS_MAP)) {
--		conv_f = UDF_SB(sb)->s_nls_map->char2uni;
-+		conv_f = UDF_SB(sb)->s_nls_map->ops->char2uni;
- 	} else
- 		BUG();
- 
-diff --git a/include/linux/nls.h b/include/linux/nls.h
-index cacbcd7d63e6..5d63fe6aa55e 100644
---- a/include/linux/nls.h
-+++ b/include/linux/nls.h
-@@ -22,12 +22,16 @@ typedef u16 wchar_t;
- /* Arbitrary Unicode character */
- typedef u32 unicode_t;
- 
--struct nls_table {
--	const char *charset;
--	const char *alias;
-+struct nls_ops {
- 	int (*uni2char) (wchar_t uni, unsigned char *out, int boundlen);
- 	int (*char2uni) (const unsigned char *rawstring, int boundlen,
- 			 wchar_t *uni);
-+};
-+
-+struct nls_table {
-+	const char *charset;
-+	const char *alias;
-+	const struct nls_ops *ops;
- 	const unsigned char *charset2lower;
- 	const unsigned char *charset2upper;
- 	struct module *owner;
-@@ -62,14 +66,14 @@ extern int utf16s_to_utf8s(const wchar_t *pwcs, int len,
- static inline int nls_uni2char(const struct nls_table *table, wchar_t uni,
- 			       unsigned char *out, int boundlen)
- {
--	return table->uni2char(uni, out, boundlen);
-+	return table->ops->uni2char(uni, out, boundlen);
- }
- 
- static inline int nls_char2uni(const struct nls_table *table,
- 			       const unsigned char *rawstring,
- 			       int boundlen, wchar_t *uni)
- {
--	return table->char2uni(rawstring, boundlen, uni);
-+	return table->ops->char2uni(rawstring, boundlen, uni);
- }
- 
- static inline const char *nls_charset_name(const struct nls_table *table)
-@@ -116,7 +120,7 @@ nls_nullsize(const struct nls_table *codepage)
- 	int charlen;
- 	char tmp[NLS_MAX_CHARSET_SIZE];
- 
--	charlen = codepage->uni2char(0, tmp, NLS_MAX_CHARSET_SIZE);
-+	charlen = codepage->ops->uni2char(0, tmp, NLS_MAX_CHARSET_SIZE);
- 
- 	return charlen > 0 ? charlen : 1;
- }
+-
+-EXPORT_SYMBOL(unregister_nls);
+-EXPORT_SYMBOL(unload_nls);
+-EXPORT_SYMBOL(load_nls);
+ EXPORT_SYMBOL(load_nls_default);
+-
+-MODULE_LICENSE("Dual BSD/GPL");
 -- 
 2.17.0
