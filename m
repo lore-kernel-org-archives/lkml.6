@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753197AbeEULiY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 07:38:24 -0400
-Received: from foss.arm.com ([217.140.101.70]:47610 "EHLO foss.arm.com"
+        id S1753206AbeEULio (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 07:38:44 -0400
+Received: from foss.arm.com ([217.140.101.70]:47562 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752855AbeEULfu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 07:35:50 -0400
+        id S1752807AbeEULfm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 07:35:42 -0400
 From: Julien Thierry <julien.thierry@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, marc.zyngier@arm.com,
@@ -13,11 +13,10 @@ Cc: linux-kernel@vger.kernel.org, marc.zyngier@arm.com,
         joelaf@google.com, joel.opensrc@gmail.com, daniel.thompson@linaro.org,
         catalin.marinas@arm.com, will.deacon@arm.com,
         Julien Thierry <julien.thierry@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>
-Subject: [PATCH v3 5/6] arm64: Detect current view of GIC priorities
-Date: Mon, 21 May 2018 12:35:14 +0100
-Message-Id: <1526902515-13769-6-git-send-email-julien.thierry@arm.com>
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH v3 2/6] arm64: alternative: Apply alternatives early in boot process
+Date: Mon, 21 May 2018 12:35:11 +0100
+Message-Id: <1526902515-13769-3-git-send-email-julien.thierry@arm.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1526902515-13769-1-git-send-email-julien.thierry@arm.com>
 References: <1526902515-13769-1-git-send-email-julien.thierry@arm.com>
@@ -25,204 +24,215 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The values non secure EL1 needs to use for PMR and RPR registers depends on
-the value of SCR_EL3.FIQ.
+From: Daniel Thompson <daniel.thompson@linaro.org>
 
-The values non secure EL1 sees from the distributor and redistributor
-depend on whether security is enabled for the GIC or not.
+Currently alternatives are applied very late in the boot process (and
+a long time after we enable scheduling). Some alternative sequences,
+such as those that alter the way CPU context is stored, must be applied
+much earlier in the boot sequence.
 
-Figure out what values we are dealing with to know if the values we use for
-PMR and RPR match the priority values that have been configured in the
-distributor and redistributors.
+Introduce apply_boot_alternatives() to allow some alternatives to be
+applied immediately after we detect the CPU features of the boot CPU.
 
-Also, add firmware requirements related to SCR_EL3.
+Since alternatives are now applied at different times, provide function
+to check whether alternatives are applied per feature.
 
+Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
+[julien.thierry@arm.com: rename to fit new cpufeature framework better,
+			 apply BOOT_SCOPE feature early in boot,
+			 add per feature alternative checking]
 Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Christoffer Dall <christoffer.dall@arm.com>
 Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- Documentation/arm64/booting.txt |  5 +++
- arch/arm64/include/asm/sysreg.h |  1 +
- drivers/irqchip/irq-gic-v3.c    | 99 ++++++++++++++++++++++++++++++-----------
- 3 files changed, 80 insertions(+), 25 deletions(-)
+ arch/arm64/include/asm/alternative.h |  5 +++--
+ arch/arm64/include/asm/cpufeature.h  |  2 ++
+ arch/arm64/kernel/alternative.c      | 39 +++++++++++++++++++++++++++++++++---
+ arch/arm64/kernel/cpufeature.c       |  7 ++++++-
+ arch/arm64/kernel/smp.c              |  7 +++++++
+ 5 files changed, 54 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/arm64/booting.txt b/Documentation/arm64/booting.txt
-index 8d0df62..e387938 100644
---- a/Documentation/arm64/booting.txt
-+++ b/Documentation/arm64/booting.txt
-@@ -188,6 +188,11 @@ Before jumping into the kernel, the following conditions must be met:
-   the kernel image will be entered must be initialised by software at a
-   higher exception level to prevent execution in an UNKNOWN state.
+diff --git a/arch/arm64/include/asm/alternative.h b/arch/arm64/include/asm/alternative.h
+index a91933b..36b0703 100644
+--- a/arch/arm64/include/asm/alternative.h
++++ b/arch/arm64/include/asm/alternative.h
+@@ -14,8 +14,6 @@
+ #include <linux/stddef.h>
+ #include <linux/stringify.h>
 
-+  - SCR_EL3.FIQ must have the same value across all CPUs the kernel is
-+    executing on.
-+  - The value of SCR_EL3.FIQ must be the same as the one present at boot
-+    time whenever the kernel is executing.
+-extern int alternatives_applied;
+-
+ struct alt_instr {
+ 	s32 orig_offset;	/* offset to original instruction */
+ 	s32 alt_offset;		/* offset to replacement instruction */
+@@ -27,9 +25,12 @@ struct alt_instr {
+ typedef void (*alternative_cb_t)(struct alt_instr *alt,
+ 				 __le32 *origptr, __le32 *updptr, int nr_inst);
+
++void __init apply_boot_alternatives(void);
+ void __init apply_alternatives_all(void);
+ void apply_alternatives(void *start, size_t length);
+
++bool feature_alternatives_applied(u16 cpufeature);
 +
-   For systems with a GICv3 interrupt controller to be used in v3 mode:
-   - If EL3 is present:
-     ICC_SRE_EL3.Enable (bit 3) must be initialiased to 0b1.
-diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
-index 6171178..fb8320a 100644
---- a/arch/arm64/include/asm/sysreg.h
-+++ b/arch/arm64/include/asm/sysreg.h
-@@ -322,6 +322,7 @@
- #define SYS_ICC_SRE_EL1			sys_reg(3, 0, 12, 12, 5)
- #define SYS_ICC_IGRPEN0_EL1		sys_reg(3, 0, 12, 12, 6)
- #define SYS_ICC_IGRPEN1_EL1		sys_reg(3, 0, 12, 12, 7)
-+#define SYS_ICC_RPR_EL1			sys_reg(3, 0, 12, 11, 3)
+ #define ALTINSTR_ENTRY(feature,cb)					      \
+ 	" .word 661b - .\n"				/* label           */ \
+ 	" .if " __stringify(cb) " == 0\n"				      \
+diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
+index 09b0f2a..19efe4e 100644
+--- a/arch/arm64/include/asm/cpufeature.h
++++ b/arch/arm64/include/asm/cpufeature.h
+@@ -359,6 +359,8 @@ static inline int cpucap_default_scope(const struct arm64_cpu_capabilities *cap)
+ extern struct static_key_false cpu_hwcap_keys[ARM64_NCAPS];
+ extern struct static_key_false arm64_const_caps_ready;
 
- #define SYS_CONTEXTIDR_EL1		sys_reg(3, 0, 13, 0, 1)
- #define SYS_TPIDR_EL1			sys_reg(3, 0, 13, 0, 4)
-diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index 82cfacf..3c44918 100644
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -63,6 +63,30 @@ struct gic_chip_data {
- static struct gic_chip_data gic_data __read_mostly;
- static DEFINE_STATIC_KEY_TRUE(supports_deactivate_key);
-
-+#ifdef CONFIG_USE_ICC_SYSREGS_FOR_IRQFLAGS
-+/*
-+ * The behaviours of RPR and PMR registers differ depending on the value of
-+ * SCR_EL3.FIQ, and the behaviour of non-secure priority registers of the
-+ * distributor and redistributors depends on whether security is enabled in the
-+ * GIC.
-+ *
-+ * When security is enabled, non-secure priority values from the (re)distributor
-+ * are presented to the GIC CPUIF as follow:
-+ *     (GIC_(R)DIST_PRI[irq] >> 1) | 0x80;
-+ *
-+ * If SCR_EL3.FIQ == 1, the values writen to/read from PMR and RPR at non-secure
-+ * EL1 are subject to a similar operation thus matching the priorities presented
-+ * from the (re)distributor when security is enabled.
-+ *
-+ * see GICv3/GICv4 Architecture Specification (IHI0069D):
-+ * - section 4.8.1 Non-secure accesses to register fields for Secure interrupt
-+ *   priorities.
-+ * - Figure 4-7 Secure read of the priority field for a Non-secure Group 1
-+ *   interrupt.
-+ */
-+DEFINE_STATIC_KEY_FALSE(have_non_secure_prio_view);
-+#endif
++extern unsigned long boot_capabilities;
 +
- static struct gic_kvm_info gic_v3_kvm_info;
- static DEFINE_PER_CPU(bool, has_rss);
+ bool this_cpu_has_cap(unsigned int cap);
 
-@@ -531,28 +555,26 @@ static void gic_update_vlpi_properties(void)
- 		!gic_data.rdists.has_direct_lpi ? "no " : "");
+ static inline bool cpu_have_feature(unsigned int num)
+diff --git a/arch/arm64/kernel/alternative.c b/arch/arm64/kernel/alternative.c
+index 5c4bce4..29885eb 100644
+--- a/arch/arm64/kernel/alternative.c
++++ b/arch/arm64/kernel/alternative.c
+@@ -34,6 +34,8 @@
+
+ int alternatives_applied;
+
++DECLARE_BITMAP(alternatives_status, ARM64_NCAPS);
++
+ struct alt_region {
+ 	struct alt_instr *begin;
+ 	struct alt_instr *end;
+@@ -122,7 +124,8 @@ static void patch_alternative(struct alt_instr *alt,
+ 	}
  }
 
--static void gic_cpu_sys_reg_init(void)
-+/* Check whether it's single security state view */
-+static inline bool gic_dist_security_disabled(void)
+-static void __apply_alternatives(void *alt_region, bool use_linear_alias)
++static void __apply_alternatives(void *alt_region,  bool use_linear_alias,
++				 unsigned long feature_mask)
  {
--	int i, cpu = smp_processor_id();
--	u64 mpidr = cpu_logical_map(cpu);
--	u64 need_rss = MPIDR_RS(mpidr);
--	bool group0;
--	u32 val, pribits;
-+	return readl_relaxed(gic_data.dist_base + GICD_CTLR) & GICD_CTLR_DS;
-+}
+ 	struct alt_instr *alt;
+ 	struct alt_region *region = alt_region;
+@@ -132,6 +135,9 @@ static void __apply_alternatives(void *alt_region, bool use_linear_alias)
+ 	for (alt = region->begin; alt < region->end; alt++) {
+ 		int nr_inst;
 
--	/*
--	 * Need to check that the SRE bit has actually been set. If
--	 * not, it means that SRE is disabled at EL2. We're going to
--	 * die painfully, and there is nothing we can do about it.
--	 *
--	 * Kindly inform the luser.
--	 */
--	if (!gic_enable_sre())
--		pr_err("GIC: unable to set SRE (disabled at EL2), panic ahead\n");
-+static inline u32 gic_get_cpu_pri_bits(void)
-+{
-+	u32 pribits;
-
- 	pribits = gic_read_ctlr();
- 	pribits &= ICC_CTLR_EL1_PRI_BITS_MASK;
- 	pribits >>= ICC_CTLR_EL1_PRI_BITS_SHIFT;
--	pribits++;
++		if ((BIT(alt->cpufeature) & feature_mask) == 0)
++			continue;
 +
-+	return pribits + 1;
+ 		/* Use ARM64_CB_PATCH as an unconditional patch */
+ 		if (alt->cpufeature < ARM64_CB_PATCH &&
+ 		    !cpus_have_cap(alt->cpufeature))
+@@ -142,6 +148,8 @@ static void __apply_alternatives(void *alt_region, bool use_linear_alias)
+ 		else
+ 			BUG_ON(alt->alt_len != alt->orig_len);
+
++		__set_bit(alt->cpufeature, alternatives_status);
++
+ 		pr_info_once("patching kernel code\n");
+
+ 		origptr = ALT_ORIG_PTR(alt);
+@@ -178,7 +186,9 @@ static int __apply_alternatives_multi_stop(void *unused)
+ 		isb();
+ 	} else {
+ 		BUG_ON(alternatives_applied);
+-		__apply_alternatives(&region, true);
++
++		__apply_alternatives(&region, true, ~boot_capabilities);
++
+ 		/* Barriers provided by the cache flushing */
+ 		WRITE_ONCE(alternatives_applied, 1);
+ 	}
+@@ -192,6 +202,24 @@ void __init apply_alternatives_all(void)
+ 	stop_machine(__apply_alternatives_multi_stop, NULL, cpu_online_mask);
+ }
+
++/*
++ * This is called very early in the boot process (directly after we run
++ * a feature detect on the boot CPU). No need to worry about other CPUs
++ * here.
++ */
++void __init apply_boot_alternatives(void)
++{
++	struct alt_region region = {
++		.begin	= (struct alt_instr *)__alt_instructions,
++		.end	= (struct alt_instr *)__alt_instructions_end,
++	};
++
++	/* If called on non-boot cpu things could go wrong */
++	WARN_ON(smp_processor_id() != 0);
++
++	__apply_alternatives(&region, true, boot_capabilities);
 +}
 +
-+static inline bool gic_cpu_has_group0(void)
-+{
-+	u32 pmr_val;
+ void apply_alternatives(void *start, size_t length)
+ {
+ 	struct alt_region region = {
+@@ -199,5 +227,10 @@ void apply_alternatives(void *start, size_t length)
+ 		.end	= start + length,
+ 	};
 
- 	/*
- 	 * Let's find out if Group0 is under control of EL3 or not by
-@@ -565,13 +587,41 @@ static void gic_cpu_sys_reg_init(void)
- 	 * becomes 0x80. Reading it back returns 0, indicating that
- 	 * we're don't have access to Group0.
+-	__apply_alternatives(&region, false);
++	__apply_alternatives(&region, false, -1);
++}
++
++bool feature_alternatives_applied(u16 cpufeature)
++{
++	return test_bit(cpufeature, alternatives_status);
+ }
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index e03e897..021ae87 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -52,6 +52,8 @@
+ DECLARE_BITMAP(cpu_hwcaps, ARM64_NCAPS);
+ EXPORT_SYMBOL(cpu_hwcaps);
+
++unsigned long boot_capabilities;
++
+ /*
+  * Flag to indicate if we have computed the system wide
+  * capabilities based on the boot time active CPUs. This
+@@ -1021,7 +1023,7 @@ static void cpu_copy_el2regs(const struct arm64_cpu_capabilities *__unused)
+ 	 * that, freshly-onlined CPUs will set tpidr_el2, so we don't need to
+ 	 * do anything here.
  	 */
--	write_gicreg(BIT(8 - pribits), ICC_PMR_EL1);
--	val = read_gicreg(ICC_PMR_EL1);
--	group0 = val != 0;
-+	write_gicreg(BIT(8 - gic_get_cpu_pri_bits()), ICC_PMR_EL1);
-+	pmr_val = read_gicreg(ICC_PMR_EL1);
+-	if (!alternatives_applied)
++	if (!feature_alternatives_applied(ARM64_HAS_VIRT_HOST_EXTN))
+ 		write_sysreg(read_sysreg(tpidr_el1), tpidr_el2);
+ }
+ #endif
+@@ -1346,6 +1348,9 @@ static void __update_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
+ 		if (!cpus_have_cap(caps->capability) && caps->desc)
+ 			pr_info("%s %s\n", info, caps->desc);
+ 		cpus_set_cap(caps->capability);
 +
-+	return pmr_val != 0;
-+}
-+
-+static void gic_cpu_sys_reg_init(void)
-+{
-+	int i, cpu = smp_processor_id();
-+	u64 mpidr = cpu_logical_map(cpu);
-+	u64 need_rss = MPIDR_RS(mpidr);
-+	bool group0;
-+	u32 pribits;
++		if (scope_mask & SCOPE_BOOT_CPU)
++			__set_bit(caps->capability, &boot_capabilities);
+ 	}
+ }
+
+diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
+index f3e2e3a..b7fb909 100644
+--- a/arch/arm64/kernel/smp.c
++++ b/arch/arm64/kernel/smp.c
+@@ -410,6 +410,13 @@ void __init smp_prepare_boot_cpu(void)
+ 	 */
+ 	jump_label_init();
+ 	cpuinfo_store_boot_cpu();
 +
 +	/*
-+	 * Need to check that the SRE bit has actually been set. If
-+	 * not, it means that SRE is disabled at EL2. We're going to
-+	 * die painfully, and there is nothing we can do about it.
-+	 *
-+	 * Kindly inform the luser.
++	 * We now know enough about the boot CPU to apply the
++	 * alternatives that cannot wait until interrupt handling
++	 * and/or scheduling is enabled.
 +	 */
-+	if (!gic_enable_sre())
-+		pr_err("GIC: unable to set SRE (disabled at EL2), panic ahead\n");
-+
-+	pribits = gic_get_cpu_pri_bits();
-+
-+	group0 = gic_cpu_has_group0();
++	apply_boot_alternatives();
+ }
 
- #ifndef CONFIG_USE_ICC_SYSREGS_FOR_IRQFLAGS
- 	/* Set priority mask register */
- 	write_gicreg(ICC_PMR_EL1_UNMASKED, ICC_PMR_EL1);
-+#else
-+	if (static_branch_likely(&have_non_secure_prio_view) && group0)
-+		/* Mismatch configuration with boot CPU */
-+		WARN_ON(group0 && !gic_dist_security_disabled());
- #endif
-
- 	/*
-@@ -825,12 +875,6 @@ static int gic_set_affinity(struct irq_data *d, const struct cpumask *mask_val,
- #endif
-
- #ifdef CONFIG_CPU_PM
--/* Check whether it's single security state view */
--static bool gic_dist_security_disabled(void)
--{
--	return readl_relaxed(gic_data.dist_base + GICD_CTLR) & GICD_CTLR_DS;
--}
--
- static int gic_cpu_pm_notifier(struct notifier_block *self,
- 			       unsigned long cmd, void *v)
- {
-@@ -1130,6 +1174,11 @@ static int __init gic_init_bases(void __iomem *dist_base,
- 	gic_cpu_init();
- 	gic_cpu_pm_init();
-
-+#ifdef CONFIG_USE_ICC_SYSREGS_FOR_IRQFLAGS
-+	if (!gic_cpu_has_group0() || gic_dist_security_disabled())
-+		static_branch_enable(&have_non_secure_prio_view);
-+#endif
-+
- 	return 0;
-
- out_free:
+ static u64 __init of_get_cpu_mpidr(struct device_node *dn)
 --
 1.9.1
