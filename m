@@ -1,124 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752453AbeEUKvE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 06:51:04 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46914 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750947AbeEUKvD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 06:51:03 -0400
-Date: Mon, 21 May 2018 11:50:55 +0100
-From: Patrick Bellasi <patrick.bellasi@arm.com>
-To: "Joel Fernandes (Google.)" <joelaf@google.com>
-Cc: linux-kernel@vger.kernel.org,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>, Todd Kjos <tkjos@google.com>,
-        claudio@evidence.eu.com, kernel-team@android.com,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2] schedutil: Allow cpufreq requests to be made even
- when kthread kicked
-Message-ID: <20180521105055.GQ30654@e110439-lin>
-References: <20180518185501.173552-1-joel@joelfernandes.org>
+        id S1751694AbeEUKye (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 06:54:34 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:47000 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750947AbeEUKyc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 06:54:32 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: jacopo mondi <jacopo@jmondi.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        niklas.soderlund@ragnatech.se, horms@verge.net.au, geert@glider.be,
+        magnus.damm@gmail.com, robh+dt@kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] arm64: dts: renesas: draak: Describe CVBS input
+Date: Mon, 21 May 2018 13:54:55 +0300
+Message-ID: <6943843.2osudLfTFd@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180521095705.GC4432@w540>
+References: <1526654878-11143-1-git-send-email-jacopo+renesas@jmondi.org> <1569661.saMqNra8vc@avalon> <20180521095705.GC4432@w540>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180518185501.173552-1-joel@joelfernandes.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4LAseVB032538
 
-On 18-May 11:55, Joel Fernandes (Google.) wrote:
-> From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Hi Jacopo,
+
+On Monday, 21 May 2018 12:57:05 EEST jacopo mondi wrote:
+> On Fri, May 18, 2018 at 06:12:15PM +0300, Laurent Pinchart wrote:
+> > On Friday, 18 May 2018 17:47:57 EEST Jacopo Mondi wrote:
+> >> Describe CVBS video input through analog video decoder ADV7180
+> >> connected to video input interface VIN4.
+> >> 
+> >> The video input signal path is shared with HDMI video input, and
+> >> selected by on-board switches SW-53 and SW-54 with CVBS input selected
+> >> by the default switches configuration.
+> >> 
+> >> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> >> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> >> 
+> >> ---
+> >> v2 -> v3:
+> >> - Add comment to describe the shared input video path
+> >> - Add my SoB and Niklas' R-b tags
+> >> ---
+> >> 
+> >>  arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 42 +++++++++++++++++++
+> >>  1 file changed, 42 insertions(+)
+> >> 
+> >> diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+> >> b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts index 9d73de8..95745fc
+> >> 100644
+> >> --- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+> >> +++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+> >> @@ -142,6 +142,11 @@
+> >>  		groups = "usb0";
+> >>  		function = "usb0";
+> >>  	};
+> >> +
+> >> +	vin4_pins_cvbs: vin4 {
+> >> +		groups = "vin4_data8", "vin4_sync", "vin4_clk";
+> >> +		function = "vin4";
+> >> +	};
+> >>  };
+> >>  
+> >>  &i2c0 {
+> >> @@ -154,6 +159,23 @@
+> >>  		reg = <0x50>;
+> >>  		pagesize = <8>;
+> >>  	};
+> >> +
+> >> +	analog-video@20 {
+> >> +		compatible = "adi,adv7180";
+> >> +		reg = <0x20>;
+> >> +
+> >> +		port {
+> > 
+> > The adv7180 DT bindings document the output port as 3 or 6 (respectively
+> > for the CP and ST versions of the chip). You should thus number the port.
+> > Apart from that the patch looks good.
 > 
-> Currently there is a chance of a schedutil cpufreq update request to be
-> dropped if there is a pending update request. This pending request can
-> be delayed if there is a scheduling delay of the irq_work and the wake
-> up of the schedutil governor kthread.
+> I admit I have barely copied this from Gen-2 boards DTS, but reading
+> the driver code and binding description again, I think this is
+> correct, as the output port numbering and mandatory input port (which
+> is missing here) only apply to adv7180cp/st chip versions.
 > 
-> A very bad scenario is when a schedutil request was already just made,
-> such as to reduce the CPU frequency, then a newer request to increase
-> CPU frequency (even sched deadline urgent frequency increase requests)
-> can be dropped, even though the rate limits suggest that its Ok to
-> process a request. This is because of the way the work_in_progress flag
-> is used.
-> 
-> This patch improves the situation by allowing new requests to happen
-> even though the old one is still being processed. Note that in this
-> approach, if an irq_work was already issued, we just update next_freq
-> and don't bother to queue another request so there's no extra work being
-> done to make this happen.
+> Here we describe plain adv7180, no need to number output ports afaict.
 
-Maybe I'm missing something but... is not this patch just a partial
-mitigation of the issue you descrive above?
+Indeed, my bad.
 
-If a DL freq increase is queued, with this patch we store the request
-but we don't actually increase the frequency until the next schedutil
-update, which can be one tick away... isn't it?
+Shouldn't you however use "adi,adv7180cp" as that's the chip we are using ? 
+The "adi,adv7180" has no port documented in its DT bindings, so it shouldn't 
+have any port node at all.
 
-If that's the case, maybe something like the following can complete
-the cure?
-
----8<---
-#define SUGOV_FREQ_NONE 0
-
-static unsigned int sugov_work_update(struct sugov_policy *sg_policy,
-				      unsigned int prev_freq)
-{
-	unsigned long irq_flags;
-	bool update_freq = true;
-	unsigned int next_freq;
-
-	/*
-	 * Hold sg_policy->update_lock shortly to handle the case where:
-	 * incase sg_policy->next_freq is read here, and then updated by
-	 * sugov_update_shared just before work_in_progress is set to false
-	 * here, we may miss queueing the new update.
-	 *
-	 * Note: If a work was queued after the update_lock is released,
-	 * sugov_work will just be called again by kthread_work code; and the
-	 * request will be proceed before the sugov thread sleeps.
-	 */
-	raw_spin_lock_irqsave(&sg_policy->update_lock, irq_flags);
-	next_freq = sg_policy->next_freq;
-	sg_policy->work_in_progress = false;
-	if (prev_freq == next_freq)
-		update_freq = false;
-	raw_spin_unlock_irqrestore(&sg_policy->update_lock, irq_flags);
-
-	/*
-	 * Update the frequency only if it has changed since the last call.
-	 */
-	if (update_freq) {
-		mutex_lock(&sg_policy->work_lock);
-		__cpufreq_driver_target(sg_policy->policy, next_freq, CPUFREQ_RELATION_L);
-		mutex_unlock(&sg_policy->work_lock);
-
-		return next_freq;
-	}
-
-	return SUGOV_FREQ_NONE;
-}
-
-static void sugov_work(struct kthread_work *work)
-{
-	struct sugov_policy *sg_policy = container_of(work, struct sugov_policy, work);
-	unsigned int prev_freq = 0;
-
-	/*
-	 * Keep updating the frequency until we end up with a frequency which
-	 * satisfies the most recent request we got meanwhile.
-	 */
-	do {
-		prev_freq = sugov_work_update(sg_policy, prev_freq);
-	} while (prev_freq != SUGOV_FREQ_NONE);
-}
----8<---
+> >> +			/*
+> >> +			 * The VIN4 video input path is shared between
+> >> +			 * CVBS and HDMI inputs through SW[49-54] switches.
+> >> +			 *
+> >> +			 * CVBS is the default selection, link it to VIN4 here.
+> >> +			 */
+> >> +			adv7180_out: endpoint {
+> >> +				remote-endpoint = <&vin4_in>;
+> >> +			};
+> >> +		};
+> >> +	};
+> >>  };
+> >>  
+> >>  &i2c1 {
+> >> @@ -246,3 +268,23 @@
+> >>  	timeout-sec = <60>;
+> >>  	status = "okay";
+> >>  };
+> >> +
+> >> +&vin4 {
+> >> +	pinctrl-0 = <&vin4_pins_cvbs>;
+> >> +	pinctrl-names = "default";
+> >> +
+> >> +	status = "okay";
+> >> +
+> >> +	ports {
+> >> +		#address-cells = <1>;
+> >> +		#size-cells = <0>;
+> >> +
+> >> +		port@0 {
+> >> +			reg = <0>;
+> >> +
+> >> +			vin4_in: endpoint {
+> >> +				remote-endpoint = <&adv7180_out>;
+> >> +			};
+> >> +		};
+> >> +	};
+> >> +};
 
 -- 
-#include <best/regards.h>
+Regards,
 
-Patrick Bellasi
+Laurent Pinchart
