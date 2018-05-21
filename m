@@ -1,41 +1,96 @@
-Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpqQ2nGLU++RxM2kWTTam1EQKcK9KS6oPpdPXbFGe6WoCgN+c9IdxVzFzESBv3JZR5rxMNX
-ARC-Seal: i=1; a=rsa-sha256; t=1526937355; cv=none;
-        d=google.com; s=arc-20160816;
-        b=RLNBDNXkPPFwyU/1tfVnv//JNgvT5+9hByyRMoOH51CUVee+U3oI7Z0bddiUJL/nJ1
-         UisjHrb69v5szehrrw4NEG1USdMS5ieml1BSuUxvI4SDIg6SsvC4qfBUFcgY6Ob1ph6l
-         FdeZXZy7CEQer6Phb3dpqACJylIYfIbj+xEZ4Re23sa9T/kQApdXrfMzYPEmUuOxBJ9X
-         rI3iIMQ7gIBYUlfcMAk0Xf5pmHZkjd+oVq6a6Iz4QodZlIPBkj6g6wA5peqjwdkDXJdm
-         3KnVn87X71z84vgh3Jy1A24Jkn/+o/jQNyd9oCgGsMaKdVjYH2qniCVKmqx/q/AKqBsd
-         98Qg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=BbZxDJtRXvZTly09K3Xh9AhvucYTNm+nE4L9Yf4Y5fU=;
-        b=r4T1Qp4TX4mA/UDyBRKlndWwDVQUcZRKUGAnoN9R/AEm/REcvEGuhjYbFxooDSsMvM
-         ug1x3BsuDhsFQLcRaEQlSqBtrsQ3KtdYOb1LrSx3g5oraFPaERAuLaQ3DuyCsUW6AT61
-         +ZmfLPvSAYLeFtWyhnitITnfIrWYff9tSoKDXVX13ZkGiu4KnDCoiDxvZfVnHWdZ8cmp
-         9U0Ueb6+V5tRFMuvXlqSENsJ0adKnAIUoARFTbmiO7zTgX7M2EoDNG8zKjAX9NW1aH5R
-         Aj8To5vwy4HmocOxtHZBy3HenhkysIjcDsREPSctf/cI7nS29EjGNukXqNidR4uNiQ/G
-         +21Q==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=BHp89pas;
-       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=BHp89pas;
-       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1340521-1526937354-2-1837552211817365413
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1526937353; b=h9wvQMFN7i60VL0WQROeiU9qotSZXTaMkT7xSM1aUJeg6D+xA9
+    MEWhlE+rfJEt4c8ms7vQoJXfzg/qN0SqIJWYl6expSG5iqVKzMe0frjMjYARNVyU
+    HsEUP+l2aEo7qamWpwAQAWPd/lGRmVELVshqDlXt/7QsOr8oR3waaFts7jIg5XL8
+    iHoBzKt4V47kmiFjm7X6a3cFEtfHqpxHUwkgJQr0kesqfPU6nUdtz2W+4Fyxaul3
+    8WjshJ4lf1MQDMLygNVV6NOqs1iu4tLlPLiWaWMiI9nycj/O336X7cetgSDv4Z2I
+    Ie91Plbx1/Bd/GizgsmGIC+SZYnarGUR5Lvg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1526937353; bh=JxPN2q91e3m59PHTUrG2xvEpYyELqg
+    KGKJ0lfdl5P7I=; b=EROvp3NCchPwP1J+GL217rXrC1PdqdMhi7UtySdVbPbDnJ
+    6dOWP/2pX9jOPU+jnhiJ/gwyDkW0rq1TvYpe6nOQu2u3P1ZHd2RYzlyqGIlgCgd3
+    Q4TS9h7XM55uh9TGOXVoAd8JSsMMrXRyxRABZPMjF/9BL7lgVmYmFoBXsIEtv5Rw
+    ZhnXSPG+IfVSa69tOjVYwM8aKjYKnmEE6Vdrk1jY2BT9xyTvql9s1TIhUNujE8FF
+    FbbNGuQwh0I7SiXcZ8dNb4BdmskTBYl+Rm23eKhNlb7hxrCnLLO46t2EXjDwN5rs
+    okx3HixYGrCrwPwVqqIOB9Qy0ZfH/ov3Fz1CLJ+g==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+    header.i=@kernel.org header.b=mTlb9YqU x-bits=1024 x-keytype=rsa
+    x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+    header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=linuxfoundation.org header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+      header.i=@kernel.org header.b=mTlb9YqU x-bits=1024 x-keytype=rsa
+      x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+      header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=linuxfoundation.org header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfI2oRxuyzjQUETAWkVrTr/HVIIZ2+vg7kWxvukoXWzinZLnV+tUMsi7sMueFeBTWdvaUDGk7HAzbqC3ITGNdMo0PEbR+mMoOVMzuS4yKbtyiUQ1x96Sm
+    aULnS74+g1rU1u3XuhTgIpqqDvkzbnySuPK6guHfL1B2BvgUtvZYCpAnzkSZ486rOAN5m2ca1z7hXhxeal3xtyNA/VtZw2r9uGnyOqtJEkDJxO4YW51bo1Am
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=pBOR-ozoAAAA:8 a=ag1SF4gXAAAA:8
+    a=63lcS0CwuErnrpi3ut4A:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751176AbeEUVPr (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 21 May 2018 17:15:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59134 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751368AbeEUVPm (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 21 May 2018 17:15:42 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Kyle Huey <khuey@kylehuey.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 50/87] x86/process: Optimize TIF checks in __switch_to_xtra()
-Date: Mon, 21 May 2018 23:11:26 +0200
-Message-Id: <20180521210424.913943908@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        David Woodhouse <dwmw@amazon.co.uk>
+Subject: [PATCH 4.9 45/87] x86/bugs: Whitelist allowed SPEC_CTRL MSR values
+Date: Mon, 21 May 2018 23:11:21 +0200
+Message-Id: <20180521210424.608193168@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210420.222671977@linuxfoundation.org>
 References: <20180521210420.222671977@linuxfoundation.org>
@@ -43,10 +98,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109864314882948?=
-X-GMAIL-MSGID: =?utf-8?q?1601109864314882948?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,120 +108,65 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kyle Huey <me@kylehuey.com>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-commit af8b3cd3934ec60f4c2a420d19a9d416554f140b upstream
+commit 1115a859f33276fe8afb31c60cf9d8e657872558 upstream
 
-Help the compiler to avoid reevaluating the thread flags for each checked
-bit by reordering the bit checks and providing an explicit xor for
-evaluation.
+Intel and AMD SPEC_CTRL (0x48) MSR semantics may differ in the
+future (or in fact use different MSRs for the same functionality).
 
-With default defconfigs for each arch,
+As such a run-time mechanism is required to whitelist the appropriate MSR
+values.
 
-x86_64: arch/x86/kernel/process.o
-text       data     bss     dec     hex
-3056       8577      16   11649    2d81	Before
-3024	   8577      16	  11617	   2d61	After
+[ tglx: Made the variable __ro_after_init ]
 
-i386: arch/x86/kernel/process.o
-text       data     bss     dec     hex
-2957	   8673	      8	  11638	   2d76	Before
-2925	   8673       8	  11606	   2d56	After
-
-Originally-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Kyle Huey <khuey@kylehuey.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Link: http://lkml.kernel.org/r/20170214081104.9244-2-khuey@kylehuey.com
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-
-[dwmw2: backported to make TIF_RDS handling simpler.
-        No deferred TR reload.]
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/process.c |   54 ++++++++++++++++++++++++++--------------------
- 1 file changed, 31 insertions(+), 23 deletions(-)
+ arch/x86/kernel/cpu/bugs.c |   11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -192,48 +192,56 @@ int set_tsc_mode(unsigned int val)
- 	return 0;
- }
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -34,6 +34,12 @@ static void __init ssb_select_mitigation
+  */
+ static u64 __ro_after_init x86_spec_ctrl_base;
  
-+static inline void switch_to_bitmap(struct tss_struct *tss,
-+				    struct thread_struct *prev,
-+				    struct thread_struct *next,
-+				    unsigned long tifp, unsigned long tifn)
-+{
-+	if (tifn & _TIF_IO_BITMAP) {
-+		/*
-+		 * Copy the relevant range of the IO bitmap.
-+		 * Normally this is 128 bytes or less:
-+		 */
-+		memcpy(tss->io_bitmap, next->io_bitmap_ptr,
-+		       max(prev->io_bitmap_max, next->io_bitmap_max));
-+	} else if (tifp & _TIF_IO_BITMAP) {
-+		/*
-+		 * Clear any possible leftover bits:
-+		 */
-+		memset(tss->io_bitmap, 0xff, prev->io_bitmap_max);
-+	}
-+}
++/*
++ * The vendor and possibly platform specific bits which can be modified in
++ * x86_spec_ctrl_base.
++ */
++static u64 __ro_after_init x86_spec_ctrl_mask = ~SPEC_CTRL_IBRS;
 +
- void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p,
- 		      struct tss_struct *tss)
+ void __init check_bugs(void)
  {
- 	struct thread_struct *prev, *next;
-+	unsigned long tifp, tifn;
+ 	identify_boot_cpu();
+@@ -116,7 +122,7 @@ static enum spectre_v2_mitigation spectr
  
- 	prev = &prev_p->thread;
- 	next = &next_p->thread;
- 
--	if (test_tsk_thread_flag(prev_p, TIF_BLOCKSTEP) ^
--	    test_tsk_thread_flag(next_p, TIF_BLOCKSTEP)) {
-+	tifn = READ_ONCE(task_thread_info(next_p)->flags);
-+	tifp = READ_ONCE(task_thread_info(prev_p)->flags);
-+	switch_to_bitmap(tss, prev, next, tifp, tifn);
-+
-+	propagate_user_return_notify(prev_p, next_p);
-+
-+	if ((tifp ^ tifn) & _TIF_BLOCKSTEP) {
- 		unsigned long debugctl = get_debugctlmsr();
- 
- 		debugctl &= ~DEBUGCTLMSR_BTF;
--		if (test_tsk_thread_flag(next_p, TIF_BLOCKSTEP))
-+		if (tifn & _TIF_BLOCKSTEP)
- 			debugctl |= DEBUGCTLMSR_BTF;
--
- 		update_debugctlmsr(debugctl);
- 	}
- 
--	if (test_tsk_thread_flag(prev_p, TIF_NOTSC) ^
--	    test_tsk_thread_flag(next_p, TIF_NOTSC)) {
--		/* prev and next are different */
--		if (test_tsk_thread_flag(next_p, TIF_NOTSC))
-+	if ((tifp ^ tifn) & _TIF_NOTSC) {
-+		if (tifn & _TIF_NOTSC)
- 			hard_disable_TSC();
- 		else
- 			hard_enable_TSC();
- 	}
--
--	if (test_tsk_thread_flag(next_p, TIF_IO_BITMAP)) {
--		/*
--		 * Copy the relevant range of the IO bitmap.
--		 * Normally this is 128 bytes or less:
--		 */
--		memcpy(tss->io_bitmap, next->io_bitmap_ptr,
--		       max(prev->io_bitmap_max, next->io_bitmap_max));
--	} else if (test_tsk_thread_flag(prev_p, TIF_IO_BITMAP)) {
--		/*
--		 * Clear any possible leftover bits:
--		 */
--		memset(tss->io_bitmap, 0xff, prev->io_bitmap_max);
--	}
--	propagate_user_return_notify(prev_p, next_p);
+ void x86_spec_ctrl_set(u64 val)
+ {
+-	if (val & ~(SPEC_CTRL_IBRS | SPEC_CTRL_RDS))
++	if (val & x86_spec_ctrl_mask)
+ 		WARN_ONCE(1, "SPEC_CTRL MSR value 0x%16llx is unknown.\n", val);
+ 	else
+ 		wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base | val);
+@@ -458,6 +464,7 @@ static enum ssb_mitigation_cmd __init __
+ 		switch (boot_cpu_data.x86_vendor) {
+ 		case X86_VENDOR_INTEL:
+ 			x86_spec_ctrl_base |= SPEC_CTRL_RDS;
++			x86_spec_ctrl_mask &= ~SPEC_CTRL_RDS;
+ 			x86_spec_ctrl_set(SPEC_CTRL_RDS);
+ 			break;
+ 		case X86_VENDOR_AMD:
+@@ -481,7 +488,7 @@ static void ssb_select_mitigation()
+ void x86_spec_ctrl_setup_ap(void)
+ {
+ 	if (boot_cpu_has(X86_FEATURE_IBRS))
+-		x86_spec_ctrl_set(x86_spec_ctrl_base & (SPEC_CTRL_IBRS | SPEC_CTRL_RDS));
++		x86_spec_ctrl_set(x86_spec_ctrl_base & ~x86_spec_ctrl_mask);
  }
  
- /*
+ #ifdef CONFIG_SYSFS
