@@ -1,91 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751160AbeEUEVz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 00:21:55 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60644 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751050AbeEUEVb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 00:21:31 -0400
-From: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-To: mpe@ellerman.id.au, mikey@neuling.org
-Cc: benh@kernel.crashing.org, paulus@samba.org,
-        naveen.n.rao@linux.vnet.ibm.com, matthew.brown.dev@gmail.com,
-        cyrilbur@gmail.com, anton@samba.org, sandipan@linux.vnet.ibm.com,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Subject: [PATCH 2/3] powerpc/sstep: Fix kernel crash if VSX is not present
-Date: Mon, 21 May 2018 09:51:07 +0530
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180521042108.8318-1-ravi.bangoria@linux.ibm.com>
-References: <20180521042108.8318-1-ravi.bangoria@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18052104-0008-0000-0000-000004F8A56F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052104-0009-0000-0000-00001E8D2B40
-Message-Id: <20180521042108.8318-3-ravi.bangoria@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-21_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805210051
+        id S1750923AbeEUE24 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 00:28:56 -0400
+Received: from gherkin.frus.com ([192.158.254.49]:39846 "EHLO gherkin.frus.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750703AbeEUE2z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 00:28:55 -0400
+Date: Sun, 20 May 2018 23:28:54 -0500
+From: Bob Tracy <rct@gherkin.frus.com>
+To: linux-kernel@vger.kernel.org
+Subject: Re: [BUG] 4.17-rcX delays during boot and memory mapping errors
+Message-ID: <20180521042854.GA1147@gherkin.frus.com>
+References: <20180519003259.GA1114@gherkin.frus.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180519003259.GA1114@gherkin.frus.com>
+User-Agent: Mutt/1.6.1 (2016-04-27)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-emulate_step() is not checking runtime VSX feature flag before
-emulating an instruction. This is causing kernel crash when kernel
-is compiled with CONFIG_VSX=y but running on a machine where VSX
-is not supported or disabled. Ex, while running emulate_step tests
-on P6 machine:
+On Fri, May 18, 2018 at 07:32:59PM -0500, Bob Tracy wrote:
+> Every one of the 4.17-rcX series has hung during boot at the point where
+> "acpid" starts up.  Beginning with -rc5, the boot actually proceeds to
+> completion after an "uncomfortably" long delay.
+> 
+> Attempting to run the X11 server results in the following diagnostic
+> output in "/var/log/Xorg.0.log":
 
-  Oops: Exception in kernel mode, sig: 4 [#1]
-  NIP [c000000000095c24] .load_vsrn+0x28/0x54
-  LR [c000000000094bdc] .emulate_loadstore+0x167c/0x17b0
-  Call Trace:
-    0x40fe240c7ae147ae (unreliable)
-    .emulate_loadstore+0x167c/0x17b0
-    .emulate_step+0x25c/0x5bc
-    .test_lxvd2x_stxvd2x+0x64/0x154
-    .test_emulate_step+0x38/0x4c
-    .do_one_initcall+0x5c/0x2c0
-    .kernel_init_freeable+0x314/0x4cc
-    .kernel_init+0x24/0x160
-    .ret_from_kernel_thread+0x58/0xb4
+v4.17-rc6 took care of the X11 server startup issue.  The
+"uncomfortably" long delay issue persists.  An observation as far as
+differences between 4.16 and 4.17-rc6 during startup...
 
-With fix:
-  emulate_step_test: lxvd2x         : FAIL
-  emulate_step_test: stxvd2x        : FAIL
+In v4.16 and earlier kernels, I wouldn't see the "random: crng init done"
+message until moments after the system was done transitioning to multi-
+user mode ("login" prompt on the console).  In the v4.17-rcX series, I
+don't see a login prompt until all the events represented in the "dmesg"
+output below have occurred:
 
-Fixes: https://github.com/linuxppc/linux/issues/148
+(...)
+[    7.314001] NET: Registered protocol family 10
+[    7.315781] IPv6: ADDRCONF(NETDEV_UP): eth0: link is not ready
+[    7.317359] Segment Routing with IPv6
+[    8.667444] NET: Registered protocol family 17
+[    9.130872] e1000e: eth0 NIC Link is Up 10 Mbps Half Duplex, Flow
+Control: None
+[    9.131839] e1000e 0000:00:19.0 eth0: 10/100 speed: disabling TSO
+[    9.136947] IPv6: ADDRCONF(NETDEV_CHANGE): eth0: link becomes ready
+[   78.567150] random: crng init done
+[  102.974609] IPv6: ADDRCONF(NETDEV_UP): eth1: link is not ready
+[  102.982063] IPv6: ADDRCONF(NETDEV_CHANGE): eth1: link becomes ready
+[  102.983716] r8152 2-1.5:1.0 eth1: carrier on
+(end of dmesg output)
 
-Reported-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
----
- arch/powerpc/lib/sstep.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+As far as what I see on the console during bootup, I see the
+"IPv6: ADDRCONF(NETDEV_CHANGE): eth0: link becomes ready" message, then
+the system "hangs" until the "random: crng init done" message appears.
+Then "acpid" startup and other events proceed normally.
 
-diff --git a/arch/powerpc/lib/sstep.c b/arch/powerpc/lib/sstep.c
-index db6bba259d91..23b7ddf04521 100644
---- a/arch/powerpc/lib/sstep.c
-+++ b/arch/powerpc/lib/sstep.c
-@@ -2544,6 +2544,15 @@ int analyse_instr(struct instruction_op *op, const struct pt_regs *regs,
- #endif /* __powerpc64__ */
- 
- 	}
-+
-+#ifdef CONFIG_VSX
-+	if ((GETTYPE(op->type) == LOAD_VSX ||
-+	     GETTYPE(op->type) == STORE_VSX) &&
-+	    !cpu_has_feature(CPU_FTR_VSX)) {
-+		return -1;
-+	}
-+#endif /* CONFIG_VSX */
-+
- 	return 0;
- 
-  logical_done:
--- 
-2.16.2
+Any idea what's going on here?
+
+--Bob
