@@ -1,40 +1,41 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZp3R1Pubt64t57L1hVtHlUeqc+2l+mj4d+wANLvuqTOAU1KoYFuDYhjsiJm7ZjoJhmXMbYY
-ARC-Seal: i=1; a=rsa-sha256; t=1526937314; cv=none;
+X-Google-Smtp-Source: AB8JxZrSD7p5U68WyHXdbFnrCA82ncw/TKeBuSbvTT70YAH8iLIjlZFO6Qc2J2pYXaqyV+IwL4kl
+ARC-Seal: i=1; a=rsa-sha256; t=1526937311; cv=none;
         d=google.com; s=arc-20160816;
-        b=jKVIHAHhxHS4T7u9zVbmebrF4y4NstE9SMEa34zO1/v3z7buTa4BDnKEow1kFQszhx
-         R6pKmWsqcpygx7mnLJpeTdkdh3UOCY00KXyLgm9Nj/x/gxu9wLumPLI/xDEhDLWZkyfr
-         Z/rQx8CyQeGvBDHEbNB3X+5sVjSSq4s/XlldLVvJ9USIXs7CeTFOte6DOe2YF4iPsdBl
-         V4RKuE2Dmhe2Uyi0XNk8NXqK5PeaybscMcFr2HchBE7ufBs60IAy5NqV0Otf8MLMp0ZH
-         V0WGztL9D+PbHAbYcbF9cyXDYu+oDkpLerrCg/BHPjq6pTBAxTSvqLfYgm9VPIJYmtYL
-         WqDw==
+        b=H7ZCF/6FVcGrzyFmOBbzFnnJPjw1NJmFOLr6pl+pTVJSKn5m751/lQMrvSjdk+/pqf
+         g9doLaiSEUSw4s+zOojoRjBiiQ5s9zVm1IK1N0O9p4e8dlsM4ZlFRHkcLhVBJHnYnNLG
+         YVXU6ZwVyMqSvF5weZ3GDQSP/Z8qiHlu4PpNlKWwc0i5NPADdQWNDr3TAijON1Cpi6XC
+         V/yn5MaZQC1l6IqiQlMI+G20dB72799kBBmc/CL2HZ/9At1gbp+cx0b5VpgyxO7Iqzzw
+         SAdI2dxV+/9PZXupjv4Jc3fzGLsPbI7bh9tEohLLsga+z5sGdNmuf+uyE7SVawS/Oiqk
+         3IjA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=cRK0DeOp9yxeK2XVQFz1htUjrMSSqaLs7niG5+PwTDI=;
-        b=dOJssfD2Y9k18fWnX2ySi7IHttboZhXx3Ui3n2MK+6o52dEMk9vTLICzaqEnYJw92C
-         yz/IfeNOyWNRTAAjd1VfCQw+3Dhbtk3g/ZGGuY9ItgvoUTL1aPXmdi0Nv5v1NBd/6aP7
-         GBKYF04OQolcFeqKvbpzgjX8XlQStzJkR1zY2mZnpyMULcwOdgj75Khk79Os7Ivb+558
-         q7WnjsCyWAbRQaqAZ5un35tpS8aVLRsZzjezT6tK1qdfPqvbIwgT2hnpaAqMMhD55upv
-         aRIEyOJiTzUaJr90RpjH2fbgHmyYG2jbrI14QKN+YjyJlFP/rXBWbfMvw3eW979wlKxb
-         SABA==
+        bh=qX+2uSxOL3gP5veP9RbjdaDO/rSoFxZ3f+V1E3Yg1m4=;
+        b=OhSsslm401LbQ31kjt5EtzChCzW5/u2FUDFTYj9QxNr7Qs06hkKUNj1FpoAxfHZs9i
+         /38LKiNodHT/CB1SFR1GOo5RyMrbxCiACmvt3GTtKcOrWB3tUcLVKxbZoSFlH0TajZbS
+         JM17og393n0nb8SWweQuHWx5tUun6Hs/1glP0r7+nDzc3JGkvutSqFwYR8FKGePLVglU
+         9AwJb6YzDlH1EM9R+sDaPurNxH+i/3pHKEdYgPk2hNQYxoPAcyjJUZ26KiAjm9OQY4Dz
+         S0CDt2Qpk9GkMXcj7WBL/2nPzQ2Za5c4g50MrpDOtFHU/IKk5B2AFPhFWJQq326Q0bD2
+         Ov5g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=Nne0bVKY;
+       dkim=pass header.i=@kernel.org header.s=default header.b=moDEHufH;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=Nne0bVKY;
+       dkim=pass header.i=@kernel.org header.s=default header.b=moDEHufH;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 36/87] x86/nospec: Simplify alternative_msr_write()
-Date: Mon, 21 May 2018 23:11:12 +0200
-Message-Id: <20180521210423.893374107@linuxfoundation.org>
+	Liu Bo <bo.liu@linux.alibaba.com>,
+	Filipe Manana <fdmanana@suse.com>,
+	Qu Wenruo <wqu@suse.com>,
+	David Sterba <dsterba@suse.com>,
+	Nikolay Borisov <nborisov@suse.com>
+Subject: [PATCH 4.9 35/87] btrfs: fix reading stale metadata blocks after degraded raid1 mounts
+Date: Mon, 21 May 2018 23:11:11 +0200
+Message-Id: <20180521210423.747857310@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210420.222671977@linuxfoundation.org>
 References: <20180521210420.222671977@linuxfoundation.org>
@@ -44,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109821557476654?=
-X-GMAIL-MSGID: =?utf-8?q?1601109821557476654?=
+X-GMAIL-THRID: =?utf-8?q?1601109818430995354?=
+X-GMAIL-MSGID: =?utf-8?q?1601109818430995354?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,66 +54,94 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Liu Bo <bo.liu@linux.alibaba.com>
 
-commit 1aa7a5735a41418d8e01fa7c9565eb2657e2ea3f upstream
+commit 02a3307aa9c20b4f6626255b028f07f6cfa16feb upstream.
 
-The macro is not type safe and I did look for why that "g" constraint for
-the asm doesn't work: it's because the asm is more fundamentally wrong.
+If a btree block, aka. extent buffer, is not available in the extent
+buffer cache, it'll be read out from the disk instead, i.e.
 
-It does
+btrfs_search_slot()
+  read_block_for_search()  # hold parent and its lock, go to read child
+    btrfs_release_path()
+    read_tree_block()  # read child
 
-        movl %[val], %%eax
+Unfortunately, the parent lock got released before reading child, so
+commit 5bdd3536cbbe ("Btrfs: Fix block generation verification race") had
+used 0 as parent transid to read the child block.  It forces
+read_tree_block() not to check if parent transid is different with the
+generation id of the child that it reads out from disk.
 
-but "val" isn't a 32-bit value, so then gcc will pass it in a register,
-and generate code like
+A simple PoC is included in btrfs/124,
 
-        movl %rsi, %eax
+0. A two-disk raid1 btrfs,
 
-and gas will complain about a nonsensical 'mov' instruction (it's moving a
-64-bit register to a 32-bit one).
+1. Right after mkfs.btrfs, block A is allocated to be device tree's root.
 
-Passing it through memory will just hide the real bug - gcc still thinks
-the memory location is 64-bit, but the "movl" will only load the first 32
-bits and it all happens to work because x86 is little-endian.
+2. Mount this filesystem and put it in use, after a while, device tree's
+   root got COW but block A hasn't been allocated/overwritten yet.
 
-Convert it to a type safe inline function with a little trick which hands
-the feature into the ALTERNATIVE macro.
+3. Umount it and reload the btrfs module to remove both disks from the
+   global @fs_devices list.
 
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+4. mount -odegraded dev1 and write some data, so now block A is allocated
+   to be a leaf in checksum tree.  Note that only dev1 has the latest
+   metadata of this filesystem.
+
+5. Umount it and mount it again normally (with both disks), since raid1
+   can pick up one disk by the writer task's pid, if btrfs_search_slot()
+   needs to read block A, dev2 which does NOT have the latest metadata
+   might be read for block A, then we got a stale block A.
+
+6. As parent transid is not checked, block A is marked as uptodate and
+   put into the extent buffer cache, so the future search won't bother
+   to read disk again, which means it'll make changes on this stale
+   one and make it dirty and flush it onto disk.
+
+To avoid the problem, parent transid needs to be passed to
+read_tree_block().
+
+In order to get a valid parent transid, we need to hold the parent's
+lock until finishing reading child.
+
+This patch needs to be slightly adapted for stable kernels, the
+&first_key parameter added to read_tree_block() is from 4.16+
+(581c1760415c4). The fix is to replace 0 by 'gen'.
+
+Fixes: 5bdd3536cbbe ("Btrfs: Fix block generation verification race")
+CC: stable@vger.kernel.org # 4.4+
+Signed-off-by: Liu Bo <bo.liu@linux.alibaba.com>
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
+Reviewed-by: Qu Wenruo <wqu@suse.com>
+[ update changelog ]
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Nikolay Borisov <nborisov@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/include/asm/nospec-branch.h |   19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
 
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -241,15 +241,16 @@ static inline void vmexit_fill_RSB(void)
- #endif
+---
+ fs/btrfs/ctree.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+--- a/fs/btrfs/ctree.c
++++ b/fs/btrfs/ctree.c
+@@ -2486,10 +2486,8 @@ read_block_for_search(struct btrfs_trans
+ 	if (p->reada != READA_NONE)
+ 		reada_for_search(root, p, level, slot, key->objectid);
+ 
+-	btrfs_release_path(p);
+-
+ 	ret = -EAGAIN;
+-	tmp = read_tree_block(root, blocknr, 0);
++	tmp = read_tree_block(root, blocknr, gen);
+ 	if (!IS_ERR(tmp)) {
+ 		/*
+ 		 * If the read above didn't mark this buffer up to date,
+@@ -2503,6 +2501,8 @@ read_block_for_search(struct btrfs_trans
+ 	} else {
+ 		ret = PTR_ERR(tmp);
+ 	}
++
++	btrfs_release_path(p);
+ 	return ret;
  }
  
--#define alternative_msr_write(_msr, _val, _feature)		\
--	asm volatile(ALTERNATIVE("",				\
--				 "movl %[msr], %%ecx\n\t"	\
--				 "movl %[val], %%eax\n\t"	\
--				 "movl $0, %%edx\n\t"		\
--				 "wrmsr",			\
--				 _feature)			\
--		     : : [msr] "i" (_msr), [val] "i" (_val)	\
--		     : "eax", "ecx", "edx", "memory")
-+static __always_inline
-+void alternative_msr_write(unsigned int msr, u64 val, unsigned int feature)
-+{
-+	asm volatile(ALTERNATIVE("", "wrmsr", %c[feature])
-+		: : "c" (msr),
-+		    "a" (val),
-+		    "d" (val >> 32),
-+		    [feature] "i" (feature)
-+		: "memory");
-+}
- 
- static inline void indirect_branch_prediction_barrier(void)
- {
