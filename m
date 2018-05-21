@@ -1,96 +1,41 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1306010-1526937333-2-15856071716393161093
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526937332; b=V2ZAzlNuk4/3tYWd06B3XPYesjHDxcjl2AlQ/NnYJA7Q8HkZLd
-    2kie3uHJgEvUqNdY0eNW3iuDdcs0GG3NoFOrkGMFcVgkXHYkfxNzcVK0G4xQX07y
-    m6nBjKwW9jwbIV/pgBOZeTTM0xhgotIzc8t/eRtFz3+qwJnxhtwT+8MU8Px26oXg
-    h30f/HLABuCQps0/PHzgaF03RtRKlK7rqG0Nk6eNyiCW+Q7tICQ/op60LMUGlrvw
-    RQ8o0gk0mVB1A5NaLxKj2Nr7KZme27v7223paz0smXn2VIKpcXhzMMz984FP2cIW
-    KEnga3hgRnRvPMR7Tu+qZM6rLTBdUAE2u6CA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1526937332; bh=zDsMiFX9eAzhUX7JAgV2ShkYS1biHt
-    vRaHssp0o1zAw=; b=N6M7piy64DxkokiuntYvMMkhQPO5kCab/H9MQ44dK3eXYa
-    rkdQK+r7XZKtTwpWbecjOX6vkbOCE5eX63TAqQA3iltOASg2s/1DTlwikwO9XXsy
-    Wd0SjTIGkLuO0b1aXKuVnBdnMziIIffUMNp/DNYpWFDdC2t7RxBRtDsEf7gpfoAa
-    ryWvqcNUttUT7ukh4LHPBoAQ4cPaTeoLS20JjITS5A95u/iu9X3LqRAYYR1SxxvU
-    MAsgWrKdJYPP1sCRBM4ABGhO/IMobATUxQHC/vg9LNbiwJalISIkVcKAAy22df6z
-    HTTVKVZjP6qHG9cOFOBMY5Qatsq+xfY8FZk9vUPw==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=IeoySHms x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linuxfoundation.org header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=IeoySHms x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linuxfoundation.org header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBQ7TP0RSJPx3S5gYkrVKUOvQvbGyEnjYG/TQCmX2mwOqOLUDJ6g+lpxn9GOClTecTfbs4Au1ghEiHXZRvZtzTNI7Zb9hlESqZiXesFXiXPlWKPI/Eic
-    5mI2+QrlF6Jk1Qw64Tm+OxwOMjdaAl21xqsqHhfyjoGlJ2iDfxAWz2vj6Pd9IniGGBtU0QQcERJUg9hE326U9Nx9WEcECehcSsBVwh2mIlWPt2GawdEZqGq/
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=pBOR-ozoAAAA:8 a=ag1SF4gXAAAA:8
-    a=tS2p1tcMxUG_1mGfonEA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752736AbeEUVP2 (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 21 May 2018 17:15:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58836 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751088AbeEUVPZ (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 21 May 2018 17:15:25 -0400
+Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZryPmByIZoIrw8CPQP96fDZq1jRBjpi/HnxD/a6CwNKPcpzGJlgoUXORA2oGigVlwuUe+er
+ARC-Seal: i=1; a=rsa-sha256; t=1526937333; cv=none;
+        d=google.com; s=arc-20160816;
+        b=p5Br427AZ1UAIUum/TTJfpewaMYMoH4/Rz7CZJzwxkgm4HJzrv9HAfAgFdExczMIJG
+         7c7sdC28dQzXKlAH4fKhwAwi8hfJsN4kqCzzKPbmyXOi38Ovr4jb4vG0taUKmYpUtupZ
+         zPyLeypymXka1gsRVgnAHuT5871bILhcKWtIt4Zl0aNikq5kYUuucMZWCvDCbydNKMlH
+         DzHoFLQohmaAShcfBbmVgWQVjgs2tBh8bF81YvgpolrMI91uGFQBvU/2t3tXnVTlVLW8
+         w3nTz1tTwDk1Vecc6/oCIbS4/GAH/gDsoDLn4tOzCF2DQZPImqNInlxMVelocpPOgClK
+         9B9A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=oZeKryUwhcNfSwN3kTS86/YIzU3DRwkbV+TVyy+HwKE=;
+        b=AuSDw0pCAfHNK5+5UhXEnXK9oVAJCHp4IFW4uuHe4EJYk/6/GuJC/29cOdlC2METz1
+         4WR6PwfEopj4+tijA2C6jooZ/OwqsoF/c5qhR0wUQcAjlSUHbDyPPxepdXSq1RxiAFP7
+         AOD6xTI30zCemtjJTcnn9Pf9aresScTBC0QGuOsPEEbuN9Amap+oT3KIfJrWea7YzcW8
+         QhqbDqcDStbaFEe4kbssY6PdtKaGbmKjElSV/f19YA1UGdJnbgd1XEoeTu3WgI6dw2ah
+         MrbR6/RYQRTIG0fQbcORFfJdlJ4R+iF/GKBH4bsBERLt67f3QqOjbnk3CMYNoKuIVhuO
+         rh/g==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=EV483vx5;
+       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=EV483vx5;
+       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@suse.de>, Ingo Molnar <mingo@kernel.org>,
-        David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 40/87] x86/bugs, KVM: Support the combination of guest and host IBRS
-Date: Mon, 21 May 2018 23:11:16 +0200
-Message-Id: <20180521210424.216683415@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@suse.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	David Woodhouse <dwmw@amazon.co.uk>
+Subject: [PATCH 4.9 43/87] x86/bugs: Provide boot parameters for the spec_store_bypass_disable mitigation
+Date: Mon, 21 May 2018 23:11:19 +0200
+Message-Id: <20180521210424.459554621@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210420.222671977@linuxfoundation.org>
 References: <20180521210420.222671977@linuxfoundation.org>
@@ -98,9 +43,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1601109841389169027?=
+X-GMAIL-MSGID: =?utf-8?q?1601109841389169027?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -110,22 +56,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-commit 5cf687548705412da47c9cec342fd952d71ed3d5 upstream
+commit 24f7fc83b9204d20f878c57cb77d261ae825e033 upstream
 
-A guest may modify the SPEC_CTRL MSR from the value used by the
-kernel. Since the kernel doesn't use IBRS, this means a value of zero is
-what is needed in the host.
+Contemporary high performance processors use a common industry-wide
+optimization known as "Speculative Store Bypass" in which loads from
+addresses to which a recent store has occurred may (speculatively) see an
+older value. Intel refers to this feature as "Memory Disambiguation" which
+is part of their "Smart Memory Access" capability.
 
-But the 336996-Speculative-Execution-Side-Channel-Mitigations.pdf refers to
-the other bits as reserved so the kernel should respect the boot time
-SPEC_CTRL value and use that.
+Memory Disambiguation can expose a cache side-channel attack against such
+speculatively read values. An attacker can create exploit code that allows
+them to read memory outside of a sandbox environment (for example,
+malicious JavaScript in a web page), or to perform more complex attacks
+against code running within the same privilege level, e.g. via the stack.
 
-This allows to deal with future extensions to the SPEC_CTRL interface if
-any at all.
+As a first step to mitigate against such attacks, provide two boot command
+line control knobs:
 
-Note: This uses wrmsrl() instead of native_wrmsl(). I does not make any
-difference as paravirt will over-write the callq *0xfff.. with the wrmsrl
-assembler code.
+ nospec_store_bypass_disable
+ spec_store_bypass_disable=[off,auto,on]
+
+By default affected x86 processors will power on with Speculative
+Store Bypass enabled. Hence the provided kernel parameters are written
+from the point of view of whether to enable a mitigation or not.
+The parameters are as follows:
+
+ - auto - Kernel detects whether your CPU model contains an implementation
+	  of Speculative Store Bypass and picks the most appropriate
+	  mitigation.
+
+ - on   - disable Speculative Store Bypass
+ - off  - enable Speculative Store Bypass
+
+[ tglx: Reordered the checks so that the whole evaluation is not done
+  	when the CPU does not support RDS ]
 
 Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -134,99 +98,216 @@ Reviewed-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/nospec-branch.h |   10 ++++++++++
- arch/x86/kernel/cpu/bugs.c           |   18 ++++++++++++++++++
- arch/x86/kvm/svm.c                   |    6 ++----
- arch/x86/kvm/vmx.c                   |    6 ++----
- 4 files changed, 32 insertions(+), 8 deletions(-)
+ Documentation/kernel-parameters.txt  |   33 +++++++++++
+ arch/x86/include/asm/cpufeatures.h   |    1 
+ arch/x86/include/asm/nospec-branch.h |    6 ++
+ arch/x86/kernel/cpu/bugs.c           |  103 +++++++++++++++++++++++++++++++++++
+ 4 files changed, 143 insertions(+)
 
+--- a/Documentation/kernel-parameters.txt
++++ b/Documentation/kernel-parameters.txt
+@@ -2699,6 +2699,9 @@ bytes respectively. Such letter suffixes
+ 			allow data leaks with this option, which is equivalent
+ 			to spectre_v2=off.
+ 
++	nospec_store_bypass_disable
++			[HW] Disable all mitigations for the Speculative Store Bypass vulnerability
++
+ 	noxsave		[BUGS=X86] Disables x86 extended register state save
+ 			and restore using xsave. The kernel will fallback to
+ 			enabling legacy floating-point and sse state.
+@@ -3973,6 +3976,36 @@ bytes respectively. Such letter suffixes
+ 			Not specifying this option is equivalent to
+ 			spectre_v2=auto.
+ 
++	spec_store_bypass_disable=
++			[HW] Control Speculative Store Bypass (SSB) Disable mitigation
++			(Speculative Store Bypass vulnerability)
++
++			Certain CPUs are vulnerable to an exploit against a
++			a common industry wide performance optimization known
++			as "Speculative Store Bypass" in which recent stores
++			to the same memory location may not be observed by
++			later loads during speculative execution. The idea
++			is that such stores are unlikely and that they can
++			be detected prior to instruction retirement at the
++			end of a particular speculation execution window.
++
++			In vulnerable processors, the speculatively forwarded
++			store can be used in a cache side channel attack, for
++			example to read memory to which the attacker does not
++			directly have access (e.g. inside sandboxed code).
++
++			This parameter controls whether the Speculative Store
++			Bypass optimization is used.
++
++			on     - Unconditionally disable Speculative Store Bypass
++			off    - Unconditionally enable Speculative Store Bypass
++			auto   - Kernel detects whether the CPU model contains an
++				 implementation of Speculative Store Bypass and
++				 picks the most appropriate mitigation
++
++			Not specifying this option is equivalent to
++			spec_store_bypass_disable=auto.
++
+ 	spia_io_base=	[HW,MTD]
+ 	spia_fio_base=
+ 	spia_pedr=
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -204,6 +204,7 @@
+ 
+ #define X86_FEATURE_USE_IBPB	( 7*32+21) /* "" Indirect Branch Prediction Barrier enabled */
+ #define X86_FEATURE_USE_IBRS_FW	( 7*32+22) /* "" Use IBRS during runtime firmware calls */
++#define X86_FEATURE_SPEC_STORE_BYPASS_DISABLE ( 7*32+23) /* "" Disable Speculative Store Bypass. */
+ 
+ /* Virtualization flags: Linux defined, word 8 */
+ #define X86_FEATURE_TPR_SHADOW  ( 8*32+ 0) /* Intel TPR Shadow */
 --- a/arch/x86/include/asm/nospec-branch.h
 +++ b/arch/x86/include/asm/nospec-branch.h
-@@ -228,6 +228,16 @@ enum spectre_v2_mitigation {
- extern void x86_spec_ctrl_set(u64);
- extern u64 x86_spec_ctrl_get_default(void);
+@@ -238,6 +238,12 @@ extern u64 x86_spec_ctrl_get_default(voi
+ extern void x86_spec_ctrl_set_guest(u64);
+ extern void x86_spec_ctrl_restore_host(u64);
  
-+/*
-+ * On VMENTER we must preserve whatever view of the SPEC_CTRL MSR
-+ * the guest has, while on VMEXIT we restore the host view. This
-+ * would be easier if SPEC_CTRL were architecturally maskable or
-+ * shadowable for guests but this is not (currently) the case.
-+ * Takes the guest view of SPEC_CTRL MSR as a parameter.
-+ */
-+extern void x86_spec_ctrl_set_guest(u64);
-+extern void x86_spec_ctrl_restore_host(u64);
++/* The Speculative Store Bypass disable variants */
++enum ssb_mitigation {
++	SPEC_STORE_BYPASS_NONE,
++	SPEC_STORE_BYPASS_DISABLE,
++};
 +
  extern char __indirect_thunk_start[];
  extern char __indirect_thunk_end[];
  
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -122,6 +122,24 @@ u64 x86_spec_ctrl_get_default(void)
+@@ -26,6 +26,7 @@
+ #include <asm/intel-family.h>
+ 
+ static void __init spectre_v2_select_mitigation(void);
++static void __init ssb_select_mitigation(void);
+ 
+ /*
+  * Our boot-time value of the SPEC_CTRL MSR. We read it once so that any
+@@ -52,6 +53,12 @@ void __init check_bugs(void)
+ 	/* Select the proper spectre mitigation before patching alternatives */
+ 	spectre_v2_select_mitigation();
+ 
++	/*
++	 * Select proper mitigation for any exposure to the Speculative Store
++	 * Bypass vulnerability.
++	 */
++	ssb_select_mitigation();
++
+ #ifdef CONFIG_X86_32
+ 	/*
+ 	 * Check whether we are able to run this kernel safely on SMP.
+@@ -357,6 +364,99 @@ retpoline_auto:
  }
- EXPORT_SYMBOL_GPL(x86_spec_ctrl_get_default);
  
-+void x86_spec_ctrl_set_guest(u64 guest_spec_ctrl)
-+{
-+	if (!boot_cpu_has(X86_FEATURE_IBRS))
-+		return;
-+	if (x86_spec_ctrl_base != guest_spec_ctrl)
-+		wrmsrl(MSR_IA32_SPEC_CTRL, guest_spec_ctrl);
-+}
-+EXPORT_SYMBOL_GPL(x86_spec_ctrl_set_guest);
+ #undef pr_fmt
++#define pr_fmt(fmt)	"Speculative Store Bypass: " fmt
 +
-+void x86_spec_ctrl_restore_host(u64 guest_spec_ctrl)
-+{
-+	if (!boot_cpu_has(X86_FEATURE_IBRS))
-+		return;
-+	if (x86_spec_ctrl_base != guest_spec_ctrl)
-+		wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
-+}
-+EXPORT_SYMBOL_GPL(x86_spec_ctrl_restore_host);
++static enum ssb_mitigation ssb_mode = SPEC_STORE_BYPASS_NONE;
 +
- #ifdef RETPOLINE
- static bool spectre_v2_bad_module;
++/* The kernel command line selection */
++enum ssb_mitigation_cmd {
++	SPEC_STORE_BYPASS_CMD_NONE,
++	SPEC_STORE_BYPASS_CMD_AUTO,
++	SPEC_STORE_BYPASS_CMD_ON,
++};
++
++static const char *ssb_strings[] = {
++	[SPEC_STORE_BYPASS_NONE]	= "Vulnerable",
++	[SPEC_STORE_BYPASS_DISABLE]	= "Mitigation: Speculative Store Bypass disabled"
++};
++
++static const struct {
++	const char *option;
++	enum ssb_mitigation_cmd cmd;
++} ssb_mitigation_options[] = {
++	{ "auto",	SPEC_STORE_BYPASS_CMD_AUTO }, /* Platform decides */
++	{ "on",		SPEC_STORE_BYPASS_CMD_ON },   /* Disable Speculative Store Bypass */
++	{ "off",	SPEC_STORE_BYPASS_CMD_NONE }, /* Don't touch Speculative Store Bypass */
++};
++
++static enum ssb_mitigation_cmd __init ssb_parse_cmdline(void)
++{
++	enum ssb_mitigation_cmd cmd = SPEC_STORE_BYPASS_CMD_AUTO;
++	char arg[20];
++	int ret, i;
++
++	if (cmdline_find_option_bool(boot_command_line, "nospec_store_bypass_disable")) {
++		return SPEC_STORE_BYPASS_CMD_NONE;
++	} else {
++		ret = cmdline_find_option(boot_command_line, "spec_store_bypass_disable",
++					  arg, sizeof(arg));
++		if (ret < 0)
++			return SPEC_STORE_BYPASS_CMD_AUTO;
++
++		for (i = 0; i < ARRAY_SIZE(ssb_mitigation_options); i++) {
++			if (!match_option(arg, ret, ssb_mitigation_options[i].option))
++				continue;
++
++			cmd = ssb_mitigation_options[i].cmd;
++			break;
++		}
++
++		if (i >= ARRAY_SIZE(ssb_mitigation_options)) {
++			pr_err("unknown option (%s). Switching to AUTO select\n", arg);
++			return SPEC_STORE_BYPASS_CMD_AUTO;
++		}
++	}
++
++	return cmd;
++}
++
++static enum ssb_mitigation_cmd __init __ssb_select_mitigation(void)
++{
++	enum ssb_mitigation mode = SPEC_STORE_BYPASS_NONE;
++	enum ssb_mitigation_cmd cmd;
++
++	if (!boot_cpu_has(X86_FEATURE_RDS))
++		return mode;
++
++	cmd = ssb_parse_cmdline();
++	if (!boot_cpu_has_bug(X86_BUG_SPEC_STORE_BYPASS) &&
++	    (cmd == SPEC_STORE_BYPASS_CMD_NONE ||
++	     cmd == SPEC_STORE_BYPASS_CMD_AUTO))
++		return mode;
++
++	switch (cmd) {
++	case SPEC_STORE_BYPASS_CMD_AUTO:
++	case SPEC_STORE_BYPASS_CMD_ON:
++		mode = SPEC_STORE_BYPASS_DISABLE;
++		break;
++	case SPEC_STORE_BYPASS_CMD_NONE:
++		break;
++	}
++
++	if (mode != SPEC_STORE_BYPASS_NONE)
++		setup_force_cpu_cap(X86_FEATURE_SPEC_STORE_BYPASS_DISABLE);
++	return mode;
++}
++
++static void ssb_select_mitigation()
++{
++	ssb_mode = __ssb_select_mitigation();
++
++	if (boot_cpu_has_bug(X86_BUG_SPEC_STORE_BYPASS))
++		pr_info("%s\n", ssb_strings[ssb_mode]);
++}
++
++#undef pr_fmt
  
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -4917,8 +4917,7 @@ static void svm_vcpu_run(struct kvm_vcpu
- 	 * is no need to worry about the conditional branch over the wrmsr
- 	 * being speculatively taken.
- 	 */
--	if (svm->spec_ctrl)
--		native_wrmsrl(MSR_IA32_SPEC_CTRL, svm->spec_ctrl);
-+	x86_spec_ctrl_set_guest(svm->spec_ctrl);
+ #ifdef CONFIG_SYSFS
  
- 	asm volatile (
- 		"push %%" _ASM_BP "; \n\t"
-@@ -5030,8 +5029,7 @@ static void svm_vcpu_run(struct kvm_vcpu
- 	if (unlikely(!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL)))
- 		svm->spec_ctrl = native_read_msr(MSR_IA32_SPEC_CTRL);
+@@ -382,6 +482,9 @@ ssize_t cpu_show_common(struct device *d
+ 			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
+ 			       spectre_v2_module_string());
  
--	if (svm->spec_ctrl)
--		native_wrmsrl(MSR_IA32_SPEC_CTRL, 0);
-+	x86_spec_ctrl_restore_host(svm->spec_ctrl);
- 
- 	/* Eliminate branch target predictions from guest mode */
- 	vmexit_fill_RSB();
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -8916,8 +8916,7 @@ static void __noclone vmx_vcpu_run(struc
- 	 * is no need to worry about the conditional branch over the wrmsr
- 	 * being speculatively taken.
- 	 */
--	if (vmx->spec_ctrl)
--		native_wrmsrl(MSR_IA32_SPEC_CTRL, vmx->spec_ctrl);
-+	x86_spec_ctrl_set_guest(vmx->spec_ctrl);
- 
- 	vmx->__launched = vmx->loaded_vmcs->launched;
- 	asm(
-@@ -9055,8 +9054,7 @@ static void __noclone vmx_vcpu_run(struc
- 	if (unlikely(!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL)))
- 		vmx->spec_ctrl = native_read_msr(MSR_IA32_SPEC_CTRL);
- 
--	if (vmx->spec_ctrl)
--		native_wrmsrl(MSR_IA32_SPEC_CTRL, 0);
-+	x86_spec_ctrl_restore_host(vmx->spec_ctrl);
- 
- 	/* Eliminate branch target predictions from guest mode */
- 	vmexit_fill_RSB();
++	case X86_BUG_SPEC_STORE_BYPASS:
++		return sprintf(buf, "%s\n", ssb_strings[ssb_mode]);
++
+ 	default:
+ 		break;
+ 	}
