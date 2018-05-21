@@ -1,316 +1,225 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752525AbeEUIyD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 04:54:03 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:33047 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751892AbeEUIxy (ORCPT
+        id S1752658AbeEUIzE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 04:55:04 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:38976 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751116AbeEUIzA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 04:53:54 -0400
-X-Google-Smtp-Source: AB8JxZqufjC9pkIBb0E5ezY+6qE1YY/CRn3YdAAfNWgdqjlsnf38/O8Cu2Y0Famo6EqbahiJMnBoSQ==
-From: Leo Yan <leo.yan@linaro.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Tor Jeremiassen <tor@ti.com>,
-        mike.leach@linaro.org, kim.phillips@arm.com,
-        Robert Walker <Robert.Walker@arm.com>, coresight@lists.linaro.org
-Cc: Leo Yan <leo.yan@linaro.org>
-Subject: [RFT v2 3/4] perf script python: Add script for CoreSight trace disassembler
-Date: Mon, 21 May 2018 16:52:27 +0800
-Message-Id: <1526892748-326-4-git-send-email-leo.yan@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1526892748-326-1-git-send-email-leo.yan@linaro.org>
-References: <1526892748-326-1-git-send-email-leo.yan@linaro.org>
+        Mon, 21 May 2018 04:55:00 -0400
+X-Google-Smtp-Source: AB8JxZquDm2NK69E+D3kv79aoX1Xgrb+kf69wMNL/rKVQFYe7pxYczurb6mvfrDhMMC//ufrATNfpw==
+Subject: Re: [PATCH v2 2/5] drm/i915: hdmi: add CEC notifier to intel_hdmi
+To: =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Cc: airlied@linux.ie, hans.verkuil@cisco.com, lee.jones@linaro.org,
+        olof@lixom.net, seanpaul@google.com, sadolfsson@google.com,
+        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, fparent@baylibre.com,
+        felixe@google.com, marcheu@chromium.org, bleung@google.com,
+        darekm@google.com, linux-media@vger.kernel.org
+References: <1526648704-16873-1-git-send-email-narmstrong@baylibre.com>
+ <1526648704-16873-3-git-send-email-narmstrong@baylibre.com>
+ <20180518132403.GW23723@intel.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
+ GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
+ RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
+ NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
+ 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
+ ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
+ YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
+ GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
+ coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
+ SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
+ YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
+ mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
+ zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
+ 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
+ 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
+ RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
+ C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
+ Acmp6h8g
+Organization: Baylibre
+Message-ID: <26a21fdb-281c-cbbd-8f48-d9ba390b3363@baylibre.com>
+Date: Mon, 21 May 2018 10:54:55 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180518132403.GW23723@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit adds python script to parse CoreSight tracing event and
-use command 'objdump' for disassembled lines, finally we can generate
-readable program execution flow for reviewing tracing data.
+Hi Ville,
 
-The script receives CoreSight tracing packet with below format:
+On 18/05/2018 15:24, Ville Syrjälä wrote:
+> On Fri, May 18, 2018 at 03:05:01PM +0200, Neil Armstrong wrote:
+>> This patchs adds the cec_notifier feature to the intel_hdmi part
+>> of the i915 DRM driver. It uses the HDMI DRM connector name to differentiate
+>> between each HDMI ports.
+>> The changes will allow the i915 HDMI code to notify EDID and HPD changes
+>> to an eventual CEC adapter.
+>>
+>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+>> ---
+>>  drivers/gpu/drm/i915/Kconfig         |  1 +
+>>  drivers/gpu/drm/i915/intel_display.h | 20 ++++++++++++++++++++
+>>  drivers/gpu/drm/i915/intel_drv.h     |  2 ++
+>>  drivers/gpu/drm/i915/intel_hdmi.c    | 13 +++++++++++++
+>>  4 files changed, 36 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/i915/Kconfig b/drivers/gpu/drm/i915/Kconfig
+>> index dfd9588..2d65d56 100644
+>> --- a/drivers/gpu/drm/i915/Kconfig
+>> +++ b/drivers/gpu/drm/i915/Kconfig
+>> @@ -23,6 +23,7 @@ config DRM_I915
+>>  	select SYNC_FILE
+>>  	select IOSF_MBI
+>>  	select CRC32
+>> +	select CEC_CORE if CEC_NOTIFIER
+>>  	help
+>>  	  Choose this option if you have a system that has "Intel Graphics
+>>  	  Media Accelerator" or "HD Graphics" integrated graphics,
+>> diff --git a/drivers/gpu/drm/i915/intel_display.h b/drivers/gpu/drm/i915/intel_display.h
+>> index 4e7418b..c68d1c8 100644
+>> --- a/drivers/gpu/drm/i915/intel_display.h
+>> +++ b/drivers/gpu/drm/i915/intel_display.h
+>> @@ -126,6 +126,26 @@ enum port {
+>>  
+>>  #define port_name(p) ((p) + 'A')
+>>  
+>> +static inline const char *port_identifier(enum port port)
+>> +{
+>> +	switch (port) {
+>> +	case PORT_A:
+>> +		return "Port A";
+>> +	case PORT_B:
+>> +		return "Port B";
+>> +	case PORT_C:
+>> +		return "Port C";
+>> +	case PORT_D:
+>> +		return "Port D";
+>> +	case PORT_E:
+>> +		return "Port E";
+>> +	case PORT_F:
+>> +		return "Port F";
+>> +	default:
+>> +		return "<invalid>";
+>> +	}
+>> +}
+> 
+> I don't think we need this in the header. A static function will do.
 
-                +------------+------------+------------+
-  packet(n):    |    addr    |    ip      |    cpu     |
-                +------------+------------+------------+
-  packet(n+1):  |    addr    |    ip      |    cpu     |
-                +------------+------------+------------+
+I just followed how other functions were declared, in the same way.
 
-packet::ip is the last address of current branch instruction and
-packet::addr presents the start address of the next coming branch
-instruction.  So for one branch instruction which starts in packet(n),
-its execution flow starts from packet(n)::addr and it stops at
-packet(n+1)::ip.  As results we need to combine the two continuous
-packets to generate the instruction range, this is the rationale for the
-script implementation:
+> And I was actually thinking something a bit fancier like:
+> snprintf("%s/port-%s", dev_name(dev), port_id(port));
+> 
+> Oh, I see you already pass the device in so I guess we don't need
+> that in the port id?
 
-  [ sample(n)::addr .. sample(n+1)::ip ]
+Indeed, my bad I forgot to answer your last question, we already pass a struct
+device which provides the device bus, name and id, so it's unneeded here.
 
-Credits to Tor Jeremiassen who have written the script skeleton and
-provides the ideas for reading symbol file according to build-id,
-creating memory map for dso and basic packet handling.  Mathieu Poirier
-contributed fixes for build-id and memory map bugs.  The detailed
-development history for this script you can find from [1].  Based on Tor
-and Mathieu work, the script is updated samples handling for the
-corrected sample format.  Another minor enhancement is to support for
-without build-id case, the script can parse kernel symbols with option
-'-k' for vmlinux file path.
+> 
+>> +
+>>  enum dpio_channel {
+>>  	DPIO_CH0,
+>>  	DPIO_CH1
+>> diff --git a/drivers/gpu/drm/i915/intel_drv.h b/drivers/gpu/drm/i915/intel_drv.h
+>> index d436858..b50e51b 100644
+>> --- a/drivers/gpu/drm/i915/intel_drv.h
+>> +++ b/drivers/gpu/drm/i915/intel_drv.h
+>> @@ -39,6 +39,7 @@
+>>  #include <drm/drm_dp_mst_helper.h>
+>>  #include <drm/drm_rect.h>
+>>  #include <drm/drm_atomic.h>
+>> +#include <media/cec-notifier.h>
+>>  
+>>  /**
+>>   * __wait_for - magic wait macro
+>> @@ -1001,6 +1002,7 @@ struct intel_hdmi {
+>>  	bool has_audio;
+>>  	bool rgb_quant_range_selectable;
+>>  	struct intel_connector *attached_connector;
+>> +	struct cec_notifier *notifier;
+> 
+> I was wondering if we need any ifdefs around this stuff, but I guess not
+> since it's just a pointer and all the functions seem to have empty
+> static inlines for the CEC=n case.
+> 
+>>  };
+>>  
+>>  struct intel_dp_mst_encoder;
+>> diff --git a/drivers/gpu/drm/i915/intel_hdmi.c b/drivers/gpu/drm/i915/intel_hdmi.c
+>> index 1baef4a..d522b5b 100644
+>> --- a/drivers/gpu/drm/i915/intel_hdmi.c
+>> +++ b/drivers/gpu/drm/i915/intel_hdmi.c
+>> @@ -1868,6 +1868,8 @@ intel_hdmi_set_edid(struct drm_connector *connector)
+>>  		connected = true;
+>>  	}
+>>  
+>> +	cec_notifier_set_phys_addr_from_edid(intel_hdmi->notifier, edid);
+>> +
+>>  	return connected;
+>>  }
+>>  
+>> @@ -1876,6 +1878,7 @@ intel_hdmi_detect(struct drm_connector *connector, bool force)
+>>  {
+>>  	enum drm_connector_status status;
+>>  	struct drm_i915_private *dev_priv = to_i915(connector->dev);
+>> +	struct intel_hdmi *intel_hdmi = intel_attached_hdmi(connector);
+>>  
+>>  	DRM_DEBUG_KMS("[CONNECTOR:%d:%s]\n",
+>>  		      connector->base.id, connector->name);
+>> @@ -1891,6 +1894,9 @@ intel_hdmi_detect(struct drm_connector *connector, bool force)
+>>  
+>>  	intel_display_power_put(dev_priv, POWER_DOMAIN_GMBUS);
+>>  
+>> +	if (status != connector_status_connected)
+>> +		cec_notifier_phys_addr_invalidate(intel_hdmi->notifier);
+>> +
+>>  	return status;
+>>  }
+>>  
+>> @@ -2031,6 +2037,8 @@ static void chv_hdmi_pre_enable(struct intel_encoder *encoder,
+>>  
+>>  static void intel_hdmi_destroy(struct drm_connector *connector)
+>>  {
+>> +	if (intel_attached_hdmi(connector)->notifier)
+>> +		cec_notifier_put(intel_attached_hdmi(connector)->notifier);
+>>  	kfree(to_intel_connector(connector)->detect_edid);
+>>  	drm_connector_cleanup(connector);
+>>  	kfree(connector);
+>> @@ -2358,6 +2366,11 @@ void intel_hdmi_init_connector(struct intel_digital_port *intel_dig_port,
+>>  		u32 temp = I915_READ(PEG_BAND_GAP_DATA);
+>>  		I915_WRITE(PEG_BAND_GAP_DATA, (temp & ~0xf) | 0xd);
+>>  	}
+>> +
+>> +	intel_hdmi->notifier = cec_notifier_get_conn(dev->dev,
+>> +						     port_identifier(port));
+>> +	if (!intel_hdmi->notifier)
+>> +		DRM_DEBUG_KMS("CEC notifier get failed\n");
+>>  }
+>>  
+>>  void intel_hdmi_init(struct drm_i915_private *dev_priv,
+>> -- 
+>> 2.7.4
+>>
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> 
 
-[1] https://github.com/Linaro/perf-opencsd/commits/perf-opencsd-v4.15/tools/perf/scripts/python/cs-trace-disasm.py
-
-Co-authored-by: Tor Jeremiassen <tor@ti.com>
-Co-authored-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
----
- tools/perf/scripts/python/arm-cs-trace-disasm.py | 234 +++++++++++++++++++++++
- 1 file changed, 234 insertions(+)
- create mode 100644 tools/perf/scripts/python/arm-cs-trace-disasm.py
-
-diff --git a/tools/perf/scripts/python/arm-cs-trace-disasm.py b/tools/perf/scripts/python/arm-cs-trace-disasm.py
-new file mode 100644
-index 0000000..58de36f
---- /dev/null
-+++ b/tools/perf/scripts/python/arm-cs-trace-disasm.py
-@@ -0,0 +1,234 @@
-+# arm-cs-trace-disasm.py: ARM CoreSight Trace Dump With Disassember
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Tor Jeremiassen <tor@ti.com> is original author who wrote script
-+# skeleton, Mathieu Poirier <mathieu.poirier@linaro.org> contributed
-+# fixes for build-id and memory map; Leo Yan <leo.yan@linaro.org>
-+# updated the packet parsing with new samples format.
-+
-+import os
-+import sys
-+import re
-+from subprocess import *
-+from optparse import OptionParser, make_option
-+
-+# Command line parsing
-+
-+option_list = [
-+	# formatting options for the bottom entry of the stack
-+	make_option("-k", "--vmlinux", dest="vmlinux_name",
-+		    help="Set path to vmlinux file"),
-+	make_option("-d", "--objdump", dest="objdump_name",
-+		    help="Set path to objdump executable file"),
-+	make_option("-v", "--verbose", dest="verbose",
-+		    action="store_true", default=False,
-+		    help="Enable debugging log")
-+]
-+
-+parser = OptionParser(option_list=option_list)
-+(options, args) = parser.parse_args()
-+
-+if (options.objdump_name == None):
-+	sys.exit("No objdump executable file specified - use -d or --objdump option")
-+
-+# Initialize global dicts and regular expression
-+
-+build_ids = dict()
-+mmaps = dict()
-+disasm_cache = dict()
-+cpu_data = dict()
-+disasm_re = re.compile("^\s*([0-9a-fA-F]+):")
-+disasm_func_re = re.compile("^\s*([0-9a-fA-F]+)\s\<.*\>:")
-+cache_size = 32*1024
-+prev_cpu = -1
-+
-+def parse_buildid():
-+	global build_ids
-+
-+	buildid_regex = "([a-fA-f0-9]+)[ \t]([^ \n]+)"
-+	buildid_re = re.compile(buildid_regex)
-+
-+	results = check_output(["perf", "buildid-list"]).split('\n');
-+	for line in results:
-+		m = buildid_re.search(line)
-+		if (m == None):
-+			continue;
-+
-+		id_name = m.group(2)
-+		id_num  = m.group(1)
-+
-+		if (id_name == "[kernel.kallsyms]") :
-+			append = "/kallsyms"
-+		elif (id_name == "[vdso]") :
-+			append = "/vdso"
-+		else:
-+			append = "/elf"
-+
-+		build_ids[id_name] = os.environ['PERF_BUILDID_DIR'] + \
-+					"/" + id_name + "/" + id_num + append;
-+		# Replace duplicate slash chars to single slash char
-+		build_ids[id_name] = build_ids[id_name].replace('//', '/', 1)
-+
-+	if ((options.vmlinux_name == None) and ("[kernel.kallsyms]" in build_ids)):
-+		print "kallsyms cannot be used to dump assembler"
-+
-+	# Set vmlinux path to replace kallsyms file, if without buildid we still
-+	# can use vmlinux to prase kernel symbols
-+	if ((options.vmlinux_name != None)):
-+		build_ids['[kernel.kallsyms]'] = options.vmlinux_name;
-+
-+def parse_mmap():
-+	global mmaps
-+
-+	# Check mmap for PERF_RECORD_MMAP and PERF_RECORD_MMAP2
-+	mmap_regex = "PERF_RECORD_MMAP.* -?[0-9]+/[0-9]+: \[(0x[0-9a-fA-F]+)\((0x[0-9a-fA-F]+)\).*:\s.*\s(\S*)"
-+	mmap_re = re.compile(mmap_regex)
-+
-+	results = check_output("perf script --show-mmap-events | fgrep PERF_RECORD_MMAP", shell=True).split('\n')
-+	for line in results:
-+		m = mmap_re.search(line)
-+		if (m != None):
-+			if (m.group(3) == '[kernel.kallsyms]_text'):
-+				dso = '[kernel.kallsyms]'
-+			else:
-+				dso = m.group(3)
-+
-+			start = int(m.group(1),0)
-+			end   = int(m.group(1),0) + int(m.group(2),0)
-+			mmaps[dso] = [start, end]
-+
-+def find_dso_mmap(addr):
-+	global mmaps
-+
-+	for key, value in mmaps.items():
-+		if (addr >= value[0] and addr < value[1]):
-+			return key
-+
-+	return None
-+
-+def read_disam(dso, start_addr, stop_addr):
-+	global mmaps
-+	global build_ids
-+
-+	addr_range = start_addr  + ":" + stop_addr;
-+
-+	# Don't let the cache get too big, clear it when it hits max size
-+	if (len(disasm_cache) > cache_size):
-+		disasm_cache.clear();
-+
-+	try:
-+		disasm_output = disasm_cache[addr_range];
-+	except:
-+		try:
-+			fname = build_ids[dso];
-+		except KeyError:
-+			sys.exit("cannot find symbol file for " + dso)
-+
-+		disasm = [ options.objdump_name, "-d", "-z",
-+			   "--start-address="+start_addr,
-+			   "--stop-address="+stop_addr, fname ]
-+
-+		disasm_output = check_output(disasm).split('\n')
-+		disasm_cache[addr_range] = disasm_output;
-+
-+	return disasm_output
-+
-+def dump_disam(dso, start_addr, stop_addr, check_svc):
-+	for line in read_disam(dso, start_addr, stop_addr):
-+		m = disasm_func_re.search(line)
-+		if (m != None):
-+			print "\t",line
-+			continue
-+
-+		m = disasm_re.search(line)
-+		if (m == None):
-+			continue;
-+
-+		print "\t",line
-+
-+		if ((check_svc == True) and "svc" in line):
-+			return
-+
-+def dump_packet(sample):
-+	print "Packet = { cpu: 0x%d addr: 0x%x phys_addr: 0x%x ip: 0x%x " \
-+	      "pid: %d tid: %d period: %d time: %d }" % \
-+	      (sample['cpu'], sample['addr'], sample['phys_addr'], \
-+	       sample['ip'], sample['pid'], sample['tid'], \
-+	       sample['period'], sample['time'])
-+
-+def trace_begin():
-+	print 'ARM CoreSight Trace Data Assembler Dump'
-+	parse_buildid()
-+	parse_mmap()
-+
-+def trace_end():
-+	print 'End'
-+
-+def trace_unhandled(event_name, context, event_fields_dict):
-+	print ' '.join(['%s=%s'%(k,str(v))for k,v in sorted(event_fields_dict.items())])
-+
-+def process_event(param_dict):
-+	global cache_size
-+	global options
-+	global prev_cpu
-+
-+	sample = param_dict["sample"]
-+
-+	if (options.verbose == True):
-+		dump_packet(sample)
-+
-+	# If period doesn't equal to 1, this packet is for instruction sample
-+	# packet, we need drop this synthetic packet.
-+	if (sample['period'] != 1):
-+		print "Skip synthetic instruction sample"
-+		return
-+
-+	cpu = format(sample['cpu'], "d");
-+
-+	# Initialize CPU data if it's empty, and directly return back
-+	# if this is the first tracing event for this CPU.
-+	if (cpu_data.get(str(cpu) + 'addr') == None):
-+		cpu_data[str(cpu) + 'addr'] = format(sample['addr'], "#x")
-+		prev_cpu = cpu
-+		return
-+
-+	# The format for packet is:
-+	#
-+	#                 +------------+------------+------------+
-+	#  sample_prev:   |    addr    |    ip      |    cpu     |
-+	#                 +------------+------------+------------+
-+	#  sample_next:   |    addr    |    ip      |    cpu     |
-+	#                 +------------+------------+------------+
-+	#
-+	# We need to combine the two continuous packets to get the instruction
-+	# range for sample_prev::cpu:
-+	#
-+	#     [ sample_prev::addr .. sample_next::ip ]
-+	#
-+	# For this purose, sample_prev::addr is stored into cpu_data structure
-+	# and read back for 'start_addr' when the new packet comes, and we need
-+	# to use sample_next::ip to calculate 'stop_addr', plusing extra 4 for
-+	# 'stop_addr' is for the sake of objdump so the final assembler dump can
-+	# include last instruction for sample_next::ip.
-+
-+	start_addr = cpu_data[str(prev_cpu) + 'addr']
-+	stop_addr  = format(sample['ip'] + 4, "#x")
-+
-+	# Sanity checking dso for start_addr and stop_addr
-+	prev_dso = find_dso_mmap(int(start_addr, 0))
-+	next_dso = find_dso_mmap(int(stop_addr, 0))
-+
-+	# If cannot find dso so cannot dump assembler, bail out
-+	if (prev_dso == None or next_dso == None):
-+		print "Address range [ %s .. %s ]: failed to find dso" % (start_addr, stop_addr)
-+		prev_cpu = cpu
-+		return
-+	elif (prev_dso != next_dso):
-+		print "Address range [ %s .. %s ]: isn't in same dso" % (start_addr, stop_addr)
-+		prev_cpu = cpu
-+		return
-+
-+	dump_disam(prev_dso, start_addr, stop_addr, False)
-+
-+	cpu_data[str(cpu) + 'addr'] = format(sample['addr'], "#x")
-+	prev_cpu = cpu
--- 
-2.7.4
+Thans,
+Neil
