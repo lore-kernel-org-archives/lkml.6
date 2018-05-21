@@ -1,98 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753311AbeEUPso (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 11:48:44 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:55388 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753275AbeEUPsi (ORCPT
+        id S1753408AbeEUPuE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 11:50:04 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:34222 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752657AbeEUPt7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 11:48:38 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Mukunda@sirena.org.uk, Vijendar <Vijendar.Mukunda@amd.com>
-Cc: Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-        Mark Brown <broonie@kernel.org>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..."
-        <alsa-devel@alsa-project.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Takashi Iwai <tiwai@suse.com>, Jason Clinton <jclinton@chromium.org>,
-        Mark Brown <broonie@kernel.org>,
-        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Akshu Agrawal <akshu.agrawal@amd.com>,
-        Guenter Roeck <linux@roeck-us.net>, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: amd: memory release for rtd structure" to the asoc tree
-In-Reply-To: <1524741374-13523-7-git-send-email-Vijendar.Mukunda@amd.com>
-Message-Id: <E1fKn36-0007Jc-EB@debutante>
-Date: Mon, 21 May 2018 16:48:36 +0100
+        Mon, 21 May 2018 11:49:59 -0400
+X-Google-Smtp-Source: AB8JxZolIgq3iBI0j+WwmbVR811cOcEUq9uV4DL8hnjZLORaD3/1GWGKDIe5mvPnCzm3vQfm2je6ag==
+Date: Mon, 21 May 2018 08:49:57 -0700
+From: Joel Fernandes <joel@joelfernandes.org>
+To: Patrick Bellasi <patrick.bellasi@arm.com>
+Cc: "Joel Fernandes (Google.)" <joelaf@google.com>,
+        linux-kernel@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Luca Abeni <luca.abeni@santannapisa.it>, Todd Kjos <tkjos@google.com>,
+        claudio@evidence.eu.com, kernel-team@android.com,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2] schedutil: Allow cpufreq requests to be made even
+ when kthread kicked
+Message-ID: <20180521154957.GA14065@joelaf.mtv.corp.google.com>
+References: <20180518185501.173552-1-joel@joelfernandes.org>
+ <20180521105055.GQ30654@e110439-lin>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180521105055.GQ30654@e110439-lin>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Mon, May 21, 2018 at 11:50:55AM +0100, Patrick Bellasi wrote:
+> On 18-May 11:55, Joel Fernandes (Google.) wrote:
+> > From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+> > 
+> > Currently there is a chance of a schedutil cpufreq update request to be
+> > dropped if there is a pending update request. This pending request can
+> > be delayed if there is a scheduling delay of the irq_work and the wake
+> > up of the schedutil governor kthread.
+> > 
+> > A very bad scenario is when a schedutil request was already just made,
+> > such as to reduce the CPU frequency, then a newer request to increase
+> > CPU frequency (even sched deadline urgent frequency increase requests)
+> > can be dropped, even though the rate limits suggest that its Ok to
+> > process a request. This is because of the way the work_in_progress flag
+> > is used.
+> > 
+> > This patch improves the situation by allowing new requests to happen
+> > even though the old one is still being processed. Note that in this
+> > approach, if an irq_work was already issued, we just update next_freq
+> > and don't bother to queue another request so there's no extra work being
+> > done to make this happen.
+> 
+> Maybe I'm missing something but... is not this patch just a partial
+> mitigation of the issue you descrive above?
+> 
+> If a DL freq increase is queued, with this patch we store the request
+> but we don't actually increase the frequency until the next schedutil
+> update, which can be one tick away... isn't it?
+> 
+> If that's the case, maybe something like the following can complete
+> the cure?
 
-   ASoC: amd: memory release for rtd structure
+We already discussed this and thought of this case, I think you missed a
+previous thread [1]. The outer loop in the kthread_work subsystem will take
+care of calling sugov_work again incase another request was queued which we
+happen to miss. So I don't think more complexity is needed to handle the case
+you're bringing up.
 
-has been applied to the asoc tree at
+thanks!
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+ - Joel
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From cac6f59717e1084552e509172d40d5c9d278feb9 Mon Sep 17 00:00:00 2001
-From: "Mukunda, Vijendar" <Vijendar.Mukunda@amd.com>
-Date: Tue, 8 May 2018 10:17:49 +0530
-Subject: [PATCH] ASoC: amd: memory release for rtd structure
-
-rtd structure freed early may result in kernel panic in dma close
-call back. moved releasing memory for rtd structure to the end of
-dma close callback.
-
-Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/amd/acp-pcm-dma.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/sound/soc/amd/acp-pcm-dma.c b/sound/soc/amd/acp-pcm-dma.c
-index 39cd54f1b493..1c44b26ad2db 100644
---- a/sound/soc/amd/acp-pcm-dma.c
-+++ b/sound/soc/amd/acp-pcm-dma.c
-@@ -998,8 +998,6 @@ static int acp_dma_close(struct snd_pcm_substream *substream)
- 								    DRV_NAME);
- 	struct audio_drv_data *adata = dev_get_drvdata(component->dev);
- 
--	kfree(rtd);
--
- 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
- 		adata->play_i2ssp_stream = NULL;
- 		/*
-@@ -1028,7 +1026,7 @@ static int acp_dma_close(struct snd_pcm_substream *substream)
- 	 */
- 	if (!adata->play_i2ssp_stream && !adata->capture_i2ssp_stream)
- 		acp_reg_write(0, adata->acp_mmio, mmACP_EXTERNAL_INTR_ENB);
--
-+	kfree(rtd);
- 	return 0;
- }
- 
--- 
-2.17.0
+[1] https://lkml.org/lkml/2018/5/17/668
