@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753328AbeEURBs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 13:01:48 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:44292 "EHLO
+        id S1753367AbeEURCB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 13:02:01 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:44364 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753065AbeEURBh (ORCPT
+        with ESMTP id S1753082AbeEURB5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 13:01:37 -0400
+        Mon, 21 May 2018 13:01:57 -0400
 From: Ezequiel Garcia <ezequiel@collabora.com>
 To: linux-media@vger.kernel.org
 Cc: kernel@collabora.com, Hans Verkuil <hverkuil@xs4all.nl>,
@@ -17,9 +17,9 @@ Cc: kernel@collabora.com, Hans Verkuil <hverkuil@xs4all.nl>,
         Brian Starkey <brian.starkey@arm.com>, linux-kernel@vger.kernel.org,
         Gustavo Padovan <gustavo.padovan@collabora.com>,
         Ezequiel Garcia <ezequiel@collabora.com>
-Subject: [PATCH v10 02/16] xilinx: regroup caps on querycap
-Date: Mon, 21 May 2018 13:59:32 -0300
-Message-Id: <20180521165946.11778-3-ezequiel@collabora.com>
+Subject: [PATCH v10 07/16] v4l: add unordered flag to format description ioctl
+Date: Mon, 21 May 2018 13:59:37 -0300
+Message-Id: <20180521165946.11778-8-ezequiel@collabora.com>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180521165946.11778-1-ezequiel@collabora.com>
 References: <20180521165946.11778-1-ezequiel@collabora.com>
@@ -29,39 +29,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Gustavo Padovan <gustavo.padovan@collabora.com>
 
-To better organize the code we concentrate the setting of
-V4L2_CAP_STREAMING in one place.
+For explicit synchronization it important for userspace to know if the
+format being used by the driver can deliver the buffers back to userspace
+in the same order they were queued with QBUF.
 
-v2: move cap->capabilities assignment down (Hans Verkuil)
+Ordered streams fits nicely in a pipeline with DRM for example, where
+ordered buffer are expected.
+
+v2: Improve documentation (Hans)
 
 Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
 ---
- drivers/media/platform/xilinx/xilinx-dma.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ Documentation/media/uapi/v4l/vidioc-enum-fmt.rst | 7 +++++++
+ include/uapi/linux/videodev2.h                   | 1 +
+ 2 files changed, 8 insertions(+)
 
-diff --git a/drivers/media/platform/xilinx/xilinx-dma.c b/drivers/media/platform/xilinx/xilinx-dma.c
-index 522cdfdd3345..d041f94be832 100644
---- a/drivers/media/platform/xilinx/xilinx-dma.c
-+++ b/drivers/media/platform/xilinx/xilinx-dma.c
-@@ -494,13 +494,15 @@ xvip_dma_querycap(struct file *file, void *fh, struct v4l2_capability *cap)
- 	struct v4l2_fh *vfh = file->private_data;
- 	struct xvip_dma *dma = to_xvip_dma(vfh->vdev);
+diff --git a/Documentation/media/uapi/v4l/vidioc-enum-fmt.rst b/Documentation/media/uapi/v4l/vidioc-enum-fmt.rst
+index 019c513df217..df8e039b9ac2 100644
+--- a/Documentation/media/uapi/v4l/vidioc-enum-fmt.rst
++++ b/Documentation/media/uapi/v4l/vidioc-enum-fmt.rst
+@@ -116,6 +116,13 @@ one until ``EINVAL`` is returned.
+       - This format is not native to the device but emulated through
+ 	software (usually libv4l2), where possible try to use a native
+ 	format instead for better performance.
++    * - ``V4L2_FMT_FLAG_UNORDERED``
++      - 0x0004
++      - This format doesn't guarantee ordered buffer handling. I.e. the order
++	in which buffers are dequeued with
++	:ref:`VIDIOC_DQBUF <VIDIOC_QBUF>` may be different
++	from the order in which they were queued with
++	:ref:`VIDIOC_QBUF <VIDIOC_QBUF>`.
  
--	cap->capabilities = V4L2_CAP_DEVICE_CAPS | V4L2_CAP_STREAMING
--			  | dma->xdev->v4l2_caps;
-+	cap->device_caps = V4L2_CAP_STREAMING;
  
- 	if (dma->queue.type == V4L2_BUF_TYPE_VIDEO_CAPTURE)
--		cap->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING;
-+		cap->device_caps |= V4L2_CAP_VIDEO_CAPTURE;
- 	else
--		cap->device_caps = V4L2_CAP_VIDEO_OUTPUT | V4L2_CAP_STREAMING;
-+		cap->device_caps |= V4L2_CAP_VIDEO_OUTPUT;
-+
-+	cap->capabilities = cap->device_caps | V4L2_CAP_DEVICE_CAPS
-+			  | dma->xdev->v4l2_caps;
+ Return Value
+diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+index 600877be5c22..a8842a5ca636 100644
+--- a/include/uapi/linux/videodev2.h
++++ b/include/uapi/linux/videodev2.h
+@@ -717,6 +717,7 @@ struct v4l2_fmtdesc {
  
- 	strlcpy(cap->driver, "xilinx-vipp", sizeof(cap->driver));
- 	strlcpy(cap->card, dma->video.name, sizeof(cap->card));
+ #define V4L2_FMT_FLAG_COMPRESSED 0x0001
+ #define V4L2_FMT_FLAG_EMULATED   0x0002
++#define V4L2_FMT_FLAG_UNORDERED  0x0004
+ 
+ 	/* Frame Size and frame rate enumeration */
+ /*
 -- 
 2.16.3
