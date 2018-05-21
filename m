@@ -1,40 +1,101 @@
-Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZr2wkS07lzBH2mpDE6O0MnhK3AtKxHcWv+oy+Sh/yBeNl/AEB4oVZkQ9Ob21271QlCt/mQN
-ARC-Seal: i=1; a=rsa-sha256; t=1526937426; cv=none;
-        d=google.com; s=arc-20160816;
-        b=MGzTWxZHxJtr0sK184SsoCBcGZ0aoUVhaxQREpTdvRHdTDQVhwchJChmpFyPPUMmbg
-         XN/VDOpBlc7gdAGGCp6MAsOfCHzWoTBMd2Wt3ubv5UbuaY6U1RIfZj8sw/Lm2lOCkrNJ
-         NKFPbksFB6j+WcVDlR5VWuoN2f+AS3+O+/3TVp7sWIroRM2TQkR8wPg0c+2ciQJqJxgw
-         DspVMSldaR8nsSQFgylIoyETY3NPeZt4DNMtSHaXjAYHWH8djIe1iwtsL7CwF8CJlLb+
-         ZBegEQL50kUMq6KYTc/OtWBXS3nUX3riejM+eQBGd+etrc8sJzFrqEHKECOni7n6EzuZ
-         Ilww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=M1ryOgm8NCnAdPQtgehp9axIR7w4Xwk+Et3ZEJSNfjc=;
-        b=SUvWPzKmqCFN3NcECaLskpGM4Yuq1rIp3o/6og5l91sE+ALJa3RmdIfCbaOp1LFX2u
-         TWHfUnN/O4+ugZeaEvfTRZTWnQW7dx/okBLEVoJmbmj3lDrzY9bj9DE3V5ui9bDfutOK
-         KP2G2ak/GXfg1K4LA2ENEtsHuTju0h4uFlGnnoaTe8iRwMe+2REwqLatKoBrZZZ2rJAV
-         +6V0La9Zeta0VWdh0oHGxuBj+IwxEyxbKJlPCHuKf3w3TuP/9k/9310p4S1mFCw5Uprd
-         KvPJJI0b3dod/pF8/6E3sMd0smEkJ1jFHXVsxjEg0jP/cIKehwdiVudEEAvBpJWOXF/i
-         Rn8Q==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=sHMPcBcE;
-       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=sHMPcBcE;
-       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1340521-1526937426-2-12732082203371517822
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1526937425; b=d7gory4pytbiEZjg/SG77lZJeh+a3++ujPjcOTQDUA62jXvWah
+    iWUR1wrbHxL2CDyn5u0MNDBV6Jd6mLyD1O2udNLC5MizHTparSN1MqGQ3uyn0kgJ
+    E8NSyWRXAGUPO22FbpmFN1EZFT7B5N361mZx/rHRHeu0CyJ8q8txzuBI8u1hZx5e
+    CCv5epKKMYdaq/aI+So8xlQcl+U7gjZlNNgNful877ON3Cc+hjgrj92d1KI00xT7
+    /oFBdF6rAXiMvOor672my4g81VqRJ/ysaPDHJs0OSlifb2R8VrNJOP8AQdfXWf3Y
+    vmDIqV+qJdiBLttrAqA0GCK/p5qUBgHE91RA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1526937425; bh=/SyQNqHKk1/B2LwyuGlEG3EAkBJ7zE
+    e7Z77jI1DGtUw=; b=I2GJ1g424aYOK3ur1HEwuoVJ2Gv4QNIQzuBBEa5hc1hBwx
+    UmkjxvTgDQ+VfKL506yNJ8i5awXXm+lxPMm/WeLOeUheNtS4QH8YfySlTArLHEfB
+    npDg/2qlMRPmX0Y6xz/9RtxX4VJHYM7vOTm9c3UPJ7t5nZw560iZrgseVCLghqmD
+    Qj3NAfdC/yyLwrw5tYBR/bkLecwploFAzSYCRneuM2uY3tCimn6sWlRbYOKcli9g
+    QKFZuKBk2LTzXn3QUiieYvjAefrFEpCB/UJzXPRoTg5oYiHXUGzZCHEzxE2a3dvE
+    h/nTluCvAU+y5aDpJ/BidFdDjSpMfeHpKjp+u1Cw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+    header.i=@kernel.org header.b=CNZKvbKg x-bits=1024 x-keytype=rsa
+    x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+    header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=linuxfoundation.org header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+      header.i=@kernel.org header.b=CNZKvbKg x-bits=1024 x-keytype=rsa
+      x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+      header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=linuxfoundation.org header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfMODZj+pNa6P43YVCKRXY0x499TsCfJicn5JA3tZ/hBAW6uDCEr1Jja+e8sOsudVvZijpWzCC1YJKaxi3ZPDSyPXzZN8ESEMEG4HoJlERLIKVtkXJNex
+    UZTsmPllfWshBdeiWBCPzam+KXFQoKgXClG73SqJpusq+bHhkYTOphZg02C91zsDa84SoRLt//Et8WAe9NbmuobprgiEJ2G0sDBTtPd0pYA4XG9ffgX5Hri8
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=Z4Rwk6OoAAAA:8 a=JfrnYn6hAAAA:8 a=zd2uoN0lAAAA:8 a=VwQbUJbxAAAA:8
+    a=pBOR-ozoAAAA:8 a=ag1SF4gXAAAA:8 a=2odvrS1lcjx2KH6_8cQA:9
+    a=5KVma6WNb4X-AGTK:21 a=SKw275Fe6VWxqwVJ:21 a=QEXdDO2ut3YA:10
+    a=HkZW87K1Qel5hWWM3VKY:22 a=1CNFftbPRP8L7MoqJWF3:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751185AbeEUVRD (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 21 May 2018 17:17:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60428 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752714AbeEUVRB (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 21 May 2018 17:17:01 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@suse.de>,
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-	David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 77/87] x86/speculation: Handle HT correctly on AMD
-Date: Mon, 21 May 2018 23:11:53 +0200
-Message-Id: <20180521210426.688053290@linuxfoundation.org>
+        stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sherry Hurwitz <sherry.hurwitz@amd.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        David Woodhouse <dwmw@amazon.co.uk>
+Subject: [PATCH 4.9 75/87] x86/cpu/AMD: Fix erratum 1076 (CPB bit)
+Date: Mon, 21 May 2018 23:11:51 +0200
+Message-Id: <20180521210426.529358154@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210420.222671977@linuxfoundation.org>
 References: <20180521210420.222671977@linuxfoundation.org>
@@ -42,10 +103,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109938794662368?=
-X-GMAIL-MSGID: =?utf-8?q?1601109938794662368?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,231 +113,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Borislav Petkov <bp@suse.de>
 
-commit 1f50ddb4f4189243c05926b842dc1a0332195f31 upstream
+commit f7f3dc00f61261cdc9ccd8b886f21bc4dffd6fd9 upstream
 
-The AMD64_LS_CFG MSR is a per core MSR on Family 17H CPUs. That means when
-hyperthreading is enabled the SSBD bit toggle needs to take both cores into
-account. Otherwise the following situation can happen:
+CPUID Fn8000_0007_EDX[CPB] is wrongly 0 on models up to B1. But they do
+support CPB (AMD's Core Performance Boosting cpufreq CPU feature), so fix that.
 
-CPU0		CPU1
-
-disable SSB
-		disable SSB
-		enable  SSB <- Enables it for the Core, i.e. for CPU0 as well
-
-So after the SSB enable on CPU1 the task on CPU0 runs with SSB enabled
-again.
-
-On Intel the SSBD control is per core as well, but the synchronization
-logic is implemented behind the per thread SPEC_CTRL MSR. It works like
-this:
-
-  CORE_SPEC_CTRL = THREAD0_SPEC_CTRL | THREAD1_SPEC_CTRL
-
-i.e. if one of the threads enables a mitigation then this affects both and
-the mitigation is only disabled in the core when both threads disabled it.
-
-Add the necessary synchronization logic for AMD family 17H. Unfortunately
-that requires a spinlock to serialize the access to the MSR, but the locks
-are only shared between siblings.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Sherry Hurwitz <sherry.hurwitz@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20170907170821.16021-1-bp@alien8.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/spec-ctrl.h |    6 +
- arch/x86/kernel/process.c        |  125 +++++++++++++++++++++++++++++++++++++--
- arch/x86/kernel/smpboot.c        |    5 +
- 3 files changed, 130 insertions(+), 6 deletions(-)
+ arch/x86/kernel/cpu/amd.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/arch/x86/include/asm/spec-ctrl.h
-+++ b/arch/x86/include/asm/spec-ctrl.h
-@@ -33,6 +33,12 @@ static inline u64 ssbd_tif_to_amd_ls_cfg
- 	return (tifn & _TIF_SSBD) ? x86_amd_ls_cfg_ssbd_mask : 0ULL;
- }
- 
-+#ifdef CONFIG_SMP
-+extern void speculative_store_bypass_ht_init(void);
-+#else
-+static inline void speculative_store_bypass_ht_init(void) { }
-+#endif
-+
- extern void speculative_store_bypass_update(void);
- 
- #endif
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -203,22 +203,135 @@ static inline void switch_to_bitmap(stru
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -749,6 +749,16 @@ static void init_amd_bd(struct cpuinfo_x
  	}
  }
  
--static __always_inline void __speculative_store_bypass_update(unsigned long tifn)
-+#ifdef CONFIG_SMP
-+
-+struct ssb_state {
-+	struct ssb_state	*shared_state;
-+	raw_spinlock_t		lock;
-+	unsigned int		disable_state;
-+	unsigned long		local_state;
-+};
-+
-+#define LSTATE_SSB	0
-+
-+static DEFINE_PER_CPU(struct ssb_state, ssb_state);
-+
-+void speculative_store_bypass_ht_init(void)
++static void init_amd_zn(struct cpuinfo_x86 *c)
 +{
-+	struct ssb_state *st = this_cpu_ptr(&ssb_state);
-+	unsigned int this_cpu = smp_processor_id();
-+	unsigned int cpu;
-+
-+	st->local_state = 0;
-+
 +	/*
-+	 * Shared state setup happens once on the first bringup
-+	 * of the CPU. It's not destroyed on CPU hotunplug.
++	 * Fix erratum 1076: CPB feature bit not being set in CPUID. It affects
++	 * all up to and including B1.
 +	 */
-+	if (st->shared_state)
-+		return;
-+
-+	raw_spin_lock_init(&st->lock);
-+
-+	/*
-+	 * Go over HT siblings and check whether one of them has set up the
-+	 * shared state pointer already.
-+	 */
-+	for_each_cpu(cpu, topology_sibling_cpumask(this_cpu)) {
-+		if (cpu == this_cpu)
-+			continue;
-+
-+		if (!per_cpu(ssb_state, cpu).shared_state)
-+			continue;
-+
-+		/* Link it to the state of the sibling: */
-+		st->shared_state = per_cpu(ssb_state, cpu).shared_state;
-+		return;
-+	}
-+
-+	/*
-+	 * First HT sibling to come up on the core.  Link shared state of
-+	 * the first HT sibling to itself. The siblings on the same core
-+	 * which come up later will see the shared state pointer and link
-+	 * themself to the state of this CPU.
-+	 */
-+	st->shared_state = st;
++	if (c->x86_model <= 1 && c->x86_stepping <= 1)
++		set_cpu_cap(c, X86_FEATURE_CPB);
 +}
 +
-+/*
-+ * Logic is: First HT sibling enables SSBD for both siblings in the core
-+ * and last sibling to disable it, disables it for the whole core. This how
-+ * MSR_SPEC_CTRL works in "hardware":
-+ *
-+ *  CORE_SPEC_CTRL = THREAD0_SPEC_CTRL | THREAD1_SPEC_CTRL
-+ */
-+static __always_inline void amd_set_core_ssb_state(unsigned long tifn)
+ static void init_amd(struct cpuinfo_x86 *c)
  {
--	u64 msr;
-+	struct ssb_state *st = this_cpu_ptr(&ssb_state);
-+	u64 msr = x86_amd_ls_cfg_base;
- 
--	if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD)) {
--		msr = x86_amd_ls_cfg_base | ssbd_tif_to_amd_ls_cfg(tifn);
-+	if (!static_cpu_has(X86_FEATURE_ZEN)) {
-+		msr |= ssbd_tif_to_amd_ls_cfg(tifn);
- 		wrmsrl(MSR_AMD64_LS_CFG, msr);
-+		return;
-+	}
-+
-+	if (tifn & _TIF_SSBD) {
-+		/*
-+		 * Since this can race with prctl(), block reentry on the
-+		 * same CPU.
-+		 */
-+		if (__test_and_set_bit(LSTATE_SSB, &st->local_state))
-+			return;
-+
-+		msr |= x86_amd_ls_cfg_ssbd_mask;
-+
-+		raw_spin_lock(&st->shared_state->lock);
-+		/* First sibling enables SSBD: */
-+		if (!st->shared_state->disable_state)
-+			wrmsrl(MSR_AMD64_LS_CFG, msr);
-+		st->shared_state->disable_state++;
-+		raw_spin_unlock(&st->shared_state->lock);
- 	} else {
--		msr = x86_spec_ctrl_base | ssbd_tif_to_spec_ctrl(tifn);
--		wrmsrl(MSR_IA32_SPEC_CTRL, msr);
-+		if (!__test_and_clear_bit(LSTATE_SSB, &st->local_state))
-+			return;
-+
-+		raw_spin_lock(&st->shared_state->lock);
-+		st->shared_state->disable_state--;
-+		if (!st->shared_state->disable_state)
-+			wrmsrl(MSR_AMD64_LS_CFG, msr);
-+		raw_spin_unlock(&st->shared_state->lock);
+ 	u32 dummy;
+@@ -779,6 +789,7 @@ static void init_amd(struct cpuinfo_x86
+ 	case 0x10: init_amd_gh(c); break;
+ 	case 0x12: init_amd_ln(c); break;
+ 	case 0x15: init_amd_bd(c); break;
++	case 0x17: init_amd_zn(c); break;
  	}
- }
-+#else
-+static __always_inline void amd_set_core_ssb_state(unsigned long tifn)
-+{
-+	u64 msr = x86_amd_ls_cfg_base | ssbd_tif_to_amd_ls_cfg(tifn);
-+
-+	wrmsrl(MSR_AMD64_LS_CFG, msr);
-+}
-+#endif
-+
-+static __always_inline void intel_set_ssb_state(unsigned long tifn)
-+{
-+	u64 msr = x86_spec_ctrl_base | ssbd_tif_to_spec_ctrl(tifn);
-+
-+	wrmsrl(MSR_IA32_SPEC_CTRL, msr);
-+}
-+
-+static __always_inline void __speculative_store_bypass_update(unsigned long tifn)
-+{
-+	if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD))
-+		amd_set_core_ssb_state(tifn);
-+	else
-+		intel_set_ssb_state(tifn);
-+}
  
- void speculative_store_bypass_update(void)
- {
-+	preempt_disable();
- 	__speculative_store_bypass_update(current_thread_info()->flags);
-+	preempt_enable();
- }
- 
- void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p,
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -75,6 +75,7 @@
- #include <asm/i8259.h>
- #include <asm/realmode.h>
- #include <asm/misc.h>
-+#include <asm/spec-ctrl.h>
- 
- /* Number of siblings per CPU package */
- int smp_num_siblings = 1;
-@@ -229,6 +230,8 @@ static void notrace start_secondary(void
- 	 */
- 	check_tsc_sync_target();
- 
-+	speculative_store_bypass_ht_init();
-+
- 	/*
- 	 * Lock vector_lock and initialize the vectors on this cpu
- 	 * before setting the cpu online. We must set it online with
-@@ -1325,6 +1328,8 @@ void __init native_smp_prepare_cpus(unsi
- 	set_mtrr_aps_delayed_init();
- 
- 	smp_quirk_init_udelay();
-+
-+	speculative_store_bypass_ht_init();
- }
- 
- void arch_enable_nonboot_cpus_begin(void)
+ 	/* Enable workaround for FXSAVE leak */
