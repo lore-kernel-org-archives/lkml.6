@@ -1,80 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753279AbeEURUm (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 13:20:42 -0400
-Received: from foss.arm.com ([217.140.101.70]:54058 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752872AbeEURUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 13:20:41 -0400
-Date: Mon, 21 May 2018 18:21:08 +0100
-From: Will Deacon <will.deacon@arm.com>
-To: Mark Salter <msalter@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        dave.martin@arm.com, robin.murphy@arm.com, peterz@infradead.org
-Subject: Re: arm64: add missing early clobber in atomic64_dec_if_positive()
-Message-ID: <20180521172108.GH21034@arm.com>
-References: <20180520001726.27808-1-msalter@redhat.com>
- <20180521170022.GD21034@arm.com>
- <c540dd519065316c859e5cb1290de7f5041cb816.camel@redhat.com>
+        id S1753302AbeEURVL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 13:21:11 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33122 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753037AbeEURVJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 13:21:09 -0400
+From: Steve Grubb <sgrubb@redhat.com>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Richard Guy Briggs <rgb@redhat.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        containers@lists.linux-foundation.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, paul@paul-moore.com
+Subject: Re: [PATCH] audit: add containerid support for IMA-audit
+Date: Mon, 21 May 2018 13:21:08 -0400
+Message-ID: <5705556.pzqfGOkdjC@x2>
+Organization: Red Hat
+In-Reply-To: <1526661264.3404.55.camel@linux.vnet.ibm.com>
+References: <1520257393.10396.291.camel@linux.vnet.ibm.com> <20180518155659.porewd6moctumkys@madcap2.tricolour.ca> <1526661264.3404.55.camel@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c540dd519065316c859e5cb1290de7f5041cb816.camel@redhat.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 01:18:39PM -0400, Mark Salter wrote:
-> On Mon, 2018-05-21 at 18:00 +0100, Will Deacon wrote:
-> > Hi Mark,
-> > 
-> > Thanks for reporting this.
-> > 
-> > On Sat, May 19, 2018 at 08:17:26PM -0400, Mark Salter wrote:
-> > > When running a kernel compiled with gcc8 on a machine using LSE, I
-> > > get:
+On Friday, May 18, 2018 12:34:24 PM EDT Mimi Zohar wrote:
+> On Fri, 2018-05-18 at 11:56 -0400, Richard Guy Briggs wrote:
+> > On 2018-05-18 10:39, Mimi Zohar wrote:
+> > > On Fri, 2018-05-18 at 09:54 -0400, Stefan Berger wrote:
+> > > > On 05/18/2018 08:53 AM, Mimi Zohar wrote:
+> > > [..]
 > > > 
-> > >  Unable to handle kernel paging request at virtual address 11111122222221
-> > 
-> > [...]
-> > 
-> > > The fault happens at the casal insn of inlined atomic64_dec_if_positive().
-> > > The inline asm code in that function has:
+> > > > >>>> If so, which ones? We could probably refactor the current
+> > > > >>>> integrity_audit_message() and have ima_parse_rule() call into it
+> > > > >>>> to get
+> > > > >>>> those fields as well. I suppose adding new fields to it wouldn't
+> > > > >>>> be
+> > > > >>>> considered breaking user space?
+> > > > >>> 
+> > > > >>> Changing the order of existing fields or inserting fields could
+> > > > >>> break
+> > > > >>> stuff and is strongly discouraged without a good reason, but
+> > > > >>> appending
+> > > > >>> fields is usually the right way to add information.
+> > > > >>> 
+> > > > >>> There are exceptions, and in this case, I'd pick the "more
+> > > > >>> standard" of
+> > > > >>> the formats for AUDIT_INTEGRITY_RULE (ima_audit_measurement?) and
+> > > > >>> stick
+> > > > >>> with that, abandoning the other format, renaming the less
+> > > > >>> standard
+> > > > >>> version of the record (ima_parse_rule?) and perhpas adopting that
+> > > > >>> abandonned format for the new record type while using
+> > > > >>> current->audit_context.
+> > > > > 
+> > > > > This sounds right, other than "type=INTEGRITY_RULE" (1805) for
+> > > > > ima_audit_measurement().  Could we rename type=1805 to be
+> > > > 
+> > > > So do we want to change both? I thought that what
+> > > > ima_audit_measurement() produces looks ok but may not have a good
+> > > > name
+> > > > for the 'type'. Now in this case I would not want to 'break user
+> > > > space'.
+> > > > The only change I was going to make was to what ima_parse_rule()
+> > > > produces.
 > > > 
-> > > 	"1:	ldr	x30, %[v]\n"
-> > > 	"	subs	%[ret], x30, #1\n"
-> > > 	"	b.lt	2f\n"
-> > > 	"	casal	x30, %[ret], %[v]\n"
-> > > 	"	sub	x30, x30, #1\n"
-> > > 	"	sub	x30, x30, %[ret]\n"
-> > > 	"	cbnz	x30, 1b\n"
-> > > 	"2:")
-> > > 	: [ret] "+r" (x0), [v] "+Q" (v->counter)
+> > > The only change for now is separating the IMA policy rules from the
+> > > IMA-audit messages.
 > > > 
-> > > gcc8 used register x0 for both [ret] and [v] and the subs was
-> > > clobbering [v] before it was used for casal. Gcc is free to do
-> > > this because [ret] lacks an early clobber modifier. So add one
-> > > to tell gcc a separate register is needed for [v].
+> > > Richard, when the containerid is appended to the IMA-audit messages,
+> > > would we make the audit type name change then?
 > > 
-> > Oh blimey, it looks like GCC is realising that counter is at offset 0
-> > of atomic_t and therefore assigns the same register for [ret] and [v],
-> > which is actually forced to be x0 by the 'register' local variable in
-> > C code. The "+Q" constraint only says that the memory is read/write, so
-> > the pointer is fair game.
-> > 
-> > I agree with your fix, but we also need to fix up the other places relying
-> > on this. Patch below -- please yell if you think I missed any.
+> > No, go ahead and make the change now.  I'm expecting that the
+> > containerid record will just be another auxiliary record and should not
+> > affect you folks.
 > 
-> I looked at the other places but figured they were okay because we're
-> explicitly using separate registers. But I suppose the early clobber
-> is the right thing to do in any case.
+> To summarize, we need to disambiguate the 1805, as both
+> ima_parse_rule() and ima_audit_measurement() are using the same number
+> with different formats.  The main usage of 1805 that we are aware of
+> is ima_audit_measurement().  Yet the "type=" name for
+> ima_audit_measurement() should be INTEGRITY_IMA_AUDIT, not
+> INTEGRITY_RULE.
+> 
+> option 1: breaks both uses
+> 1805 - INTEGRITY_IMA_AUDIT - ima_audit_measurement()
+> 1806 - INTEGRITY_POLICY_RULE - ima_parse_rule()
+> 
+> option 2: breaks the most common usage
+> 1805 - INTEGRITY_RULE - ima_parse_rule()
+> 1806 - INTEGRITY_IMA_AUDIT - ima_audit_measurement()
+> 
+> option 3: leaves the most common usage with the wrong name, and breaks
+> the other less common usage
+> 1805 - INTEGRITY_RULE - ima_audit_measurement()
+> 1806 - INTEGRITY_POLICY_RULE - ima_parse_rule()
+> 
+> So option 3 is the best option?
 
-I was worried about silly things like a caller doing:
+>From a user space perspective, I don't care as long the event is well formed 
+(No unnecessary untrusted string logging) and we have the required fields for 
+searching: pid, uid, auid, tty, session, subj, comm, exe, & res. And the 
+object is identifiable in the event.
 
-  atomic64_and((long)v, v);
-
-and then GCC figuring out that the two values were equal and allocating
-the same register..
-
-Will
+-Steve
