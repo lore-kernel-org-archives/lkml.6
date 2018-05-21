@@ -1,33 +1,31 @@
 Return-Path: <linux-security-module-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-248046-1527086577-2-10482368483227518336
+X-Cyrus-Session-Id: sloti22d1t05-662614-1526904576-2-10065700626307370727
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-charsets: plain='UTF-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
+X-Spam-charsets: 
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-security-module-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527086577; b=QsvWZeF3fCeEeFDhrC71ush9yJATEFbDod01M1ECW4Ot/Rx71V
-    RCNqrWEHHwrSPWIePr+sBLzMm4vuL0Mp+sMQKFVNNW51V8ZGjlsIsnEYtfMge6EU
-    kL1is4SAv9m+gSZYDcT133uA+Y0y0GRvBnPKao65MzjyXAZUFheM5W1neiHax7mt
-    rykkvbVUPFBPD2eEwBgK6QWj4zesfxHfAiV0QXoA1KTnkuSEyD9/eFakbA0L/EjA
-    pVBRPWBzU0WHfL/8p2e89MokdtEipk7lqtLj4lwfwKUI8WCeegWnii47yMm4EgDt
-    6NkpkorM+oYNoKqoxtE7gt6TsiE9xHLAEcwA==
+    1526904576; b=LbmygLRmndo0aCAqvvjwlgE0OL2+1oWifdLAK4rBaSNnV6u3Pp
+    qAIEVIE/v+w7UB+nTJGnjugyBNunlHS4MYXduZDj2Dwg3YF53tDt7LEGljP4X5D9
+    JqGHdKpvJ3T1axmxGJZ+0T9z3yKE01flR9Zmqc+CDr7TCpFcF3qIWgwFEo855rmc
+    o9qlaxIGYdh2MKtOUXOKKs5WsaOfFyFEjP8VNXbBfoMOh81riXkKKUs81pcyyC7F
+    JoGgynSzpv6sfWcvRpYqATPz/wiM0IZ9AtKepjQxDRigJt1Hi5gs47QzE5fGMHT9
+    V9S8It92lQzAooO8TNm9rbqnx+2iRc2zcExA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:from:to:cc:date:in-reply-to
-    :references:content-type:mime-version:content-transfer-encoding
-    :message-id:sender:list-id; s=fm2; t=1527086577; bh=1v+JYcjRv/xS
-    yMVZDGlb8Amdbv98K4nbn9gXSLw8s10=; b=OIwyqeUcjYUgcDFDGjn/+hCBkwjv
-    Ur+Paqv5rcAnJ1CnPXXmSeVnerzgbjGySj2bqy0v4vreGS7F/NFZEIHUKYaOMYJC
-    Vr+sNL6wjWMWPP/VN/jskZd0p5spgG9dnY/t1OMxSVNbNofhZTuNRdkUtmUFZPrn
-    d6eto2ntAYC7eSmhx4H/Wj/6Zz/sNh7pGODTQioHsgEb92yVchsD0FN7zgX4pp3i
-    NFdI7ez+jvW+Bw7Zcc/rHgvsN7KHX9crOocJVYbHJ5tv+EpuEW/MBXd234cbwuGF
-    7xW+0GNmJYRLrtqjYmKh7CHybhdxc5qnQjndfRVronce9HK2BXqpO9/DUA==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1526904576; bh=c5S22jlZ8Z7D3NnLI0mB3UPZsiCnXz
+    RgyGc163uRcgY=; b=XPMU3zwL1k2gNENtEtPU5HtNOYiC516YYyYhfIX71n8iqu
+    eh0AGR7cgqMk4RTafWyd/9623lRYo+kmuWvOWLlx8FhL3s1C5Q34PYG1OZoKSlq0
+    5Vfg03Fof7LchWMG9VD4MPqJMNAs3XhOj4RfB5R2xVUZjVpMYawoDWFESuyG/7cC
+    DpgLA7EqxJGjxSU+qfH2Ar7RDTc4abOtNpP4WyBDaq+P9Ba1cHF/0k/PZ8fcRvi2
+    8JtwwT8gFgfH7SjzQd3I4DOtVdm8rAWxC2OdvsOYwERCOz9CNeN2LLIsKIzd0h/A
+    3YuHJB2wTHvOwB5gHsxN1Fglmn5ARGKZUCXEaAiA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none)
-    header.from=linux.vnet.ibm.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=huawei.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -36,15 +34,12 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linux.vnet.ibm.com header.result=pass
-    header_org.domain=ibm.com header_org.result=pass
-    header_is_org_domain=no;
+    header.domain=huawei.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none)
-      header.from=linux.vnet.ibm.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=huawei.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -53,102 +48,107 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linux.vnet.ibm.com header.result=pass
-      header_org.domain=ibm.com header_org.result=pass
-      header_is_org_domain=no;
+      header.domain=huawei.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfH12LH2Z38yZtO+Bnld4kds7zydhWmW43lhC8+SILSGu4EHbbR/a5E+O70bKRZy5ozbyjUhX03CTRcf0knEjOqQrZ5Usfgg7Y3gyFlo2LVErEoyXgd8O
-    nHf+M5NzS6cF+HZPqUtkH4uRIUiOsKGp7tHY3w79gjVmeQYeYOR4Hptixmu2ufSQYEhKPkiyKjqKF46H68tKMT2rsWqjKLYh7YVmcC+0PJIU8U8bZLq3TWFM
-    k/eLIi/YRLQyV9gLgxQ/qg==
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VnNF1IyMAAAA:8 a=pGLkceISAAAA:8 a=K6HrmWtEAAAA:8 a=hBqU3vQJAAAA:8
-    a=VwQbUJbxAAAA:8 a=i0EeH86SAAAA:8 a=B218esqBk1pxTWaAb8YA:9 a=QEXdDO2ut3YA:10
-    a=x8gzFH9gYPwA:10 a=yV38gEssg_2GhkhKF82i:22 a=WLjMIN4s_96MqnBbPenP:22
+X-CM-Envelope: MS4wfKhShobc2OOsonOn41AaFUEDiByMP6C7UGnyw/V1+blXf902sXU3CzsIPn7qHAKlR2vhRZ5aiYZ55aM28+AxxeTtmQuCesrPhhptgaM8CJS8e+XHyFrx
+    UFaGY0ywEKN5lfjHIvPFuHLhj/9YFHr7EppvfUbTudzQaukhX1i+XTfKFSbY6nOqLqSh03qEo+d7rP3DQ47BhfiMeTCqAzD/Ood9sXOplY3ZUSmDGARacK+h
+    WEVRGiTrOquqkhzl0Lzmsw==
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Xg0H5i2kXJwA:10 a=VUJBJC2UJ8kA:10
+    a=DfNHnWVPAAAA:8 a=K6HrmWtEAAAA:8 a=hBqU3vQJAAAA:8 a=VwQbUJbxAAAA:8
+    a=i0EeH86SAAAA:8 a=2N7LZ2YGnUxFU9Y0tUkA:9 a=x8gzFH9gYPwA:10
+    a=rjTVMONInIDnV1a_A2c_:22 a=yV38gEssg_2GhkhKF82i:22 a=WLjMIN4s_96MqnBbPenP:22
     a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933149AbeEWOmx (ORCPT <rfc822;linux@kroah.com>);
-        Wed, 23 May 2018 10:42:53 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36535 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933231AbeEWOmv (ORCPT
+        id S1753000AbeEUMJd (ORCPT <rfc822;linux@kroah.com>);
+        Mon, 21 May 2018 08:09:33 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7716 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752999AbeEUMJZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 23 May 2018 10:42:51 -0400
-Subject: Re: [PATCH 25/33] ima: use match_string() helper
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Yisheng Xie <xieyisheng1@huawei.com>, linux-kernel@vger.kernel.org
-Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Mon, 21 May 2018 08:09:25 -0400
+From: Yisheng Xie <xieyisheng1@huawei.com>
+To: <linux-kernel@vger.kernel.org>
+CC: Yisheng Xie <xieyisheng1@huawei.com>,
+        John Johansen <john.johansen@canonical.com>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Date: Wed, 23 May 2018 10:42:43 -0400
-In-Reply-To: <1526903890-35761-26-git-send-email-xieyisheng1@huawei.com>
+        <linux-security-module@vger.kernel.org>
+Subject: [PATCH 26/33] apparmor: use match_string() helper
+Date: Mon, 21 May 2018 19:58:03 +0800
+Message-ID: <1526903890-35761-27-git-send-email-xieyisheng1@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
+In-Reply-To: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
 References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
-         <1526903890-35761-26-git-send-email-xieyisheng1@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18052314-0012-0000-0000-000005D9CD31
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052314-0013-0000-0000-00001957182F
-Message-Id: <1527086563.4168.0.camel@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-23_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805230149
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, 2018-05-21 at 19:58 +0800, Yisheng Xie wrote:
-> match_string() returns the index of an array for a matching string,
-> which can be used intead of open coded variant.
-> 
-> Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-> Cc: James Morris <jmorris@namei.org>
-> Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> Cc: linux-integrity@vger.kernel.org
-> Cc: linux-security-module@vger.kernel.org
-> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+match_string() returns the index of an array for a matching string,
+which can be used intead of open coded variant.
 
-Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: John Johansen <john.johansen@canonical.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-security-module@vger.kernel.org
+Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+---
+ security/apparmor/lsm.c | 25 +++++++++++--------------
+ 1 file changed, 11 insertions(+), 14 deletions(-)
 
-> ---
->  security/integrity/ima/ima_main.c | 11 ++++-------
->  1 file changed, 4 insertions(+), 7 deletions(-)
-> 
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index 74d0bd7..f807093 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -61,14 +61,11 @@ static int __init hash_setup(char *str)
->  		goto out;
->  	}
-> 
-> -	for (i = 0; i < HASH_ALGO__LAST; i++) {
-> -		if (strcmp(str, hash_algo_name[i]) == 0) {
-> -			ima_hash_algo = i;
-> -			break;
-> -		}
-> -	}
-> -	if (i == HASH_ALGO__LAST)
-> +	i = match_string(hash_algo_name, HASH_ALGO__LAST, str);
-> +	if (i < 0)
->  		return 1;
-> +
-> +	ima_hash_algo = i;
->  out:
->  	hash_setup_done = 1;
->  	return 1;
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index ce2b89e..9b5904f 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -1378,14 +1378,12 @@ static int param_set_audit(const char *val, const struct kernel_param *kp)
+ 	if (apparmor_initialized && !policy_admin_capable(NULL))
+ 		return -EPERM;
+ 
+-	for (i = 0; i < AUDIT_MAX_INDEX; i++) {
+-		if (strcmp(val, audit_mode_names[i]) == 0) {
+-			aa_g_audit = i;
+-			return 0;
+-		}
+-	}
++	i = match_string(audit_mode_names, AUDIT_MAX_INDEX, val);
++	if (i < 0)
++		return -EINVAL;
+ 
+-	return -EINVAL;
++	aa_g_audit = i;
++	return 0;
+ }
+ 
+ static int param_get_mode(char *buffer, const struct kernel_param *kp)
+@@ -1409,14 +1407,13 @@ static int param_set_mode(const char *val, const struct kernel_param *kp)
+ 	if (apparmor_initialized && !policy_admin_capable(NULL))
+ 		return -EPERM;
+ 
+-	for (i = 0; i < APPARMOR_MODE_NAMES_MAX_INDEX; i++) {
+-		if (strcmp(val, aa_profile_mode_names[i]) == 0) {
+-			aa_g_profile_mode = i;
+-			return 0;
+-		}
+-	}
++	i = match_string(aa_profile_mode_names,
++			 APPARMOR_MODE_NAMES_MAX_INDEX, val);
++	if (i)
++		return -EINVAL;
+ 
+-	return -EINVAL;
++	aa_g_profile_mode = i;
++	return 0;
+ }
+ 
+ /*
+-- 
+1.7.12.4
 
