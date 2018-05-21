@@ -1,131 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751188AbeEUMZU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 08:25:20 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:44051 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751075AbeEUMZT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 08:25:19 -0400
-Date: Mon, 21 May 2018 14:25:14 +0200
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <uwe@kleine-koenig.org>
-To: Ales Novak <alnovak@suse.cz>
-Cc: a.zummo@towertech.it, akpm@linux-foundation.org,
-        rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org,
-        jkosina@suse.cz
-Subject: Re: rtc: fix chardev initialization races
-Message-ID: <20180521122509.GA4251@taurus.defre.kleine-koenig.org>
-References: <1393410793-7315-1-git-send-email-alnovak@suse.cz>
+        id S1751656AbeEUMZp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 08:25:45 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52146 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750944AbeEUMZk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 08:25:40 -0400
+Date: Mon, 21 May 2018 20:25:28 +0800
+From: Wei Xu <wexu@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jfreimann@redhat.com,
+        tiwei.bie@intel.com
+Subject: Re: [RFC V4 PATCH 0/8] Packed ring layout for vhost
+Message-ID: <20180521122528.GA28627@wei-ubt>
+References: <1526473941-16199-1-git-send-email-jasowang@redhat.com>
+ <20180520162514.GA21958@wei-ubt>
+ <9a8425be-5c39-eff7-d808-836b825ed890@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="+QahgC5+KEYLbs62"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1393410793-7315-1-git-send-email-alnovak@suse.cz>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9a8425be-5c39-eff7-d808-836b825ed890@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, May 21, 2018 at 10:33:30AM +0800, Jason Wang wrote:
+> 
+> 
+> On 2018年05月21日 00:25, Wei Xu wrote:
+> >On Wed, May 16, 2018 at 08:32:13PM +0800, Jason Wang wrote:
+> >>Hi all:
+> >>
+> >>This RFC implement packed ring layout. The code were tested with
+> >>Tiwei's RFC V3 ahttps://lkml.org/lkml/2018/4/25/34. Some fixups and
+> >>tweaks were needed on top of Tiwei's code to make it run for event
+> >>index.
+> >Could you please show the change based on Tiwei's code to easy other's
+> >test?
+> 
+> Please try Tiwei's V4 instead of just waiting for the fixup. It should work
+> unless you don't try zerocopy and vIOMMU.
 
---+QahgC5+KEYLbs62
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yeah, actually v3 of both you guys works well on my test bed except resetting.
 
-On Wed, Feb 26, 2014 at 11:33:13AM +0100, Ales Novak wrote:
-> In many rtc modules, the chardevice file in rtc module probe is
-> being created prematurely. If the probe fails after the chardevice
-> file has been created (e.g. after rtc_device_register), it's possible
-> for a program to open() it, which subsequently can cause memory
-> corruption.
->=20
-> The race looks like that (thanks Jiri):
->=20
-> CPU0:                                CPU1:
-> sys_load_module()
->  do_init_module()
->   do_one_initcall()
->    cmos_do_probe()
->     rtc_device_register()
->      __register_chrdev()
->      cdev->owner =3D struct module*
->                                      open("/dev/rtc0")
->     rtc_device_unregister()
->   module_put()
->   free_module()
->    module_free(mod->module_core)
->    /* struct module *module is now
->       freed */
->                                       chrdev_open()
->                                        spin_lock(cdev_lock)
->                                        cdev_get()
->                                         try_module_get()
->                                          module_is_live()
->                                          /* dereferences already
->                                             freed struct module* */
+> 
+> 
+> >>Pktgen reports about 20% improvement on PPS (event index is off). More
+> >>testing is ongoing.
+> >>
+> >>Notes for tester:
+> >>
+> >>- Start from this version, vhost need qemu co-operation to work
+> >>   correctly. Or you can comment out the packed specific code for
+> >>   GET/SET_VRING_BASE.
+> >Do you mean the code in vhost_virtqueue_start/stop?
+> 
+> For qemu, probably.
+> 
+> >Both Tiwei's and your v3
+> >work fortunately correctly which should be avoided since the ring should be
+> >definitely different.
+> 
+> I don't understand this, you mean reset work?a
 
-[Context: For a patch to rtc-pcf2127.c Alexandre Belloni asked not to
-fail after rtc_device_register successfully finished and pointed to this
-reasoning as explaination.]
+No, currently we have not handled vhost start/stop for split/packed ring relatively
+which is what I am doing now.
 
-If there is really such a race then (I hope) there is
-something in the cdev code that needs fixing. According to my
-understanding, when rtc_device_unregister returned, the cdev is gone and
-so chrdev_open is supposed to fail.
+Wei
 
-Otherwise the same problem can be triggered when the device is unbound
-and the module unloaded while another cpu opens the char dev.
-
-I added a msleep(5000) to chrdev_open like this:
-
-        if (current->pid !=3D 1) {
-                pr_info("%s:%d: sleeping to open race window\n", __func__, =
-__LINE__);
-                msleep(5000);
-                pr_info("%s:%d: done sleeping\n", __func__, __LINE__);
-        }
-
-before the spinlock is taken. If I trigger that (using
-
-	a =3D open("/dev/rtc0")
-
-in a Python shell) and then do rmmod rtc_pcf2127 (which is the driver
-backing my rtc0), I get:
-
-	OSError: [Errno 6] No such device or address: '/dev/rtc0'
-
-> This patch is proposing a solution, splitting the function
-> {devm_,}rtc_device_register into {devm_,}rtc_device_register{_fs,}.
-> The {devm_}rtc_device_register_fs which is creating the files, should
-> be called after it is clear that the probe will pass. It will set the
-> RTC_DEV_FILES_EXIST into rtc_device->flags.
-
-So this split is not a complete fix but only a work around for some
-cases at best.
-
-Maybe there isn't even a problem?
-
-Best regards
-Uwe
-=20
-
---+QahgC5+KEYLbs62
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAlsCuqIACgkQwfwUeK3K
-7AnEhgf/Vj/D2FzcmADX0wvZM+0sq/9zEFviSDobEQ3EAqjedwEbyug8C5N5j/39
-wBHVrd61jpl5/W88KdB7YdwhlC+R3pSMm7Eu6GXfE/LmqMQsAFNVifFvnFw24GNg
-kawwzvJX5TPiEVRmgD3e5Y+HdJypSIr24RWHL6xUCMeLcnkvh8YnAKAVQxWmZgme
-xaGKBHo686djotKnE3UPEP1oOch22LlBLMm4FnhE+ReT8elufLtrqh3D1de8m74i
-bnaes7r5qrKx3x32w9pwTRSt5Awm/Tx2L3yWxK136fFDNpfFicDFsSTymjt+OBEi
-KW3WW/ZNUQctw7y+kJt8dARYfNbcwA==
-=o6r5
------END PGP SIGNATURE-----
-
---+QahgC5+KEYLbs62--
+> 
+> Thanks
+> 
+> >
+> >Wei
+> >
+> >>Changes from V3:
+> >>- Fix math on event idx checking
+> >>- Sync last avail wrap counter through GET/SET_VRING_BASE
+> >>- remove desc_event prefix in the driver/device structure
+> >>
+> >>Changes from V2:
+> >>- do not use & in checking desc_event_flags
+> >>- off should be most significant bit
+> >>- remove the workaround of mergeable buffer for dpdk prototype
+> >>- id should be in the last descriptor in the chain
+> >>- keep _F_WRITE for write descriptor when adding used
+> >>- device flags updating should use ADDR_USED type
+> >>- return error on unexpected unavail descriptor in a chain
+> >>- return false in vhost_ve_avail_empty is descriptor is available
+> >>- track last seen avail_wrap_counter
+> >>- correctly examine available descriptor in get_indirect_packed()
+> >>- vhost_idx_diff should return u16 instead of bool
+> >>
+> >>Changes from V1:
+> >>
+> >>- Refactor vhost used elem code to avoid open coding on used elem
+> >>- Event suppression support (compile test only).
+> >>- Indirect descriptor support (compile test only).
+> >>- Zerocopy support.
+> >>- vIOMMU support.
+> >>- SCSI/VSOCK support (compile test only).
+> >>- Fix several bugs
+> >>
+> >>Jason Wang (8):
+> >>   vhost: move get_rx_bufs to vhost.c
+> >>   vhost: hide used ring layout from device
+> >>   vhost: do not use vring_used_elem
+> >>   vhost_net: do not explicitly manipulate vhost_used_elem
+> >>   vhost: vhost_put_user() can accept metadata type
+> >>   virtio: introduce packed ring defines
+> >>   vhost: packed ring support
+> >>   vhost: event suppression for packed ring
+> >>
+> >>  drivers/vhost/net.c                | 136 ++----
+> >>  drivers/vhost/scsi.c               |  62 +--
+> >>  drivers/vhost/vhost.c              | 861 ++++++++++++++++++++++++++++++++-----
+> >>  drivers/vhost/vhost.h              |  47 +-
+> >>  drivers/vhost/vsock.c              |  42 +-
+> >>  include/uapi/linux/virtio_config.h |   9 +
+> >>  include/uapi/linux/virtio_ring.h   |  32 ++
+> >>  7 files changed, 928 insertions(+), 261 deletions(-)
+> >>
+> >>-- 
+> >>2.7.4
+> >>
+> 
