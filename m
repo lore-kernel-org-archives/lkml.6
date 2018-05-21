@@ -1,38 +1,38 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrDYL+8DAYChoMepu4qOIAuGgi+Y1GworbdyZjHR6r2wuUKV4aihVUx9FiKBgOyKkQaEoU1
-ARC-Seal: i=1; a=rsa-sha256; t=1526937789; cv=none;
+X-Google-Smtp-Source: AB8JxZqEWVfIXzZb5qIyEV4dOVA9o7A3lc630TQiXZAdTdwRvXMJeppHEreSiqm0y4uJvhNpD9K3
+ARC-Seal: i=1; a=rsa-sha256; t=1526937787; cv=none;
         d=google.com; s=arc-20160816;
-        b=xu1rjYCyauUt8kScmNwm1p9+a9YCdRvs16U7aC+SpW6a4qw+KobcB1EEDVIMGXOMFf
-         JbJyAKaIWGpcTFDZu7iCPv0+sM+w/htc0204UFOFYb2D5+UJQOoMFUmTBAEy2by/nUNt
-         zzxV0fd2KmmYSJB4BzwfyOa5QnwHyQFjhEdqNewS9eICz4O66Xj6vXtQpNCs3caUm9oM
-         nzH0Zd1yScHmsxFP9pn9YmwWqcU6TMa2K0dqdX5tKpq8EedYh96DpVbn8Lx5N6c1j0M8
-         w2clHMkOjthYhFskc0KJF811k+QkGnR36GXE562VseV784LC+2Nnxd3Amy2b5aHUveV7
-         bvCA==
+        b=WDAyj2oU/8LAuYmmnJBxg8SJUUCu0/XtbiLqM4+qOnXIubGhYbGzYIATdtRWPp+ooh
+         DFBTNQndgZGvA/BexL/k9MSkg3X5IyWw/KRsVswAOcln8/gbtaGVTGrKn2UrohlRCUoh
+         FbdBRJVmUBXyTyD4O9PwR2WF7GVyIgnuM3CHe1fW/pKR5hsK5Mk47iSJ2bj/GNtDR8rV
+         mC9I14jO8ulDyUPOpvsijIpfOBrISk6FSF+xmklwKIAlOofgDHltPLNJG2NgjmAK+6HT
+         yNG9j74dRqyMcMp6S+45QFwcDHNnkRnQC5FhSjClL74iomD6yNVCAmDBtrZLLVZnVExX
+         dckA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=O1xiy+wiWyVYrlb1AOiMja60qOOZsUuc0pgWE5cyBoA=;
-        b=ojDSkByCvVh4t+4ZLGG1MUcQraw/gxnbthDVpqHDGXcuvM1hdqGpspRzZqwM/TX67Z
-         +golj7Y81eYuO3g1yD8cXCIkrYQnqqvOg9yVej3GQ9SbXQkMYQGV31l0tQAKStN2ls84
-         USdFqLUeZoH4rVO35baVFfHM6nq3NbU6f55E/uIFIORXcjm3OWrBcoBkBDCgoY5ujFLQ
-         H/kKqpzQkeHWVVFDh+v+mXSMCRP2TgbI1R2eV8InEqdqsQDKyp3TS1u5Q0RVRTu/m6SS
-         WZYXH6a94gwlfFakC6FnWXRe/GWAwa3AjVcE/QP8biAMCRkziyyNHklGVlnEgcGUEnMt
-         6oHQ==
+        bh=PvLBWf0xdKI2JohKWJZgTukFy14ovpJT7RXSIPzd2Vc=;
+        b=nemNxbS6JoLvdP/HZF5TpbLZJpiJ41Jf1ZvcLolaXR8+UvJhVzRJj0wFVgk9WeaZ5c
+         bSlJo7F7OFRSu81rAo/L8ZbmDcE+iOpQytzzv2LvxxiMWt18hE74qQGy/6fqmvRt8OcE
+         hlE2iiVnZC5yEwxGQPlNlqjY/KstrlWZawLTreEBmTB1Ml3zcTTSSDsZ1G3RLkmrFWdq
+         AEj6fNGOtS5665LNdpeQFcysjkSdDM1VgY8BSFnPMrHwXNdbhw9cGBhLCKv6D7Zfvhwc
+         oOkdUJ1HTcutBGHAIJtt4z9wg4QioIKFs5NlBIQlLFICCM9fW86Xeuscd0TeO4Bh/FGS
+         lC4g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=D/G00/Ki;
+       dkim=pass header.i=@kernel.org header.s=default header.b=0+NcutDf;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=D/G00/Ki;
+       dkim=pass header.i=@kernel.org header.s=default header.b=0+NcutDf;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Florian Westphal <fw@strlen.de>,
-	Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.16 026/110] netfilter: nf_tables: free set name in error path
-Date: Mon, 21 May 2018 23:11:23 +0200
-Message-Id: <20180521210506.148651708@linuxfoundation.org>
+	Jann Horn <jannh@google.com>,
+	Jens Wiklander <jens.wiklander@linaro.org>
+Subject: [PATCH 4.16 025/110] tee: shm: fix use-after-free via temporarily dropped reference
+Date: Mon, 21 May 2018 23:11:22 +0200
+Message-Id: <20180521210506.066487309@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601110019222436527?=
-X-GMAIL-MSGID: =?utf-8?q?1601110319655024852?=
+X-GMAIL-THRID: =?utf-8?q?1601110016429100028?=
+X-GMAIL-MSGID: =?utf-8?q?1601110317314625125?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,44 +51,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Jann Horn <jannh@google.com>
 
-commit 2f6adf481527c8ab8033c601f55bfb5b3712b2ac upstream.
+commit bb765d1c331f62b59049d35607ed2e365802bef9 upstream.
 
-set->name must be free'd here in case ops->init fails.
+Bump the file's refcount before moving the reference into the fd table,
+not afterwards. The old code could drop the file's refcount to zero for a
+short moment before calling get_file() via get_dma_buf().
 
-Fixes: 387454901bd6 ("netfilter: nf_tables: Allow set names of up to 255 chars")
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+This code can only be triggered on ARM systems that use Linaro's OP-TEE.
+
+Fixes: 967c9cca2cc5 ("tee: generic TEE subsystem")
+Signed-off-by: Jann Horn <jannh@google.com>
+Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/nf_tables_api.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/tee/tee_shm.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/net/netfilter/nf_tables_api.c
-+++ b/net/netfilter/nf_tables_api.c
-@@ -3203,18 +3203,20 @@ static int nf_tables_newset(struct net *
+--- a/drivers/tee/tee_shm.c
++++ b/drivers/tee/tee_shm.c
+@@ -360,9 +360,10 @@ int tee_shm_get_fd(struct tee_shm *shm)
+ 	if (!(shm->flags & TEE_SHM_DMA_BUF))
+ 		return -EINVAL;
  
- 	err = ops->init(set, &desc, nla);
- 	if (err < 0)
--		goto err2;
-+		goto err3;
++	get_dma_buf(shm->dmabuf);
+ 	fd = dma_buf_fd(shm->dmabuf, O_CLOEXEC);
+-	if (fd >= 0)
+-		get_dma_buf(shm->dmabuf);
++	if (fd < 0)
++		dma_buf_put(shm->dmabuf);
+ 	return fd;
+ }
  
- 	err = nft_trans_set_add(&ctx, NFT_MSG_NEWSET, set);
- 	if (err < 0)
--		goto err3;
-+		goto err4;
- 
- 	list_add_tail_rcu(&set->list, &table->sets);
- 	table->use++;
- 	return 0;
- 
--err3:
-+err4:
- 	ops->destroy(set);
-+err3:
-+	kfree(set->name);
- err2:
- 	kvfree(set);
- err1:
