@@ -1,172 +1,293 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751014AbeEUFOb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 01:14:31 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:43544 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750867AbeEUFO2 (ORCPT
+        id S1751072AbeEUFTM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 01:19:12 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:59149 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750873AbeEUFTK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 01:14:28 -0400
-X-Google-Smtp-Source: AB8JxZqYHvOXlrmqXq/GQb2wKTF1XmB4jAf3gmh2b6Z5AARHuU1pLcgllJZi7p6p9gOMOTaXxGPbhg==
-Date: Mon, 21 May 2018 10:44:24 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: "Joel Fernandes (Google.)" <joelaf@google.com>
-Cc: linux-kernel@vger.kernel.org,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>, Todd Kjos <tkjos@google.com>,
-        claudio@evidence.eu.com, kernel-team@android.com,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2] schedutil: Allow cpufreq requests to be made even
- when kthread kicked
-Message-ID: <20180521051424.mljwmisvrvi6yyc4@vireshk-i7>
-References: <20180518185501.173552-1-joel@joelfernandes.org>
+        Mon, 21 May 2018 01:19:10 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w4L5IlAc029157
+X-Nifty-SrcIP: [209.85.217.174]
+X-Google-Smtp-Source: AB8JxZqkJX7kfNUxyCCJShIHRUro/kIwD8XPNSL1PkYl9GJrdYEU5kQSm8MeEmvGifSq7KwzuC+uTe78mJjl5oSQehU=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180518185501.173552-1-joel@joelfernandes.org>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <20180520145031.GB9826@ravnborg.org>
+References: <1526537830-22606-1-git-send-email-yamada.masahiro@socionext.com>
+ <1526537830-22606-8-git-send-email-yamada.masahiro@socionext.com> <20180520145031.GB9826@ravnborg.org>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Mon, 21 May 2018 14:18:06 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATM6s++TJ-VrbSwoMmP5FgVOmkUNGCwzZW=Re0WEr5EYQ@mail.gmail.com>
+Message-ID: <CAK7LNATM6s++TJ-VrbSwoMmP5FgVOmkUNGCwzZW=Re0WEr5EYQ@mail.gmail.com>
+Subject: Re: [PATCH v4 07/31] kconfig: add built-in function support
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nicholas Piggin <npiggin@gmail.com>, Kees Cook <keescook@chromium.org>,
+        Emese Revfy <re.emese@gmail.com>, X86 ML <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18-05-18, 11:55, Joel Fernandes (Google.) wrote:
-> From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
-> 
-> Currently there is a chance of a schedutil cpufreq update request to be
-> dropped if there is a pending update request. This pending request can
-> be delayed if there is a scheduling delay of the irq_work and the wake
-> up of the schedutil governor kthread.
-> 
-> A very bad scenario is when a schedutil request was already just made,
-> such as to reduce the CPU frequency, then a newer request to increase
-> CPU frequency (even sched deadline urgent frequency increase requests)
-> can be dropped, even though the rate limits suggest that its Ok to
-> process a request. This is because of the way the work_in_progress flag
-> is used.
-> 
-> This patch improves the situation by allowing new requests to happen
-> even though the old one is still being processed. Note that in this
-> approach, if an irq_work was already issued, we just update next_freq
-> and don't bother to queue another request so there's no extra work being
-> done to make this happen.
+Sam,
 
-Now that this isn't an RFC anymore, you shouldn't have added below
-paragraph here. It could go to the comments section though.
+2018-05-20 23:50 GMT+09:00 Sam Ravnborg <sam@ravnborg.org>:
+> On Thu, May 17, 2018 at 03:16:46PM +0900, Masahiro Yamada wrote:
+>> This commit adds a new concept 'function' to do more text processing
+>> in Kconfig.
+>>
+>> A function call looks like this:
+>>
+>>   $(function,arg1,arg2,arg3,...)
+>>
+>> This commit adds the basic infrastructure to expand functions.
+>> Change the text expansion helpers to take arguments.
+>>
+>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>> ---
+>>
+>> Changes in v4:
+>>   - Error out if arguments more than FUNCTION_MAX_ARGS are passed
+>>   - Use a comma as a delimiter between the function name and the
+>>     first argument
+>>   - Check the number of arguments accepted by each function
+>>   - Support delayed expansion of arguments.
+>>     This will be needed to implement 'if' function
+>>
+>> Changes in v3:
+>>   - Split base infrastructure and 'shell' function
+>>     into separate patches.
+>>
+>> Changes in v2:
+>>   - Use 'shell' for getting stdout from the comment.
+>>     It was 'shell-stdout' in the previous version.
+>>   - Simplify the implementation since the expansion has been moved to
+>>     lexer.
+>>
+>>  scripts/kconfig/preprocess.c | 168 ++++++++++++++++++++++++++++++++++++++++---
+>>  1 file changed, 159 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/scripts/kconfig/preprocess.c b/scripts/kconfig/preprocess.c
+>> index 1bf506c..5be28ec 100644
+>> --- a/scripts/kconfig/preprocess.c
+>> +++ b/scripts/kconfig/preprocess.c
+>> @@ -3,12 +3,17 @@
+>>  // Copyright (C) 2018 Masahiro Yamada <yamada.masahiro@socionext.com>
+>>
+>>  #include <stdarg.h>
+>> +#include <stdbool.h>
+>>  #include <stdio.h>
+>>  #include <stdlib.h>
+>>  #include <string.h>
+>>
+>>  #include "list.h"
+>>
+>> +#define ARRAY_SIZE(arr)              (sizeof(arr) / sizeof((arr)[0]))
+>> +
+>> +static char *expand_string_with_args(const char *in, int argc, char *argv[]);
+>> +
+>>  static void __attribute__((noreturn)) pperror(const char *format, ...)
+>>  {
+>>       va_list ap;
+>> @@ -88,9 +93,85 @@ void env_write_dep(FILE *f, const char *autoconfig_name)
+>>       }
+>>  }
+>>
+>> -static char *eval_clause(const char *in)
+>> +/*
+>> + * Built-in functions
+>> + */
+>> +struct function {
+>> +     const char *name;
+>> +     unsigned int min_args;
+>> +     unsigned int max_args;
+>> +     bool expand_args;
+>> +     char *(*func)(int argc, char *argv[], int old_argc, char *old_argv[]);
+>> +};
+> If a typedef was provided for the function then ...
 
-> I had brought up this issue at the OSPM conference and Claudio had a
-> discussion RFC with an alternate approach [1]. I prefer the approach as
-> done in the patch below since it doesn't need any new flags and doesn't
-> cause any other extra overhead.
-> 
-> [1] https://patchwork.kernel.org/patch/10384261/
-> 
-> LGTMed-by: Viresh Kumar <viresh.kumar@linaro.org>
-> LGTMed-by: Juri Lelli <juri.lelli@redhat.com>
 
-Looks like a Tag you just invented ? :)
+Yes, I can do this,
+but I may rather consider to simplify the code.
 
-> CC: Viresh Kumar <viresh.kumar@linaro.org>
-> CC: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> CC: Peter Zijlstra <peterz@infradead.org>
-> CC: Ingo Molnar <mingo@redhat.com>
-> CC: Patrick Bellasi <patrick.bellasi@arm.com>
-> CC: Juri Lelli <juri.lelli@redhat.com>
-> Cc: Luca Abeni <luca.abeni@santannapisa.it>
-> CC: Joel Fernandes <joelaf@google.com>
-> CC: Todd Kjos <tkjos@google.com>
-> CC: claudio@evidence.eu.com
-> CC: kernel-team@android.com
-> CC: linux-pm@vger.kernel.org
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> ---
-> v1 -> v2: Minor style related changes.
-> 
->  kernel/sched/cpufreq_schedutil.c | 34 ++++++++++++++++++++++++--------
->  1 file changed, 26 insertions(+), 8 deletions(-)
-> 
-> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-> index e13df951aca7..5c482ec38610 100644
-> --- a/kernel/sched/cpufreq_schedutil.c
-> +++ b/kernel/sched/cpufreq_schedutil.c
-> @@ -92,9 +92,6 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
->  	    !cpufreq_can_do_remote_dvfs(sg_policy->policy))
->  		return false;
->  
-> -	if (sg_policy->work_in_progress)
-> -		return false;
-> -
->  	if (unlikely(sg_policy->need_freq_update)) {
->  		sg_policy->need_freq_update = false;
->  		/*
-> @@ -128,7 +125,7 @@ static void sugov_update_commit(struct sugov_policy *sg_policy, u64 time,
->  
->  		policy->cur = next_freq;
->  		trace_cpu_frequency(next_freq, smp_processor_id());
-> -	} else {
-> +	} else if (!sg_policy->work_in_progress) {
->  		sg_policy->work_in_progress = true;
->  		irq_work_queue(&sg_policy->irq_work);
->  	}
-> @@ -291,6 +288,13 @@ static void sugov_update_single(struct update_util_data *hook, u64 time,
->  
->  	ignore_dl_rate_limit(sg_cpu, sg_policy);
->  
-> +	/*
-> +	 * For slow-switch systems, single policy requests can't run at the
-> +	 * moment if update is in progress, unless we acquire update_lock.
-> +	 */
-> +	if (sg_policy->work_in_progress)
-> +		return;
-> +
 
-I would still want this to go away :)
+>> +
+>> +static const struct function function_table[] = {
+>> +     /* Name         MIN     MAX     EXP?    Function */
+>> +};
+>> +
+>> +#define FUNCTION_MAX_ARGS            16
+>> +
+>> +static char *function_expand_arg_and_call(char *(*func)(int argc, char *argv[],
+>> +                                                     int old_argc,
+>> +                                                     char *old_argv[]),
+>> +                                       int argc, char *argv[],
+>> +                                       int old_argc, char *old_argv[])
+> this could be much easier to read.
+>
+>> +{
+>> +     char *expanded_argv[FUNCTION_MAX_ARGS], *res;
+>> +     int i;
+>> +
+>> +     for (i = 0; i < argc; i++)
+>> +             expanded_argv[i] = expand_string_with_args(argv[i],
+>> +                                                        old_argc, old_argv);
+>
+> No check for too many arguments here - maybe it is done in some other place.
 
-@Rafael, will it be fine to get locking in place for unshared policy
-platforms ?
+Right.
+This has already been checked by eval_clause().
 
->  	if (!sugov_should_update_freq(sg_policy, time))
->  		return;
->  
-> @@ -382,13 +386,27 @@ sugov_update_shared(struct update_util_data *hook, u64 time, unsigned int flags)
->  static void sugov_work(struct kthread_work *work)
->  {
->  	struct sugov_policy *sg_policy = container_of(work, struct sugov_policy, work);
-> +	unsigned int freq;
-> +	unsigned long flags;
-> +
-> +	/*
-> +	 * Hold sg_policy->update_lock shortly to handle the case where:
-> +	 * incase sg_policy->next_freq is read here, and then updated by
-> +	 * sugov_update_shared just before work_in_progress is set to false
-> +	 * here, we may miss queueing the new update.
-> +	 *
-> +	 * Note: If a work was queued after the update_lock is released,
-> +	 * sugov_work will just be called again by kthread_work code; and the
-> +	 * request will be proceed before the sugov thread sleeps.
-> +	 */
-> +	raw_spin_lock_irqsave(&sg_policy->update_lock, flags);
-> +	freq = sg_policy->next_freq;
-> +	sg_policy->work_in_progress = false;
-> +	raw_spin_unlock_irqrestore(&sg_policy->update_lock, flags);
->  
->  	mutex_lock(&sg_policy->work_lock);
-> -	__cpufreq_driver_target(sg_policy->policy, sg_policy->next_freq,
-> -				CPUFREQ_RELATION_L);
-> +	__cpufreq_driver_target(sg_policy->policy, freq, CPUFREQ_RELATION_L);
->  	mutex_unlock(&sg_policy->work_lock);
-> -
-> -	sg_policy->work_in_progress = false;
->  }
->  
->  static void sugov_irq_work(struct irq_work *irq_work)
 
-Fix the commit log and you can add my
+>> +
+>> +     res = func(argc, expanded_argv, 0, NULL);
+>> +
+>> +     for (i = 0; i < argc; i++)
+>> +             free(expanded_argv[i]);
+>> +
+>> +     return res;
+>> +}
+>> +
+>> +static char *function_call(const char *name, int argc, char *argv[],
+>> +                        int old_argc, char *old_argv[])
+>> +{
+>> +     const struct function *f;
+>> +     int i;
+>> +
+>> +     for (i = 0; i < ARRAY_SIZE(function_table); i++) {
+>> +             f = &function_table[i];
+>> +             if (strcmp(f->name, name))
+>> +                     continue;
+>> +
+>> +             if (argc < f->min_args)
+>> +                     pperror("too few function arguments passed to '%s'",
+>> +                             name);
+>> +
+>> +             if (argc > f->max_args)
+>> +                     pperror("too many function arguments passed to '%s'",
+>> +                             name);
+> Number of arguments checked here, but max_args is not assiged in this patch.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+This is added to function_table[] by later patches.
+
+
+>
+>> +
+>> +             if (f->expand_args)
+>> +                     return function_expand_arg_and_call(f->func, argc, argv,
+>> +                                                         old_argc, old_argv);
+>> +             return f->func(argc, argv, old_argc, old_argv);
+>> +     }
+>> +
+>> +     return NULL;
+>> +}
+>> +
+>> +/*
+>> + * Evaluate a clause with arguments.  argc/argv are arguments from the upper
+>> + * function call.
+>> + *
+>> + * Returned string must be freed when done
+>> + */
+>> +static char *eval_clause(const char *in, int argc, char *argv[])
+>>  {
+>> -     char *res, *name;
+>> +     char *tmp, *prev, *p, *res, *name;
+>> +     int new_argc = 0;
+>> +     char *new_argv[FUNCTION_MAX_ARGS];
+>> +     int nest = 0;
+>> +     int i;
+>>
+>>       /*
+>>        * Returns an empty string because '$()' should be evaluated
+>> @@ -99,10 +180,69 @@ static char *eval_clause(const char *in)
+>>       if (!*in)
+>>               return xstrdup("");
+>>
+>> -     name = expand_string(in);
+>> +     tmp = xstrdup(in);
+>> +
+>> +     prev = p = tmp;
+>> +
+>> +     /*
+>> +      * Split into tokens
+>> +      * The function name and arguments are separated by a comma.
+>> +      * For example, if the function call is like this:
+>> +      *   $(foo,abc,$(x),$(y))
+>> +      *
+>> +      * The input string for this helper should be:
+>> +      *   foo,abc,$(x),$(y)
+>> +      *
+>> +      * and split into:
+>> +      *   new_argv[0] = 'foo'
+>> +      *   new_argv[1] = 'abc'
+>> +      *   new_argv[2] = '$(x)'
+>> +      *   new_argv[3] = '$(y)'
+>> +      */
+>> +     while (*p) {
+>> +             if (nest == 0 && *p == ',') {
+>> +                     *p = 0;
+>> +                     if (new_argc >= FUNCTION_MAX_ARGS)
+>> +                             pperror("too many function arguments");
+>> +                     new_argv[new_argc++] = prev;
+>> +                     prev = p + 1;
+>> +             } else if (*p == '(') {
+>> +                     nest++;
+>> +             } else if (*p == ')') {
+>> +                     nest--;
+>> +             }
+>> +
+>> +             p++;
+>> +     }
+>> +     new_argv[new_argc++] = prev;
+>
+> Will the following be equal:
+>
+>         $(foo,abc,$(x),$(y))
+>         $(foo, abc, $(x), $(y))
+>
+> make is rather annoying as space is significant, but there seems no good reason
+> for kconfig to inheritate this.
+> So unless there are good arguments consider alloing the spaces.
+> If the current implmentation already supports optional spaces then I just missed
+> it whie reviewing.
+
+
+I have been thinking of trimming the leading whitespaces.
+(https://patchwork.kernel.org/patch/10405549/)
+
+This is trade-off vs "how to pass spaces as arguments?"
+
+GNU Make trims any leading whitespaces from the first argument.
+At least, it was tedious to print messages with indentation.
+
+
+$(info Tool information:)
+$(info   CC: $(CC))
+$(info   LD: $(LD))
+
+will print
+
+Tool information:
+CC: gcc
+LD: ld
+
+
+To keep the indentation, I need to do like follows:
+
+$(info Tool information:)
+$(info $(space)$(space)CC: $(CC))
+$(info $(space)$(space)LD: $(LD))
+
+
+If this is acceptable limitation,
+yes, I can do this.
+
+
+
 
 -- 
-viresh
+Best Regards
+Masahiro Yamada
