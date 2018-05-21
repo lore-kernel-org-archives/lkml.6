@@ -1,20 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752747AbeEULL5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 07:11:57 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:44016 "EHLO
+        id S1752767AbeEULMw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 07:12:52 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:41194 "EHLO
         cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752663AbeEULLw (ORCPT
+        with ESMTP id S1751166AbeEULMv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 07:11:52 -0400
+        Mon, 21 May 2018 07:12:51 -0400
 From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PCI <linux-pci@vger.kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH] PCI / PM: Clean up outdated comments in pci_target_state()
-Date: Mon, 21 May 2018 13:11:12 +0200
-Message-ID: <2360046.ecez94sF1Y@aspire.rjw.lan>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH] PM: wakeup: Make the "aborting suspend" message debug
+Date: Mon, 21 May 2018 13:12:12 +0200
+Message-ID: <24631155.j0D4AbJmQY@aspire.rjw.lan>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -24,37 +22,25 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Two comments in pci_target_state() are outdated, as the function
-doesn't set the target power state for the device any more, only
-finds one for it, so fix them accordingly.
+The message printed by pm_wakeup_pending() on wakeup detection is
+not very useful if someone is not interested specifically in
+debugging wakeup, so turn it into a pm_debug() one.
 
-Reported-by: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- drivers/pci/pci.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/base/power/wakeup.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Index: linux-pm/drivers/pci/pci.c
+Index: linux-pm/drivers/base/power/wakeup.c
 ===================================================================
---- linux-pm.orig/drivers/pci/pci.c
-+++ linux-pm/drivers/pci/pci.c
-@@ -2025,8 +2025,7 @@ static pci_power_t pci_target_state(stru
+--- linux-pm.orig/drivers/base/power/wakeup.c
++++ linux-pm/drivers/base/power/wakeup.c
+@@ -853,7 +853,7 @@ bool pm_wakeup_pending(void)
+ 	spin_unlock_irqrestore(&events_lock, flags);
  
- 	if (platform_pci_power_manageable(dev)) {
- 		/*
--		 * Call the platform to choose the target state of the device
--		 * and enable wake-up from this state if supported.
-+		 * Call the platform to find the target state for the device.
- 		 */
- 		pci_power_t state = platform_pci_choose_state(dev);
+ 	if (ret) {
+-		pr_info("PM: Wakeup pending, aborting suspend\n");
++		pr_debug("PM: Wakeup pending, aborting suspend\n");
+ 		pm_print_active_wakeup_sources();
+ 	}
  
-@@ -2059,8 +2058,7 @@ static pci_power_t pci_target_state(stru
- 	if (wakeup) {
- 		/*
- 		 * Find the deepest state from which the device can generate
--		 * wake-up events, make it the target state and enable device
--		 * to generate PME#.
-+		 * PME#.
- 		 */
- 		if (dev->pme_support) {
- 			while (target_state
