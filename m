@@ -1,355 +1,660 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751719AbeEUVG1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 17:06:27 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:39981 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751138AbeEUVGP (ORCPT
+        id S1751121AbeEUVLB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 17:11:01 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:37501 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750837AbeEUVK5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 17:06:15 -0400
-X-Google-Smtp-Source: AB8JxZqGTa+N0WN0C1D/LKPr538B6GrvaLXeo6FyM/rUarT/Yv2ij9UlM7r3al9jOIyLb+q2Nw/2/w==
-Date: Mon, 21 May 2018 14:06:11 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Eugen Hristev <eugen.hristev@microchip.com>
-Cc: jic23@kernel.org, ludovic.desroches@microchip.com,
-        alexandre.belloni@bootlin.com, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
-        nicolas.ferre@microchip.com, robh@kernel.org
-Subject: Re: [PATCH v6 6/9] input: touchscreen: resistive-adc-touch: add
- generic resistive ADC touchscreen
-Message-ID: <20180521210611.GB74396@dtor-ws>
-References: <1526898477-9952-1-git-send-email-eugen.hristev@microchip.com>
- <1526898477-9952-7-git-send-email-eugen.hristev@microchip.com>
+        Mon, 21 May 2018 17:10:57 -0400
+X-Google-Smtp-Source: AB8JxZozLkTUEX/6kH8bJjl+gK3FCaW9bc8xO08+D8Hl+fg1ul7nWY0qxNo9AZNES4xbGps2ChFFOQ==
+Subject: Re: [PATCH v7 2/2] leds: lm3601x: Introduce the lm3601x LED driver
+To: Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org, mark.rutland@arm.com,
+        andy.shevchenko@gmail.com
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org
+References: <20180521180927.18472-1-dmurphy@ti.com>
+ <20180521180927.18472-2-dmurphy@ti.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <69a920da-f759-de50-865c-0ebc43044b66@gmail.com>
+Date: Mon, 21 May 2018 23:09:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526898477-9952-7-git-send-email-eugen.hristev@microchip.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180521180927.18472-2-dmurphy@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 01:27:54PM +0300, Eugen Hristev wrote:
-> This adds a generic resistive touchscreen (GRTS) driver, which is based
-> on an IIO device (an ADC). It must be connected to the channels of an ADC
-> to receive touch data. Then it will feed the data into the input subsystem
-> where it registers an input device.
-> It uses an IIO callback buffer to register to the IIO device
+Hi Dan,
+
+Thank you for the update.
+
+On 05/21/2018 08:09 PM, Dan Murphy wrote:
+> Introduce the family of LED devices that can
+> drive a torch, strobe or IR LED.
 > 
-> Some parts of this patch are based on initial original work by
-> Mohamed Jamsheeth Hajanajubudeen and Bandaru Venkateswara Swamy
+> The LED driver can be configured with a strobe
+> timer to execute a strobe flash.  The IR LED
+> brightness is controlled via the torch brightness
+> register.
 > 
-> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-
-I assume this will go through IIO tree? Just a couple of comsmetic
-comments below, feel free to ignore.
-
+> The data sheet for each the LM36010 and LM36011
+> LED drivers can be found here:
+> http://www.ti.com/product/LM36010
+> http://www.ti.com/product/LM36011
+> 
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
 > ---
-> Changes in v6:
->  -  changed a dev_err to dev_dbg which was forgotten in v5.
 > 
-> Changes in v5:
->  - return error on probe if failed add_action_or_reset
->  - renamed property touchscreen-threshold-pressure to
-> touchscreen-min-pressure, changed variables accordingly
+> v7 - Numerous fixes to many to list.  Highlights are moved from OF APIs to device_property
+> APIs, updated LED registration, timeout to reg algorithim, and fixed label generation -
+> https://patchwork.kernel.org/patch/10401437/
 > 
-> Changes in v4:
->  - added a small description in file header
->  - changed MAX_POS_MASK to GRTS_MAX_POS_MASK
->  - initialized press with 0, as this value means no touch.
-> press has to be initialized because compiler/checkpatch complains
-> that can be used uninitialized.
->  - changed of_property_read_u32 to device_*
->  - set_abs_params for pressure will have range according to threshold
->  - changed evbit and keybit with set_capability call
->  - changed variable names to error instead of ret
->  - checked errors for add_action_or_reset
->  - cosmetic cleaning
+> v6 - This driver has been heavily modified from v5.  There is no longer reading
+> of individual child nodes.  There are too many changes to list here see -
+> https://patchwork.kernel.org/patch/10392123/
+> v5 - Fixed magic numbers, change reg cache type, added of_put_node to release
+> the dt node ref, and I did not change the remove function to leave the LED in its
+> state on driver removal - https://patchwork.kernel.org/patch/10391741/
+> v4 - Fixed Cocci issue using ARRAY_SIZE - https://patchwork.kernel.org/patch/10389259/
+> v3 - removed wildcard dt compatible, fixed copyright, fixed struct doc, removed
+> RO registers from default, added regmap volatile for FLAGS_REG, updated regmap cache type,
+> fixed unlock and extra semi colon in strobe_set, removed unnecessary out label
+> in led register and fixed checking of the ret in brightness_set - https://patchwork.kernel.org/patch/10386243/
+> v2 - Fixed kbuild issue and removed unused cdev_strobe - https://patchwork.kernel.org/patch/10384585/
 > 
-> Changes in v3:
->  - pressure now reported naturally growing down-up
->  - using helpers from touchscreen.h to parse DT properties
->  - added devm_add_action_or_reset to handle callback buffer clean on exit
->  - changed compatible and threshold property to adapt to changed bindings
+>   drivers/leds/Kconfig        |   9 +
+>   drivers/leds/Makefile       |   1 +
+>   drivers/leds/leds-lm3601x.c | 501 ++++++++++++++++++++++++++++++++++++
+>   3 files changed, 511 insertions(+)
+>   create mode 100644 drivers/leds/leds-lm3601x.c
 > 
-> Changes in v2:
->  - this is now a generic resistive adc touchscreen driver
-> 
-> 
->  drivers/input/touchscreen/Kconfig               |  13 ++
->  drivers/input/touchscreen/Makefile              |   1 +
->  drivers/input/touchscreen/resistive-adc-touch.c | 201 ++++++++++++++++++++++++
->  3 files changed, 215 insertions(+)
->  create mode 100644 drivers/input/touchscreen/resistive-adc-touch.c
-> 
-> diff --git a/drivers/input/touchscreen/Kconfig b/drivers/input/touchscreen/Kconfig
-> index 4f15496..8f85d3a 100644
-> --- a/drivers/input/touchscreen/Kconfig
-> +++ b/drivers/input/touchscreen/Kconfig
-> @@ -92,6 +92,19 @@ config TOUCHSCREEN_AD7879_SPI
->  	  To compile this driver as a module, choose M here: the
->  	  module will be called ad7879-spi.
->  
-> +config TOUCHSCREEN_ADC
-> +	tristate "Generic ADC based resistive touchscreen"
-> +	depends on IIO
-> +	select IIO_BUFFER_CB
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 2c896c0e69e1..50ae536f343f 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -145,6 +145,15 @@ config LEDS_LM3692X
+>   	  This option enables support for the TI LM3692x family
+>   	  of white LED string drivers used for backlighting.
+>   
+> +config LEDS_LM3601X
+> +	tristate "LED support for LM3601x Chips"
+> +	depends on LEDS_CLASS && I2C && OF
+> +	depends on LEDS_CLASS_FLASH
+> +	select REGMAP_I2C
 > +	help
-> +	  Say Y here if you want to use the generic ADC
-> +	  resistive touchscreen driver.
+> +	  This option enables support for the TI LM3601x family
+> +	  of flash, torch and indicator classes.
 > +
-> +	  If unsure, say N (but it's safe to say "Y").
-> +
-> +	  To compile this driver as a module, choose M here: the
-> +	  module will be called resistive-adc-touch.ko.
-> +
->  config TOUCHSCREEN_AR1021_I2C
->  	tristate "Microchip AR1020/1021 i2c touchscreen"
->  	depends on I2C && OF
-> diff --git a/drivers/input/touchscreen/Makefile b/drivers/input/touchscreen/Makefile
-> index dddae79..843c7f9 100644
-> --- a/drivers/input/touchscreen/Makefile
-> +++ b/drivers/input/touchscreen/Makefile
-> @@ -13,6 +13,7 @@ obj-$(CONFIG_TOUCHSCREEN_AD7877)	+= ad7877.o
->  obj-$(CONFIG_TOUCHSCREEN_AD7879)	+= ad7879.o
->  obj-$(CONFIG_TOUCHSCREEN_AD7879_I2C)	+= ad7879-i2c.o
->  obj-$(CONFIG_TOUCHSCREEN_AD7879_SPI)	+= ad7879-spi.o
-> +obj-$(CONFIG_TOUCHSCREEN_ADC)		+= resistive-adc-touch.o
->  obj-$(CONFIG_TOUCHSCREEN_ADS7846)	+= ads7846.o
->  obj-$(CONFIG_TOUCHSCREEN_AR1021_I2C)	+= ar1021_i2c.o
->  obj-$(CONFIG_TOUCHSCREEN_ATMEL_MXT)	+= atmel_mxt_ts.o
-> diff --git a/drivers/input/touchscreen/resistive-adc-touch.c b/drivers/input/touchscreen/resistive-adc-touch.c
+>   config LEDS_LOCOMO
+>   	tristate "LED Support for Locomo device"
+>   	depends on LEDS_CLASS
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index 91eca81cae82..b79807fe1b67 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -76,6 +76,7 @@ obj-$(CONFIG_LEDS_MLXREG)		+= leds-mlxreg.o
+>   obj-$(CONFIG_LEDS_NIC78BX)		+= leds-nic78bx.o
+>   obj-$(CONFIG_LEDS_MT6323)		+= leds-mt6323.o
+>   obj-$(CONFIG_LEDS_LM3692X)		+= leds-lm3692x.o
+> +obj-$(CONFIG_LEDS_LM3601X)		+= leds-lm3601x.o
+>   
+>   # LED SPI Drivers
+>   obj-$(CONFIG_LEDS_DAC124S085)		+= leds-dac124s085.o
+> diff --git a/drivers/leds/leds-lm3601x.c b/drivers/leds/leds-lm3601x.c
 > new file mode 100644
-> index 0000000..05d629b
+> index 000000000000..7c71cb11d474
 > --- /dev/null
-> +++ b/drivers/input/touchscreen/resistive-adc-touch.c
-> @@ -0,0 +1,201 @@
+> +++ b/drivers/leds/leds-lm3601x.c
+> @@ -0,0 +1,501 @@
 > +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * ADC generic resistive touchscreen (GRTS)
-> + * This is a generic input driver that connects to an ADC
-> + * given the channels in device tree, and reports events to the input
-> + * subsystem.
-> + *
-> + * Copyright (C) 2017,2018 Microchip Technology,
-> + * Author: Eugen Hristev <eugen.hristev@microchip.com>
-> + *
-> + */
-> +#include <linux/input.h>
-> +#include <linux/input/touchscreen.h>
-> +#include <linux/iio/consumer.h>
-> +#include <linux/iio/iio.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
+> +// Flash and torch driver for Texas Instruments LM3601X LED
+> +// Flash driver chip family
+> +// Copyright (C) 2018 Texas Instruments Incorporated - http://www.ti.com/
 > +
-> +#define DRIVER_NAME					"resistive-adc-touch"
-> +#define GRTS_DEFAULT_PRESSURE_MIN			50000
-> +#define GRTS_MAX_POS_MASK				GENMASK(11, 0)
+> +#include <linux/delay.h>
+> +#include <linux/i2c.h>
+> +#include <linux/leds.h>
+> +#include <linux/led-class-flash.h>
+> +#include <linux/module.h>
+> +#include <linux/regmap.h>
+> +#include <linux/slab.h>
+> +#include <uapi/linux/uleds.h>
+> +
+> +#define LM3601X_LED_IR		0x0
+> +#define LM3601X_LED_TORCH	0x1
+> +
+> +/* Registers */
+> +#define LM3601X_ENABLE_REG	0x01
+> +#define LM3601X_CFG_REG		0x02
+> +#define LM3601X_LED_FLASH_REG	0x03
+> +#define LM3601X_LED_TORCH_REG	0x04
+> +#define LM3601X_FLAGS_REG	0x05
+> +#define LM3601X_DEV_ID_REG	0x06
+> +
+> +#define LM3601X_SW_RESET	BIT(7)
+> +
+> +/* Enable Mode bits */
+> +#define LM3601X_MODE_STANDBY	0x00
+> +#define LM3601X_MODE_IR_DRV	BIT(0)
+> +#define LM3601X_MODE_TORCH	BIT(1)
+> +#define LM3601X_MODE_STROBE	(BIT(0) | BIT(1))
+> +#define LM3601X_STRB_EN		BIT(2)
+> +#define LM3601X_STRB_EDGE_TRIG	BIT(3)
+> +#define LM3601X_IVFM_EN		BIT(4)
+> +
+> +#define LM36010_BOOST_LIMIT_28	BIT(5)
+> +#define LM36010_BOOST_FREQ_4MHZ	BIT(6)
+> +#define LM36010_BOOST_MODE_PASS	BIT(7)
+> +
+> +/* Flag Mask */
+> +#define LM3601X_FLASH_TIME_OUT	BIT(0)
+> +#define LM3601X_UVLO_FAULT	BIT(1)
+> +#define LM3601X_THERM_SHUTDOWN	BIT(2)
+> +#define LM3601X_THERM_CURR	BIT(3)
+> +#define LM36010_CURR_LIMIT	BIT(4)
+> +#define LM3601X_SHORT_FAULT	BIT(5)
+> +#define LM3601X_IVFM_TRIP	BIT(6)
+> +#define LM36010_OVP_FAULT	BIT(7)
+> +
+> +#define LM3601X_MAX_TORCH_I_UA	376000
+> +#define LM3601X_MIN_TORCH_I_UA	2400
+> +#define LM3601X_TORCH_REG_DIV	3000
+> +
+> +#define LM3601X_MAX_STROBE_I_UA	1500000
+> +#define LM3601X_MIN_STROBE_I_UA	11000
+> +#define LM3601X_STROBE_REG_DIV	11800
+> +
+> +#define LM3601X_TIMEOUT_MASK	0x1e
+> +#define LM3601X_ENABLE_MASK	0x03
+> +
+> +#define LM3601X_LOWER_STEP_US	40000
+> +#define LM3601X_UPPER_STEP_US	200000
+> +#define LM3601X_MIN_TIMEOUT_US	40000
+> +#define LM3601X_MAX_TIMEOUT_US	1600000
+> +#define LM3601X_TIMEOUT_XOVER	400000
+> +
+> +enum lm3601x_type {
+> +	CHIP_LM36010 = 0,
+> +	CHIP_LM36011,
+> +};
 > +
 > +/**
-> + * grts_state - generic resistive touch screen information struct
-> + * @pressure_min:	number representing the minimum for the pressure
-> + * @pressure:		are we getting pressure info or not
-> + * @iio_chans:		list of channels acquired
-> + * @iio_cb:		iio_callback buffer for the data
-> + * @input:		the input device structure that we register
-> + * @prop:		touchscreen properties struct
+> + * struct lm3601x_led -
+> + * @fled_cdev: flash led class device pointer
+
+s/led/LED/
+
+> + * @client: Pointer to the I2C client
+> + * @regmap: Devices register map
+> + * @lock: Lock for reading/writing the device
+> + * @led_name: LED label for the Torch or IR LED
+> + * @strobe_timeout: the timeout for the strobe
+> + * @last_flag: last known flags register value
+> + * @torch_current_max: maximum current for the torch
+> + * @strobe_current_max: maximum current for the strobe
+> + * @max_strobe_timeout: maximum timeout for the strobe
+> + * @led_mode: The mode to enable either IR or Torch
 > + */
-> +struct grts_state {
-> +	u32				pressure_min;
-> +	bool				pressure;
-> +	struct iio_channel		*iio_chans;
-> +	struct iio_cb_buffer		*iio_cb;
-> +	struct input_dev		*input;
-> +	struct touchscreen_properties	prop;
+> +struct lm3601x_led {
+> +	struct led_classdev_flash fled_cdev;
+> +	struct i2c_client *client;
+> +	struct regmap *regmap;
+> +	struct mutex lock;
+> +
+> +	char led_name[LED_MAX_NAME_SIZE];
+> +
+> +	unsigned int strobe_timeout;
+> +	unsigned int last_flag;
+> +
+> +	u32 torch_current_max;
+> +	u32 strobe_current_max;
+> +	u32 max_strobe_timeout;
+> +
+> +	u32 led_mode;
 > +};
 > +
-> +static int grts_cb(const void *data, void *private)
-> +{
-> +	const u16 *touch_info = data;
-> +	struct grts_state *st = private;
-> +	unsigned int x, y, press = 0x0;
-> +
-> +	/* channel data coming in buffer in the order below */
-> +	x = touch_info[0];
-> +	y = touch_info[1];
-> +	if (st->pressure)
-> +		press = touch_info[2];
-> +
-> +	if ((!x && !y) || (st->pressure && (press < st->pressure_min))) {
-> +		/* report end of touch */
-> +		input_report_key(st->input, BTN_TOUCH, 0);
-> +		input_sync(st->input);
-> +		return 0;
-> +	}
-> +
-> +	/* report proper touch to subsystem*/
-> +	touchscreen_report_pos(st->input, &st->prop, x, y, false);
-> +	if (st->pressure)
-> +		input_report_abs(st->input, ABS_PRESSURE, press);
-> +	input_report_key(st->input, BTN_TOUCH, 1);
-> +	input_sync(st->input);
-> +
-> +	return 0;
-> +}
-> +
-> +static int grts_open(struct input_dev *dev)
-> +{
-> +	int error;
-> +	struct grts_state *st = input_get_drvdata(dev);
-> +
-> +	error = iio_channel_start_all_cb(st->iio_cb);
-> +	if (error) {
-> +		dev_err(dev->dev.parent, "failed to start callback buffer.\n");
-> +		return error;
-> +	}
-> +	return 0;
-> +}
-> +
-> +static void grts_close(struct input_dev *dev)
-> +{
-> +	struct grts_state *st = input_get_drvdata(dev);
-> +
-> +	iio_channel_stop_all_cb(st->iio_cb);
-> +}
-> +
-> +static void grts_disable(void *data)
-> +{
-> +	iio_channel_release_all_cb(data);
-> +}
-> +
-> +static int grts_probe(struct platform_device *pdev)
-> +{
-> +	struct grts_state *st;
-> +	struct input_dev *input;
-> +	struct device *dev = &pdev->dev;
-> +	struct iio_channel *chan;
-> +	int error;
-> +
-> +	st = devm_kzalloc(dev, sizeof(struct grts_state), GFP_KERNEL);
-> +	if (!st)
-> +		return -ENOMEM;
-> +
-> +	error = device_property_read_u32(dev, "touchscreen-min-pressure",
-> +					 &st->pressure_min);
-> +	if (error) {
-> +		dev_dbg(dev, "can't get touchscreen-min-pressure property.\n");
-> +		st->pressure_min = GRTS_DEFAULT_PRESSURE_MIN;
-> +	}
-
-I do not think it makes sense to complain about missing property if
-there is no "pressure" channel. Probably move down?
-
-> +
-> +	/* get the channels from IIO device */
-> +	st->iio_chans = devm_iio_channel_get_all(dev);
-> +	if (IS_ERR(st->iio_chans)) {
-> +		if (PTR_ERR(st->iio_chans) != -EPROBE_DEFER)
-> +			dev_err(dev, "can't get iio channels.\n");
-> +		return PTR_ERR(st->iio_chans);
-
-		error = PTR_ERR(st->iio_chans);
-		if (error != -EPROBE_DEFER)
-			dev_err(dev, "can't get iio channels.\n");
-		return error;
-
-> +	}
-> +
-> +	chan = &st->iio_chans[0];
-> +	st->pressure = false;
-> +	while (chan && chan->indio_dev) {
-> +		if (!strcmp(chan->channel->datasheet_name, "pressure"))
-> +			st->pressure = true;
-> +		chan++;
-> +	}
-> +
-> +	input = devm_input_allocate_device(dev);
-> +	if (!input) {
-> +		dev_err(dev, "failed to allocate input device.\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	input->name = DRIVER_NAME;
-> +	input->id.bustype = BUS_HOST;
-> +	input->open = grts_open;
-> +	input->close = grts_close;
-> +
-> +	input_set_abs_params(input, ABS_X, 0, GRTS_MAX_POS_MASK - 1, 0, 0);
-> +	input_set_abs_params(input, ABS_Y, 0, GRTS_MAX_POS_MASK - 1, 0, 0);
-> +	if (st->pressure)
-> +		input_set_abs_params(input, ABS_PRESSURE, st->pressure_min,
-> +				     0xffff, 0, 0);
-> +
-> +	input_set_capability(input, EV_KEY, BTN_TOUCH);
-> +
-> +	/* parse optional device tree properties */
-> +	touchscreen_parse_properties(input, false, &st->prop);
-> +
-> +	st->input = input;
-> +	input_set_drvdata(input, st);
-> +
-> +	error = input_register_device(input);
-> +	if (error) {
-> +		dev_err(dev, "failed to register input device.");
-> +		return error;
-> +	}
-> +
-> +	st->iio_cb = iio_channel_get_all_cb(dev, grts_cb, st);
-> +	if (IS_ERR(st->iio_cb)) {
-> +		dev_err(dev, "failed to allocate callback buffer.\n");
-> +		error =  PTR_ERR(st->iio_cb);
-> +		return error;
-
-Simply:
-
-		return PTR_ERR(st->iio_cb);
-
-since you opted out of printing error codes in error messages.
-
-> +	}
-> +
-> +	error = devm_add_action_or_reset(dev, grts_disable, st->iio_cb);
-> +	if (error) {
-> +		dev_err(dev, "failed to add disable action.\n");
-> +		return error;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id grts_of_match[] = {
-> +	{
-> +		.compatible = "resistive-adc-touch",
-> +	}, {
-> +		/* sentinel */
-> +	},
+> +static const struct reg_default lm3601x_regmap_defs[] = {
+> +	{ LM3601X_ENABLE_REG, 0x20 },
+> +	{ LM3601X_CFG_REG, 0x15 },
+> +	{ LM3601X_LED_FLASH_REG, 0x00 },
+> +	{ LM3601X_LED_TORCH_REG, 0x00 },
 > +};
 > +
-> +MODULE_DEVICE_TABLE(of, grts_of_match);
+> +static bool lm3601x_volatile_reg(struct device *dev, unsigned int reg)
+> +{
+> +	switch (reg) {
+> +	case LM3601X_FLAGS_REG:
+> +		return true;
+> +	default:
+> +		return false;
+> +	}
+> +}
 > +
-> +static struct platform_driver grts_driver = {
-> +	.probe = grts_probe,
+> +static const struct regmap_config lm3601x_regmap = {
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +
+> +	.max_register = LM3601X_DEV_ID_REG,
+> +	.reg_defaults = lm3601x_regmap_defs,
+> +	.num_reg_defaults = ARRAY_SIZE(lm3601x_regmap_defs),
+> +	.cache_type = REGCACHE_RBTREE,
+> +	.volatile_reg = lm3601x_volatile_reg,
+> +};
+> +
+> +static struct lm3601x_led *fled_cdev_to_led(
+> +				struct led_classdev_flash *fled_cdev)
+> +{
+> +	return container_of(fled_cdev, struct lm3601x_led, fled_cdev);
+> +}
+> +
+> +static int lm3601x_read_faults(struct lm3601x_led *led)
+> +{
+> +	int flags_val;
+> +	int ret;
+> +
+> +	ret = regmap_read(led->regmap, LM3601X_FLAGS_REG, &flags_val);
+> +	if (ret < 0)
+> +		return -EIO;
+> +
+> +	led->last_flag = 0;
+> +
+> +	if (flags_val & LM36010_OVP_FAULT)
+> +		led->last_flag |= LED_FAULT_OVER_VOLTAGE;
+> +
+> +	if (flags_val & (LM3601X_THERM_SHUTDOWN | LM3601X_THERM_CURR))
+> +		led->last_flag |= LED_FAULT_OVER_TEMPERATURE;
+> +
+> +	if (flags_val & LM3601X_SHORT_FAULT)
+> +		led->last_flag |= LED_FAULT_SHORT_CIRCUIT;
+> +
+> +	if (flags_val & LM36010_CURR_LIMIT)
+> +		led->last_flag |= LED_FAULT_OVER_CURRENT;
+> +
+> +	if (flags_val & LM3601X_UVLO_FAULT)
+> +		led->last_flag |= LED_FAULT_UNDER_VOLTAGE;
+> +
+> +	if (flags_val & LM3601X_IVFM_TRIP)
+> +		led->last_flag |= LED_FAULT_INPUT_VOLTAGE;
+> +
+> +	if (flags_val & LM3601X_THERM_SHUTDOWN)
+> +		led->last_flag |= LED_FAULT_LED_OVER_TEMPERATURE;
+> +
+> +	return led->last_flag;
+> +}
+> +
+> +static int lm3601x_brightness_set(struct led_classdev *cdev,
+> +					enum led_brightness brightness)
+> +{
+> +	struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(cdev);
+> +	struct lm3601x_led *led = fled_cdev_to_led(fled_cdev);
+> +	int ret, led_mode_val;
+> +	u8 brightness_val;
+> +
+> +	mutex_lock(&led->lock);
+> +
+> +	ret = lm3601x_read_faults(led);
+> +	if (ret < 0)
+> +		goto out;
+> +
+> +	if (led->led_mode == LM3601X_LED_TORCH)
+> +		led_mode_val = LM3601X_MODE_TORCH;
+> +	else
+> +		led_mode_val = LM3601X_MODE_IR_DRV;
+> +
+> +	if (brightness == LED_OFF) {
+> +		ret = regmap_update_bits(led->regmap, LM3601X_ENABLE_REG,
+> +					led_mode_val, LED_OFF);
+> +		goto out;
+> +	}
+> +
+> +	if (brightness == LED_ON)
+> +		brightness_val = LED_ON;
+
+Use of LED_ON enum can be a bit misleading here,
+It was designed for LEDs that can be only turned on/off.
+
+You can use DIV_ROUND_UP to achieve the same in a more clear way.
+
+> +	else
+> +		brightness_val = brightness / LM3601X_TORCH_REG_DIV;
+> +
+> +	ret = regmap_write(led->regmap, LM3601X_LED_TORCH_REG, brightness_val);
+> +	if (ret < 0)
+> +		goto out;
+> +
+> +	ret = regmap_update_bits(led->regmap, LM3601X_ENABLE_REG,
+> +				LM3601X_MODE_TORCH | LM3601X_MODE_IR_DRV,
+> +				led_mode_val);
+> +out:
+> +	mutex_unlock(&led->lock);
+> +	return ret;
+> +}
+> +
+> +static int lm3601x_strobe_set(struct led_classdev_flash *fled_cdev,
+> +				bool state)
+> +{
+> +	struct lm3601x_led *led = fled_cdev_to_led(fled_cdev);
+> +	int timeout_reg_val = 0;
+> +	int current_timeout;
+> +	int ret;
+> +
+> +	mutex_lock(&led->lock);
+> +
+> +	ret = regmap_read(led->regmap, LM3601X_CFG_REG, &current_timeout);
+> +	if (ret < 0)
+> +		goto out;
+> +
+> +	if (led->strobe_timeout >= LM3601X_TIMEOUT_XOVER)
+> +		timeout_reg_val = led->strobe_timeout / LM3601X_UPPER_STEP_US + 0x07;
+> +	else
+> +		timeout_reg_val = led->strobe_timeout / LM3601X_LOWER_STEP_US - 0x01;
+> +
+> +	if (led->strobe_timeout != current_timeout)
+> +		ret = regmap_update_bits(led->regmap, LM3601X_CFG_REG,
+> +					LM3601X_TIMEOUT_MASK, timeout_reg_val);
+> +
+> +	if (state)
+> +		ret = regmap_update_bits(led->regmap, LM3601X_ENABLE_REG,
+> +					LM3601X_MODE_TORCH | LM3601X_MODE_IR_DRV,
+> +					LM3601X_MODE_STROBE);
+> +	else
+> +		ret = regmap_update_bits(led->regmap, LM3601X_ENABLE_REG,
+> +					LM3601X_MODE_STROBE, LED_OFF);
+> +
+> +	ret = lm3601x_read_faults(led);
+> +out:
+> +	mutex_unlock(&led->lock);
+> +	return ret;
+> +}
+> +
+> +static int lm3601x_strobe_brightness_set(struct led_classdev_flash *fled_cdev,
+> +					u32 brightness)
+> +{
+> +	struct lm3601x_led *led = fled_cdev_to_led(fled_cdev);
+> +	int ret;
+> +	u8 brightness_val;
+> +
+> +	mutex_lock(&led->lock);
+> +	ret = lm3601x_read_faults(led);
+> +	if (ret < 0)
+> +		goto out;
+> +
+> +	if (brightness == LED_OFF) {
+> +		ret = regmap_update_bits(led->regmap, LM3601X_ENABLE_REG,
+> +					LM3601X_MODE_STROBE, LED_OFF);
+> +		goto out;
+> +	}
+> +
+> +	if (brightness == LED_ON)
+> +		brightness_val = LED_ON;
+
+Ditto.
+
+> +	else
+> +		brightness_val = brightness / LM3601X_STROBE_REG_DIV;
+> +
+> +	ret = regmap_write(led->regmap, LM3601X_LED_FLASH_REG, brightness_val);
+> +out:
+> +	mutex_unlock(&led->lock);
+> +	return ret;
+> +}
+> +
+> +static int lm3601x_strobe_timeout_set(struct led_classdev_flash *fled_cdev,
+> +				u32 timeout)
+> +{
+> +	struct lm3601x_led *led = fled_cdev_to_led(fled_cdev);
+> +	int ret = 0;
+> +
+> +	mutex_lock(&led->lock);
+> +
+> +	led->strobe_timeout = timeout;
+> +
+> +	mutex_unlock(&led->lock);
+> +
+> +	return ret;
+> +}
+> +
+> +static int lm3601x_strobe_get(struct led_classdev_flash *fled_cdev,
+> +				bool *state)
+> +{
+> +	struct lm3601x_led *led = fled_cdev_to_led(fled_cdev);
+> +	int ret;
+> +	int strobe_state;
+> +
+> +	mutex_lock(&led->lock);
+> +
+> +	ret = regmap_read(led->regmap, LM3601X_ENABLE_REG, &strobe_state);
+> +	if (ret < 0)
+> +		goto out;
+> +
+> +	*state = strobe_state & LM3601X_MODE_STROBE;
+> +
+> +out:
+> +	mutex_unlock(&led->lock);
+> +	return ret;
+> +}
+> +
+> +static int lm3601x_strobe_fault_get(struct led_classdev_flash *fled_cdev,
+> +				u32 *fault)
+> +{
+> +	struct lm3601x_led *led = fled_cdev_to_led(fled_cdev);
+> +
+> +	lm3601x_read_faults(led);
+> +
+> +	*fault = led->last_flag;
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct led_flash_ops strobe_ops = {
+> +	.flash_brightness_set	= lm3601x_strobe_brightness_set,
+
+s/strobe/flash/
+
+> +	.strobe_set		= lm3601x_strobe_set,
+> +	.strobe_get		= lm3601x_strobe_get,
+> +	.timeout_set		= lm3601x_strobe_timeout_set,
+
+Ditto.
+
+> +	.fault_get		= lm3601x_strobe_fault_get,
+
+Ditto.
+
+> +};
+> +
+> +static int lm3601x_register_leds(struct lm3601x_led *led)
+> +{
+> +	struct led_classdev *led_cdev;
+> +	struct led_flash_setting *setting;
+> +
+> +	led->fled_cdev.ops = &strobe_ops;
+> +
+> +	setting = &led->fled_cdev.timeout;
+> +	setting->min = LM3601X_MIN_TIMEOUT_US;
+> +	setting->max = led->max_strobe_timeout;
+> +	setting->step = LM3601X_LOWER_STEP_US;
+> +	setting->val = led->max_strobe_timeout;
+> +
+> +	setting = &led->fled_cdev.brightness;
+> +	setting->min = LM3601X_MIN_STROBE_I_UA;
+> +	setting->max = LM3601X_MAX_STROBE_I_UA;
+> +	setting->step = LM3601X_TORCH_REG_DIV;
+> +	setting->val = led->strobe_current_max;
+> +
+> +	led_cdev = &led->fled_cdev.led_cdev;
+> +	led_cdev->name = led->led_name;
+> +	led_cdev->brightness_set_blocking = lm3601x_brightness_set;
+> +	led_cdev->max_brightness = LM3601X_MAX_TORCH_I_UA;
+
+LED class brightness is expressed in levels, so:
+
+led_cdev->max_brightness = DIV_ROUND_UP(LM3601X_MAX_TORCH_I_UA, 
+LM3601X_TORCH_REG_DIV)
+
+> +	led_cdev->flags |= LED_DEV_CAP_FLASH;
+> +
+> +	return led_classdev_flash_register(&led->client->dev, &led->fled_cdev);
+> +}
+> +
+> +static int lm3601x_parse_node(struct lm3601x_led *led,
+> +			      struct device_node *node)
+> +{
+> +	struct fwnode_handle *child = NULL;
+> +	int ret = -ENODEV;
+> +	const char *name;
+> +
+> +	child = device_get_next_child_node(&led->client->dev, child);
+> +	if (!child) {
+> +		dev_err(&led->client->dev, "No LED Child node\n");
+> +		return ret;
+> +	}
+> +
+> +	ret = fwnode_property_read_u32(child, "reg", &led->led_mode);
+> +	if (ret) {
+> +		dev_err(&led->client->dev, "reg DT property missing\n");
+> +		goto out_err;
+> +	}
+> +
+> +	if (led->led_mode > LM3601X_LED_TORCH ||
+> +	    led->led_mode < LM3601X_LED_IR) {
+> +		dev_warn(&led->client->dev, "Invalid led mode requested\n");
+> +		ret = -EINVAL;
+> +		goto out_err;
+> +	}
+> +
+> +	ret = fwnode_property_read_string(child, "label", &name);
+> +	if (ret) {
+> +		if (led->led_mode == LM3601X_LED_TORCH)
+> +			name = "torch";
+> +		else
+> +			name = "infrared";
+> +	}
+> +
+> +	snprintf(led->led_name, sizeof(led->led_name),
+> +		"%s:%s", node->name, name);
+
+Reading once again my recent explanation regarding this I realized
+that I didn't provide clear conclusion, which is: we no longer
+use child node name for LED class device name if label is absent.
+(apart from that - you're using parent DT node now, i.e.
+led-controller).
+
+Please follow what was done for drivers/leds/leds-cr0014114.c.
+
+> +	ret = fwnode_property_read_u32(child, "led-max-microamp",
+> +					&led->torch_current_max);
+> +	if (ret < 0) {
+> +		dev_warn(&led->client->dev,
+> +			"led-max-microamp DT property missing\n");
+> +		goto out_err;
+> +	}
+> +
+> +	ret = fwnode_property_read_u32(child, "flash-max-microamp",
+> +				&led->strobe_current_max);
+> +	if (ret < 0) {
+> +		dev_warn(&led->client->dev,
+> +			 "flash-max-microamp DT property missing\n");
+> +		goto out_err;
+> +	}
+> +
+> +	ret = fwnode_property_read_u32(child, "flash-max-timeout-us",
+> +				&led->max_strobe_timeout);
+> +	if (ret < 0) {
+> +		dev_warn(&led->client->dev,
+> +			 "flash-max-timeout-us DT property missing\n");
+> +		goto out_err;
+> +	}
+> +
+> +out_err:
+> +	fwnode_handle_put(child);
+> +	return ret;
+> +}
+> +
+> +static int lm3601x_probe(struct i2c_client *client,
+> +			const struct i2c_device_id *id)
+> +{
+> +	struct lm3601x_led *led;
+> +	int err;
+> +
+> +	led = devm_kzalloc(&client->dev, sizeof(*led), GFP_KERNEL);
+> +	if (!led)
+> +		return -ENOMEM;
+> +
+> +	led->client = client;
+> +	i2c_set_clientdata(client, led);
+> +
+> +	err = lm3601x_parse_node(led, client->dev.of_node);
+> +	if (err < 0)
+> +		return -ENODEV;
+> +
+> +	led->regmap = devm_regmap_init_i2c(client, &lm3601x_regmap);
+> +	if (IS_ERR(led->regmap)) {
+> +		err = PTR_ERR(led->regmap);
+> +		dev_err(&client->dev,
+> +			"Failed to allocate register map: %d\n", err);
+> +		return err;
+> +	}
+> +
+> +	mutex_init(&led->lock);
+> +
+> +	err = lm3601x_register_leds(led);
+
+return lm3601x_register_leds(led)
+
+> +
+> +	return err;
+> +}
+> +
+> +static int lm3601x_remove(struct i2c_client *client)
+> +{
+> +	struct lm3601x_led *led = i2c_get_clientdata(client);
+> +
+> +	regmap_update_bits(led->regmap, LM3601X_ENABLE_REG,
+> +			   LM3601X_ENABLE_MASK,
+> +			   LM3601X_MODE_STANDBY);
+> +
+
+mutex_destroy() is missing.
+
+> +	return 0;
+> +}
+> +
+> +static const struct i2c_device_id lm3601x_id[] = {
+> +	{ "LM36010", CHIP_LM36010 },
+> +	{ "LM36011", CHIP_LM36011 },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(i2c, lm3601x_id);
+> +
+> +static const struct of_device_id of_lm3601x_leds_match[] = {
+> +	{ .compatible = "ti,lm36010", },
+> +	{ .compatible = "ti,lm36011", },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, of_lm3601x_leds_match);
+> +
+> +static struct i2c_driver lm3601x_i2c_driver = {
 > +	.driver = {
-> +		.name = DRIVER_NAME,
-> +		.of_match_table = of_match_ptr(grts_of_match),
+> +		.name = "lm3601x",
+> +		.of_match_table = of_lm3601x_leds_match,
 > +	},
+> +	.probe = lm3601x_probe,
+> +	.remove = lm3601x_remove,
+> +	.id_table = lm3601x_id,
 > +};
+> +module_i2c_driver(lm3601x_i2c_driver);
 > +
-> +module_platform_driver(grts_driver);
-> +
-> +MODULE_AUTHOR("Eugen Hristev <eugen.hristev@microchip.com>");
-> +MODULE_DESCRIPTION("Generic ADC Resistive Touch Driver");
+> +MODULE_DESCRIPTION("Texas Instruments Flash Lighting driver for LM3601X");
+> +MODULE_AUTHOR("Dan Murphy <dmurphy@ti.com>");
 > +MODULE_LICENSE("GPL v2");
-> -- 
-> 2.7.4
 > 
 
-Thanks.
-
 -- 
-Dmitry
+Best regards,
+Jacek Anaszewski
