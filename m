@@ -1,47 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751645AbeEUJdc (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 05:33:32 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:33395 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751109AbeEUJd1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 05:33:27 -0400
-X-Google-Smtp-Source: AB8JxZq7fx8XNk/tFlcMLSGt37xo8z1hFdR8nEL5pgWUBk7ujOIP9ZFo2Lb3BOLlluoBBExRQBSWxQ==
-Message-ID: <1526895204.2822.4.camel@baylibre.com>
-Subject: Re: [PATCH v2 2/2] clk: meson: axg: let mpll clocks round closest
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date: Mon, 21 May 2018 11:33:24 +0200
-In-Reply-To: <61fa49ae-e73e-957e-e28a-134102f82194@baylibre.com>
-References: <20180515163652.19980-1-jbrunet@baylibre.com>
-         <20180515163652.19980-3-jbrunet@baylibre.com>
-         <61fa49ae-e73e-957e-e28a-134102f82194@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
+        id S1751724AbeEUJed (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 05:34:33 -0400
+Received: from foss.arm.com ([217.140.101.70]:45608 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751081AbeEUJeb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 05:34:31 -0400
+Subject: Re: [PATCH v3 4/5] ARM: perf: Allow the use of the PMUv3 driver on
+ 32bit ARM
+To: Marc Zyngier <marc.zyngier@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@arm.linux.org.uk>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Stefan Wahren <stefan.wahren@i2se.com>, Eric Anholt <eric@anholt.net>,
+        Florian Fainelli <f.fainelli@gmail.com>
+References: <20180518143913.26306-1-marc.zyngier@arm.com>
+ <20180518143913.26306-5-marc.zyngier@arm.com>
+From: Vladimir Murzin <vladimir.murzin@arm.com>
+Message-ID: <f40d8620-eb57-37be-a2f0-b7bf7a74c087@arm.com>
+Date: Mon, 21 May 2018 10:34:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180518143913.26306-5-marc.zyngier@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-05-15 at 18:46 +0200, Neil Armstrong wrote:
-> On 15/05/2018 18:36, Jerome Brunet wrote:
-> > Let the mpll dividers achieve the closest rate possible, even if
-> > it means rounding the requested rate up.
-> > 
-> > This is done to improve the accuracy of the rates provided by these
-> > plls to the audio subsystem
-> > 
-> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> > ---
-> > 
-[...]
-> 
-> Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+On 18/05/18 15:39, Marc Zyngier wrote:
+> +static inline int read_pmuver(void)
+> +{
+> +	/* PMUVers is not a signed field */
+> +	u32 dfr0 = read_cpuid_ext(CPUID_EXT_DFR0);
+> +	return (dfr0 >> 24) & 0xf;
+> +}
 
-Applied
+Should we rule out versions prior v3 here or in __armv8pmu_probe_pmu()?
+
+Thanks
+Vladimir
