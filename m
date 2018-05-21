@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753097AbeEUQCj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 12:02:39 -0400
+        id S1753031AbeEUQCg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 12:02:36 -0400
 Received: from esa6.hgst.iphmx.com ([216.71.154.45]:59151 "EHLO
         esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752311AbeEUQC3 (ORCPT
+        with ESMTP id S1752092AbeEUQC2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 12:02:29 -0400
+        Mon, 21 May 2018 12:02:28 -0400
 X-IronPort-AV: E=Sophos;i="5.49,426,1520870400";
-   d="scan'208";a="79445389"
+   d="scan'208";a="79445383"
 From: adam.manzanares@wdc.com
 To: viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
         axboe@kernel.dk, bcrl@kvack.org
@@ -19,9 +19,9 @@ Cc: tglx@linutronix.de, mingo@kernel.org, pombredanne@nexb.com,
         linux-kernel@vger.kernel.org, linux-aio@kvack.org,
         linux-api@vger.kernel.org, hch@infradread.org,
         Adam Manzanares <adam.manzanares@wdc.com>
-Subject: [PATCH v5 2/5] fs: Convert kiocb rw_hint from enum to u16
-Date: Mon, 21 May 2018 09:01:44 -0700
-Message-Id: <20180521160147.2372-3-adam.manzanares@wdc.com>
+Subject: [PATCH v5 1/5] block: add ioprio_check_cap function
+Date: Mon, 21 May 2018 09:01:43 -0700
+Message-Id: <20180521160147.2372-2-adam.manzanares@wdc.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180521160147.2372-1-adam.manzanares@wdc.com>
 References: <20180521160147.2372-1-adam.manzanares@wdc.com>
@@ -31,56 +31,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Adam Manzanares <adam.manzanares@wdc.com>
 
-In order to avoid kiocb bloat for per command iopriority support, rw_hint
-is converted from enum to a u16. Added a guard around ki_hint assigment.
+Aio per command iopriority support introduces a second interface between
+userland and the kernel capable of passing iopriority. The aio interface also
+needs the ability to verify that the submitting context has sufficient
+priviledges to submit IOPRIO_RT commands. This patch creates the
+ioprio_check_cap function to be used by the ioprio_set system call and also by
+the aio interface.
 
 Signed-off-by: Adam Manzanares <adam.manzanares@wdc.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- include/linux/fs.h | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ block/ioprio.c         | 22 ++++++++++++++++------
+ include/linux/ioprio.h |  2 ++
+ 2 files changed, 18 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 7f07977bdfd7..50de40dbbb85 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -284,6 +284,8 @@ enum rw_hint {
- 	WRITE_LIFE_EXTREME	= RWH_WRITE_LIFE_EXTREME,
- };
+diff --git a/block/ioprio.c b/block/ioprio.c
+index 6f5d0b6625e3..f9821080c92c 100644
+--- a/block/ioprio.c
++++ b/block/ioprio.c
+@@ -61,15 +61,10 @@ int set_task_ioprio(struct task_struct *task, int ioprio)
+ }
+ EXPORT_SYMBOL_GPL(set_task_ioprio);
  
-+#define MAX_KI_HINT		((1 << 16) - 1) /* ki_hint type is u16 */
-+
- #define IOCB_EVENTFD		(1 << 0)
- #define IOCB_APPEND		(1 << 1)
- #define IOCB_DIRECT		(1 << 2)
-@@ -299,7 +301,7 @@ struct kiocb {
- 	void (*ki_complete)(struct kiocb *iocb, long ret, long ret2);
- 	void			*private;
- 	int			ki_flags;
--	enum rw_hint		ki_hint;
-+	u16			ki_hint;
- } __randomize_layout;
+-SYSCALL_DEFINE3(ioprio_set, int, which, int, who, int, ioprio)
++int ioprio_check_cap(int ioprio)
+ {
+ 	int class = IOPRIO_PRIO_CLASS(ioprio);
+ 	int data = IOPRIO_PRIO_DATA(ioprio);
+-	struct task_struct *p, *g;
+-	struct user_struct *user;
+-	struct pid *pgrp;
+-	kuid_t uid;
+-	int ret;
  
- static inline bool is_sync_kiocb(struct kiocb *kiocb)
-@@ -1927,12 +1929,19 @@ static inline enum rw_hint file_write_hint(struct file *file)
+ 	switch (class) {
+ 		case IOPRIO_CLASS_RT:
+@@ -92,6 +87,21 @@ SYSCALL_DEFINE3(ioprio_set, int, which, int, who, int, ioprio)
+ 			return -EINVAL;
+ 	}
  
- static inline int iocb_flags(struct file *file);
- 
-+static inline u16 ki_hint_validate(enum rw_hint hint)
-+{
-+	if (hint > MAX_KI_HINT)
-+		return 0;
-+	return hint;
++	return 0;
 +}
 +
- static inline void init_sync_kiocb(struct kiocb *kiocb, struct file *filp)
- {
- 	*kiocb = (struct kiocb) {
- 		.ki_filp = filp,
- 		.ki_flags = iocb_flags(filp),
--		.ki_hint = file_write_hint(filp),
-+		.ki_hint = ki_hint_validate(file_write_hint(filp)),
- 	};
- }
++SYSCALL_DEFINE3(ioprio_set, int, which, int, who, int, ioprio)
++{
++	struct task_struct *p, *g;
++	struct user_struct *user;
++	struct pid *pgrp;
++	kuid_t uid;
++	int ret;
++
++	ret = ioprio_check_cap(ioprio);
++	if (ret)
++		return ret;
++
+ 	ret = -ESRCH;
+ 	rcu_read_lock();
+ 	switch (which) {
+diff --git a/include/linux/ioprio.h b/include/linux/ioprio.h
+index 627efac73e6d..4a28cec49ec3 100644
+--- a/include/linux/ioprio.h
++++ b/include/linux/ioprio.h
+@@ -77,4 +77,6 @@ extern int ioprio_best(unsigned short aprio, unsigned short bprio);
  
+ extern int set_task_ioprio(struct task_struct *task, int ioprio);
+ 
++extern int ioprio_check_cap(int ioprio);
++
+ #endif
 -- 
 2.15.1
