@@ -1,124 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751450AbeEUSkq (ORCPT <rfc822;w@1wt.eu>);
+        id S1751516AbeEUSkv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 14:40:51 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:34407 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751429AbeEUSkq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 21 May 2018 14:40:46 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38834 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750930AbeEUSkk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 14:40:40 -0400
-From: Steve Grubb <sgrubb@redhat.com>
-To: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Richard Guy Briggs <rgb@redhat.com>,
-        containers@lists.linux-foundation.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, paul@paul-moore.com
-Subject: Re: [PATCH] audit: add containerid support for IMA-audit
-Date: Mon, 21 May 2018 14:40:40 -0400
-Message-ID: <16251997.Lr3lOVDqLJ@x2>
-Organization: Red Hat
-In-Reply-To: <7abd3460-0797-f003-12c7-7329beb0835b@linux.vnet.ibm.com>
-References: <1520257393.10396.291.camel@linux.vnet.ibm.com> <5705556.pzqfGOkdjC@x2> <7abd3460-0797-f003-12c7-7329beb0835b@linux.vnet.ibm.com>
+X-Google-Smtp-Source: AB8JxZp50TeQsAPXdYJIAPDvUAvOMn8hchfWdQ6/5ESMRN9sbfj+ObGJCaO/RsoDTcDeiPDRvO6zsA==
+Date: Mon, 21 May 2018 21:40:41 +0300
+From: Vladimir Davydov <vdavydov.dev@gmail.com>
+To: Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc: akpm@linux-foundation.org, shakeelb@google.com,
+        viro@zeniv.linux.org.uk, hannes@cmpxchg.org, mhocko@kernel.org,
+        tglx@linutronix.de, pombredanne@nexb.com, stummala@codeaurora.org,
+        gregkh@linuxfoundation.org, sfr@canb.auug.org.au, guro@fb.com,
+        mka@chromium.org, penguin-kernel@I-love.SAKURA.ne.jp,
+        chris@chris-wilson.co.uk, longman@redhat.com, minchan@kernel.org,
+        ying.huang@intel.com, mgorman@techsingularity.net, jbacik@fb.com,
+        linux@roeck-us.net, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        willy@infradead.org, lirongqing@baidu.com, aryabinin@virtuozzo.com
+Subject: Re: [PATCH v6 05/17] mm: Assign memcg-aware shrinkers bitmap to memcg
+Message-ID: <20180521184041.5p2zyhzu45eeihmi@esperanza>
+References: <152663268383.5308.8660992135988724014.stgit@localhost.localdomain>
+ <152663295709.5308.12103481076537943325.stgit@localhost.localdomain>
+ <20180520072702.5ivoc5qxdbcus4td@esperanza>
+ <7a5c644d-625e-a01e-a9a7-304eea13d225@virtuozzo.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7a5c644d-625e-a01e-a9a7-304eea13d225@virtuozzo.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Stefan,
-
-On Monday, May 21, 2018 2:04:08 PM EDT Stefan Berger wrote:
-> On 05/21/2018 01:21 PM, Steve Grubb wrote:
-> > On Friday, May 18, 2018 12:34:24 PM EDT Mimi Zohar wrote:
-> >> On Fri, 2018-05-18 at 11:56 -0400, Richard Guy Briggs wrote:
-> >>> On 2018-05-18 10:39, Mimi Zohar wrote:
-> >>>> On Fri, 2018-05-18 at 09:54 -0400, Stefan Berger wrote:
-> >>>>> On 05/18/2018 08:53 AM, Mimi Zohar wrote:
-> >>>> [..]
-> >>>> 
-> >>>>>>>>> If so, which ones? We could probably refactor the current
-> >>>>>>>>> integrity_audit_message() and have ima_parse_rule() call into it
-> >>>>>>>>> to get those fields as well. I suppose adding new fields to it
-> >>>>>>>>> wouldn't be considered breaking user space?
-> >>>>>>>> 
-> >>>>>>>> Changing the order of existing fields or inserting fields could
-> >>>>>>>> break stuff and is strongly discouraged without a good reason, but
-> >>>>>>>> appending fields is usually the right way to add information.
-> >>>>>>>> 
-> >>>>>>>> There are exceptions, and in this case, I'd pick the "more
-> >>>>>>>> standard" of the formats for AUDIT_INTEGRITY_RULE
-> >>>>>>>> (ima_audit_measurement?) and stick with that, abandoning the other
-> >>>>>>>> format, renaming the less standard version of the record
-> >>>>>>>> (ima_parse_rule?) and perhpas adopting that abandonned format for
-> >>>>>>>> the new record type while using current->audit_context.
-> >>>>>> 
-> >>>>>> This sounds right, other than "type=INTEGRITY_RULE" (1805) for
-> >>>>>> ima_audit_measurement().  Could we rename type=1805 to be
-> >>>>> 
-> >>>>> So do we want to change both? I thought that what
-> >>>>> ima_audit_measurement() produces looks ok but may not have a good
-> >>>>> name for the 'type'. Now in this case I would not want to 'break user
-> >>>>> space'. The only change I was going to make was to what
-> >>>>> ima_parse_rule() produces.
-> >>>> 
-> >>>> The only change for now is separating the IMA policy rules from the
-> >>>> IMA-audit messages.
-> >>>> 
-> >>>> Richard, when the containerid is appended to the IMA-audit messages,
-> >>>> would we make the audit type name change then?
-> >>> 
-> >>> No, go ahead and make the change now.  I'm expecting that the
-> >>> containerid record will just be another auxiliary record and should not
-> >>> affect you folks.
-> >> 
-> >> To summarize, we need to disambiguate the 1805, as both
-> >> ima_parse_rule() and ima_audit_measurement() are using the same number
-> >> with different formats.  The main usage of 1805 that we are aware of
-> >> is ima_audit_measurement().  Yet the "type=" name for
-> >> ima_audit_measurement() should be INTEGRITY_IMA_AUDIT, not
-> >> INTEGRITY_RULE.
-> >> 
-> >> option 1: breaks both uses
-> >> 1805 - INTEGRITY_IMA_AUDIT - ima_audit_measurement()
-> >> 1806 - INTEGRITY_POLICY_RULE - ima_parse_rule()
-> >> 
-> >> option 2: breaks the most common usage
-> >> 1805 - INTEGRITY_RULE - ima_parse_rule()
-> >> 1806 - INTEGRITY_IMA_AUDIT - ima_audit_measurement()
-> >> 
-> >> option 3: leaves the most common usage with the wrong name, and breaks
-> >> the other less common usage
-> >> 1805 - INTEGRITY_RULE - ima_audit_measurement()
-> >> 1806 - INTEGRITY_POLICY_RULE - ima_parse_rule()
-> >> 
-> >> So option 3 is the best option?
-> >> 
-> >  From a user space perspective, I don't care as long the event is well
-> >  formed
->
-> Are you saying this because of the tools you referred to that require
-> proper ordering and all fields need to be available?
-
-Its because the order was established a long time ago. User space tools still 
-expect that ordering.
- 
-> > (No unnecessary untrusted string logging) and we have the required fields
-> > for searching: pid, uid, auid, tty, session, subj, comm, exe, & res. And
-> > the object is identifiable in the event.
+On Mon, May 21, 2018 at 01:16:40PM +0300, Kirill Tkhai wrote:
+> >> +static int memcg_expand_one_shrinker_map(struct mem_cgroup *memcg,
+> >> +					 int size, int old_size)
+> > 
+> > Nit: No point in passing old_size here. You can instead use
+> > memcg_shrinker_map_size directly.
 > 
-> There's at least one documented user that showed the existing format...
+> This is made for the readability. All the actions with global variable
+> is made in the same function -- memcg_expand_shrinker_maps(), all
+> the actions with local variables are also in the same -- memcg_expand_one_shrinker_map().
+> Accessing memcg_shrinker_map_size in memcg_expand_one_shrinker_map()
+> looks not intuitive and breaks modularity. 
+
+I guess it depends on how you look at it. Anyway, it's nitpicking so I
+won't mind if you leave it as is.
+
+> >> +static int memcg_alloc_shrinker_maps(struct mem_cgroup *memcg)
+> >> +{
+> >> +	struct memcg_shrinker_map *map;
+> >> +	int nid, size, ret = 0;
+> >> +
+> >> +	if (mem_cgroup_is_root(memcg))
+> >> +		return 0;
+> >> +
+> >> +	mutex_lock(&memcg_shrinker_map_mutex);
+> >> +	size = memcg_shrinker_map_size;
+> >> +	for_each_node(nid) {
+> >> +		map = kvzalloc(sizeof(*map) + size, GFP_KERNEL);
+> >> +		if (!map) {
+> > 
+> >> +			memcg_free_shrinker_maps(memcg);
+> > 
+> > Nit: Please don't call this function under the mutex as it isn't
+> > necessary. Set 'ret', break the loop, then check 'ret' after releasing
+> > the mutex, and call memcg_free_shrinker_maps() if it's not 0.
 > 
-> https://www.fireeye.com/blog/threat-research/2016/11/extending_linux_exec.h
-> tml
+> No, it must be called under the mutex. See the race with memcg_expand_one_shrinker_map().
+> NULL maps are not expanded, and this is the indicator we use to differ memcg, which is
+> not completely online. If the allocations in memcg_alloc_shrinker_maps() fail at nid == 1,
+> then freeing of nid == 0 can race with expanding.
 
-Hmm. I see. If that event was ever sent to linux-audit mail list for 
-feedback, we would have had some discussion because it's not a proper event. 
-The order of the fields changed, new fields were added, untrusted string 
-logging is being used, field names are not documented in the field name 
-dictionary, existing field names are not being used, subject information is 
-incomplete, results is missing, and its not entirely clear what the object 
-is.
+Ah, I see, you're right.
 
--Steve
+> >> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> >> index 3de12a9bdf85..f09ea20d7270 100644
+> >> --- a/mm/vmscan.c
+> >> +++ b/mm/vmscan.c
+> >> @@ -171,6 +171,7 @@ static DECLARE_RWSEM(shrinker_rwsem);
+> >>  
+> >>  #ifdef CONFIG_MEMCG_KMEM
+> >>  static DEFINE_IDR(shrinker_idr);
+> > 
+> >> +static int memcg_shrinker_nr_max;
+> > 
+> > Nit: Please rename it to shrinker_id_max and make it store max shrinker
+> > id, not the max number shrinkers that have ever been allocated. This
+> > will make it easier to understand IMO.
+> >
+> > Also, this variable doesn't belong to this patch as you don't really
+> > need it to expaned mem cgroup maps. Let's please move it to patch 3
+> > (the one that introduces shrinker_idr).
+> > 
+> >>  
+> >>  static int prealloc_memcg_shrinker(struct shrinker *shrinker)
+> >>  {
+> >> @@ -181,6 +182,15 @@ static int prealloc_memcg_shrinker(struct shrinker *shrinker)
+> >>  	ret = id = idr_alloc(&shrinker_idr, shrinker, 0, 0, GFP_KERNEL);
+> >>  	if (ret < 0)
+> >>  		goto unlock;
+> > 
+> >> +
+> >> +	if (id >= memcg_shrinker_nr_max) {
+> >> +		if (memcg_expand_shrinker_maps(id + 1)) {
+> >> +			idr_remove(&shrinker_idr, id);
+> >> +			goto unlock;
+> >> +		}
+> >> +		memcg_shrinker_nr_max = id + 1;
+> >> +	}
+> >> +
+> > 
+> > Then we'll have here:
+> > 
+> > 	if (memcg_expaned_shrinker_maps(id)) {
+> > 		idr_remove(shrinker_idr, id);
+> > 		goto unlock;
+> > 	}
+> > 
+> > and from patch 3:
+> > 
+> > 	shrinker_id_max = MAX(shrinker_id_max, id);
+> 
+> So, shrinker_id_max contains "the max number shrinkers that have ever been allocated" minus 1.
+> The only difference to existing logic is "minus 1", which will be needed to reflect in
+> shrink_slab_memcg()->for_each_set_bit()...
+> 
+> To have "minus 1" instead of "not to have minus 1" looks a little subjective.
+
+OK, leave 'nr' then, but please consider my other comments:
+
+ - rename memcg_shrinker_nr_max to shrinker_nr_max so that the variable
+   name is consistent with shrinker_idr
+
+ - move shrinker_nr_max to patch 3 as you don't need it for expanding
+   memcg shrinker maps
+
+ - don't use shrinker_nr_max to check whether we need to expand memcg
+   maps - simply call memcg_expand_shrinker_maps() and let it decide -
+   this will neatly isolate all the logic related to memcg shrinker map
+   allocation in memcontrol.c
