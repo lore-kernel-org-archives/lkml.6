@@ -1,41 +1,40 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrPp5wMVKmQlZ/iuYJJwbm8gt0WJiX53NPEaVBdUoK4302wU9dESo/XzDnY/FNtmRff+gHd
-ARC-Seal: i=1; a=rsa-sha256; t=1526937316; cv=none;
+X-Google-Smtp-Source: AB8JxZp3R1Pubt64t57L1hVtHlUeqc+2l+mj4d+wANLvuqTOAU1KoYFuDYhjsiJm7ZjoJhmXMbYY
+ARC-Seal: i=1; a=rsa-sha256; t=1526937314; cv=none;
         d=google.com; s=arc-20160816;
-        b=JmMP+3bzd2X80iRw/O7INeWW9MkJdFSVrBS5XbQwQXPrSliCr5DEjbxf6R+RVDMW2Y
-         uemQOmL9unVEBys81gUWivebTr4L6I6lQWYz5EGE4UCP3DwC9pRwtmp/D4JxPam3G7Sd
-         IFJNptjNwZxqupcGYVJmOCVM7uAWqm1rXd8wE/uMYBxl0Nnq/t/LAnHRAjbhnB7mscX8
-         KNIgoPATXJNklg8b4OeSfud+vLSA7ICYrCuvL9baXXf+MdPiRtxNspw3Qii3kZjbXJ8H
-         xAsSCEeR6WGPJVvOTagI+o4g++2mKE8IRRmu0QRx+d7lHWIuevCQPDfCAO6FmeZ9bYxp
-         EqHA==
+        b=jKVIHAHhxHS4T7u9zVbmebrF4y4NstE9SMEa34zO1/v3z7buTa4BDnKEow1kFQszhx
+         R6pKmWsqcpygx7mnLJpeTdkdh3UOCY00KXyLgm9Nj/x/gxu9wLumPLI/xDEhDLWZkyfr
+         Z/rQx8CyQeGvBDHEbNB3X+5sVjSSq4s/XlldLVvJ9USIXs7CeTFOte6DOe2YF4iPsdBl
+         V4RKuE2Dmhe2Uyi0XNk8NXqK5PeaybscMcFr2HchBE7ufBs60IAy5NqV0Otf8MLMp0ZH
+         V0WGztL9D+PbHAbYcbF9cyXDYu+oDkpLerrCg/BHPjq6pTBAxTSvqLfYgm9VPIJYmtYL
+         WqDw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=zYXpW0BlO7E337mMMZum10Fgd3tqL4XVfKkn3FhRLno=;
-        b=t+5II5rEa+JiZmW84xxynEFRlL5y9u3hcJ5bexwHzp00NkRKG+vmXUOAIj1bvUOgiu
-         4zn0wtkQbOxO7staRsvZ7Dia7tBdR3zYydGW8lC3XqGmwET+iAmMDgx4/ktyWkfCRVuS
-         95WZru1K8eyTOUR8IP99d1WIMCvEvMZ/KJXKHJ/hJFymUDEOz48oBuLYi+7jmrOjNGTH
-         HZhqRlf8DapQkLqtWFv9jAKbHyvpJyQ6ByYJaSWFbMyg4yEIQLVdnW+KPxcCRcjCbmBN
-         62cxrYuHr2tShP750v/3gvodYcxKFvCHB2qN5wKkZk3pvq/cD5FKbfA9Mu1NFLLQtEZD
-         fxzg==
+        bh=cRK0DeOp9yxeK2XVQFz1htUjrMSSqaLs7niG5+PwTDI=;
+        b=dOJssfD2Y9k18fWnX2ySi7IHttboZhXx3Ui3n2MK+6o52dEMk9vTLICzaqEnYJw92C
+         yz/IfeNOyWNRTAAjd1VfCQw+3Dhbtk3g/ZGGuY9ItgvoUTL1aPXmdi0Nv5v1NBd/6aP7
+         GBKYF04OQolcFeqKvbpzgjX8XlQStzJkR1zY2mZnpyMULcwOdgj75Khk79Os7Ivb+558
+         q7WnjsCyWAbRQaqAZ5un35tpS8aVLRsZzjezT6tK1qdfPqvbIwgT2hnpaAqMMhD55upv
+         aRIEyOJiTzUaJr90RpjH2fbgHmyYG2jbrI14QKN+YjyJlFP/rXBWbfMvw3eW979wlKxb
+         SABA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=aPJMdrxS;
+       dkim=pass header.i=@kernel.org header.s=default header.b=Nne0bVKY;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=aPJMdrxS;
+       dkim=pass header.i=@kernel.org header.s=default header.b=Nne0bVKY;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Borislav Petkov <bp@suse.de>,
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Ingo Molnar <mingo@kernel.org>,
 	David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 37/87] x86/bugs: Concentrate bug detection into a separate function
-Date: Mon, 21 May 2018 23:11:13 +0200
-Message-Id: <20180521210423.990303652@linuxfoundation.org>
+Subject: [PATCH 4.9 36/87] x86/nospec: Simplify alternative_msr_write()
+Date: Mon, 21 May 2018 23:11:12 +0200
+Message-Id: <20180521210423.893374107@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210420.222671977@linuxfoundation.org>
 References: <20180521210420.222671977@linuxfoundation.org>
@@ -45,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109824365345903?=
-X-GMAIL-MSGID: =?utf-8?q?1601109824365345903?=
+X-GMAIL-THRID: =?utf-8?q?1601109821557476654?=
+X-GMAIL-MSGID: =?utf-8?q?1601109821557476654?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,69 +53,66 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-commit 4a28bfe3267b68e22c663ac26185aa16c9b879ef upstream
+commit 1aa7a5735a41418d8e01fa7c9565eb2657e2ea3f upstream
 
-Combine the various logic which goes through all those
-x86_cpu_id matching structures in one function.
+The macro is not type safe and I did look for why that "g" constraint for
+the asm doesn't work: it's because the asm is more fundamentally wrong.
 
-Suggested-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+It does
+
+        movl %[val], %%eax
+
+but "val" isn't a 32-bit value, so then gcc will pass it in a register,
+and generate code like
+
+        movl %rsi, %eax
+
+and gas will complain about a nonsensical 'mov' instruction (it's moving a
+64-bit register to a 32-bit one).
+
+Passing it through memory will just hide the real bug - gcc still thinks
+the memory location is 64-bit, but the "movl" will only load the first 32
+bits and it all happens to work because x86 is little-endian.
+
+Convert it to a type safe inline function with a little trick which hands
+the feature into the ALTERNATIVE macro.
+
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Borislav Petkov <bp@suse.de>
 Reviewed-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/common.c |   21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+ arch/x86/include/asm/nospec-branch.h |   19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -879,21 +879,27 @@ static const __initconst struct x86_cpu_
- 	{}
- };
- 
--static bool __init cpu_vulnerable_to_meltdown(struct cpuinfo_x86 *c)
-+static void __init cpu_set_bug_bits(struct cpuinfo_x86 *c)
- {
- 	u64 ia32_cap = 0;
- 
-+	if (x86_match_cpu(cpu_no_speculation))
-+		return;
-+
-+	setup_force_cpu_bug(X86_BUG_SPECTRE_V1);
-+	setup_force_cpu_bug(X86_BUG_SPECTRE_V2);
-+
- 	if (x86_match_cpu(cpu_no_meltdown))
--		return false;
-+		return;
- 
- 	if (cpu_has(c, X86_FEATURE_ARCH_CAPABILITIES))
- 		rdmsrl(MSR_IA32_ARCH_CAPABILITIES, ia32_cap);
- 
- 	/* Rogue Data Cache Load? No! */
- 	if (ia32_cap & ARCH_CAP_RDCL_NO)
--		return false;
-+		return;
- 
--	return true;
-+	setup_force_cpu_bug(X86_BUG_CPU_MELTDOWN);
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -241,15 +241,16 @@ static inline void vmexit_fill_RSB(void)
+ #endif
  }
  
- /*
-@@ -942,12 +948,7 @@ static void __init early_identify_cpu(st
+-#define alternative_msr_write(_msr, _val, _feature)		\
+-	asm volatile(ALTERNATIVE("",				\
+-				 "movl %[msr], %%ecx\n\t"	\
+-				 "movl %[val], %%eax\n\t"	\
+-				 "movl $0, %%edx\n\t"		\
+-				 "wrmsr",			\
+-				 _feature)			\
+-		     : : [msr] "i" (_msr), [val] "i" (_val)	\
+-		     : "eax", "ecx", "edx", "memory")
++static __always_inline
++void alternative_msr_write(unsigned int msr, u64 val, unsigned int feature)
++{
++	asm volatile(ALTERNATIVE("", "wrmsr", %c[feature])
++		: : "c" (msr),
++		    "a" (val),
++		    "d" (val >> 32),
++		    [feature] "i" (feature)
++		: "memory");
++}
  
- 	setup_force_cpu_cap(X86_FEATURE_ALWAYS);
- 
--	if (!x86_match_cpu(cpu_no_speculation)) {
--		if (cpu_vulnerable_to_meltdown(c))
--			setup_force_cpu_bug(X86_BUG_CPU_MELTDOWN);
--		setup_force_cpu_bug(X86_BUG_SPECTRE_V1);
--		setup_force_cpu_bug(X86_BUG_SPECTRE_V2);
--	}
-+	cpu_set_bug_bits(c);
- 
- 	fpu__init_system(c);
- 
+ static inline void indirect_branch_prediction_barrier(void)
+ {
