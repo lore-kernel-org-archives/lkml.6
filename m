@@ -1,70 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751276AbeEUMos (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 08:44:48 -0400
-Received: from mga07.intel.com ([134.134.136.100]:31974 "EHLO mga07.intel.com"
+        id S1751280AbeEUMuF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 08:50:05 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55431 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750999AbeEUMop (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 08:44:45 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,426,1520924400";
-   d="scan'208";a="201112075"
-Subject: Re: [PATCH v2]: perf/x86: store user space frame-pointer value on a
- sample
-To: Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org
-References: <31205dc8-b756-e12b-0249-2ed06c2db9c9@linux.intel.com>
- <20180509145436.GV12217@hirez.programming.kicks-ass.net>
- <3ecedd91-1c01-6fc5-4648-89eaf5ff0930@linux.intel.com>
- <20180510101406.GA12217@hirez.programming.kicks-ass.net>
-From: Alexey Budankov <alexey.budankov@linux.intel.com>
-Message-ID: <0594eaea-0cab-ea04-c258-5f4770ffeee6@linux.intel.com>
-Date: Mon, 21 May 2018 15:44:40 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1750970AbeEUMuD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 08:50:03 -0400
+Date: Mon, 21 May 2018 14:50:00 +0200
+From: Jan Kara <jack@suse.cz>
+To: syzbot <syzbot+9a44753ac327c557796a@syzkaller.appspotmail.com>
+Cc: adilger.kernel@dilger.ca, jack@suse.cz, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        tytso@mit.edu
+Subject: Re: WARNING in ext4_set_page_dirty
+Message-ID: <20180521125000.hlgdsvlzlr7xw3bx@quack2.suse.cz>
+References: <089e0825cec8180a2b0568c4ee1d@google.com>
+ <0000000000003a8d73056cb11ca3@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20180510101406.GA12217@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0000000000003a8d73056cb11ca3@google.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
-
-On 10.05.2018 13:14, Peter Zijlstra wrote:
-> On Thu, May 10, 2018 at 12:42:38PM +0300, Alexey Budankov wrote:
->>> The Changelog needs to state that user_regs->bp is in fact valid and
->>
->> That actually was tested on binaries compiled without and with BP exposed 
->> and in the latter case proved the value of that change.
+On Sun 20-05-18 23:07:02, syzbot wrote:
+> syzbot has found a reproducer for the following crash on:
 > 
-> Mostly works is not the same as 'always initialized', if there are entry
-> paths that do not store that register, then using the value might leak
-> values from the kernel stack, which would be bad.
+> HEAD commit:    771c577c23ba Linux 4.17-rc6
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=108c9f37800000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=982e2df1b9e60b02
+> dashboard link: https://syzkaller.appspot.com/bug?extid=9a44753ac327c557796a
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1655584f800000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15134357800000
 > 
-> But like said, I think much of the kernel entry code was sanitized with
-> the PTI effort and I suspect things are in fact fine now, but lets wait
-> for Andy to confirm.
-
-It looks like, these days, all registers are saved on system calls, just 
-like you anticipated.
-
-So BP register value might be stored into the Perf trace on a sample. 
-
-Andy?
-
-Thanks,
-Alexey
-
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+9a44753ac327c557796a@syzkaller.appspotmail.com
 > 
+> WARNING: CPU: 0 PID: 4577 at fs/ext4/inode.c:3894
+> ext4_set_page_dirty+0x28d/0x330 fs/ext4/inode.c:3894
+> Kernel panic - not syncing: panic_on_warn set ...
+
+Looking at the reproducer, this is the issue we have been speaking about at
+LSF/MM - direct IO read dirties pages after writeback has written them out
+and so we don't expect them to be dirtied. If someone told me I would not
+believe this is possible to hit by fuzzing ;) Good job from the syzkaller
+guys!
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
