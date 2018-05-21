@@ -1,44 +1,47 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZo0g1UZp25QpOBBlXpuk2D5/Sa9nMfdIBpIY0WXI3z4z24radBYoKfEn9QzEplMqm//Dzbq
-ARC-Seal: i=1; a=rsa-sha256; t=1526937845; cv=none;
+X-Google-Smtp-Source: AB8JxZp/7aMDUh1SLwKOf3ntOuOIvVwb8EgNJgboTGdEByYjqW2Rh4I5w8SoA09xwXw0snRmCAT+
+ARC-Seal: i=1; a=rsa-sha256; t=1526937842; cv=none;
         d=google.com; s=arc-20160816;
-        b=KhGL1K3c5FmaCMPi7pNhBY9VVh/eJ/RAJyr8hSdmdC7qHxvcXm5AvWKy25Euxrwzqz
-         niqcAGI/vFdmElC4sOLyevM4qE8V56/XZqiHqD4kKtQbRF3lwKERgXIaMUxcRj5thFt9
-         s4TY12ZR9LDg2ZZK5BAqc4VCkckw+tVvn8QGXM0Y2N8XTFeN23vFCQgVpc4R7T0P5RGu
-         Q2xI7n4XiadScflQOiqrXTmffaq2KMiprrSyRrV1Q5ssYqlCA6iXFJt6xznwkLZIG6dl
-         tq8HMSx/v4izNOoz0asMlXaYVJ5TSLe9nrwL9jeVUsezC/GhLQU16tKRQSBXmZ2aXOYV
-         UeGw==
+        b=ypWmYWTlowBQavt8VjduZwzRb6m/3M8tNBnZRZplNy3vdy3B3GXfwbWT+Sz64f259Q
+         cdp3isF8BynUgjkkDI7qd+NWUeQBCQhTMR/3JaMus6Zuf+cPTPGFE3I571lT6enI7rPN
+         devIQ8qyS1pAJjwhofWpsGCsSgsh/YC46NuvBtNC7wHx6uu61zbBe0/oCn+s7gTyOfyS
+         5rkr0B03eXfDRMRAzRjD8HuM3SCleCT2ldgFQj2D3h2qpJ3EHmN1buf71D1TLmRxmB79
+         GU0J0rSO4XXc67p66OhnPEg2uoS0raqZ1RLox5D1O/LNHZKTSEaJjYCFbZJDj8g3fLsP
+         MXoA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=ZMCjYibgX63eJAZHxTQTfXeBKhap+MeoLgtV0WwDQcc=;
-        b=AeNgGKd31o40Mli5ANvpUNK/+WhkPcVdaMPQmNuU3OWGZ+5fTkz7eg/HPLzB+WcBAp
-         Ofrqz1gSwMqG8FP06GsqRPoG1JvvFtT/PijcNTp2uiewng7w9Gkvcw+k6WFWDQNOJT9Q
-         iQm4eS0raXd8K2TD+4eaPvzhv9tgYS3iPQtJK8yUyQGd+DBzCHh2CZ2jM6NvH2p0U9vT
-         663mBVwrYuZPT5rXnr2jxH+HdrOCSp+ZSGNIOx8IjIATbSEFnp6v8PqLLowtdbtTJ1GS
-         UZIlTvG2ee7GgtFPfobfwgtFuvoGJAUeIC45v9S81R8Sqm/ddINbe6a1dLAf7//ACGTk
-         9yXw==
+        bh=sZW8kXYr4BVq+DsKhS6cba1fOTlwV7rBGM1BWXAEZpA=;
+        b=Ko8Qz8krFcPYmXnCDydBkwyK8RwnDYYXCsqHz2qoiw1aOlI0x3iJ3qbulHFhlVo86F
+         2B3Wf4B3NC8mmRiTdkWQrGzAhANm6azJo0+gNw9kNaqCybsWX8hQE5uGSO9pufeSBzse
+         lUJC4iHyqvWyxmVSPvrOLK+OmxZ5wD+FUFV5qP4OO8RPH8B1hchXn6QX0qr3gQ7DGf3i
+         EMUFgaI450+LtMsPWEIBiZOXVQ36g+x+LRSrlItjE0uNiu4afiDLJ4j6iOh9SE1P4m/0
+         SBKB/OAjmoC+z1Chjq2e2DIkM5Rl3Fu7FcqwyZHywGLBpgbBoXGpxPF8qJ8W6Pr+0nMn
+         KQOA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=Rsyk6kH3;
+       dkim=pass header.i=@kernel.org header.s=default header.b=waLjnWb7;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=Rsyk6kH3;
+       dkim=pass header.i=@kernel.org header.s=default header.b=waLjnWb7;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Dave Hansen <dave.hansen@intel.com>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
-	Matt Fleming <matt@codeblueprint.co.uk>,
+	Michael Ellermen <mpe@ellerman.id.au>,
 	Peter Zijlstra <peterz@infradead.org>,
+	Ram Pai <linuxram@us.ibm.com>,
+	Shuah Khan <shuah@kernel.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	linux-efi@vger.kernel.org,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.16 047/110] efi: Avoid potential crashes, fix the struct efi_pci_io_protocol_32 definition for mixed mode
-Date: Mon, 21 May 2018 23:11:44 +0200
-Message-Id: <20180521210508.645245136@linuxfoundation.org>
+	linux-mm@kvack.org,
+	Ingo Molnar <mingo@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH 4.16 046/110] x86/pkeys: Do not special case protection key 0
+Date: Mon, 21 May 2018 23:11:43 +0200
+Message-Id: <20180521210508.373502928@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -48,8 +51,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109790218666482?=
-X-GMAIL-MSGID: =?utf-8?q?1601110377778220921?=
+X-GMAIL-THRID: =?utf-8?q?1601109786925412053?=
+X-GMAIL-MSGID: =?utf-8?q?1601110375126671940?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -57,79 +60,79 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: Dave Hansen <dave.hansen@linux.intel.com>
 
-commit 0b3225ab9407f557a8e20f23f37aa7236c10a9b1 upstream.
+commit 2fa9d1cfaf0e02f8abef0757002bff12dfcfa4e6 upstream.
 
-Mixed mode allows a kernel built for x86_64 to interact with 32-bit
-EFI firmware, but requires us to define all struct definitions carefully
-when it comes to pointer sizes.
+mm_pkey_is_allocated() treats pkey 0 as unallocated.  That is
+inconsistent with the manpages, and also inconsistent with
+mm->context.pkey_allocation_map.  Stop special casing it and only
+disallow values that are actually bad (< 0).
 
-'struct efi_pci_io_protocol_32' currently uses a 'void *' for the
-'romimage' field, which will be interpreted as a 64-bit field
-on such kernels, potentially resulting in bogus memory references
-and subsequent crashes.
+The end-user visible effect of this is that you can now use
+mprotect_pkey() to set pkey=0.
 
-Tested-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: <stable@vger.kernel.org>
+This is a bit nicer than what Ram proposed[1] because it is simpler
+and removes special-casing for pkey 0.  On the other hand, it does
+allow applications to pkey_free() pkey-0, but that's just a silly
+thing to do, so we are not going to protect against it.
+
+The scenario that could happen is similar to what happens if you free
+any other pkey that is in use: it might get reallocated later and used
+to protect some other data.  The most likely scenario is that pkey-0
+comes back from pkey_alloc(), an access-disable or write-disable bit
+is set in PKRU for it, and the next stack access will SIGSEGV.  It's
+not horribly different from if you mprotect()'d your stack or heap to
+be unreadable or unwritable, which is generally very foolish, but also
+not explicitly prevented by the kernel.
+
+1. http://lkml.kernel.org/r/1522112702-27853-1-git-send-email-linuxram@us.ibm.com
+
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>p
+Cc: Dave Hansen <dave.hansen@intel.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Matt Fleming <matt@codeblueprint.co.uk>
+Cc: Michael Ellermen <mpe@ellerman.id.au>
 Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ram Pai <linuxram@us.ibm.com>
+Cc: Shuah Khan <shuah@kernel.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180504060003.19618-13-ard.biesheuvel@linaro.org
+Cc: linux-mm@kvack.org
+Cc: stable@vger.kernel.org
+Fixes: 58ab9a088dda ("x86/pkeys: Check against max pkey to avoid overflows")
+Link: http://lkml.kernel.org/r/20180509171358.47FD785E@viggo.jf.intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/boot/compressed/eboot.c |    6 ++++--
- include/linux/efi.h              |    8 ++++----
- 2 files changed, 8 insertions(+), 6 deletions(-)
+ arch/x86/include/asm/mmu_context.h |    2 +-
+ arch/x86/include/asm/pkeys.h       |    6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
---- a/arch/x86/boot/compressed/eboot.c
-+++ b/arch/x86/boot/compressed/eboot.c
-@@ -163,7 +163,8 @@ __setup_efi_pci32(efi_pci_io_protocol_32
- 	if (status != EFI_SUCCESS)
- 		goto free_struct;
+--- a/arch/x86/include/asm/mmu_context.h
++++ b/arch/x86/include/asm/mmu_context.h
+@@ -192,7 +192,7 @@ static inline int init_new_context(struc
  
--	memcpy(rom->romdata, pci->romimage, pci->romsize);
-+	memcpy(rom->romdata, (void *)(unsigned long)pci->romimage,
-+	       pci->romsize);
- 	return status;
- 
- free_struct:
-@@ -269,7 +270,8 @@ __setup_efi_pci64(efi_pci_io_protocol_64
- 	if (status != EFI_SUCCESS)
- 		goto free_struct;
- 
--	memcpy(rom->romdata, pci->romimage, pci->romsize);
-+	memcpy(rom->romdata, (void *)(unsigned long)pci->romimage,
-+	       pci->romsize);
- 	return status;
- 
- free_struct:
---- a/include/linux/efi.h
-+++ b/include/linux/efi.h
-@@ -395,8 +395,8 @@ typedef struct {
- 	u32 attributes;
- 	u32 get_bar_attributes;
- 	u32 set_bar_attributes;
--	uint64_t romsize;
--	void *romimage;
-+	u64 romsize;
-+	u32 romimage;
- } efi_pci_io_protocol_32;
- 
- typedef struct {
-@@ -415,8 +415,8 @@ typedef struct {
- 	u64 attributes;
- 	u64 get_bar_attributes;
- 	u64 set_bar_attributes;
--	uint64_t romsize;
--	void *romimage;
-+	u64 romsize;
-+	u64 romimage;
- } efi_pci_io_protocol_64;
- 
- typedef struct {
+ #ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
+ 	if (cpu_feature_enabled(X86_FEATURE_OSPKE)) {
+-		/* pkey 0 is the default and always allocated */
++		/* pkey 0 is the default and allocated implicitly */
+ 		mm->context.pkey_allocation_map = 0x1;
+ 		/* -1 means unallocated or invalid */
+ 		mm->context.execute_only_pkey = -1;
+--- a/arch/x86/include/asm/pkeys.h
++++ b/arch/x86/include/asm/pkeys.h
+@@ -51,10 +51,10 @@ bool mm_pkey_is_allocated(struct mm_stru
+ {
+ 	/*
+ 	 * "Allocated" pkeys are those that have been returned
+-	 * from pkey_alloc().  pkey 0 is special, and never
+-	 * returned from pkey_alloc().
++	 * from pkey_alloc() or pkey 0 which is allocated
++	 * implicitly when the mm is created.
+ 	 */
+-	if (pkey <= 0)
++	if (pkey < 0)
+ 		return false;
+ 	if (pkey >= arch_max_pkey())
+ 		return false;
