@@ -1,104 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753336AbeEURtG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 13:49:06 -0400
-Received: from anholt.net ([50.246.234.109]:49828 "EHLO anholt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753097AbeEURtC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 13:49:02 -0400
-From: Eric Anholt <eric@anholt.net>
-To: Yisheng Xie <xieyisheng1@huawei.com>, linux-kernel@vger.kernel.org
-Cc: Yisheng Xie <xieyisheng1@huawei.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Stefan Wahren <stefan.wahren@i2se.com>, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 12/33] clk: bcm2835: use match_string() helper
-In-Reply-To: <1526903890-35761-13-git-send-email-xieyisheng1@huawei.com>
-References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com> <1526903890-35761-13-git-send-email-xieyisheng1@huawei.com>
-User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
-Date: Mon, 21 May 2018 10:48:58 -0700
-Message-ID: <874lj0ew6t.fsf@anholt.net>
+        id S1753441AbeEURxO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 13:53:14 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47294 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753411AbeEURxK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 13:53:10 -0400
+Subject: Re: [PATCH] audit: add containerid support for IMA-audit
+To: Steve Grubb <sgrubb@redhat.com>
+Cc: Richard Guy Briggs <rgb@redhat.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        containers@lists.linux-foundation.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, paul@paul-moore.com
+References: <1520257393.10396.291.camel@linux.vnet.ibm.com>
+ <20180308112104.z67wohdvjqemy7wy@madcap2.tricolour.ca>
+ <efb6c164-febe-67bb-43a9-795476c4902f@linux.vnet.ibm.com>
+ <2397631.78oLu0QVqb@x2>
+From: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Date: Mon, 21 May 2018 13:53:04 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+In-Reply-To: <2397631.78oLu0QVqb@x2>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-MW
+X-TM-AS-GCONF: 00
+x-cbid: 18052117-0024-0000-0000-00001873B7C0
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009061; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000261; SDB=6.01035630; UDB=6.00529726; IPR=6.00814758;
+ MB=3.00021227; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-21 17:53:08
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18052117-0025-0000-0000-00005015F922
+Message-Id: <21646a72-e782-e33a-9e75-5cc98b241f36@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-21_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805210211
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-
-Yisheng Xie <xieyisheng1@huawei.com> writes:
-
-> match_string() returns the index of an array for a matching string,
-> which can be used intead of open coded variant.
+On 05/21/2018 12:58 PM, Steve Grubb wrote:
+> On Thursday, May 17, 2018 10:18:13 AM EDT Stefan Berger wrote:
+>>> audit_log_container_info() then releasing the local context.  This
+>>> version of the record has additional concerns covered here:
+>>> https://github.com/linux-audit/audit-kernel/issues/52
+>> Following the discussion there and the concern with breaking user space,
+>> how can we split up the AUDIT_INTEGRITY_RULE that is used in
+>> ima_audit_measurement() and ima_parse_rule(), without 'breaking user
+>> space'?
+>>
+>> A message produced by ima_parse_rule() looks like this here:
+>>
+>> type=INTEGRITY_RULE msg=audit(1526566213.870:305): action="dont_measure"
+>> fsmagic="0x9fa0" res=1
+> Why is action and fsmagic being logged as untrusted strings? Untrusted
+> strings are used when an unprivileged user can affect the contents of the
+> field such as creating a file with space or special characters in the name.
 >
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Eric Anholt <eric@anholt.net>
-> Cc: Stefan Wahren <stefan.wahren@i2se.com>
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-rpi-kernel@lists.infradead.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
-> ---
->  drivers/clk/bcm/clk-bcm2835.c | 14 ++++++--------
->  1 file changed, 6 insertions(+), 8 deletions(-)
+> Also, subject and object information is missing. Who loaded this rule?
 >
-> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-> index fa0d5c8..a27c0d2 100644
-> --- a/drivers/clk/bcm/clk-bcm2835.c
-> +++ b/drivers/clk/bcm/clk-bcm2835.c
-> @@ -1395,8 +1395,7 @@ static struct clk_hw *bcm2835_register_clock(struct=
- bcm2835_cprman *cprman,
->  	struct bcm2835_clock *clock;
->  	struct clk_init_data init;
->  	const char *parents[1 << CM_SRC_BITS];
-> -	size_t i, j;
-> -	int ret;
-> +	int i, ret;
->=20=20
->  	/*
->  	 * Replace our strings referencing parent clocks with the
-> @@ -1405,12 +1404,11 @@ static struct clk_hw *bcm2835_register_clock(stru=
-ct bcm2835_cprman *cprman,
->  	for (i =3D 0; i < data->num_mux_parents; i++) {
->  		parents[i] =3D data->parents[i];
->=20=20
-> -		for (j =3D 0; j < ARRAY_SIZE(cprman_parent_names); j++) {
-> -			if (strcmp(parents[i], cprman_parent_names[j]) =3D=3D 0) {
-> -				parents[i] =3D cprman->real_parent_names[j];
-> -				break;
-> -			}
-> -		}
-> +		ret =3D match_string(cprman_parent_names,
-> +				   ARRAY_SIZE(cprman_parent_names),
-> +				   parents[i]);
-> +		if (ret >=3D 0)
-> +			parents[i] =3D cprman->real_parent_names[ret];
+>> in contrast to that an INTEGRITY_PCR record type:
+>>
+>> type=INTEGRITY_PCR msg=audit(1526566235.193:334): pid=1615 uid=0 auid=0
+>> ses=2 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+>> op="invalid_pcr" cause="open_writers" comm="scp"
+>> name="/var/log/audit/audit.log" dev="dm-0" ino=1962625 res=1
+> Why is op & cause being logged as an untrusted string? This also has
+> incomplete subject information.
 
-Reviewed-by: Eric Anholt <eric@anholt.net>
+It's calling audit_log_string() in both cases:
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+https://elixir.bootlin.com/linux/latest/source/security/integrity/integrity_audit.c#L48
 
------BEGIN PGP SIGNATURE-----
+>
+>> Should some of the fields from INTEGRITY_PCR also appear in
+>> INTEGRITY_RULE? If so, which ones?
+> pid, uid, auid, tty, session, subj, comm, exe, res.  <- these are required to
+> be searchable
+>
+>> We could probably refactor the current  integrity_audit_message() and have
+>> ima_parse_rule() call into it to get those fields as well. I suppose adding
+>> new fields to it wouldn't be considered breaking user space?
+> The audit user space utilities pretty much expects those fields in that order
+> for any IMA originating events. You can add things like op or cause before
 
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlsDBooACgkQtdYpNtH8
-nug3LA//aZmSSf68qHXjBV33bop6na0WcGK0p+BArUD+EgndyLAliFCB+uEHQ0or
-RvMSkUcikTSaqurCLOBZpzOEYEDWtGTFY4HPgvqoKTbHm4+PKJfoCGdBgzb1BxJ6
-ctLeglj8+YsBBluR4+1Dn0MJBNYaG7fifk9JeLNXE5PLkFkb1SYHtGqlkXyL0w/1
-8jZM+WXmRjR637Xlxc7DReqx/x1pI03Ec5OAjkX4fX1a0inCr4Wm6hN9yEQlrZki
-1XTZsPFW87+XZyUFwm6IBkGr4FsPglreeyjYAEdRTj+ymMJUJaY6BI1yj8v+H4I5
-ZvLFJFXDuL7nbru0nMw/F5a1pewf5/UJMqDGH7AO3lBjnUMESQOtCjvaPbeIBpy8
-jyYgwNfjwdSU8SaY99aMgr3WQcy9Uzlcof2Nmd2pgDOPBD3dJR1nSWQUbRX7v1Rw
-vrlYo0r0+cZZoUmoztj5bpaSOHf+mLpC4SBY6y+5PEL8FeHW9UoWZe5Zug3ZM1ZJ
-Eehp/9S+dMsEt5y8lphBNaKz40MGa2PpSrywEOeAowVKnxIj58borW1lK4r4riG+
-GA84bDB904R/VUQetjdKxcAZvwN6k6VkEL9//M447m3WM+p4O/I7PfeDo9BhSqFf
-OS34GAVHTbp4GIV/Taq9MH0rEckYyr9FSPFy6jqMmLh1Fv2oNEw=
-=lr2s
------END PGP SIGNATURE-----
---=-=-=--
+We will call into audit_log_task, which will put the parameters into 
+correct order:
+
+auid uid gid ses subj pid comm exe
+
+https://elixir.bootlin.com/linux/latest/source/kernel/auditsc.c#L2433
+
+
+
+
+> that. The reason why you can do that is those additional fields are not
+> required to be searchable by common criteria.
+>
+> -Steve
+>
+>
