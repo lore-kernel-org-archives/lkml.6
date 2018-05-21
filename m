@@ -1,39 +1,38 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZq5TePYWIy5KDRMYmGUTgJGGqRqoDkVUZENO2NHLXNaY7DaftVrVTJhsxldS4ugN6krPHs5
-ARC-Seal: i=1; a=rsa-sha256; t=1526938019; cv=none;
+X-Google-Smtp-Source: AB8JxZr99TU1xieS1wSBXZ7SRglZlZpS9BruvbAD+O3S+9DCdXO9cQlmMSnHPInp2sCqHsi6mu/x
+ARC-Seal: i=1; a=rsa-sha256; t=1526938014; cv=none;
         d=google.com; s=arc-20160816;
-        b=e2Q2X4h/RRCgeLLUvPqfd9gPPS60OJ083jt6ow0vnsfGCmTsyR7yajz4UK/xGzfmNS
-         1TtL8pURvwZF8lNCDvgHaAuluQAEPd+xQ+NG6Qwhsc8Ada/g+tEpISAFdVzJic3vxUch
-         djbPFWSPfJnef4F7MfkTqlDqzVLvK6LNeUWhmLMlY5iDK4mwHpOXzqC+O0+K5n1T0fbf
-         PLkTsJuTa9jD7nKfjQIBrzD62gWgNPF41R1MPFlA5U+NQs7j/th9lPUB+4lM+4H+Jj+V
-         SplHcC1BgvRd/xS2NcmKGUy7SkVYvL4/yB0S4Cm11qV5Wwee17KZy3H5ukxFXmhptiU2
-         AF0A==
+        b=eNNHDpcGYMjl05TzLBZa4j+0WiHxU1JXLHbPe3oUFpj22T/kvC/JdcDiUrjl93rixs
+         DB2k1ZuGrbK1PD5pU7drvPjoOcdxamDb4a/itrpFhybfAcMsVCW92gDZHi/O5aUqcoIc
+         i4D4+KanOjVsMWF+LNtibfD3NqnR7MSCNLO7b4c7My3/pz5xMp8U+n67NTYKz/yOdv1Z
+         ao8mrZX3YwEHSB9phSV9KG9gIUlkotbOjmIHU8/YFn/MLp/M9u5GUujKurwF5Cd76o8Q
+         okLbL+NXmrWNjrGV4YTqPJa5mi+OerHEeiAUd0HN9YQLK/zoIDqrFlVnvglPUce1FtHK
+         2whg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=07szletfcHTt5Y3i8aC0FMF5V9fj5vlVJ1GidwqdYvs=;
-        b=ZkIlXlOqESSzb3Qy4Z8mvqd8kvNyf82Dgq6tr4wUb/UF7LPWrasMI3x985rhSghsn3
-         PE1uUV5AqUszI2ylM8zB6nPsWQQcPLt+6HAtkI6PL9uo2YSdN9FIliSizn7qERUfR36G
-         SQOfpWp5kPUsT+ThAYkqFBRVfUnJJj0j/c13ZKX1IGuV+PE3A+19nnNr4EMkhgMB3i/5
-         kKeWQmPfFqciF2ReCFoRzJLEjv3JNWNwb9CodWPakKhzhJhqnoBZlvTmUjnOhwbVoz8X
-         CdJ6kqJ2XkmPCWxgfzgIdNQ489doHQGGxYoqB7bDbm1KZ/4WWOj1c3dgvFsKKjnzSXGf
-         ZR6w==
+        bh=MvxBJ+zuF6Ly7j1swy1jQKzdSl7nbMOTz7CravS8BB4=;
+        b=g2IZopzi3sCUIeFEP21Z+15hu9tRD3tbem3YMBxlWn+okZZm1P8iIEkA9QeAF3r8mA
+         nPUB4z4zmL61rOSJTRelCFLB+yrFYcN24MXvEVMB4Erfal4jv3+mVPaoyVGLBo/HHPbl
+         MAEZxdC77XVdTH8fEVaF7oczhpLmiOnvWRFYQyijvXYU9jTCwYgSt9OdPMz66dml7CRl
+         Zxhr32tRTYAxRIvhzKcyD0SLFhtjo6+7HcWDqzbR1brA2Lny/uKJu6nJC2yjqxOSf3iw
+         B2cCzUSQMeTkrMss4UirKqdRmauD7088tJFbeVVzfgyB1jJZTmlniEIqQiW7cVJljBlq
+         Visg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=ix32tg6T;
+       dkim=pass header.i=@kernel.org header.s=default header.b=kXf+qpTC;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=ix32tg6T;
+       dkim=pass header.i=@kernel.org header.s=default header.b=kXf+qpTC;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@suse.de>,
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Subject: [PATCH 4.16 099/110] x86/speculation: Handle HT correctly on AMD
-Date: Mon, 21 May 2018 23:12:36 +0200
-Message-Id: <20180521210514.471629102@linuxfoundation.org>
+	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.16 109/110] x86/bugs: Rename SSBD_NO to SSB_NO
+Date: Mon, 21 May 2018 23:12:46 +0200
+Message-Id: <20180521210515.102929769@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109938794662368?=
-X-GMAIL-MSGID: =?utf-8?q?1601110560702283190?=
+X-GMAIL-THRID: =?utf-8?q?1601109970459860027?=
+X-GMAIL-MSGID: =?utf-8?q?1601110554815652194?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,230 +51,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-commit 1f50ddb4f4189243c05926b842dc1a0332195f31 upstream
+commit 240da953fcc6a9008c92fae5b1f727ee5ed167ab upstream
 
-The AMD64_LS_CFG MSR is a per core MSR on Family 17H CPUs. That means when
-hyperthreading is enabled the SSBD bit toggle needs to take both cores into
-account. Otherwise the following situation can happen:
+The "336996 Speculative Execution Side Channel Mitigations" from
+May defines this as SSB_NO, hence lets sync-up.
 
-CPU0		CPU1
-
-disable SSB
-		disable SSB
-		enable  SSB <- Enables it for the Core, i.e. for CPU0 as well
-
-So after the SSB enable on CPU1 the task on CPU0 runs with SSB enabled
-again.
-
-On Intel the SSBD control is per core as well, but the synchronization
-logic is implemented behind the per thread SPEC_CTRL MSR. It works like
-this:
-
-  CORE_SPEC_CTRL = THREAD0_SPEC_CTRL | THREAD1_SPEC_CTRL
-
-i.e. if one of the threads enables a mitigation then this affects both and
-the mitigation is only disabled in the core when both threads disabled it.
-
-Add the necessary synchronization logic for AMD family 17H. Unfortunately
-that requires a spinlock to serialize the access to the MSR, but the locks
-are only shared between siblings.
-
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/spec-ctrl.h |    6 +
- arch/x86/kernel/process.c        |  125 +++++++++++++++++++++++++++++++++++++--
- arch/x86/kernel/smpboot.c        |    5 +
- 3 files changed, 130 insertions(+), 6 deletions(-)
+ arch/x86/include/asm/msr-index.h |    2 +-
+ arch/x86/kernel/cpu/common.c     |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/x86/include/asm/spec-ctrl.h
-+++ b/arch/x86/include/asm/spec-ctrl.h
-@@ -33,6 +33,12 @@ static inline u64 ssbd_tif_to_amd_ls_cfg
- 	return (tifn & _TIF_SSBD) ? x86_amd_ls_cfg_ssbd_mask : 0ULL;
- }
+--- a/arch/x86/include/asm/msr-index.h
++++ b/arch/x86/include/asm/msr-index.h
+@@ -70,7 +70,7 @@
+ #define MSR_IA32_ARCH_CAPABILITIES	0x0000010a
+ #define ARCH_CAP_RDCL_NO		(1 << 0)   /* Not susceptible to Meltdown */
+ #define ARCH_CAP_IBRS_ALL		(1 << 1)   /* Enhanced IBRS support */
+-#define ARCH_CAP_SSBD_NO		(1 << 4)   /*
++#define ARCH_CAP_SSB_NO			(1 << 4)   /*
+ 						    * Not susceptible to Speculative Store Bypass
+ 						    * attack, so no Speculative Store Bypass
+ 						    * control required.
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -965,7 +965,7 @@ static void __init cpu_set_bug_bits(stru
+ 		rdmsrl(MSR_IA32_ARCH_CAPABILITIES, ia32_cap);
  
-+#ifdef CONFIG_SMP
-+extern void speculative_store_bypass_ht_init(void);
-+#else
-+static inline void speculative_store_bypass_ht_init(void) { }
-+#endif
-+
- extern void speculative_store_bypass_update(void);
+ 	if (!x86_match_cpu(cpu_no_spec_store_bypass) &&
+-	   !(ia32_cap & ARCH_CAP_SSBD_NO))
++	   !(ia32_cap & ARCH_CAP_SSB_NO))
+ 		setup_force_cpu_bug(X86_BUG_SPEC_STORE_BYPASS);
  
- #endif
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -279,22 +279,135 @@ static inline void switch_to_bitmap(stru
- 	}
- }
- 
--static __always_inline void __speculative_store_bypass_update(unsigned long tifn)
-+#ifdef CONFIG_SMP
-+
-+struct ssb_state {
-+	struct ssb_state	*shared_state;
-+	raw_spinlock_t		lock;
-+	unsigned int		disable_state;
-+	unsigned long		local_state;
-+};
-+
-+#define LSTATE_SSB	0
-+
-+static DEFINE_PER_CPU(struct ssb_state, ssb_state);
-+
-+void speculative_store_bypass_ht_init(void)
-+{
-+	struct ssb_state *st = this_cpu_ptr(&ssb_state);
-+	unsigned int this_cpu = smp_processor_id();
-+	unsigned int cpu;
-+
-+	st->local_state = 0;
-+
-+	/*
-+	 * Shared state setup happens once on the first bringup
-+	 * of the CPU. It's not destroyed on CPU hotunplug.
-+	 */
-+	if (st->shared_state)
-+		return;
-+
-+	raw_spin_lock_init(&st->lock);
-+
-+	/*
-+	 * Go over HT siblings and check whether one of them has set up the
-+	 * shared state pointer already.
-+	 */
-+	for_each_cpu(cpu, topology_sibling_cpumask(this_cpu)) {
-+		if (cpu == this_cpu)
-+			continue;
-+
-+		if (!per_cpu(ssb_state, cpu).shared_state)
-+			continue;
-+
-+		/* Link it to the state of the sibling: */
-+		st->shared_state = per_cpu(ssb_state, cpu).shared_state;
-+		return;
-+	}
-+
-+	/*
-+	 * First HT sibling to come up on the core.  Link shared state of
-+	 * the first HT sibling to itself. The siblings on the same core
-+	 * which come up later will see the shared state pointer and link
-+	 * themself to the state of this CPU.
-+	 */
-+	st->shared_state = st;
-+}
-+
-+/*
-+ * Logic is: First HT sibling enables SSBD for both siblings in the core
-+ * and last sibling to disable it, disables it for the whole core. This how
-+ * MSR_SPEC_CTRL works in "hardware":
-+ *
-+ *  CORE_SPEC_CTRL = THREAD0_SPEC_CTRL | THREAD1_SPEC_CTRL
-+ */
-+static __always_inline void amd_set_core_ssb_state(unsigned long tifn)
- {
--	u64 msr;
-+	struct ssb_state *st = this_cpu_ptr(&ssb_state);
-+	u64 msr = x86_amd_ls_cfg_base;
- 
--	if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD)) {
--		msr = x86_amd_ls_cfg_base | ssbd_tif_to_amd_ls_cfg(tifn);
-+	if (!static_cpu_has(X86_FEATURE_ZEN)) {
-+		msr |= ssbd_tif_to_amd_ls_cfg(tifn);
- 		wrmsrl(MSR_AMD64_LS_CFG, msr);
-+		return;
-+	}
-+
-+	if (tifn & _TIF_SSBD) {
-+		/*
-+		 * Since this can race with prctl(), block reentry on the
-+		 * same CPU.
-+		 */
-+		if (__test_and_set_bit(LSTATE_SSB, &st->local_state))
-+			return;
-+
-+		msr |= x86_amd_ls_cfg_ssbd_mask;
-+
-+		raw_spin_lock(&st->shared_state->lock);
-+		/* First sibling enables SSBD: */
-+		if (!st->shared_state->disable_state)
-+			wrmsrl(MSR_AMD64_LS_CFG, msr);
-+		st->shared_state->disable_state++;
-+		raw_spin_unlock(&st->shared_state->lock);
- 	} else {
--		msr = x86_spec_ctrl_base | ssbd_tif_to_spec_ctrl(tifn);
--		wrmsrl(MSR_IA32_SPEC_CTRL, msr);
-+		if (!__test_and_clear_bit(LSTATE_SSB, &st->local_state))
-+			return;
-+
-+		raw_spin_lock(&st->shared_state->lock);
-+		st->shared_state->disable_state--;
-+		if (!st->shared_state->disable_state)
-+			wrmsrl(MSR_AMD64_LS_CFG, msr);
-+		raw_spin_unlock(&st->shared_state->lock);
- 	}
- }
-+#else
-+static __always_inline void amd_set_core_ssb_state(unsigned long tifn)
-+{
-+	u64 msr = x86_amd_ls_cfg_base | ssbd_tif_to_amd_ls_cfg(tifn);
-+
-+	wrmsrl(MSR_AMD64_LS_CFG, msr);
-+}
-+#endif
-+
-+static __always_inline void intel_set_ssb_state(unsigned long tifn)
-+{
-+	u64 msr = x86_spec_ctrl_base | ssbd_tif_to_spec_ctrl(tifn);
-+
-+	wrmsrl(MSR_IA32_SPEC_CTRL, msr);
-+}
-+
-+static __always_inline void __speculative_store_bypass_update(unsigned long tifn)
-+{
-+	if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD))
-+		amd_set_core_ssb_state(tifn);
-+	else
-+		intel_set_ssb_state(tifn);
-+}
- 
- void speculative_store_bypass_update(void)
- {
-+	preempt_disable();
- 	__speculative_store_bypass_update(current_thread_info()->flags);
-+	preempt_enable();
- }
- 
- void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p,
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -77,6 +77,7 @@
- #include <asm/i8259.h>
- #include <asm/misc.h>
- #include <asm/qspinlock.h>
-+#include <asm/spec-ctrl.h>
- 
- /* Number of siblings per CPU package */
- int smp_num_siblings = 1;
-@@ -242,6 +243,8 @@ static void notrace start_secondary(void
- 	 */
- 	check_tsc_sync_target();
- 
-+	speculative_store_bypass_ht_init();
-+
- 	/*
- 	 * Lock vector_lock, set CPU online and bring the vector
- 	 * allocator online. Online must be set with vector_lock held
-@@ -1257,6 +1260,8 @@ void __init native_smp_prepare_cpus(unsi
- 	set_mtrr_aps_delayed_init();
- 
- 	smp_quirk_init_udelay();
-+
-+	speculative_store_bypass_ht_init();
- }
- 
- void arch_enable_nonboot_cpus_begin(void)
+ 	if (x86_match_cpu(cpu_no_speculation))
