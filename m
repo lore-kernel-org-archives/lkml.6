@@ -1,45 +1,45 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZoEuKNi7OebnylHNcEQL149wChwCWbRugR7/7VPo7av7AM9Xp5cbP+KCzEQfpseT+31c/1e
-ARC-Seal: i=1; a=rsa-sha256; t=1526937527; cv=none;
+X-Google-Smtp-Source: AB8JxZoywricB15ROZKB8L47vxuNTu3T2EhtqAB75qbQdV5m+2Bw8law2wY0uF1Dk2r//GlA1GhC
+ARC-Seal: i=1; a=rsa-sha256; t=1526937524; cv=none;
         d=google.com; s=arc-20160816;
-        b=aNdfr6RM2/Fv/GpbBusLDHQyDngwczNbvhdjb+MY2Uha4+vnoqWqKGulWkKtrfKX0z
-         IiJzGx/NCC5X9H8H57Hj0CQmEKGfxla35ivGtnCOIk4QUmd0Iv2Zmlco58uS42qjAie2
-         VJnp54AEidw7pKkjPz3yTnICr/RtpmHe9H5ZJh55joHhuBnw4k3DLvTKQZiJ9tMCuZxv
-         i0vctXC2r5tHITKnYNloDXb/qg0H3Ey21s/8IkKS0ddfkqb22jCGdKo/PLilypi7ZU1q
-         AaWtUk9LlKgz07vTqB3IkdDht2glRdmMArIQyRVnIycrDgoX12Shs7xgV8XJ68sFKYlf
-         nBMw==
+        b=0RQqA654eF7h8tugr4oeStqK31Y3NkGYunfTYscDaeGfYlLmJ26gl5hwdhkDRF1mY+
+         /4U1Cf0/1G9P1hGC9ao6+oMpquEdKkgsNK+LXOj1SuzhrFIpEJ75Vs206r3drzn1DoWP
+         WgkmJYIOp3NQIJKmXUhWol3gCNtpj2dWWihanGwmLXA/D3F8LdZidgsDeyLArok0Vr1r
+         8VMXWRLNISHiyGvdmHRe2iFb7M+sKvyVhMOw4hTOBVjZBEp34xZCxYi4k8a+H1mR1iMG
+         ux/6l+eQrCmAf0Q+bnIsbl2RUa+IT8mozYKyJLj8W9ppkzhsPAi5TJdEgYeQtCNuHGou
+         RlGw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=IYlGglrxvdfk6oN+D1cR3zHoSsD7kHpncn0lp5Xe+D8=;
-        b=02GUFvEEf/3EYhuaEtx4no849PAJaBDeRpcrb7yMQeR6Vu95P9vt92m5hCUAG7UY48
-         o1kHOXSMTF3+7bnLVTzsoMD15pr3sXES4QuNXL34tkKjDI3xHdoDn8CvhDlWLnBU+R8R
-         7Wukrpw6syPEJSBSRNgkzBFQQ8fi14f0ljR30U7Uj5+zv234OuItQlc2kBvbXhHOTQlt
-         JVDni/RNyvXjX3T01HO5/j58+FjO9Fyn7RwKVEPbTRXvVmXxPj6FVJcHZwIh41ciK5nV
-         6H6BTpn3niC/buGrPEZnL+FSA8CBGoRdlXFoFeFGELPZ9DNw2HGpcgxfAUX/6yyANFrc
-         Or8A==
+        bh=doBjWK2ZRNC6ZIEKjCxZOwAX8nOjOI6R/gAGHovyiKQ=;
+        b=q1WVNWUOzZZmpKAIobBv236Ij9alT934sXmUlaRN+CablHNaFpgojwimJy50yRjgAZ
+         TCNVvmzXettfnDOErQbcp7L19zIElQ6lcZA8QaKImptIcRyTRMygi75cvzEh/hV/ECIz
+         USfaXray0RI2LopRXE4DS5S16ZYyKVm5N6QbzF5hgvmVTMfYkK55y0pfma/cxiq4hjlH
+         VzqPKI8mysV05tPN0mP7SEtmyHMpdTLnIZ3WZUSFOLlWaiqAuQj15pRpowwWymOf2bax
+         VWo3teTcFyV97dgA0LjiMXdNhZLzzeUjYKM8A2LU+edc+YnvNidcmF9V3hDvwfGjHXSb
+         ozFg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=YwjlwoY2;
+       dkim=pass header.i=@kernel.org header.s=default header.b=pmp9qBpN;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=YwjlwoY2;
+       dkim=pass header.i=@kernel.org header.s=default header.b=pmp9qBpN;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Pavel Tatashin <pasha.tatashin@oracle.com>,
-	Michal Hocko <mhocko@suse.com>,
+	Ross Zwisler <ross.zwisler@linux.intel.com>,
+	"CR, Sapthagirish" <sapthagirish.cr@intel.com>,
+	Jan Kara <jack@suse.cz>,
+	Matthew Wilcox <willy@infradead.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dave Chinner <david@fromorbit.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
-	Steven Sistare <steven.sistare@oracle.com>,
-	Daniel Jordan <daniel.m.jordan@oracle.com>,
-	Mel Gorman <mgorman@techsingularity.net>,
-	Fengguang Wu <fengguang.wu@intel.com>,
-	Dennis Zhou <dennisszhou@gmail.com>,
 	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 26/95] mm: dont allow deferred pages with NEED_PER_CPU_KM
-Date: Mon, 21 May 2018 23:11:16 +0200
-Message-Id: <20180521210453.792478845@linuxfoundation.org>
+Subject: [PATCH 4.14 25/95] radix tree: fix multi-order iteration race
+Date: Mon, 21 May 2018 23:11:15 +0200
+Message-Id: <20180521210453.552574505@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210447.219380974@linuxfoundation.org>
 References: <20180521210447.219380974@linuxfoundation.org>
@@ -49,8 +49,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109869699407044?=
-X-GMAIL-MSGID: =?utf-8?q?1601110044675455507?=
+X-GMAIL-THRID: =?utf-8?q?1601110042369790052?=
+X-GMAIL-MSGID: =?utf-8?q?1601110042369790052?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -58,88 +58,117 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Pavel Tatashin <pasha.tatashin@oracle.com>
+From: Ross Zwisler <ross.zwisler@linux.intel.com>
 
-commit ab1e8d8960b68f54af42b6484b5950bd13a4054b upstream.
+commit 9f418224e8114156d995b98fa4e0f4fd21f685fe upstream.
 
-It is unsafe to do virtual to physical translations before mm_init() is
-called if struct page is needed in order to determine the memory section
-number (see SECTION_IN_PAGE_FLAGS).  This is because only in mm_init()
-we initialize struct pages for all the allocated memory when deferred
-struct pages are used.
+Fix a race in the multi-order iteration code which causes the kernel to
+hit a GP fault.  This was first seen with a production v4.15 based
+kernel (4.15.6-300.fc27.x86_64) utilizing a DAX workload which used
+order 9 PMD DAX entries.
 
-My recent fix in commit c9e97a1997 ("mm: initialize pages on demand
-during boot") exposed this problem, because it greatly reduced number of
-pages that are initialized before mm_init(), but the problem existed
-even before my fix, as Fengguang Wu found.
+The race has to do with how we tear down multi-order sibling entries
+when we are removing an item from the tree.  Remember for example that
+an order 2 entry looks like this:
 
-Below is a more detailed explanation of the problem.
+  struct radix_tree_node.slots[] = [entry][sibling][sibling][sibling]
 
-We initialize struct pages in four places:
+where 'entry' is in some slot in the struct radix_tree_node, and the
+three slots following 'entry' contain sibling pointers which point back
+to 'entry.'
 
-1. Early in boot a small set of struct pages is initialized to fill the
-   first section, and lower zones.
+When we delete 'entry' from the tree, we call :
 
-2. During mm_init() we initialize "struct pages" for all the memory that
-   is allocated, i.e reserved in memblock.
+  radix_tree_delete()
+    radix_tree_delete_item()
+      __radix_tree_delete()
+        replace_slot()
 
-3. Using on-demand logic when pages are allocated after mm_init call
-   (when memblock is finished)
+replace_slot() first removes the siblings in order from the first to the
+last, then at then replaces 'entry' with NULL.  This means that for a
+brief period of time we end up with one or more of the siblings removed,
+so:
 
-4. After smp_init() when the rest free deferred pages are initialized.
+  struct radix_tree_node.slots[] = [entry][NULL][sibling][sibling]
 
-The problem occurs if we try to do va to phys translation of a memory
-between steps 1 and 2.  Because we have not yet initialized struct pages
-for all the reserved pages, it is inherently unsafe to do va to phys if
-the translation itself requires access of "struct page" as in case of
-this combination: CONFIG_SPARSE && !CONFIG_SPARSE_VMEMMAP
+This causes an issue if you have a reader iterating over the slots in
+the tree via radix_tree_for_each_slot() while only under
+rcu_read_lock()/rcu_read_unlock() protection.  This is a common case in
+mm/filemap.c.
 
-The following path exposes the problem:
+The issue is that when __radix_tree_next_slot() => skip_siblings() tries
+to skip over the sibling entries in the slots, it currently does so with
+an exact match on the slot directly preceding our current slot.
+Normally this works:
 
-  start_kernel()
-   trap_init()
-    setup_cpu_entry_areas()
-     setup_cpu_entry_area(cpu)
-      get_cpu_gdt_paddr(cpu)
-       per_cpu_ptr_to_phys(addr)
-        pcpu_addr_to_page(addr)
-         virt_to_page(addr)
-          pfn_to_page(__pa(addr) >> PAGE_SHIFT)
+                                      V preceding slot
+  struct radix_tree_node.slots[] = [entry][sibling][sibling][sibling]
+                                              ^ current slot
 
-We disable this path by not allowing NEED_PER_CPU_KM with deferred
-struct pages feature.
+This lets you find the first sibling, and you skip them all in order.
 
-The problems are discussed in these threads:
-  http://lkml.kernel.org/r/20180418135300.inazvpxjxowogyge@wfg-t540p.sh.intel.com
-  http://lkml.kernel.org/r/20180419013128.iurzouiqxvcnpbvz@wfg-t540p.sh.intel.com
-  http://lkml.kernel.org/r/20180426202619.2768-1-pasha.tatashin@oracle.com
+But in the case where one of the siblings is NULL, that slot is skipped
+and then our sibling detection is interrupted:
 
-Link: http://lkml.kernel.org/r/20180515175124.1770-1-pasha.tatashin@oracle.com
-Fixes: 3a80a7fa7989 ("mm: meminit: initialise a subset of struct pages if CONFIG_DEFERRED_STRUCT_PAGE_INIT is set")
-Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Steven Sistare <steven.sistare@oracle.com>
-Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Cc: Fengguang Wu <fengguang.wu@intel.com>
-Cc: Dennis Zhou <dennisszhou@gmail.com>
+                                             V preceding slot
+  struct radix_tree_node.slots[] = [entry][NULL][sibling][sibling]
+                                                    ^ current slot
+
+This means that the sibling pointers aren't recognized since they point
+all the way back to 'entry', so we think that they are normal internal
+radix tree pointers.  This causes us to think we need to walk down to a
+struct radix_tree_node starting at the address of 'entry'.
+
+In a real running kernel this will crash the thread with a GP fault when
+you try and dereference the slots in your broken node starting at
+'entry'.
+
+We fix this race by fixing the way that skip_siblings() detects sibling
+nodes.  Instead of testing against the preceding slot we instead look
+for siblings via is_sibling_entry() which compares against the position
+of the struct radix_tree_node.slots[] array.  This ensures that sibling
+entries are properly identified, even if they are no longer contiguous
+with the 'entry' they point to.
+
+Link: http://lkml.kernel.org/r/20180503192430.7582-6-ross.zwisler@linux.intel.com
+Fixes: 148deab223b2 ("radix-tree: improve multiorder iterators")
+Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+Reported-by: CR, Sapthagirish <sapthagirish.cr@intel.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Chinner <david@fromorbit.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+ lib/radix-tree.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -649,6 +649,7 @@ config DEFERRED_STRUCT_PAGE_INIT
- 	depends on ARCH_SUPPORTS_DEFERRED_STRUCT_PAGE_INIT
- 	depends on NO_BOOTMEM && MEMORY_HOTPLUG
- 	depends on !FLATMEM
-+	depends on !NEED_PER_CPU_KM
- 	help
- 	  Ordinarily all struct pages are initialised during early boot in a
- 	  single thread. On very large machines this can take a considerable
+--- a/lib/radix-tree.c
++++ b/lib/radix-tree.c
+@@ -1613,11 +1613,9 @@ static void set_iter_tags(struct radix_t
+ static void __rcu **skip_siblings(struct radix_tree_node **nodep,
+ 			void __rcu **slot, struct radix_tree_iter *iter)
+ {
+-	void *sib = node_to_entry(slot - 1);
+-
+ 	while (iter->index < iter->next_index) {
+ 		*nodep = rcu_dereference_raw(*slot);
+-		if (*nodep && *nodep != sib)
++		if (*nodep && !is_sibling_entry(iter->node, *nodep))
+ 			return slot;
+ 		slot++;
+ 		iter->index = __radix_tree_iter_add(iter, 1);
+@@ -1632,7 +1630,7 @@ void __rcu **__radix_tree_next_slot(void
+ 				struct radix_tree_iter *iter, unsigned flags)
+ {
+ 	unsigned tag = flags & RADIX_TREE_ITER_TAG_MASK;
+-	struct radix_tree_node *node = rcu_dereference_raw(*slot);
++	struct radix_tree_node *node;
+ 
+ 	slot = skip_siblings(&node, slot, iter);
+ 
