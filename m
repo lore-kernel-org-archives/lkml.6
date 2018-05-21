@@ -1,84 +1,59 @@
-Return-Path: <xieyisheng1@huawei.com>
-X-Google-Smtp-Source: AB8JxZqzYMnY6LInKRtL/Q7EcNfrZtjQQXa+qZDjtIrTzvG0s1P8Ve0ag8GoOPmxqkijV7P8CRvS
-ARC-Seal: i=1; a=rsa-sha256; t=1526904842; cv=none;
+Return-Path: <andy.shevchenko@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1526941201; cv=none;
         d=google.com; s=arc-20160816;
-        b=UH1cyElJ3UFDHDE0iVrvM13eODriJeNPxOX4ZwPDOXzO2XffmqKEfvvpb4fW++eBQM
-         84bOSfNjB/gJwuqIYMAzWDDVOAOjXJygNMxBKs+la8MpCholcIBFSLJpC3gUl8h1FaM7
-         9a+yWFanreSIJm8vvsQA67QhzfhGPsuYThisWjD6kOmzIi+kpzXwPVUQ3UnyPzcjOVOo
-         vX7tPccWyAhVGG8twnEWETM7wQaJk5+zFcokg1gPrmBSHQhzZKL93O9OC2QLDA/fUR2g
-         3BYbAHGaYjqBgXOe32NWoKi1a/3t6JKKKojatC/X6ijKKbd++kjT9Ri6bkrVLrA+50bK
-         TNGw==
+        b=Xc7rq2xZTOQ5SdMU+vpkY97NcuYm2jP61+DXjOpvm83MIuqaaNegVMwolto7lTzbiF
+         fXGIKoPh68mPw4N4c8srMCaxN7CfStqNRdS9Kiu+vkbQ8Oj5NGuJQGp8mm63Tr0gCF21
+         p8jc9h8omev4xIDWqiRttkQDsjh8tAoTiCCOO424CgC0YKizeay5ZuXbJXKg+D+NVQG5
+         rwGzkjixesUkg8+ZkX7cECH647nG0jNcCqV2ua0RkjhRw1JDTh8LUFhSA2qrPiFmXAwz
+         paaYQa8UxFG4D9TvaclttJkVpgFrY3SFhg/3X5fP9mc/bNzPk8eAhAPgbARVidjA6La7
+         w+7w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
-         :from:arc-authentication-results;
-        bh=iRx9jKcrOS3rhHhwPPE7Q1woBVe/s2L9ohvWBe7jJLs=;
-        b=ZIptnNQTochq6x/GBCK95ep/foLy43bIK0TMY6/az0esZ3UR0y2mbWHgVok+/+9zTX
-         jcphKrontbuD7j3oq0NyoG97pHJppTmU/T2+yETTG7YCDR1J+ErOrv+/K0pRIOl3DqMe
-         kWcJrOQOn6TaJreGChDaL2qmMqu2712IQkLtVKIbWfagClWW1AO9y+HwkPhji3mmFv/X
-         tK1vF6/vszLzqqj5qjUhns7MJYoJz4KWrCbswq5X4tsdzz3ywfVQy0TuUxbWDPR6nZdF
-         A4mhoTG3jxIdj+sCJtoaqSEqnFXC2rGO2ZpvOCBIu5QFhhYxjAQqIeZmRHChasfCjF1i
-         +13A==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=hfyvVuF/SWyWdh6ql7xXwGLeojP0+D8PeVAPgXxWbBw=;
+        b=rIMTM4HAqkX2RDuVTbL079pJPLQ+uEI5Doe4I4PEwN+NyG2FboT6tA7zYCTe/uAjfV
+         xgsD26ahgZ6N0iIF4mzJi8rUUL844ibJevqBFX3WHUWVyq7BuqjXrzyMYp5OpkfPxrAP
+         PDOGveiZBx0TE1qZB91N4rGnSezhDVxx08ofkGwzzBj4pHCmn4AL2Ermb0tfAem5icc2
+         ErAZhoRHeywquTBp7oZ3enr7Out23TDEH3eigO/XG968zTx8QW7ShmLqpEGfqH8symtu
+         k2iYOrVRy8piI8otUAbqCsUmD1Nozf5bmrILc4ilyU/VdJUURbVWQspM8fP8KWwIyiYU
+         LtkA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of xieyisheng1@huawei.com designates 45.249.212.35 as permitted sender) smtp.mailfrom=xieyisheng1@huawei.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=K1fNLf7Q;
+       spf=pass (google.com: domain of andy.shevchenko@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andy.shevchenko@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of xieyisheng1@huawei.com designates 45.249.212.35 as permitted sender) smtp.mailfrom=xieyisheng1@huawei.com
-From: Yisheng Xie <xieyisheng1@huawei.com>
-To: <linux-kernel@vger.kernel.org>
-CC: Yisheng Xie <xieyisheng1@huawei.com>, <linux-usb@vger.kernel.org>,
-	"Felipe Balbi" <balbi@kernel.org>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>
-Subject: [PATCH 01/33] usb: phy: use match_string() helper
-Date: Mon, 21 May 2018 19:57:38 +0800
-Message-ID: <1526903890-35761-2-git-send-email-xieyisheng1@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
-In-Reply-To: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
-References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=K1fNLf7Q;
+       spf=pass (google.com: domain of andy.shevchenko@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andy.shevchenko@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AB8JxZpj837S+vn9GlnGeBRNwi0ieGMXbrgwV78+Hxv3x1upSbvh/BwPM8wA75Gvy7gVBiqU8xcDAPqAtZmgcN79wWI=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+In-Reply-To: <1526903890-35761-2-git-send-email-xieyisheng1@huawei.com>
+References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com> <1526903890-35761-2-git-send-email-xieyisheng1@huawei.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 22 May 2018 01:20:01 +0300
+Message-ID: <CAHp75Ven5JXiaPA50K_fq33L2W+atHT81Txp3D=6j4Op1BHPGA@mail.gmail.com>
+Subject: Re: [PATCH 01/33] usb: phy: use match_string() helper
+To: Yisheng Xie <xieyisheng1@huawei.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, USB <linux-usb@vger.kernel.org>,
+	Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1601075771849447048?=
-X-GMAIL-MSGID: =?utf-8?q?1601075771849447048?=
+X-GMAIL-MSGID: =?utf-8?q?1601113897555573328?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-match_string() returns the index of an array for a matching string,
-which can be used intead of open coded variant.
+On Mon, May 21, 2018 at 2:57 PM, Yisheng Xie <xieyisheng1@huawei.com> wrote:
+> match_string() returns the index of an array for a matching string,
+> which can be used intead of open coded variant.
 
-Cc: linux-usb@vger.kernel.org
-Cc: Felipe Balbi <balbi@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
----
- drivers/usb/phy/of.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+> -       int err, i;
+> +       int ret;
 
-diff --git a/drivers/usb/phy/of.c b/drivers/usb/phy/of.c
-index 1ab134f..5777c9f 100644
---- a/drivers/usb/phy/of.c
-+++ b/drivers/usb/phy/of.c
-@@ -28,16 +28,14 @@
- enum usb_phy_interface of_usb_get_phy_mode(struct device_node *np)
- {
- 	const char *phy_type;
--	int err, i;
-+	int ret;
- 
--	err = of_property_read_string(np, "phy_type", &phy_type);
--	if (err < 0)
-+	ret = of_property_read_string(np, "phy_type", &phy_type);
-+	if (ret < 0)
- 		return USBPHY_INTERFACE_MODE_UNKNOWN;
- 
--	for (i = 0; i < ARRAY_SIZE(usbphy_modes); i++)
--		if (!strcmp(phy_type, usbphy_modes[i]))
--			return i;
-+	ret = match_string(usbphy_modes, ARRAY_SIZE(usbphy_modes), phy_type);
- 
--	return USBPHY_INTERFACE_MODE_UNKNOWN;
-+	return (ret < 0) ? USBPHY_INTERFACE_MODE_UNKNOWN : ret;
- }
- EXPORT_SYMBOL_GPL(of_usb_get_phy_mode);
+int err;
+
+would still work.
+
 -- 
-1.7.12.4
+With Best Regards,
+Andy Shevchenko
