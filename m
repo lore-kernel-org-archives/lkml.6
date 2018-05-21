@@ -1,69 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751719AbeEUIfc (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 04:35:32 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40592 "EHLO mx1.redhat.com"
+        id S1752357AbeEUIgA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 04:36:00 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51298 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751286AbeEUIf1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 04:35:27 -0400
+        id S1751101AbeEUIfX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 04:35:23 -0400
 From: Jason Wang <jasowang@redhat.com>
 To: mst@redhat.com, jasowang@redhat.com
 Cc: virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        John Fastabend <john.fastabend@gmail.com>
-Subject: [PATCH net 4/4] virito-net: fix leaking page for gso packet during mergeable XDP
-Date: Mon, 21 May 2018 16:35:06 +0800
-Message-Id: <1526891706-18516-5-git-send-email-jasowang@redhat.com>
+        linux-kernel@vger.kernel.org
+Subject: [PATCH net 3/4] virtio-net: reset num_buf to 1 after linearizing packet
+Date: Mon, 21 May 2018 16:35:05 +0800
+Message-Id: <1526891706-18516-4-git-send-email-jasowang@redhat.com>
 In-Reply-To: <1526891706-18516-1-git-send-email-jasowang@redhat.com>
 References: <1526891706-18516-1-git-send-email-jasowang@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We need to drop refcnt to xdp_page if we see a gso packet. Otherwise
-it will be leaked. Fixing this by moving the check of gso packet above
-the linearizing logic.
+If we successfully linearize the packets, num_buf were set to zero
+which was wrong since we now have only 1 buffer to be used for e.g in
+the error path of receive_mergeable(). Zero num_buf will lead the code
+try to pop the buffers of next packet and drop it. Fixing this by set
+num_buf to 1 if we successfully linearize the packet.
 
-Cc: John Fastabend <john.fastabend@gmail.com>
-Fixes: 72979a6c3590 ("virtio_net: xdp, add slowpath case for non contiguous buffers")
+Fixes: 4941d472bf95 ("virtio-net: do not reset during XDP set")
 Signed-off-by: Jason Wang <jasowang@redhat.com>
 ---
- drivers/net/virtio_net.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/net/virtio_net.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index 165a922..f8db809 100644
+index 6260d65..165a922 100644
 --- a/drivers/net/virtio_net.c
 +++ b/drivers/net/virtio_net.c
-@@ -707,6 +707,14 @@ static struct sk_buff *receive_mergeable(struct net_device *dev,
- 		void *data;
- 		u32 act;
- 
-+		/* Transient failure which in theory could occur if
-+		 * in-flight packets from before XDP was enabled reach
-+		 * the receive path after XDP is loaded. In practice I
-+		 * was not able to create this condition.
-+		 */
-+		if (unlikely(hdr->hdr.gso_type))
-+			goto err_xdp;
-+
- 		/* This happens when rx buffer size is underestimated
- 		 * or headroom is not enough because of the buffer
- 		 * was refilled before XDP is set. This should only
-@@ -728,14 +736,6 @@ static struct sk_buff *receive_mergeable(struct net_device *dev,
+@@ -722,6 +722,7 @@ static struct sk_buff *receive_mergeable(struct net_device *dev,
+ 						      &len);
+ 			if (!xdp_page)
+ 				goto err_xdp;
++			num_buf = 1;
+ 			offset = VIRTIO_XDP_HEADROOM;
+ 		} else {
  			xdp_page = page;
- 		}
- 
--		/* Transient failure which in theory could occur if
--		 * in-flight packets from before XDP was enabled reach
--		 * the receive path after XDP is loaded. In practice I
--		 * was not able to create this condition.
--		 */
--		if (unlikely(hdr->hdr.gso_type))
--			goto err_xdp;
--
- 		/* Allow consuming headroom but reserve enough space to push
- 		 * the descriptor on if we get an XDP_TX return code.
- 		 */
 -- 
 2.7.4
