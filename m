@@ -1,93 +1,40 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1344077-1526937916-2-15537556695686516813
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526937916; b=NCEn2Ul6kQ7SYA6RtuqD1Z7zQdq2sC5IdDET2zZIXEMPZX8Q3J
-    /OHq+M6ITJ0vT2vjN/qfII6tZMTz6nuRZ0DL43nCT4f8PHx8kH2bFpeYKglA8yz/
-    pEe1b0O/DAw80lrMnxHevlYp51fWYxHZHGrIahcAiWYTAlw7qfa+3eouu/J2Fd8M
-    wsmMQ8usKGc91N2alIwr7HmA0hvj6iJOVg12y2s2d/cSnP0hw9U+nnYmq4SU9ZIp
-    7qsfnOfvt0kOmxpQKnjynrz89wix4dkX4mklqVvMy0V2b0KiHjnsFLm5qJ0YAgZ2
-    aQDl9uTW1HIvAHctzoyqp+1Vfk4heM4MbhcQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1526937916; bh=BA6ifrJ0wEs+oCkQ9QWJuOrry4ZK8u
-    ITY/7TTvRRBLk=; b=hZHAjUQ8dKq2RaQDwsuSrYTVsoEMGVYfM6j4RCuT1PBuXH
-    s3mWLQoxDT81w8q+nzGOTBBIFJtspL2HnCuXQteNyEOqGUn1jW0Hxsj6bCUU1OhV
-    LHexb4VD+rGohuhr1ySelaOArdXPl7JSTw/VXqaaih4IchSZPMVQ42/ek2pZSFTF
-    3Snv967iSwol5WnDY7Yl5xGY8K2Xxi1N32j3kZZEqScfAHJLye4N9T/IsLaNGq2x
-    Y4oPS/uMnqsyGIYJadqhpRPt5+ampzUl0jlrcCw1nUONWRDYnCWlV9OBNAMcw1k0
-    eHOI6KYy0NQhCmnlHObFtrVcuLSQbPHIoCRFeokA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=hDWyVnaD x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linuxfoundation.org header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=hDWyVnaD x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linuxfoundation.org header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfN1rM25griGVU8VW0HsSD3MJCR9Agb0V7S86pkESGg879SuB+M+583cCHhaYSYOgIK4vQCOQ0oaCjZbbaGfO/BPPEJmFj5isVdqtzaADZhDQPgEaJzaA
-    /OmolaNhuFrS4y0C1EL3PzB1GOtsP0fWD41i+TZs7GnqDZM3SrcR5AabbrQLtz1gzy6DB5UNzYAbzzyIvTsLfsou+qmEKVvIO/OTpN0P+fc6zjTv504TgYMO
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=QyXUC8HyAAAA:8 a=3HDBlxybAAAA:8 a=ag1SF4gXAAAA:8 a=lc5_RKDeiTAuVUZirQIA:9
-    a=QEXdDO2ut3YA:10 a=laEoCiVfU_Unz3mSdgXN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932387AbeEUVZN (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 21 May 2018 17:25:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40048 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932166AbeEUVZK (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 21 May 2018 17:25:10 -0400
+Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZqh6whmpWF7hG74qumqiuqThA2gIxMgfm1fyYxfYU0kiX15ERNp8R5OKMPU1H4wklnXh4re
+ARC-Seal: i=1; a=rsa-sha256; t=1526937913; cv=none;
+        d=google.com; s=arc-20160816;
+        b=BQ6LUXk9ya1cXH2Ry2p674MH8EzDiyv0Z8uFzNB2rXu7UIW71+70G7ScEnBa7w1VTL
+         e7jZVWJwPmtMU+w9+QaYCSVevPXKSQeRXtQchfXl89zPcxSLVDLCx8ReeB0u4Fo294wW
+         XKKzJlrydM+Yo6mfTPI3Ma1ueg7awquRWyI24LTcCAh+Sc//Oecgs6SYO3Kppo/b42U5
+         pLcWaIKwPmLcIINYe2L24cfMUeUl43aVHrWUxcjoUb2Y1naAtLGWs4mqNtrHXBhXpDPE
+         xyVLpcpT+8IfQhaPhiOYTHEdN2MEutpXuh7txGz3MjxIrwDEVD5lsPw+wh4D3gW1Phq0
+         DaHw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=SFZ72aKgdLEFVjnlEWyx3VYdg9ROgRJOwewNUsZ9u2E=;
+        b=Ol7Mfg1GiWr+uxoC6jFQ1NmNZ807PXkhHWOEXLY+6oPVu8lbiqh0DyfQ8H0h0zjK1H
+         9RRSQKYOy2lwD6j7/NuT7iJ4hBGeHFmGyAPIPox/hXfZyXC8jjrMMkZmxBiuCSR1Ug3M
+         QhRDhVg4jSHaFSG8a47uf6YQL+8/0BSvwhThNZgFWGDVP/QdweyBeIynN/u7o6P6rav/
+         Lm9qkGbY6v5ww3jzXiK+aXgQTwoYxtz7UGDxNzbOPFjeamMQFJ56o8eUkQ8VyJaAFKaz
+         +juvmnKI0Tzd0utc/GTKKdcxojC+rTaEPJPl4S5ACM1pwN0k26fN5zPmbLBVc2TiRdiG
+         yfdA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=a4ut+8qi;
+       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=a4ut+8qi;
+       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fengguang Wu <fengguang.wu@intel.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.16 028/110] netfilter: nf_tables: nf_tables_obj_lookup_byhandle() can be static
-Date: Mon, 21 May 2018 23:11:25 +0200
-Message-Id: <20180521210506.302731397@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Borislav Petkov <bp@suse.de>,
+	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.16 064/110] x86/bugs: Concentrate bug reporting into a separate function
+Date: Mon, 21 May 2018 23:12:01 +0200
+Message-Id: <20180521210511.863181479@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -95,9 +42,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1601109827159806887?=
+X-GMAIL-MSGID: =?utf-8?q?1601110449731597707?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -105,40 +53,85 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: kbuild test robot <fengguang.wu@intel.com>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-commit ae0662f84b105776734cb089703a7bf834bac195 upstream.
+commit d1059518b4789cabe34bb4b714d07e6089c82ca1 upstream
 
-Fixes: 3ecbfd65f50e ("netfilter: nf_tables: allocate handle and delete objects via handle")
-Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Those SysFS functions have a similar preamble, as such make common
+code to handle them.
+
+Suggested-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- net/netfilter/nf_tables_api.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/x86/kernel/cpu/bugs.c |   46 +++++++++++++++++++++++++++++++--------------
+ 1 file changed, 32 insertions(+), 14 deletions(-)
 
---- a/net/netfilter/nf_tables_api.c
-+++ b/net/netfilter/nf_tables_api.c
-@@ -4399,9 +4399,9 @@ struct nft_object *nf_tables_obj_lookup(
- }
- EXPORT_SYMBOL_GPL(nf_tables_obj_lookup);
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -314,30 +314,48 @@ retpoline_auto:
+ #undef pr_fmt
  
--struct nft_object *nf_tables_obj_lookup_byhandle(const struct nft_table *table,
--						 const struct nlattr *nla,
--						 u32 objtype, u8 genmask)
-+static struct nft_object *nf_tables_obj_lookup_byhandle(const struct nft_table *table,
-+							const struct nlattr *nla,
-+							u32 objtype, u8 genmask)
+ #ifdef CONFIG_SYSFS
+-ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr, char *buf)
++
++ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
++			char *buf, unsigned int bug)
  {
- 	struct nft_object *obj;
- 
-@@ -4921,7 +4921,7 @@ struct nft_flowtable *nf_tables_flowtabl
+-	if (!boot_cpu_has_bug(X86_BUG_CPU_MELTDOWN))
++	if (!boot_cpu_has_bug(bug))
+ 		return sprintf(buf, "Not affected\n");
+-	if (boot_cpu_has(X86_FEATURE_PTI))
+-		return sprintf(buf, "Mitigation: PTI\n");
++
++	switch (bug) {
++	case X86_BUG_CPU_MELTDOWN:
++		if (boot_cpu_has(X86_FEATURE_PTI))
++			return sprintf(buf, "Mitigation: PTI\n");
++
++		break;
++
++	case X86_BUG_SPECTRE_V1:
++		return sprintf(buf, "Mitigation: __user pointer sanitization\n");
++
++	case X86_BUG_SPECTRE_V2:
++		return sprintf(buf, "%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
++			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
++			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
++			       spectre_v2_module_string());
++
++	default:
++		break;
++	}
++
+ 	return sprintf(buf, "Vulnerable\n");
  }
- EXPORT_SYMBOL_GPL(nf_tables_flowtable_lookup);
  
--struct nft_flowtable *
-+static struct nft_flowtable *
- nf_tables_flowtable_lookup_byhandle(const struct nft_table *table,
- 				    const struct nlattr *nla, u8 genmask)
++ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr, char *buf)
++{
++	return cpu_show_common(dev, attr, buf, X86_BUG_CPU_MELTDOWN);
++}
++
+ ssize_t cpu_show_spectre_v1(struct device *dev, struct device_attribute *attr, char *buf)
  {
+-	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V1))
+-		return sprintf(buf, "Not affected\n");
+-	return sprintf(buf, "Mitigation: __user pointer sanitization\n");
++	return cpu_show_common(dev, attr, buf, X86_BUG_SPECTRE_V1);
+ }
+ 
+ ssize_t cpu_show_spectre_v2(struct device *dev, struct device_attribute *attr, char *buf)
+ {
+-	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
+-		return sprintf(buf, "Not affected\n");
+-
+-	return sprintf(buf, "%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
+-		       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
+-		       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
+-		       spectre_v2_module_string());
++	return cpu_show_common(dev, attr, buf, X86_BUG_SPECTRE_V2);
+ }
+ #endif
