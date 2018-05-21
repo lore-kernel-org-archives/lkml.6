@@ -1,59 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751115AbeEUJFX (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 05:05:23 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54680 "EHLO mx1.redhat.com"
+        id S1752750AbeEUJF3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 05:05:29 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41312 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752670AbeEUJFP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 05:05:15 -0400
+        id S1751186AbeEUJFZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 05:05:25 -0400
 From: Jason Wang <jasowang@redhat.com>
 To: mst@redhat.com, jasowang@redhat.com
 Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
         netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH net-next 08/12] tuntap: tweak on the path of non-xdp case in tun_build_skb()
-Date: Mon, 21 May 2018 17:04:29 +0800
-Message-Id: <1526893473-20128-9-git-send-email-jasowang@redhat.com>
+Subject: [RFC PATCH net-next 10/12] vhost_net: build xdp buff
+Date: Mon, 21 May 2018 17:04:31 +0800
+Message-Id: <1526893473-20128-11-git-send-email-jasowang@redhat.com>
 In-Reply-To: <1526893473-20128-1-git-send-email-jasowang@redhat.com>
 References: <1526893473-20128-1-git-send-email-jasowang@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If we're sure not to go native XDP, there's no need for several things
-like touching preemption counter and rcu stuffs.
+This patch implement build XDP buffers in vhost_net. The idea is do
+userspace copy in vhost_net and build XDP buff based on the
+page. Vhost_net can then submit one or an array of XDP buffs to
+underlayer socket (e.g TUN). TUN can choose to do XDP or call
+build_skb() to build skb. To support build skb, vnet header were also
+stored into the header of the XDP buff.
+
+This userspace copy and XDP buffs building is key to achieve XDP
+batching in TUN, since TUN does not need to care about userspace copy
+and then can disable premmption for several XDP buffs to achieve
+batching from XDP.
+
+TODO: reserve headroom based on the TUN XDP.
 
 Signed-off-by: Jason Wang <jasowang@redhat.com>
 ---
- drivers/net/tun.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/vhost/net.c | 74 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 74 insertions(+)
 
-diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-index f6e0f96..ed04291 100644
---- a/drivers/net/tun.c
-+++ b/drivers/net/tun.c
-@@ -1645,10 +1645,12 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
- 	 * of xdp_prog above, this should be rare and for simplicity
- 	 * we do XDP on skb in case the headroom is not enough.
- 	 */
--	if (hdr->gso_type || !xdp_prog)
-+	if (hdr->gso_type || !xdp_prog) {
- 		*skb_xdp = 1;
--	else
--		*skb_xdp = 0;
-+		goto build;
+diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+index f0639d7..1209e84 100644
+--- a/drivers/vhost/net.c
++++ b/drivers/vhost/net.c
+@@ -492,6 +492,80 @@ static bool vhost_has_more_pkts(struct vhost_net *net,
+ 	       likely(!vhost_exceeds_maxpend(net));
+ }
+ 
++#define VHOST_NET_HEADROOM 256
++#define VHOST_NET_RX_PAD (NET_IP_ALIGN + NET_SKB_PAD)
++
++static int vhost_net_build_xdp(struct vhost_net_virtqueue *nvq,
++			       struct iov_iter *from,
++			       struct xdp_buff *xdp)
++{
++	struct vhost_virtqueue *vq = &nvq->vq;
++	struct page_frag *alloc_frag = &current->task_frag;
++	struct virtio_net_hdr *gso;
++	size_t len = iov_iter_count(from);
++	int buflen = SKB_DATA_ALIGN(sizeof(struct skb_shared_info));
++	int pad = SKB_DATA_ALIGN(VHOST_NET_RX_PAD + VHOST_NET_HEADROOM
++				 + nvq->sock_hlen);
++	int sock_hlen = nvq->sock_hlen;
++	void *buf;
++	int copied;
++
++	if (len < nvq->sock_hlen)
++		return -EFAULT;
++
++	if (SKB_DATA_ALIGN(len + pad) +
++	    SKB_DATA_ALIGN(sizeof(struct skb_shared_info)) > PAGE_SIZE)
++		return -ENOSPC;
++
++	buflen += SKB_DATA_ALIGN(len + pad);
++	alloc_frag->offset = ALIGN((u64)alloc_frag->offset, SMP_CACHE_BYTES);
++	if (unlikely(!skb_page_frag_refill(buflen, alloc_frag, GFP_KERNEL)))
++		return -ENOMEM;
++
++	buf = (char *)page_address(alloc_frag->page) + alloc_frag->offset;
++
++	/* We store two kinds of metadata in the header which will be
++	 * used for XDP_PASS to do build_skb():
++	 * offset 0: buflen
++	 * offset sizeof(int): vnet header
++	 */
++	copied = copy_page_from_iter(alloc_frag->page,
++				     alloc_frag->offset + sizeof(int), sock_hlen, from);
++	if (copied != sock_hlen)
++		return -EFAULT;
++
++	gso = (struct virtio_net_hdr *)(buf + sizeof(int));
++
++	if ((gso->flags & VIRTIO_NET_HDR_F_NEEDS_CSUM) &&
++	    vhost16_to_cpu(vq, gso->csum_start) +
++	    vhost16_to_cpu(vq, gso->csum_offset) + 2 >
++	    vhost16_to_cpu(vq, gso->hdr_len)) {
++		gso->hdr_len = cpu_to_vhost16(vq,
++			       vhost16_to_cpu(vq, gso->csum_start) +
++			       vhost16_to_cpu(vq, gso->csum_offset) + 2);
++
++		if (vhost16_to_cpu(vq, gso->hdr_len) > len)
++			return -EINVAL;
 +	}
 +
-+	*skb_xdp = 0;
- 
- 	preempt_disable();
- 	rcu_read_lock();
-@@ -1695,6 +1697,7 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
- 	rcu_read_unlock();
- 	preempt_enable();
- 
-+build:
- 	skb = build_skb(buf, buflen);
- 	if (!skb) {
- 		skb = ERR_PTR(-ENOMEM);
++	len -= sock_hlen;
++	copied = copy_page_from_iter(alloc_frag->page,
++				     alloc_frag->offset + pad,
++				     len, from);
++	if (copied != len)
++		return -EFAULT;
++
++	xdp->data_hard_start = buf;
++	xdp->data = buf + pad;
++	xdp->data_end = xdp->data + len;
++	*(int *)(xdp->data_hard_start)= buflen;
++
++	get_page(alloc_frag->page);
++	alloc_frag->offset += buflen;
++
++	return 0;
++}
++
+ static void handle_tx_copy(struct vhost_net *net)
+ {
+ 	struct vhost_net_virtqueue *nvq = &net->vqs[VHOST_NET_VQ_TX];
 -- 
 2.7.4
