@@ -1,100 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753569AbeEUSJo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 14:09:44 -0400
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:45415 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753529AbeEUSJj (ORCPT
+        id S1753632AbeEUSKh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 14:10:37 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:36251 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753275AbeEUSKe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 14:09:39 -0400
-From: Dan Murphy <dmurphy@ti.com>
-To: <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <jacek.anaszewski@gmail.com>, <andy.shevchenko@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-leds@vger.kernel.org>, Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v7 1/2] dt: bindings: lm3601x: Introduce the lm3601x driver
-Date: Mon, 21 May 2018 13:09:26 -0500
-Message-ID: <20180521180927.18472-1-dmurphy@ti.com>
-X-Mailer: git-send-email 2.12.2
+        Mon, 21 May 2018 14:10:34 -0400
+X-Google-Smtp-Source: AB8JxZoGi/m4Ev2y3V2mVH9puTflB7DqMWl3ifr3UlKLzQgpYUM1w65mcyGIoRZdwTvUTKa6gz7E7Q==
+From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+To: Tony Lindgren <tony@atomide.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Mark Brown <broonie@kernel.org>, Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Richard Weinberger <richard@nod.at>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Jarkko Nikula <jarkko.nikula@bitmer.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-fbdev@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Subject: Re: [PATCH 1/6] ARM: OMAP1: ams-delta: add GPIO lookup tables
+Date: Mon, 21 May 2018 20:10:44 +0200
+Message-ID: <2148445.bqG5QPj1MO@z50>
+In-Reply-To: <20180521173519.GA98604@atomide.com>
+References: <20180518210954.29044-1-jmkrzyszt@gmail.com> <20180521173519.GA98604@atomide.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce the device tree bindings for the lm3601x
-family of LED torch, flash and IR drivers.
+On Monday, May 21, 2018 7:35:19 PM CEST Tony Lindgren wrote:
+> Hi,
+> 
+> * Janusz Krzysztofik <jmkrzyszt@gmail.com> [180518 14:12]:
+> > Scope of the change is limited to GPIO pins used by board specific
+> > device drivers which will be updated by follow-up patches of the
+> > series. Those are some OMAP GPIO (gpio-0-15) and most of Amstrad Delta
+> > latch2 GPIO bank pins. Remaining pins of those banks, as well as
+> > Amstrad Delta latch1 pins, will be addressed later.
+> > 
+> > Assign a label ("latch2") to the bank, enumerate its pins and put that
+> > information, together with OMAP GPIO bank pins, in GPIO lookup tables.
+> > Assign lookup tables to devices as soon as those devices are registered
+> > and their names can be obtained.
+> > 
+> > A step froward in:
+> > - removal of hard-coded GPIO numbers from drivers,
+> > - removal of board mach includes from drivers,
+> > - switching to dynamically assigned GPIO numbers.
+> 
+> Is this first patch safe for me to apply separately?
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
----
+Absolutely, it is.
 
-v7 - Removed led-sources in favor of reg, fixed malformatted ranges - https://patchwork.kernel.org/patch/10401435/
-
-v6 - Removed multiple led child nodes, fixed example to display micro ranges
-for corresponding child nodes and added led-sources to define the current driver -
-https://patchwork.kernel.org/patch/10392121/
-v5 - No changes - https://patchwork.kernel.org/patch/10391743/
-v4 - Added " " around "=", changed strobe to flash on label, removed "support and
-register" comment and change ir lable to ir:torch - See v2 patchworks for comments
-v3 - Removed wildcard compatible - https://patchwork.kernel.org/patch/10386241/
-v2 - No changes - https://patchwork.kernel.org/patch/10384587/
-
- .../devicetree/bindings/leds/leds-lm3601x.txt | 45 +++++++++++++++++++
- 1 file changed, 45 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3601x.txt
-
-diff --git a/Documentation/devicetree/bindings/leds/leds-lm3601x.txt b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
-new file mode 100644
-index 000000000000..a88b2c41e75b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
-@@ -0,0 +1,45 @@
-+* Texas Instruments - lm3601x Single-LED Flash Driver
-+
-+The LM3601X are ultra-small LED flash drivers that
-+provide a high level of adjustability.
-+
-+Required properties:
-+	- compatible : Can be one of the following
-+		"ti,lm36010"
-+		"ti,lm36011"
-+	- reg : I2C slave address
-+	- #address-cells : 1
-+	- #size-cells : 0
-+
-+Required child properties:
-+	- reg : 0 - Indicates a IR mode
-+		1 - Indicates a Torch (white LED) mode
-+
-+Required properties for flash LED child nodes:
-+	See Documentation/devicetree/bindings/leds/common.txt
-+	- flash-max-microamp : Range from 11mA - 1.5A
-+	- flash-max-timeout-us : Range from 40ms - 1600ms
-+	- led-max-microamp : Range from 2.4mA - 376mA
-+
-+Optional child properties:
-+	- label : see Documentation/devicetree/bindings/leds/common.txt
-+
-+Example:
-+led-controller@64 {
-+	compatible = "ti,lm36010";
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	reg = <0x64>;
-+
-+	led@0 {
-+		reg = <1>;
-+		label = "white:torch";
-+		led-max-microamp = <376000>;
-+		flash-max-microamp = <1500000>;
-+		flash-max-timeout-us = <1600000>;
-+	};
-+}
-+
-+For more product information please see the links below:
-+http://www.ti.com/product/LM36010
-+http://www.ti.com/product/LM36011
--- 
-2.17.0.582.gccdcbd54c
+Thanks,
+Janusz
