@@ -1,52 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753843AbeEUWLC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 18:11:02 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:36183 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753766AbeEUVTe (ORCPT
+        id S1753609AbeEUWOB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 18:14:01 -0400
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:34051 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752707AbeEUWN5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 17:19:34 -0400
-X-Google-Smtp-Source: AB8JxZq9Iq564knrAC9jRIXK4wwf5ob5gHXV1p8Y+MoBDbQQjSL1PMqle2fTQHX8/SgXmPEdw52VBQ==
-Date: Mon, 21 May 2018 14:19:31 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Song Liu <songliubraving@fb.com>
-cc: linux-mm@kvack.org, kernel-team@fb.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/THP: use hugepage_vma_check() in
- khugepaged_enter_vma_merge()
-In-Reply-To: <20180521193853.3089484-1-songliubraving@fb.com>
-Message-ID: <alpine.DEB.2.21.1805211419210.41872@chino.kir.corp.google.com>
-References: <20180521193853.3089484-1-songliubraving@fb.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 21 May 2018 18:13:57 -0400
+X-Google-Smtp-Source: AB8JxZoit+IudIqQ6U6Yhc4UFXRjL7/QjgJEYojFxlg/PZ8cl/oxcU9BVhbydNA9PTHSdSVjy+9K7wiGKpEoTP3NxfE=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <1526903890-35761-28-git-send-email-xieyisheng1@huawei.com>
+References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com> <1526903890-35761-28-git-send-email-xieyisheng1@huawei.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 22 May 2018 01:13:56 +0300
+Message-ID: <CAHp75VcTpAkMeKa0YXpp91WooVPs5X7jPGk0w2ruitp4siKLVw@mail.gmail.com>
+Subject: Re: [PATCH 27/33] sched/debug: use match_string() helper
+To: Yisheng Xie <xieyisheng1@huawei.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 May 2018, Song Liu wrote:
+On Mon, May 21, 2018 at 2:58 PM, Yisheng Xie <xieyisheng1@huawei.com> wrote:
+> match_string() returns the index of an array for a matching string,
+> which can be used intead of open coded variant.
+>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+> ---
+>  kernel/sched/debug.c | 20 +++++++++-----------
+>  1 file changed, 9 insertions(+), 11 deletions(-)
+>
+> diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
+> index 15b10e2..9e34499 100644
+> --- a/kernel/sched/debug.c
+> +++ b/kernel/sched/debug.c
+> @@ -111,16 +111,14 @@ static int sched_feat_set(char *cmp)
+>                 cmp += 3;
+>         }
+>
+> -       for (i = 0; i < __SCHED_FEAT_NR; i++) {
+> -               if (strcmp(cmp, sched_feat_names[i]) == 0) {
+> -                       if (neg) {
+> -                               sysctl_sched_features &= ~(1UL << i);
+> -                               sched_feat_disable(i);
+> -                       } else {
+> -                               sysctl_sched_features |= (1UL << i);
+> -                               sched_feat_enable(i);
+> -                       }
+> -                       break;
+> +       i = match_string(sched_feat_names, __SCHED_FEAT_NR, cmp);
 
-> khugepaged_enter_vma_merge() is using a different approach to check
-> whether a vma is valid for khugepaged_enter():
-> 
->     if (!vma->anon_vma)
->             /*
->              * Not yet faulted in so we will register later in the
->              * page fault if needed.
->              */
->             return 0;
->     if (vma->vm_ops || (vm_flags & VM_NO_KHUGEPAGED))
->             /* khugepaged not yet working on file or special mappings */
->             return 0;
-> 
-> This check has some problems. One of the obvious problems is that
-> it doesn't check shmem_file(), so that vma backed with shmem files
-> will not call khugepaged_enter().
-> 
-> This patch fixes these problems by reusing hugepage_vma_check() in
-> khugepaged_enter_vma_merge().
-> 
-> Signed-off-by: Song Liu <songliubraving@fb.com>
+> +       if (i >= 0) {
 
-Acked-by: David Rientjes <rientjes@google.com>
+Why not
+
+if (i < 0)
+ return i;
+
+?
+
+> +               if (neg) {
+> +                       sysctl_sched_features &= ~(1UL << i);
+> +                       sched_feat_disable(i);
+> +               } else {
+> +                       sysctl_sched_features |= (1UL << i);
+> +                       sched_feat_enable(i);
+>                 }
+>         }
+>
+> @@ -150,7 +148,7 @@ static int sched_feat_set(char *cmp)
+>         inode_lock(inode);
+>         i = sched_feat_set(cmp);
+>         inode_unlock(inode);
+
+> -       if (i == __SCHED_FEAT_NR)
+> +       if (i < 0)
+>                 return -EINVAL;
+
+Now it would be
+
+if (i < 0)
+ return i;
+
+-- 
+With Best Regards,
+Andy Shevchenko
