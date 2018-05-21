@@ -1,5 +1,5 @@
 Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-53684-1526876280-2-12841717764060143007
+X-Cyrus-Session-Id: sloti22d1t05-4033468-1526864750-2-2339294536861126136
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-charsets: plain='utf-8'
@@ -7,30 +7,24 @@ X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-fsdevel-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526876279; b=jb0f3Nu2KwL2YDPMpQSYc3u+hUpBPiEjJIzI7y99Gl0D0ahpn2
-    WvIP06WBQiDrEzY7LFZStCAUzVVnd1CqtxPVd1JWS0lj9iF1uzQ7Rjr242LNo38H
-    p8ygJB3AmlSn6YyS5v3l8dBzVapjoeB1DaUv/w4hAxH7PpJq4/knD6RaFb7vbFSr
-    zRO5O6PbDRlg7UT/hTTzsScK5OzDlxbYAmDNJcyHJr+w4f2T2BW+9OPNT5nfgBb1
-    wRJ930A7ul/HtTH4wU+esrvj3ZEOFOlDHEmXVn7pAo/tJRJ/wqCAz2bp3o+w/vLn
-    yND92TJylGbrJzosx7HLchxBHZ7uJOwKpMuA==
+    1526864750; b=AXNABlrAlyfPypJn8vflWUFJ0NuVzaOVQI3lXWvVsbKSNW1evb
+    FDlJOFMCBna30YtU7kZ0dXtThFwYjts3GOwGHxQPY+xximsmwnwjzAh2nvabZ3fB
+    AKvpmMB/YDj5SimXHqMror+dnIXemgAkhF1I45ieeECP3+Ov3KvYiFDnQQn1xHvm
+    ujYvLM/Lzqiv3CKAw9GfEeTrKMy5rWLja2WHvpSR6q5xtgiM8qY4nOfutfnBB04J
+    lP0geP0AYzKMVCjfZPrRi/9DxTbAbNpAekvB3vIAXXcCwUpSht/h2In2KQaTut1u
+    u73hKMaErcacwkQLMXnGiPYSsJfvzhsLUgUQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1526876279;
-    bh=YlyPwUqWoRKxnO6fS9SR5XlruGR1mXNACBn8wW2TVUA=; b=YfzPFEmLbQwv
-    VyJz/HCE5jOY7k+D+36yqRX03YtCBO2PHbhYFt+Yxh4wws9XwwQN9xIA4qVSN2Ha
-    GQeF2/KjThkJwfAAwFyQivzh55GoOyTE03xMyyXzxbUxzCWbvW8mrj/ZBRsRbKXi
-    Jz7lTp6CqxGu06GFWIrjrZJmpuUNCLAoi5CqBcahhrl+5Q3vpbnXUzWjnoiqVWZW
-    myUqc8HnE0SUPA8dPUek3VdOy6OqTiL/iAM4C51NbdoFgXiUuj+w+iXE4XJp8bei
-    hU2HdegmdM1IPd0xgJlG04X9fTJh8nP0xcGeBnOut7I1iDkwS4el9AA1wGqzyU0n
-    pHQAJfJcRQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=messagingengine.com
-    header.i=@messagingengine.com header.b=SjdTBPbW x-bits=2048
-    x-keytype=rsa x-algorithm=sha256 x-selector=fm2;
-    dkim=pass (2048-bit rsa key sha256) header.d=themaw.net
-    header.i=@themaw.net header.b=RZ5+Axtf x-bits=2048 x-keytype=rsa
-    x-algorithm=sha256 x-selector=fm3;
+    messagingengine.com; h=subject:from:to:cc:date:message-id
+    :mime-version:content-type:content-transfer-encoding:sender
+    :list-id; s=fm2; t=1526864750; bh=80FTDG02LcinGbOxl4B80Yzq/i3zFw
+    BLffOhELFPGYM=; b=H2y8eCMI9Z+MHSZnibMrzhV3RguuUq01Z014ETybZXFCVF
+    xH2lB4uoAke+vMFqRtJOzfdeDAHKEHEQbXRyUFgiVmn6IAF9W4oqyIw11rWQA1bb
+    L218rYRRvWDkPcn9d8MtSw2kMD1wJ/eCGy4pdltIWnZTyNlcoMKmzZOcam7+ekXj
+    eNufZW3BQYspVNT5lZIJMwBsVOdfHOEuG9H6OE9bnG0sm64n/CP503vTHoFO0jdw
+    QStUZYaopJ4a56q9/8A6Yf65VvL9ADkhI06WeI+Jqti3LYsShMs33XmqLYDqeqIM
+    fcRfYAMX+JqLn3UVjcoRErUcrFy1r6uzniCn02Fg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=themaw.net;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
@@ -42,14 +36,9 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=themaw.net header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=messagingengine.com
-      header.i=@messagingengine.com header.b=SjdTBPbW x-bits=2048
-      x-keytype=rsa x-algorithm=sha256 x-selector=fm2;
-    dkim=pass (2048-bit rsa key sha256) header.d=themaw.net
-      header.i=@themaw.net header.b=RZ5+Axtf x-bits=2048 x-keytype=rsa
-      x-algorithm=sha256 x-selector=fm3;
+    dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=themaw.net;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
@@ -62,46 +51,45 @@ Authentication-Results: mx2.messagingengine.com;
       header.domain=themaw.net header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGhDSQ2wMwVjjPoOLt0Yxunx9IXCcg+b2iV/VRVBzHokuUtUAEu/nnpCfHzpsM9l/OXumhPNJiOz4er8q94IcB/FE2AbC7xzbE7ckJ1WyHj+pTngvUjG
-    moFY/7MUxPU5+Ux0MHfj7qjhc9VE0Ti5qqnMExuxD76GAKwAg6IT/TN4Xg95kNYGAPlYRCx/8PKleUlsgZmyNAYmmo75TNpvEmLrx1tvQ+xjWKI/dernHRpf
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfAnZBov0wA6ImA1fXhU2qx+poxb36U6LPy8iJMPj9PYGFzDn8yblDWvVbGfJLDFBc/oFnkk2VSzs5weKPWVePDzHi+7fM5awo7RQHNHJH31lmbrOe3gY
+    4kFmOgmAM8jGeJ2DMF5NbL7vb+h42BFHLMwwRTVMiW0AhSy6eLxIK7nDKWRSmScR16zPaWG/r4BWlBwqZ4E5PDzywOhzf0uJHj1ayAimWGeBS9dPtFYaNW2M
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=jUFqNg-nAAAA:8 a=JfrnYn6hAAAA:8 a=UJ4jOSzL1uLZkbJGBZYA:9 a=QEXdDO2ut3YA:10
-    a=-tElvS_Zar9K8zhlwiSp:22 a=1CNFftbPRP8L7MoqJWF3:22
+    a=jUFqNg-nAAAA:8 a=plLDmvKwOQ-xL7X99yQA:9 a=QEXdDO2ut3YA:10
+    a=-tElvS_Zar9K8zhlwiSp:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750837AbeEUER4 (ORCPT <rfc822;linux@kroah.com>);
-        Mon, 21 May 2018 00:17:56 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:50993 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750822AbeEUERz (ORCPT
+        id S1752552AbeEUBFq (ORCPT <rfc822;linux@kroah.com>);
+        Sun, 20 May 2018 21:05:46 -0400
+Received: from icp-osb-irony-out1.external.iinet.net.au ([203.59.1.210]:57702
+        "EHLO icp-osb-irony-out1.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751609AbeEUBFo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 May 2018 00:17:55 -0400
-X-ME-Proxy: <xmx:ckgCW7fDsU6p0ziESbt8FYPCmPFgBbAH9Zh-x8-JbIVaVkVbdZu-ZA>
-X-ME-Proxy: <xmx:ckgCW13eQSnxBucVwdKD7RW2W41_vgIxFnYWGxkBJcg5Pp6WcrjPJg>
-X-ME-Proxy: <xmx:ckgCW3OkAqcpx6wGNi9Ratec-5W8vyCcZFJIW_eFLNDy0oMayJXn4A>
-X-ME-Proxy: <xmx:ckgCW8T9kGIh6aMdCnw9Eq8HFzNJ_V5Bb870TJLJidsaJDOpYWNCiA>
-X-ME-Proxy: <xmx:ckgCW9wU_WZsqp0-WSrKv9b4VNg66TzazD-ni57okqh-nUC2WeMGQQ>
-X-ME-Proxy: <xmx:ckgCW_6EJSvXf0BxYuxlCD3dosm9NnRm1I8JKCvxDpL_GGwFMjf6oQ>
-X-ME-Sender: <xms:ckgCWzrtFaKpZPd4tV2t41yQhmjtNSj5AD5FC6uFBI1CBmM6rgW-rA>
-Subject: Re: [PATCH] autofs - make autofs4 Kconfig depend on AUTOFS_FS
+        Sun, 20 May 2018 21:05:44 -0400
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2BrCgApGgJb/+U/0XZaHgEGDINDgV4og?=
+ =?us-ascii?q?3SUfEYBAQEBAQaBBzR8k0qBZB4YAYRAghMhOBQBAgEBAQEBAQJsKIVSVigBDAI?=
+ =?us-ascii?q?YDgJJFhOFFgylU4IcGgKIIYIPgQmHLIEMgQeBPoc4gxiCVAKMIGOLSQmOV4E3g?=
+ =?us-ascii?q?22CUIUIAZIcMyGBUk0uCoJ+giAXjiQyMHoBAY8oAQE?=
+X-IPAS-Result: =?us-ascii?q?A2BrCgApGgJb/+U/0XZaHgEGDINDgV4og3SUfEYBAQEBAQa?=
+ =?us-ascii?q?BBzR8k0qBZB4YAYRAghMhOBQBAgEBAQEBAQJsKIVSVigBDAIYDgJJFhOFFgylU?=
+ =?us-ascii?q?4IcGgKIIYIPgQmHLIEMgQeBPoc4gxiCVAKMIGOLSQmOV4E3g22CUIUIAZIcMyG?=
+ =?us-ascii?q?BUk0uCoJ+giAXjiQyMHoBAY8oAQE?=
+X-IronPort-AV: E=Sophos;i="5.49,425,1520870400";
+   d="scan'208";a="99701058"
+Subject: [PATCH] autofs - comment on selinux changes needed for module
+ autoload
+From: Ian Kent <raven@themaw.net>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         autofs mailing list <autofs@vger.kernel.org>,
         Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <152686465885.5980.4013776735694914550.stgit@pluto.themaw.net>
- <c0eb4d04-9d75-7fc2-0bce-f2caac9d2056@infradead.org>
-From: Ian Kent <raven@themaw.net>
-Message-ID: <d6096c21-1c0f-266f-8541-29f0726fe349@themaw.net>
-Date: Mon, 21 May 2018 12:17:49 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+Date: Mon, 21 May 2018 09:05:41 +0800
+Message-ID: <152686474171.6155.1239659539983577463.stgit@pluto.themaw.net>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-In-Reply-To: <c0eb4d04-9d75-7fc2-0bce-f2caac9d2056@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -109,65 +97,36 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 21/05/18 10:08, Randy Dunlap wrote:
-> On 05/20/2018 06:04 PM, Ian Kent wrote:
->> Setting AUTOFS_FS and AUTOFS4_FS to y or m results in a compile
->> failure.
->>
->> It isn't possible to unset one if the other is set because it
->> introduces a circular dependency.
->>
->> But adding "depends on AUTOFS_FS = n && AUTOFS_FS != m" will make
->> autofs4 appear under the autofs entry which should call attention
->> to it. It also results in AUTOFS4_FS being removed from .config
->> for any setting of AUTOFS_FS except n.
+Due to the autofs4 module using a file system type name of autofs
+different from the module containing directory name autoload did
+not function properly. To work around this kernel configurations
+have often elected to build the module into the kernel.
 
-Arrgh!
+This can result in selinux policies that prohibit autoloading of
+the autofs module which need to be changed.
 
-I missed that "&& AUTOFS_FS != m" in the description.
+Add a comment about this to "possible changes" section of the
+autofs4 module help.
 
-Andrew, let me re-post this patch with this fixed and with the
-added annotations for Randy below.
+Signed-off-by: Ian Kent <raven@themaw.net>
+---
+ fs/autofs4/Kconfig |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
->>
->> Adding a "NOTE" to the AUTOFS4_FS help text will hopefully raise
->> awareness of the change to smooth the transition.
->>
->> Signed-off-by: Ian Kent <raven@themaw.net>
->> Cc: Randy Dunlap <rdunlap@infradead.org>
-> 
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Tested-by: Randy Dunlap <rdunlap@infradead.org>
-> 
-> Thanks.
-> 
->> ---
->>  fs/autofs4/Kconfig |    8 ++++++++
->>  1 file changed, 8 insertions(+)
->>
->> diff --git a/fs/autofs4/Kconfig b/fs/autofs4/Kconfig
->> index 53bc592a250d..2c2fdf989f90 100644
->> --- a/fs/autofs4/Kconfig
->> +++ b/fs/autofs4/Kconfig
->> @@ -1,6 +1,7 @@
->>  config AUTOFS4_FS
->>  	tristate "Kernel automounter version 4 support (also supports v3 and v5)"
->>  	default n
->> +	depends on AUTOFS_FS = n
->>  	help
->>  	  The automounter is a tool to automatically mount remote file systems
->>  	  on demand. This implementation is partially kernel-based to reduce
->> @@ -30,3 +31,10 @@ config AUTOFS4_FS
->>  	  - any "alias autofs autofs4" will need to be removed.
->>  
->>  	  Please configure AUTOFS_FS instead of AUTOFS4_FS from now on.
->> +
->> +	  NOTE: Since the modules autofs and autofs4 use the same file system
->> +		type name of "autofs" only one can be built. The "depends"
->> +		above will result in AUTOFS4_FS not appearing in .config for
->> +		any setting of AUTOFS_FS other than n and AUTOFS4_FS will
->> +		appear under the AUTOFS_FS entry otherwise which is intended
->> +		to draw attention to the module rename change.
->>
-> 
-> 
+diff --git a/fs/autofs4/Kconfig b/fs/autofs4/Kconfig
+index 2c2fdf989f90..99fda4d6da25 100644
+--- a/fs/autofs4/Kconfig
++++ b/fs/autofs4/Kconfig
+@@ -29,6 +29,12 @@ config AUTOFS4_FS
+ 	    and the module name are the same as the file system name there
+ 	    is no need to manually load module.
+ 	  - any "alias autofs autofs4" will need to be removed.
++	  - due to the autofs4 module directory name not being the same as
++	    its file system name autoloading didn't work properly. Because
++	    of this kernel configurations would often build the module into
++	    the kernel. This may have resulted in selinux policies that will
++	    prevent the autofs module from autoloading and will need to be
++	    updated.
+ 
+ 	  Please configure AUTOFS_FS instead of AUTOFS4_FS from now on.
+ 
