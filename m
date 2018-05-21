@@ -1,119 +1,266 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753058AbeEUPEr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 11:04:47 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51338 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753015AbeEUPEl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 11:04:41 -0400
-Date: Mon, 21 May 2018 11:04:40 -0400
-From: Mike Snitzer <snitzer@redhat.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        hch@infradead.org, colyli@suse.de, darrick.wong@oracle.com, clm@fb.com,
-        bacik@fb.com, linux-xfs@vger.kernel.org, drbd-dev@lists.linbit.com,
-        linux-btrfs@vger.kernel.org, linux-raid@vger.kernel.org,
-        neilb@suse.com
-Subject: Re: [PATCH 00/13] convert block layer to bioset_init()/mempool_init()
-Message-ID: <20180521150439.GA19379@redhat.com>
-References: <20180520222558.7053-1-kent.overstreet@gmail.com>
- <20180521140348.GA19069@redhat.com>
- <686d7df6-c7d1-48a6-b7ff-48dc8aff6a62@kernel.dk>
- <20180521143132.GB19194@redhat.com>
- <2bbeeb1a-8b99-b06a-eb9b-eb8523c16460@kernel.dk>
- <20180521144703.GA19303@redhat.com>
- <4b343aef-e11c-73ba-1d88-7e73ca838cad@kernel.dk>
+        id S1752828AbeEUPJd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 11:09:33 -0400
+Received: from foss.arm.com ([217.140.101.70]:52478 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751843AbeEUPJa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 11:09:30 -0400
+Date: Mon, 21 May 2018 16:09:24 +0100
+From: Patrick Bellasi <patrick.bellasi@arm.com>
+To: Waiman Long <longman@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
+        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>
+Subject: Re: [PATCH v8 1/6] cpuset: Enable cpuset controller in default
+ hierarchy
+Message-ID: <20180521150924.GS30654@e110439-lin>
+References: <1526590545-3350-1-git-send-email-longman@redhat.com>
+ <1526590545-3350-2-git-send-email-longman@redhat.com>
+ <20180521115528.GR30654@e110439-lin>
+ <fbc71cfc-6801-0fda-b0c6-2a70f7c9fe25@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4b343aef-e11c-73ba-1d88-7e73ca838cad@kernel.dk>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <fbc71cfc-6801-0fda-b0c6-2a70f7c9fe25@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21 2018 at 10:52am -0400,
-Jens Axboe <axboe@kernel.dk> wrote:
+On 21-May 09:55, Waiman Long wrote:
+> On 05/21/2018 07:55 AM, Patrick Bellasi wrote:
+> > Hi Waiman!
 
-> On 5/21/18 8:47 AM, Mike Snitzer wrote:
-> > On Mon, May 21 2018 at 10:36am -0400,
-> > Jens Axboe <axboe@kernel.dk> wrote:
-> > 
-> >> On 5/21/18 8:31 AM, Mike Snitzer wrote:
-> >>> On Mon, May 21 2018 at 10:19am -0400,
-> >>> Jens Axboe <axboe@kernel.dk> wrote:
-> >>>
-> >>>> On 5/21/18 8:03 AM, Mike Snitzer wrote:
-> >>>>> On Sun, May 20 2018 at  6:25pm -0400,
-> >>>>> Kent Overstreet <kent.overstreet@gmail.com> wrote:
-> >>>>>
-> >>>>>> Jens - this series does the rest of the conversions that Christoph wanted, and
-> >>>>>> drops bioset_create().
-> >>>>>>
-> >>>>>> Only lightly tested, but the changes are pretty mechanical. Based on your
-> >>>>>> for-next tree.
-> >>>>>
-> >>>>> By switching 'mempool_t *' to 'mempool_t' and 'bio_set *' to 'bio_set'
-> >>>>> you've altered the alignment of members in data structures.  So I'll
-> >>>>> need to audit all the data structures you've modified in DM.
-> >>>>>
-> >>>>> Could we get the backstory on _why_ you're making this change?
-> >>>>> Would go a long way to helping me appreciate why this is a good use of
-> >>>>> anyone's time.
-> >>>>
-> >>>> Yeah, it's in the first series, it gets rid of a pointer indirection.
-> >>>
-> >>> "Allows mempools to be embedded in other structs, getting rid of a
-> >>> pointer indirection from allocation fastpaths."
-> >>>
-> >>> So this is about using contiguous memory or avoiding partial allocation
-> >>> failure?  Or both?
-> >>>
-> >>> Or more to it?  Just trying to fully appreciate the theory behind the
-> >>> perceived associated benefit.
-> >>
-> >> It's about avoiding a pointer indirection. Instead of having to
-> >> follow a pointer to get to that struct, it's simple offset math off
-> >> your main structure.
-> >>
-> >>> I do think the increased risk of these embedded bio_set and mempool_t
-> >>> themselves crossing cachelines, or struct members that follow them doing
-> >>> so, really detracts from these types of changes.
-> >>
-> >> Definitely something to look out for, though most of them should be
-> >> per-dev structures and not in-flight structures. That makes it a bit
-> >> less sensitive. But can't hurt to audit the layouts and adjust if
-> >> necessary. This is why it's posted for review :-)
-> > 
-> > This isn't something that is easily caught upfront.  Yes we can all be
-> > busy little beavers with pahole to audit alignment.  But chances are
-> > most people won't do it.
-> > 
-> > Reality is there is potential for a regression due to false sharing to
-> > creep in if a hot struct member suddenly starts straddling a cacheline.
-> > That type of NUMA performance killer is pretty insidious and somewhat
-> > tedious to hunt down even when looking for it with specialized tools:
-> > https://joemario.github.io/blog/2016/09/01/c2c-blog/
+[...]
+
+> >> +Cpuset
+> >> +------
+> >> +
+> >> +The "cpuset" controller provides a mechanism for constraining
+> >> +the CPU and memory node placement of tasks to only the resources
+> >> +specified in the cpuset interface files in a task's current cgroup.
+> >> +This is especially valuable on large NUMA systems where placing jobs
+> >> +on properly sized subsets of the systems with careful processor and
+> >> +memory placement to reduce cross-node memory access and contention
+> >> +can improve overall system performance.
+> > Another quite important use-case for cpuset is Android, where they are
+> > actively used to do both power-saving as well as performance tunings.
+> > For example, depending on the status of an application, its threads
+> > can be allowed to run on all available CPUS (e.g. foreground apps) or
+> > be restricted only on few energy efficient CPUs (e.g. backgroud apps).
+> >
+> > Since here we are at "rewriting" cpusets for v2, I think it's important
+> > to keep this mobile world scenario into consideration.
+> >
+> > For example, in this context, we are looking at the possibility to
+> > update/tune cpuset.cpus with a relatively high rate, i.e. tens of
+> > times per second. Not sure that's the same update rate usually
+> > required for the large NUMA systems you cite above.  However, in this
+> > case it's quite important to have really small overheads for these
+> > operations.
 > 
-> IMHO you're making a big deal out of something that should not be.
+> The cgroup interface isn't designed for high update throughput.
 
-I raised an issue that had seemingly not been considered at all.  Not
-making a big deal.  Raising it for others' benefit.
+Indeed, I had the same impression...
 
-> If the dm bits are that sensitive and cache line honed to perfection
-> already due to previous regressions in that area, then it might
-> not be a bad idea to have some compile checks for false cacheline
-> sharing between sensitive members, or spilling of a sub-struct
-> into multiple cachelines.
+> Changing cpuset.cpus will require searching for the all the tasks in
+> the cpuset and change its cpu mask.
+
+... I'm wondering if that has to be the case. In principle there can
+be a different solution which is: update on demand. In the wakeup
+path, once we know a task really need a CPU and we want to find one
+for it, at that point we can align the cpuset mask with the task's
+one. Sort of using the cpuset mask as a clamp on top of the task's
+affinity mask.
+
+The main downside of such an approach could be the overheads in the
+wakeup path... but, still... that should be measured.
+The advantage is that we do not spend time changing attributes of
+tassk which, potentially, could be sleeping for a long time.
+
+
+> That isn't a fast operation, but it shouldn't be too bad either
+> depending on how many tasks are in the cpuset.
+
+Indeed, althought it still seems a bit odd and overkilling updating
+task affinity for tasks which are not currently RUNNABLE. Isn't it?
+
+> I would not suggest doing rapid changes to cpuset.cpus as a mean to tune
+> the behavior of a task. So what exactly is the tuning you are thinking
+> about? Is it moving a task from the a high-power cpu to a low power one
+> or vice versa?
+
+That's defenitively a possible use case. In Android for example we
+usually assign more resources to TOP_APP tasks (those belonging to the
+application you are currently using) while we restrict the resoures
+one we switch an app to be in BACKGROUND.
+
+More in general, if you think about a generic Run-Time Resource
+Management framework, which assign resources to the tasks of multiple
+applications and want to have a fine grained control.
+
+> If so, it is probably better to move the task from one cpuset of
+> high-power cpus to another cpuset of low-power cpus.
+
+This is what Android does not but also what we want to possible
+change, for two main reasons:
+
+1. it does not fit with the "number one guideline" for proper
+   CGroups usage, which is "Organize Once and Control":
+      https://elixir.bootlin.com/linux/latest/source/Documentation/cgroup-v2.txt#L518
+   where it says that:
+      migrating processes across cgroups frequently as a means to
+      apply different resource restrictions is discouraged.
+
+   Despite this giudeline, it turns out that in v1 at least, it seems
+   to be faster to move tasks across cpusets then tuning cpuset
+   attributes... also when all the tasks are sleeping.
+
+
+2. it does not allow to get advantages for accounting controllers such
+   as the memory controller where, by moving tasks around, we cannot
+   properly account and control the amount of memory a task can use.
+
+Thsu, for these reasons and also to possibly migrate to the unified
+hierarchy schema proposed by CGroups v2... we would like a
+low-overhead mechanism for setting/tuning cpuset at run-time with
+whatever frequency you like.
+
+> >> +
+> >> +The "cpuset" controller is hierarchical.  That means the controller
+> >> +cannot use CPUs or memory nodes not allowed in its parent.
+> >> +
+> >> +
+> >> +Cpuset Interface Files
+> >> +~~~~~~~~~~~~~~~~~~~~~~
+> >> +
+> >> +  cpuset.cpus
+> >> +	A read-write multiple values file which exists on non-root
+> >> +	cpuset-enabled cgroups.
+> >> +
+> >> +	It lists the CPUs allowed to be used by tasks within this
+> >> +	cgroup.  The CPU numbers are comma-separated numbers or
+> >> +	ranges.  For example:
+> >> +
+> >> +	  # cat cpuset.cpus
+> >> +	  0-4,6,8-10
+> >> +
+> >> +	An empty value indicates that the cgroup is using the same
+> >> +	setting as the nearest cgroup ancestor with a non-empty
+> >> +	"cpuset.cpus" or all the available CPUs if none is found.
+> > Does that means that we can move tasks into a newly created group for
+> > which we have not yet configured this value?
+> > AFAIK, that's a different behavior wrt v1... and I like it better.
+> >
 > 
-> It's not like this was pushed behind your back. It's posted for
-> review. It's quite possible the net change is a win for dm. Let's
-> focus on getting it reviewed, rather than pontificate on what
-> could potentially go all wrong with this.
+> For v2, if you haven't set up the cpuset.cpus, it defaults to the
+> effective cpu list of its parent.
 
-Why are you making this personal?  Or purely about DM?  I'm merely
-pointing out this change isn't something that can be given a quick
-blanket "looks good".
++1
 
-Mike
+> 
+> >> +
+> >> +	The value of "cpuset.cpus" stays constant until the next update
+> >> +	and won't be affected by any CPU hotplug events.
+> > This also sounds interesting, does it means that we use the
+> > cpuset.cpus mask to restrict online CPUs, whatever they are?
+> 
+> cpuset.cpus holds the cpu list written by the users.
+> cpuset.cpus.effective is the actual cpu mask that is being used. The
+> effective cpu mask is always a subset of cpuset.cpus. They differ if not
+> all the CPUs in cpuset.cpus are online.
+
+And that's fine: the effective mask is updated based on HP events.
+
+The main limitations on this side, so far, is that in
+update_tasks_cpumask() we walk all the tasks to set_cpus_allowed_ptr()
+independently for them to be RUNNABLE or not. Isn't that?
+
+Thus, this will ensure to have a valid mask at wakeup time, but
+perhaps it's not such a big overhead to update the same on the wakeup
+path... thus speeding up quite a lot the update_cpumasks_hier()
+especially when you have many SLEEPING tasks on a cpuset.
+
+A first measurement and tracing shows that this update could cost up
+to 4ms on a Pixel2 device where you update the cpus for a cpuset
+containing a single task always sleeping.
+
+> > I'll have a better look at the code, but my understanding of v1 is
+> > that we spent a lot of effort to keep task cpu-affinity masks aligned
+> > with the cpuset in which they live, and we do something similar at each
+> > HP event, which ultimately generates a lot of overheads in systems
+> > where: you have many HP events and/or cpuset.cpus change quite
+> > frequently.
+> >
+> > I hope to find some better behavior in this series.
+> >
+> 
+> The behavior of CPU offline event should be similar in v2. Any HP event
+> will cause the system to reset the cpu masks of task affected by the
+> event. The online event, however, will be a bit different between v1 and
+> v2. For v1, the online event won't restore the CPU back to those cpusets
+> that had the onlined CPU previously. For v2, the v2, the online CPU will
+> be restored back to those cpusets. So there is less work from the
+> management layer, but overhead is still there in the kernel of doing the
+> restore.
+
+On that side, I still have to better look into the v1 and v2
+implementations, but for the util_clamp extension of the cpu
+controller:
+   https://lkml.org/lkml/2018/4/9/601
+I'm proposing a different update schema which it seems can give you
+the benefits or "restoring the mask" after an UP event as well as a
+fast update/tuning path at run-time.
+
+Along the line of the above implementation, it would mean that the
+task affinity mask is constrained/clamped/masked by the TG's affinity
+mask. This should be an operation performed "on-demand" whenever it
+makes sense.
+
+However, to be honest, I never measured the overheads to combine two
+cpu masks and it can very well be something overkilling for the wakeup
+path. I don't think the AND by itself should be an issue, since it's
+already used in the fast wakeup path, e.g.
+
+   select_task_rq_fair()
+      select_idle_sibling()
+         select_idle_core()
+            cpumask_and(cpus, sched_domain_span(sd),
+                        &p->cpus_allowed);
+
+What eventually could be an issue is the race between the scheduler
+looking at the cpuset cpumaks and cgroups changing it... but perhaps
+that's something could be fixed with a proper locking mechanism.
+
+I will try to run some experiments to at least collect some overheads
+numbers.
+
+
+[...]
+
+> >> @@ -2104,8 +2144,10 @@ struct cgroup_subsys cpuset_cgrp_subsys = {
+> >>  	.post_attach	= cpuset_post_attach,
+> >>  	.bind		= cpuset_bind,
+> >>  	.fork		= cpuset_fork,
+> >> -	.legacy_cftypes	= files,
+> >> +	.legacy_cftypes	= legacy_files,
+> >> +	.dfl_cftypes	= dfl_files,
+> >>  	.early_init	= true,
+> >> +	.threaded	= true,
+> > Which means that by default we can attach tasks instead of only
+> > processes, right?
+> 
+> Yes, you can control task placement on the thread level, not just process.
+
++1
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
