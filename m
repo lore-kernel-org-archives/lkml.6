@@ -1,54 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752949AbeEUPRN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 11:17:13 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:33118 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751682AbeEUPRL (ORCPT
+        id S1753109AbeEUPRY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 11:17:24 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:35418 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751682AbeEUPRN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 11:17:11 -0400
-X-Google-Smtp-Source: AB8JxZr4Ynef4xv+tYcHaknERhoq7lxJ/CMzEzqv1h8KlsTzEap8n04HquK/7FIG/MFLVehwPxsSp6Z75lkzw+RDHW0=
+        Mon, 21 May 2018 11:17:13 -0400
+X-Google-Smtp-Source: AB8JxZoPE27k8peo3yyajNVKnMqwUjXwh3KRoGX/sfRgUgHO+nkviomu6Gsgg2GG6DZrTOFw6JLZ4A==
+Subject: Re: [PATCH] bpf: check NULL for sk_to_full_sk()
+To: YueHaibing <yuehaibing@huawei.com>, ast@kernel.org,
+        daniel@iogearbox.net
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+References: <20180521075558.11968-1-yuehaibing@huawei.com>
+From: Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <5490b571-7881-c5eb-6acf-8f45634cd2b1@gmail.com>
+Date: Mon, 21 May 2018 08:17:11 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-References: <20180518130413.16997-1-roman.penyaev@profitbricks.com>
- <20180518130413.16997-2-roman.penyaev@profitbricks.com> <20180519163735.GX3803@linux.vnet.ibm.com>
- <CAJrWOzAt8BDtypaRwYx_y9jpCVD5W_VL9aQsFsC3bL-XaoJz9g@mail.gmail.com>
- <20180520004318.GY3803@linux.vnet.ibm.com> <CAJrWOzBenkHg_5zs1VAxP_rVbCbOJO_eO0toJBhnzXuy_yWH2Q@mail.gmail.com>
-In-Reply-To: <CAJrWOzBenkHg_5zs1VAxP_rVbCbOJO_eO0toJBhnzXuy_yWH2Q@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 21 May 2018 08:16:59 -0700
-Message-ID: <CA+55aFymFCVqh4VxtqDPoFYh6zsGEDLSV79_AnsMp3M=t2mhqg@mail.gmail.com>
-Subject: Re: [PATCH v2 01/26] rculist: introduce list_next_or_null_rr_rcu()
-To: Roman Pen <roman.penyaev@profitbricks.com>
-Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Bart Van Assche <bart.vanassche@sandisk.com>,
-        Or Gerlitz <ogerlitz@mellanox.com>, Doug Ledford <dledford@redhat.com>,
-        swapnil.ingle@profitbricks.com, danil.kipnis@profitbricks.com,
-        Jinpu Wang <jinpu.wang@profitbricks.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180521075558.11968-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 6:51 AM Roman Penyaev <
-roman.penyaev@profitbricks.com> wrote:
 
-> No, I continue from the pointer, which I assigned on the previous IO
-> in order to send IO fairly and keep load balanced.
 
-Right. And that's exactly what has both me and Paul nervous. You're no
-longer in the RCU domain. You're using a pointer where the lifetime has
-nothing to do with RCU any more.
+On 05/21/2018 12:55 AM, YueHaibing wrote:
+> like commit df39a9f106d5 ("bpf: check NULL for sk_to_full_sk() return value"),
+> we should check sk_to_full_sk return value against NULL.
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  include/linux/bpf-cgroup.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/bpf-cgroup.h b/include/linux/bpf-cgroup.h
+> index 30d15e6..fd3fbeb 100644
+> --- a/include/linux/bpf-cgroup.h
+> +++ b/include/linux/bpf-cgroup.h
+> @@ -91,7 +91,7 @@ int __cgroup_bpf_check_dev_permission(short dev_type, u32 major, u32 minor,
+>  	int __ret = 0;							       \
+>  	if (cgroup_bpf_enabled && sk && sk == skb->sk) {		       \
+>  		typeof(sk) __sk = sk_to_full_sk(sk);			       \
+> -		if (sk_fullsock(__sk))					       \
+> +		if (__sk && sk_fullsock(__sk))				       \
+>  			__ret = __cgroup_bpf_run_filter_skb(__sk, skb,	       \
+>  						      BPF_CGROUP_INET_EGRESS); \
+>  	}								       \
+> 
 
-Can it be done? Sure. But you need *other* locking for it (that you haven't
-explained), and it's fragile as hell.
-
-It's probably best to not use RCU for it at all, but depend on that "other
-locking" that you have to have anyway, to keep the pointer valid over the
-non-RCU region.
-
-                Linus
+Why is this needed ???
