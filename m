@@ -1,39 +1,39 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZr6qdYhRjsE1/MoNQ5r+nOL+krNGl+4NX3OC0namt+vd6JZuk0u6tADMgiSpyph5vkQFeUR
-ARC-Seal: i=1; a=rsa-sha256; t=1526937894; cv=none;
+X-Google-Smtp-Source: AB8JxZrOiIRkub/Kn8ek3AUFlRbtyJKSHiBhYeNBRGQHGwjwR8uxm9TOJN7I9nAscNhOZfd8zPes
+ARC-Seal: i=1; a=rsa-sha256; t=1526937891; cv=none;
         d=google.com; s=arc-20160816;
-        b=j6xQpYk+fl0oIsksvlJzn+nBJ8gEioXT9TMX+qY2+G2XPNdayEmQTXDjccZ2S4dJp1
-         4YtaBq9kH1RON3LexpLz6oi+J8eQtXMXULzyQ2qT+k/sFy8D1eVHRmnVj/LoOTEcjq8x
-         yzy4vLZ77M+P2FeQbjgwbqPtLM+q72/SzehdhiEoVBuCxUXy4ud8wKoU/PMXJPAz5j30
-         dK/gnnTlucxC/QWNNJB5wy7bXN1yWe+aCoYIbF7MPRloulDSEM41koxpw1vdD3oXI4FF
-         wKpljDXBAbNZ/cCjPKEXan/fmTEQfciM1U2uueBKdl47fnZwXyzhH9eVuBn6I8LthpSp
-         VFcQ==
+        b=UpfUR7pYzLsEFoFF7CNgNIBVVgLiAhnbOVUupgelGQLVZFXBa8VyobpAs+exeXTE+m
+         bu04YhZjwBbiJVs3BlLAUVltHQn2Z+KuHr9B+GRA7kRKusf7ZzXfXdcuEu025R4WsrxS
+         1WnBtyLTVtt+md4YZ5LbLjnERyp9v5VCySeH5Hw4lQUHP38KQqU9HPaN/O61fdFYESSB
+         sA5k45WepUSkPhLKdwDnCCR92Z/DujeHxRo/mPOMZQFvcAMId81WkKFlORRgvAG2hJBd
+         kvtHRkfi5ZMBVYxYElCr6JmbuYRXG+KVuFTDPnRxYVxtfJd85cCPYfyE/xEQTWXnTaFJ
+         kamA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=ho7WNhAttsyir9kyQSAPCrJ8tv39cc/QTuo/eu/qTKw=;
-        b=CGjuv5i1fSfIeOy1KiZcsmYOf4p2p373G1JFEB6ypj21VFy6XIvmhYBlbX/xoxMzJJ
-         u5chAYD3B7cUvUvGwz8tBU81wEXOHDvW7SFWWxIuUxH//OEOUFGgtI7+9Oxo/qCXOkWg
-         Cwp//jdqZl4gOrXCCaQekzd3NKSipj6ZcagVFZ803+g3VoXkB7oDL8Bzl4Ibjt+bzHQ0
-         MkXr6msjWRRsM+u858WoUic7wK9y4rU3CiWAE6cXII5XIl4ywArsQpZYOFyKAgqhCzK8
-         Bmz4k3aMLHxqS8CUCteUy88F3lX0Sqw6CUUHQNjR+vkVRMdWu1V7VqfI1qHajVk3ojHR
-         9K6Q==
+        bh=8BusgR7UX/ileAW+5yEe/c1qYnHORHi/kfMJ1sdEfAw=;
+        b=zZLGRIGE4HK02WHNQRFtPjEFDejGTRaqIjFbcje93B08ZL6o+ukH8tj/2MwuKZWQnZ
+         4MV1BgNFchdYm8GrJitNSVwXeKtmFo7n1Nqe4W7EmgA0zrwOWLzYEcuI1+oq7mg1zffz
+         XnBmNwhG9dkfyFFBOWBSF4khOKpHYMKUFt07L04kNFIrnwPkwA26MFa4uaEOodDvloat
+         CFK6DOSsVmfxBxfJdiOUCOtuOef9BtQb0G7XZ7Y6hLwn0DhUx4JXpSjGt7jl3noV5O+n
+         1Ec0m9VTRO/llnlpMxNHeAAdLONKld96/q/HWXG8oHBywJ5qSmemFOUDoUwqPDyDlftr
+         RUhQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=UxGdQhCA;
+       dkim=pass header.i=@kernel.org header.s=default header.b=rnKTNHpO;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=UxGdQhCA;
+       dkim=pass header.i=@kernel.org header.s=default header.b=rnKTNHpO;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Chris Packham <chris.packham@alliedtelesis.co.nz>,
-	Boris Brezillon <boris.brezillon@bootlin.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH 4.16 032/110] mtd: rawnand: marvell: Fix read logic for layouts with ->nchunks > 2
-Date: Mon, 21 May 2018 23:11:29 +0200
-Message-Id: <20180521210506.599322824@linuxfoundation.org>
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.16 062/110] x86/nospec: Simplify alternative_msr_write()
+Date: Mon, 21 May 2018 23:11:59 +0200
+Message-Id: <20180521210511.622233431@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601110429508486183?=
-X-GMAIL-MSGID: =?utf-8?q?1601110429508486183?=
+X-GMAIL-THRID: =?utf-8?q?1601109821557476654?=
+X-GMAIL-MSGID: =?utf-8?q?1601110426752074469?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,50 +52,65 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Boris Brezillon <boris.brezillon@bootlin.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-commit 90d617633368ab97a2c7571c6e66dad54f39228d upstream.
+commit 1aa7a5735a41418d8e01fa7c9565eb2657e2ea3f upstream
 
-The code is doing monolithic reads for all chunks except the last one
-which is wrong since a monolithic read will issue the
-READ0+ADDRS+READ_START sequence. It not only takes longer because it
-forces the NAND chip to reload the page content into its internal
-cache, but by doing that we also reset the column pointer to 0, which
-means we'll always read the first chunk instead of moving to the next
-one.
+The macro is not type safe and I did look for why that "g" constraint for
+the asm doesn't work: it's because the asm is more fundamentally wrong.
 
-Rework the code to do a monolithic read only for the first chunk,
-then switch to naked reads for all intermediate chunks and finally
-issue a last naked read for the last chunk.
+It does
 
-Fixes: 02f26ecf8c77 mtd: nand: add reworked Marvell NAND controller driver
-Cc: stable@vger.kernel.org
-Reported-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Tested-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
+        movl %[val], %%eax
+
+but "val" isn't a 32-bit value, so then gcc will pass it in a register,
+and generate code like
+
+        movl %rsi, %eax
+
+and gas will complain about a nonsensical 'mov' instruction (it's moving a
+64-bit register to a 32-bit one).
+
+Passing it through memory will just hide the real bug - gcc still thinks
+the memory location is 64-bit, but the "movl" will only load the first 32
+bits and it all happens to work because x86 is little-endian.
+
+Convert it to a type safe inline function with a little trick which hands
+the feature into the ALTERNATIVE macro.
+
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/mtd/nand/marvell_nand.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ arch/x86/include/asm/nospec-branch.h |   19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
---- a/drivers/mtd/nand/marvell_nand.c
-+++ b/drivers/mtd/nand/marvell_nand.c
-@@ -1190,11 +1190,13 @@ static void marvell_nfc_hw_ecc_bch_read_
- 				  NDCB0_CMD2(NAND_CMD_READSTART);
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -241,15 +241,16 @@ static inline void vmexit_fill_RSB(void)
+ #endif
+ }
  
- 	/*
--	 * Trigger the naked read operation only on the last chunk.
--	 * Otherwise, use monolithic read.
-+	 * Trigger the monolithic read on the first chunk, then naked read on
-+	 * intermediate chunks and finally a last naked read on the last chunk.
- 	 */
--	if (lt->nchunks == 1 || (chunk < lt->nchunks - 1))
-+	if (chunk == 0)
- 		nfc_op.ndcb[0] |= NDCB0_CMD_XTYPE(XTYPE_MONOLITHIC_RW);
-+	else if (chunk < lt->nchunks - 1)
-+		nfc_op.ndcb[0] |= NDCB0_CMD_XTYPE(XTYPE_NAKED_RW);
- 	else
- 		nfc_op.ndcb[0] |= NDCB0_CMD_XTYPE(XTYPE_LAST_NAKED_RW);
+-#define alternative_msr_write(_msr, _val, _feature)		\
+-	asm volatile(ALTERNATIVE("",				\
+-				 "movl %[msr], %%ecx\n\t"	\
+-				 "movl %[val], %%eax\n\t"	\
+-				 "movl $0, %%edx\n\t"		\
+-				 "wrmsr",			\
+-				 _feature)			\
+-		     : : [msr] "i" (_msr), [val] "i" (_val)	\
+-		     : "eax", "ecx", "edx", "memory")
++static __always_inline
++void alternative_msr_write(unsigned int msr, u64 val, unsigned int feature)
++{
++	asm volatile(ALTERNATIVE("", "wrmsr", %c[feature])
++		: : "c" (msr),
++		    "a" (val),
++		    "d" (val >> 32),
++		    [feature] "i" (feature)
++		: "memory");
++}
  
+ static inline void indirect_branch_prediction_barrier(void)
+ {
