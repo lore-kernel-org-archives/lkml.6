@@ -1,44 +1,39 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrO3PZuuzPqH1vsOX6XhOjl50GIF13+uZSdaztPC/3EjB7gxR3fto7wN3M5aGA46LDrw754
-ARC-Seal: i=1; a=rsa-sha256; t=1526937624; cv=none;
+X-Google-Smtp-Source: AB8JxZrozSD+YsBqz9j+R1WHZknI+rX9b77cAIMDLT9HDFKD91l0NdKKUeswfRPahiCc6drEIsKC
+ARC-Seal: i=1; a=rsa-sha256; t=1526937621; cv=none;
         d=google.com; s=arc-20160816;
-        b=NQwhwPpxBLl+otRRJa3XZNP2Wo216eOHHMCGI0j/ktI2ObcUh9//SEHbH+qbeW7v2l
-         lrPxFYlp2wLyExp6F66pribvibLk2J1ymPx0TYJxhRM/+9si9Q5Rbx7zx9wZJicxrBJI
-         D2rnV1fCTSLHKKHWArAZGCfvIBUaO9yp52yFZBpbllewri1OPpvgiq+GjLZz2kJsoOrY
-         7Q1G6NzEnXRQQR33A6sYFmAfcFCpE8hS6MdEjciEMLOZ9GzioiOS4PelA+eZet1Zk1hK
-         rE+kJJVrAAx8bBtUU/6l6WOVyUnaZGfWz3ooVpYYOT0RC9XoJKbO5GRzoj+Wpdkmp2Dk
-         /LjQ==
+        b=MbxWtTfcDuttgsnUh2gmCoaPUhiOOO7+lxm5BraVA9Yr6B694yqOnI2NjaZiw1DpsC
+         ffLj4BBdVyz1ZZhe10FqBaoklHQ5/j+Pq1UUOsOD+3MfHtCZtl7ir7/W0CeN3t7x8Wo6
+         0fnvUvkNIGqJu13HVU6STfgmeeen4T/dkaST8S0wWtDKkWlV5tp746RnbLD2bRvaKU3I
+         gyx3UtthnxMEOYqc8a7XuM9UXupGdD5V3Ht88d0a29RnT4kAOfvdNPENZazbz5q03lnZ
+         330sQfH6vuzeuzunDTNu2dvY4gklfzcWqvhsKJw3TUTTv8mRQyD0nH6sg2f5M53UkFko
+         KeZA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=/kWvmVdbsCCWV3803F7gB91g3kFf2/88QgdoLEy5xII=;
-        b=HBzkkQ6Ukglve+qbwiZt7EFy22Rf9VHU+0KRL6f8zykn1oJrp64E36ZjQSu7wytmlF
-         pMQJZ53IhQN3Mm9vhlbC7w5X0gfCOgyeUFUdL92ZRmxUgqq5WMKAyHR9r42L/lU6J9w5
-         0L11FzKNEVgJKRMFvL4tPiesdATY0mbYHoCbVNt803LR2quYQu9W4kB83M2XlmS54OXv
-         4VcCV/vFnXgVPinDcHF9bmRz2X0Gjohepk99o2wYL3v91Qd7fJslmpLNWhlM3fjkaItf
-         zXTwEfaIAqV3kikszWiB6G3E0pZO5kiRMlQV2Zg2cAs7Oq1GE0ytAS24axZTU8lD1nRd
-         qFIQ==
+        bh=hNfhXn5z+8a2GWazsrWHbZM31fYi7omyOPsc/WLlBg0=;
+        b=EMedbZixazhhug0f/SLfHLC6EOOflmObS77E9wlUOSwnkN296XsW+5BzUTw+4VycM/
+         b88rpaXij0NrvsmKzdQrD9TexM6fJGK/sYFJuhh2GE0yROMh58gUU6cnVXV4GNL1AdU0
+         VhN1NCtRd32ItPRdhUfqHHqMf9xwKl0OIzVMP55FmSfqUw249mwriyaPt3o5ENdli2Zs
+         j/2L7mbJGcTBPMtORs2X1raTcCPl3umQQepb7NEk1daTTADxFLz2RW3aMC7+bVir/n1T
+         HlecH7d6y3zFhez+xYjkJdcTo7hKEDzYl0d+NzJuy0W1NYXMVlLZxqDsg9MwTfpD4mb1
+         4ztQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=dBwGcqjB;
+       dkim=pass header.i=@kernel.org header.s=default header.b=Go+DBx0W;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=dBwGcqjB;
+       dkim=pass header.i=@kernel.org header.s=default header.b=Go+DBx0W;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Matt Fleming <matt@codeblueprint.co.uk>,
-	Peter Zijlstra <peterz@infradead.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	linux-efi@vger.kernel.org,
+	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 34/95] efi: Avoid potential crashes, fix the struct efi_pci_io_protocol_32 definition for mixed mode
-Date: Mon, 21 May 2018 23:11:24 +0200
-Message-Id: <20180521210454.955873306@linuxfoundation.org>
+Subject: [PATCH 4.14 60/95] x86/speculation: Create spec-ctrl.h to avoid include hell
+Date: Mon, 21 May 2018 23:11:50 +0200
+Message-Id: <20180521210458.863812227@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210447.219380974@linuxfoundation.org>
 References: <20180521210447.219380974@linuxfoundation.org>
@@ -48,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109790218666482?=
-X-GMAIL-MSGID: =?utf-8?q?1601110146515878091?=
+X-GMAIL-THRID: =?utf-8?q?1601109858795528866?=
+X-GMAIL-MSGID: =?utf-8?q?1601110143279582831?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -57,79 +52,123 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 0b3225ab9407f557a8e20f23f37aa7236c10a9b1 upstream.
+commit 28a2775217b17208811fa43a9e96bd1fdf417b86 upstream
 
-Mixed mode allows a kernel built for x86_64 to interact with 32-bit
-EFI firmware, but requires us to define all struct definitions carefully
-when it comes to pointer sizes.
+Having everything in nospec-branch.h creates a hell of dependencies when
+adding the prctl based switching mechanism. Move everything which is not
+required in nospec-branch.h to spec-ctrl.h and fix up the includes in the
+relevant files.
 
-'struct efi_pci_io_protocol_32' currently uses a 'void *' for the
-'romimage' field, which will be interpreted as a 64-bit field
-on such kernels, potentially resulting in bogus memory references
-and subsequent crashes.
-
-Tested-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: <stable@vger.kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Matt Fleming <matt@codeblueprint.co.uk>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180504060003.19618-13-ard.biesheuvel@linaro.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/boot/compressed/eboot.c |    6 ++++--
- include/linux/efi.h              |    8 ++++----
- 2 files changed, 8 insertions(+), 6 deletions(-)
+ arch/x86/include/asm/nospec-branch.h |   14 --------------
+ arch/x86/include/asm/spec-ctrl.h     |   21 +++++++++++++++++++++
+ arch/x86/kernel/cpu/amd.c            |    2 +-
+ arch/x86/kernel/cpu/bugs.c           |    2 +-
+ arch/x86/kvm/svm.c                   |    2 +-
+ arch/x86/kvm/vmx.c                   |    2 +-
+ 6 files changed, 25 insertions(+), 18 deletions(-)
+ create mode 100644 arch/x86/include/asm/spec-ctrl.h
 
---- a/arch/x86/boot/compressed/eboot.c
-+++ b/arch/x86/boot/compressed/eboot.c
-@@ -163,7 +163,8 @@ __setup_efi_pci32(efi_pci_io_protocol_32
- 	if (status != EFI_SUCCESS)
- 		goto free_struct;
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -228,26 +228,12 @@ enum spectre_v2_mitigation {
+ extern void x86_spec_ctrl_set(u64);
+ extern u64 x86_spec_ctrl_get_default(void);
  
--	memcpy(rom->romdata, pci->romimage, pci->romsize);
-+	memcpy(rom->romdata, (void *)(unsigned long)pci->romimage,
-+	       pci->romsize);
- 	return status;
+-/*
+- * On VMENTER we must preserve whatever view of the SPEC_CTRL MSR
+- * the guest has, while on VMEXIT we restore the host view. This
+- * would be easier if SPEC_CTRL were architecturally maskable or
+- * shadowable for guests but this is not (currently) the case.
+- * Takes the guest view of SPEC_CTRL MSR as a parameter.
+- */
+-extern void x86_spec_ctrl_set_guest(u64);
+-extern void x86_spec_ctrl_restore_host(u64);
+-
+ /* The Speculative Store Bypass disable variants */
+ enum ssb_mitigation {
+ 	SPEC_STORE_BYPASS_NONE,
+ 	SPEC_STORE_BYPASS_DISABLE,
+ };
  
- free_struct:
-@@ -269,7 +270,8 @@ __setup_efi_pci64(efi_pci_io_protocol_64
- 	if (status != EFI_SUCCESS)
- 		goto free_struct;
+-/* AMD specific Speculative Store Bypass MSR data */
+-extern u64 x86_amd_ls_cfg_base;
+-extern u64 x86_amd_ls_cfg_rds_mask;
+-
+ extern char __indirect_thunk_start[];
+ extern char __indirect_thunk_end[];
  
--	memcpy(rom->romdata, pci->romimage, pci->romsize);
-+	memcpy(rom->romdata, (void *)(unsigned long)pci->romimage,
-+	       pci->romsize);
- 	return status;
+--- /dev/null
++++ b/arch/x86/include/asm/spec-ctrl.h
+@@ -0,0 +1,21 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_X86_SPECCTRL_H_
++#define _ASM_X86_SPECCTRL_H_
++
++#include <asm/nospec-branch.h>
++
++/*
++ * On VMENTER we must preserve whatever view of the SPEC_CTRL MSR
++ * the guest has, while on VMEXIT we restore the host view. This
++ * would be easier if SPEC_CTRL were architecturally maskable or
++ * shadowable for guests but this is not (currently) the case.
++ * Takes the guest view of SPEC_CTRL MSR as a parameter.
++ */
++extern void x86_spec_ctrl_set_guest(u64);
++extern void x86_spec_ctrl_restore_host(u64);
++
++/* AMD specific Speculative Store Bypass MSR data */
++extern u64 x86_amd_ls_cfg_base;
++extern u64 x86_amd_ls_cfg_rds_mask;
++
++#endif
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -10,7 +10,7 @@
+ #include <asm/processor.h>
+ #include <asm/apic.h>
+ #include <asm/cpu.h>
+-#include <asm/nospec-branch.h>
++#include <asm/spec-ctrl.h>
+ #include <asm/smp.h>
+ #include <asm/pci-direct.h>
+ #include <asm/delay.h>
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -13,7 +13,7 @@
+ #include <linux/cpu.h>
+ #include <linux/module.h>
  
- free_struct:
---- a/include/linux/efi.h
-+++ b/include/linux/efi.h
-@@ -395,8 +395,8 @@ typedef struct {
- 	u32 attributes;
- 	u32 get_bar_attributes;
- 	u32 set_bar_attributes;
--	uint64_t romsize;
--	void *romimage;
-+	u64 romsize;
-+	u32 romimage;
- } efi_pci_io_protocol_32;
+-#include <asm/nospec-branch.h>
++#include <asm/spec-ctrl.h>
+ #include <asm/cmdline.h>
+ #include <asm/bugs.h>
+ #include <asm/processor.h>
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -46,7 +46,7 @@
+ #include <asm/kvm_para.h>
+ #include <asm/irq_remapping.h>
+ #include <asm/microcode.h>
+-#include <asm/nospec-branch.h>
++#include <asm/spec-ctrl.h>
  
- typedef struct {
-@@ -415,8 +415,8 @@ typedef struct {
- 	u64 attributes;
- 	u64 get_bar_attributes;
- 	u64 set_bar_attributes;
--	uint64_t romsize;
--	void *romimage;
-+	u64 romsize;
-+	u64 romimage;
- } efi_pci_io_protocol_64;
+ #include <asm/virtext.h>
+ #include "trace.h"
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -52,7 +52,7 @@
+ #include <asm/irq_remapping.h>
+ #include <asm/mmu_context.h>
+ #include <asm/microcode.h>
+-#include <asm/nospec-branch.h>
++#include <asm/spec-ctrl.h>
  
- typedef struct {
+ #include "trace.h"
+ #include "pmu.h"
