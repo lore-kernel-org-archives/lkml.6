@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751516AbeEUTT7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 15:19:59 -0400
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:35570 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751101AbeEUTTy (ORCPT
+        id S1751581AbeEUTU0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 15:20:26 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:34482 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751188AbeEUTUY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 15:19:54 -0400
-X-Google-Smtp-Source: ADUXVKLouqtqA3RtGQroE1/OQaf4cllfWawBH2bPzgoDEBm7KtbsJHfs7fHmpSGNHG0PTuKErSbrVQ==
-Subject: Re: [PATCH 1/2] rtc: brcmstb-waketimer: switch to rtc_register_device
+        Mon, 21 May 2018 15:20:24 -0400
+X-Google-Smtp-Source: AB8JxZo/iaT3grlD3QnqQ1vW91oPeFO4PoIEJIe2WxRKJrO6zHSx2sTID3dd0HpS9yaVBEzCXner5Q==
+Subject: Re: [PATCH 2/2] rtc: brcmstb-waketimer: add range
 To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
         linux-rtc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -18,6 +18,7 @@ Cc: linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         linux-arm-kernel@lists.infradead.org
 References: <20180520202730.28172-1-alexandre.belloni@bootlin.com>
+ <20180520202730.28172-2-alexandre.belloni@bootlin.com>
 From: Florian Fainelli <f.fainelli@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
@@ -53,12 +54,12 @@ Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
  y5arMQorqTFWlEOgRA8OP47L9knl9i4xuR0euV6DChDrguup2aJVU8JPBBgRAgAPAhsMBQJU
  X9LxBQkeXB3fAAoJEGFXmRW1Y3YOj4UAn3nrFLPZekMeqX5aD/aq/dsbXSfyAKC45Go0YyxV
  HGuUuzv+GKZ6nsysJw==
-Message-ID: <2ceb0348-b030-d584-2a20-0bc678a83b14@gmail.com>
-Date: Mon, 21 May 2018 12:19:43 -0700
+Message-ID: <dd13ff3a-6bc0-6871-2253-e12444141c09@gmail.com>
+Date: Mon, 21 May 2018 12:20:20 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180520202730.28172-1-alexandre.belloni@bootlin.com>
+In-Reply-To: <20180520202730.28172-2-alexandre.belloni@bootlin.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -67,10 +68,11 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 05/20/2018 01:27 PM, Alexandre Belloni wrote:
-> Switch to devm_rtc_allocate_device/rtc_register_device.
+> Let the core handle the range.
 > 
 > Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
 Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+-- 
 -- 
 Florian
