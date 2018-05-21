@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752823AbeEUKMr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 06:12:47 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:55816 "EHLO huawei.com"
+        id S1752764AbeEUKMf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 06:12:35 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:55826 "EHLO huawei.com"
         rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752644AbeEUKLp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752651AbeEUKLp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 21 May 2018 06:11:45 -0400
 From: John Garry <john.garry@huawei.com>
 To: <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
 CC: <linux-scsi@vger.kernel.org>, <linuxarm@huawei.com>,
         <linux-kernel@vger.kernel.org>, Xiaofei Tan <tanxiaofei@huawei.com>,
         "John Garry" <john.garry@huawei.com>
-Subject: [PATCH 11/13] scsi: hisi_sas: Terminate STP reject quickly for v2 hw
-Date: Mon, 21 May 2018 18:09:23 +0800
-Message-ID: <1526897365-228549-12-git-send-email-john.garry@huawei.com>
+Subject: [PATCH 09/13] scsi: hisi_sas: Include TMF elements in struct hisi_sas_slot
+Date: Mon, 21 May 2018 18:09:21 +0800
+Message-ID: <1526897365-228549-10-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1526897365-228549-1-git-send-email-john.garry@huawei.com>
 References: <1526897365-228549-1-git-send-email-john.garry@huawei.com>
@@ -27,122 +27,251 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Xiaofei Tan <tanxiaofei@huawei.com>
 
-For v2 hw, STP link from target is rejected after host reset
-because of a SoC bug. The STP reject will be terminated after
-we have sent IO from each PHY of a port.
+In future scenarios we will want to use the TMF struct
+for more task types than SSP.
 
-This is not an problem before, as we don't need to setup STP
-link from target immediately after host reset. But now, it is.
-Because we want to send soft-reset immediately after host reset.
-
-In order to terminate STP reject quickly, this patch send ATA
-reset command through each PHY of a port. Notes: ATA reset
-command don't need target's response.
-
-Besides, we do abort dev for each device before terminating STP
-reject. This is a quirk of v2 hw.
+As such, we can add struct hisi_sas_tmf_task directly into
+struct hisi_sas_slot, and this will mean we can remove
+the TMF parameters from the task prep functions.
 
 Signed-off-by: Xiaofei Tan <tanxiaofei@huawei.com>
 Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- drivers/scsi/hisi_sas/hisi_sas_main.c | 78 +++++++++++++++++++++++++++++++++++
- 1 file changed, 78 insertions(+)
+ drivers/scsi/hisi_sas/hisi_sas.h       | 14 +++++++-------
+ drivers/scsi/hisi_sas/hisi_sas_main.c  | 15 +++++++--------
+ drivers/scsi/hisi_sas/hisi_sas_v1_hw.c | 12 ++++++------
+ drivers/scsi/hisi_sas/hisi_sas_v2_hw.c | 10 +++++-----
+ drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 10 +++++-----
+ 5 files changed, 30 insertions(+), 31 deletions(-)
 
+diff --git a/drivers/scsi/hisi_sas/hisi_sas.h b/drivers/scsi/hisi_sas/hisi_sas.h
+index 8ce6abb..60bd652 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas.h
++++ b/drivers/scsi/hisi_sas/hisi_sas.h
+@@ -179,6 +179,11 @@ struct hisi_sas_device {
+ 	u8 dev_status;
+ };
+ 
++struct hisi_sas_tmf_task {
++	u8 tmf;
++	u16 tag_of_task_to_be_managed;
++};
++
+ struct hisi_sas_slot {
+ 	struct list_head entry;
+ 	struct list_head delivery;
+@@ -199,11 +204,7 @@ struct hisi_sas_slot {
+ 	struct work_struct abort_slot;
+ 	struct timer_list internal_abort_timer;
+ 	bool is_internal;
+-};
+-
+-struct hisi_sas_tmf_task {
+-	u8 tmf;
+-	u16 tag_of_task_to_be_managed;
++	struct hisi_sas_tmf_task *tmf;
+ };
+ 
+ struct hisi_sas_hw {
+@@ -217,8 +218,7 @@ struct hisi_sas_hw {
+ 	int (*get_free_slot)(struct hisi_hba *hisi_hba, struct hisi_sas_dq *dq);
+ 	void (*start_delivery)(struct hisi_sas_dq *dq);
+ 	void (*prep_ssp)(struct hisi_hba *hisi_hba,
+-			struct hisi_sas_slot *slot, int is_tmf,
+-			struct hisi_sas_tmf_task *tmf);
++			struct hisi_sas_slot *slot);
+ 	void (*prep_smp)(struct hisi_hba *hisi_hba,
+ 			struct hisi_sas_slot *slot);
+ 	void (*prep_stp)(struct hisi_hba *hisi_hba,
 diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-index d613b68..2e02539 100644
+index a6fcfb3..d613b68 100644
 --- a/drivers/scsi/hisi_sas/hisi_sas_main.c
 +++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-@@ -1275,6 +1275,81 @@ static void hisi_sas_reset_init_all_devices(struct hisi_hba *hisi_hba)
- 	}
+@@ -266,10 +266,9 @@ static void hisi_sas_task_prep_smp(struct hisi_hba *hisi_hba,
  }
  
-+static void hisi_sas_send_ata_reset_each_phy(struct hisi_hba *hisi_hba,
-+					     struct asd_sas_port *sas_port,
-+					     struct domain_device *device)
-+{
-+	struct hisi_sas_tmf_task tmf_task = { .force_phy = 1 };
-+	struct ata_port *ap = device->sata_dev.ap;
-+	struct device *dev = hisi_hba->dev;
-+	int s = sizeof(struct host_to_dev_fis);
-+	int rc = TMF_RESP_FUNC_FAILED;
-+	struct asd_sas_phy *sas_phy;
-+	struct ata_link *link;
-+	u8 fis[20] = {0};
-+	u32 state;
-+
-+	state = hisi_hba->hw->get_phys_state(hisi_hba);
-+	list_for_each_entry(sas_phy, &sas_port->phy_list, port_phy_el) {
-+		if (!(state & BIT(sas_phy->id)))
-+			continue;
-+
-+		ata_for_each_link(link, ap, EDGE) {
-+			int pmp = sata_srst_pmp(link);
-+
-+			tmf_task.phy_id = sas_phy->id;
-+			hisi_sas_fill_ata_reset_cmd(link->device, 1, pmp, fis);
-+			rc = hisi_sas_exec_internal_tmf_task(device, fis, s,
-+							     &tmf_task);
-+			if (rc != TMF_RESP_FUNC_COMPLETE) {
-+				dev_err(dev, "phy%d ata reset failed rc=%d\n",
-+					sas_phy->id, rc);
-+				break;
-+			}
-+		}
-+	}
-+}
-+
-+static void hisi_sas_terminate_stp_reject(struct hisi_hba *hisi_hba)
-+{
-+	struct device *dev = hisi_hba->dev;
-+	int port_no, rc, i;
-+
-+	for (i = 0; i < HISI_SAS_MAX_DEVICES; i++) {
-+		struct hisi_sas_device *sas_dev = &hisi_hba->devices[i];
-+		struct domain_device *device = sas_dev->sas_device;
-+
-+		if ((sas_dev->dev_type == SAS_PHY_UNUSED) || !device)
-+			continue;
-+
-+		rc = hisi_sas_internal_task_abort(hisi_hba, device,
-+						  HISI_SAS_INT_ABT_DEV, 0);
-+		if (rc < 0)
-+			dev_err(dev, "STP reject: abort dev failed %d\n", rc);
-+	}
-+
-+	for (port_no = 0; port_no < hisi_hba->n_phy; port_no++) {
-+		struct hisi_sas_port *port = &hisi_hba->port[port_no];
-+		struct asd_sas_port *sas_port = &port->sas_port;
-+		struct domain_device *port_dev = sas_port->port_dev;
-+		struct domain_device *device;
-+
-+		if (!port_dev || !DEV_IS_EXPANDER(port_dev->dev_type))
-+			continue;
-+
-+		/* Try to find a SATA device */
-+		list_for_each_entry(device, &sas_port->dev_list,
-+				    dev_list_node) {
-+			if (dev_is_sata(device)) {
-+				hisi_sas_send_ata_reset_each_phy(hisi_hba,
-+								 sas_port,
-+								 device);
-+				break;
-+			}
-+		}
-+	}
-+}
-+
- static int hisi_sas_controller_reset(struct hisi_hba *hisi_hba)
+ static void hisi_sas_task_prep_ssp(struct hisi_hba *hisi_hba,
+-				  struct hisi_sas_slot *slot, int is_tmf,
+-				  struct hisi_sas_tmf_task *tmf)
++				  struct hisi_sas_slot *slot)
  {
- 	struct device *dev = hisi_hba->dev;
-@@ -1312,6 +1387,9 @@ static int hisi_sas_controller_reset(struct hisi_hba *hisi_hba)
- 	hisi_hba->hw->phys_init(hisi_hba);
- 	msleep(1000);
- 	hisi_sas_refresh_port_id(hisi_hba);
-+
-+	if (hisi_hba->reject_stp_links_msk)
-+		hisi_sas_terminate_stp_reject(hisi_hba);
- 	hisi_sas_reset_init_all_devices(hisi_hba);
- 	scsi_unblock_requests(shost);
+-	hisi_hba->hw->prep_ssp(hisi_hba, slot, is_tmf, tmf);
++	hisi_hba->hw->prep_ssp(hisi_hba, slot);
+ }
  
+ static void hisi_sas_task_prep_ata(struct hisi_hba *hisi_hba,
+@@ -322,7 +321,7 @@ static void hisi_sas_slot_abort(struct work_struct *work)
+ 
+ static int hisi_sas_task_prep(struct sas_task *task,
+ 			      struct hisi_sas_dq **dq_pointer,
+-			      int is_tmf, struct hisi_sas_tmf_task *tmf,
++			      bool is_tmf, struct hisi_sas_tmf_task *tmf,
+ 			      int *pass)
+ {
+ 	struct domain_device *device = task->dev;
+@@ -461,8 +460,8 @@ static int hisi_sas_task_prep(struct sas_task *task,
+ 	slot->cmd_hdr = &cmd_hdr_base[dlvry_queue_slot];
+ 	slot->task = task;
+ 	slot->port = port;
+-	if (is_tmf)
+-		slot->is_internal = true;
++	slot->tmf = tmf;
++	slot->is_internal = is_tmf;
+ 	task->lldd_task = slot;
+ 	INIT_WORK(&slot->abort_slot, hisi_sas_slot_abort);
+ 
+@@ -475,7 +474,7 @@ static int hisi_sas_task_prep(struct sas_task *task,
+ 		hisi_sas_task_prep_smp(hisi_hba, slot);
+ 		break;
+ 	case SAS_PROTOCOL_SSP:
+-		hisi_sas_task_prep_ssp(hisi_hba, slot, is_tmf, tmf);
++		hisi_sas_task_prep_ssp(hisi_hba, slot);
+ 		break;
+ 	case SAS_PROTOCOL_SATA:
+ 	case SAS_PROTOCOL_STP:
+@@ -527,7 +526,7 @@ static int hisi_sas_task_prep(struct sas_task *task,
+ }
+ 
+ static int hisi_sas_task_exec(struct sas_task *task, gfp_t gfp_flags,
+-			      int is_tmf, struct hisi_sas_tmf_task *tmf)
++			      bool is_tmf, struct hisi_sas_tmf_task *tmf)
+ {
+ 	u32 rc;
+ 	u32 pass = 0;
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
+index 8d5d857..05609ac 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
+@@ -986,8 +986,7 @@ static void prep_smp_v1_hw(struct hisi_hba *hisi_hba,
+ }
+ 
+ static void prep_ssp_v1_hw(struct hisi_hba *hisi_hba,
+-			  struct hisi_sas_slot *slot, int is_tmf,
+-			  struct hisi_sas_tmf_task *tmf)
++			  struct hisi_sas_slot *slot)
+ {
+ 	struct sas_task *task = slot->task;
+ 	struct hisi_sas_cmd_hdr *hdr = slot->cmd_hdr;
+@@ -996,7 +995,8 @@ static void prep_ssp_v1_hw(struct hisi_hba *hisi_hba,
+ 	struct hisi_sas_port *port = slot->port;
+ 	struct sas_ssp_task *ssp_task = &task->ssp_task;
+ 	struct scsi_cmnd *scsi_cmnd = ssp_task->cmd;
+-	int has_data = 0, priority = is_tmf;
++	struct hisi_sas_tmf_task *tmf = slot->tmf;
++	int has_data = 0, priority = !!tmf;
+ 	u8 *buf_cmd, fburst = 0;
+ 	u32 dw1, dw2;
+ 
+@@ -1010,7 +1010,7 @@ static void prep_ssp_v1_hw(struct hisi_hba *hisi_hba,
+ 
+ 	dw1 = 1 << CMD_HDR_VERIFY_DTL_OFF;
+ 
+-	if (is_tmf) {
++	if (tmf) {
+ 		dw1 |= 3 << CMD_HDR_SSP_FRAME_TYPE_OFF;
+ 	} else {
+ 		switch (scsi_cmnd->sc_data_direction) {
+@@ -1031,7 +1031,7 @@ static void prep_ssp_v1_hw(struct hisi_hba *hisi_hba,
+ 	dw1 |= sas_dev->device_id << CMD_HDR_DEVICE_ID_OFF;
+ 	hdr->dw1 = cpu_to_le32(dw1);
+ 
+-	if (is_tmf) {
++	if (tmf) {
+ 		dw2 = ((sizeof(struct ssp_tmf_iu) +
+ 			sizeof(struct ssp_frame_hdr)+3)/4) <<
+ 			CMD_HDR_CFL_OFF;
+@@ -1062,7 +1062,7 @@ static void prep_ssp_v1_hw(struct hisi_hba *hisi_hba,
+ 	hdr->dw2 = cpu_to_le32(dw2);
+ 
+ 	memcpy(buf_cmd, &task->ssp_task.LUN, 8);
+-	if (!is_tmf) {
++	if (!tmf) {
+ 		buf_cmd[9] = fburst | task->ssp_task.task_attr |
+ 				(task->ssp_task.task_prio << 3);
+ 		memcpy(buf_cmd + 12, task->ssp_task.cmd->cmnd,
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
+index 18dbaff..fafb3f1 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
+@@ -1745,8 +1745,7 @@ static void prep_smp_v2_hw(struct hisi_hba *hisi_hba,
+ }
+ 
+ static void prep_ssp_v2_hw(struct hisi_hba *hisi_hba,
+-			  struct hisi_sas_slot *slot, int is_tmf,
+-			  struct hisi_sas_tmf_task *tmf)
++			  struct hisi_sas_slot *slot)
+ {
+ 	struct sas_task *task = slot->task;
+ 	struct hisi_sas_cmd_hdr *hdr = slot->cmd_hdr;
+@@ -1755,7 +1754,8 @@ static void prep_ssp_v2_hw(struct hisi_hba *hisi_hba,
+ 	struct hisi_sas_port *port = slot->port;
+ 	struct sas_ssp_task *ssp_task = &task->ssp_task;
+ 	struct scsi_cmnd *scsi_cmnd = ssp_task->cmd;
+-	int has_data = 0, priority = is_tmf;
++	struct hisi_sas_tmf_task *tmf = slot->tmf;
++	int has_data = 0, priority = !!tmf;
+ 	u8 *buf_cmd;
+ 	u32 dw1 = 0, dw2 = 0;
+ 
+@@ -1766,7 +1766,7 @@ static void prep_ssp_v2_hw(struct hisi_hba *hisi_hba,
+ 			       (1 << CMD_HDR_CMD_OFF)); /* ssp */
+ 
+ 	dw1 = 1 << CMD_HDR_VDTL_OFF;
+-	if (is_tmf) {
++	if (tmf) {
+ 		dw1 |= 2 << CMD_HDR_FRAME_TYPE_OFF;
+ 		dw1 |= DIR_NO_DATA << CMD_HDR_DIR_OFF;
+ 	} else {
+@@ -1809,7 +1809,7 @@ static void prep_ssp_v2_hw(struct hisi_hba *hisi_hba,
+ 		sizeof(struct ssp_frame_hdr);
+ 
+ 	memcpy(buf_cmd, &task->ssp_task.LUN, 8);
+-	if (!is_tmf) {
++	if (!tmf) {
+ 		buf_cmd[9] = task->ssp_task.task_attr |
+ 				(task->ssp_task.task_prio << 3);
+ 		memcpy(buf_cmd + 12, task->ssp_task.cmd->cmnd,
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+index dd5f542..8c996aa 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+@@ -911,8 +911,7 @@ static void prep_prd_sge_v3_hw(struct hisi_hba *hisi_hba,
+ }
+ 
+ static void prep_ssp_v3_hw(struct hisi_hba *hisi_hba,
+-			  struct hisi_sas_slot *slot, int is_tmf,
+-			  struct hisi_sas_tmf_task *tmf)
++			  struct hisi_sas_slot *slot)
+ {
+ 	struct sas_task *task = slot->task;
+ 	struct hisi_sas_cmd_hdr *hdr = slot->cmd_hdr;
+@@ -921,7 +920,8 @@ static void prep_ssp_v3_hw(struct hisi_hba *hisi_hba,
+ 	struct hisi_sas_port *port = slot->port;
+ 	struct sas_ssp_task *ssp_task = &task->ssp_task;
+ 	struct scsi_cmnd *scsi_cmnd = ssp_task->cmd;
+-	int has_data = 0, priority = is_tmf;
++	struct hisi_sas_tmf_task *tmf = slot->tmf;
++	int has_data = 0, priority = !!tmf;
+ 	u8 *buf_cmd;
+ 	u32 dw1 = 0, dw2 = 0;
+ 
+@@ -932,7 +932,7 @@ static void prep_ssp_v3_hw(struct hisi_hba *hisi_hba,
+ 			       (1 << CMD_HDR_CMD_OFF)); /* ssp */
+ 
+ 	dw1 = 1 << CMD_HDR_VDTL_OFF;
+-	if (is_tmf) {
++	if (tmf) {
+ 		dw1 |= 2 << CMD_HDR_FRAME_TYPE_OFF;
+ 		dw1 |= DIR_NO_DATA << CMD_HDR_DIR_OFF;
+ 	} else {
+@@ -974,7 +974,7 @@ static void prep_ssp_v3_hw(struct hisi_hba *hisi_hba,
+ 		sizeof(struct ssp_frame_hdr);
+ 
+ 	memcpy(buf_cmd, &task->ssp_task.LUN, 8);
+-	if (!is_tmf) {
++	if (!tmf) {
+ 		buf_cmd[9] = ssp_task->task_attr | (ssp_task->task_prio << 3);
+ 		memcpy(buf_cmd + 12, scsi_cmnd->cmnd, scsi_cmnd->cmd_len);
+ 	} else {
 -- 
 1.9.1
