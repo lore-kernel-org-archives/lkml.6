@@ -1,38 +1,38 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqVhb3hMLSioUmcHs5lCvpRyMVRDT8G76Kl/cGSGswshhuhISJ0aYtsZpigWnQDz/zDSWMj
-ARC-Seal: i=1; a=rsa-sha256; t=1526937810; cv=none;
+X-Google-Smtp-Source: AB8JxZqyYUNkpEfTAqqDwYLkFq7dvwfoSZQtLTKsv1pY8Czm4h6cU9rjSW7Dsp6qBg5giACc76Zj
+ARC-Seal: i=1; a=rsa-sha256; t=1526937807; cv=none;
         d=google.com; s=arc-20160816;
-        b=0BHFWVgJFlL3BR9Eh3jKw9GxYzgbbG6DEUva5QJuJwMy8/lGdBh+JkZOT9gRxTCadQ
-         +ctzR+hgXQmfUO/BmMBU+tnamOLsGUgbAHVVJ10GKoU4N0rtF4muY7KWD388F5nEeA2t
-         IgdvvwtwbQALl/JTtNoQx7sD7E3zW6gzv7tap2B1HPwokrnuWbQi+eOHjl0eYHBNNufC
-         JA7mibpYPewxtaqOsrR4P9NDIl6QVf/RC8IeJx4PjxVp6+VRNvfgGPP76U8h3mTfkwSA
-         H5G9ZNlqtp39QHteSpZKk9IA0qFWNXJJJcB6LUPkACk0G3OXCfNnenXVJqTK4G7Hahbu
-         rPjg==
+        b=xNsZ79xUfUXrkVqCWloU2QqgvjyKZHZukZTz1Ga1Wv3e5Q9C9Jj9kWoGQaGvZLA59W
+         0q+mQ3Z2444DkJvehasKZZVYxYHmikcOKBCGp2MIYehNW63KHhHXssOv2IFKAg943s/O
+         IVuxwmIEcMBAyq9+1U+Dxtwdlhm2QMA6D4FP2/dXHyuxZqzuAaBlUjeyRhh6ab5f5dQj
+         Lsexhwwt+N8qyulk7bpR03uoL6p0oNBDhcPw4QCaXk7F2OO4CL3b3UaWvy54XGTFwQ48
+         SMrPQsFBArBJo8nLdseZNFydydseoYL9Z+0BNQA3DwJDdOUmAAeQQPTgjrOIRUxk13kQ
+         2EOw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=rB01O+NiFaXWOuLG0ZNolm2RviIWXr0JXJNgEjhr4Ec=;
-        b=jzNo4gszokyfzKmypeUIsXcdDYczhIjyhRLUFtTBu/4gFhaP6NgEc0JGKBwuNVT2Bi
-         sN5qey1rPy1wTNQavQg1SIAX4jHV9466zsA4+JUJQ+KGZuZncrpehSDWOqj0DD78xXdp
-         yqRP9dk6SjOI69eYPCLtak7eBrbGWJ6zABQvpZe3XDdb1YOGBLeNlzSn+RRmrowsUf5R
-         HhFHnZNiURIsjpg187PMwrIHLQGIP7AzV38WElGmDaKdRGj4RGupMrFeHRMoEwG1l+GU
-         lY/ZtwUZQNw9NXi/gr3BVG85fKlpOlCnswSVZJ8qBYlkfAeqsCHeZh4lQ8uTkcn3GaDv
-         YYmw==
+        bh=lDSSuQh7p68OZlwVLlcfvoR51dqcV9+Vj2WHYPtCHhQ=;
+        b=ujcicp1QLXWhnnS6X5ygSn2UXXpOYtrZvXXdZpUa88sULHxjb/i6JVcIEVFGs7+WCJ
+         ePhlakW2e9fMw5fA6jI6EHuj0r/x53KQLqGdF9LpUD2X+2svFnfiortRZhjA8z9mwWtb
+         0pHAm7earO1q+CMzSxWbgb7B31AodpBRRs5wzPA2taQXAeGrwLebtNbVf8tKmkq4TksT
+         XU3wJmFO/k0SLcQWJLJRVQ5kRTunQm5IL+xbLSeZwuwee6inJJXp0yJkmX2hS2l61gLA
+         tiVxZ+j5Hwlw3N65+pRV2UC5QnaZMao48emyey/Jp33LXgyvllRFwtyYgPd4C/jZyJhW
+         CBQA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=Rjh6q7na;
+       dkim=pass header.i=@kernel.org header.s=default header.b=NnO/UqPD;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=Rjh6q7na;
+       dkim=pass header.i=@kernel.org header.s=default header.b=NnO/UqPD;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jeremy Soller <jeremy@system76.com>,
+	Federico Cuello <fedux@fedux.com.ar>,
 	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.16 008/110] ALSA: hda/realtek - Clevo P950ER ALC1220 Fixup
-Date: Mon, 21 May 2018 23:11:05 +0200
-Message-Id: <20180521210504.640455271@linuxfoundation.org>
+Subject: [PATCH 4.16 007/110] ALSA: usb: mixer: volume quirk for CM102-A+/102S+
+Date: Mon, 21 May 2018 23:11:04 +0200
+Message-Id: <20180521210504.547698504@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601110341492205042?=
-X-GMAIL-MSGID: =?utf-8?q?1601110341492205042?=
+X-GMAIL-THRID: =?utf-8?q?1601109768849668423?=
+X-GMAIL-MSGID: =?utf-8?q?1601110338402693772?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,29 +51,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jeremy Soller <jeremy@system76.com>
+From: Federico Cuello <fedux@fedux.com.ar>
 
-commit 2f0d520a1a73555ac51c19cd494493f60b4c1cea upstream.
+commit 21493316a3c4598f308d5a9fa31cc74639c4caff upstream.
 
-This adds support for the P950ER, which has the same required fixup as
-the P950HR, but has a different PCI ID.
+Currently it's not possible to set volume lower than 26% (it just mutes).
 
-Signed-off-by: Jeremy Soller <jeremy@system76.com>
+Also fixes this warning:
+
+  Warning! Unlikely big volume range (=9472), cval->res is probably wrong.
+  [13] FU [PCM Playback Volume] ch = 2, val = -9473/-1/1
+
+, and volume works fine for full range.
+
+Signed-off-by: Federico Cuello <fedux@fedux.com.ar>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |    1 +
- 1 file changed, 1 insertion(+)
+ sound/usb/mixer.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -2363,6 +2363,7 @@ static const struct snd_pci_quirk alc882
- 	SND_PCI_QUIRK_VENDOR(0x1462, "MSI", ALC882_FIXUP_GPIO3),
- 	SND_PCI_QUIRK(0x147b, 0x107a, "Abit AW9D-MAX", ALC882_FIXUP_ABIT_AW9D_MAX),
- 	SND_PCI_QUIRK(0x1558, 0x9501, "Clevo P950HR", ALC1220_FIXUP_CLEVO_P950),
-+	SND_PCI_QUIRK(0x1558, 0x95e2, "Clevo P950ER", ALC1220_FIXUP_CLEVO_P950),
- 	SND_PCI_QUIRK_VENDOR(0x1558, "Clevo laptop", ALC882_FIXUP_EAPD),
- 	SND_PCI_QUIRK(0x161f, 0x2054, "Medion laptop", ALC883_FIXUP_EAPD),
- 	SND_PCI_QUIRK(0x17aa, 0x3a0d, "Lenovo Y530", ALC882_FIXUP_LENOVO_Y530),
+--- a/sound/usb/mixer.c
++++ b/sound/usb/mixer.c
+@@ -915,6 +915,14 @@ static void volume_control_quirks(struct
+ 		}
+ 		break;
+ 
++	case USB_ID(0x0d8c, 0x0103):
++		if (!strcmp(kctl->id.name, "PCM Playback Volume")) {
++			usb_audio_info(chip,
++				 "set volume quirk for CM102-A+/102S+\n");
++			cval->min = -256;
++		}
++		break;
++
+ 	case USB_ID(0x0471, 0x0101):
+ 	case USB_ID(0x0471, 0x0104):
+ 	case USB_ID(0x0471, 0x0105):
