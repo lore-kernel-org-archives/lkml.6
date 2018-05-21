@@ -1,44 +1,39 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqQcstmd18Ly2e9SSJUxQnLnCa4M/dglB/m1mGd1rDO2juRgMCk8r8+GSeJ5LDSJBmbX3LR
-ARC-Seal: i=1; a=rsa-sha256; t=1526937904; cv=none;
+X-Google-Smtp-Source: AB8JxZo3eP9gwcquppojAN1vPvyutRD2iPMkzSzVOKGgkorYeTWrB2/mF5x2G3Ota2haYS8GA6IW
+ARC-Seal: i=1; a=rsa-sha256; t=1526937902; cv=none;
         d=google.com; s=arc-20160816;
-        b=DG+mNEimYyvck17oHBMo+NqW/cdMeZ8eKsCinbP+nSDvhI7mndkyPjZhZutUC1vi9L
-         a+F7MeccTXSLqiXShLzM9t/4Fx7AXX9Knu7HQ/kZDOvEtcr1/Ch8WWXFVc+Wyc4J1Br7
-         5OWFeqL8RJC3PDeplxyBnCfXXbejPiSG4WcKnVSnbim42i04caJC+FLXDxaXo5O9PBLt
-         VBqD90a1vsmrx8Rz/XLNhvGPkFMz4qOPUeUch13XlmaRG+kpUbQ6NfcRyDY6CT4csxmq
-         +KCQb4/pNnAJ8eKIXd/XoAMwvBUdv5XelIQWmI31N5VZoACeHC5OB3pwanbYCFCYDoLL
-         7MSw==
+        b=yFu4trZrKpo1fn34rXBegwyAndimSL220puTZ390t/WvrT0i9gJzeO9M7d1qHAwz1h
+         0jl6NlbxXqJcXrBQfJj23EE2eXoEr3Xl661mPvgHiD0wirBHH+/h/4vx7PX8N9kVdOeL
+         +rmul3mrZS1gRJLrLu64tqrl/GZHFwLWEv9kmVb4tH+MY6Aswbfw/Bq7+JYbtTGcsoQY
+         X5aYb0aZAalePhjMur2Ae08Fp9bHRPjygmg+lbFtlzhtSNYG2vDVUW0E8nxMfmEgnp6Y
+         T4DaNnmGw8dSfpVdZUrxCo+8O+RMCMthHI9ouLCPTpJB8BHCs0TbowMnXAU5ioXz3oEv
+         RnJA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=1WSOpdBCeOBe52y9+5uKY/EmvTCX7Tbb0WXsXuBFu0M=;
-        b=VHjJsv1SINKw6H+fhH2z8xsT3/5Ffd+oL6vawxQeg1wK8gsm4y94zxxgQpovo7YpAF
-         mULM6AmNu71f9DNnkVgs352uH5qxrgtp59k97EYbv7wBwvFdtrd71divLItcw2MC27GA
-         uojIknVt5YfxbmFjXxAaNMOneh0kOBYG7kNUFnRXuoQP94PiwN2w6P1P0QDHEFM/SXV4
-         4/myRr2Koi6YoVuFdcUTayKo+O3Zysga8age0cc93hNUxmJqDR8FS5KEuvBofcgICmv1
-         S6xkIFkm7Lf6OZ1c0yB6Xbpd/0f1HMK6y+ETgV6p6MEantalHpqpVUnNGi7gG74b2JHv
-         0bUQ==
+        bh=swFjaaDSNkQHv2w/N76rV3KVRlTJdpNYgLSkrnxxJIw=;
+        b=xJgQ9htHG24Es85GcKg3GMjcVEGo/nfHQ6blobQaCvyddNQPQ5c76kf2nYOM178GAN
+         3O2Hg6IkU6dINZXlbTKbVhGE12jHZhuN0jU6E09CGrqFphdJCPlPeGah25UALQLzJHYb
+         H5pq7rKmVEyV8lTfkiCV0vhmA9m/GRQjJCUwlBd4FRxk+KJJMKoJYp8Ui5t70uv3K5S8
+         u48mfI8x4V1+Fn34t6dCl0TwapoLdi2Ag8QmVwQC2N9yCjqGF6Obfi6X87sFigvNfQjK
+         pjSFoTAcKozls5xO6DmHk5t4REu6JJAzvelvA3pusBX/SG6g04Xp0uv0dXG93mJR3y89
+         3UMQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=w0M+eMl+;
+       dkim=pass header.i=@kernel.org header.s=default header.b=feo+kSOF;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=w0M+eMl+;
+       dkim=pass header.i=@kernel.org header.s=default header.b=feo+kSOF;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Matthew Wilcox <mawilcox@microsoft.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Kees Cook <keescook@chromium.org>,
-	Yury Norov <ynorov@caviumnetworks.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.16 036/110] lib/test_bitmap.c: fix bitmap optimisation tests to report errors correctly
-Date: Mon, 21 May 2018 23:11:33 +0200
-Message-Id: <20180521210506.912667866@linuxfoundation.org>
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.16 035/110] cpufreq: armada-37xx: driver relies on cpufreq-dt
+Date: Mon, 21 May 2018 23:11:32 +0200
+Message-Id: <20180521210506.829446267@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -48,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601110038722851247?=
-X-GMAIL-MSGID: =?utf-8?q?1601110440478592234?=
+X-GMAIL-THRID: =?utf-8?q?1601110437993449287?=
+X-GMAIL-MSGID: =?utf-8?q?1601110437993449287?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -57,71 +52,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+From: Miquel Raynal <miquel.raynal@bootlin.com>
 
-commit 1e3054b98c5415d5cb5f8824fc33b548ae5644c3 upstream.
+commit 0cf442c6bcf572e04f5690340d5b8e62afcee2ca upstream.
 
-I had neglected to increment the error counter when the tests failed,
-which made the tests noisy when they fail, but not actually return an
-error code.
+Armada-37xx driver registers a cpufreq-dt driver. Not having
+CONFIG_CPUFREQ_DT selected leads to a silent abort during the probe.
+Prevent that situation by having the former depending on the latter.
 
-Link: http://lkml.kernel.org/r/20180509114328.9887-1-mpe@ellerman.id.au
-Fixes: 3cc78125a081 ("lib/test_bitmap.c: add optimisation tests")
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Reported-by: Michael Ellerman <mpe@ellerman.id.au>
-Tested-by: Michael Ellerman <mpe@ellerman.id.au>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Cc: Yury Norov <ynorov@caviumnetworks.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: <stable@vger.kernel.org>	[4.13+]
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 92ce45fb875d7 (cpufreq: Add DVFS support for Armada 37xx)
+Cc: 4.16+ <stable@vger.kernel.org> # 4.16+
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- lib/test_bitmap.c |   21 +++++++++++++++------
- 1 file changed, 15 insertions(+), 6 deletions(-)
+ drivers/cpufreq/Kconfig.arm |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/lib/test_bitmap.c
-+++ b/lib/test_bitmap.c
-@@ -329,23 +329,32 @@ static void noinline __init test_mem_opt
- 	unsigned int start, nbits;
+--- a/drivers/cpufreq/Kconfig.arm
++++ b/drivers/cpufreq/Kconfig.arm
+@@ -20,7 +20,7 @@ config ACPI_CPPC_CPUFREQ
  
- 	for (start = 0; start < 1024; start += 8) {
--		memset(bmap1, 0x5a, sizeof(bmap1));
--		memset(bmap2, 0x5a, sizeof(bmap2));
- 		for (nbits = 0; nbits < 1024 - start; nbits += 8) {
-+			memset(bmap1, 0x5a, sizeof(bmap1));
-+			memset(bmap2, 0x5a, sizeof(bmap2));
-+
- 			bitmap_set(bmap1, start, nbits);
- 			__bitmap_set(bmap2, start, nbits);
--			if (!bitmap_equal(bmap1, bmap2, 1024))
-+			if (!bitmap_equal(bmap1, bmap2, 1024)) {
- 				printk("set not equal %d %d\n", start, nbits);
--			if (!__bitmap_equal(bmap1, bmap2, 1024))
-+				failed_tests++;
-+			}
-+			if (!__bitmap_equal(bmap1, bmap2, 1024)) {
- 				printk("set not __equal %d %d\n", start, nbits);
-+				failed_tests++;
-+			}
- 
- 			bitmap_clear(bmap1, start, nbits);
- 			__bitmap_clear(bmap2, start, nbits);
--			if (!bitmap_equal(bmap1, bmap2, 1024))
-+			if (!bitmap_equal(bmap1, bmap2, 1024)) {
- 				printk("clear not equal %d %d\n", start, nbits);
--			if (!__bitmap_equal(bmap1, bmap2, 1024))
-+				failed_tests++;
-+			}
-+			if (!__bitmap_equal(bmap1, bmap2, 1024)) {
- 				printk("clear not __equal %d %d\n", start,
- 									nbits);
-+				failed_tests++;
-+			}
- 		}
- 	}
- }
+ config ARM_ARMADA_37XX_CPUFREQ
+ 	tristate "Armada 37xx CPUFreq support"
+-	depends on ARCH_MVEBU
++	depends on ARCH_MVEBU && CPUFREQ_DT
+ 	help
+ 	  This adds the CPUFreq driver support for Marvell Armada 37xx SoCs.
+ 	  The Armada 37xx PMU supports 4 frequency and VDD levels.
