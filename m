@@ -1,84 +1,220 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753186AbeEUQwE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 12:52:04 -0400
-Received: from mga05.intel.com ([192.55.52.43]:9881 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752876AbeEUQwC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 12:52:02 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,426,1520924400";
-   d="scan'208";a="52619328"
-Subject: Re: [PATCH v2]: perf/x86: store user space frame-pointer value on a
- sample
-To: Andy Lutomirski <luto@amacapital.net>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org
-References: <31205dc8-b756-e12b-0249-2ed06c2db9c9@linux.intel.com>
- <20180509145436.GV12217@hirez.programming.kicks-ass.net>
- <3ecedd91-1c01-6fc5-4648-89eaf5ff0930@linux.intel.com>
- <20180510101406.GA12217@hirez.programming.kicks-ass.net>
- <0594eaea-0cab-ea04-c258-5f4770ffeee6@linux.intel.com>
- <71E4F816-7E0F-4984-B53C-06F8566EAB40@amacapital.net>
-From: Alexey Budankov <alexey.budankov@linux.intel.com>
-Message-ID: <36a2c137-8342-4ff4-ddcb-3ac1fe092810@linux.intel.com>
-Date: Mon, 21 May 2018 19:51:54 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1753236AbeEUQwM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 12:52:12 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:34770 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752908AbeEUQwF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 12:52:05 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0F494602BC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
+Subject: Re: [PATCH v4 4/5] remoteproc: qcom: Add support for mss remoteproc
+ on SDM845
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: p.zabel@pengutronix.de, robh+dt@kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, georgi.djakov@linaro.org,
+        jassisinghbrar@gmail.com, ohad@wizery.com, mark.rutland@arm.com,
+        kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
+References: <20180425150843.26657-1-sibis@codeaurora.org>
+ <20180425150843.26657-5-sibis@codeaurora.org>
+ <20180518213104.GT14924@minitux>
+From: Sibi S <sibis@codeaurora.org>
+Message-ID: <dec6b787-9c61-5f46-2448-27adca00d12f@codeaurora.org>
+Date: Mon, 21 May 2018 22:21:56 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <71E4F816-7E0F-4984-B53C-06F8566EAB40@amacapital.net>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180518213104.GT14924@minitux>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Bjorn,
+Thanks for the review.
 
-Hi Andy,
-On 21.05.2018 17:14, Andy Lutomirski wrote:
+On 05/19/2018 03:01 AM, Bjorn Andersson wrote:
+> On Wed 25 Apr 08:08 PDT 2018, Sibi Sankar wrote:
 > 
->> On May 21, 2018, at 5:44 AM, Alexey Budankov <alexey.budankov@linux.intel.com> wrote:
+>>  From SDM845, the Q6SS reset sequence on software side has been
+>> simplified with the introduction of boot FSM which assists in
+>> bringing the Q6 out of reset
 >>
->> Hi Peter,
+>> Add GLINK subdevice to allow definition of GLINK edge as a
+>> child of modem-pil
 >>
->>> On 10.05.2018 13:14, Peter Zijlstra wrote:
->>> On Thu, May 10, 2018 at 12:42:38PM +0300, Alexey Budankov wrote:
->>>>> The Changelog needs to state that user_regs->bp is in fact valid and
->>>>
->>>> That actually was tested on binaries compiled without and with BP exposed 
->>>> and in the latter case proved the value of that change.
->>>
->>> Mostly works is not the same as 'always initialized', if there are entry
->>> paths that do not store that register, then using the value might leak
->>> values from the kernel stack, which would be bad.
->>>
->>> But like said, I think much of the kernel entry code was sanitized with
->>> the PTI effort and I suspect things are in fact fine now, but lets wait
->>> for Andy to confirm.
->>
->> It looks like, these days, all registers are saved on system calls, just 
->> like you anticipated.
->>
->> So BP register value might be stored into the Perf trace on a sample. 
->>
->> Andy?
 > 
-> Hmm, I thought I replied. Yes, they are indeed all saved, but I’m not very excited about committing to doing so forever. But storing BP should be fine.
-
-Thanks for explicit confirmation regarding BP register.
-BTW, do you see any mean to prevent possible unattended regression?
-I guess it could be some compile time assertion or regression testing.
-
-Thanks,
-Alexey
-
+> Please split this in two patches; one adding sdm845 and one adding the
+> glink subdev. You can squash in the addition of the compatible in the dt
+> binding into the sdm845 code patch, you wish as well.
 > 
+
+Will split it into two commits
+Will still keep the dt-binding as a separate patch
+
+> Apart from that this looks good!
+> 
+> Regards,
+> Bjorn
+> 
+>> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+>> ---
+>>   drivers/remoteproc/qcom_q6v5_pil.c | 65 +++++++++++++++++++++++++++++-
+>>   1 file changed, 64 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+>> index 7e2d04d4f2f0..4d9504e8bf8e 100644
+>> --- a/drivers/remoteproc/qcom_q6v5_pil.c
+>> +++ b/drivers/remoteproc/qcom_q6v5_pil.c
+>> @@ -57,6 +57,8 @@
+>>   #define RMB_PMI_META_DATA_REG		0x10
+>>   #define RMB_PMI_CODE_START_REG		0x14
+>>   #define RMB_PMI_CODE_LENGTH_REG		0x18
+>> +#define RMB_MBA_MSS_STATUS		0x40
+>> +#define RMB_MBA_ALT_RESET		0x44
+>>   
+>>   #define RMB_CMD_META_DATA_READY		0x1
+>>   #define RMB_CMD_LOAD_READY		0x2
+>> @@ -104,6 +106,13 @@
+>>   #define QDSP6SS_XO_CBCR		0x0038
+>>   #define QDSP6SS_ACC_OVERRIDE_VAL		0x20
+>>   
+>> +/* QDSP6v65 parameters */
+>> +#define QDSP6SS_SLEEP                   0x3C
+>> +#define QDSP6SS_BOOT_CORE_START         0x400
+>> +#define QDSP6SS_BOOT_CMD                0x404
+>> +#define SLEEP_CHECK_MAX_LOOPS           200
+>> +#define BOOT_FSM_TIMEOUT                10000
+>> +
+>>   struct reg_info {
+>>   	struct regulator *reg;
+>>   	int uV;
+>> @@ -170,6 +179,7 @@ struct q6v5 {
+>>   	void *mpss_region;
+>>   	size_t mpss_size;
+>>   
+>> +	struct qcom_rproc_glink glink_subdev;
+>>   	struct qcom_rproc_subdev smd_subdev;
+>>   	struct qcom_rproc_ssr ssr_subdev;
+>>   	struct qcom_sysmon *sysmon;
+>> @@ -184,6 +194,7 @@ enum {
+>>   	MSS_MSM8916,
+>>   	MSS_MSM8974,
+>>   	MSS_MSM8996,
+>> +	MSS_SDM845,
+>>   };
+>>   
+>>   static int q6v5_regulator_init(struct device *dev, struct reg_info *regs,
+>> @@ -390,8 +401,35 @@ static int q6v5proc_reset(struct q6v5 *qproc)
+>>   	int ret;
+>>   	int i;
+>>   
+>> +	if (qproc->version == MSS_SDM845) {
+>>   
+>> -	if (qproc->version == MSS_MSM8996) {
+>> +		val = readl(qproc->reg_base + QDSP6SS_SLEEP);
+>> +		val |= 0x1;
+>> +		writel(val, qproc->reg_base + QDSP6SS_SLEEP);
+>> +
+>> +		ret = readl_poll_timeout(qproc->reg_base + QDSP6SS_SLEEP,
+>> +					 val, !(val & BIT(31)), 1,
+>> +					 SLEEP_CHECK_MAX_LOOPS);
+>> +		if (ret) {
+>> +			dev_err(qproc->dev, "QDSP6SS Sleep clock timed out\n");
+>> +			return -ETIMEDOUT;
+>> +		}
+>> +
+>> +		/* De-assert QDSP6 stop core */
+>> +		writel(1, qproc->reg_base + QDSP6SS_BOOT_CORE_START);
+>> +		/* Trigger boot FSM */
+>> +		writel(1, qproc->reg_base + QDSP6SS_BOOT_CMD);
+>> +
+>> +		ret = readl_poll_timeout(qproc->rmb_base + RMB_MBA_MSS_STATUS,
+>> +				val, (val & BIT(0)) != 0, 10, BOOT_FSM_TIMEOUT);
+>> +		if (ret) {
+>> +			dev_err(qproc->dev, "Boot FSM failed to complete.\n");
+>> +			return ret;
+>> +		}
+>> +
+>> +		goto pbl_wait;
+>> +
+>> +	} else if (qproc->version == MSS_MSM8996) {
+>>   		/* Override the ACC value if required */
+>>   		writel(QDSP6SS_ACC_OVERRIDE_VAL,
+>>   		       qproc->reg_base + QDSP6SS_STRAP_ACC);
+>> @@ -499,6 +537,7 @@ static int q6v5proc_reset(struct q6v5 *qproc)
+>>   	val &= ~Q6SS_STOP_CORE;
+>>   	writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
+>>   
+>> +pbl_wait:
+>>   	/* Wait for PBL status */
+>>   	ret = q6v5_rmb_pbl_wait(qproc, 1000);
+>>   	if (ret == -ETIMEDOUT) {
+>> @@ -1256,6 +1295,7 @@ static int q6v5_probe(struct platform_device *pdev)
+>>   	}
+>>   	qproc->mpss_perm = BIT(QCOM_SCM_VMID_HLOS);
+>>   	qproc->mba_perm = BIT(QCOM_SCM_VMID_HLOS);
+>> +	qcom_add_glink_subdev(rproc, &qproc->glink_subdev);
+>>   	qcom_add_smd_subdev(rproc, &qproc->smd_subdev);
+>>   	qcom_add_ssr_subdev(rproc, &qproc->ssr_subdev, "mpss");
+>>   	qproc->sysmon = qcom_add_sysmon_subdev(rproc, "modem", 0x12);
+>> @@ -1279,6 +1319,7 @@ static int q6v5_remove(struct platform_device *pdev)
+>>   	rproc_del(qproc->rproc);
+>>   
+>>   	qcom_remove_sysmon_subdev(qproc->sysmon);
+>> +	qcom_remove_glink_subdev(qproc->rproc, &qproc->glink_subdev);
+>>   	qcom_remove_smd_subdev(qproc->rproc, &qproc->smd_subdev);
+>>   	qcom_remove_ssr_subdev(qproc->rproc, &qproc->ssr_subdev);
+>>   	rproc_free(qproc->rproc);
+>> @@ -1286,6 +1327,27 @@ static int q6v5_remove(struct platform_device *pdev)
+>>   	return 0;
+>>   }
+>>   
+>> +static const struct rproc_hexagon_res sdm845_mss = {
+>> +	.hexagon_mba_image = "mba.mbn",
+>> +	.proxy_clk_names = (char*[]){
+>> +			"xo",
+>> +			"axis2",
+>> +			"prng",
+>> +			NULL
+>> +	},
+>> +	.active_clk_names = (char*[]){
+>> +			"iface",
+>> +			"bus",
+>> +			"mem",
+>> +			"gpll0_mss",
+>> +			"snoc_axi",
+>> +			"mnoc_axi",
+>> +			NULL
+>> +	},
+>> +	.need_mem_protection = true,
+>> +	.version = MSS_SDM845,
+>> +};
+>> +
+>>   static const struct rproc_hexagon_res msm8996_mss = {
+>>   	.hexagon_mba_image = "mba.mbn",
+>>   	.proxy_clk_names = (char*[]){
+>> @@ -1379,6 +1441,7 @@ static const struct of_device_id q6v5_of_match[] = {
+>>   	{ .compatible = "qcom,msm8916-mss-pil", .data = &msm8916_mss},
+>>   	{ .compatible = "qcom,msm8974-mss-pil", .data = &msm8974_mss},
+>>   	{ .compatible = "qcom,msm8996-mss-pil", .data = &msm8996_mss},
+>> +	{ .compatible = "qcom,sdm845-mss-pil", .data = &sdm845_mss},
+>>   	{ },
+>>   };
+>>   MODULE_DEVICE_TABLE(of, q6v5_of_match);
+>> -- 
+>> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+>> a Linux Foundation Collaborative Project
+>>
+> 
+
+-- 
+Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc, is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
