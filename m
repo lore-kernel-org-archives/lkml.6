@@ -1,41 +1,40 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrSD7p5U68WyHXdbFnrCA82ncw/TKeBuSbvTT70YAH8iLIjlZFO6Qc2J2pYXaqyV+IwL4kl
-ARC-Seal: i=1; a=rsa-sha256; t=1526937311; cv=none;
+X-Google-Smtp-Source: AB8JxZpXruww/l7zj2EwBrMWfqXq7Yrj6Xb+zRrQpuAk0JDdJcuDD0ppzwoysXB0dAA76M/W1NFu
+ARC-Seal: i=1; a=rsa-sha256; t=1526937306; cv=none;
         d=google.com; s=arc-20160816;
-        b=H7ZCF/6FVcGrzyFmOBbzFnnJPjw1NJmFOLr6pl+pTVJSKn5m751/lQMrvSjdk+/pqf
-         g9doLaiSEUSw4s+zOojoRjBiiQ5s9zVm1IK1N0O9p4e8dlsM4ZlFRHkcLhVBJHnYnNLG
-         YVXU6ZwVyMqSvF5weZ3GDQSP/Z8qiHlu4PpNlKWwc0i5NPADdQWNDr3TAijON1Cpi6XC
-         V/yn5MaZQC1l6IqiQlMI+G20dB72799kBBmc/CL2HZ/9At1gbp+cx0b5VpgyxO7Iqzzw
-         SAdI2dxV+/9PZXupjv4Jc3fzGLsPbI7bh9tEohLLsga+z5sGdNmuf+uyE7SVawS/Oiqk
-         3IjA==
+        b=mB86cxKbYGEvHbdGzbWJqwazklXdYDXo7JWPhxn3yxl59xtxS4kKEtC2a3S6wo0ejy
+         mxZXjm9Osac6qbgfSl8DJW/bRI4BwQuEklv9NUFiVAFSvDXDAxjsQo8b6FD9XH1OHg1A
+         ZIAXFzicoHI2AvSIEv09EeEPaat5Dag2MlgogDtMswr36HSH8aW4uTFIh4K40QeB/D9i
+         dp2lvnIZenEkh8GYFrELCvutj/530XDD2lfxPALHbp/1NedBXTh10NSw3+DRjesYCIq1
+         iBwITPLc9eGUv1HGv686RdaMuoQTDgjWU05AO3dHtaAnscAmVUlkcY9qVUqPx4DJBF0i
+         t3eg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=qX+2uSxOL3gP5veP9RbjdaDO/rSoFxZ3f+V1E3Yg1m4=;
-        b=OhSsslm401LbQ31kjt5EtzChCzW5/u2FUDFTYj9QxNr7Qs06hkKUNj1FpoAxfHZs9i
-         /38LKiNodHT/CB1SFR1GOo5RyMrbxCiACmvt3GTtKcOrWB3tUcLVKxbZoSFlH0TajZbS
-         JM17og393n0nb8SWweQuHWx5tUun6Hs/1glP0r7+nDzc3JGkvutSqFwYR8FKGePLVglU
-         9AwJb6YzDlH1EM9R+sDaPurNxH+i/3pHKEdYgPk2hNQYxoPAcyjJUZ26KiAjm9OQY4Dz
-         S0CDt2Qpk9GkMXcj7WBL/2nPzQ2Za5c4g50MrpDOtFHU/IKk5B2AFPhFWJQq326Q0bD2
-         Ov5g==
+        bh=yvrbbGee7JkF8TooSs8rQMj7c2ugwWaoldxP73KWorE=;
+        b=rZihh0DmEU7vDOUNpI04wkdsM8jpklSzERI1+A0iOkIcwg9YdzLkjgnG3XgSDQuisO
+         5k5Q3KcEFYZHrpaEaUztWeZtsYITpZxncsI3ITJJYCfBPMAIEo6sI2NHLpuveVJgMz5r
+         NQ5tdZaGq9t3PAgz/5MM19MNGPQuJ5jv6Pd7a21ifXSxx3yuGd7/18VDYps9qNWjf20D
+         g3QSUehzAoUkCUPgcwiMIC1MZcyhb4xDsI2VhGAYwHutp5zB5zPdjha6b2w/cNmPVF45
+         0rMnlxfv4skHSUmuEhractBYQmrCOYlrU944kKni5w8nbw1UuulFxgr3WKMk6w1/e2u8
+         FyJg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=moDEHufH;
+       dkim=pass header.i=@kernel.org header.s=default header.b=sFbTZIhV;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=moDEHufH;
+       dkim=pass header.i=@kernel.org header.s=default header.b=sFbTZIhV;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Liu Bo <bo.liu@linux.alibaba.com>,
-	Filipe Manana <fdmanana@suse.com>,
-	Qu Wenruo <wqu@suse.com>,
-	David Sterba <dsterba@suse.com>,
-	Nikolay Borisov <nborisov@suse.com>
-Subject: [PATCH 4.9 35/87] btrfs: fix reading stale metadata blocks after degraded raid1 mounts
-Date: Mon, 21 May 2018 23:11:11 +0200
-Message-Id: <20180521210423.747857310@linuxfoundation.org>
+	Juergen Gross <jgross@suse.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	David Woodhouse <dwmw@amazon.co.uk>
+Subject: [PATCH 4.9 34/87] x86/amd: dont set X86_BUG_SYSRET_SS_ATTRS when running under Xen
+Date: Mon, 21 May 2018 23:11:10 +0200
+Message-Id: <20180521210423.609407739@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210420.222671977@linuxfoundation.org>
 References: <20180521210420.222671977@linuxfoundation.org>
@@ -45,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109818430995354?=
-X-GMAIL-MSGID: =?utf-8?q?1601109818430995354?=
+X-GMAIL-THRID: =?utf-8?q?1601109813034580646?=
+X-GMAIL-MSGID: =?utf-8?q?1601109813034580646?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,94 +53,56 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Liu Bo <bo.liu@linux.alibaba.com>
+commit def9331a12977770cc6132d79f8e6565871e8e38 upstream
 
-commit 02a3307aa9c20b4f6626255b028f07f6cfa16feb upstream.
+When running as Xen pv guest X86_BUG_SYSRET_SS_ATTRS must not be set
+on AMD cpus.
 
-If a btree block, aka. extent buffer, is not available in the extent
-buffer cache, it'll be read out from the disk instead, i.e.
+This bug/feature bit is kind of special as it will be used very early
+when switching threads. Setting the bit and clearing it a little bit
+later leaves a critical window where things can go wrong. This time
+window has enlarged a little bit by using setup_clear_cpu_cap() instead
+of the hypervisor's set_cpu_features callback. It seems this larger
+window now makes it rather easy to hit the problem.
 
-btrfs_search_slot()
-  read_block_for_search()  # hold parent and its lock, go to read child
-    btrfs_release_path()
-    read_tree_block()  # read child
+The proper solution is to never set the bit in case of Xen.
 
-Unfortunately, the parent lock got released before reading child, so
-commit 5bdd3536cbbe ("Btrfs: Fix block generation verification race") had
-used 0 as parent transid to read the child block.  It forces
-read_tree_block() not to check if parent transid is different with the
-generation id of the child that it reads out from disk.
-
-A simple PoC is included in btrfs/124,
-
-0. A two-disk raid1 btrfs,
-
-1. Right after mkfs.btrfs, block A is allocated to be device tree's root.
-
-2. Mount this filesystem and put it in use, after a while, device tree's
-   root got COW but block A hasn't been allocated/overwritten yet.
-
-3. Umount it and reload the btrfs module to remove both disks from the
-   global @fs_devices list.
-
-4. mount -odegraded dev1 and write some data, so now block A is allocated
-   to be a leaf in checksum tree.  Note that only dev1 has the latest
-   metadata of this filesystem.
-
-5. Umount it and mount it again normally (with both disks), since raid1
-   can pick up one disk by the writer task's pid, if btrfs_search_slot()
-   needs to read block A, dev2 which does NOT have the latest metadata
-   might be read for block A, then we got a stale block A.
-
-6. As parent transid is not checked, block A is marked as uptodate and
-   put into the extent buffer cache, so the future search won't bother
-   to read disk again, which means it'll make changes on this stale
-   one and make it dirty and flush it onto disk.
-
-To avoid the problem, parent transid needs to be passed to
-read_tree_block().
-
-In order to get a valid parent transid, we need to hold the parent's
-lock until finishing reading child.
-
-This patch needs to be slightly adapted for stable kernels, the
-&first_key parameter added to read_tree_block() is from 4.16+
-(581c1760415c4). The fix is to replace 0 by 'gen'.
-
-Fixes: 5bdd3536cbbe ("Btrfs: Fix block generation verification race")
-CC: stable@vger.kernel.org # 4.4+
-Signed-off-by: Liu Bo <bo.liu@linux.alibaba.com>
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
-Reviewed-by: Qu Wenruo <wqu@suse.com>
-[ update changelog ]
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/btrfs/ctree.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/kernel/cpu/amd.c |    5 +++--
+ arch/x86/xen/enlighten.c  |    4 +---
+ 2 files changed, 4 insertions(+), 5 deletions(-)
 
---- a/fs/btrfs/ctree.c
-+++ b/fs/btrfs/ctree.c
-@@ -2486,10 +2486,8 @@ read_block_for_search(struct btrfs_trans
- 	if (p->reada != READA_NONE)
- 		reada_for_search(root, p, level, slot, key->objectid);
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -824,8 +824,9 @@ static void init_amd(struct cpuinfo_x86
+ 		if (cpu_has(c, X86_FEATURE_3DNOW) || cpu_has(c, X86_FEATURE_LM))
+ 			set_cpu_cap(c, X86_FEATURE_3DNOWPREFETCH);
  
--	btrfs_release_path(p);
--
- 	ret = -EAGAIN;
--	tmp = read_tree_block(root, blocknr, 0);
-+	tmp = read_tree_block(root, blocknr, gen);
- 	if (!IS_ERR(tmp)) {
- 		/*
- 		 * If the read above didn't mark this buffer up to date,
-@@ -2503,6 +2501,8 @@ read_block_for_search(struct btrfs_trans
- 	} else {
- 		ret = PTR_ERR(tmp);
- 	}
-+
-+	btrfs_release_path(p);
- 	return ret;
+-	/* AMD CPUs don't reset SS attributes on SYSRET */
+-	set_cpu_bug(c, X86_BUG_SYSRET_SS_ATTRS);
++	/* AMD CPUs don't reset SS attributes on SYSRET, Xen does. */
++	if (!cpu_has(c, X86_FEATURE_XENPV))
++		set_cpu_bug(c, X86_BUG_SYSRET_SS_ATTRS);
  }
  
+ #ifdef CONFIG_X86_32
+--- a/arch/x86/xen/enlighten.c
++++ b/arch/x86/xen/enlighten.c
+@@ -1977,10 +1977,8 @@ EXPORT_SYMBOL_GPL(xen_hvm_need_lapic);
+ 
+ static void xen_set_cpu_features(struct cpuinfo_x86 *c)
+ {
+-	if (xen_pv_domain()) {
+-		clear_cpu_bug(c, X86_BUG_SYSRET_SS_ATTRS);
++	if (xen_pv_domain())
+ 		set_cpu_cap(c, X86_FEATURE_XENPV);
+-	}
+ }
+ 
+ static void xen_pin_vcpu(int cpu)
