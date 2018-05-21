@@ -1,96 +1,388 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752838AbeEUEoS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 00:44:18 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55553 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751738AbeEUEiN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 00:38:13 -0400
-From: NeilBrown <neilb@suse.com>
-To: Oleg Drokin <oleg.drokin@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        James Simmons <jsimmons@infradead.org>,
-        Andreas Dilger <andreas.dilger@intel.com>
-Date: Mon, 21 May 2018 14:35:12 +1000
-Subject: [PATCH 07/30] staging: lustre: simplify capability dropping.
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lustre Development List <lustre-devel@lists.lustre.org>
-Message-ID: <152687731262.24196.18346433737169784278.stgit@noble>
-In-Reply-To: <152687724799.24196.7718555295926047576.stgit@noble>
-References: <152687724799.24196.7718555295926047576.stgit@noble>
-User-Agent: StGit/0.17.1-dirty
+        id S1752779AbeEUEoj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 00:44:39 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:32715 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751245AbeEUEoe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 00:44:34 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w4L4iN3P029349
+X-Nifty-SrcIP: [209.85.217.173]
+X-Google-Smtp-Source: AB8JxZrMS3aMngL9ikI+I7Tpl+A+m/OcY8rddC0UmTqX113QG8PbI0QIcDvOcECKNTGs2XPL5dm2l4kikLcLHGRwAmY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAFkk2KQUps1rhjxdOVz5Mkt+p7VkHX+o5aHvP3u0Hka0_ULcow@mail.gmail.com>
+References: <1526537830-22606-1-git-send-email-yamada.masahiro@socionext.com>
+ <1526537830-22606-4-git-send-email-yamada.masahiro@socionext.com> <CAFkk2KQUps1rhjxdOVz5Mkt+p7VkHX+o5aHvP3u0Hka0_ULcow@mail.gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Mon, 21 May 2018 13:43:42 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARP2b=jN_ioj3dT=3yiSTv7Ezu-MSPuh0vO30irN5D1nA@mail.gmail.com>
+Message-ID: <CAK7LNARP2b=jN_ioj3dT=3yiSTv7Ezu-MSPuh0vO30irN5D1nA@mail.gmail.com>
+Subject: Re: [PATCH v4 03/31] kconfig: reference environment variables
+ directly and remove 'option env='
+To: Ulf Magnusson <ulfalizer@gmail.com>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nicholas Piggin <npiggin@gmail.com>, Kees Cook <keescook@chromium.org>,
+        Emese Revfy <re.emese@gmail.com>, X86 ML <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Lustre has a 'squash credentials' concept similar to the "anon_uid"
-for nfsd.  When accessing a file with squashed credentials, we
-need to also drop capabilities.
-Linux has cap_drop_fs_set() and cap_drop_nfsd_set().  Rather than
-taking a completely different approach, this patch changes lustre
-to use this same cap_drop_*_set() approach.
+Hi.
 
-With this change we also drop CAP_MKNOD and CAP_MAC_OVERRIDE
-which are probably appropriate, and don't drop
-CAP_SYS_ADMIN or CAP_SYS_BOOT which should be irrelevant for
-file permission checking
 
-Calling both cap_drop_*_set() seems a bit clumsy, but gets
-the job done.
 
-Signed-off-by: NeilBrown <neilb@suse.com>
----
- .../staging/lustre/include/linux/libcfs/curproc.h  |   10 ----------
- drivers/staging/lustre/lustre/llite/file.c         |    8 +++-----
- 2 files changed, 3 insertions(+), 15 deletions(-)
+2018-05-21 0:46 GMT+09:00 Ulf Magnusson <ulfalizer@gmail.com>:
 
-diff --git a/drivers/staging/lustre/include/linux/libcfs/curproc.h b/drivers/staging/lustre/include/linux/libcfs/curproc.h
-index 83526f84495d..fc6f6eb2d5fe 100644
---- a/drivers/staging/lustre/include/linux/libcfs/curproc.h
-+++ b/drivers/staging/lustre/include/linux/libcfs/curproc.h
-@@ -50,16 +50,6 @@
- 
- typedef u32 cfs_cap_t;
- 
--#define CFS_CAP_FS_MASK (BIT(CAP_CHOWN) |		\
--			 BIT(CAP_DAC_OVERRIDE) |	\
--			 BIT(CAP_DAC_READ_SEARCH) |	\
--			 BIT(CAP_FOWNER) |		\
--			 BIT(CAP_FSETID) |		\
--			 BIT(CAP_LINUX_IMMUTABLE) | \
--			 BIT(CAP_SYS_ADMIN) |	\
--			 BIT(CAP_SYS_BOOT) |	\
--			 BIT(CAP_SYS_RESOURCE))
--
- static inline cfs_cap_t cfs_curproc_cap_pack(void)
- {
- 	/* cfs_cap_t is only the first word of kernel_cap_t */
-diff --git a/drivers/staging/lustre/lustre/llite/file.c b/drivers/staging/lustre/lustre/llite/file.c
-index 0026fde81ad3..a77cadcd9d48 100644
---- a/drivers/staging/lustre/lustre/llite/file.c
-+++ b/drivers/staging/lustre/lustre/llite/file.c
-@@ -3050,7 +3050,6 @@ int ll_inode_permission(struct inode *inode, int mask)
- 	const struct cred *old_cred = NULL;
- 	struct cred *cred = NULL;
- 	bool squash_id = false;
--	cfs_cap_t cap;
- 	int rc = 0;
- 
- 	if (mask & MAY_NOT_BLOCK)
-@@ -3094,10 +3093,9 @@ int ll_inode_permission(struct inode *inode, int mask)
- 
- 		cred->fsuid = make_kuid(&init_user_ns, squash->rsi_uid);
- 		cred->fsgid = make_kgid(&init_user_ns, squash->rsi_gid);
--		for (cap = 0; cap < sizeof(cfs_cap_t) * 8; cap++) {
--			if ((1 << cap) & CFS_CAP_FS_MASK)
--				cap_lower(cred->cap_effective, cap);
--		}
-+		cred->cap_effective = cap_drop_nfsd_set(cred->cap_effective);
-+		cred->cap_effective = cap_drop_fs_set(cred->cap_effective);
-+
- 		old_cred = override_creds(cred);
- 	}
- 
+> s/environments/environment variables/
+
+Will fix.
+
+
+>
+>> +        * They will be written out to include/config/auto.conf.cmd
+>> +        */
+>> +       env_add(name, value);
+>> +
+>> +       return xstrdup(value);
+>> +}
+>> +
+>> +void env_write_dep(FILE *f, const char *autoconfig_name)
+>> +{
+>> +       struct env *e, *tmp;
+>> +
+>> +       list_for_each_entry_safe(e, tmp, &env_list, node) {
+>> +               fprintf(f, "ifneq \"$(%s)\" \"%s\"\n", e->name, e->value);
+>> +               fprintf(f, "%s: FORCE\n", autoconfig_name);
+>> +               fprintf(f, "endif\n");
+>> +               env_del(e);
+>> +       }
+>> +}
+>> +
+>> +static char *eval_clause(const char *in)
+>> +{
+>> +       char *res, *name;
+>> +
+>> +       /*
+>> +        * Returns an empty string because '$()' should be evaluated
+>> +        * to a null string.
+>> +        */
+>
+> Do you know of cases where this is more useful than erroring out?
+>
+> Not saying it doesn't make sense. Just curious.
+
+
+I just followed how Make works.
+
+Anyway, eval_clause() will return null string for null input.
+I will remove that hunk.
+
+
+
+
+>> +       if (!*in)
+>> +               return xstrdup("");
+>> +
+>> +       name = expand_string(in);
+>> +
+>> +       res = env_expand(name);
+>> +       free(name);
+>> +
+>> +       return res;
+>> +}
+>> +
+>> +/*
+>> + * Expand a string that follows '$'
+>> + *
+>> + * For example, if the input string is
+>> + *     ($(FOO)$($(BAR)))$(BAZ)
+>> + * this helper evaluates
+>> + *     $($(FOO)$($(BAR)))
+>> + * and returns the resulted string, then updates 'str' to point to the next
+>
+> s/resulted/resulting/
+>
+> Maybe something like this would make the behavior a bit clearer:
+>
+>   ...and returns a new string containing the expansion, also advancing
+>   'str' to point to the next character after... (note that this function does
+>   a recursive expansion) ...
+
+
+Is this OK?
+
+/*
+ * Expand a string that follows '$'
+ *
+ * For example, if the input string is
+ *     ($(FOO)$($(BAR)))$(BAZ)
+ * this helper evaluates
+ *     $($(FOO)$($(BAR)))
+ * and returns a new string containing the expansion (note that the string is
+ * recursively expanded), also advancing 'str' to point to the next character
+ * after the corresponding closing parenthesis, in this case, *str will be
+ *     $(BAR)
+ */
+
+
+
+>> + * character after the corresponding closing parenthesis, in this case, *str
+>> + * will be
+>> + *     $(BAR)
+>> + */
+>> +char *expand_dollar(const char **str)
+>> +{
+>> +       const char *p = *str;
+>> +       const char *q;
+>> +       char *tmp, *out;
+>> +       int nest = 0;
+>> +
+>> +       /* '$$' represents an escaped '$' */
+>> +       if (*p == '$') {
+>> +               *str = p + 1;
+>> +               return xstrdup("$");
+>> +       }
+>> +
+>> +       /*
+>> +        * Kconfig does not support single-letter variable as in $A
+>> +        * or curly braces as in ${CC}.
+>> +        */
+>> +       if (*p != '(')
+>> +               pperror("syntax error: '$' not followed by '('", p);
+>
+> Could say "not followed by '(' by or '$'".
+
+Will do.
+
+
+>> +
+>> +       p++;
+>> +       q = p;
+>> +       while (*q) {
+>> +               if (*q == '(') {
+>> +                       nest++;
+>> +               } else if (*q == ')') {
+>> +                       if (nest-- == 0)
+>> +                               break;
+>> +               }
+>> +               q++;
+>> +       }
+>> +
+>> +       if (!*q)
+>> +               pperror("unterminated reference to '%s': missing ')'", p);
+>> +
+>> +       tmp = xmalloc(q - p + 1);
+>> +       memcpy(tmp, p, q - p);
+>> +       tmp[q - p] = 0;
+>> +       *str = q + 1;
+>> +       out = eval_clause(tmp);
+>> +       free(tmp);
+>> +
+>> +       return out;
+>
+> This might be a bit clearer, since the 'str' update and the expansion
+> are independent:
+
+Indeed, will do.
+
+>
+>   /* Advance 'str' to after the expanded initial portion of the string */
+>   *str = q + 1;
+>
+>   /* Save the "FOO" part of "(FOO)" into 'tmp' and expand it recursively */
+>   tmp = xmalloc(q - p + 1);
+>   memcpy(tmp, p, q - p);
+>   tmp[q - p] = '\0';
+>   out = eval_clause(tmp);
+>   free(tmp);
+>
+>   return out;
+>
+> ...or switched around, but thought putting the 'str' bit first might
+> emphasize that it isn't modified.
+
+
+I prefer advancing the pointer at last.
+
+
+
+
+>> +}
+>> +
+>> +/*
+>> + * Expand variables in the given string.  Undefined variables
+>> + * expand to an empty string.
+>
+> I wonder what the tradeoffs are vs. erroring out here (or leaving
+> undefined variables as-is).
+
+
+I want to stick to the Make-like behavior here and exploit it in some cases.
+We can set some variables in some arch/*/Kconfig,
+but unset in the others.
+
+
+
+
+In some arch/*/Kconfig:
+
+min-gcc-version := 40900
+
+
+
+
+In init/Kconfig:
+
+# GCC 4.5 is required to build Linux Kernel.
+# Some architectures may override it (from arch/*/Kconfig) for their
+requirement.
+min-gcc-version := $(if,$(min-gcc-version),$(min-gcc-version),40500)
+
+... check the gcc version, then show error
+if it is older than $(min-gcc-version).
+
+
+
+
+
+
+
+
+>> + * The returned string must be freed when done.
+>> + */
+>> +char *expand_string(const char *in)
+>> +{
+>> +       const char *prev_in, *p;
+>> +       char *new, *out;
+>> +       size_t outlen;
+>> +
+>> +       out = xmalloc(1);
+>> +       *out = 0;
+>> +
+>> +       while ((p = strchr(in, '$'))) {
+>> +               prev_in = in;
+>> +               in = p + 1;
+>> +               new = expand_dollar(&in);
+>> +               outlen = strlen(out) + (p - prev_in) + strlen(new) + 1;
+>> +               out = xrealloc(out, outlen);
+>> +               strncat(out, prev_in, p - prev_in);
+>> +               strcat(out, new);
+>> +               free(new);
+>
+> Some code duplication with expand_one_token() here. Do you think
+> something could be factored out/reorganized?
+
+
+Yes.  For example, the following would work.
+If you prefer that, I can update it in v5.
+
+
+
+
+static char *__expand_string(const char **str, bool (*is_end)(const char *))
+{
+        const char *in, *prev_in, *p;
+        char *new, *out;
+        size_t outlen;
+
+        out = xmalloc(1);
+        *out = 0;
+
+        p = in = *str;
+
+        while (1) {
+                if (*p == '$') {
+                        prev_in = in;
+                        in = p + 1;
+                        new = expand_dollar(&in);
+                        outlen = strlen(out) + (p - prev_in) + strlen(new) + 1;
+                        out = xrealloc(out, outlen);
+                        strncat(out, prev_in, p - prev_in);
+                        strcat(out, new);
+                        free(new);
+                        p = in;
+                        continue;
+                }
+
+                if (is_end(p))
+                        break;
+
+                p++;
+        }
+
+        outlen = strlen(out) + (p - in) + 1;
+        out = xrealloc(out, outlen);
+        strncat(out, in, p - in);
+
+        *str = p;
+
+        return out;
+}
+
+static bool is_end_of_str(const char *s)
+{
+        return !*s;
+}
+
+char *expand_string(const char *in)
+{
+        return __expand_string(&in, is_end_of_str);
+}
+
+static bool is_end_of_token(const char *s)
+{
+        return !(isalnum(*s) || *s == '_' || *s == '-' || *s == '.' ||
+*s == '/');
+}
+
+char *expand_one_token(const char **str)
+{
+        return __expand_string(str, is_end_of_token);
+}
+
+
+
+
+
+> I wonder if it might be cleaner to have expand_dollar() take a pointer
+> to the '$'. Might even out in terms of the +1's you'd have to add, as
+> all callers manually bump the pointer before the call now. I haven't
+> tried implementing it though, so hard to say.
+
+
+If I do this, I'd want to add a sanity check to expand_dollar().
+I'd rather like to avoid unneeded code.
+
+
+static char *expand_dollar(...)
+{
+        assert(*p == '$');
+        p++;
+
+        /* '$$' represents an escaped '$' */
+        if (*p == '$') {
+               *str = p + 1;
+               return xstrdup("$");
+        }
+
+         ...
+
+
+}
+
+
+>
+> Some short inline comments similar to above would help too I think.
+>
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
