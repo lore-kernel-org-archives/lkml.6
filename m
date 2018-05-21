@@ -1,114 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751276AbeEUTjz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 15:39:55 -0400
-Received: from gateway34.websitewelcome.com ([192.185.148.196]:21706 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751077AbeEUTjy (ORCPT
+        id S1751054AbeEUTxH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 15:53:07 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:51782 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750837AbeEUTxG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 15:39:54 -0400
-X-Authority-Reason: nr=8
-Date: Mon, 21 May 2018 14:39:51 -0500
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [media] duplicate code in media drivers
-Message-ID: <20180521193951.GA16659@embeddedor.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.192.46.223
-X-Source-L: No
-X-Exim-ID: 1fKqev-001ysX-Jt
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [187.192.46.223]:57532
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 3
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Mon, 21 May 2018 15:53:06 -0400
+Message-ID: <1526932382.7898.25.camel@surriel.com>
+Subject: Re: [PATCH] mm/THP: use hugepage_vma_check() in
+ khugepaged_enter_vma_merge()
+From: Rik van Riel <riel@surriel.com>
+To: Song Liu <songliubraving@fb.com>, linux-mm@kvack.org
+Cc: kernel-team@fb.com, linux-kernel@vger.kernel.org,
+        Andrea Arcangeli <aarcange@redhat.com>
+Date: Mon, 21 May 2018 15:53:02 -0400
+In-Reply-To: <20180521193853.3089484-1-songliubraving@fb.com>
+References: <20180521193853.3089484-1-songliubraving@fb.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-gFG4TwXSJeSRiOik4kOd"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mauro,
 
-I found some duplicate code with the help of Coccinelle and Coverity. Notice that these are not code patches, they only point out the duplicate code in some media drivers:
+--=-gFG4TwXSJeSRiOik4kOd
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-diff -u -p drivers/media/pci/bt8xx/dvb-bt8xx.c /tmp/nothing/media/pci/bt8xx/dvb-bt8xx.c
---- drivers/media/pci/bt8xx/dvb-bt8xx.c
-+++ /tmp/nothing/media/pci/bt8xx/dvb-bt8xx.c
-@@ -389,9 +389,7 @@ static int advbt771_samsung_tdtc9251dh0_
-        else if (c->frequency < 600000000)
-                bs = 0x08;
-        else if (c->frequency < 730000000)
--               bs = 0x08;
-        else
--               bs = 0x08;
+On Mon, 2018-05-21 at 12:38 -0700, Song Liu wrote:
 
-        pllbuf[0] = 0x61;
-        pllbuf[1] = div >> 8;
-diff -u -p drivers/media/usb/dvb-usb/dib0700_devices.c /tmp/nothing/media/usb/dvb-usb/dib0700_devices.c
---- drivers/media/usb/dvb-usb/dib0700_devices.c
-+++ /tmp/nothing/media/usb/dvb-usb/dib0700_devices.c
-@@ -1741,13 +1741,6 @@ static int dib809x_tuner_attach(struct d
-        struct dib0700_adapter_state *st = adap->priv;
-        struct i2c_adapter *tun_i2c = st->dib8000_ops.get_i2c_master(adap->fe_adap[0].fe, DIBX000_I2C_INTERFACE_TUNER, 1);
+> This patch fixes these problems by reusing hugepage_vma_check() in
+> khugepaged_enter_vma_merge().
 
--       if (adap->id == 0) {
--               if (dvb_attach(dib0090_register, adap->fe_adap[0].fe, tun_i2c, &dib809x_dib0090_config) == NULL)
--                       return -ENODEV;
--       } else {
--               if (dvb_attach(dib0090_register, adap->fe_adap[0].fe, tun_i2c, &dib809x_dib0090_config) == NULL)
--                       return -ENODEV;
--       }
+Lets take a look at this in more detail. This effectively
+adds the following conditions to khugepaged_enter_vma_merge:
+- fail if MMF_DISABLE_THP bit is set in mm->flags (good)
+- allow if merging a tmpfs file and THP tmpfs is enabled (good)
+- disallow if is_vma_temporary_stack (good)
+- otherwise, allow if !VM_NO_KHUGEPAGED flag (good)
 
-        st->set_param_save = adap->fe_adap[0].fe->ops.tuner_ops.set_params;
-        adap->fe_adap[0].fe->ops.tuner_ops.set_params = dib8096_set_param_override;
-diff -u -p drivers/media/dvb-frontends/mb86a16.c /tmp/nothing/media/dvb-frontends/mb86a16.c
---- drivers/media/dvb-frontends/mb86a16.c
-+++ /tmp/nothing/media/dvb-frontends/mb86a16.c
-@@ -1466,9 +1466,7 @@ static int mb86a16_set_fe(struct mb86a16
-                                                        wait_t = (1572864 + state->srate / 2) / state->srate;
-                                                if (state->srate < 5000)
-                                                        /* FIXME ! , should be a long wait ! */
--                                                       msleep_interruptible(wait_t);
-                                                else
--                                                       msleep_interruptible(wait_t);
+Looks like this covers all the conditions I can think
+of, and if I missed any, chances are that condition
+should be added to hugepage_vma_check()...
 
-                                                if (sync_chk(state, &junk) == 0) {
-                                                        iq_vt_set(state, 1);
-diff -u -p drivers/media/dvb-frontends/au8522_decoder.c /tmp/nothing/media/dvb-frontends/au8522_decoder.c
---- drivers/media/dvb-frontends/au8522_decoder.c
-+++ /tmp/nothing/media/dvb-frontends/au8522_decoder.c
-@@ -280,14 +280,9 @@ static void setup_decoder_defaults(struc
-                        AU8522_TOREGAAGC_REG0E5H_CVBS);
-        au8522_writereg(state, AU8522_REG016H, AU8522_REG016H_CVBS);
+> Signed-off-by: Song Liu <songliubraving@fb.com>
 
--       if (is_svideo) {
-                /* Despite what the table says, for the HVR-950q we still need
-                   to be in CVBS mode for the S-Video input (reason unknown). */
-                /* filter_coef_type = 3; */
--               filter_coef_type = 5;
--       } else {
--               filter_coef_type = 5;
--       }
+Reviewed-by: Rik van Riel <riel@surriel.com>
 
-        /* Load the Video Decoder Filter Coefficients */
-        for (i = 0; i < NUM_FILTER_COEF; i++) {
+> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> index d7b2a4b..e50c2bd 100644
+> --- a/mm/khugepaged.c
+> +++ b/mm/khugepaged.c
+> @@ -430,18 +430,14 @@ int __khugepaged_enter(struct mm_struct *mm)
+>  	return 0;
+>  }
+> =20
+> +static bool hugepage_vma_check(struct vm_area_struct *vma);
+> +
+>  int khugepaged_enter_vma_merge(struct vm_area_struct *vma,
+>  			       unsigned long vm_flags)
+>  {
+>  	unsigned long hstart, hend;
+> -	if (!vma->anon_vma)
+> -		/*
+> -		 * Not yet faulted in so we will register later in
+> the
+> -		 * page fault if needed.
+> -		 */
+> -		return 0;
+> -	if (vma->vm_ops || (vm_flags & VM_NO_KHUGEPAGED))
+> -		/* khugepaged not yet working on file or special
+> mappings */
+> +
+> +	if (!hugepage_vma_check(vma))
+>  		return 0;
+>  	hstart =3D (vma->vm_start + ~HPAGE_PMD_MASK) & HPAGE_PMD_MASK;
+>  	hend =3D vma->vm_end & HPAGE_PMD_MASK;
+--=20
+All Rights Reversed.
+--=-gFG4TwXSJeSRiOik4kOd
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
+-----BEGIN PGP SIGNATURE-----
 
-I wonder if some of the cases above were intentionally coded that way or some code needs to be removed.
+iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlsDI54ACgkQznnekoTE
+3oMCiwf/eCQXtvuRmecOTXmKDXTdWl4r0FV4dg+yCU2DrxjNF1PP6FzKZa2jKwHd
+MapKKr6jOt3ezevqOmO/Z1/9OHVqmW5cSzxo9iavl/aYB5WtcL8Ks29NIFidYWBu
+Q5vzOldZhEH5X7uZ0NP1dz0zNbAKBfvVKMQze6c6QqV9puk97glyK1mRJBw9Vw45
+kC30OP5XhCT/Nm3pFLJudb/XM3rCCrvFqOrO1/9Lhg0Mh9EwkTzAk5XwDiMq45sv
+GKnjf+gSQzPiLTr3wE6iIOm7OLY6NWWUJVdcfzcMyFYreD9KY3mGveTi2Bj86aVQ
+2QMk3YwhEyOEnbkWx8JoBOKRZwuIGw==
+=H/U/
+-----END PGP SIGNATURE-----
 
-Thanks
---
-Gustavo
+--=-gFG4TwXSJeSRiOik4kOd--
