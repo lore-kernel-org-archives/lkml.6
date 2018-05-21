@@ -1,61 +1,75 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1526648318; cv=none;
+Return-Path: <broonie@sirena.org.uk>
+X-Google-Smtp-Source: AB8JxZpgfh91YIEBtovFvLVBIL+xITWeezmNBbrn5BzTNQY/mmrVDvmt0VUBBxGIZmcITX53VBrU
+ARC-Seal: i=1; a=rsa-sha256; t=1526917774; cv=none;
         d=google.com; s=arc-20160816;
-        b=vjImhzec2R1eEjNO0FDj1a/ixZ8vhQLqo7MH4Z3dch2ZgDXIwOpngFZ0YUpAX/mMrQ
-         XCi5SsD0HrMIcGG9LB6ewOH8Xi5OWbDsVCtbYs+Q7KwoUsx9bcU312eNIfCDLHXC4daD
-         1RU+OwLCwhISF5/ShZCFfosWB00IUGLvqBZGZMO/gCCVg88Eq6q2V+0+qff4j0aAX2OZ
-         piLlyzJwvmSQXNdJzlqX0j7N4hkpGe5rP5bwNs9oyWnxvvzSKfreXv3fGCrg+ToWxrRT
-         1JpO0RywusEeC2WOmvPOj1ElnTgt0exOFO4Yz2sSaB9UfQBZ2l1PeVhIS9G6PoDpKWuG
-         3vDg==
+        b=ahAR860X1CqDU2z5Zz7IK17bmqizLBBbbtRoWbJQ/rJWRd9/lciRZn/ZKK42HqmG1W
+         hPOyL17pfO64Q2dZQEE8E1S4Ow5dtqTtDNQit1iKQufEJmX432Wd+DCkarSZMPD6R/2C
+         RSCjbaT91VQt4od3RlY5hb84CCWnOJjMu4GEgc8ahwWAFYmWMfXrQhw2gcEp4GLyo3P6
+         okuzxzidMHdf6Mp8luGwDU6moWTa6M5MnIVhub6stqGBr2EZXNJNeHLuE7RcihHtprj4
+         EnDq3MEtLVkpwylbt7WHhXjsJFg7mhbkGlJZzMpcb5ES+RGwy9+qyHwhokF9eBbSctMH
+         1afA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=nX2ucln+TlxsiPN/r6WU5iNi+j28T92o8UlmP6JYmE8=;
-        b=BSAJaPR9yQVQ8M37s9qNPEGB/0RGR8sGVovFLDzDmGhjQmCwXkh0H18lvnDVXesgP7
-         0CCDQHuwOwey6XACpSlew58MGUUYmGk2NIXsZrLVEAY3wxbBWn9tqXu4eGxmsFWQDysf
-         C9RghcKiwH0zMNVhru9+5F8NduGnde/+lafIVlC7y0l0XRXX/HuWd0OE/yMNJHfiqoRV
-         vwhNzi44khHyneJSYluGDb/BAQdAiJvQ/rJhR7Z+uN3jVK2U2C9nqcMckkWZ+WK8uknY
-         HoCH1wJsdT+UihS3bIAon3sbCo1dgl3+OaC2tOFqpT9Gyl2tO0fi1nFAGEG3RpaIROx2
-         2WrQ==
+        h=date:message-id:in-reply-to:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=BYYCLxzfoq81621auBOzfYRAAQL9F1sGUrT299tmfRg=;
+        b=mgOyqpXMb5e+1EsmB+EEWt4UK6QC2qj4HkGs7TUO988iZxq4hsQ3rq6JzFw0YHLvvR
+         TqwIZBVr/oo1N3Ha0Jv8L38vYg7O6vHCFHusmjJ64Ifyqgb6m6PMx0vAkmFO3nz0cF0/
+         k6kNwyDYl10FZgaxscNbfvqdL6R1f2qUZMkw9P7FpmY5yNsMDYLPObRY9qZKpxKEqVsK
+         fLO7EHfAVnG5fD7iOxCy2D1ed3mO5E25153vx3IJipl1g91aqLdeJGAPvHmp9h8WpwwK
+         chj6hiY0q6f38DaCJ62OrHzN576w3qBQWChgkwNWYbWyWFxglyeTok63XdZ8PM1XcZhk
+         mDlA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=a9BBB6rZ;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=FxeRRn4/;
+       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=a9BBB6rZ;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZotKmxXR0F2aQzOslI93TPlpIjhrmaoukRg9/+VdgOB4hDI+myKVL8N8vjMTOlVzkQ+fOLM/Q==
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To: broonie@kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	bgoswami@codeaurora.org
-Cc: robh+dt@kernel.org,
-	gregkh@linuxfoundation.org,
-	david.brown@linaro.org,
-	mark.rutland@arm.com,
-	lgirdwood@gmail.com,
-	plai@codeaurora.org,
-	tiwai@suse.com,
-	perex@perex.cz,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rohkumar@qti.qualcomm.com,
-	spatakok@qti.qualcomm.com,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v9 02/15] ASoC: qdsp6: qdafe: Add SLIMBus port Support
-Date: Fri, 18 May 2018 13:55:57 +0100
-Message-Id: <20180518125610.26200-3-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180518125610.26200-1-srinivas.kandagatla@linaro.org>
-References: <20180518125610.26200-1-srinivas.kandagatla@linaro.org>
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=FxeRRn4/;
+       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+From: Mark Brown <broonie@kernel.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>, broonie@kernel.org, linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org, bgoswami@codeaurora.org, mark.rutland@arm.com, devicetree@vger.kernel.org, rohkumar@qti.qualcomm.com, gregkh@linuxfoundation.org, plai@codeaurora.org, lgirdwood@gmail.com, tiwai@suse.com, david.brown@linaro.org, robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org, spatakok@qti.qualcomm.com, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: qdsp6: qdafe: Add SLIMBus port Support" to the asoc tree
+In-Reply-To: <20180518125610.26200-3-srinivas.kandagatla@linaro.org>
+Message-Id: <E1fKn41-0007Qf-VB@debutante>
+Date: Mon, 21 May 2018 16:49:33 +0100
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600806786652794154?=
-X-GMAIL-MSGID: =?utf-8?q?1600806786652794154?=
+X-GMAIL-THRID: =?utf-8?q?1601089332853751266?=
+X-GMAIL-MSGID: =?utf-8?q?1601089332853751266?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
+
+The patch
+
+   ASoC: qdsp6: qdafe: Add SLIMBus port Support
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 4d430d5a0e9d4d065e0447366caf48d5f580d7fb Mon Sep 17 00:00:00 2001
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Date: Fri, 18 May 2018 13:55:57 +0100
+Subject: [PATCH] ASoC: qdsp6: qdafe: Add SLIMBus port Support
 
 This patch adds support to 6 SLIMBus AFE ports, which are used as
 backend dais.
@@ -63,9 +77,10 @@ backend dais.
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Reviewed-and-tested-by: Rohit kumar <rohitkr@codeaurora.org>
 Reviewed-by: Banajit Goswami <bgoswami@codeaurora.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/qcom/qdsp6/q6afe.c | 129 +++++++++++++++++++++++++++++++++++++++++++
- sound/soc/qcom/qdsp6/q6afe.h |  14 +++++
+ sound/soc/qcom/qdsp6/q6afe.c | 129 +++++++++++++++++++++++++++++++++++
+ sound/soc/qcom/qdsp6/q6afe.h |  14 ++++
  2 files changed, 143 insertions(+)
 
 diff --git a/sound/soc/qcom/qdsp6/q6afe.c b/sound/soc/qcom/qdsp6/q6afe.c
@@ -282,4 +297,4 @@ index 3bd991a7c42d..5659966c6b1e 100644
  
  #endif /* __Q6AFE_H__ */
 -- 
-2.16.2
+2.17.0
