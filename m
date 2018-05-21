@@ -1,160 +1,226 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751249AbeEUSuM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 14:50:12 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:40156 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750923AbeEUSuI (ORCPT
+        id S1750993AbeEUSvd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 14:51:33 -0400
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:42049 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750773AbeEUSvb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 14:50:08 -0400
-Subject: Re: [Xen-devel] [RFC 1/3] xen/balloon: Allow allocating DMA buffers
-To: Oleksandr Andrushchenko <andr2000@gmail.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        jgross@suse.com, konrad.wilk@oracle.com
-Cc: daniel.vetter@intel.com, matthew.d.roper@intel.com,
-        dongwon.kim@intel.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180517082604.14828-1-andr2000@gmail.com>
- <20180517082604.14828-2-andr2000@gmail.com>
- <6a108876-19b7-49d0-3de2-9e10f984736c@oracle.com>
- <9541926e-001a-e41e-317c-dbff6d687761@gmail.com>
- <218e2bf7-490d-f89e-9866-27b7e3dbc835@oracle.com>
- <a08e7d0d-f7d5-6b7e-979b-8a17060482f0@gmail.com>
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <b177a327-6a73-bb77-c69b-bc0958a05532@oracle.com>
-Date: Mon, 21 May 2018 14:53:08 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 21 May 2018 14:51:31 -0400
+X-Google-Smtp-Source: AB8JxZqO3hlR8wk95aKNc1aY5dfmW6oww37iCDq8KtigimG+Zdfoi4BGDUnkL+RgkHTvBm6sr65JpK6MnmtuCrb7ea8=
 MIME-Version: 1.0
-In-Reply-To: <a08e7d0d-f7d5-6b7e-979b-8a17060482f0@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8900 signatures=668700
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805210222
+In-Reply-To: <CAOuPNLiaAc16BoMQ=EiqWiyMs14MP4YPOTUf42XbUs2xNYzUUg@mail.gmail.com>
+References: <CAOuPNLjqJVsPOVPCnswtFyXudAJ88_F0QVUq-Z6qWE=UpH0mBA@mail.gmail.com>
+ <5af57fea.1c69fb81.885f0.2377.GMRIR@mx.google.com> <CAOuPNLgbT59h=Jm5YiOCbrqFkDokJ8xutQ_OkpsFYzKazKhTHg@mail.gmail.com>
+ <20180511123915.GC16141@n2100.armlinux.org.uk> <f6f7b18644136323f4485d6123b330d0dde207a4.camel@pengutronix.de>
+ <CAOuPNLgRHCasmsXTVwcy5ohq8TYjbr4MThxm4Q-HFWihJ7ARww@mail.gmail.com>
+ <CAOuPNLiFr3qbNVAwF4wj2aAG0UXRVsgRo-8JfaKFCsoL+Ggk9w@mail.gmail.com>
+ <1526303498.3494.11.camel@pengutronix.de> <CAOuPNLiZJrDveOHWwvJQ+JLg+j6FOk74oQBKaEq0oqY6w0ko=A@mail.gmail.com>
+ <CAOuPNLiaAc16BoMQ=EiqWiyMs14MP4YPOTUf42XbUs2xNYzUUg@mail.gmail.com>
+From: Pintu Kumar <pintu.ping@gmail.com>
+Date: Tue, 22 May 2018 00:21:30 +0530
+Message-ID: <CAOuPNLhx1RcrTeVr7CPfAT6grmiZW1RBZbDioFP+jN5N91O6sw@mail.gmail.com>
+Subject: Re: Delivery Status Notification (Failure)
+To: Lucas Stach <l.stach@pengutronix.de>
+Cc: Russell King - ARM Linux <linux@armlinux.org.uk>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org, kernelnewbies@kernelnewbies.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/21/2018 01:32 PM, Oleksandr Andrushchenko wrote:
-> On 05/21/2018 07:35 PM, Boris Ostrovsky wrote:
->> On 05/21/2018 01:40 AM, Oleksandr Andrushchenko wrote:
->>> On 05/19/2018 01:04 AM, Boris Ostrovsky wrote:
->>>> On 05/17/2018 04:26 AM, Oleksandr Andrushchenko wrote:
->>>>> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->>>> A commit message would be useful.
->>> Sure, v1 will have it
->>>>> Signed-off-by: Oleksandr Andrushchenko
->>>>> <oleksandr_andrushchenko@epam.com>
->>>>>
->>>>>        for (i = 0; i < nr_pages; i++) {
->>>>> -        page = alloc_page(gfp);
->>>>> -        if (page == NULL) {
->>>>> -            nr_pages = i;
->>>>> -            state = BP_EAGAIN;
->>>>> -            break;
->>>>> +        if (ext_pages) {
->>>>> +            page = ext_pages[i];
->>>>> +        } else {
->>>>> +            page = alloc_page(gfp);
->>>>> +            if (page == NULL) {
->>>>> +                nr_pages = i;
->>>>> +                state = BP_EAGAIN;
->>>>> +                break;
->>>>> +            }
->>>>>            }
->>>>>            scrub_page(page);
->>>>>            list_add(&page->lru, &pages);
->>>>> @@ -529,7 +565,7 @@ static enum bp_state
->>>>> decrease_reservation(unsigned long nr_pages, gfp_t gfp)
->>>>>        i = 0;
->>>>>        list_for_each_entry_safe(page, tmp, &pages, lru) {
->>>>>            /* XENMEM_decrease_reservation requires a GFN */
->>>>> -        frame_list[i++] = xen_page_to_gfn(page);
->>>>> +        frames[i++] = xen_page_to_gfn(page);
->>>>>      #ifdef CONFIG_XEN_HAVE_PVMMU
->>>>>            /*
->>>>> @@ -552,18 +588,22 @@ static enum bp_state
->>>>> decrease_reservation(unsigned long nr_pages, gfp_t gfp)
->>>>>    #endif
->>>>>            list_del(&page->lru);
->>>>>    -        balloon_append(page);
->>>>> +        if (!ext_pages)
->>>>> +            balloon_append(page);
->>>> So what you are proposing is not really ballooning. You are just
->>>> piggybacking on existing interfaces, aren't you?
->>> Sort of. Basically I need to {increase|decrease}_reservation, not
->>> actually
->>> allocating ballooned pages.
->>> Do you think I can simply EXPORT_SYMBOL for
->>> {increase|decrease}_reservation?
->>> Any other suggestion?
+Dear Lucas,
+
+Can you give me some pointers on how to set affinity for entire GPIO Bank.
+Currently I am exploring drivers/gpio/gpio-mxc.c to find out how the
+GPIO banks are set up.
+
+I also found that affinity can be set using: desc->irq_data.affinity,
+may be by using cpumask_copy(...).
+But still I am not familiar with this.
+
+So, I need your help.
+
+
+Thank You!
+
+Regards,
+Pintu
+
+
+
+On Thu, May 17, 2018 at 6:58 PM, Pintu Kumar <pintu.ping@gmail.com> wrote:
+> On Mon, May 14, 2018 at 7:58 PM, Pintu Kumar <pintu.ping@gmail.com> wrote:
 >>
->> I am actually wondering how much of that code you end up reusing. You
->> pretty much create new code paths in both routines and common code ends
->> up being essentially the hypercall.
-> Well, I hoped that it would be easier to maintain if I modify existing
-> code
-> to support both use-cases, but I am also ok to create new routines if
-> this
-> seems to be reasonable - please let me know
->>   So the question is --- would it make
->> sense to do all of this separately from the balloon driver?
-> This can be done, but which driver will host this code then? If we
-> move from
-> the balloon driver, then this could go to either gntdev or grant-table.
-> What's your preference?
-
-A separate module?
-
-Is there any use for this feature outside of your zero-copy DRM driver?
-
--boris
+>> On Mon, May 14, 2018 at 6:41 PM, Lucas Stach <l.stach@pengutronix.de> wrote:
+>> > Am Montag, den 14.05.2018, 17:42 +0530 schrieb Pintu Kumar:
+>> >> Hi,
+>> >>
+>> >> Is there any work around possible to set IRQ affinity for some GPIO
+>> >> interrupt ?
+>> >> How to avoid CPU0 to receive the current GPIO interrupt ?
+>> >> How do we assign GPIO interrupts to any CPU other than CPU0 ?
+>> >> Is it possible to isolate CPU0 for a sometime, from my GPIO driver so
+>> >> that GPIO interrupt can be served by another CPU ?
+>> >>
+>> >> Need your inputs to decide whether it is still possible to set
+>> >> affinity for GPIO interrupt, or its impossible ?
+>> >
+>> > This is not possible. The GPIO IRQs are aggregated into one GPC/GIC IRQ
+>> > line per GPIO bank, so it is not possible to change affinity of a
+>> > single GPIO interrupt to another CPU.
+>>
+>> OK. Thanks for your confirmation.
+>>
+>> > Best we could do is change the
+>> > affinity of the whole bank,
+>>
+>
+> Hi,
+>
+> I found that the driver is responsible for setting GPIO bank in i.MX7:
+> https://elixir.bootlin.com/linux/v4.2/source/drivers/gpio/gpio-mxc.c
+>
+> However I still dont know how to set the cpumask for one of the GPIO Bank.
+>
+> From this link, it seems it is possible to set affinity for a GPIO IRQ.
+> https://community.nxp.com/thread/303144
+>
+> But when I try it form my GPIO138 (GPIO5_IO10) it did not help.
+>
+> So, as you said, I wanted to change affinity for the whole GPIO bank and try it.
+> Please give me some pointers.
+>
+> Thanks
+>
+>
+>> OK. How can we do this on the fly from my driver code.
+>> If you have any reference please let me know.
+>> This is required only for experimental purpose to prove the point to be mgmt.
+>> My idea is, from the driver, change the affinity of the whole bank.
+>> So, the GPIO interrupt can be delivered on to this specific CPU bank.
+>> Once I am done, I will revert back to the old bank.
+>> Please give me some hint on how to do this from my kernel module....
+>>
+>>
+>> > but given the limited usefulness of
+>> > something like that, nobody bothered to implement such a thing.
+>> >
+>> > Regards,
+>> > Lucas
+>> >
+>> >>
+>> >>
+>> >> On Fri, May 11, 2018 at 8:07 PM, Pintu Kumar <pintu.ping@gmail.com>
+>> >> wrote:
+>> >> > On Fri, May 11, 2018 at 6:34 PM, Lucas Stach <l.stach@pengutronix.d
+>> >> > e> wrote:
+>> >> > > Am Freitag, den 11.05.2018, 13:39 +0100 schrieb Russell King -
+>> >> > > ARM Linux:
+>> >> > > > On Fri, May 11, 2018 at 05:07:37PM +0530, Pintu Kumar wrote:
+>> >> > > > > Hi,
+>> >> > > > >
+>> >> > > > > I need one help.
+>> >> > > > > I am using i.MX7 Sabre board with kernel version 4.1.15
+>> >> > > > >
+>> >> > > > > Let's say I am interested in GPIO number: 21
+>> >> > > > > I wanted to set CPU affinity for particular GPIO->IRQ number,
+>> >> > > > > so I
+>> >> > > > > tried the below steps:
+>> >> > > > > root@10:~# echo 21 > /sys/class/gpio/export
+>> >> > > > > root@10:~# echo "rising" > /sys/class/gpio/gpio21/edge
+>> >> > > > > root@10:~# cat /proc/interrupts | grep 21
+>> >> > > > >   47: 0 0 gpio-mxc 21 Edge gpiolib
+>> >> > > > > root@10:~# cat /sys/class/gpio/gpio21/direction
+>> >> > > > > in
+>> >> > > > > root@10:~# cat /proc/irq/47/smp_affinity
+>> >> > > > > 3
+>> >> > > > > root@10:~# echo 2 > /proc/irq/47/smp_affinity
+>> >> > > > > -bash: echo: write error: Input/output error
+>> >> > > > >
+>> >> > > > > But I get input/output error.
+>> >> > > > > When I debug further, found that irq_can_set_affinity is
+>> >> > > > > returning 0:
+>> >> > > > > [    0.000000] genirq: irq_can_set_affinity (0): balance: 1,
+>> >> > > > > irq_data.chip: a81b7e48, irq_set_affinity:   (null)
+>> >> > > > > [    0.000000] write_irq_affinity: FAIL
+>> >> > > > >
+>> >> > > > > I also tried first setting /proc/irq/default_smp_affinity to
+>> >> > > > > 2 (from 3).
+>> >> > > > > This change is working, but the smp_affinity setting for the
+>> >> > > > > new IRQ
+>> >> > > > > is not working.
+>> >> > > > >
+>> >> > > > > When I try to set smp_affinity for mmc0, then it works.
+>> >> > > > > # cat /proc/interrupts | grep mmc
+>> >> > > > > 295:         55          0     GPCV2  22 Edge      mmc0
+>> >> > > > > 296:          0          0     GPCV2  23 Edge      mmc1
+>> >> > > > > 297:         52          0     GPCV2  24 Edge      mmc2
+>> >> > > > >
+>> >> > > > > root@10:~# echo 2 > /proc/irq/295/smp_affinity
+>> >> > > > > root@10:~#
+>> >> > > > >
+>> >> > > > >
+>> >> > > > > So, I wanted to know what are the conditions for which
+>> >> > > > > setting
+>> >> > > > > smp_affinity for an IRQ will work ?
+>> >> > > > >
+>> >> > > > > Is there any way by which I can set CPU affinity to a GPIO ->
+>> >> > > > > IRQ ?
+>> >> > > > > Whether, irq_set_affinity_hint() will work in this case ?
+>> >> > > >
+>> >> > > > IRQ affinity is only supported where interrupts are _directly_
+>> >> > > > wired to
+>> >> > > > the GIC.  It's the GIC which does the interrupt steering to the
+>> >> > > > CPU
+>> >> > > > cores.
+>> >> > > >
+>> >> > > > Interrupts on downstream interrupt controllers (such as GPCV2)
+>> >> > > > have no
+>> >> > > > ability to be directed independently to other CPUs - the only
+>> >> > > > possible
+>> >> > > > way to change the mapping is to move _all_ interrupts on that
+>> >> > > > controller,
+>> >> > > > and any downstream chained interrupts at GIC level.
+>> >> > > >
+>> >> > > > Hence why Interrupt 295 has no irq_set_affinity function: there
+>> >> > > > is no way
+>> >> > > > for the interrupt controller itself to change the affinity of
+>> >> > > > the input
+>> >> > > > interrupt.
+>> >> > >
+>> >> > > The GPCv2 though is a secondary IRQ controller which has a 1:1
+>> >> > > mapping
+>> >> > > of its input IRQs to the upstream GIC IRQ lines. Affinity can
+>> >> > > thus be
+>> >> > > handled by forwarding the request to the GIC by
+>> >> > > irq_chip_set_affinity_parent().
+>> >> > >
+>> >> > > As this is handled correctly in the upstream kernel since the
+>> >> > > first
+>> >> > > commit introducing support for the GPCv2, it seems the issue is
+>> >> > > only
+>> >> > > present in some downstream kernel.
+>> >> > >
+>> >> >
+>> >> > OK. Thanks so much for your reply.
+>> >> >
+>> >> > I saw some of the drivers using irq_set_affinity_hint() to force
+>> >> > the
+>> >> > IRQ affinity to a particular CPU.
+>> >> > This is the sample:
+>> >> > {
+>> >> > cpumask_clear(mask);
+>> >> > cpumask_set_cpu(cpu, mask);
+>> >> > irq_set_affinity_hint(irq, mask);
+>> >> > }
+>> >> >
+>> >> > Whether this logic will work for a particular GPIO pin ?
+>> >> >
+>
+>
+>>
+>> >> >
+>> >> > > Regards,
+>> >> > > Lucas
