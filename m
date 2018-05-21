@@ -1,39 +1,93 @@
-Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrAWuGfSYeCrbclOG9gOya45wwqNr/C00WPxjDaKaorl416wv36T1h6mpbIR+RU74VEgsco
-ARC-Seal: i=1; a=rsa-sha256; t=1526937472; cv=none;
-        d=google.com; s=arc-20160816;
-        b=b2QHJYJnU+rgf1iShMeDCrnh/Q2XgI9M5y75EyBKjYZsCZQYUAAJ8UQp/e907UePnB
-         RxDl7IzL8cIQ7WG+fYCZLixGPRXp/rgodLuFsZ9xoI/nbSEO1feHSYRlD7H8VBDLAGC4
-         GCxoUOlbI0dNeWykWVooNEbZKiIRVy4cRFx6rghGqk5ob5jfIDkT3EH+BT59XSitdDn7
-         XXgqlFW203M3NEp8N3WmFKFF3KYYN6AgvUAewei2ZHtoSIPNx+U48Qo4ynggdaHoTdHR
-         bpZiqSSo9pUW85/20o05CMTiyYEw+b0fNrfa7gME3axWFsLguHyKo8lAFexFwsQQUYmJ
-         rHjw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=yIw/I0jh8KF5PYidftSVZJmva1ZrgTZPRO0dfbO79lc=;
-        b=Wc4fqABlO/aN7jVvKJAFUkkgkpf0wbeouOcvi7/A1UiiK4gr/vK3rbvkRc90Drgix0
-         3ZqrjqC77DxmzJUWUOVYNKQS+M5klj9w/h16CZJJMgX+h0/9vAfF/DeMMz07lZyvYGHG
-         KKP4z7SbQ2w90Y+KhsEycD0OsLpcm2ZCtWSgjwmQ3zJw/FeCdtcwiC2/QmagK0OhJjgm
-         xRWtHuyyPPySMb/JUad6yB3/RH93wUYCjRqxtdZspuabFh3A5irwwjI6M15UWWV1xUUB
-         XXRv2oeZ8WhEeSYg+zTtUnyPECOcXUuVapeKVvQ4aVYaAvthEMx1Z5+yFiujE+ouMigq
-         +spA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=wiyP0FYc;
-       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=wiyP0FYc;
-       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1340521-1526937470-2-439723823608705532
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1526937469; b=gSrgG7KBWJOBAGQMkWBCiGU+NKN7s067hAQmpfV0HEov+ZyR1L
+    8OtTQWWKL4eH0VopbuYFk6hPqJTH7QmLoRGvbVfr8RIOjg5eGAmjgt7c77WZXiAS
+    P2hhFSjouIiT+YOa1NnoTElXzotAwk8Cuejopbste/rIFIzYscN19A0zCgQQas7Q
+    iOcJgxJDFa7OZqChpzdPcn4ihJvuM4ml80Dzg9qy5Xlwo2Y+tBwIXcZHMMj95Ya3
+    0QcgJI1bbEU0/yBoUqC02CVfCEmdRec2pTakcfHs0144qW5jDDk+qkK4+HC8ml68
+    IK5lmabgghbrOji+N4G4nrrVGAp2ThdVe7+w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1526937469; bh=xaAhbRKWVu3cn5mtREBaB1e8yp5hLA
+    /sEdu6RzwZfR0=; b=bmyw6Yv+lNO9vjxVeCEq7/bSFCNaqXa+aPgGMj1S+VtV7j
+    r/YuRncB57LyuUSV3WiLSudyi+gftN4Ku9XELCP+sefIx6Wr5U/rT7/ueaCE1qG7
+    0UnCbXW6IxT8rBU3NIS0mcTl2Y1nZn3d0RZk/pl3U9MPJfiTl8C49y+Bd2oRCZQj
+    tlC86eDUXAYM1lMlJy2DVTYXbbZvaM5t8wkcYJ8q+I/qFbmxRURbmdXwh62vkj67
+    ClWO6y6YdPcTioplAH9gISRI9tijnY3zUAOlKpnA6dPnWzQ0VAG/eEnsdplVov1M
+    yJk5vAwLNhxFy0B+cYAYsMuG5C2r6Iq3LoI0QsMQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+    header.i=@kernel.org header.b=k61raiD4 x-bits=1024 x-keytype=rsa
+    x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+    header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=linuxfoundation.org header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+      header.i=@kernel.org header.b=k61raiD4 x-bits=1024 x-keytype=rsa
+      x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+      header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=linuxfoundation.org header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfOmtJTFTJxPVoNwDs8JRMxuJWTtDSA6T5DHpwp7DQNsUphbUuWtcqmbwf7QuBNRW11nY1J4AbFuSJUJqQH3fS7wzRK9cQPLTIY2oHG/yiHqfsmE5dqqk
+    Ps9e5Is19XSedzcIvrtTCNPKFqyIT8CeDU7PyWCN+czTlPQwmv2M73DlmQKV5IMUVFnlHB2FKkaa2HQH1Ylx+jTuMSKbR/Ak2JbTmLLMmae13Pz3P9j1Z4gs
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=cm27Pg_UAAAA:8 a=pBOR-ozoAAAA:8 a=ag1SF4gXAAAA:8 a=C7OFwyuGYqsuo0XBkyEA:9
+    a=QEXdDO2ut3YA:10 a=xmb-EsYY8bH0VWELuYED:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752520AbeEUVRp (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 21 May 2018 17:17:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32868 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751571AbeEUVRl (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 21 May 2018 17:17:41 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Kees Cook <keescook@chromium.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 61/87] seccomp: Add filter flag to opt-out of SSB mitigation
-Date: Mon, 21 May 2018 23:11:37 +0200
-Message-Id: <20180521210425.604678841@linuxfoundation.org>
+        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        David Woodhouse <dwmw@amazon.co.uk>
+Subject: [PATCH 4.9 57/87] seccomp: Enable speculation flaw mitigations
+Date: Mon, 21 May 2018 23:11:33 +0200
+Message-Id: <20180521210425.352522928@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210420.222671977@linuxfoundation.org>
 References: <20180521210420.222671977@linuxfoundation.org>
@@ -41,10 +95,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109987144420611?=
-X-GMAIL-MSGID: =?utf-8?q?1601109987144420611?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,209 +107,57 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Kees Cook <keescook@chromium.org>
 
-commit 00a02d0c502a06d15e07b857f8ff921e3e402675 upstream
+commit 5c3070890d06ff82eecb808d02d2ca39169533ef upstream
 
-If a seccomp user is not interested in Speculative Store Bypass mitigation
-by default, it can set the new SECCOMP_FILTER_FLAG_SPEC_ALLOW flag when
-adding filters.
+When speculation flaw mitigations are opt-in (via prctl), using seccomp
+will automatically opt-in to these protections, since using seccomp
+indicates at least some level of sandboxing is desired.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/seccomp.h                       |    3 -
- include/uapi/linux/seccomp.h                  |    4 +
- kernel/seccomp.c                              |   19 +++---
- tools/testing/selftests/seccomp/seccomp_bpf.c |   78 +++++++++++++++++++++++++-
- 4 files changed, 93 insertions(+), 11 deletions(-)
+ kernel/seccomp.c |   17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
---- a/include/linux/seccomp.h
-+++ b/include/linux/seccomp.h
-@@ -3,7 +3,8 @@
- 
- #include <uapi/linux/seccomp.h>
- 
--#define SECCOMP_FILTER_FLAG_MASK	(SECCOMP_FILTER_FLAG_TSYNC)
-+#define SECCOMP_FILTER_FLAG_MASK	(SECCOMP_FILTER_FLAG_TSYNC	| \
-+					 SECCOMP_FILTER_FLAG_SPEC_ALLOW)
- 
- #ifdef CONFIG_SECCOMP
- 
---- a/include/uapi/linux/seccomp.h
-+++ b/include/uapi/linux/seccomp.h
-@@ -15,7 +15,9 @@
- #define SECCOMP_SET_MODE_FILTER	1
- 
- /* Valid flags for SECCOMP_SET_MODE_FILTER */
--#define SECCOMP_FILTER_FLAG_TSYNC	1
-+#define SECCOMP_FILTER_FLAG_TSYNC	(1UL << 0)
-+/* In v4.14+ SECCOMP_FILTER_FLAG_LOG is (1UL << 1) */
-+#define SECCOMP_FILTER_FLAG_SPEC_ALLOW	(1UL << 2)
- 
- /*
-  * All BPF programs must return a 32-bit value.
 --- a/kernel/seccomp.c
 +++ b/kernel/seccomp.c
-@@ -230,7 +230,8 @@ static inline void spec_mitigate(struct
- }
- 
- static inline void seccomp_assign_mode(struct task_struct *task,
--				       unsigned long seccomp_mode)
-+				       unsigned long seccomp_mode,
-+				       unsigned long flags)
- {
- 	assert_spin_locked(&task->sighand->siglock);
- 
-@@ -240,8 +241,9 @@ static inline void seccomp_assign_mode(s
- 	 * filter) is set.
- 	 */
- 	smp_mb__before_atomic();
--	/* Assume seccomp processes want speculation flaw mitigation. */
--	spec_mitigate(task, PR_SPEC_STORE_BYPASS);
-+	/* Assume default seccomp processes want spec flaw mitigation. */
-+	if ((flags & SECCOMP_FILTER_FLAG_SPEC_ALLOW) == 0)
-+		spec_mitigate(task, PR_SPEC_STORE_BYPASS);
- 	set_tsk_thread_flag(task, TIF_SECCOMP);
- }
- 
-@@ -309,7 +311,7 @@ static inline pid_t seccomp_can_sync_thr
-  * without dropping the locks.
-  *
-  */
--static inline void seccomp_sync_threads(void)
-+static inline void seccomp_sync_threads(unsigned long flags)
- {
- 	struct task_struct *thread, *caller;
- 
-@@ -350,7 +352,8 @@ static inline void seccomp_sync_threads(
- 		 * allow one thread to transition the other.
- 		 */
- 		if (thread->seccomp.mode == SECCOMP_MODE_DISABLED)
--			seccomp_assign_mode(thread, SECCOMP_MODE_FILTER);
-+			seccomp_assign_mode(thread, SECCOMP_MODE_FILTER,
-+					    flags);
- 	}
- }
- 
-@@ -469,7 +472,7 @@ static long seccomp_attach_filter(unsign
- 
- 	/* Now that the new filter is in place, synchronize to all threads. */
- 	if (flags & SECCOMP_FILTER_FLAG_TSYNC)
--		seccomp_sync_threads();
-+		seccomp_sync_threads(flags);
- 
- 	return 0;
- }
-@@ -729,7 +732,7 @@ static long seccomp_set_mode_strict(void
- #ifdef TIF_NOTSC
- 	disable_TSC();
- #endif
--	seccomp_assign_mode(current, seccomp_mode);
-+	seccomp_assign_mode(current, seccomp_mode, 0);
- 	ret = 0;
- 
- out:
-@@ -787,7 +790,7 @@ static long seccomp_set_mode_filter(unsi
- 	/* Do not free the successfully attached filter. */
- 	prepared = NULL;
- 
--	seccomp_assign_mode(current, seccomp_mode);
-+	seccomp_assign_mode(current, seccomp_mode, flags);
- out:
- 	spin_unlock_irq(&current->sighand->siglock);
- 	if (flags & SECCOMP_FILTER_FLAG_TSYNC)
---- a/tools/testing/selftests/seccomp/seccomp_bpf.c
-+++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
-@@ -1692,7 +1692,11 @@ TEST_F_SIGNAL(TRACE_syscall, kill_after_
- #endif
- 
- #ifndef SECCOMP_FILTER_FLAG_TSYNC
--#define SECCOMP_FILTER_FLAG_TSYNC 1
-+#define SECCOMP_FILTER_FLAG_TSYNC (1UL << 0)
-+#endif
-+
-+#ifndef SECCOMP_FILTER_FLAG_SPEC_ALLOW
-+#define SECCOMP_FILTER_FLAG_SPEC_ALLOW (1UL << 2)
- #endif
- 
- #ifndef seccomp
-@@ -1791,6 +1795,78 @@ TEST(seccomp_syscall_mode_lock)
- 	}
+@@ -16,6 +16,8 @@
+ #include <linux/atomic.h>
+ #include <linux/audit.h>
+ #include <linux/compat.h>
++#include <linux/nospec.h>
++#include <linux/prctl.h>
+ #include <linux/sched.h>
+ #include <linux/seccomp.h>
+ #include <linux/slab.h>
+@@ -214,6 +216,19 @@ static inline bool seccomp_may_assign_mo
+ 	return true;
  }
  
 +/*
-+ * Test detection of known and unknown filter flags. Userspace needs to be able
-+ * to check if a filter flag is supported by the current kernel and a good way
-+ * of doing that is by attempting to enter filter mode, with the flag bit in
-+ * question set, and a NULL pointer for the _args_ parameter. EFAULT indicates
-+ * that the flag is valid and EINVAL indicates that the flag is invalid.
++ * If a given speculation mitigation is opt-in (prctl()-controlled),
++ * select it, by disabling speculation (enabling mitigation).
 + */
-+TEST(detect_seccomp_filter_flags)
++static inline void spec_mitigate(struct task_struct *task,
++				 unsigned long which)
 +{
-+	unsigned int flags[] = { SECCOMP_FILTER_FLAG_TSYNC,
-+				 SECCOMP_FILTER_FLAG_SPEC_ALLOW };
-+	unsigned int flag, all_flags;
-+	int i;
-+	long ret;
++	int state = arch_prctl_spec_ctrl_get(task, which);
 +
-+	/* Test detection of known-good filter flags */
-+	for (i = 0, all_flags = 0; i < ARRAY_SIZE(flags); i++) {
-+		int bits = 0;
-+
-+		flag = flags[i];
-+		/* Make sure the flag is a single bit! */
-+		while (flag) {
-+			if (flag & 0x1)
-+				bits ++;
-+			flag >>= 1;
-+		}
-+		ASSERT_EQ(1, bits);
-+		flag = flags[i];
-+
-+		ret = seccomp(SECCOMP_SET_MODE_FILTER, flag, NULL);
-+		ASSERT_NE(ENOSYS, errno) {
-+			TH_LOG("Kernel does not support seccomp syscall!");
-+		}
-+		EXPECT_EQ(-1, ret);
-+		EXPECT_EQ(EFAULT, errno) {
-+			TH_LOG("Failed to detect that a known-good filter flag (0x%X) is supported!",
-+			       flag);
-+		}
-+
-+		all_flags |= flag;
-+	}
-+
-+	/* Test detection of all known-good filter flags */
-+	ret = seccomp(SECCOMP_SET_MODE_FILTER, all_flags, NULL);
-+	EXPECT_EQ(-1, ret);
-+	EXPECT_EQ(EFAULT, errno) {
-+		TH_LOG("Failed to detect that all known-good filter flags (0x%X) are supported!",
-+		       all_flags);
-+	}
-+
-+	/* Test detection of an unknown filter flag */
-+	flag = -1;
-+	ret = seccomp(SECCOMP_SET_MODE_FILTER, flag, NULL);
-+	EXPECT_EQ(-1, ret);
-+	EXPECT_EQ(EINVAL, errno) {
-+		TH_LOG("Failed to detect that an unknown filter flag (0x%X) is unsupported!",
-+		       flag);
-+	}
-+
-+	/*
-+	 * Test detection of an unknown filter flag that may simply need to be
-+	 * added to this test
-+	 */
-+	flag = flags[ARRAY_SIZE(flags) - 1] << 1;
-+	ret = seccomp(SECCOMP_SET_MODE_FILTER, flag, NULL);
-+	EXPECT_EQ(-1, ret);
-+	EXPECT_EQ(EINVAL, errno) {
-+		TH_LOG("Failed to detect that an unknown filter flag (0x%X) is unsupported! Does a new flag need to be added to this test?",
-+		       flag);
-+	}
++	if (state > 0 && (state & PR_SPEC_PRCTL))
++		arch_prctl_spec_ctrl_set(task, which, PR_SPEC_DISABLE);
 +}
 +
- TEST(TSYNC_first)
+ static inline void seccomp_assign_mode(struct task_struct *task,
+ 				       unsigned long seccomp_mode)
  {
- 	struct sock_filter filter[] = {
+@@ -225,6 +240,8 @@ static inline void seccomp_assign_mode(s
+ 	 * filter) is set.
+ 	 */
+ 	smp_mb__before_atomic();
++	/* Assume seccomp processes want speculation flaw mitigation. */
++	spec_mitigate(task, PR_SPEC_STORE_BYPASS);
+ 	set_tsk_thread_flag(task, TIF_SECCOMP);
+ }
+ 
