@@ -1,63 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751050AbeEUGFe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 02:05:34 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:41105 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750867AbeEUGFc (ORCPT
+        id S1751111AbeEUGHG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 02:07:06 -0400
+Received: from mail-it0-f69.google.com ([209.85.214.69]:40567 "EHLO
+        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750859AbeEUGHC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 02:05:32 -0400
-X-Google-Smtp-Source: AB8JxZpZxKaPqGyDn81bAf4fY0pbw0Mgwry4YV2eKz1aw22jgZTwA5Av7RZ90sDFtGz0KwVw/B24Jg==
-Date: Mon, 21 May 2018 11:35:29 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Taniya Das <tdas@codeaurora.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        robh@kernel.org, Rajendra Nayak <rnayak@codeaurora.org>,
-        Amit Nischal <anischal@codeaurora.org>, devicetree@vger.kernel.org,
-        skannan@codeaurora.org, amit.kucheria@linaro.org
-Subject: Re: [PATCH v2 0/2] Add support for QCOM cpufreq FW driver
-Message-ID: <20180521060529.kyjkglucbydr6b3f@vireshk-i7>
-References: <1526751291-17873-1-git-send-email-tdas@codeaurora.org>
+        Mon, 21 May 2018 02:07:02 -0400
+X-Google-Smtp-Source: AB8JxZqZXYWDw3Qm4Azi8usFn6FVqh2E3/LoEbUZqGlNI7dt4wLydt5f67lbalSYXi+JgyloO6zGr5hmyVEIrjI3qgKevSAGuRsG
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526751291-17873-1-git-send-email-tdas@codeaurora.org>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+Date: Sun, 20 May 2018 23:07:02 -0700
+In-Reply-To: <089e0825cec8180a2b0568c4ee1d@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000003a8d73056cb11ca3@google.com>
+Subject: Re: WARNING in ext4_set_page_dirty
+From: syzbot <syzbot+9a44753ac327c557796a@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, jack@suse.cz, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19-05-18, 23:04, Taniya Das wrote:
->  [v2]
->    * Address comments given in v0 series.
+syzbot has found a reproducer for the following crash on:
 
-That's not how you do it. You need to explain every change in enough
-detail here so that the reviewers don't need to go to their previous
-emails to see what changed.
+HEAD commit:    771c577c23ba Linux 4.17-rc6
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=108c9f37800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=982e2df1b9e60b02
+dashboard link: https://syzkaller.appspot.com/bug?extid=9a44753ac327c557796a
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1655584f800000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15134357800000
 
->  [v1]
->     * Fixed compilation reported by Amit K.
-> 
-> The CPUfreq FW present in some QCOM chipsets offloads the steps necessary
-> for changing the frequency of CPUs. The driver implements the cpufreq
-> driver interface for this firmware.
-> 
-> Taniya Das (2):
->   dt-bindings: cpufreq: Introduce QCOM CPUFREQ FW bindings
->   cpufreq: qcom-fw: Add support for QCOM cpufreq FW driver
-> 
->  .../bindings/cpufreq/cpufreq-qcom-fw.txt           |  68 +++++
->  drivers/cpufreq/Kconfig.arm                        |   9 +
->  drivers/cpufreq/Makefile                           |   1 +
->  drivers/cpufreq/qcom-cpufreq-fw.c                  | 317 +++++++++++++++++++++
->  4 files changed, 395 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-fw.txt
->  create mode 100644 drivers/cpufreq/qcom-cpufreq-fw.c
-> 
-> --
-> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-> of the Code Aurora Forum, hosted by the  Linux Foundation.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+9a44753ac327c557796a@syzkaller.appspotmail.com
 
--- 
-viresh
+WARNING: CPU: 0 PID: 4577 at fs/ext4/inode.c:3894  
+ext4_set_page_dirty+0x28d/0x330 fs/ext4/inode.c:3894
+Kernel panic - not syncing: panic_on_warn set ...
+
+CPU: 0 PID: 4577 Comm: syz-executor342 Not tainted 4.17.0-rc6+ #61
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  panic+0x22f/0x4de kernel/panic.c:184
+  __warn.cold.8+0x163/0x1b3 kernel/panic.c:536
+  report_bug+0x252/0x2d0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  do_error_trap+0x1de/0x490 arch/x86/kernel/traps.c:296
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
+RIP: 0010:ext4_set_page_dirty+0x28d/0x330 fs/ext4/inode.c:3894
+RSP: 0018:ffff8801b38fe2a0 EFLAGS: 00010293
+RAX: ffff8801aca16680 RBX: 1ffff1003671fc56 RCX: ffffffff82052441
+RDX: 0000000000000000 RSI: ffffffff8205248d RDI: 0000000000000007
+RBP: ffff8801b38fe378 R08: ffff8801aca16680 R09: 0000000000000006
+R10: ffff8801aca16680 R11: 0000000000000000 R12: ffffea0007007f40
+R13: 0000000000000000 R14: ffff8801b38fe350 R15: ffffea0007007f60
+  set_page_dirty+0x35f/0x6d0 mm/page-writeback.c:2566
+  set_page_dirty_lock+0x115/0x180 mm/page-writeback.c:2591
+  dio_bio_complete+0x599/0x870 fs/direct-io.c:559
+  dio_await_completion fs/direct-io.c:580 [inline]
+  do_blockdev_direct_IO+0x4153/0x9e90 fs/direct-io.c:1388
+  __blockdev_direct_IO+0x9d/0xc6 fs/direct-io.c:1417
+  ext4_direct_IO_read fs/ext4/inode.c:3833 [inline]
+  ext4_direct_IO+0xf90/0x2110 fs/ext4/inode.c:3865
+  generic_file_read_iter+0x510/0x2f00 mm/filemap.c:2341
+  ext4_file_read_iter+0x18b/0x3c0 fs/ext4/file.c:77
+  call_read_iter include/linux/fs.h:1778 [inline]
+  new_sync_read fs/read_write.c:406 [inline]
+  __vfs_read+0x696/0xa50 fs/read_write.c:418
+  vfs_read+0x17f/0x3d0 fs/read_write.c:452
+  ksys_pread64+0x174/0x1a0 fs/read_write.c:626
+  __do_sys_pread64 fs/read_write.c:636 [inline]
+  __se_sys_pread64 fs/read_write.c:633 [inline]
+  __x64_sys_pread64+0x97/0xf0 fs/read_write.c:633
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x445c09
+RSP: 002b:00007f4eead2ad18 EFLAGS: 00000246 ORIG_RAX: 0000000000000011
+RAX: ffffffffffffffda RBX: 00000000006dac74 RCX: 0000000000445c09
+RDX: 00000000fffffd80 RSI: 0000000020002000 RDI: 0000000000000073
+RBP: 0000000000000000 R08: 65732f636f72702f R09: 65732f636f72702f
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dac70
+R13: 00007f4eead2ad20 R14: 2e64657473757274 R15: 000000000000000b
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
