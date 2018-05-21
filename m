@@ -1,348 +1,268 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752958AbeEUNu5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 09:50:57 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:40778 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752874AbeEUNuc (ORCPT
+        id S1752989AbeEUNvd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 09:51:33 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:34692 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751688AbeEUNva (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 09:50:32 -0400
-X-Google-Smtp-Source: AB8JxZqfsTxozlocz3chvwLPEiNlx2gCMYipJWCPEZALsKEQV71nAQDpq/CXg2kqhGwbSkXnOwMK6qQG5tIV6F1Id7I=
+        Mon, 21 May 2018 09:51:30 -0400
+X-Google-Smtp-Source: AB8JxZoZsUdyOfyIhK40kellqXdzYikmvWRGCY48pr7l5hYyaP1ipKOLdugbZFv0n0MnbKbdCQY87A==
+Date: Mon, 21 May 2018 09:51:27 -0400
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: benjamin.gaignard@st.com, fabrice.gasnier@st.com,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v6 4/9] counter: 104-quad-8: Add Generic Counter
+ interface support
+Message-ID: <20180521135127.GC5723@sophia>
+References: <cover.1526487615.git.vilhelm.gray@gmail.com>
+ <881ede525a87ef68fad76cc757ce0ba72df03e5a.1526487615.git.vilhelm.gray@gmail.com>
+ <20180520164253.5432d2a4@archlinux>
 MIME-Version: 1.0
-In-Reply-To: <20180520004318.GY3803@linux.vnet.ibm.com>
-References: <20180518130413.16997-1-roman.penyaev@profitbricks.com>
- <20180518130413.16997-2-roman.penyaev@profitbricks.com> <20180519163735.GX3803@linux.vnet.ibm.com>
- <CAJrWOzAt8BDtypaRwYx_y9jpCVD5W_VL9aQsFsC3bL-XaoJz9g@mail.gmail.com> <20180520004318.GY3803@linux.vnet.ibm.com>
-From: Roman Penyaev <roman.penyaev@profitbricks.com>
-Date: Mon, 21 May 2018 15:50:10 +0200
-Message-ID: <CAJrWOzBenkHg_5zs1VAxP_rVbCbOJO_eO0toJBhnzXuy_yWH2Q@mail.gmail.com>
-Subject: Re: [PATCH v2 01/26] rculist: introduce list_next_or_null_rr_rcu()
-To: "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: linux-block <linux-block@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Bart Van Assche <bart.vanassche@sandisk.com>,
-        Or Gerlitz <ogerlitz@mellanox.com>, Doug Ledford <dledford@redhat.com>,
-        Swapnil Ingle <swapnil.ingle@profitbricks.com>,
-        Danil Kipnis <danil.kipnis@profitbricks.com>,
-        Jack Wang <jinpu.wang@profitbricks.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180520164253.5432d2a4@archlinux>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 20, 2018 at 2:43 AM, Paul E. McKenney
-<paulmck@linux.vnet.ibm.com> wrote:
-> On Sat, May 19, 2018 at 10:20:48PM +0200, Roman Penyaev wrote:
->> On Sat, May 19, 2018 at 6:37 PM, Paul E. McKenney
->> <paulmck@linux.vnet.ibm.com> wrote:
->> > On Fri, May 18, 2018 at 03:03:48PM +0200, Roman Pen wrote:
->> >> Function is going to be used in transport over RDMA module
->> >> in subsequent patches.
->> >>
->> >> Function returns next element in round-robin fashion,
->> >> i.e. head will be skipped.  NULL will be returned if list
->> >> is observed as empty.
->> >>
->> >> Signed-off-by: Roman Pen <roman.penyaev@profitbricks.com>
->> >> Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
->> >> Cc: linux-kernel@vger.kernel.org
->> >> ---
->> >>  include/linux/rculist.h | 19 +++++++++++++++++++
->> >>  1 file changed, 19 insertions(+)
->> >>
->> >> diff --git a/include/linux/rculist.h b/include/linux/rculist.h
->> >> index 127f534fec94..b0840d5ab25a 100644
->> >> --- a/include/linux/rculist.h
->> >> +++ b/include/linux/rculist.h
->> >> @@ -339,6 +339,25 @@ static inline void list_splice_tail_init_rcu(struct list_head *list,
->> >>  })
->> >>
->> >>  /**
->> >> + * list_next_or_null_rr_rcu - get next list element in round-robin fashion.
->> >> + * @head:    the head for the list.
->> >> + * @ptr:        the list head to take the next element from.
->> >> + * @type:       the type of the struct this is embedded in.
->> >> + * @memb:       the name of the list_head within the struct.
->> >> + *
->> >> + * Next element returned in round-robin fashion, i.e. head will be skipped,
->> >> + * but if list is observed as empty, NULL will be returned.
->> >> + *
->> >> + * This primitive may safely run concurrently with the _rcu list-mutation
->> >> + * primitives such as list_add_rcu() as long as it's guarded by rcu_read_lock().
->> >
->> > Of course, all the set of list_next_or_null_rr_rcu() invocations that
->> > are round-robining a given list must all be under the same RCU read-side
->> > critical section.  For example, the following will break badly:
->> >
->> >         struct foo *take_rr_step(struct list_head *head, struct foo *ptr)
->> >         {
->> >                 struct foo *ret;
->> >
->> >                 rcu_read_lock();
->> >                 ret = list_next_or_null_rr_rcu(head, ptr, struct foo, foolist);
->> >                 rcu_read_unlock();  /* BUG */
->> >                 return ret;
->> >         }
->> >
->> > You need a big fat comment stating this, at the very least.  The resulting
->> > bug can be very hard to trigger and even harder to debug.
->> >
->> > And yes, I know that the same restriction applies to list_next_rcu()
->> > and friends.  The difference is that if you try to invoke those in an
->> > infinite loop, you will be rapped on the knuckles as soon as you hit
->> > the list header.  Without that knuckle-rapping, RCU CPU stall warnings
->> > might tempt people to do something broken like take_rr_step() above.
->>
->> Hi Paul,
->>
->> I need -rr behaviour for doing IO load-balancing when I choose next RDMA
->> connection from the list in order to send a request, i.e. my code is
->> something like the following:
->>
->>         static struct conn *get_and_set_next_conn(void)
->>         {
->>                 struct conn *conn;
->>
->>                 conn = rcu_dereferece(rcu_conn);
->>                 if (unlikely(!conn))
->>                     return conn;
+On Sun, May 20, 2018 at 04:42:53PM +0100, Jonathan Cameron wrote:
+>On Wed, 16 May 2018 13:51:25 -0400
+>William Breathitt Gray <vilhelm.gray@gmail.com> wrote:
 >
-> Wait.  Don't you need to restart from the beginning of the list in
-> this case?  Or does the list never have anything added to it and is
-> rcu_conn initially the first element in the list?
-
-Hi Paul,
-
-No, I continue from the pointer, which I assigned on the previous IO
-in order to send IO fairly and keep load balanced.
-
-Initially @rcu_conn points to the first element, but elements can
-be deleted from the list and list can become empty.
-
-The deletion code is below.
-
+>> This patch adds support for the Generic Counter interface to the
+>> 104-QUAD-8 driver. The existing 104-QUAD-8 device interface should not
+>> be affected by this patch; all changes are intended as supplemental
+>> additions as perceived by the user.
+>> 
+>> Generic Counter Counts are created for the eight quadrature channel
+>> counts, as well as their respective quadrature A and B Signals (which
+>> are associated via respective Synapse structures) and respective index
+>> Signals.
+>> 
+>> The new Generic Counter interface sysfs attributes are intended to
+>> expose the same functionality and data available via the existing
+>> 104-QUAD-8 IIO device interface; the Generic Counter interface serves
+>> to provide the respective functionality and data in a standard way
+>> expected of counter devices.
+>> 
+>> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 >
->>                 conn = list_next_or_null_rr_rcu(&conn_list,
->>                                                 &conn->entry,
->>                                                 typeof(*conn),
->>                                                 entry);
->>                 rcu_assign_pointer(rcu_conn, conn);
+>A few general comments that applied just as well to the original driver
+>as they do to the modified version.
 >
-> Linus is correct to doubt this code.  You assign a pointer to the current
-> element to rcu_conn, which is presumably a per-CPU or global variable.
-> So far, so good ...
-
-I use per-CPU, in the first example I did not show that not to overcomplicate
-the code.
-
+>I wonder if this would be easier to review as two patches.
+>Move the driver then add the counter interfaces?
 >
->>                 return conn;
->>         }
->>
->>         rcu_read_lock();
->>         conn = get_and_set_next_conn();
->>         if (unlikely(!conn)) {
->>                 /* ... */
->>         }
->>         err = rdma_io(conn, request);
->>         rcu_read_unlock();
+>Right now people kind of have to review the old IIO driver and
+>all the new stuff which is a big job..
 >
-> ... except that some other CPU might well remove the entry referenced by
-> rcu_conn at this point.  It would have to wait for a grace period (e.g.,
-> synchronize_rcu()), but the current CPU has exited its RCU read-side
-> critical section, and therefore is not blocking the grace period.
-> Therefore, by the time get_and_set_next_conn() picks up rcu_conn, it
-> might well be referencing the freelist, or, even worse, some other type
-> of structure.
+>Jonathan
+
+This looks like more simple cleanup, so I expect to incorporate your
+suggestions without problem here as well. I'll also try to make the code
+easier to read by writing some defines for the magic numbers throughout.
+
+William Breathitt Gray
+
+>> ---
+>>  MAINTAINERS                      |    4 +-
+>>  drivers/counter/104-quad-8.c     | 1335 ++++++++++++++++++++++++++++++
+>>  drivers/counter/Kconfig          |   21 +
+>>  drivers/counter/Makefile         |    2 +
+>>  drivers/iio/counter/104-quad-8.c |  596 -------------
+>>  drivers/iio/counter/Kconfig      |   17 -
+>>  drivers/iio/counter/Makefile     |    1 -
+>>  7 files changed, 1360 insertions(+), 616 deletions(-)
+>>  create mode 100644 drivers/counter/104-quad-8.c
+>>  delete mode 100644 drivers/iio/counter/104-quad-8.c
+>> 
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 7a01aa63fb33..f11bf7885aeb 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -266,12 +266,12 @@ L:	linux-gpio@vger.kernel.org
+>>  S:	Maintained
+>>  F:	drivers/gpio/gpio-104-idio-16.c
+>>  
+>> -ACCES 104-QUAD-8 IIO DRIVER
+>> +ACCES 104-QUAD-8 DRIVER
+>>  M:	William Breathitt Gray <vilhelm.gray@gmail.com>
+>>  L:	linux-iio@vger.kernel.org
+>>  S:	Maintained
+>>  F:	Documentation/ABI/testing/sysfs-bus-iio-counter-104-quad-8
+>> -F:	drivers/iio/counter/104-quad-8.c
+>> +F:	drivers/counter/104-quad-8.c
+>>  
+>>  ACCES PCI-IDIO-16 GPIO DRIVER
+>>  M:	William Breathitt Gray <vilhelm.gray@gmail.com>
+>> diff --git a/drivers/counter/104-quad-8.c b/drivers/counter/104-quad-8.c
+>> new file mode 100644
+>> index 000000000000..7c72fb72d660
+>> --- /dev/null
+>> +++ b/drivers/counter/104-quad-8.c
+>> @@ -0,0 +1,1335 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
 >
-> What is your code doing to prevent this from happening?  (There are ways,
-> but I want to know what you were doing in this case.)
-
-Probably I should have shown the way of removal at the very beginning,
-my fault.  So deletion looks as the following (a bit changed and
-simplified for the sake of clearness):
-
-        static void remove_connection(conn)
-        {
-                bool need_to_wait = false;
-                int cpu;
-
-                /* Do not let RCU list add/delete happen in parallel */
-                mutex_lock(&conn_lock);
-
-                list_del_rcu(&conn->entry);
-
-                /* Make sure everybody observes element removal */
-                synchronize_rcu();
-
-                /*
-                 * At this point nobody sees @conn in the list, but
-still we have
-                 * dangling pointer @rcu_conn which _can_ point to @conn.  Since
-                 * nobody can observe @conn in the list, we guarantee
-that IO path
-                 * will not assign @conn to @rcu_conn, i.e. @rcu_conn
-can be equal
-                 * to @conn, but can never again become @conn.
-                 */
-
-                /*
-                 * Get @next connection from current @conn which is going to be
-                 * removed.
-                 */
-                next = list_next_or_null_rr_rcu(&conn_list, &conn->entry,
-                                                typeof(*next), entry);
-
-                /*
-                 * Here @rcu_conn can be changed by reader side, so use @cmpxchg
-                 * in order to keep fairness in load-balancing and do not touch
-                 * the pointer which can be already changed by the IO path.
-                 *
-                 * Current path can be faster than IO path and the
-following race
-                 * exists:
-                 *
-                 *   CPU0                         CPU1
-                 *   ----                         ----
-                 *   conn = rcu_dereferece(rcu_conn);
-                 *   next = list_next_or_null_rr_rcu(conn)
-                 *
-                 *                                conn ==
-cmpxchg(rcu_conn, conn, next);
-                 *                                synchronize_rcu();
-                 *
-                 *   rcu_assign_pointer(rcu_conn, next);
-                 *   ^^^^^^^^^^^^^^^^^^
-                 *
-                 *   Here @rcu_conn is already equal to @next (done by
-@cmpxchg),
-                 *   so assignment to the same pointer is harmless.
-                 *
-                 */
-                for_each_possible_cpu(cpu) {
-                        struct conn **rcu_conn;
-
-                        rcu_conn = per_cpu_ptr(pcpu_rcu_conn, cpu);
-                        if (*rcu_conn != conn)
-                                /*
-                                 * This @cpu will never again pick up @conn,
-                                 * so it is safe just to choose next CPU.
-                                 */
-                                continue;
-
-                        if (conn == cmpxchg(rcu_conn, conn, next))
-                                /*
-                                 * @rcu_conn was successfully replaced
-with @next,
-                                 * that means that someone can also hold a @conn
-                                 * and dereferencing it, so wait for a
-grace period
-                                 * is required.
-                                 */
-                                need_to_wait = true;
-                }
-                if (need_to_wait)
-                        synchronize_rcu();
-
-                mutex_unlock(&conn_lock);
-
-                kfree(conn);
-        }
-
-
+>If you are happy with SPDX drop the GPL text below to keep things
+>short.
 >
->> i.e. usage of the @next pointer is under an RCU critical section.
->>
->> > Is it possible to instead do some sort of list_for_each_entry_rcu()-like
->> > macro that makes it more obvious that the whole thing need to be under
->> > a single RCU read-side critical section?  Such a macro would of course be
->> > an infinite loop if the list never went empty, so presumably there would
->> > be a break or return statement in there somewhere.
->>
->> The difference is that I do not need a loop, I take the @next conn pointer,
->> save it for the following IO request and do IO for current IO request.
->>
->> It seems list_for_each_entry_rcu()-like with immediate "break" in the body
->> of the loop does not look nice, I personally do not like it, i.e.:
->>
->>
->>         static struct conn *get_and_set_next_conn(void)
->>         {
->>                 struct conn *conn;
->>
->>                 conn = rcu_dereferece(rcu_conn);
->>                 if (unlikely(!conn))
->>                     return conn;
->>                 list_for_each_entry_rr_rcu(conn, &conn_list,
->>                                            entry) {
->>                         break;
->>                 }
->>                 rcu_assign_pointer(rcu_conn, conn);
->>                 return conn;
->>         }
->>
->>
->> or maybe I did not fully get your idea?
+>> +/*
+>> + * IIO driver for the ACCES 104-QUAD-8
+>> + * Copyright (C) 2016 William Breathitt Gray
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License, version 2, as
+>> + * published by the Free Software Foundation.
+>> + *
+>> + * This program is distributed in the hope that it will be useful, but
+>> + * WITHOUT ANY WARRANTY; without even the implied warranty of
+>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+>> + * General Public License for more details.
+>> + *
+>> + * This driver supports the ACCES 104-QUAD-8 and ACCES 104-QUAD-4.
+>> + */
+>> +#include <linux/bitops.h>
+>...
+>> +static int quad8_probe(struct device *dev, unsigned int id)
+>> +{
+>> +	struct iio_dev *indio_dev;
+>> +	struct quad8_iio *quad8iio;
+>> +	int i, j;
+>> +	unsigned int base_offset;
+>> +	int err;
+>> +
+>> +	if (!devm_request_region(dev, base[id], QUAD8_EXTENT, dev_name(dev))) {
+>> +		dev_err(dev, "Unable to lock port addresses (0x%X-0x%X)\n",
+>> +			base[id], base[id] + QUAD8_EXTENT);
+>> +		return -EBUSY;
+>> +	}
+>> +
+>> +	/* Allocate IIO device; this also allocates driver data structure */
+>> +	indio_dev = devm_iio_device_alloc(dev, sizeof(*quad8iio));
+>> +	if (!indio_dev)
+>> +		return -ENOMEM;
+>> +
+>> +	/* Initialize IIO device */
+>> +	indio_dev->info = &quad8_info;
+>> +	indio_dev->modes = INDIO_DIRECT_MODE;
+>> +	indio_dev->num_channels = ARRAY_SIZE(quad8_channels);
+>> +	indio_dev->channels = quad8_channels;
+>> +	indio_dev->name = dev_name(dev);
+>> +	indio_dev->dev.parent = dev;
+>> +
+>> +	/* Initialize Counter device and driver data */
+>> +	quad8iio = iio_priv(indio_dev);
+>> +	quad8iio->counter.name = dev_name(dev);
+>> +	quad8iio->counter.parent = dev;
+>> +	quad8iio->counter.ops = &quad8_ops;
+>> +	quad8iio->counter.counts = quad8_counts;
+>> +	quad8iio->counter.num_counts = ARRAY_SIZE(quad8_counts);
+>> +	quad8iio->counter.signals = quad8_signals;
+>> +	quad8iio->counter.num_signals = ARRAY_SIZE(quad8_signals);
+>> +	quad8iio->counter.priv = quad8iio;
+>> +	quad8iio->base = base[id];
+>> +
+>> +	/* Reset all counters and disable interrupt function */
+>> +	outb(0x01, base[id] + 0x11);
+>> +	/* Set initial configuration for all counters */
+>> +	for (i = 0; i < QUAD8_NUM_COUNTERS; i++) {
+>> +		base_offset = base[id] + 2 * i;
+>> +		/* Reset Byte Pointer */
+>> +		outb(0x01, base_offset + 1);
 >
-> That would not help at all because you are still leaking the pointer out
-> of the RCU read-side critical section.  That is completely and utterly
-> broken unless you are somehow cleaning up rcu_conn when you remove
-> the element.  And getting that cleanup right is -extremely- tricky.
-> Unless you have some sort of proof of correctness, you will get a NACK
-> from me.
-
-I understand all the consequences of the leaking pointer, and of course
-wrapped loop with RCU lock/unlock is simpler, but in order to keep
-load-balancing and IO fairness avoiding any locks on IO path I've come
-up with these RCU tricks and list_next_or_null_rr_rcu() macro.
-
-> More like this:
+>I'm going to be fussy.  There are lots of values
+>in here that look like register bits and you could exchange much of
+>this documentation for a some good defines...
 >
->         list_for_each_entry_rr_rcu(conn, &conn_list, entry) {
->                 do_something_with(conn);
->                 if (done_for_now())
->                         break;
->         }
+>Taking base_offset + 1 bits 5 and 6 look to select the actual register
+>and the rest of them do the control.
 >
->> >> + */
->> >> +#define list_next_or_null_rr_rcu(head, ptr, type, memb) \
->> >> +({ \
->> >> +     list_next_or_null_rcu(head, ptr, type, memb) ?: \
->> >> +             list_next_or_null_rcu(head, READ_ONCE((ptr)->next), type, memb); \
->> >
->> > Are there any uses for this outside of RDMA?  If not, I am with Linus.
->> > Define this within RDMA, where a smaller number of people can more
->> > easily be kept aware of the restrictions on use.  If it turns out to be
->> > more generally useful, we can take a look at exactly what makes sense
->> > more globally.
->>
->> The only one list_for_each_entry_rcu()-like macro I am aware of is used in
->> block/blk-mq-sched.c, is called list_for_each_entry_rcu_rr():
->>
->> https://elixir.bootlin.com/linux/v4.17-rc5/source/block/blk-mq-sched.c#L370
->>
->> Does it make sense to implement generic list_next_or_null_rr_rcu() reusing
->> my list_next_or_null_rr_rcu() variant?
+>Anyhow, not critical but the readability of this code could be improved
+>somewhat.
 >
-> Let's start with the basics:  It absolutely does not make sense to leak
-> pointers across rcu_read_unlock() unless you have arranged something else
-> to protect the pointed-to data in the meantime.  There are a number of ways
-> of implementing this protection.  Again, what protection are you using?
+>> +		/* Reset Preset Register */
+>> +		for (j = 0; j < 3; j++)
+>> +			outb(0x00, base_offset);
+>> +		/* Reset Borrow, Carry, Compare, and Sign flags */
+>> +		outb(0x04, base_offset + 1);
+>> +		/* Reset Error flag */
+>> +		outb(0x06, base_offset + 1);
+>> +		/* Binary encoding; Normal count; non-quadrature mode */
+>> +		outb(0x20, base_offset + 1);
+>> +		/* Disable A and B inputs; preset on index; FLG1 as Carry */
+>> +		outb(0x40, base_offset + 1);
+>> +		/* Disable index function; negative index polarity */
+>> +		outb(0x60, base_offset + 1);
+>> +	}
+>> +	/* Enable all counters */
+>> +	outb(0x00, base[id] + 0x11);
+>> +
+>> +	/* Register IIO device */
+>> +	err = devm_iio_device_register(dev, indio_dev);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	/* Register Counter device */
+>> +	return devm_counter_register(dev, &quad8iio->counter);
+>> +}
+>> +
+>> +static struct isa_driver quad8_driver = {
+>> +	.probe = quad8_probe,
+>> +	.driver = {
+>> +		.name = "104-quad-8"
+>> +	}
+>> +};
+>> +
+>> +module_isa_driver(quad8_driver, num_quad8);
+>> +
+>> +MODULE_AUTHOR("William Breathitt Gray <vilhelm.gray@gmail.com>");
+>> +MODULE_DESCRIPTION("ACCES 104-QUAD-8 IIO driver");
+>> +MODULE_LICENSE("GPL v2");
+>> diff --git a/drivers/counter/Kconfig b/drivers/counter/Kconfig
+>> index 65fa92abd5a4..73f03372484f 100644
+>> --- a/drivers/counter/Kconfig
+>> +++ b/drivers/counter/Kconfig
+>> @@ -16,3 +16,24 @@ menuconfig COUNTER
+>>  	  consumption. The Generic Counter interface enables drivers to support
+>>  	  and expose a common set of components and functionality present in
+>>  	  counter devices.
+>> +
+>> +if COUNTER
+>> +
+>> +config 104_QUAD_8
+>> +	tristate "ACCES 104-QUAD-8 driver"
+>> +	depends on PC104 && X86 && IIO
+>> +	select ISA_BUS_API
+>> +	help
+>> +	  Say yes here to build support for the ACCES 104-QUAD-8 quadrature
+>> +	  encoder counter/interface device family (104-QUAD-8, 104-QUAD-4).
+>> +
+>> +	  Performing a write to a counter's IIO_CHAN_INFO_RAW sets the counter and
+>> +	  also clears the counter's respective error flag. Although the counters
+>> +	  have a 25-bit range, only the lower 24 bits may be set, either directly
+>> +	  or via a counter's preset attribute. Interrupts are not supported by
+>> +	  this driver.
 >
-> Your code at the above URL looks plausible to me at first glance: You
-> do rcu_read_lock(), a loop with list_for_each_entry_rcu_rr(), then
-> rcu_read_unlock().  But at second glance, it looks like htcx->queue
-> might have the same vulnerability as rcu_conn in your earlier code.
-
-I am not the author of the code at the URL I specified. I provided the
-link answering the question to show other possible users of round-robin
-semantics for RCU list traversal.  In my 'list_next_or_null_rr_rcu()'
-case I can't use a loop, I leak the pointer and indeed have to be very
-careful.  But perhaps we can come up with some generic solution to cover
-both cases: -rr loop and -rr next.
-
---
-Roman
+>This text probably wants to be updated to reflect the new counter subsystem support..
+>
+>> +
+>> +	  The base port addresses for the devices may be configured via the base
+>> +	  array module parameter.
+>> +
+>> +endif # COUNTER
+>> diff --git a/drivers/counter/Makefile b/drivers/counter/Makefile
+>> index ad1ba7109cdc..23a4f6263e45 100644
+>> --- a/drivers/counter/Makefile
+>> +++ b/drivers/counter/Makefile
+>> @@ -6,3 +6,5 @@
+>>  
+>>  obj-$(CONFIG_COUNTER) += counter.o
+>>  counter-y := generic-counter.o
+>> +
+>> +obj-$(CONFIG_104_QUAD_8)	+= 104-quad-8.o
+>> diff --git a/drivers/iio/counter/104-quad-8.c b/drivers/iio/counter/104-quad-8.c
+>...
