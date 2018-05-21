@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753037AbeEUL0s (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 07:26:48 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:40234 "EHLO
+        id S1752815AbeEUL1A (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 07:27:00 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41064 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752815AbeEUL0m (ORCPT
+        with ESMTP id S1750773AbeEUL0y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 07:26:42 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A332960F92
+        Mon, 21 May 2018 07:26:54 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 92E26609D1
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
 From: Ilia Lin <ilialin@codeaurora.org>
@@ -22,9 +22,9 @@ Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         rnayak@codeaurora.org, ilialin@codeaurora.org,
         amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
         celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: [PATCH v9 10/15] cpufreq: Add Kryo CPU scaling driver
-Date: Mon, 21 May 2018 14:25:27 +0300
-Message-Id: <1526901932-9514-11-git-send-email-ilialin@codeaurora.org>
+Subject: [PATCH v9 12/15] dt: qcom: Add qcom-cpufreq-kryo driver configuration
+Date: Mon, 21 May 2018 14:25:29 +0300
+Message-Id: <1526901932-9514-13-git-send-email-ilialin@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1526901932-9514-1-git-send-email-ilialin@codeaurora.org>
 References: <1526901932-9514-1-git-send-email-ilialin@codeaurora.org>
@@ -32,242 +32,499 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
-the CPU frequency subset and voltage value of each OPP varies
-based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
-defines the voltage and frequency value based on the msm-id in SMEM
-and speedbin blown in the efuse combination.
-The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
-to provide the OPP framework with required information.
-This is used to determine the voltage and frequency value for each OPP of
-operating-points-v2 table when it is parsed by the OPP framework.
+1. Add NVMEM node for the speedbin
+2. Add definitions for all possible MSM8996 CPU OPPs.
+The qcom-cpufreq-kryo driver will select the appropriate subset.
 
 Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
 Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- drivers/cpufreq/Kconfig.arm          |  10 +++
- drivers/cpufreq/Makefile             |   1 +
- drivers/cpufreq/cpufreq-dt-platdev.c |   3 +
- drivers/cpufreq/qcom-cpufreq-kryo.c  | 164 +++++++++++++++++++++++++++++++++++
- 4 files changed, 178 insertions(+)
- create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
+ arch/arm64/boot/dts/qcom/apq8096-db820c.dts |   2 +-
+ arch/arm64/boot/dts/qcom/msm8996.dtsi       | 281 ++++++++++++++++++++++++++--
+ 2 files changed, 270 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-index de55c7d..0bfd40e 100644
---- a/drivers/cpufreq/Kconfig.arm
-+++ b/drivers/cpufreq/Kconfig.arm
-@@ -124,6 +124,16 @@ config ARM_OMAP2PLUS_CPUFREQ
- 	depends on ARCH_OMAP2PLUS
- 	default ARCH_OMAP2PLUS
+diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c.dts b/arch/arm64/boot/dts/qcom/apq8096-db820c.dts
+index 230e9c8..da23bda 100644
+--- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dts
++++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dts
+@@ -17,5 +17,5 @@
  
-+config ARM_QCOM_CPUFREQ_KRYO
-+	bool "Qualcomm Kryo based CPUFreq"
-+	depends on QCOM_QFPROM
-+	depends on QCOM_SMEM
-+	select PM_OPP
-+	help
-+	  This adds the CPUFreq driver for Qualcomm Kryo SoC based boards.
-+
-+	  If in doubt, say N.
-+
- config ARM_S3C_CPUFREQ
- 	bool
- 	help
-diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-index 8d24ade..fb4a2ec 100644
---- a/drivers/cpufreq/Makefile
-+++ b/drivers/cpufreq/Makefile
-@@ -65,6 +65,7 @@ obj-$(CONFIG_MACH_MVEBU_V7)		+= mvebu-cpufreq.o
- obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+= omap-cpufreq.o
- obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+= pxa2xx-cpufreq.o
- obj-$(CONFIG_PXA3xx)			+= pxa3xx-cpufreq.o
-+obj-$(CONFIG_ARM_QCOM_CPUFREQ_KRYO)	+= qcom-cpufreq-kryo.o
- obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+= s3c2410-cpufreq.o
- obj-$(CONFIG_ARM_S3C2412_CPUFREQ)	+= s3c2412-cpufreq.o
- obj-$(CONFIG_ARM_S3C2416_CPUFREQ)	+= s3c2416-cpufreq.o
-diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-index 3b585e4..77d6ab8 100644
---- a/drivers/cpufreq/cpufreq-dt-platdev.c
-+++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-@@ -118,6 +118,9 @@
- 
- 	{ .compatible = "nvidia,tegra124", },
- 
-+	{ .compatible = "qcom,apq8096", },
-+	{ .compatible = "qcom,msm8996", },
-+
- 	{ .compatible = "st,stih407", },
- 	{ .compatible = "st,stih410", },
- 
-diff --git a/drivers/cpufreq/qcom-cpufreq-kryo.c b/drivers/cpufreq/qcom-cpufreq-kryo.c
-new file mode 100644
-index 0000000..9087db3
---- /dev/null
-+++ b/drivers/cpufreq/qcom-cpufreq-kryo.c
-@@ -0,0 +1,164 @@
+ / {
+ 	model = "Qualcomm Technologies, Inc. DB820c";
+-	compatible = "arrow,apq8096-db820c", "qcom,apq8096-sbc";
++	compatible = "arrow,apq8096-db820c", "qcom,apq8096-sbc", "qcom,apq8096";
+ };
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index e6cf290..d96a112 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -1,13 +1,6 @@
+-/* Copyright (c) 2014-2015, The Linux Foundation. All rights reserved.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 and
+- * only version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ */
++ * Copyright (c) 2014-2015, 2018 The Linux Foundation. All rights reserved.
+  */
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+@@ -169,177 +162,436 @@
+ 	};
+ 
+ 	cluster0_opp: opp_table0 {
+-		compatible = "operating-points-v2";
++		compatible = "operating-points-v2-kryo-cpu",
++					"operating-points-v2";
++		nvmem-cells = <&speedbin_efuse>;
+ 		opp-shared;
+ 
+ 		opp-307200000 {
+ 			opp-hz = /bits/ 64 <307200000>;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-384000000 {
++			opp-hz = /bits/ 64 <384000000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-422400000 {
+ 			opp-hz = /bits/ 64 <422400000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-460800000 {
++			opp-hz = /bits/ 64 <460800000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-480000000 {
+ 			opp-hz = /bits/ 64 <480000000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-537600000 {
++			opp-hz = /bits/ 64 <537600000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-556800000 {
+ 			opp-hz = /bits/ 64 <556800000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-614400000 {
++			opp-hz = /bits/ 64 <614400000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-652800000 {
+ 			opp-hz = /bits/ 64 <652800000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-691200000 {
++			opp-hz = /bits/ 64 <691200000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-729600000 {
+ 			opp-hz = /bits/ 64 <729600000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-768000000 {
++			opp-hz = /bits/ 64 <768000000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-844800000 {
+ 			opp-hz = /bits/ 64 <844800000>;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-902400000 {
++			opp-hz = /bits/ 64 <902400000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-960000000 {
+ 			opp-hz = /bits/ 64 <960000000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-979200000 {
++			opp-hz = /bits/ 64 <979200000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1036800000 {
+ 			opp-hz = /bits/ 64 <1036800000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1056000000 {
++			opp-hz = /bits/ 64 <1056000000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1113600000 {
+ 			opp-hz = /bits/ 64 <1113600000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1132800000 {
++			opp-hz = /bits/ 64 <1132800000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1190400000 {
+ 			opp-hz = /bits/ 64 <1190400000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1209600000 {
++			opp-hz = /bits/ 64 <1209600000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1228800000 {
+ 			opp-hz = /bits/ 64 <1228800000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1286400000 {
++			opp-hz = /bits/ 64 <1286400000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1324800000 {
+ 			opp-hz = /bits/ 64 <1324800000>;
++			opp-supported-hw = <0x5>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1363200000 {
++			opp-hz = /bits/ 64 <1363200000>;
++			opp-supported-hw = <0x72>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1401600000 {
+ 			opp-hz = /bits/ 64 <1401600000>;
++			opp-supported-hw = <0x5>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1440000000 {
++			opp-hz = /bits/ 64 <1440000000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1478400000 {
+ 			opp-hz = /bits/ 64 <1478400000>;
++			opp-supported-hw = <0x1>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1497600000 {
++			opp-hz = /bits/ 64 <1497600000>;
++			opp-supported-hw = <0x4>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1516800000 {
++			opp-hz = /bits/ 64 <1516800000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1593600000 {
+ 			opp-hz = /bits/ 64 <1593600000>;
++			opp-supported-hw = <0x71>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1996800000 {
++			opp-hz = /bits/ 64 <1996800000>;
++			opp-supported-hw = <0x20>;
++			clock-latency-ns = <200000>;
++		};
++		opp-2188800000 {
++			opp-hz = /bits/ 64 <2188800000>;
++			opp-supported-hw = <0x10>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 	};
+ 
+ 	cluster1_opp: opp_table1 {
+-		compatible = "operating-points-v2";
++		compatible = "operating-points-v2-kryo-cpu";
++		nvmem-cells = <&speedbin_efuse>;
+ 		opp-shared;
+ 
+ 		opp-307200000 {
+ 			opp-hz = /bits/ 64 <307200000>;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-384000000 {
++			opp-hz = /bits/ 64 <384000000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-403200000 {
+ 			opp-hz = /bits/ 64 <403200000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-460800000 {
++			opp-hz = /bits/ 64 <460800000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-480000000 {
+ 			opp-hz = /bits/ 64 <480000000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-537600000 {
++			opp-hz = /bits/ 64 <537600000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-556800000 {
+ 			opp-hz = /bits/ 64 <556800000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-614400000 {
++			opp-hz = /bits/ 64 <614400000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-652800000 {
+ 			opp-hz = /bits/ 64 <652800000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-691200000 {
++			opp-hz = /bits/ 64 <691200000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-729600000 {
+ 			opp-hz = /bits/ 64 <729600000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-748800000 {
++			opp-hz = /bits/ 64 <748800000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-806400000 {
+ 			opp-hz = /bits/ 64 <806400000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-825600000 {
++			opp-hz = /bits/ 64 <825600000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-883200000 {
+ 			opp-hz = /bits/ 64 <883200000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-902400000 {
++			opp-hz = /bits/ 64 <902400000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-940800000 {
+ 			opp-hz = /bits/ 64 <940800000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-979200000 {
++			opp-hz = /bits/ 64 <979200000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1036800000 {
+ 			opp-hz = /bits/ 64 <1036800000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1056000000 {
++			opp-hz = /bits/ 64 <1056000000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1113600000 {
+ 			opp-hz = /bits/ 64 <1113600000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1132800000 {
++			opp-hz = /bits/ 64 <1132800000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1190400000 {
+ 			opp-hz = /bits/ 64 <1190400000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1209600000 {
++			opp-hz = /bits/ 64 <1209600000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1248000000 {
+ 			opp-hz = /bits/ 64 <1248000000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1286400000 {
++			opp-hz = /bits/ 64 <1286400000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1324800000 {
+ 			opp-hz = /bits/ 64 <1324800000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1363200000 {
++			opp-hz = /bits/ 64 <1363200000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1401600000 {
+ 			opp-hz = /bits/ 64 <1401600000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1440000000 {
++			opp-hz = /bits/ 64 <1440000000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1478400000 {
+ 			opp-hz = /bits/ 64 <1478400000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1516800000 {
++			opp-hz = /bits/ 64 <1516800000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1555200000 {
+ 			opp-hz = /bits/ 64 <1555200000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1593600000 {
++			opp-hz = /bits/ 64 <1593600000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1632000000 {
+ 			opp-hz = /bits/ 64 <1632000000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1670400000 {
++			opp-hz = /bits/ 64 <1670400000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1708800000 {
+ 			opp-hz = /bits/ 64 <1708800000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1747200000 {
++			opp-hz = /bits/ 64 <1747200000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1785600000 {
+ 			opp-hz = /bits/ 64 <1785600000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1804800000 {
++			opp-hz = /bits/ 64 <1804800000>;
++			opp-supported-hw = <0x6>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1824000000 {
+ 			opp-hz = /bits/ 64 <1824000000>;
++			opp-supported-hw = <0x71>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1900800000 {
++			opp-hz = /bits/ 64 <1900800000>;
++			opp-supported-hw = <0x74>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1920000000 {
+ 			opp-hz = /bits/ 64 <1920000000>;
++			opp-supported-hw = <0x1>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1977600000 {
++			opp-hz = /bits/ 64 <1977600000>;
++			opp-supported-hw = <0x30>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1996800000 {
+ 			opp-hz = /bits/ 64 <1996800000>;
++			opp-supported-hw = <0x1>;
++			clock-latency-ns = <200000>;
++		};
++		opp-2054400000 {
++			opp-hz = /bits/ 64 <2054400000>;
++			opp-supported-hw = <0x30>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-2073600000 {
+ 			opp-hz = /bits/ 64 <2073600000>;
++			opp-supported-hw = <0x1>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-2150400000 {
+ 			opp-hz = /bits/ 64 <2150400000>;
++			opp-supported-hw = <0x31>;
++			clock-latency-ns = <200000>;
++		};
++		opp-2246400000 {
++			opp-hz = /bits/ 64 <2246400000>;
++			opp-supported-hw = <0x10>;
++			clock-latency-ns = <200000>;
++		};
++		opp-2342400000 {
++			opp-hz = /bits/ 64 <2342400000>;
++			opp-supported-hw = <0x10>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 	};
+@@ -917,6 +1169,11 @@
+ 				reg = <0x24f 0x1>;
+ 				bits = <1 4>;
+ 			};
 +
-+/*
-+ * In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
-+ * the CPU frequency subset and voltage value of each OPP varies
-+ * based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
-+ * defines the voltage and frequency value based on the msm-id in SMEM
-+ * and speedbin blown in the efuse combination.
-+ * The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
-+ * to provide the OPP framework with required information.
-+ * This is used to determine the voltage and frequency value for each OPP of
-+ * operating-points-v2 table when it is parsed by the OPP framework.
-+ */
-+
-+#include <linux/cpu.h>
-+#include <linux/err.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/nvmem-consumer.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_opp.h>
-+#include <linux/slab.h>
-+#include <linux/soc/qcom/smem.h>
-+
-+#define MSM_ID_SMEM	137
-+#define SILVER_LEAD	0
-+#define GOLD_LEAD	2
-+
-+enum _msm_id {
-+	MSM8996V3 = 0xF6ul,
-+	APQ8096V3 = 0x123ul,
-+	MSM8996SG = 0x131ul,
-+	APQ8096SG = 0x138ul,
-+};
-+
-+enum _msm8996_version {
-+	MSM8996_V3,
-+	MSM8996_SG,
-+	NUM_OF_MSM8996_VERSIONS,
-+};
-+
-+static enum _msm8996_version __init qcom_cpufreq_kryo_get_msm_id(void)
-+{
-+	size_t len;
-+	u32 *msm_id;
-+	enum _msm8996_version version;
-+
-+	msm_id = qcom_smem_get(QCOM_SMEM_HOST_ANY, MSM_ID_SMEM, &len);
-+	/* The first 4 bytes are format, next to them is the actual msm-id */
-+	msm_id++;
-+
-+	switch ((enum _msm_id)*msm_id) {
-+	case MSM8996V3:
-+	case APQ8096V3:
-+		version = MSM8996_V3;
-+		break;
-+	case MSM8996SG:
-+	case APQ8096SG:
-+		version = MSM8996_SG;
-+		break;
-+	default:
-+		version = NUM_OF_MSM8996_VERSIONS;
-+	}
-+
-+	return version;
-+}
-+
-+static int __init qcom_cpufreq_kryo_driver_init(void)
-+{
-+	struct device *cpu_dev_silver, *cpu_dev_gold;
-+	struct opp_table *opp_silver, *opp_gold;
-+	enum _msm8996_version msm8996_version;
-+	struct nvmem_cell *speedbin_nvmem;
-+	struct platform_device *pdev;
-+	struct device_node *np;
-+	u8 *speedbin;
-+	u32 versions;
-+	size_t len;
-+	int ret;
-+
-+	cpu_dev_silver = get_cpu_device(SILVER_LEAD);
-+	if (NULL == cpu_dev_silver)
-+		return -ENODEV;
-+
-+	cpu_dev_gold = get_cpu_device(GOLD_LEAD);
-+	if (NULL == cpu_dev_gold)
-+		return -ENODEV;
-+
-+	msm8996_version = qcom_cpufreq_kryo_get_msm_id();
-+	if (NUM_OF_MSM8996_VERSIONS == msm8996_version) {
-+		dev_err(cpu_dev_silver, "Not Snapdragon 820/821!");
-+		return -ENODEV;
-+	}
-+
-+	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev_silver);
-+	if (IS_ERR(np))
-+		return PTR_ERR(np);
-+
-+	if (!of_device_is_compatible(np, "operating-points-v2-kryo-cpu")) {
-+		ret = -ENOENT;
-+		goto free_np;
-+	}
-+
-+	speedbin_nvmem = of_nvmem_cell_get(np, NULL);
-+	if (IS_ERR(speedbin_nvmem)) {
-+		ret = PTR_ERR(speedbin_nvmem);
-+		dev_err(cpu_dev_silver, "Could not get nvmem cell: %d\n", ret);
-+		goto free_np;
-+	}
-+
-+	speedbin = nvmem_cell_read(speedbin_nvmem, &len);
-+	nvmem_cell_put(speedbin_nvmem);
-+
-+	switch (msm8996_version) {
-+	case MSM8996_V3:
-+		versions = 1 << (unsigned int)(*speedbin);
-+		break;
-+	case MSM8996_SG:
-+		versions = 1 << ((unsigned int)(*speedbin) + 4);
-+		break;
-+	default:
-+		BUG();
-+		break;
-+	}
-+
-+	opp_silver = dev_pm_opp_set_supported_hw(cpu_dev_silver,&versions,1);
-+	if (IS_ERR(opp_silver)) {
-+		dev_err(cpu_dev_silver, "Failed to set supported hardware\n");
-+		ret = PTR_ERR(opp_silver);
-+		goto free_np;
-+	}
-+
-+	opp_gold = dev_pm_opp_set_supported_hw(cpu_dev_gold,&versions,1);
-+	if (IS_ERR(opp_gold)) {
-+		dev_err(cpu_dev_gold, "Failed to set supported hardware\n");
-+		ret = PTR_ERR(opp_gold);
-+		goto free_opp_silver;
-+	}
-+
-+	pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
-+	if (!IS_ERR(pdev))
-+		return 0;
-+
-+	ret = PTR_ERR(pdev);
-+	dev_err(cpu_dev_silver, "Failed to register platform device\n");
-+	dev_pm_opp_put_supported_hw(opp_gold);
-+
-+free_opp_silver:
-+	dev_pm_opp_put_supported_hw(opp_silver);
-+
-+free_np:
-+	of_node_put(np);
-+
-+	return ret;
-+}
-+late_initcall(qcom_cpufreq_kryo_driver_init);
-+
-+MODULE_DESCRIPTION("Qualcomm Technologies, Inc. Kryo CPUfreq driver");
-+MODULE_LICENSE("GPL v2");
++			speedbin_efuse: speedbin@133 {
++				reg = <0x133 0x1>;
++				bits = <5 3>;
++			};
+ 		};
+ 
+ 		phy@34000 {
 -- 
 1.9.1
