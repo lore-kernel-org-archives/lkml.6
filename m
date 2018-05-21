@@ -1,52 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752537AbeEULRT (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 07:17:19 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47190 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751166AbeEULRO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 07:17:14 -0400
-From: Robin Murphy <robin.murphy@arm.com>
-To: will.deacon@arm.com, mark.rutland@arm.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] perf/arm-cci: Remove unnecessary period adjustment
-Date: Mon, 21 May 2018 12:17:09 +0100
-Message-Id: <9e5b7638ff44111334aff53b76bdcd1f26f08179.1526901337.git.robin.murphy@arm.com>
-X-Mailer: git-send-email 2.17.0.dirty
+        id S1752644AbeEULYh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 07:24:37 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:43152 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751166AbeEULYe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 07:24:34 -0400
+X-Google-Smtp-Source: AB8JxZpaO/Z6k2ajw52Lb1M//R2sPQZNreuO/q0S1G4vOwNqmQzrXXtikogXg2S6B8GtE4QJ+izQqVz9wuxxY5gn18w=
+MIME-Version: 1.0
+In-Reply-To: <20180517050611.GG20254@sirena.org.uk>
+References: <20180514080640.12515-1-linus.walleij@linaro.org>
+ <20180514080640.12515-20-linus.walleij@linaro.org> <20180517050611.GG20254@sirena.org.uk>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 21 May 2018 13:24:32 +0200
+Message-ID: <CACRpkdZnY+gKMarQkgp1Csn4ZFfYoC6WOV2XNkV1EKyx_bMKrw@mail.gmail.com>
+Subject: Re: [PATCH 19/19 v3] ARM: s3c64xx: Tidy up handling of regulator GPIO lookups
+To: Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since sampling events are rejected up-front by cci_pmu_event_init(), it
-doesn't make much sense to go fiddling with the sampling period later.
-This would seem to be just another leftover artefact of the arm_pmu
-framwork, and as such can go.
+On Thu, May 17, 2018 at 7:06 AM, Mark Brown <broonie@kernel.org> wrote:
+> On Mon, May 14, 2018 at 10:06:40AM +0200, Linus Walleij wrote:
+>> From: Charles Keepax <ckeepax@opensource.cirrus.com>
+>>
+>> Rather than unconditionally registering the GPIO lookup table only do so
+>> for devices that require it.
+>>
+>> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+>> [Fixed up to also handle wm5102 and wm5102 reva]
+>> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+>> ---
+>> ChangeLog v2->v3:
+>> - Including this in my patch series.
+>> ---
+>>  arch/arm/mach-s3c64xx/mach-crag6410-module.c | 18 +++++++++++-------
+>>  1 file changed, 11 insertions(+), 7 deletions(-)
+>
+> You need to send this patch to the Samsung platform maintainers...
 
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
----
- drivers/perf/arm-cci.c | 9 ---------
- 1 file changed, 9 deletions(-)
+Right. As it sits on top of the other patches we can take it on
+a side track later anyways through their tree.
 
-diff --git a/drivers/perf/arm-cci.c b/drivers/perf/arm-cci.c
-index 09938dd8eb6f..e6fadc8e1178 100644
---- a/drivers/perf/arm-cci.c
-+++ b/drivers/perf/arm-cci.c
-@@ -1297,15 +1297,6 @@ static int __hw_perf_event_init(struct perf_event *event)
- 	 */
- 	hwc->config_base	    |= (unsigned long)mapping;
- 
--	/*
--	 * Limit the sample_period to half of the counter width. That way, the
--	 * new counter value is far less likely to overtake the previous one
--	 * unless you have some serious IRQ latency issues.
--	 */
--	hwc->sample_period  = CCI_PMU_CNTR_MASK >> 1;
--	hwc->last_period    = hwc->sample_period;
--	local64_set(&hwc->period_left, hwc->sample_period);
--
- 	if (event->group_leader != event) {
- 		if (validate_group(event) != 0)
- 			return -EINVAL;
--- 
-2.17.0.dirty
+Yours,
+Linus Walleij
