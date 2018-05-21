@@ -1,98 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752743AbeEUCjX (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 22:39:23 -0400
-Received: from mga03.intel.com ([134.134.136.65]:49844 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751637AbeEUCjV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 22:39:21 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,425,1520924400";
-   d="scan'208";a="230274478"
-Date: Mon, 21 May 2018 10:39:44 +0800
-From: Tiwei Bie <tiwei.bie@intel.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
-        jfreimann@redhat.com
-Subject: Re: [RFC v4 3/5] virtio_ring: add packed ring support
-Message-ID: <20180521023944.GA16702@debian>
-References: <20180516134550.GB4171@debian>
- <eaf946f1-abab-c4e5-1ab5-ba7912986d58@redhat.com>
- <20180516143332.GA1957@debian>
- <bc38e5a1-e920-7055-dc22-49ac98455257@redhat.com>
- <20180518112950.GA28224@debian>
- <e247b46a-183f-3959-859b-aebb0bf81c07@redhat.com>
- <20180518143334.GA4537@debian>
- <1a661df0-8ca9-b31d-9c17-8684d608a33a@redhat.com>
- <20180519022938.GA18888@debian>
- <b8c0d147-2711-cb26-a084-e7d3d32d0002@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b8c0d147-2711-cb26-a084-e7d3d32d0002@redhat.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S1752745AbeEUCkC (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 22:40:02 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:43163 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751094AbeEUCkA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 May 2018 22:40:00 -0400
+X-Google-Smtp-Source: AB8JxZrnAx4WpSMGMpw9nR156fqfxVlOgX4XN07B0y7m6TwigQD7ZRCwJHuO+87vrg1KLPKcoW1bWQ==
+From: ufo19890607 <ufo19890607@gmail.com>
+To: akpm@linux-foundation.org, mhocko@suse.com, rientjes@google.com,
+        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
+        penguin-kernel@I-love.SAKURA.ne.jp, guro@fb.com,
+        yang.s@alibaba-inc.com
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        yuzhoujian <yuzhoujian@didichuxing.com>
+Subject: [PATCH v4] Print the memcg's name when system-wide OOM happened
+Date: Mon, 21 May 2018 03:39:46 +0100
+Message-Id: <1526870386-2439-1-git-send-email-ufo19890607@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 10:30:51AM +0800, Jason Wang wrote:
-> On 2018年05月19日 10:29, Tiwei Bie wrote:
-> > > I don't hope so.
-> > > 
-> > > > I agreed driver should track the DMA addrs or some
-> > > > other necessary things from the very beginning. And
-> > > > I also repeated the spec to emphasize that it does
-> > > > make sense. And I'd like to do that.
-> > > > 
-> > > > What I was saying is that, to support OOO, we may
-> > > > need to manage these context (which saves DMA addrs
-> > > > etc) via a list which is similar to the desc list
-> > > > maintained via `next` in split ring instead of an
-> > > > array whose elements always can be indexed directly.
-> > > My point is these context is a must (not only for OOO).
-> > Yeah, and I have the exactly same point after you
-> > pointed that I shouldn't get the addrs from descs.
-> > I do think it makes sense. I'll do it in the next
-> > version. I don't have any doubt about it. All my
-> > questions are about the OOO, instead of whether we
-> > should save context or not. It just seems that you
-> > thought I don't want to do it, and were trying to
-> > convince me that I should do it.
-> 
-> Right, but looks like I was wrong :)
-> 
-> > 
-> > > > The desc ring in split ring is an array, but its
-> > > > free entries are managed as list via next. I was
-> > > > just wondering, do we want to manage such a list
-> > > > because of OOO. It's just a very simple question
-> > > > that I want to hear your opinion... (It doesn't
-> > > > means anything, e.g. It doesn't mean I don't want
-> > > > to support OOO. It's just a simple question...)
-> > > So the question is yes. But I admit I don't have better idea other than what
-> > > you propose here (something like split ring which is a little bit sad).
-> > > Maybe Michael had.
-> > Yeah, that's why I asked this question. It will
-> > make the packed ring a bit similar to split ring
-> > at least in the driver part. So I want to draw
-> > your attention on this to make sure that we're
-> > on the same page.
-> 
-> Yes. I think we are.
+From: yuzhoujian <yuzhoujian@didichuxing.com>
 
-Cool. Glad to hear that! Thanks! :)
+The dump_header does not print the memcg's name when the system
+oom happened. So users cannot locate the certain container which
+contains the task that has been killed by the oom killer.
 
-Best regards,
-Tiwei Bie
+System oom report will print the memcg's name after this patch,
+so users can get the memcg's path from the oom report and check
+the certain container more quickly.
 
-> 
-> Thanks
-> 
-> > Best regards,
-> > Tiwei Bie
-> > 
-> 
+Changes since v3:
+- rename the helper's name to mem_cgroup_print_oom_memcg_name.
+- add the rcu lock held to the helper.
+- remove the print info of memcg's name in mem_cgroup_print_oom_info.
+
+Changes since v2:
+- add the mem_cgroup_print_memcg_name helper to print the memcg's
+  name which contains the task that will be killed by the oom-killer.
+
+Changes since v1:
+- replace adding mem_cgroup_print_oom_info with printing the memcg's
+  name only.
+
+Signed-off-by: yuzhoujian <yuzhoujian@didichuxing.com>
+---
+ include/linux/memcontrol.h |  9 +++++++++
+ mm/memcontrol.c            | 27 +++++++++++++++++++--------
+ mm/oom_kill.c              |  1 +
+ 3 files changed, 29 insertions(+), 8 deletions(-)
+
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index d99b71bc2c66..5fc58beae368 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -464,6 +464,9 @@ void mem_cgroup_handle_over_high(void);
+ 
+ unsigned long mem_cgroup_get_limit(struct mem_cgroup *memcg);
+ 
++void mem_cgroup_print_oom_memcg_name(struct mem_cgroup *memcg,
++				struct task_struct *p);
++
+ void mem_cgroup_print_oom_info(struct mem_cgroup *memcg,
+ 				struct task_struct *p);
+ 
+@@ -858,6 +861,12 @@ static inline unsigned long mem_cgroup_get_limit(struct mem_cgroup *memcg)
+ 	return 0;
+ }
+ 
++static inline void
++mem_cgroup_print_oom_memcg_name(struct mem_cgroup *memcg,
++					struct task_struct *p)
++{
++}
++
+ static inline void
+ mem_cgroup_print_oom_info(struct mem_cgroup *memcg, struct task_struct *p)
+ {
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 2bd3df3d101a..138a11edfacb 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -1118,19 +1118,15 @@ static const char *const memcg1_stat_names[] = {
+ };
+ 
+ #define K(x) ((x) << (PAGE_SHIFT-10))
++
+ /**
+- * mem_cgroup_print_oom_info: Print OOM information relevant to memory controller.
++ * mem_cgroup_print_oom_memcg_name: Print the memcg's name which contains the
++ * task that will be killed by the oom-killer.
+  * @memcg: The memory cgroup that went over limit
+  * @p: Task that is going to be killed
+- *
+- * NOTE: @memcg and @p's mem_cgroup can be different when hierarchy is
+- * enabled
+  */
+-void mem_cgroup_print_oom_info(struct mem_cgroup *memcg, struct task_struct *p)
++void mem_cgroup_print_oom_memcg_name(struct mem_cgroup *memcg, struct task_struct *p)
+ {
+-	struct mem_cgroup *iter;
+-	unsigned int i;
+-
+ 	rcu_read_lock();
+ 
+ 	if (p) {
+@@ -1145,7 +1141,22 @@ void mem_cgroup_print_oom_info(struct mem_cgroup *memcg, struct task_struct *p)
+ 	pr_cont("\n");
+ 
+ 	rcu_read_unlock();
++}
++
++/**
++ * mem_cgroup_print_oom_info: Print OOM information relevant to memory controller.
++ * @memcg: The memory cgroup that went over limit
++ * @p: Task that is going to be killed
++ *
++ * NOTE: @memcg and @p's mem_cgroup can be different when hierarchy is
++ * enabled
++ */
++void mem_cgroup_print_oom_info(struct mem_cgroup *memcg, struct task_struct *p)
++{
++	struct mem_cgroup *iter;
++	unsigned int i;
+ 
++	mem_cgroup_print_oom_memcg_name(memcg, p);
+ 	pr_info("memory: usage %llukB, limit %llukB, failcnt %lu\n",
+ 		K((u64)page_counter_read(&memcg->memory)),
+ 		K((u64)memcg->memory.limit), memcg->memory.failcnt);
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index 8ba6cb88cf58..3e0b725fb877 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -433,6 +433,7 @@ static void dump_header(struct oom_control *oc, struct task_struct *p)
+ 	if (is_memcg_oom(oc))
+ 		mem_cgroup_print_oom_info(oc->memcg, p);
+ 	else {
++		mem_cgroup_print_oom_memcg_name(oc->memcg, p);
+ 		show_mem(SHOW_MEM_FILTER_NODES, oc->nodemask);
+ 		if (is_dump_unreclaim_slabs())
+ 			dump_unreclaimable_slab();
+-- 
+2.14.1
