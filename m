@@ -1,97 +1,364 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751246AbeEUJ0A (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 05:26:00 -0400
-Received: from mail-sg2apc01on0094.outbound.protection.outlook.com ([104.47.125.94]:53229
-        "EHLO APC01-SG2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750993AbeEUJZ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 05:25:56 -0400
-From: Tianyu Lan <Tianyu.Lan@microsoft.com>
-CC: Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        Alexander Grest <Alexander.Grest@microsoft.com>,
-        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH] HV: Fix definition of struct hv_vp_assist_page.
-Thread-Topic: [PATCH] HV: Fix definition of struct hv_vp_assist_page.
-Thread-Index: AQHT8OW0xvko0r+GHEaIrg880bNuaw==
-Date: Mon, 21 May 2018 09:25:50 +0000
-Message-ID: <20180521092506.90121-1-Tianyu.Lan@microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Tianyu.Lan@microsoft.com;
-x-originating-ip: [52.168.54.252]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;KU1P153MB0101;7:IYr4Ht5FFiR5YGcqdpOgmBCZYHDDKrUCmOYSyiq5dr/FJTIUQmEejSKBow2tVruI1+klNSoujdum/zyiGFla0/eNhsm9gBljBNR2TaLcscAuPG0RqfwFFAvU9q+KOCQrtMj4NAHf5hFerHPHIVy1bZ2EWnGaJ4uTE2Vua3wXqpMCKTGbPkvksX8u29YslWKXStJ7Pa2ZMgU5N8NCJenqu+Qc3azEHPM1HtwU8YjnWUFmJfv1TE5wNUu952bn31gf;20:e0Dpo0H3LRnQYlYoNg38dVgft1E+XNDB49i04Ruiaen9PlYMDGBDFamyYEe14I+ZZDD2wXtWHEGTMjmcFuA5F8vR+4wYmnuTpKSnSSnWU5GSgFqdj6MZIu6/3j1qnspZniGlQbcAaiur8yd5y/nSY/w/KdRinczvMMoCg4eOJdw=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(2017052603328)(7193020);SRVR:KU1P153MB0101;
-x-ms-traffictypediagnostic: KU1P153MB0101:
-x-microsoft-antispam-prvs: <KU1P153MB0101918379A821EBFB2D508192950@KU1P153MB0101.APCP153.PROD.OUTLOOK.COM>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231254)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:KU1P153MB0101;BCL:0;PCL:0;RULEID:;SRVR:KU1P153MB0101;
-x-forefront-prvs: 06793E740F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(366004)(396003)(39380400002)(346002)(376002)(199004)(189003)(5660300001)(6506007)(10090500001)(81166006)(81156014)(486006)(86612001)(7736002)(8676002)(305945005)(1857600001)(53936002)(6436002)(102836004)(86362001)(575784001)(2616005)(476003)(54906003)(316002)(25786009)(99286004)(8936002)(109986005)(26005)(6512007)(22452003)(4326008)(68736007)(6116002)(3660700001)(59246006)(1076002)(2900100001)(5250100002)(2906002)(3280700002)(3846002)(36756003)(105586002)(478600001)(106356001)(72206003)(14454004)(6486002)(10290500003)(66066001)(97736004)(1671002)(22906009);DIR:OUT;SFP:1102;SCL:1;SRVR:KU1P153MB0101;H:KU1P153MB0136.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: eQZKuvHNGB3fFyfELhYfaF4RmqHQts09TPGkvOYNR//qg5Af2kQBVEX9kJ4/Fz+9MyCTu/eDM5PU3/wwKO7Z+BDYBf14fYp4/IxtR1IuXswHKTUliyH/V7L7cFjtPyq9yi2c0PZwnY772Jt/0PwgUjsS0rkA1dq/Z8Zqjuc/tKHSBV+Q0sLHKIYzDpzwSgfP
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: d486d4f4-48ad-43e6-37b8-08d5befcd7f3
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d486d4f4-48ad-43e6-37b8-08d5befcd7f3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 May 2018 09:25:50.1846
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KU1P153MB0101
-To: unlisted-recipients:; (no To-header on input)
+        id S1751547AbeEUJ0K (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 05:26:10 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:54243 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751019AbeEUJZ5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 05:25:57 -0400
+X-Google-Smtp-Source: AB8JxZpbQynbDkEQ91qFeUvtsu3UUjb9NExhCOTpfrt0aC0oBtGr8M7fEUW8ejeygpkebr5Y98jsXg==
+From: Tvrtko Ursulin <tursulin@ursulin.net>
+X-Google-Original-From: Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
+To: linux-kernel@vger.kernel.org
+Cc: Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>
+Subject: [RFC] perf: Allow fine-grained PMU access control
+Date: Mon, 21 May 2018 10:25:49 +0100
+Message-Id: <20180521092549.5349-1-tvrtko.ursulin@linux.intel.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4L9Q6A3025159
 
-The struct hv_vp_assist_page was defined incorrectly.
-The "vtl_control" should be u64[3], "nested_enlightenments_control"
-should be a u64 and there is 7 reserved bytes following "enlighten_vmentry".
-This patch is to fix it.
+From: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
 
-Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
+For situations where sysadmins might want to allow different level of
+of access control for different PMUs, we start creating per-PMU
+perf_event_paranoid controls in sysfs.
+
+These work in equivalent fashion as the existing perf_event_paranoid
+sysctl, which now becomes the parent control for each PMU.
+
+On PMU registration the global/parent value will be inherited by each PMU,
+as it will be propagated to all registered PMUs when the sysctl is
+updated.
+
+At any later point individual PMU access controls, located in
+<sysfs>/device/<pmu-name>/perf_event_paranoid, can be adjusted to achieve
+fine grained access control.
+
+Signed-off-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: linux-kernel@vger.kernel.org
 ---
- arch/x86/include/asm/hyperv-tlfs.h | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ arch/x86/events/intel/bts.c     |  2 +-
+ arch/x86/events/intel/core.c    |  2 +-
+ arch/x86/events/intel/p4.c      |  2 +-
+ include/linux/perf_event.h      | 18 ++++--
+ kernel/events/core.c            | 99 +++++++++++++++++++++++++++------
+ kernel/sysctl.c                 |  4 +-
+ kernel/trace/trace_event_perf.c |  6 +-
+ 7 files changed, 105 insertions(+), 28 deletions(-)
 
-diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
-index f7be6d03a310..fae0a5431cdd 100644
---- a/arch/x86/include/asm/hyperv-tlfs.h
-+++ b/arch/x86/include/asm/hyperv-tlfs.h
-@@ -496,10 +496,11 @@ struct hv_timer_message_payload {
- /* Define virtual processor assist page structure. */
- struct hv_vp_assist_page {
- 	__u32 apic_assist;
--	__u32 reserved;
--	__u64 vtl_control[2];
--	__u64 nested_enlightenments_control[2];
--	__u32 enlighten_vmentry;
-+	__u32 reserved1;
-+	__u64 vtl_control[3];
-+	__u64 nested_enlightenments_control;
-+	__u8 enlighten_vmentry;
-+	__u8 reserved2[7];
- 	__u64 current_nested_vmcs;
- };
+diff --git a/arch/x86/events/intel/bts.c b/arch/x86/events/intel/bts.c
+index 24ffa1e88cf9..e416c9e2400a 100644
+--- a/arch/x86/events/intel/bts.c
++++ b/arch/x86/events/intel/bts.c
+@@ -555,7 +555,7 @@ static int bts_event_init(struct perf_event *event)
+ 	 * Note that the default paranoia setting permits unprivileged
+ 	 * users to profile the kernel.
+ 	 */
+-	if (event->attr.exclude_kernel && perf_paranoid_kernel() &&
++	if (event->attr.exclude_kernel && perf_paranoid_kernel(event->pmu) &&
+ 	    !capable(CAP_SYS_ADMIN))
+ 		return -EACCES;
  
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index 707b2a96e516..6b126bdbd16c 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -3025,7 +3025,7 @@ static int intel_pmu_hw_config(struct perf_event *event)
+ 	if (x86_pmu.version < 3)
+ 		return -EINVAL;
+ 
+-	if (perf_paranoid_cpu() && !capable(CAP_SYS_ADMIN))
++	if (perf_paranoid_cpu(event->pmu) && !capable(CAP_SYS_ADMIN))
+ 		return -EACCES;
+ 
+ 	event->hw.config |= ARCH_PERFMON_EVENTSEL_ANY;
+diff --git a/arch/x86/events/intel/p4.c b/arch/x86/events/intel/p4.c
+index d32c0eed38ca..878451ef1ace 100644
+--- a/arch/x86/events/intel/p4.c
++++ b/arch/x86/events/intel/p4.c
+@@ -776,7 +776,7 @@ static int p4_validate_raw_event(struct perf_event *event)
+ 	 * the user needs special permissions to be able to use it
+ 	 */
+ 	if (p4_ht_active() && p4_event_bind_map[v].shared) {
+-		if (perf_paranoid_cpu() && !capable(CAP_SYS_ADMIN))
++		if (perf_paranoid_cpu(event->pmu) && !capable(CAP_SYS_ADMIN))
+ 			return -EACCES;
+ 	}
+ 
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index e71e99eb9a4e..2d9e7b4bcfac 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -271,6 +271,9 @@ struct pmu {
+ 	/* number of address filters this PMU can do */
+ 	unsigned int			nr_addr_filters;
+ 
++	/* fine grained access control */
++	int				perf_event_paranoid;
++
+ 	/*
+ 	 * Fully disable/enable this PMU, can be used to protect from the PMI
+ 	 * as well as for lazy/batch writing of the MSRs.
+@@ -1159,6 +1162,9 @@ extern int sysctl_perf_cpu_time_max_percent;
+ 
+ extern void perf_sample_event_took(u64 sample_len_ns);
+ 
++extern int perf_proc_paranoid_handler(struct ctl_table *table, int write,
++		void __user *buffer, size_t *lenp,
++		loff_t *ppos);
+ extern int perf_proc_update_handler(struct ctl_table *table, int write,
+ 		void __user *buffer, size_t *lenp,
+ 		loff_t *ppos);
+@@ -1169,19 +1175,19 @@ extern int perf_cpu_time_max_percent_handler(struct ctl_table *table, int write,
+ int perf_event_max_stack_handler(struct ctl_table *table, int write,
+ 				 void __user *buffer, size_t *lenp, loff_t *ppos);
+ 
+-static inline bool perf_paranoid_tracepoint_raw(void)
++static inline bool perf_paranoid_tracepoint_raw(const struct pmu *pmu)
+ {
+-	return sysctl_perf_event_paranoid > -1;
++	return pmu->perf_event_paranoid > -1;
+ }
+ 
+-static inline bool perf_paranoid_cpu(void)
++static inline bool perf_paranoid_cpu(const struct pmu *pmu)
+ {
+-	return sysctl_perf_event_paranoid > 0;
++	return pmu->perf_event_paranoid > 0;
+ }
+ 
+-static inline bool perf_paranoid_kernel(void)
++static inline bool perf_paranoid_kernel(const struct pmu *pmu)
+ {
+-	return sysctl_perf_event_paranoid > 1;
++	return pmu->perf_event_paranoid > 1;
+ }
+ 
+ extern void perf_event_init(void);
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 725d37d6e386..f20c41ff9c4b 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -432,6 +432,24 @@ static void update_perf_cpu_limits(void)
+ 
+ static bool perf_rotate_context(struct perf_cpu_context *cpuctx);
+ 
++int perf_proc_paranoid_handler(struct ctl_table *table, int write,
++		void __user *buffer, size_t *lenp,
++		loff_t *ppos)
++{
++	int ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
++	struct pmu *pmu;
++
++	if (ret || !write)
++		return ret;
++
++	mutex_lock(&pmus_lock);
++	list_for_each_entry(pmu, &pmus, entry)
++		pmu->perf_event_paranoid = sysctl_perf_event_paranoid;
++	mutex_unlock(&pmus_lock);
++
++	return 0;
++}
++
+ int perf_proc_update_handler(struct ctl_table *table, int write,
+ 		void __user *buffer, size_t *lenp,
+ 		loff_t *ppos)
+@@ -4113,7 +4131,7 @@ find_get_context(struct pmu *pmu, struct task_struct *task,
+ 
+ 	if (!task) {
+ 		/* Must be root to operate on a CPU event: */
+-		if (perf_paranoid_cpu() && !capable(CAP_SYS_ADMIN))
++		if (perf_paranoid_cpu(pmu) && !capable(CAP_SYS_ADMIN))
+ 			return ERR_PTR(-EACCES);
+ 
+ 		cpuctx = per_cpu_ptr(pmu->pmu_cpu_context, cpu);
+@@ -5679,7 +5697,7 @@ static int perf_mmap(struct file *file, struct vm_area_struct *vma)
+ 	lock_limit >>= PAGE_SHIFT;
+ 	locked = vma->vm_mm->pinned_vm + extra;
+ 
+-	if ((locked > lock_limit) && perf_paranoid_tracepoint_raw() &&
++	if ((locked > lock_limit) && perf_paranoid_tracepoint_raw(event->pmu) &&
+ 		!capable(CAP_IPC_LOCK)) {
+ 		ret = -EPERM;
+ 		goto unlock;
+@@ -9426,6 +9444,41 @@ static void free_pmu_context(struct pmu *pmu)
+ 	mutex_unlock(&pmus_lock);
+ }
+ 
++/*
++ * Fine-grained access control:
++ */
++static ssize_t
++perf_event_paranoid_show(struct device *dev,
++			 struct device_attribute *attr,
++			 char *page)
++{
++	struct pmu *pmu = dev_get_drvdata(dev);
++
++	return snprintf(page, PAGE_SIZE - 1, "%d\n", pmu->perf_event_paranoid);
++}
++
++static ssize_t
++perf_event_paranoid_store(struct device *dev,
++			  struct device_attribute *attr,
++			  const char *buf, size_t count)
++{
++	struct pmu *pmu = dev_get_drvdata(dev);
++	int ret, val;
++
++	ret = kstrtoint(buf, 0, &val);
++	if (ret)
++		return ret;
++
++	if (val < -1 || val > 2)
++		return -EINVAL;
++
++	pmu->perf_event_paranoid = val;
++
++	return count;
++}
++
++DEVICE_ATTR_RW(perf_event_paranoid);
++
+ /*
+  * Let userspace know that this PMU supports address range filtering:
+  */
+@@ -9540,6 +9593,11 @@ static int pmu_dev_alloc(struct pmu *pmu)
+ 	if (ret)
+ 		goto free_dev;
+ 
++	/* Add fine-grained access control attribute. */
++	ret = device_create_file(pmu->dev, &dev_attr_perf_event_paranoid);
++	if (ret)
++		goto del_dev;
++
+ 	/* For PMUs with address filters, throw in an extra attribute: */
+ 	if (pmu->nr_addr_filters)
+ 		ret = device_create_file(pmu->dev, &dev_attr_nr_addr_filters);
+@@ -9571,6 +9629,7 @@ int perf_pmu_register(struct pmu *pmu, const char *name, int type)
+ 	if (!pmu->pmu_disable_count)
+ 		goto unlock;
+ 
++	pmu->perf_event_paranoid = sysctl_perf_event_paranoid;
+ 	pmu->type = -1;
+ 	if (!name)
+ 		goto skip_type;
+@@ -10190,10 +10249,6 @@ static int perf_copy_attr(struct perf_event_attr __user *uattr,
+ 			 */
+ 			attr->branch_sample_type = mask;
+ 		}
+-		/* privileged levels capture (kernel, hv): check permissions */
+-		if ((mask & PERF_SAMPLE_BRANCH_PERM_PLM)
+-		    && perf_paranoid_kernel() && !capable(CAP_SYS_ADMIN))
+-			return -EACCES;
+ 	}
+ 
+ 	if (attr->sample_type & PERF_SAMPLE_REGS_USER) {
+@@ -10410,11 +10465,6 @@ SYSCALL_DEFINE5(perf_event_open,
+ 	if (err)
+ 		return err;
+ 
+-	if (!attr.exclude_kernel) {
+-		if (perf_paranoid_kernel() && !capable(CAP_SYS_ADMIN))
+-			return -EACCES;
+-	}
+-
+ 	if (attr.namespaces) {
+ 		if (!capable(CAP_SYS_ADMIN))
+ 			return -EACCES;
+@@ -10428,11 +10478,6 @@ SYSCALL_DEFINE5(perf_event_open,
+ 			return -EINVAL;
+ 	}
+ 
+-	/* Only privileged users can get physical addresses */
+-	if ((attr.sample_type & PERF_SAMPLE_PHYS_ADDR) &&
+-	    perf_paranoid_kernel() && !capable(CAP_SYS_ADMIN))
+-		return -EACCES;
+-
+ 	/*
+ 	 * In cgroup mode, the pid argument is used to pass the fd
+ 	 * opened to the cgroup directory in cgroupfs. The cpu argument
+@@ -10502,6 +10547,28 @@ SYSCALL_DEFINE5(perf_event_open,
+ 		goto err_cred;
+ 	}
+ 
++	if (!attr.exclude_kernel) {
++		if (perf_paranoid_kernel(event->pmu) &&
++		    !capable(CAP_SYS_ADMIN)) {
++			err = -EACCES;
++			goto err_alloc;
++		}
++	}
++
++	/* Only privileged users can get physical addresses */
++	if ((attr.sample_type & PERF_SAMPLE_PHYS_ADDR) &&
++	    perf_paranoid_kernel(event->pmu) && !capable(CAP_SYS_ADMIN)) {
++		err = -EACCES;
++		goto err_alloc;
++	}
++
++	/* privileged levels capture (kernel, hv): check permissions */
++	if ((attr.branch_sample_type & PERF_SAMPLE_BRANCH_PERM_PLM) &&
++	    perf_paranoid_kernel(event->pmu) && !capable(CAP_SYS_ADMIN)) {
++		err = -EACCES;
++		goto err_alloc;
++	}
++
+ 	if (is_sampling_event(event)) {
+ 		if (event->pmu->capabilities & PERF_PMU_CAP_NO_INTERRUPT) {
+ 			err = -EOPNOTSUPP;
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 6a78cf70761d..aeec3ac5405e 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -1142,7 +1142,9 @@ static struct ctl_table kern_table[] = {
+ 		.data		= &sysctl_perf_event_paranoid,
+ 		.maxlen		= sizeof(sysctl_perf_event_paranoid),
+ 		.mode		= 0644,
+-		.proc_handler	= proc_dointvec,
++		.proc_handler	= perf_proc_paranoid_handler,
++		.extra1		= &neg_one,
++		.extra2		= &two,
+ 	},
+ 	{
+ 		.procname	= "perf_event_mlock_kb",
+diff --git a/kernel/trace/trace_event_perf.c b/kernel/trace/trace_event_perf.c
+index c79193e598f5..545a7ef9bfe1 100644
+--- a/kernel/trace/trace_event_perf.c
++++ b/kernel/trace/trace_event_perf.c
+@@ -45,7 +45,8 @@ static int perf_trace_event_perm(struct trace_event_call *tp_event,
+ 
+ 	/* The ftrace function trace is allowed only for root. */
+ 	if (ftrace_event_is_function(tp_event)) {
+-		if (perf_paranoid_tracepoint_raw() && !capable(CAP_SYS_ADMIN))
++		if (perf_paranoid_tracepoint_raw(p_event->pmu) &&
++		    !capable(CAP_SYS_ADMIN))
+ 			return -EPERM;
+ 
+ 		if (!is_sampling_event(p_event))
+@@ -81,7 +82,8 @@ static int perf_trace_event_perm(struct trace_event_call *tp_event,
+ 	 * ...otherwise raw tracepoint data can be a severe data leak,
+ 	 * only allow root to have these.
+ 	 */
+-	if (perf_paranoid_tracepoint_raw() && !capable(CAP_SYS_ADMIN))
++	if (perf_paranoid_tracepoint_raw(p_event->pmu) &&
++	    !capable(CAP_SYS_ADMIN))
+ 		return -EPERM;
+ 
+ 	return 0;
 -- 
-2.14.3
+2.17.0
