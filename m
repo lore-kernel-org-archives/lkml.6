@@ -1,39 +1,38 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrX9dSbWeWqvL6QXOLOrd7v0o+9v9gtvexf09nZNdpvv6LUu8nV7Hna3StjPCXXZir1d8Kq
-ARC-Seal: i=1; a=rsa-sha256; t=1526937384; cv=none;
+X-Google-Smtp-Source: AB8JxZqSA5OldMJ4hqcE7hN2HJB0ELaQurDANK5ktD94bS+i4xo8Nc3SBelWrI8cazbI21eqTnv8
+ARC-Seal: i=1; a=rsa-sha256; t=1526937381; cv=none;
         d=google.com; s=arc-20160816;
-        b=yG7banns/jR20YR5c4CAkRgnqgoTx1F3uM2ggUg1YBBBN8+bCZeoUja5865QF5+WNa
-         bGsXdODzmiwCWi0/auPNSCtPPQxBs11OsS/yM+Rfp7WMZTi/70h5wO8CsZalvB6O+LX/
-         GPIFMm/IZa3/TtJosF0yTxMmmMD3Hs5eG8tePzpNUFSlVWb7jjEzJCFZvpld3vPcfMfR
-         aktablvaVoK7cHzTua1D6E2wgG6qyipOJTg3w6JZhqwdVhhEm+QJqpLifjUStbAbuf4l
-         uvQ/eEM+bPTHAsqteEY94GE3mZdY+XEgBg5mtMbNpZti7s02A3b30zuEt5WxBDOSD4s7
-         /ZDQ==
+        b=vGDox9rcxa7KnoizeSpcXtObPld0q3KtbCKyLQGGQaCjht03b0phT7AZ7WC5X+o3zB
+         ak3U4rGm7i9yvf7zDQeIjFGZhZiBHqKSO/q0lcPAZBAiuU1UpFhGnA3+jIF+Ta3GSy0Q
+         8dtaho29S3H8z9tRMduPakrEzMWw1256oT49k8/vLUYCY4AqPb2Zh+kOxTfvASg10o8T
+         8oaOjdWGfiKsAB7sGs/jNIlESM7d4S9ril3LPhzM81AuT4SFVSz5cDuXYHnGqIwSt0n5
+         5HdKh6eteSM57s6wE754uZm2tnofKZwpa/eDoYuykQ4Zb2QkSe3WQw/D6Bxz2zWg2FLt
+         h9gQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=dmNzbCSnJQLXa+RhWOgiQLvNmCIxrepnc6DMDIUxmL8=;
-        b=pYkEbt4mtniQ6vChUmaz47INHwMB2bYeqxSdWR/Ke27DIWYukqnhbPugCiCxTKk2cI
-         2ZpaIBokt5eaV8IxvDBtgcTXR3qNUdYhkOhNf5aA+n73th27GFKJAB4Qaw9Q1vFSHHvw
-         xAlH+3O/YMwF1o255AoPJzJlMjhgJWWmBg3J6qdtXsh75nnfKBY+eeUJZbT5BUlsy+VX
-         ReRHnn+Q9amsRa1mO6MUpYe/Q463s+1uTyLQOIl2x3LaJ+zND3dtNB4jxbzqFiyvuTLG
-         zFwLiiUYF4daMCKrel7M+fYbh6KHBRA70pW6PLTWsJj3AwZa1N9oRIwR44ePUQL59Om0
-         8j5Q==
+        bh=Jnx/5BS4yuM1GMDKUwyxiEGlGdSZIVs+iUpqvo2+2QA=;
+        b=LnpAZI1v+Rjht/0g1zwiWvXwU7ckBWI21rx+RKngIPOVrmacHiF0old9LiL6J0E0Ht
+         inFPydNFNl2eDoQfLJ6P2XmM3+UfXCpLTMlZHSq/ihIIq/mMaQZnKW9FpYQI44W5Rl2x
+         7pUb2gKxekazhJ0h3k9NmXIM7XEIgBHDD/ExcWVYYjz4BSIRiAUNXsrE+CcwL/scO6tT
+         mvt7fNa8z+N/BT7lei7sp3xecY7eWV0e6QM9vDOcQbWpFx4GLaA+JYFlCNj0XVW7Cw78
+         ml4JQa+9m+Z43jsWPJBvy01/4gRWaXHrOxmMo96O4tNm5QovlDLTOwYOOJibDDBB1i6G
+         xlMA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=EL8aLZzG;
+       dkim=pass header.i=@kernel.org header.s=default header.b=2FHxxIKf;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=EL8aLZzG;
+       dkim=pass header.i=@kernel.org header.s=default header.b=2FHxxIKf;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Kees Cook <keescook@chromium.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 63/87] x86/speculation: Make "seccomp" the default mode for Speculative Store Bypass
-Date: Mon, 21 May 2018 23:11:39 +0200
-Message-Id: <20180521210425.733930167@linuxfoundation.org>
+Subject: [PATCH 4.9 62/87] seccomp: Move speculation migitation control to arch code
+Date: Mon, 21 May 2018 23:11:38 +0200
+Message-Id: <20180521210425.692595297@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210420.222671977@linuxfoundation.org>
 References: <20180521210420.222671977@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109894850235462?=
-X-GMAIL-MSGID: =?utf-8?q?1601109894850235462?=
+X-GMAIL-THRID: =?utf-8?q?1601109891840824631?=
+X-GMAIL-MSGID: =?utf-8?q?1601109891840824631?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,156 +51,111 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kees Cook <keescook@chromium.org>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit f21b53b20c754021935ea43364dbf53778eeba32 upstream
+commit 8bf37d8c067bb7eb8e7c381bdadf9bd89182b6bc upstream
 
-Unless explicitly opted out of, anything running under seccomp will have
-SSB mitigations enabled. Choosing the "prctl" mode will disable this.
+The migitation control is simpler to implement in architecture code as it
+avoids the extra function call to check the mode. Aside of that having an
+explicit seccomp enabled mode in the architecture mitigations would require
+even more workarounds.
 
-[ tglx: Adjusted it to the new arch_seccomp_spec_mitigate() mechanism ]
+Move it into architecture code and provide a weak function in the seccomp
+code. Remove the 'which' argument as this allows the architecture to decide
+which mitigations are relevant for seccomp.
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/kernel-parameters.txt  |   26 +++++++++++++++++---------
- arch/x86/include/asm/nospec-branch.h |    1 +
- arch/x86/kernel/cpu/bugs.c           |   32 +++++++++++++++++++++++---------
- 3 files changed, 41 insertions(+), 18 deletions(-)
+ arch/x86/kernel/cpu/bugs.c |   29 ++++++++++++++++++-----------
+ include/linux/nospec.h     |    2 ++
+ kernel/seccomp.c           |   15 ++-------------
+ 3 files changed, 22 insertions(+), 24 deletions(-)
 
---- a/Documentation/kernel-parameters.txt
-+++ b/Documentation/kernel-parameters.txt
-@@ -3997,19 +3997,27 @@ bytes respectively. Such letter suffixes
- 			This parameter controls whether the Speculative Store
- 			Bypass optimization is used.
- 
--			on     - Unconditionally disable Speculative Store Bypass
--			off    - Unconditionally enable Speculative Store Bypass
--			auto   - Kernel detects whether the CPU model contains an
--				 implementation of Speculative Store Bypass and
--				 picks the most appropriate mitigation.
--			prctl  - Control Speculative Store Bypass per thread
--				 via prctl. Speculative Store Bypass is enabled
--				 for a process by default. The state of the control
--				 is inherited on fork.
-+			on      - Unconditionally disable Speculative Store Bypass
-+			off     - Unconditionally enable Speculative Store Bypass
-+			auto    - Kernel detects whether the CPU model contains an
-+				  implementation of Speculative Store Bypass and
-+				  picks the most appropriate mitigation. If the
-+				  CPU is not vulnerable, "off" is selected. If the
-+				  CPU is vulnerable the default mitigation is
-+				  architecture and Kconfig dependent. See below.
-+			prctl   - Control Speculative Store Bypass per thread
-+				  via prctl. Speculative Store Bypass is enabled
-+				  for a process by default. The state of the control
-+				  is inherited on fork.
-+			seccomp - Same as "prctl" above, but all seccomp threads
-+				  will disable SSB unless they explicitly opt out.
- 
- 			Not specifying this option is equivalent to
- 			spec_store_bypass_disable=auto.
- 
-+			Default mitigations:
-+			X86:	If CONFIG_SECCOMP=y "seccomp", otherwise "prctl"
-+
- 	spia_io_base=	[HW,MTD]
- 	spia_fio_base=
- 	spia_pedr=
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -233,6 +233,7 @@ enum ssb_mitigation {
- 	SPEC_STORE_BYPASS_NONE,
- 	SPEC_STORE_BYPASS_DISABLE,
- 	SPEC_STORE_BYPASS_PRCTL,
-+	SPEC_STORE_BYPASS_SECCOMP,
- };
- 
- extern char __indirect_thunk_start[];
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -415,22 +415,25 @@ enum ssb_mitigation_cmd {
- 	SPEC_STORE_BYPASS_CMD_AUTO,
- 	SPEC_STORE_BYPASS_CMD_ON,
- 	SPEC_STORE_BYPASS_CMD_PRCTL,
-+	SPEC_STORE_BYPASS_CMD_SECCOMP,
- };
- 
- static const char *ssb_strings[] = {
- 	[SPEC_STORE_BYPASS_NONE]	= "Vulnerable",
- 	[SPEC_STORE_BYPASS_DISABLE]	= "Mitigation: Speculative Store Bypass disabled",
--	[SPEC_STORE_BYPASS_PRCTL]	= "Mitigation: Speculative Store Bypass disabled via prctl"
-+	[SPEC_STORE_BYPASS_PRCTL]	= "Mitigation: Speculative Store Bypass disabled via prctl",
-+	[SPEC_STORE_BYPASS_SECCOMP]	= "Mitigation: Speculative Store Bypass disabled via prctl and seccomp",
- };
- 
- static const struct {
- 	const char *option;
- 	enum ssb_mitigation_cmd cmd;
- } ssb_mitigation_options[] = {
--	{ "auto",	SPEC_STORE_BYPASS_CMD_AUTO },  /* Platform decides */
--	{ "on",		SPEC_STORE_BYPASS_CMD_ON },    /* Disable Speculative Store Bypass */
--	{ "off",	SPEC_STORE_BYPASS_CMD_NONE },  /* Don't touch Speculative Store Bypass */
--	{ "prctl",	SPEC_STORE_BYPASS_CMD_PRCTL }, /* Disable Speculative Store Bypass via prctl */
-+	{ "auto",	SPEC_STORE_BYPASS_CMD_AUTO },    /* Platform decides */
-+	{ "on",		SPEC_STORE_BYPASS_CMD_ON },      /* Disable Speculative Store Bypass */
-+	{ "off",	SPEC_STORE_BYPASS_CMD_NONE },    /* Don't touch Speculative Store Bypass */
-+	{ "prctl",	SPEC_STORE_BYPASS_CMD_PRCTL },   /* Disable Speculative Store Bypass via prctl */
-+	{ "seccomp",	SPEC_STORE_BYPASS_CMD_SECCOMP }, /* Disable Speculative Store Bypass via prctl and seccomp */
- };
- 
- static enum ssb_mitigation_cmd __init ssb_parse_cmdline(void)
-@@ -480,8 +483,15 @@ static enum ssb_mitigation_cmd __init __
- 
- 	switch (cmd) {
- 	case SPEC_STORE_BYPASS_CMD_AUTO:
--		/* Choose prctl as the default mode */
--		mode = SPEC_STORE_BYPASS_PRCTL;
-+	case SPEC_STORE_BYPASS_CMD_SECCOMP:
-+		/*
-+		 * Choose prctl+seccomp as the default mode if seccomp is
-+		 * enabled.
-+		 */
-+		if (IS_ENABLED(CONFIG_SECCOMP))
-+			mode = SPEC_STORE_BYPASS_SECCOMP;
-+		else
-+			mode = SPEC_STORE_BYPASS_PRCTL;
- 		break;
- 	case SPEC_STORE_BYPASS_CMD_ON:
- 		mode = SPEC_STORE_BYPASS_DISABLE;
-@@ -529,12 +539,14 @@ static void ssb_select_mitigation()
+@@ -568,6 +568,24 @@ static int ssb_prctl_set(struct task_str
+ 	return 0;
  }
  
- #undef pr_fmt
-+#define pr_fmt(fmt)     "Speculation prctl: " fmt
- 
- static int ssb_prctl_set(struct task_struct *task, unsigned long ctrl)
++int arch_prctl_spec_ctrl_set(struct task_struct *task, unsigned long which,
++			     unsigned long ctrl)
++{
++	switch (which) {
++	case PR_SPEC_STORE_BYPASS:
++		return ssb_prctl_set(task, ctrl);
++	default:
++		return -ENODEV;
++	}
++}
++
++#ifdef CONFIG_SECCOMP
++void arch_seccomp_spec_mitigate(struct task_struct *task)
++{
++	ssb_prctl_set(task, PR_SPEC_FORCE_DISABLE);
++}
++#endif
++
+ static int ssb_prctl_get(struct task_struct *task)
  {
- 	bool update;
- 
--	if (ssb_mode != SPEC_STORE_BYPASS_PRCTL)
-+	if (ssb_mode != SPEC_STORE_BYPASS_PRCTL &&
-+	    ssb_mode != SPEC_STORE_BYPASS_SECCOMP)
- 		return -ENXIO;
- 
- 	switch (ctrl) {
-@@ -582,7 +594,8 @@ int arch_prctl_spec_ctrl_set(struct task
- #ifdef CONFIG_SECCOMP
- void arch_seccomp_spec_mitigate(struct task_struct *task)
- {
--	ssb_prctl_set(task, PR_SPEC_FORCE_DISABLE);
-+	if (ssb_mode == SPEC_STORE_BYPASS_SECCOMP)
-+		ssb_prctl_set(task, PR_SPEC_FORCE_DISABLE);
- }
- #endif
- 
-@@ -591,6 +604,7 @@ static int ssb_prctl_get(struct task_str
  	switch (ssb_mode) {
- 	case SPEC_STORE_BYPASS_DISABLE:
- 		return PR_SPEC_DISABLE;
-+	case SPEC_STORE_BYPASS_SECCOMP:
- 	case SPEC_STORE_BYPASS_PRCTL:
- 		if (task_spec_ssb_force_disable(task))
- 			return PR_SPEC_PRCTL | PR_SPEC_FORCE_DISABLE;
+@@ -586,17 +604,6 @@ static int ssb_prctl_get(struct task_str
+ 	}
+ }
+ 
+-int arch_prctl_spec_ctrl_set(struct task_struct *task, unsigned long which,
+-			     unsigned long ctrl)
+-{
+-	switch (which) {
+-	case PR_SPEC_STORE_BYPASS:
+-		return ssb_prctl_set(task, ctrl);
+-	default:
+-		return -ENODEV;
+-	}
+-}
+-
+ int arch_prctl_spec_ctrl_get(struct task_struct *task, unsigned long which)
+ {
+ 	switch (which) {
+--- a/include/linux/nospec.h
++++ b/include/linux/nospec.h
+@@ -62,5 +62,7 @@ static inline unsigned long array_index_
+ int arch_prctl_spec_ctrl_get(struct task_struct *task, unsigned long which);
+ int arch_prctl_spec_ctrl_set(struct task_struct *task, unsigned long which,
+ 			     unsigned long ctrl);
++/* Speculation control for seccomp enforced mitigation */
++void arch_seccomp_spec_mitigate(struct task_struct *task);
+ 
+ #endif /* _LINUX_NOSPEC_H */
+--- a/kernel/seccomp.c
++++ b/kernel/seccomp.c
+@@ -216,18 +216,7 @@ static inline bool seccomp_may_assign_mo
+ 	return true;
+ }
+ 
+-/*
+- * If a given speculation mitigation is opt-in (prctl()-controlled),
+- * select it, by disabling speculation (enabling mitigation).
+- */
+-static inline void spec_mitigate(struct task_struct *task,
+-				 unsigned long which)
+-{
+-	int state = arch_prctl_spec_ctrl_get(task, which);
+-
+-	if (state > 0 && (state & PR_SPEC_PRCTL))
+-		arch_prctl_spec_ctrl_set(task, which, PR_SPEC_FORCE_DISABLE);
+-}
++void __weak arch_seccomp_spec_mitigate(struct task_struct *task) { }
+ 
+ static inline void seccomp_assign_mode(struct task_struct *task,
+ 				       unsigned long seccomp_mode,
+@@ -243,7 +232,7 @@ static inline void seccomp_assign_mode(s
+ 	smp_mb__before_atomic();
+ 	/* Assume default seccomp processes want spec flaw mitigation. */
+ 	if ((flags & SECCOMP_FILTER_FLAG_SPEC_ALLOW) == 0)
+-		spec_mitigate(task, PR_SPEC_STORE_BYPASS);
++		arch_seccomp_spec_mitigate(task);
+ 	set_tsk_thread_flag(task, TIF_SECCOMP);
+ }
+ 
