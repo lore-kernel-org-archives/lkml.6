@@ -1,38 +1,93 @@
-Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZoJ80juVcfBnNYEXeJUc7FQWNWCDq9fM7MPgpF8DKwBNwsjeoQaPoV0YqMde0aDbw6r6JiE
-ARC-Seal: i=1; a=rsa-sha256; t=1526937886; cv=none;
-        d=google.com; s=arc-20160816;
-        b=HUMFfPvooKTqJjvYM9BWMh/NLQrw7iqcs6sATJAf4+xYqOC+zNIgsclTmGM7WiZ5oK
-         ZswB7kOjgHCjlDiT4sf90f9KS52uw93B/CvKEL9xqyJ5t9AvwfSymIISdAGSSxCrsYay
-         PsiYqAlmtQtZNgj8q9NglVJ4W7p7sP3W3TPBWXEC86YdgdSAL94SP652NQefzLRNmAld
-         Sb3xoAjuGewli2Ol8KYNZbi2ABL4hwZT2NSy0XKH4DZWa7jVLrTX0HtlU5aL+JYk/IV5
-         ev1gP9NAw9mgghmZc0gzIUCu+tZVTMV6rqKy8v6uhE1Qr9o5NlrmTCgp0r0RXVcg4MQH
-         7X/A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=ak23eg9wdowwwW6aBtAdctVGUM0qkuREzwGl7fIZKus=;
-        b=b8MNEjanJTCI4aZb7dPYD1oKxmv9t5HAzkLRsMGq4ZEV6p70iUq2lZOAvDnrxWbTQ4
-         X/oOv1LQzAITR1aD4PeVAd/fH2X9boLNVvJJzAWo1gbqnz100mqMV2DU+43oeDNDrfPQ
-         PKGS3i/YLcRv2MYQB3u5lsPczs9RRpUkyTCRDnkaiFwiNxjpVVw4e6cxfxOB6JiMaLhx
-         5aa+rwTEgvKC7JT62zUmTUbA21QbsKrkIfljvQ1sKRI0auGVSv/5TcUSOlzYWt/Iut4t
-         iEXHfNiujI0rCdXlqD/36HBoKL1RfD6GKo/2XJxA9LUhzn/kn7qWEnJELsAlAg3SN6Om
-         AbQA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=YTBTVbaW;
-       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=YTBTVbaW;
-       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1340521-1526937882-2-12960467792994491279
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1526937881; b=a3J+3FKv2e5O4Cx7gt0HwqSMuk5ibuT09N2bKT1xfZSqXCJhp/
+    zbcmEVV+zIoEEPxpU8a25HaowpNX57X9vJr2y6f6UzyKVj9+bfsh86Eq82PlWkeQ
+    9tctNX9mr1/GzyH8cn0ZUB+emIwnMDwh1g/ijE/M/X9U8fY0jcBpS4PrpfC3TuPM
+    hV/L1vI8jk8GOzIk/V+6CbXo5Sif2od306T4nqOG5w48mu0gfQltJYEjrfJ0pbbN
+    BnGPx67zon+45W9EvrU9Lkio2hpbDRNpbSUSIOwBPUvAj1/YRQcBj21NljFVT/Vx
+    +29wK3P6DZPhk/5Fz1qoU2CfrwZVfx95YsSg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1526937881; bh=lIlLzvu30TYUcyKmZKvcPvtZDzpxrd
+    3hrNpFtNPMnSY=; b=TsgVD9C63gGhsEQ6N51nC0r0ZR5ddL6aEN5ljRE3A4iOXA
+    dK9pd9Uz+mexPMsm/bFcqXMYP1gaGX3E8RokabElx+hqihtSJG6UWBf+rfH14WyF
+    cMml521Yd18iHCLIUWIuzARbCcS44Oz7WTSiEOxkNJNwjcDq7x4NmuzplAkY1Qzk
+    bYK4YUdSGB0XNszUEOHmajC1XnqYUic/XBaVBbBx4OgJjXnbKw4uMRxT9RPvWgX9
+    8Vo4Qy+Zrfxo3dP9l2BjR5dS70q7A1c1fGq+LtAt04uPt17RULiKKfQ/rTBAr7eZ
+    NY0Vm/6IlpgS3GhuILsSm+cRzHX9jjFcS7ECN1lw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+    header.i=@kernel.org header.b=FltxVvOe x-bits=1024 x-keytype=rsa
+    x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+    header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=linuxfoundation.org header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+      header.i=@kernel.org header.b=FltxVvOe x-bits=1024 x-keytype=rsa
+      x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+      header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=linuxfoundation.org header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfL1dAgMHn2XqNVRkucflPtid8aJX/nAKbW5kEZev6jomM1xU1T81Spg/5rr/Yxcd+fvKgQACAy3Xf1wYj/LWeFQW3FXe1xmqn2y+L7AhYdK3An4iIvBT
+    9yavHymIplBQEmAQygVH3e4I2PpL9r1u4Z4WNM4q8mR7XaQ1UszW86o5s4weao00ltVNlGdf6IaJBWJWw4Bh0bfqXoFvwaBN0nFANr9RvllSKInK38keiO/R
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=iox4zFpeAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=OoizzLiirw8PgB2rMYsA:9
+    a=QEXdDO2ut3YA:10 a=WzC6qhA0u3u7Ye7llzcV:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751942AbeEUVYd (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 21 May 2018 17:24:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39394 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932255AbeEUVYa (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 21 May 2018 17:24:30 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Nikolay Borisov <nborisov@suse.com>,
-	David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.16 060/110] btrfs: Fix delalloc inodes invalidation during transaction abort
-Date: Mon, 21 May 2018 23:11:57 +0200
-Message-Id: <20180521210511.302410287@linuxfoundation.org>
+        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.16 055/110] Btrfs: fix xattr loss after power failure
+Date: Mon, 21 May 2018 23:11:52 +0200
+Message-Id: <20180521210510.398647772@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -40,10 +95,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601110098844973821?=
-X-GMAIL-MSGID: =?utf-8?q?1601110420774772039?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,129 +105,78 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nikolay Borisov <nborisov@suse.com>
+From: Filipe Manana <fdmanana@suse.com>
 
-commit fe816d0f1d4c31c4c31d42ca78a87660565fc800 upstream.
+commit 9a8fca62aacc1599fea8e813d01e1955513e4fad upstream.
 
-When a transaction is aborted btrfs_cleanup_transaction is called to
-cleanup all the various in-flight bits and pieces which migth be
-active. One of those is delalloc inodes - inodes which have dirty
-pages which haven't been persisted yet. Currently the process of
-freeing such delalloc inodes in exceptional circumstances such as
-transaction abort boiled down to calling btrfs_invalidate_inodes whose
-sole job is to invalidate the dentries for all inodes related to a
-root. This is in fact wrong and insufficient since such delalloc inodes
-will likely have pending pages or ordered-extents and will be linked to
-the sb->s_inode_list. This means that unmounting a btrfs instance with
-an aborted transaction could potentially lead inodes/their pages
-visible to the system long after their superblock has been freed. This
-in turn leads to a "use-after-free" situation once page shrink is
-triggered. This situation could be simulated by running generic/019
-which would cause such inodes to be left hanging, followed by
-generic/176 which causes memory pressure and page eviction which lead
-to touching the freed super block instance. This situation is
-additionally detected by the unmount code of VFS with the following
-message:
+If a file has xattrs, we fsync it, to ensure we clear the flags
+BTRFS_INODE_NEEDS_FULL_SYNC and BTRFS_INODE_COPY_EVERYTHING from its
+inode, the current transaction commits and then we fsync it (without
+either of those bits being set in its inode), we end up not logging
+all its xattrs. This results in deleting all xattrs when replying the
+log after a power failure.
 
-"VFS: Busy inodes after unmount of Self-destruct in 5 seconds.  Have a nice day..."
+Trivial reproducer
 
-Additionally btrfs hits WARN_ON(!RB_EMPTY_ROOT(&root->inode_tree));
-in free_fs_root for the same reason.
+  $ mkfs.btrfs -f /dev/sdb
+  $ mount /dev/sdb /mnt
 
-This patch aims to rectify the sitaution by doing the following:
+  $ touch /mnt/foobar
+  $ setfattr -n user.xa -v qwerty /mnt/foobar
+  $ xfs_io -c "fsync" /mnt/foobar
 
-1. Change btrfs_destroy_delalloc_inodes so that it calls
-invalidate_inode_pages2 for every inode on the delalloc list, this
-ensures that all the pages of the inode are released. This function
-boils down to calling btrfs_releasepage. During test I observed cases
-where inodes on the delalloc list were having an i_count of 0, so this
-necessitates using igrab to be sure we are working on a non-freed inode.
+  $ sync
 
-2. Since calling btrfs_releasepage might queue delayed iputs move the
-call out to btrfs_cleanup_transaction in btrfs_error_commit_super before
-calling run_delayed_iputs for the last time. This is necessary to ensure
-that delayed iputs are run.
+  $ xfs_io -c "pwrite -S 0xab 0 64K" /mnt/foobar
+  $ xfs_io -c "fsync" /mnt/foobar
+  <power failure>
 
-Note: this patch is tagged for 4.14 stable but the fix applies to older
-versions too but needs to be backported manually due to conflicts.
+  $ mount /dev/sdb /mnt
+  $ getfattr --absolute-names --dump /mnt/foobar
+  <empty output>
+  $
 
-CC: stable@vger.kernel.org # 4.14.x: 2b8773313494: btrfs: Split btrfs_del_delalloc_inode into 2 functions
-CC: stable@vger.kernel.org # 4.14.x
-Signed-off-by: Nikolay Borisov <nborisov@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-[ add comment to igrab ]
+So fix this by making sure all xattrs are logged if we log a file's inode
+item and neither the flags BTRFS_INODE_NEEDS_FULL_SYNC nor
+BTRFS_INODE_COPY_EVERYTHING were set in the inode.
+
+Fixes: 36283bf777d9 ("Btrfs: fix fsync xattr loss in the fast fsync path")
+Cc: <stable@vger.kernel.org> # 4.2+
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/disk-io.c |   26 +++++++++++++++-----------
- 1 file changed, 15 insertions(+), 11 deletions(-)
+ fs/btrfs/tree-log.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -3744,6 +3744,7 @@ void close_ctree(struct btrfs_fs_info *f
- 	set_bit(BTRFS_FS_CLOSING_DONE, &fs_info->flags);
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -4749,6 +4749,7 @@ static int btrfs_log_inode(struct btrfs_
+ 	struct extent_map_tree *em_tree = &inode->extent_tree;
+ 	u64 logged_isize = 0;
+ 	bool need_log_inode_item = true;
++	bool xattrs_logged = false;
  
- 	btrfs_free_qgroup_config(fs_info);
-+	ASSERT(list_empty(&fs_info->delalloc_roots));
- 
- 	if (percpu_counter_sum(&fs_info->delalloc_bytes)) {
- 		btrfs_info(fs_info, "at unmount delalloc count %lld",
-@@ -4049,15 +4050,15 @@ static int btrfs_check_super_valid(struc
- 
- static void btrfs_error_commit_super(struct btrfs_fs_info *fs_info)
- {
-+	/* cleanup FS via transaction */
-+	btrfs_cleanup_transaction(fs_info);
-+
- 	mutex_lock(&fs_info->cleaner_mutex);
- 	btrfs_run_delayed_iputs(fs_info);
- 	mutex_unlock(&fs_info->cleaner_mutex);
- 
- 	down_write(&fs_info->cleanup_work_sem);
- 	up_write(&fs_info->cleanup_work_sem);
--
--	/* cleanup FS via transaction */
--	btrfs_cleanup_transaction(fs_info);
- }
- 
- static void btrfs_destroy_ordered_extents(struct btrfs_root *root)
-@@ -4182,19 +4183,23 @@ static void btrfs_destroy_delalloc_inode
- 	list_splice_init(&root->delalloc_inodes, &splice);
- 
- 	while (!list_empty(&splice)) {
-+		struct inode *inode = NULL;
- 		btrfs_inode = list_first_entry(&splice, struct btrfs_inode,
- 					       delalloc_inodes);
--
--		list_del_init(&btrfs_inode->delalloc_inodes);
--		clear_bit(BTRFS_INODE_IN_DELALLOC_LIST,
--			  &btrfs_inode->runtime_flags);
-+		__btrfs_del_delalloc_inode(root, btrfs_inode);
- 		spin_unlock(&root->delalloc_lock);
- 
--		btrfs_invalidate_inodes(btrfs_inode->root);
--
-+		/*
-+		 * Make sure we get a live inode and that it'll not disappear
-+		 * meanwhile.
-+		 */
-+		inode = igrab(&btrfs_inode->vfs_inode);
-+		if (inode) {
-+			invalidate_inode_pages2(inode->i_mapping);
-+			iput(inode);
+ 	path = btrfs_alloc_path();
+ 	if (!path)
+@@ -5050,6 +5051,7 @@ next_key:
+ 	err = btrfs_log_all_xattrs(trans, root, inode, path, dst_path);
+ 	if (err)
+ 		goto out_unlock;
++	xattrs_logged = true;
+ 	if (max_key.type >= BTRFS_EXTENT_DATA_KEY && !fast_search) {
+ 		btrfs_release_path(path);
+ 		btrfs_release_path(dst_path);
+@@ -5062,6 +5064,11 @@ log_extents:
+ 	btrfs_release_path(dst_path);
+ 	if (need_log_inode_item) {
+ 		err = log_inode_item(trans, log, dst_path, inode);
++		if (!err && !xattrs_logged) {
++			err = btrfs_log_all_xattrs(trans, root, inode, path,
++						   dst_path);
++			btrfs_release_path(path);
 +		}
- 		spin_lock(&root->delalloc_lock);
+ 		if (err)
+ 			goto out_unlock;
  	}
--
- 	spin_unlock(&root->delalloc_lock);
- }
- 
-@@ -4210,7 +4215,6 @@ static void btrfs_destroy_all_delalloc_i
- 	while (!list_empty(&splice)) {
- 		root = list_first_entry(&splice, struct btrfs_root,
- 					 delalloc_root);
--		list_del_init(&root->delalloc_root);
- 		root = btrfs_grab_fs_root(root);
- 		BUG_ON(!root);
- 		spin_unlock(&fs_info->delalloc_root_lock);
