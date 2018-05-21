@@ -1,142 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751126AbeEUEvw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 00:51:52 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:50390 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750703AbeEUEvv (ORCPT
+        id S1750944AbeEUE5t (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 00:57:49 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:37022 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750703AbeEUE5r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 00:51:51 -0400
-Subject: Re: [PATCH v2 5/5] kconfig: refactor ncurses package checks for
- building nconf
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        "Luis R . Rodriguez" <mcgrof@suse.com>,
-        Ulf Magnusson <ulfalizer@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1526804213-8238-1-git-send-email-yamada.masahiro@socionext.com>
- <1526804213-8238-6-git-send-email-yamada.masahiro@socionext.com>
- <7819f81c-2de6-4202-1349-ae4ce01caa26@infradead.org>
- <CAK7LNARzdUZ3=PWwM_SC-t6XEoCgGEBfh4kj_KMv9WUquAHJ0g@mail.gmail.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <170f1ce7-c192-96cd-f593-89f534d239bc@infradead.org>
-Date: Sun, 20 May 2018 21:51:47 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 21 May 2018 00:57:47 -0400
+X-Google-Smtp-Source: AB8JxZrgnjVc4m28sXT6O3qxDaU6tJNTtuVMa7n6KaGemLmP1tvYZRlw7g5jtdMGdB5ss/74zSUW2cEcFOQTxgM5umw=
 MIME-Version: 1.0
-In-Reply-To: <CAK7LNARzdUZ3=PWwM_SC-t6XEoCgGEBfh4kj_KMv9WUquAHJ0g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAFqt6zZeQLMkdha4DD2uMp=LOX879BrR6pf4_fwXzc3nr=G-Rw@mail.gmail.com>
+References: <20180425045922.GA21590@jordon-HP-15-Notebook-PC> <CAFqt6zZeQLMkdha4DD2uMp=LOX879BrR6pf4_fwXzc3nr=G-Rw@mail.gmail.com>
+From: Souptick Joarder <jrdr.linux@gmail.com>
+Date: Mon, 21 May 2018 10:27:44 +0530
+Message-ID: <CAFqt6zascSzTd9QR1rNxdRV=Ta-nuVksj9mtNE0Fzb4qQ21EvQ@mail.gmail.com>
+Subject: Re: [PATCH v2] gpu: drm: udl: Adding new typedef vm_fault_t
+To: airlied@redhat.com,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        =?UTF-8?Q?Cihangir_Akt=C3=BCrk?= <cakturk@gmail.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Michal Hocko <mhocko@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/20/2018 09:48 PM, Masahiro Yamada wrote:
-> 2018-05-21 8:41 GMT+09:00 Randy Dunlap <rdunlap@infradead.org>:
->> On 05/20/2018 01:16 AM, Masahiro Yamada wrote:
->>> Building nconf requires ncurses, but its presence is not checked.
->>> Check and configure necessary packages by a shell script like the
->>> other GUI frontends.
->>>
->>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->>> ---
->>>
+On Thu, May 10, 2018 at 7:18 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> On Wed, Apr 25, 2018 at 10:29 AM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+>> Use new return type vm_fault_t for fault and huge_fault
+>> handler. For now, this is just documenting that the
+>> function returns a VM_FAULT value rather than an errno.
+>> Once all instances are converted, vm_fault_t will become
+>> a distinct type.
 >>
->>> diff --git a/scripts/kconfig/nconf-cfg.sh b/scripts/kconfig/nconf-cfg.sh
->>> new file mode 100644
->>> index 0000000..8eb7948
->>> --- /dev/null
->>> +++ b/scripts/kconfig/nconf-cfg.sh
->>> @@ -0,0 +1,34 @@
->>> +#!/bin/sh
->>> +# SPDX-License-Identifier: GPL-2.0
->>> +
->>> +PKG="ncursesw menuw panelw"
->>> +PKG2="ncurses menu panel"
->>> +
->>> +if pkg-config --exists $PKG; then
->>> +     echo libs=\"$(pkg-config --libs $PKG)\"
->>> +     exit 0
->>> +fi
->>> +
->>> +if pkg-config --exists $PKG2; then
->>> +     echo libs=\"$(pkg-config --libs $PKG2)\"
->>> +     exit 0
->>> +fi
->>> +
+>> Commit 1c8f422059ae ("mm: change return type to vm_fault_t")
 >>
->> I guess this one needs clags, especially -I, like the mconf patch contains...
-> 
-> 
-> 
-> I thought so.
-> 
-> But, the current scripts/kconfig/Makefile
-> adds 'pkg-config --libs' to nconf,
-> but does nothing about 'pkg-config --cflags' for nconf.
-> Therefore, I kept the current behavior just in case.
-> 
-> 
-> The nconfig in the current version is not working for you, right?
-
-That's correct.
-
-
-Info:
-
-$ make ARCH=x86_64 O=xx64 nconfig
-make[1]: Entering directory '/home/rdunlap/lnx/next/linux-next-20180517/xx64'
-  GEN     ./Makefile
-  UPD     scripts/kconfig/.nconf-cfg
-  HOSTCC  scripts/kconfig/nconf.o
-In file included from ../scripts/kconfig/nconf.c:15:0:
-../scripts/kconfig/nconf.h:19:18: fatal error: menu.h: No such file or directory
- #include <menu.h>
-                  ^
-compilation terminated.
-scripts/Makefile.host:107: recipe for target 'scripts/kconfig/nconf.o' failed
-make[2]: *** [scripts/kconfig/nconf.o] Error 1
-/home/rdunlap/lnx/next/linux-next-20180517/Makefile:525: recipe for target 'nconfig' failed
-make[1]: *** [nconfig] Error 2
-make[1]: Leaving directory '/home/rdunlap/lnx/next/linux-next-20180517/xx64'
-Makefile:146: recipe for target 'sub-make' failed
-make: *** [sub-make] Error 2
-
-
-xx64/scripts/kconfig/.nconf-cfg contains:
-libs="-lncursesw -lmenuw -lpanelw"
-
-
->>> +# Unfortunately, some distributions (e.g. openSUSE) cannot find ncurses
->>> +# by pkg-config.
->>> +if [ -f /usr/include/ncursesw/ncurses.h ]; then
->>> +     echo libs=\"-lncursesw -lmenuw -lpanelw\"
->>> +     exit 0
->>> +fi
->>> +
->>> +if [ -f /usr/include/ncurses.h ]; then
->>> +     echo libs=\"-lncurses -lmenu -lpanel\"
->>> +     exit 0
->>> +fi
->>> +
->>> +echo >&2 "*"
->>> +echo >&2 "* Unable to find the ncurses."
+>> Previously vm_insert_page() returns err which driver
+>> mapped into VM_FAULT_* type. The new function vmf_
+>> insert_page() will replace this inefficiency by
+>> returning VM_FAULT_* type.
 >>
->>                               the ncurses package."
+>> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+>> Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+>> ---
+>> v2: Updated the change log
 >>
->>> +echo >&2 "* Install ncurses (ncurses-devel or libncurses-dev"
->>> +echo >&2 "* depending on your distribution)"
+>>  drivers/gpu/drm/udl/udl_drv.h |  3 ++-
+>>  drivers/gpu/drm/udl/udl_gem.c | 15 ++-------------
+>>  2 files changed, 4 insertions(+), 14 deletions(-)
 >>
->>                                  distribution)."
+>> diff --git a/drivers/gpu/drm/udl/udl_drv.h b/drivers/gpu/drm/udl/udl_drv.h
+>> index 2a75ab8..11151c4 100644
+>> --- a/drivers/gpu/drm/udl/udl_drv.h
+>> +++ b/drivers/gpu/drm/udl/udl_drv.h
+>> @@ -16,6 +16,7 @@
 >>
->>> +echo >&2 "*"
->>> +exit 1
->>>
-> 
-> 
-> 
+>>  #include <linux/usb.h>
+>>  #include <drm/drm_gem.h>
+>> +#include <linux/mm_types.h>
+>>
+>>  #define DRIVER_NAME            "udl"
+>>  #define DRIVER_DESC            "DisplayLink"
+>> @@ -134,7 +135,7 @@ struct drm_gem_object *udl_gem_prime_import(struct drm_device *dev,
+>>  int udl_gem_vmap(struct udl_gem_object *obj);
+>>  void udl_gem_vunmap(struct udl_gem_object *obj);
+>>  int udl_drm_gem_mmap(struct file *filp, struct vm_area_struct *vma);
+>> -int udl_gem_fault(struct vm_fault *vmf);
+>> +vm_fault_t udl_gem_fault(struct vm_fault *vmf);
+>>
+>>  int udl_handle_damage(struct udl_framebuffer *fb, int x, int y,
+>>                       int width, int height);
+>> diff --git a/drivers/gpu/drm/udl/udl_gem.c b/drivers/gpu/drm/udl/udl_gem.c
+>> index dee6bd9..cf5fe35 100644
+>> --- a/drivers/gpu/drm/udl/udl_gem.c
+>> +++ b/drivers/gpu/drm/udl/udl_gem.c
+>> @@ -100,13 +100,12 @@ int udl_drm_gem_mmap(struct file *filp, struct vm_area_struct *vma)
+>>         return ret;
+>>  }
+>>
+>> -int udl_gem_fault(struct vm_fault *vmf)
+>> +vm_fault_t udl_gem_fault(struct vm_fault *vmf)
+>>  {
+>>         struct vm_area_struct *vma = vmf->vma;
+>>         struct udl_gem_object *obj = to_udl_bo(vma->vm_private_data);
+>>         struct page *page;
+>>         unsigned int page_offset;
+>> -       int ret = 0;
+>>
+>>         page_offset = (vmf->address - vma->vm_start) >> PAGE_SHIFT;
+>>
+>> @@ -114,17 +113,7 @@ int udl_gem_fault(struct vm_fault *vmf)
+>>                 return VM_FAULT_SIGBUS;
+>>
+>>         page = obj->pages[page_offset];
+>> -       ret = vm_insert_page(vma, vmf->address, page);
+>> -       switch (ret) {
+>> -       case -EAGAIN:
+>> -       case 0:
+>> -       case -ERESTARTSYS:
+>> -               return VM_FAULT_NOPAGE;
+>> -       case -ENOMEM:
+>> -               return VM_FAULT_OOM;
+>> -       default:
+>> -               return VM_FAULT_SIGBUS;
+>> -       }
+>> +       return vmf_insert_page(vma, vmf->address, page);
+>>  }
+>>
+>>  int udl_gem_get_pages(struct udl_gem_object *obj)
+>> --
+>> 1.9.1
+>>
+>
+> Any comment on this patch ?
 
-
--- 
-~Randy
+If no comment, we would like to get this patch in queue
+for 4.18.
