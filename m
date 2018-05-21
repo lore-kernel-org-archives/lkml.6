@@ -1,142 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753395AbeEUWVS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 18:21:18 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41888 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753201AbeEUWVO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 18:21:14 -0400
-Date: Tue, 22 May 2018 01:21:11 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jesse Brandeburg <jesse.brandeburg@intel.com>
-Cc: Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH net-next 10/12] vhost_net: build xdp buff
-Message-ID: <20180522012008-mutt-send-email-mst@kernel.org>
-References: <1526893473-20128-1-git-send-email-jasowang@redhat.com>
- <1526893473-20128-11-git-send-email-jasowang@redhat.com>
- <20180521095611.00005caa@intel.com>
+        id S1753308AbeEUWX1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 18:23:27 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:40114 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751473AbeEUWXX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 18:23:23 -0400
+X-Google-Smtp-Source: AB8JxZrvAwpmmbh+zy2KUa1p+LQQcG+8xxL26pAh0Lic0KZAv9f+tPexP0vxtGPvuZZFYMQi+/5HkBMUAA1BWrtkYSE=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180521095611.00005caa@intel.com>
+In-Reply-To: <1526903890-35761-31-git-send-email-xieyisheng1@huawei.com>
+References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com> <1526903890-35761-31-git-send-email-xieyisheng1@huawei.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 22 May 2018 01:23:22 +0300
+Message-ID: <CAHp75VfOWPjbmtE=zhmbd4wNsOjYF7ZVGkq9DeMpbtgXwa2DAA@mail.gmail.com>
+Subject: Re: [PATCH 30/33] ALSA: oxygen: use match_string() helper
+To: Yisheng Xie <xieyisheng1@huawei.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 09:56:11AM -0700, Jesse Brandeburg wrote:
-> On Mon, 21 May 2018 17:04:31 +0800 Jason wrote:
-> > This patch implement build XDP buffers in vhost_net. The idea is do
-> > userspace copy in vhost_net and build XDP buff based on the
-> > page. Vhost_net can then submit one or an array of XDP buffs to
-> > underlayer socket (e.g TUN). TUN can choose to do XDP or call
-> > build_skb() to build skb. To support build skb, vnet header were also
-> > stored into the header of the XDP buff.
-> > 
-> > This userspace copy and XDP buffs building is key to achieve XDP
-> > batching in TUN, since TUN does not need to care about userspace copy
-> > and then can disable premmption for several XDP buffs to achieve
-> > batching from XDP.
-> > 
-> > TODO: reserve headroom based on the TUN XDP.
-> > 
-> > Signed-off-by: Jason Wang <jasowang@redhat.com>
-> > ---
-> >  drivers/vhost/net.c | 74 +++++++++++++++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 74 insertions(+)
-> > 
-> > diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-> > index f0639d7..1209e84 100644
-> > --- a/drivers/vhost/net.c
-> > +++ b/drivers/vhost/net.c
-> > @@ -492,6 +492,80 @@ static bool vhost_has_more_pkts(struct vhost_net *net,
-> >  	       likely(!vhost_exceeds_maxpend(net));
-> >  }
-> >  
-> > +#define VHOST_NET_HEADROOM 256
-> > +#define VHOST_NET_RX_PAD (NET_IP_ALIGN + NET_SKB_PAD)
-> > +
-> > +static int vhost_net_build_xdp(struct vhost_net_virtqueue *nvq,
-> > +			       struct iov_iter *from,
-> > +			       struct xdp_buff *xdp)
-> > +{
-> > +	struct vhost_virtqueue *vq = &nvq->vq;
-> > +	struct page_frag *alloc_frag = &current->task_frag;
-> > +	struct virtio_net_hdr *gso;
-> > +	size_t len = iov_iter_count(from);
-> > +	int buflen = SKB_DATA_ALIGN(sizeof(struct skb_shared_info));
-> > +	int pad = SKB_DATA_ALIGN(VHOST_NET_RX_PAD + VHOST_NET_HEADROOM
-> > +				 + nvq->sock_hlen);
-> > +	int sock_hlen = nvq->sock_hlen;
-> > +	void *buf;
-> > +	int copied;
-> > +
-> > +	if (len < nvq->sock_hlen)
-> > +		return -EFAULT;
-> > +
-> > +	if (SKB_DATA_ALIGN(len + pad) +
-> > +	    SKB_DATA_ALIGN(sizeof(struct skb_shared_info)) > PAGE_SIZE)
-> > +		return -ENOSPC;
-> > +
-> > +	buflen += SKB_DATA_ALIGN(len + pad);
-> 
-> maybe store the result of SKB_DATA_ALIGN in a local instead of doing
-> the work twice?
+On Mon, May 21, 2018 at 2:58 PM, Yisheng Xie <xieyisheng1@huawei.com> wrote:
+> match_string() returns the index of an array for a matching string,
+> which can be used intead of open coded variant.
+>
+> Cc: Clemens Ladisch <clemens@ladisch.de>
+> Cc: Jaroslav Kysela <perex@perex.cz>
+> Cc: Takashi Iwai <tiwai@suse.com>
+> Cc: alsa-devel@alsa-project.org
+> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+> ---
+>  sound/pci/oxygen/oxygen_mixer.c | 13 ++++++-------
+>  1 file changed, 6 insertions(+), 7 deletions(-)
+>
+> diff --git a/sound/pci/oxygen/oxygen_mixer.c b/sound/pci/oxygen/oxygen_mixer.c
+> index 4ca1266..fbd8f5e 100644
+> --- a/sound/pci/oxygen/oxygen_mixer.c
+> +++ b/sound/pci/oxygen/oxygen_mixer.c
+> @@ -1052,10 +1052,9 @@ static int add_controls(struct oxygen *chip,
+>                 [CONTROL_CD_CAPTURE_SWITCH] = "CD Capture Switch",
+>                 [CONTROL_AUX_CAPTURE_SWITCH] = "Aux Capture Switch",
+>         };
+> -       unsigned int i, j;
+>         struct snd_kcontrol_new template;
+>         struct snd_kcontrol *ctl;
+> -       int err;
+> +       int i, j, err;
 
-I don't mind, but I guess gcc can always do it itself?
+What's wrong with
 
-> > +	alloc_frag->offset = ALIGN((u64)alloc_frag->offset, SMP_CACHE_BYTES);
-> > +	if (unlikely(!skb_page_frag_refill(buflen, alloc_frag, GFP_KERNEL)))
-> > +		return -ENOMEM;
-> > +
-> > +	buf = (char *)page_address(alloc_frag->page) + alloc_frag->offset;
-> > +
-> > +	/* We store two kinds of metadata in the header which will be
-> > +	 * used for XDP_PASS to do build_skb():
-> > +	 * offset 0: buflen
-> > +	 * offset sizeof(int): vnet header
-> > +	 */
-> > +	copied = copy_page_from_iter(alloc_frag->page,
-> > +				     alloc_frag->offset + sizeof(int), sock_hlen, from);
-> > +	if (copied != sock_hlen)
-> > +		return -EFAULT;
-> > +
-> > +	gso = (struct virtio_net_hdr *)(buf + sizeof(int));
-> > +
-> > +	if ((gso->flags & VIRTIO_NET_HDR_F_NEEDS_CSUM) &&
-> > +	    vhost16_to_cpu(vq, gso->csum_start) +
-> > +	    vhost16_to_cpu(vq, gso->csum_offset) + 2 >
-> > +	    vhost16_to_cpu(vq, gso->hdr_len)) {
-> > +		gso->hdr_len = cpu_to_vhost16(vq,
-> > +			       vhost16_to_cpu(vq, gso->csum_start) +
-> > +			       vhost16_to_cpu(vq, gso->csum_offset) + 2);
-> > +
-> > +		if (vhost16_to_cpu(vq, gso->hdr_len) > len)
-> > +			return -EINVAL;
-> > +	}
-> > +
-> > +	len -= sock_hlen;
-> > +	copied = copy_page_from_iter(alloc_frag->page,
-> > +				     alloc_frag->offset + pad,
-> > +				     len, from);
-> > +	if (copied != len)
-> > +		return -EFAULT;
-> > +
-> > +	xdp->data_hard_start = buf;
-> > +	xdp->data = buf + pad;
-> > +	xdp->data_end = xdp->data + len;
-> > +	*(int *)(xdp->data_hard_start)= buflen;
-> 
-> space before =
-> 
-> > +
-> > +	get_page(alloc_frag->page);
-> > +	alloc_frag->offset += buflen;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >  static void handle_tx_copy(struct vhost_net *net)
-> >  {
-> >  	struct vhost_net_virtqueue *nvq = &net->vqs[VHOST_NET_VQ_TX];
+unsigned int i;
+
+?
+
+>
+>         for (i = 0; i < count; ++i) {
+>                 template = controls[i];
+> @@ -1086,11 +1085,11 @@ static int add_controls(struct oxygen *chip,
+>                 err = snd_ctl_add(chip->card, ctl);
+>                 if (err < 0)
+>                         return err;
+> -               for (j = 0; j < CONTROL_COUNT; ++j)
+> -                       if (!strcmp(ctl->id.name, known_ctl_names[j])) {
+> -                               chip->controls[j] = ctl;
+> -                               ctl->private_free = oxygen_any_ctl_free;
+> -                       }
+> +               j = match_string(known_ctl_names, CONTROL_COUNT, ctl->id.name);
+> +               if (j >= 0) {
+> +                       chip->controls[j] = ctl;
+> +                       ctl->private_free = oxygen_any_ctl_free;
+> +               }
+>         }
+>         return 0;
+>  }
+> --
+> 1.7.12.4
+>
+
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
