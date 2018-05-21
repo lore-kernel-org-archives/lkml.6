@@ -1,288 +1,148 @@
-Return-Path: <naresh.kamboju@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1526987037; cv=none;
-        d=google.com; s=arc-20160816;
-        b=EnFMT2GKntvHzSp2W6Nrt3h8l6ltAc4BukhSwlMjxWhhCLvgoMikS8i15hPn/pV0vs
-         YXcthm1Z+dEJ9XC/AXE8+2ulV9aecxxkLoWoIDzscdUYutYG5oE/+5s7pegr3HepGgig
-         yTLAbYSTV75oBVqiYwHu8tJ6TfLZGehbe6yGthNc+3M0fcaI0F1yWQTZ8t7gfVQH7OLx
-         lspnVQwd/KUk2gYInVjy3tapQsWj+r7IggJAd3ci+V2IlQaKW5vRTHoFZjt0ISg9zQ8L
-         4nKcl9soKYDn+7fqqiS6VR9UqKjocdTgyZwMwuajDbiPqElssoRJ8Zc5U4EAKhiXCU1C
-         a78w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :references:in-reply-to:mime-version:dkim-signature
-         :arc-authentication-results;
-        bh=wN+7O3Z+xqQkSuHQ9fyuJNTvT9av4/QoCF7a7greReI=;
-        b=xD0IA6pqn+Y1UTFKbfRCwy8QMt/mQVgZnPJvwy5Aoj5CDwypHSvDpEmHcsuZoVZQxz
-         YzQzxJJzikH1vyrXVLtQKT5B2Kd8hNt+VNSqlDT0ARp6iCok5tkFHAh/d5CnV1UeTKKW
-         UVNKzzuITy9RinMA/6okbG9rP3vb+AgJoLKTNJY/8ngxMbDXaHELsedwQZ3StiZWl+1D
-         NtNNnDYqGOlAT+f8xg+DLO0I1QqP2xu41NsDZI1n8nzgC7HLmmcVjy7ZmEoex8z501FE
-         oFTlsemlTmSwZMjQ5UuluwDgArqenj76MmNQ0yWg13T6H5pRtdq+Sqn+QHydi833x/sB
-         AbHg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=DJW+jBgP;
-       spf=pass (google.com: domain of naresh.kamboju@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=naresh.kamboju@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=DJW+jBgP;
-       spf=pass (google.com: domain of naresh.kamboju@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=naresh.kamboju@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZrRupvgBYIUxgr3vjz2mMZOFC4JYBch4AIMn29YAfxYJ3GOVDekHqMbp/uI2dU56XgoLId6EeExfaKL0aC/jd4=
-MIME-Version: 1.0
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1859598-1526967066-2-12470688492631923363
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, DATE_IN_PAST_06_12 1.543,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1526967065; b=Rc9Xii65tiarr2yfIghB1CKdnSCXomBRMshg0jgsEq2FY9EWMf
+    VoZXu56mVsvlpkx1NMzQhHW7Pu36pY+1n+cEHVOlgk8z24ptU0gTI+7O18i6+UIU
+    daYggzHjf5+uCxIOqyiHuU3J9dLfiY5cNU8ZsWcbhhvNmNd5qSL98y0Obl9IqzlS
+    9ga5B4p58SI0Quo/B55JHoM2mAzxzfoE6ECqQe3ymUaa4WmtciuctmMY/at9tZI6
+    I4UPweWexk09kuJ7yEyYXpZmSvbNn2PqZc0ThoixVUdmRUUA2u190+QbdLcLK8EL
+    0dwITEGbW/q/2BIYb5OPEQL+05L1/iVYuVpg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1526967065; bh=j0yF48yZ7m5BsYIPFlKj/rduPA/ILD
+    PPnU5zgz3Clds=; b=MaHULOTxVqyky9vruzOTEJQoQbSQ/3YdEOz3Yq/fNmWe7b
+    ItWz4nleL+EWgZC6HQk/eY5EE72uEw9h9Vns5bViYZ8cQ4zGtxPU461PDn05uuP4
+    Iklx5/FP+DfRvwthDxbxN3oKIIvpGUKlhZbZ7G875YtLRAFIGpTEjAuqQBHTYrzE
+    jR7VyxoyTp78Y7zrbPynvfgYVKPkEWzVBNQPgl3iTnQB35r7wCvAOYjIxxVxDIN0
+    8E+mBRmGTpjzKvggSvXr4FHOEfKCt5yBYzCNnf0SM/o68YDehwWfuoC/LEWhjnGi
+    o/krPk4SuSvU7BjctN020r17EM7AbaET7rshWZJg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+    header.i=@kernel.org header.b=2Hbu1x10 x-bits=1024 x-keytype=rsa
+    x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+    header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=linuxfoundation.org header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+      header.i=@kernel.org header.b=2Hbu1x10 x-bits=1024 x-keytype=rsa
+      x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+      header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=linuxfoundation.org header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfLRGgLOSN5p8Ttd7r7VTgHwwssK7nbM4pbh2fLO9i1leTmXrvOArDbD2TkDxL60sFJo8o7MdZNH2teuPnfaLYUYXw1FgCq1j1x7YnuLTEPCW7k1U1Duz
+    O4u0/euSsInInmgNDM3CpBYLb4UEaEM6GTIAnqV0qupJBRtDc7lzhZKzBfAqv6xHRp5vaw/lujptDQslQMbpAPLUN1jgMsX6FDiqTgl++ShgpBl2XCvXY1r7
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=xjQjg--fAAAA:8 a=pGLkceISAAAA:8 a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8
+    a=ag1SF4gXAAAA:8 a=oPBFecwIsE1NewbdIycA:9 a=QEXdDO2ut3YA:10
+    a=L4vkcYpMSA5nFlNZ2tk3:22 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751391AbeEVFax (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 22 May 2018 01:30:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33772 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751039AbeEVFas (ORCPT <rfc822;stable@vger.kernel.org>);
+        Tue, 22 May 2018 01:30:48 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Alexander Monakov <amonakov@ispras.ru>,
+        Ben Gardner <gardner.ben@gmail.com>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH 4.14 21/95] i2c: designware: fix poll-after-enable regression
+Date: Mon, 21 May 2018 23:11:11 +0200
+Message-Id: <20180521210452.394569412@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210447.219380974@linuxfoundation.org>
 References: <20180521210447.219380974@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Tue, 22 May 2018 16:33:56 +0530
-Message-ID: <CA+G9fYt6-b-4o_Sr43hX_7X9Xkt=E72hyzbtD1KHu26Hm4bLYA@mail.gmail.com>
-Subject: Re: [PATCH 4.14 00/95] 4.14.43-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: open list <linux-kernel@vger.kernel.org>, Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, Ben Hutchings <ben.hutchings@codethink.co.uk>,
-	linux- stable <stable@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1601110078992471569?=
-X-GMAIL-MSGID: =?utf-8?q?1601161959840260885?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 22 May 2018 at 02:40, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wr=
-ote:
-> This is the start of the stable review cycle for the 4.14.43 release.
-> There are 95 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Tue May 22 21:04:09 UTC 2018.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.14.43-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.14.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
+------------------
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm and x86_64.
+From: Alexander Monakov <amonakov@ispras.ru>
 
-NOTE:
-kselftest rtnetlink.sh test case failed on all device.
-Which is not a regression which used to SKIP pass and now run and fail.
-Bug reported to investigate,
-https://bugs.linaro.org/show_bug.cgi?id=3D3834
+commit 06cb616b1bca7080824acfedb3d4c898e7a64836 upstream.
 
+Not all revisions of DW I2C controller implement the enable status register.
+On platforms where that's the case (e.g. BG2CD and SPEAr ARM SoCs), waiting
+for enable will time out as reading the unimplemented register yields zero.
 
-Summary
-------------------------------------------------------------------------
+It was observed that reading the IC_ENABLE_STATUS register once suffices to
+avoid getting it stuck on Bay Trail hardware, so replace polling with one
+dummy read of the register.
 
-kernel: 4.14.43-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.14.y
-git commit: b98076ba9976b9ea99d2595ee3af9f94a0c0d22c
-git describe: v4.14.42-96-gb98076ba9976
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.14-oe/bu=
-ild/v4.14.42-96-gb98076ba9976
+Fixes: fba4adbbf670 ("i2c: designware: must wait for enable")
+Signed-off-by: Alexander Monakov <amonakov@ispras.ru>
+Tested-by: Ben Gardner <gardner.ben@gmail.com>
+Acked-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Cc: stable@kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-No regressions (compared to build v4.14.42-48-g089359da1ecd)
-------------------------------------------------------------------------
+---
+ drivers/i2c/busses/i2c-designware-master.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Boards, architectures and test suites:
--------------------------------------
-dragonboard-410c
-* boot - fail: 1, pass: 20
-* kselftest - fail: 1, skip: 27, pass: 40
-* libhugetlbfs - skip: 1, pass: 90
-* ltp-cap_bounds-tests - pass: 2
-* ltp-containers-tests - skip: 17, pass: 64
-* ltp-fcntl-locktests-tests - pass: 2
-* ltp-filecaps-tests - pass: 2
-* ltp-fs-tests - skip: 6, pass: 57
-* ltp-fs_bind-tests - pass: 2
-* ltp-fs_perms_simple-tests - pass: 19
-* ltp-fsx-tests - pass: 2
-* ltp-hugetlb-tests - skip: 1, pass: 21
-* ltp-io-tests - pass: 3
-* ltp-ipc-tests - pass: 9
-* ltp-math-tests - pass: 11
-* ltp-nptl-tests - pass: 2
-* ltp-pty-tests - pass: 4
-* ltp-sched-tests - pass: 14
-* ltp-securebits-tests - pass: 4
-* ltp-syscalls-tests - skip: 134, pass: 1016
-* ltp-timers-tests - pass: 13
-
-hi6220-hikey - arm64
-* boot - pass: 20
-* kselftest - fail: 1, skip: 23, pass: 43
-* libhugetlbfs - skip: 1, pass: 90
-* ltp-cap_bounds-tests - pass: 2
-* ltp-containers-tests - skip: 17, pass: 64
-* ltp-fcntl-locktests-tests - pass: 2
-* ltp-filecaps-tests - pass: 2
-* ltp-fs-tests - skip: 6, pass: 57
-* ltp-fs_bind-tests - pass: 2
-* ltp-fs_perms_simple-tests - pass: 19
-* ltp-fsx-tests - pass: 2
-* ltp-hugetlb-tests - skip: 1, pass: 21
-* ltp-io-tests - pass: 3
-* ltp-ipc-tests - pass: 9
-* ltp-math-tests - pass: 11
-* ltp-nptl-tests - pass: 2
-* ltp-pty-tests - pass: 4
-* ltp-sched-tests - skip: 4, pass: 10
-* ltp-securebits-tests - pass: 4
-* ltp-syscalls-tests - skip: 135, pass: 1015
-* ltp-timers-tests - pass: 13
-
-juno-r2 - arm64
-* boot - pass: 20
-* kselftest - fail: 1, skip: 25, pass: 42
-* libhugetlbfs - skip: 1, pass: 90
-* ltp-cap_bounds-tests - pass: 2
-* ltp-containers-tests - skip: 17, pass: 64
-* ltp-fcntl-locktests-tests - pass: 2
-* ltp-filecaps-tests - pass: 2
-* ltp-fs-tests - skip: 6, pass: 57
-* ltp-fs_bind-tests - pass: 2
-* ltp-fs_perms_simple-tests - pass: 19
-* ltp-fsx-tests - pass: 2
-* ltp-hugetlb-tests - pass: 22
-* ltp-io-tests - pass: 3
-* ltp-ipc-tests - pass: 9
-* ltp-math-tests - pass: 11
-* ltp-nptl-tests - pass: 2
-* ltp-pty-tests - pass: 4
-* ltp-sched-tests - skip: 4, pass: 10
-* ltp-securebits-tests - pass: 4
-* ltp-syscalls-tests - skip: 134, pass: 1016
-* ltp-timers-tests - pass: 13
-
-qemu_arm
-* boot - pass: 20
-* kselftest - fail: 3, skip: 29, pass: 36
-* libhugetlbfs - pass: 1
-* ltp-cap_bounds-tests - pass: 2
-* ltp-containers-tests - skip: 18, pass: 63
-* ltp-fcntl-locktests-tests - pass: 2
-* ltp-filecaps-tests - pass: 2
-* ltp-fs-tests - skip: 5, pass: 58
-* ltp-fs_bind-tests - pass: 2
-* ltp-fs_perms_simple-tests - pass: 19
-* ltp-fsx-tests - pass: 2
-* ltp-hugetlb-tests - skip: 1, pass: 21
-* ltp-io-tests - pass: 3
-* ltp-ipc-tests - pass: 9
-* ltp-math-tests - pass: 11
-* ltp-nptl-tests - pass: 2
-* ltp-pty-tests - pass: 4
-* ltp-sched-tests - skip: 7, pass: 7
-* ltp-securebits-tests - pass: 4
-* ltp-syscalls-tests - fail: 3, skip: 92, pass: 1055
-* ltp-timers-tests - pass: 13
-
-qemu_arm64
-* boot - pass: 22
-* kselftest - fail: 1, skip: 29, pass: 40
-* libhugetlbfs - pass: 92
-* ltp-cap_bounds-tests - pass: 2
-* ltp-containers-tests - skip: 17, pass: 64
-* ltp-fcntl-locktests-tests - pass: 2
-* ltp-filecaps-tests - pass: 2
-* ltp-fs-tests - skip: 6, pass: 57
-* ltp-fs_bind-tests - pass: 2
-* ltp-fs_perms_simple-tests - pass: 19
-* ltp-fsx-tests - pass: 2
-* ltp-hugetlb-tests - pass: 22
-* ltp-io-tests - pass: 3
-* ltp-ipc-tests - pass: 9
-* ltp-math-tests - pass: 3
-* ltp-nptl-tests - pass: 2
-* ltp-pty-tests - pass: 4
-* ltp-sched-tests - skip: 6, pass: 8
-* ltp-securebits-tests - pass: 4
-* ltp-syscalls-tests - fail: 2, skip: 156, pass: 992
-* ltp-timers-tests - pass: 13
-
-qemu_x86_64
-* boot - pass: 20
-* kselftest - fail: 1, skip: 29, pass: 52
-* libhugetlbfs - skip: 1, pass: 90
-* ltp-cap_bounds-tests - pass: 2
-* ltp-containers-tests - skip: 17, pass: 64
-* ltp-fcntl-locktests-tests - pass: 2
-* ltp-filecaps-tests - pass: 2
-* ltp-fs-tests - skip: 6, pass: 57
-* ltp-fs_bind-tests - pass: 2
-* ltp-fs_perms_simple-tests - pass: 19
-* ltp-fsx-tests - pass: 2
-* ltp-hugetlb-tests - pass: 22
-* ltp-io-tests - pass: 3
-* ltp-ipc-tests - pass: 9
-* ltp-math-tests - pass: 11
-* ltp-nptl-tests - pass: 2
-* ltp-pty-tests - pass: 4
-* ltp-sched-tests - skip: 1, pass: 13
-* ltp-securebits-tests - pass: 4
-* ltp-syscalls-tests - skip: 152, pass: 998
-* ltp-timers-tests - pass: 13
-
-x15 - arm
-* boot - pass: 20
-* kselftest - fail: 3, skip: 26, pass: 38
-* libhugetlbfs - skip: 1, pass: 87
-* ltp-cap_bounds-tests - pass: 2
-* ltp-containers-tests - skip: 18, pass: 63
-* ltp-fcntl-locktests-tests - pass: 2
-* ltp-filecaps-tests - pass: 2
-* ltp-fs-tests - skip: 5, pass: 58
-* ltp-fs_bind-tests - pass: 2
-* ltp-fs_perms_simple-tests - pass: 19
-* ltp-fsx-tests - pass: 2
-* ltp-hugetlb-tests - skip: 2, pass: 20
-* ltp-io-tests - pass: 3
-* ltp-ipc-tests - pass: 9
-* ltp-math-tests - pass: 11
-* ltp-nptl-tests - pass: 2
-* ltp-pty-tests - pass: 4
-* ltp-sched-tests - skip: 1, pass: 13
-* ltp-securebits-tests - pass: 4
-* ltp-syscalls-tests - skip: 75, pass: 1075
-* ltp-timers-tests - pass: 13
-
-x86_64
-* boot - pass: 22
-* kselftest - fail: 1, skip: 20, pass: 53
-* kselftest-vsyscall-mode-native - fail: 2, skip: 20, pass: 53
-* kselftest-vsyscall-mode-none - fail: 1, skip: 20, pass: 51
-* libhugetlbfs - skip: 1, pass: 90
-* ltp-cap_bounds-tests - pass: 2
-* ltp-containers-tests - skip: 17, pass: 64
-* ltp-fcntl-locktests-tests - pass: 2
-* ltp-filecaps-tests - pass: 2
-* ltp-fs-tests - skip: 5, pass: 58
-* ltp-fs_bind-tests - pass: 2
-* ltp-fs_perms_simple-tests - pass: 19
-* ltp-fsx-tests - pass: 2
-* ltp-hugetlb-tests - pass: 22
-* ltp-io-tests - pass: 3
-* ltp-ipc-tests - pass: 9
-* ltp-math-tests - pass: 11
-* ltp-nptl-tests - pass: 2
-* ltp-pty-tests - pass: 4
-* ltp-sched-tests - skip: 5, pass: 9
-* ltp-securebits-tests - pass: 4
-* ltp-syscalls-tests - skip: 116, pass: 1034
-* ltp-timers-tests - pass: 13
-
---=20
-Linaro QA (BETA)
-https://qa-reports.linaro.org
+--- a/drivers/i2c/busses/i2c-designware-master.c
++++ b/drivers/i2c/busses/i2c-designware-master.c
+@@ -207,7 +207,10 @@ static void i2c_dw_xfer_init(struct dw_i
+ 	i2c_dw_disable_int(dev);
+ 
+ 	/* Enable the adapter */
+-	__i2c_dw_enable_and_wait(dev, true);
++	__i2c_dw_enable(dev, true);
++
++	/* Dummy read to avoid the register getting stuck on Bay Trail */
++	dw_readl(dev, DW_IC_ENABLE_STATUS);
+ 
+ 	/* Clear and enable interrupts */
+ 	dw_readl(dev, DW_IC_CLR_INTR);
