@@ -1,39 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752822AbeEUOkU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 10:40:20 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:38850 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751021AbeEUOkQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 10:40:16 -0400
-Date: Mon, 21 May 2018 16:40:14 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Michal =?utf-8?B?Vm9rw6HEjQ==?= <vokac.m@gmail.com>
-Cc: netdev@vger.kernel.org, michal.vokac@ysoft.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        f.fainelli@gmail.com, vivien.didelot@savoirfairelinux.com,
-        mark.rutland@arm.com, robh+dt@kernel.org, davem@davemloft.net
-Subject: Re: [PATCH net-next 3/7] net: dsa: qca8k: Enable RXMAC when bringing
- up a port
-Message-ID: <20180521144014.GB8077@lunn.ch>
-References: <1526909293-56377-1-git-send-email-michal.vokac@ysoft.com>
- <1526909293-56377-4-git-send-email-michal.vokac@ysoft.com>
+        id S1752783AbeEUOmD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 10:42:03 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51318 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751127AbeEUOmA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 10:42:00 -0400
+Subject: Re: [PATCH 6/6] arm64: perf: Add support for chaining counters
+To: Robin Murphy <robin.murphy@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        will.deacon@arm.com
+References: <1526638943-2110-1-git-send-email-suzuki.poulose@arm.com>
+ <1526638943-2110-7-git-send-email-suzuki.poulose@arm.com>
+ <32f2d870-9b9c-0b10-880f-cc99cf969bf6@arm.com>
+ <5d53fe1d-dbd9-2aad-73bd-0c4284540240@arm.com>
+ <c8cb9280-c93d-89c4-43ed-179de8d46dfd@arm.com>
+ <f7ffdcfb-5a32-9a55-32a5-4f8770e23aa0@arm.com>
+From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <22ea8f48-dc74-6d84-6085-b41447a79a6d@arm.com>
+Date: Mon, 21 May 2018 15:41:56 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <f7ffdcfb-5a32-9a55-32a5-4f8770e23aa0@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1526909293-56377-4-git-send-email-michal.vokac@ysoft.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 03:28:09PM +0200, Michal Vokáč wrote:
-> When a port is brought up/down do not enable/disable only the TXMAC
-> but the RXMAC as well. This is essential for the CPU port to work.
+On 21/05/18 15:00, Robin Murphy wrote:
+> On 21/05/18 14:42, Suzuki K Poulose wrote:
+>> On 18/05/18 16:57, Suzuki K Poulose wrote:
+>>> Hi Robin,
+>>>
+>>> On 18/05/18 14:49, Robin Murphy wrote:
+>>>> On 18/05/18 11:22, Suzuki K Poulose wrote:
+>>>>> Add support for chained event counters. PMUv3 allows chaining
+>>>>> a pair of adjacent PMU counters (with the lower counter number
+>>>>> being always "even"). The low counter is programmed to count
+>>>>> the event of interest and the high counter(odd numbered) is
+>>>>> programmed with a special event code (0x1e - Chain). Thus
+>>>>> we need special allocation schemes to make the full use of
+>>>>> available counters. So, we allocate the counters from either
+>>>>> ends. i.e, chained counters are allocated from the lower
+>>>>> end in pairs of two and the normal counters are allocated
+>>>>> from the higher number. Also makes necessary changes to
+>>>>> handle the chained events as a single event with 2 counters.
+>>>>>
+>>>>> Cc: Mark Rutland <mark.rutland@arm.com>
+>>>>> Cc: Will Deacon <will.deacon@arm.com>
+>>>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>>
+>>>
+>>>>>   /*
+>>>>> @@ -845,8 +1016,14 @@ static int __armv8_pmuv3_map_event(struct perf_event *event,
+>>>>>                          &armv8_pmuv3_perf_cache_map,
+>>>>>                          ARMV8_PMU_EVTYPE_EVENT);
+>>>>> -    if (hw_event_id == ARMV8_PMUV3_PERFCTR_CPU_CYCLES)
+>>>>> +    if (hw_event_id == ARMV8_PMUV3_PERFCTR_CPU_CYCLES) {
+>>>>> +        /* Prevent chaining for cycle counter */
+>>>>
+>>>> Why? Sure, we want to avoid executing the chaining logic if we're scheduling a cycles event in the dedicated counter (which is perhaps what the comment above wanted to say), but if one ends up allocated into a regular counter (e.g. if the user asks for multiple cycle counts with different filters), then I don't see any reason to forbid that being chained.
+>>>
+>>> Ah, I didn't think about that case. I was under the assumption that the
+>>> cycles are *only* placed on the cycle counter. I will take care of that.
+>>> Thanks for the review.
+>>
+>> Robin, Mark, Will
+>>
+>> One potential problem I see with allowing chaining of the cycle counter
+>> *and* the promotion of cycle event to 64bit by default is when the user
+>> may actually be able to count 1 less event (due to the promotion of
+>> cycle event to 64bit and thus forcing to use chain, if the cycle counter
+>> is unavailable).
 > 
-> Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
+> Right, I didn't mean to imply we should inject the "chain" attr automatically for all cycles events, just that we shouldn't be rejecting it if the user does explicitly set it (but then just ignore it if using the dedicated counter).
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Right, I was not talking about the automatic "chain" for cycles events. The
+problem is we don't know if we would get the "cycle" counter for the given
+event until it is "added", at which point we have already decided
+whether the event is 32bit or 64bit. So, we cannot really delay the decision
+until that. Thats where this comes up. Given a cycle event (without an explicit
+chain request), do we treat it as a 64bit event or not ? If we do, we could
 
-    Andrew
+1) get the Cycle counter, all is fine.
+
+2) If not, fallback to Chaining. The user looses a counter.
+
+> 
+>> So one option is to drop automatic promotion of the cycle counter to
+>> 64bit and do it only when it is requested by the user and use either the
+>> Cycle counter (preferred) or fall back to chaining. That way, the user
+>> has the control over the number of events he can count using the given
+>> set of counters.
+> 
+> Naively, there doesn't seem to be any inherent harm in always using 64-bit arithmetic for the dedicated counter, but it would mean that with multiple (non-chained) cycles events, some would be taking an interrupt every few seconds while one would effectively never overflow. I guess the question is whether that matters or not.
+> 
+
+The problem is we can't have a mask per counter as we don't know where
+the event would be placed until it is added. Or we should delay the
+period initialisation/update to post get_event_idx().
+
+Suzuki
