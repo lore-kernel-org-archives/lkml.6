@@ -1,352 +1,240 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752991AbeEUElJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 00:41:09 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55996 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752955AbeEUElF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 00:41:05 -0400
-From: NeilBrown <neilb@suse.com>
-To: Oleg Drokin <oleg.drokin@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        James Simmons <jsimmons@infradead.org>,
-        Andreas Dilger <andreas.dilger@intel.com>
-Date: Mon, 21 May 2018 14:35:13 +1000
-Subject: [PATCH 30/30] staging: lustre: remove libcfs_all.h
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lustre Development List <lustre-devel@lists.lustre.org>
-Message-ID: <152687731351.24196.8390974804707198399.stgit@noble>
-In-Reply-To: <152687724799.24196.7718555295926047576.stgit@noble>
-References: <152687724799.24196.7718555295926047576.stgit@noble>
-User-Agent: StGit/0.17.1-dirty
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S1751565AbeEUEmo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 00:42:44 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:36606 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752766AbeEUEme (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 00:42:34 -0400
+X-Google-Smtp-Source: AB8JxZoxLmlMfn8gBR1usCgQiKKsX6cvqAshQNY+5TBYpVwyC72P7Q/M2AVWBgfauMZaUgYCy5oqpw==
+From: Joel Fernandes <joelaf@google.com>
+X-Google-Original-From: Joel Fernandes <joel@joelfernandes.org>
+To: linux-kernel@vger.kernel.org
+Cc: Joel Fernandes <joel@joelfernandes.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>, byungchul.park@lge.com,
+        kernel-team@android.com
+Subject: [PATCH v3 2/4] rcu: Cleanup the variables used to request a new grace period
+Date: Sun, 20 May 2018 21:42:18 -0700
+Message-Id: <20180521044220.123933-3-joel@joelfernandes.org>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+In-Reply-To: <20180521044220.123933-1-joel@joelfernandes.org>
+References: <20180521044220.123933-1-joel@joelfernandes.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the remaining files that include libcfs_all.h,
-replace it with other include files as necessary,
-then remove libcfs_all.h
+The 'c' variable was used previously to store the grace period that is
+being requested. However it is not very meaningful since the gp_seq
+conversions. This patch replaces it with gp_seq_req indicating that
+this is the grace period that was requested. Also updating tracing with
+the new name.
 
-Signed-off-by: NeilBrown <neilb@suse.com>
+Previous patch discussion is at:
+https://patchwork.kernel.org/patch/10396579/
+
+Signed-off-by: Joel Fernandes <joel@joelfernandes.org>
 ---
- .../lustre/include/linux/libcfs/libcfs_all.h       |   88 --------------------
- drivers/staging/lustre/lnet/libcfs/debug.c         |    5 +
- drivers/staging/lustre/lnet/libcfs/fail.c          |    6 +
- drivers/staging/lustre/lnet/libcfs/hash.c          |    5 +
- drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c    |   15 ++-
- drivers/staging/lustre/lnet/libcfs/libcfs_lock.c   |    5 +
- drivers/staging/lustre/lnet/libcfs/libcfs_mem.c    |    6 +
- drivers/staging/lustre/lnet/libcfs/libcfs_string.c |    8 ++
- drivers/staging/lustre/lnet/libcfs/linux-crypto.c  |    4 +
- drivers/staging/lustre/lnet/libcfs/linux-debug.c   |    2 
- .../staging/lustre/lnet/libcfs/linux-tracefile.c   |    3 -
- drivers/staging/lustre/lnet/libcfs/module.c        |    1 
- drivers/staging/lustre/lnet/libcfs/tracefile.c     |   10 ++
- 13 files changed, 50 insertions(+), 108 deletions(-)
- delete mode 100644 drivers/staging/lustre/include/linux/libcfs/libcfs_all.h
+ include/trace/events/rcu.h | 15 ++++++------
+ kernel/rcu/tree.c          | 50 ++++++++++++++++++++++----------------
+ 2 files changed, 37 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/staging/lustre/include/linux/libcfs/libcfs_all.h b/drivers/staging/lustre/include/linux/libcfs/libcfs_all.h
-deleted file mode 100644
-index c4232c823ac7..000000000000
---- a/drivers/staging/lustre/include/linux/libcfs/libcfs_all.h
-+++ /dev/null
-@@ -1,88 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * GPL HEADER START
-- *
-- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 only,
-- * as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful, but
-- * WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-- * General Public License version 2 for more details (a copy is included
-- * in the LICENSE file that accompanied this code).
-- *
-- * You should have received a copy of the GNU General Public License
-- * version 2 along with this program; If not, see
-- * http://www.gnu.org/licenses/gpl-2.0.html
-- *
-- * GPL HEADER END
-- */
--/*
-- * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
-- * Use is subject to license terms.
-- *
-- * Copyright (c) 2011, 2015, Intel Corporation.
-- */
--/*
-- * This file is part of Lustre, http://www.lustre.org/
-- * Lustre is a trademark of Sun Microsystems, Inc.
-- */
--
--#ifndef __LIBCFS_LIBCFS_ALL_H__
--#define __LIBCFS_LIBCFS_ALL_H__
--
--#include <linux/gfp.h>
--#include <linux/list.h>
--
--#include <uapi/linux/lnet/libcfs_ioctl.h>
--#include <linux/bitops.h>
--#include <linux/compiler.h>
--#include <linux/ctype.h>
--#include <linux/errno.h>
--#include <linux/file.h>
--#include <linux/fs.h>
--#include <linux/highmem.h>
--#include <linux/interrupt.h>
--#include <linux/kallsyms.h>
--#include <linux/kernel.h>
--#include <linux/kmod.h>
--#include <linux/kthread.h>
--#include <linux/mm.h>
--#include <linux/mm_inline.h>
--#include <linux/module.h>
--#include <linux/moduleparam.h>
--#include <linux/mutex.h>
--#include <linux/notifier.h>
--#include <linux/pagemap.h>
--#include <linux/random.h>
--#include <linux/rbtree.h>
--#include <linux/rwsem.h>
--#include <linux/scatterlist.h>
--#include <linux/sched.h>
--#include <linux/signal.h>
--#include <linux/slab.h>
--#include <linux/smp.h>
--#include <linux/stat.h>
--#include <linux/string.h>
--#include <linux/time.h>
--#include <linux/timer.h>
--#include <linux/types.h>
--#include <linux/unistd.h>
--#include <linux/vmalloc.h>
--#include <net/sock.h>
--#include <linux/atomic.h>
--#include <asm/div64.h>
--#include <linux/timex.h>
--#include <linux/uaccess.h>
--#include <stdarg.h>
--
--#include <linux/libcfs/libcfs.h>
--
--#include <linux/libcfs/libcfs_cpu.h>
--#include <linux/libcfs/libcfs_string.h>
--#include <linux/libcfs/libcfs_hash.h>
--
--#endif /* __LIBCFS_LIBCFS_ALL_H__ */
-diff --git a/drivers/staging/lustre/lnet/libcfs/debug.c b/drivers/staging/lustre/lnet/libcfs/debug.c
-index d59b6243d6bd..06f694f6a28f 100644
---- a/drivers/staging/lustre/lnet/libcfs/debug.c
-+++ b/drivers/staging/lustre/lnet/libcfs/debug.c
-@@ -38,7 +38,10 @@
- 
- # define DEBUG_SUBSYSTEM S_LNET
- 
--#include <linux/libcfs/libcfs_all.h>
-+#include <linux/module.h>
-+#include <linux/ctype.h>
-+#include <linux/libcfs/libcfs_string.h>
-+#include <linux/kthread.h>
- #include "tracefile.h"
- 
- static char debug_file_name[1024];
-diff --git a/drivers/staging/lustre/lnet/libcfs/fail.c b/drivers/staging/lustre/lnet/libcfs/fail.c
-index 7385bdf541b6..bd86b3b5bc34 100644
---- a/drivers/staging/lustre/lnet/libcfs/fail.c
-+++ b/drivers/staging/lustre/lnet/libcfs/fail.c
-@@ -30,7 +30,11 @@
-  * Lustre is a trademark of Oracle Corporation, Inc.
+diff --git a/include/trace/events/rcu.h b/include/trace/events/rcu.h
+index 5373bc61ae08..a8d07feff6a0 100644
+--- a/include/trace/events/rcu.h
++++ b/include/trace/events/rcu.h
+@@ -103,15 +103,16 @@ TRACE_EVENT(rcu_grace_period,
   */
+ TRACE_EVENT(rcu_future_grace_period,
  
--#include <linux/libcfs/libcfs_all.h>
-+#include <linux/types.h>
-+#include <linux/slab.h>
-+#include <linux/module.h>
-+#include <linux/libcfs/libcfs.h>
-+#include <linux/random.h>
+-	TP_PROTO(const char *rcuname, unsigned long gp_seq, unsigned long c,
+-		 u8 level, int grplo, int grphi, const char *gpevent),
++	TP_PROTO(const char *rcuname, unsigned long gp_seq,
++		 unsigned long gp_seq_req, u8 level, int grplo, int grphi,
++		 const char *gpevent),
  
- unsigned long cfs_fail_loc;
- EXPORT_SYMBOL(cfs_fail_loc);
-diff --git a/drivers/staging/lustre/lnet/libcfs/hash.c b/drivers/staging/lustre/lnet/libcfs/hash.c
-index 88a853f64b89..48be66f0d654 100644
---- a/drivers/staging/lustre/lnet/libcfs/hash.c
-+++ b/drivers/staging/lustre/lnet/libcfs/hash.c
-@@ -105,8 +105,9 @@
+-	TP_ARGS(rcuname, gp_seq, c, level, grplo, grphi, gpevent),
++	TP_ARGS(rcuname, gp_seq, gp_seq_req, level, grplo, grphi, gpevent),
+ 
+ 	TP_STRUCT__entry(
+ 		__field(const char *, rcuname)
+ 		__field(unsigned long, gp_seq)
+-		__field(unsigned long, c)
++		__field(unsigned long, gp_seq_req)
+ 		__field(u8, level)
+ 		__field(int, grplo)
+ 		__field(int, grphi)
+@@ -121,7 +122,7 @@ TRACE_EVENT(rcu_future_grace_period,
+ 	TP_fast_assign(
+ 		__entry->rcuname = rcuname;
+ 		__entry->gp_seq = gp_seq;
+-		__entry->c = c;
++		__entry->gp_seq_req = gp_seq_req;
+ 		__entry->level = level;
+ 		__entry->grplo = grplo;
+ 		__entry->grphi = grphi;
+@@ -129,7 +130,7 @@ TRACE_EVENT(rcu_future_grace_period,
+ 	),
+ 
+ 	TP_printk("%s %lu %lu %u %d %d %s",
+-		  __entry->rcuname, __entry->gp_seq, __entry->c, __entry->level,
++		  __entry->rcuname, __entry->gp_seq, __entry->gp_seq_req, __entry->level,
+ 		  __entry->grplo, __entry->grphi, __entry->gpevent)
+ );
+ 
+@@ -751,7 +752,7 @@ TRACE_EVENT(rcu_barrier,
+ #else /* #ifdef CONFIG_RCU_TRACE */
+ 
+ #define trace_rcu_grace_period(rcuname, gp_seq, gpevent) do { } while (0)
+-#define trace_rcu_future_grace_period(rcuname, gp_seq, c, \
++#define trace_rcu_future_grace_period(rcuname, gp_seq, gp_seq_req, \
+ 				      level, grplo, grphi, event) \
+ 				      do { } while (0)
+ #define trace_rcu_grace_period_init(rcuname, gp_seq, level, grplo, grphi, \
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 2c06e1ab90cd..0ffd41ba304f 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -1518,13 +1518,18 @@ void rcu_cpu_stall_reset(void)
+ 
+ /* Trace-event wrapper function for trace_rcu_future_grace_period.  */
+ static void trace_rcu_this_gp(struct rcu_node *rnp, struct rcu_data *rdp,
+-			      unsigned long c, const char *s)
++			      unsigned long gp_seq_req, const char *s)
+ {
+-	trace_rcu_future_grace_period(rdp->rsp->name, rnp->gp_seq, c,
++	trace_rcu_future_grace_period(rdp->rsp->name, rnp->gp_seq, gp_seq_req,
+ 				      rnp->level, rnp->grplo, rnp->grphi, s);
+ }
+ 
+ /*
++ * rcu_start_this_gp - Request the start of a particular grace period
++ * @rnp: The leaf node of the CPU from which to start.
++ * @rdp: The rcu_data corresponding to the CPU from which to start.
++ * @gp_seq_req: The gp_seq of the grace period to start.
++ *
+  * Start the specified grace period, as needed to handle newly arrived
+  * callbacks.  The required future grace periods are recorded in each
+  * rcu_node structure's ->gp_seq_needed field.  Returns true if there
+@@ -1532,9 +1537,11 @@ static void trace_rcu_this_gp(struct rcu_node *rnp, struct rcu_data *rdp,
+  *
+  * The caller must hold the specified rcu_node structure's ->lock, which
+  * is why the caller is responsible for waking the grace-period kthread.
++ *
++ * Returns true if the GP thread needs to be awakened else false.
   */
- #include <linux/seq_file.h>
- #include <linux/log2.h>
--
--#include <linux/libcfs/libcfs_all.h>
-+#include <linux/slab.h>
-+#include <linux/mm.h>
-+#include <linux/libcfs/libcfs_hash.h>
+ static bool rcu_start_this_gp(struct rcu_node *rnp, struct rcu_data *rdp,
+-			      unsigned long c)
++			      unsigned long gp_seq_req)
+ {
+ 	bool ret = false;
+ 	struct rcu_state *rsp = rdp->rsp;
+@@ -1550,25 +1557,27 @@ static bool rcu_start_this_gp(struct rcu_node *rnp, struct rcu_data *rdp,
+ 	 * not be released.
+ 	 */
+ 	raw_lockdep_assert_held_rcu_node(rnp);
+-	trace_rcu_this_gp(rnp, rdp, c, TPS("Startleaf"));
++	trace_rcu_this_gp(rnp, rdp, gp_seq_req, TPS("Startleaf"));
+ 	for (rnp_root = rnp; 1; rnp_root = rnp_root->parent) {
+ 		if (rnp_root != rnp)
+ 			raw_spin_lock_rcu_node(rnp_root);
+-		if (ULONG_CMP_GE(rnp_root->gp_seq_needed, c) ||
+-		    rcu_seq_started(&rnp_root->gp_seq, c) ||
++		if (ULONG_CMP_GE(rnp_root->gp_seq_needed, gp_seq_req) ||
++		    rcu_seq_started(&rnp_root->gp_seq, gp_seq_req) ||
+ 		    (rnp != rnp_root &&
+ 		     rcu_seq_state(rcu_seq_current(&rnp_root->gp_seq)))) {
+-			trace_rcu_this_gp(rnp_root, rdp, c, TPS("Prestarted"));
++			trace_rcu_this_gp(rnp_root, rdp, gp_seq_req,
++					  TPS("Prestarted"));
+ 			goto unlock_out;
+ 		}
+-		rnp_root->gp_seq_needed = c;
++		rnp_root->gp_seq_needed = gp_seq_req;
+ 		if (rcu_seq_state(rcu_seq_current(&rnp->gp_seq))) {
+ 			/*
+ 			 * We just marked the leaf, and a grace period
+ 			 * is in progress, which means that rcu_gp_cleanup()
+ 			 * will see the marking.  Bail to reduce contention.
+ 			 */
+-			trace_rcu_this_gp(rnp, rdp, c, TPS("Startedleaf"));
++			trace_rcu_this_gp(rnp, rdp, gp_seq_req,
++					  TPS("Startedleaf"));
+ 			goto unlock_out;
+ 		}
+ 		if (rnp_root != rnp && rnp_root->parent != NULL)
+@@ -1579,14 +1588,14 @@ static bool rcu_start_this_gp(struct rcu_node *rnp, struct rcu_data *rdp,
  
- #if CFS_HASH_DEBUG_LEVEL >= CFS_HASH_DEBUG_1
- static unsigned int warn_on_depth = 8;
-diff --git a/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c b/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c
-index 0c9369e4a014..3d1cf457b286 100644
---- a/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c
-+++ b/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c
-@@ -31,16 +31,19 @@
- 
- #define DEBUG_SUBSYSTEM S_LNET
- 
--#include <linux/libcfs/libcfs_all.h>
-+#include <linux/cpu.h>
-+#include <linux/sched.h>
-+#include <linux/module.h>
-+#include <linux/slab.h>
-+#include <linux/cache.h>
-+
-+#include <linux/libcfs/libcfs_cpu.h>
-+#include <linux/libcfs/libcfs_string.h>
-+#include <linux/libcfs/libcfs.h>
- 
- /** Global CPU partition table */
- struct cfs_cpt_table   *cfs_cpt_tab __read_mostly;
- EXPORT_SYMBOL(cfs_cpt_tab);
--#define DEBUG_SUBSYSTEM S_LNET
--
--#include <linux/cpu.h>
--#include <linux/sched.h>
--#include <linux/libcfs/libcfs_all.h>
- 
- /**
-  * modparam for setting number of partitions
-diff --git a/drivers/staging/lustre/lnet/libcfs/libcfs_lock.c b/drivers/staging/lustre/lnet/libcfs/libcfs_lock.c
-index 4758cb4bd9d8..223505c37545 100644
---- a/drivers/staging/lustre/lnet/libcfs/libcfs_lock.c
-+++ b/drivers/staging/lustre/lnet/libcfs/libcfs_lock.c
-@@ -28,7 +28,10 @@
- 
- #define DEBUG_SUBSYSTEM S_LNET
- 
--#include <linux/libcfs/libcfs_all.h>
-+#include <linux/module.h>
-+#include <linux/slab.h>
-+#include <linux/libcfs/libcfs.h>
-+#include <linux/libcfs/libcfs_cpu.h>
- 
- /** destroy cpu-partition lock, see libcfs_private.h for more detail */
- void
-diff --git a/drivers/staging/lustre/lnet/libcfs/libcfs_mem.c b/drivers/staging/lustre/lnet/libcfs/libcfs_mem.c
-index dcc418528e23..2d533be9bb30 100644
---- a/drivers/staging/lustre/lnet/libcfs/libcfs_mem.c
-+++ b/drivers/staging/lustre/lnet/libcfs/libcfs_mem.c
-@@ -29,7 +29,11 @@
- 
- #define DEBUG_SUBSYSTEM S_LNET
- 
--#include <linux/libcfs/libcfs_all.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/libcfs/libcfs_cpu.h>
-+#include <linux/slab.h>
-+#include <linux/mm.h>
- 
- struct cfs_var_array {
- 	unsigned int		va_count;	/* # of buffers */
-diff --git a/drivers/staging/lustre/lnet/libcfs/libcfs_string.c b/drivers/staging/lustre/lnet/libcfs/libcfs_string.c
-index bdd3b97e7f65..e1fb1263e3ae 100644
---- a/drivers/staging/lustre/lnet/libcfs/libcfs_string.c
-+++ b/drivers/staging/lustre/lnet/libcfs/libcfs_string.c
-@@ -37,7 +37,13 @@
-  * Author: Nathan Rutman <nathan.rutman@sun.com>
+ 	/* If GP already in progress, just leave, otherwise start one. */
+ 	if (rcu_gp_in_progress(rsp)) {
+-		trace_rcu_this_gp(rnp_root, rdp, c, TPS("Startedleafroot"));
++		trace_rcu_this_gp(rnp_root, rdp, gp_seq_req, TPS("Startedleafroot"));
+ 		goto unlock_out;
+ 	}
+-	trace_rcu_this_gp(rnp_root, rdp, c, TPS("Startedroot"));
++	trace_rcu_this_gp(rnp_root, rdp, gp_seq_req, TPS("Startedroot"));
+ 	WRITE_ONCE(rsp->gp_flags, rsp->gp_flags | RCU_GP_FLAG_INIT);
+ 	rsp->gp_req_activity = jiffies;
+ 	if (!rsp->gp_kthread) {
+-		trace_rcu_this_gp(rnp_root, rdp, c, TPS("NoGPkthread"));
++		trace_rcu_this_gp(rnp_root, rdp, gp_seq_req, TPS("NoGPkthread"));
+ 		goto unlock_out;
+ 	}
+ 	trace_rcu_grace_period(rsp->name, READ_ONCE(rsp->gp_seq), TPS("newreq"));
+@@ -1595,9 +1604,9 @@ static bool rcu_start_this_gp(struct rcu_node *rnp, struct rcu_data *rdp,
+ 	if (rnp != rnp_root)
+ 		raw_spin_unlock_rcu_node(rnp_root);
+ 	/* Push furthest requested GP to leaf node and rcu_data structure. */
+-	if (ULONG_CMP_GE(rnp_root->gp_seq_needed, c)) {
+-		rnp->gp_seq_needed = c;
+-		rdp->gp_seq_needed = c;
++	if (ULONG_CMP_GE(rnp_root->gp_seq_needed, gp_seq_req)) {
++		rnp->gp_seq_needed = gp_seq_req;
++		rdp->gp_seq_needed = gp_seq_req;
+ 	}
+ 	return ret;
+ }
+@@ -1608,14 +1617,13 @@ static bool rcu_start_this_gp(struct rcu_node *rnp, struct rcu_data *rdp,
   */
+ static bool rcu_future_gp_cleanup(struct rcu_state *rsp, struct rcu_node *rnp)
+ {
+-	unsigned long c = rnp->gp_seq;
+ 	bool needmore;
+ 	struct rcu_data *rdp = this_cpu_ptr(rsp->rda);
  
--#include <linux/libcfs/libcfs_all.h>
-+#include <linux/ctype.h>
-+#include <linux/string.h>
-+#include <linux/errno.h>
-+#include <linux/module.h>
-+#include <linux/slab.h>
-+#include <linux/libcfs/libcfs.h>
-+#include <linux/libcfs/libcfs_string.h>
+ 	needmore = ULONG_CMP_LT(rnp->gp_seq, rnp->gp_seq_needed);
+ 	if (!needmore)
+ 		rnp->gp_seq_needed = rnp->gp_seq; /* Avoid counter wrap. */
+-	trace_rcu_this_gp(rnp, rdp, c,
++	trace_rcu_this_gp(rnp, rdp, rnp->gp_seq,
+ 			  needmore ? TPS("CleanupMore") : TPS("Cleanup"));
+ 	return needmore;
+ }
+@@ -1651,7 +1659,7 @@ static void rcu_gp_kthread_wake(struct rcu_state *rsp)
+ static bool rcu_accelerate_cbs(struct rcu_state *rsp, struct rcu_node *rnp,
+ 			       struct rcu_data *rdp)
+ {
+-	unsigned long c;
++	unsigned long gp_seq_req;
+ 	bool ret = false;
  
- /* Convert a text string to a bitmask */
- int cfs_str2mask(const char *str, const char *(*bit2str)(int bit),
-diff --git a/drivers/staging/lustre/lnet/libcfs/linux-crypto.c b/drivers/staging/lustre/lnet/libcfs/linux-crypto.c
-index c7fc388f81f5..21ff9bf6da47 100644
---- a/drivers/staging/lustre/lnet/libcfs/linux-crypto.c
-+++ b/drivers/staging/lustre/lnet/libcfs/linux-crypto.c
-@@ -30,8 +30,10 @@
+ 	raw_lockdep_assert_held_rcu_node(rnp);
+@@ -1670,9 +1678,9 @@ static bool rcu_accelerate_cbs(struct rcu_state *rsp, struct rcu_node *rnp,
+ 	 * accelerating callback invocation to an earlier grace-period
+ 	 * number.
+ 	 */
+-	c = rcu_seq_snap(&rsp->gp_seq);
+-	if (rcu_segcblist_accelerate(&rdp->cblist, c))
+-		ret = rcu_start_this_gp(rnp, rdp, c);
++	gp_seq_req = rcu_seq_snap(&rsp->gp_seq);
++	if (rcu_segcblist_accelerate(&rdp->cblist, gp_seq_req))
++		ret = rcu_start_this_gp(rnp, rdp, gp_seq_req);
  
- #include <crypto/hash.h>
- #include <linux/scatterlist.h>
--#include <linux/libcfs/libcfs_all.h>
-+#include <linux/highmem.h>
-+#include <linux/module.h>
- #include <linux/libcfs/libcfs_crypto.h>
-+#include <linux/libcfs/libcfs.h>
- #include "linux-crypto.h"
- 
- /**
-diff --git a/drivers/staging/lustre/lnet/libcfs/linux-debug.c b/drivers/staging/lustre/lnet/libcfs/linux-debug.c
-index cf53f5d0b5ec..15ab849374c2 100644
---- a/drivers/staging/lustre/lnet/libcfs/linux-debug.c
-+++ b/drivers/staging/lustre/lnet/libcfs/linux-debug.c
-@@ -51,8 +51,6 @@
- 
- # define DEBUG_SUBSYSTEM S_LNET
- 
--#include <linux/libcfs/libcfs_all.h>
--
- #include "tracefile.h"
- 
- #include <linux/kallsyms.h>
-diff --git a/drivers/staging/lustre/lnet/libcfs/linux-tracefile.c b/drivers/staging/lustre/lnet/libcfs/linux-tracefile.c
-index f3ed9f6d86ca..347138409eba 100644
---- a/drivers/staging/lustre/lnet/libcfs/linux-tracefile.c
-+++ b/drivers/staging/lustre/lnet/libcfs/linux-tracefile.c
-@@ -34,7 +34,8 @@
- #define DEBUG_SUBSYSTEM S_LNET
- #define LUSTRE_TRACEFILE_PRIVATE
- 
--#include <linux/libcfs/libcfs_all.h>
-+#include <linux/slab.h>
-+#include <linux/mm.h>
- #include "tracefile.h"
- 
- /* percents to share the total debug memory for each type */
-diff --git a/drivers/staging/lustre/lnet/libcfs/module.c b/drivers/staging/lustre/lnet/libcfs/module.c
-index 45c8db09bf51..5dc7de9e6478 100644
---- a/drivers/staging/lustre/lnet/libcfs/module.c
-+++ b/drivers/staging/lustre/lnet/libcfs/module.c
-@@ -52,7 +52,6 @@
- 
- # define DEBUG_SUBSYSTEM S_LNET
- 
--#include <linux/libcfs/libcfs_all.h>
- #include <asm/div64.h>
- 
- #include <linux/libcfs/libcfs_crypto.h>
-diff --git a/drivers/staging/lustre/lnet/libcfs/tracefile.c b/drivers/staging/lustre/lnet/libcfs/tracefile.c
-index 828e4d002a16..7ca562e156f0 100644
---- a/drivers/staging/lustre/lnet/libcfs/tracefile.c
-+++ b/drivers/staging/lustre/lnet/libcfs/tracefile.c
-@@ -39,9 +39,15 @@
- #define DEBUG_SUBSYSTEM S_LNET
- #define LUSTRE_TRACEFILE_PRIVATE
- #define pr_fmt(fmt) "Lustre: " fmt
--#include "tracefile.h"
- 
--#include <linux/libcfs/libcfs_all.h>
-+#include <linux/ratelimit.h>
-+#include <linux/highmem.h>
-+#include <linux/ctype.h>
-+#include <linux/kthread.h>
-+#include <linux/mm.h>
-+#include <linux/slab.h>
-+#include <linux/uaccess.h>
-+#include "tracefile.h"
- 
- /* XXX move things up to the top, comment */
- union cfs_trace_data_union (*cfs_trace_data[TCD_MAX_TYPES])[NR_CPUS] __cacheline_aligned;
+ 	/* Trace depending on how much we were able to accelerate. */
+ 	if (rcu_segcblist_restempty(&rdp->cblist, RCU_WAIT_TAIL))
+-- 
+2.17.0.441.gb46fe60e1d-goog
