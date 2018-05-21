@@ -1,166 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752903AbeEUOu3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 10:50:29 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:48392 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751133AbeEUOu2 (ORCPT
+        id S1752869AbeEUOwR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 10:52:17 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:43609 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752566AbeEUOwN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 10:50:28 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: niklas.soderlund@ragnatech.se, horms@verge.net.au, geert@glider.be,
-        magnus.damm@gmail.com, robh+dt@kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] arm64: dts: renesas: draak: Describe CVBS input
-Date: Mon, 21 May 2018 17:50:50 +0300
-Message-ID: <1958464.yiJe0NDHa3@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <1526913942-15426-3-git-send-email-jacopo+renesas@jmondi.org>
-References: <1526913942-15426-1-git-send-email-jacopo+renesas@jmondi.org> <1526913942-15426-3-git-send-email-jacopo+renesas@jmondi.org>
+        Mon, 21 May 2018 10:52:13 -0400
+X-Google-Smtp-Source: AB8JxZrwXUjdqD8xQgP1xOMUTkWCe4digey8BOtE2viSV0wN1sLICTMP4i24pttnZaDOHh28xpCAsg==
+Subject: Re: [PATCH 00/13] convert block layer to bioset_init()/mempool_init()
+To: Mike Snitzer <snitzer@redhat.com>
+Cc: Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        hch@infradead.org, colyli@suse.de, darrick.wong@oracle.com, clm@fb.com,
+        bacik@fb.com, linux-xfs@vger.kernel.org, drbd-dev@lists.linbit.com,
+        linux-btrfs@vger.kernel.org, linux-raid@vger.kernel.org,
+        neilb@suse.com
+References: <20180520222558.7053-1-kent.overstreet@gmail.com>
+ <20180521140348.GA19069@redhat.com>
+ <686d7df6-c7d1-48a6-b7ff-48dc8aff6a62@kernel.dk>
+ <20180521143132.GB19194@redhat.com>
+ <2bbeeb1a-8b99-b06a-eb9b-eb8523c16460@kernel.dk>
+ <20180521144703.GA19303@redhat.com>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <4b343aef-e11c-73ba-1d88-7e73ca838cad@kernel.dk>
+Date: Mon, 21 May 2018 08:52:10 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+In-Reply-To: <20180521144703.GA19303@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4LEoXSD015568
 
-Hi Jacopo,
+On 5/21/18 8:47 AM, Mike Snitzer wrote:
+> On Mon, May 21 2018 at 10:36am -0400,
+> Jens Axboe <axboe@kernel.dk> wrote:
+> 
+>> On 5/21/18 8:31 AM, Mike Snitzer wrote:
+>>> On Mon, May 21 2018 at 10:19am -0400,
+>>> Jens Axboe <axboe@kernel.dk> wrote:
+>>>
+>>>> On 5/21/18 8:03 AM, Mike Snitzer wrote:
+>>>>> On Sun, May 20 2018 at  6:25pm -0400,
+>>>>> Kent Overstreet <kent.overstreet@gmail.com> wrote:
+>>>>>
+>>>>>> Jens - this series does the rest of the conversions that Christoph wanted, and
+>>>>>> drops bioset_create().
+>>>>>>
+>>>>>> Only lightly tested, but the changes are pretty mechanical. Based on your
+>>>>>> for-next tree.
+>>>>>
+>>>>> By switching 'mempool_t *' to 'mempool_t' and 'bio_set *' to 'bio_set'
+>>>>> you've altered the alignment of members in data structures.  So I'll
+>>>>> need to audit all the data structures you've modified in DM.
+>>>>>
+>>>>> Could we get the backstory on _why_ you're making this change?
+>>>>> Would go a long way to helping me appreciate why this is a good use of
+>>>>> anyone's time.
+>>>>
+>>>> Yeah, it's in the first series, it gets rid of a pointer indirection.
+>>>
+>>> "Allows mempools to be embedded in other structs, getting rid of a
+>>> pointer indirection from allocation fastpaths."
+>>>
+>>> So this is about using contiguous memory or avoiding partial allocation
+>>> failure?  Or both?
+>>>
+>>> Or more to it?  Just trying to fully appreciate the theory behind the
+>>> perceived associated benefit.
+>>
+>> It's about avoiding a pointer indirection. Instead of having to
+>> follow a pointer to get to that struct, it's simple offset math off
+>> your main structure.
+>>
+>>> I do think the increased risk of these embedded bio_set and mempool_t
+>>> themselves crossing cachelines, or struct members that follow them doing
+>>> so, really detracts from these types of changes.
+>>
+>> Definitely something to look out for, though most of them should be
+>> per-dev structures and not in-flight structures. That makes it a bit
+>> less sensitive. But can't hurt to audit the layouts and adjust if
+>> necessary. This is why it's posted for review :-)
+> 
+> This isn't something that is easily caught upfront.  Yes we can all be
+> busy little beavers with pahole to audit alignment.  But chances are
+> most people won't do it.
+> 
+> Reality is there is potential for a regression due to false sharing to
+> creep in if a hot struct member suddenly starts straddling a cacheline.
+> That type of NUMA performance killer is pretty insidious and somewhat
+> tedious to hunt down even when looking for it with specialized tools:
+> https://joemario.github.io/blog/2016/09/01/c2c-blog/
 
-Thank you for the patch.
+IMHO you're making a big deal out of something that should not be.
+If the dm bits are that sensitive and cache line honed to perfection
+already due to previous regressions in that area, then it might
+not be a bad idea to have some compile checks for false cacheline
+sharing between sensitive members, or spilling of a sub-struct
+into multiple cachelines.
 
-On Monday, 21 May 2018 17:45:41 EEST Jacopo Mondi wrote:
-> Describe CVBS video input through analog video decoder ADV7180
-> connected to video input interface VIN4.
-> 
-> The video input signal path is shared with HDMI video input, and
-> selected by on-board switches SW-53 and SW-54 with CVBS input selected
-> by the default switches configuration.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
-> v3 -> v4:
-> - Use 'adi,adv7180cp' compatible string in place of just 'adi,adv7180'
->   as suggested by Laurent.
-> - Re-structure CVBS input ports definition according to adv7180cp
->   bindings: add port@0 for composite input, add port@3 for parallel
->   video output.
-> - Change node label to 'composite-in' as in Gose board bindings.
-> 
-> v2 -> v3:
-> - Add comment to describe the shared input video path.
-> - Add my SoB and Niklas' R-b tags.
-> ---
->  arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 68
-> ++++++++++++++++++++++++++ 1 file changed, 68 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-> b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts index 9d73de8..ad59032
-> 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-> +++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-> @@ -59,6 +59,16 @@
->  		};
->  	};
-> 
-> +	composite-in {
-> +		compatible = "composite-video-connector";
-> +
-> +		port {
-> +			composite_con_in: endpoint {
-> +				remote-endpoint = <&adv7180_in>;
-> +			};
-> +		};
-> +	};
-> +
->  	memory@48000000 {
->  		device_type = "memory";
->  		/* first 128MB is reserved for secure area. */
-> @@ -142,6 +152,11 @@
->  		groups = "usb0";
->  		function = "usb0";
->  	};
-> +
-> +	vin4_pins_cvbs: vin4 {
-> +		groups = "vin4_data8", "vin4_sync", "vin4_clk";
-> +		function = "vin4";
-> +	};
->  };
-> 
->  &i2c0 {
-> @@ -154,6 +169,39 @@
->  		reg = <0x50>;
->  		pagesize = <8>;
->  	};
-> +
-> +	composite-in@20 {
-> +		compatible = "adi,adv7180cp";
-> +		reg = <0x20>;
-> +
-> +		port {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@0 {
-> +				reg = <0>;
-> +				adv7180_in: endpoint {
-> +					remote-endpoint = <&composite_con_in>;
-> +				};
-> +			};
-> +
-> +			port@3 {
-> +				reg = <3>;
-> +
-> +				/*
-> +				 * The VIN4 video input path is shared between
-> +				 * CVBS and HDMI inputs through SW[49-53]
-> +				 * switches.
-> +				 *
-> +				 * CVBS is the default selection, link it to
-> +				 * VIN4 here.
-> +				 */
-> +				adv7180_out: endpoint {
-> +					remote-endpoint = <&vin4_in>;
-> +				};
-> +			};
-> +		};
-> +	};
->  };
-> 
->  &i2c1 {
-> @@ -246,3 +294,23 @@
->  	timeout-sec = <60>;
->  	status = "okay";
->  };
-> +
-> +&vin4 {
-> +	pinctrl-0 = <&vin4_pins_cvbs>;
-> +	pinctrl-names = "default";
-> +
-> +	status = "okay";
-> +
-> +	ports {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		port@0 {
-> +			reg = <0>;
-> +
-> +			vin4_in: endpoint {
-> +				remote-endpoint = <&adv7180_out>;
-> +			};
-> +		};
-> +	};
-> +};
-
+It's not like this was pushed behind your back. It's posted for
+review. It's quite possible the net change is a win for dm. Let's
+focus on getting it reviewed, rather than pontificate on what
+could potentially go all wrong with this.
 
 -- 
-Regards,
-
-Laurent Pinchart
+Jens Axboe
