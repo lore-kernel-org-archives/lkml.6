@@ -1,39 +1,39 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrGIgBNbrH9GsGw0p31v0/YUGdfnjqxLpAQxgWgADFeX6u7Oo92Ywm0YNoyLA88Cj5n7uQi
-ARC-Seal: i=1; a=rsa-sha256; t=1526937921; cv=none;
+X-Google-Smtp-Source: AB8JxZqvFBB5Xti5RIxmKOGG5ILC843gJmJ2JnnWSwA0gJacGJuh+I2fhBtafRP6FBYYo0wLEFCU
+ARC-Seal: i=1; a=rsa-sha256; t=1526937918; cv=none;
         d=google.com; s=arc-20160816;
-        b=OSDXTRPvVGahr16j46NPczliru/UcQEuCZo7MF0UtQ8+oUGVcUpJojF4r8mZt/LbSK
-         Ep1jUYSFc9rYsQMa3dZ+h9rNJ1CEPdWgIzhENZ5IUNk5vSTaL8Gb2SXgJmVjd2gZ1ofR
-         WVLqdn7MUgQgXzSECEPl3w2JisDZp23ZCJdPlSEe6OFOJe9J6//yjmoeKcrBH+4sxeKk
-         fGrvEPAIWopd286Vl6ZVq7BbmDWueJ2E9HFdibew9fmhV59O3862d7LsBcMDISGazgzh
-         wVFlYD2AACdEgBaUNDgrkmDurbk+jE6E7OV5oYx/8Elfagc8OW/o8vVP0RXi6cdUe+/b
-         yJyQ==
+        b=Kt8bI9/eeoOhiiHRgw9NwcmAW6bEc+jBB/KwhqkRXpPNslBxnNTpqgx6APZqm0XzkJ
+         Q2JHIfLZ1hp1cXk9WuZk7mlJBXhM1KSD5VRT+HGpK0WJXZeMsI/yRMl5qQ2uYOaRaE09
+         V8uZL5yTjBZQGPz0SGkDhMu+91iPb+B3nLSigwz4FBGqTdnn+/A4p0jXid1/Qq1fivv7
+         rb5Wjf17ic/xNdMu5DymV8hPXsnopEVzphOCe68yGPw2NoUGz52VHjh9x1JFD00w2ki9
+         PZr0rkhjl80mjAbGP1VSjXRbdrgCJ4+G7EwT7oFVfiTz+gypJhiHFhNdVuW37eWF0AiX
+         BiDA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=UAO8sapI+DfQNY4BAy1CbzFO9eGDTfgQltsKTq8Zgi8=;
-        b=D8nyB0sfgLNt+SUBOmhXQM2/hhP5TmiVvm6KjGoPNGlur6wvz5Ynw+HK4YRth9ob77
-         mfvDV1PSLRkoXXCIMpzblmjPSzKk6mKOpQZq76qECjYTqSSOH+A87tcAua0YbdS+qOp5
-         0DwQiDjmRu2mEwFWwPu11yHNTnMR1WNz6nZJP6fsZzcBiEKTGakxvMIbWPQCFXGup1Xh
-         6Nd+1YLLaskurn2/MT6iq40uATTw5w+YF2DP4ZQ/zvVVnZRylVY1r5kWk8cRJzxcfWLs
-         5JoutAPZtmxrb4jYHfN6RAFbqjSp3OU6u80a3wm7zGLhxGI0mTocYQkSshzK7urhZVLU
-         DIwg==
+        bh=gotOT8uT4a0XZh1Q3CscamaYwSadi5OsqwurGRokiQ8=;
+        b=pmwrY/juh36NvVGAum1qHhdhvFRF2j3sbx0csKc6Biq9NkQ50ENmHvQME6hprR5JrC
+         +lTBUCFR+m7iuSkV/uF9KtXvQ/Ejvzr3RzgY+sEgcbSsy3Iy/LWyd2Tqo/KB6N2uHeo4
+         eDNroElJqbaaFkHL1fZiC4e3WEOFCWhetIGo4j4sikUA2ix+mkMJdBifiM8r4CfXnh/i
+         ns6jn8xyUbSAfB6VhRZHDMV9mexXQv8a2xb05Kj3Zla+g+POAAIcHCyFUuQZdjO+4vGI
+         tBLtzAloqy7JpmOpGLZ5IVO+rk7ue9ys9RdXEdYiYatr6EaO0J8DgZIA/p0J2KEotj/1
+         sLlQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=XNh7Jb9+;
+       dkim=pass header.i=@kernel.org header.s=default header.b=IFOE1syf;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=XNh7Jb9+;
+       dkim=pass header.i=@kernel.org header.s=default header.b=IFOE1syf;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Subject: [PATCH 4.16 075/110] prctl: Add speculation control prctls
-Date: Mon, 21 May 2018 23:12:12 +0200
-Message-Id: <20180521210512.767717174@linuxfoundation.org>
+	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.16 074/110] x86/speculation: Create spec-ctrl.h to avoid include hell
+Date: Mon, 21 May 2018 23:12:11 +0200
+Message-Id: <20180521210512.695964768@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109861377173650?=
-X-GMAIL-MSGID: =?utf-8?q?1601110457502571746?=
+X-GMAIL-THRID: =?utf-8?q?1601109858795528866?=
+X-GMAIL-MSGID: =?utf-8?q?1601110454869233305?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,235 +54,121 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-commit b617cfc858161140d69cc0b5cc211996b557a1c7 upstream
+commit 28a2775217b17208811fa43a9e96bd1fdf417b86 upstream
 
-Add two new prctls to control aspects of speculation related vulnerabilites
-and their mitigations to provide finer grained control over performance
-impacting mitigations.
-
-PR_GET_SPECULATION_CTRL returns the state of the speculation misfeature
-which is selected with arg2 of prctl(2). The return value uses bit 0-2 with
-the following meaning:
-
-Bit  Define           Description
-0    PR_SPEC_PRCTL    Mitigation can be controlled per task by
-                      PR_SET_SPECULATION_CTRL
-1    PR_SPEC_ENABLE   The speculation feature is enabled, mitigation is
-                      disabled
-2    PR_SPEC_DISABLE  The speculation feature is disabled, mitigation is
-                      enabled
-
-If all bits are 0 the CPU is not affected by the speculation misfeature.
-
-If PR_SPEC_PRCTL is set, then the per task control of the mitigation is
-available. If not set, prctl(PR_SET_SPECULATION_CTRL) for the speculation
-misfeature will fail.
-
-PR_SET_SPECULATION_CTRL allows to control the speculation misfeature, which
-is selected by arg2 of prctl(2) per task. arg3 is used to hand in the
-control value, i.e. either PR_SPEC_ENABLE or PR_SPEC_DISABLE.
-
-The common return values are:
-
-EINVAL  prctl is not implemented by the architecture or the unused prctl()
-        arguments are not 0
-ENODEV  arg2 is selecting a not supported speculation misfeature
-
-PR_SET_SPECULATION_CTRL has these additional return values:
-
-ERANGE  arg3 is incorrect, i.e. it's not either PR_SPEC_ENABLE or PR_SPEC_DISABLE
-ENXIO   prctl control of the selected speculation misfeature is disabled
-
-The first supported controlable speculation misfeature is
-PR_SPEC_STORE_BYPASS. Add the define so this can be shared between
-architectures.
-
-Based on an initial patch from Tim Chen and mostly rewritten.
+Having everything in nospec-branch.h creates a hell of dependencies when
+adding the prctl based switching mechanism. Move everything which is not
+required in nospec-branch.h to spec-ctrl.h and fix up the includes in the
+relevant files.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
 Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/userspace-api/index.rst     |    1 
- Documentation/userspace-api/spec_ctrl.rst |   86 ++++++++++++++++++++++++++++++
- include/linux/nospec.h                    |    5 +
- include/uapi/linux/prctl.h                |   11 +++
- kernel/sys.c                              |   22 +++++++
- 5 files changed, 125 insertions(+)
- create mode 100644 Documentation/userspace-api/spec_ctrl.rst
+ arch/x86/include/asm/nospec-branch.h |   14 --------------
+ arch/x86/include/asm/spec-ctrl.h     |   21 +++++++++++++++++++++
+ arch/x86/kernel/cpu/amd.c            |    2 +-
+ arch/x86/kernel/cpu/bugs.c           |    2 +-
+ arch/x86/kvm/svm.c                   |    2 +-
+ arch/x86/kvm/vmx.c                   |    2 +-
+ 6 files changed, 25 insertions(+), 18 deletions(-)
+ create mode 100644 arch/x86/include/asm/spec-ctrl.h
 
---- a/Documentation/userspace-api/index.rst
-+++ b/Documentation/userspace-api/index.rst
-@@ -19,6 +19,7 @@ place where this information is gathered
-    no_new_privs
-    seccomp_filter
-    unshare
-+   spec_ctrl
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -228,26 +228,12 @@ enum spectre_v2_mitigation {
+ extern void x86_spec_ctrl_set(u64);
+ extern u64 x86_spec_ctrl_get_default(void);
  
- .. only::  subproject and html
+-/*
+- * On VMENTER we must preserve whatever view of the SPEC_CTRL MSR
+- * the guest has, while on VMEXIT we restore the host view. This
+- * would be easier if SPEC_CTRL were architecturally maskable or
+- * shadowable for guests but this is not (currently) the case.
+- * Takes the guest view of SPEC_CTRL MSR as a parameter.
+- */
+-extern void x86_spec_ctrl_set_guest(u64);
+-extern void x86_spec_ctrl_restore_host(u64);
+-
+ /* The Speculative Store Bypass disable variants */
+ enum ssb_mitigation {
+ 	SPEC_STORE_BYPASS_NONE,
+ 	SPEC_STORE_BYPASS_DISABLE,
+ };
+ 
+-/* AMD specific Speculative Store Bypass MSR data */
+-extern u64 x86_amd_ls_cfg_base;
+-extern u64 x86_amd_ls_cfg_rds_mask;
+-
+ extern char __indirect_thunk_start[];
+ extern char __indirect_thunk_end[];
  
 --- /dev/null
-+++ b/Documentation/userspace-api/spec_ctrl.rst
-@@ -0,0 +1,86 @@
-+===================
-+Speculation Control
-+===================
++++ b/arch/x86/include/asm/spec-ctrl.h
+@@ -0,0 +1,21 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_X86_SPECCTRL_H_
++#define _ASM_X86_SPECCTRL_H_
 +
-+Quite some CPUs have speculation related misfeatures which are in fact
-+vulnerabilites causing data leaks in various forms even accross privilege
-+domains.
++#include <asm/nospec-branch.h>
 +
-+The kernel provides mitigation for such vulnerabilities in various
-+forms. Some of these mitigations are compile time configurable and some on
-+the kernel command line.
++/*
++ * On VMENTER we must preserve whatever view of the SPEC_CTRL MSR
++ * the guest has, while on VMEXIT we restore the host view. This
++ * would be easier if SPEC_CTRL were architecturally maskable or
++ * shadowable for guests but this is not (currently) the case.
++ * Takes the guest view of SPEC_CTRL MSR as a parameter.
++ */
++extern void x86_spec_ctrl_set_guest(u64);
++extern void x86_spec_ctrl_restore_host(u64);
 +
-+There is also a class of mitigations which are very expensive, but they can
-+be restricted to a certain set of processes or tasks in controlled
-+environments. The mechanism to control these mitigations is via
-+:manpage:`prctl(2)`.
++/* AMD specific Speculative Store Bypass MSR data */
++extern u64 x86_amd_ls_cfg_base;
++extern u64 x86_amd_ls_cfg_rds_mask;
 +
-+There are two prctl options which are related to this:
-+
-+ * PR_GET_SPECULATION_CTRL
-+
-+ * PR_SET_SPECULATION_CTRL
-+
-+PR_GET_SPECULATION_CTRL
-+-----------------------
-+
-+PR_GET_SPECULATION_CTRL returns the state of the speculation misfeature
-+which is selected with arg2 of prctl(2). The return value uses bits 0-2 with
-+the following meaning:
-+
-+==== ================ ===================================================
-+Bit  Define           Description
-+==== ================ ===================================================
-+0    PR_SPEC_PRCTL    Mitigation can be controlled per task by
-+                      PR_SET_SPECULATION_CTRL
-+1    PR_SPEC_ENABLE   The speculation feature is enabled, mitigation is
-+                      disabled
-+2    PR_SPEC_DISABLE  The speculation feature is disabled, mitigation is
-+                      enabled
-+==== ================ ===================================================
-+
-+If all bits are 0 the CPU is not affected by the speculation misfeature.
-+
-+If PR_SPEC_PRCTL is set, then the per task control of the mitigation is
-+available. If not set, prctl(PR_SET_SPECULATION_CTRL) for the speculation
-+misfeature will fail.
-+
-+PR_SET_SPECULATION_CTRL
-+-----------------------
-+PR_SET_SPECULATION_CTRL allows to control the speculation misfeature, which
-+is selected by arg2 of :manpage:`prctl(2)` per task. arg3 is used to hand
-+in the control value, i.e. either PR_SPEC_ENABLE or PR_SPEC_DISABLE.
-+
-+Common error codes
-+------------------
-+======= =================================================================
-+Value   Meaning
-+======= =================================================================
-+EINVAL  The prctl is not implemented by the architecture or unused
-+        prctl(2) arguments are not 0
-+
-+ENODEV  arg2 is selecting a not supported speculation misfeature
-+======= =================================================================
-+
-+PR_SET_SPECULATION_CTRL error codes
-+-----------------------------------
-+======= =================================================================
-+Value   Meaning
-+======= =================================================================
-+0       Success
-+
-+ERANGE  arg3 is incorrect, i.e. it's neither PR_SPEC_ENABLE nor
-+        PR_SPEC_DISABLE
-+
-+ENXIO   Control of the selected speculation misfeature is not possible.
-+        See PR_GET_SPECULATION_CTRL.
-+======= =================================================================
-+
-+Speculation misfeature controls
-+-------------------------------
-+- PR_SPEC_STORE_BYPASS: Speculative Store Bypass
-+
-+  Invocations:
-+   * prctl(PR_GET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, 0, 0, 0);
-+   * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, PR_SPEC_ENABLE, 0, 0);
-+   * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, PR_SPEC_DISABLE, 0, 0);
---- a/include/linux/nospec.h
-+++ b/include/linux/nospec.h
-@@ -55,4 +55,9 @@ static inline unsigned long array_index_
- 									\
- 	(typeof(_i)) (_i & _mask);					\
- })
-+
-+/* Speculation control prctl */
-+int arch_prctl_spec_ctrl_get(unsigned long which);
-+int arch_prctl_spec_ctrl_set(unsigned long which, unsigned long ctrl);
-+
- #endif /* _LINUX_NOSPEC_H */
---- a/include/uapi/linux/prctl.h
-+++ b/include/uapi/linux/prctl.h
-@@ -207,4 +207,15 @@ struct prctl_mm_map {
- # define PR_SVE_VL_LEN_MASK		0xffff
- # define PR_SVE_VL_INHERIT		(1 << 17) /* inherit across exec */
++#endif
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -10,7 +10,7 @@
+ #include <asm/processor.h>
+ #include <asm/apic.h>
+ #include <asm/cpu.h>
+-#include <asm/nospec-branch.h>
++#include <asm/spec-ctrl.h>
+ #include <asm/smp.h>
+ #include <asm/pci-direct.h>
+ #include <asm/delay.h>
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -13,7 +13,7 @@
+ #include <linux/cpu.h>
+ #include <linux/module.h>
  
-+/* Per task speculation control */
-+#define PR_GET_SPECULATION_CTRL		52
-+#define PR_SET_SPECULATION_CTRL		53
-+/* Speculation control variants */
-+# define PR_SPEC_STORE_BYPASS		0
-+/* Return and control values for PR_SET/GET_SPECULATION_CTRL */
-+# define PR_SPEC_NOT_AFFECTED		0
-+# define PR_SPEC_PRCTL			(1UL << 0)
-+# define PR_SPEC_ENABLE			(1UL << 1)
-+# define PR_SPEC_DISABLE		(1UL << 2)
-+
- #endif /* _LINUX_PRCTL_H */
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -61,6 +61,8 @@
- #include <linux/uidgid.h>
- #include <linux/cred.h>
+-#include <asm/nospec-branch.h>
++#include <asm/spec-ctrl.h>
+ #include <asm/cmdline.h>
+ #include <asm/bugs.h>
+ #include <asm/processor.h>
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -50,7 +50,7 @@
+ #include <asm/kvm_para.h>
+ #include <asm/irq_remapping.h>
+ #include <asm/microcode.h>
+-#include <asm/nospec-branch.h>
++#include <asm/spec-ctrl.h>
  
-+#include <linux/nospec.h>
-+
- #include <linux/kmsg_dump.h>
- /* Move somewhere else to avoid recompiling? */
- #include <generated/utsrelease.h>
-@@ -2190,6 +2192,16 @@ static int propagate_has_child_subreaper
- 	return 1;
- }
+ #include <asm/virtext.h>
+ #include "trace.h"
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -52,7 +52,7 @@
+ #include <asm/irq_remapping.h>
+ #include <asm/mmu_context.h>
+ #include <asm/microcode.h>
+-#include <asm/nospec-branch.h>
++#include <asm/spec-ctrl.h>
  
-+int __weak arch_prctl_spec_ctrl_get(unsigned long which)
-+{
-+	return -EINVAL;
-+}
-+
-+int __weak arch_prctl_spec_ctrl_set(unsigned long which, unsigned long ctrl)
-+{
-+	return -EINVAL;
-+}
-+
- SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
- 		unsigned long, arg4, unsigned long, arg5)
- {
-@@ -2398,6 +2410,16 @@ SYSCALL_DEFINE5(prctl, int, option, unsi
- 	case PR_SVE_GET_VL:
- 		error = SVE_GET_VL();
- 		break;
-+	case PR_GET_SPECULATION_CTRL:
-+		if (arg3 || arg4 || arg5)
-+			return -EINVAL;
-+		error = arch_prctl_spec_ctrl_get(arg2);
-+		break;
-+	case PR_SET_SPECULATION_CTRL:
-+		if (arg4 || arg5)
-+			return -EINVAL;
-+		error = arch_prctl_spec_ctrl_set(arg2, arg3);
-+		break;
- 	default:
- 		error = -EINVAL;
- 		break;
+ #include "trace.h"
+ #include "pmu.h"
