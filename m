@@ -1,79 +1,33 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752657AbeEUKDY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 06:03:24 -0400
-Received: from ozlabs.org ([203.11.71.1]:46911 "EHLO ozlabs.org"
+        id S1752675AbeEUKD2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 06:03:28 -0400
+Received: from ozlabs.org ([203.11.71.1]:56061 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752880AbeEUKB2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752879AbeEUKB2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 21 May 2018 06:01:28 -0400
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 96f391cf40ee5c9201cc7b55abe3903761e6a2e2
-In-Reply-To: <20180410063437.217D2653BC@po15720vm.idsi0.si.c-s.fr>
-To: Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, Scott Wood <oss@buserror.net>
+X-powerpc-patch-commit: e4f2419fac381c5a7659834169dbe79659da2d0d
+In-Reply-To: <20170803125934.14960-1-peda@axentia.se>
+To: Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org
 From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc: Shile Zhang <shile.zhang@nokia.com>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: Revert "powerpc/64: Fix checksum folding in csum_add()"
-Message-Id: <40qDnZ2Vrmz9s31@ozlabs.org>
-Date: Mon, 21 May 2018 20:01:22 +1000 (AEST)
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev@lists.ozlabs.org, Peter Rosin <peda@axentia.se>
+Subject: Re: powerpc/fsl/dts: fix the i2c-mux compatible for t104xqds
+Message-Id: <40qDnX3tdWz9s33@ozlabs.org>
+Date: Mon, 21 May 2018 20:01:20 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-04-10 at 06:34:37 UTC, Christophe Leroy wrote:
-> This reverts commit 6ad966d7303b70165228dba1ee8da1a05c10eefe.
+On Thu, 2017-08-03 at 12:59:34 UTC, Peter Rosin wrote:
+> The sanctioned compatible is "nxp,pca9547".
 > 
-> That commit was pointless, because csum_add() sums two 32 bits
-> values, so the sum is 0x1fffffffe at the maximum.
-> And then when adding upper part (1) and lower part (0xfffffffe),
-> the result is 0xffffffff which doesn't carry.
-> Any lower value will not carry either.
-> 
-> And behind the fact that this commit is useless, it also kills the
-> whole purpose of having an arch specific inline csum_add()
-> because the resulting code gets even worse than what is obtained
-> with the generic implementation of csum_add()
-> 
-> 0000000000000240 <.csum_add>:
->  240:	38 00 ff ff 	li      r0,-1
->  244:	7c 84 1a 14 	add     r4,r4,r3
->  248:	78 00 00 20 	clrldi  r0,r0,32
->  24c:	78 89 00 22 	rldicl  r9,r4,32,32
->  250:	7c 80 00 38 	and     r0,r4,r0
->  254:	7c 09 02 14 	add     r0,r9,r0
->  258:	78 09 00 22 	rldicl  r9,r0,32,32
->  25c:	7c 00 4a 14 	add     r0,r0,r9
->  260:	78 03 00 20 	clrldi  r3,r0,32
->  264:	4e 80 00 20 	blr
-> 
-> In comparison, the generic implementation of csum_add() gives:
-> 
-> 0000000000000290 <.csum_add>:
->  290:	7c 63 22 14 	add     r3,r3,r4
->  294:	7f 83 20 40 	cmplw   cr7,r3,r4
->  298:	7c 10 10 26 	mfocrf  r0,1
->  29c:	54 00 ef fe 	rlwinm  r0,r0,29,31,31
->  2a0:	7c 60 1a 14 	add     r3,r0,r3
->  2a4:	78 63 00 20 	clrldi  r3,r3,32
->  2a8:	4e 80 00 20 	blr
-> 
-> And the reverted implementation for PPC64 gives:
-> 
-> 0000000000000240 <.csum_add>:
->  240:	7c 84 1a 14 	add     r4,r4,r3
->  244:	78 80 00 22 	rldicl  r0,r4,32,32
->  248:	7c 80 22 14 	add     r4,r0,r4
->  24c:	78 83 00 20 	clrldi  r3,r4,32
->  250:	4e 80 00 20 	blr
-> 
-> Fixes: 6ad966d7303b7 ("powerpc/64: Fix checksum folding in csum_add()")
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> Acked-by: Paul Mackerras <paulus@ozlabs.org>
+> Signed-off-by: Peter Rosin <peda@axentia.se>
 
 Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/96f391cf40ee5c9201cc7b55abe390
+https://git.kernel.org/powerpc/c/e4f2419fac381c5a7659834169dbe7
 
 cheers
