@@ -1,38 +1,38 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZp61GJgwM/1e0ZbfKH+Fam2Hq2ZlLwky2/SKA+wnabPc1jtq9i6zQcfNRgIkNBm37ZftBDz
-ARC-Seal: i=1; a=rsa-sha256; t=1526937277; cv=none;
+X-Google-Smtp-Source: AB8JxZo9JjInhIbGX0Uwo5s0KLPkhJpDorAHzUP27LDcWk+GWrZooQ3+DBgYdYfMG+Y/EkgfRfS2
+ARC-Seal: i=1; a=rsa-sha256; t=1526937272; cv=none;
         d=google.com; s=arc-20160816;
-        b=YhzRtKcdTq+eLCDOsimZYGUjpWuG+5bHQpMf4TIBPbOBrktIm08DwctNqXCOKLoAEb
-         re7Pu+3wQ35D0pynR4OM2Ykm3Jjef26CRO9ORORYMTWfM7Hw3By6ro/jAmE9NdXK6wia
-         ITbBSWSQ1Lca+PqlvOqkbCIKxpZ0eFNHmkj6QFrxeyC+vSy82mNrml+yerN7I/g8N4ml
-         F/KnWH0rPEHFrf3yGVmGlFCH04HUz5d1A3T7ZJ2Gp7sM6aHAJUm4ayZOFV8UObatiMVS
-         5d2XxuF8XTHk5Ebk1pQzH84nrXsbxiKj4mbFtqFhGhoL5avO2xi9LWKrvnvU4cm+VPY3
-         k4XA==
+        b=JBDvHe8hEgGDMY4L2s+4FzRTAyTLlhwp+jq5tvndSKjDNt5q8oSnVFRtSjW7S7MXdD
+         GiexdJgV6zMKdJQfqDNg836KrhSmp5AMLzpX7fkCohi+1baFrGOyCk6mfJFmb1Jzdwvp
+         t1AWyCK+STM9rm6xuY57Cx5tJ7ZnS7JzPJ202yILSX0AZcuyUeyXa8QSDh03dmkJb8Wg
+         BY11/ifoz52qAX7DIJHOkt54pIbfnK8ZKDSiGZ3IIzLrNeKG2o5ICN97WbG3mIRdsWHC
+         H7eqCgbYUF36FCqftSkeNuhq2luHrlvwyYMEiWhHLAMPbkHZdcds8HCBynWTvU5ML16q
+         7m2g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=3Ln2sHbgXhp5tfeneySHkF1T2sJy9YHl2nRquasMJ8E=;
-        b=hAYDWWQb2uRL5uC7gxg6HK4EYYUDXw3HyAfP9XfPn+LcQjnN3Bc+O5Edgfuk4bw22T
-         TDDfzp1tsa8LseY0rFg1P58vXGFoIu75fr8wcPkoCea/7M2XBF8aHvMZaecZhM4jAJ4h
-         lsoxvVZRHgHrVhCg0lFAWa5/KzUs74y2+U/Nw/1I9aboG28OSVAihz01+AOCTlhejq9a
-         Oh1a0juuOltMpXJonR+dJFoZnzI7mvTHJ1HqIRIN5s6/UQni4o7Pk/MO96w/0H93WCZL
-         PQPqJRkApShXCu8A7dx9cMljV1bpX4mF3hZ24YiItp+iVNlcVGDMBxDiz7DfChfNmf78
-         e+xA==
+        bh=avLtrpdk3hBDuxmHk+zgwTGqQVRRoSjV/OlnIbbc0/E=;
+        b=NXk8VvjN41v/ZZ7h2fWeXhY+pt48iC0Zwu4x+X9/i3zjPJy5L8urZtKxApnA/nbJn/
+         E3JWo6is2wpArWg2njm+FirDiODmqUMmvEhVUA66dx77M8ESwbAA4mAP19ZtVzvwYMPb
+         icahvoU46d0W1avN3yj0LL1cOofG2eXA9Iocu12FP7qb0k8Ml51gIJVx9vwMzAdl0RTY
+         MSyv2sij1aw5cChYdhR9qgQR6fVT5mSU1DKXRDLM8mwYQccaIyGjjsEyJkOxZiXQJ/Pe
+         /JSOIaOyiZE23mQzyfTE7BMVm5TOffNkaqFnyeUt9QJZSCVGLpzKxLVlB5vXdcBhmBe7
+         x/gA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=X5zalsrn;
+       dkim=pass header.i=@kernel.org header.s=default header.b=ZVAEjbcF;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=X5zalsrn;
+       dkim=pass header.i=@kernel.org header.s=default header.b=ZVAEjbcF;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Florian Westphal <fw@strlen.de>,
-	Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.9 16/87] netfilter: nf_tables: cant fail after linking rule into active rule list
-Date: Mon, 21 May 2018 23:10:52 +0200
-Message-Id: <20180521210421.799286872@linuxfoundation.org>
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.9 09/87] spi: pxa2xx: Allow 64-bit DMA
+Date: Mon, 21 May 2018 23:10:45 +0200
+Message-Id: <20180521210421.086088277@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210420.222671977@linuxfoundation.org>
 References: <20180521210420.222671977@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109783674177294?=
-X-GMAIL-MSGID: =?utf-8?q?1601109783674177294?=
+X-GMAIL-THRID: =?utf-8?q?1601109777677915566?=
+X-GMAIL-MSGID: =?utf-8?q?1601109777677915566?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,108 +51,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-commit 569ccae68b38654f04b6842b034aa33857f605fe upstream.
+commit efc4a13724b852ddaa3358402a8dec024ffbcb17 upstream.
 
-rules in nftables a free'd using kfree, but protected by rcu, i.e. we
-must wait for a grace period to elapse.
+Currently the 32-bit device address only is supported for DMA. However,
+starting from Intel Sunrisepoint PCH the DMA address of the device FIFO
+can be 64-bit.
 
-Normal removal patch does this, but nf_tables_newrule() doesn't obey
-this rule during error handling.
+Change the respective variable to be compatible with DMA engine
+expectations, i.e. to phys_addr_t.
 
-It calls nft_trans_rule_add() *after* linking rule, and, if that
-fails to allocate memory, it unlinks the rule and then kfree() it --
-this is unsafe.
-
-Switch order -- first add rule to transaction list, THEN link it
-to public list.
-
-Note: nft_trans_rule_add() uses GFP_KERNEL; it will not fail so this
-is not a problem in practice (spotted only during code review).
-
-Fixes: 0628b123c96d12 ("netfilter: nfnetlink: add batch support and use it from nf_tables")
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: 34cadd9c1bcb ("spi: pxa2xx: Add support for Intel Sunrisepoint")
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/nf_tables_api.c |   59 ++++++++++++++++++++++--------------------
- 1 file changed, 32 insertions(+), 27 deletions(-)
+ drivers/spi/spi-pxa2xx.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/netfilter/nf_tables_api.c
-+++ b/net/netfilter/nf_tables_api.c
-@@ -2200,41 +2200,46 @@ static int nf_tables_newrule(struct net
- 	}
+--- a/drivers/spi/spi-pxa2xx.h
++++ b/drivers/spi/spi-pxa2xx.h
+@@ -38,7 +38,7 @@ struct driver_data {
  
- 	if (nlh->nlmsg_flags & NLM_F_REPLACE) {
--		if (nft_is_active_next(net, old_rule)) {
--			trans = nft_trans_rule_add(&ctx, NFT_MSG_DELRULE,
--						   old_rule);
--			if (trans == NULL) {
--				err = -ENOMEM;
--				goto err2;
--			}
--			nft_deactivate_next(net, old_rule);
--			chain->use--;
--			list_add_tail_rcu(&rule->list, &old_rule->list);
--		} else {
-+		if (!nft_is_active_next(net, old_rule)) {
- 			err = -ENOENT;
- 			goto err2;
- 		}
--	} else if (nlh->nlmsg_flags & NLM_F_APPEND)
--		if (old_rule)
--			list_add_rcu(&rule->list, &old_rule->list);
--		else
--			list_add_tail_rcu(&rule->list, &chain->rules);
--	else {
--		if (old_rule)
--			list_add_tail_rcu(&rule->list, &old_rule->list);
--		else
--			list_add_rcu(&rule->list, &chain->rules);
--	}
-+		trans = nft_trans_rule_add(&ctx, NFT_MSG_DELRULE,
-+					   old_rule);
-+		if (trans == NULL) {
-+			err = -ENOMEM;
-+			goto err2;
-+		}
-+		nft_deactivate_next(net, old_rule);
-+		chain->use--;
-+
-+		if (nft_trans_rule_add(&ctx, NFT_MSG_NEWRULE, rule) == NULL) {
-+			err = -ENOMEM;
-+			goto err2;
-+		}
+ 	/* SSP register addresses */
+ 	void __iomem *ioaddr;
+-	u32 ssdr_physical;
++	phys_addr_t ssdr_physical;
  
--	if (nft_trans_rule_add(&ctx, NFT_MSG_NEWRULE, rule) == NULL) {
--		err = -ENOMEM;
--		goto err3;
-+		list_add_tail_rcu(&rule->list, &old_rule->list);
-+	} else {
-+		if (nft_trans_rule_add(&ctx, NFT_MSG_NEWRULE, rule) == NULL) {
-+			err = -ENOMEM;
-+			goto err2;
-+		}
-+
-+		if (nlh->nlmsg_flags & NLM_F_APPEND) {
-+			if (old_rule)
-+				list_add_rcu(&rule->list, &old_rule->list);
-+			else
-+				list_add_tail_rcu(&rule->list, &chain->rules);
-+		 } else {
-+			if (old_rule)
-+				list_add_tail_rcu(&rule->list, &old_rule->list);
-+			else
-+				list_add_rcu(&rule->list, &chain->rules);
-+		}
- 	}
- 	chain->use++;
- 	return 0;
- 
--err3:
--	list_del_rcu(&rule->list);
- err2:
- 	nf_tables_rule_destroy(&ctx, rule);
- err1:
+ 	/* SSP masks*/
+ 	u32 dma_cr1;
