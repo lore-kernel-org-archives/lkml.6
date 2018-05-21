@@ -1,38 +1,38 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZosmXxIAE4+7BXpRaLJa202AHcyddghSsDyPp7lCxYcNYBUyJB7BDqgx35/TYIoNL0SLJ1k
-ARC-Seal: i=1; a=rsa-sha256; t=1526937834; cv=none;
+X-Google-Smtp-Source: AB8JxZqljzgDnsOdWR/KCLNakVmNnlvORYglwySFRHUmADyOa72drpu8+LuQiSz3payrmLPAD5jB
+ARC-Seal: i=1; a=rsa-sha256; t=1526937831; cv=none;
         d=google.com; s=arc-20160816;
-        b=r7D/j4W1X6zzhGdl2I9MCVPf7OdBbX29hYw1xqtvGU26e8oqVGlExGHJvVpduYs8A/
-         FWwzb0nqdrr334C8lPVJ/A6w3Fq51RuA0jV10/+ddSoINGVT4p0dwnIvBEGRsp+UbjgD
-         JpyNyOjljgR9EjMtC798Wqh8kdV5E1nPkdnCbQ8B3RRV+B/fwajem1McNbKJABdcXmcS
-         hJS5Y1ny+d1SBQyutB2TL2GB55rQSKooq+CHbyT5VVvBYtxId0gUvOqOyiwsTltb+IEi
-         X9hssEAFrwrQuEsDVjJTUaZA7ur8Brp2n5VwwQX4vixq1hHKrJF22DddRDpk4vnaY1GQ
-         K1mw==
+        b=mSKzSezFlM5P0nOZ+ZUPabHGgFDHSU0WH3NTmDJaJuYBCdhNnvyMUD0PXGi6MSZxz+
+         8Q3InIv4amsHjgaqo2QjZqntmaQxH0jodY8XqUscJeddRlTvd1fyh2pnh//SsEmMBICY
+         N7G9v9SNIK/RNsk1PZCVN6QFZ+08QGRfcH3qTOVPI8tvta+95RmXgn3ePCcstaD1J6Er
+         xPmJNP3vMWE5qM9H1EdLYAlzx1OOzdNoVXRJAohVbOCyTNRtDXfTxyrP7u/WZuySxpTB
+         B5eDVRKiS56sQHCMxJjHn+qgaKUopUKQuqoDmA+9gyza5YffrF3NvAW9eZMj1Jg+XFet
+         x5xA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=6vbqNpEKQ0yPVXtrVySXiBDtLSqMrbLzCr/l31vE3HU=;
-        b=YlnnKJiS0/LcCRHIm1BsuwfhkVwblY5eNzfxYk+15sVie46LdFEYPgX5uRpkxjQfZk
-         aVHNSBOTfxOHgAUtNZIwjPrTKrWAzjddH2PGSeiSIGgIWWvDSWtIHqwFPoUGHMCsfMOp
-         V+MPwDa4zHBwTLsWssVOs1e4Wxezfm46iz/IX4vxj/MnnB1uzqH3lXzTpQbmn+TZHNEi
-         dqVw73KSTMTvD5YriBBrCJFiaU8ISTbq7TPENyDOCVAmLVxRsKMXeMmiTH4+7bFOGMem
-         Q2qIiJ6cRb4WLjbZPV/zm44oUAFhnC0VRPZ3lvM/OPrhYyKUTUVYRgdkd7Jb/plBAOHz
-         vAAQ==
+        bh=o8PWWH9l28w2w/I/WJn6wozheaUESM1/9RB+99kvNmI=;
+        b=nLjZQZ4WZlID35LPRGdpiM093N0qBjmb8bOkAXbuy7GeZPS/Bv9Zwfpz7L6T5kzaiZ
+         upXH22fPLsneoVhwHVw1Jou1B1TBBiQFfWpb6/Z+3PH47Hu/JZqjLZCrtRvx/Q5IRqAw
+         BrCEp2k5+4G+A/E1I3XypFZkqAPC9OTR7ot9xPZ1geJNG/vFox4xWyL7iqGJckf5kLvV
+         D3m9Ce3XMe7HZaZR9+tw+sNjRA3NxY8+rN5wX8Trrn7EV0RuDU3UW31pl1hGdz28HeXg
+         JxMM5JDSti9ZJnSXpBm/0G0pvnOTA941TiQKNk6k04kOp2cJtmzqf0kW+J4gQU7WLx22
+         8mSg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=QsMmMUBO;
+       dkim=pass header.i=@kernel.org header.s=default header.b=NqGBV5Kp;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=QsMmMUBO;
+       dkim=pass header.i=@kernel.org header.s=default header.b=NqGBV5Kp;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+	Julian Wiedmann <jwi@linux.ibm.com>,
 	Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.16 043/110] s390: remove indirect branch from do_softirq_own_stack
-Date: Mon, 21 May 2018 23:11:40 +0200
-Message-Id: <20180521210507.918921974@linuxfoundation.org>
+Subject: [PATCH 4.16 042/110] s390/qdio: dont release memory in qdio_setup_irq()
+Date: Mon, 21 May 2018 23:11:39 +0200
+Message-Id: <20180521210507.853502959@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109880764209307?=
-X-GMAIL-MSGID: =?utf-8?q?1601110366336223503?=
+X-GMAIL-THRID: =?utf-8?q?1601109877906061998?=
+X-GMAIL-MSGID: =?utf-8?q?1601110363537779117?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,36 +51,63 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+From: Julian Wiedmann <jwi@linux.ibm.com>
 
-commit 9f18fff63cfd6f559daa1eaae60640372c65f84b upstream.
+commit 2e68adcd2fb21b7188ba449f0fab3bee2910e500 upstream.
 
-The inline assembly to call __do_softirq on the irq stack uses
-an indirect branch. This can be replaced with a normal relative
-branch.
+Calling qdio_release_memory() on error is just plain wrong. It frees
+the main qdio_irq struct, when following code still uses it.
 
-Cc: stable@vger.kernel.org # 4.16
-Fixes: f19fbd5ed6 ("s390: introduce execute-trampolines for branches")
-Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Also, no other error path in qdio_establish() does this. So trust
+callers to clean up via qdio_free() if some step of the QDIO
+initialization fails.
+
+Fixes: 779e6e1c724d ("[S390] qdio: new qdio driver.")
+Cc: <stable@vger.kernel.org> #v2.6.27+
+Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
 Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/s390/kernel/irq.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/s390/cio/qdio_setup.c |   10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
---- a/arch/s390/kernel/irq.c
-+++ b/arch/s390/kernel/irq.c
-@@ -176,10 +176,9 @@ void do_softirq_own_stack(void)
- 		new -= STACK_FRAME_OVERHEAD;
- 		((struct stack_frame *) new)->back_chain = old;
- 		asm volatile("   la    15,0(%0)\n"
--			     "   basr  14,%2\n"
-+			     "   brasl 14,__do_softirq\n"
- 			     "   la    15,0(%1)\n"
--			     : : "a" (new), "a" (old),
--			         "a" (__do_softirq)
-+			     : : "a" (new), "a" (old)
- 			     : "0", "1", "2", "3", "4", "5", "14",
- 			       "cc", "memory" );
- 	} else {
+--- a/drivers/s390/cio/qdio_setup.c
++++ b/drivers/s390/cio/qdio_setup.c
+@@ -456,7 +456,6 @@ int qdio_setup_irq(struct qdio_initializ
+ {
+ 	struct ciw *ciw;
+ 	struct qdio_irq *irq_ptr = init_data->cdev->private->qdio_data;
+-	int rc;
+ 
+ 	memset(&irq_ptr->qib, 0, sizeof(irq_ptr->qib));
+ 	memset(&irq_ptr->siga_flag, 0, sizeof(irq_ptr->siga_flag));
+@@ -493,16 +492,14 @@ int qdio_setup_irq(struct qdio_initializ
+ 	ciw = ccw_device_get_ciw(init_data->cdev, CIW_TYPE_EQUEUE);
+ 	if (!ciw) {
+ 		DBF_ERROR("%4x NO EQ", irq_ptr->schid.sch_no);
+-		rc = -EINVAL;
+-		goto out_err;
++		return -EINVAL;
+ 	}
+ 	irq_ptr->equeue = *ciw;
+ 
+ 	ciw = ccw_device_get_ciw(init_data->cdev, CIW_TYPE_AQUEUE);
+ 	if (!ciw) {
+ 		DBF_ERROR("%4x NO AQ", irq_ptr->schid.sch_no);
+-		rc = -EINVAL;
+-		goto out_err;
++		return -EINVAL;
+ 	}
+ 	irq_ptr->aqueue = *ciw;
+ 
+@@ -510,9 +507,6 @@ int qdio_setup_irq(struct qdio_initializ
+ 	irq_ptr->orig_handler = init_data->cdev->handler;
+ 	init_data->cdev->handler = qdio_int_handler;
+ 	return 0;
+-out_err:
+-	qdio_release_memory(irq_ptr);
+-	return rc;
+ }
+ 
+ void qdio_print_subchannel_info(struct qdio_irq *irq_ptr,
