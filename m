@@ -1,112 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753246AbeEURPC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 13:15:02 -0400
-Received: from mail-wr0-f177.google.com ([209.85.128.177]:42145 "EHLO
-        mail-wr0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752945AbeEURO6 (ORCPT
+        id S1753202AbeEURQ5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 13:16:57 -0400
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:8470 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752803AbeEURQy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 13:14:58 -0400
-X-Google-Smtp-Source: AB8JxZpAlYJ6X7XYzbUzuTb8TJr0tkdIjTMtE0OQphlvlqLZXq4KcEwJGvAJVdGdz4THf9bFpuJ5BGxQYJEpJTBiuxc=
-MIME-Version: 1.0
-In-Reply-To: <20180521090351.GA1266@leoy-ThinkPad-X240s>
-References: <CALAqxLX5qPq_5CQwubzk5hiL3kkes7nK9NGqtnyddXKfyaJKTg@mail.gmail.com>
- <5B02847C.3000102@hisilicon.com> <20180521090351.GA1266@leoy-ThinkPad-X240s>
-From: John Stultz <john.stultz@linaro.org>
-Date: Mon, 21 May 2018 10:14:55 -0700
-Message-ID: <CALAqxLWu8E16ZyraPaap6w3SVbb2ByKWB6HAcALQ9xWrXw9V+A@mail.gmail.com>
-Subject: Re: REGRESSION: HiKey eMMC corruption
-To: Leo Yan <leo.yan@linaro.org>
-Cc: Wei Xu <xuwei5@hisilicon.com>, Ryan Grachek <ryan@edited.us>,
-        Arnd Bergmann <arnd@arndb.de>, Guodong Xu <guodong.xu@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        YongQin Liu <yongqin.liu@linaro.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 21 May 2018 13:16:54 -0400
+X-IronPort-AV: E=Sophos;i="5.49,426,1520870400";
+   d="scan'208";a="78841216"
+From: Bart Van Assche <bart.vanassche@wdc.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>,
+        Bart Van Assche <bart.vanassche@wdc.com>
+Subject: [PATCH v12 0/2] blk-mq: Rework blk-mq timeout handling again
+Date: Mon, 21 May 2018 10:16:50 -0700
+Message-Id: <20180521171652.3021-1-bart.vanassche@wdc.com>
+X-Mailer: git-send-email 2.16.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 2:03 AM, Leo Yan <leo.yan@linaro.org> wrote:
-> Hi Wei, John,
->
-> On Mon, May 21, 2018 at 09:34:04AM +0100, Wei Xu wrote:
->> Hi John,
->>
->> On 2018/5/18 23:59, John Stultz wrote:
->> > The last few months have been busy and I've not been ontop of my
->> > upstream testing as well as I'd like, but today I did manage to chase
->> > down an issue I've been seeing since 4.17-rc1 on the HiKey board,
->> > which was causing emmc corruption and stopping the board from booting.
->> >
->> > Symptoms usually looked like:
->> > [    1.690448] mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot
->> > req 400000Hz, actual 400000HZ div = 31)
->> > ...
->> > [    1.777288] mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot
->> > req 150000000Hz, actual 148800000HZ div = 0)
->> > [    1.777760] mmc0: new HS200 MMC card at address 0001
->> > ...
->> > [   12.214381] dwmmc_k3 f723d000.dwmmc0: Unexpected command timeout, state 3
->> > [   12.457420] mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot
->> > req 400000Hz, actual 400000HZ div = 31)
->> > [   12.536676] mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot
->> > req 150000000Hz, actual 148800000HZ div = 0)
->> > [   12.616827] mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot
->> > req 400000Hz, actual 400000HZ div = 31)
->> > [   12.695742] mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot
->> > req 150000000Hz, actual 148800000HZ div = 0)
->> > [   12.772067] mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot
->> > req 400000Hz, actual 400000HZ div = 31)
->> > [   12.850429] mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot
->> > req 150000000Hz, actual 148800000HZ div = 0)
->> > [   12.863384] print_req_error: I/O error, dev mmcblk0, sector 8810504
->> > [   12.869778] Aborting journal on device mmcblk0p10-8.
->> > [   12.887900] mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot
->> > req 400000Hz, actual 400000HZ div = 31)
->> > [   12.967509] mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot
->> > req 150000000Hz, actual 148800000HZ div = 0)
->> > [   13.130182] mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot
->> > req 400000Hz, actual 400000HZ div = 31)
->> > [   13.209438] mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot
->> > req 150000000Hz, actual 148800000HZ div = 0)
->> > [   13.302085] mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot
->> > req 400000Hz, actual 400000HZ div = 31)
->> > [   13.380462] mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot
->> > req 150000000Hz, actual 148800000HZ div = 0)
->> > [   13.494539] mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot
->> > req 400000Hz, actual 400000HZ div = 31)
->> > [   13.571420] mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot
->> > req 150000000Hz, actual 148800000HZ div = 0)
->> > [   13.640817] EXT4-fs error (device mmcblk0p10):
->> > ext4_journal_check_start:61: Detected aborted journal
->> > [   13.650043] EXT4-fs (mmcblk0p10): Remounting filesystem read-only
->> >
->> > And quite often this would result in a disk that wouldn't properly
->> > boot even with older kernels.
->> >
->> > I've narrowed the issue down to the following change:
->> > abd7d0972a192 ("arm64: dts: hikey: Enable HS200 mode on eMMC")
->> >
->> > Reverting this change seems to make things work reliably for me.
->>
->> Thanks to report this!
->> Let me check with Leo and Guodong to know which property changing
->> this is caused by.
->>
->> Hi Leo and Guodong,
->>
->> Can you help to confirm the commit abd7d0972a192?
->> From the log it seemed to cause by the property "max-frequency".
->
-> The commit abd7d0972a192 ("arm64: dts: hikey: Enable HS200 mode on
-> eMMC") can work well on my Hikey620 board, my Hikey620 board is
-> Lemaker version with 8GB Samsung emmc flash.
->
-> John, are you using different Hikey manufacturing version?
+Hello Jens,
 
-No, its a standard 8gb version.  Later today I'll try to narrow down
-if only part of the dts changes can be reverted.
+This patch series reworks blk-mq timeout handling by introducing a state
+machine per request. Please consider this patch series for inclusion in the
+upstream kernel.
 
-thanks
--john
+Bart.
+
+Changes compared to v11:
+- Reworked patch 1/2: instead of introducing CONFIG_ARCH_HAVE_CMPXCHG64, make
+  sure that cmpxchg64() is only defined if it can be used.
+
+Changes compared to v10:
+- In patch 1/2, added "default y if 64BIT" to the "config ARCH_HAVE_CMPXCHG64"
+  entry in arch/Kconfig. Left out the "select ARCH_HAVE_CMPXCHG64" statements
+  that became superfluous due to this change (alpha, arm64, powerpc and s390).
+- Also in patch 1/2, only select ARCH_HAVE_CMPXCHG64 if X86_CMPXCHG64 has been
+  selected.
+- In patch 2/2, moved blk_mq_change_rq_state() from blk-mq.h to blk-mq.c.
+- Added a comment header above __blk_mq_requeue_request() and
+  blk_mq_requeue_request().
+- Documented the MQ_RQ_* state transitions in block/blk-mq.h.
+- Left out the fourth argument of blk_mq_rq_set_deadline().
+
+Changes compared to v9:
+- Addressed multiple comments related to patch 1/2: added
+  CONFIG_ARCH_HAVE_CMPXCHG64 for riscv, modified
+  features/locking/cmpxchg64/arch-support.txt as requested and made the
+  order of the symbols in the arch/*/Kconfig alphabetical where possible.
+
+Changes compared to v8:
+- Split into two patches.
+- Moved the spin_lock_init() call from blk_mq_rq_ctx_init() into
+  blk_mq_init_request().
+- Fixed the deadline set by blk_add_timer().
+- Surrounded the das_lock member with #ifndef CONFIG_ARCH_HAVE_CMPXCHG64 /
+  #endif.
+
+Changes compared to v7:
+- Fixed the generation number mechanism. Note: with this patch applied the
+  behavior of the block layer does not depend on the generation number.
+- Added more 32-bit architectures to the list of architectures on which
+  cmpxchg64() should not be used.
+
+Changes compared to v6:
+- Used a union instead of bit manipulations to store multiple values into
+  a single 64-bit field.
+- Reduced the size of the timeout field from 64 to 32 bits.
+- Made sure that the block layer still builds with this patch applied
+  for the sh and mips architectures.
+- Fixed two sparse warnings that were introduced by this patch in the
+  WRITE_ONCE() calls.
+
+Changes compared to v5:
+- Restored the synchronize_rcu() call between marking a request for timeout
+  handling and the actual timeout handling to avoid that timeout handling
+  starts while .queue_rq() is still in progress if the timeout is very short.
+- Only use cmpxchg() if another context could attempt to change the request
+  state concurrently. Use WRITE_ONCE() otherwise.
+
+Changes compared to v4:
+- Addressed multiple review comments from Christoph. The most important are
+  that atomic_long_cmpxchg() has been changed into cmpxchg() and also that
+  there is now a nice and clean split between the legacy and blk-mq versions
+  of blk_add_timer().
+- Changed the patch name and modified the patch description because there is
+  disagreement about whether or not the v4.16 blk-mq core can complete a
+  single request twice. Kept the "Cc: stable" tag because of
+  https://bugzilla.kernel.org/show_bug.cgi?id=199077.
+
+Changes compared to v3 (see also https://www.mail-archive.com/linux-block@vger.kernel.org/msg20073.html):
+- Removed the spinlock again that was introduced to protect the request state.
+  v4 uses atomic_long_cmpxchg() instead.
+- Split __deadline into two variables - one for the legacy block layer and one
+  for blk-mq.
+
+Changes compared to v2 (https://www.mail-archive.com/linux-block@vger.kernel.org/msg18338.html):
+- Rebased and retested on top of kernel v4.16.
+
+Changes compared to v1 (https://www.mail-archive.com/linux-block@vger.kernel.org/msg18089.html):
+- Removed the gstate and aborted_gstate members of struct request and used
+  the __deadline member to encode both the generation and state information.
+
+Bart Van Assche (2):
+  ARM: cmpxchg64: Only define cmpxchg64() if not using the Thumb
+    instruction set
+  blk-mq: Rework blk-mq timeout handling again
+
+ arch/arm/include/asm/cmpxchg.h |   4 +
+ block/blk-core.c               |   6 --
+ block/blk-mq-debugfs.c         |   1 -
+ block/blk-mq.c                 | 238 +++++++++++++++++++----------------------
+ block/blk-mq.h                 |  64 +++++------
+ block/blk-timeout.c            | 133 +++++++++++++++--------
+ block/blk.h                    |  11 +-
+ include/linux/blkdev.h         |  48 +++++----
+ 8 files changed, 267 insertions(+), 238 deletions(-)
+
+-- 
+2.16.3
