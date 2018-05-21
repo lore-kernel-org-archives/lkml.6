@@ -1,110 +1,75 @@
-Return-Path: <Vijendar.Mukunda@amd.com>
-X-Google-Smtp-Source: AB8JxZpiuZz7H/8X8h2Be5mZY5cTeK2Nb7SxYWWpgXxMOgco1CqjDa6+3TNgH9/SE4MuBRVbbpYz
-ARC-Seal: i=1; a=rsa-sha256; t=1525754919; cv=none;
+Return-Path: <broonie@sirena.org.uk>
+X-Google-Smtp-Source: AB8JxZoX8rJY2kX+F7VNykEmCCh20KkPvKt2ahVHvJBNBqcvJFYQQj3v42s33WblpFEAHkXA/ZLJ
+ARC-Seal: i=1; a=rsa-sha256; t=1526917701; cv=none;
         d=google.com; s=arc-20160816;
-        b=1DPdlHiWSqLruqKQ8KWOSBcfZ9bu/nwoYDL8y+VnGdWcWsS3y34OYotg/58SaqjU+h
-         WSFvQ8Xq9nhJoK/YbwgSlbfa3CYOzpeaUkRgqsU9iwwfczP8wz+UjlTN6ZYWlQX5R8Vv
-         QufyY3plt0pP5+QTAkv/SqFCi2M7crYzVWM2neMcxWTTWFQt1O7QQ89Moj+ovxt/8MLG
-         ElCJjzqEvJXGoBi+vae1xutwfUlQAoqc2PPmgUcDfErAQVbgCnF6ZuNJCjHwFepVUO2f
-         NRJQOJ8aXeRT/LC9fpQ8aex3EFsEAg/+en8opq6m0Kqx5W8DLu4YUcu0zbY28OfyttMF
-         pNlg==
+        b=eXmRVvpNs1nYOtYw4w9XfXBf2tTU9Mt+hIbTqwQEXmQdgXP4QsJml6HR+tSW6YWqQB
+         JmVftx2AEtTqaremWZZBt5PRohQwhH4gGRh94HhftciWXcqtxxvzmk8rr+BWibuFA7Wr
+         B2TEeptxmeb0Lqtib33fM6G6a4C3SGtb3DVztmsKN8J1VX8Q7+pmTF9Ws9uSZ4qv0s5v
+         xYMYRskSB6VDS60HU4JlzkdeP+EA/5OcxBiu8ES1jLafoWqx7gkxtQWdtw6c0wkmRBK9
+         2rqGVsHI/xcD0SAwMod3wXupQSBYopxSeWyq6aZ6xtHhBkbt1Erv5IqDYvQLxjrjnbwK
+         xUlw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=spamdiagnosticmetadata:spamdiagnosticoutput:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:dkim-signature
+        h=date:message-id:in-reply-to:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
-        bh=4RjT0tvYDOcId01K4/Zh9qc4MtXpH+yeFX3oFkSpL2Y=;
-        b=TteXPD0vkvJAtppKe7aLy/mhoHQ8ZVSioQDQK9XIiGF0Kn+e72c4/XaaHk6EGjmXnm
-         txdf9mx/r/uSoTV4+iojzOyoj4nhxAEVWs7QL2OfTjvNwirwfPFUs1TWyFZeNLFRYjVn
-         RgBV5TO0bPPJMHn3rn9tilyMRy/ieHmhLyENb0pp0s8NSnbltsPi0hb5Ikb5PpusP2JA
-         YJnqL9R2dw7P4HL6pYhmwlUmgUVkvHyMXIZOJFVL2PJmEbdToaQ1xavpFeii1Fhmr0lu
-         b3RtEUk7Jv9p9lRzwUfmmSYg/oEwl/K5AVyd385hNairxibBWtFdzEZ2hL1GupQAX24k
-         oFKQ==
+        bh=XQWxGY7YGgxgA5to88sPaFU9HXoLvW8z18E2zeBt2KE=;
+        b=snNbHz7dU5qAt2JqnAi0VRKfGpDxSuouzGt+tcm78alPrvXas5LE0ZOq29NxxJCmTW
+         +Sx1qJc7AOEPwnMwYQvOu2sJPiw5Qv5DpRPhJRQZ2Vq4OZ6aA211xbkT0XTH4ogxcz5h
+         4q66seFZ6R4uTpyy/fgrXNVWVWoyf83YjDo82RtuCKcCwlJA8WL9M4OGy29hegKhBM7W
+         RLWMIRNJK6fyNIlU41IJNBNsBCWNv64mCOTPb+1rLWcub9GRpCQbFwvazqUMkbeRSoio
+         6M36JgMoG+q3bRQ7YKHXdItVLEgE/iYEvEwSmPDJt759VuvZyeUQohuAiY8tAAN4CiA3
+         XOFQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@amdcloud.onmicrosoft.com header.s=selector1-amd-com header.b=gyjAwp7a;
-       spf=neutral (google.com: 104.47.41.73 is neither permitted nor denied by best guess record for domain of vijendar.mukunda@amd.com) smtp.mailfrom=Vijendar.Mukunda@amd.com
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=U7/CeUXo;
+       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@amdcloud.onmicrosoft.com header.s=selector1-amd-com header.b=gyjAwp7a;
-       spf=neutral (google.com: 104.47.41.73 is neither permitted nor denied by best guess record for domain of vijendar.mukunda@amd.com) smtp.mailfrom=Vijendar.Mukunda@amd.com
-Authentication-Results: spf=none (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; roeck-us.net; dkim=none (message not signed)
- header.d=none;roeck-us.net; dmarc=permerror action=none header.from=amd.com;
-From: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-To: 
-CC: Vijendar Mukunda <Vijendar.Mukunda@amd.com>, Liam Girdwood
-	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela
-	<perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Akshu Agrawal
-	<akshu.agrawal@amd.com>, Daniel Kurtz <djkurtz@chromium.org>, Alex Deucher
-	<alexander.deucher@amd.com>, Kuninori Morimoto
-	<kuninori.morimoto.gx@renesas.com>, Wei Yongjun <weiyongjun1@huawei.com>,
-	Jason Clinton <jclinton@chromium.org>, Guenter Roeck <linux@roeck-us.net>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "moderated list:SOUND - SOC
- LAYER / DYNAMIC AUDIO POWER MANAGEM..." <alsa-devel@alsa-project.org>, "open
- list" <linux-kernel@vger.kernel.org>
-Subject: [PATCH V4 10/10] ASoC: amd: dma driver changes for bt i2s instance
-Date: Tue, 8 May 2018 10:17:53 +0530
-Message-ID: <1525754888-14124-10-git-send-email-Vijendar.Mukunda@amd.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1525754888-14124-1-git-send-email-Vijendar.Mukunda@amd.com>
-References: <1525754888-14124-1-git-send-email-Vijendar.Mukunda@amd.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39380400002)(39860400002)(376002)(346002)(396003)(2980300002)(428003)(189003)(199004)(486006)(86362001)(478600001)(2616005)(575784001)(5660300001)(105586002)(106466001)(68736007)(109986005)(39060400002)(36756003)(446003)(50226002)(2906002)(53936002)(59450400001)(7416002)(356003)(53416004)(11346002)(76176011)(77096007)(104016004)(426003)(126002)(7696005)(72206003)(97736004)(476003)(336012)(4326008)(50466002)(81166006)(1671002)(81156014)(186003)(6666003)(54906003)(8936002)(48376002)(305945005)(47776003)(16586007)(26005)(316002)(51416003)(8676002)(266003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM3PR12MB0764;H:SATLEXCHOV02.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: 1;DM3NAM03FT062;1:KSaT8higJ9gwcxMKzaNQqE8h3ivEg1HByeStob3dIgEZ/HxIGQQn3XUTAhekbbQ80anOx/B7a95hJfAxqjKfvRaXJ20VJHhybTTyGnmtoIThwhQx93FC2s+G9Yac/HzG
-X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060);SRVR:DM3PR12MB0764;
-X-Microsoft-Exchange-Diagnostics: 1;DM3PR12MB0764;3:L6WYevelweNKab753TixKHtwcWKBCXLtBC73J7V+bQz713MwHNSco1GZUJoPuYXZ1kEvE/V88Wg4HNkabBl4CHN1EyiU7/TpbV5/PAYzXQdoIGfIyEgDNst+WiPPcRCriwfHLw2Ifj3V0MhwXmN7jfTObCzC/2RysgYqZqt7M92YgAhQw1KXLLXzyjB0z++qllScccAvoUcrRDlARHeAUi5tTUpttcECaWyKnOmUzEkIlo0apUtTjFlUa1GXaBa9CpA0OZWBkBPBD3obRHI+dEmaU+ke/cjVJpVwK5KmjoJPcmPwrLQwHK5pw56U3HALVU8CR2QCFpdyzS75iDAKfTB//FJrnNnRVRzCUs5ZWD8=;25:IzB6GDy8+mQBdDyBOyqsHByAoyTd0ONts/PuDdOhTXjYHYWCpsAN4o+WhR9RXqRRIfBfGhWGYdP87Isnq3Ei+bwBfLsxKXyHfpedExcMGFU7YL220nDDCaayKXF7QMwSFJhXxlcfY3E9bi1HqT0ZTLrGmOncYzOFvr2db4+qR+uSfWdJuw5tPkX9Fv9/BXwYldePKGYRxoL6u9ZnrpKglPyclcCfrHIj60NjCf25hSMn2Qjj8ub+vORZ6+KBULhMHvWYAjX1yoWGBRb0UQBh33hS8o/EQvyXSSuaaQlza8dYS4OfOWLF0Sse1dlWTSWoi7S114MdhUoI1icRCEgNdw==
-X-MS-TrafficTypeDiagnostic: DM3PR12MB0764:
-X-Microsoft-Exchange-Diagnostics: 1;DM3PR12MB0764;31:rk0sPB1kIKx3FJpl/RThDYaO3mzl+cxc1ZxY8yikcKDlSfBl8WjbAidro8AolKtKC2DtbrZE5bmKDUnxn+E4Q84yw7eTk/aNFNjW8/rYTAmQQxgGUZ/AEPAOdo9BbCbvMkFG4KfzHBdt7PaDDLkj2fXvadsW5apniq8bFKtiwl8y4gPmbVq4gBIq9UStYWUte5TvGPssr1qQOXtF3Pt9WMGND/5hGuZNHkjT5qnwjdk=;20:SMYBgSSNjR8gUlplgvWh6BXpy962UW3eoJKrQ5MOBljm+6C8PsAMvZF6ZfvVA9miE2jL88p5N4hgpSbMkttO014hZusp3/gp31/vwRKevEFXzany3BNuI7G8FoquGtUJVRmd2cHe8Cxy0jokoiW4va4Jm3qOmv3iPqEJehn9jJgX3/GU6ur03BpvoYJk0QQiGgM8X9fxU32HuiDPb/amjPkZAhRXgYjMSxzBcfnXN/z4a8y2Lcb5qbGSFHO9VAtnGiR4NFtU+6MLOrZAlqUBoSkflT8YJ1PuUSuGD0W1Mka2NtYOGsIsSzChonTmQeLsuKpygvjysEXlvE0YCXuuMN8YdiBmYCM6FrX6Q5qXR5nX4Ow+01/diTzJHnwgvoTY5odvowmJB53T7vfxMItudAjOabTD92XXbXGyZ2+2INh6igYioEtcypdQKXCktKScBj8DENKa3jVeh1rE20JjyhuGuZzb1hLFswJ7SoPCDHvwB2aNKzwOwL01PUuADnP+
-X-Microsoft-Antispam-PRVS: <DM3PR12MB0764BF60FA0AA5F138B2E05D979A0@DM3PR12MB0764.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93003095)(3002001)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:DM3PR12MB0764;BCL:0;PCL:0;RULEID:;SRVR:DM3PR12MB0764;
-X-Microsoft-Exchange-Diagnostics: 1;DM3PR12MB0764;4:L15Tl3tVBl2iR/sXkD/ZJcJyTlI0W+vOlwPlYCUXJUo13vQ5+x/Ob81Z1C7P8SGPyn5x4wdnZtcAk0sHqGlFkU9upz3UsNQIPtD//76QAEjHdy9+YKiqzrsSyW7WU/Uke6zaDOO73mf45nncqSBCUUyb0AJGh8EqJnPcemBIRQGv52hfRduYKtzQX19GzNAjvVrgPa8eppHPJA94WFRTlYSxriukm+O45/7anZdt7zdQR8l4qZZLPAEo4ahGmsWGyGEIgYRQQuNgjnJKzUhWmEK4EgxEWK2pI4nwbnfqRzWn9dgVfhIaHxeeHDhu8r+R
-X-Forefront-PRVS: 0666E15D35
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM3PR12MB0764;23:cePnRCyRIFbD5GTmrJ28m01jGbqBOcVXyT51VqIKA?=
- =?us-ascii?Q?erUNkoOKR/5SVRI76l681NNiTZAEzi/t9JhPf5eWaViI8UOdSOBBbLKrd08H?=
- =?us-ascii?Q?4OV8iTf7My7tnPDy3UX0rYm8TNJQnIK2X5WxOiuhHyE6r+oLy53qa0T2S/QZ?=
- =?us-ascii?Q?K6fkX08nYfzYfU60GDxZ9ZRoiDTGHcWNrj+MVa77hr9+aV9Tp4MAuCnCHWL+?=
- =?us-ascii?Q?uMjZhY2pXL9jlQZkJjRTJChiUFABNaXlfPwsqPSDoi8ZHD45b+aA47DTviLP?=
- =?us-ascii?Q?34Xm3koBmpj6gBcs47aKUkfvLVH0tLj8nFPgtfvDQYTA+r2vyT3LnjSAl/U1?=
- =?us-ascii?Q?C6iY4esBNbnrw1CB979nllS9Thbxix9lYYp0LO4sp6hl636NL6p3D6e3YjM/?=
- =?us-ascii?Q?RZX5pNh+Ewh0s5hLoo4ewnnyD98/K0F/yEU99OOhRbGDXVn+GgH4EtdlGuTn?=
- =?us-ascii?Q?r8VrfRsDRbBNOeuHGQ7PUALR1EbduMIvrksq0zpefoYo5omHTXSnBVTJzXEC?=
- =?us-ascii?Q?ajDApEqmjmC8S7ms/8JHi7QiqLVIxASCiTq2bW5E7s0JE9pUMt3gMtx6E50m?=
- =?us-ascii?Q?YRpex6IPeKTdp6l38DkUxnVGYlNX+l0Jbbod30QDq/tKcivQXaAFwAz4UyzE?=
- =?us-ascii?Q?DSOPzYo09aSJmbb5upiZIYDBWxpjRtr/yok9cpLFtYKnyOjHG0Br7dmveweQ?=
- =?us-ascii?Q?gjvY5PGmcrQX5M7J7mI8m3hBW6Fj4xsjmho8FfPoIJLvcU+PlJzkVkuRpsS4?=
- =?us-ascii?Q?Yd4c1rcqfXVOJgikHQeDxYDrjs/ErxzTwebmCnegK2wWt84NpmGDHhwq7j3A?=
- =?us-ascii?Q?3tHyRvjscFfnir1rd2uWfeOq7a9aX01xNHWfuG07Yfr+0JBEZ4UXMooavOgF?=
- =?us-ascii?Q?mjmMkCyG1xKFjCVkFZtHAEVbkTyworC3YgEXR6Lmpelly4Ba7pZT0WOXtv3N?=
- =?us-ascii?Q?T0BF7lMoeY7gJ9JRZr8F7O+BojcI6jlaEPHho8KYsiWiIWSHj7eNOlV+JIK4?=
- =?us-ascii?Q?ULbPU7MhhKtN2osx0WrS4hh1JxfoY+z+620WaYMnbicLdHkAGr3PqFcWqmse?=
- =?us-ascii?Q?rXsiKj6W+Ns4YkAPieK1j3NS/6dciJGD6nXuGGvqr9hBodYlSnmlV2cQ0LHT?=
- =?us-ascii?Q?jVT0Tty32AUVgpAzmLP5PdBc7D1F3NWcF1RmasZnnFIVxx+JkuymzbVpbiCE?=
- =?us-ascii?Q?drz6DxypqPiGIOlYmCYXmWScA5kq7XQXLmXsymrGOrsiqFVGc52WBqi/66tY?=
- =?us-ascii?Q?X6eYpTMEVKPtxvlW4sxX1WpWEW6bBQz9W2oTF06l1ZMFh31uyCwzuZPqQn7s?=
- =?us-ascii?B?dz09?=
-X-Microsoft-Antispam-Message-Info: JJWjOg6R7LmQMKb2WD3pxWhACWycW+SOCTKl8xJ0Sg1Wj2jMUJqMIhDWu8XDh7yvmwNueQ5RAZJX331maGCPyAiywvMa0H2bDs8cHgK7qF4yu9w/ZHy2Jm13tF57/FsBebZrx2MoF3AjAp73zUJlukm/Dg5Ar7YaUjAviWqVI4BthMcx3/59T7Ia+jSbxS4O
-X-Microsoft-Exchange-Diagnostics: 1;DM3PR12MB0764;6:LNRRabcwWnWMeZYqKf1B62LZrn8KQNmEqAf5QfeYHmcP3KcMOHCrVSpWRpa8ofBgmjRHDkiP8DqboNEZ1PAWBwpJaL/vgczfl1+hCzhE1sKszOgC0j1CWWp1MobrmuSdV1KK8yiSVfJGaziyI+whGhyqtM1rYC2CZn4KbZxRDePtuolcRmZ9/PzB8GrJf0Wpi/8MoRAaGFyXclnIzif3vbAsE/YgEwEL94RSi/rU5TDJYth894PDqh8I3qjMdek5ikG3e/3AsScTDtsEY9+7g2cVhFMiLeL/3BRouZU0xW38v0imGrOg6NMFTLzQQfETad5gvKKsuoXi3cZmVEPR7CpkDgupUdlOOgBo+iq9u0epmbXD5FjwuXVgrQWrKI6dZFfpJTpbmS2HWNfA2vwyI9QbbFwbWmhdsaI7B/JXDJqZ6Y0hkuHedTpFc9PebT6DYEDUUEejJQjU5AK08LMSuA==;5:6D5EwQWJkYOdTsnMynMwZr7j2KMKp6yTlu61Tu7tGTBE4qrCwm/KsBQr/ZEfqNmzRmZCLupboj6okKVbyLAFnIGrRS8ZlTnzs9ykA6XLKP8zfIb7mD9xwY5/BULuRhfo9cMdju/FYbLB9B3xaNGwEnOvaU52+vG4PpTKHk8mH+Y=;24:amkD3KvMSTJUscc6oLTftKXf9EfPfM6Y4ee7UjY22dQ+HAIHYTYHtS8/Y1EpydhOoRQrUBPS3r7sG+YGtFKap4X5E0HO8OODcGJ1ypimaDw=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DM3PR12MB0764;7:w86VMaUWYQyAo2QJdT/KuSUdkrRfem3AwKkgS/aM/ZpKgJBpKvH7uEE6MaSkOi69YDoNyxsZrFCgI2JWac4jL2yuL9KyRYreB3zMdft+bvuQMNFbsEUkpV2QVP9YqvV5cjLNMKF1q8tc+W08pRTdLfbXYQw2a9kICZH2EjO+H0ghcnGFfnuztWwQ4TOLfUA+TWk35oMBBaeaunBAwrgaS/zjay4hyH0sL/VwHPAXGhi9VuGe9x/INw4o0sBkxNvB;20:qiJO5rDtrVdRC6NwM8gsooEww57z5KjGrDiev+98FX+2J6+Klnw6FR8ozjURWjGfDklERACp+70kN1eeal2rCWmbSRj8v2bS2K9dfwhHWFPmteCUgESwPqVf07sUV9Ex4bDcESOSujmLXx0zJmNU9vY05gQKRn3b7pzJrGxqNFyLZ1+ijx5b1y/W2BRtCAOvqi2WSAL9rwPBuHkdKgmdM/9ivuPOGNYZGQXUe107pLUOCvYFZ8nmSFlwp2B8fyn/
-X-MS-Office365-Filtering-Correlation-Id: c76f3352-41b8-42f0-3dac-08d5b49ef5e1
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2018 04:48:36.0179
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c76f3352-41b8-42f0-3dac-08d5b49ef5e1
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXCHOV02.amd.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR12MB0764
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=U7/CeUXo;
+       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+From: Mark Brown <broonie@kernel.org>
+To: Mukunda@sirena.org.uk, Vijendar <Vijendar.Mukunda@amd.com>
+Cc: Vijendar Mukunda <Vijendar.Mukunda@amd.com>, Mark Brown <broonie@kernel.org>, , "moderated list:SOUND - SOC, LAYER / DYNAMIC AUDIO POWER MANAGEM..." <alsa-devel@alsa-project.org>, open list <linux-kernel@vger.kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Takashi Iwai <tiwai@suse.com>, Daniel Kurtz <djkurtz@chromium.org>, Jason Clinton <jclinton@chromium.org>, Mark Brown <broonie@kernel.org>, Wei Yongjun <weiyongjun1@huawei.com>, Vijendar Mukunda <Vijendar.Mukunda@amd.com>, Alex Deucher <alexander.deucher@amd.com>, Akshu Agrawal <akshu.agrawal@amd.com>, Guenter Roeck <linux@roeck-us.net>, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: amd: dma driver changes for bt i2s instance" to the asoc tree
+In-Reply-To: <1525754888-14124-10-git-send-email-Vijendar.Mukunda@amd.com>
+Message-Id: <E1fKn2i-0007F0-G0@debutante>
+Date: Mon, 21 May 2018 16:48:12 +0100
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599869990217577157?=
-X-GMAIL-MSGID: =?utf-8?q?1599869990217577157?=
+X-GMAIL-THRID: =?utf-8?q?1601089256338552789?=
+X-GMAIL-MSGID: =?utf-8?q?1601089256338552789?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
+
+The patch
+
+   ASoC: amd: dma driver changes for bt i2s instance
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From ccfbb4f5723736bb6f548a319ab97e4c4f8ff2b4 Mon Sep 17 00:00:00 2001
+From: "Mukunda, Vijendar" <Vijendar.Mukunda@amd.com>
+Date: Tue, 8 May 2018 10:17:53 +0530
+Subject: [PATCH] ASoC: amd: dma driver changes for bt i2s instance
 
 With in ACP, There are three I2S controllers can be
 configured/enabled ( I2S SP, I2S MICSP, I2S BT).
@@ -114,19 +79,15 @@ controller Instance.
 
 Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
 Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
-v1->v2: defined i2s instance macros in acp header file
-v2->v3: sqaushed previous patch series and spilt changes
-	into multiple patches (acp dma driver code cleanup
-	patches and bt i2s instance specific changes)
-v3->v4: Fixed checkpatch.pl error
- sound/soc/amd/acp-da7219-max98357a.c |  24 ++++
- sound/soc/amd/acp-pcm-dma.c          | 256 +++++++++++++++++++++++++++--------
- sound/soc/amd/acp.h                  |  40 ++++++
+ sound/soc/amd/acp-da7219-max98357a.c |  24 +++
+ sound/soc/amd/acp-pcm-dma.c          | 256 +++++++++++++++++++++------
+ sound/soc/amd/acp.h                  |  40 +++++
  3 files changed, 263 insertions(+), 57 deletions(-)
 
 diff --git a/sound/soc/amd/acp-da7219-max98357a.c b/sound/soc/amd/acp-da7219-max98357a.c
-index 133139d..ccddc66 100644
+index 133139dbcb06..ccddc6650b9c 100644
 --- a/sound/soc/amd/acp-da7219-max98357a.c
 +++ b/sound/soc/amd/acp-da7219-max98357a.c
 @@ -36,6 +36,7 @@
@@ -214,7 +175,7 @@ index 133139d..ccddc66 100644
  }
  
 diff --git a/sound/soc/amd/acp-pcm-dma.c b/sound/soc/amd/acp-pcm-dma.c
-index ec9cab3..906eb77 100644
+index 1c44b26ad2db..ac32deaa9541 100644
 --- a/sound/soc/amd/acp-pcm-dma.c
 +++ b/sound/soc/amd/acp-pcm-dma.c
 @@ -37,12 +37,14 @@
@@ -605,7 +566,7 @@ index ec9cab3..906eb77 100644
  	acp_reg_write(1, adata->acp_mmio, mmACP_EXTERNAL_INTR_ENB);
  	return 0;
 diff --git a/sound/soc/amd/acp.h b/sound/soc/amd/acp.h
-index 62695ed..9cd3e96 100644
+index 62695ede997d..9cd3e96c84d4 100644
 --- a/sound/soc/amd/acp.h
 +++ b/sound/soc/amd/acp.h
 @@ -13,6 +13,8 @@
@@ -700,4 +661,4 @@ index 62695ed..9cd3e96 100644
  	struct {
  	u32 low;
 -- 
-2.7.4
+2.17.0
