@@ -1,128 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752714AbeEUDOP (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 23:14:15 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43158 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752311AbeEUDON (ORCPT
+        id S1752291AbeEUDSA (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 23:18:00 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:34746 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751300AbeEUDR6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 23:14:13 -0400
-Subject: Re: [ANNOUNCE] Kconfiglib menuconfig implementation
-To: Ulf Magnusson <ulfalizer@gmail.com>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <CAFkk2KRTnRpi5thUGTM2+LZMyitggdJtiOBO7E0pTn93fz6-SQ@mail.gmail.com>
- <d4c3b2ab-385d-fe7a-bdb1-2d497d620de5@infradead.org>
- <CAFkk2KRozscmd4kQSJKwKmY3WpTody7S5XZZObf8SKLF62k6+w@mail.gmail.com>
- <CAFkk2KRkEt3+786QvyjzPPAm+3HDe2+ydzZJpshfdKyUDQVfuw@mail.gmail.com>
- <CAFkk2KRvSxu+x-nb045=3L63KEk5h9URr5QYLPoYp6rqqTR4qA@mail.gmail.com>
- <3d9be2f2-3fbe-411b-8529-0e0847f01346@infradead.org>
- <CAFkk2KRWon_S--dxYw82cDyGXKTFA6jxrrQwstzLvHPs=6-dqQ@mail.gmail.com>
- <c4ec710f-b2bd-b9f0-c33a-159aa53ca73c@infradead.org>
- <1378afb3-2b0e-da7a-5721-a8fa727e4382@infradead.org>
- <CAFkk2KS=bYn3t-764CEy+sq9E8FUbWH=L-yQbDhAYQpnrgmsiQ@mail.gmail.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <4a4b12fc-ab54-20c4-7aa7-a83c4faecf25@infradead.org>
-Date: Sun, 20 May 2018 19:45:22 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Sun, 20 May 2018 23:17:58 -0400
+Subject: Re: [linux-next PATCH 0/4] Enable network driver on K2G ICE and GP
+ EVMs
+To: Murali Karicheri <m-karicheri2@ti.com>, ssantosh@kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1526066952-5230-1-git-send-email-m-karicheri2@ti.com>
+From: "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <8e1aa492-ae7a-de2b-f5d2-8756b10ece79@oracle.com>
+Date: Sun, 20 May 2018 20:17:08 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <CAFkk2KS=bYn3t-764CEy+sq9E8FUbWH=L-yQbDhAYQpnrgmsiQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1526066952-5230-1-git-send-email-m-karicheri2@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8899 signatures=668700
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=923
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805210037
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/19/2018 09:47 PM, Ulf Magnusson wrote:
-> On Sun, May 20, 2018 at 6:03 AM, Randy Dunlap <rdunlap@infradead.org> wrote:
->> On 05/19/2018 08:45 PM, Randy Dunlap wrote:
->>> On 05/08/2018 09:59 AM, Ulf Magnusson wrote:
->>>> Hello,
->>>>
->>>> I've added incremental search for jumping directly to a symbol now.
->>>> Regular expressions are supported as well.
->>>>
->>>> Some screenshots below:
->>>>
->>>> https://raw.githubusercontent.com/ulfalizer/Kconfiglib/screenshots/screenshots/ss10.png
->>>> https://raw.githubusercontent.com/ulfalizer/Kconfiglib/screenshots/screenshots/ss11.png
->>>> https://raw.githubusercontent.com/ulfalizer/Kconfiglib/screenshots/screenshots/ss13.png
->>>>
->>>> The last screenshot shows how things might look after you jump to a
->>>> symbol. The jumped-to symbol wasn't visible in this case, so show-all
->>>> mode was turned on automatically.
->>>
->>> Hi Ulf,
->>>
->>>
->>>
->>> Hm, OK, I used the trick that you supplied a few weeks ago and I have the UI now.
->>>
->>>     ARCH=x86 SRCARCH=x86 KERNELVERSION=`make kernelversion` \
->>>         Kconfiglib/menuconfig.py
->>>
->>> so yes, a real Makefile target would be nice. :)
->>
->> I want to see all kconfig symbols that end with "_DEBUG" (so excluding
->> _DEBUGFS).  Using:
->>
->> /.*_DEBUG$
->>
->> shows me 6 symbols:
->> ATH9K_COMMON_DEBUG
->> DVB_B2C2_FLEXCOP_DEBUG
->> HAVE_DMA_API_DEBUG
->> IP_DCCP_TFRC_DEBUG
->> NFS_DEBUG
->> PM_SLEEP_DEBUG
->>
->> so where are the other (approx.) 176?
->> see:
->> $ find . -name Kconfig\* | xargs grep "config.*_DEBUG$" | grep -v \.orig | wc
->>     182     364    9179
->>
->>
->> Anyway, something for you to look at. :)
->>
->> --
->> ~Randy
+On 5/11/18 12:29 PM, Murali Karicheri wrote:
+> Now that NetCP driver patches for K2G SoC is merged to linux-next master
+> this series add patches to enable network driver on K2G ICE and GP EVMs.
 > 
-> It's related to how the search is done. Searching for "DEBUG\b" (word
-> boundary) instead will find all of them.
+> Thanks
 > 
-> A string is generated for each symbol. For symbols with prompts, this
-> string includes the prompt as well, so you get e.g.
+> Applied the patches on top of latest linux-next master, built kernel and
+> booted up on both EVMs. The logs are below
 > 
->     AB8500_DEBUG "Enable debug info via debugfs"
+> K2G GP EVM: https://pastebin.ubuntu.com/p/ycZDnZXYPx/
+> K2G ICE EVM: https://pastebin.ubuntu.com/p/bdCpzgdrXr/
 > 
-> Those strings are then searched/displayed.
+> Murali Karicheri (4):
+>    ARM: dts: k2g: add dt bindings to support network driver
+>    ARM: dts: keystone-k2g-evm: Enable netcp network driver
+>    ARM: dts: keystone-k2g-ice: Enable netcp network driver
+>    ARM: keystone: k2g: enable micrel and dp83867 phys
 > 
-> What you got with your search was all symbols whose names end in
-> "_DEBUG" that don't have a prompt.
+>   arch/arm/boot/dts/keystone-k2g-evm.dts    |  53 +++++++++++
+>   arch/arm/boot/dts/keystone-k2g-ice.dts    |  59 ++++++++++++
+>   arch/arm/boot/dts/keystone-k2g-netcp.dtsi | 147 ++++++++++++++++++++++++++++++
+>   arch/arm/boot/dts/keystone-k2g.dtsi       |  13 +++
+>   arch/arm/configs/keystone_defconfig       |   2 +
+>   5 files changed, 274 insertions(+)
+>   create mode 100644 arch/arm/boot/dts/keystone-k2g-netcp.dtsi
 > 
-> The nice thing about searching both the name and the prompt is that
-> e.g. "debugfs ab8500" will find the symbol above. I'm also planning to
-> add menus to the search, by generating 'menu: "menu title"' strings
-> for them.
-> 
-> It's a bit awkward/unintuitive that what you tried doesn't work
-> though. Maybe the symbol name could be searched separately from the
-> prompt, though I'd be a bit sad to abandon the super simple
-> single-string-per-entry implementation approach. :)
+Looks good. Will add this to the queue for 4.19. Thanks !!
 
-Hi Ulf,
-
-What else are you planning to do with /(search)?
-
-
-/syscall lists 20 or so symbols. It would be nice if each one of those
-showed its current setting [y,n,maybe^Wm].
-
-
-I like Toggle show-all mode.  When I use xconfig, I usually turn on most
-of its options, including one like that.
-
--- 
-~Randy
+Regards,
+Santosh
