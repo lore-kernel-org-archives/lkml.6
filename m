@@ -1,38 +1,38 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqWgEzTsjp07kXLNnfnYhGbcprpSkM47VC82tdLpOphyr/rYFbY8ZSu4C2mzA4duTaEWwry
-ARC-Seal: i=1; a=rsa-sha256; t=1526937812; cv=none;
+X-Google-Smtp-Source: AB8JxZqVhb3hMLSioUmcHs5lCvpRyMVRDT8G76Kl/cGSGswshhuhISJ0aYtsZpigWnQDz/zDSWMj
+ARC-Seal: i=1; a=rsa-sha256; t=1526937810; cv=none;
         d=google.com; s=arc-20160816;
-        b=MdFDv9D45BhFaLwAJHqwA1kHMUK3TeBk1JbbAQLoOF3fiUvYHowjLuyf7Z14+EPAD8
-         Ptq0tLlB/xbESzEppwNNMMr5oamIerV9IkHbQF3/22gX/wUzg7FfVlxVqKfiveTMDKzw
-         FQs/6rieHvmmw/1G8Ghc/Ya/gBZ9DHYT6gVYmkfxHcpxPOS5/uRNDouNSLEAFXfjlnda
-         gFloVVeyfAKZnt76/FUYwdPICwz5jTWH193WaMAdkyCugMz+ZOnRPeRJvhTzi1q6r6Yx
-         2SmjKo79iWN1BhrFnszMwzZkmWRt7pSrotzhjeWX37kPNY5r6yIr2kd9p3pgnxwWTvJ0
-         OR5w==
+        b=0BHFWVgJFlL3BR9Eh3jKw9GxYzgbbG6DEUva5QJuJwMy8/lGdBh+JkZOT9gRxTCadQ
+         +ctzR+hgXQmfUO/BmMBU+tnamOLsGUgbAHVVJ10GKoU4N0rtF4muY7KWD388F5nEeA2t
+         IgdvvwtwbQALl/JTtNoQx7sD7E3zW6gzv7tap2B1HPwokrnuWbQi+eOHjl0eYHBNNufC
+         JA7mibpYPewxtaqOsrR4P9NDIl6QVf/RC8IeJx4PjxVp6+VRNvfgGPP76U8h3mTfkwSA
+         H5G9ZNlqtp39QHteSpZKk9IA0qFWNXJJJcB6LUPkACk0G3OXCfNnenXVJqTK4G7Hahbu
+         rPjg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=Hiy7TRGkPAC169D+JfLnUsqRwMQU2OwK3r7ggR87GlM=;
-        b=e0SSmE/fxcp69N1mnllvtd0Q5wm6fP2SRuWf/7WWmzuDDB4Nm3rlBBRw70FGpiRvaT
-         UwDFw6TWcS4lmdqyIb7Y3+neAt1rSP8yNGt7fOi57mr7LHmwxcwT99feuyqGkxmOLgL1
-         BEyqN+xHThS8TnnkUOwKY7ys+fRKjzjdw9E2nEOjUOjmsYdd9DwPKq7IY9VG8MC0wcGo
-         o9XSh8noT3i4MJEEDAfAbOijJOYQiZUUhnpqUxRGQ49BrYG0uR3TjmuGC2SdwDUUO5hr
-         NMofGRaGhqjkfM/UQPSXA9mAaAVcN51kSLIJTuNehkN7cQ98DFg0Em5OfI0tZZpyNROn
-         u0iA==
+        bh=rB01O+NiFaXWOuLG0ZNolm2RviIWXr0JXJNgEjhr4Ec=;
+        b=jzNo4gszokyfzKmypeUIsXcdDYczhIjyhRLUFtTBu/4gFhaP6NgEc0JGKBwuNVT2Bi
+         sN5qey1rPy1wTNQavQg1SIAX4jHV9466zsA4+JUJQ+KGZuZncrpehSDWOqj0DD78xXdp
+         yqRP9dk6SjOI69eYPCLtak7eBrbGWJ6zABQvpZe3XDdb1YOGBLeNlzSn+RRmrowsUf5R
+         HhFHnZNiURIsjpg187PMwrIHLQGIP7AzV38WElGmDaKdRGj4RGupMrFeHRMoEwG1l+GU
+         lY/ZtwUZQNw9NXi/gr3BVG85fKlpOlCnswSVZJ8qBYlkfAeqsCHeZh4lQ8uTkcn3GaDv
+         YYmw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=iijOfl+4;
+       dkim=pass header.i=@kernel.org header.s=default header.b=Rjh6q7na;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=iijOfl+4;
+       dkim=pass header.i=@kernel.org header.s=default header.b=Rjh6q7na;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Hans de Goede <hdegoede@redhat.com>,
+	Jeremy Soller <jeremy@system76.com>,
 	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.16 009/110] ALSA: hda: Add Lenovo C50 All in one to the power_save blacklist
-Date: Mon, 21 May 2018 23:11:06 +0200
-Message-Id: <20180521210504.743182997@linuxfoundation.org>
+Subject: [PATCH 4.16 008/110] ALSA: hda/realtek - Clevo P950ER ALC1220 Fixup
+Date: Mon, 21 May 2018 23:11:05 +0200
+Message-Id: <20180521210504.640455271@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109772409939861?=
-X-GMAIL-MSGID: =?utf-8?q?1601110343672951647?=
+X-GMAIL-THRID: =?utf-8?q?1601110341492205042?=
+X-GMAIL-MSGID: =?utf-8?q?1601110341492205042?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,31 +51,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Jeremy Soller <jeremy@system76.com>
 
-commit c8beccc19b92f5172994c0732db689c08f4f98e5 upstream.
+commit 2f0d520a1a73555ac51c19cd494493f60b4c1cea upstream.
 
-Power-saving is causing loud plops on the Lenovo C50 All in one, add it
-to the blacklist.
+This adds support for the P950ER, which has the same required fixup as
+the P950HR, but has a different PCI ID.
 
-BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1572975
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Jeremy Soller <jeremy@system76.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/hda_intel.c |    2 ++
- 1 file changed, 2 insertions(+)
+ sound/pci/hda/patch_realtek.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/sound/pci/hda/hda_intel.c
-+++ b/sound/pci/hda/hda_intel.c
-@@ -2208,6 +2208,8 @@ static struct snd_pci_quirk power_save_b
- 	SND_PCI_QUIRK(0x1849, 0x0c0c, "Asrock B85M-ITX", 0),
- 	/* https://bugzilla.redhat.com/show_bug.cgi?id=1525104 */
- 	SND_PCI_QUIRK(0x1043, 0x8733, "Asus Prime X370-Pro", 0),
-+	/* https://bugzilla.redhat.com/show_bug.cgi?id=1572975 */
-+	SND_PCI_QUIRK(0x17aa, 0x36a7, "Lenovo C50 All in one", 0),
- 	/* https://bugzilla.kernel.org/show_bug.cgi?id=198611 */
- 	SND_PCI_QUIRK(0x17aa, 0x2227, "Lenovo X1 Carbon 3rd Gen", 0),
- 	{}
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -2363,6 +2363,7 @@ static const struct snd_pci_quirk alc882
+ 	SND_PCI_QUIRK_VENDOR(0x1462, "MSI", ALC882_FIXUP_GPIO3),
+ 	SND_PCI_QUIRK(0x147b, 0x107a, "Abit AW9D-MAX", ALC882_FIXUP_ABIT_AW9D_MAX),
+ 	SND_PCI_QUIRK(0x1558, 0x9501, "Clevo P950HR", ALC1220_FIXUP_CLEVO_P950),
++	SND_PCI_QUIRK(0x1558, 0x95e2, "Clevo P950ER", ALC1220_FIXUP_CLEVO_P950),
+ 	SND_PCI_QUIRK_VENDOR(0x1558, "Clevo laptop", ALC882_FIXUP_EAPD),
+ 	SND_PCI_QUIRK(0x161f, 0x2054, "Medion laptop", ALC883_FIXUP_EAPD),
+ 	SND_PCI_QUIRK(0x17aa, 0x3a0d, "Lenovo Y530", ALC882_FIXUP_LENOVO_Y530),
