@@ -1,11 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1340521-1526938470-2-10434671115372992477
+X-Cyrus-Session-Id: sloti22d1t05-1340521-1526938452-2-5150781480209046200
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
-  SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -13,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526938469; b=NKk4Vhs9vIVzCmkraqgYZTk8E7Ze+QE2XCFchukAgCU5lP6Mff
-    sIvRmgM7PD+m/DUxvOOGQFYWts7OzuAtaBx0oCiZ7LMZ6PHCmkEZoVsWSWtsGuup
-    GV3gwu7t9uTMB+E/7skJC++1fwh5yccZ/r6Vmcow1GfiCOmzaDX7j3FyIzXECQNv
-    upbRMs1We1jpU5k4KLpaQtfAt4C0XVyJbmarwHpW6vGIWKgEpDcxuO2FshVKJuay
-    m/vU7/WzFyEL5gT4j3Rl3vGM764nshLZwBysL+jnlH9AzzJKR93Z/uvEMIdJYGXB
-    9O7cesfirzngrTrxNKaZFYnUjfMBlDaId4Iw==
+    1526938451; b=Gc0T5+qTl7iifOaBQaGBC9pPr1/XlYD5I87DGDS7HY8ghbxnIm
+    ykFOLjUuVSNK1I+azk1yz4iebHY8jSSkLvG49F4C9l7/psnYX52r6vMEkMMtzpVx
+    Bzc0Eb+J3w2JEjz0e6XaXim8yjnl9D3cGuWLwGQkFpJOsyWhfL0YLp9zYC7GcWyJ
+    A6mDpIq+9SYMywCSXZ6WDDFPwl4cCUt33QAqnZr/3aKin/6eTdINs+VHrb74rwpS
+    GuNrX572CQ+JSyV0dWPJK48fgXtVabwfW35n+le2tTQSg636cerVSwGzAtcuWAp1
+    ooY+wMldGgXJjl3kGUjZurBT+O6mGtiCDf4A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1526938469; bh=VWd7V4hL2waJz75jDHywMpUS0IktWC
-    CgL3SLnPiVdfc=; b=abLkWl/IWu2Uxd3HcHOLadLiBcxMEGxteNU3RiCEHziUBN
-    xbtcfArKlu/qCDjYx2YeLAdt5WaxE/0eWMGCmj3t/6gtGZot6mOOOLa7nVJn8poM
-    zGLPR3opJR4Mrt1z5flajgBcrnnKtKWf42KYZHx0CKiactTexs05OBTdf0/xZiyO
-    tj533P7gBqpVswHMW3Nc6qrMIhz9DknAQPe93YdPoZK0WqPwqogtej2GjBnLCl6G
-    nqz5JYrbdDdAhMg6yOZBM1DsYIiRKf6vPkpcoou63GlvmYLjSPiF8Zp28nMgJsIK
-    vPP2kUoWR9ztd4fmwJ4Ai7uHLDi9IEy5QvTSsxBA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1526938451; bh=YVHyisg3OxkwQReBVlGNDJhiIgYd/w
+    Ek+FH1q+Gz31E=; b=UgDs68ORp7pu6jsREztdJDHmQi2VDxlwWVAqa5CB88ey4R
+    IEA90PCZxRZ0fok8rtDsXJfk+iaEJqihBeBidn6JlMDeRgebHLvEkqP3+dRq7Af5
+    mTo2q11NJRA47PCqhQxM2JvHk3YjEyhJLYbuuKnSFTT9ZQUGQVYs+NuiG2vcER3m
+    sd6sK/bBnnGDG9xAB8LfWkn/kEYozMipOITEBs2IBpsGDUcaSIHz5H7NGtd+Bij+
+    hWtSRCb1ue+bARQx+HoXHZT74L2UUXwtg6mLLHaBR4v96+Y+radYqvVoiDPXj4o8
+    F/K6CjXZoTcAqqHHbJLjPDGTXKb7l2rpD94GDnFw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=xdm7n4MW x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=10U2GHEY x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -46,10 +45,10 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=xdm7n4MW x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=10U2GHEY x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -65,30 +64,29 @@ Authentication-Results: mx2.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfC4jgMCtZUHdkF9u2UmQuAAmUU2zI2/KCOHg7qtV45aHZAN35zhXQ/eIKToISxfhGt7exf0p5PJG9ypnw0u1tV935ftz4HIzY+SUQ/dz7/jHF5EddV+j
-    87qVeBLmjkeSVnhSb8jOQhKyJRsi4c7TE3R2TWADtJgRHT6BgTtufol5PY6VldiYyUmd3UY0C1s6UEbxU8mAx0B5TCsyL6Lx2+00il2Ojgp45ugwnzY9wSj7
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfCFAFOibquIMbtdvVJeCgfuxoWQc1qpBZMTKO1D89035GGJAMoPKQZIvY72k9KDnmjkYYDQ9VEm186AX3Ujl44WbXs3uSDtAdkPUrHlVTrneluTZqLCB
+    HPx23AGWH+wUNRFFWjhSPM5Kdon7/N/mgroRU3jra2CmN2yze2hjMAuqgEKYHPaKoAmE1HNmAknHyufstiSPdBBJPJoRvUZDbIIGZXg71dsCvFxBbjCqGDSk
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=yPCof4ZbAAAA:8 a=ag1SF4gXAAAA:8 a=_hPQj-9b_kpJJmlC3esA:9 a=QEXdDO2ut3YA:10
+    a=ag1SF4gXAAAA:8 a=3OV-j5Brly1SKWfoiugA:9 a=QEXdDO2ut3YA:10
     a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754544AbeEUVeN (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 21 May 2018 17:34:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40830 "EHLO mail.kernel.org"
+        id S932500AbeEUV0F (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 21 May 2018 17:26:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40850 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754427AbeEUVZ7 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 21 May 2018 17:25:59 -0400
+        id S932164AbeEUV0C (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 21 May 2018 17:26:02 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.16 088/110] proc: Use underscores for SSBD in status
-Date: Mon, 21 May 2018 23:12:25 +0200
-Message-Id: <20180521210513.865615681@linuxfoundation.org>
+Subject: [PATCH 4.16 089/110] Documentation/spec_ctrl: Do some minor cleanups
+Date: Mon, 21 May 2018 23:12:26 +0200
+Message-Id: <20180521210513.908478454@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -106,28 +104,81 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+From: Borislav Petkov <bp@suse.de>
 
-commit e96f46ee8587607a828f783daa6eb5b44d25004d upstream
+commit dd0792699c4058e63c0715d9a7c2d40226fcdddc upstream
 
-The style for the 'status' file is CamelCase or this. _.
+Fix some typos, improve formulations, end sentences with a fullstop.
 
-Fixes: fae1fa0fc ("proc: Provide details on speculation flaw mitigations")
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/proc/array.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/userspace-api/spec_ctrl.rst |   24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
---- a/fs/proc/array.c
-+++ b/fs/proc/array.c
-@@ -348,7 +348,7 @@ static inline void task_seccomp(struct s
- #ifdef CONFIG_SECCOMP
- 	seq_put_decimal_ull(m, "\nSeccomp:\t", p->seccomp.mode);
- #endif
--	seq_printf(m, "\nSpeculation Store Bypass:\t");
-+	seq_printf(m, "\nSpeculation_Store_Bypass:\t");
- 	switch (arch_prctl_spec_ctrl_get(p, PR_SPEC_STORE_BYPASS)) {
- 	case -EINVAL:
- 		seq_printf(m, "unknown");
+--- a/Documentation/userspace-api/spec_ctrl.rst
++++ b/Documentation/userspace-api/spec_ctrl.rst
+@@ -2,13 +2,13 @@
+ Speculation Control
+ ===================
+ 
+-Quite some CPUs have speculation related misfeatures which are in fact
+-vulnerabilites causing data leaks in various forms even accross privilege
+-domains.
++Quite some CPUs have speculation-related misfeatures which are in
++fact vulnerabilities causing data leaks in various forms even across
++privilege domains.
+ 
+ The kernel provides mitigation for such vulnerabilities in various
+-forms. Some of these mitigations are compile time configurable and some on
+-the kernel command line.
++forms. Some of these mitigations are compile-time configurable and some
++can be supplied on the kernel command line.
+ 
+ There is also a class of mitigations which are very expensive, but they can
+ be restricted to a certain set of processes or tasks in controlled
+@@ -32,18 +32,18 @@ the following meaning:
+ Bit  Define                Description
+ ==== ===================== ===================================================
+ 0    PR_SPEC_PRCTL         Mitigation can be controlled per task by
+-                           PR_SET_SPECULATION_CTRL
++                           PR_SET_SPECULATION_CTRL.
+ 1    PR_SPEC_ENABLE        The speculation feature is enabled, mitigation is
+-                           disabled
++                           disabled.
+ 2    PR_SPEC_DISABLE       The speculation feature is disabled, mitigation is
+-                           enabled
++                           enabled.
+ 3    PR_SPEC_FORCE_DISABLE Same as PR_SPEC_DISABLE, but cannot be undone. A
+                            subsequent prctl(..., PR_SPEC_ENABLE) will fail.
+ ==== ===================== ===================================================
+ 
+ If all bits are 0 the CPU is not affected by the speculation misfeature.
+ 
+-If PR_SPEC_PRCTL is set, then the per task control of the mitigation is
++If PR_SPEC_PRCTL is set, then the per-task control of the mitigation is
+ available. If not set, prctl(PR_SET_SPECULATION_CTRL) for the speculation
+ misfeature will fail.
+ 
+@@ -61,9 +61,9 @@ Common error codes
+ Value   Meaning
+ ======= =================================================================
+ EINVAL  The prctl is not implemented by the architecture or unused
+-        prctl(2) arguments are not 0
++        prctl(2) arguments are not 0.
+ 
+-ENODEV  arg2 is selecting a not supported speculation misfeature
++ENODEV  arg2 is selecting a not supported speculation misfeature.
+ ======= =================================================================
+ 
+ PR_SET_SPECULATION_CTRL error codes
+@@ -74,7 +74,7 @@ Value   Meaning
+ 0       Success
+ 
+ ERANGE  arg3 is incorrect, i.e. it's neither PR_SPEC_ENABLE nor
+-        PR_SPEC_DISABLE nor PR_SPEC_FORCE_DISABLE
++        PR_SPEC_DISABLE nor PR_SPEC_FORCE_DISABLE.
+ 
+ ENXIO   Control of the selected speculation misfeature is not possible.
+         See PR_GET_SPECULATION_CTRL.
