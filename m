@@ -1,133 +1,394 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753477AbeEURmH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 13:42:07 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54424 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753324AbeEURlr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 13:41:47 -0400
-Date: Mon, 21 May 2018 18:41:42 +0100
-From: Patrick Bellasi <patrick.bellasi@arm.com>
-To: Joel Fernandes <joel@joelfernandes.org>
-Cc: "Joel Fernandes (Google.)" <joelaf@google.com>,
-        linux-kernel@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>, Todd Kjos <tkjos@google.com>,
-        claudio@evidence.eu.com, kernel-team@android.com,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2] schedutil: Allow cpufreq requests to be made even
- when kthread kicked
-Message-ID: <20180521174142.GU30654@e110439-lin>
-References: <20180518185501.173552-1-joel@joelfernandes.org>
- <20180521105055.GQ30654@e110439-lin>
- <20180521154957.GA14065@joelaf.mtv.corp.google.com>
- <20180521170050.GT30654@e110439-lin>
- <20180521172001.GA21678@joelaf.mtv.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180521172001.GA21678@joelaf.mtv.corp.google.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1753494AbeEURmY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 13:42:24 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:34710 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753465AbeEURlu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 13:41:50 -0400
+X-Google-Smtp-Source: AB8JxZqDoDvj1aD5opF3HLvUKnP4bFpVflpXRgWfES7jW9b+u2DhCmFQiPOpmo1zTtb8eK3kwdQ1CQ==
+From: Shakeel Butt <shakeelb@google.com>
+To: Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Thelen <gthelen@google.com>, Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>, Tejun Heo <tj@kernel.org>
+Cc: Linux MM <linux-mm@kvack.org>, cgroups@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Shakeel Butt <shakeelb@google.com>
+Subject: [PATCH] mm: fix race between kmem_cache destroy, create and deactivate
+Date: Mon, 21 May 2018 10:41:16 -0700
+Message-Id: <20180521174116.171846-1-shakeelb@google.com>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21-May 10:20, Joel Fernandes wrote:
-> Hi Patrick,
-> 
-> On Mon, May 21, 2018 at 06:00:50PM +0100, Patrick Bellasi wrote:
-> > On 21-May 08:49, Joel Fernandes wrote:
-> > > On Mon, May 21, 2018 at 11:50:55AM +0100, Patrick Bellasi wrote:
-> > > > On 18-May 11:55, Joel Fernandes (Google.) wrote:
-> > > > > From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
-> > > > > 
-> > > > > Currently there is a chance of a schedutil cpufreq update request to be
-> > > > > dropped if there is a pending update request. This pending request can
-> > > > > be delayed if there is a scheduling delay of the irq_work and the wake
-> > > > > up of the schedutil governor kthread.
-> > > > > 
-> > > > > A very bad scenario is when a schedutil request was already just made,
-> > > > > such as to reduce the CPU frequency, then a newer request to increase
-> > > > > CPU frequency (even sched deadline urgent frequency increase requests)
-> > > > > can be dropped, even though the rate limits suggest that its Ok to
-> > > > > process a request. This is because of the way the work_in_progress flag
-> > > > > is used.
-> > > > > 
-> > > > > This patch improves the situation by allowing new requests to happen
-> > > > > even though the old one is still being processed. Note that in this
-> > > > > approach, if an irq_work was already issued, we just update next_freq
-> > > > > and don't bother to queue another request so there's no extra work being
-> > > > > done to make this happen.
-> > > > 
-> > > > Maybe I'm missing something but... is not this patch just a partial
-> > > > mitigation of the issue you descrive above?
-> > > > 
-> > > > If a DL freq increase is queued, with this patch we store the request
-> > > > but we don't actually increase the frequency until the next schedutil
-> > > > update, which can be one tick away... isn't it?
-> > > > 
-> > > > If that's the case, maybe something like the following can complete
-> > > > the cure?
-> > > 
-> > > We already discussed this and thought of this case, I think you missed a
-> > > previous thread [1]. The outer loop in the kthread_work subsystem will take
-> > > care of calling sugov_work again incase another request was queued which we
-> > > happen to miss.
-> > 
-> > Ok, I missed that thread... my bad.
-> 
-> Sure no problem, sorry I was just pointing out the thread, not blaming you
-> for not reading it ;)
+The memcg kmem cache creation and deactivation (SLUB only) is
+asynchronous. If a root kmem cache is destroyed whose memcg cache is in
+the process of creation or deactivation, the kernel may crash.
 
-Sure, np here too ;)
+Example of one such crash:
+	general protection fault: 0000 [#1] SMP PTI
+	CPU: 1 PID: 1721 Comm: kworker/14:1 Not tainted 4.17.0-smp
+	...
+	Workqueue: memcg_kmem_cache kmemcg_deactivate_workfn
+	RIP: 0010:has_cpu_slab
+	...
+	Call Trace:
+	? on_each_cpu_cond
+	__kmem_cache_shrink
+	kmemcg_cache_deact_after_rcu
+	kmemcg_deactivate_workfn
+	process_one_work
+	worker_thread
+	kthread
+	ret_from_fork+0x35/0x40
 
-> > However, [1] made me noticing that your solution works under the
-> > assumption that we keep queuing a new kworker job for each request we
-> > get, isn't it?
-> 
-> Not at each request, but each request after work_in_progress was cleared by the
-> sugov_work. Any requests that happen between work_in_progress is set and
-> cleared only result in updating of the next_freq.
+This issue is due to the lack of reference counting for the root
+kmem_caches. There exist a refcount in kmem_cache but it is actually a
+count of aliases i.e. number of kmem_caches merged together.
 
-I see, so we enqueue for the time of:
+This patch make alias count explicit and adds reference counting to the
+root kmem_caches. The reference of a root kmem cache is elevated on
+merge and while its memcg kmem_cache is in the process of creation or
+deactivation.
 
-   mutex_lock(&sg_policy->work_lock);
-   __cpufreq_driver_target(sg_policy->policy, freq, CPUFREQ_RELATION_L);
-   mutex_unlock(&sg_policy->work_lock);
+Signed-off-by: Shakeel Butt <shakeelb@google.com>
+---
+ include/linux/slab.h     |  2 +
+ include/linux/slab_def.h |  3 +-
+ include/linux/slub_def.h |  3 +-
+ mm/memcontrol.c          |  7 ++++
+ mm/slab.c                |  4 +-
+ mm/slab.h                |  5 ++-
+ mm/slab_common.c         | 84 ++++++++++++++++++++++++++++++----------
+ mm/slub.c                | 14 ++++---
+ 8 files changed, 90 insertions(+), 32 deletions(-)
 
-> > If that's the case, this means that if, for example, during a
-> > frequency switch you get a request to reduce the frequency (e.g.
-> > deadline task passing the 0-lag time) and right after a request to
-> > increase the frequency (e.g. the current FAIR task tick)... you will
-> > enqueue a freq drop followed by a freq increase and actually do two
-> > frequency hops?
-> 
-> Yes possibly,
-
-Not sure about the time window above, I can try to get some
-measurements tomorrow.
-
-> I see your point but I'm not sure if the tight loop around that
-> is worth the complexity, or atleast is within the scope of my patch.
-> Perhaps the problem you describe can be looked at as a future enhancement?
-
-Sure, I already have it as a patch on top of your.  I can post it
-afterwards and we can discuss whether it makes sense or not.
-
-Still have to better check, but I think that maybe we can skip
-the queueing altogether if some work is already pending... in case we
-wanna go for a dedicated inner loop like the one I was proposing.
-
-Apart that, I think that your patch is already fixing 90% of the
-issue we have now.
-
-> thanks,
-> 
->  - Joel
-
+diff --git a/include/linux/slab.h b/include/linux/slab.h
+index 9ebe659bd4a5..4c28f2483a22 100644
+--- a/include/linux/slab.h
++++ b/include/linux/slab.h
+@@ -674,6 +674,8 @@ struct memcg_cache_params {
+ };
+ 
+ int memcg_update_all_caches(int num_memcgs);
++bool kmem_cache_tryget(struct kmem_cache *s);
++void kmem_cache_put(struct kmem_cache *s);
+ 
+ /**
+  * kmalloc_array - allocate memory for an array.
+diff --git a/include/linux/slab_def.h b/include/linux/slab_def.h
+index d9228e4d0320..4bb22c89a740 100644
+--- a/include/linux/slab_def.h
++++ b/include/linux/slab_def.h
+@@ -41,7 +41,8 @@ struct kmem_cache {
+ /* 4) cache creation/removal */
+ 	const char *name;
+ 	struct list_head list;
+-	int refcount;
++	refcount_t refcount;
++	int alias_count;
+ 	int object_size;
+ 	int align;
+ 
+diff --git a/include/linux/slub_def.h b/include/linux/slub_def.h
+index 3773e26c08c1..532d4b6f83ed 100644
+--- a/include/linux/slub_def.h
++++ b/include/linux/slub_def.h
+@@ -97,7 +97,8 @@ struct kmem_cache {
+ 	struct kmem_cache_order_objects max;
+ 	struct kmem_cache_order_objects min;
+ 	gfp_t allocflags;	/* gfp flags to use on each alloc */
+-	int refcount;		/* Refcount for slab cache destroy */
++	refcount_t refcount;	/* Refcount for slab cache destroy */
++	int alias_count;	/* Number of root kmem caches merged */
+ 	void (*ctor)(void *);
+ 	unsigned int inuse;		/* Offset to metadata */
+ 	unsigned int align;		/* Alignment */
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index bdb8028c806c..ab5673dbfc4e 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -2185,6 +2185,7 @@ static void memcg_kmem_cache_create_func(struct work_struct *w)
+ 	memcg_create_kmem_cache(memcg, cachep);
+ 
+ 	css_put(&memcg->css);
++	kmem_cache_put(cachep);
+ 	kfree(cw);
+ }
+ 
+@@ -2200,6 +2201,12 @@ static void __memcg_schedule_kmem_cache_create(struct mem_cgroup *memcg,
+ 	if (!cw)
+ 		return;
+ 
++	/* Make sure root kmem cache does not get destroyed in the middle */
++	if (!kmem_cache_tryget(cachep)) {
++		kfree(cw);
++		return;
++	}
++
+ 	css_get(&memcg->css);
+ 
+ 	cw->memcg = memcg;
+diff --git a/mm/slab.c b/mm/slab.c
+index c1fe8099b3cd..080732f5f20d 100644
+--- a/mm/slab.c
++++ b/mm/slab.c
+@@ -1883,8 +1883,8 @@ __kmem_cache_alias(const char *name, unsigned int size, unsigned int align,
+ 	struct kmem_cache *cachep;
+ 
+ 	cachep = find_mergeable(size, align, flags, name, ctor);
+-	if (cachep) {
+-		cachep->refcount++;
++	if (cachep && kmem_cache_tryget(cachep)) {
++		cachep->alias_count++;
+ 
+ 		/*
+ 		 * Adjust the object sizes so that we clear
+diff --git a/mm/slab.h b/mm/slab.h
+index 68bdf498da3b..25962ab75ec1 100644
+--- a/mm/slab.h
++++ b/mm/slab.h
+@@ -25,7 +25,8 @@ struct kmem_cache {
+ 	unsigned int useroffset;/* Usercopy region offset */
+ 	unsigned int usersize;	/* Usercopy region size */
+ 	const char *name;	/* Slab name for sysfs */
+-	int refcount;		/* Use counter */
++	refcount_t refcount;	/* Use counter */
++	int alias_count;
+ 	void (*ctor)(void *);	/* Called on object slot creation */
+ 	struct list_head list;	/* List of all slab caches on the system */
+ };
+@@ -295,7 +296,7 @@ extern void slab_init_memcg_params(struct kmem_cache *);
+ extern void memcg_link_cache(struct kmem_cache *s);
+ extern void slab_deactivate_memcg_cache_rcu_sched(struct kmem_cache *s,
+ 				void (*deact_fn)(struct kmem_cache *));
+-
++extern void kmem_cache_put_locked(struct kmem_cache *s);
+ #else /* CONFIG_MEMCG && !CONFIG_SLOB */
+ 
+ /* If !memcg, all caches are root. */
+diff --git a/mm/slab_common.c b/mm/slab_common.c
+index b0dd9db1eb2f..390eb47486fd 100644
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -306,7 +306,7 @@ int slab_unmergeable(struct kmem_cache *s)
+ 	/*
+ 	 * We may have set a slab to be unmergeable during bootstrap.
+ 	 */
+-	if (s->refcount < 0)
++	if (s->alias_count < 0)
+ 		return 1;
+ 
+ 	return 0;
+@@ -391,7 +391,8 @@ static struct kmem_cache *create_cache(const char *name,
+ 	if (err)
+ 		goto out_free_cache;
+ 
+-	s->refcount = 1;
++	s->alias_count = 1;
++	refcount_set(&s->refcount, 1);
+ 	list_add(&s->list, &slab_caches);
+ 	memcg_link_cache(s);
+ out:
+@@ -611,6 +612,13 @@ void memcg_create_kmem_cache(struct mem_cgroup *memcg,
+ 	if (memcg->kmem_state != KMEM_ONLINE)
+ 		goto out_unlock;
+ 
++	/*
++	 * The root cache has been requested to be destroyed while its memcg
++	 * cache was in creation queue.
++	 */
++	if (!root_cache->alias_count)
++		goto out_unlock;
++
+ 	idx = memcg_cache_id(memcg);
+ 	arr = rcu_dereference_protected(root_cache->memcg_params.memcg_caches,
+ 					lockdep_is_held(&slab_mutex));
+@@ -663,6 +671,8 @@ static void kmemcg_deactivate_workfn(struct work_struct *work)
+ {
+ 	struct kmem_cache *s = container_of(work, struct kmem_cache,
+ 					    memcg_params.deact_work);
++	struct kmem_cache *root = s->memcg_params.root_cache;
++	struct mem_cgroup *memcg = s->memcg_params.memcg;
+ 
+ 	get_online_cpus();
+ 	get_online_mems();
+@@ -677,7 +687,8 @@ static void kmemcg_deactivate_workfn(struct work_struct *work)
+ 	put_online_cpus();
+ 
+ 	/* done, put the ref from slab_deactivate_memcg_cache_rcu_sched() */
+-	css_put(&s->memcg_params.memcg->css);
++	css_put(&memcg->css);
++	kmem_cache_put(root);
+ }
+ 
+ static void kmemcg_deactivate_rcufn(struct rcu_head *head)
+@@ -712,6 +723,10 @@ void slab_deactivate_memcg_cache_rcu_sched(struct kmem_cache *s,
+ 	    WARN_ON_ONCE(s->memcg_params.deact_fn))
+ 		return;
+ 
++	/* Make sure root kmem_cache does not get destroyed in the middle */
++	if (!kmem_cache_tryget(s->memcg_params.root_cache))
++		return;
++
+ 	/* pin memcg so that @s doesn't get destroyed in the middle */
+ 	css_get(&s->memcg_params.memcg->css);
+ 
+@@ -838,21 +853,17 @@ void slab_kmem_cache_release(struct kmem_cache *s)
+ 	kmem_cache_free(kmem_cache, s);
+ }
+ 
+-void kmem_cache_destroy(struct kmem_cache *s)
++static void __kmem_cache_destroy(struct kmem_cache *s, bool lock)
+ {
+ 	int err;
+ 
+-	if (unlikely(!s))
+-		return;
+-
+-	get_online_cpus();
+-	get_online_mems();
++	if (lock) {
++		get_online_cpus();
++		get_online_mems();
++		mutex_lock(&slab_mutex);
++	}
+ 
+-	mutex_lock(&slab_mutex);
+-
+-	s->refcount--;
+-	if (s->refcount)
+-		goto out_unlock;
++	VM_BUG_ON(s->alias_count);
+ 
+ 	err = shutdown_memcg_caches(s);
+ 	if (!err)
+@@ -863,11 +874,42 @@ void kmem_cache_destroy(struct kmem_cache *s)
+ 		       s->name);
+ 		dump_stack();
+ 	}
+-out_unlock:
+-	mutex_unlock(&slab_mutex);
+ 
+-	put_online_mems();
+-	put_online_cpus();
++	if (lock) {
++		mutex_unlock(&slab_mutex);
++		put_online_mems();
++		put_online_cpus();
++	}
++}
++
++bool kmem_cache_tryget(struct kmem_cache *s)
++{
++	if (is_root_cache(s))
++		return refcount_inc_not_zero(&s->refcount);
++	return false;
++}
++
++void kmem_cache_put(struct kmem_cache *s)
++{
++	if (is_root_cache(s) &&
++	    refcount_dec_and_test(&s->refcount))
++		__kmem_cache_destroy(s, true);
++}
++
++void kmem_cache_put_locked(struct kmem_cache *s)
++{
++	if (is_root_cache(s) &&
++	    refcount_dec_and_test(&s->refcount))
++		__kmem_cache_destroy(s, false);
++}
++
++void kmem_cache_destroy(struct kmem_cache *s)
++{
++	if (unlikely(!s))
++		return;
++
++	s->alias_count--;
++	kmem_cache_put(s);
+ }
+ EXPORT_SYMBOL(kmem_cache_destroy);
+ 
+@@ -919,7 +961,8 @@ void __init create_boot_cache(struct kmem_cache *s, const char *name,
+ 		panic("Creation of kmalloc slab %s size=%u failed. Reason %d\n",
+ 					name, size, err);
+ 
+-	s->refcount = -1;	/* Exempt from merging for now */
++	s->alias_count = -1;	/* Exempt from merging for now */
++	refcount_set(&s->refcount, 1);
+ }
+ 
+ struct kmem_cache *__init create_kmalloc_cache(const char *name,
+@@ -934,7 +977,8 @@ struct kmem_cache *__init create_kmalloc_cache(const char *name,
+ 	create_boot_cache(s, name, size, flags, useroffset, usersize);
+ 	list_add(&s->list, &slab_caches);
+ 	memcg_link_cache(s);
+-	s->refcount = 1;
++	s->alias_count = 1;
++	refcount_set(&s->refcount, 1);
+ 	return s;
+ }
+ 
+diff --git a/mm/slub.c b/mm/slub.c
+index 48f75872c356..2e45f7febc6e 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -4270,8 +4270,8 @@ __kmem_cache_alias(const char *name, unsigned int size, unsigned int align,
+ 	struct kmem_cache *s, *c;
+ 
+ 	s = find_mergeable(size, align, flags, name, ctor);
+-	if (s) {
+-		s->refcount++;
++	if (s && kmem_cache_tryget(s)) {
++		s->alias_count++;
+ 
+ 		/*
+ 		 * Adjust the object sizes so that we clear
+@@ -4286,7 +4286,8 @@ __kmem_cache_alias(const char *name, unsigned int size, unsigned int align,
+ 		}
+ 
+ 		if (sysfs_slab_alias(s, name)) {
+-			s->refcount--;
++			s->alias_count--;
++			kmem_cache_put_locked(s);
+ 			s = NULL;
+ 		}
+ 	}
+@@ -5009,7 +5010,8 @@ SLAB_ATTR_RO(ctor);
+ 
+ static ssize_t aliases_show(struct kmem_cache *s, char *buf)
+ {
+-	return sprintf(buf, "%d\n", s->refcount < 0 ? 0 : s->refcount - 1);
++	return sprintf(buf, "%d\n",
++		       s->alias_count < 0 ? 0 : s->alias_count - 1);
+ }
+ SLAB_ATTR_RO(aliases);
+ 
+@@ -5162,7 +5164,7 @@ static ssize_t trace_store(struct kmem_cache *s, const char *buf,
+ 	 * as well as cause other issues like converting a mergeable
+ 	 * cache into an umergeable one.
+ 	 */
+-	if (s->refcount > 1)
++	if (s->alias_count > 1)
+ 		return -EINVAL;
+ 
+ 	s->flags &= ~SLAB_TRACE;
+@@ -5280,7 +5282,7 @@ static ssize_t failslab_show(struct kmem_cache *s, char *buf)
+ static ssize_t failslab_store(struct kmem_cache *s, const char *buf,
+ 							size_t length)
+ {
+-	if (s->refcount > 1)
++	if (s->alias_count > 1)
+ 		return -EINVAL;
+ 
+ 	s->flags &= ~SLAB_FAILSLAB;
 -- 
-#include <best/regards.h>
-
-Patrick Bellasi
+2.17.0.441.gb46fe60e1d-goog
