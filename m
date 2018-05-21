@@ -1,216 +1,190 @@
-Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3904782-1526646871-2-167874107478743435
+Return-Path: <linux-arch-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-797182-1526912247-2-6289326590129365672
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-charsets: 
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
-X-Mail-from: linux-fsdevel-owner@vger.kernel.org
+X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526646871; b=lQXNpxINqenop1vtBdymLQL7AkjOCAM4cUr2zKhIF95dNuGVV2
-    nqYAML3xS0fpKVBVo7wWp6EJqY35FeIRNpL7z/EUpchMAG1X62iNFYhGukFWvitb
-    UL3uTQjxfXCLIekwCxDrFMbmsX0Icw4ER6rSJ19XC72SaGU3Rs7F0Nn6gjvV/tUs
-    djODCGVyF0662jBaB58xArYDDvGIvT+zKOtgTUdZJmM3++xVDWfAwotbLgho3CJ6
-    ziV9lM4h8m62RmPkFgvvRNL6JZoEku70w+h8688vwKfk/lPKeUoftz3jH/rDVEWY
-    cROgVEXL65oaDd8ohr+pqiqFaBuLtWcTpheA==
+    1526912247; b=XfD0OGMixNkZd4i77RAOsWisuQ/O/aFS3EH000OdWzRkkA3QPR
+    oi9dTEzYdcTGXoHfIAZP9tJfHDxmYRqAjExJZziBY0TmnMenVGEocajvUjUsdh9B
+    MLsRRsS8xNkUHAXrLAEdbDCWUHlUbWc1mawk7rAwGCEbTvluuoq0K5Y6q9bWZmsz
+    tq+v+dhqxdU8iSTidUNB/DmaYlnhDP9vGvldUd18nKs0xXQJH7TRLGu+clEUaxqU
+    /wgc008K8ol6V/9ywmd4hHhGbTlxct5NOOpiLn7i/PV+CX86bhEdODRnyDwcAWBB
+    IW4uo2Y2CE+kjqrhYngWxaPrIAAPNvAwUOFg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1526646871; bh=
-    WWecXvKTw3qMptRQo+W2EISJLZN/ZRzcPKqGBjR4OEE=; b=SQtfBE61PoXatn0M
-    A6DJTtbxnOeDa5H+f5qzA0X6ByKGBkcH+XEZvkyMNy2Pc7vAeu85FgwIG6IDf/Pe
-    gpq4ROg0rXBn0mWfxoubQo1dOw7i6p6VCid5Fw9vjqlfh1N8ggAuetXN1VLOX29T
-    AWtTT2o5Luggne907NVFtN64UDfp1Z7sYo6wSZUjYibATGkI6ZjCx9eNppgPaxph
-    6V1MRifmhMyQyGSDIv2+5qZuLx91MvKgvKNzy8CYVuGHTkBRQ5U0KcD2nXas/hR7
-    aNpfgFHx5woXQMokBW6dxB0SewvgAhc5wpVKFC4PHiAhMf+PS3oIBigHSvvKvopc
-    o6Bw8A==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=hHZsx3Ub x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=default;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1526912247; bh=SYpWCD/zVR2fr2AN6ayHF0XfkoxETL
+    eBM+V6NwghpN0=; b=k62VlaOlTJ8gemytTBIF7bs8qXEsSPby4oHX1ys8d+WT3L
+    06yHmc6DIW0UQXDgdpZqPz7yjTZHH68KH0PjnYmI+2+eLAH1CdDgemgmx0a2CeNR
+    IXyoKegtH4dACO79CArZSWJOHCzWRttDyWSigamMNLnaoMkPjWnbzXlurVd+F9HG
+    co8OEoz32ZKpXMmxznhtoing5/16kN/pnuM+R9B0Rfju6ewSQ7vbUPtB4XseyHiN
+    f0vQejpr4brEy+P51pHRZCxBMP2yv698Nw8O12ZrpWqDbJsNC/Km7RXyPUvyCBsu
+    lts5B4bFfe8PQZM5hUoB4YoehV5dZlUYP3bvylfg==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arm.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx3.messagingengine.com;
+    header.domain=arm.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=hHZsx3Ub x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=default;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arm.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
+      header.domain=arm.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFTxxHLTG3yFbyO+SgVQMfJOHumXA0VrAPXKT1CwnkgEwywbDeB21Y/zA+PVBnSKgr83CV2grW0eoZDgu36v5Q64EdG39EcP3QEr9qafm8rKOSmt72Lq
-    X5WZCqsJndctlicq3kUKv7xLvtcmSrmAHyRKHCPDju75F8xM01SvWxuRIrH+rZN0X3yNAsU8Xw6up5gFbAGS5wT8OtMqMlnIxawY7OuChl0h+VQQNOIREaXn
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=20KFwNOVAAAA:8
-    a=JfrnYn6hAAAA:8 a=GNsyKJoZn9PrpM4oRc4A:9 a=4MQNZ0B9HpVkPOYV:21
-    a=VEPsnuCcJBzqb1Bj:21 a=1CNFftbPRP8L7MoqJWF3:22
+X-CM-Envelope: MS4wfPOGZQXUQsa+YNOh+xBfaYGymuKftcmTnoELdugbBFbncV0MbCSIXH3w00NltcKSkGsjaYBYyLLvorQkF4AU+hCiFQkJLFCqZfNm7kZbHauaw5ZU9Ssp
+    yz+DRo/e7Qkb5cLXo8tEKuWz5YvhW8FxCTP3Ej64w/3aVPbMytKbGkPf5JJXULMsRn4+bfaKLev85syjUhl4zqlBX6zUP9sLKAmVWWwGBJu9p2GvQu19s1K4
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=JfrnYn6hAAAA:8
+    a=pk9vOewVUvBdo0IRyQ4A:9 a=I7Fl0iNTEZgA:10 a=G5WYf6J1rTwA:10 a=d0Eap3aq__YA:10
+    a=aXqy-N0K3ocA:10 a=1CNFftbPRP8L7MoqJWF3:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752044AbeERMe1 (ORCPT <rfc822;linux@kroah.com>);
-        Fri, 18 May 2018 08:34:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39524 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750977AbeERMeW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 May 2018 08:34:22 -0400
-From: Jeff Layton <jlayton@kernel.org>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: viro@ZenIV.linux.org.uk, willy@infradead.org, andres@anarazel.de
-Subject: [RFC PATCH 05/11] fs: track per-sb writeback errors and report them to syncfs
-Date: Fri, 18 May 2018 08:34:09 -0400
-Message-Id: <20180518123415.28181-6-jlayton@kernel.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180518123415.28181-1-jlayton@kernel.org>
-References: <20180518123415.28181-1-jlayton@kernel.org>
-Sender: linux-fsdevel-owner@vger.kernel.org
-X-Mailing-List: linux-fsdevel@vger.kernel.org
+        id S1751265AbeEUORZ (ORCPT <rfc822;linux@kroah.com>);
+        Mon, 21 May 2018 10:17:25 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50292 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751039AbeEUORY (ORCPT <rfc822;linux-arch@vger.kernel.org>);
+        Mon, 21 May 2018 10:17:24 -0400
+From: Dave Martin <Dave.Martin@arm.com>
+To: kvmarm@lists.cs.columbia.edu
+Cc: linux-arm-kernel@lists.infradead.org,
+        Christoffer Dall <cdall@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Oleg Nesterov <oleg@redhat.com>
+Subject: [PATCH v9 00/16] KVM: arm64: Optimise FPSIMD context switching
+Date: Mon, 21 May 2018 15:17:01 +0100
+Message-Id: <1526912237-25308-1-git-send-email-Dave.Martin@arm.com>
+X-Mailer: git-send-email 2.1.4
+Sender: linux-arch-owner@vger.kernel.org
+X-Mailing-List: linux-arch@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Jeff Layton <jlayton@redhat.com>
+Note: Most of these patches are Arm-specific.  People not Cc'd on the
+whole series can find it in the linux-arm-kernel archive [2].
 
-Usually we suggest that applications call fsync when they want to
-ensure that all data written to the file has made it to the backing
-store, but that can be inefficient when there are a lot of open
-files.
+This series aims to improve the way FPSIMD context is handled by KVM.
+Only minor changes have been made since the previous v8 [1], though
+this posting does apply a couple of fixes.
 
-Calling syncfs on the filesystem may be more efficient, but the error
-reporting doesn't currently work the way most people expect. If a single
-inode on a filesystem reports a writeback error, syncfs won't return an
-error. syncfs only returns an error if __sync_blockdev fails.
+This is a minor update to fix a couple of build breaks introduced late
+in the evolution of the series. [3] [4]
 
-It would be better if it reported an error if there were any writeback
-failures. Then applications could call syncfs to see if there are any
-errors on any open files, and could then call fsync on all of the other
-descriptors to figure out which one failed.
+There is also an unexplained NULL-dereference bug observed by Marc on
+ESPRESSOBin [5] that I need to look into.  We've not been able to
+reproduce this so far.
 
-This patch implements a suggestion from Willy to remedy this. It adds a
-new errseq_t to struct super_block, and has mapping_set_error also
-record writeback errors there.
+In the meantime, this post will give people an opportunity to look over
+the current changes.
 
-To report errors recorded there, we also need to keep an errseq_t for in
-struct file to act as a cursor, but growing struct file for this purpose
-is undesirable. We could just reuse f_wb_err, but someone could mix
-calls to fsync and syncfs and that would break things.
 
-As an alternative, this patch only has syncfs report errors recorded
-in s_wb_err when the file has been opened with O_PATH. Any file opened
-with O_PATH will not have its fsync field defined in its
-file_operations so we can be sure that nothing else will be using its
-f_wb_err field.
+The changes are summarised in the individual patches.
 
-Note that calling syncfs on an O_PATH descriptor today will return
--EBADF, so this scheme gives userland a way to tell whether this
-mechanism will work at runtime.
+Reviewers please note:
 
-Cc: Andres Freund <andres@anarazel.de>
-Cc: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Jeff Layton <jlayton@redhat.com>
----
- fs/open.c               | 6 +++---
- fs/sync.c               | 9 +++++++--
- include/linux/fs.h      | 3 +++
- include/linux/pagemap.h | 5 ++++-
- 4 files changed, 17 insertions(+), 6 deletions(-)
+ * **Only patches 8 and 12** have changed since v8.
 
-diff --git a/fs/open.c b/fs/open.c
-index c5ee7cd60424..3e8c7b16abb8 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -739,15 +739,15 @@ static int do_dentry_open(struct file *f,
- 	f->f_inode = inode;
- 	f->f_mapping = inode->i_mapping;
- 
--	/* Ensure that we skip any errors that predate opening of the file */
--	f->f_wb_err = filemap_sample_wb_err(f->f_mapping);
--
- 	if (unlikely(f->f_flags & O_PATH)) {
- 		f->f_mode = FMODE_PATH;
- 		f->f_op = &empty_fops;
-+		f->f_wb_err = errseq_sample(&f->f_path.dentry->d_sb->s_wb_err);
- 		goto done;
- 	}
- 
-+	f->f_wb_err = filemap_sample_wb_err(f->f_mapping);
-+
- 	if (f->f_mode & FMODE_WRITE && !special_file(inode->i_mode)) {
- 		error = get_write_access(inode);
- 		if (unlikely(error))
-diff --git a/fs/sync.c b/fs/sync.c
-index c876fa414cae..f2400d13a65f 100644
---- a/fs/sync.c
-+++ b/fs/sync.c
-@@ -162,16 +162,21 @@ void emergency_sync(void)
-  */
- SYSCALL_DEFINE1(syncfs, int, fd)
- {
--	struct fd f = fdget(fd);
-+	struct fd f = fdget_raw(fd);
- 	struct super_block *sb;
-+	errseq_t *wberr = NULL;
- 	int ret;
- 
- 	if (!f.file)
- 		return -EBADF;
-+
- 	sb = f.file->f_path.dentry->d_sb;
- 
-+	if (f.file->f_flags & O_PATH)
-+		wberr = &f.file->f_wb_err;
-+
- 	down_read(&sb->s_umount);
--	ret = sync_filesystem(sb, NULL);
-+	ret = sync_filesystem(sb, wberr);
- 	up_read(&sb->s_umount);
- 
- 	fdput(f);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index d40fe9ead5fb..fecd29325f36 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1416,6 +1416,9 @@ struct super_block {
- 	/* Being remounted read-only */
- 	int s_readonly_remount;
- 
-+	/* per-sb errseq_t for reporting writeback errors via syncfs */
-+	errseq_t s_wb_err;
-+
- 	/* AIO completions deferred from interrupt context */
- 	struct workqueue_struct *s_dio_done_wq;
- 	struct hlist_head s_pins;
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index b1bd2186e6d2..2de87c5a2718 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -51,7 +51,10 @@ static inline void mapping_set_error(struct address_space *mapping, int error)
- 		return;
- 
- 	/* Record in wb_err for checkers using errseq_t based tracking */
--	filemap_set_wb_err(mapping, error);
-+	__filemap_set_wb_err(mapping, error);
-+
-+	/* Record it in superblock */
-+	errseq_set(&mapping->host->i_sb->s_wb_err, error);
- 
- 	/* Record it in flags for now, for legacy callers */
- 	if (error == -ENOSPC)
+ * I have stripped tags from patch 12 due to the introduction of a new
+   source file, which may not be the best approach.
+
+   If Christoffer, Marc and Catalin could take another look that
+   would be much appreciated.
+
+Cheers
+---Dave
+
+[1] [PULL v8] KVM: arm64: Optimise FPSIMD context switching
+lists.infradead.org/pipermail/linux-arm-kernel/2018-May/578184.html
+
+[2] linux-arm-kernel archive
+http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/thread.html
+
+[3] [kvmarm:queue 9/29] arch/arm/kvm/../../../virt/kvm/arm/arm.c:783:3: error: implicit declaration of function 'kvm_arch_vcpu_ctxsync_fp'; did you mean 'kvm_arch_vcpu_put_fp'?
+http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/579400.html
+
+[4] [kvmarm:queue 13/29] arch/arm/kvm/../../../virt/kvm/arm/arm.c:1598:6: error: implicit declaration of function 'system_supports_sve'
+http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/579399.html
+
+[5] [PULL v8] KVM: arm64: Optimise FPSIMD context switching
+http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/579353.html
+
+
+Christoffer Dall (1):
+  KVM: arm/arm64: Introduce kvm_arch_vcpu_run_pid_change
+
+Dave Martin (15):
+  thread_info: Add update_thread_flag() helpers
+  arm64: Use update{,_tsk}_thread_flag()
+  KVM: arm64: Convert lazy FPSIMD context switch trap to C
+  arm64: fpsimd: Generalise context saving for non-task contexts
+  arm64/sve: Refactor user SVE trap maintenance for external use
+  KVM: arm64: Repurpose vcpu_arch.debug_flags for general-purpose flags
+  KVM: arm64: Optimise FPSIMD handling to reduce guest/host thrashing
+  arm64/sve: Move read_zcr_features() out of cpufeature.h
+  arm64/sve: Switch sve_pffr() argument from task to thread
+  arm64/sve: Move sve_pffr() to fpsimd.h and make inline
+  KVM: arm64: Save host SVE context as appropriate
+  KVM: arm64: Remove eager host SVE state saving
+  KVM: arm64: Remove redundant *exit_code changes in fpsimd_guest_exit()
+  KVM: arm64: Fold redundant exit code checks out of fixup_guest_exit()
+  KVM: arm64: Invoke FPSIMD context switch trap from C
+
+ arch/arm/include/asm/kvm_host.h     |  10 ++-
+ arch/arm64/Kconfig                  |   7 ++
+ arch/arm64/include/asm/cpufeature.h |  29 -------
+ arch/arm64/include/asm/fpsimd.h     |  21 ++++++
+ arch/arm64/include/asm/kvm_asm.h    |   3 -
+ arch/arm64/include/asm/kvm_host.h   |  33 +++++---
+ arch/arm64/include/asm/processor.h  |   2 +
+ arch/arm64/kernel/fpsimd.c          | 147 +++++++++++++++++++-----------------
+ arch/arm64/kernel/ptrace.c          |   1 +
+ arch/arm64/kvm/Kconfig              |   1 +
+ arch/arm64/kvm/Makefile             |   4 +-
+ arch/arm64/kvm/debug.c              |   8 +-
+ arch/arm64/kvm/fpsimd.c             | 111 +++++++++++++++++++++++++++
+ arch/arm64/kvm/hyp/debug-sr.c       |   6 +-
+ arch/arm64/kvm/hyp/entry.S          |  43 -----------
+ arch/arm64/kvm/hyp/hyp-entry.S      |  19 -----
+ arch/arm64/kvm/hyp/switch.c         | 124 ++++++++++++++++++++----------
+ arch/arm64/kvm/hyp/sysreg-sr.c      |   4 +-
+ arch/arm64/kvm/init.c               |  33 ++++++++
+ arch/arm64/kvm/sys_regs.c           |   9 +--
+ include/linux/kvm_host.h            |   9 +++
+ include/linux/sched.h               |   6 ++
+ include/linux/thread_info.h         |  11 +++
+ virt/kvm/Kconfig                    |   3 +
+ virt/kvm/arm/arm.c                  |  13 +++-
+ virt/kvm/kvm_main.c                 |   7 +-
+ 26 files changed, 430 insertions(+), 234 deletions(-)
+ create mode 100644 arch/arm64/kvm/fpsimd.c
+ create mode 100644 arch/arm64/kvm/init.c
+
 -- 
-2.17.0
+2.1.4
