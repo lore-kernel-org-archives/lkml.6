@@ -1,39 +1,41 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqrI7BxWQDF/DbVYgdimVyttSbnrWMBczFSqTUZ4FwMI2yxi+VRZbS/K3e6cuU9eV1SkNVm
-ARC-Seal: i=1; a=rsa-sha256; t=1526937409; cv=none;
+X-Google-Smtp-Source: AB8JxZpeQV5yGxAF/Zv9HFZSKGDe/r26W2unPAeEMqIaDCPzT7KSeNNol9foWmUFZb63SBBGja6X
+ARC-Seal: i=1; a=rsa-sha256; t=1526937407; cv=none;
         d=google.com; s=arc-20160816;
-        b=yIlphbAK5INRzDFok31i2Bhi2B60EwwkPf1ihydOqmv1KHie1lK4GCeuoyfMVMepnb
-         vbKU/AUccfOFu2xiffEezcT4DnuOeqCY34yjLvf3QVCyX2AslKZp35YLxp8cgWSvE/xu
-         Ur3Synj1usiIMNBeFHq03oZZCZCZBUVCYUlkbwOvgaP68GCvcBCClrdFPEpbTDt88NwN
-         oRqOK1l87GP8cw6SfpcmecNPli3fbeETnaGCLpYiIcScJ7vGw4LE58+dFKeZnqlMzla1
-         o5gGYFj+E4hqTwKbSV76nK5DRUy16JlQp0Ln9p06if/kJnOy1HA80TDqDB4gJFZRNKzi
-         DGGA==
+        b=bLLlFVbNKRQatC/FrByUSvjr6XGIElrfzLNy/t4HRgbhOrBYWCpPlezbg9hzpkh0fs
+         pBnoaN3uTrstuCCSa+brJ1SdP3vmjdtn/K37KSJvAeEVsW56fVf89DpxoOyh8ebRd5o8
+         XHyGOH+2LfF7xcVoVLQ5lem67GDXY0ePNtWuLq19kk6KJBI1M7dUcHT6oiVZ7+GDv6Bx
+         oytaVEAGrbcVMY4xrB9f+V/c2Cewg5j796kpg6effqC4JRz8xEj64ciqbT8mZA05qiYR
+         rD1FXUdoqH9UgWYB9MX0kb40DuUf4qhWCPUNjCdCtu7vdH4Qfo8Jw/M7iWnJtz0KHOBp
+         oX/g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=U/WOykwnH++ilM1Obht4G1TUbp1vLtMzinlzxkE6TZo=;
-        b=V0wI6VOkWAUbD2dzhaVyXJLYqNqP1Orio4lAbxupr9EdKvVgvELbS1xu7qAKgFVhBC
-         OYiA9q51jd4pY4etFhxAIBoh59l8cJuTrUu67uAsonBzNzvmK1xfGx+vwQln/eteOt9h
-         fynX0/dlcxKpXNkuWtjMEzIjwLOTDG/QdCMj8Eex0qrsf5OubWexvlZczQ6ZZNghh47s
-         rhxDelG3LlF75R7jo8LY1KpNf+t53PGd7Qrfi6axrpZ0XTpWcxebObEMxVKDFJO/0/Dp
-         SfHvg9qRwdIPn+8QUcsTA+3om1QFl+FxrzTKV5ZYWG2rFnd4C22ZTKGluCbwPla+nslN
-         bA+w==
+        bh=5weaQz6fUylRZXfWmMnx616YKv0sxcFtsoZRCO+Q1Ns=;
+        b=EpT9fh0W4cojwccxLEC1Un94Oat8Z4DEZNGEB7WSkvR1lBOOnlJnsCwibblAIbGVHN
+         aL1goDa/bR5J4PsyaOXYI9zwMbk3iZqPctd/ZbXVCMZYdLktLDRDnqgGGPXkKVoCgPq2
+         bKanH3GTPoPY3EYgJ1oh688eeIWI/pE9gBwTDGRyajDStXZ+ZOHZXZ7dbDea9TrtDwrf
+         oUFtg3dyHUy10zL+RIFy4snGWvbPTPqcQU3F1tYVo/CtKxjF9fpWTDkGUSm6uRK5y/CD
+         D3//fgmKVCg6vM+vw1DKJM9nX/0HH/tLCzqej7OVYLuaHeEib26rU12iAk3GgZ2CLdxJ
+         x/lQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=AXnsnQt8;
+       dkim=pass header.i=@kernel.org header.s=default header.b=VGwZs1Sz;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=AXnsnQt8;
+       dkim=pass header.i=@kernel.org header.s=default header.b=VGwZs1Sz;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@suse.de>,
 	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
 	David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 54/87] x86/speculation: Add prctl for Speculative Store Bypass mitigation
-Date: Mon, 21 May 2018 23:11:30 +0200
-Message-Id: <20180521210425.156788399@linuxfoundation.org>
+Subject: [PATCH 4.9 71/87] KVM: SVM: Move spec control call after restore of GS
+Date: Mon, 21 May 2018 23:11:47 +0200
+Message-Id: <20180521210426.247329442@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210420.222671977@linuxfoundation.org>
 References: <20180521210420.222671977@linuxfoundation.org>
@@ -43,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109921205571253?=
-X-GMAIL-MSGID: =?utf-8?q?1601109921205571253?=
+X-GMAIL-THRID: =?utf-8?q?1601109918498873978?=
+X-GMAIL-MSGID: =?utf-8?q?1601109918498873978?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,210 +56,63 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-commit a73ec77ee17ec556fe7f165d00314cb7c047b1ac upstream
+commit 15e6c22fd8e5a42c5ed6d487b7c9fe44c2517765 upstream
 
-Add prctl based control for Speculative Store Bypass mitigation and make it
-the default mitigation for Intel and AMD.
+svm_vcpu_run() invokes x86_spec_ctrl_restore_host() after VMEXIT, but
+before the host GS is restored. x86_spec_ctrl_restore_host() uses 'current'
+to determine the host SSBD state of the thread. 'current' is GS based, but
+host GS is not yet restored and the access causes a triple fault.
 
-Andi Kleen provided the following rationale (slightly redacted):
+Move the call after the host GS restore.
 
- There are multiple levels of impact of Speculative Store Bypass:
-
- 1) JITed sandbox.
-    It cannot invoke system calls, but can do PRIME+PROBE and may have call
-    interfaces to other code
-
- 2) Native code process.
-    No protection inside the process at this level.
-
- 3) Kernel.
-
- 4) Between processes.
-
- The prctl tries to protect against case (1) doing attacks.
-
- If the untrusted code can do random system calls then control is already
- lost in a much worse way. So there needs to be system call protection in
- some way (using a JIT not allowing them or seccomp). Or rather if the
- process can subvert its environment somehow to do the prctl it can already
- execute arbitrary code, which is much worse than SSB.
-
- To put it differently, the point of the prctl is to not allow JITed code
- to read data it shouldn't read from its JITed sandbox. If it already has
- escaped its sandbox then it can already read everything it wants in its
- address space, and do much worse.
-
- The ability to control Speculative Store Bypass allows to enable the
- protection selectively without affecting overall system performance.
-
-Based on an initial patch from Tim Chen. Completely rewritten.
-
+Fixes: 885f82bfbc6f x86/process: Allow runtime control of Speculative Store Bypass
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Borislav Petkov <bp@suse.de>
 Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-
+Acked-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/kernel-parameters.txt  |    6 ++
- arch/x86/include/asm/nospec-branch.h |    1 
- arch/x86/kernel/cpu/bugs.c           |   83 ++++++++++++++++++++++++++++++-----
- 3 files changed, 79 insertions(+), 11 deletions(-)
+ arch/x86/kvm/svm.c |   24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
---- a/Documentation/kernel-parameters.txt
-+++ b/Documentation/kernel-parameters.txt
-@@ -4001,7 +4001,11 @@ bytes respectively. Such letter suffixes
- 			off    - Unconditionally enable Speculative Store Bypass
- 			auto   - Kernel detects whether the CPU model contains an
- 				 implementation of Speculative Store Bypass and
--				 picks the most appropriate mitigation
-+				 picks the most appropriate mitigation.
-+			prctl  - Control Speculative Store Bypass per thread
-+				 via prctl. Speculative Store Bypass is enabled
-+				 for a process by default. The state of the control
-+				 is inherited on fork.
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -5011,6 +5011,18 @@ static void svm_vcpu_run(struct kvm_vcpu
+ #endif
+ 		);
  
- 			Not specifying this option is equivalent to
- 			spec_store_bypass_disable=auto.
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -232,6 +232,7 @@ extern u64 x86_spec_ctrl_get_default(voi
- enum ssb_mitigation {
- 	SPEC_STORE_BYPASS_NONE,
- 	SPEC_STORE_BYPASS_DISABLE,
-+	SPEC_STORE_BYPASS_PRCTL,
- };
++	/* Eliminate branch target predictions from guest mode */
++	vmexit_fill_RSB();
++
++#ifdef CONFIG_X86_64
++	wrmsrl(MSR_GS_BASE, svm->host.gs_base);
++#else
++	loadsegment(fs, svm->host.fs);
++#ifndef CONFIG_X86_32_LAZY_GS
++	loadsegment(gs, svm->host.gs);
++#endif
++#endif
++
+ 	/*
+ 	 * We do not use IBRS in the kernel. If this vCPU has used the
+ 	 * SPEC_CTRL MSR it may have left it on; save the value and
+@@ -5031,18 +5043,6 @@ static void svm_vcpu_run(struct kvm_vcpu
  
- extern char __indirect_thunk_start[];
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -11,6 +11,8 @@
- #include <linux/utsname.h>
- #include <linux/cpu.h>
- #include <linux/module.h>
-+#include <linux/nospec.h>
-+#include <linux/prctl.h>
+ 	x86_spec_ctrl_restore_host(svm->spec_ctrl);
  
- #include <asm/spec-ctrl.h>
- #include <asm/cmdline.h>
-@@ -411,20 +413,23 @@ enum ssb_mitigation_cmd {
- 	SPEC_STORE_BYPASS_CMD_NONE,
- 	SPEC_STORE_BYPASS_CMD_AUTO,
- 	SPEC_STORE_BYPASS_CMD_ON,
-+	SPEC_STORE_BYPASS_CMD_PRCTL,
- };
+-	/* Eliminate branch target predictions from guest mode */
+-	vmexit_fill_RSB();
+-
+-#ifdef CONFIG_X86_64
+-	wrmsrl(MSR_GS_BASE, svm->host.gs_base);
+-#else
+-	loadsegment(fs, svm->host.fs);
+-#ifndef CONFIG_X86_32_LAZY_GS
+-	loadsegment(gs, svm->host.gs);
+-#endif
+-#endif
+-
+ 	reload_tss(vcpu);
  
- static const char *ssb_strings[] = {
- 	[SPEC_STORE_BYPASS_NONE]	= "Vulnerable",
--	[SPEC_STORE_BYPASS_DISABLE]	= "Mitigation: Speculative Store Bypass disabled"
-+	[SPEC_STORE_BYPASS_DISABLE]	= "Mitigation: Speculative Store Bypass disabled",
-+	[SPEC_STORE_BYPASS_PRCTL]	= "Mitigation: Speculative Store Bypass disabled via prctl"
- };
- 
- static const struct {
- 	const char *option;
- 	enum ssb_mitigation_cmd cmd;
- } ssb_mitigation_options[] = {
--	{ "auto",	SPEC_STORE_BYPASS_CMD_AUTO }, /* Platform decides */
--	{ "on",		SPEC_STORE_BYPASS_CMD_ON },   /* Disable Speculative Store Bypass */
--	{ "off",	SPEC_STORE_BYPASS_CMD_NONE }, /* Don't touch Speculative Store Bypass */
-+	{ "auto",	SPEC_STORE_BYPASS_CMD_AUTO },  /* Platform decides */
-+	{ "on",		SPEC_STORE_BYPASS_CMD_ON },    /* Disable Speculative Store Bypass */
-+	{ "off",	SPEC_STORE_BYPASS_CMD_NONE },  /* Don't touch Speculative Store Bypass */
-+	{ "prctl",	SPEC_STORE_BYPASS_CMD_PRCTL }, /* Disable Speculative Store Bypass via prctl */
- };
- 
- static enum ssb_mitigation_cmd __init ssb_parse_cmdline(void)
-@@ -474,14 +479,15 @@ static enum ssb_mitigation_cmd __init __
- 
- 	switch (cmd) {
- 	case SPEC_STORE_BYPASS_CMD_AUTO:
--		/*
--		 * AMD platforms by default don't need SSB mitigation.
--		 */
--		if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
--			break;
-+		/* Choose prctl as the default mode */
-+		mode = SPEC_STORE_BYPASS_PRCTL;
-+		break;
- 	case SPEC_STORE_BYPASS_CMD_ON:
- 		mode = SPEC_STORE_BYPASS_DISABLE;
- 		break;
-+	case SPEC_STORE_BYPASS_CMD_PRCTL:
-+		mode = SPEC_STORE_BYPASS_PRCTL;
-+		break;
- 	case SPEC_STORE_BYPASS_CMD_NONE:
- 		break;
- 	}
-@@ -492,7 +498,7 @@ static enum ssb_mitigation_cmd __init __
- 	 *  - X86_FEATURE_RDS - CPU is able to turn off speculative store bypass
- 	 *  - X86_FEATURE_SPEC_STORE_BYPASS_DISABLE - engage the mitigation
- 	 */
--	if (mode != SPEC_STORE_BYPASS_NONE) {
-+	if (mode == SPEC_STORE_BYPASS_DISABLE) {
- 		setup_force_cpu_cap(X86_FEATURE_SPEC_STORE_BYPASS_DISABLE);
- 		/*
- 		 * Intel uses the SPEC CTRL MSR Bit(2) for this, while AMD uses
-@@ -523,6 +529,63 @@ static void ssb_select_mitigation()
- 
- #undef pr_fmt
- 
-+static int ssb_prctl_set(unsigned long ctrl)
-+{
-+	bool rds = !!test_tsk_thread_flag(current, TIF_RDS);
-+
-+	if (ssb_mode != SPEC_STORE_BYPASS_PRCTL)
-+		return -ENXIO;
-+
-+	if (ctrl == PR_SPEC_ENABLE)
-+		clear_tsk_thread_flag(current, TIF_RDS);
-+	else
-+		set_tsk_thread_flag(current, TIF_RDS);
-+
-+	if (rds != !!test_tsk_thread_flag(current, TIF_RDS))
-+		speculative_store_bypass_update();
-+
-+	return 0;
-+}
-+
-+static int ssb_prctl_get(void)
-+{
-+	switch (ssb_mode) {
-+	case SPEC_STORE_BYPASS_DISABLE:
-+		return PR_SPEC_DISABLE;
-+	case SPEC_STORE_BYPASS_PRCTL:
-+		if (test_tsk_thread_flag(current, TIF_RDS))
-+			return PR_SPEC_PRCTL | PR_SPEC_DISABLE;
-+		return PR_SPEC_PRCTL | PR_SPEC_ENABLE;
-+	default:
-+		if (boot_cpu_has_bug(X86_BUG_SPEC_STORE_BYPASS))
-+			return PR_SPEC_ENABLE;
-+		return PR_SPEC_NOT_AFFECTED;
-+	}
-+}
-+
-+int arch_prctl_spec_ctrl_set(unsigned long which, unsigned long ctrl)
-+{
-+	if (ctrl != PR_SPEC_ENABLE && ctrl != PR_SPEC_DISABLE)
-+		return -ERANGE;
-+
-+	switch (which) {
-+	case PR_SPEC_STORE_BYPASS:
-+		return ssb_prctl_set(ctrl);
-+	default:
-+		return -ENODEV;
-+	}
-+}
-+
-+int arch_prctl_spec_ctrl_get(unsigned long which)
-+{
-+	switch (which) {
-+	case PR_SPEC_STORE_BYPASS:
-+		return ssb_prctl_get();
-+	default:
-+		return -ENODEV;
-+	}
-+}
-+
- void x86_spec_ctrl_setup_ap(void)
- {
- 	if (boot_cpu_has(X86_FEATURE_IBRS))
+ 	local_irq_disable();
