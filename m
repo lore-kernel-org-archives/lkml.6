@@ -1,78 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751137AbeEUSYg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 14:24:36 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45344 "EHLO mx1.redhat.com"
+        id S1751184AbeEUSaV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 14:30:21 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34868 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750781AbeEUSYe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 14:24:34 -0400
-Date: Mon, 21 May 2018 14:24:32 -0400
-From: Mike Snitzer <snitzer@redhat.com>
-To: Kent Overstreet <kent.overstreet@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, hch@infradead.org, colyli@suse.de,
-        darrick.wong@oracle.com, clm@fb.com, bacik@fb.com,
-        linux-xfs@vger.kernel.org, drbd-dev@lists.linbit.com,
-        linux-btrfs@vger.kernel.org, linux-raid@vger.kernel.org,
-        neilb@suse.com
-Subject: Re: [PATCH 00/13] convert block layer to bioset_init()/mempool_init()
-Message-ID: <20180521182427.GA20013@redhat.com>
-References: <20180521143132.GB19194@redhat.com>
- <2bbeeb1a-8b99-b06a-eb9b-eb8523c16460@kernel.dk>
- <20180521144703.GA19303@redhat.com>
- <4b343aef-e11c-73ba-1d88-7e73ca838cad@kernel.dk>
- <20180521150439.GA19379@redhat.com>
- <61e30dcf-a01c-f47d-087a-12930caf9aef@kernel.dk>
- <20180521151817.GA19454@redhat.com>
- <d01a150a-7752-f6ce-78f2-17a65c1e6fa5@kernel.dk>
- <20180521160907.GA19553@redhat.com>
- <20180521173724.GG11495@kmo-pixel>
+        id S1750909AbeEUSaS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 14:30:18 -0400
+From: Steve Grubb <sgrubb@redhat.com>
+To: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc: Richard Guy Briggs <rgb@redhat.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        containers@lists.linux-foundation.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, paul@paul-moore.com
+Subject: Re: [PATCH] audit: add containerid support for IMA-audit
+Date: Mon, 21 May 2018 14:30:18 -0400
+Message-ID: <4015765.rtofcNpGHU@x2>
+Organization: Red Hat
+In-Reply-To: <21646a72-e782-e33a-9e75-5cc98b241f36@linux.vnet.ibm.com>
+References: <1520257393.10396.291.camel@linux.vnet.ibm.com> <2397631.78oLu0QVqb@x2> <21646a72-e782-e33a-9e75-5cc98b241f36@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180521173724.GG11495@kmo-pixel>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21 2018 at  1:37pm -0400,
-Kent Overstreet <kent.overstreet@gmail.com> wrote:
+Hello Stefan,
 
+On Monday, May 21, 2018 1:53:04 PM EDT Stefan Berger wrote:
+> On 05/21/2018 12:58 PM, Steve Grubb wrote:
+> > On Thursday, May 17, 2018 10:18:13 AM EDT Stefan Berger wrote:
+> >>> audit_log_container_info() then releasing the local context.  This
+> >>> version of the record has additional concerns covered here:
+> >>> https://github.com/linux-audit/audit-kernel/issues/52
+> >> 
+> >> Following the discussion there and the concern with breaking user space,
+> >> how can we split up the AUDIT_INTEGRITY_RULE that is used in
+> >> ima_audit_measurement() and ima_parse_rule(), without 'breaking user
+> >> space'?
+> >> 
+> >> A message produced by ima_parse_rule() looks like this here:
+> >> 
+> >> type=INTEGRITY_RULE msg=audit(1526566213.870:305): action="dont_measure"
+> >> fsmagic="0x9fa0" res=1
+> > 
+> > Why is action and fsmagic being logged as untrusted strings? Untrusted
+> > strings are used when an unprivileged user can affect the contents of the
+> > field such as creating a file with space or special characters in the
+> > name.
+> > 
+> > Also, subject and object information is missing. Who loaded this rule?
+> > 
+> >> in contrast to that an INTEGRITY_PCR record type:
+> >> 
+> >> type=INTEGRITY_PCR msg=audit(1526566235.193:334): pid=1615 uid=0 auid=0
+> >> ses=2 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+> >> op="invalid_pcr" cause="open_writers" comm="scp"
+> >> name="/var/log/audit/audit.log" dev="dm-0" ino=1962625 res=1
+> > 
+> > Why is op & cause being logged as an untrusted string? This also has
+> > incomplete subject information.
 > 
-> Uh, you came across as upset and paranoid to me too. Chalk it up to email? :)
+> It's calling audit_log_string() in both cases:
+> 
+> https://elixir.bootlin.com/linux/latest/source/security/integrity/integrity
+> _audit.c#L48
 
-Awesome.  See how easy it is to make someone with purely constructive
-questions and feedback come off as upset and paranoid?
+I see. Looking things over, I see that it seems like it should do the right 
+thing. But the original purpose for this function is here:
 
-The tipping point occurs when bait is set with:
-"It's not like <insert complete non sequitur>".
-Then:
-"Let's focus on getting it reviewed, rather than pontificate on what
-could potentially go all wrong with this."
+https://elixir.bootlin.com/linux/latest/source/kernel/audit.c#L1944
 
-Message received: less pontificating, more doing!
+This is where it is logging an untrusted string and has to decide to encode 
+it or just place it in quotes. If it has quotes, that means it's an untrusted 
+string but has no control characters in it. I think you want to use 
+audit_log_format() for any string that is trustworthy.
 
-And here I thought that focusing on what could go wrong (across all code
-touched) was review.  But OK, I'm the one that made this all weird ;)
 
-It is what it is at this point.
+As an aside, I wonder why audit_log_string() is in the API when it is a 
+helper to audit_log_untrustedstring() ?  Without understanding the rules of 
+untrusted strings, it can't be used correctly without re-inventing 
+audit_log_untrustedstring() by hand.
 
-> I personally don't care, I have no horse in this race. This particular patch
-> series wasn't my idea, Christoph wanted all these conversions done so
-> bioset_create() could be deleted. If you want us to hold off on the dm patch for
-> awhile until someone can get around to testing it or whatever (since I don't
-> have tests for everything I pushed) that would be perfectly fine by me.
 
-As I clarified already: this isn't about DM.
+> >> Should some of the fields from INTEGRITY_PCR also appear in
+> >> INTEGRITY_RULE? If so, which ones?
+> > 
+> > pid, uid, auid, tty, session, subj, comm, exe, res.  <- these are
+> > required to be searchable
+> > 
+> >> We could probably refactor the current  integrity_audit_message() and
+> >> have ima_parse_rule() call into it to get those fields as well. I
+> >> suppose adding new fields to it wouldn't be considered breaking user
+> >> space?
+> > 
+> > The audit user space utilities pretty much expects those fields in that
+> > order for any IMA originating events. You can add things like op or
+> > cause before
+>
+> We will call into audit_log_task, which will put the parameters into
+> correct order:
+> 
+> auid uid gid ses subj pid comm exe
 
-Every single data structure change in this series should be reviewed for
-unforeseen alignment consequences.  Jens seemed to say that is
-worthwhile.  Not sure if he'll do it or we divide it up.  If we divide
-it up a temp topic branch should be published for others to inspect.
+I'm telling you what the correct order is.  :-)  A long time ago, the IMA 
+system had audit events with the order I'm mentioning. For example, here's 
+one from a log I collected back in 2013:
 
-Could be alignment hasn't been a historic concern for a bunch of the
-data structures changed in this series.. if so then all we can do is fix
-up any obvious potential for false sharing.
+type=INTEGRITY_PCR msg=audit(1327409021.813:21): pid=1 uid=0 auid=4294967295 
+ses=4294967295 subj=kernel op="add_template_measure" cause="hash_added" 
+comm="init" name="01parse-kernel.sh" dev=rootfs ino=5413 res=0
 
-Mike
+it was missing "tty" and "exe", but the order is as I mentioned. The 
+expectation is that INTEGRITY events maintain this established order across 
+all events.
+
+Thanks,
+-Steve
+
+
+> https://elixir.bootlin.com/linux/latest/source/kernel/auditsc.c#L2433
+> 
+> > that. The reason why you can do that is those additional fields are not
+> > required to be searchable by common criteria.
+> > 
+> > -Steve
