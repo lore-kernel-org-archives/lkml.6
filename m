@@ -1,67 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751128AbeEUShs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 14:37:48 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:46537 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750977AbeEUSho (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 14:37:44 -0400
-X-Google-Smtp-Source: AB8JxZpDzyycLu2mgobcGfx0++PaZSbSlV3T4HDuR5xu8EL+U6tUY/CTICn55mU0FcBn95xNUsbgMw==
-Date: Mon, 21 May 2018 11:37:42 -0700
-From: Omar Sandoval <osandov@osandov.com>
-To: Bart Van Assche <Bart.VanAssche@wdc.com>
-Cc: "kent.overstreet@gmail.com" <kent.overstreet@gmail.com>,
-        "mingo@kernel.org" <mingo@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "axboe@kernel.dk" <axboe@kernel.dk>
-Subject: Re: [PATCH 00/10] Misc block layer patches for bcachefs
-Message-ID: <20180521183742.GC14774@vader>
-References: <20180518090636.GA14738@kmo-pixel>
- <8f62d8f870c6b66e90d3e7f57acee481acff57f5.camel@wdc.com>
- <20180520221733.GA11495@kmo-pixel>
- <bb4fd32d0baa6554615a7ec3b45cc2b89424328e.camel@wdc.com>
- <20180520223116.GB11495@kmo-pixel>
- <b0aa2a8737b2d826fea58dc0bc113ddce50f018a.camel@wdc.com>
- <20180520232139.GE11495@kmo-pixel>
- <238bacfbc43245159c1586189a436efbb069306b.camel@wdc.com>
- <20180520235853.GF11495@kmo-pixel>
- <d3fbfaa667f5ac64c1f230249e3333594cb4a128.camel@wdc.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d3fbfaa667f5ac64c1f230249e3333594cb4a128.camel@wdc.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        id S1751143AbeEUSjM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 14:39:12 -0400
+Received: from anholt.net ([50.246.234.109]:50278 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751019AbeEUSjL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 14:39:11 -0400
+From: Eric Anholt <eric@anholt.net>
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        bcm-kernel-feedback-list@broadcom.com, Eric Anholt <eric@anholt.net>
+Subject: [PATCH v2] arm: bcm2835: Add the PMU to the devicetree.
+Date: Mon, 21 May 2018 11:39:07 -0700
+Message-Id: <20180521183907.27563-1-eric@anholt.net>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 03:11:08PM +0000, Bart Van Assche wrote:
-> On Sun, 2018-05-20 at 19:58 -0400, Kent Overstreet wrote:
-> > On Sun, May 20, 2018 at 11:40:45PM +0000, Bart Van Assche wrote:
-> > > On Sun, 2018-05-20 at 19:21 -0400, Kent Overstreet wrote:
-> > > > I really have better things to do than debug someone else's tests...
-> > > > [ ... ]
-> > > > ../run_tests: line 65: cd: /lib/modules/4.16.0+/kernel/block: No such file or directory
-> > > 
-> > > Kernel v4.16 is too old to run these tests. The srp-test script needs the
-> > > following commit that went upstream in kernel v4.17-rc1:
-> > > 
-> > > 63cf1a902c9d ("IB/srpt: Add RDMA/CM support")
-> > 
-> > Same output on Jens' for-next branch.
-> 
-> Others have been able to run the srp-test software with the instructions
-> provided earlier in this e-mail thread. Can you share the kernel messages from
-> around the time the test was run (dmesg, /var/log/messages or /var/log/syslog)?
-> 
-> Thanks,
-> 
-> Bart.
+This only probes on arm64 so far, but hopefully that driver will be
+generalized soon.
 
-Bart,
+Signed-off-by: Eric Anholt <eric@anholt.net>
+---
+ arch/arm/boot/dts/bcm2837.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Have you made any progress in porting srp-test to blktests so we don't
-have to have this conversation again?
+diff --git a/arch/arm/boot/dts/bcm2837.dtsi b/arch/arm/boot/dts/bcm2837.dtsi
+index 7704bb029605..beb6c502dadc 100644
+--- a/arch/arm/boot/dts/bcm2837.dtsi
++++ b/arch/arm/boot/dts/bcm2837.dtsi
+@@ -17,6 +17,12 @@
+ 		};
+ 	};
+ 
++	arm-pmu {
++		compatible = "arm,cortex-a53-pmu";
++		interrupt-parent = <&local_intc>;
++		interrupts = <9 IRQ_TYPE_LEVEL_HIGH>;
++	};
++
+ 	timer {
+ 		compatible = "arm,armv7-timer";
+ 		interrupt-parent = <&local_intc>;
+-- 
+2.17.0
