@@ -1,147 +1,189 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753181AbeEUQqw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 12:46:52 -0400
-Received: from mga14.intel.com ([192.55.52.115]:49136 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752247AbeEUQqr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 12:46:47 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,426,1520924400";
-   d="scan'208";a="57754209"
-Date: Mon, 21 May 2018 09:46:46 -0700
-From: Jesse Brandeburg <jesse.brandeburg@intel.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: <mst@redhat.com>, <kvm@vger.kernel.org>,
-        <virtualization@lists.linux-foundation.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, jesse.brandeburg@intel.com
-Subject: Re: [RFC PATCH net-next 04/12] vhost_net: split out datacopy logic
-Message-ID: <20180521094646.00002dee@intel.com>
-In-Reply-To: <1526893473-20128-5-git-send-email-jasowang@redhat.com>
-References: <1526893473-20128-1-git-send-email-jasowang@redhat.com>
-        <1526893473-20128-5-git-send-email-jasowang@redhat.com>
-X-Mailer: Claws Mail 3.14.0 (GTK+ 2.24.30; i686-w64-mingw32)
+        id S1753188AbeEUQtq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 12:49:46 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33684 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752247AbeEUQto (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 12:49:44 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4849B602BC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
+Subject: Re: [PATCH] remoteproc: Proxy unvote clk/regs in handover context
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: ohad@wizery.com, clew@codeaurora.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <20180425145025.21654-1-sibis@codeaurora.org>
+ <20180518195845.GS14924@minitux>
+From: Sibi S <sibis@codeaurora.org>
+Message-ID: <dbad946a-97b1-ff58-38a6-6a92ee97ccd5@codeaurora.org>
+Date: Mon, 21 May 2018 22:19:39 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180518195845.GS14924@minitux>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 May 2018 17:04:25 +0800 Jason wrote:
-> Instead of mixing zerocopy and datacopy logics, this patch tries to
-> split datacopy logic out. This results for a more compact code and
-> specific optimization could be done on top more easily.
+Hi Bjorn,
+Thanks for the review. Will make all the suggested changes.
+
+On 05/19/2018 01:28 AM, Bjorn Andersson wrote:
+> On Wed 25 Apr 07:50 PDT 2018, Sibi Sankar wrote:
 > 
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
-> ---
->  drivers/vhost/net.c | 111 +++++++++++++++++++++++++++++++++++++++++++++++-----
->  1 file changed, 102 insertions(+), 9 deletions(-)
+>> Introduce interrupt handler for smp2p ready interrupt and
+>> handle start completion. Remove the proxy votes for clocks
+>> and regulators in the handover interrupt context. Disable
+>> wdog and fatal interrupts on remoteproc device stop and
+>> re-enable them on remoteproc device start.
 > 
-> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-> index 4ebac76..4682fcc 100644
-> --- a/drivers/vhost/net.c
-> +++ b/drivers/vhost/net.c
-> @@ -492,9 +492,95 @@ static bool vhost_has_more_pkts(struct vhost_net *net,
->  	       likely(!vhost_exceeds_maxpend(net));
->  }
->  
-> +static void handle_tx_copy(struct vhost_net *net)
-> +{
-> +	struct vhost_net_virtqueue *nvq = &net->vqs[VHOST_NET_VQ_TX];
-> +	struct vhost_virtqueue *vq = &nvq->vq;
-> +	unsigned out, in;
+> Can't the enable/disable dance be split out into a separate commit?
+> Making the introduction of them cleaner in the git history?
+> 
 
-move "out" and "in" down to inside the for loop as well.
+will split it into separate commits
 
-> +	int head;
+>>
+>> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+>> ---
+>>   drivers/remoteproc/qcom_q6v5_pil.c | 71 +++++++++++++++++++++++++-----
+>>   1 file changed, 60 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+>> index 296eb3f8b551..7e2d04d4f2f0 100644
+>> --- a/drivers/remoteproc/qcom_q6v5_pil.c
+>> +++ b/drivers/remoteproc/qcom_q6v5_pil.c
+>> @@ -143,6 +143,10 @@ struct q6v5 {
+>>   	struct qcom_smem_state *state;
+>>   	unsigned stop_bit;
+>>   
+>> +	unsigned int handover_interrupt;
+>> +	unsigned int wdog_interrupt;
+>> +	unsigned int fatal_interrupt;
+> 
+> Make these "int", and write "irq" instead of "interrupt".
+> 
 
-move this "head" declaration inside for-loop below.
+ok
 
-> +	struct msghdr msg = {
-> +		.msg_name = NULL,
-> +		.msg_namelen = 0,
-> +		.msg_control = NULL,
-> +		.msg_controllen = 0,
-> +		.msg_flags = MSG_DONTWAIT,
-> +	};
-> +	size_t len, total_len = 0;
-> +	int err;
-> +	size_t hdr_size;
-> +	struct socket *sock;
-> +	struct vhost_net_ubuf_ref *uninitialized_var(ubufs);
-> +	int sent_pkts = 0;
+>> +
+>>   	struct clk *active_clks[8];
+>>   	struct clk *proxy_clks[4];
+>>   	int active_clk_count;
+>> @@ -170,6 +174,7 @@ struct q6v5 {
+>>   	struct qcom_rproc_ssr ssr_subdev;
+>>   	struct qcom_sysmon *sysmon;
+>>   	bool need_mem_protection;
+>> +	bool unvoted_flag;
+>>   	int mpss_perm;
+>>   	int mba_perm;
+>>   	int version;
+>> @@ -727,6 +732,7 @@ static int q6v5_start(struct rproc *rproc)
+>>   	int xfermemop_ret;
+>>   	int ret;
+>>   
+>> +	qproc->unvoted_flag = false;
+>>   	ret = q6v5_regulator_enable(qproc, qproc->proxy_regs,
+>>   				    qproc->proxy_reg_count);
+>>   	if (ret) {
+>> @@ -793,9 +799,16 @@ static int q6v5_start(struct rproc *rproc)
+>>   	if (ret)
+>>   		goto reclaim_mpss;
+>>   
+>> +	enable_irq(qproc->handover_interrupt);
+>> +	enable_irq(qproc->wdog_interrupt);
+>> +	enable_irq(qproc->fatal_interrupt);
+>> +
+>>   	ret = wait_for_completion_timeout(&qproc->start_done,
+>>   					  msecs_to_jiffies(5000));
+>>   	if (ret == 0) {
+>> +		disable_irq(qproc->handover_interrupt);
+>> +		disable_irq(qproc->wdog_interrupt);
+>> +		disable_irq(qproc->fatal_interrupt);
+>>   		dev_err(qproc->dev, "start timed out\n");
+>>   		ret = -ETIMEDOUT;
+>>   		goto reclaim_mpss;
+>> @@ -809,11 +822,6 @@ static int q6v5_start(struct rproc *rproc)
+>>   			"Failed to reclaim mba buffer system may become unstable\n");
+>>   	qproc->running = true;
+>>   
+>> -	q6v5_clk_disable(qproc->dev, qproc->proxy_clks,
+>> -			 qproc->proxy_clk_count);
+>> -	q6v5_regulator_disable(qproc, qproc->proxy_regs,
+>> -			       qproc->proxy_reg_count);
+>> -
+>>   	return 0;
+>>   
+>>   reclaim_mpss:
+>> @@ -892,6 +900,16 @@ static int q6v5_stop(struct rproc *rproc)
+>>   	WARN_ON(ret);
+>>   
+>>   	reset_control_assert(qproc->mss_restart);
+>> +	disable_irq(qproc->handover_interrupt);
+>> +	if (!qproc->unvoted_flag) {
+>> +		q6v5_clk_disable(qproc->dev, qproc->proxy_clks,
+>> +				 qproc->proxy_clk_count);
+>> +		q6v5_regulator_disable(qproc, qproc->proxy_regs,
+>> +				       qproc->proxy_reg_count);
+>> +	}
+> 
+> Perhaps break this out into a separate function and call it from the two
+> places?
 
-why do we need so many locals?
+Will create two separate functions for enable/disable
 
-> +
-> +	mutex_lock(&vq->mutex);
-> +	sock = vq->private_data;
-> +	if (!sock)
-> +		goto out;
-> +
-> +	if (!vq_iotlb_prefetch(vq))
-> +		goto out;
-> +
-> +	vhost_disable_notify(&net->dev, vq);
-> +	vhost_net_disable_vq(net, vq);
-> +
-> +	hdr_size = nvq->vhost_hlen;
-> +
-> +	for (;;) {
-> +		head = vhost_net_tx_get_vq_desc(net, vq, vq->iov,
-> +						ARRAY_SIZE(vq->iov),
-> +						&out, &in);
-> +		/* On error, stop handling until the next kick. */
-> +		if (unlikely(head < 0))
-> +			break;
-> +		/* Nothing new?  Wait for eventfd to tell us they refilled. */
-> +		if (head == vq->num) {
-> +			if (unlikely(vhost_enable_notify(&net->dev, vq))) {
-> +				vhost_disable_notify(&net->dev, vq);
-> +				continue;
-> +			}
-> +			break;
-> +		}
-> +		if (in) {
-> +			vq_err(vq, "Unexpected descriptor format for TX: "
-> +			       "out %d, int %d\n", out, in);
+> 
+>> +	disable_irq(qproc->wdog_interrupt);
+>> +	disable_irq(qproc->fatal_interrupt);
+> 
+> Any particular reason why you didn't group the disable_irq() calls
+> together? Would look prettier than spreading them on each side of the
+> resource disable.
 
-don't break strings, keep all the bits between " " together, even if it
-is longer than 80 chars.
+Nope they can be grouped together.
 
-> +			break;
-> +		}
-> +
-> +		len = init_iov_iter(vq, &msg.msg_iter, hdr_size, out);
-> +		if (len < 0)
-> +			break;
+> 
+>> +
+>>   	q6v5_clk_disable(qproc->dev, qproc->active_clks,
+>>   			 qproc->active_clk_count);
+>>   	q6v5_regulator_disable(qproc, qproc->active_regs,
+> [..]
+>> @@ -1184,19 +1221,31 @@ static int q6v5_probe(struct platform_device *pdev)
+>>   
+>>   	qproc->version = desc->version;
+>>   	qproc->need_mem_protection = desc->need_mem_protection;
+>> -	ret = q6v5_request_irq(qproc, pdev, "wdog", q6v5_wdog_interrupt);
+>> +	ret = q6v5_request_irq(qproc, pdev, "wdog", q6v5_wdog_interrupt,
+>> +			       &qproc->wdog_interrupt);
+> 
+> I think it's time to inline this function instead. You can omit the
+> first error handling and rely on request_irq to fail if you pass it an
+> invalid irq number.
 
-same comment as previous patch, len is a size_t which is unsigned.
+I'll inline the function.
 
-> +
-> +		total_len += len;
-> +		if (total_len < VHOST_NET_WEIGHT &&
-> +		    vhost_has_more_pkts(net, vq)) {
-> +			msg.msg_flags |= MSG_MORE;
-> +		} else {
-> +			msg.msg_flags &= ~MSG_MORE;
-> +		}
+> 
+>> +	if (ret < 0)
+>> +		goto free_rproc;
+>> +	disable_irq(qproc->wdog_interrupt);
+> 
+> I presume this is to balance the IRQ enable/disable later?
+> 
 
-don't need { } here.
+yes just to keep things symmetric.
 
-> +
-> +		/* TODO: Check specific error and bomb out unless ENOBUFS? */
-> +		err = sock->ops->sendmsg(sock, &msg, len);
-> +		if (unlikely(err < 0)) {
-> +			vhost_discard_vq_desc(vq, 1);
-> +			vhost_net_enable_vq(net, vq);
-> +			break;
-> +		}
-> +		if (err != len)
-> +			pr_debug("Truncated TX packet: "
-> +				 " len %d != %zd\n", err, len);
+>> +
+> 
+> Regards,
+> Bjorn
+> 
 
-single line " " string please
+-- 
+Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc, is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
