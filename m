@@ -1,21 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753028AbeEUMOx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 08:14:53 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:38706 "EHLO huawei.com"
+        id S1752693AbeEUMOv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 08:14:51 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:38741 "EHLO huawei.com"
         rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752644AbeEUMJF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 08:09:05 -0400
+        id S1751075AbeEUMJG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 08:09:06 -0400
 From: Yisheng Xie <xieyisheng1@huawei.com>
 To: <linux-kernel@vger.kernel.org>
 CC: Yisheng Xie <xieyisheng1@huawei.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-rockchip@lists.infradead.org>
-Subject: [PATCH 13/33] clk: rockchip: use match_string() helper
-Date: Mon, 21 May 2018 19:57:50 +0800
-Message-ID: <1526903890-35761-14-git-send-email-xieyisheng1@huawei.com>
+        Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-gpio@vger.kernel.org>
+Subject: [PATCH 17/33] pinctrl: armada-37xx: use match_string() helper
+Date: Mon, 21 May 2018 19:57:54 +0800
+Message-ID: <1526903890-35761-18-git-send-email-xieyisheng1@huawei.com>
 X-Mailer: git-send-email 1.7.12.4
 In-Reply-To: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
 References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
@@ -30,51 +31,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 match_string() returns the index of an array for a matching string,
 which can be used intead of open coded variant.
 
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Heiko Stuebner <heiko@sntech.de>
-Cc: linux-clk@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: Gregory Clement <gregory.clement@bootlin.com>
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
 Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-rockchip@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org
 Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
 ---
- drivers/clk/rockchip/clk.c | 16 +++++-----------
- 1 file changed, 5 insertions(+), 11 deletions(-)
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 16 ++--------------
+ 1 file changed, 2 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-index 3cd8ad5..514032d 100644
---- a/drivers/clk/rockchip/clk.c
-+++ b/drivers/clk/rockchip/clk.c
-@@ -274,18 +274,10 @@ static struct clk *rockchip_clk_register_frac_branch(
- 		struct clk_mux *frac_mux = &frac->mux;
- 		struct clk_init_data init;
- 		struct clk *mux_clk;
--		int i, ret;
+diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+index 5b63248..e338327 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
++++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+@@ -214,18 +214,6 @@ static inline void armada_37xx_update_reg(unsigned int *reg,
+ 	}
+ }
+ 
+-static int armada_37xx_get_func_reg(struct armada_37xx_pin_group *grp,
+-				    const char *func)
+-{
+-	int f;
 -
--		frac->mux_frac_idx = -1;
--		for (i = 0; i < child->num_parents; i++) {
--			if (!strcmp(name, child->parent_names[i])) {
--				pr_debug("%s: found fractional parent in mux at pos %d\n",
--					 __func__, i);
--				frac->mux_frac_idx = i;
--				break;
--			}
--		}
-+		int ret;
+-	for (f = 0; (f < NB_FUNCS) && grp->funcs[f]; f++)
+-		if (!strcmp(grp->funcs[f], func))
+-			return f;
+-
+-	return -ENOTSUPP;
+-}
+-
+ static struct armada_37xx_pin_group *armada_37xx_find_next_grp_by_pin(
+ 	struct armada_37xx_pinctrl *info, int pin, int *grp)
+ {
+@@ -344,10 +332,10 @@ static int armada_37xx_pmx_set_by_name(struct pinctrl_dev *pctldev,
+ 	dev_dbg(info->dev, "enable function %s group %s\n",
+ 		name, grp->name);
  
-+		frac->mux_frac_idx = match_string(child->parent_names,
-+						  child->num_parents, name);
- 		frac->mux_ops = &clk_mux_ops;
- 		frac->clk_nb.notifier_call = rockchip_clk_frac_notifier_cb;
+-	func = armada_37xx_get_func_reg(grp, name);
++	func = match_string(grp->funcs, NB_FUNCS, name);
  
-@@ -312,6 +304,8 @@ static struct clk *rockchip_clk_register_frac_branch(
+ 	if (func < 0)
+-		return func;
++		return -ENOTSUPP;
  
- 		/* notifier on the fraction divider to catch rate changes */
- 		if (frac->mux_frac_idx >= 0) {
-+			pr_debug("%s: find fractional parent in mux at pos %d\n",
-+				 __func__, frac->mux_frac_idx);
- 			ret = clk_notifier_register(clk, &frac->clk_nb);
- 			if (ret)
- 				pr_err("%s: failed to register clock notifier for %s\n",
+ 	val = grp->val[func];
+ 
 -- 
 1.7.12.4
