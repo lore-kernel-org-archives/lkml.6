@@ -1,82 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753136AbeEUPRl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 11:17:41 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:37238 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753120AbeEUPRe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 11:17:34 -0400
-X-Google-Smtp-Source: AB8JxZr6ljMN79j79GSiYYFgmoUWS2O2NDCMG24+WpQE2q8DjJG36EtyclMYtGZL5EyljBhdS0g+3Q==
-Subject: Re: [PATCH net-next 3/7] net: dsa: qca8k: Enable RXMAC when bringing
- up a port
-To: =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <vokac.m@gmail.com>,
-        netdev@vger.kernel.org, michal.vokac@ysoft.com
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        vivien.didelot@savoirfairelinux.com, andrew@lunn.ch,
-        mark.rutland@arm.com, robh+dt@kernel.org, davem@davemloft.net
-References: <1526909293-56377-1-git-send-email-michal.vokac@ysoft.com>
- <1526909293-56377-4-git-send-email-michal.vokac@ysoft.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-Message-ID: <0e72750c-5567-d12c-8d9c-5a25520ab104@gmail.com>
-Date: Mon, 21 May 2018 08:17:30 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1753149AbeEUPSX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 11:18:23 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38402 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752878AbeEUPST (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 11:18:19 -0400
+Date: Mon, 21 May 2018 11:18:17 -0400
+From: Mike Snitzer <snitzer@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        hch@infradead.org, colyli@suse.de, darrick.wong@oracle.com, clm@fb.com,
+        bacik@fb.com, linux-xfs@vger.kernel.org, drbd-dev@lists.linbit.com,
+        linux-btrfs@vger.kernel.org, linux-raid@vger.kernel.org,
+        neilb@suse.com
+Subject: Re: [PATCH 00/13] convert block layer to bioset_init()/mempool_init()
+Message-ID: <20180521151817.GA19454@redhat.com>
+References: <20180520222558.7053-1-kent.overstreet@gmail.com>
+ <20180521140348.GA19069@redhat.com>
+ <686d7df6-c7d1-48a6-b7ff-48dc8aff6a62@kernel.dk>
+ <20180521143132.GB19194@redhat.com>
+ <2bbeeb1a-8b99-b06a-eb9b-eb8523c16460@kernel.dk>
+ <20180521144703.GA19303@redhat.com>
+ <4b343aef-e11c-73ba-1d88-7e73ca838cad@kernel.dk>
+ <20180521150439.GA19379@redhat.com>
+ <61e30dcf-a01c-f47d-087a-12930caf9aef@kernel.dk>
 MIME-Version: 1.0
-In-Reply-To: <1526909293-56377-4-git-send-email-michal.vokac@ysoft.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <61e30dcf-a01c-f47d-087a-12930caf9aef@kernel.dk>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, May 21 2018 at 11:09am -0400,
+Jens Axboe <axboe@kernel.dk> wrote:
 
-
-On 05/21/2018 06:28 AM, Michal Vokáč wrote:
-> When a port is brought up/down do not enable/disable only the TXMAC
-> but the RXMAC as well. This is essential for the CPU port to work.
+> On 5/21/18 9:04 AM, Mike Snitzer wrote:
+> > On Mon, May 21 2018 at 10:52am -0400,
+> > Jens Axboe <axboe@kernel.dk> wrote:
+> > 
+> >> On 5/21/18 8:47 AM, Mike Snitzer wrote:
+> >>> On Mon, May 21 2018 at 10:36am -0400,
+> >>> Jens Axboe <axboe@kernel.dk> wrote:
+> >>>
+> >>>> On 5/21/18 8:31 AM, Mike Snitzer wrote:
+> >>>>> On Mon, May 21 2018 at 10:19am -0400,
+> >>>>> Jens Axboe <axboe@kernel.dk> wrote:
+> >>>>>
+> >>>>>> On 5/21/18 8:03 AM, Mike Snitzer wrote:
+> >>>>>>> On Sun, May 20 2018 at  6:25pm -0400,
+> >>>>>>> Kent Overstreet <kent.overstreet@gmail.com> wrote:
+> >>>>>>>
+> >>>>>>>> Jens - this series does the rest of the conversions that Christoph wanted, and
+> >>>>>>>> drops bioset_create().
+> >>>>>>>>
+> >>>>>>>> Only lightly tested, but the changes are pretty mechanical. Based on your
+> >>>>>>>> for-next tree.
+> >>>>>>>
+> >>>>>>> By switching 'mempool_t *' to 'mempool_t' and 'bio_set *' to 'bio_set'
+> >>>>>>> you've altered the alignment of members in data structures.  So I'll
+> >>>>>>> need to audit all the data structures you've modified in DM.
+> >>>>>>>
+> >>>>>>> Could we get the backstory on _why_ you're making this change?
+> >>>>>>> Would go a long way to helping me appreciate why this is a good use of
+> >>>>>>> anyone's time.
+> >>>>>>
+> >>>>>> Yeah, it's in the first series, it gets rid of a pointer indirection.
+> >>>>>
+> >>>>> "Allows mempools to be embedded in other structs, getting rid of a
+> >>>>> pointer indirection from allocation fastpaths."
+> >>>>>
+> >>>>> So this is about using contiguous memory or avoiding partial allocation
+> >>>>> failure?  Or both?
+> >>>>>
+> >>>>> Or more to it?  Just trying to fully appreciate the theory behind the
+> >>>>> perceived associated benefit.
+> >>>>
+> >>>> It's about avoiding a pointer indirection. Instead of having to
+> >>>> follow a pointer to get to that struct, it's simple offset math off
+> >>>> your main structure.
+> >>>>
+> >>>>> I do think the increased risk of these embedded bio_set and mempool_t
+> >>>>> themselves crossing cachelines, or struct members that follow them doing
+> >>>>> so, really detracts from these types of changes.
+> >>>>
+> >>>> Definitely something to look out for, though most of them should be
+> >>>> per-dev structures and not in-flight structures. That makes it a bit
+> >>>> less sensitive. But can't hurt to audit the layouts and adjust if
+> >>>> necessary. This is why it's posted for review :-)
+> >>>
+> >>> This isn't something that is easily caught upfront.  Yes we can all be
+> >>> busy little beavers with pahole to audit alignment.  But chances are
+> >>> most people won't do it.
+> >>>
+> >>> Reality is there is potential for a regression due to false sharing to
+> >>> creep in if a hot struct member suddenly starts straddling a cacheline.
+> >>> That type of NUMA performance killer is pretty insidious and somewhat
+> >>> tedious to hunt down even when looking for it with specialized tools:
+> >>> https://joemario.github.io/blog/2016/09/01/c2c-blog/
+> >>
+> >> IMHO you're making a big deal out of something that should not be.
+> > 
+> > I raised an issue that had seemingly not been considered at all.  Not
+> > making a big deal.  Raising it for others' benefit.
+> > 
+> >> If the dm bits are that sensitive and cache line honed to perfection
+> >> already due to previous regressions in that area, then it might
+> >> not be a bad idea to have some compile checks for false cacheline
+> >> sharing between sensitive members, or spilling of a sub-struct
+> >> into multiple cachelines.
+> >>
+> >> It's not like this was pushed behind your back. It's posted for
+> >> review. It's quite possible the net change is a win for dm. Let's
+> >> focus on getting it reviewed, rather than pontificate on what
+> >> could potentially go all wrong with this.
+> > 
+> > Why are you making this personal?  Or purely about DM?  I'm merely
+> > pointing out this change isn't something that can be given a quick
+> > blanket "looks good".
 > 
-> Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
+> I'm not making this personal at all?! You raised a (valid) concern,
+> I'm merely stating why I don't think it's a high risk issue. I'm
+> assuming your worry is related to dm, as those are the reports
+> that would ultimately land on your desk.
 
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Then we'll just agree to disagree with what this implies: "It's not like
+this was pushed behind your back."
 
-Should this have:
+Reality is I'm fine with the change.  Just think there is follow-on work
+(now or later) that is needed.
 
-Fixes: 6b93fb46480a ("net-next: dsa: add new driver for qca8xxx family")?
--- 
-Florian
+Enough said.
