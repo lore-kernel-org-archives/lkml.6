@@ -1,104 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751064AbeEUHEE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 03:04:04 -0400
-Received: from mga18.intel.com ([134.134.136.126]:53610 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750948AbeEUHEB (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 03:04:01 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,426,1520924400";
-   d="scan'208";a="57007309"
-From: Jin Yao <yao.jin@linux.intel.com>
-To: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com
-Cc: Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
-        yao.jin@intel.com, Jin Yao <yao.jin@linux.intel.com>
-Subject: [PATCH v4 0/3] perf annotate: Support '--group' option
-Date: Mon, 21 May 2018 22:57:43 +0800
-Message-Id: <1526914666-31839-1-git-send-email-yao.jin@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S1751077AbeEUHNT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 03:13:19 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:40392 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750965AbeEUHNS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 03:13:18 -0400
+From: Richard Weinberger <richard@nod.at>
+To: Stefan Schaeckeler <sschaeck@cisco.com>
+Cc: David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mtd: mtdoops: optionally dump boottime
+Date: Mon, 21 May 2018 09:13:09 +0200
+Message-ID: <5252756.S0IrdeWEj0@blindfold>
+In-Reply-To: <20180521022924.GA33758@sjc-ads-587.cisco.com>
+References: <20180521022924.GA33758@sjc-ads-587.cisco.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For non-explicit group, perf report has already supported a option
-'--group' which can enable group output.
+Stefan,
 
-This patch-set will support perf annotate with the same '--group'.
+Am Montag, 21. Mai 2018, 04:29:24 CEST schrieb Stefan Schaeckeler:
+> Hello Richard and others,
+> 
+> > I get the use-case, but why is this only for mtdoops?
+> 
+> Powerpc's nvram module also stores oops messages and does so by adding an
+> additional timestamp, as well (search for kmsg_dump_get_buffer() in
+> arch/powerpc/kernel/nvram_64.c).
 
-For example,
+Just one more reason to make it generic.
+ 
+> This timestamp is the number of seconds since 1970 and stored as a 64 bit
+> integer in the nvram header. Basically, the last kmesg timestamp is a few ms
+> less than this additionally stored timestamp. Recording boottime would be more
+> elegant, I guess.
+> 
+> 
+> > IMHO this needs to go into generic code such that all kmsg dumpers can
+> > benefit from it.
+> 
+> This would be not that easy:
+> 
+> #1 kmsg_dump_get_buffer(...size...) returns the most recent <size> bytes.
+> Consecutive calls return older chunks. It would be natural to return the
+> boottime as the first line, e.g. in the last call, but some clients such as
+> mtdoops call kmsg_dump_get_buffer() only once. The returned buffer may be
+> complete including boottime, or not.
+> 
+> #2 consistency with other clients: nvram_64.c has the same requirement of
+> storing a kind of wall-time but does it in a completely different way: no
+> readable ascii text timestamp preprended to the kmsg buffer but a 64 bit
+> timestamp in its header. Note, I don't think we should make mtdoops behave like
+> nvram_64.c by storing the timestamp as a 64 bit integer (in its header) b/c
+> most people do a cat or string of the mtd device /dev/mtdX and a 64 bit integer
+> would just read as garbage.
 
-    perf record -e cycles,branches ./div
-    perf annotate main --stdio --group
+I think this is the perfect opportunity to talk with other kmesg dump users on
+how to add a timestamp.
+As last resort we can always do it in our own way but I think making it generic
+is at lest worth a try...
 
-                     :            Disassembly of section .text:
-                     :
-                     :            00000000004004b0 <main>:
-                     :            main():
-                     :
-                     :                    return i;
-                     :            }
-                     :
-                     :            int main(void)
-                     :            {
-        0.00    0.00 :   4004b0:       push   %rbx
-                     :                    int i;
-                     :                    int flag;
-                     :                    volatile double x = 1212121212, y = 121212;
-                     :
-                     :                    s_randseed = time(0);
-        0.00    0.00 :   4004b1:       xor    %edi,%edi
-                     :                    srand(s_randseed);
-        0.00    0.00 :   4004b3:       mov    $0x77359400,%ebx
-                     :
-                     :                    return i;
-                     :            }
-                     :
+> I hope we can have separate implementations for recording additional
+> timestamps. Later, I'll send a patch with stylistic changes unless we
+> completely disagree on how to move forward.
 
-v4:
----
-  Change function name from perf_evlist_forced_leader to
-  perf_evlist__force_leader
+Both #1 and #2 aren't show-stoppers.
 
-Impact:
--------
-  perf evlist: Create new function perf_evlist__force_leader
-  perf report: Use perf_evlist__force_leader to support '--group'
-  perf annotate: Support '--group' option
-
-v3:
----------
-Move the comment which was on setup_forced_leader() to the
-new function perf_evlist_forced_leader().
-
-Impact
-------
-  perf evlist: Create a new function perf_evlist_forced_leader
-  perf report: Use perf_evlist_forced_leader to support '--group'
-
-v2:
----------
-Arnaldo points out that it should be done the way it is for
-perf report --group. v2 refers to this way and the patch is
-totally rewritten.
-
-Init post:
-----------
-Post the patch 'perf annotate: Support multiple events without group'
-
-Jin Yao (3):
-  perf evlist: Create new function perf_evlist__force_leader
-  perf report: Use perf_evlist__force_leader to support '--group'
-  perf annotate: Support '--group' option
-
- tools/perf/builtin-annotate.c |  7 +++++++
- tools/perf/builtin-report.c   | 13 ++-----------
- tools/perf/util/evlist.c      | 15 +++++++++++++++
- tools/perf/util/evlist.h      |  3 +++
- 4 files changed, 27 insertions(+), 11 deletions(-)
-
--- 
-2.7.4
+Thanks,
+//richard
