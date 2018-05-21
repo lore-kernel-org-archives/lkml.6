@@ -1,38 +1,37 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqyYUNkpEfTAqqDwYLkFq7dvwfoSZQtLTKsv1pY8Czm4h6cU9rjSW7Dsp6qBg5giACc76Zj
-ARC-Seal: i=1; a=rsa-sha256; t=1526937807; cv=none;
+X-Google-Smtp-Source: AB8JxZrct7pF3BEDZpEymYcQHEd5uFmfLbrRVduFpzbdy7clbIox59XGU96mYeJxllMG8yh6iA4p
+ARC-Seal: i=1; a=rsa-sha256; t=1526937804; cv=none;
         d=google.com; s=arc-20160816;
-        b=xNsZ79xUfUXrkVqCWloU2QqgvjyKZHZukZTz1Ga1Wv3e5Q9C9Jj9kWoGQaGvZLA59W
-         0q+mQ3Z2444DkJvehasKZZVYxYHmikcOKBCGp2MIYehNW63KHhHXssOv2IFKAg943s/O
-         IVuxwmIEcMBAyq9+1U+Dxtwdlhm2QMA6D4FP2/dXHyuxZqzuAaBlUjeyRhh6ab5f5dQj
-         Lsexhwwt+N8qyulk7bpR03uoL6p0oNBDhcPw4QCaXk7F2OO4CL3b3UaWvy54XGTFwQ48
-         SMrPQsFBArBJo8nLdseZNFydydseoYL9Z+0BNQA3DwJDdOUmAAeQQPTgjrOIRUxk13kQ
-         2EOw==
+        b=D79F2rJyZog4SI+jNBYQqal9utRIwVv3aBOZeuYtDA9GR5Kyp7n4MaAbxO1+qTra/M
+         wUrpDtyHUStFOCWVdaFa+rZ5zLN9KRAWiVWzqTlQ9sUv7dP7lCO/LU/WBa2mZPBHmIdm
+         paTFmIHrDN5/3QXzSkHEHsCIk43OLIQXs4gohoYCIyBR+aXUrYEx9iP8RvuGG/Rcb5Oi
+         lySpiQIu9gQ7iP/UndXNjxoOv3KBDocDNM2YibRJy9tLXCXQJkQoo+DJUp5fkX5JwiiA
+         5wA9rv7RtdaWQno8nqMokTZcvKG9Qwj7mUGvo//7esyL0pBv7VHhCFfM/hLT57kbcj9C
+         uEvQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=lDSSuQh7p68OZlwVLlcfvoR51dqcV9+Vj2WHYPtCHhQ=;
-        b=ujcicp1QLXWhnnS6X5ygSn2UXXpOYtrZvXXdZpUa88sULHxjb/i6JVcIEVFGs7+WCJ
-         ePhlakW2e9fMw5fA6jI6EHuj0r/x53KQLqGdF9LpUD2X+2svFnfiortRZhjA8z9mwWtb
-         0pHAm7earO1q+CMzSxWbgb7B31AodpBRRs5wzPA2taQXAeGrwLebtNbVf8tKmkq4TksT
-         XU3wJmFO/k0SLcQWJLJRVQ5kRTunQm5IL+xbLSeZwuwee6inJJXp0yJkmX2hS2l61gLA
-         tiVxZ+j5Hwlw3N65+pRV2UC5QnaZMao48emyey/Jp33LXgyvllRFwtyYgPd4C/jZyJhW
-         CBQA==
+        bh=RzluvsJGlIe8zYEEoNuNfr6V0Ey2eLNN7T2skHPtf6A=;
+        b=HZXQNCgoh5yHuuqEuQkeuzHODU0/JKFa5O9nuVW9iCDCXpJgZ6aXXJCoSoGTPmdQgl
+         JZcjofXz9HrdX6+9bZ36nEQ5LeWZILsAgWfuQ1y+llxK4XF4wf9qcqwhb2OWWYBiPG5O
+         Zzlp3bw7UYIrWu5ox584RjDJ1OTaoaE21+M/YujmpprArIOLs5flsR9jW4xAVtvh35+B
+         aWssOd1hStujAguuvzpEzqYk3S8snys/nSHIAX3+nq1ejcAOOTlk0kKoYzpT/pBumkJU
+         JvpImGuuJ7zbuZOxpAQLoo02nB2zOloXJIqEKuticNPSvjQ8uKxgxiqkYLcQlkPNpqZa
+         FhdQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=NnO/UqPD;
+       dkim=pass header.i=@kernel.org header.s=default header.b=OMXt06P/;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=NnO/UqPD;
+       dkim=pass header.i=@kernel.org header.s=default header.b=OMXt06P/;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Federico Cuello <fedux@fedux.com.ar>,
-	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.16 007/110] ALSA: usb: mixer: volume quirk for CM102-A+/102S+
-Date: Mon, 21 May 2018 23:11:04 +0200
-Message-Id: <20180521210504.547698504@linuxfoundation.org>
+	"Shuah Khan (Samsung OSG)" <shuah@kernel.org>
+Subject: [PATCH 4.16 006/110] usbip: usbip_host: fix bad unlock balance during stub_probe()
+Date: Mon, 21 May 2018 23:11:03 +0200
+Message-Id: <20180521210504.433346601@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109768849668423?=
-X-GMAIL-MSGID: =?utf-8?q?1601110338402693772?=
+X-GMAIL-THRID: =?utf-8?q?1601109766152397439?=
+X-GMAIL-MSGID: =?utf-8?q?1601110335921755304?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,42 +50,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Federico Cuello <fedux@fedux.com.ar>
+From: Shuah Khan (Samsung OSG) <shuah@kernel.org>
 
-commit 21493316a3c4598f308d5a9fa31cc74639c4caff upstream.
+commit c171654caa875919be3c533d3518da8be5be966e upstream.
 
-Currently it's not possible to set volume lower than 26% (it just mutes).
+stub_probe() calls put_busid_priv() in an error path when device isn't
+found in the busid_table. Fix it by making put_busid_priv() safe to be
+called with null struct bus_id_priv pointer.
 
-Also fixes this warning:
+This problem happens when "usbip bind" is run without loading usbip_host
+driver and then running modprobe. The first failed bind attempt unbinds
+the device from the original driver and when usbip_host is modprobed,
+stub_probe() runs and doesn't find the device in its busid table and calls
+put_busid_priv(0 with null bus_id_priv pointer.
 
-  Warning! Unlikely big volume range (=9472), cval->res is probably wrong.
-  [13] FU [PCM Playback Volume] ch = 2, val = -9473/-1/1
+usbip-host 3-10.2: 3-10.2 is not in match_busid table...  skip!
 
-, and volume works fine for full range.
+[  367.359679] =====================================
+[  367.359681] WARNING: bad unlock balance detected!
+[  367.359683] 4.17.0-rc4+ #5 Not tainted
+[  367.359685] -------------------------------------
+[  367.359688] modprobe/2768 is trying to release lock (
+[  367.359689]
+==================================================================
+[  367.359696] BUG: KASAN: null-ptr-deref in print_unlock_imbalance_bug+0x99/0x110
+[  367.359699] Read of size 8 at addr 0000000000000058 by task modprobe/2768
 
-Signed-off-by: Federico Cuello <fedux@fedux.com.ar>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+[  367.359705] CPU: 4 PID: 2768 Comm: modprobe Not tainted 4.17.0-rc4+ #5
+
+Fixes: 22076557b07c ("usbip: usbip_host: fix NULL-ptr deref and use-after-free errors") in usb-linus
+Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/mixer.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/usb/usbip/stub_main.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/sound/usb/mixer.c
-+++ b/sound/usb/mixer.c
-@@ -915,6 +915,14 @@ static void volume_control_quirks(struct
- 		}
- 		break;
+--- a/drivers/usb/usbip/stub_main.c
++++ b/drivers/usb/usbip/stub_main.c
+@@ -82,7 +82,8 @@ struct bus_id_priv *get_busid_priv(const
  
-+	case USB_ID(0x0d8c, 0x0103):
-+		if (!strcmp(kctl->id.name, "PCM Playback Volume")) {
-+			usb_audio_info(chip,
-+				 "set volume quirk for CM102-A+/102S+\n");
-+			cval->min = -256;
-+		}
-+		break;
-+
- 	case USB_ID(0x0471, 0x0101):
- 	case USB_ID(0x0471, 0x0104):
- 	case USB_ID(0x0471, 0x0105):
+ void put_busid_priv(struct bus_id_priv *bid)
+ {
+-	spin_unlock(&bid->busid_lock);
++	if (bid)
++		spin_unlock(&bid->busid_lock);
+ }
+ 
+ static int add_match_busid(char *busid)
