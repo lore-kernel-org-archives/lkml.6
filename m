@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753079AbeEUPT3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 11:19:29 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:43085 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752671AbeEUPTY (ORCPT
+        id S1753114AbeEUPUX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 11:20:23 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:35868 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752247AbeEUPUV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 11:19:24 -0400
-X-Google-Smtp-Source: AB8JxZr+K2GNOH0FaFg6twj+MbglFvzqbY5vasPNL2pV/jEKINdswI/lQn1dpiwJr27gs0JPTVnYzw==
-Subject: Re: [PATCH net-next 4/7] net: dsa: qca8k: Force CPU port to its
- highest bandwidth
+        Mon, 21 May 2018 11:20:21 -0400
+X-Google-Smtp-Source: AB8JxZpcuYQ3O26JDdy1d7p/YlZFj2Q9NZJr2kJOfdRogp6WQaIZvtRv/GibxlVsoZcXqwmfYzmeOw==
+Subject: Re: [PATCH net-next 5/7] net: dsa: qca8k: Allow overwriting CPU port
+ setting
 To: =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <vokac.m@gmail.com>,
         netdev@vger.kernel.org, michal.vokac@ysoft.com
 Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         vivien.didelot@savoirfairelinux.com, andrew@lunn.ch,
         mark.rutland@arm.com, robh+dt@kernel.org, davem@davemloft.net
 References: <1526909293-56377-1-git-send-email-michal.vokac@ysoft.com>
- <1526909293-56377-5-git-send-email-michal.vokac@ysoft.com>
+ <1526909293-56377-6-git-send-email-michal.vokac@ysoft.com>
 From: Florian Fainelli <f.fainelli@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
@@ -52,12 +52,12 @@ Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
  y5arMQorqTFWlEOgRA8OP47L9knl9i4xuR0euV6DChDrguup2aJVU8JPBBgRAgAPAhsMBQJU
  X9LxBQkeXB3fAAoJEGFXmRW1Y3YOj4UAn3nrFLPZekMeqX5aD/aq/dsbXSfyAKC45Go0YyxV
  HGuUuzv+GKZ6nsysJw==
-Message-ID: <7d73f1b8-453a-fcbe-a1b8-41ced652deb0@gmail.com>
-Date: Mon, 21 May 2018 08:19:20 -0700
+Message-ID: <57c7ed4f-71ee-17bb-7ece-83af89652e77@gmail.com>
+Date: Mon, 21 May 2018 08:20:16 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <1526909293-56377-5-git-send-email-michal.vokac@ysoft.com>
+In-Reply-To: <1526909293-56377-6-git-send-email-michal.vokac@ysoft.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -68,23 +68,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 On 05/21/2018 06:28 AM, Michal Vokáč wrote:
-> By default autonegotiation is enabled to configure MAC on all ports.
-> For the CPU port autonegotiation can not be used so we need to set
-> some sensible defaults manually.
-> 
-> This patch forces the default setting of the CPU port to 1000Mbps/full
-> duplex which is the chip maximum capability.
-> 
-> Also correct size of the bit field used to configure link speed.
+> Implement adjust_link function that allows to overwrite default CPU port
+> setting using fixed-link device tree subnode.
 > 
 > Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
 
 Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-
-Likewise, would not we want to have a:
-
-Fixes: 6b93fb46480a ("net-next: dsa: add new driver for qca8xxx family")
-
-tag here as well?
 -- 
 Florian
