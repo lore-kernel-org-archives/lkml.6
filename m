@@ -1,37 +1,38 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZr98mIVsjvKczMW5nLr2bMz6AwnOGzSnqbvlQmt16/G4NV/PlBfQlMX5xP8KkXknF36RY5S
-ARC-Seal: i=1; a=rsa-sha256; t=1526937796; cv=none;
+X-Google-Smtp-Source: AB8JxZqqTQ6lGA9PMJadkJ50MisstNUBWEwBZYhKXsKnTjALG6HRHIsLNmq/hoLAPPn/PaF4CKr9
+ARC-Seal: i=1; a=rsa-sha256; t=1526937793; cv=none;
         d=google.com; s=arc-20160816;
-        b=WN5Z9t/yAkUo52AkQlM7SJ2pTz0X79ubyKtMxcoNVM+NJJpFzCLuVVuYVVWkYMC9Iy
-         3IPjQ+wso8NKFjEMV++jgjkBBcnEFJ/Fjbst5EnAu9ORgbSqQaTjqkLKzTL7Y+UAZa9D
-         y4KCTBbW9iI8s7rTW+8DvDU/LzAcgLlQhqNnhuqzGhpn6WWDHlBrsodeetN14M6Co+FE
-         kvO8iD+ndP8Cxe8Vys3vRCiF1RPf1J4oXXP9kfzCBKdN9ggAMkzzBptmAo1fwzSfy1qa
-         hi/hk/WpmOwSHyY1a2hpzPUcbwG34zPjSLNQBs3QbIx6rzlc2Xng1EORR+0pMN7D2UN3
-         mKKg==
+        b=O+tBZVPnnb4G63PrZQoXGLS1O8qHeXP04/1IfN6Ym0CQlv++dP2vWJSWVHTCZcwfeo
+         YTEViiaVeDK/fk/FXJ7b9iLDjO1S8s1epRdWoH5w6+sFEbAl0oEAWxZfV9fwR2llHLQO
+         crV0p/W/0HqzjU7bR8HewHtLRQyGEhlDuQMGzt7B2AY6AsTXGWoUormqqhNeY6ZhkNdZ
+         vBg2Dtttwox+WeL6affiecckqW2HrEm0aW3PWFtfHSo+GFpUWQOLolr85yQTxi70RM0J
+         x3BgRd21qmraYCk93U0hEWKBtswAiWNQR83velV8WaoaGVCCDHNefzjFRhrkzKW64xpC
+         nxcA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=HocnZaxKl28O52yXCF3zY0vJAKpMDfU1Pkdy2gHPv6k=;
-        b=Amrm5EhybdDs3TLDuSZMuvhXUtW4jUD5yL6tN+HwThuK0jWNjzGmPfsiNxYhkTaOYd
-         ChSbaNzNBKWg4feKTx3A6Z13b0/IgijezJnwXdV4yKV/4kXphy/fV+4jPUQXKXgSwxWo
-         5Lzeh1T7MprWtF7CjImsZARnmkgrGPw9QRooBL2xmpuyXXyr4YpStx8WsB7OxNmaLvNH
-         pauMfCG50QWbEVw3CGZXF45ZYaNVxG4bk7bv/kDXdor9mFhhZCVSXJFCRrIPdiPia2rj
-         /e/ZH8g3X+KQMc3EblzxcHjtvVFgDfcR+dGpeLaVZZbdZ1kHANfGwE083GUV4q0I40Og
-         D2Xw==
+        bh=Hcfngx9tZnH1LObmjBzXhmBfL9MFVo3Tjmji5wEhG9c=;
+        b=b1glTPMgnML08koT/eTDjVZ/WMti/SVGmvV8ajhC7Xz9GDF7+MfSTZ+Qg/rR0wUtTn
+         OYVrN6dvl/Of87q6cAPzY7TFvLtS8sVlYJAXhQO9ixrO0glK0OA3Co41U5m8CMNuloL/
+         OFDk/GLMErMTHP6Hf6RplNFs+oUuWOZIYBJ1QDZWgxIwoeKH9iweM1tyb/Z8aDLpSMMx
+         sVPeo9XyRNJjKaboOkZXksgn3TuO7w7lCdT55D+C0rtF6nO95oNhvBfvrQWgyK9qXBz6
+         /3HFbAPwg22UmDXARuokShibOqXL7mM9au03F171sCwS6Uyj1tK0EXl8yg8ACZFjSvWC
+         KqTA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=dAvruYnQ;
+       dkim=pass header.i=@kernel.org header.s=default header.b=l+QxA2zU;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=dAvruYnQ;
+       dkim=pass header.i=@kernel.org header.s=default header.b=l+QxA2zU;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Shuah Khan (Samsung OSG)" <shuah@kernel.org>
-Subject: [PATCH 4.16 003/110] usbip: usbip_host: delete device from busid_table after rebind
-Date: Mon, 21 May 2018 23:11:00 +0200
-Message-Id: <20180521210504.136082974@linuxfoundation.org>
+	Florian Westphal <fw@strlen.de>,
+	Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.16 027/110] netfilter: nf_tables: cant fail after linking rule into active rule list
+Date: Mon, 21 May 2018 23:11:24 +0200
+Message-Id: <20180521210506.224261442@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109757512536317?=
-X-GMAIL-MSGID: =?utf-8?q?1601110327061043988?=
+X-GMAIL-THRID: =?utf-8?q?1601109783674177294?=
+X-GMAIL-MSGID: =?utf-8?q?1601110324250909582?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,44 +51,108 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+From: Florian Westphal <fw@strlen.de>
 
-commit 1e180f167d4e413afccbbb4a421b48b2de832549 upstream.
+commit 569ccae68b38654f04b6842b034aa33857f605fe upstream.
 
-Device is left in the busid_table after unbind and rebind. Rebind
-initiates usb bus scan and the original driver claims the device.
-After rescan the device should be deleted from the busid_table as
-it no longer belongs to usbip_host.
+rules in nftables a free'd using kfree, but protected by rcu, i.e. we
+must wait for a grace period to elapse.
 
-Fix it to delete the device after device_attach() succeeds.
+Normal removal patch does this, but nf_tables_newrule() doesn't obey
+this rule during error handling.
 
-Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
-Cc: stable <stable@vger.kernel.org>
+It calls nft_trans_rule_add() *after* linking rule, and, if that
+fails to allocate memory, it unlinks the rule and then kfree() it --
+this is unsafe.
+
+Switch order -- first add rule to transaction list, THEN link it
+to public list.
+
+Note: nft_trans_rule_add() uses GFP_KERNEL; it will not fail so this
+is not a problem in practice (spotted only during code review).
+
+Fixes: 0628b123c96d12 ("netfilter: nfnetlink: add batch support and use it from nf_tables")
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/usbip/stub_main.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ net/netfilter/nf_tables_api.c |   59 ++++++++++++++++++++++--------------------
+ 1 file changed, 32 insertions(+), 27 deletions(-)
 
---- a/drivers/usb/usbip/stub_main.c
-+++ b/drivers/usb/usbip/stub_main.c
-@@ -186,6 +186,9 @@ static ssize_t rebind_store(struct devic
- 	if (!bid)
- 		return -ENODEV;
- 
-+	/* mark the device for deletion so probe ignores it during rescan */
-+	bid->status = STUB_BUSID_OTHER;
-+
- 	/* device_attach() callers should hold parent lock for USB */
- 	if (bid->udev->dev.parent)
- 		device_lock(bid->udev->dev.parent);
-@@ -197,6 +200,9 @@ static ssize_t rebind_store(struct devic
- 		return ret;
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -2357,41 +2357,46 @@ static int nf_tables_newrule(struct net
  	}
  
-+	/* delete device from busid_table */
-+	del_match_busid((char *) buf);
+ 	if (nlh->nlmsg_flags & NLM_F_REPLACE) {
+-		if (nft_is_active_next(net, old_rule)) {
+-			trans = nft_trans_rule_add(&ctx, NFT_MSG_DELRULE,
+-						   old_rule);
+-			if (trans == NULL) {
+-				err = -ENOMEM;
+-				goto err2;
+-			}
+-			nft_deactivate_next(net, old_rule);
+-			chain->use--;
+-			list_add_tail_rcu(&rule->list, &old_rule->list);
+-		} else {
++		if (!nft_is_active_next(net, old_rule)) {
+ 			err = -ENOENT;
+ 			goto err2;
+ 		}
+-	} else if (nlh->nlmsg_flags & NLM_F_APPEND)
+-		if (old_rule)
+-			list_add_rcu(&rule->list, &old_rule->list);
+-		else
+-			list_add_tail_rcu(&rule->list, &chain->rules);
+-	else {
+-		if (old_rule)
+-			list_add_tail_rcu(&rule->list, &old_rule->list);
+-		else
+-			list_add_rcu(&rule->list, &chain->rules);
+-	}
++		trans = nft_trans_rule_add(&ctx, NFT_MSG_DELRULE,
++					   old_rule);
++		if (trans == NULL) {
++			err = -ENOMEM;
++			goto err2;
++		}
++		nft_deactivate_next(net, old_rule);
++		chain->use--;
 +
- 	return count;
- }
++		if (nft_trans_rule_add(&ctx, NFT_MSG_NEWRULE, rule) == NULL) {
++			err = -ENOMEM;
++			goto err2;
++		}
  
+-	if (nft_trans_rule_add(&ctx, NFT_MSG_NEWRULE, rule) == NULL) {
+-		err = -ENOMEM;
+-		goto err3;
++		list_add_tail_rcu(&rule->list, &old_rule->list);
++	} else {
++		if (nft_trans_rule_add(&ctx, NFT_MSG_NEWRULE, rule) == NULL) {
++			err = -ENOMEM;
++			goto err2;
++		}
++
++		if (nlh->nlmsg_flags & NLM_F_APPEND) {
++			if (old_rule)
++				list_add_rcu(&rule->list, &old_rule->list);
++			else
++				list_add_tail_rcu(&rule->list, &chain->rules);
++		 } else {
++			if (old_rule)
++				list_add_tail_rcu(&rule->list, &old_rule->list);
++			else
++				list_add_rcu(&rule->list, &chain->rules);
++		}
+ 	}
+ 	chain->use++;
+ 	return 0;
+ 
+-err3:
+-	list_del_rcu(&rule->list);
+ err2:
+ 	nf_tables_rule_destroy(&ctx, rule);
+ err1:
