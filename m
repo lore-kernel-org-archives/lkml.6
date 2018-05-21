@@ -1,104 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752989AbeEUWf0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 18:35:26 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:43131 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752687AbeEUWfX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 18:35:23 -0400
-X-Google-Smtp-Source: AB8JxZp9W7aMmGZjKCLksdp7DadGF021zhX1jJbnfuzabi11Xc0Mdgzo3dhSyS2Hcwx3MVEr5szFKw==
-From: Evan Green <evgreen@chromium.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dianders@chromium.org
-Cc: Evan Green <evgreen@chromium.org>
-Subject: [PATCH] mmc: Allow non-sleeping GPIO cd
-Date: Mon, 21 May 2018 15:35:03 -0700
-Message-Id: <20180521223503.152131-1-evgreen@chromium.org>
-X-Mailer: git-send-email 2.13.5
+        id S1751453AbeEUWpV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 18:45:21 -0400
+Received: from mga06.intel.com ([134.134.136.31]:3112 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750977AbeEUWpQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 18:45:16 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,427,1520924400";
+   d="scan'208";a="226135701"
+Subject: [PATCH 1/5] mm,
+ devm_memremap_pages: mark devm_memremap_pages() EXPORT_SYMBOL_GPL
+From: Dan Williams <dan.j.williams@intel.com>
+To: akpm@linux-foundation.org
+Cc: Michal Hocko <mhocko@suse.com>,
+        =?utf-8?b?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Christoph Hellwig <hch@lst.de>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Date: Mon, 21 May 2018 15:35:19 -0700
+Message-ID: <152694211948.5484.5084180448502160279.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <152694211402.5484.2277538346144115181.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <152694211402.5484.2277538346144115181.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change uses the appropriate _cansleep or non-sleeping API for
-reading GPIO card detect state. This allows users with GPIOs that
-never sleep to avoid a warning when certain quirks are present.
+The devm_memremap_pages() facility is tightly integrated with the
+kernel's memory hotplug functionality. It injects an altmap argument
+deep into the architecture specific vmemmap implementation to allow
+allocating from specific reserved pages, and it has Linux specific
+assumptions about page structure reference counting relative to
+get_user_pages() and get_user_pages_fast(). It was an oversight that
+this was not marked EXPORT_SYMBOL_GPL from the outset.
 
-The sdhci controller has an SDHCI_QUIRK_NO_CARD_NO_RESET, which
-indicates that a controller will not reset properly if no card is
-inserted. With this quirk enabled, mmc_get_cd_gpio is called in
-several places with a spinlock held and interrupts disabled.
-gpiod_get_raw_value_cansleep is not happy with this situation,
-and throws out a warning.
-
-For boards that a) use controllers that have this quirk, and b) wire
-card detect up to a GPIO that doesn't sleep, this is a spurious warning.
-This change silences that warning, at the cost of pushing this problem
-down to users that have sleeping GPIOs and controllers with this quirk.
-
-Signed-off-by: Evan Green <evgreen@chromium.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: "Jérôme Glisse" <jglisse@redhat.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
-This is my initial solution to the warning I was trying to face down
-in my previous RFC [1]. Upsides of this solution is it manages to
-avoid the warning in places where the warning doesn't apply, and is
-low-risk. Other approaches I considered:
+ kernel/memremap.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-1. Changing sdhci_get_cd to reach through mmc and get the GPIO value
-directly (without sleeping) rather than calling mmc_gpio_get_cd,
-which uses the cansleep functions. I didn't love this because a) it
-seemed ugly to be reaching into mmc_host like that and b) I'd have to
-duplicate the logic in mmc_gpio_get_cd, which seemed brittle.
-
-2. Using mmc_gpio_set_cd_isr to record when the card detect pin
-changes, and then in sdhci_do_reset we wouldn't actually need to
-get CD state, just look at the cached value. This seemed risky to me
-since it would affect all sdhci controllers, and I don't know that
-everybody using gpio-cd can do interrupts on their pins.
-
-3. Adding mmc_gpio_get_cd_nosleep(). That one's still doable if
-preferred, but I'd have to give some thought to when sdhci wires
-up to which one.
-
-I'm up for other suggestions. This one most just seemed like the
-best first stab of minimally addressing the warning without rocking
-the boat otherwise.
-
-[1] https://patchwork.kernel.org/patch/10374633/
----
- drivers/mmc/core/slot-gpio.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/mmc/core/slot-gpio.c b/drivers/mmc/core/slot-gpio.c
-index 31f7dbb15668..0f497b69f4b8 100644
---- a/drivers/mmc/core/slot-gpio.c
-+++ b/drivers/mmc/core/slot-gpio.c
-@@ -75,16 +75,22 @@ EXPORT_SYMBOL(mmc_gpio_get_ro);
- 
- int mmc_gpio_get_cd(struct mmc_host *host)
- {
-+	int can_sleep;
- 	struct mmc_gpio *ctx = host->slot.handler_priv;
- 
- 	if (!ctx || !ctx->cd_gpio)
- 		return -ENOSYS;
- 
--	if (ctx->override_cd_active_level)
--		return !gpiod_get_raw_value_cansleep(ctx->cd_gpio) ^
--			!!(host->caps2 & MMC_CAP2_CD_ACTIVE_HIGH);
-+	can_sleep = gpiod_cansleep(ctx->cd_gpio);
-+	if (ctx->override_cd_active_level) {
-+		int value = can_sleep ?
-+				gpiod_get_raw_value_cansleep(ctx->cd_gpio) :
-+				gpiod_get_raw_value(ctx->cd_gpio);
-+		return !value ^ !!(host->caps2 & MMC_CAP2_CD_ACTIVE_HIGH);
-+	}
- 
--	return gpiod_get_value_cansleep(ctx->cd_gpio);
-+	return can_sleep ? gpiod_get_value_cansleep(ctx->cd_gpio) :
-+			gpiod_get_value(ctx->cd_gpio);
+diff --git a/kernel/memremap.c b/kernel/memremap.c
+index 895e6b76b25e..c614645227a7 100644
+--- a/kernel/memremap.c
++++ b/kernel/memremap.c
+@@ -429,7 +429,7 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap)
+ 	pgmap_radix_release(res, pgoff);
+ 	return ERR_PTR(error);
  }
- EXPORT_SYMBOL(mmc_gpio_get_cd);
+-EXPORT_SYMBOL(devm_memremap_pages);
++EXPORT_SYMBOL_GPL(devm_memremap_pages);
  
--- 
-2.13.5
+ unsigned long vmem_altmap_offset(struct vmem_altmap *altmap)
+ {
