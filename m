@@ -1,28 +1,28 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZodx92bML4Red/plDWf6NhB+dmJWgV6V8KVev8nROg6GDOR8bpV05p+EXvSOw3vnnaWPUk2
-ARC-Seal: i=1; a=rsa-sha256; t=1526937654; cv=none;
+X-Google-Smtp-Source: AB8JxZrpLgy/H7oHGWyM6t/Kypi9cPcDyvPn+/THwLIwEnaXPoeWqDjTgwudaOuxlCapbe09Y7mt
+ARC-Seal: i=1; a=rsa-sha256; t=1526937651; cv=none;
         d=google.com; s=arc-20160816;
-        b=GSf3HQpvwHnPGXYoaqYx7nwxgyoUBU2FXrEik6epIc3VGCZvWFRqu54KmnGwHbuVlG
-         gN0yxsNNTovOQl1shHgBW7zp9wBhqn31XfR90+GuF1R6SRFgvQHP18dpRZ8Om6vl3Jxl
-         ueI1yIGMfb2kpKktAkW2Q66q1spP52GJ4qty46BgKLyN6IYycr4DvAYu8pBeky4D8SFL
-         TiysnxnMpmabLpa3dJJz4DCuwryrkzPNNmAx4Sai3YrcjQ+Z/rn/zCwkc7p7UfaAFkwQ
-         dCvl+i0//DwvEnKbm4NKU5cvWtGFIsKAA/EHhaCcDaaXKNFOxiOU9IaZYYmOXjuMKsWE
-         qQ8Q==
+        b=ZJHlLnX+VhbuqFulwQ2T+L4GyFEpvAN+uwGWasRG5KQhj4Lsay4yU+B76hL8lpw7Mq
+         MJ1l6T44EkMLOWd80iL6MSkDqLs3TiQmQArQGtLtIxN1JiUTaK8rja3fp4Xs7wMKozsN
+         AKp99KFiqZEuK6ar9CYA+YXwpOpVApSVF/uYSP1h3sQgpIHkMoRLvWpwFVNdBMOWHP7K
+         7WB75p4U3PKBGOnItA5NMHg2IvpdVA0oEtnF7IsQ3rKx/kl+7dByn+pI+SLIArdy/45M
+         uDusrGsqFithabDyqQ02yDK8nuxdcivmh7RFPXFU7QGhCanbDZMWaONaVp04gXBjD4Ji
+         fwgQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=b8wBX3eQa0C4jnP0VCuHj4vBoCoCMim77RdP/g1NJUg=;
-        b=cRwOrukCCUdxCK8BEfDQJqzAW0kWFFTS9Sd3QJQXrkskxwDZ1fbLuxa1fpekkvk2CS
-         F9fhBN5r36GHPb9h2Qg6A/KY1s2c/OFj0dX/eVXdcPJujLiEzBUcAEsFNNf7HgAuaPPc
-         6oRr0DjjDaGZUYJMNSha1NlqwvQHz/Ihqkw2Hcxn8zM2NMTYEoTz2G707tojGbZh1wk6
-         9NQIFSq1yOEP7MwyWvZBJQ6M3QruMy36Gix40Sjg1wSUN+rfI/pEb3ZbtsP+IYh1QM4L
-         vLBy+AqSkqtBnYQpJC8ALzqRtPos1yvbVVtC+c5274MWavOs7s1PmWtixwS/3sKf/3Td
-         JiYg==
+        bh=bwVJimv/n4KZALNrp7YexZp95/8OgQEkNS0V5Y5ac+8=;
+        b=K+gBEq/OeLONB8LodLRUTKqrA6xL0YIKIGh9dMbvOoanvbi1huiC/pYyknupwdOgVz
+         WWqzIX8BCS7VMPkEetFdWPjFGuLPrW1SfxxS5LlD7hNDiSFY0G/PMFMCxblNz0xWB72e
+         cM76yw1jBNBgIIV+hEBfUFPiSPEIAyu5nAjRozDas54gqYxe8aCVZtfc4UeiFKkHYHPm
+         Iu6O82Gl6BqAF/8FU3upehvThFskuFBNVlqKUQUtsM7L9eZxEDMTt/GiplHn1AZVtVp1
+         gaFnNM0/kFAoQ3hZXwczZrZDcpMdnDXqQg5UuW7DmpJ2ZAwinm2JamtA8zbj/hW07BR8
+         MU4Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=D5rpbRqb;
+       dkim=pass header.i=@kernel.org header.s=default header.b=OLBD3l5Q;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=D5rpbRqb;
+       dkim=pass header.i=@kernel.org header.s=default header.b=OLBD3l5Q;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
@@ -30,9 +30,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Masami Hiramatsu <mhiramat@kernel.org>,
 	Russell King <rmk+kernel@armlinux.org.uk>
-Subject: [PATCH 4.14 40/95] ARM: 8772/1: kprobes: Prohibit kprobes on get_user functions
-Date: Mon, 21 May 2018 23:11:30 +0200
-Message-Id: <20180521210456.141627200@linuxfoundation.org>
+Subject: [PATCH 4.14 39/95] ARM: 8770/1: kprobes: Prohibit probing on optimized_callback
+Date: Mon, 21 May 2018 23:11:29 +0200
+Message-Id: <20180521210455.995294715@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210447.219380974@linuxfoundation.org>
 References: <20180521210447.219380974@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109804932649139?=
-X-GMAIL-MSGID: =?utf-8?q?1601110177983170258?=
+X-GMAIL-THRID: =?utf-8?q?1601109801592715270?=
+X-GMAIL-MSGID: =?utf-8?q?1601110175196831082?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,114 +53,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Masami Hiramatsu <mhiramat@kernel.org>
 
-commit 0d73c3f8e7f6ee2aab1bb350f60c180f5ae21a2c upstream.
+commit 70948c05fdde0aac32f9667856a88725c192fa40 upstream.
 
-Since do_undefinstr() uses get_user to get the undefined
-instruction, it can be called before kprobes processes
-recursive check. This can cause an infinit recursive
-exception.
-Prohibit probing on get_user functions.
+Prohibit probing on optimized_callback() because
+it is called from kprobes itself. If we put a kprobes
+on it, that will cause a recursive call loop.
+Mark it NOKPROBE_SYMBOL.
 
-Fixes: 24ba613c9d6c ("ARM kprobes: core code")
+Fixes: 0dc016dbd820 ("ARM: kprobes: enable OPTPROBES for ARM 32")
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 Cc: stable@vger.kernel.org
 Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/include/asm/assembler.h |   10 ++++++++++
- arch/arm/lib/getuser.S           |   10 ++++++++++
- 2 files changed, 20 insertions(+)
+ arch/arm/probes/kprobes/opt-arm.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/arm/include/asm/assembler.h
-+++ b/arch/arm/include/asm/assembler.h
-@@ -536,4 +536,14 @@ THUMB(	orr	\reg , \reg , #PSR_T_BIT	)
- #endif
- 	.endm
+--- a/arch/arm/probes/kprobes/opt-arm.c
++++ b/arch/arm/probes/kprobes/opt-arm.c
+@@ -192,6 +192,7 @@ optimized_callback(struct optimized_kpro
  
-+#ifdef CONFIG_KPROBES
-+#define _ASM_NOKPROBE(entry)				\
-+	.pushsection "_kprobe_blacklist", "aw" ;	\
-+	.balign 4 ;					\
-+	.long entry;					\
-+	.popsection
-+#else
-+#define _ASM_NOKPROBE(entry)
-+#endif
-+
- #endif /* __ASM_ASSEMBLER_H__ */
---- a/arch/arm/lib/getuser.S
-+++ b/arch/arm/lib/getuser.S
-@@ -38,6 +38,7 @@ ENTRY(__get_user_1)
- 	mov	r0, #0
- 	ret	lr
- ENDPROC(__get_user_1)
-+_ASM_NOKPROBE(__get_user_1)
+ 	local_irq_restore(flags);
+ }
++NOKPROBE_SYMBOL(optimized_callback)
  
- ENTRY(__get_user_2)
- 	check_uaccess r0, 2, r1, r2, __get_user_bad
-@@ -58,6 +59,7 @@ rb	.req	r0
- 	mov	r0, #0
- 	ret	lr
- ENDPROC(__get_user_2)
-+_ASM_NOKPROBE(__get_user_2)
- 
- ENTRY(__get_user_4)
- 	check_uaccess r0, 4, r1, r2, __get_user_bad
-@@ -65,6 +67,7 @@ ENTRY(__get_user_4)
- 	mov	r0, #0
- 	ret	lr
- ENDPROC(__get_user_4)
-+_ASM_NOKPROBE(__get_user_4)
- 
- ENTRY(__get_user_8)
- 	check_uaccess r0, 8, r1, r2, __get_user_bad8
-@@ -78,6 +81,7 @@ ENTRY(__get_user_8)
- 	mov	r0, #0
- 	ret	lr
- ENDPROC(__get_user_8)
-+_ASM_NOKPROBE(__get_user_8)
- 
- #ifdef __ARMEB__
- ENTRY(__get_user_32t_8)
-@@ -91,6 +95,7 @@ ENTRY(__get_user_32t_8)
- 	mov	r0, #0
- 	ret	lr
- ENDPROC(__get_user_32t_8)
-+_ASM_NOKPROBE(__get_user_32t_8)
- 
- ENTRY(__get_user_64t_1)
- 	check_uaccess r0, 1, r1, r2, __get_user_bad8
-@@ -98,6 +103,7 @@ ENTRY(__get_user_64t_1)
- 	mov	r0, #0
- 	ret	lr
- ENDPROC(__get_user_64t_1)
-+_ASM_NOKPROBE(__get_user_64t_1)
- 
- ENTRY(__get_user_64t_2)
- 	check_uaccess r0, 2, r1, r2, __get_user_bad8
-@@ -114,6 +120,7 @@ rb	.req	r0
- 	mov	r0, #0
- 	ret	lr
- ENDPROC(__get_user_64t_2)
-+_ASM_NOKPROBE(__get_user_64t_2)
- 
- ENTRY(__get_user_64t_4)
- 	check_uaccess r0, 4, r1, r2, __get_user_bad8
-@@ -121,6 +128,7 @@ ENTRY(__get_user_64t_4)
- 	mov	r0, #0
- 	ret	lr
- ENDPROC(__get_user_64t_4)
-+_ASM_NOKPROBE(__get_user_64t_4)
- #endif
- 
- __get_user_bad8:
-@@ -131,6 +139,8 @@ __get_user_bad:
- 	ret	lr
- ENDPROC(__get_user_bad)
- ENDPROC(__get_user_bad8)
-+_ASM_NOKPROBE(__get_user_bad)
-+_ASM_NOKPROBE(__get_user_bad8)
- 
- .pushsection __ex_table, "a"
- 	.long	1b, __get_user_bad
+ int arch_prepare_optimized_kprobe(struct optimized_kprobe *op, struct kprobe *orig)
+ {
