@@ -1,83 +1,184 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751214AbeEUUMd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 16:12:33 -0400
-Received: from paleale.coelho.fi ([176.9.41.70]:45440 "EHLO
-        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750993AbeEUUMb (ORCPT
+        id S1751413AbeEUUMk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 16:12:40 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:44812 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750993AbeEUUMe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 16:12:31 -0400
-Message-ID: <bd408cb86db243289ce32d16adea003245facefa.camel@coelho.fi>
-From: Luca Coelho <luca@coelho.fi>
-To: Yisheng Xie <xieyisheng1@huawei.com>, linux-kernel@vger.kernel.org
-Cc: Kalle Valo <kvalo@codeaurora.org>,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Date: Mon, 21 May 2018 23:12:22 +0300
-In-Reply-To: <1526903890-35761-8-git-send-email-xieyisheng1@huawei.com>
-References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
-         <1526903890-35761-8-git-send-email-xieyisheng1@huawei.com>
+        Mon, 21 May 2018 16:12:34 -0400
+X-Google-Smtp-Source: AB8JxZoAowMCyXDuaiBnW79P6iGeI053b0Pv+JQrITNtUmEEC3kuiwvs/GamPFcnaLgtoQPLtASqESV+Mbio2OjuLM0=
+MIME-Version: 1.0
+References: <20180521174116.171846-1-shakeelb@google.com> <20180521114227.233983ac7038a9f4bf5b7066@linux-foundation.org>
+In-Reply-To: <20180521114227.233983ac7038a9f4bf5b7066@linux-foundation.org>
+From: Shakeel Butt <shakeelb@google.com>
+Date: Mon, 21 May 2018 13:12:20 -0700
+Message-ID: <CALvZod48W5FHnhgqXyat1aeWFhrjJymZdAyU_eGgtSX2RAnCxQ@mail.gmail.com>
+Subject: Re: [PATCH] mm: fix race between kmem_cache destroy, create and deactivate
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Michal Hocko <mhocko@kernel.org>, Greg Thelen <gthelen@google.com>,
+        Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>, Tejun Heo <tj@kernel.org>,
+        Linux MM <linux-mm@kvack.org>, Cgroups <cgroups@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.2-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 91.156.4.241
-X-SA-Exim-Mail-From: luca@coelho.fi
-Subject: Re: [PATCH 07/33] iwlwifi: mvm: use match_string() helper
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on farmhouse.coelho.fi)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-05-21 at 19:57 +0800, Yisheng Xie wrote:
-> match_string() returns the index of an array for a matching string,
-> which can be used intead of open coded variant.
-> 
-> Cc: Kalle Valo <kvalo@codeaurora.org>
-> Cc: Intel Linux Wireless <linuxwifi@intel.com>
-> Cc: Johannes Berg <johannes.berg@intel.com>
-> Cc: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-> Cc: linux-wireless@vger.kernel.org
-> Cc: netdev@vger.kernel.org
-> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
-> ---
->  drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c | 11 +++--------
->  1 file changed, 3 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c
-> b/drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c
-> index 0e6401c..e8249a6 100644
-> --- a/drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c
-> +++ b/drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c
-> @@ -671,14 +671,9 @@ static ssize_t iwl_dbgfs_bt_cmd_read(struct file
-> *file, char __user *user_buf,
->  	};
->  	int ret, bt_force_ant_mode;
->  
-> -	for (bt_force_ant_mode = 0;
-> -	     bt_force_ant_mode < ARRAY_SIZE(modes_str);
-> -	     bt_force_ant_mode++) {
-> -		if (!strcmp(buf, modes_str[bt_force_ant_mode]))
-> -			break;
-> -	}
-> -
-> -	if (bt_force_ant_mode >= ARRAY_SIZE(modes_str))
-> +	bt_force_ant_mode = match_string(modes_str,
-> +					 ARRAY_SIZE(modes_str),
-> buf);
-> +	if (bt_force_ant_mode < 0)
->  		return -EINVAL;
->  
->  	ret = 0;
+On Mon, May 21, 2018 at 11:42 AM Andrew Morton <akpm@linux-foundation.org>
+wrote:
 
-Looks fine, I'll push this to our internal tree for review and take a
-closer look at what the match_string() function does exactly.
+> On Mon, 21 May 2018 10:41:16 -0700 Shakeel Butt <shakeelb@google.com>
+wrote:
 
-Thanks for the patch.
+> > The memcg kmem cache creation and deactivation (SLUB only) is
+> > asynchronous. If a root kmem cache is destroyed whose memcg cache is in
+> > the process of creation or deactivation, the kernel may crash.
+> >
+> > Example of one such crash:
+> >       general protection fault: 0000 [#1] SMP PTI
+> >       CPU: 1 PID: 1721 Comm: kworker/14:1 Not tainted 4.17.0-smp
+> >       ...
+> >       Workqueue: memcg_kmem_cache kmemcg_deactivate_workfn
+> >       RIP: 0010:has_cpu_slab
+> >       ...
+> >       Call Trace:
+> >       ? on_each_cpu_cond
+> >       __kmem_cache_shrink
+> >       kmemcg_cache_deact_after_rcu
+> >       kmemcg_deactivate_workfn
+> >       process_one_work
+> >       worker_thread
+> >       kthread
+> >       ret_from_fork+0x35/0x40
+> >
+> > This issue is due to the lack of reference counting for the root
+> > kmem_caches. There exist a refcount in kmem_cache but it is actually a
+> > count of aliases i.e. number of kmem_caches merged together.
+> >
+> > This patch make alias count explicit and adds reference counting to the
+> > root kmem_caches. The reference of a root kmem cache is elevated on
+> > merge and while its memcg kmem_cache is in the process of creation or
+> > deactivation.
+> >
 
---
-Cheers,
-Luca.
+> The patch seems depressingly complex.
+
+> And a bit underdocumented...
+
+
+I will add more documentation to the code.
+
+> > --- a/include/linux/slab.h
+> > +++ b/include/linux/slab.h
+> > @@ -674,6 +674,8 @@ struct memcg_cache_params {
+> >  };
+> >
+> >  int memcg_update_all_caches(int num_memcgs);
+> > +bool kmem_cache_tryget(struct kmem_cache *s);
+> > +void kmem_cache_put(struct kmem_cache *s);
+> >
+> >  /**
+> >   * kmalloc_array - allocate memory for an array.
+> > diff --git a/include/linux/slab_def.h b/include/linux/slab_def.h
+> > index d9228e4d0320..4bb22c89a740 100644
+> > --- a/include/linux/slab_def.h
+> > +++ b/include/linux/slab_def.h
+> > @@ -41,7 +41,8 @@ struct kmem_cache {
+> >  /* 4) cache creation/removal */
+> >       const char *name;
+> >       struct list_head list;
+> > -     int refcount;
+> > +     refcount_t refcount;
+> > +     int alias_count;
+
+> The semantic meaning of these two?  What locking protects alias_count?
+
+SLAB and SLUB allow reusing existing root kmem caches. The alias_count of a
+kmem cache tells the number of times this kmem cache is reused (maybe
+shared_count or reused_count are better names). Basically if there were 5
+root kmem cache creation request and suppose SLAB/SLUB decide to reuse the
+first kmem cache created for next 4 requests then this count will be 5 and
+all 5 will be pointing to the same kmem_cache object.
+
+Before this patch, alias_count (previously named refcount) was modified
+only within slab_mutex but can be read outside. It was conflated into
+multiple things like shared count, reference count and unmergeable flag (if
+-ve). This patch decouples the reference counting from this field and there
+is no need to protect alias_count with locks.
+
+> >       int object_size;
+> >       int align;
+> >
+> > diff --git a/include/linux/slub_def.h b/include/linux/slub_def.h
+> > index 3773e26c08c1..532d4b6f83ed 100644
+> > --- a/include/linux/slub_def.h
+> > +++ b/include/linux/slub_def.h
+> > @@ -97,7 +97,8 @@ struct kmem_cache {
+> >       struct kmem_cache_order_objects max;
+> >       struct kmem_cache_order_objects min;
+> >       gfp_t allocflags;       /* gfp flags to use on each alloc */
+> > -     int refcount;           /* Refcount for slab cache destroy */
+> > +     refcount_t refcount;    /* Refcount for slab cache destroy */
+> > +     int alias_count;        /* Number of root kmem caches merged */
+
+> "merged" what with what in what manner?
+
+shared or reused might be better words here.
+
+> >       void (*ctor)(void *);
+> >       unsigned int inuse;             /* Offset to metadata */
+> >       unsigned int align;             /* Alignment */
+> >
+> > ...
+> >
+> > --- a/mm/slab.h
+> > +++ b/mm/slab.h
+> > @@ -25,7 +25,8 @@ struct kmem_cache {
+> >       unsigned int useroffset;/* Usercopy region offset */
+> >       unsigned int usersize;  /* Usercopy region size */
+> >       const char *name;       /* Slab name for sysfs */
+> > -     int refcount;           /* Use counter */
+> > +     refcount_t refcount;    /* Use counter */
+> > +     int alias_count;
+
+> Semantic meaning/usage of alias_count?  Locking for it?
+
+Will add in the next version.
+
+> >       void (*ctor)(void *);   /* Called on object slot creation */
+> >       struct list_head list;  /* List of all slab caches on the system
+*/
+> >  };
+> >
+> > ...
+> >
+> > +bool kmem_cache_tryget(struct kmem_cache *s)
+> > +{
+> > +     if (is_root_cache(s))
+> > +             return refcount_inc_not_zero(&s->refcount);
+> > +     return false;
+> > +}
+> > +
+> > +void kmem_cache_put(struct kmem_cache *s)
+> > +{
+> > +     if (is_root_cache(s) &&
+> > +         refcount_dec_and_test(&s->refcount))
+> > +             __kmem_cache_destroy(s, true);
+> > +}
+> > +
+> > +void kmem_cache_put_locked(struct kmem_cache *s)
+> > +{
+> > +     if (is_root_cache(s) &&
+> > +         refcount_dec_and_test(&s->refcount))
+> > +             __kmem_cache_destroy(s, false);
+> > +}
+
+> Some covering documentation for the above would be useful.  Why do they
+> exist, why do they only operate on the root cache? etc.
+
+Ack.
