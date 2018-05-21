@@ -1,200 +1,185 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751942AbeEUT7J (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 15:59:09 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:42376 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751750AbeEUT7D (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 15:59:03 -0400
-X-Google-Smtp-Source: AB8JxZr/y27TR3ZgulO36kdzj6SiDVoTsT50d6ZX1dt8u96Mp30GRPUpbrwYxVM4qj+BuaT10kgplA==
-Date: Tue, 22 May 2018 01:31:14 +0530
-From: Souptick Joarder <jrdr.linux@gmail.com>
-To: tomi.valkeinen@ti.com, airlied@linux.ie
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        willy@infradead.org
-Subject: [PATCH] gpu: drm: omapdrm: Adding new typedef vm_fault_t
-Message-ID: <20180521200113.GA20998@jordon-HP-15-Notebook-PC>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        id S1752089AbeEUT7S (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 15:59:18 -0400
+Received: from mga11.intel.com ([192.55.52.93]:12394 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751143AbeEUT7Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 15:59:16 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,427,1520924400";
+   d="scan'208";a="57200415"
+From: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+        Jonathan Corbet <corbet@lwn.net>, linux-hwmon@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
+        Jason M Biils <jason.m.bills@linux.intel.com>,
+        Randy Dunlap <rdunlap@infradead.org>
+Subject: [v4 08/11] Documentation: hwmon: Add documents for PECI hwmon client drivers
+Date: Mon, 21 May 2018 12:59:14 -0700
+Message-Id: <20180521195914.28027-1-jae.hyun.yoo@linux.intel.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use new return type vm_fault_t for fault handler. For
-now, this is just documenting that the function returns
-a VM_FAULT value rather than an errno. Once all instances
-are converted, vm_fault_t will become a distinct type.
+This commit adds hwmon documents for PECI cputemp and dimmtemp drivers.
 
-Ref-> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
-
-Previously vm_insert_mixed() returns err which driver
-mapped into VM_FAULT_* type. Also return value of
-vm_insert_mixed() not handled correctly and 0 was
-returned inside fault_2d() as default. The new function
-vmf_insert_mixed() will replace this inefficiency by
-returning correct VM_FAULT_* type.
-
-vmf_error() is the newly introduce inline function
-in 4.17-rc6.
-
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Reviewed-by: Haiyue Wang <haiyue.wang@linux.intel.com>
+Reviewed-by: James Feist <james.feist@linux.intel.com>
+Reviewed-by: Vernon Mauery <vernon.mauery@linux.intel.com>
+Cc: Jason M Biils <jason.m.bills@linux.intel.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>
 ---
- drivers/gpu/drm/omapdrm/omap_gem.c | 51 +++++++++++++++++---------------------
- drivers/gpu/drm/omapdrm/omap_gem.h |  3 ++-
- 2 files changed, 25 insertions(+), 29 deletions(-)
+ Documentation/hwmon/peci-cputemp  | 78 +++++++++++++++++++++++++++++++
+ Documentation/hwmon/peci-dimmtemp | 50 ++++++++++++++++++++
+ 2 files changed, 128 insertions(+)
+ create mode 100644 Documentation/hwmon/peci-cputemp
+ create mode 100644 Documentation/hwmon/peci-dimmtemp
 
-diff --git a/drivers/gpu/drm/omapdrm/omap_gem.c b/drivers/gpu/drm/omapdrm/omap_gem.c
-index 0faf042..f9fe755 100644
---- a/drivers/gpu/drm/omapdrm/omap_gem.c
-+++ b/drivers/gpu/drm/omapdrm/omap_gem.c
-@@ -371,7 +371,7 @@ size_t omap_gem_mmap_size(struct drm_gem_object *obj)
-  */
- 
- /* Normal handling for the case of faulting in non-tiled buffers */
--static int fault_1d(struct drm_gem_object *obj,
-+static vm_fault_t fault_1d(struct drm_gem_object *obj,
- 		struct vm_area_struct *vma, struct vm_fault *vmf)
- {
- 	struct omap_gem_object *omap_obj = to_omap_bo(obj);
-@@ -392,11 +392,12 @@ static int fault_1d(struct drm_gem_object *obj,
- 	VERB("Inserting %p pfn %lx, pa %lx", (void *)vmf->address,
- 			pfn, pfn << PAGE_SHIFT);
- 
--	return vm_insert_mixed(vma, vmf->address, __pfn_to_pfn_t(pfn, PFN_DEV));
-+	return vmf_insert_mixed(vma, vmf->address,
-+			__pfn_to_pfn_t(pfn, PFN_DEV));
- }
- 
- /* Special handling for the case of faulting in 2d tiled buffers */
--static int fault_2d(struct drm_gem_object *obj,
-+static vm_fault_t fault_2d(struct drm_gem_object *obj,
- 		struct vm_area_struct *vma, struct vm_fault *vmf)
- {
- 	struct omap_gem_object *omap_obj = to_omap_bo(obj);
-@@ -407,7 +408,8 @@ static int fault_2d(struct drm_gem_object *obj,
- 	unsigned long pfn;
- 	pgoff_t pgoff, base_pgoff;
- 	unsigned long vaddr;
--	int i, ret, slots;
-+	int i, err, slots;
-+	vm_fault_t ret;
- 
- 	/*
- 	 * Note the height of the slot is also equal to the number of pages
-@@ -473,9 +475,10 @@ static int fault_2d(struct drm_gem_object *obj,
- 	memset(pages + slots, 0,
- 			sizeof(struct page *) * (n - slots));
- 
--	ret = tiler_pin(entry->block, pages, ARRAY_SIZE(pages), 0, true);
--	if (ret) {
--		dev_err(obj->dev->dev, "failed to pin: %d\n", ret);
-+	err = tiler_pin(entry->block, pages, ARRAY_SIZE(pages), 0, true);
-+	if (err) {
-+		ret = vmf_error(err);
-+		dev_err(obj->dev->dev, "failed to pin: %d\n", err);
- 		return ret;
- 	}
- 
-@@ -485,7 +488,10 @@ static int fault_2d(struct drm_gem_object *obj,
- 			pfn, pfn << PAGE_SHIFT);
- 
- 	for (i = n; i > 0; i--) {
--		vm_insert_mixed(vma, vaddr, __pfn_to_pfn_t(pfn, PFN_DEV));
-+		ret = vmf_insert_mixed(vma,
-+			vaddr, __pfn_to_pfn_t(pfn, PFN_DEV));
-+		if (ret & VM_FAULT_ERROR)
-+			break;
- 		pfn += priv->usergart[fmt].stride_pfn;
- 		vaddr += PAGE_SIZE * m;
- 	}
-@@ -494,7 +500,7 @@ static int fault_2d(struct drm_gem_object *obj,
- 	priv->usergart[fmt].last = (priv->usergart[fmt].last + 1)
- 				 % NUM_USERGART_ENTRIES;
- 
--	return 0;
-+	return ret;
- }
- 
- /**
-@@ -509,14 +515,15 @@ static int fault_2d(struct drm_gem_object *obj,
-  * vma->vm_private_data points to the GEM object that is backing this
-  * mapping.
-  */
--int omap_gem_fault(struct vm_fault *vmf)
-+vm_fault_t omap_gem_fault(struct vm_fault *vmf)
- {
- 	struct vm_area_struct *vma = vmf->vma;
- 	struct drm_gem_object *obj = vma->vm_private_data;
- 	struct omap_gem_object *omap_obj = to_omap_bo(obj);
- 	struct drm_device *dev = obj->dev;
- 	struct page **pages;
--	int ret;
-+	int err;
-+	vm_fault_t ret;
- 
- 	/* Make sure we don't parallel update on a fault, nor move or remove
- 	 * something from beneath our feet
-@@ -524,9 +531,11 @@ int omap_gem_fault(struct vm_fault *vmf)
- 	mutex_lock(&dev->struct_mutex);
- 
- 	/* if a shmem backed object, make sure we have pages attached now */
--	ret = get_pages(obj, &pages);
--	if (ret)
-+	err = get_pages(obj, &pages);
-+	if (err) {
-+		ret = vmf_error(err);
- 		goto fail;
-+	}
- 
- 	/* where should we do corresponding put_pages().. we are mapping
- 	 * the original page, rather than thru a GART, so we can't rely
-@@ -542,21 +551,7 @@ int omap_gem_fault(struct vm_fault *vmf)
- 
- fail:
- 	mutex_unlock(&dev->struct_mutex);
--	switch (ret) {
--	case 0:
--	case -ERESTARTSYS:
--	case -EINTR:
--	case -EBUSY:
--		/*
--		 * EBUSY is ok: this just means that another thread
--		 * already did the job.
--		 */
--		return VM_FAULT_NOPAGE;
--	case -ENOMEM:
--		return VM_FAULT_OOM;
--	default:
--		return VM_FAULT_SIGBUS;
--	}
-+	return ret;
- }
- 
- /** We override mainly to fix up some of the vm mapping flags.. */
-diff --git a/drivers/gpu/drm/omapdrm/omap_gem.h b/drivers/gpu/drm/omapdrm/omap_gem.h
-index a78bde0..c1c45fb 100644
---- a/drivers/gpu/drm/omapdrm/omap_gem.h
-+++ b/drivers/gpu/drm/omapdrm/omap_gem.h
-@@ -21,6 +21,7 @@
- #define __OMAPDRM_GEM_H__
- 
- #include <linux/types.h>
-+#include <linux/mm_types.h>
- 
- enum dma_data_direction;
- 
-@@ -80,7 +81,7 @@ struct dma_buf *omap_gem_prime_export(struct drm_device *dev,
- struct drm_gem_object *omap_gem_prime_import(struct drm_device *dev,
- 		struct dma_buf *buffer);
- 
--int omap_gem_fault(struct vm_fault *vmf);
-+vm_fault_t omap_gem_fault(struct vm_fault *vmf);
- int omap_gem_roll(struct drm_gem_object *obj, u32 roll);
- void omap_gem_cpu_sync_page(struct drm_gem_object *obj, int pgoff);
- void omap_gem_dma_sync_buffer(struct drm_gem_object *obj,
+diff --git a/Documentation/hwmon/peci-cputemp b/Documentation/hwmon/peci-cputemp
+new file mode 100644
+index 000000000000..821a9258f2e6
+--- /dev/null
++++ b/Documentation/hwmon/peci-cputemp
+@@ -0,0 +1,78 @@
++Kernel driver peci-cputemp
++==========================
++
++Supported chips:
++	One of Intel server CPUs listed below which is connected to a PECI bus.
++		* Intel Xeon E5/E7 v3 server processors
++			Intel Xeon E5-14xx v3 family
++			Intel Xeon E5-24xx v3 family
++			Intel Xeon E5-16xx v3 family
++			Intel Xeon E5-26xx v3 family
++			Intel Xeon E5-46xx v3 family
++			Intel Xeon E7-48xx v3 family
++			Intel Xeon E7-88xx v3 family
++		* Intel Xeon E5/E7 v4 server processors
++			Intel Xeon E5-16xx v4 family
++			Intel Xeon E5-26xx v4 family
++			Intel Xeon E5-46xx v4 family
++			Intel Xeon E7-48xx v4 family
++			Intel Xeon E7-88xx v4 family
++		* Intel Xeon Scalable server processors
++			Intel Xeon Bronze family
++			Intel Xeon Silver family
++			Intel Xeon Gold family
++			Intel Xeon Platinum family
++	Addresses scanned: PECI client address 0x30 - 0x37
++	Datasheet: Available from http://www.intel.com/design/literature.htm
++
++Author:
++	Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
++
++Description
++-----------
++
++This driver implements a generic PECI hwmon feature which provides Digital
++Thermal Sensor (DTS) thermal readings of the CPU package and CPU cores that are
++accessible using the PECI Client Command Suite via the processor PECI client.
++
++All temperature values are given in millidegree Celsius and will be measurable
++only when the target CPU is powered on.
++
++sysfs attributes
++----------------
++
++temp1_label		"Die"
++temp1_input		Provides current die temperature of the CPU package.
++temp1_max		Provides thermal control temperature of the CPU package
++			which is also known as Tcontrol.
++temp1_crit		Provides shutdown temperature of the CPU package which
++			is also known as the maximum processor junction
++			temperature, Tjmax or Tprochot.
++temp1_crit_hyst		Provides the hysteresis value from Tcontrol to Tjmax of
++			the CPU package.
++
++temp2_label		"Tcontrol"
++temp2_input		Provides current Tcontrol temperature of the CPU
++			package which is also known as Fan Temperature target.
++			Indicates the relative value from thermal monitor trip
++			temperature at which fans should be engaged.
++temp2_crit		Provides Tcontrol critical value of the CPU package
++			which is same to Tjmax.
++
++temp3_label		"Tthrottle"
++temp3_input		Provides current Tthrottle temperature of the CPU
++			package. Used for throttling temperature. If this value
++			is allowed and lower than Tjmax - the throttle will
++			occur and reported at lower than Tjmax.
++
++temp4_label		"Tjmax"
++temp4_input		Provides the maximum junction temperature, Tjmax of the
++			CPU package.
++
++temp[5-*]_label		Provides string "Core X", where X is resolved core
++			number.
++temp[5-*]_input		Provides current temperature of each core.
++temp[5-*]_max		Provides thermal control temperature of the core.
++temp[5-*]_crit		Provides shutdown temperature of the core.
++temp[5-*]_crit_hyst	Provides the hysteresis value from Tcontrol to Tjmax of
++			the core.
+diff --git a/Documentation/hwmon/peci-dimmtemp b/Documentation/hwmon/peci-dimmtemp
+new file mode 100644
+index 000000000000..c54f2526188c
+--- /dev/null
++++ b/Documentation/hwmon/peci-dimmtemp
+@@ -0,0 +1,50 @@
++Kernel driver peci-dimmtemp
++===========================
++
++Supported chips:
++	One of Intel server CPUs listed below which is connected to a PECI bus.
++		* Intel Xeon E5/E7 v3 server processors
++			Intel Xeon E5-14xx v3 family
++			Intel Xeon E5-24xx v3 family
++			Intel Xeon E5-16xx v3 family
++			Intel Xeon E5-26xx v3 family
++			Intel Xeon E5-46xx v3 family
++			Intel Xeon E7-48xx v3 family
++			Intel Xeon E7-88xx v3 family
++		* Intel Xeon E5/E7 v4 server processors
++			Intel Xeon E5-16xx v4 family
++			Intel Xeon E5-26xx v4 family
++			Intel Xeon E5-46xx v4 family
++			Intel Xeon E7-48xx v4 family
++			Intel Xeon E7-88xx v4 family
++		* Intel Xeon Scalable server processors
++			Intel Xeon Bronze family
++			Intel Xeon Silver family
++			Intel Xeon Gold family
++			Intel Xeon Platinum family
++	Addresses scanned: PECI client address 0x30 - 0x37
++	Datasheet: Available from http://www.intel.com/design/literature.htm
++
++Author:
++	Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
++
++Description
++-----------
++
++This driver implements a generic PECI hwmon feature which provides Digital
++Thermal Sensor (DTS) thermal readings of DIMM components that are accessible
++using the PECI Client Command Suite via the processor PECI client.
++
++All temperature values are given in millidegree Celsius and will be measurable
++only when the target CPU is powered on.
++
++sysfs attributes
++----------------
++
++temp[N]_label		Provides string "DIMM CI", where C is DIMM channel and
++			I is DIMM index of the populated DIMM.
++temp[N]_input		Provides current temperature of the populated DIMM.
++
++Note:
++	DIMM temperature attributes will appear when the client CPU's BIOS
++	completes memory training and testing.
 -- 
-1.9.1
+2.17.0
