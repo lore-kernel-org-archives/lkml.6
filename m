@@ -1,93 +1,38 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1340521-1526937579-2-6455749249306915409
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526937579; b=PJbbbBkT1m/dw9hZunyLl6Htog/zPdpoPtuWMVaekcrk16NiO7
-    xkzorVl5QtSoPfP/2oTLxCyrEYCk9GX6bP8klj92SW7fLpoCvlt3k4Pz2RjF5zSM
-    VisgfxFVqLvu2k0ei5boMI3T0MezfgA+DVWKGduwYLnpRKzNOIhWQs/J7D0UvC4a
-    SZzpq6O3ogKEdJI8soKJdAFT6YUtTFJMJ5ou2+pHJ1IQERtZztGPdbNlc53AkNfM
-    lyk5Zzu+124yNjgYrk3lIxKgRv01YluHi3POAsAH3et5bWxgIj2LlyOPTorNa6Zi
-    Qr+Vu0yx9ldcEOinneJnRR8MGlzI3fwgAOiA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1526937579; bh=3OUR9rnWEvluPkTv7SQeFZ26MbHYKa
-    5VZ0QEGzXzRDM=; b=GaFulzihIrWqq4zWHqLKiTaz4TCLBWU+nP1qsmL+ydQgnk
-    TSEot9ezx7MmJqF4rgUbFJ1SAWUJdTy0b2rkXiW2kp/GuQ/RzfoaO1DrMibwitLk
-    drhmy7zUm43JzSWGCeMX5K6UuY6PaJ+H03at3eckrxwMp3AdDQsCM3X++JJ5igdU
-    6Zv//XG7Q1uhU//zGHvE8YP8Z38weaTEchmuu5c3vpQoO2xi1tlkwgYkH7oG5whi
-    ceOn76Of4omVxEhE/FarUQ4G7vo8dxyyAgP5pfnQ8x9LMwIBn8Tmrd94FFwKUdpP
-    OmSJgeMDdBzrrwD+s3/cE6nr0NyegMqBVz4Ecucg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=nvRR1HdY x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linuxfoundation.org header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=nvRR1HdY x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linuxfoundation.org header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBgFrWkT6ZBE2OloliQcDzwqBC/zsvF/cTUvfp5idM5/i0M14OrEsL/z7ZKekh2WGbh4DAfDU+3AotxgBzEm6YbY7NpQkGd5mknD8paDoGr4dbeCIpb6
-    poYqL3YJisrdbabo1QfVaN93kk9h/rAAyaOXc+nl4DOhzzFcv+mvNcAYyzP7VfPxuFC3hDK7BZSH76n5e7LPEUKwvGMEC3vUXmx7LW9sBqgq6/rOeCaMXgUl
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=iox4zFpeAAAA:8 a=ag1SF4gXAAAA:8
-    a=lUoSDrnz3zN8yKeRpAYA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
-    a=WzC6qhA0u3u7Ye7llzcV:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753115AbeEUVTg (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 21 May 2018 17:19:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34620 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753005AbeEUVTd (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 21 May 2018 17:19:33 -0400
+Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZpwFz/MzObnPnne+XfOIdVidiGy6Mq7k2WyNAqY6EImi3cd7GGJ9aBv8eta+AlvtaOD30Gp
+ARC-Seal: i=1; a=rsa-sha256; t=1526937578; cv=none;
+        d=google.com; s=arc-20160816;
+        b=gLHcv9pOXxWK0FNRBvPpB39PZopMIED9mU6o/+6tJFDxDgRiqjfmvai0bxskQBFTCp
+         ER19OeclU+tcaUp34SwdAIbafxfsU+iacdFQoPopbKVRPBfU8f+sMJ6mdfe8i0ZVEAUz
+         sN3s5c/+o3cBjoDmY/UF7oWt+iPdMby7KwSEZ+pwbI/0PYfE1KanwJFHzOvusHo5nTum
+         JBEDAKZ0oUreaAysk9wATMXac/22m73pTFMMyTjjVXQJEfm8c2kNw0dfuoWNUpJTnfCl
+         eToWsIW3DvoIqEeCU7rn9oErgC32W7vIzr35DLa6IVuc1kmM5sEe2UNIIH+2o1vQP/kr
+         htbg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=4GbtBvYcPnwd0Ai3VicbcGjxb6qW8TgsIIp+7/cQygg=;
+        b=YYp4nKw5niujuQA8RibRqDk3QMBzoIrTSN82FWYo49ekqfsbFhmXpUv5n2o4qPGQK+
+         jD28jvJhEbZxctGgfaCqzelchakefwcuNd6SnURYQudM+gq8Oj+GBFN2t+tC5BFeD7x8
+         An+PiPHux0PhCbklZ1f7HVoDBihN4KEeMUqUuZYRNHB3s9AR2csAaoG64LdCvUnvEo3F
+         zrIU2ih58Fzp3N0TaxvXe7ndWP3Ek0fAQp6THX5zh2PDMGnJYLFlIPrg/uqwlb/rMLvz
+         nj0FOwsGWVMTLIEszrKi3rssWL4pWK0uV8BGVtddVqx0IORSou5guUytRljnzdNMIkJb
+         e+QQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=L0NcJKYP;
+       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=L0NcJKYP;
+       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anand Jain <anand.jain@oracle.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 44/95] btrfs: fix crash when trying to resume balance without the resume flag
-Date: Mon, 21 May 2018 23:11:34 +0200
-Message-Id: <20180521210457.060115712@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Nikolay Borisov <nborisov@suse.com>,
+	David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.14 46/95] btrfs: Fix delalloc inodes invalidation during transaction abort
+Date: Mon, 21 May 2018 23:11:36 +0200
+Message-Id: <20180521210457.347313694@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210447.219380974@linuxfoundation.org>
 References: <20180521210447.219380974@linuxfoundation.org>
@@ -95,9 +40,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1601110098844973821?=
+X-GMAIL-MSGID: =?utf-8?q?1601110098844973821?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -105,57 +51,129 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Anand Jain <anand.jain@oracle.com>
+From: Nikolay Borisov <nborisov@suse.com>
 
-commit 02ee654d3a04563c67bfe658a05384548b9bb105 upstream.
+commit fe816d0f1d4c31c4c31d42ca78a87660565fc800 upstream.
 
-We set the BTRFS_BALANCE_RESUME flag in the btrfs_recover_balance()
-only, which isn't called during the remount. So when resuming from
-the paused balance we hit the bug:
+When a transaction is aborted btrfs_cleanup_transaction is called to
+cleanup all the various in-flight bits and pieces which migth be
+active. One of those is delalloc inodes - inodes which have dirty
+pages which haven't been persisted yet. Currently the process of
+freeing such delalloc inodes in exceptional circumstances such as
+transaction abort boiled down to calling btrfs_invalidate_inodes whose
+sole job is to invalidate the dentries for all inodes related to a
+root. This is in fact wrong and insufficient since such delalloc inodes
+will likely have pending pages or ordered-extents and will be linked to
+the sb->s_inode_list. This means that unmounting a btrfs instance with
+an aborted transaction could potentially lead inodes/their pages
+visible to the system long after their superblock has been freed. This
+in turn leads to a "use-after-free" situation once page shrink is
+triggered. This situation could be simulated by running generic/019
+which would cause such inodes to be left hanging, followed by
+generic/176 which causes memory pressure and page eviction which lead
+to touching the freed super block instance. This situation is
+additionally detected by the unmount code of VFS with the following
+message:
 
- kernel: kernel BUG at fs/btrfs/volumes.c:3890!
- ::
- kernel:  balance_kthread+0x51/0x60 [btrfs]
- kernel:  kthread+0x111/0x130
- ::
- kernel: RIP: btrfs_balance+0x12e1/0x1570 [btrfs] RSP: ffffba7d0090bde8
+"VFS: Busy inodes after unmount of Self-destruct in 5 seconds.  Have a nice day..."
 
-Reproducer:
-  On a mounted filesystem:
+Additionally btrfs hits WARN_ON(!RB_EMPTY_ROOT(&root->inode_tree));
+in free_fs_root for the same reason.
 
-  btrfs balance start --full-balance /btrfs
-  btrfs balance pause /btrfs
-  mount -o remount,ro /dev/sdb /btrfs
-  mount -o remount,rw /dev/sdb /btrfs
+This patch aims to rectify the sitaution by doing the following:
 
-To fix this set the BTRFS_BALANCE_RESUME flag in
-btrfs_resume_balance_async().
+1. Change btrfs_destroy_delalloc_inodes so that it calls
+invalidate_inode_pages2 for every inode on the delalloc list, this
+ensures that all the pages of the inode are released. This function
+boils down to calling btrfs_releasepage. During test I observed cases
+where inodes on the delalloc list were having an i_count of 0, so this
+necessitates using igrab to be sure we are working on a non-freed inode.
 
-CC: stable@vger.kernel.org # 4.4+
-Signed-off-by: Anand Jain <anand.jain@oracle.com>
+2. Since calling btrfs_releasepage might queue delayed iputs move the
+call out to btrfs_cleanup_transaction in btrfs_error_commit_super before
+calling run_delayed_iputs for the last time. This is necessary to ensure
+that delayed iputs are run.
+
+Note: this patch is tagged for 4.14 stable but the fix applies to older
+versions too but needs to be backported manually due to conflicts.
+
+CC: stable@vger.kernel.org # 4.14.x: 2b8773313494: btrfs: Split btrfs_del_delalloc_inode into 2 functions
+CC: stable@vger.kernel.org # 4.14.x
+Signed-off-by: Nikolay Borisov <nborisov@suse.com>
 Reviewed-by: David Sterba <dsterba@suse.com>
+[ add comment to igrab ]
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/volumes.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ fs/btrfs/disk-io.c |   26 +++++++++++++++-----------
+ 1 file changed, 15 insertions(+), 11 deletions(-)
 
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -3964,6 +3964,15 @@ int btrfs_resume_balance_async(struct bt
- 		return 0;
- 	}
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -3905,6 +3905,7 @@ void close_ctree(struct btrfs_fs_info *f
+ 	set_bit(BTRFS_FS_CLOSING_DONE, &fs_info->flags);
  
-+	/*
-+	 * A ro->rw remount sequence should continue with the paused balance
-+	 * regardless of who pauses it, system or the user as of now, so set
-+	 * the resume flag.
-+	 */
-+	spin_lock(&fs_info->balance_lock);
-+	fs_info->balance_ctl->flags |= BTRFS_BALANCE_RESUME;
-+	spin_unlock(&fs_info->balance_lock);
+ 	btrfs_free_qgroup_config(fs_info);
++	ASSERT(list_empty(&fs_info->delalloc_roots));
+ 
+ 	if (percpu_counter_sum(&fs_info->delalloc_bytes)) {
+ 		btrfs_info(fs_info, "at unmount delalloc count %lld",
+@@ -4203,15 +4204,15 @@ static int btrfs_check_super_valid(struc
+ 
+ static void btrfs_error_commit_super(struct btrfs_fs_info *fs_info)
+ {
++	/* cleanup FS via transaction */
++	btrfs_cleanup_transaction(fs_info);
 +
- 	tsk = kthread_run(balance_kthread, fs_info, "btrfs-balance");
- 	return PTR_ERR_OR_ZERO(tsk);
+ 	mutex_lock(&fs_info->cleaner_mutex);
+ 	btrfs_run_delayed_iputs(fs_info);
+ 	mutex_unlock(&fs_info->cleaner_mutex);
+ 
+ 	down_write(&fs_info->cleanup_work_sem);
+ 	up_write(&fs_info->cleanup_work_sem);
+-
+-	/* cleanup FS via transaction */
+-	btrfs_cleanup_transaction(fs_info);
  }
+ 
+ static void btrfs_destroy_ordered_extents(struct btrfs_root *root)
+@@ -4334,19 +4335,23 @@ static void btrfs_destroy_delalloc_inode
+ 	list_splice_init(&root->delalloc_inodes, &splice);
+ 
+ 	while (!list_empty(&splice)) {
++		struct inode *inode = NULL;
+ 		btrfs_inode = list_first_entry(&splice, struct btrfs_inode,
+ 					       delalloc_inodes);
+-
+-		list_del_init(&btrfs_inode->delalloc_inodes);
+-		clear_bit(BTRFS_INODE_IN_DELALLOC_LIST,
+-			  &btrfs_inode->runtime_flags);
++		__btrfs_del_delalloc_inode(root, btrfs_inode);
+ 		spin_unlock(&root->delalloc_lock);
+ 
+-		btrfs_invalidate_inodes(btrfs_inode->root);
+-
++		/*
++		 * Make sure we get a live inode and that it'll not disappear
++		 * meanwhile.
++		 */
++		inode = igrab(&btrfs_inode->vfs_inode);
++		if (inode) {
++			invalidate_inode_pages2(inode->i_mapping);
++			iput(inode);
++		}
+ 		spin_lock(&root->delalloc_lock);
+ 	}
+-
+ 	spin_unlock(&root->delalloc_lock);
+ }
+ 
+@@ -4362,7 +4367,6 @@ static void btrfs_destroy_all_delalloc_i
+ 	while (!list_empty(&splice)) {
+ 		root = list_first_entry(&splice, struct btrfs_root,
+ 					 delalloc_root);
+-		list_del_init(&root->delalloc_root);
+ 		root = btrfs_grab_fs_root(root);
+ 		BUG_ON(!root);
+ 		spin_unlock(&fs_info->delalloc_root_lock);
