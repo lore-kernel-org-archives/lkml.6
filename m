@@ -1,41 +1,38 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpm81JafBlEoANxGLLny7Op7S9Oqoh6MQZzgVN46kjbI2Od0MglPALoMF2f0eaazdzTZggO
-ARC-Seal: i=1; a=rsa-sha256; t=1526937776; cv=none;
+X-Google-Smtp-Source: AB8JxZo9/GC/ooIMFrDGAl9ka8FxEHExBEC4s322ZzmoRydmUlMCl2sohEnYE4O7qZL6ATF+nKD4
+ARC-Seal: i=1; a=rsa-sha256; t=1526937773; cv=none;
         d=google.com; s=arc-20160816;
-        b=RNDsEWwu9kDxrGQVfUv4qnJ/URX98z7PIeyitwkg2M1x0AKGx5jxF2ZO4MVkQ9l0fW
-         a6LyZY6gKr6WlyP6jkYs4Sw4l8RfMRPt+aPWw3np+Bs+l66Zrq3VCyuiEvBK8jXt62U+
-         TIxEZGci5J0Gsa+z7gxkdPNTc9IHDU1aK+opkE1ofL+88Wuii5ChxRzzzKulPCEwCPbQ
-         U5Yk5ydhurz5Zprdx4WQAJKGd+1FBv4v+fRCsis/9+4dsu2tqiKGtE0hyixAA31kj7Zk
-         ab+uSGk42HVIUDx9WK3Zr8RsaI3+iQdwX2rMIOhcv4j7WSmlIDyKEIfmK0UKkFJBGQnn
-         9FBg==
+        b=dErpT2wlr7XZNs1RZwcjEpXlbCYuiSDacFDB7eMHQgVN9ossASixjr/Ny/mhux0ndu
+         4ghK9e1RaRERWinp31qdE6l2W5NnSbuMABKaqHk22C9VgWwAX10Eom8x052AduPsQ6QK
+         7A8RX05zqk6IM3XqLbgjwsjzkA+38GAQ7Fj+U3ZNWEaV+xezQ6TgR91zGRXHW8SZ/Xvt
+         WIWepGK1BbhVdFzb9v/MqsJU3Ix9rX/QEQyR+HNwLxpx+eeORMZywdl5beqQWlbQFqm+
+         zhtjfDZrvolp0MEl/+cO69CVXdg23RCv+B1XpAlUkmKtDJ8BmjttX3RorgJvQrq0G2Wy
+         7SIA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=tUuHKByBXiaqRSPHduhlUz9RuLqk8Jo337xoXkunP/g=;
-        b=poGColEDSX1pmWgBREELnlxtxMUMiERRTPJ5bkBvOw5VN+aZJimw8ejpUnJzGnH7MP
-         Gxh2oEHlZQzZ3T2V/E2xNbUzfK2eSI6nuc/8oaPfjFuCKV3beTBfKOQ1DWj+tFI5xFOo
-         ETKL5KkHeBh/vNYKRZTO0n+YSV47KHP5gmBPqf+HMySeyLpzWEj2yrbIqkqHozYcM0OY
-         cOPHkAr8tFnKZ4fnoyHL0vEhIB8nm10fhP+AKWGiOISUetrLKai3x36hFLddMhoCn+Le
-         QZ23RKGANbIhGeYfVdJCYbv/P3k1QTeAG1F7Tb6yaok32Ng278FIjuxNDnMjvBL0KnR4
-         CibA==
+        bh=id7i4Zn53uZdjAfMEkOclnchlFoWEYALAD1jRP4ns10=;
+        b=KKXGkQ9yCAnxH99aBzc4DHoLNtPOqVSOXMQIkzMvDQozhlvHLdCfs4gyug9PSDzrhE
+         /aOb33QfoIwAtW1dT0E44vb3rKQ62JHr9YgjS1v3wCCjljVp3ifWpLn/2FxDGualOcZZ
+         yquE/myEVxoHcQ2NV79snlGaKDIS5SDr5jQF87nn8HjHTCshpWVFWcqgyop3ZHfdZ+43
+         3p0lh3ti3wsVvi68m+Kp9BfkUbfD/yMf8Ti0o2365/3xHMjEM+qgYCz/HfgxlXo2kBJr
+         ngkjYoi1Hm1twVURZuVSormF9wBCtE8NPZNuxG91ztK0XRiXDYgFO7527r8D/uImiXRw
+         U5vw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=YADzj9OL;
+       dkim=pass header.i=@kernel.org header.s=default header.b=t83VfbfW;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=YADzj9OL;
+       dkim=pass header.i=@kernel.org header.s=default header.b=t83VfbfW;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Pierre Morel <pmorel@linux.vnet.ibm.com>,
-	Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>,
-	Halil Pasic <pasic@linux.vnet.ibm.com>,
-	Cornelia Huck <cohuck@redhat.com>,
-	Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.16 021/110] vfio: ccw: fix cleanup if cp_prefetch fails
-Date: Mon, 21 May 2018 23:11:18 +0200
-Message-Id: <20180521210505.740716749@linuxfoundation.org>
+	Gabriel Craciunescu <nix.or.die@gmail.com>,
+	Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 4.16 020/110] hwmon: (k10temp) Use API function to access System Management Network
+Date: Mon, 21 May 2018 23:11:17 +0200
+Message-Id: <20180521210505.656961106@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -45,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601110010443793395?=
-X-GMAIL-MSGID: =?utf-8?q?1601110305640402598?=
+X-GMAIL-THRID: =?utf-8?q?1601110303218100056?=
+X-GMAIL-MSGID: =?utf-8?q?1601110303218100056?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,67 +51,79 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Halil Pasic <pasic@linux.vnet.ibm.com>
+From: Guenter Roeck <linux@roeck-us.net>
 
-commit d66a7355717ec903d455277a550d930ba13df4a8 upstream.
+commit 3b031622f598481970400519bd5abc2a16708282 upstream.
 
-If the translation of a channel program fails, we may end up attempting
-to clean up (free, unpin) stuff that never got translated (and allocated,
-pinned) in the first place.
+The SMN (System Management Network) on Family 17h AMD CPUs is also accessed
+from other drivers, specifically EDAC. Accessing it directly is racy.
+On top of that, accessing the SMN through root bridge 00:00 is wrong on
+multi-die CPUs and may result in reading the temperature from the wrong
+die. Use available API functions to fix the problem.
 
-By adjusting the lengths of the chains accordingly (so the element that
-failed, and all subsequent elements are excluded) cleanup activities
-based on false assumptions can be avoided.
+For this to work, add dependency on AMD_NB. Also change the Raven Ridge
+PCI device ID to point to Data Fabric Function 3, since this ID is used
+by the API functions to find the CPU node.
 
-Let's make sure cp_free works properly after cp_prefetch returns with an
-error by setting ch_len of a ccw chain to the number of the translated
-CCWs on that chain.
-
-Cc: stable@vger.kernel.org #v4.12+
-Acked-by: Pierre Morel <pmorel@linux.vnet.ibm.com>
-Reviewed-by: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
-Signed-off-by: Halil Pasic <pasic@linux.vnet.ibm.com>
-Signed-off-by: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
-Message-Id: <20180423110113.59385-2-bjsdjshi@linux.vnet.ibm.com>
-[CH: fixed typos]
-Signed-off-by: Cornelia Huck <cohuck@redhat.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: stable@vger.kernel.org # v4.16+
+Tested-by: Gabriel Craciunescu <nix.or.die@gmail.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/s390/cio/vfio_ccw_cp.c |   13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ drivers/hwmon/Kconfig   |    2 +-
+ drivers/hwmon/k10temp.c |   11 ++++++-----
+ 2 files changed, 7 insertions(+), 6 deletions(-)
 
---- a/drivers/s390/cio/vfio_ccw_cp.c
-+++ b/drivers/s390/cio/vfio_ccw_cp.c
-@@ -715,6 +715,10 @@ void cp_free(struct channel_program *cp)
-  * and stores the result to ccwchain list. @cp must have been
-  * initialized by a previous call with cp_init(). Otherwise, undefined
-  * behavior occurs.
-+ * For each chain composing the channel program:
-+ * - On entry ch_len holds the count of CCWs to be translated.
-+ * - On exit ch_len is adjusted to the count of successfully translated CCWs.
-+ * This allows cp_free to find in ch_len the count of CCWs to free in a chain.
-  *
-  * The S/390 CCW Translation APIS (prefixed by 'cp_') are introduced
-  * as helpers to do ccw chain translation inside the kernel. Basically
-@@ -749,11 +753,18 @@ int cp_prefetch(struct channel_program *
- 		for (idx = 0; idx < len; idx++) {
- 			ret = ccwchain_fetch_one(chain, idx, cp);
- 			if (ret)
--				return ret;
-+				goto out_err;
- 		}
- 	}
+--- a/drivers/hwmon/Kconfig
++++ b/drivers/hwmon/Kconfig
+@@ -272,7 +272,7 @@ config SENSORS_K8TEMP
  
- 	return 0;
-+out_err:
-+	/* Only cleanup the chain elements that were actually translated. */
-+	chain->ch_len = idx;
-+	list_for_each_entry_continue(chain, &cp->ccwchain_list, next) {
-+		chain->ch_len = 0;
-+	}
-+	return ret;
+ config SENSORS_K10TEMP
+ 	tristate "AMD Family 10h+ temperature sensor"
+-	depends on X86 && PCI
++	depends on X86 && PCI && AMD_NB
+ 	help
+ 	  If you say yes here you get support for the temperature
+ 	  sensor(s) inside your CPU. Supported are later revisions of
+--- a/drivers/hwmon/k10temp.c
++++ b/drivers/hwmon/k10temp.c
+@@ -23,6 +23,7 @@
+ #include <linux/init.h>
+ #include <linux/module.h>
+ #include <linux/pci.h>
++#include <asm/amd_nb.h>
+ #include <asm/processor.h>
+ 
+ MODULE_DESCRIPTION("AMD Family 10h+ CPU core temperature monitor");
+@@ -40,8 +41,8 @@ static DEFINE_MUTEX(nb_smu_ind_mutex);
+ #define PCI_DEVICE_ID_AMD_17H_DF_F3	0x1463
+ #endif
+ 
+-#ifndef PCI_DEVICE_ID_AMD_17H_RR_NB
+-#define PCI_DEVICE_ID_AMD_17H_RR_NB	0x15d0
++#ifndef PCI_DEVICE_ID_AMD_17H_M10H_DF_F3
++#define PCI_DEVICE_ID_AMD_17H_M10H_DF_F3	0x15eb
+ #endif
+ 
+ /* CPUID function 0x80000001, ebx */
+@@ -136,8 +137,8 @@ static void read_tempreg_nb_f15(struct p
+ 
+ static void read_tempreg_nb_f17(struct pci_dev *pdev, u32 *regval)
+ {
+-	amd_nb_index_read(pdev, PCI_DEVFN(0, 0), 0x60,
+-			  F17H_M01H_REPORTED_TEMP_CTRL_OFFSET, regval);
++	amd_smn_read(amd_pci_dev_to_node_id(pdev),
++		     F17H_M01H_REPORTED_TEMP_CTRL_OFFSET, regval);
  }
  
- /**
+ static ssize_t temp1_input_show(struct device *dev,
+@@ -322,7 +323,7 @@ static const struct pci_device_id k10tem
+ 	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_16H_NB_F3) },
+ 	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_16H_M30H_NB_F3) },
+ 	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_17H_DF_F3) },
+-	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_17H_RR_NB) },
++	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_17H_M10H_DF_F3) },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(pci, k10temp_id_table);
