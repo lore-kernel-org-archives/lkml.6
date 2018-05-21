@@ -1,164 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753231AbeEURNJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 13:13:09 -0400
-Received: from foss.arm.com ([217.140.101.70]:53920 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753082AbeEURNF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 13:13:05 -0400
-Date: Mon, 21 May 2018 18:12:59 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        akpm@linux-foundation.org, will.deacon@arm.com,
-        torvalds@linux-foundation.org, paulmck@linux.vnet.ibm.com,
-        tglx@linutronix.de, hpa@zytor.com, linux-tip-commits@vger.kernel.org
-Subject: Re: [tip:locking/core] locking/atomics: Simplify the op definitions
- in atomic.h some more
-Message-ID: <20180521171259.h6xsenh57zbumcox@lakrids.cambridge.arm.com>
-References: <20180505083635.622xmcvb42dw5xxh@gmail.com>
- <tip-87d655a48dfe74293f72dc001ed042142cf00d44@git.kernel.org>
- <20180509073327.GE12217@hirez.programming.kicks-ass.net>
- <20180515083556.GA30420@gmail.com>
- <20180515114144.GX12217@hirez.programming.kicks-ass.net>
- <20180515154333.bszh4nuowhocozuc@lakrids.cambridge.arm.com>
- <20180515171021.GI12217@hirez.programming.kicks-ass.net>
- <20180515175307.m4xbkbicdrzo4qhb@lakrids.cambridge.arm.com>
- <20180515181136.GR12217@hirez.programming.kicks-ass.net>
+        id S1753246AbeEURPC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 13:15:02 -0400
+Received: from mail-wr0-f177.google.com ([209.85.128.177]:42145 "EHLO
+        mail-wr0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752945AbeEURO6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 13:14:58 -0400
+X-Google-Smtp-Source: AB8JxZpAlYJ6X7XYzbUzuTb8TJr0tkdIjTMtE0OQphlvlqLZXq4KcEwJGvAJVdGdz4THf9bFpuJ5BGxQYJEpJTBiuxc=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180515181136.GR12217@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180521090351.GA1266@leoy-ThinkPad-X240s>
+References: <CALAqxLX5qPq_5CQwubzk5hiL3kkes7nK9NGqtnyddXKfyaJKTg@mail.gmail.com>
+ <5B02847C.3000102@hisilicon.com> <20180521090351.GA1266@leoy-ThinkPad-X240s>
+From: John Stultz <john.stultz@linaro.org>
+Date: Mon, 21 May 2018 10:14:55 -0700
+Message-ID: <CALAqxLWu8E16ZyraPaap6w3SVbb2ByKWB6HAcALQ9xWrXw9V+A@mail.gmail.com>
+Subject: Re: REGRESSION: HiKey eMMC corruption
+To: Leo Yan <leo.yan@linaro.org>
+Cc: Wei Xu <xuwei5@hisilicon.com>, Ryan Grachek <ryan@edited.us>,
+        Arnd Bergmann <arnd@arndb.de>, Guodong Xu <guodong.xu@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        YongQin Liu <yongqin.liu@linaro.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 08:11:36PM +0200, Peter Zijlstra wrote:
-> On Tue, May 15, 2018 at 06:53:08PM +0100, Mark Rutland wrote:
-> > On Tue, May 15, 2018 at 07:10:21PM +0200, Peter Zijlstra wrote:
-> > > On Tue, May 15, 2018 at 04:43:33PM +0100, Mark Rutland wrote:
-> > > > I *think* the table can encode enough info to generate atomic-long.h,
-> > > > atomic-instrumented.h, and the atomic.h ordering fallbacks. I'll need to
-> > > > flesh out the table and check that we don't end up clashing with
-> > > > some of the regular fallbacks.
-> > > 
-> > > Yes, details details ;-)
-> > > 
-> > > > # name	meta	args...
-> > > > #
-> > > > # Where meta contains a string of:
-> > > > # * B - bool: returns bool, fully ordered
-> > > > # * V - void: returns void, fully ordered
-> > > 
-> > > void retuns are relaxed
-> > 
-> > How about:
-> > 
-> >   V - void: returns void, no ordering variants (implicitly relaxed)
-> 
-> Works for me.
-> 
-> > > > # * I - int: returns base type, all orderings
-> > > > # * R - return: returns base type, all orderings
-> > > > # * F - fetch: returns base type, all orderings
-> > > > # * T - try: returns bool, all orderings
-> > > 
-> > > Little more verbose than mine, I think we can get there with X and XB
-> > > instead of I and T, but whatever :-)
-> > 
-> > Mhmm. I found it easier to do switch-like things this way, but it works
-> > regardless.
-> 
-> I'm a minimalist, but yeah whatever ;-)
-> 
-> > > > # Where args contains list of type[:name], where type is:
-> > > > # * v - pointer to atomic base type (atomic or atomic64)
-> > > > # * i - base type (int or long)
-> > > > # * I - pointer to base type (int or long)
-> > > > #
-> > > > add		VRF	i	v
-> > > > sub		VRF	i	v
-> > > > inc		VRF	v
-> > > > dec		VRF	v
-> > > > or		VF	i	v
-> > > > and		VF	i	v
-> > > > andnot		VF	i	v
-> > > > xor		VF	i	v
-> > > > xchg		I	v	i
-> > > > cmpxchg		I	v	i:old	i:new
-> > > > try_cmpxchg	T	v	I:old	i:new
-> > > > add_and_test	B	i	v
-> > > > sub_and_test	B	i	v
-> > > > dec_and_test	B	v
-> > > > inc_and_test	B	v
-> 
-> we might also want:
-> 
-> set		V	v	i
-> set_release	V	v	i
-> read		I	v
-> read_acquire	I	v
+On Mon, May 21, 2018 at 2:03 AM, Leo Yan <leo.yan@linaro.org> wrote:
+> Hi Wei, John,
+>
+> On Mon, May 21, 2018 at 09:34:04AM +0100, Wei Xu wrote:
+>> Hi John,
+>>
+>> On 2018/5/18 23:59, John Stultz wrote:
+>> > The last few months have been busy and I've not been ontop of my
+>> > upstream testing as well as I'd like, but today I did manage to chase
+>> > down an issue I've been seeing since 4.17-rc1 on the HiKey board,
+>> > which was causing emmc corruption and stopping the board from booting.
+>> >
+>> > Symptoms usually looked like:
+>> > [    1.690448] mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot
+>> > req 400000Hz, actual 400000HZ div = 31)
+>> > ...
+>> > [    1.777288] mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot
+>> > req 150000000Hz, actual 148800000HZ div = 0)
+>> > [    1.777760] mmc0: new HS200 MMC card at address 0001
+>> > ...
+>> > [   12.214381] dwmmc_k3 f723d000.dwmmc0: Unexpected command timeout, state 3
+>> > [   12.457420] mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot
+>> > req 400000Hz, actual 400000HZ div = 31)
+>> > [   12.536676] mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot
+>> > req 150000000Hz, actual 148800000HZ div = 0)
+>> > [   12.616827] mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot
+>> > req 400000Hz, actual 400000HZ div = 31)
+>> > [   12.695742] mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot
+>> > req 150000000Hz, actual 148800000HZ div = 0)
+>> > [   12.772067] mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot
+>> > req 400000Hz, actual 400000HZ div = 31)
+>> > [   12.850429] mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot
+>> > req 150000000Hz, actual 148800000HZ div = 0)
+>> > [   12.863384] print_req_error: I/O error, dev mmcblk0, sector 8810504
+>> > [   12.869778] Aborting journal on device mmcblk0p10-8.
+>> > [   12.887900] mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot
+>> > req 400000Hz, actual 400000HZ div = 31)
+>> > [   12.967509] mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot
+>> > req 150000000Hz, actual 148800000HZ div = 0)
+>> > [   13.130182] mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot
+>> > req 400000Hz, actual 400000HZ div = 31)
+>> > [   13.209438] mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot
+>> > req 150000000Hz, actual 148800000HZ div = 0)
+>> > [   13.302085] mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot
+>> > req 400000Hz, actual 400000HZ div = 31)
+>> > [   13.380462] mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot
+>> > req 150000000Hz, actual 148800000HZ div = 0)
+>> > [   13.494539] mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot
+>> > req 400000Hz, actual 400000HZ div = 31)
+>> > [   13.571420] mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot
+>> > req 150000000Hz, actual 148800000HZ div = 0)
+>> > [   13.640817] EXT4-fs error (device mmcblk0p10):
+>> > ext4_journal_check_start:61: Detected aborted journal
+>> > [   13.650043] EXT4-fs (mmcblk0p10): Remounting filesystem read-only
+>> >
+>> > And quite often this would result in a disk that wouldn't properly
+>> > boot even with older kernels.
+>> >
+>> > I've narrowed the issue down to the following change:
+>> > abd7d0972a192 ("arm64: dts: hikey: Enable HS200 mode on eMMC")
+>> >
+>> > Reverting this change seems to make things work reliably for me.
+>>
+>> Thanks to report this!
+>> Let me check with Leo and Guodong to know which property changing
+>> this is caused by.
+>>
+>> Hi Leo and Guodong,
+>>
+>> Can you help to confirm the commit abd7d0972a192?
+>> From the log it seemed to cause by the property "max-frequency".
+>
+> The commit abd7d0972a192 ("arm64: dts: hikey: Enable HS200 mode on
+> eMMC") can work well on my Hikey620 board, my Hikey620 board is
+> Lemaker version with 8GB Samsung emmc flash.
+>
+> John, are you using different Hikey manufacturing version?
 
-Indeed!
+No, its a standard 8gb version.  Later today I'll try to narrow down
+if only part of the dts changes can be reverted.
 
-I concurrently fiddled with this and came to the below. I special-cased
-set and read for the purpose of preserving the acquire/release semantics
-in the meta table, but either way works.
-
-----
-# name	meta	args...
-#
-# Where meta contains a string of variants to generate.
-# Upper-case implies _{acquire,release,relaxed} variants.
-# Valid meta values are:
-# * B/b	- bool: returns bool
-# * v	- void: returns void
-# * I/i	- int: returns base type
-# * R	- return: returns base type (has _return variants)
-# * F	- fetch: returns base type (has fetch_ variants)
-# * l	- load: returns base type (has _acquire order variant)
-# * s	- store: returns void (has _release order variant)
-#
-# Where args contains list of type[:name], where type is:
-# * cv	- const pointer to atomic base type (atomic_t/atomic64_t/atomic_long_t)
-# * v	- pointer to atomic base type (atomic_t/atomic64_t/atomic_long_t)
-# * i	- base type (int/s64/long)
-# * I	- pointer to base type (int/s64/long)
-#
-read		l	cv
-set		s	v	i
-add		vRF	i	v
-sub		vRF	i	v
-inc		vRF	v
-dec		vRF	v
-and		vF	i	v
-andnot		vF	i	v
-or		vF	i	v
-xor		vF	i	v
-xchg		I	v	i
-cmpxchg		I	v	i:old	i:new
-try_cmpxchg	B	v	I:old	i:new
-sub_and_test	b	i	v
-dec_and_test	b	v
-inc_and_test	b	v
-add_negative	i	i	v
-add_unless	i	v	i:a	i:u
-inc_not_zero	i	v
-----
-
-... which seems to be sufficient to give me a working atomic-long.h
-using [1,2].
-
-I have *most* of the atomic.h ordering variant generation, and most of
-atomic-instrumented.h, modulo a few special cases to be handled.
-
-I'm also not sure which functions are intended to be mandatory. I had
-hoped I could just wrap every atomic_foo in an ifdef, but not all arches
-have a #define for all functions, so that needs to be handled somehow.
-
-Thanks,
-Mark.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git/commit/?h=atomics/generated&id=6b44ecd77dbb7c3e518260d2e223a29c64c85740
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git/commit/?h=atomics/generated&id=432d8259040a67b7234c869c9298d042515958a2
+thanks
+-john
