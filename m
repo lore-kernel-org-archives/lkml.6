@@ -1,80 +1,139 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751862AbeEUBE1 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 21:04:27 -0400
-Received: from icp-osb-irony-out1.external.iinet.net.au ([203.59.1.210]:49326
-        "EHLO icp-osb-irony-out1.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751109AbeEUBEZ (ORCPT
+        id S1752308AbeEUBPm (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 21:15:42 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:44250 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751500AbeEUBPj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 21:04:25 -0400
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2BnCgApGgJb/+U/0XZaHgEGDINDgV4og?=
- =?us-ascii?q?3SUfEYBAQEBAQaBBzR8k0qBZB4YAYRAghMhNxUBAgEBAQEBAQJsKIVSVigBDAI?=
- =?us-ascii?q?YDgJJFhOFFgylU4IcGgKIIYIPgQmHLIEMgQeBDy+HHByDGIJUAoVAhmBjhAeHQ?=
- =?us-ascii?q?gmLJIMzgTeDbYJQfoQKASuRcTIigVJNLgqCfpBbMjB6AQGPKAEB?=
-X-IPAS-Result: =?us-ascii?q?A2BnCgApGgJb/+U/0XZaHgEGDINDgV4og3SUfEYBAQEBAQa?=
- =?us-ascii?q?BBzR8k0qBZB4YAYRAghMhNxUBAgEBAQEBAQJsKIVSVigBDAIYDgJJFhOFFgylU?=
- =?us-ascii?q?4IcGgKIIYIPgQmHLIEMgQeBDy+HHByDGIJUAoVAhmBjhAeHQgmLJIMzgTeDbYJ?=
- =?us-ascii?q?QfoQKASuRcTIigVJNLgqCfpBbMjB6AQGPKAEB?=
-X-IronPort-AV: E=Sophos;i="5.49,425,1520870400";
-   d="scan'208";a="99700747"
-Subject: [PATCH] autofs - make autofs4 Kconfig depend on AUTOFS_FS
-From: Ian Kent <raven@themaw.net>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        autofs mailing list <autofs@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date: Mon, 21 May 2018 09:04:18 +0800
-Message-ID: <152686465885.5980.4013776735694914550.stgit@pluto.themaw.net>
-User-Agent: StGit/0.17.1-dirty
+        Sun, 20 May 2018 21:15:39 -0400
+X-Google-Smtp-Source: AB8JxZo4clzpQqrwhtLe3zr+Gz4OpSCyxoNkwXkD/WuN7Q3WUggdE2kyVdS4epGS1smXYmGpbtjCx+8vFAsSLDiizYY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAKTKpr4skf3=Aw1YJNPppSjUT7w7_CF6QhefeHZDQXzENCfm5g@mail.gmail.com>
+References: <20180419171234.11053-1-ganapatrao.kulkarni@cavium.com>
+ <c6c3655b-cef2-1112-e8a7-79c99f9ddac6@arm.com> <CAKTKpr67gqCK5y6atsterc7kCAg9fK_NKx2yMD3OjY+1L=j0sQ@mail.gmail.com>
+ <CAKTKpr4skf3=Aw1YJNPppSjUT7w7_CF6QhefeHZDQXzENCfm5g@mail.gmail.com>
+From: Ganapatrao Kulkarni <gklkml16@gmail.com>
+Date: Mon, 21 May 2018 06:45:38 +0530
+Message-ID: <CAKTKpr7BmaR-rwqf=z8JiNpaoQNhpSXuUp8sZogUgSLpfcCe0A@mail.gmail.com>
+Subject: Re: [PATCH] iommu/iova: Update cached node pointer when current node
+ fails to get any free IOVA
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
+        Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>, tomasz.nowicki@cavium.com,
+        jnair@caviumnetworks.com, Robert Richter <Robert.Richter@cavium.com>,
+        Vadim.Lomovtsev@cavium.com, Jan.Glauber@cavium.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Setting AUTOFS_FS and AUTOFS4_FS to y or m results in a compile
-failure.
+On Thu, Apr 26, 2018 at 3:15 PM, Ganapatrao Kulkarni <gklkml16@gmail.com> wrote:
+> Hi Robin,
+>
+> On Mon, Apr 23, 2018 at 11:11 PM, Ganapatrao Kulkarni
+> <gklkml16@gmail.com> wrote:
+>> On Mon, Apr 23, 2018 at 10:07 PM, Robin Murphy <robin.murphy@arm.com> wrote:
+>>> On 19/04/18 18:12, Ganapatrao Kulkarni wrote:
+>>>>
+>>>> The performance drop is observed with long hours iperf testing using 40G
+>>>> cards. This is mainly due to long iterations in finding the free iova
+>>>> range in 32bit address space.
+>>>>
+>>>> In current implementation for 64bit PCI devices, there is always first
+>>>> attempt to allocate iova from 32bit(SAC preferred over DAC) address
+>>>> range. Once we run out 32bit range, there is allocation from higher range,
+>>>> however due to cached32_node optimization it does not suppose to be
+>>>> painful. cached32_node always points to recently allocated 32-bit node.
+>>>> When address range is full, it will be pointing to last allocated node
+>>>> (leaf node), so walking rbtree to find the available range is not
+>>>> expensive affair. However this optimization does not behave well when
+>>>> one of the middle node is freed. In that case cached32_node is updated
+>>>> to point to next iova range. The next iova allocation will consume free
+>>>> range and again update cached32_node to itself. From now on, walking
+>>>> over 32-bit range is more expensive.
+>>>>
+>>>> This patch adds fix to update cached node to leaf node when there are no
+>>>> iova free range left, which avoids unnecessary long iterations.
+>>>
+>>>
+>>> The only trouble with this is that "allocation failed" doesn't uniquely mean
+>>> "space full". Say that after some time the 32-bit space ends up empty except
+>>> for one page at 0x1000 and one at 0x80000000, then somebody tries to
+>>> allocate 2GB. If we move the cached node down to the leftmost entry when
+>>> that fails, all subsequent allocation attempts are now going to fail despite
+>>> the space being 99.9999% free!
+>>>
+>>> I can see a couple of ways to solve that general problem of free space above
+>>> the cached node getting lost, but neither of them helps with the case where
+>>> there is genuinely insufficient space (and if anything would make it even
+>>> slower). In terms of the optimisation you want here, i.e. fail fast when an
+>>> allocation cannot possibly succeed, the only reliable idea which comes to
+>>> mind is free-PFN accounting. I might give that a go myself to see how ugly
+>>> it looks.
+>
+> For this testing, dual port intel 40G card(XL710) used and both ports
+> were connected in loop-back. Ran iperf server and clients on both
+> ports(used NAT to route packets out on intended ports).There were 10
+> iperf clients invoked every 60 seconds in loop for hours for each
+> port. Initially the performance on both ports is seen close to line
+> rate, however after test ran about 4 to 6 hours, the performance
+> started dropping  to very low (to few hundred Mbps) on both
+> connections.
+>
+> IMO,  this is common bug and should happen on any other platforms too
+> and needs to be fixed at the earliest.
+> Please let me know if you have better way to fix this,  i am happy to
+> test your patch!
 
-It isn't possible to unset one if the other is set because it
-introduces a circular dependency.
-
-But adding "depends on AUTOFS_FS = n && AUTOFS_FS != m" will make
-autofs4 appear under the autofs entry which should call attention
-to it. It also results in AUTOFS4_FS being removed from .config
-for any setting of AUTOFS_FS except n.
-
-Adding a "NOTE" to the AUTOFS4_FS help text will hopefully raise
-awareness of the change to smooth the transition.
-
-Signed-off-by: Ian Kent <raven@themaw.net>
-Cc: Randy Dunlap <rdunlap@infradead.org>
----
- fs/autofs4/Kconfig |    8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/fs/autofs4/Kconfig b/fs/autofs4/Kconfig
-index 53bc592a250d..2c2fdf989f90 100644
---- a/fs/autofs4/Kconfig
-+++ b/fs/autofs4/Kconfig
-@@ -1,6 +1,7 @@
- config AUTOFS4_FS
- 	tristate "Kernel automounter version 4 support (also supports v3 and v5)"
- 	default n
-+	depends on AUTOFS_FS = n
- 	help
- 	  The automounter is a tool to automatically mount remote file systems
- 	  on demand. This implementation is partially kernel-based to reduce
-@@ -30,3 +31,10 @@ config AUTOFS4_FS
- 	  - any "alias autofs autofs4" will need to be removed.
- 
- 	  Please configure AUTOFS_FS instead of AUTOFS4_FS from now on.
-+
-+	  NOTE: Since the modules autofs and autofs4 use the same file system
-+		type name of "autofs" only one can be built. The "depends"
-+		above will result in AUTOFS4_FS not appearing in .config for
-+		any setting of AUTOFS_FS other than n and AUTOFS4_FS will
-+		appear under the AUTOFS_FS entry otherwise which is intended
-+		to draw attention to the module rename change.
+any update on this issue?
+>
+>>
+>> i see 2 problems in current implementation,
+>> 1. We don't replenish the 32 bits range, until first attempt of second
+>> allocation(64 bit) fails.
+>> 2. Having  per cpu cache might not yield good hit on platforms with
+>> more number of CPUs.
+>>
+>> however irrespective of current issues, It makes sense to update
+>> cached node as done in this patch , when there is failure to get iova
+>> range using current cached pointer which is forcing for the
+>> unnecessary time consuming do-while iterations until any replenish
+>> happens!
+>>
+>> thanks
+>> Ganapat
+>>
+>>>
+>>> Robin.
+>>>
+>>>
+>>>> Signed-off-by: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
+>>>> ---
+>>>>   drivers/iommu/iova.c | 6 ++++++
+>>>>   1 file changed, 6 insertions(+)
+>>>>
+>>>> diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
+>>>> index 83fe262..e6ee2ea 100644
+>>>> --- a/drivers/iommu/iova.c
+>>>> +++ b/drivers/iommu/iova.c
+>>>> @@ -201,6 +201,12 @@ static int __alloc_and_insert_iova_range(struct
+>>>> iova_domain *iovad,
+>>>>         } while (curr && new_pfn <= curr_iova->pfn_hi);
+>>>>         if (limit_pfn < size || new_pfn < iovad->start_pfn) {
+>>>> +               /* No more cached node points to free hole, update to leaf
+>>>> node.
+>>>> +                */
+>>>> +               struct iova *prev_iova;
+>>>> +
+>>>> +               prev_iova = rb_entry(prev, struct iova, node);
+>>>> +               __cached_rbnode_insert_update(iovad, prev_iova);
+>>>>                 spin_unlock_irqrestore(&iovad->iova_rbtree_lock, flags);
+>>>>                 return -ENOMEM;
+>>>>         }
+>>>>
+>>>
+>
+> thanks
+> Ganapat
