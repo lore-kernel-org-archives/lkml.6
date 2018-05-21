@@ -1,70 +1,85 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1525870873; cv=none;
+Return-Path: <broonie@sirena.org.uk>
+X-Google-Smtp-Source: AB8JxZre7m4h1ZxzTkmG0gK1xJkv7Lvd6uk7ZUzdJeSx6I3lY3MzTqdoFF/1r3hw/ARrti+PFsis
+ARC-Seal: i=1; a=rsa-sha256; t=1526917628; cv=none;
         d=google.com; s=arc-20160816;
-        b=pNiuud5i1NVuc7J896jHBzEMkYeFNEifsjROrD5hFEsHGjCw9R8cBbOC9xBhixFt46
-         ihKV8uvX5qBbc7xdsU0Y2dWMGQuWZNo+COONUReyk670nm2RQsaSUcl/yNS3N1RbV/3G
-         9Km+3k3L/hNVnC/IvH7e2Nv70ZIAJ+22Dx99iVxnKCeQ0OUG7ZEW67qTGjPF4JHg+iCV
-         T00l90W9pu94rvtxFOg4IfrvSzBE+ByxAgbxc4tdjjGYGA9929xcOPejjlDVs02KjUXg
-         jMfb0sM1kUFLia9AJxBux1TwiaKtdfpA8LCF+GVFPZg479xbA3TG8kbOWVixY4/71ipe
-         gtqg==
+        b=y8mwxv+3G5UXrRNqd+da5jlY+HO4LuQw0KosfW7c4zQi6y8d97xRSazez21est4R+R
+         NfuURSBLdIaEPxrqvW9d12dcOkEttNuoua2Ug+DIK25ydZ+9v30W9oDiZCHqesGy1ibw
+         EWxvOwbyBF5WVoaYYzP8sKlLAc5I9aJUMYBG2CRBnDDkfvcZi7NcQtj68CEw4xaozB65
+         fcCTTC+96cJuqLnhKlvPHUTTJTKSpG75JxnulElJRRltc040EPoSJ5ht4/Y3WQXALDIQ
+         qfHgNVCcg3DmdgloFxa9VcfX8IH4Hf862VBQ67wfwjQyT0UVO9b9BOCn1OxxxOhcz2cu
+         L5mw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=b6KNRmgBNX1F/vt0UTkBKE7cHLPTGGkXc0Y/LbvjVlU=;
-        b=r/PBeqFOUFY6tq7lYU6avXImVliloecJct/Ik6P67MKQG8a4b9MGKdmwnjHvc2K9dF
-         t8L3hPGdQDiotB4hcF9ylrjoELhKTfdbv+mhbVmnSvX49eMfLFafdBZyUCYpUawEPetO
-         +PmKKnVUYXu1pOnaBFTP4VJw30xbpDOLlYaCF67zQwy3bnoIfUmT3G2WAUYeK/A9bflo
-         OHduB4T2/t/e3l1cGFoeiuoV+a+u4kQTQfJ3Zvijflw7GGwd1HIzzhn9Xp1qhcFxBuzQ
-         0rkoxggOBuvno15fmzop6276yZWbOEAm89GFV5kbzYTSom2YkW2vO2I6KIVU4d9piM1z
-         gGAg==
+        h=date:message-id:in-reply-to:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=w0pA+pUt3DlNnmEuRdqxepJjP6MNmokUI1/wzTfa698=;
+        b=aFx+YLAcYzWxxgwPsP9GWbdmflnmxuZWhJFOdcvlB1cnXjejwORHi5D+BBF5ZniwEz
+         iTZlzvCGFxojU5No9AofIRac+EUvdDYEBiXMq+wKk1FD7nn2IpqL9jrtDGnz3R/DQU/X
+         /nHGbcX0xeRbltvYQ/H5wZb1hgLuZZz6T9gZIy3cxx9HMo/kPQg4ZxcgOSc5jMe/yFOI
+         Es2/anhx4NJFdaJgBWHTZ8oI1ErpmVSDDZAqhuMadOhusPF7SWradT1nRSDhmECrngcJ
+         X5Imi/ZWQVie8hKNNN/XtahWySX4u+JaKrBybTplZwaeY4pHTArr1rLKQjyy3SPMIOrx
+         LuUA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=HcQtlcLm;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=I4i7SIHW;
+       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=HcQtlcLm;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZqJcCMYh/ypMC9u9kwTBVWXKjahonjj5442qCvjJhjxICU2xKXHvWP6zMQEnM2OS5rGPcBOLg==
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To: andy.gross@linaro.org,
-	broonie@kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	robh+dt@kernel.org,
-	bgoswami@codeaurora.org
-Cc: gregkh@linuxfoundation.org,
-	david.brown@linaro.org,
-	mark.rutland@arm.com,
-	lgirdwood@gmail.com,
-	plai@codeaurora.org,
-	tiwai@suse.com,
-	perex@perex.cz,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rohkumar@qti.qualcomm.com,
-	spatakok@qti.qualcomm.com,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v8 23/24] ASoC: qcom: apq8096: Add db820c machine driver
-Date: Wed,  9 May 2018 13:56:34 +0100
-Message-Id: <20180509125635.5653-24-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180509125635.5653-1-srinivas.kandagatla@linaro.org>
-References: <20180509125635.5653-1-srinivas.kandagatla@linaro.org>
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=I4i7SIHW;
+       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+From: Mark Brown <broonie@kernel.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>, andy.gross@linaro.org, broonie@kernel.org, linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org, robh+dt@kernel.org, bgoswami@codeaurora.org, mark.rutland@arm.com, devicetree@vger.kernel.org, rohkumar@qti.qualcomm.com, gregkh@linuxfoundation.org, plai@codeaurora.org, tiwai@suse.com, lgirdwood@gmail.com, david.brown@linaro.org, linux-arm-kernel@lists.infradead.org, spatakok@qti.qualcomm.com, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: qcom: apq8096: Add db820c machine driver" to the asoc tree
+In-Reply-To: <20180509125635.5653-24-srinivas.kandagatla@linaro.org>
+Message-Id: <E1fKn1a-0006zQ-5l@debutante>
+Date: Mon, 21 May 2018 16:47:02 +0100
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599263638421096230?=
-X-GMAIL-MSGID: =?utf-8?q?1599991577169357586?=
+X-GMAIL-THRID: =?utf-8?q?1601089179484309695?=
+X-GMAIL-MSGID: =?utf-8?q?1601089179484309695?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
+
+The patch
+
+   ASoC: qcom: apq8096: Add db820c machine driver
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From a6f933f63f2ffdb211dbf203dd9750449af000d3 Mon Sep 17 00:00:00 2001
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Date: Fri, 18 May 2018 13:56:10 +0100
+Subject: [PATCH] ASoC: qcom: apq8096: Add db820c machine driver
 
 This patch adds support to DB820c machine driver.
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Reviewed-by: Banajit Goswami <bgoswami@codeaurora.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
  sound/soc/qcom/Kconfig   |   9 ++
  sound/soc/qcom/Makefile  |   2 +
- sound/soc/qcom/apq8096.c | 255 +++++++++++++++++++++++++++++++++++++++++++++++
+ sound/soc/qcom/apq8096.c | 255 +++++++++++++++++++++++++++++++++++++++
  3 files changed, 266 insertions(+)
  create mode 100644 sound/soc/qcom/apq8096.c
 
@@ -363,4 +378,4 @@ index 000000000000..561cd429e6f2
 +MODULE_DESCRIPTION("APQ8096 ASoC Machine Driver");
 +MODULE_LICENSE("GPL v2");
 -- 
-2.16.2
+2.17.0
