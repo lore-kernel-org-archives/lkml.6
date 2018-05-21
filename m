@@ -1,119 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751095AbeEUE7N (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 00:59:13 -0400
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:23211 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750859AbeEUE7K (ORCPT
+        id S1751020AbeEUFFA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 01:05:00 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:44975 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750859AbeEUFE4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 00:59:10 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w4L4x1pw015694
-X-Nifty-SrcIP: [209.85.217.171]
-X-Google-Smtp-Source: AB8JxZrSMTsu4z3Owx61d41GtTTHTNauLzivG/HCMsBtDzm+8AzGt6UaqwSqpDewEAS3UE2O0k2d3K9gXrOKp+LFNVM=
+        Mon, 21 May 2018 01:04:56 -0400
+X-Google-Smtp-Source: AB8JxZq6fCb8/TaTRgOUi4jHlPOajOD7cw1XBdmQM9RnA4fKxr8H75FR6MiHbTFciVK0MbeXS9kISA==
+Date: Mon, 21 May 2018 10:34:53 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Ilia Lin <ilialin@codeaurora.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+        mark.rutland@arm.com, nm@ti.com, lgirdwood@gmail.com,
+        broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
+        catalin.marinas@arm.com, will.deacon@arm.com, rjw@rjwysocki.net,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
+        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
+        celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: Re: [PATCH] cpufreq: Add Kryo CPU scaling driver
+Message-ID: <20180521050453.vls3fe6fyake4dhk@vireshk-i7>
+References: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
+ <1526729701-8589-1-git-send-email-ilialin@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <170f1ce7-c192-96cd-f593-89f534d239bc@infradead.org>
-References: <1526804213-8238-1-git-send-email-yamada.masahiro@socionext.com>
- <1526804213-8238-6-git-send-email-yamada.masahiro@socionext.com>
- <7819f81c-2de6-4202-1349-ae4ce01caa26@infradead.org> <CAK7LNARzdUZ3=PWwM_SC-t6XEoCgGEBfh4kj_KMv9WUquAHJ0g@mail.gmail.com>
- <170f1ce7-c192-96cd-f593-89f534d239bc@infradead.org>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Mon, 21 May 2018 13:58:20 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQYpfNn666z8tJUeLB53kyHdfr06HiLaAizihnuZv6cRQ@mail.gmail.com>
-Message-ID: <CAK7LNAQYpfNn666z8tJUeLB53kyHdfr06HiLaAizihnuZv6cRQ@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] kconfig: refactor ncurses package checks for
- building nconf
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        "Luis R . Rodriguez" <mcgrof@suse.com>,
-        Ulf Magnusson <ulfalizer@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1526729701-8589-1-git-send-email-ilialin@codeaurora.org>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-05-21 13:51 GMT+09:00 Randy Dunlap <rdunlap@infradead.org>:
-> On 05/20/2018 09:48 PM, Masahiro Yamada wrote:
->> 2018-05-21 8:41 GMT+09:00 Randy Dunlap <rdunlap@infradead.org>:
->>> On 05/20/2018 01:16 AM, Masahiro Yamada wrote:
->>>> Building nconf requires ncurses, but its presence is not checked.
->>>> Check and configure necessary packages by a shell script like the
->>>> other GUI frontends.
->>>>
->>>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->>>> ---
->>>>
->>>
->>>> diff --git a/scripts/kconfig/nconf-cfg.sh b/scripts/kconfig/nconf-cfg.sh
->>>> new file mode 100644
->>>> index 0000000..8eb7948
->>>> --- /dev/null
->>>> +++ b/scripts/kconfig/nconf-cfg.sh
->>>> @@ -0,0 +1,34 @@
->>>> +#!/bin/sh
->>>> +# SPDX-License-Identifier: GPL-2.0
->>>> +
->>>> +PKG="ncursesw menuw panelw"
->>>> +PKG2="ncurses menu panel"
->>>> +
->>>> +if pkg-config --exists $PKG; then
->>>> +     echo libs=\"$(pkg-config --libs $PKG)\"
->>>> +     exit 0
->>>> +fi
->>>> +
->>>> +if pkg-config --exists $PKG2; then
->>>> +     echo libs=\"$(pkg-config --libs $PKG2)\"
->>>> +     exit 0
->>>> +fi
->>>> +
->>>
->>> I guess this one needs clags, especially -I, like the mconf patch contains...
->>
->>
->>
->> I thought so.
->>
->> But, the current scripts/kconfig/Makefile
->> adds 'pkg-config --libs' to nconf,
->> but does nothing about 'pkg-config --cflags' for nconf.
->> Therefore, I kept the current behavior just in case.
->>
->>
->> The nconfig in the current version is not working for you, right?
->
-> That's correct.
->
->
-> Info:
->
-> $ make ARCH=x86_64 O=xx64 nconfig
-> make[1]: Entering directory '/home/rdunlap/lnx/next/linux-next-20180517/xx64'
->   GEN     ./Makefile
->   UPD     scripts/kconfig/.nconf-cfg
->   HOSTCC  scripts/kconfig/nconf.o
-> In file included from ../scripts/kconfig/nconf.c:15:0:
-> ../scripts/kconfig/nconf.h:19:18: fatal error: menu.h: No such file or directory
->  #include <menu.h>
->                   ^
-> compilation terminated.
-> scripts/Makefile.host:107: recipe for target 'scripts/kconfig/nconf.o' failed
-> make[2]: *** [scripts/kconfig/nconf.o] Error 1
-> /home/rdunlap/lnx/next/linux-next-20180517/Makefile:525: recipe for target 'nconfig' failed
-> make[1]: *** [nconfig] Error 2
-> make[1]: Leaving directory '/home/rdunlap/lnx/next/linux-next-20180517/xx64'
-> Makefile:146: recipe for target 'sub-make' failed
-> make: *** [sub-make] Error 2
->
->
-> xx64/scripts/kconfig/.nconf-cfg contains:
-> libs="-lncursesw -lmenuw -lpanelw"
->
+More comments after Russell's reply.
 
-Sorry, I mean
-the nconfig in the Linus tree is not working, right?
+On 19-05-18, 14:35, Ilia Lin wrote:
+> +static int __init qcom_cpufreq_kryo_driver_init(void)
+> +{
+> +	struct device *cpu_dev_silver, *cpu_dev_gold;
+> +	struct opp_table *opp_silver, *opp_gold;
+> +	enum _msm8996_version msm8996_version;
+> +	struct nvmem_cell *speedbin_nvmem;
+> +	struct platform_device *pdev;
+> +	struct device_node *np;
+> +	u8 *speedbin;
+> +	u32 versions;
+> +	size_t len;
+> +	int ret;
+> +
+> +	cpu_dev_silver = get_cpu_device(SILVER_LEAD);
+> +	if (IS_ERR_OR_NULL(cpu_dev_silver))
 
+get_cpu_device() returns only NULL on error.
 
+> +		return PTR_ERR(cpu_dev_silver);
+> +
+> +	cpu_dev_gold = get_cpu_device(SILVER_LEAD);
+> +	if (IS_ERR_OR_NULL(cpu_dev_gold))
+> +		return PTR_ERR(cpu_dev_gold);
+> +
+> +	msm8996_version = qcom_cpufreq_kryo_get_msm_id();
+> +	if (NUM_OF_MSM8996_VERSIONS == msm8996_version) {
+> +		dev_err(cpu_dev_silver, "Not Snapdragon 820/821!");
+> +		return -ENODEV;
+> +	}
+> +
+> +	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev_silver);
+> +	if (IS_ERR_OR_NULL(np))
+
+same here.
+
+> +		return PTR_ERR(np);
+> +
+> +	if (!of_device_is_compatible(np, "operating-points-v2-kryo-cpu")) {
+> +		ret = -ENOENT;
+> +		goto free_np;
+> +	}
+> +
+> +	speedbin_nvmem = of_nvmem_cell_get(np, NULL);
+> +	if (IS_ERR(speedbin_nvmem)) {
+> +		ret = PTR_ERR(speedbin_nvmem);
+> +		dev_err(cpu_dev_silver, "Could not get nvmem cell: %d\n", ret);
+> +		goto free_np;
+> +	}
+> +
+> +	speedbin = nvmem_cell_read(speedbin_nvmem, &len);
+> +	nvmem_cell_put(speedbin_nvmem);
+> +
+> +	switch (msm8996_version) {
+> +	case MSM8996_V3:
+> +		versions = 1 << (unsigned int)(*speedbin);
+> +		break;
+> +	case MSM8996_SG:
+> +		versions = 1 << ((unsigned int)(*speedbin) + 4);
+> +		break;
+> +	default:
+> +		BUG();
+> +		break;
+> +	}
+> +
+> +	opp_silver = dev_pm_opp_set_supported_hw(cpu_dev_silver,&versions,1);
+> +	if (IS_ERR(opp_silver)) {
+> +		dev_err(cpu_dev_silver, "Failed to set supported hardware\n");
+> +		ret = PTR_ERR(opp_silver);
+> +		goto free_np;
+> +	}
+> +
+> +	opp_gold = dev_pm_opp_set_supported_hw(cpu_dev_gold,&versions,1);
+> +	if (IS_ERR(opp_gold)) {
+> +		dev_err(cpu_dev_gold, "Failed to set supported hardware\n");
+> +		ret = PTR_ERR(opp_gold);
+> +		goto free_opp_silver;
+> +	}
+> +
+> +	pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
+
+and this only returns ERR_PTR() on error.
+
+> +	if (!IS_ERR_OR_NULL(pdev))
+> +		return 0;
+> +
+> +	ret = PTR_ERR(pdev);
+> +	dev_err(cpu_dev_silver, "Failed to register platform device\n");
+> +	dev_pm_opp_put_supported_hw(opp_gold);
+> +
+> +free_opp_silver:
+> +	dev_pm_opp_put_supported_hw(opp_silver);
+> +
+> +free_np:
+> +	of_node_put(np);
+> +
+> +	return ret;
+> +}
+> +late_initcall(qcom_cpufreq_kryo_driver_init);
+> +
+> +MODULE_DESCRIPTION("Qualcomm Technologies, Inc. Kryo CPUfreq driver");
+> +MODULE_LICENSE("GPL v2");
+> -- 
+> 1.9.1
 
 -- 
-Best Regards
-Masahiro Yamada
+viresh
