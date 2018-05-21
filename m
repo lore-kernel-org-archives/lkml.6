@@ -1,48 +1,38 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZr0lx/lcnobfsZSR1bf5u3LsMbPjem//HNK2aAleihB7U3Eb4JPGpzf1V2svk6U0LJ3C6Kn
-ARC-Seal: i=1; a=rsa-sha256; t=1526937562; cv=none;
+X-Google-Smtp-Source: AB8JxZoAg0zlHa3GvMBgAisdFjVdCvz9+mjuBXyNr33W/VFjHG8SNLmjUR3M+DUEFJCEh6bIgMwt
+ARC-Seal: i=1; a=rsa-sha256; t=1526937552; cv=none;
         d=google.com; s=arc-20160816;
-        b=fb3anbDa+EiDD25M2fCFtL7Gr7jqVEk2vny4e8wahu9trhKzddPe8erAorkd6wAdMb
-         AmoKHF4lkfSSQR82ZDmX5Dh17mcIlf9ECVLsk7E61gIlKxAKNIWiXyuMp2tEs2gRcCSy
-         DY0XowWwkgGUHPW15cmX8i/DP+mVa10+br5K5hV6cD8VjwwI9WLa41ceEFxQ9dLMwKJM
-         KrZbxP4IMs6nfbT7xhzZkTdwgCxdEqtk2C2YzK4uJreQFpCZ/ZcqeK0RR99z2Bomd2eD
-         BoQLKyojPYRCfGp3JUkwKTWqtsgMT0U2uhg12o72EvuDKUd75M6bj/Ktkl8fI46Y0rcT
-         LnOg==
+        b=wSgnGBIT76d4eGXA4OzLW84f6lyNR5D8ELacJi8iXNOST6+V/YvL/pVe1kmJ6yh4yb
+         kXduYtsBzfsPjll0UlbaLm4zlYQhxM/NvC7KmAsOQiI2HczqvnaUF9N1xJ9iWwRg2G8f
+         0O7QrtnKU5oFvA4Mfk4X2AU1XCPHVyMz+j+S+Ynuf33sr6A/5ijCIfB5WHI/O1/+WK3X
+         d4oOpgelwSwprmnjx1c5QyktKvFEE4+85BIG+3j6EbMkCoFmeJdUpBw0Xztpaqga9OZ8
+         1IK5Q6DGucGKWODH202rFRoAi9QZx9sKPAc/1PmeiRCANY8fBFwZYIAzBZIge+JeYcJn
+         zR1g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=8ITHYratHskM+Zr6Y9s0NiejHBeeezmSPmPLxr3nuAw=;
-        b=olytMteDwsuP6m4E+vE01tfZwNfU46NytAKxPxcakCMqbsTY1a9Nk49geYs46cLetB
-         Xa74m6lncgVUZa8UkZZeFQI2BwtXeYVn+KGiFxTgJ5YoaBe8yE6JFifRvmEpVvnFr8H8
-         CzDbsfQMnM9RaEoP/8NHLZktb5+wifNF0hDbqz347/rGbpt8cRJ2wMBFDUZzH4nFtTLf
-         fUaKoHFcH78LdZBHtu7aWgXV+BQRKfMHcAkiXuMtNUcDAnKjYtZnMkBnqDcl+1u/I0zD
-         Ce4AQdByRFbcbyqIV9poSjyRJ1jxZcEuyrZEbZBxG2VjDpb05BKPA9q1zf2AlQJKCiEg
-         CLFA==
+        bh=zNIe4Y4ntQRusCMCeLycdh3JXfANm3c7wG3v+tr8QAw=;
+        b=U5pAJ9MB0ZdT4HLwtQEVjtnXT9sAbSqokR4zxBlHMiP/c1UrcxzWSiSdjeYdyHe9N7
+         yDKK7l8InWvVjfb7pEchjGv8lCLuBr2YgeSZ3EtR2IjMJWNq4LCYieL7CH2NiKdxOYsD
+         rjmFYYSGhJgSYwOZ3hQclRtCg56FV3wEpKdbrpNTX7AREDUjf4LKnWREblwCBhhmfzDH
+         sPYP6K+qOBZHCVK5VRm6fBgsdhv8YSGrokiX+lP2BktnIZZ3Yb3lYOvRmNYC0lnvuj0q
+         eFcDF1Jn2TIql4SnbYjzzHP/r270Zaq03FBjzXxsbgpJ83w86j+rvDP2Nz8X/juXuETc
+         m6sQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=jLittXwX;
+       dkim=pass header.i=@kernel.org header.s=default header.b=G/PBBlfL;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=jLittXwX;
+       dkim=pass header.i=@kernel.org header.s=default header.b=G/PBBlfL;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Shakeel Butt <shakeelb@google.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Dave Hansen <dave.hansen@intel.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Michael Ellermen <mpe@ellerman.id.au>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ram Pai <linuxram@us.ibm.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-mm@kvack.org,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 32/95] x86/pkeys: Override pkey when moving away from PROT_EXEC
-Date: Mon, 21 May 2018 23:11:22 +0200
-Message-Id: <20180521210454.684335787@linuxfoundation.org>
+	Hans de Goede <hdegoede@redhat.com>,
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 07/95] ALSA: hda: Add Lenovo C50 All in one to the power_save blacklist
+Date: Mon, 21 May 2018 23:10:57 +0200
+Message-Id: <20180521210448.854686658@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210447.219380974@linuxfoundation.org>
 References: <20180521210447.219380974@linuxfoundation.org>
@@ -52,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109883753600221?=
-X-GMAIL-MSGID: =?utf-8?q?1601110081898373103?=
+X-GMAIL-THRID: =?utf-8?q?1601109772409939861?=
+X-GMAIL-MSGID: =?utf-8?q?1601110070661445945?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -61,127 +51,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dave Hansen <dave.hansen@linux.intel.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 0a0b152083cfc44ec1bb599b57b7aab41327f998 upstream.
+commit c8beccc19b92f5172994c0732db689c08f4f98e5 upstream.
 
-I got a bug report that the following code (roughly) was
-causing a SIGSEGV:
+Power-saving is causing loud plops on the Lenovo C50 All in one, add it
+to the blacklist.
 
-	mprotect(ptr, size, PROT_EXEC);
-	mprotect(ptr, size, PROT_NONE);
-	mprotect(ptr, size, PROT_READ);
-	*ptr = 100;
-
-The problem is hit when the mprotect(PROT_EXEC)
-is implicitly assigned a protection key to the VMA, and made
-that key ACCESS_DENY|WRITE_DENY.  The PROT_NONE mprotect()
-failed to remove the protection key, and the PROT_NONE->
-PROT_READ left the PTE usable, but the pkey still in place
-and left the memory inaccessible.
-
-To fix this, we ensure that we always "override" the pkee
-at mprotect() if the VMA does not have execute-only
-permissions, but the VMA has the execute-only pkey.
-
-We had a check for PROT_READ/WRITE, but it did not work
-for PROT_NONE.  This entirely removes the PROT_* checks,
-which ensures that PROT_NONE now works.
-
-Reported-by: Shakeel Butt <shakeelb@google.com>
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Ellermen <mpe@ellerman.id.au>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ram Pai <linuxram@us.ibm.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-mm@kvack.org
-Cc: stable@vger.kernel.org
-Fixes: 62b5f7d013f ("mm/core, x86/mm/pkeys: Add execute-only protection keys support")
-Link: http://lkml.kernel.org/r/20180509171351.084C5A71@viggo.jf.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1572975
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/pkeys.h |   12 +++++++++++-
- arch/x86/mm/pkeys.c          |   21 +++++++++++----------
- 2 files changed, 22 insertions(+), 11 deletions(-)
+ sound/pci/hda/hda_intel.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/x86/include/asm/pkeys.h
-+++ b/arch/x86/include/asm/pkeys.h
-@@ -2,6 +2,8 @@
- #ifndef _ASM_X86_PKEYS_H
- #define _ASM_X86_PKEYS_H
- 
-+#define ARCH_DEFAULT_PKEY	0
-+
- #define arch_max_pkey() (boot_cpu_has(X86_FEATURE_OSPKE) ? 16 : 1)
- 
- extern int arch_set_user_pkey_access(struct task_struct *tsk, int pkey,
-@@ -15,7 +17,7 @@ extern int __execute_only_pkey(struct mm
- static inline int execute_only_pkey(struct mm_struct *mm)
- {
- 	if (!boot_cpu_has(X86_FEATURE_OSPKE))
--		return 0;
-+		return ARCH_DEFAULT_PKEY;
- 
- 	return __execute_only_pkey(mm);
- }
-@@ -56,6 +58,14 @@ bool mm_pkey_is_allocated(struct mm_stru
- 		return false;
- 	if (pkey >= arch_max_pkey())
- 		return false;
-+	/*
-+	 * The exec-only pkey is set in the allocation map, but
-+	 * is not available to any of the user interfaces like
-+	 * mprotect_pkey().
-+	 */
-+	if (pkey == mm->context.execute_only_pkey)
-+		return false;
-+
- 	return mm_pkey_allocation_map(mm) & (1U << pkey);
- }
- 
---- a/arch/x86/mm/pkeys.c
-+++ b/arch/x86/mm/pkeys.c
-@@ -94,26 +94,27 @@ int __arch_override_mprotect_pkey(struct
- 	 */
- 	if (pkey != -1)
- 		return pkey;
--	/*
--	 * Look for a protection-key-drive execute-only mapping
--	 * which is now being given permissions that are not
--	 * execute-only.  Move it back to the default pkey.
--	 */
--	if (vma_is_pkey_exec_only(vma) &&
--	    (prot & (PROT_READ|PROT_WRITE))) {
--		return 0;
--	}
-+
- 	/*
- 	 * The mapping is execute-only.  Go try to get the
- 	 * execute-only protection key.  If we fail to do that,
- 	 * fall through as if we do not have execute-only
--	 * support.
-+	 * support in this mm.
- 	 */
- 	if (prot == PROT_EXEC) {
- 		pkey = execute_only_pkey(vma->vm_mm);
- 		if (pkey > 0)
- 			return pkey;
-+	} else if (vma_is_pkey_exec_only(vma)) {
-+		/*
-+		 * Protections are *not* PROT_EXEC, but the mapping
-+		 * is using the exec-only pkey.  This mapping was
-+		 * PROT_EXEC and will no longer be.  Move back to
-+		 * the default pkey.
-+		 */
-+		return ARCH_DEFAULT_PKEY;
- 	}
-+
- 	/*
- 	 * This is a vanilla, non-pkey mprotect (or we failed to
- 	 * setup execute-only), inherit the pkey from the VMA we
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -2208,6 +2208,8 @@ static struct snd_pci_quirk power_save_b
+ 	SND_PCI_QUIRK(0x1849, 0x0c0c, "Asrock B85M-ITX", 0),
+ 	/* https://bugzilla.redhat.com/show_bug.cgi?id=1525104 */
+ 	SND_PCI_QUIRK(0x1043, 0x8733, "Asus Prime X370-Pro", 0),
++	/* https://bugzilla.redhat.com/show_bug.cgi?id=1572975 */
++	SND_PCI_QUIRK(0x17aa, 0x36a7, "Lenovo C50 All in one", 0),
+ 	/* https://bugzilla.kernel.org/show_bug.cgi?id=198611 */
+ 	SND_PCI_QUIRK(0x17aa, 0x2227, "Lenovo X1 Carbon 3rd Gen", 0),
+ 	{}
