@@ -1,54 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751788AbeEUEiO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 00:38:14 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:36579 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751637AbeEUEiG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 00:38:06 -0400
-X-Google-Smtp-Source: AB8JxZoAypTh/dAg+mN7i+LBx0ItB6rQgHZdXNpgYTWOeQYKw0qaSn9ZZm8DrILSFCDzakEWajzzjw==
-Date: Sun, 20 May 2018 21:38:04 -0700
-From: Joel Fernandes <joel@joelfernandes.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: linux-kernel@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>, byungchul.park@lge.com,
-        kernel-team@android.com
-Subject: Re: [PATCH v2 0/4] fixes, cleanups for rcu/dev
-Message-ID: <20180521043804.GA72491@joelaf.mtv.corp.google.com>
-References: <20180521043251.120953-1-joel@joelfernandes.org>
+        id S1752838AbeEUEoS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 00:44:18 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55553 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751738AbeEUEiN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 00:38:13 -0400
+From: NeilBrown <neilb@suse.com>
+To: Oleg Drokin <oleg.drokin@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        James Simmons <jsimmons@infradead.org>,
+        Andreas Dilger <andreas.dilger@intel.com>
+Date: Mon, 21 May 2018 14:35:12 +1000
+Subject: [PATCH 07/30] staging: lustre: simplify capability dropping.
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lustre Development List <lustre-devel@lists.lustre.org>
+Message-ID: <152687731262.24196.18346433737169784278.stgit@noble>
+In-Reply-To: <152687724799.24196.7718555295926047576.stgit@noble>
+References: <152687724799.24196.7718555295926047576.stgit@noble>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180521043251.120953-1-joel@joelfernandes.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 20, 2018 at 09:32:47PM -0700, Joel Fernandes wrote:
-> Hi Paul,
-> 
-> Here are some patches reworked with a few comments on few of the patches
-> from previous series: https://lkml.org/lkml/2018/5/13/296
-> 
-> 4/4 is a new addition which fixes a potential issue.
-> 
-> Let me know what you think, thanks!
-> 
-> Joel Fernandes (4):
->   rcu: Add comment documenting how rcu_seq_snap works
->   rcu: Cleanup the variables used to request a new grace period
->   rcu: Use better variable names in funnel locking loop
->   rcu: Unlock non-start node only after accessing its gp_seq_needed
+Lustre has a 'squash credentials' concept similar to the "anon_uid"
+for nfsd.  When accessing a file with squashed credentials, we
+need to also drop capabilities.
+Linux has cap_drop_fs_set() and cap_drop_nfsd_set().  Rather than
+taking a completely different approach, this patch changes lustre
+to use this same cap_drop_*_set() approach.
 
-Please disregard the v2, my infant daughter distracted me when I was
-preparing the 'git format-patch' :-) I was not supposed to send the 'Speed
-up..' patch since I already sent that separately. And patch 4/4 which I
-believe fixes a potential issue is also missing. So lets drop/ignore all of
-this v2 and I'll just send a v3.
+With this change we also drop CAP_MKNOD and CAP_MAC_OVERRIDE
+which are probably appropriate, and don't drop
+CAP_SYS_ADMIN or CAP_SYS_BOOT which should be irrelevant for
+file permission checking
 
-thanks!
+Calling both cap_drop_*_set() seems a bit clumsy, but gets
+the job done.
+
+Signed-off-by: NeilBrown <neilb@suse.com>
+---
+ .../staging/lustre/include/linux/libcfs/curproc.h  |   10 ----------
+ drivers/staging/lustre/lustre/llite/file.c         |    8 +++-----
+ 2 files changed, 3 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/staging/lustre/include/linux/libcfs/curproc.h b/drivers/staging/lustre/include/linux/libcfs/curproc.h
+index 83526f84495d..fc6f6eb2d5fe 100644
+--- a/drivers/staging/lustre/include/linux/libcfs/curproc.h
++++ b/drivers/staging/lustre/include/linux/libcfs/curproc.h
+@@ -50,16 +50,6 @@
+ 
+ typedef u32 cfs_cap_t;
+ 
+-#define CFS_CAP_FS_MASK (BIT(CAP_CHOWN) |		\
+-			 BIT(CAP_DAC_OVERRIDE) |	\
+-			 BIT(CAP_DAC_READ_SEARCH) |	\
+-			 BIT(CAP_FOWNER) |		\
+-			 BIT(CAP_FSETID) |		\
+-			 BIT(CAP_LINUX_IMMUTABLE) | \
+-			 BIT(CAP_SYS_ADMIN) |	\
+-			 BIT(CAP_SYS_BOOT) |	\
+-			 BIT(CAP_SYS_RESOURCE))
+-
+ static inline cfs_cap_t cfs_curproc_cap_pack(void)
+ {
+ 	/* cfs_cap_t is only the first word of kernel_cap_t */
+diff --git a/drivers/staging/lustre/lustre/llite/file.c b/drivers/staging/lustre/lustre/llite/file.c
+index 0026fde81ad3..a77cadcd9d48 100644
+--- a/drivers/staging/lustre/lustre/llite/file.c
++++ b/drivers/staging/lustre/lustre/llite/file.c
+@@ -3050,7 +3050,6 @@ int ll_inode_permission(struct inode *inode, int mask)
+ 	const struct cred *old_cred = NULL;
+ 	struct cred *cred = NULL;
+ 	bool squash_id = false;
+-	cfs_cap_t cap;
+ 	int rc = 0;
+ 
+ 	if (mask & MAY_NOT_BLOCK)
+@@ -3094,10 +3093,9 @@ int ll_inode_permission(struct inode *inode, int mask)
+ 
+ 		cred->fsuid = make_kuid(&init_user_ns, squash->rsi_uid);
+ 		cred->fsgid = make_kgid(&init_user_ns, squash->rsi_gid);
+-		for (cap = 0; cap < sizeof(cfs_cap_t) * 8; cap++) {
+-			if ((1 << cap) & CFS_CAP_FS_MASK)
+-				cap_lower(cred->cap_effective, cap);
+-		}
++		cred->cap_effective = cap_drop_nfsd_set(cred->cap_effective);
++		cred->cap_effective = cap_drop_fs_set(cred->cap_effective);
++
+ 		old_cred = override_creds(cred);
+ 	}
  
