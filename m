@@ -1,70 +1,85 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1526648319; cv=none;
+Return-Path: <broonie@sirena.org.uk>
+X-Google-Smtp-Source: AB8JxZonEp3IIuJ2Y6d4zssq2vnWtfohFn/FVnJwU3hFAE6UhtvTtdeLnE4N/cJZRz09xnGNV3d7
+ARC-Seal: i=1; a=rsa-sha256; t=1526917766; cv=none;
         d=google.com; s=arc-20160816;
-        b=apH3X4yD5tbLYzs9WDGra6iJNwAWsG6G6+gF65SkpeaQKEmO0OaWMeyjurvhdPca1o
-         UyiecdM7N74co72E5byWf5TFasP2pnPpUIjMDXupqPIzjhkBC2AhaMg3/8n2GX6JICh3
-         D2Qmbmd0sqtRaH1qc9aGAUX4XjQ5NgHZBAF80DEUhqlHZOWmDI9l2NfWnJtyDEHJdxpF
-         1fCv5Dljez42xPYtJjY6SbIUrRcQBEwhIkvZ5uSjjh2wqBOvHpAyaH0r5Zb0O53WJiVc
-         hFax+o/0JS8FK7h679dLeGlGsENiWx1uy29wlAzH0kjqEx0ZuaOY3DaPOqotg61wezfr
-         wEkw==
+        b=DnTh/+p5C4P+P6We2L5sLAj3c0iGKhKz0sH8OjWqmnoiomGassAXj/8b20LVRX5EO6
+         hDPyer9AZJP0hVL20uH7vkzT5ngxADTAU1/QTYoSvFlZ9F4KjY5/mmn1ksvriNFVpYvF
+         niEbCjkR9z6zytjWWoLIXsx3MNZk/iIYSrY8IWSMyjJXTQUf0WdO4cLgckrnkKEYI9yB
+         sei0FZEZejnaWVK5a1yXcB0MtOQo5aKecmTwGYC6S1gWuI8Irw87m8HMbmff3G5f7+Dd
+         tepEMfY69gGBW5a9XZxqmZGpXMGB8dEDfuChsv2MDSYUkQWw8Cy2GnVJe1DtPqCqCtWm
+         VBNg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=WXREnDuyykSCeBhSm95zkYVXMUlII0X6x11w5v2/ie8=;
-        b=j7iHzfwiXLnFGXVEwyPu8sBmttkcOGLvTo+P4m72U+KTsfUASzBnTHYGLnjWsNUbVq
-         hULAm/DamZ2Ncm/AOmgk53o6/BDGF82zJMvIiswQNHI5etYBqBGEXm2VGXQSDT1X9kCe
-         P4bJ6XLQzva3Ke7OO8ZvJ1moE5JEW1GR4HjyuLbEkcOSM++mE3Q5nfWLQUeWUWVx0tD1
-         tdypFJjsIBr33+dHjtuJH4a1BaBHcBeq1Yb8EAzM38NGoJv+jpVO6gmS0HDsYx9W2P/X
-         sVeERmwlz/AOVPrF1Co39m80EKWLNZk3bK8GnxK9Yx0DEds3wjeGauB2L/15ECyoM6CW
-         QcSQ==
+        h=date:message-id:in-reply-to:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=SIfFfE2XlziV2Qti0rWZbznwVxhjRvYaD6Ui63M0YkM=;
+        b=xXnIq5wAsVqdTB+KnGlxKfRmdUf56VVSSTJk3/mxWREeVAIr/QjJINyKb5+1LlBUIg
+         GysyL/P6/pp+z0g83MdsO5eisChTEVD07mYP8Z+cMty8Kp4y+pm8+VHQhP6BMCTQJaXq
+         FzSrppzRTwRo2b79W+ApHZqlXIFkOZWPLBIRXL51lhfIXqYni+zpPyrY6sqQ1L24EF2Y
+         e3noBXD1cMaH4QUfkRN83z8/az4+EguaIllRbXeKQrKgiG0nTGF6PlmUExfFIu0+Rj//
+         vkXMuYuoXfyHt0Xw+YfKJr43KEn6nt1UK4nFQjl1r9+uRVmoIk36TIiqagpbU8Hpl8eq
+         eOqg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=PVKbRjGd;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=UAP0K2rS;
+       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=PVKbRjGd;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZr7MNpYRSbkiKHOYpDA4mXe3QQwzON92vsoaJOacd6QRNeoE5vatDRxGBr7zjD0XV6KaID1UQ==
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To: broonie@kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	bgoswami@codeaurora.org
-Cc: robh+dt@kernel.org,
-	gregkh@linuxfoundation.org,
-	david.brown@linaro.org,
-	mark.rutland@arm.com,
-	lgirdwood@gmail.com,
-	plai@codeaurora.org,
-	tiwai@suse.com,
-	perex@perex.cz,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rohkumar@qti.qualcomm.com,
-	spatakok@qti.qualcomm.com,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v9 03/15] ASoC: qdsp6: q6afe: Add support to MI2S ports
-Date: Fri, 18 May 2018 13:55:58 +0100
-Message-Id: <20180518125610.26200-4-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180518125610.26200-1-srinivas.kandagatla@linaro.org>
-References: <20180518125610.26200-1-srinivas.kandagatla@linaro.org>
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=UAP0K2rS;
+       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+From: Mark Brown <broonie@kernel.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>, broonie@kernel.org, linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org, bgoswami@codeaurora.org, mark.rutland@arm.com, devicetree@vger.kernel.org, rohkumar@qti.qualcomm.com, gregkh@linuxfoundation.org, plai@codeaurora.org, lgirdwood@gmail.com, tiwai@suse.com, david.brown@linaro.org, robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org, spatakok@qti.qualcomm.com, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: qdsp6: q6afe: Add support to MI2S ports" to the asoc tree
+In-Reply-To: <20180518125610.26200-4-srinivas.kandagatla@linaro.org>
+Message-Id: <E1fKn3t-0007PF-KN@debutante>
+Date: Mon, 21 May 2018 16:49:25 +0100
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600806788665284656?=
-X-GMAIL-MSGID: =?utf-8?q?1600806788665284656?=
+X-GMAIL-THRID: =?utf-8?q?1601089323957197119?=
+X-GMAIL-MSGID: =?utf-8?q?1601089323957197119?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
+
+The patch
+
+   ASoC: qdsp6: q6afe: Add support to MI2S ports
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From d3839145722bae49e3a02d65f64ce49c75d7c8e1 Mon Sep 17 00:00:00 2001
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Date: Fri, 18 May 2018 13:55:58 +0100
+Subject: [PATCH] ASoC: qdsp6: q6afe: Add support to MI2S ports
 
 This patch adds support to 4 MI2S ports on LPASS.
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Reviewed-and-tested-by: Rohit kumar <rohitkr@codeaurora.org>
 Reviewed-by: Banajit Goswami <bgoswami@codeaurora.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/qcom/qdsp6/q6afe.c | 224 +++++++++++++++++++++++++++++++++++++++++++
- sound/soc/qcom/qdsp6/q6afe.h |  13 +++
+ sound/soc/qcom/qdsp6/q6afe.c | 224 +++++++++++++++++++++++++++++++++++
+ sound/soc/qcom/qdsp6/q6afe.h |  13 ++
  2 files changed, 237 insertions(+)
 
 diff --git a/sound/soc/qcom/qdsp6/q6afe.c b/sound/soc/qcom/qdsp6/q6afe.c
@@ -389,4 +404,4 @@ index 5659966c6b1e..3cb3bb4985a9 100644
  
  #endif /* __Q6AFE_H__ */
 -- 
-2.16.2
+2.17.0
