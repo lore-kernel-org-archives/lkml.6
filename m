@@ -1,50 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754185AbeEUWAf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 18:00:35 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:41420 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753114AbeEUWAZ (ORCPT
+        id S1754200AbeEUWBZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 18:01:25 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:35160 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753663AbeEUVVW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 18:00:25 -0400
-X-Google-Smtp-Source: AB8JxZp5g2Fl9IFrvsXeAEfErIj3T0DaXmS8omkd1SHQ+2xhUkUAaZzUcD1PygvGzc+T18OLs16ekogH7x7zWmz6iS4=
+        Mon, 21 May 2018 17:21:22 -0400
+X-Google-Smtp-Source: AB8JxZq6WZjbhU49bgc0leFbVJQnxv/6ZiZ0F5s5rYacqd3oESva+Vpg4pfcEBLOeM/iR17wMZVdGA==
+Date: Mon, 21 May 2018 14:21:18 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: "Vittorio Gambaletta (VittGam)" <linuxbugs@vittgam.net>
+Cc: linux-kernel@vger.kernel.org, bleung@chromium.org, bleung@google.com,
+        olof@lixom.net, Salvatore Bellizzi <lkml@seppia.net>,
+        groeck@chromium.org, groeck@google.com
+Subject: Re: [PATCH RESEND] platform/chrome: cros_ec_lpc: Add support for
+ newer Google devices using custom coreboot firmware or stock SeaBIOS.
+Message-ID: <20180521212118.GD74396@dtor-ws>
+References: <201805210544.w4L5iZ9B083096@mail.vittgam.net>
 MIME-Version: 1.0
-In-Reply-To: <1526903890-35761-20-git-send-email-xieyisheng1@huawei.com>
-References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com> <1526903890-35761-20-git-send-email-xieyisheng1@huawei.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 22 May 2018 01:00:23 +0300
-Message-ID: <CAHp75VfqEdoDZydwFmQaLiUN8cVtH3MbFHf3qixU8xUHXMwt1g@mail.gmail.com>
-Subject: Re: [PATCH 19/33] thermal: db8500: use match_string() helper
-To: Yisheng Xie <xieyisheng1@huawei.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201805210544.w4L5iZ9B083096@mail.vittgam.net>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 2:57 PM, Yisheng Xie <xieyisheng1@huawei.com> wrote:
-> match_string() returns the index of an array for a matching string,
-> which can be used intead of open coded variant.
+Hi Vittorio,
 
-> +       i = match_string((const char **)trip_point->cdev_name,
+On Mon, May 21, 2018 at 07:44:35AM +0200, Vittorio Gambaletta (VittGam) wrote:
+> Custom coreboot firmware does not contain "Google_*" as BIOS
+> version string; also, booting through stock SeaBIOS will present
+> an empty BIOS version string to Linux. So the generic match at
+> the top would not work.
+> 
+> A previous patch added the "GOOGLE" match for DMI system vendor,
+> but newer machines such as Skylake-based Caroline use "Google"
+> instead.
+> 
+> Also amend the previous comment adding a note that this is needed
+> for stock SeaBIOS too.
 
-Casting looks ugly. You need to constify the variable itself.
+I think this driver is incorrectly structured and adding new DMI
+signatures should not be needed. The newer hardware has the device
+GOOG0004 in their ACPI tables, we should not need additional DMI checks.
+DMI checks should only be needed for much older hardware, such as
+Link/Peppy that did not have EC described in DSDT.
 
-> +                        COOLING_DEV_MAX, cdev->type);
->
-> -       return -ENODEV;
-> +       return (i < 0) ? -ENODEV : 0;
+Let me see if I can fix it up.
 
-I would rather go with
+> 
+> Signed-off-by: Vittorio Gambaletta <linuxbugs@vittgam.net>
+> Signed-off-by: Salvatore Bellizzi <lkml@seppia.net>
+> 
+> ---
+> 
+> --- a/drivers/platform/chrome/cros_ec_lpc.c
+> +++ b/drivers/platform/chrome/cros_ec_lpc.c
+> @@ -347,7 +347,8 @@
+>  	},
+>  	{
+>  		/*
+> -		 * If the box is running custom coreboot firmware then the
+> +		 * If the box is running custom coreboot firmware,
+> +		 * or is booting Linux through stock SeaBIOS, then the
+>  		 * DMI BIOS version string will not be matched by "Google_",
+>  		 * but the system vendor string will still be matched by
+>  		 * "GOOGLE".
+> @@ -358,6 +359,16 @@
+>  		},
+>  	},
+>  	{
+> +		/*
+> +		 * Newer machines use "Google" instead of "GOOGLE" as
+> +		 * DMI system vendor string.
+> +		 */
+> +		.matches = {
+> +			DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
+> +			DMI_MATCH(DMI_SYS_VENDOR, "Google"),
+> +		},
+> +	},
+> +	{
+>  		/* x86-link, the Chromebook Pixel. */
+>  		.matches = {
+>  			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
 
-if (ret < 0)
- return -ENODEV;
-
-return 0;
+Thanks.
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Dmitry
