@@ -1,28 +1,28 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZo9/GC/ooIMFrDGAl9ka8FxEHExBEC4s322ZzmoRydmUlMCl2sohEnYE4O7qZL6ATF+nKD4
-ARC-Seal: i=1; a=rsa-sha256; t=1526937773; cv=none;
+X-Google-Smtp-Source: AB8JxZqGpFhNA2asPd+nKPyoBRBCBwDRC9ai2fNK5QxOuy+w7L6Dc8qwwwpMVHb2F6nEZmZtRnJ4
+ARC-Seal: i=1; a=rsa-sha256; t=1526937768; cv=none;
         d=google.com; s=arc-20160816;
-        b=dErpT2wlr7XZNs1RZwcjEpXlbCYuiSDacFDB7eMHQgVN9ossASixjr/Ny/mhux0ndu
-         4ghK9e1RaRERWinp31qdE6l2W5NnSbuMABKaqHk22C9VgWwAX10Eom8x052AduPsQ6QK
-         7A8RX05zqk6IM3XqLbgjwsjzkA+38GAQ7Fj+U3ZNWEaV+xezQ6TgR91zGRXHW8SZ/Xvt
-         WIWepGK1BbhVdFzb9v/MqsJU3Ix9rX/QEQyR+HNwLxpx+eeORMZywdl5beqQWlbQFqm+
-         zhtjfDZrvolp0MEl/+cO69CVXdg23RCv+B1XpAlUkmKtDJ8BmjttX3RorgJvQrq0G2Wy
-         7SIA==
+        b=aAYrRwpYdFoBG1FTjYl8hmvCqu6c3lkn7/yhyyf5PH3aX+ZQGXesNDj3s+ETZkzb55
+         lmMogRJNM3c7UNwhcnwOsUPX6386BwLKFALdcz6S6UVyRCIHuKG0xe/hbxStQutHISWV
+         mWEDfdBKzdupQkyb0jX3fTCGk4HvUa80X/23rC4IED9Klnde46O4Nyacda4GXwpHG1U1
+         ICOcY0OfVNw9IPxQOdQmEbUJSnzZVAUKEpyxQbB0hvUPYn5xLrSL7FDLFDksfnJLwuut
+         Bpw09lsuspNaFYJ7NrudQk9F12xr3D08qNbz1mGpYDl6irz3xybp7dGiB84zhTIlYned
+         bvnQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=id7i4Zn53uZdjAfMEkOclnchlFoWEYALAD1jRP4ns10=;
-        b=KKXGkQ9yCAnxH99aBzc4DHoLNtPOqVSOXMQIkzMvDQozhlvHLdCfs4gyug9PSDzrhE
-         /aOb33QfoIwAtW1dT0E44vb3rKQ62JHr9YgjS1v3wCCjljVp3ifWpLn/2FxDGualOcZZ
-         yquE/myEVxoHcQ2NV79snlGaKDIS5SDr5jQF87nn8HjHTCshpWVFWcqgyop3ZHfdZ+43
-         3p0lh3ti3wsVvi68m+Kp9BfkUbfD/yMf8Ti0o2365/3xHMjEM+qgYCz/HfgxlXo2kBJr
-         ngkjYoi1Hm1twVURZuVSormF9wBCtE8NPZNuxG91ztK0XRiXDYgFO7527r8D/uImiXRw
-         U5vw==
+        bh=a3Zy4pJVhRV44sXgbNAn5lV+1tZEHKFzDa6HyDWXjqg=;
+        b=tvsP6xjMvbK7PwuOEFgVMs0Sm4A67v6w6CVF/qsv1ssjVL+/ZKpBBNpWWl+OlUFXZ1
+         0v5KjBsVK0SGG137NYB3r8xUQ8b9x3r95S59k68kovlHh6SdD8eFfQabWv4B6Xvycsk6
+         Ui1uCAzcWOANyxMysdqk44NAklH4fmjqBul7C4v6StMwO6QZA0MCiWgQo6+auHKR7RSz
+         P/FTDJb7rmTySQMWISv6ZOISZMX2NkMFqsswNsaSTrPGoAiyEMnMgfML83VikiVvfyPm
+         f61/YbbhQKR9BHEv8y00NrNJgTWrLSt7e/el2bhVfY6kbMcSreh+Z1TjPsAzTQ5qmS/c
+         g2Lg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=t83VfbfW;
+       dkim=pass header.i=@kernel.org header.s=default header.b=xbLTIoVb;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=t83VfbfW;
+       dkim=pass header.i=@kernel.org header.s=default header.b=xbLTIoVb;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
@@ -30,9 +30,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Gabriel Craciunescu <nix.or.die@gmail.com>,
 	Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.16 020/110] hwmon: (k10temp) Use API function to access System Management Network
-Date: Mon, 21 May 2018 23:11:17 +0200
-Message-Id: <20180521210505.656961106@linuxfoundation.org>
+Subject: [PATCH 4.16 019/110] hwmon: (k10temp) Fix reading critical temperature register
+Date: Mon, 21 May 2018 23:11:16 +0200
+Message-Id: <20180521210505.567817304@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601110303218100056?=
-X-GMAIL-MSGID: =?utf-8?q?1601110303218100056?=
+X-GMAIL-THRID: =?utf-8?q?1601110297162141760?=
+X-GMAIL-MSGID: =?utf-8?q?1601110297162141760?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,17 +53,10 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Guenter Roeck <linux@roeck-us.net>
 
-commit 3b031622f598481970400519bd5abc2a16708282 upstream.
+commit 40626a1bf657eef557fcee9e1b8ef5b4f5b56dcd upstream.
 
-The SMN (System Management Network) on Family 17h AMD CPUs is also accessed
-from other drivers, specifically EDAC. Accessing it directly is racy.
-On top of that, accessing the SMN through root bridge 00:00 is wrong on
-multi-die CPUs and may result in reading the temperature from the wrong
-die. Use available API functions to fix the problem.
-
-For this to work, add dependency on AMD_NB. Also change the Raven Ridge
-PCI device ID to point to Data Fabric Function 3, since this ID is used
-by the API functions to find the CPU node.
+The HTC (Hardware Temperature Control) register has moved
+for recent chips.
 
 Cc: stable@vger.kernel.org # v4.16+
 Tested-by: Gabriel Craciunescu <nix.or.die@gmail.com>
@@ -71,59 +64,105 @@ Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hwmon/Kconfig   |    2 +-
- drivers/hwmon/k10temp.c |   11 ++++++-----
- 2 files changed, 7 insertions(+), 6 deletions(-)
+ drivers/hwmon/k10temp.c |   40 ++++++++++++++++++++++++++++++----------
+ 1 file changed, 30 insertions(+), 10 deletions(-)
 
---- a/drivers/hwmon/Kconfig
-+++ b/drivers/hwmon/Kconfig
-@@ -272,7 +272,7 @@ config SENSORS_K8TEMP
- 
- config SENSORS_K10TEMP
- 	tristate "AMD Family 10h+ temperature sensor"
--	depends on X86 && PCI
-+	depends on X86 && PCI && AMD_NB
- 	help
- 	  If you say yes here you get support for the temperature
- 	  sensor(s) inside your CPU. Supported are later revisions of
 --- a/drivers/hwmon/k10temp.c
 +++ b/drivers/hwmon/k10temp.c
-@@ -23,6 +23,7 @@
- #include <linux/init.h>
- #include <linux/module.h>
- #include <linux/pci.h>
-+#include <asm/amd_nb.h>
- #include <asm/processor.h>
+@@ -63,10 +63,12 @@ static DEFINE_MUTEX(nb_smu_ind_mutex);
+ #define  NB_CAP_HTC			0x00000400
  
- MODULE_DESCRIPTION("AMD Family 10h+ CPU core temperature monitor");
-@@ -40,8 +41,8 @@ static DEFINE_MUTEX(nb_smu_ind_mutex);
- #define PCI_DEVICE_ID_AMD_17H_DF_F3	0x1463
- #endif
+ /*
+- * For F15h M60h, functionality of REG_REPORTED_TEMPERATURE
+- * has been moved to D0F0xBC_xD820_0CA4 [Reported Temperature
+- * Control]
++ * For F15h M60h and M70h, REG_HARDWARE_THERMAL_CONTROL
++ * and REG_REPORTED_TEMPERATURE have been moved to
++ * D0F0xBC_xD820_0C64 [Hardware Temperature Control]
++ * D0F0xBC_xD820_0CA4 [Reported Temperature Control]
+  */
++#define F15H_M60H_HARDWARE_TEMP_CTRL_OFFSET	0xd8200c64
+ #define F15H_M60H_REPORTED_TEMP_CTRL_OFFSET	0xd8200ca4
  
--#ifndef PCI_DEVICE_ID_AMD_17H_RR_NB
--#define PCI_DEVICE_ID_AMD_17H_RR_NB	0x15d0
-+#ifndef PCI_DEVICE_ID_AMD_17H_M10H_DF_F3
-+#define PCI_DEVICE_ID_AMD_17H_M10H_DF_F3	0x15eb
- #endif
+ /* F17h M01h Access througn SMN */
+@@ -74,6 +76,7 @@ static DEFINE_MUTEX(nb_smu_ind_mutex);
  
- /* CPUID function 0x80000001, ebx */
-@@ -136,8 +137,8 @@ static void read_tempreg_nb_f15(struct p
+ struct k10temp_data {
+ 	struct pci_dev *pdev;
++	void (*read_htcreg)(struct pci_dev *pdev, u32 *regval);
+ 	void (*read_tempreg)(struct pci_dev *pdev, u32 *regval);
+ 	int temp_offset;
+ 	u32 temp_adjust_mask;
+@@ -98,6 +101,11 @@ static const struct tctl_offset tctl_off
+ 	{ 0x17, "AMD Ryzen Threadripper 1910", 10000 },
+ };
  
- static void read_tempreg_nb_f17(struct pci_dev *pdev, u32 *regval)
++static void read_htcreg_pci(struct pci_dev *pdev, u32 *regval)
++{
++	pci_read_config_dword(pdev, REG_HARDWARE_THERMAL_CONTROL, regval);
++}
++
+ static void read_tempreg_pci(struct pci_dev *pdev, u32 *regval)
  {
--	amd_nb_index_read(pdev, PCI_DEVFN(0, 0), 0x60,
--			  F17H_M01H_REPORTED_TEMP_CTRL_OFFSET, regval);
-+	amd_smn_read(amd_pci_dev_to_node_id(pdev),
-+		     F17H_M01H_REPORTED_TEMP_CTRL_OFFSET, regval);
+ 	pci_read_config_dword(pdev, REG_REPORTED_TEMPERATURE, regval);
+@@ -114,6 +122,12 @@ static void amd_nb_index_read(struct pci
+ 	mutex_unlock(&nb_smu_ind_mutex);
  }
  
- static ssize_t temp1_input_show(struct device *dev,
-@@ -322,7 +323,7 @@ static const struct pci_device_id k10tem
- 	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_16H_NB_F3) },
- 	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_16H_M30H_NB_F3) },
- 	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_17H_DF_F3) },
--	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_17H_RR_NB) },
-+	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_17H_M10H_DF_F3) },
- 	{}
- };
- MODULE_DEVICE_TABLE(pci, k10temp_id_table);
++static void read_htcreg_nb_f15(struct pci_dev *pdev, u32 *regval)
++{
++	amd_nb_index_read(pdev, PCI_DEVFN(0, 0), 0xb8,
++			  F15H_M60H_HARDWARE_TEMP_CTRL_OFFSET, regval);
++}
++
+ static void read_tempreg_nb_f15(struct pci_dev *pdev, u32 *regval)
+ {
+ 	amd_nb_index_read(pdev, PCI_DEVFN(0, 0), 0xb8,
+@@ -160,8 +174,7 @@ static ssize_t show_temp_crit(struct dev
+ 	u32 regval;
+ 	int value;
+ 
+-	pci_read_config_dword(data->pdev,
+-			      REG_HARDWARE_THERMAL_CONTROL, &regval);
++	data->read_htcreg(data->pdev, &regval);
+ 	value = ((regval >> 16) & 0x7f) * 500 + 52000;
+ 	if (show_hyst)
+ 		value -= ((regval >> 24) & 0xf) * 500;
+@@ -181,13 +194,18 @@ static umode_t k10temp_is_visible(struct
+ 	struct pci_dev *pdev = data->pdev;
+ 
+ 	if (index >= 2) {
+-		u32 reg_caps, reg_htc;
++		u32 reg;
++
++		if (!data->read_htcreg)
++			return 0;
+ 
+ 		pci_read_config_dword(pdev, REG_NORTHBRIDGE_CAPABILITIES,
+-				      &reg_caps);
+-		pci_read_config_dword(pdev, REG_HARDWARE_THERMAL_CONTROL,
+-				      &reg_htc);
+-		if (!(reg_caps & NB_CAP_HTC) || !(reg_htc & HTC_ENABLE))
++				      &reg);
++		if (!(reg & NB_CAP_HTC))
++			return 0;
++
++		data->read_htcreg(data->pdev, &reg);
++		if (!(reg & HTC_ENABLE))
+ 			return 0;
+ 	}
+ 	return attr->mode;
+@@ -268,11 +286,13 @@ static int k10temp_probe(struct pci_dev
+ 
+ 	if (boot_cpu_data.x86 == 0x15 && (boot_cpu_data.x86_model == 0x60 ||
+ 					  boot_cpu_data.x86_model == 0x70)) {
++		data->read_htcreg = read_htcreg_nb_f15;
+ 		data->read_tempreg = read_tempreg_nb_f15;
+ 	} else if (boot_cpu_data.x86 == 0x17) {
+ 		data->temp_adjust_mask = 0x80000;
+ 		data->read_tempreg = read_tempreg_nb_f17;
+ 	} else {
++		data->read_htcreg = read_htcreg_pci;
+ 		data->read_tempreg = read_tempreg_pci;
+ 	}
+ 
