@@ -1,38 +1,38 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZoFJJoCKV6KpEJcIUM94bA7C5vqNEKvNwLZRntu7Pj0e7RNGvjS6I3OJ2UOv3/eYCrqtk2C
-ARC-Seal: i=1; a=rsa-sha256; t=1526937730; cv=none;
+X-Google-Smtp-Source: AB8JxZrQZ7BXtQnXxjaZoABiQUP7F15Vk41wvHKW3zpjTlQIs5NJyeW5xhX0US/1PiNu8Q3z7fp5
+ARC-Seal: i=1; a=rsa-sha256; t=1526937727; cv=none;
         d=google.com; s=arc-20160816;
-        b=Mq6sggWr6v8caWNpI3r7CxCNOwde2XdYlmyHIonVntcaP2v8g3e0QJZC+JAa1QPnpP
-         b9lfEhlDaLH3UI96lJgUaUTVOpkONF73Ih4jBeWJsIJG8KjBiy0+6cJjrxftbmKJy/W3
-         0AIhZkHbImUnSHK0p2PXjjs6ggiz99agWoV/HMMychSrytVlcCYaWDos0O/bOQnfVivp
-         EabqAOpmiNo6S8GohFMoDsRPzvHcoIhcHgRjFuTRma5ycw6UkPnMBpkB3aKj1CwuJqN0
-         +IRtZ9d0xdOINT6R13zvaeYTMc0o/iNJ7n43gNIiNxy2/E96gJL2RbK7/d0DOqlt2I4q
-         ksOA==
+        b=xtp9+xsvTeX42ZMEHCHYMCYweLgZ1Otyt7Dtnqnm/W+zcZsrylhjYJN5Y9C1odoLYY
+         CuneglyqJZ2rqkvba9g8XkzkeHxxTfLDUiyaVonmrvYI8Rt3gzULiKV2uNasMSjJm9DO
+         61V5j3bbFcFTigHhZIZRJRNRrDGiBrrzYn5+4agTaqzMN52oIr+0/SJLvKn8zMWnwWml
+         covXut+TQv291xVUTSR7Ldahh4sHKFLxHCBGVlMtYDfCdcRbDoSyMY9/a6Tv2JkrxNju
+         05jNoddY4MY6QAlYyXFDoW+fGCFN6sxk+G/TdZL7qP33Pn1VbktszAhSbliI2y23Mz5s
+         /KPA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=96jXU/ce0qRKpxjkIAxrcQZiAh254SypM606+p18TlU=;
-        b=eZqFEFCkLDFjZuh2rfipx240thDpuwIFgVKmHtx+S2qQYkSj/Rxz5K49v3xu2FhQ9Q
-         BgZrMBS/LLYL8CS4i0iivlRfeKym8dy/QxeoHlUiDCO/T3ECycJAGGZDSh/czQJEZoFF
-         jwGK4k/sFS0fVDVoS5AUqB02NoMpjDNzZF02/l9Ho9WKdYhoncwcdQyAKeoSVUEpPz7r
-         x4pIvP50tXXzk1aG9PkZ/OHMH8BZRmtvYtfXa9QwN9lq1ujTkjeGyyNgYHyJSxh2ajGb
-         wcr3O3DYjZdiKItcmLDAz1AFN529xo7IidkQJVvQmdkO2MEqE9vxxcC1DvYBiqrVQIBg
-         duGw==
+        bh=OXIgyPkSe+gsJbMicl/S3wxLVMhO+WhDQKjjM5KfBOw=;
+        b=YbtlZUW7iEU0JctgIrNRzqrWySVlLBVcK9kVL7/i0gCjvl+rq83zWx96Rh7OvVfWKg
+         s7BIrn+3kdIwtDNWlSolRC4Tr+VG0a05pBmq0icUG+/vCK/+nypRLucXlBSWaW+B+xzP
+         fblKB1WFJDIX3bgu+kk4QsbH+5T5wK0fRbQh6/LoZXl+2Mzgv3u4driHjnPr/ra3Yanu
+         2+VtuaX7CbZhBwAWYs4FOQ2Hsj0XFzFk81+8JwfLYkxAolI8fnskudsc8ixRRO4DRYsB
+         Sq/m8rtxSssoL87zzGXhDk1RzKT3RCFlUZ5/lfkXO5Sc+nivkOgXEIm3PKxLyzGiSmIs
+         J7VQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=d8sJsf9k;
+       dkim=pass header.i=@kernel.org header.s=default header.b=MbMScOFR;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=d8sJsf9k;
+       dkim=pass header.i=@kernel.org header.s=default header.b=MbMScOFR;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+	Kees Cook <keescook@chromium.org>,
 	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.14 73/95] x86/bugs: Rename _RDS to _SSBD
-Date: Mon, 21 May 2018 23:12:03 +0200
-Message-Id: <20180521210500.955924566@linuxfoundation.org>
+Subject: [PATCH 4.14 72/95] x86/speculation: Make "seccomp" the default mode for Speculative Store Bypass
+Date: Mon, 21 May 2018 23:12:02 +0200
+Message-Id: <20180521210500.745059783@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210447.219380974@linuxfoundation.org>
 References: <20180521210447.219380974@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109897706008662?=
-X-GMAIL-MSGID: =?utf-8?q?1601110257705812208?=
+X-GMAIL-THRID: =?utf-8?q?1601109894850235462?=
+X-GMAIL-MSGID: =?utf-8?q?1601110254817689240?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,378 +51,155 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+From: Kees Cook <keescook@chromium.org>
 
-commit 9f65fb29374ee37856dbad847b4e121aab72b510 upstream
+commit f21b53b20c754021935ea43364dbf53778eeba32 upstream
 
-Intel collateral will reference the SSB mitigation bit in IA32_SPEC_CTL[2]
-as SSBD (Speculative Store Bypass Disable).
+Unless explicitly opted out of, anything running under seccomp will have
+SSB mitigations enabled. Choosing the "prctl" mode will disable this.
 
-Hence changing it.
+[ tglx: Adjusted it to the new arch_seccomp_spec_mitigate() mechanism ]
 
-It is unclear yet what the MSR_IA32_ARCH_CAPABILITIES (0x10a) Bit(4) name
-is going to be. Following the rename it would be SSBD_NO but that rolls out
-to Speculative Store Bypass Disable No.
-
-Also fixed the missing space in X86_FEATURE_AMD_SSBD.
-
-[ tglx: Fixup x86_amd_rds_enable() and rds_tif_to_amd_ls_cfg() as well ]
-
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/cpufeatures.h |    4 ++--
- arch/x86/include/asm/msr-index.h   |   10 +++++-----
- arch/x86/include/asm/spec-ctrl.h   |   12 ++++++------
- arch/x86/include/asm/thread_info.h |    6 +++---
- arch/x86/kernel/cpu/amd.c          |   14 +++++++-------
- arch/x86/kernel/cpu/bugs.c         |   36 ++++++++++++++++++------------------
- arch/x86/kernel/cpu/common.c       |    2 +-
- arch/x86/kernel/cpu/intel.c        |    2 +-
- arch/x86/kernel/process.c          |    8 ++++----
- arch/x86/kvm/cpuid.c               |    2 +-
- arch/x86/kvm/vmx.c                 |    6 +++---
- 11 files changed, 51 insertions(+), 51 deletions(-)
+ Documentation/admin-guide/kernel-parameters.txt |   26 ++++++++++++-------
+ arch/x86/include/asm/nospec-branch.h            |    1 
+ arch/x86/kernel/cpu/bugs.c                      |   32 +++++++++++++++++-------
+ 3 files changed, 41 insertions(+), 18 deletions(-)
 
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -213,7 +213,7 @@
- #define X86_FEATURE_USE_IBPB		( 7*32+21) /* "" Indirect Branch Prediction Barrier enabled */
- #define X86_FEATURE_USE_IBRS_FW		( 7*32+22) /* "" Use IBRS during runtime firmware calls */
- #define X86_FEATURE_SPEC_STORE_BYPASS_DISABLE	( 7*32+23) /* "" Disable Speculative Store Bypass. */
--#define X86_FEATURE_AMD_RDS		(7*32+24)  /* "" AMD RDS implementation */
-+#define X86_FEATURE_AMD_SSBD		( 7*32+24)  /* "" AMD SSBD implementation */
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -3954,19 +3954,27 @@
+ 			This parameter controls whether the Speculative Store
+ 			Bypass optimization is used.
  
- /* Virtualization flags: Linux defined, word 8 */
- #define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
-@@ -333,7 +333,7 @@
- #define X86_FEATURE_SPEC_CTRL		(18*32+26) /* "" Speculation Control (IBRS + IBPB) */
- #define X86_FEATURE_INTEL_STIBP		(18*32+27) /* "" Single Thread Indirect Branch Predictors */
- #define X86_FEATURE_ARCH_CAPABILITIES	(18*32+29) /* IA32_ARCH_CAPABILITIES MSR (Intel) */
--#define X86_FEATURE_RDS			(18*32+31) /* Reduced Data Speculation */
-+#define X86_FEATURE_SSBD		(18*32+31) /* Speculative Store Bypass Disable */
+-			on     - Unconditionally disable Speculative Store Bypass
+-			off    - Unconditionally enable Speculative Store Bypass
+-			auto   - Kernel detects whether the CPU model contains an
+-				 implementation of Speculative Store Bypass and
+-				 picks the most appropriate mitigation.
+-			prctl  - Control Speculative Store Bypass per thread
+-				 via prctl. Speculative Store Bypass is enabled
+-				 for a process by default. The state of the control
+-				 is inherited on fork.
++			on      - Unconditionally disable Speculative Store Bypass
++			off     - Unconditionally enable Speculative Store Bypass
++			auto    - Kernel detects whether the CPU model contains an
++				  implementation of Speculative Store Bypass and
++				  picks the most appropriate mitigation. If the
++				  CPU is not vulnerable, "off" is selected. If the
++				  CPU is vulnerable the default mitigation is
++				  architecture and Kconfig dependent. See below.
++			prctl   - Control Speculative Store Bypass per thread
++				  via prctl. Speculative Store Bypass is enabled
++				  for a process by default. The state of the control
++				  is inherited on fork.
++			seccomp - Same as "prctl" above, but all seccomp threads
++				  will disable SSB unless they explicitly opt out.
  
- /*
-  * BUG word(s)
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -42,8 +42,8 @@
- #define MSR_IA32_SPEC_CTRL		0x00000048 /* Speculation Control */
- #define SPEC_CTRL_IBRS			(1 << 0)   /* Indirect Branch Restricted Speculation */
- #define SPEC_CTRL_STIBP			(1 << 1)   /* Single Thread Indirect Branch Predictors */
--#define SPEC_CTRL_RDS_SHIFT		2	   /* Reduced Data Speculation bit */
--#define SPEC_CTRL_RDS			(1 << SPEC_CTRL_RDS_SHIFT)   /* Reduced Data Speculation */
-+#define SPEC_CTRL_SSBD_SHIFT		2	   /* Speculative Store Bypass Disable bit */
-+#define SPEC_CTRL_SSBD			(1 << SPEC_CTRL_SSBD_SHIFT)   /* Speculative Store Bypass Disable */
+ 			Not specifying this option is equivalent to
+ 			spec_store_bypass_disable=auto.
  
- #define MSR_IA32_PRED_CMD		0x00000049 /* Prediction Command */
- #define PRED_CMD_IBPB			(1 << 0)   /* Indirect Branch Prediction Barrier */
-@@ -70,10 +70,10 @@
- #define MSR_IA32_ARCH_CAPABILITIES	0x0000010a
- #define ARCH_CAP_RDCL_NO		(1 << 0)   /* Not susceptible to Meltdown */
- #define ARCH_CAP_IBRS_ALL		(1 << 1)   /* Enhanced IBRS support */
--#define ARCH_CAP_RDS_NO			(1 << 4)   /*
-+#define ARCH_CAP_SSBD_NO		(1 << 4)   /*
- 						    * Not susceptible to Speculative Store Bypass
--						    * attack, so no Reduced Data Speculation control
--						    * required.
-+						    * attack, so no Speculative Store Bypass
-+						    * control required.
- 						    */
++			Default mitigations:
++			X86:	If CONFIG_SECCOMP=y "seccomp", otherwise "prctl"
++
+ 	spia_io_base=	[HW,MTD]
+ 	spia_fio_base=
+ 	spia_pedr=
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -233,6 +233,7 @@ enum ssb_mitigation {
+ 	SPEC_STORE_BYPASS_NONE,
+ 	SPEC_STORE_BYPASS_DISABLE,
+ 	SPEC_STORE_BYPASS_PRCTL,
++	SPEC_STORE_BYPASS_SECCOMP,
+ };
  
- #define MSR_IA32_BBL_CR_CTL		0x00000119
---- a/arch/x86/include/asm/spec-ctrl.h
-+++ b/arch/x86/include/asm/spec-ctrl.h
-@@ -17,20 +17,20 @@ extern void x86_spec_ctrl_restore_host(u
- 
- /* AMD specific Speculative Store Bypass MSR data */
- extern u64 x86_amd_ls_cfg_base;
--extern u64 x86_amd_ls_cfg_rds_mask;
-+extern u64 x86_amd_ls_cfg_ssbd_mask;
- 
- /* The Intel SPEC CTRL MSR base value cache */
- extern u64 x86_spec_ctrl_base;
- 
--static inline u64 rds_tif_to_spec_ctrl(u64 tifn)
-+static inline u64 ssbd_tif_to_spec_ctrl(u64 tifn)
- {
--	BUILD_BUG_ON(TIF_RDS < SPEC_CTRL_RDS_SHIFT);
--	return (tifn & _TIF_RDS) >> (TIF_RDS - SPEC_CTRL_RDS_SHIFT);
-+	BUILD_BUG_ON(TIF_SSBD < SPEC_CTRL_SSBD_SHIFT);
-+	return (tifn & _TIF_SSBD) >> (TIF_SSBD - SPEC_CTRL_SSBD_SHIFT);
- }
- 
--static inline u64 rds_tif_to_amd_ls_cfg(u64 tifn)
-+static inline u64 ssbd_tif_to_amd_ls_cfg(u64 tifn)
- {
--	return (tifn & _TIF_RDS) ? x86_amd_ls_cfg_rds_mask : 0ULL;
-+	return (tifn & _TIF_SSBD) ? x86_amd_ls_cfg_ssbd_mask : 0ULL;
- }
- 
- extern void speculative_store_bypass_update(void);
---- a/arch/x86/include/asm/thread_info.h
-+++ b/arch/x86/include/asm/thread_info.h
-@@ -81,7 +81,7 @@ struct thread_info {
- #define TIF_SIGPENDING		2	/* signal pending */
- #define TIF_NEED_RESCHED	3	/* rescheduling necessary */
- #define TIF_SINGLESTEP		4	/* reenable singlestep on user return*/
--#define TIF_RDS			5	/* Reduced data speculation */
-+#define TIF_SSBD			5	/* Reduced data speculation */
- #define TIF_SYSCALL_EMU		6	/* syscall emulation active */
- #define TIF_SYSCALL_AUDIT	7	/* syscall auditing active */
- #define TIF_SECCOMP		8	/* secure computing */
-@@ -108,7 +108,7 @@ struct thread_info {
- #define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
- #define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
- #define _TIF_SINGLESTEP		(1 << TIF_SINGLESTEP)
--#define _TIF_RDS		(1 << TIF_RDS)
-+#define _TIF_SSBD		(1 << TIF_SSBD)
- #define _TIF_SYSCALL_EMU	(1 << TIF_SYSCALL_EMU)
- #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
- #define _TIF_SECCOMP		(1 << TIF_SECCOMP)
-@@ -148,7 +148,7 @@ struct thread_info {
- 
- /* flags to check in __switch_to() */
- #define _TIF_WORK_CTXSW							\
--	(_TIF_IO_BITMAP|_TIF_NOCPUID|_TIF_NOTSC|_TIF_BLOCKSTEP|_TIF_RDS)
-+	(_TIF_IO_BITMAP|_TIF_NOCPUID|_TIF_NOTSC|_TIF_BLOCKSTEP|_TIF_SSBD)
- 
- #define _TIF_WORK_CTXSW_PREV (_TIF_WORK_CTXSW|_TIF_USER_RETURN_NOTIFY)
- #define _TIF_WORK_CTXSW_NEXT (_TIF_WORK_CTXSW)
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -567,12 +567,12 @@ static void bsp_init_amd(struct cpuinfo_
- 		}
- 		/*
- 		 * Try to cache the base value so further operations can
--		 * avoid RMW. If that faults, do not enable RDS.
-+		 * avoid RMW. If that faults, do not enable SSBD.
- 		 */
- 		if (!rdmsrl_safe(MSR_AMD64_LS_CFG, &x86_amd_ls_cfg_base)) {
--			setup_force_cpu_cap(X86_FEATURE_RDS);
--			setup_force_cpu_cap(X86_FEATURE_AMD_RDS);
--			x86_amd_ls_cfg_rds_mask = 1ULL << bit;
-+			setup_force_cpu_cap(X86_FEATURE_SSBD);
-+			setup_force_cpu_cap(X86_FEATURE_AMD_SSBD);
-+			x86_amd_ls_cfg_ssbd_mask = 1ULL << bit;
- 		}
- 	}
- }
-@@ -894,9 +894,9 @@ static void init_amd(struct cpuinfo_x86
- 	if (!cpu_has(c, X86_FEATURE_XENPV))
- 		set_cpu_bug(c, X86_BUG_SYSRET_SS_ATTRS);
- 
--	if (boot_cpu_has(X86_FEATURE_AMD_RDS)) {
--		set_cpu_cap(c, X86_FEATURE_RDS);
--		set_cpu_cap(c, X86_FEATURE_AMD_RDS);
-+	if (boot_cpu_has(X86_FEATURE_AMD_SSBD)) {
-+		set_cpu_cap(c, X86_FEATURE_SSBD);
-+		set_cpu_cap(c, X86_FEATURE_AMD_SSBD);
- 	}
- }
- 
+ extern char __indirect_thunk_start[];
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -45,10 +45,10 @@ static u64 __ro_after_init x86_spec_ctrl
+@@ -416,22 +416,25 @@ enum ssb_mitigation_cmd {
+ 	SPEC_STORE_BYPASS_CMD_AUTO,
+ 	SPEC_STORE_BYPASS_CMD_ON,
+ 	SPEC_STORE_BYPASS_CMD_PRCTL,
++	SPEC_STORE_BYPASS_CMD_SECCOMP,
+ };
  
- /*
-  * AMD specific MSR info for Speculative Store Bypass control.
-- * x86_amd_ls_cfg_rds_mask is initialized in identify_boot_cpu().
-+ * x86_amd_ls_cfg_ssbd_mask is initialized in identify_boot_cpu().
-  */
- u64 __ro_after_init x86_amd_ls_cfg_base;
--u64 __ro_after_init x86_amd_ls_cfg_rds_mask;
-+u64 __ro_after_init x86_amd_ls_cfg_ssbd_mask;
+ static const char *ssb_strings[] = {
+ 	[SPEC_STORE_BYPASS_NONE]	= "Vulnerable",
+ 	[SPEC_STORE_BYPASS_DISABLE]	= "Mitigation: Speculative Store Bypass disabled",
+-	[SPEC_STORE_BYPASS_PRCTL]	= "Mitigation: Speculative Store Bypass disabled via prctl"
++	[SPEC_STORE_BYPASS_PRCTL]	= "Mitigation: Speculative Store Bypass disabled via prctl",
++	[SPEC_STORE_BYPASS_SECCOMP]	= "Mitigation: Speculative Store Bypass disabled via prctl and seccomp",
+ };
  
- void __init check_bugs(void)
- {
-@@ -146,7 +146,7 @@ u64 x86_spec_ctrl_get_default(void)
- 	u64 msrval = x86_spec_ctrl_base;
- 
- 	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL)
--		msrval |= rds_tif_to_spec_ctrl(current_thread_info()->flags);
-+		msrval |= ssbd_tif_to_spec_ctrl(current_thread_info()->flags);
- 	return msrval;
- }
- EXPORT_SYMBOL_GPL(x86_spec_ctrl_get_default);
-@@ -159,7 +159,7 @@ void x86_spec_ctrl_set_guest(u64 guest_s
- 		return;
- 
- 	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL)
--		host |= rds_tif_to_spec_ctrl(current_thread_info()->flags);
-+		host |= ssbd_tif_to_spec_ctrl(current_thread_info()->flags);
- 
- 	if (host != guest_spec_ctrl)
- 		wrmsrl(MSR_IA32_SPEC_CTRL, guest_spec_ctrl);
-@@ -174,18 +174,18 @@ void x86_spec_ctrl_restore_host(u64 gues
- 		return;
- 
- 	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL)
--		host |= rds_tif_to_spec_ctrl(current_thread_info()->flags);
-+		host |= ssbd_tif_to_spec_ctrl(current_thread_info()->flags);
- 
- 	if (host != guest_spec_ctrl)
- 		wrmsrl(MSR_IA32_SPEC_CTRL, host);
- }
- EXPORT_SYMBOL_GPL(x86_spec_ctrl_restore_host);
- 
--static void x86_amd_rds_enable(void)
-+static void x86_amd_ssb_disable(void)
- {
--	u64 msrval = x86_amd_ls_cfg_base | x86_amd_ls_cfg_rds_mask;
-+	u64 msrval = x86_amd_ls_cfg_base | x86_amd_ls_cfg_ssbd_mask;
- 
--	if (boot_cpu_has(X86_FEATURE_AMD_RDS))
-+	if (boot_cpu_has(X86_FEATURE_AMD_SSBD))
- 		wrmsrl(MSR_AMD64_LS_CFG, msrval);
- }
- 
-@@ -473,7 +473,7 @@ static enum ssb_mitigation_cmd __init __
- 	enum ssb_mitigation mode = SPEC_STORE_BYPASS_NONE;
+ static const struct {
+ 	const char *option;
  	enum ssb_mitigation_cmd cmd;
+ } ssb_mitigation_options[] = {
+-	{ "auto",	SPEC_STORE_BYPASS_CMD_AUTO },  /* Platform decides */
+-	{ "on",		SPEC_STORE_BYPASS_CMD_ON },    /* Disable Speculative Store Bypass */
+-	{ "off",	SPEC_STORE_BYPASS_CMD_NONE },  /* Don't touch Speculative Store Bypass */
+-	{ "prctl",	SPEC_STORE_BYPASS_CMD_PRCTL }, /* Disable Speculative Store Bypass via prctl */
++	{ "auto",	SPEC_STORE_BYPASS_CMD_AUTO },    /* Platform decides */
++	{ "on",		SPEC_STORE_BYPASS_CMD_ON },      /* Disable Speculative Store Bypass */
++	{ "off",	SPEC_STORE_BYPASS_CMD_NONE },    /* Don't touch Speculative Store Bypass */
++	{ "prctl",	SPEC_STORE_BYPASS_CMD_PRCTL },   /* Disable Speculative Store Bypass via prctl */
++	{ "seccomp",	SPEC_STORE_BYPASS_CMD_SECCOMP }, /* Disable Speculative Store Bypass via prctl and seccomp */
+ };
  
--	if (!boot_cpu_has(X86_FEATURE_RDS))
-+	if (!boot_cpu_has(X86_FEATURE_SSBD))
- 		return mode;
+ static enum ssb_mitigation_cmd __init ssb_parse_cmdline(void)
+@@ -481,8 +484,15 @@ static enum ssb_mitigation_cmd __init __
  
- 	cmd = ssb_parse_cmdline();
-@@ -507,7 +507,7 @@ static enum ssb_mitigation_cmd __init __
- 	/*
- 	 * We have three CPU feature flags that are in play here:
- 	 *  - X86_BUG_SPEC_STORE_BYPASS - CPU is susceptible.
--	 *  - X86_FEATURE_RDS - CPU is able to turn off speculative store bypass
-+	 *  - X86_FEATURE_SSBD - CPU is able to turn off speculative store bypass
- 	 *  - X86_FEATURE_SPEC_STORE_BYPASS_DISABLE - engage the mitigation
- 	 */
- 	if (mode == SPEC_STORE_BYPASS_DISABLE) {
-@@ -518,12 +518,12 @@ static enum ssb_mitigation_cmd __init __
- 		 */
- 		switch (boot_cpu_data.x86_vendor) {
- 		case X86_VENDOR_INTEL:
--			x86_spec_ctrl_base |= SPEC_CTRL_RDS;
--			x86_spec_ctrl_mask &= ~SPEC_CTRL_RDS;
--			x86_spec_ctrl_set(SPEC_CTRL_RDS);
-+			x86_spec_ctrl_base |= SPEC_CTRL_SSBD;
-+			x86_spec_ctrl_mask &= ~SPEC_CTRL_SSBD;
-+			x86_spec_ctrl_set(SPEC_CTRL_SSBD);
- 			break;
- 		case X86_VENDOR_AMD:
--			x86_amd_rds_enable();
-+			x86_amd_ssb_disable();
- 			break;
- 		}
- 	}
-@@ -556,16 +556,16 @@ static int ssb_prctl_set(struct task_str
- 		if (task_spec_ssb_force_disable(task))
- 			return -EPERM;
- 		task_clear_spec_ssb_disable(task);
--		update = test_and_clear_tsk_thread_flag(task, TIF_RDS);
-+		update = test_and_clear_tsk_thread_flag(task, TIF_SSBD);
+ 	switch (cmd) {
+ 	case SPEC_STORE_BYPASS_CMD_AUTO:
+-		/* Choose prctl as the default mode */
+-		mode = SPEC_STORE_BYPASS_PRCTL;
++	case SPEC_STORE_BYPASS_CMD_SECCOMP:
++		/*
++		 * Choose prctl+seccomp as the default mode if seccomp is
++		 * enabled.
++		 */
++		if (IS_ENABLED(CONFIG_SECCOMP))
++			mode = SPEC_STORE_BYPASS_SECCOMP;
++		else
++			mode = SPEC_STORE_BYPASS_PRCTL;
  		break;
- 	case PR_SPEC_DISABLE:
- 		task_set_spec_ssb_disable(task);
--		update = !test_and_set_tsk_thread_flag(task, TIF_RDS);
-+		update = !test_and_set_tsk_thread_flag(task, TIF_SSBD);
- 		break;
- 	case PR_SPEC_FORCE_DISABLE:
- 		task_set_spec_ssb_disable(task);
- 		task_set_spec_ssb_force_disable(task);
--		update = !test_and_set_tsk_thread_flag(task, TIF_RDS);
-+		update = !test_and_set_tsk_thread_flag(task, TIF_SSBD);
- 		break;
- 	default:
- 		return -ERANGE;
-@@ -635,7 +635,7 @@ void x86_spec_ctrl_setup_ap(void)
- 		x86_spec_ctrl_set(x86_spec_ctrl_base & ~x86_spec_ctrl_mask);
- 
- 	if (ssb_mode == SPEC_STORE_BYPASS_DISABLE)
--		x86_amd_rds_enable();
-+		x86_amd_ssb_disable();
+ 	case SPEC_STORE_BYPASS_CMD_ON:
+ 		mode = SPEC_STORE_BYPASS_DISABLE;
+@@ -530,12 +540,14 @@ static void ssb_select_mitigation()
  }
  
- #ifdef CONFIG_SYSFS
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -926,7 +926,7 @@ static void __init cpu_set_bug_bits(stru
- 		rdmsrl(MSR_IA32_ARCH_CAPABILITIES, ia32_cap);
+ #undef pr_fmt
++#define pr_fmt(fmt)     "Speculation prctl: " fmt
  
- 	if (!x86_match_cpu(cpu_no_spec_store_bypass) &&
--	   !(ia32_cap & ARCH_CAP_RDS_NO))
-+	   !(ia32_cap & ARCH_CAP_SSBD_NO))
- 		setup_force_cpu_bug(X86_BUG_SPEC_STORE_BYPASS);
- 
- 	if (x86_match_cpu(cpu_no_speculation))
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -189,7 +189,7 @@ static void early_init_intel(struct cpui
- 		setup_clear_cpu_cap(X86_FEATURE_STIBP);
- 		setup_clear_cpu_cap(X86_FEATURE_SPEC_CTRL);
- 		setup_clear_cpu_cap(X86_FEATURE_INTEL_STIBP);
--		setup_clear_cpu_cap(X86_FEATURE_RDS);
-+		setup_clear_cpu_cap(X86_FEATURE_SSBD);
- 	}
- 
- 	/*
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -284,11 +284,11 @@ static __always_inline void __speculativ
+ static int ssb_prctl_set(struct task_struct *task, unsigned long ctrl)
  {
- 	u64 msr;
+ 	bool update;
  
--	if (static_cpu_has(X86_FEATURE_AMD_RDS)) {
--		msr = x86_amd_ls_cfg_base | rds_tif_to_amd_ls_cfg(tifn);
-+	if (static_cpu_has(X86_FEATURE_AMD_SSBD)) {
-+		msr = x86_amd_ls_cfg_base | ssbd_tif_to_amd_ls_cfg(tifn);
- 		wrmsrl(MSR_AMD64_LS_CFG, msr);
- 	} else {
--		msr = x86_spec_ctrl_base | rds_tif_to_spec_ctrl(tifn);
-+		msr = x86_spec_ctrl_base | ssbd_tif_to_spec_ctrl(tifn);
- 		wrmsrl(MSR_IA32_SPEC_CTRL, msr);
- 	}
+-	if (ssb_mode != SPEC_STORE_BYPASS_PRCTL)
++	if (ssb_mode != SPEC_STORE_BYPASS_PRCTL &&
++	    ssb_mode != SPEC_STORE_BYPASS_SECCOMP)
+ 		return -ENXIO;
+ 
+ 	switch (ctrl) {
+@@ -583,7 +595,8 @@ int arch_prctl_spec_ctrl_set(struct task
+ #ifdef CONFIG_SECCOMP
+ void arch_seccomp_spec_mitigate(struct task_struct *task)
+ {
+-	ssb_prctl_set(task, PR_SPEC_FORCE_DISABLE);
++	if (ssb_mode == SPEC_STORE_BYPASS_SECCOMP)
++		ssb_prctl_set(task, PR_SPEC_FORCE_DISABLE);
  }
-@@ -330,7 +330,7 @@ void __switch_to_xtra(struct task_struct
- 	if ((tifp ^ tifn) & _TIF_NOCPUID)
- 		set_cpuid_faulting(!!(tifn & _TIF_NOCPUID));
+ #endif
  
--	if ((tifp ^ tifn) & _TIF_RDS)
-+	if ((tifp ^ tifn) & _TIF_SSBD)
- 		__speculative_store_bypass_update(tifn);
- }
- 
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -394,7 +394,7 @@ static inline int __do_cpuid_ent(struct
- 
- 	/* cpuid 7.0.edx*/
- 	const u32 kvm_cpuid_7_0_edx_x86_features =
--		F(AVX512_4VNNIW) | F(AVX512_4FMAPS) | F(SPEC_CTRL) | F(RDS) |
-+		F(AVX512_4VNNIW) | F(AVX512_4FMAPS) | F(SPEC_CTRL) | F(SSBD) |
- 		F(ARCH_CAPABILITIES);
- 
- 	/* all calls to cpuid_count() should be made on the same cpu */
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -3295,7 +3295,7 @@ static int vmx_get_msr(struct kvm_vcpu *
- 		if (!msr_info->host_initiated &&
- 		    !guest_cpuid_has(vcpu, X86_FEATURE_IBRS) &&
- 		    !guest_cpuid_has(vcpu, X86_FEATURE_SPEC_CTRL) &&
--		    !guest_cpuid_has(vcpu, X86_FEATURE_RDS))
-+		    !guest_cpuid_has(vcpu, X86_FEATURE_SSBD))
- 			return 1;
- 
- 		msr_info->data = to_vmx(vcpu)->spec_ctrl;
-@@ -3417,11 +3417,11 @@ static int vmx_set_msr(struct kvm_vcpu *
- 		if (!msr_info->host_initiated &&
- 		    !guest_cpuid_has(vcpu, X86_FEATURE_IBRS) &&
- 		    !guest_cpuid_has(vcpu, X86_FEATURE_SPEC_CTRL) &&
--		    !guest_cpuid_has(vcpu, X86_FEATURE_RDS))
-+		    !guest_cpuid_has(vcpu, X86_FEATURE_SSBD))
- 			return 1;
- 
- 		/* The STIBP bit doesn't fault even if it's not advertised */
--		if (data & ~(SPEC_CTRL_IBRS | SPEC_CTRL_STIBP | SPEC_CTRL_RDS))
-+		if (data & ~(SPEC_CTRL_IBRS | SPEC_CTRL_STIBP | SPEC_CTRL_SSBD))
- 			return 1;
- 
- 		vmx->spec_ctrl = data;
+@@ -592,6 +605,7 @@ static int ssb_prctl_get(struct task_str
+ 	switch (ssb_mode) {
+ 	case SPEC_STORE_BYPASS_DISABLE:
+ 		return PR_SPEC_DISABLE;
++	case SPEC_STORE_BYPASS_SECCOMP:
+ 	case SPEC_STORE_BYPASS_PRCTL:
+ 		if (task_spec_ssb_force_disable(task))
+ 			return PR_SPEC_PRCTL | PR_SPEC_FORCE_DISABLE;
