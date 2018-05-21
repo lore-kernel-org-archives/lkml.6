@@ -1,38 +1,38 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZr7gJh7NZQeUJdAPj9+/SYIAd0bTgL1AMc7VpFzZSA3EDfI+Xt5IwxpUBoTxRaZJoe9kMPs
-ARC-Seal: i=1; a=rsa-sha256; t=1526937850; cv=none;
+X-Google-Smtp-Source: AB8JxZqchwRR/pzC1rxWGoEQRG9uv9ObFD7n+1MAFVnB6SrCRY/J9blZO0W2SCnbjA8Nw4SKOerS
+ARC-Seal: i=1; a=rsa-sha256; t=1526937847; cv=none;
         d=google.com; s=arc-20160816;
-        b=izSF9c0b6RVn6qvWfUhO60lZ7eSkhlGL6MnlJERvpZjqTwGzJjnJKHTD6H0+kdyial
-         HHqvD0NdE1rx+4+0SqoGOEwTYSE3X+sF4XrU5XhkkhatBEBCKVbr2m2FpllY61fIsbB4
-         Pfy0Hlndq9C/BHbWysVoxvnk+5V/dFKDlr1h6iMHPhrm37DO/U8QZlHwNOhpLp+Y+ZfU
-         6ZmlLz2QpkSdApRokV/JVR9kfOL9eAs6/YdMhbTkjIbFrABKke7vxiIhEkiCxNdELxXx
-         o3MxiBNOX5Q9a9YkDp3F9iQrrnIuE05XbBQSbZNlyQOMHuACGWqchiwFsR48fj1D2t+4
-         PWRw==
+        b=xWYCJorvOEKdv+72+ZJnDZLBbXuWG/DxEeGvLNacNsbSXAvDIAh8CNJNteDn3yKL7H
+         AVgpA3/v6dKkd8kdjzbx/9oAOAMISYPmj5nsvyks7zRiDEwBiyt0sHme2+xeulvf7uZC
+         NKO+5HiI/s9KC+Xd3DunNI0CGD/WXhi7vWlUfEGFgTnxlByZ+DU9tw3tOpn3jmL6Qc2n
+         73TEdIBWwmOoPiJnkyqL1citInFqyjgXceSVnKbB4sQ1araxwpoY3N2eRLpIO+n+PxQp
+         qhbYiemvgezCzU1uFS1zARf1V0OTTZ/0r8LI4mL0mQ3qi+F2W3TU4VZ3wC5+4f8vc90A
+         UT/g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=kOzkMCZat7j5iJJ6wfKG9DgPq86ztMlOPFUaQxZpWys=;
-        b=h08rAUa4y39gjRHOm/Am7UNfl4zp28nGXwpBaU1/kDNUHNLSCguBvP08tLM3LafcpH
-         PJWPI5/sdrkP7I1YMObEStOwtE3xdOsUUKHcFPJ/zCRkpDF45U10tPv+ascZPmZ4uqbC
-         ur7mLwxHzrTRFWfMWqz9T3CJKCB2cNvZM0PSThtXJ/NA3+KrgiQ0BewZjh2WGK3ri97l
-         kv8p5fSabmeiyhUKPpcMa1Pbp93YinHc0pRepFsef5kYSp8ElwDTsZKj2nH3pX+y59cV
-         YUrGI0dKeNM/Rb/jOrKh0snlz1z+o2iz1VbjeT/aa6Q7ZzS3VUQsMn+O677Ah/fxfBas
-         fLzw==
+        bh=NfLV3jthL6RRVbsvIZhZzjAVmuBomJEPk0T63fTH7J8=;
+        b=i+i6993QiKbPNGObOsmVVtUUQwZbqUD7pEs90sfkJycLAEB/wk5gqG+aAUsHI5vQzr
+         nx52BLAJtyGmt2JtVloS+u7CkZbV/wlGcdl4wa0pGNrynAV4aY6eqTWcWHdWYGk3sZ1z
+         GntT/LYeDQR6TwvBasQPVi/GQlxPMD6nlmdeJ4haa9WplJOjuI5Ppz2zh9yRuUL3SH+I
+         +v81RR8pwZwZAhstWRlrDfCgJhPHXcr6qyfYB5DkPHDun8kf9wgK+2VDBIcWmp1sAUXW
+         66mKS00B7BeMFnv6ppTIkPGCeXtdWxzYa6xqiGdqAVxtRzQToFP5VV9f0pI30ZOGrmR3
+         K0vA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=OTY8Ys7W;
+       dkim=pass header.i=@kernel.org header.s=default header.b=q7wxvIUH;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=OTY8Ys7W;
+       dkim=pass header.i=@kernel.org header.s=default header.b=q7wxvIUH;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Russell King <rmk+kernel@armlinux.org.uk>
-Subject: [PATCH 4.16 048/110] ARM: 8771/1: kprobes: Prohibit kprobes on do_undefinstr
-Date: Mon, 21 May 2018 23:11:45 +0200
-Message-Id: <20180521210508.942917094@linuxfoundation.org>
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>
+Subject: [PATCH 4.16 030/110] ARM64: dts: marvell: armada-cp110: Add mg_core_clk for ethernet node
+Date: Mon, 21 May 2018 23:11:27 +0200
+Message-Id: <20180521210506.440063348@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109792890386805?=
-X-GMAIL-MSGID: =?utf-8?q?1601110383405282339?=
+X-GMAIL-THRID: =?utf-8?q?1601110380295633221?=
+X-GMAIL-MSGID: =?utf-8?q?1601110380295633221?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,50 +51,68 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
 
-commit eb0146daefdde65665b7f076fbff7b49dade95b9 upstream.
+commit f43194c1447c9536efb0859c2f3f46f6bf2b9154 upstream.
 
-Prohibit kprobes on do_undefinstr because kprobes on
-arm is implemented by undefined instruction. This means
-if we probe do_undefinstr(), it can cause infinit
-recursive exception.
+Marvell PPv2.2 controller present on CP-110 need the extra "mg_core_clk"
+clock to avoid system hangs when powering some network interfaces up.
 
-Fixes: 24ba613c9d6c ("ARM kprobes: core code")
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: stable@vger.kernel.org
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+This issue appeared after a recent clock rework on Armada 7K/8K platforms.
+
+This commit adds the new clock and updates the documentation accordingly.
+
+[gregory.clement: use the real first commit to fix and add the cc:stable
+flag]
+Fixes: e3af9f7c6ece ("RM64: dts: marvell: armada-cp110: Fix clock resources for various node")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/kernel/traps.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/net/marvell-pp2.txt |    9 +++++----
+ arch/arm64/boot/dts/marvell/armada-cp110.dtsi         |    5 +++--
+ 2 files changed, 8 insertions(+), 6 deletions(-)
 
---- a/arch/arm/kernel/traps.c
-+++ b/arch/arm/kernel/traps.c
-@@ -19,6 +19,7 @@
- #include <linux/uaccess.h>
- #include <linux/hardirq.h>
- #include <linux/kdebug.h>
-+#include <linux/kprobes.h>
- #include <linux/module.h>
- #include <linux/kexec.h>
- #include <linux/bug.h>
-@@ -417,7 +418,8 @@ void unregister_undef_hook(struct undef_
- 	raw_spin_unlock_irqrestore(&undef_lock, flags);
- }
+--- a/Documentation/devicetree/bindings/net/marvell-pp2.txt
++++ b/Documentation/devicetree/bindings/net/marvell-pp2.txt
+@@ -21,9 +21,10 @@ Required properties:
+ 	- main controller clock (for both armada-375-pp2 and armada-7k-pp2)
+ 	- GOP clock (for both armada-375-pp2 and armada-7k-pp2)
+ 	- MG clock (only for armada-7k-pp2)
++	- MG Core clock (only for armada-7k-pp2)
+ 	- AXI clock (only for armada-7k-pp2)
+-- clock-names: names of used clocks, must be "pp_clk", "gop_clk", "mg_clk"
+-  and "axi_clk" (the 2 latter only for armada-7k-pp2).
++- clock-names: names of used clocks, must be "pp_clk", "gop_clk", "mg_clk",
++  "mg_core_clk" and "axi_clk" (the 3 latter only for armada-7k-pp2).
  
--static int call_undef_hook(struct pt_regs *regs, unsigned int instr)
-+static nokprobe_inline
-+int call_undef_hook(struct pt_regs *regs, unsigned int instr)
- {
- 	struct undef_hook *hook;
- 	unsigned long flags;
-@@ -490,6 +492,7 @@ die_sig:
+ The ethernet ports are represented by subnodes. At least one port is
+ required.
+@@ -80,8 +81,8 @@ cpm_ethernet: ethernet@0 {
+ 	compatible = "marvell,armada-7k-pp22";
+ 	reg = <0x0 0x100000>, <0x129000 0xb000>;
+ 	clocks = <&cpm_syscon0 1 3>, <&cpm_syscon0 1 9>,
+-		 <&cpm_syscon0 1 5>, <&cpm_syscon0 1 18>;
+-	clock-names = "pp_clk", "gop_clk", "gp_clk", "axi_clk";
++		 <&cpm_syscon0 1 5>, <&cpm_syscon0 1 6>, <&cpm_syscon0 1 18>;
++	clock-names = "pp_clk", "gop_clk", "mg_clk", "mg_core_clk", "axi_clk";
  
- 	arm_notify_die("Oops - undefined instruction", regs, &info, 0, 6);
- }
-+NOKPROBE_SYMBOL(do_undefinstr)
- 
- /*
-  * Handle FIQ similarly to NMI on x86 systems.
+ 	eth0: eth0 {
+ 		interrupts = <ICU_GRP_NSR 39 IRQ_TYPE_LEVEL_HIGH>,
+--- a/arch/arm64/boot/dts/marvell/armada-cp110.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-cp110.dtsi
+@@ -40,9 +40,10 @@
+ 			compatible = "marvell,armada-7k-pp22";
+ 			reg = <0x0 0x100000>, <0x129000 0xb000>;
+ 			clocks = <&CP110_LABEL(clk) 1 3>, <&CP110_LABEL(clk) 1 9>,
+-				 <&CP110_LABEL(clk) 1 5>, <&CP110_LABEL(clk) 1 18>;
++				 <&CP110_LABEL(clk) 1 5>, <&CP110_LABEL(clk) 1 6>,
++				 <&CP110_LABEL(clk) 1 18>;
+ 			clock-names = "pp_clk", "gop_clk",
+-				      "mg_clk", "axi_clk";
++				      "mg_clk", "mg_core_clk", "axi_clk";
+ 			marvell,system-controller = <&CP110_LABEL(syscon0)>;
+ 			status = "disabled";
+ 			dma-coherent;
