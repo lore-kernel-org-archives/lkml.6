@@ -1,94 +1,48 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1340521-1526937563-5-18037492522509920990
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526937563; b=YAQ/HoSHwvRcuOhKCbSXwBlCh9mmVNKY9qYeLPfCDApEkjBtdE
-    bIvPleg9RlP3vRsRO3A9WoX0Had8CQ37Gm36C++ePw9aB4OHRG1YhUxst2aJ2Y2/
-    kD7c+6UdOKeClRziwnDqKCn6lwq/Xs/FUjZPPQRlYvZ4Jt/kZZHLzlsb6iSgGIFZ
-    wGGTbwKxl2rweHI90Yd2X5Z9GkNP4No8RMalDhSLjjhIfeB0P/0EDv3uwCU5dEaj
-    1eND2WMmf93aShm+92HvCpAaoLm/tR2pCvBqrUVpRGhnhybAzqGmuSWKFPKH5jHS
-    giPnDh0mN0QtesTQ0Jrz0plBDiw6d2ChC2Iw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1526937563; bh=JwqvhcjZUgJ/0nvkfqT3rwTR2jzMNf
-    w/bxuxjwDrQgc=; b=SqBR8+a5rLqgkPztwaAwKGI9Qntk44EhkcktHhyeawA5gq
-    nSt0BJhV6oxYPuHT98yBv8jNnCUgkWrXFbP4KzBlJbUki2UZHX4CgYfLuLeWY21C
-    yr+w8zbTOz22b4Dpjc6qRarjdsG6thKZlsyqCZJXyrZ11LYloq3Mymu3/BpYR9/k
-    DlaaS3XEAi+2SUayKm63qiHsn/O3PWpUKH96r7RzvFDDtgaSXuHQT3vkrouESBJH
-    xrUMgXqkstFE0Fd09W70KxGkZyJQ1wFRI1VNKztD+MMzTTS4OvsMBkcMFFsD38TJ
-    ZnajFXjAq0iE9igTuVgZsgQd3F5+g7FuSzL1Xurw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=Tvn/RG1/ x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linuxfoundation.org header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=Tvn/RG1/ x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linuxfoundation.org header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGynhNzHb5QQjpylk77kFBXi5zT8R9h++daVqQJk9+2zXTDRhlBYKZ+nyDWIvlo+jhpdB6MjwKbVLF7nS0NBSSwYlNQgt1lBuFBwf3OXUT+FM4JXcKVU
-    rX84AP8Asc0SMYDES551EEasqazCeRpMakjfcv00XoCsEI7m0IuYMuexlRCdItiHuB+/35nOQ1lzvcUy7c4Ee/hV1jheWTGM5Eb+fzBxMYkJz6WWschMUrsE
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=BLZoak4jdz2zqNjCJHsA:9
-    a=hTJd3nM-DXW1XHX1:21 a=Hg-IJv2aXcJdoT2Z:21 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752859AbeEUVTU (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 21 May 2018 17:19:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34306 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752933AbeEUVTR (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 21 May 2018 17:19:17 -0400
+Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZr0lx/lcnobfsZSR1bf5u3LsMbPjem//HNK2aAleihB7U3Eb4JPGpzf1V2svk6U0LJ3C6Kn
+ARC-Seal: i=1; a=rsa-sha256; t=1526937562; cv=none;
+        d=google.com; s=arc-20160816;
+        b=fb3anbDa+EiDD25M2fCFtL7Gr7jqVEk2vny4e8wahu9trhKzddPe8erAorkd6wAdMb
+         AmoKHF4lkfSSQR82ZDmX5Dh17mcIlf9ECVLsk7E61gIlKxAKNIWiXyuMp2tEs2gRcCSy
+         DY0XowWwkgGUHPW15cmX8i/DP+mVa10+br5K5hV6cD8VjwwI9WLa41ceEFxQ9dLMwKJM
+         KrZbxP4IMs6nfbT7xhzZkTdwgCxdEqtk2C2YzK4uJreQFpCZ/ZcqeK0RR99z2Bomd2eD
+         BoQLKyojPYRCfGp3JUkwKTWqtsgMT0U2uhg12o72EvuDKUd75M6bj/Ktkl8fI46Y0rcT
+         LnOg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=8ITHYratHskM+Zr6Y9s0NiejHBeeezmSPmPLxr3nuAw=;
+        b=olytMteDwsuP6m4E+vE01tfZwNfU46NytAKxPxcakCMqbsTY1a9Nk49geYs46cLetB
+         Xa74m6lncgVUZa8UkZZeFQI2BwtXeYVn+KGiFxTgJ5YoaBe8yE6JFifRvmEpVvnFr8H8
+         CzDbsfQMnM9RaEoP/8NHLZktb5+wifNF0hDbqz347/rGbpt8cRJ2wMBFDUZzH4nFtTLf
+         fUaKoHFcH78LdZBHtu7aWgXV+BQRKfMHcAkiXuMtNUcDAnKjYtZnMkBnqDcl+1u/I0zD
+         Ce4AQdByRFbcbyqIV9poSjyRJ1jxZcEuyrZEbZBxG2VjDpb05BKPA9q1zf2AlQJKCiEg
+         CLFA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=jLittXwX;
+       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=jLittXwX;
+       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.14 09/95] spi: pxa2xx: Allow 64-bit DMA
-Date: Mon, 21 May 2018 23:10:59 +0200
-Message-Id: <20180521210449.243652283@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Shakeel Butt <shakeelb@google.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dave Hansen <dave.hansen@intel.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Michael Ellermen <mpe@ellerman.id.au>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ram Pai <linuxram@us.ibm.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-mm@kvack.org,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 32/95] x86/pkeys: Override pkey when moving away from PROT_EXEC
+Date: Mon, 21 May 2018 23:11:22 +0200
+Message-Id: <20180521210454.684335787@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210447.219380974@linuxfoundation.org>
 References: <20180521210447.219380974@linuxfoundation.org>
@@ -96,9 +50,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1601109883753600221?=
+X-GMAIL-MSGID: =?utf-8?q?1601110081898373103?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -106,35 +61,127 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Dave Hansen <dave.hansen@linux.intel.com>
 
-commit efc4a13724b852ddaa3358402a8dec024ffbcb17 upstream.
+commit 0a0b152083cfc44ec1bb599b57b7aab41327f998 upstream.
 
-Currently the 32-bit device address only is supported for DMA. However,
-starting from Intel Sunrisepoint PCH the DMA address of the device FIFO
-can be 64-bit.
+I got a bug report that the following code (roughly) was
+causing a SIGSEGV:
 
-Change the respective variable to be compatible with DMA engine
-expectations, i.e. to phys_addr_t.
+	mprotect(ptr, size, PROT_EXEC);
+	mprotect(ptr, size, PROT_NONE);
+	mprotect(ptr, size, PROT_READ);
+	*ptr = 100;
 
-Fixes: 34cadd9c1bcb ("spi: pxa2xx: Add support for Intel Sunrisepoint")
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+The problem is hit when the mprotect(PROT_EXEC)
+is implicitly assigned a protection key to the VMA, and made
+that key ACCESS_DENY|WRITE_DENY.  The PROT_NONE mprotect()
+failed to remove the protection key, and the PROT_NONE->
+PROT_READ left the PTE usable, but the pkey still in place
+and left the memory inaccessible.
+
+To fix this, we ensure that we always "override" the pkee
+at mprotect() if the VMA does not have execute-only
+permissions, but the VMA has the execute-only pkey.
+
+We had a check for PROT_READ/WRITE, but it did not work
+for PROT_NONE.  This entirely removes the PROT_* checks,
+which ensures that PROT_NONE now works.
+
+Reported-by: Shakeel Butt <shakeelb@google.com>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Michael Ellermen <mpe@ellerman.id.au>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ram Pai <linuxram@us.ibm.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-mm@kvack.org
 Cc: stable@vger.kernel.org
+Fixes: 62b5f7d013f ("mm/core, x86/mm/pkeys: Add execute-only protection keys support")
+Link: http://lkml.kernel.org/r/20180509171351.084C5A71@viggo.jf.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/spi/spi-pxa2xx.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/include/asm/pkeys.h |   12 +++++++++++-
+ arch/x86/mm/pkeys.c          |   21 +++++++++++----------
+ 2 files changed, 22 insertions(+), 11 deletions(-)
 
---- a/drivers/spi/spi-pxa2xx.h
-+++ b/drivers/spi/spi-pxa2xx.h
-@@ -38,7 +38,7 @@ struct driver_data {
+--- a/arch/x86/include/asm/pkeys.h
++++ b/arch/x86/include/asm/pkeys.h
+@@ -2,6 +2,8 @@
+ #ifndef _ASM_X86_PKEYS_H
+ #define _ASM_X86_PKEYS_H
  
- 	/* SSP register addresses */
- 	void __iomem *ioaddr;
--	u32 ssdr_physical;
-+	phys_addr_t ssdr_physical;
++#define ARCH_DEFAULT_PKEY	0
++
+ #define arch_max_pkey() (boot_cpu_has(X86_FEATURE_OSPKE) ? 16 : 1)
  
- 	/* SSP masks*/
- 	u32 dma_cr1;
+ extern int arch_set_user_pkey_access(struct task_struct *tsk, int pkey,
+@@ -15,7 +17,7 @@ extern int __execute_only_pkey(struct mm
+ static inline int execute_only_pkey(struct mm_struct *mm)
+ {
+ 	if (!boot_cpu_has(X86_FEATURE_OSPKE))
+-		return 0;
++		return ARCH_DEFAULT_PKEY;
+ 
+ 	return __execute_only_pkey(mm);
+ }
+@@ -56,6 +58,14 @@ bool mm_pkey_is_allocated(struct mm_stru
+ 		return false;
+ 	if (pkey >= arch_max_pkey())
+ 		return false;
++	/*
++	 * The exec-only pkey is set in the allocation map, but
++	 * is not available to any of the user interfaces like
++	 * mprotect_pkey().
++	 */
++	if (pkey == mm->context.execute_only_pkey)
++		return false;
++
+ 	return mm_pkey_allocation_map(mm) & (1U << pkey);
+ }
+ 
+--- a/arch/x86/mm/pkeys.c
++++ b/arch/x86/mm/pkeys.c
+@@ -94,26 +94,27 @@ int __arch_override_mprotect_pkey(struct
+ 	 */
+ 	if (pkey != -1)
+ 		return pkey;
+-	/*
+-	 * Look for a protection-key-drive execute-only mapping
+-	 * which is now being given permissions that are not
+-	 * execute-only.  Move it back to the default pkey.
+-	 */
+-	if (vma_is_pkey_exec_only(vma) &&
+-	    (prot & (PROT_READ|PROT_WRITE))) {
+-		return 0;
+-	}
++
+ 	/*
+ 	 * The mapping is execute-only.  Go try to get the
+ 	 * execute-only protection key.  If we fail to do that,
+ 	 * fall through as if we do not have execute-only
+-	 * support.
++	 * support in this mm.
+ 	 */
+ 	if (prot == PROT_EXEC) {
+ 		pkey = execute_only_pkey(vma->vm_mm);
+ 		if (pkey > 0)
+ 			return pkey;
++	} else if (vma_is_pkey_exec_only(vma)) {
++		/*
++		 * Protections are *not* PROT_EXEC, but the mapping
++		 * is using the exec-only pkey.  This mapping was
++		 * PROT_EXEC and will no longer be.  Move back to
++		 * the default pkey.
++		 */
++		return ARCH_DEFAULT_PKEY;
+ 	}
++
+ 	/*
+ 	 * This is a vanilla, non-pkey mprotect (or we failed to
+ 	 * setup execute-only), inherit the pkey from the VMA we
