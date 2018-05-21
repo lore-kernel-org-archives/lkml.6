@@ -1,52 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753928AbeEUWI1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 18:08:27 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36178 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753046AbeEUWIY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 18:08:24 -0400
-Date: Tue, 22 May 2018 01:08:23 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: David Miller <davem@davemloft.net>
-Cc: jasowang@redhat.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, hannes@stressinduktion.org,
-        edumazet@google.com
-Subject: Re: [PATCH net] tuntap: raise EPOLLOUT on device up
-Message-ID: <20180522010700-mutt-send-email-mst@kernel.org>
-References: <1526648443-24128-1-git-send-email-jasowang@redhat.com>
- <20180521.114742.427929977852677864.davem@davemloft.net>
+        id S1753843AbeEUWLC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 18:11:02 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:36183 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753766AbeEUVTe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 17:19:34 -0400
+X-Google-Smtp-Source: AB8JxZq9Iq564knrAC9jRIXK4wwf5ob5gHXV1p8Y+MoBDbQQjSL1PMqle2fTQHX8/SgXmPEdw52VBQ==
+Date: Mon, 21 May 2018 14:19:31 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Song Liu <songliubraving@fb.com>
+cc: linux-mm@kvack.org, kernel-team@fb.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/THP: use hugepage_vma_check() in
+ khugepaged_enter_vma_merge()
+In-Reply-To: <20180521193853.3089484-1-songliubraving@fb.com>
+Message-ID: <alpine.DEB.2.21.1805211419210.41872@chino.kir.corp.google.com>
+References: <20180521193853.3089484-1-songliubraving@fb.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180521.114742.427929977852677864.davem@davemloft.net>
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 11:47:42AM -0400, David Miller wrote:
-> From: Jason Wang <jasowang@redhat.com>
-> Date: Fri, 18 May 2018 21:00:43 +0800
-> 
-> > We return -EIO on device down but can not raise EPOLLOUT after it was
-> > up. This may confuse user like vhost which expects tuntap to raise
-> > EPOLLOUT to re-enable its TX routine after tuntap is down. This could
-> > be easily reproduced by transmitting packets from VM while down and up
-> > the tap device. Fixing this by set SOCKWQ_ASYNC_NOSPACE on -EIO.
-> > 
-> > Cc: Hannes Frederic Sowa <hannes@stressinduktion.org>
-> > Cc: Eric Dumazet <edumazet@google.com>
-> > Fixes: 1bd4978a88ac2 ("tun: honor IFF_UP in tun_get_user()")
-> > Signed-off-by: Jason Wang <jasowang@redhat.com>
-> 
-> I'm no so sure what to do with this patch.
-> 
-> Like Michael says, this flag bit is only checks upon transmit which
-> may or may not happen after this point.  It doesn't seem to be
-> guaranteed.
+On Mon, 21 May 2018, Song Liu wrote:
 
-Jason, can't we detect a link up transition and respond accordingly?
-What do you think?
+> khugepaged_enter_vma_merge() is using a different approach to check
+> whether a vma is valid for khugepaged_enter():
+> 
+>     if (!vma->anon_vma)
+>             /*
+>              * Not yet faulted in so we will register later in the
+>              * page fault if needed.
+>              */
+>             return 0;
+>     if (vma->vm_ops || (vm_flags & VM_NO_KHUGEPAGED))
+>             /* khugepaged not yet working on file or special mappings */
+>             return 0;
+> 
+> This check has some problems. One of the obvious problems is that
+> it doesn't check shmem_file(), so that vma backed with shmem files
+> will not call khugepaged_enter().
+> 
+> This patch fixes these problems by reusing hugepage_vma_check() in
+> khugepaged_enter_vma_merge().
+> 
+> Signed-off-by: Song Liu <songliubraving@fb.com>
 
--- 
-MST
+Acked-by: David Rientjes <rientjes@google.com>
