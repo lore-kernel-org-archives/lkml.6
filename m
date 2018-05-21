@@ -1,39 +1,39 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqzpQCquMq+fCFxCrP2tQQtlmzNtGLMIxNJbt3IrnI6DtNUedtkYhtVtvgBK5MY1lcO5czE
-ARC-Seal: i=1; a=rsa-sha256; t=1526937392; cv=none;
+X-Google-Smtp-Source: AB8JxZpPI1SEWAH43Rs1VdBWQlkHUMTONEHGMUyve3u5VhcArbWYeyb1fRNjk4aed+jwCqGEPLRd
+ARC-Seal: i=1; a=rsa-sha256; t=1526937389; cv=none;
         d=google.com; s=arc-20160816;
-        b=P9RX6VBnjvaCdC+pkfQyYiCaAlNbQ9o2/ggUlQ3I5zgfIJmUpGFjRJEj7sUvTkipbl
-         3V7dQbBlz/So9uRx/aDV3rWQYgnddaQ3Kts50fsSl1e5s+ESFYg1jjWeQNGZ2S7D+b3P
-         t6SI3432piZgmEA3MbPEb0oiNWDWzeyHEKhgzEXMmKY93DdeuJ66lY12kFtxrAg5hfQt
-         JiSDo0O0phl3vASQ4zuKxMI34eLchp86ROPoCJRjKEexjeA39ufr9vCBlPDLMCDrFIl/
-         oG8OF2zRb2H/2zrD14whyxMxyoIQBQ+73UzSqUrPpenCdZtMhJPjvHo5lROswBxH91xf
-         wyhw==
+        b=GoGELc//PPOxO6AK9LF5a1T5VXJThCQcOGI6yXSoLn0bVauwDIcB1Hz95R3YCvJCWa
+         2K+LVcEa5dge4szlgibhEPsMzOXdR8FCxSyKmYjup27r315J0tuvt3hQysDVZ7x1Y+eL
+         xBmA4t170qkxo+zt3yaEZlQwrJD6PpdRY5W3FKwA7U5JoEcj+IAeDy8jwyPM9TzcsUkh
+         /whBzcN1enuRAX9hXsf+17zu14o30KN2k3zNtBm20XHrsmvckxdxesLjvlis9XdrN1/j
+         puQ15Z8+gJrGTAnzPnwz9ex4UTmV/9+WfZBoIWl/Su+m30j1d515Xn7ycPV1FJuDW0X0
+         plUA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=+j5wz+GnvjdhZhqLto514K/4oKIpoOr8Akv2iyRn+cI=;
-        b=vjY5w8cEH1HPgb5dcTyAbp5d3mL0yaKN7dyr6SiMOAhvxanuRGWnTVFr4jY54/sb3o
-         gkn6TEvz79fUdIWF59GSERlkKAcU1zecGG/IpDXWlc+sjhIavmJhFay4rXv9cUEDTn9w
-         wqgWZmWazUlaCVvlUAiqbr1Gns/Hl0+PJAYiNmha73YEmKt8i+2Y0rlNWTpVLkJtSBlc
-         EQ8BCO49dOrXO+ensrJ7d5ZkNz3MNYItYbtCtDHYWKUbDzPg+Ilkf2XbiraC64btUNBs
-         xYl5bHgUc+/72pgjDOaUgkCRoYPQ45csZvld5bsFMgkayMSRmdgdo2MZozPKSWyGmJ8T
-         N4xg==
+        bh=7D4v3Ye3sch1dJOQoi7qKJ7tBu5CtYmagmxIVWjbsrg=;
+        b=h8MtiBClNlEAE1n7Ybn4BnNXCI4/g3/Heyb4VLrEb93vRWT9Dtm+AjIhL/IyOB0oGs
+         +eGXObY+meop91wW1tp6XAXuv/KdJS0tekt19pJaP1ol18/w0/Es+D8p/aNO9LzcAjZE
+         /k8B5VkjOu2F3vfAxt28m2VVz6qNSlwf5f/u351bIiUKXHPxowMVVsm82OBgnYE3UVUg
+         jI7TYsDXBSk5jivVWL6HOoK0LEurkP3ZCfEBp5f9tiWRTU2RuIr+wpo7EQIMWifvrkal
+         PyoD/EBjVQIxnfSe6qI1VyggTN3593NeAng+WFyb0ScOVFckMG82OgBZWo9orK6SDRS2
+         Zc8A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=P8WJC6yg;
+       dkim=pass header.i=@kernel.org header.s=default header.b=qBwahe0Q;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=P8WJC6yg;
+       dkim=pass header.i=@kernel.org header.s=default header.b=qBwahe0Q;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Borislav Petkov <bp@suse.de>,
+	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 66/87] Documentation/spec_ctrl: Do some minor cleanups
-Date: Mon, 21 May 2018 23:11:42 +0200
-Message-Id: <20180521210425.937595360@linuxfoundation.org>
+Subject: [PATCH 4.9 65/87] proc: Use underscores for SSBD in status
+Date: Mon, 21 May 2018 23:11:41 +0200
+Message-Id: <20180521210425.869248770@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210420.222671977@linuxfoundation.org>
 References: <20180521210420.222671977@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109903251925648?=
-X-GMAIL-MSGID: =?utf-8?q?1601109903251925648?=
+X-GMAIL-THRID: =?utf-8?q?1601109900337483371?=
+X-GMAIL-MSGID: =?utf-8?q?1601109900337483371?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,82 +52,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Borislav Petkov <bp@suse.de>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-commit dd0792699c4058e63c0715d9a7c2d40226fcdddc upstream
+commit e96f46ee8587607a828f783daa6eb5b44d25004d upstream
 
-Fix some typos, improve formulations, end sentences with a fullstop.
+The style for the 'status' file is CamelCase or this. _.
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
+Fixes: fae1fa0fc ("proc: Provide details on speculation flaw mitigations")
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/spec_ctrl.txt |   24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ fs/proc/array.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/Documentation/spec_ctrl.txt
-+++ b/Documentation/spec_ctrl.txt
-@@ -2,13 +2,13 @@
- Speculation Control
- ===================
- 
--Quite some CPUs have speculation related misfeatures which are in fact
--vulnerabilites causing data leaks in various forms even accross privilege
--domains.
-+Quite some CPUs have speculation-related misfeatures which are in
-+fact vulnerabilities causing data leaks in various forms even across
-+privilege domains.
- 
- The kernel provides mitigation for such vulnerabilities in various
--forms. Some of these mitigations are compile time configurable and some on
--the kernel command line.
-+forms. Some of these mitigations are compile-time configurable and some
-+can be supplied on the kernel command line.
- 
- There is also a class of mitigations which are very expensive, but they can
- be restricted to a certain set of processes or tasks in controlled
-@@ -32,18 +32,18 @@ the following meaning:
- Bit  Define                Description
- ==== ===================== ===================================================
- 0    PR_SPEC_PRCTL         Mitigation can be controlled per task by
--                           PR_SET_SPECULATION_CTRL
-+                           PR_SET_SPECULATION_CTRL.
- 1    PR_SPEC_ENABLE        The speculation feature is enabled, mitigation is
--                           disabled
-+                           disabled.
- 2    PR_SPEC_DISABLE       The speculation feature is disabled, mitigation is
--                           enabled
-+                           enabled.
- 3    PR_SPEC_FORCE_DISABLE Same as PR_SPEC_DISABLE, but cannot be undone. A
-                            subsequent prctl(..., PR_SPEC_ENABLE) will fail.
- ==== ===================== ===================================================
- 
- If all bits are 0 the CPU is not affected by the speculation misfeature.
- 
--If PR_SPEC_PRCTL is set, then the per task control of the mitigation is
-+If PR_SPEC_PRCTL is set, then the per-task control of the mitigation is
- available. If not set, prctl(PR_SET_SPECULATION_CTRL) for the speculation
- misfeature will fail.
- 
-@@ -61,9 +61,9 @@ Common error codes
- Value   Meaning
- ======= =================================================================
- EINVAL  The prctl is not implemented by the architecture or unused
--        prctl(2) arguments are not 0
-+        prctl(2) arguments are not 0.
- 
--ENODEV  arg2 is selecting a not supported speculation misfeature
-+ENODEV  arg2 is selecting a not supported speculation misfeature.
- ======= =================================================================
- 
- PR_SET_SPECULATION_CTRL error codes
-@@ -74,7 +74,7 @@ Value   Meaning
- 0       Success
- 
- ERANGE  arg3 is incorrect, i.e. it's neither PR_SPEC_ENABLE nor
--        PR_SPEC_DISABLE nor PR_SPEC_FORCE_DISABLE
-+        PR_SPEC_DISABLE nor PR_SPEC_FORCE_DISABLE.
- 
- ENXIO   Control of the selected speculation misfeature is not possible.
-         See PR_GET_SPECULATION_CTRL.
+--- a/fs/proc/array.c
++++ b/fs/proc/array.c
+@@ -347,7 +347,7 @@ static inline void task_seccomp(struct s
+ #ifdef CONFIG_SECCOMP
+ 	seq_put_decimal_ull(m, "Seccomp:\t", p->seccomp.mode);
+ #endif
+-	seq_printf(m, "\nSpeculation Store Bypass:\t");
++	seq_printf(m, "\nSpeculation_Store_Bypass:\t");
+ 	switch (arch_prctl_spec_ctrl_get(p, PR_SPEC_STORE_BYPASS)) {
+ 	case -EINVAL:
+ 		seq_printf(m, "unknown");
