@@ -1,39 +1,39 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpvEoIgi0BPfQSU6YuJPiPuTacumChAg01il7WEvorVr1sSMS8YEPjS7HY6x1oiBdpwLcq0
-ARC-Seal: i=1; a=rsa-sha256; t=1526937401; cv=none;
+X-Google-Smtp-Source: AB8JxZrE4QgcbDJrDdHgEeYEeik6MR1p3vpmGu2BFFIvXoQ6toKAdkCmVYQEjU1FPIb8IGZoUj2y
+ARC-Seal: i=1; a=rsa-sha256; t=1526937399; cv=none;
         d=google.com; s=arc-20160816;
-        b=Jzv406jfJZe2F/HpwAIom7CnnzQzskpEFF7zOMZt/993ItA8wJNjbco7qc7M3Wb8Y8
-         ZcneFjt4lpllc76uLt79wfZyzZheLbwuB8ja6bfZzVxEvwwFOO/QWICuOFdbGt7GdaEs
-         SwWyyzX885K7lW6xikcxNnzqOOdVfLwte2+9b2vnstdMbMOnubVY/PeghzAJkdT6kSeb
-         yh7tfX5ur+tXQJ6F7haQXEKpy0A3mOTmHSGlwkgG8Jmyre5nE/TWiDx28qnLt+VUTbot
-         XJfPN4AIX0dXpKiX50BieKXuuwvdUB74c++L4gisE1uOYvu1fDv9GmU3w+pFPmDZQegN
-         NaIQ==
+        b=jZ34aZJowtkLjZET+aURcJyzaWhSg5Z8hVrijJQaruEYLfFV9zcHXDu6f8CktU8hT4
+         YxX2sxc0XTYH1eBmRHhme7AlvFmx2/CpJIkvzJER+YRMk1ncRB4DRniPehZnDKOELM/A
+         f6qRgsph60XEUvBw0MmwD58kxhtnZEHOA/VFaCyf+GF3EL3xpQlFTsWz4jJEHWjfbJjc
+         6QuOvRCbe4UimCBAaYKnyFO3O/mY6ReOm07fL9fmDhrOifffv4ezsldbMDFBbyoPPtS8
+         SAUDdr9d0Y8YRFquJ97Hbj1MzGWhISvXWAHcBzRmYi/OVn4YLbuFkt/UBIBYS7TBS5EN
+         /2fg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=29AKCw3UvMRji1RgifUjvINN/GPRl65hFy6MIN0fBco=;
-        b=H4xRzZIvh/zvxwSwmQuGlN+s2WA0uGaICL9/7XX8Mb3olwZHgTZcVXaKHIFE1vDXIE
-         2uHUN9qT7aqOD/mJ1iscDufp1Um7/5BFNBRt9d1Rui8Ns5p4P5cDGnwAUlRO82ES1eW5
-         5SKBedbSc+DKIXo4MotiikXp5yIm2NoJxIBLeNTa8z4Cmd6AA3rNuKbe7DxUDsIyyIJw
-         z9HczYHYTvWiVV/mdypuyV4YWTm6sjlaiz2VPBDs3fW7V0aTKkFQ4hBclCQBWsJQpI4Y
-         0btv0qkoiGHuWEm8kp87kr5O6o16c7U3PePpU+Fpsr8L8RfdK4U7hPYgljIc5ob03dV3
-         LicQ==
+        bh=Z1qfZVsBLFdg5bQo3sBpdrBhnPoQZDLoz/WvMfMhoak=;
+        b=hsFRBr/CmUtfCE2WJ964PqVJHo3UVf1JdnPPFjvAsKKXiTjI6/yVZPPzHrKNL2/T9+
+         fFfldBWlKmVhcGSQPT4xNN4NGy+nNpFP3cDnuFcgYCSF8Gskvy8+GYTs5lpolsQW/FYH
+         Y9tzyYi5hNMFzgK1rlpWNd+HjSw2Ej88Mgj2xQzh1d+0y4S8YrCMBtZIaEKIEQYBXU3l
+         b7iuycNyeeh/kXMk8FpSsQKAIGrfqmz3c45JPZenXuR7tGFO4ZIta1yTS6gAdynPfjx9
+         4LEOL2Pjfa10QKcyQAl1/6lgZ56QDlm18ql1lm8P4saRj1DjzXVtmB6Xi1XDbvbslcDE
+         xZyw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=gQwM/r/s;
+       dkim=pass header.i=@kernel.org header.s=default header.b=xCucgbWe;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=gQwM/r/s;
+       dkim=pass header.i=@kernel.org header.s=default header.b=xCucgbWe;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+	Jiri Kosina <jkosina@suse.cz>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 69/87] x86/bugs: Fix the parameters alignment and missing void
-Date: Mon, 21 May 2018 23:11:45 +0200
-Message-Id: <20180521210426.119520188@linuxfoundation.org>
+Subject: [PATCH 4.9 68/87] x86/bugs: Make cpu_show_common() static
+Date: Mon, 21 May 2018 23:11:44 +0200
+Message-Id: <20180521210426.062438550@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210420.222671977@linuxfoundation.org>
 References: <20180521210420.222671977@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109912945612941?=
-X-GMAIL-MSGID: =?utf-8?q?1601109912945612941?=
+X-GMAIL-THRID: =?utf-8?q?1601109910295501859?=
+X-GMAIL-MSGID: =?utf-8?q?1601109910295501859?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,37 +52,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+From: Jiri Kosina <jkosina@suse.cz>
 
-commit ffed645e3be0e32f8e9ab068d257aee8d0fe8eec upstream
+commit 7bb4d366cba992904bffa4820d24e70a3de93e76 upstream
 
-Fixes: 7bb4d366c ("x86/bugs: Make cpu_show_common() static")
-Fixes: 24f7fc83b ("x86/bugs: Provide boot parameters for the spec_store_bypass_disable mitigation")
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+cpu_show_common() is not used outside of arch/x86/kernel/cpu/bugs.c, so
+make it static.
+
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/bugs.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/kernel/cpu/bugs.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -530,7 +530,7 @@ static enum ssb_mitigation __init __ssb_
- 	return mode;
- }
+@@ -639,7 +639,7 @@ void x86_spec_ctrl_setup_ap(void)
  
--static void ssb_select_mitigation()
-+static void ssb_select_mitigation(void)
- {
- 	ssb_mode = __ssb_select_mitigation();
- 
-@@ -640,7 +640,7 @@ void x86_spec_ctrl_setup_ap(void)
  #ifdef CONFIG_SYSFS
  
- static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
--			char *buf, unsigned int bug)
-+			       char *buf, unsigned int bug)
+-ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
++static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
+ 			char *buf, unsigned int bug)
  {
  	if (!boot_cpu_has_bug(bug))
- 		return sprintf(buf, "Not affected\n");
