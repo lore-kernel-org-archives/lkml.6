@@ -1,94 +1,41 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1344077-1526937892-2-2555449062530058793
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526937892; b=O8huKmXq+Rf4VWEU8GVxBD4FnSfgZzgQl08Yfl4XecfBVDWRxT
-    zgJvKsqr6IPh2WOgDNzitmisUd6RZpoAwV71WOLJgrMw5G/OC5XFwKDo5E/i2KjF
-    cblrz+8PYet6eMD/C2i6IzWxmlTVvLtdys+YMEHoY2mLCkYkMVw4543tu1QorNei
-    //6ItodMxWuRf8zIWAvMNXBB8Migk+JxfemvFHh2/9+ChGth3fnYJCEMJhwBjwqc
-    Y+PkQIgMfICQ2R7e+P4MaRK1GVlcWknt+ei1xu4QkFFB0gGksoc4InFSyJujjH1z
-    45xGaTrWvL7jlFmeicgIusqg5xcdfQaBqh4Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1526937892; bh=NLGuh4Ro59Is53ThI875DC1rN0eeuC
-    wyAzt8h18zAgU=; b=kv8hH9JmLGI0c6thI919jHkJyL6IpUDPtj/0gSsbFS+Bn0
-    Gj/+PYDE4oJ8tnSJxQjUfSNuZhRHFUWz7RdDLDoiv+u2zvA8E6BzWrb2WTkxEiyu
-    iRsALU88YXIydRXFwPT+4IwRS7+dWDRIAQTEdK7MdYneawQ7UanN2sHbkgfnrRVm
-    OWvIhmT18giVj5TLTg95wXECucoRhCcKswe9RJKWrnaLpsYfklauYOPHP3c8dFap
-    ARJhvaCnytx3FyzMo+LUFtHmpF3ZK5BsPf0xEdtrzdoQj+c89bolIAJt5lea2nvO
-    7QVE+Rme8Hf7hCqcBzfQP1Zt3T7/fAXJ+EJpJPZA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=BXoDhHZr x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linuxfoundation.org header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=BXoDhHZr x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linuxfoundation.org header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLZD1RIhchLbbUq0A/TfHBb2oUt/OIK6ETzijgUD/mufCOZkpU+pvW6jbEXnYzYWLc4tT8/XwCl36+pjleZK6Ju3xZKVpT5VkCQbP92oWV62U+hxwhyh
-    T3osWjPiZ9IfPzaslSECZo6XS5Fl/grYknVEe/PibXKPhN9Me0jJC2+pprkSJ2iwjS4e2ftQMGFx2x3zYIYF4MfSx3tHQWWhHq4kAZqSqZHlGWavXVIWfZxG
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=iox4zFpeAAAA:8 a=yPCof4ZbAAAA:8 a=ag1SF4gXAAAA:8 a=JkOS3zwmIFKoxc-HOjEA:9
-    a=QEXdDO2ut3YA:10 a=WzC6qhA0u3u7Ye7llzcV:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932327AbeEUVYr (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 21 May 2018 17:24:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39586 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932302AbeEUVYn (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 21 May 2018 17:24:43 -0400
+Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZqudvJx4O4XLHp7Nx+G7L40rdFTdhNqCr3yiiiedAkmKnqItuhd254nCpqiNxWtKpd5Freu
+ARC-Seal: i=1; a=rsa-sha256; t=1526937888; cv=none;
+        d=google.com; s=arc-20160816;
+        b=r0dzITXdjQ3lcg8TKjkQPQYj1Kn5g236b0Sg4aQtW0X6ig0bxpzZuRtSeoYpYdYy51
+         x0mcMpasoxMbK7y1YRJBWYZkpLrrfUtj3oGWT4Y7vHS5qjxFl2z6a/3cedBXJgTMg/YW
+         LWtjD2QixGxMZhnWpMV7tossvLvBTfsIqaB49F41RjLYfiehag0zkzF4suArEAT44r+F
+         j6Yl6/uhzjuKuPTzdc6HxhH011Pkw1uK2G+zAfaEdozyYiKno2x6AwTsxA+FLcPFaHtq
+         +/CClj1zI8sTRGqSeQXjDjzHAIaycenzRwz6UEbI+8J168EgxHb5Gkmhw+bkaPpMa5Dv
+         ymzw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=OIb13Ui5adWE/03jrVuGOtEFsjYc/wuBrtyR/Mfm0yU=;
+        b=mCH5jEhfHhq4bIOYkbhz1kTLcPITXxa0bZTXhSYx94il6haMp9NKHFi3Hap87HpqVP
+         QuBebTDgp/pvy5sJdQ9RzEw4Sx6dEu4UeslwOBOCoqEHeM6pgWXZlB+St1tjQFqcoA5t
+         yG2N3eCA+xSPOQAUXIVJ7QUJ5Hs+UOpVuuG2bjKtek4RDO+CUTW/Fcl6Gb90VzYOO2fP
+         RSi7DaccmhUwox2zF+arYn8H7pl2Ep3LFJzghgQSon9nhsuuR8mGpNhjqZXFxHJysFIt
+         7bJxQFZVpN6CDWC9Gv2+lmRGfDUlcUJOF5fOAaLZIVIj3SSXd68C9jfW6MS4djzOG1U3
+         M81w==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=aHUHZN4k;
+       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=aHUHZN4k;
+       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
-        David Sterba <dsterba@suse.com>,
-        Anand Jain <anand.jain@oracle.com>
-Subject: [PATCH 4.16 059/110] btrfs: Split btrfs_del_delalloc_inode into 2 functions
-Date: Mon, 21 May 2018 23:11:56 +0200
-Message-Id: <20180521210511.174373366@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Liu Bo <bo.liu@linux.alibaba.com>,
+	Filipe Manana <fdmanana@suse.com>,
+	Qu Wenruo <wqu@suse.com>,
+	David Sterba <dsterba@suse.com>,
+	Nikolay Borisov <nborisov@suse.com>
+Subject: [PATCH 4.16 061/110] btrfs: fix reading stale metadata blocks after degraded raid1 mounts
+Date: Mon, 21 May 2018 23:11:58 +0200
+Message-Id: <20180521210511.440167357@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -96,9 +43,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1601109818430995354?=
+X-GMAIL-MSGID: =?utf-8?q?1601110424091478313?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -106,64 +54,94 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nikolay Borisov <nborisov@suse.com>
+From: Liu Bo <bo.liu@linux.alibaba.com>
 
-commit 2b8773313494ede83a26fb372466e634564002ed upstream.
+commit 02a3307aa9c20b4f6626255b028f07f6cfa16feb upstream.
 
-This is in preparation of fixing delalloc inodes leakage on transaction
-abort. Also export the new function.
+If a btree block, aka. extent buffer, is not available in the extent
+buffer cache, it'll be read out from the disk instead, i.e.
 
-Signed-off-by: Nikolay Borisov <nborisov@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Reviewed-by: Anand Jain <anand.jain@oracle.com>
+btrfs_search_slot()
+  read_block_for_search()  # hold parent and its lock, go to read child
+    btrfs_release_path()
+    read_tree_block()  # read child
+
+Unfortunately, the parent lock got released before reading child, so
+commit 5bdd3536cbbe ("Btrfs: Fix block generation verification race") had
+used 0 as parent transid to read the child block.  It forces
+read_tree_block() not to check if parent transid is different with the
+generation id of the child that it reads out from disk.
+
+A simple PoC is included in btrfs/124,
+
+0. A two-disk raid1 btrfs,
+
+1. Right after mkfs.btrfs, block A is allocated to be device tree's root.
+
+2. Mount this filesystem and put it in use, after a while, device tree's
+   root got COW but block A hasn't been allocated/overwritten yet.
+
+3. Umount it and reload the btrfs module to remove both disks from the
+   global @fs_devices list.
+
+4. mount -odegraded dev1 and write some data, so now block A is allocated
+   to be a leaf in checksum tree.  Note that only dev1 has the latest
+   metadata of this filesystem.
+
+5. Umount it and mount it again normally (with both disks), since raid1
+   can pick up one disk by the writer task's pid, if btrfs_search_slot()
+   needs to read block A, dev2 which does NOT have the latest metadata
+   might be read for block A, then we got a stale block A.
+
+6. As parent transid is not checked, block A is marked as uptodate and
+   put into the extent buffer cache, so the future search won't bother
+   to read disk again, which means it'll make changes on this stale
+   one and make it dirty and flush it onto disk.
+
+To avoid the problem, parent transid needs to be passed to
+read_tree_block().
+
+In order to get a valid parent transid, we need to hold the parent's
+lock until finishing reading child.
+
+This patch needs to be slightly adapted for stable kernels, the
+&first_key parameter added to read_tree_block() is from 4.16+
+(581c1760415c4). The fix is to replace 0 by 'gen'.
+
+Fixes: 5bdd3536cbbe ("Btrfs: Fix block generation verification race")
+CC: stable@vger.kernel.org # 4.4+
+Signed-off-by: Liu Bo <bo.liu@linux.alibaba.com>
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
+Reviewed-by: Qu Wenruo <wqu@suse.com>
+[ update changelog ]
 Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Nikolay Borisov <nborisov@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/ctree.h |    2 ++
- fs/btrfs/inode.c |   13 ++++++++++---
- 2 files changed, 12 insertions(+), 3 deletions(-)
+ fs/btrfs/ctree.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/fs/btrfs/ctree.h
-+++ b/fs/btrfs/ctree.h
-@@ -3153,6 +3153,8 @@ noinline int can_nocow_extent(struct ino
- 			      u64 *orig_start, u64 *orig_block_len,
- 			      u64 *ram_bytes);
+--- a/fs/btrfs/ctree.c
++++ b/fs/btrfs/ctree.c
+@@ -2491,10 +2491,8 @@ read_block_for_search(struct btrfs_root
+ 	if (p->reada != READA_NONE)
+ 		reada_for_search(fs_info, p, level, slot, key->objectid);
  
-+void __btrfs_del_delalloc_inode(struct btrfs_root *root,
-+				struct btrfs_inode *inode);
- struct inode *btrfs_lookup_dentry(struct inode *dir, struct dentry *dentry);
- int btrfs_set_inode_index(struct btrfs_inode *dir, u64 *index);
- int btrfs_unlink_inode(struct btrfs_trans_handle *trans,
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -1762,12 +1762,12 @@ static void btrfs_add_delalloc_inodes(st
- 	spin_unlock(&root->delalloc_lock);
- }
- 
--static void btrfs_del_delalloc_inode(struct btrfs_root *root,
--				     struct btrfs_inode *inode)
-+
-+void __btrfs_del_delalloc_inode(struct btrfs_root *root,
-+				struct btrfs_inode *inode)
- {
- 	struct btrfs_fs_info *fs_info = btrfs_sb(inode->vfs_inode.i_sb);
- 
--	spin_lock(&root->delalloc_lock);
- 	if (!list_empty(&inode->delalloc_inodes)) {
- 		list_del_init(&inode->delalloc_inodes);
- 		clear_bit(BTRFS_INODE_IN_DELALLOC_LIST,
-@@ -1780,6 +1780,13 @@ static void btrfs_del_delalloc_inode(str
- 			spin_unlock(&fs_info->delalloc_root_lock);
- 		}
+-	btrfs_release_path(p);
+-
+ 	ret = -EAGAIN;
+-	tmp = read_tree_block(fs_info, blocknr, 0);
++	tmp = read_tree_block(fs_info, blocknr, gen);
+ 	if (!IS_ERR(tmp)) {
+ 		/*
+ 		 * If the read above didn't mark this buffer up to date,
+@@ -2508,6 +2506,8 @@ read_block_for_search(struct btrfs_root
+ 	} else {
+ 		ret = PTR_ERR(tmp);
  	}
-+}
 +
-+static void btrfs_del_delalloc_inode(struct btrfs_root *root,
-+				     struct btrfs_inode *inode)
-+{
-+	spin_lock(&root->delalloc_lock);
-+	__btrfs_del_delalloc_inode(root, inode);
- 	spin_unlock(&root->delalloc_lock);
++	btrfs_release_path(p);
+ 	return ret;
  }
  
