@@ -1,40 +1,45 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqh6whmpWF7hG74qumqiuqThA2gIxMgfm1fyYxfYU0kiX15ERNp8R5OKMPU1H4wklnXh4re
-ARC-Seal: i=1; a=rsa-sha256; t=1526937913; cv=none;
+X-Google-Smtp-Source: AB8JxZqRQ/SgS9wUFIcw9JiFAORbaBwHc5fSUHR7vxbNn2hbiYvhqrCjJbxKBsLRRfF4vgB4vi7Y
+ARC-Seal: i=1; a=rsa-sha256; t=1526937907; cv=none;
         d=google.com; s=arc-20160816;
-        b=BQ6LUXk9ya1cXH2Ry2p674MH8EzDiyv0Z8uFzNB2rXu7UIW71+70G7ScEnBa7w1VTL
-         e7jZVWJwPmtMU+w9+QaYCSVevPXKSQeRXtQchfXl89zPcxSLVDLCx8ReeB0u4Fo294wW
-         XKKzJlrydM+Yo6mfTPI3Ma1ueg7awquRWyI24LTcCAh+Sc//Oecgs6SYO3Kppo/b42U5
-         pLcWaIKwPmLcIINYe2L24cfMUeUl43aVHrWUxcjoUb2Y1naAtLGWs4mqNtrHXBhXpDPE
-         xyVLpcpT+8IfQhaPhiOYTHEdN2MEutpXuh7txGz3MjxIrwDEVD5lsPw+wh4D3gW1Phq0
-         DaHw==
+        b=hAS35VCaiy6cI1ikbdeIwJNc4LnjmipQhDnDc0NjHtuxws5AI1D5cIDNSGyqny1WJk
+         CqOhsCcqjKC2NW5B/fiEcKLNohDsLsGwlnjNz5zyJq2B1BuGtbjfnY16kyzvLcKkoXtu
+         PAYlEgRvqbVJX4n0lhmywNwrqKIs3DykUPIPiYQamdipRTZM8QWQCvD/4MyHzom8y6Qp
+         Xe35kZdRXYesxqMrOlZPJ+owVjCjWN6Hhf1p/Wc1pQzA6jQaCoeegIwD7fw/WdV4irTs
+         ZBjmAbMwgbC/I5fH0sCVpR+NnSWPHXLIK1gnB8l9VboMxMuj1YnS75s8/P8si4rVm+K1
+         +sVA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=SFZ72aKgdLEFVjnlEWyx3VYdg9ROgRJOwewNUsZ9u2E=;
-        b=Ol7Mfg1GiWr+uxoC6jFQ1NmNZ807PXkhHWOEXLY+6oPVu8lbiqh0DyfQ8H0h0zjK1H
-         9RRSQKYOy2lwD6j7/NuT7iJ4hBGeHFmGyAPIPox/hXfZyXC8jjrMMkZmxBiuCSR1Ug3M
-         QhRDhVg4jSHaFSG8a47uf6YQL+8/0BSvwhThNZgFWGDVP/QdweyBeIynN/u7o6P6rav/
-         Lm9qkGbY6v5ww3jzXiK+aXgQTwoYxtz7UGDxNzbOPFjeamMQFJ56o8eUkQ8VyJaAFKaz
-         +juvmnKI0Tzd0utc/GTKKdcxojC+rTaEPJPl4S5ACM1pwN0k26fN5zPmbLBVc2TiRdiG
-         yfdA==
+        bh=Ed7hAdiKdjMACtzoaF1VKyJjKkel3cY4wCL9NOy+RKQ=;
+        b=dG7u/kgaYgRhWPJKXGuyS+tfn7OgaPxOV4xITt5IkRhrRExfF+5bfIcuXqA2GbI34o
+         QlG55ylKhZFaBVhzMdhaT3Ifj6bf2I6QIhuwWjgMfS+tMcc2WXmC+Eys+3dZTEi5I261
+         +/QyphCOcHm2vC+NM810tedYpg8IKXHgDVSlwOfkhxYTUGRWGI/hHG6Ye4e3fOhHhlT8
+         5efKgebhT3b7qCKjYglJVLfLCu8Ry0cFFJJQIgBrVBArjOUvpSGPyiNwb2hBrmdMNVpm
+         1W6p5lQDKG4rj/0Rn0dkIOvtXqyx2E70QtMlsPQvVhokhcUh+Z5ULUsSI8p62nu0BPQI
+         8Kwg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=a4ut+8qi;
+       dkim=pass header.i=@kernel.org header.s=default header.b=aErsSBXh;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=a4ut+8qi;
+       dkim=pass header.i=@kernel.org header.s=default header.b=aErsSBXh;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Borislav Petkov <bp@suse.de>,
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.16 064/110] x86/bugs: Concentrate bug reporting into a separate function
-Date: Mon, 21 May 2018 23:12:01 +0200
-Message-Id: <20180521210511.863181479@linuxfoundation.org>
+	Ross Zwisler <ross.zwisler@linux.intel.com>,
+	"CR, Sapthagirish" <sapthagirish.cr@intel.com>,
+	Jan Kara <jack@suse.cz>,
+	Matthew Wilcox <willy@infradead.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dave Chinner <david@fromorbit.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.16 037/110] radix tree: fix multi-order iteration race
+Date: Mon, 21 May 2018 23:11:34 +0200
+Message-Id: <20180521210507.009374384@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -44,8 +49,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109827159806887?=
-X-GMAIL-MSGID: =?utf-8?q?1601110449731597707?=
+X-GMAIL-THRID: =?utf-8?q?1601110042369790052?=
+X-GMAIL-MSGID: =?utf-8?q?1601110442981889535?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,85 +58,117 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+From: Ross Zwisler <ross.zwisler@linux.intel.com>
 
-commit d1059518b4789cabe34bb4b714d07e6089c82ca1 upstream
+commit 9f418224e8114156d995b98fa4e0f4fd21f685fe upstream.
 
-Those SysFS functions have a similar preamble, as such make common
-code to handle them.
+Fix a race in the multi-order iteration code which causes the kernel to
+hit a GP fault.  This was first seen with a production v4.15 based
+kernel (4.15.6-300.fc27.x86_64) utilizing a DAX workload which used
+order 9 PMD DAX entries.
 
-Suggested-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
+The race has to do with how we tear down multi-order sibling entries
+when we are removing an item from the tree.  Remember for example that
+an order 2 entry looks like this:
+
+  struct radix_tree_node.slots[] = [entry][sibling][sibling][sibling]
+
+where 'entry' is in some slot in the struct radix_tree_node, and the
+three slots following 'entry' contain sibling pointers which point back
+to 'entry.'
+
+When we delete 'entry' from the tree, we call :
+
+  radix_tree_delete()
+    radix_tree_delete_item()
+      __radix_tree_delete()
+        replace_slot()
+
+replace_slot() first removes the siblings in order from the first to the
+last, then at then replaces 'entry' with NULL.  This means that for a
+brief period of time we end up with one or more of the siblings removed,
+so:
+
+  struct radix_tree_node.slots[] = [entry][NULL][sibling][sibling]
+
+This causes an issue if you have a reader iterating over the slots in
+the tree via radix_tree_for_each_slot() while only under
+rcu_read_lock()/rcu_read_unlock() protection.  This is a common case in
+mm/filemap.c.
+
+The issue is that when __radix_tree_next_slot() => skip_siblings() tries
+to skip over the sibling entries in the slots, it currently does so with
+an exact match on the slot directly preceding our current slot.
+Normally this works:
+
+                                      V preceding slot
+  struct radix_tree_node.slots[] = [entry][sibling][sibling][sibling]
+                                              ^ current slot
+
+This lets you find the first sibling, and you skip them all in order.
+
+But in the case where one of the siblings is NULL, that slot is skipped
+and then our sibling detection is interrupted:
+
+                                             V preceding slot
+  struct radix_tree_node.slots[] = [entry][NULL][sibling][sibling]
+                                                    ^ current slot
+
+This means that the sibling pointers aren't recognized since they point
+all the way back to 'entry', so we think that they are normal internal
+radix tree pointers.  This causes us to think we need to walk down to a
+struct radix_tree_node starting at the address of 'entry'.
+
+In a real running kernel this will crash the thread with a GP fault when
+you try and dereference the slots in your broken node starting at
+'entry'.
+
+We fix this race by fixing the way that skip_siblings() detects sibling
+nodes.  Instead of testing against the preceding slot we instead look
+for siblings via is_sibling_entry() which compares against the position
+of the struct radix_tree_node.slots[] array.  This ensures that sibling
+entries are properly identified, even if they are no longer contiguous
+with the 'entry' they point to.
+
+Link: http://lkml.kernel.org/r/20180503192430.7582-6-ross.zwisler@linux.intel.com
+Fixes: 148deab223b2 ("radix-tree: improve multiorder iterators")
+Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+Reported-by: CR, Sapthagirish <sapthagirish.cr@intel.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Chinner <david@fromorbit.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/kernel/cpu/bugs.c |   46 +++++++++++++++++++++++++++++++--------------
- 1 file changed, 32 insertions(+), 14 deletions(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -314,30 +314,48 @@ retpoline_auto:
- #undef pr_fmt
- 
- #ifdef CONFIG_SYSFS
--ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr, char *buf)
-+
-+ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
-+			char *buf, unsigned int bug)
+---
+ lib/radix-tree.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+--- a/lib/radix-tree.c
++++ b/lib/radix-tree.c
+@@ -1612,11 +1612,9 @@ static void set_iter_tags(struct radix_t
+ static void __rcu **skip_siblings(struct radix_tree_node **nodep,
+ 			void __rcu **slot, struct radix_tree_iter *iter)
  {
--	if (!boot_cpu_has_bug(X86_BUG_CPU_MELTDOWN))
-+	if (!boot_cpu_has_bug(bug))
- 		return sprintf(buf, "Not affected\n");
--	if (boot_cpu_has(X86_FEATURE_PTI))
--		return sprintf(buf, "Mitigation: PTI\n");
-+
-+	switch (bug) {
-+	case X86_BUG_CPU_MELTDOWN:
-+		if (boot_cpu_has(X86_FEATURE_PTI))
-+			return sprintf(buf, "Mitigation: PTI\n");
-+
-+		break;
-+
-+	case X86_BUG_SPECTRE_V1:
-+		return sprintf(buf, "Mitigation: __user pointer sanitization\n");
-+
-+	case X86_BUG_SPECTRE_V2:
-+		return sprintf(buf, "%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
-+			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
-+			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
-+			       spectre_v2_module_string());
-+
-+	default:
-+		break;
-+	}
-+
- 	return sprintf(buf, "Vulnerable\n");
- }
- 
-+ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr, char *buf)
-+{
-+	return cpu_show_common(dev, attr, buf, X86_BUG_CPU_MELTDOWN);
-+}
-+
- ssize_t cpu_show_spectre_v1(struct device *dev, struct device_attribute *attr, char *buf)
- {
--	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V1))
--		return sprintf(buf, "Not affected\n");
--	return sprintf(buf, "Mitigation: __user pointer sanitization\n");
-+	return cpu_show_common(dev, attr, buf, X86_BUG_SPECTRE_V1);
- }
- 
- ssize_t cpu_show_spectre_v2(struct device *dev, struct device_attribute *attr, char *buf)
- {
--	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
--		return sprintf(buf, "Not affected\n");
+-	void *sib = node_to_entry(slot - 1);
 -
--	return sprintf(buf, "%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
--		       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
--		       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
--		       spectre_v2_module_string());
-+	return cpu_show_common(dev, attr, buf, X86_BUG_SPECTRE_V2);
- }
- #endif
+ 	while (iter->index < iter->next_index) {
+ 		*nodep = rcu_dereference_raw(*slot);
+-		if (*nodep && *nodep != sib)
++		if (*nodep && !is_sibling_entry(iter->node, *nodep))
+ 			return slot;
+ 		slot++;
+ 		iter->index = __radix_tree_iter_add(iter, 1);
+@@ -1631,7 +1629,7 @@ void __rcu **__radix_tree_next_slot(void
+ 				struct radix_tree_iter *iter, unsigned flags)
+ {
+ 	unsigned tag = flags & RADIX_TREE_ITER_TAG_MASK;
+-	struct radix_tree_node *node = rcu_dereference_raw(*slot);
++	struct radix_tree_node *node;
+ 
+ 	slot = skip_siblings(&node, slot, iter);
+ 
