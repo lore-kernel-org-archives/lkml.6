@@ -1,39 +1,38 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqZLGmfR+KppEULEJ31d13bJtvdEn9VCZEtFTkeH8pAPy2tXIZQqH/gbnil6/GxnaE5dTqM
-ARC-Seal: i=1; a=rsa-sha256; t=1526937567; cv=none;
+X-Google-Smtp-Source: AB8JxZqoC3aSKDrqiUrMqsjdLcQJHLdBTheK4irZefnmwTxqtsVznLknkpOin50pE4gQzBBI3auL
+ARC-Seal: i=1; a=rsa-sha256; t=1526937565; cv=none;
         d=google.com; s=arc-20160816;
-        b=etPP+G3e/r0pOPA57IJSmNRYuI3/RMhWW7qp3Nj6rfegvaOKcZW9NS7WJQB+RCNt/L
-         gnPkbKm0pDMa8yRNXRFjMffElQSzaHEaL2kJ6g2fTLX5S3Y5GstztbJIroDZLWgOt3xy
-         VcdLz9LWQRbzw+ElN2P81jGZUL4mKGCtRKMdhv+yMzFMk2/ITge3PIQwRsfnJn21e5ch
-         J6gWy0THQwoWH8TZ3PC2WLb+2TJ6xSpkHPGEtE1ZEGXOam8F33YEpez4nK6dLGZrVPyh
-         5vWQI7FFL+TzC8LCPDwlso+TA7TZW1KSLa3JnzsnHkn+c8vUZ8SGcnQ0s7i/qAj++DFK
-         4qYw==
+        b=gLsE71AZjeyTFK/GkBRzEsIcIhVwazvrKqskOqyGl5A/t39s2WLGEovYMtHR9umcJp
+         1a16G6bLeYsgOMqGhvUR38FHFR/2qdAM+QZgAhfoePaU4lT2w7lS8BEpsH6eWnfCEM53
+         wohbQUL3ZJvHPrq26lFFlbsT67n+ufIn6k3q1BG2rkkV5fk3jg7ExbjbiOZ++jgfZdrs
+         h8CvzUFkFYgUM+OE0xHa3Eh5m0jixgEexyIxw38J7ANPOShMKdm/ZxWxCWFyYHb7P2oZ
+         yipOe8woNGJg674UwXPC8fOVA7tMvqbEi/QYlAD6chA6izkNLQpreHWmATTxP72/7rnW
+         bA/g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=SmhG9yVRqxg8sy66/tT1nwdVUOhKW9oZRUK19it91z0=;
-        b=PFWn8ZlnU9VJY6cGzNRubbqIyWwbpAAGV1niq6Mr2nyQCL2hvW2fz7OGZfrDo6XeeT
-         HbM/dklqiaZWFq99CaohKx0IAwvkmk9SLFsA+UWFp7GXrwmgUJZHcIm3Fw6a+naMvFP4
-         nLNg7imNMr4n9YhbRZrOwvplcjppuiVxFcCNK12dYJFKvcFayolGXH06qtsERy9qHa7s
-         lLvi05ZHfBS5rCtVwblkyQzi/n+yetYHP2U8MaSujf4GT18kYn8HqxBWDArk6ShlsUNN
-         XbY4i0Bks32GK9q6kUMgW5eDxoINQUam8voDcEAUnWLuVV9/O/S6ON1m27WNfa/u5QdK
-         OOWQ==
+        bh=u/4kjz40eYrEFsF+6JS7NBn//QAAHIbEFat0uO0Bnrs=;
+        b=hT2g5tk6RDHwc6lbCsEP7I0V9HiUtbrJzN5+BuRhyGK+roj0T34cW4qPYl9igGRJia
+         rOM+SCevoQ4FRz704dwXaguDQGV74yvlNBKRYfkdDALzubVAGVbB4K7+iitzE5/8PR0b
+         tE/czT6VKZIsTL0jaUjQqQSVCTOfmIQLEtcbRJBHboGHWfMpQZ06Zu8wFohfOzQrB+nJ
+         T316TCRI1FygYl9tPgBMOCyyo/gl/N7GBWLrO5TJHWg6VgkIIt48jM/rHMrpiYPFum7I
+         2jIFgJKiI/qWlITpBQdSkSEREkgOdYe6lXrK+NmKbz+cWgWwjacGG8SepB1cM5o2RyA8
+         XxmA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=cme/q8Up;
+       dkim=pass header.i=@kernel.org header.s=default header.b=CNYIwULd;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=cme/q8Up;
+       dkim=pass header.i=@kernel.org header.s=default header.b=CNYIwULd;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Robbie Ko <robbieko@synology.com>,
 	Filipe Manana <fdmanana@suse.com>,
 	David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 42/95] Btrfs: send, fix invalid access to commit roots due to concurrent snapshotting
-Date: Mon, 21 May 2018 23:11:32 +0200
-Message-Id: <20180521210456.634748797@linuxfoundation.org>
+Subject: [PATCH 4.14 41/95] Btrfs: fix xattr loss after power failure
+Date: Mon, 21 May 2018 23:11:31 +0200
+Message-Id: <20180521210456.394614996@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210447.219380974@linuxfoundation.org>
 References: <20180521210447.219380974@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601110087056186967?=
-X-GMAIL-MSGID: =?utf-8?q?1601110087056186967?=
+X-GMAIL-THRID: =?utf-8?q?1601109807672624155?=
+X-GMAIL-MSGID: =?utf-8?q?1601110084514189182?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,134 +51,78 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Robbie Ko <robbieko@synology.com>
+From: Filipe Manana <fdmanana@suse.com>
 
-commit 6f2f0b394b54e2b159ef969a0b5274e9bbf82ff2 upstream.
+commit 9a8fca62aacc1599fea8e813d01e1955513e4fad upstream.
 
-[BUG]
-btrfs incremental send BUG happens when creating a snapshot of snapshot
-that is being used by send.
+If a file has xattrs, we fsync it, to ensure we clear the flags
+BTRFS_INODE_NEEDS_FULL_SYNC and BTRFS_INODE_COPY_EVERYTHING from its
+inode, the current transaction commits and then we fsync it (without
+either of those bits being set in its inode), we end up not logging
+all its xattrs. This results in deleting all xattrs when replying the
+log after a power failure.
 
-[REASON]
-The problem can happen if while we are doing a send one of the snapshots
-used (parent or send) is snapshotted, because snapshoting implies COWing
-the root of the source subvolume/snapshot.
+Trivial reproducer
 
-1. When doing an incremental send, the send process will get the commit
-   roots from the parent and send snapshots, and add references to them
-   through extent_buffer_get().
+  $ mkfs.btrfs -f /dev/sdb
+  $ mount /dev/sdb /mnt
 
-2. When a snapshot/subvolume is snapshotted, its root node is COWed
-   (transaction.c:create_pending_snapshot()).
+  $ touch /mnt/foobar
+  $ setfattr -n user.xa -v qwerty /mnt/foobar
+  $ xfs_io -c "fsync" /mnt/foobar
 
-3. COWing releases the space used by the node immediately, through:
+  $ sync
 
-   __btrfs_cow_block()
-   --btrfs_free_tree_block()
-   ----btrfs_add_free_space(bytenr of node)
+  $ xfs_io -c "pwrite -S 0xab 0 64K" /mnt/foobar
+  $ xfs_io -c "fsync" /mnt/foobar
+  <power failure>
 
-4. Because send doesn't hold a transaction open, it's possible that
-   the transaction used to create the snapshot commits, switches the
-   commit root and the old space used by the previous root node gets
-   assigned to some other node allocation. Allocation of a new node will
-   use the existing extent buffer found in memory, which we previously
-   got a reference through extent_buffer_get(), and allow the extent
-   buffer's content (pages) to be modified:
+  $ mount /dev/sdb /mnt
+  $ getfattr --absolute-names --dump /mnt/foobar
+  <empty output>
+  $
 
-   btrfs_alloc_tree_block
-   --btrfs_reserve_extent
-   ----find_free_extent (get bytenr of old node)
-   --btrfs_init_new_buffer (use bytenr of old node)
-   ----btrfs_find_create_tree_block
-   ------alloc_extent_buffer
-   --------find_extent_buffer (get old node)
+So fix this by making sure all xattrs are logged if we log a file's inode
+item and neither the flags BTRFS_INODE_NEEDS_FULL_SYNC nor
+BTRFS_INODE_COPY_EVERYTHING were set in the inode.
 
-5. So send can access invalid memory content and have unpredictable
-   behaviour.
-
-[FIX]
-So we fix the problem by copying the commit roots of the send and
-parent snapshots and use those copies.
-
-CallTrace looks like this:
- ------------[ cut here ]------------
- kernel BUG at fs/btrfs/ctree.c:1861!
- invalid opcode: 0000 [#1] SMP
- CPU: 6 PID: 24235 Comm: btrfs Tainted: P           O 3.10.105 #23721
- ffff88046652d680 ti: ffff88041b720000 task.ti: ffff88041b720000
- RIP: 0010:[<ffffffffa08dd0e8>] read_node_slot+0x108/0x110 [btrfs]
- RSP: 0018:ffff88041b723b68  EFLAGS: 00010246
- RAX: ffff88043ca6b000 RBX: ffff88041b723c50 RCX: ffff880000000000
- RDX: 000000000000004c RSI: ffff880314b133f8 RDI: ffff880458b24000
- RBP: 0000000000000000 R08: 0000000000000001 R09: ffff88041b723c66
- R10: 0000000000000001 R11: 0000000000001000 R12: ffff8803f3e48890
- R13: ffff8803f3e48880 R14: ffff880466351800 R15: 0000000000000001
- FS:  00007f8c321dc8c0(0000) GS:ffff88047fcc0000(0000)
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- R2: 00007efd1006d000 CR3: 0000000213a24000 CR4: 00000000003407e0
- DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
- DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
- Stack:
- ffff88041b723c50 ffff8803f3e48880 ffff8803f3e48890 ffff8803f3e48880
- ffff880466351800 0000000000000001 ffffffffa08dd9d7 ffff88041b723c50
- ffff8803f3e48880 ffff88041b723c66 ffffffffa08dde85 a9ff88042d2c4400
- Call Trace:
- [<ffffffffa08dd9d7>] ? tree_move_down.isra.33+0x27/0x50 [btrfs]
- [<ffffffffa08dde85>] ? tree_advance+0xb5/0xc0 [btrfs]
- [<ffffffffa08e83d4>] ? btrfs_compare_trees+0x2d4/0x760 [btrfs]
- [<ffffffffa0982050>] ? finish_inode_if_needed+0x870/0x870 [btrfs]
- [<ffffffffa09841ea>] ? btrfs_ioctl_send+0xeda/0x1050 [btrfs]
- [<ffffffffa094bd3d>] ? btrfs_ioctl+0x1e3d/0x33f0 [btrfs]
- [<ffffffff81111133>] ? handle_pte_fault+0x373/0x990
- [<ffffffff8153a096>] ? atomic_notifier_call_chain+0x16/0x20
- [<ffffffff81063256>] ? set_task_cpu+0xb6/0x1d0
- [<ffffffff811122c3>] ? handle_mm_fault+0x143/0x2a0
- [<ffffffff81539cc0>] ? __do_page_fault+0x1d0/0x500
- [<ffffffff81062f07>] ? check_preempt_curr+0x57/0x90
- [<ffffffff8115075a>] ? do_vfs_ioctl+0x4aa/0x990
- [<ffffffff81034f83>] ? do_fork+0x113/0x3b0
- [<ffffffff812dd7d7>] ? trace_hardirqs_off_thunk+0x3a/0x6c
- [<ffffffff81150cc8>] ? SyS_ioctl+0x88/0xa0
- [<ffffffff8153e422>] ? system_call_fastpath+0x16/0x1b
- ---[ end trace 29576629ee80b2e1 ]---
-
-Fixes: 7069830a9e38 ("Btrfs: add btrfs_compare_trees function")
-CC: stable@vger.kernel.org # 3.6+
-Signed-off-by: Robbie Ko <robbieko@synology.com>
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
+Fixes: 36283bf777d9 ("Btrfs: fix fsync xattr loss in the fast fsync path")
+Cc: <stable@vger.kernel.org> # 4.2+
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/ctree.c |   16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+ fs/btrfs/tree-log.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/fs/btrfs/ctree.c
-+++ b/fs/btrfs/ctree.c
-@@ -5454,12 +5454,24 @@ int btrfs_compare_trees(struct btrfs_roo
- 	down_read(&fs_info->commit_root_sem);
- 	left_level = btrfs_header_level(left_root->commit_root);
- 	left_root_level = left_level;
--	left_path->nodes[left_level] = left_root->commit_root;
-+	left_path->nodes[left_level] =
-+			btrfs_clone_extent_buffer(left_root->commit_root);
-+	if (!left_path->nodes[left_level]) {
-+		up_read(&fs_info->commit_root_sem);
-+		ret = -ENOMEM;
-+		goto out;
-+	}
- 	extent_buffer_get(left_path->nodes[left_level]);
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -4669,6 +4669,7 @@ static int btrfs_log_inode(struct btrfs_
+ 	struct extent_map_tree *em_tree = &inode->extent_tree;
+ 	u64 logged_isize = 0;
+ 	bool need_log_inode_item = true;
++	bool xattrs_logged = false;
  
- 	right_level = btrfs_header_level(right_root->commit_root);
- 	right_root_level = right_level;
--	right_path->nodes[right_level] = right_root->commit_root;
-+	right_path->nodes[right_level] =
-+			btrfs_clone_extent_buffer(right_root->commit_root);
-+	if (!right_path->nodes[right_level]) {
-+		up_read(&fs_info->commit_root_sem);
-+		ret = -ENOMEM;
-+		goto out;
-+	}
- 	extent_buffer_get(right_path->nodes[right_level]);
- 	up_read(&fs_info->commit_root_sem);
- 
+ 	path = btrfs_alloc_path();
+ 	if (!path)
+@@ -4971,6 +4972,7 @@ next_key:
+ 	err = btrfs_log_all_xattrs(trans, root, inode, path, dst_path);
+ 	if (err)
+ 		goto out_unlock;
++	xattrs_logged = true;
+ 	if (max_key.type >= BTRFS_EXTENT_DATA_KEY && !fast_search) {
+ 		btrfs_release_path(path);
+ 		btrfs_release_path(dst_path);
+@@ -4983,6 +4985,11 @@ log_extents:
+ 	btrfs_release_path(dst_path);
+ 	if (need_log_inode_item) {
+ 		err = log_inode_item(trans, log, dst_path, inode);
++		if (!err && !xattrs_logged) {
++			err = btrfs_log_all_xattrs(trans, root, inode, path,
++						   dst_path);
++			btrfs_release_path(path);
++		}
+ 		if (err)
+ 			goto out_unlock;
+ 	}
