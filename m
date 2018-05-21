@@ -1,75 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750978AbeEUFjz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 01:39:55 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:43907 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750849AbeEUFjx (ORCPT
+        id S1751117AbeEUFkg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 01:40:36 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:40662 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751072AbeEUFkf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 01:39:53 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w4L5dTTo015658
-X-Nifty-SrcIP: [209.85.217.177]
-X-Google-Smtp-Source: AB8JxZrDEf8M8e1qPeAvS1XyJqgxCdTmKqiVjFAtTpbpZBdLbTJOxdQxHkMbMgmXlRQ8ScLDCXU/037j0xCXkh96sso=
+        Mon, 21 May 2018 01:40:35 -0400
+X-Google-Smtp-Source: AB8JxZr7/AQr/A7SWx8WTDHHEnE9EYP+LrWqdT4o+EouSk9z+/JgamigRWw1wmI6Pa0ObyCZDvK+IA==
+Subject: Re: [Xen-devel] [RFC 1/3] xen/balloon: Allow allocating DMA buffers
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        jgross@suse.com, konrad.wilk@oracle.com
+Cc: daniel.vetter@intel.com, matthew.d.roper@intel.com,
+        dongwon.kim@intel.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180517082604.14828-1-andr2000@gmail.com>
+ <20180517082604.14828-2-andr2000@gmail.com>
+ <6a108876-19b7-49d0-3de2-9e10f984736c@oracle.com>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <9541926e-001a-e41e-317c-dbff6d687761@gmail.com>
+Date: Mon, 21 May 2018 08:40:30 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180520143933.GA9826@ravnborg.org>
-References: <1526537830-22606-1-git-send-email-yamada.masahiro@socionext.com>
- <1526537830-22606-6-git-send-email-yamada.masahiro@socionext.com> <20180520143933.GA9826@ravnborg.org>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Mon, 21 May 2018 14:38:48 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATr+qHfjpYaj2h2-AcMUFozeyRDETjtJcp4kd8=DEk5dw@mail.gmail.com>
-Message-ID: <CAK7LNATr+qHfjpYaj2h2-AcMUFozeyRDETjtJcp4kd8=DEk5dw@mail.gmail.com>
-Subject: Re: [PATCH v4 05/31] kconfig: remove string expansion for mainmenu
- after yyparse()
-To: Sam Ravnborg <sam@ravnborg.org>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nicholas Piggin <npiggin@gmail.com>, Kees Cook <keescook@chromium.org>,
-        Emese Revfy <re.emese@gmail.com>, X86 ML <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <6a108876-19b7-49d0-3de2-9e10f984736c@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-05-20 23:39 GMT+09:00 Sam Ravnborg <sam@ravnborg.org>:
-
->> @@ -544,10 +530,10 @@ void conf_parse(const char *name)
->>       if (!modules_sym)
->>               modules_sym = sym_find( "n" );
+On 05/19/2018 01:04 AM, Boris Ostrovsky wrote:
+> On 05/17/2018 04:26 AM, Oleksandr Andrushchenko wrote:
+>> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>
+> A commit message would be useful.
+Sure, v1 will have it
+>
+>> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 >>
->> -     tmp = rootmenu.prompt->text;
->> -     rootmenu.prompt->text = _(rootmenu.prompt->text);
->> -     rootmenu.prompt->text = sym_expand_string_value(rootmenu.prompt->text);
->> -     free((char*)tmp);
->> +     if (!menu_has_prompt(&rootmenu)) {
->> +             current_entry = &rootmenu;
->> +             menu_add_prompt(P_MENU, "Linux Kernel Configuration", NULL);
+>>   	for (i = 0; i < nr_pages; i++) {
+>> -		page = alloc_page(gfp);
+>> -		if (page == NULL) {
+>> -			nr_pages = i;
+>> -			state = BP_EAGAIN;
+>> -			break;
+>> +		if (ext_pages) {
+>> +			page = ext_pages[i];
+>> +		} else {
+>> +			page = alloc_page(gfp);
+>> +			if (page == NULL) {
+>> +				nr_pages = i;
+>> +				state = BP_EAGAIN;
+>> +				break;
+>> +			}
+>>   		}
+>>   		scrub_page(page);
+>>   		list_add(&page->lru, &pages);
+>> @@ -529,7 +565,7 @@ static enum bp_state decrease_reservation(unsigned long nr_pages, gfp_t gfp)
+>>   	i = 0;
+>>   	list_for_each_entry_safe(page, tmp, &pages, lru) {
+>>   		/* XENMEM_decrease_reservation requires a GFN */
+>> -		frame_list[i++] = xen_page_to_gfn(page);
+>> +		frames[i++] = xen_page_to_gfn(page);
+>>   
+>>   #ifdef CONFIG_XEN_HAVE_PVMMU
+>>   		/*
+>> @@ -552,18 +588,22 @@ static enum bp_state decrease_reservation(unsigned long nr_pages, gfp_t gfp)
+>>   #endif
+>>   		list_del(&page->lru);
+>>   
+>> -		balloon_append(page);
+>> +		if (!ext_pages)
+>> +			balloon_append(page);
 >
-> Could this be something less specific?
-> To help the other users of kconfig out is the wild.
+> So what you are proposing is not really ballooning. You are just
+> piggybacking on existing interfaces, aren't you?
+Sort of. Basically I need to {increase|decrease}_reservation, not actually
+allocating ballooned pages.
+Do you think I can simply EXPORT_SYMBOL for {increase|decrease}_reservation?
+Any other suggestion?
+> -boris
 >
-> For example:
 >
->         menu_add_prompt(P_MENU, _("Main menu"), NULL);
-
-
-OK, but this should be done as a separate work.
-
-I am keeping the current string "Linux Kernel Configuration"
-
-
-
-> Note, the added _() to make the text translateable.
->
-
-Hmm, I just wonder how much helpful gettext things are...
-
-Rather, it looks maintenance burden to me.
-Once we add messages, it is difficult to change.
-
-
--- 
-Best Regards
-Masahiro Yamada
+Thank you,
+Oleksandr
