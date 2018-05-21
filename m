@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751976AbeEUSsC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 14:48:02 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:46968 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750923AbeEUSqn (ORCPT
+        id S1752133AbeEUSsI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 14:48:08 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:41529 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751154AbeEUSql (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 14:46:43 -0400
-X-Google-Smtp-Source: AB8JxZrnTISgYU3pxTz+zMIbgL5OgZ2GoUMDpMeZNcHoAyZLheeFr8SKapCji8Xij+kmsVgf4tc5hw==
+        Mon, 21 May 2018 14:46:41 -0400
+X-Google-Smtp-Source: AB8JxZpn0Se5iGfHYLvxoB/8rD5gWYn+jtOfc83G3XGdcqpJ/RwuE2Jpe3BdQNfG1i811JHgazbklg==
 From: Florian Fainelli <f.fainelli@gmail.com>
 To: netdev@vger.kernel.org
 Cc: Florian Fainelli <f.fainelli@gmail.com>,
@@ -21,9 +21,9 @@ Cc: Florian Fainelli <f.fainelli@gmail.com>,
         Lukas Wunner <lukas@wunner.de>, Rob Herring <robh@kernel.org>,
         linux-omap@vger.kernel.org (open list:TI ETHERNET SWITCH DRIVER (CPSW)),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net-next 5/5] ti: ethernet: davinci: Fix cast to int warnings
-Date: Mon, 21 May 2018 11:45:55 -0700
-Message-Id: <20180521184555.21555-6-f.fainelli@gmail.com>
+Subject: [PATCH net-next 4/5] net: ethernet: davinci_emac: Fix printing of base address
+Date: Mon, 21 May 2018 11:45:54 -0700
+Message-Id: <20180521184555.21555-5-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180521184555.21555-1-f.fainelli@gmail.com>
 References: <20180521184555.21555-1-f.fainelli@gmail.com>
@@ -31,48 +31,29 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that we can compile test this driver on 64-bit hosts, we get some
-warnings about how a pointer/address is written/read to/from a register
-(sw_token). Fix this by doing the appropriate conversions, we cannot
-possibly have the driver work on 64-bit hosts the way the tokens are
-managed though, since the registers being written to a 32-bit only.
+Use %pa which is the correct formatter to print a physical address,
+instead of %p which is just a pointer.
 
+Fixes: a6286ee630f6 ("net: Add TI DaVinci EMAC driver")
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- drivers/net/ethernet/ti/davinci_cpdma.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/ti/davinci_emac.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/ti/davinci_cpdma.c b/drivers/net/ethernet/ti/davinci_cpdma.c
-index 9ec49213de5e..cdbddf16dd29 100644
---- a/drivers/net/ethernet/ti/davinci_cpdma.c
-+++ b/drivers/net/ethernet/ti/davinci_cpdma.c
-@@ -1080,7 +1080,7 @@ int cpdma_chan_submit(struct cpdma_chan *chan, void *token, void *data,
- 	writel_relaxed(buffer, &desc->hw_buffer);
- 	writel_relaxed(len, &desc->hw_len);
- 	writel_relaxed(mode | len, &desc->hw_mode);
--	writel_relaxed(token, &desc->sw_token);
-+	writel_relaxed((uintptr_t)token, &desc->sw_token);
- 	writel_relaxed(buffer, &desc->sw_buffer);
- 	writel_relaxed(len, &desc->sw_len);
- 	desc_read(desc, sw_len);
-@@ -1121,15 +1121,15 @@ static void __cpdma_chan_free(struct cpdma_chan *chan,
- 	struct cpdma_desc_pool		*pool = ctlr->pool;
- 	dma_addr_t			buff_dma;
- 	int				origlen;
--	void				*token;
-+	uintptr_t			token;
+diff --git a/drivers/net/ethernet/ti/davinci_emac.c b/drivers/net/ethernet/ti/davinci_emac.c
+index abceea802ea1..be0fec17d95d 100644
+--- a/drivers/net/ethernet/ti/davinci_emac.c
++++ b/drivers/net/ethernet/ti/davinci_emac.c
+@@ -1930,8 +1930,8 @@ static int davinci_emac_probe(struct platform_device *pdev)
  
--	token      = (void *)desc_read(desc, sw_token);
-+	token      = desc_read(desc, sw_token);
- 	buff_dma   = desc_read(desc, sw_buffer);
- 	origlen    = desc_read(desc, sw_len);
+ 	if (netif_msg_probe(priv)) {
+ 		dev_notice(&pdev->dev, "DaVinci EMAC Probe found device "
+-			   "(regs: %p, irq: %d)\n",
+-			   (void *)priv->emac_base_phys, ndev->irq);
++			   "(regs: %pa, irq: %d)\n",
++			   &priv->emac_base_phys, ndev->irq);
+ 	}
+ 	pm_runtime_put(&pdev->dev);
  
- 	dma_unmap_single(ctlr->dev, buff_dma, origlen, chan->dir);
- 	cpdma_desc_free(pool, desc, 1);
--	(*chan->handler)(token, outlen, status);
-+	(*chan->handler)((void *)token, outlen, status);
- }
- 
- static int __cpdma_chan_process(struct cpdma_chan *chan)
 -- 
 2.14.1
