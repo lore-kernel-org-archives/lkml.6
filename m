@@ -1,19 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752936AbeEUMQV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 08:16:21 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:38663 "EHLO huawei.com"
+        id S1752838AbeEUMRJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 08:17:09 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:38651 "EHLO huawei.com"
         rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751176AbeEUMJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 08:09:04 -0400
+        id S1752645AbeEUMJB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 08:09:01 -0400
 From: Yisheng Xie <xieyisheng1@huawei.com>
 To: <linux-kernel@vger.kernel.org>
 CC: Yisheng Xie <xieyisheng1@huawei.com>,
-        Stuart Yoder <stuyoder@gmail.com>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Subject: [PATCH 11/33] bus: fsl-mc: use match_string() helper
-Date: Mon, 21 May 2018 19:57:48 +0800
-Message-ID: <1526903890-35761-12-git-send-email-xieyisheng1@huawei.com>
+        Kalle Valo <kvalo@codeaurora.org>,
+        Intel Linux Wireless <linuxwifi@intel.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>
+Subject: [PATCH 07/33] iwlwifi: mvm: use match_string() helper
+Date: Mon, 21 May 2018 19:57:44 +0800
+Message-ID: <1526903890-35761-8-git-send-email-xieyisheng1@huawei.com>
 X-Mailer: git-send-email 1.7.12.4
 In-Reply-To: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
 References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
@@ -28,54 +31,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 match_string() returns the index of an array for a matching string,
 which can be used intead of open coded variant.
 
-Cc: Stuart Yoder <stuyoder@gmail.com>
-Cc: Laurentiu Tudor <laurentiu.tudor@nxp.com>
+Cc: Kalle Valo <kvalo@codeaurora.org>
+Cc: Intel Linux Wireless <linuxwifi@intel.com>
+Cc: Johannes Berg <johannes.berg@intel.com>
+Cc: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Cc: linux-wireless@vger.kernel.org
+Cc: netdev@vger.kernel.org
 Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
 ---
- drivers/bus/fsl-mc/fsl-mc-allocator.c | 24 +++++-------------------
- 1 file changed, 5 insertions(+), 19 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/bus/fsl-mc/fsl-mc-allocator.c b/drivers/bus/fsl-mc/fsl-mc-allocator.c
-index fb1442b..63c4735 100644
---- a/drivers/bus/fsl-mc/fsl-mc-allocator.c
-+++ b/drivers/bus/fsl-mc/fsl-mc-allocator.c
-@@ -156,22 +156,6 @@ static int __must_check fsl_mc_resource_pool_remove_device(struct fsl_mc_device
- 	[FSL_MC_POOL_IRQ] = "irq",
- };
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c b/drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c
+index 0e6401c..e8249a6 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c
+@@ -671,14 +671,9 @@ static ssize_t iwl_dbgfs_bt_cmd_read(struct file *file, char __user *user_buf,
+ 	};
+ 	int ret, bt_force_ant_mode;
  
--static int __must_check object_type_to_pool_type(const char *object_type,
--						 enum fsl_mc_pool_type
--								*pool_type)
--{
--	unsigned int i;
--
--	for (i = 0; i < ARRAY_SIZE(fsl_mc_pool_type_strings); i++) {
--		if (strcmp(object_type, fsl_mc_pool_type_strings[i]) == 0) {
--			*pool_type = i;
--			return 0;
--		}
+-	for (bt_force_ant_mode = 0;
+-	     bt_force_ant_mode < ARRAY_SIZE(modes_str);
+-	     bt_force_ant_mode++) {
+-		if (!strcmp(buf, modes_str[bt_force_ant_mode]))
+-			break;
 -	}
 -
--	return -EINVAL;
--}
--
- int __must_check fsl_mc_resource_allocate(struct fsl_mc_bus *mc_bus,
- 					  enum fsl_mc_pool_type pool_type,
- 					  struct fsl_mc_resource **new_resource)
-@@ -581,9 +565,11 @@ static int fsl_mc_allocator_probe(struct fsl_mc_device *mc_dev)
+-	if (bt_force_ant_mode >= ARRAY_SIZE(modes_str))
++	bt_force_ant_mode = match_string(modes_str,
++					 ARRAY_SIZE(modes_str), buf);
++	if (bt_force_ant_mode < 0)
  		return -EINVAL;
  
- 	mc_bus = to_fsl_mc_bus(mc_bus_dev);
--	error = object_type_to_pool_type(mc_dev->obj_desc.type, &pool_type);
--	if (error < 0)
--		return error;
-+	pool_type = match_string(fsl_mc_pool_type_strings,
-+				 ARRAY_SIZE(fsl_mc_pool_type_strings),
-+				 mc_dev->obj_desc.type);
-+	if (pool_type < 0)
-+		return pool_type;
- 
- 	error = fsl_mc_resource_pool_add_device(mc_bus, pool_type, mc_dev);
- 	if (error < 0)
+ 	ret = 0;
 -- 
 1.7.12.4
