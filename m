@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753056AbeEUMO5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 08:14:57 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:38697 "EHLO huawei.com"
+        id S1753028AbeEUMOx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 08:14:53 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:38706 "EHLO huawei.com"
         rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752633AbeEUMJF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752644AbeEUMJF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 21 May 2018 08:09:05 -0400
 From: Yisheng Xie <xieyisheng1@huawei.com>
 To: <linux-kernel@vger.kernel.org>
 CC: Yisheng Xie <xieyisheng1@huawei.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Subject: [PATCH 09/33] phy: tegra: use match_string() helper
-Date: Mon, 21 May 2018 19:57:46 +0800
-Message-ID: <1526903890-35761-10-git-send-email-xieyisheng1@huawei.com>
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-rockchip@lists.infradead.org>
+Subject: [PATCH 13/33] clk: rockchip: use match_string() helper
+Date: Mon, 21 May 2018 19:57:50 +0800
+Message-ID: <1526903890-35761-14-git-send-email-xieyisheng1@huawei.com>
 X-Mailer: git-send-email 1.7.12.4
 In-Reply-To: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
 References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
@@ -29,47 +30,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 match_string() returns the index of an array for a matching string,
 which can be used intead of open coded variant.
 
-Cc: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Heiko Stuebner <heiko@sntech.de>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-rockchip@lists.infradead.org
 Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
 ---
- drivers/phy/tegra/xusb.c | 15 +--------------
- 1 file changed, 1 insertion(+), 14 deletions(-)
+ drivers/clk/rockchip/clk.c | 16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-index 11aa590..de1b4eb 100644
---- a/drivers/phy/tegra/xusb.c
-+++ b/drivers/phy/tegra/xusb.c
-@@ -102,19 +102,6 @@ static struct phy *tegra_xusb_pad_of_xlate(struct device *dev,
- 	return np;
- }
+diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+index 3cd8ad5..514032d 100644
+--- a/drivers/clk/rockchip/clk.c
++++ b/drivers/clk/rockchip/clk.c
+@@ -274,18 +274,10 @@ static struct clk *rockchip_clk_register_frac_branch(
+ 		struct clk_mux *frac_mux = &frac->mux;
+ 		struct clk_init_data init;
+ 		struct clk *mux_clk;
+-		int i, ret;
+-
+-		frac->mux_frac_idx = -1;
+-		for (i = 0; i < child->num_parents; i++) {
+-			if (!strcmp(name, child->parent_names[i])) {
+-				pr_debug("%s: found fractional parent in mux at pos %d\n",
+-					 __func__, i);
+-				frac->mux_frac_idx = i;
+-				break;
+-			}
+-		}
++		int ret;
  
--static int
--tegra_xusb_lane_lookup_function(struct tegra_xusb_lane *lane,
--				    const char *function)
--{
--	unsigned int i;
--
--	for (i = 0; i < lane->soc->num_funcs; i++)
--		if (strcmp(function, lane->soc->funcs[i]) == 0)
--			return i;
--
--	return -EINVAL;
--}
--
- int tegra_xusb_lane_parse_dt(struct tegra_xusb_lane *lane,
- 			     struct device_node *np)
- {
-@@ -126,7 +113,7 @@ int tegra_xusb_lane_parse_dt(struct tegra_xusb_lane *lane,
- 	if (err < 0)
- 		return err;
++		frac->mux_frac_idx = match_string(child->parent_names,
++						  child->num_parents, name);
+ 		frac->mux_ops = &clk_mux_ops;
+ 		frac->clk_nb.notifier_call = rockchip_clk_frac_notifier_cb;
  
--	err = tegra_xusb_lane_lookup_function(lane, function);
-+	err = match_string(lane->soc->funcs, lane->soc->num_funcs, function);
- 	if (err < 0) {
- 		dev_err(dev, "invalid function \"%s\" for lane \"%s\"\n",
- 			function, np->name);
+@@ -312,6 +304,8 @@ static struct clk *rockchip_clk_register_frac_branch(
+ 
+ 		/* notifier on the fraction divider to catch rate changes */
+ 		if (frac->mux_frac_idx >= 0) {
++			pr_debug("%s: find fractional parent in mux at pos %d\n",
++				 __func__, frac->mux_frac_idx);
+ 			ret = clk_notifier_register(clk, &frac->clk_nb);
+ 			if (ret)
+ 				pr_err("%s: failed to register clock notifier for %s\n",
 -- 
 1.7.12.4
