@@ -1,519 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751446AbeEUJBo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 05:01:44 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:42105 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751087AbeEUJBk (ORCPT
+        id S1751265AbeEUJCH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 05:02:07 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:34361 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751072AbeEUJCD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 05:01:40 -0400
-X-Google-Smtp-Source: AB8JxZovgiZA4cUnC+CG2zXvEA9VhtdsW1D2Oa5B1Bl8dDeMQYlnxMtcL7mSMLL8DWow+p6csFbOsw==
-Subject: Re: [PATCH v2 5/5] media: platform: Add Chrome OS EC CEC driver
-To: Enric Balletbo Serra <eballetbo@gmail.com>
-Cc: David Airlie <airlied@linux.ie>, Hans Verkuil <hans.verkuil@cisco.com>,
-        Lee Jones <lee.jones@linaro.org>, Olof Johansson <olof@lixom.net>,
-        Sean Paul <seanpaul@google.com>, sadolfsson@google.com,
-        intel-gfx@lists.freedesktop.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Fabien Parent <fparent@baylibre.com>, Felix Ekblom <felixe@google.com>,
-        =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>,
-        Benson Leung <bleung@google.com>, darekm@google.com,
-        linux-media@vger.kernel.org
-References: <1526648704-16873-1-git-send-email-narmstrong@baylibre.com>
- <1526648704-16873-6-git-send-email-narmstrong@baylibre.com>
- <CAFqH_52m+_PZWOyvwfTDmJ4Lgr=efFqW2k8DoBk1dn97AGv5pg@mail.gmail.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
- GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
- RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
- NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
- 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
- ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
- YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
- GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
- coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
- SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
- YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
- mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
- zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
- 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
- 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
- RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
- C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
- Acmp6h8g
-Organization: Baylibre
-Message-ID: <a4df63e0-a4a2-ee13-5429-126c1df74910@baylibre.com>
-Date: Mon, 21 May 2018 11:01:37 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 21 May 2018 05:02:03 -0400
+X-Google-Smtp-Source: AB8JxZpIXsElOqnC6iCNO901BVkdnEujD3gRPYmjtlgLNGEU+PKBWf0cN+MXxY5FD4bhzHrQKOhVtg==
+Date: Mon, 21 May 2018 14:32:01 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Taniya Das <tdas@codeaurora.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        robh@kernel.org, Rajendra Nayak <rnayak@codeaurora.org>,
+        Amit Nischal <anischal@codeaurora.org>, devicetree@vger.kernel.org,
+        skannan@codeaurora.org, amit.kucheria@linaro.org
+Subject: Re: [PATCH v2 0/2] Add support for QCOM cpufreq FW driver
+Message-ID: <20180521090201.4ix2at6emxsdf6s2@vireshk-i7>
+References: <1526751291-17873-1-git-send-email-tdas@codeaurora.org>
+ <20180521060529.kyjkglucbydr6b3f@vireshk-i7>
+ <cb15a4db-77cd-8063-f323-652c6b03306e@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <CAFqH_52m+_PZWOyvwfTDmJ4Lgr=efFqW2k8DoBk1dn97AGv5pg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cb15a4db-77cd-8063-f323-652c6b03306e@codeaurora.org>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Enric,
+On 21-05-18, 13:05, Taniya Das wrote:
+> Hello Viresh,
+> 
+> Sure, will do it next time. Hope updating the fixes in this email is fine.
+> Do let me know in case you need me to send it across again the series with
+> cover letter updated.
+> 
+> On 5/21/2018 11:35 AM, Viresh Kumar wrote:
+> > On 19-05-18, 23:04, Taniya Das wrote:
+> > >   [v2]
+> > >     * Address comments given in v0 series.
+> > 
+> > That's not how you do it. You need to explain every change in enough
+> > detail here so that the reviewers don't need to go to their previous
+> > emails to see what changed.
+> > 
+> Fixes in [v2]
+>   * Fixed the alignment issues in "qcom_cpufreq_fw_target_index" for
+> dev_err and also for "qcom_cpu_resources_init".
+>  * Removed ret = 0 from qcom_get_related_cpus and added to check for
+> cpu_mask_empty to return -ENOENT.
+>  * Fixes qcom_cpu_resources_init function
+>    * Remove initialization of 'index'
+>    * Check for valid 'c'
+>  * Removed initialization of 'prev_cc' from 'qcom_read_lut'.
+>  * Remove initialization of 'ret' from function qcom_resources_init and add
+> return -ENODEV based on 'of_get_available_child_count'.
+>  * Removed initialization of 'rc' from qcom_cpufreq_fw_driver_probe
+>  * Removed module_exit as this driver would not be used as module, also
+> updated the Kconfig to bool from tristate.
+>  * Updated the subsystem in device tree bindings.
 
-On 18/05/2018 17:02, Enric Balletbo Serra wrote:
-> Hi Neil,
-> 
-> 2018-05-18 15:05 GMT+02:00 Neil Armstrong <narmstrong@baylibre.com>:
->> The Chrome OS Embedded Controller can expose a CEC bus, this patch add the
-> 
-> A minor nit, there is a "consensus" on tell cros-ec as "ChromeOS
-> Embedded Controller" or "ChromeOS EC". Yes, I know that you can see in
-> the kernel many other ways to refer to the ChromeOS EC, but to
-> standardize a little bit, could you replace all occurrences s/Chrome
-> OS/ChromeOS/. Thanks.
+That's what it should look like. Thanks.
 
-Ok, I'll do a cleanup.
-
-> 
->> driver for such feature of the Embedded Controller.
->>
->> This driver is part of the cros-ec MFD and will be add as a sub-device when
->> the feature bit is exposed by the EC.
->>
->> The controller will only handle a single logical address and handles
->> all the messages retries and will only expose Success or Error.
->>
->> The controller will be tied to the HDMI CEC notifier by using the platform
->> DMI Data and the i915 device name and connector name.
->>
->> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
->> ---
->>  drivers/media/platform/Kconfig                   |  11 +
->>  drivers/media/platform/Makefile                  |   2 +
->>  drivers/media/platform/cros-ec-cec/Makefile      |   1 +
->>  drivers/media/platform/cros-ec-cec/cros-ec-cec.c | 347 +++++++++++++++++++++++
->>  4 files changed, 361 insertions(+)
->>  create mode 100644 drivers/media/platform/cros-ec-cec/Makefile
->>  create mode 100644 drivers/media/platform/cros-ec-cec/cros-ec-cec.c
->>
->> diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
->> index c7a1cf8..e55a8ed2 100644
->> --- a/drivers/media/platform/Kconfig
->> +++ b/drivers/media/platform/Kconfig
->> @@ -546,6 +546,17 @@ menuconfig CEC_PLATFORM_DRIVERS
->>
->>  if CEC_PLATFORM_DRIVERS
->>
->> +config VIDEO_CROS_EC_CEC
->> +       tristate "Chrome OS EC CEC driver"
-> 
-> here
-> 
->> +       depends on MFD_CROS_EC || COMPILE_TEST
->> +       select CEC_CORE
->> +       select CEC_NOTIFIER
->> +       ---help---
->> +         If you say yes here you will get support for the
->> +         Chrome OS Embedded Controller's CEC.
-> 
-> here
-> 
->> +         The CEC bus is present in the HDMI connector and enables communication
->> +         between compatible devices.
->> +
->>  config VIDEO_MESON_AO_CEC
->>         tristate "Amlogic Meson AO CEC driver"
->>         depends on ARCH_MESON || COMPILE_TEST
->> diff --git a/drivers/media/platform/Makefile b/drivers/media/platform/Makefile
->> index 932515d..830696f 100644
->> --- a/drivers/media/platform/Makefile
->> +++ b/drivers/media/platform/Makefile
->> @@ -92,3 +92,5 @@ obj-$(CONFIG_VIDEO_QCOM_CAMSS)                += qcom/camss-8x16/
->>  obj-$(CONFIG_VIDEO_QCOM_VENUS)         += qcom/venus/
->>
->>  obj-y                                  += meson/
->> +
->> +obj-y                                  += cros-ec-cec/
->> diff --git a/drivers/media/platform/cros-ec-cec/Makefile b/drivers/media/platform/cros-ec-cec/Makefile
->> new file mode 100644
->> index 0000000..9ce97f9
->> --- /dev/null
->> +++ b/drivers/media/platform/cros-ec-cec/Makefile
->> @@ -0,0 +1 @@
->> +obj-$(CONFIG_VIDEO_CROS_EC_CEC) += cros-ec-cec.o
->> diff --git a/drivers/media/platform/cros-ec-cec/cros-ec-cec.c b/drivers/media/platform/cros-ec-cec/cros-ec-cec.c
->> new file mode 100644
->> index 0000000..7e1e275
->> --- /dev/null
->> +++ b/drivers/media/platform/cros-ec-cec/cros-ec-cec.c
->> @@ -0,0 +1,347 @@
->> +// SPDX-License-Identifier: GPL-2.0+
->> +/*
->> + * CEC driver for Chrome OS Embedded Controller
-> 
-> and here
-> 
->> + *
->> + * Copyright (c) 2018 BayLibre, SAS
->> + * Author: Neil Armstrong <narmstrong@baylibre.com>
->> + */
->> +
->> +#include <linux/kernel.h>
->> +#include <linux/module.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/dmi.h>
->> +#include <linux/pci.h>
->> +#include <linux/cec.h>
->> +#include <linux/slab.h>
->> +#include <linux/interrupt.h>
->> +#include <media/cec.h>
->> +#include <media/cec-notifier.h>
->> +#include <linux/mfd/cros_ec.h>
->> +#include <linux/mfd/cros_ec_commands.h>
->> +
->> +#define DRV_NAME       "cros-ec-cec"
->> +
->> +/**
->> + * struct cros_ec_cec - Driver data for EC CEC
->> + *
->> + * @cros_ec: Pointer to EC device
->> + * @notifier: Notifier info for responding to EC events
->> + * @adap: CEC adapter
->> + * @notify: CEC notifier pointer
->> + * @rx_msg: storage for a received message
->> + */
->> +struct cros_ec_cec {
->> +       struct cros_ec_device *cros_ec;
->> +       struct notifier_block notifier;
->> +       struct cec_adapter *adap;
->> +       struct cec_notifier *notify;
->> +       struct cec_msg rx_msg;
->> +};
->> +
->> +static void handle_cec_message(struct cros_ec_cec *cros_ec_cec)
->> +{
->> +       struct cros_ec_device *cros_ec = cros_ec_cec->cros_ec;
->> +       uint8_t *cec_message = cros_ec->event_data.data.cec_message;
->> +       unsigned int len = cros_ec->event_size;
->> +
->> +       cros_ec_cec->rx_msg.len = len;
->> +       memcpy(cros_ec_cec->rx_msg.msg, cec_message, len);
->> +
->> +       cec_received_msg(cros_ec_cec->adap, &cros_ec_cec->rx_msg);
->> +}
->> +
->> +static void handle_cec_event(struct cros_ec_cec *cros_ec_cec)
->> +{
->> +       struct cros_ec_device *cros_ec = cros_ec_cec->cros_ec;
->> +       uint32_t events = cros_ec->event_data.data.cec_events;
->> +
->> +       if (events & EC_MKBP_CEC_SEND_OK)
->> +               cec_transmit_attempt_done(cros_ec_cec->adap,
->> +                                         CEC_TX_STATUS_OK);
->> +
->> +       /* FW takes care of all retries, tell core to avoid more retries */
->> +       if (events & EC_MKBP_CEC_SEND_FAILED)
->> +               cec_transmit_attempt_done(cros_ec_cec->adap,
->> +                                         CEC_TX_STATUS_MAX_RETRIES |
->> +                                         CEC_TX_STATUS_NACK);
->> +}
->> +
->> +static int cros_ec_cec_event(struct notifier_block *nb,
->> +                            unsigned long queued_during_suspend,
->> +                            void *_notify)
->> +{
->> +       struct cros_ec_cec *cros_ec_cec;
->> +       struct cros_ec_device *cros_ec;
->> +
->> +       cros_ec_cec = container_of(nb, struct cros_ec_cec, notifier);
->> +       cros_ec = cros_ec_cec->cros_ec;
->> +
->> +       if (cros_ec->event_data.event_type == EC_MKBP_CEC_EVENT) {
->> +               handle_cec_event(cros_ec_cec);
->> +               return NOTIFY_OK;
->> +       }
->> +
->> +       if (cros_ec->event_data.event_type == EC_MKBP_EVENT_CEC_MESSAGE) {
->> +               handle_cec_message(cros_ec_cec);
->> +               return NOTIFY_OK;
->> +       }
->> +
->> +       return NOTIFY_DONE;
->> +}
->> +
->> +static int cros_ec_cec_set_log_addr(struct cec_adapter *adap, u8 logical_addr)
->> +{
->> +       struct cros_ec_cec *cros_ec_cec = adap->priv;
->> +       struct cros_ec_device *cros_ec = cros_ec_cec->cros_ec;
->> +       struct {
->> +               struct cros_ec_command msg;
->> +               struct ec_params_cec_set data;
->> +       } __packed msg = {};
->> +       int ret;
->> +
->> +       msg.msg.command = EC_CMD_CEC_SET;
->> +       msg.msg.outsize = sizeof(msg.data);
->> +       msg.data.cmd = CEC_CMD_LOGICAL_ADDRESS;
->> +       msg.data.address = logical_addr;
->> +
->> +       ret = cros_ec_cmd_xfer_status(cros_ec, &msg.msg);
->> +       if (ret < 0) {
->> +               dev_err(cros_ec->dev,
->> +                       "error setting CEC logical address on EC: %d\n", ret);
->> +               return ret;
->> +       }
->> +
->> +       return 0;
->> +}
->> +
->> +static int cros_ec_cec_transmit(struct cec_adapter *adap, u8 attempts,
->> +                               u32 signal_free_time, struct cec_msg *cec_msg)
->> +{
->> +       struct cros_ec_cec *cros_ec_cec = adap->priv;
->> +       struct cros_ec_device *cros_ec = cros_ec_cec->cros_ec;
->> +       struct {
->> +               struct cros_ec_command msg;
->> +               struct ec_params_cec_write data;
->> +       } __packed msg = {};
->> +       int ret;
->> +
->> +       msg.msg.command = EC_CMD_CEC_WRITE_MSG;
->> +       msg.msg.outsize = cec_msg->len;
->> +       memcpy(msg.data.msg, cec_msg->msg, cec_msg->len);
->> +
->> +       ret = cros_ec_cmd_xfer_status(cros_ec, &msg.msg);
->> +       if (ret < 0) {
->> +               dev_err(cros_ec->dev,
->> +                       "error writing CEC msg on EC: %d\n", ret);
->> +               return ret;
->> +       }
->> +
->> +       return 0;
->> +}
->> +
->> +static int cros_ec_cec_adap_enable(struct cec_adapter *adap, bool enable)
->> +{
->> +       struct cros_ec_cec *cros_ec_cec = adap->priv;
->> +       struct cros_ec_device *cros_ec = cros_ec_cec->cros_ec;
->> +       struct {
->> +               struct cros_ec_command msg;
->> +               struct ec_params_cec_set data;
->> +       } __packed msg = {};
->> +       int ret;
->> +
->> +       msg.msg.command = EC_CMD_CEC_SET;
->> +       msg.msg.outsize = sizeof(msg.data);
->> +       msg.data.cmd = CEC_CMD_ENABLE;
->> +       msg.data.enable = enable;
->> +
->> +       ret = cros_ec_cmd_xfer_status(cros_ec, &msg.msg);
->> +       if (ret < 0) {
->> +               dev_err(cros_ec->dev,
->> +                       "error %sabling CEC on EC: %d\n",
->> +                       (enable ? "en" : "dis"), ret);
->> +               return ret;
->> +       }
->> +
->> +       return 0;
->> +}
->> +
->> +static const struct cec_adap_ops cros_ec_cec_ops = {
->> +       .adap_enable = cros_ec_cec_adap_enable,
->> +       .adap_log_addr = cros_ec_cec_set_log_addr,
->> +       .adap_transmit = cros_ec_cec_transmit,
->> +};
->> +
->> +#ifdef CONFIG_PM_SLEEP
->> +static int cros_ec_cec_suspend(struct device *dev)
->> +{
->> +       struct platform_device *pdev = to_platform_device(dev);
->> +       struct cros_ec_cec *cros_ec_cec = dev_get_drvdata(&pdev->dev);
->> +
->> +       if (device_may_wakeup(dev))
->> +               enable_irq_wake(cros_ec_cec->cros_ec->irq);
->> +
->> +       return 0;
->> +}
->> +
->> +static int cros_ec_cec_resume(struct device *dev)
->> +{
->> +       struct platform_device *pdev = to_platform_device(dev);
->> +       struct cros_ec_cec *cros_ec_cec = dev_get_drvdata(&pdev->dev);
->> +
->> +       if (device_may_wakeup(dev))
->> +               disable_irq_wake(cros_ec_cec->cros_ec->irq);
->> +
->> +       return 0;
->> +}
->> +#endif
->> +
->> +static SIMPLE_DEV_PM_OPS(cros_ec_cec_pm_ops,
->> +       cros_ec_cec_suspend, cros_ec_cec_resume);
->> +
->> +#if IS_ENABLED(CONFIG_PCI) && IS_ENABLED(CONFIG_DMI)
->> +
->> +/*
->> + * The Firmware only handles a single CEC interface tied to a single HDMI
->> + * connector we specify along with the DRM device name handling the HDMI output
->> + */
->> +
->> +struct cec_dmi_match {
->> +       char *sys_vendor;
->> +       char *product_name;
->> +       char *devname;
->> +       char *conn;
->> +};
->> +
->> +static const struct cec_dmi_match cec_dmi_match_table[] = {
->> +       /* Google Fizz */
->> +       { "Google", "Fizz", "0000:00:02.0", "Port B" },
->> +};
->> +
->> +static int cros_ec_cec_get_notifier(struct device *dev,
->> +                                   struct cec_notifier **notify)
->> +{
->> +       int i;
->> +
->> +       for (i = 0 ; i < ARRAY_SIZE(cec_dmi_match_table) ; ++i) {
->> +               const struct cec_dmi_match *m = &cec_dmi_match_table[i];
->> +
->> +               if (dmi_match(DMI_SYS_VENDOR, m->sys_vendor) &&
->> +                   dmi_match(DMI_PRODUCT_NAME, m->product_name)) {
->> +                       struct device *d;
->> +
->> +                       /* Find the device, bail out if not yet registered */
->> +                       d = bus_find_device_by_name(&pci_bus_type, NULL,
->> +                                                   m->devname);
->> +                       if (!d)
->> +                               return -EPROBE_DEFER;
->> +
->> +                       *notify = cec_notifier_get_conn(d, m->conn);
->> +                       return 0;
->> +               }
->> +       }
->> +
->> +       /* Hardware support must be added in the cec_dmi_match_table */
->> +       dev_warn(dev, "CEC notifier not configured for this hardware\n");
->> +
->> +       return -ENODEV;
->> +}
->> +
->> +#else
->> +
->> +static int cros_ec_cec_get_notifier(struct device *dev,
->> +                                   struct cec_notifier **notify)
->> +{
->> +       return -ENODEV;
->> +}
->> +
->> +#endif
->> +
->> +static int cros_ec_cec_probe(struct platform_device *pdev)
->> +{
->> +       struct cros_ec_dev *ec_dev = dev_get_drvdata(pdev->dev.parent);
->> +       struct cros_ec_device *cros_ec = ec_dev->ec_dev;
->> +       struct cros_ec_cec *cros_ec_cec;
->> +       int ret;
->> +
->> +       cros_ec_cec = devm_kzalloc(&pdev->dev, sizeof(*cros_ec_cec),
->> +                                  GFP_KERNEL);
->> +       if (!cros_ec_cec)
->> +               return -ENOMEM;
->> +
->> +       platform_set_drvdata(pdev, cros_ec_cec);
->> +       cros_ec_cec->cros_ec = cros_ec;
->> +
->> +       ret = cros_ec_cec_get_notifier(&pdev->dev, &cros_ec_cec->notify);
->> +       if (ret)
->> +               return ret;
->> +
->> +       ret = device_init_wakeup(&pdev->dev, 1);
->> +       if (ret) {
->> +               dev_err(&pdev->dev, "failed to initialize wakeup\n");
->> +               return ret;
->> +       }
->> +
->> +       cros_ec_cec->adap = cec_allocate_adapter(&cros_ec_cec_ops, cros_ec_cec,
->> +                                                DRV_NAME, CEC_CAP_DEFAULTS, 1);
->> +       if (IS_ERR(cros_ec_cec->adap))
->> +               return PTR_ERR(cros_ec_cec->adap);
->> +
->> +       /* Get CEC events from the EC. */
->> +       cros_ec_cec->notifier.notifier_call = cros_ec_cec_event;
->> +       ret = blocking_notifier_chain_register(&cros_ec->event_notifier,
->> +                                              &cros_ec_cec->notifier);
->> +       if (ret) {
->> +               dev_err(&pdev->dev, "failed to register notifier\n");
->> +               cec_delete_adapter(cros_ec_cec->adap);
->> +               return ret;
->> +       }
->> +
->> +       ret = cec_register_adapter(cros_ec_cec->adap, &pdev->dev);
->> +       if (ret < 0) {
->> +               cec_delete_adapter(cros_ec_cec->adap);
->> +               return ret;
->> +       }
->> +
->> +       cec_register_cec_notifier(cros_ec_cec->adap, cros_ec_cec->notify);
->> +
->> +       return 0;
->> +}
->> +
->> +static int cros_ec_cec_remove(struct platform_device *pdev)
->> +{
->> +       struct cros_ec_cec *cros_ec_cec = platform_get_drvdata(pdev);
->> +       struct device *dev = &pdev->dev;
->> +       int ret;
->> +
->> +       ret = blocking_notifier_chain_unregister(
->> +                       &cros_ec_cec->cros_ec->event_notifier,
->> +                       &cros_ec_cec->notifier);
->> +
->> +       if (ret) {
->> +               dev_err(dev, "failed to unregister notifier\n");
->> +               return ret;
->> +       }
->> +
->> +       cec_unregister_adapter(cros_ec_cec->adap);
->> +
->> +       if (cros_ec_cec->notify)
->> +               cec_notifier_put(cros_ec_cec->notify);
->> +
->> +       return 0;
->> +}
->> +
->> +static struct platform_driver cros_ec_cec_driver = {
->> +       .probe = cros_ec_cec_probe,
->> +       .remove  = cros_ec_cec_remove,
->> +       .driver = {
->> +               .name = DRV_NAME,
->> +               .pm = &cros_ec_cec_pm_ops,
->> +       },
->> +};
->> +
->> +module_platform_driver(cros_ec_cec_driver);
->> +
->> +MODULE_DESCRIPTION("CEC driver for Chrome OS ECs");
->> +MODULE_AUTHOR("Neil Armstrong <narmstrong@baylibre.com>");
->> +MODULE_LICENSE("GPL");
->> +MODULE_ALIAS("platform:" DRV_NAME);
->> --
->> 2.7.4
->>
->> _______________________________________________
->> dri-devel mailing list
->> dri-devel@lists.freedesktop.org
->> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> 
-> The patch looks good to me, so
-> 
-> Reviewed-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> 
-
-Thanks,
-Neil
+-- 
+viresh
