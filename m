@@ -1,39 +1,38 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrFv/YNOtMwa5yPKs+/+4rHtQfYk6YdQgMZp+dVdfifo5ygx9GGIV6bTV66OTeaKGbg8X2X
-ARC-Seal: i=1; a=rsa-sha256; t=1526937828; cv=none;
+X-Google-Smtp-Source: AB8JxZrfZUKMc7dBQj8Jk4wOu3LUS4kF0WsXhxhgAbMQ/V0dSuEQl8TYVXBhQLJ9MPCfidVhAtb/
+ARC-Seal: i=1; a=rsa-sha256; t=1526937826; cv=none;
         d=google.com; s=arc-20160816;
-        b=zHKd+18vpUbaXyF/V/Qa7uB0YdXksyTZqzyv2xvAP9oTtBEXCnoO9EI41fGWVK7zvy
-         PngDbgCvV1KE6vTDvXnsRvW7yiXLrQoMZVwgYDTgh6jSMHLKXeY+PPSqsyI0Jnn1NufW
-         d/U0QqKMgSzzFs3qeEYhlugv05XDDR1YbmPI6KpOw+8CYt36x+bBIDyzOx3ssfJzEBM6
-         hJuBM1U5ooXsW0o39Gq5HZVjaxN+SL+gvckpqGxzf+uNaAJx6mgOqNYh7xR9GlEffVC8
-         rcYcXOR75U2z05hwgfIHAancR0BNPeBpAQlcIupVTDF5OLl+an1Wmn9dcWz37qnAQk2K
-         PLQw==
+        b=JiUOA5ULLjcKFP4il83DOXB1A0Raa5FN1qu2ays6K9SztJNvu6JtwNR/Xhjs766iHn
+         zpG8d/mudnoBMz0ySixN/gb6iIcqIOJU+mSXj3h7G4MFreEW1+t/DD1FJVOodrNCQPaU
+         K8oKPn1bXBsPgeyxbPJvMf4wR+becWgZOYRGN72qLQ7TuIkjOMgHPb8pk668Hau1uKQV
+         w6+JQKbHnTDoD0p9vReyfnmIvfAbKnfuTunYlFxde5M1GolQ98eX158mfFsvQ86wgVLI
+         axYqDogKUa13WdlAaIZzzZX6dq0i0it0qX6y1qtm1t48gGh40oT5AVYVpoxQnMDObn3u
+         koYQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=fQj77HYFB9KP5nHAsLxPJwUZNS+2cChzr3mTy8+9+98=;
-        b=ZPTQHTqwACXXu3QiWKKEXrzEEPNS7x5kf50maHQp676X6mP5jWT5GG6lr/nGNT4/07
-         0dFN1wIB3/Nq7Stsh4spRiTIRznuIFJ9iQ4xB1112YbU36XyE8D+yt9O8ineT+m+KtJZ
-         /+Dpi82dZNFgHejmisiqB38+yAAbmmOSgFcsbv/e+JaIIzaCam7pvSh4505pOnZwG1tp
-         xDQ5pfR8HiyK9hotBt78UC7UNw/5EOGaFukBCYnjd2CsTwkIHIH91FFDn0dTwUP2Wlaa
-         l7iMVRwFKuNpVdeydF11BCtjsSNF9Q0taUgA+m4cR196N8BJzZQugYVo8jHzgOw1uxB/
-         7ODw==
+        bh=5rce2/XRSA0YyYce8GaCpIVvsm20ccOr3ZlQ4zQE3MU=;
+        b=kzNQu1QuoQY1QPsZ0VxKiV0p6njs1Z+07epUUzC7YMNf60B9p3K2IVHy7T+8R6zNvp
+         J0Ds4diz83o+k+/Nc8NPYK8XQSVhyNhbMc8l0bcJiee2fcvsjya2CeyOr3B0bNY2BbaQ
+         peouZLYLzSRGC0kXI0zk1cdXPG005I5LGu8fPpizGaqkhCwzPqSBMaAnidDlk+i/2Kvn
+         Z+u+aKfcVK8w89HzdiYPI2QF2GbzOdyLoNknHfha3D5BWMhBIXJBhcoi27DlfIAAwW1E
+         x3uHbAGE52U6fOoEbjWk1XTAiNZHZ0FNZ30TaAhwBP0pmuCbisAP0YmIe/b28re6Ife2
+         Nlag==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=jYz9inbU;
+       dkim=pass header.i=@kernel.org header.s=default header.b=yY1HFOi6;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=jYz9inbU;
+       dkim=pass header.i=@kernel.org header.s=default header.b=yY1HFOi6;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Heiko Carstens <heiko.carstens@de.ibm.com>,
-	Hendrik Brueckner <brueckner@linux.ibm.com>,
+	Julian Wiedmann <jwi@linux.ibm.com>,
 	Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.16 041/110] s390/cpum_sf: ensure sample frequency of perf event attributes is non-zero
-Date: Mon, 21 May 2018 23:11:38 +0200
-Message-Id: <20180521210507.731353876@linuxfoundation.org>
+Subject: [PATCH 4.16 040/110] s390/qdio: fix access to uninitialized qdio_q fields
+Date: Mon, 21 May 2018 23:11:37 +0200
+Message-Id: <20180521210507.606013066@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109875373566358?=
-X-GMAIL-MSGID: =?utf-8?q?1601110360515462791?=
+X-GMAIL-THRID: =?utf-8?q?1601109872569829997?=
+X-GMAIL-MSGID: =?utf-8?q?1601110358130238174?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,36 +51,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hendrik Brueckner <brueckner@linux.ibm.com>
+From: Julian Wiedmann <jwi@linux.ibm.com>
 
-commit 4bbaf2584b86b0772413edeac22ff448f36351b1 upstream.
+commit e521813468f786271a87e78e8644243bead48fad upstream.
 
-Correct a trinity finding for the perf_event_open() system call with
-a perf event attribute structure that uses a frequency but has the
-sampling frequency set to zero.  This causes a FP divide exception during
-the sample rate initialization for the hardware sampling facility.
+Ever since CQ/QAOB support was added, calling qdio_free() straight after
+qdio_alloc() results in qdio_release_memory() accessing uninitialized
+memory (ie. q->u.out.use_cq and q->u.out.aobs). Followed by a
+kmem_cache_free() on the random AOB addresses.
 
-Fixes: 8c069ff4bd606 ("s390/perf: add support for the CPU-Measurement Sampling Facility")
-Cc: stable@vger.kernel.org # 3.14+
-Reviewed-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Signed-off-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+For older kernels that don't have 6e30c549f6ca, the same applies if
+qdio_establish() fails in the DEV_STATE_ONLINE check.
+
+While initializing q->u.out.use_cq would be enough to fix this
+particular bug, the more future-proof change is to just zero-alloc the
+whole struct.
+
+Fixes: 104ea556ee7f ("qdio: support asynchronous delivery of storage blocks")
+Cc: <stable@vger.kernel.org> #v3.2+
+Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
 Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/s390/kernel/perf_cpum_sf.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/s390/cio/qdio_setup.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/s390/kernel/perf_cpum_sf.c
-+++ b/arch/s390/kernel/perf_cpum_sf.c
-@@ -753,6 +753,10 @@ static int __hw_perf_event_init(struct p
- 	 */
- 	rate = 0;
- 	if (attr->freq) {
-+		if (!attr->sample_freq) {
-+			err = -EINVAL;
-+			goto out;
-+		}
- 		rate = freq_to_sample_rate(&si, attr->sample_freq);
- 		rate = hw_limit_rate(&si, rate);
- 		attr->freq = 0;
+--- a/drivers/s390/cio/qdio_setup.c
++++ b/drivers/s390/cio/qdio_setup.c
+@@ -141,7 +141,7 @@ static int __qdio_allocate_qs(struct qdi
+ 	int i;
+ 
+ 	for (i = 0; i < nr_queues; i++) {
+-		q = kmem_cache_alloc(qdio_q_cache, GFP_KERNEL);
++		q = kmem_cache_zalloc(qdio_q_cache, GFP_KERNEL);
+ 		if (!q)
+ 			return -ENOMEM;
+ 
