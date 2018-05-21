@@ -1,40 +1,38 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqy6TNt1Iocd740qTDq06C/QwY4qLBd69lb1PIxrEpRXQpYsRbmtaWWTGKOw5pA3YFWrKZJ
-ARC-Seal: i=1; a=rsa-sha256; t=1526937486; cv=none;
+X-Google-Smtp-Source: AB8JxZoodiayVSdFQbBGJkC8wPa0PwY8jLQ/3gXQunxbO2Xduc645NMectsL/SXCmDl8AVIHui/I
+ARC-Seal: i=1; a=rsa-sha256; t=1526937483; cv=none;
         d=google.com; s=arc-20160816;
-        b=OWtcM7ymnupNMtI5f/vnXwbWp1sLgz+eVnf0gulA3FGHdPdMbYbXeS3pI6/1KPHTdY
-         5CglAiis9PhPN0OW+xpN2e7t8rjdpwp/bmeGEi4vgZlIVnUEAqyvIOno/OrYS3Hd5fQo
-         PXRhNuemOyPypeJjLMUt2KghoQVqy9WQwRTZNGNI4R6sQqlUxrf/G27pqNH5CxX6XZx0
-         CPvMi4aSREgVu5JciAiKg5T4n0McRDWFU1As+/bNpXLTM3YDRpi1SfJ2z1n/7xzgvNdV
-         81HdVx8gyh7DtPXHnS1yNXTL+Gb7TC68w1TpxCmb+WQW3Frh7C6ibkYwbutbqYbH1ebE
-         NCVw==
+        b=y0bjnrxY3pEgkyT7TNbgPECX0Bzf/OR00IYJKwF2QK05mPUllF/6aHrnkBbEzPPC/9
+         LGI8x+EwbVJ+eCN3UQ0XOi97s5vh0n2/S1KPGGlh2nC8ruu2lBobtlO2Z8NQyYkXnhWD
+         Jtsu6V5nS/Fw8bvM4J3+gK4jU3zjkSWBkku6HeQjjsdkB4VI6d5WfOHVM3M6wlu/Q45z
+         575Vg7bgbU5w1+viADiK8G8TusfV+uGaTKCK/Oj3LGsagYBsy4RjtRhY+uUaoJRkeRvS
+         4XhfXYRyChrQ4I88fRT8p6AZl8Vb29i3Mqo3yOp/YVCcwLP5NRzZM2Z+qxkeJl1QwsUo
+         7b2Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=2MJITZSN73HNSvcg04f0qgQXrkHmf5QBr9AVFTIqWlE=;
-        b=PazEhM3xN/wv6rQv6bIGk+AabD7EcP0DrsDOUlIUBBcl45erBs0dnJqdUqMdiAbSWB
-         xVipgtYt8DC1hEaxr1MBNoBTWfWhjyVzhjhkwnFLbWaUoHeq3XBP9u+pAgCDZqwDu6qS
-         8BCfbwSMasY4fjVUBnZ6pnr6EHDbjnJdNWsVOnJ8Dv2r8hn4S6nICmsG0dgkWflvBy4r
-         h/kuzScTGV4/eURWpmDkmenUhGJdKGf/ig4Qx7JwpNx90tTwpW2f8f/YJ3rbiEXxCWM9
-         lV3QYMm/n8+gVmSTfbduZt6YV0qAq1GgV9/8Yehn0Y9Zy2lyy1XPvlCFfnmFYy25H6Jr
-         PYng==
+        bh=P5cDQGSEXQS7dNx9tNVZcLQG1AJXu6fa9AMCiF2f5VI=;
+        b=FAwq0g3bHIJhtAcvUeAsmZM7mith6ORq0ecExsHwLABmFzOyW+yifMd+q6Zhkq5kQ6
+         1lIRRkJgFD81BuKsZVx5mW0MKzX3O4JkFM6LPksPE1xCSx63bxtRnLykoE7QNL8BPCH7
+         Nhtax3aiXvFKByhMh6PZ8GPhmkXim13OlNn/RQOTjRyYxcynvsnhfnY6WwQt7Yc5n7rT
+         JoJgxH02wyOS8PhhFUkHFAaHJIJlDHQtmZKuu9JHDuf+PswkNiFivTcWOMBDKgb8Ka7K
+         hjTorB1LFhh6xSAoUG4AMX+jeksu9TkNRLy/xBl4kDemK9NiWdxzfyPd7LCw1aUCydJR
+         UBkw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=CfP43Bic;
+       dkim=pass header.i=@kernel.org header.s=default header.b=leCQWf09;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=CfP43Bic;
+       dkim=pass header.i=@kernel.org header.s=default header.b=leCQWf09;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jan Glauber <jan.glauber@caviumnetworks.com>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.14 12/95] KVM: arm/arm64: VGIC/ITS save/restore: protect kvm_read_guest() calls
-Date: Mon, 21 May 2018 23:11:02 +0200
-Message-Id: <20180521210450.041829852@linuxfoundation.org>
+	Kamal Dasu <kdasu.kdev@gmail.com>,
+	Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.14 11/95] spi: bcm-qspi: Always read and set BSPI_MAST_N_BOOT_CTRL
+Date: Mon, 21 May 2018 23:11:01 +0200
+Message-Id: <20180521210449.783724664@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210447.219380974@linuxfoundation.org>
 References: <20180521210447.219380974@linuxfoundation.org>
@@ -44,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601110002195518274?=
-X-GMAIL-MSGID: =?utf-8?q?1601110002195518274?=
+X-GMAIL-THRID: =?utf-8?q?1601109746955059282?=
+X-GMAIL-MSGID: =?utf-8?q?1601109999382987861?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,66 +51,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andre Przywara <andre.przywara@arm.com>
+From: Kamal Dasu <kdasu.kdev@gmail.com>
 
-commit 711702b57cc3c50b84bd648de0f1ca0a378805be upstream.
+commit 602805fb618b018b7a41fbb3f93c1992b078b1ae upstream.
 
-kvm_read_guest() will eventually look up in kvm_memslots(), which requires
-either to hold the kvm->slots_lock or to be inside a kvm->srcu critical
-section.
-In contrast to x86 and s390 we don't take the SRCU lock on every guest
-exit, so we have to do it individually for each kvm_read_guest() call.
-Use the newly introduced wrapper for that.
+Always confirm the BSPI_MAST_N_BOOT_CTRL bit when enabling
+or disabling BSPI transfers.
 
-Cc: Stable <stable@vger.kernel.org> # 4.12+
-Reported-by: Jan Glauber <jan.glauber@caviumnetworks.com>
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-Acked-by: Christoffer Dall <christoffer.dall@arm.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Fixes: 4e3b2d236fe00 ("spi: bcm-qspi: Add BSPI spi-nor flash controller driver")
+Signed-off-by: Kamal Dasu <kdasu.kdev@gmail.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- virt/kvm/arm/vgic/vgic-its.c |    4 ++--
- virt/kvm/arm/vgic/vgic-v3.c  |    4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/spi/spi-bcm-qspi.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/virt/kvm/arm/vgic/vgic-its.c
-+++ b/virt/kvm/arm/vgic/vgic-its.c
-@@ -1830,7 +1830,7 @@ static int scan_its_table(struct vgic_it
- 		int next_offset;
- 		size_t byte_offset;
+--- a/drivers/spi/spi-bcm-qspi.c
++++ b/drivers/spi/spi-bcm-qspi.c
+@@ -490,7 +490,7 @@ static int bcm_qspi_bspi_set_mode(struct
  
--		ret = kvm_read_guest(kvm, gpa, entry, esz);
-+		ret = kvm_read_guest_lock(kvm, gpa, entry, esz);
- 		if (ret)
- 			return ret;
+ static void bcm_qspi_enable_bspi(struct bcm_qspi *qspi)
+ {
+-	if (!has_bspi(qspi) || (qspi->bspi_enabled))
++	if (!has_bspi(qspi))
+ 		return;
  
-@@ -2191,7 +2191,7 @@ static int vgic_its_restore_cte(struct v
- 	int ret;
+ 	qspi->bspi_enabled = 1;
+@@ -505,7 +505,7 @@ static void bcm_qspi_enable_bspi(struct
  
- 	BUG_ON(esz > sizeof(val));
--	ret = kvm_read_guest(kvm, gpa, &val, esz);
-+	ret = kvm_read_guest_lock(kvm, gpa, &val, esz);
- 	if (ret)
- 		return ret;
- 	val = le64_to_cpu(val);
---- a/virt/kvm/arm/vgic/vgic-v3.c
-+++ b/virt/kvm/arm/vgic/vgic-v3.c
-@@ -297,7 +297,7 @@ retry:
- 	bit_nr = irq->intid % BITS_PER_BYTE;
- 	ptr = pendbase + byte_offset;
+ static void bcm_qspi_disable_bspi(struct bcm_qspi *qspi)
+ {
+-	if (!has_bspi(qspi) || (!qspi->bspi_enabled))
++	if (!has_bspi(qspi))
+ 		return;
  
--	ret = kvm_read_guest(kvm, ptr, &val, 1);
-+	ret = kvm_read_guest_lock(kvm, ptr, &val, 1);
- 	if (ret)
- 		return ret;
- 
-@@ -350,7 +350,7 @@ int vgic_v3_save_pending_tables(struct k
- 		ptr = pendbase + byte_offset;
- 
- 		if (byte_offset != last_byte_offset) {
--			ret = kvm_read_guest(kvm, ptr, &val, 1);
-+			ret = kvm_read_guest_lock(kvm, ptr, &val, 1);
- 			if (ret)
- 				return ret;
- 			last_byte_offset = byte_offset;
+ 	qspi->bspi_enabled = 0;
