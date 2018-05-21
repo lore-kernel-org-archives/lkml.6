@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753127AbeEUMJk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 08:09:40 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:7723 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753002AbeEUMJZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 08:09:25 -0400
+        id S1753059AbeEUMJ3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 08:09:29 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:38665 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751614AbeEUMJF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 08:09:05 -0400
 From: Yisheng Xie <xieyisheng1@huawei.com>
 To: <linux-kernel@vger.kernel.org>
 CC: Yisheng Xie <xieyisheng1@huawei.com>,
-        Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, <alsa-devel@alsa-project.org>
-Subject: [PATCH 29/33] ALSA: oxfw: use match_string() helper
-Date: Mon, 21 May 2018 19:58:06 +0800
-Message-ID: <1526903890-35761-30-git-send-email-xieyisheng1@huawei.com>
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>, <linux-pm@vger.kernel.org>
+Subject: [PATCH 15/33] cpufreq: intel_pstate: use match_string() helper
+Date: Mon, 21 May 2018 19:57:52 +0800
+Message-ID: <1526903890-35761-16-git-send-email-xieyisheng1@huawei.com>
 X-Mailer: git-send-email 1.7.12.4
 In-Reply-To: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
 References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
@@ -28,40 +29,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 match_string() returns the index of an array for a matching string,
 which can be used intead of open coded variant.
 
-Cc: Clemens Ladisch <clemens@ladisch.de>
-Cc: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.com>
-Cc: alsa-devel@alsa-project.org
+Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: Len Brown <lenb@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-pm@vger.kernel.org
 Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
 ---
- sound/firewire/oxfw/oxfw.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ drivers/cpufreq/intel_pstate.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
-diff --git a/sound/firewire/oxfw/oxfw.c b/sound/firewire/oxfw/oxfw.c
-index 413ab63..1e5b2c8 100644
---- a/sound/firewire/oxfw/oxfw.c
-+++ b/sound/firewire/oxfw/oxfw.c
-@@ -49,7 +49,6 @@ static bool detect_loud_models(struct fw_unit *unit)
- 		"Tapco LINK.firewire 4x6",
- 		"U.420"};
- 	char model[32];
--	unsigned int i;
- 	int err;
+diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
+index 17e566af..d701e26 100644
+--- a/drivers/cpufreq/intel_pstate.c
++++ b/drivers/cpufreq/intel_pstate.c
+@@ -645,21 +645,18 @@ static ssize_t store_energy_performance_preference(
+ {
+ 	struct cpudata *cpu_data = all_cpu_data[policy->cpu];
+ 	char str_preference[21];
+-	int ret, i = 0;
++	int ret;
  
- 	err = fw_csr_string(unit->directory, CSR_MODEL,
-@@ -57,12 +56,7 @@ static bool detect_loud_models(struct fw_unit *unit)
- 	if (err < 0)
- 		return false;
+ 	ret = sscanf(buf, "%20s", str_preference);
+ 	if (ret != 1)
+ 		return -EINVAL;
  
--	for (i = 0; i < ARRAY_SIZE(models); i++) {
--		if (strcmp(models[i], model) == 0)
--			break;
+-	while (energy_perf_strings[i] != NULL) {
+-		if (!strcmp(str_preference, energy_perf_strings[i])) {
+-			intel_pstate_set_energy_pref_index(cpu_data, i);
+-			return count;
+-		}
+-		++i;
 -	}
--
--	return (i < ARRAY_SIZE(models));
-+	return match_string(models, ARRAY_SIZE(models), model) >= 0;
++	ret = match_string(energy_perf_strings, -1, str_preference);
++	if (ret < 0)
++		return ret;
+ 
+-	return -EINVAL;
++	intel_pstate_set_energy_pref_index(cpu_data, ret);
++	return count;
  }
  
- static int name_card(struct snd_oxfw *oxfw)
+ static ssize_t show_energy_performance_preference(
 -- 
 1.7.12.4
