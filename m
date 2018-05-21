@@ -1,64 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752370AbeEUUAP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 16:00:15 -0400
-Received: from mga05.intel.com ([192.55.52.43]:20317 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751253AbeEUUAM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 16:00:12 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,427,1520924400";
-   d="scan'208";a="201237654"
-From: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-To: "David S . Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
-Cc: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
-        Jason M Biils <jason.m.bills@linux.intel.com>
-Subject: [v4 11/11] Add maintainers for the PECI subsystem
-Date: Mon, 21 May 2018 13:00:10 -0700
-Message-Id: <20180521200010.28161-1-jae.hyun.yoo@linux.intel.com>
-X-Mailer: git-send-email 2.17.0
+        id S1751317AbeEUUDW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 16:03:22 -0400
+Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:60559 "EHLO
+        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750947AbeEUUDT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 16:03:19 -0400
+From: Vlad Buslov <vladbu@mellanox.com>
+To: davem@davemloft.net
+Cc: netdev@vger.kernel.org, jhs@mojatatu.com, xiyou.wangcong@gmail.com,
+        jiri@resnulli.us, linux-kernel@vger.kernel.org,
+        Vlad Buslov <vladbu@mellanox.com>
+Subject: [PATCH net-next v2] net: sched: don't disable bh when accessing action idr
+Date: Mon, 21 May 2018 23:03:04 +0300
+Message-Id: <1526932984-11544-1-git-send-email-vladbu@mellanox.com>
+X-Mailer: git-send-email 2.7.5
+In-Reply-To: <20180519.230258.1374885458106197707.davem@davemloft.net>
+References: <20180519.230258.1374885458106197707.davem@davemloft.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit adds maintainer information for the PECI subsystem.
+Initial net_device implementation used ingress_lock spinlock to synchronize
+ingress path of device. This lock was used in both process and bh context.
+In some code paths action map lock was obtained while holding ingress_lock.
+Commit e1e992e52faa ("[NET_SCHED] protect action config/dump from irqs")
+modified actions to always disable bh, while using action map lock, in
+order to prevent deadlock on ingress_lock in softirq. This lock was removed
+from net_device, so disabling bh, while accessing action map, is no longer
+necessary.
 
-Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Reviewed-by: Haiyue Wang <haiyue.wang@linux.intel.com>
-Reviewed-by: James Feist <james.feist@linux.intel.com>
-Reviewed-by: Vernon Mauery <vernon.mauery@linux.intel.com>
-Cc: Jason M Biils <jason.m.bills@linux.intel.com>
+Replace all action idr spinlock usage with regular calls that do not
+disable bh.
+
+Signed-off-by: Vlad Buslov <vladbu@mellanox.com>
 ---
- MAINTAINERS | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ net/sched/act_api.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9051a9ca24a2..e85a95f6fb08 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11073,6 +11073,16 @@ L:	platform-driver-x86@vger.kernel.org
- S:	Maintained
- F:	drivers/platform/x86/peaq-wmi.c
+diff --git a/net/sched/act_api.c b/net/sched/act_api.c
+index 72251241665a..3f4cf930f809 100644
+--- a/net/sched/act_api.c
++++ b/net/sched/act_api.c
+@@ -77,9 +77,9 @@ static void free_tcf(struct tc_action *p)
  
-+PECI SUBSYSTEM
-+M:	Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-+M:	Jason M Biils <jason.m.bills@linux.intel.com>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/peci/
-+F:	drivers/peci/
-+F:	drivers/hwmon/peci-*.c
-+F:	include/linux/peci.h
-+F:	include/uapi/linux/peci-ioctl.h
-+
- PER-CPU MEMORY ALLOCATOR
- M:	Tejun Heo <tj@kernel.org>
- M:	Christoph Lameter <cl@linux.com>
+ static void tcf_idr_remove(struct tcf_idrinfo *idrinfo, struct tc_action *p)
+ {
+-	spin_lock_bh(&idrinfo->lock);
++	spin_lock(&idrinfo->lock);
+ 	idr_remove(&idrinfo->action_idr, p->tcfa_index);
+-	spin_unlock_bh(&idrinfo->lock);
++	spin_unlock(&idrinfo->lock);
+ 	gen_kill_estimator(&p->tcfa_rate_est);
+ 	free_tcf(p);
+ }
+@@ -156,7 +156,7 @@ static int tcf_dump_walker(struct tcf_idrinfo *idrinfo, struct sk_buff *skb,
+ 	struct tc_action *p;
+ 	unsigned long id = 1;
+ 
+-	spin_lock_bh(&idrinfo->lock);
++	spin_lock(&idrinfo->lock);
+ 
+ 	s_i = cb->args[0];
+ 
+@@ -191,7 +191,7 @@ static int tcf_dump_walker(struct tcf_idrinfo *idrinfo, struct sk_buff *skb,
+ 	if (index >= 0)
+ 		cb->args[0] = index + 1;
+ 
+-	spin_unlock_bh(&idrinfo->lock);
++	spin_unlock(&idrinfo->lock);
+ 	if (n_i) {
+ 		if (act_flags & TCA_FLAG_LARGE_DUMP_ON)
+ 			cb->args[1] = n_i;
+@@ -261,9 +261,9 @@ static struct tc_action *tcf_idr_lookup(u32 index, struct tcf_idrinfo *idrinfo)
+ {
+ 	struct tc_action *p = NULL;
+ 
+-	spin_lock_bh(&idrinfo->lock);
++	spin_lock(&idrinfo->lock);
+ 	p = idr_find(&idrinfo->action_idr, index);
+-	spin_unlock_bh(&idrinfo->lock);
++	spin_unlock(&idrinfo->lock);
+ 
+ 	return p;
+ }
+@@ -323,7 +323,7 @@ int tcf_idr_create(struct tc_action_net *tn, u32 index, struct nlattr *est,
+ 	}
+ 	spin_lock_init(&p->tcfa_lock);
+ 	idr_preload(GFP_KERNEL);
+-	spin_lock_bh(&idrinfo->lock);
++	spin_lock(&idrinfo->lock);
+ 	/* user doesn't specify an index */
+ 	if (!index) {
+ 		index = 1;
+@@ -331,7 +331,7 @@ int tcf_idr_create(struct tc_action_net *tn, u32 index, struct nlattr *est,
+ 	} else {
+ 		err = idr_alloc_u32(idr, NULL, &index, index, GFP_ATOMIC);
+ 	}
+-	spin_unlock_bh(&idrinfo->lock);
++	spin_unlock(&idrinfo->lock);
+ 	idr_preload_end();
+ 	if (err)
+ 		goto err3;
+@@ -369,9 +369,9 @@ void tcf_idr_insert(struct tc_action_net *tn, struct tc_action *a)
+ {
+ 	struct tcf_idrinfo *idrinfo = tn->idrinfo;
+ 
+-	spin_lock_bh(&idrinfo->lock);
++	spin_lock(&idrinfo->lock);
+ 	idr_replace(&idrinfo->action_idr, a, a->tcfa_index);
+-	spin_unlock_bh(&idrinfo->lock);
++	spin_unlock(&idrinfo->lock);
+ }
+ EXPORT_SYMBOL(tcf_idr_insert);
+ 
 -- 
-2.17.0
+2.7.5
