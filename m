@@ -1,28 +1,28 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrh3NgNn5FQOaprlBxW0yLSgtB+y6uaOc3eVk46fzkeZC/LLD2G4tShK/BdeyZReY/LOqW0
-ARC-Seal: i=1; a=rsa-sha256; t=1526937610; cv=none;
+X-Google-Smtp-Source: AB8JxZrIjdi/OltjkdTTa0vTla/eyUveOsrNFrW3j7h6ry4x3KbwE3OGIhDRF8QxsKX4vQwAvpiQ
+ARC-Seal: i=1; a=rsa-sha256; t=1526937606; cv=none;
         d=google.com; s=arc-20160816;
-        b=TlbSyX6qkvdEmm33LXjNRdm0LcUH/CH3/n1Q3D76UksnlPpdmP+y/Ek3RxUtXyYGId
-         nbCK7p0fL5BkkaoRpVlH6vV4WAA0tp9rlRkXpMVVnf+cal2zJNgpZqkbY7PyCs0NvZv0
-         T+n6mRh+z8Y+BygGjgyDcGppNuA0eprDP2tmLz3rQT1eUJh/s2LK43uEVIqwSdWyxHQD
-         m+PxDHTjUtf3m9dusuOfVIKrslPGnvduWnQtSuaut4/yFgQhFDZH1WczrRiT4Uyy4hEn
-         03jRNnh/zImyhWivXNdH1B1Yb0LwEOsztuEi7tISvvqwnH6LerEyJYc/hnSpWoKHfpp7
-         joJA==
+        b=CmQP3FoXRnRbdrlgcb/C5/Q0VTS2jOaS90utGZHAXSNgwd7GVaLpQU81yeRWfZtdwz
+         quwumRjpkI2Us5xSZK6EF9Bk/yV987Q7AmXm5rTOQ7ma/0G7JpMRqwr16LablzQEAwF4
+         xnVzXg6m+wqP09qCiIRV620tR30jTTY0r/xtYUWwYzrUwN7cUQpHpdG9NI833JH+mJyu
+         5IPPHKIceE3546UrDxOpIGbTcg7QvQolYaKiTNDc+iASNjxlQ3ZA6SiXsrwEuREuqWpP
+         sfxPfg9LvFd7LJoHV28tP2NLUmEYIEUErxV0Pw5a2n5gMdV/B7cOAMaDBNVU+mfmUqVK
+         q/BA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=rNKDgGcCieHkEpeEKyLA9If4By1Yk9HClppuIxxNd1Q=;
-        b=OSE/NfRMykDZb0gLXbPgKdYxU6QaFF7ZMgfM59hCq1CKABuJaoI4/PLSABTHpGnAkJ
-         gKTEyRPWaIglJEyeuSb+5Ynvg8r8Kq4Q++fOc75O/6jclEyCz6nDvbGwneGKxkXSprNw
-         2+l9uoNQajFdjkt+XfM/9iEtSvReM6R2CQQznYtx5+nmU2vBgI7OMDROoiZ0W5XTaAaI
-         DMYdnk5YSOn0ZtgNmmfi6Y5na7rpLzEamc7hVsl+AWiM32sXjdNDzw+uhf1mvlSJxfst
-         vNz1WI5eUCFH3ytCVlD+CP+TZP8sijyWhKDr74E/QpD5mw3duxkk1b4551DVOymTtwNM
-         46EA==
+        bh=ZcddQJwthTH28Achn9ILvQ48W8vqwxd5yxhaYiNZa6M=;
+        b=zVM84o4SjV03xSWYCNx4nS9u7kwDhRmqO0b2Z7naw3Q4uWWkkH46DGZuCSYgjht/u8
+         9P3XzdgYQdcM52lBOSY+5cmv/jo8aw2gdVtLUa0ozybkU1S+dSX6uYjdsYLJor4lHLac
+         l4aHiC8mFczBea6PQD+qkuJtlVOIrpAkmkB7r6vOZwT3DcAley9fhMM5diR7rCBbJWyq
+         dz3daAZpC+91QUKNRz6HXh7uF0priyyytXVa1lRtzrgV1l/UpWoZ1z3PwSlrPvbxmtgB
+         nqNTHIuHWVPCdEaN7T3priCCFuB9fePHIzzpK8Ag6NIB4wG/ziQE7GudJrRem8ckT8uw
+         n+5Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=oFYP87kt;
+       dkim=pass header.i=@kernel.org header.s=default header.b=PoOFsZiH;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=oFYP87kt;
+       dkim=pass header.i=@kernel.org header.s=default header.b=PoOFsZiH;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
@@ -32,9 +32,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Borislav Petkov <bp@suse.de>,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 56/95] x86/bugs/intel: Set proper CPU features and setup RDS
-Date: Mon, 21 May 2018 23:11:46 +0200
-Message-Id: <20180521210458.503710843@linuxfoundation.org>
+Subject: [PATCH 4.14 55/95] x86/bugs: Provide boot parameters for the spec_store_bypass_disable mitigation
+Date: Mon, 21 May 2018 23:11:45 +0200
+Message-Id: <20180521210458.392769211@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210447.219380974@linuxfoundation.org>
 References: <20180521210447.219380974@linuxfoundation.org>
@@ -44,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109844632570010?=
-X-GMAIL-MSGID: =?utf-8?q?1601110131304796653?=
+X-GMAIL-THRID: =?utf-8?q?1601109841389169027?=
+X-GMAIL-MSGID: =?utf-8?q?1601110127409855237?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,27 +55,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-commit 772439717dbf703b39990be58d8d4e3e4ad0598a upstream
+commit 24f7fc83b9204d20f878c57cb77d261ae825e033 upstream
 
-Intel CPUs expose methods to:
+Contemporary high performance processors use a common industry-wide
+optimization known as "Speculative Store Bypass" in which loads from
+addresses to which a recent store has occurred may (speculatively) see an
+older value. Intel refers to this feature as "Memory Disambiguation" which
+is part of their "Smart Memory Access" capability.
 
- - Detect whether RDS capability is available via CPUID.7.0.EDX[31],
+Memory Disambiguation can expose a cache side-channel attack against such
+speculatively read values. An attacker can create exploit code that allows
+them to read memory outside of a sandbox environment (for example,
+malicious JavaScript in a web page), or to perform more complex attacks
+against code running within the same privilege level, e.g. via the stack.
 
- - The SPEC_CTRL MSR(0x48), bit 2 set to enable RDS.
+As a first step to mitigate against such attacks, provide two boot command
+line control knobs:
 
- - MSR_IA32_ARCH_CAPABILITIES, Bit(4) no need to enable RRS.
+ nospec_store_bypass_disable
+ spec_store_bypass_disable=[off,auto,on]
 
-With that in mind if spec_store_bypass_disable=[auto,on] is selected set at
-boot-time the SPEC_CTRL MSR to enable RDS if the platform requires it.
+By default affected x86 processors will power on with Speculative
+Store Bypass enabled. Hence the provided kernel parameters are written
+from the point of view of whether to enable a mitigation or not.
+The parameters are as follows:
 
-Note that this does not fix the KVM case where the SPEC_CTRL is exposed to
-guests which can muck with it, see patch titled :
- KVM/SVM/VMX/x86/spectre_v2: Support the combination of guest and host IBRS.
+ - auto - Kernel detects whether your CPU model contains an implementation
+	  of Speculative Store Bypass and picks the most appropriate
+	  mitigation.
 
-And for the firmware (IBRS to be set), see patch titled:
- x86/spectre_v2: Read SPEC_CTRL MSR during boot and re-use reserved bits
+ - on   - disable Speculative Store Bypass
+ - off  - enable Speculative Store Bypass
 
-[ tglx: Distangled it from the intel implementation and kept the call order ]
+[ tglx: Reordered the checks so that the whole evaluation is not done
+  	when the CPU does not support RDS ]
 
 Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -83,138 +96,216 @@ Reviewed-by: Borislav Petkov <bp@suse.de>
 Reviewed-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/msr-index.h |    6 ++++++
- arch/x86/kernel/cpu/bugs.c       |   30 ++++++++++++++++++++++++++++--
- arch/x86/kernel/cpu/common.c     |   10 ++++++----
- arch/x86/kernel/cpu/cpu.h        |    2 ++
- arch/x86/kernel/cpu/intel.c      |    1 +
- 5 files changed, 43 insertions(+), 6 deletions(-)
+ Documentation/admin-guide/kernel-parameters.txt |   33 +++++++
+ arch/x86/include/asm/cpufeatures.h              |    1 
+ arch/x86/include/asm/nospec-branch.h            |    6 +
+ arch/x86/kernel/cpu/bugs.c                      |  103 ++++++++++++++++++++++++
+ 4 files changed, 143 insertions(+)
 
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -42,6 +42,7 @@
- #define MSR_IA32_SPEC_CTRL		0x00000048 /* Speculation Control */
- #define SPEC_CTRL_IBRS			(1 << 0)   /* Indirect Branch Restricted Speculation */
- #define SPEC_CTRL_STIBP			(1 << 1)   /* Single Thread Indirect Branch Predictors */
-+#define SPEC_CTRL_RDS			(1 << 2)   /* Reduced Data Speculation */
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2600,6 +2600,9 @@
+ 			allow data leaks with this option, which is equivalent
+ 			to spectre_v2=off.
  
- #define MSR_IA32_PRED_CMD		0x00000049 /* Prediction Command */
- #define PRED_CMD_IBPB			(1 << 0)   /* Indirect Branch Prediction Barrier */
-@@ -68,6 +69,11 @@
- #define MSR_IA32_ARCH_CAPABILITIES	0x0000010a
- #define ARCH_CAP_RDCL_NO		(1 << 0)   /* Not susceptible to Meltdown */
- #define ARCH_CAP_IBRS_ALL		(1 << 1)   /* Enhanced IBRS support */
-+#define ARCH_CAP_RDS_NO			(1 << 4)   /*
-+						    * Not susceptible to Speculative Store Bypass
-+						    * attack, so no Reduced Data Speculation control
-+						    * required.
-+						    */
++	nospec_store_bypass_disable
++			[HW] Disable all mitigations for the Speculative Store Bypass vulnerability
++
+ 	noxsave		[BUGS=X86] Disables x86 extended register state save
+ 			and restore using xsave. The kernel will fallback to
+ 			enabling legacy floating-point and sse state.
+@@ -3930,6 +3933,36 @@
+ 			Not specifying this option is equivalent to
+ 			spectre_v2=auto.
  
- #define MSR_IA32_BBL_CR_CTL		0x00000119
- #define MSR_IA32_BBL_CR_CTL3		0x0000011e
++	spec_store_bypass_disable=
++			[HW] Control Speculative Store Bypass (SSB) Disable mitigation
++			(Speculative Store Bypass vulnerability)
++
++			Certain CPUs are vulnerable to an exploit against a
++			a common industry wide performance optimization known
++			as "Speculative Store Bypass" in which recent stores
++			to the same memory location may not be observed by
++			later loads during speculative execution. The idea
++			is that such stores are unlikely and that they can
++			be detected prior to instruction retirement at the
++			end of a particular speculation execution window.
++
++			In vulnerable processors, the speculatively forwarded
++			store can be used in a cache side channel attack, for
++			example to read memory to which the attacker does not
++			directly have access (e.g. inside sandboxed code).
++
++			This parameter controls whether the Speculative Store
++			Bypass optimization is used.
++
++			on     - Unconditionally disable Speculative Store Bypass
++			off    - Unconditionally enable Speculative Store Bypass
++			auto   - Kernel detects whether the CPU model contains an
++				 implementation of Speculative Store Bypass and
++				 picks the most appropriate mitigation
++
++			Not specifying this option is equivalent to
++			spec_store_bypass_disable=auto.
++
+ 	spia_io_base=	[HW,MTD]
+ 	spia_fio_base=
+ 	spia_pedr=
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -212,6 +212,7 @@
+ 
+ #define X86_FEATURE_USE_IBPB		( 7*32+21) /* "" Indirect Branch Prediction Barrier enabled */
+ #define X86_FEATURE_USE_IBRS_FW		( 7*32+22) /* "" Use IBRS during runtime firmware calls */
++#define X86_FEATURE_SPEC_STORE_BYPASS_DISABLE	( 7*32+23) /* "" Disable Speculative Store Bypass. */
+ 
+ /* Virtualization flags: Linux defined, word 8 */
+ #define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -238,6 +238,12 @@ extern u64 x86_spec_ctrl_get_default(voi
+ extern void x86_spec_ctrl_set_guest(u64);
+ extern void x86_spec_ctrl_restore_host(u64);
+ 
++/* The Speculative Store Bypass disable variants */
++enum ssb_mitigation {
++	SPEC_STORE_BYPASS_NONE,
++	SPEC_STORE_BYPASS_DISABLE,
++};
++
+ extern char __indirect_thunk_start[];
+ extern char __indirect_thunk_end[];
+ 
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -117,7 +117,7 @@ static enum spectre_v2_mitigation spectr
+@@ -27,6 +27,7 @@
+ #include <asm/intel-family.h>
  
- void x86_spec_ctrl_set(u64 val)
- {
--	if (val & ~SPEC_CTRL_IBRS)
-+	if (val & ~(SPEC_CTRL_IBRS | SPEC_CTRL_RDS))
- 		WARN_ONCE(1, "SPEC_CTRL MSR value 0x%16llx is unknown.\n", val);
- 	else
- 		wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base | val);
-@@ -444,8 +444,28 @@ static enum ssb_mitigation_cmd __init __
- 		break;
- 	}
+ static void __init spectre_v2_select_mitigation(void);
++static void __init ssb_select_mitigation(void);
  
--	if (mode != SPEC_STORE_BYPASS_NONE)
+ /*
+  * Our boot-time value of the SPEC_CTRL MSR. We read it once so that any
+@@ -53,6 +54,12 @@ void __init check_bugs(void)
+ 	/* Select the proper spectre mitigation before patching alternatives */
+ 	spectre_v2_select_mitigation();
+ 
 +	/*
-+	 * We have three CPU feature flags that are in play here:
-+	 *  - X86_BUG_SPEC_STORE_BYPASS - CPU is susceptible.
-+	 *  - X86_FEATURE_RDS - CPU is able to turn off speculative store bypass
-+	 *  - X86_FEATURE_SPEC_STORE_BYPASS_DISABLE - engage the mitigation
++	 * Select proper mitigation for any exposure to the Speculative Store
++	 * Bypass vulnerability.
 +	 */
-+	if (mode != SPEC_STORE_BYPASS_NONE) {
- 		setup_force_cpu_cap(X86_FEATURE_SPEC_STORE_BYPASS_DISABLE);
-+		/*
-+		 * Intel uses the SPEC CTRL MSR Bit(2) for this, while AMD uses
-+		 * a completely different MSR and bit dependent on family.
-+		 */
-+		switch (boot_cpu_data.x86_vendor) {
-+		case X86_VENDOR_INTEL:
-+			x86_spec_ctrl_base |= SPEC_CTRL_RDS;
-+			x86_spec_ctrl_set(SPEC_CTRL_RDS);
++	ssb_select_mitigation();
++
+ #ifdef CONFIG_X86_32
+ 	/*
+ 	 * Check whether we are able to run this kernel safely on SMP.
+@@ -358,6 +365,99 @@ retpoline_auto:
+ }
+ 
+ #undef pr_fmt
++#define pr_fmt(fmt)	"Speculative Store Bypass: " fmt
++
++static enum ssb_mitigation ssb_mode = SPEC_STORE_BYPASS_NONE;
++
++/* The kernel command line selection */
++enum ssb_mitigation_cmd {
++	SPEC_STORE_BYPASS_CMD_NONE,
++	SPEC_STORE_BYPASS_CMD_AUTO,
++	SPEC_STORE_BYPASS_CMD_ON,
++};
++
++static const char *ssb_strings[] = {
++	[SPEC_STORE_BYPASS_NONE]	= "Vulnerable",
++	[SPEC_STORE_BYPASS_DISABLE]	= "Mitigation: Speculative Store Bypass disabled"
++};
++
++static const struct {
++	const char *option;
++	enum ssb_mitigation_cmd cmd;
++} ssb_mitigation_options[] = {
++	{ "auto",	SPEC_STORE_BYPASS_CMD_AUTO }, /* Platform decides */
++	{ "on",		SPEC_STORE_BYPASS_CMD_ON },   /* Disable Speculative Store Bypass */
++	{ "off",	SPEC_STORE_BYPASS_CMD_NONE }, /* Don't touch Speculative Store Bypass */
++};
++
++static enum ssb_mitigation_cmd __init ssb_parse_cmdline(void)
++{
++	enum ssb_mitigation_cmd cmd = SPEC_STORE_BYPASS_CMD_AUTO;
++	char arg[20];
++	int ret, i;
++
++	if (cmdline_find_option_bool(boot_command_line, "nospec_store_bypass_disable")) {
++		return SPEC_STORE_BYPASS_CMD_NONE;
++	} else {
++		ret = cmdline_find_option(boot_command_line, "spec_store_bypass_disable",
++					  arg, sizeof(arg));
++		if (ret < 0)
++			return SPEC_STORE_BYPASS_CMD_AUTO;
++
++		for (i = 0; i < ARRAY_SIZE(ssb_mitigation_options); i++) {
++			if (!match_option(arg, ret, ssb_mitigation_options[i].option))
++				continue;
++
++			cmd = ssb_mitigation_options[i].cmd;
 +			break;
-+		case X86_VENDOR_AMD:
-+			break;
++		}
++
++		if (i >= ARRAY_SIZE(ssb_mitigation_options)) {
++			pr_err("unknown option (%s). Switching to AUTO select\n", arg);
++			return SPEC_STORE_BYPASS_CMD_AUTO;
 +		}
 +	}
 +
- 	return mode;
- }
- 
-@@ -459,6 +479,12 @@ static void ssb_select_mitigation()
- 
- #undef pr_fmt
- 
-+void x86_spec_ctrl_setup_ap(void)
-+{
-+	if (boot_cpu_has(X86_FEATURE_IBRS))
-+		x86_spec_ctrl_set(x86_spec_ctrl_base & (SPEC_CTRL_IBRS | SPEC_CTRL_RDS));
++	return cmd;
 +}
 +
++static enum ssb_mitigation_cmd __init __ssb_select_mitigation(void)
++{
++	enum ssb_mitigation mode = SPEC_STORE_BYPASS_NONE;
++	enum ssb_mitigation_cmd cmd;
++
++	if (!boot_cpu_has(X86_FEATURE_RDS))
++		return mode;
++
++	cmd = ssb_parse_cmdline();
++	if (!boot_cpu_has_bug(X86_BUG_SPEC_STORE_BYPASS) &&
++	    (cmd == SPEC_STORE_BYPASS_CMD_NONE ||
++	     cmd == SPEC_STORE_BYPASS_CMD_AUTO))
++		return mode;
++
++	switch (cmd) {
++	case SPEC_STORE_BYPASS_CMD_AUTO:
++	case SPEC_STORE_BYPASS_CMD_ON:
++		mode = SPEC_STORE_BYPASS_DISABLE;
++		break;
++	case SPEC_STORE_BYPASS_CMD_NONE:
++		break;
++	}
++
++	if (mode != SPEC_STORE_BYPASS_NONE)
++		setup_force_cpu_cap(X86_FEATURE_SPEC_STORE_BYPASS_DISABLE);
++	return mode;
++}
++
++static void ssb_select_mitigation()
++{
++	ssb_mode = __ssb_select_mitigation();
++
++	if (boot_cpu_has_bug(X86_BUG_SPEC_STORE_BYPASS))
++		pr_info("%s\n", ssb_strings[ssb_mode]);
++}
++
++#undef pr_fmt
+ 
  #ifdef CONFIG_SYSFS
  
- ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -918,7 +918,11 @@ static void __init cpu_set_bug_bits(stru
- {
- 	u64 ia32_cap = 0;
+@@ -383,6 +483,9 @@ ssize_t cpu_show_common(struct device *d
+ 			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
+ 			       spectre_v2_module_string());
  
--	if (!x86_match_cpu(cpu_no_spec_store_bypass))
-+	if (cpu_has(c, X86_FEATURE_ARCH_CAPABILITIES))
-+		rdmsrl(MSR_IA32_ARCH_CAPABILITIES, ia32_cap);
++	case X86_BUG_SPEC_STORE_BYPASS:
++		return sprintf(buf, "%s\n", ssb_strings[ssb_mode]);
 +
-+	if (!x86_match_cpu(cpu_no_spec_store_bypass) &&
-+	   !(ia32_cap & ARCH_CAP_RDS_NO))
- 		setup_force_cpu_bug(X86_BUG_SPEC_STORE_BYPASS);
- 
- 	if (x86_match_cpu(cpu_no_speculation))
-@@ -930,9 +934,6 @@ static void __init cpu_set_bug_bits(stru
- 	if (x86_match_cpu(cpu_no_meltdown))
- 		return;
- 
--	if (cpu_has(c, X86_FEATURE_ARCH_CAPABILITIES))
--		rdmsrl(MSR_IA32_ARCH_CAPABILITIES, ia32_cap);
--
- 	/* Rogue Data Cache Load? No! */
- 	if (ia32_cap & ARCH_CAP_RDCL_NO)
- 		return;
-@@ -1346,6 +1347,7 @@ void identify_secondary_cpu(struct cpuin
- #endif
- 	mtrr_ap_init();
- 	validate_apic_and_package_id(c);
-+	x86_spec_ctrl_setup_ap();
- }
- 
- static __init int setup_noclflush(char *arg)
---- a/arch/x86/kernel/cpu/cpu.h
-+++ b/arch/x86/kernel/cpu/cpu.h
-@@ -50,4 +50,6 @@ extern void cpu_detect_cache_sizes(struc
- 
- unsigned int aperfmperf_get_khz(int cpu);
- 
-+extern void x86_spec_ctrl_setup_ap(void);
-+
- #endif /* ARCH_X86_CPU_H */
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -189,6 +189,7 @@ static void early_init_intel(struct cpui
- 		setup_clear_cpu_cap(X86_FEATURE_STIBP);
- 		setup_clear_cpu_cap(X86_FEATURE_SPEC_CTRL);
- 		setup_clear_cpu_cap(X86_FEATURE_INTEL_STIBP);
-+		setup_clear_cpu_cap(X86_FEATURE_RDS);
+ 	default:
+ 		break;
  	}
- 
- 	/*
