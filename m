@@ -1,49 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753382AbeEURfS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 13:35:18 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:35369 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753283AbeEURfN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 13:35:13 -0400
-X-Google-Smtp-Source: AB8JxZpTHYEEcYRasF8FdnjvRIWb7OP+6MExqvks1FWpRBx/eHDoLPVKakSZRkHDBeBnzjZhurqpbw==
-From: Sabin Mihai Rapan <sabin.rapan@gmail.com>
-To: gregkh@linuxfoundation.org, jsimmons@infradead.org,
-        andreas.dilger@intel.com, oleg.drokin@intel.com
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sabin Mihai Rapan <sabin.rapan@gmail.com>
-Subject: [PATCH 3/4] staging: lustre: Fix "unsigned"->"unsigned int"
-Date: Mon, 21 May 2018 19:34:29 +0200
-Message-Id: <20180521173430.9759-3-sabin.rapan@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180520124408.GA10692@kroah.com>
-References: <20180520124408.GA10692@kroah.com>
+        id S1753402AbeEURf2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 13:35:28 -0400
+Received: from muru.com ([72.249.23.125]:43842 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753263AbeEURfY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 13:35:24 -0400
+Date: Mon, 21 May 2018 10:35:19 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Mark Brown <broonie@kernel.org>, Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Richard Weinberger <richard@nod.at>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Jarkko Nikula <jarkko.nikula@bitmer.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-fbdev@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Subject: Re: [PATCH 1/6] ARM: OMAP1: ams-delta: add GPIO lookup tables
+Message-ID: <20180521173519.GA98604@atomide.com>
+References: <20180518210954.29044-1-jmkrzyszt@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180518210954.29044-1-jmkrzyszt@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes the checkpatch.pl warning:
+Hi,
 
-WARNING:UNSPECIFIED_INT: Prefer 'unsigned int' to bare use of 'unsigned'
+* Janusz Krzysztofik <jmkrzyszt@gmail.com> [180518 14:12]:
+> Scope of the change is limited to GPIO pins used by board specific
+> device drivers which will be updated by follow-up patches of the
+> series. Those are some OMAP GPIO (gpio-0-15) and most of Amstrad Delta
+> latch2 GPIO bank pins. Remaining pins of those banks, as well as
+> Amstrad Delta latch1 pins, will be addressed later.
+> 
+> Assign a label ("latch2") to the bank, enumerate its pins and put that
+> information, together with OMAP GPIO bank pins, in GPIO lookup tables.
+> Assign lookup tables to devices as soon as those devices are registered
+> and their names can be obtained.
+> 
+> A step froward in:
+> - removal of hard-coded GPIO numbers from drivers,
+> - removal of board mach includes from drivers,
+> - switching to dynamically assigned GPIO numbers.
 
-Signed-off-by: Sabin Mihai Rapan <sabin.rapan@gmail.com>
----
- .../staging/lustre/include/uapi/linux/lustre/lustre_fiemap.h    | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Is this first patch safe for me to apply separately?
 
-diff --git a/drivers/staging/lustre/include/uapi/linux/lustre/lustre_fiemap.h b/drivers/staging/lustre/include/uapi/linux/lustre/lustre_fiemap.h
-index f5214dc33c60..d375a476f5ea 100644
---- a/drivers/staging/lustre/include/uapi/linux/lustre/lustre_fiemap.h
-+++ b/drivers/staging/lustre/include/uapi/linux/lustre/lustre_fiemap.h
-@@ -51,7 +51,7 @@ static inline size_t fiemap_count_to_size(size_t extent_count)
- 				       sizeof(struct fiemap_extent);
- }
- 
--static inline unsigned fiemap_size_to_count(size_t array_size)
-+static inline unsigned int fiemap_size_to_count(size_t array_size)
- {
- 	return (array_size - sizeof(struct fiemap)) /
- 		sizeof(struct fiemap_extent);
--- 
-2.17.0
+Regards,
+
+Tony
