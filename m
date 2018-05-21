@@ -1,91 +1,38 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753043AbeEUOrJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 10:47:09 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37178 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752882AbeEUOrF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 10:47:05 -0400
-Date: Mon, 21 May 2018 10:47:03 -0400
-From: Mike Snitzer <snitzer@redhat.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        hch@infradead.org, colyli@suse.de, darrick.wong@oracle.com, clm@fb.com,
-        bacik@fb.com, linux-xfs@vger.kernel.org, drbd-dev@lists.linbit.com,
-        linux-btrfs@vger.kernel.org, linux-raid@vger.kernel.org,
-        neilb@suse.com
-Subject: Re: [PATCH 00/13] convert block layer to bioset_init()/mempool_init()
-Message-ID: <20180521144703.GA19303@redhat.com>
-References: <20180520222558.7053-1-kent.overstreet@gmail.com>
- <20180521140348.GA19069@redhat.com>
- <686d7df6-c7d1-48a6-b7ff-48dc8aff6a62@kernel.dk>
- <20180521143132.GB19194@redhat.com>
- <2bbeeb1a-8b99-b06a-eb9b-eb8523c16460@kernel.dk>
+        id S1753070AbeEUOrR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 10:47:17 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:38889 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752735AbeEUOrM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 10:47:12 -0400
+Date: Mon, 21 May 2018 16:47:11 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Michal =?utf-8?B?Vm9rw6HEjQ==?= <vokac.m@gmail.com>
+Cc: netdev@vger.kernel.org, michal.vokac@ysoft.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        f.fainelli@gmail.com, vivien.didelot@savoirfairelinux.com,
+        mark.rutland@arm.com, robh+dt@kernel.org, davem@davemloft.net
+Subject: Re: [PATCH net-next 1/7] net: dsa: qca8k: Add QCA8334 binding
+ documentation
+Message-ID: <20180521144711.GE8077@lunn.ch>
+References: <1526909293-56377-1-git-send-email-michal.vokac@ysoft.com>
+ <1526909293-56377-2-git-send-email-michal.vokac@ysoft.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <2bbeeb1a-8b99-b06a-eb9b-eb8523c16460@kernel.dk>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1526909293-56377-2-git-send-email-michal.vokac@ysoft.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21 2018 at 10:36am -0400,
-Jens Axboe <axboe@kernel.dk> wrote:
+On Mon, May 21, 2018 at 03:28:07PM +0200, Michal Vokáč wrote:
+> Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
 
-> On 5/21/18 8:31 AM, Mike Snitzer wrote:
-> > On Mon, May 21 2018 at 10:19am -0400,
-> > Jens Axboe <axboe@kernel.dk> wrote:
-> > 
-> >> On 5/21/18 8:03 AM, Mike Snitzer wrote:
-> >>> On Sun, May 20 2018 at  6:25pm -0400,
-> >>> Kent Overstreet <kent.overstreet@gmail.com> wrote:
-> >>>
-> >>>> Jens - this series does the rest of the conversions that Christoph wanted, and
-> >>>> drops bioset_create().
-> >>>>
-> >>>> Only lightly tested, but the changes are pretty mechanical. Based on your
-> >>>> for-next tree.
-> >>>
-> >>> By switching 'mempool_t *' to 'mempool_t' and 'bio_set *' to 'bio_set'
-> >>> you've altered the alignment of members in data structures.  So I'll
-> >>> need to audit all the data structures you've modified in DM.
-> >>>
-> >>> Could we get the backstory on _why_ you're making this change?
-> >>> Would go a long way to helping me appreciate why this is a good use of
-> >>> anyone's time.
-> >>
-> >> Yeah, it's in the first series, it gets rid of a pointer indirection.
-> > 
-> > "Allows mempools to be embedded in other structs, getting rid of a
-> > pointer indirection from allocation fastpaths."
-> > 
-> > So this is about using contiguous memory or avoiding partial allocation
-> > failure?  Or both?
-> > 
-> > Or more to it?  Just trying to fully appreciate the theory behind the
-> > perceived associated benefit.
-> 
-> It's about avoiding a pointer indirection. Instead of having to
-> follow a pointer to get to that struct, it's simple offset math off
-> your main structure.
-> 
-> > I do think the increased risk of these embedded bio_set and mempool_t
-> > themselves crossing cachelines, or struct members that follow them doing
-> > so, really detracts from these types of changes.
-> 
-> Definitely something to look out for, though most of them should be
-> per-dev structures and not in-flight structures. That makes it a bit
-> less sensitive. But can't hurt to audit the layouts and adjust if
-> necessary. This is why it's posted for review :-)
+Hi Michal
 
-This isn't something that is easily caught upfront.  Yes we can all be
-busy little beavers with pahole to audit alignment.  But chances are
-most people won't do it.
+It would be good to document that fixed-link can be used.
 
-Reality is there is potential for a regression due to false sharing to
-creep in if a hot struct member suddenly starts straddling a cacheline.
-That type of NUMA performance killer is pretty insidious and somewhat
-tedious to hunt down even when looking for it with specialized tools:
-https://joemario.github.io/blog/2016/09/01/c2c-blog/
+   Andrew
