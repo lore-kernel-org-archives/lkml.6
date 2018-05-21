@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753133AbeEUQCn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 12:02:43 -0400
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:27273 "EHLO
+        id S1753097AbeEUQCj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 12:02:39 -0400
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:59151 "EHLO
         esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752623AbeEUQC3 (ORCPT
+        with ESMTP id S1752311AbeEUQC3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 21 May 2018 12:02:29 -0400
 X-IronPort-AV: E=Sophos;i="5.49,426,1520870400";
-   d="scan'208";a="79445394"
+   d="scan'208";a="79445389"
 From: adam.manzanares@wdc.com
 To: viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
         axboe@kernel.dk, bcrl@kvack.org
@@ -19,9 +19,9 @@ Cc: tglx@linutronix.de, mingo@kernel.org, pombredanne@nexb.com,
         linux-kernel@vger.kernel.org, linux-aio@kvack.org,
         linux-api@vger.kernel.org, hch@infradread.org,
         Adam Manzanares <adam.manzanares@wdc.com>
-Subject: [PATCH v5 3/5] fs: Add aio iopriority support
-Date: Mon, 21 May 2018 09:01:45 -0700
-Message-Id: <20180521160147.2372-4-adam.manzanares@wdc.com>
+Subject: [PATCH v5 2/5] fs: Convert kiocb rw_hint from enum to u16
+Date: Mon, 21 May 2018 09:01:44 -0700
+Message-Id: <20180521160147.2372-3-adam.manzanares@wdc.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180521160147.2372-1-adam.manzanares@wdc.com>
 References: <20180521160147.2372-1-adam.manzanares@wdc.com>
@@ -31,112 +31,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Adam Manzanares <adam.manzanares@wdc.com>
 
-This is the per-I/O equivalent of the ioprio_set system call.
-
-When IOCB_FLAG_IOPRIO is set on the iocb aio_flags field, then we set the
-newly added kiocb ki_ioprio field to the value in the iocb aio_reqprio field.
-
-We set the blkdev bio iopriority unconditionally, so we need to guarantee the 
-kiocb is initialized properly. Added changes to the loopback driver and 
-init_sync_kiocb to achieve this.
-
-This patch depends on block: add ioprio_check_cap function.
+In order to avoid kiocb bloat for per command iopriority support, rw_hint
+is converted from enum to a u16. Added a guard around ki_hint assigment.
 
 Signed-off-by: Adam Manzanares <adam.manzanares@wdc.com>
 ---
- drivers/block/loop.c         |  3 +++
- fs/aio.c                     | 16 ++++++++++++++++
- include/linux/fs.h           |  3 +++
- include/uapi/linux/aio_abi.h |  1 +
- 4 files changed, 23 insertions(+)
+ include/linux/fs.h | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 5d4e31655d96..dd98dfd97f5e 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -76,6 +76,8 @@
- #include <linux/miscdevice.h>
- #include <linux/falloc.h>
- #include <linux/uio.h>
-+#include <linux/ioprio.h>
-+
- #include "loop.h"
- 
- #include <linux/uaccess.h>
-@@ -559,6 +561,7 @@ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
- 	cmd->iocb.ki_filp = file;
- 	cmd->iocb.ki_complete = lo_rw_aio_complete;
- 	cmd->iocb.ki_flags = IOCB_DIRECT;
-+	cmd->iocb.ki_ioprio = IOPRIO_PRIO_VALUE(IOPRIO_CLASS_NONE, 0);
- 	if (cmd->css)
- 		kthread_associate_blkcg(cmd->css);
- 
-diff --git a/fs/aio.c b/fs/aio.c
-index f3eae5d5771b..44b4572be524 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -1451,6 +1451,22 @@ static int aio_prep_rw(struct kiocb *req, struct iocb *iocb)
- 	if (iocb->aio_flags & IOCB_FLAG_RESFD)
- 		req->ki_flags |= IOCB_EVENTFD;
- 	req->ki_hint = file_write_hint(req->ki_filp);
-+	if (iocb->aio_flags & IOCB_FLAG_IOPRIO) {
-+		/*
-+		 * If the IOCB_FLAG_IOPRIO flag of aio_flags is set, then
-+		 * aio_reqprio is interpreted as an I/O scheduling
-+		 * class and priority.
-+		 */
-+		ret = ioprio_check_cap(iocb->aio_reqprio);
-+		if (ret) {
-+			pr_debug("aio ioprio check cap error\n");
-+			return -EINVAL;
-+		}
-+
-+		req->ki_ioprio = iocb->aio_reqprio;
-+	} else
-+		req->ki_ioprio = IOPRIO_PRIO_VALUE(IOPRIO_CLASS_NONE, 0);
-+
- 	ret = kiocb_set_rw_flags(req, iocb->aio_rw_flags);
- 	if (unlikely(ret))
- 		fput(req->ki_filp);
 diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 50de40dbbb85..73b749ed3ea1 100644
+index 7f07977bdfd7..50de40dbbb85 100644
 --- a/include/linux/fs.h
 +++ b/include/linux/fs.h
-@@ -36,6 +36,7 @@
- #include <linux/delayed_call.h>
- #include <linux/uuid.h>
- #include <linux/errseq.h>
-+#include <linux/ioprio.h>
+@@ -284,6 +284,8 @@ enum rw_hint {
+ 	WRITE_LIFE_EXTREME	= RWH_WRITE_LIFE_EXTREME,
+ };
  
- #include <asm/byteorder.h>
- #include <uapi/linux/fs.h>
-@@ -302,6 +303,7 @@ struct kiocb {
++#define MAX_KI_HINT		((1 << 16) - 1) /* ki_hint type is u16 */
++
+ #define IOCB_EVENTFD		(1 << 0)
+ #define IOCB_APPEND		(1 << 1)
+ #define IOCB_DIRECT		(1 << 2)
+@@ -299,7 +301,7 @@ struct kiocb {
+ 	void (*ki_complete)(struct kiocb *iocb, long ret, long ret2);
  	void			*private;
  	int			ki_flags;
- 	u16			ki_hint;
-+	u16			ki_ioprio; /* See linux/ioprio.h */
+-	enum rw_hint		ki_hint;
++	u16			ki_hint;
  } __randomize_layout;
  
  static inline bool is_sync_kiocb(struct kiocb *kiocb)
-@@ -1942,6 +1944,7 @@ static inline void init_sync_kiocb(struct kiocb *kiocb, struct file *filp)
+@@ -1927,12 +1929,19 @@ static inline enum rw_hint file_write_hint(struct file *file)
+ 
+ static inline int iocb_flags(struct file *file);
+ 
++static inline u16 ki_hint_validate(enum rw_hint hint)
++{
++	if (hint > MAX_KI_HINT)
++		return 0;
++	return hint;
++}
++
+ static inline void init_sync_kiocb(struct kiocb *kiocb, struct file *filp)
+ {
+ 	*kiocb = (struct kiocb) {
  		.ki_filp = filp,
  		.ki_flags = iocb_flags(filp),
- 		.ki_hint = ki_hint_validate(file_write_hint(filp)),
-+		.ki_ioprio = IOPRIO_PRIO_VALUE(IOPRIO_CLASS_NONE, 0),
+-		.ki_hint = file_write_hint(filp),
++		.ki_hint = ki_hint_validate(file_write_hint(filp)),
  	};
  }
  
-diff --git a/include/uapi/linux/aio_abi.h b/include/uapi/linux/aio_abi.h
-index 2c0a3415beee..d4e768d55d14 100644
---- a/include/uapi/linux/aio_abi.h
-+++ b/include/uapi/linux/aio_abi.h
-@@ -55,6 +55,7 @@ enum {
-  *                   is valid.
-  */
- #define IOCB_FLAG_RESFD		(1 << 0)
-+#define IOCB_FLAG_IOPRIO	(1 << 1)
- 
- /* read() from /dev/aio returns these structures. */
- struct io_event {
 -- 
 2.15.1
