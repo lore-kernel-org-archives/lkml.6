@@ -1,92 +1,218 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753193AbeEUQ72 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 12:59:28 -0400
-Received: from smtprelay.synopsys.com ([198.182.37.59]:45113 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752809AbeEUQ71 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 12:59:27 -0400
-Subject: Re: ARC compact700 NPS platform - EZ_MachineCheck exception handler
-To: "Ofer Levi(SW)" <oferle@mellanox.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Meir Lichtinger" <meirl@mellanox.com>,
-        arcml <linux-snps-arc@lists.infradead.org>
-References: <DB6PR05MB4597A3B8BC5BE80BD039B0AAB2950@DB6PR05MB4597.eurprd05.prod.outlook.com>
-From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Message-ID: <0c84cd14-19dc-a22c-271c-11cbd18ded3a@synopsys.com>
-Date: Mon, 21 May 2018 09:59:17 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1753303AbeEUQ77 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 12:59:59 -0400
+Received: from foss.arm.com ([217.140.101.70]:53722 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753213AbeEUQ74 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 12:59:56 -0400
+Date: Mon, 21 May 2018 18:00:23 +0100
+From: Will Deacon <will.deacon@arm.com>
+To: Mark Salter <msalter@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        dave.martin@arm.com, robin.murphy@arm.com, peterz@infradead.org
+Subject: Re: [RHEL-8] arm64: add missing early clobber in
+ atomic64_dec_if_positive()
+Message-ID: <20180521170022.GD21034@arm.com>
+References: <20180520001726.27808-1-msalter@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <DB6PR05MB4597A3B8BC5BE80BD039B0AAB2950@DB6PR05MB4597.eurprd05.prod.outlook.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [10.10.161.52]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180520001726.27808-1-msalter@redhat.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/21/2018 07:14 AM, Ofer Levi(SW) wrote:
-> Resending, due to typo in LKML mail  address.
+Hi Mark,
 
-Also please CC linux-snps-arc@lists.infradead.org for any ARC Linux related posts.
+Thanks for reporting this.
 
->   
->   The EV_MachineCheck exception handler is halting the core for exceptions
->   which are not tlb_overlap_fault.
->   Since for the NPS platform each core is running a single thread in ZOL (Zero
->   Overhead Linux) isolation mode, we feel that most of the time it is safe to
->   resume execution instead of halting the core.
+On Sat, May 19, 2018 at 08:17:26PM -0400, Mark Salter wrote:
+> When running a kernel compiled with gcc8 on a machine using LSE, I
+> get:
+> 
+>  Unable to handle kernel paging request at virtual address 11111122222221
 
-Most of the time is not good enough when dealing with OS code :-(
-A Machine check excepting implies something went terribly wrong. Some of those 
-cases can be handled gracefully (such as duplicate TLB entry), but others can't so 
-continuing despite it is recipe for disaster. Perhaps your chip has some spurious 
-Machine check exceptions ?
+[...]
 
->   I would appreciate it if you could review the change  below
+> The fault happens at the casal insn of inlined atomic64_dec_if_positive().
+> The inline asm code in that function has:
+> 
+> 	"1:	ldr	x30, %[v]\n"
+> 	"	subs	%[ret], x30, #1\n"
+> 	"	b.lt	2f\n"
+> 	"	casal	x30, %[ret], %[v]\n"
+> 	"	sub	x30, x30, #1\n"
+> 	"	sub	x30, x30, %[ret]\n"
+> 	"	cbnz	x30, 1b\n"
+> 	"2:")
+> 	: [ret] "+r" (x0), [v] "+Q" (v->counter)
+> 
+> gcc8 used register x0 for both [ret] and [v] and the subs was
+> clobbering [v] before it was used for casal. Gcc is free to do
+> this because [ret] lacks an early clobber modifier. So add one
+> to tell gcc a separate register is needed for [v].
 
-Next time please send a real patch so I know right away what was changed.
+Oh blimey, it looks like GCC is realising that counter is at offset 0
+of atomic_t and therefore assigns the same register for [ret] and [v],
+which is actually forced to be x0 by the 'register' local variable in
+C code. The "+Q" constraint only says that the memory is read/write, so
+the pointer is fair game.
 
-> and let me know
->   what you think, if this change is valid or if we missed or overlooked
->   something.
->   We are not looking to push this change upstream, but will be used on some
->   systems.
+I agree with your fix, but we also need to fix up the other places relying
+on this. Patch below -- please yell if you think I missed any.
 
-Hmm, but you have to explain why those machine checks are fine !
+Cheers,
 
->   
->   Please see below our implementation after label 1.
->   
->   Thanks
->   Ofer
->   
->   ENTRY(EV_MachineCheck)
->   
->   	EXCEPTION_PROLOGUE
->   
-> ...
->   	brne    r3, ECR_C_MCHK_DUP_TLB, 1f
->   
->   	bl      do_tlb_overlap_fault
->   	b       ret_from_exception
->   
->   1:
->   	FAKE_RET_FROM_EXCPN
+Will
 
-You don't need this.
+--->8
 
->   	bl		do_machine_check  ; using DO_ERROR_INFO macro
+>From 3d9417b28ed2588c33b7e54e6681c88f0224201a Mon Sep 17 00:00:00 2001
+From: Will Deacon <will.deacon@arm.com>
+Date: Mon, 21 May 2018 17:44:57 +0100
+Subject: [PATCH] arm64: lse: Add early clobbers to some input/output asm
+ operands
 
-We don't have above function in code. There's do_machine_check_fault() which calls 
-die() -> flag 1 - so it would halt the kernel and would never return here.
-So your patch is broken in implementation as well.
+For LSE atomics that read and write a register operand, we need to
+ensure that these operands are annotated as "early clobber" if the
+register is written before all of the input operands have been consumed.
+Failure to do so can result in the compiler allocating the same register
+to both operands, leading to splats such as:
 
->   	b       ret_from_exception
->   
->   END(EV_MachineCheck)
->
->
+ Unable to handle kernel paging request at virtual address 11111122222221
+ [...]
+ x1 : 1111111122222222 x0 : 1111111122222221
+ Process swapper/0 (pid: 1, stack limit = 0x000000008209f908)
+ Call trace:
+  test_atomic64+0x1360/0x155c
+
+where x0 has been allocated as both the value to be stored and also the
+atomic_t pointer.
+
+This patch adds the missing clobbers.
+
+Cc: <stable@vger.kernel.org>
+Cc: Dave Martin <dave.martin@arm.com>
+Cc: Robin Murphy <robin.murphy@arm.com>
+Reported-by: Mark Salter <msalter@redhat.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+---
+ arch/arm64/include/asm/atomic_lse.h | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/arch/arm64/include/asm/atomic_lse.h b/arch/arm64/include/asm/atomic_lse.h
+index 9ef0797380cb..f9b0b09153e0 100644
+--- a/arch/arm64/include/asm/atomic_lse.h
++++ b/arch/arm64/include/asm/atomic_lse.h
+@@ -117,7 +117,7 @@ static inline void atomic_and(int i, atomic_t *v)
+ 	/* LSE atomics */
+ 	"	mvn	%w[i], %w[i]\n"
+ 	"	stclr	%w[i], %[v]")
+-	: [i] "+r" (w0), [v] "+Q" (v->counter)
++	: [i] "+&r" (w0), [v] "+Q" (v->counter)
+ 	: "r" (x1)
+ 	: __LL_SC_CLOBBERS);
+ }
+@@ -135,7 +135,7 @@ static inline int atomic_fetch_and##name(int i, atomic_t *v)		\
+ 	/* LSE atomics */						\
+ 	"	mvn	%w[i], %w[i]\n"					\
+ 	"	ldclr" #mb "	%w[i], %w[i], %[v]")			\
+-	: [i] "+r" (w0), [v] "+Q" (v->counter)				\
++	: [i] "+&r" (w0), [v] "+Q" (v->counter)				\
+ 	: "r" (x1)							\
+ 	: __LL_SC_CLOBBERS, ##cl);					\
+ 									\
+@@ -161,7 +161,7 @@ static inline void atomic_sub(int i, atomic_t *v)
+ 	/* LSE atomics */
+ 	"	neg	%w[i], %w[i]\n"
+ 	"	stadd	%w[i], %[v]")
+-	: [i] "+r" (w0), [v] "+Q" (v->counter)
++	: [i] "+&r" (w0), [v] "+Q" (v->counter)
+ 	: "r" (x1)
+ 	: __LL_SC_CLOBBERS);
+ }
+@@ -180,7 +180,7 @@ static inline int atomic_sub_return##name(int i, atomic_t *v)		\
+ 	"	neg	%w[i], %w[i]\n"					\
+ 	"	ldadd" #mb "	%w[i], w30, %[v]\n"			\
+ 	"	add	%w[i], %w[i], w30")				\
+-	: [i] "+r" (w0), [v] "+Q" (v->counter)				\
++	: [i] "+&r" (w0), [v] "+Q" (v->counter)				\
+ 	: "r" (x1)							\
+ 	: __LL_SC_CLOBBERS , ##cl);					\
+ 									\
+@@ -207,7 +207,7 @@ static inline int atomic_fetch_sub##name(int i, atomic_t *v)		\
+ 	/* LSE atomics */						\
+ 	"	neg	%w[i], %w[i]\n"					\
+ 	"	ldadd" #mb "	%w[i], %w[i], %[v]")			\
+-	: [i] "+r" (w0), [v] "+Q" (v->counter)				\
++	: [i] "+&r" (w0), [v] "+Q" (v->counter)				\
+ 	: "r" (x1)							\
+ 	: __LL_SC_CLOBBERS, ##cl);					\
+ 									\
+@@ -314,7 +314,7 @@ static inline void atomic64_and(long i, atomic64_t *v)
+ 	/* LSE atomics */
+ 	"	mvn	%[i], %[i]\n"
+ 	"	stclr	%[i], %[v]")
+-	: [i] "+r" (x0), [v] "+Q" (v->counter)
++	: [i] "+&r" (x0), [v] "+Q" (v->counter)
+ 	: "r" (x1)
+ 	: __LL_SC_CLOBBERS);
+ }
+@@ -332,7 +332,7 @@ static inline long atomic64_fetch_and##name(long i, atomic64_t *v)	\
+ 	/* LSE atomics */						\
+ 	"	mvn	%[i], %[i]\n"					\
+ 	"	ldclr" #mb "	%[i], %[i], %[v]")			\
+-	: [i] "+r" (x0), [v] "+Q" (v->counter)				\
++	: [i] "+&r" (x0), [v] "+Q" (v->counter)				\
+ 	: "r" (x1)							\
+ 	: __LL_SC_CLOBBERS, ##cl);					\
+ 									\
+@@ -358,7 +358,7 @@ static inline void atomic64_sub(long i, atomic64_t *v)
+ 	/* LSE atomics */
+ 	"	neg	%[i], %[i]\n"
+ 	"	stadd	%[i], %[v]")
+-	: [i] "+r" (x0), [v] "+Q" (v->counter)
++	: [i] "+&r" (x0), [v] "+Q" (v->counter)
+ 	: "r" (x1)
+ 	: __LL_SC_CLOBBERS);
+ }
+@@ -377,7 +377,7 @@ static inline long atomic64_sub_return##name(long i, atomic64_t *v)	\
+ 	"	neg	%[i], %[i]\n"					\
+ 	"	ldadd" #mb "	%[i], x30, %[v]\n"			\
+ 	"	add	%[i], %[i], x30")				\
+-	: [i] "+r" (x0), [v] "+Q" (v->counter)				\
++	: [i] "+&r" (x0), [v] "+Q" (v->counter)				\
+ 	: "r" (x1)							\
+ 	: __LL_SC_CLOBBERS, ##cl);					\
+ 									\
+@@ -404,7 +404,7 @@ static inline long atomic64_fetch_sub##name(long i, atomic64_t *v)	\
+ 	/* LSE atomics */						\
+ 	"	neg	%[i], %[i]\n"					\
+ 	"	ldadd" #mb "	%[i], %[i], %[v]")			\
+-	: [i] "+r" (x0), [v] "+Q" (v->counter)				\
++	: [i] "+&r" (x0), [v] "+Q" (v->counter)				\
+ 	: "r" (x1)							\
+ 	: __LL_SC_CLOBBERS, ##cl);					\
+ 									\
+@@ -435,7 +435,7 @@ static inline long atomic64_dec_if_positive(atomic64_t *v)
+ 	"	sub	x30, x30, %[ret]\n"
+ 	"	cbnz	x30, 1b\n"
+ 	"2:")
+-	: [ret] "+r" (x0), [v] "+Q" (v->counter)
++	: [ret] "+&r" (x0), [v] "+Q" (v->counter)
+ 	:
+ 	: __LL_SC_CLOBBERS, "cc", "memory");
+ 
+@@ -516,7 +516,7 @@ static inline long __cmpxchg_double##name(unsigned long old1,		\
+ 	"	eor	%[old1], %[old1], %[oldval1]\n"			\
+ 	"	eor	%[old2], %[old2], %[oldval2]\n"			\
+ 	"	orr	%[old1], %[old1], %[old2]")			\
+-	: [old1] "+r" (x0), [old2] "+r" (x1),				\
++	: [old1] "+&r" (x0), [old2] "+&r" (x1),				\
+ 	  [v] "+Q" (*(unsigned long *)ptr)				\
+ 	: [new1] "r" (x2), [new2] "r" (x3), [ptr] "r" (x4),		\
+ 	  [oldval1] "r" (oldval1), [oldval2] "r" (oldval2)		\
+-- 
+2.1.4
