@@ -1,162 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752947AbeEUOXH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 10:23:07 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:40383 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751682AbeEUOVx (ORCPT
+        id S1752986AbeEUOXS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 10:23:18 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:37014 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752923AbeEUOXE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 10:21:53 -0400
-X-Google-Smtp-Source: AB8JxZqH4e6Du3KjU1CHJfhH6i0XzImSvnIlm9kkYVhLK0QQ57yAkGW3EMRHNDUbUYO8vrF4pYaiGA==
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: airlied@linux.ie, hans.verkuil@cisco.com, lee.jones@linaro.org,
-        olof@lixom.net, seanpaul@google.com
-Cc: Neil Armstrong <narmstrong@baylibre.com>, sadolfsson@google.com,
-        felixe@google.com, bleung@google.com, darekm@google.com,
-        marcheu@chromium.org, fparent@baylibre.com,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 1/5] media: cec-notifier: Get notifier by device and connector name
-Date: Mon, 21 May 2018 16:21:42 +0200
-Message-Id: <1526912506-18406-2-git-send-email-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1526912506-18406-1-git-send-email-narmstrong@baylibre.com>
-References: <1526912506-18406-1-git-send-email-narmstrong@baylibre.com>
+        Mon, 21 May 2018 10:23:04 -0400
+X-Google-Smtp-Source: AB8JxZozPDLvpOSSplO42T2XQyvFXyzFbw9LMLrIYxWJk9K5o+lYRD8ZvXiceeVFLwEzrOrRWDoCwltAM5OFIOYkptg=
+MIME-Version: 1.0
+In-Reply-To: <20180520145031.GB9826@ravnborg.org>
+References: <1526537830-22606-1-git-send-email-yamada.masahiro@socionext.com>
+ <1526537830-22606-8-git-send-email-yamada.masahiro@socionext.com> <20180520145031.GB9826@ravnborg.org>
+From: Ulf Magnusson <ulfalizer@gmail.com>
+Date: Mon, 21 May 2018 16:23:03 +0200
+Message-ID: <CAFkk2KSCtj8E48Y3KDRvT8E6bjqWpc_FvpwjVpo1Vx-tQPikwQ@mail.gmail.com>
+Subject: Re: [PATCH v4 07/31] kconfig: add built-in function support
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nicholas Piggin <npiggin@gmail.com>, Kees Cook <keescook@chromium.org>,
+        Emese Revfy <re.emese@gmail.com>, X86 ML <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In non device-tree world, we can need to get the notifier by the driver
-name directly and eventually defer probe if not yet created.
+On Sun, May 20, 2018 at 4:50 PM, Sam Ravnborg <sam@ravnborg.org> wrote:
+> Will the following be equal:
+>
+>         $(foo,abc,$(x),$(y))
+>         $(foo, abc, $(x), $(y))
+>
+> make is rather annoying as space is significant, but there seems no good reason
+> for kconfig to inheritate this.
+> So unless there are good arguments consider alloing the spaces.
+> If the current implmentation already supports optional spaces then I just missed
+> it whie reviewing.
+>
+>         Sam
 
-This patch adds a variant of the get function by using the device name
-instead and will not create a notifier if not yet created.
++1 from me.
 
-But the i915 driver exposes at least 2 HDMI connectors, this patch also
-adds the possibility to add a connector name tied to the notifier device
-to form a tuple and associate different CEC controllers for each HDMI
-connectors.
+I also find the rules for whitespace in Make confusing, and always
+have to look them up when doing trickier stuff. Maybe they're the
+result of people not considering whitespace initially, and stuff
+getting tacked on later. GNU Make adds some alternate syntaxes with
+quotes.
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/media/cec/cec-notifier.c | 11 ++++++++---
- include/media/cec-notifier.h     | 27 ++++++++++++++++++++++++---
- 2 files changed, 32 insertions(+), 6 deletions(-)
+I was going to mention shell, but it looks like you already did. :)
 
-diff --git a/drivers/media/cec/cec-notifier.c b/drivers/media/cec/cec-notifier.c
-index 16dffa0..dd2078b 100644
---- a/drivers/media/cec/cec-notifier.c
-+++ b/drivers/media/cec/cec-notifier.c
-@@ -21,6 +21,7 @@ struct cec_notifier {
- 	struct list_head head;
- 	struct kref kref;
- 	struct device *dev;
-+	const char *conn;
- 	struct cec_adapter *cec_adap;
- 	void (*callback)(struct cec_adapter *adap, u16 pa);
- 
-@@ -30,13 +31,14 @@ struct cec_notifier {
- static LIST_HEAD(cec_notifiers);
- static DEFINE_MUTEX(cec_notifiers_lock);
- 
--struct cec_notifier *cec_notifier_get(struct device *dev)
-+struct cec_notifier *cec_notifier_get_conn(struct device *dev, const char *conn)
- {
- 	struct cec_notifier *n;
- 
- 	mutex_lock(&cec_notifiers_lock);
- 	list_for_each_entry(n, &cec_notifiers, head) {
--		if (n->dev == dev) {
-+		if (n->dev == dev &&
-+		    (!conn || !strcmp(n->conn, conn))) {
- 			kref_get(&n->kref);
- 			mutex_unlock(&cec_notifiers_lock);
- 			return n;
-@@ -46,6 +48,8 @@ struct cec_notifier *cec_notifier_get(struct device *dev)
- 	if (!n)
- 		goto unlock;
- 	n->dev = dev;
-+	if (conn)
-+		n->conn = kstrdup(conn, GFP_KERNEL);
- 	n->phys_addr = CEC_PHYS_ADDR_INVALID;
- 	mutex_init(&n->lock);
- 	kref_init(&n->kref);
-@@ -54,7 +58,7 @@ struct cec_notifier *cec_notifier_get(struct device *dev)
- 	mutex_unlock(&cec_notifiers_lock);
- 	return n;
- }
--EXPORT_SYMBOL_GPL(cec_notifier_get);
-+EXPORT_SYMBOL_GPL(cec_notifier_get_conn);
- 
- static void cec_notifier_release(struct kref *kref)
- {
-@@ -62,6 +66,7 @@ static void cec_notifier_release(struct kref *kref)
- 		container_of(kref, struct cec_notifier, kref);
- 
- 	list_del(&n->head);
-+	kfree(n->conn);
- 	kfree(n);
- }
- 
-diff --git a/include/media/cec-notifier.h b/include/media/cec-notifier.h
-index cf0add7..814eeef 100644
---- a/include/media/cec-notifier.h
-+++ b/include/media/cec-notifier.h
-@@ -20,8 +20,10 @@ struct cec_notifier;
- #if IS_REACHABLE(CONFIG_CEC_CORE) && IS_ENABLED(CONFIG_CEC_NOTIFIER)
- 
- /**
-- * cec_notifier_get - find or create a new cec_notifier for the given device.
-+ * cec_notifier_get_conn - find or create a new cec_notifier for the given
-+ * device and connector tuple.
-  * @dev: device that sends the events.
-+ * @conn: the connector name from which the event occurs
-  *
-  * If a notifier for device @dev already exists, then increase the refcount
-  * and return that notifier.
-@@ -31,7 +33,8 @@ struct cec_notifier;
-  *
-  * Return NULL if the memory could not be allocated.
-  */
--struct cec_notifier *cec_notifier_get(struct device *dev);
-+struct cec_notifier *cec_notifier_get_conn(struct device *dev,
-+					   const char *conn);
- 
- /**
-  * cec_notifier_put - decrease refcount and delete when the refcount reaches 0.
-@@ -85,7 +88,8 @@ void cec_register_cec_notifier(struct cec_adapter *adap,
- 			       struct cec_notifier *notifier);
- 
- #else
--static inline struct cec_notifier *cec_notifier_get(struct device *dev)
-+static inline struct cec_notifier *cec_notifier_get_conn(struct device *dev,
-+							 const char *conn)
- {
- 	/* A non-NULL pointer is expected on success */
- 	return (struct cec_notifier *)0xdeadfeed;
-@@ -121,6 +125,23 @@ static inline void cec_register_cec_notifier(struct cec_adapter *adap,
- #endif
- 
- /**
-+ * cec_notifier_get - find or create a new cec_notifier for the given device.
-+ * @dev: device that sends the events.
-+ *
-+ * If a notifier for device @dev already exists, then increase the refcount
-+ * and return that notifier.
-+ *
-+ * If it doesn't exist, then allocate a new notifier struct and return a
-+ * pointer to that new struct.
-+ *
-+ * Return NULL if the memory could not be allocated.
-+ */
-+static inline struct cec_notifier *cec_notifier_get(struct device *dev)
-+{
-+	return cec_notifier_get_conn(dev, NULL);
-+}
-+
-+/**
-  * cec_notifier_phys_addr_invalidate() - set the physical address to INVALID
-  *
-  * @n: the CEC notifier
--- 
-2.7.4
+If we go with Make-like syntax, maybe we could at least have a variant
+with fewer whitespace gotchas.
+
+Cheers,
+Ulf
