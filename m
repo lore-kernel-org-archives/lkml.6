@@ -1,55 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753084AbeEULgg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 07:36:36 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:36244 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753054AbeEULga (ORCPT
+        id S1753114AbeEULgq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 07:36:46 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:53772 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753073AbeEULgf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 07:36:30 -0400
-X-Google-Smtp-Source: AB8JxZqOOVro3EwrxDYvbnNcn9EFnAk0tszEhYdWdKLWAIFEzHTzW4OpiZDg9xy5ahnf/6RvJlNEpoTGqzSpltzha3Q=
+        Mon, 21 May 2018 07:36:35 -0400
+X-Google-Smtp-Source: AB8JxZqPo427+SQOk+3OMca8OI0K9yu8G4N8if3RmUXUgnTK+t9sId/1ZNNxUGvvJX5mfkD65ernIgzE3/velQwugiQ=
 MIME-Version: 1.0
-In-Reply-To: <20180515095748.6794-1-jbrunet@baylibre.com>
-References: <20180515095748.6794-1-jbrunet@baylibre.com>
+In-Reply-To: <20180516192022.23541-1-malat@debian.org>
+References: <20180516192022.23541-1-malat@debian.org>
 From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 21 May 2018 13:36:29 +0200
-Message-ID: <CAPDyKFqxaqHZ6D_kY8P53WmXOyL4xj4UGOyfT8Nb2W1pPKxBEg@mail.gmail.com>
-Subject: Re: [PATCH 0/2] mmc: meson-gx: add device reset
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>,
-        devicetree@vger.kernel.org,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+Date: Mon, 21 May 2018 13:36:34 +0200
+Message-ID: <CAPDyKFr2Bf_Ngtwp5pPU8Q956Ok4Ut8HLDsNxFvk-iU445Huvw@mail.gmail.com>
+Subject: Re: [PATCH] mmc: block: propagate correct returned value in mmc_rpmb_ioctl
+To: Mathieu Malaterre <malat@debian.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4LBaoOV000341
 
-On 15 May 2018 at 11:57, Jerome Brunet <jbrunet@baylibre.com> wrote:
-> This patchset adds the optional reset of the meson-gx mmc controller and
-> the related documentation.
+On 16 May 2018 at 21:20, Mathieu Malaterre <malat@debian.org> wrote:
+> In commit 97548575bef3 ("mmc: block: Convert RPMB to a character device") a
+> new function `mmc_rpmb_ioctl` was added. The final return is simply
+> returning a value of `0` instead of propagating the correct return code.
 >
-> Changes since v1: [0]
->  * Correct typo in the documentation
->  * Separate code and documentation patches
->  * Error on reset failure.
+> Discovered during a compilation with W=1, silence the following gcc warning
 >
-> [0]: https://lkml.kernel.org/r/20180426103817.12675-1-jbrunet@baylibre.com
+>   drivers/mmc/core/block.c:2470:6: warning: variable ‘ret’ set but not used [-Wunused-but-set-variable]
 >
-> Jerome Brunet (2):
->   dt-bindings: mmc: meson-gx: add reset
->   mmc: meson-gx: add device reset
->
->  Documentation/devicetree/bindings/mmc/amlogic,meson-gx.txt | 2 ++
->  drivers/mmc/host/meson-gx-mmc.c                            | 9 +++++++++
->  2 files changed, 11 insertions(+)
->
-> --
-> 2.14.3
->
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
 
-Thanks, applied for next!
+Thanks, applied for fixes and by adding a stable tag!
 
 Kind regards
 Uffe
+
+> ---
+>  drivers/mmc/core/block.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
+> index 9e923cd1d80e..38a7586b00cc 100644
+> --- a/drivers/mmc/core/block.c
+> +++ b/drivers/mmc/core/block.c
+> @@ -2485,7 +2485,7 @@ static long mmc_rpmb_ioctl(struct file *filp, unsigned int cmd,
+>                 break;
+>         }
+>
+> -       return 0;
+> +       return ret;
+>  }
+>
+>  #ifdef CONFIG_COMPAT
+> --
+> 2.11.0
+>
