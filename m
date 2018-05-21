@@ -1,53 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752835AbeEUJGD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 05:06:03 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:43352 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751712AbeEUJF5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 05:05:57 -0400
-X-Google-Smtp-Source: AB8JxZq5jX7Q8tFzECNjWMDu9iaAzjngthVv0Zde+K/myqCBRicgQ3PzUrgpqBQa2yGfS3Xezo6dVA==
-Date: Mon, 21 May 2018 14:35:53 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: ilialin@codeaurora.org
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-        mark.rutland@arm.com, nm@ti.com, lgirdwood@gmail.com,
-        broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
-        catalin.marinas@arm.com, will.deacon@arm.com, rjw@rjwysocki.net,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
-        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-        celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: Re: [PATCH v8 10/15] cpufreq: Add Kryo CPU scaling driver
-Message-ID: <20180521090553.6wervk335scgnko6@vireshk-i7>
-References: <1526555955-29960-1-git-send-email-ilialin@codeaurora.org>
- <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
- <20180518014538.duphof6enscpm5vp@vireshk-i7>
- <019201d3ef66$db97aed0$92c70c70$@codeaurora.org>
- <20180521044938.bnr2sdkmvdorfxqm@vireshk-i7>
- <000501d3f0e2$23500c00$69f02400$@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000501d3f0e2$23500c00$69f02400$@codeaurora.org>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+        id S1752706AbeEUJFS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 05:05:18 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43678 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752653AbeEUJFL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 05:05:11 -0400
+From: Jason Wang <jasowang@redhat.com>
+To: mst@redhat.com, jasowang@redhat.com
+Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH net-next 07/12] tuntap: simplify error handling in tun_build_skb()
+Date: Mon, 21 May 2018 17:04:28 +0800
+Message-Id: <1526893473-20128-8-git-send-email-jasowang@redhat.com>
+In-Reply-To: <1526893473-20128-1-git-send-email-jasowang@redhat.com>
+References: <1526893473-20128-1-git-send-email-jasowang@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21-05-18, 12:00, ilialin@codeaurora.org wrote:
-> Final version (addressing Russel's comment as well):
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+---
+ drivers/net/tun.c | 36 ++++++++++++++----------------------
+ 1 file changed, 14 insertions(+), 22 deletions(-)
 
-Sorry, can't review it like this. At least you should be posting your
-diff here and you also need to do that from a sane email client like
-mutt, which wouldn't auto-fix/update the code. Doing it from gmail or
-thunderbird will ofcourse screw it.
-
-Or a simple way is to send the patch again (alone) using in-reply-to
-field.
-
+diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+index 24ecd82..f6e0f96 100644
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -1612,7 +1612,7 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
+ 				     int len, int *skb_xdp)
+ {
+ 	struct page_frag *alloc_frag = &current->task_frag;
+-	struct sk_buff *skb;
++	struct sk_buff *skb = NULL;
+ 	struct bpf_prog *xdp_prog;
+ 	int buflen = SKB_DATA_ALIGN(sizeof(struct skb_shared_info));
+ 	unsigned int delta = 0;
+@@ -1638,6 +1638,9 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
+ 	if (copied != len)
+ 		return ERR_PTR(-EFAULT);
+ 
++	get_page(alloc_frag->page);
++	alloc_frag->offset += buflen;
++
+ 	/* There's a small window that XDP may be set after the check
+ 	 * of xdp_prog above, this should be rare and for simplicity
+ 	 * we do XDP on skb in case the headroom is not enough.
+@@ -1665,24 +1668,16 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
+ 
+ 		switch (act) {
+ 		case XDP_REDIRECT:
+-			get_page(alloc_frag->page);
+-			alloc_frag->offset += buflen;
+ 			err = xdp_do_redirect(tun->dev, &xdp, xdp_prog);
+ 			xdp_do_flush_map();
+ 			if (err)
+-				goto err_redirect;
+-			rcu_read_unlock();
+-			preempt_enable();
+-			return NULL;
++				goto err_xdp;
++			goto out;
+ 		case XDP_TX:
+-			get_page(alloc_frag->page);
+-			alloc_frag->offset += buflen;
+ 			if (tun_xdp_tx(tun->dev, &xdp))
+-				goto err_redirect;
++				goto err_xdp;
+ 			tun_xdp_flush(tun->dev);
+-			rcu_read_unlock();
+-			preempt_enable();
+-			return NULL;
++			goto out;
+ 		case XDP_PASS:
+ 			delta = orig_data - xdp.data;
+ 			len = xdp.data_end - xdp.data;
+@@ -1702,25 +1697,22 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
+ 
+ 	skb = build_skb(buf, buflen);
+ 	if (!skb) {
+-		rcu_read_unlock();
+-		preempt_enable();
+-		return ERR_PTR(-ENOMEM);
++		skb = ERR_PTR(-ENOMEM);
++		goto out;
+ 	}
+ 
+ 	skb_reserve(skb, pad - delta);
+ 	skb_put(skb, len);
+-	get_page(alloc_frag->page);
+-	alloc_frag->offset += buflen;
+ 
+ 	return skb;
+ 
+-err_redirect:
+-	put_page(alloc_frag->page);
+ err_xdp:
++	alloc_frag->offset -= buflen;
++	put_page(alloc_frag->page);
++out:
+ 	rcu_read_unlock();
+ 	preempt_enable();
+-	this_cpu_inc(tun->pcpu_stats->rx_dropped);
+-	return NULL;
++	return skb;
+ }
+ 
+ /* Get packet from user space buffer */
 -- 
-viresh
+2.7.4
