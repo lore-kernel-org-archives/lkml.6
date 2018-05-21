@@ -1,196 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751516AbeEUSQ6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 14:16:58 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:34908 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750960AbeEUSQu (ORCPT
+        id S1751152AbeEUSS2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 14:18:28 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:44398 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750773AbeEUSS0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 14:16:50 -0400
-X-Google-Smtp-Source: AB8JxZqvtHc43GuOD14i32n96J0rW4D0LdfykG9+13FausIbow0TvT7KGyzkgQI9CNHoKAjWkpoFnA==
-Date: Mon, 21 May 2018 21:16:45 +0300
-From: Vladimir Davydov <vdavydov.dev@gmail.com>
-To: Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc: akpm@linux-foundation.org, shakeelb@google.com,
-        viro@zeniv.linux.org.uk, hannes@cmpxchg.org, mhocko@kernel.org,
-        tglx@linutronix.de, pombredanne@nexb.com, stummala@codeaurora.org,
-        gregkh@linuxfoundation.org, sfr@canb.auug.org.au, guro@fb.com,
-        mka@chromium.org, penguin-kernel@I-love.SAKURA.ne.jp,
-        chris@chris-wilson.co.uk, longman@redhat.com, minchan@kernel.org,
-        ying.huang@intel.com, mgorman@techsingularity.net, jbacik@fb.com,
-        linux@roeck-us.net, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        willy@infradead.org, lirongqing@baidu.com, aryabinin@virtuozzo.com
-Subject: Re: [PATCH v6 12/17] mm: Set bit in memcg shrinker bitmap on first
- list_lru item apearance
-Message-ID: <20180521181645.gmtm3fscygrltrdr@esperanza>
-References: <152663268383.5308.8660992135988724014.stgit@localhost.localdomain>
- <152663302275.5308.7476660277265020067.stgit@localhost.localdomain>
- <20180520075558.6ls4yzrkou63orkb@esperanza>
- <2a0ca70d-12bb-8087-9897-9cb33f676177@virtuozzo.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2a0ca70d-12bb-8087-9897-9cb33f676177@virtuozzo.com>
+        Mon, 21 May 2018 14:18:26 -0400
+X-Google-Smtp-Source: AB8JxZqu6gGK65X21ghD0S/5qPVf3E7pUi6uagUTdJIWfa4lMP2KRt0cwpQJaijO4QwNIakrAaG3Gg==
+From: Omar Sandoval <osandov@osandov.com>
+To: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-team@fb.com
+Subject: [PATCH] Documentation: document hung_task_panic kernel parameter
+Date: Mon, 21 May 2018 11:18:17 -0700
+Message-Id: <53ad4158547699c2d35ba817394750dc2487158a.1526926625.git.osandov@fb.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 12:31:34PM +0300, Kirill Tkhai wrote:
-> On 20.05.2018 10:55, Vladimir Davydov wrote:
-> > On Fri, May 18, 2018 at 11:43:42AM +0300, Kirill Tkhai wrote:
-> >> Introduce set_shrinker_bit() function to set shrinker-related
-> >> bit in memcg shrinker bitmap, and set the bit after the first
-> >> item is added and in case of reparenting destroyed memcg's items.
-> >>
-> >> This will allow next patch to make shrinkers be called only,
-> >> in case of they have charged objects at the moment, and
-> >> to improve shrink_slab() performance.
-> >>
-> >> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-> >> ---
-> >>  include/linux/memcontrol.h |   14 ++++++++++++++
-> >>  mm/list_lru.c              |   22 ++++++++++++++++++++--
-> >>  2 files changed, 34 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> >> index e51c6e953d7a..7ae1b94becf3 100644
-> >> --- a/include/linux/memcontrol.h
-> >> +++ b/include/linux/memcontrol.h
-> >> @@ -1275,6 +1275,18 @@ static inline int memcg_cache_id(struct mem_cgroup *memcg)
-> >>  
-> >>  extern int memcg_expand_shrinker_maps(int new_id);
-> >>  
-> >> +static inline void memcg_set_shrinker_bit(struct mem_cgroup *memcg,
-> >> +					  int nid, int shrinker_id)
-> >> +{
-> > 
-> >> +	if (shrinker_id >= 0 && memcg && memcg != root_mem_cgroup) {
-> > 
-> > Nit: I'd remove these checks from this function and require the caller
-> > to check that shrinker_id >= 0 and memcg != NULL or root_mem_cgroup.
-> > See below how the call sites would look then.
-> > 
-> >> +		struct memcg_shrinker_map *map;
-> >> +
-> >> +		rcu_read_lock();
-> >> +		map = rcu_dereference(memcg->nodeinfo[nid]->shrinker_map);
-> >> +		set_bit(shrinker_id, map->map);
-> >> +		rcu_read_unlock();
-> >> +	}
-> >> +}
-> >>  #else
-> >>  #define for_each_memcg_cache_index(_idx)	\
-> >>  	for (; NULL; )
-> >> @@ -1297,6 +1309,8 @@ static inline void memcg_put_cache_ids(void)
-> >>  {
-> >>  }
-> >>  
-> >> +static inline void memcg_set_shrinker_bit(struct mem_cgroup *memcg,
-> >> +					  int nid, int shrinker_id) { }
-> >>  #endif /* CONFIG_MEMCG_KMEM */
-> >>  
-> >>  #endif /* _LINUX_MEMCONTROL_H */
-> >> diff --git a/mm/list_lru.c b/mm/list_lru.c
-> >> index cab8fad7f7e2..7df71ab0de1c 100644
-> >> --- a/mm/list_lru.c
-> >> +++ b/mm/list_lru.c
-> >> @@ -31,6 +31,11 @@ static void list_lru_unregister(struct list_lru *lru)
-> >>  	mutex_unlock(&list_lrus_mutex);
-> >>  }
-> >>  
-> >> +static int lru_shrinker_id(struct list_lru *lru)
-> >> +{
-> >> +	return lru->shrinker_id;
-> >> +}
-> >> +
-> >>  static inline bool list_lru_memcg_aware(struct list_lru *lru)
-> >>  {
-> >>  	/*
-> >> @@ -94,6 +99,11 @@ static void list_lru_unregister(struct list_lru *lru)
-> >>  {
-> >>  }
-> >>  
-> >> +static int lru_shrinker_id(struct list_lru *lru)
-> >> +{
-> >> +	return -1;
-> >> +}
-> >> +
-> >>  static inline bool list_lru_memcg_aware(struct list_lru *lru)
-> >>  {
-> >>  	return false;
-> >> @@ -119,13 +129,17 @@ bool list_lru_add(struct list_lru *lru, struct list_head *item)
-> >>  {
-> >>  	int nid = page_to_nid(virt_to_page(item));
-> >>  	struct list_lru_node *nlru = &lru->node[nid];
-> >> +	struct mem_cgroup *memcg;
-> >>  	struct list_lru_one *l;
-> >>  
-> >>  	spin_lock(&nlru->lock);
-> >>  	if (list_empty(item)) {
-> >> -		l = list_lru_from_kmem(nlru, item, NULL);
-> >> +		l = list_lru_from_kmem(nlru, item, &memcg);
-> >>  		list_add_tail(item, &l->list);
-> >> -		l->nr_items++;
-> >> +		/* Set shrinker bit if the first element was added */
-> >> +		if (!l->nr_items++)
-> >> +			memcg_set_shrinker_bit(memcg, nid,
-> >> +					       lru_shrinker_id(lru));
-> > 
-> > This would turn into
-> > 
-> > 	if (!l->nr_items++ && memcg)
-> > 		memcg_set_shrinker_bit(memcg, nid, lru_shrinker_id(lru));
-> > 
-> > Note, you don't need to check that lru_shrinker_id(lru) is >= 0 here as
-> > the fact that memcg != NULL guarantees that. Also, memcg can't be
-> > root_mem_cgroup here as kmem objects allocated for the root cgroup go
-> > unaccounted.
-> > 
-> >>  		nlru->nr_items++;
-> >>  		spin_unlock(&nlru->lock);
-> >>  		return true;
-> >> @@ -520,6 +534,7 @@ static void memcg_drain_list_lru_node(struct list_lru *lru, int nid,
-> >>  	struct list_lru_node *nlru = &lru->node[nid];
-> >>  	int dst_idx = dst_memcg->kmemcg_id;
-> >>  	struct list_lru_one *src, *dst;
-> >> +	bool set;
-> >>  
-> >>  	/*
-> >>  	 * Since list_lru_{add,del} may be called under an IRQ-safe lock,
-> >> @@ -531,7 +546,10 @@ static void memcg_drain_list_lru_node(struct list_lru *lru, int nid,
-> >>  	dst = list_lru_from_memcg_idx(nlru, dst_idx);
-> >>  
-> >>  	list_splice_init(&src->list, &dst->list);
-> >> +	set = (!dst->nr_items && src->nr_items);
-> >>  	dst->nr_items += src->nr_items;
-> >> +	if (set)
-> >> +		memcg_set_shrinker_bit(dst_memcg, nid, lru_shrinker_id(lru));
-> > 
-> > This would turn into
-> > 
-> > 	if (set && dst_idx >= 0)
-> > 		memcg_set_shrinker_bit(dst_memcg, nid, lru_shrinker_id(lru));
-> > 
-> > Again, the shrinker is guaranteed to be memcg aware in this function and
-> > dst_memcg != NULL.
-> > 
-> > IMHO such a change would make the code a bit more straightforward.
-> 
-> IMHO, this makes the code less readable. Using single generic function with
-> generic check is easier, then using two different checks for different places.
-> Next a person, who will modify the logic, does not have to think about particulars
-> of strange checks in list_lru_add() and memcg_drain_list_lru_node(), if he/she
+From: Omar Sandoval <osandov@fb.com>
 
-I'd prefer them to think through all corner cases before touching this
-code :-)
+This parameter has been around since commit e162b39a368f ("softlockup:
+decouple hung tasks check from softlockup detection") in 2009 but was
+never documented.
 
-> does not involved in the change of maps logic. Memory cgroup is already fell
-> into many corner cases, let's do not introduce them in new places.
+Signed-off-by: Omar Sandoval <osandov@fb.com>
+---
+ Documentation/admin-guide/kernel-parameters.txt | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-The reason why I'd rather move those checks from memcg_set_shrinker_bit
-to call sites is that now looking at the function code makes me wonder
-why this function has to turn into a no-op if shrinker_id < 0 or memcg
-is NULL, why these corner cases are even possible. To understand that, I
-have to look at all places where this function is called, which are
-located in a different source file. This is rather inconvenient IMO. But
-I guess it's bikesheding so I don't insist.
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 11fc28ecdb6d..4e37bebdc3d0 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -1341,6 +1341,16 @@
+ 			x86-64 are 2M (when the CPU supports "pse") and 1G
+ 			(when the CPU supports the "pdpe1gb" cpuinfo flag).
+ 
++	hung_task_panic=
++			[KNL] Should the hung task detector generate panics.
++			Format: <integer>
++
++			A nonzero value instructs the kernel to panic when a
++			hung task is detected. The default value is controlled
++			by the CONFIG_BOOTPARAM_HUNG_TASK_PANIC build-time
++			option. The value selected by this boot parameter can
++			be changed later by the kernel.hung_task_panic sysctl.
++
+ 	hvc_iucv=	[S390] Number of z/VM IUCV hypervisor console (HVC)
+ 			       terminal devices. Valid values: 0..8
+ 	hvc_iucv_allow=	[S390] Comma-separated list of z/VM user IDs.
+-- 
+2.17.0
