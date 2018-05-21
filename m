@@ -1,115 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751727AbeEUAns (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 20:43:48 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:44426 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751637AbeEUAno (ORCPT
+        id S1751657AbeEUAtS (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 20:49:18 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:37615 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751094AbeEUAtO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 20:43:44 -0400
-X-Google-Smtp-Source: AB8JxZqdBDbsZw5zWXn5CY94uPNfvCzmj8uhlmUzZlmsHGvprzpFlZR13JP00E7XX2RzvzYR93BVTg==
-From: Joel Fernandes <joelaf@google.com>
-X-Google-Original-From: Joel Fernandes <joel@joelfernandes.org>
-To: linux-kernel@vger.kernel.org
-Cc: "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>, byungchul.park@lge.com,
-        kernel-team@android.com, Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>
-Subject: [PATCH v2] rcu: Speed up calling of RCU tasks callbacks
-Date: Sun, 20 May 2018 17:43:24 -0700
-Message-Id: <20180521004324.68371-1-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+        Sun, 20 May 2018 20:49:14 -0400
+X-ME-Proxy: <xmx:ihcCWzXiD0JZslhWby2_0hRE8hauXHrtStQ03dtClPicR5xXk8HOmQ>
+X-ME-Proxy: <xmx:ihcCW7zkIxkKF85J5g1xCu7TCoClJf93hei43HDvHEVz2bgUaLPbjQ>
+X-ME-Proxy: <xmx:ihcCWxOV8wDPkOLAdO4aGx-lItVl62jkXsbFPdzQ7VYUklUWGVuA8Q>
+X-ME-Proxy: <xmx:ihcCW84I8BBKb9xCyk8lnrMKuN0kyZiH2RD5sZsby-TdhK_-wrsIyQ>
+X-ME-Proxy: <xmx:ihcCWyO_nD1iM2SQLK6s7k7Iq81v9t8Vp3r3z9lpmVXMTBL8xDxOcw>
+X-ME-Proxy: <xmx:ihcCW5Qjdn3rGJQNsobiDi4cy5g0zPawuakz3Rrkbuo1UAn8QDQCCw>
+X-ME-Sender: <xms:ihcCW1AHXElQxjAN9Yu3S2vW-LCprjsLkLlQ7KuKR1acyNayxxU7Sg>
+Subject: Re: mmotm 2018-05-17-16-26 uploaded (autofs)
+From: Ian Kent <raven@themaw.net>
+To: Randy Dunlap <rdunlap@infradead.org>, akpm@linux-foundation.org,
+        broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au,
+        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        mm-commits@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+References: <20180517232639.sD6Cz%akpm@linux-foundation.org>
+ <19926e1e-6dba-3b9f-fd97-d9eb88bfb7dd@infradead.org>
+ <49acf718-da2e-73dc-a3bf-c41d7546576e@themaw.net>
+ <9e3dfece-46a0-8ab2-2c7e-3edf956703a8@infradead.org>
+ <6441e45b-6216-a20a-5b1d-6f5663d701dd@themaw.net>
+ <80c2dcf5-b9a9-3d75-7f6f-d0e9c1a11fb9@themaw.net>
+ <22ae3b7e-bfbd-6537-9656-9fd429255d69@infradead.org>
+ <d225202d-fcba-851d-63a6-ae6a1c3ae0e7@themaw.net>
+Message-ID: <11712bc6-9d45-7bb1-4e88-720ee3e312dd@themaw.net>
+Date: Mon, 21 May 2018 08:49:08 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <d225202d-fcba-851d-63a6-ae6a1c3ae0e7@themaw.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+On 21/05/18 08:43, Ian Kent wrote:
+>>>
+>>> It looks like adding:
+>>> depends on AUTOFS_FS = n && AUTOFS_FS != m
+>>
+>> Hi.  Is there a typo on the line above?
 
-RCU tasks callbacks can take atleast 1 second before the callbacks are
-executed. This happens even if the hold-out tasks enter their quiescent states
-quickly. I noticed this when I was testing trampoline callback execution.
+LOL, but your point is what does the AUTOFS_FS != m do!
 
-To test the trampoline freeing, I wrote a simple script:
-cd /sys/kernel/debug/tracing/
-echo '__schedule_bug:traceon' > set_ftrace_filter;
-echo '!__schedule_bug:traceon' > set_ftrace_filter;
+The answer should be nothing but ..... I'll have to play
+a little more.
 
-In the background I had simple bash while loop:
-while [ 1 ]; do x=1; done &
-
-Total time of completion of above commands in seconds:
-
-With this patch:
-real    0m0.179s
-user    0m0.000s
-sys     0m0.054s
-
-Without this patch:
-real    0m1.098s
-user    0m0.000s
-sys     0m0.053s
-
-That's a great than 6X speed up in performance. In order to accomplish
-this, I am waiting for HZ/10 time before entering the hold-out checking
-loop. The loop still preserves its checking of held tasks every 1 second
-as before, incase this first test doesn't succeed.
-
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Peter Zilstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>
-Cc: byungchul.park@lge.com
-Cc: kernel-team@android.com
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
----
-Changes since v1->v2:
- - Changed total wait time to HZ/10 instead of 2 jiffies
- - Updated the commands to reproduce issue
-
- kernel/rcu/update.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
-index 5783bdf86e5a..a28698e44b08 100644
---- a/kernel/rcu/update.c
-+++ b/kernel/rcu/update.c
-@@ -743,6 +743,12 @@ static int __noreturn rcu_tasks_kthread(void *arg)
- 		 */
- 		synchronize_srcu(&tasks_rcu_exit_srcu);
- 
-+		/*
-+		 * Wait a little bit incase held tasks are released
-+		 * during their next timer ticks.
-+		 */
-+		schedule_timeout_interruptible(HZ/10);
-+
- 		/*
- 		 * Each pass through the following loop scans the list
- 		 * of holdout tasks, removing any that are no longer
-@@ -755,7 +761,6 @@ static int __noreturn rcu_tasks_kthread(void *arg)
- 			int rtst;
- 			struct task_struct *t1;
- 
--			schedule_timeout_interruptible(HZ);
- 			rtst = READ_ONCE(rcu_task_stall_timeout);
- 			needreport = rtst > 0 &&
- 				     time_after(jiffies, lastreport + rtst);
-@@ -768,6 +773,11 @@ static int __noreturn rcu_tasks_kthread(void *arg)
- 				check_holdout_task(t, needreport, &firstreport);
- 				cond_resched();
- 			}
-+
-+			if (list_empty(&rcu_tasks_holdouts))
-+				break;
-+
-+			schedule_timeout_interruptible(HZ);
- 		}
- 
- 		/*
--- 
-2.17.0.441.gb46fe60e1d-goog
+> 
+> Don't think so.
+> 
+> This was straight out of:
+> 
+> diff --git a/fs/autofs4/Kconfig b/fs/autofs4/Kconfig
+> index 53bc592a250d..2f9bafabac1b 100644
+> --- a/fs/autofs4/Kconfig
+> +++ b/fs/autofs4/Kconfig
+> @@ -1,6 +1,7 @@
+>  config AUTOFS4_FS
+>         tristate "Kernel automounter version 4 support (also supports v3 and v5)"
+>         default n
+> +       depends on AUTOFS_FS = n && AUTOFS_FS != m
+>         help
+>           The automounter is a tool to automatically mount remote file systems
+>           on demand. This implementation is partially kernel-based to reduce
+> @@ -30,3 +31,10 @@ config AUTOFS4_FS
+>           - any "alias autofs autofs4" will need to be removed.
+>  
+>           Please configure AUTOFS_FS instead of AUTOFS4_FS from now on.
+> +
+> +         NOTE: Since the modules autofs and autofs4 use the same file system
+> +               type name of "autofs" only one can be built. The "depends"
+> +               above will result in AUTOFS4_FS not appearing in .config for
+> +               any setting of AUTOFS_FS other than n and AUTOFS4_FS will
+> +               appear under the AUTOFS_FS entry otherwise which is intended
+> +               to draw attention to the module rename change.
+> 
+> which appears to do what's needed about as well as can be done and deals
+> with the AUTOFS4_FS=y && AUTOFS_FS=y case.
+> 
+> Ian
+> 
