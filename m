@@ -1,150 +1,146 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1184171-1526932708-2-7463030589210122311
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: 
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526932706; b=Yp89QiUyVm9TTLfFIGCIrqOlaxhCgSa/fiG6iNkhxh/AXVTWua
-    z5a4JQN4/Ac+vI3mdaZZNJDv7PaX/UY0kpXya49JyiN6SjBhL+pWMcH3kZzRfriE
-    0/QU5meB1p5+OUh0HdVEW/PjMelV8OcvpO+n6YE3jS+jCLxL4FvsLnEGelW5vITO
-    TAGWudCIJ1gJv+krnz6c9NMpr7D7DwersD3oHLtVUr4FomVsYmzxz4jBWBwlKzjK
-    LiqjoAPDF6gUMB9aWw66hJTwfgshLBsM84bNBLc9L5nuGzlA1sgojeBQlQHwJ6E4
-    Mf4vYfom4GTSD6Uk4MmFLqnr5yabisLlZb3g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=fm2; t=1526932706; bh=TOIEhXnV2dXmdq/8oCSTk6uNatgblz
-    K2/6TNn9QSQec=; b=dYPg42kjFi3Qp91N4HkuavsKBp7oaxKA5420CtdxuxnG4T
-    QzticWdJb7dvGjcV39QvvvS6TDknvsw7oQC9i3q01gCOwlJPzFtyXa8X6IKPNJ88
-    hMFkpibhMvaBZwbDORoXkWWdx/G+pu4DxrlAiDSdTBrRP2i/nfUAsonLARUWPv1M
-    rtfb/Yvs8n/RFxOEofzgAH9H6XG9FEKZ3s8HxOfZWEMidCftpGnljlIEsuOD9LFL
-    lVrtwFGcKPrKF1CazWfujsimSsjUe3lZkK+8R5Vz6u2u9TuXxc/DwsOlqY11c2VY
-    8mAvNgnIRilsvItbXvXND4atLTkXpG0uRNChAQ9g==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 1024-bit rsa key sha256)
-    header.d=linaro.org header.i=@linaro.org header.b=jl8JmkVT x-bits=1024
-    x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linaro.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=LuKTfJVv;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linaro.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (body has been altered, 1024-bit rsa key sha256)
-      header.d=linaro.org header.i=@linaro.org header.b=jl8JmkVT x-bits=1024
-      x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linaro.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=LuKTfJVv;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linaro.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGpr07SECJhdJM5o3vTiODWO4jG9Mopt7SarWJqLktNbFtAiH54l9wy6yxS+8+J5XDjRIkfdQVfO3gcCqWE3IVaYZiVcbFl9pv8+128tBg0c7ntJjzQn
-    VXRbZk846drQr/Kf3SDJOeFOTkjek5RNGhNDIcHDyiqaYX7/tDZ1t5/Wz2G9SZA1tqzn2sRZQ1IrU2XYIDRrmLinqrh++To8bQLZsmG6H4POxAKOXFYrJpX6
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=xqWC_Br6kY4A:10 a=VUJBJC2UJ8kA:10
-    a=jIQo8A4GAAAA:8 a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8
-    a=9f7s3DRQrkJldriD0Y0A:9 a=x8gzFH9gYPwA:10 a=Lf5xNeLK5dgiOs8hzIjU:22
-    a=AjGcO6oz07-iQ99wixmX:22 a=cvBusfyB2V15izCimMoJ:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751429AbeEUT6Y (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 21 May 2018 15:58:24 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:35528 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750977AbeEUT6Y (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Mon, 21 May 2018 15:58:24 -0400
-X-Google-Smtp-Source: AB8JxZrPseJsKk/hhKvKuTsWxBcOrcRTZo0dBhXtESCp2Ya69xcLZN2RR8gINCPiJ69d4ph5np8GSw==
-From: John Stultz <john.stultz@linaro.org>
-To: lkml <linux-kernel@vger.kernel.org>
-Cc: John Stultz <john.stultz@linaro.org>,
-        John Youn <johnyoun@synopsys.com>,
-        Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>,
-        Artur Petrosyan <arturp@synopsys.com>,
-        Grigor Tovmasyan <tovmasya@synopsys.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        linux-usb@vger.kernel.org
-Subject: [PATCH v2] usb: dwc2: Fix HiKey regression caused by power_down feature
-Date: Mon, 21 May 2018 12:58:18 -0700
-Message-Id: <1526932698-28285-1-git-send-email-john.stultz@linaro.org>
-X-Mailer: git-send-email 2.7.4
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+Return-Path: <yehs1@lenovo.com>
+X-Google-Smtp-Source: AB8JxZoBARAesc4Xuw1rIKkXvZbprB+/Gjv4RLwTtZUO2eUySDVm4BFGsKahA8zMbGij7VQQ7U/C
+ARC-Seal: i=1; a=rsa-sha256; t=1526926022; cv=none;
+        d=google.com; s=arc-20160816;
+        b=Q8Oo6N1vqN8nOsVg5B3Z07N3O0cOWgE8lnjlUKducldd3AloUpL3aWsANF/ZhbMAyn
+         6FHyIoV+BTnw3E/b4azJLwMqfyoW56iPwmeShsfPKwX3pOTUueBcMLTXUA3y8NQp2Oas
+         wGpTXpASZykf8G7RkN26oE++QZ0uQYyjj53tbck9O5cgKdobmH08iUJ5iLG01CMilg/C
+         KWVOkC8WDwWCqvimgiPdpXG01gYlMGl4lL6lXd/VD+MvxAYDe5S/KCWgi07i/QsZEHa3
+         V2gGYDnmWItu2Ar3gp1PygTXYqQPZdKhXuEf769jesZh+cDgzQvb7ejs3WCX+tl615ai
+         QdvQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:content-transfer-encoding:spamdiagnosticmetadata
+         :spamdiagnosticoutput:content-language:accept-language:message-id
+         :date:thread-index:thread-topic:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=L8Af918tH9mW1jC9uoN5F+2XnUGKsXp033K0w0x+AV8=;
+        b=cci97HM1I9WeQCjpNiZ1Le+mAkf2D+erjkTIcz8wI/ebyIq4HRmdOdBRffCa63Wxia
+         +TOQ+xsQCj76gjck1IIh/jlP+VYfi+cnzzW0ed4v29NSUChqZN9BYIKl3/0c2yaJqpHo
+         VP/tWbU7aeSroc1b4e/WTydDyHehL5pPDyyK00uSEA0J656H84VY+opwufH1DoItwqDM
+         29G3UIfHUPeSOj40KKez9pFX3ouRQq7kXmwHEj5nuKXJz/m+7sYLLZe3MW62FK53Ngyi
+         hnxRVMvl1+95igGLg3lT8xU8VXctwYit86Xu0axr/xEduMvA95mDJoDz+bydjXf8/+nC
+         Q/Vw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@LenovoBeijing.onmicrosoft.com header.s=selector1-lenovo-com header.b=lePPFJHS;
+       spf=pass (google.com: domain of yehs1@lenovo.com designates 216.82.243.198 as permitted sender) smtp.mailfrom=yehs1@lenovo.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=lenovo.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@LenovoBeijing.onmicrosoft.com header.s=selector1-lenovo-com header.b=lePPFJHS;
+       spf=pass (google.com: domain of yehs1@lenovo.com designates 216.82.243.198 as permitted sender) smtp.mailfrom=yehs1@lenovo.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=lenovo.com
+X-Brightmail-Tracker: H4sIAAAAAAAAA1WTfUxTVxjGe+63hLtcLjDeNWJmkwWpwiDL8CY
+  km5vZcv/YEjOnyWAZtttd29kPdm8h3Uc2qtMgk48pgcGKVq1YGQ6oBclKdOlwGUqCMqboNhuo
+  bgMdSjMHGQmut1fd9t/zvM/vvOc9J+cwOB+m9YzkcUuy02Q3UGmE9fcprOBsGl5e5JtfL/h6u
+  inh8Gmr0Oodo4Wby62EsPNIDyUc//IsJvjPlAp7fTuQMB4P0sIPX/so4Vr3PVIYPHoaE2ING4
+  TOu7dpYXegDxO+8DYgYWkxSSyE92PC+dpmckOm6A9ViZ8M/0GKJ4NGMdS1hxJDiX20+P3nS4R
+  4pqObFvdPHkPit3cmCDFypYYS529cJcSe8I+EOOofpsWT5z8Q+/9+Rty1kL0po4y0Oc0uzzbS
+  OrjjZ7LypzTPgctBvAb9ydShNIbnriPoG4iSmokiaGzxItUQXBCHxFcXaS1pwOCb7+KYZmIIb
+  kwFk9gKhuLyYeTWJVwNsrhmBFd29lGqwblGGoZ2HaJVKpN7FQLjg6kVWdxrMBMZwjVdCJ2Jrl
+  Sd4J6AxhP1KZ7lXoe5Wq2OuFxomY5hqsa5HOhoaSdVDRwHgaExXNPZMBNfTtaZJP8KzIXf0Mq
+  rwRc5eh/JhfGDn6bOBlwTCW29FzHNDCC4eucYpVFG6B2pSzUCbjscH5U0pg7BZP2t+8wq6Kqf
+  IrQghEPvYozQgpUwdupXWgumSYgf7Eh14jkznFiyafU4gguBJVK7Fj38MrEHNaG17f85nabXg
+  T+SoDS9FjoP3cTbUzeTASNt1wk/IrrQGkWSqyW54KmSQrNss1jdDpPNXlBcJBQ6JEUxWSS7ya
+  wUvulyhFDyBX+s06FBdLezPIoeYzBDNrv8LlbOP2J2vfWe1aRYK+Qqu6RE0UqGMQArrMDL+Qx
+  Zskiet2325Dd4EAOTbshiS9SYVSpNDsVm0aJzqIDpDu/bi/OE0+WU9DnssyrEqZC1yvmwxYPP
+  NI5y9Zks0ul0fHqlJDts7v/nsyiHQYZMdrPaJd3mdD/caTY5BJYcojZ6ryw5hNv0b6SvQYEj0
+  Y/mXya8Yv+HngEeG+1Q1m8seXrL4oVY0daN0/zmdVOzTef+enSuDLltW5u2bfJl8Hn5v7UdeG
+  7LYX2e8dT78nAxq6/2RmouV2dvHykllSfll975zO7p9xkfXzU51PzC6onRVqdiuZao5rPyay/
+  tXrhdUfHiDFua5088X7TGZSAUq6nYiMuK6R/2jLC3RwQAAA==
+X-Env-Sender: yehs1@lenovo.com
+X-Msg-Ref: server-16.tower-144.messagelabs.com!1526926021!25956812!1
+X-Originating-IP: [104.232.225.2]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.9.15; banners=-,-,-
+X-VirusChecked: Checked
+From: Huaisheng HS1 Ye <yehs1@lenovo.com>
+To: "akpm@linux-foundation.org" <akpm@linux-foundation.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, "willy@infradead.org"
+	<willy@infradead.org>
+CC: "mhocko@suse.com" <mhocko@suse.com>, "vbabka@suse.cz" <vbabka@suse.cz>, "mgorman@techsingularity.net" <mgorman@techsingularity.net>, "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>, "alexander.levin@verizon.com" <alexander.levin@verizon.com>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "colyli@suse.de"
+	<colyli@suse.de>, NingTing Cheng <chengnt@lenovo.com>, Ocean HY1 He
+	<hehy1@lenovo.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "iommu@lists.linux-foundation.org"
+	<iommu@lists.linux-foundation.org>, "xen-devel@lists.xenproject.org"
+	<xen-devel@lists.xenproject.org>, "linux-btrfs@vger.kernel.org"
+	<linux-btrfs@vger.kernel.org>, "hch@lst.de" <hch@lst.de>, "zhongjiang@huawei.com" <zhongjiang@huawei.com>, "minchan@kernel.org"
+	<minchan@kernel.org>, "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>, "rientjes@google.com" <rientjes@google.com>
+Subject: [RFC PATCH v2 09/12] mm/vmpressure: update usage of address zone
+ modifiers
+Thread-Topic: [RFC PATCH v2 09/12] mm/vmpressure: update usage of address zone
+ modifiers
+Thread-Index: AdPxLkxZEy+b+TRpTsGychxB72xX5g==
+Date: Mon, 21 May 2018 18:06:48 +0000
+Message-ID: <HK2PR03MB16849EA4D9CE5C230EB9966492950@HK2PR03MB1684.apcprd03.prod.outlook.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [125.33.105.40]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;HK2PR03MB0690;7:806hGBRjtBnPewuPJ+dubLKgUvYMX8WCmfAHa1nFvJSkABhCq587oLfUIhtMN9DV/R0zsFC7rLjF2lIYhAMOn5YmT2uQluNjrf4TQSCcBk59mqatIXKjxDQEFLyANPURN0BhTLXbtXPuGTbKXwavBcuAEtV01m+06VEDuWssHPxgZcWl+Z6HRG0QYrAaEFq1qUFEG75YrDsASLI74Ewj0MVeypzu9R/nafU1JYGYENqFDZpVh1E82ApfQFk/TCFu;20:ME7wmJgfcsO/+qvAVKc++QHKIH0XX2nROGg7w80SlqWhjcDkkHO1yI9DcevnsUOR9T+saj4DzVlVjsvZlmrxAmTJMWMo7uxrAczdog0kQ8/0p+Ky19CkEl6fpkiTrikVrFxImdmbvZg191c7vcOrwRm27SWkw3zBiwLdSs8rRsEoL4GOpfeMczsvbREE6/ys4bXnwRNLDwYt7yBeyZuR664x0gUVSc2ErMVZCzOuzQRp4wGOKHIaHVJH3ve8dC5wcetVu1yyfQLdvpWBTrSN0CRecV897BBDbD+lPaDsCez5kuwounIg71LICFVkTBkzxcYd/bwpPELc8kSBR3dFbw==
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:HK2PR03MB0690;
+x-ms-traffictypediagnostic: HK2PR03MB0690:
+x-microsoft-antispam-prvs: <HK2PR03MB06906243E6D397FDD4744F4492950@HK2PR03MB0690.apcprd03.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(3940261145250)(50582790962513)(788757137089)(211936372134217)(153496737603132)(146099531331640);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(3231254)(944501410)(52105095)(93006095)(93001095)(10201501046)(149027)(150027)(6041310)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:HK2PR03MB0690;BCL:0;PCL:0;RULEID:;SRVR:HK2PR03MB0690;
+x-forefront-prvs: 06793E740F
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(396003)(346002)(366004)(376002)(39850400004)(189003)(199004)(316002)(68736007)(4326008)(81156014)(110136005)(14066004)(7416002)(6116002)(3846002)(3280700002)(74316002)(2900100001)(5250100002)(7696005)(81166006)(86362001)(9686003)(8936002)(97736004)(14454004)(5660300001)(33656002)(486006)(53936002)(8676002)(2201001)(54906003)(476003)(55016002)(66066001)(105586002)(99286004)(15650500001)(25786009)(106356001)(59450400001)(7736002)(6506007)(305945005)(186003)(26005)(3660700001)(2906002)(2501003)(478600001)(6436002)(102836004)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:HK2PR03MB0690;H:HK2PR03MB1684.apcprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: vF+4isIzNCqc+H98/q9u6q/mkgG+cN8xdeITGxJlXUzuSOXJo/cqNG8BLyxHBth/zK3wi9gKq3Zx7kPqUK6BqE5oXuLtpo9Q0M9dg3kwYLj+mXGPIs2iBWS7WJSoJ0C2O0fudur7kTcSb8+7sWJsLXZVgs7fLSpqBdkEaH2+pujHlj0Jjgcm3TWS7fbgDmRe
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Office365-Filtering-Correlation-Id: 11cb9eb4-7dd4-4c9e-a6b9-08d5bf459f12
+X-MS-Exchange-CrossTenant-Network-Message-Id: 11cb9eb4-7dd4-4c9e-a6b9-08d5bf459f12
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 May 2018 18:06:48.2749
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 5c7d0b28-bdf8-410c-aa93-4df372b16203
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK2PR03MB0690
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1601097981260839782?=
+X-GMAIL-MSGID: =?utf-8?q?1601097981260839782?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-In 4.17-rc, commit 03ea6d6e9e1f ("usb: dwc2: Enable power down")
-caused the HiKey board to not correctly handle switching between
-usb-gadget and usb-host mode.
+Use __GFP_ZONE_MOVABLE to replace (__GFP_HIGHMEM | __GFP_MOVABLE).
 
-Unplugging the OTG port would result in:
-[   42.240973] dwc2 f72c0000.usb: dwc2_restore_host_registers: no host registers to restore
-[   42.249066] dwc2 f72c0000.usb: dwc2_host_exit_hibernation: failed to restore host registers
+___GFP_DMA, ___GFP_HIGHMEM and ___GFP_DMA32 have been deleted from GFP=20
+bitmasks, the bottom three bits of GFP mask is reserved for storing
+encoded zone number.
 
-And the USB-host ports would not function.
+__GFP_ZONE_MOVABLE contains encoded ZONE_MOVABLE and __GFP_MOVABLE flag.
 
-And plugging in the OTG port, we would see:
-[   46.046557] WARNING: CPU: 3 PID: 6 at drivers/usb/dwc2/gadget.c:260 dwc2_hsotg_init_fifo+0x194/0x1a0
-[   46.055761] CPU: 3 PID: 6 Comm: kworker/u16:0 Not tainted 4.17.0-rc5-00030-ge67da8c #231
-[   46.055767] Hardware name: HiKey Development Board (DT)
-[   46.055784] Workqueue: dwc2 dwc2_conn_id_status_change
-...
+With GFP_ZONE_TABLE, __GFP_HIGHMEM ORing __GFP_MOVABLE means gfp_zone
+should return ZONE_MOVABLE. In order to keep that compatible with
+GFP_ZONE_TABLE, replace (__GFP_HIGHMEM | __GFP_MOVABLE) with
+__GFP_ZONE_MOVABLE.
 
-Thus, this patch sets the hisi params to disable the power_down
-flag by default, and gets thing working again.
-
-Cc: John Youn <johnyoun@synopsys.com>
-Cc: Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>
-Cc: Artur Petrosyan <arturp@synopsys.com>
-Cc: Grigor Tovmasyan <tovmasya@synopsys.com>
-Cc: Felipe Balbi <felipe.balbi@linux.intel.com>
-Cc: linux-usb@vger.kernel.org
-Signed-off-by: John Stultz <john.stultz@linaro.org>
+Signed-off-by: Huaisheng Ye <yehs1@lenovo.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: zhongjiang <zhongjiang@huawei.com>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: David Rientjes <rientjes@google.com>
 ---
-v2: Use DWC2_POWER_DOWN_PARAM_NONE as suggested by Minas
----
- drivers/usb/dwc2/params.c | 1 +
- 1 file changed, 1 insertion(+)
+ mm/vmpressure.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/dwc2/params.c b/drivers/usb/dwc2/params.c
-index f03e418..d38871c 100644
---- a/drivers/usb/dwc2/params.c
-+++ b/drivers/usb/dwc2/params.c
-@@ -70,6 +70,7 @@ static void dwc2_set_his_params(struct dwc2_hsotg *hsotg)
- 		GAHBCFG_HBSTLEN_SHIFT;
- 	p->uframe_sched = false;
- 	p->change_speed_quirk = true;
-+	p->power_down = DWC2_POWER_DOWN_PARAM_NONE;
- }
- 
- static void dwc2_set_rk_params(struct dwc2_hsotg *hsotg)
--- 
-2.7.4
-
+diff --git a/mm/vmpressure.c b/mm/vmpressure.c
+index 85350ce..30a40e2 100644
+--- a/mm/vmpressure.c
++++ b/mm/vmpressure.c
+@@ -256,7 +256,7 @@ void vmpressure(gfp_t gfp, struct mem_cgroup *memcg, bo=
+ol tree,
+         * Indirect reclaim (kswapd) sets sc->gfp_mask to GFP_KERNEL, so
+         * we account it too.
+         */
+-       if (!(gfp & (__GFP_HIGHMEM | __GFP_MOVABLE | __GFP_IO | __GFP_FS)))
++       if (!(gfp & (__GFP_ZONE_MOVABLE | __GFP_IO | __GFP_FS)))
+                return;
+=20
+        /*
+--=20
+1.8.3.1
