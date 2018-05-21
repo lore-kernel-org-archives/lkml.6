@@ -1,217 +1,183 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751185AbeEUIOe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 04:14:34 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:54888 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751133AbeEUIOb (ORCPT
+        id S1751134AbeEUI3z (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 04:29:55 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:34697 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751081AbeEUI3x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 04:14:31 -0400
+        Mon, 21 May 2018 04:29:53 -0400
+X-Google-Smtp-Source: AB8JxZrdnPMOvYCUJjPUGVRlUT0FEnWVV9zTa/T8Bz3PR9VPhRWWPcBntcu9rB04t9OW70/AztNFAsXHe9SHwdVL2XY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date: Mon, 21 May 2018 10:14:23 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: Anson Huang <anson.huang@nxp.com>
-Cc: shawnguo@kernel.org, kernel@pengutronix.de,
-        Fabio Estevam <fabio.estevam@nxp.com>, robh+dt@kernel.org,
-        mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
-        Adriana Reus <adriana.reus@nxp.com>, rui.silva@linaro.org,
-        dl-linux-imx <linux-imx@nxp.com>, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH V2 2/3] clk: imx7d: correct enet clock CCGR registers
-In-Reply-To: <AM3PR04MB1315417C51882B554AEBC617F5950@AM3PR04MB1315.eurprd04.prod.outlook.com>
-References: <1526605266-18464-1-git-send-email-Anson.Huang@nxp.com>
- <1526605266-18464-2-git-send-email-Anson.Huang@nxp.com>
- <c42c4274cfd06297d1699c96d3253125@agner.ch>
- <AM3PR04MB1315417C51882B554AEBC617F5950@AM3PR04MB1315.eurprd04.prod.outlook.com>
-Message-ID: <bdaca652700a6f70aca14fd450bd4dab@agner.ch>
-User-Agent: Roundcube Webmail/1.3.4
-X-Spamd-Result: default: False [-0.31 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MID_RHS_MATCH_FROM(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[15];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         RCVD_TLS_ALL(0.00)[];
-         BAYES_HAM(-0.21)[71.78%];
-         ARC_NA(0.00)[]
+In-Reply-To: <20180521051424.mljwmisvrvi6yyc4@vireshk-i7>
+References: <20180518185501.173552-1-joel@joelfernandes.org> <20180521051424.mljwmisvrvi6yyc4@vireshk-i7>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 21 May 2018 10:29:52 +0200
+X-Google-Sender-Auth: OdcCFDy7sovRJWFxIFzi1_XHStA
+Message-ID: <CAJZ5v0jbJ3HfLyP6VZ2PuG0q1n=faX3G98ruwK-o1ro+gv7B9w@mail.gmail.com>
+Subject: Re: [PATCH v2] schedutil: Allow cpufreq requests to be made even when
+ kthread kicked
+To: Viresh Kumar <viresh.kumar@linaro.org>,
+        "Joel Fernandes (Google.)" <joelaf@google.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Luca Abeni <luca.abeni@santannapisa.it>, Todd Kjos <tkjos@google.com>,
+        Claudio Scordino <claudio@evidence.eu.com>, kernel-team@android.com,
+        Linux PM <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21.05.2018 04:35, Anson Huang wrote:
-> Hi, Stefan
-> 
-> Anson Huang
-> Best Regards!
-> 
-> 
->> -----Original Message-----
->> From: Stefan Agner [mailto:stefan@agner.ch]
->> Sent: Friday, May 18, 2018 9:02 PM
->> To: Anson Huang <anson.huang@nxp.com>
->> Cc: shawnguo@kernel.org; kernel@pengutronix.de; Fabio Estevam
->> <fabio.estevam@nxp.com>; robh+dt@kernel.org; mark.rutland@arm.com;
->> mturquette@baylibre.com; sboyd@kernel.org; Adriana Reus
->> <adriana.reus@nxp.com>; rui.silva@linaro.org; dl-linux-imx
->> <linux-imx@nxp.com>; linux-arm-kernel@lists.infradead.org;
->> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org;
->> linux-clk@vger.kernel.org
->> Subject: Re: [PATCH V2 2/3] clk: imx7d: correct enet clock CCGR registers
+On Mon, May 21, 2018 at 7:14 AM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> On 18-05-18, 11:55, Joel Fernandes (Google.) wrote:
+>> From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
 >>
->> On 18.05.2018 03:01, Anson Huang wrote:
->> > Correct enet clock gates as below:
->> >
->> > CCGR6: IMX7D_ENET_AXI_ROOT_CLK (enet1 and enet2 bus clocks)
->> > CCGR112: IMX7D_ENET1_TIME_ROOT_CLK, IMX7D_ENET1_IPG_ROOT_CLK
->> > CCGR113: IMX7D_ENET2_TIME_ROOT_CLK, IMX7D_ENET2_IPG_ROOT_CLK
->> >
->> > Just rename unused IMX7D_ENETx_REF_ROOT_CLK for
->> > IMX7D_ENETx_IPG_ROOT_CLK instead of adding new clocks.
+>> Currently there is a chance of a schedutil cpufreq update request to be
+>> dropped if there is a pending update request. This pending request can
+>> be delayed if there is a scheduling delay of the irq_work and the wake
+>> up of the schedutil governor kthread.
 >>
->> Are you sure that IMX7D_ENETx_REF_ROOT_CLK are not used?
+>> A very bad scenario is when a schedutil request was already just made,
+>> such as to reduce the CPU frequency, then a newer request to increase
+>> CPU frequency (even sched deadline urgent frequency increase requests)
+>> can be dropped, even though the rate limits suggest that its Ok to
+>> process a request. This is because of the way the work_in_progress flag
+>> is used.
 >>
->> I understand that the reference manual does not a gate at 0x44e0...
+>> This patch improves the situation by allowing new requests to happen
+>> even though the old one is still being processed. Note that in this
+>> approach, if an irq_work was already issued, we just update next_freq
+>> and don't bother to queue another request so there's no extra work being
+>> done to make this happen.
+>
+> Now that this isn't an RFC anymore, you shouldn't have added below
+> paragraph here. It could go to the comments section though.
+>
+>> I had brought up this issue at the OSPM conference and Claudio had a
+>> discussion RFC with an alternate approach [1]. I prefer the approach as
+>> done in the patch below since it doesn't need any new flags and doesn't
+>> cause any other extra overhead.
 >>
->> But in a earlier revision of our Colibri iMX7 we actually used clock out, and
->> referenced this clock to enable the reference clock (see also:
->> https://emea01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fpatch
->> work.kernel.org%2Fpatch%2F9211371%2F&data=02%7C01%7CAnson.Huang%
->> 40nxp.com%7Cea0856a68d8e4b921ba608d5bcbf9c02%7C686ea1d3bc2b4c6fa
->> 92cd99c5c301635%7C0%7C1%7C636622453508888330&sdata=rEhwj0innLDc
->> AEgxJyqd5vtG3SNVS05r2hEFvSc%2BQQs%3D&reserved=0).
+>> [1] https://patchwork.kernel.org/patch/10384261/
 >>
->> I guess if the gate really does not exist, then we should/would have to set
->> IMX7D_ENET1_REF_ROOT_DIV to use the SoC provided ref clock.
->>
->> --
->> Stefan
->  
-> I looked into the RTL and also checked with our design team, they confirm that
-> there is no CCGR78(0x44e0) and CCGR80(0x4500) on i.MX7D, the register offset
-> are there, but no hardware wire connection for them. That is why they did NOT
-> list them in Reference Manual. So I think we can remove them. 
-> 
-> For your case of using them as clock input, maybe clock tree auto use its parent
-> IMX7D_ENETx_REF_ROOT_DIV which is existing, so it works.
+>> LGTMed-by: Viresh Kumar <viresh.kumar@linaro.org>
+>> LGTMed-by: Juri Lelli <juri.lelli@redhat.com>
+>
+> Looks like a Tag you just invented ? :)
 
-That make sense.
+Yeah.
 
-The change looks good to me.
+The LGTM from Juri can be converned into an ACK silently IMO.  That
+said I have added Looks-good-to: tags to a couple of commits. :-)
 
-Reviewed-by: Stefan Agner <stefan@agner.ch>
-
---
-Stefan
-
-> 
-> Anson.
-> 
+>> CC: Viresh Kumar <viresh.kumar@linaro.org>
+>> CC: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>> CC: Peter Zijlstra <peterz@infradead.org>
+>> CC: Ingo Molnar <mingo@redhat.com>
+>> CC: Patrick Bellasi <patrick.bellasi@arm.com>
+>> CC: Juri Lelli <juri.lelli@redhat.com>
+>> Cc: Luca Abeni <luca.abeni@santannapisa.it>
+>> CC: Joel Fernandes <joelaf@google.com>
+>> CC: Todd Kjos <tkjos@google.com>
+>> CC: claudio@evidence.eu.com
+>> CC: kernel-team@android.com
+>> CC: linux-pm@vger.kernel.org
+>> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+>> ---
+>> v1 -> v2: Minor style related changes.
 >>
->> >
->> > Based on Andy Duan's patch from the NXP kernel tree.
->> >
->> > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
->> > ---
->> >  drivers/clk/imx/clk-imx7d.c             | 10 ++++++----
->> >  include/dt-bindings/clock/imx7d-clock.h |  4 ++--
->> >  2 files changed, 8 insertions(+), 6 deletions(-)
->> >
->> > diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
->> > index 23d5090a..d4936b9 100644
->> > --- a/drivers/clk/imx/clk-imx7d.c
->> > +++ b/drivers/clk/imx/clk-imx7d.c
->> > @@ -26,6 +26,8 @@ static u32 share_count_sai1;  static u32
->> > share_count_sai2;  static u32 share_count_sai3;  static u32
->> > share_count_nand;
->> > +static u32 share_count_enet1;
->> > +static u32 share_count_enet2;
->> >
->> >  static const struct clk_div_table test_div_table[] = {
->> >  	{ .val = 3, .div = 1, },
->> > @@ -805,6 +807,10 @@ static void __init imx7d_clocks_init(struct
->> > device_node *ccm_node)
->> >  	clks[IMX7D_MIPI_DSI_ROOT_CLK] = imx_clk_gate4("mipi_dsi_root_clk",
->> > "mipi_dsi_post_div", base + 0x4650, 0);
->> >  	clks[IMX7D_MIPI_CSI_ROOT_CLK] = imx_clk_gate4("mipi_csi_root_clk",
->> > "mipi_csi_post_div", base + 0x4640, 0);
->> >  	clks[IMX7D_MIPI_DPHY_ROOT_CLK] =
->> imx_clk_gate4("mipi_dphy_root_clk",
->> > "mipi_dphy_post_div", base + 0x4660, 0);
->> > +	clks[IMX7D_ENET1_IPG_ROOT_CLK] =
->> > imx_clk_gate2_shared2("enet1_ipg_root_clk", "enet_axi_post_div", base
->> > + 0x4700, 0, &share_count_enet1);
->> > +	clks[IMX7D_ENET1_TIME_ROOT_CLK] =
->> > imx_clk_gate2_shared2("enet1_time_root_clk", "enet1_time_post_div",
->> > base + 0x4700, 0, &share_count_enet1);
->> > +	clks[IMX7D_ENET2_IPG_ROOT_CLK] =
->> > imx_clk_gate2_shared2("enet2_ipg_root_clk", "enet_axi_post_div", base
->> > + 0x4710, 0, &share_count_enet2);
->> > +	clks[IMX7D_ENET2_TIME_ROOT_CLK] =
->> > imx_clk_gate2_shared2("enet2_time_root_clk", "enet2_time_post_div",
->> > base + 0x4710, 0, &share_count_enet2);
->> >  	clks[IMX7D_SAI1_ROOT_CLK] = imx_clk_gate2_shared2("sai1_root_clk",
->> > "sai1_post_div", base + 0x48c0, 0, &share_count_sai1);
->> >  	clks[IMX7D_SAI1_IPG_CLK]  = imx_clk_gate2_shared2("sai1_ipg_clk",
->> > "ipg_root_clk",  base + 0x48c0, 0, &share_count_sai1);
->> >  	clks[IMX7D_SAI2_ROOT_CLK] = imx_clk_gate2_shared2("sai2_root_clk",
->> > "sai2_post_div", base + 0x48d0, 0, &share_count_sai2); @@ -812,10
->> > +818,6 @@ static void __init imx7d_clocks_init(struct device_node
->> > *ccm_node)
->> >  	clks[IMX7D_SAI3_ROOT_CLK] = imx_clk_gate2_shared2("sai3_root_clk",
->> > "sai3_post_div", base + 0x48e0, 0, &share_count_sai3);
->> >  	clks[IMX7D_SAI3_IPG_CLK]  = imx_clk_gate2_shared2("sai3_ipg_clk",
->> > "ipg_root_clk",  base + 0x48e0, 0, &share_count_sai3);
->> >  	clks[IMX7D_SPDIF_ROOT_CLK] = imx_clk_gate4("spdif_root_clk",
->> > "spdif_post_div", base + 0x44d0, 0);
->> > -	clks[IMX7D_ENET1_REF_ROOT_CLK] =
->> imx_clk_gate4("enet1_ref_root_clk",
->> > "enet1_ref_post_div", base + 0x44e0, 0);
->> > -	clks[IMX7D_ENET1_TIME_ROOT_CLK] =
->> > imx_clk_gate4("enet1_time_root_clk", "enet1_time_post_div", base +
->> > 0x44f0, 0);
->> > -	clks[IMX7D_ENET2_REF_ROOT_CLK] =
->> imx_clk_gate4("enet2_ref_root_clk",
->> > "enet2_ref_post_div", base + 0x4500, 0);
->> > -	clks[IMX7D_ENET2_TIME_ROOT_CLK] =
->> > imx_clk_gate4("enet2_time_root_clk", "enet2_time_post_div", base +
->> > 0x4510, 0);
->> >  	clks[IMX7D_EIM_ROOT_CLK] = imx_clk_gate4("eim_root_clk",
->> > "eim_post_div", base + 0x4160, 0);
->> >  	clks[IMX7D_NAND_RAWNAND_CLK] =
->> > imx_clk_gate2_shared2("nand_rawnand_clk", "nand_root_clk", base +
->> > 0x4140, 0, &share_count_nand);
->> >  	clks[IMX7D_NAND_USDHC_BUS_RAWNAND_CLK] =
->> > imx_clk_gate2_shared2("nand_usdhc_rawnand_clk",
->> "nand_usdhc_root_clk",
->> > base + 0x4140, 0, &share_count_nand); diff --git
->> > a/include/dt-bindings/clock/imx7d-clock.h
->> > b/include/dt-bindings/clock/imx7d-clock.h
->> > index b2325d3e2..0d67f53 100644
->> > --- a/include/dt-bindings/clock/imx7d-clock.h
->> > +++ b/include/dt-bindings/clock/imx7d-clock.h
->> > @@ -168,7 +168,7 @@
->> >  #define IMX7D_SPDIF_ROOT_SRC		155
->> >  #define IMX7D_SPDIF_ROOT_CG		156
->> >  #define IMX7D_SPDIF_ROOT_DIV		157
->> > -#define IMX7D_ENET1_REF_ROOT_CLK	158
->> > +#define IMX7D_ENET1_IPG_ROOT_CLK        158
->> >  #define IMX7D_ENET1_REF_ROOT_SRC	159
->> >  #define IMX7D_ENET1_REF_ROOT_CG		160
->> >  #define IMX7D_ENET1_REF_ROOT_DIV	161
->> > @@ -176,7 +176,7 @@
->> >  #define IMX7D_ENET1_TIME_ROOT_SRC	163
->> >  #define IMX7D_ENET1_TIME_ROOT_CG	164
->> >  #define IMX7D_ENET1_TIME_ROOT_DIV	165
->> > -#define IMX7D_ENET2_REF_ROOT_CLK	166
->> > +#define IMX7D_ENET2_IPG_ROOT_CLK        166
->> >  #define IMX7D_ENET2_REF_ROOT_SRC	167
->> >  #define IMX7D_ENET2_REF_ROOT_CG		168
->> >  #define IMX7D_ENET2_REF_ROOT_DIV	169
+>>  kernel/sched/cpufreq_schedutil.c | 34 ++++++++++++++++++++++++--------
+>>  1 file changed, 26 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+>> index e13df951aca7..5c482ec38610 100644
+>> --- a/kernel/sched/cpufreq_schedutil.c
+>> +++ b/kernel/sched/cpufreq_schedutil.c
+>> @@ -92,9 +92,6 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
+>>           !cpufreq_can_do_remote_dvfs(sg_policy->policy))
+>>               return false;
+>>
+>> -     if (sg_policy->work_in_progress)
+>> -             return false;
+>> -
+>>       if (unlikely(sg_policy->need_freq_update)) {
+>>               sg_policy->need_freq_update = false;
+>>               /*
+>> @@ -128,7 +125,7 @@ static void sugov_update_commit(struct sugov_policy *sg_policy, u64 time,
+>>
+>>               policy->cur = next_freq;
+>>               trace_cpu_frequency(next_freq, smp_processor_id());
+>> -     } else {
+>> +     } else if (!sg_policy->work_in_progress) {
+>>               sg_policy->work_in_progress = true;
+>>               irq_work_queue(&sg_policy->irq_work);
+>>       }
+>> @@ -291,6 +288,13 @@ static void sugov_update_single(struct update_util_data *hook, u64 time,
+>>
+>>       ignore_dl_rate_limit(sg_cpu, sg_policy);
+>>
+>> +     /*
+>> +      * For slow-switch systems, single policy requests can't run at the
+>> +      * moment if update is in progress, unless we acquire update_lock.
+>> +      */
+>> +     if (sg_policy->work_in_progress)
+>> +             return;
+>> +
+>
+> I would still want this to go away :)
+>
+> @Rafael, will it be fine to get locking in place for unshared policy
+> platforms ?
+
+As long as it doesn't affect the fast switch path in any way.
+
+>
+>>       if (!sugov_should_update_freq(sg_policy, time))
+>>               return;
+>>
+>> @@ -382,13 +386,27 @@ sugov_update_shared(struct update_util_data *hook, u64 time, unsigned int flags)
+>>  static void sugov_work(struct kthread_work *work)
+>>  {
+>>       struct sugov_policy *sg_policy = container_of(work, struct sugov_policy, work);
+>> +     unsigned int freq;
+>> +     unsigned long flags;
+>> +
+>> +     /*
+>> +      * Hold sg_policy->update_lock shortly to handle the case where:
+>> +      * incase sg_policy->next_freq is read here, and then updated by
+>> +      * sugov_update_shared just before work_in_progress is set to false
+>> +      * here, we may miss queueing the new update.
+>> +      *
+>> +      * Note: If a work was queued after the update_lock is released,
+>> +      * sugov_work will just be called again by kthread_work code; and the
+>> +      * request will be proceed before the sugov thread sleeps.
+>> +      */
+>> +     raw_spin_lock_irqsave(&sg_policy->update_lock, flags);
+>> +     freq = sg_policy->next_freq;
+>> +     sg_policy->work_in_progress = false;
+>> +     raw_spin_unlock_irqrestore(&sg_policy->update_lock, flags);
+>>
+>>       mutex_lock(&sg_policy->work_lock);
+>> -     __cpufreq_driver_target(sg_policy->policy, sg_policy->next_freq,
+>> -                             CPUFREQ_RELATION_L);
+>> +     __cpufreq_driver_target(sg_policy->policy, freq, CPUFREQ_RELATION_L);
+>>       mutex_unlock(&sg_policy->work_lock);
+>> -
+>> -     sg_policy->work_in_progress = false;
+>>  }
+>>
+>>  static void sugov_irq_work(struct irq_work *irq_work)
+>
+> Fix the commit log and you can add my
+
+I can fix it up.
+
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+
+Thanks,
+Rafael
