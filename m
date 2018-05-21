@@ -1,119 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751317AbeEUUDW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 16:03:22 -0400
-Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:60559 "EHLO
-        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750947AbeEUUDT (ORCPT
+        id S1751117AbeEUULZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 16:11:25 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:33985 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751027AbeEUULW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 16:03:19 -0400
-From: Vlad Buslov <vladbu@mellanox.com>
-To: davem@davemloft.net
-Cc: netdev@vger.kernel.org, jhs@mojatatu.com, xiyou.wangcong@gmail.com,
-        jiri@resnulli.us, linux-kernel@vger.kernel.org,
-        Vlad Buslov <vladbu@mellanox.com>
-Subject: [PATCH net-next v2] net: sched: don't disable bh when accessing action idr
-Date: Mon, 21 May 2018 23:03:04 +0300
-Message-Id: <1526932984-11544-1-git-send-email-vladbu@mellanox.com>
-X-Mailer: git-send-email 2.7.5
-In-Reply-To: <20180519.230258.1374885458106197707.davem@davemloft.net>
-References: <20180519.230258.1374885458106197707.davem@davemloft.net>
+        Mon, 21 May 2018 16:11:22 -0400
+X-Google-Smtp-Source: AB8JxZrsbFTIskfTbnWHHeFT4gkYGggDRa8xHrxP7wUU4mlUvepLlZO4E4qy5wIqQppWTZbpRlF99/DaTyp4lScb9To=
+MIME-Version: 1.0
+In-Reply-To: <20180521165803.GA15717@agluck-desk>
+References: <CAG=yYwmnHgAvauZLxfFcUEACF_J+qh4d2tvYY=AdjHvyeSFK_A@mail.gmail.com>
+ <20180514162752.GG23049@pd.tnic> <CAG=yYwk-dbMF_7eS9bUraAru8b4fyCosxp+MpQA=1ZYH0nd_hg@mail.gmail.com>
+ <20180520204032.GA19845@pd.tnic> <CAG=yYw=bdgsTSW80R1Wt9uUTtXeMwX5macbjrPBNzVLihk-Ufw@mail.gmail.com>
+ <20180521165803.GA15717@agluck-desk>
+From: Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>
+Date: Tue, 22 May 2018 01:41:20 +0530
+Message-ID: <CAG=yYw=OQ7zpyK-5iqg7uQvcykTvuhQfX=RFg3GpQGvCRowd=Q@mail.gmail.com>
+Subject: Re: PROBLEM: mce: [Hardware Error] from dmesg -l emerg
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        linux-edac@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Initial net_device implementation used ingress_lock spinlock to synchronize
-ingress path of device. This lock was used in both process and bh context.
-In some code paths action map lock was obtained while holding ingress_lock.
-Commit e1e992e52faa ("[NET_SCHED] protect action config/dump from irqs")
-modified actions to always disable bh, while using action map lock, in
-order to prevent deadlock on ingress_lock in softirq. This lock was removed
-from net_device, so disabling bh, while accessing action map, is no longer
-necessary.
+> (*) Can you send a snip from the raw dmesg output that starts
+> a couple of lines before:
+>
+>
+>         ... [Hardware Error]: CPU 0: Machine Check: 0 Bank: 5 ...
+>
+> and continues a couple of lines past
+>
+>         ... [Hardware Error]: PROCESSOR 0:306d4 ...
+>
+> and I'll take a look at why mcelog choked.
 
-Replace all action idr spinlock usage with regular calls that do not
-disable bh.
 
-Signed-off-by: Vlad Buslov <vladbu@mellanox.com>
----
- net/sched/act_api.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/net/sched/act_api.c b/net/sched/act_api.c
-index 72251241665a..3f4cf930f809 100644
---- a/net/sched/act_api.c
-+++ b/net/sched/act_api.c
-@@ -77,9 +77,9 @@ static void free_tcf(struct tc_action *p)
- 
- static void tcf_idr_remove(struct tcf_idrinfo *idrinfo, struct tc_action *p)
- {
--	spin_lock_bh(&idrinfo->lock);
-+	spin_lock(&idrinfo->lock);
- 	idr_remove(&idrinfo->action_idr, p->tcfa_index);
--	spin_unlock_bh(&idrinfo->lock);
-+	spin_unlock(&idrinfo->lock);
- 	gen_kill_estimator(&p->tcfa_rate_est);
- 	free_tcf(p);
- }
-@@ -156,7 +156,7 @@ static int tcf_dump_walker(struct tcf_idrinfo *idrinfo, struct sk_buff *skb,
- 	struct tc_action *p;
- 	unsigned long id = 1;
- 
--	spin_lock_bh(&idrinfo->lock);
-+	spin_lock(&idrinfo->lock);
- 
- 	s_i = cb->args[0];
- 
-@@ -191,7 +191,7 @@ static int tcf_dump_walker(struct tcf_idrinfo *idrinfo, struct sk_buff *skb,
- 	if (index >= 0)
- 		cb->args[0] = index + 1;
- 
--	spin_unlock_bh(&idrinfo->lock);
-+	spin_unlock(&idrinfo->lock);
- 	if (n_i) {
- 		if (act_flags & TCA_FLAG_LARGE_DUMP_ON)
- 			cb->args[1] = n_i;
-@@ -261,9 +261,9 @@ static struct tc_action *tcf_idr_lookup(u32 index, struct tcf_idrinfo *idrinfo)
- {
- 	struct tc_action *p = NULL;
- 
--	spin_lock_bh(&idrinfo->lock);
-+	spin_lock(&idrinfo->lock);
- 	p = idr_find(&idrinfo->action_idr, index);
--	spin_unlock_bh(&idrinfo->lock);
-+	spin_unlock(&idrinfo->lock);
- 
- 	return p;
- }
-@@ -323,7 +323,7 @@ int tcf_idr_create(struct tc_action_net *tn, u32 index, struct nlattr *est,
- 	}
- 	spin_lock_init(&p->tcfa_lock);
- 	idr_preload(GFP_KERNEL);
--	spin_lock_bh(&idrinfo->lock);
-+	spin_lock(&idrinfo->lock);
- 	/* user doesn't specify an index */
- 	if (!index) {
- 		index = 1;
-@@ -331,7 +331,7 @@ int tcf_idr_create(struct tc_action_net *tn, u32 index, struct nlattr *est,
- 	} else {
- 		err = idr_alloc_u32(idr, NULL, &index, index, GFP_ATOMIC);
- 	}
--	spin_unlock_bh(&idrinfo->lock);
-+	spin_unlock(&idrinfo->lock);
- 	idr_preload_end();
- 	if (err)
- 		goto err3;
-@@ -369,9 +369,9 @@ void tcf_idr_insert(struct tc_action_net *tn, struct tc_action *a)
- {
- 	struct tcf_idrinfo *idrinfo = tn->idrinfo;
- 
--	spin_lock_bh(&idrinfo->lock);
-+	spin_lock(&idrinfo->lock);
- 	idr_replace(&idrinfo->action_idr, a, a->tcfa_index);
--	spin_unlock_bh(&idrinfo->lock);
-+	spin_unlock(&idrinfo->lock);
- }
- EXPORT_SYMBOL(tcf_idr_insert);
- 
+------------------------------------------------------------------------------------------------------------------------------------->
+$sudo dmesg -r | grep -B 30 "Bank"
+x2apic: IRQ remapping doesn't support X2APIC mode
+..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
+tsc: Fast TSC calibration using PIT
+tsc: Detected 1895.567 MHz processor
+clocksource: tsc-early: mask: 0xffffffffffffffff max_cycles:
+0x36a5a03c965, max_idle_ns: 881590412318 ns
+Calibrating delay loop (skipped), value calculated using timer
+frequency.. 3791.13 BogoMIPS (lpj=7582268)
+pid_max: default: 32768 minimum: 301
+Security Framework initialized
+Yama: becoming mindful.
+AppArmor: AppArmor initialized
+Dentry cache hash table entries: 524288 (order: 10, 4194304 bytes)
+Inode-cache hash table entries: 262144 (order: 9, 2097152 bytes)
+Mount-cache hash table entries: 8192 (order: 4, 65536 bytes)
+Mountpoint-cache hash table entries: 8192 (order: 4, 65536 bytes)
+CPU: Physical Processor ID: 0
+CPU: Processor Core ID: 0
+ENERGY_PERF_BIAS: Set to 'normal', was 'performance'
+ENERGY_PERF_BIAS: View and update with x86_energy_perf_policy(8)
+mce: CPU supports 7 MCE banks
+CPU0: Thermal monitoring enabled (TM1)
+process: using mwait in idle threads
+Last level iTLB entries: 4KB 64, 2MB 8, 4MB 8
+Last level dTLB entries: 4KB 64, 2MB 0, 4MB 0, 1GB 4
+Spectre V2 : Mitigation: Full generic retpoline
+Spectre V2 : Spectre v2 mitigation: Enabling Indirect Branch Prediction Barrier
+Spectre V2 : Enabling Restricted Speculation for firmware calls
+Freeing SMP alternatives memory: 32K
+TSC deadline timer enabled
+smpboot: CPU0: Intel(R) Pentium(R) CPU 3825U @ 1.90GHz (family: 0x6,
+model: 0x3d, stepping: 0x4)
+mce: [Hardware Error]: Machine check events logged
+mce: [Hardware Error]: CPU 0: Machine Check: 0 Bank 5: ee0000000040110b
+$
+---------------------------------------------------------------------------------------------------------------------------------------------->
+
+
+
+$sudo dmesg -r | grep -A 30 "0:306d4"
+mce: [Hardware Error]: PROCESSOR 0:306d4 TIME 1526932210 SOCKET 0 APIC
+0 microcode 2a
+Performance Events: PEBS fmt2+, Broadwell events, 16-deep LBR,
+full-width counters, Intel PMU driver.
+... version:                3
+... bit width:              48
+... generic registers:      4
+... value mask:             0000ffffffffffff
+... max period:             00007fffffffffff
+... fixed-purpose events:   3
+... event mask:             000000070000000f
+Hierarchical SRCU implementation.
+NMI watchdog: Enabled. Permanently consumes one hw-PMU counter.
+smp: Bringing up secondary CPUs ...
+x86: Booting SMP configuration:
+.... node  #0, CPUs:      #1 #2 #3
+smp: Brought up 1 node, 4 CPUs
+smpboot: Max logical packages: 1
+smpboot: Total of 4 processors activated (15164.53 BogoMIPS)
+devtmpfs: initialized
+x86/mm: Memory block size: 128MB
+PM: Registering ACPI NVS region [mem 0x9cc8e000-0x9cf8dfff] (3145728 bytes)
+clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff,
+max_idle_ns: 7645041785100000 ns
+futex hash table entries: 1024 (order: 4, 65536 bytes)
+pinctrl core: initialized pinctrl subsystem
+NET: Registered protocol family 16
+audit: initializing netlink subsys (disabled)
+audit: type=2000 audit(1526932210.048:1): state=initialized
+audit_enabled=0 res=1
+cpuidle: using governor ladder
+cpuidle: using governor menu
+Simple Boot Flag at 0x44 set to 0x1
+ACPI FADT declares the system doesn't support PCIe ASPM, so disable it
+ACPI: bus type PCI registered
+$
+------------------------------------------------------------------------------------------------------------------------>
+
+
 -- 
-2.7.5
+software engineer
+rajagiri school of engineering and technology
