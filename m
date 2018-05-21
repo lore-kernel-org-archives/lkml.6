@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753048AbeEUMMn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 08:12:43 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:7714 "EHLO huawei.com"
+        id S1753021AbeEUMMj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 08:12:39 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7715 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752970AbeEUMJU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752977AbeEUMJU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 21 May 2018 08:09:20 -0400
 From: Yisheng Xie <xieyisheng1@huawei.com>
 To: <linux-kernel@vger.kernel.org>
-CC: Yisheng Xie <xieyisheng1@huawei.com>,
-        Sebastian Reichel <sre@kernel.org>, <linux-pm@vger.kernel.org>
-Subject: [PATCH 18/33] power: supply: use match_string() helper
-Date: Mon, 21 May 2018 19:57:55 +0800
-Message-ID: <1526903890-35761-19-git-send-email-xieyisheng1@huawei.com>
+CC: Yisheng Xie <xieyisheng1@huawei.com>, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>, <linux-pm@vger.kernel.org>
+Subject: [PATCH 19/33] thermal: db8500: use match_string() helper
+Date: Mon, 21 May 2018 19:57:56 +0800
+Message-ID: <1526903890-35761-20-git-send-email-xieyisheng1@huawei.com>
 X-Mailer: git-send-email 1.7.12.4
 In-Reply-To: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
 References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
@@ -27,50 +27,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 match_string() returns the index of an array for a matching string,
 which can be used intead of open coded variant.
 
-Cc: Sebastian Reichel <sre@kernel.org>
+Cc: Zhang Rui <rui.zhang@intel.com>
+Cc: Eduardo Valentin <edubezval@gmail.com>
 Cc: linux-pm@vger.kernel.org
 Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
 ---
- drivers/power/supply/power_supply_core.c | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+ drivers/thermal/db8500_thermal.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/supply/power_supply_core.c
-index feac7b0..84da3a2 100644
---- a/drivers/power/supply/power_supply_core.c
-+++ b/drivers/power/supply/power_supply_core.c
-@@ -36,8 +36,6 @@
- static bool __power_supply_is_supplied_by(struct power_supply *supplier,
- 					 struct power_supply *supply)
- {
--	int i;
--
- 	if (!supply->supplied_from && !supplier->supplied_to)
- 		return false;
+diff --git a/drivers/thermal/db8500_thermal.c b/drivers/thermal/db8500_thermal.c
+index f491faf..dd83614 100644
+--- a/drivers/thermal/db8500_thermal.c
++++ b/drivers/thermal/db8500_thermal.c
+@@ -50,12 +50,10 @@ static int db8500_thermal_match_cdev(struct thermal_cooling_device *cdev,
+ 	if (!strlen(cdev->type))
+ 		return -EINVAL;
  
-@@ -45,18 +43,16 @@ static bool __power_supply_is_supplied_by(struct power_supply *supplier,
- 	if (supply->supplied_from) {
- 		if (!supplier->desc->name)
- 			return false;
--		for (i = 0; i < supply->num_supplies; i++)
--			if (!strcmp(supplier->desc->name, supply->supplied_from[i]))
--				return true;
-+		return match_string((const char **)supply->supplied_from,
-+				    supply->num_supplies,
-+				    supplier->desc->name) >= 0;
- 	} else {
- 		if (!supply->desc->name)
- 			return false;
--		for (i = 0; i < supplier->num_supplicants; i++)
--			if (!strcmp(supplier->supplied_to[i], supply->desc->name))
--				return true;
-+		return match_string((const char **)supplier->supplied_to,
-+				    supplier->num_supplicants,
-+				    supply->desc->name) >= 0;
- 	}
--
--	return false;
+-	for (i = 0; i < COOLING_DEV_MAX; i++) {
+-		if (!strcmp(trip_point->cdev_name[i], cdev->type))
+-			return 0;
+-	}
++	i = match_string((const char **)trip_point->cdev_name,
++			 COOLING_DEV_MAX, cdev->type);
+ 
+-	return -ENODEV;
++	return (i < 0) ? -ENODEV : 0;
  }
  
- static int __power_supply_changed_work(struct device *dev, void *data)
+ /* Callback to bind cooling device to thermal zone */
 -- 
 1.7.12.4
