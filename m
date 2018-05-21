@@ -1,141 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751140AbeEUTCR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 15:02:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54118 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750939AbeEUTCQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 15:02:16 -0400
-Date: Mon, 21 May 2018 12:02:15 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Dave Young <dyoung@redhat.com>
-Cc: linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
-        Cong Wang <xiyou.wangcong@gmail.com>, Neil Horman <nhorman@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Vivek Goyal <vgoyal@redhat.com>, Tony Luck <tony.luck@intel.com>,
-        Anton Vorontsov <avorontsov@ru.mvista.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Hari Bathini <hbathini@linux.vnet.ibm.com>, dzickus@redhat.com,
-        bhe@redhat.com
-Subject: Re: [PATCH] kdump: add default crashkernel reserve kernel config
- options
-Message-Id: <20180521120215.117d963a7619eb0d1f54bced@linux-foundation.org>
-In-Reply-To: <20180521025337.GA4627@dhcp-128-65.nay.redhat.com>
-References: <20180521025337.GA4627@dhcp-128-65.nay.redhat.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1751265AbeEUTCe (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 15:02:34 -0400
+Received: from anholt.net ([50.246.234.109]:50466 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751171AbeEUTC3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 15:02:29 -0400
+From: Eric Anholt <eric@anholt.net>
+To: Liviu Dudau <Liviu.Dudau@arm.com>,
+        Gustavo Padovan <gustavo@padovan.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>, Jonathan Corbet <corbet@lwn.net>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        David Airlie <airlied@linux.ie>, Brian Starkey <brian.starkey@arm.com>,
+        Alexandru-Cosmin Gheorghe <alexandru-cosmin.gheorghe@arm.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Daniel Stone <daniels@collabora.com>,
+        Mihail Atanassov <mihail.atanassov@arm.com>,
+        Liviu Dudau <liviu.dudau@arm.com>
+Subject: Re: [PATCH v8 2/3] drm: writeback: Add out-fences for writeback connectors
+In-Reply-To: <20180518151743.29937-3-Liviu.Dudau@arm.com>
+References: <20180518151743.29937-1-Liviu.Dudau@arm.com> <20180518151743.29937-3-Liviu.Dudau@arm.com>
+User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
+Date: Mon, 21 May 2018 12:02:25 -0700
+Message-ID: <87a7ssu91a.fsf@anholt.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 May 2018 10:53:37 +0800 Dave Young <dyoung@redhat.com> wrote:
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-> This is a rework of the crashkernel=auto patches back to 2009 although
-> I'm not sure if below is the last version of the old effort:
-> https://lkml.org/lkml/2009/8/12/61
-> https://lwn.net/Articles/345344/
-> 
-> I changed the original design, instead of adding the auto reserve logic
-> in code, in this patch just introduce two kernel config options for
-> the default crashkernel value in MB and the threshold of system memory
-> in MB so that only reserve default when system memory is equal or
-> above the threshold.
-> 
-> With the kernel configs distributions can easily change the default
-> values so that people do not need to manually set kernel cmdline
-> for common use cases and one can still overwrite the default value
-> with manual setup or disable it by using crashkernel=0
-> 
-> Signed-off-by: Dave Young <dyoung@redhat.com>
-> ---
-> Another difference is with original design the crashkernel size scales
-> with system memory, according to test, large machine may need more
-> memory in kdump kernel because of several factors:
-> 1. cpu numbers, because of the percpu memory allocated for cpus.
->    (kdump can use nr_cpus=1 to workaround this, but some
->     arches do not support nr_cpus=X for example powerpc) 
-> 2. IO devices, large system can have a lot of io devices, although we
->    can try to only add those device drivers we needed, it is still a
->    problem because of some built-in drivers, some stacked logical devices
->    eg. device mapper devices, acpi etc.  Even if only considering the
->    meta data for driver model it will still be a big number eg. sysfs
->    files etc.
-> 3. The minimum memory requirement for some device drivers are big, even
->    if some of them have implemented low meory profile.  It is usual to see
->    10M memory use for a storage driver.
-> 4. user space initramfs size growing.  Busybox is not usable if we need
->    to add udev support and some complicate storage support.  Use dracut
->    with systemd, especially networking stuff need more memory.
-> 
-> So probably add another kernel config option to scale the memory size
-> eg.  CRASHKERNEL_DEFAULT_SCALE_RATIO is also good to have,  in RHEL we
-> use base_value + system_mem >> (2^14) for x86.  I'm still hesatating
-> how to describe and add this option. Any suggestions will be appreciated.
-> 
-> ...
+Liviu Dudau <Liviu.Dudau@arm.com> writes:
+
+> From: Brian Starkey <brian.starkey@arm.com>
 >
-> --- linux-x86.orig/arch/Kconfig
-> +++ linux-x86/arch/Kconfig
-> @@ -10,6 +10,22 @@ config KEXEC_CORE
->  	select CRASH_CORE
->  	bool
->  
-> +config CRASHKERNEL_DEFAULT_THRESHOLD_MB
-> +	int "System memory size threshold for kdump memory default reserving"
-> +	depends on CRASH_CORE
-> +	default 0
-> +	help
-> +	  CRASHKERNEL_DEFAULT_MB is used as default crashkernel value if
-> +	  the system memory size is equal or bigger than the threshold.
-
-"the threshold" is rather vague.  Can it be clarified?
-
-In fact I'm really struggling to understand the logic here....
+> Add the WRITEBACK_OUT_FENCE_PTR property to writeback connectors, to
+> enable userspace to get a fence which will signal once the writeback is
+> complete. It is not allowed to request an out-fence without a
+> framebuffer attached to the connector.
+>
+> A timeline is added to drm_writeback_connector for use by the writeback
+> out-fences.
 
 
-> +config CRASHKERNEL_DEFAULT_MB
-> +	int "Default crashkernel memory size reserved for kdump"
-> +	depends on CRASH_CORE
-> +	default 0
-> +	help
-> +	  This is used as the default kdump reserved memory size in MB.
-> +	  crashkernel=X kernel cmdline can overwrite this value.
+> diff --git a/include/drm/drm_writeback.h b/include/drm/drm_writeback.h
+> index cf3a28676006a..6a7462c1821ad 100644
+> --- a/include/drm/drm_writeback.h
+> +++ b/include/drm/drm_writeback.h
+> @@ -49,6 +49,32 @@ struct drm_writeback_connector {
+>  	 * drm_writeback_signal_completion()
+>  	 */
+>  	struct list_head job_queue;
 > +
->  config HAVE_IMA_KEXEC
->  	bool
->  
-> @@ -143,6 +144,24 @@ static int __init parse_crashkernel_simp
->  	return 0;
->  }
->  
-> +static int __init get_crashkernel_default(unsigned long long system_ram,
-> +					  unsigned long long *size)
-> +{
-> +	unsigned long long sz = CONFIG_CRASHKERNEL_DEFAULT_MB;
-> +	unsigned long long thres = CONFIG_CRASHKERNEL_DEFAULT_THRESHOLD_MB;
+> +	/**
+> +	 * @fence_context:
+> +	 *
+> +	 * timeline context used for fence operations.
+> +	 */
+> +	unsigned int fence_context;
+> +	/**
+> +	 * @fence_lock:
+> +	 *
+> +	 * spinlock to protect the fences in the fence_context.
+> +	 */
+> +	spinlock_t fence_lock;
+> +	/**
+> +	 * @fence_seqno:
+> +	 *
+> +	 * Seqno variable used as monotonic counter for the fences
+> +	 * created on the connector's timeline.
+> +	 */
+> +	unsigned long fence_seqno;
+> +	/**
+> +	 * @timeline_name:
+> +	 *
+> +	 * The name of the connector's fence timeline.
+> +	 */
+> +	char timeline_name[32];
+>  };
+>=20=20
+>  struct drm_writeback_job {
+> @@ -59,12 +85,14 @@ struct drm_writeback_job {
+>  	 * framebuffer reference to a workqueue.
+>  	 */
+>  	struct work_struct cleanup_work;
 > +
-> +	thres *= SZ_1M;
-> +	sz *= SZ_1M;
+>  	/**
+>  	 * @list_entry:
+>  	 *
+>  	 * List item for the connector's @job_queue
+>  	 */
+>  	struct list_head list_entry;
 > +
-> +	if (sz >= system_ram || system_ram < thres) {
-> +		pr_debug("crashkernel default size can not be used.\n");
-> +		return -EINVAL;
+>  	/**
+>  	 * @fb:
+>  	 *
 
-In other words,
+Move this hunk into patch 1?
 
-	if (system_ram <= CONFIG_CRASHKERNEL_DEFAULT_MB ||
-	    system_ram < CONFIG_CRASHKERNEL_DEFAULT_THRESHOLD_MB)
-		fail;
+Other than that, the series is:
 
-yes?
+Reviewed-by: Eric Anholt <eric@anholt.net>
 
-How come?  What's happening here?  Perhaps a (good) explanatory comment
-is needed.  And clearer Kconfig text.
+It's pretty clean and makes sense to me.  I only had some questions
+about the job_queue, which seems superfluous if we aren't supporting
+firing off a new writeback while an old one is outstanding (and maybe we
+should throw an error in that case).  Still, I think this is ready to land.
 
-All confused :(
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlsDF8EACgkQtdYpNtH8
+nui3QBAAoUEW51kGUOOKfarNq8LMbKyqq5hDO7Qndhuy74lvD3W5plcoexdZ+671
+O/OMjiqPRWU2fZzaQJoamc9JVGIX23A49LnWfLIiH6DXHi3im7olMW4atyXrK1g4
+zyUhQQ5LyKsQbuUIMfMJSDTYWxkb37MbH8a0X19RKTHufZeJW52fLml8vvfcMShT
+/4H3LmeBcz5EoOWo+hbuRMq8bbxJzwQ4O5BGAIof/0TaDz4UDGR4TsRbgbDaCTnl
+hJmCba56RmvHNxYdbPnR0S9v1QW+oQiVKR1AGAnskKlF/mHKHPVQjwP+OuvOBgXP
+cdrIA3W/IEBMYc+ngpBSX9829nDIuN/aElLUMXJxq5xiYyP0LOfdR7TPLyn1tkzO
+RfSRHWFdDQ9t1/WmwIDz7XQePxyQ4OSdlAFvPy+xPfUgdATsz95Mt+N8au1uY3ug
+jss/9umXB3zxblgwhqPHXs7V2BBds0H6XiW6eHQOCoMkGF6nHnQQNUtgl6jVL45j
+92wNUlLnWjLb9jAEhLLJdc7wLv7kz5PtlhkbksYEJra5G1Sinx/ILUIPhmC0X9SR
+HlEYn2v4DNWQTVafJgZzvxVpcNoJSFGLIcwe9+Yaav58dGAxrGn1Aqagh3aut1vn
+rmhzCaWgtPdagPnbQEMYKvzquRd7NKQVgzlvL/1sIc53W8hcN+w=
+=Kl6p
+-----END PGP SIGNATURE-----
+--=-=-=--
