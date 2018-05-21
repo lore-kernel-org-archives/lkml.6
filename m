@@ -1,24 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752658AbeEUIzE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 04:55:04 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:38976 "EHLO
+        id S1751154AbeEUJA0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 05:00:26 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:54930 "EHLO
         mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751116AbeEUIzA (ORCPT
+        with ESMTP id S1750993AbeEUJAW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 04:55:00 -0400
-X-Google-Smtp-Source: AB8JxZquDm2NK69E+D3kv79aoX1Xgrb+kf69wMNL/rKVQFYe7pxYczurb6mvfrDhMMC//ufrATNfpw==
-Subject: Re: [PATCH v2 2/5] drm/i915: hdmi: add CEC notifier to intel_hdmi
-To: =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Cc: airlied@linux.ie, hans.verkuil@cisco.com, lee.jones@linaro.org,
-        olof@lixom.net, seanpaul@google.com, sadolfsson@google.com,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, fparent@baylibre.com,
-        felixe@google.com, marcheu@chromium.org, bleung@google.com,
-        darekm@google.com, linux-media@vger.kernel.org
+        Mon, 21 May 2018 05:00:22 -0400
+X-Google-Smtp-Source: AB8JxZoeN/f7Kx0cYypEsZ+Nf9yGqECX9876ZILrpFYIzIqzQl9Rl3d1N+VUjqlwDquPGuMe/6cHEw==
+Subject: Re: [PATCH v2 3/5] mfd: cros-ec: Introduce CEC commands and events
+ definitions.
+To: Enric Balletbo Serra <eballetbo@gmail.com>
+Cc: David Airlie <airlied@linux.ie>, Hans Verkuil <hans.verkuil@cisco.com>,
+        Lee Jones <lee.jones@linaro.org>, Olof Johansson <olof@lixom.net>,
+        Sean Paul <seanpaul@google.com>, sadolfsson@google.com,
+        Felix Ekblom <felixe@google.com>, Benson Leung <bleung@google.com>,
+        darekm@google.com,
+        =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>,
+        Fabien Parent <fparent@baylibre.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-media@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Stefan Adolfsson <sadolfsson@chromium.org>
 References: <1526648704-16873-1-git-send-email-narmstrong@baylibre.com>
- <1526648704-16873-3-git-send-email-narmstrong@baylibre.com>
- <20180518132403.GW23723@intel.com>
+ <1526648704-16873-4-git-send-email-narmstrong@baylibre.com>
+ <CAFqH_50MsavjXP1fDhiiXR=ARyCK5-PXDCsQNKk3b1BPSXzwdw@mail.gmail.com>
 From: Neil Armstrong <narmstrong@baylibre.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
@@ -46,180 +52,272 @@ Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
  C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
  Acmp6h8g
 Organization: Baylibre
-Message-ID: <26a21fdb-281c-cbbd-8f48-d9ba390b3363@baylibre.com>
-Date: Mon, 21 May 2018 10:54:55 +0200
+Message-ID: <414f69e8-1d47-f5c8-4a09-7a1bbd6ffa33@baylibre.com>
+Date: Mon, 21 May 2018 11:00:19 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180518132403.GW23723@intel.com>
+In-Reply-To: <CAFqH_50MsavjXP1fDhiiXR=ARyCK5-PXDCsQNKk3b1BPSXzwdw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ville,
+Hi Enric,
 
-On 18/05/2018 15:24, Ville Syrjälä wrote:
-> On Fri, May 18, 2018 at 03:05:01PM +0200, Neil Armstrong wrote:
->> This patchs adds the cec_notifier feature to the intel_hdmi part
->> of the i915 DRM driver. It uses the HDMI DRM connector name to differentiate
->> between each HDMI ports.
->> The changes will allow the i915 HDMI code to notify EDID and HPD changes
->> to an eventual CEC adapter.
+On 18/05/2018 18:19, Enric Balletbo Serra wrote:
+> Hi Neil,
+> 
+> 2018-05-18 15:05 GMT+02:00 Neil Armstrong <narmstrong@baylibre.com>:
+>> The EC can expose a CEC bus, this patch adds the CEC related definitions
+>> needed by the cros-ec-cec driver.
+>> Having a 16 byte mkbp event size makes it possible to send CEC
+>> messages from the EC to the AP directly inside the mkbp event
+>> instead of first doing a notification and then a read.
 >>
+>> Signed-off-by: Stefan Adolfsson <sadolfsson@chromium.org>
 >> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 >> ---
->>  drivers/gpu/drm/i915/Kconfig         |  1 +
->>  drivers/gpu/drm/i915/intel_display.h | 20 ++++++++++++++++++++
->>  drivers/gpu/drm/i915/intel_drv.h     |  2 ++
->>  drivers/gpu/drm/i915/intel_hdmi.c    | 13 +++++++++++++
->>  4 files changed, 36 insertions(+)
+>>  drivers/platform/chrome/cros_ec_proto.c | 40 +++++++++++++----
+>>  include/linux/mfd/cros_ec.h             |  2 +-
+>>  include/linux/mfd/cros_ec_commands.h    | 80 +++++++++++++++++++++++++++++++++
+>>  3 files changed, 112 insertions(+), 10 deletions(-)
 >>
->> diff --git a/drivers/gpu/drm/i915/Kconfig b/drivers/gpu/drm/i915/Kconfig
->> index dfd9588..2d65d56 100644
->> --- a/drivers/gpu/drm/i915/Kconfig
->> +++ b/drivers/gpu/drm/i915/Kconfig
->> @@ -23,6 +23,7 @@ config DRM_I915
->>  	select SYNC_FILE
->>  	select IOSF_MBI
->>  	select CRC32
->> +	select CEC_CORE if CEC_NOTIFIER
->>  	help
->>  	  Choose this option if you have a system that has "Intel Graphics
->>  	  Media Accelerator" or "HD Graphics" integrated graphics,
->> diff --git a/drivers/gpu/drm/i915/intel_display.h b/drivers/gpu/drm/i915/intel_display.h
->> index 4e7418b..c68d1c8 100644
->> --- a/drivers/gpu/drm/i915/intel_display.h
->> +++ b/drivers/gpu/drm/i915/intel_display.h
->> @@ -126,6 +126,26 @@ enum port {
->>  
->>  #define port_name(p) ((p) + 'A')
->>  
->> +static inline const char *port_identifier(enum port port)
+>> diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
+>> index e7bbdf9..c4f6c44 100644
+>> --- a/drivers/platform/chrome/cros_ec_proto.c
+>> +++ b/drivers/platform/chrome/cros_ec_proto.c
+>> @@ -504,10 +504,31 @@ int cros_ec_cmd_xfer_status(struct cros_ec_device *ec_dev,
+>>  }
+>>  EXPORT_SYMBOL(cros_ec_cmd_xfer_status);
+>>
+>> +static int get_next_event_xfer(struct cros_ec_device *ec_dev,
+>> +                              struct cros_ec_command *msg,
+>> +                              int version, uint32_t size)
 >> +{
->> +	switch (port) {
->> +	case PORT_A:
->> +		return "Port A";
->> +	case PORT_B:
->> +		return "Port B";
->> +	case PORT_C:
->> +		return "Port C";
->> +	case PORT_D:
->> +		return "Port D";
->> +	case PORT_E:
->> +		return "Port E";
->> +	case PORT_F:
->> +		return "Port F";
->> +	default:
->> +		return "<invalid>";
->> +	}
+>> +       int ret;
+>> +
+>> +       msg->version = version;
+>> +       msg->command = EC_CMD_GET_NEXT_EVENT;
+>> +       msg->insize = size;
+>> +       msg->outsize = 0;
+>> +
+>> +       ret = cros_ec_cmd_xfer(ec_dev, msg);
+>> +       if (ret > 0) {
+>> +               ec_dev->event_size = ret - 1;
+>> +               memcpy(&ec_dev->event_data, msg->data, ec_dev->event_size);
+>> +       }
+>> +
+>> +       return ret;
 >> +}
-> 
-> I don't think we need this in the header. A static function will do.
-
-I just followed how other functions were declared, in the same way.
-
-> And I was actually thinking something a bit fancier like:
-> snprintf("%s/port-%s", dev_name(dev), port_id(port));
-> 
-> Oh, I see you already pass the device in so I guess we don't need
-> that in the port id?
-
-Indeed, my bad I forgot to answer your last question, we already pass a struct
-device which provides the device bus, name and id, so it's unneeded here.
-
-> 
 >> +
->>  enum dpio_channel {
->>  	DPIO_CH0,
->>  	DPIO_CH1
->> diff --git a/drivers/gpu/drm/i915/intel_drv.h b/drivers/gpu/drm/i915/intel_drv.h
->> index d436858..b50e51b 100644
->> --- a/drivers/gpu/drm/i915/intel_drv.h
->> +++ b/drivers/gpu/drm/i915/intel_drv.h
->> @@ -39,6 +39,7 @@
->>  #include <drm/drm_dp_mst_helper.h>
->>  #include <drm/drm_rect.h>
->>  #include <drm/drm_atomic.h>
->> +#include <media/cec-notifier.h>
->>  
->>  /**
->>   * __wait_for - magic wait macro
->> @@ -1001,6 +1002,7 @@ struct intel_hdmi {
->>  	bool has_audio;
->>  	bool rgb_quant_range_selectable;
->>  	struct intel_connector *attached_connector;
->> +	struct cec_notifier *notifier;
+>>  static int get_next_event(struct cros_ec_device *ec_dev)
+>>  {
+>>         u8 buffer[sizeof(struct cros_ec_command) + sizeof(ec_dev->event_data)];
+>>         struct cros_ec_command *msg = (struct cros_ec_command *)&buffer;
+>> +       static int cmd_version = 1;
 > 
-> I was wondering if we need any ifdefs around this stuff, but I guess not
-> since it's just a pointer and all the functions seem to have empty
-> static inlines for the CEC=n case.
+> Personal opinion, but I don't like this static here, and also I don't
+> think this is scalable. Could we ask for the command version?
+
+I don't have an opinion, I only followed how it was implemented on the
+chromeos kernel and adapted to mainline. If you have a better way, I'll use it !
+
 > 
+>>         int ret;
+>>
+>>         if (ec_dev->suspended) {
+>> @@ -515,18 +536,19 @@ static int get_next_event(struct cros_ec_device *ec_dev)
+>>                 return -EHOSTDOWN;
+>>         }
+>>
+>> -       msg->version = 0;
+>> -       msg->command = EC_CMD_GET_NEXT_EVENT;
+>> -       msg->insize = sizeof(ec_dev->event_data);
+>> -       msg->outsize = 0;
+>> +       if (cmd_version == 1) {
+>> +               ret = get_next_event_xfer(ec_dev, msg, cmd_version,
+>> +                               sizeof(struct ec_response_get_next_event_v1));
+>> +               if (ret < 0 || msg->result != EC_RES_INVALID_VERSION)
+>> +                       return ret;
+>>
+>> -       ret = cros_ec_cmd_xfer(ec_dev, msg);
+>> -       if (ret > 0) {
+>> -               ec_dev->event_size = ret - 1;
+>> -               memcpy(&ec_dev->event_data, msg->data,
+>> -                      sizeof(ec_dev->event_data));
+>> +               /* Fallback to version 0 for future send attempts */
+>> +               cmd_version = 0;
+>>         }
+>>
+> 
+> So we always do a failed transfer on all these EC devices that does
+> not support CEC. I am wondering if wouldn't be better pass the command
+> version to the cros_ec_get_next_event function. The driver should know
+> which version to use, just a random idea.
+
+No, the driver cannot know the command version, this depends on the FW version
+and the platform. AFAIK this must be discovered.
+
+> 
+>> +       ret = get_next_event_xfer(ec_dev, msg, cmd_version,
+>> +                                 sizeof(struct ec_response_get_next_event));
+>> +
+>>         return ret;
+>>  }
+>>
+>> diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
+>> index f36125e..32caef3 100644
+>> --- a/include/linux/mfd/cros_ec.h
+>> +++ b/include/linux/mfd/cros_ec.h
+>> @@ -147,7 +147,7 @@ struct cros_ec_device {
+>>         bool mkbp_event_supported;
+>>         struct blocking_notifier_head event_notifier;
+>>
+>> -       struct ec_response_get_next_event event_data;
+>> +       struct ec_response_get_next_event_v1 event_data;
+>>         int event_size;
+>>         u32 host_event_wake_mask;
 >>  };
->>  
->>  struct intel_dp_mst_encoder;
->> diff --git a/drivers/gpu/drm/i915/intel_hdmi.c b/drivers/gpu/drm/i915/intel_hdmi.c
->> index 1baef4a..d522b5b 100644
->> --- a/drivers/gpu/drm/i915/intel_hdmi.c
->> +++ b/drivers/gpu/drm/i915/intel_hdmi.c
->> @@ -1868,6 +1868,8 @@ intel_hdmi_set_edid(struct drm_connector *connector)
->>  		connected = true;
->>  	}
->>  
->> +	cec_notifier_set_phys_addr_from_edid(intel_hdmi->notifier, edid);
+>> diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
+>> index f2edd99..16c3a2b 100644
+>> --- a/include/linux/mfd/cros_ec_commands.h
+>> +++ b/include/linux/mfd/cros_ec_commands.h
+> 
+> This file is going to be very big and as requested by Lee I plan to
+> convert this file to the kernel-doc format, this patch introduces some
+> new structs so could you document the new structs in the suggested
+> format?
+
+Ok
+
+> 
+>> @@ -804,6 +804,8 @@ enum ec_feature_code {
+>>         EC_FEATURE_MOTION_SENSE_FIFO = 24,
+>>         /* EC has RTC feature that can be controlled by host commands */
+>>         EC_FEATURE_RTC = 27,
+>> +       /* EC supports CEC commands */
+>> +       EC_FEATURE_CEC = 35,
+>>  };
+>>
+>>  #define EC_FEATURE_MASK_0(event_code) (1UL << (event_code % 32))
+>> @@ -2078,6 +2080,12 @@ enum ec_mkbp_event {
+>>         /* EC sent a sysrq command */
+>>         EC_MKBP_EVENT_SYSRQ = 6,
+>>
+>> +       /* Notify the AP that something happened on CEC */
+>> +       EC_MKBP_CEC_EVENT = 8,
 >> +
->>  	return connected;
->>  }
->>  
->> @@ -1876,6 +1878,7 @@ intel_hdmi_detect(struct drm_connector *connector, bool force)
->>  {
->>  	enum drm_connector_status status;
->>  	struct drm_i915_private *dev_priv = to_i915(connector->dev);
->> +	struct intel_hdmi *intel_hdmi = intel_attached_hdmi(connector);
->>  
->>  	DRM_DEBUG_KMS("[CONNECTOR:%d:%s]\n",
->>  		      connector->base.id, connector->name);
->> @@ -1891,6 +1894,9 @@ intel_hdmi_detect(struct drm_connector *connector, bool force)
->>  
->>  	intel_display_power_put(dev_priv, POWER_DOMAIN_GMBUS);
->>  
->> +	if (status != connector_status_connected)
->> +		cec_notifier_phys_addr_invalidate(intel_hdmi->notifier);
+>> +       /* Send an incoming CEC message to the AP */
+>> +       EC_MKBP_EVENT_CEC_MESSAGE = 9,
 >> +
->>  	return status;
->>  }
->>  
->> @@ -2031,6 +2037,8 @@ static void chv_hdmi_pre_enable(struct intel_encoder *encoder,
->>  
->>  static void intel_hdmi_destroy(struct drm_connector *connector)
->>  {
->> +	if (intel_attached_hdmi(connector)->notifier)
->> +		cec_notifier_put(intel_attached_hdmi(connector)->notifier);
->>  	kfree(to_intel_connector(connector)->detect_edid);
->>  	drm_connector_cleanup(connector);
->>  	kfree(connector);
->> @@ -2358,6 +2366,11 @@ void intel_hdmi_init_connector(struct intel_digital_port *intel_dig_port,
->>  		u32 temp = I915_READ(PEG_BAND_GAP_DATA);
->>  		I915_WRITE(PEG_BAND_GAP_DATA, (temp & ~0xf) | 0xd);
->>  	}
+>>         /* Number of MKBP events */
+>>         EC_MKBP_EVENT_COUNT,
+>>  };
+>> @@ -2093,12 +2101,31 @@ union ec_response_get_next_data {
+>>         uint32_t   sysrq;
+>>  } __packed;
+>>
+>> +union ec_response_get_next_data_v1 {
+>> +       uint8_t   key_matrix[16];
 >> +
->> +	intel_hdmi->notifier = cec_notifier_get_conn(dev->dev,
->> +						     port_identifier(port));
->> +	if (!intel_hdmi->notifier)
->> +		DRM_DEBUG_KMS("CEC notifier get failed\n");
->>  }
->>  
->>  void intel_hdmi_init(struct drm_i915_private *dev_priv,
->> -- 
+>> +       /* Unaligned */
+>> +       uint32_t  host_event;
+>> +
+>> +       uint32_t   buttons;
+>> +       uint32_t   switches;
+>> +       uint32_t   sysrq;
+>> +       uint32_t   cec_events;
+>> +       uint8_t    cec_message[16];
+>> +} __packed;
+>> +
+>>  struct ec_response_get_next_event {
+>>         uint8_t event_type;
+>>         /* Followed by event data if any */
+>>         union ec_response_get_next_data data;
+>>  } __packed;
+>>
+>> +struct ec_response_get_next_event_v1 {
+>> +       uint8_t event_type;
+>> +       /* Followed by event data if any */
+>> +       union ec_response_get_next_data_v1 data;
+>> +} __packed;
+>> +
+>>  /* Bit indices for buttons and switches.*/
+>>  /* Buttons */
+>>  #define EC_MKBP_POWER_BUTTON   0
+>> @@ -2828,6 +2855,59 @@ struct ec_params_reboot_ec {
+>>  /* Current version of ACPI memory address space */
+>>  #define EC_ACPI_MEM_VERSION_CURRENT 1
+>>
+>> +/*****************************************************************************/
+>> +/*
+>> + * HDMI CEC commands
+>> + *
+>> + * These commands are for sending and receiving message via HDMI CEC
+>> + */
+>> +#define MAX_CEC_MSG_LEN 16
+>> +
+>> +/* CEC message from the AP to be written on the CEC bus */
+>> +#define EC_CMD_CEC_WRITE_MSG 0x00B8
+>> +
+>> +/* Message to write to the CEC bus */
+>> +struct ec_params_cec_write {
+>> +       uint8_t msg[MAX_CEC_MSG_LEN];
+>> +} __packed;
+>> +
+>> +/* Set various CEC parameters */
+>> +#define EC_CMD_CEC_SET 0x00BA
+>> +
+>> +struct ec_params_cec_set {
+>> +       uint8_t cmd; /* enum cec_command */
+>> +       union {
+>> +               uint8_t enable;
+>> +               uint8_t address;
+>> +       };
+>> +} __packed;
+>> +
+>> +/* Read various CEC parameters */
+>> +#define EC_CMD_CEC_GET 0x00BB
+>> +
+>> +struct ec_params_cec_get {
+>> +       uint8_t cmd; /* enum cec_command */
+>> +} __packed;
+>> +
+>> +struct ec_response_cec_get {
+>> +       union {
+>> +               uint8_t enable;
+>> +               uint8_t address;
+>> +       };
+>> +} __packed;
+>> +
+>> +enum cec_command {
+>> +       /* CEC reading, writing and events enable */
+>> +       CEC_CMD_ENABLE,
+>> +       /* CEC logical address  */
+>> +       CEC_CMD_LOGICAL_ADDRESS,
+>> +};
+>> +
+>> +/* Events from CEC to AP */
+>> +enum mkbp_cec_event {
+>> +       EC_MKBP_CEC_SEND_OK                     = 1 << 0,
+>> +       EC_MKBP_CEC_SEND_FAILED                 = 1 << 1,
+> 
+> Use the BIT() macro.
+
+Ok
+
+> 
+>> +};
+>>
+>>  /*****************************************************************************/
+>>  /*
+>> --
 >> 2.7.4
 >>
->> _______________________________________________
->> dri-devel mailing list
->> dri-devel@lists.freedesktop.org
->> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 > 
-
-Thans,
-Neil
+> Thanks,
+>   Enric
+> 
