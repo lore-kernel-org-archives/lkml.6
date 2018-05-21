@@ -1,38 +1,39 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqEWVfIXzZb5qIyEV4dOVA9o7A3lc630TQiXZAdTdwRvXMJeppHEreSiqm0y4uJvhNpD9K3
-ARC-Seal: i=1; a=rsa-sha256; t=1526937787; cv=none;
+X-Google-Smtp-Source: AB8JxZrMYNFEDvuHroU2xqqs9No0B4CVeCjMhTsDOpyu/5rRhZKAGnPHys0WTlETEpnaysfEV/uS
+ARC-Seal: i=1; a=rsa-sha256; t=1526937784; cv=none;
         d=google.com; s=arc-20160816;
-        b=WDAyj2oU/8LAuYmmnJBxg8SJUUCu0/XtbiLqM4+qOnXIubGhYbGzYIATdtRWPp+ooh
-         DFBTNQndgZGvA/BexL/k9MSkg3X5IyWw/KRsVswAOcln8/gbtaGVTGrKn2UrohlRCUoh
-         FbdBRJVmUBXyTyD4O9PwR2WF7GVyIgnuM3CHe1fW/pKR5hsK5Mk47iSJ2bj/GNtDR8rV
-         mC9I14jO8ulDyUPOpvsijIpfOBrISk6FSF+xmklwKIAlOofgDHltPLNJG2NgjmAK+6HT
-         yNG9j74dRqyMcMp6S+45QFwcDHNnkRnQC5FhSjClL74iomD6yNVCAmDBtrZLLVZnVExX
-         dckA==
+        b=Cd6SruEUQhRpVC6n8k7U4IELKTzv5ks157SGTs0VTBqm5qX4p5HPSIyadrSeGLdYi/
+         sioQ7LetXYM8aADUX8HevkDNRFUXmq/K3rZHqxWtcN5hOZkcf571Kb+pF3QUda5zllSG
+         moy7Xyr6dq+fHC6sUGtw3IKu936Ix69tnL3Nzgc1u/iASegpeJcjJO5b2XZlUJ8F81Qb
+         iHKXcUAUO6Q9AQ6IflLaaGOK7fsYv3wdx8aBtdte2RY++eLSCsYOprziaShtzcTZrrJ3
+         HkePNN2a86xVv6hUPGSen3WeM8kCd1AALZ1huLNU/P8T8ulRcNKS/1ybn+YfM5sJ8fWZ
+         Iubg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=PvLBWf0xdKI2JohKWJZgTukFy14ovpJT7RXSIPzd2Vc=;
-        b=nemNxbS6JoLvdP/HZF5TpbLZJpiJ41Jf1ZvcLolaXR8+UvJhVzRJj0wFVgk9WeaZ5c
-         bSlJo7F7OFRSu81rAo/L8ZbmDcE+iOpQytzzv2LvxxiMWt18hE74qQGy/6fqmvRt8OcE
-         hlE2iiVnZC5yEwxGQPlNlqjY/KstrlWZawLTreEBmTB1Ml3zcTTSSDsZ1G3RLkmrFWdq
-         AEj6fNGOtS5665LNdpeQFcysjkSdDM1VgY8BSFnPMrHwXNdbhw9cGBhLCKv6D7Zfvhwc
-         oOkdUJ1HTcutBGHAIJtt4z9wg4QioIKFs5NlBIQlLFICCM9fW86Xeuscd0TeO4Bh/FGS
-         lC4g==
+        bh=coJBfaVCbKzDQ0BWK6T8cByStiL7hkbuBOg0T+75NoI=;
+        b=lqTiugjp2l23H5raS/p+u77P3ZbFTRxX8zm8l4/BRxYPvFAndX6Iczfo5ZcY47ZeRy
+         0Jn0yH/MZngpg8dWC6jTZGLgezotu9eFZTs6sMCdS7IlHcEVOmx45nUcM8r/N7J2EkRT
+         ZXArlgs9zD7jKuPUhqhI+dKA4I+BIudyZfGoRrfsORN8nQKPhJTJVdC0shvaD6497EYS
+         jImOMSSTFdWa4qMZIc9p+2y3EVl7RS729HwBB+PRKCjGSbsf3nZU8AqxbWJfjrgJB/Cw
+         joGLhNUNd6nN/+llH5EpxEF24maSjPAgVQGZQYPsds5KP7MFR80gNJggpMKyftAFXshG
+         m6Tg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=0+NcutDf;
+       dkim=pass header.i=@kernel.org header.s=default header.b=mkaLKv2o;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=0+NcutDf;
+       dkim=pass header.i=@kernel.org header.s=default header.b=mkaLKv2o;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jann Horn <jannh@google.com>,
-	Jens Wiklander <jens.wiklander@linaro.org>
-Subject: [PATCH 4.16 025/110] tee: shm: fix use-after-free via temporarily dropped reference
-Date: Mon, 21 May 2018 23:11:22 +0200
-Message-Id: <20180521210506.066487309@linuxfoundation.org>
+	Gabriel Craciunescu <nix.or.die@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 4.16 024/110] x86/amd_nb: Add support for Raven Ridge CPUs
+Date: Mon, 21 May 2018 23:11:21 +0200
+Message-Id: <20180521210506.000026717@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -42,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601110016429100028?=
-X-GMAIL-MSGID: =?utf-8?q?1601110317314625125?=
+X-GMAIL-THRID: =?utf-8?q?1601110314179713251?=
+X-GMAIL-MSGID: =?utf-8?q?1601110314179713251?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,37 +52,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Guenter Roeck <linux@roeck-us.net>
 
-commit bb765d1c331f62b59049d35607ed2e365802bef9 upstream.
+commit f9bc6b2dd9cf025f827f471769e1d88b527bfb91 upstream.
 
-Bump the file's refcount before moving the reference into the fd table,
-not afterwards. The old code could drop the file's refcount to zero for a
-short moment before calling get_file() via get_dma_buf().
+Add Raven Ridge root bridge and data fabric PCI IDs.
+This is required for amd_pci_dev_to_node_id() and amd_smn_read().
 
-This code can only be triggered on ARM systems that use Linaro's OP-TEE.
-
-Fixes: 967c9cca2cc5 ("tee: generic TEE subsystem")
-Signed-off-by: Jann Horn <jannh@google.com>
-Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
+Cc: stable@vger.kernel.org # v4.16+
+Tested-by: Gabriel Craciunescu <nix.or.die@gmail.com>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tee/tee_shm.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/x86/kernel/amd_nb.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/tee/tee_shm.c
-+++ b/drivers/tee/tee_shm.c
-@@ -360,9 +360,10 @@ int tee_shm_get_fd(struct tee_shm *shm)
- 	if (!(shm->flags & TEE_SHM_DMA_BUF))
- 		return -EINVAL;
+--- a/arch/x86/kernel/amd_nb.c
++++ b/arch/x86/kernel/amd_nb.c
+@@ -14,8 +14,11 @@
+ #include <asm/amd_nb.h>
  
-+	get_dma_buf(shm->dmabuf);
- 	fd = dma_buf_fd(shm->dmabuf, O_CLOEXEC);
--	if (fd >= 0)
--		get_dma_buf(shm->dmabuf);
-+	if (fd < 0)
-+		dma_buf_put(shm->dmabuf);
- 	return fd;
- }
+ #define PCI_DEVICE_ID_AMD_17H_ROOT	0x1450
++#define PCI_DEVICE_ID_AMD_17H_M10H_ROOT	0x15d0
+ #define PCI_DEVICE_ID_AMD_17H_DF_F3	0x1463
+ #define PCI_DEVICE_ID_AMD_17H_DF_F4	0x1464
++#define PCI_DEVICE_ID_AMD_17H_M10H_DF_F3 0x15eb
++#define PCI_DEVICE_ID_AMD_17H_M10H_DF_F4 0x15ec
  
+ /* Protect the PCI config register pairs used for SMN and DF indirect access. */
+ static DEFINE_MUTEX(smn_mutex);
+@@ -24,6 +27,7 @@ static u32 *flush_words;
+ 
+ static const struct pci_device_id amd_root_ids[] = {
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_ROOT) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_M10H_ROOT) },
+ 	{}
+ };
+ 
+@@ -39,6 +43,7 @@ const struct pci_device_id amd_nb_misc_i
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_16H_NB_F3) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_16H_M30H_NB_F3) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_DF_F3) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_M10H_DF_F3) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_CNB17H_F3) },
+ 	{}
+ };
+@@ -51,6 +56,7 @@ static const struct pci_device_id amd_nb
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_16H_NB_F4) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_16H_M30H_NB_F4) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_DF_F4) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_M10H_DF_F4) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_CNB17H_F4) },
+ 	{}
+ };
