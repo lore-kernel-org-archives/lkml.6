@@ -1,38 +1,101 @@
-Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqlfcINZAUwhbPRzxDDOZwmrKfYqoc1nd4N3WQtKrsu/8gvshygU8ZqjdIoWuCd/S927cgU
-ARC-Seal: i=1; a=rsa-sha256; t=1526937533; cv=none;
-        d=google.com; s=arc-20160816;
-        b=ouS5RBS1z+GbgaZTzWFlJZGAMlL1Gs7VzuxtNyDKtRolignae7ofiRyE2p5CKvidfe
-         ohoKn5oSZ4Iq6Byn+WElmZut8o1/cnPwRmaEjsmvdejdp3QsADEDbxWpBYnLCUio3ink
-         m8RktQdHa/Fh0FwIxpzd+f6sCiQhFVF6HAjY1LfP4iyUPZusH6B6RhKIpWra7h90BNlh
-         H+R/BLujQYmgDEO/aigbLt7J29VAijIK9zOb9K4G9twm/B1UdFFmrfHH1ehOxYNQTJ3D
-         2Oe+E9LaZR4+2+cWi5mvde99R3tHqGjqmGp83Qmuu5JPwW/8b3KHyFGvOQSSlPqdabgw
-         4wFQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=DNzvJywzxxdmo2GqliiWiQ0rBsLTiQoZOMYFs9pUo4c=;
-        b=offpo9ulTSUCiygwtmGZ+9x/BYixeDvxvDIUaqXV3coZWtLuPeVDKIpmMLEeeX67ge
-         hIIfIcJqsVbtJUQXwqm916ZiCzcl21OTq2tSwiKr14E9+7kdqQh2b8rqRN/j4J0rixkN
-         Qgq8VxvYUh9WMYUlC/G11uRrDWHHtX3J1nWDIX9p22+H4Htlq8Z63vQ5jwpFpefW1sol
-         mTkbIhQwORGZTMKPXpGTAm1gZJ7/i7ypTpPBWnuEpMrzESW9F+8g6JN4v65+1IHBK3YG
-         Ag4vL9D+N9htPzVZvxcArGYQIsP/1nst9kFiPjcY6qwVNyVHBjb1xDqRDfSrcBAIGYBb
-         0Kyw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=FhBymtL7;
-       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=FhBymtL7;
-       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1340521-1526937531-2-11913765758628270907
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1526937530; b=aJMhecrtkyY6j8V0y08fRaBrFtC3MpL6Ig+WEcL6D3CgBxQIcZ
+    BCqa03Dtls8sCb7aymdVzFUobW3HgW7slNdSZQlfXIex0hN7w+nbVWJFnmcJ5cPC
+    5Fe9gj69x0lgiub6mENVZryeZ43dw6PCp2NiAbEFhlr+z3W/GWaa/JSaC6fTvjvq
+    gxexIIgduueQUtwSAjvm+2DAekYtdfsaqj1I5hzqzBnmJvkjUzHN8p3SFFwHnhIh
+    XQBS+ILG3Gt9vM/+UM/mV33gs/1rqE97lNTBa9kP0KGfO+NmhGWxM5uik+Zp62K+
+    2I0VgIz3bN/0ZZPU93GEL3VwgnhghsJMcK3g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1526937530; bh=4MyQkeJwO5wHtadDgdcK3GuAxGF93u
+    r+59HFLvXBl/I=; b=lkIivtiBd17rYPHJiJJa2/9Lc9M4PftnYhFLkNNvOfdTFS
+    IuMEmpC9z7UZHGkCjv30UyLK2ApTZxcMI94EVbI/3Y5rYrmpvq6gjB3NRvulMits
+    OaNU84ESZe8Q/e070lhud/bNR0vK4Qu9WfMUUgj3E4BsAdrGTJutJ8yLF2WE6Ba7
+    D280onWnd8E8v+v+v0IFAyGfdKoLYIP4JwPH6ea8vZHVxj+Xbix0WWk/QSwaRioU
+    0MK4pFaUhSxWyaDJkjqIvdYvmZMspWGPGoHgfz937qDzX0a0/73qUhUbW3wMw1te
+    nKC/ic/t8S3gnyKNuWipLlzqp/lAK5540KuYwQIg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+    header.i=@kernel.org header.b=qKXVHmYs x-bits=1024 x-keytype=rsa
+    x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+    header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=linuxfoundation.org header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+      header.i=@kernel.org header.b=qKXVHmYs x-bits=1024 x-keytype=rsa
+      x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+      header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=linuxfoundation.org header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfOkoDW3/0rst6CUfWMQlWY2Fre8Ou5/+Tc/TOzDKiPO3t7bT09AbEm4sRJA+c0La+yvwTC77vcGrztqJTlAjgslN247S7JRrajaLjcVX+8AnHtfO77+0
+    kWdQW9mrPpEyNIpL+0tDFH1F0Ne3jIJG7gBe7+0rpDjutq+FqCEJCXmasQycIahvFuR/4/wBbSyWHvsmNB4/TcnyMZcE0dp9nkGt2j2WfSPS4YPV6MnY7zrU
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=yMhMjlubAAAA:8 a=VwQbUJbxAAAA:8 a=cm27Pg_UAAAA:8 a=enOvQawGAAAA:8
+    a=QyXUC8HyAAAA:8 a=tBb2bbeoAAAA:8 a=Z4Rwk6OoAAAA:8 a=ag1SF4gXAAAA:8
+    a=xZ1hyXiKp-vhQTs5yaQA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=xmb-EsYY8bH0VWELuYED:22 a=OuzhcWw_GC9nAYdNdRwA:22 a=Oj-tNtZlA1e06AYgeCfH:22
+    a=HkZW87K1Qel5hWWM3VKY:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753611AbeEUVSp (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 21 May 2018 17:18:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33786 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753596AbeEUVSm (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 21 May 2018 17:18:42 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Julian Wiedmann <jwi@linux.ibm.com>,
-	Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.14 28/95] s390/qdio: fix access to uninitialized qdio_q fields
-Date: Mon, 21 May 2018 23:11:18 +0200
-Message-Id: <20180521210454.082712215@linuxfoundation.org>
+        stable@vger.kernel.org, Matthew Wilcox <mawilcox@microsoft.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Kees Cook <keescook@chromium.org>,
+        Yury Norov <ynorov@caviumnetworks.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 24/95] lib/test_bitmap.c: fix bitmap optimisation tests to report errors correctly
+Date: Mon, 21 May 2018 23:11:14 +0200
+Message-Id: <20180521210453.286442585@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210447.219380974@linuxfoundation.org>
 References: <20180521210447.219380974@linuxfoundation.org>
@@ -40,10 +103,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109872569829997?=
-X-GMAIL-MSGID: =?utf-8?q?1601110050733364771?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,40 +113,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Julian Wiedmann <jwi@linux.ibm.com>
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-commit e521813468f786271a87e78e8644243bead48fad upstream.
+commit 1e3054b98c5415d5cb5f8824fc33b548ae5644c3 upstream.
 
-Ever since CQ/QAOB support was added, calling qdio_free() straight after
-qdio_alloc() results in qdio_release_memory() accessing uninitialized
-memory (ie. q->u.out.use_cq and q->u.out.aobs). Followed by a
-kmem_cache_free() on the random AOB addresses.
+I had neglected to increment the error counter when the tests failed,
+which made the tests noisy when they fail, but not actually return an
+error code.
 
-For older kernels that don't have 6e30c549f6ca, the same applies if
-qdio_establish() fails in the DEV_STATE_ONLINE check.
-
-While initializing q->u.out.use_cq would be enough to fix this
-particular bug, the more future-proof change is to just zero-alloc the
-whole struct.
-
-Fixes: 104ea556ee7f ("qdio: support asynchronous delivery of storage blocks")
-Cc: <stable@vger.kernel.org> #v3.2+
-Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Link: http://lkml.kernel.org/r/20180509114328.9887-1-mpe@ellerman.id.au
+Fixes: 3cc78125a081 ("lib/test_bitmap.c: add optimisation tests")
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Reported-by: Michael Ellerman <mpe@ellerman.id.au>
+Tested-by: Michael Ellerman <mpe@ellerman.id.au>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Cc: Yury Norov <ynorov@caviumnetworks.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: <stable@vger.kernel.org>	[4.13+]
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/s390/cio/qdio_setup.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/test_bitmap.c |   21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
 
---- a/drivers/s390/cio/qdio_setup.c
-+++ b/drivers/s390/cio/qdio_setup.c
-@@ -140,7 +140,7 @@ static int __qdio_allocate_qs(struct qdi
- 	int i;
+--- a/lib/test_bitmap.c
++++ b/lib/test_bitmap.c
+@@ -434,23 +434,32 @@ static void noinline __init test_mem_opt
+ 	unsigned int start, nbits;
  
- 	for (i = 0; i < nr_queues; i++) {
--		q = kmem_cache_alloc(qdio_q_cache, GFP_KERNEL);
-+		q = kmem_cache_zalloc(qdio_q_cache, GFP_KERNEL);
- 		if (!q)
- 			return -ENOMEM;
+ 	for (start = 0; start < 1024; start += 8) {
+-		memset(bmap1, 0x5a, sizeof(bmap1));
+-		memset(bmap2, 0x5a, sizeof(bmap2));
+ 		for (nbits = 0; nbits < 1024 - start; nbits += 8) {
++			memset(bmap1, 0x5a, sizeof(bmap1));
++			memset(bmap2, 0x5a, sizeof(bmap2));
++
+ 			bitmap_set(bmap1, start, nbits);
+ 			__bitmap_set(bmap2, start, nbits);
+-			if (!bitmap_equal(bmap1, bmap2, 1024))
++			if (!bitmap_equal(bmap1, bmap2, 1024)) {
+ 				printk("set not equal %d %d\n", start, nbits);
+-			if (!__bitmap_equal(bmap1, bmap2, 1024))
++				failed_tests++;
++			}
++			if (!__bitmap_equal(bmap1, bmap2, 1024)) {
+ 				printk("set not __equal %d %d\n", start, nbits);
++				failed_tests++;
++			}
  
+ 			bitmap_clear(bmap1, start, nbits);
+ 			__bitmap_clear(bmap2, start, nbits);
+-			if (!bitmap_equal(bmap1, bmap2, 1024))
++			if (!bitmap_equal(bmap1, bmap2, 1024)) {
+ 				printk("clear not equal %d %d\n", start, nbits);
+-			if (!__bitmap_equal(bmap1, bmap2, 1024))
++				failed_tests++;
++			}
++			if (!__bitmap_equal(bmap1, bmap2, 1024)) {
+ 				printk("clear not __equal %d %d\n", start,
+ 									nbits);
++				failed_tests++;
++			}
+ 		}
+ 	}
+ }
