@@ -1,118 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752986AbeEUPOK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 11:14:10 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38810 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752778AbeEUPOF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 11:14:05 -0400
-Subject: Re: [PATCH v5 05/13] s390: vfio-ap: register matrix device with VFIO
- mdev framework
-To: Cornelia Huck <cohuck@redhat.com>
-Cc: Halil Pasic <pasic@linux.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org, freude@de.ibm.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
-        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1525705912-12815-6-git-send-email-akrowiak@linux.vnet.ibm.com>
- <5471b194-d7ca-c9c6-132e-fa9539fe44f0@linux.ibm.com>
- <4688078d-3e13-5201-582f-52576b25defa@linux.vnet.ibm.com>
- <20180517094454.6afae7ba.cohuck@redhat.com>
-From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Date: Mon, 21 May 2018 11:13:58 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1753015AbeEUPPk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 11:15:40 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38853 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752247AbeEUPPg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 11:15:36 -0400
+Date: Mon, 21 May 2018 17:12:51 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Mike Snitzer <snitzer@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        hch@infradead.org, colyli@suse.de, darrick.wong@oracle.com, clm@fb.com,
+        bacik@fb.com, linux-xfs@vger.kernel.org, drbd-dev@lists.linbit.com,
+        linux-btrfs@vger.kernel.org, linux-raid@vger.kernel.org,
+        neilb@suse.com
+Subject: Re: [PATCH 00/13] convert block layer to bioset_init()/mempool_init()
+Message-ID: <20180521151251.GX6649@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Jens Axboe <axboe@kernel.dk>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        hch@infradead.org, colyli@suse.de, darrick.wong@oracle.com,
+        clm@fb.com, bacik@fb.com, linux-xfs@vger.kernel.org,
+        drbd-dev@lists.linbit.com, linux-btrfs@vger.kernel.org,
+        linux-raid@vger.kernel.org, neilb@suse.com
+References: <20180520222558.7053-1-kent.overstreet@gmail.com>
+ <20180521140348.GA19069@redhat.com>
+ <686d7df6-c7d1-48a6-b7ff-48dc8aff6a62@kernel.dk>
 MIME-Version: 1.0
-In-Reply-To: <20180517094454.6afae7ba.cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18052115-0028-0000-0000-000009A86625
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009061; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000261; SDB=6.01035577; UDB=6.00529694; IPR=6.00814705;
- MB=3.00021227; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-21 15:14:02
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052115-0029-0000-0000-00003AED0B89
-Message-Id: <b45ba36a-0451-56b8-c038-410441bb8bd4@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-21_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805210181
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <686d7df6-c7d1-48a6-b7ff-48dc8aff6a62@kernel.dk>
+User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/17/2018 03:44 AM, Cornelia Huck wrote:
-> On Mon, 14 May 2018 15:42:18 -0400
-> Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
->
->> On 05/11/2018 01:18 PM, Halil Pasic wrote:
->>>
->>> On 05/07/2018 05:11 PM, Tony Krowiak wrote:
->>>> Registers the matrix device created by the VFIO AP device
->>>> driver with the VFIO mediated device framework.
->>>> Registering the matrix device will create the sysfs
->>>> structures needed to create mediated matrix devices
->>>> each of which will be used to configure the AP matrix
->>>> for a guest and connect it to the VFIO AP device driver.
->>>> +static int vfio_ap_mdev_create(struct kobject *kobj, struct
->>>> mdev_device *mdev)
->>>> +{
->>>> +    struct ap_matrix *ap_matrix = to_ap_matrix(mdev_parent_dev(mdev));
->>>> +
->>>> +    ap_matrix->available_instances--;
->>>> +
->>>> +    return 0;
->>>> +}
->>>> +
->>>> +static int vfio_ap_mdev_remove(struct mdev_device *mdev)
->>>> +{
->>>> +    struct ap_matrix *ap_matrix = to_ap_matrix(mdev_parent_dev(mdev));
->>>> +
->>>> +    ap_matrix->available_instances++;
->>>> +
->>>> +    return 0;
->>>> +}
->>>> +
->>> The above functions seem to be called with the lock of this
->>> auto-generated
->>> mdev parent device held. That's why we don't have to care about
->>> synchronization
->>> ourselves, right?
->> I would assume as much. The comments for the 'struct mdev_parent_ops' in
->> include/linux/mdev.h do not mention anything about synchronization, nor
->> did I
->> see any locking or synchronization in the vfio_ccw implementation after
->> which
->> I modeled my code, so frankly it is something I did not consider.
->>
->>>
->>> A small comment in the code could be helpful for mdev non-experts.
->>> Hell, I would
->>> even consider documenting it for all mdev -- took me some time to
->>> figure out.
->> You may want to bring this up with the VFIO mdev maintainers, but I'd be
->> happy to
->> include a comment in the functions in question if you think it important.
-> Important note: There's currently a patch on list that removes the mdev
-> parent mutex, and it seems there was never intended to be any
-> serialization in that place by the mdev core. (Look for "vfio/mdev:
-> Check globally for duplicate devices".)
+On Mon, May 21, 2018 at 08:19:58AM -0600, Jens Axboe wrote:
+> On 5/21/18 8:03 AM, Mike Snitzer wrote:
+> > On Sun, May 20 2018 at  6:25pm -0400,
+> > Kent Overstreet <kent.overstreet@gmail.com> wrote:
+> > 
+> >> Jens - this series does the rest of the conversions that Christoph wanted, and
+> >> drops bioset_create().
+> >>
+> >> Only lightly tested, but the changes are pretty mechanical. Based on your
+> >> for-next tree.
+> > 
+> > By switching 'mempool_t *' to 'mempool_t' and 'bio_set *' to 'bio_set'
+> > you've altered the alignment of members in data structures.  So I'll
+> > need to audit all the data structures you've modified in DM.
+> > 
+> > Could we get the backstory on _why_ you're making this change?
+> > Would go a long way to helping me appreciate why this is a good use of
+> > anyone's time.
+> 
+> Yeah, it's in the first series, it gets rid of a pointer indirection.
 
-The patch on the list holds the mdev_list_lock during create and remove
-of an mdev device, so it looks like no synchronization is necessary on the
-part of the vendor code in the create/remove callbacks; does that sound
-about right?
+This should to be also mentioned the changelog of each patch. There are
+12 subsystems changed, this could be about 10 maintainers and I guess
+everybody has the same question why the change is made.
 
->
+The conversion is not exactly the same in all patches, the simple
+pointer -> static variable can be possibly covered by the same generic
+text but as Mike points out the alignment changes should be at least
+mentioned for consideration otherwise.
