@@ -1,183 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751134AbeEUI3z (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 04:29:55 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:34697 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751081AbeEUI3x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 04:29:53 -0400
-X-Google-Smtp-Source: AB8JxZrdnPMOvYCUJjPUGVRlUT0FEnWVV9zTa/T8Bz3PR9VPhRWWPcBntcu9rB04t9OW70/AztNFAsXHe9SHwdVL2XY=
+        id S1751154AbeEUIe3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 04:34:29 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7709 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750970AbeEUIe2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 04:34:28 -0400
+Subject: Re: REGRESSION: HiKey eMMC corruption
+To: John Stultz <john.stultz@linaro.org>, Ryan Grachek <ryan@edited.us>,
+        "Arnd Bergmann" <arnd@arndb.de>, Leo Yan <leo.yan@linaro.org>,
+        Guodong Xu <guodong.xu@linaro.org>
+References: <CALAqxLX5qPq_5CQwubzk5hiL3kkes7nK9NGqtnyddXKfyaJKTg@mail.gmail.com>
+CC: Ulf Hansson <ulf.hansson@linaro.org>,
+        YongQin Liu <yongqin.liu@linaro.org>,
+        lkml <linux-kernel@vger.kernel.org>
+From: Wei Xu <xuwei5@hisilicon.com>
+Message-ID: <5B02847C.3000102@hisilicon.com>
+Date: Mon, 21 May 2018 09:34:04 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180521051424.mljwmisvrvi6yyc4@vireshk-i7>
-References: <20180518185501.173552-1-joel@joelfernandes.org> <20180521051424.mljwmisvrvi6yyc4@vireshk-i7>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 21 May 2018 10:29:52 +0200
-X-Google-Sender-Auth: OdcCFDy7sovRJWFxIFzi1_XHStA
-Message-ID: <CAJZ5v0jbJ3HfLyP6VZ2PuG0q1n=faX3G98ruwK-o1ro+gv7B9w@mail.gmail.com>
-Subject: Re: [PATCH v2] schedutil: Allow cpufreq requests to be made even when
- kthread kicked
-To: Viresh Kumar <viresh.kumar@linaro.org>,
-        "Joel Fernandes (Google.)" <joelaf@google.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>, Todd Kjos <tkjos@google.com>,
-        Claudio Scordino <claudio@evidence.eu.com>, kernel-team@android.com,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CALAqxLX5qPq_5CQwubzk5hiL3kkes7nK9NGqtnyddXKfyaJKTg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.44]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 7:14 AM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> On 18-05-18, 11:55, Joel Fernandes (Google.) wrote:
->> From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
->>
->> Currently there is a chance of a schedutil cpufreq update request to be
->> dropped if there is a pending update request. This pending request can
->> be delayed if there is a scheduling delay of the irq_work and the wake
->> up of the schedutil governor kthread.
->>
->> A very bad scenario is when a schedutil request was already just made,
->> such as to reduce the CPU frequency, then a newer request to increase
->> CPU frequency (even sched deadline urgent frequency increase requests)
->> can be dropped, even though the rate limits suggest that its Ok to
->> process a request. This is because of the way the work_in_progress flag
->> is used.
->>
->> This patch improves the situation by allowing new requests to happen
->> even though the old one is still being processed. Note that in this
->> approach, if an irq_work was already issued, we just update next_freq
->> and don't bother to queue another request so there's no extra work being
->> done to make this happen.
->
-> Now that this isn't an RFC anymore, you shouldn't have added below
-> paragraph here. It could go to the comments section though.
->
->> I had brought up this issue at the OSPM conference and Claudio had a
->> discussion RFC with an alternate approach [1]. I prefer the approach as
->> done in the patch below since it doesn't need any new flags and doesn't
->> cause any other extra overhead.
->>
->> [1] https://patchwork.kernel.org/patch/10384261/
->>
->> LGTMed-by: Viresh Kumar <viresh.kumar@linaro.org>
->> LGTMed-by: Juri Lelli <juri.lelli@redhat.com>
->
-> Looks like a Tag you just invented ? :)
+Hi John,
 
-Yeah.
+On 2018/5/18 23:59, John Stultz wrote:
+> The last few months have been busy and I've not been ontop of my
+> upstream testing as well as I'd like, but today I did manage to chase
+> down an issue I've been seeing since 4.17-rc1 on the HiKey board,
+> which was causing emmc corruption and stopping the board from booting.
+> 
+> Symptoms usually looked like:
+> [    1.690448] mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot
+> req 400000Hz, actual 400000HZ div = 31)
+> ...
+> [    1.777288] mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot
+> req 150000000Hz, actual 148800000HZ div = 0)
+> [    1.777760] mmc0: new HS200 MMC card at address 0001
+> ...
+> [   12.214381] dwmmc_k3 f723d000.dwmmc0: Unexpected command timeout, state 3
+> [   12.457420] mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot
+> req 400000Hz, actual 400000HZ div = 31)
+> [   12.536676] mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot
+> req 150000000Hz, actual 148800000HZ div = 0)
+> [   12.616827] mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot
+> req 400000Hz, actual 400000HZ div = 31)
+> [   12.695742] mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot
+> req 150000000Hz, actual 148800000HZ div = 0)
+> [   12.772067] mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot
+> req 400000Hz, actual 400000HZ div = 31)
+> [   12.850429] mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot
+> req 150000000Hz, actual 148800000HZ div = 0)
+> [   12.863384] print_req_error: I/O error, dev mmcblk0, sector 8810504
+> [   12.869778] Aborting journal on device mmcblk0p10-8.
+> [   12.887900] mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot
+> req 400000Hz, actual 400000HZ div = 31)
+> [   12.967509] mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot
+> req 150000000Hz, actual 148800000HZ div = 0)
+> [   13.130182] mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot
+> req 400000Hz, actual 400000HZ div = 31)
+> [   13.209438] mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot
+> req 150000000Hz, actual 148800000HZ div = 0)
+> [   13.302085] mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot
+> req 400000Hz, actual 400000HZ div = 31)
+> [   13.380462] mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot
+> req 150000000Hz, actual 148800000HZ div = 0)
+> [   13.494539] mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot
+> req 400000Hz, actual 400000HZ div = 31)
+> [   13.571420] mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot
+> req 150000000Hz, actual 148800000HZ div = 0)
+> [   13.640817] EXT4-fs error (device mmcblk0p10):
+> ext4_journal_check_start:61: Detected aborted journal
+> [   13.650043] EXT4-fs (mmcblk0p10): Remounting filesystem read-only
+> 
+> And quite often this would result in a disk that wouldn't properly
+> boot even with older kernels.
+> 
+> I've narrowed the issue down to the following change:
+> abd7d0972a192 ("arm64: dts: hikey: Enable HS200 mode on eMMC")
+> 
+> Reverting this change seems to make things work reliably for me.
 
-The LGTM from Juri can be converned into an ACK silently IMO.  That
-said I have added Looks-good-to: tags to a couple of commits. :-)
+Thanks to report this!
+Let me check with Leo and Guodong to know which property changing
+this is caused by.
 
->> CC: Viresh Kumar <viresh.kumar@linaro.org>
->> CC: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->> CC: Peter Zijlstra <peterz@infradead.org>
->> CC: Ingo Molnar <mingo@redhat.com>
->> CC: Patrick Bellasi <patrick.bellasi@arm.com>
->> CC: Juri Lelli <juri.lelli@redhat.com>
->> Cc: Luca Abeni <luca.abeni@santannapisa.it>
->> CC: Joel Fernandes <joelaf@google.com>
->> CC: Todd Kjos <tkjos@google.com>
->> CC: claudio@evidence.eu.com
->> CC: kernel-team@android.com
->> CC: linux-pm@vger.kernel.org
->> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
->> ---
->> v1 -> v2: Minor style related changes.
->>
->>  kernel/sched/cpufreq_schedutil.c | 34 ++++++++++++++++++++++++--------
->>  1 file changed, 26 insertions(+), 8 deletions(-)
->>
->> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
->> index e13df951aca7..5c482ec38610 100644
->> --- a/kernel/sched/cpufreq_schedutil.c
->> +++ b/kernel/sched/cpufreq_schedutil.c
->> @@ -92,9 +92,6 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
->>           !cpufreq_can_do_remote_dvfs(sg_policy->policy))
->>               return false;
->>
->> -     if (sg_policy->work_in_progress)
->> -             return false;
->> -
->>       if (unlikely(sg_policy->need_freq_update)) {
->>               sg_policy->need_freq_update = false;
->>               /*
->> @@ -128,7 +125,7 @@ static void sugov_update_commit(struct sugov_policy *sg_policy, u64 time,
->>
->>               policy->cur = next_freq;
->>               trace_cpu_frequency(next_freq, smp_processor_id());
->> -     } else {
->> +     } else if (!sg_policy->work_in_progress) {
->>               sg_policy->work_in_progress = true;
->>               irq_work_queue(&sg_policy->irq_work);
->>       }
->> @@ -291,6 +288,13 @@ static void sugov_update_single(struct update_util_data *hook, u64 time,
->>
->>       ignore_dl_rate_limit(sg_cpu, sg_policy);
->>
->> +     /*
->> +      * For slow-switch systems, single policy requests can't run at the
->> +      * moment if update is in progress, unless we acquire update_lock.
->> +      */
->> +     if (sg_policy->work_in_progress)
->> +             return;
->> +
->
-> I would still want this to go away :)
->
-> @Rafael, will it be fine to get locking in place for unshared policy
-> platforms ?
+Hi Leo and Guodong,
 
-As long as it doesn't affect the fast switch path in any way.
+Can you help to confirm the commit abd7d0972a192?
+>From the log it seemed to cause by the property "max-frequency".
 
->
->>       if (!sugov_should_update_freq(sg_policy, time))
->>               return;
->>
->> @@ -382,13 +386,27 @@ sugov_update_shared(struct update_util_data *hook, u64 time, unsigned int flags)
->>  static void sugov_work(struct kthread_work *work)
->>  {
->>       struct sugov_policy *sg_policy = container_of(work, struct sugov_policy, work);
->> +     unsigned int freq;
->> +     unsigned long flags;
->> +
->> +     /*
->> +      * Hold sg_policy->update_lock shortly to handle the case where:
->> +      * incase sg_policy->next_freq is read here, and then updated by
->> +      * sugov_update_shared just before work_in_progress is set to false
->> +      * here, we may miss queueing the new update.
->> +      *
->> +      * Note: If a work was queued after the update_lock is released,
->> +      * sugov_work will just be called again by kthread_work code; and the
->> +      * request will be proceed before the sugov thread sleeps.
->> +      */
->> +     raw_spin_lock_irqsave(&sg_policy->update_lock, flags);
->> +     freq = sg_policy->next_freq;
->> +     sg_policy->work_in_progress = false;
->> +     raw_spin_unlock_irqrestore(&sg_policy->update_lock, flags);
->>
->>       mutex_lock(&sg_policy->work_lock);
->> -     __cpufreq_driver_target(sg_policy->policy, sg_policy->next_freq,
->> -                             CPUFREQ_RELATION_L);
->> +     __cpufreq_driver_target(sg_policy->policy, freq, CPUFREQ_RELATION_L);
->>       mutex_unlock(&sg_policy->work_lock);
->> -
->> -     sg_policy->work_in_progress = false;
->>  }
->>
->>  static void sugov_irq_work(struct irq_work *irq_work)
->
-> Fix the commit log and you can add my
+Thanks!
 
-I can fix it up.
+Best Regards,
+Wei
 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Thanks,
-Rafael
+> 
+> Should we revert that upstream for now?
+> 
+> thanks
+> -john
+> 
+> .
+> 
