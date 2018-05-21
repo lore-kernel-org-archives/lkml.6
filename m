@@ -1,30 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752730AbeEULOA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 07:14:00 -0400
-Received: from mail-vk0-f41.google.com ([209.85.213.41]:40344 "EHLO
-        mail-vk0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751025AbeEULN7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 07:13:59 -0400
-X-Google-Smtp-Source: AB8JxZr/qvMfINmpdKBgByqJyih4QmrJn9vH8eIyHnpkG2BTdIjI6qqZ6OUaBaiDB8QC0Aerl5TBy/MMkpBx2JN99ZA=
-MIME-Version: 1.0
-Reply-To: whiteheadm@acm.org
-From: tedheadster <tedheadster@gmail.com>
-Date: Mon, 21 May 2018 07:13:37 -0400
-Message-ID: <CAP8WD_apEh=a8m2zJtUwcFpMRYh3ffjTbT5983413hrfE0w05w@mail.gmail.com>
-Subject: RE: x86: Fix AMD K6 indirect call check v2
-To: Andi Kleen <ak@linux.intel.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1752537AbeEULRT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 07:17:19 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47190 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751166AbeEULRO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 07:17:14 -0400
+From: Robin Murphy <robin.murphy@arm.com>
+To: will.deacon@arm.com, mark.rutland@arm.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] perf/arm-cci: Remove unnecessary period adjustment
+Date: Mon, 21 May 2018 12:17:09 +0100
+Message-Id: <9e5b7638ff44111334aff53b76bdcd1f26f08179.1526901337.git.robin.murphy@arm.com>
+X-Mailer: git-send-email 2.17.0.dirty
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andi,
-  I have a K6 regression testing system. I think my K6 is a revision
-C, but I probably can get an earlier cpu (with the bug) to test on.
+Since sampling events are rejected up-front by cci_pmu_event_init(), it
+doesn't make much sense to go fiddling with the sampling period later.
+This would seem to be just another leftover artefact of the arm_pmu
+framwork, and as such can go.
 
-Do you have any specific tests you would want me to do on the affected cpu?
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+---
+ drivers/perf/arm-cci.c | 9 ---------
+ 1 file changed, 9 deletions(-)
 
-- Matthew Whitehead
+diff --git a/drivers/perf/arm-cci.c b/drivers/perf/arm-cci.c
+index 09938dd8eb6f..e6fadc8e1178 100644
+--- a/drivers/perf/arm-cci.c
++++ b/drivers/perf/arm-cci.c
+@@ -1297,15 +1297,6 @@ static int __hw_perf_event_init(struct perf_event *event)
+ 	 */
+ 	hwc->config_base	    |= (unsigned long)mapping;
+ 
+-	/*
+-	 * Limit the sample_period to half of the counter width. That way, the
+-	 * new counter value is far less likely to overtake the previous one
+-	 * unless you have some serious IRQ latency issues.
+-	 */
+-	hwc->sample_period  = CCI_PMU_CNTR_MASK >> 1;
+-	hwc->last_period    = hwc->sample_period;
+-	local64_set(&hwc->period_left, hwc->sample_period);
+-
+ 	if (event->group_leader != event) {
+ 		if (validate_group(event) != 0)
+ 			return -EINVAL;
+-- 
+2.17.0.dirty
