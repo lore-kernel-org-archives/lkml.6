@@ -1,22 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752044AbeEUEiQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 00:38:16 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55536 "EHLO mx2.suse.de"
+        id S1752318AbeEUEiY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 00:38:24 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55566 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751633AbeEUEiG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 00:38:06 -0400
+        id S1751088AbeEUEiV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 00:38:21 -0400
 From: NeilBrown <neilb@suse.com>
 To: Oleg Drokin <oleg.drokin@intel.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         James Simmons <jsimmons@infradead.org>,
         Andreas Dilger <andreas.dilger@intel.com>
 Date: Mon, 21 May 2018 14:35:12 +1000
-Subject: [PATCH 06/30] staging: lustre: remove current_pid() and
- current_comm()
+Subject: [PATCH 08/30] staging: lustre: discard cfs_cap_t, use kernel_cap_t
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Lustre Development List <lustre-devel@lists.lustre.org>
-Message-ID: <152687731258.24196.14857062582444612938.stgit@noble>
+Message-ID: <152687731265.24196.15391613601574901407.stgit@noble>
 In-Reply-To: <152687724799.24196.7718555295926047576.stgit@noble>
 References: <152687724799.24196.7718555295926047576.stgit@noble>
 User-Agent: StGit/0.17.1-dirty
@@ -27,240 +26,373 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just use current->pid and current->comm directly, instead
-of having wrappers.
+lustre only sends 32bits of capabilities in on-the-wire RPC calls.
+It current strips off higher bits and uses a 32bit cfs_cap_t
+throughout.
+Though there is a small memory cost, it is cleaner to use
+kernel_cap_t throughout and only truncate when marshalling
+data for RPC calls.
+
+So this patch replaces cfs_cap_t with kernel_cap_t throughout,
+and where a cfs_cap_t was previous stored in a __u32, we now
+store cap.cap[0] instead.
+
+With this, we can remove include/linux/libcfs/curproc.h
 
 Signed-off-by: NeilBrown <neilb@suse.com>
 ---
- .../staging/lustre/include/linux/libcfs/curproc.h  |    4 ----
- drivers/staging/lustre/lnet/libcfs/debug.c         |    2 +-
- drivers/staging/lustre/lustre/ldlm/ldlm_lock.c     |    2 +-
- .../staging/lustre/lustre/llite/llite_internal.h   |    2 +-
- drivers/staging/lustre/lustre/llite/statahead.c    |    6 +++---
- drivers/staging/lustre/lustre/lov/lov_merge.c      |    2 +-
- drivers/staging/lustre/lustre/lov/lov_obd.c        |    6 +++---
- drivers/staging/lustre/lustre/obdclass/class_obd.c |    2 +-
- drivers/staging/lustre/lustre/osc/osc_request.c    |    2 +-
- drivers/staging/lustre/lustre/ptlrpc/client.c      |    8 ++++----
- drivers/staging/lustre/lustre/ptlrpc/service.c     |    6 +++---
- 11 files changed, 19 insertions(+), 23 deletions(-)
+ .../staging/lustre/include/linux/libcfs/curproc.h  |   69 --------------------
+ .../staging/lustre/include/linux/libcfs/libcfs.h   |    1 
+ drivers/staging/lustre/lustre/include/obd.h        |    4 +
+ drivers/staging/lustre/lustre/include/obd_class.h  |    2 -
+ drivers/staging/lustre/lustre/llite/dir.c          |    2 -
+ drivers/staging/lustre/lustre/llite/llite_lib.c    |    2 -
+ drivers/staging/lustre/lustre/llite/namei.c        |    2 -
+ drivers/staging/lustre/lustre/lmv/lmv_obd.c        |    8 +-
+ drivers/staging/lustre/lustre/mdc/mdc_internal.h   |    4 +
+ drivers/staging/lustre/lustre/mdc/mdc_lib.c        |   17 +++--
+ drivers/staging/lustre/lustre/mdc/mdc_reint.c      |    2 -
+ drivers/staging/lustre/lustre/mdc/mdc_request.c    |    2 -
+ drivers/staging/lustre/lustre/ptlrpc/sec.c         |    2 -
+ 13 files changed, 24 insertions(+), 93 deletions(-)
+ delete mode 100644 drivers/staging/lustre/include/linux/libcfs/curproc.h
 
 diff --git a/drivers/staging/lustre/include/linux/libcfs/curproc.h b/drivers/staging/lustre/include/linux/libcfs/curproc.h
-index d6e4f47b5daf..83526f84495d 100644
+deleted file mode 100644
+index fc6f6eb2d5fe..000000000000
 --- a/drivers/staging/lustre/include/linux/libcfs/curproc.h
-+++ b/drivers/staging/lustre/include/linux/libcfs/curproc.h
-@@ -48,10 +48,6 @@
-  * kernel_cap_t
-  */
- 
--/* check if task is running in compat mode.*/
--#define current_pid()		(current->pid)
--#define current_comm()		(current->comm)
++++ /dev/null
+@@ -1,69 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
+- * GPL HEADER START
+- *
+- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 only,
+- * as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful, but
+- * WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+- * General Public License version 2 for more details (a copy is included
+- * in the LICENSE file that accompanied this code).
+- *
+- * You should have received a copy of the GNU General Public License
+- * version 2 along with this program; If not, see
+- * http://www.gnu.org/licenses/gpl-2.0.html
+- *
+- * GPL HEADER END
+- */
+-/*
+- * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
+- * Use is subject to license terms.
+- *
+- * Copyright (c) 2011, 2012, Intel Corporation.
+- */
+-/*
+- * This file is part of Lustre, http://www.lustre.org/
+- * Lustre is a trademark of Sun Microsystems, Inc.
+- *
+- * libcfs/include/libcfs/curproc.h
+- *
+- * Lustre curproc API declaration
+- *
+- * Author: Nikita Danilov <nikita@clusterfs.com>
+- */
 -
- typedef u32 cfs_cap_t;
+-#ifndef __LIBCFS_CURPROC_H__
+-#define __LIBCFS_CURPROC_H__
+-
+-/*
+- * Plus, platform-specific constant
+- *
+- * and opaque scalar type
+- *
+- * kernel_cap_t
+- */
+-
+-typedef u32 cfs_cap_t;
+-
+-static inline cfs_cap_t cfs_curproc_cap_pack(void)
+-{
+-	/* cfs_cap_t is only the first word of kernel_cap_t */
+-	return (cfs_cap_t)(current_cap().cap[0]);
+-}
+-
+-/* __LIBCFS_CURPROC_H__ */
+-#endif
+-/*
+- * Local variables:
+- * c-indentation-style: "K&R"
+- * c-basic-offset: 8
+- * tab-width: 8
+- * fill-column: 80
+- * scroll-step: 1
+- * End:
+- */
+diff --git a/drivers/staging/lustre/include/linux/libcfs/libcfs.h b/drivers/staging/lustre/include/linux/libcfs/libcfs.h
+index 4c91ef45abb6..7259544e4c32 100644
+--- a/drivers/staging/lustre/include/linux/libcfs/libcfs.h
++++ b/drivers/staging/lustre/include/linux/libcfs/libcfs.h
+@@ -86,7 +86,6 @@
+ #include <linux/libcfs/libcfs_string.h>
+ #include <linux/libcfs/libcfs_hash.h>
+ #include <linux/libcfs/libcfs_fail.h>
+-#include <linux/libcfs/curproc.h>
  
- #define CFS_CAP_FS_MASK (BIT(CAP_CHOWN) |		\
-diff --git a/drivers/staging/lustre/lnet/libcfs/debug.c b/drivers/staging/lustre/lnet/libcfs/debug.c
-index 5862f0730dd0..724a453a27ac 100644
---- a/drivers/staging/lustre/lnet/libcfs/debug.c
-+++ b/drivers/staging/lustre/lnet/libcfs/debug.c
-@@ -373,7 +373,7 @@ void libcfs_debug_dumplog(void)
- 	add_wait_queue(&debug_ctlwq, &wait);
+ #define LIBCFS_VERSION "0.7.0"
  
- 	dumper = kthread_run(libcfs_debug_dumplog_thread,
--			     (void *)(long)current_pid(),
-+			     (void *)(long)current->pid,
- 			     "libcfs_debug_dumper");
- 	set_current_state(TASK_INTERRUPTIBLE);
- 	if (IS_ERR(dumper))
-diff --git a/drivers/staging/lustre/lustre/ldlm/ldlm_lock.c b/drivers/staging/lustre/lustre/ldlm/ldlm_lock.c
-index 22c49cc593e3..763acd2311a2 100644
---- a/drivers/staging/lustre/lustre/ldlm/ldlm_lock.c
-+++ b/drivers/staging/lustre/lustre/ldlm/ldlm_lock.c
-@@ -1558,7 +1558,7 @@ struct ldlm_lock *ldlm_lock_create(struct ldlm_namespace *ns,
+diff --git a/drivers/staging/lustre/lustre/include/obd.h b/drivers/staging/lustre/lustre/include/obd.h
+index fe21987a3f9f..da99a0f02b6c 100644
+--- a/drivers/staging/lustre/lustre/include/obd.h
++++ b/drivers/staging/lustre/lustre/include/obd.h
+@@ -717,7 +717,7 @@ struct md_op_data {
+ 	__u32		   op_suppgids[2];
+ 	__u32		   op_fsuid;
+ 	__u32		   op_fsgid;
+-	cfs_cap_t	       op_cap;
++	kernel_cap_t	       op_cap;
+ 	void		   *op_data;
+ 	size_t			op_data_size;
  
- 	lock->l_req_mode = mode;
- 	lock->l_ast_data = data;
--	lock->l_pid = current_pid();
-+	lock->l_pid = current->pid;
- 	if (cbs) {
- 		lock->l_blocking_ast = cbs->lcs_blocking;
- 		lock->l_completion_ast = cbs->lcs_completion;
-diff --git a/drivers/staging/lustre/lustre/llite/llite_internal.h b/drivers/staging/lustre/lustre/llite/llite_internal.h
-index 6504850e3689..379d88e20cd3 100644
---- a/drivers/staging/lustre/lustre/llite/llite_internal.h
-+++ b/drivers/staging/lustre/lustre/llite/llite_internal.h
-@@ -1140,7 +1140,7 @@ dentry_may_statahead(struct inode *dir, struct dentry *dentry)
- 		return false;
+@@ -912,7 +912,7 @@ struct md_ops {
+ 		     struct md_open_data *, struct ptlrpc_request **);
+ 	int (*create)(struct obd_export *, struct md_op_data *,
+ 		      const void *, size_t, umode_t, uid_t, gid_t,
+-		      cfs_cap_t, __u64, struct ptlrpc_request **);
++		      kernel_cap_t, __u64, struct ptlrpc_request **);
+ 	int (*enqueue)(struct obd_export *, struct ldlm_enqueue_info *,
+ 		       const union ldlm_policy_data *, struct md_op_data *,
+ 		       struct lustre_handle *, __u64);
+diff --git a/drivers/staging/lustre/lustre/include/obd_class.h b/drivers/staging/lustre/lustre/include/obd_class.h
+index a76f016a8c45..a3b1465121e5 100644
+--- a/drivers/staging/lustre/lustre/include/obd_class.h
++++ b/drivers/staging/lustre/lustre/include/obd_class.h
+@@ -1226,7 +1226,7 @@ static inline int md_close(struct obd_export *exp, struct md_op_data *op_data,
  
- 	/* not the same process, don't statahead */
--	if (lli->lli_opendir_pid != current_pid())
-+	if (lli->lli_opendir_pid != current->pid)
- 		return false;
+ static inline int md_create(struct obd_export *exp, struct md_op_data *op_data,
+ 			    const void *data, size_t datalen, umode_t mode,
+-			    uid_t uid, gid_t gid, cfs_cap_t cap_effective,
++			    uid_t uid, gid_t gid, kernel_cap_t cap_effective,
+ 			    __u64 rdev, struct ptlrpc_request **request)
+ {
+ 	int rc;
+diff --git a/drivers/staging/lustre/lustre/llite/dir.c b/drivers/staging/lustre/lustre/llite/dir.c
+index 80d44ca9516a..688dddf3ca47 100644
+--- a/drivers/staging/lustre/lustre/llite/dir.c
++++ b/drivers/staging/lustre/lustre/llite/dir.c
+@@ -445,7 +445,7 @@ static int ll_dir_setdirstripe(struct inode *parent, struct lmv_user_md *lump,
+ 	err = md_create(sbi->ll_md_exp, op_data, lump, sizeof(*lump), mode,
+ 			from_kuid(&init_user_ns, current_fsuid()),
+ 			from_kgid(&init_user_ns, current_fsgid()),
+-			cfs_curproc_cap_pack(), 0, &request);
++			current_cap(), 0, &request);
+ 	ll_finish_md_op_data(op_data);
+ 
+ 	err = ll_prep_inode(&inode, request, parent->i_sb, NULL);
+diff --git a/drivers/staging/lustre/lustre/llite/llite_lib.c b/drivers/staging/lustre/lustre/llite/llite_lib.c
+index 60dbe888e336..bdb53ab77e58 100644
+--- a/drivers/staging/lustre/lustre/llite/llite_lib.c
++++ b/drivers/staging/lustre/lustre/llite/llite_lib.c
+@@ -2336,7 +2336,7 @@ struct md_op_data *ll_prep_md_op_data(struct md_op_data *op_data,
+ 	op_data->op_mod_time = ktime_get_real_seconds();
+ 	op_data->op_fsuid = from_kuid(&init_user_ns, current_fsuid());
+ 	op_data->op_fsgid = from_kgid(&init_user_ns, current_fsgid());
+-	op_data->op_cap = cfs_curproc_cap_pack();
++	op_data->op_cap = current_cap();
+ 	if ((opc == LUSTRE_OPC_CREATE) && name &&
+ 	    filename_is_volatile(name, namelen, &op_data->op_mds))
+ 		op_data->op_bias |= MDS_CREATE_VOLATILE;
+diff --git a/drivers/staging/lustre/lustre/llite/namei.c b/drivers/staging/lustre/lustre/llite/namei.c
+index 9ac7f097802d..d5f6d20afe8c 100644
+--- a/drivers/staging/lustre/lustre/llite/namei.c
++++ b/drivers/staging/lustre/lustre/llite/namei.c
+@@ -885,7 +885,7 @@ static int ll_new_node(struct inode *dir, struct dentry *dentry,
+ 	err = md_create(sbi->ll_md_exp, op_data, tgt, tgt_len, mode,
+ 			from_kuid(&init_user_ns, current_fsuid()),
+ 			from_kgid(&init_user_ns, current_fsgid()),
+-			cfs_curproc_cap_pack(), rdev, &request);
++			current_cap(), rdev, &request);
+ 	ll_finish_md_op_data(op_data);
+ 	if (err < 0 && err != -EREMOTE)
+ 		goto err_exit;
+diff --git a/drivers/staging/lustre/lustre/lmv/lmv_obd.c b/drivers/staging/lustre/lustre/lmv/lmv_obd.c
+index b55be6cb52bb..6ab9cdb6f9d1 100644
+--- a/drivers/staging/lustre/lustre/lmv/lmv_obd.c
++++ b/drivers/staging/lustre/lustre/lmv/lmv_obd.c
+@@ -1598,7 +1598,7 @@ lmv_locate_mds(struct lmv_obd *lmv, struct md_op_data *op_data,
+ 
+ static int lmv_create(struct obd_export *exp, struct md_op_data *op_data,
+ 		      const void *data, size_t datalen, umode_t mode,
+-		      uid_t uid, gid_t gid, cfs_cap_t cap_effective,
++		      uid_t uid, gid_t gid, kernel_cap_t cap_effective,
+ 		      __u64 rdev, struct ptlrpc_request **request)
+ {
+ 	struct obd_device       *obd = exp->exp_obd;
+@@ -1783,7 +1783,7 @@ static int lmv_link(struct obd_export *exp, struct md_op_data *op_data,
+ 
+ 	op_data->op_fsuid = from_kuid(&init_user_ns, current_fsuid());
+ 	op_data->op_fsgid = from_kgid(&init_user_ns, current_fsgid());
+-	op_data->op_cap = cfs_curproc_cap_pack();
++	op_data->op_cap = current_cap();
+ 	if (op_data->op_mea2) {
+ 		struct lmv_stripe_md *lsm = op_data->op_mea2;
+ 		const struct lmv_oinfo *oinfo;
+@@ -1835,7 +1835,7 @@ static int lmv_rename(struct obd_export *exp, struct md_op_data *op_data,
+ 
+ 	op_data->op_fsuid = from_kuid(&init_user_ns, current_fsuid());
+ 	op_data->op_fsgid = from_kgid(&init_user_ns, current_fsgid());
+-	op_data->op_cap = cfs_curproc_cap_pack();
++	op_data->op_cap = current_cap();
+ 
+ 	if (op_data->op_cli_flags & CLI_MIGRATE) {
+ 		LASSERTF(fid_is_sane(&op_data->op_fid3), "invalid FID " DFID "\n",
+@@ -2413,7 +2413,7 @@ static int lmv_unlink(struct obd_export *exp, struct md_op_data *op_data,
+ 
+ 	op_data->op_fsuid = from_kuid(&init_user_ns, current_fsuid());
+ 	op_data->op_fsgid = from_kgid(&init_user_ns, current_fsgid());
+-	op_data->op_cap = cfs_curproc_cap_pack();
++	op_data->op_cap = current_cap();
  
  	/*
-diff --git a/drivers/staging/lustre/lustre/llite/statahead.c b/drivers/staging/lustre/lustre/llite/statahead.c
-index b4a6ee6c83f3..d864f5f36d85 100644
---- a/drivers/staging/lustre/lustre/llite/statahead.c
-+++ b/drivers/staging/lustre/lustre/llite/statahead.c
-@@ -1075,7 +1075,7 @@ static int ll_statahead_thread(void *arg)
- 			CDEBUG(D_READA, "Statahead for dir " DFID " hit ratio too low: hit/miss %llu/%llu, sent/replied %llu/%llu, stopping statahead thread: pid %d\n",
- 			       PFID(&lli->lli_fid), sai->sai_hit,
- 			       sai->sai_miss, sai->sai_sent,
--			       sai->sai_replied, current_pid());
-+			       sai->sai_replied, current->pid);
- 			break;
- 		}
- 	}
-@@ -1147,7 +1147,7 @@ void ll_authorize_statahead(struct inode *dir, void *key)
- 		 */
- 		LASSERT(!lli->lli_opendir_pid);
- 		lli->lli_opendir_key = key;
--		lli->lli_opendir_pid = current_pid();
-+		lli->lli_opendir_pid = current->pid;
- 		lli->lli_sa_enabled = 1;
- 	}
- 	spin_unlock(&lli->lli_sa_lock);
-@@ -1506,7 +1506,7 @@ static int start_statahead_thread(struct inode *dir, struct dentry *dentry)
- 	atomic_inc(&ll_i2sbi(parent->d_inode)->ll_sa_running);
+ 	 * If child's fid is given, cancel unused locks for it if it is from
+diff --git a/drivers/staging/lustre/lustre/mdc/mdc_internal.h b/drivers/staging/lustre/lustre/mdc/mdc_internal.h
+index 88ee32717688..28924e927b50 100644
+--- a/drivers/staging/lustre/lustre/mdc/mdc_internal.h
++++ b/drivers/staging/lustre/lustre/mdc/mdc_internal.h
+@@ -50,7 +50,7 @@ void mdc_setattr_pack(struct ptlrpc_request *req, struct md_op_data *op_data,
+ 		      void *ea, size_t ealen);
+ void mdc_create_pack(struct ptlrpc_request *req, struct md_op_data *op_data,
+ 		     const void *data, size_t datalen, umode_t mode, uid_t uid,
+-		     gid_t gid, cfs_cap_t capability, __u64 rdev);
++		     gid_t gid, kernel_cap_t capability, __u64 rdev);
+ void mdc_open_pack(struct ptlrpc_request *req, struct md_op_data *op_data,
+ 		   umode_t mode, __u64 rdev, __u64 flags, const void *data,
+ 		   size_t datalen);
+@@ -97,7 +97,7 @@ void mdc_replay_open(struct ptlrpc_request *req);
  
- 	CDEBUG(D_READA, "start statahead thread: [pid %d] [parent %pd]\n",
--	       current_pid(), parent);
-+	       current->pid, parent);
- 
- 	task = kthread_create(ll_statahead_thread, parent, "ll_sa_%u",
- 			      lli->lli_opendir_pid);
-diff --git a/drivers/staging/lustre/lustre/lov/lov_merge.c b/drivers/staging/lustre/lustre/lov/lov_merge.c
-index 3796bbb25305..3a0f21dc1f8a 100644
---- a/drivers/staging/lustre/lustre/lov/lov_merge.c
-+++ b/drivers/staging/lustre/lustre/lov/lov_merge.c
-@@ -56,7 +56,7 @@ int lov_merge_lvb_kms(struct lov_stripe_md *lsm,
- 	int rc = 0;
- 
- 	assert_spin_locked(&lsm->lsm_lock);
--	LASSERT(lsm->lsm_lock_owner == current_pid());
-+	LASSERT(lsm->lsm_lock_owner == current->pid);
- 
- 	CDEBUG(D_INODE, "MDT ID " DOSTID " initial value: s=%llu m=%llu a=%llu c=%llu b=%llu\n",
- 	       POSTID(&lsm->lsm_oi), lvb->lvb_size, lvb->lvb_mtime,
-diff --git a/drivers/staging/lustre/lustre/lov/lov_obd.c b/drivers/staging/lustre/lustre/lov/lov_obd.c
-index d091e03098b5..a5ab0ce38e41 100644
---- a/drivers/staging/lustre/lustre/lov/lov_obd.c
-+++ b/drivers/staging/lustre/lustre/lov/lov_obd.c
-@@ -1297,16 +1297,16 @@ static int lov_set_info_async(const struct lu_env *env, struct obd_export *exp,
- void lov_stripe_lock(struct lov_stripe_md *md)
- 		__acquires(&md->lsm_lock)
- {
--	LASSERT(md->lsm_lock_owner != current_pid());
-+	LASSERT(md->lsm_lock_owner != current->pid);
- 	spin_lock(&md->lsm_lock);
- 	LASSERT(md->lsm_lock_owner == 0);
--	md->lsm_lock_owner = current_pid();
-+	md->lsm_lock_owner = current->pid;
+ int mdc_create(struct obd_export *exp, struct md_op_data *op_data,
+ 	       const void *data, size_t datalen, umode_t mode, uid_t uid,
+-	       gid_t gid, cfs_cap_t capability, __u64 rdev,
++	       gid_t gid, kernel_cap_t capability, __u64 rdev,
+ 	       struct ptlrpc_request **request);
+ int mdc_link(struct obd_export *exp, struct md_op_data *op_data,
+ 	     struct ptlrpc_request **request);
+diff --git a/drivers/staging/lustre/lustre/mdc/mdc_lib.c b/drivers/staging/lustre/lustre/mdc/mdc_lib.c
+index 46eefdc09e3a..d582968987ff 100644
+--- a/drivers/staging/lustre/lustre/mdc/mdc_lib.c
++++ b/drivers/staging/lustre/lustre/mdc/mdc_lib.c
+@@ -49,7 +49,7 @@ static void __mdc_pack_body(struct mdt_body *b, __u32 suppgid)
+ 	b->mbo_gid = from_kgid(&init_user_ns, current_gid());
+ 	b->mbo_fsuid = from_kuid(&init_user_ns, current_fsuid());
+ 	b->mbo_fsgid = from_kgid(&init_user_ns, current_fsgid());
+-	b->mbo_capability = cfs_curproc_cap_pack();
++	b->mbo_capability = current_cap().cap[0];
  }
  
- void lov_stripe_unlock(struct lov_stripe_md *md)
- 		__releases(&md->lsm_lock)
+ void mdc_swap_layouts_pack(struct ptlrpc_request *req,
+@@ -126,7 +126,8 @@ void mdc_readdir_pack(struct ptlrpc_request *req, __u64 pgoff, size_t size,
+ /* packing of MDS records */
+ void mdc_create_pack(struct ptlrpc_request *req, struct md_op_data *op_data,
+ 		     const void *data, size_t datalen, umode_t mode,
+-		     uid_t uid, gid_t gid, cfs_cap_t cap_effective, __u64 rdev)
++		     uid_t uid, gid_t gid, kernel_cap_t cap_effective,
++		     __u64 rdev)
  {
--	LASSERT(md->lsm_lock_owner == current_pid());
-+	LASSERT(md->lsm_lock_owner == current->pid);
- 	md->lsm_lock_owner = 0;
- 	spin_unlock(&md->lsm_lock);
- }
-diff --git a/drivers/staging/lustre/lustre/obdclass/class_obd.c b/drivers/staging/lustre/lustre/obdclass/class_obd.c
-index 2dd8728760d1..bc5e7f560b71 100644
---- a/drivers/staging/lustre/lustre/obdclass/class_obd.c
-+++ b/drivers/staging/lustre/lustre/obdclass/class_obd.c
-@@ -100,7 +100,7 @@ int lustre_get_jobid(char *jobid)
- 	/* Use process name + fsuid as jobid */
- 	if (strcmp(obd_jobid_var, JOBSTATS_PROCNAME_UID) == 0) {
- 		snprintf(jobid, LUSTRE_JOBID_SIZE, "%s.%u",
--			 current_comm(),
-+			 current->comm,
- 			 from_kuid(&init_user_ns, current_fsuid()));
- 		return 0;
- 	}
-diff --git a/drivers/staging/lustre/lustre/osc/osc_request.c b/drivers/staging/lustre/lustre/osc/osc_request.c
-index 2c92119b37be..0155294184f1 100644
---- a/drivers/staging/lustre/lustre/osc/osc_request.c
-+++ b/drivers/staging/lustre/lustre/osc/osc_request.c
-@@ -2296,7 +2296,7 @@ static int osc_iocontrol(unsigned int cmd, struct obd_export *exp, int len,
- 		goto out;
- 	default:
- 		CDEBUG(D_INODE, "unrecognised ioctl %#x by %s\n",
--		       cmd, current_comm());
-+		       cmd, current->comm);
- 		err = -ENOTTY;
- 		goto out;
- 	}
-diff --git a/drivers/staging/lustre/lustre/ptlrpc/client.c b/drivers/staging/lustre/lustre/ptlrpc/client.c
-index a868ff6e720f..dd71eefe8452 100644
---- a/drivers/staging/lustre/lustre/ptlrpc/client.c
-+++ b/drivers/staging/lustre/lustre/ptlrpc/client.c
-@@ -1552,7 +1552,7 @@ static int ptlrpc_send_new_req(struct ptlrpc_request *req)
+ 	struct mdt_rec_create	*rec;
+ 	char			*tmp;
+@@ -138,7 +139,7 @@ void mdc_create_pack(struct ptlrpc_request *req, struct md_op_data *op_data,
+ 	rec->cr_opcode   = REINT_CREATE;
+ 	rec->cr_fsuid    = uid;
+ 	rec->cr_fsgid    = gid;
+-	rec->cr_cap      = cap_effective;
++	rec->cr_cap      = cap_effective.cap[0];
+ 	rec->cr_fid1     = op_data->op_fid1;
+ 	rec->cr_fid2     = op_data->op_fid2;
+ 	rec->cr_mode     = mode;
+@@ -203,7 +204,7 @@ void mdc_open_pack(struct ptlrpc_request *req, struct md_op_data *op_data,
+ 	rec->cr_opcode   = REINT_OPEN;
+ 	rec->cr_fsuid    = from_kuid(&init_user_ns, current_fsuid());
+ 	rec->cr_fsgid    = from_kgid(&init_user_ns, current_fsgid());
+-	rec->cr_cap      = cfs_curproc_cap_pack();
++	rec->cr_cap      = current_cap().cap[0];
+ 	rec->cr_fid1 = op_data->op_fid1;
+ 	rec->cr_fid2 = op_data->op_fid2;
  
- 	lustre_msg_set_last_xid(req->rq_reqmsg, min_xid);
+@@ -281,7 +282,7 @@ static void mdc_setattr_pack_rec(struct mdt_rec_setattr *rec,
+ 	rec->sa_opcode  = REINT_SETATTR;
+ 	rec->sa_fsuid   = from_kuid(&init_user_ns, current_fsuid());
+ 	rec->sa_fsgid   = from_kgid(&init_user_ns, current_fsgid());
+-	rec->sa_cap     = cfs_curproc_cap_pack();
++	rec->sa_cap     = current_cap().cap[0];
+ 	rec->sa_suppgid = -1;
  
--	lustre_msg_set_status(req->rq_reqmsg, current_pid());
-+	lustre_msg_set_status(req->rq_reqmsg, current->pid);
+ 	rec->sa_fid    = op_data->op_fid1;
+@@ -350,7 +351,7 @@ void mdc_unlink_pack(struct ptlrpc_request *req, struct md_op_data *op_data)
+ 					REINT_RMENTRY : REINT_UNLINK;
+ 	rec->ul_fsuid    = op_data->op_fsuid;
+ 	rec->ul_fsgid    = op_data->op_fsgid;
+-	rec->ul_cap      = op_data->op_cap;
++	rec->ul_cap      = op_data->op_cap.cap[0];
+ 	rec->ul_mode     = op_data->op_mode;
+ 	rec->ul_suppgid1 = op_data->op_suppgids[0];
+ 	rec->ul_suppgid2 = -1;
+@@ -372,7 +373,7 @@ void mdc_link_pack(struct ptlrpc_request *req, struct md_op_data *op_data)
+ 	rec->lk_opcode   = REINT_LINK;
+ 	rec->lk_fsuid    = op_data->op_fsuid; /* current->fsuid; */
+ 	rec->lk_fsgid    = op_data->op_fsgid; /* current->fsgid; */
+-	rec->lk_cap      = op_data->op_cap;   /* current->cap_effective; */
++	rec->lk_cap      = op_data->op_cap.cap[0]; /* current->cap_effective; */
+ 	rec->lk_suppgid1 = op_data->op_suppgids[0];
+ 	rec->lk_suppgid2 = op_data->op_suppgids[1];
+ 	rec->lk_fid1     = op_data->op_fid1;
+@@ -423,7 +424,7 @@ void mdc_rename_pack(struct ptlrpc_request *req, struct md_op_data *op_data,
+ 	rec->rn_opcode   = REINT_RENAME;
+ 	rec->rn_fsuid    = op_data->op_fsuid;
+ 	rec->rn_fsgid    = op_data->op_fsgid;
+-	rec->rn_cap      = op_data->op_cap;
++	rec->rn_cap      = op_data->op_cap.cap[0];
+ 	rec->rn_suppgid1 = op_data->op_suppgids[0];
+ 	rec->rn_suppgid2 = op_data->op_suppgids[1];
+ 	rec->rn_fid1     = op_data->op_fid1;
+diff --git a/drivers/staging/lustre/lustre/mdc/mdc_reint.c b/drivers/staging/lustre/lustre/mdc/mdc_reint.c
+index 488b98007558..94ab43bcbe4f 100644
+--- a/drivers/staging/lustre/lustre/mdc/mdc_reint.c
++++ b/drivers/staging/lustre/lustre/mdc/mdc_reint.c
+@@ -148,7 +148,7 @@ int mdc_setattr(struct obd_export *exp, struct md_op_data *op_data,
  
- 	rc = sptlrpc_req_refresh_ctx(req, -1);
- 	if (rc) {
-@@ -1567,7 +1567,7 @@ static int ptlrpc_send_new_req(struct ptlrpc_request *req)
- 	}
+ int mdc_create(struct obd_export *exp, struct md_op_data *op_data,
+ 	       const void *data, size_t datalen, umode_t mode,
+-	       uid_t uid, gid_t gid, cfs_cap_t cap_effective,
++	       uid_t uid, gid_t gid, kernel_cap_t cap_effective,
+ 	       __u64 rdev, struct ptlrpc_request **request)
+ {
+ 	struct ptlrpc_request *req;
+diff --git a/drivers/staging/lustre/lustre/mdc/mdc_request.c b/drivers/staging/lustre/lustre/mdc/mdc_request.c
+index 0eaf35c55966..1aee9691b513 100644
+--- a/drivers/staging/lustre/lustre/mdc/mdc_request.c
++++ b/drivers/staging/lustre/lustre/mdc/mdc_request.c
+@@ -303,7 +303,7 @@ static int mdc_xattr_common(struct obd_export *exp,
+ 		rec->sx_opcode = REINT_SETXATTR;
+ 		rec->sx_fsuid  = from_kuid(&init_user_ns, current_fsuid());
+ 		rec->sx_fsgid  = from_kgid(&init_user_ns, current_fsgid());
+-		rec->sx_cap    = cfs_curproc_cap_pack();
++		rec->sx_cap    = current_cap().cap[0];
+ 		rec->sx_suppgid1 = suppgid;
+ 		rec->sx_suppgid2 = -1;
+ 		rec->sx_fid    = *fid;
+diff --git a/drivers/staging/lustre/lustre/ptlrpc/sec.c b/drivers/staging/lustre/lustre/ptlrpc/sec.c
+index 3cb1e075f077..256421465bcd 100644
+--- a/drivers/staging/lustre/lustre/ptlrpc/sec.c
++++ b/drivers/staging/lustre/lustre/ptlrpc/sec.c
+@@ -2236,7 +2236,7 @@ int sptlrpc_pack_user_desc(struct lustre_msg *msg, int offset)
+ 	pud->pud_gid = from_kgid(&init_user_ns, current_gid());
+ 	pud->pud_fsuid = from_kuid(&init_user_ns, current_fsuid());
+ 	pud->pud_fsgid = from_kgid(&init_user_ns, current_fsgid());
+-	pud->pud_cap = cfs_curproc_cap_pack();
++	pud->pud_cap = current_cap().cap[0];
+ 	pud->pud_ngroups = (msg->lm_buflens[offset] - sizeof(*pud)) / 4;
  
- 	CDEBUG(D_RPCTRACE, "Sending RPC pname:cluuid:pid:xid:nid:opc %s:%s:%d:%llu:%s:%d\n",
--	       current_comm(),
-+	       current->comm,
- 	       imp->imp_obd->obd_uuid.uuid,
- 	       lustre_msg_get_status(req->rq_reqmsg), req->rq_xid,
- 	       libcfs_nid2str(imp->imp_connection->c_peer.nid),
-@@ -1978,7 +1978,7 @@ int ptlrpc_check_set(const struct lu_env *env, struct ptlrpc_request_set *set)
- 
- 		CDEBUG(req->rq_reqmsg ? D_RPCTRACE : 0,
- 		       "Completed RPC pname:cluuid:pid:xid:nid:opc %s:%s:%d:%llu:%s:%d\n",
--		       current_comm(), imp->imp_obd->obd_uuid.uuid,
-+		       current->comm, imp->imp_obd->obd_uuid.uuid,
- 		       lustre_msg_get_status(req->rq_reqmsg), req->rq_xid,
- 		       libcfs_nid2str(imp->imp_connection->c_peer.nid),
- 		       lustre_msg_get_opc(req->rq_reqmsg));
-@@ -2760,7 +2760,7 @@ int ptlrpc_queue_wait(struct ptlrpc_request *req)
- 	}
- 
- 	/* for distributed debugging */
--	lustre_msg_set_status(req->rq_reqmsg, current_pid());
-+	lustre_msg_set_status(req->rq_reqmsg, current->pid);
- 
- 	/* add a ref for the set (see comment in ptlrpc_set_add_req) */
- 	ptlrpc_request_addref(req);
-diff --git a/drivers/staging/lustre/lustre/ptlrpc/service.c b/drivers/staging/lustre/lustre/ptlrpc/service.c
-index 1d28139c950e..f1de9dd551cd 100644
---- a/drivers/staging/lustre/lustre/ptlrpc/service.c
-+++ b/drivers/staging/lustre/lustre/ptlrpc/service.c
-@@ -1679,7 +1679,7 @@ ptlrpc_server_handle_request(struct ptlrpc_service_part *svcpt,
- 	}
- 
- 	CDEBUG(D_RPCTRACE, "Handling RPC pname:cluuid+ref:pid:xid:nid:opc %s:%s+%d:%d:x%llu:%s:%d\n",
--	       current_comm(),
-+	       current->comm,
- 	       (request->rq_export ?
- 		(char *)request->rq_export->exp_client_uuid.uuid : "0"),
- 	       (request->rq_export ?
-@@ -1723,7 +1723,7 @@ ptlrpc_server_handle_request(struct ptlrpc_service_part *svcpt,
- 	arrived_usecs = arrived.tv_sec * USEC_PER_SEC +
- 			 arrived.tv_nsec / NSEC_PER_USEC;
- 	CDEBUG(D_RPCTRACE, "Handled RPC pname:cluuid+ref:pid:xid:nid:opc %s:%s+%d:%d:x%llu:%s:%d Request processed in %ldus (%ldus total) trans %llu rc %d/%d\n",
--	       current_comm(),
-+	       current->comm,
- 	       (request->rq_export ?
- 		(char *)request->rq_export->exp_client_uuid.uuid : "0"),
- 	       (request->rq_export ?
-@@ -2018,7 +2018,7 @@ static int ptlrpc_main(void *arg)
- 	struct lu_env *env;
- 	int counter = 0, rc = 0;
- 
--	thread->t_pid = current_pid();
-+	thread->t_pid = current->pid;
- 	unshare_fs_struct();
- 
- 	/* NB: we will call cfs_cpt_bind() for all threads, because we
+ 	task_lock(current);
