@@ -1,90 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751251AbeEUUoL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 16:44:11 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:36184 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750962AbeEUUoJ (ORCPT
+        id S1751500AbeEUUob (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 16:44:31 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:43181 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751127AbeEUUo1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 16:44:09 -0400
-X-Google-Smtp-Source: AB8JxZqqtIUz1ea8la+a6XJ6k6ZjmKv17rE6Qa3FKmV3lCntypPctNzIgFOhewC8SW4jr6Xx6x65hg==
-From: Niklas Cassel <niklas.cassel@linaro.org>
-To: Kalle Valo <kvalo@qca.qualcomm.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: Niklas Cassel <niklas.cassel@linaro.org>, ath10k@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] ath10k: transmit queued frames after waking queues
-Date: Mon, 21 May 2018 22:43:59 +0200
-Message-Id: <20180521204359.23884-1-niklas.cassel@linaro.org>
-X-Mailer: git-send-email 2.17.0
+        Mon, 21 May 2018 16:44:27 -0400
+X-Google-Smtp-Source: AB8JxZrv7RgMLkZabXxp04MtnF7qxTnVcsRQvXLbG5AdrpfMC5yPL7semR9XFwuDfdhlQ7gSK3btfDiGciqZ9iGOnKU=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180521180927.18472-2-dmurphy@ti.com>
+References: <20180521180927.18472-1-dmurphy@ti.com> <20180521180927.18472-2-dmurphy@ti.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 21 May 2018 23:44:25 +0300
+Message-ID: <CAHp75VcShgaFoJVqbTGBXrrgEr-7JQcCLK4Qy-jydE5++f4VAQ@mail.gmail.com>
+Subject: Re: [PATCH v7 2/2] leds: lm3601x: Introduce the lm3601x LED driver
+To: Dan Murphy <dmurphy@ti.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following problem was observed when running iperf:
+On Mon, May 21, 2018 at 9:09 PM, Dan Murphy <dmurphy@ti.com> wrote:
+> Introduce the family of LED devices that can
+> drive a torch, strobe or IR LED.
+>
+> The LED driver can be configured with a strobe
+> timer to execute a strobe flash.  The IR LED
+> brightness is controlled via the torch brightness
+> register.
+>
+> The data sheet for each the LM36010 and LM36011
+> LED drivers can be found here:
+> http://www.ti.com/product/LM36010
+> http://www.ti.com/product/LM36011
 
-[  3]  0.0- 1.0 sec  2.00 MBytes  16.8 Mbits/sec
-[  3]  1.0- 2.0 sec  3.12 MBytes  26.2 Mbits/sec
-[  3]  2.0- 3.0 sec  3.25 MBytes  27.3 Mbits/sec
-[  3]  3.0- 4.0 sec   655 KBytes  5.36 Mbits/sec
-[  3]  4.0- 5.0 sec  0.00 Bytes  0.00 bits/sec
-[  3]  5.0- 6.0 sec  0.00 Bytes  0.00 bits/sec
-[  3]  6.0- 7.0 sec  0.00 Bytes  0.00 bits/sec
-[  3]  7.0- 8.0 sec  0.00 Bytes  0.00 bits/sec
-[  3]  8.0- 9.0 sec  0.00 Bytes  0.00 bits/sec
-[  3]  9.0-10.0 sec  0.00 Bytes  0.00 bits/sec
-[  3]  0.0-10.3 sec  9.01 MBytes  7.32 Mbits/sec
+Thanks for an update. My comments below.
 
-There are frames in the ieee80211_txq and there are frames that have
-been removed from from this queue, but haven't yet been sent on the wire
-(num_pending_tx).
+> +config LEDS_LM3601X
+> +       tristate "LED support for LM3601x Chips"
+> +       depends on LEDS_CLASS && I2C && OF
 
-When num_pending_tx reaches max_num_pending_tx, we will stop the queues
-by calling ieee80211_stop_queues().
+Now OF here is superfluous.
 
-As frames that have previously been sent for transmission
-(num_pending_tx) are completed, we will decrease num_pending_tx and wake
-the queues by calling ieee80211_wake_queue(). ieee80211_wake_queue()
-does not call wake_tx_queue, so we might still have frames in the
-queue at this point.
+> +       depends on LEDS_CLASS_FLASH
+> +       select REGMAP_I2C
+> +       help
+> +         This option enables support for the TI LM3601x family
+> +         of flash, torch and indicator classes.
 
-While the queues were stopped, the socket buffer might have filled up,
-and in order for user space to write more, we need to free the frames
-in the queue, since they are accounted to the socket. In order to free
-them, we first need to transmit them.
+> +#define LM3601X_TIMEOUT_MASK   0x1e
+> +#define LM3601X_ENABLE_MASK    0x03
 
-In order to avoid trying to flush the queue every time we free a frame,
-only do this when there are 3 or less frames pending, and while we
-actually have frames in the queue. This logic was copied from
-mt76_txq_schedule (mt76), one of few other drivers that are actually
-using wake_tx_queue.
+I dunno if GENMASK() will be better here.
 
-Suggested-by: Toke Høiland-Jørgensen <toke@toke.dk>
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
----
-Changes since V1: use READ_ONCE() to disallow the compiler
-optimizing things in undesirable ways.
+> +#define LM3601X_LOWER_STEP_US  40000
+> +#define LM3601X_UPPER_STEP_US  200000
+> +#define LM3601X_MIN_TIMEOUT_US 40000
+> +#define LM3601X_MAX_TIMEOUT_US 1600000
 
- drivers/net/wireless/ath/ath10k/txrx.c | 3 +++
- 1 file changed, 3 insertions(+)
+> +#define LM3601X_TIMEOUT_XOVER  400000
 
-diff --git a/drivers/net/wireless/ath/ath10k/txrx.c b/drivers/net/wireless/ath/ath10k/txrx.c
-index cda164f6e9f6..264cf0bd5c00 100644
---- a/drivers/net/wireless/ath/ath10k/txrx.c
-+++ b/drivers/net/wireless/ath/ath10k/txrx.c
-@@ -95,6 +95,9 @@ int ath10k_txrx_tx_unref(struct ath10k_htt *htt,
- 		wake_up(&htt->empty_tx_wq);
- 	spin_unlock_bh(&htt->tx_lock);
- 
-+	if (READ_ONCE(htt->num_pending_tx) <= 3 && !list_empty(&ar->txqs))
-+		ath10k_mac_tx_push_pending(ar);
-+
- 	dma_unmap_single(dev, skb_cb->paddr, msdu->len, DMA_TO_DEVICE);
- 
- 	ath10k_report_offchan_tx(htt->ar, msdu);
+Missed unit?
+
+> +       ret = regmap_update_bits(led->regmap, LM3601X_ENABLE_REG,
+> +                               LM3601X_MODE_TORCH | LM3601X_MODE_IR_DRV,
+> +                               led_mode_val);
+
+> +               ret = regmap_update_bits(led->regmap, LM3601X_ENABLE_REG,
+> +                                       LM3601X_MODE_TORCH | LM3601X_MODE_IR_DRV,
+> +                                       LM3601X_MODE_STROBE);
+
+Perhaps
+#define ..._MODE_TORCH_WITH_IR   (..._TOCRH | ..._IR_DRV)
+?
+
+> +static int lm3601x_probe(struct i2c_client *client,
+> +                       const struct i2c_device_id *id)
+> +{
+> +       struct lm3601x_led *led;
+> +       int err;
+
+> +       err = lm3601x_parse_node(led, client->dev.of_node);
+> +       if (err < 0)
+
+> +               return -ENODEV;
+
+Shouldn't be
+
+return err;
+
+?
+
+> +       err = lm3601x_register_leds(led);
+> +
+> +       return err;
+
+I will leave this to maintainers since you seems have strong
+objections against more or less standard pattern, i.e.
+
+return lm3601x_register_leds();
+
+> +}
+
 -- 
-2.17.0
+With Best Regards,
+Andy Shevchenko
