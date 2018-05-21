@@ -1,38 +1,94 @@
-Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpS3aaQY0b39LZFjMb3NLOWPJK3ja7gaJTJJ2Zqtb8GOpja6Dsg15grmAwupeDxMXiDV0gn
-ARC-Seal: i=1; a=rsa-sha256; t=1526937722; cv=none;
-        d=google.com; s=arc-20160816;
-        b=dQNT878jqTCgAJSNyH32BCE07V+3t2U+wWqRcceVuoDJkunB51gwd93C54EAsJ5mlm
-         +bfcVa4BzUcp8ESGlT2FEMtNtmtzZaezHf4sBwtBzuJHrCa19A5WWrEf/Dmf6U3ydFmF
-         1ViOQCPUt0BZNgMVg9v/sANBnZc/OmDnvPGb1k6Vm5POmZtyKa9E0StoBue2avLjBw7/
-         FumGMPHQrhsmB9AQJ5KwKFouFf0KcAW15OrNzGt41jOG4bkp/O6o/pGyYpeAPptLgOCY
-         exbXxQFaHs9urkwu9dy65nwPZiWk5SDOcJMcu+043W2tvWzaYECPeCJGTqKyP7Acleae
-         4Phw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=Ssj04J1cp1RtBGrt9whaGThgx22Lvv+tW+qj/7Ih1Yc=;
-        b=nMvxBRroek5u7WNUqyh+heVfHoGfdqfsSBdZftdjEpz43s6vqQ9vKg02Vzsk6/i2tx
-         cecE0YkT33/NntFL4pB5SYuAAgcr4AtjWeZLpa+zaYA0zrkuAYQ1MFxartpVVF6wJAcH
-         EwZ7XUt8WQTDiwS2sCuQrsEfINf709xcUKSZS9QWiQPE+z7SQtkmbonAmKKydgCdwZnX
-         ZQxWYq87dj0jVryoU+ZUFPDbTxj84N8pWofTqxoowHcdxDJBR5hJuQo2ffnfdd4xGSsf
-         Y83mzRUthkYeS2JElV4mwgY+3hRAJp1ExA0ZkuDQm+HkU4i2kF052/0kIkCLLtp05kep
-         fDJg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=SFbFa8jq;
-       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=SFbFa8jq;
-       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1344077-1526937719-2-13884766136945567078
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1526937718; b=KZ+M87lIbtEcC2HK3lcuMVFD2pBQykMygqCdAgOr3XdJ8jCBcl
+    Qn58oUrUBu3CmRqHRZ1YKDj3LeDWeVtjcrNvLixGVj+iKU6jQFz4hC/Vj8FmyWP9
+    bJXc0fru7v6VzEHU/SMWcxqwCxyPgyTfgnBHIqOEUB1NpDi6E84W6DJ5a1ihcpJ+
+    9kJMz47BYlNCUDQeDfNjn0H/b9pKqK5ZsppnfZABd1B+keHvKZvOfp2qJNxAZo2z
+    E47+sUpyVYnsBJebDXiCk7HZzwlrruJZLx7F7BCN/2ScDC8i7C01/Lm1t+uBszXG
+    QGtj1rtfBuug93w5hAI07HLYHptMRF24bUEg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1526937718; bh=OaMMoKZ47izfvbHc/7tbUVfhtOMjyn
+    Zvm7Fy/YjAb0s=; b=Pbgnp/ath87EMXqY5xyE2xpS3Bn9hVLuUePTF8Rjp2GncP
+    0rJY6VH0MS7HpnnrgMnOiqgAcN8Enbv2ggJvO9Lx0rQlzkjNJHd3RNAPA4n7qGgM
+    NZCHSEJiuV4OZ1/tGPQ7LJU+ToQYAybK8hNRC7r5QKTu071gaFXG0FNWC6vVfbzE
+    X2KyjqK3gLyzBS8g9hhNXw6yGH4RLS02i1V3hxb14VWSN3ywWzO10MoeHAB0lAFh
+    r2835cEXDZFPloRAYDsiBMxckuSHvXmlxKUxPm07Wj8qPQifcNakMW2WX74H06iC
+    vrmvgwCP6d9rkhS/XuqbouzJcxO7Yg/khKq8XMhw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+    header.i=@kernel.org header.b=zZLkj9d8 x-bits=1024 x-keytype=rsa
+    x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+    header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=linuxfoundation.org header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+      header.i=@kernel.org header.b=zZLkj9d8 x-bits=1024 x-keytype=rsa
+      x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+      header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=linuxfoundation.org header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfCMH8nFnJEeGmMFZhvZp/ZTdJOthO/uec3DNwRvqcjTE5DuuVkowPVYPV7G0145vcEA4sH+E2E0kz3jF5f5n6IKdXN+rU0SCSP92Y/Js4b/fmG5JABhn
+    V5zWT1nrTGssy2xR727I8wXX0Mm2Wwnh6rKEDjQgb1CPi3yNbwMqUyCUFE+K0gGDZzF3F1VHXQnjg5qh26aVk0WBdWFxQOZ8mxwdOrm6C/u24DgECM8t215l
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=zd2uoN0lAAAA:8 a=ag1SF4gXAAAA:8 a=t04PoXa8hJHlejHJIY4A:9
+    a=RDnl8STWzRyePB1t:21 a=ekcrdkrbgBxVkTtc:21 a=QEXdDO2ut3YA:10
+    a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1754139AbeEUVV4 (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 21 May 2018 17:21:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36864 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754107AbeEUVVy (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 21 May 2018 17:21:54 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Kees Cook <keescook@chromium.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.14 70/95] seccomp: Add filter flag to opt-out of SSB mitigation
-Date: Mon, 21 May 2018 23:12:00 +0200
-Message-Id: <20180521210500.495328874@linuxfoundation.org>
+        stable@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.14 94/95] KVM: SVM: Implement VIRT_SPEC_CTRL support for SSBD
+Date: Mon, 21 May 2018 23:12:24 +0200
+Message-Id: <20180521210503.476603046@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210447.219380974@linuxfoundation.org>
 References: <20180521210447.219380974@linuxfoundation.org>
@@ -40,10 +96,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109987144420611?=
-X-GMAIL-MSGID: =?utf-8?q?1601110248999324414?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,167 +106,204 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kees Cook <keescook@chromium.org>
+From: Tom Lendacky <thomas.lendacky@amd.com>
 
-commit 00a02d0c502a06d15e07b857f8ff921e3e402675 upstream
+commit bc226f07dcd3c9ef0b7f6236fe356ea4a9cb4769 upstream
 
-If a seccomp user is not interested in Speculative Store Bypass mitigation
-by default, it can set the new SECCOMP_FILTER_FLAG_SPEC_ALLOW flag when
-adding filters.
+Expose the new virtualized architectural mechanism, VIRT_SSBD, for using
+speculative store bypass disable (SSBD) under SVM.  This will allow guests
+to use SSBD on hardware that uses non-architectural mechanisms for enabling
+SSBD.
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
+[ tglx: Folded the migration fixup from Paolo Bonzini ]
+
+Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/seccomp.h                       |    5 +++--
- include/uapi/linux/seccomp.h                  |    5 +++--
- kernel/seccomp.c                              |   19 +++++++++++--------
- tools/testing/selftests/seccomp/seccomp_bpf.c |   22 +++++++++++++++++++---
- 4 files changed, 36 insertions(+), 15 deletions(-)
+ arch/x86/include/asm/kvm_host.h |    2 +-
+ arch/x86/kernel/cpu/common.c    |    3 ++-
+ arch/x86/kvm/cpuid.c            |   11 +++++++++--
+ arch/x86/kvm/svm.c              |   21 +++++++++++++++++++--
+ arch/x86/kvm/vmx.c              |   18 +++++++++++++++---
+ arch/x86/kvm/x86.c              |   13 ++++---------
+ 6 files changed, 50 insertions(+), 18 deletions(-)
 
---- a/include/linux/seccomp.h
-+++ b/include/linux/seccomp.h
-@@ -4,8 +4,9 @@
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -908,7 +908,7 @@ struct kvm_x86_ops {
+ 	int (*hardware_setup)(void);               /* __init */
+ 	void (*hardware_unsetup)(void);            /* __exit */
+ 	bool (*cpu_has_accelerated_tpr)(void);
+-	bool (*cpu_has_high_real_mode_segbase)(void);
++	bool (*has_emulated_msr)(int index);
+ 	void (*cpuid_update)(struct kvm_vcpu *vcpu);
  
- #include <uapi/linux/seccomp.h>
+ 	int (*vm_init)(struct kvm *kvm);
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -743,7 +743,8 @@ static void init_speculation_control(str
+ 	if (cpu_has(c, X86_FEATURE_INTEL_STIBP))
+ 		set_cpu_cap(c, X86_FEATURE_STIBP);
  
--#define SECCOMP_FILTER_FLAG_MASK	(SECCOMP_FILTER_FLAG_TSYNC | \
--					 SECCOMP_FILTER_FLAG_LOG)
-+#define SECCOMP_FILTER_FLAG_MASK	(SECCOMP_FILTER_FLAG_TSYNC	| \
-+					 SECCOMP_FILTER_FLAG_LOG	| \
-+					 SECCOMP_FILTER_FLAG_SPEC_ALLOW)
+-	if (cpu_has(c, X86_FEATURE_SPEC_CTRL_SSBD))
++	if (cpu_has(c, X86_FEATURE_SPEC_CTRL_SSBD) ||
++	    cpu_has(c, X86_FEATURE_VIRT_SSBD))
+ 		set_cpu_cap(c, X86_FEATURE_SSBD);
  
- #ifdef CONFIG_SECCOMP
+ 	if (cpu_has(c, X86_FEATURE_AMD_IBRS)) {
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -367,7 +367,7 @@ static inline int __do_cpuid_ent(struct
  
---- a/include/uapi/linux/seccomp.h
-+++ b/include/uapi/linux/seccomp.h
-@@ -17,8 +17,9 @@
- #define SECCOMP_GET_ACTION_AVAIL	2
+ 	/* cpuid 0x80000008.ebx */
+ 	const u32 kvm_cpuid_8000_0008_ebx_x86_features =
+-		F(AMD_IBPB) | F(AMD_IBRS);
++		F(AMD_IBPB) | F(AMD_IBRS) | F(VIRT_SSBD);
  
- /* Valid flags for SECCOMP_SET_MODE_FILTER */
--#define SECCOMP_FILTER_FLAG_TSYNC	1
--#define SECCOMP_FILTER_FLAG_LOG		2
-+#define SECCOMP_FILTER_FLAG_TSYNC	(1UL << 0)
-+#define SECCOMP_FILTER_FLAG_LOG		(1UL << 1)
-+#define SECCOMP_FILTER_FLAG_SPEC_ALLOW	(1UL << 2)
- 
- /*
-  * All BPF programs must return a 32-bit value.
---- a/kernel/seccomp.c
-+++ b/kernel/seccomp.c
-@@ -243,7 +243,8 @@ static inline void spec_mitigate(struct
- }
- 
- static inline void seccomp_assign_mode(struct task_struct *task,
--				       unsigned long seccomp_mode)
-+				       unsigned long seccomp_mode,
-+				       unsigned long flags)
- {
- 	assert_spin_locked(&task->sighand->siglock);
- 
-@@ -253,8 +254,9 @@ static inline void seccomp_assign_mode(s
- 	 * filter) is set.
- 	 */
- 	smp_mb__before_atomic();
--	/* Assume seccomp processes want speculation flaw mitigation. */
--	spec_mitigate(task, PR_SPEC_STORE_BYPASS);
-+	/* Assume default seccomp processes want spec flaw mitigation. */
-+	if ((flags & SECCOMP_FILTER_FLAG_SPEC_ALLOW) == 0)
-+		spec_mitigate(task, PR_SPEC_STORE_BYPASS);
- 	set_tsk_thread_flag(task, TIF_SECCOMP);
- }
- 
-@@ -322,7 +324,7 @@ static inline pid_t seccomp_can_sync_thr
-  * without dropping the locks.
-  *
-  */
--static inline void seccomp_sync_threads(void)
-+static inline void seccomp_sync_threads(unsigned long flags)
- {
- 	struct task_struct *thread, *caller;
- 
-@@ -363,7 +365,8 @@ static inline void seccomp_sync_threads(
- 		 * allow one thread to transition the other.
- 		 */
- 		if (thread->seccomp.mode == SECCOMP_MODE_DISABLED)
--			seccomp_assign_mode(thread, SECCOMP_MODE_FILTER);
-+			seccomp_assign_mode(thread, SECCOMP_MODE_FILTER,
-+					    flags);
+ 	/* cpuid 0xC0000001.edx */
+ 	const u32 kvm_cpuid_C000_0001_edx_x86_features =
+@@ -632,13 +632,20 @@ static inline int __do_cpuid_ent(struct
+ 			g_phys_as = phys_as;
+ 		entry->eax = g_phys_as | (virt_as << 8);
+ 		entry->edx = 0;
+-		/* IBRS and IBPB aren't necessarily present in hardware cpuid */
++		/*
++		 * IBRS, IBPB and VIRT_SSBD aren't necessarily present in
++		 * hardware cpuid
++		 */
+ 		if (boot_cpu_has(X86_FEATURE_AMD_IBPB))
+ 			entry->ebx |= F(AMD_IBPB);
+ 		if (boot_cpu_has(X86_FEATURE_AMD_IBRS))
+ 			entry->ebx |= F(AMD_IBRS);
++		if (boot_cpu_has(X86_FEATURE_VIRT_SSBD))
++			entry->ebx |= F(VIRT_SSBD);
+ 		entry->ebx &= kvm_cpuid_8000_0008_ebx_x86_features;
+ 		cpuid_mask(&entry->ebx, CPUID_8000_0008_EBX);
++		if (boot_cpu_has(X86_FEATURE_LS_CFG_SSBD))
++			entry->ebx |= F(VIRT_SSBD);
+ 		break;
  	}
- }
+ 	case 0x80000019:
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -3630,6 +3630,13 @@ static int svm_get_msr(struct kvm_vcpu *
  
-@@ -486,7 +489,7 @@ static long seccomp_attach_filter(unsign
- 
- 	/* Now that the new filter is in place, synchronize to all threads. */
- 	if (flags & SECCOMP_FILTER_FLAG_TSYNC)
--		seccomp_sync_threads();
-+		seccomp_sync_threads(flags);
- 
- 	return 0;
- }
-@@ -835,7 +838,7 @@ static long seccomp_set_mode_strict(void
- #ifdef TIF_NOTSC
- 	disable_TSC();
- #endif
--	seccomp_assign_mode(current, seccomp_mode);
-+	seccomp_assign_mode(current, seccomp_mode, 0);
- 	ret = 0;
- 
- out:
-@@ -893,7 +896,7 @@ static long seccomp_set_mode_filter(unsi
- 	/* Do not free the successfully attached filter. */
- 	prepared = NULL;
- 
--	seccomp_assign_mode(current, seccomp_mode);
-+	seccomp_assign_mode(current, seccomp_mode, flags);
- out:
- 	spin_unlock_irq(&current->sighand->siglock);
- 	if (flags & SECCOMP_FILTER_FLAG_TSYNC)
---- a/tools/testing/selftests/seccomp/seccomp_bpf.c
-+++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
-@@ -134,11 +134,15 @@ struct seccomp_data {
- #endif
- 
- #ifndef SECCOMP_FILTER_FLAG_TSYNC
--#define SECCOMP_FILTER_FLAG_TSYNC 1
-+#define SECCOMP_FILTER_FLAG_TSYNC (1UL << 0)
- #endif
- 
- #ifndef SECCOMP_FILTER_FLAG_LOG
--#define SECCOMP_FILTER_FLAG_LOG 2
-+#define SECCOMP_FILTER_FLAG_LOG (1UL << 1)
-+#endif
+ 		msr_info->data = svm->spec_ctrl;
+ 		break;
++	case MSR_AMD64_VIRT_SPEC_CTRL:
++		if (!msr_info->host_initiated &&
++		    !guest_cpuid_has(vcpu, X86_FEATURE_VIRT_SSBD))
++			return 1;
 +
-+#ifndef SECCOMP_FILTER_FLAG_SPEC_ALLOW
-+#define SECCOMP_FILTER_FLAG_SPEC_ALLOW (1UL << 2)
- #endif
++		msr_info->data = svm->virt_spec_ctrl;
++		break;
+ 	case MSR_IA32_UCODE_REV:
+ 		msr_info->data = 0x01000065;
+ 		break;
+@@ -3764,6 +3771,16 @@ static int svm_set_msr(struct kvm_vcpu *
+ 			break;
+ 		set_msr_interception(svm->msrpm, MSR_IA32_PRED_CMD, 0, 1);
+ 		break;
++	case MSR_AMD64_VIRT_SPEC_CTRL:
++		if (!msr->host_initiated &&
++		    !guest_cpuid_has(vcpu, X86_FEATURE_VIRT_SSBD))
++			return 1;
++
++		if (data & ~SPEC_CTRL_SSBD)
++			return 1;
++
++		svm->virt_spec_ctrl = data;
++		break;
+ 	case MSR_STAR:
+ 		svm->vmcb->save.star = data;
+ 		break;
+@@ -5249,7 +5266,7 @@ static bool svm_cpu_has_accelerated_tpr(
+ 	return false;
+ }
  
- #ifndef seccomp
-@@ -2063,14 +2067,26 @@ TEST(seccomp_syscall_mode_lock)
- TEST(detect_seccomp_filter_flags)
+-static bool svm_has_high_real_mode_segbase(void)
++static bool svm_has_emulated_msr(int index)
  {
- 	unsigned int flags[] = { SECCOMP_FILTER_FLAG_TSYNC,
--				 SECCOMP_FILTER_FLAG_LOG };
-+				 SECCOMP_FILTER_FLAG_LOG,
-+				 SECCOMP_FILTER_FLAG_SPEC_ALLOW };
- 	unsigned int flag, all_flags;
- 	int i;
- 	long ret;
+ 	return true;
+ }
+@@ -5556,7 +5573,7 @@ static struct kvm_x86_ops svm_x86_ops __
+ 	.hardware_enable = svm_hardware_enable,
+ 	.hardware_disable = svm_hardware_disable,
+ 	.cpu_has_accelerated_tpr = svm_cpu_has_accelerated_tpr,
+-	.cpu_has_high_real_mode_segbase = svm_has_high_real_mode_segbase,
++	.has_emulated_msr = svm_has_emulated_msr,
  
- 	/* Test detection of known-good filter flags */
- 	for (i = 0, all_flags = 0; i < ARRAY_SIZE(flags); i++) {
-+		int bits = 0;
-+
- 		flag = flags[i];
-+		/* Make sure the flag is a single bit! */
-+		while (flag) {
-+			if (flag & 0x1)
-+				bits ++;
-+			flag >>= 1;
-+		}
-+		ASSERT_EQ(1, bits);
-+		flag = flags[i];
-+
- 		ret = seccomp(SECCOMP_SET_MODE_FILTER, flag, NULL);
- 		ASSERT_NE(ENOSYS, errno) {
- 			TH_LOG("Kernel does not support seccomp syscall!");
+ 	.vcpu_create = svm_create_vcpu,
+ 	.vcpu_free = svm_free_vcpu,
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -9214,9 +9214,21 @@ static void vmx_handle_external_intr(str
+ }
+ STACK_FRAME_NON_STANDARD(vmx_handle_external_intr);
+ 
+-static bool vmx_has_high_real_mode_segbase(void)
++static bool vmx_has_emulated_msr(int index)
+ {
+-	return enable_unrestricted_guest || emulate_invalid_guest_state;
++	switch (index) {
++	case MSR_IA32_SMBASE:
++		/*
++		 * We cannot do SMM unless we can run the guest in big
++		 * real mode.
++		 */
++		return enable_unrestricted_guest || emulate_invalid_guest_state;
++	case MSR_AMD64_VIRT_SPEC_CTRL:
++		/* This is AMD only.  */
++		return false;
++	default:
++		return true;
++	}
+ }
+ 
+ static bool vmx_mpx_supported(void)
+@@ -12178,7 +12190,7 @@ static struct kvm_x86_ops vmx_x86_ops __
+ 	.hardware_enable = hardware_enable,
+ 	.hardware_disable = hardware_disable,
+ 	.cpu_has_accelerated_tpr = report_flexpriority,
+-	.cpu_has_high_real_mode_segbase = vmx_has_high_real_mode_segbase,
++	.has_emulated_msr = vmx_has_emulated_msr,
+ 
+ 	.vcpu_create = vmx_create_vcpu,
+ 	.vcpu_free = vmx_free_vcpu,
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -1036,6 +1036,7 @@ static u32 emulated_msrs[] = {
+ 	MSR_IA32_SMBASE,
+ 	MSR_PLATFORM_INFO,
+ 	MSR_MISC_FEATURES_ENABLES,
++	MSR_AMD64_VIRT_SPEC_CTRL,
+ };
+ 
+ static unsigned num_emulated_msrs;
+@@ -2721,7 +2722,7 @@ int kvm_vm_ioctl_check_extension(struct
+ 		 * fringe case that is not enabled except via specific settings
+ 		 * of the module parameters.
+ 		 */
+-		r = kvm_x86_ops->cpu_has_high_real_mode_segbase();
++		r = kvm_x86_ops->has_emulated_msr(MSR_IA32_SMBASE);
+ 		break;
+ 	case KVM_CAP_VAPIC:
+ 		r = !kvm_x86_ops->cpu_has_accelerated_tpr();
+@@ -4324,14 +4325,8 @@ static void kvm_init_msr_list(void)
+ 	num_msrs_to_save = j;
+ 
+ 	for (i = j = 0; i < ARRAY_SIZE(emulated_msrs); i++) {
+-		switch (emulated_msrs[i]) {
+-		case MSR_IA32_SMBASE:
+-			if (!kvm_x86_ops->cpu_has_high_real_mode_segbase())
+-				continue;
+-			break;
+-		default:
+-			break;
+-		}
++		if (!kvm_x86_ops->has_emulated_msr(emulated_msrs[i]))
++			continue;
+ 
+ 		if (j < i)
+ 			emulated_msrs[j] = emulated_msrs[i];
