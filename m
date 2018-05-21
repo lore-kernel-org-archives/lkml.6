@@ -1,75 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751043AbeEUSTY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 14:19:24 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54808 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750781AbeEUSTX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 14:19:23 -0400
-Date: Mon, 21 May 2018 19:19:49 +0100
-From: Will Deacon <will.deacon@arm.com>
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@arm.linux.org.uk>,
-        Vladimir Murzin <vladimir.murzin@arm.com>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Stefan Wahren <stefan.wahren@i2se.com>, Eric Anholt <eric@anholt.net>,
-        Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH v3 0/5]
-Message-ID: <20180521181948.GB19122@arm.com>
-References: <20180518143913.26306-1-marc.zyngier@arm.com>
+        id S1751025AbeEUSXK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 14:23:10 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:35125 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750773AbeEUSXH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 14:23:07 -0400
+X-Google-Smtp-Source: AB8JxZq1lqck1mGnFy2zpfBc+gEbXPbYwy4cOfvnj0i0fSZALorAcrNfjYQUfNZXJjLs0iYTqYXeIg==
+Date: Mon, 21 May 2018 23:55:20 +0530
+From: Souptick Joarder <jrdr.linux@gmail.com>
+To: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH v2] kernel: event: core: Change return type to vm_fault_t
+Message-ID: <20180521182520.GA19677@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180518143913.26306-1-marc.zyngier@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
+Use new return type vm_fault_t for fault handler. For
+now, this is just documenting that the function returns
+a VM_FAULT value rather than an errno. Once all instances
+are converted, vm_fault_t will become a distinct type.
 
-Thanks for this.
+Ref-> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
 
-On Fri, May 18, 2018 at 03:39:08PM +0100, Marc Zyngier wrote:
-> PMUv3 has been introduced with ARMv8 and, while it has only been used
-> on 64bit systems so far, it would definitely be useful for 32bit
-> guests running under KVM/arm64, for example.
-> 
-> There is also the case of people natively running 32bit kernels on
-> 64bit HW and trying to upstream unspeakable hacks, hoping that the
-> stars will align and that they'll win the lottery (see [1]).
-> 
-> So let's try again, and make the PMUv3 driver usable for everyone.
-> 
-> This is done in three steps:
-> (1) Move the driver from arch/arm64 to drivers/perf
-> (2) Add a handful of system register accessors so that we can reuse
->     the driver on 32bit
-> (3) Provide the same accessors on 32bit, enable compilation, and
->     make it the default selection for mach-virt.
-> 
-> Tested on a Seattle box with 32bit guests.
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+v2: Updated the change log.
+    Acked by Peter Zijlstra.
 
-I think we should go ahead with something like this, but I don't think
-we're quite there with these patches. If we're going to move the arch code
-out into drivers, let's do that for the perf_event* files under arch/arm/
-as well. Then we could have a structure along the lines of:
+ kernel/events/core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 96db9ae..d09f1c4 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -4918,11 +4918,11 @@ void perf_event_update_userpage(struct perf_event *event)
+ }
+ EXPORT_SYMBOL_GPL(perf_event_update_userpage);
 
-  drivers/perf/arm_pmu.c			- As it is today
-  drivers/perf/arm_cpu/xscale_pmu.c		- Only builds for 32-bit
-  drivers/perf/arm_cpu/armv6_pmu.c		- Only builds for 32-bit
-  drivers/perf/arm_cpu/arch_pmu.c		- Works for v7/v8 on
-                                                  both 32-bit and 64-bit
+-static int perf_mmap_fault(struct vm_fault *vmf)
++static vm_fault_t perf_mmap_fault(struct vm_fault *vmf)
+ {
+ 	struct perf_event *event = vmf->vma->vm_file->private_data;
+ 	struct ring_buffer *rb;
+-	int ret = VM_FAULT_SIGBUS;
++	vm_fault_t ret = VM_FAULT_SIGBUS;
 
-The latter can then pull in whatever accessors it needs from the arch
-code headers.
-
-I know it's more of an invasive change, but this way we always end up
-running the same code on the two architectures and it will be much easier
-to maintain.
-
-Will
+ 	if (vmf->flags & FAULT_FLAG_MKWRITE) {
+ 		if (vmf->pgoff == 0)
+--
+1.9.1
