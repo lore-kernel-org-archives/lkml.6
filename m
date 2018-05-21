@@ -1,41 +1,47 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZorhClTZBzKOtOWZ+FWv7XqshOSoFrbwiJiN8ezF/h1khutDMPXF0OhM9oa0peS5mzztnrD
-ARC-Seal: i=1; a=rsa-sha256; t=1526937595; cv=none;
+X-Google-Smtp-Source: AB8JxZoFh84awdaBXCZu1KeIOZKqUybsIhCTPfl8ieX/srE/ckttfWvq6as3st5hz1pWd1rd8UDX
+ARC-Seal: i=1; a=rsa-sha256; t=1526937592; cv=none;
         d=google.com; s=arc-20160816;
-        b=wgxFrP/gCSerzyX3K5DBGvhLbpnbk9kzyTj2mL9VBpQn9LHGXsmG7sBvbjNAIktLj+
-         XXBv1mCOkiHDM/6YY/K1aA2QOixGeooSnF35qX03aVHO8RfsbEoQxtOBegFYKY9oWUrq
-         LWEZSHdH68vja+lBf/5qvJQ3g512dwTos+wqxGyCFmRH+6RcYoorffy2MMx30dXF6Go+
-         Uh0OJjPvzQEdbAxLpeBENGrsATxzdz2v1DErtgi4vT8qbUyDKmHh5cAeQ0fqQxU7+OJD
-         JxGi1/lTUDbZhsmHdN+vOmNs20plg3OlZiF+ZlWsIFwDXpF+Vz9Ii8cbvgyf0VL39FN2
-         N7Gg==
+        b=iIc/qBQrm86W7o/5IMvhJR1dX7tG1e8Yj7aDOt+2c1CijnVxa/DCtawhQj6dmeH4iJ
+         12GjxD0HZGRn83lz1fsSm+0BnhuZalwGCuTY92k6nZToYBXJ6KJf1Cn43wytkgeA0j+K
+         OVPfO3Jz4wTjspqjNUs+DO35c3gta8dt7v3zMuMF9M25UaEx2seAf0trRptIbOmz6Wa+
+         Yfe71qKNfTkHgSLZVAXSAq4G8B5emKZ7iGDcuxPbL933ZtH0TTjsjDWzl42UR8Y/Ne7c
+         Sht2pYsie6Fh2q5PSZoLVpL3p4L9borSP8wMrcpHRreStRRiDcYU7FqHo8OzIpgbKwJF
+         AH+Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=tXh5raY/tC+4TVat06cL2G7tOv59NgVrF39/u/IfoDM=;
-        b=MEH7KHHdlsfl0QIZfVQSMH4FvxhiFkqG/nerAtY+2y5RQdyRwhk5+4XGVjS9jsIGhr
-         bGV111gkR6JxTPxSBkrOjvqTtUzE0EYuQaYCbG24yhnfWEfaSf3LeINLnHedzzxSWtkf
-         m5WeGeTgT0qxRDzedsvf7TXkzjf3aEoNL+COThTPL5o27UPqSmIYuRoLavMldA19hIUK
-         HgGMWZGhoupeMGGGKQT7jFrjVQB03OzXWn59xR9VPRxihaTNqnEFnRj2QsDN6aq48Nb7
-         UMgn0efKTax1wRF/DBZZ4Ny2vOoc40CVH9VoNsPir/nTXylETaWwjrjhNoGZE5FcbCst
-         Vaiw==
+        bh=LG5aD/T2e2pbuaSqVqClgElEFl6P61OhiVJ/9lo8X9U=;
+        b=J3LArNhSp6oBgX5cw2MrQfRLuCOAsBzKiuZzHbRd1urLJYRS+P3HyPEzGuJI8egKAH
+         v0BBWcjS9TRkBCv4uIVV/yDTfxYG3EvrFPY9S+zDxmK0bFdfJ5ae9XNQA8YgGYV6UuOA
+         KdZc7N+rBnC3BKPttmQB4yFHxgCacjOLTtFA0BORREs3F6scjMUBN2RX4b6St0fZyDFf
+         efBt1fB9blJ2xmRZJKgCGOrQtZEYaniGCVXFgqOxF2LGlyj7fJJm5U3qe9Vr3Nylxxs4
+         c2CW5qKhbASI0LzY3fzTdd+CBD+9850jfb592AoM3rA75a13Tky6mlgVLilFDEQzDzc2
+         o17Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=P2KdjAOq;
+       dkim=pass header.i=@kernel.org header.s=default header.b=FvC7gM1t;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=P2KdjAOq;
+       dkim=pass header.i=@kernel.org header.s=default header.b=FvC7gM1t;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jon Masters <jcm@redhat.com>,
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Dave Hansen <dave.hansen@intel.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Michael Ellermen <mpe@ellerman.id.au>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ram Pai <linuxram@us.ibm.com>,
+	Shuah Khan <shuah@kernel.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@suse.de>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 51/95] x86/bugs: Read SPEC_CTRL MSR during boot and re-use reserved bits
-Date: Mon, 21 May 2018 23:11:41 +0200
-Message-Id: <20180521210457.953818429@linuxfoundation.org>
+	linux-mm@kvack.org,
+	Ingo Molnar <mingo@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH 4.14 33/95] x86/pkeys: Do not special case protection key 0
+Date: Mon, 21 May 2018 23:11:23 +0200
+Message-Id: <20180521210454.799243479@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210447.219380974@linuxfoundation.org>
 References: <20180521210447.219380974@linuxfoundation.org>
@@ -45,8 +51,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109829596787230?=
-X-GMAIL-MSGID: =?utf-8?q?1601110116036888632?=
+X-GMAIL-THRID: =?utf-8?q?1601109786925412053?=
+X-GMAIL-MSGID: =?utf-8?q?1601110113849608799?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,134 +60,79 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+From: Dave Hansen <dave.hansen@linux.intel.com>
 
-commit 1b86883ccb8d5d9506529d42dbe1a5257cb30b18 upstream
+commit 2fa9d1cfaf0e02f8abef0757002bff12dfcfa4e6 upstream.
 
-The 336996-Speculative-Execution-Side-Channel-Mitigations.pdf refers to all
-the other bits as reserved. The Intel SDM glossary defines reserved as
-implementation specific - aka unknown.
+mm_pkey_is_allocated() treats pkey 0 as unallocated.  That is
+inconsistent with the manpages, and also inconsistent with
+mm->context.pkey_allocation_map.  Stop special casing it and only
+disallow values that are actually bad (< 0).
 
-As such at bootup this must be taken it into account and proper masking for
-the bits in use applied.
+The end-user visible effect of this is that you can now use
+mprotect_pkey() to set pkey=0.
 
-A copy of this document is available at
-https://bugzilla.kernel.org/show_bug.cgi?id=199511
+This is a bit nicer than what Ram proposed[1] because it is simpler
+and removes special-casing for pkey 0.  On the other hand, it does
+allow applications to pkey_free() pkey-0, but that's just a silly
+thing to do, so we are not going to protect against it.
 
-[ tglx: Made x86_spec_ctrl_base __ro_after_init ]
+The scenario that could happen is similar to what happens if you free
+any other pkey that is in use: it might get reallocated later and used
+to protect some other data.  The most likely scenario is that pkey-0
+comes back from pkey_alloc(), an access-disable or write-disable bit
+is set in PKRU for it, and the next stack access will SIGSEGV.  It's
+not horribly different from if you mprotect()'d your stack or heap to
+be unreadable or unwritable, which is generally very foolish, but also
+not explicitly prevented by the kernel.
 
-Suggested-by: Jon Masters <jcm@redhat.com>
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
+1. http://lkml.kernel.org/r/1522112702-27853-1-git-send-email-linuxram@us.ibm.com
+
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>p
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Michael Ellermen <mpe@ellerman.id.au>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ram Pai <linuxram@us.ibm.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-mm@kvack.org
+Cc: stable@vger.kernel.org
+Fixes: 58ab9a088dda ("x86/pkeys: Check against max pkey to avoid overflows")
+Link: http://lkml.kernel.org/r/20180509171358.47FD785E@viggo.jf.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/include/asm/nospec-branch.h |   24 ++++++++++++++++++++----
- arch/x86/kernel/cpu/bugs.c           |   28 ++++++++++++++++++++++++++++
- 2 files changed, 48 insertions(+), 4 deletions(-)
 
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -217,6 +217,17 @@ enum spectre_v2_mitigation {
- 	SPECTRE_V2_IBRS,
- };
+---
+ arch/x86/include/asm/mmu_context.h |    2 +-
+ arch/x86/include/asm/pkeys.h       |    6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+--- a/arch/x86/include/asm/mmu_context.h
++++ b/arch/x86/include/asm/mmu_context.h
+@@ -192,7 +192,7 @@ static inline int init_new_context(struc
  
-+/*
-+ * The Intel specification for the SPEC_CTRL MSR requires that we
-+ * preserve any already set reserved bits at boot time (e.g. for
-+ * future additions that this kernel is not currently aware of).
-+ * We then set any additional mitigation bits that we want
-+ * ourselves and always use this as the base for SPEC_CTRL.
-+ * We also use this when handling guest entry/exit as below.
-+ */
-+extern void x86_spec_ctrl_set(u64);
-+extern u64 x86_spec_ctrl_get_default(void);
-+
- extern char __indirect_thunk_start[];
- extern char __indirect_thunk_end[];
- 
-@@ -254,8 +265,9 @@ void alternative_msr_write(unsigned int
- 
- static inline void indirect_branch_prediction_barrier(void)
+ #ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
+ 	if (cpu_feature_enabled(X86_FEATURE_OSPKE)) {
+-		/* pkey 0 is the default and always allocated */
++		/* pkey 0 is the default and allocated implicitly */
+ 		mm->context.pkey_allocation_map = 0x1;
+ 		/* -1 means unallocated or invalid */
+ 		mm->context.execute_only_pkey = -1;
+--- a/arch/x86/include/asm/pkeys.h
++++ b/arch/x86/include/asm/pkeys.h
+@@ -51,10 +51,10 @@ bool mm_pkey_is_allocated(struct mm_stru
  {
--	alternative_msr_write(MSR_IA32_PRED_CMD, PRED_CMD_IBPB,
--			      X86_FEATURE_USE_IBPB);
-+	u64 val = PRED_CMD_IBPB;
-+
-+	alternative_msr_write(MSR_IA32_PRED_CMD, val, X86_FEATURE_USE_IBPB);
- }
- 
- /*
-@@ -266,14 +278,18 @@ static inline void indirect_branch_predi
-  */
- #define firmware_restrict_branch_speculation_start()			\
- do {									\
-+	u64 val = x86_spec_ctrl_get_default() | SPEC_CTRL_IBRS;		\
-+									\
- 	preempt_disable();						\
--	alternative_msr_write(MSR_IA32_SPEC_CTRL, SPEC_CTRL_IBRS,	\
-+	alternative_msr_write(MSR_IA32_SPEC_CTRL, val,			\
- 			      X86_FEATURE_USE_IBRS_FW);			\
- } while (0)
- 
- #define firmware_restrict_branch_speculation_end()			\
- do {									\
--	alternative_msr_write(MSR_IA32_SPEC_CTRL, 0,			\
-+	u64 val = x86_spec_ctrl_get_default();				\
-+									\
-+	alternative_msr_write(MSR_IA32_SPEC_CTRL, val,			\
- 			      X86_FEATURE_USE_IBRS_FW);			\
- 	preempt_enable();						\
- } while (0)
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -28,6 +28,12 @@
- 
- static void __init spectre_v2_select_mitigation(void);
- 
-+/*
-+ * Our boot-time value of the SPEC_CTRL MSR. We read it once so that any
-+ * writes to SPEC_CTRL contain whatever reserved bits have been set.
-+ */
-+static u64 __ro_after_init x86_spec_ctrl_base;
-+
- void __init check_bugs(void)
- {
- 	identify_boot_cpu();
-@@ -37,6 +43,13 @@ void __init check_bugs(void)
- 		print_cpu_info(&boot_cpu_data);
- 	}
- 
-+	/*
-+	 * Read the SPEC_CTRL MSR to account for reserved bits which may
-+	 * have unknown values.
-+	 */
-+	if (boot_cpu_has(X86_FEATURE_IBRS))
-+		rdmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
-+
- 	/* Select the proper spectre mitigation before patching alternatives */
- 	spectre_v2_select_mitigation();
- 
-@@ -95,6 +108,21 @@ static const char *spectre_v2_strings[]
- 
- static enum spectre_v2_mitigation spectre_v2_enabled = SPECTRE_V2_NONE;
- 
-+void x86_spec_ctrl_set(u64 val)
-+{
-+	if (val & ~SPEC_CTRL_IBRS)
-+		WARN_ONCE(1, "SPEC_CTRL MSR value 0x%16llx is unknown.\n", val);
-+	else
-+		wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base | val);
-+}
-+EXPORT_SYMBOL_GPL(x86_spec_ctrl_set);
-+
-+u64 x86_spec_ctrl_get_default(void)
-+{
-+	return x86_spec_ctrl_base;
-+}
-+EXPORT_SYMBOL_GPL(x86_spec_ctrl_get_default);
-+
- #ifdef RETPOLINE
- static bool spectre_v2_bad_module;
- 
+ 	/*
+ 	 * "Allocated" pkeys are those that have been returned
+-	 * from pkey_alloc().  pkey 0 is special, and never
+-	 * returned from pkey_alloc().
++	 * from pkey_alloc() or pkey 0 which is allocated
++	 * implicitly when the mm is created.
+ 	 */
+-	if (pkey <= 0)
++	if (pkey < 0)
+ 		return false;
+ 	if (pkey >= arch_max_pkey())
+ 		return false;
