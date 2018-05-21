@@ -1,43 +1,39 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrxaaT0JCZQo7OHYKeX7WeNn7gjSlqJlLrGRmUVKUDPWCETO+ukGOS7X3N21wOzFzRekivD
-ARC-Seal: i=1; a=rsa-sha256; t=1526937412; cv=none;
+X-Google-Smtp-Source: AB8JxZqrI7BxWQDF/DbVYgdimVyttSbnrWMBczFSqTUZ4FwMI2yxi+VRZbS/K3e6cuU9eV1SkNVm
+ARC-Seal: i=1; a=rsa-sha256; t=1526937409; cv=none;
         d=google.com; s=arc-20160816;
-        b=ATdd15dqH90YYmIrOcV5HgLzPkGPwTvOm56gZLWGuvuEKKxUCdEcVZvFrn+Evcse38
-         2az8+rafYX61BVNYiWDG6kqfZoKfQ6lMqM1Yp1iGw4zIQxGvnJaiGcTGbTIDnKgJl07N
-         0NZMlYrdRZJnl5CUO1ofEpQFDE9MnfyvRZfygBF4mQ/6CcqDwmcdt3pkSVMwWZ7RLnEW
-         JdTfsNiowvKxjULwcSKiLvPX5B/FGyvL9JBwdK7V76GSZ4QtGZmaD0Pege/AcdLWt2Ii
-         EIUlZwhEdYvdONzJVUc4H2SG2tYcUcUjdj8XrJDOnNPoyaRGNdRYNekZ5WAqdo2BSPQG
-         NfuA==
+        b=yIlphbAK5INRzDFok31i2Bhi2B60EwwkPf1ihydOqmv1KHie1lK4GCeuoyfMVMepnb
+         vbKU/AUccfOFu2xiffEezcT4DnuOeqCY34yjLvf3QVCyX2AslKZp35YLxp8cgWSvE/xu
+         Ur3Synj1usiIMNBeFHq03oZZCZCZBUVCYUlkbwOvgaP68GCvcBCClrdFPEpbTDt88NwN
+         oRqOK1l87GP8cw6SfpcmecNPli3fbeETnaGCLpYiIcScJ7vGw4LE58+dFKeZnqlMzla1
+         o5gGYFj+E4hqTwKbSV76nK5DRUy16JlQp0Ln9p06if/kJnOy1HA80TDqDB4gJFZRNKzi
+         DGGA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=QYMAIhZrSXhhb5GQQyTFDb5RSIFsHY2dOob+LklMvk4=;
-        b=APjNrKziJdok0vzScvCYZC0tCypPCcs5XvI73WM0E75bCtpNwqllqx5z/tmV8epftX
-         zw8b3TgFN3A5jEcRJif0BsALmFA+BrfWNAFp5oHTjleTYeGXigPIr+LR0pXDjVAqm2QM
-         IXaVY/u0x79GXZLm5rdDIF4TszNg58kvTWAiVo2t51YO0YH33E4BPpCN98Xklw6PdCtr
-         d8co9Fb9AJeCjL1SEtWCG4F7rA4g0++jHZ8zbK8+DRRsyvxoBiJe7QVVyqdb/Qxvq8iE
-         YfHf6cNO/MCFwZkxRYZgDc2Hwm4+pF+mWhx96FPl/TQPuMg11ZrXscRpqBjYYTPtSWaf
-         95XA==
+        bh=U/WOykwnH++ilM1Obht4G1TUbp1vLtMzinlzxkE6TZo=;
+        b=V0wI6VOkWAUbD2dzhaVyXJLYqNqP1Orio4lAbxupr9EdKvVgvELbS1xu7qAKgFVhBC
+         OYiA9q51jd4pY4etFhxAIBoh59l8cJuTrUu67uAsonBzNzvmK1xfGx+vwQln/eteOt9h
+         fynX0/dlcxKpXNkuWtjMEzIjwLOTDG/QdCMj8Eex0qrsf5OubWexvlZczQ6ZZNghh47s
+         rhxDelG3LlF75R7jo8LY1KpNf+t53PGd7Qrfi6axrpZ0XTpWcxebObEMxVKDFJO/0/Dp
+         SfHvg9qRwdIPn+8QUcsTA+3om1QFl+FxrzTKV5ZYWG2rFnd4C22ZTKGluCbwPla+nslN
+         bA+w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=aUlRbu/2;
+       dkim=pass header.i=@kernel.org header.s=default header.b=AXnsnQt8;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=aUlRbu/2;
+       dkim=pass header.i=@kernel.org header.s=default header.b=AXnsnQt8;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Borislav Petkov <bp@suse.de>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-	=?UTF-8?q?J=C3=B6rg=20Otte?= <jrg.otte@gmail.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
 	David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 72/87] x86/speculation: Use synthetic bits for IBRS/IBPB/STIBP
-Date: Mon, 21 May 2018 23:11:48 +0200
-Message-Id: <20180521210426.320900655@linuxfoundation.org>
+Subject: [PATCH 4.9 54/87] x86/speculation: Add prctl for Speculative Store Bypass mitigation
+Date: Mon, 21 May 2018 23:11:30 +0200
+Message-Id: <20180521210425.156788399@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210420.222671977@linuxfoundation.org>
 References: <20180521210420.222671977@linuxfoundation.org>
@@ -47,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109924308566298?=
-X-GMAIL-MSGID: =?utf-8?q?1601109924308566298?=
+X-GMAIL-THRID: =?utf-8?q?1601109921205571253?=
+X-GMAIL-MSGID: =?utf-8?q?1601109921205571253?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,142 +52,212 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Borislav Petkov <bp@suse.de>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit e7c587da125291db39ddf1f49b18e5970adbac17 upstream
+commit a73ec77ee17ec556fe7f165d00314cb7c047b1ac upstream
 
-Intel and AMD have different CPUID bits hence for those use synthetic bits
-which get set on the respective vendor's in init_speculation_control(). So
-that debacles like what the commit message of
+Add prctl based control for Speculative Store Bypass mitigation and make it
+the default mitigation for Intel and AMD.
 
-  c65732e4f721 ("x86/cpu: Restore CPUID_8000_0008_EBX reload")
+Andi Kleen provided the following rationale (slightly redacted):
 
-talks about don't happen anymore.
+ There are multiple levels of impact of Speculative Store Bypass:
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
+ 1) JITed sandbox.
+    It cannot invoke system calls, but can do PRIME+PROBE and may have call
+    interfaces to other code
+
+ 2) Native code process.
+    No protection inside the process at this level.
+
+ 3) Kernel.
+
+ 4) Between processes.
+
+ The prctl tries to protect against case (1) doing attacks.
+
+ If the untrusted code can do random system calls then control is already
+ lost in a much worse way. So there needs to be system call protection in
+ some way (using a JIT not allowing them or seccomp). Or rather if the
+ process can subvert its environment somehow to do the prctl it can already
+ execute arbitrary code, which is much worse than SSB.
+
+ To put it differently, the point of the prctl is to not allow JITed code
+ to read data it shouldn't read from its JITed sandbox. If it already has
+ escaped its sandbox then it can already read everything it wants in its
+ address space, and do much worse.
+
+ The ability to control Speculative Store Bypass allows to enable the
+ protection selectively without affecting overall system performance.
+
+Based on an initial patch from Tim Chen. Completely rewritten.
+
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Tested-by: Jörg Otte <jrg.otte@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Link: https://lkml.kernel.org/r/20180504161815.GG9257@pd.tnic
+
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/cpufeatures.h |   12 ++++++++----
- arch/x86/kernel/cpu/common.c       |   14 ++++++++++----
- arch/x86/kvm/cpuid.c               |   10 +++++-----
- arch/x86/kvm/cpuid.h               |    4 ++--
- 4 files changed, 25 insertions(+), 15 deletions(-)
+ Documentation/kernel-parameters.txt  |    6 ++
+ arch/x86/include/asm/nospec-branch.h |    1 
+ arch/x86/kernel/cpu/bugs.c           |   83 ++++++++++++++++++++++++++++++-----
+ 3 files changed, 79 insertions(+), 11 deletions(-)
 
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -205,7 +205,10 @@
- #define X86_FEATURE_USE_IBPB	( 7*32+21) /* "" Indirect Branch Prediction Barrier enabled */
- #define X86_FEATURE_USE_IBRS_FW	( 7*32+22) /* "" Use IBRS during runtime firmware calls */
- #define X86_FEATURE_SPEC_STORE_BYPASS_DISABLE ( 7*32+23) /* "" Disable Speculative Store Bypass. */
--#define X86_FEATURE_AMD_SSBD	(7*32+24)  /* "" AMD SSBD implementation */
-+#define X86_FEATURE_AMD_SSBD	( 7*32+24) /* "" AMD SSBD implementation */
-+#define X86_FEATURE_IBRS	( 7*32+25) /* Indirect Branch Restricted Speculation */
-+#define X86_FEATURE_IBPB	( 7*32+26) /* Indirect Branch Prediction Barrier */
-+#define X86_FEATURE_STIBP	( 7*32+27) /* Single Thread Indirect Branch Predictors */
+--- a/Documentation/kernel-parameters.txt
++++ b/Documentation/kernel-parameters.txt
+@@ -4001,7 +4001,11 @@ bytes respectively. Such letter suffixes
+ 			off    - Unconditionally enable Speculative Store Bypass
+ 			auto   - Kernel detects whether the CPU model contains an
+ 				 implementation of Speculative Store Bypass and
+-				 picks the most appropriate mitigation
++				 picks the most appropriate mitigation.
++			prctl  - Control Speculative Store Bypass per thread
++				 via prctl. Speculative Store Bypass is enabled
++				 for a process by default. The state of the control
++				 is inherited on fork.
  
- /* Virtualization flags: Linux defined, word 8 */
- #define X86_FEATURE_TPR_SHADOW  ( 8*32+ 0) /* Intel TPR Shadow */
-@@ -263,9 +266,9 @@
- /* AMD-defined CPU features, CPUID level 0x80000008 (ebx), word 13 */
- #define X86_FEATURE_CLZERO	(13*32+0) /* CLZERO instruction */
- #define X86_FEATURE_IRPERF	(13*32+1) /* Instructions Retired Count */
--#define X86_FEATURE_IBPB	(13*32+12) /* Indirect Branch Prediction Barrier */
--#define X86_FEATURE_IBRS	(13*32+14) /* Indirect Branch Restricted Speculation */
--#define X86_FEATURE_STIBP	(13*32+15) /* Single Thread Indirect Branch Predictors */
-+#define X86_FEATURE_AMD_IBPB	(13*32+12) /* Indirect Branch Prediction Barrier */
-+#define X86_FEATURE_AMD_IBRS	(13*32+14) /* Indirect Branch Restricted Speculation */
-+#define X86_FEATURE_AMD_STIBP	(13*32+15) /* Single Thread Indirect Branch Predictors */
+ 			Not specifying this option is equivalent to
+ 			spec_store_bypass_disable=auto.
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -232,6 +232,7 @@ extern u64 x86_spec_ctrl_get_default(voi
+ enum ssb_mitigation {
+ 	SPEC_STORE_BYPASS_NONE,
+ 	SPEC_STORE_BYPASS_DISABLE,
++	SPEC_STORE_BYPASS_PRCTL,
+ };
  
- /* Thermal and Power Management Leaf, CPUID level 0x00000006 (eax), word 14 */
- #define X86_FEATURE_DTHERM	(14*32+ 0) /* Digital Thermal Sensor */
-@@ -301,6 +304,7 @@
- #define X86_FEATURE_SUCCOR	(17*32+1) /* Uncorrectable error containment and recovery */
- #define X86_FEATURE_SMCA	(17*32+3) /* Scalable MCA */
+ extern char __indirect_thunk_start[];
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -11,6 +11,8 @@
+ #include <linux/utsname.h>
+ #include <linux/cpu.h>
+ #include <linux/module.h>
++#include <linux/nospec.h>
++#include <linux/prctl.h>
  
-+
- /* Intel-defined CPU features, CPUID level 0x00000007:0 (EDX), word 18 */
- #define X86_FEATURE_AVX512_4VNNIW	(18*32+ 2) /* AVX-512 Neural Network Instructions */
- #define X86_FEATURE_AVX512_4FMAPS	(18*32+ 3) /* AVX-512 Multiply Accumulation Single precision */
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -725,17 +725,23 @@ static void init_speculation_control(str
- 	 * and they also have a different bit for STIBP support. Also,
- 	 * a hypervisor might have set the individual AMD bits even on
- 	 * Intel CPUs, for finer-grained selection of what's available.
--	 *
--	 * We use the AMD bits in 0x8000_0008 EBX as the generic hardware
--	 * features, which are visible in /proc/cpuinfo and used by the
--	 * kernel. So set those accordingly from the Intel bits.
- 	 */
- 	if (cpu_has(c, X86_FEATURE_SPEC_CTRL)) {
- 		set_cpu_cap(c, X86_FEATURE_IBRS);
- 		set_cpu_cap(c, X86_FEATURE_IBPB);
- 	}
-+
- 	if (cpu_has(c, X86_FEATURE_INTEL_STIBP))
- 		set_cpu_cap(c, X86_FEATURE_STIBP);
-+
-+	if (cpu_has(c, X86_FEATURE_AMD_IBRS))
-+		set_cpu_cap(c, X86_FEATURE_IBRS);
-+
-+	if (cpu_has(c, X86_FEATURE_AMD_IBPB))
-+		set_cpu_cap(c, X86_FEATURE_IBPB);
-+
-+	if (cpu_has(c, X86_FEATURE_AMD_STIBP))
-+		set_cpu_cap(c, X86_FEATURE_STIBP);
- }
+ #include <asm/spec-ctrl.h>
+ #include <asm/cmdline.h>
+@@ -411,20 +413,23 @@ enum ssb_mitigation_cmd {
+ 	SPEC_STORE_BYPASS_CMD_NONE,
+ 	SPEC_STORE_BYPASS_CMD_AUTO,
+ 	SPEC_STORE_BYPASS_CMD_ON,
++	SPEC_STORE_BYPASS_CMD_PRCTL,
+ };
  
- void get_cpu_cap(struct cpuinfo_x86 *c)
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -357,7 +357,7 @@ static inline int __do_cpuid_ent(struct
+ static const char *ssb_strings[] = {
+ 	[SPEC_STORE_BYPASS_NONE]	= "Vulnerable",
+-	[SPEC_STORE_BYPASS_DISABLE]	= "Mitigation: Speculative Store Bypass disabled"
++	[SPEC_STORE_BYPASS_DISABLE]	= "Mitigation: Speculative Store Bypass disabled",
++	[SPEC_STORE_BYPASS_PRCTL]	= "Mitigation: Speculative Store Bypass disabled via prctl"
+ };
  
- 	/* cpuid 0x80000008.ebx */
- 	const u32 kvm_cpuid_8000_0008_ebx_x86_features =
--		F(IBPB) | F(IBRS);
-+		F(AMD_IBPB) | F(AMD_IBRS);
+ static const struct {
+ 	const char *option;
+ 	enum ssb_mitigation_cmd cmd;
+ } ssb_mitigation_options[] = {
+-	{ "auto",	SPEC_STORE_BYPASS_CMD_AUTO }, /* Platform decides */
+-	{ "on",		SPEC_STORE_BYPASS_CMD_ON },   /* Disable Speculative Store Bypass */
+-	{ "off",	SPEC_STORE_BYPASS_CMD_NONE }, /* Don't touch Speculative Store Bypass */
++	{ "auto",	SPEC_STORE_BYPASS_CMD_AUTO },  /* Platform decides */
++	{ "on",		SPEC_STORE_BYPASS_CMD_ON },    /* Disable Speculative Store Bypass */
++	{ "off",	SPEC_STORE_BYPASS_CMD_NONE },  /* Don't touch Speculative Store Bypass */
++	{ "prctl",	SPEC_STORE_BYPASS_CMD_PRCTL }, /* Disable Speculative Store Bypass via prctl */
+ };
  
- 	/* cpuid 0xC0000001.edx */
- 	const u32 kvm_cpuid_C000_0001_edx_x86_features =
-@@ -619,10 +619,10 @@ static inline int __do_cpuid_ent(struct
- 		entry->eax = g_phys_as | (virt_as << 8);
- 		entry->edx = 0;
- 		/* IBRS and IBPB aren't necessarily present in hardware cpuid */
--		if (boot_cpu_has(X86_FEATURE_IBPB))
--			entry->ebx |= F(IBPB);
--		if (boot_cpu_has(X86_FEATURE_IBRS))
--			entry->ebx |= F(IBRS);
-+		if (boot_cpu_has(X86_FEATURE_AMD_IBPB))
-+			entry->ebx |= F(AMD_IBPB);
-+		if (boot_cpu_has(X86_FEATURE_AMD_IBRS))
-+			entry->ebx |= F(AMD_IBRS);
- 		entry->ebx &= kvm_cpuid_8000_0008_ebx_x86_features;
- 		cpuid_mask(&entry->ebx, CPUID_8000_0008_EBX);
+ static enum ssb_mitigation_cmd __init ssb_parse_cmdline(void)
+@@ -474,14 +479,15 @@ static enum ssb_mitigation_cmd __init __
+ 
+ 	switch (cmd) {
+ 	case SPEC_STORE_BYPASS_CMD_AUTO:
+-		/*
+-		 * AMD platforms by default don't need SSB mitigation.
+-		 */
+-		if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
+-			break;
++		/* Choose prctl as the default mode */
++		mode = SPEC_STORE_BYPASS_PRCTL;
++		break;
+ 	case SPEC_STORE_BYPASS_CMD_ON:
+ 		mode = SPEC_STORE_BYPASS_DISABLE;
  		break;
---- a/arch/x86/kvm/cpuid.h
-+++ b/arch/x86/kvm/cpuid.h
-@@ -165,7 +165,7 @@ static inline bool guest_cpuid_has_ibpb(
- 	struct kvm_cpuid_entry2 *best;
++	case SPEC_STORE_BYPASS_CMD_PRCTL:
++		mode = SPEC_STORE_BYPASS_PRCTL;
++		break;
+ 	case SPEC_STORE_BYPASS_CMD_NONE:
+ 		break;
+ 	}
+@@ -492,7 +498,7 @@ static enum ssb_mitigation_cmd __init __
+ 	 *  - X86_FEATURE_RDS - CPU is able to turn off speculative store bypass
+ 	 *  - X86_FEATURE_SPEC_STORE_BYPASS_DISABLE - engage the mitigation
+ 	 */
+-	if (mode != SPEC_STORE_BYPASS_NONE) {
++	if (mode == SPEC_STORE_BYPASS_DISABLE) {
+ 		setup_force_cpu_cap(X86_FEATURE_SPEC_STORE_BYPASS_DISABLE);
+ 		/*
+ 		 * Intel uses the SPEC CTRL MSR Bit(2) for this, while AMD uses
+@@ -523,6 +529,63 @@ static void ssb_select_mitigation()
  
- 	best = kvm_find_cpuid_entry(vcpu, 0x80000008, 0);
--	if (best && (best->ebx & bit(X86_FEATURE_IBPB)))
-+	if (best && (best->ebx & bit(X86_FEATURE_AMD_IBPB)))
- 		return true;
- 	best = kvm_find_cpuid_entry(vcpu, 7, 0);
- 	return best && (best->edx & bit(X86_FEATURE_SPEC_CTRL));
-@@ -176,7 +176,7 @@ static inline bool guest_cpuid_has_spec_
- 	struct kvm_cpuid_entry2 *best;
+ #undef pr_fmt
  
- 	best = kvm_find_cpuid_entry(vcpu, 0x80000008, 0);
--	if (best && (best->ebx & bit(X86_FEATURE_IBRS)))
-+	if (best && (best->ebx & bit(X86_FEATURE_AMD_IBRS)))
- 		return true;
- 	best = kvm_find_cpuid_entry(vcpu, 7, 0);
- 	return best && (best->edx & (bit(X86_FEATURE_SPEC_CTRL) | bit(X86_FEATURE_SSBD)));
++static int ssb_prctl_set(unsigned long ctrl)
++{
++	bool rds = !!test_tsk_thread_flag(current, TIF_RDS);
++
++	if (ssb_mode != SPEC_STORE_BYPASS_PRCTL)
++		return -ENXIO;
++
++	if (ctrl == PR_SPEC_ENABLE)
++		clear_tsk_thread_flag(current, TIF_RDS);
++	else
++		set_tsk_thread_flag(current, TIF_RDS);
++
++	if (rds != !!test_tsk_thread_flag(current, TIF_RDS))
++		speculative_store_bypass_update();
++
++	return 0;
++}
++
++static int ssb_prctl_get(void)
++{
++	switch (ssb_mode) {
++	case SPEC_STORE_BYPASS_DISABLE:
++		return PR_SPEC_DISABLE;
++	case SPEC_STORE_BYPASS_PRCTL:
++		if (test_tsk_thread_flag(current, TIF_RDS))
++			return PR_SPEC_PRCTL | PR_SPEC_DISABLE;
++		return PR_SPEC_PRCTL | PR_SPEC_ENABLE;
++	default:
++		if (boot_cpu_has_bug(X86_BUG_SPEC_STORE_BYPASS))
++			return PR_SPEC_ENABLE;
++		return PR_SPEC_NOT_AFFECTED;
++	}
++}
++
++int arch_prctl_spec_ctrl_set(unsigned long which, unsigned long ctrl)
++{
++	if (ctrl != PR_SPEC_ENABLE && ctrl != PR_SPEC_DISABLE)
++		return -ERANGE;
++
++	switch (which) {
++	case PR_SPEC_STORE_BYPASS:
++		return ssb_prctl_set(ctrl);
++	default:
++		return -ENODEV;
++	}
++}
++
++int arch_prctl_spec_ctrl_get(unsigned long which)
++{
++	switch (which) {
++	case PR_SPEC_STORE_BYPASS:
++		return ssb_prctl_get();
++	default:
++		return -ENODEV;
++	}
++}
++
+ void x86_spec_ctrl_setup_ap(void)
+ {
+ 	if (boot_cpu_has(X86_FEATURE_IBRS))
