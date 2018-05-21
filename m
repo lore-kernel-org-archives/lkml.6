@@ -1,40 +1,40 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpjFJak0tJh+wJeLTtkMtSkiDnatsYBrWQ6v1l6O283fLaeQpZVE+iUFGGYbFco9iHjWFUH
-ARC-Seal: i=1; a=rsa-sha256; t=1526937431; cv=none;
+X-Google-Smtp-Source: AB8JxZqL7BZRNlv1GXduGV3kcWONhUDEgT5P/r8vpw9HDrw0QQEPTtCLtm1VnTZr5aRVjKhJqZGA
+ARC-Seal: i=1; a=rsa-sha256; t=1526937429; cv=none;
         d=google.com; s=arc-20160816;
-        b=qm2v8cqBYIQUrlCcKOa9EjzKeZXUsI69VU2XkmoLIlmmR91lSUzVRfH4xTgdGApVjO
-         nJy1YPqJGGBERf023WnEdH2Pfj0SrtqwYHzNI7ZmKwVRMJPR/1CRuX0ZptSSCC++JQb8
-         oHeqD4ZaghA4DOPCh91l9OV7xIDBP6Zr4Jfnl/BFoeHYJ98sxMKHof4gHGjDJ7YaJlEQ
-         1HS30VqIKBKTRcI6P2o0dxVK8ytUIgEW0DzkKZgFGl4YZCZ2yvaLBbK57pmAkJk+mfg/
-         ADJP9kvV9cLMdqPMVDOFwDkjRxF66qERcr3yQToanIA7x3dCtAAJTxZsDNsCRbFt8WdF
-         BwIA==
+        b=akhsgjkppArqkd7oG8O2SpaSzF7u8R7zb9cqMIhdIeoOD93rs60TW0qP4XNOwCgGuX
+         rUsjOeYC2befdDZ+hjOQmq7LZCPHdPr5GU77ZVudhXyg8UjQAsBtYNdn/hrote9rDMAc
+         X/kmXmG/PM8nHRKNLXjPwdAK2tipYc95et2/fiS1sI0mGr6DIUajTZI7zQ1KK7ur8TJf
+         Vukii5pQYbUxCw43tmBHRjqK7vdEgePpfMTNQBLxcHVyXb8aqFzVNm7XlujA6Z+D+E+a
+         jgKDS4zAlPedC/bKRyskwhDtYOxX/0jcG5gCxSAY2VKGKROaeMGYsO5iC9jLP+YqbdrW
+         t3lA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=YNYO39Qp3uXtTAwltUMMys3teheN92uOAbqsVzYwU4I=;
-        b=Cij3fSG0+p0W5ubpxWtxQh1SQtPY6Fa7BEESp+eVyLIfyLyVmU5ISj9ZV7bJdY4mjL
-         lK/fjTBrUMB5NrLmqqwvjyT6dcqTvcSNId0frL+Uc92V75rlf0Jm+WeYRSlP88Xfv6/f
-         C7pw3sFwFhqGFGaWvp8rpYGNKBwbnBEL4GYZ2D73/5RZk9wHM0bVTNrw8joqLjgqXpEK
-         jVYvzijlDU7lk/okcgt+5KBaSINNPK3HPg/SWZUyvv1VdvtHirvmN57sffFC1E50mzHW
-         GhzDziEV90JTejccmRRBevWCOqsOq3wwg6L5MSxYAnrvgjhJL5cC+qEZUee57qZ4DhPG
-         mcZQ==
+        bh=fLhLtBVnjQKSX3XdqS9oiQvW424R8ahH0bhrLWLugjs=;
+        b=j2H66AUPJLa0EHNs9yuTW1iTmmbFKW1mcFnGomRnbsvN76brQhCcTXAueIKpa3ZQXG
+         WuH2RlzVgRbIuG7SCaCNiczir3MRWvO1qiQ/89A+NOdz/Sb0RkQExClBpa1yh0ZQQcTy
+         f7cIr+ui+HxiI0Jreo2eQCmbHTxUT7HEp9wSCUHJhSzfkEocTAK0F3kJ0jIiAx8h/lUu
+         gFDBTnHqcx2A+Zw5QAWDY8jOd1Jqx8AbOS6lIwdFfi/crPw4BDbY0ZYj0J+a/oi926E2
+         Gs4gGJCluh7hhSKcelfJTlag8/dqHl5hjF/f7AJe6qhq4uqri1rB93v5XVKjece3myAo
+         Yt6Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=E8k/+/cn;
+       dkim=pass header.i=@kernel.org header.s=default header.b=ysX6q8Fu;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=E8k/+/cn;
+       dkim=pass header.i=@kernel.org header.s=default header.b=ysX6q8Fu;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tom Lendacky <thomas.lendacky@amd.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Borislav Petkov <bp@suse.de>,
+	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
 	David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 79/87] x86/speculation: Add virtualized speculative store bypass disable support
-Date: Mon, 21 May 2018 23:11:55 +0200
-Message-Id: <20180521210426.823679099@linuxfoundation.org>
+Subject: [PATCH 4.9 78/87] x86/bugs, KVM: Extend speculation control for VIRT_SPEC_CTRL
+Date: Mon, 21 May 2018 23:11:54 +0200
+Message-Id: <20180521210426.762626320@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210420.222671977@linuxfoundation.org>
 References: <20180521210420.222671977@linuxfoundation.org>
@@ -44,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109944454534636?=
-X-GMAIL-MSGID: =?utf-8?q?1601109944454534636?=
+X-GMAIL-THRID: =?utf-8?q?1601109941891387503?=
+X-GMAIL-MSGID: =?utf-8?q?1601109941891387503?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,92 +53,151 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tom Lendacky <thomas.lendacky@amd.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 11fb0683493b2da112cd64c9dada221b52463bf7 upstream
+commit ccbcd2674472a978b48c91c1fbfb66c0ff959f24 upstream
 
-Some AMD processors only support a non-architectural means of enabling
-speculative store bypass disable (SSBD).  To allow a simplified view of
-this to a guest, an architectural definition has been created through a new
-CPUID bit, 0x80000008_EBX[25], and a new MSR, 0xc001011f.  With this, a
-hypervisor can virtualize the existence of this definition and provide an
-architectural method for using SSBD to a guest.
+AMD is proposing a VIRT_SPEC_CTRL MSR to handle the Speculative Store
+Bypass Disable via MSR_AMD64_LS_CFG so that guests do not have to care
+about the bit position of the SSBD bit and thus facilitate migration.
+Also, the sibling coordination on Family 17H CPUs can only be done on
+the host.
 
-Add the new CPUID feature, the new MSR and update the existing SSBD
-support to use this MSR when present.
+Extend x86_spec_ctrl_set_guest() and x86_spec_ctrl_restore_host() with an
+extra argument for the VIRT_SPEC_CTRL MSR.
 
-Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+Hand in 0 from VMX and in SVM add a new virt_spec_ctrl member to the CPU
+data structure which is going to be used in later patches for the actual
+implementation.
+
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/cpufeatures.h |    1 +
- arch/x86/include/asm/msr-index.h   |    2 ++
- arch/x86/kernel/cpu/bugs.c         |    4 +++-
- arch/x86/kernel/process.c          |   13 ++++++++++++-
- 4 files changed, 18 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/spec-ctrl.h |    9 ++++++---
+ arch/x86/kernel/cpu/bugs.c       |   20 ++++++++++++++++++--
+ arch/x86/kvm/svm.c               |   11 +++++++++--
+ arch/x86/kvm/vmx.c               |    5 +++--
+ 4 files changed, 36 insertions(+), 9 deletions(-)
 
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -274,6 +274,7 @@
- #define X86_FEATURE_AMD_IBPB	(13*32+12) /* Indirect Branch Prediction Barrier */
- #define X86_FEATURE_AMD_IBRS	(13*32+14) /* Indirect Branch Restricted Speculation */
- #define X86_FEATURE_AMD_STIBP	(13*32+15) /* Single Thread Indirect Branch Predictors */
-+#define X86_FEATURE_VIRT_SSBD	(13*32+25) /* Virtualized Speculative Store Bypass Disable */
+--- a/arch/x86/include/asm/spec-ctrl.h
++++ b/arch/x86/include/asm/spec-ctrl.h
+@@ -10,10 +10,13 @@
+  * the guest has, while on VMEXIT we restore the host view. This
+  * would be easier if SPEC_CTRL were architecturally maskable or
+  * shadowable for guests but this is not (currently) the case.
+- * Takes the guest view of SPEC_CTRL MSR as a parameter.
++ * Takes the guest view of SPEC_CTRL MSR as a parameter and also
++ * the guest's version of VIRT_SPEC_CTRL, if emulated.
+  */
+-extern void x86_spec_ctrl_set_guest(u64);
+-extern void x86_spec_ctrl_restore_host(u64);
++extern void x86_spec_ctrl_set_guest(u64 guest_spec_ctrl,
++				    u64 guest_virt_spec_ctrl);
++extern void x86_spec_ctrl_restore_host(u64 guest_spec_ctrl,
++				       u64 guest_virt_spec_ctrl);
  
- /* Thermal and Power Management Leaf, CPUID level 0x00000006 (eax), word 14 */
- #define X86_FEATURE_DTHERM	(14*32+ 0) /* Digital Thermal Sensor */
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -323,6 +323,8 @@
- #define MSR_AMD64_IBSOPDATA4		0xc001103d
- #define MSR_AMD64_IBS_REG_COUNT_MAX	8 /* includes MSR_AMD64_IBSBRTARGET */
- 
-+#define MSR_AMD64_VIRT_SPEC_CTRL	0xc001011f
-+
- /* Fam 17h MSRs */
- #define MSR_F17H_IRPERF			0xc00000e9
- 
+ /* AMD specific Speculative Store Bypass MSR data */
+ extern u64 x86_amd_ls_cfg_base;
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -204,7 +204,9 @@ static void x86_amd_ssb_disable(void)
+@@ -150,7 +150,15 @@ u64 x86_spec_ctrl_get_default(void)
+ }
+ EXPORT_SYMBOL_GPL(x86_spec_ctrl_get_default);
+ 
+-void x86_spec_ctrl_set_guest(u64 guest_spec_ctrl)
++/**
++ * x86_spec_ctrl_set_guest - Set speculation control registers for the guest
++ * @guest_spec_ctrl:		The guest content of MSR_SPEC_CTRL
++ * @guest_virt_spec_ctrl:	The guest controlled bits of MSR_VIRT_SPEC_CTRL
++ *				(may get translated to MSR_AMD64_LS_CFG bits)
++ *
++ * Avoids writing to the MSR if the content/bits are the same
++ */
++void x86_spec_ctrl_set_guest(u64 guest_spec_ctrl, u64 guest_virt_spec_ctrl)
  {
- 	u64 msrval = x86_amd_ls_cfg_base | x86_amd_ls_cfg_ssbd_mask;
+ 	u64 host = x86_spec_ctrl_base;
  
--	if (boot_cpu_has(X86_FEATURE_LS_CFG_SSBD))
-+	if (boot_cpu_has(X86_FEATURE_VIRT_SSBD))
-+		wrmsrl(MSR_AMD64_VIRT_SPEC_CTRL, SPEC_CTRL_SSBD);
-+	else if (boot_cpu_has(X86_FEATURE_LS_CFG_SSBD))
- 		wrmsrl(MSR_AMD64_LS_CFG, msrval);
+@@ -167,7 +175,15 @@ void x86_spec_ctrl_set_guest(u64 guest_s
  }
+ EXPORT_SYMBOL_GPL(x86_spec_ctrl_set_guest);
  
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -312,6 +312,15 @@ static __always_inline void amd_set_core
- }
- #endif
+-void x86_spec_ctrl_restore_host(u64 guest_spec_ctrl)
++/**
++ * x86_spec_ctrl_restore_host - Restore host speculation control registers
++ * @guest_spec_ctrl:		The guest content of MSR_SPEC_CTRL
++ * @guest_virt_spec_ctrl:	The guest controlled bits of MSR_VIRT_SPEC_CTRL
++ *				(may get translated to MSR_AMD64_LS_CFG bits)
++ *
++ * Avoids writing to the MSR if the content/bits are the same
++ */
++void x86_spec_ctrl_restore_host(u64 guest_spec_ctrl, u64 guest_virt_spec_ctrl)
+ {
+ 	u64 host = x86_spec_ctrl_base;
  
-+static __always_inline void amd_set_ssb_virt_state(unsigned long tifn)
-+{
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -185,6 +185,12 @@ struct vcpu_svm {
+ 	} host;
+ 
+ 	u64 spec_ctrl;
 +	/*
-+	 * SSBD has the same definition in SPEC_CTRL and VIRT_SPEC_CTRL,
-+	 * so ssbd_tif_to_spec_ctrl() just works.
++	 * Contains guest-controlled bits of VIRT_SPEC_CTRL, which will be
++	 * translated into the appropriate L2_CFG bits on the host to
++	 * perform speculative control.
 +	 */
-+	wrmsrl(MSR_AMD64_VIRT_SPEC_CTRL, ssbd_tif_to_spec_ctrl(tifn));
-+}
-+
- static __always_inline void intel_set_ssb_state(unsigned long tifn)
- {
- 	u64 msr = x86_spec_ctrl_base | ssbd_tif_to_spec_ctrl(tifn);
-@@ -321,7 +330,9 @@ static __always_inline void intel_set_ss
++	u64 virt_spec_ctrl;
  
- static __always_inline void __speculative_store_bypass_update(unsigned long tifn)
- {
--	if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD))
-+	if (static_cpu_has(X86_FEATURE_VIRT_SSBD))
-+		amd_set_ssb_virt_state(tifn);
-+	else if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD))
- 		amd_set_core_ssb_state(tifn);
- 	else
- 		intel_set_ssb_state(tifn);
+ 	u32 *msrpm;
+ 
+@@ -1561,6 +1567,7 @@ static void svm_vcpu_reset(struct kvm_vc
+ 	u32 eax = 1;
+ 
+ 	svm->spec_ctrl = 0;
++	svm->virt_spec_ctrl = 0;
+ 
+ 	if (!init_event) {
+ 		svm->vcpu.arch.apic_base = APIC_DEFAULT_PHYS_BASE |
+@@ -4917,7 +4924,7 @@ static void svm_vcpu_run(struct kvm_vcpu
+ 	 * is no need to worry about the conditional branch over the wrmsr
+ 	 * being speculatively taken.
+ 	 */
+-	x86_spec_ctrl_set_guest(svm->spec_ctrl);
++	x86_spec_ctrl_set_guest(svm->spec_ctrl, svm->virt_spec_ctrl);
+ 
+ 	asm volatile (
+ 		"push %%" _ASM_BP "; \n\t"
+@@ -5041,7 +5048,7 @@ static void svm_vcpu_run(struct kvm_vcpu
+ 	if (unlikely(!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL)))
+ 		svm->spec_ctrl = native_read_msr(MSR_IA32_SPEC_CTRL);
+ 
+-	x86_spec_ctrl_restore_host(svm->spec_ctrl);
++	x86_spec_ctrl_restore_host(svm->spec_ctrl, svm->virt_spec_ctrl);
+ 
+ 	reload_tss(vcpu);
+ 
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -8916,9 +8916,10 @@ static void __noclone vmx_vcpu_run(struc
+ 	 * is no need to worry about the conditional branch over the wrmsr
+ 	 * being speculatively taken.
+ 	 */
+-	x86_spec_ctrl_set_guest(vmx->spec_ctrl);
++	x86_spec_ctrl_set_guest(vmx->spec_ctrl, 0);
+ 
+ 	vmx->__launched = vmx->loaded_vmcs->launched;
++
+ 	asm(
+ 		/* Store host registers */
+ 		"push %%" _ASM_DX "; push %%" _ASM_BP ";"
+@@ -9054,7 +9055,7 @@ static void __noclone vmx_vcpu_run(struc
+ 	if (unlikely(!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL)))
+ 		vmx->spec_ctrl = native_read_msr(MSR_IA32_SPEC_CTRL);
+ 
+-	x86_spec_ctrl_restore_host(vmx->spec_ctrl);
++	x86_spec_ctrl_restore_host(vmx->spec_ctrl, 0);
+ 
+ 	/* Eliminate branch target predictions from guest mode */
+ 	vmexit_fill_RSB();
