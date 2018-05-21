@@ -1,127 +1,250 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752750AbeEUJF3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 05:05:29 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41312 "EHLO mx1.redhat.com"
+        id S1752802AbeEUJFh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 05:05:37 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46340 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751186AbeEUJFZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 05:05:25 -0400
+        id S1752742AbeEUJF3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 05:05:29 -0400
 From: Jason Wang <jasowang@redhat.com>
 To: mst@redhat.com, jasowang@redhat.com
 Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
         netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH net-next 10/12] vhost_net: build xdp buff
-Date: Mon, 21 May 2018 17:04:31 +0800
-Message-Id: <1526893473-20128-11-git-send-email-jasowang@redhat.com>
+Subject: [RFC PATCH net-next 11/12] vhost_net: passing raw xdp buff to tun
+Date: Mon, 21 May 2018 17:04:32 +0800
+Message-Id: <1526893473-20128-12-git-send-email-jasowang@redhat.com>
 In-Reply-To: <1526893473-20128-1-git-send-email-jasowang@redhat.com>
 References: <1526893473-20128-1-git-send-email-jasowang@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch implement build XDP buffers in vhost_net. The idea is do
-userspace copy in vhost_net and build XDP buff based on the
-page. Vhost_net can then submit one or an array of XDP buffs to
-underlayer socket (e.g TUN). TUN can choose to do XDP or call
-build_skb() to build skb. To support build skb, vnet header were also
-stored into the header of the XDP buff.
+This patches implement a TUN specific msg_control:
 
-This userspace copy and XDP buffs building is key to achieve XDP
-batching in TUN, since TUN does not need to care about userspace copy
-and then can disable premmption for several XDP buffs to achieve
-batching from XDP.
+#define TUN_MSG_UBUF 1
+#define TUN_MSG_PTR  2
+struct tun_msg_ctl {
+       int type;
+       void *ptr;
+};
 
-TODO: reserve headroom based on the TUN XDP.
+The first supported type is ubuf which is already used by vhost_net
+zerocopy code. The second is XDP buff, which allows vhost_net to pass
+XDP buff to TUN. This could be used to implement accepting an array of
+XDP buffs from vhost_net in the following patches.
 
 Signed-off-by: Jason Wang <jasowang@redhat.com>
 ---
- drivers/vhost/net.c | 74 +++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 74 insertions(+)
+ drivers/net/tun.c      | 91 +++++++++++++++++++++++++++++++++++++++++++++++++-
+ drivers/vhost/net.c    | 21 ++++++++++--
+ include/linux/if_tun.h |  7 ++++
+ 3 files changed, 116 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-index f0639d7..1209e84 100644
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -492,6 +492,80 @@ static bool vhost_has_more_pkts(struct vhost_net *net,
- 	       likely(!vhost_exceeds_maxpend(net));
+diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+index 2560378..b586b3f 100644
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -2387,18 +2387,107 @@ static void tun_sock_write_space(struct sock *sk)
+ 	kill_fasync(&tfile->fasync, SIGIO, POLL_OUT);
  }
  
-+#define VHOST_NET_HEADROOM 256
-+#define VHOST_NET_RX_PAD (NET_IP_ALIGN + NET_SKB_PAD)
-+
-+static int vhost_net_build_xdp(struct vhost_net_virtqueue *nvq,
-+			       struct iov_iter *from,
-+			       struct xdp_buff *xdp)
++static int tun_xdp_one(struct tun_struct *tun,
++		       struct tun_file *tfile,
++		       struct xdp_buff *xdp)
 +{
-+	struct vhost_virtqueue *vq = &nvq->vq;
-+	struct page_frag *alloc_frag = &current->task_frag;
-+	struct virtio_net_hdr *gso;
-+	size_t len = iov_iter_count(from);
-+	int buflen = SKB_DATA_ALIGN(sizeof(struct skb_shared_info));
-+	int pad = SKB_DATA_ALIGN(VHOST_NET_RX_PAD + VHOST_NET_HEADROOM
-+				 + nvq->sock_hlen);
-+	int sock_hlen = nvq->sock_hlen;
-+	void *buf;
-+	int copied;
++	struct virtio_net_hdr *gso = xdp->data_hard_start + sizeof(int);
++	struct tun_pcpu_stats *stats;
++	struct bpf_prog *xdp_prog;
++	struct sk_buff *skb = NULL;
++	u32 rxhash = 0, act;
++	int buflen = *(int *)xdp->data_hard_start;
++	int err = 0;
++	bool skb_xdp = false;
 +
-+	if (len < nvq->sock_hlen)
-+		return -EFAULT;
++	preempt_disable();
++	rcu_read_lock();
 +
-+	if (SKB_DATA_ALIGN(len + pad) +
-+	    SKB_DATA_ALIGN(sizeof(struct skb_shared_info)) > PAGE_SIZE)
-+		return -ENOSPC;
-+
-+	buflen += SKB_DATA_ALIGN(len + pad);
-+	alloc_frag->offset = ALIGN((u64)alloc_frag->offset, SMP_CACHE_BYTES);
-+	if (unlikely(!skb_page_frag_refill(buflen, alloc_frag, GFP_KERNEL)))
-+		return -ENOMEM;
-+
-+	buf = (char *)page_address(alloc_frag->page) + alloc_frag->offset;
-+
-+	/* We store two kinds of metadata in the header which will be
-+	 * used for XDP_PASS to do build_skb():
-+	 * offset 0: buflen
-+	 * offset sizeof(int): vnet header
-+	 */
-+	copied = copy_page_from_iter(alloc_frag->page,
-+				     alloc_frag->offset + sizeof(int), sock_hlen, from);
-+	if (copied != sock_hlen)
-+		return -EFAULT;
-+
-+	gso = (struct virtio_net_hdr *)(buf + sizeof(int));
-+
-+	if ((gso->flags & VIRTIO_NET_HDR_F_NEEDS_CSUM) &&
-+	    vhost16_to_cpu(vq, gso->csum_start) +
-+	    vhost16_to_cpu(vq, gso->csum_offset) + 2 >
-+	    vhost16_to_cpu(vq, gso->hdr_len)) {
-+		gso->hdr_len = cpu_to_vhost16(vq,
-+			       vhost16_to_cpu(vq, gso->csum_start) +
-+			       vhost16_to_cpu(vq, gso->csum_offset) + 2);
-+
-+		if (vhost16_to_cpu(vq, gso->hdr_len) > len)
-+			return -EINVAL;
++	xdp_prog = rcu_dereference(tun->xdp_prog);
++	if (xdp_prog) {
++		if (gso->gso_type) {
++			skb_xdp = true;
++			goto build;
++		}
++		xdp_set_data_meta_invalid(xdp);
++		xdp->rxq = &tfile->xdp_rxq;
++		act = tun_do_xdp(tun, tfile, xdp_prog, xdp, &err);
++		if (err)
++			goto out;
++		if (act != XDP_PASS)
++			goto out;
 +	}
 +
-+	len -= sock_hlen;
-+	copied = copy_page_from_iter(alloc_frag->page,
-+				     alloc_frag->offset + pad,
-+				     len, from);
-+	if (copied != len)
-+		return -EFAULT;
++build:
++	skb = build_skb(xdp->data_hard_start, buflen);
++	if (!skb) {
++		err = -ENOMEM;
++		goto out;
++	}
 +
-+	xdp->data_hard_start = buf;
-+	xdp->data = buf + pad;
-+	xdp->data_end = xdp->data + len;
-+	*(int *)(xdp->data_hard_start)= buflen;
++	if (skb_xdp) {
++		err = do_xdp_generic(xdp_prog, skb);
++		if (err != XDP_PASS)
++			goto out;
++	}
 +
-+	get_page(alloc_frag->page);
-+	alloc_frag->offset += buflen;
++	skb_reserve(skb, xdp->data - xdp->data_hard_start);
++	skb_put(skb, xdp->data_end - xdp->data);
 +
-+	return 0;
++	if (virtio_net_hdr_to_skb(skb, gso, tun_is_little_endian(tun))) {
++		this_cpu_inc(tun->pcpu_stats->rx_frame_errors);
++		kfree_skb(skb);
++		err = -EINVAL;
++		goto out;
++	}
++
++	skb->protocol = eth_type_trans(skb, tun->dev);
++	skb_reset_network_header(skb);
++	skb_probe_transport_header(skb, 0);
++
++	if (!rcu_dereference(tun->steering_prog))
++		rxhash = __skb_get_hash_symmetric(skb);
++
++	netif_receive_skb(skb);
++
++	stats = get_cpu_ptr(tun->pcpu_stats);
++	u64_stats_update_begin(&stats->syncp);
++	stats->rx_packets++;
++	stats->rx_bytes += skb->len;
++	u64_stats_update_end(&stats->syncp);
++	put_cpu_ptr(stats);
++
++	if (rxhash)
++		tun_flow_update(tun, rxhash, tfile);
++
++out:
++	rcu_read_unlock();
++	preempt_enable();
++
++	return err;
 +}
 +
- static void handle_tx_copy(struct vhost_net *net)
+ static int tun_sendmsg(struct socket *sock, struct msghdr *m, size_t total_len)
+ {
+ 	int ret;
+ 	struct tun_file *tfile = container_of(sock, struct tun_file, socket);
+ 	struct tun_struct *tun = tun_get(tfile);
++	struct tun_msg_ctl *ctl = m->msg_control;
+ 
+ 	if (!tun)
+ 		return -EBADFD;
+ 
+-	ret = tun_get_user(tun, tfile, m->msg_control, &m->msg_iter,
++	if (ctl && ctl->type == TUN_MSG_PTR) {
++		ret = tun_xdp_one(tun, tfile, ctl->ptr);
++		if (!ret)
++			ret = total_len;
++		goto out;
++	}
++
++	ret = tun_get_user(tun, tfile, ctl ? ctl->ptr : NULL, &m->msg_iter,
+ 			   m->msg_flags & MSG_DONTWAIT,
+ 			   m->msg_flags & MSG_MORE);
++out:
+ 	tun_put(tun);
+ 	return ret;
+ }
+diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+index 1209e84..0d84de6 100644
+--- a/drivers/vhost/net.c
++++ b/drivers/vhost/net.c
+@@ -117,6 +117,7 @@ struct vhost_net_virtqueue {
+ 	struct vhost_net_ubuf_ref *ubufs;
+ 	struct ptr_ring *rx_ring;
+ 	struct vhost_net_buf rxq;
++	struct xdp_buff xdp[VHOST_RX_BATCH];
+ };
+ 
+ struct vhost_net {
+@@ -570,6 +571,7 @@ static void handle_tx_copy(struct vhost_net *net)
  {
  	struct vhost_net_virtqueue *nvq = &net->vqs[VHOST_NET_VQ_TX];
+ 	struct vhost_virtqueue *vq = &nvq->vq;
++	struct xdp_buff xdp;
+ 	unsigned out, in;
+ 	int head;
+ 	struct msghdr msg = {
+@@ -584,6 +586,7 @@ static void handle_tx_copy(struct vhost_net *net)
+ 	size_t hdr_size;
+ 	struct socket *sock;
+ 	struct vhost_net_ubuf_ref *uninitialized_var(ubufs);
++	struct tun_msg_ctl ctl;
+ 	int sent_pkts = 0;
+ 	s16 nheads = 0;
+ 
+@@ -628,6 +631,14 @@ static void handle_tx_copy(struct vhost_net *net)
+ 		vq->heads[nheads].id = cpu_to_vhost32(vq, head);
+ 		vq->heads[nheads].len = 0;
+ 
++		err = vhost_net_build_xdp(nvq, &msg.msg_iter, &xdp);
++		if (!err) {
++			ctl.type = TUN_MSG_PTR;
++			ctl.ptr = &xdp;
++			msg.msg_control = &ctl;
++		} else
++			msg.msg_control = NULL;
++
+ 		total_len += len;
+ 		if (total_len < VHOST_NET_WEIGHT &&
+ 		    vhost_has_more_pkts(net, vq)) {
+@@ -734,16 +745,21 @@ static void handle_tx_zerocopy(struct vhost_net *net)
+ 		/* use msg_control to pass vhost zerocopy ubuf info to skb */
+ 		if (zcopy_used) {
+ 			struct ubuf_info *ubuf;
++			struct tun_msg_ctl ctl;
++
+ 			ubuf = nvq->ubuf_info + nvq->upend_idx;
+ 
++			ctl.type = TUN_MSG_UBUF;
++			ctl.ptr = ubuf;
++
+ 			vq->heads[nvq->upend_idx].id = cpu_to_vhost32(vq, head);
+ 			vq->heads[nvq->upend_idx].len = VHOST_DMA_IN_PROGRESS;
+ 			ubuf->callback = vhost_zerocopy_callback;
+ 			ubuf->ctx = nvq->ubufs;
+ 			ubuf->desc = nvq->upend_idx;
+ 			refcount_set(&ubuf->refcnt, 1);
+-			msg.msg_control = ubuf;
+-			msg.msg_controllen = sizeof(ubuf);
++			msg.msg_control = &ctl;
++			msg.msg_controllen = sizeof(ctl);
+ 			ubufs = nvq->ubufs;
+ 			atomic_inc(&ubufs->refcount);
+ 			nvq->upend_idx = (nvq->upend_idx + 1) % UIO_MAXIOV;
+@@ -751,6 +767,7 @@ static void handle_tx_zerocopy(struct vhost_net *net)
+ 			msg.msg_control = NULL;
+ 			ubufs = NULL;
+ 		}
++
+ 		total_len += len;
+ 		if (total_len < VHOST_NET_WEIGHT &&
+ 		    vhost_has_more_pkts(net, vq)) {
+diff --git a/include/linux/if_tun.h b/include/linux/if_tun.h
+index 3d2996d..ba46dce 100644
+--- a/include/linux/if_tun.h
++++ b/include/linux/if_tun.h
+@@ -19,6 +19,13 @@
+ 
+ #define TUN_XDP_FLAG 0x1UL
+ 
++#define TUN_MSG_UBUF 1
++#define TUN_MSG_PTR  2
++struct tun_msg_ctl {
++	int type;
++	void *ptr;
++};
++
+ #if defined(CONFIG_TUN) || defined(CONFIG_TUN_MODULE)
+ struct socket *tun_get_socket(struct file *);
+ struct ptr_ring *tun_get_tx_ring(struct file *file);
 -- 
 2.7.4
