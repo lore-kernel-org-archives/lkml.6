@@ -1,105 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753317AbeEURcY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 13:32:24 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:39850 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753097AbeEURcU (ORCPT
+        id S1753331AbeEUReB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 13:34:01 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:34946 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753303AbeEURd6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 13:32:20 -0400
-X-Google-Smtp-Source: AB8JxZo342VVCYleyJeNhwaWHgjpOV1VY5mlTX9wgMvjQRqFotA2FmZxt5FCIK3pd7Dam3RWI751Cw==
-Subject: Re: [Xen-devel] [RFC 1/3] xen/balloon: Allow allocating DMA buffers
-To: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        jgross@suse.com, konrad.wilk@oracle.com
-Cc: daniel.vetter@intel.com, matthew.d.roper@intel.com,
-        dongwon.kim@intel.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180517082604.14828-1-andr2000@gmail.com>
- <20180517082604.14828-2-andr2000@gmail.com>
- <6a108876-19b7-49d0-3de2-9e10f984736c@oracle.com>
- <9541926e-001a-e41e-317c-dbff6d687761@gmail.com>
- <218e2bf7-490d-f89e-9866-27b7e3dbc835@oracle.com>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <a08e7d0d-f7d5-6b7e-979b-8a17060482f0@gmail.com>
-Date: Mon, 21 May 2018 20:32:15 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 21 May 2018 13:33:58 -0400
+X-Google-Smtp-Source: AB8JxZrdepHHx9E8/GWoutcXFS9/9BzvOGppX8KgU7pQG9dhzVW/+gyl7V1H/fUPSkVb4+ZH1pW2LQ==
+Date: Mon, 21 May 2018 10:33:56 -0700
+From: Joel Fernandes <joel@joelfernandes.org>
+To: Patrick Bellasi <patrick.bellasi@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>, kernel-team@android.com
+Subject: Re: [PATCH v3 1/2] cpufreq: schedutil: Fix iowait boost reset
+Message-ID: <20180521173356.GB21678@joelaf.mtv.corp.google.com>
+References: <20180521085120.7902-1-patrick.bellasi@arm.com>
+ <20180521085120.7902-2-patrick.bellasi@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <218e2bf7-490d-f89e-9866-27b7e3dbc835@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180521085120.7902-2-patrick.bellasi@arm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/21/2018 07:35 PM, Boris Ostrovsky wrote:
-> On 05/21/2018 01:40 AM, Oleksandr Andrushchenko wrote:
->> On 05/19/2018 01:04 AM, Boris Ostrovsky wrote:
->>> On 05/17/2018 04:26 AM, Oleksandr Andrushchenko wrote:
->>>> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->>> A commit message would be useful.
->> Sure, v1 will have it
->>>> Signed-off-by: Oleksandr Andrushchenko
->>>> <oleksandr_andrushchenko@epam.com>
->>>>
->>>>        for (i = 0; i < nr_pages; i++) {
->>>> -        page = alloc_page(gfp);
->>>> -        if (page == NULL) {
->>>> -            nr_pages = i;
->>>> -            state = BP_EAGAIN;
->>>> -            break;
->>>> +        if (ext_pages) {
->>>> +            page = ext_pages[i];
->>>> +        } else {
->>>> +            page = alloc_page(gfp);
->>>> +            if (page == NULL) {
->>>> +                nr_pages = i;
->>>> +                state = BP_EAGAIN;
->>>> +                break;
->>>> +            }
->>>>            }
->>>>            scrub_page(page);
->>>>            list_add(&page->lru, &pages);
->>>> @@ -529,7 +565,7 @@ static enum bp_state
->>>> decrease_reservation(unsigned long nr_pages, gfp_t gfp)
->>>>        i = 0;
->>>>        list_for_each_entry_safe(page, tmp, &pages, lru) {
->>>>            /* XENMEM_decrease_reservation requires a GFN */
->>>> -        frame_list[i++] = xen_page_to_gfn(page);
->>>> +        frames[i++] = xen_page_to_gfn(page);
->>>>      #ifdef CONFIG_XEN_HAVE_PVMMU
->>>>            /*
->>>> @@ -552,18 +588,22 @@ static enum bp_state
->>>> decrease_reservation(unsigned long nr_pages, gfp_t gfp)
->>>>    #endif
->>>>            list_del(&page->lru);
->>>>    -        balloon_append(page);
->>>> +        if (!ext_pages)
->>>> +            balloon_append(page);
->>> So what you are proposing is not really ballooning. You are just
->>> piggybacking on existing interfaces, aren't you?
->> Sort of. Basically I need to {increase|decrease}_reservation, not
->> actually
->> allocating ballooned pages.
->> Do you think I can simply EXPORT_SYMBOL for
->> {increase|decrease}_reservation?
->> Any other suggestion?
->
-> I am actually wondering how much of that code you end up reusing. You
-> pretty much create new code paths in both routines and common code ends
-> up being essentially the hypercall.
-Well, I hoped that it would be easier to maintain if I modify existing code
-to support both use-cases, but I am also ok to create new routines if this
-seems to be reasonable - please let me know
->   So the question is --- would it make
-> sense to do all of this separately from the balloon driver?
-This can be done, but which driver will host this code then? If we move from
-the balloon driver, then this could go to either gntdev or grant-table.
-What's your preference?
->
-> -boris
-Thank you,
-Oleksandr
+On Mon, May 21, 2018 at 09:51:19AM +0100, Patrick Bellasi wrote:
+> A more energy efficient update of the IO wait boosting mechanism has
+> been introduced in:
+> 
+>    commit a5a0809bc58e ("cpufreq: schedutil: Make iowait boost more energy efficient")
+> 
+> where the boost value is expected to be:
+> 
+>  - doubled at each successive wakeup from IO
+>    staring from the minimum frequency supported by a CPU
+> 
+>  - reset when a CPU is not updated for more then one tick
+>    by either disabling the IO wait boost or resetting its value to the
+>    minimum frequency if this new update requires an IO boost.
+> 
+> This approach is supposed to "ignore" boosting for sporadic wakeups from
+> IO, while still getting the frequency boosted to the maximum to benefit
+> long sequence of wakeup from IO operations.
+> 
+> However, these assumptions are not always satisfied.
+> For example, when an IO boosted CPU enters idle for more the one tick
+> and then wakes up after an IO wait, since in sugov_set_iowait_boost() we
+> first check the IOWAIT flag, we keep doubling the iowait boost instead
+> of restarting from the minimum frequency value.
+> 
+> This misbehavior could happen mainly on non-shared frequency domains,
+> thus defeating the energy efficiency optimization, but it can also
+> happen on shared frequency domain systems.
+> 
+> Let fix this issue in sugov_set_iowait_boost() by:
+>  - first check the IO wait boost reset conditions
+>    to eventually reset the boost value
+>  - then applying the correct IO boost value
+>    if required by the caller
+> 
+> Reported-by: Viresh Kumar <viresh.kumar@linaro.org>
+> Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: Joel Fernandes <joelaf@google.com>
+> Cc: Juri Lelli <juri.lelli@redhat.com>
+> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-pm@vger.kernel.org
+> Fixes: a5a0809bc58e ("cpufreq: schedutil: Make iowait boost more energy efficient")
+> 
+> ---
+> Changes in v3:
+>  - split the fix into a separated patch (this one)
+>  - added "Fixes" tag (Viresh)
+> ---
+>  kernel/sched/cpufreq_schedutil.c | 18 ++++++++++--------
+>  1 file changed, 10 insertions(+), 8 deletions(-)
+> 
+> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+> index e13df951aca7..c4063e578e4d 100644
+> --- a/kernel/sched/cpufreq_schedutil.c
+> +++ b/kernel/sched/cpufreq_schedutil.c
+> @@ -203,6 +203,16 @@ static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
+>  
+>  static void sugov_set_iowait_boost(struct sugov_cpu *sg_cpu, u64 time, unsigned int flags)
+>  {
+> +	/* Clear iowait_boost if the CPU apprears to have been idle. */
+> +	if (sg_cpu->iowait_boost) {
+> +		s64 delta_ns = time - sg_cpu->last_update;
+> +
+> +		if (delta_ns > TICK_NSEC) {
+> +			sg_cpu->iowait_boost = 0;
+> +			sg_cpu->iowait_boost_pending = false;
+> +		}
+> +	}
+> +
+
+Yes, I guess this effects single policies only. For shared, we are resetting
+the iowait boost on the wake-up-from-idle update anyway. So even if it was
+doubled, it would be reset.
+
+Looks good to me! thanks,
+
+Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
