@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753114AbeEUPUX (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 11:20:23 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:35868 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752247AbeEUPUV (ORCPT
+        id S1753241AbeEUPVe (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 11:21:34 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:37749 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753055AbeEUPV2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 11:20:21 -0400
-X-Google-Smtp-Source: AB8JxZpcuYQ3O26JDdy1d7p/YlZFj2Q9NZJr2kJOfdRogp6WQaIZvtRv/GibxlVsoZcXqwmfYzmeOw==
-Subject: Re: [PATCH net-next 5/7] net: dsa: qca8k: Allow overwriting CPU port
- setting
+        Mon, 21 May 2018 11:21:28 -0400
+X-Google-Smtp-Source: AB8JxZqLsbT/0I0NJLI65R/cgEB+5ST3Pvz+UDZx3jvkmGkop0aADjwp4KySks4Ft3Dih4dNibJhyg==
+Subject: Re: [PATCH net-next 7/7] net: dsa: qca8k: Remove rudundant
+ parentheses
 To: =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <vokac.m@gmail.com>,
         netdev@vger.kernel.org, michal.vokac@ysoft.com
 Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         vivien.didelot@savoirfairelinux.com, andrew@lunn.ch,
         mark.rutland@arm.com, robh+dt@kernel.org, davem@davemloft.net
 References: <1526909293-56377-1-git-send-email-michal.vokac@ysoft.com>
- <1526909293-56377-6-git-send-email-michal.vokac@ysoft.com>
+ <1526909293-56377-8-git-send-email-michal.vokac@ysoft.com>
 From: Florian Fainelli <f.fainelli@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
@@ -52,12 +52,12 @@ Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
  y5arMQorqTFWlEOgRA8OP47L9knl9i4xuR0euV6DChDrguup2aJVU8JPBBgRAgAPAhsMBQJU
  X9LxBQkeXB3fAAoJEGFXmRW1Y3YOj4UAn3nrFLPZekMeqX5aD/aq/dsbXSfyAKC45Go0YyxV
  HGuUuzv+GKZ6nsysJw==
-Message-ID: <57c7ed4f-71ee-17bb-7ece-83af89652e77@gmail.com>
-Date: Mon, 21 May 2018 08:20:16 -0700
+Message-ID: <708a634a-167f-4e96-be97-aca059724374@gmail.com>
+Date: Mon, 21 May 2018 08:21:24 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <1526909293-56377-6-git-send-email-michal.vokac@ysoft.com>
+In-Reply-To: <1526909293-56377-8-git-send-email-michal.vokac@ysoft.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -68,10 +68,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 On 05/21/2018 06:28 AM, Michal Vokáč wrote:
-> Implement adjust_link function that allows to overwrite default CPU port
-> setting using fixed-link device tree subnode.
-> 
-> Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
+> Fix warning reported by checkpatch.
+
+Nit in the subject: should be redundant, with that:
 
 Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 -- 
