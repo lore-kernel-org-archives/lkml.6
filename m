@@ -1,40 +1,39 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZr+cSrNw3Cd8GSNMSArx9JTclQwk7Jkby/5Bw517uB+LMvICwKZuvyzbXewsRiH8E1gi6YL
-ARC-Seal: i=1; a=rsa-sha256; t=1526937442; cv=none;
+X-Google-Smtp-Source: AB8JxZpQFijGfuIC5WKn5d4NpqJRga817L/9b2xuDsSjMcCYI3dqVpiQDWqzv+JKzn0mDJi3etNA
+ARC-Seal: i=1; a=rsa-sha256; t=1526937439; cv=none;
         d=google.com; s=arc-20160816;
-        b=QEEpc/BkSOucNfmM71TurgHGG/RuvWBSaMtmPk7MHcj1oUJ7xBTuXsEvV266yD29mv
-         5lJbPzeahDo41SEpizYY+TycNyDGoBHrhGpMmtUw9Y6L8YIjHGs93LWUsfieQwtMsMnr
-         wY2ZjKvPqEF7SmtF1NrpsWKlfHYE9SGUInHAitW0BMuwtypUs+lLLeSAPxe5yldOAhiu
-         H/8ZXAq35B5+5Q8br1ZM7IgnrtRIA821Ayh5RiAr7phtvooYNVmKVXrDY4yTTYQNhEx6
-         Y7/ZQPFzm6BMdex1IoLdZWfF2NBHsPVMk+7JQmquju7TpFbtUmw92at6afvDWWbjPo4N
-         Uapg==
+        b=At92/ND/5u5XJyBBa+Ebb4WI1z1uAt+V3OdxtFtWLDfeo85wvT6PePu6I2u+7Bym9Q
+         t7MZ5O+fG6V1BL1L5krlkikldN8YkKQfpHfgDlz6O8f6D1ddZn1sn1NUm6DOIeDb40cO
+         Xewwut+pMFe47JEqYBdBGwHojJUiupI48P6PPJw5suGOZ+8j+JNX70pq2Ji2yHxsLV/p
+         C3FnAIB3Z0RJrY/MYBoP2RKz9Cs6Pcfo2W7w4sYQ74U+3oh9kxAv5arIrPwnMIppC4A/
+         tqXCRPf/A2IEKLk9Bl4mITUsvPXFL+yOs++5LAsX2cBXw4+WYT6nTPi48nUFs5HTrRVi
+         ajYA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=ToQrIKZm/BLRcPbrayANtql2Bo0CEx6+F62OB5gWdjg=;
-        b=P9V0IvbVK3J6QLtwTml3Xolkiq8K9WRDcZBxnYn6yBj6tqANMBz9oLAeRzWEEv5tOo
-         +hutGQTGHWeX0x3vI4n0SH8EAu84SfMNAlvJx5pNj96j2HnkupCg+FQYv7H8dCT0joIw
-         p+3LmsMdpsxSzPGrSNJgBBkrQGSsc6LwgeqFnLknhwiUH31QGhpu+aL0qKY08gLMpp/i
-         TnvzZkf4Oxtlh9TXQFMm6TOtpNfe2PaQVwRjMmwxEQllFfofhK8aWqZkMMriNLr01ZQ+
-         PfngJ7gfVsap7jTK9KUjVssyHcG1UUkRNbXRAiOIjL4G6BGmkLMdXOCs+0eOMDUo6p8I
-         /MLQ==
+        bh=LVQi3RRZspJIXOrGmwkWqyPpH2vNZnlPitghK5hHp8Y=;
+        b=Bpb4qwwkAPD9dLjMDzs6doppPGchYvfcibE8S3tTIReDWEG+SPgrM0mxB9RSLO3Iep
+         dCXPxz9g0RcJR07Vpm3vbycPUhhuOvy58lkYRvHvgKw4L3JboXdi56hxvFimRlOoDVZ8
+         TRTYfn1rnkxhSBo7A7qaAsHIBPoSVCwtLmrvRdwo1QEnoJEyLYVTYq1ZVktepAX8BvJd
+         14PV6d9SCFRHcFsyokH39ynWoNuuctCx7kPlzkRjruH2uz3xHQvqnvtK1JVRxHROPCHM
+         EgTquLEJFAmmqnNh3Y7X8/cFwuNzTvzqxJWNQmh1772QcT0xgR9JuPfYj0GTcFOgsc4c
+         C34Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=bQHQU6mh;
+       dkim=pass header.i=@kernel.org header.s=default header.b=BAuNH46P;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=bQHQU6mh;
+       dkim=pass header.i=@kernel.org header.s=default header.b=BAuNH46P;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
+	Kees Cook <keescook@chromium.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@suse.de>,
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
 	David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 82/87] x86/bugs: Expose x86_spec_ctrl_base directly
-Date: Mon, 21 May 2018 23:11:58 +0200
-Message-Id: <20180521210427.008568976@linuxfoundation.org>
+Subject: [PATCH 4.9 55/87] nospec: Allow getting/setting on non-current task
+Date: Mon, 21 May 2018 23:11:31 +0200
+Message-Id: <20180521210425.207854939@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210420.222671977@linuxfoundation.org>
 References: <20180521210420.222671977@linuxfoundation.org>
@@ -44,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109955955970722?=
-X-GMAIL-MSGID: =?utf-8?q?1601109955955970722?=
+X-GMAIL-THRID: =?utf-8?q?1601109953344318245?=
+X-GMAIL-MSGID: =?utf-8?q?1601109953344318245?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,111 +52,153 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Kees Cook <keescook@chromium.org>
 
-commit fa8ac4988249c38476f6ad678a4848a736373403 upstream
+commit 7bbf1373e228840bb0295a2ca26d548ef37f448e upstream
 
-x86_spec_ctrl_base is the system wide default value for the SPEC_CTRL MSR.
-x86_spec_ctrl_get_default() returns x86_spec_ctrl_base and was intended to
-prevent modification to that variable. Though the variable is read only
-after init and globaly visible already.
+Adjust arch_prctl_get/set_spec_ctrl() to operate on tasks other than
+current.
 
-Remove the function and export the variable instead.
+This is needed both for /proc/$pid/status queries and for seccomp (since
+thread-syncing can trigger seccomp in non-current threads).
 
+Signed-off-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/nospec-branch.h |   16 +++++-----------
- arch/x86/include/asm/spec-ctrl.h     |    3 ---
- arch/x86/kernel/cpu/bugs.c           |   11 +----------
- 3 files changed, 6 insertions(+), 24 deletions(-)
+ arch/x86/kernel/cpu/bugs.c |   27 ++++++++++++++++-----------
+ include/linux/nospec.h     |    7 +++++--
+ kernel/sys.c               |    9 +++++----
+ 3 files changed, 26 insertions(+), 17 deletions(-)
 
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -217,16 +217,7 @@ enum spectre_v2_mitigation {
- 	SPECTRE_V2_IBRS,
- };
- 
--/*
-- * The Intel specification for the SPEC_CTRL MSR requires that we
-- * preserve any already set reserved bits at boot time (e.g. for
-- * future additions that this kernel is not currently aware of).
-- * We then set any additional mitigation bits that we want
-- * ourselves and always use this as the base for SPEC_CTRL.
-- * We also use this when handling guest entry/exit as below.
-- */
- extern void x86_spec_ctrl_set(u64);
--extern u64 x86_spec_ctrl_get_default(void);
- 
- /* The Speculative Store Bypass disable variants */
- enum ssb_mitigation {
-@@ -278,6 +269,9 @@ static inline void indirect_branch_predi
- 	alternative_msr_write(MSR_IA32_PRED_CMD, val, X86_FEATURE_USE_IBPB);
- }
- 
-+/* The Intel SPEC CTRL MSR base value cache */
-+extern u64 x86_spec_ctrl_base;
-+
- /*
-  * With retpoline, we must use IBRS to restrict branch prediction
-  * before calling into firmware.
-@@ -286,7 +280,7 @@ static inline void indirect_branch_predi
-  */
- #define firmware_restrict_branch_speculation_start()			\
- do {									\
--	u64 val = x86_spec_ctrl_get_default() | SPEC_CTRL_IBRS;		\
-+	u64 val = x86_spec_ctrl_base | SPEC_CTRL_IBRS;			\
- 									\
- 	preempt_disable();						\
- 	alternative_msr_write(MSR_IA32_SPEC_CTRL, val,			\
-@@ -295,7 +289,7 @@ do {									\
- 
- #define firmware_restrict_branch_speculation_end()			\
- do {									\
--	u64 val = x86_spec_ctrl_get_default();				\
-+	u64 val = x86_spec_ctrl_base;					\
- 									\
- 	alternative_msr_write(MSR_IA32_SPEC_CTRL, val,			\
- 			      X86_FEATURE_USE_IBRS_FW);			\
---- a/arch/x86/include/asm/spec-ctrl.h
-+++ b/arch/x86/include/asm/spec-ctrl.h
-@@ -47,9 +47,6 @@ void x86_spec_ctrl_restore_host(u64 gues
- extern u64 x86_amd_ls_cfg_base;
- extern u64 x86_amd_ls_cfg_ssbd_mask;
- 
--/* The Intel SPEC CTRL MSR base value cache */
--extern u64 x86_spec_ctrl_base;
--
- static inline u64 ssbd_tif_to_spec_ctrl(u64 tifn)
- {
- 	BUILD_BUG_ON(TIF_SSBD < SPEC_CTRL_SSBD_SHIFT);
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -35,6 +35,7 @@ static void __init ssb_select_mitigation
-  * writes to SPEC_CTRL contain whatever reserved bits have been set.
-  */
- u64 __ro_after_init x86_spec_ctrl_base;
-+EXPORT_SYMBOL_GPL(x86_spec_ctrl_base);
+@@ -529,31 +529,35 @@ static void ssb_select_mitigation()
  
- /*
-  * The vendor and possibly platform specific bits which can be modified in
-@@ -140,16 +141,6 @@ void x86_spec_ctrl_set(u64 val)
- }
- EXPORT_SYMBOL_GPL(x86_spec_ctrl_set);
+ #undef pr_fmt
  
--u64 x86_spec_ctrl_get_default(void)
--{
--	u64 msrval = x86_spec_ctrl_base;
--
--	if (static_cpu_has(X86_FEATURE_SPEC_CTRL))
--		msrval |= ssbd_tif_to_spec_ctrl(current_thread_info()->flags);
--	return msrval;
--}
--EXPORT_SYMBOL_GPL(x86_spec_ctrl_get_default);
--
- void
- x86_virt_spec_ctrl(u64 guest_spec_ctrl, u64 guest_virt_spec_ctrl, bool setguest)
+-static int ssb_prctl_set(unsigned long ctrl)
++static int ssb_prctl_set(struct task_struct *task, unsigned long ctrl)
  {
+-	bool rds = !!test_tsk_thread_flag(current, TIF_RDS);
++	bool rds = !!test_tsk_thread_flag(task, TIF_RDS);
+ 
+ 	if (ssb_mode != SPEC_STORE_BYPASS_PRCTL)
+ 		return -ENXIO;
+ 
+ 	if (ctrl == PR_SPEC_ENABLE)
+-		clear_tsk_thread_flag(current, TIF_RDS);
++		clear_tsk_thread_flag(task, TIF_RDS);
+ 	else
+-		set_tsk_thread_flag(current, TIF_RDS);
++		set_tsk_thread_flag(task, TIF_RDS);
+ 
+-	if (rds != !!test_tsk_thread_flag(current, TIF_RDS))
++	/*
++	 * If being set on non-current task, delay setting the CPU
++	 * mitigation until it is next scheduled.
++	 */
++	if (task == current && rds != !!test_tsk_thread_flag(task, TIF_RDS))
+ 		speculative_store_bypass_update();
+ 
+ 	return 0;
+ }
+ 
+-static int ssb_prctl_get(void)
++static int ssb_prctl_get(struct task_struct *task)
+ {
+ 	switch (ssb_mode) {
+ 	case SPEC_STORE_BYPASS_DISABLE:
+ 		return PR_SPEC_DISABLE;
+ 	case SPEC_STORE_BYPASS_PRCTL:
+-		if (test_tsk_thread_flag(current, TIF_RDS))
++		if (test_tsk_thread_flag(task, TIF_RDS))
+ 			return PR_SPEC_PRCTL | PR_SPEC_DISABLE;
+ 		return PR_SPEC_PRCTL | PR_SPEC_ENABLE;
+ 	default:
+@@ -563,24 +567,25 @@ static int ssb_prctl_get(void)
+ 	}
+ }
+ 
+-int arch_prctl_spec_ctrl_set(unsigned long which, unsigned long ctrl)
++int arch_prctl_spec_ctrl_set(struct task_struct *task, unsigned long which,
++			     unsigned long ctrl)
+ {
+ 	if (ctrl != PR_SPEC_ENABLE && ctrl != PR_SPEC_DISABLE)
+ 		return -ERANGE;
+ 
+ 	switch (which) {
+ 	case PR_SPEC_STORE_BYPASS:
+-		return ssb_prctl_set(ctrl);
++		return ssb_prctl_set(task, ctrl);
+ 	default:
+ 		return -ENODEV;
+ 	}
+ }
+ 
+-int arch_prctl_spec_ctrl_get(unsigned long which)
++int arch_prctl_spec_ctrl_get(struct task_struct *task, unsigned long which)
+ {
+ 	switch (which) {
+ 	case PR_SPEC_STORE_BYPASS:
+-		return ssb_prctl_get();
++		return ssb_prctl_get(task);
+ 	default:
+ 		return -ENODEV;
+ 	}
+--- a/include/linux/nospec.h
++++ b/include/linux/nospec.h
+@@ -7,6 +7,8 @@
+ #define _LINUX_NOSPEC_H
+ #include <asm/barrier.h>
+ 
++struct task_struct;
++
+ /**
+  * array_index_mask_nospec() - generate a ~0 mask when index < size, 0 otherwise
+  * @index: array element index
+@@ -57,7 +59,8 @@ static inline unsigned long array_index_
+ })
+ 
+ /* Speculation control prctl */
+-int arch_prctl_spec_ctrl_get(unsigned long which);
+-int arch_prctl_spec_ctrl_set(unsigned long which, unsigned long ctrl);
++int arch_prctl_spec_ctrl_get(struct task_struct *task, unsigned long which);
++int arch_prctl_spec_ctrl_set(struct task_struct *task, unsigned long which,
++			     unsigned long ctrl);
+ 
+ #endif /* _LINUX_NOSPEC_H */
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -2074,12 +2074,13 @@ static int prctl_get_tid_address(struct
+ }
+ #endif
+ 
+-int __weak arch_prctl_spec_ctrl_get(unsigned long which)
++int __weak arch_prctl_spec_ctrl_get(struct task_struct *t, unsigned long which)
+ {
+ 	return -EINVAL;
+ }
+ 
+-int __weak arch_prctl_spec_ctrl_set(unsigned long which, unsigned long ctrl)
++int __weak arch_prctl_spec_ctrl_set(struct task_struct *t, unsigned long which,
++				    unsigned long ctrl)
+ {
+ 	return -EINVAL;
+ }
+@@ -2285,12 +2286,12 @@ SYSCALL_DEFINE5(prctl, int, option, unsi
+ 	case PR_GET_SPECULATION_CTRL:
+ 		if (arg3 || arg4 || arg5)
+ 			return -EINVAL;
+-		error = arch_prctl_spec_ctrl_get(arg2);
++		error = arch_prctl_spec_ctrl_get(me, arg2);
+ 		break;
+ 	case PR_SET_SPECULATION_CTRL:
+ 		if (arg4 || arg5)
+ 			return -EINVAL;
+-		error = arch_prctl_spec_ctrl_set(arg2, arg3);
++		error = arch_prctl_spec_ctrl_set(me, arg2, arg3);
+ 		break;
+ 	default:
+ 		error = -EINVAL;
