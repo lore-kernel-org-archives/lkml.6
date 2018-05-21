@@ -1,38 +1,39 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqqw+tNvzdeYb757yiaDVqKI1HWsoSVgrp/vYw1JgNzNvZnSDUO4jyXTRPQd49SS48Qp7SV
-ARC-Seal: i=1; a=rsa-sha256; t=1526937926; cv=none;
+X-Google-Smtp-Source: AB8JxZrGIgBNbrH9GsGw0p31v0/YUGdfnjqxLpAQxgWgADFeX6u7Oo92Ywm0YNoyLA88Cj5n7uQi
+ARC-Seal: i=1; a=rsa-sha256; t=1526937921; cv=none;
         d=google.com; s=arc-20160816;
-        b=PiEreoGRlKQhVKyD3Zq3UYAYSupgCLO9LRgtGcWXnPoG03RPdaDOB1qXHiVZdh6oL+
-         2dh+7FYoFLbEUXjJnVEZGNEYlYxa29fcZnjiz4WhCaDV2EjWJvJkDjTJoFOYOYsNj3Ij
-         WjGIFSq4StRTlCXd4Pk6nQMoo2JTnylEkSVF3Ya4EWWYg3KWAn4JN6V2uQgCY/RTWAs3
-         zbHc+nE/DoZLT/GqNmh056Wz9DZSZ4+VZA4ZdEGpJjAikfAlLx5N25x/QBeGnqG0+8S8
-         CKpe5QIQHacoXIfdfhzwLme95K16F076m5RgpMq1wHegr9nqgq1OqlGMxqcA4ld8N79+
-         p9NQ==
+        b=OSDXTRPvVGahr16j46NPczliru/UcQEuCZo7MF0UtQ8+oUGVcUpJojF4r8mZt/LbSK
+         Ep1jUYSFc9rYsQMa3dZ+h9rNJ1CEPdWgIzhENZ5IUNk5vSTaL8Gb2SXgJmVjd2gZ1ofR
+         WVLqdn7MUgQgXzSECEPl3w2JisDZp23ZCJdPlSEe6OFOJe9J6//yjmoeKcrBH+4sxeKk
+         fGrvEPAIWopd286Vl6ZVq7BbmDWueJ2E9HFdibew9fmhV59O3862d7LsBcMDISGazgzh
+         wVFlYD2AACdEgBaUNDgrkmDurbk+jE6E7OV5oYx/8Elfagc8OW/o8vVP0RXi6cdUe+/b
+         yJyQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=R47ZXrekaVIOKpGe3+j0rDT3oPmGHH2FR5FSBNKgxuk=;
-        b=PIfDJPaimNmV9C8XyF73s/l1oToleRsaWBWh4zk649hUPUqH2nwvsJWua4YKzZ7Bhx
-         s86lkqetBh3JgnOyqNEaiiE6TufMW6ofeCl7BEdPap+bfJzjprXzLdiq0Yylbw7cSujy
-         iJsPFvHP208DkMbQKi6+HVAqVH8jrY0cvOCgpCzrr87mV24CZ5UMClO5zuFqGTWEsNWM
-         c9fYCr6xrqF/qjFOtH7+iOrneWT9bGPWZFM3FfcyOOD8h4yYXw62lOKxZWQoa0E9pDTS
-         sMzDHHwC6p/Ih30SF9qSmlLUXwmEVcshBWgiD9cvuRKGQS6KbUuVLGr4UYIYV8LTGZyY
-         y+aA==
+        bh=UAO8sapI+DfQNY4BAy1CbzFO9eGDTfgQltsKTq8Zgi8=;
+        b=D8nyB0sfgLNt+SUBOmhXQM2/hhP5TmiVvm6KjGoPNGlur6wvz5Ynw+HK4YRth9ob77
+         mfvDV1PSLRkoXXCIMpzblmjPSzKk6mKOpQZq76qECjYTqSSOH+A87tcAua0YbdS+qOp5
+         0DwQiDjmRu2mEwFWwPu11yHNTnMR1WNz6nZJP6fsZzcBiEKTGakxvMIbWPQCFXGup1Xh
+         6Nd+1YLLaskurn2/MT6iq40uATTw5w+YF2DP4ZQ/zvVVnZRylVY1r5kWk8cRJzxcfWLs
+         5JoutAPZtmxrb4jYHfN6RAFbqjSp3OU6u80a3wm7zGLhxGI0mTocYQkSshzK7urhZVLU
+         DIwg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=cV25LSeC;
+       dkim=pass header.i=@kernel.org header.s=default header.b=XNh7Jb9+;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=cV25LSeC;
+       dkim=pass header.i=@kernel.org header.s=default header.b=XNh7Jb9+;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
 	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Subject: [PATCH 4.16 077/110] x86/speculation: Add prctl for Speculative Store Bypass mitigation
-Date: Mon, 21 May 2018 23:12:14 +0200
-Message-Id: <20180521210512.913590589@linuxfoundation.org>
+Subject: [PATCH 4.16 075/110] prctl: Add speculation control prctls
+Date: Mon, 21 May 2018 23:12:12 +0200
+Message-Id: <20180521210512.767717174@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -42,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109921205571253?=
-X-GMAIL-MSGID: =?utf-8?q?1601110463697333391?=
+X-GMAIL-THRID: =?utf-8?q?1601109861377173650?=
+X-GMAIL-MSGID: =?utf-8?q?1601110457502571746?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,208 +54,235 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-commit a73ec77ee17ec556fe7f165d00314cb7c047b1ac upstream
+commit b617cfc858161140d69cc0b5cc211996b557a1c7 upstream
 
-Add prctl based control for Speculative Store Bypass mitigation and make it
-the default mitigation for Intel and AMD.
+Add two new prctls to control aspects of speculation related vulnerabilites
+and their mitigations to provide finer grained control over performance
+impacting mitigations.
 
-Andi Kleen provided the following rationale (slightly redacted):
+PR_GET_SPECULATION_CTRL returns the state of the speculation misfeature
+which is selected with arg2 of prctl(2). The return value uses bit 0-2 with
+the following meaning:
 
- There are multiple levels of impact of Speculative Store Bypass:
+Bit  Define           Description
+0    PR_SPEC_PRCTL    Mitigation can be controlled per task by
+                      PR_SET_SPECULATION_CTRL
+1    PR_SPEC_ENABLE   The speculation feature is enabled, mitigation is
+                      disabled
+2    PR_SPEC_DISABLE  The speculation feature is disabled, mitigation is
+                      enabled
 
- 1) JITed sandbox.
-    It cannot invoke system calls, but can do PRIME+PROBE and may have call
-    interfaces to other code
+If all bits are 0 the CPU is not affected by the speculation misfeature.
 
- 2) Native code process.
-    No protection inside the process at this level.
+If PR_SPEC_PRCTL is set, then the per task control of the mitigation is
+available. If not set, prctl(PR_SET_SPECULATION_CTRL) for the speculation
+misfeature will fail.
 
- 3) Kernel.
+PR_SET_SPECULATION_CTRL allows to control the speculation misfeature, which
+is selected by arg2 of prctl(2) per task. arg3 is used to hand in the
+control value, i.e. either PR_SPEC_ENABLE or PR_SPEC_DISABLE.
 
- 4) Between processes.
+The common return values are:
 
- The prctl tries to protect against case (1) doing attacks.
+EINVAL  prctl is not implemented by the architecture or the unused prctl()
+        arguments are not 0
+ENODEV  arg2 is selecting a not supported speculation misfeature
 
- If the untrusted code can do random system calls then control is already
- lost in a much worse way. So there needs to be system call protection in
- some way (using a JIT not allowing them or seccomp). Or rather if the
- process can subvert its environment somehow to do the prctl it can already
- execute arbitrary code, which is much worse than SSB.
+PR_SET_SPECULATION_CTRL has these additional return values:
 
- To put it differently, the point of the prctl is to not allow JITed code
- to read data it shouldn't read from its JITed sandbox. If it already has
- escaped its sandbox then it can already read everything it wants in its
- address space, and do much worse.
+ERANGE  arg3 is incorrect, i.e. it's not either PR_SPEC_ENABLE or PR_SPEC_DISABLE
+ENXIO   prctl control of the selected speculation misfeature is disabled
 
- The ability to control Speculative Store Bypass allows to enable the
- protection selectively without affecting overall system performance.
+The first supported controlable speculation misfeature is
+PR_SPEC_STORE_BYPASS. Add the define so this can be shared between
+architectures.
 
-Based on an initial patch from Tim Chen. Completely rewritten.
+Based on an initial patch from Tim Chen and mostly rewritten.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
 Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/admin-guide/kernel-parameters.txt |    6 +
- arch/x86/include/asm/nospec-branch.h            |    1 
- arch/x86/kernel/cpu/bugs.c                      |   83 +++++++++++++++++++++---
- 3 files changed, 79 insertions(+), 11 deletions(-)
+ Documentation/userspace-api/index.rst     |    1 
+ Documentation/userspace-api/spec_ctrl.rst |   86 ++++++++++++++++++++++++++++++
+ include/linux/nospec.h                    |    5 +
+ include/uapi/linux/prctl.h                |   11 +++
+ kernel/sys.c                              |   22 +++++++
+ 5 files changed, 125 insertions(+)
+ create mode 100644 Documentation/userspace-api/spec_ctrl.rst
 
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4025,7 +4025,11 @@
- 			off    - Unconditionally enable Speculative Store Bypass
- 			auto   - Kernel detects whether the CPU model contains an
- 				 implementation of Speculative Store Bypass and
--				 picks the most appropriate mitigation
-+				 picks the most appropriate mitigation.
-+			prctl  - Control Speculative Store Bypass per thread
-+				 via prctl. Speculative Store Bypass is enabled
-+				 for a process by default. The state of the control
-+				 is inherited on fork.
+--- a/Documentation/userspace-api/index.rst
++++ b/Documentation/userspace-api/index.rst
+@@ -19,6 +19,7 @@ place where this information is gathered
+    no_new_privs
+    seccomp_filter
+    unshare
++   spec_ctrl
  
- 			Not specifying this option is equivalent to
- 			spec_store_bypass_disable=auto.
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -232,6 +232,7 @@ extern u64 x86_spec_ctrl_get_default(voi
- enum ssb_mitigation {
- 	SPEC_STORE_BYPASS_NONE,
- 	SPEC_STORE_BYPASS_DISABLE,
-+	SPEC_STORE_BYPASS_PRCTL,
- };
+ .. only::  subproject and html
  
- extern char __indirect_thunk_start[];
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -12,6 +12,8 @@
- #include <linux/utsname.h>
- #include <linux/cpu.h>
- #include <linux/module.h>
+--- /dev/null
++++ b/Documentation/userspace-api/spec_ctrl.rst
+@@ -0,0 +1,86 @@
++===================
++Speculation Control
++===================
++
++Quite some CPUs have speculation related misfeatures which are in fact
++vulnerabilites causing data leaks in various forms even accross privilege
++domains.
++
++The kernel provides mitigation for such vulnerabilities in various
++forms. Some of these mitigations are compile time configurable and some on
++the kernel command line.
++
++There is also a class of mitigations which are very expensive, but they can
++be restricted to a certain set of processes or tasks in controlled
++environments. The mechanism to control these mitigations is via
++:manpage:`prctl(2)`.
++
++There are two prctl options which are related to this:
++
++ * PR_GET_SPECULATION_CTRL
++
++ * PR_SET_SPECULATION_CTRL
++
++PR_GET_SPECULATION_CTRL
++-----------------------
++
++PR_GET_SPECULATION_CTRL returns the state of the speculation misfeature
++which is selected with arg2 of prctl(2). The return value uses bits 0-2 with
++the following meaning:
++
++==== ================ ===================================================
++Bit  Define           Description
++==== ================ ===================================================
++0    PR_SPEC_PRCTL    Mitigation can be controlled per task by
++                      PR_SET_SPECULATION_CTRL
++1    PR_SPEC_ENABLE   The speculation feature is enabled, mitigation is
++                      disabled
++2    PR_SPEC_DISABLE  The speculation feature is disabled, mitigation is
++                      enabled
++==== ================ ===================================================
++
++If all bits are 0 the CPU is not affected by the speculation misfeature.
++
++If PR_SPEC_PRCTL is set, then the per task control of the mitigation is
++available. If not set, prctl(PR_SET_SPECULATION_CTRL) for the speculation
++misfeature will fail.
++
++PR_SET_SPECULATION_CTRL
++-----------------------
++PR_SET_SPECULATION_CTRL allows to control the speculation misfeature, which
++is selected by arg2 of :manpage:`prctl(2)` per task. arg3 is used to hand
++in the control value, i.e. either PR_SPEC_ENABLE or PR_SPEC_DISABLE.
++
++Common error codes
++------------------
++======= =================================================================
++Value   Meaning
++======= =================================================================
++EINVAL  The prctl is not implemented by the architecture or unused
++        prctl(2) arguments are not 0
++
++ENODEV  arg2 is selecting a not supported speculation misfeature
++======= =================================================================
++
++PR_SET_SPECULATION_CTRL error codes
++-----------------------------------
++======= =================================================================
++Value   Meaning
++======= =================================================================
++0       Success
++
++ERANGE  arg3 is incorrect, i.e. it's neither PR_SPEC_ENABLE nor
++        PR_SPEC_DISABLE
++
++ENXIO   Control of the selected speculation misfeature is not possible.
++        See PR_GET_SPECULATION_CTRL.
++======= =================================================================
++
++Speculation misfeature controls
++-------------------------------
++- PR_SPEC_STORE_BYPASS: Speculative Store Bypass
++
++  Invocations:
++   * prctl(PR_GET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, 0, 0, 0);
++   * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, PR_SPEC_ENABLE, 0, 0);
++   * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, PR_SPEC_DISABLE, 0, 0);
+--- a/include/linux/nospec.h
++++ b/include/linux/nospec.h
+@@ -55,4 +55,9 @@ static inline unsigned long array_index_
+ 									\
+ 	(typeof(_i)) (_i & _mask);					\
+ })
++
++/* Speculation control prctl */
++int arch_prctl_spec_ctrl_get(unsigned long which);
++int arch_prctl_spec_ctrl_set(unsigned long which, unsigned long ctrl);
++
+ #endif /* _LINUX_NOSPEC_H */
+--- a/include/uapi/linux/prctl.h
++++ b/include/uapi/linux/prctl.h
+@@ -207,4 +207,15 @@ struct prctl_mm_map {
+ # define PR_SVE_VL_LEN_MASK		0xffff
+ # define PR_SVE_VL_INHERIT		(1 << 17) /* inherit across exec */
+ 
++/* Per task speculation control */
++#define PR_GET_SPECULATION_CTRL		52
++#define PR_SET_SPECULATION_CTRL		53
++/* Speculation control variants */
++# define PR_SPEC_STORE_BYPASS		0
++/* Return and control values for PR_SET/GET_SPECULATION_CTRL */
++# define PR_SPEC_NOT_AFFECTED		0
++# define PR_SPEC_PRCTL			(1UL << 0)
++# define PR_SPEC_ENABLE			(1UL << 1)
++# define PR_SPEC_DISABLE		(1UL << 2)
++
+ #endif /* _LINUX_PRCTL_H */
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -61,6 +61,8 @@
+ #include <linux/uidgid.h>
+ #include <linux/cred.h>
+ 
 +#include <linux/nospec.h>
-+#include <linux/prctl.h>
++
+ #include <linux/kmsg_dump.h>
+ /* Move somewhere else to avoid recompiling? */
+ #include <generated/utsrelease.h>
+@@ -2190,6 +2192,16 @@ static int propagate_has_child_subreaper
+ 	return 1;
+ }
  
- #include <asm/spec-ctrl.h>
- #include <asm/cmdline.h>
-@@ -412,20 +414,23 @@ enum ssb_mitigation_cmd {
- 	SPEC_STORE_BYPASS_CMD_NONE,
- 	SPEC_STORE_BYPASS_CMD_AUTO,
- 	SPEC_STORE_BYPASS_CMD_ON,
-+	SPEC_STORE_BYPASS_CMD_PRCTL,
- };
- 
- static const char *ssb_strings[] = {
- 	[SPEC_STORE_BYPASS_NONE]	= "Vulnerable",
--	[SPEC_STORE_BYPASS_DISABLE]	= "Mitigation: Speculative Store Bypass disabled"
-+	[SPEC_STORE_BYPASS_DISABLE]	= "Mitigation: Speculative Store Bypass disabled",
-+	[SPEC_STORE_BYPASS_PRCTL]	= "Mitigation: Speculative Store Bypass disabled via prctl"
- };
- 
- static const struct {
- 	const char *option;
- 	enum ssb_mitigation_cmd cmd;
- } ssb_mitigation_options[] = {
--	{ "auto",	SPEC_STORE_BYPASS_CMD_AUTO }, /* Platform decides */
--	{ "on",		SPEC_STORE_BYPASS_CMD_ON },   /* Disable Speculative Store Bypass */
--	{ "off",	SPEC_STORE_BYPASS_CMD_NONE }, /* Don't touch Speculative Store Bypass */
-+	{ "auto",	SPEC_STORE_BYPASS_CMD_AUTO },  /* Platform decides */
-+	{ "on",		SPEC_STORE_BYPASS_CMD_ON },    /* Disable Speculative Store Bypass */
-+	{ "off",	SPEC_STORE_BYPASS_CMD_NONE },  /* Don't touch Speculative Store Bypass */
-+	{ "prctl",	SPEC_STORE_BYPASS_CMD_PRCTL }, /* Disable Speculative Store Bypass via prctl */
- };
- 
- static enum ssb_mitigation_cmd __init ssb_parse_cmdline(void)
-@@ -475,14 +480,15 @@ static enum ssb_mitigation_cmd __init __
- 
- 	switch (cmd) {
- 	case SPEC_STORE_BYPASS_CMD_AUTO:
--		/*
--		 * AMD platforms by default don't need SSB mitigation.
--		 */
--		if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
--			break;
-+		/* Choose prctl as the default mode */
-+		mode = SPEC_STORE_BYPASS_PRCTL;
-+		break;
- 	case SPEC_STORE_BYPASS_CMD_ON:
- 		mode = SPEC_STORE_BYPASS_DISABLE;
- 		break;
-+	case SPEC_STORE_BYPASS_CMD_PRCTL:
-+		mode = SPEC_STORE_BYPASS_PRCTL;
-+		break;
- 	case SPEC_STORE_BYPASS_CMD_NONE:
- 		break;
- 	}
-@@ -493,7 +499,7 @@ static enum ssb_mitigation_cmd __init __
- 	 *  - X86_FEATURE_RDS - CPU is able to turn off speculative store bypass
- 	 *  - X86_FEATURE_SPEC_STORE_BYPASS_DISABLE - engage the mitigation
- 	 */
--	if (mode != SPEC_STORE_BYPASS_NONE) {
-+	if (mode == SPEC_STORE_BYPASS_DISABLE) {
- 		setup_force_cpu_cap(X86_FEATURE_SPEC_STORE_BYPASS_DISABLE);
- 		/*
- 		 * Intel uses the SPEC CTRL MSR Bit(2) for this, while AMD uses
-@@ -524,6 +530,63 @@ static void ssb_select_mitigation()
- 
- #undef pr_fmt
- 
-+static int ssb_prctl_set(unsigned long ctrl)
++int __weak arch_prctl_spec_ctrl_get(unsigned long which)
 +{
-+	bool rds = !!test_tsk_thread_flag(current, TIF_RDS);
-+
-+	if (ssb_mode != SPEC_STORE_BYPASS_PRCTL)
-+		return -ENXIO;
-+
-+	if (ctrl == PR_SPEC_ENABLE)
-+		clear_tsk_thread_flag(current, TIF_RDS);
-+	else
-+		set_tsk_thread_flag(current, TIF_RDS);
-+
-+	if (rds != !!test_tsk_thread_flag(current, TIF_RDS))
-+		speculative_store_bypass_update();
-+
-+	return 0;
++	return -EINVAL;
 +}
 +
-+static int ssb_prctl_get(void)
++int __weak arch_prctl_spec_ctrl_set(unsigned long which, unsigned long ctrl)
 +{
-+	switch (ssb_mode) {
-+	case SPEC_STORE_BYPASS_DISABLE:
-+		return PR_SPEC_DISABLE;
-+	case SPEC_STORE_BYPASS_PRCTL:
-+		if (test_tsk_thread_flag(current, TIF_RDS))
-+			return PR_SPEC_PRCTL | PR_SPEC_DISABLE;
-+		return PR_SPEC_PRCTL | PR_SPEC_ENABLE;
-+	default:
-+		if (boot_cpu_has_bug(X86_BUG_SPEC_STORE_BYPASS))
-+			return PR_SPEC_ENABLE;
-+		return PR_SPEC_NOT_AFFECTED;
-+	}
++	return -EINVAL;
 +}
 +
-+int arch_prctl_spec_ctrl_set(unsigned long which, unsigned long ctrl)
-+{
-+	if (ctrl != PR_SPEC_ENABLE && ctrl != PR_SPEC_DISABLE)
-+		return -ERANGE;
-+
-+	switch (which) {
-+	case PR_SPEC_STORE_BYPASS:
-+		return ssb_prctl_set(ctrl);
-+	default:
-+		return -ENODEV;
-+	}
-+}
-+
-+int arch_prctl_spec_ctrl_get(unsigned long which)
-+{
-+	switch (which) {
-+	case PR_SPEC_STORE_BYPASS:
-+		return ssb_prctl_get();
-+	default:
-+		return -ENODEV;
-+	}
-+}
-+
- void x86_spec_ctrl_setup_ap(void)
+ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+ 		unsigned long, arg4, unsigned long, arg5)
  {
- 	if (boot_cpu_has(X86_FEATURE_IBRS))
+@@ -2398,6 +2410,16 @@ SYSCALL_DEFINE5(prctl, int, option, unsi
+ 	case PR_SVE_GET_VL:
+ 		error = SVE_GET_VL();
+ 		break;
++	case PR_GET_SPECULATION_CTRL:
++		if (arg3 || arg4 || arg5)
++			return -EINVAL;
++		error = arch_prctl_spec_ctrl_get(arg2);
++		break;
++	case PR_SET_SPECULATION_CTRL:
++		if (arg4 || arg5)
++			return -EINVAL;
++		error = arch_prctl_spec_ctrl_set(arg2, arg3);
++		break;
+ 	default:
+ 		error = -EINVAL;
+ 		break;
