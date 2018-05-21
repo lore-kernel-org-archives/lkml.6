@@ -1,105 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753208AbeEUQYD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 12:24:03 -0400
-Received: from mga11.intel.com ([192.55.52.93]:64975 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753130AbeEUQYB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 12:24:01 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,426,1520924400";
-   d="scan'208";a="57747998"
-Date: Mon, 21 May 2018 09:24:00 -0700
-From: Jesse Brandeburg <jesse.brandeburg@intel.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: <mst@redhat.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>,
-        <virtualization@lists.linux-foundation.org>,
-        jesse.brandeburg@intel.com
-Subject: Re: [RFC PATCH net-next 01/12] vhost_net: introduce helper to
- initialize tx iov iter
-Message-ID: <20180521092400.00004c68@intel.com>
-In-Reply-To: <1526893473-20128-2-git-send-email-jasowang@redhat.com>
-References: <1526893473-20128-1-git-send-email-jasowang@redhat.com>
-        <1526893473-20128-2-git-send-email-jasowang@redhat.com>
-X-Mailer: Claws Mail 3.14.0 (GTK+ 2.24.30; i686-w64-mingw32)
+        id S1753272AbeEUQ0S (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 12:26:18 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:46481 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752824AbeEUQ0P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 12:26:15 -0400
+X-Google-Smtp-Source: AB8JxZpuEa2m2FvsazKrjHpqUCG2lMKy6MtYA0B0UJXxIevT5V3qRI9Ux97h9/mQJ14cQe3Z3OuKFQ==
+Date: Mon, 21 May 2018 09:26:11 -0700
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To: Alban Crequy <alban.crequy@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        containers@lists.linux-foundation.org, cgroups@vger.kernel.org,
+        Alban Crequy <alban@kinvolk.io>, tj@kernel.org
+Subject: Re: [PATCH] [RFC] bpf: tracing: new helper bpf_get_current_cgroup_ino
+Message-ID: <20180521162609.lpdrnozowmzdn57m@ast-mbp.dhcp.thefacebook.com>
+References: <20180513173318.21680-1-alban@kinvolk.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180513173318.21680-1-alban@kinvolk.io>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jason, a few nits. 
-
-On Mon, 21 May 2018 17:04:22 +0800 Jason wrote:
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
-> ---
->  drivers/vhost/net.c | 34 +++++++++++++++++++++++-----------
->  1 file changed, 23 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-> index c4b49fc..15d191a 100644
-> --- a/drivers/vhost/net.c
-> +++ b/drivers/vhost/net.c
-> @@ -459,6 +459,26 @@ static bool vhost_exceeds_maxpend(struct vhost_net *net)
->  	       min_t(unsigned int, VHOST_MAX_PEND, vq->num >> 2);
->  }
+On Sun, May 13, 2018 at 07:33:18PM +0200, Alban Crequy wrote:
 >  
-> +static size_t init_iov_iter(struct vhost_virtqueue *vq, struct iov_iter *iter,
-> +			    size_t hdr_size, int out)
+> +BPF_CALL_2(bpf_get_current_cgroup_ino, u32, hierarchy, u64, flags)
 > +{
-> +	/* Skip header. TODO: support TSO. */
-> +	size_t len = iov_length(vq->iov, out);
+> +	// TODO: pick the correct hierarchy instead of the mem controller
+> +	struct cgroup *cgrp = task_cgroup(current, memory_cgrp_id);
 > +
-> +	iov_iter_init(iter, WRITE, vq->iov, out, len);
-> +	iov_iter_advance(iter, hdr_size);
-> +	/* Sanity check */
-> +	if (!iov_iter_count(iter)) {
-> +		vq_err(vq, "Unexpected header len for TX: "
-> +			"%zd expected %zd\n",
-> +			len, hdr_size);
-
-ok, it was like this before, but please unwrap the string in " ", there
-should be no line breaks in string declarations and they are allowed to
-go over 80 characters.
-
-> +		return -EFAULT;
-> +	}
-> +	len = iov_iter_count(iter);
+> +	if (unlikely(!cgrp))
+> +		return -EINVAL;
+> +	if (unlikely(hierarchy))
+> +		return -EINVAL;
+> +	if (unlikely(flags))
+> +		return -EINVAL;
 > +
-> +	return len;
-> +}
-> +
->  /* Expects to be always run from workqueue - which acts as
->   * read-size critical section for our kind of RCU. */
->  static void handle_tx(struct vhost_net *net)
-> @@ -521,18 +541,10 @@ static void handle_tx(struct vhost_net *net)
->  			       "out %d, int %d\n", out, in);
->  			break;
->  		}
-> -		/* Skip header. TODO: support TSO. */
-> -		len = iov_length(vq->iov, out);
-> -		iov_iter_init(&msg.msg_iter, WRITE, vq->iov, out, len);
-> -		iov_iter_advance(&msg.msg_iter, hdr_size);
-> -		/* Sanity check */
-> -		if (!msg_data_left(&msg)) {
-> -			vq_err(vq, "Unexpected header len for TX: "
-> -			       "%zd expected %zd\n",
-> -			       len, hdr_size);
-> +
-> +		len = init_iov_iter(vq, &msg.msg_iter, hdr_size, out);
-> +		if (len < 0)
+> +	return cgrp->kn->id.ino;
 
-len is declared as size_t, which is unsigned, and can never be
-negative.  I'm pretty sure this is a bug.
+ino only is not enough to identify cgroup. It needs generation number too.
+I don't quite see how hierarchy and flags can be used in the future.
+Also why limit it to memcg?
 
+How about something like this instead:
 
->  			break;
-> -		}
-> -		len = msg_data_left(&msg);
->  
->  		zcopy_used = zcopy && len >= VHOST_GOODCOPY_LEN
->  				   && !vhost_exceeds_maxpend(net)
+BPF_CALL_2(bpf_get_current_cgroup_id)
+{
+        struct cgroup *cgrp = task_dfl_cgroup(current);
+
+        return cgrp->kn->id.id;
+}
+The user space can use fhandle api to get the same 64-bit id.
