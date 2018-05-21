@@ -1,79 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752684AbeEUKyo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 06:54:44 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:37746 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751078AbeEUKyi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 06:54:38 -0400
-Date: Mon, 21 May 2018 11:54:28 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Ilia Lin <ilialin@codeaurora.org>
-Cc: viresh.kumar@linaro.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] cpufreq: Add Kryo CPU scaling driver
-Message-ID: <20180521105428.GM17671@n2100.armlinux.org.uk>
-References: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
- <1526898690-4018-1-git-send-email-ilialin@codeaurora.org>
+        id S1752730AbeEUKzR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 06:55:17 -0400
+Received: from foss.arm.com ([217.140.101.70]:46970 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751078AbeEUKzQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 06:55:16 -0400
+Date: Mon, 21 May 2018 11:55:11 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Ganapatrao Kulkarni <gklkml16@gmail.com>
+Cc: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Will Deacon <Will.Deacon@arm.com>, jnair@caviumnetworks.com,
+        Robert Richter <Robert.Richter@cavium.com>, Vadim.Lomovtsev@cavium.com,
+        Jan.Glauber@cavium.com
+Subject: Re: [PATCH v4 2/2] ThunderX2: Add Cavium ThunderX2 SoC UNCORE PMU
+ driver
+Message-ID: <20180521105511.6ztjk5conf7lfaiz@lakrids.cambridge.arm.com>
+References: <20180425090047.6485-1-ganapatrao.kulkarni@cavium.com>
+ <20180425090047.6485-3-ganapatrao.kulkarni@cavium.com>
+ <20180426105938.y6unpt36lisb7kbr@lakrids.cambridge.arm.com>
+ <CAKTKpr7Q7T9ZCTBi=LQR=XaAoihbBA3OKCO7yFobzNmR8EfyjQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1526898690-4018-1-git-send-email-ilialin@codeaurora.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CAKTKpr7Q7T9ZCTBi=LQR=XaAoihbBA3OKCO7yFobzNmR8EfyjQ@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 01:31:30PM +0300, Ilia Lin wrote:
-> +#define SILVER_LEAD	0
-> +#define GOLD_LEAD	2
+On Sat, May 05, 2018 at 12:16:13AM +0530, Ganapatrao Kulkarni wrote:
+> On Thu, Apr 26, 2018 at 4:29 PM, Mark Rutland <mark.rutland@arm.com> wrote:
+> > On Wed, Apr 25, 2018 at 02:30:47PM +0530, Ganapatrao Kulkarni wrote:
 
-Okay, two different values here, but "GOLD_LEAD" appears unused.
+> >> + *
+> >> + *  L3 Tile and DMC channel selection is through SMC call
+> >> + *  SMC call arguments,
+> >> + *   x0 = THUNDERX2_SMC_CALL_ID      (Vendor SMC call Id)
+> >> + *   x1 = THUNDERX2_SMC_SET_CHANNEL  (Id to set DMC/L3C channel)
+> >> + *   x2 = Node id
+> >
+> > How do we map Linux node IDs to the firmware's view of node IDs?
+> >
+> > I don't believe the two are necessarily the same -- Linux's node IDs are
+> > a Linux-specific construct.
+> 
+> both are same, it is numa node id from ACPI/firmware.
 
-> +	cpu_dev_silver = get_cpu_device(SILVER_LEAD);
-> +	if (NULL == cpu_dev_silver)
-> +		return -ENODEV;
-> +
-> +	cpu_dev_gold = get_cpu_device(SILVER_LEAD);
-> +	if (NULL == cpu_dev_gold)
-> +		return -ENODEV;
+I am very wary about assuming that the Linux nid will always be the same
+as the ACPI node id.
 
-get_cpu_device() takes the logical CPU number.  So the above gets CPU 0
-each time, and so cpu_dev_silver == cpu_dev_gold here.  So what's the
-point of the second get_cpu_device() ?  If it's supposed to be:
+For that to *potentially* be true, this driver should depend on
+CONFIG_NUMA, NUMA must not be disabled on the command line, etc, or the
+node id will always be NUMA_NO_NODE.
 
-	cpu_dev_gold = get_cpu_device(GOLD_LEAD);
+I would be *much* happier if we had an explicit mapping somewhere to the
+ID the FW expects.
 
-That would get CPU 2, but in terms of these defines, it doesn't make that
-much sense.  What exactly does "silver lead" and "gold lead" refer to in
-these definitions?
+> > It would be much nicer if we could pass something based on the MPIDR,
+> > which is a known HW construct, or if this implicitly affected the
+> > current node.
+> 
+> IMO,  node id is sufficient.
 
-> +	opp_silver = dev_pm_opp_set_supported_hw(cpu_dev_silver,&versions,1);
-> +	if (IS_ERR(opp_silver)) {
-> +		dev_err(cpu_dev_silver, "Failed to set supported hardware\n");
-> +		ret = PTR_ERR(opp_silver);
-> +		goto free_np;
-> +	}
-> +
-> +	opp_gold = dev_pm_opp_set_supported_hw(cpu_dev_gold,&versions,1);
-> +	if (IS_ERR(opp_gold)) {
-> +		dev_err(cpu_dev_gold, "Failed to set supported hardware\n");
-> +		ret = PTR_ERR(opp_gold);
-> +		goto free_opp_silver;
-> +	}
+I agree that *a* node ID is sufficient, I just don't think that we're
+guaranteed to have the specific node ID the FW wants.
 
-Given that cpu_dev_silver == cpu_dev_gold, doesn't the second call to
-dev_pm_opp_set_supported_hw() always fail, as opp_table->supported_hw
-will be set by the first call?
+> > It would be vastly more sane for this to not be muxed at all. :/
+> 
+> i am helpless due to crappy hw design!
 
-To me, this driver looks completely useless as it will always fail to
-initialise, and I question whether this code has even been runtime
-tested.
+I'm certainly not blaming you for this! :)
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+I hope the HW designers don't make the same mistake in future, though...
+
+Thanks,
+Mark.
