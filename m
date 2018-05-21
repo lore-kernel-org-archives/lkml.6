@@ -1,40 +1,43 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZo40L52dv8cYWWHEq4N/Dj2avAuj5HiaURD2SntVAK/lpWusRdaTdHn0KFHsMU1HKSJgMQk
-ARC-Seal: i=1; a=rsa-sha256; t=1526937415; cv=none;
+X-Google-Smtp-Source: AB8JxZrxaaT0JCZQo7OHYKeX7WeNn7gjSlqJlLrGRmUVKUDPWCETO+ukGOS7X3N21wOzFzRekivD
+ARC-Seal: i=1; a=rsa-sha256; t=1526937412; cv=none;
         d=google.com; s=arc-20160816;
-        b=tzP4DsVKuUqGWKxLn2ph8TAGnDLsdXG9550/LCs0nRhTrrCTterBCYTwv1M+Y9d2gs
-         eMyD3+dq+Qr45vvFhf8fpKi1Sezb7zakNZe6K46BTNi2IxnrZzwAP/oicwnf4WrSe9lw
-         hjxofhUH8ZtgMpTwnA2Ieu8vD0THyEtteblYHaPVbwscyLy+DmM7XwNGwEMqpY5f2Kbz
-         gHwM9jjwZTdJDRdDFlasL+fUXXuUqJH/1MrFMq/yS3IBGEHl0xBRTXWaY/9nUgdAqmtI
-         C8hNNfZ/SxFogw7JzGjf8YcONXi+FmzNjQPk/zeUJZbhgU7Fzv7ZqLZgLsXSgDKk403Z
-         Nz9g==
+        b=ATdd15dqH90YYmIrOcV5HgLzPkGPwTvOm56gZLWGuvuEKKxUCdEcVZvFrn+Evcse38
+         2az8+rafYX61BVNYiWDG6kqfZoKfQ6lMqM1Yp1iGw4zIQxGvnJaiGcTGbTIDnKgJl07N
+         0NZMlYrdRZJnl5CUO1ofEpQFDE9MnfyvRZfygBF4mQ/6CcqDwmcdt3pkSVMwWZ7RLnEW
+         JdTfsNiowvKxjULwcSKiLvPX5B/FGyvL9JBwdK7V76GSZ4QtGZmaD0Pege/AcdLWt2Ii
+         EIUlZwhEdYvdONzJVUc4H2SG2tYcUcUjdj8XrJDOnNPoyaRGNdRYNekZ5WAqdo2BSPQG
+         NfuA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=xGRFKICbWn/mU8MgIPRo2AxTwTVH2FTLTkgoB3pB++I=;
-        b=jz+CMxeznF1TXO0SznWe0SdO9y31eHRIj+fRLwP5NMR9muAB29q8hpApqLJwu7pVLL
-         oboggR1lCa/b1JbLoGc5rlbooSwGxUoyH7smz0sSght1vJZEpKYc249+/iGC6bxONDeA
-         dAowbiBvI+q9mzxBQWqGqjI2bdj3Mte53OzK4fv/pQttgBVj1qnIvpWaOrFQ/UOC4dey
-         jbKAUSXphhhoz0AmRwLwCcq4T8beuoQyNVzwjjNruxuntJSa2uIlchYCBHcwGUeUWR+/
-         fywFp/e7ZUsMNjGr5xUmGsLUBbaNd+dcOtTbOb9yAXkmbIhe+V+dF8XAKIrLD34V5e9u
-         byKA==
+        bh=QYMAIhZrSXhhb5GQQyTFDb5RSIFsHY2dOob+LklMvk4=;
+        b=APjNrKziJdok0vzScvCYZC0tCypPCcs5XvI73WM0E75bCtpNwqllqx5z/tmV8epftX
+         zw8b3TgFN3A5jEcRJif0BsALmFA+BrfWNAFp5oHTjleTYeGXigPIr+LR0pXDjVAqm2QM
+         IXaVY/u0x79GXZLm5rdDIF4TszNg58kvTWAiVo2t51YO0YH33E4BPpCN98Xklw6PdCtr
+         d8co9Fb9AJeCjL1SEtWCG4F7rA4g0++jHZ8zbK8+DRRsyvxoBiJe7QVVyqdb/Qxvq8iE
+         YfHf6cNO/MCFwZkxRYZgDc2Hwm4+pF+mWhx96FPl/TQPuMg11ZrXscRpqBjYYTPtSWaf
+         95XA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=tV7aqG0L;
+       dkim=pass header.i=@kernel.org header.s=default header.b=aUlRbu/2;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=tV7aqG0L;
+       dkim=pass header.i=@kernel.org header.s=default header.b=aUlRbu/2;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
 	Borislav Petkov <bp@suse.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
 	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+	=?UTF-8?q?J=C3=B6rg=20Otte?= <jrg.otte@gmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
 	David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 73/87] x86/cpufeatures: Disentangle MSR_SPEC_CTRL enumeration from IBRS
-Date: Mon, 21 May 2018 23:11:49 +0200
-Message-Id: <20180521210426.391468460@linuxfoundation.org>
+Subject: [PATCH 4.9 72/87] x86/speculation: Use synthetic bits for IBRS/IBPB/STIBP
+Date: Mon, 21 May 2018 23:11:48 +0200
+Message-Id: <20180521210426.320900655@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210420.222671977@linuxfoundation.org>
 References: <20180521210420.222671977@linuxfoundation.org>
@@ -44,8 +47,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109927546153517?=
-X-GMAIL-MSGID: =?utf-8?q?1601109927546153517?=
+X-GMAIL-THRID: =?utf-8?q?1601109924308566298?=
+X-GMAIL-MSGID: =?utf-8?q?1601109924308566298?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,143 +56,142 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Borislav Petkov <bp@suse.de>
 
-commit 7eb8956a7fec3c1f0abc2a5517dada99ccc8a961 upstream
+commit e7c587da125291db39ddf1f49b18e5970adbac17 upstream
 
-The availability of the SPEC_CTRL MSR is enumerated by a CPUID bit on
-Intel and implied by IBRS or STIBP support on AMD. That's just confusing
-and in case an AMD CPU has IBRS not supported because the underlying
-problem has been fixed but has another bit valid in the SPEC_CTRL MSR,
-the thing falls apart.
+Intel and AMD have different CPUID bits hence for those use synthetic bits
+which get set on the respective vendor's in init_speculation_control(). So
+that debacles like what the commit message of
 
-Add a synthetic feature bit X86_FEATURE_MSR_SPEC_CTRL to denote the
-availability on both Intel and AMD.
+  c65732e4f721 ("x86/cpu: Restore CPUID_8000_0008_EBX reload")
 
-While at it replace the boot_cpu_has() checks with static_cpu_has() where
-possible. This prevents late microcode loading from exposing SPEC_CTRL, but
-late loading is already very limited as it does not reevaluate the
-mitigation options and other bits and pieces. Having static_cpu_has() is
-the simplest and least fragile solution.
+talks about don't happen anymore.
 
+Signed-off-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Borislav Petkov <bp@suse.de>
 Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Tested-by: Jörg Otte <jrg.otte@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Link: https://lkml.kernel.org/r/20180504161815.GG9257@pd.tnic
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/cpufeatures.h |    2 ++
- arch/x86/kernel/cpu/bugs.c         |   18 +++++++++++-------
- arch/x86/kernel/cpu/common.c       |    9 +++++++--
- arch/x86/kernel/cpu/intel.c        |    1 +
- 4 files changed, 21 insertions(+), 9 deletions(-)
+ arch/x86/include/asm/cpufeatures.h |   12 ++++++++----
+ arch/x86/kernel/cpu/common.c       |   14 ++++++++++----
+ arch/x86/kvm/cpuid.c               |   10 +++++-----
+ arch/x86/kvm/cpuid.h               |    4 ++--
+ 4 files changed, 25 insertions(+), 15 deletions(-)
 
 --- a/arch/x86/include/asm/cpufeatures.h
 +++ b/arch/x86/include/asm/cpufeatures.h
-@@ -197,6 +197,8 @@
- #define X86_FEATURE_RETPOLINE	( 7*32+12) /* "" Generic Retpoline mitigation for Spectre variant 2 */
- #define X86_FEATURE_RETPOLINE_AMD ( 7*32+13) /* "" AMD Retpoline mitigation for Spectre variant 2 */
+@@ -205,7 +205,10 @@
+ #define X86_FEATURE_USE_IBPB	( 7*32+21) /* "" Indirect Branch Prediction Barrier enabled */
+ #define X86_FEATURE_USE_IBRS_FW	( 7*32+22) /* "" Use IBRS during runtime firmware calls */
+ #define X86_FEATURE_SPEC_STORE_BYPASS_DISABLE ( 7*32+23) /* "" Disable Speculative Store Bypass. */
+-#define X86_FEATURE_AMD_SSBD	(7*32+24)  /* "" AMD SSBD implementation */
++#define X86_FEATURE_AMD_SSBD	( 7*32+24) /* "" AMD SSBD implementation */
++#define X86_FEATURE_IBRS	( 7*32+25) /* Indirect Branch Restricted Speculation */
++#define X86_FEATURE_IBPB	( 7*32+26) /* Indirect Branch Prediction Barrier */
++#define X86_FEATURE_STIBP	( 7*32+27) /* Single Thread Indirect Branch Predictors */
  
-+#define X86_FEATURE_MSR_SPEC_CTRL ( 7*32+16) /* "" MSR SPEC_CTRL is implemented */
+ /* Virtualization flags: Linux defined, word 8 */
+ #define X86_FEATURE_TPR_SHADOW  ( 8*32+ 0) /* Intel TPR Shadow */
+@@ -263,9 +266,9 @@
+ /* AMD-defined CPU features, CPUID level 0x80000008 (ebx), word 13 */
+ #define X86_FEATURE_CLZERO	(13*32+0) /* CLZERO instruction */
+ #define X86_FEATURE_IRPERF	(13*32+1) /* Instructions Retired Count */
+-#define X86_FEATURE_IBPB	(13*32+12) /* Indirect Branch Prediction Barrier */
+-#define X86_FEATURE_IBRS	(13*32+14) /* Indirect Branch Restricted Speculation */
+-#define X86_FEATURE_STIBP	(13*32+15) /* Single Thread Indirect Branch Predictors */
++#define X86_FEATURE_AMD_IBPB	(13*32+12) /* Indirect Branch Prediction Barrier */
++#define X86_FEATURE_AMD_IBRS	(13*32+14) /* Indirect Branch Restricted Speculation */
++#define X86_FEATURE_AMD_STIBP	(13*32+15) /* Single Thread Indirect Branch Predictors */
+ 
+ /* Thermal and Power Management Leaf, CPUID level 0x00000006 (eax), word 14 */
+ #define X86_FEATURE_DTHERM	(14*32+ 0) /* Digital Thermal Sensor */
+@@ -301,6 +304,7 @@
+ #define X86_FEATURE_SUCCOR	(17*32+1) /* Uncorrectable error containment and recovery */
+ #define X86_FEATURE_SMCA	(17*32+3) /* Scalable MCA */
+ 
 +
- #define X86_FEATURE_RSB_CTXSW	( 7*32+19) /* "" Fill RSB on context switches */
- 
- /* Because the ALTERNATIVE scheme is for members of the X86_FEATURE club... */
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -63,7 +63,7 @@ void __init check_bugs(void)
- 	 * have unknown values. AMD64_LS_CFG MSR is cached in the early AMD
- 	 * init code as it is not enumerated and depends on the family.
- 	 */
--	if (boot_cpu_has(X86_FEATURE_IBRS))
-+	if (boot_cpu_has(X86_FEATURE_MSR_SPEC_CTRL))
- 		rdmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
- 
- 	/* Select the proper spectre mitigation before patching alternatives */
-@@ -144,7 +144,7 @@ u64 x86_spec_ctrl_get_default(void)
- {
- 	u64 msrval = x86_spec_ctrl_base;
- 
--	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL)
-+	if (static_cpu_has(X86_FEATURE_SPEC_CTRL))
- 		msrval |= ssbd_tif_to_spec_ctrl(current_thread_info()->flags);
- 	return msrval;
- }
-@@ -154,10 +154,12 @@ void x86_spec_ctrl_set_guest(u64 guest_s
- {
- 	u64 host = x86_spec_ctrl_base;
- 
--	if (!boot_cpu_has(X86_FEATURE_IBRS))
-+	/* Is MSR_SPEC_CTRL implemented ? */
-+	if (!static_cpu_has(X86_FEATURE_MSR_SPEC_CTRL))
- 		return;
- 
--	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL)
-+	/* Intel controls SSB in MSR_SPEC_CTRL */
-+	if (static_cpu_has(X86_FEATURE_SPEC_CTRL))
- 		host |= ssbd_tif_to_spec_ctrl(current_thread_info()->flags);
- 
- 	if (host != guest_spec_ctrl)
-@@ -169,10 +171,12 @@ void x86_spec_ctrl_restore_host(u64 gues
- {
- 	u64 host = x86_spec_ctrl_base;
- 
--	if (!boot_cpu_has(X86_FEATURE_IBRS))
-+	/* Is MSR_SPEC_CTRL implemented ? */
-+	if (!static_cpu_has(X86_FEATURE_MSR_SPEC_CTRL))
- 		return;
- 
--	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL)
-+	/* Intel controls SSB in MSR_SPEC_CTRL */
-+	if (static_cpu_has(X86_FEATURE_SPEC_CTRL))
- 		host |= ssbd_tif_to_spec_ctrl(current_thread_info()->flags);
- 
- 	if (host != guest_spec_ctrl)
-@@ -630,7 +634,7 @@ int arch_prctl_spec_ctrl_get(struct task
- 
- void x86_spec_ctrl_setup_ap(void)
- {
--	if (boot_cpu_has(X86_FEATURE_IBRS))
-+	if (boot_cpu_has(X86_FEATURE_MSR_SPEC_CTRL))
- 		x86_spec_ctrl_set(x86_spec_ctrl_base & ~x86_spec_ctrl_mask);
- 
- 	if (ssb_mode == SPEC_STORE_BYPASS_DISABLE)
+ /* Intel-defined CPU features, CPUID level 0x00000007:0 (EDX), word 18 */
+ #define X86_FEATURE_AVX512_4VNNIW	(18*32+ 2) /* AVX-512 Neural Network Instructions */
+ #define X86_FEATURE_AVX512_4FMAPS	(18*32+ 3) /* AVX-512 Multiply Accumulation Single precision */
 --- a/arch/x86/kernel/cpu/common.c
 +++ b/arch/x86/kernel/cpu/common.c
-@@ -729,19 +729,24 @@ static void init_speculation_control(str
+@@ -725,17 +725,23 @@ static void init_speculation_control(str
+ 	 * and they also have a different bit for STIBP support. Also,
+ 	 * a hypervisor might have set the individual AMD bits even on
+ 	 * Intel CPUs, for finer-grained selection of what's available.
+-	 *
+-	 * We use the AMD bits in 0x8000_0008 EBX as the generic hardware
+-	 * features, which are visible in /proc/cpuinfo and used by the
+-	 * kernel. So set those accordingly from the Intel bits.
+ 	 */
  	if (cpu_has(c, X86_FEATURE_SPEC_CTRL)) {
  		set_cpu_cap(c, X86_FEATURE_IBRS);
  		set_cpu_cap(c, X86_FEATURE_IBPB);
-+		set_cpu_cap(c, X86_FEATURE_MSR_SPEC_CTRL);
  	}
- 
++
  	if (cpu_has(c, X86_FEATURE_INTEL_STIBP))
  		set_cpu_cap(c, X86_FEATURE_STIBP);
- 
--	if (cpu_has(c, X86_FEATURE_AMD_IBRS))
-+	if (cpu_has(c, X86_FEATURE_AMD_IBRS)) {
- 		set_cpu_cap(c, X86_FEATURE_IBRS);
-+		set_cpu_cap(c, X86_FEATURE_MSR_SPEC_CTRL);
-+	}
- 
- 	if (cpu_has(c, X86_FEATURE_AMD_IBPB))
- 		set_cpu_cap(c, X86_FEATURE_IBPB);
- 
--	if (cpu_has(c, X86_FEATURE_AMD_STIBP))
-+	if (cpu_has(c, X86_FEATURE_AMD_STIBP)) {
- 		set_cpu_cap(c, X86_FEATURE_STIBP);
-+		set_cpu_cap(c, X86_FEATURE_MSR_SPEC_CTRL);
-+	}
++
++	if (cpu_has(c, X86_FEATURE_AMD_IBRS))
++		set_cpu_cap(c, X86_FEATURE_IBRS);
++
++	if (cpu_has(c, X86_FEATURE_AMD_IBPB))
++		set_cpu_cap(c, X86_FEATURE_IBPB);
++
++	if (cpu_has(c, X86_FEATURE_AMD_STIBP))
++		set_cpu_cap(c, X86_FEATURE_STIBP);
  }
  
  void get_cpu_cap(struct cpuinfo_x86 *c)
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -153,6 +153,7 @@ static void early_init_intel(struct cpui
- 		setup_clear_cpu_cap(X86_FEATURE_IBPB);
- 		setup_clear_cpu_cap(X86_FEATURE_STIBP);
- 		setup_clear_cpu_cap(X86_FEATURE_SPEC_CTRL);
-+		setup_clear_cpu_cap(X86_FEATURE_MSR_SPEC_CTRL);
- 		setup_clear_cpu_cap(X86_FEATURE_INTEL_STIBP);
- 		setup_clear_cpu_cap(X86_FEATURE_SSBD);
- 	}
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -357,7 +357,7 @@ static inline int __do_cpuid_ent(struct
+ 
+ 	/* cpuid 0x80000008.ebx */
+ 	const u32 kvm_cpuid_8000_0008_ebx_x86_features =
+-		F(IBPB) | F(IBRS);
++		F(AMD_IBPB) | F(AMD_IBRS);
+ 
+ 	/* cpuid 0xC0000001.edx */
+ 	const u32 kvm_cpuid_C000_0001_edx_x86_features =
+@@ -619,10 +619,10 @@ static inline int __do_cpuid_ent(struct
+ 		entry->eax = g_phys_as | (virt_as << 8);
+ 		entry->edx = 0;
+ 		/* IBRS and IBPB aren't necessarily present in hardware cpuid */
+-		if (boot_cpu_has(X86_FEATURE_IBPB))
+-			entry->ebx |= F(IBPB);
+-		if (boot_cpu_has(X86_FEATURE_IBRS))
+-			entry->ebx |= F(IBRS);
++		if (boot_cpu_has(X86_FEATURE_AMD_IBPB))
++			entry->ebx |= F(AMD_IBPB);
++		if (boot_cpu_has(X86_FEATURE_AMD_IBRS))
++			entry->ebx |= F(AMD_IBRS);
+ 		entry->ebx &= kvm_cpuid_8000_0008_ebx_x86_features;
+ 		cpuid_mask(&entry->ebx, CPUID_8000_0008_EBX);
+ 		break;
+--- a/arch/x86/kvm/cpuid.h
++++ b/arch/x86/kvm/cpuid.h
+@@ -165,7 +165,7 @@ static inline bool guest_cpuid_has_ibpb(
+ 	struct kvm_cpuid_entry2 *best;
+ 
+ 	best = kvm_find_cpuid_entry(vcpu, 0x80000008, 0);
+-	if (best && (best->ebx & bit(X86_FEATURE_IBPB)))
++	if (best && (best->ebx & bit(X86_FEATURE_AMD_IBPB)))
+ 		return true;
+ 	best = kvm_find_cpuid_entry(vcpu, 7, 0);
+ 	return best && (best->edx & bit(X86_FEATURE_SPEC_CTRL));
+@@ -176,7 +176,7 @@ static inline bool guest_cpuid_has_spec_
+ 	struct kvm_cpuid_entry2 *best;
+ 
+ 	best = kvm_find_cpuid_entry(vcpu, 0x80000008, 0);
+-	if (best && (best->ebx & bit(X86_FEATURE_IBRS)))
++	if (best && (best->ebx & bit(X86_FEATURE_AMD_IBRS)))
+ 		return true;
+ 	best = kvm_find_cpuid_entry(vcpu, 7, 0);
+ 	return best && (best->edx & (bit(X86_FEATURE_SPEC_CTRL) | bit(X86_FEATURE_SSBD)));
