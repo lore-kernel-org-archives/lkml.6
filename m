@@ -1,124 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753202AbeEURQ5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 13:16:57 -0400
+        id S1753250AbeEURRC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 13:17:02 -0400
 Received: from esa5.hgst.iphmx.com ([216.71.153.144]:8470 "EHLO
         esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752803AbeEURQy (ORCPT
+        with ESMTP id S1752928AbeEURQy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 21 May 2018 13:16:54 -0400
 X-IronPort-AV: E=Sophos;i="5.49,426,1520870400";
-   d="scan'208";a="78841216"
+   d="scan'208";a="78841220"
 From: Bart Van Assche <bart.vanassche@wdc.com>
 To: Jens Axboe <axboe@kernel.dk>
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         Christoph Hellwig <hch@lst.de>,
-        Bart Van Assche <bart.vanassche@wdc.com>
-Subject: [PATCH v12 0/2] blk-mq: Rework blk-mq timeout handling again
-Date: Mon, 21 May 2018 10:16:50 -0700
-Message-Id: <20180521171652.3021-1-bart.vanassche@wdc.com>
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Russell King <linux@armlinux.org.uk>
+Subject: [PATCH v12 1/2] ARM: cmpxchg64: Only define cmpxchg64() if not using the Thumb instruction set
+Date: Mon, 21 May 2018 10:16:51 -0700
+Message-Id: <20180521171652.3021-2-bart.vanassche@wdc.com>
 X-Mailer: git-send-email 2.16.3
+In-Reply-To: <20180521171652.3021-1-bart.vanassche@wdc.com>
+References: <20180521171652.3021-1-bart.vanassche@wdc.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Jens,
+Since the implementation of cmpxchg64() uses instructions that are not
+Thumb instructions, only define cmpxchg64() if not building in Thumb
+mode. This patch allows the next patch in this series to check for
+cmpxchg64() support using #if defined(cmpxchg64).
 
-This patch series reworks blk-mq timeout handling by introducing a state
-machine per request. Please consider this patch series for inclusion in the
-upstream kernel.
+Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Russell King <linux@armlinux.org.uk>
+---
+ arch/arm/include/asm/cmpxchg.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Bart.
-
-Changes compared to v11:
-- Reworked patch 1/2: instead of introducing CONFIG_ARCH_HAVE_CMPXCHG64, make
-  sure that cmpxchg64() is only defined if it can be used.
-
-Changes compared to v10:
-- In patch 1/2, added "default y if 64BIT" to the "config ARCH_HAVE_CMPXCHG64"
-  entry in arch/Kconfig. Left out the "select ARCH_HAVE_CMPXCHG64" statements
-  that became superfluous due to this change (alpha, arm64, powerpc and s390).
-- Also in patch 1/2, only select ARCH_HAVE_CMPXCHG64 if X86_CMPXCHG64 has been
-  selected.
-- In patch 2/2, moved blk_mq_change_rq_state() from blk-mq.h to blk-mq.c.
-- Added a comment header above __blk_mq_requeue_request() and
-  blk_mq_requeue_request().
-- Documented the MQ_RQ_* state transitions in block/blk-mq.h.
-- Left out the fourth argument of blk_mq_rq_set_deadline().
-
-Changes compared to v9:
-- Addressed multiple comments related to patch 1/2: added
-  CONFIG_ARCH_HAVE_CMPXCHG64 for riscv, modified
-  features/locking/cmpxchg64/arch-support.txt as requested and made the
-  order of the symbols in the arch/*/Kconfig alphabetical where possible.
-
-Changes compared to v8:
-- Split into two patches.
-- Moved the spin_lock_init() call from blk_mq_rq_ctx_init() into
-  blk_mq_init_request().
-- Fixed the deadline set by blk_add_timer().
-- Surrounded the das_lock member with #ifndef CONFIG_ARCH_HAVE_CMPXCHG64 /
-  #endif.
-
-Changes compared to v7:
-- Fixed the generation number mechanism. Note: with this patch applied the
-  behavior of the block layer does not depend on the generation number.
-- Added more 32-bit architectures to the list of architectures on which
-  cmpxchg64() should not be used.
-
-Changes compared to v6:
-- Used a union instead of bit manipulations to store multiple values into
-  a single 64-bit field.
-- Reduced the size of the timeout field from 64 to 32 bits.
-- Made sure that the block layer still builds with this patch applied
-  for the sh and mips architectures.
-- Fixed two sparse warnings that were introduced by this patch in the
-  WRITE_ONCE() calls.
-
-Changes compared to v5:
-- Restored the synchronize_rcu() call between marking a request for timeout
-  handling and the actual timeout handling to avoid that timeout handling
-  starts while .queue_rq() is still in progress if the timeout is very short.
-- Only use cmpxchg() if another context could attempt to change the request
-  state concurrently. Use WRITE_ONCE() otherwise.
-
-Changes compared to v4:
-- Addressed multiple review comments from Christoph. The most important are
-  that atomic_long_cmpxchg() has been changed into cmpxchg() and also that
-  there is now a nice and clean split between the legacy and blk-mq versions
-  of blk_add_timer().
-- Changed the patch name and modified the patch description because there is
-  disagreement about whether or not the v4.16 blk-mq core can complete a
-  single request twice. Kept the "Cc: stable" tag because of
-  https://bugzilla.kernel.org/show_bug.cgi?id=199077.
-
-Changes compared to v3 (see also https://www.mail-archive.com/linux-block@vger.kernel.org/msg20073.html):
-- Removed the spinlock again that was introduced to protect the request state.
-  v4 uses atomic_long_cmpxchg() instead.
-- Split __deadline into two variables - one for the legacy block layer and one
-  for blk-mq.
-
-Changes compared to v2 (https://www.mail-archive.com/linux-block@vger.kernel.org/msg18338.html):
-- Rebased and retested on top of kernel v4.16.
-
-Changes compared to v1 (https://www.mail-archive.com/linux-block@vger.kernel.org/msg18089.html):
-- Removed the gstate and aborted_gstate members of struct request and used
-  the __deadline member to encode both the generation and state information.
-
-Bart Van Assche (2):
-  ARM: cmpxchg64: Only define cmpxchg64() if not using the Thumb
-    instruction set
-  blk-mq: Rework blk-mq timeout handling again
-
- arch/arm/include/asm/cmpxchg.h |   4 +
- block/blk-core.c               |   6 --
- block/blk-mq-debugfs.c         |   1 -
- block/blk-mq.c                 | 238 +++++++++++++++++++----------------------
- block/blk-mq.h                 |  64 +++++------
- block/blk-timeout.c            | 133 +++++++++++++++--------
- block/blk.h                    |  11 +-
- include/linux/blkdev.h         |  48 +++++----
- 8 files changed, 267 insertions(+), 238 deletions(-)
-
+diff --git a/arch/arm/include/asm/cmpxchg.h b/arch/arm/include/asm/cmpxchg.h
+index 8b701f8e175c..41ab99bc04ca 100644
+--- a/arch/arm/include/asm/cmpxchg.h
++++ b/arch/arm/include/asm/cmpxchg.h
+@@ -141,7 +141,9 @@ static inline unsigned long __xchg(unsigned long x, volatile void *ptr, int size
+ 					        sizeof(*(ptr)));	\
+ })
+ 
++#ifndef CONFIG_THUMB2_KERNEL
+ #define cmpxchg64_local(ptr, o, n) __cmpxchg64_local_generic((ptr), (o), (n))
++#endif /* CONFIG_THUMB2_KERNEL */
+ 
+ #include <asm-generic/cmpxchg.h>
+ 
+@@ -241,6 +243,7 @@ static inline unsigned long __cmpxchg_local(volatile void *ptr,
+ 				        sizeof(*(ptr)));		\
+ })
+ 
++#ifndef CONFIG_THUMB2_KERNEL
+ static inline unsigned long long __cmpxchg64(unsigned long long *ptr,
+ 					     unsigned long long old,
+ 					     unsigned long long new)
+@@ -273,6 +276,7 @@ static inline unsigned long long __cmpxchg64(unsigned long long *ptr,
+ })
+ 
+ #define cmpxchg64_local(ptr, o, n) cmpxchg64_relaxed((ptr), (o), (n))
++#endif /* CONFIG_THUMB2_KERNEL */
+ 
+ #endif	/* __LINUX_ARM_ARCH__ >= 6 */
+ 
 -- 
 2.16.3
