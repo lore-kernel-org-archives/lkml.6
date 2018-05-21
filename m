@@ -1,226 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750993AbeEUSvd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 14:51:33 -0400
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:42049 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750773AbeEUSvb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 14:51:31 -0400
-X-Google-Smtp-Source: AB8JxZqO3hlR8wk95aKNc1aY5dfmW6oww37iCDq8KtigimG+Zdfoi4BGDUnkL+RgkHTvBm6sr65JpK6MnmtuCrb7ea8=
-MIME-Version: 1.0
-In-Reply-To: <CAOuPNLiaAc16BoMQ=EiqWiyMs14MP4YPOTUf42XbUs2xNYzUUg@mail.gmail.com>
-References: <CAOuPNLjqJVsPOVPCnswtFyXudAJ88_F0QVUq-Z6qWE=UpH0mBA@mail.gmail.com>
- <5af57fea.1c69fb81.885f0.2377.GMRIR@mx.google.com> <CAOuPNLgbT59h=Jm5YiOCbrqFkDokJ8xutQ_OkpsFYzKazKhTHg@mail.gmail.com>
- <20180511123915.GC16141@n2100.armlinux.org.uk> <f6f7b18644136323f4485d6123b330d0dde207a4.camel@pengutronix.de>
- <CAOuPNLgRHCasmsXTVwcy5ohq8TYjbr4MThxm4Q-HFWihJ7ARww@mail.gmail.com>
- <CAOuPNLiFr3qbNVAwF4wj2aAG0UXRVsgRo-8JfaKFCsoL+Ggk9w@mail.gmail.com>
- <1526303498.3494.11.camel@pengutronix.de> <CAOuPNLiZJrDveOHWwvJQ+JLg+j6FOk74oQBKaEq0oqY6w0ko=A@mail.gmail.com>
- <CAOuPNLiaAc16BoMQ=EiqWiyMs14MP4YPOTUf42XbUs2xNYzUUg@mail.gmail.com>
-From: Pintu Kumar <pintu.ping@gmail.com>
-Date: Tue, 22 May 2018 00:21:30 +0530
-Message-ID: <CAOuPNLhx1RcrTeVr7CPfAT6grmiZW1RBZbDioFP+jN5N91O6sw@mail.gmail.com>
-Subject: Re: Delivery Status Notification (Failure)
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: Russell King - ARM Linux <linux@armlinux.org.uk>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org, kernelnewbies@kernelnewbies.org
-Content-Type: text/plain; charset="UTF-8"
+        id S1751125AbeEUS6K (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 14:58:10 -0400
+Received: from foss.arm.com ([217.140.101.70]:55120 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750960AbeEUS6I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 14:58:08 -0400
+Date: Mon, 21 May 2018 13:58:07 -0500
+From: Kim Phillips <kim.phillips@arm.com>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, will.deacon@arm.com,
+        Pawel Moll <pawel.moll@arm.com>, linux-kernel@vger.kernel.org,
+        perf group <linux-perf-users@vger.kernel.org>
+Subject: Re: [PATCHv2] drivers/perf: arm-ccn: don't log to dmesg in
+ event_init
+Message-Id: <20180521135807.3b39d00979b7c416d4f65be2@arm.com>
+In-Reply-To: <20180521171949.31412-1-mark.rutland@arm.com>
+References: <20180521171949.31412-1-mark.rutland@arm.com>
+Organization: Arm
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Lucas,
+[adding LKML, linux-perf-users.  Please do so from now on]
 
-Can you give me some pointers on how to set affinity for entire GPIO Bank.
-Currently I am exploring drivers/gpio/gpio-mxc.c to find out how the
-GPIO banks are set up.
+On Mon, 21 May 2018 18:19:49 +0100
+Mark Rutland <mark.rutland@arm.com> wrote:
 
-I also found that affinity can be set using: desc->irq_data.affinity,
-may be by using cpumask_copy(...).
-But still I am not familiar with this.
+> The ARM CCN PMU driver uses dev_warn() to complain about parameters in
+> the user-provided perf_event_attr. This means that under normal
+> operation (e.g. a single invocation of the perf tool), a number of
+> messages warnings may be logged to dmesg.
+> 
+> Tools may issue multiple syscalls to probe for feature support, and
+> multiple applications (from multiple users) can attempt to open events
+> simultaneously, so this is not very helpful, even if a user happens to
+> have access to dmesg. Worse, this can push important information out of
+> the dmesg ring buffer, and can significantly slow down syscall fuzzers,
+> vastly increasing the time it takes to find critical bugs.
+> 
+> Demote the dev_warn() instances to dev_dbg(), as is the case for all
+> other PMU drivers under drivers/perf/. Users who wish to debug PMU event
+> initialisation can enable dynamic debug to receive these messages.
+> 
+> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+> Cc: Pawel Moll <pawel.moll@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> ---
 
-So, I need your help.
+Care to address my comments to the rationale?:
 
+https://marc.info/?l=linux-arm-kernel&m=152582291919277&w=2
 
-Thank You!
+Thanks,
 
-Regards,
-Pintu
-
-
-
-On Thu, May 17, 2018 at 6:58 PM, Pintu Kumar <pintu.ping@gmail.com> wrote:
-> On Mon, May 14, 2018 at 7:58 PM, Pintu Kumar <pintu.ping@gmail.com> wrote:
->>
->> On Mon, May 14, 2018 at 6:41 PM, Lucas Stach <l.stach@pengutronix.de> wrote:
->> > Am Montag, den 14.05.2018, 17:42 +0530 schrieb Pintu Kumar:
->> >> Hi,
->> >>
->> >> Is there any work around possible to set IRQ affinity for some GPIO
->> >> interrupt ?
->> >> How to avoid CPU0 to receive the current GPIO interrupt ?
->> >> How do we assign GPIO interrupts to any CPU other than CPU0 ?
->> >> Is it possible to isolate CPU0 for a sometime, from my GPIO driver so
->> >> that GPIO interrupt can be served by another CPU ?
->> >>
->> >> Need your inputs to decide whether it is still possible to set
->> >> affinity for GPIO interrupt, or its impossible ?
->> >
->> > This is not possible. The GPIO IRQs are aggregated into one GPC/GIC IRQ
->> > line per GPIO bank, so it is not possible to change affinity of a
->> > single GPIO interrupt to another CPU.
->>
->> OK. Thanks for your confirmation.
->>
->> > Best we could do is change the
->> > affinity of the whole bank,
->>
->
-> Hi,
->
-> I found that the driver is responsible for setting GPIO bank in i.MX7:
-> https://elixir.bootlin.com/linux/v4.2/source/drivers/gpio/gpio-mxc.c
->
-> However I still dont know how to set the cpumask for one of the GPIO Bank.
->
-> From this link, it seems it is possible to set affinity for a GPIO IRQ.
-> https://community.nxp.com/thread/303144
->
-> But when I try it form my GPIO138 (GPIO5_IO10) it did not help.
->
-> So, as you said, I wanted to change affinity for the whole GPIO bank and try it.
-> Please give me some pointers.
->
-> Thanks
->
->
->> OK. How can we do this on the fly from my driver code.
->> If you have any reference please let me know.
->> This is required only for experimental purpose to prove the point to be mgmt.
->> My idea is, from the driver, change the affinity of the whole bank.
->> So, the GPIO interrupt can be delivered on to this specific CPU bank.
->> Once I am done, I will revert back to the old bank.
->> Please give me some hint on how to do this from my kernel module....
->>
->>
->> > but given the limited usefulness of
->> > something like that, nobody bothered to implement such a thing.
->> >
->> > Regards,
->> > Lucas
->> >
->> >>
->> >>
->> >> On Fri, May 11, 2018 at 8:07 PM, Pintu Kumar <pintu.ping@gmail.com>
->> >> wrote:
->> >> > On Fri, May 11, 2018 at 6:34 PM, Lucas Stach <l.stach@pengutronix.d
->> >> > e> wrote:
->> >> > > Am Freitag, den 11.05.2018, 13:39 +0100 schrieb Russell King -
->> >> > > ARM Linux:
->> >> > > > On Fri, May 11, 2018 at 05:07:37PM +0530, Pintu Kumar wrote:
->> >> > > > > Hi,
->> >> > > > >
->> >> > > > > I need one help.
->> >> > > > > I am using i.MX7 Sabre board with kernel version 4.1.15
->> >> > > > >
->> >> > > > > Let's say I am interested in GPIO number: 21
->> >> > > > > I wanted to set CPU affinity for particular GPIO->IRQ number,
->> >> > > > > so I
->> >> > > > > tried the below steps:
->> >> > > > > root@10:~# echo 21 > /sys/class/gpio/export
->> >> > > > > root@10:~# echo "rising" > /sys/class/gpio/gpio21/edge
->> >> > > > > root@10:~# cat /proc/interrupts | grep 21
->> >> > > > >   47: 0 0 gpio-mxc 21 Edge gpiolib
->> >> > > > > root@10:~# cat /sys/class/gpio/gpio21/direction
->> >> > > > > in
->> >> > > > > root@10:~# cat /proc/irq/47/smp_affinity
->> >> > > > > 3
->> >> > > > > root@10:~# echo 2 > /proc/irq/47/smp_affinity
->> >> > > > > -bash: echo: write error: Input/output error
->> >> > > > >
->> >> > > > > But I get input/output error.
->> >> > > > > When I debug further, found that irq_can_set_affinity is
->> >> > > > > returning 0:
->> >> > > > > [    0.000000] genirq: irq_can_set_affinity (0): balance: 1,
->> >> > > > > irq_data.chip: a81b7e48, irq_set_affinity:   (null)
->> >> > > > > [    0.000000] write_irq_affinity: FAIL
->> >> > > > >
->> >> > > > > I also tried first setting /proc/irq/default_smp_affinity to
->> >> > > > > 2 (from 3).
->> >> > > > > This change is working, but the smp_affinity setting for the
->> >> > > > > new IRQ
->> >> > > > > is not working.
->> >> > > > >
->> >> > > > > When I try to set smp_affinity for mmc0, then it works.
->> >> > > > > # cat /proc/interrupts | grep mmc
->> >> > > > > 295:         55          0     GPCV2  22 Edge      mmc0
->> >> > > > > 296:          0          0     GPCV2  23 Edge      mmc1
->> >> > > > > 297:         52          0     GPCV2  24 Edge      mmc2
->> >> > > > >
->> >> > > > > root@10:~# echo 2 > /proc/irq/295/smp_affinity
->> >> > > > > root@10:~#
->> >> > > > >
->> >> > > > >
->> >> > > > > So, I wanted to know what are the conditions for which
->> >> > > > > setting
->> >> > > > > smp_affinity for an IRQ will work ?
->> >> > > > >
->> >> > > > > Is there any way by which I can set CPU affinity to a GPIO ->
->> >> > > > > IRQ ?
->> >> > > > > Whether, irq_set_affinity_hint() will work in this case ?
->> >> > > >
->> >> > > > IRQ affinity is only supported where interrupts are _directly_
->> >> > > > wired to
->> >> > > > the GIC.  It's the GIC which does the interrupt steering to the
->> >> > > > CPU
->> >> > > > cores.
->> >> > > >
->> >> > > > Interrupts on downstream interrupt controllers (such as GPCV2)
->> >> > > > have no
->> >> > > > ability to be directed independently to other CPUs - the only
->> >> > > > possible
->> >> > > > way to change the mapping is to move _all_ interrupts on that
->> >> > > > controller,
->> >> > > > and any downstream chained interrupts at GIC level.
->> >> > > >
->> >> > > > Hence why Interrupt 295 has no irq_set_affinity function: there
->> >> > > > is no way
->> >> > > > for the interrupt controller itself to change the affinity of
->> >> > > > the input
->> >> > > > interrupt.
->> >> > >
->> >> > > The GPCv2 though is a secondary IRQ controller which has a 1:1
->> >> > > mapping
->> >> > > of its input IRQs to the upstream GIC IRQ lines. Affinity can
->> >> > > thus be
->> >> > > handled by forwarding the request to the GIC by
->> >> > > irq_chip_set_affinity_parent().
->> >> > >
->> >> > > As this is handled correctly in the upstream kernel since the
->> >> > > first
->> >> > > commit introducing support for the GPCv2, it seems the issue is
->> >> > > only
->> >> > > present in some downstream kernel.
->> >> > >
->> >> >
->> >> > OK. Thanks so much for your reply.
->> >> >
->> >> > I saw some of the drivers using irq_set_affinity_hint() to force
->> >> > the
->> >> > IRQ affinity to a particular CPU.
->> >> > This is the sample:
->> >> > {
->> >> > cpumask_clear(mask);
->> >> > cpumask_set_cpu(cpu, mask);
->> >> > irq_set_affinity_hint(irq, mask);
->> >> > }
->> >> >
->> >> > Whether this logic will work for a particular GPIO pin ?
->> >> >
->
->
->>
->> >> >
->> >> > > Regards,
->> >> > > Lucas
+Kim
