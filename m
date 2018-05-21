@@ -1,82 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752766AbeEUWb1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 18:31:27 -0400
-Received: from smtp-proxy002.phy.lolipop.jp ([157.7.104.43]:45067 "EHLO
-        smtp-proxy002.phy.lolipop.jp" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750993AbeEUWbY (ORCPT
+        id S1752989AbeEUWf0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 18:35:26 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:43131 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752687AbeEUWfX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 18:31:24 -0400
-Subject: Re: [PATCH 28/33] ALSA: dice use match_string() helper
-To: Yisheng Xie <xieyisheng1@huawei.com>, linux-kernel@vger.kernel.org
-Cc: alsa-devel@alsa-project.org, Clemens Ladisch <clemens@ladisch.de>,
-        Takashi Iwai <tiwai@suse.com>
-References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
- <1526903890-35761-29-git-send-email-xieyisheng1@huawei.com>
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Message-ID: <856cff99-0350-368e-f6c9-d632839e6c33@sakamocchi.jp>
-Date: Tue, 22 May 2018 07:31:23 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <1526903890-35761-29-git-send-email-xieyisheng1@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 21 May 2018 18:35:23 -0400
+X-Google-Smtp-Source: AB8JxZp9W7aMmGZjKCLksdp7DadGF021zhX1jJbnfuzabi11Xc0Mdgzo3dhSyS2Hcwx3MVEr5szFKw==
+From: Evan Green <evgreen@chromium.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dianders@chromium.org
+Cc: Evan Green <evgreen@chromium.org>
+Subject: [PATCH] mmc: Allow non-sleeping GPIO cd
+Date: Mon, 21 May 2018 15:35:03 -0700
+Message-Id: <20180521223503.152131-1-evgreen@chromium.org>
+X-Mailer: git-send-email 2.13.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This change uses the appropriate _cansleep or non-sleeping API for
+reading GPIO card detect state. This allows users with GPIOs that
+never sleep to avoid a warning when certain quirks are present.
 
-On May 21 2018 20:58, Yisheng Xie wrote:
-> match_string() returns the index of an array for a matching string,
-> which can be used intead of open coded variant.
-> 
-> Cc: Clemens Ladisch <clemens@ladisch.de>
-> Cc: Jaroslav Kysela <perex@perex.cz>
-> Cc: Takashi Iwai <tiwai@suse.com>
-> Cc: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-> Cc: alsa-devel@alsa-project.org
-> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
-> ---
->   sound/firewire/dice/dice.c | 8 +-------
->   1 file changed, 1 insertion(+), 7 deletions(-)
+The sdhci controller has an SDHCI_QUIRK_NO_CARD_NO_RESET, which
+indicates that a controller will not reset properly if no card is
+inserted. With this quirk enabled, mmc_get_cd_gpio is called in
+several places with a spinlock held and interrupts disabled.
+gpiod_get_raw_value_cansleep is not happy with this situation,
+and throws out a warning.
 
-I'm welcome to this change, while in the latest subsystem tree for v4.18
-the 'force_to_pcm_support()' local function was removed by my patch[1].
-Your patch can be abandon.
+For boards that a) use controllers that have this quirk, and b) wire
+card detect up to a GPIO that doesn't sleep, this is a spurious warning.
+This change silences that warning, at the cost of pushing this problem
+down to users that have sleeping GPIOs and controllers with this quirk.
 
-> diff --git a/sound/firewire/dice/dice.c b/sound/firewire/dice/dice.c
-> index 96bb01b..0639074 100644
-> --- a/sound/firewire/dice/dice.c
-> +++ b/sound/firewire/dice/dice.c
-> @@ -35,19 +35,13 @@ static bool force_two_pcm_support(struct fw_unit *unit)
->   		"SAFFIRE_PRO_40_1",
->   	};
->   	char model[32];
-> -	unsigned int i;
->   	int err;
->   
->   	err = fw_csr_string(unit->directory, CSR_MODEL, model, sizeof(model));
->   	if (err < 0)
->   		return false;
->   
-> -	for (i = 0; i < ARRAY_SIZE(models); i++) {
-> -		if (strcmp(models[i], model) == 0)
-> -			break;
-> -	}
-> -
-> -	return i < ARRAY_SIZE(models);
-> +	return match_string(models, ARRAY_SIZE(models), model) >= 0;
->   }
->   
->   static int check_dice_category(struct fw_unit *unit)
+Signed-off-by: Evan Green <evgreen@chromium.org>
+---
+This is my initial solution to the warning I was trying to face down
+in my previous RFC [1]. Upsides of this solution is it manages to
+avoid the warning in places where the warning doesn't apply, and is
+low-risk. Other approaches I considered:
 
-[1] ALSA: dice: remove local frag of force_two_pcms
-https://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git/commit/?h=for-next&id=9c367c01d3d5
+1. Changing sdhci_get_cd to reach through mmc and get the GPIO value
+directly (without sleeping) rather than calling mmc_gpio_get_cd,
+which uses the cansleep functions. I didn't love this because a) it
+seemed ugly to be reaching into mmc_host like that and b) I'd have to
+duplicate the logic in mmc_gpio_get_cd, which seemed brittle.
 
+2. Using mmc_gpio_set_cd_isr to record when the card detect pin
+changes, and then in sdhci_do_reset we wouldn't actually need to
+get CD state, just look at the cached value. This seemed risky to me
+since it would affect all sdhci controllers, and I don't know that
+everybody using gpio-cd can do interrupts on their pins.
 
-Thanks
+3. Adding mmc_gpio_get_cd_nosleep(). That one's still doable if
+preferred, but I'd have to give some thought to when sdhci wires
+up to which one.
 
-Takashi Sakamoto
+I'm up for other suggestions. This one most just seemed like the
+best first stab of minimally addressing the warning without rocking
+the boat otherwise.
+
+[1] https://patchwork.kernel.org/patch/10374633/
+---
+ drivers/mmc/core/slot-gpio.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/mmc/core/slot-gpio.c b/drivers/mmc/core/slot-gpio.c
+index 31f7dbb15668..0f497b69f4b8 100644
+--- a/drivers/mmc/core/slot-gpio.c
++++ b/drivers/mmc/core/slot-gpio.c
+@@ -75,16 +75,22 @@ EXPORT_SYMBOL(mmc_gpio_get_ro);
+ 
+ int mmc_gpio_get_cd(struct mmc_host *host)
+ {
++	int can_sleep;
+ 	struct mmc_gpio *ctx = host->slot.handler_priv;
+ 
+ 	if (!ctx || !ctx->cd_gpio)
+ 		return -ENOSYS;
+ 
+-	if (ctx->override_cd_active_level)
+-		return !gpiod_get_raw_value_cansleep(ctx->cd_gpio) ^
+-			!!(host->caps2 & MMC_CAP2_CD_ACTIVE_HIGH);
++	can_sleep = gpiod_cansleep(ctx->cd_gpio);
++	if (ctx->override_cd_active_level) {
++		int value = can_sleep ?
++				gpiod_get_raw_value_cansleep(ctx->cd_gpio) :
++				gpiod_get_raw_value(ctx->cd_gpio);
++		return !value ^ !!(host->caps2 & MMC_CAP2_CD_ACTIVE_HIGH);
++	}
+ 
+-	return gpiod_get_value_cansleep(ctx->cd_gpio);
++	return can_sleep ? gpiod_get_value_cansleep(ctx->cd_gpio) :
++			gpiod_get_value(ctx->cd_gpio);
+ }
+ EXPORT_SYMBOL(mmc_gpio_get_cd);
+ 
+-- 
+2.13.5
