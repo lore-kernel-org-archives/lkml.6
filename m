@@ -1,82 +1,108 @@
-Return-Path: <bot@kernelci.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1526955991; cv=none;
+Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZrYX+UFSMaxXpSmJaD/7jJeqlETzeOxIFNkq6rGFZerSn70QAprXHSvbxQITLGS2Lwm05Nu
+ARC-Seal: i=1; a=rsa-sha256; t=1526937738; cv=none;
         d=google.com; s=arc-20160816;
-        b=iqQZDrgDS8FMlSfXderGcJCG7GPbP9eAs4xGd7A3aeUgTsMlC7/Feuw3Vhj79m2FQo
-         4TBvivYU1PDdY8PVcj76dJCZvfosSk/odRBnOxUMSOUCyJ3Sj4PqNdNjikCQ5uZSOK/i
-         Shk3BdrfISPRbrD9LNVnhBsOeEnjp/8zLHr7ZrVfdLXetCYjHeqOhp6HbyJJ+5TqbWJW
-         YLYuApgLHascekLCqusmb4w0x3TMIMHnkGXjynQqtvnTx5+WT2ycvf7l0mjLJTlp7Xkm
-         SasW9b2g2sBTBuSxzu9xtz8Lws2P1rZruuxwnrKrakUQuua+PgyyM7IBiJEAd5fXaO8B
-         21+g==
+        b=jRTlTYihclQ/BzRkWE/L0IUkVGUjXCYKX01uNjACjKI/ksUNgO3cVnP/GwH51cTodz
+         8Bryhbahq2RvmvtsamHLIe3UCqCB48ZY2aCq0qUQWo2sddBFD8XwblxIBQaU/N4Z9IWS
+         uFKNyTuS9e4eCk47Ib8vxhiFo2Rdi8+Hfq/kx4vLRcml9yc7yudO0oA0yLb7UURpOwp5
+         0cTisslqEMu0E1gE6hOy2wLsUW61NiabXnjaMwHTtmrXZrHblxe7fsbjnQE8oQ1tDs2f
+         TLNMaIFdaF6KlW3tEoLhl8XqSsv+fxEP8jf2sob9sEp/fhXwKrP7b3TaSciZT0ZZDmXa
+         otMw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
-         :mime-version:date:message-id:arc-authentication-results;
-        bh=cTNbwT/sTaX7pZG9KTV8FPwIhBi4emD2khHx0nU8JhA=;
-        b=bWXpjFZg5JTR7/4OOk3yZ5REkbo9cVaxKbquqptY9bysIWfWu8MZwwIlDCgtwsZdm+
-         B+Iu35vzx/ghreJ8QkRwtuDPBNNr5WXTYvGJ0ZFT6cJdQrpd3MWR7hDDA7GaFzPC/dha
-         //YvczGHwZto+MtkTv+6uYheUW6qWoH+Pqb3IEBAyNPVTMJxVfNfbiUIrKx0ypQWmLut
-         XMWR3zSU5weCF2gY1NvMENUmvcgrRLVzWDRrLEzp8u52fzXR7cDK4RlTYtnnSOKyGn9w
-         cgJOdDCVJpGhpSb0yLbxuDBkYtPloDIjVLX+08h30FNFxfRV+zBubszHAUN02ISpBwfZ
-         bqjQ==
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=5Arrt+/wthma1d29c0O9bkRrjfCaVFPGLO1yBjDxleA=;
+        b=v+2xt9ABGlp3m5j1Yxxr3yn5TGD0y9kTl4KcdTQ87yhjSRrNduC3795uqJtJhX69Lu
+         gr/RRGbAN1vORyjR3XNSpva6b1WFePda5L8Dm7YPtTSh4X/dabqLVEJ+QVValVLx0j3V
+         KNhJvpQIIY/FyV28IbWLkmuXU5suq26u0BQMKtwnLx0r6VEJkk8xEN9o2IPgTn3r2I6o
+         sCd5T8G5jN0ahiei60m/pFyXlvK097mhsuLFCXBR6ALDUuK6SMcFwZi8R2PHAHjyzkze
+         ntL6+uHo/d8Ve/Q+5+9RUiHBlaLzClZdxZvv8H7ujZQoDjHyzulPIMD6dH9xCwrouss/
+         NEEg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=bot@kernelci.org
+       dkim=pass header.i=@kernel.org header.s=default header.b=EZ/goNVu;
+       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=bot@kernelci.org
-X-Google-Smtp-Source: AB8JxZqDru0KubWp4n+VBWiH5jwOXUDHqpVEXqyR4K9zyGtS4UaFg5dG38lDRQtt2sSFiwZIeMNHLw==
-Message-ID: <5b037fd6.1c69fb81.7ef92.a485@mx.google.com>
-Date: Mon, 21 May 2018 19:26:30 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Tree: stable-rc
-X-Kernelci-Branch: linux-4.14.y
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v4.14.42-96-gb98076ba9976
+       dkim=pass header.i=@kernel.org header.s=default header.b=EZ/goNVu;
+       spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	Kees Cook <keescook@chromium.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.14 66/95] seccomp: Enable speculation flaw mitigations
+Date: Mon, 21 May 2018 23:11:56 +0200
+Message-Id: <20180521210459.982314713@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210447.219380974@linuxfoundation.org>
 References: <20180521210447.219380974@linuxfoundation.org>
-Subject: Re: [PATCH 4.14 00/95] 4.14.43-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-From: kernelci.org bot <bot@kernelci.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
- shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk,
- lkft-triage@lists.linaro.org, stable@vger.kernel.org
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1601110078992471569?=
-X-GMAIL-MSGID: =?utf-8?q?1601129405145694030?=
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1601109975566640494?=
+X-GMAIL-MSGID: =?utf-8?q?1601110265904339967?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-stable-rc/linux-4.14.y boot: 116 boots: 0 failed, 111 passed with 5 offline=
- (v4.14.42-96-gb98076ba9976)
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.14.y/kernel/v4.14.42-96-gb98076ba9976/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.14.=
-y/kernel/v4.14.42-96-gb98076ba9976/
+------------------
 
-Tree: stable-rc
-Branch: linux-4.14.y
-Git Describe: v4.14.42-96-gb98076ba9976
-Git Commit: b98076ba9976b9ea99d2595ee3af9f94a0c0d22c
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 60 unique boards, 23 SoC families, 15 builds out of 185
+From: Kees Cook <keescook@chromium.org>
 
-Offline Platforms:
+commit 5c3070890d06ff82eecb808d02d2ca39169533ef upstream
 
-arm:
+When speculation flaw mitigations are opt-in (via prctl), using seccomp
+will automatically opt-in to these protections, since using seccomp
+indicates at least some level of sandboxing is desired.
 
-    tegra_defconfig:
-        tegra30-beaver: 1 offline lab
-
-    multi_v7_defconfig:
-        armada-xp-openblocks-ax3-4: 1 offline lab
-        tegra30-beaver: 1 offline lab
-        zynq-zc702: 1 offline lab
-
-    mvebu_v7_defconfig:
-        armada-xp-openblocks-ax3-4: 1 offline lab
-
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
-For more info write to <info@kernelci.org>
+ kernel/seccomp.c |   17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+--- a/kernel/seccomp.c
++++ b/kernel/seccomp.c
+@@ -19,6 +19,8 @@
+ #include <linux/compat.h>
+ #include <linux/coredump.h>
+ #include <linux/kmemleak.h>
++#include <linux/nospec.h>
++#include <linux/prctl.h>
+ #include <linux/sched.h>
+ #include <linux/sched/task_stack.h>
+ #include <linux/seccomp.h>
+@@ -227,6 +229,19 @@ static inline bool seccomp_may_assign_mo
+ 	return true;
+ }
+ 
++/*
++ * If a given speculation mitigation is opt-in (prctl()-controlled),
++ * select it, by disabling speculation (enabling mitigation).
++ */
++static inline void spec_mitigate(struct task_struct *task,
++				 unsigned long which)
++{
++	int state = arch_prctl_spec_ctrl_get(task, which);
++
++	if (state > 0 && (state & PR_SPEC_PRCTL))
++		arch_prctl_spec_ctrl_set(task, which, PR_SPEC_DISABLE);
++}
++
+ static inline void seccomp_assign_mode(struct task_struct *task,
+ 				       unsigned long seccomp_mode)
+ {
+@@ -238,6 +253,8 @@ static inline void seccomp_assign_mode(s
+ 	 * filter) is set.
+ 	 */
+ 	smp_mb__before_atomic();
++	/* Assume seccomp processes want speculation flaw mitigation. */
++	spec_mitigate(task, PR_SPEC_STORE_BYPASS);
+ 	set_tsk_thread_flag(task, TIF_SECCOMP);
+ }
+ 
