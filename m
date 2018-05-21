@@ -1,43 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753406AbeEURlm (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 13:41:42 -0400
-Received: from mail-pl0-f53.google.com ([209.85.160.53]:40839 "EHLO
-        mail-pl0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753621AbeEURkG (ORCPT
+        id S1753458AbeEURlr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 13:41:47 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:44322 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753652AbeEURks (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 13:40:06 -0400
-X-Google-Smtp-Source: AB8JxZp0TUiMEz2ewwgVEMqOIJPJskPhGOxEAh4JqOsUEOwa0GuUtRfl8k893oLV//qTCRJ6xZKY5w==
-Date: Tue, 22 May 2018 02:39:59 +0900
-From: Jungsub Shin <supsup5642@gmail.com>
-To: viro@zeniv.linux.org.uk
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Why is the length of max mount option a page size??
-Message-ID: <20180521173959.GA12779@supsup-VirtualBox>
+        Mon, 21 May 2018 13:40:48 -0400
+X-Google-Smtp-Source: AB8JxZpaxzu4DHKdxLFV55p43+ZNzhUBXkoe5yeb/tE+y7h+bcU+JW9V8gC475qpPC2mso5FZib2vQ==
+Subject: Re: [PATCH v6 2/2] acpi: apei: Do not panic() on PCIe errors reported
+ through GHES
+To: Tyler Baicar <tbaicar@codeaurora.org>, bp@alien8.de
+Cc: alex_gagniuc@dellteam.com, austin_bolen@dell.com, shyam_iyer@dell.com,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
+        Tony Luck <tony.luck@intel.com>, Will Deacon <will.deacon@arm.com>,
+        James Morse <james.morse@arm.com>, Shiju Jose <shiju.jose@huawei.com>,
+        "Jonathan (Zhixiong) Zhang" <zjzhang@codeaurora.org>,
+        Dongjiu Geng <gengdongjiu@huawei.com>, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180521135003.32459-1-mr.nuke.me@gmail.com>
+ <20180521135003.32459-3-mr.nuke.me@gmail.com>
+ <737bea6a-2f0e-e573-754e-2e410c34013e@codeaurora.org>
+From: "Alex G." <mr.nuke.me@gmail.com>
+Message-ID: <a2d37208-a8d1-0995-5915-2eb4a0ab2fa4@gmail.com>
+Date: Mon, 21 May 2018 12:40:41 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <737bea6a-2f0e-e573-754e-2e410c34013e@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, now i'm interested in mount lenght of max mount option.
-I anaylsis ksys_mount() function in /fs/namespace.c. and find out 
-the length of max mount option is a page size (4096 bytes).
 
-I know that almost mount option short and page size is enough to
-contain almost mount options. but because of options for 
-unionfs(overlay, aufs), lenght of mount option could be exceed it
-and cut.
 
-I suffer this problem with aufs. aufs's branch option is cut and 
-fail to aufs mount. I know that aufs is not offical fs in linux, 
-but overlay fs now support multi layer mount option and could be 
-suffer the same problem.
+On 05/21/2018 09:27 AM, Tyler Baicar wrote:
+> On 5/21/2018 9:49 AM, Alexandru Gagniuc wrote:
+(snip)
+> Hello Alex,
+> 
+> There is a compile warning if CONFIG_HAVE_ACPI_APEI_NMI is not selected.
+> 
+>   CC      drivers/acpi/apei/ghes.o
+> drivers/acpi/apei/ghes.c:483:12: warning: ‘ghes_severity’ defined but
+> not used [-Wunused-function]
+>  static int ghes_severity(struct ghes *ghes)
+>             ^~~~~~~~~~~~~
 
-I think the best is dynamic allocate mount option's kernel memory. 
-but I'm only have shallow knowlege of kernel, I can't guess it.
-And I think If the length of mount option cannot exceed a page size, 
-kernel must leave warning messsage about lenght and return err.
-copy_mount_options() function seems to done this.
+Thanks for finding that. It's an easy fix. Staged for v7.
+
+> Thanks,
+> Tyler
+> 
