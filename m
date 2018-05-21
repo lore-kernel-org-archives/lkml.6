@@ -1,145 +1,172 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751020AbeEUFFA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 01:05:00 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:44975 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750859AbeEUFE4 (ORCPT
+        id S1751014AbeEUFOb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 01:14:31 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:43544 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750867AbeEUFO2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 01:04:56 -0400
-X-Google-Smtp-Source: AB8JxZq6fCb8/TaTRgOUi4jHlPOajOD7cw1XBdmQM9RnA4fKxr8H75FR6MiHbTFciVK0MbeXS9kISA==
-Date: Mon, 21 May 2018 10:34:53 +0530
+        Mon, 21 May 2018 01:14:28 -0400
+X-Google-Smtp-Source: AB8JxZqYHvOXlrmqXq/GQb2wKTF1XmB4jAf3gmh2b6Z5AARHuU1pLcgllJZi7p6p9gOMOTaXxGPbhg==
+Date: Mon, 21 May 2018 10:44:24 +0530
 From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Ilia Lin <ilialin@codeaurora.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-        mark.rutland@arm.com, nm@ti.com, lgirdwood@gmail.com,
-        broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
-        catalin.marinas@arm.com, will.deacon@arm.com, rjw@rjwysocki.net,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
-        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-        celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: Re: [PATCH] cpufreq: Add Kryo CPU scaling driver
-Message-ID: <20180521050453.vls3fe6fyake4dhk@vireshk-i7>
-References: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
- <1526729701-8589-1-git-send-email-ilialin@codeaurora.org>
+To: "Joel Fernandes (Google.)" <joelaf@google.com>
+Cc: linux-kernel@vger.kernel.org,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Luca Abeni <luca.abeni@santannapisa.it>, Todd Kjos <tkjos@google.com>,
+        claudio@evidence.eu.com, kernel-team@android.com,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2] schedutil: Allow cpufreq requests to be made even
+ when kthread kicked
+Message-ID: <20180521051424.mljwmisvrvi6yyc4@vireshk-i7>
+References: <20180518185501.173552-1-joel@joelfernandes.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1526729701-8589-1-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <20180518185501.173552-1-joel@joelfernandes.org>
 User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-More comments after Russell's reply.
+On 18-05-18, 11:55, Joel Fernandes (Google.) wrote:
+> From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+> 
+> Currently there is a chance of a schedutil cpufreq update request to be
+> dropped if there is a pending update request. This pending request can
+> be delayed if there is a scheduling delay of the irq_work and the wake
+> up of the schedutil governor kthread.
+> 
+> A very bad scenario is when a schedutil request was already just made,
+> such as to reduce the CPU frequency, then a newer request to increase
+> CPU frequency (even sched deadline urgent frequency increase requests)
+> can be dropped, even though the rate limits suggest that its Ok to
+> process a request. This is because of the way the work_in_progress flag
+> is used.
+> 
+> This patch improves the situation by allowing new requests to happen
+> even though the old one is still being processed. Note that in this
+> approach, if an irq_work was already issued, we just update next_freq
+> and don't bother to queue another request so there's no extra work being
+> done to make this happen.
 
-On 19-05-18, 14:35, Ilia Lin wrote:
-> +static int __init qcom_cpufreq_kryo_driver_init(void)
-> +{
-> +	struct device *cpu_dev_silver, *cpu_dev_gold;
-> +	struct opp_table *opp_silver, *opp_gold;
-> +	enum _msm8996_version msm8996_version;
-> +	struct nvmem_cell *speedbin_nvmem;
-> +	struct platform_device *pdev;
-> +	struct device_node *np;
-> +	u8 *speedbin;
-> +	u32 versions;
-> +	size_t len;
-> +	int ret;
-> +
-> +	cpu_dev_silver = get_cpu_device(SILVER_LEAD);
-> +	if (IS_ERR_OR_NULL(cpu_dev_silver))
+Now that this isn't an RFC anymore, you shouldn't have added below
+paragraph here. It could go to the comments section though.
 
-get_cpu_device() returns only NULL on error.
+> I had brought up this issue at the OSPM conference and Claudio had a
+> discussion RFC with an alternate approach [1]. I prefer the approach as
+> done in the patch below since it doesn't need any new flags and doesn't
+> cause any other extra overhead.
+> 
+> [1] https://patchwork.kernel.org/patch/10384261/
+> 
+> LGTMed-by: Viresh Kumar <viresh.kumar@linaro.org>
+> LGTMed-by: Juri Lelli <juri.lelli@redhat.com>
 
-> +		return PTR_ERR(cpu_dev_silver);
-> +
-> +	cpu_dev_gold = get_cpu_device(SILVER_LEAD);
-> +	if (IS_ERR_OR_NULL(cpu_dev_gold))
-> +		return PTR_ERR(cpu_dev_gold);
-> +
-> +	msm8996_version = qcom_cpufreq_kryo_get_msm_id();
-> +	if (NUM_OF_MSM8996_VERSIONS == msm8996_version) {
-> +		dev_err(cpu_dev_silver, "Not Snapdragon 820/821!");
-> +		return -ENODEV;
-> +	}
-> +
-> +	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev_silver);
-> +	if (IS_ERR_OR_NULL(np))
+Looks like a Tag you just invented ? :)
 
-same here.
+> CC: Viresh Kumar <viresh.kumar@linaro.org>
+> CC: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> CC: Peter Zijlstra <peterz@infradead.org>
+> CC: Ingo Molnar <mingo@redhat.com>
+> CC: Patrick Bellasi <patrick.bellasi@arm.com>
+> CC: Juri Lelli <juri.lelli@redhat.com>
+> Cc: Luca Abeni <luca.abeni@santannapisa.it>
+> CC: Joel Fernandes <joelaf@google.com>
+> CC: Todd Kjos <tkjos@google.com>
+> CC: claudio@evidence.eu.com
+> CC: kernel-team@android.com
+> CC: linux-pm@vger.kernel.org
+> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> ---
+> v1 -> v2: Minor style related changes.
+> 
+>  kernel/sched/cpufreq_schedutil.c | 34 ++++++++++++++++++++++++--------
+>  1 file changed, 26 insertions(+), 8 deletions(-)
+> 
+> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+> index e13df951aca7..5c482ec38610 100644
+> --- a/kernel/sched/cpufreq_schedutil.c
+> +++ b/kernel/sched/cpufreq_schedutil.c
+> @@ -92,9 +92,6 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
+>  	    !cpufreq_can_do_remote_dvfs(sg_policy->policy))
+>  		return false;
+>  
+> -	if (sg_policy->work_in_progress)
+> -		return false;
+> -
+>  	if (unlikely(sg_policy->need_freq_update)) {
+>  		sg_policy->need_freq_update = false;
+>  		/*
+> @@ -128,7 +125,7 @@ static void sugov_update_commit(struct sugov_policy *sg_policy, u64 time,
+>  
+>  		policy->cur = next_freq;
+>  		trace_cpu_frequency(next_freq, smp_processor_id());
+> -	} else {
+> +	} else if (!sg_policy->work_in_progress) {
+>  		sg_policy->work_in_progress = true;
+>  		irq_work_queue(&sg_policy->irq_work);
+>  	}
+> @@ -291,6 +288,13 @@ static void sugov_update_single(struct update_util_data *hook, u64 time,
+>  
+>  	ignore_dl_rate_limit(sg_cpu, sg_policy);
+>  
+> +	/*
+> +	 * For slow-switch systems, single policy requests can't run at the
+> +	 * moment if update is in progress, unless we acquire update_lock.
+> +	 */
+> +	if (sg_policy->work_in_progress)
+> +		return;
+> +
 
-> +		return PTR_ERR(np);
-> +
-> +	if (!of_device_is_compatible(np, "operating-points-v2-kryo-cpu")) {
-> +		ret = -ENOENT;
-> +		goto free_np;
-> +	}
-> +
-> +	speedbin_nvmem = of_nvmem_cell_get(np, NULL);
-> +	if (IS_ERR(speedbin_nvmem)) {
-> +		ret = PTR_ERR(speedbin_nvmem);
-> +		dev_err(cpu_dev_silver, "Could not get nvmem cell: %d\n", ret);
-> +		goto free_np;
-> +	}
-> +
-> +	speedbin = nvmem_cell_read(speedbin_nvmem, &len);
-> +	nvmem_cell_put(speedbin_nvmem);
-> +
-> +	switch (msm8996_version) {
-> +	case MSM8996_V3:
-> +		versions = 1 << (unsigned int)(*speedbin);
-> +		break;
-> +	case MSM8996_SG:
-> +		versions = 1 << ((unsigned int)(*speedbin) + 4);
-> +		break;
-> +	default:
-> +		BUG();
-> +		break;
-> +	}
-> +
-> +	opp_silver = dev_pm_opp_set_supported_hw(cpu_dev_silver,&versions,1);
-> +	if (IS_ERR(opp_silver)) {
-> +		dev_err(cpu_dev_silver, "Failed to set supported hardware\n");
-> +		ret = PTR_ERR(opp_silver);
-> +		goto free_np;
-> +	}
-> +
-> +	opp_gold = dev_pm_opp_set_supported_hw(cpu_dev_gold,&versions,1);
-> +	if (IS_ERR(opp_gold)) {
-> +		dev_err(cpu_dev_gold, "Failed to set supported hardware\n");
-> +		ret = PTR_ERR(opp_gold);
-> +		goto free_opp_silver;
-> +	}
-> +
-> +	pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
+I would still want this to go away :)
 
-and this only returns ERR_PTR() on error.
+@Rafael, will it be fine to get locking in place for unshared policy
+platforms ?
 
-> +	if (!IS_ERR_OR_NULL(pdev))
-> +		return 0;
+>  	if (!sugov_should_update_freq(sg_policy, time))
+>  		return;
+>  
+> @@ -382,13 +386,27 @@ sugov_update_shared(struct update_util_data *hook, u64 time, unsigned int flags)
+>  static void sugov_work(struct kthread_work *work)
+>  {
+>  	struct sugov_policy *sg_policy = container_of(work, struct sugov_policy, work);
+> +	unsigned int freq;
+> +	unsigned long flags;
 > +
-> +	ret = PTR_ERR(pdev);
-> +	dev_err(cpu_dev_silver, "Failed to register platform device\n");
-> +	dev_pm_opp_put_supported_hw(opp_gold);
-> +
-> +free_opp_silver:
-> +	dev_pm_opp_put_supported_hw(opp_silver);
-> +
-> +free_np:
-> +	of_node_put(np);
-> +
-> +	return ret;
-> +}
-> +late_initcall(qcom_cpufreq_kryo_driver_init);
-> +
-> +MODULE_DESCRIPTION("Qualcomm Technologies, Inc. Kryo CPUfreq driver");
-> +MODULE_LICENSE("GPL v2");
-> -- 
-> 1.9.1
+> +	/*
+> +	 * Hold sg_policy->update_lock shortly to handle the case where:
+> +	 * incase sg_policy->next_freq is read here, and then updated by
+> +	 * sugov_update_shared just before work_in_progress is set to false
+> +	 * here, we may miss queueing the new update.
+> +	 *
+> +	 * Note: If a work was queued after the update_lock is released,
+> +	 * sugov_work will just be called again by kthread_work code; and the
+> +	 * request will be proceed before the sugov thread sleeps.
+> +	 */
+> +	raw_spin_lock_irqsave(&sg_policy->update_lock, flags);
+> +	freq = sg_policy->next_freq;
+> +	sg_policy->work_in_progress = false;
+> +	raw_spin_unlock_irqrestore(&sg_policy->update_lock, flags);
+>  
+>  	mutex_lock(&sg_policy->work_lock);
+> -	__cpufreq_driver_target(sg_policy->policy, sg_policy->next_freq,
+> -				CPUFREQ_RELATION_L);
+> +	__cpufreq_driver_target(sg_policy->policy, freq, CPUFREQ_RELATION_L);
+>  	mutex_unlock(&sg_policy->work_lock);
+> -
+> -	sg_policy->work_in_progress = false;
+>  }
+>  
+>  static void sugov_irq_work(struct irq_work *irq_work)
+
+Fix the commit log and you can add my
+
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
 -- 
 viresh
