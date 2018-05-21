@@ -1,341 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751185AbeEUUeb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 16:34:31 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:46468 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751140AbeEUUe1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 16:34:27 -0400
-X-Google-Smtp-Source: AB8JxZrY023HDIzUDWRChZnhU9xjgsHf1sFLhJ2di0HV0tldZqNpl1a9gWIPTM+N6SR7BYtXr5iOfTY1eGVEGG8IDDE=
-MIME-Version: 1.0
-In-Reply-To: <20180521175707.6653-1-labbott@redhat.com>
-References: <20180521175707.6653-1-labbott@redhat.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 21 May 2018 23:34:26 +0300
-Message-ID: <CAHp75VcQNS694ZD1iQpMSNruNU=vT_p+SXcepC_noRW8TKUzcA@mail.gmail.com>
-Subject: Re: [PATCHv9] gpio: Remove VLA from gpiolib
-To: Laura Abbott <labbott@redhat.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-hardening@lists.openwall.com,
-        Phil Reid <preid@electromag.com.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1751245AbeEUUfR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 16:35:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36043 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751096AbeEUUfM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 16:35:12 -0400
+From: Takashi Iwai <tiwai@suse.de>
+To: Marcel Holtmann <marcel@holtmann.org>
+Cc: Johan Hedberg <johan.hedberg@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>, linux-bluetooth@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] Bluetooth: Apply QCA Rome patches for some ATH3012 models
+Date: Mon, 21 May 2018 22:34:52 +0200
+Message-Id: <20180521203452.9705-1-tiwai@suse.de>
+X-Mailer: git-send-email 2.16.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 8:57 PM, Laura Abbott <labbott@redhat.com> wrote:
-> The new challenge is to remove VLAs from the kernel
-> (see https://lkml.org/lkml/2018/3/7/621) to eventually
-> turn on -Wvla.
->
-> Using a kmalloc array is the easy way to fix this but kmalloc is still
-> more expensive than stack allocation. Introduce a fast path with a
-> fixed size stack array to cover most chip with gpios below some fixed
-> amount. The slow path dynamically allocates an array to cover those
-> chips with a large number of gpios.
->
+In commit f44cb4b19ed4 ("Bluetooth: btusb: Fix quirk for Atheros
+1525/QCA6174") we tried to address the non-working Atheros BT devices
+by changing the quirk from BTUSB_ATH3012 to BTUSB_QCA_ROME.  This made
+such devices working while it turned out to break other existing chips
+with the very same USB ID, hence it was reverted afterwards.
 
-LGTM
+This is another attempt to tackle the issue.  The essential point to
+use BTUSB_QCA_ROME is to apply the btusb_setup_qca() and do RAM-
+patching.  And the previous attempt failed because btusb_setup_qca()
+returns -ENODEV if the ROM version doesn't match with the expected
+ones.  For some devices that have already the "correct" ROM versions,
+we may just skip the setup procedure and continue the rest.
 
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+So, the first fix we'll need is to add a check of the ROM version in
+the function to skip the setup if the ROM version looks already sane,
+so that it can be applied for all ath devices.
 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Phil Reid <preid@electromag.com.au>
-> Reviewed-and-tested-by: Lukas Wunner <lukas@wunner.de>
-> Signed-off-by: Lukas Wunner <lukas@wunner.de>
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
-> ---
-> v9: switch to bitmap_zero
-> ---
->  drivers/gpio/Kconfig          | 12 ++++++
->  drivers/gpio/gpiolib.c        | 76 +++++++++++++++++++++++++++--------
->  drivers/gpio/gpiolib.h        |  2 +-
->  include/linux/gpio/consumer.h | 10 +++--
->  4 files changed, 78 insertions(+), 22 deletions(-)
->
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index b960f6f35abd..71c0ab46f216 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -22,6 +22,18 @@ menuconfig GPIOLIB
->
->  if GPIOLIB
->
-> +config GPIOLIB_FASTPATH_LIMIT
-> +       int "Maximum number of GPIOs for fast path"
-> +       range 32 512
-> +       default 512
-> +       help
-> +          This adjusts the point at which certain APIs will switch from
-> +          using a stack allocated buffer to a dynamically allocated buffer.
-> +
-> +          You shouldn't need to change this unless you really need to
-> +          optimize either stack space or performance. Change this carefully
-> +          since setting an incorrect value could cause stack corruption.
-> +
->  config OF_GPIO
->         def_bool y
->         depends on OF
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index d8ccb500872f..982f19d62496 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -61,6 +61,11 @@ static struct bus_type gpio_bus_type = {
->         .name = "gpio",
->  };
->
-> +/*
-> + * Number of GPIOs to use for the fast path in set array
-> + */
-> +#define FASTPATH_NGPIO CONFIG_GPIOLIB_FASTPATH_LIMIT
-> +
->  /* gpio_lock prevents conflicts during gpio_desc[] table updates.
->   * While any GPIO is requested, its gpio_chip is not removable;
->   * each GPIO's "requested" flag serves as a lock and refcount.
-> @@ -450,12 +455,11 @@ static long linehandle_ioctl(struct file *filep, unsigned int cmd,
->                         vals[i] = !!ghd.values[i];
->
->                 /* Reuse the array setting function */
-> -               gpiod_set_array_value_complex(false,
-> +               return gpiod_set_array_value_complex(false,
->                                               true,
->                                               lh->numdescs,
->                                               lh->descs,
->                                               vals);
-> -               return 0;
->         }
->         return -EINVAL;
->  }
-> @@ -1244,6 +1248,10 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
->                 goto err_free_descs;
->         }
->
-> +       if (chip->ngpio > FASTPATH_NGPIO)
-> +               chip_warn(chip, "line cnt %u is greater than fast path cnt %u\n",
-> +               chip->ngpio, FASTPATH_NGPIO);
-> +
->         gdev->label = kstrdup_const(chip->label ?: "unknown", GFP_KERNEL);
->         if (!gdev->label) {
->                 status = -ENOMEM;
-> @@ -2719,16 +2727,28 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
->
->         while (i < array_size) {
->                 struct gpio_chip *chip = desc_array[i]->gdev->chip;
-> -               unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
-> -               unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
-> +               unsigned long fastpath[2 * BITS_TO_LONGS(FASTPATH_NGPIO)];
-> +               unsigned long *mask, *bits;
->                 int first, j, ret;
->
-> +               if (likely(chip->ngpio <= FASTPATH_NGPIO)) {
-> +                       mask = fastpath;
-> +               } else {
-> +                       mask = kmalloc_array(2 * BITS_TO_LONGS(chip->ngpio),
-> +                                          sizeof(*mask),
-> +                                          can_sleep ? GFP_KERNEL : GFP_ATOMIC);
-> +                       if (!mask)
-> +                               return -ENOMEM;
-> +               }
-> +
-> +               bits = mask + BITS_TO_LONGS(chip->ngpio);
-> +               bitmap_zero(mask, chip->ngpio);
-> +
->                 if (!can_sleep)
->                         WARN_ON(chip->can_sleep);
->
->                 /* collect all inputs belonging to the same chip */
->                 first = i;
-> -               memset(mask, 0, sizeof(mask));
->                 do {
->                         const struct gpio_desc *desc = desc_array[i];
->                         int hwgpio = gpio_chip_hwgpio(desc);
-> @@ -2739,8 +2759,11 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
->                          (desc_array[i]->gdev->chip == chip));
->
->                 ret = gpio_chip_get_multiple(chip, mask, bits);
-> -               if (ret)
-> +               if (ret) {
-> +                       if (mask != fastpath)
-> +                               kfree(mask);
->                         return ret;
-> +               }
->
->                 for (j = first; j < i; j++) {
->                         const struct gpio_desc *desc = desc_array[j];
-> @@ -2752,6 +2775,9 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
->                         value_array[j] = value;
->                         trace_gpio_value(desc_to_gpio(desc), 1, value);
->                 }
-> +
-> +               if (mask != fastpath)
-> +                       kfree(mask);
->         }
->         return 0;
->  }
-> @@ -2935,7 +2961,7 @@ static void gpio_chip_set_multiple(struct gpio_chip *chip,
->         }
->  }
->
-> -void gpiod_set_array_value_complex(bool raw, bool can_sleep,
-> +int gpiod_set_array_value_complex(bool raw, bool can_sleep,
->                                    unsigned int array_size,
->                                    struct gpio_desc **desc_array,
->                                    int *value_array)
-> @@ -2944,14 +2970,26 @@ void gpiod_set_array_value_complex(bool raw, bool can_sleep,
->
->         while (i < array_size) {
->                 struct gpio_chip *chip = desc_array[i]->gdev->chip;
-> -               unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
-> -               unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
-> +               unsigned long fastpath[2 * BITS_TO_LONGS(FASTPATH_NGPIO)];
-> +               unsigned long *mask, *bits;
->                 int count = 0;
->
-> +               if (likely(chip->ngpio <= FASTPATH_NGPIO)) {
-> +                       mask = fastpath;
-> +               } else {
-> +                       mask = kmalloc_array(2 * BITS_TO_LONGS(chip->ngpio),
-> +                                          sizeof(*mask),
-> +                                          can_sleep ? GFP_KERNEL : GFP_ATOMIC);
-> +                       if (!mask)
-> +                               return -ENOMEM;
-> +               }
-> +
-> +               bits = mask + BITS_TO_LONGS(chip->ngpio);
-> +               bitmap_zero(mask, chip->ngpio);
-> +
->                 if (!can_sleep)
->                         WARN_ON(chip->can_sleep);
->
-> -               memset(mask, 0, sizeof(mask));
->                 do {
->                         struct gpio_desc *desc = desc_array[i];
->                         int hwgpio = gpio_chip_hwgpio(desc);
-> @@ -2982,7 +3020,11 @@ void gpiod_set_array_value_complex(bool raw, bool can_sleep,
->                 /* push collected bits to outputs */
->                 if (count != 0)
->                         gpio_chip_set_multiple(chip, mask, bits);
-> +
-> +               if (mask != fastpath)
-> +                       kfree(mask);
->         }
-> +       return 0;
->  }
->
->  /**
-> @@ -3057,13 +3099,13 @@ EXPORT_SYMBOL_GPL(gpiod_set_value);
->   * This function should be called from contexts where we cannot sleep, and will
->   * complain if the GPIO chip functions potentially sleep.
->   */
-> -void gpiod_set_raw_array_value(unsigned int array_size,
-> +int gpiod_set_raw_array_value(unsigned int array_size,
->                          struct gpio_desc **desc_array, int *value_array)
->  {
->         if (!desc_array)
-> -               return;
-> -       gpiod_set_array_value_complex(true, false, array_size, desc_array,
-> -                                     value_array);
-> +               return -EINVAL;
-> +       return gpiod_set_array_value_complex(true, false, array_size,
-> +                                       desc_array, value_array);
->  }
->  EXPORT_SYMBOL_GPL(gpiod_set_raw_array_value);
->
-> @@ -3383,14 +3425,14 @@ EXPORT_SYMBOL_GPL(gpiod_set_value_cansleep);
->   *
->   * This function is to be called from contexts that can sleep.
->   */
-> -void gpiod_set_raw_array_value_cansleep(unsigned int array_size,
-> +int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
->                                         struct gpio_desc **desc_array,
->                                         int *value_array)
->  {
->         might_sleep_if(extra_checks);
->         if (!desc_array)
-> -               return;
-> -       gpiod_set_array_value_complex(true, true, array_size, desc_array,
-> +               return -EINVAL;
-> +       return gpiod_set_array_value_complex(true, true, array_size, desc_array,
->                                       value_array);
->  }
->  EXPORT_SYMBOL_GPL(gpiod_set_raw_array_value_cansleep);
-> diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-> index ad456b6f9d8b..1a8e20363861 100644
-> --- a/drivers/gpio/gpiolib.h
-> +++ b/drivers/gpio/gpiolib.h
-> @@ -188,7 +188,7 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
->                                   unsigned int array_size,
->                                   struct gpio_desc **desc_array,
->                                   int *value_array);
-> -void gpiod_set_array_value_complex(bool raw, bool can_sleep,
-> +int gpiod_set_array_value_complex(bool raw, bool can_sleep,
->                                    unsigned int array_size,
->                                    struct gpio_desc **desc_array,
->                                    int *value_array);
-> diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-> index dbd065963296..243112c7fa7d 100644
-> --- a/include/linux/gpio/consumer.h
-> +++ b/include/linux/gpio/consumer.h
-> @@ -116,7 +116,7 @@ int gpiod_get_raw_array_value(unsigned int array_size,
->                               struct gpio_desc **desc_array,
->                               int *value_array);
->  void gpiod_set_raw_value(struct gpio_desc *desc, int value);
-> -void gpiod_set_raw_array_value(unsigned int array_size,
-> +int gpiod_set_raw_array_value(unsigned int array_size,
->                                struct gpio_desc **desc_array,
->                                int *value_array);
->
-> @@ -134,7 +134,7 @@ int gpiod_get_raw_array_value_cansleep(unsigned int array_size,
->                                        struct gpio_desc **desc_array,
->                                        int *value_array);
->  void gpiod_set_raw_value_cansleep(struct gpio_desc *desc, int value);
-> -void gpiod_set_raw_array_value_cansleep(unsigned int array_size,
-> +int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
->                                         struct gpio_desc **desc_array,
->                                         int *value_array);
->
-> @@ -369,12 +369,13 @@ static inline void gpiod_set_raw_value(struct gpio_desc *desc, int value)
->         /* GPIO can never have been requested */
->         WARN_ON(1);
->  }
-> -static inline void gpiod_set_raw_array_value(unsigned int array_size,
-> +static inline int gpiod_set_raw_array_value(unsigned int array_size,
->                                              struct gpio_desc **desc_array,
->                                              int *value_array)
->  {
->         /* GPIO can never have been requested */
->         WARN_ON(1);
-> +       return 0;
->  }
->
->  static inline int gpiod_get_value_cansleep(const struct gpio_desc *desc)
-> @@ -423,12 +424,13 @@ static inline void gpiod_set_raw_value_cansleep(struct gpio_desc *desc,
->         /* GPIO can never have been requested */
->         WARN_ON(1);
->  }
-> -static inline void gpiod_set_raw_array_value_cansleep(unsigned int array_size,
-> +static inline int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
->                                                 struct gpio_desc **desc_array,
->                                                 int *value_array)
->  {
->         /* GPIO can never have been requested */
->         WARN_ON(1);
-> +       return 0;
->  }
->
->  static inline int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
-> --
-> 2.17.0
->
+However, the world is a bit more complex than that simple solution.
+Since BTUSB_ATH3012 quirk checks the bcdDevice and bails out when it's
+0x0001 at the beginning of probing, so the device probe always aborts
+here.
 
+In this patch, we add another check of ROM version again, and if the
+device needs patching, the probe continues.  For that, a slight
+refactoring of btusb_qca_send_vendor_req() was required so that the
+probe function can pass usb_device pointer directly before allocating
+hci_dev stuff.
 
+Fixes: commit f44cb4b19ed4 ("Bluetooth: btusb: Fix quirk for Atheros 1525/QCA6174")
+Bugzilla: http://bugzilla.opensuse.org/show_bug.cgi?id=1082504
+Tested-by: Ivan Levshin <ivan.levshin@microfocus.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 
+---
+ drivers/bluetooth/btusb.c | 32 +++++++++++++++++++++++++-------
+ 1 file changed, 25 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index b937cc1e2c07..9a91f44ee33b 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -2497,11 +2497,9 @@ static const struct qca_device_info qca_devices_table[] = {
+ 	{ 0x00000302, 28, 4, 18 }, /* Rome 3.2 */
+ };
+ 
+-static int btusb_qca_send_vendor_req(struct hci_dev *hdev, u8 request,
++static int btusb_qca_send_vendor_req(struct usb_device *udev, u8 request,
+ 				     void *data, u16 size)
+ {
+-	struct btusb_data *btdata = hci_get_drvdata(hdev);
+-	struct usb_device *udev = btdata->udev;
+ 	int pipe, err;
+ 	u8 *buf;
+ 
+@@ -2516,7 +2514,7 @@ static int btusb_qca_send_vendor_req(struct hci_dev *hdev, u8 request,
+ 	err = usb_control_msg(udev, pipe, request, USB_TYPE_VENDOR | USB_DIR_IN,
+ 			      0, 0, buf, size, USB_CTRL_SET_TIMEOUT);
+ 	if (err < 0) {
+-		bt_dev_err(hdev, "Failed to access otp area (%d)", err);
++		dev_err(&udev->dev, "Failed to access otp area (%d)", err);
+ 		goto done;
+ 	}
+ 
+@@ -2666,20 +2664,38 @@ static int btusb_setup_qca_load_nvm(struct hci_dev *hdev,
+ 	return err;
+ }
+ 
++/* identify the ROM version and check whether patches are needed */
++static bool btusb_qca_need_patch(struct usb_device *udev)
++{
++	struct qca_version ver;
++
++	if (btusb_qca_send_vendor_req(udev, QCA_GET_TARGET_VERSION, &ver,
++				      sizeof(ver)) < 0)
++		return false;
++	/* only low ROM versions need patches */
++	return !(le32_to_cpu(ver.rom_version) & ~0xffffU);
++}
++
+ static int btusb_setup_qca(struct hci_dev *hdev)
+ {
++	struct btusb_data *btdata = hci_get_drvdata(hdev);
++	struct usb_device *udev = btdata->udev;
+ 	const struct qca_device_info *info = NULL;
+ 	struct qca_version ver;
+ 	u32 ver_rom;
+ 	u8 status;
+ 	int i, err;
+ 
+-	err = btusb_qca_send_vendor_req(hdev, QCA_GET_TARGET_VERSION, &ver,
++	err = btusb_qca_send_vendor_req(udev, QCA_GET_TARGET_VERSION, &ver,
+ 					sizeof(ver));
+ 	if (err < 0)
+ 		return err;
+ 
+ 	ver_rom = le32_to_cpu(ver.rom_version);
++	/* Don't care about high ROM versions */
++	if (ver_rom & ~0xffffU)
++		return 0;
++
+ 	for (i = 0; i < ARRAY_SIZE(qca_devices_table); i++) {
+ 		if (ver_rom == qca_devices_table[i].rom_version)
+ 			info = &qca_devices_table[i];
+@@ -2689,7 +2705,7 @@ static int btusb_setup_qca(struct hci_dev *hdev)
+ 		return -ENODEV;
+ 	}
+ 
+-	err = btusb_qca_send_vendor_req(hdev, QCA_CHECK_STATUS, &status,
++	err = btusb_qca_send_vendor_req(udev, QCA_CHECK_STATUS, &status,
+ 					sizeof(status));
+ 	if (err < 0)
+ 		return err;
+@@ -2903,7 +2919,8 @@ static int btusb_probe(struct usb_interface *intf,
+ 		/* Old firmware would otherwise let ath3k driver load
+ 		 * patch and sysconfig files
+ 		 */
+-		if (le16_to_cpu(udev->descriptor.bcdDevice) <= 0x0001)
++		if (le16_to_cpu(udev->descriptor.bcdDevice) <= 0x0001 &&
++		    !btusb_qca_need_patch(udev))
+ 			return -ENODEV;
+ 	}
+ 
+@@ -3065,6 +3082,7 @@ static int btusb_probe(struct usb_interface *intf,
+ 	}
+ 
+ 	if (id->driver_info & BTUSB_ATH3012) {
++		data->setup_on_usb = btusb_setup_qca;
+ 		hdev->set_bdaddr = btusb_set_bdaddr_ath3012;
+ 		set_bit(HCI_QUIRK_SIMULTANEOUS_DISCOVERY, &hdev->quirks);
+ 		set_bit(HCI_QUIRK_STRICT_DUPLICATE_FILTER, &hdev->quirks);
 -- 
-With Best Regards,
-Andy Shevchenko
+2.16.3
