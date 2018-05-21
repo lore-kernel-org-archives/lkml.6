@@ -1,89 +1,166 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752820AbeEUOt6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 10:49:58 -0400
-Received: from mga06.intel.com ([134.134.136.31]:43914 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751133AbeEUOtw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 10:49:52 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,426,1520924400";
-   d="scan'208";a="48503615"
-Date: Mon, 21 May 2018 17:49:48 +0300
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To: Randy Li <ayaka@soulik.info>
-Cc: dri-devel@lists.freedesktop.org, airlied@linux.ie,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        nicolas.dufresne@collabora.com, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/2] drm/fourcc: add a 10bits fully packed variant of NV12
-Message-ID: <20180521144948.GF23723@intel.com>
-References: <20180520171705.29690-1-ayaka@soulik.info>
- <20180520171705.29690-2-ayaka@soulik.info>
+        id S1752903AbeEUOu3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 10:50:29 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:48392 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751133AbeEUOu2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 10:50:28 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: niklas.soderlund@ragnatech.se, horms@verge.net.au, geert@glider.be,
+        magnus.damm@gmail.com, robh+dt@kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] arm64: dts: renesas: draak: Describe CVBS input
+Date: Mon, 21 May 2018 17:50:50 +0300
+Message-ID: <1958464.yiJe0NDHa3@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <1526913942-15426-3-git-send-email-jacopo+renesas@jmondi.org>
+References: <1526913942-15426-1-git-send-email-jacopo+renesas@jmondi.org> <1526913942-15426-3-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180520171705.29690-2-ayaka@soulik.info>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4LEoXSD015568
 
-On Mon, May 21, 2018 at 01:17:04AM +0800, Randy Li wrote:
-> This pixel format is a fully packed and 10bits variant of NV12.
-> A luma pixel would take 10bits in memory, without any
-> filled bits between pixels in a stride. The color gamut
-> follows the BT.2020 standard.
+Hi Jacopo,
+
+Thank you for the patch.
+
+On Monday, 21 May 2018 17:45:41 EEST Jacopo Mondi wrote:
+> Describe CVBS video input through analog video decoder ADV7180
+> connected to video input interface VIN4.
 > 
-> Signed-off-by: Randy Li <ayaka@soulik.info>
+> The video input signal path is shared with HDMI video input, and
+> selected by on-board switches SW-53 and SW-54 with CVBS input selected
+> by the default switches configuration.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
 > ---
->  drivers/gpu/drm/drm_fourcc.c  | 1 +
->  include/uapi/drm/drm_fourcc.h | 3 +++
->  2 files changed, 4 insertions(+)
+> v3 -> v4:
+> - Use 'adi,adv7180cp' compatible string in place of just 'adi,adv7180'
+>   as suggested by Laurent.
+> - Re-structure CVBS input ports definition according to adv7180cp
+>   bindings: add port@0 for composite input, add port@3 for parallel
+>   video output.
+> - Change node label to 'composite-in' as in Gose board bindings.
 > 
-> diff --git a/drivers/gpu/drm/drm_fourcc.c b/drivers/gpu/drm/drm_fourcc.c
-> index 5ca6395cd4d3..1f43967c4013 100644
-> --- a/drivers/gpu/drm/drm_fourcc.c
-> +++ b/drivers/gpu/drm/drm_fourcc.c
-> @@ -173,6 +173,7 @@ const struct drm_format_info *__drm_format_info(u32 format)
->  		{ .format = DRM_FORMAT_UYVY,		.depth = 0,  .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 2, .vsub = 1 },
->  		{ .format = DRM_FORMAT_VYUY,		.depth = 0,  .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 2, .vsub = 1 },
->  		{ .format = DRM_FORMAT_AYUV,		.depth = 0,  .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
-> +		{ .format = DRM_FORMAT_NV12_10LE40,	.depth = 0,  .num_planes = 2, .cpp = { 1, 2, 0 }, .hsub = 2, .vsub = 2 },
+> v2 -> v3:
+> - Add comment to describe the shared input video path.
+> - Add my SoB and Niklas' R-b tags.
+> ---
+>  arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 68
+> ++++++++++++++++++++++++++ 1 file changed, 68 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+> b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts index 9d73de8..ad59032
+> 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+> @@ -59,6 +59,16 @@
+>  		};
 >  	};
->  
->  	unsigned int i;
-> diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
-> index e04613d30a13..8eabf01e966f 100644
-> --- a/include/uapi/drm/drm_fourcc.h
-> +++ b/include/uapi/drm/drm_fourcc.h
-> @@ -140,6 +140,9 @@ extern "C" {
->  #define DRM_FORMAT_NV61		fourcc_code('N', 'V', '6', '1') /* 2x1 subsampled Cb:Cr plane */
->  #define DRM_FORMAT_NV24		fourcc_code('N', 'V', '2', '4') /* non-subsampled Cr:Cb plane */
->  #define DRM_FORMAT_NV42		fourcc_code('N', 'V', '4', '2') /* non-subsampled Cb:Cr plane */
-> +/* A fully packed variant of NV12_10LE32 */
-
-What does "fully packed" mean? NV12_10LE32 doesn't even exist so
-referring to it makes no sense.
-
-Please try to provide an unambiguous description of new formats like we
-have for everything else.
-
-> +#define DRM_FORMAT_NV12_10LE40	fourcc_code('R', 'K', '2', '0') /* 2x2 subsampled Cr:Cb plane */
-> +
->  
->  /*
->   * 3 plane YCbCr
-> -- 
-> 2.14.3
 > 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> +	composite-in {
+> +		compatible = "composite-video-connector";
+> +
+> +		port {
+> +			composite_con_in: endpoint {
+> +				remote-endpoint = <&adv7180_in>;
+> +			};
+> +		};
+> +	};
+> +
+>  	memory@48000000 {
+>  		device_type = "memory";
+>  		/* first 128MB is reserved for secure area. */
+> @@ -142,6 +152,11 @@
+>  		groups = "usb0";
+>  		function = "usb0";
+>  	};
+> +
+> +	vin4_pins_cvbs: vin4 {
+> +		groups = "vin4_data8", "vin4_sync", "vin4_clk";
+> +		function = "vin4";
+> +	};
+>  };
+> 
+>  &i2c0 {
+> @@ -154,6 +169,39 @@
+>  		reg = <0x50>;
+>  		pagesize = <8>;
+>  	};
+> +
+> +	composite-in@20 {
+> +		compatible = "adi,adv7180cp";
+> +		reg = <0x20>;
+> +
+> +		port {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			port@0 {
+> +				reg = <0>;
+> +				adv7180_in: endpoint {
+> +					remote-endpoint = <&composite_con_in>;
+> +				};
+> +			};
+> +
+> +			port@3 {
+> +				reg = <3>;
+> +
+> +				/*
+> +				 * The VIN4 video input path is shared between
+> +				 * CVBS and HDMI inputs through SW[49-53]
+> +				 * switches.
+> +				 *
+> +				 * CVBS is the default selection, link it to
+> +				 * VIN4 here.
+> +				 */
+> +				adv7180_out: endpoint {
+> +					remote-endpoint = <&vin4_in>;
+> +				};
+> +			};
+> +		};
+> +	};
+>  };
+> 
+>  &i2c1 {
+> @@ -246,3 +294,23 @@
+>  	timeout-sec = <60>;
+>  	status = "okay";
+>  };
+> +
+> +&vin4 {
+> +	pinctrl-0 = <&vin4_pins_cvbs>;
+> +	pinctrl-names = "default";
+> +
+> +	status = "okay";
+> +
+> +	ports {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		port@0 {
+> +			reg = <0>;
+> +
+> +			vin4_in: endpoint {
+> +				remote-endpoint = <&adv7180_out>;
+> +			};
+> +		};
+> +	};
+> +};
+
 
 -- 
-Ville Syrjälä
-Intel
+Regards,
+
+Laurent Pinchart
