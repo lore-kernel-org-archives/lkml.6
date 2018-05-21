@@ -1,28 +1,28 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqL7BZRNlv1GXduGV3kcWONhUDEgT5P/r8vpw9HDrw0QQEPTtCLtm1VnTZr5aRVjKhJqZGA
-ARC-Seal: i=1; a=rsa-sha256; t=1526937429; cv=none;
+X-Google-Smtp-Source: AB8JxZr2wkS07lzBH2mpDE6O0MnhK3AtKxHcWv+oy+Sh/yBeNl/AEB4oVZkQ9Ob21271QlCt/mQN
+ARC-Seal: i=1; a=rsa-sha256; t=1526937426; cv=none;
         d=google.com; s=arc-20160816;
-        b=akhsgjkppArqkd7oG8O2SpaSzF7u8R7zb9cqMIhdIeoOD93rs60TW0qP4XNOwCgGuX
-         rUsjOeYC2befdDZ+hjOQmq7LZCPHdPr5GU77ZVudhXyg8UjQAsBtYNdn/hrote9rDMAc
-         X/kmXmG/PM8nHRKNLXjPwdAK2tipYc95et2/fiS1sI0mGr6DIUajTZI7zQ1KK7ur8TJf
-         Vukii5pQYbUxCw43tmBHRjqK7vdEgePpfMTNQBLxcHVyXb8aqFzVNm7XlujA6Z+D+E+a
-         jgKDS4zAlPedC/bKRyskwhDtYOxX/0jcG5gCxSAY2VKGKROaeMGYsO5iC9jLP+YqbdrW
-         t3lA==
+        b=MGzTWxZHxJtr0sK184SsoCBcGZ0aoUVhaxQREpTdvRHdTDQVhwchJChmpFyPPUMmbg
+         XN/VDOpBlc7gdAGGCp6MAsOfCHzWoTBMd2Wt3ubv5UbuaY6U1RIfZj8sw/Lm2lOCkrNJ
+         NKFPbksFB6j+WcVDlR5VWuoN2f+AS3+O+/3TVp7sWIroRM2TQkR8wPg0c+2ciQJqJxgw
+         DspVMSldaR8nsSQFgylIoyETY3NPeZt4DNMtSHaXjAYHWH8djIe1iwtsL7CwF8CJlLb+
+         ZBegEQL50kUMq6KYTc/OtWBXS3nUX3riejM+eQBGd+etrc8sJzFrqEHKECOni7n6EzuZ
+         Ilww==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=fLhLtBVnjQKSX3XdqS9oiQvW424R8ahH0bhrLWLugjs=;
-        b=j2H66AUPJLa0EHNs9yuTW1iTmmbFKW1mcFnGomRnbsvN76brQhCcTXAueIKpa3ZQXG
-         WuH2RlzVgRbIuG7SCaCNiczir3MRWvO1qiQ/89A+NOdz/Sb0RkQExClBpa1yh0ZQQcTy
-         f7cIr+ui+HxiI0Jreo2eQCmbHTxUT7HEp9wSCUHJhSzfkEocTAK0F3kJ0jIiAx8h/lUu
-         gFDBTnHqcx2A+Zw5QAWDY8jOd1Jqx8AbOS6lIwdFfi/crPw4BDbY0ZYj0J+a/oi926E2
-         Gs4gGJCluh7hhSKcelfJTlag8/dqHl5hjF/f7AJe6qhq4uqri1rB93v5XVKjece3myAo
-         Yt6Q==
+        bh=M1ryOgm8NCnAdPQtgehp9axIR7w4Xwk+Et3ZEJSNfjc=;
+        b=SUvWPzKmqCFN3NcECaLskpGM4Yuq1rIp3o/6og5l91sE+ALJa3RmdIfCbaOp1LFX2u
+         TWHfUnN/O4+ugZeaEvfTRZTWnQW7dx/okBLEVoJmbmj3lDrzY9bj9DE3V5ui9bDfutOK
+         KP2G2ak/GXfg1K4LA2ENEtsHuTju0h4uFlGnnoaTe8iRwMe+2REwqLatKoBrZZZ2rJAV
+         +6V0La9Zeta0VWdh0oHGxuBj+IwxEyxbKJlPCHuKf3w3TuP/9k/9310p4S1mFCw5Uprd
+         KvPJJI0b3dod/pF8/6E3sMd0smEkJ1jFHXVsxjEg0jP/cIKehwdiVudEEAvBpJWOXF/i
+         Rn8Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=ysX6q8Fu;
+       dkim=pass header.i=@kernel.org header.s=default header.b=sHMPcBcE;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=ysX6q8Fu;
+       dkim=pass header.i=@kernel.org header.s=default header.b=sHMPcBcE;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
@@ -32,9 +32,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Borislav Petkov <bp@suse.de>,
 	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
 	David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 78/87] x86/bugs, KVM: Extend speculation control for VIRT_SPEC_CTRL
-Date: Mon, 21 May 2018 23:11:54 +0200
-Message-Id: <20180521210426.762626320@linuxfoundation.org>
+Subject: [PATCH 4.9 77/87] x86/speculation: Handle HT correctly on AMD
+Date: Mon, 21 May 2018 23:11:53 +0200
+Message-Id: <20180521210426.688053290@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210420.222671977@linuxfoundation.org>
 References: <20180521210420.222671977@linuxfoundation.org>
@@ -44,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601109941891387503?=
-X-GMAIL-MSGID: =?utf-8?q?1601109941891387503?=
+X-GMAIL-THRID: =?utf-8?q?1601109938794662368?=
+X-GMAIL-MSGID: =?utf-8?q?1601109938794662368?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,20 +55,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-commit ccbcd2674472a978b48c91c1fbfb66c0ff959f24 upstream
+commit 1f50ddb4f4189243c05926b842dc1a0332195f31 upstream
 
-AMD is proposing a VIRT_SPEC_CTRL MSR to handle the Speculative Store
-Bypass Disable via MSR_AMD64_LS_CFG so that guests do not have to care
-about the bit position of the SSBD bit and thus facilitate migration.
-Also, the sibling coordination on Family 17H CPUs can only be done on
-the host.
+The AMD64_LS_CFG MSR is a per core MSR on Family 17H CPUs. That means when
+hyperthreading is enabled the SSBD bit toggle needs to take both cores into
+account. Otherwise the following situation can happen:
 
-Extend x86_spec_ctrl_set_guest() and x86_spec_ctrl_restore_host() with an
-extra argument for the VIRT_SPEC_CTRL MSR.
+CPU0		CPU1
 
-Hand in 0 from VMX and in SVM add a new virt_spec_ctrl member to the CPU
-data structure which is going to be used in later patches for the actual
-implementation.
+disable SSB
+		disable SSB
+		enable  SSB <- Enables it for the Core, i.e. for CPU0 as well
+
+So after the SSB enable on CPU1 the task on CPU0 runs with SSB enabled
+again.
+
+On Intel the SSBD control is per core as well, but the synchronization
+logic is implemented behind the per thread SPEC_CTRL MSR. It works like
+this:
+
+  CORE_SPEC_CTRL = THREAD0_SPEC_CTRL | THREAD1_SPEC_CTRL
+
+i.e. if one of the threads enables a mitigation then this affects both and
+the mitigation is only disabled in the core when both threads disabled it.
+
+Add the necessary synchronization logic for AMD family 17H. Unfortunately
+that requires a spinlock to serialize the access to the MSR, but the locks
+are only shared between siblings.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Borislav Petkov <bp@suse.de>
@@ -76,128 +89,195 @@ Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/spec-ctrl.h |    9 ++++++---
- arch/x86/kernel/cpu/bugs.c       |   20 ++++++++++++++++++--
- arch/x86/kvm/svm.c               |   11 +++++++++--
- arch/x86/kvm/vmx.c               |    5 +++--
- 4 files changed, 36 insertions(+), 9 deletions(-)
+ arch/x86/include/asm/spec-ctrl.h |    6 +
+ arch/x86/kernel/process.c        |  125 +++++++++++++++++++++++++++++++++++++--
+ arch/x86/kernel/smpboot.c        |    5 +
+ 3 files changed, 130 insertions(+), 6 deletions(-)
 
 --- a/arch/x86/include/asm/spec-ctrl.h
 +++ b/arch/x86/include/asm/spec-ctrl.h
-@@ -10,10 +10,13 @@
-  * the guest has, while on VMEXIT we restore the host view. This
-  * would be easier if SPEC_CTRL were architecturally maskable or
-  * shadowable for guests but this is not (currently) the case.
-- * Takes the guest view of SPEC_CTRL MSR as a parameter.
-+ * Takes the guest view of SPEC_CTRL MSR as a parameter and also
-+ * the guest's version of VIRT_SPEC_CTRL, if emulated.
-  */
--extern void x86_spec_ctrl_set_guest(u64);
--extern void x86_spec_ctrl_restore_host(u64);
-+extern void x86_spec_ctrl_set_guest(u64 guest_spec_ctrl,
-+				    u64 guest_virt_spec_ctrl);
-+extern void x86_spec_ctrl_restore_host(u64 guest_spec_ctrl,
-+				       u64 guest_virt_spec_ctrl);
- 
- /* AMD specific Speculative Store Bypass MSR data */
- extern u64 x86_amd_ls_cfg_base;
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -150,7 +150,15 @@ u64 x86_spec_ctrl_get_default(void)
+@@ -33,6 +33,12 @@ static inline u64 ssbd_tif_to_amd_ls_cfg
+ 	return (tifn & _TIF_SSBD) ? x86_amd_ls_cfg_ssbd_mask : 0ULL;
  }
- EXPORT_SYMBOL_GPL(x86_spec_ctrl_get_default);
  
--void x86_spec_ctrl_set_guest(u64 guest_spec_ctrl)
-+/**
-+ * x86_spec_ctrl_set_guest - Set speculation control registers for the guest
-+ * @guest_spec_ctrl:		The guest content of MSR_SPEC_CTRL
-+ * @guest_virt_spec_ctrl:	The guest controlled bits of MSR_VIRT_SPEC_CTRL
-+ *				(may get translated to MSR_AMD64_LS_CFG bits)
-+ *
-+ * Avoids writing to the MSR if the content/bits are the same
-+ */
-+void x86_spec_ctrl_set_guest(u64 guest_spec_ctrl, u64 guest_virt_spec_ctrl)
- {
- 	u64 host = x86_spec_ctrl_base;
- 
-@@ -167,7 +175,15 @@ void x86_spec_ctrl_set_guest(u64 guest_s
- }
- EXPORT_SYMBOL_GPL(x86_spec_ctrl_set_guest);
- 
--void x86_spec_ctrl_restore_host(u64 guest_spec_ctrl)
-+/**
-+ * x86_spec_ctrl_restore_host - Restore host speculation control registers
-+ * @guest_spec_ctrl:		The guest content of MSR_SPEC_CTRL
-+ * @guest_virt_spec_ctrl:	The guest controlled bits of MSR_VIRT_SPEC_CTRL
-+ *				(may get translated to MSR_AMD64_LS_CFG bits)
-+ *
-+ * Avoids writing to the MSR if the content/bits are the same
-+ */
-+void x86_spec_ctrl_restore_host(u64 guest_spec_ctrl, u64 guest_virt_spec_ctrl)
- {
- 	u64 host = x86_spec_ctrl_base;
- 
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -185,6 +185,12 @@ struct vcpu_svm {
- 	} host;
- 
- 	u64 spec_ctrl;
-+	/*
-+	 * Contains guest-controlled bits of VIRT_SPEC_CTRL, which will be
-+	 * translated into the appropriate L2_CFG bits on the host to
-+	 * perform speculative control.
-+	 */
-+	u64 virt_spec_ctrl;
- 
- 	u32 *msrpm;
- 
-@@ -1561,6 +1567,7 @@ static void svm_vcpu_reset(struct kvm_vc
- 	u32 eax = 1;
- 
- 	svm->spec_ctrl = 0;
-+	svm->virt_spec_ctrl = 0;
- 
- 	if (!init_event) {
- 		svm->vcpu.arch.apic_base = APIC_DEFAULT_PHYS_BASE |
-@@ -4917,7 +4924,7 @@ static void svm_vcpu_run(struct kvm_vcpu
- 	 * is no need to worry about the conditional branch over the wrmsr
- 	 * being speculatively taken.
- 	 */
--	x86_spec_ctrl_set_guest(svm->spec_ctrl);
-+	x86_spec_ctrl_set_guest(svm->spec_ctrl, svm->virt_spec_ctrl);
- 
- 	asm volatile (
- 		"push %%" _ASM_BP "; \n\t"
-@@ -5041,7 +5048,7 @@ static void svm_vcpu_run(struct kvm_vcpu
- 	if (unlikely(!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL)))
- 		svm->spec_ctrl = native_read_msr(MSR_IA32_SPEC_CTRL);
- 
--	x86_spec_ctrl_restore_host(svm->spec_ctrl);
-+	x86_spec_ctrl_restore_host(svm->spec_ctrl, svm->virt_spec_ctrl);
- 
- 	reload_tss(vcpu);
- 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -8916,9 +8916,10 @@ static void __noclone vmx_vcpu_run(struc
- 	 * is no need to worry about the conditional branch over the wrmsr
- 	 * being speculatively taken.
- 	 */
--	x86_spec_ctrl_set_guest(vmx->spec_ctrl);
-+	x86_spec_ctrl_set_guest(vmx->spec_ctrl, 0);
- 
- 	vmx->__launched = vmx->loaded_vmcs->launched;
++#ifdef CONFIG_SMP
++extern void speculative_store_bypass_ht_init(void);
++#else
++static inline void speculative_store_bypass_ht_init(void) { }
++#endif
 +
- 	asm(
- 		/* Store host registers */
- 		"push %%" _ASM_DX "; push %%" _ASM_BP ";"
-@@ -9054,7 +9055,7 @@ static void __noclone vmx_vcpu_run(struc
- 	if (unlikely(!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL)))
- 		vmx->spec_ctrl = native_read_msr(MSR_IA32_SPEC_CTRL);
+ extern void speculative_store_bypass_update(void);
  
--	x86_spec_ctrl_restore_host(vmx->spec_ctrl);
-+	x86_spec_ctrl_restore_host(vmx->spec_ctrl, 0);
+ #endif
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -203,22 +203,135 @@ static inline void switch_to_bitmap(stru
+ 	}
+ }
  
- 	/* Eliminate branch target predictions from guest mode */
- 	vmexit_fill_RSB();
+-static __always_inline void __speculative_store_bypass_update(unsigned long tifn)
++#ifdef CONFIG_SMP
++
++struct ssb_state {
++	struct ssb_state	*shared_state;
++	raw_spinlock_t		lock;
++	unsigned int		disable_state;
++	unsigned long		local_state;
++};
++
++#define LSTATE_SSB	0
++
++static DEFINE_PER_CPU(struct ssb_state, ssb_state);
++
++void speculative_store_bypass_ht_init(void)
++{
++	struct ssb_state *st = this_cpu_ptr(&ssb_state);
++	unsigned int this_cpu = smp_processor_id();
++	unsigned int cpu;
++
++	st->local_state = 0;
++
++	/*
++	 * Shared state setup happens once on the first bringup
++	 * of the CPU. It's not destroyed on CPU hotunplug.
++	 */
++	if (st->shared_state)
++		return;
++
++	raw_spin_lock_init(&st->lock);
++
++	/*
++	 * Go over HT siblings and check whether one of them has set up the
++	 * shared state pointer already.
++	 */
++	for_each_cpu(cpu, topology_sibling_cpumask(this_cpu)) {
++		if (cpu == this_cpu)
++			continue;
++
++		if (!per_cpu(ssb_state, cpu).shared_state)
++			continue;
++
++		/* Link it to the state of the sibling: */
++		st->shared_state = per_cpu(ssb_state, cpu).shared_state;
++		return;
++	}
++
++	/*
++	 * First HT sibling to come up on the core.  Link shared state of
++	 * the first HT sibling to itself. The siblings on the same core
++	 * which come up later will see the shared state pointer and link
++	 * themself to the state of this CPU.
++	 */
++	st->shared_state = st;
++}
++
++/*
++ * Logic is: First HT sibling enables SSBD for both siblings in the core
++ * and last sibling to disable it, disables it for the whole core. This how
++ * MSR_SPEC_CTRL works in "hardware":
++ *
++ *  CORE_SPEC_CTRL = THREAD0_SPEC_CTRL | THREAD1_SPEC_CTRL
++ */
++static __always_inline void amd_set_core_ssb_state(unsigned long tifn)
+ {
+-	u64 msr;
++	struct ssb_state *st = this_cpu_ptr(&ssb_state);
++	u64 msr = x86_amd_ls_cfg_base;
+ 
+-	if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD)) {
+-		msr = x86_amd_ls_cfg_base | ssbd_tif_to_amd_ls_cfg(tifn);
++	if (!static_cpu_has(X86_FEATURE_ZEN)) {
++		msr |= ssbd_tif_to_amd_ls_cfg(tifn);
+ 		wrmsrl(MSR_AMD64_LS_CFG, msr);
++		return;
++	}
++
++	if (tifn & _TIF_SSBD) {
++		/*
++		 * Since this can race with prctl(), block reentry on the
++		 * same CPU.
++		 */
++		if (__test_and_set_bit(LSTATE_SSB, &st->local_state))
++			return;
++
++		msr |= x86_amd_ls_cfg_ssbd_mask;
++
++		raw_spin_lock(&st->shared_state->lock);
++		/* First sibling enables SSBD: */
++		if (!st->shared_state->disable_state)
++			wrmsrl(MSR_AMD64_LS_CFG, msr);
++		st->shared_state->disable_state++;
++		raw_spin_unlock(&st->shared_state->lock);
+ 	} else {
+-		msr = x86_spec_ctrl_base | ssbd_tif_to_spec_ctrl(tifn);
+-		wrmsrl(MSR_IA32_SPEC_CTRL, msr);
++		if (!__test_and_clear_bit(LSTATE_SSB, &st->local_state))
++			return;
++
++		raw_spin_lock(&st->shared_state->lock);
++		st->shared_state->disable_state--;
++		if (!st->shared_state->disable_state)
++			wrmsrl(MSR_AMD64_LS_CFG, msr);
++		raw_spin_unlock(&st->shared_state->lock);
+ 	}
+ }
++#else
++static __always_inline void amd_set_core_ssb_state(unsigned long tifn)
++{
++	u64 msr = x86_amd_ls_cfg_base | ssbd_tif_to_amd_ls_cfg(tifn);
++
++	wrmsrl(MSR_AMD64_LS_CFG, msr);
++}
++#endif
++
++static __always_inline void intel_set_ssb_state(unsigned long tifn)
++{
++	u64 msr = x86_spec_ctrl_base | ssbd_tif_to_spec_ctrl(tifn);
++
++	wrmsrl(MSR_IA32_SPEC_CTRL, msr);
++}
++
++static __always_inline void __speculative_store_bypass_update(unsigned long tifn)
++{
++	if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD))
++		amd_set_core_ssb_state(tifn);
++	else
++		intel_set_ssb_state(tifn);
++}
+ 
+ void speculative_store_bypass_update(void)
+ {
++	preempt_disable();
+ 	__speculative_store_bypass_update(current_thread_info()->flags);
++	preempt_enable();
+ }
+ 
+ void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p,
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -75,6 +75,7 @@
+ #include <asm/i8259.h>
+ #include <asm/realmode.h>
+ #include <asm/misc.h>
++#include <asm/spec-ctrl.h>
+ 
+ /* Number of siblings per CPU package */
+ int smp_num_siblings = 1;
+@@ -229,6 +230,8 @@ static void notrace start_secondary(void
+ 	 */
+ 	check_tsc_sync_target();
+ 
++	speculative_store_bypass_ht_init();
++
+ 	/*
+ 	 * Lock vector_lock and initialize the vectors on this cpu
+ 	 * before setting the cpu online. We must set it online with
+@@ -1325,6 +1328,8 @@ void __init native_smp_prepare_cpus(unsi
+ 	set_mtrr_aps_delayed_init();
+ 
+ 	smp_quirk_init_udelay();
++
++	speculative_store_bypass_ht_init();
+ }
+ 
+ void arch_enable_nonboot_cpus_begin(void)
