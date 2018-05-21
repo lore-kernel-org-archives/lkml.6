@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753367AbeEURCB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 13:02:01 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:44364 "EHLO
+        id S1753380AbeEURCF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 13:02:05 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:44384 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753082AbeEURB5 (ORCPT
+        with ESMTP id S1753355AbeEURCB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 13:01:57 -0400
+        Mon, 21 May 2018 13:02:01 -0400
 From: Ezequiel Garcia <ezequiel@collabora.com>
 To: linux-media@vger.kernel.org
 Cc: kernel@collabora.com, Hans Verkuil <hverkuil@xs4all.nl>,
@@ -17,9 +17,9 @@ Cc: kernel@collabora.com, Hans Verkuil <hverkuil@xs4all.nl>,
         Brian Starkey <brian.starkey@arm.com>, linux-kernel@vger.kernel.org,
         Gustavo Padovan <gustavo.padovan@collabora.com>,
         Ezequiel Garcia <ezequiel@collabora.com>
-Subject: [PATCH v10 07/16] v4l: add unordered flag to format description ioctl
-Date: Mon, 21 May 2018 13:59:37 -0300
-Message-Id: <20180521165946.11778-8-ezequiel@collabora.com>
+Subject: [PATCH v10 08/16] v4l: mark unordered formats
+Date: Mon, 21 May 2018 13:59:38 -0300
+Message-Id: <20180521165946.11778-9-ezequiel@collabora.com>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180521165946.11778-1-ezequiel@collabora.com>
 References: <20180521165946.11778-1-ezequiel@collabora.com>
@@ -29,50 +29,146 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Gustavo Padovan <gustavo.padovan@collabora.com>
 
-For explicit synchronization it important for userspace to know if the
-format being used by the driver can deliver the buffers back to userspace
-in the same order they were queued with QBUF.
+Now that we've introduced the V4L2_FMT_FLAG_UNORDERED flag,
+mark the appropriate formats.
 
-Ordered streams fits nicely in a pipeline with DRM for example, where
-ordered buffer are expected.
-
-v2: Improve documentation (Hans)
+v2: Set unordered flag before calling the driver callback.
 
 Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
+Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
 ---
- Documentation/media/uapi/v4l/vidioc-enum-fmt.rst | 7 +++++++
- include/uapi/linux/videodev2.h                   | 1 +
- 2 files changed, 8 insertions(+)
+ drivers/media/v4l2-core/v4l2-ioctl.c | 74 +++++++++++++++++++++++++++---------
+ 1 file changed, 57 insertions(+), 17 deletions(-)
 
-diff --git a/Documentation/media/uapi/v4l/vidioc-enum-fmt.rst b/Documentation/media/uapi/v4l/vidioc-enum-fmt.rst
-index 019c513df217..df8e039b9ac2 100644
---- a/Documentation/media/uapi/v4l/vidioc-enum-fmt.rst
-+++ b/Documentation/media/uapi/v4l/vidioc-enum-fmt.rst
-@@ -116,6 +116,13 @@ one until ``EINVAL`` is returned.
-       - This format is not native to the device but emulated through
- 	software (usually libv4l2), where possible try to use a native
- 	format instead for better performance.
-+    * - ``V4L2_FMT_FLAG_UNORDERED``
-+      - 0x0004
-+      - This format doesn't guarantee ordered buffer handling. I.e. the order
-+	in which buffers are dequeued with
-+	:ref:`VIDIOC_DQBUF <VIDIOC_QBUF>` may be different
-+	from the order in which they were queued with
-+	:ref:`VIDIOC_QBUF <VIDIOC_QBUF>`.
+diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+index f48c505550e0..2135ac235a96 100644
+--- a/drivers/media/v4l2-core/v4l2-ioctl.c
++++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+@@ -1102,6 +1102,27 @@ static int v4l_enumoutput(const struct v4l2_ioctl_ops *ops,
+ 	return ops->vidioc_enum_output(file, fh, p);
+ }
  
++static void v4l_fill_unordered_fmtdesc(struct v4l2_fmtdesc *fmt)
++{
++	switch (fmt->pixelformat) {
++	case V4L2_PIX_FMT_MPEG:
++	case V4L2_PIX_FMT_H264:
++	case V4L2_PIX_FMT_H264_NO_SC:
++	case V4L2_PIX_FMT_H264_MVC:
++	case V4L2_PIX_FMT_H263:
++	case V4L2_PIX_FMT_MPEG1:
++	case V4L2_PIX_FMT_MPEG2:
++	case V4L2_PIX_FMT_MPEG4:
++	case V4L2_PIX_FMT_XVID:
++	case V4L2_PIX_FMT_VC1_ANNEX_G:
++	case V4L2_PIX_FMT_VC1_ANNEX_L:
++	case V4L2_PIX_FMT_VP8:
++	case V4L2_PIX_FMT_VP9:
++	case V4L2_PIX_FMT_HEVC:
++		fmt->flags |= V4L2_FMT_FLAG_UNORDERED;
++	}
++}
++
+ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
+ {
+ 	const unsigned sz = sizeof(fmt->description);
+@@ -1310,61 +1331,80 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
  
- Return Value
-diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-index 600877be5c22..a8842a5ca636 100644
---- a/include/uapi/linux/videodev2.h
-+++ b/include/uapi/linux/videodev2.h
-@@ -717,6 +717,7 @@ struct v4l2_fmtdesc {
+ 	if (descr)
+ 		WARN_ON(strlcpy(fmt->description, descr, sz) >= sz);
+-	fmt->flags = flags;
++	fmt->flags |= flags;
+ }
  
- #define V4L2_FMT_FLAG_COMPRESSED 0x0001
- #define V4L2_FMT_FLAG_EMULATED   0x0002
-+#define V4L2_FMT_FLAG_UNORDERED  0x0004
+-static int v4l_enum_fmt(const struct v4l2_ioctl_ops *ops,
+-				struct file *file, void *fh, void *arg)
+-{
+-	struct v4l2_fmtdesc *p = arg;
+-	int ret = check_fmt(file, p->type);
  
- 	/* Frame Size and frame rate enumeration */
- /*
+-	if (ret)
+-		return ret;
+-	ret = -EINVAL;
++static int __vidioc_enum_fmt(const struct v4l2_ioctl_ops *ops,
++			     struct v4l2_fmtdesc *p,
++			     struct file *file, void *fh)
++{
++	int ret = 0;
+ 
+ 	switch (p->type) {
+ 	case V4L2_BUF_TYPE_VIDEO_CAPTURE:
+ 		if (unlikely(!ops->vidioc_enum_fmt_vid_cap))
+ 			break;
+-		ret = ops->vidioc_enum_fmt_vid_cap(file, fh, arg);
++		ret = ops->vidioc_enum_fmt_vid_cap(file, fh, p);
+ 		break;
+ 	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
+ 		if (unlikely(!ops->vidioc_enum_fmt_vid_cap_mplane))
+ 			break;
+-		ret = ops->vidioc_enum_fmt_vid_cap_mplane(file, fh, arg);
++		ret = ops->vidioc_enum_fmt_vid_cap_mplane(file, fh, p);
+ 		break;
+ 	case V4L2_BUF_TYPE_VIDEO_OVERLAY:
+ 		if (unlikely(!ops->vidioc_enum_fmt_vid_overlay))
+ 			break;
+-		ret = ops->vidioc_enum_fmt_vid_overlay(file, fh, arg);
++		ret = ops->vidioc_enum_fmt_vid_overlay(file, fh, p);
+ 		break;
+ 	case V4L2_BUF_TYPE_VIDEO_OUTPUT:
+ 		if (unlikely(!ops->vidioc_enum_fmt_vid_out))
+ 			break;
+-		ret = ops->vidioc_enum_fmt_vid_out(file, fh, arg);
++		ret = ops->vidioc_enum_fmt_vid_out(file, fh, p);
+ 		break;
+ 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
+ 		if (unlikely(!ops->vidioc_enum_fmt_vid_out_mplane))
+ 			break;
+-		ret = ops->vidioc_enum_fmt_vid_out_mplane(file, fh, arg);
++		ret = ops->vidioc_enum_fmt_vid_out_mplane(file, fh, p);
+ 		break;
+ 	case V4L2_BUF_TYPE_SDR_CAPTURE:
+ 		if (unlikely(!ops->vidioc_enum_fmt_sdr_cap))
+ 			break;
+-		ret = ops->vidioc_enum_fmt_sdr_cap(file, fh, arg);
++		ret = ops->vidioc_enum_fmt_sdr_cap(file, fh, p);
+ 		break;
+ 	case V4L2_BUF_TYPE_SDR_OUTPUT:
+ 		if (unlikely(!ops->vidioc_enum_fmt_sdr_out))
+ 			break;
+-		ret = ops->vidioc_enum_fmt_sdr_out(file, fh, arg);
++		ret = ops->vidioc_enum_fmt_sdr_out(file, fh, p);
+ 		break;
+ 	case V4L2_BUF_TYPE_META_CAPTURE:
+ 		if (unlikely(!ops->vidioc_enum_fmt_meta_cap))
+ 			break;
+-		ret = ops->vidioc_enum_fmt_meta_cap(file, fh, arg);
++		ret = ops->vidioc_enum_fmt_meta_cap(file, fh, p);
+ 		break;
+ 	}
++	return ret;
++}
++
++static int v4l_enum_fmt(const struct v4l2_ioctl_ops *ops,
++				struct file *file, void *fh, void *arg)
++{
++	struct v4l2_fmtdesc *p = arg;
++	int ret = check_fmt(file, p->type);
++
++	if (ret)
++		return ret;
++	ret = -EINVAL;
++
++	ret = __vidioc_enum_fmt(ops, p, file, fh);
++	if (ret)
++		return ret;
++	/*
++	 * Set the unordered flag and call the driver
++	 * again so it has the chance to clear the flag.
++	 */
++	v4l_fill_unordered_fmtdesc(p);
++	ret = __vidioc_enum_fmt(ops, p, file, fh);
+ 	if (ret == 0)
+ 		v4l_fill_fmtdesc(p);
+ 	return ret;
 -- 
 2.16.3
