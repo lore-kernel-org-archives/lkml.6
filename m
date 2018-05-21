@@ -1,239 +1,187 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753091AbeEUQKz convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 12:10:55 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55228 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752761AbeEUQKw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 12:10:52 -0400
-Subject: Re: [PATCH v8 1/6] cpuset: Enable cpuset controller in default
- hierarchy
-To: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
+        id S1753071AbeEUQNx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 12:13:53 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:35865 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752879AbeEUQNs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 12:13:48 -0400
+X-Google-Smtp-Source: AB8JxZrJ0fRjBlhcbXEBiOJTpLc0jzYKJSN7TduK7joa76GMm1FL8QWrLa8S3u84fO93aCMKDBKs/A==
+Date: Mon, 21 May 2018 09:13:46 -0700
+From: Joel Fernandes <joel@joelfernandes.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+        "Joel Fernandes (Google.)" <joelaf@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
         Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
-        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>
-References: <1526590545-3350-1-git-send-email-longman@redhat.com>
- <1526590545-3350-2-git-send-email-longman@redhat.com>
- <20180521115528.GR30654@e110439-lin>
- <fbc71cfc-6801-0fda-b0c6-2a70f7c9fe25@redhat.com>
- <20180521150924.GS30654@e110439-lin>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <80841a12-6f82-91ae-8925-3092398efe32@redhat.com>
-Date: Mon, 21 May 2018 12:10:47 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Luca Abeni <luca.abeni@santannapisa.it>, Todd Kjos <tkjos@google.com>,
+        Claudio Scordino <claudio@evidence.eu.com>, kernel-team@android.com,
+        Linux PM <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH v2] schedutil: Allow cpufreq requests to be made even
+ when kthread kicked
+Message-ID: <20180521161346.GB14065@joelaf.mtv.corp.google.com>
+References: <20180518185501.173552-1-joel@joelfernandes.org>
+ <20180521051424.mljwmisvrvi6yyc4@vireshk-i7>
+ <CAJZ5v0jbJ3HfLyP6VZ2PuG0q1n=faX3G98ruwK-o1ro+gv7B9w@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180521150924.GS30654@e110439-lin>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0jbJ3HfLyP6VZ2PuG0q1n=faX3G98ruwK-o1ro+gv7B9w@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/21/2018 11:09 AM, Patrick Bellasi wrote:
-> On 21-May 09:55, Waiman Long wrote:
->
->> Changing cpuset.cpus will require searching for the all the tasks in
->> the cpuset and change its cpu mask.
-> ... I'm wondering if that has to be the case. In principle there can
-> be a different solution which is: update on demand. In the wakeup
-> path, once we know a task really need a CPU and we want to find one
-> for it, at that point we can align the cpuset mask with the task's
-> one. Sort of using the cpuset mask as a clamp on top of the task's
-> affinity mask.
->
-> The main downside of such an approach could be the overheads in the
-> wakeup path... but, still... that should be measured.
-> The advantage is that we do not spend time changing attributes of
-> tassk which, potentially, could be sleeping for a long time.
+On Mon, May 21, 2018 at 10:29:52AM +0200, Rafael J. Wysocki wrote:
+> On Mon, May 21, 2018 at 7:14 AM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > On 18-05-18, 11:55, Joel Fernandes (Google.) wrote:
+> >> From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+> >>
+> >> Currently there is a chance of a schedutil cpufreq update request to be
+> >> dropped if there is a pending update request. This pending request can
+> >> be delayed if there is a scheduling delay of the irq_work and the wake
+> >> up of the schedutil governor kthread.
+> >>
+> >> A very bad scenario is when a schedutil request was already just made,
+> >> such as to reduce the CPU frequency, then a newer request to increase
+> >> CPU frequency (even sched deadline urgent frequency increase requests)
+> >> can be dropped, even though the rate limits suggest that its Ok to
+> >> process a request. This is because of the way the work_in_progress flag
+> >> is used.
+> >>
+> >> This patch improves the situation by allowing new requests to happen
+> >> even though the old one is still being processed. Note that in this
+> >> approach, if an irq_work was already issued, we just update next_freq
+> >> and don't bother to queue another request so there's no extra work being
+> >> done to make this happen.
+> >
+> > Now that this isn't an RFC anymore, you shouldn't have added below
+> > paragraph here. It could go to the comments section though.
+> >
+> >> I had brought up this issue at the OSPM conference and Claudio had a
+> >> discussion RFC with an alternate approach [1]. I prefer the approach as
+> >> done in the patch below since it doesn't need any new flags and doesn't
+> >> cause any other extra overhead.
+> >>
+> >> [1] https://patchwork.kernel.org/patch/10384261/
+> >>
+> >> LGTMed-by: Viresh Kumar <viresh.kumar@linaro.org>
+> >> LGTMed-by: Juri Lelli <juri.lelli@redhat.com>
+> >
+> > Looks like a Tag you just invented ? :)
+> 
+> Yeah.
+> 
+> The LGTM from Juri can be converned into an ACK silently IMO.  That
+> said I have added Looks-good-to: tags to a couple of commits. :-)
 
-We already have a linked list of tasks in a cgroup. So it isn't too hard
-to find them. Doing update on demand will require adding a bunch of code
-to the wakeup path. So unless there is a good reason to do it, I don't
-it as necessary at this point.
+Cool, I'll covert them to Acks :-)
 
->
->> That isn't a fast operation, but it shouldn't be too bad either
->> depending on how many tasks are in the cpuset.
-> Indeed, althought it still seems a bit odd and overkilling updating
-> task affinity for tasks which are not currently RUNNABLE. Isn't it?
->
->> I would not suggest doing rapid changes to cpuset.cpus as a mean to tune
->> the behavior of a task. So what exactly is the tuning you are thinking
->> about? Is it moving a task from the a high-power cpu to a low power one
->> or vice versa?
-> That's defenitively a possible use case. In Android for example we
-> usually assign more resources to TOP_APP tasks (those belonging to the
-> application you are currently using) while we restrict the resoures
-> one we switch an app to be in BACKGROUND.
+[..]
+> >> v1 -> v2: Minor style related changes.
+> >>
+> >>  kernel/sched/cpufreq_schedutil.c | 34 ++++++++++++++++++++++++--------
+> >>  1 file changed, 26 insertions(+), 8 deletions(-)
+> >>
+> >> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+> >> index e13df951aca7..5c482ec38610 100644
+> >> --- a/kernel/sched/cpufreq_schedutil.c
+> >> +++ b/kernel/sched/cpufreq_schedutil.c
+> >> @@ -92,9 +92,6 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
+> >>           !cpufreq_can_do_remote_dvfs(sg_policy->policy))
+> >>               return false;
+> >>
+> >> -     if (sg_policy->work_in_progress)
+> >> -             return false;
+> >> -
+> >>       if (unlikely(sg_policy->need_freq_update)) {
+> >>               sg_policy->need_freq_update = false;
+> >>               /*
+> >> @@ -128,7 +125,7 @@ static void sugov_update_commit(struct sugov_policy *sg_policy, u64 time,
+> >>
+> >>               policy->cur = next_freq;
+> >>               trace_cpu_frequency(next_freq, smp_processor_id());
+> >> -     } else {
+> >> +     } else if (!sg_policy->work_in_progress) {
+> >>               sg_policy->work_in_progress = true;
+> >>               irq_work_queue(&sg_policy->irq_work);
+> >>       }
+> >> @@ -291,6 +288,13 @@ static void sugov_update_single(struct update_util_data *hook, u64 time,
+> >>
+> >>       ignore_dl_rate_limit(sg_cpu, sg_policy);
+> >>
+> >> +     /*
+> >> +      * For slow-switch systems, single policy requests can't run at the
+> >> +      * moment if update is in progress, unless we acquire update_lock.
+> >> +      */
+> >> +     if (sg_policy->work_in_progress)
+> >> +             return;
+> >> +
+> >
+> > I would still want this to go away :)
+> >
+> > @Rafael, will it be fine to get locking in place for unshared policy
+> > platforms ?
+> 
+> As long as it doesn't affect the fast switch path in any way.
 
-Switching an app from foreground to background and vice versa shouldn't
-happen that frequently. Maybe once every few seconds, at most. I am just
-wondering what use cases will require changing cpuset attributes in tens
-per second.
+I just realized that on a single policy switch that uses the governor thread,
+there will be 1 thread per-CPU. The sugov_update_single will be called on the
+same CPU with interrupts disabled. In sugov_work, we are doing a
+raw_spin_lock_irqsave which also disables interrupts. So I don't think
+there's any possibility of a race happening on the same CPU between the
+frequency update request and the sugov_work executing. In other words, I feel
+we can drop the above if (..) statement for single policies completely and
+only keep the changes for the shared policy. Viresh since you brought up the
+single policy issue initially which made me add this if statememnt, could you
+let me know if you agree with what I just said?
 
-> More in general, if you think about a generic Run-Time Resource
-> Management framework, which assign resources to the tasks of multiple
-> applications and want to have a fine grained control.
->
->> If so, it is probably better to move the task from one cpuset of
->> high-power cpus to another cpuset of low-power cpus.
-> This is what Android does not but also what we want to possible
-> change, for two main reasons:
->
-> 1. it does not fit with the "number one guideline" for proper
->    CGroups usage, which is "Organize Once and Control":
->       https://elixir.bootlin.com/linux/latest/source/Documentation/cgroup-v2.txt#L518
->    where it says that:
->       migrating processes across cgroups frequently as a means to
->       apply different resource restrictions is discouraged.
->
->    Despite this giudeline, it turns out that in v1 at least, it seems
->    to be faster to move tasks across cpusets then tuning cpuset
->    attributes... also when all the tasks are sleeping.
+> >>       if (!sugov_should_update_freq(sg_policy, time))
+> >>               return;
+> >>
+> >> @@ -382,13 +386,27 @@ sugov_update_shared(struct update_util_data *hook, u64 time, unsigned int flags)
+> >>  static void sugov_work(struct kthread_work *work)
+> >>  {
+> >>       struct sugov_policy *sg_policy = container_of(work, struct sugov_policy, work);
+> >> +     unsigned int freq;
+> >> +     unsigned long flags;
+> >> +
+> >> +     /*
+> >> +      * Hold sg_policy->update_lock shortly to handle the case where:
+> >> +      * incase sg_policy->next_freq is read here, and then updated by
+> >> +      * sugov_update_shared just before work_in_progress is set to false
+> >> +      * here, we may miss queueing the new update.
+> >> +      *
+> >> +      * Note: If a work was queued after the update_lock is released,
+> >> +      * sugov_work will just be called again by kthread_work code; and the
+> >> +      * request will be proceed before the sugov thread sleeps.
+> >> +      */
+> >> +     raw_spin_lock_irqsave(&sg_policy->update_lock, flags);
+> >> +     freq = sg_policy->next_freq;
+> >> +     sg_policy->work_in_progress = false;
+> >> +     raw_spin_unlock_irqrestore(&sg_policy->update_lock, flags);
+> >>
+> >>       mutex_lock(&sg_policy->work_lock);
+> >> -     __cpufreq_driver_target(sg_policy->policy, sg_policy->next_freq,
+> >> -                             CPUFREQ_RELATION_L);
+> >> +     __cpufreq_driver_target(sg_policy->policy, freq, CPUFREQ_RELATION_L);
+> >>       mutex_unlock(&sg_policy->work_lock);
+> >> -
+> >> -     sg_policy->work_in_progress = false;
+> >>  }
+> >>
+> >>  static void sugov_irq_work(struct irq_work *irq_work)
+> >
+> > Fix the commit log and you can add my
+> 
+> I can fix it up.
+> 
+> > Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-It is probably similar in v2 as the core logic are almost the same.
+Thanks!
 
-> 2. it does not allow to get advantages for accounting controllers such
->    as the memory controller where, by moving tasks around, we cannot
->    properly account and control the amount of memory a task can use.
-
-For v1, memory controller and cpuset controller can be in different
-hierarchy. For v2, we have a unified hierarchy. However, we don't need
-to enable all the controllers in different levels of the hierarchy. For
-example,
-
-    A (memory, cpuset) -- B1 (cpuset)
-                \-- B2 (cpuset)
-
-Cgroup A has memory and cpuset controllers enabled. The child cgroups B1
-and B2 only have cpuset enabled. You can move tasks between B1 and B2
-and they will be subjected to the same memory limitation as imposed by
-the memory controller in A. So there are way to work around that.
-
-> Thsu, for these reasons and also to possibly migrate to the unified
-> hierarchy schema proposed by CGroups v2... we would like a
-> low-overhead mechanism for setting/tuning cpuset at run-time with
-> whatever frequency you like.
-
-We may be able to improve the performance of changing cpuset attribute
-somewhat, but I don't believe there will be much improvement here.
-
->>>> +
->>>> +The "cpuset" controller is hierarchical.  That means the controller
->>>> +cannot use CPUs or memory nodes not allowed in its parent.
->>>> +
->>>> +
->>>> +Cpuset Interface Files
->>>> +~~~~~~~~~~~~~~~~~~~~~~
->>>> +
->>>> +  cpuset.cpus
->>>> +	A read-write multiple values file which exists on non-root
->>>> +	cpuset-enabled cgroups.
->>>> +
->>>> +	It lists the CPUs allowed to be used by tasks within this
->>>> +	cgroup.  The CPU numbers are comma-separated numbers or
->>>> +	ranges.  For example:
->>>> +
->>>> +	  # cat cpuset.cpus
->>>> +	  0-4,6,8-10
->>>> +
->>>> +	An empty value indicates that the cgroup is using the same
->>>> +	setting as the nearest cgroup ancestor with a non-empty
->>>> +	"cpuset.cpus" or all the available CPUs if none is found.
->>> Does that means that we can move tasks into a newly created group for
->>> which we have not yet configured this value?
->>> AFAIK, that's a different behavior wrt v1... and I like it better.
->>>
->> For v2, if you haven't set up the cpuset.cpus, it defaults to the
->> effective cpu list of its parent.
-> +1
->
->>>> +
->>>> +	The value of "cpuset.cpus" stays constant until the next update
->>>> +	and won't be affected by any CPU hotplug events.
->>> This also sounds interesting, does it means that we use the
->>> cpuset.cpus mask to restrict online CPUs, whatever they are?
->> cpuset.cpus holds the cpu list written by the users.
->> cpuset.cpus.effective is the actual cpu mask that is being used. The
->> effective cpu mask is always a subset of cpuset.cpus. They differ if not
->> all the CPUs in cpuset.cpus are online.
-> And that's fine: the effective mask is updated based on HP events.
->
-> The main limitations on this side, so far, is that in
-> update_tasks_cpumask() we walk all the tasks to set_cpus_allowed_ptr()
-> independently for them to be RUNNABLE or not. Isn't that?
-
-That is true.
-
-> Thus, this will ensure to have a valid mask at wakeup time, but
-> perhaps it's not such a big overhead to update the same on the wakeup
-> path... thus speeding up quite a lot the update_cpumasks_hier()
-> especially when you have many SLEEPING tasks on a cpuset.
->
-> A first measurement and tracing shows that this update could cost up
-> to 4ms on a Pixel2 device where you update the cpus for a cpuset
-> containing a single task always sleeping.
-
-The 4ms cost is more than what I would have expected. If you think
-delaying the update until wakeup time is the right move, you can create
-a patch to do that and we can discuss the merit of doing so in LKML.
-
->
->>> I'll have a better look at the code, but my understanding of v1 is
->>> that we spent a lot of effort to keep task cpu-affinity masks aligned
->>> with the cpuset in which they live, and we do something similar at each
->>> HP event, which ultimately generates a lot of overheads in systems
->>> where: you have many HP events and/or cpuset.cpus change quite
->>> frequently.
->>>
->>> I hope to find some better behavior in this series.
->>>
->> The behavior of CPU offline event should be similar in v2. Any HP event
->> will cause the system to reset the cpu masks of task affected by the
->> event. The online event, however, will be a bit different between v1 and
->> v2. For v1, the online event won't restore the CPU back to those cpusets
->> that had the onlined CPU previously. For v2, the v2, the online CPU will
->> be restored back to those cpusets. So there is less work from the
->> management layer, but overhead is still there in the kernel of doing the
->> restore.
-> On that side, I still have to better look into the v1 and v2
-> implementations, but for the util_clamp extension of the cpu
-> controller:
->    https://lkml.org/lkml/2018/4/9/601
-> I'm proposing a different update schema which it seems can give you
-> the benefits or "restoring the mask" after an UP event as well as a
-> fast update/tuning path at run-time.
->
-> Along the line of the above implementation, it would mean that the
-> task affinity mask is constrained/clamped/masked by the TG's affinity
-> mask. This should be an operation performed "on-demand" whenever it
-> makes sense.
->
-> However, to be honest, I never measured the overheads to combine two
-> cpu masks and it can very well be something overkilling for the wakeup
-> path. I don't think the AND by itself should be an issue, since it's
-> already used in the fast wakeup path, e.g.
->
->    select_task_rq_fair()
->       select_idle_sibling()
->          select_idle_core()
->             cpumask_and(cpus, sched_domain_span(sd),
->                         &p->cpus_allowed);
->
-> What eventually could be an issue is the race between the scheduler
-> looking at the cpuset cpumaks and cgroups changing it... but perhaps
-> that's something could be fixed with a proper locking mechanism.
->
-> I will try to run some experiments to at least collect some overheads
-> numbers.
-Collecting more information on where the slowdown is will be helpful.
-
--Longman
+ - Joel
