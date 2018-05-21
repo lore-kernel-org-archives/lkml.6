@@ -1,57 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751253AbeEUFop (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 01:44:45 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:41070 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751103AbeEUFol (ORCPT
+        id S1751616AbeEUFoy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 01:44:54 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:36108 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751195AbeEUFop (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 01:44:41 -0400
-X-Google-Smtp-Source: AB8JxZq3mVci5A77L1hoX3mZLHyTQ6aYvlyC52NutZlYGjm7Wf+YtVMe8Eqt+jFdKuzXcZy7cGSW6A==
-Date: Mon, 21 May 2018 11:14:38 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Geis <pgwipeout@gmail.com>
-Subject: Re: [PATCH v2 07/11] cpufreq: tegra20: Remove unnecessary parentheses
-Message-ID: <20180521054438.hvv4rlc5bu6jjlbo@vireshk-i7>
-References: <20180518200642.24815-1-digetx@gmail.com>
- <20180518200642.24815-8-digetx@gmail.com>
+        Mon, 21 May 2018 01:44:45 -0400
+X-Google-Smtp-Source: AB8JxZo7mEZXlttJPqYz++r2vqvTq5qN/G6QRHv7FIrY5M0scfnWd9vbXjvSPpd64/ZjDz4Bg89jxw==
+Subject: Re: [Xen-devel][RFC 2/3] xen/grant-table: Extend API to work with DMA
+ buffers
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        jgross@suse.com, konrad.wilk@oracle.com
+Cc: daniel.vetter@intel.com, dongwon.kim@intel.com,
+        matthew.d.roper@intel.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180517082604.14828-1-andr2000@gmail.com>
+ <20180517082604.14828-3-andr2000@gmail.com>
+ <28532709-6c87-f048-be6a-3c4ba02ae56f@oracle.com>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <097da8bd-2cfc-0916-451d-dec3e4d2a52e@gmail.com>
+Date: Mon, 21 May 2018 08:44:40 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180518200642.24815-8-digetx@gmail.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <28532709-6c87-f048-be6a-3c4ba02ae56f@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18-05-18, 23:06, Dmitry Osipenko wrote:
-> Remove unnecessary parentheses as suggested by the checkpatch script.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/cpufreq/tegra20-cpufreq.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
-> index df25e350c8e6..4b85a6733533 100644
-> --- a/drivers/cpufreq/tegra20-cpufreq.c
-> +++ b/drivers/cpufreq/tegra20-cpufreq.c
-> @@ -50,7 +50,7 @@ static unsigned int tegra_get_intermediate(struct cpufreq_policy *policy,
->  	 * - we are already at it, i.e. policy->cur == ifreq
->  	 * - index corresponds to ifreq
->  	 */
-> -	if ((freq_table[index].frequency == ifreq) || (policy->cur == ifreq))
-> +	if (freq_table[index].frequency == ifreq || policy->cur == ifreq)
->  		return 0;
->  
->  	return ifreq;
-
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-
--- 
-viresh
+On 05/19/2018 01:19 AM, Boris Ostrovsky wrote:
+> On 05/17/2018 04:26 AM, Oleksandr Andrushchenko wrote:
+>> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>>
+>> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>> ---
+>>   drivers/xen/grant-table.c | 49 +++++++++++++++++++++++++++++++++++++++
+>>   include/xen/grant_table.h |  7 ++++++
+>>   2 files changed, 56 insertions(+)
+>>
+>> diff --git a/drivers/xen/grant-table.c b/drivers/xen/grant-table.c
+>> index bb36b1e1dbcc..c27bcc420575 100644
+>> --- a/drivers/xen/grant-table.c
+>> +++ b/drivers/xen/grant-table.c
+>> @@ -729,6 +729,55 @@ void gnttab_free_pages(int nr_pages, struct page **pages)
+>>   }
+>>   EXPORT_SYMBOL(gnttab_free_pages);
+>>   
+>> +int gnttab_dma_alloc_pages(struct device *dev, bool coherent,
+>> +			   int nr_pages, struct page **pages,
+>> +			   void **vaddr, dma_addr_t *dev_bus_addr)
+>> +{
+>> +	int i;
+>> +	int ret;
+>> +
+>> +	ret = alloc_dma_xenballooned_pages(dev, coherent, nr_pages, pages,
+>> +					   vaddr, dev_bus_addr);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	for (i = 0; i < nr_pages; i++) {
+>> +#if BITS_PER_LONG < 64
+>> +		struct xen_page_foreign *foreign;
+>> +
+>> +		foreign = kzalloc(sizeof(*foreign), GFP_KERNEL);
+>> +		if (!foreign) {
+>> +			gnttab_dma_free_pages(dev, flags, nr_pages, pages,
+>> +					      *vaddr, *dev_bus_addr);
+>> +			return -ENOMEM;
+>> +		}
+>> +		set_page_private(pages[i], (unsigned long)foreign);
+>> +#endif
+>> +		SetPagePrivate(pages[i]);
+>> +	}
+>> +	return 0;
+>> +}
+>> +EXPORT_SYMBOL(gnttab_dma_alloc_pages);
+>> +
+>> +void gnttab_dma_free_pages(struct device *dev, bool coherent,
+>> +			   int nr_pages, struct page **pages,
+>> +			   void *vaddr, dma_addr_t dev_bus_addr)
+>> +{
+>> +	int i;
+>> +
+>> +	for (i = 0; i < nr_pages; i++) {
+>> +		if (PagePrivate(pages[i])) {
+>> +#if BITS_PER_LONG < 64
+>> +			kfree((void *)page_private(pages[i]));
+>> +#endif
+>> +			ClearPagePrivate(pages[i]);
+>> +		}
+>> +	}
+>> +	free_dma_xenballooned_pages(dev, coherent, nr_pages, pages,
+>> +				    vaddr, dev_bus_addr);
+>> +}
+>> +EXPORT_SYMBOL(gnttab_dma_free_pages);
+>
+> Given that these routines look almost exactly like their non-dma
+> counterparts I wonder whether common code could be factored out.
+Yes, this can be done
+> -boris
+>
+>
+>
+>
+>> +
+>>   /* Handling of paged out grant targets (GNTST_eagain) */
+>>   #define MAX_DELAY 256
+>>   static inline void
+>> diff --git a/include/xen/grant_table.h b/include/xen/grant_table.h
+>> index 34b1379f9777..20ee2b5ba965 100644
+>> --- a/include/xen/grant_table.h
+>> +++ b/include/xen/grant_table.h
+>> @@ -195,6 +195,13 @@ void gnttab_free_auto_xlat_frames(void);
+>>   int gnttab_alloc_pages(int nr_pages, struct page **pages);
+>>   void gnttab_free_pages(int nr_pages, struct page **pages);
+>>   
+>> +int gnttab_dma_alloc_pages(struct device *dev, bool coherent,
+>> +			   int nr_pages, struct page **pages,
+>> +			   void **vaddr, dma_addr_t *dev_bus_addr);
+>> +void gnttab_dma_free_pages(struct device *dev, bool coherent,
+>> +			   int nr_pages, struct page **pages,
+>> +			   void *vaddr, dma_addr_t dev_bus_addr);
+>> +
+>>   int gnttab_map_refs(struct gnttab_map_grant_ref *map_ops,
+>>   		    struct gnttab_map_grant_ref *kmap_ops,
+>>   		    struct page **pages, unsigned int count);
