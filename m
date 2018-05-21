@@ -1,46 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752767AbeEULMw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 07:12:52 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:41194 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751166AbeEULMv (ORCPT
+        id S1752730AbeEULOA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 07:14:00 -0400
+Received: from mail-vk0-f41.google.com ([209.85.213.41]:40344 "EHLO
+        mail-vk0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751025AbeEULN7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 07:12:51 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH] PM: wakeup: Make the "aborting suspend" message debug
-Date: Mon, 21 May 2018 13:12:12 +0200
-Message-ID: <24631155.j0D4AbJmQY@aspire.rjw.lan>
+        Mon, 21 May 2018 07:13:59 -0400
+X-Google-Smtp-Source: AB8JxZr/qvMfINmpdKBgByqJyih4QmrJn9vH8eIyHnpkG2BTdIjI6qqZ6OUaBaiDB8QC0Aerl5TBy/MMkpBx2JN99ZA=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Reply-To: whiteheadm@acm.org
+From: tedheadster <tedheadster@gmail.com>
+Date: Mon, 21 May 2018 07:13:37 -0400
+Message-ID: <CAP8WD_apEh=a8m2zJtUwcFpMRYh3ffjTbT5983413hrfE0w05w@mail.gmail.com>
+Subject: RE: x86: Fix AMD K6 indirect call check v2
+To: Andi Kleen <ak@linux.intel.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Andi,
+  I have a K6 regression testing system. I think my K6 is a revision
+C, but I probably can get an earlier cpu (with the bug) to test on.
 
-The message printed by pm_wakeup_pending() on wakeup detection is
-not very useful if someone is not interested specifically in
-debugging wakeup, so turn it into a pm_debug() one.
+Do you have any specific tests you would want me to do on the affected cpu?
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/base/power/wakeup.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-Index: linux-pm/drivers/base/power/wakeup.c
-===================================================================
---- linux-pm.orig/drivers/base/power/wakeup.c
-+++ linux-pm/drivers/base/power/wakeup.c
-@@ -853,7 +853,7 @@ bool pm_wakeup_pending(void)
- 	spin_unlock_irqrestore(&events_lock, flags);
- 
- 	if (ret) {
--		pr_info("PM: Wakeup pending, aborting suspend\n");
-+		pr_debug("PM: Wakeup pending, aborting suspend\n");
- 		pm_print_active_wakeup_sources();
- 	}
- 
+- Matthew Whitehead
