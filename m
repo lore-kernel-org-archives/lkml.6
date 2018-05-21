@@ -1,264 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752963AbeEUOd5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 10:33:57 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36668 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751251AbeEUOdy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 10:33:54 -0400
-Date: Mon, 21 May 2018 17:33:52 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH net-next 12/12] vhost_net: batch submitting XDP
- buffers to underlayer sockets
-Message-ID: <20180521173253-mutt-send-email-mst@kernel.org>
-References: <1526893473-20128-1-git-send-email-jasowang@redhat.com>
- <1526893473-20128-13-git-send-email-jasowang@redhat.com>
+        id S1752742AbeEUOgx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 10:36:53 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:45755 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752231AbeEUOgu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 10:36:50 -0400
+X-Google-Smtp-Source: AB8JxZq4W7kPVBiye7jh6h7fwsOWzayZ9v4bYFLR/4Wdi5X8oyT3WeYMKkj5zxutblRvRFhLjjRkVw==
+Subject: Re: [PATCH 00/13] convert block layer to bioset_init()/mempool_init()
+To: Mike Snitzer <snitzer@redhat.com>
+Cc: Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        hch@infradead.org, colyli@suse.de, darrick.wong@oracle.com, clm@fb.com,
+        bacik@fb.com, linux-xfs@vger.kernel.org, drbd-dev@lists.linbit.com,
+        linux-btrfs@vger.kernel.org, linux-raid@vger.kernel.org,
+        neilb@suse.com
+References: <20180520222558.7053-1-kent.overstreet@gmail.com>
+ <20180521140348.GA19069@redhat.com>
+ <686d7df6-c7d1-48a6-b7ff-48dc8aff6a62@kernel.dk>
+ <20180521143132.GB19194@redhat.com>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <2bbeeb1a-8b99-b06a-eb9b-eb8523c16460@kernel.dk>
+Date: Mon, 21 May 2018 08:36:46 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526893473-20128-13-git-send-email-jasowang@redhat.com>
+In-Reply-To: <20180521143132.GB19194@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 05:04:33PM +0800, Jason Wang wrote:
-> This patch implements XDP batching for vhost_net with tun. This is
-> done by batching XDP buffs in vhost and submit them when:
+On 5/21/18 8:31 AM, Mike Snitzer wrote:
+> On Mon, May 21 2018 at 10:19am -0400,
+> Jens Axboe <axboe@kernel.dk> wrote:
 > 
-> - vhost_net can not build XDP buff (mostly because of the size of packet)
-> - #batched exceeds the limitation (VHOST_NET_RX_BATCH).
-> - tun accept a batch of XDP buff through msg_control and process them
->   in a batch
+>> On 5/21/18 8:03 AM, Mike Snitzer wrote:
+>>> On Sun, May 20 2018 at  6:25pm -0400,
+>>> Kent Overstreet <kent.overstreet@gmail.com> wrote:
+>>>
+>>>> Jens - this series does the rest of the conversions that Christoph wanted, and
+>>>> drops bioset_create().
+>>>>
+>>>> Only lightly tested, but the changes are pretty mechanical. Based on your
+>>>> for-next tree.
+>>>
+>>> By switching 'mempool_t *' to 'mempool_t' and 'bio_set *' to 'bio_set'
+>>> you've altered the alignment of members in data structures.  So I'll
+>>> need to audit all the data structures you've modified in DM.
+>>>
+>>> Could we get the backstory on _why_ you're making this change?
+>>> Would go a long way to helping me appreciate why this is a good use of
+>>> anyone's time.
+>>
+>> Yeah, it's in the first series, it gets rid of a pointer indirection.
 > 
-> With this tun XDP can benefit from e.g batch transmission during
-> XDP_REDIRECT or XDP_TX.
+> "Allows mempools to be embedded in other structs, getting rid of a
+> pointer indirection from allocation fastpaths."
 > 
-> Tests shows 21% improvement on TX pps (from ~3.2Mpps to ~3.9Mpps)
-> while transmitting through testpmd from guest to host by
-> xdp_redirect_map between tap0 and ixgbe.
+> So this is about using contiguous memory or avoiding partial allocation
+> failure?  Or both?
 > 
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
+> Or more to it?  Just trying to fully appreciate the theory behind the
+> perceived associated benefit.
 
-s/underlayer/underlying/ ?
+It's about avoiding a pointer indirection. Instead of having to
+follow a pointer to get to that struct, it's simple offset math off
+your main structure.
 
-> ---
->  drivers/net/tun.c   | 36 +++++++++++++++++----------
->  drivers/vhost/net.c | 71 ++++++++++++++++++++++++++++++++++++-----------------
->  2 files changed, 71 insertions(+), 36 deletions(-)
-> 
-> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-> index b586b3f..5d16d18 100644
-> --- a/drivers/net/tun.c
-> +++ b/drivers/net/tun.c
-> @@ -1616,7 +1616,6 @@ static u32 tun_do_xdp(struct tun_struct *tun,
->  	switch (act) {
->  	case XDP_REDIRECT:
->  		*err = xdp_do_redirect(tun->dev, xdp, xdp_prog);
-> -		xdp_do_flush_map();
->  		if (*err)
->  			break;
->  		goto out;
-> @@ -1624,7 +1623,6 @@ static u32 tun_do_xdp(struct tun_struct *tun,
->  		*err = tun_xdp_tx(tun->dev, xdp);
->  		if (*err)
->  			break;
-> -		tun_xdp_flush(tun->dev);
->  		goto out;
->  	case XDP_PASS:
->  		goto out;
-> @@ -2400,9 +2398,6 @@ static int tun_xdp_one(struct tun_struct *tun,
->  	int err = 0;
->  	bool skb_xdp = false;
->  
-> -	preempt_disable();
-> -	rcu_read_lock();
-> -
->  	xdp_prog = rcu_dereference(tun->xdp_prog);
->  	if (xdp_prog) {
->  		if (gso->gso_type) {
-> @@ -2461,15 +2456,12 @@ static int tun_xdp_one(struct tun_struct *tun,
->  		tun_flow_update(tun, rxhash, tfile);
->  
->  out:
-> -	rcu_read_unlock();
-> -	preempt_enable();
-> -
->  	return err;
->  }
->  
->  static int tun_sendmsg(struct socket *sock, struct msghdr *m, size_t total_len)
->  {
-> -	int ret;
-> +	int ret, i;
->  	struct tun_file *tfile = container_of(sock, struct tun_file, socket);
->  	struct tun_struct *tun = tun_get(tfile);
->  	struct tun_msg_ctl *ctl = m->msg_control;
-> @@ -2477,10 +2469,28 @@ static int tun_sendmsg(struct socket *sock, struct msghdr *m, size_t total_len)
->  	if (!tun)
->  		return -EBADFD;
->  
-> -	if (ctl && ctl->type == TUN_MSG_PTR) {
-> -		ret = tun_xdp_one(tun, tfile, ctl->ptr);
-> -		if (!ret)
-> -			ret = total_len;
-> +	if (ctl && ((ctl->type & 0xF) == TUN_MSG_PTR)) {
-> +		int n = ctl->type >> 16;
-> +
-> +		preempt_disable();
-> +		rcu_read_lock();
-> +
-> +		for (i = 0; i < n; i++) {
-> +			struct xdp_buff *x = (struct xdp_buff *)ctl->ptr;
-> +			struct xdp_buff *xdp = &x[i];
-> +
-> +			xdp_set_data_meta_invalid(xdp);
-> +			xdp->rxq = &tfile->xdp_rxq;
-> +			tun_xdp_one(tun, tfile, xdp);
-> +		}
-> +
-> +		xdp_do_flush_map();
-> +		tun_xdp_flush(tun->dev);
-> +
-> +		rcu_read_unlock();
-> +		preempt_enable();
-> +
-> +		ret = total_len;
->  		goto out;
->  	}
->  
-> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-> index 0d84de6..bec4109 100644
-> --- a/drivers/vhost/net.c
-> +++ b/drivers/vhost/net.c
-> @@ -118,6 +118,7 @@ struct vhost_net_virtqueue {
->  	struct ptr_ring *rx_ring;
->  	struct vhost_net_buf rxq;
->  	struct xdp_buff xdp[VHOST_RX_BATCH];
-> +	struct vring_used_elem heads[VHOST_RX_BATCH];
->  };
->  
->  struct vhost_net {
-> @@ -511,7 +512,7 @@ static int vhost_net_build_xdp(struct vhost_net_virtqueue *nvq,
->  	void *buf;
->  	int copied;
->  
-> -	if (len < nvq->sock_hlen)
-> +	if (unlikely(len < nvq->sock_hlen))
->  		return -EFAULT;
->  
->  	if (SKB_DATA_ALIGN(len + pad) +
-> @@ -567,11 +568,37 @@ static int vhost_net_build_xdp(struct vhost_net_virtqueue *nvq,
->  	return 0;
->  }
->  
-> +static void vhost_tx_batch(struct vhost_net *net,
-> +			   struct vhost_net_virtqueue *nvq,
-> +			   struct socket *sock,
-> +			   struct msghdr *msghdr, int n)
-> +{
-> +	struct tun_msg_ctl ctl = {
-> +		.type = n << 16 | TUN_MSG_PTR,
-> +		.ptr = nvq->xdp,
-> +	};
-> +	int err;
-> +
-> +	if (n == 0)
-> +		return;
-> +
-> +	msghdr->msg_control = &ctl;
-> +	err = sock->ops->sendmsg(sock, msghdr, 0);
-> +
-> +	if (unlikely(err < 0)) {
-> +		/* FIXME vq_err() */
-> +		vq_err(&nvq->vq, "sendmsg err!\n");
-> +		return;
-> +	}
-> +	vhost_add_used_and_signal_n(&net->dev, &nvq->vq, nvq->vq.heads, n);
-> +}
-> +
-> +/* Expects to be always run from workqueue - which acts as
-> + * read-size critical section for our kind of RCU. */
->  static void handle_tx_copy(struct vhost_net *net)
->  {
->  	struct vhost_net_virtqueue *nvq = &net->vqs[VHOST_NET_VQ_TX];
->  	struct vhost_virtqueue *vq = &nvq->vq;
-> -	struct xdp_buff xdp;
->  	unsigned out, in;
->  	int head;
->  	struct msghdr msg = {
-> @@ -586,7 +613,6 @@ static void handle_tx_copy(struct vhost_net *net)
->  	size_t hdr_size;
->  	struct socket *sock;
->  	struct vhost_net_ubuf_ref *uninitialized_var(ubufs);
-> -	struct tun_msg_ctl ctl;
->  	int sent_pkts = 0;
->  	s16 nheads = 0;
->  
-> @@ -631,22 +657,24 @@ static void handle_tx_copy(struct vhost_net *net)
->  		vq->heads[nheads].id = cpu_to_vhost32(vq, head);
->  		vq->heads[nheads].len = 0;
->  
-> -		err = vhost_net_build_xdp(nvq, &msg.msg_iter, &xdp);
-> -		if (!err) {
-> -			ctl.type = TUN_MSG_PTR;
-> -			ctl.ptr = &xdp;
-> -			msg.msg_control = &ctl;
-> -		} else
-> -			msg.msg_control = NULL;
-> -
->  		total_len += len;
-> -		if (total_len < VHOST_NET_WEIGHT &&
-> -		    vhost_has_more_pkts(net, vq)) {
-> -			msg.msg_flags |= MSG_MORE;
-> -		} else {
-> -			msg.msg_flags &= ~MSG_MORE;
-> +		err = vhost_net_build_xdp(nvq, &msg.msg_iter,
-> +					  &nvq->xdp[nheads]);
-> +		if (!err) {
-> +			if (++nheads == VHOST_RX_BATCH) {
-> +				vhost_tx_batch(net, nvq, sock, &msg, nheads);
-> +				nheads = 0;
-> +			}
-> +			goto done;
-> +		} else if (unlikely(err != -ENOSPC)) {
-> +			vq_err(vq, "Fail to build XDP buffer\n");
-> +			break;
->  		}
->  
-> +		vhost_tx_batch(net, nvq, sock, &msg, nheads);
-> +		msg.msg_control = NULL;
-> +		nheads = 0;
-> +
->  		/* TODO: Check specific error and bomb out unless ENOBUFS? */
->  		err = sock->ops->sendmsg(sock, &msg, len);
->  		if (unlikely(err < 0)) {
-> @@ -657,11 +685,9 @@ static void handle_tx_copy(struct vhost_net *net)
->  		if (err != len)
->  			pr_debug("Truncated TX packet: "
->  				 " len %d != %zd\n", err, len);
-> -		if (++nheads == VHOST_RX_BATCH) {
-> -			vhost_add_used_and_signal_n(&net->dev, vq, vq->heads,
-> -						    nheads);
-> -			nheads = 0;
-> -		}
-> +
-> +		vhost_add_used_and_signal(&net->dev, vq, head, 0);
-> +done:
->  		if (vhost_exceeds_weight(++sent_pkts, total_len)) {
->  			vhost_poll_queue(&vq->poll);
->  			break;
-> @@ -669,8 +695,7 @@ static void handle_tx_copy(struct vhost_net *net)
->  	}
->  out:
->  	if (nheads)
-> -		vhost_add_used_and_signal_n(&net->dev, vq, vq->heads,
-> -					    nheads);
-> +		vhost_tx_batch(net, nvq, sock, &msg, nheads);
->  	mutex_unlock(&vq->mutex);
->  }
->  
-> -- 
-> 2.7.4
+> I do think the increased risk of these embedded bio_set and mempool_t
+> themselves crossing cachelines, or struct members that follow them doing
+> so, really detracts from these types of changes.
+
+Definitely something to look out for, though most of them should be
+per-dev structures and not in-flight structures. That makes it a bit
+less sensitive. But can't hurt to audit the layouts and adjust if
+necessary. This is why it's posted for review :-)
+
+-- 
+Jens Axboe
