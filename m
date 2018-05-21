@@ -1,98 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753075AbeEUO0S (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 10:26:18 -0400
-Received: from foss.arm.com ([217.140.101.70]:51136 "EHLO foss.arm.com"
+        id S1753092AbeEUO0f (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 10:26:35 -0400
+Received: from foss.arm.com ([217.140.101.70]:51162 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753038AbeEUO0G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 10:26:06 -0400
-From: Quentin Perret <quentin.perret@arm.com>
-To: peterz@infradead.org, rjw@rjwysocki.net, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Cc: mingo@redhat.com, dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
-        chris.redpath@arm.com, patrick.bellasi@arm.com,
-        valentin.schneider@arm.com, vincent.guittot@linaro.org,
-        thara.gopinath@linaro.org, viresh.kumar@linaro.org, tkjos@google.com,
-        joelaf@google.com, smuckle@google.com, adharmap@quicinc.com,
-        skannan@quicinc.com, pkondeti@codeaurora.org, juri.lelli@redhat.com,
-        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
-        currojerez@riseup.net, javi.merino@kernel.org, quentin.perret@arm.com
-Subject: [RFC PATCH v3 10/10] arch_topology: Start Energy Aware Scheduling
-Date: Mon, 21 May 2018 15:25:05 +0100
-Message-Id: <20180521142505.6522-11-quentin.perret@arm.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180521142505.6522-1-quentin.perret@arm.com>
-References: <20180521142505.6522-1-quentin.perret@arm.com>
+        id S1752838AbeEUO0a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 10:26:30 -0400
+Subject: Re: [PATCH INTERNAL 3/3] PCI: iproc: Disable MSI parsing in certain
+ PAXC blocks
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Ray Jui <ray.jui@broadcom.com>
+Cc: poza@codeaurora.org, Bjorn Helgaas <bhelgaas@google.com>,
+        Bjorn Helgaas <helgaas@kernel.org>, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, linux-pci@vger.kernel.org,
+        linux-pci-owner@vger.kernel.org
+References: <1526577692-21104-1-git-send-email-ray.jui@broadcom.com>
+ <1526577692-21104-4-git-send-email-ray.jui@broadcom.com>
+ <ad41ea7f16414a83a2b3d7e6192bcf79@codeaurora.org>
+ <20180518135614.GA18605@e107981-ln.cambridge.arm.com>
+ <e433f2cf-63c5-37c3-f7ef-15ff0aa67e4f@broadcom.com>
+ <20180521133305.GB1443@e107981-ln.cambridge.arm.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <073832d4-88a0-efa1-2da8-5e07479e51e0@arm.com>
+Date: Mon, 21 May 2018 15:26:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180521133305.GB1443@e107981-ln.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Energy Aware Scheduling starts when the scheduling domains are built if the
-Energy Model is present and all conditions are met. However, in the typical
-case of Arm/Arm64 systems, the Energy Model is provided after the scheduling
-domains are first built at boot time, which results in EAS staying
-disabled.
+On 21/05/18 14:33, Lorenzo Pieralisi wrote:
+> [+Robin]
+> 
+> On Fri, May 18, 2018 at 12:48:28PM -0700, Ray Jui wrote:
+>> Hi Lorenzo,
+>>
+>> On 5/18/2018 6:56 AM, Lorenzo Pieralisi wrote:
+>>> On Fri, May 18, 2018 at 02:53:41PM +0530, poza@codeaurora.org wrote:
+>>>> On 2018-05-17 22:51, Ray Jui wrote:
+>>>>> The internal MSI parsing logic in certain revisions of PAXC root
+>>>>> complexes does not work properly and can casue corruptions on the
+>>>>> writes. They need to be disabled
+>>>>>
+>>>>> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+>>>>> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+>>>>> ---
+>>>>> drivers/pci/host/pcie-iproc.c | 34 ++++++++++++++++++++++++++++++++--
+>>>>> 1 file changed, 32 insertions(+), 2 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/pci/host/pcie-iproc.c b/drivers/pci/host/pcie-iproc.c
+>>>>> index 3c76c5f..b906d80 100644
+>>>>> --- a/drivers/pci/host/pcie-iproc.c
+>>>>> +++ b/drivers/pci/host/pcie-iproc.c
+>>>>> @@ -1144,10 +1144,22 @@ static int iproc_pcie_paxb_v2_msi_steer(struct
+>>>>> iproc_pcie *pcie, u64 msi_addr)
+>>>>> 	return ret;
+>>>>> }
+>>>>>
+>>>>> -static void iproc_pcie_paxc_v2_msi_steer(struct iproc_pcie *pcie, u64
+>>>>> msi_addr)
+>>>>> +static void iproc_pcie_paxc_v2_msi_steer(struct iproc_pcie *pcie, u64
+>>>>> msi_addr,
+>>>>> +					 bool enable)
+>>>>> {
+>>>>> 	u32 val;
+>>>>>
+>>>>> +	if (!enable) {
+>>>>> +		/*
+>>>>> +		 * Disable PAXC MSI steering. All write transfers will be
+>>>>> +		 * treated as non-MSI transfers
+>>>>> +		 */
+>>>>> +		val = iproc_pcie_read_reg(pcie, IPROC_PCIE_MSI_EN_CFG);
+>>>>> +		val &= ~MSI_ENABLE_CFG;
+>>>>> +		iproc_pcie_write_reg(pcie, IPROC_PCIE_MSI_EN_CFG, val);
+>>>>> +		return;
+>>>>> +	}
+>>>>> +
+>>>>> 	/*
+>>>>> 	 * Program bits [43:13] of address of GITS_TRANSLATER register into
+>>>>> 	 * bits [30:0] of the MSI base address register.  In fact, in all iProc
+>>>>> @@ -1201,7 +1213,7 @@ static int iproc_pcie_msi_steer(struct iproc_pcie
+>>>>> *pcie,
+>>>>> 			return ret;
+>>>>> 		break;
+>>>>> 	case IPROC_PCIE_PAXC_V2:
+>>>>> -		iproc_pcie_paxc_v2_msi_steer(pcie, msi_addr);
+>>>>> +		iproc_pcie_paxc_v2_msi_steer(pcie, msi_addr, true);
+>>>>
+>>>> Are you calling iproc_pcie_paxc_v2_msi_steer() anywhere else with 'false' ?
+>>>> I see its getting called only from one place in current code
+>>>> iproc_pcie_msi_steer().
+>>>
+>>> It is called below with the false field to disable MSIs. That's probably
+>>> one reason more to create a function to enable/disable MSIs instead of
+>>> adding a parameter to iproc_pcie_paxc_v2_msi_steer().
+>>
+>> Correct. Thanks for helping to explain.
+>>
+>>>
+>>> Which brings me to the question: what happens to those MSIs writes
+>>> when MSIs are disabled according to this patch ? Are they terminated
+>>> at the root complex ?
+>>
+>> Note the PAXC block parses MSI writes from our internally connected
+>> endpoints (i.e., an embedded network processor). The PAXC block examines
+>> these MSI writes and modifies the memory attributes (to DEVICE) of these
+>> data and then send them out to the AXI bus. These MSI writes will then be
+>> forwarded to the GIC (e.g., GICv2m, GICv3-ITS from ARM) for further
+>> processing. This is saying, PAXC itself does not process these MSI writes.
+>> They are processed by the GIC and associated interrupt will be generated
+>> form the GIC. PAXC's job is to parse and tag them properly so these MSI
+>> writes can reach the GIC, and at the same, reach the GIC at the right order.
+>>
+>> On some of these problematic PAXCs, we are being forced to disable this PAXC
+>> internal parsing logic. In this case, we set up static mapping with the
+>> IOMMU to modify the memory attributes of these MSI writes. These MSI writes
+>> are always designated towards a specific memory address (e.g., on the GICv3
+>> based system, it's the address of the translator register), and that's why
+>> static mapping table can be set up to work around this.
+> 
+> Which means, I presume, that there must be some code that somehow
+> somewhere in the kernel sets-up those mappings and it has to be related
+> to this patch, in which case I wonder why we enable the PAXC steering at
+> all given that this (hack) can be done through the IOMMU (and I assume
+> that on all PAXC platforms that do need MSIs there is an IOMMU IP
+> upstream the root bridge, otherwise I have no idea what will happen to
+> those MSI writes).
 
-This commit fixes this issue by re-building the scheduling domain from the
-arch topology driver, once CPUfreq is up and running and when the capacity
-of the CPUs have been updated to their final value.
+If it's only rewriting memory attributes (FWIW it sounds like this thing 
+is comparable to the AXI translation table of the PLDA root complex we 
+have in Juno), then if the IOMMU is controlled by Linux the PAXC 
+shouldn't be needed anyway. In that situation the GICv2m/ITS doorbell 
+will be already mapped for the endpoint as device memory (and usually at 
+some arbitrary address that the PAXC won't recognise anyway) - see 
+iommu_dma_get_msi_page().
 
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Quentin Perret <quentin.perret@arm.com>
----
- drivers/base/arch_topology.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+If Linux *doesn't* know about the IOMMU, then the firmware should be 
+free to set it up with a static 1:1 mapping of the PA space and leave it 
+that way, provided Linux can't inadvertently stomp on those page tables 
+later.
 
-diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
-index e7cb0c6ade81..7f9fa10ef940 100644
---- a/drivers/base/arch_topology.c
-+++ b/drivers/base/arch_topology.c
-@@ -15,6 +15,8 @@
- #include <linux/slab.h>
- #include <linux/string.h>
- #include <linux/sched/topology.h>
-+#include <linux/energy_model.h>
-+#include <linux/cpuset.h>
- 
- DEFINE_PER_CPU(unsigned long, freq_scale) = SCHED_CAPACITY_SCALE;
- 
-@@ -173,6 +175,9 @@ static cpumask_var_t cpus_to_visit;
- static void parsing_done_workfn(struct work_struct *work);
- static DECLARE_WORK(parsing_done_work, parsing_done_workfn);
- 
-+static void start_eas_workfn(struct work_struct *work);
-+static DECLARE_WORK(start_eas_work, start_eas_workfn);
-+
- static int
- init_cpu_capacity_callback(struct notifier_block *nb,
- 			   unsigned long val,
-@@ -204,6 +209,7 @@ init_cpu_capacity_callback(struct notifier_block *nb,
- 		free_raw_capacity();
- 		pr_debug("cpu_capacity: parsing done\n");
- 		schedule_work(&parsing_done_work);
-+		schedule_work(&start_eas_work);
- 	}
- 
- 	return 0;
-@@ -249,6 +255,19 @@ static void parsing_done_workfn(struct work_struct *work)
- 	free_cpumask_var(cpus_to_visit);
- }
- 
-+static void start_eas_workfn(struct work_struct *work)
-+{
-+	/* Make sure the EM knows about the updated CPU capacities. */
-+	rcu_read_lock();
-+	em_rescale_cpu_capacity();
-+	rcu_read_unlock();
-+
-+	/* Inform the scheduler about the EM availability. */
-+	cpus_read_lock();
-+	rebuild_sched_domains();
-+	cpus_read_unlock();
-+}
-+
- #else
- core_initcall(free_raw_capacity);
- #endif
--- 
-2.17.0
+Robin.
