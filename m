@@ -1,69 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752713AbeEUObi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 10:31:38 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36594 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751504AbeEUObg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 10:31:36 -0400
-Date: Mon, 21 May 2018 10:31:35 -0400
-From: Mike Snitzer <snitzer@redhat.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        hch@infradead.org, colyli@suse.de, darrick.wong@oracle.com, clm@fb.com,
-        bacik@fb.com, linux-xfs@vger.kernel.org, drbd-dev@lists.linbit.com,
-        linux-btrfs@vger.kernel.org, linux-raid@vger.kernel.org,
-        neilb@suse.com
-Subject: Re: [PATCH 00/13] convert block layer to bioset_init()/mempool_init()
-Message-ID: <20180521143132.GB19194@redhat.com>
-References: <20180520222558.7053-1-kent.overstreet@gmail.com>
- <20180521140348.GA19069@redhat.com>
- <686d7df6-c7d1-48a6-b7ff-48dc8aff6a62@kernel.dk>
+        id S1752761AbeEUObu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 10:31:50 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:43881 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752658AbeEUObn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 10:31:43 -0400
+X-Google-Smtp-Source: AB8JxZobfru4TgCsAX3u3kk6DQNFg+36Tcyfzsufsxi4rN17Ju33fnNfPorDrYb+xmFPWeF2FWl4EA==
+Subject: Re: [PATCH v2 03/29] venus: hfi: update sequence event to handle more
+ properties
+To: Tomasz Figa <tfiga@chromium.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>, vgarodia@codeaurora.org
+References: <20180515075859.17217-1-stanimir.varbanov@linaro.org>
+ <20180515075859.17217-4-stanimir.varbanov@linaro.org>
+ <CAAFQd5DVz-VcyR5DibXjRXCzy=w0PeoG0ru8Eadc4+thCX4f=A@mail.gmail.com>
+From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <b375ac04-8757-c5e4-1813-8adb17a8a3d5@linaro.org>
+Date: Mon, 21 May 2018 17:31:40 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <686d7df6-c7d1-48a6-b7ff-48dc8aff6a62@kernel.dk>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <CAAFQd5DVz-VcyR5DibXjRXCzy=w0PeoG0ru8Eadc4+thCX4f=A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21 2018 at 10:19am -0400,
-Jens Axboe <axboe@kernel.dk> wrote:
+Hi Tomasz,
 
-> On 5/21/18 8:03 AM, Mike Snitzer wrote:
-> > On Sun, May 20 2018 at  6:25pm -0400,
-> > Kent Overstreet <kent.overstreet@gmail.com> wrote:
-> > 
-> >> Jens - this series does the rest of the conversions that Christoph wanted, and
-> >> drops bioset_create().
-> >>
-> >> Only lightly tested, but the changes are pretty mechanical. Based on your
-> >> for-next tree.
-> > 
-> > By switching 'mempool_t *' to 'mempool_t' and 'bio_set *' to 'bio_set'
-> > you've altered the alignment of members in data structures.  So I'll
-> > need to audit all the data structures you've modified in DM.
-> > 
-> > Could we get the backstory on _why_ you're making this change?
-> > Would go a long way to helping me appreciate why this is a good use of
-> > anyone's time.
+On 05/18/2018 04:53 PM, Tomasz Figa wrote:
+> On Tue, May 15, 2018 at 5:14 PM Stanimir Varbanov <
+> stanimir.varbanov@linaro.org> wrote:
 > 
-> Yeah, it's in the first series, it gets rid of a pointer indirection.
+>> HFI version 4xx can pass more properties in the sequence change
+>> event, extend the event structure with them.
+> 
+>> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+>> ---
+>>   drivers/media/platform/qcom/venus/hfi.h      |  9 ++++++
+>>   drivers/media/platform/qcom/venus/hfi_msgs.c | 46
+> ++++++++++++++++++++++++++++
+>>   2 files changed, 55 insertions(+)
+> 
+>> diff --git a/drivers/media/platform/qcom/venus/hfi.h
+> b/drivers/media/platform/qcom/venus/hfi.h
+>> index 5466b7d60dd0..21376d93170f 100644
+>> --- a/drivers/media/platform/qcom/venus/hfi.h
+>> +++ b/drivers/media/platform/qcom/venus/hfi.h
+>> @@ -74,6 +74,15 @@ struct hfi_event_data {
+>>          u32 tag;
+>>          u32 profile;
+>>          u32 level;
+> 
+> nit; Could we add a comment saying that it showed in 4xx?
 
-"Allows mempools to be embedded in other structs, getting rid of a
-pointer indirection from allocation fastpaths."
+Sure, I can add a comment.
 
-So this is about using contiguous memory or avoiding partial allocation
-failure?  Or both?
+> 
+> [snip]
+> 
+>> +               case HFI_PROPERTY_CONFIG_VDEC_ENTROPY:
+>> +                       data_ptr += sizeof(u32);
+>> +                       entropy_mode = *(u32 *)data_ptr;
+>> +                       event.entropy_mode = entropy_mode;
+> 
+> Is the |entropy_mode| local variable necessary?
 
-Or more to it?  Just trying to fully appreciate the theory behind the
-perceived associated benefit.
+Isn't GCC smart enough ;) Sure, I can drop entropy_mode local variable.
 
-I do think the increased risk of these embedded bio_set and mempool_t
-themselves crossing cachelines, or struct members that follow them doing
-so, really detracts from these types of changes.
-
-Thanks,
-Mike
+-- 
+regards,
+Stan
