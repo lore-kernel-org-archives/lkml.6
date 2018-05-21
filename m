@@ -1,209 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752796AbeEUKPM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 06:15:12 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:55744 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751434AbeEUKLj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 06:11:39 -0400
-From: John Garry <john.garry@huawei.com>
-To: <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
-CC: <linux-scsi@vger.kernel.org>, <linuxarm@huawei.com>,
-        <linux-kernel@vger.kernel.org>, John Garry <john.garry@huawei.com>
-Subject: [PATCH 01/13] scsi: hisi_sas: Introduce hisi_sas_phy_set_linkrate()
-Date: Mon, 21 May 2018 18:09:13 +0800
-Message-ID: <1526897365-228549-2-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1526897365-228549-1-git-send-email-john.garry@huawei.com>
-References: <1526897365-228549-1-git-send-email-john.garry@huawei.com>
+        id S1752728AbeEUKPd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 06:15:33 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46228 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751111AbeEUKP2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 06:15:28 -0400
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        Hanjun Guo <hanjun.guo@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Will Deacon <Will.Deacon@arm.com>,
+        Catalin Marinas <Catalin.Marinas@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <Mark.Rutland@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-riscv@lists.infradead.org,
+        Xiongfeng Wang <wangxiongfeng2@huawei.com>, vkilari@codeaurora.org,
+        Al Stone <ahs3@redhat.com>, Dietmar.Eggemann@arm.com,
+        Morten.Rasmussen@arm.com, Palmer Dabbelt <palmer@sifive.com>,
+        Len Brown <lenb@kernel.org>, John Garry <john.garry@huawei.com>,
+        austinwc@codeaurora.org, tnowicki@caviumnetworks.com,
+        jhugo@codeaurora.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: Re: [PATCH v9 02/12] drivers: base: cacheinfo: setup DT cache
+ properties early
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+References: <20180511235807.30834-1-jeremy.linton@arm.com>
+ <20180511235807.30834-3-jeremy.linton@arm.com>
+ <78b08b68-ff57-8dd8-6eb1-00548f275eac@arm.com>
+ <CAHp75VciOAMX1HWifZ+K9GiVicZRFrwHaGteJFVe1uFrh+qu0w@mail.gmail.com>
+ <a64ed431-0f60-2711-4138-eeefc7ba2d8b@arm.com>
+ <20180517154701.GA20281@e107155-lin>
+ <CAHp75VfEYcPdECmDDOd8CLBBXGpcwSUGQRr0x8VTb1-7j51_0Q@mail.gmail.com>
+ <7c9a4921-d4da-f1db-85ed-7d7f917be30c@arm.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Organization: ARM
+Message-ID: <90f9c7c6-b7ae-9e23-3e15-eec44ba39703@arm.com>
+Date: Mon, 21 May 2018 11:15:13 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+In-Reply-To: <7c9a4921-d4da-f1db-85ed-7d7f917be30c@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is much common code and functionality between the
-HW versions to set the PHY linkrate.
 
-As such, this patch factors out the common code into
-a generic function hisi_sas_phy_set_linkrate().
 
-Signed-off-by: John Garry <john.garry@huawei.com>
----
- drivers/scsi/hisi_sas/hisi_sas_main.c  | 29 +++++++++++++++++++++++++++-
- drivers/scsi/hisi_sas/hisi_sas_v1_hw.c | 35 ++++------------------------------
- drivers/scsi/hisi_sas/hisi_sas_v2_hw.c | 21 ++------------------
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 21 ++------------------
- 4 files changed, 36 insertions(+), 70 deletions(-)
+On 21/05/18 10:27, Sudeep Holla wrote:
+> 
+> 
+> On 18/05/18 22:50, Andy Shevchenko wrote:
+>> On Thu, May 17, 2018 at 6:47 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+>>
+>>> Is below patch does what you were looking for ?
+>>
+>> Somewhat.
+>> See below for some minors.
+>>
+> 
+> Thanks
+> 
+>>> of_property_read_u64 searches for a property in a device node and read
+>>> a 64-bit value from it. Instead of using of_get_property to get the
+>>> property and then read 64-bit value using of_read_number, we can make
+>>> use of of_property_read_u64.
+>>
+>> Suggested-by?
+>>
+> 
+> Yes indeed, added it locally after I sent out this patch. Will send out
+> a proper patch soon.
+> 
+>>> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+>>
+>>
+>>> -       cache_size = of_get_property(np, propname, NULL);
+>>> -       if (cache_size)
+>>> -               this_leaf->size = of_read_number(cache_size, 1);
+>>> +       if (!of_property_read_u64(np, propname, &cache_size))
+>>> +               this_leaf->size = cache_size;
+>>
+>> I suppose it's something like this
+>>
+>> ret = of_property_...(..., &this_leaf->VAR);
+>> if (ret)
+>>  warning / set default / etc
+> 
+> OK, I do prefer this but once I was told not to use structure elements
+> directly like that, but should be harmless in this particular case, will
+> do so. 
+> 
 
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-index 39f694e..f822d6f 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_main.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-@@ -866,6 +866,33 @@ static int hisi_sas_queue_command(struct sas_task *task, gfp_t gfp_flags)
- 	return hisi_sas_task_exec(task, gfp_flags, 0, NULL);
- }
- 
-+static void hisi_sas_phy_set_linkrate(struct hisi_hba *hisi_hba, int phy_no,
-+			struct sas_phy_linkrates *r)
-+{
-+	struct sas_phy_linkrates _r;
-+
-+	struct hisi_sas_phy *phy = &hisi_hba->phy[phy_no];
-+	struct asd_sas_phy *sas_phy = &phy->sas_phy;
-+	enum sas_linkrate min, max;
-+
-+	if (r->maximum_linkrate == SAS_LINK_RATE_UNKNOWN) {
-+		max = sas_phy->phy->maximum_linkrate;
-+		min = r->minimum_linkrate;
-+	} else if (r->minimum_linkrate == SAS_LINK_RATE_UNKNOWN) {
-+		max = r->maximum_linkrate;
-+		min = sas_phy->phy->minimum_linkrate;
-+	} else
-+		return;
-+
-+	_r.maximum_linkrate = max;
-+	_r.minimum_linkrate = min;
-+
-+	hisi_hba->hw->phy_disable(hisi_hba, phy_no);
-+	msleep(100);
-+	hisi_hba->hw->phy_set_linkrate(hisi_hba, phy_no, &_r);
-+	hisi_hba->hw->phy_start(hisi_hba, phy_no);
-+}
-+
- static int hisi_sas_control_phy(struct asd_sas_phy *sas_phy, enum phy_func func,
- 				void *funcdata)
- {
-@@ -889,7 +916,7 @@ static int hisi_sas_control_phy(struct asd_sas_phy *sas_phy, enum phy_func func,
- 		break;
- 
- 	case PHY_FUNC_SET_LINK_RATE:
--		hisi_hba->hw->phy_set_linkrate(hisi_hba, phy_no, funcdata);
-+		hisi_sas_phy_set_linkrate(hisi_hba, phy_no, funcdata);
- 		break;
- 	case PHY_FUNC_GET_EVENTS:
- 		if (hisi_hba->hw->get_events) {
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
-index abe175f..8fa79d0 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
-@@ -855,39 +855,12 @@ static enum sas_linkrate phy_get_max_linkrate_v1_hw(void)
- static void phy_set_linkrate_v1_hw(struct hisi_hba *hisi_hba, int phy_no,
- 		struct sas_phy_linkrates *r)
- {
--	u32 prog_phy_link_rate =
--		hisi_sas_phy_read32(hisi_hba, phy_no, PROG_PHY_LINK_RATE);
--	struct hisi_sas_phy *phy = &hisi_hba->phy[phy_no];
--	struct asd_sas_phy *sas_phy = &phy->sas_phy;
--	int i;
--	enum sas_linkrate min, max;
--	u32 rate_mask = 0;
--
--	if (r->maximum_linkrate == SAS_LINK_RATE_UNKNOWN) {
--		max = sas_phy->phy->maximum_linkrate;
--		min = r->minimum_linkrate;
--	} else if (r->minimum_linkrate == SAS_LINK_RATE_UNKNOWN) {
--		max = r->maximum_linkrate;
--		min = sas_phy->phy->minimum_linkrate;
--	} else
--		return;
--
--	sas_phy->phy->maximum_linkrate = max;
--	sas_phy->phy->minimum_linkrate = min;
--
--	max -= SAS_LINK_RATE_1_5_GBPS;
-+	enum sas_linkrate max = r->maximum_linkrate;
-+	u32 prog_phy_link_rate = 0x800;
- 
--	for (i = 0; i <= max; i++)
--		rate_mask |= 1 << (i * 2);
--
--	prog_phy_link_rate &= ~0xff;
--	prog_phy_link_rate |= rate_mask;
--
--	disable_phy_v1_hw(hisi_hba, phy_no);
--	msleep(100);
-+	prog_phy_link_rate |= hisi_sas_get_prog_phy_linkrate_mask(max);
- 	hisi_sas_phy_write32(hisi_hba, phy_no, PROG_PHY_LINK_RATE,
--			prog_phy_link_rate);
--	start_phy_v1_hw(hisi_hba, phy_no);
-+			     prog_phy_link_rate);
- }
- 
- static int get_wideport_bitmap_v1_hw(struct hisi_hba *hisi_hba, int port_id)
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-index 911bb76..fb0e966 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-@@ -1600,29 +1600,12 @@ static enum sas_linkrate phy_get_max_linkrate_v2_hw(void)
- static void phy_set_linkrate_v2_hw(struct hisi_hba *hisi_hba, int phy_no,
- 		struct sas_phy_linkrates *r)
- {
--	struct hisi_sas_phy *phy = &hisi_hba->phy[phy_no];
--	struct asd_sas_phy *sas_phy = &phy->sas_phy;
--	enum sas_linkrate min, max;
-+	enum sas_linkrate max = r->maximum_linkrate;
- 	u32 prog_phy_link_rate = 0x800;
- 
--	if (r->maximum_linkrate == SAS_LINK_RATE_UNKNOWN) {
--		max = sas_phy->phy->maximum_linkrate;
--		min = r->minimum_linkrate;
--	} else if (r->minimum_linkrate == SAS_LINK_RATE_UNKNOWN) {
--		max = r->maximum_linkrate;
--		min = sas_phy->phy->minimum_linkrate;
--	} else
--		return;
--
--	sas_phy->phy->maximum_linkrate = max;
--	sas_phy->phy->minimum_linkrate = min;
- 	prog_phy_link_rate |= hisi_sas_get_prog_phy_linkrate_mask(max);
--
--	disable_phy_v2_hw(hisi_hba, phy_no);
--	msleep(100);
- 	hisi_sas_phy_write32(hisi_hba, phy_no, PROG_PHY_LINK_RATE,
--			prog_phy_link_rate);
--	start_phy_v2_hw(hisi_hba, phy_no);
-+			     prog_phy_link_rate);
- }
- 
- static int get_wideport_bitmap_v2_hw(struct hisi_hba *hisi_hba, int port_id)
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index c013673..0a80a39 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -1879,29 +1879,12 @@ static int hisi_sas_v3_init(struct hisi_hba *hisi_hba)
- static void phy_set_linkrate_v3_hw(struct hisi_hba *hisi_hba, int phy_no,
- 		struct sas_phy_linkrates *r)
- {
--	struct hisi_sas_phy *phy = &hisi_hba->phy[phy_no];
--	struct asd_sas_phy *sas_phy = &phy->sas_phy;
--	enum sas_linkrate min, max;
-+	enum sas_linkrate max = r->maximum_linkrate;
- 	u32 prog_phy_link_rate = 0x800;
- 
--	if (r->maximum_linkrate == SAS_LINK_RATE_UNKNOWN) {
--		max = sas_phy->phy->maximum_linkrate;
--		min = r->minimum_linkrate;
--	} else if (r->minimum_linkrate == SAS_LINK_RATE_UNKNOWN) {
--		max = r->maximum_linkrate;
--		min = sas_phy->phy->minimum_linkrate;
--	} else
--		return;
--
--	sas_phy->phy->maximum_linkrate = max;
--	sas_phy->phy->minimum_linkrate = min;
- 	prog_phy_link_rate |= hisi_sas_get_prog_phy_linkrate_mask(max);
--
--	disable_phy_v3_hw(hisi_hba, phy_no);
--	msleep(100);
- 	hisi_sas_phy_write32(hisi_hba, phy_no, PROG_PHY_LINK_RATE,
--			prog_phy_link_rate);
--	start_phy_v3_hw(hisi_hba, phy_no);
-+			     prog_phy_link_rate);
- }
- 
- static void interrupt_disable_v3_hw(struct hisi_hba *hisi_hba)
+I spoke too early, I need to retain local u64 variable otherwise we get
+incompatible pointer type(expected 'u64 *' but argument is of type
+‘unsigned int *’) error with Werror=incompatible-pointer-types.
+
 -- 
-1.9.1
+Regards,
+Sudeep
