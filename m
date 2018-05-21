@@ -1,42 +1,45 @@
 Return-Path: <SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZr51TrJ4IxLY/9FLEMCBTLuvdideinQH4+X1y38+jcgg40ecYWdbnRyAxjKj+gT5K7biQ96
-ARC-Seal: i=1; a=rsa-sha256; t=1526937530; cv=none;
+X-Google-Smtp-Source: AB8JxZoEuKNi7OebnylHNcEQL149wChwCWbRugR7/7VPo7av7AM9Xp5cbP+KCzEQfpseT+31c/1e
+ARC-Seal: i=1; a=rsa-sha256; t=1526937527; cv=none;
         d=google.com; s=arc-20160816;
-        b=tkKN/fkaBJdyWDUTokq9vJdWn47wmuIrqdgZK6tWmWw+xYVYCoJK6hC8NGjs4K7cQN
-         LKgjdw8VFsvNHGnGkPE5J76jyPLFXyVaMoE6IeezKkmwq0Hr6e8Nh50dNLQ/xjeayz7v
-         s/4ZFrQqU884U4Zwy5IFJR2w0+XU4NliNY+IcvzQYs3vC1sFiOUvR2XZybtTu+z3woY8
-         PX8IzaOoP7yff89I9m3cRVPhltVKVeYOfHZTT6k++2L9UbicYMJM8I63Z5i3nMooshbi
-         edmH/LPB2JeaMXxDakfg4QTPmEZ67l1HZ+NC06N0sJEbMLMkU16wWj1H3Smo5yKKgDTs
-         q7bw==
+        b=aNdfr6RM2/Fv/GpbBusLDHQyDngwczNbvhdjb+MY2Uha4+vnoqWqKGulWkKtrfKX0z
+         IiJzGx/NCC5X9H8H57Hj0CQmEKGfxla35ivGtnCOIk4QUmd0Iv2Zmlco58uS42qjAie2
+         VJnp54AEidw7pKkjPz3yTnICr/RtpmHe9H5ZJh55joHhuBnw4k3DLvTKQZiJ9tMCuZxv
+         i0vctXC2r5tHITKnYNloDXb/qg0H3Ey21s/8IkKS0ddfkqb22jCGdKo/PLilypi7ZU1q
+         AaWtUk9LlKgz07vTqB3IkdDht2glRdmMArIQyRVnIycrDgoX12Shs7xgV8XJ68sFKYlf
+         nBMw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=P+khoYZf2mHQcf5UjVWTvXEfdvZNOI296Jn3ZU8MwHs=;
-        b=RuVOnTUuU0rJVrB2f7oEkNwW6DmbcJUvGZH0UhjajWxUUhdBea/KQst7pdnCzmZc4x
-         D78tfq6Va4DsMX7p3EzUn4PjIMW1QrQvi3qyrki8lCpRsLIbe4UD3f4a+LPC0TI6eayN
-         v75j+nCCpJ0HX69qGt/llnSCkHQRHzqHuJj2SBByxmGbf/jZji4KkTUBryiCLT/ltiJq
-         X5uMErk1RgYe/BkApQLK101U5YNUehXzR/FFFgv2qMX8ltL4gLS71Lm2Ds2TGcMFLTKo
-         rm/hZPstVskF8pPZbExSvlbIC6IrHIlCh37YJw8rliONEhstzOgh/vHi9yE4esKosz3r
-         usFA==
+        bh=IYlGglrxvdfk6oN+D1cR3zHoSsD7kHpncn0lp5Xe+D8=;
+        b=02GUFvEEf/3EYhuaEtx4no849PAJaBDeRpcrb7yMQeR6Vu95P9vt92m5hCUAG7UY48
+         o1kHOXSMTF3+7bnLVTzsoMD15pr3sXES4QuNXL34tkKjDI3xHdoDn8CvhDlWLnBU+R8R
+         7Wukrpw6syPEJSBSRNgkzBFQQ8fi14f0ljR30U7Uj5+zv234OuItQlc2kBvbXhHOTQlt
+         JVDni/RNyvXjX3T01HO5/j58+FjO9Fyn7RwKVEPbTRXvVmXxPj6FVJcHZwIh41ciK5nV
+         6H6BTpn3niC/buGrPEZnL+FSA8CBGoRdlXFoFeFGELPZ9DNw2HGpcgxfAUX/6yyANFrc
+         Or8A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=JBqEqzML;
+       dkim=pass header.i=@kernel.org header.s=default header.b=YwjlwoY2;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=JBqEqzML;
+       dkim=pass header.i=@kernel.org header.s=default header.b=YwjlwoY2;
        spf=pass (google.com: domain of srs0=nia/=ii=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nia/=II=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Michel Thierry <michel.thierry@intel.com>,
-	mesa-dev@lists.freedesktop.org,
-	Mika Kuoppala <mika.kuoppala@linux.intel.com>,
-	Oscar Mateo <oscar.mateo@intel.com>,
-	Chris Wilson <chris@chris-wilson.co.uk>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Subject: [PATCH 4.14 27/95] drm/i915/gen9: Add WaClearHIZ_WM_CHICKEN3 for bxt and glk
-Date: Mon, 21 May 2018 23:11:17 +0200
-Message-Id: <20180521210453.951043722@linuxfoundation.org>
+	Pavel Tatashin <pasha.tatashin@oracle.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Steven Sistare <steven.sistare@oracle.com>,
+	Daniel Jordan <daniel.m.jordan@oracle.com>,
+	Mel Gorman <mgorman@techsingularity.net>,
+	Fengguang Wu <fengguang.wu@intel.com>,
+	Dennis Zhou <dennisszhou@gmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 26/95] mm: dont allow deferred pages with NEED_PER_CPU_KM
+Date: Mon, 21 May 2018 23:11:16 +0200
+Message-Id: <20180521210453.792478845@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210447.219380974@linuxfoundation.org>
 References: <20180521210447.219380974@linuxfoundation.org>
@@ -46,8 +49,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601110047588810636?=
-X-GMAIL-MSGID: =?utf-8?q?1601110047588810636?=
+X-GMAIL-THRID: =?utf-8?q?1601109869699407044?=
+X-GMAIL-MSGID: =?utf-8?q?1601110044675455507?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,55 +58,88 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michel Thierry <michel.thierry@intel.com>
+From: Pavel Tatashin <pasha.tatashin@oracle.com>
 
-commit b579f924a90f42fa561afd8201514fc216b71949 upstream.
+commit ab1e8d8960b68f54af42b6484b5950bd13a4054b upstream.
 
-Factor in clear values wherever required while updating destination
-min/max.
+It is unsafe to do virtual to physical translations before mm_init() is
+called if struct page is needed in order to determine the memory section
+number (see SECTION_IN_PAGE_FLAGS).  This is because only in mm_init()
+we initialize struct pages for all the allocated memory when deferred
+struct pages are used.
 
-References: HSDES#1604444184
-Signed-off-by: Michel Thierry <michel.thierry@intel.com>
-Cc: mesa-dev@lists.freedesktop.org
-Cc: Mika Kuoppala <mika.kuoppala@linux.intel.com>
-Cc: Oscar Mateo <oscar.mateo@intel.com>
-Reviewed-by: Mika Kuoppala <mika.kuoppala@linux.intel.com>
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180510200708.18097-1-michel.thierry@intel.com
-Cc: stable@vger.kernel.org
-Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180514165445.9198-1-michel.thierry@intel.com
-(backported from commit 0c79f9cb77eae28d48a4f9fc1b3341aacbbd260c)
-Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+My recent fix in commit c9e97a1997 ("mm: initialize pages on demand
+during boot") exposed this problem, because it greatly reduced number of
+pages that are initialized before mm_init(), but the problem existed
+even before my fix, as Fengguang Wu found.
+
+Below is a more detailed explanation of the problem.
+
+We initialize struct pages in four places:
+
+1. Early in boot a small set of struct pages is initialized to fill the
+   first section, and lower zones.
+
+2. During mm_init() we initialize "struct pages" for all the memory that
+   is allocated, i.e reserved in memblock.
+
+3. Using on-demand logic when pages are allocated after mm_init call
+   (when memblock is finished)
+
+4. After smp_init() when the rest free deferred pages are initialized.
+
+The problem occurs if we try to do va to phys translation of a memory
+between steps 1 and 2.  Because we have not yet initialized struct pages
+for all the reserved pages, it is inherently unsafe to do va to phys if
+the translation itself requires access of "struct page" as in case of
+this combination: CONFIG_SPARSE && !CONFIG_SPARSE_VMEMMAP
+
+The following path exposes the problem:
+
+  start_kernel()
+   trap_init()
+    setup_cpu_entry_areas()
+     setup_cpu_entry_area(cpu)
+      get_cpu_gdt_paddr(cpu)
+       per_cpu_ptr_to_phys(addr)
+        pcpu_addr_to_page(addr)
+         virt_to_page(addr)
+          pfn_to_page(__pa(addr) >> PAGE_SHIFT)
+
+We disable this path by not allowing NEED_PER_CPU_KM with deferred
+struct pages feature.
+
+The problems are discussed in these threads:
+  http://lkml.kernel.org/r/20180418135300.inazvpxjxowogyge@wfg-t540p.sh.intel.com
+  http://lkml.kernel.org/r/20180419013128.iurzouiqxvcnpbvz@wfg-t540p.sh.intel.com
+  http://lkml.kernel.org/r/20180426202619.2768-1-pasha.tatashin@oracle.com
+
+Link: http://lkml.kernel.org/r/20180515175124.1770-1-pasha.tatashin@oracle.com
+Fixes: 3a80a7fa7989 ("mm: meminit: initialise a subset of struct pages if CONFIG_DEFERRED_STRUCT_PAGE_INIT is set")
+Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Steven Sistare <steven.sistare@oracle.com>
+Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc: Mel Gorman <mgorman@techsingularity.net>
+Cc: Fengguang Wu <fengguang.wu@intel.com>
+Cc: Dennis Zhou <dennisszhou@gmail.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/i915_reg.h        |    3 +++
- drivers/gpu/drm/i915/intel_engine_cs.c |    4 ++++
- 2 files changed, 7 insertions(+)
+ mm/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/gpu/drm/i915/i915_reg.h
-+++ b/drivers/gpu/drm/i915/i915_reg.h
-@@ -7044,6 +7044,9 @@ enum {
- #define SLICE_ECO_CHICKEN0			_MMIO(0x7308)
- #define   PIXEL_MASK_CAMMING_DISABLE		(1 << 14)
- 
-+#define GEN9_WM_CHICKEN3			_MMIO(0x5588)
-+#define   GEN9_FACTOR_IN_CLR_VAL_HIZ		(1 << 9)
-+
- /* WaCatErrorRejectionIssue */
- #define GEN7_SQ_CHICKEN_MBCUNIT_CONFIG		_MMIO(0x9030)
- #define  GEN7_SQ_CHICKEN_MBCUNIT_SQINTMOB	(1<<11)
---- a/drivers/gpu/drm/i915/intel_engine_cs.c
-+++ b/drivers/gpu/drm/i915/intel_engine_cs.c
-@@ -900,6 +900,10 @@ static int gen9_init_workarounds(struct
- 	I915_WRITE(GEN8_L3SQCREG4, (I915_READ(GEN8_L3SQCREG4) |
- 				    GEN8_LQSC_FLUSH_COHERENT_LINES));
- 
-+	/* WaClearHIZ_WM_CHICKEN3:bxt,glk */
-+	if (IS_GEN9_LP(dev_priv))
-+		WA_SET_BIT_MASKED(GEN9_WM_CHICKEN3, GEN9_FACTOR_IN_CLR_VAL_HIZ);
-+
- 	/* WaVFEStateAfterPipeControlwithMediaStateClear:skl,bxt,glk,cfl */
- 	ret = wa_ring_whitelist_reg(engine, GEN9_CTX_PREEMPT_REG);
- 	if (ret)
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -649,6 +649,7 @@ config DEFERRED_STRUCT_PAGE_INIT
+ 	depends on ARCH_SUPPORTS_DEFERRED_STRUCT_PAGE_INIT
+ 	depends on NO_BOOTMEM && MEMORY_HOTPLUG
+ 	depends on !FLATMEM
++	depends on !NEED_PER_CPU_KM
+ 	help
+ 	  Ordinarily all struct pages are initialised during early boot in a
+ 	  single thread. On very large machines this can take a considerable
