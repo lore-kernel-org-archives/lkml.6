@@ -1,49 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752883AbeEUOc7 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        id S1752931AbeEUOdL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 10:33:11 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:35273 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752678AbeEUOc7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 21 May 2018 10:32:59 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:53566 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752650AbeEUOc4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 10:32:56 -0400
-Date: Mon, 21 May 2018 16:32:54 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Abhishek Sahu <absahu@codeaurora.org>
-Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        Andy Gross <andy.gross@linaro.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 03/14] dt-bindings: qcom_nandc: make
- nand-ecc-strength optional
-Message-ID: <20180521163254.71ade105@xps13>
-In-Reply-To: <1525350041-22995-4-git-send-email-absahu@codeaurora.org>
-References: <1525350041-22995-1-git-send-email-absahu@codeaurora.org>
-        <1525350041-22995-4-git-send-email-absahu@codeaurora.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+X-Google-Smtp-Source: AB8JxZrokihz74yF3y7hdAP5yKr59FoKFY2KjwaOhW1e24j+h/EGRkNe7Gy6SNEvgpqwayo5AOQq52xWSrBX1pEhZKE=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <CAFkk2KSCtj8E48Y3KDRvT8E6bjqWpc_FvpwjVpo1Vx-tQPikwQ@mail.gmail.com>
+References: <1526537830-22606-1-git-send-email-yamada.masahiro@socionext.com>
+ <1526537830-22606-8-git-send-email-yamada.masahiro@socionext.com>
+ <20180520145031.GB9826@ravnborg.org> <CAFkk2KSCtj8E48Y3KDRvT8E6bjqWpc_FvpwjVpo1Vx-tQPikwQ@mail.gmail.com>
+From: Ulf Magnusson <ulfalizer@gmail.com>
+Date: Mon, 21 May 2018 16:32:57 +0200
+Message-ID: <CAFkk2KQuPiy=ziKeixNHzu-_k+Mau6PUwYTQh_EbWEu0GX-tkg@mail.gmail.com>
+Subject: Re: [PATCH v4 07/31] kconfig: add built-in function support
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nicholas Piggin <npiggin@gmail.com>, Kees Cook <keescook@chromium.org>,
+        Emese Revfy <re.emese@gmail.com>, X86 ML <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Abhishek,
+On Mon, May 21, 2018 at 4:23 PM, Ulf Magnusson <ulfalizer@gmail.com> wrote:
+> On Sun, May 20, 2018 at 4:50 PM, Sam Ravnborg <sam@ravnborg.org> wrote:
+>> Will the following be equal:
+>>
+>>         $(foo,abc,$(x),$(y))
+>>         $(foo, abc, $(x), $(y))
+>>
+>> make is rather annoying as space is significant, but there seems no good reason
+>> for kconfig to inheritate this.
+>> So unless there are good arguments consider alloing the spaces.
+>> If the current implmentation already supports optional spaces then I just missed
+>> it whie reviewing.
+>>
+>>         Sam
+>
+> +1 from me.
+>
+> I also find the rules for whitespace in Make confusing, and always
+> have to look them up when doing trickier stuff. Maybe they're the
+> result of people not considering whitespace initially, and stuff
+> getting tacked on later. GNU Make adds some alternate syntaxes with
+> quotes.
+>
+> I was going to mention shell, but it looks like you already did. :)
+>
+> If we go with Make-like syntax, maybe we could at least have a variant
+> with fewer whitespace gotchas.
+>
+> Cheers,
+> Ulf
 
-On Thu,  3 May 2018 17:50:30 +0530, Abhishek Sahu
-<absahu@codeaurora.org> wrote:
+Maybe it'd be a pain to implement, but something like $(foo $(x) "two
+words" "interpolated $(stuff)") seems pretty nice, with three
+arguments there.
 
-> Now, nand-ecc-strength is optional. If specified in DT, then
-> controller will use this ECC strength otherwise ECC strength will
-> be calculated according to chip requirement and available OOB size.
+For variables too:
 
-Same comment as before: don't start the commit log with "now,".
+  x = foo
+  y = "two words"
 
-Thanks,
-Miquèl
+Or have mandatory quotes, but yeah, bit spammy there maybe.
+
+Cheers,
+Ulf
