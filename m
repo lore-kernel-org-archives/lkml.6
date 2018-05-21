@@ -1,101 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752669AbeEUOAf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 10:00:35 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50108 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751280AbeEUOAf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 10:00:35 -0400
-Subject: Re: [PATCH 6/6] arm64: perf: Add support for chaining counters
-To: Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, mark.rutland@arm.com,
-        will.deacon@arm.com
-References: <1526638943-2110-1-git-send-email-suzuki.poulose@arm.com>
- <1526638943-2110-7-git-send-email-suzuki.poulose@arm.com>
- <32f2d870-9b9c-0b10-880f-cc99cf969bf6@arm.com>
- <5d53fe1d-dbd9-2aad-73bd-0c4284540240@arm.com>
- <c8cb9280-c93d-89c4-43ed-179de8d46dfd@arm.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <f7ffdcfb-5a32-9a55-32a5-4f8770e23aa0@arm.com>
-Date: Mon, 21 May 2018 15:00:32 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752102AbeEUODs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 10:03:48 -0400
+Received: from foss.arm.com ([217.140.101.70]:50152 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751021AbeEUODq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 10:03:46 -0400
+Date: Mon, 21 May 2018 15:03:36 +0100
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: honghui.zhang@mediatek.com, marc.zyngier@arm.com, bhelgaas@google.com,
+        matthias.bgg@gmail.com, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        yingjoe.chen@mediatek.com, eddie.huang@mediatek.com,
+        ryder.lee@mediatek.com, hongkun.cao@mediatek.com,
+        youlin.pei@mediatek.com, yong.wu@mediatek.com, yt.shen@mediatek.com,
+        sean.wang@mediatek.com, xinping.qian@mediatek.com
+Subject: Re: [PATCH v7 2/2] PCI: mediatek: Using chained IRQ to setup IRQ
+ handle
+Message-ID: <20180521140336.GA3149@e107981-ln.cambridge.arm.com>
+References: <1525412853-24367-1-git-send-email-honghui.zhang@mediatek.com>
+ <1525412853-24367-3-git-send-email-honghui.zhang@mediatek.com>
+ <20180518195154.GB41790@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <c8cb9280-c93d-89c4-43ed-179de8d46dfd@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180518195154.GB41790@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/05/18 14:42, Suzuki K Poulose wrote:
-> On 18/05/18 16:57, Suzuki K Poulose wrote:
->> Hi Robin,
->>
->> On 18/05/18 14:49, Robin Murphy wrote:
->>> On 18/05/18 11:22, Suzuki K Poulose wrote:
->>>> Add support for chained event counters. PMUv3 allows chaining
->>>> a pair of adjacent PMU counters (with the lower counter number
->>>> being always "even"). The low counter is programmed to count
->>>> the event of interest and the high counter(odd numbered) is
->>>> programmed with a special event code (0x1e - Chain). Thus
->>>> we need special allocation schemes to make the full use of
->>>> available counters. So, we allocate the counters from either
->>>> ends. i.e, chained counters are allocated from the lower
->>>> end in pairs of two and the normal counters are allocated
->>>> from the higher number. Also makes necessary changes to
->>>> handle the chained events as a single event with 2 counters.
->>>>
->>>> Cc: Mark Rutland <mark.rutland@arm.com>
->>>> Cc: Will Deacon <will.deacon@arm.com>
->>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+On Fri, May 18, 2018 at 02:51:54PM -0500, Bjorn Helgaas wrote:
+> On Fri, May 04, 2018 at 01:47:33PM +0800, honghui.zhang@mediatek.com wrote:
+> > From: Honghui Zhang <honghui.zhang@mediatek.com>
+> > 
+> > Using irq_chip solution to setup IRQs in order to consist
+> > with IRQ framework.
+> > 
+> > Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
+> > Acked-by: Ryder Lee <ryder.lee@mediatek.com>
+> > ---
+> >  drivers/pci/host/pcie-mediatek.c | 206 ++++++++++++++++++++++-----------------
+> >  1 file changed, 115 insertions(+), 91 deletions(-)
+> > 
+> > diff --git a/drivers/pci/host/pcie-mediatek.c b/drivers/pci/host/pcie-mediatek.c
+> > index c3dc549..dabf1086 100644
+> > --- a/drivers/pci/host/pcie-mediatek.c
+> > +++ b/drivers/pci/host/pcie-mediatek.c
+> > ...
 > 
->>
->>>>   /*
->>>> @@ -845,8 +1016,14 @@ static int __armv8_pmuv3_map_event(struct 
->>>> perf_event *event,
->>>>                          &armv8_pmuv3_perf_cache_map,
->>>>                          ARMV8_PMU_EVTYPE_EVENT);
->>>> -    if (hw_event_id == ARMV8_PMUV3_PERFCTR_CPU_CYCLES)
->>>> +    if (hw_event_id == ARMV8_PMUV3_PERFCTR_CPU_CYCLES) {
->>>> +        /* Prevent chaining for cycle counter */
->>>
->>> Why? Sure, we want to avoid executing the chaining logic if we're 
->>> scheduling a cycles event in the dedicated counter (which is perhaps 
->>> what the comment above wanted to say), but if one ends up allocated 
->>> into a regular counter (e.g. if the user asks for multiple cycle 
->>> counts with different filters), then I don't see any reason to forbid 
->>> that being chained.
->>
->> Ah, I didn't think about that case. I was under the assumption that the
->> cycles are *only* placed on the cycle counter. I will take care of that.
->> Thanks for the review.
+> > -static int mtk_pcie_msi_map(struct irq_domain *domain, unsigned int irq,
+> > -			    irq_hw_number_t hwirq)
+> > +static struct msi_domain_info mtk_msi_domain_info = {
 > 
-> Robin, Mark, Will
+> I think this patch should be amended to include this:
 > 
-> One potential problem I see with allowing chaining of the cycle counter
-> *and* the promotion of cycle event to 64bit by default is when the user
-> may actually be able to count 1 less event (due to the promotion of
-> cycle event to 64bit and thus forcing to use chain, if the cycle counter
-> is unavailable).
+> diff --git a/drivers/pci/host/Kconfig b/drivers/pci/host/Kconfig
+> index 0d0177ce436c..368b70d9371b 100644
+> --- a/drivers/pci/host/Kconfig
+> +++ b/drivers/pci/host/Kconfig
+> @@ -193,7 +193,7 @@ config PCIE_MEDIATEK
+>  	bool "MediaTek PCIe controller"
+>  	depends on (ARM || ARM64) && (ARCH_MEDIATEK || COMPILE_TEST)
+>  	depends on OF
+> -	depends on PCI
 
-Right, I didn't mean to imply we should inject the "chain" attr 
-automatically for all cycles events, just that we shouldn't be rejecting 
-it if the user does explicitly set it (but then just ignore it if using 
-the dedicated counter).
+Actually I amended your patch, since I do not think the deletion above
+belongs in this commit (I agree that's completely useless but that's
+not this patch that we should remove it).
 
-> So one option is to drop automatic promotion of the cycle counter to
-> 64bit and do it only when it is requested by the user and use either the
-> Cycle counter (preferred) or fall back to chaining. That way, the user
-> has the control over the number of events he can count using the given
-> set of counters.
+Lorenzo
 
-Naively, there doesn't seem to be any inherent harm in always using 
-64-bit arithmetic for the dedicated counter, but it would mean that with 
-multiple (non-chained) cycles events, some would be taking an interrupt 
-every few seconds while one would effectively never overflow. I guess 
-the question is whether that matters or not.
-
-Robin.
+> +	depends on PCI_MSI_IRQ_DOMAIN
