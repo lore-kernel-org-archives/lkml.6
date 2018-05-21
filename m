@@ -1,79 +1,139 @@
-Return-Path: <jhovold@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1526976859; cv=none;
-        d=google.com; s=arc-20160816;
-        b=vkAtO6Js+hYYUwaZIBP/20g7jNcDUIwyANhzHhU8XIwmq33Ypkpk25XoFcl/MN4iBF
-         kFi2adhkdVoaR9xXZMFLeoIrYI6KPGVJyKqtKKDnbXrsDdUEvm2LF0UOYzT/AfnVCaSk
-         A1SzdF5Mu4c0X19jHY7mKUg35C4Jq8oCwkLAE4sj8XONuwrEoGd+P3Ch30w2TUkDKaXj
-         eZ4WMS7WChdueYxTlUmcLjakl69VGinaQLGGLVqP2urzlseIuDM6/VkYC1swEsbF/LAe
-         67UWg7ygzPot6boueQc5GUIPVt+d7OdfBwRCPpFKOSaqfTv0UNWRT8Q1Ic/2LpzW/zMx
-         FUkA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:sender:dkim-signature
-         :arc-authentication-results;
-        bh=2iSjvTx7x4+qqgjmfrAZ0fIZXXjeUroLXtgO1RneeI0=;
-        b=DeNI4b4+zy/ak/n+Dw7AJj9BEuELb1mWYl/8Tb+dLVa7QlnPV+FMIZ4NZqlBvNEDD9
-         wn30lxsFb/mKBahTkwipQ18zFICSMmAA8RM6mQ5/rdx56+rFz7AsJYrCzkxzArE8JR3b
-         s4n0Ds/Ti/v8g2I2IXR0IISPf3C5Qh+kTM2G/ZYxLsr66Gn5cbzTqWwtATBvrlAmDbE8
-         AR1nzzdiXmnB2dRTgG77dPWgs1EslRwV+hNh2DoqTNF354ZXLW12lxa3UTBts8dr/hmk
-         HQbiJfzq1VCi/ZIgaxiqR+QH98FC5lTmz8Fv3To/blChbSbIOyyVZ8aPcRwaSpsGwQnk
-         uQVA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=a/tOQYdF;
-       spf=pass (google.com: domain of jhovold@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jhovold@gmail.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=a/tOQYdF;
-       spf=pass (google.com: domain of jhovold@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jhovold@gmail.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
-X-Google-Smtp-Source: AB8JxZqSDxQigf+EZvSdI3aS4bPWOJ6B84R0z5k9o0BPDcHiiHY6zKM7qVGQcjj5ni5O5oQqPDytJA==
-Sender: Johan Hovold <jhovold@gmail.com>
-Date: Tue, 22 May 2018 10:14:11 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Johan Hovold <johan@kernel.org>, Jiri Slaby <jslaby@suse.com>,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH] tty: add missing const to termios hw-change helper
-Message-ID: <20180522081411.GS30172@localhost>
-References: <20180521110844.30728-1-johan@kernel.org>
- <20180521164130.GF17976@kroah.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180521164130.GF17976@kroah.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-540135-1526897614-2-8670555788261140375
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, RCVD_IN_SORBS_WEB 1.5, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1526897614; b=bp/MULLdF9clon0L0xJcirJy3iR/g6yPzyEvnjwOs4M1IqV/Rf
+    xbokZXLJquUjTbS4BZUg4oN3YHY+CYOnGrPx5dA0z3R2H7gSeQX/KzXK+cLr0mzU
+    LfxvcomxA5wHuhHL7V7tc2WQylKNExTZcDfGjc68gNId4Sy3xGMjYGxzUiyBrkAB
+    T2zveHt3jur2ryIGPkG9BxjQHPotIdLQUF4YQl1+lz+/YIibXQexoTkcaMQx3EDt
+    N5TsMlMAJLIyCDLLMsC/hCwHBE7/HNwys17ue93JHdrHJNJ06B6/LCuAnSkgTe97
+    OL+ncJSsgObS17WgnOXz7SMJ7MvhugRuYNBA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1526897614; bh=b11d/4ejPRAyo6yvzGS7Yo5v++1Y5l
+    K7mt0KzRx9Q5Q=; b=KmReeWKrMPQoQOWcvszU34VLBkWiqjowWOPsVSUVrhL5xx
+    Cu53sU7lUUU5nxBvCYTtOJjWeKw2ozxx4eqIHvsjOqo7PKMuLoxKKGFsOWHdlRRX
+    sbW+WWD2Lm4doCkg6jdBJMIA2sKDeDFL2jouTTAj+LgyvBOLVjuocA55hztQS4dJ
+    PVvP0aBH8ZK/3UErxeeeqYHvuH5vumeEmMh8pEIi4VPq+j1TUVZEGp+3JpQ+iZd0
+    DSk1LemUpDRARkr23HF+zYaZ32ew90Ut1p7ZcXIacgLTO4yIZbXhBrCte7gn+bqA
+    Z5Cfb26t1R1KJksxOU0SjgfkTbiR0Ey0hUb3KSxg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=rock-chips.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=rock-chips.com header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=rock-chips.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=rock-chips.com header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfO9xLjGwO8iIrBe/vKhaz0mXG9SA3XfkABcHgO9OQBmBclhrj+ZkB0vqCg4J9qKk/PXyUvtFD9z1GuuwZeKC8HwLCl4CCJHnWH3iA/5x7j+KLRgd5xSe
+    ez+ACoBRUyT01zdNvse+QT7VhY5HLJd/h40ypN5xVt2KwVD0m2Vu8gcKDacRB0D9mO7wwX5zrypM8uKjxjRGA+LuqVuVYjTA+iurqmaT58I+deJAMBOdN6Hd
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=4_-BN3WEXhEA:10 a=VUJBJC2UJ8kA:10
+    a=s8YR1HE3AAAA:8 a=VwQbUJbxAAAA:8 a=qWF6PjqbNgdoSuVphE0A:9 a=x8gzFH9gYPwA:10
+    a=jGH_LyMDp9YhSvY-UuyI:22 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751574AbeEUKNT (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 21 May 2018 06:13:19 -0400
+Received: from regular1.263xmail.com ([211.150.99.141]:52730 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751111AbeEUKNQ (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Mon, 21 May 2018 06:13:16 -0400
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-IP-DOMAINF: 1
+X-RL-SENDER: william.wu@rock-chips.com
+X-FST-TO: hminas@synopsys.com
+X-SENDER-IP: 58.22.7.114
+X-LOGIN-NAME: william.wu@rock-chips.com
+X-UNIQUE-TAG: <da4afb1238ce17ee863d96a4502f78af>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+From: William Wu <william.wu@rock-chips.com>
+To: hminas@synopsys.com, felipe.balbi@linux.intel.com,
+        gregkh@linuxfoundation.org
+Cc: sergei.shtylyov@cogentembedded.com, heiko@sntech.de,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, frank.wang@rock-chips.com,
+        huangtao@rock-chips.com, dianders@google.com,
+        daniel.meng@rock-chips.com, John.Youn@synopsys.com,
+        william.wu@rock-chips.com, fml@rock-chips.com
+Subject: [PATCH] usb: dwc2: fix the incorrect bitmaps for the ports of multi_tt hub
+Date: Mon, 21 May 2018 18:12:00 +0800
+Message-Id: <1526897520-9340-1-git-send-email-william.wu@rock-chips.com>
+X-Mailer: git-send-email 2.0.0
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1601071710898587784?=
-X-GMAIL-MSGID: =?utf-8?q?1601151287907951346?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, May 21, 2018 at 06:41:30PM +0200, Greg Kroah-Hartman wrote:
-> On Mon, May 21, 2018 at 01:08:44PM +0200, Johan Hovold wrote:
-> > Add missing const qualifiers to the termios hw-change helper parameters,
-> > which is used by few USB serial drivers. This specifically allows the
-> > pl2303 driver to use const arguments in one of its helper as well.
-> > 
-> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Cc: Jiri Slaby <jslaby@suse.com>
-> > Signed-off-by: Johan Hovold <johan@kernel.org>
-> > ---
-> > 
-> > Greg, are you fine with me taking this one through my tree, or do prefer
-> > I split out the pl2303 bits?
-> > 
-> > Note that this helper is only used by a few USB serial drivers and that
-> > the pl2303 bits depend on a new patch targeted for -next.
-> 
-> Your tree is fine:
-> 
-> 	Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+The dwc2_get_ls_map() use ttport to reference into the
+bitmap if we're on a multi_tt hub. But the bitmaps index
+from 0 to (hub->maxchild - 1), while the ttport index from
+1 to hub->maxchild. This will cause invalid memory access
+when the number of ttport is hub->maxchild.
 
-I made this patch a prerequisite of the pl2303 change so that I could
-use const there from the start instead (i.e. I dropped the pl2303 chunk
-from this one).
+Without this patch, I can easily meet a Kernel panic issue
+if connect a low-speed USB mouse with the max port of FE2.1
+multi-tt hub (1a40:0201) on rk3288 platform.
 
-Now applied.
+Signed-off-by: William Wu <william.wu@rock-chips.com>
+---
+ drivers/usb/dwc2/hcd_queue.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Johan
+diff --git a/drivers/usb/dwc2/hcd_queue.c b/drivers/usb/dwc2/hcd_queue.c
+index d7c3d6c..9c55d1a 100644
+--- a/drivers/usb/dwc2/hcd_queue.c
++++ b/drivers/usb/dwc2/hcd_queue.c
+@@ -383,7 +383,7 @@ static unsigned long *dwc2_get_ls_map(struct dwc2_hsotg *hsotg,
+ 	/* Get the map and adjust if this is a multi_tt hub */
+ 	map = qh->dwc_tt->periodic_bitmaps;
+ 	if (qh->dwc_tt->usb_tt->multi)
+-		map += DWC2_ELEMENTS_PER_LS_BITMAP * qh->ttport;
++		map += DWC2_ELEMENTS_PER_LS_BITMAP * (qh->ttport - 1);
+ 
+ 	return map;
+ }
+-- 
+2.0.0
+
+
