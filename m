@@ -1,58 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751176AbeEUGoZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 02:44:25 -0400
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:35619 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750969AbeEUGoW (ORCPT
+        id S1751069AbeEUGtS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 02:49:18 -0400
+Received: from mta-p3.oit.umn.edu ([134.84.196.203]:54198 "EHLO
+        mta-p3.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750859AbeEUGtN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 02:44:22 -0400
-X-Google-Smtp-Source: AB8JxZpHu5pWnwF4y2u1msCzyepm2HvHKyxTFdmKP+tPdtgoE725aAE/7iwvO5iYsZulnLYiQC85IGr7VD/1vtMT2Vc=
+        Mon, 21 May 2018 02:49:13 -0400
+X-Google-Smtp-Source: AB8JxZrwBIXx3tCditjvYPB0UpUC93+aBC/kjJ8l8bIfccs7xFhnxURvOZArUl50ckeEHP9NlU1H7JuwEE1Sgfp6pkA=
 MIME-Version: 1.0
-In-Reply-To: <20180520192523.32dde632@xps13>
-References: <20180518210954.29044-1-jmkrzyszt@gmail.com> <5456625.lDWjtgZygK@z50>
- <CAHp75Ved2nw1JKnXT2Jxnw4XLsby1eVJU6cfBjE2sp4LP4Kwmg@mail.gmail.com>
- <3505791.x6nWYTo8eb@z50> <CAHp75Vdp5A58JMTf8vaET84QEzzZ_T7eKLUYfWV9qpWt5ptYCA@mail.gmail.com>
- <20180520192523.32dde632@xps13>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 21 May 2018 09:44:20 +0300
-Message-ID: <CAHp75VcCVNGey1TmAR7EJ3wJL1q+KSOXpbwJ3XmoU70tKOm+Bg@mail.gmail.com>
-Subject: Re: [PATCH 5/6] mtd: rawnand: ams-delta: use GPIO lookup table
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>, Tony Lindgren <tony@atomide.com>,
-        Richard Weinberger <richard@nod.at>, Mark Brown <broonie@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        "open list:MEMORY TECHNOLOGY..." <linux-mtd@lists.infradead.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        Jarkko Nikula <jarkko.nikula@bitmer.com>
+In-Reply-To: <20180520.183730.1550159916165131561.davem@davemloft.net>
+References: <1526679228-1596-1-git-send-email-wang6495@umn.edu> <20180520.183730.1550159916165131561.davem@davemloft.net>
+From: Wenwen Wang <wang6495@umn.edu>
+Date: Mon, 21 May 2018 01:48:31 -0500
+X-Gmail-Original-Message-ID: <CAAa=b7f3LA4GS18VfLouDLFYAsGifwbWb1DtMeWSGOCT64egug@mail.gmail.com>
+Message-ID: <CAAa=b7f3LA4GS18VfLouDLFYAsGifwbWb1DtMeWSGOCT64egug@mail.gmail.com>
+Subject: Re: [PATCH v2] isdn: eicon: fix a missing-check bug
+To: David Miller <davem@davemloft.net>
+Cc: Kangjie Lu <kjlu@umn.edu>, Armin Schindler <mac@melware.de>,
+        Karsten Keil <isdn@linux-pingi.de>,
+        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Wenwen Wang <wang6495@umn.edu>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4L6nPUX016114
 
-On Sun, May 20, 2018 at 8:25 PM, Miquel Raynal
-<miquel.raynal@bootlin.com> wrote:
-> On Sun, 20 May 2018 19:17:04 +0300, Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
+On Sun, May 20, 2018 at 5:37 PM, David Miller <davem@davemloft.net> wrote:
+> From: Wenwen Wang <wang6495@umn.edu>
+> Date: Fri, 18 May 2018 16:33:47 -0500
+>
+>> In divasmain.c, the function divas_write() firstly invokes the function
+>> diva_xdi_open_adapter() to open the adapter that matches with the adapter
+>> number provided by the user, and then invokes the function diva_xdi_write()
+>> to perform the write operation using the matched adapter. The two functions
+>> diva_xdi_open_adapter() and diva_xdi_write() are located in diva.c.
+>
+> This doesn't even compile:
+>
+> In file included from drivers/isdn/hardware/eicon/divasmain.c:30:
+> drivers/isdn/hardware/eicon/diva.h:23:18: error: unknown type name ‘diva_xdi_um_cfg_cmd_t’
+>       int length, diva_xdi_um_cfg_cmd_t *msg,
+>                   ^~~~~~~~~~~~~~~~~~~~~
+> drivers/isdn/hardware/eicon/diva.h:27:20: error: unknown type name ‘diva_xdi_um_cfg_cmd_t’
+>         int length, diva_xdi_um_cfg_cmd_t *msg,
+>                     ^~~~~~~~~~~~~~~~~~~~~
 
-> Do we actually have the possibility to rename this gpio? I guess no
-> since it would break DT backward compatibility.
+Sorry. I will correct the compilation errors and resubmit the patch.
 
-No we don't.
-
-> Otherwise it would have
-> been more descriptive to call it something like 'gpio-rb'.
-
-"gpio" prefix, actually "gpios" suffix is a mandatory part of the
-name. For sake of convenience it's not used in API calls.
-
--- 
-With Best Regards,
-Andy Shevchenko
+Wenwen
