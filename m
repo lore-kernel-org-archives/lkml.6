@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753312AbeEURBm (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 13:01:42 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:44280 "EHLO
+        id S1753346AbeEURBz (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 13:01:55 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:44334 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753255AbeEURBd (ORCPT
+        with ESMTP id S1753082AbeEURBt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 13:01:33 -0400
+        Mon, 21 May 2018 13:01:49 -0400
 From: Ezequiel Garcia <ezequiel@collabora.com>
 To: linux-media@vger.kernel.org
 Cc: kernel@collabora.com, Hans Verkuil <hverkuil@xs4all.nl>,
@@ -17,9 +17,9 @@ Cc: kernel@collabora.com, Hans Verkuil <hverkuil@xs4all.nl>,
         Brian Starkey <brian.starkey@arm.com>, linux-kernel@vger.kernel.org,
         Gustavo Padovan <gustavo.padovan@collabora.com>,
         Ezequiel Garcia <ezequiel@collabora.com>
-Subject: [PATCH v10 01/16] videobuf2: Make struct vb2_buffer refcounted
-Date: Mon, 21 May 2018 13:59:31 -0300
-Message-Id: <20180521165946.11778-2-ezequiel@collabora.com>
+Subject: [PATCH v10 05/16] vb2: move vb2_ops functions to videobuf2-core.[ch]
+Date: Mon, 21 May 2018 13:59:35 -0300
+Message-Id: <20180521165946.11778-6-ezequiel@collabora.com>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180521165946.11778-1-ezequiel@collabora.com>
 References: <20180521165946.11778-1-ezequiel@collabora.com>
@@ -27,119 +27,124 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The in-fence implementation involves having a per-buffer fence callback,
-that triggers on the fence signal. The fence callback is called asynchronously
-and needs a valid reference to the associated ideobuf2 buffer.
+From: Gustavo Padovan <gustavo.padovan@collabora.com>
 
-Allow this by making the vb2_buffer refcounted, so it can be passed
-to other contexts.
+vb2_ops_wait_prepare() and vb2_ops_wait_finish() were in the
+wrong file.
 
-Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
 ---
- drivers/media/common/videobuf2/videobuf2-core.c | 27 ++++++++++++++++++++++---
- include/media/videobuf2-core.h                  |  7 +++++--
- 2 files changed, 29 insertions(+), 5 deletions(-)
+ drivers/media/common/videobuf2/videobuf2-core.c | 14 ++++++++++++++
+ drivers/media/common/videobuf2/videobuf2-v4l2.c | 14 --------------
+ include/media/videobuf2-core.h                  | 18 ++++++++++++++++++
+ include/media/videobuf2-v4l2.h                  | 18 ------------------
+ 4 files changed, 32 insertions(+), 32 deletions(-)
 
 diff --git a/drivers/media/common/videobuf2/videobuf2-core.c b/drivers/media/common/videobuf2/videobuf2-core.c
-index d3f7bb33a54d..f1feb45c1e37 100644
+index f1feb45c1e37..61e7b6407586 100644
 --- a/drivers/media/common/videobuf2/videobuf2-core.c
 +++ b/drivers/media/common/videobuf2/videobuf2-core.c
-@@ -190,6 +190,26 @@ module_param(debug, int, 0644);
- static void __vb2_queue_cancel(struct vb2_queue *q);
- static void __enqueue_in_driver(struct vb2_buffer *vb);
+@@ -677,6 +677,20 @@ int vb2_verify_memory_type(struct vb2_queue *q,
+ }
+ EXPORT_SYMBOL(vb2_verify_memory_type);
  
-+static void __vb2_buffer_free(struct kref *kref)
-+{
-+	struct vb2_buffer *vb =
-+		container_of(kref, struct vb2_buffer, refcount);
-+	kfree(vb);
-+}
++/* vb2_ops helpers. Only use if vq->lock is non-NULL. */
 +
-+static void __vb2_buffer_put(struct vb2_buffer *vb)
++void vb2_ops_wait_prepare(struct vb2_queue *vq)
 +{
-+	if (vb)
-+		kref_put(&vb->refcount, __vb2_buffer_free);
++	mutex_unlock(vq->lock);
 +}
++EXPORT_SYMBOL_GPL(vb2_ops_wait_prepare);
 +
-+static struct vb2_buffer *__vb2_buffer_get(struct vb2_buffer *vb)
++void vb2_ops_wait_finish(struct vb2_queue *vq)
 +{
-+	if (vb)
-+		kref_get(&vb->refcount);
-+	return vb;
++	mutex_lock(vq->lock);
 +}
++EXPORT_SYMBOL_GPL(vb2_ops_wait_finish);
 +
- /*
-  * __vb2_buf_mem_alloc() - allocate video memory for the given buffer
-  */
-@@ -346,6 +366,7 @@ static int __vb2_queue_alloc(struct vb2_queue *q, enum vb2_memory memory,
- 			break;
- 		}
+ int vb2_core_reqbufs(struct vb2_queue *q, enum vb2_memory memory,
+ 		unsigned int *count)
+ {
+diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+index 886a2d8d5c6c..64503615d00b 100644
+--- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
++++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+@@ -947,20 +947,6 @@ unsigned long vb2_fop_get_unmapped_area(struct file *file, unsigned long addr,
+ EXPORT_SYMBOL_GPL(vb2_fop_get_unmapped_area);
+ #endif
  
-+		kref_init(&vb->refcount);
- 		vb->state = VB2_BUF_STATE_DEQUEUED;
- 		vb->vb2_queue = q;
- 		vb->num_planes = num_planes;
-@@ -365,7 +386,7 @@ static int __vb2_queue_alloc(struct vb2_queue *q, enum vb2_memory memory,
- 				dprintk(1, "failed allocating memory for buffer %d\n",
- 					buffer);
- 				q->bufs[vb->index] = NULL;
--				kfree(vb);
-+				__vb2_buffer_put(vb);
- 				break;
- 			}
- 			__setup_offsets(vb);
-@@ -380,7 +401,7 @@ static int __vb2_queue_alloc(struct vb2_queue *q, enum vb2_memory memory,
- 					buffer, vb);
- 				__vb2_buf_mem_free(vb);
- 				q->bufs[vb->index] = NULL;
--				kfree(vb);
-+				__vb2_buffer_put(vb);
- 				break;
- 			}
- 		}
-@@ -520,7 +541,7 @@ static int __vb2_queue_free(struct vb2_queue *q, unsigned int buffers)
- 	/* Free videobuf buffers */
- 	for (buffer = q->num_buffers - buffers; buffer < q->num_buffers;
- 	     ++buffer) {
--		kfree(q->bufs[buffer]);
-+		__vb2_buffer_put(q->bufs[buffer]);
- 		q->bufs[buffer] = NULL;
- 	}
- 
+-/* vb2_ops helpers. Only use if vq->lock is non-NULL. */
+-
+-void vb2_ops_wait_prepare(struct vb2_queue *vq)
+-{
+-	mutex_unlock(vq->lock);
+-}
+-EXPORT_SYMBOL_GPL(vb2_ops_wait_prepare);
+-
+-void vb2_ops_wait_finish(struct vb2_queue *vq)
+-{
+-	mutex_lock(vq->lock);
+-}
+-EXPORT_SYMBOL_GPL(vb2_ops_wait_finish);
+-
+ MODULE_DESCRIPTION("Driver helper framework for Video for Linux 2");
+ MODULE_AUTHOR("Pawel Osciak <pawel@osciak.com>, Marek Szyprowski");
+ MODULE_LICENSE("GPL");
 diff --git a/include/media/videobuf2-core.h b/include/media/videobuf2-core.h
-index f6818f732f34..baa4632c7e59 100644
+index baa4632c7e59..137f72702101 100644
 --- a/include/media/videobuf2-core.h
 +++ b/include/media/videobuf2-core.h
-@@ -12,11 +12,12 @@
- #ifndef _MEDIA_VIDEOBUF2_CORE_H
- #define _MEDIA_VIDEOBUF2_CORE_H
+@@ -403,6 +403,24 @@ struct vb2_ops {
+ 	void (*buf_queue)(struct vb2_buffer *vb);
+ };
  
-+#include <linux/bitops.h>
-+#include <linux/dma-buf.h>
-+#include <linux/kref.h>
- #include <linux/mm_types.h>
- #include <linux/mutex.h>
- #include <linux/poll.h>
--#include <linux/dma-buf.h>
--#include <linux/bitops.h>
++/**
++ * vb2_ops_wait_prepare - helper function to lock a struct &vb2_queue
++ *
++ * @vq: pointer to &struct vb2_queue
++ *
++ * ..note:: only use if vq->lock is non-NULL.
++ */
++void vb2_ops_wait_prepare(struct vb2_queue *vq);
++
++/**
++ * vb2_ops_wait_finish - helper function to unlock a struct &vb2_queue
++ *
++ * @vq: pointer to &struct vb2_queue
++ *
++ * ..note:: only use if vq->lock is non-NULL.
++ */
++void vb2_ops_wait_finish(struct vb2_queue *vq);
++
+ /**
+  * struct vb2_buf_ops - driver-specific callbacks.
+  *
+diff --git a/include/media/videobuf2-v4l2.h b/include/media/videobuf2-v4l2.h
+index 3d5e2d739f05..cf83b01dc44e 100644
+--- a/include/media/videobuf2-v4l2.h
++++ b/include/media/videobuf2-v4l2.h
+@@ -273,22 +273,4 @@ unsigned long vb2_fop_get_unmapped_area(struct file *file, unsigned long addr,
+ 		unsigned long len, unsigned long pgoff, unsigned long flags);
+ #endif
  
- #define VB2_MAX_FRAME	(32)
- #define VB2_MAX_PLANES	(8)
-@@ -249,6 +250,7 @@ struct vb2_buffer {
- 
- 	/* private: internal use only
- 	 *
-+	 * refcount:		refcount for this buffer
- 	 * state:		current buffer state; do not change
- 	 * queued_entry:	entry on the queued buffers list, which holds
- 	 *			all buffers queued from userspace
-@@ -256,6 +258,7 @@ struct vb2_buffer {
- 	 *			to be dequeued to userspace
- 	 * vb2_plane:		per-plane information; do not change
- 	 */
-+	struct kref		refcount;
- 	enum vb2_buffer_state	state;
- 
- 	struct vb2_plane	planes[VB2_MAX_PLANES];
+-/**
+- * vb2_ops_wait_prepare - helper function to lock a struct &vb2_queue
+- *
+- * @vq: pointer to &struct vb2_queue
+- *
+- * ..note:: only use if vq->lock is non-NULL.
+- */
+-void vb2_ops_wait_prepare(struct vb2_queue *vq);
+-
+-/**
+- * vb2_ops_wait_finish - helper function to unlock a struct &vb2_queue
+- *
+- * @vq: pointer to &struct vb2_queue
+- *
+- * ..note:: only use if vq->lock is non-NULL.
+- */
+-void vb2_ops_wait_finish(struct vb2_queue *vq);
+-
+ #endif /* _MEDIA_VIDEOBUF2_V4L2_H */
 -- 
 2.16.3
