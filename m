@@ -1,126 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751280AbeEUSki (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 14:40:38 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:36960 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750930AbeEUSke (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 14:40:34 -0400
-Date: Mon, 21 May 2018 11:39:36 -0700
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-To: Kent Overstreet <kent.overstreet@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        axboe@kernel.dk, hch@infradead.org, colyli@suse.de, snitzer@redhat.com,
-        clm@fb.com, bacik@fb.com, linux-xfs@vger.kernel.org,
-        drbd-dev@lists.linbit.com, linux-btrfs@vger.kernel.org,
-        linux-raid@vger.kernel.org, neilb@suse.com
-Subject: Re: [PATCH 11/12] xfs: convert to bioset_init()/mempool_init()
-Message-ID: <20180521183936.GJ23858@magnolia>
-References: <20180520222558.7053-1-kent.overstreet@gmail.com>
- <20180520222558.7053-12-kent.overstreet@gmail.com>
+        id S1751450AbeEUSkq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 14:40:46 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38834 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750930AbeEUSkk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 14:40:40 -0400
+From: Steve Grubb <sgrubb@redhat.com>
+To: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Richard Guy Briggs <rgb@redhat.com>,
+        containers@lists.linux-foundation.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, paul@paul-moore.com
+Subject: Re: [PATCH] audit: add containerid support for IMA-audit
+Date: Mon, 21 May 2018 14:40:40 -0400
+Message-ID: <16251997.Lr3lOVDqLJ@x2>
+Organization: Red Hat
+In-Reply-To: <7abd3460-0797-f003-12c7-7329beb0835b@linux.vnet.ibm.com>
+References: <1520257393.10396.291.camel@linux.vnet.ibm.com> <5705556.pzqfGOkdjC@x2> <7abd3460-0797-f003-12c7-7329beb0835b@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180520222558.7053-12-kent.overstreet@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8900 signatures=668700
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=9 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805210220
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 20, 2018 at 06:25:57PM -0400, Kent Overstreet wrote:
-> Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
+Hello Stefan,
 
-Looks ok, I guess...
-Acked-by: Darrick J. Wong <darrick.wong@oracle.com>
+On Monday, May 21, 2018 2:04:08 PM EDT Stefan Berger wrote:
+> On 05/21/2018 01:21 PM, Steve Grubb wrote:
+> > On Friday, May 18, 2018 12:34:24 PM EDT Mimi Zohar wrote:
+> >> On Fri, 2018-05-18 at 11:56 -0400, Richard Guy Briggs wrote:
+> >>> On 2018-05-18 10:39, Mimi Zohar wrote:
+> >>>> On Fri, 2018-05-18 at 09:54 -0400, Stefan Berger wrote:
+> >>>>> On 05/18/2018 08:53 AM, Mimi Zohar wrote:
+> >>>> [..]
+> >>>> 
+> >>>>>>>>> If so, which ones? We could probably refactor the current
+> >>>>>>>>> integrity_audit_message() and have ima_parse_rule() call into it
+> >>>>>>>>> to get those fields as well. I suppose adding new fields to it
+> >>>>>>>>> wouldn't be considered breaking user space?
+> >>>>>>>> 
+> >>>>>>>> Changing the order of existing fields or inserting fields could
+> >>>>>>>> break stuff and is strongly discouraged without a good reason, but
+> >>>>>>>> appending fields is usually the right way to add information.
+> >>>>>>>> 
+> >>>>>>>> There are exceptions, and in this case, I'd pick the "more
+> >>>>>>>> standard" of the formats for AUDIT_INTEGRITY_RULE
+> >>>>>>>> (ima_audit_measurement?) and stick with that, abandoning the other
+> >>>>>>>> format, renaming the less standard version of the record
+> >>>>>>>> (ima_parse_rule?) and perhpas adopting that abandonned format for
+> >>>>>>>> the new record type while using current->audit_context.
+> >>>>>> 
+> >>>>>> This sounds right, other than "type=INTEGRITY_RULE" (1805) for
+> >>>>>> ima_audit_measurement().  Could we rename type=1805 to be
+> >>>>> 
+> >>>>> So do we want to change both? I thought that what
+> >>>>> ima_audit_measurement() produces looks ok but may not have a good
+> >>>>> name for the 'type'. Now in this case I would not want to 'break user
+> >>>>> space'. The only change I was going to make was to what
+> >>>>> ima_parse_rule() produces.
+> >>>> 
+> >>>> The only change for now is separating the IMA policy rules from the
+> >>>> IMA-audit messages.
+> >>>> 
+> >>>> Richard, when the containerid is appended to the IMA-audit messages,
+> >>>> would we make the audit type name change then?
+> >>> 
+> >>> No, go ahead and make the change now.  I'm expecting that the
+> >>> containerid record will just be another auxiliary record and should not
+> >>> affect you folks.
+> >> 
+> >> To summarize, we need to disambiguate the 1805, as both
+> >> ima_parse_rule() and ima_audit_measurement() are using the same number
+> >> with different formats.  The main usage of 1805 that we are aware of
+> >> is ima_audit_measurement().  Yet the "type=" name for
+> >> ima_audit_measurement() should be INTEGRITY_IMA_AUDIT, not
+> >> INTEGRITY_RULE.
+> >> 
+> >> option 1: breaks both uses
+> >> 1805 - INTEGRITY_IMA_AUDIT - ima_audit_measurement()
+> >> 1806 - INTEGRITY_POLICY_RULE - ima_parse_rule()
+> >> 
+> >> option 2: breaks the most common usage
+> >> 1805 - INTEGRITY_RULE - ima_parse_rule()
+> >> 1806 - INTEGRITY_IMA_AUDIT - ima_audit_measurement()
+> >> 
+> >> option 3: leaves the most common usage with the wrong name, and breaks
+> >> the other less common usage
+> >> 1805 - INTEGRITY_RULE - ima_audit_measurement()
+> >> 1806 - INTEGRITY_POLICY_RULE - ima_parse_rule()
+> >> 
+> >> So option 3 is the best option?
+> >> 
+> >  From a user space perspective, I don't care as long the event is well
+> >  formed
+>
+> Are you saying this because of the tools you referred to that require
+> proper ordering and all fields need to be available?
 
---D
-
-> ---
->  fs/xfs/xfs_aops.c  |  2 +-
->  fs/xfs/xfs_aops.h  |  2 +-
->  fs/xfs/xfs_super.c | 11 +++++------
->  3 files changed, 7 insertions(+), 8 deletions(-)
+Its because the order was established a long time ago. User space tools still 
+expect that ordering.
+ 
+> > (No unnecessary untrusted string logging) and we have the required fields
+> > for searching: pid, uid, auid, tty, session, subj, comm, exe, & res. And
+> > the object is identifiable in the event.
 > 
-> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-> index 0ab824f574..102463543d 100644
-> --- a/fs/xfs/xfs_aops.c
-> +++ b/fs/xfs/xfs_aops.c
-> @@ -594,7 +594,7 @@ xfs_alloc_ioend(
->  	struct xfs_ioend	*ioend;
->  	struct bio		*bio;
->  
-> -	bio = bio_alloc_bioset(GFP_NOFS, BIO_MAX_PAGES, xfs_ioend_bioset);
-> +	bio = bio_alloc_bioset(GFP_NOFS, BIO_MAX_PAGES, &xfs_ioend_bioset);
->  	xfs_init_bio_from_bh(bio, bh);
->  
->  	ioend = container_of(bio, struct xfs_ioend, io_inline_bio);
-> diff --git a/fs/xfs/xfs_aops.h b/fs/xfs/xfs_aops.h
-> index 69346d460d..694c85b038 100644
-> --- a/fs/xfs/xfs_aops.h
-> +++ b/fs/xfs/xfs_aops.h
-> @@ -18,7 +18,7 @@
->  #ifndef __XFS_AOPS_H__
->  #define __XFS_AOPS_H__
->  
-> -extern struct bio_set *xfs_ioend_bioset;
-> +extern struct bio_set xfs_ioend_bioset;
->  
->  /*
->   * Types of I/O for bmap clustering and I/O completion tracking.
-> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-> index d714240529..f643d76db5 100644
-> --- a/fs/xfs/xfs_super.c
-> +++ b/fs/xfs/xfs_super.c
-> @@ -63,7 +63,7 @@
->  #include <linux/parser.h>
->  
->  static const struct super_operations xfs_super_operations;
-> -struct bio_set *xfs_ioend_bioset;
-> +struct bio_set xfs_ioend_bioset;
->  
->  static struct kset *xfs_kset;		/* top-level xfs sysfs dir */
->  #ifdef DEBUG
-> @@ -1845,10 +1845,9 @@ MODULE_ALIAS_FS("xfs");
->  STATIC int __init
->  xfs_init_zones(void)
->  {
-> -	xfs_ioend_bioset = bioset_create(4 * MAX_BUF_PER_PAGE,
-> +	if (bioset_init(&xfs_ioend_bioset, 4 * MAX_BUF_PER_PAGE,
->  			offsetof(struct xfs_ioend, io_inline_bio),
-> -			BIOSET_NEED_BVECS);
-> -	if (!xfs_ioend_bioset)
-> +			BIOSET_NEED_BVECS))
->  		goto out;
->  
->  	xfs_log_ticket_zone = kmem_zone_init(sizeof(xlog_ticket_t),
-> @@ -1997,7 +1996,7 @@ xfs_init_zones(void)
->   out_destroy_log_ticket_zone:
->  	kmem_zone_destroy(xfs_log_ticket_zone);
->   out_free_ioend_bioset:
-> -	bioset_free(xfs_ioend_bioset);
-> +	bioset_exit(&xfs_ioend_bioset);
->   out:
->  	return -ENOMEM;
->  }
-> @@ -2029,7 +2028,7 @@ xfs_destroy_zones(void)
->  	kmem_zone_destroy(xfs_btree_cur_zone);
->  	kmem_zone_destroy(xfs_bmap_free_item_zone);
->  	kmem_zone_destroy(xfs_log_ticket_zone);
-> -	bioset_free(xfs_ioend_bioset);
-> +	bioset_exit(&xfs_ioend_bioset);
->  }
->  
->  STATIC int __init
-> -- 
-> 2.17.0
+> There's at least one documented user that showed the existing format...
 > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-xfs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> https://www.fireeye.com/blog/threat-research/2016/11/extending_linux_exec.h
+> tml
+
+Hmm. I see. If that event was ever sent to linux-audit mail list for 
+feedback, we would have had some discussion because it's not a proper event. 
+The order of the fields changed, new fields were added, untrusted string 
+logging is being used, field names are not documented in the field name 
+dictionary, existing field names are not being used, subject information is 
+incomplete, results is missing, and its not entirely clear what the object 
+is.
+
+-Steve
