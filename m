@@ -1,11 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1340521-1526938433-2-6301126264516296699
+X-Cyrus-Session-Id: sloti22d1t05-1344077-1526938377-2-577090587960448608
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
-  SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -13,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526938432; b=VmLuVuuRcwe30JTyByKPRt8BrrcMDR5HgowGCPlTHPpXXPvh5B
-    +oWSLyvQql1Dmh/5/9GQn+Pa1iyoxDppyn13wB/X/46UKU5yYtHLjogEQcwDAhwQ
-    9qkRNGzt3dN/F//2IxRU7boNJEU/eZJkk2OK7L0/4EMA3XMHPsOC1M7izISlCw4j
-    hG5H9+78XG/Ei67V65mxgwVFPeDuXa2zWx1BDVT/DfUrXCA5W46iD2x+hrkQsrGp
-    6KZrYjrNUf6Hd8PMkjwZZPFT2B1UFE8GwlRFyxUGmdYNAvv7bXpg7VI9xcnoI4S1
-    qeb+A79HAqqP5phdUmBsfhwN6IoONKOornJA==
+    1526938376; b=NQYGymyJJbxWb1pnqqTslPx1w+1n10DUcXn1n26YHFEYe/W91W
+    aqidOyf5llJ/xbKCQSxtKRIV+ZI4NLFVLOTeeCzK3jeVUFgbkN2aI7Q+NC07Sneh
+    5Y78rDDIHxxNY6/Y4ZKl9xRo9bS+gstg7mC3ZxYI4w737IU5zmhwvDpa/dKhoZFQ
+    0Z6HxN0td+BB7yuyt7xERdByGnf300mHLhnxt5sZGOhzh3/L0LpXFhmynVXFcRIN
+    EEDZtPtzByZHR2Gm0QAnIzHrAGoalydqfU/kmxQWJ/mMz47COz65tPmA+9R9BB9L
+    WHJ1oKsDAwqx8kB4ajXQ51wr0n6ke9smRpeA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1526938432; bh=/Wbc/P3azr7EXVEWeOoe+HNJ2CKk8z
-    KgKCj4RR8L4lM=; b=GeVNNzhRvhV+LgnFZyz7naZXzK6po3z5Px1tGqrRKdAb/8
-    DRqC41IS3Yx4dTEE1iMfabMVWUhpbAs1PvZdbb/0S3Y/KJTYnJwW9P1z6MTSjJgx
-    DHSsS0jpCs9Ed4tFH53VHUVROGqBgCiUVJwUEap6Xb8//KvqyKWTQkT7J3a1EEQk
-    COmICoQ+NX1+f6c0P8VvqpQSNPp5suVFqKM3H5ce63P1NDFxk27Nxfuoc6L9M9lF
-    u/PtiS4jrulXywmKPioV3sq6eQu6mkEnBNbaZ+MMGLWJTvMJ/T4ATxdffVL5YBuI
-    FXp8/QFI3dT0b5EJnkzhsTz88gyc2VY4RAhxOtrg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1526938376; bh=yfrU2E67PkXzbgSI4WaSxOxsYVRtp6
+    3Z33as4skqHOI=; b=fQeJUCWGx8qlD9gOrL9FPI8Qi/YIoyLQKBKVV46HNIbxpz
+    cLkBMn2yuUH0HkenQa+319rGHvOQe2/wAEfsvBsh5OKbRqrSPyGJv04LaIfPkzK7
+    RgiplIUFa3Oz6kPx0Qpb4wIvOJEQwlnIGaDIbXbSfYTuV4dpuaIsDPWBAdpQEO3F
+    O00PaK90YNJKfidIWist0d917FmK0qS4Q9Nc5xzCbA1suSk3wGmW5PMqqdUzcY9p
+    uItUgFJDr2ctYjWNHLola9ntz0iFmoMlzAJz3uPEMIr/pZXQG7nn2nSvblCCgXp9
+    /meRnMQUOJR/CKAvHBGmV0FoUd61LpWhQg+EWksg==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=tbRjm9bP x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=sAMQEFFb x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -46,10 +45,10 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=tbRjm9bP x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=sAMQEFFb x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -65,29 +64,31 @@ Authentication-Results: mx3.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfA1A7Do9I9qGHSU4nA2u4+1HEEilZIrJ1QE4iyIL3i5WdweGzGjuGJ29dKgwyjS0ewQC6OZCy+h1QnW73LIW8qINCTgTmLdsVPLDNNtdUeGg/QyMb6Dw
-    bhqlRQI+IAN7u8uJUj6dO/vQ2nK6Iqe3zQBWbgUl2iMWMjLSBm2GWXw6zpAXH9BUeqCcAQ2aT2VfCNxVwf6B2AFQBmfWWpbeB5ritCftdjtnmrx18I7wkWaG
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfJhLM7MGlPIXUiYOV/KHIXExM2g6dN4ucfu9l5iomMI/5imJ0Eyy5IHceRltp37a83Lal2D+X1LfeXXf5mdEhowegiB+hTGhHK/DNVGu50/2Lupk/U1k
+    32gpf7H9MWV5cve4l7XXIz0CxZ8xVVR+AqBa/KcqqgpPSmRLjaD7Rfaeh/tm7wXxH9TqK0hHohkZFP38BXO2BE2Iqk0L8UjQpUOQPtV8TB72PIQt70AISVlX
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=ag1SF4gXAAAA:8 a=M0XPXDyK0zsVw8u4YH8A:9 a=QEXdDO2ut3YA:10
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=tS2p1tcMxUG_1mGfonEA:9
+    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932512AbeEUV0K (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 21 May 2018 17:26:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40942 "EHLO mail.kernel.org"
+        id S932528AbeEUV0Q (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 21 May 2018 17:26:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41022 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932510AbeEUV0H (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 21 May 2018 17:26:07 -0400
+        id S1754444AbeEUV0M (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 21 May 2018 17:26:12 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.16 091/110] x86/bugs: Make cpu_show_common() static
-Date: Mon, 21 May 2018 23:12:28 +0200
-Message-Id: <20180521210514.000271981@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@suse.de>, Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.16 066/110] x86/bugs, KVM: Support the combination of guest and host IBRS
+Date: Mon, 21 May 2018 23:12:03 +0200
+Message-Id: <20180521210512.061816675@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180521210503.823249477@linuxfoundation.org>
 References: <20180521210503.823249477@linuxfoundation.org>
@@ -105,28 +106,124 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jiri Kosina <jkosina@suse.cz>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-commit 7bb4d366cba992904bffa4820d24e70a3de93e76 upstream
+commit 5cf687548705412da47c9cec342fd952d71ed3d5 upstream
 
-cpu_show_common() is not used outside of arch/x86/kernel/cpu/bugs.c, so
-make it static.
+A guest may modify the SPEC_CTRL MSR from the value used by the
+kernel. Since the kernel doesn't use IBRS, this means a value of zero is
+what is needed in the host.
 
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+But the 336996-Speculative-Execution-Side-Channel-Mitigations.pdf refers to
+the other bits as reserved so the kernel should respect the boot time
+SPEC_CTRL value and use that.
+
+This allows to deal with future extensions to the SPEC_CTRL interface if
+any at all.
+
+Note: This uses wrmsrl() instead of native_wrmsl(). I does not make any
+difference as paravirt will over-write the callq *0xfff.. with the wrmsrl
+assembler code.
+
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/bugs.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/include/asm/nospec-branch.h |   10 ++++++++++
+ arch/x86/kernel/cpu/bugs.c           |   18 ++++++++++++++++++
+ arch/x86/kvm/svm.c                   |    6 ++----
+ arch/x86/kvm/vmx.c                   |    6 ++----
+ 4 files changed, 32 insertions(+), 8 deletions(-)
 
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -228,6 +228,16 @@ enum spectre_v2_mitigation {
+ extern void x86_spec_ctrl_set(u64);
+ extern u64 x86_spec_ctrl_get_default(void);
+ 
++/*
++ * On VMENTER we must preserve whatever view of the SPEC_CTRL MSR
++ * the guest has, while on VMEXIT we restore the host view. This
++ * would be easier if SPEC_CTRL were architecturally maskable or
++ * shadowable for guests but this is not (currently) the case.
++ * Takes the guest view of SPEC_CTRL MSR as a parameter.
++ */
++extern void x86_spec_ctrl_set_guest(u64);
++extern void x86_spec_ctrl_restore_host(u64);
++
+ extern char __indirect_thunk_start[];
+ extern char __indirect_thunk_end[];
+ 
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -640,7 +640,7 @@ void x86_spec_ctrl_setup_ap(void)
+@@ -123,6 +123,24 @@ u64 x86_spec_ctrl_get_default(void)
+ }
+ EXPORT_SYMBOL_GPL(x86_spec_ctrl_get_default);
  
- #ifdef CONFIG_SYSFS
++void x86_spec_ctrl_set_guest(u64 guest_spec_ctrl)
++{
++	if (!boot_cpu_has(X86_FEATURE_IBRS))
++		return;
++	if (x86_spec_ctrl_base != guest_spec_ctrl)
++		wrmsrl(MSR_IA32_SPEC_CTRL, guest_spec_ctrl);
++}
++EXPORT_SYMBOL_GPL(x86_spec_ctrl_set_guest);
++
++void x86_spec_ctrl_restore_host(u64 guest_spec_ctrl)
++{
++	if (!boot_cpu_has(X86_FEATURE_IBRS))
++		return;
++	if (x86_spec_ctrl_base != guest_spec_ctrl)
++		wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
++}
++EXPORT_SYMBOL_GPL(x86_spec_ctrl_restore_host);
++
+ #ifdef RETPOLINE
+ static bool spectre_v2_bad_module;
  
--ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
-+static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
- 			char *buf, unsigned int bug)
- {
- 	if (!boot_cpu_has_bug(bug))
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -5401,8 +5401,7 @@ static void svm_vcpu_run(struct kvm_vcpu
+ 	 * is no need to worry about the conditional branch over the wrmsr
+ 	 * being speculatively taken.
+ 	 */
+-	if (svm->spec_ctrl)
+-		native_wrmsrl(MSR_IA32_SPEC_CTRL, svm->spec_ctrl);
++	x86_spec_ctrl_set_guest(svm->spec_ctrl);
+ 
+ 	asm volatile (
+ 		"push %%" _ASM_BP "; \n\t"
+@@ -5514,8 +5513,7 @@ static void svm_vcpu_run(struct kvm_vcpu
+ 	if (unlikely(!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL)))
+ 		svm->spec_ctrl = native_read_msr(MSR_IA32_SPEC_CTRL);
+ 
+-	if (svm->spec_ctrl)
+-		native_wrmsrl(MSR_IA32_SPEC_CTRL, 0);
++	x86_spec_ctrl_restore_host(svm->spec_ctrl);
+ 
+ 	/* Eliminate branch target predictions from guest mode */
+ 	vmexit_fill_RSB();
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -9468,8 +9468,7 @@ static void __noclone vmx_vcpu_run(struc
+ 	 * is no need to worry about the conditional branch over the wrmsr
+ 	 * being speculatively taken.
+ 	 */
+-	if (vmx->spec_ctrl)
+-		native_wrmsrl(MSR_IA32_SPEC_CTRL, vmx->spec_ctrl);
++	x86_spec_ctrl_set_guest(vmx->spec_ctrl);
+ 
+ 	vmx->__launched = vmx->loaded_vmcs->launched;
+ 	asm(
+@@ -9607,8 +9606,7 @@ static void __noclone vmx_vcpu_run(struc
+ 	if (unlikely(!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL)))
+ 		vmx->spec_ctrl = native_read_msr(MSR_IA32_SPEC_CTRL);
+ 
+-	if (vmx->spec_ctrl)
+-		native_wrmsrl(MSR_IA32_SPEC_CTRL, 0);
++	x86_spec_ctrl_restore_host(vmx->spec_ctrl);
+ 
+ 	/* Eliminate branch target predictions from guest mode */
+ 	vmexit_fill_RSB();
