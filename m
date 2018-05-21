@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751682AbeEUMJT (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 08:09:19 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:38664 "EHLO huawei.com"
+        id S1753017AbeEUMJZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 08:09:25 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:38663 "EHLO huawei.com"
         rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752815AbeEUMJC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752814AbeEUMJC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 21 May 2018 08:09:02 -0400
 From: Yisheng Xie <xieyisheng1@huawei.com>
 To: <linux-kernel@vger.kernel.org>
-CC: Yisheng Xie <xieyisheng1@huawei.com>, Jaroslav Kysela <perex@perex.cz>,
-        <netdev@vger.kernel.org>
-Subject: [PATCH 06/33] hp100: use match_string() helper
-Date: Mon, 21 May 2018 19:57:43 +0800
-Message-ID: <1526903890-35761-7-git-send-email-xieyisheng1@huawei.com>
+CC: Yisheng Xie <xieyisheng1@huawei.com>, Tony Lindgren <tony@atomide.com>,
+        Lee Jones <lee.jones@linaro.org>, <linux-omap@vger.kernel.org>
+Subject: [PATCH 02/33] mfd: omap-usb-host: use match_string() helper
+Date: Mon, 21 May 2018 19:57:39 +0800
+Message-ID: <1526903890-35761-3-git-send-email-xieyisheng1@huawei.com>
 X-Mailer: git-send-email 1.7.12.4
 In-Reply-To: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
 References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
@@ -27,39 +27,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 match_string() returns the index of an array for a matching string,
 which can be used intead of open coded variant.
 
-Cc: Jaroslav Kysela <perex@perex.cz>
-Cc: netdev@vger.kernel.org
+Cc: Tony Lindgren <tony@atomide.com>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: linux-omap@vger.kernel.org
 Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
 ---
- drivers/net/ethernet/hp/hp100.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ drivers/mfd/omap-usb-host.c | 24 ++----------------------
+ 1 file changed, 2 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/net/ethernet/hp/hp100.c b/drivers/net/ethernet/hp/hp100.c
-index c8c7ad2..84501b3 100644
---- a/drivers/net/ethernet/hp/hp100.c
-+++ b/drivers/net/ethernet/hp/hp100.c
-@@ -335,7 +335,6 @@ static const char *hp100_read_id(int ioaddr)
- static __init int hp100_isa_probe1(struct net_device *dev, int ioaddr)
- {
- 	const char *sig;
+diff --git a/drivers/mfd/omap-usb-host.c b/drivers/mfd/omap-usb-host.c
+index 7aab376..e11ab12 100644
+--- a/drivers/mfd/omap-usb-host.c
++++ b/drivers/mfd/omap-usb-host.c
+@@ -153,27 +153,6 @@ static inline u32 usbhs_read(void __iomem *base, u32 reg)
+ 	[OMAP_OHCI_PORT_MODE_TLL_2PIN_DPDM]	= "ohci-tll-2pin-dpdm",
+ };
+ 
+-/**
+- * omap_usbhs_get_dt_port_mode - Get the 'enum usbhs_omap_port_mode'
+- * from the port mode string.
+- * @mode: The port mode string, usually obtained from device tree.
+- *
+- * The function returns the 'enum usbhs_omap_port_mode' that matches the
+- * provided port mode string as per the port_modes table.
+- * If no match is found it returns -ENODEV
+- */
+-static int omap_usbhs_get_dt_port_mode(const char *mode)
+-{
 -	int i;
- 
- 	if (!request_region(ioaddr, HP100_REGION_SIZE, "hp100"))
- 		goto err;
-@@ -351,13 +350,7 @@ static __init int hp100_isa_probe1(struct net_device *dev, int ioaddr)
- 	if (sig == NULL)
- 		goto err;
- 
--	for (i = 0; i < ARRAY_SIZE(hp100_isa_tbl); i++) {
--		if (!strcmp(hp100_isa_tbl[i], sig))
--			break;
 -
+-	for (i = 0; i < ARRAY_SIZE(port_modes); i++) {
+-		if (!strcmp(mode, port_modes[i]))
+-			return i;
 -	}
 -
--	if (i < ARRAY_SIZE(hp100_isa_tbl))
-+	if (match_string(hp100_isa_tbl, ARRAY_SIZE(hp100_isa_tbl), sig) >= 0)
- 		return hp100_probe1(dev, ioaddr, HP100_BUS_ISA, NULL);
-  err:
- 	return -ENODEV;
+-	return -ENODEV;
+-}
+-
+ static struct platform_device *omap_usbhs_alloc_child(const char *name,
+ 			struct resource	*res, int num_resources, void *pdata,
+ 			size_t pdata_size, struct device *dev)
+@@ -529,7 +508,8 @@ static int usbhs_omap_get_dt_pdata(struct device *dev,
+ 		if (ret < 0)
+ 			continue;
+ 
+-		ret = omap_usbhs_get_dt_port_mode(mode);
++		/* get 'enum usbhs_omap_port_mode' from port mode string */
++		ret = match_string(port_modes, ARRAY_SIZE(port_modes), mode);
+ 		if (ret < 0) {
+ 			dev_warn(dev, "Invalid port%d-mode \"%s\" in device tree\n",
+ 					i, mode);
 -- 
 1.7.12.4
