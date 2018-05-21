@@ -1,110 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753552AbeEUSGC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 14:06:02 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:36714 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753291AbeEUSF6 (ORCPT
+        id S1753485AbeEUSI0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 14:08:26 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:45564 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753237AbeEUSIX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 14:05:58 -0400
-X-Google-Smtp-Source: AB8JxZpMZNZXzc09hXJdSb71Kt5+zc/UZgJ59F+uWxWsSEVmfkmYAicGXknxWR3XhRWPj3na7htGyw==
-Date: Mon, 21 May 2018 11:05:57 -0700
-From: Joel Fernandes <joel@joelfernandes.org>
-To: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: linux-kernel@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>, Todd Kjos <tkjos@google.com>,
-        claudio@evidence.eu.com, kernel-team@android.com,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2] schedutil: Allow cpufreq requests to be made even
- when kthread kicked
-Message-ID: <20180521180557.GA40541@joelaf.mtv.corp.google.com>
-References: <20180518185501.173552-1-joel@joelfernandes.org>
- <20180521105055.GQ30654@e110439-lin>
+        Mon, 21 May 2018 14:08:23 -0400
+Subject: Re: [PATCH v2 0/7] mm: pages for hugetlb's overcommit may be able to
+ charge to memcg
+To: TSUKADA Koutaro <tsukada@ascade.co.jp>,
+        Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>, David Rientjes <rientjes@google.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        Marc-Andre Lureau <marcandre.lureau@redhat.com>,
+        Punit Agrawal <punit.agrawal@arm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, cgroups@vger.kernel.org
+References: <e863529b-7ce5-4fbe-8cff-581b5789a5f9@ascade.co.jp>
+From: Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <240f1b14-ed7d-4983-6c52-be4899d4caa5@oracle.com>
+Date: Mon, 21 May 2018 11:07:33 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180521105055.GQ30654@e110439-lin>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <e863529b-7ce5-4fbe-8cff-581b5789a5f9@ascade.co.jp>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8900 signatures=668700
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805210214
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 11:50:55AM +0100, Patrick Bellasi wrote:
-> On 18-May 11:55, Joel Fernandes (Google.) wrote:
-> > From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
-> > 
-> > Currently there is a chance of a schedutil cpufreq update request to be
-> > dropped if there is a pending update request. This pending request can
-> > be delayed if there is a scheduling delay of the irq_work and the wake
-> > up of the schedutil governor kthread.
-> > 
-> > A very bad scenario is when a schedutil request was already just made,
-> > such as to reduce the CPU frequency, then a newer request to increase
-> > CPU frequency (even sched deadline urgent frequency increase requests)
-> > can be dropped, even though the rate limits suggest that its Ok to
-> > process a request. This is because of the way the work_in_progress flag
-> > is used.
-> > 
-> > This patch improves the situation by allowing new requests to happen
-> > even though the old one is still being processed. Note that in this
-> > approach, if an irq_work was already issued, we just update next_freq
-> > and don't bother to queue another request so there's no extra work being
-> > done to make this happen.
+On 05/17/2018 09:27 PM, TSUKADA Koutaro wrote:
+> Thanks to Mike Kravetz for comment on the previous version patch.
 > 
-> Maybe I'm missing something but... is not this patch just a partial
-> mitigation of the issue you descrive above?
+> The purpose of this patch-set is to make it possible to control whether or
+> not to charge surplus hugetlb pages obtained by overcommitting to memory
+> cgroup. In the future, I am trying to accomplish limiting the memory usage
+> of applications that use both normal pages and hugetlb pages by the memory
+> cgroup(not use the hugetlb cgroup).
 > 
-> If a DL freq increase is queued, with this patch we store the request
-> but we don't actually increase the frequency until the next schedutil
-> update, which can be one tick away... isn't it?
+> Applications that use shared libraries like libhugetlbfs.so use both normal
+> pages and hugetlb pages, but we do not know how much to use each. Please
+> suppose you want to manage the memory usage of such applications by cgroup
+> How do you set the memory cgroup and hugetlb cgroup limit when you want to
+> limit memory usage to 10GB?
 > 
-> If that's the case, maybe something like the following can complete
-> the cure?
+> If you set a limit of 10GB for each, the user can use a total of 20GB of
+> memory and can not limit it well. Since it is difficult to estimate the
+> ratio used by user of normal pages and hugetlb pages, setting limits of 2GB
+> to memory cgroup and 8GB to hugetlb cgroup is not very good idea. In such a
+> case, I thought that by using my patch-set, we could manage resources just
+> by setting 10GB as the limit of memory cgoup(there is no limit to hugetlb
+> cgroup).
 > 
-> ---8<---
-> #define SUGOV_FREQ_NONE 0
+> In this patch-set, introduce the charge_surplus_huge_pages(boolean) to
+> struct hstate. If it is true, it charges to the memory cgroup to which the
+> task that obtained surplus hugepages belongs. If it is false, do nothing as
+> before, and the default value is false. The charge_surplus_huge_pages can
+> be controlled procfs or sysfs interfaces.
 > 
-> static unsigned int sugov_work_update(struct sugov_policy *sg_policy,
-> 				      unsigned int prev_freq)
-> {
-> 	unsigned long irq_flags;
-> 	bool update_freq = true;
-> 	unsigned int next_freq;
+> Since THP is very effective in environments with kernel page size of 4KB,
+> such as x86, there is no reason to positively use HugeTLBfs, so I think
+> that there is no situation to enable charge_surplus_huge_pages. However, in
+> some distributions such as arm64, the page size of the kernel is 64KB, and
+> the size of THP is too huge as 512MB, making it difficult to use. HugeTLBfs
+> may support multiple huge page sizes, and in such a special environment
+> there is a desire to use HugeTLBfs.
+
+One of the basic questions/concerns I have is accounting for surplus huge
+pages in the default memory resource controller.  The existing huegtlb
+resource controller already takes hugetlbfs huge pages into account,
+including surplus pages.  This series would allow surplus pages to be
+accounted for in the default  memory controller, or the hugetlb controller
+or both.
+
+I understand that current mechanisms do not meet the needs of the above
+use case.  The question is whether this is an appropriate way to approach
+the issue.  My cgroup experience and knowledge is extremely limited, but
+it does not appear that any other resource can be controlled by multiple
+controllers.  Therefore, I am concerned that this may be going against
+basic cgroup design philosophy.
+
+It would be good to get comments from people more cgroup knowledgeable,
+and especially from those involved in the decision to do separate hugetlb
+control.
+
+-- 
+Mike Kravetz
+
 > 
-> 	/*
-> 	 * Hold sg_policy->update_lock shortly to handle the case where:
-> 	 * incase sg_policy->next_freq is read here, and then updated by
-> 	 * sugov_update_shared just before work_in_progress is set to false
-> 	 * here, we may miss queueing the new update.
-> 	 *
-> 	 * Note: If a work was queued after the update_lock is released,
-> 	 * sugov_work will just be called again by kthread_work code; and the
-> 	 * request will be proceed before the sugov thread sleeps.
-> 	 */
-> 	raw_spin_lock_irqsave(&sg_policy->update_lock, irq_flags);
-> 	next_freq = sg_policy->next_freq;
-> 	sg_policy->work_in_progress = false;
-> 	if (prev_freq == next_freq)
-> 		update_freq = false;
-
-About this patch on top of mine, I believe this check is already being done
-by sugov_update_commit? :
-
-static void sugov_update_commit(struct sugov_policy *sg_policy, u64 time,
-				unsigned int next_freq)
-{
-	struct cpufreq_policy *policy = sg_policy->policy;
-
-	if (sg_policy->next_freq == next_freq)
-		return;
-
-	sg_policy->next_freq = next_freq;
-	sg_policy->last_freq_update_time = time;
-----
-
-thanks,
-
- - Joel
+> The patch set is for 4.17.0-rc3+. I don't know whether patch-set are
+> acceptable or not, so I just done a simple test.
+> 
+> Thanks,
+> Tsukada
+> 
+> TSUKADA Koutaro (7):
+>   hugetlb: introduce charge_surplus_huge_pages to struct hstate
+>   hugetlb: supports migrate charging for surplus hugepages
+>   memcg: use compound_order rather than hpage_nr_pages
+>   mm, sysctl: make charging surplus hugepages controllable
+>   hugetlb: add charge_surplus_hugepages attribute
+>   Documentation, hugetlb: describe about charge_surplus_hugepages
+>   memcg: supports movement of surplus hugepages statistics
+> 
+>  Documentation/vm/hugetlbpage.txt |    6 +
+>  include/linux/hugetlb.h          |    4 +
+>  kernel/sysctl.c                  |    7 +
+>  mm/hugetlb.c                     |  148 +++++++++++++++++++++++++++++++++++++++
+>  mm/memcontrol.c                  |  109 +++++++++++++++++++++++++++-
+>  5 files changed, 269 insertions(+), 5 deletions(-)
+> 
