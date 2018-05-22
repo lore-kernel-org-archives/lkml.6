@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752940AbeEVTlQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 15:41:16 -0400
-Received: from mga04.intel.com ([192.55.52.120]:18869 "EHLO mga04.intel.com"
+        id S1752894AbeEVTlb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 15:41:31 -0400
+Received: from mga04.intel.com ([192.55.52.120]:18867 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752257AbeEVTcC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 15:32:02 -0400
+        id S1752044AbeEVTcB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 15:32:01 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,430,1520924400";
-   d="scan'208";a="226406347"
+   d="scan'208";a="226406344"
 From: Reinette Chatre <reinette.chatre@intel.com>
 To: tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
         vikas.shivappa@linux.intel.com
@@ -18,9 +18,9 @@ Cc: gavin.hindman@intel.com, jithu.joseph@intel.com, dave.hansen@intel.com,
         mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
         linux-kernel@vger.kernel.org,
         Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH V4 04/38] x86/intel_rdt: Introduce resource group's mode resctrl file
-Date: Tue, 22 May 2018 04:28:52 -0700
-Message-Id: <902574465439924850a6e7c4cc06b8a79bd7d2b4.1526987654.git.reinette.chatre@intel.com>
+Subject: [PATCH V4 03/38] x86/intel_rdt: Associate mode with each RDT resource group
+Date: Tue, 22 May 2018 04:28:51 -0700
+Message-Id: <2f1844c590a87f96b8b948d5d6da54b532d25888.1526987654.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <cover.1526987654.git.reinette.chatre@intel.com>
 References: <cover.1526987654.git.reinette.chatre@intel.com>
@@ -30,125 +30,90 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A new resctrl file "mode" associated with each resource group
-is introduced. This file will display the resource group's current mode
-and an administrator can also use it to modify the resource group's
-mode.
+Each RDT resource group is associated with a mode that will reflect
+the level of sharing of its allocations. The default, shareable, will be
+associated with each resource group on creation since it is zero and
+resource groups are created with kzalloc. The managing of the mode of a
+resource group will follow. The default resource group always remain
+though so ensure that it is reset to the default mode when the resctrl
+filesystem is unmounted.
 
-Only shareable mode is currently supported.
+Also introduce a utility that can be used to determine the mode of a
+resource group when it is searched for based on its class of service.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 83 ++++++++++++++++++++++++++++++++
- 1 file changed, 83 insertions(+)
+ arch/x86/kernel/cpu/intel_rdt.h          |  3 +++
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 22 ++++++++++++++++++++++
+ 2 files changed, 25 insertions(+)
 
+diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
+index c08eee73ecd3..7ff1f633bebe 100644
+--- a/arch/x86/kernel/cpu/intel_rdt.h
++++ b/arch/x86/kernel/cpu/intel_rdt.h
+@@ -122,6 +122,7 @@ struct mongroup {
+  * @type:			indicates type of this rdtgroup - either
+  *				monitor only or ctrl_mon group
+  * @mon:			mongroup related data
++ * @mode:			mode of resource group
+  */
+ struct rdtgroup {
+ 	struct kernfs_node	*kn;
+@@ -132,6 +133,7 @@ struct rdtgroup {
+ 	atomic_t		waitcount;
+ 	enum rdt_group_type	type;
+ 	struct mongroup		mon;
++	enum rdtgrp_mode	mode;
+ };
+ 
+ /* rdtgroup.flags */
+@@ -461,6 +463,7 @@ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
+ 				char *buf, size_t nbytes, loff_t off);
+ int rdtgroup_schemata_show(struct kernfs_open_file *of,
+ 			   struct seq_file *s, void *v);
++enum rdtgrp_mode rdtgroup_mode_by_closid(int closid);
+ struct rdt_domain *get_domain_from_cpu(int cpu, struct rdt_resource *r);
+ int alloc_rmid(void);
+ void free_rmid(u32 rmid);
 diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index 70d7846041fe..eac60602c87b 100644
+index 749856a2e736..70d7846041fe 100644
 --- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
 +++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -147,6 +147,24 @@ enum rdtgrp_mode rdtgroup_mode_by_closid(int closid)
- 	return RDT_NUM_MODES;
+@@ -126,6 +126,27 @@ static void closid_free(int closid)
+ 	closid_free_map |= 1 << closid;
  }
  
-+static const char * const rdt_mode_str[] = {
-+	[RDT_MODE_SHAREABLE]	= "shareable",
-+};
-+
 +/**
-+ * rdtgroup_mode_str - Return the string representation of mode
-+ * @mode: the resource group mode as &enum rdtgroup_mode
++ * rdtgroup_mode_by_closid - Return mode of resource group with closid
++ * @closid: closid if the resource group
 + *
-+ * Return: string representation of valid mode, "unknown" otherwise
++ * Each resource group is associated with a @closid. Here the mode
++ * of a resource group can be queried by searching for it using its closid.
++ *
++ * Return: mode as &enum rdtgrp_mode of resource group with closid @closid
 + */
-+static const char *rdtgroup_mode_str(enum rdtgrp_mode mode)
++enum rdtgrp_mode rdtgroup_mode_by_closid(int closid)
 +{
-+	if (mode < RDT_MODE_SHAREABLE || mode >= RDT_NUM_MODES)
-+		return "unknown";
++	struct rdtgroup *rdtgrp;
 +
-+	return rdt_mode_str[mode];
++	list_for_each_entry(rdtgrp, &rdt_all_groups, rdtgroup_list) {
++		if (rdtgrp->closid == closid)
++			return rdtgrp->mode;
++	}
++
++	return RDT_NUM_MODES;
 +}
 +
  /* set uid and gid of rdtgroup dirs and files to that of the creator */
  static int rdtgroup_kn_set_ugid(struct kernfs_node *kn)
  {
-@@ -761,6 +779,63 @@ static ssize_t max_threshold_occ_write(struct kernfs_open_file *of,
- 	return nbytes;
- }
- 
-+/*
-+ * rdtgroup_mode_show - Display mode of this resource group
-+ */
-+static int rdtgroup_mode_show(struct kernfs_open_file *of,
-+			      struct seq_file *s, void *v)
-+{
-+	struct rdtgroup *rdtgrp;
-+
-+	rdtgrp = rdtgroup_kn_lock_live(of->kn);
-+	if (!rdtgrp) {
-+		rdtgroup_kn_unlock(of->kn);
-+		return -ENOENT;
-+	}
-+
-+	seq_printf(s, "%s\n", rdtgroup_mode_str(rdtgrp->mode));
-+
-+	rdtgroup_kn_unlock(of->kn);
-+	return 0;
-+}
-+
-+static ssize_t rdtgroup_mode_write(struct kernfs_open_file *of,
-+				   char *buf, size_t nbytes, loff_t off)
-+{
-+	struct rdtgroup *rdtgrp;
-+	enum rdtgrp_mode mode;
-+	int ret = 0;
-+
-+	/* Valid input requires a trailing newline */
-+	if (nbytes == 0 || buf[nbytes - 1] != '\n')
-+		return -EINVAL;
-+	buf[nbytes - 1] = '\0';
-+
-+	rdtgrp = rdtgroup_kn_lock_live(of->kn);
-+	if (!rdtgrp) {
-+		rdtgroup_kn_unlock(of->kn);
-+		return -ENOENT;
-+	}
-+
-+	rdt_last_cmd_clear();
-+
-+	mode = rdtgrp->mode;
-+
-+	if ((!strcmp(buf, "shareable") && mode == RDT_MODE_SHAREABLE))
-+		goto out;
-+
-+	if (!strcmp(buf, "shareable")) {
-+		rdtgrp->mode = RDT_MODE_SHAREABLE;
-+	} else {
-+		rdt_last_cmd_printf("unknown/unsupported mode\n");
-+		ret = -EINVAL;
-+	}
-+
-+out:
-+	rdtgroup_kn_unlock(of->kn);
-+	return ret ?: nbytes;
-+}
-+
- /* rdtgroup information files for one cache resource. */
- static struct rftype res_common_files[] = {
- 	{
-@@ -874,6 +949,14 @@ static struct rftype res_common_files[] = {
- 		.seq_show	= rdtgroup_schemata_show,
- 		.fflags		= RF_CTRL_BASE,
- 	},
-+	{
-+		.name		= "mode",
-+		.mode		= 0644,
-+		.kf_ops		= &rdtgroup_kf_single_ops,
-+		.write		= rdtgroup_mode_write,
-+		.seq_show	= rdtgroup_mode_show,
-+		.fflags		= RF_CTRL_BASE,
-+	},
- };
- 
- static int rdtgroup_add_files(struct kernfs_node *kn, unsigned long fflags)
+@@ -1483,6 +1504,7 @@ static void rdt_kill_sb(struct super_block *sb)
+ 		reset_all_ctrls(r);
+ 	cdp_disable_all();
+ 	rmdir_all_sub();
++	rdtgroup_default.mode = RDT_MODE_SHAREABLE;
+ 	static_branch_disable_cpuslocked(&rdt_alloc_enable_key);
+ 	static_branch_disable_cpuslocked(&rdt_mon_enable_key);
+ 	static_branch_disable_cpuslocked(&rdt_enable_key);
 -- 
 2.13.6
