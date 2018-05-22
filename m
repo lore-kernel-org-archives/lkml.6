@@ -1,5 +1,5 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2671386-1527002223-2-2446802747377992846
+X-Cyrus-Session-Id: sloti22d1t05-2689340-1527002241-2-5551078674525159251
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
@@ -14,23 +14,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527002222; b=d3q8LEuCJfSvh2lYEmKEzlf4ZG1WJqfdqpp3ypvEUhavSdsGMO
-    Ey8oeSsSMd3HKL/ud+38DXanbmJYqveIDca3ocwbj4W2PpVq0niCFpCpcAVImCL0
-    i4y3Qc2oKYCDpGsYxrr58uP1DIY5UVPruXzY8cWnXqZ1tZfOPKFZHAUZpX/ykWKA
-    mD0vU5iWMwWbuXOFwG81UtkS7XFoGgZ8pYJDcM4pBpBhRnDGGU6eoDgGKxLb8PBY
-    3XvS41Ww2Tkbi8+3aBif35+lVpIp0xwCHrPUPhblZA7i0JbhJTmnBjySaBw5xaQ7
-    LTHZbRX9En4mT2wjuDUHoNZtqahTOxNP3GCA==
+    1527002241; b=HN3NqwYlnQyDpZzxKvWEkMXAcpfP7iOz7OJjuP3rGfLx8+0SjB
+    mv/B97kGcm7wgyCKYGxp9Hv4iJsL8jU855ZLwZVE++OoDer69wZ8chUBIcKGmWOM
+    iMfaJwjJUYij5kw6m6yWu+fV7LQwdrRT8Ao+4K+3EflKpL0Ba0nS5jje/DNH5XV3
+    saIDYC0Jfp6z10Asr3OfgorT3qFIW+jH8dK9TGuuyxzII3HFV4NFaIdCmvcTfTz/
+    FkzYJs1RB9v9PjReqn0N1CPw3y5ful+XcGS8jfS6+z7M/4l8w3pkRAXvFCzaQHMd
+    aMso2D86iq0fssxsmafSwHnZ5ATkI4TqUoSA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=message-id:from:date:subject:to:cc
-    :mime-version:content-type:sender:list-id; s=fm2; t=1527002222;
-    bh=xRnnr/Tq1kp+5ST5lHyS+X0WP6IL8ZkaFzEXRuTPYXs=; b=a8uDx31iekwY
-    FCVPjKsJN0zYUO6HTmT5obvdtgfUbu9EnhBL2DNJnsINmwWQoBiylG9lVEy3rn4s
-    mseFNEYEmHSWbDNAW++1iwUVQJ+V1Q7y2zq0ANbz35sIva6BI5OrMCeEJ3jGTDN+
-    Bh6kpsx2lSafRvdQY2XKI9X9ps697bZkHB0MOPKZ77tbbPS9hIzkRx8gL0X3ZKQc
-    x2XBSJEJhjtJAqIb/D2ja60P6dLta2xowSE+tSEz87txjrtkTf2gbSILUzLeUWFi
-    Dgc7qA+xz6/DH01vPnUkkaKEsERMkV5vP8wR3Hhsk6RPeLC3YBY0hl+65eSQ0haV
-    SOcFhNNlaw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=message-id:in-reply-to:references:from
+    :date:subject:to:cc:mime-version:content-type:sender:list-id; s=
+    fm2; t=1527002241; bh=YOuOJUka76CZCuVg81k1Q9gsI51iE0mkFjj6lokXHf
+    U=; b=ByDj4W2UX2pQYdfiOdMad9gZ+PgLJD/4vJwd/DFvzXxM6/Prcd1GOwgLF4
+    XKtS3yWnAQMpRQphb8lXNkmTzUw8Krtbara1+U4f6HSiYRLnk/idsFxs5/zPNzTK
+    zbvOHnZldZE3UbiYhtnBMfw09dja+9NUaGguZ34qfTmgQbn+E/qsWzY0ls1Jz/Wy
+    adP+aLMagSaSksKZvhRIidAR4U5XmvR+OQFBZ63XELCRXHvmSN+HbzygzI7FX8wz
+    b6XRIxeHz9eXMeqO8H6SeBano/GZZzWUbIXpqqlWfGNMwx9tTXIVdormVjyj+Fk6
+    yRXcgNC+G+LfidcKlBJrl3oNliLQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=diasemi.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -43,7 +43,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=diasemi.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=diasemi.com;
@@ -58,45 +58,47 @@ Authentication-Results: mx2.messagingengine.com;
       header.domain=diasemi.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfAl+wSOBFQqoM/P5c4gV5IzShcJwCnbvrLMgPaZmC3UzhLxM28MyeZjb4XIbPo8xjYMVYwy6QKAzbL0Coy5FrqZ0TMPHDvJHrYSbvaLy68S6wn/viQsJ
-    ZPBoQQCOT/0HUjOQQSErqic5T6jG/gxGJY69+1CqARjqo2XQUx/U9Rxmp2I9tP1V30BXi23mYbQpjUitp57Jx2Hu8x8sgp9m4rr4pHkQieWIlT/A2Qs660do
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfHPUrUSRtxpoGYehUrODLrhc2Ky+2Yfxi1snsNHcyfgOT6ngJ0jyM9TboauHruIZfFQltIfi/f3ONgdwL34T4w8yC9gVhTWWqreBuM1M/Ii7YCELM9W2
+    FaTs3xsWE3ITF0Cq2ByqbQXctC0KKowU8uxffM0He6+P6ab3cGGBYbze48jm+bwTs25Ii134OJ+LdIpQ42TtRVXWhi10LY9LOpkjsEQdipJIhZ9OpU65M/L0
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=QRjQRLzp78EA:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=FLLQ4yAgDYodH0EX7PkA:9 a=x8gzFH9gYPwA:10
-    a=AjGcO6oz07-iQ99wixmX:22
+    a=X3a0BiUdAAAA:8 a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=7SnPkMIUnkRMdFQsR8oA:9
+    a=x8gzFH9gYPwA:10 a=aWu3muFgq6otJbhCXpL5:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751958AbeEVPQa (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 22 May 2018 11:16:30 -0400
-Received: from mail1.bemta5.messagelabs.com ([195.245.231.140]:37677 "EHLO
-        mail1.bemta5.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751339AbeEVPQ0 (ORCPT
+        id S1752424AbeEVPRG (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 22 May 2018 11:17:06 -0400
+Received: from mail1.bemta26.messagelabs.com ([85.158.142.1]:34048 "EHLO
+        mail1.bemta26.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751416AbeEVPQ0 (ORCPT
         <rfc822;linux-usb@vger.kernel.org>); Tue, 22 May 2018 11:16:26 -0400
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDIsWRWlGSWpSXmKPExsUSt3Opsa67CUu
-  0wbo9whbNi9ezWXSt3slicXnXHDaLz71HGC0WLWtltniy8AyTxendJQ7sHptWdbJ5zDsZ6LF/
-  7hp2j53fG9g9Pm+SC2CNYs3MS8qvSGDN+PV4C1tBP1vFuavPGBsYX7F0MXJxCAmsZ5To7fjO2
-  sXICeRUSPxbfYIRxOYVcJO4MHEaWJxNwEJi8okHbCA2i4CqxJJ7a8FqhAX8JM68/wwWFxHYwC
-  ixfUUoiM0sUCfR+/stC8QcQYmTM5+wQMQlJA6+eMEMsctA4vSCRrC4hIC9xPT3V4HiHEC2vkT
-  jsViIsKHE91nfoErMJZq2zmScwMg/C8nUWUimLmBkWsWoUZxaVJZapGtoppdUlJmeUZKbmJmj
-  a2hgqpebWlycmJ6ak5hUrJecn7uJERjKDECwg3Hq+7hDjJIcTEqivGFPmaOF+JLyUyozEosz4
-  otKc1KLDzHKcHAoSfB+MmKJFhIsSk1PrUjLzAFGFUxagoNHSYR3Okiat7ggMbc4Mx0idYpRUU
-  qc9yBIQgAkkVGaB9cGi+RLjLJSwryMQIcI8RSkFuVmlqDKv2IU52BUEuYVMQaawpOZVwI3/RX
-  QYiagxReXM4MsLklESEk1MGYf+XpBuTTONyJvoQ3LsvIqnt9i7yRFpvnw9ZWyTwiytau3eNvD
-  2ODiIa9c8dFn14/Ptx6U/TRoDC38can93Qu3tq3f5fdUvNhR+02iKXWzF8vKZZLc85e6GZ6/E
-  bmopdmUTTvDsmVv7kLvJW5ikit8tfJNTQ/b7dhxPV76mJT90WYJrorPSizFGYmGWsxFxYkAGu
-  b+7t8CAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrCIsWRWlGSWpSXmKPExsUSt3Opsa6nCUu
+  0wd4OfovmxevZLLpW72SxuLxrDpvF594jjBaLlrUyWzxZeIbJ4vTuEgd2j02rOtk85p0M9Ng/
+  dw27x87vDewenzfJBbBGsWbmJeVXJLBmrJh9jb3gBGfF+jXLmBoYV3B0MXJxCAmsZ5R48/gIW
+  xcjJ5BTIfH14FZGEJtXIFNi9pceFhCbU8Bd4uKC84wQNW4Su9ZvYAKx2QQsJCafeADWyyKgKr
+  H12UGwuLCAt0T/zKtg9SICGxgltq8IBbGZBeoken+/ZYGYLyhxcuYTFoi4hMTBFy+YIeYbSJx
+  e0AgWlxCwl5j+/ipQnAPI1pdoPBYLETaU+D7rG1SJuUTT1pmMExgFZyGZOgvJ1AWMTKsYLZKK
+  MtMzSnITM3N0DQ0MdA0NjXUNdM0t9RKrdBP1Ukt1k1PzSooSgZJ6ieXFesWVuck5KXp5qSWbG
+  IGxwQAEOxhXfUk8xCjJwaQkyhv2lDlaiC8pP6UyI7E4I76oNCe1+BCjDAeHkgTvhDdAOcGi1P
+  TUirTMHGCUwqQlOHiURHiPg6R5iwsSc4sz0yFSpxgVpcR5t4MkBEASGaV5cG2wxHCJUVZKmJc
+  R6BAhnoLUotzMElT5V4ziHIxKwrzPQabwZOaVwE1/BbSYCWjxxeVgi0sSEVJSDYyNqvvkL0TG
+  uzhYtDkvuZLg/3PHTtmc7Q5xPNefX93Ru8hN57nMlPWCEx2u7ln9ZUZ2S92LwOfNZ6RabAsrZ
+  s2ffujihTP7ptkt92zouO+4/ujHlo13/v1eHFm/sLT2lEjHkvOvTuyud0wVrP6s5HnwdOqVC2
+  uTSq8G5Zd+KFv75fwpb/1vD3R2KrEUZyQaajEXFScCAKoI3R0HAwAA
 X-Env-Sender: Adam.Thomson.Opensource@diasemi.com
-X-Msg-Ref: server-5.tower-180.messagelabs.com!1527002183!97455828!1
+X-Msg-Ref: server-36.tower-229.messagelabs.com!1527002185!660592!1
 X-Originating-IP: [94.185.165.51]
 X-SYMC-ESS-Client-Auth: outbound-route-from=pass
 X-StarScan-Received: 
 X-StarScan-Version: 9.9.15; banners=-,-,-
 X-VirusChecked: Checked
-Message-ID: <cover.1527000797.git.Adam.Thomson.Opensource@diasemi.com>
+Message-ID: <449707040719c8845cf9fa6bc779bae25fca54a5.1527000797.git.Adam.Thomson.Opensource@diasemi.com>
+In-Reply-To: <cover.1527000797.git.Adam.Thomson.Opensource@diasemi.com>
+References: <cover.1527000797.git.Adam.Thomson.Opensource@diasemi.com>
 From: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Date: Tue, 22 May 2018 16:16:22 +0100
-Subject: [PATCH 0/2] typec: tcpm: Populate fwnode for use in power_supply core
+Date: Tue, 22 May 2018 16:16:24 +0100
+Subject: [PATCH 2/2] typec: tcpm: Provide fwnode pointer as part of psy_cfg
 To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
         Guenter Roeck <linux@roeck-us.net>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -115,23 +117,41 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch set adds support for passing a fwnode pointer as part of the psy
-config structure, when intialising the psy core, so that calling code can be
-written to be agnostic of the HW description required for the platform. The TCPM
-code is updated subsequently to make use of this new field.
+For supply registration, provide fwnode pointer of the port device,
+via the power_supply_config structure, to allow other psy drivers
+to add us as a supplier. At present this only applies to DT
+based platforms using the 'power-supplies' DT property, but in the
+future should also work for ACPI platforms when the relevant support
+is added to the power_supply core.
 
-For now the main FW support in the psy core is still just DT based but in the
-future ACPI will likely be added and can use this field.
+Signed-off-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Suggested-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+---
+ drivers/usb/typec/tcpm.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Adam Thomson (2):
-  power: supply: Add fwnode pointer to power_supply_config struct
-  typec: tcpm: Provide fwnode pointer as part of psy_cfg
-
- drivers/power/supply/power_supply_core.c | 4 +++-
- drivers/usb/typec/tcpm.c                 | 2 ++
- include/linux/power_supply.h             | 2 ++
- 3 files changed, 7 insertions(+), 1 deletion(-)
-
+diff --git a/drivers/usb/typec/tcpm.c b/drivers/usb/typec/tcpm.c
+index 72996cc..0ccd2ce 100644
+--- a/drivers/usb/typec/tcpm.c
++++ b/drivers/usb/typec/tcpm.c
+@@ -14,6 +14,7 @@
+ #include <linux/mutex.h>
+ #include <linux/power_supply.h>
+ #include <linux/proc_fs.h>
++#include <linux/property.h>
+ #include <linux/sched/clock.h>
+ #include <linux/seq_file.h>
+ #include <linux/slab.h>
+@@ -4500,6 +4501,7 @@ static int devm_tcpm_psy_register(struct tcpm_port *port)
+ 	char *psy_name;
+ 
+ 	psy_cfg.drv_data = port;
++	psy_cfg.fwnode = dev_fwnode(port->dev);
+ 	psy_name = devm_kzalloc(port->dev, psy_name_len, GFP_KERNEL);
+ 	if (!psy_name)
+ 		return -ENOMEM;
 -- 
 1.9.1
 
