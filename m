@@ -1,58 +1,321 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751236AbeEVGlZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 02:41:25 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45072 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750954AbeEVGlV (ORCPT
+        id S1751291AbeEVGmq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 02:42:46 -0400
+Received: from smtprelay.synopsys.com ([198.182.37.59]:47920 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750954AbeEVGmo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 02:41:21 -0400
-Date: Mon, 21 May 2018 23:41:18 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Kent Overstreet <kent.overstreet@gmail.com>
-Cc: Mike Snitzer <snitzer@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        hch@infradead.org, colyli@suse.de, darrick.wong@oracle.com, clm@fb.com,
-        bacik@fb.com, linux-xfs@vger.kernel.org, drbd-dev@lists.linbit.com,
-        linux-btrfs@vger.kernel.org, linux-raid@vger.kernel.org,
-        neilb@suse.com
-Subject: Re: [PATCH 00/13] convert block layer to bioset_init()/mempool_init()
-Message-ID: <20180522064118.GA18704@infradead.org>
-References: <20180521144703.GA19303@redhat.com>
- <4b343aef-e11c-73ba-1d88-7e73ca838cad@kernel.dk>
- <20180521150439.GA19379@redhat.com>
- <61e30dcf-a01c-f47d-087a-12930caf9aef@kernel.dk>
- <20180521151817.GA19454@redhat.com>
- <d01a150a-7752-f6ce-78f2-17a65c1e6fa5@kernel.dk>
- <20180521160907.GA19553@redhat.com>
- <20180521173724.GG11495@kmo-pixel>
- <20180521182427.GA20013@redhat.com>
- <20180521233855.GI11495@kmo-pixel>
+        Tue, 22 May 2018 02:42:44 -0400
+From: Prabu Thangamuthu <Prabu.T@synopsys.com>
+To: "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
+CC: Manjunath M Bettegowda <Manjunath.MB@synopsys.com>,
+        "prabu.t@synopsys.com" <prabu.t@synopsys.com>
+Subject: [PATCH 1/1] mmc: sdhci-pci-dwc-mshc: synopsys dwc mshc support
+Thread-Topic: [PATCH 1/1] mmc: sdhci-pci-dwc-mshc: synopsys dwc mshc support
+Thread-Index: AdPxmBIFOmCk2CVqRi+baz/mIdVd7Q==
+Date: Tue, 22 May 2018 06:42:39 +0000
+Message-ID: <705D14B1C7978B40A723277C067CEDE2010A9B43CC@IN01WEMBXB.internal.synopsys.com>
+Accept-Language: en-US, en-IN
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.12.239.235]
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180521233855.GI11495@kmo-pixel>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4M6gpn6009135
 
-On Mon, May 21, 2018 at 07:38:55PM -0400, Kent Overstreet wrote:
-> On Mon, May 21, 2018 at 02:24:32PM -0400, Mike Snitzer wrote:
-> > Every single data structure change in this series should be reviewed for
-> > unforeseen alignment consequences.  Jens seemed to say that is
-> > worthwhile.  Not sure if he'll do it or we divide it up.  If we divide
-> > it up a temp topic branch should be published for others to inspect.
-> > 
-> > Could be alignment hasn't been a historic concern for a bunch of the
-> > data structures changed in this series.. if so then all we can do is fix
-> > up any obvious potential for false sharing.
-> 
-> Honestly, I almost never worry about alignment... the very few times I do care,
-> I use __cacheline_aligned_in_smp.
+To enable Synopsys DWC MSHC controller on HPAS-DX platform connected using
+PCIe interface. As Clock generation logic is implemented in MMCM module of
+HAPS-DX platform, we have separate functions to control the MMCM to
+generate required clocks with respect to speed mode. Also we have platform
+specific set_power function to support different VDD of eMMC devices.
 
-And that generally is the right stratgey.  If Mike really doesn't want
-a change we can just open code the kmalloc for the bio set there, the
-important point is that we should not keep the old API around for no
-good reason.
+Signed-off-by: Prabu Thangamuthu <prabu.t@synopsys.com>
+---
+ MAINTAINERS                           |   7 ++
+ drivers/mmc/host/Makefile             |   3 +-
+ drivers/mmc/host/sdhci-pci-core.c     |   1 +
+ drivers/mmc/host/sdhci-pci-dwc-mshc.c | 146
+++++++++++++++++++++++++++++++++++
+ drivers/mmc/host/sdhci-pci-dwc-mshc.h |  37 +++++++++
+ drivers/mmc/host/sdhci-pci.h          |   3 +
+ 6 files changed, 196 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/mmc/host/sdhci-pci-dwc-mshc.c
+ create mode 100644 drivers/mmc/host/sdhci-pci-dwc-mshc.h
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9051a9c..f1749c4 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12643,6 +12643,13 @@ S:    Maintained
+ F:    drivers/mmc/host/sdhci*
+ F:    include/linux/mmc/sdhci*
+ 
++SYNOPSYS SDHCI COMPLIANT DWC MSHC DRIVER
++M:    Prabu Thangamuthu <prabu.t@synopsys.com>
++M:    Manjunath M B <manjumb@synopsys.com>
++L:    linux-mmc@vger.kernel.org
++S:    Maintained
++F:    drivers/mmc/host/sdhci-pci-dwc-mshc*
++
+ SECURE DIGITAL HOST CONTROLLER INTERFACE (SDHCI) SAMSUNG DRIVER
+ M:    Ben Dooks <ben-linux@fluff.org>
+ M:    Jaehoon Chung <jh80.chung@samsung.com>
+diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
+index 6aead24..6c0d3fb 100644
+--- a/drivers/mmc/host/Makefile
++++ b/drivers/mmc/host/Makefile
+@@ -11,7 +11,8 @@ obj-$(CONFIG_MMC_MXC)        += mxcmmc.o
+ obj-$(CONFIG_MMC_MXS)        += mxs-mmc.o
+ obj-$(CONFIG_MMC_SDHCI)        += sdhci.o
+ obj-$(CONFIG_MMC_SDHCI_PCI)    += sdhci-pci.o
+-sdhci-pci-y            += sdhci-pci-core.o sdhci-pci-o2micro.o
+sdhci-pci-arasan.o
++sdhci-pci-y            += sdhci-pci-core.o sdhci-pci-o2micro.o
+sdhci-pci-arasan.o \
++                   sdhci-pci-dwc-mshc.o
+ obj-$(subst m,y,$(CONFIG_MMC_SDHCI_PCI))    += sdhci-pci-data.o
+ obj-$(CONFIG_MMC_SDHCI_ACPI)    += sdhci-acpi.o
+ obj-$(CONFIG_MMC_SDHCI_PXAV3)    += sdhci-pxav3.o
+diff --git a/drivers/mmc/host/sdhci-pci-core.c
+b/drivers/mmc/host/sdhci-pci-core.c
+index 77dd352..96b6963 100644
+--- a/drivers/mmc/host/sdhci-pci-core.c
++++ b/drivers/mmc/host/sdhci-pci-core.c
+@@ -1511,6 +1511,7 @@ static int amd_probe(struct sdhci_pci_chip *chip)
+     SDHCI_PCI_DEVICE(O2, SEABIRD0, o2),
+     SDHCI_PCI_DEVICE(O2, SEABIRD1, o2),
+     SDHCI_PCI_DEVICE(ARASAN, PHY_EMMC, arasan),
++    SDHCI_PCI_DEVICE(SYNOPSYS, DWC_MSHC,  snps),
+     SDHCI_PCI_DEVICE_CLASS(AMD, SYSTEM_SDHCI, PCI_CLASS_MASK, amd),
+     /* Generic SD host controller */
+     {PCI_DEVICE_CLASS(SYSTEM_SDHCI, PCI_CLASS_MASK)},
+diff --git a/drivers/mmc/host/sdhci-pci-dwc-mshc.c
+b/drivers/mmc/host/sdhci-pci-dwc-mshc.c
+new file mode 100644
+index 0000000..bca3db4
+--- /dev/null
++++ b/drivers/mmc/host/sdhci-pci-dwc-mshc.c
+@@ -0,0 +1,146 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * SDHCI driver for Synopsys DWC_MSHC controller
++ *
++ * Copyright (C) 2018 Synopsys, Inc. (www.synopsys.com)
++ *
++ * Authors:
++ *    Prabu Thangamuthu <prabu.t@synopsys.com>
++ *    Manjunath M B <manjumb@synopsys.com>
++ *
++ */
++
++#include <linux/pci.h>
++#include <linux/delay.h>
++#include <linux/module.h>
++#include <linux/moduleparam.h>
++
++#include "sdhci.h"
++#include "sdhci-pci.h"
++#include "sdhci-pci-dwc-mshc.h"
++
++/* Default emmc vdd is set to 3.3V */
++static unsigned int emmc_vdd = SDHC_EMMC_VDD_330V;
++module_param(emmc_vdd, int, 0444);
++
++static void sdhci_snps_set_clock(struct sdhci_host *host, unsigned int
+clock)
++{
++    u16 clk = 0;
++    u32 reg = 0;
++    u32 vendor_ptr = 0;
++
++    vendor_ptr = sdhci_readw(host, SDHCI_VENDOR_PTR_R);
++
++    /* Disable Software managed rx tuning */
++    reg = sdhci_readl(host, (SDHC_AT_CTRL_R + vendor_ptr));
++    reg &= ~SDHC_SW_TUNE_EN;
++    sdhci_writel(host, reg, (SDHC_AT_CTRL_R + vendor_ptr));
++
++    if (clock <= 52000000) {
++        sdhci_set_clock(host, clock);
++    } else {
++        /* Assert reset to MMCM */
++        reg = sdhci_readl(host, (SDHC_GPIO_OUT + vendor_ptr));
++        reg |= SDHC_CCLK_MMCM_RST;
++        sdhci_writel(host, reg, (SDHC_GPIO_OUT + vendor_ptr));
++
++        /* Configure MMCM*/
++        sdhci_writel(host, DIV_REG_100_MHZ, SDHC_MMCM_DIV_REG);
++        sdhci_writel(host, CLKFBOUT_100_MHZ,
++                SDHC_MMCM_CLKFBOUT);
++
++        /* De-assert reset to MMCM*/
++        reg = sdhci_readl(host, (SDHC_GPIO_OUT + vendor_ptr));
++        reg &= ~SDHC_CCLK_MMCM_RST;
++        sdhci_writel(host, reg, (SDHC_GPIO_OUT + vendor_ptr));
++
++        /* Enable clock */
++        clk = SDHCI_PROG_CLOCK_MODE | SDHCI_CLOCK_INT_EN |
++            SDHCI_CLOCK_CARD_EN;
++        sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
++    }
++}
++
++static void sdhci_snps_set_power(struct sdhci_host *host, unsigned char
+mode,
++             unsigned short vdd)
++{
++    u8 pwr = 0;
++    u16 ctrl;
++
++    if (mode != MMC_POWER_OFF) {
++        switch (1 << vdd) {
++        case MMC_VDD_165_195:
++            pwr = SDHCI_POWER_180;
++            break;
++        case MMC_VDD_29_30:
++        case MMC_VDD_30_31:
++            pwr = SDHCI_POWER_300;
++            break;
++        case MMC_VDD_32_33:
++        case MMC_VDD_33_34:
++            pwr = SDHCI_POWER_330;
++            break;
++        default:
++            WARN(1, "%s: Invalid vdd %#x\n",
++                 mmc_hostname(host->mmc), vdd);
++            break;
++        }
++    }
++
++    if (host->pwr == pwr)
++        return;
++
++    host->pwr = pwr;
++
++    if (pwr == 0) {
++        sdhci_writeb(host, 0, SDHCI_POWER_CONTROL);
++    } else {
++        sdhci_writeb(host, 0, SDHCI_POWER_CONTROL);
++
++        /*
++         * Enable it for eMMC phy cfg1 test with 1.8V mode
++         */
++        if (emmc_vdd == SDHC_EMMC_VDD_180V) {
++            pwr = SDHCI_POWER_180;
++            sdhci_writeb(host, pwr, SDHCI_POWER_CONTROL);
++
++            ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
++            /*
++             * Enable 1.8V Signal Enable in the Host Control2
++             * register
++             */
++            ctrl |= SDHCI_CTRL_VDD_180;
++            sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
++        }
++        pwr |= SDHCI_POWER_ON;
++
++        sdhci_writeb(host, pwr, SDHCI_POWER_CONTROL);
++    }
++}
++
++static int sdhci_snps_pci_probe_slot(struct sdhci_pci_slot *slot)
++{
++    struct sdhci_host *host = slot->host;
++
++    host->caps = sdhci_readl(host, SDHCI_CAPABILITIES);
++    host->caps1 = sdhci_readl(host, SDHCI_CAPABILITIES_1);
++
++    return 0;
++}
++
++/* Synopsys DWC MSHC Controller based on SDHCI-PCI */
++static const struct sdhci_ops sdhci_snps_ops = {
++    .set_clock    = sdhci_snps_set_clock,
++    .set_power    = sdhci_snps_set_power,
++    .enable_dma    = sdhci_pci_enable_dma,
++    .set_bus_width    = sdhci_set_bus_width,
++    .reset        = sdhci_reset,
++    .set_uhs_signaling = sdhci_set_uhs_signaling,
++};
++
++const struct sdhci_pci_fixes sdhci_snps = {
++    .probe_slot    = sdhci_snps_pci_probe_slot,
++    .ops        = &sdhci_snps_ops,
++};
++
++MODULE_PARM_DESC(emmc_vdd, "VDD to configure eMMC device supply voltage");
+diff --git a/drivers/mmc/host/sdhci-pci-dwc-mshc.h
+b/drivers/mmc/host/sdhci-pci-dwc-mshc.h
+new file mode 100644
+index 0000000..352bbfd
+--- /dev/null
++++ b/drivers/mmc/host/sdhci-pci-dwc-mshc.h
+@@ -0,0 +1,37 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * SDHCI driver for Synopsys DWC_MSHC controller
++ *
++ * Copyright (C) 2018 Synopsys, Inc. (www.synopsys.com)
++ *
++ * Authors:
++ *    Prabu Thangamuthu <prabu.t@synopsys.com>
++ *    Manjunath M B <manjumb@synopsys.com>
++ *
++ */
++
++#ifndef __SDHCI_PCI_DWC_MSHC_H__
++#define __SDHCI_PCI_DWC_MSHC_H__
++
++#define SDHCI_VENDOR_PTR_R               0xE8
++
++/* Module Parameters */
++#define SDHC_EMMC_VDD_330V               33
++#define SDHC_EMMC_VDD_180V               18
++
++/* Synopsys Vendor Specific Registers */
++#define SDHC_GPIO_OUT                          0x34
++#define SDHC_AT_CTRL_R                   0x40
++
++#define SDHC_SW_TUNE_EN                   0x00000010
++
++/* MMCM DRP */
++#define SDHC_MMCM_DIV_REG               0x1020
++#define DIV_REG_100_MHZ                   0x1145
++
++#define SDHC_MMCM_CLKFBOUT               0x1024
++#define CLKFBOUT_100_MHZ               0x0000
++
++#define SDHC_CCLK_MMCM_RST               0x00000001
++
++#endif
+diff --git a/drivers/mmc/host/sdhci-pci.h b/drivers/mmc/host/sdhci-pci.h
+index db9cb54..c91dcec 100644
+--- a/drivers/mmc/host/sdhci-pci.h
++++ b/drivers/mmc/host/sdhci-pci.h
+@@ -59,6 +59,7 @@
+ #define PCI_VENDOR_ID_ARASAN        0x16e6
+ #define PCI_DEVICE_ID_ARASAN_PHY_EMMC    0x0670
+ 
++#define PCI_DEVICE_ID_SYNOPSYS_DWC_MSHC 0xC202
+ /*
+  * PCI device class and mask
+  */
+@@ -183,4 +184,6 @@ static inline void *sdhci_pci_priv(struct
+sdhci_pci_slot *slot)
+ 
+ extern const struct sdhci_pci_fixes sdhci_arasan;
+ 
++extern const struct sdhci_pci_fixes sdhci_snps;
++
+ #endif /* __SDHCI_PCI_H */
+-- 
+1.9.1
