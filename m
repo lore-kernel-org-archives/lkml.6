@@ -1,71 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751456AbeEVHYM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 03:24:12 -0400
-Received: from conuserg-12.nifty.com ([210.131.2.79]:45981 "EHLO
-        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751189AbeEVHYI (ORCPT
+        id S1751495AbeEVHYQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 03:24:16 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51220 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751106AbeEVHYH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 03:24:08 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com w4M7MRAd030337
-X-Nifty-SrcIP: [153.142.97.92]
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-kbuild@vger.kernel.org
-Cc: Sam Ravnborg <sam@ravnborg.org>, Ulf Magnusson <ulfalizer@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arvind Prasanna <arvindprasanna@gmail.com>
-Subject: [PATCH v3 0/4] kconfig: refactor package checks for GUI frontends
-Date: Tue, 22 May 2018 16:22:17 +0900
-Message-Id: <1526973741-664-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 22 May 2018 03:24:07 -0400
+From: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>
+To: Michal Suchanek <msuchanek@suse.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>, Breno Leitao <leitao@debian.org>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        "Guilherme G. Piccoli" <gpiccoli@linux.vnet.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Cc: Michal Suchanek <msuchanek@suse.de>
+Subject: Re: [PATCH] powerpc/xmon: really enable xmon when a breakpoint is set
+In-Reply-To: <20180521132108.7938-1-msuchanek@suse.de>
+References: <20180521132108.7938-1-msuchanek@suse.de>
+Date: Tue, 22 May 2018 12:53:53 +0530
+MIME-Version: 1.0
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+x-cbid: 18052207-0044-0000-0000-000005550CC6
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18052207-0045-0000-0000-00002896986A
+Message-Id: <87bmd8xieu.fsf@vajain21.in.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-22_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805220088
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Thanks for the patch Michal,
 
-Kconfig supports 4 GUI frontends.
-Each of them needs some support packages, but checks them differently:
+Michal Suchanek <msuchanek@suse.de> writes:
 
-  qconf, gconf: check packages in Makefile (pkg-config is required)
-  mconf: lxdialog/check-lxdialog.sh
-  nconf: needs ncurses, but its presence is not checked
+> When single-stepping kernel code from xmon without a debug hook enabled
+> the kernel crashes. This can happen when kernel starts with xmon on
+> crash disabled but xmon is entered using sysrq.
+>
+> Commit e1368d0c9edb ("powerpc/xmon: Setup debugger hooks when first
+> break-point is set") adds force_enable_xmon function that prints
+> "xmon: Enabling debugger hooks" but does not enable them.
+Debugger hooks are enabled just befores debugger() is entered from
+sysrq_handle_xmon(). Thats why force_enable_xmon() simply sets sets
+'xmon_on=1' and exits.
 
-This series refactor the package checks so that all of them work
-in the same way.
+The problem you are seeing is probably due to sysrq_handle_xmon()
+clearing the debugger hooks on return from debugger() as xmon_on was
+never set for the 's' xmon command.
 
-The package check scripts have been moved to scripts/kconfig/*conf-cfg.sh
+> Add the call to xmon_init to install the debugger hooks in
+> force_enable_xmon and also call force_enable_xmon when single-stepping
+> in xmon.
+Only calling force_enable_xmon() from do_step() should be suffice as on exit
+from the debugger() the value of xmon_on is checked and if required the
+debugger hooks are kept instead of getting cleared.
 
-The motivation of this clean-up is Randy's following patch:
-https://patchwork.kernel.org/patch/10277723/
 
-I want to clean up existing code before adding more checks.
+>  arch/powerpc/xmon/xmon.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/arch/powerpc/xmon/xmon.c b/arch/powerpc/xmon/xmon.c
+> index a0842f1ff72c..504bd1c3d8b0 100644
+> --- a/arch/powerpc/xmon/xmon.c
+> +++ b/arch/powerpc/xmon/xmon.c
 
 
-Masahiro Yamada (4):
-  kbuild: do not display CHK for filechk
-  kconfig: refactor Qt package checks for building qconf
-  kconfig: refactor GTK+ package checks for building gconf
-  kconfig: refactor ncurses package checks for building mconf and nconf
+> @@ -1275,6 +1279,7 @@ static inline void force_enable_xmon(void)
+>  	if (!xmon_on) {
+>  		printf("xmon: Enabling debugger hooks\n");
+>  		xmon_on = 1;
+> +		xmon_init(1);
+>  	}
+>  }
 
- scripts/Kbuild.include                     |   1 -
- scripts/kconfig/Makefile                   | 168 ++++++++++-------------------
- scripts/kconfig/gconf-cfg.sh               |  23 ++++
- scripts/kconfig/lxdialog/check-lxdialog.sh |  93 ----------------
- scripts/kconfig/lxdialog/dialog.h          |   2 +-
- scripts/kconfig/mconf-cfg.sh               |  44 ++++++++
- scripts/kconfig/nconf-cfg.sh               |  43 ++++++++
- scripts/kconfig/qconf-cfg.sh               |  25 +++++
- 8 files changed, 195 insertions(+), 204 deletions(-)
- create mode 100755 scripts/kconfig/gconf-cfg.sh
- delete mode 100755 scripts/kconfig/lxdialog/check-lxdialog.sh
- create mode 100755 scripts/kconfig/mconf-cfg.sh
- create mode 100644 scripts/kconfig/nconf-cfg.sh
- create mode 100755 scripts/kconfig/qconf-cfg.sh
+As mentioned above call to force_enable_xmon() is usually done in context of
+sysrq_handle_xmon() which sets the debugger hooks as soon as its
+entered. So I think that this hunk is not really needed.
+
 
 -- 
-2.7.4
+Vaibhav Jain <vaibhav@linux.vnet.ibm.com>
+Linux Technology Center, IBM India Pvt. Ltd.
