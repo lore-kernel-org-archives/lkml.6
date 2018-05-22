@@ -1,187 +1,134 @@
-Return-Path: <willemdebruijn.kernel@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1526922468; cv=none;
+Return-Path: <jrosen@cisco.com>
+X-Google-Smtp-Source: AB8JxZpmbObUnQfw95qXH5dMKKuX596mjNM8sGzLoVqIq8sTXchl72WKHUVWoayCQ0dAvb6yc8i4
+ARC-Seal: i=1; a=rsa-sha256; t=1526998336; cv=none;
         d=google.com; s=arc-20160816;
-        b=xP9XJkrTiWtIAvTEy4Rxp9dazj3RURjmuQY6kTScmQoY/Cs6NcZ4uOsKx3coO/iUc/
-         iSROEPUXxdv0k8/13yqVzauwKoBh+67q18yoY1waaI290FbW4f65AjGG2SDjMcDDwrDi
-         eMShPtuzB4+7BE/QJvPyvR4x44qOvlo89qxm8E/5gtNDeX4e+XkN1gYaSsVivZnKeSmt
-         8u9mBlqIydFCD/vyVNhprGrKvGUY2SsUprQAxwYZPE8U7kOG2+luAKfbsS2qx8CWoSpm
-         /DdO4th58vYGqwhtlf2lvoh6a6FSKzCFbdsL4utkrm+QRUS9M6djl7kDzTmDDzxIKPDv
-         7F5w==
+        b=bMwPVtF+lUrxrmmYunoMKcza3I7nja5mt669EeXc6FlyXpf3OdQN4wVkhM9hHzWlBL
+         n4jZIqChyvE9ujW3nhSi1uCH0lYMZugdVjShzIeOjob/lRUYOhtW3/FO4zbhY72sPozh
+         4gNOoOZ2Z9t2DvY/LFAHDTvx7oS/jnWbXIQ09lyOLv00107cbQUQKlkQrpYyCYX5DTL7
+         1tugnsihbIwS4DxBPikgTpP6QUQNAx+WGAIIa8kILfEWxuq4HdOuvGl5LNtguuME5zlp
+         CPmrwSLzXcNJSxLZlVOvWhCfZaQaG9kYEmlHjGhgJHNN2iU7qhxxBn8F7zaOnwzcOdQ/
+         b2ug==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=Gsyc3Qzc6ghGgqw/ldGZrbjMIpE7sxZKyyK1s4k0+i4=;
-        b=ogSbHsPZzKN56RSH+JQLBFA06dVv4u3YP+g2vximL07NqxEzxhPbRgzCpSmuzMuCdO
-         yYvN9SbHWBxRB8Ggkpa7HuTDUzGKTACbtNVsn1lOZgRP1ik92TMXSkERTrfQY4Tp8CVi
-         D1pxpir7qH8TEr/h9H2LIqJB8i+ZhE9nGYHA/JYuYTRDsAQ9wm6CHBFWibW0lK6+zLf4
-         jFKS1NdU7/Au9wA9udfUpFSz6yhrh/K1+5CMI2seePHYo5SGQONxOm4C+2Bif3LC4LJ9
-         43Cqh5dmmoyCdQkryV6yqS/f/vS4NXayOINk/xbAAavakb97VKeWQyd1tkYanuawko8d
-         UkTQ==
+        h=mime-version:content-transfer-encoding:content-language
+         :accept-language:references:message-id:date:thread-index
+         :thread-topic:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=kKpn7jHbuEqcOvB7cNl5xM8OBcfQJVViyXt5Ae8FTo0=;
+        b=VIbb5h08mUJdgUYJ4jV3PSj9ET+ezvIMakfuNUPcyv+yR4SrwoKw/8znDkQjj3lOUk
+         UM53E949pQ3Y6AwvJkRXUZdZG7Wt/J64tCJl61+GITchDux6UA4Mz0rGvsA4NqjyS9Rn
+         G7dhOEA3tEj3xOTmg2MKRBlzXQqe4MaxoMl3J2GHFNoJFJiArUnMlFBfiftAPnYWPGut
+         rWBUQqVHgbuvkJfT9kiFjZS44+KehT6iBXvDa+eP2mHdLqC3Fq9VwW68B5EcqKSbKI6T
+         NNJobVaNgYydDs/prd+MkE68AhpmDMTC3wyEqiJtCZLoKI0M1/01aygMGAt9wJwvUUU5
+         wBaQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=FgieNask;
-       spf=pass (google.com: domain of willemdebruijn.kernel@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=willemdebruijn.kernel@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@cisco.com header.s=iport header.b=I0rRXkeZ;
+       spf=pass (google.com: domain of jrosen@cisco.com designates 173.37.86.72 as permitted sender) smtp.mailfrom=jrosen@cisco.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=cisco.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=FgieNask;
-       spf=pass (google.com: domain of willemdebruijn.kernel@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=willemdebruijn.kernel@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AB8JxZoOc/bWSk9cDAZOrrjiaOCTFcznYbczccwSKwh6r0eBKtpxrWlXdWZgR4Mx50dXFM2ke1WQgtX5L8lCPB6LiMo=
-MIME-Version: 1.0
-In-Reply-To: <b7f6cc54a9f04132a279b15de0187ddd@XCH-RTP-016.cisco.com>
+       dkim=pass header.i=@cisco.com header.s=iport header.b=I0rRXkeZ;
+       spf=pass (google.com: domain of jrosen@cisco.com designates 173.37.86.72 as permitted sender) smtp.mailfrom=jrosen@cisco.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=cisco.com
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0AfAQBVJARb/51dJa1dGQEBAQEBAQE?=
+ =?us-ascii?q?BAQEBAQcBAQEBAYMUL4FfKAqDa4gEjHeBeYEPhwOMM4F4C4RsHIIHITQYAQI?=
+ =?us-ascii?q?BAQEBAQECbCiFKAEBAQEDIxFFEAIBCBgCAiYCAgIfERUQAgQOBQgThHADFah?=
+ =?us-ascii?q?mghyHDQ2BK4IPgQmHLIFUP4Qcgk+FJIJUAocckQcsCQKLVoJ3gT+DbodZiiq?=
+ =?us-ascii?q?GKQIREwGBJAEcOIFScBWCfoJIjgZvjUaBGAEB?=
+X-IronPort-AV: E=Sophos;i="5.49,430,1520899200";
+   d="scan'208";a="398908403"
+From: "Jon Rosen (jrosen)" <jrosen@cisco.com>
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+CC: "David S. Miller" <davem@davemloft.net>,
+        Willem de Bruijn
+	<willemb@google.com>,
+        Eric Dumazet <edumazet@google.com>, Kees Cook
+	<keescook@chromium.org>,
+        David Windsor <dwindsor@gmail.com>,
+        "Rosen, Rami"
+	<rami.rosen@intel.com>,
+        "Reshetova, Elena" <elena.reshetova@intel.com>,
+        "Mike
+ Maloney" <maloney@google.com>,
+        Benjamin Poirier <bpoirier@suse.com>,
+        "Thomas
+ Gleixner" <tglx@linutronix.de>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        "open list:NETWORKING [GENERAL]"
+	<netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2] packet: track ring entry use using a shadow ring to
+ prevent RX ring overrun
+Thread-Topic: [PATCH v2] packet: track ring entry use using a shadow ring to
+ prevent RX ring overrun
+Thread-Index: AQHT72oCSQesQH+wcU+iC1K5zWLMg6Q5fnUAgAAIkQCAAJ/kcIAAiZoA///PyiCAAUxXoA==
+Date: Tue, 22 May 2018 14:12:13 +0000
+Message-ID: <00de829386b04823bb58a555fb620317@XCH-RTP-016.cisco.com>
 References: <1526731655-10087-1-git-send-email-jrosen@cisco.com>
  <CAF=yD-+kjceErK=CApiu1oY9uTjVWG2qeX=NkGVYufVVC_L2PA@mail.gmail.com>
- <CAF=yD-KvTyTibhqpKP79Obfk8KRVDLMyb6THNwNgrJzs47bAtQ@mail.gmail.com> <b7f6cc54a9f04132a279b15de0187ddd@XCH-RTP-016.cisco.com>
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date: Mon, 21 May 2018 13:07:06 -0400
-Message-ID: <CAF=yD-Kfto4jJYMFzn=PV8OYdhEmdNfW+aakDhRMzRBWhWY0UQ@mail.gmail.com>
-Subject: Re: [PATCH v2] packet: track ring entry use using a shadow ring to
- prevent RX ring overrun
-To: "Jon Rosen (jrosen)" <jrosen@cisco.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Willem de Bruijn <willemb@google.com>,
-	Eric Dumazet <edumazet@google.com>, Kees Cook <keescook@chromium.org>,
-	David Windsor <dwindsor@gmail.com>, "Rosen, Rami" <rami.rosen@intel.com>,
-	"Reshetova, Elena" <elena.reshetova@intel.com>, Mike Maloney <maloney@google.com>,
-	Benjamin Poirier <bpoirier@suse.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+ <CAF=yD-KvTyTibhqpKP79Obfk8KRVDLMyb6THNwNgrJzs47bAtQ@mail.gmail.com>
+ <b7f6cc54a9f04132a279b15de0187ddd@XCH-RTP-016.cisco.com>
+ <CAF=yD-Kfto4jJYMFzn=PV8OYdhEmdNfW+aakDhRMzRBWhWY0UQ@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.150.24.124]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1600894186810885957?=
-X-GMAIL-MSGID: =?utf-8?q?1601094254075710562?=
+X-GMAIL-MSGID: =?utf-8?q?1601173807534179958?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, May 21, 2018 at 8:57 AM, Jon Rosen (jrosen) <jrosen@cisco.com> wrote:
-> On Sunday, May 20, 2018 7:22 PM, Willem de Bruijn
-> <willemdebruijn.kernel@gmail.com> wrote:
->> On Sun, May 20, 2018 at 6:51 PM, Willem de Bruijn
->> <willemdebruijn.kernel@gmail.com> wrote:
->>> On Sat, May 19, 2018 at 8:07 AM, Jon Rosen <jrosen@cisco.com> wrote:
->>>> Fix PACKET_RX_RING bug for versions TPACKET_V1 and TPACKET_V2 which
->>>> casues the ring to get corrupted by allowing multiple kernel threads
->>>> to claim ownership of the same ring entry. Track ownership in a shadow
->>>> ring structure to prevent other kernel threads from reusing the same
->>>> entry before it's fully filled in, passed to user space, and then
->>>> eventually passed back to the kernel for use with a new packet.
->>>>
->>>> Signed-off-by: Jon Rosen <jrosen@cisco.com>
->>>> ---
->>>>
->>>> There is a bug in net/packet/af_packet.c:tpacket_rcv in how it manages
->>>> the PACKET_RX_RING for versions TPACKET_V1 and TPACKET_V2.  This bug makes
->>>> it possible for multiple kernel threads to claim ownership of the same
->>>> ring entry, corrupting the ring and the corresponding packet(s).
->>>>
->>>> These diffs are the second proposed solution, previous proposal was described
->>>> in https://www.mail-archive.com/netdev@vger.kernel.org/msg227468.html
->>>> subject [RFC PATCH] packet: mark ring entry as in-use inside spin_lock
->>>> to prevent RX ring overrun
->>>>
->>>> Those diffs would have changed the binary interface and have broken certain
->>>> applications. Consensus was that such a change would be inappropriate.
->>>>
->>>> These new diffs use a shadow ring in kernel space for tracking intermediate
->>>> state of an entry and prevent more than one kernel thread from simultaneously
->>>> allocating a ring entry. This avoids any impact to the binary interface
->>>> between kernel and userspace but comes at the additional cost of requiring a
->>>> second spin_lock when passing ownership of a ring entry to userspace.
->>>>
->>>> Jon Rosen (1):
->>>>   packet: track ring entry use using a shadow ring to prevent RX ring
->>>>     overrun
->>>>
->>>>  net/packet/af_packet.c | 64 ++++++++++++++++++++++++++++++++++++++++++++++++++
->>>>  net/packet/internal.h  | 14 +++++++++++
->>>>  2 files changed, 78 insertions(+)
->>>>
->>>
->>>> @@ -2383,7 +2412,11 @@ static int tpacket_rcv(struct sk_buff *skb, struct net_device *dev,
->>>>  #endif
->>>>
->>>>         if (po->tp_version <= TPACKET_V2) {
->>>> +               spin_lock(&sk->sk_receive_queue.lock);
->>>>                 __packet_set_status(po, h.raw, status);
->>>> +               packet_rx_shadow_release(rx_shadow_ring_entry);
->>>> +               spin_unlock(&sk->sk_receive_queue.lock);
->>>> +
->>>>                 sk->sk_data_ready(sk);
->>>
->>> Thanks for continuing to look at this. I spent some time on it last time
->>> around but got stuck, too.
->>>
->>> This version takes an extra spinlock in the hot path. That will be very
->>> expensive. Once we need to accept that, we could opt for a simpler
->>> implementation akin to the one discussed in the previous thread:
->>>
->>> stash a value in tp_padding or similar while tp_status remains
->>> TP_STATUS_KERNEL to signal ownership to concurrent kernel
->>> threads. The issue previously was that that field could not atomically
->>> be cleared together with __packet_set_status. This is no longer
->>> an issue when holding the queue lock.
->>>
->>> With a field like tp_padding, unlike tp_len, it is arguably also safe to
->>> clear it after flipping status (userspace should treat it as undefined).
->>>
->>> With v1 tpacket_hdr, no explicit padding field is defined but due to
->>> TPACKET_HDRLEN alignment it exists on both 32 and 64 bit
->>> platforms.
->>>
->>> The danger with using padding is that a process may write to it
->>> and cause deadlock, of course. There is no logical reason for doing
->>> so.
->>
->> For the ring, there is no requirement to allocate exactly the amount
->> specified by the user request. Safer than relying on shared memory
->> and simpler than the extra allocation in this patch would be to allocate
->> extra shadow memory at the end of the ring (and not mmap that).
->>
->> That still leaves an extra cold cacheline vs using tp_padding.
->
-> Given my lack of experience and knowledge in writing kernel code
-> it was easier for me to allocate the shadow ring as a separate
-> structure.  Of course it's not about me and my skills so if it's
-> more appropriate to allocate at the tail of the existing ring
-> then certainly I can look at doing that.
->
-> I think the bigger issues as you've pointed out are the cost of
-> the additional spin lock and should the additional state be
-> stored in-band (fewer cache lines) or out-of band (less risk of
-> breaking due to unpredictable application behavior).
-
-We don't need the spinlock if clearing the shadow byte after
-setting the status to user.
-
-Worst case, user will set it back to kernel while the shadow
-byte is not cleared yet and the next producer will drop a packet.
-But next producers will make progress, so there is no deadlock
-or corruption.
-
-It probably does require a shadow structure as opposed to a
-padding byte to work with the long tail of (possibly broken)
-applications, sadly.
-
-A setsockopt for userspace to signal a stricter interpretation of
-tp_status to elide the shadow hack could then be considered.
-It's not pretty. Either way, no full new version is required.
-
-> As much as I would like to find a solution that doesn't require
-> the spin lock I have yet to do so. Maybe the answer is that
-> existing applications will need to suffer the performance impact
-> but a new version or option for TPACKET_V1/V2 could be added to
-> indicate strict adherence of the TP_STATUS_USER bit and then the
-> original diffs could be used.
->
-> There is another option I was considering but have yet to try
-> which would avoid needing a shadow ring by using counter(s) to
-> track maximum sequence number queued to userspace vs. the next
-> sequence number to be allocated in the ring.  If the difference
-> is greater than the size of the ring then the ring can be
-> considered full and the allocation would fail. Of course this may
-> create an additional hotspot between cores, not sure if that
-> would be significant or not.
-
-Please do have a look, but I don't think that this will work in this
-case in practice. It requires tracking the producer tail. Updating
-the slowest writer requires probing each subsequent slot's status
-byte to find the new tail, which is a lot of (by then cold) cacheline
-reads.
+T24gTW9uZGF5LCBNYXkgMjEsIDIwMTggMjoxNyBQTSwgSm9uIFJvc2VuIChqcm9zZW4pIDxqcm9z
+ZW5AY2lzY28uY29tPiB3cm90ZToNCj4gT24gTW9uZGF5LCBNYXkgMjEsIDIwMTggMTowNyBQTSwg
+V2lsbGVtIGRlIEJydWlqbg0KPiA8d2lsbGVtZGVicnVpam4ua2VybmVsQGdtYWlsLmNvbT4gd3Jv
+dGU6DQo+PiBPbiBNb24sIE1heSAyMSwgMjAxOCBhdCA4OjU3IEFNLCBKb24gUm9zZW4gKGpyb3Nl
+bikgPGpyb3NlbkBjaXNjby5jb20+IHdyb3RlOg0KDQouLi5zbmlwLi4uDQoNCj4+DQo+PiBBIHNl
+dHNvY2tvcHQgZm9yIHVzZXJzcGFjZSB0byBzaWduYWwgYSBzdHJpY3RlciBpbnRlcnByZXRhdGlv
+biBvZg0KPj4gdHBfc3RhdHVzIHRvIGVsaWRlIHRoZSBzaGFkb3cgaGFjayBjb3VsZCB0aGVuIGJl
+IGNvbnNpZGVyZWQuDQo+PiBJdCdzIG5vdCBwcmV0dHkuIEVpdGhlciB3YXksIG5vIGZ1bGwgbmV3
+IHZlcnNpb24gaXMgcmVxdWlyZWQuDQo+Pg0KPj4+IEFzIG11Y2ggYXMgSSB3b3VsZCBsaWtlIHRv
+IGZpbmQgYSBzb2x1dGlvbiB0aGF0IGRvZXNuJ3QgcmVxdWlyZQ0KPj4+IHRoZSBzcGluIGxvY2sg
+SSBoYXZlIHlldCB0byBkbyBzby4gTWF5YmUgdGhlIGFuc3dlciBpcyB0aGF0DQo+Pj4gZXhpc3Rp
+bmcgYXBwbGljYXRpb25zIHdpbGwgbmVlZCB0byBzdWZmZXIgdGhlIHBlcmZvcm1hbmNlIGltcGFj
+dA0KPj4+IGJ1dCBhIG5ldyB2ZXJzaW9uIG9yIG9wdGlvbiBmb3IgVFBBQ0tFVF9WMS9WMiBjb3Vs
+ZCBiZSBhZGRlZCB0bw0KPj4+IGluZGljYXRlIHN0cmljdCBhZGhlcmVuY2Ugb2YgdGhlIFRQX1NU
+QVRVU19VU0VSIGJpdCBhbmQgdGhlbiB0aGUNCj4+PiBvcmlnaW5hbCBkaWZmcyBjb3VsZCBiZSB1
+c2VkLg0KDQpJdCBsb29rcyBsaWtlIGFkZGluZyBuZXcgc29ja2V0IG9wdGlvbnMgaXMgcHJldHR5
+IHJhcmUgc28gSQ0Kd29uZGVyIGlmIGEgYmV0dGVyIG9wdGlvbiBtaWdodCBiZSB0byBkZWZpbmUg
+YSBuZXcgVFBfU1RBVFVTX1hYWA0KYml0IHdoaWNoIHdvdWxkIHNpZ25hbCBmcm9tIGEgdXNlcnNw
+YWNlIGFwcGxpY2F0aW9uIHRvIHRoZSBrZXJuZWwNCnRoYXQgaXQgc3RyaWN0bHkgaW50ZXJwcmV0
+cyB0aGUgVFBfU1RBVFVTX1VTRVIgYml0IHRvIGRldGVybWluZQ0Kb3duZXJzaGlwLg0KDQpUb2Rh
+eXMgYXBwbGljYXRpb25zIHNldCB0cF9zdGF0dXMgPSBUUF9TVEFUVVNfS0VSTkVMKDApIGZvciB0
+aGUNCmtlcm5lbCB0byBwaWNrIHVwIHRoZSBlbnRyeS4gIFdlIGNvdWxkIGRlZmluZSBhIG5ldyB2
+YWx1ZSB0byBwYXNzDQpvd25lcnNoaXAgYXMgd2VsbCBhcyBvbmUgdG8gaW5kaWNhdGUgdG8gb3Ro
+ZXIga2VybmVsIHRocmVhZHMgdGhhdA0KYW4gZW50cnkgaXMgaW51c2U6DQoNCiAgICAgICAgI2Rl
+ZmluZSBUUF9TVEFUVVNfVVNFUl9UT19LRVJORUwgICAgICAgICgxIDw8IDgpDQogICAgICAgICNk
+ZWZpbmUgVFBfU1RBVFVTX0lOVVNFICAgICAgICAgICAgICAgICAoMSA8PCA5KQ0KDQpJZiB0aGUg
+a2VybmVsIHNlZXMgdHBfc3RhdHVzID09IFRQX1NUQVRVU19LRVJORUwgdGhlbiBpdCBzaG91bGQN
+CnVzZSB0aGUgc2hhZG93IG1ldGhvZCBmb3IgdGFja2luZyBvd25lcnNoaXAuIElmIGl0IHNlZXMg
+dHBfc3RhdHVzDQo9PSBUUF9TVEFUVVNfVVNFUl9UT19LRVJORUwgdGhlbiBpdCBjYW4gdXNlIHRo
+ZSBUUF9TVEFUVVNfSU5VU0UNCm1ldGhvZC4NCg0KPj4+DQo+Pj4gVGhlcmUgaXMgYW5vdGhlciBv
+cHRpb24gSSB3YXMgY29uc2lkZXJpbmcgYnV0IGhhdmUgeWV0IHRvIHRyeQ0KPj4+IHdoaWNoIHdv
+dWxkIGF2b2lkIG5lZWRpbmcgYSBzaGFkb3cgcmluZyBieSB1c2luZyBjb3VudGVyKHMpIHRvDQo+
+Pj4gdHJhY2sgbWF4aW11bSBzZXF1ZW5jZSBudW1iZXIgcXVldWVkIHRvIHVzZXJzcGFjZSB2cy4g
+dGhlIG5leHQNCj4+PiBzZXF1ZW5jZSBudW1iZXIgdG8gYmUgYWxsb2NhdGVkIGluIHRoZSByaW5n
+LiAgSWYgdGhlIGRpZmZlcmVuY2UNCj4+PiBpcyBncmVhdGVyIHRoYW4gdGhlIHNpemUgb2YgdGhl
+IHJpbmcgdGhlbiB0aGUgcmluZyBjYW4gYmUNCj4+PiBjb25zaWRlcmVkIGZ1bGwgYW5kIHRoZSBh
+bGxvY2F0aW9uIHdvdWxkIGZhaWwuIE9mIGNvdXJzZSB0aGlzIG1heQ0KPj4+IGNyZWF0ZSBhbiBh
+ZGRpdGlvbmFsIGhvdHNwb3QgYmV0d2VlbiBjb3Jlcywgbm90IHN1cmUgaWYgdGhhdA0KPj4+IHdv
+dWxkIGJlIHNpZ25pZmljYW50IG9yIG5vdC4NCj4+DQo+PiBQbGVhc2UgZG8gaGF2ZSBhIGxvb2ss
+IGJ1dCBJIGRvbid0IHRoaW5rIHRoYXQgdGhpcyB3aWxsIHdvcmsgaW4gdGhpcw0KPj4gY2FzZSBp
+biBwcmFjdGljZS4gSXQgcmVxdWlyZXMgdHJhY2tpbmcgdGhlIHByb2R1Y2VyIHRhaWwuIFVwZGF0
+aW5nDQo+PiB0aGUgc2xvd2VzdCB3cml0ZXIgcmVxdWlyZXMgcHJvYmluZyBlYWNoIHN1YnNlcXVl
+bnQgc2xvdCdzIHN0YXR1cw0KPj4gYnl0ZSB0byBmaW5kIHRoZSBuZXcgdGFpbCwgd2hpY2ggaXMg
+YSBsb3Qgb2YgKGJ5IHRoZW4gY29sZCkgY2FjaGVsaW5lDQo+PiByZWFkcy4NCj4NCj4gSSd2ZSB0
+aG91Z2h0IGFib3V0IGl0IGEgbGl0dGxlIG1vcmUgYW5kIGFtIG5vdCBjb252aW5jZWQgaXQncw0K
+PiB3b3JrYWJsZSBidXQgSSdsbCBzcGVuZCBhIGxpdHRsZSBtb3JlIHRpbWUgb24gaXQgYmVmb3Jl
+IGdpdmluZw0KPiB1cC4NCg0KSSd2ZSBnaXZlbiB1cCBvbiB0aGlzIG1ldGhvZC4gIEp1c3QgZG9u
+J3Qgc2VlIGhvdyB0byBtYWtlIGl0IHdvcmsuDQoNCg==
