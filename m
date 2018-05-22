@@ -1,59 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751655AbeEVNLt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 09:11:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39462 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751605AbeEVNLo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 09:11:44 -0400
-Subject: [PATCH v1] MIPS: PCI: Use dev_printk() when possible
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: linux-pci@vger.kernel.org
-Cc: Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>,
-        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
-Date: Tue, 22 May 2018 08:11:42 -0500
-Message-ID: <152699470263.162686.16975145205315900817.stgit@bhelgaas-glaptop.roam.corp.google.com>
-In-Reply-To: <152699466671.162686.1029992586935534102.stgit@bhelgaas-glaptop.roam.corp.google.com>
-References: <152699466671.162686.1029992586935534102.stgit@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: StGit/0.18
+        id S1751369AbeEVNOC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 09:14:02 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:35114 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751172AbeEVNOB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 09:14:01 -0400
+X-Google-Smtp-Source: AB8JxZpy+GKdkMGkJDJODOi4HXqUSgFL9KoRdntDdqvQYScryYont4N+fuXclEvEcfxUNzyh/CXdyg==
+Reply-To: christian.koenig@amd.com
+Subject: Re: [PATCH] swiotlb: Fix inversed DMA_ATTR_NO_WARN test
+To: =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>,
+        Christoph Hellwig <hch@lst.de>
+Cc: iommu@lists.linux-foundation.org,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+References: <20180501132411.2311-1-michel@daenzer.net>
+ <786ca83f-45c4-264b-2aef-d84fb18d3d28@gmail.com>
+ <CAKMK7uH2+v3_UUqXdCjz_8=H4VRt1zB+dgE99PuuPqd+XM2=-w@mail.gmail.com>
+ <20180502124151.GA22857@lst.de>
+ <1066dfa2-2f78-815d-c65a-9d09eb35458c@daenzer.net>
+ <20180502162145.GA26787@lst.de>
+ <ba310210-6f3c-f4e6-29e5-5ae6e791ebeb@daenzer.net>
+From: =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
+Message-ID: <1cbc4e10-96e6-c222-fb1a-fd7847be5755@gmail.com>
+Date: Tue, 22 May 2018 15:13:58 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <ba310210-6f3c-f4e6-29e5-5ae6e791ebeb@daenzer.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+Am 02.05.2018 um 18:59 schrieb Michel Dänzer:
+> On 2018-05-02 06:21 PM, Christoph Hellwig wrote:
+>> On Wed, May 02, 2018 at 04:31:09PM +0200, Michel Dänzer wrote:
+>>>> No.  __GFP_NOWARN (and gfp_t flags in general) are the wrong interface
+>>>> for dma allocations and just cause problems.  I actually plan to
+>>>> get rid of the gfp_t argument in dma_alloc_attrs sooner, and only
+>>>> allow either GFP_KERNEL or GFP_DMA passed in dma_alloc_coherent.
+>>> How about GFP_TRANSHUGE_LIGHT? TTM uses that to opportunistically
+>>> allocate huge pages (GFP_TRANSHUGE can result in unacceptably long
+>>> delays with memory pressure).
+>> Well, that is exactly what I don't want drivers to do - same for
+>> __GFP_COMP in some drm code.  This very much assumes the page allocator
+>> is used to back dma allocations, which very often it actually isn't, and
+>> any use of magic gfp flags creates a tight coupling of consumers with a
+>> specific implementation.
+>>
+>> In general I can't think of a good reason not to actually use
+>> GFP_TRANSHUGE_LIGHT by default in the dma allocator unless
+>> DMA_ATTR_ALLOC_SINGLE_PAGES is set.  Can you prepare a patch for that?
+> I'm afraid I'll have to leave that to somebody else.
 
-Use the pci_info() and pci_err() wrappers for dev_printk() when possible.
+Coming back to this topic once more, sorry for the delay but busy as 
+usual :)
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- arch/mips/pci/pci-legacy.c |    7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+What exactly do you mean with "dma allocator" here? The TTM allocator 
+using the dma_alloc_coherent calls? Or the swiotlb implementation of the 
+calls?
 
-diff --git a/arch/mips/pci/pci-legacy.c b/arch/mips/pci/pci-legacy.c
-index 0c65c38e05d6..73643e80f02d 100644
---- a/arch/mips/pci/pci-legacy.c
-+++ b/arch/mips/pci/pci-legacy.c
-@@ -263,9 +263,7 @@ static int pcibios_enable_resources(struct pci_dev *dev, int mask)
- 				(!(r->flags & IORESOURCE_ROM_ENABLE)))
- 			continue;
- 		if (!r->start && r->end) {
--			printk(KERN_ERR "PCI: Device %s not available "
--			       "because of resource collisions\n",
--			       pci_name(dev));
-+			pci_err(dev, "can't enable device: resource collisions\n");
- 			return -EINVAL;
- 		}
- 		if (r->flags & IORESOURCE_IO)
-@@ -274,8 +272,7 @@ static int pcibios_enable_resources(struct pci_dev *dev, int mask)
- 			cmd |= PCI_COMMAND_MEMORY;
- 	}
- 	if (cmd != old_cmd) {
--		printk("PCI: Enabling device %s (%04x -> %04x)\n",
--		       pci_name(dev), old_cmd, cmd);
-+		pci_info(dev, "enabling device (%04x -> %04x)\n", old_cmd, cmd);
- 		pci_write_config_word(dev, PCI_COMMAND, cmd);
- 	}
- 	return 0;
+Christian.
