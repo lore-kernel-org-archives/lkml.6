@@ -1,70 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753432AbeEVXa7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 19:30:59 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59766 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753100AbeEVXa6 (ORCPT
+        id S1753483AbeEVXcE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 19:32:04 -0400
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:40619 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753105AbeEVXb7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 19:30:58 -0400
-Date: Tue, 22 May 2018 16:21:16 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: kbuild test robot <fengguang.wu@intel.com>
-Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH rcu] rcutorture: __pcpu_scope_rcu_torture_timer_rand
- can be static
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <201805230516.7z5kOC3u%fengguang.wu@intel.com>
- <20180522213034.GA87654@lkp-sb04>
+        Tue, 22 May 2018 19:31:59 -0400
+X-Google-Smtp-Source: AB8JxZop6iXPuWONpZapk31A62am/oiXXKQyTCxqigYW+ymL3GtYl271KxPFOA/4nw149VGulUCKplM55glsvTaHjfo=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180522213034.GA87654@lkp-sb04>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18052223-0016-0000-0000-000008C7E1F2
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009068; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000261; SDB=6.01036223; UDB=6.00530082; IPR=6.00815351;
- MB=3.00021247; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-22 23:30:55
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052223-0017-0000-0000-00003EDAAD9B
-Message-Id: <20180522232116.GG3803@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-22_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805220232
+In-Reply-To: <8d4af5c4-96fa-54ee-d5c1-b887b1de5a3c@kernel.dk>
+References: <20180522181512.39316-1-keescook@chromium.org> <20180522181512.39316-4-keescook@chromium.org>
+ <20180522183613.GA3784@infradead.org> <yq1efi3bk3g.fsf@oracle.com>
+ <CAGXu5jJ0Sice+fdpWgzBhQR=NGz-DT9qmYVdV1GeH73_q9pbmw@mail.gmail.com>
+ <732f4249-5681-4a54-ec21-4ecc3d3a74e5@kernel.dk> <20180522191309.GA23615@infradead.org>
+ <8d4af5c4-96fa-54ee-d5c1-b887b1de5a3c@kernel.dk>
+From: Kees Cook <keescook@chromium.org>
+Date: Tue, 22 May 2018 16:31:57 -0700
+X-Google-Sender-Auth: la2ZXY6LMvHf5sYEHvLwc0MCk0s
+Message-ID: <CAGXu5j+mgGZkTDS6EDRspJKKbU=vMT4ehv9T-SekPba=ESoGDg@mail.gmail.com>
+Subject: Re: [PATCH 3/6] block: Create scsi_sense.h for SCSI and ATAPI
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Christoph Hellwig <hch@infradead.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Tejun Heo <tj@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Manoj N. Kumar" <manoj@linux.vnet.ibm.com>,
+        "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>,
+        Uma Krishnan <ukrishn@linux.vnet.ibm.com>,
+        linux-block <linux-block@vger.kernel.org>, linux-ide@vger.kernel.org,
+        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 05:30:35AM +0800, kbuild test robot wrote:
-> 
-> Fixes: 816e0790625a ("rcutorture: Use per-CPU random state for rcu_torture_timer()")
-> Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
+On Tue, May 22, 2018 at 12:16 PM, Jens Axboe <axboe@kernel.dk> wrote:
+> On 5/22/18 1:13 PM, Christoph Hellwig wrote:
+>> On Tue, May 22, 2018 at 01:09:41PM -0600, Jens Axboe wrote:
+>>> I think Martin and Christoph are objecting to moving the code to
+>>> block/scsi_ioctl.h. I don't care too much about where the code is, but
+>>> think it would be nice to have the definitions in a separate header. But
+>>> if they prefer just pulling in all of SCSI for it, well then I guess
+>>> it's pointless to move the header bits. Seems very heavy handed to me,
+>>> though.
+>>
+>> It might be heavy handed for the 3 remaining users of drivers/ide,
+>
+> Brutal :-)
 
-I folded this into the offending patch with attribution, thank you!
+Heh. I noticed a similar sense buffer use in drivers/cdrom/cdrom.c
+too. Is this okay under the same considerations?
 
-							Thanx, Paul
+diff --git a/drivers/block/Kconfig b/drivers/block/Kconfig
+index ad9b687a236a..220ff321c102 100644
+--- a/drivers/block/Kconfig
++++ b/drivers/block/Kconfig
+@@ -79,7 +79,7 @@ config GDROM
+        tristate "SEGA Dreamcast GD-ROM drive"
+        depends on SH_DREAMCAST
+        select CDROM
+-       select BLK_SCSI_REQUEST # only for the generic cdrom code
++       select SCSI
+        help
+          A standard SEGA Dreamcast comes with a modified CD ROM drive called a
+          "GD-ROM" by SEGA to signify it is capable of reading special disks
+@@ -345,7 +345,7 @@ config CDROM_PKTCDVD
+        tristate "Packet writing on CD/DVD media (DEPRECATED)"
+        depends on !UML
+        select CDROM
+-       select BLK_SCSI_REQUEST
++       select SCSI
+        help
+          Note: This driver is deprecated and will be removed from the
+          kernel in the near future!
+diff --git a/drivers/block/paride/Kconfig b/drivers/block/paride/Kconfig
+index f8bd6ef3605a..7fdfcc5eaca5 100644
+--- a/drivers/block/paride/Kconfig
++++ b/drivers/block/paride/Kconfig
+@@ -27,7 +27,7 @@ config PARIDE_PCD
+        tristate "Parallel port ATAPI CD-ROMs"
+        depends on PARIDE
+        select CDROM
+-       select BLK_SCSI_REQUEST # only for the generic cdrom code
++       select SCSI
+        ---help---
+          This option enables the high-level driver for ATAPI CD-ROM devices
+          connected through a parallel port. If you chose to build PARIDE
 
-> ---
->  rcutorture.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-> index 5683bfb..a03313e 100644
-> --- a/kernel/rcu/rcutorture.c
-> +++ b/kernel/rcu/rcutorture.c
-> @@ -1142,7 +1142,7 @@ static bool rcu_torture_one_read(struct torture_random_state *trsp)
->  	return true;
->  }
-> 
-> -DEFINE_TORTURE_RANDOM_PERCPU(rcu_torture_timer_rand);
-> +static DEFINE_TORTURE_RANDOM_PERCPU(rcu_torture_timer_rand);
-> 
->  /*
->   * RCU torture reader from timer handler.  Dereferences rcu_torture_current,
-> 
+>> but as long as that stuff just keeps working I'd rather worry about
+>> everyone else, and keep the scsi code where it belongs.
+>
+> Fine with me then, hopefully we can some day kill it off.
+
+I'll send a v2. I found a few other things to fix up (including the
+cdrom.c one).
+
+Thanks!
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
