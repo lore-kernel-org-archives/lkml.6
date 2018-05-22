@@ -1,92 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751551AbeEVSoX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 14:44:23 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:47026 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751277AbeEVSoV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 14:44:21 -0400
-X-Google-Smtp-Source: AB8JxZoNO9bqyY25aoj4g5mFjj400l5gKTc3y+3ef+P1IMN7X8GONyCq1P96Gy1oIRu5MEjiZJwQTc07cQ91jWdBP+k=
+        id S1751726AbeEVSph (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 14:45:37 -0400
+Received: from mga14.intel.com ([192.55.52.115]:58433 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751319AbeEVSpf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 14:45:35 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,430,1520924400";
+   d="scan'208";a="60823261"
+Date: Tue, 22 May 2018 11:45:33 -0700
+From: "Luck, Tony" <tony.luck@intel.com>
+To: "Alex G." <mr.nuke.me@gmail.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Borislav Petkov <bp@alien8.de>, alex_gagniuc@dellteam.com,
+        austin_bolen@dell.com, shyam_iyer@dell.com,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
+        Tyler Baicar <tbaicar@codeaurora.org>,
+        Will Deacon <will.deacon@arm.com>, James Morse <james.morse@arm.com>,
+        Shiju Jose <shiju.jose@huawei.com>,
+        "Jonathan (Zhixiong) Zhang" <zjzhang@codeaurora.org>,
+        Dongjiu Geng <gengdongjiu@huawei.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 1/2] acpi: apei: Rename ghes_severity() to
+ ghes_cper_severity()
+Message-ID: <20180522184532.GA4360@agluck-desk>
+References: <20180521135003.32459-1-mr.nuke.me@gmail.com>
+ <20180521135003.32459-2-mr.nuke.me@gmail.com>
+ <CAJZ5v0hKfgTOJb47NjeOP1BBPXPjWqdfu_TXVwWMzOHicEx0Xw@mail.gmail.com>
+ <53d0ba88-6929-a7cf-6c3e-4ca389f7249a@gmail.com>
+ <20180522135015.GF5512@pd.tnic>
+ <0b758a1c-90e3-6f76-4f83-1e22c8fc9cd6@gmail.com>
+ <20180522145426.GG5512@pd.tnic>
+ <20180522175742.GA3543@agluck-desk>
+ <CAJZ5v0j1E-kg3RPcasSJn=uZj9uaZcL4Zw9tp4mJgnsbWcPWbw@mail.gmail.com>
+ <5dc58180-d3c0-a9f0-282f-4be433c94052@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1526983321-41949-3-git-send-email-michel.pollet@bp.renesas.com>
-References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com> <1526983321-41949-3-git-send-email-michel.pollet@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 22 May 2018 20:44:19 +0200
-X-Google-Sender-Auth: lFlbyZeOz8kLXVCfYwhTk3oOqfo
-Message-ID: <CAMuHMdW-HUBRF4rLdfzixcyMUBg7+4XU+-3zayePoyeQiBZ8ZA@mail.gmail.com>
-Subject: Re: [PATCH v6 2/6] dt-bindings: Add the rzn1-clocks.h file
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5dc58180-d3c0-a9f0-282f-4be433c94052@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michel,
+On Tue, May 22, 2018 at 01:19:34PM -0500, Alex G. wrote:
+> Firmware started passing "fatal" GHES headers with the explicit intent of
+> crashing an OS. At the same time, we've learnt how to handle these errors in
+> a number of cases. With DPC (coming soon to firmware-first) the error is
+> contained, and a non-issue.
 
-On Tue, May 22, 2018 at 12:01 PM, Michel Pollet
-<michel.pollet@bp.renesas.com> wrote:
-> This adds the constants necessary to use the renesas,rzn1-clocks driver.
->
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Perhaps DPC is the change that you need to emphasize as to
+why things are different now, so we can change the default
+Linux behavior.
 
-Thanks for your patch!
+With the h/w guaranteeing that corrupt data is contained, we
+should be safe to disregard BIOS indications of "fatal" problems
+that could be anything and might show up in unknown ways some
+time later if we keep running.
 
-> ---
->  include/dt-bindings/clock/rzn1-clocks.h | 187 ++++++++++++++++++++++++++++++++
->  1 file changed, 187 insertions(+)
->  create mode 100644 include/dt-bindings/clock/rzn1-clocks.h
->
-> diff --git a/include/dt-bindings/clock/rzn1-clocks.h b/include/dt-bindings/clock/rzn1-clocks.h
-> new file mode 100644
-> index 0000000..8a73db2
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/rzn1-clocks.h
-
-Given this is part of the DT ABI, and there exist multiple different RZ/N1
-SoCs (and there are probably planned more), I wouldn't call this header
-file "rzn1-clocks.h", but e.g. "r9a06g032-clocks.h".
-
-> @@ -0,0 +1,187 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * RZ/N1 clock IDs
-> + *
-> + * Copyright (C) 2018 Renesas Electronics Europe Limited
-> + *
-> + * Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>
-> + * Derived from zx-reboot.c
-> + */
-> +
-> +#ifndef __DT_BINDINGS_RZN1_CLOCK_H__
-> +#define __DT_BINDINGS_RZN1_CLOCK_H__
-> +
-> +#define RZN1_CLKOUT                    0
-
-Similar for the RZN1 prefix.
-
-I'll look at the actual list of clocks later...
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-Tony
