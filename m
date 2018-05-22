@@ -1,54 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752574AbeEVPIT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 11:08:19 -0400
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:51490 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751597AbeEVPIC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 11:08:02 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>
-Cc: linux-mtd@lists.infradead.org, Atsushi Nemoto <anemo@mba.ocn.ne.jp>,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] mtd: cmdlinepart: Update comment for introduction of OFFSET_CONTINUOUS
-Date: Tue, 22 May 2018 17:07:53 +0200
-Message-Id: <1527001673-16318-1-git-send-email-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.7.4
+        id S1752489AbeEVPJ6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 11:09:58 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39486 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751942AbeEVPHo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 11:07:44 -0400
+From: Marc Zyngier <marc.zyngier@arm.com>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu
+Cc: Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>, Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christoffer Dall <christoffer.dall@arm.com>
+Subject: [PATCH 14/14] arm64: KVM: Add ARCH_WORKAROUND_2 discovery through ARCH_FEATURES_FUNC_ID
+Date: Tue, 22 May 2018 16:06:48 +0100
+Message-Id: <20180522150648.28297-15-marc.zyngier@arm.com>
+X-Mailer: git-send-email 2.14.2
+In-Reply-To: <20180522150648.28297-1-marc.zyngier@arm.com>
+References: <20180522150648.28297-1-marc.zyngier@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The comment about offset zero was not updated when changing behavior:
-  - Automatic offset calculation is indicated by OFFSET_CONTINUOUS,
-  - Zero really means offset zero.
+Now that all our infrastructure is in place, let's expose the
+availability of ARCH_WORKAROUND_2 to guests. We take this opportunity
+to tidy up a couple of SMCCC constants.
 
-Fixes: b175d03dd2072836 ("[PATCH] mtd cmdlinepart: allow zero offset value")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Christoffer Dall <christoffer.dall@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 ---
- drivers/mtd/cmdlinepart.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/arm/include/asm/kvm_host.h   | 12 ++++++++++++
+ arch/arm64/include/asm/kvm_host.h | 23 +++++++++++++++++++++++
+ arch/arm64/kvm/reset.c            |  4 ++++
+ virt/kvm/arm/psci.c               | 18 ++++++++++++++++--
+ 4 files changed, 55 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mtd/cmdlinepart.c b/drivers/mtd/cmdlinepart.c
-index fbd5affc0acfe3fe..3ea44cff9b759e3c 100644
---- a/drivers/mtd/cmdlinepart.c
-+++ b/drivers/mtd/cmdlinepart.c
-@@ -190,7 +190,10 @@ static struct mtd_partition * newpart(char *s,
- 		extra_mem = (unsigned char *)(parts + *num_parts);
- 	}
+diff --git a/arch/arm/include/asm/kvm_host.h b/arch/arm/include/asm/kvm_host.h
+index c7c28c885a19..d478766b56c1 100644
+--- a/arch/arm/include/asm/kvm_host.h
++++ b/arch/arm/include/asm/kvm_host.h
+@@ -315,6 +315,18 @@ static inline bool kvm_arm_harden_branch_predictor(void)
+ 	return false;
+ }
  
--	/* enter this partition (offset will be calculated later if it is zero at this point) */
-+	/*
-+	 * enter this partition (offset will be calculated later if it is
-+	 * OFFSET_CONTINUOUS at this point)
-+	 */
- 	parts[this_part].size = size;
- 	parts[this_part].offset = offset;
- 	parts[this_part].mask_flags = mask_flags;
++#define KVM_SSBD_UNKNOWN		-1
++#define KVM_SSBD_FORCE_DISABLE		0
++#define KVM_SSBD_EL1_ENTRY		1
++#define KVM_SSBD_FORCE_ENABLE		2
++#define KVM_SSBD_MITIGATED		3
++
++static inline int kvm_arm_have_ssbd(void)
++{
++	/* No way to detect it yet, pretend it is not there. */
++	return KVM_SSBD_UNKNOWN;
++}
++
+ static inline void kvm_vcpu_load_sysregs(struct kvm_vcpu *vcpu) {}
+ static inline void kvm_vcpu_put_sysregs(struct kvm_vcpu *vcpu) {}
+ 
+diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+index 9bef3f69bdcd..082b0dbb85c6 100644
+--- a/arch/arm64/include/asm/kvm_host.h
++++ b/arch/arm64/include/asm/kvm_host.h
+@@ -455,6 +455,29 @@ static inline bool kvm_arm_harden_branch_predictor(void)
+ 	return cpus_have_const_cap(ARM64_HARDEN_BRANCH_PREDICTOR);
+ }
+ 
++#define KVM_SSBD_UNKNOWN		-1
++#define KVM_SSBD_FORCE_DISABLE		0
++#define KVM_SSBD_EL1_ENTRY		1
++#define KVM_SSBD_FORCE_ENABLE		2
++#define KVM_SSBD_MITIGATED		3
++
++static inline int kvm_arm_have_ssbd(void)
++{
++	switch (arm64_get_ssbd_state()) {
++	case ARM64_SSBD_FORCE_DISABLE:
++		return KVM_SSBD_FORCE_DISABLE;
++	case ARM64_SSBD_EL1_ENTRY:
++		return KVM_SSBD_EL1_ENTRY;
++	case ARM64_SSBD_FORCE_ENABLE:
++		return KVM_SSBD_FORCE_ENABLE;
++	case ARM64_SSBD_MITIGATED:
++		return KVM_SSBD_MITIGATED;
++	case ARM64_SSBD_UNKNOWN:
++	default:
++		return KVM_SSBD_UNKNOWN;
++	}
++}
++
+ void kvm_vcpu_load_sysregs(struct kvm_vcpu *vcpu);
+ void kvm_vcpu_put_sysregs(struct kvm_vcpu *vcpu);
+ 
+diff --git a/arch/arm64/kvm/reset.c b/arch/arm64/kvm/reset.c
+index 3256b9228e75..20a7dfee8494 100644
+--- a/arch/arm64/kvm/reset.c
++++ b/arch/arm64/kvm/reset.c
+@@ -122,6 +122,10 @@ int kvm_reset_vcpu(struct kvm_vcpu *vcpu)
+ 	/* Reset PMU */
+ 	kvm_pmu_vcpu_reset(vcpu);
+ 
++	/* Default workaround setup is enabled (if supported) */
++	if (kvm_arm_have_ssbd() == KVM_SSBD_EL1_ENTRY)
++		vcpu->arch.workaround_flags |= VCPU_WORKAROUND_2_FLAG;
++
+ 	/* Reset timer */
+ 	return kvm_timer_vcpu_reset(vcpu);
+ }
+diff --git a/virt/kvm/arm/psci.c b/virt/kvm/arm/psci.c
+index c4762bef13c6..4843bfa1f986 100644
+--- a/virt/kvm/arm/psci.c
++++ b/virt/kvm/arm/psci.c
+@@ -405,7 +405,7 @@ static int kvm_psci_call(struct kvm_vcpu *vcpu)
+ int kvm_hvc_call_handler(struct kvm_vcpu *vcpu)
+ {
+ 	u32 func_id = smccc_get_function(vcpu);
+-	u32 val = PSCI_RET_NOT_SUPPORTED;
++	u32 val = SMCCC_RET_NOT_SUPPORTED;
+ 	u32 feature;
+ 
+ 	switch (func_id) {
+@@ -417,7 +417,21 @@ int kvm_hvc_call_handler(struct kvm_vcpu *vcpu)
+ 		switch(feature) {
+ 		case ARM_SMCCC_ARCH_WORKAROUND_1:
+ 			if (kvm_arm_harden_branch_predictor())
+-				val = 0;
++				val = SMCCC_RET_SUCCESS;
++			break;
++		case ARM_SMCCC_ARCH_WORKAROUND_2:
++			switch (kvm_arm_have_ssbd()) {
++			case KVM_SSBD_FORCE_DISABLE:
++			case KVM_SSBD_UNKNOWN:
++				break;
++			case KVM_SSBD_EL1_ENTRY:
++				val = SMCCC_RET_SUCCESS;
++				break;
++			case KVM_SSBD_FORCE_ENABLE:
++			case KVM_SSBD_MITIGATED:
++				val = SMCCC_RET_NOT_REQUIRED;
++				break;
++			}
+ 			break;
+ 		}
+ 		break;
 -- 
-2.7.4
+2.14.2
