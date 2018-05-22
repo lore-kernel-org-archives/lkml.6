@@ -1,103 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753489AbeEVWwO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 18:52:14 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:42754 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753036AbeEVWwL (ORCPT
+        id S1753357AbeEVWyF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 18:54:05 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:33915 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753036AbeEVWyD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 18:52:11 -0400
-X-Google-Smtp-Source: AB8JxZrEc/Q9ZPwHPIcAL2ZorLMoa3J4DuJTqvHTQ87Y7Nj4aaJLTvG2W4G4x0IH2hjQ6rQcu3R9NQ==
-Date: Tue, 22 May 2018 15:52:08 -0700
-From: Eric Biggers <ebiggers3@gmail.com>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Brian Foster <bfoster@redhat.com>,
-        syzbot <syzbot+568245b88fbaedcb1959@syzkaller.appspotmail.com>,
-        darrick.wong@oracle.com, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: INFO: task hung in xlog_grant_head_check
-Message-ID: <20180522225208.GB658@sol.localdomain>
-References: <000000000000457b2d056cbb0044@google.com>
- <20180522123107.GC3751@bfoster.bfoster>
- <20180522222620.GW23861@dastard>
+        Tue, 22 May 2018 18:54:03 -0400
+X-Google-Smtp-Source: AB8JxZoFxhmCvMUCqEAb2GaHzO9l5gDopnXTI4yUcZbiv5NoeEjo5VJgZ4mFMnWB1BileTNwa8AcQQ==
+Date: Tue, 22 May 2018 15:54:01 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Michal Hocko <mhocko@kernel.org>
+cc: =?UTF-8?B?56a56Iif6ZSu?= <ufo19890607@gmail.com>,
+        akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
+        aarcange@redhat.com, penguin-kernel@i-love.sakura.ne.jp, guro@fb.com,
+        yang.s@alibaba-inc.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Wind Yu <yuzhoujian@didichuxing.com>
+Subject: Re: [PATCH] Add the memcg print oom info for system oom
+In-Reply-To: <20180522063742.GE20020@dhcp22.suse.cz>
+Message-ID: <alpine.DEB.2.21.1805221542540.83718@chino.kir.corp.google.com>
+References: <1526540428-12178-1-git-send-email-ufo19890607@gmail.com> <20180517071140.GQ12670@dhcp22.suse.cz> <CAHCio2gOLnj4NpkFrxpYVygg6ZeSeuwgp2Lwr6oTHRxHpbmcWw@mail.gmail.com> <20180517102330.GS12670@dhcp22.suse.cz> <alpine.DEB.2.21.1805211405300.41872@chino.kir.corp.google.com>
+ <20180522063742.GE20020@dhcp22.suse.cz>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180522222620.GW23861@dastard>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 08:26:20AM +1000, Dave Chinner wrote:
-> On Tue, May 22, 2018 at 08:31:08AM -0400, Brian Foster wrote:
-> > On Mon, May 21, 2018 at 10:55:02AM -0700, syzbot wrote:
-> > > Hello,
-> > > 
-> > > syzbot found the following crash on:
-> > > 
-> > > HEAD commit:    203ec2fed17a Merge tag 'armsoc-fixes' of git://git.kernel...
-> > > git tree:       upstream
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=11c1ad77800000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=f3b4e30da84ec1ed
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=568245b88fbaedcb1959
-> > > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> > > syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=122c7427800000
-> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10387057800000
-> > > 
-> > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > > Reported-by: syzbot+568245b88fbaedcb1959@syzkaller.appspotmail.com
-> > > 
-> > >         (ptrval): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> > > ................
-> > >         (ptrval): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> > > ................
-> > > XFS (loop0): metadata I/O error in "xfs_trans_read_buf_map" at daddr 0x2 len
-> > > 1 error 117
-> > > XFS (loop0): xfs_imap_lookup: xfs_ialloc_read_agi() returned error -117,
-> > > agno 0
-> > > XFS (loop0): failed to read root inode
-> > 
-> > FWIW, the initial console output is actually:
-> > 
-> > [  448.028253] XFS (loop0): Mounting V4 Filesystem
-> > [  448.033540] XFS (loop0): Log size 9371840 blocks too large, maximum size is 1048576 blocks
-> > [  448.042287] XFS (loop0): Log size out of supported range.
-> > [  448.047841] XFS (loop0): Continuing onwards, but if log hangs are experienced then please report this message in the bug report.
-> > [  448.060712] XFS (loop0): totally zeroed log
-> > 
-> > ... which warns about an oversized log and resulting log hangs. Not
-> > having dug into the details of why this occurs so quickly in this mount
-> > failure path,
-> 
-> I suspect that it is a head and/or log tail pointer overflow, so when it
-> tries to do the first trans reserve of the mount - to write the
-> unmount record - it says "no log space available, please wait".
-> 
-> > it does look like we'd never have got past this point on a
-> > v5 fs (i.e., the above warning would become an error and we'd not enter
-> > the xfs_log_mount_cancel() path).
-> 
-> And this comes back to my repeated comments about fuzzers needing
-> to fuzz properly made V5 filesystems as we catch and error out on
-> things like this. Fuzzing random collections of v4 filesystem
-> fragments will continue to trip over problems we've avoided with v5
-> filesystems, and this is further evidence to point to that.
->
-> 
-> I'd suggest that at this point, syzbot XFS reports should be
-> redirected to /dev/null. It's not worth our time to triage
-> unreviewed bot generated bug reports until the syzbot developers
-> start listening and acting on what we have been telling them
-> about fuzzing filesystems and reproducing bugs that are meaningful
-> and useful to us.
+On Tue, 22 May 2018, Michal Hocko wrote:
 
-The whole point of fuzzing is to provide improper inputs.  A kernel bug is a
-kernel bug, even if it's in deprecated/unmaintained code, or involves userspace
-doing something unexpected.  If you have known buggy code in XFS that you refuse
-to fix, then please provide a kernel config option so that users can disable the
-unmaintained XFS formats/features, leaving the maintained ones.  As-is, you seem
-to be forcing everyone who enables CONFIG_XFS_FS to build known
-buggy/unmaintained code into their kernel.
+> > I've had success with defining a single line output the includes the 
+> > CONSTRAINT_* of the oom kill, the origin and kill memcgs, the thread name, 
+> > pid, and uid.  On system oom kills, origin and kill memcgs are left empty.
+> > 
+> > oom-kill constraint=CONSTRAINT_* origin_memcg=<memcg> kill_memcg=<memcg> task=<comm> pid=<pid> uid=<uid>
+> > 
+> > Perhaps we should introduce a single line output that will be backwards 
+> > compatible that includes this information?
+> 
+> I do not have a strong preference here. We already print cpuset on its
+> own line and we can do the same for the memcg.
+> 
 
-- Eric
+Yes, for both the memcg that has reached its limit (origin_memcg) and the 
+memcg the killed process is attached to (kill_memcg).
+
+It's beneficial to have a single-line output to avoid any printk 
+interleaving or ratelimiting that includes the constraint, comm, and at 
+least pid.  (We include uid simply to find oom kills of root processes.)
+
+We already have all this information, including cpuset, cpuset nodemask, 
+and allocation nodemask for mempolicy ooms.  The only exception appears to 
+be the kill_memcg for CONSTRAINT_NONE and for it to be emitted in a way 
+that can't be interleaved or suppressed.
+
+Perhaps we can have this?
+
+oom-kill constraint=CONSTRAINT_* nodemask=<cpuset/mempolicy nodemask> origin_memcg=<memcg> kill_memcg=<memcg> task=<comm> pid=<pid> uid=<uid>
+
+For CONSTRAINT_NONE, nodemask and origin_memcg are empty.  For 
+CONSTRAINT_CPUSET and CONSTRAINT_MEMORY_POLICY, origin_memcg is empty.
