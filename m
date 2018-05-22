@@ -1,90 +1,176 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752833AbeEVUaa (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 16:30:30 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:39963 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751748AbeEVUa3 (ORCPT
+        id S1752807AbeEVUcZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 16:32:25 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:35282 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751748AbeEVUcY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 16:30:29 -0400
-X-Google-Smtp-Source: AB8JxZoDuQTv8MtdhQDNpJjymw9Bi5fFNDxHMQx3mRBQHyLziG6K/eLFDnmyrUb4Gqgm4nJ34M3pjw==
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-To: sboyd@kernel.org, mturquette@baylibre.com
-Cc: leo.yan@linaro.org, olof@lixom.net, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH] clk/driver/hisi: Consolidate the Kconfig for the CLOCK_STUB
-Date: Tue, 22 May 2018 22:30:18 +0200
-Message-Id: <1527021018-31698-1-git-send-email-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        Tue, 22 May 2018 16:32:24 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: ming_qian@realsil.com.cn
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Ana Guerrero Lopez <ana.guerrero@collabora.com>
+Subject: Re: [PATCH] media: uvcvideo: Support realtek's UVC 1.5 device
+Date: Tue, 22 May 2018 23:32:19 +0300
+Message-ID: <2510852.fx2XduE8hM@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <1525831988-32017-1-git-send-email-ming_qian@realsil.com.cn>
+References: <1525831988-32017-1-git-send-email-ming_qian@realsil.com.cn>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current defconfig is inconsistent as it selects the mailbox and
-the clock for the hi6220 and the hi3660 without having their Kconfigs
-making sure the dependencies are correct. It ends up when selecting
-different versions for the kernel (for example when git bisecting)
-those options disappear and they don't get back, leading to unexpected
-behaviors. In our case, the cpufreq driver does no longer work because
-the clock fails to initialize due to the clock stub and the mailbox
-missing.
+Hello,
 
-In order to have the dependencies correctly set when defaulting, let's
-do the same as commit 3a49afb84ca074e ("clk: enable hi655x common clk
-automatically") where we select automatically the driver when the
-parent driver is selected. With sensible defaults in place, we can leave
-other choices for EXPERT.
+Thank you for the patch.
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
----
+On Wednesday, 9 May 2018 05:13:08 EEST ming_qian@realsil.com.cn wrote:
+> From: ming_qian <ming_qian@realsil.com.cn>
+> 
+> The length of UVC 1.5 video control is 48, and it id 34 for UVC 1.1.
+> Change it to 48 for UVC 1.5 device,
+> and the UVC 1.5 device can be recognized.
+> 
+> More changes to the driver are needed for full UVC 1.5 compatibility.
+> However, at least the UVC 1.5 Realtek RTS5847/RTS5852 cameras have
+> been reported to work well.
 
-Split the patch into the clk specific and resent as requested by Olof
-Johansson.
----
- arch/arm64/configs/defconfig  |  1 -
- drivers/clk/hisilicon/Kconfig | 13 ++++++++-----
- 2 files changed, 8 insertions(+), 6 deletions(-)
+This patch is however not specific to Realtek devices, so I think we should
+make the subject line more generic. It's fine mentioning in the commit message
+itself that the Realtek RTS5847/RTS5852 cameras have been successfully tested.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index ecf6137..1d9d8b9 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -549,7 +549,6 @@ CONFIG_HWSPINLOCK_QCOM=y
- CONFIG_ARM_MHU=y
- CONFIG_PLATFORM_MHU=y
- CONFIG_BCM2835_MBOX=y
--CONFIG_HI6220_MBOX=y
- CONFIG_QCOM_APCS_IPC=y
- CONFIG_ROCKCHIP_IOMMU=y
- CONFIG_TEGRA_IOMMU_SMMU=y
-diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
-index 1bd4355..becdb1d 100644
---- a/drivers/clk/hisilicon/Kconfig
-+++ b/drivers/clk/hisilicon/Kconfig
-@@ -44,14 +44,17 @@ config RESET_HISI
- 	  Build reset controller driver for HiSilicon device chipsets.
+> Signed-off-by: ming_qian <ming_qian@realsil.com.cn>
+> ---
+>  drivers/media/usb/uvc/uvc_video.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_video.c
+> b/drivers/media/usb/uvc/uvc_video.c index aa0082f..32dfb32 100644
+> --- a/drivers/media/usb/uvc/uvc_video.c
+> +++ b/drivers/media/usb/uvc/uvc_video.c
+> @@ -171,6 +171,8 @@ static int uvc_get_video_ctrl(struct uvc_streaming
+> *stream, int ret;
+> 
+>  	size = stream->dev->uvc_version >= 0x0110 ? 34 : 26;
+> +	if (stream->dev->uvc_version >= 0x0150)
+> +		size = 48;
+>  	if ((stream->dev->quirks & UVC_QUIRK_PROBE_DEF) &&
+>  			query == UVC_GET_DEF)
+>  		return -EIO;
+> @@ -259,6 +261,8 @@ static int uvc_set_video_ctrl(struct uvc_streaming
+> *stream, int ret;
+> 
+>  	size = stream->dev->uvc_version >= 0x0110 ? 34 : 26;
+> +	if (stream->dev->uvc_version >= 0x0150)
+> +		size = 48;
+>  	data = kzalloc(size, GFP_KERNEL);
+>  	if (data == NULL)
+>  		return -ENOMEM;
+
+Instead of duplicating the computation in both functions, I think we should
+move the code to a helper function.
+
+Furthermore there are equality checks further down both functions that compare
+the size to 34, they should be updated to also support UVC 1.5.
+
+I propose the following updated patch. If you're fine with it there's no need
+to resubmit, I'll queue it for v4.19.
+
+I have dropped the Reviewed-by and Tested-by tags as the patch has changed.
+
+commit a9c002732695eab2096580a0d1a1687bc2f95928
+Author: ming_qian <ming_qian@realsil.com.cn>
+Date:   Wed May 9 10:13:08 2018 +0800
+
+    media: uvcvideo: Support UVC 1.5 video probe & commit controls
+    
+    The length of UVC 1.5 video control is 48, and it is 34 for UVC 1.1.
+    Change it to 48 for UVC 1.5 device, and the UVC 1.5 device can be
+    recognized.
+    
+    More changes to the driver are needed for full UVC 1.5 compatibility.
+    However, at least the UVC 1.5 Realtek RTS5847/RTS5852 cameras have been
+    reported to work well.
+    
+    Cc: stable@vger.kernel.org
+    Signed-off-by: ming_qian <ming_qian@realsil.com.cn>
+    [Factor out code to helper function, update size checks]
+    Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
+index eb9e04a59427..285b0e813b9d 100644
+--- a/drivers/media/usb/uvc/uvc_video.c
++++ b/drivers/media/usb/uvc/uvc_video.c
+@@ -207,14 +207,27 @@ static void uvc_fixup_video_ctrl(struct uvc_streaming *stream,
+ 	}
+ }
  
- config STUB_CLK_HI6220
--	bool "Hi6220 Stub Clock Driver"
--	depends on COMMON_CLK_HI6220 && MAILBOX
--	default ARCH_HISI
-+	bool "Hi6220 Stub Clock Driver" if EXPERT
-+	depends on (COMMON_CLK_HI6220 || COMPILE_TEST)
-+	depends on MAILBOX
-+	default COMMON_CLK_HI6220
- 	help
- 	  Build the Hisilicon Hi6220 stub clock driver.
++static size_t uvc_video_ctrl_size(struct uvc_streaming *stream)
++{
++	/*
++	 * Return the size of the video probe and commit controls, which depends
++	 * on the protocol version.
++	 */
++	if (stream->dev->uvc_version < 0x0110)
++		return 26;
++	else if (stream->dev->uvc_version < 0x0150)
++		return 34;
++	else
++		return 48;
++}
++
+ static int uvc_get_video_ctrl(struct uvc_streaming *stream,
+ 	struct uvc_streaming_control *ctrl, int probe, u8 query)
+ {
++	u16 size = uvc_video_ctrl_size(stream);
+ 	u8 *data;
+-	u16 size;
+ 	int ret;
  
- config STUB_CLK_HI3660
--	bool "Hi3660 Stub Clock Driver"
--	depends on COMMON_CLK_HI3660 && MAILBOX
-+	bool "Hi3660 Stub Clock Driver" if EXPERT
-+	depends on (COMMON_CLK_HI3660 || COMPILE_TEST)
-+	depends on MAILBOX
-+	default COMMON_CLK_HI3660
- 	help
- 	  Build the Hisilicon Hi3660 stub clock driver.
+-	size = stream->dev->uvc_version >= 0x0110 ? 34 : 26;
+ 	if ((stream->dev->quirks & UVC_QUIRK_PROBE_DEF) &&
+ 			query == UVC_GET_DEF)
+ 		return -EIO;
+@@ -271,7 +284,7 @@ static int uvc_get_video_ctrl(struct uvc_streaming *stream,
+ 	ctrl->dwMaxVideoFrameSize = get_unaligned_le32(&data[18]);
+ 	ctrl->dwMaxPayloadTransferSize = get_unaligned_le32(&data[22]);
+ 
+-	if (size == 34) {
++	if (size >= 34) {
+ 		ctrl->dwClockFrequency = get_unaligned_le32(&data[26]);
+ 		ctrl->bmFramingInfo = data[30];
+ 		ctrl->bPreferedVersion = data[31];
+@@ -300,11 +313,10 @@ static int uvc_get_video_ctrl(struct uvc_streaming *stream,
+ static int uvc_set_video_ctrl(struct uvc_streaming *stream,
+ 	struct uvc_streaming_control *ctrl, int probe)
+ {
++	u16 size = uvc_video_ctrl_size(stream);
+ 	u8 *data;
+-	u16 size;
+ 	int ret;
+ 
+-	size = stream->dev->uvc_version >= 0x0110 ? 34 : 26;
+ 	data = kzalloc(size, GFP_KERNEL);
+ 	if (data == NULL)
+ 		return -ENOMEM;
+@@ -321,7 +333,7 @@ static int uvc_set_video_ctrl(struct uvc_streaming *stream,
+ 	put_unaligned_le32(ctrl->dwMaxVideoFrameSize, &data[18]);
+ 	put_unaligned_le32(ctrl->dwMaxPayloadTransferSize, &data[22]);
+ 
+-	if (size == 34) {
++	if (size >= 34) {
+ 		put_unaligned_le32(ctrl->dwClockFrequency, &data[26]);
+ 		data[30] = ctrl->bmFramingInfo;
+ 		data[31] = ctrl->bPreferedVersion;
+
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
