@@ -1,67 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751763AbeEVH4o (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 03:56:44 -0400
-Received: from mo4-p00-ob.smtp.rzone.de ([85.215.255.20]:15400 "EHLO
-        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751603AbeEVH4M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 03:56:12 -0400
-X-RZG-AUTH: ":P2EQZWCpfu+qG7CngxMFH1J+3q8wa/QXkBR9MXjAuzpIG0mv9coXAgc09VbzR8stxx+XNVGnx9ZX3co74kFtJGu5gyLH"
-X-RZG-CLASS-ID: mo00
-From: Olaf Hering <olaf@aepfle.de>
-To: linux-kernel@vger.kernel.org
-Cc: Olaf Hering <ohering@suse.de>, "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        devel@linuxdriverproject.org (open list:Hyper-V CORE AND DRIVERS)
-Subject: [PATCH v1] tools: hv: update lsvmbus to be compatible with python3
-Date: Tue, 22 May 2018 09:43:51 +0200
-Message-Id: <20180522074351.13346-1-olaf@aepfle.de>
-X-Mailer: git-send-email 2.16.3
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1751553AbeEVH4F (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 03:56:05 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48008 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751470AbeEVHzz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 03:55:55 -0400
+From: Eric Auger <eric.auger@redhat.com>
+To: eric.auger.pro@gmail.com, eric.auger@redhat.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
+        christoffer.dall@arm.com, peter.maydell@linaro.org
+Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
+Subject: [PATCH v8 09/13] KVM: arm/arm64: Check vcpu redist base before registering an iodev
+Date: Tue, 22 May 2018 09:55:14 +0200
+Message-Id: <1526975718-18567-10-git-send-email-eric.auger@redhat.com>
+In-Reply-To: <1526975718-18567-1-git-send-email-eric.auger@redhat.com>
+References: <1526975718-18567-1-git-send-email-eric.auger@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Olaf Hering <ohering@suse.de>
+As we are going to register several redist regions,
+vgic_register_all_redist_iodevs() may be called several times. We need
+to register a redist_iodev for a given vcpu only once. So let's
+check if the base address has already been set. Initialize this latter
+in kvm_vgic_vcpu_init().
 
-Python3 changed the way how 'print' works.
-Adjust the code to a syntax that is understood by python2 and python3.
+Signed-off-by: Eric Auger <eric.auger@redhat.com>
+Acked-by: Christoffer Dall <christoffer.dall@arm.com>
 
-Signed-off-by: Olaf Hering <ohering@suse.de>
 ---
- tools/hv/lsvmbus | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/tools/hv/lsvmbus b/tools/hv/lsvmbus
-index 353e56768df8..55e7374bade0 100644
---- a/tools/hv/lsvmbus
-+++ b/tools/hv/lsvmbus
-@@ -17,7 +17,7 @@ if options.verbose is not None:
+v4 -> v5:
+- added Christoffer's A-b
+---
+ virt/kvm/arm/vgic/vgic-init.c    | 3 +++
+ virt/kvm/arm/vgic/vgic-mmio-v3.c | 3 +++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/virt/kvm/arm/vgic/vgic-init.c b/virt/kvm/arm/vgic/vgic-init.c
+index 272af97..2673efc 100644
+--- a/virt/kvm/arm/vgic/vgic-init.c
++++ b/virt/kvm/arm/vgic/vgic-init.c
+@@ -199,6 +199,9 @@ int kvm_vgic_vcpu_init(struct kvm_vcpu *vcpu)
+ 	int ret = 0;
+ 	int i;
  
- vmbus_sys_path = '/sys/bus/vmbus/devices'
- if not os.path.isdir(vmbus_sys_path):
--	print "%s doesn't exist: exiting..." % vmbus_sys_path
-+	print("%s doesn't exist: exiting..." % vmbus_sys_path)
- 	exit(-1)
++	vgic_cpu->rd_iodev.base_addr = VGIC_ADDR_UNDEF;
++	vgic_cpu->sgi_iodev.base_addr = VGIC_ADDR_UNDEF;
++
+ 	INIT_LIST_HEAD(&vgic_cpu->ap_list_head);
+ 	spin_lock_init(&vgic_cpu->ap_list_lock);
  
- vmbus_dev_dict = {
-@@ -93,11 +93,11 @@ format2 = '%2s: Class_ID = %s - %s\n\tDevice_ID = %s\n\tSysfs path: %s\n%s'
+diff --git a/virt/kvm/arm/vgic/vgic-mmio-v3.c b/virt/kvm/arm/vgic/vgic-mmio-v3.c
+index 3dbc057..1c6c535 100644
+--- a/virt/kvm/arm/vgic/vgic-mmio-v3.c
++++ b/virt/kvm/arm/vgic/vgic-mmio-v3.c
+@@ -592,6 +592,9 @@ int vgic_register_redist_iodev(struct kvm_vcpu *vcpu)
+ 	gpa_t rd_base, sgi_base;
+ 	int ret;
  
- for d in vmbus_dev_list:
- 	if verbose == 0:
--		print ('VMBUS ID ' + format0) % (d.vmbus_id, d.dev_desc)
-+		print(('VMBUS ID ' + format0) % (d.vmbus_id, d.dev_desc))
- 	elif verbose == 1:
--		print ('VMBUS ID ' + format1) %	\
--			(d.vmbus_id, d.class_id, d.dev_desc, d.chn_vp_mapping)
-+		print (('VMBUS ID ' + format1) %	\
-+			(d.vmbus_id, d.class_id, d.dev_desc, d.chn_vp_mapping))
- 	else:
--		print ('VMBUS ID ' + format2) % \
-+		print (('VMBUS ID ' + format2) % \
- 			(d.vmbus_id, d.class_id, d.dev_desc, \
--			d.device_id, d.sysfs_path, d.chn_vp_mapping)
-+			d.device_id, d.sysfs_path, d.chn_vp_mapping))
++	if (!IS_VGIC_ADDR_UNDEF(vgic_cpu->rd_iodev.base_addr))
++		return 0;
++
+ 	/*
+ 	 * We may be creating VCPUs before having set the base address for the
+ 	 * redistributor region, in which case we will come back to this
+-- 
+2.5.5
