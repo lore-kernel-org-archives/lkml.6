@@ -1,66 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751432AbeEVNp7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 09:45:59 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:51201 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751199AbeEVNp6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 09:45:58 -0400
-X-Google-Smtp-Source: AB8JxZqqDi+9G+FlOg56qgKVvHngcUDZU9SwvLJswe9tKjdpXHNvSMQ0wELGWVgM7WOrvqltttCwBVAUG6wwRwyvEdc=
+        id S1751355AbeEVNsA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 09:48:00 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40824 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751196AbeEVNr7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 09:47:59 -0400
+Date: Tue, 22 May 2018 15:47:57 +0200
+From: Jiri Olsa <jolsa@redhat.com>
+To: Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: PROBLEM: found 2 tests failed using "perf test" command
+Message-ID: <20180522134757.GA10727@krava>
+References: <CAG=yYwnNYY6YKD8wtnjQD-87N7ipSCnyXr8dzFGm4brE6-cgNw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180522035445.16911-2-boris.ostrovsky@oracle.com>
-References: <20180522035445.16911-1-boris.ostrovsky@oracle.com> <20180522035445.16911-2-boris.ostrovsky@oracle.com>
-From: Brian Gerst <brgerst@gmail.com>
-Date: Tue, 22 May 2018 09:45:57 -0400
-Message-ID: <CAMzpN2iMrEqee+8yGP_qk-qAuXf+_o6vrOUSDTvX=8JAUDT5Fg@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] xen/PVH: Set up GS segment for stack canary
-To: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: xen-devel@lists.xenproject.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Juergen Gross <jgross@suse.com>, Jan Beulich <JBeulich@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAG=yYwnNYY6YKD8wtnjQD-87N7ipSCnyXr8dzFGm4brE6-cgNw@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 11:54 PM, Boris Ostrovsky
-<boris.ostrovsky@oracle.com> wrote:
-> We are making calls to C code (e.g. xen_prepare_pvh()) which may use
-> stack canary (stored in GS segment).
->
-> Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-> ---
->  arch/x86/xen/xen-pvh.S | 26 +++++++++++++++++++++++++-
->  1 file changed, 25 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/x86/xen/xen-pvh.S b/arch/x86/xen/xen-pvh.S
-> index e1a5fbe..0169374 100644
-> --- a/arch/x86/xen/xen-pvh.S
-> +++ b/arch/x86/xen/xen-pvh.S
-> @@ -54,6 +54,9 @@
->   * charge of setting up it's own stack, GDT and IDT.
->   */
->
-> +#define PVH_GDT_ENTRY_CANARY   4
-> +#define PVH_CANARY_SEL         (PVH_GDT_ENTRY_CANARY * 8)
-> +
->  ENTRY(pvh_start_xen)
->         cld
->
-> @@ -98,6 +101,12 @@ ENTRY(pvh_start_xen)
->         /* 64-bit entry point. */
->         .code64
->  1:
-> +       /* Set base address in stack canary descriptor. */
-> +       mov $MSR_GS_BASE,%ecx
-> +       mov $canary, %rax
-> +       cdq
-> +       wrmsr
+On Sun, May 20, 2018 at 01:53:15AM +0530, Jeffrin Thalakkottoor wrote:
+> hello,
+> 
+> 
+> i found two tests failed while i did "sudo ./perf test"
+> 
+> --------------------------------------------------------------------------->
+> 24: Object code reading                                   : FAILED!
+> 64: probe libc's inet_pton & backtrace it with ping       : FAILED!
+> ---------------------------------------------------------------------------->
+> 
+> some relevent shell session details from ./sudo perf test -vv 24
+> -------------------------------------------------------------------------------------------------------->
+> Objdump command is: objdump -z -d --start-address=0xffffffff8132dda7
+> --stop-address=0xffffffff8132de27
+> /lib/modules/4.17.0-rc5+/build/vmlinux
+> Bytes read match those read by objdump
+> Reading object code for memory address: 0xfffffe000005e01e
+> thread__find_addr_map failed
+> test child finished with -1
+> ---- end ----
+> Object code reading: FAILED!
+> ---------------------------------------------------------------------------------------------------------->
+> 
+> $sudo ./perf test -vv 64
+> 64: probe libc's inet_pton & backtrace it with ping       :
+> --- start ---
+> test child forked, pid 4751
+> test child finished with -1
+> ---- end ----
+> probe libc's inet_pton & backtrace it with ping: FAILED!
 
-CDQ only sign-extends EAX to RAX.  What you really want is to move the
-high 32-bits to EDX (or zero EDX if we can guarantee it is loaded
-below 4G).
+there's been some recent discussion/changes in here, please follow:
+  https://marc.info/?t=152662842600002&r=1&w=2
 
---
-Brian Gerst
+jirka
