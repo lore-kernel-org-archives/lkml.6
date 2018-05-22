@@ -1,95 +1,72 @@
-Return-Path: <yehs2007@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1526916052; cv=none;
+Return-Path: <BATV+a8c6d037863aa87ae187+5385+infradead.org+hch@bombadil.srs.infradead.org>
+X-Google-Smtp-Source: AB8JxZoOZPlmMUPVa7ItR7At01bs2BS86xys04z5Kl5qMXDUeDdyvJZqbJu3sBws0/ISmKZ2aywR
+ARC-Seal: i=1; a=rsa-sha256; t=1526981893; cv=none;
         d=google.com; s=arc-20160816;
-        b=SG4Nwu0N29rFV2YsiB8NpKPitozxN2UVQA8oAVT8vAnYSZLb2LTe97xcrWofDz72CJ
-         OWkRfwo8OlqvjCzEqgxcLVqIP/8lu2edVCn7jpB5b62iqvaAXjOOK45t/b6iiUavszWG
-         Vfq100IuNIiwzKykCDopZz1btIjgxGCikDlEhSeGHXP6Na8R4ltZEoWjEXtXL/XYcL3B
-         G5MlRSP0zJvfuBZkyF3DOeMIVyYX2GW2fypyMmFOTkGyKP5hNbLfVPcd/W4o9Kxu0UiM
-         3qzwFa/AgqQOeuLV4/FKZQyqwuTiOPC7zEgGIcCKF17mej7dyeEE5jDetVu5VG3g0xTF
-         LJbw==
+        b=kxNd3lXD7YpjQ6WoWqzPxjarKkhVv3dfwi69wjHH4wZPFENQNbgAlG+5ahLF8ih/iE
+         0XqRGarI+iZnxebHFUZIzYP4nk4jOvajNMEAJilMTYIpHZxOnDyGhnUmY90v9ZKFdnda
+         BH67MRh7QGVX38t0olnqSBJbBYoEM8VNmCP75asgR6h5OH319dYkAp3AN22M92MW0yko
+         INjnEoHEFSMaNTw9Ixm/EEsG60Hm3PXQLcUT5+qLr2ACZ48FWezCLA5xgA1RNzONIPYr
+         QoBd+jTaoB/1KBrARW5ciezIlNKpao5+sXR5+YtzxTjiFKGlILx2xUo7uMErykgjwN01
+         iPNQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=Pzs2NzeRlCb9X0ibpkf1mD9br6NpgeDf+l77IWkXvG4=;
-        b=wcpQ8+jDgkX2djt6v1vz/jxlOXpWYlXSKi8/Yj1ho0/Qt6EUdutUv7PK1ITxc0YAfD
-         4+ndjL8bvIE6f8VBOhxhheKEqd8qMIAFEdSOsYz+QlNLyqXVRtx9dca9ySpx896OU3/E
-         wbayNW6Gs2lIlOHSFVWuGMB2CjC/7ovDZrAIe42mVRkdofNFg2/6zAsWpvOdCx/SQQME
-         3GSEDlwbFkFePv7WbnxEg6KzZSEeV1XQqkkTN9/Df4HQRcWjgusilhT4A98+XkgKeKAY
-         S/nkzpSgRNVFrAGjO3bbRKvp2xZcOmxdt391ZY6d7DK5a2ppm0NbNkUIwug5DpIGwm4L
-         H/9w==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:dkim-signature
+         :arc-authentication-results;
+        bh=M4INESxLyxjFPAvAEVW7iyUCKIST3o6noPHpwPPFByU=;
+        b=SMW0P7NA60/v78QIERv9+FMU3CI5SVansEE/6ptGWEn9uSQJ3EwbFLi4m0zb1tdvSS
+         CiCqE9mT/Cfvi+oCHqUoLbPhmBQsdO44zWfOTCoedmjSL9SF2n4ZM2DwvDjccblN6Klt
+         OcvG8ByKFpEEZ4z8PdgO9b7k1JZFGZd4orpWS99rnAFDjC6ojsTflLhageCtmJREG+wi
+         +jVo0surqBLJZP3wxw5E3ti1LLmZ00oUFepmepKiYi642Z6o88DmVyd7hdDxPo452mo0
+         zxnD4EYWjasMjeqSNhUBG55sKU5p9PVa9oFPjyPtWdwfMHDqewhgQW9TcSWfrzK3Y+aY
+         WHWA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=MQn9gBEE;
-       spf=pass (google.com: domain of yehs2007@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=yehs2007@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=BswMr4tM;
+       spf=pass (google.com: best guess record for domain of batv+a8c6d037863aa87ae187+5385+infradead.org+hch@bombadil.srs.infradead.org designates 198.137.202.133 as permitted sender) smtp.mailfrom=BATV+a8c6d037863aa87ae187+5385+infradead.org+hch@bombadil.srs.infradead.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=MQn9gBEE;
-       spf=pass (google.com: domain of yehs2007@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=yehs2007@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AB8JxZpVAZvz1PxSltGd4psCJG6EaEMmfGQJ8l1ZcUvd3x7p2B1fVx0jLNS83Fs1Zb7VVDFEkaIUVw==
-From: Huaisheng Ye <yehs2007@gmail.com>
-To: akpm@linux-foundation.org,
-	linux-mm@kvack.org
-Cc: mhocko@suse.com,
-	willy@infradead.org,
-	vbabka@suse.cz,
-	mgorman@techsingularity.net,
-	kstewart@linuxfoundation.org,
-	alexander.levin@verizon.com,
-	gregkh@linuxfoundation.org,
-	colyli@suse.de,
-	chengnt@lenovo.com,
-	hehy1@lenovo.com,
-	linux-kernel@vger.kernel.org,
-	iommu@lists.linux-foundation.org,
-	xen-devel@lists.xenproject.org,
-	linux-btrfs@vger.kernel.org,
-	Huaisheng Ye <yehs1@lenovo.com>,
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=BswMr4tM;
+       spf=pass (google.com: best guess record for domain of batv+a8c6d037863aa87ae187+5385+infradead.org+hch@bombadil.srs.infradead.org designates 198.137.202.133 as permitted sender) smtp.mailfrom=BATV+a8c6d037863aa87ae187+5385+infradead.org+hch@bombadil.srs.infradead.org
+Date: Tue, 22 May 2018 02:38:06 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Huaisheng Ye <yehs2007@gmail.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, mhocko@suse.com,
+	willy@infradead.org, vbabka@suse.cz, mgorman@techsingularity.net,
+	kstewart@linuxfoundation.org, alexander.levin@verizon.com,
+	gregkh@linuxfoundation.org, colyli@suse.de, chengnt@lenovo.com,
+	hehy1@lenovo.com, linux-kernel@vger.kernel.org,
+	iommu@lists.linux-foundation.org, xen-devel@lists.xenproject.org,
+	linux-btrfs@vger.kernel.org, Huaisheng Ye <yehs1@lenovo.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
+	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
 	Robin Murphy <robin.murphy@arm.com>
-Subject: [RFC PATCH v2 02/12] arch/x86/kernel/amd_gart_64: update usage of address zone modifiers
-Date: Mon, 21 May 2018 23:20:23 +0800
-Message-Id: <1526916033-4877-3-git-send-email-yehs2007@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1526916033-4877-1-git-send-email-yehs2007@gmail.com>
+Subject: Re: [RFC PATCH v2 02/12] arch/x86/kernel/amd_gart_64: update usage
+ of address zone modifiers
+Message-ID: <20180522093806.GA25671@infradead.org>
 References: <1526916033-4877-1-git-send-email-yehs2007@gmail.com>
+ <1526916033-4877-3-git-send-email-yehs2007@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1526916033-4877-3-git-send-email-yehs2007@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1601087527015520115?=
-X-GMAIL-MSGID: =?utf-8?q?1601087527015520115?=
+X-GMAIL-MSGID: =?utf-8?q?1601156565621522474?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Huaisheng Ye <yehs1@lenovo.com>
+This code doesn't exist in current mainline.  What kernel version
+is your patch against?
 
-Use __GFP_ZONE_MASK to replace (__GFP_DMA | __GFP_HIGHMEM | __GFP_DMA32).
+On Mon, May 21, 2018 at 11:20:23PM +0800, Huaisheng Ye wrote:
+> From: Huaisheng Ye <yehs1@lenovo.com>
+> 
+> Use __GFP_ZONE_MASK to replace (__GFP_DMA | __GFP_HIGHMEM | __GFP_DMA32).
+> 
+> ___GFP_DMA, ___GFP_HIGHMEM and ___GFP_DMA32 have been deleted from GFP
+> bitmasks, the bottom three bits of GFP mask is reserved for storing
+> encoded zone number.
+> __GFP_DMA, __GFP_HIGHMEM and __GFP_DMA32 should not be operated by OR.
 
-___GFP_DMA, ___GFP_HIGHMEM and ___GFP_DMA32 have been deleted from GFP
-bitmasks, the bottom three bits of GFP mask is reserved for storing
-encoded zone number.
-__GFP_DMA, __GFP_HIGHMEM and __GFP_DMA32 should not be operated by OR.
-
-Signed-off-by: Huaisheng Ye <yehs1@lenovo.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Robin Murphy <robin.murphy@arm.com>
----
- arch/x86/kernel/amd_gart_64.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/amd_gart_64.c b/arch/x86/kernel/amd_gart_64.c
-index ecd486c..1dd6971 100644
---- a/arch/x86/kernel/amd_gart_64.c
-+++ b/arch/x86/kernel/amd_gart_64.c
-@@ -485,7 +485,7 @@ static int gart_map_sg(struct device *dev, struct scatterlist *sg, int nents,
- 	struct page *page;
- 
- 	if (force_iommu && !(flag & GFP_DMA)) {
--		flag &= ~(__GFP_DMA | __GFP_HIGHMEM | __GFP_DMA32);
-+		flag &= ~__GFP_ZONE_MASK;
- 		page = alloc_pages(flag | __GFP_ZERO, get_order(size));
- 		if (!page)
- 			return NULL;
--- 
-1.8.3.1
+If they have already been deleted the identifier should not exist
+anymore, so either your patch has issues, or at least the description.
