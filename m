@@ -1,82 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751844AbeEVPRZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 11:17:25 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:64098 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751287AbeEVPQ6 (ORCPT
+        id S1751517AbeEVPSH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 11:18:07 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:45764 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751236AbeEVPSE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 11:16:58 -0400
-From: Faiz Abbas <faiz_abbas@ti.com>
-Subject: mmc filesystem performance decreased on the first write after
- filesystem creation
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>
-CC: Christoph Hellwig <hch@lst.de>, Ulf Hansson <ulf.hansson@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>
-Message-ID: <a976e20a-3ed1-43d0-4665-f570ef496d02@ti.com>
-Date: Tue, 22 May 2018 20:48:31 +0530
+        Tue, 22 May 2018 11:18:04 -0400
+X-Google-Smtp-Source: AB8JxZr7FYHVUfINDxbi2xERy6XeZGWO1ufieTWA7XqdVrzrRt6LqsOwMOQ+q5rgJTnABzEUNGbWCQ==
+Subject: Re: [PATCH v6 2/2] acpi: apei: Do not panic() on PCIe errors reported
+ through GHES
+To: Tyler Baicar <tbaicar@codeaurora.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>, alex_gagniuc@dellteam.com,
+        austin_bolen@dell.com, shyam_iyer@dell.com,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
+        Tony Luck <tony.luck@intel.com>, Will Deacon <will.deacon@arm.com>,
+        James Morse <james.morse@arm.com>, Shiju Jose <shiju.jose@huawei.com>,
+        "Jonathan (Zhixiong) Zhang" <zjzhang@codeaurora.org>,
+        Dongjiu Geng <gengdongjiu@huawei.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180521135003.32459-1-mr.nuke.me@gmail.com>
+ <20180521135003.32459-3-mr.nuke.me@gmail.com>
+ <CAJZ5v0h+U1zNK+LdOH_pU7kb+c6VK7erZCRqaV2WauDE2cwc6w@mail.gmail.com>
+ <5a72a503-e8d5-c317-89b4-86e574c48064@gmail.com>
+ <50e318d3-b581-ad8b-d0e3-3e6c7b0da080@codeaurora.org>
+From: "Alex G." <mr.nuke.me@gmail.com>
+Message-ID: <cf2e0a02-fb99-efde-0b41-63585c9d8844@gmail.com>
+Date: Tue, 22 May 2018 10:18:02 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <50e318d3-b581-ad8b-d0e3-3e6c7b0da080@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-I am debugging a performance reduction in ext2 filesystems on an mmc
-device in TI's am335x evm board.
 
-I see that the performance is reduced on the first write after making a
-new filesystem using mkfs.ext2 on one of the mmc partitions. The
-performance comes back to normal after the first write.
+On 05/22/2018 10:15 AM, Tyler Baicar wrote:
+> On 5/22/2018 10:32 AM, Alex G. wrote:
+>> I think the biggest problem is having a policy to panic on "fatal"
+>> errors, instead of letting the error handler make that decision. I'd
+>> much rather kill that stupid policy, but people seem to like it for some
+>> reason.
+>>
+> You can get around that panic and still have the error handled as
+> AER_FATAL in
+> the current code. Your FW needs to mark the error as RECOVERABLE and then
+> set the CPER_SEC_RESET flag.
 
-commands used:
+Of course, that would be ideal. But experience shows that firmware
+doesn't do this. That's the whole point: firmware sends questionable data.
 
-=> umount /dev/mmcblk1p2
+Alex
 
-=> mkfs.ext2 -F  /dev/mmcblk1p2
-
-=> mount -t ext2 -o async /dev/mmcblk1p2 /mnt/partition_mmc
-
-=> dd if=/dev/urandom of=/dev/shm/srctest_file_mmc_1184 bs=1M count=10
-
-=> ./filesystem_tests -write -src_file /dev/shm/srctest_file_mmc_1184
--srcfile_size 10 -file /mnt/partition_mmc/test_file_1184 -buffer_size
-102400 -file_size 100 -performance
-
-The filesystem_tests write utility reads from the file generated at
-/dev/shm/srctest_file_mmc_1184, memory maps the file to a buffer, and
-then writes it into the newly created /mnt/partition_mmc in multiples of
-buffer_size while measuring write performance.
-
-See here for the implementation of filesystem_tests write utility:
-http://arago-project.org/git/projects/?p=test-automation/ltp-ddt.git;a=blob;f=testcases/ddt/filesystem_test_suite/src/testcases/st_filesystem_write_to_file.c;h=80e8e244d7eaa9f0dbd9b21ea705445156c36bef;hb=f7fc06c290333ce08a7d4fba104eee0f0f1d942b
-
-Complete log with multiple calls to filesystem_tests:
-https://pastebin.ubuntu.com/p/BckmTJpqPv/
-
-Notice that the first run of filesystem_tests has a lower throughput
-reported.
-
-I was able to bisect the issue to this commit:
-5d1429fead5b (mmc: remove the discard_zeroes_data flag)
-
-I would assume that after this flag is removed, the filesystem creation
-command would explicitly write zeroes to the device which might explain
-the performance fall. However, then the mkfs.ext2 command itself should
-take more time rather than the first file write after that.
-
-It would be nice if someone could help me understand why this is happening.
-
-Thanks for your help.
-
-Regards,
-Faiz
+> https://elixir.bootlin.com/linux/v4.17-rc6/source/drivers/acpi/apei/ghes.c#L450
+> 
+> 
+> Thanks,
+> Tyler
+> 
