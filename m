@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752701AbeEVPKQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 11:10:16 -0400
-Received: from foss.arm.com ([217.140.101.70]:39470 "EHLO foss.arm.com"
+        id S1752329AbeEVPKS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 11:10:18 -0400
+Received: from foss.arm.com ([217.140.101.70]:39436 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751880AbeEVPHm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 11:07:42 -0400
+        id S1751763AbeEVPHi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 11:07:38 -0400
 From: Marc Zyngier <marc.zyngier@arm.com>
 To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         kvmarm@lists.cs.columbia.edu
@@ -15,9 +15,9 @@ Cc: Will Deacon <will.deacon@arm.com>,
         Andy Lutomirski <luto@kernel.org>, Kees Cook <keescook@chromium.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Christoffer Dall <christoffer.dall@arm.com>
-Subject: [PATCH 13/14] arm64: KVM: Handle guest's ARCH_WORKAROUND_2 requests
-Date: Tue, 22 May 2018 16:06:47 +0100
-Message-Id: <20180522150648.28297-14-marc.zyngier@arm.com>
+Subject: [PATCH 11/14] arm64: KVM: Add HYP per-cpu accessors
+Date: Tue, 22 May 2018 16:06:45 +0100
+Message-Id: <20180522150648.28297-12-marc.zyngier@arm.com>
 X-Mailer: git-send-email 2.14.2
 In-Reply-To: <20180522150648.28297-1-marc.zyngier@arm.com>
 References: <20180522150648.28297-1-marc.zyngier@arm.com>
@@ -25,82 +25,60 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to forward the guest's ARCH_WORKAROUND_2 calls to EL3,
-add a small(-ish) sequence to handle it at EL2. Special care must
-be taken to track the state of the guest itself by updating the
-workaround flags. We also rely on patching to enable calls into
-the firmware.
+As we're going to require to access per-cpu variables at EL2,
+let's craft the minimum set of accessors required to implement
+reading a per-cpu variable, relying on tpidr_el2 to contain the
+per-cpu offset.
 
-Note that since we need to execute branches, this always executes
-after the Spectre-v2 mitigation has been applied.
-
+Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
 Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 ---
- arch/arm64/kernel/asm-offsets.c |  1 +
- arch/arm64/kvm/hyp/hyp-entry.S  | 38 +++++++++++++++++++++++++++++++++++++-
- 2 files changed, 38 insertions(+), 1 deletion(-)
+ arch/arm64/include/asm/kvm_asm.h | 27 +++++++++++++++++++++++++--
+ 1 file changed, 25 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/kernel/asm-offsets.c b/arch/arm64/kernel/asm-offsets.c
-index 5bdda651bd05..323aeb5f2fe6 100644
---- a/arch/arm64/kernel/asm-offsets.c
-+++ b/arch/arm64/kernel/asm-offsets.c
-@@ -136,6 +136,7 @@ int main(void)
- #ifdef CONFIG_KVM_ARM_HOST
-   DEFINE(VCPU_CONTEXT,		offsetof(struct kvm_vcpu, arch.ctxt));
-   DEFINE(VCPU_FAULT_DISR,	offsetof(struct kvm_vcpu, arch.fault.disr_el1));
-+  DEFINE(VCPU_WORKAROUND_FLAGS,	offsetof(struct kvm_vcpu, arch.workaround_flags));
-   DEFINE(CPU_GP_REGS,		offsetof(struct kvm_cpu_context, gp_regs));
-   DEFINE(CPU_USER_PT_REGS,	offsetof(struct kvm_regs, regs));
-   DEFINE(CPU_FP_REGS,		offsetof(struct kvm_regs, fp_regs));
-diff --git a/arch/arm64/kvm/hyp/hyp-entry.S b/arch/arm64/kvm/hyp/hyp-entry.S
-index bffece27b5c1..5b1fa37ca1f4 100644
---- a/arch/arm64/kvm/hyp/hyp-entry.S
-+++ b/arch/arm64/kvm/hyp/hyp-entry.S
-@@ -106,8 +106,44 @@ el1_hvc_guest:
- 	 */
- 	ldr	x1, [sp]				// Guest's x0
- 	eor	w1, w1, #ARM_SMCCC_ARCH_WORKAROUND_1
-+	cbz	w1, wa_epilogue
-+
-+	/* ARM_SMCCC_ARCH_WORKAROUND_2 handling */
-+	eor	w1, w1, #(ARM_SMCCC_ARCH_WORKAROUND_1 ^ \
-+			  ARM_SMCCC_ARCH_WORKAROUND_2)
- 	cbnz	w1, el1_trap
--	mov	x0, x1
-+
-+#ifdef CONFIG_ARM64_SSBD
-+alternative_cb	arm64_enable_wa2_handling
-+	b	wa2_end
-+alternative_cb_end
-+	get_vcpu_ptr	x2, x0
-+	ldr	x0, [x2, #VCPU_WORKAROUND_FLAGS]
-+
-+	/* Sanitize the argument and update the guest flags*/
-+	ldr	x1, [sp, #8]			// Guest's x1
-+	clz	w1, w1				// Murphy's device:
-+	lsr	w1, w1, #5			// w1 = !!w1 without using
-+	eor	w1, w1, #1			// the flags...
-+	bfi	x0, x1, #VCPU_WORKAROUND_2_FLAG_SHIFT, #1
-+	str	x0, [x2, #VCPU_WORKAROUND_FLAGS]
-+
-+	/* Check that we actually need to perform the call */
-+	hyp_ldr_this_cpu x0, arm64_ssbd_callback_required, x2
-+	cbz	x0, wa2_end
-+
-+	mov	w0, #ARM_SMCCC_ARCH_WORKAROUND_2
-+	smc	#0
-+
-+	/* Don't leak data from the SMC call */
-+	mov	x3, xzr
-+wa2_end:
-+	mov	x2, xzr
-+	mov	x1, xzr
-+#endif
-+
-+wa_epilogue:
-+	mov	x0, xzr
- 	add	sp, sp, #16
- 	eret
+diff --git a/arch/arm64/include/asm/kvm_asm.h b/arch/arm64/include/asm/kvm_asm.h
+index f6648a3e4152..fefd8cf42c35 100644
+--- a/arch/arm64/include/asm/kvm_asm.h
++++ b/arch/arm64/include/asm/kvm_asm.h
+@@ -71,14 +71,37 @@ extern u32 __kvm_get_mdcr_el2(void);
  
+ extern u32 __init_stage2_translation(void);
+ 
++/* Home-grown __this_cpu_{ptr,read} variants that always work at HYP */
++#define __hyp_this_cpu_ptr(sym)						\
++	({								\
++		void *__ptr = hyp_symbol_addr(sym);			\
++		__ptr += read_sysreg(tpidr_el2);			\
++		(typeof(&sym))__ptr;					\
++	 })
++
++#define __hyp_this_cpu_read(sym)					\
++	({								\
++		*__hyp_this_cpu_ptr(sym);				\
++	 })
++
+ #else /* __ASSEMBLY__ */
+ 
+-.macro get_host_ctxt reg, tmp
+-	adr_l	\reg, kvm_host_cpu_state
++.macro hyp_adr_this_cpu reg, sym, tmp
++	adr_l	\reg, \sym
+ 	mrs	\tmp, tpidr_el2
+ 	add	\reg, \reg, \tmp
+ .endm
+ 
++.macro hyp_ldr_this_cpu reg, sym, tmp
++	adr_l	\reg, \sym
++	mrs	\tmp, tpidr_el2
++	ldr	\reg,  [\reg, \tmp]
++.endm
++
++.macro get_host_ctxt reg, tmp
++	hyp_adr_this_cpu \reg, kvm_host_cpu_state, \tmp
++.endm
++
+ .macro get_vcpu_ptr vcpu, ctxt
+ 	get_host_ctxt \ctxt, \vcpu
+ 	ldr	\vcpu, [\ctxt, #HOST_CONTEXT_VCPU]
 -- 
 2.14.2
