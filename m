@@ -1,78 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751106AbeEVGhq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 02:37:46 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53164 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750707AbeEVGhp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 02:37:45 -0400
-Date: Tue, 22 May 2018 08:37:42 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: David Rientjes <rientjes@google.com>
-Cc: =?utf-8?B?56a56Iif6ZSu?= <ufo19890607@gmail.com>,
-        akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
-        aarcange@redhat.com, penguin-kernel@i-love.sakura.ne.jp, guro@fb.com,
-        yang.s@alibaba-inc.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Wind Yu <yuzhoujian@didichuxing.com>
-Subject: Re: [PATCH] Add the memcg print oom info for system oom
-Message-ID: <20180522063742.GE20020@dhcp22.suse.cz>
-References: <1526540428-12178-1-git-send-email-ufo19890607@gmail.com>
- <20180517071140.GQ12670@dhcp22.suse.cz>
- <CAHCio2gOLnj4NpkFrxpYVygg6ZeSeuwgp2Lwr6oTHRxHpbmcWw@mail.gmail.com>
- <20180517102330.GS12670@dhcp22.suse.cz>
- <alpine.DEB.2.21.1805211405300.41872@chino.kir.corp.google.com>
+        id S1751236AbeEVGlZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 02:41:25 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45072 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750954AbeEVGlV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 02:41:21 -0400
+Date: Mon, 21 May 2018 23:41:18 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Kent Overstreet <kent.overstreet@gmail.com>
+Cc: Mike Snitzer <snitzer@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        hch@infradead.org, colyli@suse.de, darrick.wong@oracle.com, clm@fb.com,
+        bacik@fb.com, linux-xfs@vger.kernel.org, drbd-dev@lists.linbit.com,
+        linux-btrfs@vger.kernel.org, linux-raid@vger.kernel.org,
+        neilb@suse.com
+Subject: Re: [PATCH 00/13] convert block layer to bioset_init()/mempool_init()
+Message-ID: <20180522064118.GA18704@infradead.org>
+References: <20180521144703.GA19303@redhat.com>
+ <4b343aef-e11c-73ba-1d88-7e73ca838cad@kernel.dk>
+ <20180521150439.GA19379@redhat.com>
+ <61e30dcf-a01c-f47d-087a-12930caf9aef@kernel.dk>
+ <20180521151817.GA19454@redhat.com>
+ <d01a150a-7752-f6ce-78f2-17a65c1e6fa5@kernel.dk>
+ <20180521160907.GA19553@redhat.com>
+ <20180521173724.GG11495@kmo-pixel>
+ <20180521182427.GA20013@redhat.com>
+ <20180521233855.GI11495@kmo-pixel>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1805211405300.41872@chino.kir.corp.google.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180521233855.GI11495@kmo-pixel>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 21-05-18 14:11:21, David Rientjes wrote:
-> On Thu, 17 May 2018, Michal Hocko wrote:
-> 
-> > this is not 5 lines at all. We dump memcg stats for the whole oom memcg
-> > subtree. For your patch it would be the whole subtree of the memcg of
-> > the oom victim. With cgroup v1 this can be quite deep as tasks can
-> > belong to inter-nodes as well. Would be
+On Mon, May 21, 2018 at 07:38:55PM -0400, Kent Overstreet wrote:
+> On Mon, May 21, 2018 at 02:24:32PM -0400, Mike Snitzer wrote:
+> > Every single data structure change in this series should be reviewed for
+> > unforeseen alignment consequences.  Jens seemed to say that is
+> > worthwhile.  Not sure if he'll do it or we divide it up.  If we divide
+> > it up a temp topic branch should be published for others to inspect.
 > > 
-> > 		pr_info("Task in ");
-> > 		pr_cont_cgroup_path(task_cgroup(p, memory_cgrp_id));
-> > 		pr_cont(" killed as a result of limit of ");
-> > 
-> > part of that output sufficient for your usecase?
+> > Could be alignment hasn't been a historic concern for a bunch of the
+> > data structures changed in this series.. if so then all we can do is fix
+> > up any obvious potential for false sharing.
 > 
-> There's no memcg to print as the limit in the above, but it does seem like 
-> the single line output is all that is needed in this case.
+> Honestly, I almost never worry about alignment... the very few times I do care,
+> I use __cacheline_aligned_in_smp.
 
-Yeah, that is exactly what I was proposing. I just copy&pasted the whole
-part to make it clear which part of mem_cgroup_print_oom_info I meant.
-Referring to "killed as a reslt of limit of" was misleading. Sorry about
-that.
-
-> It might be useful to discuss a single line output that specifies relevant 
-> information about the context of the oom kill, the killed thread, and the 
-> memcg of that thread, in a way that will be backwards compatible.  The 
-> messages in the oom killer have been restructured over time, I don't 
-> believe there is a backwards compatible way to search for an oom event in 
-> the kernel log.
-
-Agreed
- 
-> I've had success with defining a single line output the includes the 
-> CONSTRAINT_* of the oom kill, the origin and kill memcgs, the thread name, 
-> pid, and uid.  On system oom kills, origin and kill memcgs are left empty.
-> 
-> oom-kill constraint=CONSTRAINT_* origin_memcg=<memcg> kill_memcg=<memcg> task=<comm> pid=<pid> uid=<uid>
-> 
-> Perhaps we should introduce a single line output that will be backwards 
-> compatible that includes this information?
-
-I do not have a strong preference here. We already print cpuset on its
-own line and we can do the same for the memcg.
-
--- 
-Michal Hocko
-SUSE Labs
+And that generally is the right stratgey.  If Mike really doesn't want
+a change we can just open code the kmalloc for the bio set there, the
+important point is that we should not keep the old API around for no
+good reason.
