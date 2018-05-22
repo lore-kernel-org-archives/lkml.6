@@ -1,85 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751623AbeEVPre (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 11:47:34 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:43839 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751257AbeEVPrb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 11:47:31 -0400
-X-Google-Smtp-Source: AB8JxZoxiKuzmu13vucjqE49H9g42HSzPC3IwKIxWVJPL0yZr/4KepRLWyHTBOUmC63OB3A12o2wCIb04BF4Cuw6c3o=
+        id S1751691AbeEVPru (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 11:47:50 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46702 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751199AbeEVPrt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 11:47:49 -0400
+Subject: Re: [PATCH] KVM: Switch 'requests' to be 64-bit (explicitly)
+To: "Raslan, KarimAllah" <karahmed@amazon.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Cc: "rkrcmar@redhat.com" <rkrcmar@redhat.com>
+References: <1523744804-8220-1-git-send-email-karahmed@amazon.de>
+ <53700469-74f0-f3b0-96a4-d8ace2919b36@redhat.com>
+ <1527003728.13207.55.camel@amazon.de>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <5f346c4e-73f2-6a73-7915-e9fa911191ec@redhat.com>
+Date: Tue, 22 May 2018 17:47:42 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <00de829386b04823bb58a555fb620317@XCH-RTP-016.cisco.com>
-References: <1526731655-10087-1-git-send-email-jrosen@cisco.com>
- <CAF=yD-+kjceErK=CApiu1oY9uTjVWG2qeX=NkGVYufVVC_L2PA@mail.gmail.com>
- <CAF=yD-KvTyTibhqpKP79Obfk8KRVDLMyb6THNwNgrJzs47bAtQ@mail.gmail.com>
- <b7f6cc54a9f04132a279b15de0187ddd@XCH-RTP-016.cisco.com> <CAF=yD-Kfto4jJYMFzn=PV8OYdhEmdNfW+aakDhRMzRBWhWY0UQ@mail.gmail.com>
- <00de829386b04823bb58a555fb620317@XCH-RTP-016.cisco.com>
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date: Tue, 22 May 2018 11:46:49 -0400
-Message-ID: <CAF=yD-LjLRfBvBzaNq+G3Z74RVZ9fOW6A+CvK2gQfrOvn5smCQ@mail.gmail.com>
-Subject: Re: [PATCH v2] packet: track ring entry use using a shadow ring to
- prevent RX ring overrun
-To: "Jon Rosen (jrosen)" <jrosen@cisco.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-        Willem de Bruijn <willemb@google.com>,
-        Eric Dumazet <edumazet@google.com>, Kees Cook <keescook@chromium.org>,
-        David Windsor <dwindsor@gmail.com>,
-        "Rosen, Rami" <rami.rosen@intel.com>,
-        "Reshetova, Elena" <elena.reshetova@intel.com>,
-        Mike Maloney <maloney@google.com>,
-        Benjamin Poirier <bpoirier@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1527003728.13207.55.camel@amazon.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 10:12 AM, Jon Rosen (jrosen) <jrosen@cisco.com> wrote:
-> On Monday, May 21, 2018 2:17 PM, Jon Rosen (jrosen) <jrosen@cisco.com> wrote:
->> On Monday, May 21, 2018 1:07 PM, Willem de Bruijn
->> <willemdebruijn.kernel@gmail.com> wrote:
->>> On Mon, May 21, 2018 at 8:57 AM, Jon Rosen (jrosen) <jrosen@cisco.com> wrote:
->
-> ...snip...
->
+On 22/05/2018 17:42, Raslan, KarimAllah wrote:
+> On Mon, 2018-04-16 at 18:28 +0200, Paolo Bonzini wrote:
+>> On 15/04/2018 00:26, KarimAllah Ahmed wrote:
 >>>
->>> A setsockopt for userspace to signal a stricter interpretation of
->>> tp_status to elide the shadow hack could then be considered.
->>> It's not pretty. Either way, no full new version is required.
+>>> Switch 'requests' to be explicitly 64-bit and update BUILD_BUG_ON check to
+>>> use the size of "requests" instead of the hard-coded '32'.
 >>>
->>>> As much as I would like to find a solution that doesn't require
->>>> the spin lock I have yet to do so. Maybe the answer is that
->>>> existing applications will need to suffer the performance impact
->>>> but a new version or option for TPACKET_V1/V2 could be added to
->>>> indicate strict adherence of the TP_STATUS_USER bit and then the
->>>> original diffs could be used.
->
-> It looks like adding new socket options is pretty rare so I
-> wonder if a better option might be to define a new TP_STATUS_XXX
-> bit which would signal from a userspace application to the kernel
-> that it strictly interprets the TP_STATUS_USER bit to determine
-> ownership.
->
-> Todays applications set tp_status = TP_STATUS_KERNEL(0) for the
-> kernel to pick up the entry.  We could define a new value to pass
-> ownership as well as one to indicate to other kernel threads that
-> an entry is inuse:
->
->         #define TP_STATUS_USER_TO_KERNEL        (1 << 8)
->         #define TP_STATUS_INUSE                 (1 << 9)
->
-> If the kernel sees tp_status == TP_STATUS_KERNEL then it should
-> use the shadow method for tacking ownership. If it sees tp_status
-> == TP_STATUS_USER_TO_KERNEL then it can use the TP_STATUS_INUSE
-> method.
+>>> That gives us a bit more room again for arch-specific requests as we
+>>> already ran out of space for x86 due to the hard-coded check.
+>>>
+>>> Cc: Paolo Bonzini <pbonzini@redhat.com>
+>>> Cc: Radim Krčmář <rkrcmar@redhat.com>
+>>> Cc: kvm@vger.kernel.org
+>>> Cc: linux-kernel@vger.kernel.org
+>>> Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+>>
+>> I'm afraid architectures like ARM 32 need this to be conditional (using
+>> Kconfig).
+> 
+> Why would using a 64-bit 'requests' be a problem for ARM32? Are you 
+> concerned about performance here or is there some symantic problem?
 
-Interesting idea. Userspace would have to consistently follow the
-new behavior for all slots, which is hard to enforce. And as this is
-checked at runtime, the kernel always has to defensively allocate
-the shadow memory. I do think that a per-ring option set before
-ring allocation is simpler. Either way, this optimization would be a
-separate follow-on patch.
+They don't support atomics on double-word data.
+
+Paolo
