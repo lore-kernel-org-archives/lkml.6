@@ -1,200 +1,186 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751621AbeEVH55 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 03:57:57 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51810 "EHLO mx1.redhat.com"
+        id S1751687AbeEVH6V (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 03:58:21 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47996 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751501AbeEVH4B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 03:56:01 -0400
+        id S1751456AbeEVHzy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 03:55:54 -0400
 From: Eric Auger <eric.auger@redhat.com>
 To: eric.auger.pro@gmail.com, eric.auger@redhat.com,
         linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
         kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
         christoffer.dall@arm.com, peter.maydell@linaro.org
 Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
-Subject: [PATCH v8 12/13] KVM: arm/arm64: Implement KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
-Date: Tue, 22 May 2018 09:55:17 +0200
-Message-Id: <1526975718-18567-13-git-send-email-eric.auger@redhat.com>
+Subject: [PATCH v8 08/13] KVM: arm/arm64: Remove kvm_vgic_vcpu_early_init
+Date: Tue, 22 May 2018 09:55:13 +0200
+Message-Id: <1526975718-18567-9-git-send-email-eric.auger@redhat.com>
 In-Reply-To: <1526975718-18567-1-git-send-email-eric.auger@redhat.com>
 References: <1526975718-18567-1-git-send-email-eric.auger@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now all the internals are ready to handle multiple redistributor
-regions, let's allow the userspace to register them.
+kvm_vgic_vcpu_early_init gets called after kvm_vgic_cpu_init which
+is confusing. The call path is as follows:
+kvm_vm_ioctl_create_vcpu
+|_ kvm_arch_cpu_create
+   |_ kvm_vcpu_init
+      |_ kvm_arch_vcpu_init
+         |_ kvm_vgic_vcpu_init
+|_ kvm_arch_vcpu_postcreate
+   |_ kvm_vgic_vcpu_early_init
+
+Static initialization currently done in kvm_vgic_vcpu_early_init()
+can be moved to kvm_vgic_vcpu_init(). So let's move the code and
+remove kvm_vgic_vcpu_early_init(). kvm_arch_vcpu_postcreate() does
+nothing.
 
 Signed-off-by: Eric Auger <eric.auger@redhat.com>
-Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
 
 ---
-v5 -> v6:
-- added Christoffer's R-b
 
-v4 -> v5:
-- s/uint<n>_t/u<n>
-- fix KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION read
-- fix read path
-- return -ENOENT instead of -ENODEV when reading the
-  attributes of a region that does not exist
-
-v3 -> v4:
-- vgic_v3_rdist_region_from_index is introduced in this patch
-
-v2 -> v3:
-- early exit if vgic_v3_rdist_region_from_index() fails
+v7 -> v8:
+- fix ret missing initialization
 ---
- virt/kvm/arm/vgic/vgic-kvm-device.c | 40 ++++++++++++++++++++++++++++++++++++-
- virt/kvm/arm/vgic/vgic-mmio-v3.c    |  4 ++--
- virt/kvm/arm/vgic/vgic-v3.c         | 14 +++++++++++++
- virt/kvm/arm/vgic/vgic.h            | 13 +++++++++++-
- 4 files changed, 67 insertions(+), 4 deletions(-)
+ include/kvm/arm_vgic.h        |  1 -
+ virt/kvm/arm/arm.c            |  1 -
+ virt/kvm/arm/vgic/vgic-init.c | 80 ++++++++++++++++++++-----------------------
+ 3 files changed, 37 insertions(+), 45 deletions(-)
 
-diff --git a/virt/kvm/arm/vgic/vgic-kvm-device.c b/virt/kvm/arm/vgic/vgic-kvm-device.c
-index 76ab369..6ada243 100644
---- a/virt/kvm/arm/vgic/vgic-kvm-device.c
-+++ b/virt/kvm/arm/vgic/vgic-kvm-device.c
-@@ -92,7 +92,7 @@ int kvm_vgic_addr(struct kvm *kvm, unsigned long type, u64 *addr, bool write)
- 		if (r)
- 			break;
- 		if (write) {
--			r = vgic_v3_set_redist_base(kvm, *addr);
-+			r = vgic_v3_set_redist_base(kvm, 0, *addr, 0);
- 			goto out;
- 		}
- 		rdreg = list_first_entry(&vgic->rd_regions,
-@@ -103,6 +103,43 @@ int kvm_vgic_addr(struct kvm *kvm, unsigned long type, u64 *addr, bool write)
- 			addr_ptr = &rdreg->base;
- 		break;
- 	}
-+	case KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION:
-+	{
-+		struct vgic_redist_region *rdreg;
-+		u8 index;
+diff --git a/include/kvm/arm_vgic.h b/include/kvm/arm_vgic.h
+index 90e489f..08ccbe3 100644
+--- a/include/kvm/arm_vgic.h
++++ b/include/kvm/arm_vgic.h
+@@ -338,7 +338,6 @@ void kvm_vgic_early_init(struct kvm *kvm);
+ int kvm_vgic_vcpu_init(struct kvm_vcpu *vcpu);
+ int kvm_vgic_create(struct kvm *kvm, u32 type);
+ void kvm_vgic_destroy(struct kvm *kvm);
+-void kvm_vgic_vcpu_early_init(struct kvm_vcpu *vcpu);
+ void kvm_vgic_vcpu_destroy(struct kvm_vcpu *vcpu);
+ int kvm_vgic_map_resources(struct kvm *kvm);
+ int kvm_vgic_hyp_init(void);
+diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
+index a4c1b76..e90fff2 100644
+--- a/virt/kvm/arm/arm.c
++++ b/virt/kvm/arm/arm.c
+@@ -290,7 +290,6 @@ struct kvm_vcpu *kvm_arch_vcpu_create(struct kvm *kvm, unsigned int id)
+ 
+ void kvm_arch_vcpu_postcreate(struct kvm_vcpu *vcpu)
+ {
+-	kvm_vgic_vcpu_early_init(vcpu);
+ }
+ 
+ void kvm_arch_vcpu_free(struct kvm_vcpu *vcpu)
+diff --git a/virt/kvm/arm/vgic/vgic-init.c b/virt/kvm/arm/vgic/vgic-init.c
+index 8901b2d..272af97 100644
+--- a/virt/kvm/arm/vgic/vgic-init.c
++++ b/virt/kvm/arm/vgic/vgic-init.c
+@@ -44,7 +44,7 @@
+  *
+  * CPU Interface:
+  *
+- * - kvm_vgic_vcpu_early_init(): initialization of static data that
++ * - kvm_vgic_vcpu_init(): initialization of static data that
+  *   doesn't depend on any sizing information or emulation type. No
+  *   allocation is allowed there.
+  */
+@@ -67,46 +67,6 @@ void kvm_vgic_early_init(struct kvm *kvm)
+ 	spin_lock_init(&dist->lpi_list_lock);
+ }
+ 
+-/**
+- * kvm_vgic_vcpu_early_init() - Initialize static VGIC VCPU data structures
+- * @vcpu: The VCPU whose VGIC data structures whould be initialized
+- *
+- * Only do initialization, but do not actually enable the VGIC CPU interface
+- * yet.
+- */
+-void kvm_vgic_vcpu_early_init(struct kvm_vcpu *vcpu)
+-{
+-	struct vgic_cpu *vgic_cpu = &vcpu->arch.vgic_cpu;
+-	int i;
+-
+-	INIT_LIST_HEAD(&vgic_cpu->ap_list_head);
+-	spin_lock_init(&vgic_cpu->ap_list_lock);
+-
+-	/*
+-	 * Enable and configure all SGIs to be edge-triggered and
+-	 * configure all PPIs as level-triggered.
+-	 */
+-	for (i = 0; i < VGIC_NR_PRIVATE_IRQS; i++) {
+-		struct vgic_irq *irq = &vgic_cpu->private_irqs[i];
+-
+-		INIT_LIST_HEAD(&irq->ap_list);
+-		spin_lock_init(&irq->irq_lock);
+-		irq->intid = i;
+-		irq->vcpu = NULL;
+-		irq->target_vcpu = vcpu;
+-		irq->targets = 1U << vcpu->vcpu_id;
+-		kref_init(&irq->refcount);
+-		if (vgic_irq_is_sgi(i)) {
+-			/* SGIs */
+-			irq->enabled = 1;
+-			irq->config = VGIC_CONFIG_EDGE;
+-		} else {
+-			/* PPIs */
+-			irq->config = VGIC_CONFIG_LEVEL;
+-		}
+-	}
+-}
+-
+ /* CREATION */
+ 
+ /**
+@@ -224,13 +184,47 @@ static int kvm_vgic_dist_init(struct kvm *kvm, unsigned int nr_spis)
+ }
+ 
+ /**
+- * kvm_vgic_vcpu_init() - Register VCPU-specific KVM iodevs
++ * kvm_vgic_vcpu_init() - Initialize static VGIC VCPU data
++ * structures and register VCPU-specific KVM iodevs
++ *
+  * @vcpu: pointer to the VCPU being created and initialized
++ *
++ * Only do initialization, but do not actually enable the
++ * VGIC CPU interface
+  */
+ int kvm_vgic_vcpu_init(struct kvm_vcpu *vcpu)
+ {
+-	int ret = 0;
++	struct vgic_cpu *vgic_cpu = &vcpu->arch.vgic_cpu;
+ 	struct vgic_dist *dist = &vcpu->kvm->arch.vgic;
++	int ret = 0;
++	int i;
 +
-+		r = vgic_check_type(kvm, KVM_DEV_TYPE_ARM_VGIC_V3);
-+		if (r)
-+			break;
++	INIT_LIST_HEAD(&vgic_cpu->ap_list_head);
++	spin_lock_init(&vgic_cpu->ap_list_lock);
 +
-+		index = *addr & KVM_VGIC_V3_RDIST_INDEX_MASK;
++	/*
++	 * Enable and configure all SGIs to be edge-triggered and
++	 * configure all PPIs as level-triggered.
++	 */
++	for (i = 0; i < VGIC_NR_PRIVATE_IRQS; i++) {
++		struct vgic_irq *irq = &vgic_cpu->private_irqs[i];
 +
-+		if (write) {
-+			gpa_t base = *addr & KVM_VGIC_V3_RDIST_BASE_MASK;
-+			u32 count = (*addr & KVM_VGIC_V3_RDIST_COUNT_MASK)
-+					>> KVM_VGIC_V3_RDIST_COUNT_SHIFT;
-+			u8 flags = (*addr & KVM_VGIC_V3_RDIST_FLAGS_MASK)
-+					>> KVM_VGIC_V3_RDIST_FLAGS_SHIFT;
-+
-+			if (!count || flags)
-+				r = -EINVAL;
-+			else
-+				r = vgic_v3_set_redist_base(kvm, index,
-+							    base, count);
-+			goto out;
++		INIT_LIST_HEAD(&irq->ap_list);
++		spin_lock_init(&irq->irq_lock);
++		irq->intid = i;
++		irq->vcpu = NULL;
++		irq->target_vcpu = vcpu;
++		irq->targets = 1U << vcpu->vcpu_id;
++		kref_init(&irq->refcount);
++		if (vgic_irq_is_sgi(i)) {
++			/* SGIs */
++			irq->enabled = 1;
++			irq->config = VGIC_CONFIG_EDGE;
++		} else {
++			/* PPIs */
++			irq->config = VGIC_CONFIG_LEVEL;
 +		}
-+
-+		rdreg = vgic_v3_rdist_region_from_index(kvm, index);
-+		if (!rdreg) {
-+			r = -ENOENT;
-+			goto out;
-+		}
-+
-+		*addr = index;
-+		*addr |= rdreg->base;
-+		*addr |= (u64)rdreg->count << KVM_VGIC_V3_RDIST_COUNT_SHIFT;
-+		goto out;
 +	}
- 	default:
- 		r = -ENODEV;
- 	}
-@@ -674,6 +711,7 @@ static int vgic_v3_has_attr(struct kvm_device *dev,
- 		switch (attr->attr) {
- 		case KVM_VGIC_V3_ADDR_TYPE_DIST:
- 		case KVM_VGIC_V3_ADDR_TYPE_REDIST:
-+		case KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION:
- 			return 0;
- 		}
- 		break;
-diff --git a/virt/kvm/arm/vgic/vgic-mmio-v3.c b/virt/kvm/arm/vgic/vgic-mmio-v3.c
-index 1c6c535..2877840 100644
---- a/virt/kvm/arm/vgic/vgic-mmio-v3.c
-+++ b/virt/kvm/arm/vgic/vgic-mmio-v3.c
-@@ -764,11 +764,11 @@ static int vgic_v3_insert_redist_region(struct kvm *kvm, uint32_t index,
- 	return ret;
- }
  
--int vgic_v3_set_redist_base(struct kvm *kvm, u64 addr)
-+int vgic_v3_set_redist_base(struct kvm *kvm, u32 index, u64 addr, u32 count)
- {
- 	int ret;
- 
--	ret = vgic_v3_insert_redist_region(kvm, 0, addr, 0);
-+	ret = vgic_v3_insert_redist_region(kvm, index, addr, count);
- 	if (ret)
- 		return ret;
- 
-diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
-index 8892821..ff7dc89 100644
---- a/virt/kvm/arm/vgic/vgic-v3.c
-+++ b/virt/kvm/arm/vgic/vgic-v3.c
-@@ -491,6 +491,20 @@ struct vgic_redist_region *vgic_v3_rdist_free_slot(struct list_head *rd_regions)
- 	return NULL;
- }
- 
-+struct vgic_redist_region *vgic_v3_rdist_region_from_index(struct kvm *kvm,
-+							   u32 index)
-+{
-+	struct list_head *rd_regions = &kvm->arch.vgic.rd_regions;
-+	struct vgic_redist_region *rdreg;
-+
-+	list_for_each_entry(rdreg, rd_regions, list) {
-+		if (rdreg->index == index)
-+			return rdreg;
-+	}
-+	return NULL;
-+}
-+
-+
- int vgic_v3_map_resources(struct kvm *kvm)
- {
- 	struct vgic_dist *dist = &kvm->arch.vgic;
-diff --git a/virt/kvm/arm/vgic/vgic.h b/virt/kvm/arm/vgic/vgic.h
-index 1c8af4e..6879cf4 100644
---- a/virt/kvm/arm/vgic/vgic.h
-+++ b/virt/kvm/arm/vgic/vgic.h
-@@ -96,6 +96,13 @@
- /* we only support 64 kB translation table page size */
- #define KVM_ITS_L1E_ADDR_MASK		GENMASK_ULL(51, 16)
- 
-+#define KVM_VGIC_V3_RDIST_INDEX_MASK	GENMASK_ULL(11, 0)
-+#define KVM_VGIC_V3_RDIST_FLAGS_MASK	GENMASK_ULL(15, 12)
-+#define KVM_VGIC_V3_RDIST_FLAGS_SHIFT	12
-+#define KVM_VGIC_V3_RDIST_BASE_MASK	GENMASK_ULL(51, 16)
-+#define KVM_VGIC_V3_RDIST_COUNT_MASK	GENMASK_ULL(63, 52)
-+#define KVM_VGIC_V3_RDIST_COUNT_SHIFT	52
-+
- /* Requires the irq_lock to be held by the caller. */
- static inline bool irq_is_pending(struct vgic_irq *irq)
- {
-@@ -215,7 +222,7 @@ int vgic_v3_probe(const struct gic_kvm_info *info);
- int vgic_v3_map_resources(struct kvm *kvm);
- int vgic_v3_lpi_sync_pending_status(struct kvm *kvm, struct vgic_irq *irq);
- int vgic_v3_save_pending_tables(struct kvm *kvm);
--int vgic_v3_set_redist_base(struct kvm *kvm, u64 addr);
-+int vgic_v3_set_redist_base(struct kvm *kvm, u32 index, u64 addr, u32 count);
- int vgic_register_redist_iodev(struct kvm_vcpu *vcpu);
- bool vgic_v3_check_base(struct kvm *kvm);
- 
-@@ -284,6 +291,10 @@ vgic_v3_rd_region_size(struct kvm *kvm, struct vgic_redist_region *rdreg)
- 	else
- 		return rdreg->count * KVM_VGIC_V3_REDIST_SIZE;
- }
-+
-+struct vgic_redist_region *vgic_v3_rdist_region_from_index(struct kvm *kvm,
-+							   u32 index);
-+
- bool vgic_v3_rdist_overlap(struct kvm *kvm, gpa_t base, size_t size);
- 
- static inline bool vgic_dist_overlap(struct kvm *kvm, gpa_t base, size_t size)
+ 	if (!irqchip_in_kernel(vcpu->kvm))
+ 		return 0;
 -- 
 2.5.5
