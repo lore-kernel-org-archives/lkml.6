@@ -1,122 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753132AbeEVU6b (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 16:58:31 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:48526 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752937AbeEVU63 (ORCPT
+        id S1753048AbeEVU7a (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 16:59:30 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:40912 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752663AbeEVU71 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 16:58:29 -0400
-Date: Tue, 22 May 2018 22:58:26 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Aaro Koskinen <aaro.koskinen@iki.fi>
-Cc: Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>, sre@kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, khilman@kernel.org,
-        ivo.g.dimitrov.75@gmail.com, patrikbachan@gmail.com, serge@hallyn.com,
-        abcloriens@gmail.com, clayton@craftyguy.net, martijn@brixit.nl,
-        sakari.ailus@linux.intel.com,
-        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
-        Thorsten Leemhuis <regressions@leemhuis.info>
-Subject: Re: v4.17-rc1: regressions on N900, N950
-Message-ID: <20180522205824.GA24927@amd>
-References: <20180422074213.GA12428@amd>
- <20180423202940.ig6iud5lrbgnu35a@darkstar.musicnaut.iki.fi>
- <20180521213952.GA11596@amd>
- <20180522080250.4fzyvqrgw5oigexn@pali>
- <20180522194139.GB2299@darkstar.musicnaut.iki.fi>
+        Tue, 22 May 2018 16:59:27 -0400
+X-Google-Smtp-Source: AB8JxZp1uIHu5VYallzE6PBLyHUigxF4UvuoTBk47lkEjMFhXOV7rILEHRLdiXApvg8Mme4GnuCssw==
+Subject: Re: [PATCH v8 2/2] leds: lm3601x: Introduce the lm3601x LED driver
+To: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>
+References: <20180522142417.19639-1-dmurphy@ti.com>
+ <20180522142417.19639-2-dmurphy@ti.com>
+ <CAHp75VfTtD3Mnyqb63R_BP8BoAGNZProLCgWoDMo-aTk5C-iVA@mail.gmail.com>
+ <dca52e6e-451c-2ca4-a001-867708622d7b@ti.com>
+ <CAHp75Vdg9HTyQhv1KMOCqq5FjgPAC2q015Opnh3jDWvZY2bbNQ@mail.gmail.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <6577f2f9-7a31-3b98-71e2-2f86818eac7a@gmail.com>
+Date: Tue, 22 May 2018 22:58:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="mYCpIKhGyMATD0i+"
-Content-Disposition: inline
-In-Reply-To: <20180522194139.GB2299@darkstar.musicnaut.iki.fi>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CAHp75Vdg9HTyQhv1KMOCqq5FjgPAC2q015Opnh3jDWvZY2bbNQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 05/22/2018 10:34 PM, Andy Shevchenko wrote:
+> On Tue, May 22, 2018 at 11:26 PM, Dan Murphy <dmurphy@ti.com> wrote:
+>> On 05/22/2018 03:12 PM, Andy Shevchenko wrote:
+>>> On Tue, May 22, 2018 at 5:24 PM, Dan Murphy <dmurphy@ti.com> wrote:
+> 
+> 
+>>>> +static struct lm3601x_led *fled_cdev_to_led(
+>>>> +                               struct led_classdev_flash *fled_cdev)
+>>>
+>>> Didn't notice before. This will look much better in one line.
+>>
+>> Gives LTL warning.
+> 
+> I wouldn't really care about it.
+> But I leave to Jacek to decide.
 
---mYCpIKhGyMATD0i+
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Please make it one line.
 
-On Tue 2018-05-22 22:41:39, Aaro Koskinen wrote:
-> Hi,
->=20
-> On Tue, May 22, 2018 at 10:02:50AM +0200, Pali Roh=E1r wrote:
-> > Hi! I remember that in time of migration from platform board code to
-> > device tree structures there appeared some bug which caused that
-> > sometimes display were not initialized. And somebody figured out that
-> > display initialization is failing when some other SPI devices are
-> > initialized before or after display... This behavior was observed only
-> > on real N900 hardware, not in qemu.
->=20
-> Touchscreen needs to be initialized before display. This is documented
-> in the DTS, see arch/arm/boot/dts/omap3-n900.dts:
->=20
-> 	* For some reason, touchscreen is necessary for screen to work at
-> 	* all on real hw. It works well without it on emulator.
-> 	*
-> 	* Also... order in the device tree actually matters here.
->=20
-> > Real reason was never explained. In old platform board code there was
-> > hardcoded order of SPI devices in which initialization happened. And in
-> > device tree it is probably in (pseudo)-random order. Enabling/disabling
-> > various config option can affect some timings and order in which kernel
-> > starts probing and initializing devices...
->=20
-> The issue was also somewhat present with platform/board code, see e.g.
-> commit e65f131a14726e5f1b880a528271a52428e5b3a5.
->=20
-> My device worked with v4.17-rc1 (haven't found time to test newer kernels=
-),
-> but if you say the probe order is random then we must find some proper way
-> to express the dependency.
+It is even Linus' recommendation to not strictly stick to the
+80 character limit as we all have modern computers nowadays.
 
-I started bisect, but.. that will probably not be useful.
+> After addressing the rest, FWIW,
+> 
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> 
 
-If your device works ok in v4.17-rc1, it probably works in newer -rcs,
-too.
-
-Thanks for the ordering hint, I'll try to figure out what is going on
-there.
-
-									Pavel
-
-
-
-# bad: [60cc43fc888428bb2f18f08997432d426a243338] Linux 4.17-rc1
-# good: [0adb32858b0bddf4ada5f364a84ed60b196dbcda] Linux 4.16
-git bisect start 'v4.17-rc1' 'v4.16'
-# bad: [ac9053d2dcb9e8c3fa35ce458dfca8fddc141680] Merge tag 'usb-4.17-rc1' =
-of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb
-git bisect bad ac9053d2dcb9e8c3fa35ce458dfca8fddc141680
-# bad: [bb2407a7219760926760f0448fddf00d625e5aec] Merge tag 'docs-4.17' of =
-git://git.lwn.net/linux
-git bisect bad bb2407a7219760926760f0448fddf00d625e5aec
-# bad: [1c7095d2836baafd84e596dd34ba1a1293a4faa9] Merge airlied/drm-next in=
-to drm-misc-next
-git bisect bad 1c7095d2836baafd84e596dd34ba1a1293a4faa9
-
-
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---mYCpIKhGyMATD0i+
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlsEhHAACgkQMOfwapXb+vKgAQCfRTCdEl9IB9Sl7HaxCaakO7cD
-9sIAoJejrpAlCItIRa0bnoRqGJcFcvUC
-=fwvJ
------END PGP SIGNATURE-----
-
---mYCpIKhGyMATD0i+--
+-- 
+Best regards,
+Jacek Anaszewski
