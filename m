@@ -1,71 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752643AbeEVTgO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 15:36:14 -0400
-Received: from mga07.intel.com ([134.134.136.100]:16708 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752551AbeEVTcE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 15:32:04 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,430,1520924400";
-   d="scan'208";a="226406402"
-From: Reinette Chatre <reinette.chatre@intel.com>
-To: tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
-        vikas.shivappa@linux.intel.com
-Cc: gavin.hindman@intel.com, jithu.joseph@intel.com, dave.hansen@intel.com,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH V4 22/38] x86/intel_rdt: Add check to determine if monitoring in progress
-Date: Tue, 22 May 2018 04:29:10 -0700
-Message-Id: <fa1dbf0b38d4913058614334c249794e0abffccb.1526987654.git.reinette.chatre@intel.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <cover.1526987654.git.reinette.chatre@intel.com>
-References: <cover.1526987654.git.reinette.chatre@intel.com>
-In-Reply-To: <cover.1526987654.git.reinette.chatre@intel.com>
-References: <cover.1526987654.git.reinette.chatre@intel.com>
+        id S1752727AbeEVTgd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 15:36:33 -0400
+Received: from smtprelay0021.hostedemail.com ([216.40.44.21]:51757 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752016AbeEVTgb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 15:36:31 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:41:355:379:541:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1540:1568:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3653:3871:3872:3876:5007:7875:10004:10400:10848:11026:11473:11658:11914:12043:12555:12760:13069:13311:13357:13439:14181:14394:14659:14721:21080:21627:30054,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:21,LUA_SUMMARY:none
+X-HE-Tag: blow58_72e2c258fbe37
+X-Filterd-Recvd-Size: 1672
+Message-ID: <5dd900e9197febc1995604bb33c23c136d8b33ce.camel@perches.com>
+Subject: [PATCH] checkpatch: Fix macro argument precedence test
+From: Joe Perches <joe@perches.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Andy Whitcroft <apw@canonical.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc: Ivan Bornyakov <brnkv.i1@gmail.com>, lustre-devel@lists.lustre.org
+Date: Tue, 22 May 2018 12:36:28 -0700
+In-Reply-To: <20180522133439.12338-1-brnkv.i1@gmail.com>
+References: <20180522133439.12338-1-brnkv.i1@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a resource group is pseudo-locked it is orphaned without a class of
-service associated with it. We thus do not want any monitoring in
-progress on a resource group that will be used for pseudo-locking.
+checkpatch's macro argument precedence test is broken so fix it.
 
-Introduce a test that can be used to determine if pseudo-locking in
-progress on a resource group. Temporarily mark it as unused to avoid
-compile warnings until it is used.
-
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+Signed-off-by: Joe Perches <joe@perches.com>
 ---
- arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ scripts/checkpatch.pl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-index dc79b3090ac5..8693dbe602a2 100644
---- a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-@@ -14,6 +14,19 @@
- #include "intel_rdt.h"
- 
- /**
-+ * rdtgroup_monitor_in_progress - Test if monitoring in progress
-+ * @r: resource group being queried
-+ *
-+ * Return: 1 if monitor groups have been created for this resource
-+ * group, 0 otherwise.
-+ */
-+static int __attribute__ ((unused))
-+rdtgroup_monitor_in_progress(struct rdtgroup *rdtgrp)
-+{
-+	return !list_empty(&rdtgrp->mon.crdtgrp_list);
-+}
-+
-+/**
-  * rdtgroup_locksetup_user_restrict - Restrict user access to group
-  * @rdtgrp: resource group needing access restricted
-  *
--- 
-2.13.6
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index baddac9379f0..68879aa65cfd 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -5041,7 +5041,7 @@ sub process {
+ 				$tmp_stmt =~ s/\b(typeof|__typeof__|__builtin\w+|typecheck\s*\(\s*$Type\s*,|\#+)\s*\(*\s*$arg\s*\)*\b//g;
+ 				$tmp_stmt =~ s/\#+\s*$arg\b//g;
+ 				$tmp_stmt =~ s/\b$arg\s*\#\#//g;
+-				my $use_cnt = $tmp_stmt =~ s/\b$arg\b//g;
++				my $use_cnt = () = $tmp_stmt =~ /\b$arg\b/g;
+ 				if ($use_cnt > 1) {
+ 					CHK("MACRO_ARG_REUSE",
+ 					    "Macro argument reuse '$arg' - possible side-effects?\n" . "$herectx");
