@@ -1,82 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753196AbeEVVwE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 17:52:04 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:37927 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753159AbeEVVwC (ORCPT
+        id S1753229AbeEVVwt (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 17:52:49 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:34533 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752936AbeEVVwr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 17:52:02 -0400
-X-Google-Smtp-Source: ADUXVKJFtmk5TeyOxGWQoqox03nrM3dlt9HFjOgMIwr9U7XBcL4OnR5gctMcBhPAH3F2H1XcnN83H8JqGGCKNdgxWRk=
+        Tue, 22 May 2018 17:52:47 -0400
+X-Google-Smtp-Source: AB8JxZrL9vHLvDGyCUEgAqEeh5UUcUdyzJxwm56Q9lyYxTzREVZmmLiYUxsgh6VnQdoXCWAt62eCh+WUl3igIsU4Bsk=
 MIME-Version: 1.0
-In-Reply-To: <20180517194834.GW25808@atomide.com>
-References: <20180515183409.78046-1-andriy.shevchenko@linux.intel.com>
- <ca78895ac7ac84ec1c7f2f33024237af329ffd7a.camel@linux.intel.com>
- <20180516100842.xuma7b3e727w7bpz@linutronix.de> <CAHp75Vc2bJQHiWYcdKK+7wwMw2fSWxMauxP-dMRUAUdKnet7WQ@mail.gmail.com>
- <20180516104734.357oevogppu5bsg4@linutronix.de> <20180517134820.GI98604@atomide.com>
- <CAHp75Veb+zBfh=44qmMevvrfCSRYhfUMJUMArsDBtgM-F_FknQ@mail.gmail.com> <20180517194834.GW25808@atomide.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 23 May 2018 00:52:01 +0300
-Message-ID: <CAHp75Vf7L3zsSgaj1vfoyNKdPo0w6Nu+mW5HuM97SKAK-1y2Pg@mail.gmail.com>
-Subject: Re: [PATCH v1 0/3] console, serial8250: Disable PM and DMA ops
-To: Tony Lindgren <tony@atomide.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
+In-Reply-To: <20180522213113.GA40506@joelaf.mtv.corp.google.com>
+References: <20180518185501.173552-1-joel@joelfernandes.org>
+ <20180522113844.5rz3skjeck57arft@vireshk-i7> <CAJZ5v0hP+gCiLa+6YvKHaj7u-DuRfmVq_vjFRMj6CnVktJRxVg@mail.gmail.com>
+ <4237890.zlzv5C60QP@aspire.rjw.lan> <CAJZ5v0henS+LZ64JQwrXR8LrY7xzcsnnYS7AoBuR9dNaC4mTRw@mail.gmail.com>
+ <20180522213113.GA40506@joelaf.mtv.corp.google.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 22 May 2018 23:52:46 +0200
+X-Google-Sender-Auth: B109BwcKxswt9J12eLwrryJGiVo
+Message-ID: <CAJZ5v0ir7Chz6jCZTKRNT12oMd4uyu+JgFLKmZ8RJkcRkyrzBg@mail.gmail.com>
+Subject: Re: [PATCH v2] schedutil: Allow cpufreq requests to be made even when
+ kthread kicked
+To: Joel Fernandes <joel@joelfernandes.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Luca Abeni <luca.abeni@santannapisa.it>, Todd Kjos <tkjos@google.com>,
+        Claudio Scordino <claudio@evidence.eu.com>, kernel-team@android.com,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "Joel Fernandes (Google.)" <joelaf@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 17, 2018 at 10:48 PM, Tony Lindgren <tony@atomide.com> wrote:
-> * Andy Shevchenko <andy.shevchenko@gmail.com> [180517 16:38]:
->> On Thu, May 17, 2018 at 4:48 PM, Tony Lindgren <tony@atomide.com> wrote:
->> > * Sebastian Andrzej Siewior <bigeasy@linutronix.de> [180516 10:49]:
-
->> > The idea breaking PM seems silly to me considering that we've had
->> > it working for years already.
+On Tue, May 22, 2018 at 11:41 PM, Joel Fernandes <joel@joelfernandes.org> wrote:
+> On Tue, May 22, 2018 at 05:27:11PM +0200, Rafael J. Wysocki wrote:
+>> On Tue, May 22, 2018 at 2:22 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>> > On Tuesday, May 22, 2018 1:42:05 PM CEST Rafael J. Wysocki wrote:
+>> >> On Tue, May 22, 2018 at 1:38 PM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>> >> > On 22-05-18, 13:31, Rafael J. Wysocki wrote:
+>> >> >> So below is my (compiled-only) version of the $subject patch, obviously based
+>> >> >> on the Joel's work.
+>> >> >>
+>> >> >> Roughly, what it does is to move the fast_switch_enabled path entirely to
+>> >> >> sugov_update_single() and take the spinlock around sugov_update_commit()
+>> >> >> in the one-CPU case too.
+>> >
+>> > [cut]
+>> >
+>> >> >
+>> >> > Why do you assume that fast switch isn't possible in shared policy
+>> >> > cases ? It infact is already enabled for few drivers.
+>> >
+>> > I hope that fast_switch is not used with devfs_possible_from_any_cpu set in the
+>> > one-CPU policy case, as that looks racy even without any patching.
 >>
->> Same question  / note. World is much more complex than just being OMAP.
+>> Which would be the only case in which sugov_update_single() would run
+>> on a CPU that is not the target.
+>>
+>> And running sugov_update_single() concurrently on two different CPUs
+>> for the same target is a no-no, as we don't prevent concurrent updates
+>> from occurring in that path.
+>>
+>> Which means that the original patch from Joel will be sufficient as
+>> long as we ensure that sugov_update_single() can only run on one CPU
+>> at a time.
 >
-> Sorry but you are making assumptions about hardware being powered on
-> all the time.
+> Since target CPU's runqueue lock is held, I don't see how we can run
+> sugov_update_single concurrently with any other CPU for single policy, so
+> protecting such race shouldn't be necessary.
 
-Nope, other way around. The so called "support" _prevents_ our
-hardware to go to sleep.
+If dvfs_possible_from_any_cpu is set, any CPU can run
+sugov_update_single(), but the kthread will only run on the target
+itself.  So another CPU running sugov_update_single() for the target
+may be racing with the target's kthread.
 
-So it's not breaking, it's fixing. It's pity that OMAP solution is just a hack.
+> Also the "if (work_in_progress)" check I added to the sugov_update_single
+> doesn't change the behavior of single policy from what it is in mainline
+> since we were doing the same thing in already sugov_should_update_freq.
 
-> It may have been a safe assumption up to mid-90's and might still be
-> valid assumption for hardware providing on MS-DOS boot floppy
-> compability.
->
-> But that is not a safe assumption for Linux kernel at all. Especially
-> for console TX where there's no need to keep it powered unless there
-> is actually something to write.
->
-> If there are runtime PM issues for consoles, let's just fix them.
-
-Yes, there is an issue to begin with, i.e. irq_safe hack.
-Removal of that hack reveals the real issues with the code.
-
-> Then for really seeing console messages on next reboot from a hung
-> system, CONFIG_PSTORE_CONSOLE option seems to do a very good job.
-
-How this helps to prevent a more serious system crashes during an
-attempt to power UART on?
-
-> With a warm reset after triggered by watchdog the console messages
-> are readable most of the time even when using DDR as the back end.
-
-Ditto.
-
--- 
-With Best Regards,
-Andy Shevchenko
+No, it doesn't, which doesn't mean that this is all OK. :-)
