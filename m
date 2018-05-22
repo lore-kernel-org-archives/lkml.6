@@ -1,45 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751514AbeEVS21 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 14:28:27 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:41058 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751277AbeEVS20 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 14:28:26 -0400
-X-Google-Smtp-Source: AB8JxZpYWihrwH8xb39EYCfGL7miXtytCIgt1RFx+L+J7h/jHanROiAM4aQoRCVcEf4ih6M8Z7QhZQN7sntOLXqOYFc=
+        id S1751538AbeEVS3z (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 14:29:55 -0400
+Received: from mail-sg2apc01on0139.outbound.protection.outlook.com ([104.47.125.139]:27488
+        "EHLO APC01-SG2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751336AbeEVS3x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 14:29:53 -0400
+From: Dexuan Cui <decui@microsoft.com>
+To: Vitaly Kuznetsov <vkuznets@redhat.com>,
+        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>
+CC: KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] tools: hv: lsvmbus: convert to Python3
+Thread-Topic: [PATCH] tools: hv: lsvmbus: convert to Python3
+Thread-Index: AQHT8alBxYccTPRY3E6cqXEwCprsraQ8Egqw
+Date: Tue, 22 May 2018 18:29:47 +0000
+Message-ID: <KL1P15301MB0006B58D5247F9EF2D9C6B8ABF940@KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM>
+References: <20180522084527.29254-1-vkuznets@redhat.com>
+In-Reply-To: <20180522084527.29254-1-vkuznets@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2018-05-22T18:29:45.3587358Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic;
+ Sensitivity=General
+x-originating-ip: [2001:4898:80e8:1:5dfd:5a7b:7ee7:e115]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;KL1P15301MB0040;7:T9yFqjrU3iMvrKv5ZBHtun7/RZD50YCVfrJd185Y/39h/hs4+JGYZ4FEcjwFCAKVv16pl8Hdd8Wh2MP4JbR9E8+pxxc1ESMIj76BYfryTedNPfCAim59zsD2mhPI694z6m2jD5AnG5szigkVRob8vEp8teqf66cTqm1hELZQsBmoW3b9NiZllNroCPrGL8IQPvRBlth1122LXV+gKDFPKEPrDFhhsQjXG1m8fp5Std/D/NVKPXdW2xrudveIzO02;20:lBNKGu/aKKa9PmSqm7C1YzPDkDBz1dkoS8us9U6y/S1mzXWYsEY0RRUujbIzbx3zgXKmninREchV8jfrzWgEneceL3NOmPOPW2/gICZbRbvvQVaNHTQ/SSvPQqd71+RRpQgcALiRqhSY2HDLjHjwej83c7PvpBIVjuoaC3xK5ok=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:KL1P15301MB0040;
+x-ms-traffictypediagnostic: KL1P15301MB0040:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=decui@microsoft.com;
+x-microsoft-antispam-prvs: <KL1P15301MB00401AC330E97B058F705793BF940@KL1P15301MB0040.APCP153.PROD.OUTLOOK.COM>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(10201501046)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:KL1P15301MB0040;BCL:0;PCL:0;RULEID:;SRVR:KL1P15301MB0040;
+x-forefront-prvs: 0680FADD48
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39380400002)(39860400002)(376002)(346002)(396003)(199004)(189003)(81166006)(81156014)(8676002)(7736002)(305945005)(6246003)(3660700001)(8936002)(8990500004)(74316002)(106356001)(105586002)(53936002)(46003)(11346002)(2501003)(86362001)(476003)(446003)(86612001)(6116002)(10090500001)(9686003)(102836004)(77096007)(486006)(186003)(7696005)(99286004)(2900100001)(5660300001)(68736007)(4326008)(6506007)(76176011)(478600001)(14454004)(10290500003)(25786009)(33656002)(316002)(110136005)(54906003)(229853002)(6436002)(55016002)(22452003)(97736004)(2906002)(3280700002);DIR:OUT;SFP:1102;SCL:1;SRVR:KL1P15301MB0040;H:KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: eNgbc+/UyXAwyB+CLnTFnVVM5nTcSiATwi1tjyr5hDsD8t1uLm0JKwVbVBtini3pb2qHpKPQyXxCVkFpWw1Apkf1NFF7kMQIXdxLlUI5yTW2r+NMBcOQZQdS8RtOMhQTSqvnZ7ZQZxvljZHcCmxE2svWD7c4a7EmSzt+KPrFF8MVGTFgTfXI1oqEY+R0Byi5
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-References: <20180518170202.11458-1-samitolvanen@google.com>
- <05d14ac7-0feb-63a3-e7ef-b8ca1ae2fd1d@arm.com> <CAKwvOdm1kYedukCq=g74AvqJHp6KC03oNoouQy2nkvfo4idoEw@mail.gmail.com>
- <8c7be44f-086d-65e3-9969-8182261ce82f@arm.com> <CAKwvOd=XZqg5=mkXZb-cxq3i_AGoJGAbmF=Fwc7Q98oi0tbN9g@mail.gmail.com>
- <3fd89842-86cd-ee01-0c2c-5438dd2d5f2a@arm.com> <CAKwvOdk+=JKcQP1ieLEkZftRGf-pqCTTzEuYvT_45YNMkEw_wA@mail.gmail.com>
- <86k1rzc4ba.wl-marc.zyngier@arm.com> <CAAeHK+z2LmMYasYtRTt2U=QF8Pe_i10RA3-SkLzGXXByZqLh1w@mail.gmail.com>
-In-Reply-To: <CAAeHK+z2LmMYasYtRTt2U=QF8Pe_i10RA3-SkLzGXXByZqLh1w@mail.gmail.com>
-From: Nick Desaulniers <ndesaulniers@google.com>
-Date: Tue, 22 May 2018 11:28:13 -0700
-Message-ID: <CAKwvOdmWg8o9yoZ+3dCwL8vYB8gzE+AatCbXENN-+Gge9Q6gtA@mail.gmail.com>
-Subject: Re: [PATCH] arm64: kvm: use -fno-jump-tables with clang
-To: Andrey Konovalov <andreyknvl@google.com>
-Cc: marc.zyngier@arm.com, Sami Tolvanen <samitolvanen@google.com>,
-        christoffer.dall@arm.com, Takahiro Akashi <takahiro.akashi@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Office365-Filtering-Correlation-Id: 8e496802-250d-4d73-7fc5-08d5c011ff87
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8e496802-250d-4d73-7fc5-08d5c011ff87
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 May 2018 18:29:47.1766
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1P15301MB0040
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4MIU1n6023972
 
-On Fri, May 18, 2018 at 11:13 AM Marc Zyngier <marc.zyngier@arm.com> wrote:
-> > - you have checked that with a released version of the compiler, you
+> From: Vitaly Kuznetsov <vkuznets@redhat.com>
+> Sent: Tuesday, May 22, 2018 01:45
+> 
+> Use '2to3' tool to make lsvmbus work with both Python2 and Python3.
+> 
+> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> ---
+>  tools/hv/lsvmbus | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/tools/hv/lsvmbus b/tools/hv/lsvmbus
+> index 353e56768df8..c184aac33d5c 100644
+> --- a/tools/hv/lsvmbus
+> +++ b/tools/hv/lsvmbus
+> @@ -17,7 +17,7 @@ if options.verbose is not None:
+> 
+>  vmbus_sys_path = '/sys/bus/vmbus/devices'
+>  if not os.path.isdir(vmbus_sys_path):
+> -	print "%s doesn't exist: exiting..." % vmbus_sys_path
+> +	print("%s doesn't exist: exiting..." % vmbus_sys_path)
+>  	exit(-1)
+> 
+>  vmbus_dev_dict = {
+> @@ -93,11 +93,11 @@ format2 = '%2s: Class_ID = %s - %s\n\tDevice_ID
+> = %s\n\tSysfs path: %s\n%s'
+> 
+>  for d in vmbus_dev_list:
+>  	if verbose == 0:
+> -		print ('VMBUS ID ' + format0) % (d.vmbus_id, d.dev_desc)
+> +		print(('VMBUS ID ' + format0) % (d.vmbus_id, d.dev_desc))
+>  	elif verbose == 1:
+> -		print ('VMBUS ID ' + format1) %	\
+> -			(d.vmbus_id, d.class_id, d.dev_desc, d.chn_vp_mapping)
+> +		print(('VMBUS ID ' + format1) %	\
+> +			(d.vmbus_id, d.class_id, d.dev_desc, d.chn_vp_mapping))
+>  	else:
+> -		print ('VMBUS ID ' + format2) % \
+> +		print(('VMBUS ID ' + format2) % \
+>  			(d.vmbus_id, d.class_id, d.dev_desc, \
+> -			d.device_id, d.sysfs_path, d.chn_vp_mapping)
+> +			d.device_id, d.sysfs_path, d.chn_vp_mapping))
+> --
+> 2.14.3
 
-On Tue, May 22, 2018 at 10:58 AM Andrey Konovalov <andreyknvl@google.com>
-wrote:
-> Tested-by: Andrey Konovalov <andreyknvl@google.com>
+Looks good to me. Thanks!
 
-Hi Andrey,
-Thank you very much for this report.  Can you confirm as well the version
-of Clang that you were using? If it's not a binary release (built from
-source), would you be able to re-confirm with a released version?
--- 
-Thanks,
-~Nick Desaulniers
+Acked-by: Dexuan Cui <decui@microsoft.com>
