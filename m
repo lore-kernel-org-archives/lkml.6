@@ -1,144 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752669AbeEVC6N (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 22:58:13 -0400
-Received: from mga11.intel.com ([192.55.52.93]:35028 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752556AbeEVC6D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 22:58:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,428,1520924400";
-   d="scan'208";a="201335906"
-From: Luwei Kang <luwei.kang@intel.com>
-To: kvm@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        chao.p.peng@linux.intel.com, thomas.lendacky@amd.com, bp@suse.de,
-        Kan.liang@intel.com, Janakarajan.Natarajan@amd.com, dwmw@amazon.co.uk,
-        linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com,
-        peterz@infradead.org, mathieu.poirier@linaro.org,
-        kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
-        pbonzini@redhat.com, rkrcmar@redhat.com, david@redhat.com,
-        bsd@redhat.com, yu.c.zhang@linux.intel.com, joro@8bytes.org,
-        Luwei Kang <luwei.kang@intel.com>
-Subject: [PATCH v9 02/12] perf/x86/intel/pt: Change pt_cap_get() to a public function
-Date: Tue, 22 May 2018 12:52:05 +0800
-Message-Id: <1526964735-16566-3-git-send-email-luwei.kang@intel.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1526964735-16566-1-git-send-email-luwei.kang@intel.com>
-References: <1526964735-16566-1-git-send-email-luwei.kang@intel.com>
+        id S1752308AbeEVDEW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 23:04:22 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36094 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751505AbeEVDES (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 23:04:18 -0400
+Date: Mon, 21 May 2018 20:04:16 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Kent Overstreet <kent.overstreet@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        peterz@infradead.org
+Subject: Re: [PATCH] [RFC] bcachefs: SIX locks (shared/intent/exclusive)
+Message-ID: <20180522030416.GB18682@bombadil.infradead.org>
+References: <20180522021951.1453-1-kent.overstreet@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180522021951.1453-1-kent.overstreet@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Peng <chao.p.peng@linux.intel.com>
+On Mon, May 21, 2018 at 10:19:51PM -0400, Kent Overstreet wrote:
+> New lock for bcachefs, like read/write locks but with a third state,
+> intent.
+> 
+> Intent locks conflict with each other, but not with read locks; taking a
+> write lock requires first holding an intent lock.
 
-Change pt_cap_get() to a public function that KVM
-can access this function to check if specific
-feature is supported on hardware.
+Can you put something in the description that these are sleeping locks
+(like mutexes), not spinning locks (like spinlocks)?  (Yeah, I know
+there's the opportunistic spin, but conceptually, they're sleeping locks).
 
-Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
-Signed-off-by: Luwei Kang <luwei.kang@intel.com>
----
- arch/x86/events/intel/pt.c      |  3 ++-
- arch/x86/events/intel/pt.h      | 21 ---------------------
- arch/x86/include/asm/intel_pt.h | 23 +++++++++++++++++++++++
- 3 files changed, 25 insertions(+), 22 deletions(-)
+Some other things I'd like documented:
 
-diff --git a/arch/x86/events/intel/pt.c b/arch/x86/events/intel/pt.c
-index 3b99394..c80e2f5 100644
---- a/arch/x86/events/intel/pt.c
-+++ b/arch/x86/events/intel/pt.c
-@@ -75,7 +75,7 @@
- 	PT_CAP(psb_periods,		1, CPUID_EBX, 0xffff0000),
- };
- 
--static u32 pt_cap_get(enum pt_capabilities cap)
-+u32 pt_cap_get(enum pt_capabilities cap)
- {
- 	struct pt_cap_desc *cd = &pt_caps[cap];
- 	u32 c = pt_pmu.caps[cd->leaf * PT_CPUID_REGS_NUM + cd->reg];
-@@ -83,6 +83,7 @@ static u32 pt_cap_get(enum pt_capabilities cap)
- 
- 	return (c & cd->mask) >> shift;
- }
-+EXPORT_SYMBOL_GPL(pt_cap_get);
- 
- static ssize_t pt_cap_show(struct device *cdev,
- 			   struct device_attribute *attr,
-diff --git a/arch/x86/events/intel/pt.h b/arch/x86/events/intel/pt.h
-index 0050ca1..269e15a 100644
---- a/arch/x86/events/intel/pt.h
-+++ b/arch/x86/events/intel/pt.h
-@@ -45,30 +45,9 @@ struct topa_entry {
- 	u64	rsvd4	: 16;
- };
- 
--#define PT_CPUID_LEAVES		2
--#define PT_CPUID_REGS_NUM	4 /* number of regsters (eax, ebx, ecx, edx) */
--
- /* TSC to Core Crystal Clock Ratio */
- #define CPUID_TSC_LEAF		0x15
- 
--enum pt_capabilities {
--	PT_CAP_max_subleaf = 0,
--	PT_CAP_cr3_filtering,
--	PT_CAP_psb_cyc,
--	PT_CAP_ip_filtering,
--	PT_CAP_mtc,
--	PT_CAP_ptwrite,
--	PT_CAP_power_event_trace,
--	PT_CAP_topa_output,
--	PT_CAP_topa_multiple_entries,
--	PT_CAP_single_range_output,
--	PT_CAP_payloads_lip,
--	PT_CAP_num_address_ranges,
--	PT_CAP_mtc_periods,
--	PT_CAP_cycle_thresholds,
--	PT_CAP_psb_periods,
--};
--
- struct pt_pmu {
- 	struct pmu		pmu;
- 	u32			caps[PT_CPUID_REGS_NUM * PT_CPUID_LEAVES];
-diff --git a/arch/x86/include/asm/intel_pt.h b/arch/x86/include/asm/intel_pt.h
-index b523f51..4270421 100644
---- a/arch/x86/include/asm/intel_pt.h
-+++ b/arch/x86/include/asm/intel_pt.h
-@@ -2,10 +2,33 @@
- #ifndef _ASM_X86_INTEL_PT_H
- #define _ASM_X86_INTEL_PT_H
- 
-+#define PT_CPUID_LEAVES		2
-+#define PT_CPUID_REGS_NUM	4 /* number of regsters (eax, ebx, ecx, edx) */
-+
-+enum pt_capabilities {
-+	PT_CAP_max_subleaf = 0,
-+	PT_CAP_cr3_filtering,
-+	PT_CAP_psb_cyc,
-+	PT_CAP_ip_filtering,
-+	PT_CAP_mtc,
-+	PT_CAP_ptwrite,
-+	PT_CAP_power_event_trace,
-+	PT_CAP_topa_output,
-+	PT_CAP_topa_multiple_entries,
-+	PT_CAP_single_range_output,
-+	PT_CAP_payloads_lip,
-+	PT_CAP_num_address_ranges,
-+	PT_CAP_mtc_periods,
-+	PT_CAP_cycle_thresholds,
-+	PT_CAP_psb_periods,
-+};
-+
- #if defined(CONFIG_PERF_EVENTS) && defined(CONFIG_CPU_SUP_INTEL)
- void cpu_emergency_stop_pt(void);
-+extern u32 pt_cap_get(enum pt_capabilities cap);
- #else
- static inline void cpu_emergency_stop_pt(void) {}
-+static inline u32 pt_cap_get(enum pt_capabilities cap) { return 0; }
- #endif
- 
- #endif /* _ASM_X86_INTEL_PT_H */
--- 
-1.8.3.1
+ - Any number of readers can hold the lock
+ - Once one thread acquires the lock for intent, further intent acquisitions
+   will block.  May new readers acquire the lock?
+ - You cannot acquire the lock for write directly, you must acquire it for
+   intent first, then upgrade to write.
+ - Can you downgrade to read from intent, or downgrade from write back to
+   intent?
+ - Once you are trying to upgrade from intent to write, are new read
+   acquisitions blocked? (can readers starve writers?)
+ - When you drop the lock as a writer, do we prefer reader acquisitions
+   over intent acquisitions?  That is, if we have a queue of RRIRIRIR,
+   and we drop the lock, does the queue look like II or IRIR?
