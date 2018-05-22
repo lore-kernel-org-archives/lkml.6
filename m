@@ -1,98 +1,195 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751492AbeEVM2A (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 08:28:00 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45624 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751161AbeEVM15 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 08:27:57 -0400
-Subject: Re: [RFC PATCH net-next 02/12] vhost_net: introduce
- vhost_exceeds_weight()
-To: Jesse Brandeburg <jesse.brandeburg@intel.com>
-Cc: mst@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org
-References: <1526893473-20128-1-git-send-email-jasowang@redhat.com>
- <1526893473-20128-3-git-send-email-jasowang@redhat.com>
- <20180521092923.00005cec@intel.com>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <ab546c2a-182f-830b-0e81-56a50da80677@redhat.com>
-Date: Tue, 22 May 2018 20:27:51 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751350AbeEVMbL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 08:31:11 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:57234 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751172AbeEVMbJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 08:31:09 -0400
+Date: Tue, 22 May 2018 08:31:08 -0400
+From: Brian Foster <bfoster@redhat.com>
+To: syzbot <syzbot+568245b88fbaedcb1959@syzkaller.appspotmail.com>
+Cc: darrick.wong@oracle.com, linux-kernel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: INFO: task hung in xlog_grant_head_check
+Message-ID: <20180522123107.GC3751@bfoster.bfoster>
+References: <000000000000457b2d056cbb0044@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20180521092923.00005cec@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000000000000457b2d056cbb0044@google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, May 21, 2018 at 10:55:02AM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    203ec2fed17a Merge tag 'armsoc-fixes' of git://git.kernel...
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=11c1ad77800000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=f3b4e30da84ec1ed
+> dashboard link: https://syzkaller.appspot.com/bug?extid=568245b88fbaedcb1959
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=122c7427800000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10387057800000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+568245b88fbaedcb1959@syzkaller.appspotmail.com
+> 
+>         (ptrval): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> ................
+>         (ptrval): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> ................
+> XFS (loop0): metadata I/O error in "xfs_trans_read_buf_map" at daddr 0x2 len
+> 1 error 117
+> XFS (loop0): xfs_imap_lookup: xfs_ialloc_read_agi() returned error -117,
+> agno 0
+> XFS (loop0): failed to read root inode
 
+FWIW, the initial console output is actually:
 
-On 2018年05月22日 00:29, Jesse Brandeburg wrote:
-> On Mon, 21 May 2018 17:04:23 +0800 Jason wrote:
->> Signed-off-by: Jason Wang <jasowang@redhat.com>
->> ---
->>   drivers/vhost/net.c | 13 ++++++++-----
->>   1 file changed, 8 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
->> index 15d191a..de544ee 100644
->> --- a/drivers/vhost/net.c
->> +++ b/drivers/vhost/net.c
->> @@ -479,6 +479,12 @@ static size_t init_iov_iter(struct vhost_virtqueue *vq, struct iov_iter *iter,
->>   	return len;
->>   }
->>   
->> +static bool vhost_exceeds_weight(int pkts, int total_len)
->> +{
->> +	return unlikely(total_len >= VHOST_NET_WEIGHT) ||
->> +	       unlikely(pkts >= VHOST_NET_PKT_WEIGHT);
-> I was going to say just one unlikely, but then the caller of this
-> function also says unlikely(vhost_exceeds...), so I think you should
-> just drop the unlikely statements here (both of them)
+[  448.028253] XFS (loop0): Mounting V4 Filesystem
+[  448.033540] XFS (loop0): Log size 9371840 blocks too large, maximum size is 1048576 blocks
+[  448.042287] XFS (loop0): Log size out of supported range.
+[  448.047841] XFS (loop0): Continuing onwards, but if log hangs are experienced then please report this message in the bug report.
+[  448.060712] XFS (loop0): totally zeroed log
 
-Ok.
+... which warns about an oversized log and resulting log hangs. Not
+having dug into the details of why this occurs so quickly in this mount
+failure path, it does look like we'd never have got past this point on a
+v5 fs (i.e., the above warning would become an error and we'd not enter
+the xfs_log_mount_cancel() path).
 
->
->> +}
->> +
->>   /* Expects to be always run from workqueue - which acts as
->>    * read-size critical section for our kind of RCU. */
->>   static void handle_tx(struct vhost_net *net)
->> @@ -570,7 +576,6 @@ static void handle_tx(struct vhost_net *net)
->>   			msg.msg_control = NULL;
->>   			ubufs = NULL;
->>   		}
->> -
-> unrelated whitespace changes?
+Brian
 
-Yes.
-
-Thanks
-
->
->>   		total_len += len;
->>   		if (total_len < VHOST_NET_WEIGHT &&
->>   		    !vhost_vq_avail_empty(&net->dev, vq) &&
->> @@ -600,8 +605,7 @@ static void handle_tx(struct vhost_net *net)
->>   		else
->>   			vhost_zerocopy_signal_used(net, vq);
->>   		vhost_net_tx_packet(net);
->> -		if (unlikely(total_len >= VHOST_NET_WEIGHT) ||
->> -		    unlikely(++sent_pkts >= VHOST_NET_PKT_WEIGHT)) {
->> +		if (unlikely(vhost_exceeds_weight(++sent_pkts, total_len))) {
->>   			vhost_poll_queue(&vq->poll);
->>   			break;
->>   		}
->> @@ -887,8 +891,7 @@ static void handle_rx(struct vhost_net *net)
->>   		if (unlikely(vq_log))
->>   			vhost_log_write(vq, vq_log, log, vhost_len);
->>   		total_len += vhost_len;
->> -		if (unlikely(total_len >= VHOST_NET_WEIGHT) ||
->> -		    unlikely(++recv_pkts >= VHOST_NET_PKT_WEIGHT)) {
->> +		if (unlikely(vhost_exceeds_weight(++recv_pkts, total_len))) {
->>   			vhost_poll_queue(&vq->poll);
->>   			goto out;
->>   		}
+> INFO: task syz-executor060:4501 blocked for more than 120 seconds.
+>       Not tainted 4.17.0-rc5+ #60
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> syz-executor060 D17168  4501   4499 0x00000000
+> Call Trace:
+>  context_switch kernel/sched/core.c:2859 [inline]
+>  __schedule+0x801/0x1e30 kernel/sched/core.c:3501
+>  schedule+0xef/0x430 kernel/sched/core.c:3545
+>  xlog_grant_head_wait+0x260/0xf80 fs/xfs/xfs_log.c:275
+>  xlog_grant_head_check+0x4d6/0x550 fs/xfs/xfs_log.c:337
+>  xfs_log_reserve+0x398/0xd20 fs/xfs/xfs_log.c:466
+>  xfs_log_unmount_write+0x2c4/0xfb0 fs/xfs/xfs_log.c:885
+>  xfs_log_quiesce+0xf9/0x130 fs/xfs/xfs_log.c:1011
+>  xfs_log_unmount+0x22/0xb0 fs/xfs/xfs_log.c:1025
+>  xfs_log_mount_cancel+0x44/0x60 fs/xfs/xfs_log.c:828
+>  xfs_mountfs+0x17d9/0x2b80 fs/xfs/xfs_mount.c:1041
+>  xfs_fs_fill_super+0xdef/0x1560 fs/xfs/xfs_super.c:1734
+>  mount_bdev+0x30c/0x3e0 fs/super.c:1164
+>  xfs_fs_mount+0x34/0x40 fs/xfs/xfs_super.c:1801
+>  mount_fs+0xae/0x328 fs/super.c:1267
+>  vfs_kern_mount.part.34+0xd4/0x4d0 fs/namespace.c:1037
+>  vfs_kern_mount fs/namespace.c:1027 [inline]
+>  do_new_mount fs/namespace.c:2518 [inline]
+>  do_mount+0x564/0x3070 fs/namespace.c:2848
+>  ksys_mount+0x12d/0x140 fs/namespace.c:3064
+>  __do_sys_mount fs/namespace.c:3078 [inline]
+>  __se_sys_mount fs/namespace.c:3075 [inline]
+>  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3075
+>  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x442d9a
+> RSP: 002b:00007ffc7a9dde88 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
+> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000442d9a
+> RDX: 0000000020000040 RSI: 0000000020000100 RDI: 00007ffc7a9dde90
+> RBP: 0000000000000004 R08: 00000000200001c0 R09: 000000000000000a
+> R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000401c00
+> R13: 0000000000401c90 R14: 0000000000000000 R15: 0000000000000000
+> 
+> Showing all locks held in the system:
+> 2 locks held by khungtaskd/893:
+>  #0:         (ptrval) (rcu_read_lock){....}, at:
+> check_hung_uninterruptible_tasks kernel/hung_task.c:175 [inline]
+>  #0:         (ptrval) (rcu_read_lock){....}, at: watchdog+0x1ff/0xf60
+> kernel/hung_task.c:249
+>  #1:         (ptrval) (tasklist_lock){.+.+}, at:
+> debug_show_all_locks+0xde/0x34a kernel/locking/lockdep.c:4470
+> 1 lock held by rsyslogd/4384:
+>  #0:         (ptrval) (&f->f_pos_lock){+.+.}, at: __fdget_pos+0x1a9/0x1e0
+> fs/file.c:766
+> 2 locks held by getty/4474:
+>  #0:         (ptrval) (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x37/0x40
+> drivers/tty/tty_ldsem.c:365
+>  #1:         (ptrval) (&ldata->atomic_read_lock){+.+.}, at:
+> n_tty_read+0x321/0x1cc0 drivers/tty/n_tty.c:2131
+> 2 locks held by getty/4475:
+>  #0:         (ptrval) (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x37/0x40
+> drivers/tty/tty_ldsem.c:365
+>  #1:         (ptrval) (&ldata->atomic_read_lock){+.+.}, at:
+> n_tty_read+0x321/0x1cc0 drivers/tty/n_tty.c:2131
+> 2 locks held by getty/4476:
+>  #0:         (ptrval) (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x37/0x40
+> drivers/tty/tty_ldsem.c:365
+>  #1:         (ptrval) (&ldata->atomic_read_lock){+.+.}, at:
+> n_tty_read+0x321/0x1cc0 drivers/tty/n_tty.c:2131
+> 2 locks held by getty/4477:
+>  #0:         (ptrval) (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x37/0x40
+> drivers/tty/tty_ldsem.c:365
+>  #1:         (ptrval) (&ldata->atomic_read_lock){+.+.}, at:
+> n_tty_read+0x321/0x1cc0 drivers/tty/n_tty.c:2131
+> 2 locks held by getty/4478:
+>  #0:         (ptrval) (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x37/0x40
+> drivers/tty/tty_ldsem.c:365
+>  #1:         (ptrval) (&ldata->atomic_read_lock){+.+.}, at:
+> n_tty_read+0x321/0x1cc0 drivers/tty/n_tty.c:2131
+> 2 locks held by getty/4479:
+>  #0:         (ptrval) (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x37/0x40
+> drivers/tty/tty_ldsem.c:365
+>  #1:         (ptrval) (&ldata->atomic_read_lock){+.+.}, at:
+> n_tty_read+0x321/0x1cc0 drivers/tty/n_tty.c:2131
+> 2 locks held by getty/4480:
+>  #0:         (ptrval) (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x37/0x40
+> drivers/tty/tty_ldsem.c:365
+>  #1:         (ptrval) (&ldata->atomic_read_lock){+.+.}, at:
+> n_tty_read+0x321/0x1cc0 drivers/tty/n_tty.c:2131
+> 1 lock held by syz-executor060/4501:
+>  #0:         (ptrval) (&type->s_umount_key#36/1){+.+.}, at: alloc_super
+> fs/super.c:213 [inline]
+>  #0:         (ptrval) (&type->s_umount_key#36/1){+.+.}, at:
+> sget_userns+0x2dd/0xf00 fs/super.c:506
+> 
+> =============================================
+> 
+> NMI backtrace for cpu 0
+> CPU: 0 PID: 893 Comm: khungtaskd Not tainted 4.17.0-rc5+ #60
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+>  nmi_cpu_backtrace.cold.4+0x19/0xce lib/nmi_backtrace.c:103
+>  nmi_trigger_cpumask_backtrace+0x151/0x192 lib/nmi_backtrace.c:62
+>  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+>  trigger_all_cpu_backtrace include/linux/nmi.h:138 [inline]
+>  check_hung_task kernel/hung_task.c:132 [inline]
+>  check_hung_uninterruptible_tasks kernel/hung_task.c:190 [inline]
+>  watchdog+0xc10/0xf60 kernel/hung_task.c:249
+>  kthread+0x345/0x410 kernel/kthread.c:240
+>  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+> Sending NMI from CPU 0 to CPUs 1:
+> NMI backtrace for cpu 1 skipped: idling at native_safe_halt+0x6/0x10
+> arch/x86/include/asm/irqflags.h:54
+> 
+> 
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-xfs" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
