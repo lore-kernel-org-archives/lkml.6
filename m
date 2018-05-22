@@ -1,171 +1,160 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751618AbeEVKQP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 06:16:15 -0400
-Received: from mail-wr0-f178.google.com ([209.85.128.178]:44420 "EHLO
-        mail-wr0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751324AbeEVKQN (ORCPT
+        id S1751355AbeEVKSY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 06:18:24 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:35652 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751173AbeEVKSL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 06:16:13 -0400
-X-Google-Smtp-Source: AB8JxZqjpeORj74ED1CCeDeA+j66HKvJF2o/2byG/Lb4GnEhmNmVRtSpYroBDlL0TdLcG9w545WRPOLXfpvRhXmd1Q4=
+        Tue, 22 May 2018 06:18:11 -0400
+X-Google-Smtp-Source: AB8JxZqEmS1RXx3HmLnTExqeLofiYqmm5ZgP8LCruG8o0t6cythqqHT1awATcriwROrSRangBX8Cz0PYvPKj6HleWmU=
 MIME-Version: 1.0
-Reply-To: sedat.dilek@gmail.com
-In-Reply-To: <CA+icZUW_wWA9f_obFWOixg2+=W8SN1zPO9KA4u3AXO91uzHEtA@mail.gmail.com>
-References: <CA+icZUUPGQsRWpdmASzPQAdjmSFmhBwPKGh_CO65C9ot9+nOSQ@mail.gmail.com>
- <20180423174224.GA243180@google.com> <CA+icZUUpxh=99JP5K_R1KpxouqDW4KY5BjCn5VTcmyByEb0R5w@mail.gmail.com>
- <20180424230645.GB243180@google.com> <CA+icZUWhLNvjbyMv+2dB9iXgHnkLZwy5+_GZYG7-sk2b_TJa8Q@mail.gmail.com>
- <20180507174909.GF19594@google.com> <CA+icZUUCBoHiuK+qCPX-H3=4Si2UXxMBMwQCmzWmq=U1sHebRg@mail.gmail.com>
- <CAH7mPviH3EiozBxkdZ685ZOo1bNJLLaOPFYwbn2NvD77w=P3Aw@mail.gmail.com>
- <CA+icZUVsV=5jvTcXVWqMs6ROhT3mv+7zBOoJ0JkUy5Mf+a4GNw@mail.gmail.com>
- <CA+icZUUfmgJPmmjuaVckvdLwWuWOPDAuFFyLq_ZPkc__LZbtSA@mail.gmail.com> <CA+icZUW_wWA9f_obFWOixg2+=W8SN1zPO9KA4u3AXO91uzHEtA@mail.gmail.com>
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Date: Tue, 22 May 2018 12:16:11 +0200
-Message-ID: <CA+icZUWFskFk6qChPRW6qUdmEAy7r8t=1OKQCuTLyHSczH01vw@mail.gmail.com>
-Subject: Re: Clang patch stacks for LTS kernels (v4.4 and v4.9) and status update
-To: Nick Desaulniers <nick.desaulniers@gmail.com>
-Cc: Matthias Kaehlcke <mka@chromium.org>,
-        lkml <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Manoj Gupta <manojgupta@chromium.org>,
-        AlistairStrachan <astrachan@google.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Content-Type: multipart/mixed; boundary="0000000000002cc26a056cc8b5ca"
+In-Reply-To: <4310659d-e36f-63d3-88b3-e1c5235679b2@infradead.org>
+References: <CAFkk2KRTnRpi5thUGTM2+LZMyitggdJtiOBO7E0pTn93fz6-SQ@mail.gmail.com>
+ <d4c3b2ab-385d-fe7a-bdb1-2d497d620de5@infradead.org> <CAFkk2KRozscmd4kQSJKwKmY3WpTody7S5XZZObf8SKLF62k6+w@mail.gmail.com>
+ <CAFkk2KRkEt3+786QvyjzPPAm+3HDe2+ydzZJpshfdKyUDQVfuw@mail.gmail.com>
+ <CAFkk2KRvSxu+x-nb045=3L63KEk5h9URr5QYLPoYp6rqqTR4qA@mail.gmail.com>
+ <3d9be2f2-3fbe-411b-8529-0e0847f01346@infradead.org> <CAFkk2KRWon_S--dxYw82cDyGXKTFA6jxrrQwstzLvHPs=6-dqQ@mail.gmail.com>
+ <c4ec710f-b2bd-b9f0-c33a-159aa53ca73c@infradead.org> <1378afb3-2b0e-da7a-5721-a8fa727e4382@infradead.org>
+ <CAFkk2KS=bYn3t-764CEy+sq9E8FUbWH=L-yQbDhAYQpnrgmsiQ@mail.gmail.com>
+ <4a4b12fc-ab54-20c4-7aa7-a83c4faecf25@infradead.org> <CAFkk2KTrC7DEe7dU4Jq13YBNWGDSa8KmMm0mpFvxokrKeMzCFg@mail.gmail.com>
+ <4310659d-e36f-63d3-88b3-e1c5235679b2@infradead.org>
+From: Ulf Magnusson <ulfalizer@gmail.com>
+Date: Tue, 22 May 2018 12:18:09 +0200
+Message-ID: <CAFkk2KQRYG28AY_qLMYOg65nD8FAWhh4Q2d3C3dq87dX66-rSA@mail.gmail.com>
+Subject: Re: [ANNOUNCE] Kconfiglib menuconfig implementation
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---0000000000002cc26a056cc8b5ca
-Content-Type: text/plain; charset="UTF-8"
+On Mon, May 21, 2018 at 5:47 AM, Randy Dunlap <rdunlap@infradead.org> wrote:
+> On 05/20/2018 08:33 PM, Ulf Magnusson wrote:
+>> On Mon, May 21, 2018 at 4:45 AM, Randy Dunlap <rdunlap@infradead.org> wrote:
+>>> On 05/19/2018 09:47 PM, Ulf Magnusson wrote:
+>>>> On Sun, May 20, 2018 at 6:03 AM, Randy Dunlap <rdunlap@infradead.org> wrote:
+>>>>> On 05/19/2018 08:45 PM, Randy Dunlap wrote:
+>>>>>> On 05/08/2018 09:59 AM, Ulf Magnusson wrote:
+>>>>>>> Hello,
+>>>>>>>
+>>>>>>> I've added incremental search for jumping directly to a symbol now.
+>>>>>>> Regular expressions are supported as well.
+>>>>>>>
+>>>>>>> Some screenshots below:
+>>>>>>>
+>>>>>>> https://raw.githubusercontent.com/ulfalizer/Kconfiglib/screenshots/screenshots/ss10.png
+>>>>>>> https://raw.githubusercontent.com/ulfalizer/Kconfiglib/screenshots/screenshots/ss11.png
+>>>>>>> https://raw.githubusercontent.com/ulfalizer/Kconfiglib/screenshots/screenshots/ss13.png
+>>>>>>>
+>>>>>>> The last screenshot shows how things might look after you jump to a
+>>>>>>> symbol. The jumped-to symbol wasn't visible in this case, so show-all
+>>>>>>> mode was turned on automatically.
+>>>>>>
+>>>>>> Hi Ulf,
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> Hm, OK, I used the trick that you supplied a few weeks ago and I have the UI now.
+>>>>>>
+>>>>>>     ARCH=x86 SRCARCH=x86 KERNELVERSION=`make kernelversion` \
+>>>>>>         Kconfiglib/menuconfig.py
+>>>>>>
+>>>>>> so yes, a real Makefile target would be nice. :)
+>>>>>
+>>>>> I want to see all kconfig symbols that end with "_DEBUG" (so excluding
+>>>>> _DEBUGFS).  Using:
+>>>>>
+>>>>> /.*_DEBUG$
+>>>>>
+>>>>> shows me 6 symbols:
+>>>>> ATH9K_COMMON_DEBUG
+>>>>> DVB_B2C2_FLEXCOP_DEBUG
+>>>>> HAVE_DMA_API_DEBUG
+>>>>> IP_DCCP_TFRC_DEBUG
+>>>>> NFS_DEBUG
+>>>>> PM_SLEEP_DEBUG
+>>>>>
+>>>>> so where are the other (approx.) 176?
+>>>>> see:
+>>>>> $ find . -name Kconfig\* | xargs grep "config.*_DEBUG$" | grep -v \.orig | wc
+>>>>>     182     364    9179
+>>>>>
+>>>>>
+>>>>> Anyway, something for you to look at. :)
+>>>>>
+>>>>> --
+>>>>> ~Randy
+>>>>
+>>>> It's related to how the search is done. Searching for "DEBUG\b" (word
+>>>> boundary) instead will find all of them.
+>>>>
+>>>> A string is generated for each symbol. For symbols with prompts, this
+>>>> string includes the prompt as well, so you get e.g.
+>>>>
+>>>>     AB8500_DEBUG "Enable debug info via debugfs"
+>>>>
+>>>> Those strings are then searched/displayed.
+>>>>
+>>>> What you got with your search was all symbols whose names end in
+>>>> "_DEBUG" that don't have a prompt.
+>>>>
+>>>> The nice thing about searching both the name and the prompt is that
+>>>> e.g. "debugfs ab8500" will find the symbol above. I'm also planning to
+>>>> add menus to the search, by generating 'menu: "menu title"' strings
+>>>> for them.
+>>>>
+>>>> It's a bit awkward/unintuitive that what you tried doesn't work
+>>>> though. Maybe the symbol name could be searched separately from the
+>>>> prompt, though I'd be a bit sad to abandon the super simple
+>>>> single-string-per-entry implementation approach. :)
+>>>
+>>> Hi Ulf,
+>>>
+>>> What else are you planning to do with /(search)?
+>>
+>> Here's the stuff I've thought of so far:
+>>
+>>   - Display invisible symbols in red (to match show-all mode)
+>>
+>>   - Search prompts of menus and comments as well
+>>
+>>   - Have [F1] show the help display without canceling the search,
+>>     so you can quickly scan through a bunch of symbols
+>>
+>> Maybe you could get fancy with stuff like finding symbols that are
+>> related to other symbols in particular ways too...
+>>
+>>> /syscall lists 20 or so symbols. It would be nice if each one of those
+>>> showed its current setting [y,n,maybe^Wm].
+>>
+>> Nice idea. I added it:
+>> https://github.com/ulfalizer/Kconfiglib/commit/3161affaa5bb8350a39bfd305c56171a25b02151
+>>
+>> Works for strings/int/hex too.
+>
+> Thanks.
+>
+>>> I like Toggle show-all mode.  When I use xconfig, I usually turn on most
+>>> of its options, including one like that.
+>>
+>> IIRC, xconfig doesn't make it very clear which symbols are invisible
+>> in show-all mode. That's why I made them red.
+>
+> Yes, that's helpful.
+>
+>
+> --
+> ~Randy
 
-Hi,
+Hello,
 
-I looked again into the llvm-bug #37512 and mentioned patches, so I
-give this a 2nd try (see attached patchset).
+I've added a mode that lists the names of all symbols in the menu now
+as well, toggled with 'c' ('n' was taken :).
 
-Regards,
-- Sedat -
+Any other features you miss from xconfig? Other suggestions?
 
---0000000000002cc26a056cc8b5ca
-Content-Type: text/x-patch; charset="US-ASCII";
-	name="0001-kbuild-clang-remove-crufty-HOSTCFLAGS.patch"
-Content-Disposition: attachment;
-	filename="0001-kbuild-clang-remove-crufty-HOSTCFLAGS.patch"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_jhhix4mc0
-
-RnJvbSA2Yjc4ZDJlY2ZhZTFjZDNkZTM1Yzg4NzE2MDVmMDg4MWRmMTc0YjM1IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBOaWNrIERlc2F1bG5pZXJzIDxuaWNrLmRlc2F1bG5pZXJzQGdt
-YWlsLmNvbT4KRGF0ZTogU2F0LCA3IE9jdCAyMDE3IDEzOjIzOjIzIC0wNzAwClN1YmplY3Q6IFtQ
-QVRDSCAxLzRdIGtidWlsZDogY2xhbmc6IHJlbW92ZSBjcnVmdHkgSE9TVENGTEFHUwoKV2hlbiBj
-b21waWxpbmcgd2l0aCBgbWFrZSBDQz1jbGFuZyBIT1NUQ0M9Y2xhbmdgLCBJIHdhcyBzZWVpbmcg
-d2FybmluZ3MKdGhhdCBjbGFuZyBkaWQgbm90IHJlY29nbml6ZSAtZm5vLWRlbGV0ZS1udWxsLXBv
-aW50ZXItY2hlY2tzIGZvciBIT1NUQ0MKdGFyZ2V0cy4gIFRoZXNlIHdlcmUgYWRkZWQgaW4gY29t
-bWl0IDYxMTYzZWZhZTAyMCAoImtidWlsZDogTExWTUxpbnV4OgpBZGQgS2J1aWxkIHN1cHBvcnQg
-Zm9yIGJ1aWxkaW5nIGtlcm5lbCB3aXRoIENsYW5nIikuCgpDbGFuZyBkb2VzIG5vdCBzdXBwb3J0
-IC1mbm8tZGVsZXRlLW51bGwtcG9pbnRlci1jaGVja3MsIHNvIGFkZGluZyBpdCB0bwpIT1NUQ0ZM
-QUdTIGlmIEhPU1RDQyBpcyBjbGFuZyBkb2VzIG5vdCBtYWtlIHNlbnNlLgoKSXQncyBub3QgY2xl
-YXIgd2h5IHRoZSBvdGhlciB3YXJuaW5ncyB3ZXJlIGRpc2FibGVkLCBhbmQganVzdCBmb3IKSE9T
-VENGTEFHUywgYnV0IEkgY2FuIHJlbW92ZSB0aGVtLCBhZGQgLVdlcnJvciB0byBIT1NUQ0ZMQUdT
-IGFuZCBjb21waWxlCndpdGggY2xhbmcganVzdCBmaW5lLgoKU3VnZ2VzdGVkLWJ5OiBNYXNhaGly
-byBZYW1hZGEgPHlhbWFkYS5tYXNhaGlyb0Bzb2Npb25leHQuY29tPgpTaWduZWQtb2ZmLWJ5OiBO
-aWNrIERlc2F1bG5pZXJzIDxuaWNrLmRlc2F1bG5pZXJzQGdtYWlsLmNvbT4KU2lnbmVkLW9mZi1i
-eTogTWFzYWhpcm8gWWFtYWRhIDx5YW1hZGEubWFzYWhpcm9Ac29jaW9uZXh0LmNvbT4KLS0tCiBN
-YWtlZmlsZSB8IDUgLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCA1IGRlbGV0aW9ucygtKQoKZGlmZiAt
-LWdpdCBhL01ha2VmaWxlIGIvTWFrZWZpbGUKaW5kZXggMGExZjk0MTg5OWY0Li4wZTRkZWM1ZmRi
-YTUgMTAwNjQ0Ci0tLSBhL01ha2VmaWxlCisrKyBiL01ha2VmaWxlCkBAIC0zNjksMTEgKzM2OSw2
-IEBAIEhPU1RDWFhGTEFHUyA6PSAtTzIgJChIT1NUX0xGU19DRkxBR1MpCiBIT1NUTERGTEFHUyAg
-Oj0gJChIT1NUX0xGU19MREZMQUdTKQogSE9TVF9MT0FETElCRVMgOj0gJChIT1NUX0xGU19MSUJT
-KQogCi1pZmVxICgkKHNoZWxsICQoSE9TVENDKSAtdiAyPiYxIHwgZ3JlcCAtYyAiY2xhbmcgdmVy
-c2lvbiIpLCAxKQotSE9TVENGTEFHUyAgKz0gLVduby11bnVzZWQtdmFsdWUgLVduby11bnVzZWQt
-cGFyYW1ldGVyIFwKLQkJLVduby1taXNzaW5nLWZpZWxkLWluaXRpYWxpemVycyAtZm5vLWRlbGV0
-ZS1udWxsLXBvaW50ZXItY2hlY2tzCi1lbmRpZgotCiAjIE1ha2UgdmFyaWFibGVzIChDQywgZXRj
-Li4uKQogQVMJCT0gJChDUk9TU19DT01QSUxFKWFzCiBMRAkJPSAkKENST1NTX0NPTVBJTEUpbGQK
-LS0gCjIuMTcuMAoK
---0000000000002cc26a056cc8b5ca
-Content-Type: text/x-patch; charset="US-ASCII";
-	name="0002-x86-xen-remove-the-use-of-VLAIS.patch"
-Content-Disposition: attachment;
-	filename="0002-x86-xen-remove-the-use-of-VLAIS.patch"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_jhhix8ea1
-
-RnJvbSAzMmYzZGQ1NWI5YzhjNWNlNDVhYzhmOTBhMmE1ZGQ1Y2ZhYjBmNGRmIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBOaWNrIERlc2F1bG5pZXJzIDxuaWNrLmRlc2F1bG5pZXJzQGdt
-YWlsLmNvbT4KRGF0ZTogU2F0LCA2IEphbiAyMDE4IDEzOjM5OjQ4IC0wODAwClN1YmplY3Q6IFtQ
-QVRDSCAyLzRdIHg4NjogeGVuOiByZW1vdmUgdGhlIHVzZSBvZiBWTEFJUwoKVmFyaWFibGUgTGVu
-Z3RoIEFycmF5cyBJbiBTdHJ1Y3RzIChWTEFJUykgaXMgbm90IHN1cHBvcnRlZCBieSBDbGFuZywg
-YW5kCmZyb3duZWQgdXBvbiBieSBvdGhlcnMuCgpodHRwczovL2xrbWwub3JnL2xrbWwvMjAxMy85
-LzIzLzUwMAoKSGVyZSwgdGhlIFZMQUlTIHdhcyB1c2VkIGJlY2F1c2UgdGhlIHNpemUgb2YgdGhl
-IGJpdG1hcCByZXR1cm5lZCBmcm9tCnhlbl9tY19lbnRyeSgpIGRlcGVuZGVkIG9uIHBvc3NpYmx5
-IChiYXNlZCBvbiBrZXJuZWwgY29uZmlndXJhdGlvbikKcnVudGltZSBzaXplZCBkYXRhLiBSYXRo
-ZXIgdGhhbiBkZWNsYXJpbmcgYXJncyBhcyBhIFZMQUlTIHRoZW4gY2FsbGluZwpzaXplb2Ygb24g
-KmFyZ3MsIHdlIGNhbGN1bGF0ZSB0aGUgYXBwcm9wcmlhdGUgc2l6ZW9mIGFyZ3MgbWFudWFsbHku
-CkZ1cnRoZXIsIHdlIGNhbiBnZXQgcmlkIG9mIHRoZSAjaWZkZWYncyBhbmQgcmVseSBvbiBudW1f
-cG9zc2libGVfY3B1cygpCih0aGFua3MgdG8gYSBoZWxwZnVsIGNoZWNrcGF0Y2ggd2FybmluZyBm
-cm9tIGFuIGVhcmxpZXIgdmVyc2lvbiBvZiB0aGlzCnBhdGNoKS4KClN1Z2dlc3RlZC1ieTogSnVl
-cmdlbiBHcm9zcyA8amdyb3NzQHN1c2UuY29tPgpTaWduZWQtb2ZmLWJ5OiBOaWNrIERlc2F1bG5p
-ZXJzIDxuaWNrLmRlc2F1bG5pZXJzQGdtYWlsLmNvbT4KUmV2aWV3ZWQtYnk6IEp1ZXJnZW4gR3Jv
-c3MgPGpncm9zc0BzdXNlLmNvbT4KU2lnbmVkLW9mZi1ieTogQm9yaXMgT3N0cm92c2t5IDxib3Jp
-cy5vc3Ryb3Zza3lAb3JhY2xlLmNvbT4KLS0tCiBhcmNoL3g4Ni94ZW4vbW11X3B2LmMgfCA4ICsr
-Ky0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspLCA1IGRlbGV0aW9ucygtKQoK
-ZGlmZiAtLWdpdCBhL2FyY2gveDg2L3hlbi9tbXVfcHYuYyBiL2FyY2gveDg2L3hlbi9tbXVfcHYu
-YwppbmRleCAwNDJlOWM0MjJiMjEuLjg1NGQ1YWE5MGIwMiAxMDA2NDQKLS0tIGEvYXJjaC94ODYv
-eGVuL21tdV9wdi5jCisrKyBiL2FyY2gveDg2L3hlbi9tbXVfcHYuYwpAQCAtMTMyNSwyMCArMTMy
-NSwxOCBAQCBzdGF0aWMgdm9pZCB4ZW5fZmx1c2hfdGxiX290aGVycyhjb25zdCBzdHJ1Y3QgY3B1
-bWFzayAqY3B1cywKIHsKIAlzdHJ1Y3QgewogCQlzdHJ1Y3QgbW11ZXh0X29wIG9wOwotI2lmZGVm
-IENPTkZJR19TTVAKLQkJREVDTEFSRV9CSVRNQVAobWFzaywgbnVtX3Byb2Nlc3NvcnMpOwotI2Vs
-c2UKIAkJREVDTEFSRV9CSVRNQVAobWFzaywgTlJfQ1BVUyk7Ci0jZW5kaWYKIAl9ICphcmdzOwog
-CXN0cnVjdCBtdWx0aWNhbGxfc3BhY2UgbWNzOworCWNvbnN0IHNpemVfdCBtY19lbnRyeV9zaXpl
-ID0gc2l6ZW9mKGFyZ3MtPm9wKSArCisJCXNpemVvZihhcmdzLT5tYXNrWzBdKSAqIEJJVFNfVE9f
-TE9OR1MobnVtX3Bvc3NpYmxlX2NwdXMoKSk7CiAKIAl0cmFjZV94ZW5fbW11X2ZsdXNoX3RsYl9v
-dGhlcnMoY3B1cywgaW5mby0+bW0sIGluZm8tPnN0YXJ0LCBpbmZvLT5lbmQpOwogCiAJaWYgKGNw
-dW1hc2tfZW1wdHkoY3B1cykpCiAJCXJldHVybjsJCS8qIG5vdGhpbmcgdG8gZG8gKi8KIAotCW1j
-cyA9IHhlbl9tY19lbnRyeShzaXplb2YoKmFyZ3MpKTsKKwltY3MgPSB4ZW5fbWNfZW50cnkobWNf
-ZW50cnlfc2l6ZSk7CiAJYXJncyA9IG1jcy5hcmdzOwogCWFyZ3MtPm9wLmFyZzIudmNwdW1hc2sg
-PSB0b19jcHVtYXNrKGFyZ3MtPm1hc2spOwogCi0tIAoyLjE3LjAKCg==
---0000000000002cc26a056cc8b5ca
-Content-Type: text/x-patch; charset="US-ASCII";
-	name="0003-compiler-clang.h-Add-__nostackprotector-attribute-v2.patch"
-Content-Disposition: attachment;
-	filename="0003-compiler-clang.h-Add-__nostackprotector-attribute-v2.patch"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_jhhixani2
-
-RnJvbSA4MWVjZWZmNjY1OGQ2ZTc1MGM3YzBkMDgxMGVjM2Q2ZTY2YTBjZDUxIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBTZWRhdCBEaWxlayA8c2VkYXQuZGlsZWtAY3JlZGF0aXYuZGU+
-CkRhdGU6IFR1ZSwgMjIgTWF5IDIwMTggMTI6MDA6NTYgKzAyMDAKU3ViamVjdDogW1BBVENIIDMv
-NF0gY29tcGlsZXItY2xhbmcuaDogQWRkIF9fbm9zdGFja3Byb3RlY3RvciBhdHRyaWJ1dGUgdjIK
-Ci0tLQogaW5jbHVkZS9saW51eC9jb21waWxlci1jbGFuZy5oIHwgNyArKysrKysrCiAxIGZpbGUg
-Y2hhbmdlZCwgNyBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9jb21w
-aWxlci1jbGFuZy5oIGIvaW5jbHVkZS9saW51eC9jb21waWxlci1jbGFuZy5oCmluZGV4IDA3MGY4
-NWQ5MmMxNS4uM2ZiMzYxNzNiYjk5IDEwMDY0NAotLS0gYS9pbmNsdWRlL2xpbnV4L2NvbXBpbGVy
-LWNsYW5nLmgKKysrIGIvaW5jbHVkZS9saW51eC9jb21waWxlci1jbGFuZy5oCkBAIC0yMSwzICsy
-MSwxMCBAQAogI2lmZGVmIF9fbm9yZXRwb2xpbmUKICN1bmRlZiBfX25vcmV0cG9saW5lCiAjZW5k
-aWYKKworLyogQ2xhbmcgdmVyc2lvbiA3ICg+PSBzdm4zMzE5MjUpIHN1cHBvcnRzIG5vX3N0YWNr
-X3Byb3RlY3RvciBhdHRyaWJ1dGUKKyAqIHdoaWNoIGRpc2FibGVzIHRoZSBzdGFjayBwcm90ZWN0
-b3Igb24gdGhlIHNwZWNpZmllZCBmdW5jdGlvbi4KKyAqIEZvciBkZXRhaWxzIHNlZSA8aHR0cHM6
-Ly9idWdzLmxsdm0ub3JnL3Nob3dfYnVnLmNnaT9pZD0zNzUxMj4uCisgKi8KKyN1bmRlZiBfX25v
-c3RhY2twcm90ZWN0b3IKKyNkZWZpbmUgX19ub3N0YWNrcHJvdGVjdG9yIF9fYXR0cmlidXRlX18o
-KG5vX3N0YWNrX3Byb3RlY3RvcikpCi0tIAoyLjE3LjAKCg==
---0000000000002cc26a056cc8b5ca
-Content-Type: text/x-patch; charset="US-ASCII";
-	name="0004-x86-paravirt-Mark-native_save_fl-with-__nostackprote.patch"
-Content-Disposition: attachment;
-	filename="0004-x86-paravirt-Mark-native_save_fl-with-__nostackprote.patch"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_jhhixcrg3
-
-RnJvbSA0YmRhY2U3ZDkxZWIwNDRhYTcyNDVkYTFjZGY4YTNkNTIxODJiN2UwIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBTZWRhdCBEaWxlayA8c2VkYXQuZGlsZWtAY3JlZGF0aXYuZGU+
-CkRhdGU6IFR1ZSwgMjIgTWF5IDIwMTggMTI6MDc6MjQgKzAyMDAKU3ViamVjdDogW1BBVENIIDQv
-NF0geDg2L3BhcmF2aXJ0OiBNYXJrIG5hdGl2ZV9zYXZlX2ZsKCkgd2l0aAogX19ub3N0YWNrcHJv
-dGVjdG9yIGF0dHJpYnV0ZSB2MgoKLS0tCiBhcmNoL3g4Ni9pbmNsdWRlL2FzbS9pcnFmbGFncy5o
-IHwgMiArLQogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCgpk
-aWZmIC0tZ2l0IGEvYXJjaC94ODYvaW5jbHVkZS9hc20vaXJxZmxhZ3MuaCBiL2FyY2gveDg2L2lu
-Y2x1ZGUvYXNtL2lycWZsYWdzLmgKaW5kZXggODlmMDg5NTVmZmY3Li43ZTY3NjUwOTdhZGMgMTAw
-NjQ0Ci0tLSBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL2lycWZsYWdzLmgKKysrIGIvYXJjaC94ODYv
-aW5jbHVkZS9hc20vaXJxZmxhZ3MuaApAQCAtMTMsNyArMTMsNyBAQAogICogSW50ZXJydXB0IGNv
-bnRyb2w6CiAgKi8KIAotc3RhdGljIGlubGluZSB1bnNpZ25lZCBsb25nIG5hdGl2ZV9zYXZlX2Zs
-KHZvaWQpCitzdGF0aWMgaW5saW5lIF9fbm9zdGFja3Byb3RlY3RvciB1bnNpZ25lZCBsb25nIG5h
-dGl2ZV9zYXZlX2ZsKHZvaWQpCiB7CiAJdW5zaWduZWQgbG9uZyBmbGFnczsKIAotLSAKMi4xNy4w
-Cgo=
---0000000000002cc26a056cc8b5ca--
+Cheers,
+Ulf
