@@ -1,85 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753487AbeEVXuD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 19:50:03 -0400
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:42282 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753319AbeEVXuA (ORCPT
+        id S1753533AbeEVXul (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 19:50:41 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:33232 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753324AbeEVXuj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 19:50:00 -0400
-X-Google-Smtp-Source: AB8JxZpQeIXVQIc0ru8Km4cHD68JWZqrtrGZKX5cIQzDz4ForpV8XbEy337UbgpvsCbO4p/fk88BL9M7790m5wwFGTA=
-MIME-Version: 1.0
-In-Reply-To: <9A0BC289-4203-4C77-A012-AAB07F42061F@kernel.dk>
-References: <20180522181512.39316-1-keescook@chromium.org> <20180522181512.39316-4-keescook@chromium.org>
- <20180522183613.GA3784@infradead.org> <yq1efi3bk3g.fsf@oracle.com>
- <CAGXu5jJ0Sice+fdpWgzBhQR=NGz-DT9qmYVdV1GeH73_q9pbmw@mail.gmail.com>
- <732f4249-5681-4a54-ec21-4ecc3d3a74e5@kernel.dk> <20180522191309.GA23615@infradead.org>
- <8d4af5c4-96fa-54ee-d5c1-b887b1de5a3c@kernel.dk> <CAGXu5j+mgGZkTDS6EDRspJKKbU=vMT4ehv9T-SekPba=ESoGDg@mail.gmail.com>
- <9A0BC289-4203-4C77-A012-AAB07F42061F@kernel.dk>
-From: Kees Cook <keescook@chromium.org>
-Date: Tue, 22 May 2018 16:49:58 -0700
-X-Google-Sender-Auth: ShJWk9w0_C7syHalNZ6Qf-1T5QE
-Message-ID: <CAGXu5jJsGWDsZNDJvUUqncSaAcvond_B_J7=BbvVW0X3r6Sxww@mail.gmail.com>
-Subject: Re: [PATCH 3/6] block: Create scsi_sense.h for SCSI and ATAPI
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Christoph Hellwig <hch@infradead.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Tejun Heo <tj@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Manoj N. Kumar" <manoj@linux.vnet.ibm.com>,
-        "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>,
-        Uma Krishnan <ukrishn@linux.vnet.ibm.com>,
-        linux-block <linux-block@vger.kernel.org>, linux-ide@vger.kernel.org,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 22 May 2018 19:50:39 -0400
+X-Google-Smtp-Source: AB8JxZpCPpYRBcnLh28T5cJYsPJfG2KdQHJbKuafSm/fbhsOgNe4j/3UtXaEKXfbNKFEnPgUULHL/w==
+From: "Joel Fernandes (Google)" <joelaf@google.com>
+X-Google-Original-From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+To: linux-kernel@vger.kernel.org
+Cc: "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Luca Abeni <luca.abeni@santannapisa.it>, Todd Kjos <tkjos@google.com>,
+        claudio@evidence.eu.com, kernel-team@android.com,
+        linux-pm@vger.kernel.org
+Subject: [PATCH RFC] schedutil: Address the r/w ordering race in kthread
+Date: Tue, 22 May 2018 16:50:28 -0700
+Message-Id: <20180522235028.80564-1-joel@joelfernandes.org>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4MNo9Wv013719
 
-On Tue, May 22, 2018 at 4:42 PM, Jens Axboe <axboe@kernel.dk> wrote:
-> On May 22, 2018, at 5:31 PM, Kees Cook <keescook@chromium.org> wrote:
->>
->>> On Tue, May 22, 2018 at 12:16 PM, Jens Axboe <axboe@kernel.dk> wrote:
->>>> On 5/22/18 1:13 PM, Christoph Hellwig wrote:
->>>>> On Tue, May 22, 2018 at 01:09:41PM -0600, Jens Axboe wrote:
->>>>> I think Martin and Christoph are objecting to moving the code to
->>>>> block/scsi_ioctl.h. I don't care too much about where the code is, but
->>>>> think it would be nice to have the definitions in a separate header. But
->>>>> if they prefer just pulling in all of SCSI for it, well then I guess
->>>>> it's pointless to move the header bits. Seems very heavy handed to me,
->>>>> though.
->>>>
->>>> It might be heavy handed for the 3 remaining users of drivers/ide,
->>>
->>> Brutal :-)
->>
->> Heh. I noticed a similar sense buffer use in drivers/cdrom/cdrom.c
->> too. Is this okay under the same considerations?
->
-> This is going from somewhat crazy to pretty nuts, imho. I guess in practical terms it doesn’t matter that much, since most folks would be using sr. I still think a split would be vastly superior. Just keep the scsi code in drivers/scsi/ and make it independently selectable.
+Currently there is a race in schedutil code for slow-switch single-CPU
+systems. Fix it by enforcing ordering the write to work_in_progress to
+happen before the read of next_freq.
 
-I had originally tied it to BLK_SCSI_REQUEST. Logically speaking,
-sense buffers are part of the request, and the CONFIG work is already
-done. This is roughly what I tried to do before, since scsi_ioctl.c is
-the only code pulled in for CONFIG_BLK_SCSI_REQUEST:
+Kthread                                       Sched update
 
-$ git grep BLK_SCSI_REQUEST | grep Makefile
-block/Makefile:obj-$(CONFIG_BLK_SCSI_REQUEST)   += scsi_ioctl.o
+sugov_work()				      sugov_update_single()
 
-Should I move to code to a new drivers/scsi/scsi_sense.c and add it to
-drivers/scsi/Makefile as:
+      lock();
+      // The CPU is free to rearrange below
+      // two in any order, so it may clear
+      // the flag first and then read next
+      // freq. Lets assume it does.
+      work_in_progress = false
 
-obj-$(CONFIG_BLK_SCSI_REQUEST)    += scsi_sense.o
+                                               if (work_in_progress)
+                                                     return;
 
-Every place I want to use the code is already covered by
-CONFIG_BLK_SCSI_REQUEST, so it seems like I just need to know where to
-put the .c file. :P
+                                               sg_policy->next_freq = 0;
+      freq = sg_policy->next_freq;
+                                               sg_policy->next_freq = real-freq;
+      unlock();
 
--Kees
+Reported-by: Viresh Kumar <viresh.kumar@linaro.org>
+CC: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+CC: Peter Zijlstra <peterz@infradead.org>
+CC: Ingo Molnar <mingo@redhat.com>
+CC: Patrick Bellasi <patrick.bellasi@arm.com>
+CC: Juri Lelli <juri.lelli@redhat.com>
+Cc: Luca Abeni <luca.abeni@santannapisa.it>
+CC: Todd Kjos <tkjos@google.com>
+CC: claudio@evidence.eu.com
+CC: kernel-team@android.com
+CC: linux-pm@vger.kernel.org
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+---
+I split this into separate patch, because this race can also happen in
+mainline.
 
+ kernel/sched/cpufreq_schedutil.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+index 5c482ec38610..ce7749da7a44 100644
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -401,6 +401,13 @@ static void sugov_work(struct kthread_work *work)
+ 	 */
+ 	raw_spin_lock_irqsave(&sg_policy->update_lock, flags);
+ 	freq = sg_policy->next_freq;
++
++	/*
++	 * sugov_update_single can access work_in_progress without update_lock,
++	 * make sure next_freq is read before work_in_progress is set.
++	 */
++	smp_mb();
++
+ 	sg_policy->work_in_progress = false;
+ 	raw_spin_unlock_irqrestore(&sg_policy->update_lock, flags);
+ 
 -- 
-Kees Cook
-Pixel Security
+2.17.0.441.gb46fe60e1d-goog
