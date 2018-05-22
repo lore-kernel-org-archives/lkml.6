@@ -1,102 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751374AbeEVJQM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 05:16:12 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:45867 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751160AbeEVJQK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 05:16:10 -0400
-X-Google-Smtp-Source: AB8JxZoGi77+dBTzUxxouN+M5zaZQZSkfMz4oMHpTuo7gU3tIQ7hi3oXYxBoB4LYycbNwE31fmDruA==
-Date: Mon, 21 May 2018 23:16:06 -1000
-From: Joey Pabalinas <joeypabalinas@gmail.com>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Joey Pabalinas <joeypabalinas@gmail.com>
-Subject: [PATCH v5] scripts/tags.sh: use `find` for $ALLSOURCE_ARCHS
- generation
-Message-ID: <20180522091606.uxvnrz7bbotpxnhn@gmail.com>
+        id S1751401AbeEVJRn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 05:17:43 -0400
+Received: from mga03.intel.com ([134.134.136.65]:51988 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750733AbeEVJRk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 05:17:40 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,429,1520924400";
+   d="scan'208";a="57400999"
+Date: Tue, 22 May 2018 12:17:32 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Tomas Winkler <tomas.winkler@intel.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>,
+        Alexander Usyskin <alexander.usyskin@intel.com>,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tpm: separate cmd_ready/go_idle from runtime_pm
+Message-ID: <20180522091732.GA5228@linux.intel.com>
+References: <20180516194600.28189-1-tomas.winkler@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="fr4cuyany7qhvesp"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: NeoMutt/20180323-62-378db9
+In-Reply-To: <20180516194600.28189-1-tomas.winkler@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, May 16, 2018 at 10:46:00PM +0300, Tomas Winkler wrote:
+> New wrappers are added tpm_cmd_ready() and tpm_go_idle() wrappers to
+> streamline tpm_try_transmit code. TPM_TRANSMIT_UNLOCKED flag is abused to
+> resolve tpm spaces recursive calls to tpm_transmit().
 
---fr4cuyany7qhvesp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This looks good and all but I don't think we want to abuse anything in
+the driver code, do we?
 
-The current code includes 'Kconfig' in ALLSOURCE_ARCHS, but
-it should not (Kconfig is not an architecture). Replace this
-with a find-generated string and directly assign it to
-$ALLSOURCE_ARCHS. The find_all_archs() function is no longer
-needed for a one-liner with obvious semantics, so inline the
-arch generation into the surrounding conditional.
+In other words, either
 
-Signed-off-by: Joey Pabalinas <joeypabalinas@gmail.com>
+1. New flag is to be added.
+2. Rename the existing flag to something else than UNLOCKED (perhaps
+   SPACE).
 
- 1 file changed, 1 insertion(+), 10 deletions(-)
-
-diff --git a/scripts/tags.sh b/scripts/tags.sh
-index 78e546ff689c2d5f40..e587610d149271171d 100755
---- a/scripts/tags.sh
-+++ b/scripts/tags.sh
-@@ -26,24 +26,15 @@ else
- fi
-=20
- # ignore userspace tools
- ignore=3D"$ignore ( -path ${tree}tools ) -prune -o"
-=20
--# Find all available archs
--find_all_archs()
--{
--	ALLSOURCE_ARCHS=3D""
--	for arch in `ls ${tree}arch`; do
--		ALLSOURCE_ARCHS=3D"${ALLSOURCE_ARCHS} "${arch##\/}
--	done
--}
--
- # Detect if ALLSOURCE_ARCHS is set. If not, we assume SRCARCH
- if [ "${ALLSOURCE_ARCHS}" =3D "" ]; then
- 	ALLSOURCE_ARCHS=3D${SRCARCH}
- elif [ "${ALLSOURCE_ARCHS}" =3D "all" ]; then
--	find_all_archs
-+	ALLSOURCE_ARCHS=3D$(find ${tree}arch/ -mindepth 1 -maxdepth 1 -type d -pr=
-intf '%f ')
- fi
-=20
- # find sources in arch/$ARCH
- find_arch_sources()
- {
---=20
-2.17.0.rc1.35.g90bbd502d54fe92035.dirty
-
---fr4cuyany7qhvesp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEKlZXrihdNOcUPZTNruvLfWhyVBkFAlsD39YACgkQruvLfWhy
-VBloFRAAqVfelpt1TH6qM+GA0THndQQizTcPl/eAiZ4UaQfboNztKbH+ouBDe10A
-X1+buVUTikKEr9KQi70nBcLe4ukE5TJPkVAO+RuWNkYROBw6CCeBVDzSbAydwa4f
-10dryXqawpcr+dxDACM4nJkltGxVDa5dmNN4hYtFF6qkQI0OVdvPHP0mpUVM/vx6
-s00u+gEsI9SfHb/dh+xQFwDTGbZtB3bBynUC7ipjti4AuR0hek5Rl2BSeRvvkKBW
-d2jTNl++3LDTARWCmyBCQFFb3v+uYkTW2reriCyfrD8w16ZpEkdwO1o7QsgLHCbF
-vMBoDGi9AKx9xoWNrjSEgyRPic6d3LlmJeFXaIxNlPebtPY5LIG/WG6+x4qnrCKt
-HzT/e36AhFkHPqxtJbVn/9hfW6RGo8AVxS96FeGsQgUZAqKl/kvji2rWuEOS7UIA
-qFowapCXMlAmlKpQyfkwUiNHAwgRHLXsbtxquLziEoVCRxSBR7g9reNip34QjmzX
-R5z8DRZaKtKkwHbp/UXyU80Da5GmrM9luR7h1fdkuTef8FR9prUxxbHnv0pNzxtb
-HAzN+IxTtBRMqZAEbWLidagyqbKlID1qNLSbwuBknlqVNTde5aQkR2lcUh8eBO+m
-AzFlfwIaB3jpANLLcbUlJspJgidyHe5rczOeV3BeGFkeVUXi150=
-=f0N4
------END PGP SIGNATURE-----
-
---fr4cuyany7qhvesp--
+ /Jarkko
