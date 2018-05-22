@@ -1,57 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751476AbeEVOSs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 10:18:48 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34500 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751294AbeEVOSq (ORCPT
+        id S1751394AbeEVOXm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 10:23:42 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:37037 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751173AbeEVOXl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 10:18:46 -0400
-Date: Tue, 22 May 2018 15:18:43 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Tree for May 17
-Message-ID: <20180522141843.GC24776@sirena.org.uk>
-References: <20180517170656.1f746914@canb.auug.org.au>
+        Tue, 22 May 2018 10:23:41 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w4MENQQh023125
+X-Nifty-SrcIP: [209.85.213.50]
+X-Google-Smtp-Source: AB8JxZo2daSxfcDh3ajVpRTvFLlWaYVAKtJLQF5q6FmxV38fkIelz1mvVzzLgtpmrDebQ1Fw5zki2YlNmoqp9pi2/D8=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ALfTUftag+2gvp1h"
-Content-Disposition: inline
-In-Reply-To: <20180517170656.1f746914@canb.auug.org.au>
-X-Cookie: I have not yet begun to byte!
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <1526885928-1712-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1526885928-1712-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Tue, 22 May 2018 23:22:45 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATojz3pvx=KsJiJDvgykUSqrNUmoQsvn7d5SJQ-Wh7+Pg@mail.gmail.com>
+Message-ID: <CAK7LNATojz3pvx=KsJiJDvgykUSqrNUmoQsvn7d5SJQ-Wh7+Pg@mail.gmail.com>
+Subject: Re: [PATCH] coccinelle: mini_lock: improve performance
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: kernel-janitors@vger.kernel.org, Gilles Muller <Gilles.Muller@lip6.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Michal Marek <michal.lkml@markovi.net>, cocci@systeme.lip6.fr,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+2018-05-21 15:58 GMT+09:00 Julia Lawall <Julia.Lawall@lip6.fr>:
+> Replace <+... ...+> by ... when any.  <+... ...+> is slow, and in some
+> obscure cases involving backward jumps it doesn't force the unlock to
+> actually come after the end of the if.
+>
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>
+> ---
 
---ALfTUftag+2gvp1h
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Applied to linux-kbuild. Thanks!
 
-On Thu, May 17, 2018 at 05:06:56PM +1000, Stephen Rothwell wrote:
+>  scripts/coccinelle/locks/mini_lock.cocci |    6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/scripts/coccinelle/locks/mini_lock.cocci b/scripts/coccinelle/locks/mini_lock.cocci
+> index 47f649b..19c6ee5 100644
+> --- a/scripts/coccinelle/locks/mini_lock.cocci
+> +++ b/scripts/coccinelle/locks/mini_lock.cocci
+> @@ -67,12 +67,14 @@ identifier lock,unlock;
+>  @@
+>
+>  *lock(E1@p,...);
+> -<+... when != E1
+> +... when != E1
+> +    when any
+>  if (...) {
+>    ... when != E1
+>  *  return@r ...;
+>  }
+> -...+>
+> +... when != E1
+> +    when any
+>  *unlock@up(E1,...);
+>
+>  @script:python depends on org@
+>
 
-> News: I will not be doing any linux-next releases between Friday 18 May
-> and Friday 25 May inclusive.
 
-Just noticed this, I'm going to try to cover starting tomorrow.  The
-usual caveats about reduced service and reliability apply.
 
---ALfTUftag+2gvp1h
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsEJsIACgkQJNaLcl1U
-h9BNZgf/Tiy9WvLEIbwnqlqjFc5nClndscpWn7h2FL89kxloiDwfRhojwG7Je6sg
-tTbf3RwR6IrtK96ChWHzcx8JlDwa/kEzOx6EIUc46mTwhFMfaxnPnx9y9cMPfQq/
-6+dsmCRDCfysveNQRA/Nc3HgARG6MJeE28v/okpQQu7KWYqP3Jj91DD6K360EWDv
-+BsgNYszjKXSWevfrmaBUPXAY4MjdX/rUetF00TWfa7Q7pnPM9mB9rAmT8wLDGp3
-gytlRT2kqNVFQFssfqbcvkvtsrR1mAZ3Yz8u2EsErAtCC5JONktPzlqrowMLL8MV
-UWjC5R4sZpdu6TC6Vg6LgdV+pduRHQ==
-=o5kR
------END PGP SIGNATURE-----
-
---ALfTUftag+2gvp1h--
+-- 
+Best Regards
+Masahiro Yamada
