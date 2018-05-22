@@ -1,83 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753218AbeEVVl5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 17:41:57 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:40511 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753007AbeEVVlz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 17:41:55 -0400
-X-Google-Smtp-Source: AB8JxZpR6fvOwX7wuSvVWK0CwX7YWg7zAHx0x/jRj/mkyn1Ik3Qay56s2xx29aUWDMHe6wmCyQ34Ug==
-Date: Tue, 22 May 2018 14:41:53 -0700
-From: Joel Fernandes <joel@joelfernandes.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>, Todd Kjos <tkjos@google.com>,
-        Claudio Scordino <claudio@evidence.eu.com>, kernel-team@android.com,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Joel Fernandes (Google.)" <joelaf@google.com>
-Subject: Re: [PATCH v2] schedutil: Allow cpufreq requests to be made even
- when kthread kicked
-Message-ID: <20180522213113.GA40506@joelaf.mtv.corp.google.com>
-References: <20180518185501.173552-1-joel@joelfernandes.org>
- <20180522113844.5rz3skjeck57arft@vireshk-i7>
- <CAJZ5v0hP+gCiLa+6YvKHaj7u-DuRfmVq_vjFRMj6CnVktJRxVg@mail.gmail.com>
- <4237890.zlzv5C60QP@aspire.rjw.lan>
- <CAJZ5v0henS+LZ64JQwrXR8LrY7xzcsnnYS7AoBuR9dNaC4mTRw@mail.gmail.com>
+        id S1753129AbeEVVva (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 17:51:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45064 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752936AbeEVVv2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 17:51:28 -0400
+Date: Tue, 22 May 2018 16:51:26 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Doug Meyer <dmeyer@gigaio.com>
+Cc: Logan Gunthorpe <logang@deltatee.com>, kurt.schwemmer@microsemi.com,
+        linux-pci@vger.kernel.org, linux-ntb <linux-ntb@googlegroups.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Jon Mason <jdmason@kudzu.us>,
+        "Jiang, Dave" <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        Alex Williamson <alex.williamson@redhat.com>
+Subject: Re: [PATCH 2/2] NTB: PCI Quirk to Enable Switchtec NT Functionality
+ with IOMMU On
+Message-ID: <20180522215126.GA22385@bhelgaas-glaptop.roam.corp.google.com>
+References: <1526558413-23113-1-git-send-email-dmeyer@gigaio.com>
+ <1526558413-23113-3-git-send-email-dmeyer@gigaio.com>
+ <20180517134521.GC19955@bhelgaas-glaptop.roam.corp.google.com>
+ <9dd68ac0-5b9e-b257-49d2-20327c2ab282@deltatee.com>
+ <CA+GK6en+g+T9H0sOMdVXv-_aD3rRcuzZ1JdfK0moEoTuuJnrqQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJZ5v0henS+LZ64JQwrXR8LrY7xzcsnnYS7AoBuR9dNaC4mTRw@mail.gmail.com>
+In-Reply-To: <CA+GK6en+g+T9H0sOMdVXv-_aD3rRcuzZ1JdfK0moEoTuuJnrqQ@mail.gmail.com>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 05:27:11PM +0200, Rafael J. Wysocki wrote:
-> On Tue, May 22, 2018 at 2:22 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> > On Tuesday, May 22, 2018 1:42:05 PM CEST Rafael J. Wysocki wrote:
-> >> On Tue, May 22, 2018 at 1:38 PM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> >> > On 22-05-18, 13:31, Rafael J. Wysocki wrote:
-> >> >> So below is my (compiled-only) version of the $subject patch, obviously based
-> >> >> on the Joel's work.
-> >> >>
-> >> >> Roughly, what it does is to move the fast_switch_enabled path entirely to
-> >> >> sugov_update_single() and take the spinlock around sugov_update_commit()
-> >> >> in the one-CPU case too.
-> >
-> > [cut]
-> >
-> >> >
-> >> > Why do you assume that fast switch isn't possible in shared policy
-> >> > cases ? It infact is already enabled for few drivers.
-> >
-> > I hope that fast_switch is not used with devfs_possible_from_any_cpu set in the
-> > one-CPU policy case, as that looks racy even without any patching.
-> 
-> Which would be the only case in which sugov_update_single() would run
-> on a CPU that is not the target.
-> 
-> And running sugov_update_single() concurrently on two different CPUs
-> for the same target is a no-no, as we don't prevent concurrent updates
-> from occurring in that path.
-> 
-> Which means that the original patch from Joel will be sufficient as
-> long as we ensure that sugov_update_single() can only run on one CPU
-> at a time.
+[+cc Alex]
 
-Since target CPU's runqueue lock is held, I don't see how we can run
-sugov_update_single concurrently with any other CPU for single policy, so
-protecting such race shouldn't be necessary.
+On Tue, May 22, 2018 at 02:09:59PM -0700, Doug Meyer wrote:
+> Logan answered the questions quite thoroughly. (Thanks, Logan!)
 
-Also the "if (work_in_progress)" check I added to the sugov_update_single
-doesn't change the behavior of single policy from what it is in mainline
-since we were doing the same thing in already sugov_should_update_freq.
+When you repost it, please rework the commit log so it answers the
+questions directly.  Otherwise the next reader may have the same
+questions again.  E.g., say something about how the proxy IDs are not
+programmable and are fixed in the hardware so all we have to do is
+read them.
 
-thanks,
+I don't think the question of when the aliases need to be added is
+quite closed.  Logan said "it seems pci_add_dma_alias() must be called
+before the driver is initialized and therefore in a quirk", but that
+doesn't make clear *why* the alias needs to be added before the driver
+is initialized.  The alias shouldn't be needed until the device does a
+DMA, and it shouldn't do that until after the driver initializes.
 
- - Joel
+I suspect the reason the existing quirks are in drivers/pci/quirks.c
+is because the IOMMU driver is in the host OS, but the host may not
+have a driver for the device if the device is passed through to a
+guest OS.  In that case, the only way to add the alias is by using a
+quirk that is always built into the host OS.
+
+We could argue that the driver in the guest should be able to tell the
+host's IOMMU driver about these aliases, but I doubt there's an
+interface for that.
+
+Bjorn
