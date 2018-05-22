@@ -1,42 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751772AbeEVSAw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 14:00:52 -0400
-Received: from mail-wm0-f45.google.com ([74.125.82.45]:50702 "EHLO
-        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751434AbeEVSAv (ORCPT
+        id S1751601AbeEVSCn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 14:02:43 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:33015 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751354AbeEVSCk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 14:00:51 -0400
-X-Google-Smtp-Source: AB8JxZr4sLWRwNOxqSj3SuJu5jq6mkE2ZDGixitUXgd3XudXTeC3ixk0gCXYjXjdHaOh5hxhuHy5wzZHzdz1rOyhyVg=
+        Tue, 22 May 2018 14:02:40 -0400
+X-Google-Smtp-Source: AB8JxZoSakFXKq/mvlegGPD/NOj1hHVkkyKFfDdNfHCWumsIV/QxQlVImGuGGAtihH1ZidMtN+Zh4A==
+Date: Tue, 22 May 2018 13:02:38 -0500
+From: Rob Herring <robh@kernel.org>
+To: djw@t-chip.com.cn
+Cc: linux-rockchip@lists.infradead.org, Wayne Chou <zxf@t-chip.com.cn>,
+        Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 2/5] gpio: syscon: Add gpio-syscon for rockchip
+Message-ID: <20180522180238.GA7328@rob-hp-laptop>
+References: <1526614328-6869-1-git-send-email-djw@t-chip.com.cn>
+ <1526615528-9707-1-git-send-email-djw@t-chip.com.cn>
+ <1526615528-9707-2-git-send-email-djw@t-chip.com.cn>
 MIME-Version: 1.0
-In-Reply-To: <201805222025.KmaxnYzb%fengguang.wu@intel.com>
-References: <20180521200113.GA20998@jordon-HP-15-Notebook-PC> <201805222025.KmaxnYzb%fengguang.wu@intel.com>
-From: Souptick Joarder <jrdr.linux@gmail.com>
-Date: Tue, 22 May 2018 23:30:49 +0530
-Message-ID: <CAFqt6zZa+sedDhPxMmYDK7978K+-QzunrD9TJoefpPt46efssg@mail.gmail.com>
-Subject: Re: [PATCH] gpu: drm: omapdrm: Adding new typedef vm_fault_t
-To: kbuild test robot <lkp@intel.com>
-Cc: kbuild-all@01.org, tomi.valkeinen@ti.com, airlied@linux.ie,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1526615528-9707-2-git-send-email-djw@t-chip.com.cn>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->    drivers/gpu//drm/omapdrm/omap_gem.c: In function 'fault_2d':
->    drivers/gpu//drm/omapdrm/omap_gem.c:480:9: error: implicit declaration of function 'vmf_error'; did you mean '__pmd_error'? [-Werror=implicit-function-declaration]
->       ret = vmf_error(err);
+On Fri, May 18, 2018 at 11:52:05AM +0800, djw@t-chip.com.cn wrote:
+> From: Levin Du <djw@t-chip.com.cn>
+> 
+> Some GPIOs sit in the GRF_SOC_CON registers of Rockchip SoCs,
+> which do not belong to the general pinctrl.
+> 
+> Adding gpio-syscon support makes controlling regulator or
+> LED using these special pins very easy by reusing existing
+> drivers, such as gpio-regulator and led-gpio.
+> 
+> Signed-off-by: Levin Du <djw@t-chip.com.cn>
+> 
+> ---
+> 
+> Changes in v2:
+> - Rename gpio_syscon10 to gpio_mute in doc
+> 
+> Changes in v1:
+> - Refactured for general gpio-syscon usage for Rockchip SoCs.
+> - Add doc rockchip,gpio-syscon.txt
+> 
+>  .../bindings/gpio/rockchip,gpio-syscon.txt         | 41 ++++++++++++++++++++++
+>  drivers/gpio/gpio-syscon.c                         | 30 ++++++++++++++++
+>  2 files changed, 71 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt b/Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
+> new file mode 100644
+> index 0000000..b1b2a67
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
+> @@ -0,0 +1,41 @@
+> +* Rockchip GPIO support for GRF_SOC_CON registers
+> +
+> +Required properties:
+> +- compatible: Should contain "rockchip,gpio-syscon".
+> +- gpio-controller: Marks the device node as a gpio controller.
+> +- #gpio-cells: Should be two. The first cell is the pin number and
+> +  the second cell is used to specify the gpio polarity:
+> +    0 = Active high,
+> +    1 = Active low.
 
-I think, drm-next and next-20180517 tree doesn't have vmf_error() included.
-As of now it's only available in 4.17-rc6.
+There's no need for this child node. Just make the parent node a gpio 
+controller.
 
->             ^~~~~~~~~
->             __pmd_error
->>> drivers/gpu//drm/omapdrm/omap_gem.c:503:9: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
->      return ret;
->             ^~~
->    cc1: some warnings being treated as errors
->
-
-I will fix this in v2.
+Rob
