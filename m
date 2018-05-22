@@ -1,155 +1,137 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3964472-1527060977-2-11334958288367776160
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2671386-1527002223-2-2446802747377992846
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES unknown,
+X-Spam-hits: BAYES_00 -1.9, FROM_WORDY 2.046, HEADER_FROM_DIFFERENT_DOMAINS 0.248,
+  MAILING_LIST_MULTI -1, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
+  FromHeader='com', MailFrom='org', XOriginatingCountry='GB'
 X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
+X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527060976; b=Kx/2qloD9iZsmvtOHCHX1gI781Qqc01x5NVw9221Kjo+dUKbFe
-    UUB1KW6n14B+LR+WWdN5GI6rzO7WmRwy42umlJEJLE2aC5dCsrLdpvxbSR9SuP5U
-    MBUJDF6+q02ODzBlvHEXNmbzCJGYO0zWlvbjQPS3SgPRVlmgVbKKqYJotRQ2czkt
-    jYeEMEQkSaZ0Vg+ZkeP7TspYfwfbP4A1flhazvlSjWK4f2dOeGwZsajPMRQOxRDg
-    Ij7Vf7LZRaVTidqBpevSueTFNF0v9buxEZkhgUH61qmZRPLxUJGObgmzh5iVQJNd
-    Igig+igwoN/hTvXvXYKj0QAwNH94JWRbddMw==
+    1527002222; b=d3q8LEuCJfSvh2lYEmKEzlf4ZG1WJqfdqpp3ypvEUhavSdsGMO
+    Ey8oeSsSMd3HKL/ud+38DXanbmJYqveIDca3ocwbj4W2PpVq0niCFpCpcAVImCL0
+    i4y3Qc2oKYCDpGsYxrr58uP1DIY5UVPruXzY8cWnXqZ1tZfOPKFZHAUZpX/ykWKA
+    mD0vU5iWMwWbuXOFwG81UtkS7XFoGgZ8pYJDcM4pBpBhRnDGGU6eoDgGKxLb8PBY
+    3XvS41Ww2Tkbi8+3aBif35+lVpIp0xwCHrPUPhblZA7i0JbhJTmnBjySaBw5xaQ7
+    LTHZbRX9En4mT2wjuDUHoNZtqahTOxNP3GCA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:references:date
-    :in-reply-to:message-id:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527060976; bh=55faTCpnu3kAT0x931xp2yDRDgwtU4
-    yXjfq1Vgcs3GY=; b=cbt7uFrGhKvktzQl53sorfj3cey1yVVCe5Un7vmN7hlQZm
-    xemow7hL3xaru/JtFAGFmcsnAKq9Q6lcMSYX8IIRRGKH4QoJyCnH7IwRKJCqGqT1
-    I5B2bcTutid41tzzdi6I/cu3w5Bire8O9cBsXmgwby91AFYVaBEPYMGPfSTKZ1CO
-    34jFR6ffWuvouy4aWtZP6NMKSrEJWjL7ekuWA9P2eFVQNXl4LYUbzWj2mGQsbE7T
-    a2boNmE2zULyPXButzIXQsBHm/pHGItESDijEjECK9iUB8qBJ55koFAobv1fJUAW
-    5zCC8o2cJGj1jval4UNUsdofFcuPPzaBhXvO4DTw==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=message-id:from:date:subject:to:cc
+    :mime-version:content-type:sender:list-id; s=fm2; t=1527002222;
+    bh=xRnnr/Tq1kp+5ST5lHyS+X0WP6IL8ZkaFzEXRuTPYXs=; b=a8uDx31iekwY
+    FCVPjKsJN0zYUO6HTmT5obvdtgfUbu9EnhBL2DNJnsINmwWQoBiylG9lVEy3rn4s
+    mseFNEYEmHSWbDNAW++1iwUVQJ+V1Q7y2zq0ANbz35sIva6BI5OrMCeEJ3jGTDN+
+    Bh6kpsx2lSafRvdQY2XKI9X9ps697bZkHB0MOPKZ77tbbPS9hIzkRx8gL0X3ZKQc
+    x2XBSJEJhjtJAqIb/D2ja60P6dLta2xowSE+tSEz87txjrtkTf2gbSILUzLeUWFi
+    Dgc7qA+xz6/DH01vPnUkkaKEsERMkV5vP8wR3Hhsk6RPeLC3YBY0hl+65eSQ0haV
+    SOcFhNNlaw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=bootlin.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=diasemi.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=bootlin.com header.result=pass header_is_org_domain=yes;
+    header.domain=diasemi.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=bootlin.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=diasemi.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=bootlin.com header.result=pass header_is_org_domain=yes;
+      header.domain=diasemi.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfB+V5OCyykBWC/M6/zyGK3QvSRc2g51AQRbFfIPXTFKOZefuzyYDFoOrxnzbAJ0pRfg4BW4CR9tPKQO5zpqbud9msrGnvE9UZ+yjmptbGLiYwEKy9k/S
-    bYCCUzlLfaB9wRqO0E2g98DNY7MxmgHq2MQ7w7hs8BH2Rq5CJ59dvG5OXYmhUDAZ54uQFxG/Xl8kpcuVsA6vPBLwIGEfzQ9/fCGd0Ep1qop6l1dipWUoXC8y
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=P-IC7800AAAA:8
-    a=VwQbUJbxAAAA:8 a=lNfA3tt48VZaNn5et4UA:9 a=d3PnA9EDa4IxuAV0gXij:22
+X-CM-Envelope: MS4wfAl+wSOBFQqoM/P5c4gV5IzShcJwCnbvrLMgPaZmC3UzhLxM28MyeZjb4XIbPo8xjYMVYwy6QKAzbL0Coy5FrqZ0TMPHDvJHrYSbvaLy68S6wn/viQsJ
+    ZPBoQQCOT/0HUjOQQSErqic5T6jG/gxGJY69+1CqARjqo2XQUx/U9Rxmp2I9tP1V30BXi23mYbQpjUitp57Jx2Hu8x8sgp9m4rr4pHkQieWIlT/A2Qs660do
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=QRjQRLzp78EA:10 a=VUJBJC2UJ8kA:10
+    a=VwQbUJbxAAAA:8 a=FLLQ4yAgDYodH0EX7PkA:9 a=x8gzFH9gYPwA:10
     a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754315AbeEWHgO (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 23 May 2018 03:36:14 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:56254 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754268AbeEWHgN (ORCPT <rfc822;stable@vger.kernel.org>);
-        Wed, 23 May 2018 03:36:13 -0400
-X-Remote-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on mail.bootlin.com
-X-Remote-Spam-Level: 
-X-Remote-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED,SHORTCIRCUIT,
-        URIBL_BLOCKED shortcircuit=ham autolearn=disabled version=3.4.0
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>,
-        Haim Boot <hayim@marvell.com>, Hanna Hawa <hannah@marvell.com>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2 02/16] arm64: dts: marvell: fix CP110 ICU node size
-References: <20180522094042.24770-1-miquel.raynal@bootlin.com>
-        <20180522094042.24770-3-miquel.raynal@bootlin.com>
-Date: Wed, 23 May 2018 09:36:11 +0200
-In-Reply-To: <20180522094042.24770-3-miquel.raynal@bootlin.com> (Miquel
-        Raynal's message of "Tue, 22 May 2018 11:40:28 +0200")
-Message-ID: <87wovuygb8.fsf@bootlin.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        id S1751958AbeEVPQa (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 22 May 2018 11:16:30 -0400
+Received: from mail1.bemta5.messagelabs.com ([195.245.231.140]:37677 "EHLO
+        mail1.bemta5.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751339AbeEVPQ0 (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Tue, 22 May 2018 11:16:26 -0400
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDIsWRWlGSWpSXmKPExsUSt3Opsa67CUu
+  0wbo9whbNi9ezWXSt3slicXnXHDaLz71HGC0WLWtltniy8AyTxendJQ7sHptWdbJ5zDsZ6LF/
+  7hp2j53fG9g9Pm+SC2CNYs3MS8qvSGDN+PV4C1tBP1vFuavPGBsYX7F0MXJxCAmsZ5To7fjO2
+  sXICeRUSPxbfYIRxOYVcJO4MHEaWJxNwEJi8okHbCA2i4CqxJJ7a8FqhAX8JM68/wwWFxHYwC
+  ixfUUoiM0sUCfR+/stC8QcQYmTM5+wQMQlJA6+eMEMsctA4vSCRrC4hIC9xPT3V4HiHEC2vkT
+  jsViIsKHE91nfoErMJZq2zmScwMg/C8nUWUimLmBkWsWoUZxaVJZapGtoppdUlJmeUZKbmJmj
+  a2hgqpebWlycmJ6ak5hUrJecn7uJERjKDECwg3Hq+7hDjJIcTEqivGFPmaOF+JLyUyozEosz4
+  otKc1KLDzHKcHAoSfB+MmKJFhIsSk1PrUjLzAFGFUxagoNHSYR3Okiat7ggMbc4Mx0idYpRUU
+  qc9yBIQgAkkVGaB9cGi+RLjLJSwryMQIcI8RSkFuVmlqDKv2IU52BUEuYVMQaawpOZVwI3/RX
+  QYiagxReXM4MsLklESEk1MGYf+XpBuTTONyJvoQ3LsvIqnt9i7yRFpvnw9ZWyTwiytau3eNvD
+  2ODiIa9c8dFn14/Ptx6U/TRoDC38can93Qu3tq3f5fdUvNhR+02iKXWzF8vKZZLc85e6GZ6/E
+  bmopdmUTTvDsmVv7kLvJW5ikit8tfJNTQ/b7dhxPV76mJT90WYJrorPSizFGYmGWsxFxYkAGu
+  b+7t8CAAA=
+X-Env-Sender: Adam.Thomson.Opensource@diasemi.com
+X-Msg-Ref: server-5.tower-180.messagelabs.com!1527002183!97455828!1
+X-Originating-IP: [94.185.165.51]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.9.15; banners=-,-,-
+X-VirusChecked: Checked
+Message-ID: <cover.1527000797.git.Adam.Thomson.Opensource@diasemi.com>
+From: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Date: Tue, 22 May 2018 16:16:22 +0100
+Subject: [PATCH 0/2] typec: tcpm: Populate fwnode for use in power_supply core
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sebastian Reichel <sre@kernel.org>
+CC: <linux-usb@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <support.opensource@diasemi.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
+X-KSE-ServerInfo: sw-ex-cashub01.diasemi.com, 9
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 22/05/2018 13:35:00
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Miquel,
- 
- On mar., mai 22 2018, Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+This patch set adds support for passing a fwnode pointer as part of the psy
+config structure, when intialising the psy core, so that calling code can be
+written to be agnostic of the HW description required for the platform. The TCPM
+code is updated subsequently to make use of this new field.
 
-> ICU size in CP110 is not 0x10 but at least 0x440 bytes long (from the
-> specification).
->
-> Fixes: 6ef84a827c37 ("arm64: dts: marvell: enable GICP and ICU on Armada 7K/8K")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> Reviewed-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+For now the main FW support in the psy core is still just DT based but in the
+future ACPI will likely be added and can use this field.
 
-Applied on mvebu/fixes
+Adam Thomson (2):
+  power: supply: Add fwnode pointer to power_supply_config struct
+  typec: tcpm: Provide fwnode pointer as part of psy_cfg
 
-Thanks,
-
-Gregory
-
-> ---
->  arch/arm64/boot/dts/marvell/armada-cp110.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/arm64/boot/dts/marvell/armada-cp110.dtsi b/arch/arm64/boot/dts/marvell/armada-cp110.dtsi
-> index 48cad7919efa..9fa41c54f69c 100644
-> --- a/arch/arm64/boot/dts/marvell/armada-cp110.dtsi
-> +++ b/arch/arm64/boot/dts/marvell/armada-cp110.dtsi
-> @@ -146,7 +146,7 @@
->  
->  		CP110_LABEL(icu): interrupt-controller@1e0000 {
->  			compatible = "marvell,cp110-icu";
-> -			reg = <0x1e0000 0x10>;
-> +			reg = <0x1e0000 0x440>;
->  			#interrupt-cells = <3>;
->  			interrupt-controller;
->  			msi-parent = <&gicp>;
-> -- 
-> 2.14.1
->
+ drivers/power/supply/power_supply_core.c | 4 +++-
+ drivers/usb/typec/tcpm.c                 | 2 ++
+ include/linux/power_supply.h             | 2 ++
+ 3 files changed, 7 insertions(+), 1 deletion(-)
 
 -- 
-Gregory Clement, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+1.9.1
+
