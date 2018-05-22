@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751893AbeEVSro (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 14:47:44 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:44535 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751737AbeEVSrk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751746AbeEVSrk (ORCPT <rfc822;w@1wt.eu>);
         Tue, 22 May 2018 14:47:40 -0400
-X-Google-Smtp-Source: AB8JxZqonYDtwWvi8W3yFTg/3wfIsBiGpQXz1w3NzUAtmTJRSTn56l6LKx87UB0y+NiBVAaV7lIblw==
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:36764 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751611AbeEVSrg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 14:47:36 -0400
+X-Google-Smtp-Source: AB8JxZoxSijW8DETFtA2Nhhv4EbWSi6sSnHZ2TvL6/N/LFWdOJMn2oG6rfmf1igsQ/3r5pOxM7g4eA==
 From: Ray Jui <ray.jui@broadcom.com>
 To: Wim Van Sebroeck <wim@linux-watchdog.org>,
         Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh+dt@kernel.org>,
@@ -18,9 +18,9 @@ To: Wim Van Sebroeck <wim@linux-watchdog.org>,
 Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com, Ray Jui <ray.jui@broadcom.com>
-Subject: [PATCH 2/5] watchdog: sp805: add 'timeout-sec' DT property support
-Date: Tue, 22 May 2018 11:47:17 -0700
-Message-Id: <1527014840-21236-3-git-send-email-ray.jui@broadcom.com>
+Subject: [PATCH 1/5] Documentation: DT: Add optional 'timeout-sec' property for sp805
+Date: Tue, 22 May 2018 11:47:16 -0700
+Message-Id: <1527014840-21236-2-git-send-email-ray.jui@broadcom.com>
 X-Mailer: git-send-email 2.1.4
 In-Reply-To: <1527014840-21236-1-git-send-email-ray.jui@broadcom.com>
 References: <1527014840-21236-1-git-send-email-ray.jui@broadcom.com>
@@ -28,35 +28,27 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for optional devicetree property 'timeout-sec'.
-'timeout-sec' is used in the driver if specified in devicetree.
-Otherwise, fall back to driver default, i.e., 60 seconds
+Update the SP805 binding document to add optional 'timeout-sec'
+devicetree property
 
 Signed-off-by: Ray Jui <ray.jui@broadcom.com>
 Reviewed-by: Scott Branden <scott.branden@broadcom.com>
 ---
- drivers/watchdog/sp805_wdt.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/watchdog/sp805-wdt.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/watchdog/sp805_wdt.c b/drivers/watchdog/sp805_wdt.c
-index 03805bc..1484609 100644
---- a/drivers/watchdog/sp805_wdt.c
-+++ b/drivers/watchdog/sp805_wdt.c
-@@ -230,7 +230,14 @@ sp805_wdt_probe(struct amba_device *adev, const struct amba_id *id)
- 	spin_lock_init(&wdt->lock);
- 	watchdog_set_nowayout(&wdt->wdd, nowayout);
- 	watchdog_set_drvdata(&wdt->wdd, wdt);
--	wdt_setload(&wdt->wdd, DEFAULT_TIMEOUT);
-+
-+	/*
-+	 * If 'timeout-sec' devicetree property is specified, use that.
-+	 * Otherwise, use DEFAULT_TIMEOUT
-+	 */
-+	wdt->wdd.timeout = DEFAULT_TIMEOUT;
-+	watchdog_init_timeout(&wdt->wdd, 0, &adev->dev);
-+	wdt_setload(&wdt->wdd, wdt->wdd.timeout);
+diff --git a/Documentation/devicetree/bindings/watchdog/sp805-wdt.txt b/Documentation/devicetree/bindings/watchdog/sp805-wdt.txt
+index edc4f0e..f898a86 100644
+--- a/Documentation/devicetree/bindings/watchdog/sp805-wdt.txt
++++ b/Documentation/devicetree/bindings/watchdog/sp805-wdt.txt
+@@ -19,6 +19,8 @@ Required properties:
  
- 	ret = watchdog_register_device(&wdt->wdd);
- 	if (ret) {
+ Optional properties:
+ - interrupts : Should specify WDT interrupt number.
++- timeout-sec : Should specify default WDT timeout in seconds. If unset, the
++                default timeout is 30 seconds
+ 
+ Examples:
+ 
 -- 
 2.1.4
