@@ -1,84 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752647AbeEVDa2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 23:30:28 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:8126 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751271AbeEVDaY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 23:30:24 -0400
-Subject: Re: [PATCH 07/33] iwlwifi: mvm: use match_string() helper
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
- <1526903890-35761-8-git-send-email-xieyisheng1@huawei.com>
- <CAHp75VeFiEMN+q0FPuk4qTVEW_1oovHzVkV_Ydcm22SEMarvUA@mail.gmail.com>
-CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        "Johannes Berg" <johannes.berg@intel.com>,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        "open list:TI WILINK WIRELES..." <linux-wireless@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>
-From: Yisheng Xie <xieyisheng1@huawei.com>
-Message-ID: <63a78572-b7d3-9cc7-9e22-5bd19cad3333@huawei.com>
-Date: Tue, 22 May 2018 11:30:02 +0800
+        id S1752675AbeEVDag (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 23:30:36 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:54051 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751271AbeEVDac (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 23:30:32 -0400
+Subject: Re: [PATCH] bpf: check NULL for sk_to_full_sk()
+To: Eric Dumazet <eric.dumazet@gmail.com>, <ast@kernel.org>,
+        <daniel@iogearbox.net>
+References: <20180521075558.11968-1-yuehaibing@huawei.com>
+ <5490b571-7881-c5eb-6acf-8f45634cd2b1@gmail.com>
+CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
+From: YueHaibing <yuehaibing@huawei.com>
+Message-ID: <297885c2-2132-b4a7-e53f-85c82caee95a@huawei.com>
+Date: Tue, 22 May 2018 11:29:47 +0800
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.1.0
+ Thunderbird/45.2.0
 MIME-Version: 1.0
-In-Reply-To: <CAHp75VeFiEMN+q0FPuk4qTVEW_1oovHzVkV_Ydcm22SEMarvUA@mail.gmail.com>
+In-Reply-To: <5490b571-7881-c5eb-6acf-8f45634cd2b1@gmail.com>
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.40]
+X-Originating-IP: [10.177.31.96]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andy,
-
-On 2018/5/22 5:43, Andy Shevchenko wrote:
-> On Mon, May 21, 2018 at 2:57 PM, Yisheng Xie <xieyisheng1@huawei.com> wrote:
->> match_string() returns the index of an array for a matching string,
->> which can be used intead of open coded variant.
+On 2018/5/21 23:17, Eric Dumazet wrote:
 > 
->>         int ret, bt_force_ant_mode;
+> 
+> On 05/21/2018 12:55 AM, YueHaibing wrote:
+>> like commit df39a9f106d5 ("bpf: check NULL for sk_to_full_sk() return value"),
+>> we should check sk_to_full_sk return value against NULL.
 >>
->> -       for (bt_force_ant_mode = 0;
->> -            bt_force_ant_mode < ARRAY_SIZE(modes_str);
->> -            bt_force_ant_mode++) {
->> -               if (!strcmp(buf, modes_str[bt_force_ant_mode]))
->> -                       break;
->> -       }
->> -
->> -       if (bt_force_ant_mode >= ARRAY_SIZE(modes_str))
-> 
->> +       bt_force_ant_mode = match_string(modes_str,
->> +                                        ARRAY_SIZE(modes_str), buf);
-> 
-> One line?
-
-hmm, if use ret instead it will no over 80 chars.
-
-> 
->> +       if (bt_force_ant_mode < 0)
->>                 return -EINVAL;
-> 
-> I would rather use
-> 
-> ret = match_string();
-> if (ret < 0)
->  return ret;
-> 
-> bt_force_... = ret;
-> 
-> But it's up tu Loca.
-
-OK, I will change it if Loca agree your opinion.
-
-Thanks
-Yisheng
-> 
+>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+>> ---
+>>  include/linux/bpf-cgroup.h | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
 >>
->>         ret = 0;
+>> diff --git a/include/linux/bpf-cgroup.h b/include/linux/bpf-cgroup.h
+>> index 30d15e6..fd3fbeb 100644
+>> --- a/include/linux/bpf-cgroup.h
+>> +++ b/include/linux/bpf-cgroup.h
+>> @@ -91,7 +91,7 @@ int __cgroup_bpf_check_dev_permission(short dev_type, u32 major, u32 minor,
+>>  	int __ret = 0;							       \
+>>  	if (cgroup_bpf_enabled && sk && sk == skb->sk) {		       \
+>>  		typeof(sk) __sk = sk_to_full_sk(sk);			       \
+>> -		if (sk_fullsock(__sk))					       \
+>> +		if (__sk && sk_fullsock(__sk))				       \
+>>  			__ret = __cgroup_bpf_run_filter_skb(__sk, skb,	       \
+>>  						      BPF_CGROUP_INET_EGRESS); \
+>>  	}								       \
+>>
 > 
+> Why is this needed ???
+
+BPF_CGROUP_RUN_PROG_INET_EGRESS is called in ip_output
+
+I just misunderstood, sorry for noise.
 > 
 > 
