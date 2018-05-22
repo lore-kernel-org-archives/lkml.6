@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751621AbeEVJlM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 05:41:12 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:49689 "EHLO mail.bootlin.com"
+        id S1751548AbeEVJlH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 05:41:07 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:49680 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751146AbeEVJk5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 05:40:57 -0400
+        id S1751354AbeEVJk4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 05:40:56 -0400
 From: Miquel Raynal <miquel.raynal@bootlin.com>
 To: Thomas Gleixner <tglx@linutronix.de>,
         Jason Cooper <jason@lakedaemon.net>,
@@ -22,9 +22,9 @@ Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
         Nadav Haklai <nadavh@marvell.com>, Haim Boot <hayim@marvell.com>,
         Hanna Hawa <hannah@marvell.com>, linux-kernel@vger.kernel.org,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH v2 04/16] irqchip/irq-mvebu-icu: clarify the reset operation of configured interrupts
-Date: Tue, 22 May 2018 11:40:30 +0200
-Message-Id: <20180522094042.24770-5-miquel.raynal@bootlin.com>
+Subject: [PATCH v2 03/16] irqchip/irq-mvebu-icu: fix wrong private data retrieval
+Date: Tue, 22 May 2018 11:40:29 +0200
+Message-Id: <20180522094042.24770-4-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180522094042.24770-1-miquel.raynal@bootlin.com>
 References: <20180522094042.24770-1-miquel.raynal@bootlin.com>
@@ -32,34 +32,37 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rewrite a small section to clarify the reset operation of interrupts
-already configured by ATF that we want to handle in the driver. This
-will simplify the introduction of System Error Interrupts support.
+The irq_domain structure has an host_data pointer that just stores
+private data. It is meant to not be touched by the IRQ core. However,
+when it comes to MSI, the MSI layer adds its own private data there
+with a structure that also has a host_data pointer.
+
+Because this IRQ domain is an MSI domain, to access private data we
+should do a d->host_data->host_data, also wrapped as
+'platform_msi_get_host_data()'.
+
+This bug was lying there silently because the 'icu' structure retrieved
+this way was just called by dev_err(), only producing a
+'(NULL device *):' output on the console.
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 Reviewed-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 ---
- drivers/irqchip/irq-mvebu-icu.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/irqchip/irq-mvebu-icu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/irqchip/irq-mvebu-icu.c b/drivers/irqchip/irq-mvebu-icu.c
-index a2a3acd74491..0f2655d7f19e 100644
+index 13063339b416..a2a3acd74491 100644
 --- a/drivers/irqchip/irq-mvebu-icu.c
 +++ b/drivers/irqchip/irq-mvebu-icu.c
-@@ -258,8 +258,12 @@ static int mvebu_icu_probe(struct platform_device *pdev)
- 	 * avoid unpredictable SPI assignments done by firmware.
- 	 */
- 	for (i = 0 ; i < ICU_MAX_IRQS ; i++) {
--		u32 icu_int = readl_relaxed(icu->base + ICU_INT_CFG(i));
--		if ((icu_int >> ICU_GROUP_SHIFT) == ICU_GRP_NSR)
-+		u32 icu_int, icu_grp;
-+
-+		icu_int = readl_relaxed(icu->base + ICU_INT_CFG(i));
-+		icu_grp = icu_int >> ICU_GROUP_SHIFT;
-+
-+		if (icu_grp == ICU_GRP_NSR)
- 			writel_relaxed(0x0, icu->base + ICU_INT_CFG(i));
- 	}
+@@ -105,7 +105,7 @@ static int
+ mvebu_icu_irq_domain_translate(struct irq_domain *d, struct irq_fwspec *fwspec,
+ 			       unsigned long *hwirq, unsigned int *type)
+ {
+-	struct mvebu_icu *icu = d->host_data;
++	struct mvebu_icu *icu = platform_msi_get_host_data(d);
+ 	unsigned int icu_group;
  
+ 	/* Check the count of the parameters in dt */
 -- 
 2.14.1
