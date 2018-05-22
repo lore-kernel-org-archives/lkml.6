@@ -1,69 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751473AbeEVRvU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 13:51:20 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59140 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751268AbeEVRvS (ORCPT
+        id S1751823AbeEVRwD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 13:52:03 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:45368 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751443AbeEVRwB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 13:51:18 -0400
-Date: Tue, 22 May 2018 10:51:14 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Christopher Lameter <cl@linux.com>, Boaz Harrosh <boazh@netapp.com>,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, Rik van Riel <riel@redhat.com>,
-        Jan Kara <jack@suse.cz>, Matthew Wilcox <mawilcox@microsoft.com>,
-        Amit Golander <Amit.Golander@netapp.com>
-Subject: Re: [PATCH] mm: Add new vma flag VM_LOCAL_CPU
-Message-ID: <20180522175114.GA1237@bombadil.infradead.org>
-References: <0efb5547-9250-6b6c-fe8e-cf4f44aaa5eb@netapp.com>
- <20180514191551.GA27939@bombadil.infradead.org>
- <7ec6fa37-8529-183d-d467-df3642bcbfd2@netapp.com>
- <20180515004137.GA5168@bombadil.infradead.org>
- <f3a66d8b-b9dc-b110-08aa-a63f0c309fb2@netapp.com>
- <010001637399f796-3ffe3ed2-2fb1-4d43-84f0-6a65b6320d66-000000@email.amazonses.com>
- <5aea6aa0-88cc-be7a-7012-7845499ced2c@netapp.com>
- <50cbc27f-0014-0185-048d-25640f744b5b@linux.intel.com>
- <0100016388be5738-df8f9d12-7011-4e4e-ba5b-33973e5da794-000000@email.amazonses.com>
- <c4bb7ea8-16d5-ca31-2a9b-db90841211ba@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c4bb7ea8-16d5-ca31-2a9b-db90841211ba@linux.intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Tue, 22 May 2018 13:52:01 -0400
+Date: Tue, 22 May 2018 13:52:00 -0400 (EDT)
+Message-Id: <20180522.135200.1524557376650201204.davem@davemloft.net>
+To: wang6495@umn.edu
+Cc: kjlu@umn.edu, mac@melware.de, isdn@linux-pingi.de,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] isdn: eicon: fix a missing-check bug
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <1526885887-9759-1-git-send-email-wang6495@umn.edu>
+References: <1526885887-9759-1-git-send-email-wang6495@umn.edu>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 10:03:54AM -0700, Dave Hansen wrote:
-> On 05/22/2018 09:46 AM, Christopher Lameter wrote:
-> > On Tue, 22 May 2018, Dave Hansen wrote:
-> > 
-> >> On 05/22/2018 09:05 AM, Boaz Harrosh wrote:
-> >>> How can we implement "Private memory"?
-> >> Per-cpu page tables would do it.
-> > We already have that for percpu subsystem. See alloc_percpu()
-> 
-> I actually mean a set of page tables which is only ever installed on a
-> single CPU.  The CPU is architecturally allowed to go load any PTE in
-> the page tables into the TLB any time it feels like.  The only way to
-> keep a PTE from getting into the TLB is not ensure that a CPU never has
-> any access to it, and the only way to do that is to make sure that no
-> set of page tables it ever loads into CR3 have that PTE.
-> 
-> As Peter said, it's possible, but not pretty.
+From: Wenwen Wang <wang6495@umn.edu>
+Date: Mon, 21 May 2018 01:58:07 -0500
 
-But CR3 is a per-CPU register.  So it'd be *possible* to allocate one
-PGD per CPU (per process).  Have them be identical in all but one of
-the PUD entries.  Then you've reserved 1/512 of your address space for
-per-CPU pages.
+> In divasmain.c, the function divas_write() firstly invokes the function
+> diva_xdi_open_adapter() to open the adapter that matches with the adapter
+> number provided by the user, and then invokes the function diva_xdi_write()
+> to perform the write operation using the matched adapter. The two functions
+> diva_xdi_open_adapter() and diva_xdi_write() are located in diva.c.
+> 
+> In diva_xdi_open_adapter(), the user command is copied to the object 'msg'
+> from the userspace pointer 'src' through the function pointer 'cp_fn',
+> which eventually calls copy_from_user() to do the copy. Then, the adapter
+> number 'msg.adapter' is used to find out a matched adapter from the
+> 'adapter_queue'. A matched adapter will be returned if it is found.
+> Otherwise, NULL is returned to indicate the failure of the verification on
+> the adapter number.
+> 
+> As mentioned above, if a matched adapter is returned, the function
+> diva_xdi_write() is invoked to perform the write operation. In this
+> function, the user command is copied once again from the userspace pointer
+> 'src', which is the same as the 'src' pointer in diva_xdi_open_adapter() as
+> both of them are from the 'buf' pointer in divas_write(). Similarly, the
+> copy is achieved through the function pointer 'cp_fn', which finally calls
+> copy_from_user(). After the successful copy, the corresponding command
+> processing handler of the matched adapter is invoked to perform the write
+> operation.
+> 
+> It is obvious that there are two copies here from userspace, one is in
+> diva_xdi_open_adapter(), and one is in diva_xdi_write(). Plus, both of
+> these two copies share the same source userspace pointer, i.e., the 'buf'
+> pointer in divas_write(). Given that a malicious userspace process can race
+> to change the content pointed by the 'buf' pointer, this can pose potential
+> security issues. For example, in the first copy, the user provides a valid
+> adapter number to pass the verification process and a valid adapter can be
+> found. Then the user can modify the adapter number to an invalid number.
+> This way, the user can bypass the verification process of the adapter
+> number and inject inconsistent data.
+> 
+> This patch reuses the data copied in
+> diva_xdi_open_adapter() and passes it to diva_xdi_write(). This way, the
+> above issues can be avoided.
+> 
+> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
 
-Complicated, ugly, memory-consuming.  But possible.
+Applied and queued up for -stable.
