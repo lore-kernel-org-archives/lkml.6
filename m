@@ -1,172 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753142AbeEVTmD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 15:42:03 -0400
-Received: from mga07.intel.com ([134.134.136.100]:16706 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752231AbeEVTcB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 15:32:01 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,430,1520924400";
-   d="scan'208";a="226406392"
-From: Reinette Chatre <reinette.chatre@intel.com>
-To: tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
-        vikas.shivappa@linux.intel.com
-Cc: gavin.hindman@intel.com, jithu.joseph@intel.com, dave.hansen@intel.com,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH V4 19/38] x86/intel_rdt: Add utility to restrict/restore access to resctrl files
-Date: Tue, 22 May 2018 04:29:07 -0700
-Message-Id: <13ca4349cc882c9e500e2b99136962a291bf72d7.1526987654.git.reinette.chatre@intel.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <cover.1526987654.git.reinette.chatre@intel.com>
-References: <cover.1526987654.git.reinette.chatre@intel.com>
-In-Reply-To: <cover.1526987654.git.reinette.chatre@intel.com>
-References: <cover.1526987654.git.reinette.chatre@intel.com>
+        id S1752638AbeEVTog (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 15:44:36 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:39168 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751942AbeEVToe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 15:44:34 -0400
+Smtp-Origin-Hostprefix: devbig
+From: Song Liu <songliubraving@fb.com>
+Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
+To: <linux-mm@kvack.org>
+CC: <kernel-team@fb.com>, Song Liu <songliubraving@fb.com>,
+        <linux-kernel@vger.kernel.org>, <mhocko@kernel.org>,
+        <rientjes@google.com>, <aarcange@redhat.com>, <kirill@shutemov.name>
+Smtp-Origin-Cluster: ftw2c04
+Subject: [PATCH v2] mm/THP: use hugepage_vma_check() in khugepaged_enter_vma_merge()
+Date: Tue, 22 May 2018 12:44:30 -0700
+Message-ID: <20180522194430.426688-1-songliubraving@fb.com>
+X-Mailer: git-send-email 2.9.5
+X-FB-Internal: Safe
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-22_06:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a resource group is used for Cache Pseudo-Locking then the region
-of cache ends up being orphaned with no class of service referring to
-it. The resctrl files intended to manage how the classes of services are
-utilized thus become irrelevant.
+khugepaged_enter_vma_merge() is using a different approach to check
+whether a vma is valid for khugepaged_enter():
 
-The fact that a resctrl file is not relevant can be communicated to the
-user by setting all of its permissions to zero. That is, its read,
-write, and execute permissions are unset for all users.
+    if (!vma->anon_vma)
+            /*
+             * Not yet faulted in so we will register later in the
+             * page fault if needed.
+             */
+            return 0;
+    if (vma->vm_ops || (vm_flags & VM_NO_KHUGEPAGED))
+            /* khugepaged not yet working on file or special mappings */
+            return 0;
 
-Introduce two utilities, rdtgroup_kn_mode_restrict() and
-rdtgroup_kn_mode_restore(), that can be used to restrict and restore
-the permissions of a file or directory belonging to a resource group.
+This check has some problems. One of the obvious problems is that
+it doesn't check shmem_file(), so that vma backed with shmem files
+will not call khugepaged_enter(). Here is an example of failed madvise():
 
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+   /* mount /dev/shm with huge=advise:
+    *     mount -o remount,huge=advise /dev/shm */
+   /* create file /dev/shm/huge */
+   #define HUGE_FILE "/dev/shm/huge"
+
+   fd = open(HUGE_FILE, O_RDONLY);
+   ptr = mmap(NULL, FILE_SIZE, PROT_READ, MAP_PRIVATE, fd, 0);
+   ret = madvise(ptr, FILE_SIZE, MADV_HUGEPAGE);
+
+madvise() will return 0, but this memory region is never put in huge
+page (check from /proc/meminfo: ShmemHugePages).
+
+This patch fixes these problems by reusing hugepage_vma_check() in
+khugepaged_enter_vma_merge().
+
+vma->vm_flags is not yet updated in khugepaged_enter_vma_merge(),
+so we need to pass the new vm_flags to hugepage_vma_check() through
+a separate argument.
+
+Signed-off-by: Song Liu <songliubraving@fb.com>
 ---
- arch/x86/kernel/cpu/intel_rdt.h          |  2 +
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 95 ++++++++++++++++++++++++++++++++
- 2 files changed, 97 insertions(+)
+ mm/khugepaged.c | 26 ++++++++++++--------------
+ 1 file changed, 12 insertions(+), 14 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
-index 10a1539cbec6..c9b8d3d1d413 100644
---- a/arch/x86/kernel/cpu/intel_rdt.h
-+++ b/arch/x86/kernel/cpu/intel_rdt.h
-@@ -469,6 +469,8 @@ void rdt_last_cmd_printf(const char *fmt, ...);
- void rdt_ctrl_update(void *arg);
- struct rdtgroup *rdtgroup_kn_lock_live(struct kernfs_node *kn);
- void rdtgroup_kn_unlock(struct kernfs_node *kn);
-+int rdtgroup_kn_mode_restrict(struct rdtgroup *r, const char *name);
-+int rdtgroup_kn_mode_restore(struct rdtgroup *r, const char *name);
- struct rdt_domain *rdt_find_domain(struct rdt_resource *r, int id,
- 				   struct list_head **pos);
- ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
-diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index f431ab493339..3461fb25bb92 100644
---- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -1290,6 +1290,101 @@ static int rdtgroup_add_files(struct kernfs_node *kn, unsigned long fflags)
- 	return ret;
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index d7b2a4b..9f74e51 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -430,18 +430,15 @@ int __khugepaged_enter(struct mm_struct *mm)
+ 	return 0;
  }
  
-+/**
-+ * rdtgroup_kn_mode_restrict - Restrict user access to named resctrl file
-+ * @r: The resource group with which the file is associated.
-+ * @name: Name of the file
-+ *
-+ * The permissions of named resctrl file, directory, or link are modified
-+ * to not allow read, write, or execute by any user.
-+ *
-+ * WARNING: This function is intended to communicate to the user that the
-+ * resctrl file has been locked down - that it is not relevant to the
-+ * particular state the system finds itself in. It should not be relied
-+ * on to protect from user access because after the file's permissions
-+ * are restricted the user can still change the permissions using chmod
-+ * from the command line.
-+ *
-+ * Return: 0 on success, <0 on failure.
-+ */
-+int rdtgroup_kn_mode_restrict(struct rdtgroup *r, const char *name)
-+{
-+	struct iattr iattr = {.ia_valid = ATTR_MODE,};
-+	struct kernfs_node *kn;
-+	int ret = 0;
++static bool hugepage_vma_check(struct vm_area_struct *vma,
++			       unsigned long vm_flags);
 +
-+	kn = kernfs_find_and_get_ns(r->kn, name, NULL);
-+	if (!kn)
-+		return -ENOENT;
-+
-+	switch (kernfs_type(kn)) {
-+	case KERNFS_DIR:
-+		iattr.ia_mode = S_IFDIR;
-+		break;
-+	case KERNFS_FILE:
-+		iattr.ia_mode = S_IFREG;
-+		break;
-+	case KERNFS_LINK:
-+		iattr.ia_mode = S_IFLNK;
-+		break;
-+	}
-+
-+	ret = kernfs_setattr(kn, &iattr);
-+	kernfs_put(kn);
-+	return ret;
-+}
-+
-+/**
-+ * rdtgroup_kn_mode_restore - Restore user access to named resctrl file
-+ * @r: The resource group with which the file is associated.
-+ * @name: Name of the file
-+ *
-+ * Restore the permissions of the named file. If @name is a directory the
-+ * permissions of its parent will be used.
-+ *
-+ * Return: 0 on success, <0 on failure.
-+ */
-+int rdtgroup_kn_mode_restore(struct rdtgroup *r, const char *name)
-+{
-+	struct iattr iattr = {.ia_valid = ATTR_MODE,};
-+	struct kernfs_node *kn, *parent;
-+	struct rftype *rfts, *rft;
-+	int ret, len;
-+
-+	rfts = res_common_files;
-+	len = ARRAY_SIZE(res_common_files);
-+
-+	for (rft = rfts; rft < rfts + len; rft++) {
-+		if (!strcmp(rft->name, name))
-+			iattr.ia_mode = rft->mode;
-+	}
-+
-+	kn = kernfs_find_and_get_ns(r->kn, name, NULL);
-+	if (!kn)
-+		return -ENOENT;
-+
-+	switch (kernfs_type(kn)) {
-+	case KERNFS_DIR:
-+		parent = kernfs_get_parent(kn);
-+		if (parent) {
-+			iattr.ia_mode |= parent->mode;
-+			kernfs_put(parent);
-+		}
-+		iattr.ia_mode |= S_IFDIR;
-+		break;
-+	case KERNFS_FILE:
-+		iattr.ia_mode |= S_IFREG;
-+		break;
-+	case KERNFS_LINK:
-+		iattr.ia_mode |= S_IFLNK;
-+		break;
-+	}
-+
-+	ret = kernfs_setattr(kn, &iattr);
-+	kernfs_put(kn);
-+	return ret;
-+}
-+
- static int rdtgroup_mkdir_info_resdir(struct rdt_resource *r, char *name,
- 				      unsigned long fflags)
+ int khugepaged_enter_vma_merge(struct vm_area_struct *vma,
+ 			       unsigned long vm_flags)
  {
+ 	unsigned long hstart, hend;
+-	if (!vma->anon_vma)
+-		/*
+-		 * Not yet faulted in so we will register later in the
+-		 * page fault if needed.
+-		 */
+-		return 0;
+-	if (vma->vm_ops || (vm_flags & VM_NO_KHUGEPAGED))
+-		/* khugepaged not yet working on file or special mappings */
++
++	if (!hugepage_vma_check(vma, vm_flags))
+ 		return 0;
+ 	hstart = (vma->vm_start + ~HPAGE_PMD_MASK) & HPAGE_PMD_MASK;
+ 	hend = vma->vm_end & HPAGE_PMD_MASK;
+@@ -819,10 +816,11 @@ khugepaged_alloc_page(struct page **hpage, gfp_t gfp, int node)
+ }
+ #endif
+ 
+-static bool hugepage_vma_check(struct vm_area_struct *vma)
++static bool hugepage_vma_check(struct vm_area_struct *vma,
++			       unsigned long vm_flags)
+ {
+-	if ((!(vma->vm_flags & VM_HUGEPAGE) && !khugepaged_always()) ||
+-	    (vma->vm_flags & VM_NOHUGEPAGE) ||
++	if ((!(vm_flags & VM_HUGEPAGE) && !khugepaged_always()) ||
++	    (vm_flags & VM_NOHUGEPAGE) ||
+ 	    test_bit(MMF_DISABLE_THP, &vma->vm_mm->flags))
+ 		return false;
+ 	if (shmem_file(vma->vm_file)) {
+@@ -835,7 +833,7 @@ static bool hugepage_vma_check(struct vm_area_struct *vma)
+ 		return false;
+ 	if (is_vma_temporary_stack(vma))
+ 		return false;
+-	return !(vma->vm_flags & VM_NO_KHUGEPAGED);
++	return !(vm_flags & VM_NO_KHUGEPAGED);
+ }
+ 
+ /*
+@@ -862,7 +860,7 @@ static int hugepage_vma_revalidate(struct mm_struct *mm, unsigned long address,
+ 	hend = vma->vm_end & HPAGE_PMD_MASK;
+ 	if (address < hstart || address + HPAGE_PMD_SIZE > hend)
+ 		return SCAN_ADDRESS_RANGE;
+-	if (!hugepage_vma_check(vma))
++	if (!hugepage_vma_check(vma, vma->vm_flags))
+ 		return SCAN_VMA_CHECK;
+ 	return 0;
+ }
+@@ -1694,7 +1692,7 @@ static unsigned int khugepaged_scan_mm_slot(unsigned int pages,
+ 			progress++;
+ 			break;
+ 		}
+-		if (!hugepage_vma_check(vma)) {
++		if (!hugepage_vma_check(vma, vma->vm_flags)) {
+ skip:
+ 			progress++;
+ 			continue;
 -- 
-2.13.6
+2.9.5
