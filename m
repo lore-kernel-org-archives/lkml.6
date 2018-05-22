@@ -1,62 +1,209 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752022AbeEVOzO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 10:55:14 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:60310 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751342AbeEVOzJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 10:55:09 -0400
-Date: Tue, 22 May 2018 16:54:26 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Alex G." <mr.nuke.me@gmail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, alex_gagniuc@dellteam.com,
-        austin_bolen@dell.com, shyam_iyer@dell.com,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
-        Tony Luck <tony.luck@intel.com>, Tyler Baicar <tbaicar@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>, James Morse <james.morse@arm.com>,
-        Shiju Jose <shiju.jose@huawei.com>,
-        "Jonathan (Zhixiong) Zhang" <zjzhang@codeaurora.org>,
-        Dongjiu Geng <gengdongjiu@huawei.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 1/2] acpi: apei: Rename ghes_severity() to
- ghes_cper_severity()
-Message-ID: <20180522145426.GG5512@pd.tnic>
-References: <20180521135003.32459-1-mr.nuke.me@gmail.com>
- <20180521135003.32459-2-mr.nuke.me@gmail.com>
- <CAJZ5v0hKfgTOJb47NjeOP1BBPXPjWqdfu_TXVwWMzOHicEx0Xw@mail.gmail.com>
- <53d0ba88-6929-a7cf-6c3e-4ca389f7249a@gmail.com>
- <20180522135015.GF5512@pd.tnic>
- <0b758a1c-90e3-6f76-4f83-1e22c8fc9cd6@gmail.com>
+        id S1751567AbeEVPAp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 11:00:45 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:36693 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751236AbeEVPAj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 11:00:39 -0400
+X-Google-Smtp-Source: AB8JxZruU57C34E3WKSJPjqTk0yscbZV6GvsGCx8WtGD2Egkc4+QHTkkH4stU1J9ArJCZ/odb8T5xQ==
+Subject: Re: [Xen-devel] [RFC 1/3] xen/balloon: Allow allocating DMA buffers
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        jgross@suse.com, konrad.wilk@oracle.com
+Cc: daniel.vetter@intel.com, matthew.d.roper@intel.com,
+        dongwon.kim@intel.com
+References: <20180517082604.14828-1-andr2000@gmail.com>
+ <20180517082604.14828-2-andr2000@gmail.com>
+ <6a108876-19b7-49d0-3de2-9e10f984736c@oracle.com>
+ <9541926e-001a-e41e-317c-dbff6d687761@gmail.com>
+ <218e2bf7-490d-f89e-9866-27b7e3dbc835@oracle.com>
+ <a08e7d0d-f7d5-6b7e-979b-8a17060482f0@gmail.com>
+ <b177a327-6a73-bb77-c69b-bc0958a05532@oracle.com>
+ <f87478c7-3523-851c-5c3a-12a9e8753bb6@epam.com>
+ <c2f0845b-ab2f-4b9b-6f46-6ddd236ad9ed@oracle.com>
+ <77c20852-b9b8-c35a-26b0-b0317e6aba09@gmail.com>
+ <f8775649-34eb-04ac-2264-609b33cdd504@oracle.com>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <2a88de28-27ef-8fe4-ddc1-35eb9e698567@gmail.com>
+Date: Tue, 22 May 2018 18:00:33 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <0b758a1c-90e3-6f76-4f83-1e22c8fc9cd6@gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <f8775649-34eb-04ac-2264-609b33cdd504@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 09:39:15AM -0500, Alex G. wrote:
-> No, the problem is with the current approach, not with mine. The problem
-> is trying to handle the error outside of the existing handler. That's a
-> no-no, IMO.
+On 05/22/2018 05:33 PM, Boris Ostrovsky wrote:
+> On 05/22/2018 01:55 AM, Oleksandr Andrushchenko wrote:
+>> On 05/21/2018 11:36 PM, Boris Ostrovsky wrote:
+>>> On 05/21/2018 03:13 PM, Oleksandr Andrushchenko wrote:
+>>>> On 05/21/2018 09:53 PM, Boris Ostrovsky wrote:
+>>>>> On 05/21/2018 01:32 PM, Oleksandr Andrushchenko wrote:
+>>>>>> On 05/21/2018 07:35 PM, Boris Ostrovsky wrote:
+>>>>>>> On 05/21/2018 01:40 AM, Oleksandr Andrushchenko wrote:
+>>>>>>>> On 05/19/2018 01:04 AM, Boris Ostrovsky wrote:
+>>>>>>>>> On 05/17/2018 04:26 AM, Oleksandr Andrushchenko wrote:
+>>>>>>>>>> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>>>>>>>>> A commit message would be useful.
+>>>>>>>> Sure, v1 will have it
+>>>>>>>>>> Signed-off-by: Oleksandr Andrushchenko
+>>>>>>>>>> <oleksandr_andrushchenko@epam.com>
+>>>>>>>>>>
+>>>>>>>>>>           for (i = 0; i < nr_pages; i++) {
+>>>>>>>>>> -        page = alloc_page(gfp);
+>>>>>>>>>> -        if (page == NULL) {
+>>>>>>>>>> -            nr_pages = i;
+>>>>>>>>>> -            state = BP_EAGAIN;
+>>>>>>>>>> -            break;
+>>>>>>>>>> +        if (ext_pages) {
+>>>>>>>>>> +            page = ext_pages[i];
+>>>>>>>>>> +        } else {
+>>>>>>>>>> +            page = alloc_page(gfp);
+>>>>>>>>>> +            if (page == NULL) {
+>>>>>>>>>> +                nr_pages = i;
+>>>>>>>>>> +                state = BP_EAGAIN;
+>>>>>>>>>> +                break;
+>>>>>>>>>> +            }
+>>>>>>>>>>               }
+>>>>>>>>>>               scrub_page(page);
+>>>>>>>>>>               list_add(&page->lru, &pages);
+>>>>>>>>>> @@ -529,7 +565,7 @@ static enum bp_state
+>>>>>>>>>> decrease_reservation(unsigned long nr_pages, gfp_t gfp)
+>>>>>>>>>>           i = 0;
+>>>>>>>>>>           list_for_each_entry_safe(page, tmp, &pages, lru) {
+>>>>>>>>>>               /* XENMEM_decrease_reservation requires a GFN */
+>>>>>>>>>> -        frame_list[i++] = xen_page_to_gfn(page);
+>>>>>>>>>> +        frames[i++] = xen_page_to_gfn(page);
+>>>>>>>>>>         #ifdef CONFIG_XEN_HAVE_PVMMU
+>>>>>>>>>>               /*
+>>>>>>>>>> @@ -552,18 +588,22 @@ static enum bp_state
+>>>>>>>>>> decrease_reservation(unsigned long nr_pages, gfp_t gfp)
+>>>>>>>>>>       #endif
+>>>>>>>>>>               list_del(&page->lru);
+>>>>>>>>>>       -        balloon_append(page);
+>>>>>>>>>> +        if (!ext_pages)
+>>>>>>>>>> +            balloon_append(page);
+>>>>>>>>> So what you are proposing is not really ballooning. You are just
+>>>>>>>>> piggybacking on existing interfaces, aren't you?
+>>>>>>>> Sort of. Basically I need to {increase|decrease}_reservation, not
+>>>>>>>> actually
+>>>>>>>> allocating ballooned pages.
+>>>>>>>> Do you think I can simply EXPORT_SYMBOL for
+>>>>>>>> {increase|decrease}_reservation?
+>>>>>>>> Any other suggestion?
+>>>>>>> I am actually wondering how much of that code you end up reusing.
+>>>>>>> You
+>>>>>>> pretty much create new code paths in both routines and common code
+>>>>>>> ends
+>>>>>>> up being essentially the hypercall.
+>>>>>> Well, I hoped that it would be easier to maintain if I modify
+>>>>>> existing
+>>>>>> code
+>>>>>> to support both use-cases, but I am also ok to create new routines if
+>>>>>> this
+>>>>>> seems to be reasonable - please let me know
+>>>>>>>      So the question is --- would it make
+>>>>>>> sense to do all of this separately from the balloon driver?
+>>>>>> This can be done, but which driver will host this code then? If we
+>>>>>> move from
+>>>>>> the balloon driver, then this could go to either gntdev or
+>>>>>> grant-table.
+>>>>>> What's your preference?
+>>>>> A separate module?
+>>>>> Is there any use for this feature outside of your zero-copy DRM
+>>>>> driver?
+>>>> Intel's hyper dma-buf (Dongwon/Matt CC'ed), V4L/GPU at least.
+>>>>
+>>>> At the time I tried to upstream zcopy driver it was discussed and
+>>>> decided that
+>>>> it would be better if I remove all DRM specific code and move it to
+>>>> Xen drivers.
+>>>> Thus, this RFC.
+>>>>
+>>>> But it can also be implemented as a dedicated Xen dma-buf driver which
+>>>> will have all the
+>>>> code from this RFC + a bit more (char/misc device handling at least).
+>>>> This will also require a dedicated user-space library, just like
+>>>> libxengnttab.so
+>>>> for gntdev (now I have all new IOCTLs covered there).
+>>>>
+>>>> If the idea of a dedicated Xen dma-buf driver seems to be more
+>>>> attractive we
+>>>> can work toward this solution. BTW, I do support this idea, but was not
+>>>> sure if Xen community accepts yet another driver which duplicates
+>>>> quite some code
+>>>> of the existing gntdev/balloon/grant-table. And now after this RFC I
+>>>> hope that all cons
+>>>> and pros of both dedicated driver and gntdev/balloon/grant-table
+>>>> extension are
+>>>> clearly seen and we can make a decision.
+>>> IIRC the objection for a separate module was in the context of gntdev
+>>> was discussion, because (among other things) people didn't want to have
+>>> yet another file in /dev/xen/
+>>>
+>>> Here we are talking about (a new) balloon-like module which doesn't
+>>> create any new user-visible interfaces. And as for duplicating code ---
+>>> as I said, I am not convinced there is much of duplication.
+>>>
+>>> I might even argue that we should add a new config option for this
+>>> module.
+>> I am not quite sure I am fully following you here: so, you suggest
+>> that we have balloon.c unchanged, but instead create a new
+>> module (namely a file under the same folder as balloon.c, e.g.
+>> dma-buf-reservation.c) and move those {increase|decrease}_reservation
+>> routines (specific to dma-buf) to that new file? And make it selectable
+>> via Kconfig? If so, then how about the changes to grant-table and gntdev?
+>> Those will look inconsistent then.
+> Inconsistent with what? The changes to grant code will also be under the
+> new config option.
+Ah, ok.
 
-Let me save you some time: until you come up with a proper solution for
-*all* PCIe errors so that the kernel can correctly decide what to do for
-each error based on its actual severity, consider this NAKed.
+Option 1. We will have Kconfig option which will cover dma-buf
+changes in balloon, grant-table and gntdev. And for that we will
+create dedicated routines in balloon and grant-table (copy of
+the existing ones, but modified to fit dma-buf use-case) and
+those under something like "#if CONFIG_XEN_DMABUF"?
+This is relatively easy to do for balloon/grant-table, but not that
+easy for gntdev: there still seems to be lots of code which can be reused,
+so I'll have to put lots of "#if CONFIG_XEN_DMABUF" there. Even more, I 
+change
+interfaces of the existing gntdev routines which won't look cute with 
+#if's, IMO.
 
-I don't care about outside or inside of the handler - this thing needs
-to be done properly and not just to serve your particular use case of
-abrupt removal of devices causing PCIe errors, and punish the rest.
+Option 2. Try moving dma-buf related changes from balloon and
+grant-table to a new file. Then gntdev's Kconfig concerns from above 
+will still
+be there, but balloon/grant-table functionality will be localized in a 
+new module.
 
-I especially don't want to have the case where a PCIe error is *really*
-fatal and then we noodle in some handlers debating about the severity
-because it got marked as recoverable intermittently and end up causing
-data corruption on the storage device. Here's a real no-no for ya.
+I am still missing your point here?
 
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+>
+>> If you suggest a new kernel driver module:
+>> IMO, there is nothing bad if we create a dedicated kernel module
+>> (driver) for Xen dma-buf handling selectable under Kconfig option.
+>> Yes, this will create a yet another device under /dev/xen,
+>> but most people will never see it if we set Kconfig to default to "n".
+>> And then we'll need user-space support for that, so Xen tools will
+>> be extended with libxendmabuf.so or so.
+>> This way all Xen dma-buf support can be localized at one place which
+>> might be easier to maintain. What is more it could be totally transparent
+>> to most of us as Kconfig option won't be set by default (both kernel
+>> and Xen).
+>
+> The downside is that we will end up having another device for doing
+> things that are not that different from what we are already doing with
+> existing gnttab device. Or are they?
+Agree, but Kconfig option, IMO, won't make it look nice because
+of gntdev changes and code reuse.
+> -boris
+Thank you,
+Oleksandr
