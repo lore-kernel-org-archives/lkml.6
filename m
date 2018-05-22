@@ -1,66 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752952AbeEVUol (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 16:44:41 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:35690 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752849AbeEVUoi (ORCPT
+        id S1753053AbeEVUpm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 16:45:42 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:37290 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752831AbeEVUpl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 16:44:38 -0400
-X-Google-Smtp-Source: AB8JxZqA5ViL5BWs4N4IzLU4xemfe3NWP6nZUlrwZUtUqjdtGue22J7zFLxJpB4k6hPlCiLa9H4rRQ==
-Date: Tue, 22 May 2018 13:44:34 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Guenter Roeck <linux@roeck-us.net>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pinctrl: cherryview: limit Strago DMI workarounds to
- version 1.0
-Message-ID: <20180522204434.GB123708@dtor-ws>
-References: <20171128191435.uxftu3bl4x4f2fxi@dtor-ws>
- <20171128192947.GI22431@lahna.fi.intel.com>
- <20171128194632.pvrp5e2td2mhlubi@dtor-ws>
- <1511898445.25007.470.camel@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1511898445.25007.470.camel@linux.intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Tue, 22 May 2018 16:45:41 -0400
+X-Google-Smtp-Source: AB8JxZoAPmg3Z9CI/Vqhj1xvmYOx8KteEIjvjosGkS2ovKI8zekCYv1EnNmMmLkGuvNV0r7tSZnyDA==
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: sboyd@kernel.org, mturquette@baylibre.com
+Cc: leo.yan@linaro.org, olof@lixom.net, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH V2] clk/driver/hisi: Consolidate the Kconfig for the CLOCK_STUB
+Date: Tue, 22 May 2018 22:45:28 +0200
+Message-Id: <1527021928-1243-1-git-send-email-daniel.lezcano@linaro.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1527021018-31698-1-git-send-email-daniel.lezcano@linaro.org>
+References: <1527021018-31698-1-git-send-email-daniel.lezcano@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 28, 2017 at 09:47:25PM +0200, Andy Shevchenko wrote:
-> On Tue, 2017-11-28 at 11:46 -0800, Dmitry Torokhov wrote:
-> > On Tue, Nov 28, 2017 at 09:29:47PM +0200, Mika Westerberg wrote:
-> > > On Tue, Nov 28, 2017 at 11:14:35AM -0800, Dmitry Torokhov wrote:
-> > > > As Google/Intel will fix the BIOS/Coreboot issues with hardcoding
-> > > > virtual interrupt numbers for keyboard/touchpa/touchscreen
-> > > > controllers
-> > > > in ACPI tables, they will also update BIOS version number from 1.0
-> > > > to 1.1. Let's limit the DMI quirks that try to preserve virtual
-> > > > IRQ
-> > > > numbers on Strago boards to those that still carry BIOSes 1.0.
-> > > > 
-> > > > Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=197953
-> > > > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> > > 
-> > > Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> > > 
-> > > Assuming there is no version "0.9" or so having the same issue.
-> > 
-> > No, as far as I can tell they all had the default 1.0...
-> 
-> Thanks for fixing that eventually!
+The current defconfig is inconsistent as it selects the mailbox and
+the clock for the hi6220 and the hi3660 without having their Kconfigs
+making sure the dependencies are correct. It ends up when selecting
+different versions for the kernel (for example when git bisecting)
+those options disappear and they don't get back, leading to unexpected
+behaviors. In our case, the cpufreq driver does no longer work because
+the clock fails to initialize due to the clock stub and the mailbox
+missing.
 
-Ugh, so this is broken, as 1.0 is BOARD version and not BIOS. Bios
-version is in form of Google_BUILD.BRANCH.PATCH, so we can't really use
-it to limit the workaround (as we do not have "less than" comparator).
+In order to have the dependencies correctly set when defaulting, let's
+do the same as commit 3a49afb84ca074e ("clk: enable hi655x common clk
+automatically") where we select automatically the driver when the
+parent driver is selected. With sensible defaults in place, we can leave
+other choices for EXPERT.
 
-Anyway, in coreboot we changed board version to 1.1, so we should use
-it. I'll post v2. Luckily this patch has not been picked by Linus as far
-as I can tell.
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+---
 
+Split the patch into the clk specific and resent as requested by Olof
+Johansson.
+---
+ drivers/clk/hisilicon/Kconfig | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
+index 1bd4355..becdb1d 100644
+--- a/drivers/clk/hisilicon/Kconfig
++++ b/drivers/clk/hisilicon/Kconfig
+@@ -44,14 +44,17 @@ config RESET_HISI
+ 	  Build reset controller driver for HiSilicon device chipsets.
+ 
+ config STUB_CLK_HI6220
+-	bool "Hi6220 Stub Clock Driver"
+-	depends on COMMON_CLK_HI6220 && MAILBOX
+-	default ARCH_HISI
++	bool "Hi6220 Stub Clock Driver" if EXPERT
++	depends on (COMMON_CLK_HI6220 || COMPILE_TEST)
++	depends on MAILBOX
++	default COMMON_CLK_HI6220
+ 	help
+ 	  Build the Hisilicon Hi6220 stub clock driver.
+ 
+ config STUB_CLK_HI3660
+-	bool "Hi3660 Stub Clock Driver"
+-	depends on COMMON_CLK_HI3660 && MAILBOX
++	bool "Hi3660 Stub Clock Driver" if EXPERT
++	depends on (COMMON_CLK_HI3660 || COMPILE_TEST)
++	depends on MAILBOX
++	default COMMON_CLK_HI3660
+ 	help
+ 	  Build the Hisilicon Hi3660 stub clock driver.
 -- 
-Dmitry
+2.7.4
