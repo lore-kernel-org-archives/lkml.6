@@ -1,104 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751311AbeEVEn3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 00:43:29 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:33724 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751205AbeEVEn2 (ORCPT
+        id S1751329AbeEVEuS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 00:50:18 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:36349 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750979AbeEVEuP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 00:43:28 -0400
-X-Google-Smtp-Source: AB8JxZoDsnCrEB6RxR5wTd8E5aYhaF9osAckXAIOAvFg8ogg39UWEumWJjIkWYq889hppOYD30gDvQ==
-Date: Mon, 21 May 2018 21:43:27 -0700
-From: Joel Fernandes <joel@joelfernandes.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Joel Fernandes <joelaf@google.com>, linux-kernel@vger.kernel.org,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>, byungchul.park@lge.com,
-        kernel-team@android.com
-Subject: Re: [PATCH v3 4/4] rcu: Unlock non-start node only after accessing
- its gp_seq_needed
-Message-ID: <20180522044327.GF40541@joelaf.mtv.corp.google.com>
-References: <20180521044220.123933-1-joel@joelfernandes.org>
- <20180521044220.123933-5-joel@joelfernandes.org>
- <20180521232537.GJ3803@linux.vnet.ibm.com>
- <20180522000734.GD40541@joelaf.mtv.corp.google.com>
- <20180522002823.GP3803@linux.vnet.ibm.com>
- <20180522041651.GA18405@linux.vnet.ibm.com>
+        Tue, 22 May 2018 00:50:15 -0400
+X-Google-Smtp-Source: AB8JxZrNSUm744tle0gJc6LnGNw4FBFmARvQWJfw7XDyz2iowSR66+h9fSLo8nu3DQVVm8rdSM53f52v/ZWEm4c7R1o=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180522041651.GA18405@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CAK7LNARWmojPEgWcuS4SSb-+a+_u4SHwxxdqoLbHfK9KARwy9g@mail.gmail.com>
+References: <1526537830-22606-1-git-send-email-yamada.masahiro@socionext.com>
+ <1526537830-22606-8-git-send-email-yamada.masahiro@socionext.com>
+ <20180520145031.GB9826@ravnborg.org> <CAFkk2KSCtj8E48Y3KDRvT8E6bjqWpc_FvpwjVpo1Vx-tQPikwQ@mail.gmail.com>
+ <CAFkk2KQuPiy=ziKeixNHzu-_k+Mau6PUwYTQh_EbWEu0GX-tkg@mail.gmail.com>
+ <CAFkk2KSf-P9RrLsK=dAgeOSYvznCygxF7X6ZG9DR4WwotfoODA@mail.gmail.com> <CAK7LNARWmojPEgWcuS4SSb-+a+_u4SHwxxdqoLbHfK9KARwy9g@mail.gmail.com>
+From: Ulf Magnusson <ulfalizer@gmail.com>
+Date: Tue, 22 May 2018 06:50:14 +0200
+Message-ID: <CAFkk2KRQP=6+a=WDCDPP1r7z5oy1TtHXOBrtFUXw0fjQJpgi9w@mail.gmail.com>
+Subject: Re: [PATCH v4 07/31] kconfig: add built-in function support
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Sam Ravnborg <sam@ravnborg.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nicholas Piggin <npiggin@gmail.com>, Kees Cook <keescook@chromium.org>,
+        Emese Revfy <re.emese@gmail.com>, X86 ML <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 09:16:51PM -0700, Paul E. McKenney wrote:
-> On Mon, May 21, 2018 at 05:28:23PM -0700, Paul E. McKenney wrote:
-> > On Mon, May 21, 2018 at 05:07:34PM -0700, Joel Fernandes wrote:
-> > > On Mon, May 21, 2018 at 04:25:38PM -0700, Paul E. McKenney wrote:
-> > > > On Sun, May 20, 2018 at 09:42:20PM -0700, Joel Fernandes wrote:
-> > > > > We acquire gp_seq_needed locklessly. To be safe, lets do the unlocking
-> > > > > after the access.
-> > > > 
-> > > > Actually, no, we hold rnp_start's ->lock throughout.  And this CPU (or in
-> > > > the case of no-CBs CPUs, this task) is in charge of rdp->gp_seq_needed,
-> > > > so nothing else is accessing it.  Or at least that is the intent.  ;-)
-> > > 
-> > > I was talking about protecting the internal node's rnp->gp_seq_needed, not
-> > > the rnp_start's gp_seq_needed.
-> > 
-> > Ah, good point, I missed the "if" condition.  This can be argued to work,
-> > sort of, given that we still hold the leaf rcu_node structure's lock,
-> > so that there is a limit to how far grace periods can advance.
-> > 
-> > But the code would of course be much cleaner with your change.
-> > 
-> > > We are protecting them in the loop:
-> > > 
-> > > like this:
-> > > for(...)
-> > > 	if (rnp != rnp_start)
-> > > 		raw_spin_lock_rcu_node(rnp);
-> > > 	[...]
-> > > 	// access rnp->gp_seq and rnp->gp_seq_needed
-> > > 	[...]
-> > > 	if (rnp != rnp_start)
-> > > 		raw_spin_unlock_rcu_node(rnp);
-> > > 
-> > > But we don't need to do such protection in unlock_out ? I'm sorry if I'm
-> > > missing something, but I'm wondering if rnp->gp_seq_needed of an internal
-> > > node can be accessed locklessly, then why can't that be done also in the
-> > > funnel locking loop - after all we are holding the rnp_start's lock through
-> > > out right?
-> > 
-> > I was focused on the updates, and missed the rnp->gp_seq_req access in the
-> > "if" statement.  The current code does sort of work, but only assuming
-> > that the compiler doesn't tear the load, and so your change would help.
-> > Could you please resend with your other two updated patches?  It depends
-> > on one of the earlier patches, so does not apply cleanly as-is.  I could
-> > hand-apply it, but that sounds like a good way to make your updated
-> > series fail to apply.  ;-)
-> > 
-> > But could you also make the commit log explicitly call out the "if"
-> > condition as being the offending access?
-> 
-> Never mind, me being stupid.  I need to apply this change to the original
-> commit "rcu: Make rcu_nocb_wait_gp() check if GP already requested", which
-> I have done with this attribution:
-> 
-> [ paulmck: Move lock release past "if" as suggested by Joel Fernandes. ]
-> 
-> I have rebased my stack on top of the updated commit.
+On Tue, May 22, 2018 at 5:11 AM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> 2018-05-22 0:10 GMT+09:00 Ulf Magnusson <ulfalizer@gmail.com>:
+>> On Mon, May 21, 2018 at 4:32 PM, Ulf Magnusson <ulfalizer@gmail.com> wrote:
+>>> On Mon, May 21, 2018 at 4:23 PM, Ulf Magnusson <ulfalizer@gmail.com> wrote:
+>>>> On Sun, May 20, 2018 at 4:50 PM, Sam Ravnborg <sam@ravnborg.org> wrote:
+>>>>> Will the following be equal:
+>>>>>
+>>>>>         $(foo,abc,$(x),$(y))
+>>>>>         $(foo, abc, $(x), $(y))
+>>>>>
+>>>>> make is rather annoying as space is significant, but there seems no good reason
+>>>>> for kconfig to inheritate this.
+>>>>> So unless there are good arguments consider alloing the spaces.
+>>>>> If the current implmentation already supports optional spaces then I just missed
+>>>>> it whie reviewing.
+>>>>>
+>>>>>         Sam
+>>>>
+>>>> +1 from me.
+>>>>
+>>>> I also find the rules for whitespace in Make confusing, and always
+>>>> have to look them up when doing trickier stuff. Maybe they're the
+>>>> result of people not considering whitespace initially, and stuff
+>>>> getting tacked on later. GNU Make adds some alternate syntaxes with
+>>>> quotes.
+>>>>
+>>>> I was going to mention shell, but it looks like you already did. :)
+>>>>
+>>>> If we go with Make-like syntax, maybe we could at least have a variant
+>>>> with fewer whitespace gotchas.
+>>>>
+>>>> Cheers,
+>>>> Ulf
+>>>
+>>> Maybe it'd be a pain to implement, but something like $(foo $(x) "two
+>>> words" "interpolated $(stuff)") seems pretty nice, with three
+>>> arguments there.
+>>
+>> Guess that might interact poorly with $(shell foo "bar baz") though.
+>> Kinda nice to have a syntax that doesn't overlap with shell when
+>> building shell commands.
+>
+>
+> Right.  I can easily imagine
+> that would end up with more gotchas due to quoting and escaping.
 
-Cool, makes sense. I am assuming this means I don't have to resend this
-patch, if I do let me know :)
+Yeah, you're right. It's probably trying to fix something that isn't
+broken. Make's syntax really isn't bad there, just slightly
+non-obvious at first...
 
-Either way, once you push your updated tree to kernel.org, I'll double check
-to make sure the change is in :)
+Think it's fine now. Better to commit to the syntax than trying to be
+"helpful" by adding a bunch of random exceptions too. That probably
+gives a bigger mess in the end...
 
-thanks, good night,
-
- - Joel
+Cheers,
+Ulf
