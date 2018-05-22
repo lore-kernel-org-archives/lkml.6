@@ -1,266 +1,163 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751401AbeEVL3z (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 07:29:55 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:47340 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751172AbeEVL3u (ORCPT
+        id S1752653AbeEVLc3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 07:32:29 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:64768 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752525AbeEVLcY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 07:29:50 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A645C60392
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
-From: Ilia Lin <ilialin@codeaurora.org>
-To: viresh.kumar@linaro.org
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] cpufreq: Add Kryo CPU scaling driver
-Date: Tue, 22 May 2018 14:29:45 +0300
-Message-Id: <1526988585-21678-1-git-send-email-ilialin@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1526729701-8589-1-git-send-email-ilialin@codeaurora.org>
-References: <1526729701-8589-1-git-send-email-ilialin@codeaurora.org>
+        Tue, 22 May 2018 07:32:24 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Viresh Kumar <viresh.kumar@linaro.org>,
+        "Joel Fernandes (Google.)" <joelaf@google.com>
+Cc: linux-kernel@vger.kernel.org,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Luca Abeni <luca.abeni@santannapisa.it>, Todd Kjos <tkjos@google.com>,
+        claudio@evidence.eu.com, kernel-team@android.com,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2] schedutil: Allow cpufreq requests to be made even when kthread kicked
+Date: Tue, 22 May 2018 13:31:45 +0200
+Message-ID: <6163159.YL3rkaEOau@aspire.rjw.lan>
+In-Reply-To: <20180522105429.yn2omuz63oa2w3ez@vireshk-i7>
+References: <20180518185501.173552-1-joel@joelfernandes.org> <4393838.cQWhzXzUcj@aspire.rjw.lan> <20180522105429.yn2omuz63oa2w3ez@vireshk-i7>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
-the CPU frequency subset and voltage value of each OPP varies
-based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
-defines the voltage and frequency value based on the msm-id in SMEM
-and speedbin blown in the efuse combination.
-The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
-to provide the OPP framework with required information.
-This is used to determine the voltage and frequency value for each OPP of
-operating-points-v2 table when it is parsed by the OPP framework.
+On Tuesday, May 22, 2018 12:54:29 PM CEST Viresh Kumar wrote:
+> On 22-05-18, 12:50, Rafael J. Wysocki wrote:
+> > Ugly indeed.
+> 
+> Hehe. I was thinking, maybe we can write wrapper helpers around lock/unlock
+> which are stored as pointers in sg_policy. So that those are only set to
+> non-NULL values (or non-Noop routines) for slow-switching single policy or
+> any-switching shared policy systems. Then we can get rid of such conditional
+> locking attempts :)
+> 
+> 
 
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+So below is my (compiled-only) version of the $subject patch, obviously based
+on the Joel's work.
+
+Roughly, what it does is to move the fast_switch_enabled path entirely to
+sugov_update_single() and take the spinlock around sugov_update_commit()
+in the one-CPU case too.
+
 ---
- drivers/cpufreq/Kconfig.arm          |  10 +++
- drivers/cpufreq/Makefile             |   1 +
- drivers/cpufreq/cpufreq-dt-platdev.c |   3 +
- drivers/cpufreq/qcom-cpufreq-kryo.c  | 163 +++++++++++++++++++++++++++++++++++
- 4 files changed, 177 insertions(+)
- create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
+ kernel/sched/cpufreq_schedutil.c |   57 ++++++++++++++++++++++++++-------------
+ 1 file changed, 38 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-index de55c7d..0bfd40e 100644
---- a/drivers/cpufreq/Kconfig.arm
-+++ b/drivers/cpufreq/Kconfig.arm
-@@ -124,6 +124,16 @@ config ARM_OMAP2PLUS_CPUFREQ
- 	depends on ARCH_OMAP2PLUS
- 	default ARCH_OMAP2PLUS
+Index: linux-pm/kernel/sched/cpufreq_schedutil.c
+===================================================================
+--- linux-pm.orig/kernel/sched/cpufreq_schedutil.c
++++ linux-pm/kernel/sched/cpufreq_schedutil.c
+@@ -92,9 +92,6 @@ static bool sugov_should_update_freq(str
+ 	    !cpufreq_can_do_remote_dvfs(sg_policy->policy))
+ 		return false;
  
-+config ARM_QCOM_CPUFREQ_KRYO
-+	bool "Qualcomm Kryo based CPUFreq"
-+	depends on QCOM_QFPROM
-+	depends on QCOM_SMEM
-+	select PM_OPP
-+	help
-+	  This adds the CPUFreq driver for Qualcomm Kryo SoC based boards.
-+
-+	  If in doubt, say N.
-+
- config ARM_S3C_CPUFREQ
- 	bool
- 	help
-diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-index 8d24ade..fb4a2ec 100644
---- a/drivers/cpufreq/Makefile
-+++ b/drivers/cpufreq/Makefile
-@@ -65,6 +65,7 @@ obj-$(CONFIG_MACH_MVEBU_V7)		+= mvebu-cpufreq.o
- obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+= omap-cpufreq.o
- obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+= pxa2xx-cpufreq.o
- obj-$(CONFIG_PXA3xx)			+= pxa3xx-cpufreq.o
-+obj-$(CONFIG_ARM_QCOM_CPUFREQ_KRYO)	+= qcom-cpufreq-kryo.o
- obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+= s3c2410-cpufreq.o
- obj-$(CONFIG_ARM_S3C2412_CPUFREQ)	+= s3c2412-cpufreq.o
- obj-$(CONFIG_ARM_S3C2416_CPUFREQ)	+= s3c2416-cpufreq.o
-diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-index 3b585e4..77d6ab8 100644
---- a/drivers/cpufreq/cpufreq-dt-platdev.c
-+++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-@@ -118,6 +118,9 @@
+-	if (sg_policy->work_in_progress)
+-		return false;
+-
+ 	if (unlikely(sg_policy->need_freq_update))
+ 		return true;
  
- 	{ .compatible = "nvidia,tegra124", },
+@@ -103,25 +100,25 @@ static bool sugov_should_update_freq(str
+ 	return delta_ns >= sg_policy->freq_update_delay_ns;
+ }
  
-+	{ .compatible = "qcom,apq8096", },
-+	{ .compatible = "qcom,msm8996", },
-+
- 	{ .compatible = "st,stih407", },
- 	{ .compatible = "st,stih410", },
+-static void sugov_update_commit(struct sugov_policy *sg_policy, u64 time,
+-				unsigned int next_freq)
++static bool sugov_update_next_freq(struct sugov_policy *sg_policy, u64 time,
++				   unsigned int next_freq)
+ {
+-	struct cpufreq_policy *policy = sg_policy->policy;
+-
+ 	if (sg_policy->next_freq == next_freq)
+-		return;
++		return false;
  
-diff --git a/drivers/cpufreq/qcom-cpufreq-kryo.c b/drivers/cpufreq/qcom-cpufreq-kryo.c
-new file mode 100644
-index 0000000..c5bb070
---- /dev/null
-+++ b/drivers/cpufreq/qcom-cpufreq-kryo.c
-@@ -0,0 +1,163 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ */
-+
-+/*
-+ * In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
-+ * the CPU frequency subset and voltage value of each OPP varies
-+ * based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
-+ * defines the voltage and frequency value based on the msm-id in SMEM
-+ * and speedbin blown in the efuse combination.
-+ * The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
-+ * to provide the OPP framework with required information.
-+ * This is used to determine the voltage and frequency value for each OPP of
-+ * operating-points-v2 table when it is parsed by the OPP framework.
-+ */
-+
-+#include <linux/cpu.h>
-+#include <linux/err.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/nvmem-consumer.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_opp.h>
-+#include <linux/slab.h>
-+#include <linux/soc/qcom/smem.h>
-+
-+#define MSM_ID_SMEM	137
-+
-+enum _msm_id {
-+	MSM8996V3 = 0xF6ul,
-+	APQ8096V3 = 0x123ul,
-+	MSM8996SG = 0x131ul,
-+	APQ8096SG = 0x138ul,
-+};
-+
-+enum _msm8996_version {
-+	MSM8996_V3,
-+	MSM8996_SG,
-+	NUM_OF_MSM8996_VERSIONS,
-+};
-+
-+static enum _msm8996_version __init qcom_cpufreq_kryo_get_msm_id(void)
-+{
-+	size_t len;
-+	u32 *msm_id;
-+	enum _msm8996_version version;
-+
-+	msm_id = qcom_smem_get(QCOM_SMEM_HOST_ANY, MSM_ID_SMEM, &len);
-+	/* The first 4 bytes are format, next to them is the actual msm-id */
-+	msm_id++;
-+
-+	switch ((enum _msm_id)*msm_id) {
-+	case MSM8996V3:
-+	case APQ8096V3:
-+		version = MSM8996_V3;
-+		break;
-+	case MSM8996SG:
-+	case APQ8096SG:
-+		version = MSM8996_SG;
-+		break;
-+	default:
-+		version = NUM_OF_MSM8996_VERSIONS;
-+	}
-+
-+	return version;
+ 	sg_policy->next_freq = next_freq;
+ 	sg_policy->last_freq_update_time = time;
+ 
+-	if (policy->fast_switch_enabled) {
+-		next_freq = cpufreq_driver_fast_switch(policy, next_freq);
+-		if (!next_freq)
+-			return;
++	return true;
 +}
-+
-+static int __init qcom_cpufreq_kryo_driver_init(void)
+ 
+-		policy->cur = next_freq;
+-		trace_cpu_frequency(next_freq, smp_processor_id());
+-	} else {
++static void sugov_update_commit(struct sugov_policy *sg_policy, u64 time,
++				unsigned int next_freq)
 +{
-+	struct opp_table *opp_tables[NR_CPUS] = {0};
-+	enum _msm8996_version msm8996_version;
-+	struct nvmem_cell *speedbin_nvmem;
-+	struct platform_device *pdev;
-+	struct device_node *np;
-+	struct device *cpu_dev;
-+	unsigned cpu;
-+	u8 *speedbin;
-+	u32 versions;
-+	size_t len;
-+	int ret;
++	if (!sugov_update_next_freq(sg_policy, time, next_freq))
++		return;
 +
-+	cpu_dev = get_cpu_device(0);
-+	if (NULL == cpu_dev)
-+		return -ENODEV;
++	if (!sg_policy->work_in_progress) {
+ 		sg_policy->work_in_progress = true;
+ 		irq_work_queue(&sg_policy->irq_work);
+ 	}
+@@ -277,6 +274,7 @@ static void sugov_update_single(struct u
+ {
+ 	struct sugov_cpu *sg_cpu = container_of(hook, struct sugov_cpu, update_util);
+ 	struct sugov_policy *sg_policy = sg_cpu->sg_policy;
++	struct cpufreq_policy *policy = sg_policy->policy;
+ 	unsigned long util, max;
+ 	unsigned int next_f;
+ 	bool busy;
+@@ -307,7 +305,23 @@ static void sugov_update_single(struct u
+ 		sg_policy->cached_raw_freq = 0;
+ 	}
+ 
+-	sugov_update_commit(sg_policy, time, next_f);
++	if (policy->fast_switch_enabled) {
++		if (!sugov_update_next_freq(sg_policy, time, next_f))
++			return;
 +
-+	msm8996_version = qcom_cpufreq_kryo_get_msm_id();
-+	if (NUM_OF_MSM8996_VERSIONS == msm8996_version) {
-+		dev_err(cpu_dev, "Not Snapdragon 820/821!");
-+		return -ENODEV;
++		next_f = cpufreq_driver_fast_switch(policy, next_f);
++		if (!next_f)
++			return;
++
++		policy->cur = next_f;
++		trace_cpu_frequency(next_f, smp_processor_id());
++	} else {
++		raw_spin_lock(&sg_policy->update_lock);
++
++		sugov_update_commit(sg_policy, time, next_f);
++
++		raw_spin_unlock(&sg_policy->update_lock);
 +	}
+ }
+ 
+ static unsigned int sugov_next_freq_shared(struct sugov_cpu *sg_cpu, u64 time)
+@@ -376,13 +390,18 @@ sugov_update_shared(struct update_util_d
+ static void sugov_work(struct kthread_work *work)
+ {
+ 	struct sugov_policy *sg_policy = container_of(work, struct sugov_policy, work);
++	unsigned int next_freq;
++	unsigned long flags;
 +
-+	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev);
-+	if (IS_ERR(np))
-+		return PTR_ERR(np);
-+
-+	if (!of_device_is_compatible(np, "operating-points-v2-kryo-cpu")) {
-+		ret = -ENOENT;
-+		goto free_np;
-+	}
-+
-+	speedbin_nvmem = of_nvmem_cell_get(np, NULL);
-+	if (IS_ERR(speedbin_nvmem)) {
-+		ret = PTR_ERR(speedbin_nvmem);
-+		dev_err(cpu_dev, "Could not get nvmem cell: %d\n", ret);
-+		goto free_np;
-+	}
-+
-+	speedbin = nvmem_cell_read(speedbin_nvmem, &len);
-+	nvmem_cell_put(speedbin_nvmem);
-+
-+	switch (msm8996_version) {
-+	case MSM8996_V3:
-+		versions = 1 << (unsigned int)(*speedbin);
-+		break;
-+	case MSM8996_SG:
-+		versions = 1 << ((unsigned int)(*speedbin) + 4);
-+		break;
-+	default:
-+		BUG();
-+		break;
-+	}
-+
-+	for_each_possible_cpu(cpu) {
-+		cpu_dev = get_cpu_device(cpu);
-+		if (NULL == cpu_dev) {
-+			ret = -ENODEV;
-+			goto free_opp;
-+		}
-+
-+		opp_tables[cpu] = dev_pm_opp_set_supported_hw(cpu_dev,
-+							      &versions, 1);
-+		ret = PTR_ERR(opp_tables[cpu]);
-+		if (ret && ret != -EBUSY) {
-+			dev_err(cpu_dev, "Failed to set supported hardware\n");
-+			goto free_opp;
-+		}
-+	}
-+
-+	pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
-+	if (!IS_ERR(pdev))
-+		return 0;
-+
-+	ret = PTR_ERR(pdev);
-+	dev_err(cpu_dev, "Failed to register platform device\n");
-+
-+free_opp:
-+	for_each_possible_cpu(cpu) {
-+		if (IS_ERR_OR_NULL(opp_tables[cpu]))
-+			break;
-+		dev_pm_opp_put_supported_hw(opp_tables[cpu]);
-+	}
-+free_np:
-+	of_node_put(np);
-+
-+	return ret;
-+}
-+late_initcall(qcom_cpufreq_kryo_driver_init);
-+
-+MODULE_DESCRIPTION("Qualcomm Technologies, Inc. Kryo CPUfreq driver");
-+MODULE_LICENSE("GPL v2");
--- 
-1.9.1
++	raw_spin_lock_irqsave(&sg_policy->update_lock, flags);
++	next_freq = sg_policy->next_freq;
++	sg_policy->work_in_progress = false;
++	raw_spin_unlock_irqrestore(&sg_policy->update_lock, flags);
+ 
+ 	mutex_lock(&sg_policy->work_lock);
+-	__cpufreq_driver_target(sg_policy->policy, sg_policy->next_freq,
++	__cpufreq_driver_target(sg_policy->policy, next_freq,
+ 				CPUFREQ_RELATION_L);
+ 	mutex_unlock(&sg_policy->work_lock);
+-
+-	sg_policy->work_in_progress = false;
+ }
+ 
+ static void sugov_irq_work(struct irq_work *irq_work)
