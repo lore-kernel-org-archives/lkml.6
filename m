@@ -1,74 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751763AbeEVRrD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 13:47:03 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41628 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751425AbeEVRqz (ORCPT
+        id S1751473AbeEVRvU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 13:51:20 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59140 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751268AbeEVRvS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 13:46:55 -0400
-Date: Tue, 22 May 2018 10:47:11 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Joel Fernandes <joel@joelfernandes.org>, byungchul.park@lge.com,
-        mathieu.desnoyers@efficios.com, Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org,
-        kernel-team@android.com
-Subject: Re: Tasks RCU vs Preempt RCU
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180519022918.GV3803@linux.vnet.ibm.com>
- <20180519225905.GB134184@joelaf.mtv.corp.google.com>
- <20180520004938.GZ3803@linux.vnet.ibm.com>
- <20180520112843.57079857@grimm.local.home>
- <20180520191846.GA248075@joelaf.mtv.corp.google.com>
- <20180521215951.2d6abfcb@gandalf.local.home>
- <20180522045414.GG40541@joelaf.mtv.corp.google.com>
- <20180522083832.45353d5f@gandalf.local.home>
- <20180522160949.GU3803@linux.vnet.ibm.com>
- <20180522132700.68b6660d@gandalf.local.home>
+        Tue, 22 May 2018 13:51:18 -0400
+Date: Tue, 22 May 2018 10:51:14 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Christopher Lameter <cl@linux.com>, Boaz Harrosh <boazh@netapp.com>,
+        Jeff Moyer <jmoyer@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, Rik van Riel <riel@redhat.com>,
+        Jan Kara <jack@suse.cz>, Matthew Wilcox <mawilcox@microsoft.com>,
+        Amit Golander <Amit.Golander@netapp.com>
+Subject: Re: [PATCH] mm: Add new vma flag VM_LOCAL_CPU
+Message-ID: <20180522175114.GA1237@bombadil.infradead.org>
+References: <0efb5547-9250-6b6c-fe8e-cf4f44aaa5eb@netapp.com>
+ <20180514191551.GA27939@bombadil.infradead.org>
+ <7ec6fa37-8529-183d-d467-df3642bcbfd2@netapp.com>
+ <20180515004137.GA5168@bombadil.infradead.org>
+ <f3a66d8b-b9dc-b110-08aa-a63f0c309fb2@netapp.com>
+ <010001637399f796-3ffe3ed2-2fb1-4d43-84f0-6a65b6320d66-000000@email.amazonses.com>
+ <5aea6aa0-88cc-be7a-7012-7845499ced2c@netapp.com>
+ <50cbc27f-0014-0185-048d-25640f744b5b@linux.intel.com>
+ <0100016388be5738-df8f9d12-7011-4e4e-ba5b-33973e5da794-000000@email.amazonses.com>
+ <c4bb7ea8-16d5-ca31-2a9b-db90841211ba@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180522132700.68b6660d@gandalf.local.home>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18052217-0028-0000-0000-000009AAC571
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009066; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000261; SDB=6.01036108; UDB=6.00530013; IPR=6.00815236;
- MB=3.00021242; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-22 17:46:52
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052217-0029-0000-0000-00003AF2084D
-Message-Id: <20180522174711.GY3803@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-22_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805220191
+In-Reply-To: <c4bb7ea8-16d5-ca31-2a9b-db90841211ba@linux.intel.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 01:27:00PM -0400, Steven Rostedt wrote:
-> On Tue, 22 May 2018 09:09:49 -0700
-> "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+On Tue, May 22, 2018 at 10:03:54AM -0700, Dave Hansen wrote:
+> On 05/22/2018 09:46 AM, Christopher Lameter wrote:
+> > On Tue, 22 May 2018, Dave Hansen wrote:
+> > 
+> >> On 05/22/2018 09:05 AM, Boaz Harrosh wrote:
+> >>> How can we implement "Private memory"?
+> >> Per-cpu page tables would do it.
+> > We already have that for percpu subsystem. See alloc_percpu()
 > 
-> > Just for the record, if you guys realy want to take over Tasks RCU,
-> > I have no objections.  For one thing, I don't anticipate any other use
-> > cases for it (famous last words!).  But you break it, you buy it!  ;-)
+> I actually mean a set of page tables which is only ever installed on a
+> single CPU.  The CPU is architecturally allowed to go load any PTE in
+> the page tables into the TLB any time it feels like.  The only way to
+> keep a PTE from getting into the TLB is not ensure that a CPU never has
+> any access to it, and the only way to do that is to make sure that no
+> set of page tables it ever loads into CR3 have that PTE.
 > 
-> It really matters how much of a burden is RCU_tasks to RCU itself? If
-> it causes a lot of headache for you, and it prevents you from cleaning
-> up RCU or making it better, then I would be happy to take it out of RCU
-> and maintain it separately myself. But if that's not the case, I'm happy
-> with keeping it within the RCU umbrella. Which brings me to the
-> question of what motivation does Joel have to remove it?
+> As Peter said, it's possible, but not pretty.
 
-The burden on me from Tasks RCU has been quite light, so no need for a
-change from my end.
+But CR3 is a per-CPU register.  So it'd be *possible* to allocate one
+PGD per CPU (per process).  Have them be identical in all but one of
+the PUD entries.  Then you've reserved 1/512 of your address space for
+per-CPU pages.
 
-Over to you, Joel!  ;-)
-
-							Thanx, Paul
+Complicated, ugly, memory-consuming.  But possible.
