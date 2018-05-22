@@ -1,209 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751567AbeEVPAp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 11:00:45 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:36693 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751236AbeEVPAj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 11:00:39 -0400
-X-Google-Smtp-Source: AB8JxZruU57C34E3WKSJPjqTk0yscbZV6GvsGCx8WtGD2Egkc4+QHTkkH4stU1J9ArJCZ/odb8T5xQ==
-Subject: Re: [Xen-devel] [RFC 1/3] xen/balloon: Allow allocating DMA buffers
-To: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        jgross@suse.com, konrad.wilk@oracle.com
-Cc: daniel.vetter@intel.com, matthew.d.roper@intel.com,
-        dongwon.kim@intel.com
-References: <20180517082604.14828-1-andr2000@gmail.com>
- <20180517082604.14828-2-andr2000@gmail.com>
- <6a108876-19b7-49d0-3de2-9e10f984736c@oracle.com>
- <9541926e-001a-e41e-317c-dbff6d687761@gmail.com>
- <218e2bf7-490d-f89e-9866-27b7e3dbc835@oracle.com>
- <a08e7d0d-f7d5-6b7e-979b-8a17060482f0@gmail.com>
- <b177a327-6a73-bb77-c69b-bc0958a05532@oracle.com>
- <f87478c7-3523-851c-5c3a-12a9e8753bb6@epam.com>
- <c2f0845b-ab2f-4b9b-6f46-6ddd236ad9ed@oracle.com>
- <77c20852-b9b8-c35a-26b0-b0317e6aba09@gmail.com>
- <f8775649-34eb-04ac-2264-609b33cdd504@oracle.com>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <2a88de28-27ef-8fe4-ddc1-35eb9e698567@gmail.com>
-Date: Tue, 22 May 2018 18:00:33 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <f8775649-34eb-04ac-2264-609b33cdd504@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        id S1751415AbeEVPHQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 11:07:16 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39268 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751199AbeEVPHP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 11:07:15 -0400
+From: Marc Zyngier <marc.zyngier@arm.com>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu
+Cc: Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>, Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christoffer Dall <christoffer.dall@arm.com>
+Subject: [PATCH 00/14] arm64 SSBD (aka Spectre-v4) mitigation
+Date: Tue, 22 May 2018 16:06:34 +0100
+Message-Id: <20180522150648.28297-1-marc.zyngier@arm.com>
+X-Mailer: git-send-email 2.14.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/22/2018 05:33 PM, Boris Ostrovsky wrote:
-> On 05/22/2018 01:55 AM, Oleksandr Andrushchenko wrote:
->> On 05/21/2018 11:36 PM, Boris Ostrovsky wrote:
->>> On 05/21/2018 03:13 PM, Oleksandr Andrushchenko wrote:
->>>> On 05/21/2018 09:53 PM, Boris Ostrovsky wrote:
->>>>> On 05/21/2018 01:32 PM, Oleksandr Andrushchenko wrote:
->>>>>> On 05/21/2018 07:35 PM, Boris Ostrovsky wrote:
->>>>>>> On 05/21/2018 01:40 AM, Oleksandr Andrushchenko wrote:
->>>>>>>> On 05/19/2018 01:04 AM, Boris Ostrovsky wrote:
->>>>>>>>> On 05/17/2018 04:26 AM, Oleksandr Andrushchenko wrote:
->>>>>>>>>> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->>>>>>>>> A commit message would be useful.
->>>>>>>> Sure, v1 will have it
->>>>>>>>>> Signed-off-by: Oleksandr Andrushchenko
->>>>>>>>>> <oleksandr_andrushchenko@epam.com>
->>>>>>>>>>
->>>>>>>>>>           for (i = 0; i < nr_pages; i++) {
->>>>>>>>>> -        page = alloc_page(gfp);
->>>>>>>>>> -        if (page == NULL) {
->>>>>>>>>> -            nr_pages = i;
->>>>>>>>>> -            state = BP_EAGAIN;
->>>>>>>>>> -            break;
->>>>>>>>>> +        if (ext_pages) {
->>>>>>>>>> +            page = ext_pages[i];
->>>>>>>>>> +        } else {
->>>>>>>>>> +            page = alloc_page(gfp);
->>>>>>>>>> +            if (page == NULL) {
->>>>>>>>>> +                nr_pages = i;
->>>>>>>>>> +                state = BP_EAGAIN;
->>>>>>>>>> +                break;
->>>>>>>>>> +            }
->>>>>>>>>>               }
->>>>>>>>>>               scrub_page(page);
->>>>>>>>>>               list_add(&page->lru, &pages);
->>>>>>>>>> @@ -529,7 +565,7 @@ static enum bp_state
->>>>>>>>>> decrease_reservation(unsigned long nr_pages, gfp_t gfp)
->>>>>>>>>>           i = 0;
->>>>>>>>>>           list_for_each_entry_safe(page, tmp, &pages, lru) {
->>>>>>>>>>               /* XENMEM_decrease_reservation requires a GFN */
->>>>>>>>>> -        frame_list[i++] = xen_page_to_gfn(page);
->>>>>>>>>> +        frames[i++] = xen_page_to_gfn(page);
->>>>>>>>>>         #ifdef CONFIG_XEN_HAVE_PVMMU
->>>>>>>>>>               /*
->>>>>>>>>> @@ -552,18 +588,22 @@ static enum bp_state
->>>>>>>>>> decrease_reservation(unsigned long nr_pages, gfp_t gfp)
->>>>>>>>>>       #endif
->>>>>>>>>>               list_del(&page->lru);
->>>>>>>>>>       -        balloon_append(page);
->>>>>>>>>> +        if (!ext_pages)
->>>>>>>>>> +            balloon_append(page);
->>>>>>>>> So what you are proposing is not really ballooning. You are just
->>>>>>>>> piggybacking on existing interfaces, aren't you?
->>>>>>>> Sort of. Basically I need to {increase|decrease}_reservation, not
->>>>>>>> actually
->>>>>>>> allocating ballooned pages.
->>>>>>>> Do you think I can simply EXPORT_SYMBOL for
->>>>>>>> {increase|decrease}_reservation?
->>>>>>>> Any other suggestion?
->>>>>>> I am actually wondering how much of that code you end up reusing.
->>>>>>> You
->>>>>>> pretty much create new code paths in both routines and common code
->>>>>>> ends
->>>>>>> up being essentially the hypercall.
->>>>>> Well, I hoped that it would be easier to maintain if I modify
->>>>>> existing
->>>>>> code
->>>>>> to support both use-cases, but I am also ok to create new routines if
->>>>>> this
->>>>>> seems to be reasonable - please let me know
->>>>>>>      So the question is --- would it make
->>>>>>> sense to do all of this separately from the balloon driver?
->>>>>> This can be done, but which driver will host this code then? If we
->>>>>> move from
->>>>>> the balloon driver, then this could go to either gntdev or
->>>>>> grant-table.
->>>>>> What's your preference?
->>>>> A separate module?
->>>>> Is there any use for this feature outside of your zero-copy DRM
->>>>> driver?
->>>> Intel's hyper dma-buf (Dongwon/Matt CC'ed), V4L/GPU at least.
->>>>
->>>> At the time I tried to upstream zcopy driver it was discussed and
->>>> decided that
->>>> it would be better if I remove all DRM specific code and move it to
->>>> Xen drivers.
->>>> Thus, this RFC.
->>>>
->>>> But it can also be implemented as a dedicated Xen dma-buf driver which
->>>> will have all the
->>>> code from this RFC + a bit more (char/misc device handling at least).
->>>> This will also require a dedicated user-space library, just like
->>>> libxengnttab.so
->>>> for gntdev (now I have all new IOCTLs covered there).
->>>>
->>>> If the idea of a dedicated Xen dma-buf driver seems to be more
->>>> attractive we
->>>> can work toward this solution. BTW, I do support this idea, but was not
->>>> sure if Xen community accepts yet another driver which duplicates
->>>> quite some code
->>>> of the existing gntdev/balloon/grant-table. And now after this RFC I
->>>> hope that all cons
->>>> and pros of both dedicated driver and gntdev/balloon/grant-table
->>>> extension are
->>>> clearly seen and we can make a decision.
->>> IIRC the objection for a separate module was in the context of gntdev
->>> was discussion, because (among other things) people didn't want to have
->>> yet another file in /dev/xen/
->>>
->>> Here we are talking about (a new) balloon-like module which doesn't
->>> create any new user-visible interfaces. And as for duplicating code ---
->>> as I said, I am not convinced there is much of duplication.
->>>
->>> I might even argue that we should add a new config option for this
->>> module.
->> I am not quite sure I am fully following you here: so, you suggest
->> that we have balloon.c unchanged, but instead create a new
->> module (namely a file under the same folder as balloon.c, e.g.
->> dma-buf-reservation.c) and move those {increase|decrease}_reservation
->> routines (specific to dma-buf) to that new file? And make it selectable
->> via Kconfig? If so, then how about the changes to grant-table and gntdev?
->> Those will look inconsistent then.
-> Inconsistent with what? The changes to grant code will also be under the
-> new config option.
-Ah, ok.
+Hi all,
 
-Option 1. We will have Kconfig option which will cover dma-buf
-changes in balloon, grant-table and gntdev. And for that we will
-create dedicated routines in balloon and grant-table (copy of
-the existing ones, but modified to fit dma-buf use-case) and
-those under something like "#if CONFIG_XEN_DMABUF"?
-This is relatively easy to do for balloon/grant-table, but not that
-easy for gntdev: there still seems to be lots of code which can be reused,
-so I'll have to put lots of "#if CONFIG_XEN_DMABUF" there. Even more, I 
-change
-interfaces of the existing gntdev routines which won't look cute with 
-#if's, IMO.
+This patch series implements the Linux kernel side of the "Spectre-v4"
+(CVE-2018-3639) mitigation known as "Speculative Store Bypass Disable"
+(SSBD).
 
-Option 2. Try moving dma-buf related changes from balloon and
-grant-table to a new file. Then gntdev's Kconfig concerns from above 
-will still
-be there, but balloon/grant-table functionality will be localized in a 
-new module.
+More information can be found at:
 
-I am still missing your point here?
+  https://bugs.chromium.org/p/project-zero/issues/detail?id=1528
+  https://developer.arm.com/support/arm-security-updates/speculative-processor-vulnerability
 
->
->> If you suggest a new kernel driver module:
->> IMO, there is nothing bad if we create a dedicated kernel module
->> (driver) for Xen dma-buf handling selectable under Kconfig option.
->> Yes, this will create a yet another device under /dev/xen,
->> but most people will never see it if we set Kconfig to default to "n".
->> And then we'll need user-space support for that, so Xen tools will
->> be extended with libxendmabuf.so or so.
->> This way all Xen dma-buf support can be localized at one place which
->> might be easier to maintain. What is more it could be totally transparent
->> to most of us as Kconfig option won't be set by default (both kernel
->> and Xen).
->
-> The downside is that we will end up having another device for doing
-> things that are not that different from what we are already doing with
-> existing gnttab device. Or are they?
-Agree, but Kconfig option, IMO, won't make it look nice because
-of gntdev changes and code reuse.
-> -boris
-Thank you,
-Oleksandr
+For all released Arm Cortex-A CPUs that are affected by this issue, then
+the preferred mitigation is simply to set a chicken bit in the firmware
+during CPU initialisation and therefore no change to Linux is required.
+Other CPUs may require the chicken bit to be toggled dynamically (for
+example, when switching between user-mode and kernel-mode) and this is
+achieved by calling into EL3 via an SMC which has been published as part
+of the latest SMCCC specification:
+
+  https://developer.arm.com/cache-speculation-vulnerability-firmware-specification
+
+as well as an ATF update for the released ARM cores affected by SSDB:
+
+  https://github.com/ARM-software/arm-trusted-firmware/pull/1392
+
+These patches provide the following:
+
+  1. Safe probing of firmware to establish which CPUs in the system
+     require calling into EL3 as part of the mitigation.
+
+  2. For CPUs that require it, call into EL3 on exception entry/exit
+     from EL0 to apply the SSBD mitigation when running at EL1.
+
+  3. A command-line option to force the SSBD mitigation to be always on,
+     always off, or dymamically toggled (default) for CPUs that require
+     the EL3 call.
+
+  4. An initial implementation of a prctl() backend for arm64 that allows
+     userspace tasks to opt-in to the mitigation explicitly. This is
+     intended to match the interface provided by x86, and so we rely on
+     their core changes here. There still is an annoying issue with
+     multithreaded seccomp tasks that get flagged with the mitigation
+     whilst they are running in userspace.
+
+  5. An initial implementation of the call via KVM, which exposes the
+     mitigation to the guest via an HVC interface. This isn't yet
+     complete and doesn't include save/restore functionality for the
+     workaround state.
+
+All comments welcome,
+
+	M.
+
+Marc Zyngier (14):
+  arm/arm64: smccc: Add SMCCC-specific return codes
+  arm64: Call ARCH_WORKAROUND_2 on transitions between EL0 and EL1
+  arm64: Add per-cpu infrastructure to call ARCH_WORKAROUND_2
+  arm64: Add ARCH_WORKAROUND_2 probing
+  arm64: Add 'ssbd' command-line option
+  arm64: ssbd: Add global mitigation state accessor
+  arm64: ssbd: Skip apply_ssbd if not using dynamic mitigation
+  arm64: ssbd: Disable mitigation on CPU resume if required by user
+  arm64: ssbd: Introduce thread flag to control userspace mitigation
+  arm64: ssbd: Add prctl interface for per-thread mitigation
+  arm64: KVM: Add HYP per-cpu accessors
+  arm64: KVM: Add ARCH_WORKAROUND_2 support for guests
+  arm64: KVM: Handle guest's ARCH_WORKAROUND_2 requests
+  arm64: KVM: Add ARCH_WORKAROUND_2 discovery through
+    ARCH_FEATURES_FUNC_ID
+
+ Documentation/admin-guide/kernel-parameters.txt |  17 +++
+ arch/arm/include/asm/kvm_host.h                 |  12 ++
+ arch/arm/include/asm/kvm_mmu.h                  |   5 +
+ arch/arm64/Kconfig                              |   9 ++
+ arch/arm64/include/asm/cpucaps.h                |   3 +-
+ arch/arm64/include/asm/cpufeature.h             |  22 +++
+ arch/arm64/include/asm/kvm_asm.h                |  30 +++-
+ arch/arm64/include/asm/kvm_host.h               |  26 ++++
+ arch/arm64/include/asm/kvm_mmu.h                |  24 ++++
+ arch/arm64/include/asm/thread_info.h            |   1 +
+ arch/arm64/kernel/Makefile                      |   1 +
+ arch/arm64/kernel/asm-offsets.c                 |   1 +
+ arch/arm64/kernel/cpu_errata.c                  | 173 ++++++++++++++++++++++++
+ arch/arm64/kernel/entry.S                       |  30 ++++
+ arch/arm64/kernel/ssbd.c                        | 107 +++++++++++++++
+ arch/arm64/kernel/suspend.c                     |   8 ++
+ arch/arm64/kvm/hyp/hyp-entry.S                  |  38 +++++-
+ arch/arm64/kvm/hyp/switch.c                     |  42 ++++++
+ arch/arm64/kvm/reset.c                          |   4 +
+ include/linux/arm-smccc.h                       |  10 ++
+ virt/kvm/arm/arm.c                              |   4 +
+ virt/kvm/arm/psci.c                             |  18 ++-
+ 22 files changed, 579 insertions(+), 6 deletions(-)
+ create mode 100644 arch/arm64/kernel/ssbd.c
+
+-- 
+2.14.2
