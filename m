@@ -1,60 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751738AbeEVICh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 04:02:37 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39632 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751229AbeEVHze (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 03:55:34 -0400
-From: Eric Auger <eric.auger@redhat.com>
-To: eric.auger.pro@gmail.com, eric.auger@redhat.com,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
-        christoffer.dall@arm.com, peter.maydell@linaro.org
-Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
-Subject: [PATCH v8 01/13] KVM: arm/arm64: Set dist->spis to NULL after kfree
-Date: Tue, 22 May 2018 09:55:06 +0200
-Message-Id: <1526975718-18567-2-git-send-email-eric.auger@redhat.com>
-In-Reply-To: <1526975718-18567-1-git-send-email-eric.auger@redhat.com>
-References: <1526975718-18567-1-git-send-email-eric.auger@redhat.com>
+        id S1751688AbeEVIDE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 04:03:04 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:36266 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751283AbeEVICz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 04:02:55 -0400
+X-Google-Smtp-Source: AB8JxZqTzitmduSWmS2lK0JKhdsdbMOdVWPy/8w7CYGufP8HHNqj+n71ahw8dvvNBo8bHEhF6ynAig==
+Date: Tue, 22 May 2018 10:02:50 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>, sre@kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, tony@atomide.com, khilman@kernel.org,
+        ivo.g.dimitrov.75@gmail.com, patrikbachan@gmail.com, serge@hallyn.com,
+        abcloriens@gmail.com, clayton@craftyguy.net, martijn@brixit.nl,
+        sakari.ailus@linux.intel.com,
+        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
+        Thorsten Leemhuis <regressions@leemhuis.info>
+Subject: Re: v4.17-rc1: regressions on N900, N950
+Message-ID: <20180522080250.4fzyvqrgw5oigexn@pali>
+References: <20180422074213.GA12428@amd>
+ <20180423202940.ig6iud5lrbgnu35a@darkstar.musicnaut.iki.fi>
+ <20180521213952.GA11596@amd>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180521213952.GA11596@amd>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-in case kvm_vgic_map_resources() fails, typically if the vgic
-distributor is not defined, __kvm_vgic_destroy will be called
-several times. Indeed kvm_vgic_map_resources() is called on
-first vcpu run. As a result dist->spis is freeed more than once
-and on the second time it causes a "kernel BUG at mm/slub.c:3912!"
+On Monday 21 May 2018 23:39:53 Pavel Machek wrote:
+> HI!
+> 
+> > On Sun, Apr 22, 2018 at 09:42:13AM +0200, Pavel Machek wrote:
+> > > v4.17-rc1 broke display for me on Nokia N900. (I don't know if system
+> > > boots, but I can see on red flash LED that at least that driver
+> > > succeeded. So it should not be early boot crash).
+> > > 
+> > > v4.17-rc1 also broke boot on N950.
+> > > 
+> > > Any ideas? Does it work for you?
+> > 
+> > Below config works for me on N900 and N950. (On N950, I need to disable to
+> > display DTS entry as discussed in other threads.)
+> 
+> Thanks... On N900 it works for me in v4.16, but display stays blank in
+> v4.17-rc1...
+> 
+> And I'm starting to suspect I have somehow special N900, or maybe
+> special gcc version... Whether display on N900 works or not seems to
+> depend on completely unrelated config options :-(. Maybe it is timing
+> during boot or something.
+> 
+> Best regards,
 
-Set dist->spis to NULL to avoid the crash.
+Hi! I remember that in time of migration from platform board code to
+device tree structures there appeared some bug which caused that
+sometimes display were not initialized. And somebody figured out that
+display initialization is failing when some other SPI devices are
+initialized before or after display... This behavior was observed only
+on real N900 hardware, not in qemu. Real reason was never explained. In
+old platform board code there was hardcoded order of SPI devices in
+which initialization happened. And in device tree it is probably in
+(pseudo)-random order. Enabling/disabling various config option can
+affect some timings and order in which kernel starts probing and
+initializing devices...
 
-Fixes: ad275b8bb1e6 ("KVM: arm/arm64: vgic-new: vgic_init: implement
-vgic_init")
-
-Signed-off-by: Eric Auger <eric.auger@redhat.com>
-Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
-Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
-
----
-
-v2 -> v3:
-- added Marc's R-b and Fixed commit
----
- virt/kvm/arm/vgic/vgic-init.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/virt/kvm/arm/vgic/vgic-init.c b/virt/kvm/arm/vgic/vgic-init.c
-index e07156c..9a5aed7 100644
---- a/virt/kvm/arm/vgic/vgic-init.c
-+++ b/virt/kvm/arm/vgic/vgic-init.c
-@@ -308,6 +308,7 @@ static void kvm_vgic_dist_destroy(struct kvm *kvm)
- 	dist->initialized = false;
- 
- 	kfree(dist->spis);
-+	dist->spis = NULL;
- 	dist->nr_spis = 0;
- 
- 	if (vgic_supports_direct_msis(kvm))
 -- 
-2.5.5
+Pali Rohár
+pali.rohar@gmail.com
