@@ -1,73 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751412AbeEVLHA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 07:07:00 -0400
-Received: from 10.mo178.mail-out.ovh.net ([46.105.76.150]:59142 "EHLO
-        10.mo178.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750733AbeEVLG5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 07:06:57 -0400
-From: =?UTF-8?q?S=C3=A9bastien=20Szymanski?=
-        <sebastien.szymanski@armadeus.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>, Stefan Agner <stefan@agner.ch>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org,
-        =?UTF-8?q?S=C3=A9bastien=20Szymanski?=
-        <sebastien.szymanski@armadeus.com>
-Subject: [PATCH v3 3/3] ARM: dts: imx6ull-colibri-wifi: remove operating points
-Date: Tue, 22 May 2018 08:28:53 +0200
-Message-Id: <20180522062853.24799-3-sebastien.szymanski@armadeus.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180522062853.24799-1-sebastien.szymanski@armadeus.com>
-References: <20180522062853.24799-1-sebastien.szymanski@armadeus.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 13138407488661902588
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedthedrgedtgddutdegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddm
+        id S1751492AbeEVLIK (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 07:08:10 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34992 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750733AbeEVLII (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 07:08:08 -0400
+From: Patrick Bellasi <patrick.bellasi@arm.com>
+To: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>
+Subject: [PATCH v4 0/2] Fix and cleanup iowait boost
+Date: Tue, 22 May 2018 12:07:52 +0100
+Message-Id: <20180522110754.20832-1-patrick.bellasi@arm.com>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Operating points are now defined in the imx6ull.dtsi file so remove
-them from board device trees.
+Here is the (hopefully) final update of:
 
-Signed-off-by: Sébastien Szymanski <sebastien.szymanski@armadeus.com>
----
- arch/arm/boot/dts/imx6ull-colibri-wifi.dtsi | 14 --------------
- 1 file changed, 14 deletions(-)
+   https://lkml.org/lkml/2018/5/21/114
+   20180521085120.7902-1-patrick.bellasi@arm.com
 
-diff --git a/arch/arm/boot/dts/imx6ull-colibri-wifi.dtsi b/arch/arm/boot/dts/imx6ull-colibri-wifi.dtsi
-index 3dffbcd50bf6..183193e8580d 100644
---- a/arch/arm/boot/dts/imx6ull-colibri-wifi.dtsi
-+++ b/arch/arm/boot/dts/imx6ull-colibri-wifi.dtsi
-@@ -20,20 +20,6 @@
- 
- &cpu0 {
- 	clock-frequency = <792000000>;
--	operating-points = <
--		/* kHz	uV */
--		792000  1225000
--		528000	1175000
--		396000	1025000
--		198000	950000
--	>;
--	fsl,soc-operating-points = <
--		/* KHz	uV */
--		792000  1175000
--		528000	1175000
--		396000	1175000
--		198000	1175000
--	>;
- };
- 
- &iomuxc {
+which just includes the small typo fixes suggested by Jeol and the ack
+and review tags collected so far.
+
+Cheers Patrick
+
+Changes in v4:
+ - fixed typos in changelog (Joel)
+ - added Reviewed-by Joel Fernandes
+ - added Acked-by Viresh and Peter
+
+Changes in v3:
+ - renamed the iowait boost functions (Peter)
+ - moved boost reset into a dedicated function (Peter)
+ - split the fix into a separated patch (Viresh)
+ - added "Fixes" tag (Viresh)
+
+Patrick Bellasi (2):
+  cpufreq: schedutil: Fix iowait boost reset
+  cpufreq: schedutil: Cleanup and document iowait boost
+
+ kernel/sched/cpufreq_schedutil.c | 152 +++++++++++++++++++++++++++------------
+ 1 file changed, 108 insertions(+), 44 deletions(-)
+
 -- 
-2.16.1
+2.15.1
