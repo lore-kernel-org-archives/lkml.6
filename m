@@ -1,79 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752323AbeEVQbl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 12:31:41 -0400
-Received: from mail02.iobjects.de ([188.40.134.68]:37954 "EHLO
-        mail02.iobjects.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751268AbeEVQbf (ORCPT
+        id S1752478AbeEVQbo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 12:31:44 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:44443 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752100AbeEVQbh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 12:31:35 -0400
-Subject: Re: [PATCH] block: kyber: make kyber more friendly with merging
-To: Jianchao Wang <jianchao.w.wang@oracle.com>, axboe@kernel.dk
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1527000509-2619-1-git-send-email-jianchao.w.wang@oracle.com>
-From: =?UTF-8?Q?Holger_Hoffst=c3=a4tte?= <holger@applied-asynchrony.com>
-Organization: Applied Asynchrony, Inc.
-Message-ID: <163c5760-cf0e-faea-ee4e-ac5d688310fe@applied-asynchrony.com>
-Date: Tue, 22 May 2018 18:17:44 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 22 May 2018 12:31:37 -0400
+X-Google-Smtp-Source: AB8JxZr6yaap2roaoKn0NYceByC0yP4Ts9pz7Z1WbepvZt/3GvwpQbBAxikaFeUy/Grt7Pu4KagR1ehX1MwvW56jAtY=
 MIME-Version: 1.0
-In-Reply-To: <1527000509-2619-1-git-send-email-jianchao.w.wang@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAKwvOdkedxmstRytbWeYU8Pj9ahgWOe7rODJJ8BDtRzUroQeXw@mail.gmail.com>
+References: <CAAeHK+wDMH_G=3UuGOda2t0g4TH4TmDAeyG-ydJwg9vmThd3eQ@mail.gmail.com>
+ <c61336a2-7c66-ea48-3daa-e644403d7a6e@arm.com> <CAAeHK+zpAnC3Ppjq2W=r-5fYh+ceEwYymER0iLTan7+pcFDiJg@mail.gmail.com>
+ <CAKwvOdkedxmstRytbWeYU8Pj9ahgWOe7rODJJ8BDtRzUroQeXw@mail.gmail.com>
+From: Andrey Konovalov <andreyknvl@google.com>
+Date: Tue, 22 May 2018 18:31:35 +0200
+Message-ID: <CAAeHK+xDpESgjA-Y7JbOAXSzE_yUjz=zcb9carbLxceB3BN=6A@mail.gmail.com>
+Subject: Re: Clang arm64 build is broken
+To: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        kvmarm@lists.cs.columbia.edu, LKML <linux-kernel@vger.kernel.org>,
+        Kostya Serebryany <kcc@google.com>, Dmitry Vyukov <dvyukov@google.com>,
+        Alexander Potapenko <glider@google.com>, christoffer.dall@arm.com,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/22/18 16:48, Jianchao Wang wrote:
-> Currently, kyber is very unfriendly with merging. kyber depends
-> on ctx rq_list to do merging, however, most of time, it will not
-> leave any requests in ctx rq_list. This is because even if tokens
-> of one domain is used up, kyber will try to dispatch requests
-> from other domain and flush the rq_list there.
-> 
-> To improve this, we setup kyber_ctx_queue (kcq) which is similar
-> with ctx, but it has rq_lists for different domain and build same
-> mapping between kcq and khd as the ctx & hctx. Then we could merge,
-> insert and dispatch for different domains separately. If one domain
-> token is used up, the requests could be left in the rq_list of
-> that domain and maybe merged with following io.
-> 
-> Following is my test result on machine with 8 cores and NVMe card
-> INTEL SSDPEKKR128G7
-> 
-> fio size=256m ioengine=libaio iodepth=64 direct=1 numjobs=8
-> seq/random
-> +------+---------------------------------------------------------------+
-> |patch?| bw(MB/s) |   iops    | slat(usec) |    clat(usec)   |  merge  |
-> +----------------------------------------------------------------------+
-> | w/o  |  606/612 | 151k/153k |  6.89/7.03 | 3349.21/3305.40 |   0/0   |
-> +----------------------------------------------------------------------+
-> | w/   | 1083/616 | 277k/154k |  4.93/6.95 | 1830.62/3279.95 | 223k/3k |
-> +----------------------------------------------------------------------+
-> When set numjobs to 16, the bw and iops could reach 1662MB/s and 425k
-> on my platform.
-> 
-> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+On Mon, May 14, 2018 at 6:24 PM, Nick Desaulniers
+<ndesaulniers@google.com> wrote:
+> On Fri, Apr 20, 2018 at 7:59 AM Andrey Konovalov <andreyknvl@google.com>
+> wrote:
+>> On Fri, Apr 20, 2018 at 10:13 AM, Marc Zyngier <marc.zyngier@arm.com>
+> wrote:
+>> >> The issue is that
+>> >> clang doesn't know about the "S" asm constraint. I reported this to
+>> >> clang [2], and hopefully this will get fixed. In the meantime, would
+>> >> it possible to work around using the "S" constraint in the kernel?
+>> >
+>> > I have no idea, I've never used clang to build the kernel. Clang isn't
+>> > really supported to build the arm64 kernel anyway (as you mention
+>> > below), and working around clang deficiencies would mean that we leave
+>> > with the workaround forever. I'd rather enable clang once it is at
+>> > feature parity with GCC.
+>
+>> The fact that there are some existing issues with building arm64
+>> kernel with clang doesn't sound like a good justification for adding
+>> new issues :)
+>
+>> However in this case I do believe that this is more of a bug in clang
+>> that should be fixed.
+>
+> Just to follow up with this thread;
+>
+> Support for "S" constraints is being (re-)added to Clang in:
+> https://reviews.llvm.org/D46745
 
-<snip>
+Hi Nick!
 
-This looks great but prevents kyber from being built as module,
-which is AFAIK supposed to work (and works now):
+I can confirm that the latest clang (which includes this patch) is
+able to build the kernel with CONFIG_KVM enabled.
 
-..
-  CC [M]  block/kyber-iosched.o
-  Building modules, stage 2.
-  MODPOST 313 modules
-ERROR: "bio_attempt_back_merge" [block/kyber-iosched.ko] undefined!
-ERROR: "bio_attempt_front_merge" [block/kyber-iosched.ko] undefined!
-ERROR: "bio_attempt_discard_merge" [block/kyber-iosched.ko] undefined!
-ERROR: "blk_try_merge" [block/kyber-iosched.ko] undefined!
-ERROR: "blk_rq_merge_ok" [block/kyber-iosched.ko] undefined!
-..
-
-It does build fine when compiled in, obviously. :)
-
-cheers,
-Holger
+Thanks!
