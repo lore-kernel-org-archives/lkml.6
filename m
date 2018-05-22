@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752658AbeEVMQs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 08:16:48 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52558 "EHLO
+        id S1751760AbeEVMQp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 08:16:45 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52592 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751609AbeEVMFL (ORCPT
+        with ESMTP id S1751872AbeEVMFL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 22 May 2018 08:05:11 -0400
 From: Christoph Hellwig <hch@lst.de>
@@ -18,9 +18,9 @@ Cc: linux-arch@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
         linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org,
         sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 07/25] nds32: remove the broken kmap code in nds32_dma_map_sg
-Date: Tue, 22 May 2018 14:04:12 +0200
-Message-Id: <20180522120430.28709-8-hch@lst.de>
+Subject: [PATCH 06/25] microblaze: remove the consistent_sync and consistent_sync_page
+Date: Tue, 22 May 2018 14:04:11 +0200
+Message-Id: <20180522120430.28709-7-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180522120430.28709-1-hch@lst.de>
 References: <20180522120430.28709-1-hch@lst.de>
@@ -29,52 +29,80 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-nds32_dma_map_sg is the only of the various DMA operations that tries
-to deal with highmem (the single page variants and SG sync routines are
-missing, SG unmap is entirely unimplemented), and it does so without
-taking into account S/G list items that are bigger than a page, which
-are legal and can happen frequently.
-
-Remove this code for now - if highmem support on nds32 becomes a real
-thing it needs to be added back as a loop over pages in the newly
-consolidated code that deals with all operations.
+Both unused.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/nds32/kernel/dma.c | 21 +++------------------
- 1 file changed, 3 insertions(+), 18 deletions(-)
+ arch/microblaze/include/asm/pgtable.h |  3 --
+ arch/microblaze/mm/consistent.c       | 45 ---------------------------
+ 2 files changed, 48 deletions(-)
 
-diff --git a/arch/nds32/kernel/dma.c b/arch/nds32/kernel/dma.c
-index d291800fc621..e1bf7206e015 100644
---- a/arch/nds32/kernel/dma.c
-+++ b/arch/nds32/kernel/dma.c
-@@ -393,24 +393,9 @@ static int nds32_dma_map_sg(struct device *dev, struct scatterlist *sg,
- 	int i;
+diff --git a/arch/microblaze/include/asm/pgtable.h b/arch/microblaze/include/asm/pgtable.h
+index 8a2e654b709f..7b650ab14fa0 100644
+--- a/arch/microblaze/include/asm/pgtable.h
++++ b/arch/microblaze/include/asm/pgtable.h
+@@ -553,9 +553,6 @@ void __init *early_get_page(void);
  
- 	for (i = 0; i < nents; i++, sg++) {
--		void *virt;
--		unsigned long pfn;
--		struct page *page = sg_page(sg);
--
--		sg->dma_address = sg_phys(sg);
--		pfn = page_to_pfn(page) + sg->offset / PAGE_SIZE;
--		page = pfn_to_page(pfn);
--		if (PageHighMem(page)) {
--			virt = kmap_atomic(page);
--			consistent_sync(virt, sg->length, dir, FOR_CPU);
--			kunmap_atomic(virt);
--		} else {
--			if (sg->offset > PAGE_SIZE)
--				panic("sg->offset:%08x > PAGE_SIZE\n",
--				      sg->offset);
--			virt = page_address(page) + sg->offset;
--			consistent_sync(virt, sg->length, dir, FOR_CPU);
--		}
-+		char *virt =
-+		    page_address((struct page *)sg->page_link) + sg->offset;
-+		consistent_sync(virt, sg->length, dir, FOR_CPU);
- 	}
- 	return nents;
+ extern unsigned long ioremap_bot, ioremap_base;
+ 
+-void consistent_sync(void *vaddr, size_t size, int direction);
+-void consistent_sync_page(struct page *page, unsigned long offset,
+-	size_t size, int direction);
+ unsigned long consistent_virt_to_pfn(void *vaddr);
+ 
+ void setup_memory(void);
+diff --git a/arch/microblaze/mm/consistent.c b/arch/microblaze/mm/consistent.c
+index b9a9c8c3397b..c9a278ac795a 100644
+--- a/arch/microblaze/mm/consistent.c
++++ b/arch/microblaze/mm/consistent.c
+@@ -220,48 +220,3 @@ void arch_dma_free(struct device *dev, size_t size, void *vaddr,
+ 	flush_tlb_all();
+ #endif
  }
+-
+-/*
+- * make an area consistent.
+- */
+-void consistent_sync(void *vaddr, size_t size, int direction)
+-{
+-	unsigned long start;
+-	unsigned long end;
+-
+-	start = (unsigned long)vaddr;
+-
+-	/* Convert start address back down to unshadowed memory region */
+-#ifdef CONFIG_XILINX_UNCACHED_SHADOW
+-	start &= ~UNCACHED_SHADOW_MASK;
+-#endif
+-	end = start + size;
+-
+-	switch (direction) {
+-	case PCI_DMA_NONE:
+-		BUG();
+-	case PCI_DMA_FROMDEVICE:	/* invalidate only */
+-		invalidate_dcache_range(start, end);
+-		break;
+-	case PCI_DMA_TODEVICE:		/* writeback only */
+-		flush_dcache_range(start, end);
+-		break;
+-	case PCI_DMA_BIDIRECTIONAL:	/* writeback and invalidate */
+-		flush_dcache_range(start, end);
+-		break;
+-	}
+-}
+-EXPORT_SYMBOL(consistent_sync);
+-
+-/*
+- * consistent_sync_page makes memory consistent. identical
+- * to consistent_sync, but takes a struct page instead of a
+- * virtual address
+- */
+-void consistent_sync_page(struct page *page, unsigned long offset,
+-	size_t size, int direction)
+-{
+-	unsigned long start = (unsigned long)page_address(page) + offset;
+-	consistent_sync((void *)start, size, direction);
+-}
+-EXPORT_SYMBOL(consistent_sync_page);
 -- 
 2.17.0
