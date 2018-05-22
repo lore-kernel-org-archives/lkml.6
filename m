@@ -1,124 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751432AbeEVMV0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 08:21:26 -0400
-Received: from 9pmail.ess.barracuda.com ([64.235.150.224]:37756 "EHLO
-        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751269AbeEVMVY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 08:21:24 -0400
-Subject: Re: [PATCH v2 4/4] MIPS: memset.S: Add comments to fault fixup
- handlers
-To: James Hogan <jhogan@kernel.org>
-CC: Ralf Baechle <ralf@linux-mips.org>, <linux-mips@linux-mips.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1523979603-492-1-git-send-email-matt.redfearn@mips.com>
- <1523979603-492-4-git-send-email-matt.redfearn@mips.com>
- <20180521161443.GA9998@jamesdev>
-From: Matt Redfearn <matt.redfearn@mips.com>
-Message-ID: <d9c292de-8d21-78e9-6094-5acef2c6fccb@mips.com>
-Date: Tue, 22 May 2018 13:20:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751479AbeEVMWU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 08:22:20 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60470 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751192AbeEVMWT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 08:22:19 -0400
+Subject: Re: [PATCH v7 08/13] KVM: arm/arm64: Remove kvm_vgic_vcpu_early_init
+To: kbuild test robot <lkp@intel.com>
+References: <1526851372-13009-9-git-send-email-eric.auger@redhat.com>
+ <201805221850.wnnX64nq%fengguang.wu@intel.com>
+Cc: kbuild-all@01.org, eric.auger.pro@gmail.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
+        christoffer.dall@arm.com, peter.maydell@linaro.org,
+        andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
+From: Auger Eric <eric.auger@redhat.com>
+Message-ID: <b03bedea-5eac-ef9b-7e6f-d200509d8535@redhat.com>
+Date: Tue, 22 May 2018 14:22:15 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
-In-Reply-To: <20180521161443.GA9998@jamesdev>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
+In-Reply-To: <201805221850.wnnX64nq%fengguang.wu@intel.com>
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [192.168.155.41]
-X-ClientProxiedBy: mipsdag02.mipstec.com (10.20.40.47) To
- mipsdag02.mipstec.com (10.20.40.47)
-X-BESS-ID: 1526991658-298553-23664-57222-1
-X-BESS-VER: 2018.6-r1805181819
-X-BESS-Apparent-Source-IP: 12.201.5.32
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.193246
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------
-        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status: 1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi James,
+Hi,
 
-On 21/05/18 17:14, James Hogan wrote:
-> On Tue, Apr 17, 2018 at 04:40:03PM +0100, Matt Redfearn wrote:
->> diff --git a/arch/mips/lib/memset.S b/arch/mips/lib/memset.S
->> index 1cc306520a55..a06dabe99d4b 100644
->> --- a/arch/mips/lib/memset.S
->> +++ b/arch/mips/lib/memset.S
->> @@ -231,16 +231,25 @@
->>   
->>   #ifdef CONFIG_CPU_MIPSR6
->>   .Lbyte_fixup\@:
->> +	/*
->> +	 * unset_bytes = current_addr + 1
->> +	 *      a2     =      t0      + 1
+On 05/22/2018 02:10 PM, kbuild test robot wrote:
+> Hi Eric,
 > 
-> The code looks more like a2 = 1 - t0 to me:
+> Thank you for the patch! Perhaps something to improve:
 > 
->> +	 */
->>   	PTR_SUBU	a2, $0, t0
->>   	jr		ra
->>   	 PTR_ADDIU	a2, 1
+> [auto build test WARNING on kvmarm/next]
+> [also build test WARNING on v4.17-rc6 next-20180517]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 > 
-> I.e. t0 counts up to 1 and then stops.
-
-Well spotted. Which means this code is also wrong.... :-/
-
-We have the count of bytes to zero in a2, but that gets clobbered in the 
-exception handler and we always return a number of bytes uncopied within 
-STORSIZE.
-
-This test code:
-
-static int __init __attribute__((optimize("O0"))) test_clear_user(void)
-{
-	int j, k;
-
-	pr_info("\n\n\nTesting clear_user\n");
-
-	for (j = 0; j < 512; j++) {
-		if ((k = clear_user(NULL+3, j)) != j) {
-			pr_err("clear_user (NULL %d) returned %d\n", j, k);
-		}
-	}
-
-	return 0;
-}
-late_initcall(test_clear_user);
-
-on a 64r6el kernel results in:
-
-[    3.965439] Testing clear_user
-[    3.973169] clear_user (NULL 8) returned 6
-[    3.976782] clear_user (NULL 9) returned 6
-[    3.980390] clear_user (NULL 10) returned 6
-[    3.984052] clear_user (NULL 11) returned 6
-[    3.987524] clear_user (NULL 12) returned 6
-[    3.991179] clear_user (NULL 13) returned 6
-[    3.994841] clear_user (NULL 14) returned 6
-[    3.998500] clear_user (NULL 15) returned 6
-[    4.002160] clear_user (NULL 16) returned 6
-[    4.005820] clear_user (NULL 17) returned 6
-[    4.009480] clear_user (NULL 18) returned 6
-[    4.013140] clear_user (NULL 19) returned 6
-[    4.016797] clear_user (NULL 20) returned 6
-[    4.020456] clear_user (NULL 21) returned 6
-
-I'll post another fix soon, and update this comment to reflect the 
-corrected behavior.
-
-Thanks,
-Matt
-
+> url:    https://github.com/0day-ci/linux/commits/Eric-Auger/KVM-arm-arm64-Allow-multiple-GICv3-redistributor-regions/20180522-004717
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm.git next
+> config: arm-axm55xx_defconfig (attached as .config)
+> compiler: arm-linux-gnueabi-gcc (Debian 7.2.0-11) 7.2.0
+> reproduce:
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # save the attached .config to linux build tree
+>         make.cross ARCH=arm 
 > 
-> Anyway I've applied patch 3 for 4.18.
+> Note: it may well be a FALSE warning. FWIW you are at least aware of it now.
+> http://gcc.gnu.org/wiki/Better_Uninitialized_Warnings
 > 
-> Cheers
-> James
+> All warnings (new ones prefixed by >>):
+> 
+>    arch/arm/kvm/../../../virt/kvm/arm/vgic/vgic-init.c: In function 'kvm_vgic_vcpu_init':
+>>> arch/arm/kvm/../../../virt/kvm/arm/vgic/vgic-init.c:199:9: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
+>      int i, ret;
+
+Fixed in v8, sent this morning. Sorry for the inconvenience.
+
+Thanks
+
+Eric
+>             ^~~
+> 
+> vim +/ret +199 arch/arm/kvm/../../../virt/kvm/arm/vgic/vgic-init.c
+> 
+>    185	
+>    186	/**
+>    187	 * kvm_vgic_vcpu_init() - Initialize static VGIC VCPU data
+>    188	 * structures and register VCPU-specific KVM iodevs
+>    189	 *
+>    190	 * @vcpu: pointer to the VCPU being created and initialized
+>    191	 *
+>    192	 * Only do initialization, but do not actually enable the
+>    193	 * VGIC CPU interface
+>    194	 */
+>    195	int kvm_vgic_vcpu_init(struct kvm_vcpu *vcpu)
+>    196	{
+>    197		struct vgic_cpu *vgic_cpu = &vcpu->arch.vgic_cpu;
+>    198		struct vgic_dist *dist = &vcpu->kvm->arch.vgic;
+>  > 199		int i, ret;
+>    200	
+>    201		INIT_LIST_HEAD(&vgic_cpu->ap_list_head);
+>    202		spin_lock_init(&vgic_cpu->ap_list_lock);
+>    203	
+>    204		/*
+>    205		 * Enable and configure all SGIs to be edge-triggered and
+>    206		 * configure all PPIs as level-triggered.
+>    207		 */
+>    208		for (i = 0; i < VGIC_NR_PRIVATE_IRQS; i++) {
+>    209			struct vgic_irq *irq = &vgic_cpu->private_irqs[i];
+>    210	
+>    211			INIT_LIST_HEAD(&irq->ap_list);
+>    212			spin_lock_init(&irq->irq_lock);
+>    213			irq->intid = i;
+>    214			irq->vcpu = NULL;
+>    215			irq->target_vcpu = vcpu;
+>    216			irq->targets = 1U << vcpu->vcpu_id;
+>    217			kref_init(&irq->refcount);
+>    218			if (vgic_irq_is_sgi(i)) {
+>    219				/* SGIs */
+>    220				irq->enabled = 1;
+>    221				irq->config = VGIC_CONFIG_EDGE;
+>    222			} else {
+>    223				/* PPIs */
+>    224				irq->config = VGIC_CONFIG_LEVEL;
+>    225			}
+>    226		}
+>    227	
+>    228		if (!irqchip_in_kernel(vcpu->kvm))
+>    229			return 0;
+>    230	
+>    231		/*
+>    232		 * If we are creating a VCPU with a GICv3 we must also register the
+>    233		 * KVM io device for the redistributor that belongs to this VCPU.
+>    234		 */
+>    235		if (dist->vgic_model == KVM_DEV_TYPE_ARM_VGIC_V3) {
+>    236			mutex_lock(&vcpu->kvm->lock);
+>    237			ret = vgic_register_redist_iodev(vcpu);
+>    238			mutex_unlock(&vcpu->kvm->lock);
+>    239		}
+>    240		return ret;
+>    241	}
+>    242	
+> 
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 > 
