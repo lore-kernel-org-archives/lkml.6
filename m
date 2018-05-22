@@ -1,95 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753118AbeEVU57 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 16:57:59 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:35633 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753079AbeEVU54 (ORCPT
+        id S1753132AbeEVU6b (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 16:58:31 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:48526 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752937AbeEVU63 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 16:57:56 -0400
-X-Google-Smtp-Source: AB8JxZoQlxfgkQI1uUhk4hZLreFKElweTBSENzyWfeTppnuubixRZNsJ4VqN4PyY+X+l5/5Lg4R1/A==
-Subject: Re: [PATCH 3/4] venus: add check to make scm calls
-To: Vikash Garodia <vgarodia@codeaurora.org>, hverkuil@xs4all.nl,
-        mchehab@kernel.org, andy.gross@linaro.org, bjorn.andersson@linaro.org,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        acourbot@google.com
-References: <1526556740-25494-1-git-send-email-vgarodia@codeaurora.org>
- <1526556740-25494-4-git-send-email-vgarodia@codeaurora.org>
- <9d5e12b1-40bd-adab-05f0-bdb209bf0174@linaro.org>
- <20180522195026.GA16550@jcrouse-lnx.qualcomm.com>
-From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <f9f99014-526d-d23b-6eaf-c04e45bef10a@linaro.org>
-Date: Tue, 22 May 2018 23:57:53 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 22 May 2018 16:58:29 -0400
+Date: Tue, 22 May 2018 22:58:26 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Aaro Koskinen <aaro.koskinen@iki.fi>
+Cc: Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>, sre@kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, tony@atomide.com, khilman@kernel.org,
+        ivo.g.dimitrov.75@gmail.com, patrikbachan@gmail.com, serge@hallyn.com,
+        abcloriens@gmail.com, clayton@craftyguy.net, martijn@brixit.nl,
+        sakari.ailus@linux.intel.com,
+        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
+        Thorsten Leemhuis <regressions@leemhuis.info>
+Subject: Re: v4.17-rc1: regressions on N900, N950
+Message-ID: <20180522205824.GA24927@amd>
+References: <20180422074213.GA12428@amd>
+ <20180423202940.ig6iud5lrbgnu35a@darkstar.musicnaut.iki.fi>
+ <20180521213952.GA11596@amd>
+ <20180522080250.4fzyvqrgw5oigexn@pali>
+ <20180522194139.GB2299@darkstar.musicnaut.iki.fi>
 MIME-Version: 1.0
-In-Reply-To: <20180522195026.GA16550@jcrouse-lnx.qualcomm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="mYCpIKhGyMATD0i+"
+Content-Disposition: inline
+In-Reply-To: <20180522194139.GB2299@darkstar.musicnaut.iki.fi>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jordan,
 
-On 22.05.2018 22:50, Jordan Crouse wrote:
-> On Tue, May 22, 2018 at 04:04:51PM +0300, Stanimir Varbanov wrote:
->> Hi Vikash,
->>
->> On 05/17/2018 02:32 PM, Vikash Garodia wrote:
->>> In order to invoke scm calls, ensure that the platform
->>> has the required support to invoke the scm calls in
->>> secure world. This code is in preparation to add PIL
->>> functionality in venus driver.
->>>
->>> Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
->>> ---
->>>   drivers/media/platform/qcom/venus/hfi_venus.c | 26 +++++++++++++++++++-------
->>>   1 file changed, 19 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/drivers/media/platform/qcom/venus/hfi_venus.c b/drivers/media/platform/qcom/venus/hfi_venus.c
->>> index f61d34b..9bcce94 100644
->>> --- a/drivers/media/platform/qcom/venus/hfi_venus.c
->>> +++ b/drivers/media/platform/qcom/venus/hfi_venus.c
->>> @@ -27,6 +27,7 @@
->>>   #include "hfi_msgs.h"
->>>   #include "hfi_venus.h"
->>>   #include "hfi_venus_io.h"
->>> +#include "firmware.h"
->>>   
->>>   #define HFI_MASK_QHDR_TX_TYPE		0xff000000
->>>   #define HFI_MASK_QHDR_RX_TYPE		0x00ff0000
->>> @@ -570,13 +571,19 @@ static int venus_halt_axi(struct venus_hfi_device *hdev)
->>>   static int venus_power_off(struct venus_hfi_device *hdev)
->>>   {
->>>   	int ret;
->>> +	void __iomem *reg_base;
->>>   
->>>   	if (!hdev->power_enabled)
->>>   		return 0;
->>>   
->>> -	ret = qcom_scm_set_remote_state(TZBSP_VIDEO_STATE_SUSPEND, 0);
->>> -	if (ret)
->>> -		return ret;
->>> +	if (qcom_scm_is_available()) {
->>> +		ret = qcom_scm_set_remote_state(TZBSP_VIDEO_STATE_SUSPEND, 0);
->>
->> I think it will be clearer if we abstract qcom_scm_set_remote_state to
->> something like venus_set_state(SUSPEND|RESUME) in firmware.c and export
->> the functions to be used here.
-> 
-> This specific function is a little odd because the SCM function got overloaded
-> and used as a hardware workaround for the adreno a5xx zap shader.
-> 
-> When we added it for the GPU we knew the day would come that we would need it
-> for Venus so we kept the name purposely generic. You can wrap if if you want
-> but just know that there are other non video entities out there using it.
+--mYCpIKhGyMATD0i+
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sorry I wasn't clear, by abstract it I meant to introduce a new 
-venus_set_state function in venus/firmware.c where we'll select 
-tz/non-tz functions for suspend / resume depending on the configuration.
+On Tue 2018-05-22 22:41:39, Aaro Koskinen wrote:
+> Hi,
+>=20
+> On Tue, May 22, 2018 at 10:02:50AM +0200, Pali Roh=E1r wrote:
+> > Hi! I remember that in time of migration from platform board code to
+> > device tree structures there appeared some bug which caused that
+> > sometimes display were not initialized. And somebody figured out that
+> > display initialization is failing when some other SPI devices are
+> > initialized before or after display... This behavior was observed only
+> > on real N900 hardware, not in qemu.
+>=20
+> Touchscreen needs to be initialized before display. This is documented
+> in the DTS, see arch/arm/boot/dts/omap3-n900.dts:
+>=20
+> 	* For some reason, touchscreen is necessary for screen to work at
+> 	* all on real hw. It works well without it on emulator.
+> 	*
+> 	* Also... order in the device tree actually matters here.
+>=20
+> > Real reason was never explained. In old platform board code there was
+> > hardcoded order of SPI devices in which initialization happened. And in
+> > device tree it is probably in (pseudo)-random order. Enabling/disabling
+> > various config option can affect some timings and order in which kernel
+> > starts probing and initializing devices...
+>=20
+> The issue was also somewhat present with platform/board code, see e.g.
+> commit e65f131a14726e5f1b880a528271a52428e5b3a5.
+>=20
+> My device worked with v4.17-rc1 (haven't found time to test newer kernels=
+),
+> but if you say the probe order is random then we must find some proper way
+> to express the dependency.
 
-regards,
-Stan
+I started bisect, but.. that will probably not be useful.
+
+If your device works ok in v4.17-rc1, it probably works in newer -rcs,
+too.
+
+Thanks for the ordering hint, I'll try to figure out what is going on
+there.
+
+									Pavel
+
+
+
+# bad: [60cc43fc888428bb2f18f08997432d426a243338] Linux 4.17-rc1
+# good: [0adb32858b0bddf4ada5f364a84ed60b196dbcda] Linux 4.16
+git bisect start 'v4.17-rc1' 'v4.16'
+# bad: [ac9053d2dcb9e8c3fa35ce458dfca8fddc141680] Merge tag 'usb-4.17-rc1' =
+of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb
+git bisect bad ac9053d2dcb9e8c3fa35ce458dfca8fddc141680
+# bad: [bb2407a7219760926760f0448fddf00d625e5aec] Merge tag 'docs-4.17' of =
+git://git.lwn.net/linux
+git bisect bad bb2407a7219760926760f0448fddf00d625e5aec
+# bad: [1c7095d2836baafd84e596dd34ba1a1293a4faa9] Merge airlied/drm-next in=
+to drm-misc-next
+git bisect bad 1c7095d2836baafd84e596dd34ba1a1293a4faa9
+
+
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--mYCpIKhGyMATD0i+
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlsEhHAACgkQMOfwapXb+vKgAQCfRTCdEl9IB9Sl7HaxCaakO7cD
+9sIAoJejrpAlCItIRa0bnoRqGJcFcvUC
+=fwvJ
+-----END PGP SIGNATURE-----
+
+--mYCpIKhGyMATD0i+--
