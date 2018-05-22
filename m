@@ -1,124 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752759AbeEVDpN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 23:45:13 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37986 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752687AbeEVDpK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 23:45:10 -0400
-Date: Tue, 22 May 2018 06:45:09 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, hannes@stressinduktion.org,
-        edumazet@google.com
-Subject: Re: [PATCH net] tuntap: raise EPOLLOUT on device up
-Message-ID: <20180522063128-mutt-send-email-mst@kernel.org>
-References: <1526648443-24128-1-git-send-email-jasowang@redhat.com>
- <20180521.114742.427929977852677864.davem@davemloft.net>
- <20180522010700-mutt-send-email-mst@kernel.org>
- <358628f8-a296-ad0e-985b-307895ed5520@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <358628f8-a296-ad0e-985b-307895ed5520@redhat.com>
+        id S1752683AbeEVDoy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 23:44:54 -0400
+Received: from mga04.intel.com ([192.55.52.120]:37610 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752656AbeEVDou (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 23:44:50 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,428,1520924400";
+   d="scan'208";a="60606834"
+From: Jin Yao <yao.jin@linux.intel.com>
+To: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com
+Cc: Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
+        yao.jin@intel.com, Jin Yao <yao.jin@linux.intel.com>
+Subject: [PATCH] perf annotate: Show group event string for stdio
+Date: Tue, 22 May 2018 19:38:35 +0800
+Message-Id: <1526989115-14435-1-git-send-email-yao.jin@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 11:22:11AM +0800, Jason Wang wrote:
-> 
-> 
-> On 2018年05月22日 06:08, Michael S. Tsirkin wrote:
-> > On Mon, May 21, 2018 at 11:47:42AM -0400, David Miller wrote:
-> > > From: Jason Wang <jasowang@redhat.com>
-> > > Date: Fri, 18 May 2018 21:00:43 +0800
-> > > 
-> > > > We return -EIO on device down but can not raise EPOLLOUT after it was
-> > > > up. This may confuse user like vhost which expects tuntap to raise
-> > > > EPOLLOUT to re-enable its TX routine after tuntap is down. This could
-> > > > be easily reproduced by transmitting packets from VM while down and up
-> > > > the tap device. Fixing this by set SOCKWQ_ASYNC_NOSPACE on -EIO.
-> > > > 
-> > > > Cc: Hannes Frederic Sowa <hannes@stressinduktion.org>
-> > > > Cc: Eric Dumazet <edumazet@google.com>
-> > > > Fixes: 1bd4978a88ac2 ("tun: honor IFF_UP in tun_get_user()")
-> > > > Signed-off-by: Jason Wang <jasowang@redhat.com>
-> > > I'm no so sure what to do with this patch.
-> > > 
-> > > Like Michael says, this flag bit is only checks upon transmit which
-> > > may or may not happen after this point.  It doesn't seem to be
-> > > guaranteed.
-> 
-> The flag is checked in tun_chr_poll() as well.
-> 
-> > Jason, can't we detect a link up transition and respond accordingly?
-> > What do you think?
-> > 
-> 
-> I think we've already tried to do this, in tun_net_open() we call
-> write_space(). But the problem is the bit may not be set at that time.
+When we enable the group, for tui/stdio2, the output first
+line includes the group event string. While for stdio,
+it will show only one event.
 
-Which bit? __dev_change_flags seems to set IFF_UP before calling
-ndo_open. The issue  I think is that tun_sock_write_space
-exits if SOCKWQ_ASYNC_NOSPACE is clear.
+For example,
 
-And now I think I understand what is going on:
+perf record -e cycles,branches ./div
+perf annotate --group --stdio
 
-	When link is down, writes to the device might fail with -EIO.
-	Userspace needs an indication when the status is resolved.  As a fix,
-	tun_net_open attempts to wake up writers - but that is only effective if
-	SOCKWQ_ASYNC_NOSPACE has been set in the past.  As a quick hack, set
-	SOCKWQ_ASYNC_NOSPACE when write fails because of the link down status.
-	If no writes failed, userspace does not know that interface
-	was down so should not care that it's going up.
+    Percent |      Source code & Disassembly of div for cycles (44407 samples)
+    ......
 
+The first line doesn't include the event 'branches'.
 
-does this describe what this line of code does?
-If yes feel free to include this info in a code comment and commit log.
+With this patch, it will show the correct group even string.
 
+perf annotate --group --stdio
 
+    Percent |      Source code & Disassembly of div for cycles, branches (44407 samples)
+    ......
 
-> A second thought is to set the bit in tun_chr_poll() instead of -EIO like:
-> 
-> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-> index d45ac37..46a1573 100644
-> --- a/drivers/net/tun.c
-> +++ b/drivers/net/tun.c
-> @@ -1423,6 +1423,13 @@ static void tun_net_init(struct net_device *dev)
->         dev->max_mtu = MAX_MTU - dev->hard_header_len;
->  }
-> 
-> +static bool tun_sock_writeable(struct tun_struct *tun, struct tun_file
-> *tfile)
-> +{
-> +       struct sock *sk = tfile->socket.sk;
-> +
-> +       return (tun->dev->flags & IFF_UP) && sock_writeable(sk);
-> +}
-> +
->  /* Character device part */
-> 
->  /* Poll */
-> @@ -1445,10 +1452,9 @@ static __poll_t tun_chr_poll(struct file *file,
-> poll_table *wait)
->         if (!ptr_ring_empty(&tfile->tx_ring))
->                 mask |= EPOLLIN | EPOLLRDNORM;
-> 
-> -       if (tun->dev->flags & IFF_UP &&
-> -           (sock_writeable(sk) ||
-> -            (!test_and_set_bit(SOCKWQ_ASYNC_NOSPACE, &sk->sk_socket->flags)
-> &&
-> -             sock_writeable(sk))))
-> +       if (tun_sock_writeable(tun, tfile) ||
-> +           (!test_and_set_bit(SOCKWQ_ASYNC_NOSPACE, &sk->sk_socket->flags)
-> &&
-> +            tun_sock_writeable(tun, tfile)));
->                 mask |= EPOLLOUT | EPOLLWRNORM;
-> 
->         if (tun->dev->reg_state != NETREG_REGISTERED)
-> 
-> Does this make more sense?
-> 
-> Thanks
+Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+---
+ tools/perf/util/annotate.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+index 6612c7f..7189768 100644
+--- a/tools/perf/util/annotate.c
++++ b/tools/perf/util/annotate.c
+@@ -1965,6 +1965,7 @@ int symbol__annotate_printf(struct symbol *sym, struct map *map,
+ 	u64 len;
+ 	int width = symbol_conf.show_total_period ? 12 : 8;
+ 	int graph_dotted_len;
++	char buf[512];
+ 
+ 	filename = strdup(dso->long_name);
+ 	if (!filename)
+@@ -1977,8 +1978,11 @@ int symbol__annotate_printf(struct symbol *sym, struct map *map,
+ 
+ 	len = symbol__size(sym);
+ 
+-	if (perf_evsel__is_group_event(evsel))
++	if (perf_evsel__is_group_event(evsel)) {
+ 		width *= evsel->nr_members;
++		perf_evsel__group_desc(evsel, buf, sizeof(buf));
++		evsel_name = buf;
++	}
+ 
+ 	graph_dotted_len = printf(" %-*.*s|	Source code & Disassembly of %s for %s (%" PRIu64 " samples)\n",
+ 				  width, width, symbol_conf.show_total_period ? "Period" :
+-- 
+2.7.4
