@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751538AbeEVKHQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 06:07:16 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:60503 "EHLO
+        id S1751622AbeEVKHd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 06:07:33 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:62926 "EHLO
         relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751060AbeEVKHM (ORCPT
+        by vger.kernel.org with ESMTP id S1751393AbeEVKH0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 06:07:12 -0400
+        Tue, 22 May 2018 06:07:26 -0400
 X-IronPort-AV: E=Sophos;i="5.49,429,1520866800";
-   d="scan'208";a="280253499"
+   d="scan'208";a="280253518"
 From: Michel Pollet <michel.pollet@bp.renesas.com>
 To: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>
 Cc: phil.edworthy@renesas.com, Michel Pollet <buserror+upstream@gmail.com>,
@@ -20,9 +20,9 @@ Cc: phil.edworthy@renesas.com, Michel Pollet <buserror+upstream@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH v6 3/6] dt-bindings: clock: renesas,rzn1-clocks: document RZ/N1 clock driver
-Date: Tue, 22 May 2018 11:01:23 +0100
-Message-Id: <1526983321-41949-4-git-send-email-michel.pollet@bp.renesas.com>
+Subject: [PATCH v6 4/6] ARM: dts: Renesas RZ/N1 SoC base device tree file
+Date: Tue, 22 May 2018 11:01:24 +0100
+Message-Id: <1526983321-41949-5-git-send-email-michel.pollet@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
 References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
@@ -30,66 +30,111 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Renesas RZ/N1 Family (Part #R9A06G0xx) requires a driver
-to provide the SoC clock infrastructure for Linux.
+This adds the Renesas RZ/N1D (Part #R9A06G032) SoC bare
+bone support.
 
-This documents the driver bindings.
+This currently only handles generic parts (gic, architected timer)
+and a UART.
+For simplicity sake, this also relies on the bootloader to set the
+pinctrl and clocks.
 
 Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 ---
- .../bindings/clock/renesas,rzn1-clocks.txt         | 44 ++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
+ arch/arm/boot/dts/r9a06g032.dtsi | 86 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 86 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r9a06g032.dtsi
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
+diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
 new file mode 100644
-index 0000000..0c41137
+index 0000000..c7764c7
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
-@@ -0,0 +1,44 @@
-+* Renesas RZ/N1 Clock Driver
++++ b/arch/arm/boot/dts/r9a06g032.dtsi
+@@ -0,0 +1,86 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Base Device Tree Source for the Renesas RZ/N1D (R9A06G032)
++ *
++ * Copyright (C) 2018 Renesas Electronics Europe Limited
++ *
++ */
 +
-+This driver provides the clock infrastructure used by all the other drivers.
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/rzn1-clock.h>
 +
-+One of the 'special' feature of this infrastructure is that Linux doesn't
-+necessary 'own' all the clocks on the SoC, some other OS runs on
-+the Cortex-M3 core and that OS can access and claim it's own clocks.
++/ {
++	compatible = "renesas,r9a06g032", "renesas,rzn1";
++	#address-cells = <1>;
++	#size-cells = <1>;
 +
-+Required Properties:
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		clocks = <&clock RZN1_DIV_CA7>;
 +
-+  - compatible: Must be
-+    - "renesas,r9a06g032-clocks" for the RZ/N1D
-+    and "renesas,rzn1-clocks" as a fallback.
-+  - reg: Base address and length of the memory resource used by the driver
-+  - #clock-cells: Must be 1
++		cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a7";
++			reg = <0>;
++		};
 +
-+Examples
-+--------
-+
-+  - Clock driver device node:
-+
-+	clock: clocks@4000c000 {
-+		compatible = "renesas,r9a06g032-clocks",
-+				"renesas,rzn1-clocks";
-+		reg = <0x4000c000 0x1000>;
-+		status = "okay";
-+		#clock-cells = <1>;
++		cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a7";
++			reg = <1>;
++		};
 +	};
 +
++	soc {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		interrupt-parent = <&gic>;
++		ranges;
 +
-+  - Other drivers can use the clocks as in:
++		clock: clocks@4000c000 {
++			compatible = "renesas,r9a06g032-clocks",
++					"renesas,rzn1-clocks";
++			reg = <0x4000c000 0x1000>;
++			status = "okay";
++			#clock-cells = <1>;
++		};
 +
-+	uart0: serial@40060000 {
-+		compatible = "snps,dw-apb-uart";
-+		reg = <0x40060000 0x400>;
-+		interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-+		reg-shift = <2>;
-+		reg-io-width = <4>;
-+		clocks = <&clock RZN1_CLK_UART0>;
-+		clock-names = "baudclk";
++		uart0: serial@40060000 {
++			compatible = "snps,dw-apb-uart";
++			reg = <0x40060000 0x400>;
++			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
++			reg-shift = <2>;
++			reg-io-width = <4>;
++			clocks = <&clock RZN1_CLK_UART0>;
++			clock-names = "baudclk";
++			status = "disabled";
++		};
++
++		gic: gic@44101000 {
++			compatible = "arm,cortex-a7-gic", "arm,gic-400";
++			interrupt-controller;
++			#interrupt-cells = <3>;
++			reg = <0x44101000 0x1000>, /* Distributer */
++			      <0x44102000 0x2000>, /* CPU interface */
++			      <0x44104000 0x2000>, /* Virt interface control */
++			      <0x44106000 0x2000>; /* Virt CPU interface */
++			interrupts =
++				<GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
++		};
 +	};
-+    Note the use of RZN1_CLK_UART0 -- these constants are declared in
-+    the rzn1-clocks.h header file. These are not hardware based constants
-+    and are Linux specific.
++
++	timer {
++		compatible = "arm,cortex-a7-timer",
++			     "arm,armv7-timer";
++		interrupt-parent = <&gic>;
++		arm,cpu-registers-not-fw-configured;
++		always-on;
++		interrupts =
++			<GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++			<GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++			<GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++			<GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
++	};
++};
 -- 
 2.7.4
