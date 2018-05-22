@@ -1,88 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753474AbeEVXsI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 19:48:08 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:36001 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753105AbeEVXsG (ORCPT
+        id S1753487AbeEVXuD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 19:50:03 -0400
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:42282 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753319AbeEVXuA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 19:48:06 -0400
-X-Google-Smtp-Source: AB8JxZp8bVjo5fhZMQW185gWaJiXqQLE1bdc2oPm8w2HGtc4+fAwu6P5rui3CWkPLoJiLeSgnjIW4g==
-Date: Tue, 22 May 2018 16:48:02 -0700
-From: Benson Leung <bleung@google.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Benson Leung <bleung@chromium.org>, Olof Johansson <olof@lixom.net>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Shawn Nematbakhsh <shawnn@chromium.org>,
-        Vittorio Gambaletta <linuxbugs@vittgam.net>,
-        Guenter Roeck <groeck@chromium.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] platform/chrome: cros_ec_lpc: do not try DMI match when
- ACPI device found
-Message-ID: <20180522234802.GB229422@decatoncale.mtv.corp.google.com>
-References: <20180522230841.GA22026@dtor-ws>
+        Tue, 22 May 2018 19:50:00 -0400
+X-Google-Smtp-Source: AB8JxZpQeIXVQIc0ru8Km4cHD68JWZqrtrGZKX5cIQzDz4ForpV8XbEy337UbgpvsCbO4p/fk88BL9M7790m5wwFGTA=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="rS8CxjVDS/+yyDmU"
-Content-Disposition: inline
-In-Reply-To: <20180522230841.GA22026@dtor-ws>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <9A0BC289-4203-4C77-A012-AAB07F42061F@kernel.dk>
+References: <20180522181512.39316-1-keescook@chromium.org> <20180522181512.39316-4-keescook@chromium.org>
+ <20180522183613.GA3784@infradead.org> <yq1efi3bk3g.fsf@oracle.com>
+ <CAGXu5jJ0Sice+fdpWgzBhQR=NGz-DT9qmYVdV1GeH73_q9pbmw@mail.gmail.com>
+ <732f4249-5681-4a54-ec21-4ecc3d3a74e5@kernel.dk> <20180522191309.GA23615@infradead.org>
+ <8d4af5c4-96fa-54ee-d5c1-b887b1de5a3c@kernel.dk> <CAGXu5j+mgGZkTDS6EDRspJKKbU=vMT4ehv9T-SekPba=ESoGDg@mail.gmail.com>
+ <9A0BC289-4203-4C77-A012-AAB07F42061F@kernel.dk>
+From: Kees Cook <keescook@chromium.org>
+Date: Tue, 22 May 2018 16:49:58 -0700
+X-Google-Sender-Auth: ShJWk9w0_C7syHalNZ6Qf-1T5QE
+Message-ID: <CAGXu5jJsGWDsZNDJvUUqncSaAcvond_B_J7=BbvVW0X3r6Sxww@mail.gmail.com>
+Subject: Re: [PATCH 3/6] block: Create scsi_sense.h for SCSI and ATAPI
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Christoph Hellwig <hch@infradead.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Tejun Heo <tj@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Manoj N. Kumar" <manoj@linux.vnet.ibm.com>,
+        "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>,
+        Uma Krishnan <ukrishn@linux.vnet.ibm.com>,
+        linux-block <linux-block@vger.kernel.org>, linux-ide@vger.kernel.org,
+        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4MNo9Wv013719
 
+On Tue, May 22, 2018 at 4:42 PM, Jens Axboe <axboe@kernel.dk> wrote:
+> On May 22, 2018, at 5:31 PM, Kees Cook <keescook@chromium.org> wrote:
+>>
+>>> On Tue, May 22, 2018 at 12:16 PM, Jens Axboe <axboe@kernel.dk> wrote:
+>>>> On 5/22/18 1:13 PM, Christoph Hellwig wrote:
+>>>>> On Tue, May 22, 2018 at 01:09:41PM -0600, Jens Axboe wrote:
+>>>>> I think Martin and Christoph are objecting to moving the code to
+>>>>> block/scsi_ioctl.h. I don't care too much about where the code is, but
+>>>>> think it would be nice to have the definitions in a separate header. But
+>>>>> if they prefer just pulling in all of SCSI for it, well then I guess
+>>>>> it's pointless to move the header bits. Seems very heavy handed to me,
+>>>>> though.
+>>>>
+>>>> It might be heavy handed for the 3 remaining users of drivers/ide,
+>>>
+>>> Brutal :-)
+>>
+>> Heh. I noticed a similar sense buffer use in drivers/cdrom/cdrom.c
+>> too. Is this okay under the same considerations?
+>
+> This is going from somewhat crazy to pretty nuts, imho. I guess in practical terms it doesn’t matter that much, since most folks would be using sr. I still think a split would be vastly superior. Just keep the scsi code in drivers/scsi/ and make it independently selectable.
 
---rS8CxjVDS/+yyDmU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I had originally tied it to BLK_SCSI_REQUEST. Logically speaking,
+sense buffers are part of the request, and the CONFIG work is already
+done. This is roughly what I tried to do before, since scsi_ioctl.c is
+the only code pulled in for CONFIG_BLK_SCSI_REQUEST:
 
-Hi Dmitry,
+$ git grep BLK_SCSI_REQUEST | grep Makefile
+block/Makefile:obj-$(CONFIG_BLK_SCSI_REQUEST)   += scsi_ioctl.o
 
-On Tue, May 22, 2018 at 04:08:41PM -0700, Dmitry Torokhov wrote:
-> Older models of Chromebooks did not describe the LPC EC in their ACPI
-> tables; starting with Strago-based devices Google is using GOOG0004 device
-> to describe EC LPC.
->=20
-> DMI-based match is fragile and does not work reliably, especially when
-> using custom firmware. It is also not needed when we can locate the right
-> ACPI device, so let's stop bailing out when DMI does not match but the
-> right ACPI device is present.
->=20
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Should I move to code to a new drivers/scsi/scsi_sense.c and add it to
+drivers/scsi/Makefile as:
 
-Nice fix. Applied.=20
+obj-$(CONFIG_BLK_SCSI_REQUEST)    += scsi_sense.o
 
-Thanks,
-Benson
+Every place I want to use the code is already covered by
+CONFIG_BLK_SCSI_REQUEST, so it seems like I just need to know where to
+put the .c file. :P
 
---=20
-Benson Leung
-Staff Software Engineer
-Chrome OS Kernel
-Google Inc.
-bleung@google.com
-Chromium OS Project
-bleung@chromium.org
+-Kees
 
---rS8CxjVDS/+yyDmU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE6gYDF28Li+nEiKLaHwn1ewov5lgFAlsErDIACgkQHwn1ewov
-5lgdbxAAix2ORmFMtBbJiNarVh1wFQVJHLgGKAmhdqS1z6AbDgZhWSnNF5oRQIfl
-3R+a+N1+xKQn/MeAgzs/i5T2Q+sFqgrxHTUHtfdD1UuJ7PT8NDMGXt2m8UkMrPXP
-clxYZPmVnfkm/Pm36o1rsJCcfFkXXABGLRsYUqhCSzxLBomyJoWAB1/HwxgnZ2YE
-m267ZV28TFdCuu8AGa113BjqUfSqM+HV5zaoO1nx+9jx5W9/FierDAdEm94q2Wrp
-/bQ0LuX6TeuKnO5Ftz4ccwVXm9bWOPUsmII5J9cWR0nMWranhFWmevh5o8sFE87Z
-hR+0m7W0sGm5eWn2IcWTWFtMQ4/iwBJREiMSulfPDxOAu8YsUmt/nFTA3AbZ7eO/
-5GC9ycHDnCBpp9ft0GeabDNF+wEkCeVwugt0TVnfGVKD+N5g3RLF+5+LDBFw8zgU
-1KP3BYTjRgdn70NbXRXrzihcH0FS/aRG03+XGiUy8x+vGVydMKnkdCJMmB4T+QXQ
-q846e5/dT61Y9t2sQeeqZChfxKU718DkLQQ70Libfp2l+HuFTDTN0slNZLePMNAq
-pe629SXbv3GytDex461ZZBeWTXJmdPKSnx1ddRZwRw6ag536ksJ7b29pPt9c/o06
-1h/NGf2w/HQP9V8BIbWSisKps301UfG4EjfF4oDYkA90o22eB30=
-=s1g1
------END PGP SIGNATURE-----
-
---rS8CxjVDS/+yyDmU--
+-- 
+Kees Cook
+Pixel Security
