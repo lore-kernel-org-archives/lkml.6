@@ -1,94 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752921AbeEVUsA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 16:48:00 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:41698 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751748AbeEVUr6 (ORCPT
+        id S1752967AbeEVUuR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 16:50:17 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:55199 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752764AbeEVUuP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 16:47:58 -0400
-X-Google-Smtp-Source: AB8JxZopwO+sc2I8xFRR7hzVTu6rumsaPjNrOiJSUavqgNk5Dsd5g6+hAWJuaRR3ZQlkKfWsfG+KFQ==
-Date: Tue, 22 May 2018 13:47:53 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Guenter Roeck <linux@roeck-us.net>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] pinctrl: cherryview: limit Strago DMI workarounds to
- version 1.0
-Message-ID: <20180522204753.GA260493@dtor-ws>
+        Tue, 22 May 2018 16:50:15 -0400
+X-Google-Smtp-Source: AB8JxZqt9Yyh8zcu2w8DcZ81A+SgWnu3W5hnuCxRGEJ1wO63d9+gAolb02Qhvj3MPEcAWbH72GljHA==
+Subject: Re: [PATCH net-next v2 1/7] net: dsa: qca8k: Add QCA8334 binding
+ documentation
+To: Rob Herring <robh@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, f.fainelli@gmail.com,
+        vivien.didelot@savoirfairelinux.com, andrew@lunn.ch,
+        mark.rutland@arm.com, davem@davemloft.net, michal.vokac@ysoft.com
+References: <1526987792-56861-1-git-send-email-michal.vokac@ysoft.com>
+ <1526987792-56861-2-git-send-email-michal.vokac@ysoft.com>
+ <20180522194039.GA15413@rob-hp-laptop>
+From: Michal <vokac.m@gmail.com>
+Message-ID: <67783b3a-e7df-2b22-eba5-a86e5de22c32@gmail.com>
+Date: Tue, 22 May 2018 22:50:11 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180522194039.GA15413@rob-hp-laptop>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As Google/Intel will fix the BIOS/Coreboot issues with hardcoding
-virtual interrupt numbers for keyboard/touchpad/touchscreen controllers
-in ACPI tables, they will also update BOARD version number from 1.0
-to 1.1. Let's limit the DMI quirks that try to preserve virtual IRQ
-numbers on Strago boards to those that still carry older BIOSes.
+On 22.5.2018 21:40, Rob Herring wrote:
+> On Tue, May 22, 2018 at 01:16:26PM +0200, Michal Vokáč wrote:
+>> Add support for the four-port variant of the Qualcomm QCA833x switch.
+>>
+>> The CPU port default link settings can be reconfigured using
+>> a fixed-link sub-node.
+>>
+>> Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
+>> ---
+>> Changes in v2:
+>>   - Add commit message and document fixed-link binding.
+>>
+>>   .../devicetree/bindings/net/dsa/qca8k.txt          | 23 +++++++++++++++++++++-
+>>   1 file changed, 22 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/net/dsa/qca8k.txt b/Documentation/devicetree/bindings/net/dsa/qca8k.txt
+>> index 9c67ee4..15b9057 100644
+>> --- a/Documentation/devicetree/bindings/net/dsa/qca8k.txt
+>> +++ b/Documentation/devicetree/bindings/net/dsa/qca8k.txt
+>> @@ -2,7 +2,10 @@
+>>   
+>>   Required properties:
+>>   
+>> -- compatible: should be "qca,qca8337"
+>> +- compatible: should be one of:
+>> +    "qca,qca8334"
+>> +    "qca,qca8337"
+>> +
+>>   - #size-cells: must be 0
+>>   - #address-cells: must be 1
+>>   
+>> @@ -14,6 +17,20 @@ port and PHY id, each subnode describing a port needs to have a valid phandle
+>>   referencing the internal PHY connected to it. The CPU port of this switch is
+>>   always port 0.
+>>   
+>> +A CPU port node has the following optional property:
+> 
+> s/property/node/
+> 
+> Otherwise,
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-Note that ideally not BOARD but BIOS version should have been updated.
-However the BIOS version used by Chrome devices has format of
-Google_BUILD.BRANCH.PATCH which is not well suited for DMI matching as
-we do not have "less than" match mode for DMI data.
+Good catch, I will correct this.
+Thanks for the review Rob.
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=197953
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
-
-v1->v2:
-
-- switch from matching on DMI_BIOS_VERSION to DMI_BOARD_VERSION
-
-
- drivers/pinctrl/intel/pinctrl-cherryview.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
-index b1ae1618fefea..44133e6846303 100644
---- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-+++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-@@ -1527,6 +1527,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
- 		.matches = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
- 			DMI_MATCH(DMI_PRODUCT_FAMILY, "Intel_Strago"),
-+			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
- 		},
- 	},
- 	{
-@@ -1534,6 +1535,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
- 		.matches = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "HP"),
- 			DMI_MATCH(DMI_PRODUCT_NAME, "Setzer"),
-+			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
- 		},
- 	},
- 	{
-@@ -1541,6 +1543,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
- 		.matches = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
- 			DMI_MATCH(DMI_PRODUCT_NAME, "Cyan"),
-+			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
- 		},
- 	},
- 	{
-@@ -1548,6 +1551,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
- 		.matches = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
- 			DMI_MATCH(DMI_PRODUCT_NAME, "Celes"),
-+			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
- 		},
- 	},
- 	{}
--- 
-2.17.0.441.gb46fe60e1d-goog
-
-
--- 
-Dmitry
+Michal
