@@ -1,51 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751214AbeEUHOT (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 03:14:19 -0400
-Received: from asavdk4.altibox.net ([109.247.116.15]:37268 "EHLO
-        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751039AbeEUHOS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 03:14:18 -0400
-Date: Mon, 21 May 2018 09:14:14 +0200
-From: Sam Ravnborg <sam@ravnborg.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nicholas Piggin <npiggin@gmail.com>, Kees Cook <keescook@chromium.org>,
-        Emese Revfy <re.emese@gmail.com>, X86 ML <x86@kernel.org>
-Subject: Re: [PATCH v4 07/31] kconfig: add built-in function support
-Message-ID: <20180521071414.GA9397@ravnborg.org>
-References: <1526537830-22606-1-git-send-email-yamada.masahiro@socionext.com>
- <1526537830-22606-8-git-send-email-yamada.masahiro@socionext.com>
- <20180520145031.GB9826@ravnborg.org>
- <CAK7LNATM6s++TJ-VrbSwoMmP5FgVOmkUNGCwzZW=Re0WEr5EYQ@mail.gmail.com>
- <20180521061613.GA21232@ravnborg.org>
- <CAK7LNATw1VRjX9CcJVdAzi7YDhmMFpxmBQqs_PPSKJdMbAD=pg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK7LNATw1VRjX9CcJVdAzi7YDhmMFpxmBQqs_PPSKJdMbAD=pg@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=UpRNyd4B c=1 sm=1 tr=0
-        a=ddpE2eP9Sid01c7MzoqXPA==:117 a=ddpE2eP9Sid01c7MzoqXPA==:17
-        a=kj9zAlcOel0A:10 a=aKLBciwiZV40MlG6Tf0A:9 a=CjuIK1q_8ugA:10
+        id S1751063AbeEUHW3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 03:22:29 -0400
+Received: from mga01.intel.com ([192.55.52.88]:23127 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750867AbeEUHW1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 03:22:27 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,426,1520924400";
+   d="scan'208";a="56096309"
+From: Jingqi Liu <jingqi.liu@intel.com>
+To: kvm@vger.kernel.org
+Cc: pbonzini@redhat.com, rkrcmar@redhat.com, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org, wei.w.wang@intel.com,
+        Jingqi Liu <jingqi.liu@intel.com>
+Subject: [PATCH RESEND] KVM: x86: Expose CLDEMOTE CPU feature to guest VM
+Date: Tue, 22 May 2018 17:01:27 +0800
+Message-Id: <1526979687-1262-1-git-send-email-jingqi.liu@intel.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Masahiro,
+The CLDEMOTE instruction hints to hardware that the cache line that
+contains the linear address should be moved("demoted") from
+the cache(s) closest to the processor core to a level more distant
+from the processor core. This may accelerate subsequent accesses
+to the line by other cores in the same coherence domain,
+especially if the line was written by the core that demotes the line.
 
-> Hmm, your suggestion is more shell-oriented parsing.
-...
-> Probably, I found it was much more complex,
-> then I chose Make-like simpler one.
+This patch exposes the cldemote feature to the guest.
 
-Agree that the simple one should be the best choice for now.
-We shall not add anything more complex unless it is really needed.
+The release document ref below link:
+https://software.intel.com/sites/default/files/managed/c5/15/\
+architecture-instruction-set-extensions-programming-reference.pdf
+This patch has a dependency on https://lkml.org/lkml/2018/4/23/928
 
-	Sam
+Signed-off-by: Jingqi Liu <jingqi.liu@intel.com>
+---
+ arch/x86/kvm/cpuid.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+index 82055b9..72d8c49 100644
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -403,7 +403,8 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
+ 	const u32 kvm_cpuid_7_0_ecx_x86_features =
+ 		F(AVX512VBMI) | F(LA57) | F(PKU) | 0 /*OSPKE*/ |
+ 		F(AVX512_VPOPCNTDQ) | F(UMIP) | F(AVX512_VBMI2) | F(GFNI) |
+-		F(VAES) | F(VPCLMULQDQ) | F(AVX512_VNNI) | F(AVX512_BITALG);
++		F(VAES) | F(VPCLMULQDQ) | F(AVX512_VNNI) | F(AVX512_BITALG) |
++		F(CLDEMOTE);
+ 
+ 	/* cpuid 7.0.edx*/
+ 	const u32 kvm_cpuid_7_0_edx_x86_features =
+-- 
+1.8.3.1
