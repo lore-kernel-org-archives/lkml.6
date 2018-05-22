@@ -1,870 +1,231 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752655AbeEVKKM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 06:10:12 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:34817 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751495AbeEVKKE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 06:10:04 -0400
-Date: Tue, 22 May 2018 12:09:48 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Robin Gong <yibin.gong@nxp.com>
-Cc: dan.j.williams@intel.com, vinod.koul@intel.com,
-        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com
-Subject: Re: [PATCH v1] dma: imx-sdma: add virt-dma support
-Message-ID: <20180522100948.6xsq3unhyyyd7zz3@pengutronix.de>
-References: <1521735499-29138-1-git-send-email-yibin.gong@nxp.com>
+        id S1752660AbeEVKKT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 06:10:19 -0400
+Received: from mail-he1eur01on0125.outbound.protection.outlook.com ([104.47.0.125]:9578
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751443AbeEVKJx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 06:09:53 -0400
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=ktkhai@virtuozzo.com;
+Subject: [PATCH v7 14/17] mm: Iterate only over charged shrinkers during
+ memcg shrink_slab()
+From: Kirill Tkhai <ktkhai@virtuozzo.com>
+To: akpm@linux-foundation.org, vdavydov.dev@gmail.com, shakeelb@google.com,
+        viro@zeniv.linux.org.uk, hannes@cmpxchg.org, mhocko@kernel.org,
+        ktkhai@virtuozzo.com, tglx@linutronix.de, pombredanne@nexb.com,
+        stummala@codeaurora.org, gregkh@linuxfoundation.org,
+        sfr@canb.auug.org.au, guro@fb.com, mka@chromium.org,
+        penguin-kernel@I-love.SAKURA.ne.jp, chris@chris-wilson.co.uk,
+        longman@redhat.com, minchan@kernel.org, ying.huang@intel.com,
+        mgorman@techsingularity.net, jbacik@fb.com, linux@roeck-us.net,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org, willy@infradead.org,
+        lirongqing@baidu.com, aryabinin@virtuozzo.com
+Date: Tue, 22 May 2018 13:09:43 +0300
+Message-ID: <152698378300.3393.14754283083814172297.stgit@localhost.localdomain>
+In-Reply-To: <152698356466.3393.5351712806709424140.stgit@localhost.localdomain>
+References: <152698356466.3393.5351712806709424140.stgit@localhost.localdomain>
+User-Agent: StGit/0.18
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1521735499-29138-1-git-send-email-yibin.gong@nxp.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-IRC: #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 11:05:21 up 151 days, 17:23, 89 users,  load average: 2.72, 1.56,
- 0.84
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [195.214.232.6]
+X-ClientProxiedBy: AM6P193CA0013.EURP193.PROD.OUTLOOK.COM
+ (2603:10a6:209:3e::26) To VI1PR0801MB1342.eurprd08.prod.outlook.com
+ (2603:10a6:800:3a::28)
+X-MS-PublicTrafficType: Email
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0801MB1342;
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0801MB1342;3:FIao7FOzdzGiKAoF+arv6ubYmD3i0UtpLQg0D/O/+dpcxLuQzwgFhGVh+rPhMAre5IY6pLYT6LJlLXpnZcEPtu3X9Z0TF4bHbNWYoC8BLvClH5PrRYO0UK7/rAdI8qLjRdSqFGzcYHI59JD1DI67Em/AibVFaovQl0HRJyDG/crVpuGa0zpG7l3PDVaB//PQL3AVZrwd3jtfXqxdfo2E0J42xlxtyTjbWixDJfPEc1s5oX/kcpVu2gDuNsJAg/Au;25:d/c/6IV57TA2fek9U/cflM+x4KLdshWLXc2SlvoH/GiUBAo1v2wb1URc0zADL7lfFnvEj3gqi7kXMpq7QCxi8dHFI55vfRyJ5z9Vyync/IQ2GtapfDDKrn1DiDw2U3Ul/K8aH72tS90rBpR10+RVoktPNjyqLxBTXnFlnuxsvnK8HCXcah2EyNrnfO0ApJr/Fj/o0cpfO5b3i6VI6o3Mp6/nOJGwKfgZ3vlTFYwnI3t4vJQ5ju2qepRkIbm3rjGg8yHRltaUCUVu9FsfHD4c9gwBFbur1KgYQne97tSpNn/j3RvxGNQNv6IHQxFadl53YYcXkpj4/TOulDnrnyFPBA==;31:k3T+g2AXVZrn9JzQwcDnzyCgj2Mcwm5jW8NgYiJAvDUke0Ap24s+mLNn4AH8BxJcCY3Nz0de881JCwm+mMGaTpHUToXtGSvEF2Z82A1ubWVMVVdiVE97yBYN6xUPNUudSJ0RiQsO+3/tdcAxl9aSFN2rpnYf7eqW40tl5cScmgWjTpanRJZDYcSXibyf8C5kmMBHmTYVeD3w6331qaPNozZNlveDVLSbPeC9f6kNwZI=
+X-MS-TrafficTypeDiagnostic: VI1PR0801MB1342:
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0801MB1342;20:AzvgOlTV2j+/5+8g2Mwng00XQzdcM7yVcDbIPH6RMINLuHnlAOA37kOlWDL9DPNUyJK9aEURngLStFWppb5eyanbddDppLfwxdozB+SemdCyUajtY8+4gpPQLGvLT6tQPkRMkp6v6+ebcfvZh6pnEgpRj7nPL1p8jNbuWrG4h3MTrLJAl2NbYr3GAlNKXqOSAHcWqp2+ITY0hMdQoL0dqIhq5VXX2ZUHj7OsHCmOyxJm1museCgeVgExyjJmSdcS2wi4eCldSIvCOtMSJZ0CKkBelfQuh1+/jdLIWi9krjmy69OlrKAZEn+zVuIBb4f50MyfDWoDCyyGTVWk3mF4L01gWwvOqzmmKKr3vQM4wJYLfygTmELyWYkU5trGVxYWq77MYVZRvhi72+0aPcqvTxTJEvFuQ810fuO96WpqbNGKad2kjAHSVJZiF8P2Fw7dhjOAk5oHDDPHhRVmtfzSrMuqNKpxkgSYi3lYE6LC9CDK8oz0/RD1AmSj8Ws7BbeH;4:01P3fehXqvm0pXWVOiP24v7VnMnz74Ewsk5zFB2nQA73soghFEH5Mbq6hRU3sIrtghPzbpusiiZRvVkwtwmons9/gUHNOYIQgSRSASvSY8sFMUMvF3SGpfr+WoxgiYfaGVDqhKWC6hHHHLOLBhgvhqf6eljoVm4jXgxnyONE2R9LaffwvhoaIepnpLO9JWbDEK2bnnSHU2L8pLfyQnYhT7zfTlhIabRDT6bGVzni7r6DCx6jPenin6K/wAOJt/7ulvY4m3yLvN3xtMhvn6SOlg==
+X-Microsoft-Antispam-PRVS: <VI1PR0801MB1342F8EBCB67A5F7001AE77ECD940@VI1PR0801MB1342.eurprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231254)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:VI1PR0801MB1342;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0801MB1342;
+X-Forefront-PRVS: 0680FADD48
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(346002)(39850400004)(396003)(366004)(39380400002)(376002)(189003)(199004)(39060400002)(50466002)(81166006)(61506002)(55016002)(53936002)(103116003)(478600001)(6636002)(7736002)(316002)(305945005)(8676002)(81156014)(66066001)(47776003)(8936002)(105586002)(58126008)(106356001)(230700001)(476003)(97736004)(11346002)(956004)(68736007)(446003)(486006)(25786009)(7416002)(26005)(52116002)(23676004)(386003)(6506007)(9686003)(59450400001)(33896004)(55236004)(86362001)(2486003)(76176011)(6116002)(7696005)(5660300001)(186003)(16526019)(2906002)(3846002)(921003)(1121003)(309714004);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0801MB1342;H:localhost.localdomain;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtWSTFQUjA4MDFNQjEzNDI7MjM6WlFmYmpsbWowellDK2ozWmFIbnlLaTFY?=
+ =?utf-8?B?WDRTZFlUOGRZSndGK1Mxd0thTmNpbW9reVcwcXhGM2JRVlVkY2k4ZndHVEdE?=
+ =?utf-8?B?MllzbmlzK2VWOWVaa1hvNkRLR2JTaGdsOGFwbFBsRzZYZVZYN2hFb2RyTjJX?=
+ =?utf-8?B?ZnlabFM3SVpHN3Y2bFZ6VXBLMnl3eThjVFFXTGhnQk84UjlsR1lRNExSc1Er?=
+ =?utf-8?B?U0x5T0VCRk5wYXVHaGJQSFZmS1lZSVViUjNhU3FVL2N6bzJtUjVIc2huWk1M?=
+ =?utf-8?B?cFpYQTVsRC9kam8yVExrbDJSYWdXU05WS3lQN29XYmgxaTJlbStaeC82dDZ5?=
+ =?utf-8?B?M0VvbElBalhvUmR0VXlkZzM3RlZHMC9lWFJOQjlMdVNuRWV3WTRjc2Zna21z?=
+ =?utf-8?B?Nkx4djZ0WWdtKzA1Wmh2ek5hbXRYSi9VeGNHZ1UxNHpyaEE5dGRaR2swdU41?=
+ =?utf-8?B?dys0TWpwS2psWHNSZWxEbSt4N0NMSmN6Z3A1VGdUdVVyQjZFdkxvb005WE1C?=
+ =?utf-8?B?ZkxoK0dzRzBiVzlrMVM1YlA2eEU5RnhERmo5WnJUQi9CODlHbGhWSkwzZ0ZL?=
+ =?utf-8?B?MDJBY25LZGpCUy9xQndldTV4R0c2N2ZTVnJNZWJZcGZoT1pmYzRld0VPT0hQ?=
+ =?utf-8?B?M1hKOVc5Q2hZdlIzYVRkaWZMQmZTV1NMNFg1MUJZUUFlTkdJMTV4UmFFbVlH?=
+ =?utf-8?B?Nk13NW15a05xYklDNjVlby90TFcrNjJNc0J2TGZrdUN0akRyZzZDaC9rbzlU?=
+ =?utf-8?B?WkhMeUVuVDdaWE5vVUFVVXRYeHd6N0VtS0YvbTdDb3Bwc3VaVmpOdnk1cU1h?=
+ =?utf-8?B?N0VjdVNyTlMzckpZWnBHN3pSbWpyVlVkTHlTRnVVb291aVJEY3BZRk83ZGNl?=
+ =?utf-8?B?SmJKV0Y2NEV6bnpHa3hIMEMzeHdtWXE4UVBRaFhjMjI5ODhFQVphWmZ0VlZw?=
+ =?utf-8?B?TS8zeVR6cW1QZHJOSytrTDNuRi9jOHIrMWVqYVlXTElJYzhkMVZvWmJQYmFn?=
+ =?utf-8?B?VUdEdjN5aE11cVZIUFBRYXk3Y1dWWUFLNGZqT21TVzJtLzc0RWlITUNPT3Fh?=
+ =?utf-8?B?ZmNHakZzeFZiaVFDL29LZythRlMzVDJub0ZHRlB5ZlZmQVplYXU5clpDb3dQ?=
+ =?utf-8?B?dENRc1BTQlBDbGQ5Q0lqQTZsM1pOYytHOFI1NUhSNW5qSnhpdzFPM2FPWnNQ?=
+ =?utf-8?B?dVFZbFEya0JSSVRvRjNrWmdWbjdna3NzdnlxUmRHMlUySWFobHREMk9sUEFq?=
+ =?utf-8?B?clRzNVNUQUNBbnNmY3kwSlFINlFJMGt2b3YwQnhCYUN4a29wVUNBYkJMcVkr?=
+ =?utf-8?B?M0I4aVNNbjF2b2dmYjFSRi9XVzdBcHR4SEUwTkR0Z21rYVNSaENGVjdDcUdU?=
+ =?utf-8?B?NEZrT0doaXhnMjY1YXhGUUlSRnRDbHIzYURvdjczTnF0eGdkWXhUQ1Y3OE9O?=
+ =?utf-8?B?SDdyaVJMdlhOa1dJZGVMRjNxK0IxZEkxK2FzR2UvbkVqSWRDV1pKZkhaK1J1?=
+ =?utf-8?B?WVlVN0ltVC9BUTQ3amQzVitHUDd4aUxjQW9qQ1FMbVVob21HR2ZJVmoyQTJy?=
+ =?utf-8?B?M3lWdUVmendqVGdVOU8xalJzQ2hqdVduUVBqaTlRejQyZEpsVHdpYnlaV01L?=
+ =?utf-8?B?UVFlYmtWckYvRTNrWVAzRDJGaXFKSDMyTEhBTzh5amIrangrTEpwdHdrdWNH?=
+ =?utf-8?B?Q1B3UmxLNWJsUUJsZGYvWEtWeEZVeTV6RHZITmY4ZHoxR2hITm51dEpGVnVw?=
+ =?utf-8?B?Sm00azBTejl1NGtYMjlydDgwWXhGUUJNTmRNeGQyUjhhOGRweGorZGlOeFVn?=
+ =?utf-8?B?bFNiU3R4b3VrMThvZlZsdCtOb0hTVklYMTFOL2hmQ3c4NVE3dz09?=
+X-Microsoft-Antispam-Message-Info: e5M/02CbFPZ8Zu9YbQoKw5VYNzgzDtZU3+ObKviXYCmftgDBhCL1A4iW6SgUeBVR+nh53wHMRZ4zJlxNa2FeX1g5Cz5yvtIf9u2qTIUVrKi4hiebGBweUCWCGXw1564Wh8Wif5Tcon9OphQ6F9KBoPfkOCRY8s6gIJx7XQFyVyDHF6h5GTi/sCLSg5RaKpyE
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0801MB1342;6:r3DXbQ6aJ54kKjXWE4mE23x19qhMta7YXP9/yfNyP+6b9QvjVh2ybK3XWbnHYdKamw8TsVMMqcdCjXnIPe80jgI8M+mM/0cP0IZTFS9qv9R0RJ7wcNB/tKeFK6TlM+QLlxOG8Q6vv5J5dfXquPzs1t9FJ5HKXKBGkSPjpJIBiqqonT8QC7XjhCugvFMIrH10WzN4Fwn44A9M+C2qsDDVg8m2fK+r6re4QsnwKv45C+cQuAcMijsu0g1Ys7GU1gZ4DXd1ZrU/F+6wgj9X3M3bnAB4FoZ/9zrDQWeRtL03DBMiVlw/u5RZ3H0/4PauQSteYZwCEqbtfJ/43Zl0Yg1f44Y0+5Jej0x3Jj2L39RTHUM9N1XaAuYOiB0xPCMY7QR4uTofIDgm4nQ7Dk00uQ7G4Eq7fH8/0mvll4Fow3ot+TUJE7RFyky4lTqXR6G9dzzEbjmjOdtD20ZiL55wetUlIg==;5:iM1ks/X4a55sbqAVk+zQPd7rWlcOJcICy6zjRNkX7yELW0nS+llnxZ+z6qf+KOlQ8RERcIFl+wQ2CtJAvcUDfEaJhNj8GkvZd2MQiCc1PjTVZIclm5KwX826r6ayttB8YEuVLvSQrzfTyFPol3KmT28RgInHRWUrz4gI71pI+Xs=;24:nHOvBjk20fguY97Nj8nV1k6TxW9gCn2P1VO+qReX4ytJ/6PBCprtWN3kdq+vwr9wbvVLQrzoDa3cxnP4m2IpfD2E564hSm27lmXyYKBB4gs=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0801MB1342;7:nw/XocK7Myc1nokt6bhYjmKA4Qleo95XuJNygSXX0qT9pWwuwLBnO+TJxUPkOMKNmqZbSgqWuTas6vhpjvY85ka3+GHmsm+/4Oxu7HXIaj0ncKA9iayKwIdMfuTYCHF0gp0mHmexprSGgGWE/6vQa8QHfw334CbBjgY+gdmsa0uSUF5MtJN9g24awpPf09sf6/GAPyJnkBJflkWlb0oSF+cA3OT8RZG8mUREje7SJftjs6Qbg29rpseKfUA5O/nx;20:ebpZNr0QYg37E07oRWFwxlxTtXFnQajQeH2nWMd3YLWlPae5glqBdRbSn+DuJOW6XfvjN8Of/e8W6a6fLC4kdELFXbcDZdddOMp37fyW9V0dIkuiqXsUhVAvVL15IN08QEpKGjkCtvgB4GBZUS9DofmTFvPHCM9jX4c6yOnm0ZM=
+X-MS-Office365-Filtering-Correlation-Id: 8a5f9f1b-f042-47e4-b3f0-08d5bfcc25ff
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2018 10:09:45.5476 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8a5f9f1b-f042-47e4-b3f0-08d5bfcc25ff
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0801MB1342
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin,
+Using the preparations made in previous patches, in case of memcg
+shrink, we may avoid shrinkers, which are not set in memcg's shrinkers
+bitmap. To do that, we separate iterations over memcg-aware and
+!memcg-aware shrinkers, and memcg-aware shrinkers are chosen
+via for_each_set_bit() from the bitmap. In case of big nodes,
+having many isolated environments, this gives significant
+performance growth. See next patches for the details.
 
-Several comments inside.
+Note, that the patch does not respect to empty memcg shrinkers,
+since we never clear the bitmap bits after we set it once.
+Their shrinkers will be called again, with no shrinked objects
+as result. This functionality is provided by next patches.
 
-Sascha
+Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+---
+ mm/vmscan.c |   87 +++++++++++++++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 78 insertions(+), 9 deletions(-)
 
-On Fri, Mar 23, 2018 at 12:18:19AM +0800, Robin Gong wrote:
-> The legacy sdma driver has below limitations or drawbacks:
->   1. Hardcode the max BDs number as "PAGE_SIZE / sizeof(*)", and alloc
->      one page size for one channel regardless of only few BDs needed
->      most time. But in few cases, the max PAGE_SIZE maybe not enough.
->   2. One SDMA channel can't stop immediatley once channel disabled which
->      means SDMA interrupt may come in after this channel terminated.There
->      are some patches for this corner case such as commit "2746e2c389f9",
->      but not cover non-cyclic.
-> 
-> The common virt-dma overcomes the above limitations. It can alloc bd
-> dynamically and free bd once this tx transfer done. No memory wasted or
-> maximum limititation here, only depends on how many memory can be requested
-> from kernel. For No.2, such issue can be workaround by checking if there
-> is available descript("sdmac->desc") now once the unwanted interrupt
-> coming. At last the common virt-dma is easier for sdma driver maintain.
-> 
-> Signed-off-by: Robin Gong <yibin.gong@nxp.com>
-> ---
->  drivers/dma/Kconfig    |   1 +
->  drivers/dma/imx-sdma.c | 395 +++++++++++++++++++++++++++++++------------------
->  2 files changed, 253 insertions(+), 143 deletions(-)
-> 
-> diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
-> index 27df3e2..c4ce43c 100644
-> --- a/drivers/dma/Kconfig
-> +++ b/drivers/dma/Kconfig
-> @@ -247,6 +247,7 @@ config IMX_SDMA
->  	tristate "i.MX SDMA support"
->  	depends on ARCH_MXC
->  	select DMA_ENGINE
-> +	select DMA_VIRTUAL_CHANNELS
->  	help
->  	  Support the i.MX SDMA engine. This engine is integrated into
->  	  Freescale i.MX25/31/35/51/53/6 chips.
-> diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
-> index ccd03c3..df79e73 100644
-> --- a/drivers/dma/imx-sdma.c
-> +++ b/drivers/dma/imx-sdma.c
-> @@ -48,6 +48,7 @@
->  #include <linux/mfd/syscon/imx6q-iomuxc-gpr.h>
->  
->  #include "dmaengine.h"
-> +#include "virt-dma.h"
->  
->  /* SDMA registers */
->  #define SDMA_H_C0PTR		0x000
-> @@ -291,10 +292,19 @@ struct sdma_context_data {
->  	u32  scratch7;
->  } __attribute__ ((packed));
->  
-> -#define NUM_BD (int)(PAGE_SIZE / sizeof(struct sdma_buffer_descriptor))
-> -
->  struct sdma_engine;
->  
-> +struct sdma_desc {
-> +	struct virt_dma_desc	vd;
-> +	struct list_head	node;
-> +	unsigned int		num_bd;
-> +	dma_addr_t		bd_phys;
-> +	unsigned int		buf_tail;
-> +	unsigned int		buf_ptail;
-> +	struct sdma_channel	*sdmac;
-> +	struct sdma_buffer_descriptor *bd;
-> +};
-> +
->  /**
->   * struct sdma_channel - housekeeping for a SDMA channel
->   *
-> @@ -310,19 +320,17 @@ struct sdma_engine;
->   * @num_bd		max NUM_BD. number of descriptors currently handling
->   */
->  struct sdma_channel {
-> +	struct virt_dma_chan		vc;
-> +	struct list_head		pending;
->  	struct sdma_engine		*sdma;
-> +	struct sdma_desc		*desc;
->  	unsigned int			channel;
->  	enum dma_transfer_direction		direction;
->  	enum sdma_peripheral_type	peripheral_type;
->  	unsigned int			event_id0;
->  	unsigned int			event_id1;
->  	enum dma_slave_buswidth		word_size;
-> -	unsigned int			buf_tail;
-> -	unsigned int			buf_ptail;
-> -	unsigned int			num_bd;
->  	unsigned int			period_len;
-> -	struct sdma_buffer_descriptor	*bd;
-> -	dma_addr_t			bd_phys;
->  	unsigned int			pc_from_device, pc_to_device;
->  	unsigned int			device_to_device;
->  	unsigned long			flags;
-> @@ -330,15 +338,12 @@ struct sdma_channel {
->  	unsigned long			event_mask[2];
->  	unsigned long			watermark_level;
->  	u32				shp_addr, per_addr;
-> -	struct dma_chan			chan;
-> -	spinlock_t			lock;
-> -	struct dma_async_tx_descriptor	desc;
->  	enum dma_status			status;
->  	unsigned int			chn_count;
->  	unsigned int			chn_real_count;
-> -	struct tasklet_struct		tasklet;
->  	struct imx_dma_data		data;
->  	bool				enabled;
-
-Usage of this variable is removed in this patch, but not the variable
-itself.
-
-> +	u32				bd_size_sum;
-
-This variable is never used for anything.
-
->  };
->  
->  #define IMX_DMA_SG_LOOP		BIT(0)
-> @@ -398,6 +403,9 @@ struct sdma_engine {
->  	u32				spba_start_addr;
->  	u32				spba_end_addr;
->  	unsigned int			irq;
-> +	/* channel0 bd */
-> +	dma_addr_t			bd0_phys;
-> +	struct sdma_buffer_descriptor	*bd0;
->  };
->  
->  static struct sdma_driver_data sdma_imx31 = {
-> @@ -553,6 +561,8 @@ MODULE_DEVICE_TABLE(of, sdma_dt_ids);
->  #define SDMA_H_CONFIG_ACR	BIT(4)  /* indicates if AHB freq /core freq = 2 or 1 */
->  #define SDMA_H_CONFIG_CSM	(3)       /* indicates which context switch mode is selected*/
->  
-> +static void sdma_start_desc(struct sdma_channel *sdmac);
-> +
->  static inline u32 chnenbl_ofs(struct sdma_engine *sdma, unsigned int event)
->  {
->  	u32 chnenbl0 = sdma->drvdata->chnenbl0;
-> @@ -597,14 +607,7 @@ static int sdma_config_ownership(struct sdma_channel *sdmac,
->  
->  static void sdma_enable_channel(struct sdma_engine *sdma, int channel)
->  {
-> -	unsigned long flags;
-> -	struct sdma_channel *sdmac = &sdma->channel[channel];
-> -
->  	writel(BIT(channel), sdma->regs + SDMA_H_START);
-> -
-> -	spin_lock_irqsave(&sdmac->lock, flags);
-> -	sdmac->enabled = true;
-> -	spin_unlock_irqrestore(&sdmac->lock, flags);
->  }
->  
->  /*
-> @@ -632,7 +635,7 @@ static int sdma_run_channel0(struct sdma_engine *sdma)
->  static int sdma_load_script(struct sdma_engine *sdma, void *buf, int size,
->  		u32 address)
->  {
-> -	struct sdma_buffer_descriptor *bd0 = sdma->channel[0].bd;
-> +	struct sdma_buffer_descriptor *bd0 = sdma->bd0;
-
-This change seems to be an orthogonal change. Please make this a
-separate patch.
-
->  	void *buf_virt;
->  	dma_addr_t buf_phys;
->  	int ret;
-> @@ -691,23 +694,16 @@ static void sdma_event_disable(struct sdma_channel *sdmac, unsigned int event)
->  static void sdma_update_channel_loop(struct sdma_channel *sdmac)
->  {
->  	struct sdma_buffer_descriptor *bd;
-> +	struct sdma_desc *desc = sdmac->desc;
->  	int error = 0;
->  	enum dma_status	old_status = sdmac->status;
-> -	unsigned long flags;
-> -
-> -	spin_lock_irqsave(&sdmac->lock, flags);
-> -	if (!sdmac->enabled) {
-> -		spin_unlock_irqrestore(&sdmac->lock, flags);
-> -		return;
-> -	}
-> -	spin_unlock_irqrestore(&sdmac->lock, flags);
->  
->  	/*
->  	 * loop mode. Iterate over descriptors, re-setup them and
->  	 * call callback function.
->  	 */
-> -	while (1) {
-> -		bd = &sdmac->bd[sdmac->buf_tail];
-> +	while (desc) {
-
-'desc' seems to be used as a loop counter here, but this variable is
-never assigned another value, so I assume it's just another way to say
-"skip the loop if desc is NULL". When 'desc' NULL you won't get into
-this function at all though, so this check for desc seems rather pointless.
-
-> +		bd = &desc->bd[desc->buf_tail];
->  
->  		if (bd->mode.status & BD_DONE)
->  			break;
-> @@ -726,8 +722,8 @@ static void sdma_update_channel_loop(struct sdma_channel *sdmac)
->  		sdmac->chn_real_count = bd->mode.count;
->  		bd->mode.status |= BD_DONE;
->  		bd->mode.count = sdmac->period_len;
-> -		sdmac->buf_ptail = sdmac->buf_tail;
-> -		sdmac->buf_tail = (sdmac->buf_tail + 1) % sdmac->num_bd;
-> +		desc->buf_ptail = desc->buf_tail;
-> +		desc->buf_tail = (desc->buf_tail + 1) % desc->num_bd;
->  
->  		/*
->  		 * The callback is called from the interrupt context in order
-> @@ -735,15 +731,16 @@ static void sdma_update_channel_loop(struct sdma_channel *sdmac)
->  		 * SDMA transaction status by the time the client tasklet is
->  		 * executed.
->  		 */
-> -
-> -		dmaengine_desc_get_callback_invoke(&sdmac->desc, NULL);
-> +		spin_unlock(&sdmac->vc.lock);
-> +		dmaengine_desc_get_callback_invoke(&desc->vd.tx, NULL);
-> +		spin_lock(&sdmac->vc.lock);
->  
->  		if (error)
->  			sdmac->status = old_status;
->  	}
->  }
->  
-> -static void mxc_sdma_handle_channel_normal(unsigned long data)
-> +static void mxc_sdma_handle_channel_normal(struct sdma_channel *data)
->  {
->  	struct sdma_channel *sdmac = (struct sdma_channel *) data;
->  	struct sdma_buffer_descriptor *bd;
-> @@ -754,8 +751,8 @@ static void mxc_sdma_handle_channel_normal(unsigned long data)
->  	 * non loop mode. Iterate over all descriptors, collect
->  	 * errors and call callback function
->  	 */
-> -	for (i = 0; i < sdmac->num_bd; i++) {
-> -		bd = &sdmac->bd[i];
-> +	for (i = 0; i < sdmac->desc->num_bd; i++) {
-> +		bd = &sdmac->desc->bd[i];
->  
->  		 if (bd->mode.status & (BD_DONE | BD_RROR))
->  			error = -EIO;
-> @@ -766,10 +763,6 @@ static void mxc_sdma_handle_channel_normal(unsigned long data)
->  		sdmac->status = DMA_ERROR;
->  	else
->  		sdmac->status = DMA_COMPLETE;
-> -
-> -	dma_cookie_complete(&sdmac->desc);
-> -
-> -	dmaengine_desc_get_callback_invoke(&sdmac->desc, NULL);
->  }
->  
->  static irqreturn_t sdma_int_handler(int irq, void *dev_id)
-> @@ -785,13 +778,24 @@ static irqreturn_t sdma_int_handler(int irq, void *dev_id)
->  	while (stat) {
->  		int channel = fls(stat) - 1;
->  		struct sdma_channel *sdmac = &sdma->channel[channel];
-> -
-> -		if (sdmac->flags & IMX_DMA_SG_LOOP)
-> -			sdma_update_channel_loop(sdmac);
-> -		else
-> -			tasklet_schedule(&sdmac->tasklet);
-> +		struct sdma_desc *desc;
-> +
-> +		spin_lock(&sdmac->vc.lock);
-> +		desc = sdmac->desc;
-> +		if (desc) {
-> +			if (sdmac->flags & IMX_DMA_SG_LOOP) {
-> +				sdma_update_channel_loop(sdmac);
-> +			} else {
-> +				mxc_sdma_handle_channel_normal(sdmac);
-> +				vchan_cookie_complete(&desc->vd);
-> +				if (!list_empty(&sdmac->pending))
-> +					list_del(&desc->node);
-
-What does this list_empty check protect you from? It looks like when the
-list really is empty then it's a bug in your internal driver logic.
-
-> +				 sdma_start_desc(sdmac);
-
-Whitespace damage here.
-
-> +			}
-> +		}
->  
->  		__clear_bit(channel, &stat);
-> +		spin_unlock(&sdmac->vc.lock);
->  	}
->  
->  	return IRQ_HANDLED;
-> @@ -897,7 +901,7 @@ static int sdma_load_context(struct sdma_channel *sdmac)
->  	int channel = sdmac->channel;
->  	int load_address;
->  	struct sdma_context_data *context = sdma->context;
-> -	struct sdma_buffer_descriptor *bd0 = sdma->channel[0].bd;
-> +	struct sdma_buffer_descriptor *bd0 = sdma->bd0;
->  	int ret;
->  	unsigned long flags;
->  
-> @@ -946,7 +950,7 @@ static int sdma_load_context(struct sdma_channel *sdmac)
->  
->  static struct sdma_channel *to_sdma_chan(struct dma_chan *chan)
->  {
-> -	return container_of(chan, struct sdma_channel, chan);
-> +	return container_of(chan, struct sdma_channel, vc.chan);
->  }
->  
->  static int sdma_disable_channel(struct dma_chan *chan)
-> @@ -954,15 +958,10 @@ static int sdma_disable_channel(struct dma_chan *chan)
->  	struct sdma_channel *sdmac = to_sdma_chan(chan);
->  	struct sdma_engine *sdma = sdmac->sdma;
->  	int channel = sdmac->channel;
-> -	unsigned long flags;
->  
->  	writel_relaxed(BIT(channel), sdma->regs + SDMA_H_STATSTOP);
->  	sdmac->status = DMA_ERROR;
->  
-> -	spin_lock_irqsave(&sdmac->lock, flags);
-> -	sdmac->enabled = false;
-> -	spin_unlock_irqrestore(&sdmac->lock, flags);
-> -
->  	return 0;
->  }
->  
-> @@ -1097,42 +1096,101 @@ static int sdma_set_channel_priority(struct sdma_channel *sdmac,
->  	return 0;
->  }
->  
-> -static int sdma_request_channel(struct sdma_channel *sdmac)
-> +static int sdma_alloc_bd(struct sdma_desc *desc)
->  {
-> -	struct sdma_engine *sdma = sdmac->sdma;
-> -	int channel = sdmac->channel;
-> -	int ret = -EBUSY;
-> +	u32 bd_size = desc->num_bd * sizeof(struct sdma_buffer_descriptor);
-> +	int ret = 0;
-> +	unsigned long flags;
->  
-> -	sdmac->bd = dma_zalloc_coherent(NULL, PAGE_SIZE, &sdmac->bd_phys,
-> +	desc->bd = dma_zalloc_coherent(NULL, bd_size, &desc->bd_phys,
->  					GFP_KERNEL);
-> -	if (!sdmac->bd) {
-> +	if (!desc->bd) {
->  		ret = -ENOMEM;
->  		goto out;
->  	}
->  
-> -	sdma->channel_control[channel].base_bd_ptr = sdmac->bd_phys;
-> -	sdma->channel_control[channel].current_bd_ptr = sdmac->bd_phys;
-> +	spin_lock_irqsave(&desc->sdmac->vc.lock, flags);
-> +	desc->sdmac->bd_size_sum += bd_size;
-> +	spin_unlock_irqrestore(&desc->sdmac->vc.lock, flags);
->  
-> -	sdma_set_channel_priority(sdmac, MXC_SDMA_DEFAULT_PRIORITY);
-> -	return 0;
->  out:
-> -
->  	return ret;
->  }
->  
-> -static dma_cookie_t sdma_tx_submit(struct dma_async_tx_descriptor *tx)
-> +static void sdma_free_bd(struct sdma_desc *desc)
->  {
-> +	u32 bd_size = desc->num_bd * sizeof(struct sdma_buffer_descriptor);
->  	unsigned long flags;
-> -	struct sdma_channel *sdmac = to_sdma_chan(tx->chan);
-> -	dma_cookie_t cookie;
->  
-> -	spin_lock_irqsave(&sdmac->lock, flags);
-> +	if (desc->bd) {
-> +		dma_free_coherent(NULL, bd_size, desc->bd, desc->bd_phys);
-> +
-> +		spin_lock_irqsave(&desc->sdmac->vc.lock, flags);
-> +		desc->sdmac->bd_size_sum -= bd_size;
-> +		spin_unlock_irqrestore(&desc->sdmac->vc.lock, flags);
-> +	}
-> +}
-> +
-> +static int sdma_request_channel0(struct sdma_engine *sdma)
-> +{
-> +	int ret = 0;
-> +
-> +	sdma->bd0 = dma_zalloc_coherent(NULL, PAGE_SIZE, &sdma->bd0_phys,
-> +					GFP_KERNEL);
-> +	if (!sdma->bd0) {
-> +		ret = -ENOMEM;
-> +		goto out;
-> +	}
->  
-> -	cookie = dma_cookie_assign(tx);
-> +	sdma->channel_control[0].base_bd_ptr = sdma->bd0_phys;
-> +	sdma->channel_control[0].current_bd_ptr = sdma->bd0_phys;
->  
-> -	spin_unlock_irqrestore(&sdmac->lock, flags);
-> +	sdma_set_channel_priority(&sdma->channel[0], MXC_SDMA_DEFAULT_PRIORITY);
-> +out:
->  
-> -	return cookie;
-> +	return ret;
-> +}
-> +
-> +static struct sdma_desc *to_sdma_desc(struct dma_async_tx_descriptor *t)
-> +{
-> +	return container_of(t, struct sdma_desc, vd.tx);
-> +}
-> +
-> +static void sdma_desc_free(struct virt_dma_desc *vd)
-> +{
-> +	struct sdma_desc *desc = container_of(vd, struct sdma_desc, vd);
-> +
-> +	if (desc) {
-
-Depending on the position of 'vd' in struct sdma_desc 'desc' will always
-be non-NULL, even if 'vd' is NULL.
-
-I think this test is unnecessary since this function should never be
-called with an invalid pointer. If it is, then the caller really
-deserved the resulting crash.
-
-> +		sdma_free_bd(desc);
-> +		kfree(desc);
-> +	}
-> +}
-> +
-> +static int sdma_terminate_all(struct dma_chan *chan)
-> +{
-> +	struct sdma_channel *sdmac = to_sdma_chan(chan);
-> +	unsigned long flags;
-> +	LIST_HEAD(head);
-> +
-> +	spin_lock_irqsave(&sdmac->vc.lock, flags);
-> +	vchan_get_all_descriptors(&sdmac->vc, &head);
-> +	while (!list_empty(&sdmac->pending)) {
-> +		struct sdma_desc *desc = list_first_entry(&sdmac->pending,
-> +			struct sdma_desc, node);
-> +
-> +		 list_del(&desc->node);
-> +		 spin_unlock_irqrestore(&sdmac->vc.lock, flags);
-> +		 sdmac->vc.desc_free(&desc->vd);
-> +		 spin_lock_irqsave(&sdmac->vc.lock, flags);
-> +	}
-
-list_for_each_entry_safe?
-
-> +
-> +	if (sdmac->desc)
-> +		sdmac->desc = NULL;
-
-The test is unnecesary.
-
-> +	spin_unlock_irqrestore(&sdmac->vc.lock, flags);
-> +	vchan_dma_desc_free_list(&sdmac->vc, &head);
-> +	sdma_disable_channel_with_delay(chan);
-> +
-> +	return 0;
->  }
->  
->  static int sdma_alloc_chan_resources(struct dma_chan *chan)
-> @@ -1168,18 +1226,11 @@ static int sdma_alloc_chan_resources(struct dma_chan *chan)
->  	if (ret)
->  		goto disable_clk_ipg;
->  
-> -	ret = sdma_request_channel(sdmac);
-> -	if (ret)
-> -		goto disable_clk_ahb;
-> -
->  	ret = sdma_set_channel_priority(sdmac, prio);
->  	if (ret)
->  		goto disable_clk_ahb;
->  
-> -	dma_async_tx_descriptor_init(&sdmac->desc, chan);
-> -	sdmac->desc.tx_submit = sdma_tx_submit;
-> -	/* txd.flags will be overwritten in prep funcs */
-> -	sdmac->desc.flags = DMA_CTRL_ACK;
-> +	sdmac->bd_size_sum = 0;
->  
->  	return 0;
->  
-> @@ -1195,7 +1246,7 @@ static void sdma_free_chan_resources(struct dma_chan *chan)
->  	struct sdma_channel *sdmac = to_sdma_chan(chan);
->  	struct sdma_engine *sdma = sdmac->sdma;
->  
-> -	sdma_disable_channel(chan);
-> +	sdma_terminate_all(chan);
->  
->  	if (sdmac->event_id0)
->  		sdma_event_disable(sdmac, sdmac->event_id0);
-> @@ -1207,12 +1258,43 @@ static void sdma_free_chan_resources(struct dma_chan *chan)
->  
->  	sdma_set_channel_priority(sdmac, 0);
->  
-> -	dma_free_coherent(NULL, PAGE_SIZE, sdmac->bd, sdmac->bd_phys);
-> -
->  	clk_disable(sdma->clk_ipg);
->  	clk_disable(sdma->clk_ahb);
->  }
->  
-> +static struct sdma_desc *sdma_transfer_init(struct sdma_channel *sdmac,
-> +				enum dma_transfer_direction direction, u32 bds)
-> +{
-> +	struct sdma_desc *desc;
-> +
-> +	desc = kzalloc((sizeof(*desc)), GFP_KERNEL);
-> +	if (!desc)
-> +		goto err_out;
-> +
-> +	sdmac->status = DMA_IN_PROGRESS;
-> +	sdmac->direction = direction;
-> +	sdmac->flags = 0;
-> +	sdmac->chn_count = 0;
-> +	sdmac->chn_real_count = 0;
-> +
-> +	desc->sdmac = sdmac;
-> +	desc->num_bd = bds;
-> +	INIT_LIST_HEAD(&desc->node);
-> +
-> +	if (sdma_alloc_bd(desc))
-> +		goto err_desc_out;
-> +
-> +	if (sdma_load_context(sdmac))
-> +		goto err_desc_out;
-> +
-> +	return desc;
-> +
-> +err_desc_out:
-> +	kfree(desc);
-> +err_out:
-> +	return NULL;
-> +}
-> +
->  static struct dma_async_tx_descriptor *sdma_prep_slave_sg(
->  		struct dma_chan *chan, struct scatterlist *sgl,
->  		unsigned int sg_len, enum dma_transfer_direction direction,
-> @@ -1223,35 +1305,24 @@ static struct dma_async_tx_descriptor *sdma_prep_slave_sg(
->  	int ret, i, count;
->  	int channel = sdmac->channel;
->  	struct scatterlist *sg;
-> +	struct sdma_desc *desc;
->  
-> -	if (sdmac->status == DMA_IN_PROGRESS)
-> +	if (!chan)
->  		return NULL;
-> -	sdmac->status = DMA_IN_PROGRESS;
-> -
-> -	sdmac->flags = 0;
->  
-> -	sdmac->buf_tail = 0;
-> -	sdmac->buf_ptail = 0;
-> -	sdmac->chn_real_count = 0;
-> +	desc = sdma_transfer_init(sdmac, direction, sg_len);
-> +	if (!desc)
-> +		goto err_out;
->  
->  	dev_dbg(sdma->dev, "setting up %d entries for channel %d.\n",
->  			sg_len, channel);
->  
-> -	sdmac->direction = direction;
->  	ret = sdma_load_context(sdmac);
->  	if (ret)
->  		goto err_out;
->  
-> -	if (sg_len > NUM_BD) {
-> -		dev_err(sdma->dev, "SDMA channel %d: maximum number of sg exceeded: %d > %d\n",
-> -				channel, sg_len, NUM_BD);
-> -		ret = -EINVAL;
-> -		goto err_out;
-> -	}
-> -
-> -	sdmac->chn_count = 0;
->  	for_each_sg(sgl, sg, sg_len, i) {
-> -		struct sdma_buffer_descriptor *bd = &sdmac->bd[i];
-> +		struct sdma_buffer_descriptor *bd = &desc->bd[i];
->  		int param;
->  
->  		bd->buffer_addr = sg->dma_address;
-> @@ -1262,7 +1333,7 @@ static struct dma_async_tx_descriptor *sdma_prep_slave_sg(
->  			dev_err(sdma->dev, "SDMA channel %d: maximum bytes for sg entry exceeded: %d > %d\n",
->  					channel, count, 0xffff);
->  			ret = -EINVAL;
-> -			goto err_out;
-> +			goto err_bd_out;
->  		}
->  
->  		bd->mode.count = count;
-> @@ -1307,10 +1378,11 @@ static struct dma_async_tx_descriptor *sdma_prep_slave_sg(
->  		bd->mode.status = param;
->  	}
->  
-> -	sdmac->num_bd = sg_len;
-> -	sdma->channel_control[channel].current_bd_ptr = sdmac->bd_phys;
-> +	return vchan_tx_prep(&sdmac->vc, &desc->vd, flags);
->  
-> -	return &sdmac->desc;
-> +err_bd_out:
-> +	sdma_free_bd(desc);
-> +	kfree(desc);
->  err_out:
->  	sdmac->status = DMA_ERROR;
->  	return NULL;
-> @@ -1326,39 +1398,32 @@ static struct dma_async_tx_descriptor *sdma_prep_dma_cyclic(
->  	int num_periods = buf_len / period_len;
->  	int channel = sdmac->channel;
->  	int ret, i = 0, buf = 0;
-> +	struct sdma_desc *desc;
->  
->  	dev_dbg(sdma->dev, "%s channel: %d\n", __func__, channel);
->  
-> -	if (sdmac->status == DMA_IN_PROGRESS)
-> -		return NULL;
-> -
-> -	sdmac->status = DMA_IN_PROGRESS;
-> +	/* Now allocate and setup the descriptor. */
-> +	desc = sdma_transfer_init(sdmac, direction, num_periods);
-> +	if (!desc)
-> +		goto err_out;
->  
-> -	sdmac->buf_tail = 0;
-> -	sdmac->buf_ptail = 0;
-> -	sdmac->chn_real_count = 0;
-> +	desc->buf_tail = 0;
-> +	desc->buf_ptail = 0;
->  	sdmac->period_len = period_len;
-> -
->  	sdmac->flags |= IMX_DMA_SG_LOOP;
-> -	sdmac->direction = direction;
-> +
->  	ret = sdma_load_context(sdmac);
->  	if (ret)
->  		goto err_out;
->  
-> -	if (num_periods > NUM_BD) {
-> -		dev_err(sdma->dev, "SDMA channel %d: maximum number of sg exceeded: %d > %d\n",
-> -				channel, num_periods, NUM_BD);
-> -		goto err_out;
-> -	}
-> -
->  	if (period_len > 0xffff) {
->  		dev_err(sdma->dev, "SDMA channel %d: maximum period size exceeded: %zu > %d\n",
->  				channel, period_len, 0xffff);
-> -		goto err_out;
-> +		goto err_bd_out;
->  	}
->  
->  	while (buf < buf_len) {
-> -		struct sdma_buffer_descriptor *bd = &sdmac->bd[i];
-> +		struct sdma_buffer_descriptor *bd = &desc->bd[i];
->  		int param;
->  
->  		bd->buffer_addr = dma_addr;
-> @@ -1366,7 +1431,7 @@ static struct dma_async_tx_descriptor *sdma_prep_dma_cyclic(
->  		bd->mode.count = period_len;
->  
->  		if (sdmac->word_size > DMA_SLAVE_BUSWIDTH_4_BYTES)
-> -			goto err_out;
-> +			goto err_bd_out;
->  		if (sdmac->word_size == DMA_SLAVE_BUSWIDTH_4_BYTES)
->  			bd->mode.command = 0;
->  		else
-> @@ -1389,10 +1454,10 @@ static struct dma_async_tx_descriptor *sdma_prep_dma_cyclic(
->  		i++;
->  	}
->  
-> -	sdmac->num_bd = num_periods;
-> -	sdma->channel_control[channel].current_bd_ptr = sdmac->bd_phys;
-> -
-> -	return &sdmac->desc;
-> +	return vchan_tx_prep(&sdmac->vc, &desc->vd, flags);
-> +err_bd_out:
-> +	sdma_free_bd(desc);
-> +	kfree(desc);
->  err_out:
->  	sdmac->status = DMA_ERROR;
->  	return NULL;
-> @@ -1432,26 +1497,74 @@ static enum dma_status sdma_tx_status(struct dma_chan *chan,
->  {
->  	struct sdma_channel *sdmac = to_sdma_chan(chan);
->  	u32 residue;
-> +	struct virt_dma_desc *vd;
-> +	struct sdma_desc *desc;
-> +	enum dma_status ret;
-> +	unsigned long flags;
->  
-> -	if (sdmac->flags & IMX_DMA_SG_LOOP)
-> -		residue = (sdmac->num_bd - sdmac->buf_ptail) *
-> +	ret = dma_cookie_status(chan, cookie, txstate);
-> +	if (ret == DMA_COMPLETE && txstate) {
-> +		residue = sdmac->chn_count - sdmac->chn_real_count;
-> +		return ret;
-> +	}
-> +
-> +	spin_lock_irqsave(&sdmac->vc.lock, flags);
-> +	vd = vchan_find_desc(&sdmac->vc, cookie);
-> +	desc = to_sdma_desc(&vd->tx);
-
-You should use 'vd' only after you have made sure it is valid (though I
-see it causes no harm in this case, but let's be nice to the readers of
-this code)
-
-> +	if (vd) {
-> +		if (sdmac->flags & IMX_DMA_SG_LOOP)
-> +			residue = (desc->num_bd - desc->buf_ptail) *
->  			   sdmac->period_len - sdmac->chn_real_count;
-> -	else
-> +		else
-> +			residue = sdmac->chn_count - sdmac->chn_real_count;
-> +	} else if (sdmac->desc && sdmac->desc->vd.tx.cookie == cookie) {
->  		residue = sdmac->chn_count - sdmac->chn_real_count;
-> +	} else {
-> +		residue = 0;
-> +	}
-> +	ret = sdmac->status;
-> +	spin_unlock_irqrestore(&sdmac->vc.lock, flags);
->  
->  	dma_set_tx_state(txstate, chan->completed_cookie, chan->cookie,
->  			 residue);
->  
-> -	return sdmac->status;
-> +	return ret;
-> +}
-> +
-> +static void sdma_start_desc(struct sdma_channel *sdmac)
-> +{
-> +	struct virt_dma_desc *vd = vchan_next_desc(&sdmac->vc);
-> +	struct sdma_desc *desc;
-> +	struct sdma_engine *sdma = sdmac->sdma;
-> +	int channel = sdmac->channel;
-> +
-> +	if (!vd) {
-> +		sdmac->desc = NULL;
-> +		return;
-> +	}
-> +	sdmac->desc = desc = to_sdma_desc(&vd->tx);
-> +	/*
-> +	 * Do not delete the node in desc_issued list in cyclic mode, otherwise
-> +	 * the desc alloced will never be freed in vchan_dma_desc_free_list
-> +	 */
-> +	if (!(sdmac->flags & IMX_DMA_SG_LOOP)) {
-> +		list_add_tail(&sdmac->desc->node, &sdmac->pending);
-> +		list_del(&vd->node);
-> +	}
-> +	sdma->channel_control[channel].base_bd_ptr = desc->bd_phys;
-> +	sdma->channel_control[channel].current_bd_ptr = desc->bd_phys;
-> +	sdma_enable_channel(sdma, sdmac->channel);
->  }
->  
->  static void sdma_issue_pending(struct dma_chan *chan)
->  {
->  	struct sdma_channel *sdmac = to_sdma_chan(chan);
-> -	struct sdma_engine *sdma = sdmac->sdma;
-> +	unsigned long flags;
->  
-> -	if (sdmac->status == DMA_IN_PROGRESS)
-> -		sdma_enable_channel(sdma, sdmac->channel);
-> +	spin_lock_irqsave(&sdmac->vc.lock, flags);
-> +	if (vchan_issue_pending(&sdmac->vc) && !sdmac->desc)
-> +		sdma_start_desc(sdmac);
-> +	spin_unlock_irqrestore(&sdmac->vc.lock, flags);
->  }
->  
->  #define SDMA_SCRIPT_ADDRS_ARRAY_SIZE_V1	34
-> @@ -1657,7 +1770,7 @@ static int sdma_init(struct sdma_engine *sdma)
->  	for (i = 0; i < MAX_DMA_CHANNELS; i++)
->  		writel_relaxed(0, sdma->regs + SDMA_CHNPRI_0 + i * 4);
->  
-> -	ret = sdma_request_channel(&sdma->channel[0]);
-> +	ret = sdma_request_channel0(sdma);
->  	if (ret)
->  		goto err_dma_alloc;
->  
-> @@ -1819,22 +1932,17 @@ static int sdma_probe(struct platform_device *pdev)
->  		struct sdma_channel *sdmac = &sdma->channel[i];
->  
->  		sdmac->sdma = sdma;
-> -		spin_lock_init(&sdmac->lock);
-> -
-> -		sdmac->chan.device = &sdma->dma_device;
-> -		dma_cookie_init(&sdmac->chan);
->  		sdmac->channel = i;
-> -
-> -		tasklet_init(&sdmac->tasklet, mxc_sdma_handle_channel_normal,
-> -			     (unsigned long) sdmac);
-> +		sdmac->status = DMA_IN_PROGRESS;
-> +		sdmac->vc.desc_free = sdma_desc_free;
-> +		INIT_LIST_HEAD(&sdmac->pending);
->  		/*
->  		 * Add the channel to the DMAC list. Do not add channel 0 though
->  		 * because we need it internally in the SDMA driver. This also means
->  		 * that channel 0 in dmaengine counting matches sdma channel 1.
->  		 */
->  		if (i)
-> -			list_add_tail(&sdmac->chan.device_node,
-> -					&sdma->dma_device.channels);
-> +			vchan_init(&sdmac->vc, &sdma->dma_device);
->  	}
->  
->  	ret = sdma_init(sdma);
-> @@ -1879,7 +1987,7 @@ static int sdma_probe(struct platform_device *pdev)
->  	sdma->dma_device.device_prep_slave_sg = sdma_prep_slave_sg;
->  	sdma->dma_device.device_prep_dma_cyclic = sdma_prep_dma_cyclic;
->  	sdma->dma_device.device_config = sdma_config;
-> -	sdma->dma_device.device_terminate_all = sdma_disable_channel_with_delay;
-> +	sdma->dma_device.device_terminate_all = sdma_terminate_all;
->  	sdma->dma_device.src_addr_widths = SDMA_DMA_BUSWIDTHS;
->  	sdma->dma_device.dst_addr_widths = SDMA_DMA_BUSWIDTHS;
->  	sdma->dma_device.directions = SDMA_DMA_DIRECTIONS;
-> @@ -1939,7 +2047,8 @@ static int sdma_remove(struct platform_device *pdev)
->  	for (i = 0; i < MAX_DMA_CHANNELS; i++) {
->  		struct sdma_channel *sdmac = &sdma->channel[i];
->  
-> -		tasklet_kill(&sdmac->tasklet);
-> +		tasklet_kill(&sdmac->vc.task);
-> +		sdma_free_chan_resources(&sdmac->vc.chan);
->  	}
->  
->  	platform_set_drvdata(pdev, NULL);
-> -- 
-> 2.7.4
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
-
--- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index d8a1ca350a58..f26ca1e00efb 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -367,6 +367,20 @@ int prealloc_shrinker(struct shrinker *shrinker)
+ 			goto free_deferred;
+ 	}
+ 
++	/*
++	 * There is a window between prealloc_shrinker()
++	 * and register_shrinker_prepared(). We don't want
++	 * to clear bit of a shrinker in such the state
++	 * in shrink_slab_memcg(), since this will impose
++	 * restrictions on a code registering a shrinker
++	 * (they would have to guarantee, their LRU lists
++	 * are empty till shrinker is completely registered).
++	 * So, we differ the situation, when 1)a shrinker
++	 * is semi-registered (id is assigned, but it has
++	 * not yet linked to shrinker_list) and 2)shrinker
++	 * is not registered (id is not assigned).
++	 */
++	INIT_LIST_HEAD(&shrinker->list);
+ 	return 0;
+ 
+ free_deferred:
+@@ -541,6 +555,67 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
+ 	return freed;
+ }
+ 
++#ifdef CONFIG_MEMCG_KMEM
++static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
++			struct mem_cgroup *memcg, int priority)
++{
++	struct memcg_shrinker_map *map;
++	unsigned long freed = 0;
++	int ret, i;
++
++	if (!memcg_kmem_enabled() || !mem_cgroup_online(memcg))
++		return 0;
++
++	if (!down_read_trylock(&shrinker_rwsem))
++		return 0;
++
++	/*
++	 * 1) Caller passes only alive memcg, so map can't be NULL.
++	 * 2) shrinker_rwsem protects from maps expanding.
++	 */
++	map = rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_map,
++					true);
++	BUG_ON(!map);
++
++	for_each_set_bit(i, map->map, shrinker_nr_max) {
++		struct shrink_control sc = {
++			.gfp_mask = gfp_mask,
++			.nid = nid,
++			.memcg = memcg,
++		};
++		struct shrinker *shrinker;
++
++		shrinker = idr_find(&shrinker_idr, i);
++		if (unlikely(!shrinker)) {
++			clear_bit(i, map->map);
++			continue;
++		}
++		BUG_ON(!(shrinker->flags & SHRINKER_MEMCG_AWARE));
++
++		/* See comment in prealloc_shrinker() */
++		if (unlikely(list_empty(&shrinker->list)))
++			continue;
++
++		ret = do_shrink_slab(&sc, shrinker, priority);
++		freed += ret;
++
++		if (rwsem_is_contended(&shrinker_rwsem)) {
++			freed = freed ? : 1;
++			break;
++		}
++	}
++
++	up_read(&shrinker_rwsem);
++	return freed;
++}
++#else /* CONFIG_MEMCG_KMEM */
++static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
++			struct mem_cgroup *memcg, int priority)
++{
++	return 0;
++}
++#endif /* CONFIG_MEMCG_KMEM */
++
+ /**
+  * shrink_slab - shrink slab caches
+  * @gfp_mask: allocation context
+@@ -570,8 +645,8 @@ static unsigned long shrink_slab(gfp_t gfp_mask, int nid,
+ 	struct shrinker *shrinker;
+ 	unsigned long freed = 0;
+ 
+-	if (memcg && (!memcg_kmem_enabled() || !mem_cgroup_online(memcg)))
+-		return 0;
++	if (memcg && !mem_cgroup_is_root(memcg))
++		return shrink_slab_memcg(gfp_mask, nid, memcg, priority);
+ 
+ 	if (!down_read_trylock(&shrinker_rwsem))
+ 		goto out;
+@@ -583,13 +658,7 @@ static unsigned long shrink_slab(gfp_t gfp_mask, int nid,
+ 			.memcg = memcg,
+ 		};
+ 
+-		/*
+-		 * If kernel memory accounting is disabled, we ignore
+-		 * SHRINKER_MEMCG_AWARE flag and call all shrinkers
+-		 * passing NULL for memcg.
+-		 */
+-		if (memcg_kmem_enabled() &&
+-		    !!memcg != !!(shrinker->flags & SHRINKER_MEMCG_AWARE))
++		if (!!memcg != !!(shrinker->flags & SHRINKER_MEMCG_AWARE))
+ 			continue;
+ 
+ 		if (!(shrinker->flags & SHRINKER_NUMA_AWARE))
