@@ -1,66 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751547AbeEVLsJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 07:48:09 -0400
-Received: from verein.lst.de ([213.95.11.211]:48127 "EHLO newverein.lst.de"
+        id S1751439AbeEVLyR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 07:54:17 -0400
+Received: from sauhun.de ([88.99.104.3]:58436 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751177AbeEVLsG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 07:48:06 -0400
-Date: Tue, 22 May 2018 13:53:20 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: Christoph Hellwig <hch@lst.de>, iommu@lists.linux-foundation.org,
-        linux-arch@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        Michal Simek <monstr@monstr.eu>, Vincent Chen <deanbo422@gmail.com>,
-        linux-c6x-dev@linux-c6x.org, linux-parisc@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-hexagon@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-m68k@vger.kernel.org,
-        openrisc@lists.librecores.org, Greentime Hu <green.hu@gmail.com>,
-        linux-alpha@vger.kernel.org, sparclinux@vger.kernel.org,
-        nios2-dev@lists.rocketboards.org, linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 04/20] arm-nommu: use generic dma_noncoherent_ops
-Message-ID: <20180522115320.GA14530@lst.de>
-References: <20180511075945.16548-1-hch@lst.de> <20180511075945.16548-5-hch@lst.de> <20180511091114.GA16141@n2100.armlinux.org.uk>
+        id S1751236AbeEVLyQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 07:54:16 -0400
+Date: Tue, 22 May 2018 13:54:14 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: George Cherian <george.cherian@cavium.com>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jglauber@cavium.com, kamlakant.patel@cavium.com,
+        mchehab+samsung@kernel.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org, akpm@linux-foundation.org,
+        linus.walleij@linaro.org, rdunlap@infradead.org
+Subject: Re: [PATCH 4/4] i2c: xlp9xx: Add MAINTAINERS entry
+Message-ID: <20180522115414.473odncwfdpgmcz7@ninjato>
+References: <1526454019-32714-1-git-send-email-george.cherian@cavium.com>
+ <1526454019-32714-5-git-send-email-george.cherian@cavium.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="z4aciq2vkq75z7wy"
 Content-Disposition: inline
-In-Reply-To: <20180511091114.GA16141@n2100.armlinux.org.uk>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <1526454019-32714-5-git-send-email-george.cherian@cavium.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 11, 2018 at 10:11:15AM +0100, Russell King - ARM Linux wrote:
-> > +void arch_sync_dma_for_device(struct device *dev, phys_addr_t paddr,
-> > +		size_t size, enum dma_data_direction dir)
-> 
-> Please no.  There is a lot of history of these (__dma_page_cpu_to_dev etc)
-> functions being abused by out of tree drivers, because they think they
-> know better.  This is stopped by making them static and ensuring that
-> drivers have no access to these functions.
-> 
-> Please do not re-expose these to the global kernel.
-> 
-> While it may make things easier for a cross-architecture point of view,
-> it makes it a lot easier for people to abuse these private APIs.
 
-The point of this series, which isn't fully archived yet, is to
-consolidate the direct mapping dma code, that is all dma_map_ops
-instances except for iommus.  It is in fact in many ways modelled
-after the ARM code.  For that we need the architectures to supply
-the cache maintainance routines.
+--z4aciq2vkq75z7wy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-However, even if they now appear in dma-noncoherent.h they are NOT
-and will NOT be exported, so using them directly from drivers won't
-easily be possible.
+On Wed, May 16, 2018 at 12:00:19AM -0700, George Cherian wrote:
+> The i2c XLP9xx driver is maintained by Cavium.
+> Add George Cherian and Jan Glauber as the Maintainers.
+>=20
+> Signed-off-by: George Cherian <george.cherian@cavium.com>
+> ---
+>  MAINTAINERS | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index df6e9bb..68da265 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -15509,6 +15509,14 @@ L:	linux-kernel@vger.kernel.org
+>  S:	Supported
+>  F:	drivers/char/xillybus/
+> =20
+> +XLP9XX I2C DRIVER
+> +M:	George Cherian <george.cherian@cavium.com>
+> +M:	Jan Glauber <jglauber@cavium.com>
 
-I'll drop the arm-nommu patch for now, but I will pester your with this
-again once arm is the last architecture not sharing the common code.
+Jan, I need an explicit ACK from you for this change.
 
-> 
-> -- 
-> RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-> FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-> According to speedtest.net: 8.21Mbps down 510kbps up
----end quoted text---
+
+--z4aciq2vkq75z7wy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlsEBOYACgkQFA3kzBSg
+KbZw8Q/8DkBUb+wq1cl5Cxq/TtxP+qC359yuqNWB94jhvOCSZ0Lug0BBYpJKH6ZI
+kF4s4hb8z/RaldItl3MOPal5uEcPuCg3rUS51yGA85go/1XUskP+9e8BU9coaP40
+0ZMM2D3wovEFdV+v0GJSxeqxyddTMxPP1BuPzGIfosHY0bvjRPCvGCiWXIGMhs5j
+OlhljgUnUzho+bNK+qJHdkPZfyM/qD2hqVwYnlTyLQxddoxCiOCLWI7a96QX20OW
+7p0s01/9E31lG0TkUsnwj0d2IDaxXV2O0iENVskCIFWgdWsW98uJqSEwARRUU7c8
+cUUeyITzKultT4yVPDANjIVA8RE7Dw3rUSZk6Lic7BJK8Q/Wkls6M0XUCmO6dkXC
+39KRDNG9E8b/KwZKu3P2m6q2ml8CB4+WIZXFYW5F8UtumcbUIJ3wswAjOQjIJdWg
+c8PXvICkEww6Amv6n6//KCJ3pJjuRx+CdMXs5JhdKxI5uOtNNLeL51LjM3fj+pmA
+eDxgEwy8I2odh7/7sRZgLybSxbfpUaije5biaf+Zu5rPwY/UwHC1WZEvJh59xcSL
+rkQYD1WrCz1bjQ8RpiJpoDbzCNra/UVbl0lvJXGcpGFAeDAJZQNUM5Ni2RheWuRD
+heKwK3R+1V/JP/VPffEpuBjnN+Exgz75UX91pDFJRNO7HpFzXmU=
+=IlIB
+-----END PGP SIGNATURE-----
+
+--z4aciq2vkq75z7wy--
