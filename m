@@ -1,158 +1,202 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751401AbeEVOMO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 10:12:14 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49834 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751423AbeEVOMK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 10:12:10 -0400
-From: Steve Grubb <sgrubb@redhat.com>
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        containers@lists.linux-foundation.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, paul@paul-moore.com
-Subject: Re: [PATCH] audit: add containerid support for IMA-audit
-Date: Tue, 22 May 2018 10:12:10 -0400
-Message-ID: <7716958.jNg3Sb0t5f@x2>
-Organization: Red Hat
-In-Reply-To: <20180522134346.b3bm7ndfjjchju3b@madcap2.tricolour.ca>
-References: <1520257393.10396.291.camel@linux.vnet.ibm.com> <e140278a-1494-ec74-f8bb-7fbac676306e@linux.vnet.ibm.com> <20180522134346.b3bm7ndfjjchju3b@madcap2.tricolour.ca>
+        id S1752062AbeEVOMi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 10:12:38 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:42045 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751199AbeEVOMd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 10:12:33 -0400
+X-Google-Smtp-Source: AB8JxZoYMx57Gs+df6EnnJj7LYN2vmp7AvVU67Ps/9KF+zNGMCYepWN37q9EPBHHGzuNtkReeqxiUA==
+Date: Tue, 22 May 2018 22:12:27 +0800
+From: martin_liu <liumartin@google.com>
+To: gregkh@linuxfoundation.org, stern@rowland.harvard.edu,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFC] driver core: don't hold dev's parent lock when using async
+ probe
+Message-ID: <20180522141227.GA118442@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, May 22, 2018 9:43:46 AM EDT Richard Guy Briggs wrote:
-> On 2018-05-21 17:57, Stefan Berger wrote:
-> > On 05/21/2018 02:30 PM, Steve Grubb wrote:
-> > > Hello Stefan,
-> > > 
-> > > On Monday, May 21, 2018 1:53:04 PM EDT Stefan Berger wrote:
-> > > > On 05/21/2018 12:58 PM, Steve Grubb wrote:
-> > > > > On Thursday, May 17, 2018 10:18:13 AM EDT Stefan Berger wrote:
-> > > > > > > audit_log_container_info() then releasing the local context. 
-> > > > > > > This
-> > > > > > > version of the record has additional concerns covered here:
-> > > > > > > https://github.com/linux-audit/audit-kernel/issues/52
-> > > > > > 
-> > > > > > Following the discussion there and the concern with breaking user
-> > > > > > space,
-> > > > > > how can we split up the AUDIT_INTEGRITY_RULE that is used in
-> > > > > > ima_audit_measurement() and ima_parse_rule(), without 'breaking
-> > > > > > user
-> > > > > > space'?
-> > > > > > 
-> > > > > > A message produced by ima_parse_rule() looks like this here:
-> > > > > > 
-> > > > > > type=INTEGRITY_RULE msg=audit(1526566213.870:305):
-> > > > > > action="dont_measure"
-> > > > > > fsmagic="0x9fa0" res=1
-> > > > > 
-> > > > > Why is action and fsmagic being logged as untrusted strings?
-> > > > > Untrusted
-> > > > > strings are used when an unprivileged user can affect the contents
-> > > > > of the
-> > > > > field such as creating a file with space or special characters in
-> > > > > the
-> > > > > name.
-> > > > > 
-> > > > > Also, subject and object information is missing. Who loaded this
-> > > > > rule?
-> > > > > 
-> > > > > > in contrast to that an INTEGRITY_PCR record type:
-> > > > > > 
-> > > > > > type=INTEGRITY_PCR msg=audit(1526566235.193:334): pid=1615 uid=0
-> > > > > > auid=0
-> > > > > > ses=2 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
-> > > > > > op="invalid_pcr" cause="open_writers" comm="scp"
-> > > > > > name="/var/log/audit/audit.log" dev="dm-0" ino=1962625 res=1
-> > > > > 
-> > > > > Why is op & cause being logged as an untrusted string? This also
-> > > > > has
-> > > > > incomplete subject information.
-> > > > 
-> > > > It's calling audit_log_string() in both cases:
-> > > > 
-> > > > https://elixir.bootlin.com/linux/latest/source/security/integrity/int
-> > > > egrity _audit.c#L48
-> > > 
-> > > I see. Looking things over, I see that it seems like it should do the
-> > > right thing. But the original purpose for this function is here:
-> > > 
-> > > https://elixir.bootlin.com/linux/latest/source/kernel/audit.c#L1944
-> > > 
-> > > This is where it is logging an untrusted string and has to decide to
-> > > encode it or just place it in quotes. If it has quotes, that means
-> > > it's an untrusted string but has no control characters in it. I think
-> > > you want to use audit_log_format() for any string that is trustworthy.
-> > 
-> > Replacing all occurrences (in IMA) of audit_log_string() with
-> > audit_log_format().
-> > 
-> > > As an aside, I wonder why audit_log_string() is in the API when it is a
-> > > helper to audit_log_untrustedstring() ?  Without understanding the
-> > > rules of untrusted strings, it can't be used correctly without
-> > > re-inventing audit_log_untrustedstring() by hand.
-> > > 
-> > > > > > Should some of the fields from INTEGRITY_PCR also appear in
-> > > > > > INTEGRITY_RULE? If so, which ones?
-> > > > > 
-> > > > > pid, uid, auid, tty, session, subj, comm, exe, res.  <- these are
-> > > > > required to be searchable
-> > > > > 
-> > > > > > We could probably refactor the current  integrity_audit_message()
-> > > > > > and
-> > > > > > have ima_parse_rule() call into it to get those fields as well. I
-> > > > > > suppose adding new fields to it wouldn't be considered breaking
-> > > > > > user
-> > > > > > space?
-> > > > > 
-> > > > > The audit user space utilities pretty much expects those fields in
-> > > > > that
-> > > > > order for any IMA originating events. You can add things like op or
-> > > > > cause before
-> > > > 
-> > > > We will call into audit_log_task, which will put the parameters into
-> > > > correct order:
-> > > > 
-> > > > auid uid gid ses subj pid comm exe
-> > > 
-> > > I'm telling you what the correct order is.  :-)  A long time ago, the
-> > > IMA
-> > :
-> > :-) Thanks. Was getting confused.
-> > :
-> > > system had audit events with the order I'm mentioning. For example,
-> > > here's
-> > > one from a log I collected back in 2013:
-> > > 
-> > > type=INTEGRITY_PCR msg=audit(1327409021.813:21): pid=1 uid=0
-> > > auid=4294967295 ses=4294967295 subj=kernel op="add_template_measure"
-> > > cause="hash_added" comm="init" name="01parse-kernel.sh" dev=rootfs
-> > > ino=5413 res=0
-> > > 
-> > > it was missing "tty" and "exe", but the order is as I mentioned. The
-> > > expectation is that INTEGRITY events maintain this established order
-> > > across all events.
-> > 
-> > I am *appending* exe= and tty= now:
-> > 
-> > type=INTEGRITY_PCR msg=audit(1526939047.809:305): pid=1609 uid=0 auid=0
-> > ses=2 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
-> > op="invalid_pcr" cause="open_writers" comm="ssh"
-> > name="/var/lib/sss/mc/passwd" dev="dm-0" ino=1962679 res=1
-> > exe="/usr/bin/ssh" tty=tty2
-> 
-> This isn't necessary since they already covered in the already
-> connected SYSCALL record which duplicates even more information than is
-> already.
+SOC have internal I/O buses that can't be probed for devices. The
+devices on the buses can be accessed directly without additinal
+configuration required. This type of bus is represented as
+"simple-bus". In some platforms, we name "soc" with "simple-bus"
+attribute and many devices are hooked under and desribe them in DT
+(device tree).
 
-My logs don't show any syscall record being attached. Nor should it. This is 
-a simple event that should stand on its own.
+In commit 'bf74ad5bc417 introduce ("[PATCH] Hold the device's
+parent's lock during probe and remove")' to solve USB subsystem
+lock sequence since usb device's characteristic. Thus "soc"
+needs to be locked whenever a device and driver's probing
+happen under "soc" bus. During this period, an async driver
+tries to probe a device which is under the "soc" bus would be
+blocked until previous driver finish the probing and release "soc"
+lock. And the next probing under the "soc" bus need to wait for
+async finish. Because of that, driver's async probe for init
+time improvement will be shadowed.
 
--Steve
+Since many devices don't have USB devices' characteristic, they
+actually don't need parent's lock. However, in order to control
+the risk and minimize the impact, we don't request parent's lock
+only when a driver requests async probe.
+
+Async probe could have more benefit after we have this patch.
+
+Signed-off-by: martin_liu <liumartin@google.com>
+---
+This RFC is asked to get some feedback since it involed driver
+core and USB subsystem. I'm not familiar with USB subsystem and
+not sure if we still need 'bf74ad5bc417 ("[PATCH] Hold the
+device's parent's lock during probe and remove")' since it has
+been there over 10 years. If we still need it and hard to fix it
+, the simple way is to find a place not to allow USB subsystem
+drivers to have async probe capability. Any suggestion is welcome.
+
+ drivers/base/bus.c | 19 +++++++++++++------
+ drivers/base/dd.c  | 23 ++++++++++++++++-------
+ 2 files changed, 29 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/base/bus.c b/drivers/base/bus.c
+index ef6183306b40..6434333995d4 100644
+--- a/drivers/base/bus.c
++++ b/drivers/base/bus.c
+@@ -181,13 +181,15 @@ static ssize_t unbind_store(struct device_driver *drv, const char *buf,
+ 	struct bus_type *bus = bus_get(drv->bus);
+ 	struct device *dev;
+ 	int err = -ENODEV;
++	bool allow_async;
+ 
++	allow_async = driver_allows_async_probing(drv);
+ 	dev = bus_find_device_by_name(bus, NULL, buf);
+ 	if (dev && dev->driver == drv) {
+-		if (dev->parent)	/* Needed for USB */
++		if (dev->parent && !allow_async)/* Needed for USB */
+ 			device_lock(dev->parent);
+ 		device_release_driver(dev);
+-		if (dev->parent)
++		if (dev->parent && !allow_async)
+ 			device_unlock(dev->parent);
+ 		err = count;
+ 	}
+@@ -208,15 +210,17 @@ static ssize_t bind_store(struct device_driver *drv, const char *buf,
+ 	struct bus_type *bus = bus_get(drv->bus);
+ 	struct device *dev;
+ 	int err = -ENODEV;
++	bool allow_async;
+ 
++	allow_async = driver_allows_async_probing(drv);
+ 	dev = bus_find_device_by_name(bus, NULL, buf);
+ 	if (dev && dev->driver == NULL && driver_match_device(drv, dev)) {
+-		if (dev->parent)	/* Needed for USB */
++		if (dev->parent && !allow_async)/* Needed for USB */
+ 			device_lock(dev->parent);
+ 		device_lock(dev);
+ 		err = driver_probe_device(drv, dev);
+ 		device_unlock(dev);
+-		if (dev->parent)
++		if (dev->parent && !allow_async)
+ 			device_unlock(dev->parent);
+ 
+ 		if (err > 0) {
+@@ -769,11 +773,14 @@ EXPORT_SYMBOL_GPL(bus_rescan_devices);
+  */
+ int device_reprobe(struct device *dev)
+ {
++	bool allow_async;
++
+ 	if (dev->driver) {
+-		if (dev->parent)        /* Needed for USB */
++		allow_async = driver_allows_async_probing(dev->driver);
++		if (dev->parent && !allow_async)/* Needed for USB */
+ 			device_lock(dev->parent);
+ 		device_release_driver(dev);
+-		if (dev->parent)
++		if (dev->parent && !allow_async)
+ 			device_unlock(dev->parent);
+ 	}
+ 	return bus_rescan_devices_helper(dev, NULL);
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index c9f54089429b..36aed1576c58 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -794,6 +794,7 @@ static int __driver_attach(struct device *dev, void *data)
+ {
+ 	struct device_driver *drv = data;
+ 	int ret;
++	bool allow_async;
+ 
+ 	/*
+ 	 * Lock device and try to bind to it. We drop the error
+@@ -817,13 +818,14 @@ static int __driver_attach(struct device *dev, void *data)
+ 		return ret;
+ 	} /* ret > 0 means positive match */
+ 
+-	if (dev->parent)	/* Needed for USB */
++	allow_async = driver_allows_async_probing(drv);
++	if (dev->parent && !allow_async)/* Needed for USB */
+ 		device_lock(dev->parent);
+ 	device_lock(dev);
+ 	if (!dev->driver)
+ 		driver_probe_device(drv, dev);
+ 	device_unlock(dev);
+-	if (dev->parent)
++	if (dev->parent && !allow_async)
+ 		device_unlock(dev->parent);
+ 
+ 	return 0;
+@@ -851,19 +853,21 @@ EXPORT_SYMBOL_GPL(driver_attach);
+ static void __device_release_driver(struct device *dev, struct device *parent)
+ {
+ 	struct device_driver *drv;
++	bool allow_async;
+ 
+ 	drv = dev->driver;
+ 	if (drv) {
+-		if (driver_allows_async_probing(drv))
++		allow_async = driver_allows_async_probing(drv);
++		if (allow_async)
+ 			async_synchronize_full();
+ 
+ 		while (device_links_busy(dev)) {
+ 			device_unlock(dev);
+-			if (parent)
++			if (parent && !allow_async)
+ 				device_unlock(parent);
+ 
+ 			device_links_unbind_consumers(dev);
+-			if (parent)
++			if (parent && !allow_async)
+ 				device_lock(parent);
+ 
+ 			device_lock(dev);
+@@ -919,7 +923,12 @@ void device_release_driver_internal(struct device *dev,
+ 				    struct device_driver *drv,
+ 				    struct device *parent)
+ {
+-	if (parent)
++	bool allow_async = false;
++
++	if (drv)
++		allow_async = driver_allows_async_probing(drv);
++
++	if (parent && !allow_async)
+ 		device_lock(parent);
+ 
+ 	device_lock(dev);
+@@ -927,7 +936,7 @@ void device_release_driver_internal(struct device *dev,
+ 		__device_release_driver(dev, parent);
+ 
+ 	device_unlock(dev);
+-	if (parent)
++	if (parent && !allow_async)
+ 		device_unlock(parent);
+ }
+ 
+-- 
+2.17.0.441.gb46fe60e1d-goog
