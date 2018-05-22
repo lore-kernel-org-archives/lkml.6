@@ -1,55 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751568AbeEVP6P (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 11:58:15 -0400
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:46758 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751199AbeEVP6L (ORCPT
+        id S1752044AbeEVQAr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 12:00:47 -0400
+Received: from mail-yw0-f193.google.com ([209.85.161.193]:37945 "EHLO
+        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751517AbeEVQAJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 11:58:11 -0400
-X-Google-Smtp-Source: AB8JxZpEEa2r79uDgvOCpCxw4MbLHFn7YI6l3KUqBaqWvM0RzcI+CnGVNsSr0bq9UinP8GftdialPQ==
-Date: Tue, 22 May 2018 10:58:09 -0500
+        Tue, 22 May 2018 12:00:09 -0400
+X-Google-Smtp-Source: AB8JxZoXuhDQI9kK5JTkjUcl8RrR3dVMIM4AWte65ZEZ9cGMDfuSVB5isW04wc5CywvBWusxNVccRQ==
+Date: Tue, 22 May 2018 11:00:07 -0500
 From: Rob Herring <robh@kernel.org>
-To: Lin Huang <hl@rock-chips.com>
-Cc: seanpaul@chromium.org, airlied@linux.ie, zyw@rock-chips.com,
-        kishon@ti.com, dianders@chromium.org, briannorris@chromium.org,
-        linux-rockchip@lists.infradead.org, heiko@sntech.de,
-        daniel.vetter@intel.com, jani.nikula@linux.intel.com,
-        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, eballetbo@gmail.com,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v6 2/5] Documentation: dt-bindings: phy: add phy_config
- for Rockchip USB Type-C PHY
-Message-ID: <20180522155809.GA3988@rob-hp-laptop>
-References: <1526895424-22894-1-git-send-email-hl@rock-chips.com>
- <1526895424-22894-2-git-send-email-hl@rock-chips.com>
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        phil.edworthy@renesas.com, Michel Pollet <buserror+upstream@gmail.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v6 2/6] dt-bindings: Add the rzn1-clocks.h file
+Message-ID: <20180522160007.GA5759@rob-hp-laptop>
+References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1526983321-41949-3-git-send-email-michel.pollet@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1526895424-22894-2-git-send-email-hl@rock-chips.com>
+In-Reply-To: <1526983321-41949-3-git-send-email-michel.pollet@bp.renesas.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 05:37:01PM +0800, Lin Huang wrote:
-> If want to do training outside DP Firmware, need phy voltage swing
-> and pre_emphasis value.
+On Tue, May 22, 2018 at 11:01:22AM +0100, Michel Pollet wrote:
+> This adds the constants necessary to use the renesas,rzn1-clocks driver.
 > 
-> Signed-off-by: Lin Huang <hl@rock-chips.com>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 > ---
-> Changes in v2:
-> - None 
-> Changes in v3:
-> - modify property description and add this property to Example
-> Changes in v4:
-> - None
-> Changes in v5:
-> - None
-> Changes in v6:
-> - change rockchip,phy_config to rockchip,phy-config and descript it in detail.
->  
->  .../devicetree/bindings/phy/phy-rockchip-typec.txt | 36 +++++++++++++++++++++-
->  1 file changed, 35 insertions(+), 1 deletion(-)
+>  include/dt-bindings/clock/rzn1-clocks.h | 187 ++++++++++++++++++++++++++++++++
+>  1 file changed, 187 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/rzn1-clocks.h
 
 Reviewed-by: Rob Herring <robh@kernel.org>
