@@ -1,136 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751436AbeEVLrY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 07:47:24 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48686 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751236AbeEVLrX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 07:47:23 -0400
-Subject: Re: [PATCH v11 01/26] mm: introduce CONFIG_SPECULATIVE_PAGE_FAULT
-To: Randy Dunlap <rdunlap@infradead.org>, akpm@linux-foundation.org,
-        mhocko@kernel.org, peterz@infradead.org, kirill@shutemov.name,
-        ak@linux.intel.com, dave@stgolabs.net, jack@suse.cz,
-        Matthew Wilcox <willy@infradead.org>, khandual@linux.vnet.ibm.com,
-        aneesh.kumar@linux.vnet.ibm.com, benh@kernel.crashing.org,
-        mpe@ellerman.id.au, paulus@samba.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        sergey.senozhatsky.work@gmail.com,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        David Rientjes <rientjes@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Ganesh Mahendran <opensource.ganesh@gmail.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Punit Agrawal <punitagrawal@gmail.com>,
-        vinayak menon <vinayakm.list@gmail.com>,
-        Yang Shi <yang.shi@linux.alibaba.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        haren@linux.vnet.ibm.com, npiggin@gmail.com, bsingharora@gmail.com,
-        paulmck@linux.vnet.ibm.com, Tim Chen <tim.c.chen@linux.intel.com>,
-        linuxppc-dev@lists.ozlabs.org, x86@kernel.org
-References: <1526555193-7242-1-git-send-email-ldufour@linux.vnet.ibm.com>
- <1526555193-7242-2-git-send-email-ldufour@linux.vnet.ibm.com>
- <2cb8256d-5822-d94d-b0e6-c46f21d84852@infradead.org>
-From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Date: Tue, 22 May 2018 13:47:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751547AbeEVLsJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 07:48:09 -0400
+Received: from verein.lst.de ([213.95.11.211]:48127 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751177AbeEVLsG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 07:48:06 -0400
+Date: Tue, 22 May 2018 13:53:20 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc: Christoph Hellwig <hch@lst.de>, iommu@lists.linux-foundation.org,
+        linux-arch@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        Michal Simek <monstr@monstr.eu>, Vincent Chen <deanbo422@gmail.com>,
+        linux-c6x-dev@linux-c6x.org, linux-parisc@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-hexagon@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-m68k@vger.kernel.org,
+        openrisc@lists.librecores.org, Greentime Hu <green.hu@gmail.com>,
+        linux-alpha@vger.kernel.org, sparclinux@vger.kernel.org,
+        nios2-dev@lists.rocketboards.org, linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 04/20] arm-nommu: use generic dma_noncoherent_ops
+Message-ID: <20180522115320.GA14530@lst.de>
+References: <20180511075945.16548-1-hch@lst.de> <20180511075945.16548-5-hch@lst.de> <20180511091114.GA16141@n2100.armlinux.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <2cb8256d-5822-d94d-b0e6-c46f21d84852@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18052211-0044-0000-0000-000005552541
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052211-0045-0000-0000-00002896B22E
-Message-Id: <8a4016fb-2c2f-ad9a-9dd4-0ed3e664b659@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-22_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805220138
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180511091114.GA16141@n2100.armlinux.org.uk>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/05/2018 18:36, Randy Dunlap wrote:
-> Hi,
+On Fri, May 11, 2018 at 10:11:15AM +0100, Russell King - ARM Linux wrote:
+> > +void arch_sync_dma_for_device(struct device *dev, phys_addr_t paddr,
+> > +		size_t size, enum dma_data_direction dir)
 > 
-> On 05/17/2018 04:06 AM, Laurent Dufour wrote:
->> This configuration variable will be used to build the code needed to
->> handle speculative page fault.
->>
->> By default it is turned off, and activated depending on architecture
->> support, ARCH_HAS_PTE_SPECIAL, SMP and MMU.
->>
->> The architecture support is needed since the speculative page fault handler
->> is called from the architecture's page faulting code, and some code has to
->> be added there to handle the speculative handler.
->>
->> The dependency on ARCH_HAS_PTE_SPECIAL is required because vm_normal_page()
->> does processing that is not compatible with the speculative handling in the
->> case ARCH_HAS_PTE_SPECIAL is not set.
->>
->> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
->> Suggested-by: David Rientjes <rientjes@google.com>
->> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
->> ---
->>  mm/Kconfig | 22 ++++++++++++++++++++++
->>  1 file changed, 22 insertions(+)
->>
->> diff --git a/mm/Kconfig b/mm/Kconfig
->> index 1d0888c5b97a..a38796276113 100644
->> --- a/mm/Kconfig
->> +++ b/mm/Kconfig
->> @@ -761,3 +761,25 @@ config GUP_BENCHMARK
->>  
->>  config ARCH_HAS_PTE_SPECIAL
->>  	bool
->> +
->> +config ARCH_SUPPORTS_SPECULATIVE_PAGE_FAULT
->> +       def_bool n
->> +
->> +config SPECULATIVE_PAGE_FAULT
->> +       bool "Speculative page faults"
->> +       default y
->> +       depends on ARCH_SUPPORTS_SPECULATIVE_PAGE_FAULT
->> +       depends on ARCH_HAS_PTE_SPECIAL && MMU && SMP
->> +       help
->> +         Try to handle user space page faults without holding the mmap_sem.
->> +
->> +	 This should allow better concurrency for massively threaded process
+> Please no.  There is a lot of history of these (__dma_page_cpu_to_dev etc)
+> functions being abused by out of tree drivers, because they think they
+> know better.  This is stopped by making them static and ensuring that
+> drivers have no access to these functions.
 > 
-> 	                                                             processes
+> Please do not re-expose these to the global kernel.
 > 
->> +	 since the page fault handler will not wait for other threads memory
-> 
-> 	                                                      thread's
-> 
->> +	 layout change to be done, assuming that this change is done in another
->> +	 part of the process's memory space. This type of page fault is named
->> +	 speculative page fault.
->> +
->> +	 If the speculative page fault fails because of a concurrency is
-> 
-> 	                                     because a concurrency is
-> 
->> +	 detected or because underlying PMD or PTE tables are not yet
->> +	 allocating, it is failing its processing and a classic page fault
-> 
-> 	 allocated, the speculative page fault fails and a classic page fault
-> 
->> +	 is then tried.
-> 
-> 
-> Also, all of the help text (below the "help" line) should be indented by
-> 1 tab + 2 spaces (in coding-style.rst).
+> While it may make things easier for a cross-architecture point of view,
+> it makes it a lot easier for people to abuse these private APIs.
 
-Thanks, Randy for reviewing my miserable English grammar.
-I'll fix that and the indentation.
+The point of this series, which isn't fully archived yet, is to
+consolidate the direct mapping dma code, that is all dma_map_ops
+instances except for iommus.  It is in fact in many ways modelled
+after the ARM code.  For that we need the architectures to supply
+the cache maintainance routines.
+
+However, even if they now appear in dma-noncoherent.h they are NOT
+and will NOT be exported, so using them directly from drivers won't
+easily be possible.
+
+I'll drop the arm-nommu patch for now, but I will pester your with this
+again once arm is the last architecture not sharing the common code.
+
+> 
+> -- 
+> RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+> FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+> According to speedtest.net: 8.21Mbps down 510kbps up
+---end quoted text---
