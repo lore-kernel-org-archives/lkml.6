@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751895AbeEVLTZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 07:19:25 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:53238 "EHLO
+        id S1752016AbeEVLTr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 07:19:47 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:54260 "EHLO
         mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751371AbeEVLRs (ORCPT
+        with ESMTP id S1751060AbeEVLRn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 07:17:48 -0400
-X-Google-Smtp-Source: AB8JxZoZMkaGBOlIiUoFK8DvXwXFVidBb2Ggz44CvAfzDpf4S3o9otP9D9BimDVR8CIyaRyjaPQV4A==
+        Tue, 22 May 2018 07:17:43 -0400
+X-Google-Smtp-Source: AB8JxZrs1okkpUO2osVQVuQ8h/OAoXLrrjXatDQMCgaQY9OyvqL0TmjAKWl57acQVN8ykl2LHeyaOA==
 From: "=?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?=" <vokac.m@gmail.com>
 X-Google-Original-From: =?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>
 To: netdev@vger.kernel.org
@@ -15,9 +15,9 @@ Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         f.fainelli@gmail.com, vivien.didelot@savoirfairelinux.com,
         andrew@lunn.ch, mark.rutland@arm.com, robh+dt@kernel.org,
         davem@davemloft.net, michal.vokac@ysoft.com
-Subject: [PATCH net-next v2 5/7] net: dsa: qca8k: Allow overwriting CPU port setting
-Date: Tue, 22 May 2018 13:16:30 +0200
-Message-Id: <1526987792-56861-6-git-send-email-michal.vokac@ysoft.com>
+Subject: [PATCH net-next v2 1/7] net: dsa: qca8k: Add QCA8334 binding documentation
+Date: Tue, 22 May 2018 13:16:26 +0200
+Message-Id: <1526987792-56861-2-git-send-email-michal.vokac@ysoft.com>
 X-Mailer: git-send-email 2.1.4
 In-Reply-To: <1526987792-56861-1-git-send-email-michal.vokac@ysoft.com>
 References: <1526987792-56861-1-git-send-email-michal.vokac@ysoft.com>
@@ -28,99 +28,66 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement adjust_link function that allows to overwrite default CPU port
-setting using fixed-link device tree subnode.
+Add support for the four-port variant of the Qualcomm QCA833x switch.
+
+The CPU port default link settings can be reconfigured using
+a fixed-link sub-node.
 
 Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
 Changes in v2:
- - Add "Reviewed-by" tags from Andrew and Florian.
+ - Add commit message and document fixed-link binding.
 
- drivers/net/dsa/qca8k.c | 43 +++++++++++++++++++++++++++++++++++++++++++
- drivers/net/dsa/qca8k.h |  1 +
- 2 files changed, 44 insertions(+)
+ .../devicetree/bindings/net/dsa/qca8k.txt          | 23 +++++++++++++++++++++-
+ 1 file changed, 22 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/dsa/qca8k.c b/drivers/net/dsa/qca8k.c
-index 14a108b38..7eba987 100644
---- a/drivers/net/dsa/qca8k.c
-+++ b/drivers/net/dsa/qca8k.c
-@@ -636,6 +636,47 @@ qca8k_setup(struct dsa_switch *ds)
- 	return 0;
- }
+diff --git a/Documentation/devicetree/bindings/net/dsa/qca8k.txt b/Documentation/devicetree/bindings/net/dsa/qca8k.txt
+index 9c67ee4..15b9057 100644
+--- a/Documentation/devicetree/bindings/net/dsa/qca8k.txt
++++ b/Documentation/devicetree/bindings/net/dsa/qca8k.txt
+@@ -2,7 +2,10 @@
  
-+static void
-+qca8k_adjust_link(struct dsa_switch *ds, int port, struct phy_device *phy)
-+{
-+	struct qca8k_priv *priv = ds->priv;
-+	u32 reg;
-+
-+	/* Force fixed-link setting for CPU port, skip others. */
-+	if (!phy_is_pseudo_fixed_link(phy))
-+		return;
-+
-+	/* Set port speed */
-+	switch (phy->speed) {
-+	case 10:
-+		reg = QCA8K_PORT_STATUS_SPEED_10;
-+		break;
-+	case 100:
-+		reg = QCA8K_PORT_STATUS_SPEED_100;
-+		break;
-+	case 1000:
-+		reg = QCA8K_PORT_STATUS_SPEED_1000;
-+		break;
-+	default:
-+		dev_dbg(priv->dev, "port%d link speed %dMbps not supported.\n",
-+			port, phy->speed);
-+		return;
-+	}
-+
-+	/* Set duplex mode */
-+	if (phy->duplex == DUPLEX_FULL)
-+		reg |= QCA8K_PORT_STATUS_DUPLEX;
-+
-+	/* Force flow control */
-+	if (dsa_is_cpu_port(ds, port))
-+		reg |= QCA8K_PORT_STATUS_RXFLOW | QCA8K_PORT_STATUS_TXFLOW;
-+
-+	/* Force link down before changing MAC options */
-+	qca8k_port_set_status(priv, port, 0);
-+	qca8k_write(priv, QCA8K_REG_PORT_STATUS(port), reg);
-+	qca8k_port_set_status(priv, port, 1);
-+}
-+
- static int
- qca8k_phy_read(struct dsa_switch *ds, int phy, int regnum)
- {
-@@ -909,6 +950,7 @@ qca8k_get_tag_protocol(struct dsa_switch *ds, int port)
- static const struct dsa_switch_ops qca8k_switch_ops = {
- 	.get_tag_protocol	= qca8k_get_tag_protocol,
- 	.setup			= qca8k_setup,
-+	.adjust_link            = qca8k_adjust_link,
- 	.get_strings		= qca8k_get_strings,
- 	.phy_read		= qca8k_phy_read,
- 	.phy_write		= qca8k_phy_write,
-@@ -942,6 +984,7 @@ qca8k_sw_probe(struct mdio_device *mdiodev)
- 		return -ENOMEM;
+ Required properties:
  
- 	priv->bus = mdiodev->bus;
-+	priv->dev = &mdiodev->dev;
+-- compatible: should be "qca,qca8337"
++- compatible: should be one of:
++    "qca,qca8334"
++    "qca,qca8337"
++
+ - #size-cells: must be 0
+ - #address-cells: must be 1
  
- 	/* read the switches ID register */
- 	id = qca8k_read(priv, QCA8K_REG_MASK_CTRL);
-diff --git a/drivers/net/dsa/qca8k.h b/drivers/net/dsa/qca8k.h
-index 5bda165..613fe5c5 100644
---- a/drivers/net/dsa/qca8k.h
-+++ b/drivers/net/dsa/qca8k.h
-@@ -167,6 +167,7 @@ struct qca8k_priv {
- 	struct ar8xxx_port_status port_sts[QCA8K_NUM_PORTS];
- 	struct dsa_switch *ds;
- 	struct mutex reg_mutex;
-+	struct device *dev;
- };
+@@ -14,6 +17,20 @@ port and PHY id, each subnode describing a port needs to have a valid phandle
+ referencing the internal PHY connected to it. The CPU port of this switch is
+ always port 0.
  
- struct qca8k_mib_desc {
++A CPU port node has the following optional property:
++
++- fixed-link            : Fixed-link subnode describing a link to a non-MDIO
++                          managed entity. See
++                          Documentation/devicetree/bindings/net/fixed-link.txt
++                          for details.
++
++For QCA8K the 'fixed-link' sub-node supports only the following properties:
++
++- 'speed' (integer, mandatory), to indicate the link speed. Accepted
++  values are 10, 100 and 1000
++- 'full-duplex' (boolean, optional), to indicate that full duplex is
++  used. When absent, half duplex is assumed.
++
+ Example:
+ 
+ 
+@@ -53,6 +70,10 @@ Example:
+ 					label = "cpu";
+ 					ethernet = <&gmac1>;
+ 					phy-mode = "rgmii";
++					fixed-link {
++						speed = 1000;
++						full-duplex;
++					};
+ 				};
+ 
+ 				port@1 {
 -- 
 2.1.4
