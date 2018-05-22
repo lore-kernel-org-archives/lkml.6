@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2357871-1526988914-2-15170468106244230572
+X-Cyrus-Session-Id: sloti22d1t05-2401354-1526988913-2-15075026200037138209
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526988913; b=PzaJHD9+0S0DEQY/QK++jKXh330vlD16JBeYMG4fC0GY3s85H3
-    WCTyso9POKC68cmLW/j3Y2wiuCxaIlnfFrrqLBjpP0mUDcBEutHhaEaacS5lb0ZU
-    a7HrZN/DHEyxjpbPtuLZSC2Wjg7sIR+iNBoZf25c1Uwkoo/U4+AXY1Dm8F30G70O
-    B4i6LLnCvNKHoEdP8wuKER6vXCcL0qbU+uFwIHhEeNDEEUozD464eI+HkObTtF+C
-    /vlIdK2CPiaU1CvXeV7JtAKU8gflUHQLWvKVTyB3tMBdEHr5cfGiMFQGIesmvGev
-    OQD/VFd3J/yrtEWlRhhTfxAp/OAkZQlMHnow==
+    1526988913; b=BqKkmLS6FuRsgSl+ekBRGUuBJPR06DO/DVgfIkAn5jbJ03VheT
+    F9usLJshAMvMyAqLhC4EBauxvQQ/KooP5W+tk5Y341WktUxBlTJA6NAp8CTeWH8y
+    nvnS6cKcZW32OIt+O4oLUBvQmZaosavZ27/Z/+oeGR+ZfVcRF+wWZxv/4kSICISl
+    FEmbb/Zw6ODHU03p9KGgLlJoipXDmVQscAcJeujkOpxJN0xhIO4MGyv8qY2oNhZq
+    0s13DNvWraHmEZ+gFAFeUd2I6LPhcrBY0cFz8N5ouDVKqelUjr1tRldfa3QCZ79E
+    Y8DUPHXFNUoDKi/DpxkVauo8rBgUk/mcf3JA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:sender:list-id; s=fm2; t=1526988913; bh=
-    nAsaxNH+XNVJT0ankrG9qVVP6bx2DAHHTRCMf+m0l1c=; b=WZW3OgHoLPqSo+Ur
-    fiIUy8Er3EOiEJao0BgsPTBIz4EmJ2aieitwPg44ddwTcOD48H440KRjCJxkI57r
-    4uVKSsiTYDy+4FZ7VrLI7DWpWTSaC/zGRf54DQJysr9zrrTtSRVA8agHCZJwroH8
-    MT4hmOWWzZUKebtNOhwR89Jw4N+TuH4wscZ0wPutoYPEa1rdqanazRNgpEMG2FL9
-    /qjm3Mp7gCrsBKpsMJcBfA1zFK/IPTAVJIjmyYuNh6JaijY+uO6aeHbMqb/3I42G
-    NOgrYi7w1ntXv767r7/yAzAwAnHgYv6Tn/zyqtITPu/q+/iKfGPK9BFEjdP11A/V
-    W9ixUg==
+    ie4Ejgcjh/1Qnmw7Ll2JyW4OM8gjyFAy/8DdBN9mH2k=; b=jn/tj8bHpN676GEp
+    9yZTwqpEVxi4LrRI6kejUjRKivXxm1cdKEqNsnUmF1RNa5ZZTcb20aILS/SX1WFz
+    gRBMycyAKZ7P3Ogkz/bmKzxKRYvnu+7RjEbNg0AwaIPAqtyiiZTRlt2h480yJWN0
+    RpbTOBtF9JMyvGiNTbZ7FFiomIjYZXPPwzkBaCAPE4GV11hxOkNe38rTvE9fr8fh
+    lSc6TotLO/mRp3n0ill4iMtH1zWvQ13x6wd1x0ItOdWgrP3iggPuC4NDVNdY5a7n
+    CpMeZYTpsDtLY4jz+qqf+eMkLBpy7YDjzbq2moakMMg0P1vOgF6lYbZUNY+orBe8
+    1SEf2A==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=infradead.org header.i=@infradead.org header.b=Iey2xong
+    header.d=infradead.org header.i=@infradead.org header.b=pC0kSDRa
     x-bits=2048 x-keytype=rsa x-algorithm=sha256
     x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -48,7 +48,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
 Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=infradead.org header.i=@infradead.org header.b=Iey2xong
+      header.d=infradead.org header.i=@infradead.org header.b=pC0kSDRa
       x-bits=2048 x-keytype=rsa x-algorithm=sha256
       x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -64,27 +64,27 @@ Authentication-Results: mx3.messagingengine.com;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
 X-CM-Envelope: MS4wfGnI4jDAkuHAO6atxsNth8CXj2CRM13BPMhEGSHVVQtdbTMt5/T8Q8xTYobLCZD9Y1cdb5ey0j0jZoJH52dQqybUFYInWRz1RIW4YBI32tWgikkpnOEM
-    Veo6nzs/9QFX6TCvAi7cAXg5yKWJJ7VBW4hHACCHjuziTQLIu0e6+t8+6saLLzGTVgaXzKqTUH7cukpTIzjLHMXhRnbr843PzPKQeRqN9HldBfGa8ZzS3gVF
+    Veo6nzs/9QFX6TCvAi7cAXg5yKWJJ7VBW4hHACCHjuziTQLIu0e6+t8+J29geLejYW+dUDeb+qUXb7q9tGXfHJRorAqrZVyixlD20O9A2wonigF1YOwstRQO
 X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8
-    a=8_ZwOryNcspL-OaGdIgA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=F55Z69aUwsZ0p8WbI6QA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752629AbeEVLep (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 22 May 2018 07:34:45 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36804 "EHLO
+        id S1751633AbeEVLdC (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 22 May 2018 07:33:02 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36786 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752807AbeEVLdD (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Tue, 22 May 2018 07:33:03 -0400
+        with ESMTP id S1751172AbeEVLc6 (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Tue, 22 May 2018 07:32:58 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: viro@zeniv.linux.org.uk
 Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
         linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 28/31] pipe: convert to ->poll_mask
-Date: Tue, 22 May 2018 13:31:05 +0200
-Message-Id: <20180522113108.25713-29-hch@lst.de>
+Subject: [PATCH 26/31] net/rxrpc: convert to ->poll_mask
+Date: Tue, 22 May 2018 13:31:03 +0200
+Message-Id: <20180522113108.25713-27-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180522113108.25713-1-hch@lst.de>
 References: <20180522113108.25713-1-hch@lst.de>
@@ -97,54 +97,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/pipe.c | 22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
+ net/rxrpc/af_rxrpc.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 39d6f431da83..bb0840e234f3 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -509,19 +509,22 @@ static long pipe_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 	}
- }
- 
--/* No kernel lock held - fine */
--static __poll_t
--pipe_poll(struct file *filp, poll_table *wait)
-+static struct wait_queue_head *
-+pipe_get_poll_head(struct file *filp, __poll_t events)
+diff --git a/net/rxrpc/af_rxrpc.c b/net/rxrpc/af_rxrpc.c
+index 9a2c8e7c000e..6b170f2e47f2 100644
+--- a/net/rxrpc/af_rxrpc.c
++++ b/net/rxrpc/af_rxrpc.c
+@@ -734,15 +734,11 @@ static int rxrpc_getsockopt(struct socket *sock, int level, int optname,
+ /*
+  * permit an RxRPC socket to be polled
+  */
+-static __poll_t rxrpc_poll(struct file *file, struct socket *sock,
+-			       poll_table *wait)
++static __poll_t rxrpc_poll_mask(struct socket *sock, __poll_t events)
  {
+ 	struct sock *sk = sock->sk;
+ 	struct rxrpc_sock *rx = rxrpc_sk(sk);
 -	__poll_t mask;
- 	struct pipe_inode_info *pipe = filp->private_data;
--	int nrbufs;
- 
--	poll_wait(filp, &pipe->wait, wait);
-+	return &pipe->wait;
-+}
-+
-+/* No kernel lock held - fine */
-+static __poll_t pipe_poll_mask(struct file *filp, __poll_t events)
-+{
-+	struct pipe_inode_info *pipe = filp->private_data;
-+	int nrbufs = pipe->nrbufs;
+-
+-	sock_poll_wait(file, sk_sleep(sk), wait);
+-	mask = 0;
 +	__poll_t mask = 0;
  
- 	/* Reading only -- no need for acquiring the semaphore.  */
--	nrbufs = pipe->nrbufs;
--	mask = 0;
- 	if (filp->f_mode & FMODE_READ) {
- 		mask = (nrbufs > 0) ? EPOLLIN | EPOLLRDNORM : 0;
- 		if (!pipe->writers && filp->f_version != pipe->w_counter)
-@@ -1020,7 +1023,8 @@ const struct file_operations pipefifo_fops = {
- 	.llseek		= no_llseek,
- 	.read_iter	= pipe_read,
- 	.write_iter	= pipe_write,
--	.poll		= pipe_poll,
-+	.get_poll_head	= pipe_get_poll_head,
-+	.poll_mask	= pipe_poll_mask,
- 	.unlocked_ioctl	= pipe_ioctl,
- 	.release	= pipe_release,
- 	.fasync		= pipe_fasync,
+ 	/* the socket is readable if there are any messages waiting on the Rx
+ 	 * queue */
+@@ -949,7 +945,7 @@ static const struct proto_ops rxrpc_rpc_ops = {
+ 	.socketpair	= sock_no_socketpair,
+ 	.accept		= sock_no_accept,
+ 	.getname	= sock_no_getname,
+-	.poll		= rxrpc_poll,
++	.poll_mask	= rxrpc_poll_mask,
+ 	.ioctl		= sock_no_ioctl,
+ 	.listen		= rxrpc_listen,
+ 	.shutdown	= rxrpc_shutdown,
 -- 
 2.17.0
 
