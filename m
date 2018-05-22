@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752552AbeEVCWn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 22:22:43 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:40856 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751745AbeEVCWd (ORCPT
+        id S1752510AbeEVCWl (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 22:22:41 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:59204 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751813AbeEVCWd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 21 May 2018 22:22:33 -0400
 Smtp-Origin-Hostprefix: devbig
@@ -16,12 +16,10 @@ CC: <daniel@iogearbox.net>, <torvalds@linux-foundation.org>,
         <mcgrof@kernel.org>, <keescook@chromium.org>, <netdev@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <kernel-team@fb.com>
 Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH v3 net-next 1/2] umh: introduce fork_usermode_blob() helper
-Date: Mon, 21 May 2018 19:22:29 -0700
-Message-ID: <20180522022230.2492505-2-ast@kernel.org>
+Subject: [PATCH v3 net-next 0/2] bpfilter
+Date: Mon, 21 May 2018 19:22:28 -0700
+Message-ID: <20180522022230.2492505-1-ast@kernel.org>
 X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20180522022230.2492505-1-ast@kernel.org>
-References: <20180522022230.2492505-1-ast@kernel.org>
 X-FB-Internal: Safe
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -33,347 +31,93 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce helper:
+Hi All,
+
+v2->v3:
+- followed Luis's suggestion and significantly simplied first patch
+  with shmem_kernel_file_setup+kernel_write. Added kdoc for new helper
+- fixed typos and race to access pipes with mutex
+- tested with bpfilter being 'builtin'. CONFIG_BPFILTER_UMH=y|m both work.
+  Interesting to see a usermode executable being embedded inside vmlinux.
+- it doesn't hurt to enable bpfilter in .config.
+  ip_setsockopt commands sent to usermode via pipes and -ENOPROTOOPT is
+  returned from userspace, so kernel falls back to original iptables code
+
+v1->v2:
+this patch set is almost a full rewrite of the earlier umh modules approach
+The v1 of patches and follow up discussion was covered by LWN:
+https://lwn.net/Articles/749108/
+
+I believe the v2 addresses all issues brought up by Andy and others.
+Mainly there are zero changes to kernel/module.c
+Instead of teaching module loading logic to recognize special
+umh module, let normal kernel modules execute part of its own
+.init.rodata as a new user space process (Andy's idea)
+Patch 1 introduces this new helper:
 int fork_usermode_blob(void *data, size_t len, struct umh_info *info);
-struct umh_info {
+Input:
+  data + len == executable file
+Output:
+  struct umh_info {
        struct file *pipe_to_umh;
        struct file *pipe_from_umh;
        pid_t pid;
-};
+  };
 
-that GPLed kernel modules (signed or unsigned) can use it to execute part
-of its own data as swappable user mode process.
+Advantages vs v1:
+- the embedded user mode executable is stored as .init.rodata inside
+  normal kernel module. These pages are freed when .ko finishes loading
+- the elf file is copied into tmpfs file. The user mode process is swappable.
+- the communication between user mode process and 'parent' kernel module
+  is done via two unix pipes, hence protocol is not exposed to
+  user space
+- impossible to launch umh on its own (that was the main issue of v1)
+  and impossible to be man-in-the-middle due to pipes
+- bpfilter.ko consists of tiny kernel part that passes the data
+  between kernel and umh via pipes and much bigger umh part that
+  doing all the work
+- 'lsmod' shows bpfilter.ko as usual.
+  'rmmod bpfilter' removes kernel module and kills corresponding umh
+- signed bpfilter.ko covers the whole image including umh code
 
-The kernel will do:
-- allocate a unique file in tmpfs
-- populate that file with [data, data + len] bytes
-- user-mode-helper code will do_execve that file and, before the process
-  starts, the kernel will create two unix pipes for bidirectional
-  communication between kernel module and umh
-- close tmpfs file, effectively deleting it
-- the fork_usermode_blob will return zero on success and populate
-  'struct umh_info' with two unix pipes and the pid of the user process
+Few issues:
+- the user can still attach to the process and debug it with
+  'gdb /proc/pid/exe pid', but 'gdb -p pid' doesn't work.
+  (a bit worse comparing to v1)
+- tinyconfig will notice a small increase in .text
+  +766 | TEXT | 7c8b94806bec umh: introduce fork_usermode_blob() helper
 
-As the first step in the development of the bpfilter project
-the fork_usermode_blob() helper is introduced to allow user mode code
-to be invoked from a kernel module. The idea is that user mode code plus
-normal kernel module code are built as part of the kernel build
-and installed as traditional kernel module into distro specified location,
-such that from a distribution point of view, there is
-no difference between regular kernel modules and kernel modules + umh code.
-Such modules can be signed, modprobed, rmmod, etc. The use of this new helper
-by a kernel module doesn't make it any special from kernel and user space
-tooling point of view.
+Alexei Starovoitov (2):
+  umh: introduce fork_usermode_blob() helper
+  net: add skeleton of bpfilter kernel module
 
-Such approach enables kernel to delegate functionality traditionally done
-by the kernel modules into the user space processes (either root or !root) and
-reduces security attack surface of the new code. The buggy umh code would crash
-the user process, but not the kernel. Another advantage is that umh code
-of the kernel module can be debugged and tested out of user space
-(e.g. opening the possibility to run clang sanitizers, fuzzers or
-user space test suites on the umh code).
-In case of the bpfilter project such architecture allows complex control plane
-to be done in the user space while bpf based data plane stays in the kernel.
+ fs/exec.c                     |  38 ++++++++++---
+ include/linux/binfmts.h       |   1 +
+ include/linux/bpfilter.h      |  15 +++++
+ include/linux/umh.h           |  12 ++++
+ include/uapi/linux/bpfilter.h |  21 +++++++
+ kernel/umh.c                  | 125 +++++++++++++++++++++++++++++++++++++++++-
+ net/Kconfig                   |   2 +
+ net/Makefile                  |   1 +
+ net/bpfilter/Kconfig          |  16 ++++++
+ net/bpfilter/Makefile         |  30 ++++++++++
+ net/bpfilter/bpfilter_kern.c  | 111 +++++++++++++++++++++++++++++++++++++
+ net/bpfilter/main.c           |  63 +++++++++++++++++++++
+ net/bpfilter/msgfmt.h         |  17 ++++++
+ net/ipv4/Makefile             |   2 +
+ net/ipv4/bpfilter/Makefile    |   2 +
+ net/ipv4/bpfilter/sockopt.c   |  42 ++++++++++++++
+ net/ipv4/ip_sockglue.c        |  17 ++++++
+ 17 files changed, 503 insertions(+), 12 deletions(-)
+ create mode 100644 include/linux/bpfilter.h
+ create mode 100644 include/uapi/linux/bpfilter.h
+ create mode 100644 net/bpfilter/Kconfig
+ create mode 100644 net/bpfilter/Makefile
+ create mode 100644 net/bpfilter/bpfilter_kern.c
+ create mode 100644 net/bpfilter/main.c
+ create mode 100644 net/bpfilter/msgfmt.h
+ create mode 100644 net/ipv4/bpfilter/Makefile
+ create mode 100644 net/ipv4/bpfilter/sockopt.c
 
-Since umh can crash, can be oom-ed by the kernel, killed by the admin,
-the kernel module that uses them (like bpfilter) needs to manage life
-time of umh on its own via two unix pipes and the pid of umh.
-
-The exit code of such kernel module should kill the umh it started,
-so that rmmod of the kernel module will cleanup the corresponding umh.
-Just like if the kernel module does kmalloc() it should kfree() it
-in the exit code.
-
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
----
- fs/exec.c               |  38 +++++++++++----
- include/linux/binfmts.h |   1 +
- include/linux/umh.h     |  12 +++++
- kernel/umh.c            | 125 ++++++++++++++++++++++++++++++++++++++++++++++--
- 4 files changed, 164 insertions(+), 12 deletions(-)
-
-diff --git a/fs/exec.c b/fs/exec.c
-index 183059c427b9..30a36c2a39bf 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1706,14 +1706,13 @@ static int exec_binprm(struct linux_binprm *bprm)
- /*
-  * sys_execve() executes a new program.
-  */
--static int do_execveat_common(int fd, struct filename *filename,
--			      struct user_arg_ptr argv,
--			      struct user_arg_ptr envp,
--			      int flags)
-+static int __do_execve_file(int fd, struct filename *filename,
-+			    struct user_arg_ptr argv,
-+			    struct user_arg_ptr envp,
-+			    int flags, struct file *file)
- {
- 	char *pathbuf = NULL;
- 	struct linux_binprm *bprm;
--	struct file *file;
- 	struct files_struct *displaced;
- 	int retval;
- 
-@@ -1752,7 +1751,8 @@ static int do_execveat_common(int fd, struct filename *filename,
- 	check_unsafe_exec(bprm);
- 	current->in_execve = 1;
- 
--	file = do_open_execat(fd, filename, flags);
-+	if (!file)
-+		file = do_open_execat(fd, filename, flags);
- 	retval = PTR_ERR(file);
- 	if (IS_ERR(file))
- 		goto out_unmark;
-@@ -1760,7 +1760,9 @@ static int do_execveat_common(int fd, struct filename *filename,
- 	sched_exec();
- 
- 	bprm->file = file;
--	if (fd == AT_FDCWD || filename->name[0] == '/') {
-+	if (!filename) {
-+		bprm->filename = "none";
-+	} else if (fd == AT_FDCWD || filename->name[0] == '/') {
- 		bprm->filename = filename->name;
- 	} else {
- 		if (filename->name[0] == '\0')
-@@ -1826,7 +1828,8 @@ static int do_execveat_common(int fd, struct filename *filename,
- 	task_numa_free(current);
- 	free_bprm(bprm);
- 	kfree(pathbuf);
--	putname(filename);
-+	if (filename)
-+		putname(filename);
- 	if (displaced)
- 		put_files_struct(displaced);
- 	return retval;
-@@ -1849,10 +1852,27 @@ static int do_execveat_common(int fd, struct filename *filename,
- 	if (displaced)
- 		reset_files_struct(displaced);
- out_ret:
--	putname(filename);
-+	if (filename)
-+		putname(filename);
- 	return retval;
- }
- 
-+static int do_execveat_common(int fd, struct filename *filename,
-+			      struct user_arg_ptr argv,
-+			      struct user_arg_ptr envp,
-+			      int flags)
-+{
-+	return __do_execve_file(fd, filename, argv, envp, flags, NULL);
-+}
-+
-+int do_execve_file(struct file *file, void *__argv, void *__envp)
-+{
-+	struct user_arg_ptr argv = { .ptr.native = __argv };
-+	struct user_arg_ptr envp = { .ptr.native = __envp };
-+
-+	return __do_execve_file(AT_FDCWD, NULL, argv, envp, 0, file);
-+}
-+
- int do_execve(struct filename *filename,
- 	const char __user *const __user *__argv,
- 	const char __user *const __user *__envp)
-diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
-index 4955e0863b83..c05f24fac4f6 100644
---- a/include/linux/binfmts.h
-+++ b/include/linux/binfmts.h
-@@ -150,5 +150,6 @@ extern int do_execveat(int, struct filename *,
- 		       const char __user * const __user *,
- 		       const char __user * const __user *,
- 		       int);
-+int do_execve_file(struct file *file, void *__argv, void *__envp);
- 
- #endif /* _LINUX_BINFMTS_H */
-diff --git a/include/linux/umh.h b/include/linux/umh.h
-index 244aff638220..5c812acbb80a 100644
---- a/include/linux/umh.h
-+++ b/include/linux/umh.h
-@@ -22,8 +22,10 @@ struct subprocess_info {
- 	const char *path;
- 	char **argv;
- 	char **envp;
-+	struct file *file;
- 	int wait;
- 	int retval;
-+	pid_t pid;
- 	int (*init)(struct subprocess_info *info, struct cred *new);
- 	void (*cleanup)(struct subprocess_info *info);
- 	void *data;
-@@ -38,6 +40,16 @@ call_usermodehelper_setup(const char *path, char **argv, char **envp,
- 			  int (*init)(struct subprocess_info *info, struct cred *new),
- 			  void (*cleanup)(struct subprocess_info *), void *data);
- 
-+struct subprocess_info *call_usermodehelper_setup_file(struct file *file,
-+			  int (*init)(struct subprocess_info *info, struct cred *new),
-+			  void (*cleanup)(struct subprocess_info *), void *data);
-+struct umh_info {
-+	struct file *pipe_to_umh;
-+	struct file *pipe_from_umh;
-+	pid_t pid;
-+};
-+int fork_usermode_blob(void *data, size_t len, struct umh_info *info);
-+
- extern int
- call_usermodehelper_exec(struct subprocess_info *info, int wait);
- 
-diff --git a/kernel/umh.c b/kernel/umh.c
-index f76b3ff876cf..30db93fd7e39 100644
---- a/kernel/umh.c
-+++ b/kernel/umh.c
-@@ -25,6 +25,8 @@
- #include <linux/ptrace.h>
- #include <linux/async.h>
- #include <linux/uaccess.h>
-+#include <linux/shmem_fs.h>
-+#include <linux/pipe_fs_i.h>
- 
- #include <trace/events/module.h>
- 
-@@ -97,9 +99,13 @@ static int call_usermodehelper_exec_async(void *data)
- 
- 	commit_creds(new);
- 
--	retval = do_execve(getname_kernel(sub_info->path),
--			   (const char __user *const __user *)sub_info->argv,
--			   (const char __user *const __user *)sub_info->envp);
-+	if (sub_info->file)
-+		retval = do_execve_file(sub_info->file,
-+					sub_info->argv, sub_info->envp);
-+	else
-+		retval = do_execve(getname_kernel(sub_info->path),
-+				   (const char __user *const __user *)sub_info->argv,
-+				   (const char __user *const __user *)sub_info->envp);
- out:
- 	sub_info->retval = retval;
- 	/*
-@@ -185,6 +191,8 @@ static void call_usermodehelper_exec_work(struct work_struct *work)
- 		if (pid < 0) {
- 			sub_info->retval = pid;
- 			umh_complete(sub_info);
-+		} else {
-+			sub_info->pid = pid;
- 		}
- 	}
- }
-@@ -393,6 +401,117 @@ struct subprocess_info *call_usermodehelper_setup(const char *path, char **argv,
- }
- EXPORT_SYMBOL(call_usermodehelper_setup);
- 
-+struct subprocess_info *call_usermodehelper_setup_file(struct file *file,
-+		int (*init)(struct subprocess_info *info, struct cred *new),
-+		void (*cleanup)(struct subprocess_info *info), void *data)
-+{
-+	struct subprocess_info *sub_info;
-+
-+	sub_info = kzalloc(sizeof(struct subprocess_info), GFP_KERNEL);
-+	if (!sub_info)
-+		return NULL;
-+
-+	INIT_WORK(&sub_info->work, call_usermodehelper_exec_work);
-+	sub_info->path = "none";
-+	sub_info->file = file;
-+	sub_info->init = init;
-+	sub_info->cleanup = cleanup;
-+	sub_info->data = data;
-+	return sub_info;
-+}
-+
-+static int umh_pipe_setup(struct subprocess_info *info, struct cred *new)
-+{
-+	struct umh_info *umh_info = info->data;
-+	struct file *from_umh[2];
-+	struct file *to_umh[2];
-+	int err;
-+
-+	/* create pipe to send data to umh */
-+	err = create_pipe_files(to_umh, 0);
-+	if (err)
-+		return err;
-+	err = replace_fd(0, to_umh[0], 0);
-+	fput(to_umh[0]);
-+	if (err < 0) {
-+		fput(to_umh[1]);
-+		return err;
-+	}
-+
-+	/* create pipe to receive data from umh */
-+	err = create_pipe_files(from_umh, 0);
-+	if (err) {
-+		fput(to_umh[1]);
-+		replace_fd(0, NULL, 0);
-+		return err;
-+	}
-+	err = replace_fd(1, from_umh[1], 0);
-+	fput(from_umh[1]);
-+	if (err < 0) {
-+		fput(to_umh[1]);
-+		replace_fd(0, NULL, 0);
-+		fput(from_umh[0]);
-+		return err;
-+	}
-+
-+	umh_info->pipe_to_umh = to_umh[1];
-+	umh_info->pipe_from_umh = from_umh[0];
-+	return 0;
-+}
-+
-+static void umh_save_pid(struct subprocess_info *info)
-+{
-+	struct umh_info *umh_info = info->data;
-+
-+	umh_info->pid = info->pid;
-+}
-+
-+/**
-+ * fork_usermode_blob - fork a blob of bytes as a usermode process
-+ * @data: a blob of bytes that can be do_execv-ed as a file
-+ * @len: length of the blob
-+ * @info: information about usermode process (shouldn't be NULL)
-+ *
-+ * Returns either negative error or zero which indicates success
-+ * in executing a blob of bytes as a usermode process. In such
-+ * case 'struct umh_info *info' is populated with two pipes
-+ * and a pid of the process. The caller is responsible for health
-+ * check of the user process, killing it via pid, and closing the
-+ * pipes when user process is no longer needed.
-+ */
-+int fork_usermode_blob(void *data, size_t len, struct umh_info *info)
-+{
-+	struct subprocess_info *sub_info;
-+	struct file *file;
-+	ssize_t written;
-+	loff_t pos = 0;
-+	int err;
-+
-+	file = shmem_kernel_file_setup("", len, 0);
-+	if (IS_ERR(file))
-+		return PTR_ERR(file);
-+
-+	written = kernel_write(file, data, len, &pos);
-+	if (written != len) {
-+		err = written;
-+		if (err >= 0)
-+			err = -ENOMEM;
-+		goto out;
-+	}
-+
-+	err = -ENOMEM;
-+	sub_info = call_usermodehelper_setup_file(file, umh_pipe_setup,
-+						  umh_save_pid, info);
-+	if (!sub_info)
-+		goto out;
-+
-+	err = call_usermodehelper_exec(sub_info, UMH_WAIT_EXEC);
-+out:
-+	fput(file);
-+	return err;
-+}
-+EXPORT_SYMBOL_GPL(fork_usermode_blob);
-+
- /**
-  * call_usermodehelper_exec - start a usermode application
-  * @sub_info: information about the subprocessa
 -- 
 2.9.5
