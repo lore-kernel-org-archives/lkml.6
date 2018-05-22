@@ -1,137 +1,89 @@
-Return-Path: <rajatja@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1527031696; cv=none;
+Return-Path: <okaya@codeaurora.org>
+X-Google-Smtp-Source: AB8JxZqLIsPsU8rk8wZWg5MjakmeRakaGNUq/c4qVz19xcixLEHistdFZc9cyCwa8Nyw9ptuvoZ2
+ARC-Seal: i=1; a=rsa-sha256; t=1527031843; cv=none;
         d=google.com; s=arc-20160816;
-        b=Bf6+e3KZlj024oaEGNQaYS7zX5IT6tSs9Q9osE778bHRxidbqOqHgjuTA3mQUhV3Jz
-         wkJ6NYfIqcx93QKVFupkS5VYDxSSXbUlcCt829iX4bOvoZTqKBsdyYoL9fbtIY3ixLHa
-         YR47tv9oKxmBVnrNlct1GDXabA7DiH2Ql75llqWy+gB05h9+nZmD0VuRGazvih7H+8mA
-         zhud/mxy6yGKo3ozt5hyLcqUHzPpuWSssZNPTJ6hd0XcXSbpaAaF0zIhYtA93+veLZCf
-         mS9uckJV8PKFznInShCZ6Aj+GGXNsCwn63OTHHzOYk7sf3M/hxDnDPm8/qzLnLXIQEof
-         zEzA==
+        b=F7r1BdNndW4GOpkMVWqdxL5cj/dpxkeRo+HCzvdC93R+x0nlDTBqQIw8KVy9py+r61
+         cZ/c9vjZW7hDdY1rxJgAI1ZQVzVm5CTIUCF0pv5bDGo2q1NBu9aOMKSpayj1nlu9oseJ
+         Vn+4/9Lz7rJy0IPPaiYfoY0VVzk3+V3SYdKRA+qJr62JQjFF+zsuXnhtFQ+n86q5U2G6
+         2UPgICWvami2dNIVbW8zqau1L2kKlLXECcccQWt/x/8iRgwBuSNBPLUWedoapnXC9eEE
+         BquDm3VVCvNi7jZLnfrR7K50qSCvJHfnuU3po2RpYITrsNRE93w7GPLEaHVF+KvBXZdj
+         ZAvA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=i58Ppfqdh+5bHRvHkrmBOHDeMbXtCVBJU1fm7/fb24M=;
-        b=LgJj7w/AoU3qFiJ/sa8mRRpcwveCOBrha1gzzrPTiGZm7DSILpxg6A6r3s3CvOtLyf
-         oBqBX53OV6EOZvSxSXN2zXv2AZQjf8H/XEaOKyZnY15avp6wsz47AipHNw7YmLWG/43w
-         nOPAxEkC2+u/KVGKfMz42YTNmUU13cXjXVUYEminoFopwEltSLfhrvGRu4d2zqVRbwJX
-         XE3pEPn3FY6TqIAJAjc9HyVXlsFdicWy/+4S3dN0gPy6ioZNVoAqjLB0bDuMpBmliSiT
-         xFhQnA9R6gtU1cw0B6rguaNMzIVy/cj8CPcjj7GOYWogFVdU6OqQucDH3+xogNGFiMOk
-         cPwg==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :dmarc-filter:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=7q0sqrwqSRlEC11/ZKteK6AmMgdTCFwSg6AHTTWEyeI=;
+        b=lUcmdd/tQvsqUQGwFPOKg9zjNrAQQtqXyef4zYngqDzR2zWWV2pu1whsueE8XcVLM4
+         xLjVWbS/iDtu43q5VT9mCfUHz8EM8v3eHR11Ccp5DrHXPoRPT2e1ZuvMVN2mRNaUuaoB
+         61WlnWjPVkrFBYgARORZvCv7iWetW/fgprTMssOrI5jSN2GtJyEHNO/R0TBOPTuAhIsi
+         Fpt0MTkmTtmNpgnSWTeDnGgVdWNmMN+o5bUjhqOX0rJFT9e2CK+aVzIGKuQw17Z7j4D3
+         ANWwphoCNuycT3c/1VggIZnohhMAa6swsG8Qmwdz2KIRzsqo/LoanDtC2uoeWX9aznm3
+         ps6g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=D7GBWTIK;
-       spf=pass (google.com: domain of rajatja@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=rajatja@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=X8lZ1g+t;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=mXcdZFBU;
+       spf=pass (google.com: domain of okaya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=okaya@codeaurora.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=D7GBWTIK;
-       spf=pass (google.com: domain of rajatja@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=rajatja@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AB8JxZrBb6btPhYTCnpeNfi6Vwi+xPrahXPfoffzXOWB8mqnSccO6mvaXMouZ5kLf97c1aN9iyBUQK5TMLyrt8MUKEw=
-MIME-Version: 1.0
-In-Reply-To: <dcbb2e92-722f-c178-efb7-8d99d4a9d99f@gmail.com>
-References: <20180522222805.80314-1-rajatja@google.com> <20180522222805.80314-3-rajatja@google.com>
- <dcbb2e92-722f-c178-efb7-8d99d4a9d99f@gmail.com>
-From: Rajat Jain <rajatja@google.com>
-Date: Tue, 22 May 2018 16:27:33 -0700
-Message-ID: <CACK8Z6GNPa+15WLxJBUAZ2=+jfhtdz+85=41B56KWSWCHSnyGw@mail.gmail.com>
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=X8lZ1g+t;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=mXcdZFBU;
+       spf=pass (google.com: domain of okaya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=okaya@codeaurora.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6CDDB6028C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
 Subject: Re: [PATCH 2/5] PCI/AER: Add sysfs stats for AER capable devices
-To: "Alex G." <mr.nuke.me@gmail.com>
+To: Rajat Jain <rajatja@google.com>, "Alex G." <mr.nuke.me@gmail.com>
 Cc: Bjorn Helgaas <bhelgaas@google.com>, Jonathan Corbet <corbet@lwn.net>,
-	Philippe Ombredanne <pombredanne@nexb.com>, Kate Stewart <kstewart@linuxfoundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Frederick Lawler <fred@fredlawl.com>, Oza Pawandeep <poza@codeaurora.org>,
-	Keith Busch <keith.busch@intel.com>, Gabriele Paoloni <gabriele.paoloni@huawei.com>,
-	Thomas Tai <thomas.tai@oracle.com>, "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-	linux-pci <linux-pci@vger.kernel.org>, linux-doc@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jes Sorensen <jsorensen@fb.com>,
-	Kyle McMartin <jkkm@fb.com>, Rajat Jain <rajatxjain@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+ Philippe Ombredanne <pombredanne@nexb.com>,
+ Kate Stewart <kstewart@linuxfoundation.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Frederick Lawler <fred@fredlawl.com>, Oza Pawandeep <poza@codeaurora.org>,
+ Keith Busch <keith.busch@intel.com>,
+ Gabriele Paoloni <gabriele.paoloni@huawei.com>,
+ Thomas Tai <thomas.tai@oracle.com>,
+ "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+ linux-pci <linux-pci@vger.kernel.org>, linux-doc@vger.kernel.org,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Jes Sorensen <jsorensen@fb.com>, Kyle McMartin <jkkm@fb.com>,
+ Rajat Jain <rajatxjain@gmail.com>
+References: <20180522222805.80314-1-rajatja@google.com>
+ <20180522222805.80314-3-rajatja@google.com>
+ <dcbb2e92-722f-c178-efb7-8d99d4a9d99f@gmail.com>
+ <CACK8Z6GNPa+15WLxJBUAZ2=+jfhtdz+85=41B56KWSWCHSnyGw@mail.gmail.com>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <9861c339-6784-c7ec-b1ec-6722fb0d5bd5@codeaurora.org>
+Date: Tue, 22 May 2018 19:30:39 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <CACK8Z6GNPa+15WLxJBUAZ2=+jfhtdz+85=41B56KWSWCHSnyGw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1601205018627101133?=
-X-GMAIL-MSGID: =?utf-8?q?1601208787543859608?=
+X-GMAIL-MSGID: =?utf-8?q?1601208943038165781?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, May 22, 2018 at 3:50 PM, Alex G. <mr.nuke.me@gmail.com> wrote:
->
->
-> On 05/22/2018 05:28 PM, Rajat Jain wrote:
->> Add the following AER sysfs stats to represent the counters for each
->> kind of error as seen by the device:
->>
->> dev_total_cor_errs
->> dev_total_fatal_errs
->> dev_total_nonfatal_errs
->>
->> Signed-off-by: Rajat Jain <rajatja@google.com>
->> ---
->>  drivers/pci/pci-sysfs.c                |  3 ++
->>  drivers/pci/pci.h                      |  4 +-
->>  drivers/pci/pcie/aer/aerdrv.h          |  1 +
->>  drivers/pci/pcie/aer/aerdrv_errprint.c |  1 +
->>  drivers/pci/pcie/aer/aerdrv_stats.c    | 72 ++++++++++++++++++++++++++
->>  5 files changed, 80 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
->> index 366d93af051d..730f985a3dc9 100644
->> --- a/drivers/pci/pci-sysfs.c
->> +++ b/drivers/pci/pci-sysfs.c
->> @@ -1743,6 +1743,9 @@ static const struct attribute_group *pci_dev_attr_groups[] = {
->>  #endif
->>       &pci_bridge_attr_group,
->>       &pcie_dev_attr_group,
->> +#ifdef CONFIG_PCIEAER
->> +     &aer_stats_attr_group,
->> +#endif
->>       NULL,
->>  };
->
-> So if the device is removed as part of recovery, then these get reset,
-> right? So if the device fails intermittently, these counters would keep
-> getting reset. Is this the intent?
+On 5/22/2018 7:27 PM, Rajat Jain wrote:
+>> What about AER errors that are contained by DPC?
+> Thanks, You are right, this patch does not take care of the DPC. I'll
+> try to read up on DPC and can integrate it if it turns out to be easy
+> enough.
+> 
 
-Umm, kind of.
-* One argument is that if a PCI device is removed and then
-re-enumerated, how do we know it is the same device and has not been
-replaced by another device for e.g.?  Note that the root port counters
-that have the cumulative counters for all the errors seen will still
-have them logged in the situation you describe.
+I'd focus on AER for the moment. DPC is going through major restructuring
+and will only handle AER_FATAL errors moving forward.
 
->
-> (snip)
->
->>  /**
->>   * pci_match_one_device - Tell if a PCI device structure has a matching
->> diff --git a/drivers/pci/pcie/aer/aerdrv.h b/drivers/pci/pcie/aer/aerdrv.h
->> index d8b9fba536ed..b5d5ad6f2c03 100644
->> --- a/drivers/pci/pcie/aer/aerdrv.h
->> +++ b/drivers/pci/pcie/aer/aerdrv.h
->> @@ -87,6 +87,7 @@ void aer_print_port_info(struct pci_dev *dev, struct aer_err_info *info);
->>  irqreturn_t aer_irq(int irq, void *context);
->>  int pci_aer_stats_init(struct pci_dev *pdev);
->>  void pci_aer_stats_exit(struct pci_dev *pdev);
->> +void pci_dev_aer_stats_incr(struct pci_dev *pdev, struct aer_err_info *info);
->>
->>  #ifdef CONFIG_ACPI_APEI
->>  int pcie_aer_get_firmware_first(struct pci_dev *pci_dev);
->> diff --git a/drivers/pci/pcie/aer/aerdrv_errprint.c b/drivers/pci/pcie/aer/aerdrv_errprint.c
->> index 21ca5e1b0ded..5e8b98deda08 100644
->> --- a/drivers/pci/pcie/aer/aerdrv_errprint.c
->> +++ b/drivers/pci/pcie/aer/aerdrv_errprint.c
->> @@ -155,6 +155,7 @@ static void __aer_print_error(struct pci_dev *dev,
->>                       pci_err(dev, "   [%2d] Unknown Error Bit%s\n",
->>                               i, info->first_error == i ? " (First)" : "");
->>       }
->> +     pci_dev_aer_stats_incr(dev, info);
->
-> What about AER errors that are contained by DPC?
+> Thanks,
+> 
+> Rajat
+> 
 
-Thanks, You are right, this patch does not take care of the DPC. I'll
-try to read up on DPC and can integrate it if it turns out to be easy
-enough.
 
-Thanks,
-
-Rajat
-
->
-> Alex
+-- 
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
