@@ -1,74 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752884AbeEVMJl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 08:09:41 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33781 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751512AbeEVMJi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 08:09:38 -0400
-Date: Tue, 22 May 2018 14:09:36 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <uwe@kleine-koenig.org>
-cc: Ales Novak <alnovak@suse.cz>, a.zummo@towertech.it,
-        akpm@linux-foundation.org, rtc-linux@googlegroups.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: rtc: fix chardev initialization races
-In-Reply-To: <20180521122509.GA4251@taurus.defre.kleine-koenig.org>
-Message-ID: <nycvar.YFH.7.76.1805221407100.27054@cbobk.fhfr.pm>
-References: <1393410793-7315-1-git-send-email-alnovak@suse.cz> <20180521122509.GA4251@taurus.defre.kleine-koenig.org>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1753110AbeEVMKC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 08:10:02 -0400
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:62583 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753033AbeEVMIl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 08:08:41 -0400
+X-IronPort-AV: E=Sophos;i="5.49,430,1520924400";
+   d="scan'208";a="11781826"
+From: Claudiu Beznea <claudiu.beznea@microchip.com>
+To: <thierry.reding@gmail.com>, <shc_work@mail.ru>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <corbet@lwn.net>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@free-electrons.com>
+CC: <linux-pwm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: [PATCH v5 8/9] pwm: add documentation for pwm push-pull mode
+Date: Tue, 22 May 2018 15:07:12 +0300
+Message-ID: <1526990833-30707-9-git-send-email-claudiu.beznea@microchip.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1526990833-30707-1-git-send-email-claudiu.beznea@microchip.com>
+References: <1526990833-30707-1-git-send-email-claudiu.beznea@microchip.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 May 2018, Uwe Kleine-König wrote:
+Add documentation for PWM push-pull mode.
 
-> > The race looks like that (thanks Jiri):
-> > 
-> > CPU0:                                CPU1:
-> > sys_load_module()
-> >  do_init_module()
-> >   do_one_initcall()
-> >    cmos_do_probe()
-> >     rtc_device_register()
-> >      __register_chrdev()
-> >      cdev->owner = struct module*
-> >                                      open("/dev/rtc0")
-> >     rtc_device_unregister()
-> >   module_put()
-> >   free_module()
-> >    module_free(mod->module_core)
-> >    /* struct module *module is now
-> >       freed */
-> >                                       chrdev_open()
-> >                                        spin_lock(cdev_lock)
-> >                                        cdev_get()
-> >                                         try_module_get()
-> >                                          module_is_live()
-> >                                          /* dereferences already
-> >                                             freed struct module* */
-> 
-> [Context: For a patch to rtc-pcf2127.c Alexandre Belloni asked not to
-> fail after rtc_device_register successfully finished and pointed to this
-> reasoning as explaination.]
-> 
-> If there is really such a race then (I hope) there is
-> something in the cdev code that needs fixing. According to my
-> understanding, when rtc_device_unregister returned, the cdev is gone and
-> so chrdev_open is supposed to fail.
+Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/pwm/pwm.txt |  2 ++
+ Documentation/pwm.txt                         | 16 ++++++++++++++++
+ include/dt-bindings/pwm/pwm.h                 |  1 +
+ 3 files changed, 19 insertions(+)
 
-Oh wow, hello back to 4 years ago!
-
-Looking at the current code, I don't think there is no such race any more, 
-as the last thing cmos_do_probe() -> __rtc_register_device() does that can 
-potentially fail is the chardev creation itself.
-
-IOW if it exists, it's guaranteed to not go away on a probe error handling 
-path (and the rest is protected via ops_lock mutex).
-
+diff --git a/Documentation/devicetree/bindings/pwm/pwm.txt b/Documentation/devicetree/bindings/pwm/pwm.txt
+index 7c8aaac43f92..6a60c0fca112 100644
+--- a/Documentation/devicetree/bindings/pwm/pwm.txt
++++ b/Documentation/devicetree/bindings/pwm/pwm.txt
+@@ -49,6 +49,8 @@ Optionally, the pwm-specifier can encode a number of flags (defined in
+ - PWM_MODE_COMPLEMENTARY: PWM complementary working mode (for PWM channels
+ with two outputs); if not specified, the default for PWM channel will be
+ used
++- PWM_MODE_PUSH_PULL: PWM push-pull working modes (for PWM channels with
++two outputs); if not specified the default for PWM channel will be used
+ 
+ Example with optional PWM specifier for inverse polarity and complementary
+ mode:
+diff --git a/Documentation/pwm.txt b/Documentation/pwm.txt
+index 912c43da8b48..675f9351fed1 100644
+--- a/Documentation/pwm.txt
++++ b/Documentation/pwm.txt
+@@ -128,6 +128,22 @@ channel that was exported. The following properties will then be available:
+     PWML1   |__|  |__|  |__|  |__|
+             <--T-->
+ 
++    Push-pull mode - for PWM channels with two outputs; output waveforms
++        for a PWM channel in push-pull mode, with normal polarity looks like
++        this:
++            __          __
++    PWMH __|  |________|  |________
++                  __          __
++    PWML ________|  |________|  |__
++           <--T-->
++
++    If polarity is inversed:
++         __    ________    ________
++    PWMH   |__|        |__|
++         ________    ________    __
++    PWML         |__|        |__|
++           <--T-->
++
+     Where T is the signal period.
+ 
+ Implementing a PWM driver
+diff --git a/include/dt-bindings/pwm/pwm.h b/include/dt-bindings/pwm/pwm.h
+index b82279cc1787..cd4265bce968 100644
+--- a/include/dt-bindings/pwm/pwm.h
++++ b/include/dt-bindings/pwm/pwm.h
+@@ -12,5 +12,6 @@
+ 
+ #define PWM_POLARITY_INVERTED			(1 << 0)
+ #define PWM_MODE_COMPLEMENTARY			(1 << 1)
++#define PWM_MODE_PUSH_PULL			(1 << 2)
+ 
+ #endif
 -- 
-Jiri Kosina
-SUSE Labs
+2.7.4
