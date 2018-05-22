@@ -1,58 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752512AbeEVTzp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 15:55:45 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:38039 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751601AbeEVTzo (ORCPT
+        id S1752323AbeEVT7D (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 15:59:03 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:35482 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751586AbeEVT7A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 15:55:44 -0400
-X-Google-Smtp-Source: AB8JxZrLLDQjhWkQLtEwpuiwHFWbhDD8bjW9JhoOt7TmV6KVaPqNWkhg02h7ALkYg3fLVr9XQrZRyA==
-From: Mathieu Malaterre <malat@debian.org>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Mathieu Malaterre <malat@debian.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-        Kees Cook <keescook@chromium.org>,
-        Laura Abbott <lauraa@codeaurora.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Gargi Sharma <gs051095@gmail.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] Add missing header include <linux/mem_encrypt.h>
-Date: Tue, 22 May 2018 21:55:31 +0200
-Message-Id: <20180522195533.31415-1-malat@debian.org>
-X-Mailer: git-send-email 2.11.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Tue, 22 May 2018 15:59:00 -0400
+X-Google-Smtp-Source: AB8JxZp2t7SC0UEygvXcw+IZZyc/PDvBu30m436E2+GYMR4IlJCt0773ZvYmnPHbMLwP4Wnj8SBRNw==
+From: Niklas Cassel <niklas.cassel@linaro.org>
+To: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc: Niklas Cassel <niklas.cassel@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: fix regulator property name for wlan pcie endpoint
+Date: Tue, 22 May 2018 21:57:57 +0200
+Message-Id: <20180522195758.24607-1-niklas.cassel@linaro.org>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In commit c7753208a94c ("x86, swiotlb: Add memory encryption support") a
-call to function ‘mem_encrypt_init’ was added. Include prototype
-defined in header <linux/mem_encrypt.h> to prevent a warning reported
-during compilation with W=1:
+The property name vddpe-supply is not included in
+Documentation/devicetree/bindings/pci/qcom,pcie.txt
+nor in the pcie-qcom PCIe Root Complex driver.
 
-  init/main.c:494:20: warning: no previous prototype for ‘mem_encrypt_init’ [-Wmissing-prototypes]
+This property name was used in an initial patchset for pcie-qcom,
+but was renamed in a later revision.
 
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
+Therefore, the regulator is currently never enabled, leaving us with
+unoperational wlan.
+
+Fix this by using the correct regulator property name, so that wlan
+comes up correctly.
+
+Fixes: 1c8ca74a2ea1 ("arm64: dts: apq8096-db820c: Enable wlan and bt en pins")
+Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
 ---
- init/main.c | 1 +
- 1 file changed, 1 insertion(+)
+Bluetooth needs a similar patch, but since bluetooth needs some more
+work, submit this right now, so we at least have working wlan.
 
-diff --git a/init/main.c b/init/main.c
-index 3d6b31f4e520..35ce2ddb1322 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -91,6 +91,7 @@
- #include <linux/cache.h>
- #include <linux/rodata_test.h>
- #include <linux/jump_label.h>
-+#include <linux/mem_encrypt.h>
+ arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
+index 818bf0efd501..804268f54f37 100644
+--- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
++++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
+@@ -203,7 +203,7 @@
+ 			pcie@600000 {
+ 				status = "okay";
+ 				perst-gpio = <&msmgpio 35 GPIO_ACTIVE_LOW>;
+-				vddpe-supply = <&wlan_en>;
++				vddpe-3v3-supply = <&wlan_en>;
+ 				vddpe1-supply = <&bt_en>;
+ 			};
  
- #include <asm/io.h>
- #include <asm/bugs.h>
 -- 
-2.11.0
+2.17.0
