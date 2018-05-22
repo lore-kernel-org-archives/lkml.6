@@ -1,5 +1,5 @@
 Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2741439-1527005132-2-16615590354814036939
+X-Cyrus-Session-Id: sloti22d1t05-2463566-1526990689-2-2750892519588989492
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-charsets: 
@@ -7,24 +7,27 @@ X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527005132; b=CrlSDUMYce0AEhZ2AsJF6UPO6vt9dGF1E3KjVNW8L3tyGjHUJE
-    iu2z4cd5Wq+Wr9QRwq2H7nn2nF+zbOCLILYL+TbEtHNztr6l7RZLd+/K1zT9xMNB
-    /bZbcajDF0DKxCzDM7WcoVcaTO0Jah5JPWKmCsDurEtDBgnysKq1uDwKMzAyJGHx
-    vXrM++UXe5MwEZDqDJkz21UWqkE+lVqFZ/0bveTqvVYK2KtheA5HPp64/qf710TF
-    8JQNbeWeqZ3EaAwJIWxOzD96VG5GWLlIutIddhbtGr40pJkxCF5X4cwZK60IbZmq
-    S5OW2WvD1aEQ3ahhmqWZlgcO7+K+Ng2gGT7A==
+    1526990689; b=J9989LMVznh8FCd05Fw0hZrcUnvlHca7zTyJOp/27mWzvm+6mL
+    ZfcWo7OPlYBA+8ALLQ3ZN4Ea2Ix3dco/AMudFw+9P2WsuUqj8GFFQTp6nSRb9wfK
+    IRGDlcGbGG8z3wKZz1IEQc+ZRxhdIASEdl6AU0rPyjDLvQ7c3Yv2X7AJ0anxvIrx
+    mgi9S7XOyiUB4AT9hHQqprpxwtsRPRVBcCdXN3Dn7//vr/shUwhQNvJCgEWKasSB
+    uPlqREjHCERYG+j09QM7JSSuiXf+ro8SVOLEj5A+rXPKCUKgZ/Gn+uc4Lj9K+Go2
+    RjYxpgqTQ2+4KZ/Cr3WqGrAUbljZtT9LjrRQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=fm2; t=1527005132; bh=ruQBqk+4YZ24lsT+G51p7o24ptIEs0
-    +mcR5ZbX905CQ=; b=Gb7l13WLbYzGn9x3t9bOl0oGhDbZEQiy4NabZcDo8Iigxo
-    +WuaEoZadbqoqv2H8X10ncyVaxlKm4UXaBNqUkdqItwmrAsoApxxQvHGBcDHmuqV
-    49tAg+Mrd5L5teU78edD2MJO9zMnDl0QNDmId9oksz2HN9TD44X6WseLrcGEe9ks
-    /A/mGlquRtaTPjkFcD+6DYWahhIusozxmJWDVvI0dgNJV9hdVYf3jPBabEItviGN
-    ldom3I494jzU1+AbYqhNjmKjhVS1MuVqSAzCLxbYT8J16VHmkOrblPbMnSO8HBPh
-    KJy9UztzPuev+LXs7ZelyyU511si3DWqbcU6UjjA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arm.com;
+    :list-id; s=fm2; t=1526990689; bh=+50stOMw/+nrvTGs4EZ04vGJ/yTaM2
+    PB1eUYzmbp2+8=; b=boS1hC3pbpY6i1lFe/L5JErVtBujgaafxVc7FMdAGzivM1
+    CLOXNiBrLTSu84zarldbrNl+PmVuhQ2l3TUv7TNRNRi39s76FG509i10LPaU5wlf
+    uUfuzmQB+u6JcqN7RgJtUROlZKHpXCdyb3UGJK3DIsoj8t+I2zHDRuzxdIzYb8rn
+    SbBk6UG8j0U911KmLZztq0VBtq5Ifwp+PoqxnUxLA0At+JOtOasFgfe77/keK9Y5
+    NEE3SnPfll+rafmjDgJ6flaw05ioGF0svuzqF5eAv5I7XLeyGuvEz0/qtykrojj6
+    6+UAkjSvbOn+7yTK4bdOyNNw0mP2HD0bZVdQoQUQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256)
+    header.d=infradead.org header.i=@infradead.org header.b=XUwihSx5
+    x-bits=2048 x-keytype=rsa x-algorithm=sha256
+    x-selector=bombadil.20170209;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -33,12 +36,15 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=arm.com header.result=pass header_is_org_domain=yes;
+    header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arm.com;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256)
+      header.d=infradead.org header.i=@infradead.org header.b=XUwihSx5
+      x-bits=2048 x-keytype=rsa x-algorithm=sha256
+      x-selector=bombadil.20170209;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -47,143 +53,83 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=arm.com header.result=pass header_is_org_domain=yes;
+      header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLLmbL8k1erzH2et4adano5Qs+pY1sf8l4bkpZfnZcnOot4XqS9JG7HO3FF6VsqMm5u+pAIwS1qu65/BJkRjBdcNTsGbZuzzKZqh/mCPU8AsQb4UPbK9
-    7MCfu7db1sLoDAiAZdJgu6tyUW5LlrzSrH79/K75He3+sMW66BSppMootpJ4DE9kBeu0BCJJKAP4gbCOe/4GyjnPOL+fArURI7RBbdio5wed4bzYPKB9vYS6
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfDwgjrkWVuV1n1sCct1hgivIkZ8qXYho50q7lGtryDpkTTkbRue8QmZ/0qaODx8484pUAfrLJS+b0vvmep+sfzBsrnPntNmc0+NGNFfbMOdVxXt9GQBk
+    JKXgQo3KS8kpoOLaR7hBoT3JRB95Z1rtOKwgS/LLJz2Wq/8AKJxvKmum4BQm8I+W3UuyPFXn5/dhiTNb2A2U970axKzJu25xAY9GyGxwAq4nPjPdBn0eR9V/
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=JfrnYn6hAAAA:8
-    a=p7Au9uXeTtAe-OaG0FYA:9 a=Q2i2xoE4Z_IA:10 a=I7Fl0iNTEZgA:10 a=G5WYf6J1rTwA:10
-    a=d0Eap3aq__YA:10 a=aXqy-N0K3ocA:10 a=1CNFftbPRP8L7MoqJWF3:22
+    a=LuXZDtCTQf_X7ep-_PIA:9 a=7Zwj6sZBwVKJAoWSPKxL6X1jA+E=:19
+    a=1CNFftbPRP8L7MoqJWF3:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751196AbeEVQF3 (ORCPT <rfc822;linux@kroah.com>);
-        Tue, 22 May 2018 12:05:29 -0400
-Received: from foss.arm.com ([217.140.101.70]:40550 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751436AbeEVQF2 (ORCPT <rfc822;linux-arch@vger.kernel.org>);
-        Tue, 22 May 2018 12:05:28 -0400
-From: Dave Martin <Dave.Martin@arm.com>
-To: kvmarm@lists.cs.columbia.edu
-Cc: linux-arm-kernel@lists.infradead.org,
-        Christoffer Dall <cdall@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Oleg Nesterov <oleg@redhat.com>
-Subject: [PATCH v10 00/18] KVM: arm64: Optimise FPSIMD context switching
-Date: Tue, 22 May 2018 17:05:01 +0100
-Message-Id: <1527005119-6842-1-git-send-email-Dave.Martin@arm.com>
-X-Mailer: git-send-email 2.1.4
+        id S1751371AbeEVMEr (ORCPT <rfc822;linux@kroah.com>);
+        Tue, 22 May 2018 08:04:47 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:51190 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751278AbeEVMEq (ORCPT
+        <rfc822;linux-arch@vger.kernel.org>); Tue, 22 May 2018 08:04:46 -0400
+From: Christoph Hellwig <hch@lst.de>
+To: iommu@lists.linux-foundation.org
+Cc: linux-arch@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
+        Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
+        linux-hexagon@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
+        linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        linux-kernel@vger.kernel.org
+Subject: common non-cache coherent direct dma mapping ops v2
+Date: Tue, 22 May 2018 14:04:05 +0200
+Message-Id: <20180522120430.28709-1-hch@lst.de>
+X-Mailer: git-send-email 2.17.0
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-arch-owner@vger.kernel.org
 X-Mailing-List: linux-arch@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Note: Most of these patches are Arm-specific.  People not Cc'd on the
-whole series can find it in the linux-arm-kernel archive [2].
+Hi all,
 
-This series aims to improve the way FPSIMD context is handled by KVM.
-Changes since the previous v9 [1] are mostly minor, but there are some
-fixes worthy of closer attention.
+this series continues consolidating the dma-mapping code, with a focus
+on architectures that do not (always) provide cache coherence for DMA.
+Three architectures (arm, mips and powerpc) are still left to be
+converted later due to complexity of their dma ops selection.
 
-In addition to addressing a review comment by Marc on the changes in v9,
-this series attempts to fix a NULL-dereference bug observed by Marc on
-ESPRESSOBin [5].  A reproducer for a similar bug is documented in [6],
-and this series fixes the observed bug (in patches 1 and 7).  At the
-moment, this is my best hypothesis for the ESPRESSOBin failure, though
-the relationship is unproven and we have no reproducer for the latter.
+The dma-noncoherent ops calls the dma-direct ops for the actual
+translation of streaming mappins and allow the architecture to provide
+any cache flushing required for cpu to device and/or device to cpu
+ownership transfers.  The dma coherent allocator is for now still left
+entirely to architecture supplied implementations due the amount of
+variations.  Hopefully we can do some consolidation for them later on
+as well.
 
-The changes are summarised in the individual patches.
+A lot of architectures are currently doing very questionable things
+in their dma mapping routines, which are documented in the changelogs
+for each patch.  Please review them very careful and correct me on
+incorrect assumptions.
 
-Reviewers please note:
+Because this series sits on top of three previously submitted series
+a git tree might be useful to actually test it.  It is provided here:
 
- * Since v8, patches 10 and 14 have changed.  Reviewer tags have been
-   stripped from patch 14, due to non-trivial changes in v9 of the
-   series: see the patch for details.
+    git://git.infradead.org/users/hch/misc.git generic-dma-noncoherent.2
 
- * Since v9, patches 1 and 7 are also new, and correct a latent bug in
-   FPSIMD context handling which is exposed by this series.
+Gitweb:
 
-If people could take a close look at the above patches, that would be
-much appreciated.
+    http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/generic-dma-noncoherent.2
 
-Cheers
----Dave
+Changes since v1:
+ - dropped the already merged generic, arc and c6x patches
+   (with the map_single offset fix from Alexey Brodkin)
+ - split various changes into smaller patches
+ - dropped the arm-nommu changes for now
+ - fixed a typo
 
-[1] [PATCH v9 00/16] KVM: arm64: Optimise FPSIMD context switching
-http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/579569.html
-
-[2] linux-arm-kernel archive
-http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/thread.html
-
-[3] [kvmarm:queue 9/29] arch/arm/kvm/../../../virt/kvm/arm/arm.c:783:3: error: implicit declaration of function 'kvm_arch_vcpu_ctxsync_fp'; did you mean 'kvm_arch_vcpu_put_fp'?
-http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/579400.html
-
-[4] [kvmarm:queue 13/29] arch/arm/kvm/../../../virt/kvm/arm/arm.c:1598:6: error: implicit declaration of function 'system_supports_sve'
-http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/579399.html
-
-[5] [PULL v8] KVM: arm64: Optimise FPSIMD context switching
-http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/579353.html
-
-
-Christoffer Dall (1):
-  KVM: arm/arm64: Introduce kvm_arch_vcpu_run_pid_change
-
-Dave Martin (17):
-  arm64: fpsimd: Fix TIF_FOREIGN_FPSTATE after invalidating cpu regs
-  thread_info: Add update_thread_flag() helpers
-  arm64: Use update{,_tsk}_thread_flag()
-  KVM: arm64: Convert lazy FPSIMD context switch trap to C
-  arm64: fpsimd: Generalise context saving for non-task contexts
-  arm64: fpsimd: Eliminate task->mm checks
-  arm64/sve: Refactor user SVE trap maintenance for external use
-  KVM: arm64: Repurpose vcpu_arch.debug_flags for general-purpose flags
-  KVM: arm64: Optimise FPSIMD handling to reduce guest/host thrashing
-  arm64/sve: Move read_zcr_features() out of cpufeature.h
-  arm64/sve: Switch sve_pffr() argument from task to thread
-  arm64/sve: Move sve_pffr() to fpsimd.h and make inline
-  KVM: arm64: Save host SVE context as appropriate
-  KVM: arm64: Remove eager host SVE state saving
-  KVM: arm64: Remove redundant *exit_code changes in fpsimd_guest_exit()
-  KVM: arm64: Fold redundant exit code checks out of fixup_guest_exit()
-  KVM: arm64: Invoke FPSIMD context switch trap from C
-
- arch/arm/include/asm/kvm_host.h      |  10 +-
- arch/arm64/Kconfig                   |   7 ++
- arch/arm64/include/asm/cpufeature.h  |  29 ------
- arch/arm64/include/asm/fpsimd.h      |  21 +++++
- arch/arm64/include/asm/kvm_asm.h     |   3 -
- arch/arm64/include/asm/kvm_host.h    |  45 +++++++--
- arch/arm64/include/asm/processor.h   |   2 +
- arch/arm64/include/asm/thread_info.h |   1 +
- arch/arm64/kernel/fpsimd.c           | 176 +++++++++++++++++------------------
- arch/arm64/kernel/ptrace.c           |   1 +
- arch/arm64/kvm/Kconfig               |   1 +
- arch/arm64/kvm/Makefile              |   2 +-
- arch/arm64/kvm/debug.c               |   8 +-
- arch/arm64/kvm/fpsimd.c              | 110 ++++++++++++++++++++++
- arch/arm64/kvm/hyp/debug-sr.c        |   6 +-
- arch/arm64/kvm/hyp/entry.S           |  43 ---------
- arch/arm64/kvm/hyp/hyp-entry.S       |  19 ----
- arch/arm64/kvm/hyp/switch.c          | 124 ++++++++++++++++--------
- arch/arm64/kvm/hyp/sysreg-sr.c       |   4 +-
- arch/arm64/kvm/sys_regs.c            |   9 +-
- include/linux/kvm_host.h             |   9 ++
- include/linux/sched.h                |   6 ++
- include/linux/thread_info.h          |  11 +++
- virt/kvm/Kconfig                     |   3 +
- virt/kvm/arm/arm.c                   |  14 ++-
- virt/kvm/kvm_main.c                  |   7 +-
- 26 files changed, 416 insertions(+), 255 deletions(-)
- create mode 100644 arch/arm64/kvm/fpsimd.c
-
--- 
-2.1.4
+Changes since RFC:
+ - fix a typo accidentally disabling the device to cpu transfer sync
+ - fixed a few compile failures
