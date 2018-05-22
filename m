@@ -1,10 +1,39 @@
-Date: Wed, 23 May 2018 10:25:41 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Rajat Jain <rajatja@google.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Jonathan Corbet <corbet@lwn.net>,
+Return-Path: <rajatja@google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1527028101; cv=none;
+        d=google.com; s=arc-20160816;
+        b=VgYs6CL/Jjk4pPch/ovAPiFMCME9WbCTSI7q4Tr0U8m+Q2A9BW3924+3g/yCuAwLIl
+         9tyMYxLqrRyCTW5NeIbxN3EV79biJ7Cv3DPhBRwGjM5H7ZVf8aeX19rtzK6VGKwUxk9U
+         qSE4XWsK17nS8e3KAsanQLMJNSIrd10x/eOd4KXwVCz4KFmWmtx2aJSimB1N1HlHT6Vj
+         DwpHGJd/14w0NXE6p8oweVDzzhJ5Kow1u+ujdehBlM0wr/+NblTyF1iSL8I+7cqOYOSW
+         PKSX9Ermdruv02v85kLHFmWhdBexw4ZixWqhNgwFxXSA83Xe2iw+wDk5BrgEKlpIoulq
+         1oJw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=j+Rsawe7EvZIqu1XY2wxzv9FW18gg9BfkhvV81lOchs=;
+        b=eTgpQLv9c2EMtPhZkS8WGZtSSEH4k9ShLR/5YCCWt9kiq9QKKU4NNvHLjOcHpnqtyo
+         z2Bw12XfHdJ/IKNbm4asd7hCWftlOzCFLjAdLKoT3xAH+N48nxMXy+301+kPF7OQytAA
+         ZgcV4y9Aveso6AzI4YxsmMVZEDVUUIoFG7pYurnqas/mlnsP+0fETceC5+uDy6Yx+K3A
+         1N/mmiChNZDHow75fYV5J3qF1/ELHILaTqfFHH3lkzGzSwKb4mrkM2V82pPJEi+kIW7c
+         i8DKFv+6wrmYoBGA8NREr/1GKLz99QL7xLfdCNYiCtZgiT4zAZJZ9PSbcjDxiiW6I+ft
+         q8uw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=ci+A43JF;
+       spf=pass (google.com: domain of rajatja@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=rajatja@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=ci+A43JF;
+       spf=pass (google.com: domain of rajatja@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=rajatja@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+X-Google-Smtp-Source: AB8JxZopl3Ks3PvIfu31p+KTE3iYDm3ESrPMyeEkgYk4P5Wy4JiNOSD4w8lwuULdUGj16/rxk1Mj7w==
+From: Rajat Jain <rajatja@google.com>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	Jonathan Corbet <corbet@lwn.net>,
 	Philippe Ombredanne <pombredanne@nexb.com>,
 	Kate Stewart <kstewart@linuxfoundation.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rajat Jain <rajatja@google.com>,
 	Frederick Lawler <fred@fredlawl.com>,
 	Oza Pawandeep <poza@codeaurora.org>,
 	Keith Busch <keith.busch@intel.com>,
@@ -12,105 +41,175 @@ Cc: Bjorn Helgaas <bhelgaas@google.com>, Jonathan Corbet <corbet@lwn.net>,
 	Alexandru Gagniuc <mr.nuke.me@gmail.com>,
 	Thomas Tai <thomas.tai@oracle.com>,
 	"Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-	linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jes Sorensen <jsorensen@fb.com>,
-	Kyle McMartin <jkkm@fb.com>, rajatxjain@gmail.com,
-	Rajat Jain <rajatj@google.com>
-Subject: Re: [PATCH 3/5] PCP/AER: Add sysfs attributes to provide breakdown
- of AERs
-Message-ID: <20180523082541.GF7247@kroah.com>
+	linux-pci@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jes Sorensen <jsorensen@fb.com>,
+	Kyle McMartin <jkkm@fb.com>
+Cc: rajatxjain@gmail.com
+Subject: [PATCH 2/5] PCI/AER: Add sysfs stats for AER capable devices
+Date: Tue, 22 May 2018 15:28:02 -0700
+Message-Id: <20180522222805.80314-3-rajatja@google.com>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+In-Reply-To: <20180522222805.80314-1-rajatja@google.com>
 References: <20180522222805.80314-1-rajatja@google.com>
- <20180522222805.80314-4-rajatja@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180522222805.80314-4-rajatja@google.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1601205018627101133?=
+X-GMAIL-MSGID: =?utf-8?q?1601205018627101133?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, May 22, 2018 at 03:28:03PM -0700, Rajat Jain wrote:
-> Add sysfs attributes to provide breakdown of the AERs seen,
-> into different type of correctable or uncorrectable errors:
-> 
-> dev_breakdown_correctable
-> dev_breakdown_uncorrectable
-> 
-> Signed-off-by: Rajat Jain <rajatj@google.com>
-> ---
->  drivers/pci/pcie/aer/aerdrv.h          |  6 ++++++
->  drivers/pci/pcie/aer/aerdrv_errprint.c |  6 ++++--
->  drivers/pci/pcie/aer/aerdrv_stats.c    | 25 +++++++++++++++++++++++++
->  3 files changed, 35 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/pcie/aer/aerdrv.h b/drivers/pci/pcie/aer/aerdrv.h
-> index b5d5ad6f2c03..048fbd7c9633 100644
-> --- a/drivers/pci/pcie/aer/aerdrv.h
-> +++ b/drivers/pci/pcie/aer/aerdrv.h
-> @@ -89,6 +89,12 @@ int pci_aer_stats_init(struct pci_dev *pdev);
->  void pci_aer_stats_exit(struct pci_dev *pdev);
->  void pci_dev_aer_stats_incr(struct pci_dev *pdev, struct aer_err_info *info);
->  
-> +extern const char
-> +*aer_correctable_error_string[AER_MAX_TYPEOF_CORRECTABLE_ERRS];
-> +
-> +extern const char
-> +*aer_uncorrectable_error_string[AER_MAX_TYPEOF_UNCORRECTABLE_ERRS];
-> +
->  #ifdef CONFIG_ACPI_APEI
->  int pcie_aer_get_firmware_first(struct pci_dev *pci_dev);
->  #else
-> diff --git a/drivers/pci/pcie/aer/aerdrv_errprint.c b/drivers/pci/pcie/aer/aerdrv_errprint.c
-> index 5e8b98deda08..5585f309f1a8 100644
-> --- a/drivers/pci/pcie/aer/aerdrv_errprint.c
-> +++ b/drivers/pci/pcie/aer/aerdrv_errprint.c
-> @@ -68,7 +68,8 @@ static const char *aer_error_layer[] = {
->  	"Transaction Layer"
->  };
->  
-> -static const char *aer_correctable_error_string[] = {
-> +const char
-> +*aer_correctable_error_string[AER_MAX_TYPEOF_CORRECTABLE_ERRS] = {
->  	"Receiver Error",		/* Bit Position 0	*/
->  	NULL,
->  	NULL,
-> @@ -87,7 +88,8 @@ static const char *aer_correctable_error_string[] = {
->  	"Header Log Overflow",		/* Bit Position 15	*/
->  };
->  
-> -static const char *aer_uncorrectable_error_string[] = {
-> +const char
-> +*aer_uncorrectable_error_string[AER_MAX_TYPEOF_UNCORRECTABLE_ERRS] = {
->  	"Undefined",			/* Bit Position 0	*/
->  	NULL,
->  	NULL,
-> diff --git a/drivers/pci/pcie/aer/aerdrv_stats.c b/drivers/pci/pcie/aer/aerdrv_stats.c
-> index 87b7119d0a86..5f0a6e144f56 100644
-> --- a/drivers/pci/pcie/aer/aerdrv_stats.c
-> +++ b/drivers/pci/pcie/aer/aerdrv_stats.c
-> @@ -61,10 +61,35 @@ aer_stats_aggregate_attr(dev_total_cor_errs);
->  aer_stats_aggregate_attr(dev_total_fatal_errs);
->  aer_stats_aggregate_attr(dev_total_nonfatal_errs);
->  
-> +#define aer_stats_breakdown_attr(field, stats_array, strings_array)            \
-> +	static ssize_t                                                         \
-> +	field##_show(struct device *dev, struct device_attribute *attr,        \
-> +		     char *buf)                                                \
-> +{                                                                              \
-> +	unsigned int i;                                                        \
-> +	char *str = buf;                                                       \
-> +	struct pci_dev *pdev = to_pci_dev(dev);                                \
-> +	u64 *stats = pdev->aer_stats->stats_array;                             \
-> +	for (i = 0; i < ARRAY_SIZE(strings_array); i++) {                      \
-> +		if (strings_array[i])                                          \
-> +			str += sprintf(str, "%s = 0x%llx\n",                   \
-> +				       strings_array[i], stats[i]);            \
-> +	}                                                                      \
-> +	return str-buf;                                                        \
-> +}                                                                              \
+Add the following AER sysfs stats to represent the counters for each
+kind of error as seen by the device:
 
-Again with the tabs instead of spaces please.
+dev_total_cor_errs
+dev_total_fatal_errs
+dev_total_nonfatal_errs
 
-thanks,
+Signed-off-by: Rajat Jain <rajatja@google.com>
+---
+ drivers/pci/pci-sysfs.c                |  3 ++
+ drivers/pci/pci.h                      |  4 +-
+ drivers/pci/pcie/aer/aerdrv.h          |  1 +
+ drivers/pci/pcie/aer/aerdrv_errprint.c |  1 +
+ drivers/pci/pcie/aer/aerdrv_stats.c    | 72 ++++++++++++++++++++++++++
+ 5 files changed, 80 insertions(+), 1 deletion(-)
 
-greg k-h
+diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+index 366d93af051d..730f985a3dc9 100644
+--- a/drivers/pci/pci-sysfs.c
++++ b/drivers/pci/pci-sysfs.c
+@@ -1743,6 +1743,9 @@ static const struct attribute_group *pci_dev_attr_groups[] = {
+ #endif
+ 	&pci_bridge_attr_group,
+ 	&pcie_dev_attr_group,
++#ifdef CONFIG_PCIEAER
++	&aer_stats_attr_group,
++#endif
+ 	NULL,
+ };
+ 
+diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+index c358e7a07f3f..9a28ec600225 100644
+--- a/drivers/pci/pci.h
++++ b/drivers/pci/pci.h
+@@ -181,7 +181,9 @@ extern const struct attribute_group *pci_dev_groups[];
+ extern const struct attribute_group *pcibus_groups[];
+ extern const struct device_type pci_dev_type;
+ extern const struct attribute_group *pci_bus_groups[];
+-
++#ifdef CONFIG_PCIEAER
++extern const struct attribute_group aer_stats_attr_group;
++#endif
+ 
+ /**
+  * pci_match_one_device - Tell if a PCI device structure has a matching
+diff --git a/drivers/pci/pcie/aer/aerdrv.h b/drivers/pci/pcie/aer/aerdrv.h
+index d8b9fba536ed..b5d5ad6f2c03 100644
+--- a/drivers/pci/pcie/aer/aerdrv.h
++++ b/drivers/pci/pcie/aer/aerdrv.h
+@@ -87,6 +87,7 @@ void aer_print_port_info(struct pci_dev *dev, struct aer_err_info *info);
+ irqreturn_t aer_irq(int irq, void *context);
+ int pci_aer_stats_init(struct pci_dev *pdev);
+ void pci_aer_stats_exit(struct pci_dev *pdev);
++void pci_dev_aer_stats_incr(struct pci_dev *pdev, struct aer_err_info *info);
+ 
+ #ifdef CONFIG_ACPI_APEI
+ int pcie_aer_get_firmware_first(struct pci_dev *pci_dev);
+diff --git a/drivers/pci/pcie/aer/aerdrv_errprint.c b/drivers/pci/pcie/aer/aerdrv_errprint.c
+index 21ca5e1b0ded..5e8b98deda08 100644
+--- a/drivers/pci/pcie/aer/aerdrv_errprint.c
++++ b/drivers/pci/pcie/aer/aerdrv_errprint.c
+@@ -155,6 +155,7 @@ static void __aer_print_error(struct pci_dev *dev,
+ 			pci_err(dev, "   [%2d] Unknown Error Bit%s\n",
+ 				i, info->first_error == i ? " (First)" : "");
+ 	}
++	pci_dev_aer_stats_incr(dev, info);
+ }
+ 
+ void aer_print_error(struct pci_dev *dev, struct aer_err_info *info)
+diff --git a/drivers/pci/pcie/aer/aerdrv_stats.c b/drivers/pci/pcie/aer/aerdrv_stats.c
+index b9f251992209..87b7119d0a86 100644
+--- a/drivers/pci/pcie/aer/aerdrv_stats.c
++++ b/drivers/pci/pcie/aer/aerdrv_stats.c
+@@ -47,6 +47,78 @@ struct aer_stats {
+ 	u64 rootport_total_nonfatal_errs;
+ };
+ 
++#define aer_stats_aggregate_attr(field)                                        \
++	static ssize_t                                                         \
++	field##_show(struct device *dev, struct device_attribute *attr,        \
++		     char *buf)                                                \
++{                                                                              \
++	struct pci_dev *pdev = to_pci_dev(dev);                                \
++	return sprintf(buf, "0x%llx\n", pdev->aer_stats->field);               \
++}                                                                              \
++static DEVICE_ATTR_RO(field)
++
++aer_stats_aggregate_attr(dev_total_cor_errs);
++aer_stats_aggregate_attr(dev_total_fatal_errs);
++aer_stats_aggregate_attr(dev_total_nonfatal_errs);
++
++static struct attribute *aer_stats_attrs[] __ro_after_init = {
++	&dev_attr_dev_total_cor_errs.attr,
++	&dev_attr_dev_total_fatal_errs.attr,
++	&dev_attr_dev_total_nonfatal_errs.attr,
++	NULL
++};
++
++static umode_t aer_stats_attrs_are_visible(struct kobject *kobj,
++					   struct attribute *a, int n)
++{
++	struct device *dev = kobj_to_dev(kobj);
++	struct pci_dev *pdev = to_pci_dev(dev);
++
++	if (!pdev->aer_stats)
++		return 0;
++
++	return a->mode;
++}
++
++const struct attribute_group aer_stats_attr_group = {
++	.name  = "aer_stats",
++	.attrs  = aer_stats_attrs,
++	.is_visible = aer_stats_attrs_are_visible,
++};
++
++void pci_dev_aer_stats_incr(struct pci_dev *pdev, struct aer_err_info *info)
++{
++	int status, i, max = -1;
++	u64 *counter = NULL;
++	struct aer_stats *aer_stats = pdev->aer_stats;
++
++	if (unlikely(!aer_stats))
++		return;
++
++	switch (info->severity) {
++	case AER_CORRECTABLE:
++		aer_stats->dev_total_cor_errs++;
++		counter = &aer_stats->dev_cor_errs[0];
++		max = AER_MAX_TYPEOF_CORRECTABLE_ERRS;
++		break;
++	case AER_NONFATAL:
++		aer_stats->dev_total_nonfatal_errs++;
++		counter = &aer_stats->dev_uncor_errs[0];
++		max = AER_MAX_TYPEOF_UNCORRECTABLE_ERRS;
++		break;
++	case AER_FATAL:
++		aer_stats->dev_total_fatal_errs++;
++		counter = &aer_stats->dev_uncor_errs[0];
++		max = AER_MAX_TYPEOF_UNCORRECTABLE_ERRS;
++		break;
++	}
++
++	status = (info->status & ~info->mask);
++	for (i = 0; i < max; i++)
++		if (status & (1 << i))
++			counter[i]++;
++}
++
+ int pci_aer_stats_init(struct pci_dev *pdev)
+ {
+ 	pdev->aer_stats = kzalloc(sizeof(struct aer_stats), GFP_KERNEL);
+-- 
+2.17.0.441.gb46fe60e1d-goog
