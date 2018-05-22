@@ -1,106 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752242AbeEVBru (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 21:47:50 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:33009 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751505AbeEVBrp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 21:47:45 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
-   d="scan'208";a="40185578"
-Subject: Re: [PATCH 4/5] acpi/processor: Fix the return value of
- acpi_processor_ids_walk()
-To: Thomas Gleixner <tglx@linutronix.de>
-CC: LKML <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
-        <linux-acpi@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Len Brown <lenb@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>
-References: <20180320110432.28127-1-douly.fnst@cn.fujitsu.com>
- <20180320110432.28127-5-douly.fnst@cn.fujitsu.com>
- <alpine.DEB.2.21.1805191704150.1599@nanos.tec.linutronix.de>
-From: Dou Liyang <douly.fnst@cn.fujitsu.com>
-Message-ID: <7c33b3bd-7e9d-1583-737c-d2edd457bd1a@cn.fujitsu.com>
-Date: Tue, 22 May 2018 09:47:36 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1752355AbeEVBsS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 21:48:18 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47650 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751557AbeEVBsR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 21:48:17 -0400
+Date: Tue, 22 May 2018 09:48:05 +0800
+From: Dave Young <dyoung@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+        Cong Wang <xiyou.wangcong@gmail.com>, Neil Horman <nhorman@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Vivek Goyal <vgoyal@redhat.com>, Tony Luck <tony.luck@intel.com>,
+        Anton Vorontsov <avorontsov@ru.mvista.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Hari Bathini <hbathini@linux.vnet.ibm.com>, dzickus@redhat.com,
+        bhe@redhat.com
+Subject: Re: [PATCH] kdump: add default crashkernel reserve kernel config
+ options
+Message-ID: <20180522014805.GB6827@dhcp-128-65.nay.redhat.com>
+References: <20180521025337.GA4627@dhcp-128-65.nay.redhat.com>
+ <20180521120215.117d963a7619eb0d1f54bced@linux-foundation.org>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1805191704150.1599@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.167.226.106]
-X-yoursite-MailScanner-ID: 2137248AE92A.AA514
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180521120215.117d963a7619eb0d1f54bced@linux-foundation.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-At 05/19/2018 11:06 PM, Thomas Gleixner wrote:
-> On Tue, 20 Mar 2018, Dou Liyang wrote:
+On 05/21/18 at 12:02pm, Andrew Morton wrote:
+> On Mon, 21 May 2018 10:53:37 +0800 Dave Young <dyoung@redhat.com> wrote:
 > 
->> ACPI driver should make sure all the processor IDs in their ACPI Namespace
->> are unique for CPU hotplug. the driver performs a depth-first walk of the
->> namespace tree and calls the acpi_processor_ids_walk().
->>
->> But, the acpi_processor_ids_walk() will return true if one processor is
->> checked, that cause the walk break after walking pass the first processor.
->>
->> Repace the value with AE_OK which is the standard acpi_status value.
->>
->> Fixes 8c8cb30f49b8 ("acpi/processor: Implement DEVICE operator for processor enumeration")
->>
->> Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
->> ---
->>   drivers/acpi/acpi_processor.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/acpi/acpi_processor.c b/drivers/acpi/acpi_processor.c
->> index 449d86d39965..db5bdb59639c 100644
->> --- a/drivers/acpi/acpi_processor.c
->> +++ b/drivers/acpi/acpi_processor.c
->> @@ -663,11 +663,11 @@ static acpi_status __init (acpi_handle handle,
->>   	}
->>   
->>   	processor_validated_ids_update(uid);
->> -	return true;
->> +	return AE_OK;
->>   
->>   err:
->>   	acpi_handle_info(handle, "Invalid processor object\n");
->> -	return false;
->> +	return AE_OK;
+> > This is a rework of the crashkernel=auto patches back to 2009 although
+> > I'm not sure if below is the last version of the old effort:
+> > https://lkml.org/lkml/2009/8/12/61
+> > https://lwn.net/Articles/345344/
+> > 
+> > I changed the original design, instead of adding the auto reserve logic
+> > in code, in this patch just introduce two kernel config options for
+> > the default crashkernel value in MB and the threshold of system memory
+> > in MB so that only reserve default when system memory is equal or
+> > above the threshold.
+> > 
+> > With the kernel configs distributions can easily change the default
+> > values so that people do not need to manually set kernel cmdline
+> > for common use cases and one can still overwrite the default value
+> > with manual setup or disable it by using crashkernel=0
+> > 
+> > Signed-off-by: Dave Young <dyoung@redhat.com>
+> > ---
+> > Another difference is with original design the crashkernel size scales
+> > with system memory, according to test, large machine may need more
+> > memory in kdump kernel because of several factors:
+> > 1. cpu numbers, because of the percpu memory allocated for cpus.
+> >    (kdump can use nr_cpus=1 to workaround this, but some
+> >     arches do not support nr_cpus=X for example powerpc) 
+> > 2. IO devices, large system can have a lot of io devices, although we
+> >    can try to only add those device drivers we needed, it is still a
+> >    problem because of some built-in drivers, some stacked logical devices
+> >    eg. device mapper devices, acpi etc.  Even if only considering the
+> >    meta data for driver model it will still be a big number eg. sysfs
+> >    files etc.
+> > 3. The minimum memory requirement for some device drivers are big, even
+> >    if some of them have implemented low meory profile.  It is usual to see
+> >    10M memory use for a storage driver.
+> > 4. user space initramfs size growing.  Busybox is not usable if we need
+> >    to add udev support and some complicate storage support.  Use dracut
+> >    with systemd, especially networking stuff need more memory.
+> > 
+> > So probably add another kernel config option to scale the memory size
+> > eg.  CRASHKERNEL_DEFAULT_SCALE_RATIO is also good to have,  in RHEL we
+> > use base_value + system_mem >> (2^14) for x86.  I'm still hesatating
+> > how to describe and add this option. Any suggestions will be appreciated.
+> > 
+> > ...
+> >
+> > --- linux-x86.orig/arch/Kconfig
+> > +++ linux-x86/arch/Kconfig
+> > @@ -10,6 +10,22 @@ config KEXEC_CORE
+> >  	select CRASH_CORE
+> >  	bool
+> >  
+> > +config CRASHKERNEL_DEFAULT_THRESHOLD_MB
+> > +	int "System memory size threshold for kdump memory default reserving"
+> > +	depends on CRASH_CORE
+> > +	default 0
+> > +	help
+> > +	  CRASHKERNEL_DEFAULT_MB is used as default crashkernel value if
+> > +	  the system memory size is equal or bigger than the threshold.
 > 
-> I'm not sure whether this is the right return value here. Rafael?
+> "the threshold" is rather vague.  Can it be clarified?
 > 
-Hi, Thomas, Rafael,
+> In fact I'm really struggling to understand the logic here....
 
-Yes, I used AE_OK to make sure it can skip the invalid objects and
-continue to do the following other objects, I'm also not sure.
+Sorry I missed this comment, the threshold is like this:
 
-For this bug, recently, I sent another patch to remove this check code
-away.
+if system memory size is lower than the threshold then we will do
+nothing and do not reserve crashkernel memory by default.  Eg. if the
+threshold is 1024M then default reservation is only used when system has
+more than 1024M memory, and for those low mem machine we do not reserve by
+default.
 
-    https://lkml.org/lkml/2018/5/17/320
-
-IMO, the duplicate IDs can be avoid by the other code
-
-    if (invalid_logical_cpuid(pr->id) || !cpu_present(pr->id)) ---- 1)
-
-As the mapping of cpu_id(pr->id) and processor_id is fixed, when
-hot-plugging a physical CPU, if its processor_id is duplicated with the
-present, the above condition 1) will be 0, and Linux will do not add
-this CPU.
-
-And, when every time the system starts, this code will be executed, it
-will waste more time with the increase in the number of CPU.
-
-So I prefer to remove this code.
-
-Thanks,
-	dou
+Thanks
+Dave
