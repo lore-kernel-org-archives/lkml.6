@@ -1,64 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753357AbeEVWyF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 18:54:05 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:33915 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753036AbeEVWyD (ORCPT
+        id S1753329AbeEVW4N (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 18:56:13 -0400
+Received: from mail-pl0-f45.google.com ([209.85.160.45]:43757 "EHLO
+        mail-pl0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753110AbeEVW4L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 18:54:03 -0400
-X-Google-Smtp-Source: AB8JxZoFxhmCvMUCqEAb2GaHzO9l5gDopnXTI4yUcZbiv5NoeEjo5VJgZ4mFMnWB1BileTNwa8AcQQ==
-Date: Tue, 22 May 2018 15:54:01 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Michal Hocko <mhocko@kernel.org>
-cc: =?UTF-8?B?56a56Iif6ZSu?= <ufo19890607@gmail.com>,
-        akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
-        aarcange@redhat.com, penguin-kernel@i-love.sakura.ne.jp, guro@fb.com,
-        yang.s@alibaba-inc.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Wind Yu <yuzhoujian@didichuxing.com>
-Subject: Re: [PATCH] Add the memcg print oom info for system oom
-In-Reply-To: <20180522063742.GE20020@dhcp22.suse.cz>
-Message-ID: <alpine.DEB.2.21.1805221542540.83718@chino.kir.corp.google.com>
-References: <1526540428-12178-1-git-send-email-ufo19890607@gmail.com> <20180517071140.GQ12670@dhcp22.suse.cz> <CAHCio2gOLnj4NpkFrxpYVygg6ZeSeuwgp2Lwr6oTHRxHpbmcWw@mail.gmail.com> <20180517102330.GS12670@dhcp22.suse.cz> <alpine.DEB.2.21.1805211405300.41872@chino.kir.corp.google.com>
- <20180522063742.GE20020@dhcp22.suse.cz>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Tue, 22 May 2018 18:56:11 -0400
+X-Google-Smtp-Source: AB8JxZqcSmTo56c3PGT/RQOMCzdwVqkqrdVt66xR45LMFIUsciCq3xoBuJ8KDufutIcTe/kEHAxmjA==
+From: Joel Fernandes <joelaf@google.com>
+X-Google-Original-From: Joel Fernandes <joel@joelfernandes.org>
+To: linux-kernel@vger.kernel.org
+Cc: "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Luca Abeni <luca.abeni@santannapisa.it>, Todd Kjos <tkjos@google.com>,
+        claudio@evidence.eu.com, kernel-team@android.com,
+        linux-pm@vger.kernel.org
+Subject: [PATCH v3] schedutil: Allow cpufreq requests to be made even when kthread kicked
+Date: Tue, 22 May 2018 15:55:53 -0700
+Message-Id: <20180522225553.69483-1-joel@joelfernandes.org>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 22 May 2018, Michal Hocko wrote:
+From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
 
-> > I've had success with defining a single line output the includes the 
-> > CONSTRAINT_* of the oom kill, the origin and kill memcgs, the thread name, 
-> > pid, and uid.  On system oom kills, origin and kill memcgs are left empty.
-> > 
-> > oom-kill constraint=CONSTRAINT_* origin_memcg=<memcg> kill_memcg=<memcg> task=<comm> pid=<pid> uid=<uid>
-> > 
-> > Perhaps we should introduce a single line output that will be backwards 
-> > compatible that includes this information?
-> 
-> I do not have a strong preference here. We already print cpuset on its
-> own line and we can do the same for the memcg.
-> 
+Currently there is a chance of a schedutil cpufreq update request to be
+dropped if there is a pending update request. This pending request can
+be delayed if there is a scheduling delay of the irq_work and the wake
+up of the schedutil governor kthread.
 
-Yes, for both the memcg that has reached its limit (origin_memcg) and the 
-memcg the killed process is attached to (kill_memcg).
+A very bad scenario is when a schedutil request was already just made,
+such as to reduce the CPU frequency, then a newer request to increase
+CPU frequency (even sched deadline urgent frequency increase requests)
+can be dropped, even though the rate limits suggest that its Ok to
+process a request. This is because of the way the work_in_progress flag
+is used.
 
-It's beneficial to have a single-line output to avoid any printk 
-interleaving or ratelimiting that includes the constraint, comm, and at 
-least pid.  (We include uid simply to find oom kills of root processes.)
+This patch improves the situation by allowing new requests to happen
+even though the old one is still being processed. Note that in this
+approach, if an irq_work was already issued, we just update next_freq
+and don't bother to queue another request so there's no extra work being
+done to make this happen.
 
-We already have all this information, including cpuset, cpuset nodemask, 
-and allocation nodemask for mempolicy ooms.  The only exception appears to 
-be the kill_memcg for CONSTRAINT_NONE and for it to be emitted in a way 
-that can't be interleaved or suppressed.
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Acked-by: Juri Lelli <juri.lelli@redhat.com>
+CC: Viresh Kumar <viresh.kumar@linaro.org>
+CC: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+CC: Peter Zijlstra <peterz@infradead.org>
+CC: Ingo Molnar <mingo@redhat.com>
+CC: Patrick Bellasi <patrick.bellasi@arm.com>
+CC: Juri Lelli <juri.lelli@redhat.com>
+Cc: Luca Abeni <luca.abeni@santannapisa.it>
+CC: Todd Kjos <tkjos@google.com>
+CC: claudio@evidence.eu.com
+CC: kernel-team@android.com
+CC: linux-pm@vger.kernel.org
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+---
+Only commit log update, no code change in v2->v3
 
-Perhaps we can have this?
+ kernel/sched/cpufreq_schedutil.c | 34 ++++++++++++++++++++++++--------
+ 1 file changed, 26 insertions(+), 8 deletions(-)
 
-oom-kill constraint=CONSTRAINT_* nodemask=<cpuset/mempolicy nodemask> origin_memcg=<memcg> kill_memcg=<memcg> task=<comm> pid=<pid> uid=<uid>
-
-For CONSTRAINT_NONE, nodemask and origin_memcg are empty.  For 
-CONSTRAINT_CPUSET and CONSTRAINT_MEMORY_POLICY, origin_memcg is empty.
+diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+index e13df951aca7..5c482ec38610 100644
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -92,9 +92,6 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
+ 	    !cpufreq_can_do_remote_dvfs(sg_policy->policy))
+ 		return false;
+ 
+-	if (sg_policy->work_in_progress)
+-		return false;
+-
+ 	if (unlikely(sg_policy->need_freq_update)) {
+ 		sg_policy->need_freq_update = false;
+ 		/*
+@@ -128,7 +125,7 @@ static void sugov_update_commit(struct sugov_policy *sg_policy, u64 time,
+ 
+ 		policy->cur = next_freq;
+ 		trace_cpu_frequency(next_freq, smp_processor_id());
+-	} else {
++	} else if (!sg_policy->work_in_progress) {
+ 		sg_policy->work_in_progress = true;
+ 		irq_work_queue(&sg_policy->irq_work);
+ 	}
+@@ -291,6 +288,13 @@ static void sugov_update_single(struct update_util_data *hook, u64 time,
+ 
+ 	ignore_dl_rate_limit(sg_cpu, sg_policy);
+ 
++	/*
++	 * For slow-switch systems, single policy requests can't run at the
++	 * moment if update is in progress, unless we acquire update_lock.
++	 */
++	if (sg_policy->work_in_progress)
++		return;
++
+ 	if (!sugov_should_update_freq(sg_policy, time))
+ 		return;
+ 
+@@ -382,13 +386,27 @@ sugov_update_shared(struct update_util_data *hook, u64 time, unsigned int flags)
+ static void sugov_work(struct kthread_work *work)
+ {
+ 	struct sugov_policy *sg_policy = container_of(work, struct sugov_policy, work);
++	unsigned int freq;
++	unsigned long flags;
++
++	/*
++	 * Hold sg_policy->update_lock shortly to handle the case where:
++	 * incase sg_policy->next_freq is read here, and then updated by
++	 * sugov_update_shared just before work_in_progress is set to false
++	 * here, we may miss queueing the new update.
++	 *
++	 * Note: If a work was queued after the update_lock is released,
++	 * sugov_work will just be called again by kthread_work code; and the
++	 * request will be proceed before the sugov thread sleeps.
++	 */
++	raw_spin_lock_irqsave(&sg_policy->update_lock, flags);
++	freq = sg_policy->next_freq;
++	sg_policy->work_in_progress = false;
++	raw_spin_unlock_irqrestore(&sg_policy->update_lock, flags);
+ 
+ 	mutex_lock(&sg_policy->work_lock);
+-	__cpufreq_driver_target(sg_policy->policy, sg_policy->next_freq,
+-				CPUFREQ_RELATION_L);
++	__cpufreq_driver_target(sg_policy->policy, freq, CPUFREQ_RELATION_L);
+ 	mutex_unlock(&sg_policy->work_lock);
+-
+-	sg_policy->work_in_progress = false;
+ }
+ 
+ static void sugov_irq_work(struct irq_work *irq_work)
+-- 
+2.17.0.441.gb46fe60e1d-goog
