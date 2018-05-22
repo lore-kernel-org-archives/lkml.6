@@ -1,253 +1,163 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751369AbeEVKob (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 06:44:31 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:34036 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751039AbeEVKo3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 06:44:29 -0400
-Date: Tue, 22 May 2018 11:44:13 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-CC: Jonathan Cameron <jic23@kernel.org>, <benjamin.gaignard@st.com>,
-        <fabrice.gasnier@st.com>, <linux-iio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v6 9/9] iio: counter: Remove IIO counter subdirectory
-Message-ID: <20180522114413.000006ec@huawei.com>
-In-Reply-To: <20180521135828.GD5723@sophia>
-References: <cover.1526487615.git.vilhelm.gray@gmail.com>
-        <4c335e0eebfbaf6e86f41e0f2864d76993d90b13.1526487615.git.vilhelm.gray@gmail.com>
-        <20180520165302.101d37ce@archlinux>
-        <20180521135828.GD5723@sophia>
-Organization: Huawei
-X-Mailer: Claws Mail 3.15.0 (GTK+ 2.24.31; x86_64-w64-mingw32)
+        id S1751329AbeEVKuM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 06:50:12 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:40250 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751002AbeEVKuJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 06:50:09 -0400
+X-Google-Smtp-Source: AB8JxZqi427Tuc8Tn6tQr3pvLyIhgJ3qh9Q5WbAxo6PsKkzcC9dlTNEbDz2lU2Vcx/qn3XFKLgvZVQ==
+Date: Tue, 22 May 2018 16:20:06 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: "Joel Fernandes (Google.)" <joelaf@google.com>
+Cc: linux-kernel@vger.kernel.org,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Luca Abeni <luca.abeni@santannapisa.it>, Todd Kjos <tkjos@google.com>,
+        claudio@evidence.eu.com, kernel-team@android.com,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2] schedutil: Allow cpufreq requests to be made even
+ when kthread kicked
+Message-ID: <20180522105006.hvntwnhzzvhznij2@vireshk-i7>
+References: <20180518185501.173552-1-joel@joelfernandes.org>
+ <20180522103415.cuutobi5kbhj4gcw@vireshk-i7>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.206.48.115]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180522103415.cuutobi5kbhj4gcw@vireshk-i7>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 May 2018 09:58:28 -0400
-William Breathitt Gray <vilhelm.gray@gmail.com> wrote:
-
-> On Sun, May 20, 2018 at 04:53:02PM +0100, Jonathan Cameron wrote:
-> >On Wed, 16 May 2018 13:52:39 -0400
-> >William Breathitt Gray <vilhelm.gray@gmail.com> wrote:
+On 22-05-18, 16:04, Viresh Kumar wrote:
+> Okay, me and Rafael were discussing this patch, locking and races around this.
+> 
+> On 18-05-18, 11:55, Joel Fernandes (Google.) wrote:
+> > diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+> > index e13df951aca7..5c482ec38610 100644
+> > --- a/kernel/sched/cpufreq_schedutil.c
+> > +++ b/kernel/sched/cpufreq_schedutil.c
+> > @@ -92,9 +92,6 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
+> >  	    !cpufreq_can_do_remote_dvfs(sg_policy->policy))
+> >  		return false;
 > >  
-> >> This patch removes the IIO counter subdirectory which is now superceded
-> >> by the Counter subsystem. Deprecation warnings are added to the
-> >> documentation of the relevant IIO counter sysfs attributes.
-> >> 
-> >> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>  
-> >
-> >Please drop the directory when it becomes empty rather than in a later
-> >patch.  IIRC there are some issues with empty Makefiles that will
-> >make building inbetween tricky.
-> >
-> >For the deprecated markings.
-> >
-> >Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>  
-> 
-> I'll have the directory removal occur with the removal of the last
-> module then when the directory becomes empty.
-> 
-> Regarding the deprecation markings, should I select a specific kernel
-> version to date the removal of these attributes, or leave the future
-> date open as this patch is now?
-
-Leave it open.  The ultimate test is whether it is actually enough of a burden
-to make us want to clean up the deprecated interface.
-
-This burden may be that it is a pain to implement something new, or to test
-or to maintain the code (or something I haven't thought of).
-
-If it's not it may stay there for ever.
-
-Jonathan
-> 
-> William Breathitt Gray
-> 
+> > -	if (sg_policy->work_in_progress)
+> > -		return false;
+> > -
+> >  	if (unlikely(sg_policy->need_freq_update)) {
+> >  		sg_policy->need_freq_update = false;
+> >  		/*
+> > @@ -128,7 +125,7 @@ static void sugov_update_commit(struct sugov_policy *sg_policy, u64 time,
 > >  
-> >> ---
-> >>  Documentation/ABI/testing/sysfs-bus-iio          |  8 ++++++++
-> >>  .../ABI/testing/sysfs-bus-iio-counter-104-quad-8 | 16 ++++++++++++++++
-> >>  drivers/iio/Kconfig                              |  1 -
-> >>  drivers/iio/Makefile                             |  1 -
-> >>  drivers/iio/counter/Kconfig                      |  8 --------
-> >>  drivers/iio/counter/Makefile                     |  5 -----
-> >>  6 files changed, 24 insertions(+), 15 deletions(-)
-> >>  delete mode 100644 drivers/iio/counter/Kconfig
-> >>  delete mode 100644 drivers/iio/counter/Makefile
-> >> 
-> >> diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
-> >> index 731146c3b138..6115d97b075e 100644
-> >> --- a/Documentation/ABI/testing/sysfs-bus-iio
-> >> +++ b/Documentation/ABI/testing/sysfs-bus-iio
-> >> @@ -1637,6 +1637,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_countY_raw
-> >>  KernelVersion:	4.10
-> >>  Contact:	linux-iio@vger.kernel.org
-> >>  Description:
-> >> +		This interface is deprecated; please use the Counter subsystem.
-> >> +
-> >>  		Raw counter device counts from channel Y. For quadrature
-> >>  		counters, multiplication by an available [Y]_scale results in
-> >>  		the counts of a single quadrature signal phase from channel Y.
-> >> @@ -1645,6 +1647,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_indexY_raw
-> >>  KernelVersion:	4.10
-> >>  Contact:	linux-iio@vger.kernel.org
-> >>  Description:
-> >> +		This interface is deprecated; please use the Counter subsystem.
-> >> +
-> >>  		Raw counter device index value from channel Y. This attribute
-> >>  		provides an absolute positional reference (e.g. a pulse once per
-> >>  		revolution) which may be used to home positional systems as
-> >> @@ -1654,6 +1658,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_count_count_direction_available
-> >>  KernelVersion:	4.12
-> >>  Contact:	linux-iio@vger.kernel.org
-> >>  Description:
-> >> +		This interface is deprecated; please use the Counter subsystem.
-> >> +
-> >>  		A list of possible counting directions which are:
-> >>  		- "up"	: counter device is increasing.
-> >>  		- "down": counter device is decreasing.
-> >> @@ -1662,4 +1668,6 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_countY_count_direction
-> >>  KernelVersion:	4.12
-> >>  Contact:	linux-iio@vger.kernel.org
-> >>  Description:
-> >> +		This interface is deprecated; please use the Counter subsystem.
-> >> +
-> >>  		Raw counter device counters direction for channel Y.
-> >> diff --git a/Documentation/ABI/testing/sysfs-bus-iio-counter-104-quad-8 b/Documentation/ABI/testing/sysfs-bus-iio-counter-104-quad-8
-> >> index 7fac2c268d9a..bac3d0d48b7b 100644
-> >> --- a/Documentation/ABI/testing/sysfs-bus-iio-counter-104-quad-8
-> >> +++ b/Documentation/ABI/testing/sysfs-bus-iio-counter-104-quad-8
-> >> @@ -6,6 +6,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_index_synchronous_mode_available
-> >>  KernelVersion:	4.10
-> >>  Contact:	linux-iio@vger.kernel.org
-> >>  Description:
-> >> +		This interface is deprecated; please use the Counter subsystem.
-> >> +
-> >>  		Discrete set of available values for the respective counter
-> >>  		configuration are listed in this file.
-> >>  
-> >> @@ -13,6 +15,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_countY_count_mode
-> >>  KernelVersion:	4.10
-> >>  Contact:	linux-iio@vger.kernel.org
-> >>  Description:
-> >> +		This interface is deprecated; please use the Counter subsystem.
-> >> +
-> >>  		Count mode for channel Y. Four count modes are available:
-> >>  		normal, range limit, non-recycle, and modulo-n. The preset value
-> >>  		for channel Y is used by the count mode where required.
-> >> @@ -47,6 +51,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_countY_noise_error
-> >>  KernelVersion:	4.10
-> >>  Contact:	linux-iio@vger.kernel.org
-> >>  Description:
-> >> +		This interface is deprecated; please use the Counter subsystem.
-> >> +
-> >>  		Read-only attribute that indicates whether excessive noise is
-> >>  		present at the channel Y count inputs in quadrature clock mode;
-> >>  		irrelevant in non-quadrature clock mode.
-> >> @@ -55,6 +61,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_countY_preset
-> >>  KernelVersion:	4.10
-> >>  Contact:	linux-iio@vger.kernel.org
-> >>  Description:
-> >> +		This interface is deprecated; please use the Counter subsystem.
-> >> +
-> >>  		If the counter device supports preset registers, the preset
-> >>  		count for channel Y is provided by this attribute.
-> >>  
-> >> @@ -62,6 +70,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_countY_quadrature_mode
-> >>  KernelVersion:	4.10
-> >>  Contact:	linux-iio@vger.kernel.org
-> >>  Description:
-> >> +		This interface is deprecated; please use the Counter subsystem.
-> >> +
-> >>  		Configure channel Y counter for non-quadrature or quadrature
-> >>  		clock mode. Selecting non-quadrature clock mode will disable
-> >>  		synchronous load mode. In quadrature clock mode, the channel Y
-> >> @@ -83,6 +93,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_countY_set_to_preset_on_index
-> >>  KernelVersion:	4.10
-> >>  Contact:	linux-iio@vger.kernel.org
-> >>  Description:
-> >> +		This interface is deprecated; please use the Counter subsystem.
-> >> +
-> >>  		Whether to set channel Y counter with channel Y preset value
-> >>  		when channel Y index input is active, or continuously count.
-> >>  		Valid attribute values are boolean.
-> >> @@ -91,6 +103,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_indexY_index_polarity
-> >>  KernelVersion:	4.10
-> >>  Contact:	linux-iio@vger.kernel.org
-> >>  Description:
-> >> +		This interface is deprecated; please use the Counter subsystem.
-> >> +
-> >>  		Active level of channel Y index input; irrelevant in
-> >>  		non-synchronous load mode.
-> >>  
-> >> @@ -98,6 +112,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_indexY_synchronous_mode
-> >>  KernelVersion:	4.10
-> >>  Contact:	linux-iio@vger.kernel.org
-> >>  Description:
-> >> +		This interface is deprecated; please use the Counter subsystem.
-> >> +
-> >>  		Configure channel Y counter for non-synchronous or synchronous
-> >>  		load mode. Synchronous load mode cannot be selected in
-> >>  		non-quadrature clock mode.
-> >> diff --git a/drivers/iio/Kconfig b/drivers/iio/Kconfig
-> >> index d69e85a8bdc3..1152efad91a1 100644
-> >> --- a/drivers/iio/Kconfig
-> >> +++ b/drivers/iio/Kconfig
-> >> @@ -74,7 +74,6 @@ source "drivers/iio/afe/Kconfig"
-> >>  source "drivers/iio/amplifiers/Kconfig"
-> >>  source "drivers/iio/chemical/Kconfig"
-> >>  source "drivers/iio/common/Kconfig"
-> >> -source "drivers/iio/counter/Kconfig"
-> >>  source "drivers/iio/dac/Kconfig"
-> >>  source "drivers/iio/dummy/Kconfig"
-> >>  source "drivers/iio/frequency/Kconfig"
-> >> diff --git a/drivers/iio/Makefile b/drivers/iio/Makefile
-> >> index d8cba9c229c0..7bdd31f1b88f 100644
-> >> --- a/drivers/iio/Makefile
-> >> +++ b/drivers/iio/Makefile
-> >> @@ -20,7 +20,6 @@ obj-y += amplifiers/
-> >>  obj-y += buffer/
-> >>  obj-y += chemical/
-> >>  obj-y += common/
-> >> -obj-y += counter/
-> >>  obj-y += dac/
-> >>  obj-y += dummy/
-> >>  obj-y += gyro/
-> >> diff --git a/drivers/iio/counter/Kconfig b/drivers/iio/counter/Kconfig
-> >> deleted file mode 100644
-> >> index 95a7a0df6cac..000000000000
-> >> --- a/drivers/iio/counter/Kconfig
-> >> +++ /dev/null
-> >> @@ -1,8 +0,0 @@
-> >> -#
-> >> -# Counter devices
-> >> -#
-> >> -# When adding new entries keep the list in alphabetical order
-> >> -
-> >> -menu "Counters"
-> >> -
-> >> -endmenu
-> >> diff --git a/drivers/iio/counter/Makefile b/drivers/iio/counter/Makefile
-> >> deleted file mode 100644
-> >> index 8fd3d954775a..000000000000
-> >> --- a/drivers/iio/counter/Makefile
-> >> +++ /dev/null
-> >> @@ -1,5 +0,0 @@
-> >> -#
-> >> -# Makefile for IIO counter devices
-> >> -#
-> >> -
-> >> -# When adding new entries keep the list in alphabetical order  
+> >  		policy->cur = next_freq;
+> >  		trace_cpu_frequency(next_freq, smp_processor_id());
+> > -	} else {
+> > +	} else if (!sg_policy->work_in_progress) {
+> >  		sg_policy->work_in_progress = true;
+> >  		irq_work_queue(&sg_policy->irq_work);
+> >  	}
+> > @@ -291,6 +288,13 @@ static void sugov_update_single(struct update_util_data *hook, u64 time,
 > >  
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> >  	ignore_dl_rate_limit(sg_cpu, sg_policy);
+> >  
+> > +	/*
+> > +	 * For slow-switch systems, single policy requests can't run at the
+> > +	 * moment if update is in progress, unless we acquire update_lock.
+> > +	 */
+> > +	if (sg_policy->work_in_progress)
+> > +		return;
+> > +
+> >  	if (!sugov_should_update_freq(sg_policy, time))
+> >  		return;
+> >  
+> > @@ -382,13 +386,27 @@ sugov_update_shared(struct update_util_data *hook, u64 time, unsigned int flags)
+> >  static void sugov_work(struct kthread_work *work)
+> >  {
+> >  	struct sugov_policy *sg_policy = container_of(work, struct sugov_policy, work);
+> > +	unsigned int freq;
+> > +	unsigned long flags;
+> > +
+> > +	/*
+> > +	 * Hold sg_policy->update_lock shortly to handle the case where:
+> > +	 * incase sg_policy->next_freq is read here, and then updated by
+> > +	 * sugov_update_shared just before work_in_progress is set to false
+> > +	 * here, we may miss queueing the new update.
+> > +	 *
+> > +	 * Note: If a work was queued after the update_lock is released,
+> > +	 * sugov_work will just be called again by kthread_work code; and the
+> > +	 * request will be proceed before the sugov thread sleeps.
+> > +	 */
+> > +	raw_spin_lock_irqsave(&sg_policy->update_lock, flags);
+> > +	freq = sg_policy->next_freq;
+> > +	sg_policy->work_in_progress = false;
+> > +	raw_spin_unlock_irqrestore(&sg_policy->update_lock, flags);
+> >  
+> >  	mutex_lock(&sg_policy->work_lock);
+> > -	__cpufreq_driver_target(sg_policy->policy, sg_policy->next_freq,
+> > -				CPUFREQ_RELATION_L);
+> > +	__cpufreq_driver_target(sg_policy->policy, freq, CPUFREQ_RELATION_L);
+> >  	mutex_unlock(&sg_policy->work_lock);
+> > -
+> > -	sg_policy->work_in_progress = false;
+> >  }
+> 
+> And I do see a race here for single policy systems doing slow switching.
+> 
+> Kthread                                                 Sched update
+> 
+> sugov_work()                                            sugov_update_single()
+> 
+>         lock();
+>         // The CPU is free to rearrange below           
+>         // two in any order, so it may clear
+>         // the flag first and then read next
+>         // freq. Lets assume it does.
+>         work_in_progress = false
+> 
+>                                                         if (work_in_progress)
+>                                                                 return;
+> 
+>                                                         sg_policy->next_freq = 0;
+>         freq = sg_policy->next_freq;
+>                                                         sg_policy->next_freq = real-next-freq;
+>         unlock();
+> 
+> 
+> 
+> Is the above theory right or am I day dreaming ? :)
+
+And here comes the ugly fix:
+
+diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+index 35826f4ec43c..1665da31862e 100644
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -283,6 +283,9 @@ static void sugov_update_single(struct update_util_data *hook, u64 time,
+ 
+        ignore_dl_rate_limit(sg_cpu, sg_policy);
+ 
++       if (!policy->fast_switch_enabled)
++               raw_spin_lock(&sg_policy->update_lock);
++
+        /*
+         * For slow-switch systems, single policy requests can't run at the
+         * moment if update is in progress, unless we acquire update_lock.
+@@ -312,6 +315,9 @@ static void sugov_update_single(struct update_util_data *hook, u64 time,
+        }
+ 
+        sugov_update_commit(sg_policy, time, next_f);
++
++       if (!policy->fast_switch_enabled)
++               raw_spin_unlock(&sg_policy->update_lock);
+ }
+ 
+ static unsigned int sugov_next_freq_shared(struct sugov_cpu *sg_cpu, u64 time)
+
+
+-- 
+viresh
