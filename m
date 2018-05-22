@@ -1,79 +1,363 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751551AbeEVQ5A (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 12:57:00 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:48280 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751268AbeEVQ4y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 12:56:54 -0400
-To: Jon Mason <jdmason@kudzu.us>, Arvind Yadav <arvind.yadav.cs@gmail.com>
-Cc: dave.jiang@intel.com, allenbh@gmail.com, linux-kernel@vger.kernel.org,
-        linux-ntb@googlegroups.com
-References: <6717325ea580df9a0294db6f83fd72a5db3daad9.1520591515.git.arvind.yadav.cs@gmail.com>
- <20180522004846.GC3255@kudzu.us>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <dd99c6f7-1a3c-e8d5-6333-e8c9c062c073@deltatee.com>
-Date: Tue, 22 May 2018 10:56:51 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180522004846.GC3255@kudzu.us>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, allenbh@gmail.com, dave.jiang@intel.com, arvind.yadav.cs@gmail.com, jdmason@kudzu.us
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH] ntb_transport: use put_device() instead of kfree()
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+        id S1751429AbeEVQ6w (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 12:58:52 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:36042 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751229AbeEVQ6s (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 12:58:48 -0400
+X-Google-Smtp-Source: AB8JxZoA/VZ5DRS5hCMLzMkBBmVrCGVggqwB7EaT9ZhsFU0u8PtnudDvP4LJarVWd3WDbV/oH6paYQ==
+From: Guenter Roeck <groeck@google.com>
+To: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org,
+        Chintan Patel <chintan.m.patel@intel.com>,
+        Guenter Roeck <groeck@chromium.org>
+Subject: [RFC/RFT PATCH] ASoC: topology: Improve backwards compatibility with v4 topology files
+Date: Tue, 22 May 2018 09:58:42 -0700
+Message-Id: <20180522165842.233949-1-groeck@google.com>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Guenter Roeck <groeck@chromium.org>
 
+Commit dc31e741db49 ("ASoC: topology: ABI - Add the types for BE
+DAI") introduced sound topology files version 5. Initially, this
+change made the topology code incompatible with v4 topology files.
+Backwards compatibility with v4 configuration files was
+subsequently added with commit 288b8da7e992 ("ASoC: topology:
+Support topology file of ABI v4").
 
-On 21/05/18 06:48 PM, Jon Mason wrote:
-> On Fri, Mar 09, 2018 at 04:03:24PM +0530, Arvind Yadav wrote:
->> Never directly free @dev after calling device_register(), even
->> if it returned an error! Always use put_device() to give up the
->> reference initialized.
->>
->> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
->> ---
->>  drivers/ntb/ntb_transport.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/ntb/ntb_transport.c b/drivers/ntb/ntb_transport.c
->> index 9878c48..8182a3a 100644
->> --- a/drivers/ntb/ntb_transport.c
->> +++ b/drivers/ntb/ntb_transport.c
->> @@ -393,7 +393,7 @@ int ntb_transport_register_client_dev(char *device_name)
->>  
->>  		rc = device_register(dev);
->>  		if (rc) {
->> -			kfree(client_dev);
->> +			put_device(dev);
-> 
-> Now we are leaking client_dev, which is bigger than just dev.  I think
-> we are going to need both now.
+Unfortunately, backwards compatibility was never fully implemented.
 
-No, when put_device is called, ntb_transport_client_release() will be
-called which then kfree's the structure there. This is the preferred way
-of freeing anything that's reference counted (as all struct devices
-are). See [1].
+First, the manifest size in (Skylake) v4 configuration files is set
+to 0, which causes manifest_new_ver() to bail out with error messages
+similar to the following.
 
-Though, if I remember correctly, the NTB tree breaks this rule a lot.
-ie. the fact that ntb_dev_release() doesn't actually free the underlying
-structure has always irked me a bit because it forces the calling
-drivers to break this rule. This means the reference counting on the NTB
-devices is broken so if someone ever uses get_device() on an struct
-ntb_dev and doesn't put it back before the driver is unbound, there will
-be a use after free bug. As far as I know though, at this time this
-isn't done.
+snd_soc_skl 0000:00:1f.3: ASoC: invalid manifest size
+snd_soc_skl 0000:00:1f.3: tplg component load failed-22
+snd_soc_skl 0000:00:1f.3: Failed to init topology!
+snd_soc_skl 0000:00:1f.3: ASoC: failed to probe component -22
+skl_n88l25_m98357a skl_n88l25_m98357a: ASoC: failed to instantiate card -22
+skl_n88l25_m98357a: probe of skl_n88l25_m98357a failed with error -22
 
-Logan
+After this problem is fixed, the following error message is seen instead.
 
+snd_soc_skl 0000:00:1f.3: ASoC: old version of manifest
+snd_soc_skl 0000:00:1f.3: Invalid descriptor token 1093938482
+snd_soc_skl 0000:00:1f.3: ASoC: failed to load widget media0_in cpr 0
+snd_soc_skl 0000:00:1f.3: tPlg component load failed-22
 
-[1]
-https://elixir.bootlin.com/linux/v4.17-rc6/source/drivers/base/core.c#L1931
+This message is seen because backwards compatibility for loading widgets
+was never implemented.
+
+Both problems have been widely reported. Various attempts were made to
+fix the problem, usually by providing v5 configuration files. However,
+all those attempts result in incomplete ASoC configuration.
+
+Let's implement backward compatibility properly to solve the problem
+for good.
+
+Signed-off-by: Guenter Roeck <groeck@chromium.org>
+---
+Tested on Caroline (Samsung Chromebook Pro) running v4.17-rc6 plus
+this patch, with original (v4) configuration file. Also tested on
+several other Chromebooks with this patch on top of chromeos-4.14.
+
+Additional real world test coverage would be useful before moving forward.
+
+ sound/soc/intel/skylake/skl-topology.c | 235 +++++++++++++++++++++++++
+ sound/soc/soc-topology.c               |   7 +-
+ 2 files changed, 240 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/intel/skylake/skl-topology.c b/sound/soc/intel/skylake/skl-topology.c
+index 3b1dca419883..cc81e200e6b7 100644
+--- a/sound/soc/intel/skylake/skl-topology.c
++++ b/sound/soc/intel/skylake/skl-topology.c
+@@ -19,6 +19,7 @@
+ #include <linux/slab.h>
+ #include <linux/types.h>
+ #include <linux/firmware.h>
++#include <linux/uuid.h>
+ #include <sound/soc.h>
+ #include <sound/soc-topology.h>
+ #include <uapi/sound/snd_sst_tokens.h>
+@@ -30,6 +31,79 @@
+ #include "../common/sst-dsp.h"
+ #include "../common/sst-dsp-priv.h"
+ 
++/* v4 configuration data */
++struct skl_dfw_v4_module_pin {
++	u16 module_id;
++	u16 instance_id;
++} __packed;
++
++struct skl_dfw_v4_module_fmt {
++	u32 channels;
++	u32 freq;
++	u32 bit_depth;
++	u32 valid_bit_depth;
++	u32 ch_cfg;
++	u32 interleaving_style;
++	u32 sample_type;
++	u32 ch_map;
++} __packed;
++
++struct skl_dfw_v4_module_caps {
++	u32 set_params:2;
++	u32 rsvd:30;
++	u32 param_id;
++	u32 caps_size;
++	u32 caps[HDA_SST_CFG_MAX];
++};
++
++struct skl_dfw_v4_pipe {
++	u8 pipe_id;
++	u8 pipe_priority;
++	u16 conn_type:4;
++	u16 rsvd:4;
++	u16 memory_pages:8;
++} __packed;
++
++struct skl_dfw_v4_module {
++	char uuid[SKL_UUID_STR_SZ];
++
++	u16 module_id;
++	u16 instance_id;
++	u32 max_mcps;
++	u32 mem_pages;
++	u32 obs;
++	u32 ibs;
++	u32 vbus_id;
++
++	u32 max_in_queue:8;
++	u32 max_out_queue:8;
++	u32 time_slot:8;
++	u32 core_id:4;
++	u32 rsvd1:4;
++
++	u32 module_type:8;
++	u32 conn_type:4;
++	u32 dev_type:4;
++	u32 hw_conn_type:4;
++	u32 rsvd2:12;
++
++	u32 params_fixup:8;
++	u32 converter:8;
++	u32 input_pin_type:1;
++	u32 output_pin_type:1;
++	u32 is_dynamic_in_pin:1;
++	u32 is_dynamic_out_pin:1;
++	u32 is_loadable:1;
++	u32 rsvd3:11;
++
++	struct skl_dfw_v4_pipe pipe;
++	struct skl_dfw_v4_module_fmt in_fmt[MAX_IN_QUEUE];
++	struct skl_dfw_v4_module_fmt out_fmt[MAX_OUT_QUEUE];
++	struct skl_dfw_v4_module_pin in_pin[MAX_IN_QUEUE];
++	struct skl_dfw_v4_module_pin out_pin[MAX_OUT_QUEUE];
++	struct skl_dfw_v4_module_caps caps;
++} __packed;
++
+ #define SKL_CH_FIXUP_MASK		(1 << 0)
+ #define SKL_RATE_FIXUP_MASK		(1 << 1)
+ #define SKL_FMT_FIXUP_MASK		(1 << 2)
+@@ -2724,6 +2798,160 @@ static int skl_tplg_get_desc_blocks(struct device *dev,
+ 	return -EINVAL;
+ }
+ 
++/*
++ * Add pipeline from topology binary into driver pipeline list
++ *
++ * If already added we return that instance
++ * Otherwise we create a new instance and add into driver list
++ */
++static int skl_tplg_add_pipe_v4(struct device *dev,
++				struct skl_module_cfg *mconfig, struct skl *skl,
++				struct skl_dfw_v4_pipe *dfw_pipe)
++{
++	struct skl_pipeline *ppl;
++	struct skl_pipe *pipe;
++	struct skl_pipe_params *params;
++
++	list_for_each_entry(ppl, &skl->ppl_list, node) {
++		if (ppl->pipe->ppl_id == dfw_pipe->pipe_id) {
++			mconfig->pipe = ppl->pipe;
++			return 0;
++		}
++	}
++
++	ppl = devm_kzalloc(dev, sizeof(*ppl), GFP_KERNEL);
++	if (!ppl)
++		return -ENOMEM;
++
++	pipe = devm_kzalloc(dev, sizeof(*pipe), GFP_KERNEL);
++	if (!pipe)
++		return -ENOMEM;
++
++	params = devm_kzalloc(dev, sizeof(*params), GFP_KERNEL);
++	if (!params)
++		return -ENOMEM;
++
++	pipe->ppl_id = dfw_pipe->pipe_id;
++	pipe->memory_pages = dfw_pipe->memory_pages;
++	pipe->pipe_priority = dfw_pipe->pipe_priority;
++	pipe->conn_type = dfw_pipe->conn_type;
++	pipe->state = SKL_PIPE_INVALID;
++	pipe->p_params = params;
++	INIT_LIST_HEAD(&pipe->w_list);
++
++	ppl->pipe = pipe;
++	list_add(&ppl->node, &skl->ppl_list);
++
++	mconfig->pipe = pipe;
++	mconfig->pipe->state = SKL_PIPE_INVALID;
++
++	return 0;
++}
++
++static void skl_fill_module_pin_info_v4(struct skl_dfw_v4_module_pin *dfw_pin,
++					struct skl_module_pin *m_pin,
++					bool is_dynamic, int max_pin)
++{
++	int i;
++
++	for (i = 0; i < max_pin; i++) {
++		m_pin[i].id.module_id = dfw_pin[i].module_id;
++		m_pin[i].id.instance_id = dfw_pin[i].instance_id;
++		m_pin[i].in_use = false;
++		m_pin[i].is_dynamic = is_dynamic;
++		m_pin[i].pin_state = SKL_PIN_UNBIND;
++	}
++}
++
++static void skl_tplg_fill_fmt_v4(struct skl_module_pin_fmt *dst_fmt,
++				 struct skl_dfw_v4_module_fmt *src_fmt,
++				 int pins)
++{
++	int i;
++
++	for (i = 0; i < pins; i++) {
++		dst_fmt[i].fmt.channels  = src_fmt[i].channels;
++		dst_fmt[i].fmt.s_freq = src_fmt[i].freq;
++		dst_fmt[i].fmt.bit_depth = src_fmt[i].bit_depth;
++		dst_fmt[i].fmt.valid_bit_depth = src_fmt[i].valid_bit_depth;
++		dst_fmt[i].fmt.ch_cfg = src_fmt[i].ch_cfg;
++		dst_fmt[i].fmt.ch_map = src_fmt[i].ch_map;
++		dst_fmt[i].fmt.interleaving_style =
++						src_fmt[i].interleaving_style;
++		dst_fmt[i].fmt.sample_type = src_fmt[i].sample_type;
++	}
++}
++
++static int skl_tplg_get_pvt_data_v4(struct snd_soc_tplg_dapm_widget *tplg_w,
++				    struct skl *skl, struct device *dev,
++				    struct skl_module_cfg *mconfig)
++{
++	struct skl_dfw_v4_module *dfw =
++				(struct skl_dfw_v4_module *)tplg_w->priv.data;
++	int ret;
++
++	dev_dbg(dev, "Parsing Skylake v4 widget topology data\n");
++
++	ret = guid_parse(dfw->uuid, (guid_t *)mconfig->guid);
++	if (ret)
++		return ret;
++	mconfig->id.module_id = -1;
++	mconfig->id.instance_id = dfw->instance_id;
++	mconfig->module->resources[0].cps = dfw->max_mcps;
++	mconfig->module->resources[0].ibs = dfw->ibs;
++	mconfig->module->resources[0].obs = dfw->obs;
++	mconfig->core_id = dfw->core_id;
++	mconfig->module->max_input_pins = dfw->max_in_queue;
++	mconfig->module->max_output_pins = dfw->max_out_queue;
++	mconfig->module->loadable = dfw->is_loadable;
++	skl_tplg_fill_fmt_v4(mconfig->module->formats[0].inputs, dfw->in_fmt,
++			     MAX_IN_QUEUE);
++	skl_tplg_fill_fmt_v4(mconfig->module->formats[0].outputs, dfw->out_fmt,
++			     MAX_OUT_QUEUE);
++
++	mconfig->params_fixup = dfw->params_fixup;
++	mconfig->converter = dfw->converter;
++	mconfig->m_type = dfw->module_type;
++	mconfig->vbus_id = dfw->vbus_id;
++	mconfig->module->resources[0].is_pages = dfw->mem_pages;
++
++	ret = skl_tplg_add_pipe_v4(dev, mconfig, skl, &dfw->pipe);
++	if (ret)
++		return ret;
++
++	mconfig->dev_type = dfw->dev_type;
++	mconfig->hw_conn_type = dfw->hw_conn_type;
++	mconfig->time_slot = dfw->time_slot;
++	mconfig->formats_config.caps_size = dfw->caps.caps_size;
++
++	mconfig->m_in_pin = devm_kzalloc(dev,
++				MAX_IN_QUEUE * sizeof(*mconfig->m_in_pin),
++				GFP_KERNEL);
++	if (!mconfig->m_in_pin)
++		return -ENOMEM;
++
++	mconfig->m_out_pin = devm_kzalloc(dev,
++				MAX_OUT_QUEUE * sizeof(*mconfig->m_out_pin),
++				GFP_KERNEL);
++	if (!mconfig->m_out_pin)
++		return -ENOMEM;
++
++	skl_fill_module_pin_info_v4(dfw->in_pin, mconfig->m_in_pin,
++				    dfw->is_dynamic_in_pin,
++				    mconfig->module->max_input_pins);
++	skl_fill_module_pin_info_v4(dfw->out_pin, mconfig->m_out_pin,
++				    dfw->is_dynamic_out_pin,
++				    mconfig->module->max_output_pins);
++
++	if (mconfig->formats_config.caps_size) {
++		dev_warn(dev, "caps size %d not supported, will be ignored\n",
++			 mconfig->formats_config.caps_size);
++		mconfig->formats_config.caps_size = 0;
++	}
++
++	return 0;
++}
++
+ /*
+  * Parse the private data for the token and corresponding value.
+  * The private data can have multiple data blocks. So, a data block
+@@ -2739,6 +2967,13 @@ static int skl_tplg_get_pvt_data(struct snd_soc_tplg_dapm_widget *tplg_w,
+ 	char *data;
+ 	int ret;
+ 
++	/*
++	 * v4 configuration files have a valid UUID at the start of
++	 * the widget's private data.
++	 */
++	if (uuid_is_valid((char *)tplg_w->priv.data))
++		return skl_tplg_get_pvt_data_v4(tplg_w, skl, dev, mconfig);
++
+ 	/* Read the NUM_DATA_BLOCKS descriptor */
+ 	array = (struct snd_soc_tplg_vendor_array *)tplg_w->priv.data;
+ 	ret = skl_tplg_get_desc_blocks(dev, array);
+diff --git a/sound/soc/soc-topology.c b/sound/soc/soc-topology.c
+index 986b8b2f90fb..d66b2e5ccd67 100644
+--- a/sound/soc/soc-topology.c
++++ b/sound/soc/soc-topology.c
+@@ -2293,8 +2293,11 @@ static int manifest_new_ver(struct soc_tplg *tplg,
+ 	*manifest = NULL;
+ 
+ 	if (src->size != sizeof(*src_v4)) {
+-		dev_err(tplg->dev, "ASoC: invalid manifest size\n");
+-		return -EINVAL;
++		dev_warn(tplg->dev, "ASoC: invalid manifest size %d\n",
++			 src->size);
++		if (src->size)
++			return -EINVAL;
++		src->size = sizeof(*src_v4);
+ 	}
+ 
+ 	dev_warn(tplg->dev, "ASoC: old version of manifest\n");
+-- 
+2.17.0.441.gb46fe60e1d-goog
