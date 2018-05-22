@@ -1,132 +1,179 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751479AbeEVMWU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 08:22:20 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60470 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751192AbeEVMWT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 08:22:19 -0400
-Subject: Re: [PATCH v7 08/13] KVM: arm/arm64: Remove kvm_vgic_vcpu_early_init
-To: kbuild test robot <lkp@intel.com>
-References: <1526851372-13009-9-git-send-email-eric.auger@redhat.com>
- <201805221850.wnnX64nq%fengguang.wu@intel.com>
-Cc: kbuild-all@01.org, eric.auger.pro@gmail.com,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
-        christoffer.dall@arm.com, peter.maydell@linaro.org,
-        andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
-From: Auger Eric <eric.auger@redhat.com>
-Message-ID: <b03bedea-5eac-ef9b-7e6f-d200509d8535@redhat.com>
-Date: Tue, 22 May 2018 14:22:15 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        id S1751516AbeEVMXC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 08:23:02 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:41935 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751161AbeEVMXA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 08:23:00 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Viresh Kumar <viresh.kumar@linaro.org>,
+        "Joel Fernandes (Google.)" <joelaf@google.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Luca Abeni <luca.abeni@santannapisa.it>, Todd Kjos <tkjos@google.com>,
+        Claudio Scordino <claudio@evidence.eu.com>, kernel-team@android.com,
+        Linux PM <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH v2] schedutil: Allow cpufreq requests to be made even when kthread kicked
+Date: Tue, 22 May 2018 14:22:20 +0200
+Message-ID: <4237890.zlzv5C60QP@aspire.rjw.lan>
+In-Reply-To: <CAJZ5v0hP+gCiLa+6YvKHaj7u-DuRfmVq_vjFRMj6CnVktJRxVg@mail.gmail.com>
+References: <20180518185501.173552-1-joel@joelfernandes.org> <20180522113844.5rz3skjeck57arft@vireshk-i7> <CAJZ5v0hP+gCiLa+6YvKHaj7u-DuRfmVq_vjFRMj6CnVktJRxVg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <201805221850.wnnX64nq%fengguang.wu@intel.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tuesday, May 22, 2018 1:42:05 PM CEST Rafael J. Wysocki wrote:
+> On Tue, May 22, 2018 at 1:38 PM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > On 22-05-18, 13:31, Rafael J. Wysocki wrote:
+> >> So below is my (compiled-only) version of the $subject patch, obviously based
+> >> on the Joel's work.
+> >>
+> >> Roughly, what it does is to move the fast_switch_enabled path entirely to
+> >> sugov_update_single() and take the spinlock around sugov_update_commit()
+> >> in the one-CPU case too.
 
-On 05/22/2018 02:10 PM, kbuild test robot wrote:
-> Hi Eric,
-> 
-> Thank you for the patch! Perhaps something to improve:
-> 
-> [auto build test WARNING on kvmarm/next]
-> [also build test WARNING on v4.17-rc6 next-20180517]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Eric-Auger/KVM-arm-arm64-Allow-multiple-GICv3-redistributor-regions/20180522-004717
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm.git next
-> config: arm-axm55xx_defconfig (attached as .config)
-> compiler: arm-linux-gnueabi-gcc (Debian 7.2.0-11) 7.2.0
-> reproduce:
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         make.cross ARCH=arm 
-> 
-> Note: it may well be a FALSE warning. FWIW you are at least aware of it now.
-> http://gcc.gnu.org/wiki/Better_Uninitialized_Warnings
-> 
-> All warnings (new ones prefixed by >>):
-> 
->    arch/arm/kvm/../../../virt/kvm/arm/vgic/vgic-init.c: In function 'kvm_vgic_vcpu_init':
->>> arch/arm/kvm/../../../virt/kvm/arm/vgic/vgic-init.c:199:9: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
->      int i, ret;
+[cut]
 
-Fixed in v8, sent this morning. Sorry for the inconvenience.
+> >
+> > Why do you assume that fast switch isn't possible in shared policy
+> > cases ? It infact is already enabled for few drivers.
 
-Thanks
+I hope that fast_switch is not used with devfs_possible_from_any_cpu set in the
+one-CPU policy case, as that looks racy even without any patching.
 
-Eric
->             ^~~
-> 
-> vim +/ret +199 arch/arm/kvm/../../../virt/kvm/arm/vgic/vgic-init.c
-> 
->    185	
->    186	/**
->    187	 * kvm_vgic_vcpu_init() - Initialize static VGIC VCPU data
->    188	 * structures and register VCPU-specific KVM iodevs
->    189	 *
->    190	 * @vcpu: pointer to the VCPU being created and initialized
->    191	 *
->    192	 * Only do initialization, but do not actually enable the
->    193	 * VGIC CPU interface
->    194	 */
->    195	int kvm_vgic_vcpu_init(struct kvm_vcpu *vcpu)
->    196	{
->    197		struct vgic_cpu *vgic_cpu = &vcpu->arch.vgic_cpu;
->    198		struct vgic_dist *dist = &vcpu->kvm->arch.vgic;
->  > 199		int i, ret;
->    200	
->    201		INIT_LIST_HEAD(&vgic_cpu->ap_list_head);
->    202		spin_lock_init(&vgic_cpu->ap_list_lock);
->    203	
->    204		/*
->    205		 * Enable and configure all SGIs to be edge-triggered and
->    206		 * configure all PPIs as level-triggered.
->    207		 */
->    208		for (i = 0; i < VGIC_NR_PRIVATE_IRQS; i++) {
->    209			struct vgic_irq *irq = &vgic_cpu->private_irqs[i];
->    210	
->    211			INIT_LIST_HEAD(&irq->ap_list);
->    212			spin_lock_init(&irq->irq_lock);
->    213			irq->intid = i;
->    214			irq->vcpu = NULL;
->    215			irq->target_vcpu = vcpu;
->    216			irq->targets = 1U << vcpu->vcpu_id;
->    217			kref_init(&irq->refcount);
->    218			if (vgic_irq_is_sgi(i)) {
->    219				/* SGIs */
->    220				irq->enabled = 1;
->    221				irq->config = VGIC_CONFIG_EDGE;
->    222			} else {
->    223				/* PPIs */
->    224				irq->config = VGIC_CONFIG_LEVEL;
->    225			}
->    226		}
->    227	
->    228		if (!irqchip_in_kernel(vcpu->kvm))
->    229			return 0;
->    230	
->    231		/*
->    232		 * If we are creating a VCPU with a GICv3 we must also register the
->    233		 * KVM io device for the redistributor that belongs to this VCPU.
->    234		 */
->    235		if (dist->vgic_model == KVM_DEV_TYPE_ARM_VGIC_V3) {
->    236			mutex_lock(&vcpu->kvm->lock);
->    237			ret = vgic_register_redist_iodev(vcpu);
->    238			mutex_unlock(&vcpu->kvm->lock);
->    239		}
->    240		return ret;
->    241	}
->    242	
-> 
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-> 
+> OK, so the fast_switch thing needs to be left outside of the spinlock
+> in the single case only.  Fair enough.
+
+That would be something like the patch below (again, compiled-only).
+
+---
+ kernel/sched/cpufreq_schedutil.c |   67 +++++++++++++++++++++++++++------------
+ 1 file changed, 47 insertions(+), 20 deletions(-)
+
+Index: linux-pm/kernel/sched/cpufreq_schedutil.c
+===================================================================
+--- linux-pm.orig/kernel/sched/cpufreq_schedutil.c
++++ linux-pm/kernel/sched/cpufreq_schedutil.c
+@@ -92,9 +92,6 @@ static bool sugov_should_update_freq(str
+ 	    !cpufreq_can_do_remote_dvfs(sg_policy->policy))
+ 		return false;
+ 
+-	if (sg_policy->work_in_progress)
+-		return false;
+-
+ 	if (unlikely(sg_policy->need_freq_update))
+ 		return true;
+ 
+@@ -103,25 +100,41 @@ static bool sugov_should_update_freq(str
+ 	return delta_ns >= sg_policy->freq_update_delay_ns;
+ }
+ 
+-static void sugov_update_commit(struct sugov_policy *sg_policy, u64 time,
+-				unsigned int next_freq)
++static bool sugov_update_next_freq(struct sugov_policy *sg_policy, u64 time,
++				   unsigned int next_freq)
+ {
+-	struct cpufreq_policy *policy = sg_policy->policy;
+-
+ 	if (sg_policy->next_freq == next_freq)
+-		return;
++		return false;
+ 
+ 	sg_policy->next_freq = next_freq;
+ 	sg_policy->last_freq_update_time = time;
+ 
+-	if (policy->fast_switch_enabled) {
+-		next_freq = cpufreq_driver_fast_switch(policy, next_freq);
+-		if (!next_freq)
+-			return;
++	return true;
++}
+ 
+-		policy->cur = next_freq;
+-		trace_cpu_frequency(next_freq, smp_processor_id());
+-	} else {
++static void sugov_fast_switch(struct sugov_policy *sg_policy, u64 time,
++			      unsigned int next_freq)
++{
++	struct cpufreq_policy *policy = sg_policy->policy;
++
++	if (!sugov_update_next_freq(sg_policy, time, next_freq))
++		return;
++
++	next_freq = cpufreq_driver_fast_switch(policy, next_freq);
++	if (!next_freq)
++		return;
++
++	policy->cur = next_freq;
++	trace_cpu_frequency(next_freq, smp_processor_id());
++}
++
++static void sugov_update_commit(struct sugov_policy *sg_policy, u64 time,
++				unsigned int next_freq)
++{
++	if (!sugov_update_next_freq(sg_policy, time, next_freq))
++		return;
++
++	if (!sg_policy->work_in_progress) {
+ 		sg_policy->work_in_progress = true;
+ 		irq_work_queue(&sg_policy->irq_work);
+ 	}
+@@ -307,7 +320,13 @@ static void sugov_update_single(struct u
+ 		sg_policy->cached_raw_freq = 0;
+ 	}
+ 
+-	sugov_update_commit(sg_policy, time, next_f);
++	if (sg_policy->policy->fast_switch_enabled) {
++		sugov_fast_switch(sg_policy, time, next_f);
++	} else {
++		raw_spin_lock(&sg_policy->update_lock);
++		sugov_update_commit(sg_policy, time, next_f);
++		raw_spin_unlock(&sg_policy->update_lock);
++	}
+ }
+ 
+ static unsigned int sugov_next_freq_shared(struct sugov_cpu *sg_cpu, u64 time)
+@@ -367,7 +386,10 @@ sugov_update_shared(struct update_util_d
+ 
+ 	if (sugov_should_update_freq(sg_policy, time)) {
+ 		next_f = sugov_next_freq_shared(sg_cpu, time);
+-		sugov_update_commit(sg_policy, time, next_f);
++		if (sg_policy->policy->fast_switch_enabled)
++			sugov_fast_switch(sg_policy, time, next_f);
++		else
++			sugov_update_commit(sg_policy, time, next_f);
+ 	}
+ 
+ 	raw_spin_unlock(&sg_policy->update_lock);
+@@ -376,13 +398,18 @@ sugov_update_shared(struct update_util_d
+ static void sugov_work(struct kthread_work *work)
+ {
+ 	struct sugov_policy *sg_policy = container_of(work, struct sugov_policy, work);
++	unsigned int next_freq;
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&sg_policy->update_lock, flags);
++	next_freq = sg_policy->next_freq;
++	sg_policy->work_in_progress = false;
++	raw_spin_unlock_irqrestore(&sg_policy->update_lock, flags);
+ 
+ 	mutex_lock(&sg_policy->work_lock);
+-	__cpufreq_driver_target(sg_policy->policy, sg_policy->next_freq,
++	__cpufreq_driver_target(sg_policy->policy, next_freq,
+ 				CPUFREQ_RELATION_L);
+ 	mutex_unlock(&sg_policy->work_lock);
+-
+-	sg_policy->work_in_progress = false;
+ }
+ 
+ static void sugov_irq_work(struct irq_work *irq_work)
