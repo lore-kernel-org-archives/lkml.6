@@ -1,60 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751704AbeEVH4V (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 03:56:21 -0400
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:59384 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751415AbeEVHz4 (ORCPT
+        id S1751763AbeEVH4o (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 03:56:44 -0400
+Received: from mo4-p00-ob.smtp.rzone.de ([85.215.255.20]:15400 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751603AbeEVH4M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 03:55:56 -0400
-X-IronPort-AV: E=Sophos;i="5.49,429,1520924400";
-   d="scan'208";a="12323662"
-From: Eugen Hristev <eugen.hristev@microchip.com>
-To: <jic23@kernel.org>, <ludovic.desroches@microchip.com>,
-        <alexandre.belloni@bootlin.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
-        <linux-input@vger.kernel.org>, <nicolas.ferre@microchip.com>,
-        <dmitry.torokhov@gmail.com>, <robh@kernel.org>
-CC: Eugen Hristev <eugen.hristev@microchip.com>
-Subject: [PATCH v7 8/9] ARM: dts: at91: sama5d2: add channel cells for ADC device
-Date: Tue, 22 May 2018 10:52:38 +0300
-Message-ID: <1526975559-18966-9-git-send-email-eugen.hristev@microchip.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1526975559-18966-1-git-send-email-eugen.hristev@microchip.com>
-References: <1526975559-18966-1-git-send-email-eugen.hristev@microchip.com>
+        Tue, 22 May 2018 03:56:12 -0400
+X-RZG-AUTH: ":P2EQZWCpfu+qG7CngxMFH1J+3q8wa/QXkBR9MXjAuzpIG0mv9coXAgc09VbzR8stxx+XNVGnx9ZX3co74kFtJGu5gyLH"
+X-RZG-CLASS-ID: mo00
+From: Olaf Hering <olaf@aepfle.de>
+To: linux-kernel@vger.kernel.org
+Cc: Olaf Hering <ohering@suse.de>, "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        devel@linuxdriverproject.org (open list:Hyper-V CORE AND DRIVERS)
+Subject: [PATCH v1] tools: hv: update lsvmbus to be compatible with python3
+Date: Tue, 22 May 2018 09:43:51 +0200
+Message-Id: <20180522074351.13346-1-olaf@aepfle.de>
+X-Mailer: git-send-email 2.16.3
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Preparing the ADC device to connect channel consumer drivers
+From: Olaf Hering <ohering@suse.de>
 
-Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+Python3 changed the way how 'print' works.
+Adjust the code to a syntax that is understood by python2 and python3.
+
+Signed-off-by: Olaf Hering <ohering@suse.de>
 ---
- arch/arm/boot/dts/sama5d2.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+ tools/hv/lsvmbus | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sama5d2.dtsi b/arch/arm/boot/dts/sama5d2.dtsi
-index 61f68e5..f06ba99 100644
---- a/arch/arm/boot/dts/sama5d2.dtsi
-+++ b/arch/arm/boot/dts/sama5d2.dtsi
-@@ -47,6 +47,7 @@
- #include <dt-bindings/dma/at91.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/clock/at91.h>
-+#include <dt-bindings/iio/adc/at91-sama5d2_adc.h>
+diff --git a/tools/hv/lsvmbus b/tools/hv/lsvmbus
+index 353e56768df8..55e7374bade0 100644
+--- a/tools/hv/lsvmbus
++++ b/tools/hv/lsvmbus
+@@ -17,7 +17,7 @@ if options.verbose is not None:
  
- / {
- 	model = "Atmel SAMA5D2 family SoC";
-@@ -1437,6 +1438,7 @@
- 				atmel,max-sample-rate-hz = <20000000>;
- 				atmel,startup-time-ms = <4>;
- 				atmel,trigger-edge-type = <IRQ_TYPE_EDGE_RISING>;
-+				#io-channel-cells = <1>;
- 				status = "disabled";
- 			};
+ vmbus_sys_path = '/sys/bus/vmbus/devices'
+ if not os.path.isdir(vmbus_sys_path):
+-	print "%s doesn't exist: exiting..." % vmbus_sys_path
++	print("%s doesn't exist: exiting..." % vmbus_sys_path)
+ 	exit(-1)
  
--- 
-2.7.4
+ vmbus_dev_dict = {
+@@ -93,11 +93,11 @@ format2 = '%2s: Class_ID = %s - %s\n\tDevice_ID = %s\n\tSysfs path: %s\n%s'
+ 
+ for d in vmbus_dev_list:
+ 	if verbose == 0:
+-		print ('VMBUS ID ' + format0) % (d.vmbus_id, d.dev_desc)
++		print(('VMBUS ID ' + format0) % (d.vmbus_id, d.dev_desc))
+ 	elif verbose == 1:
+-		print ('VMBUS ID ' + format1) %	\
+-			(d.vmbus_id, d.class_id, d.dev_desc, d.chn_vp_mapping)
++		print (('VMBUS ID ' + format1) %	\
++			(d.vmbus_id, d.class_id, d.dev_desc, d.chn_vp_mapping))
+ 	else:
+-		print ('VMBUS ID ' + format2) % \
++		print (('VMBUS ID ' + format2) % \
+ 			(d.vmbus_id, d.class_id, d.dev_desc, \
+-			d.device_id, d.sysfs_path, d.chn_vp_mapping)
++			d.device_id, d.sysfs_path, d.chn_vp_mapping))
