@@ -1,58 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752791AbeEVVGe (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 17:06:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50309 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751575AbeEVVGc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 17:06:32 -0400
-From: NeilBrown <neilb@suse.com>
-To: Patrick Farrell <paf@cray.com>, Oleg Drokin <oleg.drokin@intel.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        James Simmons <jsimmons@infradead.org>,
-        Andreas Dilger <andreas.dilger@intel.com>
-Date: Wed, 23 May 2018 07:06:23 +1000
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Lustre Development List" <lustre-devel@lists.lustre.org>
-Subject: Re: [lustre-devel] [PATCH 13/30] staging: lustre: replace libcfs_register_ioctl with a blocking notifier_chain
-In-Reply-To: <BE6A1DEE-0CAE-4703-89C5-4722C0319BF9@cray.com>
-References: <152687724799.24196.7718555295926047576.stgit@noble> <152687731283.24196.5413466102459843186.stgit@noble> <BE6A1DEE-0CAE-4703-89C5-4722C0319BF9@cray.com>
-Message-ID: <87a7srz9gw.fsf@notabene.neil.brown.name>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+        id S1752867AbeEVVHh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 17:07:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43156 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751575AbeEVVHg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 17:07:36 -0400
+Date: Tue, 22 May 2018 14:07:35 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        "open list:KASAN" <kasan-dev@googlegroups.com>
+Subject: Re: [PATCH v2 2/2] kasan: fix memory hotplug during boot
+Message-Id: <20180522140735.71dcd92e7b013629a7f15f91@linux-foundation.org>
+In-Reply-To: <09c36096-f8c8-b9e9-0bed-113e494f159a@virtuozzo.com>
+References: <20180522100756.18478-1-david@redhat.com>
+        <20180522100756.18478-3-david@redhat.com>
+        <f4378c56-acc2-a5cf-724c-76cffee28235@virtuozzo.com>
+        <ff21c6e7-cb32-60d8-abd3-dfc6be3d05f7@redhat.com>
+        <09c36096-f8c8-b9e9-0bed-113e494f159a@virtuozzo.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+On Tue, 22 May 2018 22:50:12 +0300 Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
 
-On Mon, May 21 2018, Patrick Farrell wrote:
+> 
+> 
+> On 05/22/2018 07:36 PM, David Hildenbrand wrote:
+> > On 22.05.2018 18:26, Andrey Ryabinin wrote:
+> >>
+> >>
+> >> On 05/22/2018 01:07 PM, David Hildenbrand wrote:
+> >>> Using module_init() is wrong. E.g. ACPI adds and onlines memory before
+> >>> our memory notifier gets registered.
+> >>>
+> >>> This makes sure that ACPI memory detected during boot up will not
+> >>> result in a kernel crash.
+> >>>
+> >>> Easily reproducable with QEMU, just specify a DIMM when starting up.
+> >>
+> >>          reproducible
+> >>>
+> >>> Signed-off-by: David Hildenbrand <david@redhat.com>
+> >>> ---
+> >>
+> >> Fixes: fa69b5989bb0 ("mm/kasan: add support for memory hotplug")
+> >> Acked-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+> >> Cc: <stable@vger.kernel.org>
+> > 
+> > Think this even dates back to:
+> > 
+> > 786a8959912e ("kasan: disable memory hotplug")
+> > 
+> 
+> Indeed.
 
-> This, and the rest of the series, look good.  Feel free to add a Reviewed-by.
-
-Thanks a lot!
-
-NeilBrown
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlsEhk8ACgkQOeye3VZi
-gbkv0Q/+KEA4qjEnJ8M71rYVqK7Lz867rzVi8CI2ExV8PJ6GvXZ612RgcWN9UwEu
-6aS1p9woHsYjbx1dTajLlvxxP+vzHCZFJMgBFkKEnOSY0A2cc3R5QCKJiWKq8PyV
-aF6gixtvbvgChrkH7PXWTKlpIsq4DH5pfFBPYD9bX6lNDMlHFhGvQxYCsgvRfm6u
-JrL3IX12RsYlaO1HJsOC1yxg/3UmY29PnRRFYQ0xddPXHMzJejYY+M0N0KRTvr1g
-0HG/dbKMIPcwypEVY4uNzSUpffoInxb4g57shHawvbz9/fZdQ2/uYr/BEHzbURRS
-P458Q+XeKYl99s02344r7XTxwuze62359PWuvzJgcL79N4aQrEGWLnLu354FpssG
-Mf3Ok24yLB2rWqpNdFx9bpNX/C5Kng6gkN1db5B6WpPZiESOJfitltyFyUZjirff
-u9OmzXkT7zqIUkBRpytbkK5NO394DrV94iIM0gzQ4ekPQsQlT+galLMa8yrGAP0x
-97W4AKQJbQpRy7yuzoveGErur5zwvWgW7Y6UeyF96qOzD50dqO/ZejGsBczxuZpT
-8v8mOmbzWEuq1ZzMuGbeBS6ec8G0ymsvBtrd2WjS3oCm3AozVshqA+tL9KCwyfwQ
-AoqXdFG+pdXve0ONFMzKpOmVdARth+79y5qZp+Tfnpm09TuOHiA=
-=CFID
------END PGP SIGNATURE-----
---=-=-=--
+Is a backport to -stable justified for either of these patches?
