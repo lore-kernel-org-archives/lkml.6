@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751343AbeEVLRo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 07:17:44 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:37795 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750733AbeEVLRm (ORCPT
+        id S1751656AbeEVLSM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 07:18:12 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:54828 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751423AbeEVLRu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 07:17:42 -0400
-X-Google-Smtp-Source: AB8JxZpPUK7PjZwyBDMFHgBZeAoxXP94RTCUcDoNMHxuf9gWtpJ1w1Tuuw7looPc97DenPuyL/VlKA==
+        Tue, 22 May 2018 07:17:50 -0400
+X-Google-Smtp-Source: AB8JxZqIVYPE5jZ/9pb3SN+nN0ojJZWlP6x/mlhXhrZollmB/L3silOm9PpNDrf3gUfU81q1TKzqdQ==
 From: "=?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?=" <vokac.m@gmail.com>
 X-Google-Original-From: =?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>
 To: netdev@vger.kernel.org
@@ -15,10 +15,12 @@ Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         f.fainelli@gmail.com, vivien.didelot@savoirfairelinux.com,
         andrew@lunn.ch, mark.rutland@arm.com, robh+dt@kernel.org,
         davem@davemloft.net, michal.vokac@ysoft.com
-Subject: [PATCH net-next v2 0/7] Add support for QCA8334 switch
-Date: Tue, 22 May 2018 13:16:25 +0200
-Message-Id: <1526987792-56861-1-git-send-email-michal.vokac@ysoft.com>
+Subject: [PATCH net-next v2 7/7] net: dsa: qca8k: Remove redundant parentheses
+Date: Tue, 22 May 2018 13:16:32 +0200
+Message-Id: <1526987792-56861-8-git-send-email-michal.vokac@ysoft.com>
 X-Mailer: git-send-email 2.1.4
+In-Reply-To: <1526987792-56861-1-git-send-email-michal.vokac@ysoft.com>
+References: <1526987792-56861-1-git-send-email-michal.vokac@ysoft.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -26,33 +28,31 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series basically adds support for a QCA8334 ethernet switch to the
-qca8k driver. It is a four-port variant of the already supported seven
-port QCA8337. Register map is the same for the whole familly and all chips
-have the same device ID.
+Fix warning reported by checkpatch.
 
-Major part of this series enhances the CPU port setting. Currently the CPU
-port is not set to any sensible defaults compatible with the xGMII
-interface. This series forces the CPU port to its maximum bandwidth and
-also allows to adjust the new defaults using fixed-link device tree
-sub-node.
+Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+Changes in v2:
+ - Fix typo in subject.
+ - Add "Reviewed-by" tags from Andrew and Florian.
 
-Alongside these changes I fixed two checkpatch warnings regarding SPDX and
-redundant parentheses.
+ drivers/net/dsa/qca8k.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Michal Vokáč (7):
-  net: dsa: qca8k: Add QCA8334 binding documentation
-  net: dsa: qca8k: Add support for QCA8334 switch
-  net: dsa: qca8k: Enable RXMAC when bringing up a port
-  net: dsa: qca8k: Force CPU port to its highest bandwidth
-  net: dsa: qca8k: Allow overwriting CPU port setting
-  net: dsa: qca8k: Replace GPL boilerplate by SPDX
-  net: dsa: qca8k: Remove redundant parentheses
-
- .../devicetree/bindings/net/dsa/qca8k.txt          | 23 +++++++-
- drivers/net/dsa/qca8k.c                            | 64 ++++++++++++++++++----
- drivers/net/dsa/qca8k.h                            |  7 ++-
- 3 files changed, 79 insertions(+), 15 deletions(-)
-
+diff --git a/drivers/net/dsa/qca8k.c b/drivers/net/dsa/qca8k.c
+index c834893..c0da402 100644
+--- a/drivers/net/dsa/qca8k.c
++++ b/drivers/net/dsa/qca8k.c
+@@ -513,7 +513,7 @@ qca8k_port_set_status(struct qca8k_priv *priv, int port, int enable)
+ 	pr_debug("qca: port %i set status %i\n", port, enable);
+ 
+ 	/* Port 0 and 6 have no internal PHY */
+-	if ((port > 0) && (port < 6))
++	if (port > 0 && port < 6)
+ 		mask |= QCA8K_PORT_STATUS_LINK_AUTO;
+ 
+ 	if (enable)
 -- 
 2.1.4
