@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751893AbeEVSPh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 14:15:37 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:45216 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751602AbeEVSP0 (ORCPT
+        id S1751763AbeEVSPg (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 14:15:36 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:46183 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751656AbeEVSP0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 22 May 2018 14:15:26 -0400
-X-Google-Smtp-Source: AB8JxZpWSbBzEY2wF7pLGJN7xlTShGdYR6tOLAzZnIKjEHlaomZayxEgmr0qVltGOCfqVgkn4AJ6fA==
+X-Google-Smtp-Source: AB8JxZr1j04qCgHCPIUM2OkKt1aXqxhgJgOZ5hMlbyMqs1/xj90UuS8ceAvwH/tA8x1vfKPDHMLpsg==
 From: Kees Cook <keescook@chromium.org>
 To: Jens Axboe <axboe@kernel.dk>
 Cc: Kees Cook <keescook@chromium.org>,
@@ -20,9 +20,9 @@ Cc: Kees Cook <keescook@chromium.org>,
         Uma Krishnan <ukrishn@linux.vnet.ibm.com>, linux-block@vger.kernel.org,
         linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 5/6] libata-scsi: Move sense buffers onto stack
-Date: Tue, 22 May 2018 11:15:11 -0700
-Message-Id: <20180522181512.39316-6-keescook@chromium.org>
+Subject: [PATCH 6/6] scsi: Check sense buffer size at build time
+Date: Tue, 22 May 2018 11:15:12 -0700
+Message-Id: <20180522181512.39316-7-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180522181512.39316-1-keescook@chromium.org>
 References: <20180522181512.39316-1-keescook@chromium.org>
@@ -30,80 +30,81 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of dynamically allocating the sense buffers, put them on the
-stack so that future compile-time sizeof() checks will be able to see
-their buffer length.
+To avoid introducing problems like those fixed in commit f7068114d45e
+("sr: pass down correctly sized SCSI sense buffer"), this creates a macro
+wrapper for scsi_execute() that verifies the size of the sense buffer
+similar to what was done for command string sizes in commit 3756f6401c30
+("exec: avoid gcc-8 warning for get_task_comm").
+
+Another solution could be to add another argument to scsi_execute(),
+but this function already takes a lot of arguments and Jens was not fond
+of that approach. As there was only a pair of dynamically allocated sense
+buffers, this also moves those 96 bytes onto the stack to avoid triggering
+the sizeof() check.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- drivers/ata/libata-scsi.c | 18 ++++++------------
- 1 file changed, 6 insertions(+), 12 deletions(-)
+ drivers/scsi/scsi_lib.c    |  6 +++---
+ include/scsi/scsi_device.h | 12 +++++++++++-
+ 2 files changed, 14 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
-index 89a9d4a2efc8..3a43d3a1ce2d 100644
---- a/drivers/ata/libata-scsi.c
-+++ b/drivers/ata/libata-scsi.c
-@@ -597,8 +597,9 @@ static int ata_get_identity(struct ata_port *ap, struct scsi_device *sdev,
- int ata_cmd_ioctl(struct scsi_device *scsidev, void __user *arg)
- {
- 	int rc = 0;
-+	u8 sensebuf[SCSI_SENSE_BUFFERSIZE];
- 	u8 scsi_cmd[MAX_COMMAND_SIZE];
--	u8 args[4], *argbuf = NULL, *sensebuf = NULL;
-+	u8 args[4], *argbuf = NULL;
- 	int argsize = 0;
- 	enum dma_data_direction data_dir;
- 	struct scsi_sense_hdr sshdr;
-@@ -610,10 +611,7 @@ int ata_cmd_ioctl(struct scsi_device *scsidev, void __user *arg)
- 	if (copy_from_user(args, arg, sizeof(args)))
- 		return -EFAULT;
+diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
+index e9b4f279d29c..718c2bec4516 100644
+--- a/drivers/scsi/scsi_lib.c
++++ b/drivers/scsi/scsi_lib.c
+@@ -238,7 +238,7 @@ void scsi_queue_insert(struct scsi_cmnd *cmd, int reason)
  
--	sensebuf = kzalloc(SCSI_SENSE_BUFFERSIZE, GFP_NOIO);
--	if (!sensebuf)
--		return -ENOMEM;
--
-+	memset(sensebuf, 0, sizeof(sensebuf));
- 	memset(scsi_cmd, 0, sizeof(scsi_cmd));
  
- 	if (args[3]) {
-@@ -685,7 +683,6 @@ int ata_cmd_ioctl(struct scsi_device *scsidev, void __user *arg)
- 	 && copy_to_user(arg + sizeof(args), argbuf, argsize))
- 		rc = -EFAULT;
- error:
--	kfree(sensebuf);
- 	kfree(argbuf);
- 	return rc;
+ /**
+- * scsi_execute - insert request and wait for the result
++ * __scsi_execute - insert request and wait for the result
+  * @sdev:	scsi device
+  * @cmd:	scsi command
+  * @data_direction: data direction
+@@ -255,7 +255,7 @@ void scsi_queue_insert(struct scsi_cmnd *cmd, int reason)
+  * Returns the scsi_cmnd result field if a command was executed, or a negative
+  * Linux error code if we didn't get that far.
+  */
+-int scsi_execute(struct scsi_device *sdev, const unsigned char *cmd,
++int __scsi_execute(struct scsi_device *sdev, const unsigned char *cmd,
+ 		 int data_direction, void *buffer, unsigned bufflen,
+ 		 unsigned char *sense, struct scsi_sense_hdr *sshdr,
+ 		 int timeout, int retries, u64 flags, req_flags_t rq_flags,
+@@ -309,7 +309,7 @@ int scsi_execute(struct scsi_device *sdev, const unsigned char *cmd,
+ 
+ 	return ret;
  }
-@@ -704,8 +701,9 @@ int ata_cmd_ioctl(struct scsi_device *scsidev, void __user *arg)
- int ata_task_ioctl(struct scsi_device *scsidev, void __user *arg)
- {
- 	int rc = 0;
-+	u8 sensebuf[SCSI_SENSE_BUFFERSIZE];
- 	u8 scsi_cmd[MAX_COMMAND_SIZE];
--	u8 args[7], *sensebuf = NULL;
-+	u8 args[7];
- 	struct scsi_sense_hdr sshdr;
- 	int cmd_result;
+-EXPORT_SYMBOL(scsi_execute);
++EXPORT_SYMBOL(__scsi_execute);
  
-@@ -715,10 +713,7 @@ int ata_task_ioctl(struct scsi_device *scsidev, void __user *arg)
- 	if (copy_from_user(args, arg, sizeof(args)))
- 		return -EFAULT;
- 
--	sensebuf = kzalloc(SCSI_SENSE_BUFFERSIZE, GFP_NOIO);
--	if (!sensebuf)
--		return -ENOMEM;
--
-+	memset(sensebuf, 0, sizeof(sensebuf));
- 	memset(scsi_cmd, 0, sizeof(scsi_cmd));
- 	scsi_cmd[0]  = ATA_16;
- 	scsi_cmd[1]  = (3 << 1); /* Non-data */
-@@ -769,7 +764,6 @@ int ata_task_ioctl(struct scsi_device *scsidev, void __user *arg)
- 	}
- 
-  error:
--	kfree(sensebuf);
- 	return rc;
- }
- 
+ /*
+  * Function:    scsi_init_cmd_errh()
+diff --git a/include/scsi/scsi_device.h b/include/scsi/scsi_device.h
+index 7ae177c8e399..1bb87b6c0ad2 100644
+--- a/include/scsi/scsi_device.h
++++ b/include/scsi/scsi_device.h
+@@ -426,11 +426,21 @@ extern const char *scsi_device_state_name(enum scsi_device_state);
+ extern int scsi_is_sdev_device(const struct device *);
+ extern int scsi_is_target_device(const struct device *);
+ extern void scsi_sanitize_inquiry_string(unsigned char *s, int len);
+-extern int scsi_execute(struct scsi_device *sdev, const unsigned char *cmd,
++extern int __scsi_execute(struct scsi_device *sdev, const unsigned char *cmd,
+ 			int data_direction, void *buffer, unsigned bufflen,
+ 			unsigned char *sense, struct scsi_sense_hdr *sshdr,
+ 			int timeout, int retries, u64 flags,
+ 			req_flags_t rq_flags, int *resid);
++/* Make sure any sense buffer is the correct size. */
++#define scsi_execute(sdev, cmd, data_direction, buffer, bufflen, sense,	\
++		     sshdr, timeout, retries, flags, rq_flags, resid)	\
++({									\
++	BUILD_BUG_ON((sense) != NULL &&					\
++		     sizeof(sense) != SCSI_SENSE_BUFFERSIZE);		\
++	__scsi_execute(sdev, cmd, data_direction, buffer, bufflen,	\
++		       sense, sshdr, timeout, retries, flags, rq_flags,	\
++		       resid);						\
++})
+ static inline int scsi_execute_req(struct scsi_device *sdev,
+ 	const unsigned char *cmd, int data_direction, void *buffer,
+ 	unsigned bufflen, struct scsi_sense_hdr *sshdr, int timeout,
 -- 
 2.17.0
