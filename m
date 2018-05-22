@@ -1,24 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753197AbeEVVaG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 17:30:06 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:33813 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752785AbeEVVaD (ORCPT
+        id S1753206AbeEVVaW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 17:30:22 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:35877 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752785AbeEVVaT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 17:30:03 -0400
-X-Google-Smtp-Source: AB8JxZr8IhhFprl6CY8WfoCw2I498QTFjd1R1bQ7k9LE1O2/LHV2ZTHUCZ45zK3XjIaFz3+s9M5kDg==
+        Tue, 22 May 2018 17:30:19 -0400
+X-Google-Smtp-Source: AB8JxZoCLNzYcrMfb4/o/kx6DNExQMgjr/i/o9fcTzzx1G/48xXEYN2UpZngmjWOWVnpQFJpcSPXNQ==
 From: "=?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?=" <jprvita@gmail.com>
 X-Google-Original-From: =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>
-To: =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@gmail.com>,
-        Corentin Chary <corentin.chary@gmail.com>,
+To: Corentin Chary <corentin.chary@gmail.com>,
         Darren Hart <dvhart@infradead.org>,
         Andy Shevchenko <andy@infradead.org>
-Cc: linux@endlessm.com, platform-driver-x86@vger.kernel.org,
-        acpi4asus-user@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: [PATCH] platform/x86: asus-wireless: Fix format specifier
-Date: Tue, 22 May 2018 14:29:56 -0700
-Message-Id: <20180522212956.5433-1-jprvita@endlessm.com>
+Cc: linux@endlessm.com, red.f0xyz@gmail.com,
+        =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>,
+        acpi4asus-user@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] platform/x86: asus-wmi: Fix NULL pointer dereference
+Date: Tue, 22 May 2018 14:30:15 -0700
+Message-Id: <20180522213016.5496-1-jprvita@endlessm.com>
 X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -27,27 +28,117 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: João Paulo Rechi Vita <jprvita@gmail.com>
+Do not perform the rfkill cleanup routine when
+(asus->driver->wlan_ctrl_by_user && ashs_present()) is true, since
+nothing is registered with the rfkill subsystem in that case. Doing so
+leads to the following kernel NULL pointer dereference:
 
-u64 should be printed with %llx instead of %x and cast to uint.
+  BUG: unable to handle kernel NULL pointer dereference at           (null)
+  IP: [<ffffffff816c7348>] __mutex_lock_slowpath+0x98/0x120
+  PGD 1a3aa8067
+  PUD 1a3b3d067
+  PMD 0
 
-Signed-off-by: João Paulo Rechi Vita <jprvita@gmail.com>
+  Oops: 0002 [#1] PREEMPT SMP
+  Modules linked in: bnep ccm binfmt_misc uvcvideo videobuf2_vmalloc videobuf2_memops videobuf2_v4l2 videobuf2_core hid_a4tech videodev x86_pkg_temp_thermal intel_powerclamp coretemp ath3k btusb btrtl btintel bluetooth kvm_intel snd_hda_codec_hdmi kvm snd_hda_codec_realtek snd_hda_codec_generic irqbypass crc32c_intel arc4 i915 snd_hda_intel snd_hda_codec ath9k ath9k_common ath9k_hw ath i2c_algo_bit snd_hwdep mac80211 ghash_clmulni_intel snd_hda_core snd_pcm snd_timer cfg80211 ehci_pci xhci_pci drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops drm xhci_hcd ehci_hcd asus_nb_wmi(-) asus_wmi sparse_keymap r8169 rfkill mxm_wmi serio_raw snd mii mei_me lpc_ich i2c_i801 video soundcore mei i2c_smbus wmi i2c_core mfd_core
+  CPU: 3 PID: 3275 Comm: modprobe Not tainted 4.9.34-gentoo #34
+  Hardware name: ASUSTeK COMPUTER INC. K56CM/K56CM, BIOS K56CM.206 08/21/2012
+  task: ffff8801a639ba00 task.stack: ffffc900014cc000
+  RIP: 0010:[<ffffffff816c7348>]  [<ffffffff816c7348>] __mutex_lock_slowpath+0x98/0x120
+  RSP: 0018:ffffc900014cfce0  EFLAGS: 00010282
+  RAX: 0000000000000000 RBX: ffff8801a54315b0 RCX: 00000000c0000100
+  RDX: 0000000000000001 RSI: 0000000000000000 RDI: ffff8801a54315b4
+  RBP: ffffc900014cfd30 R08: 0000000000000000 R09: 0000000000000002
+  R10: 0000000000000000 R11: 0000000000000000 R12: ffff8801a54315b4
+  R13: ffff8801a639ba00 R14: 00000000ffffffff R15: ffff8801a54315b8
+  FS:  00007faa254fb700(0000) GS:ffff8801aef80000(0000) knlGS:0000000000000000
+  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  CR2: 0000000000000000 CR3: 00000001a3b1b000 CR4: 00000000001406e0
+  Stack:
+   ffff8801a54315b8 0000000000000000 ffffffff814733ae ffffc900014cfd28
+   ffffffff8146a28c ffff8801a54315b0 0000000000000000 ffff8801a54315b0
+   ffff8801a66f3820 0000000000000000 ffffc900014cfd48 ffffffff816c73e7
+  Call Trace:
+   [<ffffffff814733ae>] ? acpi_ut_release_mutex+0x5d/0x61
+   [<ffffffff8146a28c>] ? acpi_ns_get_node+0x49/0x52
+   [<ffffffff816c73e7>] mutex_lock+0x17/0x30
+   [<ffffffffa00a3bb4>] asus_rfkill_hotplug+0x24/0x1a0 [asus_wmi]
+   [<ffffffffa00a4421>] asus_wmi_rfkill_exit+0x61/0x150 [asus_wmi]
+   [<ffffffffa00a49f1>] asus_wmi_remove+0x61/0xb0 [asus_wmi]
+   [<ffffffff814a5128>] platform_drv_remove+0x28/0x40
+   [<ffffffff814a2901>] __device_release_driver+0xa1/0x160
+   [<ffffffff814a29e3>] device_release_driver+0x23/0x30
+   [<ffffffff814a1ffd>] bus_remove_device+0xfd/0x170
+   [<ffffffff8149e5a9>] device_del+0x139/0x270
+   [<ffffffff814a5028>] platform_device_del+0x28/0x90
+   [<ffffffff814a50a2>] platform_device_unregister+0x12/0x30
+   [<ffffffffa00a4209>] asus_wmi_unregister_driver+0x19/0x30 [asus_wmi]
+   [<ffffffffa00da0ea>] asus_nb_wmi_exit+0x10/0xf26 [asus_nb_wmi]
+   [<ffffffff8110c692>] SyS_delete_module+0x192/0x270
+   [<ffffffff810022b2>] ? exit_to_usermode_loop+0x92/0xa0
+   [<ffffffff816ca560>] entry_SYSCALL_64_fastpath+0x13/0x94
+  Code: e8 5e 30 00 00 8b 03 83 f8 01 0f 84 93 00 00 00 48 8b 43 10 4c 8d 7b 08 48 89 63 10 41 be ff ff ff ff 4c 89 3c 24 48 89 44 24 08 <48> 89 20 4c 89 6c 24 10 eb 1d 4c 89 e7 49 c7 45 08 02 00 00 00
+  RIP  [<ffffffff816c7348>] __mutex_lock_slowpath+0x98/0x120
+   RSP <ffffc900014cfce0>
+  CR2: 0000000000000000
+  ---[ end trace 8d484233fa7cb512 ]---
+  note: modprobe[3275] exited with preempt_count 2
+
+https://bugzilla.kernel.org/show_bug.cgi?id=196467
+
+Reported-by: red.f0xyz@gmail.com
+Signed-off-by: João Paulo Rechi Vita <jprvita@endlessm.com>
 ---
- drivers/platform/x86/asus-wireless.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/platform/x86/asus-wmi.c | 23 +++++++++++++----------
+ 1 file changed, 13 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/platform/x86/asus-wireless.c b/drivers/platform/x86/asus-wireless.c
-index f086469ea740..6afd011de9e5 100644
---- a/drivers/platform/x86/asus-wireless.c
-+++ b/drivers/platform/x86/asus-wireless.c
-@@ -72,7 +72,7 @@ static u64 asus_wireless_method(acpi_handle handle, const char *method,
- 		acpi_handle_err(handle,
- 				"Failed to eval method %s, param %#x (%d)\n",
- 				method, param, s);
--	acpi_handle_debug(handle, "%s returned %#x\n", method, (uint) ret);
-+	acpi_handle_debug(handle, "%s returned %#llx\n", method, ret);
- 	return ret;
+diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+index ef87e78ca772..3d523ca64694 100644
+--- a/drivers/platform/x86/asus-wmi.c
++++ b/drivers/platform/x86/asus-wmi.c
+@@ -163,6 +163,16 @@ MODULE_LICENSE("GPL");
+ 
+ static const char * const ashs_ids[] = { "ATK4001", "ATK4002", NULL };
+ 
++static bool ashs_present(void)
++{
++	int i = 0;
++	while (ashs_ids[i]) {
++		if (acpi_dev_found(ashs_ids[i++]))
++			return true;
++	}
++	return false;
++}
++
+ struct bios_args {
+ 	u32 arg0;
+ 	u32 arg1;
+@@ -1025,6 +1035,9 @@ static int asus_new_rfkill(struct asus_wmi *asus,
+ 
+ static void asus_wmi_rfkill_exit(struct asus_wmi *asus)
+ {
++	if (asus->driver->wlan_ctrl_by_user && ashs_present())
++		return;
++
+ 	asus_unregister_rfkill_notifier(asus, "\\_SB.PCI0.P0P5");
+ 	asus_unregister_rfkill_notifier(asus, "\\_SB.PCI0.P0P6");
+ 	asus_unregister_rfkill_notifier(asus, "\\_SB.PCI0.P0P7");
+@@ -2120,16 +2133,6 @@ static int asus_wmi_fan_init(struct asus_wmi *asus)
+ 	return 0;
  }
  
+-static bool ashs_present(void)
+-{
+-	int i = 0;
+-	while (ashs_ids[i]) {
+-		if (acpi_dev_found(ashs_ids[i++]))
+-			return true;
+-	}
+-	return false;
+-}
+-
+ /*
+  * WMI Driver
+  */
 -- 
 2.17.0
