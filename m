@@ -1,55 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751561AbeEVQi3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 12:38:29 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:40313 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751268AbeEVQiZ (ORCPT
+        id S1751474AbeEVQmg (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 12:42:36 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:44453 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751196AbeEVQmd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 12:38:25 -0400
-X-Google-Smtp-Source: AB8JxZoJs/EbHEsKFKNK85Sy2i++NCf0TP3IAvPHcsK+HWO7Yvu0Jm9yGycFqk0g2XwwljKaLq2G83UDKTYN42aoKRI=
+        Tue, 22 May 2018 12:42:33 -0400
+X-Google-Smtp-Source: AB8JxZoxVFkusOcMG03RAIsx1I73ljrvHRzcm58EiBvZZfsoeeK0G6DBXKfcuuTJkVuv9czrpqen0g==
+Date: Tue, 22 May 2018 11:42:30 -0500
+From: Rob Herring <robh@kernel.org>
+To: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Haiyue Wang <haiyue.wang@linux.intel.com>,
+        Vernon Mauery <vernon.mauery@linux.intel.com>,
+        James Feist <james.feist@linux.intel.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Andrew Jeffery <andrew@aj.id.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Jason M Biils <jason.m.bills@linux.intel.com>,
+        Joel Stanley <joel@jms.id.au>
+Subject: Re: [v4 07/11] dt-bindings: hwmon: Add documents for PECI hwmon
+ client drivers
+Message-ID: <20180522164230.GA11707@rob-hp-laptop>
+References: <20180521195905.27983-1-jae.hyun.yoo@linux.intel.com>
 MIME-Version: 1.0
-References: <20180518130413.16997-1-roman.penyaev@profitbricks.com>
- <20180518130413.16997-2-roman.penyaev@profitbricks.com> <20180519163735.GX3803@linux.vnet.ibm.com>
- <CAJrWOzAt8BDtypaRwYx_y9jpCVD5W_VL9aQsFsC3bL-XaoJz9g@mail.gmail.com>
- <20180520004318.GY3803@linux.vnet.ibm.com> <CAJrWOzBenkHg_5zs1VAxP_rVbCbOJO_eO0toJBhnzXuy_yWH2Q@mail.gmail.com>
- <CA+55aFymFCVqh4VxtqDPoFYh6zsGEDLSV79_AnsMp3M=t2mhqg@mail.gmail.com>
- <20180521153337.GF3803@linux.vnet.ibm.com> <CAJrWOzDfJ46Vwz5k7VgUwz04EzCCUtt57jxCx1RC0LoOA3t0AA@mail.gmail.com>
-In-Reply-To: <CAJrWOzDfJ46Vwz5k7VgUwz04EzCCUtt57jxCx1RC0LoOA3t0AA@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 22 May 2018 09:38:13 -0700
-Message-ID: <CA+55aFx+4D5bBYSKb5jKjJ8SP=osGB=PCf8vW3RZH+R5fp5jgQ@mail.gmail.com>
-Subject: Re: [PATCH v2 01/26] rculist: introduce list_next_or_null_rr_rcu()
-To: Roman Pen <roman.penyaev@profitbricks.com>
-Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Bart Van Assche <bart.vanassche@sandisk.com>,
-        Or Gerlitz <ogerlitz@mellanox.com>, Doug Ledford <dledford@redhat.com>,
-        swapnil.ingle@profitbricks.com, danil.kipnis@profitbricks.com,
-        Jinpu Wang <jinpu.wang@profitbricks.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180521195905.27983-1-jae.hyun.yoo@linux.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 2:09 AM Roman Penyaev <
-roman.penyaev@profitbricks.com> wrote:
+On Mon, May 21, 2018 at 12:59:05PM -0700, Jae Hyun Yoo wrote:
+> This commit adds dt-bindings documents for PECI hwmon client drivers.
+> 
+> Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+> Reviewed-by: Haiyue Wang <haiyue.wang@linux.intel.com>
+> Reviewed-by: James Feist <james.feist@linux.intel.com>
+> Reviewed-by: Vernon Mauery <vernon.mauery@linux.intel.com>
+> Cc: Andrew Jeffery <andrew@aj.id.au>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Jason M Biils <jason.m.bills@linux.intel.com>
+> Cc: Joel Stanley <joel@jms.id.au>
+> ---
+>  .../bindings/hwmon/peci-cputemp.txt           | 23 ++++++++++++++++++
+>  .../bindings/hwmon/peci-dimmtemp.txt          | 24 +++++++++++++++++++
+>  2 files changed, 47 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/hwmon/peci-cputemp.txt
+>  create mode 100644 Documentation/devicetree/bindings/hwmon/peci-dimmtemp.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/hwmon/peci-cputemp.txt b/Documentation/devicetree/bindings/hwmon/peci-cputemp.txt
+> new file mode 100644
+> index 000000000000..2f59aee12d9e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/hwmon/peci-cputemp.txt
+> @@ -0,0 +1,23 @@
+> +Bindings for Intel PECI (Platform Environment Control Interface) cputemp driver.
+> +
+> +Required properties:
+> +- compatible : Should be "intel,peci-cputemp".
+> +- reg        : Should contain address of a client CPU. Address range of CPU
+> +	       clients is starting from 0x30 based on PECI specification.
+> +
+> +Example:
+> +	peci-bus@0 {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		< more properties >
+> +
+> +		peci-cputemp@30 {
+> +			compatible = "intel,peci-cputemp";
+> +			reg = <0x30>;
+> +		};
 
-> Should I resend current patch with more clear comments about how careful
-> caller should be with a leaking pointer?
+[...]
 
-No. Even if we go your way, there is *one* single user, and that one is
-special and needs to take a lot more care.
+> +		peci-dimmtemp@30 {
+> +			compatible = "intel,peci-dimmtemp";
+> +			reg = <0x30>;
+> +		};
 
-Just roll your own version, and make it an inline function like I've asked
-now now many times, and add a shit-ton of explanations of why it's safe to
-use in that *one* situation.
+As I said in the prior version, 2 nodes at the same address is wrong.
 
-I don't want any crazy and unsafe stuff in the generic header file that
-absolutely *nobody* should ever use.
-
-                  Linus
+Rob
