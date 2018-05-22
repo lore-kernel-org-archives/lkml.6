@@ -1,66 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751726AbeEVSph (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 14:45:37 -0400
-Received: from mga14.intel.com ([192.55.52.115]:58433 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751319AbeEVSpf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 14:45:35 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,430,1520924400";
-   d="scan'208";a="60823261"
-Date: Tue, 22 May 2018 11:45:33 -0700
-From: "Luck, Tony" <tony.luck@intel.com>
-To: "Alex G." <mr.nuke.me@gmail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Borislav Petkov <bp@alien8.de>, alex_gagniuc@dellteam.com,
-        austin_bolen@dell.com, shyam_iyer@dell.com,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
-        Tyler Baicar <tbaicar@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>, James Morse <james.morse@arm.com>,
-        Shiju Jose <shiju.jose@huawei.com>,
-        "Jonathan (Zhixiong) Zhang" <zjzhang@codeaurora.org>,
-        Dongjiu Geng <gengdongjiu@huawei.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 1/2] acpi: apei: Rename ghes_severity() to
- ghes_cper_severity()
-Message-ID: <20180522184532.GA4360@agluck-desk>
-References: <20180521135003.32459-1-mr.nuke.me@gmail.com>
- <20180521135003.32459-2-mr.nuke.me@gmail.com>
- <CAJZ5v0hKfgTOJb47NjeOP1BBPXPjWqdfu_TXVwWMzOHicEx0Xw@mail.gmail.com>
- <53d0ba88-6929-a7cf-6c3e-4ca389f7249a@gmail.com>
- <20180522135015.GF5512@pd.tnic>
- <0b758a1c-90e3-6f76-4f83-1e22c8fc9cd6@gmail.com>
- <20180522145426.GG5512@pd.tnic>
- <20180522175742.GA3543@agluck-desk>
- <CAJZ5v0j1E-kg3RPcasSJn=uZj9uaZcL4Zw9tp4mJgnsbWcPWbw@mail.gmail.com>
- <5dc58180-d3c0-a9f0-282f-4be433c94052@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5dc58180-d3c0-a9f0-282f-4be433c94052@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1751566AbeEVSrf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 14:47:35 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:45733 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751343AbeEVSrb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 14:47:31 -0400
+X-Google-Smtp-Source: AB8JxZrckyaNa4JfcLYEiO06EZw3AXLPCRni7+jUdrqnkpsqICopQBAXDjTTOm6S487XPDPR4b6Jxw==
+From: Ray Jui <ray.jui@broadcom.com>
+To: Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, Ray Jui <ray.jui@broadcom.com>
+Subject: [PATCH 0/5] Enhance support for the SP805 WDT
+Date: Tue, 22 May 2018 11:47:15 -0700
+Message-Id: <1527014840-21236-1-git-send-email-ray.jui@broadcom.com>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 01:19:34PM -0500, Alex G. wrote:
-> Firmware started passing "fatal" GHES headers with the explicit intent of
-> crashing an OS. At the same time, we've learnt how to handle these errors in
-> a number of cases. With DPC (coming soon to firmware-first) the error is
-> contained, and a non-issue.
+This patch series enhances the support for the SP805 watchdog timer.
+First of all, 'timeout-sec' devicetree property is added. In addition,
+support is also added to allow the driver to reset the watchdog if it
+has been detected that watchdot has been started in the bootloader. In
+this case, the driver will initiate the ping service from the kernel
+watchdog subsystem, before a user mode daemon takes over. This series
+also enables SP805 in the default ARM64 defconfig
 
-Perhaps DPC is the change that you need to emphasize as to
-why things are different now, so we can change the default
-Linux behavior.
+This patch series is based off v4.17-rc5 and is available on GIHUB:
+repo: https://github.com/Broadcom/arm64-linux.git
+branch: sp805-wdt-v1
 
-With the h/w guaranteeing that corrupt data is contained, we
-should be safe to disregard BIOS indications of "fatal" problems
-that could be anything and might show up in unknown ways some
-time later if we keep running.
+Ray Jui (5):
+  Documentation: DT: Add optional 'timeout-sec' property for sp805
+  watchdog: sp805: add 'timeout-sec' DT property support
+  watchdog: sp805: set WDOG_HW_RUNNING when appropriate
+  arm64: dt: set initial SR watchdog timeout to 60 seconds
+  arm64: defconfig: add CONFIG_ARM_SP805_WATCHDOG
 
--Tony
+ .../devicetree/bindings/watchdog/sp805-wdt.txt     |  2 ++
+ .../arm64/boot/dts/broadcom/stingray/stingray.dtsi |  1 +
+ arch/arm64/configs/defconfig                       |  1 +
+ drivers/watchdog/sp805_wdt.c                       | 31 +++++++++++++++++++++-
+ 4 files changed, 34 insertions(+), 1 deletion(-)
+
+-- 
+2.1.4
