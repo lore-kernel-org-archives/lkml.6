@@ -1,74 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752798AbeEVU1a (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 16:27:30 -0400
-Received: from mail-it0-f45.google.com ([209.85.214.45]:53328 "EHLO
-        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752161AbeEVU13 (ORCPT
+        id S1752823AbeEVU3X (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 16:29:23 -0400
+Received: from mail-qt0-f180.google.com ([209.85.216.180]:33477 "EHLO
+        mail-qt0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752370AbeEVU3U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 16:27:29 -0400
-X-Google-Smtp-Source: AB8JxZrGGTwGvGaLhrBCx8bRtI99AdrwKpV4DKVSt5TTB2wlk2ydUEl7UhAZ+936OUmSVxSPTllTF7HrFe1UX+igb+k=
+        Tue, 22 May 2018 16:29:20 -0400
+X-Google-Smtp-Source: AB8JxZon4JouIGn9Qu7y+gsBlURVSmOeWclpC7/j3FBJXEo3H5aPCLDJciM+HT9HWCBouOe8i4xjPMIMXlolafY15ZU=
 MIME-Version: 1.0
-References: <0879f797135033e05e8e9166a3c85628@codeaurora.org>
-In-Reply-To: <0879f797135033e05e8e9166a3c85628@codeaurora.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 22 May 2018 13:27:17 -0700
-Message-ID: <CA+55aFyGHhPvbqGaA0+tx7fbH+Uc6sbGKk2PLoFYCt-agCOgOw@mail.gmail.com>
-Subject: Re: write_lock_irq(&tasklist_lock)
-To: psodagud@codeaurora.org
-Cc: Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Rik van Riel <riel@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-        Eric Biggers <ebiggers@google.com>,
-        Frederic Weisbecker <fweisbec@gmail.com>, sherryy@android.com,
-        Vegard Nossum <vegard.nossum@oracle.com>,
-        Christoph Lameter <cl@linux.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Sasha Levin <alexander.levin@verizon.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+In-Reply-To: <8a7108ce-a109-a1b5-ace7-38a189d2352d@huawei.com>
+References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
+ <1526903890-35761-28-git-send-email-xieyisheng1@huawei.com>
+ <CAHp75VcTpAkMeKa0YXpp91WooVPs5X7jPGk0w2ruitp4siKLVw@mail.gmail.com> <8a7108ce-a109-a1b5-ace7-38a189d2352d@huawei.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 22 May 2018 23:29:18 +0300
+Message-ID: <CAHp75VddbUBmPJta93NqdNc9WTEVN2bqimYOSbi9ejNT2rg0kw@mail.gmail.com>
+Subject: Re: [PATCH 27/33] sched/debug: use match_string() helper
+To: Yisheng Xie <xieyisheng1@huawei.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 12:40 PM Sodagudi Prasad <psodagud@codeaurora.org>
-wrote:
+On Tue, May 22, 2018 at 3:10 PM, Yisheng Xie <xieyisheng1@huawei.com> wrote:
 
-> Have you observed this type of issues with tasklist_lock ?
+>>> +       i = match_string(sched_feat_names, __SCHED_FEAT_NR, cmp);
+>>> +       if (i >= 0) {
+>>
+>> Why not
+>>
+>> if (i < 0)
+>>  return i;
+>
+> if i >=0 it will also return i. so need return i just if (i < 0), right ?
 
-tasklist_lock remains pretty painful. It covers too much, but trying to
-split it up has never worked well.
+Looking to the only (modified) caller, I think yes, either you return
+error code or just 0.
 
-It's usually not a huge problem because there are so few writers, but what
-you're seeing is the writer starvation issue because readers can be
-plentiful.
+>>> -       if (i == __SCHED_FEAT_NR)
+>>> +       if (i < 0)
+>>>                 return -EINVAL;
+>>
+>> Now it would be
+>>
 
-> Do we need write_lock_irq(&tasklist_lock) in below portion of code ? Can
-> I use write_unlock instead of write_lock_irq in portion of code?
+>> if (i < 0)
 
-You absolutely need write_lock_irq(), because taking the tasklist_lock
-without disabling interrupts will deadlock very quickly due to an interrupt
-taking the tasklist_lock for reading.
+...even if (i) and rename i to ret to show the change in returned value meaning.
 
-That said, the write_lock_irq(&tasklist_lock) could possibly be replaced
-with something like
+>>  return i;
+>
+> Right, will change it in next version
 
-   static void tasklist_write_lock(void)
-   {
-         unsigned long flags;
-         local_irq_save(flags);
-         while (!write_trylock(&tasklist_lock)) {
-                 local_irq_restore(flags);
-                 do { cpu_relax(); } while (write_islocked(&tasklist_lock));
-                 local_irq_disable();
-         }
-   }
-
-but we don't have that "write_islocked()" function.
-
-So the above would need more work, and is entirely untested anyway,
-obviously.
-
-                 Linus
+-- 
+With Best Regards,
+Andy Shevchenko
