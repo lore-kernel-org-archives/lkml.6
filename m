@@ -1,431 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751391AbeEVHcQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 03:32:16 -0400
-Received: from mout.perfora.net ([74.208.4.194]:39111 "EHLO mout.perfora.net"
+        id S1751674AbeEVHdF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 03:33:05 -0400
+Received: from mout.perfora.net ([74.208.4.197]:45139 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751002AbeEVHcO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 03:32:14 -0400
+        id S1751177AbeEVHcP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 03:32:15 -0400
 From: Quytelda Kahja <quytelda@tamalin.org>
 To: gregkh@linuxfoundation.org, pombredanne@nexb.com
 Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Quytelda Kahja <quytelda@tamalin.org>
-Subject: [PATCH 4/9] staging: rtl8723bs: Clean up whitespace in 'rtl8723_hal.h'.
-Date: Tue, 22 May 2018 00:26:32 -0700
-Message-Id: <20180522072637.9782-4-quytelda@tamalin.org>
+Subject: [PATCH 2/9] staging: rtl8723bs: Rename 'Hal8723bPhyReg.h' using snake case.
+Date: Tue, 22 May 2018 00:26:30 -0700
+Message-Id: <20180522072637.9782-2-quytelda@tamalin.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180522072637.9782-1-quytelda@tamalin.org>
 References: <20180522072637.9782-1-quytelda@tamalin.org>
-X-Provags-ID: V03:K1:9t9XdCubOYtN9P9kS9HiADwE9L1ILEeB719Uoy+vVsOc39JlTLQ
- 5qWNxMjPYXNJs0QShmQyjv89RyN9IM9koakJcR+v/De0NusW1e6c7Z40CO6KeA0ok7o7Crs
- sLjF+NeSYN7stTiTLWw8mdy09TaX6BWv0Lq5B8H2dcCrN6DJ5JJzo9jCnqH3X46zvBRud4L
- WNEEXO+L3/R4ANbFse3Fw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:nDFaqn2dmys=:zdrAgaAbnErVkBJijMkCWU
- 7BE7th0dtezR9Bl8qU3M6Pii8vDqKaAItl2SWdmYJBriyMnFaZOhYIDD2KfCOLkZozgHFYDXu
- wJDo8DfusZPdEoL4qT0ms0b6weONEZvTEwPgXeMh6uBaOYWlhqNEUxd5a9BZLHGZYSByPDhBS
- hQuKTPWX10bG7de7ylLt82firnHwJeen3yAtqOsLLeHVpRO5Nav8WSeafkNqD3mYmidq4V+zf
- wZ69H91HAzcHHw07/SL9XNhkubCHlhi3m0DolOe+O5mTcWKeavjK9/c9HB2gbn0wbco2BwI3/
- Lpk6usm6aMNZwgqA8Vxz791VfAtVV5mW8gqbIQqrrH+TRgrlPKe+IaX9oHyqzupNDYNzBo4P5
- 0zxl0tLxDPYZnhCoFQThkhx1+dx151VEhw/f0Q4rMwWCUA3zxZOp7I5xDhT/dFIeTmAQlwLsF
- /hBJrlUk5W+Kw7eLQO0ZgWBbSWDiFc4L6QNeDtbpvHS5KhW42uo1sW4dZyJM3yQfC8yI9UY2p
- 2EEapkL0jKp9qV0aZjRM/cwbc5khA0vmxI5CAb3PsdpNEi0zNoDH9k6j2p5gFZF9eO/tFvm7j
- RAo8XgS6LXuyePOz1vCqOwvG34wafPFbSctDK2ilogKYus9QbeguyPSryNSR6LNqZhHab+Q2z
- 0lAzYg8TTnFJn68PX+V69gM0Qn8fHHht38wAdJKZmbkAKBtcg/fHwblizkBlnBi0O5gc=
+X-Provags-ID: V03:K1:GAtCWXaLGMB8N+JQdQHndPJ+lm86hMPrelCVTPpcN9v10RFCkP5
+ +7IOpSQClagIyfcX/TaIyruQpNt7csNfS823tB7pjMNiSwoGIUK93CbQb2elc8YMW5EnDn2
+ 9wpg6A1MDM3OV09T5jM5I4jQDtK74ZHK+NoKbySaSA4kpG5Ej98TtDcrKGZDt2t3Pz6Gs9Q
+ xodLKaft5XrpFWatczuvg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:ZYhXdLQFZkU=:kmJ/iv4BmzZ9ahSo28eURk
+ mGXLOfzm0cb18OqrIppbTNhIfhanycIFOs6BHt/kf3u+gJqoeBdFGRshH42MBao2dyjXttStG
+ xWxCh4ShkqaBQZ64OtmU8lmCdAA4nPjVJ7LdmqSUvUEkTOt6Q8sSYENmijptDXy2V0Oc6Lm76
+ ZXwVwKE0sGkRI1fj0aoq0APmYfN6FRxfBn+fXhnMjI4qKEBLPvQBBfor1SwP8CQrrx2uNqSfu
+ XonQiWMpem3u8cLd+oDI7IVeGFPi1iBpcj62BxxtcplCRppMgyV43hW6bZncyz6Ut+B5uRW53
+ VK6fe3eop5a47Q3utWrY02omjs70eErJBdwXWS+qwpTOtdJFaytHoAyqcZC1kgV+RjQDci/w7
+ Mz2jYQkcGDiy1lRPVdV62weWX4dmMQeUi1nBBcACfI/+AKQKIifsmuc3Bshr+t5ZAvF+z8UgC
+ 7kVkavzglxr4GtzsNh7yxhOPh9sPK68gq8a53EzbHCs69NuGl/NEM9Ush5yGdOGImF+l7OQ/P
+ cQfiTMPYmT6gPTi86tckR7xSRaRCjoFzfIWsRRhCIz050fmrJGHjLS7tSQcNNmbyxnBZyk9+4
+ WXXhAa2sMk2paUaLKhGXiw7DhuzObApyTRtdB8bm9C5n9Kd3D+uxqyiSt9G3OGFMfWargNxp9
+ Q/EneJXEgId6Jh1cRgpODz/aY6i1/aZiWv/ZkysPN6iFwwIoc4MX7mGyfrjLkBLlv5Fc=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make alignment and whitespace more consistent within the file
-'rtl8723_hal.h' and with the kernel coding style guidelines.
+Camel-case is discouraged in the linux kernel coding style.  Rename
+this header using snake case instead.
 
 Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
 ---
- .../staging/rtl8723bs/include/rtl8723b_hal.h  | 261 ++++++++++--------
- 1 file changed, 144 insertions(+), 117 deletions(-)
+ .../rtl8723bs/include/{Hal8723BPhyReg.h => hal_phy_reg_8723b.h} | 0
+ drivers/staging/rtl8723bs/include/rtl8723b_hal.h                | 2 +-
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+ rename drivers/staging/rtl8723bs/include/{Hal8723BPhyReg.h => hal_phy_reg_8723b.h} (100%)
 
+diff --git a/drivers/staging/rtl8723bs/include/Hal8723BPhyReg.h b/drivers/staging/rtl8723bs/include/hal_phy_reg_8723b.h
+similarity index 100%
+rename from drivers/staging/rtl8723bs/include/Hal8723BPhyReg.h
+rename to drivers/staging/rtl8723bs/include/hal_phy_reg_8723b.h
 diff --git a/drivers/staging/rtl8723bs/include/rtl8723b_hal.h b/drivers/staging/rtl8723bs/include/rtl8723b_hal.h
-index eedc765b6a6e..8ce4f7a9edc3 100644
+index 46ac61b058c8..c2b71b4e4982 100644
 --- a/drivers/staging/rtl8723bs/include/rtl8723b_hal.h
 +++ b/drivers/staging/rtl8723bs/include/rtl8723b_hal.h
-@@ -21,29 +21,30 @@
- #include "hal_phy_cfg.h"
+@@ -17,7 +17,7 @@
+ #include "rtl8723b_cmd.h"
+ #include "rtw_mp.h"
+ #include "hal_pwr_seq.h"
+-#include "Hal8723BPhyReg.h"
++#include "hal_phy_reg_8723b.h"
+ #include "Hal8723BPhyCfg.h"
  
  /*  */
--/* 		RTL8723B From file */
-+/* RTL8723B From file */
- /*  */
--	#define RTL8723B_FW_IMG					"rtl8723b/FW_NIC.bin"
--	#define RTL8723B_FW_WW_IMG				"rtl8723b/FW_WoWLAN.bin"
--	#define RTL8723B_PHY_REG					"rtl8723b/PHY_REG.txt"
--	#define RTL8723B_PHY_RADIO_A				"rtl8723b/RadioA.txt"
--	#define RTL8723B_PHY_RADIO_B				"rtl8723b/RadioB.txt"
--	#define RTL8723B_TXPWR_TRACK				"rtl8723b/TxPowerTrack.txt"
--	#define RTL8723B_AGC_TAB					"rtl8723b/AGC_TAB.txt"
--	#define RTL8723B_PHY_MACREG				"rtl8723b/MAC_REG.txt"
--	#define RTL8723B_PHY_REG_PG				"rtl8723b/PHY_REG_PG.txt"
--	#define RTL8723B_PHY_REG_MP				"rtl8723b/PHY_REG_MP.txt"
--	#define RTL8723B_TXPWR_LMT				"rtl8723b/TXPWR_LMT.txt"
-+#define RTL8723B_FW_IMG      "rtl8723b/FW_NIC.bin"
-+#define RTL8723B_FW_WW_IMG   "rtl8723b/FW_WoWLAN.bin"
-+#define RTL8723B_PHY_REG     "rtl8723b/PHY_REG.txt"
-+#define RTL8723B_PHY_RADIO_A "rtl8723b/RadioA.txt"
-+#define RTL8723B_PHY_RADIO_B "rtl8723b/RadioB.txt"
-+#define RTL8723B_TXPWR_TRACK "rtl8723b/TxPowerTrack.txt"
-+#define RTL8723B_AGC_TAB     "rtl8723b/AGC_TAB.txt"
-+#define RTL8723B_PHY_MACREG  "rtl8723b/MAC_REG.txt"
-+#define RTL8723B_PHY_REG_PG  "rtl8723b/PHY_REG_PG.txt"
-+#define RTL8723B_PHY_REG_MP  "rtl8723b/PHY_REG_MP.txt"
-+#define RTL8723B_TXPWR_LMT   "rtl8723b/TXPWR_LMT.txt"
- 
- /*  */
--/* 		RTL8723B From header */
-+/* RTL8723B From header */
- /*  */
- 
--#define FW_8723B_SIZE			0x8000
--#define FW_8723B_START_ADDRESS	0x1000
--#define FW_8723B_END_ADDRESS		0x1FFF /* 0x5FFF */
-+#define FW_8723B_SIZE          0x8000
-+#define FW_8723B_START_ADDRESS 0x1000
-+#define FW_8723B_END_ADDRESS   0x1FFF /* 0x5FFF */
- 
--#define IS_FW_HEADER_EXIST_8723B(_pFwHdr)	((le16_to_cpu(_pFwHdr->Signature)&0xFFF0) == 0x5300)
-+#define IS_FW_HEADER_EXIST_8723B(_pFwHdr) \
-+	((le16_to_cpu(_pFwHdr->Signature) & 0xFFF0) == 0x5300)
- 
- struct rt_firmware {
- 	u32 ulFwLength;
-@@ -55,126 +56,139 @@ struct rt_firmware_hdr {
- 	/*  8-byte alinment required */
- 
- 	/*  LONG WORD 0 ---- */
--	__le16 	Signature;	/*  92C0: test chip; 92C, 88C0: test chip; 88C1: MP A-cut; 92C1: MP A-cut */
--	u8 Category;	/*  AP/NIC and USB/PCI */
--	u8 Function;	/*  Reserved for different FW function indcation, for further use when driver needs to download different FW in different conditions */
--	__le16 	Version;		/*  FW Version */
--	__le16 Subversion;	/*  FW Subversion, default 0x00 */
-+	__le16 Signature;  /* 92C0: test chip; 92C, 88C0: test chip;
-+			    * 88C1: MP A-cut; 92C1: MP A-cut */
-+	u8 Category;	   /* AP/NIC and USB/PCI */
-+	u8 Function;	   /* Reserved for different FW function indcation, for
-+			    * further use when driver needs to download
-+			    * different FW in different conditions. */
-+	__le16 Version;    /* FW Version */
-+	__le16 Subversion; /* FW Subversion, default 0x00 */
- 
- 	/*  LONG WORD 1 ---- */
--	u8 Month;	/*  Release time Month field */
--	u8 Date;	/*  Release time Date field */
--	u8 Hour;	/*  Release time Hour field */
--	u8 Minute;	/*  Release time Minute field */
--	__le16		RamCodeSize;	/*  The size of RAM code */
--	__le16		Rsvd2;
-+	u8 Month;  /* Release time Month field */
-+	u8 Date;   /* Release time Date field */
-+	u8 Hour;   /* Release time Hour field */
-+	u8 Minute; /* Release time Minute field */
-+
-+	__le16 RamCodeSize; /* The size of RAM code */
-+	__le16 Rsvd2;
- 
- 	/*  LONG WORD 2 ---- */
--	__le32		SvnIdx;	/*  The SVN entry index */
--	__le32		Rsvd3;
-+	__le32 SvnIdx;	/* The SVN entry index */
-+	__le32 Rsvd3;
- 
- 	/*  LONG WORD 3 ---- */
--	__le32		Rsvd4;
--	__le32		Rsvd5;
-+	__le32 Rsvd4;
-+	__le32 Rsvd5;
- };
- 
--#define DRIVER_EARLY_INT_TIME_8723B		0x05
--#define BCN_DMA_ATIME_INT_TIME_8723B		0x02
--
--/*  for 8723B */
--/*  TX 32K, RX 16K, Page size 128B for TX, 8B for RX */
--#define PAGE_SIZE_TX_8723B			128
--#define PAGE_SIZE_RX_8723B			8
-+#define DRIVER_EARLY_INT_TIME_8723B  0x05
-+#define BCN_DMA_ATIME_INT_TIME_8723B 0x02
- 
--#define RX_DMA_SIZE_8723B			0x4000	/*  16K */
--#define RX_DMA_RESERVED_SIZE_8723B	0x80	/*  128B, reserved for tx report */
--#define RX_DMA_BOUNDARY_8723B		(RX_DMA_SIZE_8723B - RX_DMA_RESERVED_SIZE_8723B - 1)
-+/* for 8723B */
-+/* TX 32K, RX 16K, Page size 128B for TX, 8B for RX */
-+#define PAGE_SIZE_TX_8723B 128
-+#define PAGE_SIZE_RX_8723B 8
- 
-+#define RX_DMA_SIZE_8723B          0x4000 /* 16K */
-+#define RX_DMA_RESERVED_SIZE_8723B 0x80   /* 128B, reserved for tx report */
-+#define RX_DMA_BOUNDARY_8723B \
-+	(RX_DMA_SIZE_8723B - RX_DMA_RESERVED_SIZE_8723B - 1)
- 
--/*  Note: We will divide number of page equally for each queue other than public queue! */
-+/* Note: We will divide number of pages equally for each queue other than the
-+ * public queue!
-+ */
- 
- /* For General Reserved Page Number(Beacon Queue is reserved page) */
- /* Beacon:2, PS-Poll:1, Null Data:1, Qos Null Data:1, BT Qos Null Data:1 */
--#define BCNQ_PAGE_NUM_8723B		0x08
--#define BCNQ1_PAGE_NUM_8723B		0x00
-+#define BCNQ_PAGE_NUM_8723B  0x08
-+#define BCNQ1_PAGE_NUM_8723B 0x00
- 
- #ifdef CONFIG_PNO_SUPPORT
- #undef BCNQ1_PAGE_NUM_8723B
--#define BCNQ1_PAGE_NUM_8723B		0x00 /*  0x04 */
-+#define BCNQ1_PAGE_NUM_8723B 0x00 /* 0x04 */
- #endif
--#define MAX_RX_DMA_BUFFER_SIZE_8723B	0x2800	/*  RX 10K */
- 
--/* For WoWLan , more reserved page */
-+#define MAX_RX_DMA_BUFFER_SIZE_8723B 0x2800 /* RX 10K */
-+
-+/* For WoWLan, more reserved page */
- /* ARP Rsp:1, RWC:1, GTK Info:1, GTK RSP:2, GTK EXT MEM:2, PNO: 6 */
- #ifdef CONFIG_WOWLAN
--#define WOWLAN_PAGE_NUM_8723B	0x07
-+#define WOWLAN_PAGE_NUM_8723B 0x07
- #else
--#define WOWLAN_PAGE_NUM_8723B	0x00
-+#define WOWLAN_PAGE_NUM_8723B 0x00
- #endif
- 
- #ifdef CONFIG_PNO_SUPPORT
- #undef WOWLAN_PAGE_NUM_8723B
--#define WOWLAN_PAGE_NUM_8723B	0x0d
-+#define WOWLAN_PAGE_NUM_8723B 0x0d
- #endif
- 
- #ifdef CONFIG_AP_WOWLAN
--#define AP_WOWLAN_PAGE_NUM_8723B	0x02
-+#define AP_WOWLAN_PAGE_NUM_8723B 0x02
- #endif
- 
--#define TX_TOTAL_PAGE_NUMBER_8723B	(0xFF - BCNQ_PAGE_NUM_8723B - BCNQ1_PAGE_NUM_8723B - WOWLAN_PAGE_NUM_8723B)
--#define TX_PAGE_BOUNDARY_8723B		(TX_TOTAL_PAGE_NUMBER_8723B + 1)
-+#define TX_TOTAL_PAGE_NUMBER_8723B     \
-+	(0xFF - BCNQ_PAGE_NUM_8723B  - \
-+		BCNQ1_PAGE_NUM_8723B - \
-+		WOWLAN_PAGE_NUM_8723B)
-+#define TX_PAGE_BOUNDARY_8723B (TX_TOTAL_PAGE_NUMBER_8723B + 1)
- 
--#define WMM_NORMAL_TX_TOTAL_PAGE_NUMBER_8723B	TX_TOTAL_PAGE_NUMBER_8723B
--#define WMM_NORMAL_TX_PAGE_BOUNDARY_8723B		(WMM_NORMAL_TX_TOTAL_PAGE_NUMBER_8723B + 1)
-+#define WMM_NORMAL_TX_TOTAL_PAGE_NUMBER_8723B TX_TOTAL_PAGE_NUMBER_8723B
-+#define WMM_NORMAL_TX_PAGE_BOUNDARY_8723B \
-+	(WMM_NORMAL_TX_TOTAL_PAGE_NUMBER_8723B + 1)
- 
--/*  For Normal Chip Setting */
--/*  (HPQ + LPQ + NPQ + PUBQ) shall be TX_TOTAL_PAGE_NUMBER_8723B */
--#define NORMAL_PAGE_NUM_HPQ_8723B		0x0C
--#define NORMAL_PAGE_NUM_LPQ_8723B		0x02
--#define NORMAL_PAGE_NUM_NPQ_8723B		0x02
-+/* For Normal Chip Setting */
-+/* (HPQ + LPQ + NPQ + PUBQ) shall be TX_TOTAL_PAGE_NUMBER_8723B */
-+#define NORMAL_PAGE_NUM_HPQ_8723B 0x0C
-+#define NORMAL_PAGE_NUM_LPQ_8723B 0x02
-+#define NORMAL_PAGE_NUM_NPQ_8723B 0x02
- 
- /*  Note: For Normal Chip Setting, modify later */
--#define WMM_NORMAL_PAGE_NUM_HPQ_8723B		0x30
--#define WMM_NORMAL_PAGE_NUM_LPQ_8723B		0x20
--#define WMM_NORMAL_PAGE_NUM_NPQ_8723B		0x20
-+#define WMM_NORMAL_PAGE_NUM_HPQ_8723B 0x30
-+#define WMM_NORMAL_PAGE_NUM_LPQ_8723B 0x20
-+#define WMM_NORMAL_PAGE_NUM_NPQ_8723B 0x20
- 
- 
- #include "HalVerDef.h"
- #include "hal_com.h"
- 
--#define EFUSE_OOB_PROTECT_BYTES			15
-+#define EFUSE_OOB_PROTECT_BYTES 15
- 
- #define HAL_EFUSE_MEMORY
- 
--#define HWSET_MAX_SIZE_8723B			512
--#define EFUSE_REAL_CONTENT_LEN_8723B		512
--#define EFUSE_MAP_LEN_8723B				512
--#define EFUSE_MAX_SECTION_8723B			64
-+#define HWSET_MAX_SIZE_8723B         512
-+#define EFUSE_REAL_CONTENT_LEN_8723B 512
-+#define EFUSE_MAP_LEN_8723B          512
-+#define EFUSE_MAX_SECTION_8723B      64
- 
--#define EFUSE_IC_ID_OFFSET			506	/* For some inferiority IC purpose. added by Roger, 2009.09.02. */
--#define AVAILABLE_EFUSE_ADDR(addr)	(addr < EFUSE_REAL_CONTENT_LEN_8723B)
-+#define EFUSE_IC_ID_OFFSET 506 /* For some inferiority IC purpose.
-+				* Added by Roger, 2009.09.02. */
-+#define AVAILABLE_EFUSE_ADDR(addr) (addr < EFUSE_REAL_CONTENT_LEN_8723B)
- 
--#define EFUSE_ACCESS_ON			0x69	/*  For RTL8723 only. */
--#define EFUSE_ACCESS_OFF			0x00	/*  For RTL8723 only. */
-+#define EFUSE_ACCESS_ON  0x69 /* For RTL8723 only. */
-+#define EFUSE_ACCESS_OFF 0x00 /* For RTL8723 only. */
- 
- /*  */
--/* 			EFUSE for BT definition */
-+/* EFUSE for BT definition */
- /*  */
--#define EFUSE_BT_REAL_BANK_CONTENT_LEN	512
--#define EFUSE_BT_REAL_CONTENT_LEN		1536	/*  512*3 */
--#define EFUSE_BT_MAP_LEN				1024	/*  1k bytes */
--#define EFUSE_BT_MAX_SECTION			128		/*  1024/8 */
-+#define EFUSE_BT_REAL_BANK_CONTENT_LEN 512
-+#define EFUSE_BT_REAL_CONTENT_LEN      1536 /* 512*3 */
-+#define EFUSE_BT_MAP_LEN               1024 /* 1k bytes */
-+#define EFUSE_BT_MAX_SECTION           128  /* 1024/8 */
- 
--#define EFUSE_PROTECT_BYTES_BANK		16
-+#define EFUSE_PROTECT_BYTES_BANK 16
- 
--/*  Description: Determine the types of C2H events that are the same in driver and Fw. */
--/*  Fisrt constructed by tynli. 2009.10.09. */
--typedef enum _C2H_EVT
--{
-+/* Description: Determine the types of C2H events that are the same in driver
-+ * and FW; First constructed by tynli. 2009.10.09.
-+ */
-+typedef enum _C2H_EVT {
- 	C2H_DBG = 0,
- 	C2H_TSF = 1,
- 	C2H_AP_RPT_RSP = 2,
--	C2H_CCX_TX_RPT = 3,	/*  The FW notify the report of the specific tx packet. */
-+	C2H_CCX_TX_RPT = 3, /* The FW notify the report
-+			     * of the specific tx packet. */
- 	C2H_BT_RSSI = 4,
- 	C2H_BT_OP_MODE = 5,
- 	C2H_EXT_RA_RPT = 6,
-@@ -184,24 +198,24 @@ typedef enum _C2H_EVT
- 	MAX_C2HEVENT
- } C2H_EVT;
- 
--typedef struct _C2H_EVT_HDR
--{
-+typedef struct _C2H_EVT_HDR {
- 	u8 CmdID;
- 	u8 CmdLen;
- 	u8 CmdSeq;
- } __attribute__((__packed__)) C2H_EVT_HDR, *PC2H_EVT_HDR;
- 
--typedef enum tag_Package_Definition
--{
--    PACKAGE_DEFAULT,
--    PACKAGE_QFN68,
--    PACKAGE_TFBGA90,
--    PACKAGE_TFBGA80,
--    PACKAGE_TFBGA79
--}PACKAGE_TYPE_E;
-+typedef enum tag_Package_Definition {
-+	PACKAGE_DEFAULT,
-+	PACKAGE_QFN68,
-+	PACKAGE_TFBGA90,
-+	PACKAGE_TFBGA80,
-+	PACKAGE_TFBGA79
-+} PACKAGE_TYPE_E;
- 
--#define INCLUDE_MULTI_FUNC_BT(_Adapter)		(GET_HAL_DATA(_Adapter)->MultiFunc & RT_MULTI_FUNC_BT)
--#define INCLUDE_MULTI_FUNC_GPS(_Adapter)	(GET_HAL_DATA(_Adapter)->MultiFunc & RT_MULTI_FUNC_GPS)
-+#define INCLUDE_MULTI_FUNC_BT(_Adapter)  \
-+	(GET_HAL_DATA(_Adapter)->MultiFunc & RT_MULTI_FUNC_BT)
-+#define INCLUDE_MULTI_FUNC_GPS(_Adapter) \
-+	(GET_HAL_DATA(_Adapter)->MultiFunc & RT_MULTI_FUNC_GPS)
- 
- /*  rtl8723a_hal_init.c */
- s32 rtl8723b_FirmwareDownload(struct adapter *padapter, bool  bUsedWoWLANFw);
-@@ -217,28 +231,40 @@ s32 rtl8723b_InitLLTTable(struct adapter *padapter);
- u8 GetEEPROMSize8723B(struct adapter *padapter);
- void Hal_InitPGData(struct adapter *padapter, u8 *PROMContent);
- void Hal_EfuseParseIDCode(struct adapter *padapter, u8 *hwinfo);
--void Hal_EfuseParseTxPowerInfo_8723B(struct adapter *padapter, u8 *PROMContent, bool AutoLoadFail);
--void Hal_EfuseParseBTCoexistInfo_8723B(struct adapter *padapter, u8 *hwinfo, bool AutoLoadFail);
--void Hal_EfuseParseEEPROMVer_8723B(struct adapter *padapter, u8 *hwinfo, bool AutoLoadFail);
--void Hal_EfuseParseChnlPlan_8723B(struct adapter *padapter, u8 *hwinfo, bool AutoLoadFail);
--void Hal_EfuseParseCustomerID_8723B(struct adapter *padapter, u8 *hwinfo, bool AutoLoadFail);
--void Hal_EfuseParseAntennaDiversity_8723B(struct adapter *padapter, u8 *hwinfo, bool AutoLoadFail);
--void Hal_EfuseParseXtal_8723B(struct adapter *padapter, u8 *hwinfo, bool AutoLoadFail);
--void Hal_EfuseParseThermalMeter_8723B(struct adapter *padapter, u8 *hwinfo, u8 AutoLoadFail);
--void Hal_EfuseParsePackageType_8723B(struct adapter *padapter, u8 *hwinfo, bool AutoLoadFail);
--void Hal_EfuseParseVoltage_8723B(struct adapter *padapter, u8 *hwinfo, bool	AutoLoadFail);
-+void Hal_EfuseParseTxPowerInfo_8723B(struct adapter *padapter, u8 *PROMContent,
-+				     bool AutoLoadFail);
-+void Hal_EfuseParseBTCoexistInfo_8723B(struct adapter *padapter, u8 *hwinfo,
-+				       bool AutoLoadFail);
-+void Hal_EfuseParseEEPROMVer_8723B(struct adapter *padapter, u8 *hwinfo,
-+				   bool AutoLoadFail);
-+void Hal_EfuseParseChnlPlan_8723B(struct adapter *padapter, u8 *hwinfo,
-+				  bool AutoLoadFail);
-+void Hal_EfuseParseCustomerID_8723B(struct adapter *padapter, u8 *hwinfo,
-+				    bool AutoLoadFail);
-+void Hal_EfuseParseAntennaDiversity_8723B(struct adapter *padapter, u8 *hwinfo,
-+					  bool AutoLoadFail);
-+void Hal_EfuseParseXtal_8723B(struct adapter *padapter, u8 *hwinfo,
-+			      bool AutoLoadFail);
-+void Hal_EfuseParseThermalMeter_8723B(struct adapter *padapter, u8 *hwinfo,
-+				      u8 AutoLoadFail);
-+void Hal_EfuseParsePackageType_8723B(struct adapter *padapter, u8 *hwinfo,
-+				     bool AutoLoadFail);
-+void Hal_EfuseParseVoltage_8723B(struct adapter *padapter, u8 *hwinfo,
-+				 bool AutoLoadFail);
- 
- void C2HPacketHandler_8723B(struct adapter *padapter, u8 *pbuffer, u16 length);
- 
- void rtl8723b_set_hal_ops(struct hal_ops *pHalFunc);
- void SetHwReg8723B(struct adapter *padapter, u8 variable, u8 *val);
- void GetHwReg8723B(struct adapter *padapter, u8 variable, u8 *val);
--u8 SetHalDefVar8723B(struct adapter *padapter, enum HAL_DEF_VARIABLE variable, void *pval);
--u8 GetHalDefVar8723B(struct adapter *padapter, enum HAL_DEF_VARIABLE variable, void *pval);
-+u8 SetHalDefVar8723B(struct adapter *padapter, enum HAL_DEF_VARIABLE variable,
-+		     void *pval);
-+u8 GetHalDefVar8723B(struct adapter *padapter, enum HAL_DEF_VARIABLE variable,
-+		     void *pval);
- 
- /*  register */
- void rtl8723b_InitBeaconParameters(struct adapter *padapter);
--void _InitBurstPktLen_8723BS(struct adapter * Adapter);
-+void _InitBurstPktLen_8723BS(struct adapter *adapter);
- void _8051Reset8723(struct adapter *padapter);
- #ifdef CONFIG_WOWLAN
- void Hal_DetectWoWMode(struct adapter *padapter);
-@@ -248,24 +274,25 @@ void rtl8723b_start_thread(struct adapter *padapter);
- void rtl8723b_stop_thread(struct adapter *padapter);
- 
- #if defined(CONFIG_CHECK_BT_HANG)
--void rtl8723bs_init_checkbthang_workqueue(struct adapter * adapter);
--void rtl8723bs_free_checkbthang_workqueue(struct adapter * adapter);
--void rtl8723bs_cancle_checkbthang_workqueue(struct adapter * adapter);
--void rtl8723bs_hal_check_bt_hang(struct adapter * adapter);
-+void rtl8723bs_init_checkbthang_workqueue(struct adapter *adapter);
-+void rtl8723bs_free_checkbthang_workqueue(struct adapter *adapter);
-+void rtl8723bs_cancle_checkbthang_workqueue(struct adapter *adapter);
-+void rtl8723bs_hal_check_bt_hang(struct adapter *adapter);
- #endif
- 
- #ifdef CONFIG_GPIO_WAKEUP
- void HalSetOutPutGPIO(struct adapter *padapter, u8 index, u8 OutPutValue);
- #endif
- 
--int FirmwareDownloadBT(struct adapter * Adapter, struct rt_firmware *firmware);
-+int FirmwareDownloadBT(struct adapter *adapter, struct rt_firmware *firmware);
- 
- void CCX_FwC2HTxRpt_8723b(struct adapter *padapter, u8 *pdata, u8 len);
- s32 c2h_id_filter_ccx_8723b(u8 *buf);
- s32 c2h_handler_8723b(struct adapter *padapter, u8 *pC2hEvent);
--u8 MRateToHwRate8723B(u8  rate);
--u8 HwRateToMRate8723B(u8  rate);
-+u8 MRateToHwRate8723B(u8 rate);
-+u8 HwRateToMRate8723B(u8 rate);
- 
--void Hal_ReadRFGainOffset(struct adapter *padapter, u8 *hwinfo, bool AutoLoadFail);
-+void Hal_ReadRFGainOffset(struct adapter *padapter, u8 *hwinfo,
-+			  bool AutoLoadFail);
- 
- #endif
 -- 
 2.17.0
