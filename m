@@ -1,238 +1,213 @@
-Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3247740-1526419303-2-11100997847360881696
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.248, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: cc='UTF-8', plain='UTF-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-serial-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526419302; b=GHlxKzx6Oxs6dR28MDKPs2ncb0qJ1rPg2X6hpw6h5NLpOqKZQG
-    d9WaKtBZqvqLtt0FFQxqPZ9BxP6b9FlBTHQTPY+Syrr5RgfTbVz6TkdikFnN5xt2
-    qgXLRc2YwiT67Kw9XrWJewDT9fb9XTTFfguHBf7sdsI8efRA0TplQ4Qzl1cIlb3y
-    TPokSEpzfVTzahVa6mGRXDJ+9JFcgwV+ZqayQXf+HU07NFB6pF/zPObdtgahl/0O
-    Krjb6Iyq5HwqOOEBXdCfcE5emHe9OF4MiViIeDLDkbb7FE1TkdvE+mPcb270+06m
-    B85G4YezFMinxIpAXdlsTEgbI8ywHUK3jdKA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    fm2; t=1526419302; bh=XCwvxtNk5DzVM8U5z9zEUxj1ddiMbZrf0N/aK+6Fj4
-    E=; b=dd9Rim4mQ9pHoyiJ5DCU/nDNh3pnlZtFTFcDkIiEUKijxHjn9AbysD/TMa
-    6yfI2iqskNHF+jtyQjJv7PEEbknOKXU8AtIiVzr9QWiZP4/nBZr4zyyA7+6ooqoe
-    5Unl5txX+TotnKAqp1eRVFvHHstmolb/1llhub3aZWMAQJGY3bTzU1GQRODz+Ar1
-    B/7YW3OKw4a5qSdamfPRL9uEMsQraYHsEZWnYEuXrxfrNf4AuzOHMPVQXuBsZXam
-    HTE1iJYj/oOq/F+OHSmQQypLd8SfhlYXeyjyPeOQpoyl/2w699vw8ps63GXNwu23
-    3DBHxeh/NLhrpjhyFdEExqZ2Otfw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-    header.d=gmail.com header.i=@gmail.com header.b=GjXYeyXg x-bits=2048
-    x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=JKm867NU;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-      header.d=gmail.com header.i=@gmail.com header.b=GjXYeyXg x-bits=2048
-      x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=JKm867NU;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOauHbshJPA3TYBLeOQqAagBz4aB2IsaSluDw/daIJJJWAWhFS22GHzwsPyD7DHH1QdBea9meSgH+V/FXN+wWbecGFOkhDl41ZEEOcPGrCm8OROuCbnM
-    NNaQoeJTp5B0Pd0UHw4p4WJU410ZJ/CDWiJD5fm7V0urb9QHBL8031o2edKYAMLn0ps2zARdgmhiRivBTMCfVlgxhFOVq14WWpTLGtouQnhc0HsgECVhRVO+
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=x7bEGLp0ZPQA:10
-    a=fbV3Th2LUxsA:10 a=VUJBJC2UJ8kA:10 a=CbDCq_QkAAAA:8 a=zeAeT-1tAAAA:8
-    a=VwQbUJbxAAAA:8 a=kQ5SHOOPlEmXhBcScvAA:9 a=j9iOmTyA6BDeWNCR:21
-    a=QWrBaOSXa8bhxGhO:21 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
-    a=1qrBK16LubpBFNPVNq2M:22 a=q4mi67SYSo5Z2N87e4-W:22 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752822AbeEOVVj (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 15 May 2018 17:21:39 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:36723 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752783AbeEOVVh (ORCPT
-        <rfc822;linux-serial@vger.kernel.org>);
-        Tue, 15 May 2018 17:21:37 -0400
-X-Google-Smtp-Source: AB8JxZqi0xZPcyi45/szUYWmr5XylYAnXn4h1xa6ibkOTYgWl2kpg3ouL5RESynGOJ9ch4Ynbn3By9H85uT9f9LFqrE=
+Return-Path: <oleksandrs@mellanox.com>
+X-Google-Smtp-Source: AB8JxZp6o6ozKcYdBLaHGGgzdTb5h6V3+YQRB+YO+fTOZQWTujZdbYb4j5d6XMYDeEsZnVd9TrS9
+ARC-Seal: i=1; a=rsa-sha256; t=1527001222; cv=none;
+        d=google.com; s=arc-20160816;
+        b=bkicGWRnyQg8w3fC8XxBIYwSjM2ggzd9dWXLhLESJNe5tse2vuZeWyOozO//TJQkRy
+         EsgZs897siVIHo4a9sNOPMZTUNa/ZIJiPhuXC4G2l6Jlq5S3gHMfejRxw9lmxIJjMEQK
+         s5b0ChntiguWabh2tlizy4m6za5kTyKbNJZhPowEbaOa+FVABbUhtbV/tb0pYamhbrrt
+         JaE9bKL0vDUpPQ2jRYYCdnuqVgg/aRqo+KDml5p5yeQUeJGwXG2oQkLhQkkItO7FJFm1
+         iDHt5IdB9+I5ou22o/KH+fH2CeX0Km1tXaVltA4PPiuwP3axRXKbtGBDWswx/g1qVTVN
+         owaQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:content-transfer-encoding:spamdiagnosticmetadata
+         :spamdiagnosticoutput:content-language:accept-language:in-reply-to
+         :references:message-id:date:thread-index:thread-topic:subject:cc:to
+         :from:dkim-signature:arc-authentication-results;
+        bh=zm3RU9ZtwFiGs+wFgor/n5Pb9Uc1NGnjR5azMA2QYZY=;
+        b=laFJ8xTOURXsvgKPShY2UDao5AFXo+QaRA3rh5RDbUu/VGc1creaEIBl6V+r0XOT3k
+         nbnUDMVZ1FREKGJtMjP1gzCjek3oV6Ik4AxEExeJqoTWVXSfZ6/WNyKIrg7QttNKEyak
+         GFv4ggq+eTU/griRgYjr78oda8LVNNxZaLNClcE2UaJf4vWz+B2xKoRLX/gSzQ1IdTYm
+         Blp8xdqxl8/EtvYNkdis/4zP/3C72x+uMv3YY37vGUjOUvbQcjw5D51nx131PE4o8GEU
+         XfV529bQ5A/M72uCx5aWPDj8ipStWqXzkjXra8D0N6sxUY25cUpZn1hzUg4n+xp29TZR
+         0/+Q==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@Mellanox.com header.s=selector1 header.b=oCcN+FeO;
+       spf=pass (google.com: domain of oleksandrs@mellanox.com designates 40.107.3.70 as permitted sender) smtp.mailfrom=oleksandrs@mellanox.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=mellanox.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@Mellanox.com header.s=selector1 header.b=oCcN+FeO;
+       spf=pass (google.com: domain of oleksandrs@mellanox.com designates 40.107.3.70 as permitted sender) smtp.mailfrom=oleksandrs@mellanox.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=mellanox.com
+From: Oleksandr Shamray <oleksandrs@mellanox.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann
+	<arnd@arndb.de>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>, devicetree
+	<devicetree@vger.kernel.org>, "openbmc@lists.ozlabs.org"
+	<openbmc@lists.ozlabs.org>, Joel Stanley <joel@jms.id.au>,
+	=?utf-8?B?SmnFmcOtIFDDrXJrbw==?= <jiri@resnulli.us>, Tobias Klauser
+	<tklauser@distanz.ch>, "open list:SERIAL DRIVERS"
+	<linux-serial@vger.kernel.org>, Vadim Pasternak <vadimp@mellanox.com>,
+	system-sw-low-level <system-sw-low-level@mellanox.com>, Rob Herring
+	<robh+dt@kernel.org>, "openocd-devel-owner@lists.sourceforge.net"
+	<openocd-devel-owner@lists.sourceforge.net>, "linux-api@vger.kernel.org"
+	<linux-api@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, "Mauro
+ Carvalho Chehab" <mchehab@kernel.org>, Jiri Pirko <jiri@mellanox.com>
+Subject: RE: [patch v21 1/4] drivers: jtag: Add JTAG core driver
+Thread-Topic: [patch v21 1/4] drivers: jtag: Add JTAG core driver
+Thread-Index: AQHT7Fg4JVUxm4yS/U6o5SZv4NfOXaQxTLeAgAp9ZqA=
+Date: Tue, 22 May 2018 15:00:19 +0000
+Message-ID: <AM5PR0501MB2449FE5F9439B6C6E7396DFBB1940@AM5PR0501MB2449.eurprd05.prod.outlook.com>
+References: <1526394095-5069-1-git-send-email-oleksandrs@mellanox.com>
+ <1526394095-5069-2-git-send-email-oleksandrs@mellanox.com>
+ <CAHp75VctG5RBtLF3nT5e_j7_e9O12u=5gerJ6OMxWbABM9ft2w@mail.gmail.com>
+In-Reply-To: <CAHp75VctG5RBtLF3nT5e_j7_e9O12u=5gerJ6OMxWbABM9ft2w@mail.gmail.com>
+Accept-Language: en-US, uk-UA
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=oleksandrs@mellanox.com;
+x-originating-ip: [79.135.198.29]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM5PR0501MB2436;7:9k7dObWRiNmifnTWUzBkjOq73RfxKkiVInwdGUPMSo2VgNcapAHB+3VCcBdxUsTT0jVDV+DG52XZdcuUEDZ8vcvbRLlHRJWwmUd3ib3fLHxoTPtEv7mQOppAiURXXnKPO3yvJ7E/zfLsPAYX+5jdFDRKAklnv6ycAs2WQYSRPwC5t5zM0Zi98GS5W7jxYOGv73V2mc/U+BOYjaWm80NmO/sU3zwBXh8V6nVdIQ04JtZ0sYrn1eIb62uzU0TV/y0w
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(48565401081)(2017052603328)(7153060)(7193020);SRVR:AM5PR0501MB2436;
+x-ms-traffictypediagnostic: AM5PR0501MB2436:
+x-microsoft-antispam-prvs: <AM5PR0501MB2436535E68766047168C3408B1940@AM5PR0501MB2436.eurprd05.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(143289334528602)(9452136761055)(65623756079841)(85827821059158)(258649278758335)(42262312472803)(157189615257929);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231254)(944501410)(52105095)(93006095)(93001095)(3002001)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:AM5PR0501MB2436;BCL:0;PCL:0;RULEID:;SRVR:AM5PR0501MB2436;
+x-forefront-prvs: 0680FADD48
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(396003)(39380400002)(346002)(376002)(13464003)(199004)(189003)(55885003)(2900100001)(5250100002)(6506007)(86362001)(305945005)(54906003)(55016002)(102836004)(7736002)(14454004)(76176011)(74316002)(6246003)(68736007)(66066001)(4326008)(7696005)(8936002)(486006)(25786009)(8676002)(11346002)(97736004)(39060400002)(81156014)(26005)(81166006)(446003)(53546011)(107886003)(476003)(105586002)(106356001)(9686003)(186003)(3660700001)(6916009)(229853002)(316002)(3280700002)(3846002)(33656002)(6116002)(7416002)(2906002)(99286004)(59450400001)(53936002)(5660300001)(6436002)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM5PR0501MB2436;H:AM5PR0501MB2449.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: jgMShw2ESGRmU3VVw1+QDsQiekxVUGQRunmSRncY+mIy2jiRELDnvOdp4H54/OXfa326J2S1ysF+oZrQ9QHHMvBoGwsnTdqCPuQKnXDvQ0svDcq16oaT3eyZSmGfmb6LjiQLv+r4k/SEYMYhV3tMjDu+3dKIdsspftd0dUr45Vdq+e4jzYqzknuqb6UwZNjk
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <1526394095-5069-2-git-send-email-oleksandrs@mellanox.com>
-References: <1526394095-5069-1-git-send-email-oleksandrs@mellanox.com> <1526394095-5069-2-git-send-email-oleksandrs@mellanox.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 16 May 2018 00:21:35 +0300
-Message-ID: <CAHp75VctG5RBtLF3nT5e_j7_e9O12u=5gerJ6OMxWbABM9ft2w@mail.gmail.com>
-Subject: Re: [patch v21 1/4] drivers: jtag: Add JTAG core driver
-To: Oleksandr Shamray <oleksandrs@mellanox.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        openbmc@lists.ozlabs.org, Joel Stanley <joel@jms.id.au>,
-        =?UTF-8?B?SmnFmcOtIFDDrXJrbw==?= <jiri@resnulli.us>,
-        Tobias Klauser <tklauser@distanz.ch>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Vadim Pasternak <vadimp@mellanox.com>,
-        system-sw-low-level@mellanox.com, Rob Herring <robh+dt@kernel.org>,
-        openocd-devel-owner@lists.sourceforge.net,
-        linux-api@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jiri Pirko <jiri@mellanox.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-serial-owner@vger.kernel.org
-X-Mailing-List: linux-serial@vger.kernel.org
+X-MS-Office365-Filtering-Correlation-Id: 35411cd7-4d5c-461d-ca0a-08d5bff4bc3d
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 35411cd7-4d5c-461d-ca0a-08d5bff4bc3d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 May 2018 15:00:19.2343
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0501MB2436
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1600540224611743625?=
+X-GMAIL-MSGID: =?utf-8?q?1601176832716758960?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, May 15, 2018 at 5:21 PM, Oleksandr Shamray
-<oleksandrs@mellanox.com> wrote:
-> Initial patch for JTAG driver
-> JTAG class driver provide infrastructure to support hardware/software
-> JTAG platform drivers. It provide user layer API interface for flashing
-> and debugging external devices which equipped with JTAG interface
-> using standard transactions.
->
-> Driver exposes set of IOCTL to user space for:
-> - XFER:
-> - SIR (Scan Instruction Register, IEEE 1149.1 Data Register scan);
-> - SDR (Scan Data Register, IEEE 1149.1 Instruction Register scan);
-> - RUNTEST (Forces the IEEE 1149.1 bus to a run state for a specified
->   number of clocks).
-> - SIOCFREQ/GIOCFREQ for setting and reading JTAG frequency.
->
-> Driver core provides set of internal APIs for allocation and
-> registration:
-> - jtag_register;
-> - jtag_unregister;
-> - jtag_alloc;
-> - jtag_free;
->
-> Platform driver on registration with jtag-core creates the next
-> entry in dev folder:
-> /dev/jtagX
-
->  0xB0   all     RATIO devices           in development:
->                                         <mailto:vgo@ratio.de>
->  0xB1   00-1F   PPPoX                   <mailto:mostrows@styx.uwaterloo.ca>
-> +0xB2   00-0f   linux/jtag.h            JTAG driver
-> +                                       <mailto:oleksandrs@mellanox.com>
-
-Consider to preserve style (upper vs. lower).
-
-> +         This provides basic core functionality support for JTAG class devices.
-> +         Hardware that is equipped with a JTAG microcontroller can be
-> +         supported by using this driver's interfaces.
-> +         This driver exposes a set of IOCTLs to the user space for
-> +         the following commands:
-> +         SDR: (Scan Data Register) Performs an IEEE 1149.1 Data Register scan
-> +         SIR: (Scan Instruction Register) Performs an IEEE 1149.1 Instruction
-> +         Register scan.
-> +         RUNTEST: Forces the IEEE 1149.1 bus to a run state for a specified
-> +         number of clocks or a specified time period.
-
-Something feels wrong with formatting here.
-
-> +#define MAX_JTAG_NAME_LEN (sizeof("jtag") + 5)
-
-Interesting definition. Why not to set to 10 explicitly? And why 10?
-(16 sounds better)
-
-> +struct jtag {
-> +       struct miscdevice miscdev;
-
-> +       struct device *dev;
-
-Doesn't miscdev parent contain exactly this one?
-
-> +       const struct jtag_ops *ops;
-> +       int id;
-> +       bool opened;
-> +       struct mutex open_lock;
-> +       unsigned long priv[0];
-> +};
-
-> +               err = copy_to_user(u64_to_user_ptr(xfer.tdio),
-> +                                  (void *)(xfer_data), data_size);
-
-Redundant parens in one case. Check the rest similar places.
-
-> +static int jtag_open(struct inode *inode, struct file *file)
-> +{
-
-> +       struct jtag *jtag = container_of(file->private_data, struct jtag,
-> +                                        miscdev);
-
-I would don't care about length and put it on one line.
-
-> +       if (jtag->opened) {
-> +       jtag->opened = true;
-> +       jtag->opened = false;
-
-Can it be opened non exclusively several times? If so, this needs to
-be a ref counter instead.
-
-> +       if (!ops->idle || !ops->mode_set || !ops->status_get || !ops->xfer)
-> +               return NULL;
-
-Are all of them mandatory?
-
-> +int jtag_register(struct jtag *jtag)
-
-Perhaps devm_ variant.
-
-> +#define jtag_u64_to_ptr(arg) ((void *)(uintptr_t)arg)
-
-Where is this used or supposed to be used?
-
-> +#define JTAG_MAX_XFER_DATA_LEN 65535
-
-Is this limitation from some spec?
-Otherwise why not to allow 64K?
-
-> +/**
-> + * struct jtag_ops - callbacks for jtag control functions:
-> + *
-> + * @freq_get: get frequency function. Filled by device driver
-> + * @freq_set: set frequency function. Filled by device driver
-> + * @status_get: set status function. Filled by device driver
-> + * @idle: set JTAG to idle state function. Filled by device driver
-> + * @xfer: send JTAG xfer function. Filled by device driver
-> + */
-
-Perhaps you need to describe which of them are _really_ mandatory and
-which are optional.
-
--- 
-With Best Regards,
-Andy Shevchenko
+SGkgQW5keS4gDQpUaGFua3MgZm9yIHJldmlldy4NCg0KUGxlYXNlIHJlYWQgbXkgYW5zd2VycyBp
+bmxpbmUuDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQW5keSBTaGV2
+Y2hlbmtvIFttYWlsdG86YW5keS5zaGV2Y2hlbmtvQGdtYWlsLmNvbV0NCj4gU2VudDogMTYg0LzQ
+sNGPIDIwMTgg0LMuIDA6MjINCj4gVG86IE9sZWtzYW5kciBTaGFtcmF5IDxvbGVrc2FuZHJzQG1l
+bGxhbm94LmNvbT4NCj4gQ2M6IEdyZWcgS3JvYWgtSGFydG1hbiA8Z3JlZ2toQGxpbnV4Zm91bmRh
+dGlvbi5vcmc+OyBBcm5kIEJlcmdtYW5uIA0KPiA8YXJuZEBhcm5kYi5kZT47IExpbnV4IEtlcm5l
+bCBNYWlsaW5nIExpc3QgDQo+IDxsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnPjsgbGludXgt
+YXJtIE1haWxpbmcgTGlzdCANCj4gPGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9y
+Zz47IGRldmljZXRyZWUgDQo+IDxkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZz47IG9wZW5ibWNA
+bGlzdHMub3psYWJzLm9yZzsgSm9lbCBTdGFubGV5IA0KPiA8am9lbEBqbXMuaWQuYXU+OyBKacWZ
+w60gUMOtcmtvIDxqaXJpQHJlc251bGxpLnVzPjsgVG9iaWFzIEtsYXVzZXIgDQo+IDx0a2xhdXNl
+ckBkaXN0YW56LmNoPjsgb3BlbiBsaXN0OlNFUklBTCBEUklWRVJTIDxsaW51eC0gDQo+IHNlcmlh
+bEB2Z2VyLmtlcm5lbC5vcmc+OyBWYWRpbSBQYXN0ZXJuYWsgPHZhZGltcEBtZWxsYW5veC5jb20+
+OyANCj4gc3lzdGVtLXN3LWxvdy1sZXZlbCA8c3lzdGVtLXN3LWxvdy1sZXZlbEBtZWxsYW5veC5j
+b20+OyBSb2IgSGVycmluZyANCj4gPHJvYmgrZHRAa2VybmVsLm9yZz47IG9wZW5vY2QtZGV2ZWwt
+b3duZXJAbGlzdHMuc291cmNlZm9yZ2UubmV0OyANCj4gbGludXgtIGFwaUB2Z2VyLmtlcm5lbC5v
+cmc7IERhdmlkIFMuIE1pbGxlciA8ZGF2ZW1AZGF2ZW1sb2Z0Lm5ldD47IA0KPiBNYXVybyBDYXJ2
+YWxobyBDaGVoYWIgPG1jaGVoYWJAa2VybmVsLm9yZz47IEppcmkgUGlya28gDQo+IDxqaXJpQG1l
+bGxhbm94LmNvbT4NCj4gU3ViamVjdDogUmU6IFtwYXRjaCB2MjEgMS80XSBkcml2ZXJzOiBqdGFn
+OiBBZGQgSlRBRyBjb3JlIGRyaXZlcg0KPiANCj4gT24gVHVlLCBNYXkgMTUsIDIwMTggYXQgNToy
+MSBQTSwgT2xla3NhbmRyIFNoYW1yYXkgDQo+IDxvbGVrc2FuZHJzQG1lbGxhbm94LmNvbT4gd3Jv
+dGU6DQo+ID4gSW5pdGlhbCBwYXRjaCBmb3IgSlRBRyBkcml2ZXINCj4gPiBKVEFHIGNsYXNzIGRy
+aXZlciBwcm92aWRlIGluZnJhc3RydWN0dXJlIHRvIHN1cHBvcnQgDQo+ID4gaGFyZHdhcmUvc29m
+dHdhcmUgSlRBRyBwbGF0Zm9ybSBkcml2ZXJzLiBJdCBwcm92aWRlIHVzZXIgbGF5ZXIgQVBJIA0K
+PiA+IGludGVyZmFjZSBmb3IgZmxhc2hpbmcgYW5kIGRlYnVnZ2luZyBleHRlcm5hbCBkZXZpY2Vz
+IHdoaWNoIGVxdWlwcGVkIA0KPiA+IHdpdGggSlRBRyBpbnRlcmZhY2UgdXNpbmcgc3RhbmRhcmQg
+dHJhbnNhY3Rpb25zLg0KPiA+DQo+ID4gRHJpdmVyIGV4cG9zZXMgc2V0IG9mIElPQ1RMIHRvIHVz
+ZXIgc3BhY2UgZm9yOg0KPiA+IC0gWEZFUjoNCj4gPiAtIFNJUiAoU2NhbiBJbnN0cnVjdGlvbiBS
+ZWdpc3RlciwgSUVFRSAxMTQ5LjEgRGF0YSBSZWdpc3RlciBzY2FuKTsNCj4gPiAtIFNEUiAoU2Nh
+biBEYXRhIFJlZ2lzdGVyLCBJRUVFIDExNDkuMSBJbnN0cnVjdGlvbiBSZWdpc3RlciBzY2FuKTsN
+Cj4gPiAtIFJVTlRFU1QgKEZvcmNlcyB0aGUgSUVFRSAxMTQ5LjEgYnVzIHRvIGEgcnVuIHN0YXRl
+IGZvciBhIHNwZWNpZmllZA0KPiA+ICAgbnVtYmVyIG9mIGNsb2NrcykuDQo+ID4gLSBTSU9DRlJF
+US9HSU9DRlJFUSBmb3Igc2V0dGluZyBhbmQgcmVhZGluZyBKVEFHIGZyZXF1ZW5jeS4NCj4gPg0K
+PiA+IERyaXZlciBjb3JlIHByb3ZpZGVzIHNldCBvZiBpbnRlcm5hbCBBUElzIGZvciBhbGxvY2F0
+aW9uIGFuZA0KPiA+IHJlZ2lzdHJhdGlvbjoNCj4gPiAtIGp0YWdfcmVnaXN0ZXI7DQo+ID4gLSBq
+dGFnX3VucmVnaXN0ZXI7DQo+ID4gLSBqdGFnX2FsbG9jOw0KPiA+IC0ganRhZ19mcmVlOw0KPiA+
+DQo+ID4gUGxhdGZvcm0gZHJpdmVyIG9uIHJlZ2lzdHJhdGlvbiB3aXRoIGp0YWctY29yZSBjcmVh
+dGVzIHRoZSBuZXh0IA0KPiA+IGVudHJ5IGluIGRldiBmb2xkZXI6DQo+ID4gL2Rldi9qdGFnWA0K
+PiANCj4gPiAgMHhCMCAgIGFsbCAgICAgUkFUSU8gZGV2aWNlcyAgICAgICAgICAgaW4gZGV2ZWxv
+cG1lbnQ6DQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxtYWls
+dG86dmdvQHJhdGlvLmRlPg0KPiA+ICAweEIxICAgMDAtMUYgICBQUFBvWCAgICAgICAgICAgICAg
+ICAgICA8bWFpbHRvOm1vc3Ryb3dzQHN0eXgudXdhdGVybG9vLmNhPg0KPiA+ICsweEIyICAgMDAt
+MGYgICBsaW51eC9qdGFnLmggICAgICAgICAgICBKVEFHIGRyaXZlcg0KPiA+ICsNCj4gPiArPG1h
+aWx0bzpvbGVrc2FuZHJzQG1lbGxhbm94LmNvbT4NCj4gDQo+IENvbnNpZGVyIHRvIHByZXNlcnZl
+IHN0eWxlICh1cHBlciB2cy4gbG93ZXIpLg0KDQpKVEFHIGluIGNvZGUgaXMgbG93ZXIgKGp0YWcp
+IGNhbmUgYnV0IGluIGRlc2NyaXB0aW9ucyBhbmQgbm90ZXMgaXQgIGlzIHVwcGVyIChKVEFHKS4N
+CkluIGFsbCBwbGFjZXMgd2hpY2ggZG8gbm90IGNvcnJlc3BvbmQgdG8gdGhpcyBJIHdpbGwgZml4
+LiANCg0KPiANCj4gPiArICAgICAgICAgVGhpcyBwcm92aWRlcyBiYXNpYyBjb3JlIGZ1bmN0aW9u
+YWxpdHkgc3VwcG9ydCBmb3IgSlRBRyBjbGFzcyBkZXZpY2VzLg0KPiA+ICsgICAgICAgICBIYXJk
+d2FyZSB0aGF0IGlzIGVxdWlwcGVkIHdpdGggYSBKVEFHIG1pY3JvY29udHJvbGxlciBjYW4gYmUN
+Cj4gPiArICAgICAgICAgc3VwcG9ydGVkIGJ5IHVzaW5nIHRoaXMgZHJpdmVyJ3MgaW50ZXJmYWNl
+cy4NCj4gPiArICAgICAgICAgVGhpcyBkcml2ZXIgZXhwb3NlcyBhIHNldCBvZiBJT0NUTHMgdG8g
+dGhlIHVzZXIgc3BhY2UgZm9yDQo+ID4gKyAgICAgICAgIHRoZSBmb2xsb3dpbmcgY29tbWFuZHM6
+DQo+ID4gKyAgICAgICAgIFNEUjogKFNjYW4gRGF0YSBSZWdpc3RlcikgUGVyZm9ybXMgYW4gSUVF
+RSAxMTQ5LjEgRGF0YSBSZWdpc3RlciBzY2FuDQo+ID4gKyAgICAgICAgIFNJUjogKFNjYW4gSW5z
+dHJ1Y3Rpb24gUmVnaXN0ZXIpIFBlcmZvcm1zIGFuIElFRUUgMTE0OS4xIEluc3RydWN0aW9uDQo+
+ID4gKyAgICAgICAgIFJlZ2lzdGVyIHNjYW4uDQo+ID4gKyAgICAgICAgIFJVTlRFU1Q6IEZvcmNl
+cyB0aGUgSUVFRSAxMTQ5LjEgYnVzIHRvIGEgcnVuIHN0YXRlIGZvciBhIHNwZWNpZmllZA0KPiA+
+ICsgICAgICAgICBudW1iZXIgb2YgY2xvY2tzIG9yIGEgc3BlY2lmaWVkIHRpbWUgcGVyaW9kLg0K
+PiANCj4gU29tZXRoaW5nIGZlZWxzIHdyb25nIHdpdGggZm9ybWF0dGluZyBoZXJlLg0KPiANCg0K
+V2lsbCBmaXgNCg0KPiA+ICsjZGVmaW5lIE1BWF9KVEFHX05BTUVfTEVOIChzaXplb2YoImp0YWci
+KSArIDUpDQo+IA0KPiBJbnRlcmVzdGluZyBkZWZpbml0aW9uLiBXaHkgbm90IHRvIHNldCB0byAx
+MCBleHBsaWNpdGx5PyBBbmQgd2h5IDEwPw0KPiAoMTYgc291bmRzIGJldHRlcikNCj4gDQo1IC0g
+aXMgYSBtYXggbGVuIG9mIEpUQUcgZGV2aWNlIGlkIGluIGRldmljZSBuYW1lLiBJIHdpbGwgYWRk
+IGRlZmluZSB0byBpdC4NCg0KSW4gZ2VuZXJhbCBJIGRvbid0IHNlZSB0aGUgY2FzZSBmb3IgdGhl
+IHN5c3RlbSB3aXRoIGh1bmRyZWRzIEpUQUcgaW50ZXJmYWNlcy4NCkkgd2lsbCBsaW1pdCBtYXhp
+bXVtIGp0YWcgbWFzdGVyIHRvIDI1NSBkZXZpY2VzIGFuZCBjaGFuZ2UgIGlkIGxlbiB0byAzDQoN
+CiNkZWZpbmUgTUFYX0pUQUdfSURfU1RSX0xFTiA1DQojZGVmaW5lIE1BWF9KVEFHX05BTUVfTEVO
+IChzaXplb2YoImp0YWciKSArIE1BWF9KVEFHX0lEX1NUUl9MRU4pDQoNCj4gPiArc3RydWN0IGp0
+YWcgew0KPiA+ICsgICAgICAgc3RydWN0IG1pc2NkZXZpY2UgbWlzY2RldjsNCj4gDQo+ID4gKyAg
+ICAgICBzdHJ1Y3QgZGV2aWNlICpkZXY7DQo+IA0KPiBEb2Vzbid0IG1pc2NkZXYgcGFyZW50IGNv
+bnRhaW4gZXhhY3RseSB0aGlzIG9uZT8NCg0KWWVzLiANCldpbGwgZml4Lg0KDQo+IA0KPiA+ICsg
+ICAgICAgY29uc3Qgc3RydWN0IGp0YWdfb3BzICpvcHM7DQo+ID4gKyAgICAgICBpbnQgaWQ7DQo+
+ID4gKyAgICAgICBib29sIG9wZW5lZDsNCj4gPiArICAgICAgIHN0cnVjdCBtdXRleCBvcGVuX2xv
+Y2s7DQo+ID4gKyAgICAgICB1bnNpZ25lZCBsb25nIHByaXZbMF07DQo+ID4gK307DQo+IA0KPiA+
+ICsgICAgICAgICAgICAgICBlcnIgPSBjb3B5X3RvX3VzZXIodTY0X3RvX3VzZXJfcHRyKHhmZXIu
+dGRpbyksDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAodm9pZCAqKSh4
+ZmVyX2RhdGEpLCBkYXRhX3NpemUpOw0KPiANCj4gUmVkdW5kYW50IHBhcmVucyBpbiBvbmUgY2Fz
+ZS4gQ2hlY2sgdGhlIHJlc3Qgc2ltaWxhciBwbGFjZXMuDQo+IA0KDQpZZXMuDQoNCj4gPiArc3Rh
+dGljIGludCBqdGFnX29wZW4oc3RydWN0IGlub2RlICppbm9kZSwgc3RydWN0IGZpbGUgKmZpbGUp
+IHsNCj4gDQo+ID4gKyAgICAgICBzdHJ1Y3QganRhZyAqanRhZyA9IGNvbnRhaW5lcl9vZihmaWxl
+LT5wcml2YXRlX2RhdGEsIHN0cnVjdCBqdGFnLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgbWlzY2Rldik7DQo+IA0KPiBJIHdvdWxkIGRvbid0IGNhcmUgYWJv
+dXQgbGVuZ3RoIGFuZCBwdXQgaXQgb24gb25lIGxpbmUuDQo+IA0KDQpCdXQgZm9sbG93aW5nIHRv
+IExJTlVYIGtlcm5lbCBzdHlsZSwgaXQgc2hvdWxkIGJlIG5vIGxvbmdlciB0aGFuIDgwIHN5bWJv
+bHMuIA0KSXQgd2lsbCBub3QgcGFzcyBieSAgLi9zY3JpcHRzL2NoZWNrcGF0Y2gucGwNCg0KV2ls
+bCBpdCBiZSBPSyB0byBzZW5kIGEgcGF0Y2ggd2hpY2ggZmFpbGVkIDgwIHN5bWJvbHMgbGltaXRh
+dGlvbiBjaGVjaz8NCg0KPiA+ICsgICAgICAgaWYgKGp0YWctPm9wZW5lZCkgew0KPiA+ICsgICAg
+ICAganRhZy0+b3BlbmVkID0gdHJ1ZTsNCj4gPiArICAgICAgIGp0YWctPm9wZW5lZCA9IGZhbHNl
+Ow0KPiANCj4gQ2FuIGl0IGJlIG9wZW5lZCBub24gZXhjbHVzaXZlbHkgc2V2ZXJhbCB0aW1lcz8g
+SWYgc28sIHRoaXMgbmVlZHMgdG8gDQo+IGJlIGEgcmVmIGNvdW50ZXIgaW5zdGVhZC4NCg0KSXQg
+Y2FuIGJlIG9wZW5lZCBvbmx5IG9uY2UuDQoNCj4gDQo+ID4gKyAgICAgICBpZiAoIW9wcy0+aWRs
+ZSB8fCAhb3BzLT5tb2RlX3NldCB8fCAhb3BzLT5zdGF0dXNfZ2V0IHx8ICFvcHMtPnhmZXIpDQo+
+ID4gKyAgICAgICAgICAgICAgIHJldHVybiBOVUxMOw0KPiANCj4gQXJlIGFsbCBvZiB0aGVtIG1h
+bmRhdG9yeT8NCj4gDQoNClllcywgZXhjZXB0ICJtb2RlX3NldCINCldpbGwgcmVtb3ZlIG1vZGVf
+c2V0IGZyb20gY2hlY2sNCg0KPiA+ICtpbnQganRhZ19yZWdpc3RlcihzdHJ1Y3QganRhZyAqanRh
+ZykNCj4gDQo+IFBlcmhhcHMgZGV2bV8gdmFyaWFudC4NCg0KSnRhZyBkcml2ZXIgdXNlcyBtaXNj
+ZGV2aWNlIGFuZCByZWxhdGVkICBtaXNjX3JlZ2lzdGVyIGFuZCBtaXNjX2RlcmVnaXN0ZXIgDQpj
+YWxscyBmb3IgY3JlYXRpb24gYW5kIGRlc3RydWN0aW9uLiBUaGVyZSBpcyBubyBkZXZpY2Ugb2Jq
+ZWN0IHByaW9yIHRvIA0KY2FsbCB0byAgbWlzY19yZWdpc3Rlciwgd2hpY2ggY291bGQgYmUgdXNl
+ZCBpbiBkZXZtX2p0YWdfcmVnaXN0ZXIuDQoNCj4gDQo+ID4gKyNkZWZpbmUganRhZ191NjRfdG9f
+cHRyKGFyZykgKCh2b2lkICopKHVpbnRwdHJfdClhcmcpDQo+IA0KDQpSZWR1bmRhbnQuIFJlbW92
+ZWQuDQoNCj4gV2hlcmUgaXMgdGhpcyB1c2VkIG9yIHN1cHBvc2VkIHRvIGJlIHVzZWQ/DQo+IA0K
+PiA+ICsjZGVmaW5lIEpUQUdfTUFYX1hGRVJfREFUQV9MRU4gNjU1MzUNCj4gDQo+IElzIHRoaXMg
+bGltaXRhdGlvbiBmcm9tIHNvbWUgc3BlYz8NCj4gT3RoZXJ3aXNlIHdoeSBub3QgdG8gYWxsb3cg
+NjRLPw0KPiANCg0KSXQgbm90IGxpbWl0ZWQgYnkgc3BlY2lmaWNhdGlvbi4gIA0KQnV0IHdlIGVu
+Zm9yY2UgYW4gdXBwZXIgYm91bmQgZm9yIHRoZSBsZW5ndGggaGVyZSwgdG8gcHJldmVudCB1c2Vy
+cyBmcm9tIGRyYWluaW5nIA0Ka2VybmVsIG1lbW9yeSB3aXRoIGdpYW50IGJ1ZmZlcnMuDQpTbyBp
+dCB3YXMgbGltaXRlZCBieSAgc2l6ZSBvZiB1bnNpZ25lZCBzaG9ydCBpbnQgKDY1NTM1KQ0KDQo+
+ID4gKy8qKg0KPiA+ICsgKiBzdHJ1Y3QganRhZ19vcHMgLSBjYWxsYmFja3MgZm9yIGp0YWcgY29u
+dHJvbCBmdW5jdGlvbnM6DQo+ID4gKyAqDQo+ID4gKyAqIEBmcmVxX2dldDogZ2V0IGZyZXF1ZW5j
+eSBmdW5jdGlvbi4gRmlsbGVkIGJ5IGRldmljZSBkcml2ZXINCj4gPiArICogQGZyZXFfc2V0OiBz
+ZXQgZnJlcXVlbmN5IGZ1bmN0aW9uLiBGaWxsZWQgYnkgZGV2aWNlIGRyaXZlcg0KPiA+ICsgKiBA
+c3RhdHVzX2dldDogc2V0IHN0YXR1cyBmdW5jdGlvbi4gRmlsbGVkIGJ5IGRldmljZSBkcml2ZXIN
+Cj4gPiArICogQGlkbGU6IHNldCBKVEFHIHRvIGlkbGUgc3RhdGUgZnVuY3Rpb24uIEZpbGxlZCBi
+eSBkZXZpY2UgZHJpdmVyDQo+ID4gKyAqIEB4ZmVyOiBzZW5kIEpUQUcgeGZlciBmdW5jdGlvbi4g
+RmlsbGVkIGJ5IGRldmljZSBkcml2ZXIgICovDQo+IA0KPiBQZXJoYXBzIHlvdSBuZWVkIHRvIGRl
+c2NyaWJlIHdoaWNoIG9mIHRoZW0gYXJlIF9yZWFsbHlfIG1hbmRhdG9yeSBhbmQgDQo+IHdoaWNo
+IGFyZSBvcHRpb25hbC4NCj4gDQoNCk9rDQoNCj4gLS0NCj4gV2l0aCBCZXN0IFJlZ2FyZHMsDQo+
+IEFuZHkgU2hldmNoZW5rbw0KDQpCZXN0IFJlZ2FyZHMsDQpPbGVrc2FuZHIgU2hhbXJheQ0KDQo=
