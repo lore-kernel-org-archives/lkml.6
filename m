@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751783AbeEVMPD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 08:15:03 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54064 "EHLO
+        id S1752467AbeEVMF3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 08:05:29 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52890 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751598AbeEVMFj (ORCPT
+        with ESMTP id S1751344AbeEVMFQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 08:05:39 -0400
+        Tue, 22 May 2018 08:05:16 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: iommu@lists.linux-foundation.org
 Cc: linux-arch@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
@@ -18,9 +18,9 @@ Cc: linux-arch@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
         linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org,
         sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 15/25] openrisc: use generic dma_noncoherent_ops
-Date: Tue, 22 May 2018 14:04:20 +0200
-Message-Id: <20180522120430.28709-16-hch@lst.de>
+Subject: [PATCH 10/25] nds32: use generic dma_noncoherent_ops
+Date: Tue, 22 May 2018 14:04:15 +0200
+Message-Id: <20180522120430.28709-11-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180522120430.28709-1-hch@lst.de>
 References: <20180522120430.28709-1-hch@lst.de>
@@ -33,182 +33,227 @@ Switch to the generic noncoherent direct mapping implementation.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/openrisc/Kconfig                   |  2 +
- arch/openrisc/include/asm/Kbuild        |  1 +
- arch/openrisc/include/asm/dma-mapping.h | 35 -------------
- arch/openrisc/kernel/dma.c              | 65 ++++---------------------
- 4 files changed, 12 insertions(+), 91 deletions(-)
- delete mode 100644 arch/openrisc/include/asm/dma-mapping.h
+ arch/nds32/Kconfig                   |   3 +
+ arch/nds32/include/asm/Kbuild        |   1 +
+ arch/nds32/include/asm/dma-mapping.h |  14 ----
+ arch/nds32/kernel/dma.c              | 113 +++------------------------
+ 4 files changed, 15 insertions(+), 116 deletions(-)
+ delete mode 100644 arch/nds32/include/asm/dma-mapping.h
 
-diff --git a/arch/openrisc/Kconfig b/arch/openrisc/Kconfig
-index 9ecad05bfc73..65e3c574c9d3 100644
---- a/arch/openrisc/Kconfig
-+++ b/arch/openrisc/Kconfig
-@@ -6,6 +6,8 @@
+diff --git a/arch/nds32/Kconfig b/arch/nds32/Kconfig
+index 249f38d3388f..67d0ac0a989c 100644
+--- a/arch/nds32/Kconfig
++++ b/arch/nds32/Kconfig
+@@ -5,10 +5,13 @@
  
- config OPENRISC
- 	def_bool y
+ config NDS32
+         def_bool y
++	select ARCH_HAS_SYNC_DMA_FOR_CPU
 +	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
+ 	select ARCH_WANT_FRAME_POINTERS if FTRACE
+ 	select CLKSRC_MMIO
+ 	select CLONE_BACKWARDS
+ 	select COMMON_CLK
 +	select DMA_NONCOHERENT_OPS
- 	select OF
- 	select OF_EARLY_FLATTREE
- 	select IRQ_DOMAIN
-diff --git a/arch/openrisc/include/asm/Kbuild b/arch/openrisc/include/asm/Kbuild
-index f05c722a21f8..e663a996b612 100644
---- a/arch/openrisc/include/asm/Kbuild
-+++ b/arch/openrisc/include/asm/Kbuild
-@@ -6,6 +6,7 @@ generic-y += current.h
+ 	select GENERIC_ATOMIC64
+ 	select GENERIC_CPU_DEVICES
+ 	select GENERIC_CLOCKEVENTS
+diff --git a/arch/nds32/include/asm/Kbuild b/arch/nds32/include/asm/Kbuild
+index 06bdf8167f5a..b3e951f805f8 100644
+--- a/arch/nds32/include/asm/Kbuild
++++ b/arch/nds32/include/asm/Kbuild
+@@ -13,6 +13,7 @@ generic-y += cputime.h
  generic-y += device.h
  generic-y += div64.h
  generic-y += dma.h
 +generic-y += dma-mapping.h
  generic-y += emergency-restart.h
+ generic-y += errno.h
  generic-y += exec.h
- generic-y += extable.h
-diff --git a/arch/openrisc/include/asm/dma-mapping.h b/arch/openrisc/include/asm/dma-mapping.h
+diff --git a/arch/nds32/include/asm/dma-mapping.h b/arch/nds32/include/asm/dma-mapping.h
 deleted file mode 100644
-index e212a1f0b6d2..000000000000
---- a/arch/openrisc/include/asm/dma-mapping.h
+index 2dd47d245c25..000000000000
+--- a/arch/nds32/include/asm/dma-mapping.h
 +++ /dev/null
-@@ -1,35 +0,0 @@
--/*
-- * OpenRISC Linux
-- *
-- * Linux architectural port borrowing liberally from similar works of
-- * others.  All original copyrights apply as per the original source
-- * declaration.
-- *
-- * OpenRISC implementation:
-- * Copyright (C) 2010-2011 Jonas Bonn <jonas@southpole.se>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- */
+@@ -1,14 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-// Copyright (C) 2005-2017 Andes Technology Corporation
 -
--#ifndef __ASM_OPENRISC_DMA_MAPPING_H
--#define __ASM_OPENRISC_DMA_MAPPING_H
+-#ifndef ASMNDS32_DMA_MAPPING_H
+-#define ASMNDS32_DMA_MAPPING_H
 -
--/*
-- * See Documentation/DMA-API-HOWTO.txt and
-- * Documentation/DMA-API.txt for documentation.
-- */
+-extern struct dma_map_ops nds32_dma_ops;
 -
--#include <linux/dma-debug.h>
--#include <linux/dma-mapping.h>
--
--extern const struct dma_map_ops or1k_dma_map_ops;
--
--static inline const struct dma_map_ops *get_arch_dma_ops(struct bus_type *bus)
+-static inline struct dma_map_ops *get_arch_dma_ops(struct bus_type *bus)
 -{
--	return &or1k_dma_map_ops;
+-	return &nds32_dma_ops;
 -}
 -
--#endif	/* __ASM_OPENRISC_DMA_MAPPING_H */
-diff --git a/arch/openrisc/kernel/dma.c b/arch/openrisc/kernel/dma.c
-index d6a0bf1fa713..159336adfa2f 100644
---- a/arch/openrisc/kernel/dma.c
-+++ b/arch/openrisc/kernel/dma.c
-@@ -19,9 +19,7 @@
-  * the only thing implemented properly.  The rest need looking into...
-  */
+-#endif
+diff --git a/arch/nds32/kernel/dma.c b/arch/nds32/kernel/dma.c
+index 43d7fd432bb6..2b3167a1f259 100644
+--- a/arch/nds32/kernel/dma.c
++++ b/arch/nds32/kernel/dma.c
+@@ -3,17 +3,14 @@
  
--#include <linux/dma-mapping.h>
--#include <linux/dma-debug.h>
+ #include <linux/types.h>
+ #include <linux/mm.h>
 -#include <linux/export.h>
+ #include <linux/string.h>
+-#include <linux/scatterlist.h>
+-#include <linux/dma-mapping.h>
 +#include <linux/dma-noncoherent.h>
+ #include <linux/io.h>
+ #include <linux/cache.h>
+ #include <linux/highmem.h>
+ #include <linux/slab.h>
+ #include <asm/cacheflush.h>
+ #include <asm/tlbflush.h>
+-#include <asm/dma-mapping.h>
+ #include <asm/proc-fns.h>
  
- #include <asm/cpuinfo.h>
- #include <asm/spr_defs.h>
-@@ -80,10 +78,9 @@ page_clear_nocache(pte_t *pte, unsigned long addr,
-  * is being ignored for now; uncached but write-combined memory is a
-  * missing feature of the OR1K.
-  */
--static void *
--or1k_dma_alloc(struct device *dev, size_t size,
--	       dma_addr_t *dma_handle, gfp_t gfp,
--	       unsigned long attrs)
-+void *
-+arch_dma_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
+ /*
+@@ -119,10 +116,8 @@ static struct arch_vm_region *vm_region_find(struct arch_vm_region *head,
+ 	return c;
+ }
+ 
+-/* FIXME: attrs is not used. */
+-static void *nds32_dma_alloc_coherent(struct device *dev, size_t size,
+-				      dma_addr_t * handle, gfp_t gfp,
+-				      unsigned long attrs)
++void *arch_dma_alloc(struct device *dev, size_t size, dma_addr_t *handle,
 +		gfp_t gfp, unsigned long attrs)
  {
- 	unsigned long va;
- 	void *page;
-@@ -115,9 +112,9 @@ or1k_dma_alloc(struct device *dev, size_t size,
- 	return (void *)va;
+ 	struct page *page;
+ 	struct arch_vm_region *c;
+@@ -227,8 +222,8 @@ static void *nds32_dma_alloc_coherent(struct device *dev, size_t size,
+ 	return NULL;
  }
  
--static void
--or1k_dma_free(struct device *dev, size_t size, void *vaddr,
--	      dma_addr_t dma_handle, unsigned long attrs)
-+void
-+arch_dma_free(struct device *dev, size_t size, void *vaddr,
-+		dma_addr_t dma_handle, unsigned long attrs)
+-static void nds32_dma_free(struct device *dev, size_t size, void *cpu_addr,
+-			   dma_addr_t handle, unsigned long attrs)
++void arch_dma_free(struct device *dev, size_t size, void *cpu_addr,
++		dma_addr_t handle, unsigned long attrs)
  {
- 	unsigned long va = (unsigned long)vaddr;
- 	struct mm_walk walk = {
-@@ -133,13 +130,10 @@ or1k_dma_free(struct device *dev, size_t size, void *vaddr,
- 	free_pages_exact(vaddr, size);
- }
+ 	struct arch_vm_region *c;
+ 	unsigned long flags, addr;
+@@ -329,11 +324,10 @@ static int __init consistent_init(void)
+ 
+ core_initcall(consistent_init);
  
 -static void
--or1k_sync_single_for_device(struct device *dev,
--			    dma_addr_t dma_handle, size_t size,
--			    enum dma_data_direction dir)
-+void arch_sync_dma_for_device(struct device *dev, phys_addr_t addr, size_t size,
-+		enum dma_data_direction dir)
+-nds32_dma_sync_single_for_device(struct device *dev, dma_addr_t handle,
+-				 size_t size, enum dma_data_direction dir)
++void arch_sync_dma_for_device(struct device *dev, phys_addr_t paddr,
++		size_t size, enum dma_data_direction dir)
  {
- 	unsigned long cl;
--	dma_addr_t addr = dma_handle;
- 	struct cpuinfo_or1k *cpuinfo = &cpuinfo_or1k[smp_processor_id()];
+-	unsigned long start = (unsigned long)phys_to_virt(handle);
++	unsigned long start = (unsigned long)phys_to_virt(paddr);
  
  	switch (dir) {
-@@ -163,45 +157,4 @@ or1k_sync_single_for_device(struct device *dev,
- 		 */
- 		break;
+ 	case DMA_FROM_DEVICE:
+@@ -347,11 +341,10 @@ nds32_dma_sync_single_for_device(struct device *dev, dma_addr_t handle,
  	}
--
--}
--
--static dma_addr_t
--or1k_map_page(struct device *dev, struct page *page,
--	      unsigned long offset, size_t size,
--	      enum dma_data_direction dir,
--	      unsigned long attrs)
--{
--	unsigned long cl;
--	dma_addr_t addr = page_to_phys(page) + offset;
--	struct cpuinfo_or1k *cpuinfo = &cpuinfo_or1k[smp_processor_id()];
--
--	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
--		or1k_sync_single_for_device(dev, addr, size, dir);
--	return addr;
+ }
+ 
+-static void
+-nds32_dma_sync_single_for_cpu(struct device *dev, dma_addr_t handle,
+-			      size_t size, enum dma_data_direction dir)
++void arch_sync_dma_for_cpu(struct device *dev, phys_addr_t paddr,
++		size_t size, enum dma_data_direction dir)
+ {
+-	unsigned long start = (unsigned long)phys_to_virt(handle);
++	unsigned long start = (unsigned long)phys_to_virt(paddr);
+ 
+ 	switch (dir) {
+ 	case DMA_TO_DEVICE:
+@@ -364,87 +357,3 @@ nds32_dma_sync_single_for_cpu(struct device *dev, dma_addr_t handle,
+ 		BUG();
+ 	}
  }
 -
--static int
--or1k_map_sg(struct device *dev, struct scatterlist *sg,
--	    int nents, enum dma_data_direction dir,
--	    unsigned long attrs)
+-static dma_addr_t nds32_dma_map_page(struct device *dev, struct page *page,
+-				     unsigned long offset, size_t size,
+-				     enum dma_data_direction dir,
+-				     unsigned long attrs)
 -{
--	struct scatterlist *s;
+-	dma_addr_t dma_addr = page_to_phys(page) + offset;
+-
+-	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
+-		nds32_dma_sync_single_for_device(dev, handle, size, dir);
+-	return dma_addr;
+-}
+-
+-static void nds32_dma_unmap_page(struct device *dev, dma_addr_t handle,
+-				 size_t size, enum dma_data_direction dir,
+-				 unsigned long attrs)
+-{
+-	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
+-		nds32_dma_sync_single_for_cpu(dev, handle, size, dir);
+-}
+-
+-static void
+-nds32_dma_sync_sg_for_device(struct device *dev, struct scatterlist *sg,
+-			     int nents, enum dma_data_direction dir)
+-{
 -	int i;
 -
--	for_each_sg(sg, s, nents, i) {
--		s->dma_address = or1k_map_page(dev, sg_page(s), s->offset,
--					       s->length, dir, 0);
+-	for (i = 0; i < nents; i++, sg++) {
+-		nds32_dma_sync_single_for_device(dev, sg_dma_address(sg),
+-				sg->length, dir);
 -	}
+-}
 -
+-static void
+-nds32_dma_sync_sg_for_cpu(struct device *dev, struct scatterlist *sg, int nents,
+-			  enum dma_data_direction dir)
+-{
+-	int i;
+-
+-	for (i = 0; i < nents; i++, sg++) {
+-		nds32_dma_sync_single_for_cpu(dev, sg_dma_address(sg),
+-				sg->length, dir);
+-	}
+-}
+-
+-static int nds32_dma_map_sg(struct device *dev, struct scatterlist *sg,
+-			    int nents, enum dma_data_direction dir,
+-			    unsigned long attrs)
+-{
+-	int i;
+-
+-	for (i = 0; i < nents; i++, sg++) {
+-		nds32_dma_sync_single_for_device(dev, sg_dma_address(sg),
+-				sg->length, dir);
+-	}
 -	return nents;
 -}
 -
--const struct dma_map_ops or1k_dma_map_ops = {
--	.alloc = or1k_dma_alloc,
--	.free = or1k_dma_free,
--	.map_page = or1k_map_page,
--	.map_sg = or1k_map_sg,
--	.sync_single_for_device = or1k_sync_single_for_device,
+-static void nds32_dma_unmap_sg(struct device *dev, struct scatterlist *sg,
+-			       int nhwentries, enum dma_data_direction dir,
+-			       unsigned long attrs)
+-{
+-	int i;
+-
+-	for (i = 0; i < nhwentries; i++, sg++) {
+-		nds32_dma_sync_single_for_cpu(dev, sg_dma_address(sg),
+-				sg->length, dir);
+-	}
+-}
+-
+-struct dma_map_ops nds32_dma_ops = {
+-	.alloc = nds32_dma_alloc_coherent,
+-	.free = nds32_dma_free,
+-	.map_page = nds32_dma_map_page,
+-	.unmap_page = nds32_dma_unmap_page,
+-	.map_sg = nds32_dma_map_sg,
+-	.unmap_sg = nds32_dma_unmap_sg,
+-	.sync_single_for_device = nds32_dma_sync_single_for_device,
+-	.sync_single_for_cpu = nds32_dma_sync_single_for_cpu,
+-	.sync_sg_for_cpu = nds32_dma_sync_sg_for_cpu,
+-	.sync_sg_for_device = nds32_dma_sync_sg_for_device,
 -};
--EXPORT_SYMBOL(or1k_dma_map_ops);
+-
+-EXPORT_SYMBOL(nds32_dma_ops);
 -- 
 2.17.0
