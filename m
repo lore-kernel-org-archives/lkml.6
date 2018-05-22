@@ -1,63 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752686AbeEVUZQ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 16:25:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33072 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751582AbeEVUZP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 16:25:15 -0400
-Date: Tue, 22 May 2018 16:25:12 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Mathieu Malaterre <malat@debian.org>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-        Kees Cook <keescook@chromium.org>,
-        Laura Abbott <lauraa@codeaurora.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Gargi Sharma <gs051095@gmail.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Add missing header include <linux/mem_encrypt.h>
-Message-ID: <20180522162512.224b301b@gandalf.local.home>
-In-Reply-To: <20180522195533.31415-1-malat@debian.org>
-References: <20180522195533.31415-1-malat@debian.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1752827AbeEVU0U (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 16:26:20 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:45964 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752161AbeEVU0R (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 16:26:17 -0400
+X-Google-Smtp-Source: AB8JxZoCwRNCYXZozMQhg3BlV5Tmxcmq2lSEfBInn4FeyZAdAgvv3/m+YT3NMqYMlTbLyRFX7DIu6Q==
+Date: Tue, 22 May 2018 14:26:12 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
+Cc: dledford@redhat.com, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, xavier.huwei@tom.com, lijun_nudt@163.com
+Subject: Re: [PATCH rdma-next 4/5] RDMA/hns: Add reset process for RoCE in
+ hip08
+Message-ID: <20180522202612.GB21148@ziepe.ca>
+References: <1526544173-106587-1-git-send-email-xavier.huwei@huawei.com>
+ <1526544173-106587-5-git-send-email-xavier.huwei@huawei.com>
+ <20180517151459.GD10842@ziepe.ca>
+ <5AFE484B.2080206@huawei.com>
+ <20180518041502.GS10842@ziepe.ca>
+ <5AFE7F54.9030201@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5AFE7F54.9030201@huawei.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 22 May 2018 21:55:31 +0200
-Mathieu Malaterre <malat@debian.org> wrote:
-
-> In commit c7753208a94c ("x86, swiotlb: Add memory encryption support") a
-> call to function ‘mem_encrypt_init’ was added. Include prototype
-> defined in header <linux/mem_encrypt.h> to prevent a warning reported
-> during compilation with W=1:
+On Fri, May 18, 2018 at 03:23:00PM +0800, Wei Hu (Xavier) wrote:
 > 
->   init/main.c:494:20: warning: no previous prototype for ‘mem_encrypt_init’ [-Wmissing-prototypes]
-
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
--- Steve
-
 > 
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
-> ---
->  init/main.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/init/main.c b/init/main.c
-> index 3d6b31f4e520..35ce2ddb1322 100644
-> --- a/init/main.c
-> +++ b/init/main.c
-> @@ -91,6 +91,7 @@
->  #include <linux/cache.h>
->  #include <linux/rodata_test.h>
->  #include <linux/jump_label.h>
-> +#include <linux/mem_encrypt.h>
->  
->  #include <asm/io.h>
->  #include <asm/bugs.h>
+> On 2018/5/18 12:15, Jason Gunthorpe wrote:
+> > On Fri, May 18, 2018 at 11:28:11AM +0800, Wei Hu (Xavier) wrote:
+> >>
+> >> On 2018/5/17 23:14, Jason Gunthorpe wrote:
+> >>> On Thu, May 17, 2018 at 04:02:52PM +0800, Wei Hu (Xavier) wrote:
+> >>>> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+> >>>> index 86ef15f..e1c44a6 100644
+> >>>> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+> >>>> @@ -774,6 +774,9 @@ static int hns_roce_cmq_send(struct hns_roce_dev *hr_dev,
+> >>>>  	int ret = 0;
+> >>>>  	int ntc;
+> >>>>  
+> >>>> +	if (hr_dev->is_reset)
+> >>>> +		return 0;
+> >>>> +
+> >>>>  	spin_lock_bh(&csq->lock);
+> >>>>  
+> >>>>  	if (num > hns_roce_cmq_space(csq)) {
+> >>>> @@ -4790,6 +4793,7 @@ static int hns_roce_hw_v2_init_instance(struct hnae3_handle *handle)
+> >>>>  	return 0;
+> >>>>  
+> >>>>  error_failed_get_cfg:
+> >>>> +	handle->priv = NULL;
+> >>>>  	kfree(hr_dev->priv);
+> >>>>  
+> >>>>  error_failed_kzalloc:
+> >>>> @@ -4803,14 +4807,70 @@ static void hns_roce_hw_v2_uninit_instance(struct hnae3_handle *handle,
+> >>>>  {
+> >>>>  	struct hns_roce_dev *hr_dev = (struct hns_roce_dev *)handle->priv;
+> >>>>  
+> >>>> +	if (!hr_dev)
+> >>>> +		return;
+> >>>> +
+> >>>>  	hns_roce_exit(hr_dev);
+> >>>> +	handle->priv = NULL;
+> >>>>  	kfree(hr_dev->priv);
+> >>>>  	ib_dealloc_device(&hr_dev->ib_dev);
+> >>>>  }
+> >>> Why are these hunks here? If init fails then uninit should not be
+> >>> called, so why meddle with priv?
+> >> In hns_roce_hw_v2_init_instance function, we evaluate handle->priv with 
+> >> hr_dev,
+> >> We want clear the value in hns_roce_hw_v2_uninit_instance function.
+> >> So we can ensure no problem in RoCE driver.
+> > What problem could happen?
+> >
+> > I keep removing unnecessary sets to null and checks of null, so please
+> > don't add them if they cannot happen.
+> >
+> > Eg uninit should never be called with a null priv, that is a serious
+> > logic mis-design someplace if it happens.
+> >
+> > Jason
+> NIC driver call the registered reset_notify() function to finish the
+> part of RoCE reset process.
+> In RoCE driver,  when hnae3_reset_notify_type is HNAE3_UNINIT_CLIENT,
+> we call hns_roce_hw_v2_uninit_instance(handle, false) to release the
+> resources.
+> when hnae3_reset_notify_type is HNAE3_INIT_CLIENT, we call
+> hns_roce_hw_v2_init_instance.
+> if hns_roce_hw_v2_init_instance failed, we should ensure no problem in
+> the other callback
+> function registered by RoCE driver.
+
+Don't design things like this.
+
+init/uninit are paired - do not call something uninit if it can be
+called after init fails, or better, arrange to prevent that so things
+are sane.
+
+Jason
