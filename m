@@ -1,202 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751368AbeEVIti (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 04:49:38 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:39169 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751069AbeEVIth (ORCPT
+        id S1751454AbeEVIuc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 04:50:32 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:35370 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750733AbeEVIu2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 04:49:37 -0400
-X-Google-Smtp-Source: AB8JxZrUcDsx0T6hZ0lubKcvMXUSPYMeiS81Gux2xDY8wxW6nwFvzVdb5TecIaB23YhrWVTq6wabFHcEuVhQSzxywNU=
+        Tue, 22 May 2018 04:50:28 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 52ADB60131
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
+Subject: Re: [PATCH V6 3/5] remoteproc: qcom: Split the head and tail of the
+ q5v5-pil rproc reset function
+To: Vinod <vkoul@kernel.org>
+Cc: bjorn.andersson@linaro.org, ohad@wizery.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, sibis@codeaurora.org
+References: <1526294812-23390-1-git-send-email-sricharan@codeaurora.org>
+ <1526294812-23390-4-git-send-email-sricharan@codeaurora.org>
+ <20180518122233.GB31996@vkoul-mobl>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <97221658-49a9-a61f-75ea-41559222bb38@codeaurora.org>
+Date: Tue, 22 May 2018 14:20:14 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Reply-To: sedat.dilek@gmail.com
-In-Reply-To: <CA+icZUUfmgJPmmjuaVckvdLwWuWOPDAuFFyLq_ZPkc__LZbtSA@mail.gmail.com>
-References: <CA+icZUUPGQsRWpdmASzPQAdjmSFmhBwPKGh_CO65C9ot9+nOSQ@mail.gmail.com>
- <20180423174224.GA243180@google.com> <CA+icZUUpxh=99JP5K_R1KpxouqDW4KY5BjCn5VTcmyByEb0R5w@mail.gmail.com>
- <20180424230645.GB243180@google.com> <CA+icZUWhLNvjbyMv+2dB9iXgHnkLZwy5+_GZYG7-sk2b_TJa8Q@mail.gmail.com>
- <20180507174909.GF19594@google.com> <CA+icZUUCBoHiuK+qCPX-H3=4Si2UXxMBMwQCmzWmq=U1sHebRg@mail.gmail.com>
- <CAH7mPviH3EiozBxkdZ685ZOo1bNJLLaOPFYwbn2NvD77w=P3Aw@mail.gmail.com>
- <CA+icZUVsV=5jvTcXVWqMs6ROhT3mv+7zBOoJ0JkUy5Mf+a4GNw@mail.gmail.com> <CA+icZUUfmgJPmmjuaVckvdLwWuWOPDAuFFyLq_ZPkc__LZbtSA@mail.gmail.com>
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Date: Tue, 22 May 2018 10:49:35 +0200
-Message-ID: <CA+icZUW_wWA9f_obFWOixg2+=W8SN1zPO9KA4u3AXO91uzHEtA@mail.gmail.com>
-Subject: Re: Clang patch stacks for LTS kernels (v4.4 and v4.9) and status update
-To: Nick Desaulniers <nick.desaulniers@gmail.com>
-Cc: Matthias Kaehlcke <mka@chromium.org>,
-        lkml <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Manoj Gupta <manojgupta@chromium.org>,
-        AlistairStrachan <astrachan@google.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180518122233.GB31996@vkoul-mobl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 10:04 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
-> On Tue, May 22, 2018 at 9:39 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
->> On Sat, May 19, 2018 at 12:54 AM, Nick Desaulniers
->> <nick.desaulniers@gmail.com> wrote:
->>> Sedat,
->>> Thanks for the report.  We have a fix ready in
->>> https://bugs.llvm.org/show_bug.cgi?id=37512.  Can you report what
->>> version of clang you were using and if earlier versions of clang have
->>> this issue?
->>> Thanks,
->>
->> Can you give some advices on how to implement
->> "attribute((no_stack_protector))" for Clang?
->>
->> I looked on how this is done for GCC...
->>
->> [ include/linux/compiler-gcc.h ]
->>
->> #if GCC_VERSION >= 40400
->> #define __optimize(level)       __attribute__((__optimize__(level)))
->> #define __nostackprotector      __optimize("no-stack-protector")
->> #endif /* GCC_VERSION >= 40400 */
->>
->> [ include/linux/compiler_types.h ]
->>
->> #ifndef __nostackprotector
->> # define __nostackprotector
->> #endif
->>
->> LLVM-bug #37512 says:
->>
->> "GCC option for this is: attribute((optimize("no-stack-protector")))
->> and the equivalent clang syntax would be: attribute((no_stack_protector))"
->>
->> So, there should be a define in "include/linux/compiler-clang.h" for this?
->>
->> [ include/linux/compiler-clang.h ]
->>
->> #define __nostackprotector attribute((no_stack_protector))
->>
->> Looks that good to you?
->>
->
-> I am trying with the attached files and...
->
-> CONFIG_PARAVIRT=y
-> CONFIG_CC_STACKPROTECTOR_STRONG=y
->
+Hi Vinod,
 
-Hmmm, I get these errors in my build-log...
+Thanks for the review.
 
-  mycompiler -Wp,-MD,arch/x86/kernel/.asm-offsets.s.d  -nostdinc
--isystem /usr/lib/llvm-7/lib/clang/7.0.0/include -I./arch/x86/include
--I./arch/x86/include/generated  -I./include -I./arch/x86/include/uapi
--I./arch/x86/include/generated/uapi -I./include/uapi
--I./include/generated/uapi -include ./include/linux/kconfig.h
--D__KERNEL__ -Qunused-arguments -Wall -Wundef -Wstrict-prototypes
--Wno-trigraphs -fno-strict-aliasing -fno-common -fshort-wchar
--Werror-implicit-function-declaration -Wno-format-security -std=gnu89
--fno-PIE -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -mno-avx -m64
--mno-80387 -mstack-alignment=8 -mtune=generic -mno-red-zone
--mcmodel=kernel -funit-at-a-time -DCONFIG_AS_CFI=1
--DCONFIG_AS_CFI_SIGNAL_FRAME=1 -DCONFIG_AS_CFI_SECTIONS=1
--DCONFIG_AS_FXSAVEQ=1 -DCONFIG_AS_SSSE3=1 -DCONFIG_AS_CRC32=1
--DCONFIG_AS_AVX=1 -DCONFIG_AS_AVX2=1 -DCONFIG_AS_AVX512=1
--DCONFIG_AS_SHA1_NI=1 -DCONFIG_AS_SHA256_NI=1 -pipe -Wno-sign-compare
--fno-asynchronous-unwind-tables -mretpoline-external-thunk -DRETPOLINE
--O2 -Wframe-larger-than=2048 -fstack-protector-strong
--Wno-unused-variable -Wno-format-invalid-specifier -Wno-gnu
--Wno-address-of-packed-member -Wno-tautological-compare
--mno-global-merge -no-integrated-as -g -pg -mfentry -DCC_USING_FENTRY
--Wdeclaration-after-statement -Wno-pointer-sign -fno-strict-overflow
--fno-merge-all-constants -fno-stack-check -Werror=implicit-int
--Werror=strict-prototypes -Werror=date-time
--Werror=incompatible-pointer-types -Wno-initializer-overrides
--Wno-unused-value -Wno-format -Wno-sign-compare
--Wno-format-zero-length -Wno-uninitialized
--DKBUILD_BASENAME='"asm_offsets"'  -DKBUILD_MODNAME='"asm_offsets"'
--fverbose-asm -S -o arch/x86/kernel/asm-offsets.s
-arch/x86/kernel/asm-offsets.c
-In file included from arch/x86/kernel/asm-offsets.c:9:
-In file included from ./include/linux/crypto.h:24:
-In file included from ./include/linux/slab.h:15:
-In file included from ./include/linux/gfp.h:6:
-In file included from ./include/linux/mmzone.h:8:
-In file included from ./include/linux/spinlock.h:51:
-In file included from ./include/linux/preempt.h:81:
-In file included from ./arch/x86/include/asm/preempt.h:7:
-In file included from ./include/linux/thread_info.h:38:
-In file included from ./arch/x86/include/asm/thread_info.h:53:
-In file included from ./arch/x86/include/asm/cpufeature.h:5:
-In file included from ./arch/x86/include/asm/processor.h:33:
-In file included from ./include/linux/irqflags.h:16:
-./arch/x86/include/asm/irqflags.h:16:29: warning: declaration
-specifier missing, defaulting to 'int'
-static inline unsigned long __nostackprotector native_save_fl(void)
-                            ^
-./include/linux/compiler-clang.h:28:39: note: expanded from macro
-'__nostackprotector'
-#define __nostackprotector attribute((no_stack_protector))
-                                      ^
-In file included from arch/x86/kernel/asm-offsets.c:9:
-In file included from ./include/linux/crypto.h:24:
-In file included from ./include/linux/slab.h:15:
-In file included from ./include/linux/gfp.h:6:
-In file included from ./include/linux/mmzone.h:8:
-In file included from ./include/linux/spinlock.h:51:
-In file included from ./include/linux/preempt.h:81:
-In file included from ./arch/x86/include/asm/preempt.h:7:
-In file included from ./include/linux/thread_info.h:38:
-In file included from ./arch/x86/include/asm/thread_info.h:53:
-In file included from ./arch/x86/include/asm/cpufeature.h:5:
-In file included from ./arch/x86/include/asm/processor.h:33:
-In file included from ./include/linux/irqflags.h:16:
-./arch/x86/include/asm/irqflags.h:16:48: error: expected function body
-after function declarator
-static inline unsigned long __nostackprotector native_save_fl(void)
-                                               ^
-In file included from arch/x86/kernel/asm-offsets.c:9:
-In file included from ./include/linux/crypto.h:24:
-In file included from ./include/linux/slab.h:15:
-In file included from ./include/linux/gfp.h:6:
-In file included from ./include/linux/mmzone.h:8:
-In file included from ./include/linux/spinlock.h:51:
-In file included from ./include/linux/preempt.h:81:
-In file included from ./arch/x86/include/asm/preempt.h:7:
-In file included from ./include/linux/thread_info.h:38:
-In file included from ./arch/x86/include/asm/thread_info.h:53:
-In file included from ./arch/x86/include/asm/cpufeature.h:5:
-./arch/x86/include/asm/processor.h:76:37: error: use of undeclared
-identifier 'NR_INFO'
-extern u16 __read_mostly tlb_lli_4k[NR_INFO];
-                                    ^
-./arch/x86/include/asm/processor.h:77:37: error: use of undeclared
-identifier 'NR_INFO'
-extern u16 __read_mostly tlb_lli_2m[NR_INFO];
-                                    ^
-./arch/x86/include/asm/processor.h:78:37: error: use of undeclared
-identifier 'NR_INFO'
-extern u16 __read_mostly tlb_lli_4m[NR_INFO];
-                                    ^
-./arch/x86/include/asm/processor.h:79:37: error: use of undeclared
-identifier 'NR_INFO'
-extern u16 __read_mostly tlb_lld_4k[NR_INFO];
-                                    ^
-./arch/x86/include/asm/processor.h:80:37: error: use of undeclared
-identifier 'NR_INFO'
-extern u16 __read_mostly tlb_lld_2m[NR_INFO];
-                                    ^
-./arch/x86/include/asm/processor.h:81:37: error: use of undeclared
-identifier 'NR_INFO'
-extern u16 __read_mostly tlb_lld_4m[NR_INFO];
-                                    ^
-./arch/x86/include/asm/processor.h:82:37: error: use of undeclared
-identifier 'NR_INFO'
-extern u16 __read_mostly tlb_lld_1g[NR_INFO];
-                                    ^
-1 warning and 8 errors generated.
-Kbuild:57: recipe for target 'arch/x86/kernel/asm-offsets.s' failed
-make[3]: *** [arch/x86/kernel/asm-offsets.s] Error 1
-Makefile:1085: recipe for target 'prepare0' failed
-make[2]: *** [prepare0] Error 2
-scripts/package/Makefile:91: recipe for target 'bindeb-pkg' failed
-make[1]: *** [bindeb-pkg] Error 2
-Makefile:1367: recipe for target 'bindeb-pkg' failed
-make: *** [bindeb-pkg] Error 2
+On 5/18/2018 5:52 PM, Vinod wrote:
+> On 14-05-18, 16:16, Sricharan R wrote:
+> 
+>> +static int q6v5_reset(struct q6v5 *qproc)
+>> +{
+>> +	u32 ret;
+>> +	int val, i;
+>> +
+>> +	/* Assert resets, stop core */
+>> +	val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
+>> +	val |= Q6SS_CORE_ARES | Q6SS_BUS_ARES_ENABLE | Q6SS_STOP_CORE;
+>> +	writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
+>> +
+>> +	/* BHS require xo cbcr to be enabled */
+>> +	val = readl(qproc->reg_base + QDSP6SS_XO_CBCR);
+>> +	val |= 0x1;
+>> +	writel(val, qproc->reg_base + QDSP6SS_XO_CBCR);
+> 
+> consider adding a updatel macro which does read, update and write for you...
+> 
 
-- Sedat -
+ ok.
+
+>> +
+>> +	/* Read CLKOFF bit to go low indicating CLK is enabled */
+>> +	ret = readl_poll_timeout(qproc->reg_base + QDSP6SS_XO_CBCR,
+>> +				 val, !(val & BIT(31)), 1,
+>> +				 HALT_CHECK_MAX_LOOPS);
+>> +	if (ret) {
+>> +		dev_err(qproc->dev,
+>> +			"xo cbcr enabling timed out (rc:%d)\n", ret);
+>> +		return ret;
+>> +	}
+>> +	/* Enable power block headswitch and wait for it to stabilize */
+>> +	val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +	val |= QDSP6v56_BHS_ON;
+>> +	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +	val |= readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+> 
+> why is this read required
+> 
+
+ It was a ditto of what was given in the programming sequence from HW folks.
+ yeah, logically the readl does not look needed. Will remove and update.
+
+>> +	udelay(1);
+>> +
+>> +	/* Put LDO in bypass mode */
+>> +	val |= QDSP6v56_LDO_BYP;
+>> +	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +
+>> +	/* Deassert QDSP6 compiler memory clamp */
+>> +	val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +	val &= ~QDSP6v56_CLAMP_QMC_MEM;
+>> +	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +
+>> +	/* Deassert memory peripheral sleep and L2 memory standby */
+>> +	val |= Q6SS_L2DATA_STBY_N | Q6SS_SLP_RET_N;
+>> +	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +
+>> +	/* Turn on L1, L2, ETB and JU memories 1 at a time */
+>> +	val = readl(qproc->reg_base + QDSP6SS_MEM_PWR_CTL);
+>> +	for (i = 19; i >= 0; i--) {
+> 
+> where is the magic number 19 coming from?
+> 
+
+ Its the total number of Q6's memory head/foot switch banks. Infact
+ the magic was there even before my patch. But will add a Macro to fix it.
+
+Regards,
+ Sricharan
+
+-- 
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
