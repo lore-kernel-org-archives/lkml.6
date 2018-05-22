@@ -1,5 +1,5 @@
 Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2463566-1526990829-2-1552050587648712230
+X-Cyrus-Session-Id: sloti22d1t05-2463566-1526990792-2-18392935554263860759
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-charsets: 
@@ -7,25 +7,25 @@ X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526990828; b=G0v7EpUgnEpDUSAmEcw9CfPquNUxdG7yVUQShI1XUJhIw1kF+9
-    JI7Davoz7hgRnLsTcAKZ8S40TrGODvygsQchFw/wTgWA3nze30R919xOIAolVZK9
-    kxngFY7zmSnm7K413ZD+8WPbIua8WS4RJurAB86z2JfjwW5XBI2QEjhqUSyY5z/4
-    PpPMPkySJfDYNLE2vsrZGky+2sQ8qUmfSVdE6qx0FrcCYs9EIYSw2wGYAYAyXzT/
-    Wg+t62+9sUfjs8rPKt+7ZnkUmBZWJEh+brV7dSwB6eI+rfEqE4xq17D90WC0+m/x
-    euABMEpU13hxl62xrot8ZoJ52YV/iHu3S9bA==
+    1526990792; b=NbcK4sdsU/o/YDXemtdvcG1gpN6y12e9Ar6tnHfg6b91TBo9Bv
+    /uyT8Emma2su/oC6/S5OWmh9pnby1uPdS1kcyIfv0kMLqrAHhyvlsjf8sn/Sbmiu
+    Qqnk+ES/RjZ8kPJTcxajKMdEorXBESB3ucrwX7RROH4DXg6VDSjfBjD9uPo9tG8+
+    rYq2PgAsq7d7765lWDLTH2rIPUnj1LINnWOmxQziYK70PQwO7WTWKu7rEenjyWLk
+    UZ8yuQ6ub4oGRtPyNLYCPQnXFYGpsfdk0VTzvQmcx8VC8z/GBKhdZ5JvHrpJ81yB
+    spzzUZAUc/rx3X1vgea+N/c/1dD2T8E4jCqw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1526990828; bh=
-    pgoTNyGPaQn4ahamtCBnigcXY+CB925hO659TYFYURY=; b=Fi6K3t+mXv7Th1J5
-    v6V+n167rpxz1D2Cm1S0x4H3pk7BogeJ8wZjmdx7Mc40KkqrFfqnHpMhBTAA1zxd
-    zRuSyuDfYpWqyKviGrcCOaIpYCzWEkLzJ47Z43kZVR26Ifp2tNFTbXFnu5tDPMjW
-    N2Xm3Xq5zG9X3p+NK2aBjtLhL9mH1I+SBvKpYi19pyiN1ALkKCviEcnD1+1mUFSP
-    Pd79Y5/U7aM/GXDnPp41/Yg2SfOqVSucnZrZdaThKN7Ju3HSNw5GB+0Ey/UjvHKM
-    YPxDpzR8e/ZTZRHg2S5hoB7vL4zMcIK4juT49gnhyGri2xy4mPBGA0ZC47ppSdlg
-    4Oh8LQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=fm2; t=1526990792; bh=
+    Lpbuxnh9XBpFSeI02TjNsx17CqPSzEqflfpopAg3Okc=; b=MUbtTG2quCP7VEJG
+    qWQe9C9JxRQrwmJI+UsJXoPZdyQanYA2jsfJkX2+Zb25n38w5hwxCdE2EMFHiMFR
+    djHafj5GDQpfszpLEWnvFObJH57KRKQCvoEqwire9hVtSr9nElXtUECqUIgQciN9
+    kyM2qTEhym1MaXK0QODxkZWHJS5ApFp7rU2FaD4izMZdDpgwMKDA4ieIjUHTxEZG
+    JgSP/QDMdl/IdzAnwNiS9fDL3q7qoFkBettlavLuMjQ65SSTAiNzPf62EGj/BtxN
+    Ike84b5xKEBKyUi8B4duOf1/lDrkrgnq9x88Wzo4MCTEQLL8KoHPPAGBL75A0eu4
+    wNqD9Q==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=infradead.org header.i=@infradead.org header.b=runVb4aB
+    header.d=infradead.org header.i=@infradead.org header.b=os01+qlJ
     x-bits=2048 x-keytype=rsa x-algorithm=sha256
     x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -39,10 +39,10 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=infradead.org header.i=@infradead.org header.b=runVb4aB
+      header.d=infradead.org header.i=@infradead.org header.b=os01+qlJ
       x-bits=2048 x-keytype=rsa x-algorithm=sha256
       x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -57,19 +57,20 @@ Authentication-Results: mx3.messagingengine.com;
       header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDVivBiUHAAOrEkRv74fyaMq/851aVX2UtkCJB2igx0bLcgFeBjuadF+yz0xQ0LlwCwbcEsHI95Xv2yWo48VNbYJS6d6H8r+7lSpbeiTnvIv7cUou5Ya
-    5ZWJ0/ZBVos06md18SR8/y0U7KtvDsnlHbxOKWYI3q5ft+Y+fLzzcM5G1+hQ07OpHXA3D3bYsDZjT0e+cLQuzyQTW/tHTYmMgiIOeMjUbEidkElkpoefYglI
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=JI-gzSgfEtX4ME16QlEA:9
+X-CM-Envelope: MS4wfDPfdb+BGlV+L46uPwNMXuPeAKOqC4q0BSU76qI2O2RTX4bhP46C510hHL0ztd22B/LR9UzzOQ4HFett5W9fxi99yi52yqmq2tHx0d1zJYEmVujlzvoW
+    FuG2f8OjN5Kiy0DufnHDoaPAcYxT0io3pq8EkykAgg/WaCGCA8g9bFv9SuIxR6KtP7PVGWnEJox0GPT6gCQ/RvX//noIDHAHVzDV3vmOlrljDDva7L+ynBSV
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=609sw1dektnBt6WZRwwA:9
+    a=0cABcoiBB4m9nw4q:21 a=07SdJin_NCkLg2PM:21
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751283AbeEVMHE (ORCPT <rfc822;linux@kroah.com>);
-        Tue, 22 May 2018 08:07:04 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55666 "EHLO
+        id S1752819AbeEVMG2 (ORCPT <rfc822;linux@kroah.com>);
+        Tue, 22 May 2018 08:06:28 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56010 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752760AbeEVMGN (ORCPT
-        <rfc822;linux-arch@vger.kernel.org>); Tue, 22 May 2018 08:06:13 -0400
+        with ESMTP id S1751361AbeEVMGT (ORCPT
+        <rfc822;linux-arch@vger.kernel.org>); Tue, 22 May 2018 08:06:19 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: iommu@lists.linux-foundation.org
 Cc: linux-arch@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
@@ -82,9 +83,9 @@ Cc: linux-arch@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
         linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org,
         sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 23/25] parisc: merge pcx_dma_ops and pcxl_dma_ops
-Date: Tue, 22 May 2018 14:04:28 +0200
-Message-Id: <20180522120430.28709-24-hch@lst.de>
+Subject: [PATCH 25/25] parisc: use generic dma_noncoherent_ops
+Date: Tue, 22 May 2018 14:04:30 +0200
+Message-Id: <20180522120430.28709-26-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180522120430.28709-1-hch@lst.de>
 References: <20180522120430.28709-1-hch@lst.de>
@@ -95,138 +96,228 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The only difference is that pcxl supports dma coherent allocations, while
-pcx only supports non-consistent allocations and otherwise fails.
+Switch to the generic noncoherent direct mapping implementation.
 
-But dma_alloc* is not in the fast path, and merging these two allows an
-easy migration path to the generic dma-noncoherent implementation, so
-do it.
+Fix sync_single_for_cpu to do skip the cache flush unless the transfer
+is to the device to match the more tested unmap_single path which should
+have the same cache coherency implications.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/parisc/include/asm/dma-mapping.h |  3 +-
- arch/parisc/kernel/pci-dma.c          | 80 ++++++++++++---------------
- arch/parisc/kernel/setup.c            |  8 +--
- arch/parisc/mm/init.c                 | 11 +---
- 4 files changed, 43 insertions(+), 59 deletions(-)
+ arch/parisc/Kconfig                   |   4 +
+ arch/parisc/include/asm/dma-mapping.h |   4 -
+ arch/parisc/kernel/pci-dma.c          | 145 ++------------------------
+ arch/parisc/kernel/setup.c            |   2 +-
+ 4 files changed, 16 insertions(+), 139 deletions(-)
 
+diff --git a/arch/parisc/Kconfig b/arch/parisc/Kconfig
+index 4d8f64d48597..4993c6dc8358 100644
+--- a/arch/parisc/Kconfig
++++ b/arch/parisc/Kconfig
+@@ -188,6 +188,10 @@ config PA20
+ config PA11
+ 	def_bool y
+ 	depends on PA7000 || PA7100LC || PA7200 || PA7300LC
++	select ARCH_HAS_SYNC_DMA_FOR_CPU
++	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
++	select DMA_NONCOHERENT_OPS
++	select DMA_NONCOHERENT_CACHE_SYNC
+ 
+ config PREFETCH
+ 	def_bool y
 diff --git a/arch/parisc/include/asm/dma-mapping.h b/arch/parisc/include/asm/dma-mapping.h
-index 01e1fc057c83..eeec8dd18e74 100644
+index eeec8dd18e74..44a9f97194aa 100644
 --- a/arch/parisc/include/asm/dma-mapping.h
 +++ b/arch/parisc/include/asm/dma-mapping.h
-@@ -22,8 +22,7 @@
+@@ -21,10 +21,6 @@
+ ** flush/purge and allocate "regular" cacheable pages for everything.
  */
  
- #ifdef CONFIG_PA11
--extern const struct dma_map_ops pcxl_dma_ops;
--extern const struct dma_map_ops pcx_dma_ops;
-+extern const struct dma_map_ops pa11_dma_ops;
- #endif
- 
+-#ifdef CONFIG_PA11
+-extern const struct dma_map_ops pa11_dma_ops;
+-#endif
+-
  extern const struct dma_map_ops *hppa_dma_ops;
+ 
+ static inline const struct dma_map_ops *get_arch_dma_ops(struct bus_type *bus)
 diff --git a/arch/parisc/kernel/pci-dma.c b/arch/parisc/kernel/pci-dma.c
-index 91bc0cac03a1..52304cb290f9 100644
+index 4d7506336918..87a7926cda6f 100644
 --- a/arch/parisc/kernel/pci-dma.c
 +++ b/arch/parisc/kernel/pci-dma.c
-@@ -408,7 +408,7 @@ pcxl_dma_init(void)
+@@ -21,13 +21,12 @@
+ #include <linux/init.h>
+ #include <linux/gfp.h>
+ #include <linux/mm.h>
+-#include <linux/pci.h>
+ #include <linux/proc_fs.h>
+ #include <linux/seq_file.h>
+ #include <linux/string.h>
+ #include <linux/types.h>
+-#include <linux/scatterlist.h>
+-#include <linux/export.h>
++#include <linux/dma-direct.h>
++#include <linux/dma-noncoherent.h>
  
- __initcall(pcxl_dma_init);
+ #include <asm/cacheflush.h>
+ #include <asm/dma.h>    /* for DMA_CHUNK_SIZE */
+@@ -450,7 +449,7 @@ static void *pcx_dma_alloc(struct device *dev, size_t size,
+ 	return addr;
+ }
  
 -static void *pa11_dma_alloc(struct device *dev, size_t size,
-+static void *pcxl_dma_alloc(struct device *dev, size_t size,
- 		dma_addr_t *dma_handle, gfp_t flag, unsigned long attrs)
++void *arch_dma_alloc(struct device *dev, size_t size,
+ 		dma_addr_t *dma_handle, gfp_t gfp, unsigned long attrs)
  {
- 	unsigned long vaddr;
-@@ -435,16 +435,44 @@ static void *pa11_dma_alloc(struct device *dev, size_t size,
- 	return (void *)vaddr;
+ 
+@@ -460,7 +459,7 @@ static void *pa11_dma_alloc(struct device *dev, size_t size,
+ 		return pcx_dma_alloc(dev, size, dma_handle, gfp, attrs);
  }
  
-+static void *pcx_dma_alloc(struct device *dev, size_t size,
-+		dma_addr_t *dma_handle, gfp_t flag, unsigned long attrs)
-+{
-+	void *addr;
-+
-+	if ((attrs & DMA_ATTR_NON_CONSISTENT) == 0)
-+		return NULL;
-+
-+	addr = (void *)__get_free_pages(flag, get_order(size));
-+	if (addr)
-+		*dma_handle = (dma_addr_t)virt_to_phys(addr);
-+
-+	return addr;
-+}
-+
-+static void *pa11_dma_alloc(struct device *dev, size_t size,
-+		dma_addr_t *dma_handle, gfp_t gfp, unsigned long attrs)
-+{
-+
-+	if (boot_cpu_data.cpu_type == pcxl2 || boot_cpu_data.cpu_type == pcxl)
-+		return pcxl_dma_alloc(dev, size, dma_handle, gfp, attrs);
-+	else
-+		return pcx_dma_alloc(dev, size, dma_handle, gfp, attrs);
-+}
-+
- static void pa11_dma_free(struct device *dev, size_t size, void *vaddr,
+-static void pa11_dma_free(struct device *dev, size_t size, void *vaddr,
++void arch_dma_free(struct device *dev, size_t size, void *vaddr,
  		dma_addr_t dma_handle, unsigned long attrs)
  {
--	int order;
-+	int order = get_order(size);
- 
--	order = get_order(size);
--	size = 1 << (order + PAGE_SHIFT);
--	unmap_uncached_pages((unsigned long)vaddr, size);
--	pcxl_free_range((unsigned long)vaddr, size);
--	free_pages((unsigned long)__va(dma_handle), order);
-+	if (boot_cpu_data.cpu_type == pcxl2 || boot_cpu_data.cpu_type == pcxl) {
-+		size = 1 << (order + PAGE_SHIFT);
-+		unmap_uncached_pages((unsigned long)vaddr, size);
-+		pcxl_free_range((unsigned long)vaddr, size);
-+
-+		vaddr = __va(dma_handle);
-+	}
-+	free_pages((unsigned long)vaddr, get_order(size));
+ 	int order = get_order(size);
+@@ -475,142 +474,20 @@ static void pa11_dma_free(struct device *dev, size_t size, void *vaddr,
+ 	free_pages((unsigned long)vaddr, get_order(size));
  }
  
- static dma_addr_t pa11_dma_map_page(struct device *dev, struct page *page,
-@@ -573,7 +601,7 @@ static void pa11_dma_cache_sync(struct device *dev, void *vaddr, size_t size,
+-static dma_addr_t pa11_dma_map_page(struct device *dev, struct page *page,
+-		unsigned long offset, size_t size,
+-		enum dma_data_direction direction, unsigned long attrs)
++void arch_sync_dma_for_device(struct device *dev, phys_addr_t paddr,
++		size_t size, enum dma_data_direction dir)
+ {
+-	void *addr = page_address(page) + offset;
+-	BUG_ON(direction == DMA_NONE);
+-
+-	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
+-		flush_kernel_dcache_range((unsigned long) addr, size);
+-
+-	return virt_to_phys(addr);
+-}
+-
+-static void pa11_dma_unmap_page(struct device *dev, dma_addr_t dma_handle,
+-		size_t size, enum dma_data_direction direction,
+-		unsigned long attrs)
+-{
+-	BUG_ON(direction == DMA_NONE);
+-
+-	if (attrs & DMA_ATTR_SKIP_CPU_SYNC)
+-		return;
+-
+-	if (direction == DMA_TO_DEVICE)
+-		return;
+-
+-	/*
+-	 * For PCI_DMA_FROMDEVICE this flush is not necessary for the
+-	 * simple map/unmap case. However, it IS necessary if if
+-	 * pci_dma_sync_single_* has been called and the buffer reused.
+-	 */
+-
+-	flush_kernel_dcache_range((unsigned long) phys_to_virt(dma_handle), size);
+-}
+-
+-static int pa11_dma_map_sg(struct device *dev, struct scatterlist *sglist,
+-		int nents, enum dma_data_direction direction,
+-		unsigned long attrs)
+-{
+-	int i;
+-	struct scatterlist *sg;
+-
+-	BUG_ON(direction == DMA_NONE);
+-
+-	for_each_sg(sglist, sg, nents, i) {
+-		unsigned long vaddr = (unsigned long)sg_virt(sg);
+-
+-		sg_dma_address(sg) = (dma_addr_t) virt_to_phys(vaddr);
+-		sg_dma_len(sg) = sg->length;
+-
+-		if (attrs & DMA_ATTR_SKIP_CPU_SYNC)
+-			continue;
+-
+-		flush_kernel_dcache_range(vaddr, sg->length);
+-	}
+-	return nents;
+-}
+-
+-static void pa11_dma_unmap_sg(struct device *dev, struct scatterlist *sglist,
+-		int nents, enum dma_data_direction direction,
+-		unsigned long attrs)
+-{
+-	int i;
+-	struct scatterlist *sg;
+-
+-	BUG_ON(direction == DMA_NONE);
+-
+-	if (attrs & DMA_ATTR_SKIP_CPU_SYNC)
+-		return;
+-
+-	if (direction == DMA_TO_DEVICE)
+-		return;
+-
+-	/* once we do combining we'll need to use phys_to_virt(sg_dma_address(sglist)) */
+-
+-	for_each_sg(sglist, sg, nents, i)
+-		flush_kernel_dcache_range(sg_virt(sg), sg->length);
+-}
+-
+-static void pa11_dma_sync_single_for_cpu(struct device *dev,
+-		dma_addr_t dma_handle, size_t size,
+-		enum dma_data_direction direction)
+-{
+-	BUG_ON(direction == DMA_NONE);
+-
+-	flush_kernel_dcache_range((unsigned long) phys_to_virt(dma_handle),
+-			size);
+-}
+-
+-static void pa11_dma_sync_single_for_device(struct device *dev,
+-		dma_addr_t dma_handle, size_t size,
+-		enum dma_data_direction direction)
+-{
+-	BUG_ON(direction == DMA_NONE);
+-
+-	flush_kernel_dcache_range((unsigned long) phys_to_virt(dma_handle),
+-			size);
+-}
+-
+-static void pa11_dma_sync_sg_for_cpu(struct device *dev, struct scatterlist *sglist, int nents, enum dma_data_direction direction)
+-{
+-	int i;
+-	struct scatterlist *sg;
+-
+-	/* once we do combining we'll need to use phys_to_virt(sg_dma_address(sglist)) */
+-
+-	for_each_sg(sglist, sg, nents, i)
+-		flush_kernel_dcache_range(sg_virt(sg), sg->length);
++	flush_kernel_dcache_range((unsigned long)phys_to_virt(paddr), size);
+ }
+ 
+-static void pa11_dma_sync_sg_for_device(struct device *dev, struct scatterlist *sglist, int nents, enum dma_data_direction direction)
++void arch_sync_dma_for_cpu(struct device *dev, phys_addr_t paddr,
++		size_t size, enum dma_data_direction dir)
+ {
+-	int i;
+-	struct scatterlist *sg;
+-
+-	/* once we do combining we'll need to use phys_to_virt(sg_dma_address(sglist)) */
+-
+-	for_each_sg(sglist, sg, nents, i)
+-		flush_kernel_dcache_range(sg_virt(sg), sg->length);
++	flush_kernel_dcache_range((unsigned long)phys_to_virt(paddr), size);
+ }
+ 
+-static void pa11_dma_cache_sync(struct device *dev, void *vaddr, size_t size,
++void arch_dma_cache_sync(struct device *dev, void *vaddr, size_t size,
+ 	       enum dma_data_direction direction)
+ {
  	flush_kernel_dcache_range((unsigned long)vaddr, size);
  }
- 
--const struct dma_map_ops pcxl_dma_ops = {
-+const struct dma_map_ops pa11_dma_ops = {
- 	.alloc =		pa11_dma_alloc,
- 	.free =			pa11_dma_free,
- 	.map_page =		pa11_dma_map_page,
-@@ -586,39 +614,3 @@ const struct dma_map_ops pcxl_dma_ops = {
- 	.sync_sg_for_device =	pa11_dma_sync_sg_for_device,
- 	.cache_sync =		pa11_dma_cache_sync,
- };
 -
--static void *pcx_dma_alloc(struct device *dev, size_t size,
--		dma_addr_t *dma_handle, gfp_t flag, unsigned long attrs)
--{
--	void *addr;
--
--	if ((attrs & DMA_ATTR_NON_CONSISTENT) == 0)
--		return NULL;
--
--	addr = (void *)__get_free_pages(flag, get_order(size));
--	if (addr)
--		*dma_handle = (dma_addr_t)virt_to_phys(addr);
--
--	return addr;
--}
--
--static void pcx_dma_free(struct device *dev, size_t size, void *vaddr,
--		dma_addr_t iova, unsigned long attrs)
--{
--	free_pages((unsigned long)vaddr, get_order(size));
--	return;
--}
--
--const struct dma_map_ops pcx_dma_ops = {
--	.alloc =		pcx_dma_alloc,
--	.free =			pcx_dma_free,
+-const struct dma_map_ops pa11_dma_ops = {
+-	.alloc =		pa11_dma_alloc,
+-	.free =			pa11_dma_free,
 -	.map_page =		pa11_dma_map_page,
 -	.unmap_page =		pa11_dma_unmap_page,
 -	.map_sg =		pa11_dma_map_sg,
@@ -238,59 +329,17 @@ index 91bc0cac03a1..52304cb290f9 100644
 -	.cache_sync =		pa11_dma_cache_sync,
 -};
 diff --git a/arch/parisc/kernel/setup.c b/arch/parisc/kernel/setup.c
-index 8d3a7b80ac42..5c8450a22255 100644
+index 5c8450a22255..4e87c35c22b7 100644
 --- a/arch/parisc/kernel/setup.c
 +++ b/arch/parisc/kernel/setup.c
-@@ -97,14 +97,12 @@ void __init dma_ops_init(void)
- 		panic(	"PA-RISC Linux currently only supports machines that conform to\n"
- 			"the PA-RISC 1.1 or 2.0 architecture specification.\n");
- 
--	case pcxs:
--	case pcxt:
--		hppa_dma_ops = &pcx_dma_ops;
--		break;
- 	case pcxl2:
- 		pa7300lc_init();
+@@ -102,7 +102,7 @@ void __init dma_ops_init(void)
  	case pcxl: /* falls through */
--		hppa_dma_ops = &pcxl_dma_ops;
-+	case pcxs:
-+	case pcxt:
-+		hppa_dma_ops = &pa11_dma_ops;
+ 	case pcxs:
+ 	case pcxt:
+-		hppa_dma_ops = &pa11_dma_ops;
++		hppa_dma_ops = &dma_noncoherent_ops;
  		break;
  	default:
  		break;
-diff --git a/arch/parisc/mm/init.c b/arch/parisc/mm/init.c
-index cab32ee824d2..4ad91c28ecbe 100644
---- a/arch/parisc/mm/init.c
-+++ b/arch/parisc/mm/init.c
-@@ -19,7 +19,6 @@
- #include <linux/gfp.h>
- #include <linux/delay.h>
- #include <linux/init.h>
--#include <linux/pci.h>		/* for hppa_dma_ops and pcxl_dma_ops */
- #include <linux/initrd.h>
- #include <linux/swap.h>
- #include <linux/unistd.h>
-@@ -616,17 +615,13 @@ void __init mem_init(void)
- 	free_all_bootmem();
- 
- #ifdef CONFIG_PA11
--	if (hppa_dma_ops == &pcxl_dma_ops) {
-+	if (boot_cpu_data.cpu_type == pcxl2 || boot_cpu_data.cpu_type == pcxl) {
- 		pcxl_dma_start = (unsigned long)SET_MAP_OFFSET(MAP_START);
- 		parisc_vmalloc_start = SET_MAP_OFFSET(pcxl_dma_start
- 						+ PCXL_DMA_MAP_SIZE);
--	} else {
--		pcxl_dma_start = 0;
--		parisc_vmalloc_start = SET_MAP_OFFSET(MAP_START);
--	}
--#else
--	parisc_vmalloc_start = SET_MAP_OFFSET(MAP_START);
-+	} else
- #endif
-+		parisc_vmalloc_start = SET_MAP_OFFSET(MAP_START);
- 
- 	mem_init_print_info(NULL);
- 
 -- 
 2.17.0
