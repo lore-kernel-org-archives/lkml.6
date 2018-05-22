@@ -1,125 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751507AbeEVPmR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 11:42:17 -0400
-Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:56364 "EHLO
-        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751196AbeEVPmQ (ORCPT
+        id S1751624AbeEVPm2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 11:42:28 -0400
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:41892 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751554AbeEVPmX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 11:42:16 -0400
-X-IronPort-AV: E=Sophos;i="5.49,430,1520899200";
-   d="scan'208";a="742232522"
-From: "Raslan, KarimAllah" <karahmed@amazon.de>
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>
-CC: "rkrcmar@redhat.com" <rkrcmar@redhat.com>
-Subject: Re: [PATCH] KVM: Switch 'requests' to be 64-bit (explicitly)
-Thread-Topic: [PATCH] KVM: Switch 'requests' to be 64-bit (explicitly)
-Thread-Index: AQHT1D++Gdqnz/tFy0K4EdrtXKZQKaQDl3kAgDiG6QA=
-Date: Tue, 22 May 2018 15:42:08 +0000
-Message-ID: <1527003728.13207.55.camel@amazon.de>
-References: <1523744804-8220-1-git-send-email-karahmed@amazon.de>
-         <53700469-74f0-f3b0-96a4-d8ace2919b36@redhat.com>
-In-Reply-To: <53700469-74f0-f3b0-96a4-d8ace2919b36@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.43.165.101]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <7F024E4BA91BD94EAA6E79E996156847@amazon.com>
+        Tue, 22 May 2018 11:42:23 -0400
+X-Google-Smtp-Source: AB8JxZqXx8ahriWJ/40Zzto8AIHYhk9yvQzBdk20yfbChNDhbyEuxMpajKw86x20K6cLavMfRJWrC94gp2ZBVKWIlB8=
 MIME-Version: 1.0
+In-Reply-To: <64c91d04479348cabbcdf1df0ff7d40f@XCH-RTP-016.cisco.com>
+References: <1526731655-10087-1-git-send-email-jrosen@cisco.com>
+ <CAF=yD-+kjceErK=CApiu1oY9uTjVWG2qeX=NkGVYufVVC_L2PA@mail.gmail.com>
+ <CAF=yD-KvTyTibhqpKP79Obfk8KRVDLMyb6THNwNgrJzs47bAtQ@mail.gmail.com>
+ <b7f6cc54a9f04132a279b15de0187ddd@XCH-RTP-016.cisco.com> <CAF=yD-Kfto4jJYMFzn=PV8OYdhEmdNfW+aakDhRMzRBWhWY0UQ@mail.gmail.com>
+ <64c91d04479348cabbcdf1df0ff7d40f@XCH-RTP-016.cisco.com>
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date: Tue, 22 May 2018 11:41:41 -0400
+Message-ID: <CAF=yD-KHFwhVt4xzED7FPLd_xej9nLmoZOgZG0PmsVgbrnN0Ng@mail.gmail.com>
+Subject: Re: [PATCH v2] packet: track ring entry use using a shadow ring to
+ prevent RX ring overrun
+To: "Jon Rosen (jrosen)" <jrosen@cisco.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+        Willem de Bruijn <willemb@google.com>,
+        Eric Dumazet <edumazet@google.com>, Kees Cook <keescook@chromium.org>,
+        David Windsor <dwindsor@gmail.com>,
+        "Rosen, Rami" <rami.rosen@intel.com>,
+        "Reshetova, Elena" <elena.reshetova@intel.com>,
+        Mike Maloney <maloney@google.com>,
+        Benjamin Poirier <bpoirier@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4MFgN7b011966
 
-On Mon, 2018-04-16 at 18:28 +0200, Paolo Bonzini wrote:
-> On 15/04/2018 00:26, KarimAllah Ahmed wrote:
-> > 
-> > Switch 'requests' to be explicitly 64-bit and update BUILD_BUG_ON check to
-> > use the size of "requests" instead of the hard-coded '32'.
-> > 
-> > That gives us a bit more room again for arch-specific requests as we
-> > already ran out of space for x86 due to the hard-coded check.
-> > 
-> > Cc: Paolo Bonzini <pbonzini@redhat.com>
-> > Cc: Radim Krčmář <rkrcmar@redhat.com>
-> > Cc: kvm@vger.kernel.org
-> > Cc: linux-kernel@vger.kernel.org
-> > Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
-> 
-> I'm afraid architectures like ARM 32 need this to be conditional (using
-> Kconfig).
+>>> I think the bigger issues as you've pointed out are the cost of
+>>> the additional spin lock and should the additional state be
+>>> stored in-band (fewer cache lines) or out-of band (less risk of
+>>> breaking due to unpredictable application behavior).
+>>
+>> We don't need the spinlock if clearing the shadow byte after
+>> setting the status to user.
+>>
+>> Worst case, user will set it back to kernel while the shadow
+>> byte is not cleared yet and the next producer will drop a packet.
+>> But next producers will make progress, so there is no deadlock
+>> or corruption.
+>
+> I thought so too for a while but after spending more time than I
+> care to admit I relized the following sequence was occuring:
+>
+>    Core A                       Core B
+>    ------                       ------
+>    - Enter spin_lock
+>    -   Get tp_status of head (X)
+>        tp_status == 0
+>    -   Check inuse
+>        inuse == 0
+>    -   Allocate entry X
+>        advance head (X+1)
+>        set inuse=1
+>    - Exit spin_lock
+>
+>      <very long delay>
+>
+>                                 <allocate N-1 entries
+>                                 where N = size of ring>
+>
+>                                 - Enter spin_lock
+>                                 -   get tp_status of head (X+N)
+>                                     tp_status == 0 (but slot
+>                                     in use for X on core A)
+>
+>    - write tp_status of         <--- trouble!
+>      X = TP_STATUS_USER         <--- trouble!
+>    - write inuse=0              <--- trouble!
+>
+>                                 -   Check inuse
+>                                     inuse == 0
+>                                 -   Allocate entry X+N
+>                                     advance head (X+N+1)
+>                                     set inuse=1
+>                                 - Exit spin_lock
+>
+>
+> At this point Core A just passed slot X to userspace with a
+> packet and Core B has just been assigned slot X+N (same slot as
+> X) for it's new packet. Both cores A and B end up filling in that
+> slot.  Tracking ths donw was one of the reasons it took me a
+> while to produce these updated diffs.
 
-Why would using a 64-bit 'requests' be a problem for ARM32? Are you 
-concerned about performance here or is there some symantic problem?
-
-> 
-> Thanks,
-> 
-> Paolo
-> 
-> > 
-> > ---
-> >  include/linux/kvm_host.h | 10 +++++-----
-> >  1 file changed, 5 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> > index 6930c63..fe4f46b 100644
-> > --- a/include/linux/kvm_host.h
-> > +++ b/include/linux/kvm_host.h
-> > @@ -129,7 +129,7 @@ static inline bool is_error_page(struct page *page)
-> >  #define KVM_REQUEST_ARCH_BASE     8
-> >  
-> >  #define KVM_ARCH_REQ_FLAGS(nr, flags) ({ \
-> > -	BUILD_BUG_ON((unsigned)(nr) >= 32 - KVM_REQUEST_ARCH_BASE); \
-> > +	BUILD_BUG_ON((unsigned)(nr) >= (sizeof(((struct kvm_vcpu *)0)->requests) * 8) - KVM_REQUEST_ARCH_BASE); \
-> >  	(unsigned)(((nr) + KVM_REQUEST_ARCH_BASE) | (flags)); \
-> >  })
-> >  #define KVM_ARCH_REQ(nr)           KVM_ARCH_REQ_FLAGS(nr, 0)
-> > @@ -223,7 +223,7 @@ struct kvm_vcpu {
-> >  	int vcpu_id;
-> >  	int srcu_idx;
-> >  	int mode;
-> > -	unsigned long requests;
-> > +	u64 requests;
-> >  	unsigned long guest_debug;
-> >  
-> >  	int pre_pcpu;
-> > @@ -1122,7 +1122,7 @@ static inline void kvm_make_request(int req, struct kvm_vcpu *vcpu)
-> >  	 * caller.  Paired with the smp_mb__after_atomic in kvm_check_request.
-> >  	 */
-> >  	smp_wmb();
-> > -	set_bit(req & KVM_REQUEST_MASK, &vcpu->requests);
-> > +	set_bit(req & KVM_REQUEST_MASK, (void *)&vcpu->requests);
-> >  }
-> >  
-> >  static inline bool kvm_request_pending(struct kvm_vcpu *vcpu)
-> > @@ -1132,12 +1132,12 @@ static inline bool kvm_request_pending(struct kvm_vcpu *vcpu)
-> >  
-> >  static inline bool kvm_test_request(int req, struct kvm_vcpu *vcpu)
-> >  {
-> > -	return test_bit(req & KVM_REQUEST_MASK, &vcpu->requests);
-> > +	return test_bit(req & KVM_REQUEST_MASK, (void *)&vcpu->requests);
-> >  }
-> >  
-> >  static inline void kvm_clear_request(int req, struct kvm_vcpu *vcpu)
-> >  {
-> > -	clear_bit(req & KVM_REQUEST_MASK, &vcpu->requests);
-> > +	clear_bit(req & KVM_REQUEST_MASK, (void *)&vcpu->requests);
-> >  }
-> >  
-> >  static inline bool kvm_check_request(int req, struct kvm_vcpu *vcpu)
-> > 
-> 
-> 
-Amazon Development Center Germany GmbH
-Berlin - Dresden - Aachen
-main office: Krausenstr. 38, 10117 Berlin
-Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
-Ust-ID: DE289237879
-Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
+Is this not just an ordering issue? Since inuse is set after tp_status,
+it has to be tested first (and barriers are needed to avoid reordering).
