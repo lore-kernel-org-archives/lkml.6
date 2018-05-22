@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751451AbeEVJk7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 05:40:59 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:49649 "EHLO mail.bootlin.com"
+        id S1751656AbeEVJnT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 05:43:19 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:49698 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751039AbeEVJkz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 05:40:55 -0400
+        id S1751359AbeEVJlA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 05:41:00 -0400
 From: Miquel Raynal <miquel.raynal@bootlin.com>
 To: Thomas Gleixner <tglx@linutronix.de>,
         Jason Cooper <jason@lakedaemon.net>,
@@ -22,189 +22,143 @@ Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
         Nadav Haklai <nadavh@marvell.com>, Haim Boot <hayim@marvell.com>,
         Hanna Hawa <hannah@marvell.com>, linux-kernel@vger.kernel.org,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH v2 00/16] Add System Error Interrupt support to Armada SoCs
-Date: Tue, 22 May 2018 11:40:26 +0200
-Message-Id: <20180522094042.24770-1-miquel.raynal@bootlin.com>
+Subject: [PATCH v2 12/16] dt-bindings/interrupt-controller: update Marvell ICU bindings
+Date: Tue, 22 May 2018 11:40:38 +0200
+Message-Id: <20180522094042.24770-13-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.14.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180522094042.24770-1-miquel.raynal@bootlin.com>
+References: <20180522094042.24770-1-miquel.raynal@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ICU is an IRQ chip found in Armada CP110. It currently has 207 wired
-inputs. Its purpose is to aggregate all CP interrupts and report them to
-the AP through MSIs. The ICU writes into GIC registers (AP side) by way
-of the interconnect. These interrupts can be of several groups:
-- SecuRe (SR);
-- Non-SecuRe (NSR);
-- System Error Interrupts (SEI);
-- RAM Error Interrupts (REI);
-- ...
-Each ICU wired interrupt can be of any of these groups. The group is
-encoded in the MSI payload.
+Change the documentation to reflect the new bindings used for Marvell
+ICU. This involves describing each interrupt group as a subnode of the
+ICU node. Each of them having their own compatible.
 
-Until now, only the non-secure interrupts (NSR) were handled by the ICU
-driver. Interrupts of another group could work by chance because the
-ICU driver does not erase all ATF configuration; it only erases the
-configuration for NSR interrupts.
-
-This series aims at adding support for the System Error Interrupts
-(SEI). For this purpose, the ICU driver is a bit reworked to separate
-the ICU 'generic' configuration from the NSR-related handling. Then,
-the SEI driver (part of the GIC) is introduced and finally, support for
-SEI interrupts are also added to the ICU driver.
-
-The SEI driver is a bit different than its cousin the GICP because it
-must handle MSIs from the CPs, as well as wired interrupts from the AP
-itself. MSIs and wired interrupts will automatically update two
-registers (GICP_SECR0/GICP_SECR1) that will trigger a single top-level
-interrupt (SPI #32).
-
-As this is my first contribution in the IRQ subsystem I might have
-missed some specificities or misunderstood the API, please do not
-hesitate to correct me if I'm wrong.
-
-Also, for the sake of understandability (and because I love ASCII art),
-this is a try to explain the ICU/SEI architecture:
-
-
-+----------------------------------------------------------------------+
-|                                                                      |
-|                                                                      |
-|     SPIa SPIb        SPIz                    SPI 32                  |
-|       ^    ^           ^                       ^                     |
-|       |    |   . . .   |                       |                     |
-|       |    |           |                       |                     |
-|       |    |   . . .   |                       |                     |
-|   +------------------------+   +---------------------------------+   |
-|   |   |    |           |   |   |               |                 |   |
-|   |   |    |           |   |   |   SEI         |                 |   |
-|   |   |    |   . . .   |   |   |       ________|_______          |   |
-|   |   |    |           |   |   |      /___SEI_SECR_____\         |   |
-|   |   |____|___________|   |   |     /       |         \\        |   |
-|   |    \_GICP_SETSPI _/    |   |    /        |          \\       |   |
-|   |                ||      |   |   /   ...   |           \\      |   |
-|   |  GICP          ||      |   |  |          |            \\     |   |
-|   +----------------||------+   +--|----------|------------||-----+   |
-|                    ||             |          |            ||         |
-|                    ||             |    ...   |            ||         |
-|                    ||             |          |            ||         |
-|                    ||             |          |            ||         |
-|                     \\_______   int 0  ... int 20        //          |
-|                      \_NSR__ \                          //           |
-|                              \\    ____________________//            |
-|                               \\  /________SEI_________/             |
-|   AP 806                       \\//                                  |
-|                                 ||                                   |
-+---------------------------------||-----------------------------------+
-                                  ||
-                                  || Interconnect
-                                  ||\
-                                  ||\\______
-                                  || \______ <---> Others CP 110
-                                  ||
-+---------------------------------||-----------------------------------+
-|                                 ||                                   |
-|   CP 110                        ||                                   |
-|                                 ||                                   |
-|       +-------------------------||------------------------+          |
-|       |                         || MSI                    |          |
-|       |   ICU                   ||                        |          |
-|       |         /--------------/  \------\                |          |
-|       |        /      /-------/           \               |          |
-|       |       /      /       /             \              |          |
-|       |      /      /       /     . . .     \             |          |
-|       |     /      /       /                 \            |          |
-|       |   NSR     NSR     SEI               NSR           |          |
-|       |    |       |       |                 |            |          |
-|       +----^-------^-------^-----------------^------------+          |
-|            |       |       |                 |                       |
-|            |       |       |      . . .      |                       |
-|            |       |       |                 |                       |
-|         int 0   int 1   int 2             int 206                    |
-|                                                                      |
-|                                                                      |
-+----------------------------------------------------------------------+
-
-
-Thank you,
-Miquèl
-
-
-Changes since v1:
-=================
-General
--------
-* Spelling/function names/comments.
-* Added Reviewed-by tags.
-* Rebased on top of Marc Zyngier level-MSI series (tip:irq/core).
-
-SEI
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
-* Change the license for GPL-2.0 only in irq-mvebu-sei.c C file.
-* Used alphabetic ordering when adding SEI driver in Makefile.
-* Re-ordered register definitions by increasing offset.
-* s/NB/COUNT/ in register definitions.
-* avoid enabling all interrupt by default.
-* fixed mask/unmask functions using the wrong hwirq number.
-* removed hackish doorbell mechanism.
-* Removed the ->xlate hook assigned for CP MSIs.
-* Used devm_*() helpers.
-* s/top_level_spi/parent_irq/ in probe.
-* Added forgotten of_node_put(child).
-* Reset the SEI registers before registering the IRQ domains.
-* Introduced new DT property "marvell,sei-ranges" instead of using
-  "reg" to declare the range of MSI interrupts vs. wired interrupts in
-  the SEI subnodes.
-* Finally did not change the ->alloc() about the fwspec->param[1]
-  line (to be checked by Marc).
+ .../bindings/interrupt-controller/marvell,icu.txt  | 81 ++++++++++++++++++----
+ 1 file changed, 69 insertions(+), 12 deletions(-)
 
-ICU
----
-* Updated the ICU documentation so the legacy bindings are still
-  documented somewhere.
-* Added stable tags on the commit fixing the CP110 ICU node size.
-* Removed the "syscon" compatible from the ICU node, instead the
-  syscon is created at probe time.
-* s/user data/private data/ in the title of commit
-  "irqchip/irq-mvebu-icu: fix wrong user data retrieval"
-
-
-Miquel Raynal (16):
-  dt-bindings/interrupt-controller: fix Marvell ICU length in the
-    example
-  arm64: dts: marvell: fix CP110 ICU node size
-  irqchip/irq-mvebu-icu: fix wrong private data retrieval
-  irqchip/irq-mvebu-icu: clarify the reset operation of configured
-    interrupts
-  irqchip/irq-mvebu-icu: switch to regmap
-  irqchip/irq-mvebu-icu: make irq_domain local
-  irqchip/irq-mvebu-icu: disociate ICU and NSR
-  irqchip/irq-mvebu-icu: support ICU subnodes
-  irqchip/irq-mvebu-sei: add new driver for Marvell SEI
-  arm64: marvell: enable SEI driver
-  irqchip/irq-mvebu-icu: add support for System Error Interrupts (SEI)
-  dt-bindings/interrupt-controller: update Marvell ICU bindings
-  dt-bindings/interrupt-controller: add documentation for Marvell SEI
-    controller
-  arm64: dts: marvell: add AP806 SEI subnode
-  arm64: dts: marvell: use new bindings for CP110 interrupts
-  arm64: dts: marvell: add CP110 ICU SEI subnode
-
- .../bindings/interrupt-controller/marvell,icu.txt  |  83 +++-
- .../bindings/interrupt-controller/marvell,sei.txt  |  50 +++
- arch/arm64/Kconfig.platforms                       |   1 +
- arch/arm64/boot/dts/marvell/armada-ap806.dtsi      |  19 +
- arch/arm64/boot/dts/marvell/armada-cp110.dtsi      | 123 +++---
- drivers/irqchip/Kconfig                            |   3 +
- drivers/irqchip/Makefile                           |   1 +
- drivers/irqchip/irq-mvebu-icu.c                    | 301 ++++++++++++---
- drivers/irqchip/irq-mvebu-sei.c                    | 422 +++++++++++++++++++++
- 9 files changed, 872 insertions(+), 131 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/marvell,sei.txt
- create mode 100644 drivers/irqchip/irq-mvebu-sei.c
-
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/marvell,icu.txt b/Documentation/devicetree/bindings/interrupt-controller/marvell,icu.txt
+index 649b7ec9d9b1..6f7e4355b3d8 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/marvell,icu.txt
++++ b/Documentation/devicetree/bindings/interrupt-controller/marvell,icu.txt
+@@ -5,6 +5,8 @@ The Marvell ICU (Interrupt Consolidation Unit) controller is
+ responsible for collecting all wired-interrupt sources in the CP and
+ communicating them to the GIC in the AP, the unit translates interrupt
+ requests on input wires to MSG memory mapped transactions to the GIC.
++These messages will access a different GIC memory area depending on
++their type (NSR, SR, SEI, REI, etc).
+ 
+ Required properties:
+ 
+@@ -12,20 +14,19 @@ Required properties:
+ 
+ - reg: Should contain ICU registers location and length.
+ 
++Subnodes: Each group of interrupt is declared as a subnode of the ICU,
++with their own compatible.
++
++Required properties for the icu_nsr/icu_sei subnodes:
++
++- compatible: Should be "marvell,cp110-icu-nsr" or "marvell,cp110-icu-sei".
++
+ - #interrupt-cells: Specifies the number of cells needed to encode an
+-  interrupt source. The value shall be 3.
++  interrupt source. The value shall be 2.
+ 
+-  The 1st cell is the group type of the ICU interrupt. Possible group
+-  types are:
++  The 1st cell is the index of the interrupt in the ICU unit.
+ 
+-   ICU_GRP_NSR (0x0) : Shared peripheral interrupt, non-secure
+-   ICU_GRP_SR  (0x1) : Shared peripheral interrupt, secure
+-   ICU_GRP_SEI (0x4) : System error interrupt
+-   ICU_GRP_REI (0x5) : RAM error interrupt
+-
+-  The 2nd cell is the index of the interrupt in the ICU unit.
+-
+-  The 3rd cell is the type of the interrupt. See arm,gic.txt for
++  The 2nd cell is the type of the interrupt. See arm,gic.txt for
+   details.
+ 
+ - interrupt-controller: Identifies the node as an interrupt
+@@ -35,17 +36,73 @@ Required properties:
+   that allows to trigger interrupts using MSG memory mapped
+   transactions.
+ 
++Note: each 'interrupts' property referring to any 'icu_xxx' node shall
++      have a different number within [0:206].
++
+ Example:
+ 
+ icu: interrupt-controller@1e0000 {
+ 	compatible = "marvell,cp110-icu";
+ 	reg = <0x1e0000 0x440>;
++
++	CP110_LABEL(icu_nsr): icu-nsr {
++		compatible = "marvell,cp110-icu-nsr";
++		#interrupt-cells = <2>;
++		interrupt-controller;
++		msi-parent = <&gicp>;
++	};
++
++        CP110_LABEL(icu_sei): icu-sei {
++                compatible = "marvell,cp110-icu-sei";
++                #interrupt-cells = <2>;
++                interrupt-controller;
++                msi-parent = <&sei>;
++        };
++};
++
++node1 {
++	interrupt-parent = <&icu_nsr>;
++	interrupts = <106 IRQ_TYPE_LEVEL_HIGH>;
++};
++
++node2 {
++	interrupt-parent = <&icu_sei>;
++	interrupts = <107 IRQ_TYPE_LEVEL_HIGH>;
++};
++
++/* Would not work with the above nodes */
++node3 {
++	interrupt-parent = <&icu_nsr>;
++	interrupts = <107 IRQ_TYPE_LEVEL_HIGH>;
++};
++
++Note on legacy bindings:
++Before using a subnode for each domain, only NSR were
++supported. Bindings were different in this way:
++
++- #interrupt-cells: The value was 3.
++	The 1st cell was the group type of the ICU interrupt. Possible
++	group types were:
++	ICU_GRP_NSR (0x0) : Shared peripheral interrupt, non-secure
++	ICU_GRP_SR  (0x1) : Shared peripheral interrupt, secure
++	ICU_GRP_SEI (0x4) : System error interrupt
++	ICU_GRP_REI (0x5) : RAM error interrupt
++	The 2nd cell was the index of the interrupt in the ICU unit.
++	The 3rd cell was the type of the interrupt. See arm,gic.txt for
++	details.
++
++Example:
++
++icu: interrupt-controller@1e0000 {
++	compatible = "marvell,cp110-icu";
++	reg = <0x1e0000 0x440>;
++
+ 	#interrupt-cells = <3>;
+ 	interrupt-controller;
+ 	msi-parent = <&gicp>;
+ };
+ 
+-usb3h0: usb3@500000 {
++node1 {
+ 	interrupt-parent = <&icu>;
+ 	interrupts = <ICU_GRP_NSR 106 IRQ_TYPE_LEVEL_HIGH>;
+ };
 -- 
 2.14.1
