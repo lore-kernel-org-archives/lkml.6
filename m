@@ -1,129 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751726AbeEVRHL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 13:07:11 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:50852 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751279AbeEVRHB (ORCPT
+        id S1752108AbeEVRHY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 13:07:24 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:43395 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751587AbeEVRHU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 13:07:01 -0400
-Subject: Re: [PATCH v4 1/2] xen/PVH: Set up GS segment for stack canary
-To: Jan Beulich <JBeulich@suse.com>
-Cc: brgerst@gmail.com, xen-devel <xen-devel@lists.xenproject.org>,
-        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org
-References: <20180522035445.16911-1-boris.ostrovsky@oracle.com>
- <20180522035445.16911-2-boris.ostrovsky@oracle.com>
- <CAMzpN2iMrEqee+8yGP_qk-qAuXf+_o6vrOUSDTvX=8JAUDT5Fg@mail.gmail.com>
- <5B0421E502000078001C4B91@prv1-mh.provo.novell.com>
- <CAMzpN2gRvYMmaf2+Fpi2wkAV_rcH=uDfM8sQQaaGGK2U=7XqMA@mail.gmail.com>
- <5B04410D02000078001C4CC5@prv1-mh.provo.novell.com>
- <70aad5f3-67b9-b1fa-d39c-cfa8615f38da@oracle.com>
- <5B04463502000078001C4CEE@prv1-mh.provo.novell.com>
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <1bb1b3b0-fae1-9c2e-f5b8-0c51f06d6fa9@oracle.com>
-Date: Tue, 22 May 2018 13:10:09 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 22 May 2018 13:07:20 -0400
+X-Google-Smtp-Source: AB8JxZp/46+TK03+tvwxPMFOhPstuZrBjIjNGrs54PMXma7Cvo5C7f2bwBXnXUNLsAhT6IfAmNn/UlFN884L3WSyhIA=
 MIME-Version: 1.0
-In-Reply-To: <5B04463502000078001C4CEE@prv1-mh.provo.novell.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8901 signatures=668700
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=904
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805220186
+In-Reply-To: <CAJZ5v0j99Lwj0hnVoCX3Unz8UvP-cP1rmggjdonTVSwsrZmasg@mail.gmail.com>
+References: <20180518185501.173552-1-joel@joelfernandes.org>
+ <20180521051424.mljwmisvrvi6yyc4@vireshk-i7> <CAJZ5v0jbJ3HfLyP6VZ2PuG0q1n=faX3G98ruwK-o1ro+gv7B9w@mail.gmail.com>
+ <20180521161346.GB14065@joelaf.mtv.corp.google.com> <CAJZ5v0hucyBEyWoz8nS=6pfwt8Yd5Wi+39=2WGFgfJobv7=qPQ@mail.gmail.com>
+ <CAJZ5v0j99Lwj0hnVoCX3Unz8UvP-cP1rmggjdonTVSwsrZmasg@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 22 May 2018 19:07:19 +0200
+X-Google-Sender-Auth: To1Yy9FraXaW77phCQQwFlDOfTU
+Message-ID: <CAJZ5v0hSniC7ca8L7wUhvZfp2HJngoY43DcA94Z=niUiTrdRuA@mail.gmail.com>
+Subject: Re: [PATCH v2] schedutil: Allow cpufreq requests to be made even when
+ kthread kicked
+To: Joel Fernandes <joel@joelfernandes.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "Joel Fernandes (Google.)" <joelaf@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Luca Abeni <luca.abeni@santannapisa.it>, Todd Kjos <tkjos@google.com>,
+        Claudio Scordino <claudio@evidence.eu.com>, kernel-team@android.com,
+        Linux PM <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/22/2018 12:32 PM, Jan Beulich wrote:
->>>> On 22.05.18 at 18:20, <boris.ostrovsky@oracle.com> wrote:
->> On 05/22/2018 12:10 PM, Jan Beulich wrote:
->>>>>> On 22.05.18 at 17:15, <brgerst@gmail.com> wrote:
->>>> On Tue, May 22, 2018 at 9:57 AM, Jan Beulich <JBeulich@suse.com> wrote:
->>>>>>>> On 22.05.18 at 15:45, <brgerst@gmail.com> wrote:
->>>>>> On Mon, May 21, 2018 at 11:54 PM, Boris Ostrovsky <boris.ostrovsky@oracle.com> 
->> wrote:
->>>>>>> @@ -98,6 +101,12 @@ ENTRY(pvh_start_xen)
->>>>>>>         /* 64-bit entry point. */
->>>>>>>         .code64
->>>>>>>  1:
->>>>>>> +       /* Set base address in stack canary descriptor. */
->>>>>>> +       mov $MSR_GS_BASE,%ecx
->>>>>>> +       mov $canary, %rax
->>>>>>> +       cdq
->>>>>>> +       wrmsr
->>>>>> CDQ only sign-extends EAX to RAX.  What you really want is to move the
->>>>>> high 32-bits to EDX (or zero EDX if we can guarantee it is loaded
->>>>>> below 4G).
->>>>> What you describe is CDQE (AT&T name: CLTD); CDQ (AT&T: CLTQ)
->>>>> sign-extends EAX to EDX:EAX.
->>>> But that would still be wrong, as it would set EDX to 0xFFFFFFFF if
->>>> the kernel was loaded between 2G and 4G.  Looking closer at the code,
->>>> we just left 32-bit mode, so we must have been loaded below 4G,
->>>> therefore EDX must be zero.
->>> Ah, yes, indeed.
->> We are loading virtual address for $canary so we will always have EDX
->> set to 0xffffffff. Isn't that what we want?
-> Oh, that's rather confusing - we're still running on the low 1:1
-> mapping when we're here. But yes, by the time we enter C code
-> (where the GS base starts to matter) we ought to be on the high
-> mappings - if only there wasn't xen_prepare_pvh().
+On Tue, May 22, 2018 at 5:30 PM, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> On Tue, May 22, 2018 at 12:02 PM, Rafael J. Wysocki <rafael@kernel.org> wrote:
+>> On Mon, May 21, 2018 at 6:13 PM, Joel Fernandes <joel@joelfernandes.org> wrote:
+>>> On Mon, May 21, 2018 at 10:29:52AM +0200, Rafael J. Wysocki wrote:
+>>>> On Mon, May 21, 2018 at 7:14 AM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>>>> > On 18-05-18, 11:55, Joel Fernandes (Google.) wrote:
+>>>> >> From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+>>>> >>
+>>>> >> Currently there is a chance of a schedutil cpufreq update request to be
+>>>> >> dropped if there is a pending update request. This pending request can
+>>>> >> be delayed if there is a scheduling delay of the irq_work and the wake
+>>>> >> up of the schedutil governor kthread.
+>>>> >>
+>>>> >> A very bad scenario is when a schedutil request was already just made,
+>>>> >> such as to reduce the CPU frequency, then a newer request to increase
+>>>> >> CPU frequency (even sched deadline urgent frequency increase requests)
+>>>> >> can be dropped, even though the rate limits suggest that its Ok to
+>>>> >> process a request. This is because of the way the work_in_progress flag
+>>>> >> is used.
+>>>> >>
+>>>> >> This patch improves the situation by allowing new requests to happen
+>>>> >> even though the old one is still being processed. Note that in this
+>>>> >> approach, if an irq_work was already issued, we just update next_freq
+>>>> >> and don't bother to queue another request so there's no extra work being
+>>>> >> done to make this happen.
+>>>> >
+>>>> > Now that this isn't an RFC anymore, you shouldn't have added below
+>>>> > paragraph here. It could go to the comments section though.
+>>>> >
+>>>> >> I had brought up this issue at the OSPM conference and Claudio had a
+>>>> >> discussion RFC with an alternate approach [1]. I prefer the approach as
+>>>> >> done in the patch below since it doesn't need any new flags and doesn't
+>>>> >> cause any other extra overhead.
+>>>> >>
+>>>> >> [1] https://patchwork.kernel.org/patch/10384261/
+>>>> >>
+>>>> >> LGTMed-by: Viresh Kumar <viresh.kumar@linaro.org>
+>>>> >> LGTMed-by: Juri Lelli <juri.lelli@redhat.com>
+>>>> >
+>>>> > Looks like a Tag you just invented ? :)
+>>>>
+>>>> Yeah.
+>>>>
+>>>> The LGTM from Juri can be converned into an ACK silently IMO.  That
+>>>> said I have added Looks-good-to: tags to a couple of commits. :-)
+>>>
+>>> Cool, I'll covert them to Acks :-)
+>>
+>> So it looks like I should expect an update of this patch, right?
+>>
+>> Or do you prefer the current one to be applied and work on top of it?
+>>
+>
+> [cut]
+>
+>>>
+>>> I just realized that on a single policy switch that uses the governor thread,
+>>> there will be 1 thread per-CPU. The sugov_update_single will be called on the
+>>> same CPU with interrupts disabled.
+>>
+>> sugov_update_single() doesn't have to run on the target CPU.
+>
+> Which sadly is a bug IMO. :-/
 
-xen_prepare_pvh() (and whatever it might call) is the only reason for
-this patch to exist. It's the only C call that we are making before
-jumping to startup_64, which I assume will have to set up GS itself
-before calling into C.
+My bad.
 
-I didn't realize we are still on identity mapping. I'll clear EDX (and
-load $_pa(canary)) then.
+sugov_update_single() runs under rq->lock, so it need not run on a
+target CPU so long as the CPU running it can update the frequency for
+the target and there is the requisite check for that in
+sugov_should_update_freq().
 
-BTW, don't we have the same issue in startup_xen()?
+That means that sugov_update_single() will not run concurrently on two
+different CPUs for the same target, but it may be running concurrently
+with the kthread (as pointed out by Viresh).
 
--boris
+>>> In sugov_work, we are doing a
+>>> raw_spin_lock_irqsave which also disables interrupts. So I don't think
+>>> there's any possibility of a race happening on the same CPU between the
+>>> frequency update request and the sugov_work executing. In other words, I feel
+>>> we can drop the above if (..) statement for single policies completely and
+>>> only keep the changes for the shared policy. Viresh since you brought up the
+>>> single policy issue initially which made me add this if statememnt, could you
+>>> let me know if you agree with what I just said?
+>>
+>> Which is why you need the spinlock too.
+>
+> And you totally have a point.
+
+Not really, sorry about that.
+
+It is necessary to take the spinlock in the non-fast-switch case,
+because of the possible race with the kthread, so something like my
+patch at https://patchwork.kernel.org/patch/10418551/ is needed after
+all.
