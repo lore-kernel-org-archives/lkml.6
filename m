@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752595AbeEVTcE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 15:32:04 -0400
+        id S1752860AbeEVTez (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 15:34:55 -0400
 Received: from mga07.intel.com ([134.134.136.100]:16707 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752406AbeEVTcC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 15:32:02 -0400
+        id S1752579AbeEVTcE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 15:32:04 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,430,1520924400";
-   d="scan'208";a="226406370"
+   d="scan'208";a="226406408"
 From: Reinette Chatre <reinette.chatre@intel.com>
 To: tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
         vikas.shivappa@linux.intel.com
@@ -18,9 +18,9 @@ Cc: gavin.hindman@intel.com, jithu.joseph@intel.com, dave.hansen@intel.com,
         mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
         linux-kernel@vger.kernel.org,
         Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH V4 12/38] x86/intel_rdt: Ensure requested schemata respects mode
-Date: Tue, 22 May 2018 04:29:00 -0700
-Message-Id: <cbe23984ec51299f63aba3b4b07f90d1cb5a3d24.1526987654.git.reinette.chatre@intel.com>
+Subject: [PATCH V4 24/38] x86/intel_rdt: Support enter/exit of locksetup mode
+Date: Tue, 22 May 2018 04:29:12 -0700
+Message-Id: <e7bdc4ec9899bf6c85c903563aaa4bc43e0867d7.1526987654.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <cover.1526987654.git.reinette.chatre@intel.com>
 References: <cover.1526987654.git.reinette.chatre@intel.com>
@@ -30,175 +30,263 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the administrator requests a change in a resource group's schemata
-we have to ensure that the new schemata respects the current resource
-group as well as the other active resource groups' schemata.
+The locksetup mode is the way in which the user communicates that the
+resource group will be used for a pseudo-locked region. Locksetup mode
+should thus ensure that all restrictions on a resource group are met
+before locksetup mode can be entered. The resource group should also be
+configured to ensure that it cannot be modified in unsupported ways when
+a pseudo-locked region.
 
-The new schemata is not allowed to overlap with the schemata of any
-exclusive resource groups. Similarly, if the resource group being
-changed is exclusive then its new schemata is not allowed to overlap
-with any schemata of any other active resource group.
+Introduce the support where the request for entering locksetup mode can
+be validated. This includes: CDP is not active, no cpus or tasks are
+assigned to the resource group, monitoring is not in progress on the
+resource group. Once the resource group is determined ready for a
+pseudo-locked region it is configured to not allow future changes to
+these properties.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
- arch/x86/kernel/cpu/intel_rdt.h             |  2 ++
- arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c | 49 ++++++++++++++++++++++-------
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c    |  4 +--
- 3 files changed, 41 insertions(+), 14 deletions(-)
+ arch/x86/kernel/cpu/intel_rdt.h             |   2 +
+ arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 187 +++++++++++++++++++++++++++-
+ 2 files changed, 183 insertions(+), 6 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
-index c0c0ef817f11..68d398bc2942 100644
+index 02ae088fd745..12b006178d3a 100644
 --- a/arch/x86/kernel/cpu/intel_rdt.h
 +++ b/arch/x86/kernel/cpu/intel_rdt.h
-@@ -465,6 +465,8 @@ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
- 				char *buf, size_t nbytes, loff_t off);
- int rdtgroup_schemata_show(struct kernfs_open_file *of,
- 			   struct seq_file *s, void *v);
-+bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
-+			   u32 _cbm, int closid, bool exclusive);
+@@ -501,6 +501,8 @@ unsigned int rdtgroup_cbm_to_size(struct rdt_resource *r, struct rdt_domain *d,
+ 				  u32 cbm);
  enum rdtgrp_mode rdtgroup_mode_by_closid(int closid);
+ int rdtgroup_tasks_assigned(struct rdtgroup *r);
++int rdtgroup_locksetup_enter(struct rdtgroup *rdtgrp);
++int rdtgroup_locksetup_exit(struct rdtgroup *rdtgrp);
  struct rdt_domain *get_domain_from_cpu(int cpu, struct rdt_resource *r);
  int update_domains(struct rdt_resource *r, int closid);
-diff --git a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-index ab4bb8731825..0e6210a043f0 100644
---- a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-@@ -123,13 +123,19 @@ static bool cbm_validate(char *buf, u32 *data, struct rdt_resource *r)
- 	return true;
- }
+ void closid_free(int closid);
+diff --git a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
+index 8693dbe602a2..ce8243c87877 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
++++ b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
+@@ -11,17 +11,56 @@
  
-+struct rdt_cbm_parse_data {
-+	struct rdtgroup		*rdtgrp;
-+	char			*buf;
-+};
+ #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
+ 
++#include <linux/slab.h>
+ #include "intel_rdt.h"
+ 
+ /**
++ * pseudo_lock_init - Initialize a pseudo-lock region
++ * @rdtgrp: resource group to which new pseudo-locked region will belong
++ *
++ * A pseudo-locked region is associated with a resource group. When this
++ * association is created the pseudo-locked region is initialized. The
++ * details of the pseudo-locked region are not known at this time so only
++ * allocation is done and association established.
++ *
++ * Return: 0 on success, <0 on failure
++ */
++static int pseudo_lock_init(struct rdtgroup *rdtgrp)
++{
++	struct pseudo_lock_region *plr;
 +
- /*
-  * Read one cache bit mask (hex). Check that it is valid for the current
-  * resource type.
++	plr = kzalloc(sizeof(*plr), GFP_KERNEL);
++	if (!plr)
++		return -ENOMEM;
++
++	rdtgrp->plr = plr;
++	return 0;
++}
++
++/**
++ * pseudo_lock_free - Free a pseudo-locked region
++ * @rdtgrp: resource group to which pseudo-locked region belonged
++ *
++ * The pseudo-locked region's resources have already been released, or not
++ * yet created at this point. Now it can be freed and disassociated from the
++ * resource group.
++ *
++ * Return: void
++ */
++static void pseudo_lock_free(struct rdtgroup *rdtgrp)
++{
++	kfree(rdtgrp->plr);
++	rdtgrp->plr = NULL;
++}
++
++/**
+  * rdtgroup_monitor_in_progress - Test if monitoring in progress
+  * @r: resource group being queried
+  *
+  * Return: 1 if monitor groups have been created for this resource
+  * group, 0 otherwise.
   */
- int parse_cbm(void *_data, struct rdt_resource *r, struct rdt_domain *d)
+-static int __attribute__ ((unused))
+-rdtgroup_monitor_in_progress(struct rdtgroup *rdtgrp)
++static int rdtgroup_monitor_in_progress(struct rdtgroup *rdtgrp)
  {
--	char *buf = _data;
-+	struct rdt_cbm_parse_data *data = _data;
-+	struct rdtgroup *rdtgrp = data->rdtgrp;
- 	u32 cbm_val;
+ 	return !list_empty(&rdtgrp->mon.crdtgrp_list);
+ }
+@@ -41,8 +80,7 @@ rdtgroup_monitor_in_progress(struct rdtgroup *rdtgrp)
+  * the state of the mode of these files will be uncertain when a failure
+  * occurs.
+  */
+-static int __attribute__ ((unused))
+-rdtgroup_locksetup_user_restrict(struct rdtgroup *rdtgrp)
++static int rdtgroup_locksetup_user_restrict(struct rdtgroup *rdtgrp)
+ {
+ 	int ret;
  
- 	if (d->have_new_ctrl) {
-@@ -137,8 +143,24 @@ int parse_cbm(void *_data, struct rdt_resource *r, struct rdt_domain *d)
- 		return -EINVAL;
- 	}
+@@ -89,8 +127,7 @@ rdtgroup_locksetup_user_restrict(struct rdtgroup *rdtgrp)
+  * again but the state of the mode of these files will be uncertain when
+  * a failure occurs.
+  */
+-static int __attribute__ ((unused))
+-rdtgroup_locksetup_user_restore(struct rdtgroup *rdtgrp)
++static int rdtgroup_locksetup_user_restore(struct rdtgroup *rdtgrp)
+ {
+ 	int ret;
  
--	if (!cbm_validate(buf, &cbm_val, r))
-+	if (!cbm_validate(data->buf, &cbm_val, r))
-+		return -EINVAL;
+@@ -124,3 +161,141 @@ rdtgroup_locksetup_user_restore(struct rdtgroup *rdtgrp)
+ out:
+ 	return ret;
+ }
++
++/**
++ * rdtgroup_locksetup_enter - Resource group enters locksetup mode
++ * @rdtgrp: resource group requested to enter locksetup mode
++ *
++ * A resource group enters locksetup mode to reflect that it would be used
++ * to represent a pseudo-locked region and is in the process of being set
++ * up to do so. A resource group used for a pseudo-locked region would
++ * lose the closid associated with it so we cannot allow it to have any
++ * tasks or cpus assigned nor permit tasks or cpus to be assigned in the
++ * future. Monitoring of a pseudo-locked region is not allowed either.
++ *
++ * The above and more restrictions on a pseudo-locked region are checked
++ * for and enforced before the resource group enters the locksetup mode.
++ *
++ * Returns: 0 if the resource group successfully entered locksetup mode, <0
++ * on failure. On failure the last_cmd_status buffer is updated with text to
++ * communicate details of failure to the user.
++ */
++int rdtgroup_locksetup_enter(struct rdtgroup *rdtgrp)
++{
++	int ret;
 +
 +	/*
-+	 * The CBM may not overlap with the CBM of another closid if
-+	 * either is exclusive.
++	 * The default resource group can neither be removed nor lose the
++	 * default closid associated with it.
 +	 */
-+	if (rdtgroup_cbm_overlaps(r, d, cbm_val, rdtgrp->closid, true)) {
-+		rdt_last_cmd_printf("overlaps with exclusive group\n");
- 		return -EINVAL;
++	if (rdtgrp == &rdtgroup_default) {
++		rdt_last_cmd_puts("cannot pseudo-lock default group\n");
++		return -EINVAL;
 +	}
 +
-+	if (rdtgroup_cbm_overlaps(r, d, cbm_val, rdtgrp->closid, false)) {
-+		if (rdtgrp->mode == RDT_MODE_EXCLUSIVE) {
-+			rdt_last_cmd_printf("overlaps with other group\n");
-+			return -EINVAL;
-+		}
++	/*
++	 * Cache Pseudo-locking not supported when CDP is enabled.
++	 *
++	 * Some things to consider if you would like to enable this
++	 * support (using L3 CDP as example):
++	 * - When CDP is enabled two separate resources are exposed,
++	 *   L3DATA and L3CODE, but they are actually on the same cache.
++	 *   The implication for pseudo-locking is that if a
++	 *   pseudo-locked region is created on a domain of one
++	 *   resource (eg. L3CODE), then a pseudo-locked region cannot
++	 *   be created on that same domain of the other resource
++	 *   (eg. L3DATA). This is because the creation of a
++	 *   pseudo-locked region involves a call to wbinvd that will
++	 *   affect all cache allocations on particular domain.
++	 * - Considering the previous, it may be possible to only
++	 *   expose one of the CDP resources to pseudo-locking and
++	 *   hide the other. For example, we could consider to only
++	 *   expose L3DATA and since the L3 cache is unified it is
++	 *   still possible to place instructions there are execute it.
++	 * - If only one region is exposed to pseudo-locking we should
++	 *   still keep in mind that availability of a portion of cache
++	 *   for pseudo-locking should take into account both resources.
++	 *   Similarly, if a pseudo-locked region is created in one
++	 *   resource, the portion of cache used by it should be made
++	 *   unavailable to all future allocations from both resources.
++	 */
++	if (rdt_resources_all[RDT_RESOURCE_L3DATA].alloc_enabled ||
++	    rdt_resources_all[RDT_RESOURCE_L2DATA].alloc_enabled) {
++		rdt_last_cmd_puts("CDP enabled\n");
++		return -EINVAL;
 +	}
- 
- 	d->new_ctrl = cbm_val;
- 	d->have_new_ctrl = true;
-@@ -152,8 +174,10 @@ int parse_cbm(void *_data, struct rdt_resource *r, struct rdt_domain *d)
-  * separated by ";". The "id" is in decimal, and must match one of
-  * the "id"s for this resource.
-  */
--static int parse_line(char *line, struct rdt_resource *r)
-+static int parse_line(char *line, struct rdt_resource *r,
-+		      struct rdtgroup *rdtgrp)
- {
-+	struct rdt_cbm_parse_data data;
- 	char *dom = NULL, *id;
- 	struct rdt_domain *d;
- 	unsigned long dom_id;
-@@ -170,7 +194,9 @@ static int parse_line(char *line, struct rdt_resource *r)
- 	dom = strim(dom);
- 	list_for_each_entry(d, &r->domains, list) {
- 		if (d->id == dom_id) {
--			if (r->parse_ctrlval(dom, r, d))
-+			data.buf = dom;
-+			data.rdtgrp = rdtgrp;
-+			if (r->parse_ctrlval(&data, r, d))
- 				return -EINVAL;
- 			goto next;
- 		}
-@@ -223,13 +249,14 @@ int update_domains(struct rdt_resource *r, int closid)
- 	return 0;
- }
- 
--static int rdtgroup_parse_resource(char *resname, char *tok, int closid)
-+static int rdtgroup_parse_resource(char *resname, char *tok,
-+				   struct rdtgroup *rdtgrp)
- {
- 	struct rdt_resource *r;
- 
- 	for_each_alloc_enabled_rdt_resource(r) {
--		if (!strcmp(resname, r->name) && closid < r->num_closid)
--			return parse_line(tok, r);
-+		if (!strcmp(resname, r->name) && rdtgrp->closid < r->num_closid)
-+			return parse_line(tok, r, rdtgrp);
- 	}
- 	rdt_last_cmd_printf("unknown/unsupported resource name '%s'\n", resname);
- 	return -EINVAL;
-@@ -242,7 +269,7 @@ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
- 	struct rdt_domain *dom;
- 	struct rdt_resource *r;
- 	char *tok, *resname;
--	int closid, ret = 0;
-+	int ret = 0;
- 
- 	/* Valid input requires a trailing newline */
- 	if (nbytes == 0 || buf[nbytes - 1] != '\n')
-@@ -256,8 +283,6 @@ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
- 	}
- 	rdt_last_cmd_clear();
- 
--	closid = rdtgrp->closid;
--
- 	for_each_alloc_enabled_rdt_resource(r) {
- 		list_for_each_entry(dom, &r->domains, list)
- 			dom->have_new_ctrl = false;
-@@ -275,13 +300,13 @@ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
- 			ret = -EINVAL;
- 			goto out;
- 		}
--		ret = rdtgroup_parse_resource(resname, tok, closid);
-+		ret = rdtgroup_parse_resource(resname, tok, rdtgrp);
- 		if (ret)
- 			goto out;
- 	}
- 
- 	for_each_alloc_enabled_rdt_resource(r) {
--		ret = update_domains(r, closid);
-+		ret = update_domains(r, rdtgrp->closid);
- 		if (ret)
- 			goto out;
- 	}
-diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index 3701b1cb0f73..5b78b4aa1a50 100644
---- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -829,8 +829,8 @@ static int rdtgroup_mode_show(struct kernfs_open_file *of,
-  *
-  * Return: false if CBM does not overlap, true if it does.
-  */
--static bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
--				  u32 _cbm, int closid, bool exclusive)
-+bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
-+			   u32 _cbm, int closid, bool exclusive)
- {
- 	unsigned long *cbm = (unsigned long *)&_cbm;
- 	unsigned long *ctrl_b;
++
++	if (rdtgroup_monitor_in_progress(rdtgrp)) {
++		rdt_last_cmd_puts("monitoring in progress\n");
++		return -EINVAL;
++	}
++
++	if (rdtgroup_tasks_assigned(rdtgrp)) {
++		rdt_last_cmd_puts("tasks assigned to resource group\n");
++		return -EINVAL;
++	}
++
++	if (!cpumask_empty(&rdtgrp->cpu_mask)) {
++		rdt_last_cmd_puts("CPUs assigned to resource group\n");
++		return -EINVAL;
++	}
++
++	if (rdtgroup_locksetup_user_restrict(rdtgrp)) {
++		rdt_last_cmd_puts("unable to modify resctrl permissions\n");
++		return -EIO;
++	}
++
++	ret = pseudo_lock_init(rdtgrp);
++	if (ret) {
++		rdt_last_cmd_puts("unable to init pseudo-lock region\n");
++		goto out_release;
++	}
++
++	/*
++	 * If this system is capable of monitoring a rmid would have been
++	 * allocated when the control group was created. This is not needed
++	 * anymore when this group would be used for pseudo-locking. This
++	 * is safe to call on platforms not capable of monitoring.
++	 */
++	free_rmid(rdtgrp->mon.rmid);
++
++	ret = 0;
++	goto out;
++
++out_release:
++	rdtgroup_locksetup_user_restore(rdtgrp);
++out:
++	return ret;
++}
++
++/**
++ * rdtgroup_locksetup_exit - resource group exist locksetup mode
++ * @rdtgrp: resource group
++ *
++ * When a resource group exits locksetup mode the earlier restrictions are
++ * lifted.
++ *
++ * Return: 0 on success, <0 on failure
++ */
++int rdtgroup_locksetup_exit(struct rdtgroup *rdtgrp)
++{
++	int ret;
++
++	if (rdt_mon_capable) {
++		ret = alloc_rmid();
++		if (ret < 0) {
++			rdt_last_cmd_puts("out of RMIDs\n");
++			return ret;
++		}
++		rdtgrp->mon.rmid = ret;
++	}
++
++	ret = rdtgroup_locksetup_user_restore(rdtgrp);
++	if (ret) {
++		free_rmid(rdtgrp->mon.rmid);
++		return ret;
++	}
++
++	pseudo_lock_free(rdtgrp);
++	return 0;
++}
 -- 
 2.13.6
