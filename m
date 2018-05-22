@@ -1,96 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752671AbeEVQhk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 12:37:40 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:44977 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751317AbeEVQfD (ORCPT
+        id S1751561AbeEVQi3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 12:38:29 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:40313 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751268AbeEVQiZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 12:35:03 -0400
-X-Google-Smtp-Source: AB8JxZr4nqOUDP5+m9xkjtZ1wNm1eJ07EaIaKL7QEgnt5xGyXJ2V1R+dZ05v/2GAK4AHCx2Yha/uzQ==
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-        Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-amlogic@lists.infradead.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/6] clk: meson: clean-up meson clock configuration
-Date: Tue, 22 May 2018 18:34:52 +0200
-Message-Id: <20180522163457.13834-2-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180522163457.13834-1-jbrunet@baylibre.com>
-References: <20180522163457.13834-1-jbrunet@baylibre.com>
+        Tue, 22 May 2018 12:38:25 -0400
+X-Google-Smtp-Source: AB8JxZoJs/EbHEsKFKNK85Sy2i++NCf0TP3IAvPHcsK+HWO7Yvu0Jm9yGycFqk0g2XwwljKaLq2G83UDKTYN42aoKRI=
+MIME-Version: 1.0
+References: <20180518130413.16997-1-roman.penyaev@profitbricks.com>
+ <20180518130413.16997-2-roman.penyaev@profitbricks.com> <20180519163735.GX3803@linux.vnet.ibm.com>
+ <CAJrWOzAt8BDtypaRwYx_y9jpCVD5W_VL9aQsFsC3bL-XaoJz9g@mail.gmail.com>
+ <20180520004318.GY3803@linux.vnet.ibm.com> <CAJrWOzBenkHg_5zs1VAxP_rVbCbOJO_eO0toJBhnzXuy_yWH2Q@mail.gmail.com>
+ <CA+55aFymFCVqh4VxtqDPoFYh6zsGEDLSV79_AnsMp3M=t2mhqg@mail.gmail.com>
+ <20180521153337.GF3803@linux.vnet.ibm.com> <CAJrWOzDfJ46Vwz5k7VgUwz04EzCCUtt57jxCx1RC0LoOA3t0AA@mail.gmail.com>
+In-Reply-To: <CAJrWOzDfJ46Vwz5k7VgUwz04EzCCUtt57jxCx1RC0LoOA3t0AA@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 22 May 2018 09:38:13 -0700
+Message-ID: <CA+55aFx+4D5bBYSKb5jKjJ8SP=osGB=PCf8vW3RZH+R5fp5jgQ@mail.gmail.com>
+Subject: Re: [PATCH v2 01/26] rculist: introduce list_next_or_null_rr_rcu()
+To: Roman Pen <roman.penyaev@profitbricks.com>
+Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Bart Van Assche <bart.vanassche@sandisk.com>,
+        Or Gerlitz <ogerlitz@mellanox.com>, Doug Ledford <dledford@redhat.com>,
+        swapnil.ingle@profitbricks.com, danil.kipnis@profitbricks.com,
+        Jinpu Wang <jinpu.wang@profitbricks.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clean the dependencies in meson clock Kconfig.
-CLK_AMLOGIC should actually select CLK_REGMAP_MESON which it uses. Also,
-each platform should select CLK_AMLOGIC, so everything is properly turned
-on when the platform Kconfig enable each configuration flag
+On Tue, May 22, 2018 at 2:09 AM Roman Penyaev <
+roman.penyaev@profitbricks.com> wrote:
 
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/Kconfig | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+> Should I resend current patch with more clear comments about how careful
+> caller should be with a leaking pointer?
 
-diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-index 815659eebea3..9d00809f07fc 100644
---- a/drivers/clk/meson/Kconfig
-+++ b/drivers/clk/meson/Kconfig
-@@ -1,13 +1,14 @@
- config COMMON_CLK_AMLOGIC
- 	bool
--	depends on OF
- 	depends on ARCH_MESON || COMPILE_TEST
-+	select COMMON_CLK_REGMAP_MESON
- 
- config COMMON_CLK_MESON_AO
- 	bool
- 	depends on OF
- 	depends on ARCH_MESON || COMPILE_TEST
- 	select COMMON_CLK_REGMAP_MESON
-+	select RESET_CONTROLLER
- 
- config COMMON_CLK_REGMAP_MESON
- 	bool
-@@ -15,9 +16,8 @@ config COMMON_CLK_REGMAP_MESON
- 
- config COMMON_CLK_MESON8B
- 	bool
--	depends on COMMON_CLK_AMLOGIC
-+	select COMMON_CLK_AMLOGIC
- 	select RESET_CONTROLLER
--	select COMMON_CLK_REGMAP_MESON
- 	help
- 	  Support for the clock controller on AmLogic S802 (Meson8),
- 	  S805 (Meson8b) and S812 (Meson8m2) devices. Say Y if you
-@@ -25,10 +25,8 @@ config COMMON_CLK_MESON8B
- 
- config COMMON_CLK_GXBB
- 	bool
--	depends on COMMON_CLK_AMLOGIC
--	select RESET_CONTROLLER
-+	select COMMON_CLK_AMLOGIC
- 	select COMMON_CLK_MESON_AO
--	select COMMON_CLK_REGMAP_MESON
- 	select MFD_SYSCON
- 	help
- 	  Support for the clock controller on AmLogic S905 devices, aka gxbb.
-@@ -36,10 +34,8 @@ config COMMON_CLK_GXBB
- 
- config COMMON_CLK_AXG
- 	bool
--	depends on COMMON_CLK_AMLOGIC
--	select RESET_CONTROLLER
-+	select COMMON_CLK_AMLOGIC
- 	select COMMON_CLK_MESON_AO
--	select COMMON_CLK_REGMAP_MESON
- 	select MFD_SYSCON
- 	help
- 	  Support for the clock controller on AmLogic A113D devices, aka axg.
--- 
-2.14.3
+No. Even if we go your way, there is *one* single user, and that one is
+special and needs to take a lot more care.
+
+Just roll your own version, and make it an inline function like I've asked
+now now many times, and add a shit-ton of explanations of why it's safe to
+use in that *one* situation.
+
+I don't want any crazy and unsafe stuff in the generic header file that
+absolutely *nobody* should ever use.
+
+                  Linus
