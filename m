@@ -1,50 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753243AbeEVVbQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 17:31:16 -0400
-Received: from mga06.intel.com ([134.134.136.31]:51973 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752950AbeEVVbO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 17:31:14 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,430,1520924400";
-   d="scan'208";a="43945460"
-Date: Wed, 23 May 2018 05:30:34 +0800
-From: kbuild test robot <lkp@intel.com>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org
-Subject: [rcu:rcu/dev 98/99] kernel/rcu/rcutorture.c:1145:1: sparse: symbol
- '__pcpu_scope_rcu_torture_timer_rand' was not declared. Should it be static?
-Message-ID: <201805230516.7z5kOC3u%fengguang.wu@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+        id S1753270AbeEVVb1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 17:31:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49892 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753007AbeEVVbX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 17:31:23 -0400
+Date: Tue, 22 May 2018 14:31:21 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+        =?ISO-8859-1?Q?J=E9r=F4me?= Glisse <jglisse@redhat.com>,
+        Logan Gunthorpe <logang@deltatee.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/5] mm, hmm: mark hmm_devmem_{add, add_resource}
+ EXPORT_SYMBOL_GPL
+Message-Id: <20180522143121.54d4ebced511277b923d31ba@linux-foundation.org>
+In-Reply-To: <20180522063236.GE7925@lst.de>
+References: <152694211402.5484.2277538346144115181.stgit@dwillia2-desk3.amr.corp.intel.com>
+        <152694214044.5484.1081005408496303826.stgit@dwillia2-desk3.amr.corp.intel.com>
+        <20180522063236.GE7925@lst.de>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git rcu/dev
-head:   477fc1978395d58ae0406293a1d963629778a39d
-commit: 816e0790625af6848ef768adead22dd6302a9c41 [98/99] rcutorture: Use per-CPU random state for rcu_torture_timer()
-reproduce:
-        # apt-get install sparse
-        git checkout 816e0790625af6848ef768adead22dd6302a9c41
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
+On Tue, 22 May 2018 08:32:36 +0200 Christoph Hellwig <hch@lst.de> wrote:
 
+> On Mon, May 21, 2018 at 03:35:40PM -0700, Dan Williams wrote:
+> > The routines hmm_devmem_add(), and hmm_devmem_add_resource() are small
+> > wrappers around devm_memremap_pages(). The devm_memremap_pages()
+> > interface is a subset of the hmm functionality which has more and deeper
+> > ties into the kernel memory management implementation. It was an
+> > oversight that these symbols were not marked EXPORT_SYMBOL_GPL from the
+> > outset due to how they originally copied (and now reuse)
+> > devm_memremap_pages().
+> 
+> If we end up keeping this code: absolutely.  Then again I think without
+> an actual user this should have never been merged, and should be removed
+> until one shows up.
+> 
 
-sparse warnings: (new ones prefixed by >>)
+It wasn't simple.  Quite a lot of manufacturers were (are?) developing
+quite complex driver code which utilizes hmm.  Merging hmm to give a
+stable target for that development and in the expectation that those
+things would be coming along was a risk and I don't think we yet know
+the outcome.
 
->> kernel/rcu/rcutorture.c:1145:1: sparse: symbol '__pcpu_scope_rcu_torture_timer_rand' was not declared. Should it be static?
-
-Please review and possibly fold the followup patch.
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Jerome, are you able to provide any updates on all of this?
