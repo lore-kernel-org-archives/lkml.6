@@ -1,98 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751415AbeEVPl1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 11:41:27 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34390 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751196AbeEVPlY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 11:41:24 -0400
-Date: Tue, 22 May 2018 17:41:20 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Pierre Morel <pmorel@linux.vnet.ibm.com>
-Cc: Dong Jia Shi <bjsdjshi@linux.ibm.com>,
-        Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>, pasic@linux.vnet.ibm.com,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Subject: Re: [PATCH 04/10] vfio: ccw: replace IO_REQ event with SSCH_REQ
- event
-Message-ID: <20180522174120.2a56adb7.cohuck@redhat.com>
-In-Reply-To: <8c75acd1-c00b-4d7f-ea4b-d32e9b05989b@linux.vnet.ibm.com>
-References: <1524149293-12658-1-git-send-email-pmorel@linux.vnet.ibm.com>
-        <1524149293-12658-5-git-send-email-pmorel@linux.vnet.ibm.com>
-        <20180426073053.GZ12194@bjsdjshi@linux.vnet.ibm.com>
-        <20180426074806.GB12194@bjsdjshi@linux.vnet.ibm.com>
-        <20180430173305.632faa80.cohuck@redhat.com>
-        <20180502074622.GV5428@bjsdjshi@linux.vnet.ibm.com>
-        <5816643d-5406-06b9-0727-fdcd771aba63@linux.vnet.ibm.com>
-        <20180504011916.GA26081@bjsdjshi@linux.ibm.com>
-        <8c75acd1-c00b-4d7f-ea4b-d32e9b05989b@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
+        id S1751507AbeEVPmR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 11:42:17 -0400
+Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:56364 "EHLO
+        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751196AbeEVPmQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 11:42:16 -0400
+X-IronPort-AV: E=Sophos;i="5.49,430,1520899200";
+   d="scan'208";a="742232522"
+From: "Raslan, KarimAllah" <karahmed@amazon.de>
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>
+CC: "rkrcmar@redhat.com" <rkrcmar@redhat.com>
+Subject: Re: [PATCH] KVM: Switch 'requests' to be 64-bit (explicitly)
+Thread-Topic: [PATCH] KVM: Switch 'requests' to be 64-bit (explicitly)
+Thread-Index: AQHT1D++Gdqnz/tFy0K4EdrtXKZQKaQDl3kAgDiG6QA=
+Date: Tue, 22 May 2018 15:42:08 +0000
+Message-ID: <1527003728.13207.55.camel@amazon.de>
+References: <1523744804-8220-1-git-send-email-karahmed@amazon.de>
+         <53700469-74f0-f3b0-96a4-d8ace2919b36@redhat.com>
+In-Reply-To: <53700469-74f0-f3b0-96a4-d8ace2919b36@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.43.165.101]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <7F024E4BA91BD94EAA6E79E996156847@amazon.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4MFgN7b011966
 
-On Fri, 4 May 2018 13:02:36 +0200
-Pierre Morel <pmorel@linux.vnet.ibm.com> wrote:
+On Mon, 2018-04-16 at 18:28 +0200, Paolo Bonzini wrote:
+> On 15/04/2018 00:26, KarimAllah Ahmed wrote:
+> > 
+> > Switch 'requests' to be explicitly 64-bit and update BUILD_BUG_ON check to
+> > use the size of "requests" instead of the hard-coded '32'.
+> > 
+> > That gives us a bit more room again for arch-specific requests as we
+> > already ran out of space for x86 due to the hard-coded check.
+> > 
+> > Cc: Paolo Bonzini <pbonzini@redhat.com>
+> > Cc: Radim Krčmář <rkrcmar@redhat.com>
+> > Cc: kvm@vger.kernel.org
+> > Cc: linux-kernel@vger.kernel.org
+> > Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+> 
+> I'm afraid architectures like ARM 32 need this to be conditional (using
+> Kconfig).
 
-> On 04/05/2018 03:19, Dong Jia Shi wrote:
-> > * Pierre Morel <pmorel@linux.vnet.ibm.com> [2018-05-03 16:26:29 +0200]:
+Why would using a 64-bit 'requests' be a problem for ARM32? Are you 
+concerned about performance here or is there some symantic problem?
+
+> 
+> Thanks,
+> 
+> Paolo
+> 
+> > 
+> > ---
+> >  include/linux/kvm_host.h | 10 +++++-----
+> >  1 file changed, 5 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> > index 6930c63..fe4f46b 100644
+> > --- a/include/linux/kvm_host.h
+> > +++ b/include/linux/kvm_host.h
+> > @@ -129,7 +129,7 @@ static inline bool is_error_page(struct page *page)
+> >  #define KVM_REQUEST_ARCH_BASE     8
 > >  
-> >> On 02/05/2018 09:46, Dong Jia Shi wrote:  
-> >>> * Cornelia Huck <cohuck@redhat.com> [2018-04-30 17:33:05 +0200]:
-> >>>  
-> >>>> On Thu, 26 Apr 2018 15:48:06 +0800
-> >>>> Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com> wrote:
-> >>>>  
-> >>>>> * Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com> [2018-04-26 15:30:54 +0800]:
-> >>>>>
-> >>>>> [...]
-> >>>>>  
-> >>>>>>> @@ -179,7 +160,7 @@ static int fsm_irq(struct vfio_ccw_private *private,
-> >>>>>>>   	if (private->io_trigger)
-> >>>>>>>   		eventfd_signal(private->io_trigger, 1);
-> >>>>>>>
-> >>>>>>> -	return private->state;
-> >>>>>>> +	return VFIO_CCW_STATE_IDLE;  
-> >>>>>> This is not right. For example, if we are in STANDBY state (subch driver
-> >>>>>> is probed, but mdev device is not created), we can not jump to IDLE
-> >>>>>> state.  
-> >>>>> I see my problem, for STANDBY state, we should introduce another event
-> >>>>> callback for VFIO_CCW_EVENT_INTERRUPT. It doesn't make sense to call
-> >>>>> fsm_irq() which tries to signal userspace with interrupt notification
-> >>>>> when mdev is not created yet... So we'd need a separated fix for this
-> >>>>> issue too.  
-> >>>> But how do we even get into that situation when we don't have an mdev
-> >>>> yet?
-> >>>>  
-> >>> We cann't... So let's assign fsm_nop() as the interrupt callback for
-> >>> STANDBY state?
-> >>>  
-> >> :) Isn't it exactly what my patch series handle?  
-> > As far as I see, that's not true. ;)
-> >
-> > After this series applied,
-> > vfio_ccw_jumptable[VFIO_CCW_STATE_STANDBY][VFIO_CCW_EVENT_INTERRUPT] is
-> > still fsm_irq().
+> >  #define KVM_ARCH_REQ_FLAGS(nr, flags) ({ \
+> > -	BUILD_BUG_ON((unsigned)(nr) >= 32 - KVM_REQUEST_ARCH_BASE); \
+> > +	BUILD_BUG_ON((unsigned)(nr) >= (sizeof(((struct kvm_vcpu *)0)->requests) * 8) - KVM_REQUEST_ARCH_BASE); \
+> >  	(unsigned)(((nr) + KVM_REQUEST_ARCH_BASE) | (flags)); \
+> >  })
+> >  #define KVM_ARCH_REQ(nr)           KVM_ARCH_REQ_FLAGS(nr, 0)
+> > @@ -223,7 +223,7 @@ struct kvm_vcpu {
+> >  	int vcpu_id;
+> >  	int srcu_idx;
+> >  	int mode;
+> > -	unsigned long requests;
+> > +	u64 requests;
+> >  	unsigned long guest_debug;
 > >  
+> >  	int pre_pcpu;
+> > @@ -1122,7 +1122,7 @@ static inline void kvm_make_request(int req, struct kvm_vcpu *vcpu)
+> >  	 * caller.  Paired with the smp_mb__after_atomic in kvm_check_request.
+> >  	 */
+> >  	smp_wmb();
+> > -	set_bit(req & KVM_REQUEST_MASK, &vcpu->requests);
+> > +	set_bit(req & KVM_REQUEST_MASK, (void *)&vcpu->requests);
+> >  }
+> >  
+> >  static inline bool kvm_request_pending(struct kvm_vcpu *vcpu)
+> > @@ -1132,12 +1132,12 @@ static inline bool kvm_request_pending(struct kvm_vcpu *vcpu)
+> >  
+> >  static inline bool kvm_test_request(int req, struct kvm_vcpu *vcpu)
+> >  {
+> > -	return test_bit(req & KVM_REQUEST_MASK, &vcpu->requests);
+> > +	return test_bit(req & KVM_REQUEST_MASK, (void *)&vcpu->requests);
+> >  }
+> >  
+> >  static inline void kvm_clear_request(int req, struct kvm_vcpu *vcpu)
+> >  {
+> > -	clear_bit(req & KVM_REQUEST_MASK, &vcpu->requests);
+> > +	clear_bit(req & KVM_REQUEST_MASK, (void *)&vcpu->requests);
+> >  }
+> >  
+> >  static inline bool kvm_check_request(int req, struct kvm_vcpu *vcpu)
+> > 
 > 
 > 
-> What I mean is, this code tries to handle design problems
-> without changing too much of the original code at first.
-> 
-> The problem here is not that the fsm_irq function is called on interrupt,
-> if we have an interrupt it must be signaled to user land.
-> The problem is that this state is entered at the wrong moment.
-> 
-> STANDBY should be entered, during the mdev_open when we realize the QEMU 
-> device,
-> and not during the probe, in which we should stay in NOT_OPER until we 
-> get the QEMU device.
-> 
-> The probe() and mdev_open() function should be modified, not the state 
-> table.
-
-So, the takeaway is that we should handle starting via the init
-callbacks and not via the state machine?
+Amazon Development Center Germany GmbH
+Berlin - Dresden - Aachen
+main office: Krausenstr. 38, 10117 Berlin
+Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
+Ust-ID: DE289237879
+Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
