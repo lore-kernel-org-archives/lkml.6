@@ -1,79 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753053AbeEVUpm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 16:45:42 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:37290 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752831AbeEVUpl (ORCPT
+        id S1753071AbeEVUqL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 16:46:11 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:46032 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752764AbeEVUqJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 16:45:41 -0400
-X-Google-Smtp-Source: AB8JxZoAPmg3Z9CI/Vqhj1xvmYOx8KteEIjvjosGkS2ovKI8zekCYv1EnNmMmLkGuvNV0r7tSZnyDA==
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-To: sboyd@kernel.org, mturquette@baylibre.com
-Cc: leo.yan@linaro.org, olof@lixom.net, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH V2] clk/driver/hisi: Consolidate the Kconfig for the CLOCK_STUB
-Date: Tue, 22 May 2018 22:45:28 +0200
-Message-Id: <1527021928-1243-1-git-send-email-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1527021018-31698-1-git-send-email-daniel.lezcano@linaro.org>
-References: <1527021018-31698-1-git-send-email-daniel.lezcano@linaro.org>
+        Tue, 22 May 2018 16:46:09 -0400
+X-Google-Smtp-Source: ADUXVKJU5GOy2FLMOyAzvetqIq+uP5xOtKtDEx8NqxwXDb7O+XFYA72tgsXyd+fDlLNkSwyeolhb7mrz1319rUV5whA=
+MIME-Version: 1.0
+In-Reply-To: <19968f96da0c548dd7d96e7520ce899e@codeaurora.org>
+References: <1526492623-20527-1-git-send-email-rishabhb@codeaurora.org>
+ <1526492623-20527-3-git-send-email-rishabhb@codeaurora.org>
+ <CAHp75VdO7+u-PQ+RBH71sxHHG0WkAyEVxv0BNPaycbcRnrZang@mail.gmail.com>
+ <f1970a64be17267e0f044242dc0764d6@codeaurora.org> <CAHp75Vd8HZU+BT38-OfXHiihv1yZG6YBeMWyfweBA+kAwk6HUw@mail.gmail.com>
+ <19968f96da0c548dd7d96e7520ce899e@codeaurora.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 22 May 2018 23:46:07 +0300
+Message-ID: <CAHp75VdmUrSo+Vu3CebEWwc=CbsnS95ZzGC3zv1+zd5MsVgdUA@mail.gmail.com>
+Subject: Re: [PATCH v7 2/2] drivers: soc: Add LLCC driver
+To: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Cc: linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm@lists.infradead.org, tsoni@codeaurora.org,
+        ckadabi@codeaurora.org, Evan Green <evgreen@chromium.org>,
+        Rob Herring <robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current defconfig is inconsistent as it selects the mailbox and
-the clock for the hi6220 and the hi3660 without having their Kconfigs
-making sure the dependencies are correct. It ends up when selecting
-different versions for the kernel (for example when git bisecting)
-those options disappear and they don't get back, leading to unexpected
-behaviors. In our case, the cpufreq driver does no longer work because
-the clock fails to initialize due to the clock stub and the mailbox
-missing.
+On Tue, May 22, 2018 at 11:40 PM,  <rishabhb@codeaurora.org> wrote:
+> On 2018-05-22 12:38, Andy Shevchenko wrote:
+>> On Tue, May 22, 2018 at 9:33 PM,  <rishabhb@codeaurora.org> wrote:
+>>> On 2018-05-18 14:01, Andy Shevchenko wrote:
 
-In order to have the dependencies correctly set when defaulting, let's
-do the same as commit 3a49afb84ca074e ("clk: enable hi655x common clk
-automatically") where we select automatically the driver when the
-parent driver is selected. With sensible defaults in place, we can leave
-other choices for EXPERT.
+>>>>> +struct llcc_slice_desc *llcc_slice_getd(u32 uid)
+>>>>> +{
+>>>>> +       const struct llcc_slice_config *cfg;
+>>>>> +       struct llcc_slice_desc *desc;
+>>>>> +       u32 sz, count = 0;
+>>>>> +
+>>>>> +       cfg = drv_data->cfg;
+>>>>> +       sz = drv_data->cfg_size;
+>>>>> +
+>>>>
+>>>>
+>>>>
+>>>>> +       while (cfg && count < sz) {
+>>>>> +               if (cfg->usecase_id == uid)
+>>>>> +                       break;
+>>>>> +               cfg++;
+>>>>> +               count++;
+>>>>> +       }
+>>>>> +       if (cfg == NULL || count == sz)
+>>>>> +               return ERR_PTR(-ENODEV);
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
----
+>>>> if (!cfg)
+>>>>           return ERR_PTR(-ENODEV);
+>>>>
+>>>> while (cfg->... != uid) {
+>>>>   cfg++;
+>>>>   count++;
+>>>> }
+>>>>
+>>>> if (count == sz)
+>>>>  return ...
+>>>>
+>>>> Though I would rather put it to for () loop.
+>>>>
+>>> In each while loop iteration the cfg pointer needs to be checked for
+>>> NULL. What if the usecase id never matches the uid passed by client
+>>> and we keep iterating. At some point it will crash.
 
-Split the patch into the clk specific and resent as requested by Olof
-Johansson.
----
- drivers/clk/hisilicon/Kconfig | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+>> do {
+>>   if (!cfg || count == sz)
+>>    return ...(-ENODEV);
+>>  ...
+>> } while (...);
+>>
+>> Though, as I said for-loop will look slightly better I think.
+>
+> Is this fine?
+> for (count = 0; count < sz; count++) {
+>    if (!cfg)
+>         return ERR_PTR(-ENODEV);
+>    if (cfg->usecase_id == uid)
+>         break;
+>    cfg++;
+> }
+> if (count == sz)
+>    return ERR_PTR(-ENODEV);
 
-diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
-index 1bd4355..becdb1d 100644
---- a/drivers/clk/hisilicon/Kconfig
-+++ b/drivers/clk/hisilicon/Kconfig
-@@ -44,14 +44,17 @@ config RESET_HISI
- 	  Build reset controller driver for HiSilicon device chipsets.
- 
- config STUB_CLK_HI6220
--	bool "Hi6220 Stub Clock Driver"
--	depends on COMMON_CLK_HI6220 && MAILBOX
--	default ARCH_HISI
-+	bool "Hi6220 Stub Clock Driver" if EXPERT
-+	depends on (COMMON_CLK_HI6220 || COMPILE_TEST)
-+	depends on MAILBOX
-+	default COMMON_CLK_HI6220
- 	help
- 	  Build the Hisilicon Hi6220 stub clock driver.
- 
- config STUB_CLK_HI3660
--	bool "Hi3660 Stub Clock Driver"
--	depends on COMMON_CLK_HI3660 && MAILBOX
-+	bool "Hi3660 Stub Clock Driver" if EXPERT
-+	depends on (COMMON_CLK_HI3660 || COMPILE_TEST)
-+	depends on MAILBOX
-+	default COMMON_CLK_HI3660
- 	help
- 	  Build the Hisilicon Hi3660 stub clock driver.
+for (count = 0; cfg && count < sz; count++, cfg++)
+ if (_id == uid)
+  break;
+
+if (!cfg || count == sz)
+    return ERR_PTR(-ENODEV);
+
+Simpler ?
+
 -- 
-2.7.4
+With Best Regards,
+Andy Shevchenko
