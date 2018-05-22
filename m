@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2401354-1526989199-2-17108667485908490485
+X-Cyrus-Session-Id: sloti22d1t05-2401354-1526989187-2-2585782015846905703
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526989199; b=Xl9U821B8EGJFHi6eSsg//Q1RN5rlvdqlvwpdHRQ8pZuThd+Yo
-    dL0KF/ovqfOC5UWu10Oai41fO6DYbuCF1tOMkeiJpLJtvy8OKvYf90+MNgtUVGth
-    KkPOMYLKPO4/tCdxn9PqzSkqbKY3Mb3ul9OyhqF9wBZ4zcsHxyjYBubGEPq0z9D2
-    F0TQR6nfsz6KANLrvoxHrkRYxTG7OeIhRQraAZHuObfHIVUmz/tCdQOB4dggFl7V
-    wyK16uk6ilpK3L/BipY3D53vAf0wNRon5RDuVW6wt81D+NV4291VS2nLD42I8iDT
-    pYKW6yA62v/asgWN8rWzP5qDukTmbcwYwdaA==
+    1526989186; b=YmhfzWqcV0mQsBHsw3DAH94hZzLtnobpGPuJGFsH5UUwPaDcD/
+    sU1onZHWWRv4e9xp0/G9QaiiTDRis6RLYvgxoRbsb5x9ouypFLpnRw+kcg3WrXW/
+    z3nVZ2IL9SZUvoijklip7bb61IQikiLriv0IK1Scd5Aj1pDd5t3yhXawsPdG/4Dv
+    nmeyyS2JYp2LoKtMwwyyv7/R/fD+zpDhAl0KzjgI58f8ENz67te54Kp52Nvut/e0
+    Wu17GFJ014X7/uAxw9yhuzV2Km3JQ48v3WhsPjKdfBYlx71veWqa/nWcX9+pvo7c
+    3pb5X5lVjI1dAbinedoZQi2rvDZzDcicsGVA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1526989199; bh=
-    0vmoDaEF5aIv4/Y4xpA7eTPmgHMPL1VeLWlsFjjwC7o=; b=SILkj45JX3YF4Ln9
-    tFeNhve/4BO8WlHZb9RBRjB+H+LRuXJuwKf7RMUfN9rtU5Vj00/47IImZzEqS6jr
-    toN7VaHhThppxLhndYq35ALB9qAss9gNxULBGgWXSKkN6R6aPU0GlGzVVC4OH1kk
-    6dSWiJAwAd+kXHp3wecXlmbKt5DBCSmCIdAPAO2NFlhInytf/zvCiCSqbJ9xLXK0
-    h+eMH5lDqw7QgM6DMZkXidG5iY/yQb5ep6XFl684zVeGuOsx8pV+xm0ztxMV64Vs
-    C7F9MZZTd25J8OfmH1c9QGD5qsiyXX7bAPb/c2G7T5xzDzgI8HWHwBZjKldMNLUV
-    9Fto6w==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=fm2; t=1526989186; bh=
+    jfnZN+BseuqQMorTOJe9KAqS775foKuvXGKRv8NtOcI=; b=liEgbXb6LE6WL8tx
+    INVVQxEQYh52GUlh1D7Nlt2KfiEtEP6CbAV61lcingkl9dhH80wOIEGdfoxpKh5z
+    im2M5PmrYz6dULQDEdCTQzJpA8Ryyla944KgIH/MK3oCRbcWKtzv+frcy1Tia7/I
+    pG2xdnTkEHZdm0w0fGRao9QZk9dufHW3HeFBrFMbmXwJsNEPnLqC+iiigQP33MJT
+    IV4hO0URWeJTzIEntKlRI/NjuY435XtF5gIqzECnn4F6TIMzgqzYQl5l+JVdbKxn
+    6RcZo7YrSl+mlBLM+vDMocTzpCSIkMM4T6+ELtUSsJBE9S7tpWVjTOIwT7y6k0JL
+    3C13Ig==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=infradead.org header.i=@infradead.org header.b=HRS9wy3L
+    header.d=infradead.org header.i=@infradead.org header.b=KvLQtBEQ
     x-bits=2048 x-keytype=rsa x-algorithm=sha256
     x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=infradead.org header.i=@infradead.org header.b=HRS9wy3L
+      header.d=infradead.org header.i=@infradead.org header.b=KvLQtBEQ
       x-bits=2048 x-keytype=rsa x-algorithm=sha256
       x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -63,28 +63,28 @@ Authentication-Results: mx4.messagingengine.com;
       header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLj06EeBcuwNiY/wgeRV6k5jwgOj011RUya2BFdCc0e8cONKvhjG/MF4Q+R66vuau7hZmDoqbfuOE5JAX1te24FjJc/zswN6iWFARJRluxCBPMWeua8w
-    NwN1pzOhxbUE3OHsO3VEINp+uky7IkZMJw8mG5MRVKFI7wWXiXseJ8dVf8DtS2Z2d4rxq8P5oJ2Y2cOVyWsZIyUbhRxRtvU498fQur7x5lAklY2xBB1E08Th
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfCzXW+qwXpgFGezekAkGVTtKcC1lCbGt6dW3crETaTGDJmsylUqzW7rRDFccCh3AN4k++MdYt69lFHTEqZe0dRE6CUwki6t5lm5x+h9OMX4ZomdzKcyx
+    98YYI1iUiaqJSnX2BJ1+2ATdeT9fKFdK0th6ZBQ/8IS2nr3athu4AseBDhngEmoSh/gUNmv5+kzlLtr/WNPg4Kk4V2H68TKliTzJZeERUePyAI05my2wA9R0
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8
-    a=PwPxyESu6iuoCfwzTd8A:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=0xgVzqWtobIYM8LKUaMA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752398AbeEVLcN (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 22 May 2018 07:32:13 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36664 "EHLO
+        id S1751552AbeEVLip (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 22 May 2018 07:38:45 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36690 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751858AbeEVLcI (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Tue, 22 May 2018 07:32:08 -0400
+        with ESMTP id S1752551AbeEVLcV (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Tue, 22 May 2018 07:32:21 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: viro@zeniv.linux.org.uk
 Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
         linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 11/31] net: add support for ->poll_mask in proto_ops
-Date: Tue, 22 May 2018 13:30:48 +0200
-Message-Id: <20180522113108.25713-12-hch@lst.de>
+Subject: [PATCH 14/31] net/unix: convert to ->poll_mask
+Date: Tue, 22 May 2018 13:30:51 +0200
+Message-Id: <20180522113108.25713-15-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180522113108.25713-1-hch@lst.de>
 References: <20180522113108.25713-1-hch@lst.de>
@@ -95,105 +95,98 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The socket file operations still implement ->poll until all protocols are
-switched over.
-
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- include/linux/net.h |  1 +
- net/socket.c        | 48 ++++++++++++++++++++++++++++++++++++++++-----
- 2 files changed, 44 insertions(+), 5 deletions(-)
+ net/unix/af_unix.c | 30 +++++++++++-------------------
+ 1 file changed, 11 insertions(+), 19 deletions(-)
 
-diff --git a/include/linux/net.h b/include/linux/net.h
-index 2248a052061d..3fd9d8c16581 100644
---- a/include/linux/net.h
-+++ b/include/linux/net.h
-@@ -147,6 +147,7 @@ struct proto_ops {
- 	int		(*getname)   (struct socket *sock,
- 				      struct sockaddr *addr,
- 				      int peer);
-+	__poll_t	(*poll_mask) (struct socket *sock, __poll_t events);
- 	__poll_t	(*poll)	     (struct file *file, struct socket *sock,
- 				      struct poll_table_struct *wait);
- 	int		(*ioctl)     (struct socket *sock, unsigned int cmd,
-diff --git a/net/socket.c b/net/socket.c
-index 571ee4005192..2d752e9eb3f9 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -117,8 +117,10 @@ static ssize_t sock_write_iter(struct kiocb *iocb, struct iov_iter *from);
- static int sock_mmap(struct file *file, struct vm_area_struct *vma);
- 
- static int sock_close(struct inode *inode, struct file *file);
--static __poll_t sock_poll(struct file *file,
--			      struct poll_table_struct *wait);
-+static struct wait_queue_head *sock_get_poll_head(struct file *file,
-+		__poll_t events);
-+static __poll_t sock_poll_mask(struct file *file, __poll_t);
-+static __poll_t sock_poll(struct file *file, struct poll_table_struct *wait);
- static long sock_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
- #ifdef CONFIG_COMPAT
- static long compat_sock_ioctl(struct file *file,
-@@ -141,6 +143,8 @@ static const struct file_operations socket_file_ops = {
- 	.llseek =	no_llseek,
- 	.read_iter =	sock_read_iter,
- 	.write_iter =	sock_write_iter,
-+	.get_poll_head = sock_get_poll_head,
-+	.poll_mask =	sock_poll_mask,
- 	.poll =		sock_poll,
- 	.unlocked_ioctl = sock_ioctl,
- #ifdef CONFIG_COMPAT
-@@ -1114,14 +1118,48 @@ int sock_create_lite(int family, int type, int protocol, struct socket **res)
+diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+index 68bb70a62afe..1a9cdad4ab82 100644
+--- a/net/unix/af_unix.c
++++ b/net/unix/af_unix.c
+@@ -638,9 +638,8 @@ static int unix_stream_connect(struct socket *, struct sockaddr *,
+ static int unix_socketpair(struct socket *, struct socket *);
+ static int unix_accept(struct socket *, struct socket *, int, bool);
+ static int unix_getname(struct socket *, struct sockaddr *, int);
+-static __poll_t unix_poll(struct file *, struct socket *, poll_table *);
+-static __poll_t unix_dgram_poll(struct file *, struct socket *,
+-				    poll_table *);
++static __poll_t unix_poll_mask(struct socket *, __poll_t);
++static __poll_t unix_dgram_poll_mask(struct socket *, __poll_t);
+ static int unix_ioctl(struct socket *, unsigned int, unsigned long);
+ static int unix_shutdown(struct socket *, int);
+ static int unix_stream_sendmsg(struct socket *, struct msghdr *, size_t);
+@@ -681,7 +680,7 @@ static const struct proto_ops unix_stream_ops = {
+ 	.socketpair =	unix_socketpair,
+ 	.accept =	unix_accept,
+ 	.getname =	unix_getname,
+-	.poll =		unix_poll,
++	.poll_mask =	unix_poll_mask,
+ 	.ioctl =	unix_ioctl,
+ 	.listen =	unix_listen,
+ 	.shutdown =	unix_shutdown,
+@@ -704,7 +703,7 @@ static const struct proto_ops unix_dgram_ops = {
+ 	.socketpair =	unix_socketpair,
+ 	.accept =	sock_no_accept,
+ 	.getname =	unix_getname,
+-	.poll =		unix_dgram_poll,
++	.poll_mask =	unix_dgram_poll_mask,
+ 	.ioctl =	unix_ioctl,
+ 	.listen =	sock_no_listen,
+ 	.shutdown =	unix_shutdown,
+@@ -726,7 +725,7 @@ static const struct proto_ops unix_seqpacket_ops = {
+ 	.socketpair =	unix_socketpair,
+ 	.accept =	unix_accept,
+ 	.getname =	unix_getname,
+-	.poll =		unix_dgram_poll,
++	.poll_mask =	unix_dgram_poll_mask,
+ 	.ioctl =	unix_ioctl,
+ 	.listen =	unix_listen,
+ 	.shutdown =	unix_shutdown,
+@@ -2630,13 +2629,10 @@ static int unix_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
+ 	return err;
  }
- EXPORT_SYMBOL(sock_create_lite);
  
-+static struct wait_queue_head *sock_get_poll_head(struct file *file,
-+		__poll_t events)
-+{
-+	struct socket *sock = file->private_data;
-+
-+	if (!sock->ops->poll_mask)
-+		return NULL;
-+	sock_poll_busy_loop(sock, events);
-+	return sk_sleep(sock->sk);
-+}
-+
-+static __poll_t sock_poll_mask(struct file *file, __poll_t events)
-+{
-+	struct socket *sock = file->private_data;
-+
-+	/*
-+	 * We need to be sure we are in sync with the socket flags modification.
-+	 *
-+	 * This memory barrier is paired in the wq_has_sleeper.
-+	 */
-+	smp_mb();
-+
-+	/* this socket can poll_ll so tell the system call */
-+	return sock->ops->poll_mask(sock, events) |
-+		(sk_can_busy_loop(sock->sk) ? POLL_BUSY_LOOP : 0);
-+}
-+
- /* No kernel lock held - perfect */
- static __poll_t sock_poll(struct file *file, poll_table *wait)
+-static __poll_t unix_poll(struct file *file, struct socket *sock, poll_table *wait)
++static __poll_t unix_poll_mask(struct socket *sock, __poll_t events)
  {
- 	struct socket *sock = file->private_data;
--	__poll_t events = poll_requested_events(wait);
-+	__poll_t events = poll_requested_events(wait), mask = 0;
+ 	struct sock *sk = sock->sk;
+-	__poll_t mask;
+-
+-	sock_poll_wait(file, sk_sleep(sk), wait);
+-	mask = 0;
++	__poll_t mask = 0;
  
--	sock_poll_busy_loop(sock, events);
--	return sock->ops->poll(file, sock, wait) | sock_poll_busy_flag(sock);
-+	if (sock->ops->poll) {
-+		sock_poll_busy_loop(sock, events);
-+		mask = sock->ops->poll(file, sock, wait);
-+	} else if (sock->ops->poll_mask) {
-+		sock_poll_wait(file, sock_get_poll_head(file, events), wait);
-+		mask = sock->ops->poll_mask(sock, events);
-+	}
-+
-+	return mask | sock_poll_busy_flag(sock);
+ 	/* exceptional events? */
+ 	if (sk->sk_err)
+@@ -2665,15 +2661,11 @@ static __poll_t unix_poll(struct file *file, struct socket *sock, poll_table *wa
+ 	return mask;
  }
  
- static int sock_mmap(struct file *file, struct vm_area_struct *vma)
+-static __poll_t unix_dgram_poll(struct file *file, struct socket *sock,
+-				    poll_table *wait)
++static __poll_t unix_dgram_poll_mask(struct socket *sock, __poll_t events)
+ {
+ 	struct sock *sk = sock->sk, *other;
+-	unsigned int writable;
+-	__poll_t mask;
+-
+-	sock_poll_wait(file, sk_sleep(sk), wait);
+-	mask = 0;
++	int writable;
++	__poll_t mask = 0;
+ 
+ 	/* exceptional events? */
+ 	if (sk->sk_err || !skb_queue_empty(&sk->sk_error_queue))
+@@ -2699,7 +2691,7 @@ static __poll_t unix_dgram_poll(struct file *file, struct socket *sock,
+ 	}
+ 
+ 	/* No write status requested, avoid expensive OUT tests. */
+-	if (!(poll_requested_events(wait) & (EPOLLWRBAND|EPOLLWRNORM|EPOLLOUT)))
++	if (!(events & (EPOLLWRBAND|EPOLLWRNORM|EPOLLOUT)))
+ 		return mask;
+ 
+ 	writable = unix_writable(sk);
 -- 
 2.17.0
 
