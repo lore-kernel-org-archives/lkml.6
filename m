@@ -1,57 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752966AbeEVVUI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 17:20:08 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47848 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752660AbeEVVUG (ORCPT
+        id S1753086AbeEVVU6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 17:20:58 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:36778 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752813AbeEVVUy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 17:20:06 -0400
-Date: Tue, 22 May 2018 16:03:06 -0500
-From: "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>
-To: Kees Cook <keescook@chromium.org>
-Cc: Jens Axboe <axboe@kernel.dk>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Tejun Heo <tj@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Manoj N. Kumar" <manoj@linux.vnet.ibm.com>,
-        Uma Krishnan <ukrishn@linux.vnet.ibm.com>, linux-block@vger.kernel.org,
-        linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/6] scsi: cxlflash: Drop unused sense buffers
-References: <20180522181512.39316-1-keescook@chromium.org>
- <20180522181512.39316-3-keescook@chromium.org>
+        Tue, 22 May 2018 17:20:54 -0400
+X-Google-Smtp-Source: AB8JxZr5wWf4ArLHadP/M1DZvs44+tWm+7YgjefYgHkJjI0UZatzz4c205qhk3ShtyDI8+Zgsreh4KH9lqtxlV0oghc=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180522181512.39316-3-keescook@chromium.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-TM-AS-GCONF: 00
-x-cbid: 18052221-0008-0000-0000-0000030E0123
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009066; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000261; SDB=6.01036097; UDB=6.00530006; IPR=6.00815225;
- MB=3.00021242; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-22 21:20:02
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052221-0009-0000-0000-0000395A458E
-Message-Id: <20180522210306.GA60047@p8tul1-build.aus.stglabs.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-22_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805220217
+In-Reply-To: <27199a35-922b-c57d-3c50-e9954a5d80a0@gmail.com>
+References: <20180521135003.32459-1-mr.nuke.me@gmail.com> <20180521135003.32459-2-mr.nuke.me@gmail.com>
+ <CAJZ5v0hKfgTOJb47NjeOP1BBPXPjWqdfu_TXVwWMzOHicEx0Xw@mail.gmail.com>
+ <53d0ba88-6929-a7cf-6c3e-4ca389f7249a@gmail.com> <CAJZ5v0hOC5P79OGAfutLcWzRuh+r9wrf2i3LOVs5VfGqbmoitA@mail.gmail.com>
+ <27199a35-922b-c57d-3c50-e9954a5d80a0@gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 22 May 2018 23:20:53 +0200
+X-Google-Sender-Auth: ZSFx_nS99zPYZIfw2g-2VrhhjZs
+Message-ID: <CAJZ5v0gF4XtEWyWV-Dwu6NttN8R-a4VPOSp0EsFaQF7tvHk_Lg@mail.gmail.com>
+Subject: Re: [PATCH v6 1/2] acpi: apei: Rename ghes_severity() to ghes_cper_severity()
+To: "Alex G." <mr.nuke.me@gmail.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Borislav Petkov <bp@alien8.de>, alex_gagniuc@dellteam.com,
+        austin_bolen@dell.com, shyam_iyer@dell.com,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
+        Tony Luck <tony.luck@intel.com>, Tyler Baicar <tbaicar@codeaurora.org>,
+        Will Deacon <will.deacon@arm.com>, James Morse <james.morse@arm.com>,
+        Shiju Jose <shiju.jose@huawei.com>,
+        "Jonathan (Zhixiong) Zhang" <zjzhang@codeaurora.org>,
+        Dongjiu Geng <gengdongjiu@huawei.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 11:15:08AM -0700, Kees Cook wrote:
-> This removes the unused sense buffer in read_cap16() and write_same16().
-> 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+On Tue, May 22, 2018 at 8:20 PM, Alex G. <mr.nuke.me@gmail.com> wrote:
+> On 05/22/2018 01:13 PM, Rafael J. Wysocki wrote:
+> (snip)
+>>
+>> Of course, you are free to have a differing opinion and I don't have
+>> to convince you about my point.  You need to convince me about your
+>> point to get the patch in through my tree, which you haven't done so
+>> far.
+>
+>
+> My point is that crossing your arms and saying "impress me" doesn't give me
+> a good idea of how you'd like to see the problem resolved.
 
-Looks good.
+I do not recall having said "impress me" at any time during our
+conversation so far.
 
-Acked-by: Matthew R. Ochs <mrochs@linux.vnet.ibm.com>
+Also this problem space is not the one I'm focusing on and I can't
+tell you how to address the problem you want to address in that space
+from the top of my head.  I can only look at what you post and decide
+whether or not I agree with that.  It has to be well documented and
+convincing enough, however, and it hasn't been so far in my view.  As
+a rule, I'd rather not apply patches that I don't feel confident of.
+
+Tony seems to agree with you, so maybe work with him on making your
+case stronger.
