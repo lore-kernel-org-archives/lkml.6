@@ -1,93 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751173AbeEVG2g (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 02:28:36 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:36892 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751039AbeEVG2d (ORCPT
+        id S1751257AbeEVGbX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 02:31:23 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:35642 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750709AbeEVGbU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 02:28:33 -0400
-X-Google-Smtp-Source: AB8JxZqhAZjVH60GbecIHiiPKVeEQOFqC2lyp/CU/PX+j/urA3G5AZRLGC1TwCwQ+U3L1DVCQ8YPaHHfqKw2Se5Kveg=
+        Tue, 22 May 2018 02:31:20 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 49104601E6
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
+Subject: Re: [PATCH v5 3/8] remoteproc: Move proxy unvote to handover irq
+ handler
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: p.zabel@pengutronix.de, robh+dt@kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, georgi.djakov@linaro.org,
+        jassisinghbrar@gmail.com, ohad@wizery.com, mark.rutland@arm.com,
+        kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
+References: <20180521172714.8551-1-sibis@codeaurora.org>
+ <20180521172714.8551-4-sibis@codeaurora.org> <20180522043511.GW14924@minitux>
+From: Sibi S <sibis@codeaurora.org>
+Message-ID: <310ca259-d4d2-240d-f0a6-057456c1bf5e@codeaurora.org>
+Date: Tue, 22 May 2018 12:01:11 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <20180322202007.23088-1-malat@debian.org>
-References: <20180322202007.23088-1-malat@debian.org>
-From: Mathieu Malaterre <malat@debian.org>
-Date: Tue, 22 May 2018 08:28:12 +0200
-X-Google-Sender-Auth: z5i9UCsUqkHCGVFqNQSk6lQPqHU
-Message-ID: <CA+7wUsxFbou9TEqL8df3Y8_PVNYwoTR4HKN8Zp7iPQhHBQsmKg@mail.gmail.com>
-Subject: Re: [PATCH 00/19] powerpc/ppc32: make W=1 compilation errors free
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Mathieu Malaterre <malat@debian.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        LKML <linux-kernel@vger.kernel.org>, kvm-ppc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180522043511.GW14924@minitux>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Any chance this could be applied to powerpc/next ?
+Hi Bjorn,
+Thanks for the review.
 
-On Thu, Mar 22, 2018 at 9:19 PM, Mathieu Malaterre <malat@debian.org> wrote:
-> Here is another batch for warnings treated as error on ppc32. Tested with:
+On 05/22/2018 10:05 AM, Bjorn Andersson wrote:
+> On Mon 21 May 10:27 PDT 2018, Sibi Sankar wrote:
+> 
+>> Introduce interrupt handler for smp2p ready interrupt to
+>> handle start completion. Move the proxy votes for clocks
+>> and regulators to the handover interrupt context.
+>>
+>> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+> 
+> I added the "synchronization logic" of patch 4 to this one, to make it
+> functional and after testing on db820c I merged patch 3 through 8 into
+> rproc-next.
+> 
+
+making the q6v5_request_irq return the irq number seems more elegant
+unlike the approach I took earlier.
+
+> I skipped the remainder of patch 4, as I think the ready_irq should be
+> included and I wonder if irq management can remove the need for the
+> "running" variable.
 >
-> $ make ARCH=powerpc ppc32_defconfig
-> $ make -j8 ARCH=powerpc CROSS_COMPILE=powerpc-linux-gnu- W=1
->
-> Using:
->
-> $ powerpc-linux-gnu-gcc --version
-> powerpc-linux-gnu-gcc (Debian 6.3.0-18) 6.3.0 20170516
->
-> Mathieu Malaterre (19):
->   powerpc/powermac: Mark variable x as unused
->   powerpc/powermac: Mark variable x as unused
->   powerpc: Mark variables as unused
->   powerpc/kvm: Mark variable tmp unused
->   powerpc/chrp/setup: Add attribute unused and make some functions
->     static
->   powerpc: Make function btext_initialize static
->   powerpc/powermac: Make some functions static
->   powerpc/tau: Make some function static
->   powerpc/chrp/pci: Make some functions static
->   powerpc/chrp/time: Make some functions static, add missing header
->     include
->   powerpc/powermac: Move pmac_pfunc_base_install prototype to header
->     file
->   powerpc/powermac: Add missing prototype for note_bootable_part()
->   powerpc/52xx: Add missing functions prototypes
->   powerpc/altivec: Add missing prototypes for altivec
->   powerpc: Add missing prototype
->   powerpc/powermac: Add missing include of header pmac.h
->   powerpc/32: Add a missing include header
->   powerpc: Add a missing include header
->   powerpc/tau: Synchronize function prototypes and body
->
->  arch/powerpc/include/asm/mpc52xx.h           |  6 +++---
->  arch/powerpc/include/asm/pmac_pfunc.h        |  1 +
->  arch/powerpc/include/asm/rheap.h             |  3 +++
->  arch/powerpc/kernel/btext.c                  |  2 +-
->  arch/powerpc/kernel/irq.c                    |  2 +-
->  arch/powerpc/kernel/kvm.c                    |  2 +-
->  arch/powerpc/kernel/pci_32.c                 |  1 +
->  arch/powerpc/kernel/prom_init.c              |  4 ++--
->  arch/powerpc/kernel/setup-common.c           |  6 ------
->  arch/powerpc/kernel/setup.h                  |  6 ++++++
->  arch/powerpc/kernel/tau_6xx.c                | 15 +++++++++------
->  arch/powerpc/kernel/vecemu.c                 |  1 +
->  arch/powerpc/lib/xor_vmx.h                   | 14 ++++++++++++++
->  arch/powerpc/platforms/chrp/pci.c            |  8 ++++----
->  arch/powerpc/platforms/chrp/setup.c          | 10 +++++-----
->  arch/powerpc/platforms/chrp/time.c           |  6 ++++--
->  arch/powerpc/platforms/powermac/bootx_init.c |  2 +-
->  arch/powerpc/platforms/powermac/pci.c        | 10 +++++-----
->  arch/powerpc/platforms/powermac/setup.c      |  1 +
->  arch/powerpc/platforms/powermac/smp.c        |  1 -
->  arch/powerpc/platforms/powermac/time.c       |  4 +++-
->  arch/powerpc/platforms/powermac/udbg_scc.c   |  2 +-
->  22 files changed, 67 insertions(+), 40 deletions(-)
->
-> --
-> 2.11.0
->
+
+will include the ready_irq as well. I think we may need to keep
+"running" for coredump but will check if it can substituted with
+irq management.
+
+> I also moved the enable_irq before we actually start the core, since
+> it's been shown downstream that the smp2p irq might fire fast enough for
+> us to miss it (and the smp2p driver does not redeliver interrupts).
+> 
+> Regards,
+> Bjorn
+> 
+>> ---
+>>   drivers/remoteproc/qcom_q6v5_pil.c | 29 +++++++++++++++++++++++------
+>>   1 file changed, 23 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+>> index 76a0c00aa04a..6333bdcd9448 100644
+>> --- a/drivers/remoteproc/qcom_q6v5_pil.c
+>> +++ b/drivers/remoteproc/qcom_q6v5_pil.c
+>> @@ -809,11 +809,6 @@ static int q6v5_start(struct rproc *rproc)
+>>   			"Failed to reclaim mba buffer system may become unstable\n");
+>>   	qproc->running = true;
+>>   
+>> -	q6v5_clk_disable(qproc->dev, qproc->proxy_clks,
+>> -			 qproc->proxy_clk_count);
+>> -	q6v5_regulator_disable(qproc, qproc->proxy_regs,
+>> -			       qproc->proxy_reg_count);
+>> -
+>>   	return 0;
+>>   
+>>   reclaim_mpss:
+>> @@ -892,6 +887,12 @@ static int q6v5_stop(struct rproc *rproc)
+>>   	WARN_ON(ret);
+>>   
+>>   	reset_control_assert(qproc->mss_restart);
+>> +
+>> +	q6v5_clk_disable(qproc->dev, qproc->proxy_clks,
+>> +			 qproc->proxy_clk_count);
+>> +	q6v5_regulator_disable(qproc, qproc->proxy_regs,
+>> +			       qproc->proxy_reg_count);
+>> +
+>>   	q6v5_clk_disable(qproc->dev, qproc->active_clks,
+>>   			 qproc->active_clk_count);
+>>   	q6v5_regulator_disable(qproc, qproc->active_regs,
+>> @@ -959,7 +960,7 @@ static irqreturn_t q6v5_fatal_interrupt(int irq, void *dev)
+>>   	return IRQ_HANDLED;
+>>   }
+>>   
+>> -static irqreturn_t q6v5_handover_interrupt(int irq, void *dev)
+>> +static irqreturn_t q6v5_ready_interrupt(int irq, void *dev)
+>>   {
+>>   	struct q6v5 *qproc = dev;
+>>   
+>> @@ -967,6 +968,18 @@ static irqreturn_t q6v5_handover_interrupt(int irq, void *dev)
+>>   	return IRQ_HANDLED;
+>>   }
+>>   
+>> +static irqreturn_t q6v5_handover_interrupt(int irq, void *dev)
+>> +{
+>> +	struct q6v5 *qproc = dev;
+>> +
+>> +	q6v5_clk_disable(qproc->dev, qproc->proxy_clks,
+>> +			 qproc->proxy_clk_count);
+>> +	q6v5_regulator_disable(qproc, qproc->proxy_regs,
+>> +			       qproc->proxy_reg_count);
+>> +
+>> +	return IRQ_HANDLED;
+>> +}
+>> +
+>>   static irqreturn_t q6v5_stop_ack_interrupt(int irq, void *dev)
+>>   {
+>>   	struct q6v5 *qproc = dev;
+>> @@ -1194,6 +1207,10 @@ static int q6v5_probe(struct platform_device *pdev)
+>>   	if (ret < 0)
+>>   		goto free_rproc;
+>>   
+>> +	ret = q6v5_request_irq(qproc, pdev, "ready", q6v5_ready_interrupt);
+>> +	if (ret < 0)
+>> +		goto free_rproc;
+>> +
+>>   	ret = q6v5_request_irq(qproc, pdev, "handover", q6v5_handover_interrupt);
+>>   	if (ret < 0)
+>>   		goto free_rproc;
+>> -- 
+>> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+>> a Linux Foundation Collaborative Project
+>>
+> 
+
+-- 
+Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc, is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
