@@ -1,69 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753118AbeEVMKs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 08:10:48 -0400
-Received: from sauhun.de ([88.99.104.3]:58550 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753004AbeEVMIe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 08:08:34 -0400
-Date: Tue, 22 May 2018 14:08:32 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: George Cherian <george.cherian@cavium.com>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jglauber@cavium.com, kamlakant.patel@cavium.com,
-        mchehab+samsung@kernel.org, davem@davemloft.net,
-        gregkh@linuxfoundation.org, akpm@linux-foundation.org,
-        linus.walleij@linaro.org, rdunlap@infradead.org
-Subject: Re: [PATCH 1/4] i2c: xlp9xx: Add support for SMBAlert
-Message-ID: <20180522120832.cuw5lbxafq4cl6bo@ninjato>
-References: <1526454019-32714-1-git-send-email-george.cherian@cavium.com>
- <1526454019-32714-2-git-send-email-george.cherian@cavium.com>
+        id S1752973AbeEVMI3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 08:08:29 -0400
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:24301 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751456AbeEVMIW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 08:08:22 -0400
+X-IronPort-AV: E=Sophos;i="5.49,430,1520924400";
+   d="scan'208";a="11781815"
+From: Claudiu Beznea <claudiu.beznea@microchip.com>
+To: <thierry.reding@gmail.com>, <shc_work@mail.ru>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <corbet@lwn.net>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@free-electrons.com>
+CC: <linux-pwm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: [PATCH v5 2/9] pwm: clps711x: populate PWM mode in of_xlate function
+Date: Tue, 22 May 2018 15:07:06 +0300
+Message-ID: <1526990833-30707-3-git-send-email-claudiu.beznea@microchip.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1526990833-30707-1-git-send-email-claudiu.beznea@microchip.com>
+References: <1526990833-30707-1-git-send-email-claudiu.beznea@microchip.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="w63k2kyc4gozi7sv"
-Content-Disposition: inline
-In-Reply-To: <1526454019-32714-2-git-send-email-george.cherian@cavium.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Populate PWM mode in of_xlate function to avoid pwm_apply_state() failure.
 
---w63k2kyc4gozi7sv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+---
+ drivers/pwm/pwm-clps711x.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-On Wed, May 16, 2018 at 12:00:16AM -0700, George Cherian wrote:
-> Add support for SMBus alert mechanism to i2c-xlp9xx driver.
-> The second interrupt is parsed to use for SMBus alert.
-> The first interrupt is the i2c controller main interrupt.
->=20
-> Signed-off-by: Kamlakant Patel <kamlakant.patel@cavium.com>
-> Signed-off-by: George Cherian <george.cherian@cavium.com>
-> Reviewed-by: Jan Glauber <jglauber@cavium.com>
-
-Applied to for-next, thanks!
-
-
---w63k2kyc4gozi7sv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlsECEAACgkQFA3kzBSg
-KbbGlQ//WbJQtJsqg3aMDclF5UnKjutNvNGUKc+tMjz/XyWzbEdADv/JI/oo+Bsd
-ArcMs+gmMWZKKpY4c3mlTEsbcuE9/KXIw1q3Ht7vnUhQdvOFa0lUa9xuX2xbAqc/
-hOeEve1+tBJO4bPWKf9jwqttLJcBYvP7FHYJgWWYPrfNfUbTEgc2owKWH79TbniZ
-uZj2fLopGdCnY86sKE92pDzkCdAe32b+acTkmDkCM6/xGcc9RO6sU2E+5WIV1A2D
-bA6HdGBS5his48iav/asU5y8+/VBU1aWPbv/y2wdiF9p9vFc9Dy0XMpOK/DnBT5d
-PQtRM6RrbA1kzgjmWzLpeuWrlHlrVcpd+GQDVfGG0+EoG/bN8f6GFn1YNrzZagFw
-ezhWXsBW07Hyvgu8DhECkyGFCZNTARqvhimedJrwUk1ImKFsZbEOI5WjMjh/xxxp
-g7dOhUB0WGSQhYDyYwX/V8EgGrIEu8ytlaIwerlMQZEn+sVA+8Pjru8SEUNMeL3N
-1anTOsFjnQ5A8gRVX0w0dKRRkhcjkhSAtzSGOtGRo94el7yEnxKDxLoctq1Aeoo6
-ztMlPwoe5AQlq0b/Hm+l8GNZr9QFLmKTeiKqTELcEKf6m8TDdTadJ7XOkXaZXwXv
-Zb5950053OLOBIqxWjRSO8pAWS8/2BKZxo/5nL6KKpMoFpV02Ag=
-=L+4g
------END PGP SIGNATURE-----
-
---w63k2kyc4gozi7sv--
+diff --git a/drivers/pwm/pwm-clps711x.c b/drivers/pwm/pwm-clps711x.c
+index 26ec24e457b1..d742e8e375c7 100644
+--- a/drivers/pwm/pwm-clps711x.c
++++ b/drivers/pwm/pwm-clps711x.c
+@@ -109,10 +109,18 @@ static const struct pwm_ops clps711x_pwm_ops = {
+ static struct pwm_device *clps711x_pwm_xlate(struct pwm_chip *chip,
+ 					     const struct of_phandle_args *args)
+ {
++	struct pwm_device *pwm;
++
+ 	if (args->args[0] >= chip->npwm)
+ 		return ERR_PTR(-EINVAL);
+ 
+-	return pwm_request_from_chip(chip, args->args[0], NULL);
++	pwm = pwm_request_from_chip(chip, args->args[0], NULL);
++	if (IS_ERR(pwm))
++		return pwm;
++
++	pwm->args.mode = pwm_mode_get_valid(chip, pwm);
++
++	return pwm;
+ }
+ 
+ static int clps711x_pwm_probe(struct platform_device *pdev)
+-- 
+2.7.4
