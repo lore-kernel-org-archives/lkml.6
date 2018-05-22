@@ -1,101 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752792AbeEVUVs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 16:21:48 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:39369 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751586AbeEVUVq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 16:21:46 -0400
-X-Google-Smtp-Source: AB8JxZo/ZG5i2z83dHia/GZ7KXTSCqjm8Ri3y8QSOWmYjrpfvydZZJAjdttETiq7b4/PXs+ga/cU0w==
-Date: Tue, 22 May 2018 14:21:41 -0600
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
-Cc: dledford@redhat.com, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, xavier.huwei@tom.com, lijun_nudt@163.com
-Subject: Re: [PATCH rdma-next 1/5] RDMA/hns: Implement the
- disassociate_ucontext API
-Message-ID: <20180522202141.GA21148@ziepe.ca>
-References: <1526544173-106587-1-git-send-email-xavier.huwei@huawei.com>
- <1526544173-106587-2-git-send-email-xavier.huwei@huawei.com>
- <20180517150019.GB10842@ziepe.ca>
- <5AFFDF48.9010805@huawei.com>
+        id S1752686AbeEVUZQ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 16:25:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33072 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751582AbeEVUZP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 16:25:15 -0400
+Date: Tue, 22 May 2018 16:25:12 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Mathieu Malaterre <malat@debian.org>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Kees Cook <keescook@chromium.org>,
+        Laura Abbott <lauraa@codeaurora.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Gargi Sharma <gs051095@gmail.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Add missing header include <linux/mem_encrypt.h>
+Message-ID: <20180522162512.224b301b@gandalf.local.home>
+In-Reply-To: <20180522195533.31415-1-malat@debian.org>
+References: <20180522195533.31415-1-malat@debian.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5AFFDF48.9010805@huawei.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 19, 2018 at 04:24:40PM +0800, Wei Hu (Xavier) wrote:
-> 
-> 
-> On 2018/5/17 23:00, Jason Gunthorpe wrote:
-> > On Thu, May 17, 2018 at 04:02:49PM +0800, Wei Hu (Xavier) wrote:
-> >> This patch Implements the IB core disassociate_ucontext API.
-> >>
-> >> Signed-off-by: Wei Hu (Xavier) <xavier.huwei@huawei.com>
-> >>  drivers/infiniband/hw/hns/hns_roce_main.c | 36 +++++++++++++++++++++++++++++++
-> >>  1 file changed, 36 insertions(+)
-> >>
-> >> diff --git a/drivers/infiniband/hw/hns/hns_roce_main.c b/drivers/infiniband/hw/hns/hns_roce_main.c
-> >> index 96fb6a9..7fafe9d 100644
-> >> +++ b/drivers/infiniband/hw/hns/hns_roce_main.c
-> >> @@ -33,6 +33,9 @@
-> >>  #include <linux/acpi.h>
-> >>  #include <linux/of_platform.h>
-> >>  #include <linux/module.h>
-> >> +#include <linux/sched.h>
-> >> +#include <linux/sched/mm.h>
-> >> +#include <linux/sched/task.h>
-> >>  #include <rdma/ib_addr.h>
-> >>  #include <rdma/ib_smi.h>
-> >>  #include <rdma/ib_user_verbs.h>
-> >> @@ -422,6 +425,38 @@ static int hns_roce_port_immutable(struct ib_device *ib_dev, u8 port_num,
-> >>  	return 0;
-> >>  }
-> >>  
-> >> +static void hns_roce_disassociate_ucontext(struct ib_ucontext *ibcontext)
-> >> +{
-> >> +	struct task_struct *process;
-> >> +	struct mm_struct   *mm;
-> >> +
-> >> +	process = get_pid_task(ibcontext->tgid, PIDTYPE_PID);
-> >> +	if (!process)
-> >> +		return;
-> >> +
-> >> +	mm = get_task_mm(process);
-> >> +	if (!mm) {
-> >> +		pr_info("no mm, disassociate ucontext is pending task termination\n");
-> >> +		while (1) {
-> >> +			put_task_struct(process);
-> >> +			usleep_range(1000, 2000);
-> >> +			process = get_pid_task(ibcontext->tgid, PIDTYPE_PID);
-> >> +			if (!process || process->state == TASK_DEAD) {
-> >> +				pr_info("disassociate ucontext done, task was terminated\n");
-> >> +				/* if task was dead, need to release the task
-> >> +				 * struct.
-> >> +				 */
-> >> +				if (process)
-> >> +					put_task_struct(process);
-> >> +				return;
-> >> +			}
-> >> +		}
-> >> +	}
-> > I don't want to see this boilerplate code copied into every
-> > driver. Hoist it into the core code, have the disassociate driver callback
-> > accept a mm_struct parameter, and refactor the other drivers using this.
-> 
-> When the userspace RDMA application process is suspended for some reason
-> without executing ibv_close_device function,
-> There will be calltrace as follows when rmmod roce kernel driver ko in
-> the current version.
-> It looks like a common problem to every driver and the code segment
-> above is suitable for every driver.
-> Pardon me for asking, but if you have any plan to do this?
+On Tue, 22 May 2018 21:55:31 +0200
+Mathieu Malaterre <malat@debian.org> wrote:
 
-My plan is to ask you to do it :)
+> In commit c7753208a94c ("x86, swiotlb: Add memory encryption support") a
+> call to function ‘mem_encrypt_init’ was added. Include prototype
+> defined in header <linux/mem_encrypt.h> to prevent a warning reported
+> during compilation with W=1:
+> 
+>   init/main.c:494:20: warning: no previous prototype for ‘mem_encrypt_init’ [-Wmissing-prototypes]
 
-Jason
+Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+
+-- Steve
+
+> 
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> ---
+>  init/main.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/init/main.c b/init/main.c
+> index 3d6b31f4e520..35ce2ddb1322 100644
+> --- a/init/main.c
+> +++ b/init/main.c
+> @@ -91,6 +91,7 @@
+>  #include <linux/cache.h>
+>  #include <linux/rodata_test.h>
+>  #include <linux/jump_label.h>
+> +#include <linux/mem_encrypt.h>
+>  
+>  #include <asm/io.h>
+>  #include <asm/bugs.h>
