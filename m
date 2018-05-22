@@ -1,76 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751772AbeEVMMr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 08:12:47 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:40448 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751172AbeEVMH0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 08:07:26 -0400
-From: Stefan Agner <stefan@agner.ch>
-To: boris.brezillon@bootlin.com, dwmw2@infradead.org,
-        computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, thierry.reding@gmail.com,
-        mturquette@baylibre.com, sboyd@kernel.org
-Cc: dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
-        marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com,
-        benjamin.lindqvist@endian.se, jonathanh@nvidia.com,
-        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com,
-        linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, Stefan Agner <stefan@agner.ch>
-Subject: [RESEND PATCH 5/5] ARM: tegra: enable NAND flash on Colibri T20
-Date: Tue, 22 May 2018 14:07:09 +0200
-Message-Id: <7f2d12d5a82843a633ea3cd11ff67ea572fb51c3.1526990589.git.stefan@agner.ch>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <cover.1526990589.git.stefan@agner.ch>
-References: <cover.1526990589.git.stefan@agner.ch>
-X-Spamd-Result: default: False [-2.10 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[26];
-         BAYES_HAM(-3.00)[100.00%];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         MID_CONTAINS_FROM(1.00)[];
-         ASN(0.00)[asn:6830, ipnet:46.140.0.0/17, country:AT];
-         RCVD_TLS_ALL(0.00)[];
-         ARC_NA(0.00)[]
+        id S1751883AbeEVMN0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 08:13:26 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34142 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750707AbeEVMNV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 08:13:21 -0400
+Date: Tue, 22 May 2018 14:13:20 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Song Liu <songliubraving@fb.com>
+Cc: linux-mm@kvack.org, kernel-team@fb.com, linux-kernel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill@shutemov.name>
+Subject: Re: [PATCH] mm/THP: use hugepage_vma_check() in
+ khugepaged_enter_vma_merge()
+Message-ID: <20180522121319.GB30663@dhcp22.suse.cz>
+References: <20180521193853.3089484-1-songliubraving@fb.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180521193853.3089484-1-songliubraving@fb.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lucas Stach <dev@lynxeye.de>
+[CC Kirill]
 
-This enables the on-module ONFI conformant NAND flash.
+On Mon 21-05-18 12:38:53, Song Liu wrote:
+> khugepaged_enter_vma_merge() is using a different approach to check
+> whether a vma is valid for khugepaged_enter():
+> 
+>     if (!vma->anon_vma)
+>             /*
+>              * Not yet faulted in so we will register later in the
+>              * page fault if needed.
+>              */
+>             return 0;
+>     if (vma->vm_ops || (vm_flags & VM_NO_KHUGEPAGED))
+>             /* khugepaged not yet working on file or special mappings */
+>             return 0;
+> 
+> This check has some problems. One of the obvious problems is that
+> it doesn't check shmem_file(), so that vma backed with shmem files
+> will not call khugepaged_enter().
+> 
+> This patch fixes these problems by reusing hugepage_vma_check() in
+> khugepaged_enter_vma_merge().
 
-Signed-off-by: Lucas Stach <dev@lynxeye.de>
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- arch/arm/boot/dts/tegra20-colibri-512.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+It would be great to be more explicit about what are the actual
+consequences. khugepaged_enter_vma_merge is called from multiple
+context. Some of then do not really care about !anon case (e.g. stack
+expansion). hugepage_madvise is quite convoluted so I am not really sure
+from a quick look (are we simply not going to merge vmas even if we
+could?).
 
-diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-index 5c202b3e3bb1..6e5dd31c4036 100644
---- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-+++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-@@ -462,6 +462,13 @@
- 		};
- 	};
+Have you noticed this by a code inspection or you have seen this
+happening in real workloads (aka, is this worth backporting to stable
+trees)?
  
-+	nand@70008000 {
-+		status = "okay";
-+		nand-bus-width = <8>;
-+		nand-on-flash-bbt;
-+		wp-gpios = <&gpio TEGRA_GPIO(S, 0) GPIO_ACTIVE_HIGH>;
-+	};
-+
- 	usb@c5004000 {
- 		status = "okay";
- 		nvidia,phy-reset-gpio = <&gpio TEGRA_GPIO(V, 1)
+> Signed-off-by: Song Liu <songliubraving@fb.com>
+> ---
+>  mm/khugepaged.c | 12 ++++--------
+>  1 file changed, 4 insertions(+), 8 deletions(-)
+> 
+> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> index d7b2a4b..e50c2bd 100644
+> --- a/mm/khugepaged.c
+> +++ b/mm/khugepaged.c
+> @@ -430,18 +430,14 @@ int __khugepaged_enter(struct mm_struct *mm)
+>  	return 0;
+>  }
+>  
+> +static bool hugepage_vma_check(struct vm_area_struct *vma);
+> +
+>  int khugepaged_enter_vma_merge(struct vm_area_struct *vma,
+>  			       unsigned long vm_flags)
+>  {
+>  	unsigned long hstart, hend;
+> -	if (!vma->anon_vma)
+> -		/*
+> -		 * Not yet faulted in so we will register later in the
+> -		 * page fault if needed.
+> -		 */
+> -		return 0;
+> -	if (vma->vm_ops || (vm_flags & VM_NO_KHUGEPAGED))
+> -		/* khugepaged not yet working on file or special mappings */
+> +
+> +	if (!hugepage_vma_check(vma))
+>  		return 0;
+>  	hstart = (vma->vm_start + ~HPAGE_PMD_MASK) & HPAGE_PMD_MASK;
+>  	hend = vma->vm_end & HPAGE_PMD_MASK;
+> -- 
+> 2.9.5
+
 -- 
-2.17.0
+Michal Hocko
+SUSE Labs
