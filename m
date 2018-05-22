@@ -1,321 +1,241 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751291AbeEVGmq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 02:42:46 -0400
-Received: from smtprelay.synopsys.com ([198.182.37.59]:47920 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750954AbeEVGmo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 02:42:44 -0400
-From: Prabu Thangamuthu <Prabu.T@synopsys.com>
-To: "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
-CC: Manjunath M Bettegowda <Manjunath.MB@synopsys.com>,
-        "prabu.t@synopsys.com" <prabu.t@synopsys.com>
-Subject: [PATCH 1/1] mmc: sdhci-pci-dwc-mshc: synopsys dwc mshc support
-Thread-Topic: [PATCH 1/1] mmc: sdhci-pci-dwc-mshc: synopsys dwc mshc support
-Thread-Index: AdPxmBIFOmCk2CVqRi+baz/mIdVd7Q==
-Date: Tue, 22 May 2018 06:42:39 +0000
-Message-ID: <705D14B1C7978B40A723277C067CEDE2010A9B43CC@IN01WEMBXB.internal.synopsys.com>
-Accept-Language: en-US, en-IN
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.12.239.235]
-Content-Type: text/plain; charset="us-ascii"
+        id S1751173AbeEVGr7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 02:47:59 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:43845 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750820AbeEVGr5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 02:47:57 -0400
+Date: Tue, 22 May 2018 08:47:54 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        Andy Gross <andy.gross@linaro.org>,
+        Archit Taneja <architt@codeaurora.org>
+Subject: Re: [PATCH v2 05/14] mtd: rawnand: qcom: wait for desc completion
+ in all BAM channels
+Message-ID: <20180522084754.0c3a53a4@xps13>
+In-Reply-To: <1525350041-22995-6-git-send-email-absahu@codeaurora.org>
+References: <1525350041-22995-1-git-send-email-absahu@codeaurora.org>
+        <1525350041-22995-6-git-send-email-absahu@codeaurora.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4M6gpn6009135
 
-To enable Synopsys DWC MSHC controller on HPAS-DX platform connected using
-PCIe interface. As Clock generation logic is implemented in MMCM module of
-HAPS-DX platform, we have separate functions to control the MMCM to
-generate required clocks with respect to speed mode. Also we have platform
-specific set_power function to support different VDD of eMMC devices.
+Hi Abhishek,
 
-Signed-off-by: Prabu Thangamuthu <prabu.t@synopsys.com>
----
- MAINTAINERS                           |   7 ++
- drivers/mmc/host/Makefile             |   3 +-
- drivers/mmc/host/sdhci-pci-core.c     |   1 +
- drivers/mmc/host/sdhci-pci-dwc-mshc.c | 146
-++++++++++++++++++++++++++++++++++
- drivers/mmc/host/sdhci-pci-dwc-mshc.h |  37 +++++++++
- drivers/mmc/host/sdhci-pci.h          |   3 +
- 6 files changed, 196 insertions(+), 1 deletion(-)
- create mode 100644 drivers/mmc/host/sdhci-pci-dwc-mshc.c
- create mode 100644 drivers/mmc/host/sdhci-pci-dwc-mshc.h
+On Thu,  3 May 2018 17:50:32 +0530, Abhishek Sahu
+<absahu@codeaurora.org> wrote:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9051a9c..f1749c4 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12643,6 +12643,13 @@ S:    Maintained
- F:    drivers/mmc/host/sdhci*
- F:    include/linux/mmc/sdhci*
- 
-+SYNOPSYS SDHCI COMPLIANT DWC MSHC DRIVER
-+M:    Prabu Thangamuthu <prabu.t@synopsys.com>
-+M:    Manjunath M B <manjumb@synopsys.com>
-+L:    linux-mmc@vger.kernel.org
-+S:    Maintained
-+F:    drivers/mmc/host/sdhci-pci-dwc-mshc*
-+
- SECURE DIGITAL HOST CONTROLLER INTERFACE (SDHCI) SAMSUNG DRIVER
- M:    Ben Dooks <ben-linux@fluff.org>
- M:    Jaehoon Chung <jh80.chung@samsung.com>
-diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
-index 6aead24..6c0d3fb 100644
---- a/drivers/mmc/host/Makefile
-+++ b/drivers/mmc/host/Makefile
-@@ -11,7 +11,8 @@ obj-$(CONFIG_MMC_MXC)        += mxcmmc.o
- obj-$(CONFIG_MMC_MXS)        += mxs-mmc.o
- obj-$(CONFIG_MMC_SDHCI)        += sdhci.o
- obj-$(CONFIG_MMC_SDHCI_PCI)    += sdhci-pci.o
--sdhci-pci-y            += sdhci-pci-core.o sdhci-pci-o2micro.o
-sdhci-pci-arasan.o
-+sdhci-pci-y            += sdhci-pci-core.o sdhci-pci-o2micro.o
-sdhci-pci-arasan.o \
-+                   sdhci-pci-dwc-mshc.o
- obj-$(subst m,y,$(CONFIG_MMC_SDHCI_PCI))    += sdhci-pci-data.o
- obj-$(CONFIG_MMC_SDHCI_ACPI)    += sdhci-acpi.o
- obj-$(CONFIG_MMC_SDHCI_PXAV3)    += sdhci-pxav3.o
-diff --git a/drivers/mmc/host/sdhci-pci-core.c
-b/drivers/mmc/host/sdhci-pci-core.c
-index 77dd352..96b6963 100644
---- a/drivers/mmc/host/sdhci-pci-core.c
-+++ b/drivers/mmc/host/sdhci-pci-core.c
-@@ -1511,6 +1511,7 @@ static int amd_probe(struct sdhci_pci_chip *chip)
-     SDHCI_PCI_DEVICE(O2, SEABIRD0, o2),
-     SDHCI_PCI_DEVICE(O2, SEABIRD1, o2),
-     SDHCI_PCI_DEVICE(ARASAN, PHY_EMMC, arasan),
-+    SDHCI_PCI_DEVICE(SYNOPSYS, DWC_MSHC,  snps),
-     SDHCI_PCI_DEVICE_CLASS(AMD, SYSTEM_SDHCI, PCI_CLASS_MASK, amd),
-     /* Generic SD host controller */
-     {PCI_DEVICE_CLASS(SYSTEM_SDHCI, PCI_CLASS_MASK)},
-diff --git a/drivers/mmc/host/sdhci-pci-dwc-mshc.c
-b/drivers/mmc/host/sdhci-pci-dwc-mshc.c
-new file mode 100644
-index 0000000..bca3db4
---- /dev/null
-+++ b/drivers/mmc/host/sdhci-pci-dwc-mshc.c
-@@ -0,0 +1,146 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * SDHCI driver for Synopsys DWC_MSHC controller
-+ *
-+ * Copyright (C) 2018 Synopsys, Inc. (www.synopsys.com)
-+ *
-+ * Authors:
-+ *    Prabu Thangamuthu <prabu.t@synopsys.com>
-+ *    Manjunath M B <manjumb@synopsys.com>
-+ *
-+ */
-+
-+#include <linux/pci.h>
-+#include <linux/delay.h>
-+#include <linux/module.h>
-+#include <linux/moduleparam.h>
-+
-+#include "sdhci.h"
-+#include "sdhci-pci.h"
-+#include "sdhci-pci-dwc-mshc.h"
-+
-+/* Default emmc vdd is set to 3.3V */
-+static unsigned int emmc_vdd = SDHC_EMMC_VDD_330V;
-+module_param(emmc_vdd, int, 0444);
-+
-+static void sdhci_snps_set_clock(struct sdhci_host *host, unsigned int
-clock)
-+{
-+    u16 clk = 0;
-+    u32 reg = 0;
-+    u32 vendor_ptr = 0;
-+
-+    vendor_ptr = sdhci_readw(host, SDHCI_VENDOR_PTR_R);
-+
-+    /* Disable Software managed rx tuning */
-+    reg = sdhci_readl(host, (SDHC_AT_CTRL_R + vendor_ptr));
-+    reg &= ~SDHC_SW_TUNE_EN;
-+    sdhci_writel(host, reg, (SDHC_AT_CTRL_R + vendor_ptr));
-+
-+    if (clock <= 52000000) {
-+        sdhci_set_clock(host, clock);
-+    } else {
-+        /* Assert reset to MMCM */
-+        reg = sdhci_readl(host, (SDHC_GPIO_OUT + vendor_ptr));
-+        reg |= SDHC_CCLK_MMCM_RST;
-+        sdhci_writel(host, reg, (SDHC_GPIO_OUT + vendor_ptr));
-+
-+        /* Configure MMCM*/
-+        sdhci_writel(host, DIV_REG_100_MHZ, SDHC_MMCM_DIV_REG);
-+        sdhci_writel(host, CLKFBOUT_100_MHZ,
-+                SDHC_MMCM_CLKFBOUT);
-+
-+        /* De-assert reset to MMCM*/
-+        reg = sdhci_readl(host, (SDHC_GPIO_OUT + vendor_ptr));
-+        reg &= ~SDHC_CCLK_MMCM_RST;
-+        sdhci_writel(host, reg, (SDHC_GPIO_OUT + vendor_ptr));
-+
-+        /* Enable clock */
-+        clk = SDHCI_PROG_CLOCK_MODE | SDHCI_CLOCK_INT_EN |
-+            SDHCI_CLOCK_CARD_EN;
-+        sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
-+    }
-+}
-+
-+static void sdhci_snps_set_power(struct sdhci_host *host, unsigned char
-mode,
-+             unsigned short vdd)
-+{
-+    u8 pwr = 0;
-+    u16 ctrl;
-+
-+    if (mode != MMC_POWER_OFF) {
-+        switch (1 << vdd) {
-+        case MMC_VDD_165_195:
-+            pwr = SDHCI_POWER_180;
-+            break;
-+        case MMC_VDD_29_30:
-+        case MMC_VDD_30_31:
-+            pwr = SDHCI_POWER_300;
-+            break;
-+        case MMC_VDD_32_33:
-+        case MMC_VDD_33_34:
-+            pwr = SDHCI_POWER_330;
-+            break;
-+        default:
-+            WARN(1, "%s: Invalid vdd %#x\n",
-+                 mmc_hostname(host->mmc), vdd);
-+            break;
-+        }
-+    }
-+
-+    if (host->pwr == pwr)
-+        return;
-+
-+    host->pwr = pwr;
-+
-+    if (pwr == 0) {
-+        sdhci_writeb(host, 0, SDHCI_POWER_CONTROL);
-+    } else {
-+        sdhci_writeb(host, 0, SDHCI_POWER_CONTROL);
-+
-+        /*
-+         * Enable it for eMMC phy cfg1 test with 1.8V mode
-+         */
-+        if (emmc_vdd == SDHC_EMMC_VDD_180V) {
-+            pwr = SDHCI_POWER_180;
-+            sdhci_writeb(host, pwr, SDHCI_POWER_CONTROL);
-+
-+            ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
-+            /*
-+             * Enable 1.8V Signal Enable in the Host Control2
-+             * register
-+             */
-+            ctrl |= SDHCI_CTRL_VDD_180;
-+            sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
-+        }
-+        pwr |= SDHCI_POWER_ON;
-+
-+        sdhci_writeb(host, pwr, SDHCI_POWER_CONTROL);
-+    }
-+}
-+
-+static int sdhci_snps_pci_probe_slot(struct sdhci_pci_slot *slot)
-+{
-+    struct sdhci_host *host = slot->host;
-+
-+    host->caps = sdhci_readl(host, SDHCI_CAPABILITIES);
-+    host->caps1 = sdhci_readl(host, SDHCI_CAPABILITIES_1);
-+
-+    return 0;
-+}
-+
-+/* Synopsys DWC MSHC Controller based on SDHCI-PCI */
-+static const struct sdhci_ops sdhci_snps_ops = {
-+    .set_clock    = sdhci_snps_set_clock,
-+    .set_power    = sdhci_snps_set_power,
-+    .enable_dma    = sdhci_pci_enable_dma,
-+    .set_bus_width    = sdhci_set_bus_width,
-+    .reset        = sdhci_reset,
-+    .set_uhs_signaling = sdhci_set_uhs_signaling,
-+};
-+
-+const struct sdhci_pci_fixes sdhci_snps = {
-+    .probe_slot    = sdhci_snps_pci_probe_slot,
-+    .ops        = &sdhci_snps_ops,
-+};
-+
-+MODULE_PARM_DESC(emmc_vdd, "VDD to configure eMMC device supply voltage");
-diff --git a/drivers/mmc/host/sdhci-pci-dwc-mshc.h
-b/drivers/mmc/host/sdhci-pci-dwc-mshc.h
-new file mode 100644
-index 0000000..352bbfd
---- /dev/null
-+++ b/drivers/mmc/host/sdhci-pci-dwc-mshc.h
-@@ -0,0 +1,37 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * SDHCI driver for Synopsys DWC_MSHC controller
-+ *
-+ * Copyright (C) 2018 Synopsys, Inc. (www.synopsys.com)
-+ *
-+ * Authors:
-+ *    Prabu Thangamuthu <prabu.t@synopsys.com>
-+ *    Manjunath M B <manjumb@synopsys.com>
-+ *
-+ */
-+
-+#ifndef __SDHCI_PCI_DWC_MSHC_H__
-+#define __SDHCI_PCI_DWC_MSHC_H__
-+
-+#define SDHCI_VENDOR_PTR_R               0xE8
-+
-+/* Module Parameters */
-+#define SDHC_EMMC_VDD_330V               33
-+#define SDHC_EMMC_VDD_180V               18
-+
-+/* Synopsys Vendor Specific Registers */
-+#define SDHC_GPIO_OUT                          0x34
-+#define SDHC_AT_CTRL_R                   0x40
-+
-+#define SDHC_SW_TUNE_EN                   0x00000010
-+
-+/* MMCM DRP */
-+#define SDHC_MMCM_DIV_REG               0x1020
-+#define DIV_REG_100_MHZ                   0x1145
-+
-+#define SDHC_MMCM_CLKFBOUT               0x1024
-+#define CLKFBOUT_100_MHZ               0x0000
-+
-+#define SDHC_CCLK_MMCM_RST               0x00000001
-+
-+#endif
-diff --git a/drivers/mmc/host/sdhci-pci.h b/drivers/mmc/host/sdhci-pci.h
-index db9cb54..c91dcec 100644
---- a/drivers/mmc/host/sdhci-pci.h
-+++ b/drivers/mmc/host/sdhci-pci.h
-@@ -59,6 +59,7 @@
- #define PCI_VENDOR_ID_ARASAN        0x16e6
- #define PCI_DEVICE_ID_ARASAN_PHY_EMMC    0x0670
- 
-+#define PCI_DEVICE_ID_SYNOPSYS_DWC_MSHC 0xC202
- /*
-  * PCI device class and mask
-  */
-@@ -183,4 +184,6 @@ static inline void *sdhci_pci_priv(struct
-sdhci_pci_slot *slot)
- 
- extern const struct sdhci_pci_fixes sdhci_arasan;
- 
-+extern const struct sdhci_pci_fixes sdhci_snps;
-+
- #endif /* __SDHCI_PCI_H */
+> The BAM has 3 channels - tx, rx and command. command channel
+> is used for register read/writes, tx channel for data writes
+> and rx channel for data reads. Currently, the driver assumes the
+> transfer completion once it gets all the command descriptor
+> completed. Sometimes, there is race condition in data channel
+
+"Sometimes, there is a race condition between the data channel (rx/tx)
+and the command channel completion. In these cases, ..."
+
+> (tx/rx) and command channel completion and in these cases,
+> the data in buffer is not valid during the small window between
+
+           ^ present in the buffer ?
+
+> command descriptor completion and data descriptor completion.
+> 
+> Now, the changes have been made to assign the callback for
+
+It is preferable to use a descriptive tense when you expose what the
+patch does. Something like "Change <this> to assign ..."
+
+> channel's final descriptor. The DMA will generate the callback
+> when all the descriptors have completed in that channel.
+> The NAND transfer will be completed only when all required
+> DMA channels have generated the completion callback.
+> 
+
+It looks like this is a fix that is a good candidate for stable trees,
+you might want to add the relevant tags.
+
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> ---
+> * Changes from v1:
+> 
+>   NONE
+> 
+>   1. Removed the custom logic and used the helper fuction.
+>  drivers/mtd/nand/raw/qcom_nandc.c | 55 ++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 54 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mtd/nand/raw/qcom_nandc.c b/drivers/mtd/nand/raw/qcom_nandc.c
+> index a8d71ce..3d1ff54 100644
+> --- a/drivers/mtd/nand/raw/qcom_nandc.c
+> +++ b/drivers/mtd/nand/raw/qcom_nandc.c
+> @@ -213,6 +213,8 @@
+>  #define QPIC_PER_CW_CMD_SGL		32
+>  #define QPIC_PER_CW_DATA_SGL		8
+>  
+> +#define QPIC_NAND_COMPLETION_TIMEOUT	msecs_to_jiffies(2000)
+
+That's huge, but why not, it's a timeout anyway.
+
+> +
+>  /*
+>   * Flags used in DMA descriptor preparation helper functions
+>   * (i.e. read_reg_dma/write_reg_dma/read_data_dma/write_data_dma)
+> @@ -245,6 +247,11 @@
+>   * @tx_sgl_start - start index in data sgl for tx.
+>   * @rx_sgl_pos - current index in data sgl for rx.
+>   * @rx_sgl_start - start index in data sgl for rx.
+> + * @first_chan_done - if current transfer already has got first channel
+> + *		      DMA desc completion.
+> + * @txn_done - completion for nand transfer.
+
+s/nand/NAND/
+
+> + * @last_data_desc - last DMA desc in data channel (tx/rx).
+> + * @last_cmd_desc - last DMA desc in command channel.
+>   */
+>  struct bam_transaction {
+>  	struct bam_cmd_element *bam_ce;
+> @@ -258,6 +265,10 @@ struct bam_transaction {
+>  	u32 tx_sgl_start;
+>  	u32 rx_sgl_pos;
+>  	u32 rx_sgl_start;
+> +	bool first_chan_done;
+> +	struct completion txn_done;
+> +	struct dma_async_tx_descriptor *last_data_desc;
+> +	struct dma_async_tx_descriptor *last_cmd_desc;
+>  };
+>  
+>  /*
+> @@ -504,6 +515,8 @@ static void free_bam_transaction(struct qcom_nand_controller *nandc)
+>  
+>  	bam_txn->data_sgl = bam_txn_buf;
+>  
+> +	init_completion(&bam_txn->txn_done);
+> +
+>  	return bam_txn;
+>  }
+>  
+> @@ -523,11 +536,36 @@ static void clear_bam_transaction(struct qcom_nand_controller *nandc)
+>  	bam_txn->tx_sgl_start = 0;
+>  	bam_txn->rx_sgl_pos = 0;
+>  	bam_txn->rx_sgl_start = 0;
+> +	bam_txn->last_data_desc = NULL;
+> +	bam_txn->first_chan_done = false;
+
+Are you sure you don't want to reinit last_cmd_desc here?
+
+>  
+>  	sg_init_table(bam_txn->cmd_sgl, nandc->max_cwperpage *
+>  		      QPIC_PER_CW_CMD_SGL);
+>  	sg_init_table(bam_txn->data_sgl, nandc->max_cwperpage *
+>  		      QPIC_PER_CW_DATA_SGL);
+> +
+> +	reinit_completion(&bam_txn->txn_done);
+> +}
+> +
+> +/* Callback for DMA descriptor completion */
+> +static void qpic_bam_dma_done(void *data)
+> +{
+> +	struct bam_transaction *bam_txn = data;
+> +
+> +	/*
+> +	 * In case of data transfer with NAND, 2 callbacks will be generated.
+> +	 * One for command channel and another one for data channel.
+> +	 * If current transaction has data descriptors then check if its
+> +	 * already got one DMA channel completion callback. In this case
+> +	 * make the NAND transfer complete otherwise mark first_chan_done true
+> +	 * and wait for next channel DMA completion callback.
+> +	 */
+> +	if (bam_txn->last_data_desc && !bam_txn->first_chan_done) {
+> +		bam_txn->first_chan_done = true;
+> +		return;
+> +	}
+
+There is a lot of new variables just to wait for two bam_dma_done().
+Why not just creating a boolean like "wait_second completion",
+initialize it in prepare_bam_async_desc to true when needed and
+complete txn_done when it's false, that's all:
+
+        if (bam_txn->wait_second_completion) {
+                bam_txn->wait_second_completion = false;
+                return;
+        }
+
+> +
+> +	complete(&bam_txn->txn_done);
+>  }
+>  
+>  static inline struct qcom_nand_host *to_qcom_nand_host(struct nand_chip *chip)
+> @@ -756,6 +794,12 @@ static int prepare_bam_async_desc(struct qcom_nand_controller *nandc,
+>  
+>  	desc->dma_desc = dma_desc;
+>  
+> +	/* update last data/command descriptor */
+> +	if (chan == nandc->cmd_chan)
+> +		bam_txn->last_cmd_desc = dma_desc;
+> +	else
+> +		bam_txn->last_data_desc = dma_desc;
+> +
+
+Is there a reason for the "last_" prefix? why not current_*_desc or
+just *_desc? (this is a real question :) ). Correct me if I'm wrong but
+you have a scatter-gather list of DMA transfers that are mapped to form
+one DMA descriptor, so there is no "last" descriptor, right?
+
+Otherwise, as I told you above, why not just a:
+
+        if (chan == nandc->data_chan)
+                bam_txn->wait_second_completion = true;
+
+>  	list_add_tail(&desc->node, &nandc->desc_list);
+>  
+>  	return 0;
+> @@ -1273,10 +1317,19 @@ static int submit_descs(struct qcom_nand_controller *nandc)
+>  		cookie = dmaengine_submit(desc->dma_desc);
+>  
+>  	if (nandc->props->is_bam) {
+> +		bam_txn->last_cmd_desc->callback = qpic_bam_dma_done;
+> +		bam_txn->last_cmd_desc->callback_param = bam_txn;
+> +		if (bam_txn->last_data_desc) {
+> +			bam_txn->last_data_desc->callback = qpic_bam_dma_done;
+> +			bam_txn->last_data_desc->callback_param = bam_txn;
+> +		}
+
+Why don't you do this directly in prepare_bam_async_desc?
+
+With:
+
+        dma_desc->callback = ...
+        dma_desc->callback_param = ...
+
+> +
+>  		dma_async_issue_pending(nandc->tx_chan);
+>  		dma_async_issue_pending(nandc->rx_chan);
+> +		dma_async_issue_pending(nandc->cmd_chan);
+>  
+> -		if (dma_sync_wait(nandc->cmd_chan, cookie) != DMA_COMPLETE)
+> +		if (!wait_for_completion_timeout(&bam_txn->txn_done,
+> +						 QPIC_NAND_COMPLETION_TIMEOUT))
+>  			return -ETIMEDOUT;
+>  	} else {
+>  		if (dma_sync_wait(nandc->chan, cookie) != DMA_COMPLETE)
+
+
+
 -- 
-1.9.1
+Miquel Raynal, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
