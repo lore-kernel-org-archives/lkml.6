@@ -1,77 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751688AbeEVIDE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 04:03:04 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:36266 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751283AbeEVICz (ORCPT
+        id S1751245AbeEVIFA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 04:05:00 -0400
+Received: from mail-lf0-f44.google.com ([209.85.215.44]:33816 "EHLO
+        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750709AbeEVIEz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 04:02:55 -0400
-X-Google-Smtp-Source: AB8JxZqTzitmduSWmS2lK0JKhdsdbMOdVWPy/8w7CYGufP8HHNqj+n71ahw8dvvNBo8bHEhF6ynAig==
-Date: Tue, 22 May 2018 10:02:50 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>, sre@kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, khilman@kernel.org,
-        ivo.g.dimitrov.75@gmail.com, patrikbachan@gmail.com, serge@hallyn.com,
-        abcloriens@gmail.com, clayton@craftyguy.net, martijn@brixit.nl,
-        sakari.ailus@linux.intel.com,
-        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
-        Thorsten Leemhuis <regressions@leemhuis.info>
-Subject: Re: v4.17-rc1: regressions on N900, N950
-Message-ID: <20180522080250.4fzyvqrgw5oigexn@pali>
-References: <20180422074213.GA12428@amd>
- <20180423202940.ig6iud5lrbgnu35a@darkstar.musicnaut.iki.fi>
- <20180521213952.GA11596@amd>
+        Tue, 22 May 2018 04:04:55 -0400
+X-Google-Smtp-Source: AB8JxZqu9h8Fy9hlxkdB8ZwD53+vQurpgO25pFv6jd+T8cYSYysk7KAws+O6krP7P6VwAi5+VronbqDcJ+YU0kvgcZM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180521213952.GA11596@amd>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Reply-To: sedat.dilek@gmail.com
+In-Reply-To: <CA+icZUVsV=5jvTcXVWqMs6ROhT3mv+7zBOoJ0JkUy5Mf+a4GNw@mail.gmail.com>
+References: <CA+icZUUPGQsRWpdmASzPQAdjmSFmhBwPKGh_CO65C9ot9+nOSQ@mail.gmail.com>
+ <20180423174224.GA243180@google.com> <CA+icZUUpxh=99JP5K_R1KpxouqDW4KY5BjCn5VTcmyByEb0R5w@mail.gmail.com>
+ <20180424230645.GB243180@google.com> <CA+icZUWhLNvjbyMv+2dB9iXgHnkLZwy5+_GZYG7-sk2b_TJa8Q@mail.gmail.com>
+ <20180507174909.GF19594@google.com> <CA+icZUUCBoHiuK+qCPX-H3=4Si2UXxMBMwQCmzWmq=U1sHebRg@mail.gmail.com>
+ <CAH7mPviH3EiozBxkdZ685ZOo1bNJLLaOPFYwbn2NvD77w=P3Aw@mail.gmail.com> <CA+icZUVsV=5jvTcXVWqMs6ROhT3mv+7zBOoJ0JkUy5Mf+a4GNw@mail.gmail.com>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Date: Tue, 22 May 2018 10:04:53 +0200
+Message-ID: <CA+icZUUfmgJPmmjuaVckvdLwWuWOPDAuFFyLq_ZPkc__LZbtSA@mail.gmail.com>
+Subject: Re: Clang patch stacks for LTS kernels (v4.4 and v4.9) and status update
+To: Nick Desaulniers <nick.desaulniers@gmail.com>
+Cc: Matthias Kaehlcke <mka@chromium.org>,
+        lkml <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Manoj Gupta <manojgupta@chromium.org>,
+        AlistairStrachan <astrachan@google.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Content-Type: multipart/mixed; boundary="00000000000097d0a8056cc6dfba"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday 21 May 2018 23:39:53 Pavel Machek wrote:
-> HI!
-> 
-> > On Sun, Apr 22, 2018 at 09:42:13AM +0200, Pavel Machek wrote:
-> > > v4.17-rc1 broke display for me on Nokia N900. (I don't know if system
-> > > boots, but I can see on red flash LED that at least that driver
-> > > succeeded. So it should not be early boot crash).
-> > > 
-> > > v4.17-rc1 also broke boot on N950.
-> > > 
-> > > Any ideas? Does it work for you?
-> > 
-> > Below config works for me on N900 and N950. (On N950, I need to disable to
-> > display DTS entry as discussed in other threads.)
-> 
-> Thanks... On N900 it works for me in v4.16, but display stays blank in
-> v4.17-rc1...
-> 
-> And I'm starting to suspect I have somehow special N900, or maybe
-> special gcc version... Whether display on N900 works or not seems to
-> depend on completely unrelated config options :-(. Maybe it is timing
-> during boot or something.
-> 
-> Best regards,
+--00000000000097d0a8056cc6dfba
+Content-Type: text/plain; charset="UTF-8"
 
-Hi! I remember that in time of migration from platform board code to
-device tree structures there appeared some bug which caused that
-sometimes display were not initialized. And somebody figured out that
-display initialization is failing when some other SPI devices are
-initialized before or after display... This behavior was observed only
-on real N900 hardware, not in qemu. Real reason was never explained. In
-old platform board code there was hardcoded order of SPI devices in
-which initialization happened. And in device tree it is probably in
-(pseudo)-random order. Enabling/disabling various config option can
-affect some timings and order in which kernel starts probing and
-initializing devices...
+On Tue, May 22, 2018 at 9:39 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+> On Sat, May 19, 2018 at 12:54 AM, Nick Desaulniers
+> <nick.desaulniers@gmail.com> wrote:
+>> Sedat,
+>> Thanks for the report.  We have a fix ready in
+>> https://bugs.llvm.org/show_bug.cgi?id=37512.  Can you report what
+>> version of clang you were using and if earlier versions of clang have
+>> this issue?
+>> Thanks,
+>
+> Can you give some advices on how to implement
+> "attribute((no_stack_protector))" for Clang?
+>
+> I looked on how this is done for GCC...
+>
+> [ include/linux/compiler-gcc.h ]
+>
+> #if GCC_VERSION >= 40400
+> #define __optimize(level)       __attribute__((__optimize__(level)))
+> #define __nostackprotector      __optimize("no-stack-protector")
+> #endif /* GCC_VERSION >= 40400 */
+>
+> [ include/linux/compiler_types.h ]
+>
+> #ifndef __nostackprotector
+> # define __nostackprotector
+> #endif
+>
+> LLVM-bug #37512 says:
+>
+> "GCC option for this is: attribute((optimize("no-stack-protector")))
+> and the equivalent clang syntax would be: attribute((no_stack_protector))"
+>
+> So, there should be a define in "include/linux/compiler-clang.h" for this?
+>
+> [ include/linux/compiler-clang.h ]
+>
+> #define __nostackprotector attribute((no_stack_protector))
+>
+> Looks that good to you?
+>
 
--- 
-Pali Rohár
-pali.rohar@gmail.com
+I am trying with the attached files and...
+
+CONFIG_PARAVIRT=y
+CONFIG_CC_STACKPROTECTOR_STRONG=y
+
+- Sedat -
+
+--00000000000097d0a8056cc6dfba
+Content-Type: text/x-patch; charset="US-ASCII";
+	name="0001-compiler-clang.h-Add-__nostackprotector-function-att.patch"
+Content-Disposition: attachment;
+	filename="0001-compiler-clang.h-Add-__nostackprotector-function-att.patch"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_jhhe63g20
+
+RnJvbSBlZDA3ZmYzNmFlN2FlMTIxZTQ4ZDZjMDU3OWZmM2ZkNTc5NmJmNTdhIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBTZWRhdCBEaWxlayA8c2VkYXQuZGlsZWtAY3JlZGF0aXYuZGU+
+CkRhdGU6IFR1ZSwgMjIgTWF5IDIwMTggMDk6NDY6MTggKzAyMDAKU3ViamVjdDogW1BBVENIIDEv
+Ml0gY29tcGlsZXItY2xhbmcuaDogQWRkIF9fbm9zdGFja3Byb3RlY3RvciBmdW5jdGlvbgogYXR0
+cmlidXRlCgotLS0KIGluY2x1ZGUvbGludXgvY29tcGlsZXItY2xhbmcuaCB8IDUgKysrKysKIDEg
+ZmlsZSBjaGFuZ2VkLCA1IGluc2VydGlvbnMoKykKCmRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4
+L2NvbXBpbGVyLWNsYW5nLmggYi9pbmNsdWRlL2xpbnV4L2NvbXBpbGVyLWNsYW5nLmgKaW5kZXgg
+MDcwZjg1ZDkyYzE1Li4xZGE5NTdjMzMxNDAgMTAwNjQ0Ci0tLSBhL2luY2x1ZGUvbGludXgvY29t
+cGlsZXItY2xhbmcuaAorKysgYi9pbmNsdWRlL2xpbnV4L2NvbXBpbGVyLWNsYW5nLmgKQEAgLTIx
+LDMgKzIxLDggQEAKICNpZmRlZiBfX25vcmV0cG9saW5lCiAjdW5kZWYgX19ub3JldHBvbGluZQog
+I2VuZGlmCisKKy8qIEZvciBkZXRhaWxzIHNlZSA8aHR0cHM6Ly9idWdzLmxsdm0ub3JnL3Nob3df
+YnVnLmNnaT9pZD0zNzUxMj4uCisgKiBUaGlzIGZlYXR1cmUgcmVxdWlyZXMgQ2xhbmcgdmVyc2lv
+biA3ID49IHN2bjMzMTkyNS4KKyAqLworI2RlZmluZSBfX25vc3RhY2twcm90ZWN0b3IgYXR0cmli
+dXRlKChub19zdGFja19wcm90ZWN0b3IpKQotLSAKMi4xNy4wCgo=
+--00000000000097d0a8056cc6dfba
+Content-Type: text/x-patch; charset="US-ASCII";
+	name="0002-x86-paravirt-Mark-native_save_fl-with-__nostackprote.patch"
+Content-Disposition: attachment;
+	filename="0002-x86-paravirt-Mark-native_save_fl-with-__nostackprote.patch"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_jhhe6ale1
+
+RnJvbSA2ZmY0MzcxOWQyZjIyNWVlOTAzNjRjZTA1NGE5NTU1OTBhMDdlOTExIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBTZWRhdCBEaWxlayA8c2VkYXQuZGlsZWtAY3JlZGF0aXYuZGU+
+CkRhdGU6IFR1ZSwgMjIgTWF5IDIwMTggMDk6NTI6MTUgKzAyMDAKU3ViamVjdDogW1BBVENIIDIv
+Ml0geDg2L3BhcmF2aXJ0OiBNYXJrIG5hdGl2ZV9zYXZlX2ZsKCkgd2l0aAogX19ub3N0YWNrcHJv
+dGVjdG9yIGF0dHJpYnV0ZQoKLS0tCiBhcmNoL3g4Ni9pbmNsdWRlL2FzbS9pcnFmbGFncy5oIHwg
+MiArLQogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCgpkaWZm
+IC0tZ2l0IGEvYXJjaC94ODYvaW5jbHVkZS9hc20vaXJxZmxhZ3MuaCBiL2FyY2gveDg2L2luY2x1
+ZGUvYXNtL2lycWZsYWdzLmgKaW5kZXggODlmMDg5NTVmZmY3Li42ZGVmMDQzMjExODEgMTAwNjQ0
+Ci0tLSBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL2lycWZsYWdzLmgKKysrIGIvYXJjaC94ODYvaW5j
+bHVkZS9hc20vaXJxZmxhZ3MuaApAQCAtMTMsNyArMTMsNyBAQAogICogSW50ZXJydXB0IGNvbnRy
+b2w6CiAgKi8KIAotc3RhdGljIGlubGluZSB1bnNpZ25lZCBsb25nIG5hdGl2ZV9zYXZlX2ZsKHZv
+aWQpCitzdGF0aWMgaW5saW5lIHVuc2lnbmVkIGxvbmcgX19ub3N0YWNrcHJvdGVjdG9yIG5hdGl2
+ZV9zYXZlX2ZsKHZvaWQpCiB7CiAJdW5zaWduZWQgbG9uZyBmbGFnczsKIAotLSAKMi4xNy4wCgo=
+--00000000000097d0a8056cc6dfba--
