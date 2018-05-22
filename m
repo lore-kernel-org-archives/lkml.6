@@ -1,139 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752631AbeEVDtR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 23:49:17 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:40994 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751719AbeEVDtL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 23:49:11 -0400
-X-Google-Smtp-Source: AB8JxZpmxjkY6aQVugm/IWHgdLTrio/1jqhfzoefuJ2zEcb4GeEwh7f2jR6ziAJKEXXAt8T6RBzjqg==
-Date: Mon, 21 May 2018 23:49:06 -0400
-From: Kent Overstreet <kent.overstreet@gmail.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        peterz@infradead.org
-Subject: Re: [PATCH] [RFC] bcachefs: SIX locks (shared/intent/exclusive)
-Message-ID: <20180522034906.GA4535@kmo-pixel>
-References: <20180522021951.1453-1-kent.overstreet@gmail.com>
- <20180522030416.GB18682@bombadil.infradead.org>
+        id S1752663AbeEVDun (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 23:50:43 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38240 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751745AbeEVDui (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 23:50:38 -0400
+Subject: Re: KASAN: use-after-free Read in vhost_chr_write_iter
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: DaeRyong Jeong <threeearcat@gmail.com>, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, byoungyoung@purdue.edu, kt0755@gmail.com,
+        bammanag@purdue.edu
+References: <20180517134544.GA20646@dragonet.kaist.ac.kr>
+ <58419d62-3074-2e5a-8504-da1cdeb08280@redhat.com>
+ <fb27c1fd-5172-252a-cb8f-b53927a26d06@redhat.com>
+ <20180521173645-mutt-send-email-mst@kernel.org>
+From: Jason Wang <jasowang@redhat.com>
+Message-ID: <51cf8274-162f-384b-0ff7-47fbf15412f1@redhat.com>
+Date: Tue, 22 May 2018 11:50:29 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180522030416.GB18682@bombadil.infradead.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180521173645-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 08:04:16PM -0700, Matthew Wilcox wrote:
-> On Mon, May 21, 2018 at 10:19:51PM -0400, Kent Overstreet wrote:
-> > New lock for bcachefs, like read/write locks but with a third state,
-> > intent.
-> > 
-> > Intent locks conflict with each other, but not with read locks; taking a
-> > write lock requires first holding an intent lock.
-> 
-> Can you put something in the description that these are sleeping locks
-> (like mutexes), not spinning locks (like spinlocks)?  (Yeah, I know
-> there's the opportunistic spin, but conceptually, they're sleeping locks).
-
-Yup, I'll add that
-
-> 
-> Some other things I'd like documented:
-> 
->  - Any number of readers can hold the lock
->  - Once one thread acquires the lock for intent, further intent acquisitions
->    will block.  May new readers acquire the lock?
-
-I think I should have that covered already - "Intent does not block read, but
-does block other intent locks"
-
->  - You cannot acquire the lock for write directly, you must acquire it for
->    intent first, then upgrade to write.
->  - Can you downgrade to read from intent, or downgrade from write back to
->    intent?
-
-You hold both write and intent, like so:
-
-six_lock_intent(&foo->lock);
-six_lock_write(&foo->lock);
-six_unlock_write(&foo->lock);
-six_unlock_intent(&foo->lock);
 
 
->  - Once you are trying to upgrade from intent to write, are new read
->    acquisitions blocked? (can readers starve writers?)
+On 2018年05月21日 22:42, Michael S. Tsirkin wrote:
+> On Mon, May 21, 2018 at 10:38:10AM +0800, Jason Wang wrote:
+>> On 2018年05月18日 17:24, Jason Wang wrote:
+>>> On 2018年05月17日 21:45, DaeRyong Jeong wrote:
+>>>> We report the crash: KASAN: use-after-free Read in vhost_chr_write_iter
+>>>>
+>>>> This crash has been found in v4.17-rc1 using RaceFuzzer (a modified
+>>>> version of Syzkaller), which we describe more at the end of this
+>>>> report. Our analysis shows that the race occurs when invoking two
+>>>> syscalls concurrently, write$vnet and ioctl$VHOST_RESET_OWNER.
+>>>>
+>>>>
+>>>> Analysis:
+>>>> We think the concurrent execution of vhost_process_iotlb_msg() and
+>>>> vhost_dev_cleanup() causes the crash.
+>>>> Both of functions can run concurrently (please see call sequence below),
+>>>> and possibly, there is a race on dev->iotlb.
+>>>> If the switch occurs right after vhost_dev_cleanup() frees
+>>>> dev->iotlb, vhost_process_iotlb_msg() still sees the non-null value
+>>>> and it
+>>>> keep executing without returning -EFAULT. Consequently, use-after-free
+>>>> occures
+>>>>
+>>>>
+>>>> Thread interleaving:
+>>>> CPU0 (vhost_process_iotlb_msg)                CPU1 (vhost_dev_cleanup)
+>>>> (In the case of both VHOST_IOTLB_UPDATE and
+>>>> VHOST_IOTLB_INVALIDATE)
+>>>> =====                            =====
+>>>>                              vhost_umem_clean(dev->iotlb);
+>>>> if (!dev->iotlb) {
+>>>>              ret = -EFAULT;
+>>>>                  break;
+>>>> }
+>>>>                              dev->iotlb = NULL;
+>>>>
+>>>>
+>>>> Call Sequence:
+>>>> CPU0
+>>>> =====
+>>>> vhost_net_chr_write_iter
+>>>>      vhost_chr_write_iter
+>>>>          vhost_process_iotlb_msg
+>>>>
+>>>> CPU1
+>>>> =====
+>>>> vhost_net_ioctl
+>>>>      vhost_net_reset_owner
+>>>>          vhost_dev_reset_owner
+>>>>              vhost_dev_cleanup
+>>> Thanks a lot for the analysis.
+>>>
+>>> This could be addressed by simply protect it with dev mutex.
+>>>
+>>> Will post a patch.
+>>>
+>> Could you please help to test the attached patch? I've done some smoking
+>> test.
+>>
+>> Thanks
+>> >From 88328386f3f652e684ee33dc4cf63dcaed871aea Mon Sep 17 00:00:00 2001
+>> From: Jason Wang<jasowang@redhat.com>
+>> Date: Fri, 18 May 2018 17:33:27 +0800
+>> Subject: [PATCH] vhost: synchronize IOTLB message with dev cleanup
+>>
+>> DaeRyong Jeong reports a race between vhost_dev_cleanup() and
+>> vhost_process_iotlb_msg():
+>>
+>> Thread interleaving:
+>> CPU0 (vhost_process_iotlb_msg)			CPU1 (vhost_dev_cleanup)
+>> (In the case of both VHOST_IOTLB_UPDATE and
+>> VHOST_IOTLB_INVALIDATE)
+>> =====						=====
+>> 						vhost_umem_clean(dev->iotlb);
+>> if (!dev->iotlb) {
+>> 	        ret = -EFAULT;
+>> 		        break;
+>> }
+>> 						dev->iotlb = NULL;
+>>
+>> The reason is we don't synchronize between them, fixing by protecting
+>> vhost_process_iotlb_msg() with dev mutex.
+>>
+>> Reported-by: DaeRyong Jeong<threeearcat@gmail.com>
+>> Fixes: 6b1e6cc7855b0 ("vhost: new device IOTLB API")
+>> Reported-by: DaeRyong Jeong<threeearcat@gmail.com>
+> Long terms we might want to move iotlb into vqs
+> so that messages can be processed in parallel.
+> Not sure how to do it yet.
+>
 
-Readers can starve writers in the current implementation, but that's something
-that should probably be fixed...
+Then we probably need to extend IOTLB msg to have a queue idx. But I 
+thinkit was probably only help if we split tx/rx into separate processes.
 
->  - When you drop the lock as a writer, do we prefer reader acquisitions
->    over intent acquisitions?  That is, if we have a queue of RRIRIRIR,
->    and we drop the lock, does the queue look like II or IRIR?
-
-Separate queues per lock type, so dropping a write lock will wake up everyone
-trying to take a read lock, and dropping an intent lock wakes up everyone trying
-to take an intent lock.
-
----
-
-Here's the new documentation I just wrote:
-
-/*
- * Shared/intent/exclusive locks: sleepable read/write locks, much like rw
- * semaphores, except with a third intermediate state, intent. Basic operations
- * are:
- *
- * six_lock_read(&foo->lock);
- * six_unlock_read(&foo->lock);
- *
- * six_lock_intent(&foo->lock);
- * six_unlock_intent(&foo->lock);
- *
- * six_lock_write(&foo->lock);
- * six_unlock_write(&foo->lock);
- *
- * Intent locks block other intent locks, but do not block read locks, and you
- * must have an intent lock held before taking a write lock, like so:
- *
- * six_lock_intent(&foo->lock);
- * six_lock_write(&foo->lock);
- * six_unlock_write(&foo->lock);
- * six_unlock_intent(&foo->lock);
- *
- * Other operations:
- *
- *   six_trylock_read()
- *   six_trylock_intent()
- *   six_trylock_write()
- *
- *   six_lock_downgrade():	convert from intent to read
- *   six_lock_tryupgrade():	attempt to convert from read to intent
- *
- * Locks also embed a sequence number, which is incremented when the lock is
- * locked or unlocked for write. The current sequence number can be grabbed
- * while a lock is held from lock->state.seq; then, if you drop the lock you can
- * use six_relock_(read|intent_write)(lock, seq) to attempt to retake the lock
- * iff it hasn't been locked for write in the meantime.
- *
- * There are also operations that take the lock type as a parameter, where the
- * type is one of SIX_LOCK_read, SIX_LOCK_intent, or SIX_LOCK_write:
- *
- *   six_lock_type(lock, type)
- *   six_unlock_type(lock, type)
- *   six_relock(lock, type, seq)
- *   six_trylock_type(lock, type)
- *   six_trylock_convert(lock, from, to)
- *
- * A lock may be held multiple types by the same thread (for read or intent,
- * not write) - up to SIX_LOCK_MAX_RECURSE. However, the six locks code does
- * _not_ implement the actual recursive checks itself though - rather, if your
- * code (e.g. btree iterator code) knows that the current thread already has a
- * lock held, and for the correct type, six_lock_increment() may be used to
- * bump up the counter for that type - the only effect is that one more call to
- * unlock will be required before the lock is unlocked.
- *
- */
+Thanks
