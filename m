@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2357871-1526989072-2-114562066004066134
+X-Cyrus-Session-Id: sloti22d1t05-2357871-1526989065-2-8098205201762960101
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526989072; b=Mb+rRxiT2L/4kJYo+sMl80xCAUWFkh7UxaQoGdL6AwQZp8u46d
-    Zm1vbZh4cwW4ccf3A7Q0rYfWuhy3FZVcmLyutkqdPzYGySUHv0CoO501Uvf35K47
-    ap/i6pzJ8/WLFG1EhlLDW7eqCOvG7KXrGD2T6c0lKi+mYl4w1uvUI9BmYhT1IJSa
-    8XNwZ4FGaYX9bfNUSPlXSkFN4u8ETjBYcxVVk829CEA4a3RDbik+RVOuHGXqWg7M
-    k7x9+MTPAbHrTlMMtqF+me2WNpQFPoTata64FcLRWcjrElYlkoF7qrZHtJIky8Gg
-    uyu443U194gyNy/FeMUWS4TDXPaeGzJIUqYA==
+    1526989064; b=PdVK5KUrNtIizX+Rx9k/uILSQz/9Rox97vVtZybW+b7zuHntBA
+    IvUsVeGRnypTrXFIhiWjtZB/OhCp9jXuhURRIMS85QZ8C3h9nV1FigqILufbc6qx
+    ehoNDR+z8jo5v7k4cRDrS5CbldrGwtFN4T931R7ZJcoorZlrkIBvP/l2jbBQo16g
+    k6xf03odiDVFCr3Th1/0ijkah3fqjai1MkvNH1hjE0+/yd2b1HT/IXabX1T9CgPX
+    5BANOq8Qqt+I9M8BpgeUpGjjo8f6iKYIAqQT5EADOeXzXL3pEZ8GeJyDUDSQzuPA
+    LGQPuNBH4knE+3rBJJQ3EbaXOv6zmPmiZzGQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1526989072; bh=
-    RZebh14Nxj1OTkiJRsLKYf2pbv45iCPYG4H13ATN/xg=; b=HzK5XG/ECe9+gYuH
-    nKQoB32768TW0U8AxKCC0CyRu3l6uXbsihzKv2cfMN1M+fg8cumNP3D0HnqZbxDG
-    7YQk7UDue/1Hbf/aYNnY+ozpmNw7hFB2jS6YYJ6tZ5kfMIPWEIfQXFL4hcdGToPX
-    lmIlCvzqDnNfxHYHcLwp8rYo8m1Qvf4x/RTB+ioeC4c8WbS90/vTkPTq/BDKAwMf
-    RdLbTMJCMQFpKZf6Sd/dRxHJ0dbk+QsbfZ7QmyZurDjYmWq47Nhao+Qt5U/hZCYw
-    6/BLI7Z2I9ctYqNLlwZST+tLoB/k2ZjstX2ZlwwP7FWpA9ecCLA/gzZfVjKPxClO
-    wB8eMA==
+    :in-reply-to:references:sender:list-id; s=fm2; t=1526989064; bh=
+    TEJuM+4w3kOXQ9ylj4TGuwy2e8/6CK2zN1QFePyGkmY=; b=QbaJk1i9Xjc4wmUP
+    VycSw0SifbHumkns5ycdfyCyCMNIQ+UR9Z6iLh6Ii4yJisb0hsRsfE/JxIo/W7Z9
+    FcnvHIivqOPvieMJYAjuV2XdsrM8htTaOQlKUgVAKeYC2/RQEAPWM8OCUZlqIrGn
+    59J40BwQQcVhAlIws1FzfmUKf7Cza6plmHMqtNRh6VJuLmLBTDnwzInjRim+u41w
+    pZjlT/JmHDgNKQnRE7sxSrZ48JL7LE2tSga41UMv4zJ5/85KnOre3uXff4Pdnqkn
+    nm+skb9U40XrrnrJUTsIM8x/M8Psfg1x4HxWirF2gUwmTexeD0ylFROvNassPjk0
+    Oq0xMw==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=infradead.org header.i=@infradead.org header.b=iQzz5S5u
+    header.d=infradead.org header.i=@infradead.org header.b=QLsyxTdW
     x-bits=2048 x-keytype=rsa x-algorithm=sha256
     x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -48,7 +48,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
 Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=infradead.org header.i=@infradead.org header.b=iQzz5S5u
+      header.d=infradead.org header.i=@infradead.org header.b=QLsyxTdW
       x-bits=2048 x-keytype=rsa x-algorithm=sha256
       x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -63,28 +63,28 @@ Authentication-Results: mx4.messagingengine.com;
       header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfKUrVc5NiChjkXzgeOTTY/k55S0j8U+JxPQJ8VS+kxx7tFxavccfqvm7pY/eLMRRVN5yZJ89nsTWg562/eX8QppTfJtxIzHZ8M93bM4t03cfKm3TJpeI
-    sY2jRxQmK7eh7SljeLITEf03MCZlz1X2G4KCqE81YAVFr5w95JNNhx+6H4TUPuJLO8eUotxTyhM5z8FwWdNzzghvMlBoA3HrHSKnv/74am56TNuSKiML9Fr+
+X-CM-Envelope: MS4wfExaMLwGmqSmG/BIeUFLVMhC8QLi0adNttSpu0MQBe5hjzFFJfpOfBLU8QUz9zrUYomFBojCf2gT87fog8D3mBUrX1LI/1Fs0JI+uNEHHf5vwff7y23g
+    b7AhUCEsBVmKlxM9WW+PTRJoutCKSHAMK97Q9Gnqs+akFpUUJPd4L0gAoQO+VHKpufRXkENktrAt5WkvR1mxK7KycCi5R+UOPM2qiMCgg3tNAx+78OrKlnDG
 X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8
-    a=qBVkKzBwSuRwKVmLvv4A:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=8TZYhQDmn-aAtMH8ogcA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752525AbeEVLce (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 22 May 2018 07:32:34 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36706 "EHLO
+        id S1752679AbeEVLcm (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 22 May 2018 07:32:42 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36722 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752644AbeEVLc3 (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Tue, 22 May 2018 07:32:29 -0400
+        with ESMTP id S1751704AbeEVLch (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Tue, 22 May 2018 07:32:37 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: viro@zeniv.linux.org.uk
 Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
         linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 16/31] net/dccp: convert to ->poll_mask
-Date: Tue, 22 May 2018 13:30:53 +0200
-Message-Id: <20180522113108.25713-17-hch@lst.de>
+Subject: [PATCH 18/31] net/vmw_vsock: convert to ->poll_mask
+Date: Tue, 22 May 2018 13:30:55 +0200
+Message-Id: <20180522113108.25713-19-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180522113108.25713-1-hch@lst.de>
 References: <20180522113108.25713-1-hch@lst.de>
@@ -97,87 +97,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- net/dccp/dccp.h  |  3 +--
- net/dccp/ipv4.c  |  2 +-
- net/dccp/ipv6.c  |  2 +-
- net/dccp/proto.c | 13 ++-----------
- 4 files changed, 5 insertions(+), 15 deletions(-)
+ net/vmw_vsock/af_vsock.c | 19 ++++++-------------
+ 1 file changed, 6 insertions(+), 13 deletions(-)
 
-diff --git a/net/dccp/dccp.h b/net/dccp/dccp.h
-index f91e3816806b..0ea2ee56ac1b 100644
---- a/net/dccp/dccp.h
-+++ b/net/dccp/dccp.h
-@@ -316,8 +316,7 @@ int dccp_recvmsg(struct sock *sk, struct msghdr *msg, size_t len, int nonblock,
- 		 int flags, int *addr_len);
- void dccp_shutdown(struct sock *sk, int how);
- int inet_dccp_listen(struct socket *sock, int backlog);
--__poll_t dccp_poll(struct file *file, struct socket *sock,
--		       poll_table *wait);
-+__poll_t dccp_poll_mask(struct socket *sock, __poll_t events);
- int dccp_v4_connect(struct sock *sk, struct sockaddr *uaddr, int addr_len);
- void dccp_req_err(struct sock *sk, u64 seq);
- 
-diff --git a/net/dccp/ipv4.c b/net/dccp/ipv4.c
-index b08feb219b44..a9e478cd3787 100644
---- a/net/dccp/ipv4.c
-+++ b/net/dccp/ipv4.c
-@@ -984,7 +984,7 @@ static const struct proto_ops inet_dccp_ops = {
- 	.accept		   = inet_accept,
- 	.getname	   = inet_getname,
- 	/* FIXME: work on tcp_poll to rename it to inet_csk_poll */
--	.poll		   = dccp_poll,
-+	.poll_mask	   = dccp_poll_mask,
- 	.ioctl		   = inet_ioctl,
- 	/* FIXME: work on inet_listen to rename it to sock_common_listen */
- 	.listen		   = inet_dccp_listen,
-diff --git a/net/dccp/ipv6.c b/net/dccp/ipv6.c
-index 6344f1b18a6a..17fc4e0166ba 100644
---- a/net/dccp/ipv6.c
-+++ b/net/dccp/ipv6.c
-@@ -1070,7 +1070,7 @@ static const struct proto_ops inet6_dccp_ops = {
- 	.socketpair	   = sock_no_socketpair,
- 	.accept		   = inet_accept,
- 	.getname	   = inet6_getname,
--	.poll		   = dccp_poll,
-+	.poll_mask	   = dccp_poll_mask,
- 	.ioctl		   = inet6_ioctl,
- 	.listen		   = inet_dccp_listen,
- 	.shutdown	   = inet_shutdown,
-diff --git a/net/dccp/proto.c b/net/dccp/proto.c
-index 84cd4e3fd01b..88b668db244b 100644
---- a/net/dccp/proto.c
-+++ b/net/dccp/proto.c
-@@ -314,20 +314,11 @@ int dccp_disconnect(struct sock *sk, int flags)
- 
- EXPORT_SYMBOL_GPL(dccp_disconnect);
- 
--/*
-- *	Wait for a DCCP event.
-- *
-- *	Note that we don't need to lock the socket, as the upper poll layers
-- *	take care of normal races (between the test and the event) and we don't
-- *	go look at any of the socket buffers directly.
-- */
--__poll_t dccp_poll(struct file *file, struct socket *sock,
--		       poll_table *wait)
-+__poll_t dccp_poll_mask(struct socket *sock, __poll_t events)
- {
- 	__poll_t mask;
- 	struct sock *sk = sock->sk;
- 
--	sock_poll_wait(file, sk_sleep(sk), wait);
- 	if (sk->sk_state == DCCP_LISTEN)
- 		return inet_csk_listen_poll(sk);
- 
-@@ -369,7 +360,7 @@ __poll_t dccp_poll(struct file *file, struct socket *sock,
- 	return mask;
+diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
+index c1076c19b858..bb5d5fa68c35 100644
+--- a/net/vmw_vsock/af_vsock.c
++++ b/net/vmw_vsock/af_vsock.c
+@@ -850,18 +850,11 @@ static int vsock_shutdown(struct socket *sock, int mode)
+ 	return err;
  }
  
--EXPORT_SYMBOL_GPL(dccp_poll);
-+EXPORT_SYMBOL_GPL(dccp_poll_mask);
- 
- int dccp_ioctl(struct sock *sk, int cmd, unsigned long arg)
+-static __poll_t vsock_poll(struct file *file, struct socket *sock,
+-			       poll_table *wait)
++static __poll_t vsock_poll_mask(struct socket *sock, __poll_t events)
  {
+-	struct sock *sk;
+-	__poll_t mask;
+-	struct vsock_sock *vsk;
+-
+-	sk = sock->sk;
+-	vsk = vsock_sk(sk);
+-
+-	poll_wait(file, sk_sleep(sk), wait);
+-	mask = 0;
++	struct sock *sk = sock->sk;
++	struct vsock_sock *vsk = vsock_sk(sk);
++	__poll_t mask = 0;
+ 
+ 	if (sk->sk_err)
+ 		/* Signify that there has been an error on this socket. */
+@@ -1091,7 +1084,7 @@ static const struct proto_ops vsock_dgram_ops = {
+ 	.socketpair = sock_no_socketpair,
+ 	.accept = sock_no_accept,
+ 	.getname = vsock_getname,
+-	.poll = vsock_poll,
++	.poll_mask = vsock_poll_mask,
+ 	.ioctl = sock_no_ioctl,
+ 	.listen = sock_no_listen,
+ 	.shutdown = vsock_shutdown,
+@@ -1849,7 +1842,7 @@ static const struct proto_ops vsock_stream_ops = {
+ 	.socketpair = sock_no_socketpair,
+ 	.accept = vsock_accept,
+ 	.getname = vsock_getname,
+-	.poll = vsock_poll,
++	.poll_mask = vsock_poll_mask,
+ 	.ioctl = sock_no_ioctl,
+ 	.listen = vsock_listen,
+ 	.shutdown = vsock_shutdown,
 -- 
 2.17.0
 
