@@ -1,89 +1,117 @@
-Return-Path: <okaya@codeaurora.org>
-X-Google-Smtp-Source: AB8JxZqLIsPsU8rk8wZWg5MjakmeRakaGNUq/c4qVz19xcixLEHistdFZc9cyCwa8Nyw9ptuvoZ2
-ARC-Seal: i=1; a=rsa-sha256; t=1527031843; cv=none;
+Return-Path: <rajatja@google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1527028110; cv=none;
         d=google.com; s=arc-20160816;
-        b=F7r1BdNndW4GOpkMVWqdxL5cj/dpxkeRo+HCzvdC93R+x0nlDTBqQIw8KVy9py+r61
-         cZ/c9vjZW7hDdY1rxJgAI1ZQVzVm5CTIUCF0pv5bDGo2q1NBu9aOMKSpayj1nlu9oseJ
-         Vn+4/9Lz7rJy0IPPaiYfoY0VVzk3+V3SYdKRA+qJr62JQjFF+zsuXnhtFQ+n86q5U2G6
-         2UPgICWvami2dNIVbW8zqau1L2kKlLXECcccQWt/x/8iRgwBuSNBPLUWedoapnXC9eEE
-         BquDm3VVCvNi7jZLnfrR7K50qSCvJHfnuU3po2RpYITrsNRE93w7GPLEaHVF+KvBXZdj
-         ZAvA==
+        b=RxMGZYSg19X2Uib6uqtO91dcxbVM3qhCGqndIO/+vVxXOZCOkuW2T62KKn/KiPDjuL
+         MIYa5wz/1XbwggLr3ND7k4mjUCgzLpvDH+rCtTKmvgNjrxi+CtgFB1bVL+szLc1toRVc
+         cRgl3ZEuejimNY0Ddkaz4VzDJBtuWbQ5v6xwrW1LrL3N8N9nLUpFr4HXz3t5qvTVNE1J
+         EpGYes1FiA2b6KZYJWpRfXZyTiawNLhgiVfP3x5RNqM/bTzPeA+YeWiE3As9bNbj06OW
+         33v4sjkSZfIg/xnh5XETP8wH9juuspUdKMoCabuUKpZSSbjagsEvN0wGnzGoFVV1i1l5
+         2BHg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :dmarc-filter:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=7q0sqrwqSRlEC11/ZKteK6AmMgdTCFwSg6AHTTWEyeI=;
-        b=lUcmdd/tQvsqUQGwFPOKg9zjNrAQQtqXyef4zYngqDzR2zWWV2pu1whsueE8XcVLM4
-         xLjVWbS/iDtu43q5VT9mCfUHz8EM8v3eHR11Ccp5DrHXPoRPT2e1ZuvMVN2mRNaUuaoB
-         61WlnWjPVkrFBYgARORZvCv7iWetW/fgprTMssOrI5jSN2GtJyEHNO/R0TBOPTuAhIsi
-         Fpt0MTkmTtmNpgnSWTeDnGgVdWNmMN+o5bUjhqOX0rJFT9e2CK+aVzIGKuQw17Z7j4D3
-         ANWwphoCNuycT3c/1VggIZnohhMAa6swsG8Qmwdz2KIRzsqo/LoanDtC2uoeWX9aznm3
-         ps6g==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=z7VkBQQlYBnvGN1Gtxd8V7KUxPUVslFvPtw1dHurOCM=;
+        b=CIKoqb58npFjft1/e+5agALMdZ8oot/95ZAMdcfTNIHl+66x4jMS2GE9VQM1NTLBjR
+         4d33PsEDs6t6/VDY6fMuj/NSTIL7UIbm+xOpDLGv3XuVOTNF5j+PVU58nIibpgVVoTC1
+         vH7vYYUVnuLb7pBY/SeDREnTTzQdu4IVEcMR2t5urZ+CnIOrA8H8sccikkK3jaQN2JgH
+         IIaLUliSdGMkB9Wj35OTItSrKnFPRbszd4H3jFhsRpGimvZmnItyzOHLmMc1AJVNUJ9e
+         /13G6KQJ3sp67hu+sg6EGO3YqdYkeopoqPnSKZwu6o0MKRbvH5bUDCXskQQIOQL85JUS
+         n7aw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=X8lZ1g+t;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=mXcdZFBU;
-       spf=pass (google.com: domain of okaya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=okaya@codeaurora.org
+       dkim=pass header.i=@google.com header.s=20161025 header.b=Im6X19go;
+       spf=pass (google.com: domain of rajatja@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=rajatja@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=X8lZ1g+t;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=mXcdZFBU;
-       spf=pass (google.com: domain of okaya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=okaya@codeaurora.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6CDDB6028C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH 2/5] PCI/AER: Add sysfs stats for AER capable devices
-To: Rajat Jain <rajatja@google.com>, "Alex G." <mr.nuke.me@gmail.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Jonathan Corbet <corbet@lwn.net>,
- Philippe Ombredanne <pombredanne@nexb.com>,
- Kate Stewart <kstewart@linuxfoundation.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Frederick Lawler <fred@fredlawl.com>, Oza Pawandeep <poza@codeaurora.org>,
- Keith Busch <keith.busch@intel.com>,
- Gabriele Paoloni <gabriele.paoloni@huawei.com>,
- Thomas Tai <thomas.tai@oracle.com>,
- "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
- linux-pci <linux-pci@vger.kernel.org>, linux-doc@vger.kernel.org,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Jes Sorensen <jsorensen@fb.com>, Kyle McMartin <jkkm@fb.com>,
- Rajat Jain <rajatxjain@gmail.com>
+       dkim=pass header.i=@google.com header.s=20161025 header.b=Im6X19go;
+       spf=pass (google.com: domain of rajatja@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=rajatja@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+X-Google-Smtp-Source: AB8JxZrRiuC9iS72kd4aGlNn5MMtdQyVn0H3/m5JAUn0kvnd2dsIr1Zj8+8Wi4tngIzM5X4VAL9eFg==
+From: Rajat Jain <rajatja@google.com>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Philippe Ombredanne <pombredanne@nexb.com>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rajat Jain <rajatja@google.com>,
+	Frederick Lawler <fred@fredlawl.com>,
+	Oza Pawandeep <poza@codeaurora.org>,
+	Keith Busch <keith.busch@intel.com>,
+	Gabriele Paoloni <gabriele.paoloni@huawei.com>,
+	Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+	Thomas Tai <thomas.tai@oracle.com>,
+	"Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+	linux-pci@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jes Sorensen <jsorensen@fb.com>,
+	Kyle McMartin <jkkm@fb.com>
+Cc: rajatxjain@gmail.com
+Subject: [PATCH 5/5] Documentation/PCI: Add details of PCI AER statistics
+Date: Tue, 22 May 2018 15:28:05 -0700
+Message-Id: <20180522222805.80314-6-rajatja@google.com>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+In-Reply-To: <20180522222805.80314-1-rajatja@google.com>
 References: <20180522222805.80314-1-rajatja@google.com>
- <20180522222805.80314-3-rajatja@google.com>
- <dcbb2e92-722f-c178-efb7-8d99d4a9d99f@gmail.com>
- <CACK8Z6GNPa+15WLxJBUAZ2=+jfhtdz+85=41B56KWSWCHSnyGw@mail.gmail.com>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <9861c339-6784-c7ec-b1ec-6722fb0d5bd5@codeaurora.org>
-Date: Tue, 22 May 2018 19:30:39 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <CACK8Z6GNPa+15WLxJBUAZ2=+jfhtdz+85=41B56KWSWCHSnyGw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1601205018627101133?=
-X-GMAIL-MSGID: =?utf-8?q?1601208943038165781?=
+X-GMAIL-THRID: =?utf-8?q?1601205027389634414?=
+X-GMAIL-MSGID: =?utf-8?q?1601205027389634414?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 5/22/2018 7:27 PM, Rajat Jain wrote:
->> What about AER errors that are contained by DPC?
-> Thanks, You are right, this patch does not take care of the DPC. I'll
-> try to read up on DPC and can integrate it if it turns out to be easy
-> enough.
-> 
+Add the PCI AER statistics details to
+Documentation/PCI/pcieaer-howto.txt
 
-I'd focus on AER for the moment. DPC is going through major restructuring
-and will only handle AER_FATAL errors moving forward.
+Signed-off-by: Rajat Jain <rajatja@google.com>
+---
+ Documentation/PCI/pcieaer-howto.txt | 35 +++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-> Thanks,
-> 
-> Rajat
-> 
-
-
+diff --git a/Documentation/PCI/pcieaer-howto.txt b/Documentation/PCI/pcieaer-howto.txt
+index acd0dddd6bb8..86ee9f9ff5e1 100644
+--- a/Documentation/PCI/pcieaer-howto.txt
++++ b/Documentation/PCI/pcieaer-howto.txt
+@@ -73,6 +73,41 @@ In the example, 'Requester ID' means the ID of the device who sends
+ the error message to root port. Pls. refer to pci express specs for
+ other fields.
+ 
++2.4 AER statistics
++
++When AER messages are captured, the statistics are exposed via the following
++sysfs attributes under the "aer_stats" folder for the device:
++
++2.4.1 Device sysfs Attributes
++
++These attributes show up under all the devices that are AER capable. These
++indicate the errors "as seen by the device". Note that this may mean that if
++an end point is causing problems, the AER counters may increment at its link
++partner (e.g. root port) because the errors will be "seen" by the link partner
++and not the the problematic end point itself (which may report all counters
++as 0 as it never saw any problems).
++
++ * dev_total_cor_errs: number of correctable errors seen by the device.
++ * dev_total_fatal_errs: number of fatal uncorrectable errors seen by the device.
++ * dev_total_nonfatal_errs: number of nonfatal uncorr errors seen by the device.
++ * dev_breakdown_correctable: Provides a breakdown of different type of
++                              correctable errors seen.
++ * dev_breakdown_uncorrectable: Provides a breakdown of different type of
++                              uncorrectable errors seen.
++
++2.4.1 Rootport sysfs Attributes
++
++These attributes showup under only the rootports that are AER capable. These
++indicate the number of error messages as "reported to" the rootport. Please note
++that the rootports also transmit (internally) the ERR_* messages for errors seen
++by the internal rootport PCI device, so these counters includes them and are
++thus cumulative of all the error messages on the PCI hierarchy originating
++at that root port.
++
++ * rootport_total_cor_errs: number of ERR_COR messages reported to rootport.
++ * rootport_total_fatal_errs: number of ERR_FATAL messages reported to rootport.
++ * rootport_total_nonfatal_errs: number of ERR_NONFATAL messages reporeted to
++                                 rootport.
+ 
+ 3. Developer Guide
+ 
 -- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.17.0.441.gb46fe60e1d-goog
