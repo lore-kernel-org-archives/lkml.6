@@ -1,60 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753444AbeEVWbi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 18:31:38 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:36535 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753224AbeEVWbf (ORCPT
+        id S1753453AbeEVWd6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 18:33:58 -0400
+Received: from mail-yw0-f194.google.com ([209.85.161.194]:38737 "EHLO
+        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753105AbeEVWd5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 18:31:35 -0400
-X-Google-Smtp-Source: AB8JxZqAFgEIHR4TWLtKSdEn+jnbg7SNXUf8YPKZHi9/Mz7x3xQhH63Dc2Sb+MkSQze4mWar4ibiLg==
-Date: Tue, 22 May 2018 17:31:33 -0500
+        Tue, 22 May 2018 18:33:57 -0400
+X-Google-Smtp-Source: AB8JxZrMVpG87c5pe6k8nYmBwqZYeIhqPJrYTPRCfCYbN1HdYyiKBzQ9d6Pe7lMB9Y4/f5nPkhTe1A==
+Date: Tue, 22 May 2018 17:33:54 -0500
 From: Rob Herring <robh@kernel.org>
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE"
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Doug Berger <opendmb@gmail.com>, Justin Chen <justinpopo6@gmail.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] soc: bcm: brcmstb: Add missing DDR MEMC compatible
- strings
-Message-ID: <20180522223133.GA11292@rob-hp-laptop>
-References: <20180511220242.837-1-f.fainelli@gmail.com>
- <20180511220242.837-3-f.fainelli@gmail.com>
+To: Rohit kumar <rohitkr@codeaurora.org>
+Cc: ohad@wizery.com, bjorn.andersson@linaro.org, mark.rutland@arm.com,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bgoswami@codeaurora.org,
+        sbpata@codeaurora.org, asishb@codeaurora.org, rkarra@codeaurora.org,
+        RajendraBabu Medisetti <rajendrabm@codeaurora.org>,
+        Krishnamurthy Renu <krishnamurthy.renu@codeaurora.org>
+Subject: Re: [PATCH] remoteproc:  Add APSS based Qualcomm ADSP PIL driver for
+ SDM845
+Message-ID: <20180522223354.GA14150@rob-hp-laptop>
+References: <1526194908-19027-1-git-send-email-rohitkr@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180511220242.837-3-f.fainelli@gmail.com>
+In-Reply-To: <1526194908-19027-1-git-send-email-rohitkr@codeaurora.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 11, 2018 at 03:02:42PM -0700, Florian Fainelli wrote:
-> We would not be matching the following chip/compatible strings
-> combinations, which would lead to not setting the warm boot flag
-> correctly, fix that:
+On Sun, May 13, 2018 at 12:31:48PM +0530, Rohit kumar wrote:
+> This adds Qualcomm ADSP PIL driver support for SDM845 with ADSP bootup
+> and shutdown operation handled from Application Processor SubSystem(APSS).
 > 
->     7260A0/B0: brcm,brcmstb-memc-ddr-rev-b.2.1
->     7255A0: brcm,brcmstb-memc-ddr-rev-b.2.3
->     7278Bx: brcm,brcmstb-memc-ddr-rev-b.3.1
-> 
-> The B2.1 core (which is in 7260 A0 and B0) doesn't have the
-> SHIMPHY_ADDR_CNTL_0_DDR_PAD_CNTRL setup in the memsys init code, nor
-> does it have the warm boot flag re-definition on entry. Those changes
-> were for B2.2 and later MEMSYS cores. Fall back to the previous S2/S3
-> entry method for these specific chips.
-> 
-> Fixes: 0b741b8234c8 ("soc: bcm: brcmstb: Add support for S2/S3/S5 suspend states (ARM)")
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
+> Signed-off-by: RajendraBabu Medisetti <rajendrabm@codeaurora.org>
+> Signed-off-by: Krishnamurthy Renu <krishnamurthy.renu@codeaurora.org>
 > ---
->  Documentation/devicetree/bindings/arm/bcm/brcm,brcmstb.txt |  3 +++
->  drivers/soc/bcm/brcmstb/pm/pm-arm.c                        | 12 ++++++++++++
->  2 files changed, 15 insertions(+)
+>  .../devicetree/bindings/remoteproc/qcom,adsp.txt   |   1 +
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
+
+>  drivers/remoteproc/Makefile                        |   3 +-
+>  drivers/remoteproc/qcom_adsp_pil.c                 | 122 ++++-----
+>  drivers/remoteproc/qcom_adsp_pil.h                 |  86 ++++++
+>  drivers/remoteproc/qcom_adsp_pil_sdm845.c          | 304 +++++++++++++++++++++
+>  5 files changed, 454 insertions(+), 62 deletions(-)
+>  create mode 100644 drivers/remoteproc/qcom_adsp_pil.h
+>  create mode 100644 drivers/remoteproc/qcom_adsp_pil_sdm845.c
