@@ -1,80 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751567AbeEVN3f (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 09:29:35 -0400
-Received: from xavier.telenet-ops.be ([195.130.132.52]:50510 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751517AbeEVN3c (ORCPT
+        id S1751420AbeEVNck (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 09:32:40 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:42587 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751214AbeEVNch (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 09:29:32 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC] ARM: dts: r8a7791: Move enable-method to CPU nodes
-Date: Tue, 22 May 2018 15:29:25 +0200
-Message-Id: <1526995765-29693-1-git-send-email-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.7.4
+        Tue, 22 May 2018 09:32:37 -0400
+X-Google-Smtp-Source: AB8JxZomFn748sSrRNTMzsyn4Hj2/3oyXoFNxvM5i/croH+xAZSp60pZNZOo6+Ib1TyKX4nyQKlYdQ==
+From: Ivan Bornyakov <brnkv.i1@gmail.com>
+To: lustre-devel@lists.lustre.org
+Cc: oleg.drokin@intel.com, andreas.dilger@intel.com,
+        jsimmons@infradead.org, gregkh@linuxfoundation.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Ivan Bornyakov <brnkv.i1@gmail.com>
+Subject: [PATCH] staging: lustre: libcfs: add parens around macros args
+Date: Tue, 22 May 2018 16:34:39 +0300
+Message-Id: <20180522133439.12338-1-brnkv.i1@gmail.com>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to Documentation/devicetree/bindings/arm/cpus.txt, the
-"enable-method" property should be a property of the individual CPU
-nodes, not of the parent "cpus" node.  However, on R-Car M2-W (and on
-several other arm32 SoCs), the property is tied to the "cpus" node
-instead.
+One may call 'CFS_FAIL_TIMEOUT(id, secs + 5);' and get unexpected result
+after macro substitution, viz., 'secs + 5' will turn into
+'secs + 5 * 1000'
 
-Secondary CPU bringup and CPU hot (un)plug work regardless, as
-arm_dt_init_cpu_maps() falls back to looking in the "cpus" node.
-
-The cpuidle code does not have such a fallback, so it does not detect
-the enable-method.  Note that cpuidle does not support the
-"renesas,apmu" enable-method yet, so for now this does not make any
-difference.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Ivan Bornyakov <brnkv.i1@gmail.com>
 ---
-Arm64 and powerpc do not have such a fallback, but SH has, like arm32.
+ drivers/staging/lustre/include/linux/libcfs/libcfs_fail.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-This is marked RFC, as the alternative is to update the DT bindings to
-keep the status quo.
----
- arch/arm/boot/dts/r8a7791.dtsi | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index d568bd22d6cbd855..b214cb8f52e47109 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -71,7 +71,6 @@
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		enable-method = "renesas,apmu";
+diff --git a/drivers/staging/lustre/include/linux/libcfs/libcfs_fail.h b/drivers/staging/lustre/include/linux/libcfs/libcfs_fail.h
+index d6fc3164e7e7..f96b9a51554d 100644
+--- a/drivers/staging/lustre/include/linux/libcfs/libcfs_fail.h
++++ b/drivers/staging/lustre/include/linux/libcfs/libcfs_fail.h
+@@ -140,7 +140,7 @@ static inline int cfs_fail_timeout_set(u32 id, u32 value, int ms, int set)
  
- 		cpu0: cpu@0 {
- 			device_type = "cpu";
-@@ -83,6 +82,7 @@
- 			clock-latency = <300000>; /* 300 us */
- 			power-domains = <&sysc R8A7791_PD_CA15_CPU0>;
- 			next-level-cache = <&L2_CA15>;
-+			enable-method = "renesas,apmu";
+ /* If id hit cfs_fail_loc, sleep for seconds or milliseconds */
+ #define CFS_FAIL_TIMEOUT(id, secs) \
+-	cfs_fail_timeout_set(id, 0, secs * 1000, CFS_FAIL_LOC_NOSET)
++	cfs_fail_timeout_set(id, 0, (secs) * 1000, CFS_FAIL_LOC_NOSET)
  
- 			/* kHz - uV - OPPs unknown yet */
- 			operating-points = <1500000 1000000>,
-@@ -101,6 +101,7 @@
- 			clocks = <&cpg CPG_CORE R8A7791_CLK_Z>;
- 			power-domains = <&sysc R8A7791_PD_CA15_CPU1>;
- 			next-level-cache = <&L2_CA15>;
-+			enable-method = "renesas,apmu";
- 		};
+ #define CFS_FAIL_TIMEOUT_MS(id, ms) \
+ 	cfs_fail_timeout_set(id, 0, ms, CFS_FAIL_LOC_NOSET)
+@@ -150,10 +150,10 @@ static inline int cfs_fail_timeout_set(u32 id, u32 value, int ms, int set)
+  * sleep seconds or milliseconds
+  */
+ #define CFS_FAIL_TIMEOUT_ORSET(id, value, secs) \
+-	cfs_fail_timeout_set(id, value, secs * 1000, CFS_FAIL_LOC_ORSET)
++	cfs_fail_timeout_set(id, value, (secs) * 1000, CFS_FAIL_LOC_ORSET)
  
- 		L2_CA15: cache-controller-0 {
+ #define CFS_FAIL_TIMEOUT_RESET(id, value, secs) \
+-	cfs_fail_timeout_set(id, value, secs * 1000, CFS_FAIL_LOC_RESET)
++	cfs_fail_timeout_set(id, value, (secs) * 1000, CFS_FAIL_LOC_RESET)
+ 
+ #define CFS_FAIL_TIMEOUT_MS_ORSET(id, value, ms) \
+ 	cfs_fail_timeout_set(id, value, ms, CFS_FAIL_LOC_ORSET)
 -- 
-2.7.4
+2.16.1
