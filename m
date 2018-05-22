@@ -1,62 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751447AbeEVIpC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 04:45:02 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:43280 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751177AbeEVIo5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 04:44:57 -0400
-Subject: Re: [PATCH v11 01/27] clk: davinci: pll: allow dev == NULL
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <20180518164829.27052-1-david@lechnology.com>
- <20180518164829.27052-2-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <fb68ea47-9d94-143d-0ee1-b7ba7da2c378@ti.com>
-Date: Tue, 22 May 2018 14:13:43 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180518164829.27052-2-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        id S1751519AbeEVIpg (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 04:45:36 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53526 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751465AbeEVIpb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 04:45:31 -0400
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: devel@linuxdriverproject.org
+Cc: Dexuan Cui <decui@microsoft.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] tools: hv: lsvmbus: convert to Python3
+Date: Tue, 22 May 2018 10:45:27 +0200
+Message-Id: <20180522084527.29254-1-vkuznets@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday 18 May 2018 10:18 PM, David Lechner wrote:
-> @@ -711,11 +777,11 @@ int of_davinci_pll_init(struct device *dev,
->  		int n_clks =  max_sysclk_id + 1;
->  		int i;
->  
-> -		clk_data = devm_kzalloc(dev, sizeof(*clk_data), GFP_KERNEL);
-> +		clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
->  		if (!clk_data)
->  			return -ENOMEM;
->  
-> -		clks = devm_kmalloc_array(dev, n_clks, sizeof(*clks), GFP_KERNEL);
-> +		clks = kmalloc_array(n_clks, sizeof(*clks), GFP_KERNEL);
->  		if (!clks)
->  			return -ENOMEM;
+Use '2to3' tool to make lsvmbus work with both Python2 and Python3.
 
-This should be:
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+---
+ tools/hv/lsvmbus | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-		if (!clks) {
-			kfree(clk_data);
-			return -ENOMEM;
-		}
-
-With that fixed:
-
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
-
-Thanks,
-Sekhar
+diff --git a/tools/hv/lsvmbus b/tools/hv/lsvmbus
+index 353e56768df8..c184aac33d5c 100644
+--- a/tools/hv/lsvmbus
++++ b/tools/hv/lsvmbus
+@@ -17,7 +17,7 @@ if options.verbose is not None:
+ 
+ vmbus_sys_path = '/sys/bus/vmbus/devices'
+ if not os.path.isdir(vmbus_sys_path):
+-	print "%s doesn't exist: exiting..." % vmbus_sys_path
++	print("%s doesn't exist: exiting..." % vmbus_sys_path)
+ 	exit(-1)
+ 
+ vmbus_dev_dict = {
+@@ -93,11 +93,11 @@ format2 = '%2s: Class_ID = %s - %s\n\tDevice_ID = %s\n\tSysfs path: %s\n%s'
+ 
+ for d in vmbus_dev_list:
+ 	if verbose == 0:
+-		print ('VMBUS ID ' + format0) % (d.vmbus_id, d.dev_desc)
++		print(('VMBUS ID ' + format0) % (d.vmbus_id, d.dev_desc))
+ 	elif verbose == 1:
+-		print ('VMBUS ID ' + format1) %	\
+-			(d.vmbus_id, d.class_id, d.dev_desc, d.chn_vp_mapping)
++		print(('VMBUS ID ' + format1) %	\
++			(d.vmbus_id, d.class_id, d.dev_desc, d.chn_vp_mapping))
+ 	else:
+-		print ('VMBUS ID ' + format2) % \
++		print(('VMBUS ID ' + format2) % \
+ 			(d.vmbus_id, d.class_id, d.dev_desc, \
+-			d.device_id, d.sysfs_path, d.chn_vp_mapping)
++			d.device_id, d.sysfs_path, d.chn_vp_mapping))
+-- 
+2.14.3
