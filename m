@@ -1,136 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753011AbeEVTik (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 15:38:40 -0400
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:43682 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752989AbeEVTih (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 15:38:37 -0400
-X-Google-Smtp-Source: AB8JxZr3ZTet8UF5DkW6I/qhUJeQKz+rB28IMTos7fWZV75RyrO4EPh0J6mVOvbbbAFOwDWKLKeomA8OeG9kVrGHNcg=
-MIME-Version: 1.0
-In-Reply-To: <f1970a64be17267e0f044242dc0764d6@codeaurora.org>
-References: <1526492623-20527-1-git-send-email-rishabhb@codeaurora.org>
- <1526492623-20527-3-git-send-email-rishabhb@codeaurora.org>
- <CAHp75VdO7+u-PQ+RBH71sxHHG0WkAyEVxv0BNPaycbcRnrZang@mail.gmail.com> <f1970a64be17267e0f044242dc0764d6@codeaurora.org>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 22 May 2018 22:38:36 +0300
-Message-ID: <CAHp75Vd8HZU+BT38-OfXHiihv1yZG6YBeMWyfweBA+kAwk6HUw@mail.gmail.com>
-Subject: Re: [PATCH v7 2/2] drivers: soc: Add LLCC driver
-To: Rishabh Bhatnagar <rishabhb@codeaurora.org>
-Cc: linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm@lists.infradead.org, tsoni@codeaurora.org,
-        ckadabi@codeaurora.org, Evan Green <evgreen@chromium.org>,
-        Rob Herring <robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1752926AbeEVTh7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 15:37:59 -0400
+Received: from mga07.intel.com ([134.134.136.100]:16706 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752420AbeEVTcD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 15:32:03 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,430,1520924400";
+   d="scan'208";a="226406352"
+From: Reinette Chatre <reinette.chatre@intel.com>
+To: tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
+        vikas.shivappa@linux.intel.com
+Cc: gavin.hindman@intel.com, jithu.joseph@intel.com, dave.hansen@intel.com,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Reinette Chatre <reinette.chatre@intel.com>
+Subject: [PATCH V4 06/38] x86/intel_rdt: Make useful functions available internally
+Date: Tue, 22 May 2018 04:28:54 -0700
+Message-Id: <2d44c94263cb89b04a4c01e6d59c8b3357208e9d.1526987654.git.reinette.chatre@intel.com>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <cover.1526987654.git.reinette.chatre@intel.com>
+References: <cover.1526987654.git.reinette.chatre@intel.com>
+In-Reply-To: <cover.1526987654.git.reinette.chatre@intel.com>
+References: <cover.1526987654.git.reinette.chatre@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 9:33 PM,  <rishabhb@codeaurora.org> wrote:
-> On 2018-05-18 14:01, Andy Shevchenko wrote:
->> On Wed, May 16, 2018 at 8:43 PM, Rishabh Bhatnagar
->> <rishabhb@codeaurora.org> wrote:
+In support of the work done to enable resource groups to have different
+modes some static functions need to be available for sharing amongst
+all RDT components.
 
->>> +#define ACTIVATE                      0x1
->>> +#define DEACTIVATE                    0x2
->>> +#define ACT_CTRL_OPCODE_ACTIVATE      0x1
->>> +#define ACT_CTRL_OPCODE_DEACTIVATE    0x2
->>> +#define ACT_CTRL_ACT_TRIG             0x1
->>
->>
->> Are these bits? Perhaps BIT() ?
->>
-> isn't it just better to use fixed size as u suggest in the next comment?
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+---
+ arch/x86/kernel/cpu/intel_rdt.h             | 2 ++
+ arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c | 2 +-
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c    | 2 +-
+ 3 files changed, 4 insertions(+), 2 deletions(-)
 
-If the are bits, use BIT() macro.
-
->>> +struct llcc_slice_desc *llcc_slice_getd(u32 uid)
->>> +{
->>> +       const struct llcc_slice_config *cfg;
->>> +       struct llcc_slice_desc *desc;
->>> +       u32 sz, count = 0;
->>> +
->>> +       cfg = drv_data->cfg;
->>> +       sz = drv_data->cfg_size;
->>> +
->>
->>
->>> +       while (cfg && count < sz) {
->>> +               if (cfg->usecase_id == uid)
->>> +                       break;
->>> +               cfg++;
->>> +               count++;
->>> +       }
->>> +       if (cfg == NULL || count == sz)
->>> +               return ERR_PTR(-ENODEV);
->>
->>
->> if (!cfg)
->>           return ERR_PTR(-ENODEV);
->>
->> while (cfg->... != uid) {
->>   cfg++;
->>   count++;
->> }
->>
->> if (count == sz)
->>  return ...
->>
->> Though I would rather put it to for () loop.
->>
-> In each while loop iteration the cfg pointer needs to be checked for
-> NULL. What if the usecase id never matches the uid passed by client
-> and we keep iterating. At some point it will crash.
-
-do {
-  if (!cfg || count == sz)
-   return ...(-ENODEV);
- ...
-} while (...);
-
-Though, as I said for-loop will look slightly better I think.
-
->>> +       ret = llcc_update_act_ctrl(desc->slice_id, act_ctrl_val,
->>> +                                 DEACTIVATE);
->>
->>
->> Perhaps one line (~83 characters here is OK) ?
->
-> The checkpatch script complains about such lines.
-
-So what if it just 3 characters out?
-
->>> +       ret = llcc_update_act_ctrl(desc->slice_id, act_ctrl_val,
->>> +                                 ACTIVATE);
-
->> Ditto.
-
->>> +               attr1_cfg = bcast_off +
->>> +
->>> LLCC_TRP_ATTR1_CFGn(llcc_table[i].slice_id);
->>> +               attr0_cfg = bcast_off +
->>> +
->>> LLCC_TRP_ATTR0_CFGn(llcc_table[i].slice_id);
-
->> Ditto.
-
->>> +               attr1_val |= llcc_table[i].probe_target_ways <<
->>> +                               ATTR1_PROBE_TARGET_WAYS_SHIFT;
->>> +               attr1_val |= llcc_table[i].fixed_size <<
->>> +                               ATTR1_FIXED_SIZE_SHIFT;
->>> +               attr1_val |= llcc_table[i].priority <<
->>> ATTR1_PRIORITY_SHIFT;
-
->> foo |=
->>   bar << SHIFT;
->>
->> would look slightly better.
-
-Did you consider this option ?
-
+diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
+index 7ff1f633bebe..5f3915c2e599 100644
+--- a/arch/x86/kernel/cpu/intel_rdt.h
++++ b/arch/x86/kernel/cpu/intel_rdt.h
+@@ -465,6 +465,8 @@ int rdtgroup_schemata_show(struct kernfs_open_file *of,
+ 			   struct seq_file *s, void *v);
+ enum rdtgrp_mode rdtgroup_mode_by_closid(int closid);
+ struct rdt_domain *get_domain_from_cpu(int cpu, struct rdt_resource *r);
++int update_domains(struct rdt_resource *r, int closid);
++void closid_free(int closid);
+ int alloc_rmid(void);
+ void free_rmid(u32 rmid);
+ int rdt_get_mon_l3_config(struct rdt_resource *r);
+diff --git a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
+index 116d57b248d3..2c23bb136ccc 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
++++ b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
+@@ -175,7 +175,7 @@ static int parse_line(char *line, struct rdt_resource *r)
+ 	return -EINVAL;
+ }
+ 
+-static int update_domains(struct rdt_resource *r, int closid)
++int update_domains(struct rdt_resource *r, int closid)
+ {
+ 	struct msr_param msr_param;
+ 	cpumask_var_t cpu_mask;
+diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+index fdc55357251b..35e538eed977 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
++++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+@@ -121,7 +121,7 @@ static int closid_alloc(void)
+ 	return closid;
+ }
+ 
+-static void closid_free(int closid)
++void closid_free(int closid)
+ {
+ 	closid_free_map |= 1 << closid;
+ }
 -- 
-With Best Regards,
-Andy Shevchenko
+2.13.6
