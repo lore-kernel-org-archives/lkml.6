@@ -1,68 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751440AbeEVP1Q (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 11:27:16 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:43906 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751199AbeEVP1M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 11:27:12 -0400
-X-Google-Smtp-Source: AB8JxZo+Qu75+FHNuDSMMTWE9fJejlrSII7sZqePmbjSzhmi/mp4gZCJTe0hr+foR5SSUlwIIAeCPCKASpMWeo2n6w0=
+        id S1751547AbeEVP1k (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 11:27:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37914 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751199AbeEVP1i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 11:27:38 -0400
+Date: Tue, 22 May 2018 11:27:36 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: RCU branching for the v4.19 merge window
+Message-ID: <20180522112736.4b44ae3c@gandalf.local.home>
+In-Reply-To: <20180517144044.GA6089@linux.vnet.ibm.com>
+References: <20180517144044.GA6089@linux.vnet.ibm.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <4237890.zlzv5C60QP@aspire.rjw.lan>
-References: <20180518185501.173552-1-joel@joelfernandes.org>
- <20180522113844.5rz3skjeck57arft@vireshk-i7> <CAJZ5v0hP+gCiLa+6YvKHaj7u-DuRfmVq_vjFRMj6CnVktJRxVg@mail.gmail.com>
- <4237890.zlzv5C60QP@aspire.rjw.lan>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 22 May 2018 17:27:11 +0200
-X-Google-Sender-Auth: OiWPvzHn_kGeVlZI5iUk1EHisag
-Message-ID: <CAJZ5v0henS+LZ64JQwrXR8LrY7xzcsnnYS7AoBuR9dNaC4mTRw@mail.gmail.com>
-Subject: Re: [PATCH v2] schedutil: Allow cpufreq requests to be made even when
- kthread kicked
-To: Viresh Kumar <viresh.kumar@linaro.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>, Todd Kjos <tkjos@google.com>,
-        Claudio Scordino <claudio@evidence.eu.com>, kernel-team@android.com,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Joel Fernandes (Google.)" <joelaf@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 2:22 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> On Tuesday, May 22, 2018 1:42:05 PM CEST Rafael J. Wysocki wrote:
->> On Tue, May 22, 2018 at 1:38 PM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
->> > On 22-05-18, 13:31, Rafael J. Wysocki wrote:
->> >> So below is my (compiled-only) version of the $subject patch, obviously based
->> >> on the Joel's work.
->> >>
->> >> Roughly, what it does is to move the fast_switch_enabled path entirely to
->> >> sugov_update_single() and take the spinlock around sugov_update_commit()
->> >> in the one-CPU case too.
->
-> [cut]
->
->> >
->> > Why do you assume that fast switch isn't possible in shared policy
->> > cases ? It infact is already enabled for few drivers.
->
-> I hope that fast_switch is not used with devfs_possible_from_any_cpu set in the
-> one-CPU policy case, as that looks racy even without any patching.
+On Thu, 17 May 2018 07:40:44 -0700
+"Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
 
-Which would be the only case in which sugov_update_single() would run
-on a CPU that is not the target.
+> Hello, Steve!
+> 
+> Another year, another difficult-to-branch set of RCU commits.
+> 
+> In happy contrast to last year, I can make some branches (SRCU, some
+> of the torture commits, and a few miscellaneous commits), but I will
+> likely end up with several short branches and one huge one.  My thought
+> is to keep the long branch, but email the patches out in a few separate
+> serieses, with each depending on its predecessor.  For example, one series
+> from the big branch would be folding the ->gpnum and ->completed fields
+> into a single ->gp_seq, which helps the RCU-flavor consolidation task.
+> Another series suppresses some rare false-positive splats that have been
+> plaguing me for more than a year.  Yet another series within this huge
+> branch applies and optimizes funnel locking for grace-period startup.
+> 
+> The problem is that the conversion to ->gp_seq has a very large footprint,
+> which of course generates lots of conflicts.  I could of course collapse
+> these commits into a single commit, but if I did that I would also defer
+> to the merge window following v4.19 due to the resulting loss of bisection
+> within that change.
+> 
+> Any advice?
+> 
+> The commits are for-mingo..rcu/dev in my -rcu tree.
 
-And running sugov_update_single() concurrently on two different CPUs
-for the same target is a no-no, as we don't prevent concurrent updates
-from occurring in that path.
+I don't see these branches (and I don't pull tags).
 
-Which means that the original patch from Joel will be sufficient as
-long as we ensure that sugov_update_single() can only run on one CPU
-at a time.
+How bad are the conflicts? Or is it too late to respond to help (sorry,
+was on vacation :-)
+
+-- Steve
