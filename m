@@ -1,68 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752478AbeEVQbo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 12:31:44 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:44443 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752100AbeEVQbh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752358AbeEVQcM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 12:32:12 -0400
+Received: from mga07.intel.com ([134.134.136.100]:7038 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752102AbeEVQbh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 22 May 2018 12:31:37 -0400
-X-Google-Smtp-Source: AB8JxZr6yaap2roaoKn0NYceByC0yP4Ts9pz7Z1WbepvZt/3GvwpQbBAxikaFeUy/Grt7Pu4KagR1ehX1MwvW56jAtY=
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,430,1520924400";
+   d="scan'208";a="57510965"
+Date: Tue, 22 May 2018 19:31:27 +0300
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To: Eric Anholt <eric@anholt.net>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] drm: Trust format_mod_supported() when it OKs a
+ plane modifier.
+Message-ID: <20180522163127.GH23723@intel.com>
+References: <20180316220435.31416-1-eric@anholt.net>
 MIME-Version: 1.0
-In-Reply-To: <CAKwvOdkedxmstRytbWeYU8Pj9ahgWOe7rODJJ8BDtRzUroQeXw@mail.gmail.com>
-References: <CAAeHK+wDMH_G=3UuGOda2t0g4TH4TmDAeyG-ydJwg9vmThd3eQ@mail.gmail.com>
- <c61336a2-7c66-ea48-3daa-e644403d7a6e@arm.com> <CAAeHK+zpAnC3Ppjq2W=r-5fYh+ceEwYymER0iLTan7+pcFDiJg@mail.gmail.com>
- <CAKwvOdkedxmstRytbWeYU8Pj9ahgWOe7rODJJ8BDtRzUroQeXw@mail.gmail.com>
-From: Andrey Konovalov <andreyknvl@google.com>
-Date: Tue, 22 May 2018 18:31:35 +0200
-Message-ID: <CAAeHK+xDpESgjA-Y7JbOAXSzE_yUjz=zcb9carbLxceB3BN=6A@mail.gmail.com>
-Subject: Re: Clang arm64 build is broken
-To: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        kvmarm@lists.cs.columbia.edu, LKML <linux-kernel@vger.kernel.org>,
-        Kostya Serebryany <kcc@google.com>, Dmitry Vyukov <dvyukov@google.com>,
-        Alexander Potapenko <glider@google.com>, christoffer.dall@arm.com,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180316220435.31416-1-eric@anholt.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 6:24 PM, Nick Desaulniers
-<ndesaulniers@google.com> wrote:
-> On Fri, Apr 20, 2018 at 7:59 AM Andrey Konovalov <andreyknvl@google.com>
-> wrote:
->> On Fri, Apr 20, 2018 at 10:13 AM, Marc Zyngier <marc.zyngier@arm.com>
-> wrote:
->> >> The issue is that
->> >> clang doesn't know about the "S" asm constraint. I reported this to
->> >> clang [2], and hopefully this will get fixed. In the meantime, would
->> >> it possible to work around using the "S" constraint in the kernel?
->> >
->> > I have no idea, I've never used clang to build the kernel. Clang isn't
->> > really supported to build the arm64 kernel anyway (as you mention
->> > below), and working around clang deficiencies would mean that we leave
->> > with the workaround forever. I'd rather enable clang once it is at
->> > feature parity with GCC.
->
->> The fact that there are some existing issues with building arm64
->> kernel with clang doesn't sound like a good justification for adding
->> new issues :)
->
->> However in this case I do believe that this is more of a bug in clang
->> that should be fixed.
->
-> Just to follow up with this thread;
->
-> Support for "S" constraints is being (re-)added to Clang in:
-> https://reviews.llvm.org/D46745
+On Fri, Mar 16, 2018 at 03:04:33PM -0700, Eric Anholt wrote:
+> For parameterized modifiers (Broadcom's SAND and UIF), we need to
+> allow the parameter fields to be filled in, while exposing only the
+> variant of the modifier with the parameter unfilled in the internal
+> arrays and the format blob.
+> 
+> Signed-off-by: Eric Anholt <eric@anholt.net>
+> Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
 
-Hi Nick!
+With https://patchwork.freedesktop.org/series/40207/ this should be
+safe for i915, so
 
-I can confirm that the latest clang (which includes this patch) is
-able to build the kernel with CONFIG_KVM enabled.
+Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
 
-Thanks!
+> ---
+>  drivers/gpu/drm/drm_plane.c | 23 ++++++++++++-----------
+>  include/drm/drm_plane.h     |  5 ++++-
+>  2 files changed, 16 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_plane.c b/drivers/gpu/drm/drm_plane.c
+> index 46fbd019a337..5bb501f1aae8 100644
+> --- a/drivers/gpu/drm/drm_plane.c
+> +++ b/drivers/gpu/drm/drm_plane.c
+> @@ -561,19 +561,20 @@ int drm_plane_check_pixel_format(struct drm_plane *plane,
+>  	if (i == plane->format_count)
+>  		return -EINVAL;
+>  
+> -	if (!plane->modifier_count)
+> -		return 0;
+> +	if (plane->funcs->format_mod_supported) {
+> +		if (!plane->funcs->format_mod_supported(plane, format, modifier))
+> +			return -EINVAL;
+> +	} else {
+> +		if (!plane->modifier_count)
+> +			return 0;
+>  
+> -	for (i = 0; i < plane->modifier_count; i++) {
+> -		if (modifier == plane->modifiers[i])
+> -			break;
+> +		for (i = 0; i < plane->modifier_count; i++) {
+> +			if (modifier == plane->modifiers[i])
+> +				break;
+> +		}
+> +		if (i == plane->modifier_count)
+> +			return -EINVAL;
+>  	}
+> -	if (i == plane->modifier_count)
+> -		return -EINVAL;
+> -
+> -	if (plane->funcs->format_mod_supported &&
+> -	    !plane->funcs->format_mod_supported(plane, format, modifier))
+> -		return -EINVAL;
+>  
+>  	return 0;
+>  }
+> diff --git a/include/drm/drm_plane.h b/include/drm/drm_plane.h
+> index f7bf4a48b1c3..6b1b51645f75 100644
+> --- a/include/drm/drm_plane.h
+> +++ b/include/drm/drm_plane.h
+> @@ -420,7 +420,10 @@ struct drm_plane_funcs {
+>  	 * This optional hook is used for the DRM to determine if the given
+>  	 * format/modifier combination is valid for the plane. This allows the
+>  	 * DRM to generate the correct format bitmask (which formats apply to
+> -	 * which modifier).
+> +	 * which modifier), and to valdiate modifiers at atomic_check time.
+> +	 *
+> +	 * If not present, then any modifier in the plane's modifier
+> +	 * list is allowed with any of the plane's formats.
+>  	 *
+>  	 * Returns:
+>  	 *
+> -- 
+> 2.16.2
+
+-- 
+Ville Syrjälä
+Intel
