@@ -1,86 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751474AbeEVQmg (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 12:42:36 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:44453 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751196AbeEVQmd (ORCPT
+        id S1751672AbeEVQnM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 12:43:12 -0400
+Received: from a9-46.smtp-out.amazonses.com ([54.240.9.46]:50626 "EHLO
+        a9-46.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751404AbeEVQnD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 12:42:33 -0400
-X-Google-Smtp-Source: AB8JxZoxVFkusOcMG03RAIsx1I73ljrvHRzcm58EiBvZZfsoeeK0G6DBXKfcuuTJkVuv9czrpqen0g==
-Date: Tue, 22 May 2018 11:42:30 -0500
-From: Rob Herring <robh@kernel.org>
-To: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Haiyue Wang <haiyue.wang@linux.intel.com>,
-        Vernon Mauery <vernon.mauery@linux.intel.com>,
-        James Feist <james.feist@linux.intel.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Andrew Jeffery <andrew@aj.id.au>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Jason M Biils <jason.m.bills@linux.intel.com>,
-        Joel Stanley <joel@jms.id.au>
-Subject: Re: [v4 07/11] dt-bindings: hwmon: Add documents for PECI hwmon
- client drivers
-Message-ID: <20180522164230.GA11707@rob-hp-laptop>
-References: <20180521195905.27983-1-jae.hyun.yoo@linux.intel.com>
+        Tue, 22 May 2018 12:43:03 -0400
+Date: Tue, 22 May 2018 16:43:02 +0000
+From: Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@nuc-kabylake
+To: Andrew Morton <akpm@linux-foundation.org>
+cc: Shakeel Butt <shakeelb@google.com>, Michal Hocko <mhocko@kernel.org>,
+        Greg Thelen <gthelen@google.com>, Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>, Tejun Heo <tj@kernel.org>,
+        Linux MM <linux-mm@kvack.org>, cgroups@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm: fix race between kmem_cache destroy, create and
+ deactivate
+In-Reply-To: <20180521114227.233983ac7038a9f4bf5b7066@linux-foundation.org>
+Message-ID: <0100016388bb8ade-de95df0e-6154-4ddc-98bb-ee33811cca85-000000@email.amazonses.com>
+References: <20180521174116.171846-1-shakeelb@google.com> <20180521114227.233983ac7038a9f4bf5b7066@linux-foundation.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180521195905.27983-1-jae.hyun.yoo@linux.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+X-SES-Outgoing: 2018.05.22-54.240.9.46
+Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 12:59:05PM -0700, Jae Hyun Yoo wrote:
-> This commit adds dt-bindings documents for PECI hwmon client drivers.
-> 
-> Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-> Reviewed-by: Haiyue Wang <haiyue.wang@linux.intel.com>
-> Reviewed-by: James Feist <james.feist@linux.intel.com>
-> Reviewed-by: Vernon Mauery <vernon.mauery@linux.intel.com>
-> Cc: Andrew Jeffery <andrew@aj.id.au>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Jason M Biils <jason.m.bills@linux.intel.com>
-> Cc: Joel Stanley <joel@jms.id.au>
-> ---
->  .../bindings/hwmon/peci-cputemp.txt           | 23 ++++++++++++++++++
->  .../bindings/hwmon/peci-dimmtemp.txt          | 24 +++++++++++++++++++
->  2 files changed, 47 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/hwmon/peci-cputemp.txt
->  create mode 100644 Documentation/devicetree/bindings/hwmon/peci-dimmtemp.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/hwmon/peci-cputemp.txt b/Documentation/devicetree/bindings/hwmon/peci-cputemp.txt
-> new file mode 100644
-> index 000000000000..2f59aee12d9e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/hwmon/peci-cputemp.txt
-> @@ -0,0 +1,23 @@
-> +Bindings for Intel PECI (Platform Environment Control Interface) cputemp driver.
-> +
-> +Required properties:
-> +- compatible : Should be "intel,peci-cputemp".
-> +- reg        : Should contain address of a client CPU. Address range of CPU
-> +	       clients is starting from 0x30 based on PECI specification.
-> +
-> +Example:
-> +	peci-bus@0 {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		< more properties >
-> +
-> +		peci-cputemp@30 {
-> +			compatible = "intel,peci-cputemp";
-> +			reg = <0x30>;
-> +		};
+On Mon, 21 May 2018, Andrew Morton wrote:
 
-[...]
+> The patch seems depressingly complex.
+>
+> And a bit underdocumented...
 
-> +		peci-dimmtemp@30 {
-> +			compatible = "intel,peci-dimmtemp";
-> +			reg = <0x30>;
-> +		};
+Maybe separate out the bits that rename refcount to alias_count?
 
-As I said in the prior version, 2 nodes at the same address is wrong.
+> > +	refcount_t refcount;
+> > +	int alias_count;
+>
+> The semantic meaning of these two?  What locking protects alias_count?
 
-Rob
+slab_mutex
+
+>
+> >  	int object_size;
+> >  	int align;
+> >
+> > diff --git a/include/linux/slub_def.h b/include/linux/slub_def.h
+> > index 3773e26c08c1..532d4b6f83ed 100644
+> > --- a/include/linux/slub_def.h
+> > +++ b/include/linux/slub_def.h
+> > @@ -97,7 +97,8 @@ struct kmem_cache {
+> >  	struct kmem_cache_order_objects max;
+> >  	struct kmem_cache_order_objects min;
+> >  	gfp_t allocflags;	/* gfp flags to use on each alloc */
+> > -	int refcount;		/* Refcount for slab cache destroy */
+> > +	refcount_t refcount;	/* Refcount for slab cache destroy */
+> > +	int alias_count;	/* Number of root kmem caches merged */
+>
+> "merged" what with what in what manner?
+
+That is a basic SLUB feature.
