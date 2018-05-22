@@ -1,113 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753331AbeEVWvq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 18:51:46 -0400
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:39650 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753036AbeEVWvn (ORCPT
+        id S1753489AbeEVWwO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 18:52:14 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:42754 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753036AbeEVWwL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 18:51:43 -0400
-X-Google-Smtp-Source: AB8JxZoexllH4yeO7cNUEeR5n/B/2viHV2Cs0Be6mFuZkgtG3mfLZyDvXR103XoS1JJzndVkBbmXMg==
-Date: Tue, 22 May 2018 17:51:40 -0500
-From: Rob Herring <robh@kernel.org>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Will Deacon <will.deacon@arm.com>, Heiko Stuebner <heiko@sntech.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Sandy Huang <hjc@rock-chips.com>,
-        David Airlie <airlied@linux.ie>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Derek Basehore <dbasehore@chromium.org>,
-        linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, Lin Huang <hl@rock-chips.com>,
-        kernel@collabora.com, Sean Paul <seanpaul@chromium.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Nickey Yang <nickey.yang@rock-chips.com>, devicetree@vger.kernel.org,
-        Yakir Yang <kuankuan.y@gmail.com>, Mark Yao <markyao0591@gmail.com>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Kever Yang <kever.yang@rock-chips.com>,
-        Brian Norris <briannorris@chromium.org>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Caesar Wang <wxt@rock-chips.com>, Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [RFC PATCH 09/10] arm64: dts: rk3399: Add dfi and dmc nodes.
-Message-ID: <20180522225140.GA30149@rob-hp-laptop>
-References: <20180514211610.26618-1-enric.balletbo@collabora.com>
- <20180514211610.26618-10-enric.balletbo@collabora.com>
+        Tue, 22 May 2018 18:52:11 -0400
+X-Google-Smtp-Source: AB8JxZrEc/Q9ZPwHPIcAL2ZorLMoa3J4DuJTqvHTQ87Y7Nj4aaJLTvG2W4G4x0IH2hjQ6rQcu3R9NQ==
+Date: Tue, 22 May 2018 15:52:08 -0700
+From: Eric Biggers <ebiggers3@gmail.com>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Brian Foster <bfoster@redhat.com>,
+        syzbot <syzbot+568245b88fbaedcb1959@syzkaller.appspotmail.com>,
+        darrick.wong@oracle.com, linux-kernel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: INFO: task hung in xlog_grant_head_check
+Message-ID: <20180522225208.GB658@sol.localdomain>
+References: <000000000000457b2d056cbb0044@google.com>
+ <20180522123107.GC3751@bfoster.bfoster>
+ <20180522222620.GW23861@dastard>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180514211610.26618-10-enric.balletbo@collabora.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180522222620.GW23861@dastard>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 11:16:09PM +0200, Enric Balletbo i Serra wrote:
-> From: Lin Huang <hl@rock-chips.com>
+On Wed, May 23, 2018 at 08:26:20AM +1000, Dave Chinner wrote:
+> On Tue, May 22, 2018 at 08:31:08AM -0400, Brian Foster wrote:
+> > On Mon, May 21, 2018 at 10:55:02AM -0700, syzbot wrote:
+> > > Hello,
+> > > 
+> > > syzbot found the following crash on:
+> > > 
+> > > HEAD commit:    203ec2fed17a Merge tag 'armsoc-fixes' of git://git.kernel...
+> > > git tree:       upstream
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=11c1ad77800000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=f3b4e30da84ec1ed
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=568245b88fbaedcb1959
+> > > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> > > syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=122c7427800000
+> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10387057800000
+> > > 
+> > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > > Reported-by: syzbot+568245b88fbaedcb1959@syzkaller.appspotmail.com
+> > > 
+> > >         (ptrval): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > ................
+> > >         (ptrval): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > ................
+> > > XFS (loop0): metadata I/O error in "xfs_trans_read_buf_map" at daddr 0x2 len
+> > > 1 error 117
+> > > XFS (loop0): xfs_imap_lookup: xfs_ialloc_read_agi() returned error -117,
+> > > agno 0
+> > > XFS (loop0): failed to read root inode
+> > 
+> > FWIW, the initial console output is actually:
+> > 
+> > [  448.028253] XFS (loop0): Mounting V4 Filesystem
+> > [  448.033540] XFS (loop0): Log size 9371840 blocks too large, maximum size is 1048576 blocks
+> > [  448.042287] XFS (loop0): Log size out of supported range.
+> > [  448.047841] XFS (loop0): Continuing onwards, but if log hangs are experienced then please report this message in the bug report.
+> > [  448.060712] XFS (loop0): totally zeroed log
+> > 
+> > ... which warns about an oversized log and resulting log hangs. Not
+> > having dug into the details of why this occurs so quickly in this mount
+> > failure path,
 > 
-> These are required to support DDR DVFS on rk3399 platform. The patch also
-> introduces two new files (rk3399-dram.h and rk3399-dram-default-timing)
-> with default DRAM settings.
+> I suspect that it is a head and/or log tail pointer overflow, so when it
+> tries to do the first trans reserve of the mount - to write the
+> unmount record - it says "no log space available, please wait".
 > 
-> Signed-off-by: Lin Huang <hl@rock-chips.com>
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> ---
+> > it does look like we'd never have got past this point on a
+> > v5 fs (i.e., the above warning would become an error and we'd not enter
+> > the xfs_log_mount_cancel() path).
 > 
->  .../rockchip/rk3399-dram-default-timing.dtsi  | 38 ++++++++++
->  arch/arm64/boot/dts/rockchip/rk3399-dram.h    | 73 +++++++++++++++++++
->  .../boot/dts/rockchip/rk3399-op1-opp.dtsi     | 29 ++++++++
->  arch/arm64/boot/dts/rockchip/rk3399.dtsi      | 20 +++++
->  4 files changed, 160 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/rockchip/rk3399-dram-default-timing.dtsi
->  create mode 100644 arch/arm64/boot/dts/rockchip/rk3399-dram.h
+> And this comes back to my repeated comments about fuzzers needing
+> to fuzz properly made V5 filesystems as we catch and error out on
+> things like this. Fuzzing random collections of v4 filesystem
+> fragments will continue to trip over problems we've avoided with v5
+> filesystems, and this is further evidence to point to that.
+>
 > 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-dram-default-timing.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-dram-default-timing.dtsi
-> new file mode 100644
-> index 000000000000..4dfe3e1d8bdf
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/rockchip/rk3399-dram-default-timing.dtsi
-> @@ -0,0 +1,38 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR X11)
-> +/*
-> + * Copyright (c) 2016-2018, Fuzhou Rockchip Electronics Co., Ltd
-> + *
-> + * Author: Lin Huang <hl@rock-chips.com>
-> + */
-> +
-> +#include "rk3399-dram.h"
-> +
-> +rockchip,ddr3_speed_bin = <21>;
-> +rockchip,pd_idle = <0x40>;
-> +rockchip,sr_idle = <0x2>;
+> I'd suggest that at this point, syzbot XFS reports should be
+> redirected to /dev/null. It's not worth our time to triage
+> unreviewed bot generated bug reports until the syzbot developers
+> start listening and acting on what we have been telling them
+> about fuzzing filesystems and reproducing bugs that are meaningful
+> and useful to us.
 
-Don't do includes this way please. These should go under a node.
+The whole point of fuzzing is to provide improper inputs.  A kernel bug is a
+kernel bug, even if it's in deprecated/unmaintained code, or involves userspace
+doing something unexpected.  If you have known buggy code in XFS that you refuse
+to fix, then please provide a kernel config option so that users can disable the
+unmaintained XFS formats/features, leaving the maintained ones.  As-is, you seem
+to be forcing everyone who enables CONFIG_XFS_FS to build known
+buggy/unmaintained code into their kernel.
 
-> +rockchip,sr_mc_gate_idle = <0x3>;
-> +rockchip,srpd_lite_idle	= <0x4>;
-> +rockchip,standby_idle = <0x2000>;
-> +rockchip,dram_dll_dis_freq = <300000000>;
-> +rockchip,phy_dll_dis_freq = <125000000>;
-> +rockchip,auto_pd_dis_freq = <666000000>;
-> +rockchip,ddr3_odt_dis_freq = <333000000>;
-> +rockchip,ddr3_drv = <DDR3_DS_40ohm>;
-> +rockchip,ddr3_odt = <DDR3_ODT_120ohm>;
-> +rockchip,phy_ddr3_ca_drv = <PHY_DRV_ODT_40>;
-> +rockchip,phy_ddr3_dq_drv = <PHY_DRV_ODT_40>;
-> +rockchip,phy_ddr3_odt = <PHY_DRV_ODT_240>;
-> +rockchip,lpddr3_odt_dis_freq = <333000000>;
-> +rockchip,lpddr3_drv = <LP3_DS_34ohm>;
-> +rockchip,lpddr3_odt = <LP3_ODT_240ohm>;
-> +rockchip,phy_lpddr3_ca_drv = <PHY_DRV_ODT_40>;
-> +rockchip,phy_lpddr3_dq_drv = <PHY_DRV_ODT_40>;
-> +rockchip,phy_lpddr3_odt = <PHY_DRV_ODT_240>;
-> +rockchip,lpddr4_odt_dis_freq = <333000000>;
-> +rockchip,lpddr4_drv = <LP4_PDDS_60ohm>;
-> +rockchip,lpddr4_dq_odt = <LP4_DQ_ODT_40ohm>;
-> +rockchip,lpddr4_ca_odt = <LP4_CA_ODT_40ohm>;
-> +rockchip,phy_lpddr4_ca_drv = <PHY_DRV_ODT_40>;
-> +rockchip,phy_lpddr4_ck_cs_drv = <PHY_DRV_ODT_80>;
-> +rockchip,phy_lpddr4_dq_drv = <PHY_DRV_ODT_80>;
-> +rockchip,phy_lpddr4_odt = <PHY_DRV_ODT_60>;
+- Eric
