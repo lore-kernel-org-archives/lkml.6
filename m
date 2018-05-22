@@ -1,86 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751245AbeEVAGR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 20:06:17 -0400
-Received: from mga18.intel.com ([134.134.136.126]:56270 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751110AbeEVAGQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 20:06:16 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,428,1520924400";
-   d="scan'208";a="201298417"
-Date: Mon, 21 May 2018 17:06:14 -0700
-From: "Luck, Tony" <tony.luck@intel.com>
-To: Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>
-Cc: Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        linux-edac@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
-Subject: Re: PROBLEM: mce: [Hardware Error] from dmesg -l emerg
-Message-ID: <20180522000614.GA21542@agluck-desk>
-References: <CAG=yYwmnHgAvauZLxfFcUEACF_J+qh4d2tvYY=AdjHvyeSFK_A@mail.gmail.com>
- <20180514162752.GG23049@pd.tnic>
- <CAG=yYwk-dbMF_7eS9bUraAru8b4fyCosxp+MpQA=1ZYH0nd_hg@mail.gmail.com>
- <20180520204032.GA19845@pd.tnic>
- <CAG=yYw=bdgsTSW80R1Wt9uUTtXeMwX5macbjrPBNzVLihk-Ufw@mail.gmail.com>
- <20180521165803.GA15717@agluck-desk>
- <CAG=yYw=OQ7zpyK-5iqg7uQvcykTvuhQfX=RFg3GpQGvCRowd=Q@mail.gmail.com>
- <20180521205751.GA19282@agluck-desk>
- <CAG=yYwmgceOCf3TeefFN-i54Z4Qxsp7asD0uhqah5P7md94kWw@mail.gmail.com>
+        id S1751516AbeEVAHh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 20:07:37 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:34369 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751125AbeEVAHf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 20:07:35 -0400
+X-Google-Smtp-Source: AB8JxZpVwNWmptsgmPr5zntzyPoU2qC4pz+VKWs5cHT69hKIXJf7bhsXpjcK1Mxwn4mPmVs9NTCnMA==
+Date: Mon, 21 May 2018 17:07:34 -0700
+From: Joel Fernandes <joel@joelfernandes.org>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Joel Fernandes <joelaf@google.com>, linux-kernel@vger.kernel.org,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>, byungchul.park@lge.com,
+        kernel-team@android.com
+Subject: Re: [PATCH v3 4/4] rcu: Unlock non-start node only after accessing
+ its gp_seq_needed
+Message-ID: <20180522000734.GD40541@joelaf.mtv.corp.google.com>
+References: <20180521044220.123933-1-joel@joelfernandes.org>
+ <20180521044220.123933-5-joel@joelfernandes.org>
+ <20180521232537.GJ3803@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAG=yYwmgceOCf3TeefFN-i54Z4Qxsp7asD0uhqah5P7md94kWw@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180521232537.GJ3803@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 02:43:37AM +0530, Jeffrin Thalakkottoor wrote:
-> mce: [Hardware Error]: CPU 0: Machine Check: 0 Bank 5: ee0000000040110b
-> mce: [Hardware Error]: TSC 0 ADDR 160000080 MISC 5040008086
-> mce: [Hardware Error]: PROCESSOR 0:306d4 TIME 1526932210 SOCKET 0 APIC
-> 0 microcode 2a
+On Mon, May 21, 2018 at 04:25:38PM -0700, Paul E. McKenney wrote:
+> On Sun, May 20, 2018 at 09:42:20PM -0700, Joel Fernandes wrote:
+> > We acquire gp_seq_needed locklessly. To be safe, lets do the unlocking
+> > after the access.
+> 
+> Actually, no, we hold rnp_start's ->lock throughout.  And this CPU (or in
+> the case of no-CBs CPUs, this task) is in charge of rdp->gp_seq_needed,
+> so nothing else is accessing it.  Or at least that is the intent.  ;-)
 
-The problem is that "mcelog --ascii" is expecting the first line to
-look like:
+I was talking about protecting the internal node's rnp->gp_seq_needed, not
+the rnp_start's gp_seq_needed.
 
-	CPU 0: Machine Check Exception: 0 Bank 5: ee0000000040110b
+We are protecting them in the loop:
 
-This seems to have been broken by commit:
+like this:
+for(...)
+	if (rnp != rnp_start)
+		raw_spin_lock_rcu_node(rnp);
+	[...]
+	// access rnp->gp_seq and rnp->gp_seq_needed
+	[...]
+	if (rnp != rnp_start)
+		raw_spin_unlock_rcu_node(rnp);
 
-	cd9c57cad3fe ("x86/MCE: Dump MCE to dmesg if no consumers")
+But we don't need to do such protection in unlock_out ? I'm sorry if I'm
+missing something, but I'm wondering if rnp->gp_seq_needed of an internal
+node can be accessed locklessly, then why can't that be done also in the
+funnel locking loop - after all we are holding the rnp_start's lock through
+out right?
 
-relevent part is this ... where we now conditionally include the
-word "Exception".
+thanks!
 
--static void print_mce(struct mce *m)
-+static void __print_mce(struct mce *m)
- {
--       int ret = 0;
--
--       pr_emerg(HW_ERR "CPU %d: Machine Check Exception: %Lx Bank %d: %016Lx\n",
--              m->extcpu, m->mcgstatus, m->bank, m->status);
-+       pr_emerg(HW_ERR "CPU %d: Machine Check%s: %Lx Bank %d: %016Lx\n",
-+                m->extcpu,
-+                (m->mcgstatus & MCG_STATUS_MCIP ? " Exception" : ""),
-+                m->mcgstatus, m->bank, m->status);
-
-While this is a bit easier to read, no new information is included as we
-do print the value of m->mcgstatus.
-
-Sadly, the change was made back in v4.10 ... so reverting it won't
-help all the people running kernels built in the last fifteen months :-(
-
-I'll see if I can get Andi to take a patch for mcelog to accept the
-line with or without the " Exception".
-
-Oh ... one more thing. Did your e-mail client line wrap that last line?
-
-> mce: [Hardware Error]: PROCESSOR 0:306d4 TIME 1526932210 SOCKET 0 APIC
-> 0 microcode 2a
-
-That should all be on one line.
-
--Tony
+ - Joel
+ 
