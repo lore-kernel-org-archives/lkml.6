@@ -1,78 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753062AbeEVViF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 17:38:05 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:36335 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752713AbeEVViE (ORCPT
+        id S1753210AbeEVVju (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 17:39:50 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:37272 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753168AbeEVVjs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 17:38:04 -0400
-X-Google-Smtp-Source: AB8JxZpLK9PDVRLSsvF2fyR1voVhqGxc+c6f0StNDZBIKZG25fY2BbMU6EQUvf8lu+2TXoJxCvX+Njf6yL0JZDstDg4=
+        Tue, 22 May 2018 17:39:48 -0400
+X-Google-Smtp-Source: ADUXVKJjgWCPHhGgpJ5mRd0voN1ohsBXAQASQamumb79IMytmztqoG3YGniJvLfz66hJgdAw7DWJB3G23+bx9kVY8+c=
 MIME-Version: 1.0
-In-Reply-To: <45b62e4b-ee9a-a2de-579f-24642bb1fbc7@deltatee.com>
-References: <152694211402.5484.2277538346144115181.stgit@dwillia2-desk3.amr.corp.intel.com>
- <152694213486.5484.5340142369038375338.stgit@dwillia2-desk3.amr.corp.intel.com>
- <45b62e4b-ee9a-a2de-579f-24642bb1fbc7@deltatee.com>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Tue, 22 May 2018 14:38:02 -0700
-Message-ID: <CAPcyv4idV8JbwUQ8tkzFzMV-sfLY15zwE_Xp3F6C_+zajVbxng@mail.gmail.com>
-Subject: Re: [PATCH 4/5] mm, hmm: replace hmm_devmem_pages_create() with devm_memremap_pages()
-To: Logan Gunthorpe <logang@deltatee.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+In-Reply-To: <20180517193008.GV25808@atomide.com>
+References: <20180515183409.78046-1-andriy.shevchenko@linux.intel.com>
+ <ca78895ac7ac84ec1c7f2f33024237af329ffd7a.camel@linux.intel.com>
+ <20180516100842.xuma7b3e727w7bpz@linutronix.de> <CAHp75Vc2bJQHiWYcdKK+7wwMw2fSWxMauxP-dMRUAUdKnet7WQ@mail.gmail.com>
+ <20180516104734.357oevogppu5bsg4@linutronix.de> <ed9879ef42a70d2609f60f73834cabb7e3df9e2f.camel@linux.intel.com>
+ <20180517135621.GJ98604@atomide.com> <CAHp75VfqAK6+dPWWkQXjy0V-AFSGLSDJ9CmnUv=ba0F66TDTVg@mail.gmail.com>
+ <20180517193008.GV25808@atomide.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 23 May 2018 00:39:46 +0300
+Message-ID: <CAHp75Ve56pyEC41XZ9i9yxBNberQe=ee2miQL0v9T4vRtkWPBQ@mail.gmail.com>
+Subject: Re: [PATCH v1 0/3] console, serial8250: Disable PM and DMA ops
+To: Tony Lindgren <tony@atomide.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 10:13 AM, Logan Gunthorpe <logang@deltatee.com> wrote:
+On Thu, May 17, 2018 at 10:30 PM, Tony Lindgren <tony@atomide.com> wrote:
+> * Andy Shevchenko <andy.shevchenko@gmail.com> [180517 16:41]:
+>> On Thu, May 17, 2018 at 4:56 PM, Tony Lindgren <tony@atomide.com> wrote:
+>> > * Andy Shevchenko <andriy.shevchenko@linux.intel.com> [180516 13:12]:
+>> >> On Wed, 2018-05-16 at 12:47 +0200, Sebastian Andrzej Siewior wrote:
+>> >> > But since I am on it. You have to enable runtime-PM for the UART. So
+>> >> > what is the problem if you simply don't enable it for the UART which
+>> >> > used as the kernel console?
+>> >>
+>> >> How do I know at the ->probe() time that device in question is going to
+>> >> be kernel console? Maybe I missed simple way of it.
+>> >
+>> > Hmm parse the kernel cmdline maybe? :)
+>> >
+>> > BTW, kernel already has earlycon doing exactly what you're trying to do.
+>>
+>> I'm sorry, I didn't follow. What exactly earlycon does?
 >
->
-> On 21/05/18 04:35 PM, Dan Williams wrote:
->> +     /*
->> +      * For device private memory we call add_pages() as we only need to
->> +      * allocate and initialize struct page for the device memory. More-
->> +      * over the device memory is un-accessible thus we do not want to
->> +      * create a linear mapping for the memory like arch_add_memory()
->> +      * would do.
->> +      *
->> +      * For all other device memory types, which are accessible by
->> +      * the CPU, we do want the linear mapping and thus use
->> +      * arch_add_memory().
->> +      */
->> +     if (pgmap->type == MEMORY_DEVICE_PRIVATE) {
->> +             error = add_pages(nid, align_start >> PAGE_SHIFT,
->> +                             align_size >> PAGE_SHIFT, NULL, false);
->> +     } else {
->> +             struct zone *zone;
->> +
->> +             error = arch_add_memory(nid, align_start, align_size, altmap,
->> +                             false);
->> +             zone = &NODE_DATA(nid)->node_zones[ZONE_DEVICE];
->> +             if (!error)
->> +                     move_pfn_range_to_zone(zone, align_start >> PAGE_SHIFT,
->>                                       align_size >> PAGE_SHIFT, altmap);
->> +     }
->
-> Maybe I missed it in the patch but, don't we need the same thing in
-> devm_memremap_pages_release() such that it calls the correct remove
-> function? Similar to the replaced hmm code:
->
->> -     mem_hotplug_begin();
->> -     if (resource->desc == IORES_DESC_DEVICE_PRIVATE_MEMORY)
->> -             __remove_pages(zone, start_pfn, npages, NULL);
->> -     else
->> -             arch_remove_memory(start_pfn << PAGE_SHIFT,
->> -                                npages << PAGE_SHIFT, NULL);
->> -     mem_hotplug_done();
->> -
->> -     hmm_devmem_radix_release(resource);
->
-> Perhaps it should be a separate patch too as it would be easier to see
-> outside the big removal of HMM code.
->
+> It provides a console very early on, see earlycon in
+> Documentation/admin-guide/kernel-parameters.txt
 
-Yes, I'll split it out.
+Yes, but what we are talking is to put the kernel console out of power
+management due to _real_ issues with it.
+
+>> The problem is in 8250 driver. The issue with runtime PM used in atomic context.
+>
+> So how about add some "noidle" kernel command line parameter for console
+> that calls
+> pm_runtime_forbid() and then you have the UART permanently
+> on.
+
+IIUC _forbid() can be overwritten via sysfs.
+And I would prefer to do other way around, something like console.idle
+and put default for OMAP to yes and no for everything else.
+
+> Hmm I guess you could make also serial8250_rpm_get() do nothing
+> based on that.
+
+Have you seen entire series which I keep here:
+https://bitbucket.org/andy-shev/linux/branch/topic/uart/rpm?
+Among other things it gets rid of those specific callbacks entirely.
+
+> I do agree the serial runtime PM has an issue if it depends on
+> pm_runtime_irq_safe() being set.
+
+It's more than an issue. The  so called "support" of RPM for UART is
+_based on the hack_.
+I would love to NAK that in the first place if I would have known of it in time.
+
+>> So, I can, of course just remove callbacks from the console ->write().
+>> Though it will prevent to use kernel console anyway.
+>
+> Please et's not start breaking things, we already see a constant
+> flow of regressions on weekly basis.
+
+Now we are stick with a hack and the case based on that is against
+fixing things.
+This is how it looks from my side.
+
+-- 
+With Best Regards,
+Andy Shevchenko
