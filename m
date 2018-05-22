@@ -1,235 +1,241 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751469AbeEVObC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 10:31:02 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:46368 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751173AbeEVOa5 (ORCPT
+        id S1751526AbeEVObm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 10:31:42 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:8176 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751173AbeEVObh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 10:30:57 -0400
-Subject: Re: [Xen-devel] [RFC 1/3] xen/balloon: Allow allocating DMA buffers
-To: Oleksandr Andrushchenko <andr2000@gmail.com>,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        jgross@suse.com, konrad.wilk@oracle.com
-Cc: daniel.vetter@intel.com, matthew.d.roper@intel.com,
-        dongwon.kim@intel.com
-References: <20180517082604.14828-1-andr2000@gmail.com>
- <20180517082604.14828-2-andr2000@gmail.com>
- <6a108876-19b7-49d0-3de2-9e10f984736c@oracle.com>
- <9541926e-001a-e41e-317c-dbff6d687761@gmail.com>
- <218e2bf7-490d-f89e-9866-27b7e3dbc835@oracle.com>
- <a08e7d0d-f7d5-6b7e-979b-8a17060482f0@gmail.com>
- <b177a327-6a73-bb77-c69b-bc0958a05532@oracle.com>
- <f87478c7-3523-851c-5c3a-12a9e8753bb6@epam.com>
- <c2f0845b-ab2f-4b9b-6f46-6ddd236ad9ed@oracle.com>
- <77c20852-b9b8-c35a-26b0-b0317e6aba09@gmail.com>
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <f8775649-34eb-04ac-2264-609b33cdd504@oracle.com>
-Date: Tue, 22 May 2018 10:33:58 -0400
+        Tue, 22 May 2018 10:31:37 -0400
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Tue, 22 May 2018 07:31:39 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 8/9] PM / Domains: Add support for multi PM domains per
+ device to genpd
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>, <linux-pm@vger.kernel.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Kevin Hilman <khilman@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>
+References: <1526639490-12167-1-git-send-email-ulf.hansson@linaro.org>
+ <1526639490-12167-9-git-send-email-ulf.hansson@linaro.org>
+Message-ID: <f5589b88-acf8-b491-df79-e359e596c8d0@nvidia.com>
+Date: Tue, 22 May 2018 15:31:16 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <77c20852-b9b8-c35a-26b0-b0317e6aba09@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1526639490-12167-9-git-send-email-ulf.hansson@linaro.org>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8900 signatures=668700
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805220168
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/22/2018 01:55 AM, Oleksandr Andrushchenko wrote:
-> On 05/21/2018 11:36 PM, Boris Ostrovsky wrote:
->> On 05/21/2018 03:13 PM, Oleksandr Andrushchenko wrote:
->>> On 05/21/2018 09:53 PM, Boris Ostrovsky wrote:
->>>> On 05/21/2018 01:32 PM, Oleksandr Andrushchenko wrote:
->>>>> On 05/21/2018 07:35 PM, Boris Ostrovsky wrote:
->>>>>> On 05/21/2018 01:40 AM, Oleksandr Andrushchenko wrote:
->>>>>>> On 05/19/2018 01:04 AM, Boris Ostrovsky wrote:
->>>>>>>> On 05/17/2018 04:26 AM, Oleksandr Andrushchenko wrote:
->>>>>>>>> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->>>>>>>> A commit message would be useful.
->>>>>>> Sure, v1 will have it
->>>>>>>>> Signed-off-by: Oleksandr Andrushchenko
->>>>>>>>> <oleksandr_andrushchenko@epam.com>
->>>>>>>>>
->>>>>>>>>          for (i = 0; i < nr_pages; i++) {
->>>>>>>>> -        page = alloc_page(gfp);
->>>>>>>>> -        if (page == NULL) {
->>>>>>>>> -            nr_pages = i;
->>>>>>>>> -            state = BP_EAGAIN;
->>>>>>>>> -            break;
->>>>>>>>> +        if (ext_pages) {
->>>>>>>>> +            page = ext_pages[i];
->>>>>>>>> +        } else {
->>>>>>>>> +            page = alloc_page(gfp);
->>>>>>>>> +            if (page == NULL) {
->>>>>>>>> +                nr_pages = i;
->>>>>>>>> +                state = BP_EAGAIN;
->>>>>>>>> +                break;
->>>>>>>>> +            }
->>>>>>>>>              }
->>>>>>>>>              scrub_page(page);
->>>>>>>>>              list_add(&page->lru, &pages);
->>>>>>>>> @@ -529,7 +565,7 @@ static enum bp_state
->>>>>>>>> decrease_reservation(unsigned long nr_pages, gfp_t gfp)
->>>>>>>>>          i = 0;
->>>>>>>>>          list_for_each_entry_safe(page, tmp, &pages, lru) {
->>>>>>>>>              /* XENMEM_decrease_reservation requires a GFN */
->>>>>>>>> -        frame_list[i++] = xen_page_to_gfn(page);
->>>>>>>>> +        frames[i++] = xen_page_to_gfn(page);
->>>>>>>>>        #ifdef CONFIG_XEN_HAVE_PVMMU
->>>>>>>>>              /*
->>>>>>>>> @@ -552,18 +588,22 @@ static enum bp_state
->>>>>>>>> decrease_reservation(unsigned long nr_pages, gfp_t gfp)
->>>>>>>>>      #endif
->>>>>>>>>              list_del(&page->lru);
->>>>>>>>>      -        balloon_append(page);
->>>>>>>>> +        if (!ext_pages)
->>>>>>>>> +            balloon_append(page);
->>>>>>>> So what you are proposing is not really ballooning. You are just
->>>>>>>> piggybacking on existing interfaces, aren't you?
->>>>>>> Sort of. Basically I need to {increase|decrease}_reservation, not
->>>>>>> actually
->>>>>>> allocating ballooned pages.
->>>>>>> Do you think I can simply EXPORT_SYMBOL for
->>>>>>> {increase|decrease}_reservation?
->>>>>>> Any other suggestion?
->>>>>> I am actually wondering how much of that code you end up reusing.
->>>>>> You
->>>>>> pretty much create new code paths in both routines and common code
->>>>>> ends
->>>>>> up being essentially the hypercall.
->>>>> Well, I hoped that it would be easier to maintain if I modify
->>>>> existing
->>>>> code
->>>>> to support both use-cases, but I am also ok to create new routines if
->>>>> this
->>>>> seems to be reasonable - please let me know
->>>>>>     So the question is --- would it make
->>>>>> sense to do all of this separately from the balloon driver?
->>>>> This can be done, but which driver will host this code then? If we
->>>>> move from
->>>>> the balloon driver, then this could go to either gntdev or
->>>>> grant-table.
->>>>> What's your preference?
->>>> A separate module?
->>>> Is there any use for this feature outside of your zero-copy DRM
->>>> driver?
->>> Intel's hyper dma-buf (Dongwon/Matt CC'ed), V4L/GPU at least.
->>>
->>> At the time I tried to upstream zcopy driver it was discussed and
->>> decided that
->>> it would be better if I remove all DRM specific code and move it to
->>> Xen drivers.
->>> Thus, this RFC.
->>>
->>> But it can also be implemented as a dedicated Xen dma-buf driver which
->>> will have all the
->>> code from this RFC + a bit more (char/misc device handling at least).
->>> This will also require a dedicated user-space library, just like
->>> libxengnttab.so
->>> for gntdev (now I have all new IOCTLs covered there).
->>>
->>> If the idea of a dedicated Xen dma-buf driver seems to be more
->>> attractive we
->>> can work toward this solution. BTW, I do support this idea, but was not
->>> sure if Xen community accepts yet another driver which duplicates
->>> quite some code
->>> of the existing gntdev/balloon/grant-table. And now after this RFC I
->>> hope that all cons
->>> and pros of both dedicated driver and gntdev/balloon/grant-table
->>> extension are
->>> clearly seen and we can make a decision.
->>
->> IIRC the objection for a separate module was in the context of gntdev
->> was discussion, because (among other things) people didn't want to have
->> yet another file in /dev/xen/
->>
->> Here we are talking about (a new) balloon-like module which doesn't
->> create any new user-visible interfaces. And as for duplicating code ---
->> as I said, I am not convinced there is much of duplication.
->>
->> I might even argue that we should add a new config option for this
->> module.
-> I am not quite sure I am fully following you here: so, you suggest
-> that we have balloon.c unchanged, but instead create a new
-> module (namely a file under the same folder as balloon.c, e.g.
-> dma-buf-reservation.c) and move those {increase|decrease}_reservation
-> routines (specific to dma-buf) to that new file? And make it selectable
-> via Kconfig? If so, then how about the changes to grant-table and gntdev?
-> Those will look inconsistent then.
+Hi Ulf,
 
-Inconsistent with what? The changes to grant code will also be under the
-new config option.
+On 18/05/18 11:31, Ulf Hansson wrote:
+> To support devices being partitioned across multiple PM domains, let's
+> start by extending genpd to cope with these configurations.
+> 
+> More precisely, add a new exported function, genpd_dev_pm_attach_by_id(),
+> similar to genpd_dev_pm_attach(), but the new function also allows the
+> caller to provide an index to what PM domain it wants to attach.
+> 
+> Furthermore, let genpd register a new virtual struct device via calling
+> device_register() and attach it to the corresponding PM domain, which is
+> looked up via calling the existing genpd OF functions. Note that the new
+> device is needed, because only one PM domain can be attached per device. At
+> successful attachment, genpd_dev_pm_attach_by_id() returns the new device,
+> allowing the caller to operate on it to deal with power management.
+> 
+> To deal with detaching of a PM domain for multiple PM domain case, we can
+> still re-use the existing genpd_dev_pm_detach() function, although we need
+> to extend it to cover cleanup of the earlier registered device, via calling
+> device_unregister().
+> 
+> An important note, genpd_dev_pm_attach_by_id() shall only be called by the
+> driver core / PM core, similar to how genpd_dev_pm_attach() is used.
+> Following changes deploys this.
+> 
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> ---
+>   drivers/base/power/domain.c | 79 +++++++++++++++++++++++++++++++++++++++++++++
+>   include/linux/pm_domain.h   |  8 +++++
+>   2 files changed, 87 insertions(+)
+> 
+> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> index d538640..ffeb6ea 100644
+> --- a/drivers/base/power/domain.c
+> +++ b/drivers/base/power/domain.c
+> @@ -2171,6 +2171,15 @@ struct generic_pm_domain *of_genpd_remove_last(struct device_node *np)
+>   }
+>   EXPORT_SYMBOL_GPL(of_genpd_remove_last);
+>   
+> +static void genpd_release_dev(struct device *dev)
+> +{
+> +	kfree(dev);
+> +}
+> +
+> +static struct bus_type genpd_bus_type = {
+> +	.name		= "genpd",
+> +};
+> +
+>   /**
+>    * genpd_dev_pm_detach - Detach a device from its PM domain.
+>    * @dev: Device to detach.
+> @@ -2208,6 +2217,10 @@ static void genpd_dev_pm_detach(struct device *dev, bool power_off)
+>   
+>   	/* Check if PM domain can be powered off after removing this device. */
+>   	genpd_queue_power_off_work(pd);
+> +
+> +	/* Unregister the device if it was created by genpd. */
+> +	if (dev->bus == &genpd_bus_type)
+> +		device_unregister(dev);
+>   }
+>   
+>   static void genpd_dev_pm_sync(struct device *dev)
+> @@ -2298,6 +2311,66 @@ int genpd_dev_pm_attach(struct device *dev)
+>   }
+>   EXPORT_SYMBOL_GPL(genpd_dev_pm_attach);
+>   
+> +/**
+> + * genpd_dev_pm_attach_by_id() - Attach a device to one of its PM domain.
+> + * @dev: Device to attach.
+> + * @index: The index of the PM domain.
+> + *
+> + * Parse device's OF node to find a PM domain specifier at the provided @index.
+> + * If such is found, allocates a new device and attaches it to retrieved
+> + * pm_domain ops.
+> + *
+> + * Returns the allocated device if successfully attached PM domain, NULL when
+> + * the device don't need a PM domain or have a single PM domain, else PTR_ERR()
+> + * in case of failures. Note that if a power-domain exists for the device, but
+> + * cannot be found or turned on, then return PTR_ERR(-EPROBE_DEFER) to ensure
+> + * that the device is not probed and to re-try again later.
+> + */
+> +struct device *genpd_dev_pm_attach_by_id(struct device *dev,
+> +					 unsigned int index)
+> +{
+> +	struct device *genpd_dev;
+> +	int num_domains;
+> +	int ret;
+> +
+> +	if (!dev->of_node)
+> +		return NULL;
+> +
+> +	/* Deal only with devices using multiple PM domains. */
+> +	num_domains = of_count_phandle_with_args(dev->of_node, "power-domains",
+> +						 "#power-domain-cells");
+> +	if (num_domains < 2 || index >= num_domains)
+> +		return NULL;
+> +
+> +	/* Allocate and register device on the genpd bus. */
+> +	genpd_dev = kzalloc(sizeof(*genpd_dev), GFP_KERNEL);
+> +	if (!genpd_dev)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	dev_set_name(genpd_dev, "genpd:%u:%s", index, dev_name(dev));
+> +	genpd_dev->bus = &genpd_bus_type;
+> +	genpd_dev->release = genpd_release_dev;
+> +
+> +	ret = device_register(genpd_dev);
+> +	if (ret) {
+> +		kfree(genpd_dev);
+> +		return ERR_PTR(ret);
+> +	}
+> +
+> +	/* Try to attach the device to the PM domain at the specified index. */
+> +	ret = __genpd_dev_pm_attach(genpd_dev, dev->of_node, index);
+> +	if (ret < 1) {
+> +		device_unregister(genpd_dev);
+> +		return ret ? ERR_PTR(ret) : NULL;
+> +	}
+> +
+> +	pm_runtime_set_active(genpd_dev);
+> +	pm_runtime_enable(genpd_dev);
+> +
+> +	return genpd_dev;
+> +}
+> +EXPORT_SYMBOL_GPL(genpd_dev_pm_attach_by_id);
 
+Thanks for sending this. Believe it or not this has still been on my to-do list
+and so we definitely need a solution for Tegra.
 
->
-> If you suggest a new kernel driver module:
-> IMO, there is nothing bad if we create a dedicated kernel module
-> (driver) for Xen dma-buf handling selectable under Kconfig option.
-> Yes, this will create a yet another device under /dev/xen,
-> but most people will never see it if we set Kconfig to default to "n".
-> And then we'll need user-space support for that, so Xen tools will
-> be extended with libxendmabuf.so or so.
-> This way all Xen dma-buf support can be localized at one place which
-> might be easier to maintain. What is more it could be totally transparent
-> to most of us as Kconfig option won't be set by default (both kernel
-> and Xen).
+Looking at the above it appears that additional power-domains exposed as devices
+to the client device. So I assume that this means that the drivers for devices
+with multiple power-domains will need to call RPM APIs for each of these
+additional power-domains. Is that correct?
 
+If so, I can see that that would work, but it does not seem to fit the RPM model
+where currently for something like device clocks, the RPM callbacks can handle
+all clocks at once.
 
-The downside is that we will end up having another device for doing
-things that are not that different from what we are already doing with
-existing gnttab device. Or are they?
+I was wondering why we could not add a list of genpd domains to the
+dev_pm_domain struct for the device? For example ...
 
--boris
+diff --git a/include/linux/pm.h b/include/linux/pm.h
+index e723b78d8357..a11d6db3c077 100644
+--- a/include/linux/pm.h
++++ b/include/linux/pm.h
+@@ -659,6 +659,7 @@ extern void dev_pm_put_subsys_data(struct device *dev);
+  * subsystem-level and driver-level callbacks.
+  */
+ struct dev_pm_domain {
++       struct list_head        genpd_list;
+        struct dev_pm_ops       ops;
+        void (*detach)(struct device *dev, bool power_off);
+        int (*activate)(struct device *dev);
+@@ -666,6 +667,11 @@ struct dev_pm_domain {
+        void (*dismiss)(struct device *dev);
+ };
+
++struct dev_pm_domain_link {
++       struct generic_pm_domain *genpd;
++       struct list_head node;
++};
++
+ /*
+  * The PM_EVENT_ messages are also used by drivers implementing the legacy
+  * suspend framework, based on the ->suspend() and ->resume() callbacks common
+diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+index e61b5cd79fe2..019593804670 100644
+--- a/include/linux/pm_domain.h
++++ b/include/linux/pm_domain.h
+@@ -51,7 +51,6 @@ struct dev_pm_opp;
+
+ struct generic_pm_domain {
+        struct device dev;
+-       struct dev_pm_domain domain;    /* PM domain operations */
+        struct list_head gpd_list_node; /* Node in the global PM domains list */
+        struct list_head master_links;  /* Links with PM domain as a master */
+        struct list_head slave_links;   /* Links with PM domain as a slave */
+@@ -99,11 +98,6 @@ struct generic_pm_domain {
+
+ };
+
+-static inline struct generic_pm_domain *pd_to_genpd(struct dev_pm_domain *pd)
+-{
+-       return container_of(pd, struct generic_pm_domain, domain);
+-}
+-
+
+Obviously the above will not compile but the intent would be to allocate a
+dev_pm_domain_link struct per power-domain that the device needs and add
+to the genpd_list for the device. It would be a much bigger change in
+having to iterate through all the power-domains when turning devices on
+and off, however, it would simplify the client driver. 
+
+Cheers
+Jon
+
+-- 
+nvpublic
