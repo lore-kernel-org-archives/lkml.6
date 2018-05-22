@@ -1,14 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752256AbeEVKMF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 06:12:05 -0400
-Received: from mail-ve1eur01on0099.outbound.protection.outlook.com ([104.47.1.99]:45280
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        id S1752569AbeEVKM1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 06:12:27 -0400
+Received: from mail-he1eur01on0099.outbound.protection.outlook.com ([104.47.0.99]:57472
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751404AbeEVKKR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 06:10:17 -0400
-Subject: [PATCH v7 17/17] mm: Clear shrinker bit if there are no objects
- related to memcg
+        id S1751477AbeEVKKJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 06:10:09 -0400
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=ktkhai@virtuozzo.com;
+Subject: [PATCH v7 16/17] mm: Add SHRINK_EMPTY shrinker methods return value
 From: Kirill Tkhai <ktkhai@virtuozzo.com>
 To: akpm@linux-foundation.org, vdavydov.dev@gmail.com, shakeelb@google.com,
         viro@zeniv.linux.org.uk, hannes@cmpxchg.org, mhocko@kernel.org,
@@ -20,8 +21,8 @@ To: akpm@linux-foundation.org, vdavydov.dev@gmail.com, shakeelb@google.com,
         mgorman@techsingularity.net, jbacik@fb.com, linux@roeck-us.net,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org, willy@infradead.org,
         lirongqing@baidu.com, aryabinin@virtuozzo.com
-Date: Tue, 22 May 2018 13:10:10 +0300
-Message-ID: <152698381022.3393.6474755436628067805.stgit@localhost.localdomain>
+Date: Tue, 22 May 2018 13:10:01 +0300
+Message-ID: <152698380141.3393.16556787145139503288.stgit@localhost.localdomain>
 In-Reply-To: <152698356466.3393.5351712806709424140.stgit@localhost.localdomain>
 References: <152698356466.3393.5351712806709424140.stgit@localhost.localdomain>
 User-Agent: StGit/0.18
@@ -29,194 +30,181 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [195.214.232.6]
-X-ClientProxiedBy: AM6P193CA0021.EURP193.PROD.OUTLOOK.COM
- (2603:10a6:209:3e::34) To HE1PR0801MB1339.eurprd08.prod.outlook.com
- (2603:10a6:3:3a::7)
+X-ClientProxiedBy: AM6PR06CA0016.eurprd06.prod.outlook.com
+ (2603:10a6:20b:14::29) To DB6PR0801MB1333.eurprd08.prod.outlook.com
+ (2603:10a6:4:a::27)
 X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:HE1PR0801MB1339;
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB1339;3:9KCjjF7FvzdmccFhhZn7DGKf2O2A7BKjM23t0yHis3p/fzKYbDiSHALowyXGI2QceI0Li3j0qq8JH1sD/X35yziI1QPhrT8aXpVVq1XdnSlSmYAYpJ9OrSukdeCuNuEhORDIaraIyB/SCS2WdHRNzaBzO/THMK1TnNeGRtl5vcxLXzgeOKO3OmG2zVavQMwdDUnXmw5ITaFav8VYP672WRj2WBsRkLQ7pCFO9UlcE2Vb5hvgH+HbmY6/a+hvddGA;25:lQGaEgG7MGSLAoyJJMBGZYEdJj9fZROeXYwJkIHgYboKNulSg56TgSE8JZKmCv5DBoQrpE9Cmxh8RLDx7iK5A9mh/ZGWXa/rNLJXdQ2VXDzFoTvIez9mzuqhDWiYiNr/T5Q9vTvRpqqZFvzhUy5NmrmknLSG93s31bLnDG333HRtzYBsKXJ7q356N3WS7rZJafyWWvWEwGSYxHP5+jpb0QrhX6eblgaD08bA15gDOl6+MUisjd8rfpZ8f6Xy1Qce/EOhPCJ1F2HFaBVdF/5lnqmli1lXo0pE6Q5ElLaUcFZmYLAn44qgC1HKvC032qyCm7BfGQNT+pHYXWZXM7ncNQ==;31:D++XoQRRJ+ivFrr2tnVAqAwJhzu2J2PPzcn195vJMQa990TR+OtJU9wCQn8TXVXFZjE6UNHFYBG+ehdb4iZ57nWBUIxeNYlxhSMnNWs5t0O2LgqOi7AGrsKRCJ6XD4U6f9NJqUNJcUSyk5LhB0I/SdJ2fd7fA81e/FpuNFXPSKlMWtBhh4YE51pNo/0KhoPWzz4g9yamkWLZffElnrZh3ICWkhss/Y6a5YFgfgqCNpM=
-X-MS-TrafficTypeDiagnostic: HE1PR0801MB1339:
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=ktkhai@virtuozzo.com;
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB1339;20:JotN/IrSCQ85/5zrS9ZOoMNu03vAkCMycWfQitbInvM5cCmdiS+Dt8irSGGdducOLmwsopW/x4ZiEQ958qBoJXZGRaWrZaBBc+reIGzsDuAWphGJTjXf0oysK3sU6frFgTOYNyIMm7JPrTBkgEx/p6TLrN76ffEM9NLMKK7qgzDSEtJ2sD4dg5zWHwYTxdQCwcuLpiVkGRbzF9ub2q4mnOSyHQTWE7zXZgPQqTrmc/f6/Ad9/CZGifmOpDCUy2MHy5G1adfcmFkEqL7qKAJJazLjchtcMRo8ruxESFbzcCKHcAwIxDpnDt6lVYxT20gQjgLVrqLip5h3njWKOSkwNHQ/0YYgBr2rGvH8Srot+soQUrHeSqddC2LhXhD09kAHKkRwf5tw+7GR8dCghxggPgMN7R6kAkPjRtXWPaL6MmZ2ucH1vfFmaol1RikR+FwgYTk4klETO9L4di0UN/dTOBOfuwtbE1zIx1XfZUqjeXRfWFiny/LXbuWfaO1OJAKr;4:c51wEAemHicsT5ohPrSyhaNDoTNJkZ+1V5OI+jmn/ux0wiYoxISk79wSgwKl4Fb2GLUe4upwpX3NeeZPtpClNzFjyby/oFH3IzUQDQBkI8HCfZYUInE4+5SfCjxj2MihOONlgjbJREjSHm9kpZnArneMxvnYWxLS8PNy85utJ911SkMj+zYQSZrq1SQd6zYoEKZOrqicaFo5SYSCxM2PHYZbdu+bquGjJtEpsnGM+YcpMlPKABSVeNCtF9XDJjR2Wl1DXUoiDih/esv1kmhKiwxYMfsGHZKkyON8Fw6stouHZcY8r8AGx8BcMTBscmk9
-X-Microsoft-Antispam-PRVS: <HE1PR0801MB1339A2E06104A51827507BD9CD940@HE1PR0801MB1339.eurprd08.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(20558992708506);
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DB6PR0801MB1333;
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0801MB1333;3:QH2vPWgGcWAVmr9RkHGGXRQlfWvkuKgoAIduYFDvEiZm8f4Tdx8wukeoBA7aR0MnYhct+uqseSKFSLd1Niw0QM4KqYnGCV9bsP04OG4mmySfjRErseIt7bRsR3eKDcCc7eMWCPxNqKn4HEpoQpIOy75K2fvSv9QuIc4R6iZouKY3UViH7mqPB6SldIooaDk3KH5MmEQ+7U08/uG98VtHSuDkTFXtGBwBxXAnJ2w+t0SvDCN7GDeQ0zDUG7wg5hTo;25:rIHM/5w3RiqQb8PJU+LRQf0mHfqsJra2q70vIRPPsJOGdb5mN4OPr7Ib/RTeG+TcD27lvcpft6nDrPgB7LSeZSAFN4xw9PJ8IU44rMXkXuP1BdN2kBRA70AamzblvWgFHFxA1kzum2xFEEmSyoDenmwEYqTrd3Q9YyaoVZHYM0mcZD0np0r0cEXqzSPq2zatEGyK3Pz90EGenCicR8/cvUlk1BKPAX3vJmN65in6uZYnC04HTlPzfoLUM44LIniO5H628RPQpZIbLYrlTOFxtM1/jnR56JOy/c2oMQuWJpKksx/Wzkiy0SFyx/Mq2+RjzYC1JMIq+Wnt6/FrziKMcg==;31:5HbcVIlbbU0SD2qUOHbA/yCHM4Q7jxEjlO3FiD/5gMkATRcZgf7zyHF+FIl3KCTWHorRet6mT0ey/4pgZRhq5Y6O9MpJDypILvmXZ/54xOQAZk3WWtB+BAX/bYGFYcp36opMqt1m9AUW//lI/tk40oHKNQRYM8mNANFxLPnnWRnsNSmyht+o92+QZNmCldGsFhjLwxilgUzU2l4qaS2EduM0Fbw5jIB1C3F+39sp1I8=
+X-MS-TrafficTypeDiagnostic: DB6PR0801MB1333:
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0801MB1333;20:24VwmkN9LiZSR/iZkG0R3wURhfsvhn2uLdxUZXug2fmQZvPYM1+6U+hSSoOKcoYJJTwXCDUIjCIBxY228V9vlPdNvmStFOHmlx9i/F3YGG420DifGq7EDgFZJ9gPaFHefxFzW2BSpDc4WvF7iQKjGv/7ysckgKazNNESstV1cWVBxEKFckVQTnUN3ew+r8brnpRUotHCiuPKwlHyWPXCi96f05MUOdsh+Sc6vz2mpZOeN5DAW0mng1BRFHd8ql2pAHVg6WDDRD1vxE5adqoQekgvxJEaaQq2l3xPRz2CZO29XDBm+mYainUooO5pBZxUu92R2s5GbFUeby0b/eNuCjSfX8JNd7ZW68WEuO32NKHomEBjjStX8u0f68f3Izy8RMlofJ1Lpd8BMJNQ9jrH6fE/RDNLO9RwmPbmW06Eqf4NHzSw0hnABi6eGDtMCgfMMpZhrm+r6fALZvo5fOFNhQ1mbh5cGpcRF31ql1f01os3JQlr9IRLtLIyTnHtCmoy;4:rzJoXGrJKa74yAbDxNBCrX/gvvjDw9rjocUk2Yr5/Dc/86hgXJnQGoGfsrTVzbEFogVgP5cNcp5Y/bfvEe5lweJ7o4wktF0ZEjzIXd6qCWsMy0kJ52OOJPfFluKRzqPRWIHAzDgYqmWuN90R4zZQG/fK9LvxAP6wbyZOaNguclnNi0fErlsyN7xDXL4RIl77Yeao6ahYC3b3pz8NPgVNPhqikBoTaUIK7wo7u2wrSsZneutZPnxPONYFCDYok4Ik63PHy3vIG0v5OJdOnFM9qw==
+X-Microsoft-Antispam-PRVS: <DB6PR0801MB1333BA56131F127D26C98A0FCD940@DB6PR0801MB1333.eurprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(93006095)(93001095)(3231254)(944501410)(52105095)(149027)(150027)(6041310)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:HE1PR0801MB1339;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0801MB1339;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231254)(944501410)(52105095)(10201501046)(3002001)(149027)(150027)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:DB6PR0801MB1333;BCL:0;PCL:0;RULEID:;SRVR:DB6PR0801MB1333;
 X-Forefront-PRVS: 0680FADD48
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(39380400002)(366004)(346002)(376002)(39850400004)(396003)(189003)(199004)(7736002)(25786009)(2486003)(6116002)(6506007)(386003)(16526019)(3846002)(8936002)(186003)(61506002)(7696005)(106356001)(47776003)(486006)(39060400002)(446003)(476003)(23676004)(11346002)(86362001)(956004)(52116002)(68736007)(97736004)(478600001)(316002)(8676002)(9686003)(55016002)(103116003)(50466002)(5660300001)(81156014)(59450400001)(2906002)(66066001)(76176011)(55236004)(6636002)(105586002)(26005)(53936002)(58126008)(33896004)(81166006)(230700001)(7416002)(305945005)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0801MB1339;H:localhost.localdomain;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtIRTFQUjA4MDFNQjEzMzk7MjM6dGxQOThVcFZOOTBTWnhWZHBBVTFpRDR2?=
- =?utf-8?B?MjFkNzlXdUcwREJnV0liN2Zabjk0VXRuY2VzamhoV0dnYzNOWFVTWDcrUnRK?=
- =?utf-8?B?bWtrYjR3MU1hTkI4QWpacDJ0REYwRHJiakFPbUcvZHZKNW14VWE1dDN6cVV0?=
- =?utf-8?B?cDdpbkg5a1BQSHB0S01Jc3ZpU0o2SzJISDQ0QW5hMTJ2cU9Mckh4aXVIN3FE?=
- =?utf-8?B?Rm40WDdiQkdqK3V1bmh1RmtYMDRSN3RtdzVpcmI4ZnBQMEJscktCQWJld2Z2?=
- =?utf-8?B?WHQvNk5teDRZTjErZWtwNERhWEdoRVNWbFEvVHEzekM2SmZMZXVBSDUwN3hF?=
- =?utf-8?B?UlBlS0dsQkdIQlNaSmpNRUYveVF4M3M1YWJleHp2ekhHYk5OQ21GMGdLdDc4?=
- =?utf-8?B?NWVQZ2IxVW1KU1BxMkZVbmg2Wkl3UmxXS1hGcHlkS3A4RlZGM1BYb2RNa0xr?=
- =?utf-8?B?R0V4bFRMNFZ0WVF2UTI3cE9uSVlKS1o3NlNrdzhnRzNHUHBTZ0N5TFdSQjR6?=
- =?utf-8?B?VVNvZ0x6dDg3S25nSTRvTmdaR3N3K3pzY1lWOHV6SU4yTVFVYjV2dkVoZWtI?=
- =?utf-8?B?Z2Q3dE0rV3RLa01TL2ZpaXRuS2M1Ujc0ZExPVWNzR1l2YUVxa3M4aXk2RUFx?=
- =?utf-8?B?b0dmTERDTGg5VDdRSHJrSDhnMDIvWFVUMi9HemphejN3eUJFMXpxTUNWL01K?=
- =?utf-8?B?bHFvakNRSzZWcmNjcGpXZVVSWVNzblJaUFEvd1BJKzc5M2pYTE9QV1hGb2pM?=
- =?utf-8?B?QTlJMUUwaURQU0lIUk0wTUFONjdWQnpiK0h4VjRMcER4SENsaU51dmdnYXFF?=
- =?utf-8?B?bGdwRnJRY0tzTW9OVDBUNkYvWnVSa3hZMEgxNUZDZ1dIZnFxdVg1ZUxjWWxX?=
- =?utf-8?B?djRaK0tDaHpGbHM5ZTdTV0NicWZRZFd5QjVLTzhvK2VlbXpjcVhXY1BlSnZQ?=
- =?utf-8?B?T0ZISFNBVFZ0NGtNS3pxdUhleFZicHJkQ2RUSUwwRkZqdDlvMFE5a01JWGZ3?=
- =?utf-8?B?YWkrNU9WTTZ6S202V1U3SU04SzJvS2JIWWtSZVdOVmpyMnpaeXhFa1VuSHVL?=
- =?utf-8?B?R0ZZeVRCSUh5Z21jRVFJNFB1dEI4eDlpY3kyeGFDUm4yYjlqM1I2QmVKRnhG?=
- =?utf-8?B?K2wxdG0rNEt6NEQxeDRhMTJBeGxXbW9aTmhjc2I0RFJEQ3BQUjBreTNCdGVS?=
- =?utf-8?B?dTR1VHVnYXJxeHlDTFJlNyt3VjFYVGNOVUUwVkl1ZC9hajNISW4vT0k3aitn?=
- =?utf-8?B?WlBDTytGaCtGOHprbllKeXBlOXBjKzdEbXY0ZkRtclRFYktLb0M2cE5nTkNV?=
- =?utf-8?B?OXRZL3AzRU00cEhodWphNUh0emR3NUd2RUJaOFpDNjRveEZuSTgycU14S3pr?=
- =?utf-8?B?Zk9UQ09QaXJ0UTErMnNPKzZpN3Rvb3lJWVdWaEIwOWZwdk92Q0tWV3c5U0tQ?=
- =?utf-8?B?aXBscHpFTk9nRVZYTFF1Rk5vRUQ0YWsvRC8xVWVSbm9jbUorcGh0Mnc3cG5O?=
- =?utf-8?B?dzJKbVdOc1JmSm9mSFJEMWhMZDRhb3pZenhaTkZaWWFHRkwvS2JrV3RyajY1?=
- =?utf-8?B?dHRnOVp2b0pPNGowMG5DbTIyN2tZZ3A5QjRRTVBUbElsbDdxZUxIR3l1K0FD?=
- =?utf-8?B?R2R0M2lTSHRwc1U0eFUwSEQ3eGhBSFhVa1o1eVVicFJveFNJZENZTGlkS2R2?=
- =?utf-8?B?ak80MkkybmVBWVpmR25uTFhuelNzQUxRa1FxT3o5L0YzTFVUNVA0UEpjYkZi?=
- =?utf-8?B?YkF0TmtCT2F2cHMxRElwWFBNZXUxNHkxT3ZSOXdOVlNTRGJ3QmQzcTN1Z0Nm?=
- =?utf-8?Q?crIx48OgG/81OEK?=
-X-Microsoft-Antispam-Message-Info: KWX8BtpZK65IrsVViKq9gehC2VkEJsdWM4jA2dS0gewQZuwno0gavUgS9vFOfsh3Gu1weTDmMSXoUh0JXaNNG3k+nI/QpTsYvG1RcaP2wwg5QvkPD46zFFcBIgmLFLnUP3gbo4wBEHZ8XO4CniVeJEjbKezOuuOBvokm2xNg81gL0bEzxotHR73ZG0RP8ksP
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB1339;6:vzoyFwlmGIzlCU6DU1jJX+3g+vxnoQHz/Ev+9YPKJfUiG3v9RXtgw7+pAoQ4xuPIE9ZCirHV2WsuHRSZbGCUvPAqbhy1ghGfW44ovnUo6OB4iFLuFdUhhm0QJ5GsCeIBu8IyphCcRmT+7lZYHwrjDctl4M9J9tSzlQozT8z/1RBAOFjnRtTjiR4Nc7i80spNkD2ZfJLIu9namUC4pJ3ppu8WW8FtdMp3Zfn/NsEp1FLlQWRzohslyjme28xI5ZVYYTyHMARqqIE771/+rSfQcsl+4nE1Bwuw18N/a5hDwCtrwsbeN6DLzP2vDJ+EtFwlpI2Qam8r3nEz3FFKO3BKwFLEKpjk2P+K15l7CoF5rdrcWUxXjfZUZL5ZlmY75Wi9vrvR/sz46rdkW8lAqNbY4iV3hHzvT37g/glBbeQHwF/3IRgjFYGe38eemaXec4aYr0JDo0CdJ+xA5ViFv30G1Q==;5:AWOZOo9XRmy/uFXG/NaaW1UsnEgUX7v71DHbKjFiULAJJpFgLfNyb+1utQ5o8pvPFiVX6FjTJ2C1OKvFnFpWBgqBakG79PmPWqZib/pAmfxQ2mlu1WooxlbB7raU0CjuKXDWiJO+1KjNZhnYzvleumY1jF67egI6I/HVb1Rvfxg=;24:IAXoSUOjV9vy4sqhN8CZLqYBKHzqR9Bro8cW/WzGbcbBvFXoxXoaT1Fk/JFcN7fF8VDzGTuxS1z5yi7vIphh0clwV6OmsYI0mbYhjh2JPLQ=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(979002)(6069001)(376002)(39380400002)(366004)(396003)(346002)(39850400004)(189003)(199004)(446003)(956004)(476003)(486006)(11346002)(186003)(16526019)(76176011)(6506007)(386003)(55236004)(2906002)(47776003)(33896004)(7696005)(52116002)(59450400001)(66066001)(7736002)(305945005)(2486003)(23676004)(68736007)(61506002)(25786009)(6636002)(230700001)(58126008)(6116002)(3846002)(39060400002)(86362001)(575784001)(97736004)(8936002)(53936002)(8676002)(103116003)(81166006)(5660300001)(50466002)(316002)(81156014)(9686003)(26005)(7416002)(55016002)(105586002)(106356001)(478600001)(921003)(1121003)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:DB6PR0801MB1333;H:localhost.localdomain;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtEQjZQUjA4MDFNQjEzMzM7MjM6MHZqUGdUbHpYM1VUVkdvUzYwZWgzMDN3?=
+ =?utf-8?B?SVRvc05ZbTlEUFFsZkhMTG9LTkRSR1hYOUR2R2lCNnVSazNldXZWY3AxZUxt?=
+ =?utf-8?B?S0dnU0R3cDNGbDh3OEoxbEowMk1tcnAxMGFJcVZOL01rVXBiUytVbWhjd1ZZ?=
+ =?utf-8?B?Zk5zUlUvMU5DQ2tqc1d4eU5CYUJTTXhlRlR4OW16S1JOTkYwNXYvSHg4aTEz?=
+ =?utf-8?B?R2R6ZFNwbm9CZnBkN2dJczNxK08raWgrU053VWhja1A0OWVpUDdhUWFhSkhq?=
+ =?utf-8?B?bWJnZCtOcDVLSWd6UklnY3BlVGhhcUZJekxUWTFtbHZtZ2JtVk9OYUxnZFNY?=
+ =?utf-8?B?SUc5d3Y0eVdoblI1NTNvV3B1V3JYdG52dDd3bmFaUjNySjdsalUvMDRiYnVZ?=
+ =?utf-8?B?dXNhbUNHN1FDY1lBZFdrUFJmVTEyKzJEYU5lbHNRdHFCR2NHbHdJc3ZSb2xP?=
+ =?utf-8?B?NmVybFR4QzJ2bVdxLzZhdk1MbUNWT1kxYjk2Q2RUVlUrNTFhV0RIb0tBN29m?=
+ =?utf-8?B?RG9JZ3dHeWh5N0FXdWZFQjJ1VmNLRzFMR2dtQm8xVWJCRis1ZFFPZkQrS2dL?=
+ =?utf-8?B?OUZZMTJxRVB6Q1JPV1h5WWc3dkdlb0srUW1jRHhqaVFxTmJtMk5RNHdGL3pV?=
+ =?utf-8?B?ejZQWk00WEZNZ01LUXAxWW9hRWV3Ums5aSsyZUNpQjFmK1VPMCsyUDJVK1ZQ?=
+ =?utf-8?B?cmF0Sk5XVXowd0FxQkdaanN2K3ZUVmNEVW9FNnNwRktSRUR1WHFJRlBiYmdo?=
+ =?utf-8?B?ODVYWGp6ZjJaR2d5dzk0dlFOVTVkdFEwS1RBeUxNb1psZ2NrRHBLWlQ5V2Qz?=
+ =?utf-8?B?dzNWMEpDYUN5Sk01VnNaTTZMR0NWc2J3bDJ2SzBmV3FzZ0dXbDhCLzhyVnEy?=
+ =?utf-8?B?cjNxWStrRUduVGdYakdNRzVURUQvMVVRb0Y3VmMwZEE0bFBNRE1FeUVnUHRm?=
+ =?utf-8?B?MzJlSmZYRVJvL2lNQm9FblA0eWpjTzZsWTFGTmtvdS9UaWFwMjJyN1ZuUWFN?=
+ =?utf-8?B?MXkyaSszd0pHaXlDSmlZL2JiQVMzcWJSVnQ2Vi9nd296R3ZvYjQ3MndDcC9y?=
+ =?utf-8?B?clZIR3lUUnpFUEFDeEY1U3dobWFaa1lHbnMvUFNJZlBLVlVBa2xWTCtXQ2tI?=
+ =?utf-8?B?cFFTc0Z3clpaUHVrMjJFZjloVDBXbVhIRXpwM2FESlV1OFZlVUdBZHV1TnI0?=
+ =?utf-8?B?bWFIOHRtaTAyaTdKaEtQS3RDQ3JWY1MyYTR2a0FoM2ozZEk5a1BzMGZOM3Jy?=
+ =?utf-8?B?U0ZDeE5DZHE2THJlWW5oQmlaWHJkdDM4dlNWdStRb2pYc1Z4OU9QUDRBN200?=
+ =?utf-8?B?VkkxeTIvcFVnZWc3OE0wanNaMGN2czNMVEQxNE0vQ1lGVGpwWnpXNUlKckcv?=
+ =?utf-8?B?cmpsdDJCSi9MTFM1cE9vWmhWaERYclp6SGk1Z2dha3kxR1NmYjlFanZ5ODU2?=
+ =?utf-8?B?UWV1KzN5QytQNmZ5SVVLQ1ZkM2hpeTk1Mm9pT29sWnlhRm51UUhRTXNmb0xZ?=
+ =?utf-8?B?d1V3b3M2VTRjeFpTS1VTUkJBZ3pybUVoTjZqVUsrL2N2QXpsaEdqQzM3ckpn?=
+ =?utf-8?B?OFp0QUllM3ZKVVFweEU1Nkc4VUlqR3hzU0VVdDRFTFhWakxYay9IWlNSbUxT?=
+ =?utf-8?B?MWx0cFY4c2hpVFMxWnBjeDhpT2VIQW1hcWNiNkVzTjlYV3F4NDIrVlRWK2dj?=
+ =?utf-8?B?RGgxYTdxbS8vK2RRRk04QW9RUlo2c1J3bjkwWkp0LzZ6czAveXJGSlhzd1hz?=
+ =?utf-8?B?Ukx1MEZaRUk5RnNBcVg2RTNLMnFOSy9NTW5sOElSeDVUMSs0dUxYSHhZRW16?=
+ =?utf-8?B?bXE3Y0t6NEdDMHA5N0c2T2pENmJyRGlmR0gybjJmR25MY0pjaVg5cVlpWkw5?=
+ =?utf-8?B?eksrR2dKekZ0VkdidW55cXVXM3ZaTHNvaVVZUVk4cmRXaDA0dWdUb1ZwaThT?=
+ =?utf-8?B?b3g1WUZHeFJNbkJuTTE0ZkhNWk03Z2g5dnUvN09lMjNtbm00MGRzK2o2OVdn?=
+ =?utf-8?Q?vTkxvEkF?=
+X-Microsoft-Antispam-Message-Info: KrGN7Y1OWyCZR+YB3djMkEaSTClBOvROEzcZu6zdW6Ty1xnvYdfxorUvQp4pwPDTUz77WybdA3JbgK+h78Y7R27dZrvWoqoSPtI8kLPm/0BTV/HntSd7t8tPZgHoYw0dV1CIKtX73VaqKmaLzZZiDEoG+QWm/XgQoCZyMcqNchKZN1Cxny0zRkporlSBevrQ
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0801MB1333;6:1MN8QLJ3C96gfGqCosWfDLxiedyvmAAoZ35sUsGCN9JGp+N1GXYRBZn5NdudMR2UNGsqOaOiRDKBja7yE1jUm0CfklNdbspjP3WTfCRyOdrtg+sCKfqKQwwSVhf9vdMsCttm+rBIsYZxMpqQosEEG+q0UQ5sHsWgNXq6dGlfnQu7doT7svTq2A7huz4q8TS2mVuxK0lHmPzctOyafQuSxF9U3YSzBkF4n9w0OM8bTXc+iymuX4ArX0NGl/NPzT8moczjfS3C1WBrPgslF1bgQjm84nX3XOOJy/RDj39LVXyQ3vLSCDDHIyCU3xdDHcldbX7yX3nebsPDAIQiKzFaYUqFxy3fCPWDBuDIKL/0D9RAkKWqFn5Rv/l4OI/f2HlbqG7Li26EUBoHMU+T2qMh/wcWIhJbdahnTIBWGLIiVq+HbWc5Oh2sB2b+iWObaDG0e81wKr59N3Tct/wu12O0fQ==;5:zqsmyah+wd6+Ciq970c0rgna0VRTMHh0d1NLDuJsX/rI/njYGdOY0GqB8YtYRtNqnmdHQz5u+xtcETZK4f7sWLVHT6t/7fybl2gzt8cStBhvDGe6xm5fru6tLozbtfTtahrnYXL6zgk+L2FR+eJScFJoEwqORfSJryFwwK5TAJ8=;24:arDaMKzM4SOhetkV8uONRrp8nFldhZ5tl6NEwpLdeNlY0yaXKsFwOgQdYV7C9Xd9lknrwc0IKnehrZTJDmtnd9gh6p78BJxbi48aoLYOpeE=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB1339;7:IhFCW/kfJ5DW6EQIc3SLCAh3mfrvk/LaWkTe7PAkuXXuSwJtROn5oOsNrxFSgTqz2MFNwABO/xxjzqKIVYaU27tbRX3Cxi3VF63pkn8hWtbqU4LtcbweJTmVjZtO/LRnx3Dlg6vn8zObPs31b4090Ja/kOSrTseSSjMDVrWEVtB/psz3XEAbkOwuBMVOIbXAvqHYPuXGsE3XzdKIMYjNfD49ylBfVIcGdMTL3klM4CpgT3NHU5/RLaBK166O7cOe;20:i8r64vXjiB4KatBwh4qbZMSTeztQg4xQ89xSUutP5tsaiAELNG2kYMiWHWUcC09SNSK5uQDFJEoqDx0yWlUTRPf2AhmF3eTmwg4tpN0pL1YhqPQgbV3SRzCQo7Fqr2Sc7J5dU8cat4gSAfiEVlBWayT3RuxWmbRyUx9TmWgvV8c=
-X-MS-Office365-Filtering-Correlation-Id: 7b78cb92-a465-40b6-f7c6-08d5bfcc3601
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0801MB1333;7:n4YBybY/8+u7lkw0gax6QInl+NU3ojb9tNoBV5mThpgGd2WVmiuLbQARH6WjnIGdeaUXt0t3VS4t12W+L6VXLZy66ifEw59DJe/sTzrQSDnMNpz3T1FaZ4kzFvDhGnnB+tyFfN2mE2IcfA59XxtzYKhjDuQ00k+IvHO+h6aSEQXuHTsaAppY5VnOsolPLWYs7MIIDpfsn2+Crgf5bMClMnUb7qbgAOsCv3xfH1hkdDTHeoCRGOrIJvI6+mwAZuTY;20:xSXtWk+gMyrmQ6cHI1wraSIOLnkiKKzNozg09BTT9r8qaMTC4C0nfMkFyXc8mgJzk52iKqjRAPaogNfmB+pDsvjHg7HgOM/fc3frnWxeMU8cLXqKApmY2JBbdfyi+m47TqN4CT/lMLAEmW2fpAWl6f54RfwYogLSHPIeOZ70v7w=
+X-MS-Office365-Filtering-Correlation-Id: 6cd48045-7a90-4a95-ae48-08d5bfcc3059
 X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2018 10:10:12.1874 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7b78cb92-a465-40b6-f7c6-08d5bfcc3601
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2018 10:10:03.1022 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6cd48045-7a90-4a95-ae48-08d5bfcc3059
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0801MB1339
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0801MB1333
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To avoid further unneed calls of do_shrink_slab()
-for shrinkers, which already do not have any charged
-objects in a memcg, their bits have to be cleared.
+We need to differ the situations, when shrinker has
+very small amount of objects (see vfs_pressure_ratio()
+called from super_cache_count()), and when it has no
+objects at all. Currently, in the both of these cases,
+shrinker::count_objects() returns 0.
 
-This patch introduces a lockless mechanism to do that
-without races without parallel list lru add. After
-do_shrink_slab() returns SHRINK_EMPTY the first time,
-we clear the bit and call it once again. Then we restore
-the bit, if the new return value is different.
-
-Note, that single smp_mb__after_atomic() in shrink_slab_memcg()
-covers two situations:
-
-1)list_lru_add()     shrink_slab_memcg
-    list_add_tail()    for_each_set_bit() <--- read bit
-                         do_shrink_slab() <--- missed list update (no barrier)
-    <MB>                 <MB>
-    set_bit()            do_shrink_slab() <--- seen list update
-
-This situation, when the first do_shrink_slab() sees set bit,
-but it doesn't see list update (i.e., race with the first element
-queueing), is rare. So we don't add <MB> before the first call
-of do_shrink_slab() instead of this to do not slow down generic
-case. Also, it's need the second call as seen in below in (2).
-
-2)list_lru_add()      shrink_slab_memcg()
-    list_add_tail()     ...
-    set_bit()           ...
-  ...                   for_each_set_bit()
-  do_shrink_slab()        do_shrink_slab()
-    clear_bit()           ...
-  ...                     ...
-  list_lru_add()          ...
-    list_add_tail()       clear_bit()
-    <MB>                  <MB>
-    set_bit()             do_shrink_slab()
-
-The barriers guarantees, the second do_shrink_slab()
-in the right side task sees list update if really
-cleared the bit. This case is drawn in the code comment.
-
-[Results/performance of the patchset]
-
-After the whole patchset applied the below test shows signify
-increase of performance:
-
-$echo 1 > /sys/fs/cgroup/memory/memory.use_hierarchy
-$mkdir /sys/fs/cgroup/memory/ct
-$echo 4000M > /sys/fs/cgroup/memory/ct/memory.kmem.limit_in_bytes
-    $for i in `seq 0 4000`; do mkdir /sys/fs/cgroup/memory/ct/$i;
-			    echo $$ > /sys/fs/cgroup/memory/ct/$i/cgroup.procs;
-			    mkdir -p s/$i; mount -t tmpfs $i s/$i;
-			    touch s/$i/file; done
-
-Then, 5 sequential calls of drop caches:
-$time echo 3 > /proc/sys/vm/drop_caches
-
-1)Before:
-0.00user 13.78system 0:13.78elapsed 99%CPU
-0.00user 5.59system 0:05.60elapsed 99%CPU
-0.00user 5.48system 0:05.48elapsed 99%CPU
-0.00user 8.35system 0:08.35elapsed 99%CPU
-0.00user 8.34system 0:08.35elapsed 99%CPU
-
-2)After
-0.00user 1.10system 0:01.10elapsed 99%CPU
-0.00user 0.00system 0:00.01elapsed 64%CPU
-0.00user 0.01system 0:00.01elapsed 82%CPU
-0.00user 0.00system 0:00.01elapsed 64%CPU
-0.00user 0.01system 0:00.01elapsed 82%CPU
-
-The results show the performance increases at least in 548 times.
+The patch introduces new SHRINK_EMPTY return value,
+which will be used for "no objects at all" case.
+It's is a refactoring mostly, as SHRINK_EMPTY is replaced
+by 0 by all callers of do_shrink_slab() in this patch,
+and all the magic will happen in further.
 
 Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
 ---
- include/linux/memcontrol.h |    2 ++
- mm/vmscan.c                |   25 +++++++++++++++++++++++--
- 2 files changed, 25 insertions(+), 2 deletions(-)
+ fs/super.c               |    3 +++
+ include/linux/shrinker.h |    7 +++++--
+ mm/vmscan.c              |   12 +++++++++---
+ mm/workingset.c          |    3 +++
+ 4 files changed, 20 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index b3ae1373c99a..c487e4300b48 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -1293,6 +1293,8 @@ static inline void memcg_set_shrinker_bit(struct mem_cgroup *memcg,
+diff --git a/fs/super.c b/fs/super.c
+index f5f96e52e0cd..7429588d6b49 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -144,6 +144,9 @@ static unsigned long super_cache_count(struct shrinker *shrink,
+ 	total_objects += list_lru_shrink_count(&sb->s_dentry_lru, sc);
+ 	total_objects += list_lru_shrink_count(&sb->s_inode_lru, sc);
  
- 		rcu_read_lock();
- 		map = rcu_dereference(memcg->nodeinfo[nid]->shrinker_map);
-+		/* Pairs with smp mb in shrink_slab() */
-+		smp_mb__before_atomic();
- 		set_bit(shrinker_id, map->map);
- 		rcu_read_unlock();
- 	}
++	if (!total_objects)
++		return SHRINK_EMPTY;
++
+ 	total_objects = vfs_pressure_ratio(total_objects);
+ 	return total_objects;
+ }
+diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
+index 7ca9c18cf130..b154fd2b084c 100644
+--- a/include/linux/shrinker.h
++++ b/include/linux/shrinker.h
+@@ -34,12 +34,15 @@ struct shrink_control {
+ };
+ 
+ #define SHRINK_STOP (~0UL)
++#define SHRINK_EMPTY (~0UL - 1)
+ /*
+  * A callback you can register to apply pressure to ageable caches.
+  *
+  * @count_objects should return the number of freeable items in the cache. If
+- * there are no objects to free or the number of freeable items cannot be
+- * determined, it should return 0. No deadlock checks should be done during the
++ * there are no objects to free, it should return SHRINK_EMPTY, while 0 is
++ * returned in cases of the number of freeable items cannot be determined
++ * or shrinker should skip this cache for this time (e.g., their number
++ * is below shrinkable limit). No deadlock checks should be done during the
+  * count callback - the shrinker relies on aggregating scan counts that couldn't
+  * be executed due to potential deadlocks to be run at a later call when the
+  * deadlock condition is no longer pending.
 diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 1425907a32dd..dba5f72956c6 100644
+index 6dbc659db120..1425907a32dd 100644
 --- a/mm/vmscan.c
 +++ b/mm/vmscan.c
-@@ -597,8 +597,29 @@ static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
+@@ -453,8 +453,8 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
+ 	long scanned = 0, next_deferred;
+ 
+ 	freeable = shrinker->count_objects(shrinker, shrinkctl);
+-	if (freeable == 0)
+-		return 0;
++	if (freeable == 0 || freeable == SHRINK_EMPTY)
++		return freeable;
+ 
+ 	/*
+ 	 * copy the current shrinker scan count into a local variable
+@@ -597,6 +597,8 @@ static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
  			continue;
  
  		ret = do_shrink_slab(&sc, shrinker, priority);
--		if (ret == SHRINK_EMPTY)
--			ret = 0;
-+		if (ret == SHRINK_EMPTY) {
-+			clear_bit(i, map->map);
-+			/*
-+			 * After the shrinker reported that it had no objects to free,
-+			 * but before we cleared the corresponding bit in the memcg
-+			 * shrinker map, a new object might have been added. To make
-+			 * sure, we have the bit set in this case, we invoke the
-+			 * shrinker one more time and re-set the bit if it reports that
-+			 * it is not empty anymore. The memory barrier here pairs with
-+			 * the barrier in memcg_set_shrinker_bit():
-+			 *
-+			 * list_lru_add()     shrink_slab_memcg()
-+			 *   list_add_tail()    clear_bit()
-+			 *   <MB>               <MB>
-+			 *   set_bit()          do_shrink_slab()
-+			 */
-+			smp_mb__after_atomic();
-+			ret = do_shrink_slab(&sc, shrinker, priority);
-+			if (ret == SHRINK_EMPTY)
-+				ret = 0;
-+			else
-+				memcg_set_shrinker_bit(memcg, nid, i);
-+		}
++		if (ret == SHRINK_EMPTY)
++			ret = 0;
  		freed += ret;
  
  		if (rwsem_is_contended(&shrinker_rwsem)) {
+@@ -642,6 +644,7 @@ static unsigned long shrink_slab(gfp_t gfp_mask, int nid,
+ {
+ 	struct shrinker *shrinker;
+ 	unsigned long freed = 0;
++	int ret;
+ 
+ 	if (!mem_cgroup_is_root(memcg))
+ 		return shrink_slab_memcg(gfp_mask, nid, memcg, priority);
+@@ -659,7 +662,10 @@ static unsigned long shrink_slab(gfp_t gfp_mask, int nid,
+ 		if (!(shrinker->flags & SHRINKER_NUMA_AWARE))
+ 			sc.nid = 0;
+ 
+-		freed += do_shrink_slab(&sc, shrinker, priority);
++		ret = do_shrink_slab(&sc, shrinker, priority);
++		if (ret == SHRINK_EMPTY)
++			ret = 0;
++		freed += ret;
+ 		/*
+ 		 * Bail out if someone want to register a new shrinker to
+ 		 * prevent the regsitration from being stalled for long periods
+diff --git a/mm/workingset.c b/mm/workingset.c
+index 79099bc5c256..3bac1b2f649a 100644
+--- a/mm/workingset.c
++++ b/mm/workingset.c
+@@ -402,6 +402,9 @@ static unsigned long count_shadow_nodes(struct shrinker *shrinker,
+ 	}
+ 	max_nodes = cache >> (RADIX_TREE_MAP_SHIFT - 3);
+ 
++	if (!nodes)
++		return SHRINK_EMPTY;
++
+ 	if (nodes <= max_nodes)
+ 		return 0;
+ 	return nodes - max_nodes;
