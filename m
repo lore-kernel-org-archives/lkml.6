@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753130AbeEVV3i (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 17:29:38 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:39374 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752733AbeEVV3g (ORCPT
+        id S1753171AbeEVV36 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 17:29:58 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:41517 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752785AbeEVV3h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 17:29:36 -0400
-X-Google-Smtp-Source: AB8JxZolr+KN+euYzY5cZ0IZgYX6udzlIt3FqMQYS8DIdLIE1r8qB1Qn2oJyCrUeRo81+DkrrmkBQw==
+        Tue, 22 May 2018 17:29:37 -0400
+X-Google-Smtp-Source: AB8JxZpKyEdmUsHvaynEcWsglTeYQY8R4lHJX3Ckbas6s4BG1lDJL7xTJ/TX1jnw6Rf0HqQOimon8w==
 From: "=?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?=" <jprvita@gmail.com>
 X-Google-Original-From: =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>
 To: Johannes Berg <johannes@sipsolutions.net>,
@@ -17,10 +17,12 @@ Cc: linux@endlessm.com,
         =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>,
         linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] rfkill: Rename rfkill_any_led_trigger* functions
-Date: Tue, 22 May 2018 14:29:31 -0700
-Message-Id: <20180522212932.5357-1-jprvita@endlessm.com>
+Subject: [PATCH 2/2] rfkill: Create rfkill-none LED trigger
+Date: Tue, 22 May 2018 14:29:32 -0700
+Message-Id: <20180522212932.5357-2-jprvita@endlessm.com>
 X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180522212932.5357-1-jprvita@endlessm.com>
+References: <20180522212932.5357-1-jprvita@endlessm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -28,171 +30,75 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename these functions to rfkill_global_led_trigger*, as they are going
-to be extended to handle another global rfkill led trigger.
-
-This commit does not change any functionality.
+Creates a new trigger rfkill-none, as a complement to rfkill-any, which
+drives LEDs when any radio is enabled. The new trigger is meant to turn
+a LED ON whenever all radios are OFF, and turn it OFF otherwise.
 
 Signed-off-by: João Paulo Rechi Vita <jprvita@endlessm.com>
 ---
- net/rfkill/core.c | 47 ++++++++++++++++++++++++-----------------------
- 1 file changed, 24 insertions(+), 23 deletions(-)
+ net/rfkill/core.c | 27 ++++++++++++++++++++-------
+ 1 file changed, 20 insertions(+), 7 deletions(-)
 
 diff --git a/net/rfkill/core.c b/net/rfkill/core.c
-index 59d0eb960275..6d64d14f4b0a 100644
+index 6d64d14f4b0a..07235520b00f 100644
 --- a/net/rfkill/core.c
 +++ b/net/rfkill/core.c
-@@ -178,9 +178,9 @@ static void rfkill_led_trigger_unregister(struct rfkill *rfkill)
+@@ -178,6 +178,7 @@ static void rfkill_led_trigger_unregister(struct rfkill *rfkill)
  }
  
  static struct led_trigger rfkill_any_led_trigger;
--static struct work_struct rfkill_any_work;
-+static struct work_struct rfkill_global_led_trigger_work;
++static struct led_trigger rfkill_none_led_trigger;
+ static struct work_struct rfkill_global_led_trigger_work;
  
--static void rfkill_any_led_trigger_worker(struct work_struct *work)
-+static void rfkill_global_led_trigger_worker(struct work_struct *work)
- {
- 	enum led_brightness brightness = LED_OFF;
- 	struct rfkill *rfkill;
-@@ -197,28 +197,29 @@ static void rfkill_any_led_trigger_worker(struct work_struct *work)
+ static void rfkill_global_led_trigger_worker(struct work_struct *work)
+@@ -195,6 +196,8 @@ static void rfkill_global_led_trigger_worker(struct work_struct *work)
+ 	mutex_unlock(&rfkill_global_mutex);
+ 
  	led_trigger_event(&rfkill_any_led_trigger, brightness);
++	led_trigger_event(&rfkill_none_led_trigger, brightness == LED_OFF ?
++							LED_FULL : LED_OFF);
  }
  
--static void rfkill_any_led_trigger_event(void)
-+static void rfkill_global_led_trigger_event(void)
- {
--	schedule_work(&rfkill_any_work);
-+	schedule_work(&rfkill_global_led_trigger_work);
+ static void rfkill_global_led_trigger_event(void)
+@@ -202,22 +205,32 @@ static void rfkill_global_led_trigger_event(void)
+ 	schedule_work(&rfkill_global_led_trigger_work);
  }
  
--static void rfkill_any_led_trigger_activate(struct led_classdev *led_cdev)
-+static void rfkill_global_led_trigger_activate(struct led_classdev *led_cdev)
+-static void rfkill_global_led_trigger_activate(struct led_classdev *led_cdev)
+-{
+-	rfkill_global_led_trigger_event();
+-}
+-
+ static int rfkill_global_led_trigger_register(void)
  {
--	rfkill_any_led_trigger_event();
-+	rfkill_global_led_trigger_event();
- }
- 
--static int rfkill_any_led_trigger_register(void)
-+static int rfkill_global_led_trigger_register(void)
- {
--	INIT_WORK(&rfkill_any_work, rfkill_any_led_trigger_worker);
-+	INIT_WORK(&rfkill_global_led_trigger_work,
-+			rfkill_global_led_trigger_worker);
++	int ret;
++
+ 	INIT_WORK(&rfkill_global_led_trigger_work,
+ 			rfkill_global_led_trigger_worker);
++
  	rfkill_any_led_trigger.name = "rfkill-any";
--	rfkill_any_led_trigger.activate = rfkill_any_led_trigger_activate;
-+	rfkill_any_led_trigger.activate = rfkill_global_led_trigger_activate;
- 	return led_trigger_register(&rfkill_any_led_trigger);
- }
- 
--static void rfkill_any_led_trigger_unregister(void)
-+static void rfkill_global_led_trigger_unregister(void)
- {
- 	led_trigger_unregister(&rfkill_any_led_trigger);
--	cancel_work_sync(&rfkill_any_work);
-+	cancel_work_sync(&rfkill_global_led_trigger_work);
- }
- #else
- static void rfkill_led_trigger_event(struct rfkill *rfkill)
-@@ -234,16 +235,16 @@ static inline void rfkill_led_trigger_unregister(struct rfkill *rfkill)
- {
- }
- 
--static void rfkill_any_led_trigger_event(void)
-+static void rfkill_global_led_trigger_event(void)
- {
- }
- 
--static int rfkill_any_led_trigger_register(void)
-+static int rfkill_global_led_trigger_register(void)
- {
- 	return 0;
- }
- 
--static void rfkill_any_led_trigger_unregister(void)
-+static void rfkill_global_led_trigger_unregister(void)
- {
- }
- #endif /* CONFIG_RFKILL_LEDS */
-@@ -354,7 +355,7 @@ static void rfkill_set_block(struct rfkill *rfkill, bool blocked)
- 	spin_unlock_irqrestore(&rfkill->lock, flags);
- 
- 	rfkill_led_trigger_event(rfkill);
--	rfkill_any_led_trigger_event();
-+	rfkill_global_led_trigger_event();
- 
- 	if (prev != curr)
- 		rfkill_event(rfkill);
-@@ -535,7 +536,7 @@ bool rfkill_set_hw_state(struct rfkill *rfkill, bool blocked)
- 	spin_unlock_irqrestore(&rfkill->lock, flags);
- 
- 	rfkill_led_trigger_event(rfkill);
--	rfkill_any_led_trigger_event();
-+	rfkill_global_led_trigger_event();
- 
- 	if (rfkill->registered && prev != blocked)
- 		schedule_work(&rfkill->uevent_work);
-@@ -579,7 +580,7 @@ bool rfkill_set_sw_state(struct rfkill *rfkill, bool blocked)
- 		schedule_work(&rfkill->uevent_work);
- 
- 	rfkill_led_trigger_event(rfkill);
--	rfkill_any_led_trigger_event();
-+	rfkill_global_led_trigger_event();
- 
- 	return blocked;
- }
-@@ -629,7 +630,7 @@ void rfkill_set_states(struct rfkill *rfkill, bool sw, bool hw)
- 			schedule_work(&rfkill->uevent_work);
- 
- 		rfkill_led_trigger_event(rfkill);
--		rfkill_any_led_trigger_event();
+-	rfkill_any_led_trigger.activate = rfkill_global_led_trigger_activate;
+-	return led_trigger_register(&rfkill_any_led_trigger);
++	ret = led_trigger_register(&rfkill_any_led_trigger);
++	if (ret)
++		return ret;
++
++	rfkill_none_led_trigger.name = "rfkill-none";
++	ret = led_trigger_register(&rfkill_none_led_trigger);
++	if (ret)
++		led_trigger_unregister(&rfkill_any_led_trigger);
++	else
++		/* Delay activation until all global triggers are registered */
 +		rfkill_global_led_trigger_event();
- 	}
++
++	return ret;
  }
- EXPORT_SYMBOL(rfkill_set_states);
-@@ -1046,7 +1047,7 @@ int __must_check rfkill_register(struct rfkill *rfkill)
- #endif
- 	}
  
--	rfkill_any_led_trigger_event();
-+	rfkill_global_led_trigger_event();
- 	rfkill_send_events(rfkill, RFKILL_OP_ADD);
- 
- 	mutex_unlock(&rfkill_global_mutex);
-@@ -1079,7 +1080,7 @@ void rfkill_unregister(struct rfkill *rfkill)
- 	mutex_lock(&rfkill_global_mutex);
- 	rfkill_send_events(rfkill, RFKILL_OP_DEL);
- 	list_del_init(&rfkill->node);
--	rfkill_any_led_trigger_event();
-+	rfkill_global_led_trigger_event();
- 	mutex_unlock(&rfkill_global_mutex);
- 
- 	rfkill_led_trigger_unregister(rfkill);
-@@ -1332,7 +1333,7 @@ static int __init rfkill_init(void)
- 	if (error)
- 		goto error_misc;
- 
--	error = rfkill_any_led_trigger_register();
-+	error = rfkill_global_led_trigger_register();
- 	if (error)
- 		goto error_led_trigger;
- 
-@@ -1346,7 +1347,7 @@ static int __init rfkill_init(void)
- 
- #ifdef CONFIG_RFKILL_INPUT
- error_input:
--	rfkill_any_led_trigger_unregister();
-+	rfkill_global_led_trigger_unregister();
- #endif
- error_led_trigger:
- 	misc_deregister(&rfkill_miscdev);
-@@ -1362,7 +1363,7 @@ static void __exit rfkill_exit(void)
- #ifdef CONFIG_RFKILL_INPUT
- 	rfkill_handler_exit();
- #endif
--	rfkill_any_led_trigger_unregister();
-+	rfkill_global_led_trigger_unregister();
- 	misc_deregister(&rfkill_miscdev);
- 	class_unregister(&rfkill_class);
+ static void rfkill_global_led_trigger_unregister(void)
+ {
++	led_trigger_unregister(&rfkill_none_led_trigger);
+ 	led_trigger_unregister(&rfkill_any_led_trigger);
+ 	cancel_work_sync(&rfkill_global_led_trigger_work);
  }
 -- 
 2.17.0
