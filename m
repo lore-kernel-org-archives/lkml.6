@@ -1,40 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751672AbeEVO1h (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 10:27:37 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44675 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751236AbeEVO1d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 10:27:33 -0400
-Date: Tue, 22 May 2018 16:27:30 +0200 (CEST)
-From: Miroslav Benes <mbenes@suse.cz>
-To: Joe Lawrence <joe.lawrence@redhat.com>
-cc: live-patching@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>, Petr Mladek <pmladek@suse.com>,
-        =?ISO-8859-2?Q?Libor_Pech=E1=E8ek?= <lpechacek@suse.com>,
-        Nicolai Stange <nstange@suse.de>, Artem Savkov <asavkov@redhat.com>
-Subject: Re: [PATCH v4 0/1] Add livepatch kselftests
-In-Reply-To: <1524680930-28168-1-git-send-email-joe.lawrence@redhat.com>
-Message-ID: <alpine.LSU.2.21.1805221617160.1847@pobox.suse.cz>
-References: <1524680930-28168-1-git-send-email-joe.lawrence@redhat.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1751740AbeEVO2U (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 10:28:20 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56842 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751229AbeEVO2P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 10:28:15 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CC83560F93
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From: Kalle Valo <kvalo@codeaurora.org>
+To: David Miller <davem@davemloft.net>
+Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: pull-request: wireless-drivers 2018-05-22
+Date: Tue, 22 May 2018 17:28:11 +0300
+Message-ID: <87603fg3yc.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4MESQPk007877
 
-On Wed, 25 Apr 2018, Joe Lawrence wrote:
+Hi Dave,
 
-> This round incorporates feedback from SUSE folks, Miroslav, Petr and
-> Libor.  Thanks for the reviews and feedback!
-> 
-> Like the previous version, this applies on top of Petr's shadow variable
-> changes and the atomic replace patchset.
+here's a pull request to net tree for 4.17. Please let me know if you
+have any problems.
 
-I skimmed through it and I did not find anything suspicious. It also works 
-as advertised. It'd great if someone from kselftest ML took a look.
+Kalle
 
-Thanks,
-Miroslav
+The following changes since commit a8d7aa17bbc970971ccdf71988ea19230ab368b1:
+
+  dccp: fix tasklet usage (2018-05-03 15:14:57 -0400)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kvalo/wireless-drivers.git tags/wireless-drivers-for-davem-2018-05-22
+
+for you to fetch changes up to 813477aa49aac5deba04eb4956360dde58a0e807:
+
+  MAINTAINERS: change Kalle as wcn36xx maintainer (2018-05-22 15:36:41 +0300)
+
+----------------------------------------------------------------
+wireless-drivers fixes for 4.17
+
+Hopefully the last fixes for 4.17. ssb is again causing problems so we
+had to revert a commit and fix it better. Also a small fix to bcma and
+some MAINTAINERS file updates.
+
+ssb
+
+* fix regression with all module PCI cards, for example using b43 and
+  b44 drivers
+
+* try again fixing a MIPS linker error
+
+bcma
+
+* fix truncated info log messages
+
+----------------------------------------------------------------
+Kalle Valo (3):
+      MAINTAINERS: update Kalle's email address
+      MAINTAINERS: change Kalle as ath.ko maintainer
+      MAINTAINERS: change Kalle as wcn36xx maintainer
+
+Rafał Miłecki (3):
+      bcma: fix buffer size caused crash in bcma_core_mips_print_irq()
+      Revert "ssb: Prevent build of PCI host features in module"
+      ssb: make SSB_PCICORE_HOSTMODE depend on SSB = y
+
+ MAINTAINERS                | 8 ++++----
+ drivers/bcma/driver_mips.c | 2 +-
+ drivers/ssb/Kconfig        | 4 ++--
+ 3 files changed, 7 insertions(+), 7 deletions(-)
