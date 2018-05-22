@@ -1,66 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751674AbeEVHdF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 03:33:05 -0400
-Received: from mout.perfora.net ([74.208.4.197]:45139 "EHLO mout.perfora.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751177AbeEVHcP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 03:32:15 -0400
-From: Quytelda Kahja <quytelda@tamalin.org>
-To: gregkh@linuxfoundation.org, pombredanne@nexb.com
-Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Quytelda Kahja <quytelda@tamalin.org>
-Subject: [PATCH 2/9] staging: rtl8723bs: Rename 'Hal8723bPhyReg.h' using snake case.
-Date: Tue, 22 May 2018 00:26:30 -0700
-Message-Id: <20180522072637.9782-2-quytelda@tamalin.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180522072637.9782-1-quytelda@tamalin.org>
-References: <20180522072637.9782-1-quytelda@tamalin.org>
-X-Provags-ID: V03:K1:GAtCWXaLGMB8N+JQdQHndPJ+lm86hMPrelCVTPpcN9v10RFCkP5
- +7IOpSQClagIyfcX/TaIyruQpNt7csNfS823tB7pjMNiSwoGIUK93CbQb2elc8YMW5EnDn2
- 9wpg6A1MDM3OV09T5jM5I4jQDtK74ZHK+NoKbySaSA4kpG5Ej98TtDcrKGZDt2t3Pz6Gs9Q
- xodLKaft5XrpFWatczuvg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:ZYhXdLQFZkU=:kmJ/iv4BmzZ9ahSo28eURk
- mGXLOfzm0cb18OqrIppbTNhIfhanycIFOs6BHt/kf3u+gJqoeBdFGRshH42MBao2dyjXttStG
- xWxCh4ShkqaBQZ64OtmU8lmCdAA4nPjVJ7LdmqSUvUEkTOt6Q8sSYENmijptDXy2V0Oc6Lm76
- ZXwVwKE0sGkRI1fj0aoq0APmYfN6FRxfBn+fXhnMjI4qKEBLPvQBBfor1SwP8CQrrx2uNqSfu
- XonQiWMpem3u8cLd+oDI7IVeGFPi1iBpcj62BxxtcplCRppMgyV43hW6bZncyz6Ut+B5uRW53
- VK6fe3eop5a47Q3utWrY02omjs70eErJBdwXWS+qwpTOtdJFaytHoAyqcZC1kgV+RjQDci/w7
- Mz2jYQkcGDiy1lRPVdV62weWX4dmMQeUi1nBBcACfI/+AKQKIifsmuc3Bshr+t5ZAvF+z8UgC
- 7kVkavzglxr4GtzsNh7yxhOPh9sPK68gq8a53EzbHCs69NuGl/NEM9Ush5yGdOGImF+l7OQ/P
- cQfiTMPYmT6gPTi86tckR7xSRaRCjoFzfIWsRRhCIz050fmrJGHjLS7tSQcNNmbyxnBZyk9+4
- WXXhAa2sMk2paUaLKhGXiw7DhuzObApyTRtdB8bm9C5n9Kd3D+uxqyiSt9G3OGFMfWargNxp9
- Q/EneJXEgId6Jh1cRgpODz/aY6i1/aZiWv/ZkysPN6iFwwIoc4MX7mGyfrjLkBLlv5Fc=
+        id S1751469AbeEVHe7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 03:34:59 -0400
+Received: from 4.mo7.mail-out.ovh.net ([178.32.122.254]:43957 "EHLO
+        4.mo7.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751124AbeEVHe6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 03:34:58 -0400
+From: =?UTF-8?q?S=C3=A9bastien=20Szymanski?=
+        <sebastien.szymanski@armadeus.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>, Stefan Agner <stefan@agner.ch>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org,
+        =?UTF-8?q?S=C3=A9bastien=20Szymanski?=
+        <sebastien.szymanski@armadeus.com>
+Subject: [PATCH v3 1/3] cpufreq: imx6q: check speed grades for i.MX6ULL
+Date: Tue, 22 May 2018 08:28:51 +0200
+Message-Id: <20180522062853.24799-1-sebastien.szymanski@armadeus.com>
+X-Mailer: git-send-email 2.16.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 13126867014484710652
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedthedrgedtgddutdegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddm
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Camel-case is discouraged in the linux kernel coding style.  Rename
-this header using snake case instead.
+Check the max speed supported from the fuses for i.MX6ULL and update the
+operating points table accordingly.
 
-Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
+Signed-off-by: Sébastien Szymanski <sebastien.szymanski@armadeus.com>
 ---
- .../rtl8723bs/include/{Hal8723BPhyReg.h => hal_phy_reg_8723b.h} | 0
- drivers/staging/rtl8723bs/include/rtl8723b_hal.h                | 2 +-
- 2 files changed, 1 insertion(+), 1 deletion(-)
- rename drivers/staging/rtl8723bs/include/{Hal8723BPhyReg.h => hal_phy_reg_8723b.h} (100%)
 
-diff --git a/drivers/staging/rtl8723bs/include/Hal8723BPhyReg.h b/drivers/staging/rtl8723bs/include/hal_phy_reg_8723b.h
-similarity index 100%
-rename from drivers/staging/rtl8723bs/include/Hal8723BPhyReg.h
-rename to drivers/staging/rtl8723bs/include/hal_phy_reg_8723b.h
-diff --git a/drivers/staging/rtl8723bs/include/rtl8723b_hal.h b/drivers/staging/rtl8723bs/include/rtl8723b_hal.h
-index 46ac61b058c8..c2b71b4e4982 100644
---- a/drivers/staging/rtl8723bs/include/rtl8723b_hal.h
-+++ b/drivers/staging/rtl8723bs/include/rtl8723b_hal.h
-@@ -17,7 +17,7 @@
- #include "rtl8723b_cmd.h"
- #include "rtw_mp.h"
- #include "hal_pwr_seq.h"
--#include "Hal8723BPhyReg.h"
-+#include "hal_phy_reg_8723b.h"
- #include "Hal8723BPhyCfg.h"
+Changes for v3:
+ - none
+
+Changes for v2:
+ - none
+
+ drivers/cpufreq/imx6q-cpufreq.c | 29 +++++++++++++++++++++++------
+ 1 file changed, 23 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/cpufreq/imx6q-cpufreq.c b/drivers/cpufreq/imx6q-cpufreq.c
+index 83cf631fc9bc..f094687cae52 100644
+--- a/drivers/cpufreq/imx6q-cpufreq.c
++++ b/drivers/cpufreq/imx6q-cpufreq.c
+@@ -266,6 +266,8 @@ static void imx6q_opp_check_speed_grading(struct device *dev)
+ }
  
- /*  */
+ #define OCOTP_CFG3_6UL_SPEED_696MHZ	0x2
++#define OCOTP_CFG3_6ULL_SPEED_792MHZ	0x2
++#define OCOTP_CFG3_6ULL_SPEED_900MHZ	0x3
+ 
+ static void imx6ul_opp_check_speed_grading(struct device *dev)
+ {
+@@ -287,16 +289,30 @@ static void imx6ul_opp_check_speed_grading(struct device *dev)
+ 	 * Speed GRADING[1:0] defines the max speed of ARM:
+ 	 * 2b'00: Reserved;
+ 	 * 2b'01: 528000000Hz;
+-	 * 2b'10: 696000000Hz;
+-	 * 2b'11: Reserved;
++	 * 2b'10: 696000000Hz on i.MX6UL, 792000000Hz on i.MX6ULL;
++	 * 2b'11: 900000000Hz on i.MX6ULL only;
+ 	 * We need to set the max speed of ARM according to fuse map.
+ 	 */
+ 	val = readl_relaxed(base + OCOTP_CFG3);
+ 	val >>= OCOTP_CFG3_SPEED_SHIFT;
+ 	val &= 0x3;
+-	if (val != OCOTP_CFG3_6UL_SPEED_696MHZ)
+-		if (dev_pm_opp_disable(dev, 696000000))
+-			dev_warn(dev, "failed to disable 696MHz OPP\n");
++
++	if (of_machine_is_compatible("fsl,imx6ul")) {
++		if (val != OCOTP_CFG3_6UL_SPEED_696MHZ)
++			if (dev_pm_opp_disable(dev, 696000000))
++				dev_warn(dev, "failed to disable 696MHz OPP\n");
++	}
++
++	if (of_machine_is_compatible("fsl,imx6ull")) {
++		if (val != OCOTP_CFG3_6ULL_SPEED_792MHZ)
++			if (dev_pm_opp_disable(dev, 792000000))
++				dev_warn(dev, "failed to disable 792MHz OPP\n");
++
++		if (val != OCOTP_CFG3_6ULL_SPEED_900MHZ)
++			if (dev_pm_opp_disable(dev, 900000000))
++				dev_warn(dev, "failed to disable 900MHz OPP\n");
++	}
++
+ 	iounmap(base);
+ put_node:
+ 	of_node_put(np);
+@@ -356,7 +372,8 @@ static int imx6q_cpufreq_probe(struct platform_device *pdev)
+ 		goto put_reg;
+ 	}
+ 
+-	if (of_machine_is_compatible("fsl,imx6ul"))
++	if (of_machine_is_compatible("fsl,imx6ul") ||
++	    of_machine_is_compatible("fsl,imx6ull"))
+ 		imx6ul_opp_check_speed_grading(cpu_dev);
+ 	else
+ 		imx6q_opp_check_speed_grading(cpu_dev);
 -- 
-2.17.0
+2.16.1
