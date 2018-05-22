@@ -1,51 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752727AbeEVTgd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 15:36:33 -0400
-Received: from smtprelay0021.hostedemail.com ([216.40.44.21]:51757 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752016AbeEVTgb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 15:36:31 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:41:355:379:541:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1540:1568:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3653:3871:3872:3876:5007:7875:10004:10400:10848:11026:11473:11658:11914:12043:12555:12760:13069:13311:13357:13439:14181:14394:14659:14721:21080:21627:30054,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:21,LUA_SUMMARY:none
-X-HE-Tag: blow58_72e2c258fbe37
-X-Filterd-Recvd-Size: 1672
-Message-ID: <5dd900e9197febc1995604bb33c23c136d8b33ce.camel@perches.com>
-Subject: [PATCH] checkpatch: Fix macro argument precedence test
-From: Joe Perches <joe@perches.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Andy Whitcroft <apw@canonical.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc: Ivan Bornyakov <brnkv.i1@gmail.com>, lustre-devel@lists.lustre.org
-Date: Tue, 22 May 2018 12:36:28 -0700
-In-Reply-To: <20180522133439.12338-1-brnkv.i1@gmail.com>
-References: <20180522133439.12338-1-brnkv.i1@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1752757AbeEVTg5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 15:36:57 -0400
+Received: from mga07.intel.com ([134.134.136.100]:16706 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752537AbeEVTcE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 15:32:04 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,430,1520924400";
+   d="scan'208";a="226406395"
+From: Reinette Chatre <reinette.chatre@intel.com>
+To: tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
+        vikas.shivappa@linux.intel.com
+Cc: gavin.hindman@intel.com, jithu.joseph@intel.com, dave.hansen@intel.com,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Reinette Chatre <reinette.chatre@intel.com>
+Subject: [PATCH V4 20/38] x86/intel_rdt: Protect against resource group changes during locking
+Date: Tue, 22 May 2018 04:29:08 -0700
+Message-Id: <0116ee4001668934476c4f764d85df2e25389fa0.1526987654.git.reinette.chatre@intel.com>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <cover.1526987654.git.reinette.chatre@intel.com>
+References: <cover.1526987654.git.reinette.chatre@intel.com>
+In-Reply-To: <cover.1526987654.git.reinette.chatre@intel.com>
+References: <cover.1526987654.git.reinette.chatre@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-checkpatch's macro argument precedence test is broken so fix it.
+We intend to modify file permissions to make the "tasks", "cpus", and
+"cpus_list" not accessible to the user when cache pseudo-locking in
+progress. Even so, it is still possible for the user to force the file
+permissions (using chmod) to make them writeable. Similarly, directory
+permissions will be modified to prevent future monitor group creation
+but the user can override these restrictions also.
 
-Signed-off-by: Joe Perches <joe@perches.com>
+Add additional checks to the files we intend to restrict to ensure that
+no modifications from user space are attempted while setting up a
+pseudo-locking or after a pseudo-locked region is set up.
+
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
- scripts/checkpatch.pl | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c | 10 +++++++++
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c    | 32 +++++++++++++++++++++++++----
+ 2 files changed, 38 insertions(+), 4 deletions(-)
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index baddac9379f0..68879aa65cfd 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -5041,7 +5041,7 @@ sub process {
- 				$tmp_stmt =~ s/\b(typeof|__typeof__|__builtin\w+|typecheck\s*\(\s*$Type\s*,|\#+)\s*\(*\s*$arg\s*\)*\b//g;
- 				$tmp_stmt =~ s/\#+\s*$arg\b//g;
- 				$tmp_stmt =~ s/\b$arg\s*\#\#//g;
--				my $use_cnt = $tmp_stmt =~ s/\b$arg\b//g;
-+				my $use_cnt = () = $tmp_stmt =~ /\b$arg\b/g;
- 				if ($use_cnt > 1) {
- 					CHK("MACRO_ARG_REUSE",
- 					    "Macro argument reuse '$arg' - possible side-effects?\n" . "$herectx");
+diff --git a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
+index 0e6210a043f0..bc79396c5dad 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
++++ b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
+@@ -283,6 +283,16 @@ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
+ 	}
+ 	rdt_last_cmd_clear();
+ 
++	/*
++	 * No changes to pseudo-locked region allowed. It has to be removed
++	 * and re-created instead.
++	 */
++	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED) {
++		ret = -EINVAL;
++		rdt_last_cmd_puts("resource group is pseudo-locked\n");
++		goto out;
++	}
++
+ 	for_each_alloc_enabled_rdt_resource(r) {
+ 		list_for_each_entry(dom, &r->domains, list)
+ 			dom->have_new_ctrl = false;
+diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+index 3461fb25bb92..2df8bcabe085 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
++++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+@@ -449,6 +449,13 @@ static ssize_t rdtgroup_cpus_write(struct kernfs_open_file *of,
+ 		goto unlock;
+ 	}
+ 
++	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED ||
++	    rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP) {
++		ret = -EINVAL;
++		rdt_last_cmd_puts("pseudo-locking in progress\n");
++		goto unlock;
++	}
++
+ 	if (is_cpu_list(of))
+ 		ret = cpulist_parse(buf, newmask);
+ 	else
+@@ -651,13 +658,22 @@ static ssize_t rdtgroup_tasks_write(struct kernfs_open_file *of,
+ 	if (kstrtoint(strstrip(buf), 0, &pid) || pid < 0)
+ 		return -EINVAL;
+ 	rdtgrp = rdtgroup_kn_lock_live(of->kn);
++	if (!rdtgrp) {
++		rdtgroup_kn_unlock(of->kn);
++		return -ENOENT;
++	}
+ 	rdt_last_cmd_clear();
+ 
+-	if (rdtgrp)
+-		ret = rdtgroup_move_task(pid, rdtgrp, of);
+-	else
+-		ret = -ENOENT;
++	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED ||
++	    rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP) {
++		ret = -EINVAL;
++		rdt_last_cmd_puts("pseudo-locking in progress\n");
++		goto unlock;
++	}
++
++	ret = rdtgroup_move_task(pid, rdtgrp, of);
+ 
++unlock:
+ 	rdtgroup_kn_unlock(of->kn);
+ 
+ 	return ret ?: nbytes;
+@@ -2261,6 +2277,14 @@ static int mkdir_rdt_prepare(struct kernfs_node *parent_kn,
+ 		goto out_unlock;
+ 	}
+ 
++	if (rtype == RDTMON_GROUP &&
++	    (prdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP ||
++	     prdtgrp->mode == RDT_MODE_PSEUDO_LOCKED)) {
++		ret = -EINVAL;
++		rdt_last_cmd_puts("pseudo-locking in progress\n");
++		goto out_unlock;
++	}
++
+ 	/* allocate the rdtgroup. */
+ 	rdtgrp = kzalloc(sizeof(*rdtgrp), GFP_KERNEL);
+ 	if (!rdtgrp) {
+-- 
+2.13.6
