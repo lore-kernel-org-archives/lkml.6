@@ -1,66 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751479AbeEVRdh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 13:33:37 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:40827 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751272AbeEVRdg (ORCPT
+        id S1751663AbeEVRdn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 13:33:43 -0400
+Received: from gateway36.websitewelcome.com ([192.185.192.36]:34876 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751272AbeEVRdj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 13:33:36 -0400
-Date: Tue, 22 May 2018 19:33:33 +0200
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH RT] arm64: fpsimd: use a local_lock() in addition to
- local_bh_disable()
-Message-ID: <20180522173333.aawadhkcekzvrswp@linutronix.de>
-References: <20180517124006.ohygrrpg7z2moqqt@linutronix.de>
- <20180522131004.3012953c@gandalf.local.home>
- <20180522172115.fpqguqlsq6bavtxy@linutronix.de>
- <20180522132429.6f1dcf92@gandalf.local.home>
+        Tue, 22 May 2018 13:33:39 -0400
+X-Authority-Reason: nr=8
+Date: Tue, 22 May 2018 12:09:22 -0500
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Devin Heitmueller <dheitmueller@kernellabs.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] au8522: remove duplicate code
+Message-ID: <20180522170922.GA30834@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180522132429.6f1dcf92@gandalf.local.home>
-User-Agent: NeoMutt/20180323
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.192.46.223
+X-Source-L: No
+X-Exim-ID: 1fLAn1-003JSO-5q
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [187.192.46.223]:37896
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-22 13:24:29 [-0400], Steven Rostedt wrote:
-> On Tue, 22 May 2018 19:21:16 +0200
-> Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
-> 
-> > On 2018-05-22 13:10:04 [-0400], Steven Rostedt wrote:
-> > > On Thu, 17 May 2018 14:40:06 +0200
-> > > Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
-> > >   
-> > > > +static DEFINE_LOCAL_IRQ_LOCK(fpsimd_lock);
-> > > >  /*
-> > > >   * Update current's FPSIMD/SVE registers from thread_struct.
-> > > >   *
-> > > > @@ -594,6 +595,7 @@ int sve_set_vector_length(struct task_struct *task,
-> > > >  	 * non-SVE thread.
-> > > >  	 */
-> > > >  	if (task == current) {
-> > > > +		local_lock(fpsimd_lock);
-> > > >  		local_bh_disable();  
-> > > 
-> > > I'm surprised that we don't have a "local_lock_bh()"?  
-> > 
-> > right. Like the last time when we introduced a global lock with no
-> > locking context? 
-> > 
-> 
-> I meant, we could have local_lock_bh(fpsimd_lock); that would turn into
-> a local_bh_disable() when !PREEMPT_RT.
+This code has been there for nine years now, and it has been
+working "good enough" since then [1].
 
-Oh that part. That could be possible I guess. I need to look into the
-second part which disables preemption while the FPU is taken.
+Remove duplicate code by getting rid of the if-else statement.
 
-> -- Steve
+[1] https://marc.info/?l=linux-kernel&m=152693550225081&w=2
 
-Sebastian
+Cc: Devin Heitmueller <dheitmueller@kernellabs.com>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/media/dvb-frontends/au8522_decoder.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/media/dvb-frontends/au8522_decoder.c b/drivers/media/dvb-frontends/au8522_decoder.c
+index 343dc92..f285096 100644
+--- a/drivers/media/dvb-frontends/au8522_decoder.c
++++ b/drivers/media/dvb-frontends/au8522_decoder.c
+@@ -280,14 +280,12 @@ static void setup_decoder_defaults(struct au8522_state *state, bool is_svideo)
+ 			AU8522_TOREGAAGC_REG0E5H_CVBS);
+ 	au8522_writereg(state, AU8522_REG016H, AU8522_REG016H_CVBS);
+ 
+-	if (is_svideo) {
+-		/* Despite what the table says, for the HVR-950q we still need
+-		   to be in CVBS mode for the S-Video input (reason unknown). */
+-		/* filter_coef_type = 3; */
+-		filter_coef_type = 5;
+-	} else {
+-		filter_coef_type = 5;
+-	}
++	/*
++	 * Despite what the table says, for the HVR-950q we still need
++	 * to be in CVBS mode for the S-Video input (reason unknown).
++	 */
++	/* filter_coef_type = 3; */
++	filter_coef_type = 5;
+ 
+ 	/* Load the Video Decoder Filter Coefficients */
+ 	for (i = 0; i < NUM_FILTER_COEF; i++) {
+-- 
+2.7.4
