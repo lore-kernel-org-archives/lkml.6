@@ -1,69 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753037AbeEVTlq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 15:41:46 -0400
-Received: from emh07.mail.saunalahti.fi ([62.142.5.117]:44254 "EHLO
-        emh07.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752941AbeEVTlo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 15:41:44 -0400
-Date: Tue, 22 May 2018 22:41:39 +0300
-From: Aaro Koskinen <aaro.koskinen@iki.fi>
-To: Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
-Cc: Pavel Machek <pavel@ucw.cz>, sre@kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, khilman@kernel.org,
-        ivo.g.dimitrov.75@gmail.com, patrikbachan@gmail.com, serge@hallyn.com,
-        abcloriens@gmail.com, clayton@craftyguy.net, martijn@brixit.nl,
-        sakari.ailus@linux.intel.com,
-        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
-        Thorsten Leemhuis <regressions@leemhuis.info>
-Subject: Re: v4.17-rc1: regressions on N900, N950
-Message-ID: <20180522194139.GB2299@darkstar.musicnaut.iki.fi>
-References: <20180422074213.GA12428@amd>
- <20180423202940.ig6iud5lrbgnu35a@darkstar.musicnaut.iki.fi>
- <20180521213952.GA11596@amd>
- <20180522080250.4fzyvqrgw5oigexn@pali>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180522080250.4fzyvqrgw5oigexn@pali>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1753179AbeEVTmH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 15:42:07 -0400
+Received: from mga07.intel.com ([134.134.136.100]:16706 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752075AbeEVTcB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 15:32:01 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,430,1520924400";
+   d="scan'208";a="226406350"
+From: Reinette Chatre <reinette.chatre@intel.com>
+To: tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
+        vikas.shivappa@linux.intel.com
+Cc: gavin.hindman@intel.com, jithu.joseph@intel.com, dave.hansen@intel.com,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Reinette Chatre <reinette.chatre@intel.com>
+Subject: [PATCH V4 05/38] x86/intel_rdt: Introduce test to determine if closid is in use
+Date: Tue, 22 May 2018 04:28:53 -0700
+Message-Id: <26e0715da4e5945b72230c0f72a4399c94bbc2d5.1526987654.git.reinette.chatre@intel.com>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <cover.1526987654.git.reinette.chatre@intel.com>
+References: <cover.1526987654.git.reinette.chatre@intel.com>
+In-Reply-To: <cover.1526987654.git.reinette.chatre@intel.com>
+References: <cover.1526987654.git.reinette.chatre@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+During CAT feature discovery the capacity bitmasks (CBMs) associated
+with all the classes of service are initialized to all ones, even if the
+class of service is not in use. Introduce a test that can be used to
+determine if a class of service is in use. This test enables code
+interested in parsing the CBMs to know if its values are meaningful or
+can be ignored.
 
-On Tue, May 22, 2018 at 10:02:50AM +0200, Pali Rohár wrote:
-> Hi! I remember that in time of migration from platform board code to
-> device tree structures there appeared some bug which caused that
-> sometimes display were not initialized. And somebody figured out that
-> display initialization is failing when some other SPI devices are
-> initialized before or after display... This behavior was observed only
-> on real N900 hardware, not in qemu.
+Temporarily mark the function as unused to silence compile warnings
+until it is used.
 
-Touchscreen needs to be initialized before display. This is documented
-in the DTS, see arch/arm/boot/dts/omap3-n900.dts:
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+---
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-	* For some reason, touchscreen is necessary for screen to work at
-	* all on real hw. It works well without it on emulator.
-	*
-	* Also... order in the device tree actually matters here.
-
-> Real reason was never explained. In old platform board code there was
-> hardcoded order of SPI devices in which initialization happened. And in
-> device tree it is probably in (pseudo)-random order. Enabling/disabling
-> various config option can affect some timings and order in which kernel
-> starts probing and initializing devices...
-
-The issue was also somewhat present with platform/board code, see e.g.
-commit e65f131a14726e5f1b880a528271a52428e5b3a5.
-
-My device worked with v4.17-rc1 (haven't found time to test newer kernels),
-but if you say the probe order is random then we must find some proper way
-to express the dependency.
-
-A.
+diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+index eac60602c87b..fdc55357251b 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
++++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+@@ -127,6 +127,18 @@ static void closid_free(int closid)
+ }
+ 
+ /**
++ * closid_allocated - test if provided closid is in use
++ * @closid: closid to be tested
++ *
++ * Return: true if @closid is currently associated with a resource group,
++ * false if @closid is free
++ */
++static bool __attribute__ ((unused)) closid_allocated(unsigned int closid)
++{
++	return (closid_free_map & (1 << closid)) == 0;
++}
++
++/**
+  * rdtgroup_mode_by_closid - Return mode of resource group with closid
+  * @closid: closid if the resource group
+  *
+-- 
+2.13.6
