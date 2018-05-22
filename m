@@ -1,138 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751883AbeEVRFe (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 13:05:34 -0400
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:42402 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751655AbeEVRF2 (ORCPT
+        id S1751687AbeEVRGC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 13:06:02 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37672 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751277AbeEVRF5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 13:05:28 -0400
-X-Google-Smtp-Source: AB8JxZp2igxos+FydE0Hfb1JCH4CDTdYtryqDQHjZGABvvv/X1wAoFX0ErC2KGySs8D6YSXGUxzKFQ==
-From: Ray Jui <ray.jui@broadcom.com>
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com, linux-pci@vger.kernel.org,
-        Ray Jui <ray.jui@broadcom.com>
-Subject: [PATCH 1/2] PCI: iproc: Reject unconfigured physical functions from PAXC
-Date: Tue, 22 May 2018 10:05:08 -0700
-Message-Id: <1527008709-20786-2-git-send-email-ray.jui@broadcom.com>
-X-Mailer: git-send-email 2.1.4
-In-Reply-To: <1527008709-20786-1-git-send-email-ray.jui@broadcom.com>
-References: <1527008709-20786-1-git-send-email-ray.jui@broadcom.com>
+        Tue, 22 May 2018 13:05:57 -0400
+Date: Tue, 22 May 2018 10:05:52 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Mike Galbraith <efault@gmx.de>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        Michal Hocko <mhocko@suse.com>
+Subject: Re: cpu stopper threads and load balancing leads to deadlock
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <1525354359.5576.1.camel@gmx.de>
+ <20180503135617.GC12217@hirez.programming.kicks-ass.net>
+ <1525357015.5577.2.camel@gmx.de>
+ <20180503144450.GD12217@hirez.programming.kicks-ass.net>
+ <20180503161231.GI26088@linux.vnet.ibm.com>
+ <20180503164508.GG12217@hirez.programming.kicks-ass.net>
+ <1526358626.19125.0.camel@gmx.de>
+ <20180517140345.GI3803@linux.vnet.ibm.com>
+ <20180517142322.GU12217@hirez.programming.kicks-ass.net>
+ <20180517145614.GK3803@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180517145614.GK3803@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18052217-0004-0000-0000-000014229BE7
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009066; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000261; SDB=6.01036094; UDB=6.00530005; IPR=6.00815223;
+ MB=3.00021242; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-22 17:05:55
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18052217-0005-0000-0000-0000874F573B
+Message-Id: <20180522170552.GA26530@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-22_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805220186
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PAXC is an emulated PCIe root complex internally in various Broadcom
-based SoCs. PAXC internally connects to the embedded network processor
-within these SoCs, with the embedeed network processor exposed as an
-endpoint device
+On Thu, May 17, 2018 at 07:56:14AM -0700, Paul E. McKenney wrote:
+> On Thu, May 17, 2018 at 04:23:22PM +0200, Peter Zijlstra wrote:
+> > On Thu, May 17, 2018 at 07:03:45AM -0700, Paul E. McKenney wrote:
+> > > On Tue, May 15, 2018 at 06:30:26AM +0200, Mike Galbraith wrote:
+> > > I have not queued it, but given Peter's Signed-off-by and your Tested-by
+> > > I would be happy to do so.
+> > 
+> > And a Changelog of course :-)
+> 
+> Thank you both!
+> 
+> Is this OK for 4.19, or do we need it for 4.18?  I am guessing 4.18,
+> but figured I should ask before wildly rebasing the 82 commits destined
+> for 4.19.  ;-)
 
-The number of physical functions from the embedded network processor
-that can be accessed depend on the firmware configuration.
-Unfortunately, due to an ASIC bug, unconfigured physical functions cannot
-be properly hidden from the root complex during enumerattion. As a
-result, config write access to these unconfigured physical functions
-during enumeration will cause a bus lock up on the embedded network
-processor
+Hearing nothing countering my assumption, I have queued this just after
+my v4.18 merge point.  Please see below for the commit, and please let
+me know if I messed anything up.
 
-Fortunately, these unconfigured physical functions contain a very
-specific, staled PCIe device ID 0x168e. By making use of this device ID,
-one is able to terminate the enumeration early in the vendor/device ID
-config read
+							Thanx, Paul
 
-Signed-off-by: Ray Jui <ray.jui@broadcom.com>
-Reviewed-by: Scott Branden <scott.branden@broadcom.com>
----
- drivers/pci/host/pcie-iproc.c | 26 +++++++++++++++++++++++++-
- drivers/pci/host/pcie-iproc.h |  5 +++++
- 2 files changed, 30 insertions(+), 1 deletion(-)
+------------------------------------------------------------------------
 
-diff --git a/drivers/pci/host/pcie-iproc.c b/drivers/pci/host/pcie-iproc.c
-index b906d80..b1d8c60 100644
---- a/drivers/pci/host/pcie-iproc.c
-+++ b/drivers/pci/host/pcie-iproc.c
-@@ -529,6 +529,25 @@ static int iproc_pcie_config_read(struct pci_bus *bus, unsigned int devfn,
- 	if (size <= 2)
- 		*val = (data >> (8 * (where & 3))) & ((1 << (size * 8)) - 1);
+commit 354238a30982b817262fe6f9d00f808451694366
+Author: Peter Zijlstra <peterz@infradead.org>
+Date:   Tue May 22 09:50:53 2018 -0700
+
+    rcu/x86: Provide early rcu_cpu_starting() callback
+    
+    The x86/mtrr code does horrific things because hardware. It uses
+    stop_machine_from_inactive_cpu(), which does a wakeup (of the stopper
+    thread on another CPU), which uses RCU, all before the CPU is onlined.
+    
+    RCU complains about this, because wakeups use RCU and RCU does
+    (rightfully) not consider offline CPUs for grace-periods.
+    
+    Fix this by initializing RCU way early in the MTRR case.
+    
+    Tested-by: Mike Galbraith <efault@gmx.de>
+    Signed-off-by: Peter Zijlstra <peterz@infradead.org>
+    Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+
+diff --git a/arch/x86/kernel/cpu/mtrr/main.c b/arch/x86/kernel/cpu/mtrr/main.c
+index 7468de429087..07360523c3ce 100644
+--- a/arch/x86/kernel/cpu/mtrr/main.c
++++ b/arch/x86/kernel/cpu/mtrr/main.c
+@@ -793,6 +793,9 @@ void mtrr_ap_init(void)
  
-+	/*
-+	 * For PAXC and PAXCv2, the total number of PFs that one can enumerate
-+	 * depends on the firmware configuration. Unfortunately, due to an ASIC
-+	 * bug, unconfigured PFs cannot be properly hidden from the root
-+	 * complex. As a result, write access to these PFs will cause bus lock
-+	 * up on the embedded processor
-+	 *
-+	 * Since all unconfigured PFs are left with an incorrect, staled device
-+	 * ID of 0x168e (PCI_DEVICE_ID_NX2_57810), we try to catch those access
-+	 * early here and reject them all
-+	 */
-+#define DEVICE_ID_MASK     0xffff0000
-+#define DEVICE_ID_SHIFT    16
-+	if (pcie->rej_unconfig_pf &&
-+	    (where & CFG_ADDR_REG_NUM_MASK) == PCI_VENDOR_ID)
-+		if ((*val & DEVICE_ID_MASK) ==
-+		    (PCI_DEVICE_ID_NX2_57810 << DEVICE_ID_SHIFT))
-+			return PCIBIOS_FUNC_NOT_SUPPORTED;
+ 	if (!use_intel() || mtrr_aps_delayed_init)
+ 		return;
 +
- 	return PCIBIOS_SUCCESSFUL;
++	rcu_cpu_starting(smp_processor_id());
++
+ 	/*
+ 	 * Ideally we should hold mtrr_mutex here to avoid mtrr entries
+ 	 * changed, but this routine will be called in cpu boot time,
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 4fccdfa25716..aa7cade1b9f3 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -3665,6 +3665,8 @@ int rcutree_dead_cpu(unsigned int cpu)
+ 	return 0;
  }
  
-@@ -628,7 +647,7 @@ static int iproc_pcie_config_read32(struct pci_bus *bus, unsigned int devfn,
- 	struct iproc_pcie *pcie = iproc_data(bus);
++static DEFINE_PER_CPU(int, rcu_cpu_started);
++
+ /*
+  * Mark the specified CPU as being online so that subsequent grace periods
+  * (both expedited and normal) will wait on it.  Note that this means that
+@@ -3686,6 +3688,11 @@ void rcu_cpu_starting(unsigned int cpu)
+ 	struct rcu_node *rnp;
+ 	struct rcu_state *rsp;
  
- 	iproc_pcie_apb_err_disable(bus, true);
--	if (pcie->type == IPROC_PCIE_PAXB_V2)
-+	if (pcie->iproc_cfg_read)
- 		ret = iproc_pcie_config_read(bus, devfn, where, size, val);
- 	else
- 		ret = pci_generic_config_read32(bus, devfn, where, size, val);
-@@ -1283,6 +1302,7 @@ static int iproc_pcie_rev_init(struct iproc_pcie *pcie)
- 		break;
- 	case IPROC_PCIE_PAXB:
- 		regs = iproc_pcie_reg_paxb;
-+		pcie->iproc_cfg_read = true;
- 		pcie->has_apb_err_disable = true;
- 		if (pcie->need_ob_cfg) {
- 			pcie->ob_map = paxb_ob_map;
-@@ -1305,10 +1325,14 @@ static int iproc_pcie_rev_init(struct iproc_pcie *pcie)
- 	case IPROC_PCIE_PAXC:
- 		regs = iproc_pcie_reg_paxc;
- 		pcie->ep_is_internal = true;
-+		pcie->iproc_cfg_read = true;
-+		pcie->rej_unconfig_pf = true;
- 		break;
- 	case IPROC_PCIE_PAXC_V2:
- 		regs = iproc_pcie_reg_paxc_v2;
- 		pcie->ep_is_internal = true;
-+		pcie->iproc_cfg_read = true;
-+		pcie->rej_unconfig_pf = true;
- 		pcie->need_msi_steer = true;
- 		break;
- 	default:
-diff --git a/drivers/pci/host/pcie-iproc.h b/drivers/pci/host/pcie-iproc.h
-index 814b600..67081cb 100644
---- a/drivers/pci/host/pcie-iproc.h
-+++ b/drivers/pci/host/pcie-iproc.h
-@@ -58,6 +58,9 @@ struct iproc_msi;
-  * @phy: optional PHY device that controls the Serdes
-  * @map_irq: function callback to map interrupts
-  * @ep_is_internal: indicates an internal emulated endpoint device is connected
-+ * @iproc_cfg_read: indicates the iProc config read function should be used
-+ * @rej_unconfig_pf: indicates the root complex needs to detect and reject
-+ * enumeration against unconfigured physical functions emulated in the ASIC
-  * @has_apb_err_disable: indicates the controller can be configured to prevent
-  * unsupported request from being forwarded as an APB bus error
-  *
-@@ -84,6 +87,8 @@ struct iproc_pcie {
- 	struct phy *phy;
- 	int (*map_irq)(const struct pci_dev *, u8, u8);
- 	bool ep_is_internal;
-+	bool iproc_cfg_read;
-+	bool rej_unconfig_pf;
- 	bool has_apb_err_disable;
++	if (per_cpu(rcu_cpu_started, cpu))
++		return;
++
++	per_cpu(rcu_cpu_started, cpu) = 1;
++
+ 	for_each_rcu_flavor(rsp) {
+ 		rdp = per_cpu_ptr(rsp->rda, cpu);
+ 		rnp = rdp->mynode;
+@@ -3742,6 +3749,8 @@ void rcu_report_dead(unsigned int cpu)
+ 	preempt_enable();
+ 	for_each_rcu_flavor(rsp)
+ 		rcu_cleanup_dying_idle_cpu(cpu, rsp);
++
++	per_cpu(rcu_cpu_started, cpu) = 0;
+ }
  
- 	bool need_ob_cfg;
--- 
-2.1.4
+ /* Migrate the dead CPU's callbacks to the current CPU. */
