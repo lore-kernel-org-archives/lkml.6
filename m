@@ -1,79 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751340AbeEVJMO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 05:12:14 -0400
-Received: from mga02.intel.com ([134.134.136.20]:61358 "EHLO mga02.intel.com"
+        id S1751411AbeEVJMq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 05:12:46 -0400
+Received: from foss.arm.com ([217.140.101.70]:33330 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750707AbeEVJMN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 05:12:13 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,429,1520924400";
-   d="scan'208";a="226263775"
-Subject: Re: [PATCH 1/2] drm/fourcc: add a 10bits fully packed variant of NV12
-To: Randy Li <ayaka@soulik.info>, dri-devel@lists.freedesktop.org
-Cc: hjc@rock-chips.com, heiko@sntech.de,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        nicolas.dufresne@collabora.com, gustavo@padovan.org,
-        seanpaul@chromium.org, airlied@linux.ie
-References: <20180520171705.29690-1-ayaka@soulik.info>
- <20180520171705.29690-2-ayaka@soulik.info>
-From: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Message-ID: <fd131abe-613b-b539-b35c-2ebd6c29addb@linux.intel.com>
-Date: Tue, 22 May 2018 11:12:06 +0200
+        id S1751240AbeEVJMn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 05:12:43 -0400
+Cc: Sudeep Holla <sudeep.holla@arm.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
+        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
+        celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: Re: [PATCH] cpufreq: Add Kryo CPU scaling driver
+To: ilialin@codeaurora.org, mturquette@baylibre.com, sboyd@kernel.org,
+        robh@kernel.org, mark.rutland@arm.com, viresh.kumar@linaro.org,
+        nm@ti.com, lgirdwood@gmail.com, broonie@kernel.org,
+        andy.gross@linaro.org, david.brown@linaro.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, rjw@rjwysocki.net, linux-clk@vger.kernel.org
+References: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
+ <1526729701-8589-1-git-send-email-ilialin@codeaurora.org>
+ <153cc316-dcb5-972f-5a2f-c91fe0f6348b@arm.com>
+ <000f01d3f103$3ff78ba0$bfe6a2e0$@codeaurora.org>
+ <2ace10bc-e1c4-2060-94d3-eb71e966ffbe@arm.com>
+ <001201d3f19a$0130a860$0391f920$@codeaurora.org>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Organization: ARM
+Message-ID: <5b2eb27b-b852-97ff-b099-fe4c22b44937@arm.com>
+Date: Tue, 22 May 2018 10:12:34 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180520171705.29690-2-ayaka@soulik.info>
+In-Reply-To: <001201d3f19a$0130a860$0391f920$@codeaurora.org>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Op 20-05-18 om 19:17 schreef Randy Li:
-> This pixel format is a fully packed and 10bits variant of NV12.
-> A luma pixel would take 10bits in memory, without any
-> filled bits between pixels in a stride. The color gamut
-> follows the BT.2020 standard.
->
-> Signed-off-by: Randy Li <ayaka@soulik.info>
-> ---
->  drivers/gpu/drm/drm_fourcc.c  | 1 +
->  include/uapi/drm/drm_fourcc.h | 3 +++
->  2 files changed, 4 insertions(+)
->
-> diff --git a/drivers/gpu/drm/drm_fourcc.c b/drivers/gpu/drm/drm_fourcc.c
-> index 5ca6395cd4d3..1f43967c4013 100644
-> --- a/drivers/gpu/drm/drm_fourcc.c
-> +++ b/drivers/gpu/drm/drm_fourcc.c
-> @@ -173,6 +173,7 @@ const struct drm_format_info *__drm_format_info(u32 format)
->  		{ .format = DRM_FORMAT_UYVY,		.depth = 0,  .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 2, .vsub = 1 },
->  		{ .format = DRM_FORMAT_VYUY,		.depth = 0,  .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 2, .vsub = 1 },
->  		{ .format = DRM_FORMAT_AYUV,		.depth = 0,  .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
-> +		{ .format = DRM_FORMAT_NV12_10LE40,	.depth = 0,  .num_planes = 2, .cpp = { 1, 2, 0 }, .hsub = 2, .vsub = 2 },
->  	};
->  
->  	unsigned int i;
-> diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
-> index e04613d30a13..8eabf01e966f 100644
-> --- a/include/uapi/drm/drm_fourcc.h
-> +++ b/include/uapi/drm/drm_fourcc.h
-> @@ -140,6 +140,9 @@ extern "C" {
->  #define DRM_FORMAT_NV61		fourcc_code('N', 'V', '6', '1') /* 2x1 subsampled Cb:Cr plane */
->  #define DRM_FORMAT_NV24		fourcc_code('N', 'V', '2', '4') /* non-subsampled Cr:Cb plane */
->  #define DRM_FORMAT_NV42		fourcc_code('N', 'V', '4', '2') /* non-subsampled Cb:Cr plane */
-> +/* A fully packed variant of NV12_10LE32 */
-> +#define DRM_FORMAT_NV12_10LE40	fourcc_code('R', 'K', '2', '0') /* 2x2 subsampled Cr:Cb plane */
-> +
->  
->  /*
->   * 3 plane YCbCr
 
-I think the description here is slightly too terse for adding a new packed format. I think it would be better
-to define a new category for 10-bit 2 plane formats.
 
-~Maarten
+On 22/05/18 07:56, ilialin@codeaurora.org wrote:
+> 
+> 
+>> -----Original Message-----
+>> From: Sudeep Holla <sudeep.holla@arm.com>
+>> Sent: Monday, May 21, 2018 16:05
+
+[...]
+
+>>
+>>
+>> That may be true and I am not that bothered about it. But assuming physical
+>> ordering from the logical cpu number is *incorrect* and will break if kernel
+>> decides to change the allocation algorithm. Kernel provides no guarantee on
+>> that, so you need to depend on some physical ID or may be DT to achieve
+>> what your want. But the current code as it stands is wrong.
+> 
+> Got your point. In fact CPUs are numbered 0-3 and ordered into 2 clusters in the DT:
+> 
+> cpus {
+> 	#address-cells = <2>;
+> 	#size-cells = <0>;
+> 
+> 	CPU0: cpu@0 {
+> 		...
+> 		reg = <0x0 0x0>;
+> 		...
+> 	};
+> 
+> 	CPU1: cpu@1 {
+> 		...
+> 		reg = <0x0 0x1>;
+> 		...
+> 	};
+> 
+> 	CPU2: cpu@100 {
+> 		...
+> 		reg = <0x0 0x100>;
+> 		...
+> 	};
+> 
+> 	CPU3: cpu@101 {
+> 		...
+> 		reg = <0x0 0x101>;
+> 		...
+> 	};
+> 
+> 	cpu-map {
+> 		cluster0 {
+> 			core0 {
+> 				cpu = <&CPU0>;
+> 			};
+> 
+> 			core1 {
+> 				cpu = <&CPU1>;
+> 			};
+> 		};
+> 
+> 		cluster1 {
+> 			core0 {
+> 				cpu = <&CPU2>;
+> 			};
+> 
+> 			core1 {
+> 				cpu = <&CPU3>;
+> 			};
+> 		};
+> 	};
+> };
+> 
+> As far, as I understand, they are probed in the same order. 
+
+Yes that's correct today, will that have to remain same for ever ?
+No it's not user ABI and kernel can decide to change the allocation
+order. What if for some reason one/more CPUs fails to boot or even
+configured not to boot ?
+
+> However, to be certain that the physical CPU is the one I intend to
+> configure, I have to fetch the device structure pointer for the cpu-map ->
+> clusterX -> core0 -> cpu path. Could you suggest a kernel API to do
+> that?
+> 
+
+Let's rewind a bit. Do you supply OPPs only on CPU0 and CPU2 ?
+If yes, that's again wrong. Simple solution is to parse all logical
+CPUs and skip if the share OPPs with some other CPUs. I think that
+logic already exists in OPP library IIRC.
+
+-- 
+Regards,
+Sudeep
