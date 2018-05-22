@@ -1,126 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753095AbeEVVla (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 17:41:30 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36942 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752960AbeEVVl2 (ORCPT
+        id S1753218AbeEVVl5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 17:41:57 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:40511 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753007AbeEVVlz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 17:41:28 -0400
-Cc: akrowiak@linux.vnet.ibm.com, Halil Pasic <pasic@linux.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
-        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-Subject: Re: [PATCH v5 05/13] s390: vfio-ap: register matrix device with VFIO
- mdev framework
-To: Cornelia Huck <cohuck@redhat.com>
-References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1525705912-12815-6-git-send-email-akrowiak@linux.vnet.ibm.com>
- <5471b194-d7ca-c9c6-132e-fa9539fe44f0@linux.ibm.com>
- <4688078d-3e13-5201-582f-52576b25defa@linux.vnet.ibm.com>
- <20180517094454.6afae7ba.cohuck@redhat.com>
- <b45ba36a-0451-56b8-c038-410441bb8bd4@linux.vnet.ibm.com>
- <20180522101940.166445f8.cohuck@redhat.com>
-From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Date: Tue, 22 May 2018 17:41:19 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Tue, 22 May 2018 17:41:55 -0400
+X-Google-Smtp-Source: AB8JxZpR6fvOwX7wuSvVWK0CwX7YWg7zAHx0x/jRj/mkyn1Ik3Qay56s2xx29aUWDMHe6wmCyQ34Ug==
+Date: Tue, 22 May 2018 14:41:53 -0700
+From: Joel Fernandes <joel@joelfernandes.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Luca Abeni <luca.abeni@santannapisa.it>, Todd Kjos <tkjos@google.com>,
+        Claudio Scordino <claudio@evidence.eu.com>, kernel-team@android.com,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "Joel Fernandes (Google.)" <joelaf@google.com>
+Subject: Re: [PATCH v2] schedutil: Allow cpufreq requests to be made even
+ when kthread kicked
+Message-ID: <20180522213113.GA40506@joelaf.mtv.corp.google.com>
+References: <20180518185501.173552-1-joel@joelfernandes.org>
+ <20180522113844.5rz3skjeck57arft@vireshk-i7>
+ <CAJZ5v0hP+gCiLa+6YvKHaj7u-DuRfmVq_vjFRMj6CnVktJRxVg@mail.gmail.com>
+ <4237890.zlzv5C60QP@aspire.rjw.lan>
+ <CAJZ5v0henS+LZ64JQwrXR8LrY7xzcsnnYS7AoBuR9dNaC4mTRw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180522101940.166445f8.cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18052221-0024-0000-0000-0000036004F4
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009068; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000261; SDB=6.01036186; UDB=6.00530060; IPR=6.00815315;
- MB=3.00021246; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-22 21:41:25
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052221-0025-0000-0000-0000482109A0
-Message-Id: <0ccac0ff-82d0-4adc-26a5-c64caf0f7a80@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-22_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805220219
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0henS+LZ64JQwrXR8LrY7xzcsnnYS7AoBuR9dNaC4mTRw@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/22/2018 04:19 AM, Cornelia Huck wrote:
-> On Mon, 21 May 2018 11:13:58 -0400
-> Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
->
->> On 05/17/2018 03:44 AM, Cornelia Huck wrote:
->>> On Mon, 14 May 2018 15:42:18 -0400
->>> Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
->>>   
->>>> On 05/11/2018 01:18 PM, Halil Pasic wrote:
->>>>> On 05/07/2018 05:11 PM, Tony Krowiak wrote:
->>>>>> Registers the matrix device created by the VFIO AP device
->>>>>> driver with the VFIO mediated device framework.
->>>>>> Registering the matrix device will create the sysfs
->>>>>> structures needed to create mediated matrix devices
->>>>>> each of which will be used to configure the AP matrix
->>>>>> for a guest and connect it to the VFIO AP device driver.
->>>>>> +static int vfio_ap_mdev_create(struct kobject *kobj, struct
->>>>>> mdev_device *mdev)
->>>>>> +{
->>>>>> +    struct ap_matrix *ap_matrix = to_ap_matrix(mdev_parent_dev(mdev));
->>>>>> +
->>>>>> +    ap_matrix->available_instances--;
->>>>>> +
->>>>>> +    return 0;
->>>>>> +}
->>>>>> +
->>>>>> +static int vfio_ap_mdev_remove(struct mdev_device *mdev)
->>>>>> +{
->>>>>> +    struct ap_matrix *ap_matrix = to_ap_matrix(mdev_parent_dev(mdev));
->>>>>> +
->>>>>> +    ap_matrix->available_instances++;
->>>>>> +
->>>>>> +    return 0;
->>>>>> +}
->>>>>> +
->>>>> The above functions seem to be called with the lock of this
->>>>> auto-generated
->>>>> mdev parent device held. That's why we don't have to care about
->>>>> synchronization
->>>>> ourselves, right?
->>>> I would assume as much. The comments for the 'struct mdev_parent_ops' in
->>>> include/linux/mdev.h do not mention anything about synchronization, nor
->>>> did I
->>>> see any locking or synchronization in the vfio_ccw implementation after
->>>> which
->>>> I modeled my code, so frankly it is something I did not consider.
->>>>   
->>>>> A small comment in the code could be helpful for mdev non-experts.
->>>>> Hell, I would
->>>>> even consider documenting it for all mdev -- took me some time to
->>>>> figure out.
->>>> You may want to bring this up with the VFIO mdev maintainers, but I'd be
->>>> happy to
->>>> include a comment in the functions in question if you think it important.
->>> Important note: There's currently a patch on list that removes the mdev
->>> parent mutex, and it seems there was never intended to be any
->>> serialization in that place by the mdev core. (Look for "vfio/mdev:
->>> Check globally for duplicate devices".)
->> The patch on the list holds the mdev_list_lock during create and remove
->> of an mdev device, so it looks like no synchronization is necessary on the
->> part of the vendor code in the create/remove callbacks; does that sound
->> about right?
-> v1/v2 did that; v3/v4 hold the list lock only while the device is added
-> to the mdev list. v4 also adds a note regarding locking to the
-> documentation.
+On Tue, May 22, 2018 at 05:27:11PM +0200, Rafael J. Wysocki wrote:
+> On Tue, May 22, 2018 at 2:22 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> > On Tuesday, May 22, 2018 1:42:05 PM CEST Rafael J. Wysocki wrote:
+> >> On Tue, May 22, 2018 at 1:38 PM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> >> > On 22-05-18, 13:31, Rafael J. Wysocki wrote:
+> >> >> So below is my (compiled-only) version of the $subject patch, obviously based
+> >> >> on the Joel's work.
+> >> >>
+> >> >> Roughly, what it does is to move the fast_switch_enabled path entirely to
+> >> >> sugov_update_single() and take the spinlock around sugov_update_commit()
+> >> >> in the one-CPU case too.
+> >
+> > [cut]
+> >
+> >> >
+> >> > Why do you assume that fast switch isn't possible in shared policy
+> >> > cases ? It infact is already enabled for few drivers.
+> >
+> > I hope that fast_switch is not used with devfs_possible_from_any_cpu set in the
+> > one-CPU policy case, as that looks racy even without any patching.
+> 
+> Which would be the only case in which sugov_update_single() would run
+> on a CPU that is not the target.
+> 
+> And running sugov_update_single() concurrently on two different CPUs
+> for the same target is a no-no, as we don't prevent concurrent updates
+> from occurring in that path.
+> 
+> Which means that the original patch from Joel will be sufficient as
+> long as we ensure that sugov_update_single() can only run on one CPU
+> at a time.
 
-I'll add some synchronization to the read/update of available instances.
+Since target CPU's runqueue lock is held, I don't see how we can run
+sugov_update_single concurrently with any other CPU for single policy, so
+protecting such race shouldn't be necessary.
 
->
+Also the "if (work_in_progress)" check I added to the sugov_update_single
+doesn't change the behavior of single policy from what it is in mainline
+since we were doing the same thing in already sugov_should_update_freq.
+
+thanks,
+
+ - Joel
