@@ -1,62 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753180AbeEVV4n (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 17:56:43 -0400
-Received: from emh06.mail.saunalahti.fi ([62.142.5.116]:47284 "EHLO
-        emh06.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753137AbeEVV4l (ORCPT
+        id S1753233AbeEVV5F (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 17:57:05 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:41800 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753137AbeEVV5D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 17:56:41 -0400
-Date: Wed, 23 May 2018 00:56:38 +0300
-From: Aaro Koskinen <aaro.koskinen@iki.fi>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>, sre@kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, khilman@kernel.org,
-        ivo.g.dimitrov.75@gmail.com, patrikbachan@gmail.com, serge@hallyn.com,
-        abcloriens@gmail.com, clayton@craftyguy.net, martijn@brixit.nl,
-        sakari.ailus@linux.intel.com,
-        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
-        Thorsten Leemhuis <regressions@leemhuis.info>
-Subject: Re: v4.17-rc1: regressions on N900, N950
-Message-ID: <20180522215638.GC2299@darkstar.musicnaut.iki.fi>
-References: <20180422074213.GA12428@amd>
- <20180423202940.ig6iud5lrbgnu35a@darkstar.musicnaut.iki.fi>
- <20180521213952.GA11596@amd>
- <20180522080250.4fzyvqrgw5oigexn@pali>
- <20180522194139.GB2299@darkstar.musicnaut.iki.fi>
- <20180522205824.GA24927@amd>
+        Tue, 22 May 2018 17:57:03 -0400
+X-Google-Smtp-Source: AB8JxZpbaawilspuuPkqGv4F92WFPaeUy3icEhjayckFLCy9T5ey2TaYrQP7a+D3a1GlxOgcdKWFYQ==
+Date: Tue, 22 May 2018 14:56:59 -0700
+From: Eric Biggers <ebiggers3@gmail.com>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: KVM list <kvm@vger.kernel.org>, karahmed@amazon.de,
+        the arch/x86 maintainers <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@suse.de>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: Re: CONFIG_KCOV causing crash in svm_vcpu_run()
+Message-ID: <20180522215659.GA658@sol.localdomain>
+References: <20180514030007.GH677@sol.localdomain>
+ <20180514030205.GI677@sol.localdomain>
+ <CACT4Y+bV3HQTZ5+ugQmukiiJBkhN_FWqPRuNRYRbe6xoKstWVA@mail.gmail.com>
+ <20180514172508.GC252575@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180522205824.GA24927@amd>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180514172508.GC252575@gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Tue, May 22, 2018 at 10:58:26PM +0200, Pavel Machek wrote:
-> On Tue 2018-05-22 22:41:39, Aaro Koskinen wrote:
-> > My device worked with v4.17-rc1 (haven't found time to test newer kernels),
-> > but if you say the probe order is random then we must find some proper way
-> > to express the dependency.
+On Mon, May 14, 2018 at 10:25:08AM -0700, Eric Biggers wrote:
+> On Mon, May 14, 2018 at 07:14:41AM +0200, Dmitry Vyukov wrote:
+> > On Mon, May 14, 2018 at 5:02 AM, Eric Biggers <ebiggers3@gmail.com> wrote:
+> > > Sorry, messed up address for KVM mailing list.  See message below.
+> > >
+> > > On Sun, May 13, 2018 at 08:00:07PM -0700, Eric Biggers wrote:
+> > >> With CONFIG_KCOV=y and an AMD processor, running the following program crashes
+> > >> the kernel with no output (I'm testing in a VM, so it's using nested
+> > >> virtualization):
+> > >>
+> > >>       #include <fcntl.h>
+> > >>       #include <linux/kvm.h>
+> > >>       #include <sys/ioctl.h>
+> > >>
+> > >>       int main()
+> > >>       {
+> > >>               int dev, vm, cpu;
+> > >>               char page[4096] __attribute__((aligned(4096))) = { 0 };
+> > >>               struct kvm_userspace_memory_region memreg = {
+> > >>                       .memory_size = 4096,
+> > >>                       .userspace_addr = (unsigned long)page,
+> > >>               };
+> > >>               dev = open("/dev/kvm", O_RDONLY);
+> > >>               vm = ioctl(dev, KVM_CREATE_VM, 0);
+> > >>               cpu = ioctl(vm, KVM_CREATE_VCPU, 0);
+> > >>               ioctl(vm, KVM_SET_USER_MEMORY_REGION, &memreg);
+> > >>               ioctl(cpu, KVM_RUN, 0);
+> > >>       }
+> > >>
+> > >> It bisects down to commit b2ac58f90540e39 ("KVM/SVM: Allow direct access to
+> > >> MSR_IA32_SPEC_CTRL").  The bug is apparently that due to the new code for
+> > >> managing the SPEC_CTRL MSR, __sanitizer_cov_trace_pc() is being called from
+> > >> svm_vcpu_run() before the host's MSR_GS_BASE has been restored, which causes a
+> > >> crash somehow.  The following patch fixes it, though I don't know that it's the
+> > >> right solution; maybe KCOV should be disabled in the function instead, or maybe
+> > >> there's a more fundamental problem.  What do people think?
+> > 
+> > 
+> > If __sanitizer_cov_trace_pc() crashes, I would expect there must be
+> > few more of them here:
+> > 
+> > if (unlikely(!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL)))
+> >     svm->spec_ctrl = native_read_msr(MSR_IA32_SPEC_CTRL);
+> > 
+> > if (svm->spec_ctrl)
+> >     native_wrmsrl(MSR_IA32_SPEC_CTRL, 0);
+> > 
+> > Compiler inserts these callbacks into every basic block/edge.. Aren't there?
+> > 
+> > Unfortunately we don't have an attribute that disables instrumentation
+> > of a single function. This is currently possible only on file level.
+> > 
 > 
-> I started bisect, but.. that will probably not be useful.
+> Yes, due to the code dealing with MSR_IA32_SPEC_CTRL, there were several calls
+> to __sanitizer_cov_trace_pc() before the write to MSR_GS_BASE.  The patch I
+> tested moves the write to MSR_GS_BASE to before all of them, so it's once again
+> the first thing after the asm block.  Again I'm not sure it's the proper
+> solution, but it did make it stop crashing.
 > 
-> If your device works ok in v4.17-rc1, it probably works in newer -rcs,
-> too.
+> Also I'm guessing this isn't specific to nested virtualization; I just didn't
+> have KCOV enabled on the host, thus the host didn't crash.
+> 
 
-Actually, my statement may be bogus... Now I tried again with -rc1
-(and also -rc6) and it fails... But v4.16 works.
+Okay, this was (apparently coincidentally) fixed by commit 15e6c22fd8e5a:
+"KVM: SVM: Move spec control call after restore of GS".  Thanks Thomas!
 
-> Thanks for the ordering hint, I'll try to figure out what is going on
-> there.
-
-My bisection pointed to 6fa7324ac5489ad43c4b6351355b869bc5458bef which
-doesn't seem to make any sense...?! So maybe there really is something
-random stuff going on? :-(
-
-A.
+- Eric
