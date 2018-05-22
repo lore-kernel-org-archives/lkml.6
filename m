@@ -1,76 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753240AbeEVWNK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 18:13:10 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36012 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753105AbeEVWNI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 18:13:08 -0400
-Date: Tue, 22 May 2018 16:13:05 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Doug Meyer <dmeyer@gigaio.com>, Logan Gunthorpe <logang@deltatee.com>,
-        kurt.schwemmer@microsemi.com, linux-pci@vger.kernel.org,
-        linux-ntb <linux-ntb@googlegroups.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Jon Mason <jdmason@kudzu.us>,
-        "Jiang, Dave" <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] NTB: PCI Quirk to Enable Switchtec NT Functionality
- with IOMMU On
-Message-ID: <20180522161305.04ec9817@w520.home>
-In-Reply-To: <20180522215126.GA22385@bhelgaas-glaptop.roam.corp.google.com>
-References: <1526558413-23113-1-git-send-email-dmeyer@gigaio.com>
-        <1526558413-23113-3-git-send-email-dmeyer@gigaio.com>
-        <20180517134521.GC19955@bhelgaas-glaptop.roam.corp.google.com>
-        <9dd68ac0-5b9e-b257-49d2-20327c2ab282@deltatee.com>
-        <CA+GK6en+g+T9H0sOMdVXv-_aD3rRcuzZ1JdfK0moEoTuuJnrqQ@mail.gmail.com>
-        <20180522215126.GA22385@bhelgaas-glaptop.roam.corp.google.com>
+        id S1753285AbeEVWQl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 18:16:41 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:53660 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753023AbeEVWQj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 18:16:39 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date: Tue, 22 May 2018 15:16:37 -0700
+From: Rajkumar Manoharan <rmanohar@codeaurora.org>
+To: Niklas Cassel <niklas.cassel@linaro.org>
+Cc: Kalle Valo <kvalo@qca.qualcomm.com>,
+        "David S. Miller" <davem@davemloft.net>, ath10k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-wireless-owner@vger.kernel.org,
+        erik.stromdahl@gmail.com
+Subject: Re: [PATCH v2] ath10k: transmit queued frames after waking queues
+In-Reply-To: <20180522211521.GA26123@localhost.localdomain>
+References: <20180521204359.23884-1-niklas.cassel@linaro.org>
+ <8195be7603a8cd659d25a9c3d898b891@codeaurora.org>
+ <20180522211521.GA26123@localhost.localdomain>
+Message-ID: <a57b21c3e2f23ef2b7e6a6ffbabe111b@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 22 May 2018 16:51:26 -0500
-Bjorn Helgaas <helgaas@kernel.org> wrote:
-
-> [+cc Alex]
+On 2018-05-22 14:15, Niklas Cassel wrote:
+> On Mon, May 21, 2018 at 04:11:38PM -0700, Rajkumar Manoharan wrote:
+>> On 2018-05-21 13:43, Niklas Cassel wrote:
+>> > The following problem was observed when running iperf:
+[...]
+>> 
+>> Sorry for the late response. ath10k_mac_tx_push_pending is already 
+>> called
+>> at the end of NAPI handler. Isn't that enough to process pending 
+>> frames?
 > 
-> On Tue, May 22, 2018 at 02:09:59PM -0700, Doug Meyer wrote:
-> > Logan answered the questions quite thoroughly. (Thanks, Logan!)  
+> This is true for e.g. ATH10K_BUS_PCI and ATH10K_BUS_SNOC,
+> but not for e.g. ATH10K_BUS_SDIO and ATH10K_BUS_USB.
 > 
-> When you repost it, please rework the commit log so it answers the
-> questions directly.  Otherwise the next reader may have the same
-> questions again.  E.g., say something about how the proxy IDs are not
-> programmable and are fixed in the hardware so all we have to do is
-> read them.
+> While there is some SDIO code merged in Kalle's tree already,
+> this problem was found when merging
+> https://git.kernel.org/pub/scm/linux/kernel/git/kvalo/ath.git/?h=ath10k-pending-sdio-usb
+> with Kalle's ath-next branch.
 > 
-> I don't think the question of when the aliases need to be added is
-> quite closed.  Logan said "it seems pci_add_dma_alias() must be called
-> before the driver is initialized and therefore in a quirk", but that
-> doesn't make clear *why* the alias needs to be added before the driver
-> is initialized.  The alias shouldn't be needed until the device does a
-> DMA, and it shouldn't do that until after the driver initializes.
-
-Aliases for devices that don't have a representation on the bus is only
-one use for pci_add_dma_alias(), we can also use it when the aliased
-device is visible on the bus and then it factors not only into the IOMMU
-context entries for a given device, but also the grouping of multiple
-devices that must be done without a host endpoint driver.
- 
-> I suspect the reason the existing quirks are in drivers/pci/quirks.c
-> is because the IOMMU driver is in the host OS, but the host may not
-> have a driver for the device if the device is passed through to a
-> guest OS.  In that case, the only way to add the alias is by using a
-> quirk that is always built into the host OS.
+>> 
+>> Earlier we observed performance issues in calling push_pending from 
+>> each
+>> tx completion. IMHO this change may introduce the same problem again.
 > 
-> We could argue that the driver in the guest should be able to tell the
-> host's IOMMU driver about these aliases, but I doubt there's an
-> interface for that.
+> I prefer functional TX over performance issues,
+> but I agree that it is unfortunate that SDIO doesn't use
+> ath10k_htt_txrx_compl_task().
+> Erik, is there a reason for this?
+> 
+Thanks for details. Now I see your problem. In case of low latency 
+devices (PCI/SNOC/AHB),
+all CE rings interrupts are serviced first and later consolidated data 
+processing done
+from ath10k_htt_txrx_compl_task and then ath10k_mac_tx_push_pending is 
+called from NAPI Poll.
 
-Sounds like a dangerous interface, imagine two physical functions on a
-device, each assigned to separate guests where one guest could usurp
-context entries for hidden devices from the other guest.  Thanks,
+In case of high latency devices (USB/SDIO), each endpoints are serviced 
+and all tx/rx jobs
+are completed from the same context. Hence no need of consolidated 
+processing.
 
-Alex
+> Perhaps it would be possible to call ath10k_mac_tx_push_pending()
+> from the equivalent to ath10k_htt_txrx_compl_task(),
+> but from SDIO's point of view.
+> 
+> Another solution might be to change so that we only call
+> ath10k_mac_tx_push_pending() from ath10k_txrx_tx_unref()
+> if (htt->num_pending_tx == 0). That should decrease the number
+> of calls to ath10k_mac_tx_push_pending(), while still avoiding
+> a "TX deadlock" scenario for SDIO.
+> 
+This issue is specific to HL devices. But your change is common which 
+will impact LL devices.
+I would prefer to call ath10k_mac_tx_push_pending after processing all 
+received mbox/urb messages.
+Export ath10k_mac_tx_push_pending API and call it from USB/SDIO irq 
+handler. Any thoughts?
+
+-Rajkumar
