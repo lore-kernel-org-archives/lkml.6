@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752963AbeEVTiD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 15:38:03 -0400
-Received: from mga07.intel.com ([134.134.136.100]:16707 "EHLO mga07.intel.com"
+        id S1752943AbeEVTiB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 15:38:01 -0400
+Received: from mga07.intel.com ([134.134.136.100]:16708 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752478AbeEVTcD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751946AbeEVTcD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 22 May 2018 15:32:03 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,430,1520924400";
-   d="scan'208";a="226406356"
+   d="scan'208";a="226406358"
 From: Reinette Chatre <reinette.chatre@intel.com>
 To: tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
         vikas.shivappa@linux.intel.com
@@ -18,9 +18,9 @@ Cc: gavin.hindman@intel.com, jithu.joseph@intel.com, dave.hansen@intel.com,
         mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
         linux-kernel@vger.kernel.org,
         Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH V4 07/38] x86/intel_rdt: Initialize new resource group with sane defaults
-Date: Tue, 22 May 2018 04:28:55 -0700
-Message-Id: <68030110df15615d95731fd354ff7adfb0476d37.1526987654.git.reinette.chatre@intel.com>
+Subject: [PATCH V4 08/38] x86/intel_rdt: Introduce new "exclusive" mode
+Date: Tue, 22 May 2018 04:28:56 -0700
+Message-Id: <cea76188c5b30cffaf89ad5c7efd66a3e7f105d4.1526987654.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <cover.1526987654.git.reinette.chatre@intel.com>
 References: <cover.1526987654.git.reinette.chatre@intel.com>
@@ -30,142 +30,51 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently when a new resource group is created its allocations would be
-those that belonged to the resource group to which its closid belonged
-previously.
+At the moment all allocations are shareable. There is no way for a user
+to designate that an allocation associated with a resource group cannot be
+shared by another.
 
-That is, we can encounter a case like:
-mkdir newgroup
-cat newgroup/schemata
-L2:0=ff;1=ff
-echo 'L2:0=0xf0;1=0xf0' > newgroup/schemata
-cat newgroup/schemata
-L2:0=0xf0;1=0xf0
-rmdir newgroup
-mkdir newnewgroup
-cat newnewgroup/schemata
-L2:0=0xf0;1=0xf0
-
-When the new group is created it would be reasonable to expect its
-allocations to be initialized with all regions that it can possibly use.
-At this time these regions would be all that are shareable by other
-resource groups as well as regions that are not currently used.
-
-When a new resource group is created the hardware is initialized with
-these new default allocations.
+Introduce the new mode "exclusive". When a resource group is marked as
+such it implies that no overlap is allowed between its allocation and that
+of another resource group.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 69 ++++++++++++++++++++++++++++++--
- 1 file changed, 66 insertions(+), 3 deletions(-)
+ arch/x86/kernel/cpu/intel_rdt.h          | 2 ++
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 1 +
+ 2 files changed, 3 insertions(+)
 
+diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
+index 5f3915c2e599..399bb94e865b 100644
+--- a/arch/x86/kernel/cpu/intel_rdt.h
++++ b/arch/x86/kernel/cpu/intel_rdt.h
+@@ -83,6 +83,7 @@ enum rdt_group_type {
+ /**
+  * enum rdtgrp_mode - Mode of a RDT resource group
+  * @RDT_MODE_SHAREABLE: This resource group allows sharing of its allocations
++ * @RDT_MODE_EXCLUSIVE: No sharing of this resource group's allocations allowed
+  *
+  * The mode of a resource group enables control over the allowed overlap
+  * between allocations associated with different resource groups (classes
+@@ -91,6 +92,7 @@ enum rdt_group_type {
+  */
+ enum rdtgrp_mode {
+ 	RDT_MODE_SHAREABLE = 0,
++	RDT_MODE_EXCLUSIVE,
+ 
+ 	/* Must be last */
+ 	RDT_NUM_MODES,
 diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index 35e538eed977..b2008c697ce0 100644
+index b2008c697ce0..739b1ecc2b80 100644
 --- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
 +++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -133,7 +133,7 @@ void closid_free(int closid)
-  * Return: true if @closid is currently associated with a resource group,
-  * false if @closid is free
-  */
--static bool __attribute__ ((unused)) closid_allocated(unsigned int closid)
-+static bool closid_allocated(unsigned int closid)
- {
- 	return (closid_free_map & (1 << closid)) == 0;
- }
-@@ -1799,6 +1799,64 @@ static int mkdir_mondata_all(struct kernfs_node *parent_kn,
- 	return ret;
- }
+@@ -161,6 +161,7 @@ enum rdtgrp_mode rdtgroup_mode_by_closid(int closid)
  
-+/**
-+ * rdtgroup_init_alloc - Initialize the new RDT group's allocations
-+ *
-+ * A new RDT group is being created on an allocation capable (CAT)
-+ * supporting system. Set this group up to start off with all usable
-+ * allocations. That is, all shareable and unused bits.
-+ *
-+ * All-zero CBM is invalid. If there are no more shareable bits available
-+ * on any domain then the entire allocation will fail.
-+ */
-+static int rdtgroup_init_alloc(struct rdtgroup *rdtgrp)
-+{
-+	u32 used_b = 0, unused_b = 0;
-+	u32 closid = rdtgrp->closid;
-+	struct rdt_resource *r;
-+	enum rdtgrp_mode mode;
-+	struct rdt_domain *d;
-+	int i, ret;
-+	u32 *ctrl;
-+
-+	for_each_alloc_enabled_rdt_resource(r) {
-+		list_for_each_entry(d, &r->domains, list) {
-+			d->have_new_ctrl = false;
-+			d->new_ctrl = r->cache.shareable_bits;
-+			used_b = r->cache.shareable_bits;
-+			ctrl = d->ctrl_val;
-+			for (i = 0; i < r->num_closid; i++, ctrl++) {
-+				if (closid_allocated(i) && i != closid) {
-+					mode = rdtgroup_mode_by_closid(i);
-+					used_b |= *ctrl;
-+					if (mode == RDT_MODE_SHAREABLE)
-+						d->new_ctrl |= *ctrl;
-+				}
-+			}
-+			unused_b = used_b ^ (BIT_MASK(r->cache.cbm_len) - 1);
-+			unused_b &= BIT_MASK(r->cache.cbm_len) - 1;
-+			d->new_ctrl |= unused_b;
-+			if (d->new_ctrl == 0) {
-+				rdt_last_cmd_printf("no space on %s:%d\n",
-+						    r->name, d->id);
-+				return -ENOSPC;
-+			}
-+			d->have_new_ctrl = true;
-+		}
-+	}
-+
-+	for_each_alloc_enabled_rdt_resource(r) {
-+		ret = update_domains(r, rdtgrp->closid);
-+		if (ret < 0) {
-+			rdt_last_cmd_puts("failed to initialize allocations\n");
-+			return ret;
-+		}
-+		rdtgrp->mode = RDT_MODE_SHAREABLE;
-+	}
-+
-+	return 0;
-+}
-+
- static int mkdir_rdt_prepare(struct kernfs_node *parent_kn,
- 			     struct kernfs_node *prgrp_kn,
- 			     const char *name, umode_t mode,
-@@ -1957,6 +2015,10 @@ static int rdtgroup_mkdir_ctrl_mon(struct kernfs_node *parent_kn,
- 	ret = 0;
+ static const char * const rdt_mode_str[] = {
+ 	[RDT_MODE_SHAREABLE]	= "shareable",
++	[RDT_MODE_EXCLUSIVE]	= "exclusive",
+ };
  
- 	rdtgrp->closid = closid;
-+	ret = rdtgroup_init_alloc(rdtgrp);
-+	if (ret < 0)
-+		goto out_id_free;
-+
- 	list_add(&rdtgrp->rdtgroup_list, &rdt_all_groups);
- 
- 	if (rdt_mon_capable) {
-@@ -1967,15 +2029,16 @@ static int rdtgroup_mkdir_ctrl_mon(struct kernfs_node *parent_kn,
- 		ret = mongroup_create_dir(kn, NULL, "mon_groups", NULL);
- 		if (ret) {
- 			rdt_last_cmd_puts("kernfs subdir error\n");
--			goto out_id_free;
-+			goto out_del_list;
- 		}
- 	}
- 
- 	goto out_unlock;
- 
-+out_del_list:
-+	list_del(&rdtgrp->rdtgroup_list);
- out_id_free:
- 	closid_free(closid);
--	list_del(&rdtgrp->rdtgroup_list);
- out_common_fail:
- 	mkdir_rdt_prepare_clean(rdtgrp);
- out_unlock:
+ /**
 -- 
 2.13.6
