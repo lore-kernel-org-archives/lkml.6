@@ -1,85 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751742AbeEVPsp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 11:48:45 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:52190 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751196AbeEVPso (ORCPT
+        id S1751870AbeEVPth (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 11:49:37 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:43968 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751340AbeEVPtd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 11:48:44 -0400
-Date: Tue, 22 May 2018 17:48:42 +0200
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>, Kees Cook <keescook@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christoffer Dall <christoffer.dall@arm.com>
-Subject: Re: [PATCH 10/14] arm64: ssbd: Add prctl interface for per-thread
- mitigation
-Message-ID: <20180522154842.pjml5lagtpyvwwqo@isilmar-4.linta.de>
-References: <20180522150648.28297-1-marc.zyngier@arm.com>
- <20180522150648.28297-11-marc.zyngier@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180522150648.28297-11-marc.zyngier@arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Tue, 22 May 2018 11:49:33 -0400
+Date: Tue, 22 May 2018 11:49:30 -0400 (EDT)
+Message-Id: <20180522.114930.689064251143958449.davem@davemloft.net>
+To: shuah@kernel.org
+Cc: vladbu@mellanox.com, linux-kselftest@vger.kernel.org,
+        lucasb@mojatatu.com, jhs@mojatatu.com, mrv@mojatatu.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tc-testing: flush gact actions on test teardown
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <11f03b6a-a8c4-e64c-7e2d-fb8218bc6320@kernel.org>
+References: <1526660482-10424-1-git-send-email-vladbu@mellanox.com>
+        <11f03b6a-a8c4-e64c-7e2d-fb8218bc6320@kernel.org>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Shuah Khan <shuah@kernel.org>
+Date: Tue, 22 May 2018 09:43:28 -0600
 
-On Tue, May 22, 2018 at 04:06:44PM +0100, Marc Zyngier wrote:
-> If running on a system that performs dynamic SSBD mitigation, allow
-> userspace to request the mitigation for itself. This is implemented
-> as a prctl call, allowing the mitigation to be enabled or disabled at
-> will for this particular thread.
+> On 05/18/2018 10:21 AM, Vlad Buslov wrote:
+>> Test 6fb4 creates one mirred and one pipe action, but only flushes mirred
+>> on teardown. Leaking pipe action causes failures in other tests.
+>> 
+>> Add additional teardown command to also flush gact actions.
+>> 
+>> Signed-off-by: Vlad Buslov <vladbu@mellanox.com>
+>> ---
+>>  tools/testing/selftests/tc-testing/tc-tests/actions/mirred.json | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>> 
+>> diff --git a/tools/testing/selftests/tc-testing/tc-tests/actions/mirred.json b/tools/testing/selftests/tc-testing/tc-tests/actions/mirred.json
+>> index 443c9b3..acb24f7 100644
+>> --- a/tools/testing/selftests/tc-testing/tc-tests/actions/mirred.json
+>> +++ b/tools/testing/selftests/tc-testing/tc-tests/actions/mirred.json
+>> @@ -44,7 +44,8 @@
+>>          "matchPattern": "action order [0-9]*: mirred \\(Egress Redirect to device lo\\).*index 2 ref",
+>>          "matchCount": "1",
+>>          "teardown": [
+>> -            "$TC actions flush action mirred"
+>> +            "$TC actions flush action mirred",
+>> +            "$TC actions flush action gact"
+>>          ]
+>>      },
+>>      {
+>> 
 > 
-> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-> ---
->  arch/arm64/kernel/Makefile |   1 +
->  arch/arm64/kernel/ssbd.c   | 107 +++++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 108 insertions(+)
->  create mode 100644 arch/arm64/kernel/ssbd.c
-> 
-> diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
-> index bf825f38d206..0025f8691046 100644
-> --- a/arch/arm64/kernel/Makefile
-> +++ b/arch/arm64/kernel/Makefile
-> @@ -54,6 +54,7 @@ arm64-obj-$(CONFIG_ARM64_RELOC_TEST)	+= arm64-reloc-test.o
->  arm64-reloc-test-y := reloc_test_core.o reloc_test_syms.o
->  arm64-obj-$(CONFIG_CRASH_DUMP)		+= crash_dump.o
->  arm64-obj-$(CONFIG_ARM_SDE_INTERFACE)	+= sdei.o
-> +arm64-obj-$(CONFIG_ARM64_SSBD)		+= ssbd.o
->  
->  obj-y					+= $(arm64-obj-y) vdso/ probes/
->  obj-m					+= $(arm64-obj-m)
-> diff --git a/arch/arm64/kernel/ssbd.c b/arch/arm64/kernel/ssbd.c
-> new file mode 100644
-> index 000000000000..34e3c430176b
-> --- /dev/null
-> +++ b/arch/arm64/kernel/ssbd.c
-> @@ -0,0 +1,107 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2018 ARM Ltd, All Rights Reserved.
-> + */
-> +
-> +#include <linux/sched.h>
-> +#include <linux/thread_info.h>
-> +
-> +#include <asm/cpufeature.h>
-> +
-> +/*
-> + * prctl interface for SSBD
-> + * FIXME: Drop the below ifdefery once the common interface has been merged.
-> + */
-> +#ifdef PR_SPEC_STORE_BYPASS
+> I can get this into 4.18-rc1 unless there is a reason for this to go
+> through net tree.
 
-That FIXME wants to be looked at.
-
-Thanks,
-	Dominik
+Why wouldn't a networking testing bug fix go through my tree?
