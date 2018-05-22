@@ -1,76 +1,271 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752749AbeEVUDM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 16:03:12 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:37220 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752108AbeEVUDK (ORCPT
+        id S1752755AbeEVUGS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 16:06:18 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49074 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751317AbeEVUGQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 16:03:10 -0400
-X-Google-Smtp-Source: AB8JxZqLCw08upgZin0KMKmTtQMcenZpXPQOGbiqX9rc0Ea1Sp76a3Zz/dyNAS9OBj9Qnk6dz27ZHlscVLB4pMtC4+0=
-MIME-Version: 1.0
-In-Reply-To: <4F646FBB-FE0B-4FEE-98E5-3CA2DF0598DE@oracle.com>
-References: <A940030A-CDBF-41CD-816F-0BBC76E7C4F4@oracle.com>
- <CAKgT0Ud2qriAkWcs56WEkw2vhYzBbWvzZOoY24ndsqPKaWn=Sg@mail.gmail.com> <4F646FBB-FE0B-4FEE-98E5-3CA2DF0598DE@oracle.com>
-From: Alexander Duyck <alexander.duyck@gmail.com>
-Date: Tue, 22 May 2018 13:03:09 -0700
-Message-ID: <CAKgT0Ud8V-5iWJoN_xSqmiZFArrpOiu2BM1Ldj_AaPhGdhiwBw@mail.gmail.com>
-Subject: Re: Regression: Approximate 34% performance hit in receive throughput
- over ixgbe seen due to build_skb patch
-To: William Kucharski <william.kucharski@oracle.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Netdev <netdev@vger.kernel.org>,
-        intel-wired-lan <intel-wired-lan@lists.osuosl.org>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        "Duyck, Alexander H" <alexander.h.duyck@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 22 May 2018 16:06:16 -0400
+From: Mike Rapoport <rppt@linux.vnet.ibm.com>
+To: Shuah Khan <shuah@kernel.org>
+Cc: Roman Gushchin <guro@fb.com>, Tejun Heo <tj@kernel.org>,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>
+Subject: [PATCH v3] selftests: cgroup/memcontrol: add basic test for socket accounting
+Date: Tue, 22 May 2018 23:06:05 +0300
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-GCONF: 00
+x-cbid: 18052220-0040-0000-0000-0000043CABA7
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18052220-0041-0000-0000-00002641E147
+Message-Id: <1527019565-20470-1-git-send-email-rppt@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-22_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805220207
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 12:29 PM, William Kucharski
-<william.kucharski@oracle.com> wrote:
->
->
->> On May 22, 2018, at 12:23 PM, Alexander Duyck <alexander.duyck@gmail.com> wrote:
->>
->> 3. There should be a private flag that can be updated via "ethtool
->> --set-priv-flags" called "legacy-rx" that you can enable that will
->> roll back to the original that did the copy-break type approach for
->> small packets and the headers of the frame.
->
-> With legacy-rx enabled, most of the regression goes away, but it's still present
-> as compared to the code without the patch; the regression then drops to about 6%:
->
-> # ethtool --show-priv-flags eno1
-> Private flags for eno1:
-> legacy-rx: on
->
-> Socket  Message  Elapsed      Messages
-> Size    Size     Time         Okay Errors   Throughput
-> bytes   bytes    secs            #      #   10^6bits/sec
->
->  65536      64   60.00     35934709      0     306.64
->  65536           60.00     33791739            288.35
->
-> Socket  Message  Elapsed      Messages
-> Size    Size     Time         Okay Errors   Throughput
-> bytes   bytes    secs            #      #   10^6bits/sec
->
->  65536      64   60.00     39254351      0     334.97
->  65536           60.00     36761069            313.69
->
-> Is this variance to be expected, or do you think modification of the
-> interrupt delay would achieve better results?
->
->
->     William Kucharski
->
+The test verifies that when there is active TCP connection, the
+memory.stat.sock and memory.current values are close.
 
-I would think with modification of interrupt delay you could probably
-do much better if my assumption is correct and the issue is us sitting
-on packets for too long so we overrun the socket buffer and start
-dropping packets or stalling the Tx.
+Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Acked-by: Roman Gushchin <guro@fb.com>
+---
+v3 changes:
+* added changelog
 
-Thanks.
+v2 changes:
+* bumped error percentage for comparing memory.current with memory.stat.sock
+* added checks that memory.stat.sock == 0 and memory.current >= 0 after TCP
+server exits
+* simplified error handling
 
-- Alex
+ tools/testing/selftests/cgroup/test_memcontrol.c | 193 +++++++++++++++++++++++
+ 1 file changed, 193 insertions(+)
+
+diff --git a/tools/testing/selftests/cgroup/test_memcontrol.c b/tools/testing/selftests/cgroup/test_memcontrol.c
+index beae06c9c899..cf0bddc9d271 100644
+--- a/tools/testing/selftests/cgroup/test_memcontrol.c
++++ b/tools/testing/selftests/cgroup/test_memcontrol.c
+@@ -9,6 +9,12 @@
+ #include <sys/stat.h>
+ #include <sys/types.h>
+ #include <unistd.h>
++#include <sys/socket.h>
++#include <sys/wait.h>
++#include <arpa/inet.h>
++#include <netinet/in.h>
++#include <netdb.h>
++#include <errno.h>
+ 
+ #include "../kselftest.h"
+ #include "cgroup_util.h"
+@@ -772,6 +778,192 @@ static int test_memcg_oom_events(const char *root)
+ 	return ret;
+ }
+ 
++struct tcp_server_args {
++	unsigned short port;
++	int ctl[2];
++};
++
++static int tcp_server(const char *cgroup, void *arg)
++{
++	struct tcp_server_args *srv_args = arg;
++	struct sockaddr_in6 saddr = { 0 };
++	socklen_t slen = sizeof(saddr);
++	int sk, client_sk, ctl_fd, yes = 1, ret = -1;
++
++	close(srv_args->ctl[0]);
++	ctl_fd = srv_args->ctl[1];
++
++	saddr.sin6_family = AF_INET6;
++	saddr.sin6_addr = in6addr_any;
++	saddr.sin6_port = htons(srv_args->port);
++
++	sk = socket(AF_INET6, SOCK_STREAM, 0);
++	if (sk < 0)
++		return ret;
++
++	if (setsockopt(sk, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) < 0)
++		goto cleanup;
++
++	if (bind(sk, (struct sockaddr *)&saddr, slen)) {
++		write(ctl_fd, &errno, sizeof(errno));
++		goto cleanup;
++	}
++
++	if (listen(sk, 1))
++		goto cleanup;
++
++	ret = 0;
++	if (write(ctl_fd, &ret, sizeof(ret)) != sizeof(ret)) {
++		ret = -1;
++		goto cleanup;
++	}
++
++	client_sk = accept(sk, NULL, NULL);
++	if (client_sk < 0)
++		goto cleanup;
++
++	ret = -1;
++	for (;;) {
++		uint8_t buf[0x100000];
++
++		if (write(client_sk, buf, sizeof(buf)) <= 0) {
++			if (errno == ECONNRESET)
++				ret = 0;
++			break;
++		}
++	}
++
++	close(client_sk);
++
++cleanup:
++	close(sk);
++	return ret;
++}
++
++static int tcp_client(const char *cgroup, unsigned short port)
++{
++	const char server[] = "localhost";
++	struct addrinfo *ai;
++	char servport[6];
++	int retries = 0x10; /* nice round number */
++	int sk, ret;
++
++	snprintf(servport, sizeof(servport), "%hd", port);
++	ret = getaddrinfo(server, servport, NULL, &ai);
++	if (ret)
++		return ret;
++
++	sk = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
++	if (sk < 0)
++		goto free_ainfo;
++
++	ret = connect(sk, ai->ai_addr, ai->ai_addrlen);
++	if (ret < 0)
++		goto close_sk;
++
++	ret = KSFT_FAIL;
++	while (retries--) {
++		uint8_t buf[0x100000];
++		long current, sock;
++
++		if (read(sk, buf, sizeof(buf)) <= 0)
++			goto close_sk;
++
++		current = cg_read_long(cgroup, "memory.current");
++		sock = cg_read_key_long(cgroup, "memory.stat", "sock ");
++
++		if (current < 0 || sock < 0)
++			goto close_sk;
++
++		if (current < sock)
++			goto close_sk;
++
++		if (values_close(current, sock, 10)) {
++			ret = KSFT_PASS;
++			break;
++		}
++	}
++
++close_sk:
++	close(sk);
++free_ainfo:
++	freeaddrinfo(ai);
++	return ret;
++}
++
++/*
++ * This test checks socket memory accounting.
++ * The test forks a TCP server listens on a random port between 1000
++ * and 61000. Once it gets a client connection, it starts writing to
++ * its socket.
++ * The TCP client interleaves reads from the socket with check whether
++ * memory.current and memory.stat.sock are similar.
++ */
++static int test_memcg_sock(const char *root)
++{
++	int bind_retries = 5, ret = KSFT_FAIL, pid, err;
++	unsigned short port;
++	char *memcg;
++
++	memcg = cg_name(root, "memcg_test");
++	if (!memcg)
++		goto cleanup;
++
++	if (cg_create(memcg))
++		goto cleanup;
++
++	while (bind_retries--) {
++		struct tcp_server_args args;
++
++		if (pipe(args.ctl))
++			goto cleanup;
++
++		port = args.port = 1000 + rand() % 60000;
++
++		pid = cg_run_nowait(memcg, tcp_server, &args);
++		if (pid < 0)
++			goto cleanup;
++
++		close(args.ctl[1]);
++		if (read(args.ctl[0], &err, sizeof(err)) != sizeof(err))
++			goto cleanup;
++		close(args.ctl[0]);
++
++		if (!err)
++			break;
++		if (err != EADDRINUSE)
++			goto cleanup;
++
++		waitpid(pid, NULL, 0);
++	}
++
++	if (err == EADDRINUSE) {
++		ret = KSFT_SKIP;
++		goto cleanup;
++	}
++
++	if (tcp_client(memcg, port) != KSFT_PASS)
++		goto cleanup;
++
++	waitpid(pid, &err, 0);
++	if (WEXITSTATUS(err))
++		goto cleanup;
++
++	if (cg_read_long(memcg, "memory.current") < 0)
++		goto cleanup;
++
++	if (cg_read_key_long(memcg, "memory.stat", "sock "))
++		goto cleanup;
++
++	ret = KSFT_PASS;
++
++cleanup:
++	cg_destroy(memcg);
++	free(memcg);
++
++	return ret;
++}
++
+ #define T(x) { x, #x }
+ struct memcg_test {
+ 	int (*fn)(const char *root);
+@@ -785,6 +977,7 @@ struct memcg_test {
+ 	T(test_memcg_max),
+ 	T(test_memcg_oom_events),
+ 	T(test_memcg_swap_max),
++	T(test_memcg_sock),
+ };
+ #undef T
+ 
+-- 
+2.7.4
