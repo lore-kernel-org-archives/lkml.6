@@ -1,356 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751611AbeEVTGU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 15:06:20 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:47006 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751346AbeEVTGR (ORCPT
+        id S1751844AbeEVTG2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 15:06:28 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:35130 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751687AbeEVTGZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 15:06:17 -0400
-Subject: Re: [Xen-devel] [RFC 1/3] xen/balloon: Allow allocating DMA buffers
-To: Oleksandr Andrushchenko <andr2000@gmail.com>,
-        "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        jgross@suse.com, konrad.wilk@oracle.com
-Cc: daniel.vetter@intel.com, matthew.d.roper@intel.com,
-        dongwon.kim@intel.com
-References: <20180517082604.14828-1-andr2000@gmail.com>
- <20180517082604.14828-2-andr2000@gmail.com>
- <6a108876-19b7-49d0-3de2-9e10f984736c@oracle.com>
- <9541926e-001a-e41e-317c-dbff6d687761@gmail.com>
- <218e2bf7-490d-f89e-9866-27b7e3dbc835@oracle.com>
- <a08e7d0d-f7d5-6b7e-979b-8a17060482f0@gmail.com>
- <b177a327-6a73-bb77-c69b-bc0958a05532@oracle.com>
- <f87478c7-3523-851c-5c3a-12a9e8753bb6@epam.com>
- <c2f0845b-ab2f-4b9b-6f46-6ddd236ad9ed@oracle.com>
- <77c20852-b9b8-c35a-26b0-b0317e6aba09@gmail.com>
- <f8775649-34eb-04ac-2264-609b33cdd504@oracle.com>
- <2a88de28-27ef-8fe4-ddc1-35eb9e698567@gmail.com>
- <afe3a9ba-ab50-5872-e044-9d8cf7034e70@oracle.com>
- <533ca735-333b-8403-85f7-d17794ea97ca@gmail.com>
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <8587f479-f5f0-0ca6-cd32-76fa94a9aed0@oracle.com>
-Date: Tue, 22 May 2018 15:09:17 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Tue, 22 May 2018 15:06:25 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BCCB4601D7
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=awallis@codeaurora.org
+Subject: Re: [PATCHv2 06/12] arm64: add basic pointer authentication support
+To: Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc: arnd@arndb.de, catalin.marinas@arm.com, cdall@linaro.org,
+        kvmarm@lists.cs.columbia.edu, linux-arch@vger.kernel.org,
+        marc.zyngier@arm.com, suzuki.poulose@arm.com, will.deacon@arm.com,
+        yao.qi@arm.com, kernel-hardening@lists.openwall.com,
+        linux-kernel@vger.kernel.org
+References: <20171127163806.31435-1-mark.rutland@arm.com>
+ <20171127163806.31435-7-mark.rutland@arm.com>
+From: Adam Wallis <awallis@codeaurora.org>
+Message-ID: <daefeb1f-9553-c26d-0b35-2c4da328aeff@codeaurora.org>
+Date: Tue, 22 May 2018 15:06:21 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <533ca735-333b-8403-85f7-d17794ea97ca@gmail.com>
+In-Reply-To: <20171127163806.31435-7-mark.rutland@arm.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8901 signatures=668700
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805220200
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/22/2018 02:27 PM, Oleksandr Andrushchenko wrote:
-> On 05/22/2018 09:02 PM, Boris Ostrovsky wrote:
->> On 05/22/2018 11:00 AM, Oleksandr Andrushchenko wrote:
->>> On 05/22/2018 05:33 PM, Boris Ostrovsky wrote:
->>>> On 05/22/2018 01:55 AM, Oleksandr Andrushchenko wrote:
->>>>> On 05/21/2018 11:36 PM, Boris Ostrovsky wrote:
->>>>>> On 05/21/2018 03:13 PM, Oleksandr Andrushchenko wrote:
->>>>>>> On 05/21/2018 09:53 PM, Boris Ostrovsky wrote:
->>>>>>>> On 05/21/2018 01:32 PM, Oleksandr Andrushchenko wrote:
->>>>>>>>> On 05/21/2018 07:35 PM, Boris Ostrovsky wrote:
->>>>>>>>>> On 05/21/2018 01:40 AM, Oleksandr Andrushchenko wrote:
->>>>>>>>>>> On 05/19/2018 01:04 AM, Boris Ostrovsky wrote:
->>>>>>>>>>>> On 05/17/2018 04:26 AM, Oleksandr Andrushchenko wrote:
->>>>>>>>>>>>> From: Oleksandr Andrushchenko
->>>>>>>>>>>>> <oleksandr_andrushchenko@epam.com>
->>>>>>>>>>>> A commit message would be useful.
->>>>>>>>>>> Sure, v1 will have it
->>>>>>>>>>>>> Signed-off-by: Oleksandr Andrushchenko
->>>>>>>>>>>>> <oleksandr_andrushchenko@epam.com>
->>>>>>>>>>>>>
->>>>>>>>>>>>>            for (i = 0; i < nr_pages; i++) {
->>>>>>>>>>>>> -        page = alloc_page(gfp);
->>>>>>>>>>>>> -        if (page == NULL) {
->>>>>>>>>>>>> -            nr_pages = i;
->>>>>>>>>>>>> -            state = BP_EAGAIN;
->>>>>>>>>>>>> -            break;
->>>>>>>>>>>>> +        if (ext_pages) {
->>>>>>>>>>>>> +            page = ext_pages[i];
->>>>>>>>>>>>> +        } else {
->>>>>>>>>>>>> +            page = alloc_page(gfp);
->>>>>>>>>>>>> +            if (page == NULL) {
->>>>>>>>>>>>> +                nr_pages = i;
->>>>>>>>>>>>> +                state = BP_EAGAIN;
->>>>>>>>>>>>> +                break;
->>>>>>>>>>>>> +            }
->>>>>>>>>>>>>                }
->>>>>>>>>>>>>                scrub_page(page);
->>>>>>>>>>>>>                list_add(&page->lru, &pages);
->>>>>>>>>>>>> @@ -529,7 +565,7 @@ static enum bp_state
->>>>>>>>>>>>> decrease_reservation(unsigned long nr_pages, gfp_t gfp)
->>>>>>>>>>>>>            i = 0;
->>>>>>>>>>>>>            list_for_each_entry_safe(page, tmp, &pages, lru) {
->>>>>>>>>>>>>                /* XENMEM_decrease_reservation requires a
->>>>>>>>>>>>> GFN */
->>>>>>>>>>>>> -        frame_list[i++] = xen_page_to_gfn(page);
->>>>>>>>>>>>> +        frames[i++] = xen_page_to_gfn(page);
->>>>>>>>>>>>>          #ifdef CONFIG_XEN_HAVE_PVMMU
->>>>>>>>>>>>>                /*
->>>>>>>>>>>>> @@ -552,18 +588,22 @@ static enum bp_state
->>>>>>>>>>>>> decrease_reservation(unsigned long nr_pages, gfp_t gfp)
->>>>>>>>>>>>>        #endif
->>>>>>>>>>>>>                list_del(&page->lru);
->>>>>>>>>>>>>        -        balloon_append(page);
->>>>>>>>>>>>> +        if (!ext_pages)
->>>>>>>>>>>>> +            balloon_append(page);
->>>>>>>>>>>> So what you are proposing is not really ballooning. You are
->>>>>>>>>>>> just
->>>>>>>>>>>> piggybacking on existing interfaces, aren't you?
->>>>>>>>>>> Sort of. Basically I need to
->>>>>>>>>>> {increase|decrease}_reservation, not
->>>>>>>>>>> actually
->>>>>>>>>>> allocating ballooned pages.
->>>>>>>>>>> Do you think I can simply EXPORT_SYMBOL for
->>>>>>>>>>> {increase|decrease}_reservation?
->>>>>>>>>>> Any other suggestion?
->>>>>>>>>> I am actually wondering how much of that code you end up
->>>>>>>>>> reusing.
->>>>>>>>>> You
->>>>>>>>>> pretty much create new code paths in both routines and common
->>>>>>>>>> code
->>>>>>>>>> ends
->>>>>>>>>> up being essentially the hypercall.
->>>>>>>>> Well, I hoped that it would be easier to maintain if I modify
->>>>>>>>> existing
->>>>>>>>> code
->>>>>>>>> to support both use-cases, but I am also ok to create new
->>>>>>>>> routines if
->>>>>>>>> this
->>>>>>>>> seems to be reasonable - please let me know
->>>>>>>>>>       So the question is --- would it make
->>>>>>>>>> sense to do all of this separately from the balloon driver?
->>>>>>>>> This can be done, but which driver will host this code then?
->>>>>>>>> If we
->>>>>>>>> move from
->>>>>>>>> the balloon driver, then this could go to either gntdev or
->>>>>>>>> grant-table.
->>>>>>>>> What's your preference?
->>>>>>>> A separate module?
->>>>>>>> Is there any use for this feature outside of your zero-copy DRM
->>>>>>>> driver?
->>>>>>> Intel's hyper dma-buf (Dongwon/Matt CC'ed), V4L/GPU at least.
->>>>>>>
->>>>>>> At the time I tried to upstream zcopy driver it was discussed and
->>>>>>> decided that
->>>>>>> it would be better if I remove all DRM specific code and move it to
->>>>>>> Xen drivers.
->>>>>>> Thus, this RFC.
->>>>>>>
->>>>>>> But it can also be implemented as a dedicated Xen dma-buf driver
->>>>>>> which
->>>>>>> will have all the
->>>>>>> code from this RFC + a bit more (char/misc device handling at
->>>>>>> least).
->>>>>>> This will also require a dedicated user-space library, just like
->>>>>>> libxengnttab.so
->>>>>>> for gntdev (now I have all new IOCTLs covered there).
->>>>>>>
->>>>>>> If the idea of a dedicated Xen dma-buf driver seems to be more
->>>>>>> attractive we
->>>>>>> can work toward this solution. BTW, I do support this idea, but
->>>>>>> was not
->>>>>>> sure if Xen community accepts yet another driver which duplicates
->>>>>>> quite some code
->>>>>>> of the existing gntdev/balloon/grant-table. And now after this
->>>>>>> RFC I
->>>>>>> hope that all cons
->>>>>>> and pros of both dedicated driver and gntdev/balloon/grant-table
->>>>>>> extension are
->>>>>>> clearly seen and we can make a decision.
->>>>>> IIRC the objection for a separate module was in the context of
->>>>>> gntdev
->>>>>> was discussion, because (among other things) people didn't want to
->>>>>> have
->>>>>> yet another file in /dev/xen/
->>>>>>
->>>>>> Here we are talking about (a new) balloon-like module which doesn't
->>>>>> create any new user-visible interfaces. And as for duplicating code
->>>>>> ---
->>>>>> as I said, I am not convinced there is much of duplication.
->>>>>>
->>>>>> I might even argue that we should add a new config option for this
->>>>>> module.
->>>>> I am not quite sure I am fully following you here: so, you suggest
->>>>> that we have balloon.c unchanged, but instead create a new
->>>>> module (namely a file under the same folder as balloon.c, e.g.
->>>>> dma-buf-reservation.c) and move those {increase|decrease}_reservation
->>>>> routines (specific to dma-buf) to that new file? And make it
->>>>> selectable
->>>>> via Kconfig? If so, then how about the changes to grant-table and
->>>>> gntdev?
->>>>> Those will look inconsistent then.
->>>> Inconsistent with what? The changes to grant code will also be
->>>> under the
->>>> new config option.
->>> Ah, ok.
->>>
->>> Option 1. We will have Kconfig option which will cover dma-buf
->>> changes in balloon,
->> I really don't think your changes to balloon driver belong there. The
->> have nothing to do with ballooning,
->>
->>> grant-table and gntdev. And for that we will
->>> create dedicated routines in balloon and grant-table (copy of
->>> the existing ones, but modified to fit dma-buf use-case) and
->>> those under something like "#if CONFIG_XEN_DMABUF"?
->>> This is relatively easy to do for balloon/grant-table, but not that
->>> easy for gntdev: there still seems to be lots of code which can be
->>> reused,
->>> so I'll have to put lots of "#if CONFIG_XEN_DMABUF" there. Even more,
->>> I change
->>> interfaces of the existing gntdev routines which won't look cute with
->>> #if's, IMO.
->>>
->>> Option 2. Try moving dma-buf related changes from balloon and
->>> grant-table to a new file. Then gntdev's Kconfig concerns from above
->>> will still
->>> be there, but balloon/grant-table functionality will be localized in a
->>> new module.
->> I don't see a problem with leaving your code (from patch 2) where it is
->> now, in grant table. It's a small change and it seems to me a single
->> #ifdef/#endif would cover it, even if you factor out common code there
->> as we've discussed. To my eye it logically belongs there. Just like your
->> gntdev changes belong to gntdev file. (Presumably, because I haven't
->> actually looked at them ;-))
->>
->> So my suggestion is
->> - separate module for your changes in balloon.c
-> Ok, so, basically, the changes I need from the balloon driver is
-> {increase|decrease}_reservation and DMAable memory allocations, so
-> I'll move that into a separate file: what could be the name for such a
-> file?
+On 11/27/2017 11:38 AM, Mark Rutland wrote:
+> This patch adds basic support for pointer authentication, allowing
+> userspace to make use of APIAKey. The kernel maintains an APIAKey value
+> for each process (shared by all threads within), which is initialised to
+> a random value at exec() time.
+> 
+> To describe that address authentication instructions are available, the
+> ID_AA64ISAR0.{APA,API} fields are exposed to userspace. A new hwcap,
+> APIA, is added to describe that the kernel manages APIAKey.
+> 
+> Instructions using other keys (APIBKey, APDAKey, APDBKey) are disabled,
+> and will behave as NOPs. These may be made use of in future patches.
+> 
+> No support is added for the generic key (APGAKey), though this cannot be
+> trapped or made to behave as a NOP. Its presence is not advertised with
+> a hwcap.
+> 
+> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> ---
+>  arch/arm64/include/asm/mmu.h          |  5 ++
+>  arch/arm64/include/asm/mmu_context.h  | 25 +++++++++-
+>  arch/arm64/include/asm/pointer_auth.h | 89 +++++++++++++++++++++++++++++++++++
+>  arch/arm64/include/uapi/asm/hwcap.h   |  1 +
+>  arch/arm64/kernel/cpufeature.c        | 17 ++++++-
+>  arch/arm64/kernel/cpuinfo.c           |  1 +
+>  6 files changed, 134 insertions(+), 4 deletions(-)
+>  create mode 100644 arch/arm64/include/asm/pointer_auth.h
+
+Mark, I was able to verify that a buffer overflow exploit results in a segfault
+with these PAC patches. When I compile the same binary without
+"-msign-return-address=none", I am able to successfully overflow the stack and
+execute malicious code.
+
+Thanks
+Adam
+
+Tested-by: Adam Wallis <awallis@codeaurora.org>
 
 
-Naming would be your job ;-)
-
-
->
->> - keep grant-table changes, with config option
-> Can we consider moving ex-balloon code into grant-table?
-
-On the second thought ---  yes, if the code is compact enough, which I
-think it is, you should be able to keep it there.
-
-
->
->> - keep gntdev changes, with config option.
-> I'll try to see what happens to gntdev with Kconfig option wrt
-> function prototype
-> changes. I also have to check if UAPI of gntdev can also support
-> CONFIG_XXX ifdefs
-> w/o problems - do you by chance know if #if CONFIG_ is ok for UAPI files?
-
-
-I would think that not but:
-
-ostr@workbase> git grep "#ifdef CONFIG_" include/uapi/
-include/uapi/asm-generic/mman-common.h:#ifdef
-CONFIG_MMAP_ALLOW_UNINITIALIZED
-include/uapi/linux/atmdev.h:#ifdef CONFIG_COMPAT
-include/uapi/linux/elfcore.h:#ifdef CONFIG_BINFMT_ELF_FDPIC
-include/uapi/linux/eventpoll.h:#ifdef CONFIG_PM_SLEEP
-include/uapi/linux/fb.h:#ifdef CONFIG_FB_BACKLIGHT
-include/uapi/linux/flat.h:#ifdef CONFIG_BINFMT_SHARED_FLAT
-include/uapi/linux/hw_breakpoint.h:#ifdef CONFIG_HAVE_MIXED_BREAKPOINTS_REGS
-ostr@workbase>
-
-
--boris
-
-
-> Or I can leave UAPI as is and ifdef in .ioctl callback.
->>   (but when you get to post
->> actual patches I would appreciate if you could split this into a series
->> of logical changes and not post a one giant patch).
-> Of course, as this is at RFC stage the idea was to roll out all the
-> changes at once, so
-> everyone has the full picture and don't need to collect changes from
-> set of patches.
->>
->> -boris
->>
-> Thank you,
-> Oleksandr
->>> I am still missing your point here?
->>>
->>>>> If you suggest a new kernel driver module:
->>>>> IMO, there is nothing bad if we create a dedicated kernel module
->>>>> (driver) for Xen dma-buf handling selectable under Kconfig option.
->>>>> Yes, this will create a yet another device under /dev/xen,
->>>>> but most people will never see it if we set Kconfig to default to
->>>>> "n".
->>>>> And then we'll need user-space support for that, so Xen tools will
->>>>> be extended with libxendmabuf.so or so.
->>>>> This way all Xen dma-buf support can be localized at one place which
->>>>> might be easier to maintain. What is more it could be totally
->>>>> transparent
->>>>> to most of us as Kconfig option won't be set by default (both kernel
->>>>> and Xen).
->>>> The downside is that we will end up having another device for doing
->>>> things that are not that different from what we are already doing with
->>>> existing gnttab device. Or are they?
->>> Agree, but Kconfig option, IMO, won't make it look nice because
->>> of gntdev changes and code reuse.
->>>> -boris
->>> Thank you,
->>> Oleksandr
->>>
->>> _______________________________________________
->>> Xen-devel mailing list
->>> Xen-devel@lists.xenproject.org
->>> https://lists.xenproject.org/mailman/listinfo/xen-devel
->
+-- 
+Adam Wallis
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project.
