@@ -1,72 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752247AbeEVTK1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 15:10:27 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54178 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751533AbeEVTK0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 15:10:26 -0400
-From: Yauheni Kaliuta <yauheni.kaliuta@redhat.com>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: Luiz Capitulino <lcapitulino@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Chris Metcalf <cmetcalf@mellanox.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Christoph Lameter <cl@linux.com>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Wanpeng Li <kernellwp@gmail.com>, Mike Galbraith <efault@gmx.de>,
-        Rik van Riel <riel@surriel.com>
-Subject: Re: [GIT PULL] isolation: 1Hz residual tick offloading v4
-References: <1516320140-13189-1-git-send-email-frederic@kernel.org>
-        <20180124104608.038fb212@redhat.com> <20180129011024.GA2942@lerouge>
-Date: Tue, 22 May 2018 22:10:19 +0300
-In-Reply-To: <20180129011024.GA2942@lerouge> (Frederic Weisbecker's message of
-        "Mon, 29 Jan 2018 02:10:26 +0100")
-Message-ID: <xunyvabfjylg.fsf@redhat.com>
+        id S1751740AbeEVTNU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 15:13:20 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59334 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751319AbeEVTNR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 15:13:17 -0400
+Date: Tue, 22 May 2018 12:13:09 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Kees Cook <keescook@chromium.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Tejun Heo <tj@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Manoj N. Kumar" <manoj@linux.vnet.ibm.com>,
+        "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>,
+        Uma Krishnan <ukrishn@linux.vnet.ibm.com>,
+        linux-block <linux-block@vger.kernel.org>, linux-ide@vger.kernel.org,
+        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/6] block: Create scsi_sense.h for SCSI and ATAPI
+Message-ID: <20180522191309.GA23615@infradead.org>
+References: <20180522181512.39316-1-keescook@chromium.org>
+ <20180522181512.39316-4-keescook@chromium.org>
+ <20180522183613.GA3784@infradead.org>
+ <yq1efi3bk3g.fsf@oracle.com>
+ <CAGXu5jJ0Sice+fdpWgzBhQR=NGz-DT9qmYVdV1GeH73_q9pbmw@mail.gmail.com>
+ <732f4249-5681-4a54-ec21-4ecc3d3a74e5@kernel.dk>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <732f4249-5681-4a54-ec21-4ecc3d3a74e5@kernel.dk>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Frederic!
+On Tue, May 22, 2018 at 01:09:41PM -0600, Jens Axboe wrote:
+> I think Martin and Christoph are objecting to moving the code to
+> block/scsi_ioctl.h. I don't care too much about where the code is, but
+> think it would be nice to have the definitions in a separate header. But
+> if they prefer just pulling in all of SCSI for it, well then I guess
+> it's pointless to move the header bits. Seems very heavy handed to me,
+> though.
 
->>>>> On Mon, 29 Jan 2018 02:10:26 +0100, Frederic Weisbecker  wrote:
- > On Wed, Jan 24, 2018 at 10:46:08AM -0500, Luiz Capitulino wrote:
-
-[...]
-
- >> Since the 1Hz tick offload worked for you, I must be missing
- >> a way to disable this timer or the kernel is thinking my CPU
- >> has unstable TSC (which it doesn't AFAIK).
-
- > It's beyond the scope of this patchset but indeed that's
- > right, I run my kernels with tsc=reliable because my CPUs
- > don't have the TSC_RELIABLE flag.  That's the only way I found
- > to shutdown the tick completely on my test machine, otherwise
- > I keep having that clocksource watchdog.
-
-[...]
-
-Thanks, it helps. But I have accounting problem:
-
-if I run user busy loop on the nohz cpu, the task accounting works
-correctly (top shows the task takes 100% cpu), but cpu accounting is
-wrong (cpu is 100% idle, in the per-core view as well).
-
-If I understand correctly, the stats are updated by account_user_time()
--> task_group_account_field() but there is no call for it in case of
-offloading (it is called from irqtime_account_process_tick,
-account_process_tick, vtime_user_exit).
-
-Moreover, task_group_account_field() uses __this_cpu_add() which will be
-wrong for offloading.
-
-For testing I used kcpustat_cpu(task_cpu(p)) in
-task_group_account_field() and added call account_user_time(curr, delta)
-to the sched_tick_remote() what fixes it for me, but what would be the
-proper fix?
-
--- 
-WBR,
-Yauheni Kaliuta
+It might be heavy handed for the 3 remaining users of drivers/ide,
+but as long as that stuff just keeps working I'd rather worry about
+everyone else, and keep the scsi code where it belongs.
