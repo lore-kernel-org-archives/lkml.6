@@ -1,72 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751932AbeEVPQS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 11:16:18 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33086 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751339AbeEVPPe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 11:15:34 -0400
-From: Jeff Moyer <jmoyer@redhat.com>
-To: adam.manzanares@wdc.com
-Cc: viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        axboe@kernel.dk, bcrl@kvack.org, tglx@linutronix.de, mingo@kernel.org,
-        pombredanne@nexb.com, kstewart@linuxfoundation.org,
-        gregkh@linuxfoundation.org, bigeasy@linutronix.de, jack@suse.cz,
-        darrick.wong@oracle.com, rgoldwyn@suse.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-aio@kvack.org, linux-api@vger.kernel.org, hch@infradead.org
-Subject: Re: [PATCH v6 4/5] fs: blkdev set bio prio from kiocb prio
-In-Reply-To: <20180522150737.9893-5-adam.manzanares@wdc.com> (adam
-        manzanares's message of "Tue, 22 May 2018 08:07:36 -0700")
-References: <20180522150737.9893-1-adam.manzanares@wdc.com>
-        <20180522150737.9893-5-adam.manzanares@wdc.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.3 (gnu/linux)
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-X-PCLoadLetter: What the f**k does that mean?
-Date: Tue, 22 May 2018 11:15:31 -0400
-Message-ID: <x49fu2jafho.fsf@segfault.boston.devel.redhat.com>
+        id S1751844AbeEVPRZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 11:17:25 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:64098 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751287AbeEVPQ6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 11:16:58 -0400
+From: Faiz Abbas <faiz_abbas@ti.com>
+Subject: mmc filesystem performance decreased on the first write after
+ filesystem creation
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>
+CC: Christoph Hellwig <hch@lst.de>, Ulf Hansson <ulf.hansson@linaro.org>,
+        Jens Axboe <axboe@kernel.dk>
+Message-ID: <a976e20a-3ed1-43d0-4665-f570ef496d02@ti.com>
+Date: Tue, 22 May 2018 20:48:31 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-adam.manzanares@wdc.com writes:
+Hi,
 
-> From: Adam Manzanares <adam.manzanares@wdc.com>
->
-> Now that kiocb has an ioprio field copy this over to the bio when it is
-> created from the kiocb.
->
-> Signed-off-by: Adam Manzanares <adam.manzanares@wdc.com>
+I am debugging a performance reduction in ext2 filesystems on an mmc
+device in TI's am335x evm board.
 
-Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
+I see that the performance is reduced on the first write after making a
+new filesystem using mkfs.ext2 on one of the mmc partitions. The
+performance comes back to normal after the first write.
 
-Thanks!
-Jeff
+commands used:
 
-> ---
->  fs/block_dev.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/fs/block_dev.c b/fs/block_dev.c
-> index 7ec920e27065..11ba99e79d2a 100644
-> --- a/fs/block_dev.c
-> +++ b/fs/block_dev.c
-> @@ -216,6 +216,7 @@ __blkdev_direct_IO_simple(struct kiocb *iocb, struct iov_iter *iter,
->  	bio.bi_write_hint = iocb->ki_hint;
->  	bio.bi_private = current;
->  	bio.bi_end_io = blkdev_bio_end_io_simple;
-> +	bio.bi_ioprio = iocb->ki_ioprio;
->  
->  	ret = bio_iov_iter_get_pages(&bio, iter);
->  	if (unlikely(ret))
-> @@ -355,6 +356,7 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
->  		bio->bi_write_hint = iocb->ki_hint;
->  		bio->bi_private = dio;
->  		bio->bi_end_io = blkdev_bio_end_io;
-> +		bio->bi_ioprio = iocb->ki_ioprio;
->  
->  		ret = bio_iov_iter_get_pages(bio, iter);
->  		if (unlikely(ret)) {
+=> umount /dev/mmcblk1p2
+
+=> mkfs.ext2 -F  /dev/mmcblk1p2
+
+=> mount -t ext2 -o async /dev/mmcblk1p2 /mnt/partition_mmc
+
+=> dd if=/dev/urandom of=/dev/shm/srctest_file_mmc_1184 bs=1M count=10
+
+=> ./filesystem_tests -write -src_file /dev/shm/srctest_file_mmc_1184
+-srcfile_size 10 -file /mnt/partition_mmc/test_file_1184 -buffer_size
+102400 -file_size 100 -performance
+
+The filesystem_tests write utility reads from the file generated at
+/dev/shm/srctest_file_mmc_1184, memory maps the file to a buffer, and
+then writes it into the newly created /mnt/partition_mmc in multiples of
+buffer_size while measuring write performance.
+
+See here for the implementation of filesystem_tests write utility:
+http://arago-project.org/git/projects/?p=test-automation/ltp-ddt.git;a=blob;f=testcases/ddt/filesystem_test_suite/src/testcases/st_filesystem_write_to_file.c;h=80e8e244d7eaa9f0dbd9b21ea705445156c36bef;hb=f7fc06c290333ce08a7d4fba104eee0f0f1d942b
+
+Complete log with multiple calls to filesystem_tests:
+https://pastebin.ubuntu.com/p/BckmTJpqPv/
+
+Notice that the first run of filesystem_tests has a lower throughput
+reported.
+
+I was able to bisect the issue to this commit:
+5d1429fead5b (mmc: remove the discard_zeroes_data flag)
+
+I would assume that after this flag is removed, the filesystem creation
+command would explicitly write zeroes to the device which might explain
+the performance fall. However, then the mkfs.ext2 command itself should
+take more time rather than the first file write after that.
+
+It would be nice if someone could help me understand why this is happening.
+
+Thanks for your help.
+
+Regards,
+Faiz
