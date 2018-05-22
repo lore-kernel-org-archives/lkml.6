@@ -1,77 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752812AbeEVMG0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 08:06:26 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55836 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752778AbeEVMGQ (ORCPT
+        id S1752890AbeEVMHf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 08:07:35 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:40412 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751765AbeEVMHY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 08:06:16 -0400
-From: Christoph Hellwig <hch@lst.de>
-To: iommu@lists.linux-foundation.org
-Cc: linux-arch@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
-        Greentime Hu <green.hu@gmail.com>, Vincent Chen <deanbo422@gmail.com>,
-        linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
-        linux-hexagon@vger.kernel.org, linux-m68k@vger.kernel.org,
-        nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
-        linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 24/25] parisc: always use flush_kernel_dcache_range for DMA cache maintainance
-Date: Tue, 22 May 2018 14:04:29 +0200
-Message-Id: <20180522120430.28709-25-hch@lst.de>
+        Tue, 22 May 2018 08:07:24 -0400
+From: Stefan Agner <stefan@agner.ch>
+To: boris.brezillon@bootlin.com, dwmw2@infradead.org,
+        computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, thierry.reding@gmail.com,
+        mturquette@baylibre.com, sboyd@kernel.org
+Cc: dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
+        marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com,
+        benjamin.lindqvist@endian.se, jonathanh@nvidia.com,
+        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com,
+        linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, Stefan Agner <stefan@agner.ch>
+Subject: [RESEND PATCH 4/5] ARM: tegra: add Tegra20 NAND flash controller node
+Date: Tue, 22 May 2018 14:07:08 +0200
+Message-Id: <4eccff9a409d229c81e6b4cc453a7f4e29e94510.1526990589.git.stefan@agner.ch>
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180522120430.28709-1-hch@lst.de>
-References: <20180522120430.28709-1-hch@lst.de>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <cover.1526990589.git.stefan@agner.ch>
+References: <cover.1526990589.git.stefan@agner.ch>
+X-Spamd-Result: default: False [-2.10 / 15.00];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         RCPT_COUNT_TWELVE(0.00)[26];
+         BAYES_HAM(-3.00)[100.00%];
+         TAGGED_RCPT(0.00)[dt];
+         MIME_GOOD(-0.10)[text/plain];
+         FROM_HAS_DN(0.00)[];
+         FROM_EQ_ENVFROM(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         TO_DN_SOME(0.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         MID_CONTAINS_FROM(1.00)[];
+         ASN(0.00)[asn:6830, ipnet:46.140.0.0/17, country:AT];
+         RCVD_TLS_ALL(0.00)[];
+         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Current the S/G list based DMA ops use flush_kernel_vmap_range which
-contains a few UP optimizations, while the rest of the DMA operations
-uses flush_kernel_dcache_range.  The single vs sg operations are supposed
-to have the same effect, so they should use the same routines.  Use
-the more conservation version for now, but if people more familiar with
-parisc think the vmap version is generally fine for DMA we should switch
-all interfaces over to it.
+From: Lucas Stach <dev@lynxeye.de>
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+Add basic controller description to be extended
+by individual boards.
+
+Signed-off-by: Lucas Stach <dev@lynxeye.de>
+Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- arch/parisc/kernel/pci-dma.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/tegra20.dtsi | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/arch/parisc/kernel/pci-dma.c b/arch/parisc/kernel/pci-dma.c
-index 52304cb290f9..4d7506336918 100644
---- a/arch/parisc/kernel/pci-dma.c
-+++ b/arch/parisc/kernel/pci-dma.c
-@@ -550,7 +550,7 @@ static void pa11_dma_unmap_sg(struct device *dev, struct scatterlist *sglist,
- 	/* once we do combining we'll need to use phys_to_virt(sg_dma_address(sglist)) */
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 0a7136462a1a..5772d0800ad7 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -425,6 +425,19 @@
+ 		status = "disabled";
+ 	};
  
- 	for_each_sg(sglist, sg, nents, i)
--		flush_kernel_vmap_range(sg_virt(sg), sg->length);
-+		flush_kernel_dcache_range(sg_virt(sg), sg->length);
- }
- 
- static void pa11_dma_sync_single_for_cpu(struct device *dev,
-@@ -581,7 +581,7 @@ static void pa11_dma_sync_sg_for_cpu(struct device *dev, struct scatterlist *sgl
- 	/* once we do combining we'll need to use phys_to_virt(sg_dma_address(sglist)) */
- 
- 	for_each_sg(sglist, sg, nents, i)
--		flush_kernel_vmap_range(sg_virt(sg), sg->length);
-+		flush_kernel_dcache_range(sg_virt(sg), sg->length);
- }
- 
- static void pa11_dma_sync_sg_for_device(struct device *dev, struct scatterlist *sglist, int nents, enum dma_data_direction direction)
-@@ -592,7 +592,7 @@ static void pa11_dma_sync_sg_for_device(struct device *dev, struct scatterlist *
- 	/* once we do combining we'll need to use phys_to_virt(sg_dma_address(sglist)) */
- 
- 	for_each_sg(sglist, sg, nents, i)
--		flush_kernel_vmap_range(sg_virt(sg), sg->length);
-+		flush_kernel_dcache_range(sg_virt(sg), sg->length);
- }
- 
- static void pa11_dma_cache_sync(struct device *dev, void *vaddr, size_t size,
++	nand: nand@70008000 {
++		compatible = "nvidia,tegra20-nand";
++		reg = <0x70008000 0x100>;
++		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&tegra_car TEGRA20_CLK_NDFLASH>;
++		clock-names = "nand";
++		resets = <&tegra_car 13>;
++		reset-names = "nand";
++		status = "disabled";
++		#address-cells = <1>;
++		#size-cells = <1>;
++	};
++
+ 	pwm: pwm@7000a000 {
+ 		compatible = "nvidia,tegra20-pwm";
+ 		reg = <0x7000a000 0x100>;
 -- 
 2.17.0
