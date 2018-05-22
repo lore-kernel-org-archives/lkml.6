@@ -1,363 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751429AbeEVQ6w (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 12:58:52 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:36042 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751229AbeEVQ6s (ORCPT
+        id S1751359AbeEVRCE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 13:02:04 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:42008 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751196AbeEVRCB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 12:58:48 -0400
-X-Google-Smtp-Source: AB8JxZoA/VZ5DRS5hCMLzMkBBmVrCGVggqwB7EaT9ZhsFU0u8PtnudDvP4LJarVWd3WDbV/oH6paYQ==
-From: Guenter Roeck <groeck@google.com>
-To: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        Tue, 22 May 2018 13:02:01 -0400
+X-Google-Smtp-Source: AB8JxZpIopU+KfCA1DlJAwq8gz3Q0WUDDI6GTP5eZ9gQytEYQ5nmK4M76hPt5gWJywcEvzpoRV6NMg==
+From: Scott Branden <scott.branden@broadcom.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Cc: BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org,
-        Chintan Patel <chintan.m.patel@intel.com>,
-        Guenter Roeck <groeck@chromium.org>
-Subject: [RFC/RFT PATCH] ASoC: topology: Improve backwards compatibility with v4 topology files
-Date: Tue, 22 May 2018 09:58:42 -0700
-Message-Id: <20180522165842.233949-1-groeck@google.com>
-X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+        Scott Branden <scott.branden@broadcom.com>
+Subject: [PATCH] arm64: dts: specify 1.8V EMMC capabilities for bcm958742t
+Date: Tue, 22 May 2018 10:01:39 -0700
+Message-Id: <1527008499-4120-1-git-send-email-scott.branden@broadcom.com>
+X-Mailer: git-send-email 2.5.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guenter Roeck <groeck@chromium.org>
+Specify 1.8V EMMC capabilities for bcm958742t board to indicate support
+for UHS mode.
 
-Commit dc31e741db49 ("ASoC: topology: ABI - Add the types for BE
-DAI") introduced sound topology files version 5. Initially, this
-change made the topology code incompatible with v4 topology files.
-Backwards compatibility with v4 configuration files was
-subsequently added with commit 288b8da7e992 ("ASoC: topology:
-Support topology file of ABI v4").
-
-Unfortunately, backwards compatibility was never fully implemented.
-
-First, the manifest size in (Skylake) v4 configuration files is set
-to 0, which causes manifest_new_ver() to bail out with error messages
-similar to the following.
-
-snd_soc_skl 0000:00:1f.3: ASoC: invalid manifest size
-snd_soc_skl 0000:00:1f.3: tplg component load failed-22
-snd_soc_skl 0000:00:1f.3: Failed to init topology!
-snd_soc_skl 0000:00:1f.3: ASoC: failed to probe component -22
-skl_n88l25_m98357a skl_n88l25_m98357a: ASoC: failed to instantiate card -22
-skl_n88l25_m98357a: probe of skl_n88l25_m98357a failed with error -22
-
-After this problem is fixed, the following error message is seen instead.
-
-snd_soc_skl 0000:00:1f.3: ASoC: old version of manifest
-snd_soc_skl 0000:00:1f.3: Invalid descriptor token 1093938482
-snd_soc_skl 0000:00:1f.3: ASoC: failed to load widget media0_in cpr 0
-snd_soc_skl 0000:00:1f.3: tPlg component load failed-22
-
-This message is seen because backwards compatibility for loading widgets
-was never implemented.
-
-Both problems have been widely reported. Various attempts were made to
-fix the problem, usually by providing v5 configuration files. However,
-all those attempts result in incomplete ASoC configuration.
-
-Let's implement backward compatibility properly to solve the problem
-for good.
-
-Signed-off-by: Guenter Roeck <groeck@chromium.org>
+Fixes: d4b4aba6be8a ("arm64: dts: Initial DTS files for Broadcom Stingray SOC")
+Signed-off-by: Scott Branden <scott.branden@broadcom.com>
 ---
-Tested on Caroline (Samsung Chromebook Pro) running v4.17-rc6 plus
-this patch, with original (v4) configuration file. Also tested on
-several other Chromebooks with this patch on top of chromeos-4.14.
+ arch/arm64/boot/dts/broadcom/stingray/bcm958742t.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Additional real world test coverage would be useful before moving forward.
-
- sound/soc/intel/skylake/skl-topology.c | 235 +++++++++++++++++++++++++
- sound/soc/soc-topology.c               |   7 +-
- 2 files changed, 240 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/intel/skylake/skl-topology.c b/sound/soc/intel/skylake/skl-topology.c
-index 3b1dca419883..cc81e200e6b7 100644
---- a/sound/soc/intel/skylake/skl-topology.c
-+++ b/sound/soc/intel/skylake/skl-topology.c
-@@ -19,6 +19,7 @@
- #include <linux/slab.h>
- #include <linux/types.h>
- #include <linux/firmware.h>
-+#include <linux/uuid.h>
- #include <sound/soc.h>
- #include <sound/soc-topology.h>
- #include <uapi/sound/snd_sst_tokens.h>
-@@ -30,6 +31,79 @@
- #include "../common/sst-dsp.h"
- #include "../common/sst-dsp-priv.h"
- 
-+/* v4 configuration data */
-+struct skl_dfw_v4_module_pin {
-+	u16 module_id;
-+	u16 instance_id;
-+} __packed;
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/bcm958742t.dts b/arch/arm64/boot/dts/broadcom/stingray/bcm958742t.dts
+index 6a4d19e..dd9de6b 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/bcm958742t.dts
++++ b/arch/arm64/boot/dts/broadcom/stingray/bcm958742t.dts
+@@ -44,3 +44,7 @@
+ &gphy0 {
+ 	enet-phy-lane-swap;
+ };
 +
-+struct skl_dfw_v4_module_fmt {
-+	u32 channels;
-+	u32 freq;
-+	u32 bit_depth;
-+	u32 valid_bit_depth;
-+	u32 ch_cfg;
-+	u32 interleaving_style;
-+	u32 sample_type;
-+	u32 ch_map;
-+} __packed;
-+
-+struct skl_dfw_v4_module_caps {
-+	u32 set_params:2;
-+	u32 rsvd:30;
-+	u32 param_id;
-+	u32 caps_size;
-+	u32 caps[HDA_SST_CFG_MAX];
++&sdio0 {
++	mmc-ddr-1_8v;
 +};
-+
-+struct skl_dfw_v4_pipe {
-+	u8 pipe_id;
-+	u8 pipe_priority;
-+	u16 conn_type:4;
-+	u16 rsvd:4;
-+	u16 memory_pages:8;
-+} __packed;
-+
-+struct skl_dfw_v4_module {
-+	char uuid[SKL_UUID_STR_SZ];
-+
-+	u16 module_id;
-+	u16 instance_id;
-+	u32 max_mcps;
-+	u32 mem_pages;
-+	u32 obs;
-+	u32 ibs;
-+	u32 vbus_id;
-+
-+	u32 max_in_queue:8;
-+	u32 max_out_queue:8;
-+	u32 time_slot:8;
-+	u32 core_id:4;
-+	u32 rsvd1:4;
-+
-+	u32 module_type:8;
-+	u32 conn_type:4;
-+	u32 dev_type:4;
-+	u32 hw_conn_type:4;
-+	u32 rsvd2:12;
-+
-+	u32 params_fixup:8;
-+	u32 converter:8;
-+	u32 input_pin_type:1;
-+	u32 output_pin_type:1;
-+	u32 is_dynamic_in_pin:1;
-+	u32 is_dynamic_out_pin:1;
-+	u32 is_loadable:1;
-+	u32 rsvd3:11;
-+
-+	struct skl_dfw_v4_pipe pipe;
-+	struct skl_dfw_v4_module_fmt in_fmt[MAX_IN_QUEUE];
-+	struct skl_dfw_v4_module_fmt out_fmt[MAX_OUT_QUEUE];
-+	struct skl_dfw_v4_module_pin in_pin[MAX_IN_QUEUE];
-+	struct skl_dfw_v4_module_pin out_pin[MAX_OUT_QUEUE];
-+	struct skl_dfw_v4_module_caps caps;
-+} __packed;
-+
- #define SKL_CH_FIXUP_MASK		(1 << 0)
- #define SKL_RATE_FIXUP_MASK		(1 << 1)
- #define SKL_FMT_FIXUP_MASK		(1 << 2)
-@@ -2724,6 +2798,160 @@ static int skl_tplg_get_desc_blocks(struct device *dev,
- 	return -EINVAL;
- }
- 
-+/*
-+ * Add pipeline from topology binary into driver pipeline list
-+ *
-+ * If already added we return that instance
-+ * Otherwise we create a new instance and add into driver list
-+ */
-+static int skl_tplg_add_pipe_v4(struct device *dev,
-+				struct skl_module_cfg *mconfig, struct skl *skl,
-+				struct skl_dfw_v4_pipe *dfw_pipe)
-+{
-+	struct skl_pipeline *ppl;
-+	struct skl_pipe *pipe;
-+	struct skl_pipe_params *params;
-+
-+	list_for_each_entry(ppl, &skl->ppl_list, node) {
-+		if (ppl->pipe->ppl_id == dfw_pipe->pipe_id) {
-+			mconfig->pipe = ppl->pipe;
-+			return 0;
-+		}
-+	}
-+
-+	ppl = devm_kzalloc(dev, sizeof(*ppl), GFP_KERNEL);
-+	if (!ppl)
-+		return -ENOMEM;
-+
-+	pipe = devm_kzalloc(dev, sizeof(*pipe), GFP_KERNEL);
-+	if (!pipe)
-+		return -ENOMEM;
-+
-+	params = devm_kzalloc(dev, sizeof(*params), GFP_KERNEL);
-+	if (!params)
-+		return -ENOMEM;
-+
-+	pipe->ppl_id = dfw_pipe->pipe_id;
-+	pipe->memory_pages = dfw_pipe->memory_pages;
-+	pipe->pipe_priority = dfw_pipe->pipe_priority;
-+	pipe->conn_type = dfw_pipe->conn_type;
-+	pipe->state = SKL_PIPE_INVALID;
-+	pipe->p_params = params;
-+	INIT_LIST_HEAD(&pipe->w_list);
-+
-+	ppl->pipe = pipe;
-+	list_add(&ppl->node, &skl->ppl_list);
-+
-+	mconfig->pipe = pipe;
-+	mconfig->pipe->state = SKL_PIPE_INVALID;
-+
-+	return 0;
-+}
-+
-+static void skl_fill_module_pin_info_v4(struct skl_dfw_v4_module_pin *dfw_pin,
-+					struct skl_module_pin *m_pin,
-+					bool is_dynamic, int max_pin)
-+{
-+	int i;
-+
-+	for (i = 0; i < max_pin; i++) {
-+		m_pin[i].id.module_id = dfw_pin[i].module_id;
-+		m_pin[i].id.instance_id = dfw_pin[i].instance_id;
-+		m_pin[i].in_use = false;
-+		m_pin[i].is_dynamic = is_dynamic;
-+		m_pin[i].pin_state = SKL_PIN_UNBIND;
-+	}
-+}
-+
-+static void skl_tplg_fill_fmt_v4(struct skl_module_pin_fmt *dst_fmt,
-+				 struct skl_dfw_v4_module_fmt *src_fmt,
-+				 int pins)
-+{
-+	int i;
-+
-+	for (i = 0; i < pins; i++) {
-+		dst_fmt[i].fmt.channels  = src_fmt[i].channels;
-+		dst_fmt[i].fmt.s_freq = src_fmt[i].freq;
-+		dst_fmt[i].fmt.bit_depth = src_fmt[i].bit_depth;
-+		dst_fmt[i].fmt.valid_bit_depth = src_fmt[i].valid_bit_depth;
-+		dst_fmt[i].fmt.ch_cfg = src_fmt[i].ch_cfg;
-+		dst_fmt[i].fmt.ch_map = src_fmt[i].ch_map;
-+		dst_fmt[i].fmt.interleaving_style =
-+						src_fmt[i].interleaving_style;
-+		dst_fmt[i].fmt.sample_type = src_fmt[i].sample_type;
-+	}
-+}
-+
-+static int skl_tplg_get_pvt_data_v4(struct snd_soc_tplg_dapm_widget *tplg_w,
-+				    struct skl *skl, struct device *dev,
-+				    struct skl_module_cfg *mconfig)
-+{
-+	struct skl_dfw_v4_module *dfw =
-+				(struct skl_dfw_v4_module *)tplg_w->priv.data;
-+	int ret;
-+
-+	dev_dbg(dev, "Parsing Skylake v4 widget topology data\n");
-+
-+	ret = guid_parse(dfw->uuid, (guid_t *)mconfig->guid);
-+	if (ret)
-+		return ret;
-+	mconfig->id.module_id = -1;
-+	mconfig->id.instance_id = dfw->instance_id;
-+	mconfig->module->resources[0].cps = dfw->max_mcps;
-+	mconfig->module->resources[0].ibs = dfw->ibs;
-+	mconfig->module->resources[0].obs = dfw->obs;
-+	mconfig->core_id = dfw->core_id;
-+	mconfig->module->max_input_pins = dfw->max_in_queue;
-+	mconfig->module->max_output_pins = dfw->max_out_queue;
-+	mconfig->module->loadable = dfw->is_loadable;
-+	skl_tplg_fill_fmt_v4(mconfig->module->formats[0].inputs, dfw->in_fmt,
-+			     MAX_IN_QUEUE);
-+	skl_tplg_fill_fmt_v4(mconfig->module->formats[0].outputs, dfw->out_fmt,
-+			     MAX_OUT_QUEUE);
-+
-+	mconfig->params_fixup = dfw->params_fixup;
-+	mconfig->converter = dfw->converter;
-+	mconfig->m_type = dfw->module_type;
-+	mconfig->vbus_id = dfw->vbus_id;
-+	mconfig->module->resources[0].is_pages = dfw->mem_pages;
-+
-+	ret = skl_tplg_add_pipe_v4(dev, mconfig, skl, &dfw->pipe);
-+	if (ret)
-+		return ret;
-+
-+	mconfig->dev_type = dfw->dev_type;
-+	mconfig->hw_conn_type = dfw->hw_conn_type;
-+	mconfig->time_slot = dfw->time_slot;
-+	mconfig->formats_config.caps_size = dfw->caps.caps_size;
-+
-+	mconfig->m_in_pin = devm_kzalloc(dev,
-+				MAX_IN_QUEUE * sizeof(*mconfig->m_in_pin),
-+				GFP_KERNEL);
-+	if (!mconfig->m_in_pin)
-+		return -ENOMEM;
-+
-+	mconfig->m_out_pin = devm_kzalloc(dev,
-+				MAX_OUT_QUEUE * sizeof(*mconfig->m_out_pin),
-+				GFP_KERNEL);
-+	if (!mconfig->m_out_pin)
-+		return -ENOMEM;
-+
-+	skl_fill_module_pin_info_v4(dfw->in_pin, mconfig->m_in_pin,
-+				    dfw->is_dynamic_in_pin,
-+				    mconfig->module->max_input_pins);
-+	skl_fill_module_pin_info_v4(dfw->out_pin, mconfig->m_out_pin,
-+				    dfw->is_dynamic_out_pin,
-+				    mconfig->module->max_output_pins);
-+
-+	if (mconfig->formats_config.caps_size) {
-+		dev_warn(dev, "caps size %d not supported, will be ignored\n",
-+			 mconfig->formats_config.caps_size);
-+		mconfig->formats_config.caps_size = 0;
-+	}
-+
-+	return 0;
-+}
-+
- /*
-  * Parse the private data for the token and corresponding value.
-  * The private data can have multiple data blocks. So, a data block
-@@ -2739,6 +2967,13 @@ static int skl_tplg_get_pvt_data(struct snd_soc_tplg_dapm_widget *tplg_w,
- 	char *data;
- 	int ret;
- 
-+	/*
-+	 * v4 configuration files have a valid UUID at the start of
-+	 * the widget's private data.
-+	 */
-+	if (uuid_is_valid((char *)tplg_w->priv.data))
-+		return skl_tplg_get_pvt_data_v4(tplg_w, skl, dev, mconfig);
-+
- 	/* Read the NUM_DATA_BLOCKS descriptor */
- 	array = (struct snd_soc_tplg_vendor_array *)tplg_w->priv.data;
- 	ret = skl_tplg_get_desc_blocks(dev, array);
-diff --git a/sound/soc/soc-topology.c b/sound/soc/soc-topology.c
-index 986b8b2f90fb..d66b2e5ccd67 100644
---- a/sound/soc/soc-topology.c
-+++ b/sound/soc/soc-topology.c
-@@ -2293,8 +2293,11 @@ static int manifest_new_ver(struct soc_tplg *tplg,
- 	*manifest = NULL;
- 
- 	if (src->size != sizeof(*src_v4)) {
--		dev_err(tplg->dev, "ASoC: invalid manifest size\n");
--		return -EINVAL;
-+		dev_warn(tplg->dev, "ASoC: invalid manifest size %d\n",
-+			 src->size);
-+		if (src->size)
-+			return -EINVAL;
-+		src->size = sizeof(*src_v4);
- 	}
- 
- 	dev_warn(tplg->dev, "ASoC: old version of manifest\n");
 -- 
-2.17.0.441.gb46fe60e1d-goog
+2.5.0
