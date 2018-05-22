@@ -1,333 +1,208 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752177AbeEVH7U (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 03:59:20 -0400
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:59384 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751380AbeEVHzu (ORCPT
+        id S1752247AbeEVH7e (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 03:59:34 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:55178 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751380AbeEVH7X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 03:55:50 -0400
-X-IronPort-AV: E=Sophos;i="5.49,429,1520924400";
-   d="scan'208";a="12323658"
-From: Eugen Hristev <eugen.hristev@microchip.com>
-To: <jic23@kernel.org>, <ludovic.desroches@microchip.com>,
-        <alexandre.belloni@bootlin.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
-        <linux-input@vger.kernel.org>, <nicolas.ferre@microchip.com>,
-        <dmitry.torokhov@gmail.com>, <robh@kernel.org>
-CC: Eugen Hristev <eugen.hristev@microchip.com>
-Subject: [PATCH v7 6/9] input: touchscreen: resistive-adc-touch: add generic resistive ADC touchscreen
-Date: Tue, 22 May 2018 10:52:36 +0300
-Message-ID: <1526975559-18966-7-git-send-email-eugen.hristev@microchip.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1526975559-18966-1-git-send-email-eugen.hristev@microchip.com>
-References: <1526975559-18966-1-git-send-email-eugen.hristev@microchip.com>
+        Tue, 22 May 2018 03:59:23 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E6A44604D4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
+From: <ilialin@codeaurora.org>
+To: "'Sudeep Holla'" <sudeep.holla@arm.com>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <robh@kernel.org>, <mark.rutland@arm.com>,
+        <viresh.kumar@linaro.org>, <nm@ti.com>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>, <andy.gross@linaro.org>,
+        <david.brown@linaro.org>, <catalin.marinas@arm.com>,
+        <will.deacon@arm.com>, <rjw@rjwysocki.net>,
+        <linux-clk@vger.kernel.org>
+Cc: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-soc@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <rnayak@codeaurora.org>, <amit.kucheria@linaro.org>,
+        <nicolas.dechesne@linaro.org>, <celster@codeaurora.org>,
+        <tfinkel@codeaurora.org>
+References: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org> <1526729701-8589-1-git-send-email-ilialin@codeaurora.org> <153cc316-dcb5-972f-5a2f-c91fe0f6348b@arm.com> <000f01d3f103$3ff78ba0$bfe6a2e0$@codeaurora.org> <2ace10bc-e1c4-2060-94d3-eb71e966ffbe@arm.com> 
+In-Reply-To: 
+Subject: RE: [PATCH] cpufreq: Add Kryo CPU scaling driver
+Date: Tue, 22 May 2018 10:59:07 +0300
+Message-ID: <001401d3f1a2$c7328850$559798f0$@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain;
+        charset="utf-8"
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQF4oTaoNxz6XIk2qh8MCLQUCquwggJzguYXAj6kKpQCSNS3vQG6YwsHAY+VlECkn9smEA==
+Content-Language: en-us
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4M7xdUC016428
 
-This adds a generic resistive touchscreen (GRTS) driver, which is based
-on an IIO device (an ADC). It must be connected to the channels of an ADC
-to receive touch data. Then it will feed the data into the input subsystem
-where it registers an input device.
-It uses an IIO callback buffer to register to the IIO device
+OK, I think I found out the way. Would this be correct?
+-----------------------------------------------------------------------------------------------
+extern struct cpu_topology cpu_topology[NR_CPUS];
 
-Some parts of this patch are based on initial original work by
-Mohamed Jamsheeth Hajanajubudeen and Bandaru Venkateswara Swamy
+static struct device *qcom_cpufreq_kryo_get_cluster_lead(int cluster)
+{
+	unsigned cpu;
 
-Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
-Changes in v7:
- - cosmetic fixes as suggested by Dmitry: moved min pressure
-property lookup below and only if pressure channel is available.
-used the error variable in probe at some point, removed it at
-different point.
+	for_each_possible_cpu(cpu) {
+		if ((cluster == cpu_topology[cpu].cluster_id) &&
+			(0 == cpu_topology[cpu].core_id))
+			return get_cpu_device(cpu);
+	}
 
-Changes in v6:
- - changed a dev_err to dev_dbg which was forgotten in v5.
+	return NULL;
+}
+-----------------------------------------------------------------------------------------------
 
-Changes in v5:
- - return error on probe if failed add_action_or_reset
- - renamed property touchscreen-threshold-pressure to
-touchscreen-min-pressure, changed variables accordingly
-
-Changes in v4:
- - added a small description in file header
- - changed MAX_POS_MASK to GRTS_MAX_POS_MASK
- - initialized press with 0, as this value means no touch.
-press has to be initialized because compiler/checkpatch complains
-that can be used uninitialized.
- - changed of_property_read_u32 to device_*
- - set_abs_params for pressure will have range according to threshold
- - changed evbit and keybit with set_capability call
- - changed variable names to error instead of ret
- - checked errors for add_action_or_reset
- - cosmetic cleaning
-
-Changes in v3:
- - pressure now reported naturally growing down-up
- - using helpers from touchscreen.h to parse DT properties
- - added devm_add_action_or_reset to handle callback buffer clean on exit
- - changed compatible and threshold property to adapt to changed bindings
-
-Changes in v2:
- - this is now a generic resistive adc touchscreen driver
-
- drivers/input/touchscreen/Kconfig               |  13 ++
- drivers/input/touchscreen/Makefile              |   1 +
- drivers/input/touchscreen/resistive-adc-touch.c | 204 ++++++++++++++++++++++++
- 3 files changed, 218 insertions(+)
- create mode 100644 drivers/input/touchscreen/resistive-adc-touch.c
-
-diff --git a/drivers/input/touchscreen/Kconfig b/drivers/input/touchscreen/Kconfig
-index 4f15496..8f85d3a 100644
---- a/drivers/input/touchscreen/Kconfig
-+++ b/drivers/input/touchscreen/Kconfig
-@@ -92,6 +92,19 @@ config TOUCHSCREEN_AD7879_SPI
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called ad7879-spi.
- 
-+config TOUCHSCREEN_ADC
-+	tristate "Generic ADC based resistive touchscreen"
-+	depends on IIO
-+	select IIO_BUFFER_CB
-+	help
-+	  Say Y here if you want to use the generic ADC
-+	  resistive touchscreen driver.
-+
-+	  If unsure, say N (but it's safe to say "Y").
-+
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called resistive-adc-touch.ko.
-+
- config TOUCHSCREEN_AR1021_I2C
- 	tristate "Microchip AR1020/1021 i2c touchscreen"
- 	depends on I2C && OF
-diff --git a/drivers/input/touchscreen/Makefile b/drivers/input/touchscreen/Makefile
-index dddae79..843c7f9 100644
---- a/drivers/input/touchscreen/Makefile
-+++ b/drivers/input/touchscreen/Makefile
-@@ -13,6 +13,7 @@ obj-$(CONFIG_TOUCHSCREEN_AD7877)	+= ad7877.o
- obj-$(CONFIG_TOUCHSCREEN_AD7879)	+= ad7879.o
- obj-$(CONFIG_TOUCHSCREEN_AD7879_I2C)	+= ad7879-i2c.o
- obj-$(CONFIG_TOUCHSCREEN_AD7879_SPI)	+= ad7879-spi.o
-+obj-$(CONFIG_TOUCHSCREEN_ADC)		+= resistive-adc-touch.o
- obj-$(CONFIG_TOUCHSCREEN_ADS7846)	+= ads7846.o
- obj-$(CONFIG_TOUCHSCREEN_AR1021_I2C)	+= ar1021_i2c.o
- obj-$(CONFIG_TOUCHSCREEN_ATMEL_MXT)	+= atmel_mxt_ts.o
-diff --git a/drivers/input/touchscreen/resistive-adc-touch.c b/drivers/input/touchscreen/resistive-adc-touch.c
-new file mode 100644
-index 0000000..cfc8bb4
---- /dev/null
-+++ b/drivers/input/touchscreen/resistive-adc-touch.c
-@@ -0,0 +1,204 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * ADC generic resistive touchscreen (GRTS)
-+ * This is a generic input driver that connects to an ADC
-+ * given the channels in device tree, and reports events to the input
-+ * subsystem.
-+ *
-+ * Copyright (C) 2017,2018 Microchip Technology,
-+ * Author: Eugen Hristev <eugen.hristev@microchip.com>
-+ *
-+ */
-+#include <linux/input.h>
-+#include <linux/input/touchscreen.h>
-+#include <linux/iio/consumer.h>
-+#include <linux/iio/iio.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+
-+#define DRIVER_NAME					"resistive-adc-touch"
-+#define GRTS_DEFAULT_PRESSURE_MIN			50000
-+#define GRTS_MAX_POS_MASK				GENMASK(11, 0)
-+
-+/**
-+ * grts_state - generic resistive touch screen information struct
-+ * @pressure_min:	number representing the minimum for the pressure
-+ * @pressure:		are we getting pressure info or not
-+ * @iio_chans:		list of channels acquired
-+ * @iio_cb:		iio_callback buffer for the data
-+ * @input:		the input device structure that we register
-+ * @prop:		touchscreen properties struct
-+ */
-+struct grts_state {
-+	u32				pressure_min;
-+	bool				pressure;
-+	struct iio_channel		*iio_chans;
-+	struct iio_cb_buffer		*iio_cb;
-+	struct input_dev		*input;
-+	struct touchscreen_properties	prop;
-+};
-+
-+static int grts_cb(const void *data, void *private)
-+{
-+	const u16 *touch_info = data;
-+	struct grts_state *st = private;
-+	unsigned int x, y, press = 0x0;
-+
-+	/* channel data coming in buffer in the order below */
-+	x = touch_info[0];
-+	y = touch_info[1];
-+	if (st->pressure)
-+		press = touch_info[2];
-+
-+	if ((!x && !y) || (st->pressure && (press < st->pressure_min))) {
-+		/* report end of touch */
-+		input_report_key(st->input, BTN_TOUCH, 0);
-+		input_sync(st->input);
-+		return 0;
-+	}
-+
-+	/* report proper touch to subsystem*/
-+	touchscreen_report_pos(st->input, &st->prop, x, y, false);
-+	if (st->pressure)
-+		input_report_abs(st->input, ABS_PRESSURE, press);
-+	input_report_key(st->input, BTN_TOUCH, 1);
-+	input_sync(st->input);
-+
-+	return 0;
-+}
-+
-+static int grts_open(struct input_dev *dev)
-+{
-+	int error;
-+	struct grts_state *st = input_get_drvdata(dev);
-+
-+	error = iio_channel_start_all_cb(st->iio_cb);
-+	if (error) {
-+		dev_err(dev->dev.parent, "failed to start callback buffer.\n");
-+		return error;
-+	}
-+	return 0;
-+}
-+
-+static void grts_close(struct input_dev *dev)
-+{
-+	struct grts_state *st = input_get_drvdata(dev);
-+
-+	iio_channel_stop_all_cb(st->iio_cb);
-+}
-+
-+static void grts_disable(void *data)
-+{
-+	iio_channel_release_all_cb(data);
-+}
-+
-+static int grts_probe(struct platform_device *pdev)
-+{
-+	struct grts_state *st;
-+	struct input_dev *input;
-+	struct device *dev = &pdev->dev;
-+	struct iio_channel *chan;
-+	int error;
-+
-+	st = devm_kzalloc(dev, sizeof(struct grts_state), GFP_KERNEL);
-+	if (!st)
-+		return -ENOMEM;
-+
-+	/* get the channels from IIO device */
-+	st->iio_chans = devm_iio_channel_get_all(dev);
-+	if (IS_ERR(st->iio_chans)) {
-+		error = PTR_ERR(st->iio_chans);
-+		if (error != -EPROBE_DEFER)
-+			dev_err(dev, "can't get iio channels.\n");
-+		return error;
-+	}
-+
-+	chan = &st->iio_chans[0];
-+	st->pressure = false;
-+	while (chan && chan->indio_dev) {
-+		if (!strcmp(chan->channel->datasheet_name, "pressure"))
-+			st->pressure = true;
-+		chan++;
-+	}
-+
-+	if (st->pressure) {
-+		error = device_property_read_u32(dev,
-+						 "touchscreen-min-pressure",
-+						 &st->pressure_min);
-+		if (error) {
-+			dev_dbg(dev, "can't get touchscreen-min-pressure property.\n");
-+			st->pressure_min = GRTS_DEFAULT_PRESSURE_MIN;
-+		}
-+	}
-+
-+	input = devm_input_allocate_device(dev);
-+	if (!input) {
-+		dev_err(dev, "failed to allocate input device.\n");
-+		return -ENOMEM;
-+	}
-+
-+	input->name = DRIVER_NAME;
-+	input->id.bustype = BUS_HOST;
-+	input->open = grts_open;
-+	input->close = grts_close;
-+
-+	input_set_abs_params(input, ABS_X, 0, GRTS_MAX_POS_MASK - 1, 0, 0);
-+	input_set_abs_params(input, ABS_Y, 0, GRTS_MAX_POS_MASK - 1, 0, 0);
-+	if (st->pressure)
-+		input_set_abs_params(input, ABS_PRESSURE, st->pressure_min,
-+				     0xffff, 0, 0);
-+
-+	input_set_capability(input, EV_KEY, BTN_TOUCH);
-+
-+	/* parse optional device tree properties */
-+	touchscreen_parse_properties(input, false, &st->prop);
-+
-+	st->input = input;
-+	input_set_drvdata(input, st);
-+
-+	error = input_register_device(input);
-+	if (error) {
-+		dev_err(dev, "failed to register input device.");
-+		return error;
-+	}
-+
-+	st->iio_cb = iio_channel_get_all_cb(dev, grts_cb, st);
-+	if (IS_ERR(st->iio_cb)) {
-+		dev_err(dev, "failed to allocate callback buffer.\n");
-+		return PTR_ERR(st->iio_cb);
-+	}
-+
-+	error = devm_add_action_or_reset(dev, grts_disable, st->iio_cb);
-+	if (error) {
-+		dev_err(dev, "failed to add disable action.\n");
-+		return error;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id grts_of_match[] = {
-+	{
-+		.compatible = "resistive-adc-touch",
-+	}, {
-+		/* sentinel */
-+	},
-+};
-+
-+MODULE_DEVICE_TABLE(of, grts_of_match);
-+
-+static struct platform_driver grts_driver = {
-+	.probe = grts_probe,
-+	.driver = {
-+		.name = DRIVER_NAME,
-+		.of_match_table = of_match_ptr(grts_of_match),
-+	},
-+};
-+
-+module_platform_driver(grts_driver);
-+
-+MODULE_AUTHOR("Eugen Hristev <eugen.hristev@microchip.com>");
-+MODULE_DESCRIPTION("Generic ADC Resistive Touch Driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.7.4
+> -----Original Message-----
+> From: ilialin@codeaurora.org <ilialin@codeaurora.org>
+> Sent: Tuesday, May 22, 2018 09:56
+> To: 'Sudeep Holla' <sudeep.holla@arm.com>; 'mturquette@baylibre.com'
+> <mturquette@baylibre.com>; 'sboyd@kernel.org' <sboyd@kernel.org>;
+> 'robh@kernel.org' <robh@kernel.org>; 'mark.rutland@arm.com'
+> <mark.rutland@arm.com>; 'viresh.kumar@linaro.org'
+> <viresh.kumar@linaro.org>; 'nm@ti.com' <nm@ti.com>;
+> 'lgirdwood@gmail.com' <lgirdwood@gmail.com>; 'broonie@kernel.org'
+> <broonie@kernel.org>; 'andy.gross@linaro.org' <andy.gross@linaro.org>;
+> 'david.brown@linaro.org' <david.brown@linaro.org>;
+> 'catalin.marinas@arm.com' <catalin.marinas@arm.com>;
+> 'will.deacon@arm.com' <will.deacon@arm.com>; 'rjw@rjwysocki.net'
+> <rjw@rjwysocki.net>; 'linux-clk@vger.kernel.org' <linux-
+> clk@vger.kernel.org>
+> Cc: 'devicetree@vger.kernel.org' <devicetree@vger.kernel.org>; 'linux-
+> kernel@vger.kernel.org' <linux-kernel@vger.kernel.org>; 'linux-
+> pm@vger.kernel.org' <linux-pm@vger.kernel.org>; 'linux-arm-
+> msm@vger.kernel.org' <linux-arm-msm@vger.kernel.org>; 'linux-
+> soc@vger.kernel.org' <linux-soc@vger.kernel.org>; 'linux-arm-
+> kernel@lists.infradead.org' <linux-arm-kernel@lists.infradead.org>;
+> 'rnayak@codeaurora.org' <rnayak@codeaurora.org>;
+> 'amit.kucheria@linaro.org' <amit.kucheria@linaro.org>;
+> 'nicolas.dechesne@linaro.org' <nicolas.dechesne@linaro.org>;
+> 'celster@codeaurora.org' <celster@codeaurora.org>;
+> 'tfinkel@codeaurora.org' <tfinkel@codeaurora.org>
+> Subject: RE: [PATCH] cpufreq: Add Kryo CPU scaling driver
+> 
+> 
+> 
+> > -----Original Message-----
+> > From: Sudeep Holla <sudeep.holla@arm.com>
+> > Sent: Monday, May 21, 2018 16:05
+> > To: ilialin@codeaurora.org; mturquette@baylibre.com; sboyd@kernel.org;
+> > robh@kernel.org; mark.rutland@arm.com; viresh.kumar@linaro.org;
+> > nm@ti.com; lgirdwood@gmail.com; broonie@kernel.org;
+> > andy.gross@linaro.org; david.brown@linaro.org;
+> > catalin.marinas@arm.com; will.deacon@arm.com; rjw@rjwysocki.net;
+> > linux-clk@vger.kernel.org
+> > Cc: Sudeep Holla <sudeep.holla@arm.com>; devicetree@vger.kernel.org;
+> > linux-kernel@vger.kernel.org; linux-pm@vger.kernel.org; linux-arm-
+> > msm@vger.kernel.org; linux-soc@vger.kernel.org; linux-arm-
+> > kernel@lists.infradead.org; rnayak@codeaurora.org;
+> > amit.kucheria@linaro.org; nicolas.dechesne@linaro.org;
+> > celster@codeaurora.org; tfinkel@codeaurora.org
+> > Subject: Re: [PATCH] cpufreq: Add Kryo CPU scaling driver
+> >
+> >
+> >
+> > On 21/05/18 13:57, ilialin@codeaurora.org wrote:
+> > >
+> > [...]
+> >
+> > >>> +#include <linux/cpu.h>
+> > >>> +#include <linux/err.h>
+> > >>> +#include <linux/init.h>
+> > >>> +#include <linux/kernel.h>
+> > >>> +#include <linux/module.h>
+> > >>> +#include <linux/nvmem-consumer.h> #include <linux/of.h> #include
+> > >>> +<linux/platform_device.h> #include <linux/pm_opp.h> #include
+> > >>> +<linux/slab.h> #include <linux/soc/qcom/smem.h>
+> > >>> +
+> > >>> +#define MSM_ID_SMEM	137
+> > >>> +#define SILVER_LEAD	0
+> > >>> +#define GOLD_LEAD	2
+> > >>> +
+> > >>
+> > >> So I gather form other emails, that these are physical cpu
+> > >> number(not even unique identifier like MPIDR). Will this work on
+> > >> parts or platforms that need to boot in GOLD LEAD cpus.
+> > >
+> > > The driver is for Kryo CPU, which (and AFAIK all multicore MSMs)
+> > > always boots on the CPU0.
+> >
+> >
+> > That may be true and I am not that bothered about it. But assuming
+> > physical ordering from the logical cpu number is *incorrect* and will
+> > break if kernel decides to change the allocation algorithm. Kernel
+> > provides no guarantee on that, so you need to depend on some physical
+> > ID or may be DT to achieve what your want. But the current code as it
+> stands is wrong.
+> 
+> Got your point. In fact CPUs are numbered 0-3 and ordered into 2 clusters in
+> the DT:
+> 
+> cpus {
+> 	#address-cells = <2>;
+> 	#size-cells = <0>;
+> 
+> 	CPU0: cpu@0 {
+> 		...
+> 		reg = <0x0 0x0>;
+> 		...
+> 	};
+> 
+> 	CPU1: cpu@1 {
+> 		...
+> 		reg = <0x0 0x1>;
+> 		...
+> 	};
+> 
+> 	CPU2: cpu@100 {
+> 		...
+> 		reg = <0x0 0x100>;
+> 		...
+> 	};
+> 
+> 	CPU3: cpu@101 {
+> 		...
+> 		reg = <0x0 0x101>;
+> 		...
+> 	};
+> 
+> 	cpu-map {
+> 		cluster0 {
+> 			core0 {
+> 				cpu = <&CPU0>;
+> 			};
+> 
+> 			core1 {
+> 				cpu = <&CPU1>;
+> 			};
+> 		};
+> 
+> 		cluster1 {
+> 			core0 {
+> 				cpu = <&CPU2>;
+> 			};
+> 
+> 			core1 {
+> 				cpu = <&CPU3>;
+> 			};
+> 		};
+> 	};
+> };
+> 
+> As far, as I understand, they are probed in the same order. However, to be
+> certain that the physical CPU is the one I intend to configure, I have to fetch
+> the device structure pointer for the cpu-map -> clusterX -> core0 -> cpu path.
+> Could you suggest a kernel API to do that?
+> 
+> 
+> 
+> >
+> > --
+> > Regards,
+> > Sudeep
