@@ -1,100 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753210AbeEVVju (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 17:39:50 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:37272 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753168AbeEVVjs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753169AbeEVVjs (ORCPT <rfc822;w@1wt.eu>);
         Tue, 22 May 2018 17:39:48 -0400
-X-Google-Smtp-Source: ADUXVKJjgWCPHhGgpJ5mRd0voN1ohsBXAQASQamumb79IMytmztqoG3YGniJvLfz66hJgdAw7DWJB3G23+bx9kVY8+c=
-MIME-Version: 1.0
-In-Reply-To: <20180517193008.GV25808@atomide.com>
-References: <20180515183409.78046-1-andriy.shevchenko@linux.intel.com>
- <ca78895ac7ac84ec1c7f2f33024237af329ffd7a.camel@linux.intel.com>
- <20180516100842.xuma7b3e727w7bpz@linutronix.de> <CAHp75Vc2bJQHiWYcdKK+7wwMw2fSWxMauxP-dMRUAUdKnet7WQ@mail.gmail.com>
- <20180516104734.357oevogppu5bsg4@linutronix.de> <ed9879ef42a70d2609f60f73834cabb7e3df9e2f.camel@linux.intel.com>
- <20180517135621.GJ98604@atomide.com> <CAHp75VfqAK6+dPWWkQXjy0V-AFSGLSDJ9CmnUv=ba0F66TDTVg@mail.gmail.com>
- <20180517193008.GV25808@atomide.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 23 May 2018 00:39:46 +0300
-Message-ID: <CAHp75Ve56pyEC41XZ9i9yxBNberQe=ee2miQL0v9T4vRtkWPBQ@mail.gmail.com>
-Subject: Re: [PATCH v1 0/3] console, serial8250: Disable PM and DMA ops
-To: Tony Lindgren <tony@atomide.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53298 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753015AbeEVVjq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 17:39:46 -0400
+Date: Tue, 22 May 2018 14:39:45 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: kbuild test robot <lkp@intel.com>
+Cc: Shakeel Butt <shakeelb@google.com>, kbuild-all@01.org,
+        Michal Hocko <mhocko@kernel.org>, Greg Thelen <gthelen@google.com>,
+        Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>, Tejun Heo <tj@kernel.org>,
+        Linux MM <linux-mm@kvack.org>, cgroups@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm: fix race between kmem_cache destroy, create and
+ deactivate
+Message-Id: <20180522143945.f8a925d15d34615c87fb9c50@linux-foundation.org>
+In-Reply-To: <201805230558.T1nJMRRH%fengguang.wu@intel.com>
+References: <20180521174116.171846-1-shakeelb@google.com>
+        <201805230558.T1nJMRRH%fengguang.wu@intel.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 17, 2018 at 10:30 PM, Tony Lindgren <tony@atomide.com> wrote:
-> * Andy Shevchenko <andy.shevchenko@gmail.com> [180517 16:41]:
->> On Thu, May 17, 2018 at 4:56 PM, Tony Lindgren <tony@atomide.com> wrote:
->> > * Andy Shevchenko <andriy.shevchenko@linux.intel.com> [180516 13:12]:
->> >> On Wed, 2018-05-16 at 12:47 +0200, Sebastian Andrzej Siewior wrote:
->> >> > But since I am on it. You have to enable runtime-PM for the UART. So
->> >> > what is the problem if you simply don't enable it for the UART which
->> >> > used as the kernel console?
->> >>
->> >> How do I know at the ->probe() time that device in question is going to
->> >> be kernel console? Maybe I missed simple way of it.
->> >
->> > Hmm parse the kernel cmdline maybe? :)
->> >
->> > BTW, kernel already has earlycon doing exactly what you're trying to do.
->>
->> I'm sorry, I didn't follow. What exactly earlycon does?
->
-> It provides a console very early on, see earlycon in
-> Documentation/admin-guide/kernel-parameters.txt
+On Wed, 23 May 2018 05:14:36 +0800 kbuild test robot <lkp@intel.com> wrote:
 
-Yes, but what we are talking is to put the kernel console out of power
-management due to _real_ issues with it.
+> Thank you for the patch! Yet something to improve:
+> 
+> [auto build test ERROR on mmotm/master]
+> [also build test ERROR on v4.17-rc6 next-20180517]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> 
+> url:    https://github.com/0day-ci/linux/commits/Shakeel-Butt/mm-fix-race-between-kmem_cache-destroy-create-and-deactivate/20180523-041715
+> base:   git://git.cmpxchg.org/linux-mmotm.git master
+> config: i386-randconfig-x009-201820 (attached as .config)
+> compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
+> reproduce:
+>         # save the attached .config to linux build tree
+>         make ARCH=i386 
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    mm/slub.c: In function '__kmem_cache_alias':
+> >> mm/slub.c:4251:4: error: implicit declaration of function 'kmem_cache_put_locked'; did you mean 'kmem_cache_init_late'? [-Werror=implicit-function-declaration]
+>        kmem_cache_put_locked(s);
+>        ^~~~~~~~~~~~~~~~~~~~~
+>        kmem_cache_init_late
+>    cc1: some warnings being treated as errors
 
->> The problem is in 8250 driver. The issue with runtime PM used in atomic context.
->
-> So how about add some "noidle" kernel command line parameter for console
-> that calls
-> pm_runtime_forbid() and then you have the UART permanently
-> on.
+Thanks.
 
-IIUC _forbid() can be overwritten via sysfs.
-And I would prefer to do other way around, something like console.idle
-and put default for OMAP to yes and no for everything else.
-
-> Hmm I guess you could make also serial8250_rpm_get() do nothing
-> based on that.
-
-Have you seen entire series which I keep here:
-https://bitbucket.org/andy-shev/linux/branch/topic/uart/rpm?
-Among other things it gets rid of those specific callbacks entirely.
-
-> I do agree the serial runtime PM has an issue if it depends on
-> pm_runtime_irq_safe() being set.
-
-It's more than an issue. The  so called "support" of RPM for UART is
-_based on the hack_.
-I would love to NAK that in the first place if I would have known of it in time.
-
->> So, I can, of course just remove callbacks from the console ->write().
->> Though it will prevent to use kernel console anyway.
->
-> Please et's not start breaking things, we already see a constant
-> flow of regressions on weekly basis.
-
-Now we are stick with a hack and the case based on that is against
-fixing things.
-This is how it looks from my side.
-
--- 
-With Best Regards,
-Andy Shevchenko
+--- a/mm/slab.h~mm-fix-race-between-kmem_cache-destroy-create-and-deactivate-v2-fix
++++ a/mm/slab.h
+@@ -204,6 +204,8 @@ ssize_t slabinfo_write(struct file *file
+ void __kmem_cache_free_bulk(struct kmem_cache *, size_t, void **);
+ int __kmem_cache_alloc_bulk(struct kmem_cache *, gfp_t, size_t, void **);
+ 
++extern void kmem_cache_put_locked(struct kmem_cache *s);
++
+ #if defined(CONFIG_MEMCG) && !defined(CONFIG_SLOB)
+ 
+ /* List of all root caches. */
+@@ -296,7 +298,6 @@ extern void slab_init_memcg_params(struc
+ extern void memcg_link_cache(struct kmem_cache *s);
+ extern void slab_deactivate_memcg_cache_rcu_sched(struct kmem_cache *s,
+ 				void (*deact_fn)(struct kmem_cache *));
+-extern void kmem_cache_put_locked(struct kmem_cache *s);
+ #else /* CONFIG_MEMCG && !CONFIG_SLOB */
+ 
+ /* If !memcg, all caches are root. */
+_
