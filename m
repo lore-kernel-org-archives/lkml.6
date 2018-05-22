@@ -1,85 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752802AbeEVU3V (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 16:29:21 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:53974 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751601AbeEVU3T (ORCPT
+        id S1752833AbeEVUaa (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 16:30:30 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:39963 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751748AbeEVUa3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 16:29:19 -0400
-Subject: Re: [PATCH v2 0/7] mm: pages for hugetlb's overcommit may be able to
- charge to memcg
-To: TSUKADA Koutaro <tsukada@ascade.co.jp>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>, David Rientjes <rientjes@google.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        Marc-Andre Lureau <marcandre.lureau@redhat.com>,
-        Punit Agrawal <punit.agrawal@arm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, cgroups@vger.kernel.org
-References: <e863529b-7ce5-4fbe-8cff-581b5789a5f9@ascade.co.jp>
- <240f1b14-ed7d-4983-6c52-be4899d4caa5@oracle.com>
- <8711fed5-fc35-a11a-3a17-740a9dca1f2a@ascade.co.jp>
-From: Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <5c32a05e-da2e-84b8-3435-4cd5f8a1f0f9@oracle.com>
-Date: Tue, 22 May 2018 13:28:30 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
-MIME-Version: 1.0
-In-Reply-To: <8711fed5-fc35-a11a-3a17-740a9dca1f2a@ascade.co.jp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8901 signatures=668700
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=677
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805220211
+        Tue, 22 May 2018 16:30:29 -0400
+X-Google-Smtp-Source: AB8JxZoDuQTv8MtdhQDNpJjymw9Bi5fFNDxHMQx3mRBQHyLziG6K/eLFDnmyrUb4Gqgm4nJ34M3pjw==
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: sboyd@kernel.org, mturquette@baylibre.com
+Cc: leo.yan@linaro.org, olof@lixom.net, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH] clk/driver/hisi: Consolidate the Kconfig for the CLOCK_STUB
+Date: Tue, 22 May 2018 22:30:18 +0200
+Message-Id: <1527021018-31698-1-git-send-email-daniel.lezcano@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/22/2018 06:04 AM, TSUKADA Koutaro wrote:
-> 
-> I stared at the commit log of mm/hugetlb_cgroup.c, but it did not seem to
-> have specially considered of surplus hugepages. Later, I will send a mail
-> to hugetlb cgroup's committer to ask about surplus hugepages charge
-> specifications.
-> 
+The current defconfig is inconsistent as it selects the mailbox and
+the clock for the hi6220 and the hi3660 without having their Kconfigs
+making sure the dependencies are correct. It ends up when selecting
+different versions for the kernel (for example when git bisecting)
+those options disappear and they don't get back, leading to unexpected
+behaviors. In our case, the cpufreq driver does no longer work because
+the clock fails to initialize due to the clock stub and the mailbox
+missing.
 
-I went back and looked at surplus huge page allocation.  Previously, I made
-a statement that the hugetlb controller accounts for surplus huge pages.
-Turns out that may not be 100% correct.
+In order to have the dependencies correctly set when defaulting, let's
+do the same as commit 3a49afb84ca074e ("clk: enable hi655x common clk
+automatically") where we select automatically the driver when the
+parent driver is selected. With sensible defaults in place, we can leave
+other choices for EXPERT.
 
-Thanks to Michal, all surplus huge page allocation is performed via the
-alloc_surplus_huge_page() routine.  This will ultimately call into the
-buddy allocator without any cgroup charges.  Calls to alloc_surplus_huge_page
-are made from:
-- alloc_huge_page() when allocating a huge page to a mapping/file.  In this
-  case, appropriate calls to the hugetlb controller are in place.  So, any
-  limits are enforced here.
-- gather_surplus_pages() when allocating and setting aside 'reserved' huge
-  pages. No accounting is performed here.  Do note that in this case the
-  allocated huge pages are not assigned to the mapping/file.  Even though
-  'reserved', they are deposited into the global pool and also counted as
-  'free'.  When these reserved pages are ultimately used to populate a
-  file/mapping, the code path goes through alloc_huge_page() where appropriate
-  calls to the hugetlb controller are in place.
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+---
 
-So, the bottom line is that surplus huge pages are not accounted for when
-they are allocated as 'reserves'.  It is not until these reserves are actually
-used that accounting limits are checked.  This 'seems' to align with general
-allocation of huge pages within the pool.  No accounting is done until they
-are actually allocated to a mapping/file.
+Split the patch into the clk specific and resent as requested by Olof
+Johansson.
+---
+ arch/arm64/configs/defconfig  |  1 -
+ drivers/clk/hisilicon/Kconfig | 13 ++++++++-----
+ 2 files changed, 8 insertions(+), 6 deletions(-)
 
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index ecf6137..1d9d8b9 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -549,7 +549,6 @@ CONFIG_HWSPINLOCK_QCOM=y
+ CONFIG_ARM_MHU=y
+ CONFIG_PLATFORM_MHU=y
+ CONFIG_BCM2835_MBOX=y
+-CONFIG_HI6220_MBOX=y
+ CONFIG_QCOM_APCS_IPC=y
+ CONFIG_ROCKCHIP_IOMMU=y
+ CONFIG_TEGRA_IOMMU_SMMU=y
+diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
+index 1bd4355..becdb1d 100644
+--- a/drivers/clk/hisilicon/Kconfig
++++ b/drivers/clk/hisilicon/Kconfig
+@@ -44,14 +44,17 @@ config RESET_HISI
+ 	  Build reset controller driver for HiSilicon device chipsets.
+ 
+ config STUB_CLK_HI6220
+-	bool "Hi6220 Stub Clock Driver"
+-	depends on COMMON_CLK_HI6220 && MAILBOX
+-	default ARCH_HISI
++	bool "Hi6220 Stub Clock Driver" if EXPERT
++	depends on (COMMON_CLK_HI6220 || COMPILE_TEST)
++	depends on MAILBOX
++	default COMMON_CLK_HI6220
+ 	help
+ 	  Build the Hisilicon Hi6220 stub clock driver.
+ 
+ config STUB_CLK_HI3660
+-	bool "Hi3660 Stub Clock Driver"
+-	depends on COMMON_CLK_HI3660 && MAILBOX
++	bool "Hi3660 Stub Clock Driver" if EXPERT
++	depends on (COMMON_CLK_HI3660 || COMPILE_TEST)
++	depends on MAILBOX
++	default COMMON_CLK_HI3660
+ 	help
+ 	  Build the Hisilicon Hi3660 stub clock driver.
 -- 
-Mike Kravetz
+2.7.4
