@@ -1,27 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753417AbeEVXjz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 19:39:55 -0400
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:44322 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753100AbeEVXjx (ORCPT
+        id S1753554AbeEVXlb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 19:41:31 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:56622 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753105AbeEVXl3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 19:39:53 -0400
-X-Google-Smtp-Source: AB8JxZptqvZ5B6EZ+b69rUs1GTA2peUWqNq/hWIx1+QHccGqM7nXoHiMF4T2B5ULUrJfqXr/avEQcse7zA/oHy9wrmg=
-MIME-Version: 1.0
-In-Reply-To: <66701f74-4f2b-988e-dd48-a2140694f551@infradead.org>
-References: <20180522181512.39316-1-keescook@chromium.org> <20180522181512.39316-4-keescook@chromium.org>
- <20180522183613.GA3784@infradead.org> <yq1efi3bk3g.fsf@oracle.com>
- <CAGXu5jJ0Sice+fdpWgzBhQR=NGz-DT9qmYVdV1GeH73_q9pbmw@mail.gmail.com>
- <732f4249-5681-4a54-ec21-4ecc3d3a74e5@kernel.dk> <20180522191309.GA23615@infradead.org>
- <8d4af5c4-96fa-54ee-d5c1-b887b1de5a3c@kernel.dk> <CAGXu5j+mgGZkTDS6EDRspJKKbU=vMT4ehv9T-SekPba=ESoGDg@mail.gmail.com>
- <66701f74-4f2b-988e-dd48-a2140694f551@infradead.org>
-From: Kees Cook <keescook@chromium.org>
-Date: Tue, 22 May 2018 16:39:51 -0700
-X-Google-Sender-Auth: XBQ5OcceWCjlEohc0rq7ZM2a_Cw
-Message-ID: <CAGXu5jJ-+F_a2Vah8JAVvfQ5Jo6mBQOoZF05da3syxhcrJoMtQ@mail.gmail.com>
+        Tue, 22 May 2018 19:41:29 -0400
 Subject: Re: [PATCH 3/6] block: Create scsi_sense.h for SCSI and ATAPI
-To: Randy Dunlap <rdunlap@infradead.org>
+To: Kees Cook <keescook@chromium.org>
 Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         James Bottomley <James.Bottomley@hansenpartnership.com>,
@@ -32,41 +19,62 @@ Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>,
         Uma Krishnan <ukrishn@linux.vnet.ibm.com>,
         linux-block <linux-block@vger.kernel.org>, linux-ide@vger.kernel.org,
         linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <20180522181512.39316-1-keescook@chromium.org>
+ <20180522181512.39316-4-keescook@chromium.org>
+ <20180522183613.GA3784@infradead.org> <yq1efi3bk3g.fsf@oracle.com>
+ <CAGXu5jJ0Sice+fdpWgzBhQR=NGz-DT9qmYVdV1GeH73_q9pbmw@mail.gmail.com>
+ <732f4249-5681-4a54-ec21-4ecc3d3a74e5@kernel.dk>
+ <20180522191309.GA23615@infradead.org>
+ <8d4af5c4-96fa-54ee-d5c1-b887b1de5a3c@kernel.dk>
+ <CAGXu5j+mgGZkTDS6EDRspJKKbU=vMT4ehv9T-SekPba=ESoGDg@mail.gmail.com>
+ <66701f74-4f2b-988e-dd48-a2140694f551@infradead.org>
+ <CAGXu5jJ-+F_a2Vah8JAVvfQ5Jo6mBQOoZF05da3syxhcrJoMtQ@mail.gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <0afffef1-9908-a446-436c-0189b1de64e1@infradead.org>
+Date: Tue, 22 May 2018 16:41:24 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <CAGXu5jJ-+F_a2Vah8JAVvfQ5Jo6mBQOoZF05da3syxhcrJoMtQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 4:34 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
-> On 05/22/2018 04:31 PM, Kees Cook wrote:
->> On Tue, May 22, 2018 at 12:16 PM, Jens Axboe <axboe@kernel.dk> wrote:
->>> On 5/22/18 1:13 PM, Christoph Hellwig wrote:
->>>> On Tue, May 22, 2018 at 01:09:41PM -0600, Jens Axboe wrote:
->>>>> I think Martin and Christoph are objecting to moving the code to
->>>>> block/scsi_ioctl.h. I don't care too much about where the code is, but
->>>>> think it would be nice to have the definitions in a separate header. But
->>>>> if they prefer just pulling in all of SCSI for it, well then I guess
->>>>> it's pointless to move the header bits. Seems very heavy handed to me,
->>>>> though.
+On 05/22/2018 04:39 PM, Kees Cook wrote:
+> On Tue, May 22, 2018 at 4:34 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
+>> On 05/22/2018 04:31 PM, Kees Cook wrote:
+>>> On Tue, May 22, 2018 at 12:16 PM, Jens Axboe <axboe@kernel.dk> wrote:
+>>>> On 5/22/18 1:13 PM, Christoph Hellwig wrote:
+>>>>> On Tue, May 22, 2018 at 01:09:41PM -0600, Jens Axboe wrote:
+>>>>>> I think Martin and Christoph are objecting to moving the code to
+>>>>>> block/scsi_ioctl.h. I don't care too much about where the code is, but
+>>>>>> think it would be nice to have the definitions in a separate header. But
+>>>>>> if they prefer just pulling in all of SCSI for it, well then I guess
+>>>>>> it's pointless to move the header bits. Seems very heavy handed to me,
+>>>>>> though.
+>>>>>
+>>>>> It might be heavy handed for the 3 remaining users of drivers/ide,
 >>>>
->>>> It might be heavy handed for the 3 remaining users of drivers/ide,
+>>>> Brutal :-)
 >>>
->>> Brutal :-)
+>>> Heh. I noticed a similar sense buffer use in drivers/cdrom/cdrom.c
+>>> too. Is this okay under the same considerations?
 >>
->> Heh. I noticed a similar sense buffer use in drivers/cdrom/cdrom.c
->> too. Is this okay under the same considerations?
->
-> No.  Do not select an entire subsystem.  Use depends on it instead.
+>> No.  Do not select an entire subsystem.  Use depends on it instead.
+> 
+> I looked at that first, but it seems it's designed for that. For
+> example, "config ATA" already has a "select SCSI".
+> 
+> It does look fishy, though, since "config SCSI" has a "depends" which
+> would be ignored by "select". Luckily, all these uses already do a
+> "depends on BLOCK" (directly or indirectly).
 
-I looked at that first, but it seems it's designed for that. For
-example, "config ATA" already has a "select SCSI".
+Linus has railed against selecting subsystems.  We shouldn't be adding
+more IMHO, although it is difficult to get rid of ones that we already have.
 
-It does look fishy, though, since "config SCSI" has a "depends" which
-would be ignored by "select". Luckily, all these uses already do a
-"depends on BLOCK" (directly or indirectly).
-
--Kees
 
 -- 
-Kees Cook
-Pixel Security
+~Randy
