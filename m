@@ -1,76 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751663AbeEVTIr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 15:08:47 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:37128 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751319AbeEVTIq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 15:08:46 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 65F4B601D7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=awallis@codeaurora.org
-Subject: Re: [PATCHv4 06/10] arm64: add basic pointer authentication support
-To: Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
-        catalin.marinas@arm.com, christoffer.dall@arm.com, drjones@redhat.com,
-        marc.zyngier@arm.com, ramana.radhakrishnan@arm.com,
-        suzuki.poulose@arm.com, will.deacon@arm.com
-References: <20180503132031.25705-1-mark.rutland@arm.com>
- <20180503132031.25705-7-mark.rutland@arm.com>
-From: Adam Wallis <awallis@codeaurora.org>
-Message-ID: <4b394038-ffd7-ef28-faaf-00f91febf54a@codeaurora.org>
-Date: Tue, 22 May 2018 15:08:42 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752022AbeEVTJi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 15:09:38 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54140 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751411AbeEVTJg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 15:09:36 -0400
+Date: Tue, 22 May 2018 15:09:34 -0400
+From: Mike Snitzer <snitzer@redhat.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Kent Overstreet <kent.overstreet@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, colyli@suse.de, darrick.wong@oracle.com,
+        clm@fb.com, bacik@fb.com, linux-xfs@vger.kernel.org,
+        drbd-dev@lists.linbit.com, linux-btrfs@vger.kernel.org,
+        linux-raid@vger.kernel.org, neilb@suse.com
+Subject: Re: [PATCH 00/13] convert block layer to bioset_init()/mempool_init()
+Message-ID: <20180522190933.GA25904@redhat.com>
+References: <4b343aef-e11c-73ba-1d88-7e73ca838cad@kernel.dk>
+ <20180521150439.GA19379@redhat.com>
+ <61e30dcf-a01c-f47d-087a-12930caf9aef@kernel.dk>
+ <20180521151817.GA19454@redhat.com>
+ <d01a150a-7752-f6ce-78f2-17a65c1e6fa5@kernel.dk>
+ <20180521160907.GA19553@redhat.com>
+ <20180521173724.GG11495@kmo-pixel>
+ <20180521182427.GA20013@redhat.com>
+ <20180521233855.GI11495@kmo-pixel>
+ <20180522064118.GA18704@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20180503132031.25705-7-mark.rutland@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180522064118.GA18704@infradead.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/3/2018 9:20 AM, Mark Rutland wrote:
-> This patch adds basic support for pointer authentication, allowing
-> userspace to make use of APIAKey. The kernel maintains an APIAKey value
-> for each process (shared by all threads within), which is initialised to
-> a random value at exec() time.
+On Tue, May 22 2018 at  2:41am -0400,
+Christoph Hellwig <hch@infradead.org> wrote:
+
+> On Mon, May 21, 2018 at 07:38:55PM -0400, Kent Overstreet wrote:
+> > On Mon, May 21, 2018 at 02:24:32PM -0400, Mike Snitzer wrote:
+> > > Every single data structure change in this series should be reviewed for
+> > > unforeseen alignment consequences.  Jens seemed to say that is
+> > > worthwhile.  Not sure if he'll do it or we divide it up.  If we divide
+> > > it up a temp topic branch should be published for others to inspect.
+> > > 
+> > > Could be alignment hasn't been a historic concern for a bunch of the
+> > > data structures changed in this series.. if so then all we can do is fix
+> > > up any obvious potential for false sharing.
+> > 
+> > Honestly, I almost never worry about alignment... the very few times I do care,
+> > I use __cacheline_aligned_in_smp.
 > 
-> To describe that address authentication instructions are available, the
-> ID_AA64ISAR0.{APA,API} fields are exposed to userspace. A new hwcap,
-> APIA, is added to describe that the kernel manages APIAKey.
-> 
-> Instructions using other keys (APIBKey, APDAKey, APDBKey) are disabled,
-> and will behave as NOPs. These may be made use of in future patches.
-> 
-> No support is added for the generic key (APGAKey), though this cannot be
-> trapped or made to behave as a NOP. Its presence is not advertised with
-> a hwcap.
-> 
-> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>
-> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> ---
+> And that generally is the right stratgey.  If Mike really doesn't want
+> a change we can just open code the kmalloc for the bio set there, the
+> important point is that we should not keep the old API around for no
+> good reason.
 
+Again, I never said I didn't want these changes.  I just thought it
+worthwhile to mention the potential for alignment quirks arising.
 
-Mark, I was able to verify that a buffer overflow exploit results in a segfault
-with these PAC patches. When I compile the same binary without
-"-msign-return-address=none", I am able to successfully overflow the stack and
-execute malicious code.
+Reality is false sharing is quite uncommon.  So my concern was/is pretty
+niche and unlikely to be applicable.
 
-Thanks
-Adam
+That said, I did take the opportunity to look at all the DM structures
+that were modified.  The bio_set and mempool_t structs are so large that
+they span multiple cachelines as is.  So I focused on eliminating
+unnecessary spanning of cachelines (by non-bio_set and non-mempool_t
+members) and eliminated most holes in DM structs.  This is the result:
+http://people.redhat.com/msnitzer/dm-4.18-struct-reorg/
 
-Tested-by: Adam Wallis <awallis@codeaurora.org>
+Compare before.txt vs after_kent.txt vs after_mike.txt
 
+Nothing staggering or special.  Just something I'll add once Kent's
+latest changes land.
 
--- 
-Adam Wallis
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+But, I also eliminated 2 4-byte holes in struct bio_set, Jens please
+feel free to pick this up (if you think it useful):
+
+From: Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH] block: eliminate 2 4-byte holes in bio_set structure
+
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+---
+ include/linux/bio.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index 5e472fc..e6fc692 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -735,7 +735,6 @@ static inline void bio_inc_remaining(struct bio *bio)
+ 
+ struct bio_set {
+ 	struct kmem_cache *bio_slab;
+-	unsigned int front_pad;
+ 
+ 	mempool_t bio_pool;
+ 	mempool_t bvec_pool;
+@@ -743,6 +742,7 @@ struct bio_set {
+ 	mempool_t bio_integrity_pool;
+ 	mempool_t bvec_integrity_pool;
+ #endif
++	unsigned int front_pad;
+ 
+ 	/*
+ 	 * Deadlock avoidance for stacking block drivers: see comments in
