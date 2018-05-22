@@ -1,68 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752176AbeEVTJr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 15:09:47 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:41363 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752075AbeEVTJo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 15:09:44 -0400
-X-Google-Smtp-Source: AB8JxZp3QZBTeo6vIjISTtRAu1JPdXy1hGbmswV7YDSBGhOPCo7C8Vd6rnP1xxbXDMwjGw2TscCoZA==
-Subject: Re: [PATCH 3/6] block: Create scsi_sense.h for SCSI and ATAPI
-To: Kees Cook <keescook@chromium.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Tejun Heo <tj@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Manoj N. Kumar" <manoj@linux.vnet.ibm.com>,
-        "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>,
-        Uma Krishnan <ukrishn@linux.vnet.ibm.com>,
-        linux-block <linux-block@vger.kernel.org>, linux-ide@vger.kernel.org,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-References: <20180522181512.39316-1-keescook@chromium.org>
- <20180522181512.39316-4-keescook@chromium.org>
- <20180522183613.GA3784@infradead.org> <yq1efi3bk3g.fsf@oracle.com>
- <CAGXu5jJ0Sice+fdpWgzBhQR=NGz-DT9qmYVdV1GeH73_q9pbmw@mail.gmail.com>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <732f4249-5681-4a54-ec21-4ecc3d3a74e5@kernel.dk>
-Date: Tue, 22 May 2018 13:09:41 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        id S1752247AbeEVTK1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 15:10:27 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54178 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751533AbeEVTK0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 15:10:26 -0400
+From: Yauheni Kaliuta <yauheni.kaliuta@redhat.com>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: Luiz Capitulino <lcapitulino@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Chris Metcalf <cmetcalf@mellanox.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Christoph Lameter <cl@linux.com>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Wanpeng Li <kernellwp@gmail.com>, Mike Galbraith <efault@gmx.de>,
+        Rik van Riel <riel@surriel.com>
+Subject: Re: [GIT PULL] isolation: 1Hz residual tick offloading v4
+References: <1516320140-13189-1-git-send-email-frederic@kernel.org>
+        <20180124104608.038fb212@redhat.com> <20180129011024.GA2942@lerouge>
+Date: Tue, 22 May 2018 22:10:19 +0300
+In-Reply-To: <20180129011024.GA2942@lerouge> (Frederic Weisbecker's message of
+        "Mon, 29 Jan 2018 02:10:26 +0100")
+Message-ID: <xunyvabfjylg.fsf@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jJ0Sice+fdpWgzBhQR=NGz-DT9qmYVdV1GeH73_q9pbmw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/22/18 12:59 PM, Kees Cook wrote:
-> On Tue, May 22, 2018 at 11:50 AM, Martin K. Petersen
-> <martin.petersen@oracle.com> wrote:
->>
->> Christoph,
->>
->>> On Tue, May 22, 2018 at 11:15:09AM -0700, Kees Cook wrote:
->>>> Both SCSI and ATAPI share the sense header. In preparation for using the
->>>> struct scsi_sense_hdr more widely, move this into a separate header and
->>>> move the helper function to scsi_ioctl.c which is linked with CONFIG_IDE
->>>> by way of CONFIG_BLK_SCSI_REQUEST.
->>>
->>> Please keep the code where it is and just depend on SCSI on the legacy
->>> ide driver.  No need to do gymnastics just for a legacy case.
->>
->> Yup, I agree.
-> 
-> Oh, er, this was mainly done at Jens's request. Jens, can you advise?
+Hi, Frederic!
 
-I think Martin and Christoph are objecting to moving the code to
-block/scsi_ioctl.h. I don't care too much about where the code is, but
-think it would be nice to have the definitions in a separate header. But
-if they prefer just pulling in all of SCSI for it, well then I guess
-it's pointless to move the header bits. Seems very heavy handed to me,
-though.
+>>>>> On Mon, 29 Jan 2018 02:10:26 +0100, Frederic Weisbecker  wrote:
+ > On Wed, Jan 24, 2018 at 10:46:08AM -0500, Luiz Capitulino wrote:
+
+[...]
+
+ >> Since the 1Hz tick offload worked for you, I must be missing
+ >> a way to disable this timer or the kernel is thinking my CPU
+ >> has unstable TSC (which it doesn't AFAIK).
+
+ > It's beyond the scope of this patchset but indeed that's
+ > right, I run my kernels with tsc=reliable because my CPUs
+ > don't have the TSC_RELIABLE flag.  That's the only way I found
+ > to shutdown the tick completely on my test machine, otherwise
+ > I keep having that clocksource watchdog.
+
+[...]
+
+Thanks, it helps. But I have accounting problem:
+
+if I run user busy loop on the nohz cpu, the task accounting works
+correctly (top shows the task takes 100% cpu), but cpu accounting is
+wrong (cpu is 100% idle, in the per-core view as well).
+
+If I understand correctly, the stats are updated by account_user_time()
+-> task_group_account_field() but there is no call for it in case of
+offloading (it is called from irqtime_account_process_tick,
+account_process_tick, vtime_user_exit).
+
+Moreover, task_group_account_field() uses __this_cpu_add() which will be
+wrong for offloading.
+
+For testing I used kcpustat_cpu(task_cpu(p)) in
+task_group_account_field() and added call account_user_time(curr, delta)
+to the sched_tick_remote() what fixes it for me, but what would be the
+proper fix?
 
 -- 
-Jens Axboe
+WBR,
+Yauheni Kaliuta
