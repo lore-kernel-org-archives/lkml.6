@@ -1,95 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751883AbeEVRwy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 13:52:54 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:42372 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751340AbeEVRwv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 13:52:51 -0400
-Date: Tue, 22 May 2018 19:52:30 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Stefan Agner <stefan@agner.ch>
-Cc: dwmw2@infradead.org, computersforpeace@gmail.com,
-        marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        thierry.reding@gmail.com, mturquette@baylibre.com, sboyd@kernel.org,
-        dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
-        marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com,
-        benjamin.lindqvist@endian.se, jonathanh@nvidia.com,
-        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com,
-        linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [RESEND PATCH 1/5] mtd: rawnand: tegra: add devicetree binding
-Message-ID: <20180522195230.471a796e@bbrezillon>
-In-Reply-To: <8bd0f80a9db9abc7af192d1c7d449887b1392ff7.1526990589.git.stefan@agner.ch>
-References: <cover.1526990589.git.stefan@agner.ch>
-        <8bd0f80a9db9abc7af192d1c7d449887b1392ff7.1526990589.git.stefan@agner.ch>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1752518AbeEVRwi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 13:52:38 -0400
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:36288 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751525AbeEVRwb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 13:52:31 -0400
+X-IronPort-AV: E=Sophos;i="5.49,430,1520870400";
+   d="scan'208";a="175448563"
+From: adam.manzanares@wdc.com
+To: viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        axboe@kernel.dk, bcrl@kvack.org
+Cc: mingo@kernel.org, tglx@linutronix.de, kstewart@linuxfoundation.org,
+        peterz@infradead.org, pombredanne@nexb.com, gregkh@linuxfoundation.org,
+        bigeasy@linutronix.de, rgoldwyn@suse.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-aio@kvack.org,
+        linux-api@vger.kernel.org, hch@infradread.org, jmoyer@redhat.com,
+        Adam Manzanares <adam.manzanares@wdc.com>
+Subject: [PATCH v7 2/5] fs: Convert kiocb rw_hint from enum to u16
+Date: Tue, 22 May 2018 10:52:18 -0700
+Message-Id: <20180522175221.2391-3-adam.manzanares@wdc.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180522175221.2391-1-adam.manzanares@wdc.com>
+References: <20180522175221.2391-1-adam.manzanares@wdc.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Stefan,
+From: Adam Manzanares <adam.manzanares@wdc.com>
 
-On Tue, 22 May 2018 14:07:05 +0200
-Stefan Agner <stefan@agner.ch> wrote:
+In order to avoid kiocb bloat for per command iopriority support, rw_hint
+is converted from enum to a u16. Added a guard around ki_hint assignment.
 
-> From: Lucas Stach <dev@lynxeye.de>
-> 
-> This adds the devicetree binding for the Tegra 2 NAND flash
-> controller.
-> 
-> Signed-off-by: Lucas Stach <dev@lynxeye.de>
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> ---
->  .../bindings/mtd/nvidia,tegra20-nand.txt      | 29 +++++++++++++++++++
->  1 file changed, 29 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
-> new file mode 100644
-> index 000000000000..522d442937a9
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
-> @@ -0,0 +1,29 @@
-> +NVIDIA Tegra NAND Flash controller
-> +
-> +Required properties:
-> +- compatible: Must be one of:
-> +  - "nvidia,tegra20-nand"
-> +- reg: MMIO address range
-> +- interrupts: interrupt output of the NFC controller
-> +- clocks: Must contain an entry for each entry in clock-names.
-> +  See ../clocks/clock-bindings.txt for details.
-> +- clock-names: Must include the following entries:
-> +  - nand
-> +- resets: Must contain an entry for each entry in reset-names.
-> +  See ../reset/reset.txt for details.
-> +- reset-names: Must include the following entries:
-> +  - nand
-> +
-> +Optional properties:
-> +- nvidia,wp-gpios: GPIO used to disable write protection of the flash
-> +
-> +  Example:
-> +	nand@70008000 {
-> +		compatible = "nvidia,tegra20-nand";
-> +		reg = <0x70008000 0x100>;
-> +		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
-> +		clocks = <&tegra_car TEGRA20_CLK_NDFLASH>;
-> +		clock-names = "nand";
-> +		resets = <&tegra_car 13>;
-> +		reset-names = "nand";
-> +	};
+Signed-off-by: Adam Manzanares <adam.manzanares@wdc.com>
+---
+ fs/aio.c           |  2 +-
+ include/linux/fs.h | 13 +++++++++++--
+ 2 files changed, 12 insertions(+), 3 deletions(-)
 
-Can you represent the controller and NAND chip separately as
-recommended here [1].
-
-Thanks,
-
-Boris
-
-[1]https://elixir.bootlin.com/linux/v4.17-rc6/source/Documentation/devicetree/bindings/mtd/nand.txt#L56
+diff --git a/fs/aio.c b/fs/aio.c
+index 755d3f57bcc8..87d8939bb1e4 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -1450,7 +1450,7 @@ static int aio_prep_rw(struct kiocb *req, struct iocb *iocb)
+ 	req->ki_flags = iocb_flags(req->ki_filp);
+ 	if (iocb->aio_flags & IOCB_FLAG_RESFD)
+ 		req->ki_flags |= IOCB_EVENTFD;
+-	req->ki_hint = file_write_hint(req->ki_filp);
++	req->ki_hint = ki_hint_validate(file_write_hint(req->ki_filp));
+ 	ret = kiocb_set_rw_flags(req, iocb->aio_rw_flags);
+ 	if (unlikely(ret))
+ 		fput(req->ki_filp);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 7f07977bdfd7..9b76ee73af14 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -299,7 +299,7 @@ struct kiocb {
+ 	void (*ki_complete)(struct kiocb *iocb, long ret, long ret2);
+ 	void			*private;
+ 	int			ki_flags;
+-	enum rw_hint		ki_hint;
++	u16			ki_hint;
+ } __randomize_layout;
+ 
+ static inline bool is_sync_kiocb(struct kiocb *kiocb)
+@@ -1927,12 +1927,21 @@ static inline enum rw_hint file_write_hint(struct file *file)
+ 
+ static inline int iocb_flags(struct file *file);
+ 
++static inline u16 ki_hint_validate(enum rw_hint hint)
++{
++	typeof(((struct kiocb *)0)->ki_hint) max_hint = -1;
++
++	if (hint <= max_hint)
++		return hint;
++	return 0;
++}
++
+ static inline void init_sync_kiocb(struct kiocb *kiocb, struct file *filp)
+ {
+ 	*kiocb = (struct kiocb) {
+ 		.ki_filp = filp,
+ 		.ki_flags = iocb_flags(filp),
+-		.ki_hint = file_write_hint(filp),
++		.ki_hint = ki_hint_validate(file_write_hint(filp)),
+ 	};
+ }
+ 
+-- 
+2.15.1
