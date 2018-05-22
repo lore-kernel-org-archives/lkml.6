@@ -1,85 +1,200 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752096AbeEVH5g (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 03:57:36 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:40882 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751189AbeEVH5c (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 03:57:32 -0400
-Subject: Re: [PATCH 12/14] OMAP: CLK: CLKSRC: Add suspend resume hooks
-To: Tony Lindgren <tony@atomide.com>
-CC: <linus.walleij@linaro.org>, <grygorii.strashko@ti.com>,
-        <t-kristo@ti.com>, <Russ.Dill@ti.com>, <linux-omap@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <ssantosh@kernel.org>,
-        <haojian.zhuang@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-        <d-gerlach@ti.com>
-References: <1523505239-16229-1-git-send-email-j-keerthy@ti.com>
- <1523505239-16229-13-git-send-email-j-keerthy@ti.com>
- <20180412142714.GX5700@atomide.com>
-From: Keerthy <j-keerthy@ti.com>
-Message-ID: <038cc2cd-ff72-c9c9-257b-1c1cc09a66a8@ti.com>
-Date: Tue, 22 May 2018 13:27:10 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
-MIME-Version: 1.0
-In-Reply-To: <20180412142714.GX5700@atomide.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        id S1751621AbeEVH55 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 03:57:57 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51810 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751501AbeEVH4B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 03:56:01 -0400
+From: Eric Auger <eric.auger@redhat.com>
+To: eric.auger.pro@gmail.com, eric.auger@redhat.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
+        christoffer.dall@arm.com, peter.maydell@linaro.org
+Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
+Subject: [PATCH v8 12/13] KVM: arm/arm64: Implement KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
+Date: Tue, 22 May 2018 09:55:17 +0200
+Message-Id: <1526975718-18567-13-git-send-email-eric.auger@redhat.com>
+In-Reply-To: <1526975718-18567-1-git-send-email-eric.auger@redhat.com>
+References: <1526975718-18567-1-git-send-email-eric.auger@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Now all the internals are ready to handle multiple redistributor
+regions, let's allow the userspace to register them.
 
+Signed-off-by: Eric Auger <eric.auger@redhat.com>
+Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
 
-On Thursday 12 April 2018 07:57 PM, Tony Lindgren wrote:
-> * Keerthy <j-keerthy@ti.com> [180412 03:56]:
->> Add the save and restore for clksrc as part of suspend and resume
->> so that it saves the counter value and restores. This is needed in
->> modes like rtc+ddr in self-refresh not doing this stalls the time.
-> 
-> I suspect this too should really happen with cpu_pm.
+---
+v5 -> v6:
+- added Christoffer's R-b
 
-I believe going by the previous set of patches this fits better with
-suspend/resume?
+v4 -> v5:
+- s/uint<n>_t/u<n>
+- fix KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION read
+- fix read path
+- return -ENOENT instead of -ENODEV when reading the
+  attributes of a region that does not exist
 
-> 
->> --- a/arch/arm/mach-omap2/timer.c
->> +++ b/arch/arm/mach-omap2/timer.c
->> @@ -442,6 +442,38 @@ static int __init __maybe_unused omap2_sync32k_clocksource_init(void)
->>  	return ret;
->>  }
->>  
->> +static unsigned int omap2_gptimer_clksrc_load;
->> +
->> +static void omap2_gptimer_clksrc_suspend(struct clocksource *unused)
->> +{
->> +	struct omap_hwmod *oh;
->> +
->> +	omap2_gptimer_clksrc_load =
->> +		__omap_dm_timer_read_counter(&clksrc, OMAP_TIMER_NONPOSTED);
->> +
->> +	oh = omap_hwmod_lookup(clocksource_gpt.name);
->> +	if (!oh)
->> +		return;
->> +
->> +	omap_hwmod_idle(oh);
->> +}
-> 
-> Probably no need to look up the hwmod every time? Especially if am437x
-> will start supporting deeper idle modes during runtime.
+v3 -> v4:
+- vgic_v3_rdist_region_from_index is introduced in this patch
 
-Like clockevent i will store the hwmod pointer for clocksource as well.
+v2 -> v3:
+- early exit if vgic_v3_rdist_region_from_index() fails
+---
+ virt/kvm/arm/vgic/vgic-kvm-device.c | 40 ++++++++++++++++++++++++++++++++++++-
+ virt/kvm/arm/vgic/vgic-mmio-v3.c    |  4 ++--
+ virt/kvm/arm/vgic/vgic-v3.c         | 14 +++++++++++++
+ virt/kvm/arm/vgic/vgic.h            | 13 +++++++++++-
+ 4 files changed, 67 insertions(+), 4 deletions(-)
 
-> 
-> And probably the cpu_pm notifies should be directly in the hwmod
-> code so we don't need to add more any more dependencies to hwmod
-> functions to timer code. We should have this code move to drivers
-> anyways at some point.
-> 
-> Regards,
-> 
-> Tony
-> 
+diff --git a/virt/kvm/arm/vgic/vgic-kvm-device.c b/virt/kvm/arm/vgic/vgic-kvm-device.c
+index 76ab369..6ada243 100644
+--- a/virt/kvm/arm/vgic/vgic-kvm-device.c
++++ b/virt/kvm/arm/vgic/vgic-kvm-device.c
+@@ -92,7 +92,7 @@ int kvm_vgic_addr(struct kvm *kvm, unsigned long type, u64 *addr, bool write)
+ 		if (r)
+ 			break;
+ 		if (write) {
+-			r = vgic_v3_set_redist_base(kvm, *addr);
++			r = vgic_v3_set_redist_base(kvm, 0, *addr, 0);
+ 			goto out;
+ 		}
+ 		rdreg = list_first_entry(&vgic->rd_regions,
+@@ -103,6 +103,43 @@ int kvm_vgic_addr(struct kvm *kvm, unsigned long type, u64 *addr, bool write)
+ 			addr_ptr = &rdreg->base;
+ 		break;
+ 	}
++	case KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION:
++	{
++		struct vgic_redist_region *rdreg;
++		u8 index;
++
++		r = vgic_check_type(kvm, KVM_DEV_TYPE_ARM_VGIC_V3);
++		if (r)
++			break;
++
++		index = *addr & KVM_VGIC_V3_RDIST_INDEX_MASK;
++
++		if (write) {
++			gpa_t base = *addr & KVM_VGIC_V3_RDIST_BASE_MASK;
++			u32 count = (*addr & KVM_VGIC_V3_RDIST_COUNT_MASK)
++					>> KVM_VGIC_V3_RDIST_COUNT_SHIFT;
++			u8 flags = (*addr & KVM_VGIC_V3_RDIST_FLAGS_MASK)
++					>> KVM_VGIC_V3_RDIST_FLAGS_SHIFT;
++
++			if (!count || flags)
++				r = -EINVAL;
++			else
++				r = vgic_v3_set_redist_base(kvm, index,
++							    base, count);
++			goto out;
++		}
++
++		rdreg = vgic_v3_rdist_region_from_index(kvm, index);
++		if (!rdreg) {
++			r = -ENOENT;
++			goto out;
++		}
++
++		*addr = index;
++		*addr |= rdreg->base;
++		*addr |= (u64)rdreg->count << KVM_VGIC_V3_RDIST_COUNT_SHIFT;
++		goto out;
++	}
+ 	default:
+ 		r = -ENODEV;
+ 	}
+@@ -674,6 +711,7 @@ static int vgic_v3_has_attr(struct kvm_device *dev,
+ 		switch (attr->attr) {
+ 		case KVM_VGIC_V3_ADDR_TYPE_DIST:
+ 		case KVM_VGIC_V3_ADDR_TYPE_REDIST:
++		case KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION:
+ 			return 0;
+ 		}
+ 		break;
+diff --git a/virt/kvm/arm/vgic/vgic-mmio-v3.c b/virt/kvm/arm/vgic/vgic-mmio-v3.c
+index 1c6c535..2877840 100644
+--- a/virt/kvm/arm/vgic/vgic-mmio-v3.c
++++ b/virt/kvm/arm/vgic/vgic-mmio-v3.c
+@@ -764,11 +764,11 @@ static int vgic_v3_insert_redist_region(struct kvm *kvm, uint32_t index,
+ 	return ret;
+ }
+ 
+-int vgic_v3_set_redist_base(struct kvm *kvm, u64 addr)
++int vgic_v3_set_redist_base(struct kvm *kvm, u32 index, u64 addr, u32 count)
+ {
+ 	int ret;
+ 
+-	ret = vgic_v3_insert_redist_region(kvm, 0, addr, 0);
++	ret = vgic_v3_insert_redist_region(kvm, index, addr, count);
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
+index 8892821..ff7dc89 100644
+--- a/virt/kvm/arm/vgic/vgic-v3.c
++++ b/virt/kvm/arm/vgic/vgic-v3.c
+@@ -491,6 +491,20 @@ struct vgic_redist_region *vgic_v3_rdist_free_slot(struct list_head *rd_regions)
+ 	return NULL;
+ }
+ 
++struct vgic_redist_region *vgic_v3_rdist_region_from_index(struct kvm *kvm,
++							   u32 index)
++{
++	struct list_head *rd_regions = &kvm->arch.vgic.rd_regions;
++	struct vgic_redist_region *rdreg;
++
++	list_for_each_entry(rdreg, rd_regions, list) {
++		if (rdreg->index == index)
++			return rdreg;
++	}
++	return NULL;
++}
++
++
+ int vgic_v3_map_resources(struct kvm *kvm)
+ {
+ 	struct vgic_dist *dist = &kvm->arch.vgic;
+diff --git a/virt/kvm/arm/vgic/vgic.h b/virt/kvm/arm/vgic/vgic.h
+index 1c8af4e..6879cf4 100644
+--- a/virt/kvm/arm/vgic/vgic.h
++++ b/virt/kvm/arm/vgic/vgic.h
+@@ -96,6 +96,13 @@
+ /* we only support 64 kB translation table page size */
+ #define KVM_ITS_L1E_ADDR_MASK		GENMASK_ULL(51, 16)
+ 
++#define KVM_VGIC_V3_RDIST_INDEX_MASK	GENMASK_ULL(11, 0)
++#define KVM_VGIC_V3_RDIST_FLAGS_MASK	GENMASK_ULL(15, 12)
++#define KVM_VGIC_V3_RDIST_FLAGS_SHIFT	12
++#define KVM_VGIC_V3_RDIST_BASE_MASK	GENMASK_ULL(51, 16)
++#define KVM_VGIC_V3_RDIST_COUNT_MASK	GENMASK_ULL(63, 52)
++#define KVM_VGIC_V3_RDIST_COUNT_SHIFT	52
++
+ /* Requires the irq_lock to be held by the caller. */
+ static inline bool irq_is_pending(struct vgic_irq *irq)
+ {
+@@ -215,7 +222,7 @@ int vgic_v3_probe(const struct gic_kvm_info *info);
+ int vgic_v3_map_resources(struct kvm *kvm);
+ int vgic_v3_lpi_sync_pending_status(struct kvm *kvm, struct vgic_irq *irq);
+ int vgic_v3_save_pending_tables(struct kvm *kvm);
+-int vgic_v3_set_redist_base(struct kvm *kvm, u64 addr);
++int vgic_v3_set_redist_base(struct kvm *kvm, u32 index, u64 addr, u32 count);
+ int vgic_register_redist_iodev(struct kvm_vcpu *vcpu);
+ bool vgic_v3_check_base(struct kvm *kvm);
+ 
+@@ -284,6 +291,10 @@ vgic_v3_rd_region_size(struct kvm *kvm, struct vgic_redist_region *rdreg)
+ 	else
+ 		return rdreg->count * KVM_VGIC_V3_REDIST_SIZE;
+ }
++
++struct vgic_redist_region *vgic_v3_rdist_region_from_index(struct kvm *kvm,
++							   u32 index);
++
+ bool vgic_v3_rdist_overlap(struct kvm *kvm, gpa_t base, size_t size);
+ 
+ static inline bool vgic_dist_overlap(struct kvm *kvm, gpa_t base, size_t size)
+-- 
+2.5.5
