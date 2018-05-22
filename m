@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752843AbeEVTey (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 15:34:54 -0400
-Received: from mga07.intel.com ([134.134.136.100]:16706 "EHLO mga07.intel.com"
+        id S1752822AbeEVTex (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 15:34:53 -0400
+Received: from mga07.intel.com ([134.134.136.100]:16708 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752406AbeEVTcF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 15:32:05 -0400
+        id S1752605AbeEVTcG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 15:32:06 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,430,1520924400";
-   d="scan'208";a="226406417"
+   d="scan'208";a="226406429"
 From: Reinette Chatre <reinette.chatre@intel.com>
 To: tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
         vikas.shivappa@linux.intel.com
@@ -18,9 +18,9 @@ Cc: gavin.hindman@intel.com, jithu.joseph@intel.com, dave.hansen@intel.com,
         mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
         linux-kernel@vger.kernel.org,
         Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH V4 27/38] x86/intel_rdt: Add utilities to test pseudo-locked region possibility
-Date: Tue, 22 May 2018 04:29:15 -0700
-Message-Id: <55867a6b4c403e0af61eec032cad669b9c12cced.1526987654.git.reinette.chatre@intel.com>
+Subject: [PATCH V4 31/38] x86/intel_rdt: resctrl files reflect pseudo-locked information
+Date: Tue, 22 May 2018 04:29:19 -0700
+Message-Id: <43a611a77ca4f09be41fad4592296cdc803ed79c.1526987654.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <cover.1526987654.git.reinette.chatre@intel.com>
 References: <cover.1526987654.git.reinette.chatre@intel.com>
@@ -30,102 +30,127 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A pseudo-locked region does not have a class of service associated with
-it and thus not tracked in the array of control values maintained as
-part of the domain. Even so, when the user provides a new bitmask for
-another resource group it needs to be checked for interference with
-existing pseudo-locked regions.
+Information about resources as well as resource groups are contained in
+a variety of resctrl files. Now that pseudo-locked regions can be
+created the files can be updated to present appropriate information to
+the user.
 
-Additionally only one pseudo-locked region can be created in any cache
-hierarchy.
+Update the resource group's schemata file to show only the information
+of the pseudo-locked region.
 
-Introduce two utilities in support of above scenarios: (1) a utility
-that can be used to test if a given capacity bitmask overlaps with any
-pseudo-locked regions associated with a particular cache instance, (2) a
-utility that can be used to test if a pseudo-locked region exists within
-a particular cache hierarchy.
+Update the resource group's size file to show the size in bytes of only
+the pseudo-locked region.
+
+Update the bit_usage file to use the letter 'P' for all pseudo-locked
+regions.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
- arch/x86/kernel/cpu/intel_rdt.h             |  2 ++
- arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 55 +++++++++++++++++++++++++++++
- 2 files changed, 57 insertions(+)
+ arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c |  3 +++
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c    | 31 +++++++++++++++++++++++------
+ 2 files changed, 28 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
-index 12b006178d3a..119645c83e27 100644
---- a/arch/x86/kernel/cpu/intel_rdt.h
-+++ b/arch/x86/kernel/cpu/intel_rdt.h
-@@ -503,6 +503,8 @@ enum rdtgrp_mode rdtgroup_mode_by_closid(int closid);
- int rdtgroup_tasks_assigned(struct rdtgroup *r);
- int rdtgroup_locksetup_enter(struct rdtgroup *rdtgrp);
- int rdtgroup_locksetup_exit(struct rdtgroup *rdtgrp);
-+bool rdtgroup_cbm_overlaps_pseudo_locked(struct rdt_domain *d, u32 _cbm);
-+bool rdtgroup_pseudo_locked_in_hierarchy(struct rdt_domain *d);
- struct rdt_domain *get_domain_from_cpu(int cpu, struct rdt_resource *r);
- int update_domains(struct rdt_resource *r, int closid);
- void closid_free(int closid);
-diff --git a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-index ce8243c87877..0d2177a0bc60 100644
---- a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-@@ -299,3 +299,58 @@ int rdtgroup_locksetup_exit(struct rdtgroup *rdtgrp)
- 	pseudo_lock_free(rdtgrp);
+diff --git a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
+index 6f4c0002b2c1..af358ca05160 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
++++ b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
+@@ -402,6 +402,9 @@ int rdtgroup_schemata_show(struct kernfs_open_file *of,
+ 		if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP) {
+ 			for_each_alloc_enabled_rdt_resource(r)
+ 				seq_printf(s, "%s:uninitialized\n", r->name);
++		} else if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED) {
++			seq_printf(s, "%s:%d=%x\n", rdtgrp->plr->r->name,
++				   rdtgrp->plr->d->id, rdtgrp->plr->cbm);
+ 		} else {
+ 			closid = rdtgrp->closid;
+ 			for_each_alloc_enabled_rdt_resource(r) {
+diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+index 88ffd1311c40..d08670ea1a3d 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
++++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+@@ -771,14 +771,16 @@ static int rdt_shareable_bits_show(struct kernfs_open_file *of,
+  *   H - currently used by hardware only but available for software use
+  *   S - currently used and shareable by software only
+  *   E - currently used exclusively by one resource group
++ *   P - currently pseudo-locked by one resource group
+  */
+ static int rdt_bit_usage_show(struct kernfs_open_file *of,
+ 			      struct seq_file *seq, void *v)
+ {
+ 	struct rdt_resource *r = of->kn->parent->priv;
+-	u32 sw_shareable, hw_shareable, exclusive;
++	u32 sw_shareable = 0, hw_shareable = 0;
++	u32 exclusive = 0, pseudo_locked = 0;
+ 	struct rdt_domain *dom;
+-	int i, hwb, swb, excl;
++	int i, hwb, swb, excl, psl;
+ 	enum rdtgrp_mode mode;
+ 	bool sep = false;
+ 	u32 *ctrl;
+@@ -803,12 +805,15 @@ static int rdt_bit_usage_show(struct kernfs_open_file *of,
+ 			case RDT_MODE_EXCLUSIVE:
+ 				exclusive |= *ctrl;
+ 				break;
++			case RDT_MODE_PSEUDO_LOCKSETUP:
+ 			/*
+-			 * Temporarily handle pseudo-locking enums
+-			 * to silence compile warnings until handling
+-			 * added in later patches.
++			 * RDT_MODE_PSEUDO_LOCKSETUP is possible
++			 * here but not included since the CBM
++			 * associated with this CLOSID in this mode
++			 * is not initialized and no task or cpu can be
++			 * assigned this CLOSID.
+ 			 */
+-			case RDT_MODE_PSEUDO_LOCKSETUP:
++				break;
+ 			case RDT_MODE_PSEUDO_LOCKED:
+ 			case RDT_NUM_MODES:
+ 				WARN(1,
+@@ -817,9 +822,11 @@ static int rdt_bit_usage_show(struct kernfs_open_file *of,
+ 			}
+ 		}
+ 		for (i = r->cache.cbm_len - 1; i >= 0; i--) {
++			pseudo_locked = dom->plr ? dom->plr->cbm : 0;
+ 			hwb = test_bit(i, (unsigned long *)&hw_shareable);
+ 			swb = test_bit(i, (unsigned long *)&sw_shareable);
+ 			excl = test_bit(i, (unsigned long *)&exclusive);
++			psl = test_bit(i, (unsigned long *)&pseudo_locked);
+ 			if (hwb && swb)
+ 				seq_puts(seq, "X");
+ 			else if (hwb && !swb)
+@@ -828,6 +835,8 @@ static int rdt_bit_usage_show(struct kernfs_open_file *of,
+ 				seq_puts(seq, "S");
+ 			else if (excl)
+ 				seq_puts(seq, "E");
++			else if (psl)
++				seq_puts(seq, "P");
+ 			else /* Unused bits remain */
+ 				seq_puts(seq, "0");
+ 		}
+@@ -1146,6 +1155,15 @@ static int rdtgroup_size_show(struct kernfs_open_file *of,
+ 		return -ENOENT;
+ 	}
+ 
++	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED) {
++		seq_printf(s, "%*s:", max_name_width, rdtgrp->plr->r->name);
++		size = rdtgroup_cbm_to_size(rdtgrp->plr->r,
++					    rdtgrp->plr->d,
++					    rdtgrp->plr->cbm);
++		seq_printf(s, "%d=%u\n", rdtgrp->plr->d->id, size);
++		goto out;
++	}
++
+ 	for_each_alloc_enabled_rdt_resource(r) {
+ 		seq_printf(s, "%*s:", max_name_width, r->name);
+ 		list_for_each_entry(d, &r->domains, list) {
+@@ -1163,6 +1181,7 @@ static int rdtgroup_size_show(struct kernfs_open_file *of,
+ 		seq_puts(s, "\n");
+ 	}
+ 
++out:
+ 	rdtgroup_kn_unlock(of->kn);
+ 
  	return 0;
- }
-+
-+/**
-+ * rdtgroup_cbm_overlaps_pseudo_locked - Test if CBM or portion is pseudo-locked
-+ * @d: RDT domain
-+ * @_cbm: CBM to test
-+ *
-+ * @d represents a cache instance and @_cbm a capacity bitmask that is
-+ * considered for it. Determine if @_cbm overlaps with any existing
-+ * pseudo-locked region on @d.
-+ *
-+ * Return: true if @_cbm overlaps with pseudo-locked region on @d, false
-+ * otherwise.
-+ */
-+bool rdtgroup_cbm_overlaps_pseudo_locked(struct rdt_domain *d, u32 _cbm)
-+{
-+	unsigned long *cbm = (unsigned long *)&_cbm;
-+	unsigned long *cbm_b;
-+	unsigned int cbm_len;
-+
-+	if (d->plr) {
-+		cbm_len = d->plr->r->cache.cbm_len;
-+		cbm_b = (unsigned long *)&d->plr->cbm;
-+		if (bitmap_intersects(cbm, cbm_b, cbm_len))
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
-+/**
-+ * rdtgroup_pseudo_locked_in_hierarchy - Pseudo-locked region in cache hierarchy
-+ * @d: RDT domain under test
-+ *
-+ * The setup of a pseudo-locked region affects all cache instances within
-+ * the hierarchy of the region. It is thus essential to know if any
-+ * pseudo-locked regions exist within a cache hierarchy to prevent any
-+ * attempts to create new pseudo-locked regions in the same hierarchy.
-+ *
-+ * Return: true if a pseudo-locked region exists in the hierarchy of @d,
-+ * false otherwise.
-+ */
-+bool rdtgroup_pseudo_locked_in_hierarchy(struct rdt_domain *d)
-+{
-+	struct rdt_resource *r;
-+	struct rdt_domain *d_i;
-+
-+	for_each_alloc_enabled_rdt_resource(r) {
-+		list_for_each_entry(d_i, &r->domains, list) {
-+			if (d_i != d &&
-+			    cpumask_intersects(&d_i->cpu_mask, &d->cpu_mask))
-+				return true;
-+		}
-+	}
-+	return false;
-+}
 -- 
 2.13.6
