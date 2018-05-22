@@ -1,108 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751760AbeEVMQp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 08:16:45 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52592 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751872AbeEVMFL (ORCPT
+        id S1752714AbeEVMRc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 08:17:32 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:57203 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751514AbeEVMRR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 08:05:11 -0400
-From: Christoph Hellwig <hch@lst.de>
-To: iommu@lists.linux-foundation.org
-Cc: linux-arch@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
-        Greentime Hu <green.hu@gmail.com>, Vincent Chen <deanbo422@gmail.com>,
-        linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
-        linux-hexagon@vger.kernel.org, linux-m68k@vger.kernel.org,
-        nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
-        linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 06/25] microblaze: remove the consistent_sync and consistent_sync_page
-Date: Tue, 22 May 2018 14:04:11 +0200
-Message-Id: <20180522120430.28709-7-hch@lst.de>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180522120430.28709-1-hch@lst.de>
-References: <20180522120430.28709-1-hch@lst.de>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Tue, 22 May 2018 08:17:17 -0400
+Subject: Re: [PATCH v7 2/2] leds: lm3601x: Introduce the lm3601x LED driver
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+CC: Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>
+References: <20180521180927.18472-1-dmurphy@ti.com>
+ <20180521180927.18472-2-dmurphy@ti.com>
+ <69a920da-f759-de50-865c-0ebc43044b66@gmail.com>
+ <3b20c9cf-5f7e-3ed9-454d-c8e8ca6c0627@ti.com>
+ <CAHp75Vf_KaRDJU83d8o1Sy1v+oztucJSYBEK9=cqNw6FQspFvg@mail.gmail.com>
+From: Dan Murphy <dmurphy@ti.com>
+Message-ID: <c5bbffef-5263-f2ff-6394-a14cbc8971b2@ti.com>
+Date: Tue, 22 May 2018 07:17:08 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <CAHp75Vf_KaRDJU83d8o1Sy1v+oztucJSYBEK9=cqNw6FQspFvg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Both unused.
+Andy
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- arch/microblaze/include/asm/pgtable.h |  3 --
- arch/microblaze/mm/consistent.c       | 45 ---------------------------
- 2 files changed, 48 deletions(-)
+On 05/21/2018 06:05 PM, Andy Shevchenko wrote:
+> On Tue, May 22, 2018 at 12:44 AM, Dan Murphy <dmurphy@ti.com> wrote:
+> 
+> 
+>>>> +    child = device_get_next_child_node(&led->client->dev, child);
+>>>> +    if (!child) {
+>>>> +        dev_err(&led->client->dev, "No LED Child node\n");
+>>>> +        return ret;
+>>>> +    }
+>>>> +
+>>>> +    ret = fwnode_property_read_u32(child, "reg", &led->led_mode);
+>>>> +    if (ret) {
+>>>> +        dev_err(&led->client->dev, "reg DT property missing\n");
+>>>> +        goto out_err;
+>>>> +    }
+>>>> +
+>>>> +    if (led->led_mode > LM3601X_LED_TORCH ||
+>>>> +        led->led_mode < LM3601X_LED_IR) {
+>>>> +        dev_warn(&led->client->dev, "Invalid led mode requested\n");
+>>>> +        ret = -EINVAL;
+>>>> +        goto out_err;
+>>>> +    }
+>>>> +
+>>>> +    ret = fwnode_property_read_string(child, "label", &name);
+>>>> +    if (ret) {
+>>>> +        if (led->led_mode == LM3601X_LED_TORCH)
+>>>> +            name = "torch";
+>>>> +        else
+>>>> +            name = "infrared";
+>>>> +    }
+>>>> +
+>>>> +    snprintf(led->led_name, sizeof(led->led_name),
+>>>> +        "%s:%s", node->name, name);
+>>>
+>>> Reading once again my recent explanation regarding this I realized
+>>> that I didn't provide clear conclusion, which is: we no longer
+>>> use child node name for LED class device name if label is absent.
+>>> (apart from that - you're using parent DT node now, i.e.
+>>> led-controller).
+>>>
+>>> Please follow what was done for drivers/leds/leds-cr0014114.c.
+>>
+>> Hmmm.  If this is calling dev->of_node->name to store the name will this
+>> work in non-DT configurations?
+> 
+> I didn't found this kind of use in linux-next, perhaps I missed something?
+> 
 
-diff --git a/arch/microblaze/include/asm/pgtable.h b/arch/microblaze/include/asm/pgtable.h
-index 8a2e654b709f..7b650ab14fa0 100644
---- a/arch/microblaze/include/asm/pgtable.h
-+++ b/arch/microblaze/include/asm/pgtable.h
-@@ -553,9 +553,6 @@ void __init *early_get_page(void);
- 
- extern unsigned long ioremap_bot, ioremap_base;
- 
--void consistent_sync(void *vaddr, size_t size, int direction);
--void consistent_sync_page(struct page *page, unsigned long offset,
--	size_t size, int direction);
- unsigned long consistent_virt_to_pfn(void *vaddr);
- 
- void setup_memory(void);
-diff --git a/arch/microblaze/mm/consistent.c b/arch/microblaze/mm/consistent.c
-index b9a9c8c3397b..c9a278ac795a 100644
---- a/arch/microblaze/mm/consistent.c
-+++ b/arch/microblaze/mm/consistent.c
-@@ -220,48 +220,3 @@ void arch_dma_free(struct device *dev, size_t size, void *vaddr,
- 	flush_tlb_all();
- #endif
- }
--
--/*
-- * make an area consistent.
-- */
--void consistent_sync(void *vaddr, size_t size, int direction)
--{
--	unsigned long start;
--	unsigned long end;
--
--	start = (unsigned long)vaddr;
--
--	/* Convert start address back down to unshadowed memory region */
--#ifdef CONFIG_XILINX_UNCACHED_SHADOW
--	start &= ~UNCACHED_SHADOW_MASK;
--#endif
--	end = start + size;
--
--	switch (direction) {
--	case PCI_DMA_NONE:
--		BUG();
--	case PCI_DMA_FROMDEVICE:	/* invalidate only */
--		invalidate_dcache_range(start, end);
--		break;
--	case PCI_DMA_TODEVICE:		/* writeback only */
--		flush_dcache_range(start, end);
--		break;
--	case PCI_DMA_BIDIRECTIONAL:	/* writeback and invalidate */
--		flush_dcache_range(start, end);
--		break;
--	}
--}
--EXPORT_SYMBOL(consistent_sync);
--
--/*
-- * consistent_sync_page makes memory consistent. identical
-- * to consistent_sync, but takes a struct page instead of a
-- * virtual address
-- */
--void consistent_sync_page(struct page *page, unsigned long offset,
--	size_t size, int direction)
--{
--	unsigned long start = (unsigned long)page_address(page) + offset;
--	consistent_sync((void *)start, size, direction);
--}
--EXPORT_SYMBOL(consistent_sync_page);
+Linux next has a different version then what I found doing a search for the driver.
+
+I will change the code to match what is in linux-next.
+
+Dan
+
+> In the driver Jacek referred to I found, though, use of of_node, which
+> at some point should be changed to fwnode.
+> 
+> For now you can fill that if you want to using something like this
+> (IIRC it should work):
+> 
+> if (is_of_node(fwnode))
+>  ...->of_node = to_of_node(...);
+> 
+>> I have not dug to deeply into the fwnode code to find out how the nodes
+>> get populated.  So my question may not even be valid.
+> 
+
+
 -- 
-2.17.0
+------------------
+Dan Murphy
