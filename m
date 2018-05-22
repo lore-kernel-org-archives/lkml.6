@@ -1,145 +1,229 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751336AbeEVJCW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 05:02:22 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:41320 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750707AbeEVJCS (ORCPT
+        id S1751392AbeEVJDF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 05:03:05 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:48390 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750733AbeEVJDA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 05:02:18 -0400
-X-Google-Smtp-Source: AB8JxZoBnKoGrYHEY6ccmQEZpo5Su0uaCEt2quHw7X1t9fS2z7htSLxp0Z16WR2qqrWanrcSQHHoZxOFXftN4LIa1TU=
+        Tue, 22 May 2018 05:03:00 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1577C604D4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
+Subject: Re: [PATCH V6 5/5] remoteproc: qcom: Add q6v5-wcss rproc ops
+To: Vinod <vkoul@kernel.org>
+Cc: bjorn.andersson@linaro.org, ohad@wizery.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, sibis@codeaurora.org
+References: <1526294812-23390-1-git-send-email-sricharan@codeaurora.org>
+ <1526294812-23390-6-git-send-email-sricharan@codeaurora.org>
+ <20180518122946.GC31996@vkoul-mobl>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <4d21e075-68c5-b2a7-c7fd-ce5b6a195166@codeaurora.org>
+Date: Tue, 22 May 2018 14:32:48 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180521135003.32459-3-mr.nuke.me@gmail.com>
-References: <20180521135003.32459-1-mr.nuke.me@gmail.com> <20180521135003.32459-3-mr.nuke.me@gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 22 May 2018 11:02:16 +0200
-X-Google-Sender-Auth: 7O_zIftpzBh1iDigNZWef46tQjg
-Message-ID: <CAJZ5v0h+U1zNK+LdOH_pU7kb+c6VK7erZCRqaV2WauDE2cwc6w@mail.gmail.com>
-Subject: Re: [PATCH v6 2/2] acpi: apei: Do not panic() on PCIe errors reported
- through GHES
-To: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-Cc: Borislav Petkov <bp@alien8.de>, alex_gagniuc@dellteam.com,
-        austin_bolen@dell.com, shyam_iyer@dell.com,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
-        Tony Luck <tony.luck@intel.com>, Tyler Baicar <tbaicar@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>, James Morse <james.morse@arm.com>,
-        Shiju Jose <shiju.jose@huawei.com>,
-        "Jonathan (Zhixiong) Zhang" <zjzhang@codeaurora.org>,
-        Dongjiu Geng <gengdongjiu@huawei.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180518122946.GC31996@vkoul-mobl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 3:49 PM, Alexandru Gagniuc <mr.nuke.me@gmail.com> wrote:
-> The policy was to panic() when GHES said that an error is "Fatal".
-> This logic is wrong for several reasons, as it doesn't account for the
-> cause of the error.
->
-> PCIe fatal errors indicate that the link to a device is either
-> unstable or unusable. They don't indicate that the machine is on fire,
+Hi,
 
-But they very well may indicate just that AFAICS.
+On 5/18/2018 5:59 PM, Vinod wrote:
+> On 14-05-18, 16:16, Sricharan R wrote:
+> 
+>> +static int q6v5_wcss_start(struct rproc *rproc)
+>> +{
+>> +	struct q6v5 *qproc = rproc->priv;
+>> +	int ret = 0;
+> 
+> Superfluous initialization
+> 
 
-> and they are not severe enough to justify a panic(). Do not blindly
-> rely on firmware to evaluate the severity for us. Instead, look at
-> the error severity based on what caused the error (GHES subsections).
+ ok.
 
-Which bit also comes from the firmware, right?  So why is it regarded
-as a better source of information?
+>> +
+>> +	ret = q6v5_clk_enable(qproc->dev, qproc->active_clks,
+>> +			      qproc->active_clk_count);
+>> +	if (ret) {
+>> +		dev_err(qproc->dev, "failed to enable clocks\n");
+>> +		return ret;
+>> +	}
+>> +
+>> +	/* Release Q6 and WCSS reset */
+>> +	ret = reset_control_deassert(qproc->wcss_reset);
+>> +	if (ret)
+>> +		dev_err(qproc->dev, "wcss_reset failed\n");
+>> +
+>> +	ret = reset_control_deassert(qproc->wcss_q6_reset);
+>> +	if (ret)
+>> +		dev_err(qproc->dev, "wcss_q6_reset failed\n");
+> 
+> shouldn't we abort on these two errors?
+> 
 
-Or are you trying to say that both of the pieces of information in
-question should be consistent with each other?  But if they aren't,
-which one should we trust more and why?
+ ha right. will fix it.
 
-> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-> ---
->  drivers/acpi/apei/ghes.c | 48 +++++++++++++++++++++++++++++++++++++++++++++---
->  1 file changed, 45 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-> index 7c1a16b106ba..9baaab798020 100644
-> --- a/drivers/acpi/apei/ghes.c
-> +++ b/drivers/acpi/apei/ghes.c
-> @@ -425,8 +425,7 @@ static void ghes_handle_memory_failure(struct acpi_hest_generic_data *gdata, int
->   * GHES_SEV_RECOVERABLE -> AER_NONFATAL
->   * GHES_SEV_RECOVERABLE && CPER_SEC_RESET -> AER_FATAL
->   *     These both need to be reported and recovered from by the AER driver.
-> - * GHES_SEV_PANIC does not make it to this handling since the kernel must
-> - *     panic.
-> + * GHES_SEV_PANIC -> AER_FATAL
->   */
->  static void ghes_handle_aer(struct acpi_hest_generic_data *gdata)
->  {
-> @@ -459,6 +458,49 @@ static void ghes_handle_aer(struct acpi_hest_generic_data *gdata)
->  #endif
->  }
->
-> +/* PCIe errors should not cause a panic. */
+>> +
+>> +	/* Lithium configuration - clock gating and bus arbitration */
+>> +	ret = regmap_update_bits(qproc->halt_map,
+>> +				 qproc->halt_nc + TCSR_GLOBAL_CFG0,
+>> +				 0x1F, 0x14);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	ret = regmap_update_bits(qproc->halt_map,
+>> +				 qproc->halt_nc + TCSR_GLOBAL_CFG1,
+>> +				 1, 0);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/* Write bootaddr to EVB so that Q6WCSS will jump there after reset */
+>> +	writel(rproc->bootaddr >> 4, qproc->reg_base + QDSP6SS_RST_EVB);
+>> +
+>> +	ret = q6v5_reset(qproc);
+>> +	if (ret)
+>> +		return ret;
+> 
+> all these returns, aren't we leaving device in some dangling state?
+> 
 
-This comment is not sufficient and it should go inside of the function.
+ hmm ok. clocks and resets have to be reverted. will add error handling here.
 
-> +static int ghes_sec_pcie_severity(struct acpi_hest_generic_data *gdata)
-> +{
-> +       struct cper_sec_pcie *pcie_err = acpi_hest_get_payload(gdata);
-> +
-> +       if (pcie_err->validation_bits & CPER_PCIE_VALID_DEVICE_ID &&
-> +           pcie_err->validation_bits & CPER_PCIE_VALID_AER_INFO &&
-> +           IS_ENABLED(CONFIG_ACPI_APEI_PCIEAER))
-> +               return GHES_SEV_RECOVERABLE;
+>> +static int q6v5_wcss_powerdown(struct q6v5 *qproc)
+>> +{
+>> +	unsigned int val = 0;
+> 
+> superfluous initialization
+> 
+ ok.
 
-You have not explained convincingly enough why the above condition
-makes sense at all.
+>> +	int ret;
+>> +
+>> +	/* 1 - Assert WCSS/Q6 HALTREQ */
+>> +	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_modem);
+>> +
+>> +	/* 2 - Enable WCSSAON_CONFIG */
+>> +	val = readl(qproc->rmb_base + SSCAON_CONFIG);
+>> +	val |= SSCAON_ENABLE;
+>> +	writel(val, qproc->rmb_base + SSCAON_CONFIG);
+>> +
+>> +	/* 3 - Set SSCAON_CONFIG */
+>> +	val |= BIT(15);
+>> +	val &= ~BIT(16);
+>> +	val &= ~BIT(17);
+>> +	val &= ~BIT(18);
+> 
+> shouldn't bit 15 thru 18 be defined on what they mean?
+> 
 
-> +
-> +       return ghes_cper_severity(gdata->error_severity);
-> +}
-> +
-> +/*
-> + * The severity field in the status block is an unreliable metric for the
-> + * severity. A more reliable way is to look at each subsection and see how safe
-> + * it is to call the approproate error handler.
-> + * We're not conerned with handling the error. We're concerned with being able
-> + * to notify an error handler by crossing the NMI/IRQ boundary, being able to
-> + * schedule_work, and so forth.
-> + *   - SEC_PCIE: All PCIe errors can be handled by AER.
+ hmm, ok. would define them.
 
-Make this comment a proper kerneldoc or move it inside of the function.
+>> +static int q6v5_q6_powerdown(struct q6v5 *qproc)
+>> +{
+>> +	int i = 0, ret;
+>> +	unsigned int val = 0;
+>> +
+>> +	/* 1 - Halt Q6 bus interface */
+>> +	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_q6);
+>> +
+>> +	/* 2 - Disable Q6 Core clock */
+>> +	val = readl(qproc->reg_base + QDSP6SS_GFMUX_CTL_REG);
+>> +	val &= ~Q6SS_CLK_ENABLE;
+>> +	writel(val, qproc->reg_base + QDSP6SS_GFMUX_CTL_REG);
+>> +
+>> +	/* 3 - Clamp I/O */
+>> +	val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +	val |= Q6SS_CLAMP_IO;
+>> +	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +
+>> +	/* 4 - Clamp WL */
+>> +	val |= QDSS_BHS_ON;
+>> +	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +
+>> +	/* 5 - Clear Erase standby */
+>> +	val &= ~Q6SS_L2DATA_STBY_N;
+>> +	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +
+>> +	/* 6 - Clear Sleep RTN */
+>> +	val &= ~Q6SS_SLP_RET_N;
+>> +	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +
+>> +	/* 7 - turn off QDSP6 memory foot/head switch one bank at a time */
+>> +	for (i = 0; i < 20; i++) {
+>> +		val = readl(qproc->reg_base + QDSP6SS_MEM_PWR_CTL);
+>> +		val &= ~BIT(i);
+>> +		writel(val, qproc->reg_base + QDSP6SS_MEM_PWR_CTL);
+>> +		mdelay(1);
+>> +	}
+>> +	/* 8 - Assert QMC memory RTN */
+>> +	val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +	val |= QDSP6v56_CLAMP_QMC_MEM;
+>> +	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +
+>> +	/* 9 - Turn off BHS */
+>> +	val &= ~QDSP6v56_BHS_ON;
+>> +	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +	udelay(1);
+>> +	/* 10 - Wait till BHS Reset is done */
+> 
+> would help in readability if you can be consistent and add empty lines after each
+> step as done for rest of the routine
+> 
+ ok.
 
-> + */
-> +static int ghes_severity(struct ghes *ghes)
-> +{
-> +       int worst_sev, sec_sev;
-> +       struct acpi_hest_generic_data *gdata;
-> +       const guid_t *section_type;
-> +       const struct acpi_hest_generic_status *estatus = ghes->estatus;
-> +
-> +       worst_sev = GHES_SEV_NO;
-> +       apei_estatus_for_each_section(estatus, gdata) {
-> +               section_type = (guid_t *)gdata->section_type;
-> +               sec_sev = ghes_cper_severity(gdata->error_severity);
-> +
-> +               if (guid_equal(section_type, &CPER_SEC_PCIE))
-> +                       sec_sev = ghes_sec_pcie_severity(gdata);
-> +
-> +               worst_sev = max(worst_sev, sec_sev);
-> +       }
-> +
-> +       return worst_sev;
-> +}
-> +
->  static void ghes_do_proc(struct ghes *ghes,
->                          const struct acpi_hest_generic_status *estatus)
->  {
-> @@ -944,7 +986,7 @@ static int ghes_notify_nmi(unsigned int cmd, struct pt_regs *regs)
->                         ret = NMI_HANDLED;
->                 }
->
-> -               sev = ghes_cper_severity(ghes->estatus->error_severity);
-> +               sev = ghes_severity(ghes);
->                 if (sev >= GHES_SEV_PANIC) {
->                         oops_begin();
->                         ghes_print_queued_estatus();
-> --
+>> +static int q6v5_wcss_stop(struct rproc *rproc)
+>> +{
+>> +	struct q6v5 *qproc = rproc->priv;
+>> +	int ret = 0;
+> 
+> this one too, I think if you run with sparse, it should warn you about these
+> 
+
+ ok, sure would check.
+
+>> +
+>> +	qproc->running = false;
+>> +
+>> +	/* WCSS powerdown */
+>> +	qcom_smem_state_update_bits(qproc->state, BIT(qproc->stop_bit),
+>> +				    BIT(qproc->stop_bit));
+>> +
+>> +	ret = wait_for_completion_timeout(&qproc->stop_done,
+>> +					  msecs_to_jiffies(5000));
+>> +	if (ret == 0) {
+>> +		dev_err(qproc->dev, "timed out on wait\n");
+>> +		return -ETIMEDOUT;
+>> +	}
+>> +
+>> +	qcom_smem_state_update_bits(qproc->state, BIT(qproc->stop_bit), 0);
+>> +
+>> +	ret = q6v5_wcss_powerdown(qproc);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/* Q6 Power down */
+>> +	ret = q6v5_q6_powerdown(qproc);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	return 0;
+> 
+> this could be optimized to:
+>         return q6v5_q6_powerdown()
+> 
+
+ ok.
+
+Regards,
+ Sricharan
+
+-- 
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
