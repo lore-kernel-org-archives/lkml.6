@@ -1,160 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751823AbeEVPx1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 11:53:27 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:33404 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751701AbeEVPxW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 11:53:22 -0400
-Message-ID: <8f6f585f4076e3a2de76ca6a4a0e99c0c6f29584.camel@collabora.com>
-Subject: Re: [PATCH v10 11/16] vb2: add explicit fence user API
-From: Ezequiel Garcia <ezequiel@collabora.com>
-To: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: kernel@collabora.com, Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
-        Shuah Khan <shuahkh@osg.samsung.com>, Pawel Osciak <pawel@osciak.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Brian Starkey <brian.starkey@arm.com>, linux-kernel@vger.kernel.org,
-        Gustavo Padovan <gustavo.padovan@collabora.com>
-Date: Tue, 22 May 2018 12:51:54 -0300
-In-Reply-To: <9a7d4128-571e-468c-8c03-9f35f610a87f@xs4all.nl>
-References: <20180521165946.11778-1-ezequiel@collabora.com>
-         <20180521165946.11778-12-ezequiel@collabora.com>
-         <9a7d4128-571e-468c-8c03-9f35f610a87f@xs4all.nl>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1 
-Mime-Version: 1.0
+        id S1752121AbeEVPxp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 11:53:45 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54375 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751892AbeEVPxj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 11:53:39 -0400
+Date: Tue, 22 May 2018 09:53:37 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Cornelia Huck <cohuck@redhat.com>
+Cc: kwankhede@nvidia.com, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, pasic@linux.ibm.com,
+        zhenyuw@linux.intel.com, zhenyuw@linux.intel.com,
+        intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org
+Subject: Re: [PATCH v4 1/2] vfio/mdev: Check globally for duplicate devices
+Message-ID: <20180522095337.1a3043e6@w520.home>
+In-Reply-To: <20180522101346.3442e1af.cohuck@redhat.com>
+References: <20180518190145.3187.7620.stgit@gimli.home>
+        <20180518191025.3187.29141.stgit@gimli.home>
+        <20180522101346.3442e1af.cohuck@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-05-22 at 14:05 +0200, Hans Verkuil wrote:
-> On 21/05/18 18:59, Ezequiel Garcia wrote:
-> > From: Gustavo Padovan <gustavo.padovan@collabora.com>
+[Cc +GVT-g maintainers/lists]
+
+On Tue, 22 May 2018 10:13:46 +0200
+Cornelia Huck <cohuck@redhat.com> wrote:
+
+> On Fri, 18 May 2018 13:10:25 -0600
+> Alex Williamson <alex.williamson@redhat.com> wrote:
+> 
+> > When we create an mdev device, we check for duplicates against the
+> > parent device and return -EEXIST if found, but the mdev device
+> > namespace is global since we'll link all devices from the bus.  We do
+> > catch this later in sysfs_do_create_link_sd() to return -EEXIST, but
+> > with it comes a kernel warning and stack trace for trying to create
+> > duplicate sysfs links, which makes it an undesirable response.
 > > 
-> > Turn the reserved2 field into fence_fd that we will use to send
-> > an in-fence to the kernel or return an out-fence from the kernel to
-> > userspace.
+> > Therefore we should really be looking for duplicates across all mdev
+> > parent devices, or as implemented here, against our mdev device list.
+> > Using mdev_list to prevent duplicates means that we can remove
+> > mdev_parent.lock, but in order not to serialize mdev device creation
+> > and removal globally, we add mdev_device.active which allows UUIDs to
+> > be reserved such that we can drop the mdev_list_lock before the mdev
+> > device is fully in place.
 > > 
-> > Two new flags were added, V4L2_BUF_FLAG_IN_FENCE, that should be used
-> > when sending an in-fence to the kernel to be waited on, and
-> > V4L2_BUF_FLAG_OUT_FENCE, to ask the kernel to give back an out-fence.
+> > Two behavioral notes; first, mdev_parent.lock had the side-effect of
+> > serializing mdev create and remove ops per parent device.  This was
+> > an implementation detail, not an intentional guarantee provided to
+> > the mdev vendor drivers.  Vendor drivers can trivially provide this
+> > serialization internally if necessary.  Second, review comments note
+> > the new -EAGAIN behavior when the device, and in particular the remove
+> > attribute, becomes visible in sysfs.  If a remove is triggered prior
+> > to completion of mdev_device_create() the user will see a -EAGAIN
+> > error.  While the errno is different, receiving an error during this
+> > period is not, the previous implementation returned -ENODEV for the
+> > same condition.  Furthermore, the consistency to the user is improved
+> > in the case where mdev_device_remove_ops() returns error.  Previously
+> > concurrent calls to mdev_device_remove() could see the device
+> > disappear with -ENODEV and return in the case of error.  Now a user
+> > would see -EAGAIN while the device is in this transitory state.
 > > 
-> > v8: return -1 if new flags are set.
-> > v7: minor fixes on the Documentation (Hans Verkuil)
-> > 
-> > v6: big improvement on doc (Hans Verkuil)
-> > 
-> > v5: - keep using reserved2 field for cpia2
-> >     - set fence_fd to 0 for now, for compat with userspace(Mauro)
-> > 
-> > v4: make it a union with reserved2 and fence_fd (Hans Verkuil)
-> > 
-> > v3: make the out_fence refer to the current buffer (Hans Verkuil)
-> > 
-> > v2: add documentation
-> > 
-> > Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
+> > Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
 > > ---
-> >  Documentation/media/uapi/v4l/buffer.rst         | 48 ++++++++++++++++++++++---
-> >  drivers/media/common/videobuf2/videobuf2-v4l2.c |  6 +++-
-> >  drivers/media/v4l2-core/v4l2-compat-ioctl32.c   |  4 +--
-> >  include/uapi/linux/videodev2.h                  |  8 ++++-
-> >  4 files changed, 58 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/Documentation/media/uapi/v4l/buffer.rst b/Documentation/media/uapi/v4l/buffer.rst
-> > index e2c85ddc990b..971b7453040c 100644
-> > --- a/Documentation/media/uapi/v4l/buffer.rst
-> > +++ b/Documentation/media/uapi/v4l/buffer.rst
-> > @@ -300,11 +300,23 @@ struct v4l2_buffer
-> >  	multi-planar API the application sets this to the number of
-> >  	elements in the ``planes`` array. The driver will fill in the
-> >  	actual number of valid elements in that array.
-> > -    * - __u32
-> > -      - ``reserved2``
-> > +    * - __s32
-> > +      - ``fence_fd``
-> >        -
-> > -      - A place holder for future extensions. Drivers and applications
-> > -	must set this to 0.
-> > +      - Used to communicate a fence file descriptor from userspace to kernel
-> > +	and vice-versa. On :ref:`VIDIOC_QBUF <VIDIOC_QBUF>` when sending
-> > +	an in-fence for V4L2 to wait on, the ``V4L2_BUF_FLAG_IN_FENCE`` flag must
-> > +	be used and this field set to the fence file descriptor of the in-fence.
-> > +	If the in-fence is not valid ` VIDIOC_QBUF`` returns an error.
-> > +
-> > +        To get an out-fence back from V4L2 the ``V4L2_BUF_FLAG_OUT_FENCE``
-> > +	must be set, the kernel will return the out-fence file descriptor in
-> > +	this field. If it fails to create the out-fence ``VIDIOC_QBUF` returns
-> > +        an error.
-> > +
-> > +	For all other ioctls V4L2 sets this field to -1 if
-> > +	``V4L2_BUF_FLAG_IN_FENCE`` and/or ``V4L2_BUF_FLAG_OUT_FENCE`` are set,
-> > +	otherwise this field is set to 0 for backward compatibility.
-> >      * - __u32
-> >        - ``reserved``
-> >        -
-> > @@ -648,6 +660,34 @@ Buffer Flags
-> >        - Start Of Exposure. The buffer timestamp has been taken when the
-> >  	exposure of the frame has begun. This is only valid for the
-> >  	``V4L2_BUF_TYPE_VIDEO_CAPTURE`` buffer type.
-> > +    * .. _`V4L2-BUF-FLAG-IN-FENCE`:
-> > +
-> > +      - ``V4L2_BUF_FLAG_IN_FENCE``
-> > +      - 0x00200000
-> > +      - Ask V4L2 to wait on the fence passed in the ``fence_fd`` field. The
-> > +	buffer won't be queued to the driver until the fence signals. The order
-> > +	in which buffers are queued is guaranteed to be preserved, so any
-> > +	buffers queued after this buffer will also be blocked until this fence
-> > +	signals. This flag must be set before calling ``VIDIOC_QBUF``. For
-> > +	other ioctls the driver just reports the value of the flag.
-> > +
-> > +        If the fence signals the flag is cleared and not reported anymore.
-> > +	If the fence is not valid ``VIDIOC_QBUF`` returns an error.
-> > +    * .. _`V4L2-BUF-FLAG-OUT-FENCE`:
-> > +
-> > +      - ``V4L2_BUF_FLAG_OUT_FENCE``
-> > +      - 0x00400000
-> > +      - Request for a fence to be attached to the buffer. The driver will fill
-> > +	in the out-fence fd in the ``fence_fd`` field when :ref:`VIDIOC_QBUF
-> > +	<VIDIOC_QBUF>` returns. This flag must be set before calling
-> > +	``VIDIOC_QBUF``. This flag is only an input, and is not set by the kernel.
-> > +
-> > +        If the creation of the out-fence fails ``VIDIOC_QBUF`` returns an
-> > +	error.
-> > +
-> > +        Note that it is valid to set both ``V4L2_BUF_FLAG_IN_FENCE`` and
-> > +        `V4L2_BUF_FLAG_OUT_FENCE`` flags. In such case, the ``fence_fd``
-> > +        field is used to both set the in-fence and return the out-fence.
-> >  
-> >  
-> >  
-> > diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
-> > index 64503615d00b..8312f61adfa6 100644
-> > --- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
-> > +++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
-> > @@ -203,9 +203,13 @@ static void __fill_v4l2_buffer(struct vb2_buffer *vb, void *pb)
-> >  	b->timestamp = ns_to_timeval(vb->timestamp);
-> >  	b->timecode = vbuf->timecode;
-> >  	b->sequence = vbuf->sequence;
-> > -	b->reserved2 = 0;
-> >  	b->reserved = 0;
-> >  
-> > +	if (b->flags & (V4L2_BUF_FLAG_IN_FENCE | V4L2_BUF_FLAG_OUT_FENCE))
-> > +		b->fence_fd = -1;
-> > +	else
-> > +		b->fence_fd = 0;
+> >  Documentation/vfio-mediated-device.txt |    5 ++
+> >  drivers/vfio/mdev/mdev_core.c          |  102 +++++++++++---------------------
+> >  drivers/vfio/mdev/mdev_private.h       |    2 -
+> >  3 files changed, 42 insertions(+), 67 deletions(-)  
 > 
-> I don't see why we can't just always set fence_fd to -1.
+> Reviewed-by: Cornelia Huck <cohuck@redhat.com>
 > 
-> There is no need for backwards compatibility that I can see.
-> 
-> 
+> I think it is better to deal with any possible vendor driver
+> implications on top of this (I still believe that vfio-ccw is fine).
 
-I thought we were trying to not break any users expecting reserved2
-to be zeroed.
+Thanks Cornelia.  So if vfio-ccw is fine, presumably NVIDIA is fine,
+then this leaves GVT-g to see if there's any fallout.  Zhenyu & Zhi,
+I've linked the series under discussion here below[1].  The question to
+you is the first of the two behavioral notes listed above, does GVT-g
+have any dependency on the mdev core providing serialization per mdev
+parent device for the create and remove callbacks within the
+mdev_parent_ops?  This was never an intended feature of the
+implementation and as noted it should be trivial for for an mdev vendor
+driver to provide equivalent course grained serialization if
+necessary.  Of course it would be better to implement that sooner
+rather than later if required.
 
-Unless that's silly?
+I see that __intel_gvt_create_vgpu() makes use of gvt->lock, which
+would seem to already provide this level of per-parent locking. The
+remove path makes use of this same lock, so I think we're ok, but
+looking for an explicit ack so there are no surprises.  I'd like
+to queue this series for v4.18.  Thanks,
+
+Alex
+
+[1] https://lkml.org/lkml/2018/5/18/1035
