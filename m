@@ -1,39 +1,38 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2320200-1526983387-2-15569751367781812724
+X-Cyrus-Session-Id: sloti22d1t05-2389970-1526987633-2-15268041683768691638
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
+X-Spam-charsets: plain='windows-1252'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526983386; b=mwD9y9RMvzcEsj2rPka+prpg+/QYRD5mHxWOMtK6H9FyG+GlTj
-    lioo0mzsBkepJTtZfw4T65QU8rBkn4jah2f9FrXmyslYLUDosgW1VcxC1om5YVFp
-    Ok+I2Nm6q7Z5UqJp6z6ttoOS5GqyXEe3qFaOGA7GRO1BNUNaIHixLEIw2V0B5UX0
-    /F5px2sq1lc3K3qk2RUiFyQsURLczZwZySm3sdPcA4u1vkp85j8qKxf3PZArhuKd
-    gveC9qx5caoCWL+U/ihnmnKHmK/0J7DmkzoSZzXyu4JwPMHNSILlRyFF1jYuzX6F
-    wmKa+OfoTbnzDBVDlQK2uey20EDzNbpRt9Hg==
+    1526987633; b=kSjfZxWGIBlxaIQgTSlkDh6nF/yfhYvWBLXdgHY4s9D+YaJyvi
+    tNaVXeqochYvxPKGqsJMjfmEETVO1GETV/9zT2aNalEBYTnaWFjwY1Jp5+6BEB/b
+    +G/FKsNBtPH1x/Q3GBKz0TMw58Acm0OTcgvruipohy6POj8AtD5QCvfFXzybXMdz
+    8izW6xciVimVmXwL3FQ8BDM8qrRtRJE1uUnrjOWBKJY/rx3tnKka5tpT+IY/eUbP
+    nHYnq/Uw7QUIjyOY2a6U5viCYtvndZ9MDNNQHiMmBBjqKTOBLLck1QkTTZGPiWDO
+    1KiqgR60PE02f7un8NzuQpErqcG9GGlyp7Fg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1526983386; bh=7rmQ8O2xt17bW6iyzIxR6hygRLQZId
-    5dO0Enl87nJws=; b=CgtAx9DlkrTTdBoFvx9ZBFdeUvIokCEf/bMdpwRmTJ4qvt
-    b5v80VKr7eR146UZhmk38FXhGGTqgxiz4WAv07Th6KEoZcjAMhy6hQVjWkyHgxC9
-    +LediEUiTWMyhshAdg5jIsJIIBNNfRRkyGXjynRR8eVkLQ2duo134n9hzAe3/Klv
-    N/AwfQ7iMwkU2kKcW2NDMjfy8wdFuG4u3iztdBD+KzFHNfD11ndsaHwTj+pu5JH5
-    HEHTs6tnjwALaOAG9F6yMYlW2ZvfHbAXYjB3X39zYzHDzspEV2EpF/eC2UOLfLuT
-    v0p2AjWcomYfFUQO7aA5rd2qpeWVi9gfrDT2Z31w==
+    messagingengine.com; h=subject:to:references:cc:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1526987633;
+    bh=SQC28kmHtSyepdYm5QxfqJdGKT7BcmwxIgKFVKt5jSU=; b=dh0wW7eBJhfo
+    WwYgr6jmyIH7FeJyt5r+OHPz1LALjOaNrxI7wlxaIexOk4MVFO7Olw562ufFAUlG
+    ztVRDIr4lURb4eDocGwqWWXeR7RCJuSoog972BzVnCVSSv/tQHxEdr28LkSFA9PO
+    lgI/D1jydb3ytqJd7K4fD6pu5FKsmu3AZkqj9OMHub9zMRTRiEKEZ6vcNpJX0n1R
+    nTj13wSzHQU7R/nc0dVnhIYoYt4K5rS24WLkHqDf50qMZAAfZ4avxXZTCLe+n8ZJ
+    ghhBublT2+xugJEWo3+3P/EPXiCJZPcwm8wWgBBzrJ6mQ2teMJB+YICLp0ktq03L
+    PWQLBRB3ag==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 1024-bit rsa key sha256)
-    header.d=kernel.org header.i=@kernel.org header.b=U1bVoZHE x-bits=1024
-    x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=linuxfoundation.org;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=huawei.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -42,16 +41,12 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linuxfoundation.org header.result=pass
-    header_is_org_domain=yes;
+    header.domain=huawei.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered, 1024-bit rsa key sha256)
-      header.d=kernel.org header.i=@kernel.org header.b=U1bVoZHE x-bits=1024
-      x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=linuxfoundation.org;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=huawei.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -60,57 +55,71 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linuxfoundation.org header.result=pass
-      header_is_org_domain=yes;
+      header.domain=huawei.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNLztSjlezkQgY5ZYVs7tYbU7SchO61bQzVLKB3BD7vtqp4Pt7mLOayjUM70qCZhyX3XCX20NYgqzsLeo+uTKK+uDq9qHW7FkA41AqzQaJY75CHNUq0e
-    URTNWMmnCDEYLybHIvCDsuOsl3spkIrzLJP7Qx4Jxv1k8R5zqKKh0BkkH7C+AwLDQgkep8AeGPyGyOdxHNL4YIcKrhpfCoDywjPXhuQBVFjK8dj3Cp3kuGMS
+X-CM-Envelope: MS4wfD6R0lGTNrgMf3fC2Jlg8c0EK/7eL1grR+UosDOFWCVNmAD2GDOngGDkU2F/5od9o/oVg2uvCdli2eIuIJNesLrdJuNTgZocS2DXnq/hLlbJtbgyP24u
+    kR265H+An4rg/gJGH2ctXS96X5maONZWTMjQUG61RQzsO/7EAmCcpgmjuN4nAM3nNnuOW329KvHdswJuAWOuI0v6bh7ReRWHigvOLI3/cRUNK0FDcaM/GgSe
 X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=i0EeH86SAAAA:8 a=VwQbUJbxAAAA:8 a=uPpzqJ_YwVX59f6PkjcA:9 a=CjuIK1q_8ugA:10
-    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=MyVaHAqUCHEA:10 a=N659UExz7-8A:10
+    a=VUJBJC2UJ8kA:10 a=i0EeH86SAAAA:8 a=VwQbUJbxAAAA:8 a=Zt5R5_gIepOIDh1y4hUA:9
+    a=pILNOxqGKmIA:10 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751314AbeEVKC2 (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 22 May 2018 06:02:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60128 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751192AbeEVKC0 (ORCPT <rfc822;linux-usb@vger.kernel.org>);
-        Tue, 22 May 2018 06:02:26 -0400
-Date: Tue, 22 May 2018 12:02:08 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Yisheng Xie <xieyisheng1@huawei.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        USB <linux-usb@vger.kernel.org>, Felipe Balbi <balbi@kernel.org>
+        id S1751261AbeEVLNj (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 22 May 2018 07:13:39 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:44259 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750733AbeEVLNj (ORCPT <rfc822;linux-usb@vger.kernel.org>);
+        Tue, 22 May 2018 07:13:39 -0400
 Subject: Re: [PATCH 01/33] usb: phy: use match_string() helper
-Message-ID: <20180522100208.GC11079@kroah.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
 References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
  <1526903890-35761-2-git-send-email-xieyisheng1@huawei.com>
  <CAHp75Ven5JXiaPA50K_fq33L2W+atHT81Txp3D=6j4Op1BHPGA@mail.gmail.com>
+ <20180522100208.GC11079@kroah.com>
+CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        USB <linux-usb@vger.kernel.org>, Felipe Balbi <balbi@kernel.org>
+From: Yisheng Xie <xieyisheng1@huawei.com>
+Message-ID: <6bc1152f-198f-4b73-d3b8-2bde7d83de71@huawei.com>
+Date: Tue, 22 May 2018 19:12:44 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.1.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75Ven5JXiaPA50K_fq33L2W+atHT81Txp3D=6j4Op1BHPGA@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180522100208.GC11079@kroah.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.40]
+X-CFilter-Loop: Reflected
 Sender: linux-usb-owner@vger.kernel.org
 X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, May 22, 2018 at 01:20:01AM +0300, Andy Shevchenko wrote:
-> On Mon, May 21, 2018 at 2:57 PM, Yisheng Xie <xieyisheng1@huawei.com> wrote:
-> > match_string() returns the index of an array for a matching string,
-> > which can be used intead of open coded variant.
-> 
-> > -       int err, i;
-> > +       int ret;
-> 
-> int err;
-> 
-> would still work.
+Hi,
 
-And it reduces churn.
+On 2018/5/22 18:02, Greg Kroah-Hartman wrote:
+> On Tue, May 22, 2018 at 01:20:01AM +0300, Andy Shevchenko wrote:
+>> On Mon, May 21, 2018 at 2:57 PM, Yisheng Xie <xieyisheng1@huawei.com> wrote:
+>>> match_string() returns the index of an array for a matching string,
+>>> which can be used intead of open coded variant.
+>>
+>>> -       int err, i;
+>>> +       int ret;
+>>
+>> int err;
+>>
+>> would still work.
+> 
+> And it reduces churn.
+
+I will keep it as err in next version.
+
+Thanks
+Yisheng
+> 
+> 
+
