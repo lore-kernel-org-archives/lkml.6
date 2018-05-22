@@ -1,347 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752453AbeEVSRA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 14:17:00 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:45210 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751329AbeEVSPX (ORCPT
+        id S1751688AbeEVSTl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 14:19:41 -0400
+Received: from mail-ot0-f178.google.com ([74.125.82.178]:40204 "EHLO
+        mail-ot0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751319AbeEVSTh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 14:15:23 -0400
-X-Google-Smtp-Source: AB8JxZq2eAQ+lxLvKclfxQBcB9hdvrH/IwU3kOaur/MeqX6F8lBiSEOqdV39n0bDUBYo1fVwlL1KMg==
-From: Kees Cook <keescook@chromium.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Kees Cook <keescook@chromium.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Tejun Heo <tj@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Manoj N. Kumar" <manoj@linux.vnet.ibm.com>,
-        "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>,
-        Uma Krishnan <ukrishn@linux.vnet.ibm.com>, linux-block@vger.kernel.org,
-        linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/6] ide-cd: Drop unused sense buffers
-Date: Tue, 22 May 2018 11:15:07 -0700
-Message-Id: <20180522181512.39316-2-keescook@chromium.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180522181512.39316-1-keescook@chromium.org>
-References: <20180522181512.39316-1-keescook@chromium.org>
+        Tue, 22 May 2018 14:19:37 -0400
+X-Google-Smtp-Source: AB8JxZoooFGB8dxVvin20JB83Qv193mWMf+jhxna72DeKMjebClduy8BilC4xrztSvNedgE/EPniKA==
+Subject: Re: [PATCH v6 1/2] acpi: apei: Rename ghes_severity() to
+ ghes_cper_severity()
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Luck, Tony" <tony.luck@intel.com>
+Cc: Borislav Petkov <bp@alien8.de>, alex_gagniuc@dellteam.com,
+        austin_bolen@dell.com, shyam_iyer@dell.com,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
+        Tyler Baicar <tbaicar@codeaurora.org>,
+        Will Deacon <will.deacon@arm.com>, James Morse <james.morse@arm.com>,
+        Shiju Jose <shiju.jose@huawei.com>,
+        "Jonathan (Zhixiong) Zhang" <zjzhang@codeaurora.org>,
+        Dongjiu Geng <gengdongjiu@huawei.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180521135003.32459-1-mr.nuke.me@gmail.com>
+ <20180521135003.32459-2-mr.nuke.me@gmail.com>
+ <CAJZ5v0hKfgTOJb47NjeOP1BBPXPjWqdfu_TXVwWMzOHicEx0Xw@mail.gmail.com>
+ <53d0ba88-6929-a7cf-6c3e-4ca389f7249a@gmail.com>
+ <20180522135015.GF5512@pd.tnic>
+ <0b758a1c-90e3-6f76-4f83-1e22c8fc9cd6@gmail.com>
+ <20180522145426.GG5512@pd.tnic> <20180522175742.GA3543@agluck-desk>
+ <CAJZ5v0j1E-kg3RPcasSJn=uZj9uaZcL4Zw9tp4mJgnsbWcPWbw@mail.gmail.com>
+From: "Alex G." <mr.nuke.me@gmail.com>
+Message-ID: <5dc58180-d3c0-a9f0-282f-4be433c94052@gmail.com>
+Date: Tue, 22 May 2018 13:19:34 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
+MIME-Version: 1.0
+In-Reply-To: <CAJZ5v0j1E-kg3RPcasSJn=uZj9uaZcL4Zw9tp4mJgnsbWcPWbw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This drops unused sense buffers from:
+On 05/22/2018 01:10 PM, Rafael J. Wysocki wrote:
+> On Tue, May 22, 2018 at 7:57 PM, Luck, Tony <tony.luck@intel.com> wrote:
+>> On Tue, May 22, 2018 at 04:54:26PM +0200, Borislav Petkov wrote:
+>>> I especially don't want to have the case where a PCIe error is *really*
+>>> fatal and then we noodle in some handlers debating about the severity
+>>> because it got marked as recoverable intermittently and end up causing
+>>> data corruption on the storage device. Here's a real no-no for ya.
+>>
+>> All that we have is a message from the BIOS that this is a "fatal"
+>> error.  When did we start trusting the BIOS to give us accurate
+>> information?
+> 
+> Some time ago, actually.
+> 
+> This is about changing the existing behavior which has been to treat
+> "fatal" errors reported by the BIOS as good enough reasons for a panic
+> for quite a while AFAICS.
 
-	cdrom_eject()
-	cdrom_read_capacity()
-	cdrom_read_tocentry()
-	ide_cd_lockdoor()
-	ide_cd_read_toc()
+Yes, you are correct. I'd actually like to go deeper, and remove the 
+policy to panic() on fatal errors. Now whether we blacklist or whitelist 
+which errors can go through is up for debate, but the current policy 
+seems broken.
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- drivers/ide/ide-cd.c       | 36 +++++++++++++++---------------------
- drivers/ide/ide-cd.h       |  2 +-
- drivers/ide/ide-cd_ioctl.c | 34 ++++++++++++----------------------
- 3 files changed, 28 insertions(+), 44 deletions(-)
+>> PCIe fatal means that the link or the device is broken.
+> 
+> And that may really mean that the component in question is on fire.
+> We just don't know.
 
-diff --git a/drivers/ide/ide-cd.c b/drivers/ide/ide-cd.c
-index 5a8e8e3c22cd..1d5b35312e33 100644
---- a/drivers/ide/ide-cd.c
-+++ b/drivers/ide/ide-cd.c
-@@ -890,8 +890,7 @@ int cdrom_check_status(ide_drive_t *drive, struct request_sense *sense)
- }
- 
- static int cdrom_read_capacity(ide_drive_t *drive, unsigned long *capacity,
--			       unsigned long *sectors_per_frame,
--			       struct request_sense *sense)
-+			       unsigned long *sectors_per_frame)
- {
- 	struct {
- 		__be32 lba;
-@@ -908,7 +907,7 @@ static int cdrom_read_capacity(ide_drive_t *drive, unsigned long *capacity,
- 	memset(cmd, 0, BLK_MAX_CDB);
- 	cmd[0] = GPCMD_READ_CDVD_CAPACITY;
- 
--	stat = ide_cd_queue_pc(drive, cmd, 0, &capbuf, &len, sense, 0,
-+	stat = ide_cd_queue_pc(drive, cmd, 0, &capbuf, &len, NULL, 0,
- 			       RQF_QUIET);
- 	if (stat)
- 		return stat;
-@@ -944,8 +943,7 @@ static int cdrom_read_capacity(ide_drive_t *drive, unsigned long *capacity,
- }
- 
- static int cdrom_read_tocentry(ide_drive_t *drive, int trackno, int msf_flag,
--				int format, char *buf, int buflen,
--				struct request_sense *sense)
-+				int format, char *buf, int buflen)
- {
- 	unsigned char cmd[BLK_MAX_CDB];
- 
-@@ -962,11 +960,11 @@ static int cdrom_read_tocentry(ide_drive_t *drive, int trackno, int msf_flag,
- 	if (msf_flag)
- 		cmd[1] = 2;
- 
--	return ide_cd_queue_pc(drive, cmd, 0, buf, &buflen, sense, 0, RQF_QUIET);
-+	return ide_cd_queue_pc(drive, cmd, 0, buf, &buflen, NULL, 0, RQF_QUIET);
- }
- 
- /* Try to read the entire TOC for the disk into our internal buffer. */
--int ide_cd_read_toc(ide_drive_t *drive, struct request_sense *sense)
-+int ide_cd_read_toc(ide_drive_t *drive)
- {
- 	int stat, ntracks, i;
- 	struct cdrom_info *info = drive->driver_data;
-@@ -996,14 +994,13 @@ int ide_cd_read_toc(ide_drive_t *drive, struct request_sense *sense)
- 	 * Check to see if the existing data is still valid. If it is,
- 	 * just return.
- 	 */
--	(void) cdrom_check_status(drive, sense);
-+	(void) cdrom_check_status(drive, NULL);
- 
- 	if (drive->atapi_flags & IDE_AFLAG_TOC_VALID)
- 		return 0;
- 
- 	/* try to get the total cdrom capacity and sector size */
--	stat = cdrom_read_capacity(drive, &toc->capacity, &sectors_per_frame,
--				   sense);
-+	stat = cdrom_read_capacity(drive, &toc->capacity, &sectors_per_frame);
- 	if (stat)
- 		toc->capacity = 0x1fffff;
- 
-@@ -1016,7 +1013,7 @@ int ide_cd_read_toc(ide_drive_t *drive, struct request_sense *sense)
- 
- 	/* first read just the header, so we know how long the TOC is */
- 	stat = cdrom_read_tocentry(drive, 0, 1, 0, (char *) &toc->hdr,
--				    sizeof(struct atapi_toc_header), sense);
-+				    sizeof(struct atapi_toc_header));
- 	if (stat)
- 		return stat;
- 
-@@ -1036,7 +1033,7 @@ int ide_cd_read_toc(ide_drive_t *drive, struct request_sense *sense)
- 				  (char *)&toc->hdr,
- 				   sizeof(struct atapi_toc_header) +
- 				   (ntracks + 1) *
--				   sizeof(struct atapi_toc_entry), sense);
-+				   sizeof(struct atapi_toc_entry));
- 
- 	if (stat && toc->hdr.first_track > 1) {
- 		/*
-@@ -1056,8 +1053,7 @@ int ide_cd_read_toc(ide_drive_t *drive, struct request_sense *sense)
- 					   (char *)&toc->hdr,
- 					   sizeof(struct atapi_toc_header) +
- 					   (ntracks + 1) *
--					   sizeof(struct atapi_toc_entry),
--					   sense);
-+					   sizeof(struct atapi_toc_entry));
- 		if (stat)
- 			return stat;
- 
-@@ -1094,7 +1090,7 @@ int ide_cd_read_toc(ide_drive_t *drive, struct request_sense *sense)
- 	if (toc->hdr.first_track != CDROM_LEADOUT) {
- 		/* read the multisession information */
- 		stat = cdrom_read_tocentry(drive, 0, 0, 1, (char *)&ms_tmp,
--					   sizeof(ms_tmp), sense);
-+					   sizeof(ms_tmp));
- 		if (stat)
- 			return stat;
- 
-@@ -1108,7 +1104,7 @@ int ide_cd_read_toc(ide_drive_t *drive, struct request_sense *sense)
- 	if (drive->atapi_flags & IDE_AFLAG_TOCADDR_AS_BCD) {
- 		/* re-read multisession information using MSF format */
- 		stat = cdrom_read_tocentry(drive, 0, 1, 1, (char *)&ms_tmp,
--					   sizeof(ms_tmp), sense);
-+					   sizeof(ms_tmp));
- 		if (stat)
- 			return stat;
- 
-@@ -1412,7 +1408,7 @@ static sector_t ide_cdrom_capacity(ide_drive_t *drive)
- {
- 	unsigned long capacity, sectors_per_frame;
- 
--	if (cdrom_read_capacity(drive, &capacity, &sectors_per_frame, NULL))
-+	if (cdrom_read_capacity(drive, &capacity, &sectors_per_frame))
- 		return 0;
- 
- 	return capacity * sectors_per_frame;
-@@ -1723,9 +1719,8 @@ static unsigned int idecd_check_events(struct gendisk *disk,
- static int idecd_revalidate_disk(struct gendisk *disk)
- {
- 	struct cdrom_info *info = ide_drv_g(disk, cdrom_info);
--	struct request_sense sense;
- 
--	ide_cd_read_toc(info->drive, &sense);
-+	ide_cd_read_toc(info->drive);
- 
- 	return  0;
- }
-@@ -1749,7 +1744,6 @@ static int ide_cd_probe(ide_drive_t *drive)
- {
- 	struct cdrom_info *info;
- 	struct gendisk *g;
--	struct request_sense sense;
- 
- 	ide_debug_log(IDE_DBG_PROBE, "driver_req: %s, media: 0x%x",
- 				     drive->driver_req, drive->media);
-@@ -1798,7 +1792,7 @@ static int ide_cd_probe(ide_drive_t *drive)
- 		goto failed;
- 	}
- 
--	ide_cd_read_toc(drive, &sense);
-+	ide_cd_read_toc(drive);
- 	g->fops = &idecd_ops;
- 	g->flags |= GENHD_FL_REMOVABLE | GENHD_FL_BLOCK_EVENTS_ON_EXCL_WRITE;
- 	device_add_disk(&drive->gendev, g);
-diff --git a/drivers/ide/ide-cd.h b/drivers/ide/ide-cd.h
-index 04f0f310a856..fc162fbb6629 100644
---- a/drivers/ide/ide-cd.h
-+++ b/drivers/ide/ide-cd.h
-@@ -99,7 +99,7 @@ void ide_cd_log_error(const char *, struct request *, struct request_sense *);
- /* ide-cd.c functions used by ide-cd_ioctl.c */
- int ide_cd_queue_pc(ide_drive_t *, const unsigned char *, int, void *,
- 		    unsigned *, struct request_sense *, int, req_flags_t);
--int ide_cd_read_toc(ide_drive_t *, struct request_sense *);
-+int ide_cd_read_toc(ide_drive_t *);
- int ide_cdrom_get_capabilities(ide_drive_t *, u8 *);
- void ide_cdrom_update_speed(ide_drive_t *, u8 *);
- int cdrom_check_status(ide_drive_t *, struct request_sense *);
-diff --git a/drivers/ide/ide-cd_ioctl.c b/drivers/ide/ide-cd_ioctl.c
-index 2acca12b9c94..c709f4eed0e9 100644
---- a/drivers/ide/ide-cd_ioctl.c
-+++ b/drivers/ide/ide-cd_ioctl.c
-@@ -105,8 +105,7 @@ unsigned int ide_cdrom_check_events_real(struct cdrom_device_info *cdi,
- /* Eject the disk if EJECTFLAG is 0.
-    If EJECTFLAG is 1, try to reload the disk. */
- static
--int cdrom_eject(ide_drive_t *drive, int ejectflag,
--		struct request_sense *sense)
-+int cdrom_eject(ide_drive_t *drive, int ejectflag)
- {
- 	struct cdrom_info *cd = drive->driver_data;
- 	struct cdrom_device_info *cdi = &cd->devinfo;
-@@ -129,20 +128,16 @@ int cdrom_eject(ide_drive_t *drive, int ejectflag,
- 	cmd[0] = GPCMD_START_STOP_UNIT;
- 	cmd[4] = loej | (ejectflag != 0);
- 
--	return ide_cd_queue_pc(drive, cmd, 0, NULL, NULL, sense, 0, 0);
-+	return ide_cd_queue_pc(drive, cmd, 0, NULL, NULL, NULL, 0, 0);
- }
- 
- /* Lock the door if LOCKFLAG is nonzero; unlock it otherwise. */
- static
--int ide_cd_lockdoor(ide_drive_t *drive, int lockflag,
--		    struct request_sense *sense)
-+int ide_cd_lockdoor(ide_drive_t *drive, int lockflag)
- {
--	struct request_sense my_sense;
-+	struct request_sense my_sense, *sense = &my_sense;
- 	int stat;
- 
--	if (sense == NULL)
--		sense = &my_sense;
--
- 	/* If the drive cannot lock the door, just pretend. */
- 	if ((drive->dev_flags & IDE_DFLAG_DOORLOCKING) == 0) {
- 		stat = 0;
-@@ -186,23 +181,22 @@ int ide_cd_lockdoor(ide_drive_t *drive, int lockflag,
- int ide_cdrom_tray_move(struct cdrom_device_info *cdi, int position)
- {
- 	ide_drive_t *drive = cdi->handle;
--	struct request_sense sense;
- 
- 	if (position) {
--		int stat = ide_cd_lockdoor(drive, 0, &sense);
-+		int stat = ide_cd_lockdoor(drive, 0);
- 
- 		if (stat)
- 			return stat;
- 	}
- 
--	return cdrom_eject(drive, !position, &sense);
-+	return cdrom_eject(drive, !position);
- }
- 
- int ide_cdrom_lock_door(struct cdrom_device_info *cdi, int lock)
- {
- 	ide_drive_t *drive = cdi->handle;
- 
--	return ide_cd_lockdoor(drive, lock, NULL);
-+	return ide_cd_lockdoor(drive, lock);
- }
- 
- /*
-@@ -213,7 +207,6 @@ int ide_cdrom_select_speed(struct cdrom_device_info *cdi, int speed)
- {
- 	ide_drive_t *drive = cdi->handle;
- 	struct cdrom_info *cd = drive->driver_data;
--	struct request_sense sense;
- 	u8 buf[ATAPI_CAPABILITIES_PAGE_SIZE];
- 	int stat;
- 	unsigned char cmd[BLK_MAX_CDB];
-@@ -236,7 +229,7 @@ int ide_cdrom_select_speed(struct cdrom_device_info *cdi, int speed)
- 		cmd[5] = speed & 0xff;
- 	}
- 
--	stat = ide_cd_queue_pc(drive, cmd, 0, NULL, NULL, &sense, 0, 0);
-+	stat = ide_cd_queue_pc(drive, cmd, 0, NULL, NULL, NULL, 0, 0);
- 
- 	if (!ide_cdrom_get_capabilities(drive, buf)) {
- 		ide_cdrom_update_speed(drive, buf);
-@@ -252,11 +245,10 @@ int ide_cdrom_get_last_session(struct cdrom_device_info *cdi,
- 	struct atapi_toc *toc;
- 	ide_drive_t *drive = cdi->handle;
- 	struct cdrom_info *info = drive->driver_data;
--	struct request_sense sense;
- 	int ret;
- 
- 	if ((drive->atapi_flags & IDE_AFLAG_TOC_VALID) == 0 || !info->toc) {
--		ret = ide_cd_read_toc(drive, &sense);
-+		ret = ide_cd_read_toc(drive);
- 		if (ret)
- 			return ret;
- 	}
-@@ -300,7 +292,6 @@ int ide_cdrom_reset(struct cdrom_device_info *cdi)
- {
- 	ide_drive_t *drive = cdi->handle;
- 	struct cdrom_info *cd = drive->driver_data;
--	struct request_sense sense;
- 	struct request *rq;
- 	int ret;
- 
-@@ -315,7 +306,7 @@ int ide_cdrom_reset(struct cdrom_device_info *cdi)
- 	 * lock it again.
- 	 */
- 	if (drive->atapi_flags & IDE_AFLAG_DOOR_LOCKED)
--		(void)ide_cd_lockdoor(drive, 1, &sense);
-+		(void)ide_cd_lockdoor(drive, 1);
- 
- 	return ret;
- }
-@@ -355,7 +346,6 @@ static int ide_cd_fake_play_trkind(ide_drive_t *drive, void *arg)
- 	struct atapi_toc_entry *first_toc, *last_toc;
- 	unsigned long lba_start, lba_end;
- 	int stat;
--	struct request_sense sense;
- 	unsigned char cmd[BLK_MAX_CDB];
- 
- 	stat = ide_cd_get_toc_entry(drive, ti->cdti_trk0, &first_toc);
-@@ -380,7 +370,7 @@ static int ide_cd_fake_play_trkind(ide_drive_t *drive, void *arg)
- 	lba_to_msf(lba_start,   &cmd[3], &cmd[4], &cmd[5]);
- 	lba_to_msf(lba_end - 1, &cmd[6], &cmd[7], &cmd[8]);
- 
--	return ide_cd_queue_pc(drive, cmd, 0, NULL, NULL, &sense, 0, 0);
-+	return ide_cd_queue_pc(drive, cmd, 0, NULL, NULL, NULL, 0, 0);
- }
- 
- static int ide_cd_read_tochdr(ide_drive_t *drive, void *arg)
-@@ -391,7 +381,7 @@ static int ide_cd_read_tochdr(ide_drive_t *drive, void *arg)
- 	int stat;
- 
- 	/* Make sure our saved TOC is valid. */
--	stat = ide_cd_read_toc(drive, NULL);
-+	stat = ide_cd_read_toc(drive);
- 	if (stat)
- 		return stat;
- 
--- 
-2.17.0
+Should there be a physical fire, we have much bigger issues. At the same 
+time, we could retrain the link, call the driver, and release freon gas 
+to put out the fire. That's something we don't currently have the option 
+to do.
+
+>> But that seems a poor reason to take down a large server that may have
+>> dozens of devices (some of them set up specifically to handle
+>> errors ... e.g. mirrored disks on separate controllers, or NIC
+>> devices that have been "bonded" together).
+>>
+>> So, as long as the action for a "fatal" error is to mark a link
+>> down and offline the device, that seems a pretty reasonable course
+>> of action.
+>>
+>> The argument gets a lot more marginal if you simply reset the
+>> link and re-enable the device to "fix" it. That might be enough,
+>> but I don't think the OS has enough data to make the call.
+> 
+> Again, that's about changing the existing behavior or the existing policy even.
+> 
+> What exactly has changed to make us consider this now?
+
+Firmware started passing "fatal" GHES headers with the explicit intent 
+of crashing an OS. At the same time, we've learnt how to handle these 
+errors in a number of cases. With DPC (coming soon to firmware-first) 
+the error is contained, and a non-issue.
+
+As specs and hardware implementations evolve, we have to adapt. I'm here 
+until November, and one of my goals is to involve linux upstream in the 
+development of these features so that when the hardware hits the market, 
+we're ready. That does mean we have to drop some of the silly things 
+we're doing.
+
+Alex
+
+> Thanks,
+> Rafael
+> 
