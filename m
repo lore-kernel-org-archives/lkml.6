@@ -1,109 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752022AbeEVTJi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 15:09:38 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54140 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751411AbeEVTJg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 15:09:36 -0400
-Date: Tue, 22 May 2018 15:09:34 -0400
-From: Mike Snitzer <snitzer@redhat.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Kent Overstreet <kent.overstreet@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, colyli@suse.de, darrick.wong@oracle.com,
-        clm@fb.com, bacik@fb.com, linux-xfs@vger.kernel.org,
-        drbd-dev@lists.linbit.com, linux-btrfs@vger.kernel.org,
-        linux-raid@vger.kernel.org, neilb@suse.com
-Subject: Re: [PATCH 00/13] convert block layer to bioset_init()/mempool_init()
-Message-ID: <20180522190933.GA25904@redhat.com>
-References: <4b343aef-e11c-73ba-1d88-7e73ca838cad@kernel.dk>
- <20180521150439.GA19379@redhat.com>
- <61e30dcf-a01c-f47d-087a-12930caf9aef@kernel.dk>
- <20180521151817.GA19454@redhat.com>
- <d01a150a-7752-f6ce-78f2-17a65c1e6fa5@kernel.dk>
- <20180521160907.GA19553@redhat.com>
- <20180521173724.GG11495@kmo-pixel>
- <20180521182427.GA20013@redhat.com>
- <20180521233855.GI11495@kmo-pixel>
- <20180522064118.GA18704@infradead.org>
+        id S1752176AbeEVTJr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 15:09:47 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:41363 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752075AbeEVTJo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 15:09:44 -0400
+X-Google-Smtp-Source: AB8JxZp3QZBTeo6vIjISTtRAu1JPdXy1hGbmswV7YDSBGhOPCo7C8Vd6rnP1xxbXDMwjGw2TscCoZA==
+Subject: Re: [PATCH 3/6] block: Create scsi_sense.h for SCSI and ATAPI
+To: Kees Cook <keescook@chromium.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Christoph Hellwig <hch@infradead.org>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Tejun Heo <tj@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Manoj N. Kumar" <manoj@linux.vnet.ibm.com>,
+        "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>,
+        Uma Krishnan <ukrishn@linux.vnet.ibm.com>,
+        linux-block <linux-block@vger.kernel.org>, linux-ide@vger.kernel.org,
+        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <20180522181512.39316-1-keescook@chromium.org>
+ <20180522181512.39316-4-keescook@chromium.org>
+ <20180522183613.GA3784@infradead.org> <yq1efi3bk3g.fsf@oracle.com>
+ <CAGXu5jJ0Sice+fdpWgzBhQR=NGz-DT9qmYVdV1GeH73_q9pbmw@mail.gmail.com>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <732f4249-5681-4a54-ec21-4ecc3d3a74e5@kernel.dk>
+Date: Tue, 22 May 2018 13:09:41 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180522064118.GA18704@infradead.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <CAGXu5jJ0Sice+fdpWgzBhQR=NGz-DT9qmYVdV1GeH73_q9pbmw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22 2018 at  2:41am -0400,
-Christoph Hellwig <hch@infradead.org> wrote:
-
-> On Mon, May 21, 2018 at 07:38:55PM -0400, Kent Overstreet wrote:
-> > On Mon, May 21, 2018 at 02:24:32PM -0400, Mike Snitzer wrote:
-> > > Every single data structure change in this series should be reviewed for
-> > > unforeseen alignment consequences.  Jens seemed to say that is
-> > > worthwhile.  Not sure if he'll do it or we divide it up.  If we divide
-> > > it up a temp topic branch should be published for others to inspect.
-> > > 
-> > > Could be alignment hasn't been a historic concern for a bunch of the
-> > > data structures changed in this series.. if so then all we can do is fix
-> > > up any obvious potential for false sharing.
-> > 
-> > Honestly, I almost never worry about alignment... the very few times I do care,
-> > I use __cacheline_aligned_in_smp.
+On 5/22/18 12:59 PM, Kees Cook wrote:
+> On Tue, May 22, 2018 at 11:50 AM, Martin K. Petersen
+> <martin.petersen@oracle.com> wrote:
+>>
+>> Christoph,
+>>
+>>> On Tue, May 22, 2018 at 11:15:09AM -0700, Kees Cook wrote:
+>>>> Both SCSI and ATAPI share the sense header. In preparation for using the
+>>>> struct scsi_sense_hdr more widely, move this into a separate header and
+>>>> move the helper function to scsi_ioctl.c which is linked with CONFIG_IDE
+>>>> by way of CONFIG_BLK_SCSI_REQUEST.
+>>>
+>>> Please keep the code where it is and just depend on SCSI on the legacy
+>>> ide driver.  No need to do gymnastics just for a legacy case.
+>>
+>> Yup, I agree.
 > 
-> And that generally is the right stratgey.  If Mike really doesn't want
-> a change we can just open code the kmalloc for the bio set there, the
-> important point is that we should not keep the old API around for no
-> good reason.
+> Oh, er, this was mainly done at Jens's request. Jens, can you advise?
 
-Again, I never said I didn't want these changes.  I just thought it
-worthwhile to mention the potential for alignment quirks arising.
+I think Martin and Christoph are objecting to moving the code to
+block/scsi_ioctl.h. I don't care too much about where the code is, but
+think it would be nice to have the definitions in a separate header. But
+if they prefer just pulling in all of SCSI for it, well then I guess
+it's pointless to move the header bits. Seems very heavy handed to me,
+though.
 
-Reality is false sharing is quite uncommon.  So my concern was/is pretty
-niche and unlikely to be applicable.
-
-That said, I did take the opportunity to look at all the DM structures
-that were modified.  The bio_set and mempool_t structs are so large that
-they span multiple cachelines as is.  So I focused on eliminating
-unnecessary spanning of cachelines (by non-bio_set and non-mempool_t
-members) and eliminated most holes in DM structs.  This is the result:
-http://people.redhat.com/msnitzer/dm-4.18-struct-reorg/
-
-Compare before.txt vs after_kent.txt vs after_mike.txt
-
-Nothing staggering or special.  Just something I'll add once Kent's
-latest changes land.
-
-But, I also eliminated 2 4-byte holes in struct bio_set, Jens please
-feel free to pick this up (if you think it useful):
-
-From: Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH] block: eliminate 2 4-byte holes in bio_set structure
-
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
----
- include/linux/bio.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index 5e472fc..e6fc692 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -735,7 +735,6 @@ static inline void bio_inc_remaining(struct bio *bio)
- 
- struct bio_set {
- 	struct kmem_cache *bio_slab;
--	unsigned int front_pad;
- 
- 	mempool_t bio_pool;
- 	mempool_t bvec_pool;
-@@ -743,6 +742,7 @@ struct bio_set {
- 	mempool_t bio_integrity_pool;
- 	mempool_t bvec_integrity_pool;
- #endif
-+	unsigned int front_pad;
- 
- 	/*
- 	 * Deadlock avoidance for stacking block drivers: see comments in
+-- 
+Jens Axboe
