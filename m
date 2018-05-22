@@ -1,186 +1,367 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751687AbeEVH6V (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 03:58:21 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47996 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751456AbeEVHzy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 03:55:54 -0400
-From: Eric Auger <eric.auger@redhat.com>
-To: eric.auger.pro@gmail.com, eric.auger@redhat.com,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
-        christoffer.dall@arm.com, peter.maydell@linaro.org
-Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
-Subject: [PATCH v8 08/13] KVM: arm/arm64: Remove kvm_vgic_vcpu_early_init
-Date: Tue, 22 May 2018 09:55:13 +0200
-Message-Id: <1526975718-18567-9-git-send-email-eric.auger@redhat.com>
-In-Reply-To: <1526975718-18567-1-git-send-email-eric.auger@redhat.com>
-References: <1526975718-18567-1-git-send-email-eric.auger@redhat.com>
+        id S1751599AbeEVH6i (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 03:58:38 -0400
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:13142 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751603AbeEVH6d (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 03:58:33 -0400
+X-IronPort-AV: E=Sophos;i="5.49,429,1520924400";
+   d="scan'208";a="14518729"
+Subject: Re: [PATCH v6 6/9] input: touchscreen: resistive-adc-touch: add
+ generic resistive ADC touchscreen
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+CC: <jic23@kernel.org>, <ludovic.desroches@microchip.com>,
+        <alexandre.belloni@bootlin.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+        <linux-input@vger.kernel.org>, <nicolas.ferre@microchip.com>,
+        <robh@kernel.org>
+References: <1526898477-9952-1-git-send-email-eugen.hristev@microchip.com>
+ <1526898477-9952-7-git-send-email-eugen.hristev@microchip.com>
+ <20180521210611.GB74396@dtor-ws>
+From: Eugen Hristev <eugen.hristev@microchip.com>
+Message-ID: <56a46a3e-07da-552a-d621-0088615f33d0@microchip.com>
+Date: Tue, 22 May 2018 10:56:09 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180521210611.GB74396@dtor-ws>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kvm_vgic_vcpu_early_init gets called after kvm_vgic_cpu_init which
-is confusing. The call path is as follows:
-kvm_vm_ioctl_create_vcpu
-|_ kvm_arch_cpu_create
-   |_ kvm_vcpu_init
-      |_ kvm_arch_vcpu_init
-         |_ kvm_vgic_vcpu_init
-|_ kvm_arch_vcpu_postcreate
-   |_ kvm_vgic_vcpu_early_init
 
-Static initialization currently done in kvm_vgic_vcpu_early_init()
-can be moved to kvm_vgic_vcpu_init(). So let's move the code and
-remove kvm_vgic_vcpu_early_init(). kvm_arch_vcpu_postcreate() does
-nothing.
 
-Signed-off-by: Eric Auger <eric.auger@redhat.com>
+On 22.05.2018 00:06, Dmitry Torokhov wrote:
+> On Mon, May 21, 2018 at 01:27:54PM +0300, Eugen Hristev wrote:
+>> This adds a generic resistive touchscreen (GRTS) driver, which is based
+>> on an IIO device (an ADC). It must be connected to the channels of an ADC
+>> to receive touch data. Then it will feed the data into the input subsystem
+>> where it registers an input device.
+>> It uses an IIO callback buffer to register to the IIO device
+>>
+>> Some parts of this patch are based on initial original work by
+>> Mohamed Jamsheeth Hajanajubudeen and Bandaru Venkateswara Swamy
+>>
+>> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+> 
+> Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> 
+> I assume this will go through IIO tree? Just a couple of comsmetic
+> comments below, feel free to ignore.
 
----
+Thank you, I modified as you suggested and sent out v7. Jonathan said in 
+an earlier e-mail that he will take them through IIO tree. Waiting on 
+his feedback.
 
-v7 -> v8:
-- fix ret missing initialization
----
- include/kvm/arm_vgic.h        |  1 -
- virt/kvm/arm/arm.c            |  1 -
- virt/kvm/arm/vgic/vgic-init.c | 80 ++++++++++++++++++++-----------------------
- 3 files changed, 37 insertions(+), 45 deletions(-)
-
-diff --git a/include/kvm/arm_vgic.h b/include/kvm/arm_vgic.h
-index 90e489f..08ccbe3 100644
---- a/include/kvm/arm_vgic.h
-+++ b/include/kvm/arm_vgic.h
-@@ -338,7 +338,6 @@ void kvm_vgic_early_init(struct kvm *kvm);
- int kvm_vgic_vcpu_init(struct kvm_vcpu *vcpu);
- int kvm_vgic_create(struct kvm *kvm, u32 type);
- void kvm_vgic_destroy(struct kvm *kvm);
--void kvm_vgic_vcpu_early_init(struct kvm_vcpu *vcpu);
- void kvm_vgic_vcpu_destroy(struct kvm_vcpu *vcpu);
- int kvm_vgic_map_resources(struct kvm *kvm);
- int kvm_vgic_hyp_init(void);
-diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
-index a4c1b76..e90fff2 100644
---- a/virt/kvm/arm/arm.c
-+++ b/virt/kvm/arm/arm.c
-@@ -290,7 +290,6 @@ struct kvm_vcpu *kvm_arch_vcpu_create(struct kvm *kvm, unsigned int id)
- 
- void kvm_arch_vcpu_postcreate(struct kvm_vcpu *vcpu)
- {
--	kvm_vgic_vcpu_early_init(vcpu);
- }
- 
- void kvm_arch_vcpu_free(struct kvm_vcpu *vcpu)
-diff --git a/virt/kvm/arm/vgic/vgic-init.c b/virt/kvm/arm/vgic/vgic-init.c
-index 8901b2d..272af97 100644
---- a/virt/kvm/arm/vgic/vgic-init.c
-+++ b/virt/kvm/arm/vgic/vgic-init.c
-@@ -44,7 +44,7 @@
-  *
-  * CPU Interface:
-  *
-- * - kvm_vgic_vcpu_early_init(): initialization of static data that
-+ * - kvm_vgic_vcpu_init(): initialization of static data that
-  *   doesn't depend on any sizing information or emulation type. No
-  *   allocation is allowed there.
-  */
-@@ -67,46 +67,6 @@ void kvm_vgic_early_init(struct kvm *kvm)
- 	spin_lock_init(&dist->lpi_list_lock);
- }
- 
--/**
-- * kvm_vgic_vcpu_early_init() - Initialize static VGIC VCPU data structures
-- * @vcpu: The VCPU whose VGIC data structures whould be initialized
-- *
-- * Only do initialization, but do not actually enable the VGIC CPU interface
-- * yet.
-- */
--void kvm_vgic_vcpu_early_init(struct kvm_vcpu *vcpu)
--{
--	struct vgic_cpu *vgic_cpu = &vcpu->arch.vgic_cpu;
--	int i;
--
--	INIT_LIST_HEAD(&vgic_cpu->ap_list_head);
--	spin_lock_init(&vgic_cpu->ap_list_lock);
--
--	/*
--	 * Enable and configure all SGIs to be edge-triggered and
--	 * configure all PPIs as level-triggered.
--	 */
--	for (i = 0; i < VGIC_NR_PRIVATE_IRQS; i++) {
--		struct vgic_irq *irq = &vgic_cpu->private_irqs[i];
--
--		INIT_LIST_HEAD(&irq->ap_list);
--		spin_lock_init(&irq->irq_lock);
--		irq->intid = i;
--		irq->vcpu = NULL;
--		irq->target_vcpu = vcpu;
--		irq->targets = 1U << vcpu->vcpu_id;
--		kref_init(&irq->refcount);
--		if (vgic_irq_is_sgi(i)) {
--			/* SGIs */
--			irq->enabled = 1;
--			irq->config = VGIC_CONFIG_EDGE;
--		} else {
--			/* PPIs */
--			irq->config = VGIC_CONFIG_LEVEL;
--		}
--	}
--}
--
- /* CREATION */
- 
- /**
-@@ -224,13 +184,47 @@ static int kvm_vgic_dist_init(struct kvm *kvm, unsigned int nr_spis)
- }
- 
- /**
-- * kvm_vgic_vcpu_init() - Register VCPU-specific KVM iodevs
-+ * kvm_vgic_vcpu_init() - Initialize static VGIC VCPU data
-+ * structures and register VCPU-specific KVM iodevs
-+ *
-  * @vcpu: pointer to the VCPU being created and initialized
-+ *
-+ * Only do initialization, but do not actually enable the
-+ * VGIC CPU interface
-  */
- int kvm_vgic_vcpu_init(struct kvm_vcpu *vcpu)
- {
--	int ret = 0;
-+	struct vgic_cpu *vgic_cpu = &vcpu->arch.vgic_cpu;
- 	struct vgic_dist *dist = &vcpu->kvm->arch.vgic;
-+	int ret = 0;
-+	int i;
-+
-+	INIT_LIST_HEAD(&vgic_cpu->ap_list_head);
-+	spin_lock_init(&vgic_cpu->ap_list_lock);
-+
-+	/*
-+	 * Enable and configure all SGIs to be edge-triggered and
-+	 * configure all PPIs as level-triggered.
-+	 */
-+	for (i = 0; i < VGIC_NR_PRIVATE_IRQS; i++) {
-+		struct vgic_irq *irq = &vgic_cpu->private_irqs[i];
-+
-+		INIT_LIST_HEAD(&irq->ap_list);
-+		spin_lock_init(&irq->irq_lock);
-+		irq->intid = i;
-+		irq->vcpu = NULL;
-+		irq->target_vcpu = vcpu;
-+		irq->targets = 1U << vcpu->vcpu_id;
-+		kref_init(&irq->refcount);
-+		if (vgic_irq_is_sgi(i)) {
-+			/* SGIs */
-+			irq->enabled = 1;
-+			irq->config = VGIC_CONFIG_EDGE;
-+		} else {
-+			/* PPIs */
-+			irq->config = VGIC_CONFIG_LEVEL;
-+		}
-+	}
- 
- 	if (!irqchip_in_kernel(vcpu->kvm))
- 		return 0;
--- 
-2.5.5
+Eugen
+> 
+>> ---
+>> Changes in v6:
+>>   -  changed a dev_err to dev_dbg which was forgotten in v5.
+>>
+>> Changes in v5:
+>>   - return error on probe if failed add_action_or_reset
+>>   - renamed property touchscreen-threshold-pressure to
+>> touchscreen-min-pressure, changed variables accordingly
+>>
+>> Changes in v4:
+>>   - added a small description in file header
+>>   - changed MAX_POS_MASK to GRTS_MAX_POS_MASK
+>>   - initialized press with 0, as this value means no touch.
+>> press has to be initialized because compiler/checkpatch complains
+>> that can be used uninitialized.
+>>   - changed of_property_read_u32 to device_*
+>>   - set_abs_params for pressure will have range according to threshold
+>>   - changed evbit and keybit with set_capability call
+>>   - changed variable names to error instead of ret
+>>   - checked errors for add_action_or_reset
+>>   - cosmetic cleaning
+>>
+>> Changes in v3:
+>>   - pressure now reported naturally growing down-up
+>>   - using helpers from touchscreen.h to parse DT properties
+>>   - added devm_add_action_or_reset to handle callback buffer clean on exit
+>>   - changed compatible and threshold property to adapt to changed bindings
+>>
+>> Changes in v2:
+>>   - this is now a generic resistive adc touchscreen driver
+>>
+>>
+>>   drivers/input/touchscreen/Kconfig               |  13 ++
+>>   drivers/input/touchscreen/Makefile              |   1 +
+>>   drivers/input/touchscreen/resistive-adc-touch.c | 201 ++++++++++++++++++++++++
+>>   3 files changed, 215 insertions(+)
+>>   create mode 100644 drivers/input/touchscreen/resistive-adc-touch.c
+>>
+>> diff --git a/drivers/input/touchscreen/Kconfig b/drivers/input/touchscreen/Kconfig
+>> index 4f15496..8f85d3a 100644
+>> --- a/drivers/input/touchscreen/Kconfig
+>> +++ b/drivers/input/touchscreen/Kconfig
+>> @@ -92,6 +92,19 @@ config TOUCHSCREEN_AD7879_SPI
+>>   	  To compile this driver as a module, choose M here: the
+>>   	  module will be called ad7879-spi.
+>>   
+>> +config TOUCHSCREEN_ADC
+>> +	tristate "Generic ADC based resistive touchscreen"
+>> +	depends on IIO
+>> +	select IIO_BUFFER_CB
+>> +	help
+>> +	  Say Y here if you want to use the generic ADC
+>> +	  resistive touchscreen driver.
+>> +
+>> +	  If unsure, say N (but it's safe to say "Y").
+>> +
+>> +	  To compile this driver as a module, choose M here: the
+>> +	  module will be called resistive-adc-touch.ko.
+>> +
+>>   config TOUCHSCREEN_AR1021_I2C
+>>   	tristate "Microchip AR1020/1021 i2c touchscreen"
+>>   	depends on I2C && OF
+>> diff --git a/drivers/input/touchscreen/Makefile b/drivers/input/touchscreen/Makefile
+>> index dddae79..843c7f9 100644
+>> --- a/drivers/input/touchscreen/Makefile
+>> +++ b/drivers/input/touchscreen/Makefile
+>> @@ -13,6 +13,7 @@ obj-$(CONFIG_TOUCHSCREEN_AD7877)	+= ad7877.o
+>>   obj-$(CONFIG_TOUCHSCREEN_AD7879)	+= ad7879.o
+>>   obj-$(CONFIG_TOUCHSCREEN_AD7879_I2C)	+= ad7879-i2c.o
+>>   obj-$(CONFIG_TOUCHSCREEN_AD7879_SPI)	+= ad7879-spi.o
+>> +obj-$(CONFIG_TOUCHSCREEN_ADC)		+= resistive-adc-touch.o
+>>   obj-$(CONFIG_TOUCHSCREEN_ADS7846)	+= ads7846.o
+>>   obj-$(CONFIG_TOUCHSCREEN_AR1021_I2C)	+= ar1021_i2c.o
+>>   obj-$(CONFIG_TOUCHSCREEN_ATMEL_MXT)	+= atmel_mxt_ts.o
+>> diff --git a/drivers/input/touchscreen/resistive-adc-touch.c b/drivers/input/touchscreen/resistive-adc-touch.c
+>> new file mode 100644
+>> index 0000000..05d629b
+>> --- /dev/null
+>> +++ b/drivers/input/touchscreen/resistive-adc-touch.c
+>> @@ -0,0 +1,201 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * ADC generic resistive touchscreen (GRTS)
+>> + * This is a generic input driver that connects to an ADC
+>> + * given the channels in device tree, and reports events to the input
+>> + * subsystem.
+>> + *
+>> + * Copyright (C) 2017,2018 Microchip Technology,
+>> + * Author: Eugen Hristev <eugen.hristev@microchip.com>
+>> + *
+>> + */
+>> +#include <linux/input.h>
+>> +#include <linux/input/touchscreen.h>
+>> +#include <linux/iio/consumer.h>
+>> +#include <linux/iio/iio.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of.h>
+>> +#include <linux/of_device.h>
+>> +#include <linux/platform_device.h>
+>> +
+>> +#define DRIVER_NAME					"resistive-adc-touch"
+>> +#define GRTS_DEFAULT_PRESSURE_MIN			50000
+>> +#define GRTS_MAX_POS_MASK				GENMASK(11, 0)
+>> +
+>> +/**
+>> + * grts_state - generic resistive touch screen information struct
+>> + * @pressure_min:	number representing the minimum for the pressure
+>> + * @pressure:		are we getting pressure info or not
+>> + * @iio_chans:		list of channels acquired
+>> + * @iio_cb:		iio_callback buffer for the data
+>> + * @input:		the input device structure that we register
+>> + * @prop:		touchscreen properties struct
+>> + */
+>> +struct grts_state {
+>> +	u32				pressure_min;
+>> +	bool				pressure;
+>> +	struct iio_channel		*iio_chans;
+>> +	struct iio_cb_buffer		*iio_cb;
+>> +	struct input_dev		*input;
+>> +	struct touchscreen_properties	prop;
+>> +};
+>> +
+>> +static int grts_cb(const void *data, void *private)
+>> +{
+>> +	const u16 *touch_info = data;
+>> +	struct grts_state *st = private;
+>> +	unsigned int x, y, press = 0x0;
+>> +
+>> +	/* channel data coming in buffer in the order below */
+>> +	x = touch_info[0];
+>> +	y = touch_info[1];
+>> +	if (st->pressure)
+>> +		press = touch_info[2];
+>> +
+>> +	if ((!x && !y) || (st->pressure && (press < st->pressure_min))) {
+>> +		/* report end of touch */
+>> +		input_report_key(st->input, BTN_TOUCH, 0);
+>> +		input_sync(st->input);
+>> +		return 0;
+>> +	}
+>> +
+>> +	/* report proper touch to subsystem*/
+>> +	touchscreen_report_pos(st->input, &st->prop, x, y, false);
+>> +	if (st->pressure)
+>> +		input_report_abs(st->input, ABS_PRESSURE, press);
+>> +	input_report_key(st->input, BTN_TOUCH, 1);
+>> +	input_sync(st->input);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int grts_open(struct input_dev *dev)
+>> +{
+>> +	int error;
+>> +	struct grts_state *st = input_get_drvdata(dev);
+>> +
+>> +	error = iio_channel_start_all_cb(st->iio_cb);
+>> +	if (error) {
+>> +		dev_err(dev->dev.parent, "failed to start callback buffer.\n");
+>> +		return error;
+>> +	}
+>> +	return 0;
+>> +}
+>> +
+>> +static void grts_close(struct input_dev *dev)
+>> +{
+>> +	struct grts_state *st = input_get_drvdata(dev);
+>> +
+>> +	iio_channel_stop_all_cb(st->iio_cb);
+>> +}
+>> +
+>> +static void grts_disable(void *data)
+>> +{
+>> +	iio_channel_release_all_cb(data);
+>> +}
+>> +
+>> +static int grts_probe(struct platform_device *pdev)
+>> +{
+>> +	struct grts_state *st;
+>> +	struct input_dev *input;
+>> +	struct device *dev = &pdev->dev;
+>> +	struct iio_channel *chan;
+>> +	int error;
+>> +
+>> +	st = devm_kzalloc(dev, sizeof(struct grts_state), GFP_KERNEL);
+>> +	if (!st)
+>> +		return -ENOMEM;
+>> +
+>> +	error = device_property_read_u32(dev, "touchscreen-min-pressure",
+>> +					 &st->pressure_min);
+>> +	if (error) {
+>> +		dev_dbg(dev, "can't get touchscreen-min-pressure property.\n");
+>> +		st->pressure_min = GRTS_DEFAULT_PRESSURE_MIN;
+>> +	}
+> 
+> I do not think it makes sense to complain about missing property if
+> there is no "pressure" channel. Probably move down?
+> 
+>> +
+>> +	/* get the channels from IIO device */
+>> +	st->iio_chans = devm_iio_channel_get_all(dev);
+>> +	if (IS_ERR(st->iio_chans)) {
+>> +		if (PTR_ERR(st->iio_chans) != -EPROBE_DEFER)
+>> +			dev_err(dev, "can't get iio channels.\n");
+>> +		return PTR_ERR(st->iio_chans);
+> 
+> 		error = PTR_ERR(st->iio_chans);
+> 		if (error != -EPROBE_DEFER)
+> 			dev_err(dev, "can't get iio channels.\n");
+> 		return error;
+> 
+>> +	}
+>> +
+>> +	chan = &st->iio_chans[0];
+>> +	st->pressure = false;
+>> +	while (chan && chan->indio_dev) {
+>> +		if (!strcmp(chan->channel->datasheet_name, "pressure"))
+>> +			st->pressure = true;
+>> +		chan++;
+>> +	}
+>> +
+>> +	input = devm_input_allocate_device(dev);
+>> +	if (!input) {
+>> +		dev_err(dev, "failed to allocate input device.\n");
+>> +		return -ENOMEM;
+>> +	}
+>> +
+>> +	input->name = DRIVER_NAME;
+>> +	input->id.bustype = BUS_HOST;
+>> +	input->open = grts_open;
+>> +	input->close = grts_close;
+>> +
+>> +	input_set_abs_params(input, ABS_X, 0, GRTS_MAX_POS_MASK - 1, 0, 0);
+>> +	input_set_abs_params(input, ABS_Y, 0, GRTS_MAX_POS_MASK - 1, 0, 0);
+>> +	if (st->pressure)
+>> +		input_set_abs_params(input, ABS_PRESSURE, st->pressure_min,
+>> +				     0xffff, 0, 0);
+>> +
+>> +	input_set_capability(input, EV_KEY, BTN_TOUCH);
+>> +
+>> +	/* parse optional device tree properties */
+>> +	touchscreen_parse_properties(input, false, &st->prop);
+>> +
+>> +	st->input = input;
+>> +	input_set_drvdata(input, st);
+>> +
+>> +	error = input_register_device(input);
+>> +	if (error) {
+>> +		dev_err(dev, "failed to register input device.");
+>> +		return error;
+>> +	}
+>> +
+>> +	st->iio_cb = iio_channel_get_all_cb(dev, grts_cb, st);
+>> +	if (IS_ERR(st->iio_cb)) {
+>> +		dev_err(dev, "failed to allocate callback buffer.\n");
+>> +		error =  PTR_ERR(st->iio_cb);
+>> +		return error;
+> 
+> Simply:
+> 
+> 		return PTR_ERR(st->iio_cb);
+> 
+> since you opted out of printing error codes in error messages.
+> 
+>> +	}
+>> +
+>> +	error = devm_add_action_or_reset(dev, grts_disable, st->iio_cb);
+>> +	if (error) {
+>> +		dev_err(dev, "failed to add disable action.\n");
+>> +		return error;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct of_device_id grts_of_match[] = {
+>> +	{
+>> +		.compatible = "resistive-adc-touch",
+>> +	}, {
+>> +		/* sentinel */
+>> +	},
+>> +};
+>> +
+>> +MODULE_DEVICE_TABLE(of, grts_of_match);
+>> +
+>> +static struct platform_driver grts_driver = {
+>> +	.probe = grts_probe,
+>> +	.driver = {
+>> +		.name = DRIVER_NAME,
+>> +		.of_match_table = of_match_ptr(grts_of_match),
+>> +	},
+>> +};
+>> +
+>> +module_platform_driver(grts_driver);
+>> +
+>> +MODULE_AUTHOR("Eugen Hristev <eugen.hristev@microchip.com>");
+>> +MODULE_DESCRIPTION("Generic ADC Resistive Touch Driver");
+>> +MODULE_LICENSE("GPL v2");
+>> -- 
+>> 2.7.4
+>>
+> 
+> Thanks.
+> 
