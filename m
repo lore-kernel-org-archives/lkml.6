@@ -1,112 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752550AbeEVCpG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 22:45:06 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:3767 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751601AbeEVCpE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 22:45:04 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
-   d="scan'208";a="40188472"
-Subject: Re: [PATCH] x86/idt: Simplify the idt_setup_apic_and_irq_gates()
-To: Thomas Gleixner <tglx@linutronix.de>
-CC: <x86@kernel.org>, <linux-kernel@vger.kernel.org>, <mingo@redhat.com>,
-        <hpa@zytor.com>
-References: <20180426054452.32308-1-douly.fnst@cn.fujitsu.com>
- <alpine.DEB.2.21.1805191424560.1599@nanos.tec.linutronix.de>
-From: Dou Liyang <douly.fnst@cn.fujitsu.com>
-Message-ID: <e756f124-0690-ccdc-6dbd-9e1e68aef771@cn.fujitsu.com>
-Date: Tue, 22 May 2018 10:44:59 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1752517AbeEVC5w (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 22:57:52 -0400
+Received: from mga11.intel.com ([192.55.52.93]:35022 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751745AbeEVC5t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 22:57:49 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,428,1520924400";
+   d="scan'208";a="201335875"
+From: Luwei Kang <luwei.kang@intel.com>
+To: kvm@vger.kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        chao.p.peng@linux.intel.com, thomas.lendacky@amd.com, bp@suse.de,
+        Kan.liang@intel.com, Janakarajan.Natarajan@amd.com, dwmw@amazon.co.uk,
+        linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com,
+        peterz@infradead.org, mathieu.poirier@linaro.org,
+        kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
+        pbonzini@redhat.com, rkrcmar@redhat.com, david@redhat.com,
+        bsd@redhat.com, yu.c.zhang@linux.intel.com, joro@8bytes.org,
+        Luwei Kang <luwei.kang@intel.com>
+Subject: [PATCH v9 00/12] Intel Processor Trace virtualization enabling
+Date: Tue, 22 May 2018 12:52:03 +0800
+Message-Id: <1526964735-16566-1-git-send-email-luwei.kang@intel.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1805191424560.1599@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.167.226.106]
-X-yoursite-MailScanner-ID: 354574B3EF2E.A927A
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
+Hi All,
 
-At 05/19/2018 08:32 PM, Thomas Gleixner wrote:
-> On Thu, 26 Apr 2018, Dou Liyang wrote:
-> 
->> The vectors between FIRST_SYSTEM_VECTOR and NR_VECTORS are special IRQ
->> vectors used by the SMP architecture. But, if X86_LOCAL_APIC=n, it will
->> not be used, and the FIRST_SYSTEM_VECTOR is equal to NR_VECTORS.
-> 
-> Correct, but that function has nothing to do with FIRST_SYSTEM_VECTOR.
-> 
+Here is a patch-series which adding Processor Trace enabling in KVM guest. You can get It's software developer manuals from:
+https://software.intel.com/sites/default/files/managed/c5/15/architecture-instruction-set-extensions-programming-reference.pdf
+In Chapter 4 INTEL PROCESSOR TRACE: VMX IMPROVEMENTS.
 
-Oops, sorry, when I reread, my changelog even made me misunderstand.
-the patch hided it.
+Introduction:
+Intel Processor Trace (Intel PT) is an extension of Intel Architecture that captures information about software execution using dedicated hardware facilities that cause only minimal performance perturbation to the software being traced. Details on the Intel PT infrastructure and trace capabilities can be found in the Intel 64 and IA-32 Architectures Software Developer’s Manual, Volume 3C.
 
-     void __init idt_setup_apic_and_irq_gates(void)
-     ...
-         for_each_clear_bit_from(i, system_vectors, FIRST_SYSTEM_VECTOR)
-                                                    ^^^^^^^^^^^^^^^^^^^
-     ...
-         for_each_clear_bit_from(i, system_vectors, NR_VECTORS)
+The suite of architecture changes serve to simplify the process of virtualizing Intel PT for use by a guest software. There are two primary elements to this new architecture support for VMX support improvements made for Intel PT.
+1. Addition of a new guest IA32_RTIT_CTL value field to the VMCS.
+  — This serves to speed and simplify the process of disabling trace on VM exit, and restoring it on VM entry.
+2. Enabling use of EPT to redirect PT output.
+  — This enables the VMM to elect to virtualize the PT output buffer using EPT. In this mode, the CPU will treat PT output addresses as Guest Physical Addresses (GPAs) and translate them using EPT. This means that Intel PT output reads (of the ToPA table) and writes (of trace output) can cause EPT violations, and other output events.
 
-What I want to say is:
+Processor Trace virtualization can be work in one of 2 possible modes by set new option "pt_mode". Default value is system mode.
+ a. system-wide: trace both host/guest and output to host buffer;
+ b. host-guest: trace host/guest simultaneous and output to their respective buffer.
 
-   In the APIC=n system, the FIRST_SYSTEM_VECTOR is equal to
-   NR_VECTORS, So all entries has been set by
+>From V8:
+ - move macro definition MSR_IA32_RTIT_ADDR_RANGE from msr-index.h to intel_pt.h;
+ - initialize the RTIT_CTL bitmask to ~0ULL.
 
-     for_each_clear_bit_from(i, system_vectors, FIRST_SYSTEM_VECTOR)
-        ...
+>From V7:
+ - remove host only mode since it can be emulated by perf code;
+ - merge patch 8 and 9 to make code and data in the same patch;
+ - rename __pt_cap_get() to pt_cap_decode();
+ - other minor change.
 
-   the following setup code for APIC=n is redundant. Just setup gates for
-   APIC=y.
+>From V6:
+ - split pathes 1~2 to four separate patches (these patches do 2 things) and add more descriptions.
 
-If it is OK, I will send v2.
+>From V5:
+ - rename the function from pt_cap_get_ex() to __pt_cap_get();
+ - replace the most of function from vmx_pt_supported() to "pt_mode == PT_MODE_HOST_GUEST"(or !=).
 
-Thanks,
+>From V4:
+ - add data check when setting the value of MSR_IA32_RTIT_CTL;
+ - Invoke new interface to set the intercept of MSRs read/write after "MSR bitmap per-vcpu" patches.
 
-	dou
+>From V3:
+ - change default mode to SYSTEM mode;
+ - add a new patch to move PT out of scattered features;
+ - add a new fucntion kvm_get_pt_addr_cnt() to get the number of address ranges;
+ - add a new function vmx_set_rtit_ctl() to set the value of guest RTIT_CTL, GUEST_IA32_RTIT_CTL and MSRs intercept.
 
->> diff --git a/arch/x86/kernel/idt.c b/arch/x86/kernel/idt.c
->> index 2c3a1b4294eb..8b4174890706 100644
->> --- a/arch/x86/kernel/idt.c
->> +++ b/arch/x86/kernel/idt.c
->> @@ -317,15 +317,16 @@ void __init idt_setup_apic_and_irq_gates(void)
->>   		set_intr_gate(i, entry);
->>   	}
->>   
->> -	for_each_clear_bit_from(i, system_vectors, NR_VECTORS) {
->> +	/*
->> +	 * If X86_LOCAL_APIC=n, the FIRST_SYSTEM_VECTOR is equal to NR_VECTORS
->> +	 * Just consider the X86_LOCAL_APIC=y case
->> +	 */
->>   #ifdef CONFIG_X86_LOCAL_APIC
->> +	for_each_clear_bit_from(i, system_vectors, NR_VECTORS) {
->>   		set_bit(i, system_vectors);
->>   		set_intr_gate(i, spurious_interrupt);
->> -#else
->> -		entry = irq_entries_start + 8 * (i - FIRST_EXTERNAL_VECTOR);
->> -		set_intr_gate(i, entry);
->> -#endif
->>   	}
->> +#endif
-> 
-> That change breaks the LOCAL_APIC=n case in a subtle way. What the function
-> does is to set _ALL_ entries starting from FIRST_EXTERNAL_VECTOR up to
-> NR_VECTORS in the IDT to a known target, except those which are already
-> occupied by a system vector.
-> 
-> So for APIC=y this sets them to: spurious vector and for APIC=n it sets it
-> to the corresppnding vector entry. You remove the latter...
->  > Thanks,
-> 
-> 	tglx
-> 
-> 
-> 
-> 
+>From v2:
+ - replace *_PT_SUPPRESS_PIP to *_PT_CONCEAL_PIP;
+ - clean SECONDARY_EXEC_PT_USE_GPA, VM_EXIT_CLEAR_IA32_RTIT_CTL and VM_ENTRY_LOAD_IA32_RTIT_CTL in SYSTEM mode. These bits must be all set or all clean;
+ - move processor tracing out of scattered features;
+ - add a new function to enable/disable intercept MSRs read/write;
+ - add all Intel PT MSRs read/write and disable intercept when PT is enabled in guest;
+ - disable Intel PT and enable intercept MSRs when L1 guest VMXON;
+ - performance optimization.
+   In Host only mode. we just need to save host RTIT_CTL before vm-entry and restore host RTIT_CTL after vm-exit;
+   In HOST_GUEST mode. we need to save and restore all MSRs only when PT has enabled in guest.
+ - use XSAVES/XRESTORES implement context switch.
+   Haven't implementation in this version and still in debuging. will make a separate patch work on this.
+
+>From v1:
+ - remove guest-only mode because guest-only mode can be covered by host-guest mode;
+ - always set "use GPA for processor tracing" in secondary execution control if it can be;
+ - trap RTIT_CTL read/write. Forbid write this msr when VMXON in L1 hypervisor.
+
+Chao Peng (7):
+  perf/x86/intel/pt: Move Intel-PT MSRs bit definitions to a public
+    header
+  perf/x86/intel/pt: Change pt_cap_get() to a public function
+  KVM: x86: Add Intel Processor Trace virtualization mode
+  KVM: x86: Add Intel Processor Trace cpuid emulation
+  KVM: x86: Add Intel Processor Trace context switch for each vcpu
+  KVM: x86: Implement Intel Processor Trace MSRs read/write emulation
+  KVM: x86: Set intercept for Intel PT MSRs read/write
+
+Luwei Kang (5):
+  perf/x86/intel/pt: Add new bit definitions for Intel PT MSRs
+  perf/x86/intel/pt: add new capability for Intel PT
+  perf/x86/intel/pt: Introduce a new function to get capability of Intel
+    PT
+  KVM: x86: Introduce a function to initialize the PT configuration
+  KVM: x86: Disable Intel Processor Trace when VMXON in L1 guest
+
+ arch/x86/events/intel/pt.c       |  12 +-
+ arch/x86/events/intel/pt.h       |  58 ------
+ arch/x86/include/asm/intel_pt.h  |  39 ++++
+ arch/x86/include/asm/kvm_host.h  |   1 +
+ arch/x86/include/asm/msr-index.h |  37 ++++
+ arch/x86/include/asm/vmx.h       |   8 +
+ arch/x86/kvm/cpuid.c             |  22 +-
+ arch/x86/kvm/svm.c               |   6 +
+ arch/x86/kvm/vmx.c               | 439 ++++++++++++++++++++++++++++++++++++++-
+ arch/x86/kvm/x86.c               |  33 ++-
+ 10 files changed, 588 insertions(+), 67 deletions(-)
+
+-- 
+1.8.3.1
