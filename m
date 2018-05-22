@@ -1,56 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751363AbeEVIeD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 04:34:03 -0400
-Received: from mga17.intel.com ([192.55.52.151]:50840 "EHLO mga17.intel.com"
+        id S1751269AbeEVIfj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 04:35:39 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:44996 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751229AbeEVId7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 04:33:59 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,429,1520924400";
-   d="scan'208";a="57389652"
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Yisheng Xie <xieyisheng1@huawei.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH 22/33] drm/i915: use match_string() helper
-In-Reply-To: <CAHp75Ve0zmHZqESKgB1U9XEhztHPzAWcw9O-8K4JUAamdmYd3A@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com> <1526903890-35761-23-git-send-email-xieyisheng1@huawei.com> <CAHp75Ve0zmHZqESKgB1U9XEhztHPzAWcw9O-8K4JUAamdmYd3A@mail.gmail.com>
-Date: Tue, 22 May 2018 11:36:30 +0300
-Message-ID: <87lgccw0hd.fsf@intel.com>
+        id S1751039AbeEVIfh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 04:35:37 -0400
+Date: Tue, 22 May 2018 10:34:56 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, linux-edac@vger.kernel.org,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: PROBLEM: mce: [Hardware Error] from dmesg -l emerg
+Message-ID: <20180522083456.GA5512@pd.tnic>
+References: <CAG=yYwmnHgAvauZLxfFcUEACF_J+qh4d2tvYY=AdjHvyeSFK_A@mail.gmail.com>
+ <20180514162752.GG23049@pd.tnic>
+ <CAG=yYwk-dbMF_7eS9bUraAru8b4fyCosxp+MpQA=1ZYH0nd_hg@mail.gmail.com>
+ <20180520204032.GA19845@pd.tnic>
+ <CAG=yYw=bdgsTSW80R1Wt9uUTtXeMwX5macbjrPBNzVLihk-Ufw@mail.gmail.com>
+ <20180521165803.GA15717@agluck-desk>
+ <CAG=yYw=OQ7zpyK-5iqg7uQvcykTvuhQfX=RFg3GpQGvCRowd=Q@mail.gmail.com>
+ <20180521205751.GA19282@agluck-desk>
+ <CAG=yYwmgceOCf3TeefFN-i54Z4Qxsp7asD0uhqah5P7md94kWw@mail.gmail.com>
+ <20180522000614.GA21542@agluck-desk>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180522000614.GA21542@agluck-desk>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 22 May 2018, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
-> On Mon, May 21, 2018 at 2:57 PM, Yisheng Xie <xieyisheng1@huawei.com> wrote:
->> match_string() returns the index of an array for a matching string,
->> which can be used intead of open coded variant.
->
-> https://patchwork.kernel.org/patch/10382323/
+On Mon, May 21, 2018 at 05:06:14PM -0700, Luck, Tony wrote:
+> On Tue, May 22, 2018 at 02:43:37AM +0530, Jeffrin Thalakkottoor wrote:
+> > mce: [Hardware Error]: CPU 0: Machine Check: 0 Bank 5: ee0000000040110b
+> > mce: [Hardware Error]: TSC 0 ADDR 160000080 MISC 5040008086
+> > mce: [Hardware Error]: PROCESSOR 0:306d4 TIME 1526932210 SOCKET 0 APIC
+> > 0 microcode 2a
+> 
+> The problem is that "mcelog --ascii" is expecting the first line to
+> look like:
+> 
+> 	CPU 0: Machine Check Exception: 0 Bank 5: ee0000000040110b
+> 
+> This seems to have been broken by commit:
+> 
+> 	cd9c57cad3fe ("x86/MCE: Dump MCE to dmesg if no consumers")
+> 
+> relevent part is this ... where we now conditionally include the
+> word "Exception".
 
-Even more convincingly,
-
-47d4cb8ae8e7 ("i915: Convert to use match_string() helper")
-
-BR,
-Jani.
-
->
->> Cc: Jani Nikula <jani.nikula@linux.intel.com>
->> Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
->> Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
->> Cc: David Airlie <airlied@linux.ie>
->> Cc: intel-gfx@lists.freedesktop.org
->> Cc: dri-devel@lists.freedesktop.org
+Well, mcelog should decode the error signature regardless whether it
+says "Exception" or not, IMO.
 
 -- 
-Jani Nikula, Intel Open Source Graphics Center
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
