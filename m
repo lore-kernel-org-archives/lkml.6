@@ -1,60 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751722AbeEVAsv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 20:48:51 -0400
-Received: from mail-yw0-f196.google.com ([209.85.161.196]:36991 "EHLO
-        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751148AbeEVAsu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 20:48:50 -0400
-X-Google-Smtp-Source: AB8JxZqAaXnNqKjf4HlWcPalCaPID0xiG7yzGwXWDzDN5+EkXg0rtNIGUuSldonERYls1YFOKBcoWA==
-Date: Mon, 21 May 2018 20:48:47 -0400
-From: Jon Mason <jdmason@kudzu.us>
-To: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Cc: dave.jiang@intel.com, allenbh@gmail.com, linux-kernel@vger.kernel.org,
-        linux-ntb@googlegroups.com
-Subject: Re: [PATCH] ntb_transport: use put_device() instead of kfree()
-Message-ID: <20180522004846.GC3255@kudzu.us>
-References: <6717325ea580df9a0294db6f83fd72a5db3daad9.1520591515.git.arvind.yadav.cs@gmail.com>
+        id S1752101AbeEVAtx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 20:49:53 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:60359 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751101AbeEVAtt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 20:49:49 -0400
+Subject: Re: [PATCH] intel_th: pti: Convert to use sysfs_match_string() helper
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+References: <1526462116-10894-1-git-send-email-xieyisheng1@huawei.com>
+ <CAHp75VeJxQDuSXZNDgZsHsoWg37oe=h3L796jcv=44kZfZcSuQ@mail.gmail.com>
+CC: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        "Krogerus, Heikki" <heikki.krogerus@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From: Yisheng Xie <xieyisheng1@huawei.com>
+Message-ID: <258eebad-2552-1581-5fba-a98c84340061@huawei.com>
+Date: Tue, 22 May 2018 08:49:40 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.1.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6717325ea580df9a0294db6f83fd72a5db3daad9.1520591515.git.arvind.yadav.cs@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CAHp75VeJxQDuSXZNDgZsHsoWg37oe=h3L796jcv=44kZfZcSuQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.40]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 09, 2018 at 04:03:24PM +0530, Arvind Yadav wrote:
-> Never directly free @dev after calling device_register(), even
-> if it returned an error! Always use put_device() to give up the
-> reference initialized.
+Hi Andy,
+
+On 2018/5/22 6:16, Andy Shevchenko wrote:
+> On Wed, May 16, 2018 at 12:15 PM, Yisheng Xie <xieyisheng1@huawei.com> wrote:
+>> The helper returns index of the matching string in an array,
+>> use it to simpler the code.
 > 
-> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
-> ---
->  drivers/ntb/ntb_transport.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> IIRC I sent the patch with the same semantics week or so ago against this file.
+
+Right, I get it. Sorry about that.
+
+Thanks
+Yisheng
 > 
-> diff --git a/drivers/ntb/ntb_transport.c b/drivers/ntb/ntb_transport.c
-> index 9878c48..8182a3a 100644
-> --- a/drivers/ntb/ntb_transport.c
-> +++ b/drivers/ntb/ntb_transport.c
-> @@ -393,7 +393,7 @@ int ntb_transport_register_client_dev(char *device_name)
->  
->  		rc = device_register(dev);
->  		if (rc) {
-> -			kfree(client_dev);
-> +			put_device(dev);
-
-Now we are leaking client_dev, which is bigger than just dev.  I think
-we are going to need both now.
-
-Thanks,
-Jon
-
->  			goto err;
->  		}
->  
-> -- 
-> 1.9.1
+>>
+>> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+>> ---
+>>  drivers/hwtracing/intel_th/pti.c | 11 ++++-------
+>>  1 file changed, 4 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/hwtracing/intel_th/pti.c b/drivers/hwtracing/intel_th/pti.c
+>> index 5669433..75cb368 100644
+>> --- a/drivers/hwtracing/intel_th/pti.c
+>> +++ b/drivers/hwtracing/intel_th/pti.c
+>> @@ -272,15 +272,12 @@ static ssize_t lpp_dest_store(struct device *dev, struct device_attribute *attr,
+>>                               const char *buf, size_t size)
+>>  {
+>>         struct pti_device *pti = dev_get_drvdata(dev);
+>> -       ssize_t ret = -EINVAL;
+>> -       int i;
+>> +       ssize_t ret;
+>>
+>> -       for (i = 0; i < ARRAY_SIZE(lpp_dest_str); i++)
+>> -               if (sysfs_streq(buf, lpp_dest_str[i]))
+>> -                       break;
+>> +       ret = sysfs_match_string(lpp_dest_str, buf);
+>>
+>> -       if (i < ARRAY_SIZE(lpp_dest_str) && pti->lpp_dest_mask & BIT(i)) {
+>> -               pti->lpp_dest = i;
+>> +       if (ret >= 0 && pti->lpp_dest_mask & BIT(ret)) {
+>> +               pti->lpp_dest = ret;
+>>                 ret = size;
+>>         }
+>>
+>> --
+>> 1.7.12.4
+>>
+> 
+> 
 > 
