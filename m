@@ -1,366 +1,285 @@
-Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3247740-1526418008-2-10073070918097273631
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.248, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES enro, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: cc='UTF-8', plain='UTF-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-serial-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526418006; b=UNuKxUBGD7nwRswAR/YIlz3ZRcLSWr0T+NLX9uZTgoRt5mj7uN
-    ljeY+wk3mwFO2+jdetR/O3FW8G1uesdksv5xOsfTCl8hbQ8l2IauCmdo5Ocvqzwx
-    vX/c93RdQWVu+ojarRoKFM3xtXqnggspazdzMF+qMZRlR+FngGfnq5q5id0CBsx7
-    pWIHnUopMg55MfKFkBOGiWE2AZR7Baq86VkcVTAQ0iO4mLkU4nv4SasaDS6VYY+n
-    +4kCzEhELt0VU1+afHD64AR6WF9oEFV7DzvcOJFAZYvdTxJVsLsvzqUAFLmtU/vr
-    2OP0ZHzAS4b7nzkfCc538o93PDzV6hOLV54w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    fm2; t=1526418006; bh=cLlY22ESvJaOCIAULADMJqcqMUP8nN1iL1sSBt9LOr
-    8=; b=j8BbLcYdO7oMflD/oBcZ6L012HdJiHoo3RfExTahvhdOj/7Hqk7RF2vtoy
-    JckLC6nrnLWOOtjXGSBW6khYvrv8WHlgDzQIQbspH7ymL9JfJiMhgXrCGc01waq1
-    1F9ZxTANGU9fil9Ye8zJiAf9Z03Y3Pz0rc55l7IbhgxjJ7Z7eSKSYU9PdChp7nZZ
-    8HillKy8hUmNrxylulnhquNqZksxfuIp93jafHyerHbqwkOfpGk8V11Gni7g/YMf
-    gDBccrxF9mDSnOY/SKSF7cMt5Kut5W2rTRggxaud3ZzpPFnnhi7jsT1/flzIRS36
-    CcBt6+2DsKqgyxpfFi1KpYmyv6qA==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-    header.d=gmail.com header.i=@gmail.com header.b=KkZV71Z5 x-bits=2048
-    x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=g26weBzA;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-      header.d=gmail.com header.i=@gmail.com header.b=KkZV71Z5 x-bits=2048
-      x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=g26weBzA;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfB+h4DK2QGqzQBYlpKIB7qHvjbpnttTzzX4DfJRaU/Y5L5jPesP+s8pGR2XnrtVkDI0ngXeEKA6DFUdKJd34CEsdwuyj4uCiygjQF7q+vG2OaIgQq64W
-    v6E9KUjOe5yt3KLo775EskPr13Ji5S+cE2ZMa15gyOCK/zMo9CEbtNuU9B1AUjGGxfNb8EM3mU3w1+AigTGn4lDrYlMLXe9V0ZUlucsSiGisVIUPQzXffRA3
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=x7bEGLp0ZPQA:10
-    a=fbV3Th2LUxsA:10 a=VUJBJC2UJ8kA:10 a=CbDCq_QkAAAA:8 a=VwQbUJbxAAAA:8
-    a=k8P3tP1lSa7KgEOYO4YA:9 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
-    a=1qrBK16LubpBFNPVNq2M:22 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752452AbeEOVAE (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 15 May 2018 17:00:04 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:35512 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752354AbeEOVAC (ORCPT
-        <rfc822;linux-serial@vger.kernel.org>);
-        Tue, 15 May 2018 17:00:02 -0400
-X-Google-Smtp-Source: AB8JxZrD4Esbm1ML4OnAxPQQHZJYl0aABKNU+3XNC+goOlYX2uVghu+yw/9nq7zuMgkdzDE62KbgTYBA4nhqj3BQZCk=
-MIME-Version: 1.0
-In-Reply-To: <1526394095-5069-3-git-send-email-oleksandrs@mellanox.com>
-References: <1526394095-5069-1-git-send-email-oleksandrs@mellanox.com> <1526394095-5069-3-git-send-email-oleksandrs@mellanox.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 16 May 2018 00:00:00 +0300
-Message-ID: <CAHp75Ve7EYiWBiE73i0CmyJhPMOdSKsGzCr0SUvta3Uya=Ov1Q@mail.gmail.com>
-Subject: Re: [patch v21 2/4] drivers: jtag: Add Aspeed SoC 24xx and 25xx
+Return-Path: <oleksandrs@mellanox.com>
+X-Google-Smtp-Source: AB8JxZoNIOU+CKBCTWFQUreYSlLHpleeUwzLhGflCU+V59R2szR4h+Qz+WYfEP4rQzP+gwHAVugr
+ARC-Seal: i=1; a=rsa-sha256; t=1527001220; cv=none;
+        d=google.com; s=arc-20160816;
+        b=wCI696iDOzpa63ZUI40Y+XdKRw/fvcQAtEV+N7Rkyrk7QVN+UbrlZkKXk2o0AqssD/
+         XYcPAlk7p0gqrdjcG9xWvtlPaNxAF4N0ErbwAv8tq3byeN4TfSo9MvmXHiFRJuuLH697
+         UX0MF1Je2vnFkzOzt4uiL7kqglRzuMd1Ffp8ntiUVk362IXHPzYgVGF6WEDwa5PTwjGZ
+         Q0IycGozJwQO3LwvmCKBAkgaj2aUyxiMLGH/rB+E7Ds93jCe6sUsG+Z6MIw5qI4OTSme
+         Poa16+MrBi5Q6TGlDDdD0Bq9iU0qvwlfDRVrCxbEY8DYAdYtsCbMiAzgNtBliUqwECvU
+         fTpg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:content-transfer-encoding:spamdiagnosticmetadata
+         :spamdiagnosticoutput:content-language:accept-language:in-reply-to
+         :references:message-id:date:thread-index:thread-topic:subject:cc:to
+         :from:dkim-signature:arc-authentication-results;
+        bh=Dg56pFI6OBjMj+7ZFa0JvgPWpY07aXEgTGlhmgE6GiE=;
+        b=RRsLGYmiLs5KMyjYvSTz1ZJMZRSt3dZiYCoq7aNRRgGfR9t96PwccfiDJLlXG58CFu
+         mLlupegA8BiyVuKISxwk7Ga4EdTWGsaz5mstD8YBO60Vw8BcCcPk2N3RZIpwUbpmdv9p
+         w08W7bhSIooJyemHMFllDowPXoec9RhOQ74qncqNxaQ3i+cSUQE0N+2KjLp7k8aH2XyY
+         KYRidxDCTfbafyZRPbOcrh8nfn84tO4T/YNPDWMDxlYj35msBMAA+TsNjoUbvxe0/H8L
+         HvQoeILwQYtd4v02FgRze2+l9W/UlHek/wrPnYA26RmSvlPYKGedc3U83D+lzTvCacZR
+         l0KA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@Mellanox.com header.s=selector1 header.b=e/abfTGz;
+       spf=pass (google.com: domain of oleksandrs@mellanox.com designates 40.107.3.69 as permitted sender) smtp.mailfrom=oleksandrs@mellanox.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=mellanox.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@Mellanox.com header.s=selector1 header.b=e/abfTGz;
+       spf=pass (google.com: domain of oleksandrs@mellanox.com designates 40.107.3.69 as permitted sender) smtp.mailfrom=oleksandrs@mellanox.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=mellanox.com
+From: Oleksandr Shamray <oleksandrs@mellanox.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann
+	<arnd@arndb.de>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>, devicetree
+	<devicetree@vger.kernel.org>, "openbmc@lists.ozlabs.org"
+	<openbmc@lists.ozlabs.org>, Joel Stanley <joel@jms.id.au>,
+	=?utf-8?B?SmnFmcOtIFDDrXJrbw==?= <jiri@resnulli.us>, Tobias Klauser
+	<tklauser@distanz.ch>, "open list:SERIAL DRIVERS"
+	<linux-serial@vger.kernel.org>, Vadim Pasternak <vadimp@mellanox.com>,
+	system-sw-low-level <system-sw-low-level@mellanox.com>, Rob Herring
+	<robh+dt@kernel.org>, "openocd-devel-owner@lists.sourceforge.net"
+	<openocd-devel-owner@lists.sourceforge.net>, "linux-api@vger.kernel.org"
+	<linux-api@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, "Mauro
+ Carvalho Chehab" <mchehab@kernel.org>, Jiri Pirko <jiri@mellanox.com>
+Subject: RE: [patch v21 2/4] drivers: jtag: Add Aspeed SoC 24xx and 25xx
  families JTAG master driver
-To: Oleksandr Shamray <oleksandrs@mellanox.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        openbmc@lists.ozlabs.org, Joel Stanley <joel@jms.id.au>,
-        =?UTF-8?B?SmnFmcOtIFDDrXJrbw==?= <jiri@resnulli.us>,
-        Tobias Klauser <tklauser@distanz.ch>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Vadim Pasternak <vadimp@mellanox.com>,
-        system-sw-low-level@mellanox.com, Rob Herring <robh+dt@kernel.org>,
-        openocd-devel-owner@lists.sourceforge.net,
-        linux-api@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jiri Pirko <jiri@mellanox.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-serial-owner@vger.kernel.org
-X-Mailing-List: linux-serial@vger.kernel.org
+Thread-Topic: [patch v21 2/4] drivers: jtag: Add Aspeed SoC 24xx and 25xx
+ families JTAG master driver
+Thread-Index: AQHT7Fg1Igvvy1uDzEagRnWJg407E6QxRq8AgAqDndA=
+Date: Tue, 22 May 2018 15:00:17 +0000
+Message-ID: <AM5PR0501MB244981D83DD33BD29FD64924B1940@AM5PR0501MB2449.eurprd05.prod.outlook.com>
+References: <1526394095-5069-1-git-send-email-oleksandrs@mellanox.com>
+ <1526394095-5069-3-git-send-email-oleksandrs@mellanox.com>
+ <CAHp75Ve7EYiWBiE73i0CmyJhPMOdSKsGzCr0SUvta3Uya=Ov1Q@mail.gmail.com>
+In-Reply-To: <CAHp75Ve7EYiWBiE73i0CmyJhPMOdSKsGzCr0SUvta3Uya=Ov1Q@mail.gmail.com>
+Accept-Language: en-US, uk-UA
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=oleksandrs@mellanox.com;
+x-originating-ip: [79.135.198.29]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM5PR0501MB2436;7:OSYz9YsrRy5Na9PVOdSgC1QCi5/iGHzgO1oLA3+7X4cWH4UmJsdJ3gZqXwZVqbnehL3tkF2TQw8AYQdxug8Pnyx6UT+8k1gcDDvLbxzGQ5LzfiahnQPtu9wKR/aDXz/gXekthrohmiPN9UTWXRDf3T4pQPVI2vp+yNTt5TUdZ1GjrNwC6zVHwSj8hg7epU/kXa9DHYFDKFpezSwuHigZ41PfkF2f2xqgClrT/mHFJ/nY15Mw7o6qPNVCD4dTjr1S
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(48565401081)(2017052603328)(7153060)(7193020);SRVR:AM5PR0501MB2436;
+x-ms-traffictypediagnostic: AM5PR0501MB2436:
+x-microsoft-antispam-prvs: <AM5PR0501MB24366308253D0769B20F246BB1940@AM5PR0501MB2436.eurprd05.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(143289334528602)(9452136761055)(65623756079841)(85827821059158)(258649278758335)(42262312472803);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231254)(944501410)(52105095)(93006095)(93001095)(3002001)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:AM5PR0501MB2436;BCL:0;PCL:0;RULEID:;SRVR:AM5PR0501MB2436;
+x-forefront-prvs: 0680FADD48
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(396003)(39380400002)(346002)(376002)(13464003)(199004)(189003)(2900100001)(5250100002)(6506007)(86362001)(305945005)(575784001)(54906003)(55016002)(102836004)(7736002)(14454004)(76176011)(74316002)(6246003)(68736007)(66066001)(4326008)(7696005)(8936002)(486006)(25786009)(8676002)(11346002)(97736004)(39060400002)(81156014)(26005)(81166006)(446003)(53546011)(107886003)(476003)(105586002)(106356001)(9686003)(186003)(3660700001)(6916009)(229853002)(316002)(3280700002)(3846002)(33656002)(6116002)(7416002)(2906002)(99286004)(59450400001)(53936002)(5660300001)(6436002)(478600001)(21314002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM5PR0501MB2436;H:AM5PR0501MB2449.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: cMeVYNAlPcC1ssbcmWkW+s8K+v6OEGqPXqBp745We6lH05UeZRuEYNrDUYUHoCCBmSNl/1IIK39I4Zgg4Gmh+gBjPpV9kjeYhHYYsQi2zUn8qQrkyjdyMue0FRtexRz8d9oQSa5vypCQolGc0qhR6b9aB4gwsTJVDLZQj6O6oxFcJcm1QHt+0hkVtkJkY938
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Office365-Filtering-Correlation-Id: cb8876fa-0bcb-4698-4c4b-08d5bff4bb3e
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cb8876fa-0bcb-4698-4c4b-08d5bff4bb3e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 May 2018 15:00:17.5519
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0501MB2436
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1600540225187669813?=
+X-GMAIL-MSGID: =?utf-8?q?1601176831838265042?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, May 15, 2018 at 5:21 PM, Oleksandr Shamray
-<oleksandrs@mellanox.com> wrote:
-> Driver adds support of Aspeed 2500/2400 series SOC JTAG master controller.
->
-> Driver implements the following jtag ops:
-> - freq_get;
-> - freq_set;
-> - status_get;
-> - idle;
-> - xfer;
->
-> It has been tested on Mellanox system with BMC equipped with
-> Aspeed 2520 SoC for programming CPLD devices.
-
-> +#define ASPEED_JTAG_DATA               0x00
-> +#define ASPEED_JTAG_INST               0x04
-> +#define ASPEED_JTAG_CTRL               0x08
-> +#define ASPEED_JTAG_ISR                        0x0C
-> +#define ASPEED_JTAG_SW                 0x10
-> +#define ASPEED_JTAG_TCK                        0x14
-> +#define ASPEED_JTAG_EC                 0x18
-> +
-> +#define ASPEED_JTAG_DATA_MSB           0x01
-> +#define ASPEED_JTAG_DATA_CHUNK_SIZE    0x20
-
-
-> +#define ASPEED_JTAG_IOUT_LEN(len)      (ASPEED_JTAG_CTL_ENG_EN |\
-> +                                        ASPEED_JTAG_CTL_ENG_OUT_EN |\
-> +                                        ASPEED_JTAG_CTL_INST_LEN(len))
-
-Better to read
-
-#define MY_COOL_CONST_OR_MACRO(xxx) \
- ...
-
-> +#define ASPEED_JTAG_DOUT_LEN(len)      (ASPEED_JTAG_CTL_ENG_EN |\
-> +                                        ASPEED_JTAG_CTL_ENG_OUT_EN |\
-> +                                        ASPEED_JTAG_CTL_DATA_LEN(len))
-
-Ditto.
-
-> +static char *end_status_str[] = {"idle", "ir pause", "drpause"};
-
-> +static int aspeed_jtag_freq_set(struct jtag *jtag, u32 freq)
-> +{
-> +       struct aspeed_jtag *aspeed_jtag = jtag_priv(jtag);
-> +       unsigned long apb_frq;
-> +       u32 tck_val;
-> +       u16 div;
-> +
-> +       apb_frq = clk_get_rate(aspeed_jtag->pclk);
-
-> +       div = (apb_frq % freq == 0) ? (apb_frq / freq) - 1 : (apb_frq / freq);
-
-Isn't it the same as
-
-div = (apb_frq - 1) / freq;
-
-?
-
-> +       tck_val = aspeed_jtag_read(aspeed_jtag, ASPEED_JTAG_TCK);
-> +       aspeed_jtag_write(aspeed_jtag,
-> +                         (tck_val & ASPEED_JTAG_TCK_DIVISOR_MASK) | div,
-> +                         ASPEED_JTAG_TCK);
-> +       return 0;
-> +}
-
-> +static void aspeed_jtag_sw_delay(struct aspeed_jtag *aspeed_jtag, int cnt)
-> +{
-> +       int i;
-> +
-> +       for (i = 0; i < cnt; i++)
-> +               aspeed_jtag_read(aspeed_jtag, ASPEED_JTAG_SW);
-
-Isn't it readsl() (or how it's called, I don't remember).
-
-> +}
-
-> +static void aspeed_jtag_wait_instruction_pause(struct aspeed_jtag *aspeed_jtag)
-> +{
-> +       wait_event_interruptible(aspeed_jtag->jtag_wq, aspeed_jtag->flag &
-> +                                ASPEED_JTAG_ISR_INST_PAUSE);
-
-In such cases I prefer to see a new line with a parameter in full.
-Check all places.
-
-> +       aspeed_jtag->flag &= ~ASPEED_JTAG_ISR_INST_PAUSE;
-> +}
-
-> +static void aspeed_jtag_sm_cycle(struct aspeed_jtag *aspeed_jtag, const u8 *tms,
-> +                                int len)
-> +{
-> +       int i;
-> +
-> +       for (i = 0; i < len; i++)
-> +               aspeed_jtag_tck_cycle(aspeed_jtag, tms[i], 0);
-> +}
-> +
-> +static void aspeed_jtag_run_test_idle_sw(struct aspeed_jtag *aspeed_jtag,
-> +                                        struct jtag_run_test_idle *runtest)
-> +{
-> +       static const u8 sm_pause_irpause[] = {1, 1, 1, 1, 0, 1, 0};
-> +       static const u8 sm_pause_drpause[] = {1, 1, 1, 0, 1, 0};
-> +       static const u8 sm_idle_irpause[] = {1, 1, 0, 1, 0};
-> +       static const u8 sm_idle_drpause[] = {1, 0, 1, 0};
-> +       static const u8 sm_pause_idle[] = {1, 1, 0};
-> +       int i;
-> +
-> +       /* SW mode from idle/pause-> to pause/idle */
-> +       if (runtest->reset) {
-> +               for (i = 0; i < ASPEED_JTAG_RESET_CNTR; i++)
-> +                       aspeed_jtag_tck_cycle(aspeed_jtag, 1, 0);
-> +       }
-
-I would rather split this big switch to a few helper functions per
-each status of surrounding switch.
-
-> +
-> +       /* Stay on IDLE for at least  TCK cycle */
-> +       for (i = 0; i < runtest->tck; i++)
-> +               aspeed_jtag_tck_cycle(aspeed_jtag, 0, 0);
-> +}
-
-
-> +/**
-> + * aspeed_jtag_run_test_idle:
-> + * JTAG reset: generates at least 9 TMS high and 1 TMS low to force
-> + * devices into Run-Test/Idle State.
-> + */
-
-It's rather broken kernel doc.
-
-> +               aspeed_jtag_write(aspeed_jtag, ASPEED_JTAG_CTL_ENG_EN |
-> +                                 ASPEED_JTAG_CTL_ENG_OUT_EN |
-> +                                 ASPEED_JTAG_CTL_FORCE_TMS, ASPEED_JTAG_CTRL);
-
-> +               aspeed_jtag_write(aspeed_jtag, ASPEED_JTAG_EC_GO_IDLE,
-> +                                 ASPEED_JTAG_EC);
-
-> +       aspeed_jtag_write(aspeed_jtag, ASPEED_JTAG_SW_MODE_EN |
-> +                         ASPEED_JTAG_SW_MODE_TDIO, ASPEED_JTAG_SW);
-
-Here you have permutations of flag some of which are repeatetive in
-the code. Perhaps make additional definitions instead.
-Check other similar places.
-
-
-> +       char          tdo;
-
-Indentation.
-
-> +       if (xfer->direction == JTAG_READ_XFER)
-> +               tdi = UINT_MAX;
-> +       else
-> +               tdi = data[index];
-
-> +                       if (xfer->direction == JTAG_READ_XFER)
-> +                               tdi = UINT_MAX;
-> +                       else
-> +                               tdi = data[index];
-
-Take your time to think how the above duplication can be avoided.
-
-> +               }
-> +       }
-> +
-> +       tdo = aspeed_jtag_tck_cycle(aspeed_jtag, 1, tdi & ASPEED_JTAG_DATA_MSB);
-> +       data[index] |= tdo << (shift_bits % ASPEED_JTAG_DATA_CHUNK_SIZE);
-> +}
-
-
-> +       if (endstate != JTAG_STATE_IDLE) {
-
-Why not to use positive check?
-
-> +       int i;
-> +
-> +       for (i = 0; i <= xfer->length / BITS_PER_BYTE; i++) {
-> +               pos += snprintf(&dbg_str[pos], sizeof(dbg_str) - pos,
-> +                               "0x%02x ", xfer_data[i]);
-> +       }
-
-Oh, NO! Consider reading printk-formats (for %*ph) and other
-documentation about available APIs.
-
-> +       if (!(aspeed_jtag->mode & JTAG_XFER_HW_MODE)) {
-> +               /* SW mode */
-
-This is rather too complex to be in one function.
-
-> +       } else {
-
-> +               /* hw mode */
-> +               aspeed_jtag_write(aspeed_jtag, 0, ASPEED_JTAG_SW);
-> +               aspeed_jtag_xfer_hw(aspeed_jtag, xfer, data);
-
-For symmetry it might be another function.
-
-> +       }
-
-> +       dev_dbg(aspeed_jtag->dev, "status %x\n", status);
-
-Perhaps someone should become familiar with tracepoints?
-
-> +               dev_err(aspeed_jtag->dev, "irq status:%x\n",
-> +                       status);
-
-
-Huh, really?! SPAM.
-
-(I would drop it completely, though you may use ratelimited variant)
-
-> +               ret = IRQ_NONE;
-> +       }
-> +       return ret;
-> +}
-
-> +       clk_prepare_enable(aspeed_jtag->pclk);
-
-This might fail.
-
-> +       dev_dbg(&pdev->dev, "IRQ %d.\n", aspeed_jtag->irq);
-
-Noise even for debug.
-
-> +       err = jtag_register(jtag);
-
-Perhaps we might have devm_ variant of this. Check how SPI framework
-deal with a such.
-
-> +static int aspeed_jtag_remove(struct platform_device *pdev)
-> +{
-
-> +       struct jtag *jtag;
-> +
-> +       jtag = platform_get_drvdata(pdev);
-
-Usually we put this on one line
-
-> +       aspeed_jtag_deinit(pdev, jtag_priv(jtag));
-> +       jtag_unregister(jtag);
-> +       jtag_free(jtag);
-> +       return 0;
-> +}
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+SGkgQW5keS4gDQpUaGFua3MgZm9yIHJldmlldy4NCg0KUGxlYXNlIHJlYWQgbXkgYW5zd2VycyBp
+bmxpbmUuDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQW5keSBTaGV2
+Y2hlbmtvIFttYWlsdG86YW5keS5zaGV2Y2hlbmtvQGdtYWlsLmNvbV0NCj4gU2VudDogMTYg0LzQ
+sNGPIDIwMTgg0LMuIDA6MDANCj4gVG86IE9sZWtzYW5kciBTaGFtcmF5IDxvbGVrc2FuZHJzQG1l
+bGxhbm94LmNvbT4NCj4gQ2M6IEdyZWcgS3JvYWgtSGFydG1hbiA8Z3JlZ2toQGxpbnV4Zm91bmRh
+dGlvbi5vcmc+OyBBcm5kIEJlcmdtYW5uIA0KPiA8YXJuZEBhcm5kYi5kZT47IExpbnV4IEtlcm5l
+bCBNYWlsaW5nIExpc3QgDQo+IDxsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnPjsgbGludXgt
+YXJtIE1haWxpbmcgTGlzdCANCj4gPGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9y
+Zz47IGRldmljZXRyZWUgDQo+IDxkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZz47IG9wZW5ibWNA
+bGlzdHMub3psYWJzLm9yZzsgSm9lbCBTdGFubGV5IA0KPiA8am9lbEBqbXMuaWQuYXU+OyBKacWZ
+w60gUMOtcmtvIDxqaXJpQHJlc251bGxpLnVzPjsgVG9iaWFzIEtsYXVzZXIgDQo+IDx0a2xhdXNl
+ckBkaXN0YW56LmNoPjsgb3BlbiBsaXN0OlNFUklBTCBEUklWRVJTIDxsaW51eC0gDQo+IHNlcmlh
+bEB2Z2VyLmtlcm5lbC5vcmc+OyBWYWRpbSBQYXN0ZXJuYWsgPHZhZGltcEBtZWxsYW5veC5jb20+
+OyANCj4gc3lzdGVtLXN3LWxvdy1sZXZlbCA8c3lzdGVtLXN3LWxvdy1sZXZlbEBtZWxsYW5veC5j
+b20+OyBSb2IgSGVycmluZyANCj4gPHJvYmgrZHRAa2VybmVsLm9yZz47IG9wZW5vY2QtZGV2ZWwt
+b3duZXJAbGlzdHMuc291cmNlZm9yZ2UubmV0OyANCj4gbGludXgtIGFwaUB2Z2VyLmtlcm5lbC5v
+cmc7IERhdmlkIFMuIE1pbGxlciA8ZGF2ZW1AZGF2ZW1sb2Z0Lm5ldD47IA0KPiBNYXVybyBDYXJ2
+YWxobyBDaGVoYWIgPG1jaGVoYWJAa2VybmVsLm9yZz47IEppcmkgUGlya28gDQo+IDxqaXJpQG1l
+bGxhbm94LmNvbT4NCj4gU3ViamVjdDogUmU6IFtwYXRjaCB2MjEgMi80XSBkcml2ZXJzOiBqdGFn
+OiBBZGQgQXNwZWVkIFNvQyAyNHh4IGFuZCANCj4gMjV4eCBmYW1pbGllcyBKVEFHIG1hc3RlciBk
+cml2ZXINCj4gDQo+IE9uIFR1ZSwgTWF5IDE1LCAyMDE4IGF0IDU6MjEgUE0sIE9sZWtzYW5kciBT
+aGFtcmF5IA0KPiA8b2xla3NhbmRyc0BtZWxsYW5veC5jb20+IHdyb3RlOg0KPiA+IERyaXZlciBh
+ZGRzIHN1cHBvcnQgb2YgQXNwZWVkIDI1MDAvMjQwMCBzZXJpZXMgU09DIEpUQUcgbWFzdGVyDQo+
+IGNvbnRyb2xsZXIuDQo+ID4NCj4gPiBEcml2ZXIgaW1wbGVtZW50cyB0aGUgZm9sbG93aW5nIGp0
+YWcgb3BzOg0KPiA+IC0gZnJlcV9nZXQ7DQo+ID4gLSBmcmVxX3NldDsNCj4gPiAtIHN0YXR1c19n
+ZXQ7DQo+ID4gLSBpZGxlOw0KPiA+IC0geGZlcjsNCj4gPg0KPiA+IEl0IGhhcyBiZWVuIHRlc3Rl
+ZCBvbiBNZWxsYW5veCBzeXN0ZW0gd2l0aCBCTUMgZXF1aXBwZWQgd2l0aCBBc3BlZWQNCj4gPiAy
+NTIwIFNvQyBmb3IgcHJvZ3JhbW1pbmcgQ1BMRCBkZXZpY2VzLg0KPiANCj4gPiArI2RlZmluZSBB
+U1BFRURfSlRBR19EQVRBICAgICAgICAgICAgICAgMHgwMA0KPiA+ICsjZGVmaW5lIEFTUEVFRF9K
+VEFHX0lOU1QgICAgICAgICAgICAgICAweDA0DQo+ID4gKyNkZWZpbmUgQVNQRUVEX0pUQUdfQ1RS
+TCAgICAgICAgICAgICAgIDB4MDgNCj4gPiArI2RlZmluZSBBU1BFRURfSlRBR19JU1IgICAgICAg
+ICAgICAgICAgICAgICAgICAweDBDDQo+ID4gKyNkZWZpbmUgQVNQRUVEX0pUQUdfU1cgICAgICAg
+ICAgICAgICAgIDB4MTANCj4gPiArI2RlZmluZSBBU1BFRURfSlRBR19UQ0sgICAgICAgICAgICAg
+ICAgICAgICAgICAweDE0DQo+ID4gKyNkZWZpbmUgQVNQRUVEX0pUQUdfRUMgICAgICAgICAgICAg
+ICAgIDB4MTgNCj4gPiArDQo+ID4gKyNkZWZpbmUgQVNQRUVEX0pUQUdfREFUQV9NU0IgICAgICAg
+ICAgIDB4MDENCj4gPiArI2RlZmluZSBBU1BFRURfSlRBR19EQVRBX0NIVU5LX1NJWkUgICAgMHgy
+MA0KPiANCj4gDQo+ID4gKyNkZWZpbmUgQVNQRUVEX0pUQUdfSU9VVF9MRU4obGVuKSAgICAgIChB
+U1BFRURfSlRBR19DVExfRU5HX0VOIHxcDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICBBU1BFRURfSlRBR19DVExfRU5HX09VVF9FTiANCj4gPiArfFwNCj4gPiAr
+DQo+ID4gK0FTUEVFRF9KVEFHX0NUTF9JTlNUX0xFTihsZW4pKQ0KPiANCj4gQmV0dGVyIHRvIHJl
+YWQNCj4gDQo+ICNkZWZpbmUgTVlfQ09PTF9DT05TVF9PUl9NQUNSTyh4eHgpIFwNCj4gIC4uLg0K
+PiANCj4gPiArI2RlZmluZSBBU1BFRURfSlRBR19ET1VUX0xFTihsZW4pICAgICAgKEFTUEVFRF9K
+VEFHX0NUTF9FTkdfRU4NCj4gfFwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgIEFTUEVFRF9KVEFHX0NUTF9FTkdfT1VUX0VOIA0KPiA+ICsgfFwNCj4gPiArDQo+
+ID4gK0FTUEVFRF9KVEFHX0NUTF9EQVRBX0xFTihsZW4pKQ0KPiANCj4gRGl0dG8uDQoNCk9rLiBD
+aGFuZ2VkIHRvOg0KI2RlZmluZSBBU1BFRURfSlRBR19JT1VUX0xFTihsZW4pIFwNCiAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAoQVNQRUVEX0pUQUdfQ1RMX0VOR19FTiB8IFwNCiAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICBBU1BFRURfSlRBR19DVExfRU5HX09VVF9FTiB8IFwN
+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBBU1BFRURfSlRBR19DVExfSU5TVF9MRU4o
+bGVuKSkNCg0KI2RlZmluZSBBU1BFRURfSlRBR19ET1VUX0xFTihsZW4pIFwNCiAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAoQVNQRUVEX0pUQUdfQ1RMX0VOR19FTiB8IFwNCiAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICBBU1BFRURfSlRBR19DVExfRU5HX09VVF9FTiB8IFwNCiAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICBBU1BFRURfSlRBR19DVExfREFUQV9MRU4obGVu
+KSkNCg0KDQo+IA0KPiA+ICtzdGF0aWMgY2hhciAqZW5kX3N0YXR1c19zdHJbXSA9IHsiaWRsZSIs
+ICJpciBwYXVzZSIsICJkcnBhdXNlIn07DQo+IA0KPiA+ICtzdGF0aWMgaW50IGFzcGVlZF9qdGFn
+X2ZyZXFfc2V0KHN0cnVjdCBqdGFnICpqdGFnLCB1MzIgZnJlcSkgew0KPiA+ICsgICAgICAgc3Ry
+dWN0IGFzcGVlZF9qdGFnICphc3BlZWRfanRhZyA9IGp0YWdfcHJpdihqdGFnKTsNCj4gPiArICAg
+ICAgIHVuc2lnbmVkIGxvbmcgYXBiX2ZycTsNCj4gPiArICAgICAgIHUzMiB0Y2tfdmFsOw0KPiA+
+ICsgICAgICAgdTE2IGRpdjsNCj4gPiArDQo+ID4gKyAgICAgICBhcGJfZnJxID0gY2xrX2dldF9y
+YXRlKGFzcGVlZF9qdGFnLT5wY2xrKTsNCj4gDQo+ID4gKyAgICAgICBkaXYgPSAoYXBiX2ZycSAl
+IGZyZXEgPT0gMCkgPyAoYXBiX2ZycSAvIGZyZXEpIC0gMSA6IA0KPiA+ICsgKGFwYl9mcnEgLyBm
+cmVxKTsNCj4gDQo+IElzbid0IGl0IHRoZSBzYW1lIGFzDQo+IA0KPiBkaXYgPSAoYXBiX2ZycSAt
+IDEpIC8gZnJlcTsNCj4gDQo+ID8NCj4gDQoNClNlZW1zIGl0IGlzIHNhbWUuIFRoYW5rcy4NCg0K
+PiA+ICsgICAgICAgdGNrX3ZhbCA9IGFzcGVlZF9qdGFnX3JlYWQoYXNwZWVkX2p0YWcsIEFTUEVF
+RF9KVEFHX1RDSyk7DQo+ID4gKyAgICAgICBhc3BlZWRfanRhZ193cml0ZShhc3BlZWRfanRhZywN
+Cj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICh0Y2tfdmFsICYgQVNQRUVEX0pUQUdfVENL
+X0RJVklTT1JfTUFTSykgfCBkaXYsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICBBU1BF
+RURfSlRBR19UQ0spOw0KPiA+ICsgICAgICAgcmV0dXJuIDA7DQo+ID4gK30NCj4gDQo+ID4gK3N0
+YXRpYyB2b2lkIGFzcGVlZF9qdGFnX3N3X2RlbGF5KHN0cnVjdCBhc3BlZWRfanRhZyAqYXNwZWVk
+X2p0YWcsIA0KPiA+ICtpbnQNCj4gPiArY250KSB7DQo+ID4gKyAgICAgICBpbnQgaTsNCj4gPiAr
+DQo+ID4gKyAgICAgICBmb3IgKGkgPSAwOyBpIDwgY250OyBpKyspDQo+ID4gKyAgICAgICAgICAg
+ICAgIGFzcGVlZF9qdGFnX3JlYWQoYXNwZWVkX2p0YWcsIEFTUEVFRF9KVEFHX1NXKTsNCj4gDQo+
+IElzbid0IGl0IHJlYWRzbCgpIChvciBob3cgaXQncyBjYWxsZWQsIEkgZG9uJ3QgcmVtZW1iZXIp
+Lg0KPiANCg0KTm8sIHJlYWRzbCByZWFkcyBkYXRhIGludG8gYnVmZmVyLiBCdXQgaW4gdGhpcyBw
+bGFjZSByZWFkIHVzZWQgZm9yIG1ha2UgDQpzb2Z0d2FyZSBkZWxheS4gDQpBc3BlZWQganRhZyBk
+cml2ZXIgc3VwcG9ydHMgMiBtb2RlczoNCjEgLSBodyBtb2RlIHdpdGggdGhlIGhhcmR3YXJlIGNv
+bnRyb2xsZWQgSlRBRyBzdGF0ZXMNCmFuZCBwaW5zDQoyIC0gd2l0aCBzb2Z0d2FyZSBjb250cm9s
+bGVkIHBpbnMuIA0KVGhpcyBwYXJ0IG9mIGNvZGUgdXNlZCBpbiBzdy1tb2RlIGFuZCBnZW5lcmF0
+ZXMgZGVsYXkgZm9yIEpUQUcgYml0LWJhbmcgLg0KSSB3aWxsIGNoYW5nZSBpdCB0byBuZGVsYXko
+KS4NCg0KPiA+ICt9DQo+IA0KPiA+ICtzdGF0aWMgdm9pZCBhc3BlZWRfanRhZ193YWl0X2luc3Ry
+dWN0aW9uX3BhdXNlKHN0cnVjdCBhc3BlZWRfanRhZw0KPiA+ICsqYXNwZWVkX2p0YWcpIHsNCj4g
+PiArICAgICAgIHdhaXRfZXZlbnRfaW50ZXJydXB0aWJsZShhc3BlZWRfanRhZy0+anRhZ193cSwg
+YXNwZWVkX2p0YWctPmZsYWcgJg0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+IEFTUEVFRF9KVEFHX0lTUl9JTlNUX1BBVVNFKTsNCj4gDQo+IEluIHN1Y2ggY2FzZXMgSSBwcmVm
+ZXIgdG8gc2VlIGEgbmV3IGxpbmUgd2l0aCBhIHBhcmFtZXRlciBpbiBmdWxsLg0KPiBDaGVjayBh
+bGwgcGxhY2VzLg0KPiANCj4gPiArICAgICAgIGFzcGVlZF9qdGFnLT5mbGFnICY9IH5BU1BFRURf
+SlRBR19JU1JfSU5TVF9QQVVTRTsgfQ0KPiANCj4gPiArc3RhdGljIHZvaWQgYXNwZWVkX2p0YWdf
+c21fY3ljbGUoc3RydWN0IGFzcGVlZF9qdGFnICphc3BlZWRfanRhZywgDQo+ID4gK2NvbnN0DQo+
+IHU4ICp0bXMsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaW50IGxlbikg
+ew0KPiA+ICsgICAgICAgaW50IGk7DQo+ID4gKw0KPiA+ICsgICAgICAgZm9yIChpID0gMDsgaSA8
+IGxlbjsgaSsrKQ0KPiA+ICsgICAgICAgICAgICAgICBhc3BlZWRfanRhZ190Y2tfY3ljbGUoYXNw
+ZWVkX2p0YWcsIHRtc1tpXSwgMCk7IH0NCj4gPiArDQo+ID4gK3N0YXRpYyB2b2lkIGFzcGVlZF9q
+dGFnX3J1bl90ZXN0X2lkbGVfc3coc3RydWN0IGFzcGVlZF9qdGFnDQo+ICphc3BlZWRfanRhZywN
+Cj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBqdGFn
+X3J1bl90ZXN0X2lkbGUNCj4gPiArKnJ1bnRlc3QpIHsNCj4gPiArICAgICAgIHN0YXRpYyBjb25z
+dCB1OCBzbV9wYXVzZV9pcnBhdXNlW10gPSB7MSwgMSwgMSwgMSwgMCwgMSwgMH07DQo+ID4gKyAg
+ICAgICBzdGF0aWMgY29uc3QgdTggc21fcGF1c2VfZHJwYXVzZVtdID0gezEsIDEsIDEsIDAsIDEs
+IDB9Ow0KPiA+ICsgICAgICAgc3RhdGljIGNvbnN0IHU4IHNtX2lkbGVfaXJwYXVzZVtdID0gezEs
+IDEsIDAsIDEsIDB9Ow0KPiA+ICsgICAgICAgc3RhdGljIGNvbnN0IHU4IHNtX2lkbGVfZHJwYXVz
+ZVtdID0gezEsIDAsIDEsIDB9Ow0KPiA+ICsgICAgICAgc3RhdGljIGNvbnN0IHU4IHNtX3BhdXNl
+X2lkbGVbXSA9IHsxLCAxLCAwfTsNCj4gPiArICAgICAgIGludCBpOw0KPiA+ICsNCj4gPiArICAg
+ICAgIC8qIFNXIG1vZGUgZnJvbSBpZGxlL3BhdXNlLT4gdG8gcGF1c2UvaWRsZSAqLw0KPiA+ICsg
+ICAgICAgaWYgKHJ1bnRlc3QtPnJlc2V0KSB7DQo+ID4gKyAgICAgICAgICAgICAgIGZvciAoaSA9
+IDA7IGkgPCBBU1BFRURfSlRBR19SRVNFVF9DTlRSOyBpKyspDQo+ID4gKyAgICAgICAgICAgICAg
+ICAgICAgICAgYXNwZWVkX2p0YWdfdGNrX2N5Y2xlKGFzcGVlZF9qdGFnLCAxLCAwKTsNCj4gPiAr
+ICAgICAgIH0NCj4gDQo+IEkgd291bGQgcmF0aGVyIHNwbGl0IHRoaXMgYmlnIHN3aXRjaCB0byBh
+IGZldyBoZWxwZXIgZnVuY3Rpb25zIHBlciANCj4gZWFjaCBzdGF0dXMgb2Ygc3Vycm91bmRpbmcg
+c3dpdGNoLg0KPiANCg0KT2suDQpXaWxsIGRvIGl0Lg0KDQoNCj4gPiArDQo+ID4gKyAgICAgICAv
+KiBTdGF5IG9uIElETEUgZm9yIGF0IGxlYXN0ICBUQ0sgY3ljbGUgKi8NCj4gPiArICAgICAgIGZv
+ciAoaSA9IDA7IGkgPCBydW50ZXN0LT50Y2s7IGkrKykNCj4gPiArICAgICAgICAgICAgICAgYXNw
+ZWVkX2p0YWdfdGNrX2N5Y2xlKGFzcGVlZF9qdGFnLCAwLCAwKTsgfQ0KPiANCj4gDQo+ID4gKy8q
+Kg0KPiA+ICsgKiBhc3BlZWRfanRhZ19ydW5fdGVzdF9pZGxlOg0KPiA+ICsgKiBKVEFHIHJlc2V0
+OiBnZW5lcmF0ZXMgYXQgbGVhc3QgOSBUTVMgaGlnaCBhbmQgMSBUTVMgbG93IHRvIGZvcmNlDQo+
+ID4gKyAqIGRldmljZXMgaW50byBSdW4tVGVzdC9JZGxlIFN0YXRlLg0KPiA+ICsgKi8NCj4gDQo+
+IEl0J3MgcmF0aGVyIGJyb2tlbiBrZXJuZWwgZG9jLg0KDQpEZWxldGVkLg0KDQo+IA0KPiA+ICsg
+ICAgICAgICAgICAgICBhc3BlZWRfanRhZ193cml0ZShhc3BlZWRfanRhZywgQVNQRUVEX0pUQUdf
+Q1RMX0VOR19FTiB8DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIEFTUEVF
+RF9KVEFHX0NUTF9FTkdfT1VUX0VOIHwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgQVNQRUVEX0pUQUdfQ1RMX0ZPUkNFX1RNUywgDQo+ID4gKyBBU1BFRURfSlRBR19DVFJM
+KTsNCj4gDQo+ID4gKyAgICAgICAgICAgICAgIGFzcGVlZF9qdGFnX3dyaXRlKGFzcGVlZF9qdGFn
+LCBBU1BFRURfSlRBR19FQ19HT19JRExFLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICBBU1BFRURfSlRBR19FQyk7DQo+IA0KPiA+ICsgICAgICAgYXNwZWVkX2p0YWdfd3Jp
+dGUoYXNwZWVkX2p0YWcsIEFTUEVFRF9KVEFHX1NXX01PREVfRU4gfA0KPiA+ICsgICAgICAgICAg
+ICAgICAgICAgICAgICAgQVNQRUVEX0pUQUdfU1dfTU9ERV9URElPLCBBU1BFRURfSlRBR19TVyk7
+DQo+IA0KPiBIZXJlIHlvdSBoYXZlIHBlcm11dGF0aW9ucyBvZiBmbGFnIHNvbWUgb2Ygd2hpY2gg
+YXJlIHJlcGVhdGV0aXZlIGluIA0KPiB0aGUgY29kZS4gUGVyaGFwcyBtYWtlIGFkZGl0aW9uYWwg
+ZGVmaW5pdGlvbnMgaW5zdGVhZC4NCj4gQ2hlY2sgb3RoZXIgc2ltaWxhciBwbGFjZXMuDQo+IA0K
+DQpPay4gV2lsbCBhZGQgZGVmaW5lZCBmb3IgcmVwZWF0ZWQgZmxhZ3MNCg0KPiANCj4gPiArICAg
+ICAgIGNoYXIgICAgICAgICAgdGRvOw0KPiANCj4gSW5kZW50YXRpb24uDQoNCk9rLg0KDQo+IA0K
+PiA+ICsgICAgICAgaWYgKHhmZXItPmRpcmVjdGlvbiA9PSBKVEFHX1JFQURfWEZFUikNCj4gPiAr
+ICAgICAgICAgICAgICAgdGRpID0gVUlOVF9NQVg7DQo+ID4gKyAgICAgICBlbHNlDQo+ID4gKyAg
+ICAgICAgICAgICAgIHRkaSA9IGRhdGFbaW5kZXhdOw0KPiANCj4gPiArICAgICAgICAgICAgICAg
+ICAgICAgICBpZiAoeGZlci0+ZGlyZWN0aW9uID09IEpUQUdfUkVBRF9YRkVSKQ0KPiA+ICsgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgdGRpID0gVUlOVF9NQVg7DQo+ID4gKyAgICAgICAg
+ICAgICAgICAgICAgICAgZWxzZQ0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+dGRpID0gZGF0YVtpbmRleF07DQo+IA0KPiBUYWtlIHlvdXIgdGltZSB0byB0aGluayBob3cgdGhl
+IGFib3ZlIGR1cGxpY2F0aW9uIGNhbiBiZSBhdm9pZGVkLg0KPiANCg0KSW4gYm90aCBjYXNlcyBk
+YXRhW10gaXMgZGlmZmVyZW50LCBzbyBJIHNob3VsZCBjaGVjayBpdCB0d2ljZSwgYnV0IEkgd2ls
+bCANCmNoYW5nZSBpdCB0bywgbWFjcm8gbGlrZToNCg0KI2RlZmluZSBBU1BFRURfSlRBR19HRVRf
+VERJKGRpcmVjdGlvbiwgZGF0YSkgXA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKGRp
+cmVjdGlvbiA9PSBKVEFHX1JFQURfWEZFUikgPyBVTklUX01BWCA6IGRhdGENCg0KPiA+ICsgICAg
+ICAgICAgICAgICB9DQo+ID4gKyAgICAgICB9DQo+ID4gKw0KPiA+ICsgICAgICAgdGRvID0gYXNw
+ZWVkX2p0YWdfdGNrX2N5Y2xlKGFzcGVlZF9qdGFnLCAxLCB0ZGkgJg0KPiBBU1BFRURfSlRBR19E
+QVRBX01TQik7DQo+ID4gKyAgICAgICBkYXRhW2luZGV4XSB8PSB0ZG8gPDwgKHNoaWZ0X2JpdHMg
+JSANCj4gPiArQVNQRUVEX0pUQUdfREFUQV9DSFVOS19TSVpFKTsgfQ0KPiANCj4gDQo+ID4gKyAg
+ICAgICBpZiAoZW5kc3RhdGUgIT0gSlRBR19TVEFURV9JRExFKSB7DQo+IA0KPiBXaHkgbm90IHRv
+IHVzZSBwb3NpdGl2ZSBjaGVjaz8NCj4gDQoNCldpbGwgcmVzdHJ1Y3R1cmUgdG8gaGF2ZSBwb3Np
+dGl2ZSBjaGVjaw0KaWYgKGVuZHN0YXRlID09IEpUQUdfU1RBVEVfSURMRSkgew0KLi4uDQp9IGVs
+c2Ugew0KLi4uDQp9IA0KDQo+ID4gKyAgICAgICBpbnQgaTsNCj4gPiArDQo+ID4gKyAgICAgICBm
+b3IgKGkgPSAwOyBpIDw9IHhmZXItPmxlbmd0aCAvIEJJVFNfUEVSX0JZVEU7IGkrKykgew0KPiA+
+ICsgICAgICAgICAgICAgICBwb3MgKz0gc25wcmludGYoJmRiZ19zdHJbcG9zXSwgc2l6ZW9mKGRi
+Z19zdHIpIC0gcG9zLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIjB4JTAy
+eCAiLCB4ZmVyX2RhdGFbaV0pOw0KPiA+ICsgICAgICAgfQ0KPiANCj4gT2gsIE5PISBDb25zaWRl
+ciByZWFkaW5nIHByaW50ay1mb3JtYXRzIChmb3IgJSpwaCkgYW5kIG90aGVyIA0KPiBkb2N1bWVu
+dGF0aW9uIGFib3V0IGF2YWlsYWJsZSBBUElzLg0KDQpPay4NCg0KPiANCj4gPiArICAgICAgIGlm
+ICghKGFzcGVlZF9qdGFnLT5tb2RlICYgSlRBR19YRkVSX0hXX01PREUpKSB7DQo+ID4gKyAgICAg
+ICAgICAgICAgIC8qIFNXIG1vZGUgKi8NCj4gDQo+IFRoaXMgaXMgcmF0aGVyIHRvbyBjb21wbGV4
+IHRvIGJlIGluIG9uZSBmdW5jdGlvbi4NCj4gDQoNCldpbGwgc3BsaXQgdG8gc2VwYXJhdGUgZnVu
+Y3Rpb25zLg0KDQo+ID4gKyAgICAgICB9IGVsc2Ugew0KPiANCj4gPiArICAgICAgICAgICAgICAg
+LyogaHcgbW9kZSAqLw0KPiA+ICsgICAgICAgICAgICAgICBhc3BlZWRfanRhZ193cml0ZShhc3Bl
+ZWRfanRhZywgMCwgQVNQRUVEX0pUQUdfU1cpOw0KPiA+ICsgICAgICAgICAgICAgICBhc3BlZWRf
+anRhZ194ZmVyX2h3KGFzcGVlZF9qdGFnLCB4ZmVyLCBkYXRhKTsNCj4gDQo+IEZvciBzeW1tZXRy
+eSBpdCBtaWdodCBiZSBhbm90aGVyIGZ1bmN0aW9uLg0KPiANCj4gPiArICAgICAgIH0NCj4gDQo+
+ID4gKyAgICAgICBkZXZfZGJnKGFzcGVlZF9qdGFnLT5kZXYsICJzdGF0dXMgJXhcbiIsIHN0YXR1
+cyk7DQo+IA0KPiBQZXJoYXBzIHNvbWVvbmUgc2hvdWxkIGJlY29tZSBmYW1pbGlhciB3aXRoIHRy
+YWNlcG9pbnRzPw0KPiANCj4gPiArICAgICAgICAgICAgICAgZGV2X2Vycihhc3BlZWRfanRhZy0+
+ZGV2LCAiaXJxIHN0YXR1czoleFxuIiwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBzdGF0
+dXMpOw0KPiANCj4gDQo+IEh1aCwgcmVhbGx5PyEgU1BBTS4NCg0KDQpJIHdpbGwgcmV2aWV3IGFu
+ZCBkZWxldGUgcmVkdW5kYW50IGRlYnVnIG1lc3NhZ2VzLg0KDQo+IA0KPiAoSSB3b3VsZCBkcm9w
+IGl0IGNvbXBsZXRlbHksIHRob3VnaCB5b3UgbWF5IHVzZSByYXRlbGltaXRlZCB2YXJpYW50KQ0K
+PiANCj4gPiArICAgICAgICAgICAgICAgcmV0ID0gSVJRX05PTkU7DQo+ID4gKyAgICAgICB9DQo+
+ID4gKyAgICAgICByZXR1cm4gcmV0Ow0KPiA+ICt9DQo+IA0KPiA+ICsgICAgICAgY2xrX3ByZXBh
+cmVfZW5hYmxlKGFzcGVlZF9qdGFnLT5wY2xrKTsNCj4gDQo+IFRoaXMgbWlnaHQgZmFpbC4NCg0K
+V2lsbCBhZGQgZXJyb3IgY2hlY2sNCg0KPiANCj4gPiArICAgICAgIGRldl9kYmcoJnBkZXYtPmRl
+diwgIklSUSAlZC5cbiIsIGFzcGVlZF9qdGFnLT5pcnEpOw0KPiANCj4gTm9pc2UgZXZlbiBmb3Ig
+ZGVidWcuDQoNCkFncmVlLg0KDQo+IA0KPiA+ICsgICAgICAgZXJyID0ganRhZ19yZWdpc3Rlcihq
+dGFnKTsNCj4gDQo+IFBlcmhhcHMgd2UgbWlnaHQgaGF2ZSBkZXZtXyB2YXJpYW50IG9mIHRoaXMu
+IENoZWNrIGhvdyBTUEkgZnJhbWV3b3JrIA0KPiBkZWFsIHdpdGggYSBzdWNoLg0KPiANCg0KSnRh
+ZyBkcml2ZXIgdXNlcyBtaXNjZGV2aWNlIGFuZCByZWxhdGVkICBtaXNjX3JlZ2lzdGVyIGFuZCBt
+aXNjX2RlcmVnaXN0ZXIgDQpjYWxscyBmb3IgY3JlYXRpb24gYW5kIGRlc3RydWN0aW9uLiBUaGVy
+ZSBpcyBubyBkZXZpY2Ugb2JqZWN0IHByaW9yIA0KdG8gY2FsbCB0byBtaXNjX3JlZ2lzdGVyLCB3
+aGljaCBjb3VsZCBiZSB1c2VkIGluIGRldm1fanRhZ19yZWdpc3Rlci4NCg0KPiA+ICtzdGF0aWMg
+aW50IGFzcGVlZF9qdGFnX3JlbW92ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KSB7DQo+
+IA0KPiA+ICsgICAgICAgc3RydWN0IGp0YWcgKmp0YWc7DQo+ID4gKw0KPiA+ICsgICAgICAganRh
+ZyA9IHBsYXRmb3JtX2dldF9kcnZkYXRhKHBkZXYpOw0KPiANCj4gVXN1YWxseSB3ZSBwdXQgdGhp
+cyBvbiBvbmUgbGluZQ0KDQorDQoNCj4gDQo+ID4gKyAgICAgICBhc3BlZWRfanRhZ19kZWluaXQo
+cGRldiwganRhZ19wcml2KGp0YWcpKTsNCj4gPiArICAgICAgIGp0YWdfdW5yZWdpc3RlcihqdGFn
+KTsNCj4gPiArICAgICAgIGp0YWdfZnJlZShqdGFnKTsNCj4gPiArICAgICAgIHJldHVybiAwOw0K
+PiA+ICt9DQo+IA0KPiANCj4gLS0NCj4gV2l0aCBCZXN0IFJlZ2FyZHMsDQo+IEFuZHkgU2hldmNo
+ZW5rbw0KDQpCZXN0IFJlZ2FyZHMsDQpPbGVrc2FuZHIgU2hhbXJheQ0KDQo=
