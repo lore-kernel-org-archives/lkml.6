@@ -1,92 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751911AbeEVIA0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 04:00:26 -0400
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:28362 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751278AbeEVHzm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751870AbeEVIAX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 04:00:23 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39654 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751393AbeEVHzm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 22 May 2018 03:55:42 -0400
-X-IronPort-AV: E=Sophos;i="5.49,429,1520924400";
-   d="scan'208";a="14433787"
-From: Eugen Hristev <eugen.hristev@microchip.com>
-To: <jic23@kernel.org>, <ludovic.desroches@microchip.com>,
-        <alexandre.belloni@bootlin.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
-        <linux-input@vger.kernel.org>, <nicolas.ferre@microchip.com>,
-        <dmitry.torokhov@gmail.com>, <robh@kernel.org>
-CC: Eugen Hristev <eugen.hristev@microchip.com>
-Subject: [PATCH v7 4/9] dt-bindings: input: touchscreen: resistive-adc-touch: create bindings
-Date: Tue, 22 May 2018 10:52:34 +0300
-Message-ID: <1526975559-18966-5-git-send-email-eugen.hristev@microchip.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1526975559-18966-1-git-send-email-eugen.hristev@microchip.com>
-References: <1526975559-18966-1-git-send-email-eugen.hristev@microchip.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+From: Eric Auger <eric.auger@redhat.com>
+To: eric.auger.pro@gmail.com, eric.auger@redhat.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
+        christoffer.dall@arm.com, peter.maydell@linaro.org
+Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
+Subject: [PATCH v8 05/13] KVM: arm/arm64: Revisit Redistributor TYPER last bit computation
+Date: Tue, 22 May 2018 09:55:10 +0200
+Message-Id: <1526975718-18567-6-git-send-email-eric.auger@redhat.com>
+In-Reply-To: <1526975718-18567-1-git-send-email-eric.auger@redhat.com>
+References: <1526975718-18567-1-git-send-email-eric.auger@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added bindings for generic resistive touchscreen ADC.
+The TYPER of an redistributor reflects whether the rdist is
+the last one of the redistributor region. Let's compare the TYPER
+GPA against the address of the last occupied slot within the
+redistributor region.
 
-Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Eric Auger <eric.auger@redhat.com>
+Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
+
 ---
-Changes in v5:
- - changed property name touchscreen-threshold-pressure to
-touchscreen-min-pressure
 
-Changes in v3:
- - renamed file and compatible to exclude "generic" keyword
- - removed the pressure threshold property, added it as a common
-touchscreen property in the touchscreen common bindings in a separate
-commit.
+v3 -> v4:
+- added Christoffer's R-b
+---
+ virt/kvm/arm/vgic/vgic-mmio-v3.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-Changes in v2:
- - modified bindings to have a generic resistive touchscreen adc driver
-instead of specific architecture one.
-
- .../input/touchscreen/resistive-adc-touch.txt      | 30 ++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/input/touchscreen/resistive-adc-touch.txt
-
-diff --git a/Documentation/devicetree/bindings/input/touchscreen/resistive-adc-touch.txt b/Documentation/devicetree/bindings/input/touchscreen/resistive-adc-touch.txt
-new file mode 100644
-index 0000000..51456c0
---- /dev/null
-+++ b/Documentation/devicetree/bindings/input/touchscreen/resistive-adc-touch.txt
-@@ -0,0 +1,30 @@
-+Generic resistive touchscreen ADC
+diff --git a/virt/kvm/arm/vgic/vgic-mmio-v3.c b/virt/kvm/arm/vgic/vgic-mmio-v3.c
+index 49ca176..ce5c927 100644
+--- a/virt/kvm/arm/vgic/vgic-mmio-v3.c
++++ b/virt/kvm/arm/vgic/vgic-mmio-v3.c
+@@ -184,12 +184,17 @@ static unsigned long vgic_mmio_read_v3r_typer(struct kvm_vcpu *vcpu,
+ 					      gpa_t addr, unsigned int len)
+ {
+ 	unsigned long mpidr = kvm_vcpu_get_mpidr_aff(vcpu);
++	struct vgic_cpu *vgic_cpu = &vcpu->arch.vgic_cpu;
++	struct vgic_redist_region *rdreg = vgic_cpu->rdreg;
+ 	int target_vcpu_id = vcpu->vcpu_id;
++	gpa_t last_rdist_typer = rdreg->base + GICR_TYPER +
++			(rdreg->free_index - 1) * KVM_VGIC_V3_REDIST_SIZE;
+ 	u64 value;
+ 
+ 	value = (u64)(mpidr & GENMASK(23, 0)) << 32;
+ 	value |= ((target_vcpu_id & 0xffff) << 8);
+-	if (target_vcpu_id == atomic_read(&vcpu->kvm->online_vcpus) - 1)
 +
-+Required properties:
-+
-+ - compatible: must be "resistive-adc-touch"
-+The device must be connected to an ADC device that provides channels for
-+position measurement and optional pressure.
-+Refer to ../iio/iio-bindings.txt for details
-+ - iio-channels: must have at least two channels connected to an ADC device.
-+These should correspond to the channels exposed by the ADC device and should
-+have the right index as the ADC device registers them. These channels
-+represent the relative position on the "x" and "y" axes.
-+ - iio-channel-names: must have all the channels' names. Mandatory channels
-+are "x" and "y".
-+
-+Optional properties:
-+ - iio-channels: The third channel named "pressure" is optional and can be
-+used if the ADC device also measures pressure besides position.
-+If this channel is missing, pressure will be ignored and the touchscreen
-+will only report position.
-+ - iio-channel-names: optional channel named "pressure".
-+
-+Example:
-+
-+	resistive_touch: resistive_touch {
-+		compatible = "resistive-adc-touch";
-+		touchscreen-min-pressure = <50000>;
-+		io-channels = <&adc 24>, <&adc 25>, <&adc 26>;
-+		io-channel-names = "x", "y", "pressure";
-+	};
++	if (addr == last_rdist_typer)
+ 		value |= GICR_TYPER_LAST;
+ 	if (vgic_has_its(vcpu->kvm))
+ 		value |= GICR_TYPER_PLPIS;
 -- 
-2.7.4
+2.5.5
