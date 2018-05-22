@@ -1,63 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753129AbeEVVva (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 17:51:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45064 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752936AbeEVVv2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 17:51:28 -0400
-Date: Tue, 22 May 2018 16:51:26 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Doug Meyer <dmeyer@gigaio.com>
-Cc: Logan Gunthorpe <logang@deltatee.com>, kurt.schwemmer@microsemi.com,
-        linux-pci@vger.kernel.org, linux-ntb <linux-ntb@googlegroups.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Jon Mason <jdmason@kudzu.us>,
-        "Jiang, Dave" <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        Alex Williamson <alex.williamson@redhat.com>
-Subject: Re: [PATCH 2/2] NTB: PCI Quirk to Enable Switchtec NT Functionality
- with IOMMU On
-Message-ID: <20180522215126.GA22385@bhelgaas-glaptop.roam.corp.google.com>
-References: <1526558413-23113-1-git-send-email-dmeyer@gigaio.com>
- <1526558413-23113-3-git-send-email-dmeyer@gigaio.com>
- <20180517134521.GC19955@bhelgaas-glaptop.roam.corp.google.com>
- <9dd68ac0-5b9e-b257-49d2-20327c2ab282@deltatee.com>
- <CA+GK6en+g+T9H0sOMdVXv-_aD3rRcuzZ1JdfK0moEoTuuJnrqQ@mail.gmail.com>
+        id S1753196AbeEVVwE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 17:52:04 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:37927 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753159AbeEVVwC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 17:52:02 -0400
+X-Google-Smtp-Source: ADUXVKJFtmk5TeyOxGWQoqox03nrM3dlt9HFjOgMIwr9U7XBcL4OnR5gctMcBhPAH3F2H1XcnN83H8JqGGCKNdgxWRk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+GK6en+g+T9H0sOMdVXv-_aD3rRcuzZ1JdfK0moEoTuuJnrqQ@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180517194834.GW25808@atomide.com>
+References: <20180515183409.78046-1-andriy.shevchenko@linux.intel.com>
+ <ca78895ac7ac84ec1c7f2f33024237af329ffd7a.camel@linux.intel.com>
+ <20180516100842.xuma7b3e727w7bpz@linutronix.de> <CAHp75Vc2bJQHiWYcdKK+7wwMw2fSWxMauxP-dMRUAUdKnet7WQ@mail.gmail.com>
+ <20180516104734.357oevogppu5bsg4@linutronix.de> <20180517134820.GI98604@atomide.com>
+ <CAHp75Veb+zBfh=44qmMevvrfCSRYhfUMJUMArsDBtgM-F_FknQ@mail.gmail.com> <20180517194834.GW25808@atomide.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 23 May 2018 00:52:01 +0300
+Message-ID: <CAHp75Vf7L3zsSgaj1vfoyNKdPo0w6Nu+mW5HuM97SKAK-1y2Pg@mail.gmail.com>
+Subject: Re: [PATCH v1 0/3] console, serial8250: Disable PM and DMA ops
+To: Tony Lindgren <tony@atomide.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc Alex]
+On Thu, May 17, 2018 at 10:48 PM, Tony Lindgren <tony@atomide.com> wrote:
+> * Andy Shevchenko <andy.shevchenko@gmail.com> [180517 16:38]:
+>> On Thu, May 17, 2018 at 4:48 PM, Tony Lindgren <tony@atomide.com> wrote:
+>> > * Sebastian Andrzej Siewior <bigeasy@linutronix.de> [180516 10:49]:
 
-On Tue, May 22, 2018 at 02:09:59PM -0700, Doug Meyer wrote:
-> Logan answered the questions quite thoroughly. (Thanks, Logan!)
+>> > The idea breaking PM seems silly to me considering that we've had
+>> > it working for years already.
+>>
+>> Same question  / note. World is much more complex than just being OMAP.
+>
+> Sorry but you are making assumptions about hardware being powered on
+> all the time.
 
-When you repost it, please rework the commit log so it answers the
-questions directly.  Otherwise the next reader may have the same
-questions again.  E.g., say something about how the proxy IDs are not
-programmable and are fixed in the hardware so all we have to do is
-read them.
+Nope, other way around. The so called "support" _prevents_ our
+hardware to go to sleep.
 
-I don't think the question of when the aliases need to be added is
-quite closed.  Logan said "it seems pci_add_dma_alias() must be called
-before the driver is initialized and therefore in a quirk", but that
-doesn't make clear *why* the alias needs to be added before the driver
-is initialized.  The alias shouldn't be needed until the device does a
-DMA, and it shouldn't do that until after the driver initializes.
+So it's not breaking, it's fixing. It's pity that OMAP solution is just a hack.
 
-I suspect the reason the existing quirks are in drivers/pci/quirks.c
-is because the IOMMU driver is in the host OS, but the host may not
-have a driver for the device if the device is passed through to a
-guest OS.  In that case, the only way to add the alias is by using a
-quirk that is always built into the host OS.
+> It may have been a safe assumption up to mid-90's and might still be
+> valid assumption for hardware providing on MS-DOS boot floppy
+> compability.
+>
+> But that is not a safe assumption for Linux kernel at all. Especially
+> for console TX where there's no need to keep it powered unless there
+> is actually something to write.
+>
+> If there are runtime PM issues for consoles, let's just fix them.
 
-We could argue that the driver in the guest should be able to tell the
-host's IOMMU driver about these aliases, but I doubt there's an
-interface for that.
+Yes, there is an issue to begin with, i.e. irq_safe hack.
+Removal of that hack reveals the real issues with the code.
 
-Bjorn
+> Then for really seeing console messages on next reboot from a hung
+> system, CONFIG_PSTORE_CONSOLE option seems to do a very good job.
+
+How this helps to prevent a more serious system crashes during an
+attempt to power UART on?
+
+> With a warm reset after triggered by watchdog the console messages
+> are readable most of the time even when using DDR as the back end.
+
+Ditto.
+
+-- 
+With Best Regards,
+Andy Shevchenko
