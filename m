@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751760AbeEVQfL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 12:35:11 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:39322 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751440AbeEVQfF (ORCPT
+        id S1752177AbeEVQfq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 12:35:46 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:50687 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751716AbeEVQfL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 12:35:05 -0400
-X-Google-Smtp-Source: AB8JxZonfRi7KnRT6PLKWRvoXIJCCK3su00MjFtTQ8kC0WaBaMndLU2wBad74tQaqQY8RkPk6n1upw==
+        Tue, 22 May 2018 12:35:11 -0400
+X-Google-Smtp-Source: AB8JxZqqbsvuUxRiZ91/KHBM0mcUAon0nmp9371XngLff89H/yM2ANlgpj3+wqf1Vg5XX3dRpTJzKg==
 From: Jerome Brunet <jbrunet@baylibre.com>
 To: Neil Armstrong <narmstrong@baylibre.com>,
         Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>
@@ -16,9 +16,9 @@ Cc: Jerome Brunet <jbrunet@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-amlogic@lists.infradead.org,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/6] clk: meson: add clk-phase clock driver
-Date: Tue, 22 May 2018 18:34:53 +0200
-Message-Id: <20180522163457.13834-3-jbrunet@baylibre.com>
+Subject: [PATCH v2 6/6] clk: meson: axg: add the audio clock controller driver
+Date: Tue, 22 May 2018 18:34:57 +0200
+Message-Id: <20180522163457.13834-7-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180522163457.13834-1-jbrunet@baylibre.com>
 References: <20180522163457.13834-1-jbrunet@baylibre.com>
@@ -26,123 +26,1036 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a driver based meson clk-regmap to control clock phase on
-amlogic SoCs
+The axg audio clock controller is the clock generation unit for the
+amlogic audio subsystem of A113 based SoCs. It may be clocked by 8
+different plls provided by the primary clock controller and also by
+10 slave bit clocks and 10 slave sample clocks which may be provided
+by external components, such as audio codecs, through the SoC pads.
+
+It contains several muxes, dividers and gates which are fed into the
+the different devices of the audio subsystem.
 
 Acked-by: Neil Armstrong <narmstrong@baylibre.com>
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/meson/Makefile    |  1 +
- drivers/clk/meson/clk-phase.c | 63 +++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/meson/clkc.h      |  8 ++++++
- 3 files changed, 72 insertions(+)
- create mode 100644 drivers/clk/meson/clk-phase.c
+ drivers/clk/meson/Kconfig     |   9 +
+ drivers/clk/meson/Makefile    |   1 +
+ drivers/clk/meson/axg-audio.c | 845 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/meson/axg-audio.h | 127 +++++++
+ 4 files changed, 982 insertions(+)
+ create mode 100644 drivers/clk/meson/axg-audio.c
+ create mode 100644 drivers/clk/meson/axg-audio.h
 
+diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+index 9ad95966aa3d..efaa70f682b4 100644
+--- a/drivers/clk/meson/Kconfig
++++ b/drivers/clk/meson/Kconfig
+@@ -45,3 +45,12 @@ config COMMON_CLK_AXG
+ 	help
+ 	  Support for the clock controller on AmLogic A113D devices, aka axg.
+ 	  Say Y if you want peripherals and CPU frequency scaling to work.
++
++config COMMON_CLK_AXG_AUDIO
++	tristate "Meson AXG Audio Clock Controller Driver"
++	depends on COMMON_CLK_AXG
++	select COMMON_CLK_AMLOGIC_AUDIO
++	select MFD_SYSCON
++	help
++	  Support for the audio clock controller on AmLogic A113D devices,
++	  aka axg, Say Y if you want audio subsystem to work.
 diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index d0d13aeb369a..162e4a6f5c55 100644
+index 1574e3f0de5c..fd97f5ba317d 100644
 --- a/drivers/clk/meson/Makefile
 +++ b/drivers/clk/meson/Makefile
-@@ -3,6 +3,7 @@
- #
- 
- obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-audio-divider.o
-+obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-phase.o
- obj-$(CONFIG_COMMON_CLK_MESON_AO) += meson-aoclk.o
+@@ -9,4 +9,5 @@ obj-$(CONFIG_COMMON_CLK_MESON_AO) += meson-aoclk.o
  obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
  obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
-diff --git a/drivers/clk/meson/clk-phase.c b/drivers/clk/meson/clk-phase.c
+ obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o axg-aoclk.o
++obj-$(CONFIG_COMMON_CLK_AXG_AUDIO)	+= axg-audio.o
+ obj-$(CONFIG_COMMON_CLK_REGMAP_MESON)	+= clk-regmap.o
+diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
 new file mode 100644
-index 000000000000..cba43748ce3d
+index 000000000000..a0ed41e73bde
 --- /dev/null
-+++ b/drivers/clk/meson/clk-phase.c
-@@ -0,0 +1,63 @@
++++ b/drivers/clk/meson/axg-audio.c
+@@ -0,0 +1,845 @@
 +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
 +/*
 + * Copyright (c) 2018 BayLibre, SAS.
 + * Author: Jerome Brunet <jbrunet@baylibre.com>
 + */
 +
++#include <linux/clk.h>
 +#include <linux/clk-provider.h>
-+#include "clkc.h"
++#include <linux/init.h>
++#include <linux/of_device.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++#include <linux/reset.h>
++#include <linux/slab.h>
 +
-+#define phase_step(_width) (360 / (1 << (_width)))
++#include "clkc-audio.h"
++#include "axg-audio.h"
 +
-+static inline struct meson_clk_phase_data *
-+meson_clk_phase_data(struct clk_regmap *clk)
-+{
-+	return (struct meson_clk_phase_data *)clk->data;
++#define AXG_MST_IN_COUNT	8
++#define AXG_SLV_SCLK_COUNT	10
++#define AXG_SLV_LRCLK_COUNT	10
++
++#define AXG_AUD_GATE(_name, _reg, _bit, _pname, _iflags)		\
++struct clk_regmap axg_##_name = {					\
++	.data = &(struct clk_regmap_gate_data){				\
++		.offset = (_reg),					\
++		.bit_idx = (_bit),					\
++	},								\
++	.hw.init = &(struct clk_init_data) {				\
++		.name = "axg_"#_name,					\
++		.ops = &clk_regmap_gate_ops,				\
++		.parent_names = (const char *[]){ _pname },		\
++		.num_parents = 1,					\
++		.flags = CLK_DUTY_CYCLE_PARENT | (_iflags),		\
++	},								\
 +}
 +
-+int meson_clk_degrees_from_val(unsigned int val, unsigned int width)
-+{
-+	return phase_step(width) * val;
-+}
-+EXPORT_SYMBOL_GPL(meson_clk_degrees_from_val);
-+
-+unsigned int meson_clk_degrees_to_val(int degrees, unsigned int width)
-+{
-+	unsigned int val = DIV_ROUND_CLOSEST(degrees, phase_step(width));
-+
-+	/*
-+	 * This last calculation is here for cases when degrees is rounded
-+	 * to 360, in which case val == (1 << width).
-+	 */
-+	return val % (1 << width);
-+}
-+EXPORT_SYMBOL_GPL(meson_clk_degrees_to_val);
-+
-+static int meson_clk_phase_get_phase(struct clk_hw *hw)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_clk_phase_data *phase = meson_clk_phase_data(clk);
-+	unsigned int val;
-+
-+	val = meson_parm_read(clk->map, &phase->ph);
-+
-+	return meson_clk_degrees_from_val(val, phase->ph.width);
++#define AXG_AUD_MUX(_name, _reg, _mask, _shift, _dflags, _pnames, _iflags) \
++struct clk_regmap axg_##_name = {					\
++	.data = &(struct clk_regmap_mux_data){				\
++		.offset = (_reg),					\
++		.mask = (_mask),					\
++		.shift = (_shift),					\
++		.flags = (_dflags),					\
++	},								\
++	.hw.init = &(struct clk_init_data){				\
++		.name = "axg_"#_name,					\
++		.ops = &clk_regmap_mux_ops,				\
++		.parent_names = (_pnames),				\
++		.num_parents = ARRAY_SIZE(_pnames),			\
++		.flags = CLK_DUTY_CYCLE_PARENT | (_iflags),		\
++	},								\
 +}
 +
-+static int meson_clk_phase_set_phase(struct clk_hw *hw, int degrees)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_clk_phase_data *phase = meson_clk_phase_data(clk);
-+	unsigned int val;
++#define AXG_AUD_DIV(_name, _reg, _shift, _width, _dflags, _pname, _iflags) \
++struct clk_regmap axg_##_name = {					\
++	.data = &(struct clk_regmap_div_data){				\
++		.offset = (_reg),					\
++		.shift = (_shift),					\
++		.width = (_width),					\
++		.flags = (_dflags),					\
++	},								\
++	.hw.init = &(struct clk_init_data){				\
++		.name = "axg_"#_name,					\
++		.ops = &clk_regmap_divider_ops,				\
++		.parent_names = (const char *[]) { _pname },		\
++		.num_parents = 1,					\
++		.flags = (_iflags),					\
++	},								\
++}
 +
-+	val = meson_clk_degrees_to_val(degrees, phase->ph.width);
-+	meson_parm_write(clk->map, &phase->ph, val);
++#define AXG_PCLK_GATE(_name, _bit)				\
++	AXG_AUD_GATE(_name, AUDIO_CLK_GATE_EN, _bit, "axg_audio_pclk", 0)
++
++/* Audio peripheral clocks */
++static AXG_PCLK_GATE(ddr_arb,	   0);
++static AXG_PCLK_GATE(pdm,	   1);
++static AXG_PCLK_GATE(tdmin_a,	   2);
++static AXG_PCLK_GATE(tdmin_b,	   3);
++static AXG_PCLK_GATE(tdmin_c,	   4);
++static AXG_PCLK_GATE(tdmin_lb,	   5);
++static AXG_PCLK_GATE(tdmout_a,	   6);
++static AXG_PCLK_GATE(tdmout_b,	   7);
++static AXG_PCLK_GATE(tdmout_c,	   8);
++static AXG_PCLK_GATE(frddr_a,	   9);
++static AXG_PCLK_GATE(frddr_b,	   10);
++static AXG_PCLK_GATE(frddr_c,	   11);
++static AXG_PCLK_GATE(toddr_a,	   12);
++static AXG_PCLK_GATE(toddr_b,	   13);
++static AXG_PCLK_GATE(toddr_c,	   14);
++static AXG_PCLK_GATE(loopback,	   15);
++static AXG_PCLK_GATE(spdifin,	   16);
++static AXG_PCLK_GATE(spdifout,	   17);
++static AXG_PCLK_GATE(resample,	   18);
++static AXG_PCLK_GATE(power_detect, 19);
++
++/* Audio Master Clocks */
++static const char * const mst_mux_parent_names[] = {
++	"axg_mst_in0", "axg_mst_in1", "axg_mst_in2", "axg_mst_in3",
++	"axg_mst_in4", "axg_mst_in5", "axg_mst_in6", "axg_mst_in7",
++};
++
++#define AXG_MST_MCLK_MUX(_name, _reg)					\
++	AXG_AUD_MUX(_name##_sel, _reg, 0x7, 24, CLK_MUX_ROUND_CLOSEST, \
++		    mst_mux_parent_names, CLK_SET_RATE_PARENT)
++
++static AXG_MST_MCLK_MUX(mst_a_mclk,   AUDIO_MCLK_A_CTRL);
++static AXG_MST_MCLK_MUX(mst_b_mclk,   AUDIO_MCLK_B_CTRL);
++static AXG_MST_MCLK_MUX(mst_c_mclk,   AUDIO_MCLK_C_CTRL);
++static AXG_MST_MCLK_MUX(mst_d_mclk,   AUDIO_MCLK_D_CTRL);
++static AXG_MST_MCLK_MUX(mst_e_mclk,   AUDIO_MCLK_E_CTRL);
++static AXG_MST_MCLK_MUX(mst_f_mclk,   AUDIO_MCLK_F_CTRL);
++static AXG_MST_MCLK_MUX(spdifout_clk, AUDIO_CLK_SPDIFOUT_CTRL);
++static AXG_MST_MCLK_MUX(spdifin_clk,  AUDIO_CLK_SPDIFIN_CTRL);
++static AXG_MST_MCLK_MUX(pdm_dclk,     AUDIO_CLK_PDMIN_CTRL0);
++static AXG_MST_MCLK_MUX(pdm_sysclk,   AUDIO_CLK_PDMIN_CTRL1);
++
++#define AXG_MST_MCLK_DIV(_name, _reg)					\
++	AXG_AUD_DIV(_name##_div, _reg, 0, 16, CLK_DIVIDER_ROUND_CLOSEST, \
++		    "axg_"#_name"_sel", CLK_SET_RATE_PARENT)		\
++
++static AXG_MST_MCLK_DIV(mst_a_mclk,   AUDIO_MCLK_A_CTRL);
++static AXG_MST_MCLK_DIV(mst_b_mclk,   AUDIO_MCLK_B_CTRL);
++static AXG_MST_MCLK_DIV(mst_c_mclk,   AUDIO_MCLK_C_CTRL);
++static AXG_MST_MCLK_DIV(mst_d_mclk,   AUDIO_MCLK_D_CTRL);
++static AXG_MST_MCLK_DIV(mst_e_mclk,   AUDIO_MCLK_E_CTRL);
++static AXG_MST_MCLK_DIV(mst_f_mclk,   AUDIO_MCLK_F_CTRL);
++static AXG_MST_MCLK_DIV(spdifout_clk, AUDIO_CLK_SPDIFOUT_CTRL);
++static AXG_MST_MCLK_DIV(spdifin_clk,  AUDIO_CLK_SPDIFIN_CTRL);
++static AXG_MST_MCLK_DIV(pdm_dclk,     AUDIO_CLK_PDMIN_CTRL0);
++static AXG_MST_MCLK_DIV(pdm_sysclk,   AUDIO_CLK_PDMIN_CTRL1);
++
++#define AXG_MST_MCLK_GATE(_name, _reg)					\
++	AXG_AUD_GATE(_name, _reg, 31,  "axg_"#_name"_div",		\
++		     CLK_SET_RATE_PARENT)
++
++static AXG_MST_MCLK_GATE(mst_a_mclk,   AUDIO_MCLK_A_CTRL);
++static AXG_MST_MCLK_GATE(mst_b_mclk,   AUDIO_MCLK_B_CTRL);
++static AXG_MST_MCLK_GATE(mst_c_mclk,   AUDIO_MCLK_C_CTRL);
++static AXG_MST_MCLK_GATE(mst_d_mclk,   AUDIO_MCLK_D_CTRL);
++static AXG_MST_MCLK_GATE(mst_e_mclk,   AUDIO_MCLK_E_CTRL);
++static AXG_MST_MCLK_GATE(mst_f_mclk,   AUDIO_MCLK_F_CTRL);
++static AXG_MST_MCLK_GATE(spdifout_clk, AUDIO_CLK_SPDIFOUT_CTRL);
++static AXG_MST_MCLK_GATE(spdifin_clk,  AUDIO_CLK_SPDIFIN_CTRL);
++static AXG_MST_MCLK_GATE(pdm_dclk,     AUDIO_CLK_PDMIN_CTRL0);
++static AXG_MST_MCLK_GATE(pdm_sysclk,   AUDIO_CLK_PDMIN_CTRL1);
++
++/* Sample Clocks */
++#define AXG_MST_SCLK_PRE_EN(_name, _reg)			\
++	AXG_AUD_GATE(mst_##_name##_sclk_pre_en, _reg, 31,	\
++		     "axg_mst_"#_name"_mclk", 0)
++
++static AXG_MST_SCLK_PRE_EN(a, AUDIO_MST_A_SCLK_CTRL0);
++static AXG_MST_SCLK_PRE_EN(b, AUDIO_MST_B_SCLK_CTRL0);
++static AXG_MST_SCLK_PRE_EN(c, AUDIO_MST_C_SCLK_CTRL0);
++static AXG_MST_SCLK_PRE_EN(d, AUDIO_MST_D_SCLK_CTRL0);
++static AXG_MST_SCLK_PRE_EN(e, AUDIO_MST_E_SCLK_CTRL0);
++static AXG_MST_SCLK_PRE_EN(f, AUDIO_MST_F_SCLK_CTRL0);
++
++#define AXG_AUD_SCLK_DIV(_name, _reg, _div_shift, _div_width,		\
++			 _hi_shift, _hi_width, _pname, _iflags)		\
++struct clk_regmap axg_##_name = {					\
++	.data = &(struct meson_sclk_div_data) {				\
++		.div = {						\
++			.reg_off = (_reg),				\
++			.shift   = (_div_shift),			\
++			.width   = (_div_width),			\
++		},							\
++		.hi = {							\
++			.reg_off = (_reg),				\
++			.shift   = (_hi_shift),				\
++			.width   = (_hi_width),				\
++		},							\
++	},								\
++	.hw.init = &(struct clk_init_data) {				\
++		.name = "axg_"#_name,					\
++		.ops = &meson_sclk_div_ops,				\
++		.parent_names = (const char *[]) { _pname },		\
++		.num_parents = 1,					\
++		.flags = (_iflags),					\
++	},								\
++}
++
++#define AXG_MST_SCLK_DIV(_name, _reg)					\
++	AXG_AUD_SCLK_DIV(mst_##_name##_sclk_div, _reg, 20, 10, 0, 0,	\
++			 "axg_mst_"#_name"_sclk_pre_en",		\
++			 CLK_SET_RATE_PARENT)
++
++static AXG_MST_SCLK_DIV(a, AUDIO_MST_A_SCLK_CTRL0);
++static AXG_MST_SCLK_DIV(b, AUDIO_MST_B_SCLK_CTRL0);
++static AXG_MST_SCLK_DIV(c, AUDIO_MST_C_SCLK_CTRL0);
++static AXG_MST_SCLK_DIV(d, AUDIO_MST_D_SCLK_CTRL0);
++static AXG_MST_SCLK_DIV(e, AUDIO_MST_E_SCLK_CTRL0);
++static AXG_MST_SCLK_DIV(f, AUDIO_MST_F_SCLK_CTRL0);
++
++#define AXG_MST_SCLK_POST_EN(_name, _reg)				\
++	AXG_AUD_GATE(mst_##_name##_sclk_post_en, _reg, 30,		\
++		     "axg_mst_"#_name"_sclk_div", CLK_SET_RATE_PARENT)
++
++static AXG_MST_SCLK_POST_EN(a, AUDIO_MST_A_SCLK_CTRL0);
++static AXG_MST_SCLK_POST_EN(b, AUDIO_MST_B_SCLK_CTRL0);
++static AXG_MST_SCLK_POST_EN(c, AUDIO_MST_C_SCLK_CTRL0);
++static AXG_MST_SCLK_POST_EN(d, AUDIO_MST_D_SCLK_CTRL0);
++static AXG_MST_SCLK_POST_EN(e, AUDIO_MST_E_SCLK_CTRL0);
++static AXG_MST_SCLK_POST_EN(f, AUDIO_MST_F_SCLK_CTRL0);
++
++#define AXG_AUD_TRIPHASE(_name, _reg, _width, _shift0, _shift1, _shift2, \
++			 _pname, _iflags)				\
++struct clk_regmap axg_##_name = {					\
++	.data = &(struct meson_clk_triphase_data) {			\
++		.ph0 = {						\
++			.reg_off = (_reg),				\
++			.shift   = (_shift0),				\
++			.width   = (_width),				\
++		},							\
++		.ph1 = {						\
++			.reg_off = (_reg),				\
++			.shift   = (_shift1),				\
++			.width   = (_width),				\
++		},							\
++		.ph2 = {						\
++			.reg_off = (_reg),				\
++			.shift   = (_shift2),				\
++			.width   = (_width),				\
++		},							\
++	},								\
++	.hw.init = &(struct clk_init_data) {				\
++		.name = "axg_"#_name,					\
++		.ops = &meson_clk_triphase_ops,				\
++		.parent_names = (const char *[]) { _pname },		\
++		.num_parents = 1,					\
++		.flags = CLK_DUTY_CYCLE_PARENT | (_iflags),		\
++	},								\
++}
++
++#define AXG_MST_SCLK(_name, _reg)					\
++	AXG_AUD_TRIPHASE(mst_##_name##_sclk, _reg, 1, 0, 2, 4,		\
++			 "axg_mst_"#_name"_sclk_post_en", CLK_SET_RATE_PARENT)
++
++static AXG_MST_SCLK(a, AUDIO_MST_A_SCLK_CTRL1);
++static AXG_MST_SCLK(b, AUDIO_MST_B_SCLK_CTRL1);
++static AXG_MST_SCLK(c, AUDIO_MST_C_SCLK_CTRL1);
++static AXG_MST_SCLK(d, AUDIO_MST_D_SCLK_CTRL1);
++static AXG_MST_SCLK(e, AUDIO_MST_E_SCLK_CTRL1);
++static AXG_MST_SCLK(f, AUDIO_MST_F_SCLK_CTRL1);
++
++#define AXG_MST_LRCLK_DIV(_name, _reg)					\
++	AXG_AUD_SCLK_DIV(mst_##_name##_lrclk_div, _reg, 0, 10, 10, 10,	\
++		    "axg_mst_"#_name"_sclk_post_en", 0)			\
++
++static AXG_MST_LRCLK_DIV(a, AUDIO_MST_A_SCLK_CTRL0);
++static AXG_MST_LRCLK_DIV(b, AUDIO_MST_B_SCLK_CTRL0);
++static AXG_MST_LRCLK_DIV(c, AUDIO_MST_C_SCLK_CTRL0);
++static AXG_MST_LRCLK_DIV(d, AUDIO_MST_D_SCLK_CTRL0);
++static AXG_MST_LRCLK_DIV(e, AUDIO_MST_E_SCLK_CTRL0);
++static AXG_MST_LRCLK_DIV(f, AUDIO_MST_F_SCLK_CTRL0);
++
++#define AXG_MST_LRCLK(_name, _reg)					\
++	AXG_AUD_TRIPHASE(mst_##_name##_lrclk, _reg, 1, 1, 3, 5,		\
++			 "axg_mst_"#_name"_lrclk_div", CLK_SET_RATE_PARENT)
++
++static AXG_MST_LRCLK(a, AUDIO_MST_A_SCLK_CTRL1);
++static AXG_MST_LRCLK(b, AUDIO_MST_B_SCLK_CTRL1);
++static AXG_MST_LRCLK(c, AUDIO_MST_C_SCLK_CTRL1);
++static AXG_MST_LRCLK(d, AUDIO_MST_D_SCLK_CTRL1);
++static AXG_MST_LRCLK(e, AUDIO_MST_E_SCLK_CTRL1);
++static AXG_MST_LRCLK(f, AUDIO_MST_F_SCLK_CTRL1);
++
++static const char * const tdm_sclk_parent_names[] = {
++	"axg_mst_a_sclk", "axg_mst_b_sclk", "axg_mst_c_sclk",
++	"axg_mst_d_sclk", "axg_mst_e_sclk", "axg_mst_f_sclk",
++	"axg_slv_sclk0", "axg_slv_sclk1", "axg_slv_sclk2",
++	"axg_slv_sclk3", "axg_slv_sclk4", "axg_slv_sclk5",
++	"axg_slv_sclk6", "axg_slv_sclk7", "axg_slv_sclk8",
++	"axg_slv_sclk9"
++};
++
++#define AXG_TDM_SCLK_MUX(_name, _reg)				\
++	AXG_AUD_MUX(tdm##_name##_sclk_sel, _reg, 0xf, 24,	\
++		    CLK_MUX_ROUND_CLOSEST,			\
++		    tdm_sclk_parent_names, 0)
++
++static AXG_TDM_SCLK_MUX(in_a,  AUDIO_CLK_TDMIN_A_CTRL);
++static AXG_TDM_SCLK_MUX(in_b,  AUDIO_CLK_TDMIN_B_CTRL);
++static AXG_TDM_SCLK_MUX(in_c,  AUDIO_CLK_TDMIN_C_CTRL);
++static AXG_TDM_SCLK_MUX(in_lb, AUDIO_CLK_TDMIN_LB_CTRL);
++static AXG_TDM_SCLK_MUX(out_a, AUDIO_CLK_TDMOUT_A_CTRL);
++static AXG_TDM_SCLK_MUX(out_b, AUDIO_CLK_TDMOUT_B_CTRL);
++static AXG_TDM_SCLK_MUX(out_c, AUDIO_CLK_TDMOUT_C_CTRL);
++
++#define AXG_TDM_SCLK_PRE_EN(_name, _reg)				\
++	AXG_AUD_GATE(tdm##_name##_sclk_pre_en, _reg, 31,		\
++		     "axg_tdm"#_name"_sclk_sel", CLK_SET_RATE_PARENT)
++
++static AXG_TDM_SCLK_PRE_EN(in_a,  AUDIO_CLK_TDMIN_A_CTRL);
++static AXG_TDM_SCLK_PRE_EN(in_b,  AUDIO_CLK_TDMIN_B_CTRL);
++static AXG_TDM_SCLK_PRE_EN(in_c,  AUDIO_CLK_TDMIN_C_CTRL);
++static AXG_TDM_SCLK_PRE_EN(in_lb, AUDIO_CLK_TDMIN_LB_CTRL);
++static AXG_TDM_SCLK_PRE_EN(out_a, AUDIO_CLK_TDMOUT_A_CTRL);
++static AXG_TDM_SCLK_PRE_EN(out_b, AUDIO_CLK_TDMOUT_B_CTRL);
++static AXG_TDM_SCLK_PRE_EN(out_c, AUDIO_CLK_TDMOUT_C_CTRL);
++
++#define AXG_TDM_SCLK_POST_EN(_name, _reg)				\
++	AXG_AUD_GATE(tdm##_name##_sclk_post_en, _reg, 30,		\
++		     "axg_tdm"#_name"_sclk_pre_en", CLK_SET_RATE_PARENT)
++
++static AXG_TDM_SCLK_POST_EN(in_a,  AUDIO_CLK_TDMIN_A_CTRL);
++static AXG_TDM_SCLK_POST_EN(in_b,  AUDIO_CLK_TDMIN_B_CTRL);
++static AXG_TDM_SCLK_POST_EN(in_c,  AUDIO_CLK_TDMIN_C_CTRL);
++static AXG_TDM_SCLK_POST_EN(in_lb, AUDIO_CLK_TDMIN_LB_CTRL);
++static AXG_TDM_SCLK_POST_EN(out_a, AUDIO_CLK_TDMOUT_A_CTRL);
++static AXG_TDM_SCLK_POST_EN(out_b, AUDIO_CLK_TDMOUT_B_CTRL);
++static AXG_TDM_SCLK_POST_EN(out_c, AUDIO_CLK_TDMOUT_C_CTRL);
++
++#define AXG_TDM_SCLK(_name, _reg)					\
++	struct clk_regmap axg_tdm##_name##_sclk = {			\
++	.data = &(struct meson_clk_phase_data) {			\
++		.ph = {							\
++			.reg_off = (_reg),				\
++			.shift   = 29,					\
++			.width   = 1,					\
++		},							\
++	},								\
++	.hw.init = &(struct clk_init_data) {				\
++		.name = "axg_tdm"#_name"_sclk",				\
++		.ops = &meson_clk_phase_ops,				\
++		.parent_names = (const char *[])			\
++		{ "axg_tdm"#_name"_sclk_post_en" },			\
++		.num_parents = 1,					\
++		.flags = CLK_DUTY_CYCLE_PARENT | CLK_SET_RATE_PARENT,	\
++	},								\
++}
++
++static AXG_TDM_SCLK(in_a,  AUDIO_CLK_TDMIN_A_CTRL);
++static AXG_TDM_SCLK(in_b,  AUDIO_CLK_TDMIN_B_CTRL);
++static AXG_TDM_SCLK(in_c,  AUDIO_CLK_TDMIN_C_CTRL);
++static AXG_TDM_SCLK(in_lb, AUDIO_CLK_TDMIN_LB_CTRL);
++static AXG_TDM_SCLK(out_a, AUDIO_CLK_TDMOUT_A_CTRL);
++static AXG_TDM_SCLK(out_b, AUDIO_CLK_TDMOUT_B_CTRL);
++static AXG_TDM_SCLK(out_c, AUDIO_CLK_TDMOUT_C_CTRL);
++
++static const char * const tdm_lrclk_parent_names[] = {
++	"axg_mst_a_lrclk", "axg_mst_b_lrclk", "axg_mst_c_lrclk",
++	"axg_mst_d_lrclk", "axg_mst_e_lrclk", "axg_mst_f_lrclk",
++	"axg_slv_lrclk0", "axg_slv_lrclk1", "axg_slv_lrclk2",
++	"axg_slv_lrclk3", "axg_slv_lrclk4", "axg_slv_lrclk5",
++	"axg_slv_lrclk6", "axg_slv_lrclk7", "axg_slv_lrclk8",
++	"axg_slv_lrclk9"
++};
++
++#define AXG_TDM_LRLCK(_name, _reg)		       \
++	AXG_AUD_MUX(tdm##_name##_lrclk, _reg, 0xf, 20, \
++		    CLK_MUX_ROUND_CLOSEST,	       \
++		    tdm_lrclk_parent_names, 0)
++
++static AXG_TDM_LRLCK(in_a,  AUDIO_CLK_TDMIN_A_CTRL);
++static AXG_TDM_LRLCK(in_b,  AUDIO_CLK_TDMIN_B_CTRL);
++static AXG_TDM_LRLCK(in_c,  AUDIO_CLK_TDMIN_C_CTRL);
++static AXG_TDM_LRLCK(in_lb, AUDIO_CLK_TDMIN_LB_CTRL);
++static AXG_TDM_LRLCK(out_a, AUDIO_CLK_TDMOUT_A_CTRL);
++static AXG_TDM_LRLCK(out_b, AUDIO_CLK_TDMOUT_B_CTRL);
++static AXG_TDM_LRLCK(out_c, AUDIO_CLK_TDMOUT_C_CTRL);
++
++/*
++ * Array of all clocks provided by this provider
++ * The input clocks of the controller will be populated at runtime
++ */
++static struct clk_hw_onecell_data axg_audio_hw_onecell_data = {
++	.hws = {
++		[AUD_CLKID_DDR_ARB]		= &axg_ddr_arb.hw,
++		[AUD_CLKID_PDM]			= &axg_pdm.hw,
++		[AUD_CLKID_TDMIN_A]		= &axg_tdmin_a.hw,
++		[AUD_CLKID_TDMIN_B]		= &axg_tdmin_b.hw,
++		[AUD_CLKID_TDMIN_C]		= &axg_tdmin_c.hw,
++		[AUD_CLKID_TDMIN_LB]		= &axg_tdmin_lb.hw,
++		[AUD_CLKID_TDMOUT_A]		= &axg_tdmout_a.hw,
++		[AUD_CLKID_TDMOUT_B]		= &axg_tdmout_b.hw,
++		[AUD_CLKID_TDMOUT_C]		= &axg_tdmout_c.hw,
++		[AUD_CLKID_FRDDR_A]		= &axg_frddr_a.hw,
++		[AUD_CLKID_FRDDR_B]		= &axg_frddr_b.hw,
++		[AUD_CLKID_FRDDR_C]		= &axg_frddr_c.hw,
++		[AUD_CLKID_TODDR_A]		= &axg_toddr_a.hw,
++		[AUD_CLKID_TODDR_B]		= &axg_toddr_b.hw,
++		[AUD_CLKID_TODDR_C]		= &axg_toddr_c.hw,
++		[AUD_CLKID_LOOPBACK]		= &axg_loopback.hw,
++		[AUD_CLKID_SPDIFIN]		= &axg_spdifin.hw,
++		[AUD_CLKID_SPDIFOUT]		= &axg_spdifout.hw,
++		[AUD_CLKID_RESAMPLE]		= &axg_resample.hw,
++		[AUD_CLKID_POWER_DETECT]	= &axg_power_detect.hw,
++		[AUD_CLKID_MST_A_MCLK_SEL]	= &axg_mst_a_mclk_sel.hw,
++		[AUD_CLKID_MST_B_MCLK_SEL]	= &axg_mst_b_mclk_sel.hw,
++		[AUD_CLKID_MST_C_MCLK_SEL]	= &axg_mst_c_mclk_sel.hw,
++		[AUD_CLKID_MST_D_MCLK_SEL]	= &axg_mst_d_mclk_sel.hw,
++		[AUD_CLKID_MST_E_MCLK_SEL]	= &axg_mst_e_mclk_sel.hw,
++		[AUD_CLKID_MST_F_MCLK_SEL]	= &axg_mst_f_mclk_sel.hw,
++		[AUD_CLKID_MST_A_MCLK_DIV]	= &axg_mst_a_mclk_div.hw,
++		[AUD_CLKID_MST_B_MCLK_DIV]	= &axg_mst_b_mclk_div.hw,
++		[AUD_CLKID_MST_C_MCLK_DIV]	= &axg_mst_c_mclk_div.hw,
++		[AUD_CLKID_MST_D_MCLK_DIV]	= &axg_mst_d_mclk_div.hw,
++		[AUD_CLKID_MST_E_MCLK_DIV]	= &axg_mst_e_mclk_div.hw,
++		[AUD_CLKID_MST_F_MCLK_DIV]	= &axg_mst_f_mclk_div.hw,
++		[AUD_CLKID_MST_A_MCLK]		= &axg_mst_a_mclk.hw,
++		[AUD_CLKID_MST_B_MCLK]		= &axg_mst_b_mclk.hw,
++		[AUD_CLKID_MST_C_MCLK]		= &axg_mst_c_mclk.hw,
++		[AUD_CLKID_MST_D_MCLK]		= &axg_mst_d_mclk.hw,
++		[AUD_CLKID_MST_E_MCLK]		= &axg_mst_e_mclk.hw,
++		[AUD_CLKID_MST_F_MCLK]		= &axg_mst_f_mclk.hw,
++		[AUD_CLKID_SPDIFOUT_CLK_SEL]	= &axg_spdifout_clk_sel.hw,
++		[AUD_CLKID_SPDIFOUT_CLK_DIV]	= &axg_spdifout_clk_div.hw,
++		[AUD_CLKID_SPDIFOUT_CLK]	= &axg_spdifout_clk.hw,
++		[AUD_CLKID_SPDIFIN_CLK_SEL]	= &axg_spdifin_clk_sel.hw,
++		[AUD_CLKID_SPDIFIN_CLK_DIV]	= &axg_spdifin_clk_div.hw,
++		[AUD_CLKID_SPDIFIN_CLK]		= &axg_spdifin_clk.hw,
++		[AUD_CLKID_PDM_DCLK_SEL]	= &axg_pdm_dclk_sel.hw,
++		[AUD_CLKID_PDM_DCLK_DIV]	= &axg_pdm_dclk_div.hw,
++		[AUD_CLKID_PDM_DCLK]		= &axg_pdm_dclk.hw,
++		[AUD_CLKID_PDM_SYSCLK_SEL]	= &axg_pdm_sysclk_sel.hw,
++		[AUD_CLKID_PDM_SYSCLK_DIV]	= &axg_pdm_sysclk_div.hw,
++		[AUD_CLKID_PDM_SYSCLK]		= &axg_pdm_sysclk.hw,
++		[AUD_CLKID_MST_A_SCLK_PRE_EN]	= &axg_mst_a_sclk_pre_en.hw,
++		[AUD_CLKID_MST_B_SCLK_PRE_EN]	= &axg_mst_b_sclk_pre_en.hw,
++		[AUD_CLKID_MST_C_SCLK_PRE_EN]	= &axg_mst_c_sclk_pre_en.hw,
++		[AUD_CLKID_MST_D_SCLK_PRE_EN]	= &axg_mst_d_sclk_pre_en.hw,
++		[AUD_CLKID_MST_E_SCLK_PRE_EN]	= &axg_mst_e_sclk_pre_en.hw,
++		[AUD_CLKID_MST_F_SCLK_PRE_EN]	= &axg_mst_f_sclk_pre_en.hw,
++		[AUD_CLKID_MST_A_SCLK_DIV]	= &axg_mst_a_sclk_div.hw,
++		[AUD_CLKID_MST_B_SCLK_DIV]	= &axg_mst_b_sclk_div.hw,
++		[AUD_CLKID_MST_C_SCLK_DIV]	= &axg_mst_c_sclk_div.hw,
++		[AUD_CLKID_MST_D_SCLK_DIV]	= &axg_mst_d_sclk_div.hw,
++		[AUD_CLKID_MST_E_SCLK_DIV]	= &axg_mst_e_sclk_div.hw,
++		[AUD_CLKID_MST_F_SCLK_DIV]	= &axg_mst_f_sclk_div.hw,
++		[AUD_CLKID_MST_A_SCLK_POST_EN]	= &axg_mst_a_sclk_post_en.hw,
++		[AUD_CLKID_MST_B_SCLK_POST_EN]	= &axg_mst_b_sclk_post_en.hw,
++		[AUD_CLKID_MST_C_SCLK_POST_EN]	= &axg_mst_c_sclk_post_en.hw,
++		[AUD_CLKID_MST_D_SCLK_POST_EN]	= &axg_mst_d_sclk_post_en.hw,
++		[AUD_CLKID_MST_E_SCLK_POST_EN]	= &axg_mst_e_sclk_post_en.hw,
++		[AUD_CLKID_MST_F_SCLK_POST_EN]	= &axg_mst_f_sclk_post_en.hw,
++		[AUD_CLKID_MST_A_SCLK]		= &axg_mst_a_sclk.hw,
++		[AUD_CLKID_MST_B_SCLK]		= &axg_mst_b_sclk.hw,
++		[AUD_CLKID_MST_C_SCLK]		= &axg_mst_c_sclk.hw,
++		[AUD_CLKID_MST_D_SCLK]		= &axg_mst_d_sclk.hw,
++		[AUD_CLKID_MST_E_SCLK]		= &axg_mst_e_sclk.hw,
++		[AUD_CLKID_MST_F_SCLK]		= &axg_mst_f_sclk.hw,
++		[AUD_CLKID_MST_A_LRCLK_DIV]	= &axg_mst_a_lrclk_div.hw,
++		[AUD_CLKID_MST_B_LRCLK_DIV]	= &axg_mst_b_lrclk_div.hw,
++		[AUD_CLKID_MST_C_LRCLK_DIV]	= &axg_mst_c_lrclk_div.hw,
++		[AUD_CLKID_MST_D_LRCLK_DIV]	= &axg_mst_d_lrclk_div.hw,
++		[AUD_CLKID_MST_E_LRCLK_DIV]	= &axg_mst_e_lrclk_div.hw,
++		[AUD_CLKID_MST_F_LRCLK_DIV]	= &axg_mst_f_lrclk_div.hw,
++		[AUD_CLKID_MST_A_LRCLK]		= &axg_mst_a_lrclk.hw,
++		[AUD_CLKID_MST_B_LRCLK]		= &axg_mst_b_lrclk.hw,
++		[AUD_CLKID_MST_C_LRCLK]		= &axg_mst_c_lrclk.hw,
++		[AUD_CLKID_MST_D_LRCLK]		= &axg_mst_d_lrclk.hw,
++		[AUD_CLKID_MST_E_LRCLK]		= &axg_mst_e_lrclk.hw,
++		[AUD_CLKID_MST_F_LRCLK]		= &axg_mst_f_lrclk.hw,
++		[AUD_CLKID_TDMIN_A_SCLK_SEL]	= &axg_tdmin_a_sclk_sel.hw,
++		[AUD_CLKID_TDMIN_B_SCLK_SEL]	= &axg_tdmin_b_sclk_sel.hw,
++		[AUD_CLKID_TDMIN_C_SCLK_SEL]	= &axg_tdmin_c_sclk_sel.hw,
++		[AUD_CLKID_TDMIN_LB_SCLK_SEL]	= &axg_tdmin_lb_sclk_sel.hw,
++		[AUD_CLKID_TDMOUT_A_SCLK_SEL]	= &axg_tdmout_a_sclk_sel.hw,
++		[AUD_CLKID_TDMOUT_B_SCLK_SEL]	= &axg_tdmout_b_sclk_sel.hw,
++		[AUD_CLKID_TDMOUT_C_SCLK_SEL]	= &axg_tdmout_c_sclk_sel.hw,
++		[AUD_CLKID_TDMIN_A_SCLK_PRE_EN]	= &axg_tdmin_a_sclk_pre_en.hw,
++		[AUD_CLKID_TDMIN_B_SCLK_PRE_EN]	= &axg_tdmin_b_sclk_pre_en.hw,
++		[AUD_CLKID_TDMIN_C_SCLK_PRE_EN]	= &axg_tdmin_c_sclk_pre_en.hw,
++		[AUD_CLKID_TDMIN_LB_SCLK_PRE_EN] = &axg_tdmin_lb_sclk_pre_en.hw,
++		[AUD_CLKID_TDMOUT_A_SCLK_PRE_EN] = &axg_tdmout_a_sclk_pre_en.hw,
++		[AUD_CLKID_TDMOUT_B_SCLK_PRE_EN] = &axg_tdmout_b_sclk_pre_en.hw,
++		[AUD_CLKID_TDMOUT_C_SCLK_PRE_EN] = &axg_tdmout_c_sclk_pre_en.hw,
++		[AUD_CLKID_TDMIN_A_SCLK_POST_EN] = &axg_tdmin_a_sclk_post_en.hw,
++		[AUD_CLKID_TDMIN_B_SCLK_POST_EN] = &axg_tdmin_b_sclk_post_en.hw,
++		[AUD_CLKID_TDMIN_C_SCLK_POST_EN] = &axg_tdmin_c_sclk_post_en.hw,
++		[AUD_CLKID_TDMIN_LB_SCLK_POST_EN] = &axg_tdmin_lb_sclk_post_en.hw,
++		[AUD_CLKID_TDMOUT_A_SCLK_POST_EN] = &axg_tdmout_a_sclk_post_en.hw,
++		[AUD_CLKID_TDMOUT_B_SCLK_POST_EN] = &axg_tdmout_b_sclk_post_en.hw,
++		[AUD_CLKID_TDMOUT_C_SCLK_POST_EN] = &axg_tdmout_c_sclk_post_en.hw,
++		[AUD_CLKID_TDMIN_A_SCLK]	= &axg_tdmin_a_sclk.hw,
++		[AUD_CLKID_TDMIN_B_SCLK]	= &axg_tdmin_b_sclk.hw,
++		[AUD_CLKID_TDMIN_C_SCLK]	= &axg_tdmin_c_sclk.hw,
++		[AUD_CLKID_TDMIN_LB_SCLK]	= &axg_tdmin_lb_sclk.hw,
++		[AUD_CLKID_TDMOUT_A_SCLK]	= &axg_tdmout_a_sclk.hw,
++		[AUD_CLKID_TDMOUT_B_SCLK]	= &axg_tdmout_b_sclk.hw,
++		[AUD_CLKID_TDMOUT_C_SCLK]	= &axg_tdmout_c_sclk.hw,
++		[AUD_CLKID_TDMIN_A_LRCLK]	= &axg_tdmin_a_lrclk.hw,
++		[AUD_CLKID_TDMIN_B_LRCLK]	= &axg_tdmin_b_lrclk.hw,
++		[AUD_CLKID_TDMIN_C_LRCLK]	= &axg_tdmin_c_lrclk.hw,
++		[AUD_CLKID_TDMIN_LB_LRCLK]	= &axg_tdmin_lb_lrclk.hw,
++		[AUD_CLKID_TDMOUT_A_LRCLK]	= &axg_tdmout_a_lrclk.hw,
++		[AUD_CLKID_TDMOUT_B_LRCLK]	= &axg_tdmout_b_lrclk.hw,
++		[AUD_CLKID_TDMOUT_C_LRCLK]	= &axg_tdmout_c_lrclk.hw,
++		[NR_CLKS] = NULL,
++	},
++	.num = NR_CLKS,
++};
++
++/* Convenience table to populate regmap in .probe() */
++static struct clk_regmap *const axg_audio_clk_regmaps[] = {
++	&axg_ddr_arb,
++	&axg_pdm,
++	&axg_tdmin_a,
++	&axg_tdmin_b,
++	&axg_tdmin_c,
++	&axg_tdmin_lb,
++	&axg_tdmout_a,
++	&axg_tdmout_b,
++	&axg_tdmout_c,
++	&axg_frddr_a,
++	&axg_frddr_b,
++	&axg_frddr_c,
++	&axg_toddr_a,
++	&axg_toddr_b,
++	&axg_toddr_c,
++	&axg_loopback,
++	&axg_spdifin,
++	&axg_spdifout,
++	&axg_resample,
++	&axg_power_detect,
++	&axg_mst_a_mclk_sel,
++	&axg_mst_b_mclk_sel,
++	&axg_mst_c_mclk_sel,
++	&axg_mst_d_mclk_sel,
++	&axg_mst_e_mclk_sel,
++	&axg_mst_f_mclk_sel,
++	&axg_mst_a_mclk_div,
++	&axg_mst_b_mclk_div,
++	&axg_mst_c_mclk_div,
++	&axg_mst_d_mclk_div,
++	&axg_mst_e_mclk_div,
++	&axg_mst_f_mclk_div,
++	&axg_mst_a_mclk,
++	&axg_mst_b_mclk,
++	&axg_mst_c_mclk,
++	&axg_mst_d_mclk,
++	&axg_mst_e_mclk,
++	&axg_mst_f_mclk,
++	&axg_spdifout_clk_sel,
++	&axg_spdifout_clk_div,
++	&axg_spdifout_clk,
++	&axg_spdifin_clk_sel,
++	&axg_spdifin_clk_div,
++	&axg_spdifin_clk,
++	&axg_pdm_dclk_sel,
++	&axg_pdm_dclk_div,
++	&axg_pdm_dclk,
++	&axg_pdm_sysclk_sel,
++	&axg_pdm_sysclk_div,
++	&axg_pdm_sysclk,
++	&axg_mst_a_sclk_pre_en,
++	&axg_mst_b_sclk_pre_en,
++	&axg_mst_c_sclk_pre_en,
++	&axg_mst_d_sclk_pre_en,
++	&axg_mst_e_sclk_pre_en,
++	&axg_mst_f_sclk_pre_en,
++	&axg_mst_a_sclk_div,
++	&axg_mst_b_sclk_div,
++	&axg_mst_c_sclk_div,
++	&axg_mst_d_sclk_div,
++	&axg_mst_e_sclk_div,
++	&axg_mst_f_sclk_div,
++	&axg_mst_a_sclk_post_en,
++	&axg_mst_b_sclk_post_en,
++	&axg_mst_c_sclk_post_en,
++	&axg_mst_d_sclk_post_en,
++	&axg_mst_e_sclk_post_en,
++	&axg_mst_f_sclk_post_en,
++	&axg_mst_a_sclk,
++	&axg_mst_b_sclk,
++	&axg_mst_c_sclk,
++	&axg_mst_d_sclk,
++	&axg_mst_e_sclk,
++	&axg_mst_f_sclk,
++	&axg_mst_a_lrclk_div,
++	&axg_mst_b_lrclk_div,
++	&axg_mst_c_lrclk_div,
++	&axg_mst_d_lrclk_div,
++	&axg_mst_e_lrclk_div,
++	&axg_mst_f_lrclk_div,
++	&axg_mst_a_lrclk,
++	&axg_mst_b_lrclk,
++	&axg_mst_c_lrclk,
++	&axg_mst_d_lrclk,
++	&axg_mst_e_lrclk,
++	&axg_mst_f_lrclk,
++	&axg_tdmin_a_sclk_sel,
++	&axg_tdmin_b_sclk_sel,
++	&axg_tdmin_c_sclk_sel,
++	&axg_tdmin_lb_sclk_sel,
++	&axg_tdmout_a_sclk_sel,
++	&axg_tdmout_b_sclk_sel,
++	&axg_tdmout_c_sclk_sel,
++	&axg_tdmin_a_sclk_pre_en,
++	&axg_tdmin_b_sclk_pre_en,
++	&axg_tdmin_c_sclk_pre_en,
++	&axg_tdmin_lb_sclk_pre_en,
++	&axg_tdmout_a_sclk_pre_en,
++	&axg_tdmout_b_sclk_pre_en,
++	&axg_tdmout_c_sclk_pre_en,
++	&axg_tdmin_a_sclk_post_en,
++	&axg_tdmin_b_sclk_post_en,
++	&axg_tdmin_c_sclk_post_en,
++	&axg_tdmin_lb_sclk_post_en,
++	&axg_tdmout_a_sclk_post_en,
++	&axg_tdmout_b_sclk_post_en,
++	&axg_tdmout_c_sclk_post_en,
++	&axg_tdmin_a_sclk,
++	&axg_tdmin_b_sclk,
++	&axg_tdmin_c_sclk,
++	&axg_tdmin_lb_sclk,
++	&axg_tdmout_a_sclk,
++	&axg_tdmout_b_sclk,
++	&axg_tdmout_c_sclk,
++	&axg_tdmin_a_lrclk,
++	&axg_tdmin_b_lrclk,
++	&axg_tdmin_c_lrclk,
++	&axg_tdmin_lb_lrclk,
++	&axg_tdmout_a_lrclk,
++	&axg_tdmout_b_lrclk,
++	&axg_tdmout_c_lrclk,
++};
++
++static struct clk *devm_clk_get_enable(struct device *dev, char *id)
++{
++	struct clk *clk;
++	int ret;
++
++	clk = devm_clk_get(dev, id);
++	if (IS_ERR(clk)) {
++		if (PTR_ERR(clk) != -EPROBE_DEFER)
++			dev_err(dev, "failed to get %s", id);
++		return clk;
++	}
++
++	ret = clk_prepare_enable(clk);
++	if (ret) {
++		dev_err(dev, "failed to enable %s", id);
++		return ERR_PTR(ret);
++	}
++
++	ret = devm_add_action_or_reset(dev,
++				       (void(*)(void *))clk_disable_unprepare,
++				       clk);
++	if (ret) {
++		dev_err(dev, "failed to add reset action on %s", id);
++		return ERR_PTR(ret);
++	}
++
++	return clk;
++}
++
++static const struct clk_ops axg_clk_no_ops = {};
++
++static struct clk_hw *axg_clk_hw_register_bypass(struct device *dev,
++						 const char *name,
++						 const char *parent_name)
++{
++	struct clk_hw *hw;
++	struct clk_init_data init;
++	char *clk_name;
++	int ret;
++
++	hw = devm_kzalloc(dev, sizeof(*hw), GFP_KERNEL);
++	if (!hw)
++		return ERR_PTR(-ENOMEM);
++
++	clk_name = kasprintf(GFP_KERNEL, "axg_%s", name);
++	if (!clk_name)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = clk_name;
++	init.ops = &axg_clk_no_ops;
++	init.flags = 0;
++	init.parent_names = parent_name ? &parent_name : NULL;
++	init.num_parents = parent_name ? 1 : 0;
++	hw->init = &init;
++
++	ret = devm_clk_hw_register(dev, hw);
++	kfree(clk_name);
++
++	return ret ? ERR_PTR(ret) : hw;
++}
++
++static int axg_register_clk_hw_input(struct device *dev,
++				     const char *name,
++				     unsigned int clkid)
++{
++	struct clk *parent_clk = devm_clk_get(dev, name);
++	struct clk_hw *hw = NULL;
++
++	if (IS_ERR(parent_clk)) {
++		int err = PTR_ERR(parent_clk);
++
++		/* It is ok if an input clock is missing */
++		if (err == -ENOENT) {
++			dev_dbg(dev, "%s not provided", name);
++		} else {
++			if (err != -EPROBE_DEFER)
++				dev_err(dev, "failed to get %s clock", name);
++			return err;
++		}
++	} else {
++		hw = axg_clk_hw_register_bypass(dev, name,
++						__clk_get_name(parent_clk));
++	}
++
++	if (IS_ERR(hw)) {
++		dev_err(dev, "failed to register %s clock", name);
++		return PTR_ERR(hw);
++	}
++
++	axg_audio_hw_onecell_data.hws[clkid] = hw;
++	return 0;
++}
++
++static int axg_register_clk_hw_inputs(struct device *dev,
++				      const char *basename,
++				      unsigned int count,
++				      unsigned int clkid)
++{
++	char *name;
++	int i, ret;
++
++	for (i = 0; i < count; i++) {
++		name = kasprintf(GFP_KERNEL, "%s%d", basename, i);
++		if (!name)
++			return -ENOMEM;
++
++		ret = axg_register_clk_hw_input(dev, name, clkid + i);
++		kfree(name);
++		if (ret)
++			return ret;
++	}
 +
 +	return 0;
 +}
 +
-+const struct clk_ops meson_clk_phase_ops = {
-+	.get_phase	= meson_clk_phase_get_phase,
-+	.set_phase	= meson_clk_phase_set_phase,
-+};
-+EXPORT_SYMBOL_GPL(meson_clk_phase_ops);
-diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-index 2fb084330ee9..fd520ccdd1be 100644
---- a/drivers/clk/meson/clkc.h
-+++ b/drivers/clk/meson/clkc.h
-@@ -96,6 +96,13 @@ struct meson_clk_audio_div_data {
- 	u8 flags;
- };
- 
-+struct meson_clk_phase_data {
-+	struct parm ph;
++static const struct regmap_config axg_audio_regmap_cfg = {
++	.reg_bits	= 32,
++	.val_bits	= 32,
++	.reg_stride	= 4,
++	.max_register	= AUDIO_CLK_PDMIN_CTRL1,
 +};
 +
-+int meson_clk_degrees_from_val(unsigned int val, unsigned int width);
-+unsigned int meson_clk_degrees_to_val(int degrees, unsigned int width);
++static int axg_audio_clkc_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct regmap *map;
++	struct resource *res;
++	void __iomem *regs;
++	struct clk *clk;
++	struct clk_hw *hw;
++	int ret, i;
 +
- #define MESON_GATE(_name, _reg, _bit)					\
- struct clk_regmap _name = {						\
- 	.data = &(struct clk_regmap_gate_data){				\
-@@ -119,5 +126,6 @@ extern const struct clk_ops meson_clk_mpll_ro_ops;
- extern const struct clk_ops meson_clk_mpll_ops;
- extern const struct clk_ops meson_clk_audio_divider_ro_ops;
- extern const struct clk_ops meson_clk_audio_divider_ops;
-+extern const struct clk_ops meson_clk_phase_ops;
- 
- #endif /* __CLKC_H */
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	regs = devm_ioremap_resource(dev, res);
++	if (IS_ERR(regs))
++		return PTR_ERR(regs);
++
++	map = devm_regmap_init_mmio(dev, regs, &axg_audio_regmap_cfg);
++	if (IS_ERR(map)) {
++		dev_err(dev, "failed to init regmap: %ld\n", PTR_ERR(map));
++		return PTR_ERR(map);
++	}
++
++	/* Get the mandatory peripheral clock */
++	clk = devm_clk_get_enable(dev, "pclk");
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
++
++	ret = device_reset(dev);
++	if (ret) {
++		dev_err(dev, "failed to reset device\n");
++		return ret;
++	}
++
++	/* Register the peripheral input clock */
++	hw = axg_clk_hw_register_bypass(dev, "audio_pclk",
++					__clk_get_name(clk));
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++
++	axg_audio_hw_onecell_data.hws[AUD_CLKID_PCLK] = hw;
++
++	/* Register optional input master clocks */
++	ret = axg_register_clk_hw_inputs(dev, "mst_in",
++					 AXG_MST_IN_COUNT,
++					 AUD_CLKID_MST0);
++	if (ret)
++		return ret;
++
++	/* Register optional input slave sclks */
++	ret = axg_register_clk_hw_inputs(dev, "slv_sclk",
++					 AXG_SLV_SCLK_COUNT,
++					 AUD_CLKID_SLV_SCLK0);
++	if (ret)
++		return ret;
++
++	/* Register optional input slave lrclks */
++	ret = axg_register_clk_hw_inputs(dev, "slv_lrclk",
++					 AXG_SLV_LRCLK_COUNT,
++					 AUD_CLKID_SLV_LRCLK0);
++	if (ret)
++		return ret;
++
++	/* Populate regmap for the regmap backed clocks */
++	for (i = 0; i < ARRAY_SIZE(axg_audio_clk_regmaps); i++)
++		axg_audio_clk_regmaps[i]->map = map;
++
++	/* Take care to skip the registered input clocks */
++	for (i = AUD_CLKID_DDR_ARB; i < axg_audio_hw_onecell_data.num; i++) {
++		hw = axg_audio_hw_onecell_data.hws[i];
++		/* array might be sparse */
++		if (!hw)
++			continue;
++
++		ret = devm_clk_hw_register(dev, hw);
++		if (ret) {
++			dev_err(dev, "failed to register clock %s\n",
++				hw->init->name);
++			return ret;
++		}
++	}
++
++	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
++					   &axg_audio_hw_onecell_data);
++}
++
++static const struct of_device_id clkc_match_table[] = {
++	{ .compatible = "amlogic,axg-audio-clkc" },
++	{}
++};
++MODULE_DEVICE_TABLE(of, clkc_match_table);
++
++static struct platform_driver axg_audio_driver = {
++	.probe		= axg_audio_clkc_probe,
++	.driver		= {
++		.name	= "axg-audio-clkc",
++		.of_match_table = clkc_match_table,
++	},
++};
++module_platform_driver(axg_audio_driver);
++
++MODULE_DESCRIPTION("Amlogic A113x Audio Clock driver");
++MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
++MODULE_LICENSE("GPL v2");
+diff --git a/drivers/clk/meson/axg-audio.h b/drivers/clk/meson/axg-audio.h
+new file mode 100644
+index 000000000000..7191b39c9d65
+--- /dev/null
++++ b/drivers/clk/meson/axg-audio.h
+@@ -0,0 +1,127 @@
++/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
++/*
++ * Copyright (c) 2018 BayLibre, SAS.
++ * Author: Jerome Brunet <jbrunet@baylibre.com>
++ */
++
++#ifndef __AXG_AUDIO_CLKC_H
++#define __AXG_AUDIO_CLKC_H
++
++/*
++ * Audio Clock  register offsets
++ *
++ * Register offsets from the datasheet must be multiplied by 4 before
++ * to get the right offset
++ */
++#define AUDIO_CLK_GATE_EN	0x000
++#define AUDIO_MCLK_A_CTRL	0x004
++#define AUDIO_MCLK_B_CTRL	0x008
++#define AUDIO_MCLK_C_CTRL	0x00C
++#define AUDIO_MCLK_D_CTRL	0x010
++#define AUDIO_MCLK_E_CTRL	0x014
++#define AUDIO_MCLK_F_CTRL	0x018
++#define AUDIO_MST_A_SCLK_CTRL0	0x040
++#define AUDIO_MST_A_SCLK_CTRL1	0x044
++#define AUDIO_MST_B_SCLK_CTRL0	0x048
++#define AUDIO_MST_B_SCLK_CTRL1	0x04C
++#define AUDIO_MST_C_SCLK_CTRL0	0x050
++#define AUDIO_MST_C_SCLK_CTRL1	0x054
++#define AUDIO_MST_D_SCLK_CTRL0	0x058
++#define AUDIO_MST_D_SCLK_CTRL1	0x05C
++#define AUDIO_MST_E_SCLK_CTRL0	0x060
++#define AUDIO_MST_E_SCLK_CTRL1	0x064
++#define AUDIO_MST_F_SCLK_CTRL0	0x068
++#define AUDIO_MST_F_SCLK_CTRL1	0x06C
++#define AUDIO_CLK_TDMIN_A_CTRL	0x080
++#define AUDIO_CLK_TDMIN_B_CTRL	0x084
++#define AUDIO_CLK_TDMIN_C_CTRL	0x088
++#define AUDIO_CLK_TDMIN_LB_CTRL 0x08C
++#define AUDIO_CLK_TDMOUT_A_CTRL 0x090
++#define AUDIO_CLK_TDMOUT_B_CTRL 0x094
++#define AUDIO_CLK_TDMOUT_C_CTRL 0x098
++#define AUDIO_CLK_SPDIFIN_CTRL	0x09C
++#define AUDIO_CLK_SPDIFOUT_CTRL 0x0A0
++#define AUDIO_CLK_RESAMPLE_CTRL 0x0A4
++#define AUDIO_CLK_LOCKER_CTRL	0x0A8
++#define AUDIO_CLK_PDMIN_CTRL0	0x0AC
++#define AUDIO_CLK_PDMIN_CTRL1	0x0B0
++
++/*
++ * CLKID index values
++ * These indices are entirely contrived and do not map onto the hardware.
++ */
++
++#define AUD_CLKID_PCLK			0
++#define AUD_CLKID_MST0			1
++#define AUD_CLKID_MST1			2
++#define AUD_CLKID_MST2			3
++#define AUD_CLKID_MST3			4
++#define AUD_CLKID_MST4			5
++#define AUD_CLKID_MST5			6
++#define AUD_CLKID_MST6			7
++#define AUD_CLKID_MST7			8
++#define AUD_CLKID_MST_A_MCLK_SEL	59
++#define AUD_CLKID_MST_B_MCLK_SEL	60
++#define AUD_CLKID_MST_C_MCLK_SEL	61
++#define AUD_CLKID_MST_D_MCLK_SEL	62
++#define AUD_CLKID_MST_E_MCLK_SEL	63
++#define AUD_CLKID_MST_F_MCLK_SEL	64
++#define AUD_CLKID_MST_A_MCLK_DIV	65
++#define AUD_CLKID_MST_B_MCLK_DIV	66
++#define AUD_CLKID_MST_C_MCLK_DIV	67
++#define AUD_CLKID_MST_D_MCLK_DIV	68
++#define AUD_CLKID_MST_E_MCLK_DIV	69
++#define AUD_CLKID_MST_F_MCLK_DIV	70
++#define AUD_CLKID_SPDIFOUT_CLK_SEL	71
++#define AUD_CLKID_SPDIFOUT_CLK_DIV	72
++#define AUD_CLKID_SPDIFIN_CLK_SEL	73
++#define AUD_CLKID_SPDIFIN_CLK_DIV	74
++#define AUD_CLKID_PDM_DCLK_SEL		75
++#define AUD_CLKID_PDM_DCLK_DIV		76
++#define AUD_CLKID_PDM_SYSCLK_SEL	77
++#define AUD_CLKID_PDM_SYSCLK_DIV	78
++#define AUD_CLKID_MST_A_SCLK_PRE_EN	92
++#define AUD_CLKID_MST_B_SCLK_PRE_EN	93
++#define AUD_CLKID_MST_C_SCLK_PRE_EN	94
++#define AUD_CLKID_MST_D_SCLK_PRE_EN	95
++#define AUD_CLKID_MST_E_SCLK_PRE_EN	96
++#define AUD_CLKID_MST_F_SCLK_PRE_EN	97
++#define AUD_CLKID_MST_A_SCLK_DIV	98
++#define AUD_CLKID_MST_B_SCLK_DIV	99
++#define AUD_CLKID_MST_C_SCLK_DIV	100
++#define AUD_CLKID_MST_D_SCLK_DIV	101
++#define AUD_CLKID_MST_E_SCLK_DIV	102
++#define AUD_CLKID_MST_F_SCLK_DIV	103
++#define AUD_CLKID_MST_A_SCLK_POST_EN	104
++#define AUD_CLKID_MST_B_SCLK_POST_EN	105
++#define AUD_CLKID_MST_C_SCLK_POST_EN	106
++#define AUD_CLKID_MST_D_SCLK_POST_EN	107
++#define AUD_CLKID_MST_E_SCLK_POST_EN	108
++#define AUD_CLKID_MST_F_SCLK_POST_EN	109
++#define AUD_CLKID_MST_A_LRCLK_DIV	110
++#define AUD_CLKID_MST_B_LRCLK_DIV	111
++#define AUD_CLKID_MST_C_LRCLK_DIV	112
++#define AUD_CLKID_MST_D_LRCLK_DIV	113
++#define AUD_CLKID_MST_E_LRCLK_DIV	114
++#define AUD_CLKID_MST_F_LRCLK_DIV	115
++#define AUD_CLKID_TDMIN_A_SCLK_PRE_EN	137
++#define AUD_CLKID_TDMIN_B_SCLK_PRE_EN	138
++#define AUD_CLKID_TDMIN_C_SCLK_PRE_EN	139
++#define AUD_CLKID_TDMIN_LB_SCLK_PRE_EN	140
++#define AUD_CLKID_TDMOUT_A_SCLK_PRE_EN	141
++#define AUD_CLKID_TDMOUT_B_SCLK_PRE_EN	142
++#define AUD_CLKID_TDMOUT_C_SCLK_PRE_EN	143
++#define AUD_CLKID_TDMIN_A_SCLK_POST_EN	144
++#define AUD_CLKID_TDMIN_B_SCLK_POST_EN	145
++#define AUD_CLKID_TDMIN_C_SCLK_POST_EN	146
++#define AUD_CLKID_TDMIN_LB_SCLK_POST_EN	147
++#define AUD_CLKID_TDMOUT_A_SCLK_POST_EN	148
++#define AUD_CLKID_TDMOUT_B_SCLK_POST_EN	149
++#define AUD_CLKID_TDMOUT_C_SCLK_POST_EN	150
++
++/* include the CLKIDs which are part of the DT bindings */
++#include <dt-bindings/clock/axg-audio-clkc.h>
++
++#define NR_CLKS	151
++
++#endif /*__AXG_AUDIO_CLKC_H */
 -- 
 2.14.3
