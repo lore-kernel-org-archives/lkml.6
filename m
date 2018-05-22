@@ -1,42 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751537AbeEVPfp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 11:35:45 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:34731 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751196AbeEVPfl (ORCPT
+        id S1751724AbeEVPg1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 11:36:27 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:39242 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751575AbeEVPgU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 11:35:41 -0400
-Subject: Re: [PATCH] kselftest/cgroup: fix variable dereferenced before check
- warning
-To: Roman Gushchin <guro@fb.com>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        Shuah Khan <shuah@kernel.org>
-References: <20180522101031.8451-1-guro@fb.com>
-From: Shuah Khan <shuah@kernel.org>
-Message-ID: <351128a3-5bba-8cd2-6d8a-fcaf9c33e2f3@kernel.org>
-Date: Tue, 22 May 2018 09:35:35 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 22 May 2018 11:36:20 -0400
+From: Colin King <colin.king@canonical.com>
+To: Jon Mason <jdmason@kudzu.us>, "David S . Miller" <davem@davemloft.net>,
+        netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] net: vxge: fix spelling mistake in macro VXGE_HW_ERR_PRIVILAGED_OPEARATION
+Date: Tue, 22 May 2018 16:36:16 +0100
+Message-Id: <20180522153616.13980-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-In-Reply-To: <20180522101031.8451-1-guro@fb.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/22/2018 04:10 AM, Roman Gushchin wrote:
-> cg_name(const char *root, const char *name) is always called with
-> non-empty root and name arguments, so there is no sense in checking
-> it in the function body (after using in strlen()).
-> 
-> Signed-off-by: Roman Gushchin <guro@fb.com>
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Cc: linux-kselftest@vger.kernel.org
+From: Colin Ian King <colin.king@canonical.com>
 
+Rename VXGE_HW_ERR_PRIVILAGED_OPEARATION to VXGE_HW_ERR_PRIVILAGED_OPERATION
+to fix spelling mistake.
 
-Thanks. I will queue this up for 4.18-rc1
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/neterion/vxge/vxge-config.c  | 12 ++++++------
+ drivers/net/ethernet/neterion/vxge/vxge-config.h  |  2 +-
+ drivers/net/ethernet/neterion/vxge/vxge-ethtool.c |  2 +-
+ drivers/net/ethernet/neterion/vxge/vxge-main.c    |  4 ++--
+ 4 files changed, 10 insertions(+), 10 deletions(-)
 
--- Shuah
+diff --git a/drivers/net/ethernet/neterion/vxge/vxge-config.c b/drivers/net/ethernet/neterion/vxge/vxge-config.c
+index 6223930a8155..8656fcc9f2a0 100644
+--- a/drivers/net/ethernet/neterion/vxge/vxge-config.c
++++ b/drivers/net/ethernet/neterion/vxge/vxge-config.c
+@@ -693,7 +693,7 @@ __vxge_hw_device_is_privilaged(u32 host_type, u32 func_id)
+ 		VXGE_HW_DEVICE_ACCESS_RIGHT_MRPCIM)
+ 		return VXGE_HW_OK;
+ 	else
+-		return VXGE_HW_ERR_PRIVILAGED_OPEARATION;
++		return VXGE_HW_ERR_PRIVILAGED_OPERATION;
+ }
+ 
+ /*
+@@ -1920,7 +1920,7 @@ enum vxge_hw_status vxge_hw_device_getpause_data(struct __vxge_hw_device *hldev,
+ 	}
+ 
+ 	if (!(hldev->access_rights & VXGE_HW_DEVICE_ACCESS_RIGHT_MRPCIM)) {
+-		status = VXGE_HW_ERR_PRIVILAGED_OPEARATION;
++		status = VXGE_HW_ERR_PRIVILAGED_OPERATION;
+ 		goto exit;
+ 	}
+ 
+@@ -3153,7 +3153,7 @@ vxge_hw_mgmt_reg_read(struct __vxge_hw_device *hldev,
+ 	case vxge_hw_mgmt_reg_type_mrpcim:
+ 		if (!(hldev->access_rights &
+ 			VXGE_HW_DEVICE_ACCESS_RIGHT_MRPCIM)) {
+-			status = VXGE_HW_ERR_PRIVILAGED_OPEARATION;
++			status = VXGE_HW_ERR_PRIVILAGED_OPERATION;
+ 			break;
+ 		}
+ 		if (offset > sizeof(struct vxge_hw_mrpcim_reg) - 8) {
+@@ -3165,7 +3165,7 @@ vxge_hw_mgmt_reg_read(struct __vxge_hw_device *hldev,
+ 	case vxge_hw_mgmt_reg_type_srpcim:
+ 		if (!(hldev->access_rights &
+ 			VXGE_HW_DEVICE_ACCESS_RIGHT_SRPCIM)) {
+-			status = VXGE_HW_ERR_PRIVILAGED_OPEARATION;
++			status = VXGE_HW_ERR_PRIVILAGED_OPERATION;
+ 			break;
+ 		}
+ 		if (index > VXGE_HW_TITAN_SRPCIM_REG_SPACES - 1) {
+@@ -3279,7 +3279,7 @@ vxge_hw_mgmt_reg_write(struct __vxge_hw_device *hldev,
+ 	case vxge_hw_mgmt_reg_type_mrpcim:
+ 		if (!(hldev->access_rights &
+ 			VXGE_HW_DEVICE_ACCESS_RIGHT_MRPCIM)) {
+-			status = VXGE_HW_ERR_PRIVILAGED_OPEARATION;
++			status = VXGE_HW_ERR_PRIVILAGED_OPERATION;
+ 			break;
+ 		}
+ 		if (offset > sizeof(struct vxge_hw_mrpcim_reg) - 8) {
+@@ -3291,7 +3291,7 @@ vxge_hw_mgmt_reg_write(struct __vxge_hw_device *hldev,
+ 	case vxge_hw_mgmt_reg_type_srpcim:
+ 		if (!(hldev->access_rights &
+ 			VXGE_HW_DEVICE_ACCESS_RIGHT_SRPCIM)) {
+-			status = VXGE_HW_ERR_PRIVILAGED_OPEARATION;
++			status = VXGE_HW_ERR_PRIVILAGED_OPERATION;
+ 			break;
+ 		}
+ 		if (index > VXGE_HW_TITAN_SRPCIM_REG_SPACES - 1) {
+diff --git a/drivers/net/ethernet/neterion/vxge/vxge-config.h b/drivers/net/ethernet/neterion/vxge/vxge-config.h
+index cfa970417f81..5ebdbfedc269 100644
+--- a/drivers/net/ethernet/neterion/vxge/vxge-config.h
++++ b/drivers/net/ethernet/neterion/vxge/vxge-config.h
+@@ -127,7 +127,7 @@ enum vxge_hw_status {
+ 	VXGE_HW_ERR_INVALID_TCODE 		  = VXGE_HW_BASE_ERR + 14,
+ 	VXGE_HW_ERR_INVALID_BLOCK_SIZE		  = VXGE_HW_BASE_ERR + 15,
+ 	VXGE_HW_ERR_INVALID_STATE		  = VXGE_HW_BASE_ERR + 16,
+-	VXGE_HW_ERR_PRIVILAGED_OPEARATION	  = VXGE_HW_BASE_ERR + 17,
++	VXGE_HW_ERR_PRIVILAGED_OPERATION	  = VXGE_HW_BASE_ERR + 17,
+ 	VXGE_HW_ERR_INVALID_PORT 		  = VXGE_HW_BASE_ERR + 18,
+ 	VXGE_HW_ERR_FIFO		 	  = VXGE_HW_BASE_ERR + 19,
+ 	VXGE_HW_ERR_VPATH			  = VXGE_HW_BASE_ERR + 20,
+diff --git a/drivers/net/ethernet/neterion/vxge/vxge-ethtool.c b/drivers/net/ethernet/neterion/vxge/vxge-ethtool.c
+index 0452848d1316..2f1bde500420 100644
+--- a/drivers/net/ethernet/neterion/vxge/vxge-ethtool.c
++++ b/drivers/net/ethernet/neterion/vxge/vxge-ethtool.c
+@@ -276,7 +276,7 @@ static void vxge_get_ethtool_stats(struct net_device *dev,
+ 	*ptr++ = 0;
+ 	status = vxge_hw_device_xmac_stats_get(hldev, xmac_stats);
+ 	if (status != VXGE_HW_OK) {
+-		if (status != VXGE_HW_ERR_PRIVILAGED_OPEARATION) {
++		if (status != VXGE_HW_ERR_PRIVILAGED_OPERATION) {
+ 			vxge_debug_init(VXGE_ERR,
+ 				"%s : %d Failure in getting xmac stats",
+ 				__func__, __LINE__);
+diff --git a/drivers/net/ethernet/neterion/vxge/vxge-main.c b/drivers/net/ethernet/neterion/vxge/vxge-main.c
+index b2299f2b2155..64fa94f8b471 100644
+--- a/drivers/net/ethernet/neterion/vxge/vxge-main.c
++++ b/drivers/net/ethernet/neterion/vxge/vxge-main.c
+@@ -3484,11 +3484,11 @@ static int vxge_device_register(struct __vxge_hw_device *hldev,
+ 				0,
+ 				&stat);
+ 
+-	if (status == VXGE_HW_ERR_PRIVILAGED_OPEARATION)
++	if (status == VXGE_HW_ERR_PRIVILAGED_OPERATION)
+ 		vxge_debug_init(
+ 			vxge_hw_device_trace_level_get(hldev),
+ 			"%s: device stats clear returns"
+-			"VXGE_HW_ERR_PRIVILAGED_OPEARATION", ndev->name);
++			"VXGE_HW_ERR_PRIVILAGED_OPERATION", ndev->name);
+ 
+ 	vxge_debug_entryexit(vxge_hw_device_trace_level_get(hldev),
+ 		"%s: %s:%d  Exiting...",
+-- 
+2.17.0
