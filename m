@@ -1,512 +1,356 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751652AbeEVTD1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 15:03:27 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:39091 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751319AbeEVTDY (ORCPT
+        id S1751611AbeEVTGU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 15:06:20 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:47006 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751346AbeEVTGR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 15:03:24 -0400
-X-Google-Smtp-Source: AB8JxZrnQnDc6BYKXJtMD0ZT+M6auFSMYXWpK4nNjFRgsp4jGkG441xWGByu1s6GqXU5iBB6iYof0A==
-From: Ramon Fried <ramon.fried@gmail.com>
-To: kvalo@codeaurora.org
-Cc: linux-kernel@vger.kernel.org, wcn36xx@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        Eyal Ilsar <eilsar@codeaurora.org>,
-        Ramon Fried <ramon.fried@linaro.org>
-Subject: [PATCH v3] wcn36xx: Add support for Factory Test Mode (FTM)
-Date: Tue, 22 May 2018 22:02:56 +0300
-Message-Id: <20180522190256.32136-1-ramon.fried@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Tue, 22 May 2018 15:06:17 -0400
+Subject: Re: [Xen-devel] [RFC 1/3] xen/balloon: Allow allocating DMA buffers
+To: Oleksandr Andrushchenko <andr2000@gmail.com>,
+        "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        jgross@suse.com, konrad.wilk@oracle.com
+Cc: daniel.vetter@intel.com, matthew.d.roper@intel.com,
+        dongwon.kim@intel.com
+References: <20180517082604.14828-1-andr2000@gmail.com>
+ <20180517082604.14828-2-andr2000@gmail.com>
+ <6a108876-19b7-49d0-3de2-9e10f984736c@oracle.com>
+ <9541926e-001a-e41e-317c-dbff6d687761@gmail.com>
+ <218e2bf7-490d-f89e-9866-27b7e3dbc835@oracle.com>
+ <a08e7d0d-f7d5-6b7e-979b-8a17060482f0@gmail.com>
+ <b177a327-6a73-bb77-c69b-bc0958a05532@oracle.com>
+ <f87478c7-3523-851c-5c3a-12a9e8753bb6@epam.com>
+ <c2f0845b-ab2f-4b9b-6f46-6ddd236ad9ed@oracle.com>
+ <77c20852-b9b8-c35a-26b0-b0317e6aba09@gmail.com>
+ <f8775649-34eb-04ac-2264-609b33cdd504@oracle.com>
+ <2a88de28-27ef-8fe4-ddc1-35eb9e698567@gmail.com>
+ <afe3a9ba-ab50-5872-e044-9d8cf7034e70@oracle.com>
+ <533ca735-333b-8403-85f7-d17794ea97ca@gmail.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <8587f479-f5f0-0ca6-cd32-76fa94a9aed0@oracle.com>
+Date: Tue, 22 May 2018 15:09:17 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <533ca735-333b-8403-85f7-d17794ea97ca@gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8901 signatures=668700
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805220200
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eyal Ilsar <eilsar@codeaurora.org>
+On 05/22/2018 02:27 PM, Oleksandr Andrushchenko wrote:
+> On 05/22/2018 09:02 PM, Boris Ostrovsky wrote:
+>> On 05/22/2018 11:00 AM, Oleksandr Andrushchenko wrote:
+>>> On 05/22/2018 05:33 PM, Boris Ostrovsky wrote:
+>>>> On 05/22/2018 01:55 AM, Oleksandr Andrushchenko wrote:
+>>>>> On 05/21/2018 11:36 PM, Boris Ostrovsky wrote:
+>>>>>> On 05/21/2018 03:13 PM, Oleksandr Andrushchenko wrote:
+>>>>>>> On 05/21/2018 09:53 PM, Boris Ostrovsky wrote:
+>>>>>>>> On 05/21/2018 01:32 PM, Oleksandr Andrushchenko wrote:
+>>>>>>>>> On 05/21/2018 07:35 PM, Boris Ostrovsky wrote:
+>>>>>>>>>> On 05/21/2018 01:40 AM, Oleksandr Andrushchenko wrote:
+>>>>>>>>>>> On 05/19/2018 01:04 AM, Boris Ostrovsky wrote:
+>>>>>>>>>>>> On 05/17/2018 04:26 AM, Oleksandr Andrushchenko wrote:
+>>>>>>>>>>>>> From: Oleksandr Andrushchenko
+>>>>>>>>>>>>> <oleksandr_andrushchenko@epam.com>
+>>>>>>>>>>>> A commit message would be useful.
+>>>>>>>>>>> Sure, v1 will have it
+>>>>>>>>>>>>> Signed-off-by: Oleksandr Andrushchenko
+>>>>>>>>>>>>> <oleksandr_andrushchenko@epam.com>
+>>>>>>>>>>>>>
+>>>>>>>>>>>>>            for (i = 0; i < nr_pages; i++) {
+>>>>>>>>>>>>> -        page = alloc_page(gfp);
+>>>>>>>>>>>>> -        if (page == NULL) {
+>>>>>>>>>>>>> -            nr_pages = i;
+>>>>>>>>>>>>> -            state = BP_EAGAIN;
+>>>>>>>>>>>>> -            break;
+>>>>>>>>>>>>> +        if (ext_pages) {
+>>>>>>>>>>>>> +            page = ext_pages[i];
+>>>>>>>>>>>>> +        } else {
+>>>>>>>>>>>>> +            page = alloc_page(gfp);
+>>>>>>>>>>>>> +            if (page == NULL) {
+>>>>>>>>>>>>> +                nr_pages = i;
+>>>>>>>>>>>>> +                state = BP_EAGAIN;
+>>>>>>>>>>>>> +                break;
+>>>>>>>>>>>>> +            }
+>>>>>>>>>>>>>                }
+>>>>>>>>>>>>>                scrub_page(page);
+>>>>>>>>>>>>>                list_add(&page->lru, &pages);
+>>>>>>>>>>>>> @@ -529,7 +565,7 @@ static enum bp_state
+>>>>>>>>>>>>> decrease_reservation(unsigned long nr_pages, gfp_t gfp)
+>>>>>>>>>>>>>            i = 0;
+>>>>>>>>>>>>>            list_for_each_entry_safe(page, tmp, &pages, lru) {
+>>>>>>>>>>>>>                /* XENMEM_decrease_reservation requires a
+>>>>>>>>>>>>> GFN */
+>>>>>>>>>>>>> -        frame_list[i++] = xen_page_to_gfn(page);
+>>>>>>>>>>>>> +        frames[i++] = xen_page_to_gfn(page);
+>>>>>>>>>>>>>          #ifdef CONFIG_XEN_HAVE_PVMMU
+>>>>>>>>>>>>>                /*
+>>>>>>>>>>>>> @@ -552,18 +588,22 @@ static enum bp_state
+>>>>>>>>>>>>> decrease_reservation(unsigned long nr_pages, gfp_t gfp)
+>>>>>>>>>>>>>        #endif
+>>>>>>>>>>>>>                list_del(&page->lru);
+>>>>>>>>>>>>>        -        balloon_append(page);
+>>>>>>>>>>>>> +        if (!ext_pages)
+>>>>>>>>>>>>> +            balloon_append(page);
+>>>>>>>>>>>> So what you are proposing is not really ballooning. You are
+>>>>>>>>>>>> just
+>>>>>>>>>>>> piggybacking on existing interfaces, aren't you?
+>>>>>>>>>>> Sort of. Basically I need to
+>>>>>>>>>>> {increase|decrease}_reservation, not
+>>>>>>>>>>> actually
+>>>>>>>>>>> allocating ballooned pages.
+>>>>>>>>>>> Do you think I can simply EXPORT_SYMBOL for
+>>>>>>>>>>> {increase|decrease}_reservation?
+>>>>>>>>>>> Any other suggestion?
+>>>>>>>>>> I am actually wondering how much of that code you end up
+>>>>>>>>>> reusing.
+>>>>>>>>>> You
+>>>>>>>>>> pretty much create new code paths in both routines and common
+>>>>>>>>>> code
+>>>>>>>>>> ends
+>>>>>>>>>> up being essentially the hypercall.
+>>>>>>>>> Well, I hoped that it would be easier to maintain if I modify
+>>>>>>>>> existing
+>>>>>>>>> code
+>>>>>>>>> to support both use-cases, but I am also ok to create new
+>>>>>>>>> routines if
+>>>>>>>>> this
+>>>>>>>>> seems to be reasonable - please let me know
+>>>>>>>>>>       So the question is --- would it make
+>>>>>>>>>> sense to do all of this separately from the balloon driver?
+>>>>>>>>> This can be done, but which driver will host this code then?
+>>>>>>>>> If we
+>>>>>>>>> move from
+>>>>>>>>> the balloon driver, then this could go to either gntdev or
+>>>>>>>>> grant-table.
+>>>>>>>>> What's your preference?
+>>>>>>>> A separate module?
+>>>>>>>> Is there any use for this feature outside of your zero-copy DRM
+>>>>>>>> driver?
+>>>>>>> Intel's hyper dma-buf (Dongwon/Matt CC'ed), V4L/GPU at least.
+>>>>>>>
+>>>>>>> At the time I tried to upstream zcopy driver it was discussed and
+>>>>>>> decided that
+>>>>>>> it would be better if I remove all DRM specific code and move it to
+>>>>>>> Xen drivers.
+>>>>>>> Thus, this RFC.
+>>>>>>>
+>>>>>>> But it can also be implemented as a dedicated Xen dma-buf driver
+>>>>>>> which
+>>>>>>> will have all the
+>>>>>>> code from this RFC + a bit more (char/misc device handling at
+>>>>>>> least).
+>>>>>>> This will also require a dedicated user-space library, just like
+>>>>>>> libxengnttab.so
+>>>>>>> for gntdev (now I have all new IOCTLs covered there).
+>>>>>>>
+>>>>>>> If the idea of a dedicated Xen dma-buf driver seems to be more
+>>>>>>> attractive we
+>>>>>>> can work toward this solution. BTW, I do support this idea, but
+>>>>>>> was not
+>>>>>>> sure if Xen community accepts yet another driver which duplicates
+>>>>>>> quite some code
+>>>>>>> of the existing gntdev/balloon/grant-table. And now after this
+>>>>>>> RFC I
+>>>>>>> hope that all cons
+>>>>>>> and pros of both dedicated driver and gntdev/balloon/grant-table
+>>>>>>> extension are
+>>>>>>> clearly seen and we can make a decision.
+>>>>>> IIRC the objection for a separate module was in the context of
+>>>>>> gntdev
+>>>>>> was discussion, because (among other things) people didn't want to
+>>>>>> have
+>>>>>> yet another file in /dev/xen/
+>>>>>>
+>>>>>> Here we are talking about (a new) balloon-like module which doesn't
+>>>>>> create any new user-visible interfaces. And as for duplicating code
+>>>>>> ---
+>>>>>> as I said, I am not convinced there is much of duplication.
+>>>>>>
+>>>>>> I might even argue that we should add a new config option for this
+>>>>>> module.
+>>>>> I am not quite sure I am fully following you here: so, you suggest
+>>>>> that we have balloon.c unchanged, but instead create a new
+>>>>> module (namely a file under the same folder as balloon.c, e.g.
+>>>>> dma-buf-reservation.c) and move those {increase|decrease}_reservation
+>>>>> routines (specific to dma-buf) to that new file? And make it
+>>>>> selectable
+>>>>> via Kconfig? If so, then how about the changes to grant-table and
+>>>>> gntdev?
+>>>>> Those will look inconsistent then.
+>>>> Inconsistent with what? The changes to grant code will also be
+>>>> under the
+>>>> new config option.
+>>> Ah, ok.
+>>>
+>>> Option 1. We will have Kconfig option which will cover dma-buf
+>>> changes in balloon,
+>> I really don't think your changes to balloon driver belong there. The
+>> have nothing to do with ballooning,
+>>
+>>> grant-table and gntdev. And for that we will
+>>> create dedicated routines in balloon and grant-table (copy of
+>>> the existing ones, but modified to fit dma-buf use-case) and
+>>> those under something like "#if CONFIG_XEN_DMABUF"?
+>>> This is relatively easy to do for balloon/grant-table, but not that
+>>> easy for gntdev: there still seems to be lots of code which can be
+>>> reused,
+>>> so I'll have to put lots of "#if CONFIG_XEN_DMABUF" there. Even more,
+>>> I change
+>>> interfaces of the existing gntdev routines which won't look cute with
+>>> #if's, IMO.
+>>>
+>>> Option 2. Try moving dma-buf related changes from balloon and
+>>> grant-table to a new file. Then gntdev's Kconfig concerns from above
+>>> will still
+>>> be there, but balloon/grant-table functionality will be localized in a
+>>> new module.
+>> I don't see a problem with leaving your code (from patch 2) where it is
+>> now, in grant table. It's a small change and it seems to me a single
+>> #ifdef/#endif would cover it, even if you factor out common code there
+>> as we've discussed. To my eye it logically belongs there. Just like your
+>> gntdev changes belong to gntdev file. (Presumably, because I haven't
+>> actually looked at them ;-))
+>>
+>> So my suggestion is
+>> - separate module for your changes in balloon.c
+> Ok, so, basically, the changes I need from the balloon driver is
+> {increase|decrease}_reservation and DMAable memory allocations, so
+> I'll move that into a separate file: what could be the name for such a
+> file?
 
-Introduce infrastructure for supporting Factory Test Mode (FTM) of the
-wireless LAN subsystem. In order for the user space to access the
-firmware in test mode the relevant netlink channel needs to be exposed
-from the kernel driver.
 
-The above is achieved as follows:
-1) Register wcn36xx driver to testmode callback from netlink
-2) Add testmode callback implementation to handle incoming FTM commands
-3) Add FTM command packet structure
-4) Add handling for GET_BUILD_RELEASE_NUMBER (msgid=0x32A2)
-5) Add generic handling for all PTT_MSG packets
+Naming would be your job ;-)
 
-Signed-off-by: Eyal Ilsar <eilsar@codeaurora.org>
-Signed-off-by: Ramon Fried <ramon.fried@linaro.org>
----
-v3:
-	* fixed kbuild warning
-v2:
-    * check for NULL after kmalloc
-    * don't assign value to ret.
- drivers/net/wireless/ath/wcn36xx/Makefile     |   2 +
- drivers/net/wireless/ath/wcn36xx/hal.h        |  16 ++
- drivers/net/wireless/ath/wcn36xx/main.c       |   3 +
- drivers/net/wireless/ath/wcn36xx/smd.c        |  81 ++++++++++
- drivers/net/wireless/ath/wcn36xx/smd.h        |   4 +
- drivers/net/wireless/ath/wcn36xx/testmode.c   | 149 ++++++++++++++++++
- drivers/net/wireless/ath/wcn36xx/testmode.h   |  46 ++++++
- drivers/net/wireless/ath/wcn36xx/testmode_i.h |  29 ++++
- drivers/net/wireless/ath/wcn36xx/wcn36xx.h    |   2 +
- 9 files changed, 332 insertions(+)
- create mode 100644 drivers/net/wireless/ath/wcn36xx/testmode.c
- create mode 100644 drivers/net/wireless/ath/wcn36xx/testmode.h
- create mode 100644 drivers/net/wireless/ath/wcn36xx/testmode_i.h
 
-diff --git a/drivers/net/wireless/ath/wcn36xx/Makefile b/drivers/net/wireless/ath/wcn36xx/Makefile
-index 3b09435104eb..582049f65735 100644
---- a/drivers/net/wireless/ath/wcn36xx/Makefile
-+++ b/drivers/net/wireless/ath/wcn36xx/Makefile
-@@ -6,3 +6,5 @@ wcn36xx-y +=   main.o \
-                smd.o \
-                pmc.o \
-                debug.o
-+
-+wcn36xx-$(CONFIG_NL80211_TESTMODE) += testmode.o
-diff --git a/drivers/net/wireless/ath/wcn36xx/hal.h b/drivers/net/wireless/ath/wcn36xx/hal.h
-index 182963522941..8491b3cb3206 100644
---- a/drivers/net/wireless/ath/wcn36xx/hal.h
-+++ b/drivers/net/wireless/ath/wcn36xx/hal.h
-@@ -2230,6 +2230,22 @@ struct wcn36xx_hal_switch_channel_rsp_msg {
- 
- } __packed;
- 
-+struct wcn36xx_hal_process_ptt_msg_req_msg {
-+	struct wcn36xx_hal_msg_header header;
-+
-+	/* Actual FTM Command body */
-+	u8 ptt_msg[0];
-+} __packed;
-+
-+struct wcn36xx_hal_process_ptt_msg_rsp_msg {
-+	struct wcn36xx_hal_msg_header header;
-+
-+	/* FTM Command response status */
-+	u32 ptt_msg_resp_status;
-+	/* Actual FTM Command body */
-+	u8 ptt_msg[0];
-+} __packed;
-+
- struct update_edca_params_req_msg {
- 	struct wcn36xx_hal_msg_header header;
- 
-diff --git a/drivers/net/wireless/ath/wcn36xx/main.c b/drivers/net/wireless/ath/wcn36xx/main.c
-index 69d6be59d97f..ea14f87d11ff 100644
---- a/drivers/net/wireless/ath/wcn36xx/main.c
-+++ b/drivers/net/wireless/ath/wcn36xx/main.c
-@@ -26,6 +26,7 @@
- #include <linux/soc/qcom/smem_state.h>
- #include <linux/soc/qcom/wcnss_ctrl.h>
- #include "wcn36xx.h"
-+#include "testmode.h"
- 
- unsigned int wcn36xx_dbg_mask;
- module_param_named(debug_mask, wcn36xx_dbg_mask, uint, 0644);
-@@ -1116,6 +1117,8 @@ static const struct ieee80211_ops wcn36xx_ops = {
- 	.sta_add		= wcn36xx_sta_add,
- 	.sta_remove		= wcn36xx_sta_remove,
- 	.ampdu_action		= wcn36xx_ampdu_action,
-+
-+	CFG80211_TESTMODE_CMD(wcn36xx_tm_cmd)
- };
- 
- static int wcn36xx_init_ieee80211(struct wcn36xx *wcn)
-diff --git a/drivers/net/wireless/ath/wcn36xx/smd.c b/drivers/net/wireless/ath/wcn36xx/smd.c
-index 8932af5e4d8d..fb0192b7ee99 100644
---- a/drivers/net/wireless/ath/wcn36xx/smd.c
-+++ b/drivers/net/wireless/ath/wcn36xx/smd.c
-@@ -292,12 +292,26 @@ static void init_hal_msg(struct wcn36xx_hal_msg_header *hdr,
- 		msg_body.header.len = sizeof(msg_body);			\
- 	} while (0)							\
- 
-+#define INIT_HAL_PTT_MSG(p_msg_body, ppt_msg_len) \
-+	do { \
-+		memset(p_msg_body, 0, sizeof(*p_msg_body) + ppt_msg_len); \
-+		p_msg_body->header.msg_type = WCN36XX_HAL_PROCESS_PTT_REQ; \
-+		p_msg_body->header.msg_version = WCN36XX_HAL_MSG_VERSION0; \
-+		p_msg_body->header.len = sizeof(*p_msg_body) + ppt_msg_len; \
-+	} while (0)
-+
- #define PREPARE_HAL_BUF(send_buf, msg_body) \
- 	do {							\
- 		memset(send_buf, 0, msg_body.header.len);	\
- 		memcpy(send_buf, &msg_body, sizeof(msg_body));	\
- 	} while (0)						\
- 
-+#define PREPARE_HAL_PTT_MSG_BUF(send_buf, p_msg_body) \
-+	do {							\
-+		memset(send_buf, 0, p_msg_body->header.len); \
-+		memcpy(send_buf, p_msg_body, p_msg_body->header.len); \
-+	} while (0)
-+
- static int wcn36xx_smd_rsp_status_check(void *buf, size_t len)
- {
- 	struct wcn36xx_fw_msg_status_rsp *rsp;
-@@ -741,6 +755,71 @@ int wcn36xx_smd_switch_channel(struct wcn36xx *wcn,
- 	return ret;
- }
- 
-+static int wcn36xx_smd_process_ptt_msg_rsp(void *buf, size_t len,
-+					   void **p_ptt_rsp_msg)
-+{
-+	struct wcn36xx_hal_process_ptt_msg_rsp_msg *rsp;
-+	int ret;
-+
-+	ret = wcn36xx_smd_rsp_status_check(buf, len);
-+	if (ret)
-+		return ret;
-+
-+	rsp = (struct wcn36xx_hal_process_ptt_msg_rsp_msg *)buf;
-+
-+	wcn36xx_dbg(WCN36XX_DBG_HAL, "process ptt msg responded with length %d\n",
-+		    rsp->header.len);
-+	wcn36xx_dbg_dump(WCN36XX_DBG_HAL_DUMP, "HAL_PTT_MSG_RSP:", rsp->ptt_msg,
-+			 rsp->header.len - sizeof(rsp->ptt_msg_resp_status));
-+
-+	if (rsp->header.len > 0) {
-+		*p_ptt_rsp_msg = kmalloc(rsp->header.len, GFP_ATOMIC);
-+		if (!*p_ptt_rsp_msg)
-+			return -ENOMEM;
-+		memcpy(*p_ptt_rsp_msg, rsp->ptt_msg, rsp->header.len);
-+	}
-+	return ret;
-+}
-+
-+int wcn36xx_smd_process_ptt_msg(struct wcn36xx *wcn,
-+				struct ieee80211_vif *vif, void *ptt_msg, size_t len,
-+		void **ptt_rsp_msg)
-+{
-+	struct wcn36xx_hal_process_ptt_msg_req_msg *p_msg_body;
-+	int ret;
-+
-+	mutex_lock(&wcn->hal_mutex);
-+	p_msg_body = kmalloc(
-+		sizeof(struct wcn36xx_hal_process_ptt_msg_req_msg) + len,
-+		GFP_ATOMIC);
-+	if (!p_msg_body) {
-+		ret = -ENOMEM;
-+		goto out_nomem;
-+	}
-+	INIT_HAL_PTT_MSG(p_msg_body, len);
-+
-+	memcpy(&p_msg_body->ptt_msg, ptt_msg, len);
-+
-+	PREPARE_HAL_PTT_MSG_BUF(wcn->hal_buf, p_msg_body);
-+
-+	ret = wcn36xx_smd_send_and_wait(wcn, p_msg_body->header.len);
-+	if (ret) {
-+		wcn36xx_err("Sending hal_process_ptt_msg failed\n");
-+		goto out;
-+	}
-+	ret = wcn36xx_smd_process_ptt_msg_rsp(wcn->hal_buf, wcn->hal_rsp_len,
-+					      ptt_rsp_msg);
-+	if (ret) {
-+		wcn36xx_err("process_ptt_msg response failed err=%d\n", ret);
-+		goto out;
-+	}
-+out:
-+	kfree(p_msg_body);
-+out_nomem:
-+	mutex_unlock(&wcn->hal_mutex);
-+	return ret;
-+}
-+
- static int wcn36xx_smd_update_scan_params_rsp(void *buf, size_t len)
- {
- 	struct wcn36xx_hal_update_scan_params_resp *rsp;
-@@ -2367,6 +2446,7 @@ int wcn36xx_smd_rsp_process(struct rpmsg_device *rpdev,
- 	case WCN36XX_HAL_JOIN_RSP:
- 	case WCN36XX_HAL_UPDATE_SCAN_PARAM_RSP:
- 	case WCN36XX_HAL_CH_SWITCH_RSP:
-+	case WCN36XX_HAL_PROCESS_PTT_RSP:
- 	case WCN36XX_HAL_FEATURE_CAPS_EXCHANGE_RSP:
- 	case WCN36XX_HAL_8023_MULTICAST_LIST_RSP:
- 	case WCN36XX_HAL_START_SCAN_OFFLOAD_RSP:
-@@ -2407,6 +2487,7 @@ int wcn36xx_smd_rsp_process(struct rpmsg_device *rpdev,
- 
- 	return 0;
- }
-+
- static void wcn36xx_ind_smd_work(struct work_struct *work)
- {
- 	struct wcn36xx *wcn =
-diff --git a/drivers/net/wireless/ath/wcn36xx/smd.h b/drivers/net/wireless/ath/wcn36xx/smd.h
-index 8076edf40ac8..945407b8764b 100644
---- a/drivers/net/wireless/ath/wcn36xx/smd.h
-+++ b/drivers/net/wireless/ath/wcn36xx/smd.h
-@@ -86,6 +86,10 @@ int wcn36xx_smd_send_beacon(struct wcn36xx *wcn, struct ieee80211_vif *vif,
- 			    u16 p2p_off);
- int wcn36xx_smd_switch_channel(struct wcn36xx *wcn,
- 			       struct ieee80211_vif *vif, int ch);
-+int wcn36xx_smd_process_ptt_msg(struct wcn36xx *wcn,
-+				struct ieee80211_vif *vif,
-+				void *ptt_msg, size_t len,
-+				void **ptt_rsp_msg);
- int wcn36xx_smd_update_proberesp_tmpl(struct wcn36xx *wcn,
- 				      struct ieee80211_vif *vif,
- 				      struct sk_buff *skb);
-diff --git a/drivers/net/wireless/ath/wcn36xx/testmode.c b/drivers/net/wireless/ath/wcn36xx/testmode.c
-new file mode 100644
-index 000000000000..1279064a3b71
---- /dev/null
-+++ b/drivers/net/wireless/ath/wcn36xx/testmode.c
-@@ -0,0 +1,149 @@
-+﻿/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ *
-+ * Permission to use, copy, modify, and/or distribute this software for any
-+ * purpose with or without fee is hereby granted, provided that the above
-+ * copyright notice and this permission notice appear in all copies.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-+ * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
-+ * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-+ * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-+ */
-+
-+#include <net/netlink.h>
-+#include <linux/firmware.h>
-+#include <net/cfg80211.h>
-+#include "wcn36xx.h"
-+
-+#include "testmode.h"
-+#include "testmode_i.h"
-+#include "hal.h"
-+#include "smd.h"
-+
-+static const struct nla_policy wcn36xx_tm_policy[WCN36XX_TM_ATTR_MAX + 1] = {
-+	[WCN36XX_TM_ATTR_CMD] = { .type = NLA_U16 },
-+	[WCN36XX_TM_ATTR_DATA] = { .type = NLA_BINARY,
-+	.len = WCN36XX_TM_DATA_MAX_LEN },
-+};
-+
-+struct build_release_number {
-+	u16 drv_major;
-+	u16 drv_minor;
-+	u16 drv_patch;
-+	u16 drv_build;
-+	u16 ptt_max;
-+	u16 ptt_min;
-+	u16 fw_ver;
-+} __packed;
-+
-+static int wcn36xx_tm_cmd_ptt(struct wcn36xx *wcn, struct ieee80211_vif *vif,
-+			      struct nlattr *tb[])
-+{
-+	int ret = 0, buf_len;
-+	void *buf;
-+	struct ftm_rsp_msg *msg, *rsp = NULL;
-+	struct sk_buff *skb;
-+
-+	if (!tb[WCN36XX_TM_ATTR_DATA])
-+		return -EINVAL;
-+
-+	buf = nla_data(tb[WCN36XX_TM_ATTR_DATA]);
-+	buf_len = nla_len(tb[WCN36XX_TM_ATTR_DATA]);
-+	msg = (struct ftm_rsp_msg *)buf;
-+
-+	wcn36xx_dbg(WCN36XX_DBG_TESTMODE,
-+		    "testmode cmd wmi msg_id 0x%04X msg_len %d buf %pK buf_len %d\n",
-+		   msg->msg_id, msg->msg_body_length,
-+		   buf, buf_len);
-+
-+	wcn36xx_dbg_dump(WCN36XX_DBG_TESTMODE_DUMP, "REQ ", buf, buf_len);
-+
-+	if (msg->msg_id == MSG_GET_BUILD_RELEASE_NUMBER) {
-+		struct build_release_number *body =
-+				(struct build_release_number *)
-+				msg->msg_response;
-+
-+		body->drv_major = wcn->fw_major;
-+		body->drv_minor = wcn->fw_minor;
-+		body->drv_patch = wcn->fw_version;
-+		body->drv_build = wcn->fw_revision;
-+		body->ptt_max = 10;
-+		body->ptt_min = 0;
-+
-+		rsp = msg;
-+		rsp->resp_status = 0;
-+	} else {
-+		wcn36xx_dbg(WCN36XX_DBG_TESTMODE,
-+			    "PPT Request >> HAL size %d\n",
-+				msg->msg_body_length);
-+
-+		msg->resp_status = wcn36xx_smd_process_ptt_msg(wcn, vif, msg,
-+							       msg->msg_body_length, (void *)(&rsp));
-+
-+		wcn36xx_dbg(WCN36XX_DBG_TESTMODE,
-+			    "Response status = %d\n",
-+				msg->resp_status);
-+		if (rsp)
-+			wcn36xx_dbg(WCN36XX_DBG_TESTMODE,
-+				    "PPT Response << HAL size %d\n",
-+					rsp->msg_body_length);
-+	}
-+
-+	if (!rsp) {
-+		rsp = msg;
-+		wcn36xx_warn("No response! Echoing request with response status %d\n",
-+			     rsp->resp_status);
-+	}
-+	wcn36xx_dbg_dump(WCN36XX_DBG_TESTMODE_DUMP, "RSP ",
-+			 rsp, rsp->msg_body_length);
-+
-+	skb = cfg80211_testmode_alloc_reply_skb(wcn->hw->wiphy,
-+						nla_total_size(msg->msg_body_length));
-+	if (!skb) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	ret = nla_put(skb, WCN36XX_TM_ATTR_DATA, rsp->msg_body_length, rsp);
-+	if (ret) {
-+		kfree_skb(skb);
-+		goto out;
-+	}
-+
-+	ret = cfg80211_testmode_reply(skb);
-+
-+out:
-+	if (rsp != msg)
-+		kfree(rsp);
-+
-+	return ret;
-+}
-+
-+int wcn36xx_tm_cmd(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
-+		   void *data, int len)
-+{
-+	struct wcn36xx *wcn = hw->priv;
-+	struct nlattr *tb[WCN36XX_TM_ATTR_MAX + 1];
-+	int ret = 0;
-+	unsigned short attr;
-+
-+	wcn36xx_dbg_dump(WCN36XX_DBG_TESTMODE_DUMP, "Data:", data, len);
-+	ret = nla_parse(tb, WCN36XX_TM_ATTR_MAX, data, len,
-+			wcn36xx_tm_policy, NULL);
-+	if (ret)
-+		return ret;
-+
-+	if (!tb[WCN36XX_TM_ATTR_CMD])
-+		return -EINVAL;
-+
-+	attr = nla_get_u16(tb[WCN36XX_TM_ATTR_CMD]);
-+
-+	if (attr != WCN36XX_TM_CMD_PTT)
-+		return -EOPNOTSUPP;
-+
-+	return wcn36xx_tm_cmd_ptt(wcn, vif, tb);
-+}
-diff --git a/drivers/net/wireless/ath/wcn36xx/testmode.h b/drivers/net/wireless/ath/wcn36xx/testmode.h
-new file mode 100644
-index 000000000000..4c6cfdb46580
---- /dev/null
-+++ b/drivers/net/wireless/ath/wcn36xx/testmode.h
-@@ -0,0 +1,46 @@
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ *
-+ * Permission to use, copy, modify, and/or distribute this software for any
-+ * purpose with or without fee is hereby granted, provided that the above
-+ * copyright notice and this permission notice appear in all copies.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-+ * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
-+ * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-+ * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-+ */
-+
-+#include "wcn36xx.h"
-+
-+struct ftm_rsp_msg {
-+	u16 msg_id;
-+	u16 msg_body_length;
-+	u32 resp_status;
-+	u8 msg_response[0];
-+} __packed;
-+
-+/* The request buffer of FTM which contains a byte of command and the request */
-+struct ftm_payload {
-+	u16 ftm_cmd_type;
-+	struct ftm_rsp_msg ftm_cmd_msg;
-+} __packed;
-+
-+#define MSG_GET_BUILD_RELEASE_NUMBER 0x32A2
-+
-+#ifdef CONFIG_NL80211_TESTMODE
-+int wcn36xx_tm_cmd(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
-+		   void *data, int len);
-+
-+#else
-+static inline int wcn36xx_tm_cmd(struct ieee80211_hw *hw,
-+				 struct ieee80211_vif *vif,
-+				void *data, int len)
-+{
-+	return 0;
-+}
-+
-+#endif
-diff --git a/drivers/net/wireless/ath/wcn36xx/testmode_i.h b/drivers/net/wireless/ath/wcn36xx/testmode_i.h
-new file mode 100644
-index 000000000000..8a1477ffd5a0
---- /dev/null
-+++ b/drivers/net/wireless/ath/wcn36xx/testmode_i.h
-@@ -0,0 +1,29 @@
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ *
-+ * Permission to use, copy, modify, and/or distribute this software for any
-+ * purpose with or without fee is hereby granted, provided that the above
-+ * copyright notice and this permission notice appear in all copies.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-+ * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
-+ * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-+ * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-+ */
-+
-+#define WCN36XX_TM_DATA_MAX_LEN		5000
-+
-+enum wcn36xx_tm_attr {
-+	__WCN36XX_TM_ATTR_INVALID	= 0,
-+	WCN36XX_TM_ATTR_CMD		= 1,
-+	WCN36XX_TM_ATTR_DATA		= 2,
-+
-+	/* keep last */
-+	__WCN36XX_TM_ATTR_AFTER_LAST,
-+	WCN36XX_TM_ATTR_MAX		= __WCN36XX_TM_ATTR_AFTER_LAST - 1,
-+};
-+
-+#define WCN36XX_TM_CMD_PTT 3
-diff --git a/drivers/net/wireless/ath/wcn36xx/wcn36xx.h b/drivers/net/wireless/ath/wcn36xx/wcn36xx.h
-index 5854adf43f3a..547e9a9eb28f 100644
---- a/drivers/net/wireless/ath/wcn36xx/wcn36xx.h
-+++ b/drivers/net/wireless/ath/wcn36xx/wcn36xx.h
-@@ -56,6 +56,8 @@ enum wcn36xx_debug_mask {
- 	WCN36XX_DBG_BEACON_DUMP	= 0x00001000,
- 	WCN36XX_DBG_PMC		= 0x00002000,
- 	WCN36XX_DBG_PMC_DUMP	= 0x00004000,
-+	WCN36XX_DBG_TESTMODE		= 0x00008000,
-+	WCN36XX_DBG_TESTMODE_DUMP	= 0x00010000,
- 	WCN36XX_DBG_ANY		= 0xffffffff,
- };
- 
--- 
-2.17.0
+>
+>> - keep grant-table changes, with config option
+> Can we consider moving ex-balloon code into grant-table?
+
+On the second thought ---  yes, if the code is compact enough, which I
+think it is, you should be able to keep it there.
+
+
+>
+>> - keep gntdev changes, with config option.
+> I'll try to see what happens to gntdev with Kconfig option wrt
+> function prototype
+> changes. I also have to check if UAPI of gntdev can also support
+> CONFIG_XXX ifdefs
+> w/o problems - do you by chance know if #if CONFIG_ is ok for UAPI files?
+
+
+I would think that not but:
+
+ostr@workbase> git grep "#ifdef CONFIG_" include/uapi/
+include/uapi/asm-generic/mman-common.h:#ifdef
+CONFIG_MMAP_ALLOW_UNINITIALIZED
+include/uapi/linux/atmdev.h:#ifdef CONFIG_COMPAT
+include/uapi/linux/elfcore.h:#ifdef CONFIG_BINFMT_ELF_FDPIC
+include/uapi/linux/eventpoll.h:#ifdef CONFIG_PM_SLEEP
+include/uapi/linux/fb.h:#ifdef CONFIG_FB_BACKLIGHT
+include/uapi/linux/flat.h:#ifdef CONFIG_BINFMT_SHARED_FLAT
+include/uapi/linux/hw_breakpoint.h:#ifdef CONFIG_HAVE_MIXED_BREAKPOINTS_REGS
+ostr@workbase>
+
+
+-boris
+
+
+> Or I can leave UAPI as is and ifdef in .ioctl callback.
+>>   (but when you get to post
+>> actual patches I would appreciate if you could split this into a series
+>> of logical changes and not post a one giant patch).
+> Of course, as this is at RFC stage the idea was to roll out all the
+> changes at once, so
+> everyone has the full picture and don't need to collect changes from
+> set of patches.
+>>
+>> -boris
+>>
+> Thank you,
+> Oleksandr
+>>> I am still missing your point here?
+>>>
+>>>>> If you suggest a new kernel driver module:
+>>>>> IMO, there is nothing bad if we create a dedicated kernel module
+>>>>> (driver) for Xen dma-buf handling selectable under Kconfig option.
+>>>>> Yes, this will create a yet another device under /dev/xen,
+>>>>> but most people will never see it if we set Kconfig to default to
+>>>>> "n".
+>>>>> And then we'll need user-space support for that, so Xen tools will
+>>>>> be extended with libxendmabuf.so or so.
+>>>>> This way all Xen dma-buf support can be localized at one place which
+>>>>> might be easier to maintain. What is more it could be totally
+>>>>> transparent
+>>>>> to most of us as Kconfig option won't be set by default (both kernel
+>>>>> and Xen).
+>>>> The downside is that we will end up having another device for doing
+>>>> things that are not that different from what we are already doing with
+>>>> existing gnttab device. Or are they?
+>>> Agree, but Kconfig option, IMO, won't make it look nice because
+>>> of gntdev changes and code reuse.
+>>>> -boris
+>>> Thank you,
+>>> Oleksandr
+>>>
+>>> _______________________________________________
+>>> Xen-devel mailing list
+>>> Xen-devel@lists.xenproject.org
+>>> https://lists.xenproject.org/mailman/listinfo/xen-devel
+>
