@@ -1,49 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751585AbeEVJHW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 05:07:22 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:21631 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751311AbeEVJHU (ORCPT
+        id S1751404AbeEVJJe (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 05:09:34 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:45190 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751283AbeEVJJ3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 05:07:20 -0400
-Subject: Re: [PATCH v11 03/27] clk: davinci: psc: allow for dev == NULL
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <20180518164829.27052-1-david@lechnology.com>
- <20180518164829.27052-4-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <250d94db-c33f-51c9-99c1-3a4ddcd627fa@ti.com>
-Date: Tue, 22 May 2018 14:35:58 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 22 May 2018 05:09:29 -0400
+X-Google-Smtp-Source: AB8JxZpWoCnlcSLICSG3cidq7+3Yhx+f1GqiYQQk44CtoD0BgUuzoinpeS6h6CpUXbAbKnuzsCGsE6JrB8AWDZTxZoc=
 MIME-Version: 1.0
-In-Reply-To: <20180518164829.27052-4-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20180521153337.GF3803@linux.vnet.ibm.com>
+References: <20180518130413.16997-1-roman.penyaev@profitbricks.com>
+ <20180518130413.16997-2-roman.penyaev@profitbricks.com> <20180519163735.GX3803@linux.vnet.ibm.com>
+ <CAJrWOzAt8BDtypaRwYx_y9jpCVD5W_VL9aQsFsC3bL-XaoJz9g@mail.gmail.com>
+ <20180520004318.GY3803@linux.vnet.ibm.com> <CAJrWOzBenkHg_5zs1VAxP_rVbCbOJO_eO0toJBhnzXuy_yWH2Q@mail.gmail.com>
+ <CA+55aFymFCVqh4VxtqDPoFYh6zsGEDLSV79_AnsMp3M=t2mhqg@mail.gmail.com> <20180521153337.GF3803@linux.vnet.ibm.com>
+From: Roman Penyaev <roman.penyaev@profitbricks.com>
+Date: Tue, 22 May 2018 11:09:08 +0200
+Message-ID: <CAJrWOzDfJ46Vwz5k7VgUwz04EzCCUtt57jxCx1RC0LoOA3t0AA@mail.gmail.com>
+Subject: Re: [PATCH v2 01/26] rculist: introduce list_next_or_null_rr_rcu()
+To: "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Bart Van Assche <bart.vanassche@sandisk.com>,
+        Or Gerlitz <ogerlitz@mellanox.com>, Doug Ledford <dledford@redhat.com>,
+        "swapnil.ingle" <swapnil.ingle@profitbricks.com>,
+        Danil Kipnis <danil.kipnis@profitbricks.com>,
+        Jinpu Wang <jinpu.wang@profitbricks.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday 18 May 2018 10:18 PM, David Lechner wrote:
-> On some davinci SoCs, we need to register the PSC clocks during early
-> boot because they are needed for clocksource/clockevent. These changes
-> allow for dev == NULL because in this case, we won't have a platform
-> device for the clocks.
-> 
-> Some function declarations are moved to a public header files so that they can
-> be called from mach init code.
-> 
-> Signed-off-by: David Lechner <david@lechnology.com>
+On Mon, May 21, 2018 at 5:33 PM, Paul E. McKenney
+<paulmck@linux.vnet.ibm.com> wrote:
+> On Mon, May 21, 2018 at 08:16:59AM -0700, Linus Torvalds wrote:
+>> On Mon, May 21, 2018 at 6:51 AM Roman Penyaev <
+>> roman.penyaev@profitbricks.com> wrote:
+>>
+>> > No, I continue from the pointer, which I assigned on the previous IO
+>> > in order to send IO fairly and keep load balanced.
+>>
+>> Right. And that's exactly what has both me and Paul nervous. You're no
+>> longer in the RCU domain. You're using a pointer where the lifetime has
+>> nothing to do with RCU any more.
+>>
+>> Can it be done? Sure. But you need *other* locking for it (that you haven't
+>> explained), and it's fragile as hell.
+>
+> He looks to actually have it right, but I would want to see a big comment
+> on the read side noting the leak of the pointer and documenting why it
+> is OK.
 
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+Hi Paul and Linus,
 
-Thanks,
-Sekhar
+Should I resend current patch with more clear comments about how careful
+caller should be with a leaking pointer?  Also I will update read side
+with a fat comment about "rcu_assign_pointer()" which leaks the pointer
+out of RCU domain and what is done to prevent nasty consequences.
+Does that sound acceptable?
+
+--
+Roman
