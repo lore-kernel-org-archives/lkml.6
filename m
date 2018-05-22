@@ -1,109 +1,229 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751196AbeEVEPX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 00:15:23 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44524 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750707AbeEVEPV (ORCPT
+        id S1751239AbeEVEXE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 00:23:04 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:52906 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750707AbeEVEXC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 00:15:21 -0400
-Date: Mon, 21 May 2018 21:16:51 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Joel Fernandes <joel@joelfernandes.org>
-Cc: Joel Fernandes <joelaf@google.com>, linux-kernel@vger.kernel.org,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>, byungchul.park@lge.com,
-        kernel-team@android.com
-Subject: Re: [PATCH v3 4/4] rcu: Unlock non-start node only after accessing
- its gp_seq_needed
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180521044220.123933-1-joel@joelfernandes.org>
- <20180521044220.123933-5-joel@joelfernandes.org>
- <20180521232537.GJ3803@linux.vnet.ibm.com>
- <20180522000734.GD40541@joelaf.mtv.corp.google.com>
- <20180522002823.GP3803@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180522002823.GP3803@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18052204-0024-0000-0000-0000035CAC45
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009064; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000261; SDB=6.01035837; UDB=6.00529851; IPR=6.00814966;
- MB=3.00021230; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-22 04:15:18
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052204-0025-0000-0000-00004818604C
-Message-Id: <20180522041651.GA18405@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-22_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805220050
+        Tue, 22 May 2018 00:23:02 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7174B6090E
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sayalil@codeaurora.org
+From: Sayali Lokhande <sayalil@codeaurora.org>
+To: subhashj@codeaurora.org, cang@codeaurora.org,
+        vivek.gautam@codeaurora.org, rnayak@codeaurora.org,
+        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, asutoshd@codeaurora.org
+Cc: linux-scsi@vger.kernel.org, Sayali Lokhande <sayalil@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH RFC 1/3] scsi: ufs: set the device reference clock setting
+Date: Tue, 22 May 2018 09:51:38 +0530
+Message-Id: <1526962900-20683-2-git-send-email-sayalil@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1526962900-20683-1-git-send-email-sayalil@codeaurora.org>
+References: <1526962900-20683-1-git-send-email-sayalil@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 05:28:23PM -0700, Paul E. McKenney wrote:
-> On Mon, May 21, 2018 at 05:07:34PM -0700, Joel Fernandes wrote:
-> > On Mon, May 21, 2018 at 04:25:38PM -0700, Paul E. McKenney wrote:
-> > > On Sun, May 20, 2018 at 09:42:20PM -0700, Joel Fernandes wrote:
-> > > > We acquire gp_seq_needed locklessly. To be safe, lets do the unlocking
-> > > > after the access.
-> > > 
-> > > Actually, no, we hold rnp_start's ->lock throughout.  And this CPU (or in
-> > > the case of no-CBs CPUs, this task) is in charge of rdp->gp_seq_needed,
-> > > so nothing else is accessing it.  Or at least that is the intent.  ;-)
-> > 
-> > I was talking about protecting the internal node's rnp->gp_seq_needed, not
-> > the rnp_start's gp_seq_needed.
-> 
-> Ah, good point, I missed the "if" condition.  This can be argued to work,
-> sort of, given that we still hold the leaf rcu_node structure's lock,
-> so that there is a limit to how far grace periods can advance.
-> 
-> But the code would of course be much cleaner with your change.
-> 
-> > We are protecting them in the loop:
-> > 
-> > like this:
-> > for(...)
-> > 	if (rnp != rnp_start)
-> > 		raw_spin_lock_rcu_node(rnp);
-> > 	[...]
-> > 	// access rnp->gp_seq and rnp->gp_seq_needed
-> > 	[...]
-> > 	if (rnp != rnp_start)
-> > 		raw_spin_unlock_rcu_node(rnp);
-> > 
-> > But we don't need to do such protection in unlock_out ? I'm sorry if I'm
-> > missing something, but I'm wondering if rnp->gp_seq_needed of an internal
-> > node can be accessed locklessly, then why can't that be done also in the
-> > funnel locking loop - after all we are holding the rnp_start's lock through
-> > out right?
-> 
-> I was focused on the updates, and missed the rnp->gp_seq_req access in the
-> "if" statement.  The current code does sort of work, but only assuming
-> that the compiler doesn't tear the load, and so your change would help.
-> Could you please resend with your other two updated patches?  It depends
-> on one of the earlier patches, so does not apply cleanly as-is.  I could
-> hand-apply it, but that sounds like a good way to make your updated
-> series fail to apply.  ;-)
-> 
-> But could you also make the commit log explicitly call out the "if"
-> condition as being the offending access?
+From: Subhash Jadavani <subhashj@codeaurora.org>
 
-Never mind, me being stupid.  I need to apply this change to the original
-commit "rcu: Make rcu_nocb_wait_gp() check if GP already requested", which
-I have done with this attribution:
+UFS host supplies the reference clock to UFS device and UFS device
+specification allows host to provide one of the 4 frequencies (19.2 MHz,
+26 MHz, 38.4 MHz, 52 MHz) for reference clock. Host should set the
+device reference clock frequency setting in the device based on what
+frequency it is supplying to UFS device.
 
-[ paulmck: Move lock release past "if" as suggested by Joel Fernandes. ]
+Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+[cang@codeaurora.org: Resolved trivial merge conflicts]
+Signed-off-by: Can Guo <cang@codeaurora.org>
+Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
+---
+ .../devicetree/bindings/ufs/ufshcd-pltfrm.txt      |  8 +++
+ drivers/scsi/ufs/ufs.h                             |  9 ++++
+ drivers/scsi/ufs/ufshcd-pltfrm.c                   | 20 ++++++++
+ drivers/scsi/ufs/ufshcd.c                          | 60 ++++++++++++++++++++++
+ drivers/scsi/ufs/ufshcd.h                          |  2 +
+ 5 files changed, 99 insertions(+)
 
-I have rebased my stack on top of the updated commit.
-
-							Thanx, Paul
+diff --git a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
+index c39dfef..ac94220 100644
+--- a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
++++ b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
+@@ -41,6 +41,12 @@ Optional properties:
+ -lanes-per-direction	: number of lanes available per direction - either 1 or 2.
+ 			  Note that it is assume same number of lanes is used both
+ 			  directions at once. If not specified, default is 2 lanes per direction.
++- dev-ref-clk-freq	: Specify the device reference clock frequency, must be one of the following:
++			  0: 19.2 MHz
++			  1: 26 MHz
++			  2: 38.4 MHz
++			  3: 52 MHz
++			  Defaults to 26 MHz if not specified.
+ 
+ Note: If above properties are not defined it can be assumed that the supply
+ regulators or clocks are always on.
+@@ -66,4 +72,6 @@ Example:
+ 		freq-table-hz = <100000000 200000000>, <0 0>, <0 0>;
+ 		phys = <&ufsphy1>;
+ 		phy-names = "ufsphy";
++		dev-ref-clk-freq = <0>; /* reference clock freq: 19.2 MHz */
+ 	};
++
+diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
+index 14e5bf7..e15deb0 100644
+--- a/drivers/scsi/ufs/ufs.h
++++ b/drivers/scsi/ufs/ufs.h
+@@ -378,6 +378,15 @@ enum query_opcode {
+ 	UPIU_QUERY_OPCODE_TOGGLE_FLAG	= 0x8,
+ };
+ 
++/* bRefClkFreq attribute values */
++enum ref_clk_freq {
++	REF_CLK_FREQ_19_2_MHZ	= 0x0,
++	REF_CLK_FREQ_26_MHZ	= 0x1,
++	REF_CLK_FREQ_38_4_MHZ	= 0x2,
++	REF_CLK_FREQ_52_MHZ	= 0x3,
++	REF_CLK_FREQ_MAX	= REF_CLK_FREQ_52_MHZ,
++};
++
+ /* Query response result code */
+ enum {
+ 	QUERY_RESULT_SUCCESS                    = 0x00,
+diff --git a/drivers/scsi/ufs/ufshcd-pltfrm.c b/drivers/scsi/ufs/ufshcd-pltfrm.c
+index e82bde0..b70838b 100644
+--- a/drivers/scsi/ufs/ufshcd-pltfrm.c
++++ b/drivers/scsi/ufs/ufshcd-pltfrm.c
+@@ -221,6 +221,24 @@ static int ufshcd_parse_regulator_info(struct ufs_hba *hba)
+ 	return err;
+ }
+ 
++static void ufshcd_parse_dev_ref_clk_freq(struct ufs_hba *hba)
++{
++	struct device *dev = hba->dev;
++	struct device_node *np = dev->of_node;
++	int ret;
++
++	if (!np)
++		return;
++
++	ret = of_property_read_u32(np, "dev-ref-clk-freq",
++				   &hba->dev_ref_clk_freq);
++	if (ret ||
++	    (hba->dev_ref_clk_freq < 0) ||
++	    (hba->dev_ref_clk_freq > REF_CLK_FREQ_52_MHZ))
++		/* default setting */
++		hba->dev_ref_clk_freq = REF_CLK_FREQ_26_MHZ;
++}
++
+ #ifdef CONFIG_PM
+ /**
+  * ufshcd_pltfrm_suspend - suspend power management function
+@@ -343,6 +361,8 @@ int ufshcd_pltfrm_init(struct platform_device *pdev,
+ 	pm_runtime_set_active(&pdev->dev);
+ 	pm_runtime_enable(&pdev->dev);
+ 
++	ufshcd_parse_dev_ref_clk_freq(hba);
++
+ 	ufshcd_init_lanes_per_dir(hba);
+ 
+ 	err = ufshcd_init(hba, mmio_base, irq);
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index c5b1bf1..1ab882f 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -6297,6 +6297,61 @@ static void ufshcd_def_desc_sizes(struct ufs_hba *hba)
+ }
+ 
+ /**
++ * ufshcd_set_dev_ref_clk - set the device bRefClkFreq
++ * @hba: per-adapter instance
++ *
++ * Read the current value of the bRefClkFreq attribute from device and update it
++ * if host is supplying different reference clock frequency than one mentioned
++ * in bRefClkFreq attribute.
++ *
++ * Returns zero on success, non-zero error value on failure.
++ */
++static int ufshcd_set_dev_ref_clk(struct ufs_hba *hba)
++{
++	int err = 0;
++	int ref_clk = -1;
++	static const char * const ref_clk_freqs[] = {"19.2 MHz", "26 MHz",
++						     "38.4 MHz", "52 MHz"};
++
++	err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_READ_ATTR,
++			QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0, &ref_clk);
++
++	if (err) {
++		dev_err(hba->dev, "%s: failed reading bRefClkFreq. err = %d\n",
++			 __func__, err);
++		goto out;
++	}
++
++	if ((ref_clk < 0) || (ref_clk > REF_CLK_FREQ_52_MHZ)) {
++		dev_err(hba->dev, "%s: invalid ref_clk setting = %d\n",
++			 __func__, ref_clk);
++		err = -EINVAL;
++		goto out;
++	}
++
++	if (ref_clk == hba->dev_ref_clk_freq)
++		goto out; /* nothing to update */
++
++	err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
++			QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0,
++			&hba->dev_ref_clk_freq);
++
++	if (err)
++		dev_err(hba->dev, "%s: bRefClkFreq setting to %s failed\n",
++			__func__, ref_clk_freqs[hba->dev_ref_clk_freq]);
++	else
++		/*
++		 * It is good to print this out here to debug any later failures
++		 * related to gear switch.
++		 */
++		dev_info(hba->dev, "%s: bRefClkFreq setting to %s succeeded\n",
++			__func__, ref_clk_freqs[hba->dev_ref_clk_freq]);
++
++out:
++	return err;
++}
++
++/**
+  * ufshcd_probe_hba - probe hba to detect device and initialize
+  * @hba: per-adapter instance
+  *
+@@ -6361,6 +6416,11 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
+ 			"%s: Failed getting max supported power mode\n",
+ 			__func__);
+ 	} else {
++		/*
++		 * Set the right value to bRefClkFreq before attempting to
++		 * switch to HS gears.
++		 */
++		ufshcd_set_dev_ref_clk(hba);
+ 		ret = ufshcd_config_pwr_mode(hba, &hba->max_pwr_info.info);
+ 		if (ret) {
+ 			dev_err(hba->dev, "%s: Failed setting power mode, err = %d\n",
+diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+index 8110dcd..0dcf113 100644
+--- a/drivers/scsi/ufs/ufshcd.h
++++ b/drivers/scsi/ufs/ufshcd.h
+@@ -549,6 +549,8 @@ struct ufs_hba {
+ 	unsigned int irq;
+ 	bool is_irq_enabled;
+ 
++	u32 dev_ref_clk_freq;
++
+ 	/* Interrupt aggregation support is broken */
+ 	#define UFSHCD_QUIRK_BROKEN_INTR_AGGR			0x1
+ 
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
