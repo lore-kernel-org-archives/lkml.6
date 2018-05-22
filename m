@@ -1,11 +1,10 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2401354-1526988786-2-7208735928289423449
+X-Cyrus-Session-Id: sloti22d1t05-2401354-1526988744-2-13661607320351632835
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
-  SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES enro, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
   MailFrom='org'
 X-Spam-charsets: 
@@ -13,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526988786; b=hIN3SE0kBxxsIwTucEyQ77RLQGRfQvU3IZUcrPWJ6lhZvdZ1En
-    Iu+SRJAUn7WWWy5vjjPAUkDTdEU8mo3ln+0v9c0pCf1JNO+zg2aUFPn6v6UB1MvZ
-    vTeOhEjmKhv4jUpdT3fxcbRiYyinsPh/oIQJ0wUHFXacwxoKwiBQBUmVsKxkoWcE
-    0WTu8q+hNdlD4qt9qfuGkcykVQkj2R+wxaELH9jA0YqCYY0iiJoUJtHrtkXbiKax
-    SS7gs89sWwxQtRIUU9OQ+c1TFM2Dtupi8nbdMOBPtmro8lAg6e+C+iPxfupb+H7w
-    Dmcc304lbvq9lbGzMCsOSGA38Azwzao503YA==
+    1526988743; b=DQzldmvvf78/jNkdUbwRUmcXnwoQipK3JV1iD0pVHtCZIYB3Zb
+    TOBJGnHJfMCs836JbTKpZiL6p73AOwJYOrafrwSeq3SJaICs6AjSYFn+i9HLA2Lb
+    LDNy/sPfnCM7jKWcnWXa9ZuIHgCnjNvio4NE8HVNRzq30vPCeryFT2qs1ttzld+Q
+    QEIbDwxlIwioGjZQvK7p4zXKpKlwTgB0LakujJgnMiFAnPxEpWapizAwoixMnd1F
+    OiJWDd02OMjCI2lfa3hfBY8c6K1Gkdvd2Aqaoef1+PJoLn+rdh6nbjlB9eggPrMd
+    hZGwu4diL4MFR48++SQLlemsTeL/YWDUCvyA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1526988786; bh=
-    Eqmc4RFzj8Aiw+X9KlH3Rf6w8BUC755odUCkG/pVOPc=; b=Lmi5OJgxKU5jkA7D
-    zkObDVG5FF1Qcuj/Vx83ODBoxQ3yMnx5Swq3N+PgFfBatA05PxOOpQhKCrRtryvn
-    Yx7m/qT66jZEAkPYvNkKXcAiDREXgZD0PmlxtBR5TcJpcEOR2WEx1op84Jhrb1hE
-    FeiMHQI02tf2YJmuXIbdxzNky6rZIuJvaP6rWe5oSpsrOPK1Gqgh57cq7XqMkhDL
-    +yb0fByWFA8Fu9cR2mvi6/Oe43i1mpDDYxOgr096tMnHOy3IZrtDn0p6HRBYFSOk
-    OSKqzJ3wafjuViJk+BSUp03u3zfT+2MhV7sV8BloumTYXwQRYSE8D0YkEhqpYE0I
-    AxrAZw==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=fm2; t=1526988743; bh=
+    boli46TrLGmbP01/yQWRQl9/OyZzPjWMHqdu8js0sUI=; b=ELK91hbkuiUFiIhU
+    +YxM4FcIqp8I2RvPSUQuyGB71iJyV02IqLmU1gFzkMmxJG2BioNS+JKciasJluCZ
+    bdCQjEfOkFnu0YmMb2YLJx8ob0Ehq/c1zX18opViebPEebmL7izwvmK7Zd2mitBq
+    0MJ7MygMoH9H6LfDUbv6I7TiXUZ9FFslt+GbjB3JzfLtbMvHTU3j89rpyCoT23mm
+    6oDuwxpHlGOomugEkw7nfW8QBpUkCgySPqTBnGH73rceWVmRxG3fRzy9v5H55Ii0
+    fUm6MWaEnTQa6IsIW0mBd+oM/OkxT1Cq0xau9SwDvzMyQkCxp8b+6NRZloVlnUYL
+    05jZkQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=infradead.org header.i=@infradead.org header.b=adiSBF4H
+    header.d=infradead.org header.i=@infradead.org header.b=A1dzWpYB
     x-bits=2048 x-keytype=rsa x-algorithm=sha256
     x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -45,10 +44,10 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=infradead.org header.i=@infradead.org header.b=adiSBF4H
+      header.d=infradead.org header.i=@infradead.org header.b=A1dzWpYB
       x-bits=2048 x-keytype=rsa x-algorithm=sha256
       x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -63,28 +62,28 @@ Authentication-Results: mx6.messagingengine.com;
       header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfK/8kVhxqxBLGiN4uRcc3+/RhOxMys+E7sSExAyWI0nNwU+SHy1EtOgZ9l/AMfBCxilcLTaBKGwODdvhcK3XGUF1ON0HVqbk6m4XhjES7CvPqZTBsGA1
-    LwBN5ElO5ZphnQhBCKhoKtRwC4luWR5FQmwQgmU8F9Rqz9OYQJ3CJA0u0PwiCGNwV6MiBujsssjXXGsThF7ZKUZ9hv8JW52RojRDpMmPeVtHm/uOicuC+Y6I
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfGwEKcdQFb7zUo5e0g20w7I3HrdbVjJBTsbh6vFMmI1h3RYxtBJzCSyMmrmJzUwFghkjj/N6rbxTV/uGE1FUjGat+bN5H+NG4e8ZHPgt9idcobEu0w0X
+    UJQerQoXEsLSpPrhYG9PRWB+Lg/61YOCLNfSgAMTDPexp9DItcSLcS7FZ8r+Y79KsyDKvHdR3V0/lbMDxQhbLKP5ciPCA+Z5biJZSxPUwlbnaTgP0OMs9U6K
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8
-    a=93xJhb5qFrg3jIcMEpwA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=Pmce8StkAcKj7r3Bg28A:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752780AbeEVLc7 (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 22 May 2018 07:32:59 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36778 "EHLO
+        id S1752541AbeEVLcU (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 22 May 2018 07:32:20 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36682 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752776AbeEVLcz (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Tue, 22 May 2018 07:32:55 -0400
+        with ESMTP id S1752525AbeEVLcR (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Tue, 22 May 2018 07:32:17 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: viro@zeniv.linux.org.uk
 Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
         linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 25/31] net/iucv: convert to ->poll_mask
-Date: Tue, 22 May 2018 13:31:02 +0200
-Message-Id: <20180522113108.25713-26-hch@lst.de>
+Subject: [PATCH 13/31] net/tcp: convert to ->poll_mask
+Date: Tue, 22 May 2018 13:30:50 +0200
+Message-Id: <20180522113108.25713-14-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180522113108.25713-1-hch@lst.de>
 References: <20180522113108.25713-1-hch@lst.de>
@@ -97,52 +96,103 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- include/net/iucv/af_iucv.h | 2 --
- net/iucv/af_iucv.c         | 7 ++-----
- 2 files changed, 2 insertions(+), 7 deletions(-)
+ include/net/tcp.h   |  3 +--
+ net/ipv4/af_inet.c  |  2 +-
+ net/ipv4/tcp.c      | 23 ++++++-----------------
+ net/ipv6/af_inet6.c |  2 +-
+ 4 files changed, 9 insertions(+), 21 deletions(-)
 
-diff --git a/include/net/iucv/af_iucv.h b/include/net/iucv/af_iucv.h
-index f4c21b5a1242..b0eaeb02d46d 100644
---- a/include/net/iucv/af_iucv.h
-+++ b/include/net/iucv/af_iucv.h
-@@ -153,8 +153,6 @@ struct iucv_sock_list {
- 	atomic_t	  autobind_name;
- };
- 
--__poll_t iucv_sock_poll(struct file *file, struct socket *sock,
--			    poll_table *wait);
- void iucv_sock_link(struct iucv_sock_list *l, struct sock *s);
- void iucv_sock_unlink(struct iucv_sock_list *l, struct sock *s);
- void iucv_accept_enqueue(struct sock *parent, struct sock *sk);
-diff --git a/net/iucv/af_iucv.c b/net/iucv/af_iucv.c
-index 893a022f9620..68e86257a549 100644
---- a/net/iucv/af_iucv.c
-+++ b/net/iucv/af_iucv.c
-@@ -1488,14 +1488,11 @@ static inline __poll_t iucv_accept_poll(struct sock *parent)
- 	return 0;
+diff --git a/include/net/tcp.h b/include/net/tcp.h
+index 9c9b3768b350..72b0ef0fe8cf 100644
+--- a/include/net/tcp.h
++++ b/include/net/tcp.h
+@@ -388,8 +388,7 @@ bool tcp_peer_is_proven(struct request_sock *req, struct dst_entry *dst);
+ void tcp_close(struct sock *sk, long timeout);
+ void tcp_init_sock(struct sock *sk);
+ void tcp_init_transfer(struct sock *sk, int bpf_op);
+-__poll_t tcp_poll(struct file *file, struct socket *sock,
+-		      struct poll_table_struct *wait);
++__poll_t tcp_poll_mask(struct socket *sock, __poll_t events);
+ int tcp_getsockopt(struct sock *sk, int level, int optname,
+ 		   char __user *optval, int __user *optlen);
+ int tcp_setsockopt(struct sock *sk, int level, int optname,
+diff --git a/net/ipv4/af_inet.c b/net/ipv4/af_inet.c
+index eaed0367e669..116e3cd11515 100644
+--- a/net/ipv4/af_inet.c
++++ b/net/ipv4/af_inet.c
+@@ -986,7 +986,7 @@ const struct proto_ops inet_stream_ops = {
+ 	.socketpair	   = sock_no_socketpair,
+ 	.accept		   = inet_accept,
+ 	.getname	   = inet_getname,
+-	.poll		   = tcp_poll,
++	.poll_mask	   = tcp_poll_mask,
+ 	.ioctl		   = inet_ioctl,
+ 	.listen		   = inet_listen,
+ 	.shutdown	   = inet_shutdown,
+diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+index 9ce1c726185e..643c1ba27338 100644
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -494,32 +494,21 @@ static inline bool tcp_stream_is_readable(const struct tcp_sock *tp,
  }
  
--__poll_t iucv_sock_poll(struct file *file, struct socket *sock,
--			    poll_table *wait)
-+static __poll_t iucv_sock_poll_mask(struct socket *sock, __poll_t events)
+ /*
+- *	Wait for a TCP event.
+- *
+- *	Note that we don't need to lock the socket, as the upper poll layers
+- *	take care of normal races (between the test and the event) and we don't
+- *	go look at any of the socket buffers directly.
++ * Socket is not locked. We are protected from async events by poll logic and
++ * correct handling of state changes made by other threads is impossible in
++ * any case.
+  */
+-__poll_t tcp_poll(struct file *file, struct socket *sock, poll_table *wait)
++__poll_t tcp_poll_mask(struct socket *sock, __poll_t events)
  {
+-	__poll_t mask;
  	struct sock *sk = sock->sk;
- 	__poll_t mask = 0;
+ 	const struct tcp_sock *tp = tcp_sk(sk);
++	__poll_t mask = 0;
+ 	int state;
  
 -	sock_poll_wait(file, sk_sleep(sk), wait);
 -
- 	if (sk->sk_state == IUCV_LISTEN)
- 		return iucv_accept_poll(sk);
+ 	state = inet_sk_state_load(sk);
+ 	if (state == TCP_LISTEN)
+ 		return inet_csk_listen_poll(sk);
  
-@@ -2388,7 +2385,7 @@ static const struct proto_ops iucv_sock_ops = {
- 	.getname	= iucv_sock_getname,
- 	.sendmsg	= iucv_sock_sendmsg,
- 	.recvmsg	= iucv_sock_recvmsg,
--	.poll		= iucv_sock_poll,
-+	.poll_mask	= iucv_sock_poll_mask,
- 	.ioctl		= sock_no_ioctl,
- 	.mmap		= sock_no_mmap,
- 	.socketpair	= sock_no_socketpair,
+-	/* Socket is not locked. We are protected from async events
+-	 * by poll logic and correct handling of state changes
+-	 * made by other threads is impossible in any case.
+-	 */
+-
+-	mask = 0;
+-
+ 	/*
+ 	 * EPOLLHUP is certainly not done right. But poll() doesn't
+ 	 * have a notion of HUP in just one direction, and for a
+@@ -600,7 +589,7 @@ __poll_t tcp_poll(struct file *file, struct socket *sock, poll_table *wait)
+ 
+ 	return mask;
+ }
+-EXPORT_SYMBOL(tcp_poll);
++EXPORT_SYMBOL(tcp_poll_mask);
+ 
+ int tcp_ioctl(struct sock *sk, int cmd, unsigned long arg)
+ {
+diff --git a/net/ipv6/af_inet6.c b/net/ipv6/af_inet6.c
+index 8da0b513f188..57b85ea438e9 100644
+--- a/net/ipv6/af_inet6.c
++++ b/net/ipv6/af_inet6.c
+@@ -571,7 +571,7 @@ const struct proto_ops inet6_stream_ops = {
+ 	.socketpair	   = sock_no_socketpair,	/* a do nothing	*/
+ 	.accept		   = inet_accept,		/* ok		*/
+ 	.getname	   = inet6_getname,
+-	.poll		   = tcp_poll,			/* ok		*/
++	.poll_mask	   = tcp_poll_mask,		/* ok		*/
+ 	.ioctl		   = inet6_ioctl,		/* must change  */
+ 	.listen		   = inet_listen,		/* ok		*/
+ 	.shutdown	   = inet_shutdown,		/* ok		*/
 -- 
 2.17.0
 
