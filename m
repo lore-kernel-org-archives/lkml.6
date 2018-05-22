@@ -1,56 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751527AbeEVRli (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 13:41:38 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:32970 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751279AbeEVRlh (ORCPT
+        id S1751512AbeEVRnN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 13:43:13 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:33838 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751240AbeEVRnL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 13:41:37 -0400
-X-Google-Smtp-Source: AB8JxZrX8xzPB2q2hb/FxhnQbzJ18LgHqIQ1jLft5uEei/Grm1CpzGvw83QnQ5nj+zP5/MjlaQYV8A==
-From: Thierry Escande <thierry.escande@linaro.org>
-To: "Tobin C . Harding" <me@tobin.cc>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] lib/test_printf.c: call wait_for_random_bytes() before plain %p tests
-Date: Tue, 22 May 2018 19:41:14 +0200
-Message-Id: <20180522174114.9197-1-thierry.escande@linaro.org>
-X-Mailer: git-send-email 2.14.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset = "utf-8"
-Content-Transfert-Encoding: 8bit
+        Tue, 22 May 2018 13:43:11 -0400
+Message-ID: <9836ca80e08574c6e77f45d069514c28f8867cb1.camel@collabora.com>
+Subject: Re: [PATCH v10 12/16] vb2: add in-fence support to QBUF
+From: Ezequiel Garcia <ezequiel@collabora.com>
+To: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: kernel@collabora.com, Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+        Shuah Khan <shuahkh@osg.samsung.com>, Pawel Osciak <pawel@osciak.com>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        Brian Starkey <brian.starkey@arm.com>, linux-kernel@vger.kernel.org,
+        Gustavo Padovan <gustavo.padovan@collabora.com>
+Date: Tue, 22 May 2018 14:41:29 -0300
+In-Reply-To: <8848cdb3-73cf-2122-4c50-a57fcd83e151@xs4all.nl>
+References: <20180521165946.11778-1-ezequiel@collabora.com>
+         <20180521165946.11778-13-ezequiel@collabora.com>
+         <7462919b-ad6f-eb8c-7389-ef0ff6e9d1a2@xs4all.nl>
+         <062e8128491e63927f4669ad08c40d29dfbb4141.camel@collabora.com>
+         <8848cdb3-73cf-2122-4c50-a57fcd83e151@xs4all.nl>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the test_printf module is loaded before the crng is initialized, the
-plain 'p' tests will fail because the printed address will not be hashed
-and the buffer will contain '(ptrval)' instead.
-This patch adds a call to wait_for_random_bytes() before plain 'p' tests
-to make sure the crng is initialized.
+On Tue, 2018-05-22 at 18:48 +0200, Hans Verkuil wrote:
+> On 22/05/18 18:22, Ezequiel Garcia wrote:
+> > > > @@ -1615,7 +1762,12 @@ static void __vb2_dqbuf(struct vb2_buffer *vb)
+> > > >  		return;
+> > > >  
+> > > >  	vb->state = VB2_BUF_STATE_DEQUEUED;
+> > > > -
+> > > > +	if (vb->in_fence) {
+> > > > +		if (dma_fence_remove_callback(vb->in_fence, &vb->fence_cb))
+> > > > +			__vb2_buffer_put(vb);
+> > > > +		dma_fence_put(vb->in_fence);
+> > > > +		vb->in_fence = NULL;
+> > > > +	}
+> > > >  	/* unmap DMABUF buffer */
+> > > >  	if (q->memory == VB2_MEMORY_DMABUF)
+> > > >  		for (i = 0; i < vb->num_planes; ++i) {
+> > > > @@ -1653,7 +1805,7 @@ int vb2_core_dqbuf(struct vb2_queue *q, unsigned int *pindex, void *pb,
+> > > >  	if (pindex)
+> > > >  		*pindex = vb->index;
+> > > >  
+> > > > -	/* Fill buffer information for the userspace */
+> > > > +	/* Fill buffer information for userspace */
+> > > >  	if (pb)
+> > > >  		call_void_bufop(q, fill_user_buffer, vb, pb);
+> > > >  
+> > > > @@ -1700,8 +1852,8 @@ static void __vb2_queue_cancel(struct vb2_queue *q)
+> > > >  	if (WARN_ON(atomic_read(&q->owned_by_drv_count))) {
+> > > >  		for (i = 0; i < q->num_buffers; ++i)
+> > > >  			if (q->bufs[i]->state == VB2_BUF_STATE_ACTIVE) {
+> > > > -				pr_warn("driver bug: stop_streaming operation is leaving buf %p in active
+> > > > state\n",
+> > > > -					q->bufs[i]);
+> > > > +				pr_warn("driver bug: stop_streaming operation is leaving buf[%d] 0x%p in active
+> > > > state\n",
+> > > > +					q->bufs[i]->index, q->bufs[i]);
+> > > >  				vb2_buffer_done(q->bufs[i], VB2_BUF_STATE_ERROR);
+> > > >  			}
+> > > 
+> > > Shouldn't any pending fences be canceled here?
+> > > 
+> > 
+> > No, we don't have to flush -- that's the reason of the refcount :)
+> > The qbuf_work won't do anything if all the buffers are returned
+> > by the driver (with error or done state), and if !streaming.
+> > 
+> > Also, note that's why qbuf_work checks for the queued state, and not
+> > for the error state.
+> > 
+> > > I feel uncomfortable with the refcounting of buffers, I'd rather that when we
+> > > cancel the queue all fences for buffers are removed/canceled/whatever.
+> > > 
+> > > Is there any reason for refcounting if we cancel all pending fences here?
+> > > 
+> > > Note that besides canceling fences you also need to cancel/flush __qbuf_work.
+> > > 
+> > > 
+> > 
+> > Like I said above, I'm trying to avoid cancel/flushing the workqueue.
+> > Currently, I believe it works fine without any flushing, provided we refcount
+> > the buffers.
+> > 
+> > The problem with cancelling the workqueue, is that you need to unlock the queue
+> > lock, to avoid a deadlock. It seemed to me that having a refcount is more natural.
+> > 
+> > Thoughts?
+> > 
+> 
+> I'll take another look tomorrow morning. Do you have a public git tree containing
+> this series that I can browse?
+> 
+> 
 
-Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
----
- lib/test_printf.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/lib/test_printf.c b/lib/test_printf.c
-index 71ebfa43ad05..839be9385a8a 100644
---- a/lib/test_printf.c
-+++ b/lib/test_printf.c
-@@ -260,6 +260,13 @@ plain(void)
- {
- 	int err;
- 
-+	/*
-+	 * Make sure crng is ready. Otherwise we get "(ptrval)" instead
-+	 * of a hashed address when printing '%p' in plain_hash() and
-+	 * plain_format().
-+	 */
-+	wait_for_random_bytes();
-+
- 	err = plain_hash();
- 	if (err) {
- 		pr_warn("plain 'p' does not appear to be hashed\n");
--- 
-2.14.1
+Sure, there you go http://git.infradead.org/users/ezequielg/linux/shortlog/refs/heads/fences_v10_v4.17-rc1
