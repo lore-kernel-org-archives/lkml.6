@@ -1,240 +1,86 @@
-Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3312385-1525390238-2-9371137387969624190
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, UNPARSEABLE_RELAY 0.001, LANGUAGES unknown,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-api-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525390237; b=cwvW2yOE2HKU2bhrpO4MibicoWlLeA7IdgTGZ8jtuvZKFMfnnW
-    TKGgjfHr18WjvTDbc4X0VVVTE4pHc/lddNAhdye9XsEV2UcguD5bwvdL0Q2kg39Z
-    ajBJayuSSnZz48wFoktnTLiXfMU/tbwFFgIZ6Rd11kkS9Gn3YvVNT6bniOW7L+fR
-    PUZqAbcBPRgGSY1J7H01d8VG7Rza65VPrUWS6sxwCvNPs68zWBULj/z5RAeA6ags
-    hy4SBonqfUCsM2zEvHxd6UP31QVVlU/s6W5vS850ASsoNBWK41YAYziMIOcjSY2D
-    FmqF487liCOak01aOPskYNmyaPeSRPmG7dOg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1525390237; bh=
-    U3/R2uB0D3Uz94HoMTzlPxwij9Bpk69TFHf+ECx5T2k=; b=hhzY3rhdnHrAkIQx
-    UBol07KvI+392oNVRdfyvUWoPIU/xSZIRv2AxaLJc4Vi75sOhJnw+iVXI8bm6yq/
-    zoQtQN+fayw2FlpkjIsVYbWDRWJY/4jXD2w3Sy0O31a15aPjEa4O/ozLYfZg1L8F
-    1O2bJ9FP/d6UxH/l90kqSaKJwt46p7D1cJNZw9iKE4oi/y6a+WMsonLKGBorSoxm
-    1k2wJ9YdOMQjubGfkUVkK7uHZvqJ1diLzxcOzC55cm+/aF1E7itVODj+J61YNwv7
-    q54DT1mGZA0vQgjbhfH0y65YxwUvCVhFhF6Txgz3p0MjpYVKq5am2XYdYi++u3pJ
-    Eofdkw==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-    header.d=oracle.com header.i=@oracle.com header.b=pcgJTRcN x-bits=2048
-    x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=oracle.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-60 state=0
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-      header.d=oracle.com header.i=@oracle.com header.b=pcgJTRcN x-bits=2048
-      x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=oracle.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-60 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDlNX0eIoIeyPYVHWVAlZ9U2hPee+ofvvzUaKlVKW6MGhReluhH1Bj74NU4OkK/QELcHefsNSlAIJNBAGVyjAuMXQgT/Zv5iIgEshFhn+thI9bxu+r05
-    Pqj82Y84ksdjTsT++OFeus0uxnCNV78eX5hqgFTtZEEZ5a2ARZtz2c1jeNUtS9VW9bH1meyYWswIeBf4q2MKnqse3cIn02xTePyLFjJWqjXITzZr/I7xZTQs
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=yPCof4ZbAAAA:8
-    a=VwQbUJbxAAAA:8 a=PahLtUytj-M3nejvR48A:9 a=x8gzFH9gYPwA:10
-    a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751036AbeECXad (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 3 May 2018 19:30:33 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:42712 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750829AbeECXa2 (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Thu, 3 May 2018 19:30:28 -0400
-From: Mike Kravetz <mike.kravetz@oracle.com>
-To: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org
-Cc: Reinette Chatre <reinette.chatre@intel.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Guy Shattah <sguy@mellanox.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        Michal Nazarewicz <mina86@mina86.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        David Nellans <dnellans@nvidia.com>,
-        Laura Abbott <labbott@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Subject: [PATCH v2 4/4] mm/hugetlb: use find_alloc_contig_pages() to allocate gigantic pages
-Date: Thu,  3 May 2018 16:29:35 -0700
-Message-Id: <20180503232935.22539-5-mike.kravetz@oracle.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20180503232935.22539-1-mike.kravetz@oracle.com>
-References: <20180503232935.22539-1-mike.kravetz@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8882 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=551
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805030204
-Sender: linux-api-owner@vger.kernel.org
-X-Mailing-List: linux-api@vger.kernel.org
-X-getmail-retrieved-from-mailbox: INBOX
+Date: Tue, 22 May 2018 21:43:00 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
+	vikas.shivappa@linux.intel.com, gavin.hindman@intel.com,
+	jithu.joseph@intel.com, dave.hansen@intel.com, mingo@redhat.com,
+	hpa@zytor.com, x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V4 34/38] x86/intel_rdt: Create debugfs files for
+ pseudo-locking testing
+Message-ID: <20180522194300.GA9656@kroah.com>
+References: <cover.1526987654.git.reinette.chatre@intel.com>
+ <2da8730575c589eb7303c7b18a2721da40c446e2.1526987654.git.reinette.chatre@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2da8730575c589eb7303c7b18a2721da40c446e2.1526987654.git.reinette.chatre@intel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Use the new find_alloc_contig_pages() interface for the allocation of
-gigantic pages and remove associated code in hugetlb.c.
+On Tue, May 22, 2018 at 04:29:22AM -0700, Reinette Chatre wrote:
+> @@ -149,6 +151,9 @@ struct pseudo_lock_region {
+>  	unsigned int		line_size;
+>  	unsigned int		size;
+>  	void			*kmem;
+> +#ifdef CONFIG_INTEL_RDT_DEBUGFS
+> +	struct dentry		*debugfs_dir;
+> +#endif
 
-Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
----
- mm/hugetlb.c | 87 +++++-------------------------------------------------------
- 1 file changed, 6 insertions(+), 81 deletions(-)
+Who cares, just always have this here, it's not going to save you
+anything to #ifdef the .c code everywhere just for this one pointer.
 
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index c81072ce7510..91edf1df3592 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -1053,91 +1053,16 @@ static void destroy_compound_gigantic_page(struct page *page,
- 	__ClearPageHead(page);
- }
- 
--static void free_gigantic_page(struct page *page, unsigned int order)
-+static void free_gigantic_page(struct page *page, struct hstate *h)
- {
--	free_contig_range(page_to_pfn(page), 1UL << order);
--}
--
--static int __alloc_gigantic_page(unsigned long start_pfn,
--				unsigned long nr_pages, gfp_t gfp_mask)
--{
--	unsigned long end_pfn = start_pfn + nr_pages;
--	return alloc_contig_range(start_pfn, end_pfn, MIGRATE_MOVABLE,
--				  gfp_mask);
--}
--
--static bool pfn_range_valid_gigantic(struct zone *z,
--			unsigned long start_pfn, unsigned long nr_pages)
--{
--	unsigned long i, end_pfn = start_pfn + nr_pages;
--	struct page *page;
--
--	for (i = start_pfn; i < end_pfn; i++) {
--		if (!pfn_valid(i))
--			return false;
--
--		page = pfn_to_page(i);
--
--		if (page_zone(page) != z)
--			return false;
--
--		if (PageReserved(page))
--			return false;
--
--		if (page_count(page) > 0)
--			return false;
--
--		if (PageHuge(page))
--			return false;
--	}
--
--	return true;
--}
--
--static bool zone_spans_last_pfn(const struct zone *zone,
--			unsigned long start_pfn, unsigned long nr_pages)
--{
--	unsigned long last_pfn = start_pfn + nr_pages - 1;
--	return zone_spans_pfn(zone, last_pfn);
-+	free_contig_pages(page, (unsigned long)pages_per_huge_page(h));
- }
- 
- static struct page *alloc_gigantic_page(struct hstate *h, gfp_t gfp_mask,
- 		int nid, nodemask_t *nodemask)
- {
--	unsigned int order = huge_page_order(h);
--	unsigned long nr_pages = 1 << order;
--	unsigned long ret, pfn, flags;
--	struct zonelist *zonelist;
--	struct zone *zone;
--	struct zoneref *z;
--
--	zonelist = node_zonelist(nid, gfp_mask);
--	for_each_zone_zonelist_nodemask(zone, z, zonelist, gfp_zone(gfp_mask), nodemask) {
--		spin_lock_irqsave(&zone->lock, flags);
--
--		pfn = ALIGN(zone->zone_start_pfn, nr_pages);
--		while (zone_spans_last_pfn(zone, pfn, nr_pages)) {
--			if (pfn_range_valid_gigantic(zone, pfn, nr_pages)) {
--				/*
--				 * We release the zone lock here because
--				 * alloc_contig_range() will also lock the zone
--				 * at some point. If there's an allocation
--				 * spinning on this lock, it may win the race
--				 * and cause alloc_contig_range() to fail...
--				 */
--				spin_unlock_irqrestore(&zone->lock, flags);
--				ret = __alloc_gigantic_page(pfn, nr_pages, gfp_mask);
--				if (!ret)
--					return pfn_to_page(pfn);
--				spin_lock_irqsave(&zone->lock, flags);
--			}
--			pfn += nr_pages;
--		}
--
--		spin_unlock_irqrestore(&zone->lock, flags);
--	}
--
--	return NULL;
-+	return find_alloc_contig_pages((unsigned long)pages_per_huge_page(h),
-+					gfp_mask, nid, nodemask);
- }
- 
- static void prep_new_huge_page(struct hstate *h, struct page *page, int nid);
-@@ -1147,7 +1072,7 @@ static void prep_compound_gigantic_page(struct page *page, unsigned int order);
- static inline bool gigantic_page_supported(void) { return false; }
- static struct page *alloc_gigantic_page(struct hstate *h, gfp_t gfp_mask,
- 		int nid, nodemask_t *nodemask) { return NULL; }
--static inline void free_gigantic_page(struct page *page, unsigned int order) { }
-+static inline void free_gigantic_page(struct page *page, struct hstate *h) { }
- static inline void destroy_compound_gigantic_page(struct page *page,
- 						unsigned int order) { }
- #endif
-@@ -1172,7 +1097,7 @@ static void update_and_free_page(struct hstate *h, struct page *page)
- 	set_page_refcounted(page);
- 	if (hstate_is_gigantic(h)) {
- 		destroy_compound_gigantic_page(page, huge_page_order(h));
--		free_gigantic_page(page, huge_page_order(h));
-+		free_gigantic_page(page, h);
- 	} else {
- 		__free_pages(page, huge_page_order(h));
- 	}
--- 
-2.13.6
+> @@ -174,6 +180,9 @@ static void pseudo_lock_region_clear(struct pseudo_lock_region *plr)
+>  		plr->d->plr = NULL;
+>  	plr->d = NULL;
+>  	plr->cbm = 0;
+> +#ifdef CONFIG_INTEL_RDT_DEBUGFS
+> +	plr->debugfs_dir = NULL;
+> +#endif
 
+See?  Ick.
+
+> +	ret = strtobool(buf, &bv);
+> +	if (ret == 0 && bv) {
+> +		ret = debugfs_file_get(file->f_path.dentry);
+> +		if (unlikely(ret))
+> +			return ret;
+
+Only ever use unlikely/likely if you can measure the performance
+difference.  Hint, you can't do that here, it's not needed at all.
+
+> +#ifdef CONFIG_INTEL_RDT_DEBUGFS
+> +	plr->debugfs_dir = debugfs_create_dir(rdtgrp->kn->name,
+> +					      debugfs_resctrl);
+> +	if (IS_ERR(plr->debugfs_dir)) {
+> +		ret = PTR_ERR(plr->debugfs_dir);
+> +		plr->debugfs_dir = NULL;
+> +		goto out_region;
+
+Ick no, you never need to care about the return value of a debugfs call.
+You code should never do something different if a debugfs call succeeds
+or fails.  And you are checking it wrong, even if you did want to do
+this :)
+
+> +	}
+> +
+> +	entry = debugfs_create_file("pseudo_lock_measure", 0200,
+> +				    plr->debugfs_dir, rdtgrp,
+> +				    &pseudo_measure_fops);
+> +	if (IS_ERR(entry)) {
+> +		ret = PTR_ERR(entry);
+> +		goto out_debugfs;
+> +	}
+
+Again, you don't care, don't do this.
+
+> +#ifdef CONFIG_INTEL_RDT_DEBUGFS
+> +	debugfs_remove_recursive(rdtgrp->plr->debugfs_dir);
+> +#endif
+
+Don't put ifdefs in .c files, it's not the Linux way at all.  You can
+make this a lot simpler/easier to maintain over time if you do not.
+
+thanks,
+
+greg k-h
