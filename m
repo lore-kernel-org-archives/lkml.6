@@ -1,33 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751666AbeEVQan (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 12:30:43 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:45404 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751557AbeEVQaj (ORCPT
+        id S1752323AbeEVQbl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 12:31:41 -0400
+Received: from mail02.iobjects.de ([188.40.134.68]:37954 "EHLO
+        mail02.iobjects.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751268AbeEVQbf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 12:30:39 -0400
-X-Google-Smtp-Source: AB8JxZrpsSuz/jTZXzFPF6YmSzfOVRY/f6sRXvEYo5wTKzAc98cCpo5kfhWv7B0GNN/0hY/9LUVhNA==
-Subject: Re: [PATCH v6 2/5] fs: Convert kiocb rw_hint from enum to u16
-To: Goldwyn Rodrigues <rgoldwyn@suse.de>, adam.manzanares@wdc.com,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org, bcrl@kvack.org
-Cc: tglx@linutronix.de, mingo@kernel.org, pombredanne@nexb.com,
-        kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
-        bigeasy@linutronix.de, jack@suse.cz, darrick.wong@oracle.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-aio@kvack.org, linux-api@vger.kernel.org, hch@infradread.org,
-        jmoyer@redhat.com
-References: <20180522150737.9893-1-adam.manzanares@wdc.com>
- <20180522150737.9893-3-adam.manzanares@wdc.com>
- <11fb2ee5-8352-2d35-3154-68637d99b096@kernel.dk>
- <084d253c-52ab-7b23-521c-28602c56153b@suse.de>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <58087b03-a3c7-93fd-d1ad-de77181e8806@kernel.dk>
-Date: Tue, 22 May 2018 10:30:36 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 22 May 2018 12:31:35 -0400
+Subject: Re: [PATCH] block: kyber: make kyber more friendly with merging
+To: Jianchao Wang <jianchao.w.wang@oracle.com>, axboe@kernel.dk
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1527000509-2619-1-git-send-email-jianchao.w.wang@oracle.com>
+From: =?UTF-8?Q?Holger_Hoffst=c3=a4tte?= <holger@applied-asynchrony.com>
+Organization: Applied Asynchrony, Inc.
+Message-ID: <163c5760-cf0e-faea-ee4e-ac5d688310fe@applied-asynchrony.com>
+Date: Tue, 22 May 2018 18:17:44 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <084d253c-52ab-7b23-521c-28602c56153b@suse.de>
+In-Reply-To: <1527000509-2619-1-git-send-email-jianchao.w.wang@oracle.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -35,69 +26,54 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/22/18 10:24 AM, Goldwyn Rodrigues wrote:
+On 05/22/18 16:48, Jianchao Wang wrote:
+> Currently, kyber is very unfriendly with merging. kyber depends
+> on ctx rq_list to do merging, however, most of time, it will not
+> leave any requests in ctx rq_list. This is because even if tokens
+> of one domain is used up, kyber will try to dispatch requests
+> from other domain and flush the rq_list there.
 > 
+> To improve this, we setup kyber_ctx_queue (kcq) which is similar
+> with ctx, but it has rq_lists for different domain and build same
+> mapping between kcq and khd as the ctx & hctx. Then we could merge,
+> insert and dispatch for different domains separately. If one domain
+> token is used up, the requests could be left in the rq_list of
+> that domain and maybe merged with following io.
 > 
-> On 05/22/2018 10:32 AM, Jens Axboe wrote:
->> On 5/22/18 9:07 AM, adam.manzanares@wdc.com wrote:
->>> From: Adam Manzanares <adam.manzanares@wdc.com>
->>>
->>> In order to avoid kiocb bloat for per command iopriority support, rw_hint
->>> is converted from enum to a u16. Added a guard around ki_hint assignment.
->>>
->>> Signed-off-by: Adam Manzanares <adam.manzanares@wdc.com>
->>> Reviewed-by: Christoph Hellwig <hch@lst.de>
->>> ---
->>>  include/linux/fs.h | 13 +++++++++++--
->>>  1 file changed, 11 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/include/linux/fs.h b/include/linux/fs.h
->>> index 7f07977bdfd7..50de40dbbb85 100644
->>> --- a/include/linux/fs.h
->>> +++ b/include/linux/fs.h
->>> @@ -284,6 +284,8 @@ enum rw_hint {
->>>  	WRITE_LIFE_EXTREME	= RWH_WRITE_LIFE_EXTREME,
->>>  };
->>>  
->>> +#define MAX_KI_HINT		((1 << 16) - 1) /* ki_hint type is u16 */
->>
->> Instead of having to do this and now rely on those now being synced,
->> how about something like the below.
->>
->> diff --git a/include/linux/fs.h b/include/linux/fs.h
->> index 760d8da1b6c7..070438d0b62d 100644
->> --- a/include/linux/fs.h
->> +++ b/include/linux/fs.h
->> @@ -299,7 +299,7 @@ struct kiocb {
->>  	void (*ki_complete)(struct kiocb *iocb, long ret, long ret2);
->>  	void			*private;
->>  	int			ki_flags;
->> -	enum rw_hint		ki_hint;
->> +	u16			ki_hint;
->>  } __randomize_layout;
->>  
->>  static inline bool is_sync_kiocb(struct kiocb *kiocb)
->> @@ -1927,12 +1927,22 @@ static inline enum rw_hint file_write_hint(struct file *file)
->>  
->>  static inline int iocb_flags(struct file *file);
->>  
->> +static inline u16 ki_hint_validate(enum rw_hint hint)
->> +{
->> +	typeof(((struct kiocb *)0)->ki_hint) max_hint = -1;
+> Following is my test result on machine with 8 cores and NVMe card
+> INTEL SSDPEKKR128G7
 > 
-> This looks complex to me. Would force a reader to lookback at what
-> datatype ki_hint is. I'd prefer to declare it as u16 max_hint = -1, or
-> even the previous #define MAX_KI_HINT format is easier to read. Just a
-> program reading style you are comfortable with though.
+> fio size=256m ioengine=libaio iodepth=64 direct=1 numjobs=8
+> seq/random
+> +------+---------------------------------------------------------------+
+> |patch?| bw(MB/s) |   iops    | slat(usec) |    clat(usec)   |  merge  |
+> +----------------------------------------------------------------------+
+> | w/o  |  606/612 | 151k/153k |  6.89/7.03 | 3349.21/3305.40 |   0/0   |
+> +----------------------------------------------------------------------+
+> | w/   | 1083/616 | 277k/154k |  4.93/6.95 | 1830.62/3279.95 | 223k/3k |
+> +----------------------------------------------------------------------+
+> When set numjobs to 16, the bw and iops could reach 1662MB/s and 425k
+> on my platform.
+> 
+> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
 
-How is it complex? It's defining a type that'll be the same as ki_hint
-in the kiocb, which is _exactly_ what we care about. Any sort of other
-definition will rely on those two locations now being synced. The
-above will never break.
+<snip>
 
-So I strongly disagree. The above will _never_ require the reader to
-figure out what the type is. Any other variant will _always_ require
-the reader to check if they are the same.
+This looks great but prevents kyber from being built as module,
+which is AFAIK supposed to work (and works now):
 
--- 
-Jens Axboe
+..
+  CC [M]  block/kyber-iosched.o
+  Building modules, stage 2.
+  MODPOST 313 modules
+ERROR: "bio_attempt_back_merge" [block/kyber-iosched.ko] undefined!
+ERROR: "bio_attempt_front_merge" [block/kyber-iosched.ko] undefined!
+ERROR: "bio_attempt_discard_merge" [block/kyber-iosched.ko] undefined!
+ERROR: "blk_try_merge" [block/kyber-iosched.ko] undefined!
+ERROR: "blk_rq_merge_ok" [block/kyber-iosched.ko] undefined!
+..
+
+It does build fine when compiled in, obviously. :)
+
+cheers,
+Holger
