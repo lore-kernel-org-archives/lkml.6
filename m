@@ -1,82 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753050AbeEVU5b (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 16:57:31 -0400
-Received: from bh-25.webhostbox.net ([208.91.199.152]:40411 "EHLO
-        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752631AbeEVU53 (ORCPT
+        id S1753118AbeEVU57 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 16:57:59 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:35633 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753079AbeEVU54 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 16:57:29 -0400
-Date: Tue, 22 May 2018 13:57:27 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Ray Jui <ray.jui@broadcom.com>
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, linux-watchdog@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
-Subject: Re: [PATCH 2/5] watchdog: sp805: add 'timeout-sec' DT property
- support
-Message-ID: <20180522205727.GC16363@roeck-us.net>
-References: <1527014840-21236-1-git-send-email-ray.jui@broadcom.com>
- <1527014840-21236-3-git-send-email-ray.jui@broadcom.com>
+        Tue, 22 May 2018 16:57:56 -0400
+X-Google-Smtp-Source: AB8JxZoQlxfgkQI1uUhk4hZLreFKElweTBSENzyWfeTppnuubixRZNsJ4VqN4PyY+X+l5/5Lg4R1/A==
+Subject: Re: [PATCH 3/4] venus: add check to make scm calls
+To: Vikash Garodia <vgarodia@codeaurora.org>, hverkuil@xs4all.nl,
+        mchehab@kernel.org, andy.gross@linaro.org, bjorn.andersson@linaro.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        acourbot@google.com
+References: <1526556740-25494-1-git-send-email-vgarodia@codeaurora.org>
+ <1526556740-25494-4-git-send-email-vgarodia@codeaurora.org>
+ <9d5e12b1-40bd-adab-05f0-bdb209bf0174@linaro.org>
+ <20180522195026.GA16550@jcrouse-lnx.qualcomm.com>
+From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <f9f99014-526d-d23b-6eaf-c04e45bef10a@linaro.org>
+Date: Tue, 22 May 2018 23:57:53 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1527014840-21236-3-git-send-email-ray.jui@broadcom.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Authenticated_sender: guenter@roeck-us.net
-X-OutGoing-Spam-Status: No, score=-1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
-X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+In-Reply-To: <20180522195026.GA16550@jcrouse-lnx.qualcomm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 11:47:17AM -0700, Ray Jui wrote:
-> Add support for optional devicetree property 'timeout-sec'.
-> 'timeout-sec' is used in the driver if specified in devicetree.
-> Otherwise, fall back to driver default, i.e., 60 seconds
-> 
-> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
-> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+Hi Jordan,
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+On 22.05.2018 22:50, Jordan Crouse wrote:
+> On Tue, May 22, 2018 at 04:04:51PM +0300, Stanimir Varbanov wrote:
+>> Hi Vikash,
+>>
+>> On 05/17/2018 02:32 PM, Vikash Garodia wrote:
+>>> In order to invoke scm calls, ensure that the platform
+>>> has the required support to invoke the scm calls in
+>>> secure world. This code is in preparation to add PIL
+>>> functionality in venus driver.
+>>>
+>>> Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
+>>> ---
+>>>   drivers/media/platform/qcom/venus/hfi_venus.c | 26 +++++++++++++++++++-------
+>>>   1 file changed, 19 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/drivers/media/platform/qcom/venus/hfi_venus.c b/drivers/media/platform/qcom/venus/hfi_venus.c
+>>> index f61d34b..9bcce94 100644
+>>> --- a/drivers/media/platform/qcom/venus/hfi_venus.c
+>>> +++ b/drivers/media/platform/qcom/venus/hfi_venus.c
+>>> @@ -27,6 +27,7 @@
+>>>   #include "hfi_msgs.h"
+>>>   #include "hfi_venus.h"
+>>>   #include "hfi_venus_io.h"
+>>> +#include "firmware.h"
+>>>   
+>>>   #define HFI_MASK_QHDR_TX_TYPE		0xff000000
+>>>   #define HFI_MASK_QHDR_RX_TYPE		0x00ff0000
+>>> @@ -570,13 +571,19 @@ static int venus_halt_axi(struct venus_hfi_device *hdev)
+>>>   static int venus_power_off(struct venus_hfi_device *hdev)
+>>>   {
+>>>   	int ret;
+>>> +	void __iomem *reg_base;
+>>>   
+>>>   	if (!hdev->power_enabled)
+>>>   		return 0;
+>>>   
+>>> -	ret = qcom_scm_set_remote_state(TZBSP_VIDEO_STATE_SUSPEND, 0);
+>>> -	if (ret)
+>>> -		return ret;
+>>> +	if (qcom_scm_is_available()) {
+>>> +		ret = qcom_scm_set_remote_state(TZBSP_VIDEO_STATE_SUSPEND, 0);
+>>
+>> I think it will be clearer if we abstract qcom_scm_set_remote_state to
+>> something like venus_set_state(SUSPEND|RESUME) in firmware.c and export
+>> the functions to be used here.
+> 
+> This specific function is a little odd because the SCM function got overloaded
+> and used as a hardware workaround for the adreno a5xx zap shader.
+> 
+> When we added it for the GPU we knew the day would come that we would need it
+> for Venus so we kept the name purposely generic. You can wrap if if you want
+> but just know that there are other non video entities out there using it.
 
-> ---
->  drivers/watchdog/sp805_wdt.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/watchdog/sp805_wdt.c b/drivers/watchdog/sp805_wdt.c
-> index 03805bc..1484609 100644
-> --- a/drivers/watchdog/sp805_wdt.c
-> +++ b/drivers/watchdog/sp805_wdt.c
-> @@ -230,7 +230,14 @@ sp805_wdt_probe(struct amba_device *adev, const struct amba_id *id)
->  	spin_lock_init(&wdt->lock);
->  	watchdog_set_nowayout(&wdt->wdd, nowayout);
->  	watchdog_set_drvdata(&wdt->wdd, wdt);
-> -	wdt_setload(&wdt->wdd, DEFAULT_TIMEOUT);
-> +
-> +	/*
-> +	 * If 'timeout-sec' devicetree property is specified, use that.
-> +	 * Otherwise, use DEFAULT_TIMEOUT
-> +	 */
-> +	wdt->wdd.timeout = DEFAULT_TIMEOUT;
-> +	watchdog_init_timeout(&wdt->wdd, 0, &adev->dev);
-> +	wdt_setload(&wdt->wdd, wdt->wdd.timeout);
->  
->  	ret = watchdog_register_device(&wdt->wdd);
->  	if (ret) {
-> -- 
-> 2.1.4
-> 
+Sorry I wasn't clear, by abstract it I meant to introduce a new 
+venus_set_state function in venus/firmware.c where we'll select 
+tz/non-tz functions for suspend / resume depending on the configuration.
+
+regards,
+Stan
