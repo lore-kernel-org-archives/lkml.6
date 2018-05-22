@@ -1,34 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751456AbeEVLX7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 07:23:59 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:36580 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750733AbeEVLXz (ORCPT
+        id S1751517AbeEVLYW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 07:24:22 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:53991 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751346AbeEVLYT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 07:23:55 -0400
-X-Google-Smtp-Source: AB8JxZrlL9ziGt4ZVJuMZ0RSJdjMzO5GxL4ve6ZeW9BbTUsbUdEKQR8g+EYPp7aEUyg8VppE3kmftmWyhiJAfpjF0Rk=
+        Tue, 22 May 2018 07:24:19 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Thomas Martitz <kugel@rockbox.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Lukas Wunner <lukas@wunner.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] PM / core: Fix direct_complete handling for devices with no callbacks
+Date: Tue, 22 May 2018 13:23:40 +0200
+Message-ID: <21512823.ylrVfREk6h@aspire.rjw.lan>
+In-Reply-To: <229515f7-d812-b92e-6918-886b62718991@rockbox.org>
+References: <6238546.EnOBWIOf9o@aspire.rjw.lan> <229515f7-d812-b92e-6918-886b62718991@rockbox.org>
 MIME-Version: 1.0
-In-Reply-To: <1526958340-25883-1-git-send-email-Anson.Huang@nxp.com>
-References: <1526958340-25883-1-git-send-email-Anson.Huang@nxp.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Tue, 22 May 2018 08:23:54 -0300
-Message-ID: <CAOMZO5Ccqsg_1rr=VACXL+bfOOB+G+XMPVhGH3G5U8tHoq9sNw@mail.gmail.com>
-Subject: Re: [PATCH V3] gpio: mxc: add clock operation
-To: Anson Huang <Anson.Huang@nxp.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        NXP Linux Team <Linux-imx@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 12:05 AM, Anson Huang <Anson.Huang@nxp.com> wrote:
-> Some i.MX SoCs have GPIO clock gates in CCM CCGR, such as
-> i.MX6SLL, need to enable clocks before accessing GPIO
-> registers, add optional clock operation for GPIO driver.
->
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+On Tuesday, May 22, 2018 1:12:40 PM CEST Thomas Martitz wrote:
+> Hello,
+> 
+> thanks for for your effort and the patch.
+> 
+> Is this eligible for stable?
 
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+Yes, it is.
+
+Thanks,
+Rafael
+
+
+> Am 22.05.2018 um 13:02 schrieb Rafael J. Wysocki:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > 
+> > Commit 08810a4119aa (PM / core: Add NEVER_SKIP and SMART_PREPARE
+> > driver flags) inadvertently prevented the power.direct_complete flag
+> > from being set for devices without PM callbacks and with disabled
+> > runtime PM which also prevents power.direct_complete from being set
+> > for their parents.  That led to problems including a resume crash on
+> > HP ZBook 14u.
+> > 
+> > Restore the previous behavior by causing power.direct_complete to be
+> > set for those devices again, but do that in a more direct way to
+> > avoid overlooking that case in the future.
+> > 
+> > Link: https://bugzilla.kernel.org/show_bug.cgi?id=199693
+> > Fixes: 08810a4119aa (PM / core: Add NEVER_SKIP and SMART_PREPARE driver flags)
+> > Reported-by: Thomas Martitz <kugel@rockbox.org>
+> > Tested-by: Thomas Martitz <kugel@rockbox.org>
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+> >   drivers/base/power/main.c |    7 +++----
+> >   1 file changed, 3 insertions(+), 4 deletions(-)
+> > 
+> > Index: linux-pm/drivers/base/power/main.c
+> > ===================================================================
+> > --- linux-pm.orig/drivers/base/power/main.c
+> > +++ linux-pm/drivers/base/power/main.c
+> > @@ -1920,10 +1920,8 @@ static int device_prepare(struct device
+> >   
+> >   	dev->power.wakeup_path = false;
+> >   
+> > -	if (dev->power.no_pm_callbacks) {
+> > -		ret = 1;	/* Let device go direct_complete */
+> > +	if (dev->power.no_pm_callbacks)
+> >   		goto unlock;
+> > -	}
+> >   
+> >   	if (dev->pm_domain)
+> >   		callback = dev->pm_domain->ops.prepare;
+> > @@ -1957,7 +1955,8 @@ unlock:
+> >   	 */
+> >   	spin_lock_irq(&dev->power.lock);
+> >   	dev->power.direct_complete = state.event == PM_EVENT_SUSPEND &&
+> > -		pm_runtime_suspended(dev) && ret > 0 &&
+> > +		((pm_runtime_suspended(dev) && ret > 0) ||
+> > +		 dev->power.no_pm_callbacks) &&
+> >   		!dev_pm_test_driver_flags(dev, DPM_FLAG_NEVER_SKIP);
+> >   	spin_unlock_irq(&dev->power.lock);
+> >   	return 0;
+> > 
+> 
+> 
