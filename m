@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751020AbeEVQfU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 12:35:20 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:45351 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751651AbeEVQfH (ORCPT
+        id S1751760AbeEVQfL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 12:35:11 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:39322 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751440AbeEVQfF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 12:35:07 -0400
-X-Google-Smtp-Source: AB8JxZrwoYtpTXEcxeK7hV+nkOBzKjS4LUF8FD6Ea2s/RrQ+Ef8eQrRuWk1enYFUSuQUd996VSsPNA==
+        Tue, 22 May 2018 12:35:05 -0400
+X-Google-Smtp-Source: AB8JxZonfRi7KnRT6PLKWRvoXIJCCK3su00MjFtTQ8kC0WaBaMndLU2wBad74tQaqQY8RkPk6n1upw==
 From: Jerome Brunet <jbrunet@baylibre.com>
 To: Neil Armstrong <narmstrong@baylibre.com>,
         Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>
@@ -16,9 +16,9 @@ Cc: Jerome Brunet <jbrunet@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-amlogic@lists.infradead.org,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/6] clk: meson: add axg audio sclk divider driver
-Date: Tue, 22 May 2018 18:34:55 +0200
-Message-Id: <20180522163457.13834-5-jbrunet@baylibre.com>
+Subject: [PATCH v2 2/6] clk: meson: add clk-phase clock driver
+Date: Tue, 22 May 2018 18:34:53 +0200
+Message-Id: <20180522163457.13834-3-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180522163457.13834-1-jbrunet@baylibre.com>
 References: <20180522163457.13834-1-jbrunet@baylibre.com>
@@ -26,305 +26,123 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a driver to control the clock divider found in the sample clock
-generator of the axg audio clock controller.
-
-The sclk divider accumulates specific features which make the generic
-divider unsuitable to control it:
-- zero based divider (div = val + 1), but zero value gates the clock,
-  so minimum divider value is 2.
-- lrclk variant may adjust the duty cycle depending the divider value
-  and the 'hi' value.
+Add a driver based meson clk-regmap to control clock phase on
+amlogic SoCs
 
 Acked-by: Neil Armstrong <narmstrong@baylibre.com>
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/meson/Makefile     |   2 +-
- drivers/clk/meson/clkc-audio.h |   8 ++
- drivers/clk/meson/sclk-div.c   | 243 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 252 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/meson/sclk-div.c
+ drivers/clk/meson/Makefile    |  1 +
+ drivers/clk/meson/clk-phase.c | 63 +++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/meson/clkc.h      |  8 ++++++
+ 3 files changed, 72 insertions(+)
+ create mode 100644 drivers/clk/meson/clk-phase.c
 
 diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index 74ec070b0974..1574e3f0de5c 100644
+index d0d13aeb369a..162e4a6f5c55 100644
 --- a/drivers/clk/meson/Makefile
 +++ b/drivers/clk/meson/Makefile
-@@ -4,7 +4,7 @@
+@@ -3,6 +3,7 @@
+ #
  
  obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-audio-divider.o
- obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-phase.o
--obj-$(CONFIG_COMMON_CLK_AMLOGIC_AUDIO)	+= clk-triphase.o
-+obj-$(CONFIG_COMMON_CLK_AMLOGIC_AUDIO)	+= clk-triphase.o sclk-div.o
++obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-phase.o
  obj-$(CONFIG_COMMON_CLK_MESON_AO) += meson-aoclk.o
  obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
  obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
-diff --git a/drivers/clk/meson/clkc-audio.h b/drivers/clk/meson/clkc-audio.h
-index 286ff1201258..0a7c157ebf81 100644
---- a/drivers/clk/meson/clkc-audio.h
-+++ b/drivers/clk/meson/clkc-audio.h
-@@ -15,6 +15,14 @@ struct meson_clk_triphase_data {
- 	struct parm ph2;
- };
- 
-+struct meson_sclk_div_data {
-+	struct parm div;
-+	struct parm hi;
-+	unsigned int cached_div;
-+	struct clk_duty cached_duty;
-+};
-+
- extern const struct clk_ops meson_clk_triphase_ops;
-+extern const struct clk_ops meson_sclk_div_ops;
- 
- #endif /* __MESON_CLKC_AUDIO_H */
-diff --git a/drivers/clk/meson/sclk-div.c b/drivers/clk/meson/sclk-div.c
+diff --git a/drivers/clk/meson/clk-phase.c b/drivers/clk/meson/clk-phase.c
 new file mode 100644
-index 000000000000..bc64019b8eeb
+index 000000000000..cba43748ce3d
 --- /dev/null
-+++ b/drivers/clk/meson/sclk-div.c
-@@ -0,0 +1,243 @@
++++ b/drivers/clk/meson/clk-phase.c
+@@ -0,0 +1,63 @@
 +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
 +/*
 + * Copyright (c) 2018 BayLibre, SAS.
 + * Author: Jerome Brunet <jbrunet@baylibre.com>
-+ *
-+ * Sample clock generator divider:
-+ * This HW divider gates with value 0 but is otherwise a zero based divider:
-+ *
-+ * val >= 1
-+ * divider = val + 1
-+ *
-+ * The duty cycle may also be set for the LR clock variant. The duty cycle
-+ * ratio is:
-+ *
-+ * hi = [0 - val]
-+ * duty_cycle = (1 + hi) / (1 + val)
 + */
 +
-+#include "clkc-audio.h"
++#include <linux/clk-provider.h>
++#include "clkc.h"
 +
-+static inline struct meson_sclk_div_data *
-+meson_sclk_div_data(struct clk_regmap *clk)
++#define phase_step(_width) (360 / (1 << (_width)))
++
++static inline struct meson_clk_phase_data *
++meson_clk_phase_data(struct clk_regmap *clk)
 +{
-+	return (struct meson_sclk_div_data *)clk->data;
++	return (struct meson_clk_phase_data *)clk->data;
 +}
 +
-+static int sclk_div_maxval(struct meson_sclk_div_data *sclk)
++int meson_clk_degrees_from_val(unsigned int val, unsigned int width)
 +{
-+	return (1 << sclk->div.width) - 1;
++	return phase_step(width) * val;
 +}
++EXPORT_SYMBOL_GPL(meson_clk_degrees_from_val);
 +
-+static int sclk_div_maxdiv(struct meson_sclk_div_data *sclk)
++unsigned int meson_clk_degrees_to_val(int degrees, unsigned int width)
 +{
-+	return sclk_div_maxval(sclk) + 1;
-+}
-+
-+static int sclk_div_getdiv(struct clk_hw *hw, unsigned long rate,
-+			   unsigned long prate, int maxdiv)
-+{
-+	int div = DIV_ROUND_CLOSEST_ULL((u64)prate, rate);
-+
-+	return clamp(div, 2, maxdiv);
-+}
-+
-+static int sclk_div_bestdiv(struct clk_hw *hw, unsigned long rate,
-+			    unsigned long *prate,
-+			    struct meson_sclk_div_data *sclk)
-+{
-+	struct clk_hw *parent = clk_hw_get_parent(hw);
-+	int bestdiv = 0, i;
-+	unsigned long maxdiv, now, parent_now;
-+	unsigned long best = 0, best_parent = 0;
-+
-+	if (!rate)
-+		rate = 1;
-+
-+	maxdiv = sclk_div_maxdiv(sclk);
-+
-+	if (!(clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT))
-+		return sclk_div_getdiv(hw, rate, *prate, maxdiv);
++	unsigned int val = DIV_ROUND_CLOSEST(degrees, phase_step(width));
 +
 +	/*
-+	 * The maximum divider we can use without overflowing
-+	 * unsigned long in rate * i below
++	 * This last calculation is here for cases when degrees is rounded
++	 * to 360, in which case val == (1 << width).
 +	 */
-+	maxdiv = min(ULONG_MAX / rate, maxdiv);
-+
-+	for (i = 2; i <= maxdiv; i++) {
-+		/*
-+		 * It's the most ideal case if the requested rate can be
-+		 * divided from parent clock without needing to change
-+		 * parent rate, so return the divider immediately.
-+		 */
-+		if (rate * i == *prate)
-+			return i;
-+
-+		parent_now = clk_hw_round_rate(parent, rate * i);
-+		now = DIV_ROUND_UP_ULL((u64)parent_now, i);
-+
-+		if (abs(rate - now) < abs(rate - best)) {
-+			bestdiv = i;
-+			best = now;
-+			best_parent = parent_now;
-+		}
-+	}
-+
-+	if (!bestdiv)
-+		bestdiv = sclk_div_maxdiv(sclk);
-+	else
-+		*prate = best_parent;
-+
-+	return bestdiv;
++	return val % (1 << width);
 +}
++EXPORT_SYMBOL_GPL(meson_clk_degrees_to_val);
 +
-+static long sclk_div_round_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long *prate)
++static int meson_clk_phase_get_phase(struct clk_hw *hw)
 +{
 +	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_sclk_div_data *sclk = meson_sclk_div_data(clk);
-+	int div;
-+
-+	div = sclk_div_bestdiv(hw, rate, prate, sclk);
-+
-+	return DIV_ROUND_UP_ULL((u64)*prate, div);
-+}
-+
-+static void sclk_apply_ratio(struct clk_regmap *clk,
-+			     struct meson_sclk_div_data *sclk)
-+{
-+	unsigned int hi = DIV_ROUND_CLOSEST(sclk->cached_div *
-+					    sclk->cached_duty.num,
-+					    sclk->cached_duty.den);
-+
-+	if (hi)
-+		hi -= 1;
-+
-+	meson_parm_write(clk->map, &sclk->hi, hi);
-+}
-+
-+static int sclk_div_set_duty_cycle(struct clk_hw *hw,
-+				   struct clk_duty *duty)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_sclk_div_data *sclk = meson_sclk_div_data(clk);
-+
-+	if (MESON_PARM_APPLICABLE(&sclk->hi)) {
-+		memcpy(&sclk->cached_duty, duty, sizeof(*duty));
-+		sclk_apply_ratio(clk, sclk);
-+	}
-+
-+	return 0;
-+}
-+
-+static int sclk_div_get_duty_cycle(struct clk_hw *hw,
-+				   struct clk_duty *duty)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_sclk_div_data *sclk = meson_sclk_div_data(clk);
-+	int hi;
-+
-+	if (!MESON_PARM_APPLICABLE(&sclk->hi)) {
-+		duty->num = 1;
-+		duty->den = 2;
-+		return 0;
-+	}
-+
-+	hi = meson_parm_read(clk->map, &sclk->hi);
-+	duty->num = hi + 1;
-+	duty->den = sclk->cached_div;
-+	return 0;
-+}
-+
-+static void sclk_apply_divider(struct clk_regmap *clk,
-+			       struct meson_sclk_div_data *sclk)
-+{
-+	if (MESON_PARM_APPLICABLE(&sclk->hi))
-+		sclk_apply_ratio(clk, sclk);
-+
-+	meson_parm_write(clk->map, &sclk->div, sclk->cached_div - 1);
-+}
-+
-+static int sclk_div_set_rate(struct clk_hw *hw, unsigned long rate,
-+			     unsigned long prate)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_sclk_div_data *sclk = meson_sclk_div_data(clk);
-+	unsigned long maxdiv = sclk_div_maxdiv(sclk);
-+
-+	sclk->cached_div = sclk_div_getdiv(hw, rate, prate, maxdiv);
-+
-+	if (clk_hw_is_enabled(hw))
-+		sclk_apply_divider(clk, sclk);
-+
-+	return 0;
-+}
-+
-+static unsigned long sclk_div_recalc_rate(struct clk_hw *hw,
-+					  unsigned long prate)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_sclk_div_data *sclk = meson_sclk_div_data(clk);
-+
-+	return DIV_ROUND_UP_ULL((u64)prate, sclk->cached_div);
-+}
-+
-+static int sclk_div_enable(struct clk_hw *hw)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_sclk_div_data *sclk = meson_sclk_div_data(clk);
-+
-+	sclk_apply_divider(clk, sclk);
-+
-+	return 0;
-+}
-+
-+static void sclk_div_disable(struct clk_hw *hw)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_sclk_div_data *sclk = meson_sclk_div_data(clk);
-+
-+	meson_parm_write(clk->map, &sclk->div, 0);
-+}
-+
-+static int sclk_div_is_enabled(struct clk_hw *hw)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_sclk_div_data *sclk = meson_sclk_div_data(clk);
-+
-+	if (meson_parm_read(clk->map, &sclk->div))
-+		return 1;
-+
-+	return 0;
-+}
-+
-+static void sclk_div_init(struct clk_hw *hw)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_sclk_div_data *sclk = meson_sclk_div_data(clk);
++	struct meson_clk_phase_data *phase = meson_clk_phase_data(clk);
 +	unsigned int val;
 +
-+	val = meson_parm_read(clk->map, &sclk->div);
++	val = meson_parm_read(clk->map, &phase->ph);
 +
-+	/* if the divider is initially disabled, assume max */
-+	if (!val)
-+		sclk->cached_div = sclk_div_maxdiv(sclk);
-+	else
-+		sclk->cached_div = val + 1;
-+
-+	sclk_div_get_duty_cycle(hw, &sclk->cached_duty);
++	return meson_clk_degrees_from_val(val, phase->ph.width);
 +}
 +
-+const struct clk_ops meson_sclk_div_ops = {
-+	.recalc_rate	= sclk_div_recalc_rate,
-+	.round_rate	= sclk_div_round_rate,
-+	.set_rate	= sclk_div_set_rate,
-+	.enable		= sclk_div_enable,
-+	.disable	= sclk_div_disable,
-+	.is_enabled	= sclk_div_is_enabled,
-+	.get_duty_cycle	= sclk_div_get_duty_cycle,
-+	.set_duty_cycle = sclk_div_set_duty_cycle,
-+	.init		= sclk_div_init,
++static int meson_clk_phase_set_phase(struct clk_hw *hw, int degrees)
++{
++	struct clk_regmap *clk = to_clk_regmap(hw);
++	struct meson_clk_phase_data *phase = meson_clk_phase_data(clk);
++	unsigned int val;
++
++	val = meson_clk_degrees_to_val(degrees, phase->ph.width);
++	meson_parm_write(clk->map, &phase->ph, val);
++
++	return 0;
++}
++
++const struct clk_ops meson_clk_phase_ops = {
++	.get_phase	= meson_clk_phase_get_phase,
++	.set_phase	= meson_clk_phase_set_phase,
 +};
-+EXPORT_SYMBOL_GPL(meson_sclk_div_ops);
++EXPORT_SYMBOL_GPL(meson_clk_phase_ops);
+diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
+index 2fb084330ee9..fd520ccdd1be 100644
+--- a/drivers/clk/meson/clkc.h
++++ b/drivers/clk/meson/clkc.h
+@@ -96,6 +96,13 @@ struct meson_clk_audio_div_data {
+ 	u8 flags;
+ };
+ 
++struct meson_clk_phase_data {
++	struct parm ph;
++};
++
++int meson_clk_degrees_from_val(unsigned int val, unsigned int width);
++unsigned int meson_clk_degrees_to_val(int degrees, unsigned int width);
++
+ #define MESON_GATE(_name, _reg, _bit)					\
+ struct clk_regmap _name = {						\
+ 	.data = &(struct clk_regmap_gate_data){				\
+@@ -119,5 +126,6 @@ extern const struct clk_ops meson_clk_mpll_ro_ops;
+ extern const struct clk_ops meson_clk_mpll_ops;
+ extern const struct clk_ops meson_clk_audio_divider_ro_ops;
+ extern const struct clk_ops meson_clk_audio_divider_ops;
++extern const struct clk_ops meson_clk_phase_ops;
+ 
+ #endif /* __CLKC_H */
 -- 
 2.14.3
