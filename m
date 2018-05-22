@@ -1,132 +1,165 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752108AbeEVRHY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 13:07:24 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:43395 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751587AbeEVRHU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 13:07:20 -0400
-X-Google-Smtp-Source: AB8JxZp/46+TK03+tvwxPMFOhPstuZrBjIjNGrs54PMXma7Cvo5C7f2bwBXnXUNLsAhT6IfAmNn/UlFN884L3WSyhIA=
+        id S1751763AbeEVRIL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 13:08:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33046 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751277AbeEVRIJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 13:08:09 -0400
+Date: Tue, 22 May 2018 18:08:05 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: benjamin.gaignard@st.com, fabrice.gasnier@st.com,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v6 3/9] docs: Add Generic Counter interface
+ documentation
+Message-ID: <20180522180805.2b61f0ed@archlinux>
+In-Reply-To: <20180521134729.GB5723@sophia>
+References: <cover.1526487615.git.vilhelm.gray@gmail.com>
+        <aa4d62315bb11ddc66d0e1a685c81b1721ffe624.1526487615.git.vilhelm.gray@gmail.com>
+        <20180520163109.22b11af8@archlinux>
+        <20180521134729.GB5723@sophia>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0j99Lwj0hnVoCX3Unz8UvP-cP1rmggjdonTVSwsrZmasg@mail.gmail.com>
-References: <20180518185501.173552-1-joel@joelfernandes.org>
- <20180521051424.mljwmisvrvi6yyc4@vireshk-i7> <CAJZ5v0jbJ3HfLyP6VZ2PuG0q1n=faX3G98ruwK-o1ro+gv7B9w@mail.gmail.com>
- <20180521161346.GB14065@joelaf.mtv.corp.google.com> <CAJZ5v0hucyBEyWoz8nS=6pfwt8Yd5Wi+39=2WGFgfJobv7=qPQ@mail.gmail.com>
- <CAJZ5v0j99Lwj0hnVoCX3Unz8UvP-cP1rmggjdonTVSwsrZmasg@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 22 May 2018 19:07:19 +0200
-X-Google-Sender-Auth: To1Yy9FraXaW77phCQQwFlDOfTU
-Message-ID: <CAJZ5v0hSniC7ca8L7wUhvZfp2HJngoY43DcA94Z=niUiTrdRuA@mail.gmail.com>
-Subject: Re: [PATCH v2] schedutil: Allow cpufreq requests to be made even when
- kthread kicked
-To: Joel Fernandes <joel@joelfernandes.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Joel Fernandes (Google.)" <joelaf@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>, Todd Kjos <tkjos@google.com>,
-        Claudio Scordino <claudio@evidence.eu.com>, kernel-team@android.com,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 5:30 PM, Rafael J. Wysocki <rafael@kernel.org> wrote:
-> On Tue, May 22, 2018 at 12:02 PM, Rafael J. Wysocki <rafael@kernel.org> wrote:
->> On Mon, May 21, 2018 at 6:13 PM, Joel Fernandes <joel@joelfernandes.org> wrote:
->>> On Mon, May 21, 2018 at 10:29:52AM +0200, Rafael J. Wysocki wrote:
->>>> On Mon, May 21, 2018 at 7:14 AM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
->>>> > On 18-05-18, 11:55, Joel Fernandes (Google.) wrote:
->>>> >> From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
->>>> >>
->>>> >> Currently there is a chance of a schedutil cpufreq update request to be
->>>> >> dropped if there is a pending update request. This pending request can
->>>> >> be delayed if there is a scheduling delay of the irq_work and the wake
->>>> >> up of the schedutil governor kthread.
->>>> >>
->>>> >> A very bad scenario is when a schedutil request was already just made,
->>>> >> such as to reduce the CPU frequency, then a newer request to increase
->>>> >> CPU frequency (even sched deadline urgent frequency increase requests)
->>>> >> can be dropped, even though the rate limits suggest that its Ok to
->>>> >> process a request. This is because of the way the work_in_progress flag
->>>> >> is used.
->>>> >>
->>>> >> This patch improves the situation by allowing new requests to happen
->>>> >> even though the old one is still being processed. Note that in this
->>>> >> approach, if an irq_work was already issued, we just update next_freq
->>>> >> and don't bother to queue another request so there's no extra work being
->>>> >> done to make this happen.
->>>> >
->>>> > Now that this isn't an RFC anymore, you shouldn't have added below
->>>> > paragraph here. It could go to the comments section though.
->>>> >
->>>> >> I had brought up this issue at the OSPM conference and Claudio had a
->>>> >> discussion RFC with an alternate approach [1]. I prefer the approach as
->>>> >> done in the patch below since it doesn't need any new flags and doesn't
->>>> >> cause any other extra overhead.
->>>> >>
->>>> >> [1] https://patchwork.kernel.org/patch/10384261/
->>>> >>
->>>> >> LGTMed-by: Viresh Kumar <viresh.kumar@linaro.org>
->>>> >> LGTMed-by: Juri Lelli <juri.lelli@redhat.com>
->>>> >
->>>> > Looks like a Tag you just invented ? :)
->>>>
->>>> Yeah.
->>>>
->>>> The LGTM from Juri can be converned into an ACK silently IMO.  That
->>>> said I have added Looks-good-to: tags to a couple of commits. :-)
->>>
->>> Cool, I'll covert them to Acks :-)
->>
->> So it looks like I should expect an update of this patch, right?
->>
->> Or do you prefer the current one to be applied and work on top of it?
->>
->
-> [cut]
->
->>>
->>> I just realized that on a single policy switch that uses the governor thread,
->>> there will be 1 thread per-CPU. The sugov_update_single will be called on the
->>> same CPU with interrupts disabled.
->>
->> sugov_update_single() doesn't have to run on the target CPU.
->
-> Which sadly is a bug IMO. :-/
+...
+> >> +
+> >> +COUNT
+> >> +-----
+> >> +A Count represents the count data for a set of Signals. The Generic
+> >> +Counter interface provides the following available count data types:
+> >> +
+> >> +* COUNT_POSITION_UNSIGNED:
+> >> +  Unsigned integer value representing position.
+> >> +
+> >> +* COUNT_POSITION_SIGNED:
+> >> +  Signed integer value representing position.  
+> >
+> >Just a thought: As the '0' position is effectively arbitrary is there any
+> >actual difference between signed and unsigned? If we defined all counters
+> >to be unsigned and just offset any signed ones so the range still fitted
+> >would we end up with a simpler interface - there would be no real loss
+> >of meaning that I can see..  I suppose it might not be what people expect
+> >though when they see their counters start at a large positive value...  
+> 
+> This is something I've been on the fence about for a while. I would
+> actually prefer the interface to have simply a COUNT_POSITION data type
+> to represent position and leave it as unsigned; distinguishing between
+> signed and unsigned position seems ultimately arbitrary given that it's
+> mathematically just an offset as you have pointed out.
+> 
+> If we were to go down this route, then we'd have a count value that may
+> always be represented using an unsigned data type, with an offset value
+> that may always be represented using a signed data type -- the
+> relationship being such: position = count + offset. Is that correct?
 
-My bad.
+Given the positions are all arbitrary (such as limits etc) there is no
+real need to have 0 as in anyway special.  So you could just apply an
+offset to everything then don't make them visible to userspace at all.
 
-sugov_update_single() runs under rq->lock, so it need not run on a
-target CPU so long as the CPU running it can update the frequency for
-the target and there is the requisite check for that in
-sugov_should_update_freq().
+> 
+> My reason for giving the option for either signed or unsigned position
+> was to help minimize the work userspace would have to do in order to get
+> the value in which they're actually interested. I suppose it was a
+> question of how abstract I want to make the interface -- although,
+> making it simpler for userspace put more of a burden on the kernel side.
+> 
+> However, the "offset" value route may actually be more robust in the end
+> because userspace would have to know whether they want a signed or
+> unsigned position regardless in order to parse, so with count and offet
+> defined we know they will always be unsigned and signed respectively.
 
-That means that sugov_update_single() will not run concurrently on two
-different CPUs for the same target, but it may be running concurrently
-with the kthread (as pointed out by Viresh).
+Hmm. It's not obvious to me which is the best option.
 
->>> In sugov_work, we are doing a
->>> raw_spin_lock_irqsave which also disables interrupts. So I don't think
->>> there's any possibility of a race happening on the same CPU between the
->>> frequency update request and the sugov_work executing. In other words, I feel
->>> we can drop the above if (..) statement for single policies completely and
->>> only keep the changes for the shared policy. Viresh since you brought up the
->>> single policy issue initially which made me add this if statememnt, could you
->>> let me know if you agree with what I just said?
->>
->> Which is why you need the spinlock too.
->
-> And you totally have a point.
+> 
+> >
+> >
+> >
+> >  
+> >> +
+> >> +A Count has a count function mode which represents the update behavior
+> >> +for the count data. The Generic Counter interface provides the following
+> >> +available count function modes:
+> >> +
+> >> +* Increase:
+> >> +  Accumulated count is incremented.
+> >> +
+> >> +* Decrease:
+> >> +  Accumulated count is decremented.
+> >> +
+> >> +* Pulse-Direction:
+> >> +  Rising edges on quadrature pair signal A updates the respective count.
+> >> +  The input level of quadrature pair signal B determines direction.
+> >> +  
+> >Perhaps group the quadrature modes for the point of view of this document?
+> >Might be slightly easier to read?  
+> >
+> >* Quadrature Modes
+> >
+> >  - x1 A: etc.
+> >  
+> >> +* Quadrature x1 A:
+> >> +  If direction is forward, rising edges on quadrature pair signal A
+> >> +  updates the respective count; if the direction is backward, falling
+> >> +  edges on quadrature pair signal A updates the respective count.
+> >> +  Quadrature encoding determines the direction.
+> >> +
+> >> +* Quadrature x1 B:
+> >> +  If direction is forward, rising edges on quadrature pair signal B
+> >> +  updates the respective count; if the direction is backward, falling
+> >> +  edges on quadrature pair signal B updates the respective count.
+> >> +  Quadrature encoding determines the direction.
+> >> +
+> >> +* Quadrature x2 A:
+> >> +  Any state transition on quadrature pair signal A updates the
+> >> +  respective count. Quadrature encoding determines the direction.
+> >> +
+> >> +* Quadrature x2 B:
+> >> +  Any state transition on quadrature pair signal B updates the
+> >> +  respective count. Quadrature encoding determines the direction.
+> >> +
+> >> +* Quadrature x2 Rising:
+> >> +  Rising edges on either quadrature pair signals updates the respective
+> >> +  count. Quadrature encoding determines the direction.  
+> >
+> >This one I've never met.  Really? There are devices who do this form
+> >of crazy? It gives really uneven counting and I'm failing to see when
+> >it would ever make sense...  References for these odd corner cases
+> >would be good.
+> >
+> >
+> >__|---|____|-----|____
+> >____|----|____|-----|____
+> >
+> >001122222223334444444  
+> 
+> That's the same reaction I had when I discovered this -- in fact the
+> STM32 LP Timer is the first time I've come across such a quadrature
+> mode. I'm not sure of the use case for this mode, because positioning
+> wouldn't be precise as you've pointed out. Perhaps Fabrice or Benjamin
+> can probe the ST guys responsible for this design choice to figure out
+> the rationale.
 
-Not really, sorry about that.
+Hmm.  My inclination would be to not support it unless someone can up
+with a meaningful use.  We are adding ABI (be it not much) for a case
+that to us makes no sense.
 
-It is necessary to take the spinlock in the non-fast-switch case,
-because of the possible race with the kthread, so something like my
-patch at https://patchwork.kernel.org/patch/10418551/ is needed after
-all.
+Looks rather like the sort of thing that is a side effect of the
+implementation rather than deliberate.
+
+> 
+> I'm leaving in these modes for now, as they do exist in the STM32 LP
+> Timer, but it does make me curious what the intentions for them were
+> (perhaps use cases outside of traditional quadrature encoder
+> positioning).
+> 
+
+Sure if there is a usecase then fair enough.
+
+Jonathan
