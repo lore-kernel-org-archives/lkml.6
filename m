@@ -1,10 +1,10 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2401354-1526989251-2-14091093950609343768
+X-Cyrus-Session-Id: sloti22d1t05-2401354-1526989232-2-15602332523970955589
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES enrosk.us-ascii, BAYES_USED global,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES ensk.us-asciisv, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
   MailFrom='org'
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526989250; b=SXhj79Zq3SAMwvjxF5Jv/8ViG4x08WNutRGetrDepDIVprd3sa
-    bwSIDSRIvskNV3MdXeScSX+a5HfWoAoTT2LZR4nONLFUkdO85MjMUK7lAc6C3TbF
-    0gko+SlU7kCROLfRXDxQOSFN7ihrGtz/iwHl0OwJebY89V0KSypIYmB1AJw5E0y5
-    F57H5zQwZui/zRl58fvgY4ra8vWwNody31qfqo9JVn4LRlqi8FWM4UKUf+s8FkTm
-    p2pQjcC/GVV84nfUVs5rBd/GGokC47JwbvFSownLKd6dt0zqLunq8dNnqfZqSmLn
-    eG/dJP1v+AzUFwmHRyZ6tKRHruKehUeAFJFg==
+    1526989231; b=DlsCioaVbtVqO58RZdWkI7HVfDIzUWOOP+k0CXHXruX2FcAeGh
+    tJ22PFsY5eGJP3ICUmEfmXTUZG4hFoBi2/mvFbfv2zRXF2cs1oc9oSY99VYGOZUI
+    Mgf/+tBBtFEL88IcrxhpCtfYXMvHDWx8Wzw0CdSvfZCWinrvN5wbzMPe1K1IlfDb
+    jcHI3ILcKAxgpbgJqlz4y+BpfwpUkuitYna+DkFqCxgsvk2/3OHRTqRUabIsc4DO
+    IMqmwPAHKIcyp/VvaXWXHXqK5AZGmpEsi9Cuy3ruzTwbtUZ/dSBGpn7QyHI+SviA
+    +Wz+XAakbw5976wg5RCM7xHki7JcINoZso0Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1526989250; bh=
-    jvkF0tUckVN+sU+s2KrOcYA4hcJkBAhlhg/TjIhRy+A=; b=i8+6Y/bQK7dCNcxw
-    LL8WxUqWy/DxSjTqBkRrlxJBomvfMycSACYhTytLwTFpcVjAIdXRPRZ+fRjCuF7q
-    26azPkDo/ZAG0DbtiHlyh/zyti3AYWTTXbvxElCBZy2IO/ktXMEH5kv8xMGAEM8h
-    hCttutfi5slxSGaVtckMlGwSvhzRoy0MURAeuZVTn47RX5A+DS4iIa+VQl90qmsw
-    lrxLd1gun3Su7AWucGeACcaQvA4QlOlhDF072dRQw8Ie8aXz9nBysKE7TiEVOqEq
-    1l9UG+vqCEpogMM0tLgqp2u+4tdQEwVTppEdTAG9tmZBrh7NR8hMoNerl3/UNZUZ
-    XtwLFQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=fm2; t=1526989231; bh=
+    5hfTYf2QG4q/g3jhOp1ASHYWU7WXTTAaYQUcbLSf+aw=; b=AFeNQm+COQl+WPFr
+    1MSBoHdMOseMMlI44tZzP9aVgwo1Edtrr3458qm3rVsPU9aNCBLayZ+RVF1p7Y8S
+    4I8u9LqhgtpDjrGXJnDFrruXPU0EXnbW0w82DrycXA+uloSWN3uqxFVX5G+51E0U
+    c44Ga1cnhwm9kE2aZH2lu1LZELjHjemqm/scthGNXqZur6z+MZmDM/jY9eEeI4Az
+    MnVbloQxHD5oTQoAf+RTnCQAJLM9ockS7F2HUTl6DLhKAWGgzmuALGp7DIKbggpz
+    4PLPvMlb8wA4Z7dPqoTibiyZOo+JFXdy83s67pWEsnHuLciA+CL/lpuLSZguQ+vw
+    2izK6Q==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=infradead.org header.i=@infradead.org header.b=fZas5uM7
+    header.d=infradead.org header.i=@infradead.org header.b=ESMbDrsc
     x-bits=2048 x-keytype=rsa x-algorithm=sha256
     x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=infradead.org header.i=@infradead.org header.b=fZas5uM7
+      header.d=infradead.org header.i=@infradead.org header.b=ESMbDrsc
       x-bits=2048 x-keytype=rsa x-algorithm=sha256
       x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -63,28 +63,28 @@ Authentication-Results: mx5.messagingengine.com;
       header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfKireMDOZKgPYIRbPN3MyqShRDfLhLQPZEEClLvA5fh64lXKLDzy6MKvykgtRMfu/DI1w+BG9a6NzqaY0Ge+6mAnlD9NBTtE++VNM6ZGprleAywZ1OzY
-    HwKk6CczCLYa0HtWB4Phbkw4XeuW8+XGyXT+H82WcNJth7dnnafMshsZJSDj9v6RgH44QSS1JdX5D6m2yR5ctucm/UuK2Ik04XD3e4gDRJ4QTb/3GDMg4+Fr
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfJYtEH8RTtpNBjGoNRWEGGi/5LCUKyI8pZ4YXmw6GQiEsmrC4BB/tZJda//QBuX9jy9ODXpND8392DNlqfmtlOB2qROUDfg8GLorRz1MbQ3H289kqo76
+    hxVjiKip2RQ2aPR4ZUIBOpHxH/kz2DmTc8x55fE+87FENZcN9IVkOkakUq5H+nvqSG58ENWfV+ROJl4PuTr6PRqwYn9DBNUZTrGn5MAP8HUyVYWfqgSu5poo
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8
-    a=KaBQk26Pbc5VCaRScTQA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=NF0aQ0-qhcIZ2yZ1B1MA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752102AbeEVLcG (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 22 May 2018 07:32:06 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36656 "EHLO
+        id S1752699AbeEVLkF (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 22 May 2018 07:40:05 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36674 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751858AbeEVLcD (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Tue, 22 May 2018 07:32:03 -0400
+        with ESMTP id S1752278AbeEVLcL (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Tue, 22 May 2018 07:32:11 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: viro@zeniv.linux.org.uk
 Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
         linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 10/31] net: refactor socket_poll
-Date: Tue, 22 May 2018 13:30:47 +0200
-Message-Id: <20180522113108.25713-11-hch@lst.de>
+Subject: [PATCH 12/31] net: remove sock_no_poll
+Date: Tue, 22 May 2018 13:30:49 +0200
+Message-Id: <20180522113108.25713-13-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180522113108.25713-1-hch@lst.de>
 References: <20180522113108.25713-1-hch@lst.de>
@@ -95,75 +95,157 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Factor out two busy poll related helpers for late reuse, and remove
-a command that isn't very helpful, especially with the __poll_t
-annotations in place.
+Now that sock_poll handles a NULL ->poll or ->poll_mask there is no need
+for a stub.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- include/net/busy_poll.h | 15 +++++++++++++++
- net/socket.c            | 21 ++++-----------------
- 2 files changed, 19 insertions(+), 17 deletions(-)
+ crypto/af_alg.c             | 1 -
+ crypto/algif_hash.c         | 2 --
+ crypto/algif_rng.c          | 1 -
+ drivers/isdn/mISDN/socket.c | 1 -
+ drivers/net/ppp/pptp.c      | 1 -
+ include/net/sock.h          | 2 --
+ net/bluetooth/bnep/sock.c   | 1 -
+ net/bluetooth/cmtp/sock.c   | 1 -
+ net/bluetooth/hidp/sock.c   | 1 -
+ net/core/sock.c             | 6 ------
+ 10 files changed, 17 deletions(-)
 
-diff --git a/include/net/busy_poll.h b/include/net/busy_poll.h
-index 71c72a939bf8..c5187438af38 100644
---- a/include/net/busy_poll.h
-+++ b/include/net/busy_poll.h
-@@ -121,6 +121,21 @@ static inline void sk_busy_loop(struct sock *sk, int nonblock)
- #endif
- }
+diff --git a/crypto/af_alg.c b/crypto/af_alg.c
+index 7846c0c20cfe..80838c1cef94 100644
+--- a/crypto/af_alg.c
++++ b/crypto/af_alg.c
+@@ -347,7 +347,6 @@ static const struct proto_ops alg_proto_ops = {
+ 	.sendpage	=	sock_no_sendpage,
+ 	.sendmsg	=	sock_no_sendmsg,
+ 	.recvmsg	=	sock_no_recvmsg,
+-	.poll		=	sock_no_poll,
  
-+static inline void sock_poll_busy_loop(struct socket *sock, __poll_t events)
-+{
-+	if (sk_can_busy_loop(sock->sk) &&
-+	    events && (events & POLL_BUSY_LOOP)) {
-+		/* once, only if requested by syscall */
-+		sk_busy_loop(sock->sk, 1);
-+	}
-+}
-+
-+/* if this socket can poll_ll, tell the system call */
-+static inline __poll_t sock_poll_busy_flag(struct socket *sock)
-+{
-+	return sk_can_busy_loop(sock->sk) ? POLL_BUSY_LOOP : 0;
-+}
-+
- /* used in the NIC receive handler to mark the skb */
- static inline void skb_mark_napi_id(struct sk_buff *skb,
- 				    struct napi_struct *napi)
-diff --git a/net/socket.c b/net/socket.c
-index f10f1d947c78..571ee4005192 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -1117,24 +1117,11 @@ EXPORT_SYMBOL(sock_create_lite);
- /* No kernel lock held - perfect */
- static __poll_t sock_poll(struct file *file, poll_table *wait)
+ 	.bind		=	alg_bind,
+ 	.release	=	af_alg_release,
+diff --git a/crypto/algif_hash.c b/crypto/algif_hash.c
+index 6c9b1927a520..bfcf595fd8f9 100644
+--- a/crypto/algif_hash.c
++++ b/crypto/algif_hash.c
+@@ -288,7 +288,6 @@ static struct proto_ops algif_hash_ops = {
+ 	.mmap		=	sock_no_mmap,
+ 	.bind		=	sock_no_bind,
+ 	.setsockopt	=	sock_no_setsockopt,
+-	.poll		=	sock_no_poll,
+ 
+ 	.release	=	af_alg_release,
+ 	.sendmsg	=	hash_sendmsg,
+@@ -396,7 +395,6 @@ static struct proto_ops algif_hash_ops_nokey = {
+ 	.mmap		=	sock_no_mmap,
+ 	.bind		=	sock_no_bind,
+ 	.setsockopt	=	sock_no_setsockopt,
+-	.poll		=	sock_no_poll,
+ 
+ 	.release	=	af_alg_release,
+ 	.sendmsg	=	hash_sendmsg_nokey,
+diff --git a/crypto/algif_rng.c b/crypto/algif_rng.c
+index 150c2b6480ed..22df3799a17b 100644
+--- a/crypto/algif_rng.c
++++ b/crypto/algif_rng.c
+@@ -106,7 +106,6 @@ static struct proto_ops algif_rng_ops = {
+ 	.bind		=	sock_no_bind,
+ 	.accept		=	sock_no_accept,
+ 	.setsockopt	=	sock_no_setsockopt,
+-	.poll		=	sock_no_poll,
+ 	.sendmsg	=	sock_no_sendmsg,
+ 	.sendpage	=	sock_no_sendpage,
+ 
+diff --git a/drivers/isdn/mISDN/socket.c b/drivers/isdn/mISDN/socket.c
+index 1f8f489b4167..18c0a1281914 100644
+--- a/drivers/isdn/mISDN/socket.c
++++ b/drivers/isdn/mISDN/socket.c
+@@ -745,7 +745,6 @@ static const struct proto_ops base_sock_ops = {
+ 	.getname	= sock_no_getname,
+ 	.sendmsg	= sock_no_sendmsg,
+ 	.recvmsg	= sock_no_recvmsg,
+-	.poll		= sock_no_poll,
+ 	.listen		= sock_no_listen,
+ 	.shutdown	= sock_no_shutdown,
+ 	.setsockopt	= sock_no_setsockopt,
+diff --git a/drivers/net/ppp/pptp.c b/drivers/net/ppp/pptp.c
+index c4267ecefd85..157b67c1bf8e 100644
+--- a/drivers/net/ppp/pptp.c
++++ b/drivers/net/ppp/pptp.c
+@@ -624,7 +624,6 @@ static const struct proto_ops pptp_ops = {
+ 	.socketpair = sock_no_socketpair,
+ 	.accept     = sock_no_accept,
+ 	.getname    = pptp_getname,
+-	.poll       = sock_no_poll,
+ 	.listen     = sock_no_listen,
+ 	.shutdown   = sock_no_shutdown,
+ 	.setsockopt = sock_no_setsockopt,
+diff --git a/include/net/sock.h b/include/net/sock.h
+index 74d725fdbe0f..4d2e8ad98985 100644
+--- a/include/net/sock.h
++++ b/include/net/sock.h
+@@ -1591,8 +1591,6 @@ int sock_no_connect(struct socket *, struct sockaddr *, int, int);
+ int sock_no_socketpair(struct socket *, struct socket *);
+ int sock_no_accept(struct socket *, struct socket *, int, bool);
+ int sock_no_getname(struct socket *, struct sockaddr *, int);
+-__poll_t sock_no_poll(struct file *, struct socket *,
+-			  struct poll_table_struct *);
+ int sock_no_ioctl(struct socket *, unsigned int, unsigned long);
+ int sock_no_listen(struct socket *, int);
+ int sock_no_shutdown(struct socket *, int);
+diff --git a/net/bluetooth/bnep/sock.c b/net/bluetooth/bnep/sock.c
+index b5116fa9835e..00deacdcb51c 100644
+--- a/net/bluetooth/bnep/sock.c
++++ b/net/bluetooth/bnep/sock.c
+@@ -175,7 +175,6 @@ static const struct proto_ops bnep_sock_ops = {
+ 	.getname	= sock_no_getname,
+ 	.sendmsg	= sock_no_sendmsg,
+ 	.recvmsg	= sock_no_recvmsg,
+-	.poll		= sock_no_poll,
+ 	.listen		= sock_no_listen,
+ 	.shutdown	= sock_no_shutdown,
+ 	.setsockopt	= sock_no_setsockopt,
+diff --git a/net/bluetooth/cmtp/sock.c b/net/bluetooth/cmtp/sock.c
+index ce86a7bae844..e08f28fadd65 100644
+--- a/net/bluetooth/cmtp/sock.c
++++ b/net/bluetooth/cmtp/sock.c
+@@ -178,7 +178,6 @@ static const struct proto_ops cmtp_sock_ops = {
+ 	.getname	= sock_no_getname,
+ 	.sendmsg	= sock_no_sendmsg,
+ 	.recvmsg	= sock_no_recvmsg,
+-	.poll		= sock_no_poll,
+ 	.listen		= sock_no_listen,
+ 	.shutdown	= sock_no_shutdown,
+ 	.setsockopt	= sock_no_setsockopt,
+diff --git a/net/bluetooth/hidp/sock.c b/net/bluetooth/hidp/sock.c
+index 008ba439bd62..1eaac01f85de 100644
+--- a/net/bluetooth/hidp/sock.c
++++ b/net/bluetooth/hidp/sock.c
+@@ -208,7 +208,6 @@ static const struct proto_ops hidp_sock_ops = {
+ 	.getname	= sock_no_getname,
+ 	.sendmsg	= sock_no_sendmsg,
+ 	.recvmsg	= sock_no_recvmsg,
+-	.poll		= sock_no_poll,
+ 	.listen		= sock_no_listen,
+ 	.shutdown	= sock_no_shutdown,
+ 	.setsockopt	= sock_no_setsockopt,
+diff --git a/net/core/sock.c b/net/core/sock.c
+index 6444525f610c..d471aa524b62 100644
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -2567,12 +2567,6 @@ int sock_no_getname(struct socket *sock, struct sockaddr *saddr,
+ }
+ EXPORT_SYMBOL(sock_no_getname);
+ 
+-__poll_t sock_no_poll(struct file *file, struct socket *sock, poll_table *pt)
+-{
+-	return 0;
+-}
+-EXPORT_SYMBOL(sock_no_poll);
+-
+ int sock_no_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
  {
--	__poll_t busy_flag = 0;
--	struct socket *sock;
--
--	/*
--	 *      We can't return errors to poll, so it's either yes or no.
--	 */
--	sock = file->private_data;
--
--	if (sk_can_busy_loop(sock->sk)) {
--		/* this socket can poll_ll so tell the system call */
--		busy_flag = POLL_BUSY_LOOP;
--
--		/* once, only if requested by syscall */
--		if (wait && (wait->_key & POLL_BUSY_LOOP))
--			sk_busy_loop(sock->sk, 1);
--	}
-+	struct socket *sock = file->private_data;
-+	__poll_t events = poll_requested_events(wait);
- 
--	return busy_flag | sock->ops->poll(file, sock, wait);
-+	sock_poll_busy_loop(sock, events);
-+	return sock->ops->poll(file, sock, wait) | sock_poll_busy_flag(sock);
- }
- 
- static int sock_mmap(struct file *file, struct vm_area_struct *vma)
+ 	return -EOPNOTSUPP;
 -- 
 2.17.0
 
