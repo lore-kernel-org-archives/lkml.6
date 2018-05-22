@@ -1,60 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751701AbeEVQGS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 12:06:18 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41044 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751528AbeEVQGM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 12:06:12 -0400
-Date: Tue, 22 May 2018 11:06:09 -0500
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Jiri Slaby <jslaby@suse.cz>, Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        mingo@redhat.com, linux-kernel@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org
-Subject: Re: [PATCH v3 1/6] x86/stacktrace: do not unwind after user regs
-Message-ID: <20180522160609.yppbfdpfoigoyuxg@treble>
-References: <20180518064713.26440-1-jslaby@suse.cz>
- <20180518065547.GA18262@gmail.com>
- <20180518224125.w2ty35wngxbzx6kv@treble>
- <20180519074251.GA2952@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180519074251.GA2952@gmail.com>
-User-Agent: NeoMutt/20180323
+        id S1752075AbeEVQGy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 12:06:54 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:2108 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751340AbeEVQGv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 12:06:51 -0400
+Message-Id: <cover.1527004752.git.christophe.leroy@c-s.fr>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v3 0/3] powerpc/lib: Optimisation of string functions for PPC32 - part 1
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, segher@kernel.crashing.org
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date: Tue, 22 May 2018 18:06:49 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 19, 2018 at 09:42:51AM +0200, Ingo Molnar wrote:
-> 
-> * Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-> 
-> > On Fri, May 18, 2018 at 08:55:47AM +0200, Ingo Molnar wrote:
-> > > 
-> > > * Jiri Slaby <jslaby@suse.cz> wrote:
-> > > 
-> > > > Josh pointed out, that there is no way a frame can be after user regs.
-> > > > So remove the last unwind and the check.
-> > > > 
-> > > > Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-> > > > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > > > Cc: Ingo Molnar <mingo@redhat.com>
-> > > > Cc: "H. Peter Anvin" <hpa@zytor.com>
-> > > > Cc: x86@kernel.org
-> > > > Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-> > > 
-> > > Josh: an Acked-by or Reviewed-by for the whole series from you would be nice.
-> > 
-> > The patches look good, but I want to run it through some testing before
-> > I give them an ACK.
+This serie intends to optimise string functions for PPC32 in the
+same spirit as already done on PPC64.
 
-For the series:
+The first patch moves PPC32 specific functions from string.S into
+a dedicated file named string_32.S
+The second patch rewrites __clear_user() by using dcbz intruction
+The third patch rewrites memcmp() to compare 32 bits words instead
+of comparing byte per byte.
 
-Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
+As shown in each individual commit log, second and third patches provide
+significant improvment.
+
+Changes in v3:
+- Fixed the sign of the result returned by memcmp() by using a logical
+comparison of u32 words and returning -1, 0 or 1 instead of doing a substract.
+- In first patch, replaced PPC_LCMPI by cmpwi
+- Fixed licence in string_32.S
+- Removed the two last patches from the serie. They will be handled later as
+they require further tests and analysis to properly identify their real benefit
+in all possible cases.
+
+Changes in v2:
+- Moved out the patch removing the hot loop alignment on PPC32
+- Squashed the changes related to NUL size verification in a single patch
+- Reordered the patches in a more logical order
+- Modified the inlining patch to avoid warning about impossibility to version symbols.
+
+Christophe Leroy (3):
+  powerpc/lib: move PPC32 specific functions out of string.S
+  powerpc/lib: optimise 32 bits __clear_user()
+  powerpc/lib: optimise PPC32 memcmp
+
+ arch/powerpc/lib/Makefile    |   5 +-
+ arch/powerpc/lib/string.S    |  61 -------------------
+ arch/powerpc/lib/string_32.S | 140 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 143 insertions(+), 63 deletions(-)
+ create mode 100644 arch/powerpc/lib/string_32.S
 
 -- 
-Josh
+2.13.3
