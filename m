@@ -1,60 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751359AbeEVIhV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 04:37:21 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:35195 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751114AbeEVIhR (ORCPT
+        id S1751423AbeEVIhf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 04:37:35 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:58717 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751161AbeEVIhc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 04:37:17 -0400
-X-Google-Smtp-Source: AB8JxZr1Tg+CdIhuYB1AdRqcPDV6QQBIw4TZg2W7phzbTBy9iKaGSo57xVeFFgDz76UiB3NwjZyj+Q==
-Date: Tue, 22 May 2018 14:07:14 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Colin King <colin.king@canonical.com>
-Cc: Vaibhav Agarwal <vaibhav.sr@gmail.com>,
-        Mark Greer <mgreer@animalcreek.com>, Johan Hovold <johan@kernel.org>,
-        Alex Elder <elder@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [greybus-dev] [PATCH] staging: greybus: fix spelling mistake:
- "Inavlid" -> "Invalid"
-Message-ID: <20180522083714.z4gtlfd7adr353fg@vireshk-i7>
-References: <20180522083342.5722-1-colin.king@canonical.com>
+        Tue, 22 May 2018 04:37:32 -0400
+From: Colin King <colin.king@canonical.com>
+To: Tariq Toukan <tariqt@mellanox.com>,
+        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] net/mlx4: fix spelling mistake: "Inrerface" -> "Interface"
+Date: Tue, 22 May 2018 09:37:28 +0100
+Message-Id: <20180522083728.5874-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180522083342.5722-1-colin.king@canonical.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22-05-18, 09:33, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in dev_err error message
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/staging/greybus/audio_topology.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/greybus/audio_topology.c b/drivers/staging/greybus/audio_topology.c
-> index de4b1b2b12f3..15e57f701630 100644
-> --- a/drivers/staging/greybus/audio_topology.c
-> +++ b/drivers/staging/greybus/audio_topology.c
-> @@ -996,7 +996,7 @@ static int gbaudio_tplg_create_widget(struct gbaudio_module_info *module,
->  
->  	ret = gbaudio_validate_kcontrol_count(w);
->  	if (ret) {
-> -		dev_err(module->dev, "Inavlid kcontrol count=%d for %s\n",
-> +		dev_err(module->dev, "Invalid kcontrol count=%d for %s\n",
->  			w->ncontrols, w->name);
->  		return ret;
->  	}
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Trivial fix to spelling mistake in mlx4_dbg debug message
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/mellanox/mlx4/intf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlx4/intf.c b/drivers/net/ethernet/mellanox/mlx4/intf.c
+index 2edcce98ab2d..6bd4103265d2 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/intf.c
++++ b/drivers/net/ethernet/mellanox/mlx4/intf.c
+@@ -172,7 +172,7 @@ int mlx4_do_bond(struct mlx4_dev *dev, bool enable)
+ 		list_add_tail(&dev_ctx->list, &priv->ctx_list);
+ 		spin_unlock_irqrestore(&priv->ctx_lock, flags);
+ 
+-		mlx4_dbg(dev, "Inrerface for protocol %d restarted with when bonded mode is %s\n",
++		mlx4_dbg(dev, "Interface for protocol %d restarted with when bonded mode is %s\n",
+ 			 dev_ctx->intf->protocol, enable ?
+ 			 "enabled" : "disabled");
+ 	}
 -- 
-viresh
+2.17.0
