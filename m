@@ -1,40 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751451AbeEVNEx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 09:04:53 -0400
-Received: from ext-host0001.ascade.co.jp ([218.224.228.194]:62605 "EHLO
-        ns.ascade.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751199AbeEVNEv (ORCPT
+        id S1751582AbeEVNFH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 09:05:07 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:44510 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751537AbeEVNEz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 09:04:51 -0400
-Subject: Re: [PATCH v2 0/7] mm: pages for hugetlb's overcommit may be able to
- charge to memcg
-To: Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>, David Rientjes <rientjes@google.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        Marc-Andre Lureau <marcandre.lureau@redhat.com>,
-        Punit Agrawal <punit.agrawal@arm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, cgroups@vger.kernel.org
-References: <e863529b-7ce5-4fbe-8cff-581b5789a5f9@ascade.co.jp>
- <240f1b14-ed7d-4983-6c52-be4899d4caa5@oracle.com>
-From: TSUKADA Koutaro <tsukada@ascade.co.jp>
-Message-ID: <8711fed5-fc35-a11a-3a17-740a9dca1f2a@ascade.co.jp>
-Date: Tue, 22 May 2018 22:04:23 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+        Tue, 22 May 2018 09:04:55 -0400
+X-Google-Smtp-Source: AB8JxZolk5xokqS7Ti4agtrUcb100l4zeqZ57YeSX5y09AivMyAWYeRbvnjACOTscgu9xo8EYhYkkQ==
+Subject: Re: [PATCH 3/4] venus: add check to make scm calls
+To: Vikash Garodia <vgarodia@codeaurora.org>, hverkuil@xs4all.nl,
+        mchehab@kernel.org, andy.gross@linaro.org, bjorn.andersson@linaro.org
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        acourbot@google.com
+References: <1526556740-25494-1-git-send-email-vgarodia@codeaurora.org>
+ <1526556740-25494-4-git-send-email-vgarodia@codeaurora.org>
+From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <9d5e12b1-40bd-adab-05f0-bdb209bf0174@linaro.org>
+Date: Tue, 22 May 2018 16:04:51 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <240f1b14-ed7d-4983-6c52-be4899d4caa5@oracle.com>
+In-Reply-To: <1526556740-25494-4-git-send-email-vgarodia@codeaurora.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -42,101 +30,50 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/05/22 3:07, Mike Kravetz wrote:
-> On 05/17/2018 09:27 PM, TSUKADA Koutaro wrote:
->> Thanks to Mike Kravetz for comment on the previous version patch.
->>
->> The purpose of this patch-set is to make it possible to control whether or
->> not to charge surplus hugetlb pages obtained by overcommitting to memory
->> cgroup. In the future, I am trying to accomplish limiting the memory usage
->> of applications that use both normal pages and hugetlb pages by the memory
->> cgroup(not use the hugetlb cgroup).
->>
->> Applications that use shared libraries like libhugetlbfs.so use both normal
->> pages and hugetlb pages, but we do not know how much to use each. Please
->> suppose you want to manage the memory usage of such applications by cgroup
->> How do you set the memory cgroup and hugetlb cgroup limit when you want to
->> limit memory usage to 10GB?
->>
->> If you set a limit of 10GB for each, the user can use a total of 20GB of
->> memory and can not limit it well. Since it is difficult to estimate the
->> ratio used by user of normal pages and hugetlb pages, setting limits of 2GB
->> to memory cgroup and 8GB to hugetlb cgroup is not very good idea. In such a
->> case, I thought that by using my patch-set, we could manage resources just
->> by setting 10GB as the limit of memory cgoup(there is no limit to hugetlb
->> cgroup).
->>
->> In this patch-set, introduce the charge_surplus_huge_pages(boolean) to
->> struct hstate. If it is true, it charges to the memory cgroup to which the
->> task that obtained surplus hugepages belongs. If it is false, do nothing as
->> before, and the default value is false. The charge_surplus_huge_pages can
->> be controlled procfs or sysfs interfaces.
->>
->> Since THP is very effective in environments with kernel page size of 4KB,
->> such as x86, there is no reason to positively use HugeTLBfs, so I think
->> that there is no situation to enable charge_surplus_huge_pages. However, in
->> some distributions such as arm64, the page size of the kernel is 64KB, and
->> the size of THP is too huge as 512MB, making it difficult to use. HugeTLBfs
->> may support multiple huge page sizes, and in such a special environment
->> there is a desire to use HugeTLBfs.
+Hi Vikash,
+
+On 05/17/2018 02:32 PM, Vikash Garodia wrote:
+> In order to invoke scm calls, ensure that the platform
+> has the required support to invoke the scm calls in
+> secure world. This code is in preparation to add PIL
+> functionality in venus driver.
 > 
-> One of the basic questions/concerns I have is accounting for surplus huge
-> pages in the default memory resource controller.  The existing huegtlb
-> resource controller already takes hugetlbfs huge pages into account,
-> including surplus pages.  This series would allow surplus pages to be
-> accounted for in the default  memory controller, or the hugetlb controller
-> or both.
+> Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
+> ---
+>  drivers/media/platform/qcom/venus/hfi_venus.c | 26 +++++++++++++++++++-------
+>  1 file changed, 19 insertions(+), 7 deletions(-)
 > 
-> I understand that current mechanisms do not meet the needs of the above
-> use case.  The question is whether this is an appropriate way to approach
-> the issue.  My cgroup experience and knowledge is extremely limited, but
-> it does not appear that any other resource can be controlled by multiple
-> controllers.  Therefore, I am concerned that this may be going against
-> basic cgroup design philosophy.
+> diff --git a/drivers/media/platform/qcom/venus/hfi_venus.c b/drivers/media/platform/qcom/venus/hfi_venus.c
+> index f61d34b..9bcce94 100644
+> --- a/drivers/media/platform/qcom/venus/hfi_venus.c
+> +++ b/drivers/media/platform/qcom/venus/hfi_venus.c
+> @@ -27,6 +27,7 @@
+>  #include "hfi_msgs.h"
+>  #include "hfi_venus.h"
+>  #include "hfi_venus_io.h"
+> +#include "firmware.h"
+>  
+>  #define HFI_MASK_QHDR_TX_TYPE		0xff000000
+>  #define HFI_MASK_QHDR_RX_TYPE		0x00ff0000
+> @@ -570,13 +571,19 @@ static int venus_halt_axi(struct venus_hfi_device *hdev)
+>  static int venus_power_off(struct venus_hfi_device *hdev)
+>  {
+>  	int ret;
+> +	void __iomem *reg_base;
+>  
+>  	if (!hdev->power_enabled)
+>  		return 0;
+>  
+> -	ret = qcom_scm_set_remote_state(TZBSP_VIDEO_STATE_SUSPEND, 0);
+> -	if (ret)
+> -		return ret;
+> +	if (qcom_scm_is_available()) {
+> +		ret = qcom_scm_set_remote_state(TZBSP_VIDEO_STATE_SUSPEND, 0);
 
-Thank you for your feedback.
-That makes sense, surplus hugepages are charged to both memcg and hugetlb
-cgroup, which may be contrary to cgroup design philosophy.
-
-Based on the above advice, I have considered the following improvements,
-what do you think about?
-
-The 'charge_surplus_hugepages' of v2 patch-set was an option to switch
-"whether to charge memcg in addition to hugetlb cgroup", but it will be
-abolished. Instead, change to "switch only to memcg instead of hugetlb
-cgroup" option. This is called 'surplus_charge_to_memcg'.
-
-The surplus_charge_to_memcg option is created in per hugetlb cgroup.
-If it is false(default), charge destination cgroup of various page types
-is the same as the current kernel version. If it become true, hugetlb
-cgroup stops accounting for surplus hugepages, and memcg starts accounting
-instead.
-
-A table showing which cgroups are charged:
-
-page types          | current  v2(off)  v2(on)   v3(off)   v3(on)
--------------------------------------------------------------------
-normal + THP        |       m       m       m         m        m
-hugetlb(persistent) |       h       h       h         h        h
-hugetlb(surplus)    |       h       h     m+h         h        m
--------------------------------------------------------------------
-
- v2: charge_surplus_hugepages option
- v3: next version, surplus_charge_to_memcg option
-  m: memory cgroup
-  h: hugetlb cgroup
-
-> 
-> It would be good to get comments from people more cgroup knowledgeable,
-> and especially from those involved in the decision to do separate hugetlb
-> control.
-> 
-
-I stared at the commit log of mm/hugetlb_cgroup.c, but it did not seem to
-have specially considered of surplus hugepages. Later, I will send a mail
-to hugetlb cgroup's committer to ask about surplus hugepages charge
-specifications.
+I think it will be clearer if we abstract qcom_scm_set_remote_state to
+something like venus_set_state(SUSPEND|RESUME) in firmware.c and export
+the functions to be used here.
 
 -- 
-Thanks,
-Tsukada
+regards,
+Stan
