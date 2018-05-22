@@ -1,50 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751666AbeEVN6H convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 09:58:07 -0400
-Received: from prv1-mh.provo.novell.com ([137.65.248.33]:48485 "EHLO
-        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751613AbeEVN6B (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:5:1>);
-        Tue, 22 May 2018 09:58:01 -0400
-Message-Id: <5B0421E502000078001C4B91@prv1-mh.provo.novell.com>
-X-Mailer: Novell GroupWise Internet Agent 18.0.0 
-Date: Tue, 22 May 2018 07:57:57 -0600
-From: "Jan Beulich" <JBeulich@suse.com>
-To: <brgerst@gmail.com>
-Cc: "xen-devel" <xen-devel@lists.xenproject.org>,
-        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
-        "Juergen Gross" <jgross@suse.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 1/2] xen/PVH: Set up GS segment for stack canary
-References: <20180522035445.16911-1-boris.ostrovsky@oracle.com>
- <20180522035445.16911-2-boris.ostrovsky@oracle.com>
- <CAMzpN2iMrEqee+8yGP_qk-qAuXf+_o6vrOUSDTvX=8JAUDT5Fg@mail.gmail.com>
-In-Reply-To: <CAMzpN2iMrEqee+8yGP_qk-qAuXf+_o6vrOUSDTvX=8JAUDT5Fg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
+        id S1751821AbeEVN6x (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 09:58:53 -0400
+Received: from mail.horus.com ([78.46.148.228]:47231 "EHLO mail.horus.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751480AbeEVN6r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 09:58:47 -0400
+Date: Tue, 22 May 2018 15:50:21 +0200
+From: Matthias Reichl <hias@horus.com>
+To: Sean Young <sean@mess.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org,
+        Devin Heitmueller <dheitmueller@kernellabs.com>,
+        Y Song <ys114321@gmail.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>
+Subject: Re: [PATCH v4 0/3] IR decoding using BPF
+Message-ID: <20180522135020.y3xxmtvhdui2so3t@camel2.lan>
+Mail-Followup-To: Matthias Reichl <hias@horus.com>,
+        Sean Young <sean@mess.org>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org,
+        Devin Heitmueller <dheitmueller@kernellabs.com>,
+        Y Song <ys114321@gmail.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>
+References: <cover.1526651592.git.sean@mess.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <cover.1526651592.git.sean@mess.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->>> On 22.05.18 at 15:45, <brgerst@gmail.com> wrote:
-> On Mon, May 21, 2018 at 11:54 PM, Boris Ostrovsky <boris.ostrovsky@oracle.com> wrote:
->> @@ -98,6 +101,12 @@ ENTRY(pvh_start_xen)
->>         /* 64-bit entry point. */
->>         .code64
->>  1:
->> +       /* Set base address in stack canary descriptor. */
->> +       mov $MSR_GS_BASE,%ecx
->> +       mov $canary, %rax
->> +       cdq
->> +       wrmsr
+Hi Sean,
+
+On Fri, May 18, 2018 at 03:07:27PM +0100, Sean Young wrote:
+> The kernel IR decoders (drivers/media/rc/ir-*-decoder.c) support the most
+> widely used IR protocols, but there are many protocols which are not
+> supported[1]. For example, the lirc-remotes[2] repo has over 2700 remotes,
+> many of which are not supported by rc-core. There is a "long tail" of
+> unsupported IR protocols, for which lircd is need to decode the IR .
 > 
-> CDQ only sign-extends EAX to RAX.  What you really want is to move the
-> high 32-bits to EDX (or zero EDX if we can guarantee it is loaded
-> below 4G).
+> IR encoding is done in such a way that some simple circuit can decode it;
+> therefore, bpf is ideal.
+> 
+> In order to support all these protocols, here we have bpf based IR decoding.
+> The idea is that user-space can define a decoder in bpf, attach it to
+> the rc device through the lirc chardev.
+> 
+> Separate work is underway to extend ir-keytable to have an extensive library
+> of bpf-based decoders, and a much expanded library of rc keymaps.
+> 
+> Another future application would be to compile IRP[3] to a IR BPF program, and
+> so support virtually every remote without having to write a decoder for each.
+> It might also be possible to support non-button devices such as analog
+> directional pads or air conditioning remote controls and decode the target
+> temperature in bpf, and pass that to an input device.
 
-What you describe is CDQE (AT&T name: CLTD); CDQ (AT&T: CLTQ)
-sign-extends EAX to EDX:EAX.
+Thanks a lot, this looks like a very interesting feature to me!
 
-Jan
+Unfortunately I don't have time to test it ATM, but please keep
+me posted - also on ir-keytable progress - I'm rather excited
+to give it a try.
+
+so long & thanks,
+
+Hias
+
+> 
+> Thanks,
+> 
+> Sean Young
+> 
+> [1] http://www.hifi-remote.com/wiki/index.php?title=DecodeIR
+> [2] https://sourceforge.net/p/lirc-remotes/code/ci/master/tree/remotes/
+> [3] http://www.hifi-remote.com/wiki/index.php?title=IRP_Notation
+> 
+> Changes since v3:
+>  - Implemented review comments from Quentin Monnet and Y Song (thanks!)
+>  - More helpful and better formatted bpf helper documentation
+>  - Changed back to bpf_prog_array rather than open-coded implementation
+>  - scancodes can be 64 bit
+>  - bpf gets passed values in microseconds, not nanoseconds.
+>    microseconds is more than than enough (IR receivers support carriers upto
+>    70kHz, at which point a single period is already 14 microseconds). Also,
+>    this makes it much more consistent with lirc mode2.
+>  - Since it looks much more like lirc mode2, rename the program type to
+>    BPF_PROG_TYPE_LIRC_MODE2.
+>  - Rebased on bpf-next
+> 
+> Changes since v2:
+>  - Fixed locking issues
+>  - Improved self-test to cover more cases
+>  - Rebased on bpf-next again
+> 
+> Changes since v1:
+>  - Code review comments from Y Song <ys114321@gmail.com> and
+>    Randy Dunlap <rdunlap@infradead.org>
+>  - Re-wrote sample bpf to be selftest
+>  - Renamed RAWIR_DECODER -> RAWIR_EVENT (Kconfig, context, bpf prog type)
+>  - Rebase on bpf-next
+>  - Introduced bpf_rawir_event context structure with simpler access checking
+> 
+> Sean Young (3):
+>   bpf: bpf_prog_array_copy() should return -ENOENT if exclude_prog not
+>     found
+>   media: rc: introduce BPF_PROG_LIRC_MODE2
+>   bpf: add selftest for lirc_mode2 type program
+> 
+>  drivers/media/rc/Kconfig                      |  13 +
+>  drivers/media/rc/Makefile                     |   1 +
+>  drivers/media/rc/bpf-lirc.c                   | 308 ++++++++++++++++++
+>  drivers/media/rc/lirc_dev.c                   |  30 ++
+>  drivers/media/rc/rc-core-priv.h               |  22 ++
+>  drivers/media/rc/rc-ir-raw.c                  |  12 +-
+>  include/linux/bpf_rcdev.h                     |  30 ++
+>  include/linux/bpf_types.h                     |   3 +
+>  include/uapi/linux/bpf.h                      |  53 ++-
+>  kernel/bpf/core.c                             |  11 +-
+>  kernel/bpf/syscall.c                          |   7 +
+>  kernel/trace/bpf_trace.c                      |   2 +
+>  tools/bpf/bpftool/prog.c                      |   1 +
+>  tools/include/uapi/linux/bpf.h                |  53 ++-
+>  tools/include/uapi/linux/lirc.h               | 217 ++++++++++++
+>  tools/lib/bpf/libbpf.c                        |   1 +
+>  tools/testing/selftests/bpf/Makefile          |   8 +-
+>  tools/testing/selftests/bpf/bpf_helpers.h     |   6 +
+>  .../testing/selftests/bpf/test_lirc_mode2.sh  |  28 ++
+>  .../selftests/bpf/test_lirc_mode2_kern.c      |  23 ++
+>  .../selftests/bpf/test_lirc_mode2_user.c      | 154 +++++++++
+>  21 files changed, 974 insertions(+), 9 deletions(-)
+>  create mode 100644 drivers/media/rc/bpf-lirc.c
+>  create mode 100644 include/linux/bpf_rcdev.h
+>  create mode 100644 tools/include/uapi/linux/lirc.h
+>  create mode 100755 tools/testing/selftests/bpf/test_lirc_mode2.sh
+>  create mode 100644 tools/testing/selftests/bpf/test_lirc_mode2_kern.c
+>  create mode 100644 tools/testing/selftests/bpf/test_lirc_mode2_user.c
+> 
+> -- 
+> 2.17.0
+> 
