@@ -1,47 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751985AbeEVRRN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 13:17:13 -0400
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:34562 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751412AbeEVRRJ (ORCPT
+        id S1752329AbeEVRST (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 13:18:19 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:44910 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752199AbeEVRSR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 13:17:09 -0400
-X-Google-Smtp-Source: AB8JxZrFQQPzRVnILE2AHH6FwB7MKxhPa77+OYiI73KiNX7LwBaeSnpZfaFQQ+v9D+n8bsTdjDDCVQ==
-Date: Tue, 22 May 2018 12:17:05 -0500
-From: Rob Herring <robh@kernel.org>
-To: Amelie Delaunay <amelie.delaunay@st.com>
-Cc: Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>, linux-rtc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/4] dt-bindings: rtc: update stm32-rtc documentation
- for stm32mp1 rtc
-Message-ID: <20180522171705.GA22550@rob-hp-laptop>
-References: <1526558666-24243-1-git-send-email-amelie.delaunay@st.com>
- <1526558666-24243-4-git-send-email-amelie.delaunay@st.com>
+        Tue, 22 May 2018 13:18:17 -0400
+X-Google-Smtp-Source: AB8JxZqD7/d3PkfBcS3UwhBkjvhpJVMMdUQIM9FnXyGoO6/z69VMVkOis/9RA1mUuRHZSZ3QSalsWbi2YSeXDVn4pCk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526558666-24243-4-git-send-email-amelie.delaunay@st.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180522170922.GA30834@embeddedor.com>
+References: <20180522170922.GA30834@embeddedor.com>
+From: Devin Heitmueller <dheitmueller@kernellabs.com>
+Date: Tue, 22 May 2018 13:18:15 -0400
+Message-ID: <CAGoCfizfW1qqDFTbrCM4HaRQBP3esLiiSxNGBongRxamSvpMZA@mail.gmail.com>
+Subject: Re: [PATCH] au8522: remove duplicate code
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 17, 2018 at 02:04:25PM +0200, Amelie Delaunay wrote:
-> RTC embedded in stm32mp1 SoC is slightly different from stm32h7 one, it
-> doesn't require to disable backup domain write protection, and rtc_ck
-> parent clock assignment isn't allowed.
-> To sum up, stm32mp1 RTC requires 2 clocks, pclk and rtc_ck, and an RTC
-> alarm interrupt.
-> 
-> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
-> ---
->  .../devicetree/bindings/rtc/st,stm32-rtc.txt       | 27 ++++++++++++++++------
->  1 file changed, 20 insertions(+), 7 deletions(-)
+Reviewed-by: Devin Heitmueller <dheitmueller@kernellabs.com>
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Devin
+
+On Tue, May 22, 2018 at 1:09 PM, Gustavo A. R. Silva
+<gustavo@embeddedor.com> wrote:
+> This code has been there for nine years now, and it has been
+> working "good enough" since then [1].
+>
+> Remove duplicate code by getting rid of the if-else statement.
+>
+> [1] https://marc.info/?l=linux-kernel&m=152693550225081&w=2
+>
+> Cc: Devin Heitmueller <dheitmueller@kernellabs.com>
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  drivers/media/dvb-frontends/au8522_decoder.c | 14 ++++++--------
+>  1 file changed, 6 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/media/dvb-frontends/au8522_decoder.c b/drivers/media/dvb-frontends/au8522_decoder.c
+> index 343dc92..f285096 100644
+> --- a/drivers/media/dvb-frontends/au8522_decoder.c
+> +++ b/drivers/media/dvb-frontends/au8522_decoder.c
+> @@ -280,14 +280,12 @@ static void setup_decoder_defaults(struct au8522_state *state, bool is_svideo)
+>                         AU8522_TOREGAAGC_REG0E5H_CVBS);
+>         au8522_writereg(state, AU8522_REG016H, AU8522_REG016H_CVBS);
+>
+> -       if (is_svideo) {
+> -               /* Despite what the table says, for the HVR-950q we still need
+> -                  to be in CVBS mode for the S-Video input (reason unknown). */
+> -               /* filter_coef_type = 3; */
+> -               filter_coef_type = 5;
+> -       } else {
+> -               filter_coef_type = 5;
+> -       }
+> +       /*
+> +        * Despite what the table says, for the HVR-950q we still need
+> +        * to be in CVBS mode for the S-Video input (reason unknown).
+> +        */
+> +       /* filter_coef_type = 3; */
+> +       filter_coef_type = 5;
+>
+>         /* Load the Video Decoder Filter Coefficients */
+>         for (i = 0; i < NUM_FILTER_COEF; i++) {
+> --
+> 2.7.4
+>
+
+
+
+-- 
+Devin J. Heitmueller - Kernel Labs
+http://www.kernellabs.com
