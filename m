@@ -1,648 +1,448 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752734AbeEVUMp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 16:12:45 -0400
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:37787 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751342AbeEVUMm (ORCPT
+        id S1752633AbeEVUNq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 16:13:46 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:42476 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751453AbeEVUNo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 16:12:42 -0400
-X-Google-Smtp-Source: AB8JxZp9UC5/4YjTw4hb0OV079IjJzeNgiraMAVAfLo59+gyB8ijECe4j0qmXwv0EYmUxXEKiyHVyzSFa9ARAjkSrXU=
-MIME-Version: 1.0
-In-Reply-To: <20180522142417.19639-2-dmurphy@ti.com>
-References: <20180522142417.19639-1-dmurphy@ti.com> <20180522142417.19639-2-dmurphy@ti.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 22 May 2018 23:12:40 +0300
-Message-ID: <CAHp75VfTtD3Mnyqb63R_BP8BoAGNZProLCgWoDMo-aTk5C-iVA@mail.gmail.com>
-Subject: Re: [PATCH v8 2/2] leds: lm3601x: Introduce the lm3601x LED driver
-To: Dan Murphy <dmurphy@ti.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 22 May 2018 16:13:44 -0400
+X-Google-Smtp-Source: AB8JxZo24BkKthLCku7qmBqBI2/S9Yf+i9PyGnDqlXgYe/+Vxfw19Kbx85M4kEqkNvzAJEHqX6qofA==
+From: Shakeel Butt <shakeelb@google.com>
+To: Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Thelen <gthelen@google.com>, Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>, Tejun Heo <tj@kernel.org>
+Cc: Linux MM <linux-mm@kvack.org>, cgroups@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Shakeel Butt <shakeelb@google.com>
+Subject: [PATCH v2] mm: fix race between kmem_cache destroy, create and deactivate
+Date: Tue, 22 May 2018 13:13:36 -0700
+Message-Id: <20180522201336.196994-1-shakeelb@google.com>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 5:24 PM, Dan Murphy <dmurphy@ti.com> wrote:
-> Introduce the family of LED devices that can
-> drive a torch, strobe or IR LED.
->
-> The LED driver can be configured with a strobe
-> timer to execute a strobe flash.  The IR LED
-> brightness is controlled via the torch brightness
-> register.
->
-> The data sheet for each the LM36010 and LM36011
-> LED drivers can be found here:
-> http://www.ti.com/product/LM36010
-> http://www.ti.com/product/LM36011
->
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> ---
->
-> v8 - Removed OF Kconfig dependency, change strobe to flash, updated label generation,
-> fixed brightness calculation, added mutex_destroy and flash_unregister - https://patchwork.kernel.org/patch/10416163/
->
-> v7 - Numerous fixes to many to list.  Highlights are moved from OF APIs to device_property
-> APIs, updated LED registration, timeout to reg algorithim, and fixed label generation -
-> https://patchwork.kernel.org/patch/10401437/
-> v6 - This driver has been heavily modified from v5.  There is no longer reading
-> of individual child nodes.  There are too many changes to list here see -
-> https://patchwork.kernel.org/patch/10392123/
-> v5 - Fixed magic numbers, change reg cache type, added of_put_node to release
-> the dt node ref, and I did not change the remove function to leave the LED in its
-> state on driver removal - https://patchwork.kernel.org/patch/10391741/
-> v4 - Fixed Cocci issue using ARRAY_SIZE - https://patchwork.kernel.org/patch/10389259/
-> v3 - removed wildcard dt compatible, fixed copyright, fixed struct doc, removed
-> RO registers from default, added regmap volatile for FLAGS_REG, updated regmap cache type,
-> fixed unlock and extra semi colon in strobe_set, removed unnecessary out label
-> in led register and fixed checking of the ret in brightness_set - https://patchwork.kernel.org/patch/10386243/
-> v2 - Fixed kbuild issue and removed unused cdev_strobe - https://patchwork.kernel.org/patch/10384585/
->
->
->  drivers/leds/Kconfig        |   9 +
->  drivers/leds/Makefile       |   1 +
->  drivers/leds/leds-lm3601x.c | 492 ++++++++++++++++++++++++++++++++++++
->  3 files changed, 502 insertions(+)
->  create mode 100644 drivers/leds/leds-lm3601x.c
->
-> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index 2c896c0e69e1..d95d436e6089 100644
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -145,6 +145,15 @@ config LEDS_LM3692X
->           This option enables support for the TI LM3692x family
->           of white LED string drivers used for backlighting.
->
-> +config LEDS_LM3601X
-> +       tristate "LED support for LM3601x Chips"
-> +       depends on LEDS_CLASS && I2C
-> +       depends on LEDS_CLASS_FLASH
-> +       select REGMAP_I2C
-> +       help
-> +         This option enables support for the TI LM3601x family
-> +         of flash, torch and indicator classes.
-> +
->  config LEDS_LOCOMO
->         tristate "LED Support for Locomo device"
->         depends on LEDS_CLASS
-> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-> index 91eca81cae82..b79807fe1b67 100644
-> --- a/drivers/leds/Makefile
-> +++ b/drivers/leds/Makefile
-> @@ -76,6 +76,7 @@ obj-$(CONFIG_LEDS_MLXREG)             += leds-mlxreg.o
->  obj-$(CONFIG_LEDS_NIC78BX)             += leds-nic78bx.o
->  obj-$(CONFIG_LEDS_MT6323)              += leds-mt6323.o
->  obj-$(CONFIG_LEDS_LM3692X)             += leds-lm3692x.o
-> +obj-$(CONFIG_LEDS_LM3601X)             += leds-lm3601x.o
->
->  # LED SPI Drivers
->  obj-$(CONFIG_LEDS_DAC124S085)          += leds-dac124s085.o
-> diff --git a/drivers/leds/leds-lm3601x.c b/drivers/leds/leds-lm3601x.c
-> new file mode 100644
-> index 000000000000..b1f0ede704c1
-> --- /dev/null
-> +++ b/drivers/leds/leds-lm3601x.c
-> @@ -0,0 +1,492 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Flash and torch driver for Texas Instruments LM3601X LED
-> +// Flash driver chip family
-> +// Copyright (C) 2018 Texas Instruments Incorporated - http://www.ti.com/
-> +
-> +#include <linux/delay.h>
-> +#include <linux/i2c.h>
-> +#include <linux/leds.h>
-> +#include <linux/led-class-flash.h>
-> +#include <linux/module.h>
-> +#include <linux/regmap.h>
-> +#include <linux/slab.h>
-> +#include <uapi/linux/uleds.h>
-> +
-> +#define LM3601X_LED_IR         0x0
-> +#define LM3601X_LED_TORCH      0x1
-> +
-> +/* Registers */
-> +#define LM3601X_ENABLE_REG     0x01
-> +#define LM3601X_CFG_REG                0x02
-> +#define LM3601X_LED_FLASH_REG  0x03
-> +#define LM3601X_LED_TORCH_REG  0x04
-> +#define LM3601X_FLAGS_REG      0x05
-> +#define LM3601X_DEV_ID_REG     0x06
-> +
-> +#define LM3601X_SW_RESET       BIT(7)
-> +
-> +/* Enable Mode bits */
-> +#define LM3601X_MODE_STANDBY   0x00
-> +#define LM3601X_MODE_IR_DRV    BIT(0)
-> +#define LM3601X_MODE_TORCH     BIT(1)
-> +#define LM3601X_MODE_STROBE    (BIT(0) | BIT(1))
-> +#define LM3601X_STRB_EN                BIT(2)
-> +#define LM3601X_STRB_EDGE_TRIG BIT(3)
-> +#define LM3601X_IVFM_EN                BIT(4)
-> +
-> +#define LM36010_BOOST_LIMIT_28 BIT(5)
-> +#define LM36010_BOOST_FREQ_4MHZ        BIT(6)
-> +#define LM36010_BOOST_MODE_PASS        BIT(7)
-> +
-> +/* Flag Mask */
-> +#define LM3601X_FLASH_TIME_OUT BIT(0)
-> +#define LM3601X_UVLO_FAULT     BIT(1)
-> +#define LM3601X_THERM_SHUTDOWN BIT(2)
-> +#define LM3601X_THERM_CURR     BIT(3)
-> +#define LM36010_CURR_LIMIT     BIT(4)
-> +#define LM3601X_SHORT_FAULT    BIT(5)
-> +#define LM3601X_IVFM_TRIP      BIT(6)
-> +#define LM36010_OVP_FAULT      BIT(7)
-> +
-> +#define LM3601X_MAX_TORCH_I_UA 376000
-> +#define LM3601X_MIN_TORCH_I_UA 2400
-> +#define LM3601X_TORCH_REG_DIV  2965
-> +
-> +#define LM3601X_MAX_STROBE_I_UA        1500000
-> +#define LM3601X_MIN_STROBE_I_UA        11000
-> +#define LM3601X_STROBE_REG_DIV 11800
-> +
-> +#define LM3601X_TIMEOUT_MASK   0x1e
-> +#define LM3601X_ENABLE_MASK    (LM3601X_MODE_IR_DRV | LM3601X_MODE_TORCH)
-> +
-> +#define LM3601X_LOWER_STEP_US  40000
-> +#define LM3601X_UPPER_STEP_US  200000
-> +#define LM3601X_MIN_TIMEOUT_US 40000
-> +#define LM3601X_MAX_TIMEOUT_US 1600000
-> +#define LM3601X_TIMEOUT_XOVER_US 400000
-> +
-> +enum lm3601x_type {
-> +       CHIP_LM36010 = 0,
-> +       CHIP_LM36011,
-> +};
-> +
-> +/**
-> + * struct lm3601x_led -
-> + * @fled_cdev: flash LED class device pointer
-> + * @client: Pointer to the I2C client
-> + * @regmap: Devices register map
-> + * @lock: Lock for reading/writing the device
-> + * @led_name: LED label for the Torch or IR LED
-> + * @flash_timeout: the timeout for the flash
-> + * @last_flag: last known flags register value
-> + * @torch_current_max: maximum current for the torch
-> + * @flash_current_max: maximum current for the flash
-> + * @max_flash_timeout: maximum timeout for the flash
-> + * @led_mode: The mode to enable either IR or Torch
-> + */
-> +struct lm3601x_led {
-> +       struct led_classdev_flash fled_cdev;
-> +       struct i2c_client *client;
-> +       struct regmap *regmap;
-> +       struct mutex lock;
-> +
-> +       char led_name[LED_MAX_NAME_SIZE];
-> +
-> +       unsigned int flash_timeout;
-> +       unsigned int last_flag;
-> +
-> +       u32 torch_current_max;
-> +       u32 flash_current_max;
-> +       u32 max_flash_timeout;
-> +
-> +       u32 led_mode;
-> +};
-> +
-> +static const struct reg_default lm3601x_regmap_defs[] = {
-> +       { LM3601X_ENABLE_REG, 0x20 },
-> +       { LM3601X_CFG_REG, 0x15 },
-> +       { LM3601X_LED_FLASH_REG, 0x00 },
-> +       { LM3601X_LED_TORCH_REG, 0x00 },
-> +};
-> +
-> +static bool lm3601x_volatile_reg(struct device *dev, unsigned int reg)
-> +{
-> +       switch (reg) {
-> +       case LM3601X_FLAGS_REG:
-> +               return true;
-> +       default:
-> +               return false;
-> +       }
-> +}
-> +
-> +static const struct regmap_config lm3601x_regmap = {
-> +       .reg_bits = 8,
-> +       .val_bits = 8,
-> +
-> +       .max_register = LM3601X_DEV_ID_REG,
-> +       .reg_defaults = lm3601x_regmap_defs,
-> +       .num_reg_defaults = ARRAY_SIZE(lm3601x_regmap_defs),
-> +       .cache_type = REGCACHE_RBTREE,
-> +       .volatile_reg = lm3601x_volatile_reg,
-> +};
-> +
+The memcg kmem cache creation and deactivation (SLUB only) is
+asynchronous. If a root kmem cache is destroyed whose memcg cache is in
+the process of creation or deactivation, the kernel may crash.
 
-> +static struct lm3601x_led *fled_cdev_to_led(
-> +                               struct led_classdev_flash *fled_cdev)
+Example of one such crash:
+	general protection fault: 0000 [#1] SMP PTI
+	CPU: 1 PID: 1721 Comm: kworker/14:1 Not tainted 4.17.0-smp
+	...
+	Workqueue: memcg_kmem_cache kmemcg_deactivate_workfn
+	RIP: 0010:has_cpu_slab
+	...
+	Call Trace:
+	? on_each_cpu_cond
+	__kmem_cache_shrink
+	kmemcg_cache_deact_after_rcu
+	kmemcg_deactivate_workfn
+	process_one_work
+	worker_thread
+	kthread
+	ret_from_fork+0x35/0x40
 
-Didn't notice before. This will look much better in one line.
+This issue is due to the lack of real reference counting for the root
+kmem_caches. Currently kmem_cache does have a field named refcount which
+has been used for multiple purposes i.e. shared count, reference count
+and noshare flag. Due to its conflated nature, it can not be used for
+reference counting by other subsystems.
 
-> +{
-> +       return container_of(fled_cdev, struct lm3601x_led, fled_cdev);
-> +}
-> +
-> +static int lm3601x_read_faults(struct lm3601x_led *led)
-> +{
-> +       int flags_val;
-> +       int ret;
-> +
-> +       ret = regmap_read(led->regmap, LM3601X_FLAGS_REG, &flags_val);
-> +       if (ret < 0)
-> +               return -EIO;
-> +
-> +       led->last_flag = 0;
-> +
-> +       if (flags_val & LM36010_OVP_FAULT)
-> +               led->last_flag |= LED_FAULT_OVER_VOLTAGE;
-> +
-> +       if (flags_val & (LM3601X_THERM_SHUTDOWN | LM3601X_THERM_CURR))
-> +               led->last_flag |= LED_FAULT_OVER_TEMPERATURE;
-> +
-> +       if (flags_val & LM3601X_SHORT_FAULT)
-> +               led->last_flag |= LED_FAULT_SHORT_CIRCUIT;
-> +
-> +       if (flags_val & LM36010_CURR_LIMIT)
-> +               led->last_flag |= LED_FAULT_OVER_CURRENT;
-> +
-> +       if (flags_val & LM3601X_UVLO_FAULT)
-> +               led->last_flag |= LED_FAULT_UNDER_VOLTAGE;
-> +
-> +       if (flags_val & LM3601X_IVFM_TRIP)
-> +               led->last_flag |= LED_FAULT_INPUT_VOLTAGE;
-> +
-> +       if (flags_val & LM3601X_THERM_SHUTDOWN)
-> +               led->last_flag |= LED_FAULT_LED_OVER_TEMPERATURE;
-> +
-> +       return led->last_flag;
-> +}
-> +
-> +static int lm3601x_brightness_set(struct led_classdev *cdev,
-> +                                       enum led_brightness brightness)
-> +{
-> +       struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(cdev);
-> +       struct lm3601x_led *led = fled_cdev_to_led(fled_cdev);
-> +       int ret, led_mode_val;
-> +
-> +       mutex_lock(&led->lock);
-> +
-> +       ret = lm3601x_read_faults(led);
-> +       if (ret < 0)
-> +               goto out;
-> +
-> +       if (led->led_mode == LM3601X_LED_TORCH)
-> +               led_mode_val = LM3601X_MODE_TORCH;
-> +       else
-> +               led_mode_val = LM3601X_MODE_IR_DRV;
-> +
-> +       if (brightness == LED_OFF) {
-> +               ret = regmap_update_bits(led->regmap, LM3601X_ENABLE_REG,
-> +                                       led_mode_val, LED_OFF);
-> +               goto out;
-> +       }
-> +
-> +       ret = regmap_write(led->regmap, LM3601X_LED_TORCH_REG, brightness);
-> +       if (ret < 0)
-> +               goto out;
-> +
-> +       ret = regmap_update_bits(led->regmap, LM3601X_ENABLE_REG,
-> +                               LM3601X_MODE_TORCH | LM3601X_MODE_IR_DRV,
-> +                               led_mode_val);
-> +out:
-> +       mutex_unlock(&led->lock);
-> +       return ret;
-> +}
-> +
-> +static int lm3601x_flash_set(struct led_classdev_flash *fled_cdev,
-> +                               bool state)
-> +{
-> +       struct lm3601x_led *led = fled_cdev_to_led(fled_cdev);
+This patch decoupled the reference counting from shared count and
+noshare flag. The new field 'shared_count' represents the shared count
+and noshare flag while 'refcount' is converted into a real reference
+counter.
 
-> +       int timeout_reg_val = 0;
+The reference counting is only implemented for root kmem_caches for
+simplicity. The reference of a root kmem_cache is elevated on sharing or
+while its memcg kmem_cache creation or deactivation request is in the
+fly and thus it is made sure that the root kmem_cache is not destroyed
+in the middle. As the reference of kmem_cache is elevated on sharing,
+the 'shared_count' does not need any locking protection as at worst it
+can be out-dated for a small window which is tolerable.
 
-Redundant assignment.
+Signed-off-by: Shakeel Butt <shakeelb@google.com>
+---
+Changelog since v1:
+- Added more documentation to the code
+- Renamed fields to be more readable
 
-> +       int current_timeout;
-> +       int ret;
-> +
-> +       mutex_lock(&led->lock);
-> +
-> +       ret = regmap_read(led->regmap, LM3601X_CFG_REG, &current_timeout);
-> +       if (ret < 0)
-> +               goto out;
-> +
-> +       if (led->flash_timeout >= LM3601X_TIMEOUT_XOVER_US)
-> +               timeout_reg_val = led->flash_timeout / LM3601X_UPPER_STEP_US + 0x07;
-> +       else
-> +               timeout_reg_val = led->flash_timeout / LM3601X_LOWER_STEP_US - 0x01;
-> +
-> +       if (led->flash_timeout != current_timeout)
-> +               ret = regmap_update_bits(led->regmap, LM3601X_CFG_REG,
-> +                                       LM3601X_TIMEOUT_MASK, timeout_reg_val);
-> +
-> +       if (state)
-> +               ret = regmap_update_bits(led->regmap, LM3601X_ENABLE_REG,
-> +                                       LM3601X_MODE_TORCH | LM3601X_MODE_IR_DRV,
-> +                                       LM3601X_MODE_STROBE);
-> +       else
-> +               ret = regmap_update_bits(led->regmap, LM3601X_ENABLE_REG,
-> +                                       LM3601X_MODE_STROBE, LED_OFF);
-> +
-> +       ret = lm3601x_read_faults(led);
-> +out:
-> +       mutex_unlock(&led->lock);
-> +       return ret;
-> +}
-> +
-> +static int lm3601x_flash_brightness_set(struct led_classdev_flash *fled_cdev,
-> +                                       u32 brightness)
-> +{
-> +       struct lm3601x_led *led = fled_cdev_to_led(fled_cdev);
+ include/linux/slab.h     |   2 +
+ include/linux/slab_def.h |   5 +-
+ include/linux/slub_def.h |   3 +-
+ mm/memcontrol.c          |   7 +++
+ mm/slab.c                |   4 +-
+ mm/slab.h                |   5 +-
+ mm/slab_common.c         | 122 ++++++++++++++++++++++++++++++++-------
+ mm/slub.c                |  14 +++--
+ 8 files changed, 130 insertions(+), 32 deletions(-)
 
-> +       int ret;
-> +       u8 brightness_val;
-
-Better to read reversed xmas tree order.
-
-> +
-> +       mutex_lock(&led->lock);
-> +       ret = lm3601x_read_faults(led);
-> +       if (ret < 0)
-> +               goto out;
-> +
-> +       if (brightness == LED_OFF) {
-> +               ret = regmap_update_bits(led->regmap, LM3601X_ENABLE_REG,
-> +                                       LM3601X_MODE_STROBE, LED_OFF);
-> +               goto out;
-> +       }
-> +
-> +       brightness_val = brightness / LM3601X_STROBE_REG_DIV;
-> +
-> +       ret = regmap_write(led->regmap, LM3601X_LED_FLASH_REG, brightness_val);
-> +out:
-> +       mutex_unlock(&led->lock);
-> +       return ret;
-> +}
-> +
-> +static int lm3601x_flash_timeout_set(struct led_classdev_flash *fled_cdev,
-> +                               u32 timeout)
-> +{
-> +       struct lm3601x_led *led = fled_cdev_to_led(fled_cdev);
-
-> +       int ret = 0;
-
-Redundant variable.
-
-> +
-> +       mutex_lock(&led->lock);
-> +
-> +       led->flash_timeout = timeout;
-> +
-> +       mutex_unlock(&led->lock);
-> +
-> +       return ret;
-> +}
-> +
-> +static int lm3601x_flash_get(struct led_classdev_flash *fled_cdev,
-> +                               bool *state)
-> +{
-> +       struct lm3601x_led *led = fled_cdev_to_led(fled_cdev);
-> +       int ret;
-> +       int flash_state;
-> +
-> +       mutex_lock(&led->lock);
-> +
-> +       ret = regmap_read(led->regmap, LM3601X_ENABLE_REG, &flash_state);
-> +       if (ret < 0)
-> +               goto out;
-> +
-> +       *state = flash_state & LM3601X_MODE_STROBE;
-> +
-> +out:
-> +       mutex_unlock(&led->lock);
-> +       return ret;
-> +}
-> +
-> +static int lm3601x_flash_fault_get(struct led_classdev_flash *fled_cdev,
-> +                               u32 *fault)
-> +{
-> +       struct lm3601x_led *led = fled_cdev_to_led(fled_cdev);
-> +
-> +       lm3601x_read_faults(led);
-> +
-> +       *fault = led->last_flag;
-> +
-> +       return 0;
-> +}
-> +
-> +static const struct led_flash_ops flash_ops = {
-> +       .flash_brightness_set   = lm3601x_flash_brightness_set,
-> +       .strobe_set             = lm3601x_flash_set,
-> +       .strobe_get             = lm3601x_flash_get,
-> +       .timeout_set            = lm3601x_flash_timeout_set,
-> +       .fault_get              = lm3601x_flash_fault_get,
-> +};
-> +
-> +static int lm3601x_register_leds(struct lm3601x_led *led)
-> +{
-> +       struct led_classdev *led_cdev;
-> +       struct led_flash_setting *setting;
-> +
-> +       led->fled_cdev.ops = &flash_ops;
-> +
-> +       setting = &led->fled_cdev.timeout;
-> +       setting->min = LM3601X_MIN_TIMEOUT_US;
-> +       setting->max = led->max_flash_timeout;
-> +       setting->step = LM3601X_LOWER_STEP_US;
-> +       setting->val = led->max_flash_timeout;
-> +
-> +       setting = &led->fled_cdev.brightness;
-> +       setting->min = LM3601X_MIN_STROBE_I_UA;
-> +       setting->max = led->flash_current_max;
-> +       setting->step = LM3601X_TORCH_REG_DIV;
-> +       setting->val = led->flash_current_max;
-> +
-> +       led_cdev = &led->fled_cdev.led_cdev;
-> +       led_cdev->name = led->led_name;
-> +       led_cdev->brightness_set_blocking = lm3601x_brightness_set;
-> +       led_cdev->max_brightness = DIV_ROUND_UP(led->torch_current_max,
-> +                                               LM3601X_TORCH_REG_DIV);
-> +       led_cdev->flags |= LED_DEV_CAP_FLASH;
-> +
-> +       return led_classdev_flash_register(&led->client->dev, &led->fled_cdev);
-> +}
-> +
-> +static int lm3601x_parse_node(struct lm3601x_led *led,
-
-> +                             struct device_node *node)
-
-I don't see how it's used.
-
-> +{
-> +       struct fwnode_handle *child = NULL;
-> +       int ret = -ENODEV;
-> +       const char *name;
-> +
-> +       child = device_get_next_child_node(&led->client->dev, child);
-> +       if (!child) {
-> +               dev_err(&led->client->dev, "No LED Child node\n");
-> +               return ret;
-> +       }
-> +
-> +       ret = fwnode_property_read_u32(child, "reg", &led->led_mode);
-> +       if (ret) {
-> +               dev_err(&led->client->dev, "reg DT property missing\n");
-> +               goto out_err;
-> +       }
-> +
-> +       if (led->led_mode > LM3601X_LED_TORCH ||
-> +           led->led_mode < LM3601X_LED_IR) {
-> +               dev_warn(&led->client->dev, "Invalid led mode requested\n");
-> +               ret = -EINVAL;
-> +               goto out_err;
-> +       }
-> +
-> +       ret = fwnode_property_read_string(child, "label", &name);
-> +       if (ret) {
-> +               if (led->led_mode == LM3601X_LED_TORCH)
-> +                       name = "torch";
-> +               else
-> +                       name = "infrared";
-> +       }
-> +
-> +       snprintf(led->led_name, sizeof(led->led_name),
-> +               "%s:%s", led->client->name, name);
-> +
-> +       ret = fwnode_property_read_u32(child, "led-max-microamp",
-> +                                       &led->torch_current_max);
-
-> +       if (ret < 0) {
-
-Be consistent with above or other way around.
-
-> +               dev_warn(&led->client->dev,
-> +                       "led-max-microamp DT property missing\n");
-> +               goto out_err;
-> +       }
-> +
-> +       ret = fwnode_property_read_u32(child, "flash-max-microamp",
-> +                               &led->flash_current_max);
-> +       if (ret < 0) {
-> +               dev_warn(&led->client->dev,
-> +                        "flash-max-microamp DT property missing\n");
-> +               goto out_err;
-> +       }
-> +
-> +       ret = fwnode_property_read_u32(child, "flash-max-timeout-us",
-> +                               &led->max_flash_timeout);
-> +       if (ret < 0) {
-> +               dev_warn(&led->client->dev,
-> +                        "flash-max-timeout-us DT property missing\n");
-> +               goto out_err;
-> +       }
-> +
-> +out_err:
-> +       fwnode_handle_put(child);
-> +       return ret;
-> +}
-> +
-> +static int lm3601x_probe(struct i2c_client *client,
-> +                       const struct i2c_device_id *id)
-> +{
-> +       struct lm3601x_led *led;
-
-> +       int err;
-
-Be consistent, either err everywhere, or ret.
-
-> +
-> +       led = devm_kzalloc(&client->dev, sizeof(*led), GFP_KERNEL);
-> +       if (!led)
-> +               return -ENOMEM;
-> +
-> +       led->client = client;
-> +       i2c_set_clientdata(client, led);
-> +
-
-> +       err = lm3601x_parse_node(led, client->dev.of_node);
-
-Can't you use dev_fwnode() helper?
-It seems it's even not used inside the function.
-
-> +       if (err < 0)
-> +               return -ENODEV;
-> +
-> +       led->regmap = devm_regmap_init_i2c(client, &lm3601x_regmap);
-> +       if (IS_ERR(led->regmap)) {
-> +               err = PTR_ERR(led->regmap);
-> +               dev_err(&client->dev,
-> +                       "Failed to allocate register map: %d\n", err);
-> +               return err;
-> +       }
-> +
-> +       mutex_init(&led->lock);
-> +
-> +       return lm3601x_register_leds(led);
-> +}
-> +
-> +static int lm3601x_remove(struct i2c_client *client)
-> +{
-> +       struct lm3601x_led *led = i2c_get_clientdata(client);
-> +
-> +       led_classdev_flash_unregister(&led->fled_cdev);
-> +       mutex_destroy(&led->lock);
-> +
-> +       return regmap_update_bits(led->regmap, LM3601X_ENABLE_REG,
-> +                          LM3601X_ENABLE_MASK,
-> +                          LM3601X_MODE_STANDBY);
-> +}
-> +
-
-> +static const struct i2c_device_id lm3601x_id[] = {
-> +       { "LM36010", CHIP_LM36010 },
-> +       { "LM36011", CHIP_LM36011 },
-> +       { }
-> +};
-> +MODULE_DEVICE_TABLE(i2c, lm3601x_id);
-
-Are you going to use it as a pure i2c driver? If yes, I would like to hear why.
-Otherwise just switch to ->probe_new().
-
-> +
-> +static const struct of_device_id of_lm3601x_leds_match[] = {
-> +       { .compatible = "ti,lm36010", },
-> +       { .compatible = "ti,lm36011", },
-> +       { }
-> +};
-> +MODULE_DEVICE_TABLE(of, of_lm3601x_leds_match);
-> +
-> +static struct i2c_driver lm3601x_i2c_driver = {
-> +       .driver = {
-> +               .name = "lm3601x",
-> +               .of_match_table = of_lm3601x_leds_match,
-> +       },
-> +       .probe = lm3601x_probe,
-> +       .remove = lm3601x_remove,
-> +       .id_table = lm3601x_id,
-> +};
-> +module_i2c_driver(lm3601x_i2c_driver);
-> +
-> +MODULE_DESCRIPTION("Texas Instruments Flash Lighting driver for LM3601X");
-> +MODULE_AUTHOR("Dan Murphy <dmurphy@ti.com>");
-> +MODULE_LICENSE("GPL v2");
-> --
-> 2.17.0.582.gccdcbd54c
->
-
-
-
+diff --git a/include/linux/slab.h b/include/linux/slab.h
+index 9ebe659bd4a5..4c28f2483a22 100644
+--- a/include/linux/slab.h
++++ b/include/linux/slab.h
+@@ -674,6 +674,8 @@ struct memcg_cache_params {
+ };
+ 
+ int memcg_update_all_caches(int num_memcgs);
++bool kmem_cache_tryget(struct kmem_cache *s);
++void kmem_cache_put(struct kmem_cache *s);
+ 
+ /**
+  * kmalloc_array - allocate memory for an array.
+diff --git a/include/linux/slab_def.h b/include/linux/slab_def.h
+index d9228e4d0320..a3aa2c7c1fcd 100644
+--- a/include/linux/slab_def.h
++++ b/include/linux/slab_def.h
+@@ -41,7 +41,10 @@ struct kmem_cache {
+ /* 4) cache creation/removal */
+ 	const char *name;
+ 	struct list_head list;
+-	int refcount;
++	/* Refcount for root kmem caches */
++	refcount_t refcount;
++	/* Number of root kmem caches sharing this cache */
++	int shared_count;
+ 	int object_size;
+ 	int align;
+ 
+diff --git a/include/linux/slub_def.h b/include/linux/slub_def.h
+index 3773e26c08c1..a2d53cd28bb6 100644
+--- a/include/linux/slub_def.h
++++ b/include/linux/slub_def.h
+@@ -97,7 +97,8 @@ struct kmem_cache {
+ 	struct kmem_cache_order_objects max;
+ 	struct kmem_cache_order_objects min;
+ 	gfp_t allocflags;	/* gfp flags to use on each alloc */
+-	int refcount;		/* Refcount for slab cache destroy */
++	refcount_t refcount;	/* Refcount for root kmem cache */
++	int shared_count;	/* Number of kmem caches sharing this cache */
+ 	void (*ctor)(void *);
+ 	unsigned int inuse;		/* Offset to metadata */
+ 	unsigned int align;		/* Alignment */
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index bdb8028c806c..ab5673dbfc4e 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -2185,6 +2185,7 @@ static void memcg_kmem_cache_create_func(struct work_struct *w)
+ 	memcg_create_kmem_cache(memcg, cachep);
+ 
+ 	css_put(&memcg->css);
++	kmem_cache_put(cachep);
+ 	kfree(cw);
+ }
+ 
+@@ -2200,6 +2201,12 @@ static void __memcg_schedule_kmem_cache_create(struct mem_cgroup *memcg,
+ 	if (!cw)
+ 		return;
+ 
++	/* Make sure root kmem cache does not get destroyed in the middle */
++	if (!kmem_cache_tryget(cachep)) {
++		kfree(cw);
++		return;
++	}
++
+ 	css_get(&memcg->css);
+ 
+ 	cw->memcg = memcg;
+diff --git a/mm/slab.c b/mm/slab.c
+index c1fe8099b3cd..7e494b83bcef 100644
+--- a/mm/slab.c
++++ b/mm/slab.c
+@@ -1883,8 +1883,8 @@ __kmem_cache_alias(const char *name, unsigned int size, unsigned int align,
+ 	struct kmem_cache *cachep;
+ 
+ 	cachep = find_mergeable(size, align, flags, name, ctor);
+-	if (cachep) {
+-		cachep->refcount++;
++	if (cachep && kmem_cache_tryget(cachep)) {
++		cachep->shared_count++;
+ 
+ 		/*
+ 		 * Adjust the object sizes so that we clear
+diff --git a/mm/slab.h b/mm/slab.h
+index 68bdf498da3b..2a940984b305 100644
+--- a/mm/slab.h
++++ b/mm/slab.h
+@@ -25,7 +25,8 @@ struct kmem_cache {
+ 	unsigned int useroffset;/* Usercopy region offset */
+ 	unsigned int usersize;	/* Usercopy region size */
+ 	const char *name;	/* Slab name for sysfs */
+-	int refcount;		/* Use counter */
++	refcount_t refcount;	/* Refcount for root kmem cache */
++	int shared_count;	/* Number of kmem caches sharing this cache */
+ 	void (*ctor)(void *);	/* Called on object slot creation */
+ 	struct list_head list;	/* List of all slab caches on the system */
+ };
+@@ -295,7 +296,7 @@ extern void slab_init_memcg_params(struct kmem_cache *);
+ extern void memcg_link_cache(struct kmem_cache *s);
+ extern void slab_deactivate_memcg_cache_rcu_sched(struct kmem_cache *s,
+ 				void (*deact_fn)(struct kmem_cache *));
+-
++extern void kmem_cache_put_locked(struct kmem_cache *s);
+ #else /* CONFIG_MEMCG && !CONFIG_SLOB */
+ 
+ /* If !memcg, all caches are root. */
+diff --git a/mm/slab_common.c b/mm/slab_common.c
+index b0dd9db1eb2f..ebe28ad516e3 100644
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -306,7 +306,7 @@ int slab_unmergeable(struct kmem_cache *s)
+ 	/*
+ 	 * We may have set a slab to be unmergeable during bootstrap.
+ 	 */
+-	if (s->refcount < 0)
++	if (s->shared_count < 0)
+ 		return 1;
+ 
+ 	return 0;
+@@ -391,7 +391,8 @@ static struct kmem_cache *create_cache(const char *name,
+ 	if (err)
+ 		goto out_free_cache;
+ 
+-	s->refcount = 1;
++	s->shared_count = 1;
++	refcount_set(&s->refcount, 1);
+ 	list_add(&s->list, &slab_caches);
+ 	memcg_link_cache(s);
+ out:
+@@ -611,6 +612,18 @@ void memcg_create_kmem_cache(struct mem_cgroup *memcg,
+ 	if (memcg->kmem_state != KMEM_ONLINE)
+ 		goto out_unlock;
+ 
++	/*
++	 * The root cache has been requested to be destroyed while its memcg
++	 * cache was in creation queue.
++	 *
++	 * The shared_count can be out-dated or can be incremented after return.
++	 * No big worries, at worst the creation of memcg kmem_cache is delayed.
++	 * The next allocation will again trigger the memcg kmem_cache creation
++	 * request.
++	 */
++	if (!root_cache->shared_count)
++		goto out_unlock;
++
+ 	idx = memcg_cache_id(memcg);
+ 	arr = rcu_dereference_protected(root_cache->memcg_params.memcg_caches,
+ 					lockdep_is_held(&slab_mutex));
+@@ -663,6 +676,8 @@ static void kmemcg_deactivate_workfn(struct work_struct *work)
+ {
+ 	struct kmem_cache *s = container_of(work, struct kmem_cache,
+ 					    memcg_params.deact_work);
++	struct kmem_cache *root = s->memcg_params.root_cache;
++	struct mem_cgroup *memcg = s->memcg_params.memcg;
+ 
+ 	get_online_cpus();
+ 	get_online_mems();
+@@ -677,7 +692,8 @@ static void kmemcg_deactivate_workfn(struct work_struct *work)
+ 	put_online_cpus();
+ 
+ 	/* done, put the ref from slab_deactivate_memcg_cache_rcu_sched() */
+-	css_put(&s->memcg_params.memcg->css);
++	css_put(&memcg->css);
++	kmem_cache_put(root);
+ }
+ 
+ static void kmemcg_deactivate_rcufn(struct rcu_head *head)
+@@ -712,6 +728,10 @@ void slab_deactivate_memcg_cache_rcu_sched(struct kmem_cache *s,
+ 	    WARN_ON_ONCE(s->memcg_params.deact_fn))
+ 		return;
+ 
++	/* Make sure root kmem_cache does not get destroyed in the middle */
++	if (!kmem_cache_tryget(s->memcg_params.root_cache))
++		return;
++
+ 	/* pin memcg so that @s doesn't get destroyed in the middle */
+ 	css_get(&s->memcg_params.memcg->css);
+ 
+@@ -838,21 +858,17 @@ void slab_kmem_cache_release(struct kmem_cache *s)
+ 	kmem_cache_free(kmem_cache, s);
+ }
+ 
+-void kmem_cache_destroy(struct kmem_cache *s)
++static void __kmem_cache_destroy(struct kmem_cache *s, bool lock)
+ {
+ 	int err;
+ 
+-	if (unlikely(!s))
+-		return;
+-
+-	get_online_cpus();
+-	get_online_mems();
+-
+-	mutex_lock(&slab_mutex);
++	if (lock) {
++		get_online_cpus();
++		get_online_mems();
++		mutex_lock(&slab_mutex);
++	}
+ 
+-	s->refcount--;
+-	if (s->refcount)
+-		goto out_unlock;
++	VM_BUG_ON(s->shared_count);
+ 
+ 	err = shutdown_memcg_caches(s);
+ 	if (!err)
+@@ -863,11 +879,75 @@ void kmem_cache_destroy(struct kmem_cache *s)
+ 		       s->name);
+ 		dump_stack();
+ 	}
+-out_unlock:
+-	mutex_unlock(&slab_mutex);
+ 
+-	put_online_mems();
+-	put_online_cpus();
++	if (lock) {
++		mutex_unlock(&slab_mutex);
++		put_online_mems();
++		put_online_cpus();
++	}
++}
++
++/*
++ * kmem_cache_tryget - Try to get a reference on a kmem_cache
++ * @s: target kmem_cache
++ *
++ * Obtain a reference on a kmem_cache unless it already has reached zero and is
++ * being released. The caller needs to ensure that kmem_cache is accessible.
++ * Currently only root kmem_cache supports reference counting.
++ */
++bool kmem_cache_tryget(struct kmem_cache *s)
++{
++	if (is_root_cache(s))
++		return refcount_inc_not_zero(&s->refcount);
++	return false;
++}
++
++/*
++ * kmem_cache_put - Put a reference on a kmem_cache
++ * @s: target kmem_cache
++ *
++ * Put a reference obtained via kmem_cache_tryget(). This function can not be
++ * called within slab_mutex as it can trigger a destruction of a kmem_cache
++ * which requires slab_mutex.
++ */
++void kmem_cache_put(struct kmem_cache *s)
++{
++	if (is_root_cache(s) &&
++	    refcount_dec_and_test(&s->refcount))
++		__kmem_cache_destroy(s, true);
++}
++
++/*
++ * kmem_cache_put_locked - Put a reference on a kmem_cache while holding
++ * slab_mutex
++ * @s: target kmem_cache
++ *
++ * Put a reference obtained via kmem_cache_tryget(). Use this function instead
++ * of kmem_cache_put if the caller has already acquired slab_mutex.
++ *
++ * At the moment this function is not exposed externally and is used by SLUB.
++ */
++void kmem_cache_put_locked(struct kmem_cache *s)
++{
++	if (is_root_cache(s) &&
++	    refcount_dec_and_test(&s->refcount))
++		__kmem_cache_destroy(s, false);
++}
++
++void kmem_cache_destroy(struct kmem_cache *s)
++{
++	if (unlikely(!s))
++		return;
++
++	/*
++	 * It is safe to decrement shared_count without any lock. In
++	 * __kmem_cache_alias the kmem_cache's refcount is elevated before
++	 * incrementing shared_count and below the reference is dropped after
++	 * decrementing shared_count. At worst shared_count can be outdated for
++	 * a small window but that is tolerable.
++	 */
++	s->shared_count--;
++	kmem_cache_put(s);
+ }
+ EXPORT_SYMBOL(kmem_cache_destroy);
+ 
+@@ -919,7 +999,8 @@ void __init create_boot_cache(struct kmem_cache *s, const char *name,
+ 		panic("Creation of kmalloc slab %s size=%u failed. Reason %d\n",
+ 					name, size, err);
+ 
+-	s->refcount = -1;	/* Exempt from merging for now */
++	s->shared_count = -1;	/* Exempt from merging for now */
++	refcount_set(&s->refcount, 1);
+ }
+ 
+ struct kmem_cache *__init create_kmalloc_cache(const char *name,
+@@ -934,7 +1015,8 @@ struct kmem_cache *__init create_kmalloc_cache(const char *name,
+ 	create_boot_cache(s, name, size, flags, useroffset, usersize);
+ 	list_add(&s->list, &slab_caches);
+ 	memcg_link_cache(s);
+-	s->refcount = 1;
++	s->shared_count = 1;
++	refcount_set(&s->refcount, 1);
+ 	return s;
+ }
+ 
+diff --git a/mm/slub.c b/mm/slub.c
+index 48f75872c356..41203710de70 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -4270,8 +4270,8 @@ __kmem_cache_alias(const char *name, unsigned int size, unsigned int align,
+ 	struct kmem_cache *s, *c;
+ 
+ 	s = find_mergeable(size, align, flags, name, ctor);
+-	if (s) {
+-		s->refcount++;
++	if (s && kmem_cache_tryget(s)) {
++		s->shared_count++;
+ 
+ 		/*
+ 		 * Adjust the object sizes so that we clear
+@@ -4286,7 +4286,8 @@ __kmem_cache_alias(const char *name, unsigned int size, unsigned int align,
+ 		}
+ 
+ 		if (sysfs_slab_alias(s, name)) {
+-			s->refcount--;
++			s->shared_count--;
++			kmem_cache_put_locked(s);
+ 			s = NULL;
+ 		}
+ 	}
+@@ -5009,7 +5010,8 @@ SLAB_ATTR_RO(ctor);
+ 
+ static ssize_t aliases_show(struct kmem_cache *s, char *buf)
+ {
+-	return sprintf(buf, "%d\n", s->refcount < 0 ? 0 : s->refcount - 1);
++	return sprintf(buf, "%d\n",
++		       s->shared_count < 0 ? 0 : s->shared_count - 1);
+ }
+ SLAB_ATTR_RO(aliases);
+ 
+@@ -5162,7 +5164,7 @@ static ssize_t trace_store(struct kmem_cache *s, const char *buf,
+ 	 * as well as cause other issues like converting a mergeable
+ 	 * cache into an umergeable one.
+ 	 */
+-	if (s->refcount > 1)
++	if (s->shared_count > 1)
+ 		return -EINVAL;
+ 
+ 	s->flags &= ~SLAB_TRACE;
+@@ -5280,7 +5282,7 @@ static ssize_t failslab_show(struct kmem_cache *s, char *buf)
+ static ssize_t failslab_store(struct kmem_cache *s, const char *buf,
+ 							size_t length)
+ {
+-	if (s->refcount > 1)
++	if (s->shared_count > 1)
+ 		return -EINVAL;
+ 
+ 	s->flags &= ~SLAB_FAILSLAB;
 -- 
-With Best Regards,
-Andy Shevchenko
+2.17.0.441.gb46fe60e1d-goog
