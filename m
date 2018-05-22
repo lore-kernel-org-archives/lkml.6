@@ -1,58 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751585AbeEVSvt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 14:51:49 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:37784 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751319AbeEVSvr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 14:51:47 -0400
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Kees Cook <keescook@chromium.org>, Jens Axboe <axboe@kernel.dk>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Tejun Heo <tj@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Manoj N. Kumar" <manoj@linux.vnet.ibm.com>,
-        "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>,
-        Uma Krishnan <ukrishn@linux.vnet.ibm.com>, linux-block@vger.kernel.org,
-        linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/6] block: Create scsi_sense.h for SCSI and ATAPI
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20180522181512.39316-1-keescook@chromium.org>
-        <20180522181512.39316-4-keescook@chromium.org>
-        <20180522183613.GA3784@infradead.org>
-Date: Tue, 22 May 2018 14:50:43 -0400
-In-Reply-To: <20180522183613.GA3784@infradead.org> (Christoph Hellwig's
-        message of "Tue, 22 May 2018 11:36:13 -0700")
-Message-ID: <yq1efi3bk3g.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        id S1751623AbeEVSyN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 14:54:13 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39708 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751361AbeEVSyL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 14:54:11 -0400
+Date: Tue, 22 May 2018 20:54:07 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: TSUKADA Koutaro <tsukada@ascade.co.jp>
+Cc: Mike Kravetz <mike.kravetz@oracle.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>, David Rientjes <rientjes@google.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        Marc-Andre Lureau <marcandre.lureau@redhat.com>,
+        Punit Agrawal <punit.agrawal@arm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, cgroups@vger.kernel.org
+Subject: Re: [PATCH v2 0/7] mm: pages for hugetlb's overcommit may be able to
+ charge to memcg
+Message-ID: <20180522185407.GC20441@dhcp22.suse.cz>
+References: <e863529b-7ce5-4fbe-8cff-581b5789a5f9@ascade.co.jp>
+ <240f1b14-ed7d-4983-6c52-be4899d4caa5@oracle.com>
+ <8711fed5-fc35-a11a-3a17-740a9dca1f2a@ascade.co.jp>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8901 signatures=668700
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=851
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805220198
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8711fed5-fc35-a11a-3a17-740a9dca1f2a@ascade.co.jp>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue 22-05-18 22:04:23, TSUKADA Koutaro wrote:
+> On 2018/05/22 3:07, Mike Kravetz wrote:
+> > On 05/17/2018 09:27 PM, TSUKADA Koutaro wrote:
+> >> Thanks to Mike Kravetz for comment on the previous version patch.
+> >>
+> >> The purpose of this patch-set is to make it possible to control whether or
+> >> not to charge surplus hugetlb pages obtained by overcommitting to memory
+> >> cgroup. In the future, I am trying to accomplish limiting the memory usage
+> >> of applications that use both normal pages and hugetlb pages by the memory
+> >> cgroup(not use the hugetlb cgroup).
+> >>
+> >> Applications that use shared libraries like libhugetlbfs.so use both normal
+> >> pages and hugetlb pages, but we do not know how much to use each. Please
+> >> suppose you want to manage the memory usage of such applications by cgroup
+> >> How do you set the memory cgroup and hugetlb cgroup limit when you want to
+> >> limit memory usage to 10GB?
+> >>
+> >> If you set a limit of 10GB for each, the user can use a total of 20GB of
+> >> memory and can not limit it well. Since it is difficult to estimate the
+> >> ratio used by user of normal pages and hugetlb pages, setting limits of 2GB
+> >> to memory cgroup and 8GB to hugetlb cgroup is not very good idea. In such a
+> >> case, I thought that by using my patch-set, we could manage resources just
+> >> by setting 10GB as the limit of memory cgoup(there is no limit to hugetlb
+> >> cgroup).
+> >>
+> >> In this patch-set, introduce the charge_surplus_huge_pages(boolean) to
+> >> struct hstate. If it is true, it charges to the memory cgroup to which the
+> >> task that obtained surplus hugepages belongs. If it is false, do nothing as
+> >> before, and the default value is false. The charge_surplus_huge_pages can
+> >> be controlled procfs or sysfs interfaces.
+> >>
+> >> Since THP is very effective in environments with kernel page size of 4KB,
+> >> such as x86, there is no reason to positively use HugeTLBfs, so I think
+> >> that there is no situation to enable charge_surplus_huge_pages. However, in
+> >> some distributions such as arm64, the page size of the kernel is 64KB, and
+> >> the size of THP is too huge as 512MB, making it difficult to use. HugeTLBfs
+> >> may support multiple huge page sizes, and in such a special environment
+> >> there is a desire to use HugeTLBfs.
+> > 
+> > One of the basic questions/concerns I have is accounting for surplus huge
+> > pages in the default memory resource controller.  The existing huegtlb
+> > resource controller already takes hugetlbfs huge pages into account,
+> > including surplus pages.  This series would allow surplus pages to be
+> > accounted for in the default  memory controller, or the hugetlb controller
+> > or both.
+> > 
+> > I understand that current mechanisms do not meet the needs of the above
+> > use case.  The question is whether this is an appropriate way to approach
+> > the issue.
 
-Christoph,
+I do share your view Mike!
 
-> On Tue, May 22, 2018 at 11:15:09AM -0700, Kees Cook wrote:
->> Both SCSI and ATAPI share the sense header. In preparation for using the
->> struct scsi_sense_hdr more widely, move this into a separate header and
->> move the helper function to scsi_ioctl.c which is linked with CONFIG_IDE
->> by way of CONFIG_BLK_SCSI_REQUEST.
->
-> Please keep the code where it is and just depend on SCSI on the legacy
-> ide driver.  No need to do gymnastics just for a legacy case.
+> > My cgroup experience and knowledge is extremely limited, but
+> > it does not appear that any other resource can be controlled by multiple
+> > controllers.  Therefore, I am concerned that this may be going against
+> > basic cgroup design philosophy.
+> 
+> Thank you for your feedback.
+> That makes sense, surplus hugepages are charged to both memcg and hugetlb
+> cgroup, which may be contrary to cgroup design philosophy.
+> 
+> Based on the above advice, I have considered the following improvements,
+> what do you think about?
+> 
+> The 'charge_surplus_hugepages' of v2 patch-set was an option to switch
+> "whether to charge memcg in addition to hugetlb cgroup", but it will be
+> abolished. Instead, change to "switch only to memcg instead of hugetlb
+> cgroup" option. This is called 'surplus_charge_to_memcg'.
 
-Yup, I agree.
+This all looks so hackish and ad-hoc that I would be tempted to give it
+an outright nack, but let's here more about why do we need this fiddling
+at all. I've asked in other email so I guess I will get an answer there
+but let me just emphasize again that I absolutely detest a possibility
+to put hugetlb pages into the memcg mix. They just do not belong there.
+Try to look at previous discussions why it has been decided to have a
+separate hugetlb pages at all.
 
+I am also quite confused why you keep distinguishing surplus hugetlb
+pages from regular preallocated ones. Being a surplus page is an
+implementation detail that we use for an internal accounting rather than
+something to exhibit to the userspace even more than we do currently.
+Just look at what [sw]hould when you need to adjust accounting - e.g.
+due to the pool resize. Are you going to uncharge those surplus pages
+ffrom memcg to reflect their persistence?
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+Michal Hocko
+SUSE Labs
