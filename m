@@ -1,391 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752669AbeEVT7i (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 15:59:38 -0400
-Received: from mga04.intel.com ([192.55.52.120]:20273 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752266AbeEVT7h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 15:59:37 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,430,1520924400";
-   d="scan'208";a="56679775"
-Subject: Re: [alsa-devel] [RFC/RFT PATCH] ASoC: topology: Improve backwards
- compatibility with v4 topology files
-To: Guenter Roeck <groeck@google.com>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>,
-        Chintan Patel <chintan.m.patel@intel.com>,
-        Guenter Roeck <groeck@chromium.org>
-References: <20180522165842.233949-1-groeck@google.com>
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <fb9aebba-919a-2e80-aec7-2fd44e5e1861@linux.intel.com>
-Date: Tue, 22 May 2018 14:59:35 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752672AbeEVUCO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 16:02:14 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:37524 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751459AbeEVUCM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 16:02:12 -0400
+X-Google-Smtp-Source: AB8JxZotxVuN8Unj2PX/FPspT7J/WyXHaAevm+gObldMIySjUzatFALv2GCKwmC9Tj270jgeWxx5pg==
+Date: Tue, 22 May 2018 15:02:10 -0500
+From: Rob Herring <robh@kernel.org>
+To: sean.wang@mediatek.com
+Cc: mark.rutland@arm.com, linus.walleij@linaro.org, matthias.bgg@gmail.com,
+        devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/7] dt-bindings: pinctrl: add external interrupt
+ support to MT7622 pinctrl
+Message-ID: <20180522200209.GA7801@rob-hp-laptop>
+References: <cover.1526835466.git.sean.wang@mediatek.com>
+ <3898620ef606004aaddc332591ca467f56773029.1526835466.git.sean.wang@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <20180522165842.233949-1-groeck@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3898620ef606004aaddc332591ca467f56773029.1526835466.git.sean.wang@mediatek.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 05/22/2018 11:58 AM, Guenter Roeck wrote:
-> From: Guenter Roeck <groeck@chromium.org>
->
-> Commit dc31e741db49 ("ASoC: topology: ABI - Add the types for BE
-> DAI") introduced sound topology files version 5. Initially, this
-> change made the topology code incompatible with v4 topology files.
-> Backwards compatibility with v4 configuration files was
-> subsequently added with commit 288b8da7e992 ("ASoC: topology:
-> Support topology file of ABI v4").
->
-> Unfortunately, backwards compatibility was never fully implemented.
->
-> First, the manifest size in (Skylake) v4 configuration files is set
-> to 0, which causes manifest_new_ver() to bail out with error messages
-> similar to the following.
->
-> snd_soc_skl 0000:00:1f.3: ASoC: invalid manifest size
-> snd_soc_skl 0000:00:1f.3: tplg component load failed-22
-> snd_soc_skl 0000:00:1f.3: Failed to init topology!
-> snd_soc_skl 0000:00:1f.3: ASoC: failed to probe component -22
-> skl_n88l25_m98357a skl_n88l25_m98357a: ASoC: failed to instantiate card -22
-> skl_n88l25_m98357a: probe of skl_n88l25_m98357a failed with error -22
->
-> After this problem is fixed, the following error message is seen instead.
->
-> snd_soc_skl 0000:00:1f.3: ASoC: old version of manifest
-> snd_soc_skl 0000:00:1f.3: Invalid descriptor token 1093938482
-> snd_soc_skl 0000:00:1f.3: ASoC: failed to load widget media0_in cpr 0
-> snd_soc_skl 0000:00:1f.3: tPlg component load failed-22
->
-> This message is seen because backwards compatibility for loading widgets
-> was never implemented.
->
-> Both problems have been widely reported. Various attempts were made to
-> fix the problem, usually by providing v5 configuration files. However,
-> all those attempts result in incomplete ASoC configuration.
->
-> Let's implement backward compatibility properly to solve the problem
-> for good.
-Thanks for starting this. I'll ask other Intel folks to look at this.
-I am surprised btw by the 'widely reported' attribute: a Google search 
-for "SKL v4 topology backwards-compatible" give me nothing but a pointer 
-to this patch and to the best of my knowledge this has not been reported 
-on alsa-devel, has it? What other platforms might be affected by this 
-problem?
-
-I am also not convinced by the notion that maintaining topology files is 
-only a userspace/distro issue. This would mean some distros will have 
-access to the required topology files, possibly enabling DSP processing 
-capabilities, but other will not and will not be able to enable even 
-basic playback/capture. Just like we have a basic firmware with limited 
-functionality in /lib/firmware/intel, it would make sense to require a 
-basic .conf file in alsa-lib for every upstream machine driver - along 
-possibly with a basic UCM file so that audio works no matter what distro 
-people use.
-
->
-> Signed-off-by: Guenter Roeck <groeck@chromium.org>
+On Mon, May 21, 2018 at 01:01:47AM +0800, sean.wang@mediatek.com wrote:
+> From: Sean Wang <sean.wang@mediatek.com>
+> 
+> Extend the capability of MT7622 pinctrl with adding EINT so that each
+> GPIO can be used to notify CPU when a signal state is changing on the
+> line as an external interrupt.
+> 
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 > ---
-> Tested on Caroline (Samsung Chromebook Pro) running v4.17-rc6 plus
-> this patch, with original (v4) configuration file. Also tested on
-> several other Chromebooks with this patch on top of chromeos-4.14.
->
-> Additional real world test coverage would be useful before moving forward.
->
->   sound/soc/intel/skylake/skl-topology.c | 235 +++++++++++++++++++++++++
->   sound/soc/soc-topology.c               |   7 +-
->   2 files changed, 240 insertions(+), 2 deletions(-)
->
-> diff --git a/sound/soc/intel/skylake/skl-topology.c b/sound/soc/intel/skylake/skl-topology.c
-> index 3b1dca419883..cc81e200e6b7 100644
-> --- a/sound/soc/intel/skylake/skl-topology.c
-> +++ b/sound/soc/intel/skylake/skl-topology.c
-> @@ -19,6 +19,7 @@
->   #include <linux/slab.h>
->   #include <linux/types.h>
->   #include <linux/firmware.h>
-> +#include <linux/uuid.h>
->   #include <sound/soc.h>
->   #include <sound/soc-topology.h>
->   #include <uapi/sound/snd_sst_tokens.h>
-> @@ -30,6 +31,79 @@
->   #include "../common/sst-dsp.h"
->   #include "../common/sst-dsp-priv.h"
->   
-> +/* v4 configuration data */
-> +struct skl_dfw_v4_module_pin {
-> +	u16 module_id;
-> +	u16 instance_id;
-> +} __packed;
-> +
-> +struct skl_dfw_v4_module_fmt {
-> +	u32 channels;
-> +	u32 freq;
-> +	u32 bit_depth;
-> +	u32 valid_bit_depth;
-> +	u32 ch_cfg;
-> +	u32 interleaving_style;
-> +	u32 sample_type;
-> +	u32 ch_map;
-> +} __packed;
-> +
-> +struct skl_dfw_v4_module_caps {
-> +	u32 set_params:2;
-> +	u32 rsvd:30;
-> +	u32 param_id;
-> +	u32 caps_size;
-> +	u32 caps[HDA_SST_CFG_MAX];
-> +};
-> +
-> +struct skl_dfw_v4_pipe {
-> +	u8 pipe_id;
-> +	u8 pipe_priority;
-> +	u16 conn_type:4;
-> +	u16 rsvd:4;
-> +	u16 memory_pages:8;
-> +} __packed;
-> +
-> +struct skl_dfw_v4_module {
-> +	char uuid[SKL_UUID_STR_SZ];
-> +
-> +	u16 module_id;
-> +	u16 instance_id;
-> +	u32 max_mcps;
-> +	u32 mem_pages;
-> +	u32 obs;
-> +	u32 ibs;
-> +	u32 vbus_id;
-> +
-> +	u32 max_in_queue:8;
-> +	u32 max_out_queue:8;
-> +	u32 time_slot:8;
-> +	u32 core_id:4;
-> +	u32 rsvd1:4;
-> +
-> +	u32 module_type:8;
-> +	u32 conn_type:4;
-> +	u32 dev_type:4;
-> +	u32 hw_conn_type:4;
-> +	u32 rsvd2:12;
-> +
-> +	u32 params_fixup:8;
-> +	u32 converter:8;
-> +	u32 input_pin_type:1;
-> +	u32 output_pin_type:1;
-> +	u32 is_dynamic_in_pin:1;
-> +	u32 is_dynamic_out_pin:1;
-> +	u32 is_loadable:1;
-> +	u32 rsvd3:11;
-> +
-> +	struct skl_dfw_v4_pipe pipe;
-> +	struct skl_dfw_v4_module_fmt in_fmt[MAX_IN_QUEUE];
-> +	struct skl_dfw_v4_module_fmt out_fmt[MAX_OUT_QUEUE];
-> +	struct skl_dfw_v4_module_pin in_pin[MAX_IN_QUEUE];
-> +	struct skl_dfw_v4_module_pin out_pin[MAX_OUT_QUEUE];
-> +	struct skl_dfw_v4_module_caps caps;
-> +} __packed;
-> +
->   #define SKL_CH_FIXUP_MASK		(1 << 0)
->   #define SKL_RATE_FIXUP_MASK		(1 << 1)
->   #define SKL_FMT_FIXUP_MASK		(1 << 2)
-> @@ -2724,6 +2798,160 @@ static int skl_tplg_get_desc_blocks(struct device *dev,
->   	return -EINVAL;
->   }
->   
-> +/*
-> + * Add pipeline from topology binary into driver pipeline list
-> + *
-> + * If already added we return that instance
-> + * Otherwise we create a new instance and add into driver list
-> + */
-> +static int skl_tplg_add_pipe_v4(struct device *dev,
-> +				struct skl_module_cfg *mconfig, struct skl *skl,
-> +				struct skl_dfw_v4_pipe *dfw_pipe)
-> +{
-> +	struct skl_pipeline *ppl;
-> +	struct skl_pipe *pipe;
-> +	struct skl_pipe_params *params;
-> +
-> +	list_for_each_entry(ppl, &skl->ppl_list, node) {
-> +		if (ppl->pipe->ppl_id == dfw_pipe->pipe_id) {
-> +			mconfig->pipe = ppl->pipe;
-> +			return 0;
-> +		}
-> +	}
-> +
-> +	ppl = devm_kzalloc(dev, sizeof(*ppl), GFP_KERNEL);
-> +	if (!ppl)
-> +		return -ENOMEM;
-> +
-> +	pipe = devm_kzalloc(dev, sizeof(*pipe), GFP_KERNEL);
-> +	if (!pipe)
-> +		return -ENOMEM;
-> +
-> +	params = devm_kzalloc(dev, sizeof(*params), GFP_KERNEL);
-> +	if (!params)
-> +		return -ENOMEM;
-> +
-> +	pipe->ppl_id = dfw_pipe->pipe_id;
-> +	pipe->memory_pages = dfw_pipe->memory_pages;
-> +	pipe->pipe_priority = dfw_pipe->pipe_priority;
-> +	pipe->conn_type = dfw_pipe->conn_type;
-> +	pipe->state = SKL_PIPE_INVALID;
-> +	pipe->p_params = params;
-> +	INIT_LIST_HEAD(&pipe->w_list);
-> +
-> +	ppl->pipe = pipe;
-> +	list_add(&ppl->node, &skl->ppl_list);
-> +
-> +	mconfig->pipe = pipe;
-> +	mconfig->pipe->state = SKL_PIPE_INVALID;
-> +
-> +	return 0;
-> +}
-> +
-> +static void skl_fill_module_pin_info_v4(struct skl_dfw_v4_module_pin *dfw_pin,
-> +					struct skl_module_pin *m_pin,
-> +					bool is_dynamic, int max_pin)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < max_pin; i++) {
-> +		m_pin[i].id.module_id = dfw_pin[i].module_id;
-> +		m_pin[i].id.instance_id = dfw_pin[i].instance_id;
-> +		m_pin[i].in_use = false;
-> +		m_pin[i].is_dynamic = is_dynamic;
-> +		m_pin[i].pin_state = SKL_PIN_UNBIND;
-> +	}
-> +}
-> +
-> +static void skl_tplg_fill_fmt_v4(struct skl_module_pin_fmt *dst_fmt,
-> +				 struct skl_dfw_v4_module_fmt *src_fmt,
-> +				 int pins)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < pins; i++) {
-> +		dst_fmt[i].fmt.channels  = src_fmt[i].channels;
-> +		dst_fmt[i].fmt.s_freq = src_fmt[i].freq;
-> +		dst_fmt[i].fmt.bit_depth = src_fmt[i].bit_depth;
-> +		dst_fmt[i].fmt.valid_bit_depth = src_fmt[i].valid_bit_depth;
-> +		dst_fmt[i].fmt.ch_cfg = src_fmt[i].ch_cfg;
-> +		dst_fmt[i].fmt.ch_map = src_fmt[i].ch_map;
-> +		dst_fmt[i].fmt.interleaving_style =
-> +						src_fmt[i].interleaving_style;
-> +		dst_fmt[i].fmt.sample_type = src_fmt[i].sample_type;
-> +	}
-> +}
-> +
-> +static int skl_tplg_get_pvt_data_v4(struct snd_soc_tplg_dapm_widget *tplg_w,
-> +				    struct skl *skl, struct device *dev,
-> +				    struct skl_module_cfg *mconfig)
-> +{
-> +	struct skl_dfw_v4_module *dfw =
-> +				(struct skl_dfw_v4_module *)tplg_w->priv.data;
-> +	int ret;
-> +
-> +	dev_dbg(dev, "Parsing Skylake v4 widget topology data\n");
-> +
-> +	ret = guid_parse(dfw->uuid, (guid_t *)mconfig->guid);
-> +	if (ret)
-> +		return ret;
-> +	mconfig->id.module_id = -1;
-> +	mconfig->id.instance_id = dfw->instance_id;
-> +	mconfig->module->resources[0].cps = dfw->max_mcps;
-> +	mconfig->module->resources[0].ibs = dfw->ibs;
-> +	mconfig->module->resources[0].obs = dfw->obs;
-> +	mconfig->core_id = dfw->core_id;
-> +	mconfig->module->max_input_pins = dfw->max_in_queue;
-> +	mconfig->module->max_output_pins = dfw->max_out_queue;
-> +	mconfig->module->loadable = dfw->is_loadable;
-> +	skl_tplg_fill_fmt_v4(mconfig->module->formats[0].inputs, dfw->in_fmt,
-> +			     MAX_IN_QUEUE);
-> +	skl_tplg_fill_fmt_v4(mconfig->module->formats[0].outputs, dfw->out_fmt,
-> +			     MAX_OUT_QUEUE);
-> +
-> +	mconfig->params_fixup = dfw->params_fixup;
-> +	mconfig->converter = dfw->converter;
-> +	mconfig->m_type = dfw->module_type;
-> +	mconfig->vbus_id = dfw->vbus_id;
-> +	mconfig->module->resources[0].is_pages = dfw->mem_pages;
-> +
-> +	ret = skl_tplg_add_pipe_v4(dev, mconfig, skl, &dfw->pipe);
-> +	if (ret)
-> +		return ret;
-> +
-> +	mconfig->dev_type = dfw->dev_type;
-> +	mconfig->hw_conn_type = dfw->hw_conn_type;
-> +	mconfig->time_slot = dfw->time_slot;
-> +	mconfig->formats_config.caps_size = dfw->caps.caps_size;
-> +
-> +	mconfig->m_in_pin = devm_kzalloc(dev,
-> +				MAX_IN_QUEUE * sizeof(*mconfig->m_in_pin),
-> +				GFP_KERNEL);
-> +	if (!mconfig->m_in_pin)
-> +		return -ENOMEM;
-> +
-> +	mconfig->m_out_pin = devm_kzalloc(dev,
-> +				MAX_OUT_QUEUE * sizeof(*mconfig->m_out_pin),
-> +				GFP_KERNEL);
-> +	if (!mconfig->m_out_pin)
-> +		return -ENOMEM;
-> +
-> +	skl_fill_module_pin_info_v4(dfw->in_pin, mconfig->m_in_pin,
-> +				    dfw->is_dynamic_in_pin,
-> +				    mconfig->module->max_input_pins);
-> +	skl_fill_module_pin_info_v4(dfw->out_pin, mconfig->m_out_pin,
-> +				    dfw->is_dynamic_out_pin,
-> +				    mconfig->module->max_output_pins);
-> +
-> +	if (mconfig->formats_config.caps_size) {
-> +		dev_warn(dev, "caps size %d not supported, will be ignored\n",
-> +			 mconfig->formats_config.caps_size);
-> +		mconfig->formats_config.caps_size = 0;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->   /*
->    * Parse the private data for the token and corresponding value.
->    * The private data can have multiple data blocks. So, a data block
-> @@ -2739,6 +2967,13 @@ static int skl_tplg_get_pvt_data(struct snd_soc_tplg_dapm_widget *tplg_w,
->   	char *data;
->   	int ret;
->   
-> +	/*
-> +	 * v4 configuration files have a valid UUID at the start of
-> +	 * the widget's private data.
-> +	 */
-> +	if (uuid_is_valid((char *)tplg_w->priv.data))
-> +		return skl_tplg_get_pvt_data_v4(tplg_w, skl, dev, mconfig);
-> +
->   	/* Read the NUM_DATA_BLOCKS descriptor */
->   	array = (struct snd_soc_tplg_vendor_array *)tplg_w->priv.data;
->   	ret = skl_tplg_get_desc_blocks(dev, array);
-> diff --git a/sound/soc/soc-topology.c b/sound/soc/soc-topology.c
-> index 986b8b2f90fb..d66b2e5ccd67 100644
-> --- a/sound/soc/soc-topology.c
-> +++ b/sound/soc/soc-topology.c
-> @@ -2293,8 +2293,11 @@ static int manifest_new_ver(struct soc_tplg *tplg,
->   	*manifest = NULL;
->   
->   	if (src->size != sizeof(*src_v4)) {
-> -		dev_err(tplg->dev, "ASoC: invalid manifest size\n");
-> -		return -EINVAL;
-> +		dev_warn(tplg->dev, "ASoC: invalid manifest size %d\n",
-> +			 src->size);
-> +		if (src->size)
-> +			return -EINVAL;
-> +		src->size = sizeof(*src_v4);
->   	}
->   
->   	dev_warn(tplg->dev, "ASoC: old version of manifest\n");
+>  Documentation/devicetree/bindings/pinctrl/pinctrl-mt7622.txt | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+
+Reviewed-by: Rob Herring <robh@kernel.org>
