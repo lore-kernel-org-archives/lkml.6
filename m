@@ -1,66 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751391AbeEVNip (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 09:38:45 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:45717 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751199AbeEVNim (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 09:38:42 -0400
-X-Google-Smtp-Source: AB8JxZoAffD0i6YwiMylA1pn8csmfoD9/BT5mzupS9DWUTGY53+UcrNUgGjOmZNAZQ6AChY+e9hpNw==
-Subject: Re: [PATCH v6 1/2] acpi: apei: Rename ghes_severity() to
- ghes_cper_severity()
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>, alex_gagniuc@dellteam.com,
-        austin_bolen@dell.com, shyam_iyer@dell.com,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
-        Tony Luck <tony.luck@intel.com>, Tyler Baicar <tbaicar@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>, James Morse <james.morse@arm.com>,
-        Shiju Jose <shiju.jose@huawei.com>,
-        "Jonathan (Zhixiong) Zhang" <zjzhang@codeaurora.org>,
-        Dongjiu Geng <gengdongjiu@huawei.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180521135003.32459-1-mr.nuke.me@gmail.com>
- <20180521135003.32459-2-mr.nuke.me@gmail.com>
- <CAJZ5v0hKfgTOJb47NjeOP1BBPXPjWqdfu_TXVwWMzOHicEx0Xw@mail.gmail.com>
-From: "Alex G." <mr.nuke.me@gmail.com>
-Message-ID: <53d0ba88-6929-a7cf-6c3e-4ca389f7249a@gmail.com>
-Date: Tue, 22 May 2018 08:38:39 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751495AbeEVNkB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 09:40:01 -0400
+Received: from muru.com ([72.249.23.125]:43984 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751199AbeEVNj6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 09:39:58 -0400
+Date: Tue, 22 May 2018 06:39:55 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Keerthy <j-keerthy@ti.com>
+Cc: linus.walleij@linaro.org, grygorii.strashko@ti.com, t-kristo@ti.com,
+        Russ.Dill@ti.com, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ssantosh@kernel.org,
+        haojian.zhuang@linaro.org, linux-arm-kernel@lists.infradead.org,
+        d-gerlach@ti.com
+Subject: Re: [PATCH 12/14] OMAP: CLK: CLKSRC: Add suspend resume hooks
+Message-ID: <20180522133955.GG98604@atomide.com>
+References: <1523505239-16229-1-git-send-email-j-keerthy@ti.com>
+ <1523505239-16229-13-git-send-email-j-keerthy@ti.com>
+ <20180412142714.GX5700@atomide.com>
+ <038cc2cd-ff72-c9c9-257b-1c1cc09a66a8@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0hKfgTOJb47NjeOP1BBPXPjWqdfu_TXVwWMzOHicEx0Xw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <038cc2cd-ff72-c9c9-257b-1c1cc09a66a8@ti.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 05/22/2018 03:55 AM, Rafael J. Wysocki wrote:
-> On Mon, May 21, 2018 at 3:49 PM, Alexandru Gagniuc <mr.nuke.me@gmail.com> wrote:
->> ghes_severity() is a misnomer in this case, as it implies the severity
->> of the entire GHES structure. Instead, it maps one CPER value to a
->> GHES_SEV* value. ghes_cper_severity() is clearer.
+* Keerthy <j-keerthy@ti.com> [180522 07:59]:
+> On Thursday 12 April 2018 07:57 PM, Tony Lindgren wrote:
+> > * Keerthy <j-keerthy@ti.com> [180412 03:56]:
+> >> Add the save and restore for clksrc as part of suspend and resume
+> >> so that it saves the counter value and restores. This is needed in
+> >> modes like rtc+ddr in self-refresh not doing this stalls the time.
+> > 
+> > I suspect this too should really happen with cpu_pm.
 > 
-> It looks like the *real* reason for this change is that you
-> re-introduce ghes_severity() as a different function in the second
-> patch.
+> I believe going by the previous set of patches this fits better with
+> suspend/resume?
 
-/me holds fist at Borislav
+Yes if you don't need it for cpuidle and other SoC variants
+don't need it for cpuidle.
 
-> There are a couple of reasons to avoid that, one of them being that
-> people will now have to remember what the function did in which kernel
-> versions. 
+> > Probably no need to look up the hwmod every time? Especially if am437x
+> > will start supporting deeper idle modes during runtime.
+> 
+> Like clockevent i will store the hwmod pointer for clocksource as well.
 
-So?
+OK
 
-> Also, the current name is good enough IMO,
+Regards,
 
-Two other reviewers were extremely confused by the vague name, so no,
-this is not good enough.
-
-> so I'm not going to apply this patch.
+Tony
