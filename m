@@ -1,68 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751436AbeEVQUH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 12:20:07 -0400
-Received: from gateway36.websitewelcome.com ([192.185.185.36]:19276 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751236AbeEVQUG (ORCPT
+        id S1751586AbeEVQUl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 12:20:41 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:38243 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751020AbeEVQUi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 12:20:06 -0400
-X-Authority-Reason: nr=8
-Date: Tue, 22 May 2018 11:20:01 -0500
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] media: dib0700: add code comment
-Message-ID: <20180522162001.GA28579@embeddedor.com>
+        Tue, 22 May 2018 12:20:38 -0400
+X-Google-Smtp-Source: AB8JxZrATXWwkPc1rQcT2kTZ58f7bA+21iyHhEjtsQWWRbCqUCyg5TeMj4eXd1xfff6ehBcPO9RhdA==
+Subject: Re: [PATCH] block: kyber: make kyber more friendly with merging
+To: =?UTF-8?Q?Holger_Hoffst=c3=a4tte?= <holger@applied-asynchrony.com>,
+        Jianchao Wang <jianchao.w.wang@oracle.com>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1527000509-2619-1-git-send-email-jianchao.w.wang@oracle.com>
+ <163c5760-cf0e-faea-ee4e-ac5d688310fe@applied-asynchrony.com>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <00e5dfd4-d3a2-b008-3d8b-390a788f61c9@kernel.dk>
+Date: Tue, 22 May 2018 10:20:34 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.192.46.223
-X-Source-L: No
-X-Exim-ID: 1fLA17-002gRj-Ad
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [187.192.46.223]:36892
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 11
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <163c5760-cf0e-faea-ee4e-ac5d688310fe@applied-asynchrony.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add FIXME code comment:
-/* FIXME: check if it is fe_adap[1] */
+On 5/22/18 10:17 AM, Holger Hoffstätte wrote:
+> On 05/22/18 16:48, Jianchao Wang wrote:
+>> Currently, kyber is very unfriendly with merging. kyber depends
+>> on ctx rq_list to do merging, however, most of time, it will not
+>> leave any requests in ctx rq_list. This is because even if tokens
+>> of one domain is used up, kyber will try to dispatch requests
+>> from other domain and flush the rq_list there.
+>>
+>> To improve this, we setup kyber_ctx_queue (kcq) which is similar
+>> with ctx, but it has rq_lists for different domain and build same
+>> mapping between kcq and khd as the ctx & hctx. Then we could merge,
+>> insert and dispatch for different domains separately. If one domain
+>> token is used up, the requests could be left in the rq_list of
+>> that domain and maybe merged with following io.
+>>
+>> Following is my test result on machine with 8 cores and NVMe card
+>> INTEL SSDPEKKR128G7
+>>
+>> fio size=256m ioengine=libaio iodepth=64 direct=1 numjobs=8
+>> seq/random
+>> +------+---------------------------------------------------------------+
+>> |patch?| bw(MB/s) |   iops    | slat(usec) |    clat(usec)   |  merge  |
+>> +----------------------------------------------------------------------+
+>> | w/o  |  606/612 | 151k/153k |  6.89/7.03 | 3349.21/3305.40 |   0/0   |
+>> +----------------------------------------------------------------------+
+>> | w/   | 1083/616 | 277k/154k |  4.93/6.95 | 1830.62/3279.95 | 223k/3k |
+>> +----------------------------------------------------------------------+
+>> When set numjobs to 16, the bw and iops could reach 1662MB/s and 425k
+>> on my platform.
+>>
+>> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+> 
+> <snip>
+> 
+> This looks great but prevents kyber from being built as module,
+> which is AFAIK supposed to work (and works now):
+> 
+> ..
+>   CC [M]  block/kyber-iosched.o
+>   Building modules, stage 2.
+>   MODPOST 313 modules
+> ERROR: "bio_attempt_back_merge" [block/kyber-iosched.ko] undefined!
+> ERROR: "bio_attempt_front_merge" [block/kyber-iosched.ko] undefined!
+> ERROR: "bio_attempt_discard_merge" [block/kyber-iosched.ko] undefined!
+> ERROR: "blk_try_merge" [block/kyber-iosched.ko] undefined!
+> ERROR: "blk_rq_merge_ok" [block/kyber-iosched.ko] undefined!
+> ..
+> 
+> It does build fine when compiled in, obviously. :)
 
-It is likely that it should be adap->fe_adap[1].fe in the second clause,
-but this has never been verified.
+It's basically duplicating the contents of blk_attempt_plug_merge().
+I would suggest abstracting out the list loop and merge check
+into a helper, that could then both be called from kyber and the
+plug merge function.
 
-Suggested-by: Mauro Carvalho Chehab <mchehab@kernel.org>
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/media/usb/dvb-usb/dib0700_devices.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/media/usb/dvb-usb/dib0700_devices.c b/drivers/media/usb/dvb-usb/dib0700_devices.c
-index c53a969..091389f 100644
---- a/drivers/media/usb/dvb-usb/dib0700_devices.c
-+++ b/drivers/media/usb/dvb-usb/dib0700_devices.c
-@@ -1745,6 +1745,7 @@ static int dib809x_tuner_attach(struct dvb_usb_adapter *adap)
- 		if (dvb_attach(dib0090_register, adap->fe_adap[0].fe, tun_i2c, &dib809x_dib0090_config) == NULL)
- 			return -ENODEV;
- 	} else {
-+		/* FIXME: check if it is fe_adap[1] */
- 		if (dvb_attach(dib0090_register, adap->fe_adap[0].fe, tun_i2c, &dib809x_dib0090_config) == NULL)
- 			return -ENODEV;
- 	}
 -- 
-2.7.4
+Jens Axboe
