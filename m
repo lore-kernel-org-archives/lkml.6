@@ -1,98 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752677AbeEVDxC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 23:53:02 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:37710 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751745AbeEVDw5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 23:52:57 -0400
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-Cc: jgross@suse.com, JBeulich@suse.com,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Subject: [PATCH v4 1/2] xen/PVH: Set up GS segment for stack canary
-Date: Mon, 21 May 2018 23:54:44 -0400
-Message-Id: <20180522035445.16911-2-boris.ostrovsky@oracle.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180522035445.16911-1-boris.ostrovsky@oracle.com>
-References: <20180522035445.16911-1-boris.ostrovsky@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8900 signatures=668700
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805220044
+        id S1752756AbeEVDxa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 23:53:30 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46760 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752704AbeEVDx2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 23:53:28 -0400
+Date: Tue, 22 May 2018 06:53:27 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: DaeRyong Jeong <threeearcat@gmail.com>, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, byoungyoung@purdue.edu, kt0755@gmail.com,
+        bammanag@purdue.edu
+Subject: Re: KASAN: use-after-free Read in vhost_chr_write_iter
+Message-ID: <20180522065147-mutt-send-email-mst@kernel.org>
+References: <20180517134544.GA20646@dragonet.kaist.ac.kr>
+ <58419d62-3074-2e5a-8504-da1cdeb08280@redhat.com>
+ <fb27c1fd-5172-252a-cb8f-b53927a26d06@redhat.com>
+ <20180521173645-mutt-send-email-mst@kernel.org>
+ <51cf8274-162f-384b-0ff7-47fbf15412f1@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <51cf8274-162f-384b-0ff7-47fbf15412f1@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We are making calls to C code (e.g. xen_prepare_pvh()) which may use
-stack canary (stored in GS segment).
+On Tue, May 22, 2018 at 11:50:29AM +0800, Jason Wang wrote:
+> 
+> 
+> On 2018年05月21日 22:42, Michael S. Tsirkin wrote:
+> > On Mon, May 21, 2018 at 10:38:10AM +0800, Jason Wang wrote:
+> > > On 2018年05月18日 17:24, Jason Wang wrote:
+> > > > On 2018年05月17日 21:45, DaeRyong Jeong wrote:
+> > > > > We report the crash: KASAN: use-after-free Read in vhost_chr_write_iter
+> > > > > 
+> > > > > This crash has been found in v4.17-rc1 using RaceFuzzer (a modified
+> > > > > version of Syzkaller), which we describe more at the end of this
+> > > > > report. Our analysis shows that the race occurs when invoking two
+> > > > > syscalls concurrently, write$vnet and ioctl$VHOST_RESET_OWNER.
+> > > > > 
+> > > > > 
+> > > > > Analysis:
+> > > > > We think the concurrent execution of vhost_process_iotlb_msg() and
+> > > > > vhost_dev_cleanup() causes the crash.
+> > > > > Both of functions can run concurrently (please see call sequence below),
+> > > > > and possibly, there is a race on dev->iotlb.
+> > > > > If the switch occurs right after vhost_dev_cleanup() frees
+> > > > > dev->iotlb, vhost_process_iotlb_msg() still sees the non-null value
+> > > > > and it
+> > > > > keep executing without returning -EFAULT. Consequently, use-after-free
+> > > > > occures
+> > > > > 
+> > > > > 
+> > > > > Thread interleaving:
+> > > > > CPU0 (vhost_process_iotlb_msg)                CPU1 (vhost_dev_cleanup)
+> > > > > (In the case of both VHOST_IOTLB_UPDATE and
+> > > > > VHOST_IOTLB_INVALIDATE)
+> > > > > =====                            =====
+> > > > >                              vhost_umem_clean(dev->iotlb);
+> > > > > if (!dev->iotlb) {
+> > > > >              ret = -EFAULT;
+> > > > >                  break;
+> > > > > }
+> > > > >                              dev->iotlb = NULL;
+> > > > > 
+> > > > > 
+> > > > > Call Sequence:
+> > > > > CPU0
+> > > > > =====
+> > > > > vhost_net_chr_write_iter
+> > > > >      vhost_chr_write_iter
+> > > > >          vhost_process_iotlb_msg
+> > > > > 
+> > > > > CPU1
+> > > > > =====
+> > > > > vhost_net_ioctl
+> > > > >      vhost_net_reset_owner
+> > > > >          vhost_dev_reset_owner
+> > > > >              vhost_dev_cleanup
+> > > > Thanks a lot for the analysis.
+> > > > 
+> > > > This could be addressed by simply protect it with dev mutex.
+> > > > 
+> > > > Will post a patch.
+> > > > 
+> > > Could you please help to test the attached patch? I've done some smoking
+> > > test.
+> > > 
+> > > Thanks
+> > > >From 88328386f3f652e684ee33dc4cf63dcaed871aea Mon Sep 17 00:00:00 2001
+> > > From: Jason Wang<jasowang@redhat.com>
+> > > Date: Fri, 18 May 2018 17:33:27 +0800
+> > > Subject: [PATCH] vhost: synchronize IOTLB message with dev cleanup
+> > > 
+> > > DaeRyong Jeong reports a race between vhost_dev_cleanup() and
+> > > vhost_process_iotlb_msg():
+> > > 
+> > > Thread interleaving:
+> > > CPU0 (vhost_process_iotlb_msg)			CPU1 (vhost_dev_cleanup)
+> > > (In the case of both VHOST_IOTLB_UPDATE and
+> > > VHOST_IOTLB_INVALIDATE)
+> > > =====						=====
+> > > 						vhost_umem_clean(dev->iotlb);
+> > > if (!dev->iotlb) {
+> > > 	        ret = -EFAULT;
+> > > 		        break;
+> > > }
+> > > 						dev->iotlb = NULL;
+> > > 
+> > > The reason is we don't synchronize between them, fixing by protecting
+> > > vhost_process_iotlb_msg() with dev mutex.
+> > > 
+> > > Reported-by: DaeRyong Jeong<threeearcat@gmail.com>
+> > > Fixes: 6b1e6cc7855b0 ("vhost: new device IOTLB API")
+> > > Reported-by: DaeRyong Jeong<threeearcat@gmail.com>
+> > Long terms we might want to move iotlb into vqs
+> > so that messages can be processed in parallel.
+> > Not sure how to do it yet.
+> > 
+> 
+> Then we probably need to extend IOTLB msg to have a queue idx. But I thinkit
+> was probably only help if we split tx/rx into separate processes.
+> 
+> Thanks
 
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
----
- arch/x86/xen/xen-pvh.S | 26 +++++++++++++++++++++++++-
- 1 file changed, 25 insertions(+), 1 deletion(-)
+3 mutex locks on each access isn't pretty even if done by
+a single process, but yes - might be more important for scsi.
 
-diff --git a/arch/x86/xen/xen-pvh.S b/arch/x86/xen/xen-pvh.S
-index e1a5fbe..0169374 100644
---- a/arch/x86/xen/xen-pvh.S
-+++ b/arch/x86/xen/xen-pvh.S
-@@ -54,6 +54,9 @@
-  * charge of setting up it's own stack, GDT and IDT.
-  */
- 
-+#define PVH_GDT_ENTRY_CANARY	4
-+#define PVH_CANARY_SEL		(PVH_GDT_ENTRY_CANARY * 8)
-+
- ENTRY(pvh_start_xen)
- 	cld
- 
-@@ -98,6 +101,12 @@ ENTRY(pvh_start_xen)
- 	/* 64-bit entry point. */
- 	.code64
- 1:
-+	/* Set base address in stack canary descriptor. */
-+	mov $MSR_GS_BASE,%ecx
-+	mov $canary, %rax
-+	cdq
-+	wrmsr
-+
- 	call xen_prepare_pvh
- 
- 	/* startup_64 expects boot_params in %rsi. */
-@@ -107,6 +116,17 @@ ENTRY(pvh_start_xen)
- 
- #else /* CONFIG_X86_64 */
- 
-+	/* Set base address in stack canary descriptor. */
-+	movl $_pa(gdt_start),%eax
-+	movl $_pa(canary),%ecx
-+	movw %cx, (PVH_GDT_ENTRY_CANARY * 8) + 2(%eax)
-+	shrl $16, %ecx
-+	movb %cl, (PVH_GDT_ENTRY_CANARY * 8) + 4(%eax)
-+	movb %ch, (PVH_GDT_ENTRY_CANARY * 8) + 7(%eax)
-+
-+	mov $PVH_CANARY_SEL,%eax
-+	mov %eax,%gs
-+
- 	call mk_early_pgtbl_32
- 
- 	mov $_pa(initial_page_table), %eax
-@@ -150,9 +170,13 @@ gdt_start:
- 	.quad GDT_ENTRY(0xc09a, 0, 0xfffff) /* __KERNEL_CS */
- #endif
- 	.quad GDT_ENTRY(0xc092, 0, 0xfffff) /* __KERNEL_DS */
-+	.quad GDT_ENTRY(0x4090, 0, 0x18)    /* PVH_CANARY_SEL */
- gdt_end:
- 
--	.balign 4
-+	.balign 16
-+canary:
-+	.fill 48, 1, 0
-+
- early_stack:
- 	.fill 256, 1, 0
- early_stack_end:
 -- 
-2.9.3
+MST
