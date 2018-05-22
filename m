@@ -1,67 +1,35 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751517AbeEVPSH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 11:18:07 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:45764 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751236AbeEVPSE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 11:18:04 -0400
-X-Google-Smtp-Source: AB8JxZr7FYHVUfINDxbi2xERy6XeZGWO1ufieTWA7XqdVrzrRt6LqsOwMOQ+q5rgJTnABzEUNGbWCQ==
-Subject: Re: [PATCH v6 2/2] acpi: apei: Do not panic() on PCIe errors reported
- through GHES
-To: Tyler Baicar <tbaicar@codeaurora.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>, alex_gagniuc@dellteam.com,
-        austin_bolen@dell.com, shyam_iyer@dell.com,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
-        Tony Luck <tony.luck@intel.com>, Will Deacon <will.deacon@arm.com>,
-        James Morse <james.morse@arm.com>, Shiju Jose <shiju.jose@huawei.com>,
-        "Jonathan (Zhixiong) Zhang" <zjzhang@codeaurora.org>,
-        Dongjiu Geng <gengdongjiu@huawei.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180521135003.32459-1-mr.nuke.me@gmail.com>
- <20180521135003.32459-3-mr.nuke.me@gmail.com>
- <CAJZ5v0h+U1zNK+LdOH_pU7kb+c6VK7erZCRqaV2WauDE2cwc6w@mail.gmail.com>
- <5a72a503-e8d5-c317-89b4-86e574c48064@gmail.com>
- <50e318d3-b581-ad8b-d0e3-3e6c7b0da080@codeaurora.org>
-From: "Alex G." <mr.nuke.me@gmail.com>
-Message-ID: <cf2e0a02-fb99-efde-0b41-63585c9d8844@gmail.com>
-Date: Tue, 22 May 2018 10:18:02 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751753AbeEVPSb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 11:18:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36368 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751566AbeEVPS2 (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 11:18:28 -0400
+Date: Tue, 22 May 2018 12:18:25 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Jin Yao <yao.jin@linux.intel.com>
+Cc: jolsa@kernel.org, peterz@infradead.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, Linux-kernel@vger.kernel.org,
+        ak@linux.intel.com, kan.liang@intel.com, yao.jin@intel.com
+Subject: Re: [PATCH] perf annotate: Show group event string for stdio
+Message-ID: <20180522151825.GC25467@kernel.org>
+References: <1526989115-14435-1-git-send-email-yao.jin@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <50e318d3-b581-ad8b-d0e3-3e6c7b0da080@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1526989115-14435-1-git-send-email-yao.jin@linux.intel.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Em Tue, May 22, 2018 at 07:38:35PM +0800, Jin Yao escreveu:
+> When we enable the group, for tui/stdio2, the output first
+> line includes the group event string. While for stdio,
+> it will show only one event.
 
+Thanks, applied.
 
-On 05/22/2018 10:15 AM, Tyler Baicar wrote:
-> On 5/22/2018 10:32 AM, Alex G. wrote:
->> I think the biggest problem is having a policy to panic on "fatal"
->> errors, instead of letting the error handler make that decision. I'd
->> much rather kill that stupid policy, but people seem to like it for some
->> reason.
->>
-> You can get around that panic and still have the error handled as
-> AER_FATAL in
-> the current code. Your FW needs to mark the error as RECOVERABLE and then
-> set the CPER_SEC_RESET flag.
-
-Of course, that would be ideal. But experience shows that firmware
-doesn't do this. That's the whole point: firmware sends questionable data.
-
-Alex
-
-> https://elixir.bootlin.com/linux/v4.17-rc6/source/drivers/acpi/apei/ghes.c#L450
-> 
-> 
-> Thanks,
-> Tyler
-> 
+- Arnaldo
