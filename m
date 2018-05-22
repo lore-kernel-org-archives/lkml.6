@@ -1,102 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751655AbeEVIBz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 04:01:55 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37620 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751301AbeEVHzg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751586AbeEVICT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 04:02:19 -0400
+Received: from esa5.microchip.iphmx.com ([216.71.150.166]:23029 "EHLO
+        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751294AbeEVHzg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 22 May 2018 03:55:36 -0400
-From: Eric Auger <eric.auger@redhat.com>
-To: eric.auger.pro@gmail.com, eric.auger@redhat.com,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
-        christoffer.dall@arm.com, peter.maydell@linaro.org
-Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
-Subject: [PATCH v8 02/13] KVM: arm/arm64: Document KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
-Date: Tue, 22 May 2018 09:55:07 +0200
-Message-Id: <1526975718-18567-3-git-send-email-eric.auger@redhat.com>
-In-Reply-To: <1526975718-18567-1-git-send-email-eric.auger@redhat.com>
-References: <1526975718-18567-1-git-send-email-eric.auger@redhat.com>
+X-IronPort-AV: E=Sophos;i="5.49,429,1520924400";
+   d="scan'208";a="12323651"
+From: Eugen Hristev <eugen.hristev@microchip.com>
+To: <jic23@kernel.org>, <ludovic.desroches@microchip.com>,
+        <alexandre.belloni@bootlin.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+        <linux-input@vger.kernel.org>, <nicolas.ferre@microchip.com>,
+        <dmitry.torokhov@gmail.com>, <robh@kernel.org>
+CC: Eugen Hristev <eugen.hristev@microchip.com>
+Subject: [PATCH v7 2/9] iio: Add channel for Position Relative
+Date: Tue, 22 May 2018 10:52:32 +0300
+Message-ID: <1526975559-18966-3-git-send-email-eugen.hristev@microchip.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1526975559-18966-1-git-send-email-eugen.hristev@microchip.com>
+References: <1526975559-18966-1-git-send-email-eugen.hristev@microchip.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We introduce a new KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION attribute in
-KVM_DEV_ARM_VGIC_GRP_ADDR group. It allows userspace to provide the
-base address and size of a redistributor region
+Add new channel type for relative position on a pad.
 
-Compared to KVM_VGIC_V3_ADDR_TYPE_REDIST, this new attribute allows
-to declare several separate redistributor regions.
+These type of analog sensor offers the position of a pen
+on a touchpad, and is represented as a voltage, which can be
+converted to a position on X and Y axis on the pad.
+The channel will hand the relative position on the pad in both directions.
 
-So the whole redist space does not need to be contiguous anymore.
+The channel can then be consumed by a touchscreen driver or
+read as-is for a raw indication of the touchpen on a touchpad.
 
-Signed-off-by: Eric Auger <eric.auger@redhat.com>
-Reviewed-by: Peter Maydell <peter.maydell@linaro.org>
-Acked-by: Christoffer Dall <christoffer.dall@arm.com>
-
+Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
 ---
-v5 -> v6:
-- s/pointed by/pointed to by
-- add Peter's R-b and Christoffer's A-b
+Changes in v2:
+ - modified channel name to relative position as suggested.
+ - modified kernel version to 4.18 (presumable)
 
-v4 -> v5:
-- Document read access
-- removed Peter's R-b
+ Documentation/ABI/testing/sysfs-bus-iio | 12 ++++++++++++
+ drivers/iio/industrialio-core.c         |  1 +
+ include/uapi/linux/iio/types.h          |  1 +
+ tools/iio/iio_event_monitor.c           |  2 ++
+ 4 files changed, 16 insertions(+)
 
-v3 -> v4:
-- Added Peter's R-b
----
- Documentation/virtual/kvm/devices/arm-vgic-v3.txt | 30 +++++++++++++++++++++--
- 1 file changed, 28 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/virtual/kvm/devices/arm-vgic-v3.txt b/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
-index 9293b45..2408ab7 100644
---- a/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
-+++ b/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
-@@ -27,16 +27,42 @@ Groups:
-       VCPU and all of the redistributor pages are contiguous.
-       Only valid for KVM_DEV_TYPE_ARM_VGIC_V3.
-       This address needs to be 64K aligned.
-+
-+    KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION (rw, 64-bit)
-+      The attribute data pointed to by kvm_device_attr.addr is a __u64 value:
-+      bits:     | 63   ....  52  |  51   ....   16 | 15 - 12  |11 - 0
-+      values:   |     count      |       base      |  flags   | index
-+      - index encodes the unique redistributor region index
-+      - flags: reserved for future use, currently 0
-+      - base field encodes bits [51:16] of the guest physical base address
-+        of the first redistributor in the region.
-+      - count encodes the number of redistributors in the region. Must be
-+        greater than 0.
-+      There are two 64K pages for each redistributor in the region and
-+      redistributors are laid out contiguously within the region. Regions
-+      are filled with redistributors in the index order. The sum of all
-+      region count fields must be greater than or equal to the number of
-+      VCPUs. Redistributor regions must be registered in the incremental
-+      index order, starting from index 0.
-+      The characteristics of a specific redistributor region can be read
-+      by presetting the index field in the attr data.
-+      Only valid for KVM_DEV_TYPE_ARM_VGIC_V3.
-+
-+  It is invalid to mix calls with KVM_VGIC_V3_ADDR_TYPE_REDIST and
-+  KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION attributes.
-+
-   Errors:
-     -E2BIG:  Address outside of addressable IPA range
--    -EINVAL: Incorrectly aligned address
-+    -EINVAL: Incorrectly aligned address, bad redistributor region
-+             count/index, mixed redistributor region attribute usage
-     -EEXIST: Address already configured
-+    -ENOENT: Attempt to read the characteristics of a non existing
-+             redistributor region
-     -ENXIO:  The group or attribute is unknown/unsupported for this device
-              or hardware support is missing.
-     -EFAULT: Invalid user pointer for attr->addr.
+diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
+index 6a5f34b..42a9287 100644
+--- a/Documentation/ABI/testing/sysfs-bus-iio
++++ b/Documentation/ABI/testing/sysfs-bus-iio
+@@ -190,6 +190,18 @@ Description:
+ 		but should match other such assignments on device).
+ 		Units after application of scale and offset are m/s^2.
  
++What:		/sys/bus/iio/devices/iio:deviceX/in_positionrelative_x_raw
++What:		/sys/bus/iio/devices/iio:deviceX/in_positionrelative_y_raw
++KernelVersion:	4.18
++Contact:	linux-iio@vger.kernel.org
++Description:
++		Relative position in direction x or y on a pad (may be
++		arbitrarily assigned but should match other such assignments on
++		device).
++		Units after application of scale and offset are milli percents
++		from the pad's size in both directions. Should be calibrated by
++		the consumer.
++
+ What:		/sys/bus/iio/devices/iio:deviceX/in_anglvel_x_raw
+ What:		/sys/bus/iio/devices/iio:deviceX/in_anglvel_y_raw
+ What:		/sys/bus/iio/devices/iio:deviceX/in_anglvel_z_raw
+diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
+index 19bdf3d..14bf3d24 100644
+--- a/drivers/iio/industrialio-core.c
++++ b/drivers/iio/industrialio-core.c
+@@ -85,6 +85,7 @@ static const char * const iio_chan_type_name_spec[] = {
+ 	[IIO_COUNT] = "count",
+ 	[IIO_INDEX] = "index",
+ 	[IIO_GRAVITY]  = "gravity",
++	[IIO_POSITIONRELATIVE]  = "positionrelative",
+ };
  
--
-   KVM_DEV_ARM_VGIC_GRP_DIST_REGS
-   KVM_DEV_ARM_VGIC_GRP_REDIST_REGS
-   Attributes:
+ static const char * const iio_modifier_names[] = {
+diff --git a/include/uapi/linux/iio/types.h b/include/uapi/linux/iio/types.h
+index 4213cdf..033c7d2 100644
+--- a/include/uapi/linux/iio/types.h
++++ b/include/uapi/linux/iio/types.h
+@@ -44,6 +44,7 @@ enum iio_chan_type {
+ 	IIO_COUNT,
+ 	IIO_INDEX,
+ 	IIO_GRAVITY,
++	IIO_POSITIONRELATIVE,
+ };
+ 
+ enum iio_modifier {
+diff --git a/tools/iio/iio_event_monitor.c b/tools/iio/iio_event_monitor.c
+index b61245e..148f69d 100644
+--- a/tools/iio/iio_event_monitor.c
++++ b/tools/iio/iio_event_monitor.c
+@@ -58,6 +58,7 @@ static const char * const iio_chan_type_name_spec[] = {
+ 	[IIO_PH] = "ph",
+ 	[IIO_UVINDEX] = "uvindex",
+ 	[IIO_GRAVITY] = "gravity",
++	[IIO_POSITIONRELATIVE] = "positionrelative",
+ };
+ 
+ static const char * const iio_ev_type_text[] = {
+@@ -151,6 +152,7 @@ static bool event_is_known(struct iio_event_data *event)
+ 	case IIO_PH:
+ 	case IIO_UVINDEX:
+ 	case IIO_GRAVITY:
++	case IIO_POSITIONRELATIVE:
+ 		break;
+ 	default:
+ 		return false;
 -- 
-2.5.5
+2.7.4
