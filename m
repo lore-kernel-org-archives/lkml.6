@@ -1,39 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752572AbeEVDon (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 23:44:43 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50694 "EHLO mx1.redhat.com"
+        id S1752712AbeEVDpB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 23:45:01 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50704 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751763AbeEVDok (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 23:44:40 -0400
+        id S1752556AbeEVDov (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 23:44:51 -0400
 From: Jason Wang <jasowang@redhat.com>
 To: mst@redhat.com, jasowang@redhat.com
 Cc: virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH net V2 0/4] Fix several issues of virtio-net mergeable XDP
-Date: Tue, 22 May 2018 11:44:27 +0800
-Message-Id: <1526960671-11782-1-git-send-email-jasowang@redhat.com>
+Subject: [PATCH net V2 3/4] virtio-net: correctly check num_buf during err path
+Date: Tue, 22 May 2018 11:44:30 +0800
+Message-Id: <1526960671-11782-4-git-send-email-jasowang@redhat.com>
+In-Reply-To: <1526960671-11782-1-git-send-email-jasowang@redhat.com>
+References: <1526960671-11782-1-git-send-email-jasowang@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi:
+If we successfully linearize the packet, num_buf will be set to zero
+which may confuse error handling path which assumes num_buf is at
+least 1 and this can lead the code tries to pop the descriptor of next
+buffer. Fixing this by checking num_buf against 1 before decreasing.
 
-Please review the patches that tries to fix sevreal issues of
-virtio-net mergeable XDP.
+Fixes: 4941d472bf95 ("virtio-net: do not reset during XDP set")
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+---
+ drivers/net/virtio_net.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes from V1:
-- check against 1 before decreasing instead of resetting to 1
-- typoe fixes
-
-Jason Wang (4):
-  virtio-net: correctly redirect linearized packet
-  virtio-net: correctly transmit XDP buff after linearizing
-  virtio-net: correctly check num_buf during err path
-  virtio-net: fix leaking page for gso packet during mergeable XDP
-
- drivers/net/virtio_net.c | 21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
-
+diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+index 6260d65..326e247 100644
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -875,7 +875,7 @@ static struct sk_buff *receive_mergeable(struct net_device *dev,
+ 	rcu_read_unlock();
+ err_skb:
+ 	put_page(page);
+-	while (--num_buf) {
++	while (num_buf-- > 1) {
+ 		buf = virtqueue_get_buf(rq->vq, &len);
+ 		if (unlikely(!buf)) {
+ 			pr_debug("%s: rx error: %d buffers missing\n",
 -- 
 2.7.4
