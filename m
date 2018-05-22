@@ -1,33 +1,33 @@
 Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2827271-1527008646-2-16001093369559684538
+X-Cyrus-Session-Id: sloti22d1t05-2827271-1527010512-2-385504231687791754
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
+X-Spam-charsets: plain='US-ASCII'
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-fsdevel-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527008645; b=ipJGDOrprOHNxEtC87fJEhHoClEO5/GsvEObXtnfRXb3CwZol1
-    81kX/imIwIC9hpJTKUO3NOvrZX0lmPDVPlsLXO0+F4mCU2j06AHR7JYcq/5UiJ29
-    WTDLoVaYXiHhNnLoMpb5zwazP98lbyx1oQ5BvOgu1SGzVjNu4zPRbVI8cpOuSzvy
-    3RM3ts18+d5B/NAPN/3HA56gJT37OmUJMYNPNTnpeTkfW9VUa3o9oITfKvgo+hTz
-    ggD2GhADf5K8uwdFo6Me4D9aKcI0ly8jE7qZZR1ZGOTHJGQPb7i90IXdv8J95Hnj
-    6s2PBy8FKPJQDKVnemfrxl4pHLkTwM/5ygLg==
+    1527010512; b=ntbNStxdzcgF01y0jbWU76OcDfjnF+J4u8tDmjXMmlI2NHHA4w
+    XrqW3drinXl/E2c0AM/P3YSIgKtA5QXz8y+wl5xHut4hFgTw1oiU/gSFVqkUIsa2
+    xAheMnYteY+0D82a390i4u3qRldJkX0K+rEYkyS+xhRUKJGajV9AqQrNyblcoLV6
+    RyTU8LpoA9MQWx86kn/D45ybFR5YMw04fBaEu9DCRDES0k91clVpOW4eFqPTFu99
+    9IqP2MPnIpYMfdXgAXAHEbg/YA1bX8+SdTz6rrSmT0mO/yxnd8Vh4Vkj37dFLcXj
+    UEM2j3A67YvFF0l9nLHs1pYwh0+RmnKoR7UQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:references:cc:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1527008645;
-    bh=qbHBS66R7H7W0iVZjqBMy6BKTQwkrow9XMhFBIhGB3Q=; b=ILiOL3jwjECV
-    lLaGVlYtbkz4w1CxTKdqvynUkapr2oeNK4WK2YVC5E1sKHZTSieHnqWT8tUj3J1I
-    ynLncaQZfOsvUaoyjY0TEO3Fi2VRXEzNncS2y/IPLzeuxwa/FCUdGEA/u7WrC3dS
-    KizmSLnaMq5v2DTemjaDZUHYXSIkFBlEDJpoUengy13l+Zvb2oUOzupxIfw/7LNw
-    +uhN1jyDj9Dz4Uzi7gLlNbt4CEbZgno6VwfW5/cCn3kVL4ryPdVBE4exxUIdxMOH
-    AfwFBzKlVichj0/QKka30/fjP518egopaulPyhUPlGOXY9EcnYI6JFKnQu8Pyxw5
-    BNN/3oTfGA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
+    messagingengine.com; h=date:from:to:cc:subject:in-reply-to
+    :message-id:references:mime-version:content-type:sender:list-id;
+    s=fm2; t=1527010512; bh=ISalpPIQdO9aFkqBoZHKUdYX8WP/AJ0Jzc5Iqq4
+    Ar9o=; b=hJd//5/sI0wFHU6Mv1PCCoYgkR4TvlFkzUfD8/ZJQM1c++wHebIymed
+    w1Kt2PL9jI3F/abZlKShjxOD6n8RbjvWEpIfmAnBFyz7GO/yfX1Xl4OPs525/xOh
+    NtOmyrJYpqkKAeTxaysWo7wgqlb2pe1ORuysy7kFeJM7D58rlwsChFyyWcSJaAe6
+    xHXXJn6xzRebYHB/t4PgoyQ8DDDgoLpUuw1GWA8pyF/RFA0Q3NW/dadmekQlH+9r
+    IQiYX6WGqKI2ruA4I0n24BN+VdHinzDMSv9iziMuTnJ8TLOwiZn/UaLzqbwfQrlA
+    TgH2D9sE/k75wp6KLHaHcFFGcdArJKw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=amazonses.com
+    header.i=@amazonses.com header.b=ZQj5sgpK x-bits=1024 x-keytype=rsa
+    x-algorithm=sha256 x-selector=ug7nbtf4gccmlpwj322ax3p6ow6yfsug;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -36,14 +36,14 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linux.intel.com header.result=pass
-    header_org.domain=intel.com header_org.result=pass
-    header_is_org_domain=no;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+    header.domain=linux.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-50 state=0
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
+    dkim=pass (1024-bit rsa key sha256) header.d=amazonses.com
+      header.i=@amazonses.com header.b=ZQj5sgpK x-bits=1024 x-keytype=rsa
+      x-algorithm=sha256 x-selector=ug7nbtf4gccmlpwj322ax3p6ow6yfsug;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -52,42 +52,29 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linux.intel.com header.result=pass
-      header_org.domain=intel.com header_org.result=pass
-      header_is_org_domain=no;
-    x-vs=clean score=-100 state=0
+      header.domain=linux.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-50 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPFaH7HOi3xlS0ApfxH6FbD3YIuTw+W8x9owgeD1pzP0bZF5++gBGG6XD19fLn7KTn1DZRgFPrCU9rCdYBhIdXPzsDkthY9hV5nWDheZbfZclALGwcE+
-    UWzY63Ez4fHDbXwp92dgFnQ1BnaUHrjVFKmbCc24WYUOtJcLLJai8k4E6fSJFIb0OTsv3X+IElcNmAcclagHwmp2v+nRR3AA8plundtf4YONPrR8yr2VsrIf
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=5Vtse2nlebr8WPeflTwA:9 a=QEXdDO2ut3YA:10
+X-CM-Envelope: MS4wfE3P0LWcLIZCPwOWcsLQWp6lFx8ITRIk7KR04CtX6Lmdz17LSfqy8tcbNdWlRxnJk4JpPIMotN5ISEZ2YS+6oABli7+eIs3P8Qy6ua7fYLWbGIJQuBia
+    lAk87ZhsKoGWsWz0IM78ys2VJAcwhMiLVahozb+fw/5VTJepz1yarixc3Zv7Oi3SEDMIvHqVE985GzEsCqqsZi6Ahgh2cC9SV8hfa53BZ+6jLWksB1a11KbM
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=Hgn-wnRn1-cA:10 a=O_nBsK7R2i4LflNZp_4A:9 a=CjuIK1q_8ugA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751590AbeEVREC (ORCPT <rfc822;linux@kroah.com>);
-        Tue, 22 May 2018 13:04:02 -0400
-Received: from mga04.intel.com ([192.55.52.120]:10179 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751240AbeEVRD5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 May 2018 13:03:57 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,430,1520924400";
-   d="scan'208";a="52944097"
-Subject: Re: [PATCH] mm: Add new vma flag VM_LOCAL_CPU
-To: Christopher Lameter <cl@linux.com>
-References: <0efb5547-9250-6b6c-fe8e-cf4f44aaa5eb@netapp.com>
- <20180514191551.GA27939@bombadil.infradead.org>
- <7ec6fa37-8529-183d-d467-df3642bcbfd2@netapp.com>
- <20180515004137.GA5168@bombadil.infradead.org>
- <f3a66d8b-b9dc-b110-08aa-a63f0c309fb2@netapp.com>
- <010001637399f796-3ffe3ed2-2fb1-4d43-84f0-6a65b6320d66-000000@email.amazonses.com>
- <5aea6aa0-88cc-be7a-7012-7845499ced2c@netapp.com>
- <50cbc27f-0014-0185-048d-25640f744b5b@linux.intel.com>
- <0100016388be5738-df8f9d12-7011-4e4e-ba5b-33973e5da794-000000@email.amazonses.com>
-Cc: Boaz Harrosh <boazh@netapp.com>, Jeff Moyer <jmoyer@redhat.com>,
+        id S1752121AbeEVRfG (ORCPT <rfc822;linux@kroah.com>);
+        Tue, 22 May 2018 13:35:06 -0400
+Received: from a9-112.smtp-out.amazonses.com ([54.240.9.112]:50294 "EHLO
+        a9-112.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751349AbeEVRfF (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 22 May 2018 13:35:05 -0400
+Date: Tue, 22 May 2018 17:35:04 +0000
+From: Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@nuc-kabylake
+To: Dave Hansen <dave.hansen@linux.intel.com>
+cc: Boaz Harrosh <boazh@netapp.com>, Jeff Moyer <jmoyer@redhat.com>,
         Matthew Wilcox <willy@infradead.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
@@ -101,79 +88,45 @@ Cc: Boaz Harrosh <boazh@netapp.com>, Jeff Moyer <jmoyer@redhat.com>,
         Rik van Riel <riel@redhat.com>, Jan Kara <jack@suse.cz>,
         Matthew Wilcox <mawilcox@microsoft.com>,
         Amit Golander <Amit.Golander@netapp.com>
-From: Dave Hansen <dave.hansen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <c4bb7ea8-16d5-ca31-2a9b-db90841211ba@linux.intel.com>
-Date: Tue, 22 May 2018 10:03:54 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+Subject: Re: [PATCH] mm: Add new vma flag VM_LOCAL_CPU
+In-Reply-To: <c4bb7ea8-16d5-ca31-2a9b-db90841211ba@linux.intel.com>
+Message-ID: <0100016388eb2dd6-f4cf8960-26d0-4435-818e-d5105fe43eb3-000000@email.amazonses.com>
+References: <0efb5547-9250-6b6c-fe8e-cf4f44aaa5eb@netapp.com> <20180514191551.GA27939@bombadil.infradead.org> <7ec6fa37-8529-183d-d467-df3642bcbfd2@netapp.com> <20180515004137.GA5168@bombadil.infradead.org> <f3a66d8b-b9dc-b110-08aa-a63f0c309fb2@netapp.com>
+ <010001637399f796-3ffe3ed2-2fb1-4d43-84f0-6a65b6320d66-000000@email.amazonses.com> <5aea6aa0-88cc-be7a-7012-7845499ced2c@netapp.com> <50cbc27f-0014-0185-048d-25640f744b5b@linux.intel.com> <0100016388be5738-df8f9d12-7011-4e4e-ba5b-33973e5da794-000000@email.amazonses.com>
+ <c4bb7ea8-16d5-ca31-2a9b-db90841211ba@linux.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <0100016388be5738-df8f9d12-7011-4e4e-ba5b-33973e5da794-000000@email.amazonses.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+X-SES-Outgoing: 2018.05.22-54.240.9.112
+Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
 Sender: linux-fsdevel-owner@vger.kernel.org
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 05/22/2018 09:46 AM, Christopher Lameter wrote:
-> On Tue, 22 May 2018, Dave Hansen wrote:
-> 
->> On 05/22/2018 09:05 AM, Boaz Harrosh wrote:
->>> How can we implement "Private memory"?
->> Per-cpu page tables would do it.
-> We already have that for percpu subsystem. See alloc_percpu()
+On Tue, 22 May 2018, Dave Hansen wrote:
 
-I actually mean a set of page tables which is only ever installed on a
-single CPU.  The CPU is architecturally allowed to go load any PTE in
-the page tables into the TLB any time it feels like.  The only way to
-keep a PTE from getting into the TLB is not ensure that a CPU never has
-any access to it, and the only way to do that is to make sure that no
-set of page tables it ever loads into CR3 have that PTE.
+> On 05/22/2018 09:46 AM, Christopher Lameter wrote:
+> > On Tue, 22 May 2018, Dave Hansen wrote:
+> >
+> >> On 05/22/2018 09:05 AM, Boaz Harrosh wrote:
+> >>> How can we implement "Private memory"?
+> >> Per-cpu page tables would do it.
+> > We already have that for percpu subsystem. See alloc_percpu()
+>
+> I actually mean a set of page tables which is only ever installed on a
+> single CPU.  The CPU is architecturally allowed to go load any PTE in
+> the page tables into the TLB any time it feels like.  The only way to
+> keep a PTE from getting into the TLB is not ensure that a CPU never has
+> any access to it, and the only way to do that is to make sure that no
+> set of page tables it ever loads into CR3 have that PTE.
+>
+> As Peter said, it's possible, but not pretty.
 
-As Peter said, it's possible, but not pretty.
+Well yeah its much more pretty if you use the segment register to avoid
+the page table tricks on x86. Other arches may rely on page table tricks.
+
+Regardless of that the percpu subsystem was created to provide "private"
+memory for each cpu and that may be the right starting point for adding
+"local" memory.
