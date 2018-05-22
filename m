@@ -1,102 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751239AbeEVJtP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 05:49:15 -0400
-Received: from lucky1.263xmail.com ([211.157.147.130]:47353 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751107AbeEVJtO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 05:49:14 -0400
-X-263anti-spam: KSV:0;BIG:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ADDR-CHECKED4: 1
-X-ABS-CHECKED: 0
-X-SKE-CHECKED: 0
-X-ANTISPAM-LEVEL: 2
-X-IP-DOMAINF: 1
-X-RL-SENDER: randy.li@rock-chips.com
-X-FST-TO: linux-arm-kernel@lists.infradead.org
-X-SENDER-IP: 58.22.7.114
-X-LOGIN-NAME: randy.li@rock-chips.com
-X-UNIQUE-TAG: <058ae33b3d5700be9d790769af51e4a5>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-Subject: Re: [PATCH 1/2] drm/fourcc: add a 10bits fully packed variant of NV12
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Randy Li <ayaka@soulik.info>, dri-devel@lists.freedesktop.org,
-        airlied@linux.ie, linux-kernel@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, nicolas.dufresne@collabora.com,
-        linux-arm-kernel@lists.infradead.org
-References: <20180520171705.29690-1-ayaka@soulik.info>
- <20180520171705.29690-2-ayaka@soulik.info>
- <303c89b8-e24f-cacb-c305-65d17c58c597@linux.intel.com>
-From: Randy Li <randy.li@rock-chips.com>
-Message-ID: <6288544d-32de-b933-d204-b7026012fb82@rock-chips.com>
-Date: Tue, 22 May 2018 17:49:07 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751432AbeEVJul (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 05:50:41 -0400
+Received: from mga18.intel.com ([134.134.136.126]:8158 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750707AbeEVJuj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 05:50:39 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,429,1520924400";
+   d="scan'208";a="58011303"
+Date: Tue, 22 May 2018 17:39:50 +0800
+From: Wu Hao <hao.wu@intel.com>
+To: Alan Tull <atull@kernel.org>
+Cc: Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org,
+        "Kang, Luwei" <luwei.kang@intel.com>,
+        "Zhang, Yi Z" <yi.z.zhang@intel.com>, "Liu, Song" <song.liu@intel.com>
+Subject: Re: [PATCH v5 04/28] fpga: mgr: add compat_id support
+Message-ID: <20180522093950.GA27322@hao-dev>
+References: <1525229431-3087-1-git-send-email-hao.wu@intel.com>
+ <1525229431-3087-5-git-send-email-hao.wu@intel.com>
+ <CANk1AXRsWsd++wjWH44CCWN+cmscy_WjLJhaGGgxmmNe-u1OLw@mail.gmail.com>
+ <20180521030307.GA26500@hao-dev>
+ <CANk1AXTDgVONiaECNOnwj26vCxJSi7ixvD_QcB4VmEo7P_cUMA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <303c89b8-e24f-cacb-c305-65d17c58c597@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANk1AXTDgVONiaECNOnwj26vCxJSi7ixvD_QcB4VmEo7P_cUMA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, May 21, 2018 at 12:33:05PM -0500, Alan Tull wrote:
+> On Sun, May 20, 2018 at 10:03 PM, Wu Hao <hao.wu@intel.com> wrote:
+> > On Mon, May 07, 2018 at 04:09:06PM -0500, Alan Tull wrote:
+> >> On Tue, May 1, 2018 at 9:50 PM, Wu Hao <hao.wu@intel.com> wrote:
+> >>
+> >> Hi Hao,
+> >>
+> >> Looks good!
+> >>
+> >> > This patch introduces compat_id support to fpga manager, it adds
+> >> > a fpga_compat_id pointer to fpga manager data structure to allow
+> >> > fpga manager drivers to save the compatibility id. This compat_id
+> >> > could be used for compatibility checking before doing partial
+> >> > reconfiguration to associated fpga regions.
+> >> >
+> >> > Signed-off-by: Wu Hao <hao.wu@intel.com>
+> >> Acked-by: Alan Tull <atull@kernel.org>
+> >
+> > Hi Alan
+> >
+> > Thanks a lot for the acked-by.
+> >
+> > Did you get a chance to look into other patches?
+> 
+> What I'm looking for mostly is: is it clear that this code was written
+> to be reused.  What do you think?  Was it?  Is there a way that intent
+> could be made clear in the code? 
 
+Hi Alan,
 
-On 05/22/2018 05:26 PM, Maarten Lankhorst wrote:
-> Op 20-05-18 om 19:17 schreef Randy Li:
->> This pixel format is a fully packed and 10bits variant of NV12.
->> A luma pixel would take 10bits in memory, without any
->> filled bits between pixels in a stride. The color gamut
->> follows the BT.2020 standard.
->>
->> Signed-off-by: Randy Li <ayaka@soulik.info>
->> ---
->>   drivers/gpu/drm/drm_fourcc.c  | 1 +
->>   include/uapi/drm/drm_fourcc.h | 3 +++
->>   2 files changed, 4 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/drm_fourcc.c b/drivers/gpu/drm/drm_fourcc.c
->> index 5ca6395cd4d3..1f43967c4013 100644
->> --- a/drivers/gpu/drm/drm_fourcc.c
->> +++ b/drivers/gpu/drm/drm_fourcc.c
->> @@ -173,6 +173,7 @@ const struct drm_format_info *__drm_format_info(u32 format)
->>   		{ .format = DRM_FORMAT_UYVY,		.depth = 0,  .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 2, .vsub = 1 },
->>   		{ .format = DRM_FORMAT_VYUY,		.depth = 0,  .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 2, .vsub = 1 },
->>   		{ .format = DRM_FORMAT_AYUV,		.depth = 0,  .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
->> +		{ .format = DRM_FORMAT_NV12_10LE40,	.depth = 0,  .num_planes = 2, .cpp = { 1, 2, 0 }, .hsub = 2, .vsub = 2 },
-> Hm, the cpp value might give problems because it rounds down, not sure how we should handle that? Set to zero?
-It is default behavior that using the filed "cpp"  to calculate the 
-pixel in many drivers. I would suggest use a new filed called bits per 
-pixel (bpp) instead of the old cpp.
-The one used in the Gstreamer is more complex: 
-https://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-GstVideoAlignment.html#GstVideoFormatInfo
-As the struct drm_format_info only a kernel internal data structure, it 
-doesn't need to update the user-space interface like libdrm.
->>   	};
->>   
->>   	unsigned int i;
->> diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
->> index e04613d30a13..8eabf01e966f 100644
->> --- a/include/uapi/drm/drm_fourcc.h
->> +++ b/include/uapi/drm/drm_fourcc.h
->> @@ -140,6 +140,9 @@ extern "C" {
->>   #define DRM_FORMAT_NV61		fourcc_code('N', 'V', '6', '1') /* 2x1 subsampled Cb:Cr plane */
->>   #define DRM_FORMAT_NV24		fourcc_code('N', 'V', '2', '4') /* non-subsampled Cr:Cb plane */
->>   #define DRM_FORMAT_NV42		fourcc_code('N', 'V', '4', '2') /* non-subsampled Cb:Cr plane */
->> +/* A fully packed variant of NV12_10LE32 */
->> +#define DRM_FORMAT_NV12_10LE40	fourcc_code('R', 'K', '2', '0') /* 2x2 subsampled Cr:Cb plane */
->> +
->>   
->>   /*
->>    * 3 plane YCbCr
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+I am a little confused, so I guess I need to clarify several things here
+to avoid misunderstanding.
+
+Actualy we are submitting this patchset to enable Intel FPGA products
+(e.g Intel Programmable Acceleration Card (PAC) with Intel Arria 10 GX
+FPGA[1]). Once this device driver is accepted by upstream, then people
+could use them with standard linux kernel. So the major purpose of the
+patchset is just a device driver for Intel specific FPGA device enabling.
+
+The Device Feature List (DFL) is one concept used in the Intel PAC A10
+FPGA device, it's a linked list of device features with predefined data
+structures. The DFL is defined in the FPGA device spec from Intel, but we
+all think it would be great if more people coud reuse it in their devices
+too, so some code could be reused. I think it may not be a problem for
+some of other Intel FPGA products to reuse these driver code, because they
+probably follow the same DFL spec to have Port and FME implemented. It's
+the same for other developers/vendors to reuse DFL to create their own
+products. They have to implement the Port and FME in device memory per
+spec, otherwise it may not be able to reuse current patchset. Please note
+that current DFL spec doesn't provide a method to customize the Port or
+FME, or even have a totally new Port or FME, but it's possible in the
+future version of DFL.
+
+So to me, it's conditional reusable for current patchset. It requires the
+FPGA device to follow the same DFL spec with Port and FME defined (and
+their private features too).
+
+> This patchset has a history of being
+> a one-off solution for a single platform, doing things to work around
+> the FPGA framework instead of doing what the framework was intended to
+> do.  The FPGA framework was written so that any FPGA could be used
+> with interface.  Currently in the upstream that means any of the
+> supported FPGAs can be programmed with the same of-fpga-region code.
+> It didn't have to get rewritten for each fpga.
+
+Per your suggestion, we already have a separated layer for enumeration,
+different platform devices/drivers for different functional blocks (e.g
+Port and FME), it also creates fpga region, manager, bridge to keep aligned
+with current FPGA framework. Thanks again for your valuable suggestions.
+
+> 
+> This patchset adds 5000 lines and I understand that another 4000 is
+> coming to add to this.  
+
+This is because there are a lot of features implemented by Intel FPGA
+products (e.g Intel PAC Card). Most code after this patchset is to add
+private features support to Port and FME.
+
+> Has that been written so that the upper layer
+> can be reused?  Or will the 'reusable' version be another huge
+> patchset?  Do you see my point?  
+
+I think current code is conditional reusable per explaination above, do
+you agree? or you have other concerns on current driver architecture?
+
+> Up to this point I've been trying to
+> help figure out what changes could make this reusable.  If you could
+> get with someone to take responsibility for architecting this patchset
+> to be clearly reusable, that could speed things up.
+
+Please let me know which part is unclear to you. I see you use "clear"
+for several times in your response, I do feel you have some concerns
+somewhere, may I know which part is not clear to you? If you're not clear
+about how DFL could support the customization. e.g if someone introduced
+a totally new Port, then how it's going to reuse our current driver. I
+would like to say, the behavior is not defined by DFL spec at all, so
+current code may not be able to reused at all. Actually there are a lot
+of similar open questions which are also unclear to me (e.g if spec will
+allow to introduce a totally new port, if yes, then how to handle the
+reset code with existing FME) as spec says nothing about these cases, at
+least for current version. As no related description in DFL spec, then
+we don't have to consider these cases for now.
+
+Thanks
+Hao
+
+> 
+> If there are improvements to the current FPGA framework that can help
+> this work, I'm interested and open to suggestions/code in that
+> direction..
+> 
+> Alan
+> 
+> >
+> > Thanks
+> > Hao
