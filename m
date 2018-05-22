@@ -1,51 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751630AbeEVR1G (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 13:27:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38836 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751279AbeEVR1D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 13:27:03 -0400
-Date: Tue, 22 May 2018 13:27:00 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Joel Fernandes <joel@joelfernandes.org>, byungchul.park@lge.com,
-        mathieu.desnoyers@efficios.com, Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org,
-        kernel-team@android.com
-Subject: Re: Tasks RCU vs Preempt RCU
-Message-ID: <20180522132700.68b6660d@gandalf.local.home>
-In-Reply-To: <20180522160949.GU3803@linux.vnet.ibm.com>
-References: <20180518183623.GA163151@joelaf.mtv.corp.google.com>
-        <20180519022918.GV3803@linux.vnet.ibm.com>
-        <20180519225905.GB134184@joelaf.mtv.corp.google.com>
-        <20180520004938.GZ3803@linux.vnet.ibm.com>
-        <20180520112843.57079857@grimm.local.home>
-        <20180520191846.GA248075@joelaf.mtv.corp.google.com>
-        <20180521215951.2d6abfcb@gandalf.local.home>
-        <20180522045414.GG40541@joelaf.mtv.corp.google.com>
-        <20180522083832.45353d5f@gandalf.local.home>
-        <20180522160949.GU3803@linux.vnet.ibm.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1751477AbeEVRaG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 13:30:06 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45150 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751269AbeEVRaE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 13:30:04 -0400
+Date: Tue, 22 May 2018 18:30:00 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: "Mahadevan, Girish" <girishm@codeaurora.org>,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        sdharia@codeaurora.org, kramasub@codeaurora.org, dianders@chromium.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] spi: spi-geni-qcom: Add SPI driver support for GENI
+ based QUP
+Message-ID: <20180522173000.GG24776@sirena.org.uk>
+References: <1525383283-18390-1-git-send-email-girishm@codeaurora.org>
+ <152607782792.34267.8023817955251139395@swboyd.mtv.corp.google.com>
+ <24b3ef71-18c1-1704-e324-5581fd18a998@codeaurora.org>
+ <152700759909.210890.13296077062705155869@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="S5HS5MvDw4DmbRmb"
+Content-Disposition: inline
+In-Reply-To: <152700759909.210890.13296077062705155869@swboyd.mtv.corp.google.com>
+X-Cookie: I have not yet begun to byte!
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 22 May 2018 09:09:49 -0700
-"Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
 
-> Just for the record, if you guys realy want to take over Tasks RCU,
-> I have no objections.  For one thing, I don't anticipate any other use
-> cases for it (famous last words!).  But you break it, you buy it!  ;-)
+--S5HS5MvDw4DmbRmb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-It really matters how much of a burden is RCU_tasks to RCU itself? If
-it causes a lot of headache for you, and it prevents you from cleaning
-up RCU or making it better, then I would be happy to take it out of RCU
-and maintain it separately myself. But if that's not the case, I'm happy
-with keeping it within the RCU umbrella. Which brings me to the
-question of what motivation does Joel have to remove it?
+On Tue, May 22, 2018 at 09:46:39AM -0700, Stephen Boyd wrote:
+> Quoting Mahadevan, Girish (2018-05-21 08:52:47)
 
--- Steve
+> > Not sure I follow, the intention is to run the controller clock based on
+> > the slave's max frequency.
+
+> That's good. The problem I see is that we have to specify the max
+> frequency in the controller/bus node, and also in the child/slave node.
+> It should only need to be specified in the slave node, so making the
+> cur_speed_hz equal the max_speed_hz is problematic. The current speed of
+> the master should be determined by calling clk_get_rate().
+
+We don't require that the slaves all individually set a speed since it
+gets a bit redundant, it should be enough to just use the default the
+controller provides.  A bigger problem with this is that the driver will
+never see a transfer which doesn't explicitly have a speed set as the
+core will ensure something is set, open coding this logic in every
+driver would obviously be tiresome.
+
+> > The intention was to allow a client to specify slave specific timing
+> > requirements, e.g CS-CLK delay (based on the slave's data sheet).
+> > So that the client drivers could setup these delays and pass it in part
+> > of the controller_data member of the spi_device data structure.
+> > The header file was meant to expose these timing params that the client
+> > could specify. I honestly didn't know how else a client could specify
+> > these to the controller driver.
+
+> Do you mean spi-rx-delay-us and spi-tx-delay-us properties? Those are
+> documented but don't seem to be used. There's also the delay_usecs part
+> of the spi_transfer structure, which may be what you're talking about.
+
+delay_usecs is for inter-transfer delays within a message rather than
+after the initial chip select assert (it can be used to keep chip select
+asserted for longer after the final transfer too).  Obviously this is
+also something that shouldn't be configured in a driver specific
+fashion.
+
+--S5HS5MvDw4DmbRmb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsEU5cACgkQJNaLcl1U
+h9AgKQf/f+zSQxgTA0ua8BkfUORt3URAfVT5QWAz7zlwRwnZNxYzxCtzaFH+amUJ
+UVg4hNRLNE3esk/IMW08cIeZ/Av1Sf7bvKzGi+00nn9OzPrS7/CUCzs5h+YCidr8
+rNtyWyEfH4fE1DAFG0wXLiUwUNX19ZWFEX/x0AV2PRxjEDa6YQKdCDfGxysktBI5
+go+aSK/QrL0U+fMCHD/ZOBZshK3UEo44rsRaVn0TwgCQbbif9yjio/9t7+iD6ctH
+eI5i6YoChrKmdmvIhUJOPvlQSYz2n/W6SzLsOE2mirG58PQK6cWCnWpQKQ96YMDw
+dDSgKjHMWGevT53hWND8e5UQoRveDg==
+=Kgdi
+-----END PGP SIGNATURE-----
+
+--S5HS5MvDw4DmbRmb--
