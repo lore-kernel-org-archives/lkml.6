@@ -1,93 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752016AbeEVLTr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 07:19:47 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:54260 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751060AbeEVLRn (ORCPT
+        id S1751474AbeEVLVL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 07:21:11 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:56915 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750733AbeEVLVJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 07:17:43 -0400
-X-Google-Smtp-Source: AB8JxZrs1okkpUO2osVQVuQ8h/OAoXLrrjXatDQMCgaQY9OyvqL0TmjAKWl57acQVN8ykl2LHeyaOA==
-From: "=?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?=" <vokac.m@gmail.com>
-X-Google-Original-From: =?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>
-To: netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        f.fainelli@gmail.com, vivien.didelot@savoirfairelinux.com,
-        andrew@lunn.ch, mark.rutland@arm.com, robh+dt@kernel.org,
-        davem@davemloft.net, michal.vokac@ysoft.com
-Subject: [PATCH net-next v2 1/7] net: dsa: qca8k: Add QCA8334 binding documentation
-Date: Tue, 22 May 2018 13:16:26 +0200
-Message-Id: <1526987792-56861-2-git-send-email-michal.vokac@ysoft.com>
-X-Mailer: git-send-email 2.1.4
-In-Reply-To: <1526987792-56861-1-git-send-email-michal.vokac@ysoft.com>
-References: <1526987792-56861-1-git-send-email-michal.vokac@ysoft.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Tue, 22 May 2018 07:21:09 -0400
+To: Bart.VanAssche@wdc.com, dvyukov@google.com
+Cc: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        jthumshirn@suse.de, alan.christopher.jenkins@gmail.com,
+        syzbot+c4f9cebf9d651f6e54de@syzkaller.appspotmail.com,
+        martin.petersen@oracle.com, axboe@kernel.dk, dan.j.williams@intel.com,
+        hch@lst.de, oleksandr@natalenko.name, ming.lei@redhat.com,
+        martin@lichtvoll.de, hare@suse.com, syzkaller-bugs@googlegroups.com,
+        ross.zwisler@linux.intel.com, keith.busch@intel.com,
+        linux-ext4@vger.kernel.org
+Subject: Re: INFO: task hung in blk_queue_enter
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+References: <b9c33b04-08d7-87a1-3d93-d81a84e6af12@I-love.SAKURA.ne.jp>
+        <43327033306c3dd2f7c3717d64ce22415b6f3451.camel@wdc.com>
+        <CACT4Y+ZJwvROpBmKWF08fTd2AH=dO-a5+dzCzZua_vVFjiCRBw@mail.gmail.com>
+        <6db16aa3a7c56b6dcca2d10b4e100a780c740081.camel@wdc.com>
+        <201805220652.BFH82351.SMQFFOJOtFOVLH@I-love.SAKURA.ne.jp>
+In-Reply-To: <201805220652.BFH82351.SMQFFOJOtFOVLH@I-love.SAKURA.ne.jp>
+Message-Id: <201805222020.FEJ82897.OFtJMFHOVLQOSF@I-love.SAKURA.ne.jp>
+X-Mailer: Winbiff [Version 2.51 PL2]
+X-Accept-Language: ja,en,zh
+Date: Tue, 22 May 2018 20:20:06 +0900
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for the four-port variant of the Qualcomm QCA833x switch.
+I checked counter values using debug printk() patch shown below, and
+found that q->q_usage_counter.count == 1 when this deadlock occurs.
 
-The CPU port default link settings can be reconfigured using
-a fixed-link sub-node.
+Since sum of percpu_count did not change after percpu_ref_kill(), this is
+not a race condition while folding percpu counter values into atomic counter
+value. That is, for some reason, someone who is responsible for calling
+percpu_ref_put(&q->q_usage_counter) (presumably via blk_queue_exit()) is
+unable to call percpu_ref_put().
 
-Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
----
-Changes in v2:
- - Add commit message and document fixed-link binding.
+diff --git a/block/blk-core.c b/block/blk-core.c
+index 85909b4..6933020 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -908,6 +908,12 @@ struct request_queue *blk_alloc_queue(gfp_t gfp_mask)
+ }
+ EXPORT_SYMBOL(blk_alloc_queue);
+ 
++static unsigned long __percpu *percpu_count_ptr(struct percpu_ref *ref)
++{
++	return (unsigned long __percpu *)
++		(ref->percpu_count_ptr & ~__PERCPU_REF_ATOMIC_DEAD);
++}
++
+ /**
+  * blk_queue_enter() - try to increase q->q_usage_counter
+  * @q: request queue pointer
+@@ -950,10 +956,22 @@ int blk_queue_enter(struct request_queue *q, blk_mq_req_flags_t flags)
+ 		 */
+ 		smp_rmb();
+ 
+-		wait_event(q->mq_freeze_wq,
+-			   (atomic_read(&q->mq_freeze_depth) == 0 &&
+-			    (preempt || !blk_queue_preempt_only(q))) ||
+-			   blk_queue_dying(q));
++		while (wait_event_timeout(q->mq_freeze_wq,
++					  (atomic_read(&q->mq_freeze_depth) == 0 &&
++					   (preempt || !blk_queue_preempt_only(q))) ||
++					  blk_queue_dying(q), 3 * HZ) == 0) {
++			struct percpu_ref *ref = &q->q_usage_counter;
++			unsigned long __percpu *percpu_count = percpu_count_ptr(ref);
++			unsigned long count = 0;
++			int cpu;
++
++			for_each_possible_cpu(cpu)
++				count += *per_cpu_ptr(percpu_count, cpu);
++
++			printk("%s(%d): %px %ld %ld\n", current->comm, current->pid,
++			       ref, atomic_long_read(&ref->count), count);
++		}
++
+ 		if (blk_queue_dying(q))
+ 			return -ENODEV;
+ 	}
+diff --git a/lib/percpu-refcount.c b/lib/percpu-refcount.c
+index 9f96fa7..72773ce 100644
+--- a/lib/percpu-refcount.c
++++ b/lib/percpu-refcount.c
+@@ -133,8 +133,8 @@ static void percpu_ref_switch_to_atomic_rcu(struct rcu_head *rcu)
+ 	for_each_possible_cpu(cpu)
+ 		count += *per_cpu_ptr(percpu_count, cpu);
+ 
+-	pr_debug("global %ld percpu %ld",
+-		 atomic_long_read(&ref->count), (long)count);
++	printk("%px global %ld percpu %ld\n", ref,
++	       atomic_long_read(&ref->count), (long)count);
+ 
+ 	/*
+ 	 * It's crucial that we sum the percpu counters _before_ adding the sum
+@@ -150,6 +150,8 @@ static void percpu_ref_switch_to_atomic_rcu(struct rcu_head *rcu)
+ 	 */
+ 	atomic_long_add((long)count - PERCPU_COUNT_BIAS, &ref->count);
+ 
++	printk("%px global %ld\n", ref, atomic_long_read(&ref->count));
++
+ 	WARN_ONCE(atomic_long_read(&ref->count) <= 0,
+ 		  "percpu ref (%pf) <= 0 (%ld) after switching to atomic",
+ 		  ref->release, atomic_long_read(&ref->count));
 
- .../devicetree/bindings/net/dsa/qca8k.txt          | 23 +++++++++++++++++++++-
- 1 file changed, 22 insertions(+), 1 deletion(-)
+If I change blk_queue_enter() not to wait at wait_event() if
+q->mq_freeze_depth != 0, this deadlock problem does not occur.
 
-diff --git a/Documentation/devicetree/bindings/net/dsa/qca8k.txt b/Documentation/devicetree/bindings/net/dsa/qca8k.txt
-index 9c67ee4..15b9057 100644
---- a/Documentation/devicetree/bindings/net/dsa/qca8k.txt
-+++ b/Documentation/devicetree/bindings/net/dsa/qca8k.txt
-@@ -2,7 +2,10 @@
+Also, I found that if blk_freeze_queue_start() tries to wait for
+counters to become 1 before calling percpu_ref_kill() (like shown
+below), this deadlock problem does not occur.
+
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 9ce9cac..4bff534 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -134,12 +134,36 @@ void blk_mq_in_flight_rw(struct request_queue *q, struct hd_struct *part,
+ 	blk_mq_queue_tag_busy_iter(q, blk_mq_check_inflight_rw, &mi);
+ }
  
- Required properties:
- 
--- compatible: should be "qca,qca8337"
-+- compatible: should be one of:
-+    "qca,qca8334"
-+    "qca,qca8337"
++#define PERCPU_COUNT_BIAS       (1LU << (BITS_PER_LONG - 1))
 +
- - #size-cells: must be 0
- - #address-cells: must be 1
- 
-@@ -14,6 +17,20 @@ port and PHY id, each subnode describing a port needs to have a valid phandle
- referencing the internal PHY connected to it. The CPU port of this switch is
- always port 0.
- 
-+A CPU port node has the following optional property:
++static unsigned long __percpu *percpu_count_ptr(struct percpu_ref *ref)
++{
++	return (unsigned long __percpu *)
++		(ref->percpu_count_ptr & ~__PERCPU_REF_ATOMIC_DEAD);
++}
 +
-+- fixed-link            : Fixed-link subnode describing a link to a non-MDIO
-+                          managed entity. See
-+                          Documentation/devicetree/bindings/net/fixed-link.txt
-+                          for details.
-+
-+For QCA8K the 'fixed-link' sub-node supports only the following properties:
-+
-+- 'speed' (integer, mandatory), to indicate the link speed. Accepted
-+  values are 10, 100 and 1000
-+- 'full-duplex' (boolean, optional), to indicate that full duplex is
-+  used. When absent, half duplex is assumed.
-+
- Example:
+ void blk_freeze_queue_start(struct request_queue *q)
+ {
+ 	int freeze_depth;
  
- 
-@@ -53,6 +70,10 @@ Example:
- 					label = "cpu";
- 					ethernet = <&gmac1>;
- 					phy-mode = "rgmii";
-+					fixed-link {
-+						speed = 1000;
-+						full-duplex;
-+					};
- 				};
- 
- 				port@1 {
--- 
-2.1.4
+ 	freeze_depth = atomic_inc_return(&q->mq_freeze_depth);
+ 	if (freeze_depth == 1) {
++		int i;
++		for (i = 0; i < 10; i++) {
++			struct percpu_ref *ref = &q->q_usage_counter;
++			unsigned long __percpu *percpu_count = percpu_count_ptr(ref);
++			unsigned long count = 0;
++			int cpu;
++
++			for_each_possible_cpu(cpu)
++				count += *per_cpu_ptr(percpu_count, cpu);
++
++			if (atomic_long_read(&ref->count) + count - PERCPU_COUNT_BIAS == 1)
++				break;
++			printk("%s(%d):! %px %ld %ld\n", current->comm, current->pid,
++			       ref, atomic_long_read(&ref->count), count);
++			schedule_timeout_uninterruptible(HZ / 10);
++		}
+ 		percpu_ref_kill(&q->q_usage_counter);
+ 		if (q->mq_ops)
+ 			blk_mq_run_hw_queues(q, false);
+
+But I don't know how to find someone who is failing to call percpu_ref_put()...
