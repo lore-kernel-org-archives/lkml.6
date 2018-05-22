@@ -1,192 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751401AbeEVOrY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 10:47:24 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:38348 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751277AbeEVOrT (ORCPT
+        id S1751440AbeEVOsm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 10:48:42 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60866 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751269AbeEVOsj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 10:47:19 -0400
-X-Google-Smtp-Source: AB8JxZqvTRGEyUCTom5XHPeIZxAelGYwggQwe1MTyjZUBcxCGhPlEJ+GGzYFRClg2Y08oiOdB+e7/uyIRRIXUAYJaw4=
+        Tue, 22 May 2018 10:48:39 -0400
+Date: Tue, 22 May 2018 05:12:16 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Joel Fernandes <joel@joelfernandes.org>
+Cc: Joel Fernandes <joelaf@google.com>, linux-kernel@vger.kernel.org,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>, byungchul.park@lge.com,
+        kernel-team@android.com
+Subject: Re: [PATCH v3 4/4] rcu: Unlock non-start node only after accessing
+ its gp_seq_needed
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180521044220.123933-1-joel@joelfernandes.org>
+ <20180521044220.123933-5-joel@joelfernandes.org>
+ <20180521232537.GJ3803@linux.vnet.ibm.com>
+ <20180522000734.GD40541@joelaf.mtv.corp.google.com>
+ <20180522002823.GP3803@linux.vnet.ibm.com>
+ <20180522041651.GA18405@linux.vnet.ibm.com>
+ <20180522044327.GF40541@joelaf.mtv.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <f5589b88-acf8-b491-df79-e359e596c8d0@nvidia.com>
-References: <1526639490-12167-1-git-send-email-ulf.hansson@linaro.org>
- <1526639490-12167-9-git-send-email-ulf.hansson@linaro.org> <f5589b88-acf8-b491-df79-e359e596c8d0@nvidia.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 22 May 2018 16:47:17 +0200
-Message-ID: <CAPDyKFr_7hbs-MC1jQn5uAgSnb1UGufXZdEmUqNTM63KemTe1g@mail.gmail.com>
-Subject: Re: [PATCH 8/9] PM / Domains: Add support for multi PM domains per
- device to genpd
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180522044327.GF40541@joelaf.mtv.corp.google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18052214-0012-0000-0000-00001649BCBC
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009066; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000261; SDB=6.01036048; UDB=6.00529977; IPR=6.00815177;
+ MB=3.00021240; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-22 14:48:36
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18052214-0013-0000-0000-000052E2AD49
+Message-Id: <20180522121216.GR3803@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-22_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805220169
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[...]
+On Mon, May 21, 2018 at 09:43:27PM -0700, Joel Fernandes wrote:
+> On Mon, May 21, 2018 at 09:16:51PM -0700, Paul E. McKenney wrote:
+> > On Mon, May 21, 2018 at 05:28:23PM -0700, Paul E. McKenney wrote:
+> > > On Mon, May 21, 2018 at 05:07:34PM -0700, Joel Fernandes wrote:
+> > > > On Mon, May 21, 2018 at 04:25:38PM -0700, Paul E. McKenney wrote:
+> > > > > On Sun, May 20, 2018 at 09:42:20PM -0700, Joel Fernandes wrote:
+> > > > > > We acquire gp_seq_needed locklessly. To be safe, lets do the unlocking
+> > > > > > after the access.
+> > > > > 
+> > > > > Actually, no, we hold rnp_start's ->lock throughout.  And this CPU (or in
+> > > > > the case of no-CBs CPUs, this task) is in charge of rdp->gp_seq_needed,
+> > > > > so nothing else is accessing it.  Or at least that is the intent.  ;-)
+> > > > 
+> > > > I was talking about protecting the internal node's rnp->gp_seq_needed, not
+> > > > the rnp_start's gp_seq_needed.
+> > > 
+> > > Ah, good point, I missed the "if" condition.  This can be argued to work,
+> > > sort of, given that we still hold the leaf rcu_node structure's lock,
+> > > so that there is a limit to how far grace periods can advance.
+> > > 
+> > > But the code would of course be much cleaner with your change.
+> > > 
+> > > > We are protecting them in the loop:
+> > > > 
+> > > > like this:
+> > > > for(...)
+> > > > 	if (rnp != rnp_start)
+> > > > 		raw_spin_lock_rcu_node(rnp);
+> > > > 	[...]
+> > > > 	// access rnp->gp_seq and rnp->gp_seq_needed
+> > > > 	[...]
+> > > > 	if (rnp != rnp_start)
+> > > > 		raw_spin_unlock_rcu_node(rnp);
+> > > > 
+> > > > But we don't need to do such protection in unlock_out ? I'm sorry if I'm
+> > > > missing something, but I'm wondering if rnp->gp_seq_needed of an internal
+> > > > node can be accessed locklessly, then why can't that be done also in the
+> > > > funnel locking loop - after all we are holding the rnp_start's lock through
+> > > > out right?
+> > > 
+> > > I was focused on the updates, and missed the rnp->gp_seq_req access in the
+> > > "if" statement.  The current code does sort of work, but only assuming
+> > > that the compiler doesn't tear the load, and so your change would help.
+> > > Could you please resend with your other two updated patches?  It depends
+> > > on one of the earlier patches, so does not apply cleanly as-is.  I could
+> > > hand-apply it, but that sounds like a good way to make your updated
+> > > series fail to apply.  ;-)
+> > > 
+> > > But could you also make the commit log explicitly call out the "if"
+> > > condition as being the offending access?
+> > 
+> > Never mind, me being stupid.  I need to apply this change to the original
+> > commit "rcu: Make rcu_nocb_wait_gp() check if GP already requested", which
+> > I have done with this attribution:
+> > 
+> > [ paulmck: Move lock release past "if" as suggested by Joel Fernandes. ]
+> > 
+> > I have rebased my stack on top of the updated commit.
+> 
+> Cool, makes sense. I am assuming this means I don't have to resend this
+> patch, if I do let me know :)
 
->>
->> +/**
->> + * genpd_dev_pm_attach_by_id() - Attach a device to one of its PM domain.
->> + * @dev: Device to attach.
->> + * @index: The index of the PM domain.
->> + *
->> + * Parse device's OF node to find a PM domain specifier at the provided @index.
->> + * If such is found, allocates a new device and attaches it to retrieved
->> + * pm_domain ops.
->> + *
->> + * Returns the allocated device if successfully attached PM domain, NULL when
->> + * the device don't need a PM domain or have a single PM domain, else PTR_ERR()
->> + * in case of failures. Note that if a power-domain exists for the device, but
->> + * cannot be found or turned on, then return PTR_ERR(-EPROBE_DEFER) to ensure
->> + * that the device is not probed and to re-try again later.
->> + */
->> +struct device *genpd_dev_pm_attach_by_id(struct device *dev,
->> +                                      unsigned int index)
->> +{
->> +     struct device *genpd_dev;
->> +     int num_domains;
->> +     int ret;
->> +
->> +     if (!dev->of_node)
->> +             return NULL;
->> +
->> +     /* Deal only with devices using multiple PM domains. */
->> +     num_domains = of_count_phandle_with_args(dev->of_node, "power-domains",
->> +                                              "#power-domain-cells");
->> +     if (num_domains < 2 || index >= num_domains)
->> +             return NULL;
->> +
->> +     /* Allocate and register device on the genpd bus. */
->> +     genpd_dev = kzalloc(sizeof(*genpd_dev), GFP_KERNEL);
->> +     if (!genpd_dev)
->> +             return ERR_PTR(-ENOMEM);
->> +
->> +     dev_set_name(genpd_dev, "genpd:%u:%s", index, dev_name(dev));
->> +     genpd_dev->bus = &genpd_bus_type;
->> +     genpd_dev->release = genpd_release_dev;
->> +
->> +     ret = device_register(genpd_dev);
->> +     if (ret) {
->> +             kfree(genpd_dev);
->> +             return ERR_PTR(ret);
->> +     }
->> +
->> +     /* Try to attach the device to the PM domain at the specified index. */
->> +     ret = __genpd_dev_pm_attach(genpd_dev, dev->of_node, index);
->> +     if (ret < 1) {
->> +             device_unregister(genpd_dev);
->> +             return ret ? ERR_PTR(ret) : NULL;
->> +     }
->> +
->> +     pm_runtime_set_active(genpd_dev);
->> +     pm_runtime_enable(genpd_dev);
->> +
->> +     return genpd_dev;
->> +}
->> +EXPORT_SYMBOL_GPL(genpd_dev_pm_attach_by_id);
->
-> Thanks for sending this. Believe it or not this has still been on my to-do list
-> and so we definitely need a solution for Tegra.
->
-> Looking at the above it appears that additional power-domains exposed as devices
-> to the client device. So I assume that this means that the drivers for devices
-> with multiple power-domains will need to call RPM APIs for each of these
-> additional power-domains. Is that correct?
+No need.
 
-They can, but should not!
+> Either way, once you push your updated tree to kernel.org, I'll double check
+> to make sure the change is in :)
 
-Instead, the driver shall use device_link_add() and device_link_del(),
-dynamically, depending on what PM domain that their original device
-needs for the current running use case.
+Please see 9624746baf6b ("rcu: Make rcu_nocb_wait_gp() check if GP
+already requested") on branch rcu/dev.
 
-In that way, they keep existing runtime PM deployment, operating on
-its original device.
-
->
-> If so, I can see that that would work, but it does not seem to fit the RPM model
-> where currently for something like device clocks, the RPM callbacks can handle
-> all clocks at once.
->
-> I was wondering why we could not add a list of genpd domains to the
-> dev_pm_domain struct for the device? For example ...
-
-See above answer, hopefully that explains it.
-
-FYI, that's why I also discovered the bug around using device links
-with runtime PM during probe.
-https://patchwork.kernel.org/patch/10408825/
-
->
-> diff --git a/include/linux/pm.h b/include/linux/pm.h
-> index e723b78d8357..a11d6db3c077 100644
-> --- a/include/linux/pm.h
-> +++ b/include/linux/pm.h
-> @@ -659,6 +659,7 @@ extern void dev_pm_put_subsys_data(struct device *dev);
->   * subsystem-level and driver-level callbacks.
->   */
->  struct dev_pm_domain {
-> +       struct list_head        genpd_list;
->         struct dev_pm_ops       ops;
->         void (*detach)(struct device *dev, bool power_off);
->         int (*activate)(struct device *dev);
-> @@ -666,6 +667,11 @@ struct dev_pm_domain {
->         void (*dismiss)(struct device *dev);
->  };
->
-> +struct dev_pm_domain_link {
-> +       struct generic_pm_domain *genpd;
-> +       struct list_head node;
-> +};
-> +
->  /*
->   * The PM_EVENT_ messages are also used by drivers implementing the legacy
->   * suspend framework, based on the ->suspend() and ->resume() callbacks common
-> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-> index e61b5cd79fe2..019593804670 100644
-> --- a/include/linux/pm_domain.h
-> +++ b/include/linux/pm_domain.h
-> @@ -51,7 +51,6 @@ struct dev_pm_opp;
->
->  struct generic_pm_domain {
->         struct device dev;
-> -       struct dev_pm_domain domain;    /* PM domain operations */
->         struct list_head gpd_list_node; /* Node in the global PM domains list */
->         struct list_head master_links;  /* Links with PM domain as a master */
->         struct list_head slave_links;   /* Links with PM domain as a slave */
-> @@ -99,11 +98,6 @@ struct generic_pm_domain {
->
->  };
->
-> -static inline struct generic_pm_domain *pd_to_genpd(struct dev_pm_domain *pd)
-> -{
-> -       return container_of(pd, struct generic_pm_domain, domain);
-> -}
-> -
->
-> Obviously the above will not compile but the intent would be to allocate a
-> dev_pm_domain_link struct per power-domain that the device needs and add
-> to the genpd_list for the device. It would be a much bigger change in
-> having to iterate through all the power-domains when turning devices on
-> and off, however, it would simplify the client driver.
->
-> Cheers
-> Jon
->
-> --
-> nvpublic
-
-Kind regards
-Uffe
+								Thanx, Paul
