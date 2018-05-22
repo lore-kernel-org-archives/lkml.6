@@ -1,81 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753311AbeEVXIq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 19:08:46 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:42650 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753002AbeEVXIp (ORCPT
+        id S1753335AbeEVXWd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 19:22:33 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:47093 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753008AbeEVXWb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 19:08:45 -0400
-X-Google-Smtp-Source: AB8JxZpBBEicFPK4BRrcaOxYwpeKm2cajxG4BaIVV2YLBBsfUoMj/msz2lkDEdV7j2EClLv0yoUMJw==
-Date: Tue, 22 May 2018 16:08:41 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Benson Leung <bleung@chromium.org>
-Cc: Olof Johansson <olof@lixom.net>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Shawn Nematbakhsh <shawnn@chromium.org>,
-        Vittorio Gambaletta <linuxbugs@vittgam.net>,
-        Guenter Roeck <groeck@chromium.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH] platform/chrome: cros_ec_lpc: do not try DMI match when ACPI
- device found
-Message-ID: <20180522230841.GA22026@dtor-ws>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Tue, 22 May 2018 19:22:31 -0400
+X-Google-Smtp-Source: AB8JxZpJhqbaPQEeUrNUtcNNctETibNUCJ+yZBf7BA+OA07bgFIUA558BT03neft7iocktgiK+JCWQ==
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: netdev@vger.kernel.org
+Cc: jon.mason@broadcom.com, Florian Fainelli <f.fainelli@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net] net: phy: broadcom: Fix auxiliary control register reads
+Date: Tue, 22 May 2018 16:22:26 -0700
+Message-Id: <20180522232227.6355-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Older models of Chromebooks did not describe the LPC EC in their ACPI
-tables; starting with Strago-based devices Google is using GOOG0004 device
-to describe EC LPC.
+We are currently doing auxiliary control register reads with the shadow
+register value 0b111 (0x7) which incidentally is also the selector value
+that should be present in bits [2:0]. Fix this by using the appropriate
+selector mask which is defined (MII_BCM54XX_AUXCTL_SHDWSEL_MASK).
 
-DMI-based match is fragile and does not work reliably, especially when
-using custom firmware. It is also not needed when we can locate the right
-ACPI device, so let's stop bailing out when DMI does not match but the
-right ACPI device is present.
+This does not have a functional impact yet because we always access the
+MII_BCM54XX_AUXCTL_SHDWSEL_MISC (0x7) register in the current code.
+This might change at some point though.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Fixes: 5b4e29005123 ("net: phy: broadcom: add bcm54xx_auxctl_read")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- drivers/platform/chrome/cros_ec_lpc.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+David, please queue this for -stable as well, thank you!
 
-diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
-index af89e82eecd23..a000d2fbbb0be 100644
---- a/drivers/platform/chrome/cros_ec_lpc.c
-+++ b/drivers/platform/chrome/cros_ec_lpc.c
-@@ -419,7 +419,13 @@ static int __init cros_ec_lpc_init(void)
- 	int ret;
- 	acpi_status status;
- 
--	if (!dmi_check_system(cros_ec_lpc_dmi_table)) {
-+	status = acpi_get_devices(ACPI_DRV_NAME, cros_ec_lpc_parse_device,
-+				  &cros_ec_lpc_acpi_device_found, NULL);
-+	if (ACPI_FAILURE(status))
-+		pr_warn(DRV_NAME ": Looking for %s failed\n", ACPI_DRV_NAME);
-+
-+	if (!cros_ec_lpc_acpi_device_found &&
-+	    !dmi_check_system(cros_ec_lpc_dmi_table)) {
- 		pr_err(DRV_NAME ": unsupported system.\n");
- 		return -ENODEV;
- 	}
-@@ -434,11 +440,6 @@ static int __init cros_ec_lpc_init(void)
- 		return ret;
- 	}
- 
--	status = acpi_get_devices(ACPI_DRV_NAME, cros_ec_lpc_parse_device,
--				  &cros_ec_lpc_acpi_device_found, NULL);
--	if (ACPI_FAILURE(status))
--		pr_warn(DRV_NAME ": Looking for %s failed\n", ACPI_DRV_NAME);
--
- 	if (!cros_ec_lpc_acpi_device_found) {
- 		/* Register the device, and it'll get hooked up automatically */
- 		ret = platform_device_register(&cros_ec_lpc_device);
+ drivers/net/phy/bcm-phy-lib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/phy/bcm-phy-lib.c b/drivers/net/phy/bcm-phy-lib.c
+index 5ad130c3da43..d5e0833d69b9 100644
+--- a/drivers/net/phy/bcm-phy-lib.c
++++ b/drivers/net/phy/bcm-phy-lib.c
+@@ -56,7 +56,7 @@ int bcm54xx_auxctl_read(struct phy_device *phydev, u16 regnum)
+ 	/* The register must be written to both the Shadow Register Select and
+ 	 * the Shadow Read Register Selector
+ 	 */
+-	phy_write(phydev, MII_BCM54XX_AUX_CTL, regnum |
++	phy_write(phydev, MII_BCM54XX_AUX_CTL, MII_BCM54XX_AUXCTL_SHDWSEL_MASK |
+ 		  regnum << MII_BCM54XX_AUXCTL_SHDWSEL_READ_SHIFT);
+ 	return phy_read(phydev, MII_BCM54XX_AUX_CTL);
+ }
 -- 
-2.17.0.441.gb46fe60e1d-goog
-
-
--- 
-Dmitry
+2.14.1
