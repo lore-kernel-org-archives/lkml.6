@@ -1,139 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752600AbeEVRwj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 13:52:39 -0400
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:22290 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751710AbeEVRwc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 13:52:32 -0400
-X-IronPort-AV: E=Sophos;i="5.49,430,1520870400";
-   d="scan'208";a="175448566"
-From: adam.manzanares@wdc.com
-To: viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        axboe@kernel.dk, bcrl@kvack.org
-Cc: mingo@kernel.org, tglx@linutronix.de, kstewart@linuxfoundation.org,
-        peterz@infradead.org, pombredanne@nexb.com, gregkh@linuxfoundation.org,
-        bigeasy@linutronix.de, rgoldwyn@suse.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-aio@kvack.org,
-        linux-api@vger.kernel.org, hch@infradread.org, jmoyer@redhat.com,
-        Adam Manzanares <adam.manzanares@wdc.com>
-Subject: [PATCH v7 3/5] fs: Add aio iopriority support
-Date: Tue, 22 May 2018 10:52:19 -0700
-Message-Id: <20180522175221.2391-4-adam.manzanares@wdc.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180522175221.2391-1-adam.manzanares@wdc.com>
-References: <20180522175221.2391-1-adam.manzanares@wdc.com>
+        id S1751883AbeEVRwy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 13:52:54 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:42372 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751340AbeEVRwv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 13:52:51 -0400
+Date: Tue, 22 May 2018 19:52:30 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Stefan Agner <stefan@agner.ch>
+Cc: dwmw2@infradead.org, computersforpeace@gmail.com,
+        marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        thierry.reding@gmail.com, mturquette@baylibre.com, sboyd@kernel.org,
+        dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
+        marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com,
+        benjamin.lindqvist@endian.se, jonathanh@nvidia.com,
+        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com,
+        linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [RESEND PATCH 1/5] mtd: rawnand: tegra: add devicetree binding
+Message-ID: <20180522195230.471a796e@bbrezillon>
+In-Reply-To: <8bd0f80a9db9abc7af192d1c7d449887b1392ff7.1526990589.git.stefan@agner.ch>
+References: <cover.1526990589.git.stefan@agner.ch>
+        <8bd0f80a9db9abc7af192d1c7d449887b1392ff7.1526990589.git.stefan@agner.ch>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adam Manzanares <adam.manzanares@wdc.com>
+Hello Stefan,
 
-This is the per-I/O equivalent of the ioprio_set system call.
+On Tue, 22 May 2018 14:07:05 +0200
+Stefan Agner <stefan@agner.ch> wrote:
 
-When IOCB_FLAG_IOPRIO is set on the iocb aio_flags field, then we set the
-newly added kiocb ki_ioprio field to the value in the iocb aio_reqprio field.
+> From: Lucas Stach <dev@lynxeye.de>
+> 
+> This adds the devicetree binding for the Tegra 2 NAND flash
+> controller.
+> 
+> Signed-off-by: Lucas Stach <dev@lynxeye.de>
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
+>  .../bindings/mtd/nvidia,tegra20-nand.txt      | 29 +++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
+> new file mode 100644
+> index 000000000000..522d442937a9
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
+> @@ -0,0 +1,29 @@
+> +NVIDIA Tegra NAND Flash controller
+> +
+> +Required properties:
+> +- compatible: Must be one of:
+> +  - "nvidia,tegra20-nand"
+> +- reg: MMIO address range
+> +- interrupts: interrupt output of the NFC controller
+> +- clocks: Must contain an entry for each entry in clock-names.
+> +  See ../clocks/clock-bindings.txt for details.
+> +- clock-names: Must include the following entries:
+> +  - nand
+> +- resets: Must contain an entry for each entry in reset-names.
+> +  See ../reset/reset.txt for details.
+> +- reset-names: Must include the following entries:
+> +  - nand
+> +
+> +Optional properties:
+> +- nvidia,wp-gpios: GPIO used to disable write protection of the flash
+> +
+> +  Example:
+> +	nand@70008000 {
+> +		compatible = "nvidia,tegra20-nand";
+> +		reg = <0x70008000 0x100>;
+> +		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&tegra_car TEGRA20_CLK_NDFLASH>;
+> +		clock-names = "nand";
+> +		resets = <&tegra_car 13>;
+> +		reset-names = "nand";
+> +	};
 
-This patch depends on block: add ioprio_check_cap function.
+Can you represent the controller and NAND chip separately as
+recommended here [1].
 
-Signed-off-by: Adam Manzanares <adam.manzanares@wdc.com>
-Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
----
- drivers/block/loop.c         |  3 +++
- fs/aio.c                     | 16 ++++++++++++++++
- include/linux/fs.h           |  3 +++
- include/uapi/linux/aio_abi.h |  1 +
- 4 files changed, 23 insertions(+)
+Thanks,
 
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 5d4e31655d96..dd98dfd97f5e 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -76,6 +76,8 @@
- #include <linux/miscdevice.h>
- #include <linux/falloc.h>
- #include <linux/uio.h>
-+#include <linux/ioprio.h>
-+
- #include "loop.h"
- 
- #include <linux/uaccess.h>
-@@ -559,6 +561,7 @@ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
- 	cmd->iocb.ki_filp = file;
- 	cmd->iocb.ki_complete = lo_rw_aio_complete;
- 	cmd->iocb.ki_flags = IOCB_DIRECT;
-+	cmd->iocb.ki_ioprio = IOPRIO_PRIO_VALUE(IOPRIO_CLASS_NONE, 0);
- 	if (cmd->css)
- 		kthread_associate_blkcg(cmd->css);
- 
-diff --git a/fs/aio.c b/fs/aio.c
-index 87d8939bb1e4..76a9d4c14e55 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -1451,6 +1451,22 @@ static int aio_prep_rw(struct kiocb *req, struct iocb *iocb)
- 	if (iocb->aio_flags & IOCB_FLAG_RESFD)
- 		req->ki_flags |= IOCB_EVENTFD;
- 	req->ki_hint = ki_hint_validate(file_write_hint(req->ki_filp));
-+	if (iocb->aio_flags & IOCB_FLAG_IOPRIO) {
-+		/*
-+		 * If the IOCB_FLAG_IOPRIO flag of aio_flags is set, then
-+		 * aio_reqprio is interpreted as an I/O scheduling
-+		 * class and priority.
-+		 */
-+		ret = ioprio_check_cap(iocb->aio_reqprio);
-+		if (ret) {
-+			pr_debug("aio ioprio check cap error\n");
-+			return -EINVAL;
-+		}
-+
-+		req->ki_ioprio = iocb->aio_reqprio;
-+	} else
-+		req->ki_ioprio = IOPRIO_PRIO_VALUE(IOPRIO_CLASS_NONE, 0);
-+
- 	ret = kiocb_set_rw_flags(req, iocb->aio_rw_flags);
- 	if (unlikely(ret))
- 		fput(req->ki_filp);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 9b76ee73af14..0c61d5987879 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -36,6 +36,7 @@
- #include <linux/delayed_call.h>
- #include <linux/uuid.h>
- #include <linux/errseq.h>
-+#include <linux/ioprio.h>
- 
- #include <asm/byteorder.h>
- #include <uapi/linux/fs.h>
-@@ -300,6 +301,7 @@ struct kiocb {
- 	void			*private;
- 	int			ki_flags;
- 	u16			ki_hint;
-+	u16			ki_ioprio; /* See linux/ioprio.h */
- } __randomize_layout;
- 
- static inline bool is_sync_kiocb(struct kiocb *kiocb)
-@@ -1942,6 +1944,7 @@ static inline void init_sync_kiocb(struct kiocb *kiocb, struct file *filp)
- 		.ki_filp = filp,
- 		.ki_flags = iocb_flags(filp),
- 		.ki_hint = ki_hint_validate(file_write_hint(filp)),
-+		.ki_ioprio = IOPRIO_PRIO_VALUE(IOPRIO_CLASS_NONE, 0),
- 	};
- }
- 
-diff --git a/include/uapi/linux/aio_abi.h b/include/uapi/linux/aio_abi.h
-index 2c0a3415beee..d4e768d55d14 100644
---- a/include/uapi/linux/aio_abi.h
-+++ b/include/uapi/linux/aio_abi.h
-@@ -55,6 +55,7 @@ enum {
-  *                   is valid.
-  */
- #define IOCB_FLAG_RESFD		(1 << 0)
-+#define IOCB_FLAG_IOPRIO	(1 << 1)
- 
- /* read() from /dev/aio returns these structures. */
- struct io_event {
--- 
-2.15.1
+Boris
+
+[1]https://elixir.bootlin.com/linux/v4.17-rc6/source/Documentation/devicetree/bindings/mtd/nand.txt#L56
