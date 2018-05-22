@@ -1,84 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751663AbeEVRdn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 13:33:43 -0400
-Received: from gateway36.websitewelcome.com ([192.185.192.36]:34876 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751272AbeEVRdj (ORCPT
+        id S1751911AbeEVRe0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 13:34:26 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:44564 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751268AbeEVReY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 13:33:39 -0400
-X-Authority-Reason: nr=8
-Date: Tue, 22 May 2018 12:09:22 -0500
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Devin Heitmueller <dheitmueller@kernellabs.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] au8522: remove duplicate code
-Message-ID: <20180522170922.GA30834@embeddedor.com>
+        Tue, 22 May 2018 13:34:24 -0400
+X-Google-Smtp-Source: AB8JxZqEFgWqazTBddpMM8eMzZXHeJerQz1YE9rpszfjp5H6U1YUHpo8/wWq15mPM9EUrGrTykXnbA==
+Date: Tue, 22 May 2018 12:34:21 -0500
+From: Rob Herring <robh@kernel.org>
+To: Elaine Zhang <zhangqing@rock-chips.com>
+Cc: heiko@sntech.de, mark.rutland@arm.com, devicetree@vger.kernel.org,
+        rjw@rjwysocki.net, khilman@kernel.org, ulf.hansson@linaro.org,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        wxt@rock-chips.com, xxx@rock-chips.com, xf@rock-chips.com,
+        huangtao@rock-chips.com
+Subject: Re: [PATCH v2 01/13] dt-bindings: power: add RK3036 SoCs header for
+ power-domain
+Message-ID: <20180522173421.GA12892@rob-hp-laptop>
+References: <1526268455-9133-1-git-send-email-zhangqing@rock-chips.com>
+ <1526268501-9200-1-git-send-email-zhangqing@rock-chips.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.192.46.223
-X-Source-L: No
-X-Exim-ID: 1fLAn1-003JSO-5q
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [187.192.46.223]:37896
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <1526268501-9200-1-git-send-email-zhangqing@rock-chips.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This code has been there for nine years now, and it has been
-working "good enough" since then [1].
+On Mon, May 14, 2018 at 11:28:21AM +0800, Elaine Zhang wrote:
+> From: Caesar Wang <wxt@rock-chips.com>
+> 
+> According to a description from TRM, add all the power domains.
+> 
+> Signed-off-by: Caesar Wang <wxt@rock-chips.com>
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> ---
+>  include/dt-bindings/power/rk3036-power.h | 27 +++++++++++++++++++++++++++
+>  1 file changed, 27 insertions(+)
+>  create mode 100644 include/dt-bindings/power/rk3036-power.h
+> 
+> diff --git a/include/dt-bindings/power/rk3036-power.h b/include/dt-bindings/power/rk3036-power.h
+> new file mode 100644
+> index 000000000000..59e09f1c5af7
+> --- /dev/null
+> +++ b/include/dt-bindings/power/rk3036-power.h
+> @@ -0,0 +1,27 @@
+> +/*
+> + * Copyright (c) 2017 Rockchip Electronics Co. Ltd.
+> + * Author: Caesar Wang <wxt@rock-chips.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
 
-Remove duplicate code by getting rid of the if-else statement.
+Use SPDX tag instead.
 
-[1] https://marc.info/?l=linux-kernel&m=152693550225081&w=2
+Otherwise,
 
-Cc: Devin Heitmueller <dheitmueller@kernellabs.com>
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/media/dvb-frontends/au8522_decoder.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-diff --git a/drivers/media/dvb-frontends/au8522_decoder.c b/drivers/media/dvb-frontends/au8522_decoder.c
-index 343dc92..f285096 100644
---- a/drivers/media/dvb-frontends/au8522_decoder.c
-+++ b/drivers/media/dvb-frontends/au8522_decoder.c
-@@ -280,14 +280,12 @@ static void setup_decoder_defaults(struct au8522_state *state, bool is_svideo)
- 			AU8522_TOREGAAGC_REG0E5H_CVBS);
- 	au8522_writereg(state, AU8522_REG016H, AU8522_REG016H_CVBS);
- 
--	if (is_svideo) {
--		/* Despite what the table says, for the HVR-950q we still need
--		   to be in CVBS mode for the S-Video input (reason unknown). */
--		/* filter_coef_type = 3; */
--		filter_coef_type = 5;
--	} else {
--		filter_coef_type = 5;
--	}
-+	/*
-+	 * Despite what the table says, for the HVR-950q we still need
-+	 * to be in CVBS mode for the S-Video input (reason unknown).
-+	 */
-+	/* filter_coef_type = 3; */
-+	filter_coef_type = 5;
- 
- 	/* Load the Video Decoder Filter Coefficients */
- 	for (i = 0; i < NUM_FILTER_COEF; i++) {
--- 
-2.7.4
+> + */
+> +
+> +#ifndef __DT_BINDINGS_POWER_RK3036_POWER_H__
+> +#define __DT_BINDINGS_POWER_RK3036_POWER_H__
+> +
+> +#define RK3036_PD_MSCH		0
+> +#define RK3036_PD_CORE		1
+> +#define RK3036_PD_PERI		2
+> +#define RK3036_PD_VIO		3
+> +#define RK3036_PD_VPU		4
+> +#define RK3036_PD_GPU		5
+> +#define RK3036_PD_SYS		6
+> +
+> +#endif
+> -- 
+> 1.9.1
+> 
+> 
