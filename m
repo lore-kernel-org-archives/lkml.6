@@ -1,135 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752756AbeEVDxa (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 23:53:30 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46760 "EHLO mx1.redhat.com"
+        id S1751106AbeEVEBE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 00:01:04 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45580 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752704AbeEVDx2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 23:53:28 -0400
-Date: Tue, 22 May 2018 06:53:27 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: DaeRyong Jeong <threeearcat@gmail.com>, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, byoungyoung@purdue.edu, kt0755@gmail.com,
-        bammanag@purdue.edu
-Subject: Re: KASAN: use-after-free Read in vhost_chr_write_iter
-Message-ID: <20180522065147-mutt-send-email-mst@kernel.org>
-References: <20180517134544.GA20646@dragonet.kaist.ac.kr>
- <58419d62-3074-2e5a-8504-da1cdeb08280@redhat.com>
- <fb27c1fd-5172-252a-cb8f-b53927a26d06@redhat.com>
- <20180521173645-mutt-send-email-mst@kernel.org>
- <51cf8274-162f-384b-0ff7-47fbf15412f1@redhat.com>
+        id S1750707AbeEVEBC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 00:01:02 -0400
+Subject: Re: [PATCH net] tuntap: raise EPOLLOUT on device up
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, hannes@stressinduktion.org,
+        edumazet@google.com
+References: <1526648443-24128-1-git-send-email-jasowang@redhat.com>
+ <20180521.114742.427929977852677864.davem@davemloft.net>
+ <20180522010700-mutt-send-email-mst@kernel.org>
+ <358628f8-a296-ad0e-985b-307895ed5520@redhat.com>
+ <20180522064529-mutt-send-email-mst@kernel.org>
+From: Jason Wang <jasowang@redhat.com>
+Message-ID: <8fa1a828-c1a7-65c0-5f15-ebb215402dcb@redhat.com>
+Date: Tue, 22 May 2018 12:00:54 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <20180522064529-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <51cf8274-162f-384b-0ff7-47fbf15412f1@redhat.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 11:50:29AM +0800, Jason Wang wrote:
-> 
-> 
-> On 2018年05月21日 22:42, Michael S. Tsirkin wrote:
-> > On Mon, May 21, 2018 at 10:38:10AM +0800, Jason Wang wrote:
-> > > On 2018年05月18日 17:24, Jason Wang wrote:
-> > > > On 2018年05月17日 21:45, DaeRyong Jeong wrote:
-> > > > > We report the crash: KASAN: use-after-free Read in vhost_chr_write_iter
-> > > > > 
-> > > > > This crash has been found in v4.17-rc1 using RaceFuzzer (a modified
-> > > > > version of Syzkaller), which we describe more at the end of this
-> > > > > report. Our analysis shows that the race occurs when invoking two
-> > > > > syscalls concurrently, write$vnet and ioctl$VHOST_RESET_OWNER.
-> > > > > 
-> > > > > 
-> > > > > Analysis:
-> > > > > We think the concurrent execution of vhost_process_iotlb_msg() and
-> > > > > vhost_dev_cleanup() causes the crash.
-> > > > > Both of functions can run concurrently (please see call sequence below),
-> > > > > and possibly, there is a race on dev->iotlb.
-> > > > > If the switch occurs right after vhost_dev_cleanup() frees
-> > > > > dev->iotlb, vhost_process_iotlb_msg() still sees the non-null value
-> > > > > and it
-> > > > > keep executing without returning -EFAULT. Consequently, use-after-free
-> > > > > occures
-> > > > > 
-> > > > > 
-> > > > > Thread interleaving:
-> > > > > CPU0 (vhost_process_iotlb_msg)                CPU1 (vhost_dev_cleanup)
-> > > > > (In the case of both VHOST_IOTLB_UPDATE and
-> > > > > VHOST_IOTLB_INVALIDATE)
-> > > > > =====                            =====
-> > > > >                              vhost_umem_clean(dev->iotlb);
-> > > > > if (!dev->iotlb) {
-> > > > >              ret = -EFAULT;
-> > > > >                  break;
-> > > > > }
-> > > > >                              dev->iotlb = NULL;
-> > > > > 
-> > > > > 
-> > > > > Call Sequence:
-> > > > > CPU0
-> > > > > =====
-> > > > > vhost_net_chr_write_iter
-> > > > >      vhost_chr_write_iter
-> > > > >          vhost_process_iotlb_msg
-> > > > > 
-> > > > > CPU1
-> > > > > =====
-> > > > > vhost_net_ioctl
-> > > > >      vhost_net_reset_owner
-> > > > >          vhost_dev_reset_owner
-> > > > >              vhost_dev_cleanup
-> > > > Thanks a lot for the analysis.
-> > > > 
-> > > > This could be addressed by simply protect it with dev mutex.
-> > > > 
-> > > > Will post a patch.
-> > > > 
-> > > Could you please help to test the attached patch? I've done some smoking
-> > > test.
-> > > 
-> > > Thanks
-> > > >From 88328386f3f652e684ee33dc4cf63dcaed871aea Mon Sep 17 00:00:00 2001
-> > > From: Jason Wang<jasowang@redhat.com>
-> > > Date: Fri, 18 May 2018 17:33:27 +0800
-> > > Subject: [PATCH] vhost: synchronize IOTLB message with dev cleanup
-> > > 
-> > > DaeRyong Jeong reports a race between vhost_dev_cleanup() and
-> > > vhost_process_iotlb_msg():
-> > > 
-> > > Thread interleaving:
-> > > CPU0 (vhost_process_iotlb_msg)			CPU1 (vhost_dev_cleanup)
-> > > (In the case of both VHOST_IOTLB_UPDATE and
-> > > VHOST_IOTLB_INVALIDATE)
-> > > =====						=====
-> > > 						vhost_umem_clean(dev->iotlb);
-> > > if (!dev->iotlb) {
-> > > 	        ret = -EFAULT;
-> > > 		        break;
-> > > }
-> > > 						dev->iotlb = NULL;
-> > > 
-> > > The reason is we don't synchronize between them, fixing by protecting
-> > > vhost_process_iotlb_msg() with dev mutex.
-> > > 
-> > > Reported-by: DaeRyong Jeong<threeearcat@gmail.com>
-> > > Fixes: 6b1e6cc7855b0 ("vhost: new device IOTLB API")
-> > > Reported-by: DaeRyong Jeong<threeearcat@gmail.com>
-> > Long terms we might want to move iotlb into vqs
-> > so that messages can be processed in parallel.
-> > Not sure how to do it yet.
-> > 
-> 
-> Then we probably need to extend IOTLB msg to have a queue idx. But I thinkit
-> was probably only help if we split tx/rx into separate processes.
-> 
-> Thanks
 
-3 mutex locks on each access isn't pretty even if done by
-a single process, but yes - might be more important for scsi.
 
--- 
-MST
+On 2018年05月22日 11:46, Michael S. Tsirkin wrote:
+> On Tue, May 22, 2018 at 11:22:11AM +0800, Jason Wang wrote:
+>>
+>> On 2018年05月22日 06:08, Michael S. Tsirkin wrote:
+>>> On Mon, May 21, 2018 at 11:47:42AM -0400, David Miller wrote:
+>>>> From: Jason Wang <jasowang@redhat.com>
+>>>> Date: Fri, 18 May 2018 21:00:43 +0800
+>>>>
+>>>>> We return -EIO on device down but can not raise EPOLLOUT after it was
+>>>>> up. This may confuse user like vhost which expects tuntap to raise
+>>>>> EPOLLOUT to re-enable its TX routine after tuntap is down. This could
+>>>>> be easily reproduced by transmitting packets from VM while down and up
+>>>>> the tap device. Fixing this by set SOCKWQ_ASYNC_NOSPACE on -EIO.
+>>>>>
+>>>>> Cc: Hannes Frederic Sowa <hannes@stressinduktion.org>
+>>>>> Cc: Eric Dumazet <edumazet@google.com>
+>>>>> Fixes: 1bd4978a88ac2 ("tun: honor IFF_UP in tun_get_user()")
+>>>>> Signed-off-by: Jason Wang <jasowang@redhat.com>
+>>>> I'm no so sure what to do with this patch.
+>>>>
+>>>> Like Michael says, this flag bit is only checks upon transmit which
+>>>> may or may not happen after this point.  It doesn't seem to be
+>>>> guaranteed.
+>> The flag is checked in tun_chr_poll() as well.
+>>
+>>> Jason, can't we detect a link up transition and respond accordingly?
+>>> What do you think?
+>>>
+>> I think we've already tried to do this, in tun_net_open() we call
+>> write_space(). But the problem is the bit may not be set at that time.
+>>
+>> A second thought is to set the bit in tun_chr_poll() instead of -EIO like:
+>>
+>> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+>> index d45ac37..46a1573 100644
+>> --- a/drivers/net/tun.c
+>> +++ b/drivers/net/tun.c
+>> @@ -1423,6 +1423,13 @@ static void tun_net_init(struct net_device *dev)
+>>          dev->max_mtu = MAX_MTU - dev->hard_header_len;
+>>   }
+>>
+>> +static bool tun_sock_writeable(struct tun_struct *tun, struct tun_file
+>> *tfile)
+>> +{
+>> +       struct sock *sk = tfile->socket.sk;
+>> +
+>> +       return (tun->dev->flags & IFF_UP) && sock_writeable(sk);
+>> +}
+>> +
+>>   /* Character device part */
+>>
+>>   /* Poll */
+>> @@ -1445,10 +1452,9 @@ static __poll_t tun_chr_poll(struct file *file,
+>> poll_table *wait)
+>>          if (!ptr_ring_empty(&tfile->tx_ring))
+>>                  mask |= EPOLLIN | EPOLLRDNORM;
+>>
+>> -       if (tun->dev->flags & IFF_UP &&
+>> -           (sock_writeable(sk) ||
+>> -            (!test_and_set_bit(SOCKWQ_ASYNC_NOSPACE, &sk->sk_socket->flags)
+>> &&
+>> -             sock_writeable(sk))))
+>> +       if (tun_sock_writeable(tun, tfile) ||
+>> +           (!test_and_set_bit(SOCKWQ_ASYNC_NOSPACE, &sk->sk_socket->flags)
+>> &&
+>> +            tun_sock_writeable(tun, tfile)));
+>>                  mask |= EPOLLOUT | EPOLLWRNORM;
+>>
+>>          if (tun->dev->reg_state != NETREG_REGISTERED)
+>>
+>> Does this make more sense?
+>>
+>> Thanks
+> I just understood the motivation for doing it on EIO.
+> Maybe there's a reason it makes sense here as well,
+> but it's far from obvious. I suggest you repost adding
+> an explanation in the comment. The original patch will
+> be fine with an explanation as well.
+>
+
+Ok, let me add explanation on both code and commit log.
+
+Thanks
