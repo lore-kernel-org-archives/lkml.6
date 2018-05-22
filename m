@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752517AbeEVK5t (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 06:57:49 -0400
+        id S1752542AbeEVK6M (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 06:58:12 -0400
 Received: from mga17.intel.com ([192.55.52.151]:56463 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751447AbeEVK44 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 06:56:56 -0400
+        id S1751740AbeEVK4o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 06:56:44 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,429,1520924400";
-   d="scan'208";a="60711579"
+   d="scan'208";a="60711529"
 From: Adrian Hunter <adrian.hunter@intel.com>
 To: Thomas Gleixner <tglx@linutronix.de>,
         Arnaldo Carvalho de Melo <acme@kernel.org>
@@ -21,9 +21,9 @@ Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
         linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [PATCH V3 14/17] perf buildid-cache: kcore_copy: Iterate phdrs
-Date: Tue, 22 May 2018 13:54:42 +0300
-Message-Id: <1526986485-6562-15-git-send-email-adrian.hunter@intel.com>
+Subject: [PATCH V3 11/17] perf buildid-cache: kcore_copy: Keep a count of phdrs
+Date: Tue, 22 May 2018 13:54:39 +0300
+Message-Id: <1526986485-6562-12-git-send-email-adrian.hunter@intel.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1526986485-6562-1-git-send-email-adrian.hunter@intel.com>
 References: <1526986485-6562-1-git-send-email-adrian.hunter@intel.com>
@@ -32,68 +32,53 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to add more program headers, iterate phdrs instead of
-assuming there is only one for the kernel text and one for the modules.
+In preparation to add more program headers, keep a count of phdrs.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 ---
- tools/perf/util/symbol-elf.c | 25 ++++++++++---------------
- 1 file changed, 10 insertions(+), 15 deletions(-)
+ tools/perf/util/symbol-elf.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
 diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
-index 3e76a0efd15c..91b8cfb045ec 100644
+index b13873a6f368..4e7b71e8ac0e 100644
 --- a/tools/perf/util/symbol-elf.c
 +++ b/tools/perf/util/symbol-elf.c
-@@ -1701,10 +1701,11 @@ int kcore_copy(const char *from_dir, const char *to_dir)
+@@ -1398,6 +1398,7 @@ struct kcore_copy_info {
+ 	u64 last_symbol;
+ 	u64 first_module;
+ 	u64 last_module_symbol;
++	size_t phnum;
+ 	struct phdr_data kernel_map;
+ 	struct phdr_data modules_map;
+ 	struct list_head phdrs;
+@@ -1517,6 +1518,8 @@ static int kcore_copy__read_maps(struct kcore_copy_info *kci, Elf *elf)
+ 	if (kci->modules_map.len)
+ 		list_add_tail(&kci->modules_map.node, &kci->phdrs);
+ 
++	kci->phnum = !!kci->kernel_map.len + !!kci->modules_map.len;
++
+ 	return 0;
+ }
+ 
+@@ -1678,7 +1681,6 @@ int kcore_copy(const char *from_dir, const char *to_dir)
+ {
  	struct kcore kcore;
  	struct kcore extract;
+-	size_t count = 2;
  	int idx = 0, err = -1;
--	off_t offset, sz, modules_offset = 0;
-+	off_t offset, sz;
+ 	off_t offset = page_size, sz, modules_offset = 0;
  	struct kcore_copy_info kci = { .stext = 0, };
- 	char kcore_filename[PATH_MAX];
- 	char extract_filename[PATH_MAX];
-+	struct phdr_data *p;
+@@ -1705,10 +1707,7 @@ int kcore_copy(const char *from_dir, const char *to_dir)
+ 	if (kcore__init(&extract, extract_filename, kcore.elfclass, false))
+ 		goto out_kcore_close;
  
- 	INIT_LIST_HEAD(&kci.phdrs);
- 
-@@ -1733,14 +1734,10 @@ int kcore_copy(const char *from_dir, const char *to_dir)
- 		 gelf_fsize(extract.elf, ELF_T_PHDR, kci.phnum, EV_CURRENT);
- 	offset = round_up(offset, page_size);
- 
--	if (kcore__add_phdr(&extract, idx++, offset, kci.kernel_map.addr,
--			    kci.kernel_map.len))
--		goto out_extract_close;
-+	kcore_copy__for_each_phdr(&kci, p) {
-+		off_t offs = p->rel + offset;
- 
--	if (kci.modules_map.addr) {
--		modules_offset = offset + kci.kernel_map.len;
--		if (kcore__add_phdr(&extract, idx, modules_offset,
--				    kci.modules_map.addr, kci.modules_map.len))
-+		if (kcore__add_phdr(&extract, idx++, offs, p->addr, p->len))
- 			goto out_extract_close;
- 	}
- 
-@@ -1748,14 +1745,12 @@ int kcore_copy(const char *from_dir, const char *to_dir)
- 	if (sz < 0 || sz > offset)
+-	if (!kci.modules_map.addr)
+-		count -= 1;
+-
+-	if (kcore__copy_hdr(&kcore, &extract, count))
++	if (kcore__copy_hdr(&kcore, &extract, kci.phnum))
  		goto out_extract_close;
  
--	if (copy_bytes(kcore.fd, kci.kernel_map.offset, extract.fd, offset,
--		       kci.kernel_map.len))
--		goto out_extract_close;
-+	kcore_copy__for_each_phdr(&kci, p) {
-+		off_t offs = p->rel + offset;
- 
--	if (modules_offset && copy_bytes(kcore.fd, kci.modules_map.offset,
--					 extract.fd, modules_offset,
--					 kci.modules_map.len))
--		goto out_extract_close;
-+		if (copy_bytes(kcore.fd, p->offset, extract.fd, offs, p->len))
-+			goto out_extract_close;
-+	}
- 
- 	if (kcore_copy__compare_file(from_dir, to_dir, "modules"))
- 		goto out_extract_close;
+ 	if (kcore__add_phdr(&extract, idx++, offset, kci.kernel_map.addr,
 -- 
 1.9.1
