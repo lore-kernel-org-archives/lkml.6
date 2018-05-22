@@ -1,75 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751257AbeEVJWy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 05:22:54 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:57922 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751160AbeEVJWV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 05:22:21 -0400
-From: Fabrice Gasnier <fabrice.gasnier@st.com>
-To: <thierry.reding@gmail.com>, <stefan.wahren@i2se.com>,
-        <gohai@sukzessiv.net>
-CC: <hsweeten@visionengravers.com>, <gottfried.haider@gmail.com>,
-        <loic.pallardy@st.com>, <fabrice.gasnier@st.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-rpi-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pwm@vger.kernel.org>
-Subject: [PATCH] Revert "pwm: Set class for exported channels in sysfs"
-Date: Tue, 22 May 2018 11:21:44 +0200
-Message-ID: <1526980904-11041-1-git-send-email-fabrice.gasnier@st.com>
-X-Mailer: git-send-email 1.9.1
+        id S1751342AbeEVJXE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 05:23:04 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:33628 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751268AbeEVJXA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 05:23:00 -0400
+Subject: Re: [PATCH 22/33] drm/i915: use match_string() helper
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
+ <1526903890-35761-23-git-send-email-xieyisheng1@huawei.com>
+ <CAHp75Ve0zmHZqESKgB1U9XEhztHPzAWcw9O-8K4JUAamdmYd3A@mail.gmail.com>
+ <87lgccw0hd.fsf@intel.com>
+CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>,
+        <intel-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>
+From: Yisheng Xie <xieyisheng1@huawei.com>
+Message-ID: <fc1a13c6-fee5-52a2-936c-097efa6fc6be@huawei.com>
+Date: Tue, 22 May 2018 17:22:41 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.1.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.44]
-X-ClientProxiedBy: SFHDAG3NODE3.st.com (10.75.127.9) To SFHDAG5NODE3.st.com
- (10.75.127.15)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-22_02:,,
- signatures=0
+In-Reply-To: <87lgccw0hd.fsf@intel.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.40]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 7e5d1fd75c3dde9fc10c4472b9368089d1b81d00 as it causes
-regression with multiple pwm chip. It creates a new entry in
-'/sys/class/pwm' every time a 'pwmX' is exported with 'echo X > export':
-- 1st time export will create an entry in /sys/class/pwm/pwmX
-- when another export happens on another pwmchip, it can't be created
-(e.g. -EEXIST)
+Hi Jani,
 
-This also changes existing ABI (Documentation/ABI/testing/sysfs-class-pwm):
-- pmwX should be there: /sys/class/pwm/pwmchipN/pwmX
+On 2018/5/22 16:36, Jani Nikula wrote:
+> On Tue, 22 May 2018, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+>> On Mon, May 21, 2018 at 2:57 PM, Yisheng Xie <xieyisheng1@huawei.com> wrote:
+>>> match_string() returns the index of an array for a matching string,
+>>> which can be used intead of open coded variant.
+>>
+>> https://patchwork.kernel.org/patch/10382323/
+> 
+> Even more convincingly,
+> 
+> 47d4cb8ae8e7 ("i915: Convert to use match_string() helper")
 
-Example on stm32 (stm32429i-eval) platform:
-$ ls /sys/class/pwm
-pwmchip0 pwmchip4
+Sorry, but I will definitely remove them in next version, I just miss these.
 
-$ cd /sys/class/pwm/pwmchip0/
-$ echo 0 > export
-$ ls /sys/class/pwm
-pwm0 pwmchip0 pwmchip4
-
-$ cd /sys/class/pwm/pwmchip4/
-$ echo 0 > export
-sysfs: cannot create duplicate filename '/class/pwm/pwm0'
-...Exception stack follows...
-
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
----
- drivers/pwm/sysfs.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/pwm/sysfs.c b/drivers/pwm/sysfs.c
-index 7c71cdb..4726d43 100644
---- a/drivers/pwm/sysfs.c
-+++ b/drivers/pwm/sysfs.c
-@@ -263,7 +263,6 @@ static int pwm_export_child(struct device *parent, struct pwm_device *pwm)
- 	export->pwm = pwm;
- 	mutex_init(&export->lock);
- 
--	export->child.class = parent->class;
- 	export->child.release = pwm_export_release;
- 	export->child.parent = parent;
- 	export->child.devt = MKDEV(0, 0);
--- 
-1.9.1
+Thanks
+Yisheng
+> 
+> BR,
+> Jani.
+> 
+>>
+>>> Cc: Jani Nikula <jani.nikula@linux.intel.com>
+>>> Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+>>> Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
+>>> Cc: David Airlie <airlied@linux.ie>
+>>> Cc: intel-gfx@lists.freedesktop.org
+>>> Cc: dri-devel@lists.freedesktop.org
+> 
