@@ -1,10 +1,10 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2401354-1526989416-2-8927431227910153599
+X-Cyrus-Session-Id: sloti22d1t05-2401354-1526989398-2-17393113716891061101
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES enroda, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
   MailFrom='org'
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526989415; b=cifXIIkOXOepIIhLfxtkcFovvENe+PL9JgxOXhrs36M3GBNERi
-    9mX6ZR4qfRx8XeQ4nSWUrscF2LipHUOV2lKwW4XsBx7z2o10L2xyKIenMvqz4Oxx
-    o8a3bkiyVwBpUzyqUB6u6Oa5/wMpQ4c+Pww4cR/K8Kql72jm31epeuXBk7GSmYid
-    iElvzceDmk7iGKwQz8+p6UAA8MEuPsnzHMYXE9pv9JeiDvjEIlnfjq/Tl65ieh/S
-    sQvd0nEat9T+RJchVq/H2vRZFSCPZeIS+CAVETJhZr9ggXP+oVl1bwwok7JoePQF
-    A6kuxJO8AZ+EJNZql5785FD4Xy3jotJB7T4g==
+    1526989398; b=gr9IkvOLSnHE092mZBZwfThsd66HT45vrWUt+ETIcSxXPYzf2o
+    aPz7phBIwFhqJ5ZBQeSYZ+VdAsg5tCBS1xeUCFP/4GYDCLDZ0KzezHH1BedBHLGs
+    0nFLBCQwhavbVEl6b/VEk7Pw+ohLj2S7juS8dp4JzUIgxSh35h6DGeOucAST7fex
+    AQ/tBT6eUGprBq/N3lyNid6UlUJClF/zx7/tEIF1RESnsfmXmiZhQ3la8nzY+t1o
+    JzS7YQ2DqrfO3s6m8HuUTnkuHwt9p0B/2e6pgJ6bSaCYgULQUKLcAfLYcSZVpkVY
+    rkpvBcIlbS7fPaCfLhUI3ict/7/HyE1INQ7g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1526989415; bh=
-    OHSs6cba2aXI5p6vrTO/kooD0u1SzY5p0PglyfX7dtM=; b=Ixh/W1u0/OFwpc63
-    y0XbawEPvcIasCzuTrXnD8d9W48hGzFg1VLHQCskCjMUXALeliLgTTSB8sndQl1d
-    9bDCLDxdxP9VBBYLjkBPyepvuGnyUwveMor4phNoUhTi3uxm5Dg50Y/txxIZbpJF
-    miCm3S762r4sDXmKAaNqSFTYBvDQuuHwiDZtRbWsxWb0Jnaru8EXXSrmYLLg+haQ
-    pun1g1gozJDZwHKugwOggFgAk3czDp3eK9jUeC+ZPzIZvDj9vnLYs2VX+QG5WepI
-    0DMbknETV/YBPaPBeodqTy/yokuzPUcTPcVzM6dZUIXmoc1FIADa+mU64xfHV48P
-    +eU8hw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=fm2; t=1526989398; bh=
+    jWzV8yEzk9uv10Y/q8/JWjzgx4frRIjm5VqayLmwd7k=; b=HbN2C+59imoxs7sK
+    aMyuR+GwKtxseP+jnOkiW5rJM9ae2AcvM163T4RPT5QU1cAkt8BKAbkdhbfQvOi6
+    3wYB6T9XuXKZhOx5IctFdD9pc5ZCieMa4WlT2VlpD21q/dcQPCjIWK/5XhXz2qbN
+    LD6yaz92dACZ14Vfwg3zeq4CyK2tVblF5YuLHRwY/KnPtdAq2x3NkqYHWaVRdHDG
+    dC7js5wef6mJq/oZQ+HIjwZpUZakVFlQc/mJnKh6AKpSvnTYRft+PR4Ej3hZZSar
+    sg19rC80PZDY5DgtFjejLer5DKJurEfwVySc0FXGI6J18ZEVnkrVYNhuywhfepkL
+    JXItfw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=infradead.org header.i=@infradead.org header.b=mIXjLLl7
+    header.d=infradead.org header.i=@infradead.org header.b=u+E/zBSa
     x-bits=2048 x-keytype=rsa x-algorithm=sha256
     x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=infradead.org header.i=@infradead.org header.b=mIXjLLl7
+      header.d=infradead.org header.i=@infradead.org header.b=u+E/zBSa
       x-bits=2048 x-keytype=rsa x-algorithm=sha256
       x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -63,30 +63,29 @@ Authentication-Results: mx3.messagingengine.com;
       header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOqaDgvtHZnJTOs/+6P49bQNc5AjwedleJU0dgoM+roUIlWMBz2hpTrun6hTUWcNM9lokcNFZ/Z7vFaX3fub9Jv88sWtdjrWBeTgnBHa1ys7Fd+pMeMN
-    WLroEZcc1TZqeZEHkhkMdl8xpSrhiIAg7ik04/N/c+XaHvfzWp1G5QR8rAR7wNKJrQ6Q3aMyF/Z+TSXnuEbOu7Tr6WVWCznH6DqlXkLzAgzzPVQAZ7qBflE+
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfNhO3OA5y42VdDJUvC1fCRcrwkVHpLzNbYc/2sVaf/P7w6yim8fiEjly0ubdvOb9/vbFF1v1k9uOw4X+Bya9/sYpI4zk4Z2UfXA+zyvZq9YVzKyAT6bG
+    D1bNfnbldfw1gVDEsnZt7jriwchirXNKL/pwHJYrozdomYedPFDVwRzkBM5D1IEMJ7xE1Qy5xdl2+BlV+Zf72ayoWw6NhmaMATi5TqBpkQopDe+N+G0qVYTB
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=ag1SF4gXAAAA:8
-    a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=HZieObWGZi2sKBCXc30A:9
-    a=0BbEcRPqd4U_uuMe:21 a=Na2JX_2fIBq9m8En:21 a=x8gzFH9gYPwA:10
+    a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=sdapQSm_P28a7qtZbq0A:9 a=x8gzFH9gYPwA:10
     a=Yupwre4RP9_Eg_Bd0iYG:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751326AbeEVLbV (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 22 May 2018 07:31:21 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36540 "EHLO
+        id S1752687AbeEVLmz (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 22 May 2018 07:42:55 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36560 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751172AbeEVLbR (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Tue, 22 May 2018 07:31:17 -0400
+        with ESMTP id S1751480AbeEVLbX (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Tue, 22 May 2018 07:31:23 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: viro@zeniv.linux.org.uk
 Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
         linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 01/31] fs: unexport poll_schedule_timeout
-Date: Tue, 22 May 2018 13:30:38 +0200
-Message-Id: <20180522113108.25713-2-hch@lst.de>
+Subject: [PATCH 02/31] fs: cleanup do_pollfd
+Date: Tue, 22 May 2018 13:30:39 +0200
+Message-Id: <20180522113108.25713-3-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180522113108.25713-1-hch@lst.de>
 References: <20180522113108.25713-1-hch@lst.de>
@@ -97,50 +96,78 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-No users outside of select.c.
+Use straightline code with failure handling gotos instead of a lot
+of nested conditionals.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 ---
- fs/select.c          | 3 +--
- include/linux/poll.h | 2 --
- 2 files changed, 1 insertion(+), 4 deletions(-)
+ fs/select.c | 48 +++++++++++++++++++++++-------------------------
+ 1 file changed, 23 insertions(+), 25 deletions(-)
 
 diff --git a/fs/select.c b/fs/select.c
-index ba879c51288f..a87f396f0313 100644
+index a87f396f0313..25da26253485 100644
 --- a/fs/select.c
 +++ b/fs/select.c
-@@ -233,7 +233,7 @@ static void __pollwait(struct file *filp, wait_queue_head_t *wait_address,
- 	add_wait_queue(wait_address, &entry->wait);
- }
- 
--int poll_schedule_timeout(struct poll_wqueues *pwq, int state,
-+static int poll_schedule_timeout(struct poll_wqueues *pwq, int state,
- 			  ktime_t *expires, unsigned long slack)
+@@ -812,34 +812,32 @@ static inline __poll_t do_pollfd(struct pollfd *pollfd, poll_table *pwait,
+ 				     bool *can_busy_poll,
+ 				     __poll_t busy_flag)
  {
- 	int rc = -EINTR;
-@@ -258,7 +258,6 @@ int poll_schedule_timeout(struct poll_wqueues *pwq, int state,
- 
- 	return rc;
+-	__poll_t mask;
+-	int fd;
+-
+-	mask = 0;
+-	fd = pollfd->fd;
+-	if (fd >= 0) {
+-		struct fd f = fdget(fd);
+-		mask = EPOLLNVAL;
+-		if (f.file) {
+-			/* userland u16 ->events contains POLL... bitmap */
+-			__poll_t filter = demangle_poll(pollfd->events) |
+-						EPOLLERR | EPOLLHUP;
+-			mask = DEFAULT_POLLMASK;
+-			if (f.file->f_op->poll) {
+-				pwait->_key = filter;
+-				pwait->_key |= busy_flag;
+-				mask = f.file->f_op->poll(f.file, pwait);
+-				if (mask & busy_flag)
+-					*can_busy_poll = true;
+-			}
+-			/* Mask out unneeded events. */
+-			mask &= filter;
+-			fdput(f);
+-		}
++	int fd = pollfd->fd;
++	__poll_t mask = 0, filter;
++	struct fd f;
++
++	if (fd < 0)
++		goto out;
++	mask = EPOLLNVAL;
++	f = fdget(fd);
++	if (!f.file)
++		goto out;
++
++	/* userland u16 ->events contains POLL... bitmap */
++	filter = demangle_poll(pollfd->events) | EPOLLERR | EPOLLHUP;
++	mask = DEFAULT_POLLMASK;
++	if (f.file->f_op->poll) {
++		pwait->_key = filter | busy_flag;
++		mask = f.file->f_op->poll(f.file, pwait);
++		if (mask & busy_flag)
++			*can_busy_poll = true;
+ 	}
++	mask &= filter;		/* Mask out unneeded events. */
++	fdput(f);
++
++out:
+ 	/* ... and so does ->revents */
+ 	pollfd->revents = mangle_poll(mask);
+-
+ 	return mask;
  }
--EXPORT_SYMBOL(poll_schedule_timeout);
  
- /**
-  * poll_select_set_timeout - helper function to setup the timeout value
-diff --git a/include/linux/poll.h b/include/linux/poll.h
-index f45ebd017eaa..a3576da63377 100644
---- a/include/linux/poll.h
-+++ b/include/linux/poll.h
-@@ -96,8 +96,6 @@ struct poll_wqueues {
- 
- extern void poll_initwait(struct poll_wqueues *pwq);
- extern void poll_freewait(struct poll_wqueues *pwq);
--extern int poll_schedule_timeout(struct poll_wqueues *pwq, int state,
--				 ktime_t *expires, unsigned long slack);
- extern u64 select_estimate_accuracy(struct timespec64 *tv);
- 
- #define MAX_INT64_SECONDS (((s64)(~((u64)0)>>1)/HZ)-1)
 -- 
 2.17.0
 
