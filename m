@@ -1,65 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751624AbeEVH4N (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 03:56:13 -0400
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:27737 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751124AbeEVHz6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 03:55:58 -0400
-X-IronPort-AV: E=Sophos;i="5.49,429,1520924400";
-   d="scan'208";a="14433794"
-From: Eugen Hristev <eugen.hristev@microchip.com>
-To: <jic23@kernel.org>, <ludovic.desroches@microchip.com>,
-        <alexandre.belloni@bootlin.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
-        <linux-input@vger.kernel.org>, <nicolas.ferre@microchip.com>,
-        <dmitry.torokhov@gmail.com>, <robh@kernel.org>
-CC: Eugen Hristev <eugen.hristev@microchip.com>
-Subject: [PATCH v7 9/9] ARM: dts: at91: sama5d2: Add resistive touch device
-Date: Tue, 22 May 2018 10:52:39 +0300
-Message-ID: <1526975559-18966-10-git-send-email-eugen.hristev@microchip.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1526975559-18966-1-git-send-email-eugen.hristev@microchip.com>
-References: <1526975559-18966-1-git-send-email-eugen.hristev@microchip.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1751663AbeEVH4R (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 03:56:17 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52928 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750733AbeEVHz4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 03:55:56 -0400
+From: Eric Auger <eric.auger@redhat.com>
+To: eric.auger.pro@gmail.com, eric.auger@redhat.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
+        christoffer.dall@arm.com, peter.maydell@linaro.org
+Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
+Subject: [PATCH v8 10/13] KVM: arm/arm64: Check all vcpu redistributors are set on map_resources
+Date: Tue, 22 May 2018 09:55:15 +0200
+Message-Id: <1526975718-18567-11-git-send-email-eric.auger@redhat.com>
+In-Reply-To: <1526975718-18567-1-git-send-email-eric.auger@redhat.com>
+References: <1526975718-18567-1-git-send-email-eric.auger@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add generic resistive touch device which is connected to ADC block
-inside the SAMA5D2 SoC
+On vcpu first run, we eventually know the actual number of vcpus.
+This is a synchronization point to check all redistributors
+were assigned. On kvm_vgic_map_resources() we check both dist and
+redist were set, eventually check potential base address inconsistencies.
 
-Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+Signed-off-by: Eric Auger <eric.auger@redhat.com>
+Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
+
 ---
-Changes in v5:
- - renamed touchscreen-threshold-pressure to touchscreen-min-pressure
 
- arch/arm/boot/dts/sama5d2.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+v4 -> v5:
+- added Christoffer's R-b
 
-diff --git a/arch/arm/boot/dts/sama5d2.dtsi b/arch/arm/boot/dts/sama5d2.dtsi
-index f06ba99..a44f325 100644
---- a/arch/arm/boot/dts/sama5d2.dtsi
-+++ b/arch/arm/boot/dts/sama5d2.dtsi
-@@ -1442,6 +1442,16 @@
- 				status = "disabled";
- 			};
+v3 -> v4:
+- use kvm_debug
+---
+ virt/kvm/arm/vgic/vgic-v3.c | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
+
+diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
+index a006914..8892821 100644
+--- a/virt/kvm/arm/vgic/vgic-v3.c
++++ b/virt/kvm/arm/vgic/vgic-v3.c
+@@ -493,16 +493,25 @@ struct vgic_redist_region *vgic_v3_rdist_free_slot(struct list_head *rd_regions)
  
-+			resistive_touch: resistive-touch {
-+				compatible = "resistive-adc-touch";
-+				io-channels = <&adc AT91_SAMA5D2_ADC_X_CHANNEL>,
-+					      <&adc AT91_SAMA5D2_ADC_Y_CHANNEL>,
-+					      <&adc AT91_SAMA5D2_ADC_P_CHANNEL>;
-+				io-channel-names = "x", "y", "pressure";
-+				touchscreen-min-pressure = <50000>;
-+				status = "disabled";
-+			};
+ int vgic_v3_map_resources(struct kvm *kvm)
+ {
+-	int ret = 0;
+ 	struct vgic_dist *dist = &kvm->arch.vgic;
+-	struct vgic_redist_region *rdreg =
+-		list_first_entry(&dist->rd_regions,
+-				 struct vgic_redist_region, list);
++	struct kvm_vcpu *vcpu;
++	int ret = 0;
++	int c;
+ 
+ 	if (vgic_ready(kvm))
+ 		goto out;
+ 
+-	if (IS_VGIC_ADDR_UNDEF(dist->vgic_dist_base) || !rdreg) {
++	kvm_for_each_vcpu(c, vcpu, kvm) {
++		struct vgic_cpu *vgic_cpu = &vcpu->arch.vgic_cpu;
 +
- 			pioA: pinctrl@fc038000 {
- 				compatible = "atmel,sama5d2-pinctrl";
- 				reg = <0xfc038000 0x600>;
++		if (IS_VGIC_ADDR_UNDEF(vgic_cpu->rd_iodev.base_addr)) {
++			kvm_debug("vcpu %d redistributor base not set\n", c);
++			ret = -ENXIO;
++			goto out;
++		}
++	}
++
++	if (IS_VGIC_ADDR_UNDEF(dist->vgic_dist_base)) {
+ 		kvm_err("Need to set vgic distributor addresses first\n");
+ 		ret = -ENXIO;
+ 		goto out;
 -- 
-2.7.4
+2.5.5
