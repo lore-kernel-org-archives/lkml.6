@@ -1,94 +1,104 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3081717-1527021864-2-9391779315649546371
+X-Cyrus-Session-Id: sloti22d1t05-2540971-1526995796-2-3930206856330354319
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
-  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
+  FromHeader='net', MailFrom='org'
 X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527021864; b=XGPVmrbIMt0zxRJ25Q6xjRqxlz5MmwFnJPBHX7hQYGSDFc+YVG
-    M1GbAhNak2G4WrOtkX7DznBw2Co+5Eu5yfYQBmz2thpkE+/hp17aBOYO+Tpwp776
-    YG8QcZz93RBy3KAHIatpZSFBmRjmkeLcUxiUF+uAB+c9pw+4gzysjAjaxq6s2QxY
-    adFk7HQh0w6+n91yZTiWTYmKSQZePyzTX0AFDUpQIhjyFV+SPO3jFwWpHkgY8vZ5
-    Z2UyIUN94h78YPTvUuUZTHrLkCidJMpVvmuKGk+Nre+61j3ieBXkemFaz/feBtXi
-    m/T87npThvZ5fa0T4/L57i8eVMIR3DCHi1eA==
+    1526995796; b=MeHcF0jsFF9pouQPCR1cRpiYDZl3QvpBLdiDuR/hmYFarXhBJp
+    yE9kPyOpesfJPktw0nFeXzFyRC4gsTGV+EJDcFMY2pm7M2pRG0ldZexGgJGtuQ/9
+    Y0QY5hZrE+HRMayAN+AmR9nkQzbWtTceZLCi9u2XekE0ZD8yxAUHVsgHPjBefsM/
+    +vUvU+6uiOs6iY7apYnacq+ZNsgEmz8e6/Xa1QnbfNrcKtNHtf9UPYmaxGKo53j+
+    tysnrCdqcNPy2pgHbWvJ7XXi5g/M+HrFdQsMZsO7JCDDO+aWRoyyKEek+vXSqQVV
+    SyE14KBb4U5HJWu4XSYZGq53/oVfkXR3I99Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=subject:to:cc:references:from:message-id
     :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1527021864;
-    bh=2oiVbnMf6rn660GB2lPFb5qVPzYGJitWzQ398NyOG50=; b=K7devXQNYzYM
-    l2Gi9SFnW1rR2Ny/91cDljzY5m3SuefEgx55z+ZavL3Z8R968YPRouC0//wbeh5M
-    fjKQasa/dSfXK5Kgof+W/zpiJSNYk2ScuUw3HH/2qw11nSfsSKfze4FB84zkEcj8
-    KKi/1eOsYC3eDoOCQ9dyV4hYs4Y9D6RpYe0NLsaZLivKuyC4YT+Gs3OAIEqurdC/
-    Xc+PQ4Fpv0TGUffwPwlLPdLFT4w2p9DXuKDjlM8TDvg3ZigYcAC5C7w7SBCe3I79
-    N96UQmFGCEb7KQD/zEFNJys1k0FVYEjXFBjXzBfhTQPpF3O25apLdNbWGb1WiPE7
-    9Bdcttyk+w==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1526995796;
+    bh=ewpN26SxOYBH9l5JudDDZ+UmzWf0ls29I+peI63Efrc=; b=cE5mRUARvZ0m
+    AfaxHdC7Z7JOAkLr+wn/EbGzVW58sKUlPHb5SPVNWZKefXQZ+/wnm0sbGTjcVRZS
+    8bP6AaIsMyly5JON0Q3lCBVxQnmCx5ZqOy58bHiJIU4I9GgtdTGEsgjemSJZ1UVJ
+    Zs90FFkY+pkRsJGBAXZDVJt6rNwO1+Ek8tAhOvIYT3xHxbgUi1kTeX7492lCK8uy
+    JFUlRtYkSwrVOm0bpG+AACPpu+zu+cRVk3CSB5jyFFVH++vQ9ClzA7AFp4tdw+3P
+    MyqF6nj6Ej1TfNA/rECx4QYI7q/Mtlp116mqx+Zq9DT3vI/FGbPxa5kjWL0X4gzH
+    +xZkCu6XWw==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256)
+    header.d=gmail.com header.i=@gmail.com header.b=RI66+oIe x-bits=2048
+    x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
+    header.d=1e100.net header.i=@1e100.net header.b=kVqNK+4E;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    header.domain=roeck-us.net header.result=pass
+    header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256)
+      header.d=gmail.com header.i=@gmail.com header.b=RI66+oIe x-bits=2048
+      x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
+      header.d=1e100.net header.i=@1e100.net header.b=kVqNK+4E;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+      header.domain=roeck-us.net header.result=pass
+      header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOGsTh+S0Knz42ZXc61z3+Q6dzFWORR3Kxo2tjo1e7pwVEu9iO03bmJ8Rkwu8z48QE9c5VFEkLQrkAe/RO5816BwEyugyHNSABzirNOkQcnSgmaIYTVe
-    2cpABse5lA+gzwRbemT2ftcohlHErAC3H/fN9OAglIWuhGf7mFtHdwcoqA6E1g+NxMa51qQBMfYBvxBZmGzufNoafklIaJXBmLiRKmpaGWgod073HcPqstih
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfCqwsE2Y0fhLH8A2iDRqAzFn+SlFov9Jw0hvE0qXoRLDzX+tscwKT1nk5+uhVBJWXhPq7jhAcd9SA8/fRn6u1UdM5PIdaC5yfoszDxlU4l1b4ML98HKk
+    vlHEEz6Z0Fm1AY5HvGwtzV7yk7UjjELzPuqLgASsWAYn0qlp6VG9Qp1XUf+NTM9q5Lyiohaopgt01O9xPy1xcxTLi5kPXG3rp1A2aJ3dlllfDpB7/ipmDogC
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=GkQz-2DCOnYA:10
-    a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8 a=8-vRK6DNSD7UNujOA5sA:9 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22
+    a=VUJBJC2UJ8kA:10 a=YWtRXzOXAAAA:8 a=HoCkWmlCV56ydFt2py0A:9 a=QEXdDO2ut3YA:10
+    a=eX-Bu5Fvq_kA:10 a=XosyFl2cby_8ldcV-F0Q:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752759AbeEVUoW (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 22 May 2018 16:44:22 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:47719 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752663AbeEVUoW (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 22 May 2018 16:44:22 -0400
+        id S1751624AbeEVN3w (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 22 May 2018 09:29:52 -0400
+Received: from mail-pg0-f54.google.com ([74.125.83.54]:35151 "EHLO
+        mail-pg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751612AbeEVN3u (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 22 May 2018 09:29:50 -0400
+X-Google-Smtp-Source: AB8JxZp+NF9+xl/0uZUfw4v8GhwMxDLffP4gFVQXxfi0rSK+oooJSMs2zu//MXDaw5NhZvZr6LeJ8Q==
 Subject: Re: [PATCH 4.14 00/95] 4.14.43-stable review
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
 Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
+        shuah@kernel.org, patches@kernelci.org,
         ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>
+        stable@vger.kernel.org
 References: <20180521210447.219380974@linuxfoundation.org>
-From: Shuah Khan <shuah@kernel.org>
-Message-ID: <dd9aa6aa-c67e-a673-ed37-6de7c7ecb856@kernel.org>
-Date: Tue, 22 May 2018 14:44:04 -0600
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <b9177f4b-2687-28e4-c5cd-f550ba92b3ed@roeck-us.net>
+Date: Tue, 22 May 2018 06:29:48 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
 In-Reply-To: <20180521210447.219380974@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: stable-owner@vger.kernel.org
@@ -97,7 +107,7 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 05/21/2018 03:10 PM, Greg Kroah-Hartman wrote:
+On 05/21/2018 02:10 PM, Greg Kroah-Hartman wrote:
 > This is the start of the stable review cycle for the 4.14.43 release.
 > There are 95 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
@@ -106,18 +116,12 @@ On 05/21/2018 03:10 PM, Greg Kroah-Hartman wrote:
 > Responses should be made by Tue May 22 21:04:09 UTC 2018.
 > Anything received after that time might be too late.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.43-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
 
-Compiled and booted on my test system. No dmesg regressions.
+Build results:
+	total: 146 pass: 146 fail: 0
+Qemu test results:
+	total: 141 pass: 141 fail: 0
 
-thanks,
--- Shuah
+Details are available at http://kerneltests.org/builders/.
+
+Guenter
