@@ -1,56 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751562AbeEVHYw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 03:24:52 -0400
-Received: from conuserg-12.nifty.com ([210.131.2.79]:45460 "EHLO
-        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751374AbeEVHXv (ORCPT
+        id S1751600AbeEVHZO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 03:25:14 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:46571 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751236AbeEVHZN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 03:23:51 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com w4M7MRAe030337
-X-Nifty-SrcIP: [153.142.97.92]
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-kbuild@vger.kernel.org
-Cc: Sam Ravnborg <sam@ravnborg.org>, Ulf Magnusson <ulfalizer@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/4] kbuild: do not display CHK for filechk
-Date: Tue, 22 May 2018 16:22:18 +0900
-Message-Id: <1526973741-664-2-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1526973741-664-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1526973741-664-1-git-send-email-yamada.masahiro@socionext.com>
+        Tue, 22 May 2018 03:25:13 -0400
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
+Subject: Re: [PATCH] drivers: bluetooth: hci_serdev: Removed unnecessary curly
+ braces
+From: Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <1526333927-21222-1-git-send-email-vaibhavmurkute88@gmail.com>
+Date: Tue, 22 May 2018 09:25:11 +0200
+Cc: Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <C40D68D9-E167-40A3-81F0-5B272D455627@holtmann.org>
+References: <1526333927-21222-1-git-send-email-vaibhavmurkute88@gmail.com>
+To: Vaibhav Murkute <vaibhavmurkute88@gmail.com>
+X-Mailer: Apple Mail (2.3445.6.18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-filechk displays two short logs; CHK for creating a temporary file,
-and UPD for really updating the target.
+Hi Vaibhav,
 
-IMHO, the build system can be quiet when the target file has not
-been updated.
+> checkpatch.pl shows a warning for these unnecessary curly braces.
+> so just removed those curly braces.
+> 
+> Signed-off-by: Vaibhav Murkute <vaibhavmurkute88@gmail.com>
+> ---
+> drivers/bluetooth/hci_serdev.c | 3 +--
+> 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+patch has been applied to bluetooth-next tree.
 
-Changes in v3: None
-Changes in v2: None
+Regards
 
- scripts/Kbuild.include | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
-index 50cee53..c7fedc5 100644
---- a/scripts/Kbuild.include
-+++ b/scripts/Kbuild.include
-@@ -57,7 +57,6 @@ kecho := $($(quiet)kecho)
- #   to specify a valid file as first prerequisite (often the kbuild file)
- define filechk
- 	$(Q)set -e;				\
--	$(kecho) '  CHK     $@';		\
- 	mkdir -p $(dir $@);			\
- 	$(filechk_$(1)) < $< > $@.tmp;		\
- 	if [ -r $@ ] && cmp -s $@ $@.tmp; then	\
--- 
-2.7.4
+Marcel
