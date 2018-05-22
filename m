@@ -1,56 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751507AbeEVJSu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 05:18:50 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:45280 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750707AbeEVJSs (ORCPT
+        id S1751257AbeEVJWy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 05:22:54 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:57922 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751160AbeEVJWV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 05:18:48 -0400
-X-Google-Smtp-Source: AB8JxZq4cSyTi2Pdj5TOgN+laARz5EdQXGL9wNx5PBsLUnJdp3eq8AANxKoEqB//A/YgmzF0Qu3KETu3lg4/3hHz548=
+        Tue, 22 May 2018 05:22:21 -0400
+From: Fabrice Gasnier <fabrice.gasnier@st.com>
+To: <thierry.reding@gmail.com>, <stefan.wahren@i2se.com>,
+        <gohai@sukzessiv.net>
+CC: <hsweeten@visionengravers.com>, <gottfried.haider@gmail.com>,
+        <loic.pallardy@st.com>, <fabrice.gasnier@st.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-rpi-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pwm@vger.kernel.org>
+Subject: [PATCH] Revert "pwm: Set class for exported channels in sysfs"
+Date: Tue, 22 May 2018 11:21:44 +0200
+Message-ID: <1526980904-11041-1-git-send-email-fabrice.gasnier@st.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-In-Reply-To: <aa8608844b153359f5e2a7ab876c75eb19969fb7.camel@redhat.com>
-References: <20180503030438.51150-1-chiu@endlessm.com> <CAHp75VfM+1HUi6W986r0iEiuS46TJc8XscO_ce4N-i66EtPLWA@mail.gmail.com>
- <CAD8Lp46edWAR2iVti8gGp+L_yy91ij6AHuJh3iuuTLg8oUq47g@mail.gmail.com>
- <CAD8Lp46-q8=t9RoWxLjZkv=EAJAbRvY37-ibUof+oVfZaOE0Kw@mail.gmail.com> <aa8608844b153359f5e2a7ab876c75eb19969fb7.camel@redhat.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 22 May 2018 12:18:47 +0300
-Message-ID: <CAHp75Vc4iXX7+VY3dE4ETjLsv=VCFaNwz6nmAUBS_E_dhpK2Aw@mail.gmail.com>
-Subject: Re: [PATCH v2] platform/x86: asus-wmi: Add keyboard backlight toggle support
-To: Benjamin Berg <bberg@redhat.com>
-Cc: Daniel Drake <drake@endlessm.com>, Chris Chiu <chiu@endlessm.com>,
-        Corentin Chary <corentin.chary@gmail.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        acpi4asus-user <acpi4asus-user@lists.sourceforge.net>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>,
-        Jian-Hong Pan <jian-hong@endlessm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG3NODE3.st.com (10.75.127.9) To SFHDAG5NODE3.st.com
+ (10.75.127.15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-22_02:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 4:41 PM, Benjamin Berg <bberg@redhat.com> wrote:
+This reverts commit 7e5d1fd75c3dde9fc10c4472b9368089d1b81d00 as it causes
+regression with multiple pwm chip. It creates a new entry in
+'/sys/class/pwm' every time a 'pwmX' is exported with 'echo X > export':
+- 1st time export will create an entry in /sys/class/pwm/pwmX
+- when another export happens on another pwmchip, it can't be created
+(e.g. -EEXIST)
 
-> I had a quick chat with Bastien about this. The conclusion was that
-> reusing the TOGGLE key may be problematic for gnome-settings-daemon.
-> And the alternative of a new CYCLE key also has some caveats.
->
-> The most straight forward solution is likely to simply handle the
-> brightness change in the kernel and not report the key to userspace at
-> all. This should work just fine and at least GNOME will show an on
-> screen display in response to the brightness change.
->
-> Do you think that approach would work well?
+This also changes existing ABI (Documentation/ABI/testing/sysfs-class-pwm):
+- pmwX should be there: /sys/class/pwm/pwmchipN/pwmX
 
-Am I right we are waiting for Daniel's answer?
+Example on stm32 (stm32429i-eval) platform:
+$ ls /sys/class/pwm
+pwmchip0 pwmchip4
 
-Btw, I mistakenly thought that patch in the queue for-next, while it's
-not. So, I'm going to drop it now.
-Feel free to re-submit a new (better) version.
+$ cd /sys/class/pwm/pwmchip0/
+$ echo 0 > export
+$ ls /sys/class/pwm
+pwm0 pwmchip0 pwmchip4
 
+$ cd /sys/class/pwm/pwmchip4/
+$ echo 0 > export
+sysfs: cannot create duplicate filename '/class/pwm/pwm0'
+...Exception stack follows...
+
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+---
+ drivers/pwm/sysfs.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/pwm/sysfs.c b/drivers/pwm/sysfs.c
+index 7c71cdb..4726d43 100644
+--- a/drivers/pwm/sysfs.c
++++ b/drivers/pwm/sysfs.c
+@@ -263,7 +263,6 @@ static int pwm_export_child(struct device *parent, struct pwm_device *pwm)
+ 	export->pwm = pwm;
+ 	mutex_init(&export->lock);
+ 
+-	export->child.class = parent->class;
+ 	export->child.release = pwm_export_release;
+ 	export->child.parent = parent;
+ 	export->child.devt = MKDEV(0, 0);
 -- 
-With Best Regards,
-Andy Shevchenko
+1.9.1
