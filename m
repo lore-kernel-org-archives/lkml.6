@@ -1,144 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753206AbeEVVaW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 17:30:22 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:35877 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752785AbeEVVaT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 17:30:19 -0400
-X-Google-Smtp-Source: AB8JxZoCLNzYcrMfb4/o/kx6DNExQMgjr/i/o9fcTzzx1G/48xXEYN2UpZngmjWOWVnpQFJpcSPXNQ==
-From: "=?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?=" <jprvita@gmail.com>
-X-Google-Original-From: =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>
-To: Corentin Chary <corentin.chary@gmail.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>
-Cc: linux@endlessm.com, red.f0xyz@gmail.com,
-        =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>,
-        acpi4asus-user@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] platform/x86: asus-wmi: Fix NULL pointer dereference
-Date: Tue, 22 May 2018 14:30:15 -0700
-Message-Id: <20180522213016.5496-1-jprvita@endlessm.com>
-X-Mailer: git-send-email 2.17.0
+        id S1753243AbeEVVbQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 17:31:16 -0400
+Received: from mga06.intel.com ([134.134.136.31]:51973 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752950AbeEVVbO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 17:31:14 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,430,1520924400";
+   d="scan'208";a="43945460"
+Date: Wed, 23 May 2018 05:30:34 +0800
+From: kbuild test robot <lkp@intel.com>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org
+Subject: [rcu:rcu/dev 98/99] kernel/rcu/rcutorture.c:1145:1: sparse: symbol
+ '__pcpu_scope_rcu_torture_timer_rand' was not declared. Should it be static?
+Message-ID: <201805230516.7z5kOC3u%fengguang.wu@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Do not perform the rfkill cleanup routine when
-(asus->driver->wlan_ctrl_by_user && ashs_present()) is true, since
-nothing is registered with the rfkill subsystem in that case. Doing so
-leads to the following kernel NULL pointer dereference:
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git rcu/dev
+head:   477fc1978395d58ae0406293a1d963629778a39d
+commit: 816e0790625af6848ef768adead22dd6302a9c41 [98/99] rcutorture: Use per-CPU random state for rcu_torture_timer()
+reproduce:
+        # apt-get install sparse
+        git checkout 816e0790625af6848ef768adead22dd6302a9c41
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
 
-  BUG: unable to handle kernel NULL pointer dereference at           (null)
-  IP: [<ffffffff816c7348>] __mutex_lock_slowpath+0x98/0x120
-  PGD 1a3aa8067
-  PUD 1a3b3d067
-  PMD 0
 
-  Oops: 0002 [#1] PREEMPT SMP
-  Modules linked in: bnep ccm binfmt_misc uvcvideo videobuf2_vmalloc videobuf2_memops videobuf2_v4l2 videobuf2_core hid_a4tech videodev x86_pkg_temp_thermal intel_powerclamp coretemp ath3k btusb btrtl btintel bluetooth kvm_intel snd_hda_codec_hdmi kvm snd_hda_codec_realtek snd_hda_codec_generic irqbypass crc32c_intel arc4 i915 snd_hda_intel snd_hda_codec ath9k ath9k_common ath9k_hw ath i2c_algo_bit snd_hwdep mac80211 ghash_clmulni_intel snd_hda_core snd_pcm snd_timer cfg80211 ehci_pci xhci_pci drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops drm xhci_hcd ehci_hcd asus_nb_wmi(-) asus_wmi sparse_keymap r8169 rfkill mxm_wmi serio_raw snd mii mei_me lpc_ich i2c_i801 video soundcore mei i2c_smbus wmi i2c_core mfd_core
-  CPU: 3 PID: 3275 Comm: modprobe Not tainted 4.9.34-gentoo #34
-  Hardware name: ASUSTeK COMPUTER INC. K56CM/K56CM, BIOS K56CM.206 08/21/2012
-  task: ffff8801a639ba00 task.stack: ffffc900014cc000
-  RIP: 0010:[<ffffffff816c7348>]  [<ffffffff816c7348>] __mutex_lock_slowpath+0x98/0x120
-  RSP: 0018:ffffc900014cfce0  EFLAGS: 00010282
-  RAX: 0000000000000000 RBX: ffff8801a54315b0 RCX: 00000000c0000100
-  RDX: 0000000000000001 RSI: 0000000000000000 RDI: ffff8801a54315b4
-  RBP: ffffc900014cfd30 R08: 0000000000000000 R09: 0000000000000002
-  R10: 0000000000000000 R11: 0000000000000000 R12: ffff8801a54315b4
-  R13: ffff8801a639ba00 R14: 00000000ffffffff R15: ffff8801a54315b8
-  FS:  00007faa254fb700(0000) GS:ffff8801aef80000(0000) knlGS:0000000000000000
-  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  CR2: 0000000000000000 CR3: 00000001a3b1b000 CR4: 00000000001406e0
-  Stack:
-   ffff8801a54315b8 0000000000000000 ffffffff814733ae ffffc900014cfd28
-   ffffffff8146a28c ffff8801a54315b0 0000000000000000 ffff8801a54315b0
-   ffff8801a66f3820 0000000000000000 ffffc900014cfd48 ffffffff816c73e7
-  Call Trace:
-   [<ffffffff814733ae>] ? acpi_ut_release_mutex+0x5d/0x61
-   [<ffffffff8146a28c>] ? acpi_ns_get_node+0x49/0x52
-   [<ffffffff816c73e7>] mutex_lock+0x17/0x30
-   [<ffffffffa00a3bb4>] asus_rfkill_hotplug+0x24/0x1a0 [asus_wmi]
-   [<ffffffffa00a4421>] asus_wmi_rfkill_exit+0x61/0x150 [asus_wmi]
-   [<ffffffffa00a49f1>] asus_wmi_remove+0x61/0xb0 [asus_wmi]
-   [<ffffffff814a5128>] platform_drv_remove+0x28/0x40
-   [<ffffffff814a2901>] __device_release_driver+0xa1/0x160
-   [<ffffffff814a29e3>] device_release_driver+0x23/0x30
-   [<ffffffff814a1ffd>] bus_remove_device+0xfd/0x170
-   [<ffffffff8149e5a9>] device_del+0x139/0x270
-   [<ffffffff814a5028>] platform_device_del+0x28/0x90
-   [<ffffffff814a50a2>] platform_device_unregister+0x12/0x30
-   [<ffffffffa00a4209>] asus_wmi_unregister_driver+0x19/0x30 [asus_wmi]
-   [<ffffffffa00da0ea>] asus_nb_wmi_exit+0x10/0xf26 [asus_nb_wmi]
-   [<ffffffff8110c692>] SyS_delete_module+0x192/0x270
-   [<ffffffff810022b2>] ? exit_to_usermode_loop+0x92/0xa0
-   [<ffffffff816ca560>] entry_SYSCALL_64_fastpath+0x13/0x94
-  Code: e8 5e 30 00 00 8b 03 83 f8 01 0f 84 93 00 00 00 48 8b 43 10 4c 8d 7b 08 48 89 63 10 41 be ff ff ff ff 4c 89 3c 24 48 89 44 24 08 <48> 89 20 4c 89 6c 24 10 eb 1d 4c 89 e7 49 c7 45 08 02 00 00 00
-  RIP  [<ffffffff816c7348>] __mutex_lock_slowpath+0x98/0x120
-   RSP <ffffc900014cfce0>
-  CR2: 0000000000000000
-  ---[ end trace 8d484233fa7cb512 ]---
-  note: modprobe[3275] exited with preempt_count 2
+sparse warnings: (new ones prefixed by >>)
 
-https://bugzilla.kernel.org/show_bug.cgi?id=196467
+>> kernel/rcu/rcutorture.c:1145:1: sparse: symbol '__pcpu_scope_rcu_torture_timer_rand' was not declared. Should it be static?
 
-Reported-by: red.f0xyz@gmail.com
-Signed-off-by: João Paulo Rechi Vita <jprvita@endlessm.com>
+Please review and possibly fold the followup patch.
+
 ---
- drivers/platform/x86/asus-wmi.c | 23 +++++++++++++----------
- 1 file changed, 13 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-index ef87e78ca772..3d523ca64694 100644
---- a/drivers/platform/x86/asus-wmi.c
-+++ b/drivers/platform/x86/asus-wmi.c
-@@ -163,6 +163,16 @@ MODULE_LICENSE("GPL");
- 
- static const char * const ashs_ids[] = { "ATK4001", "ATK4002", NULL };
- 
-+static bool ashs_present(void)
-+{
-+	int i = 0;
-+	while (ashs_ids[i]) {
-+		if (acpi_dev_found(ashs_ids[i++]))
-+			return true;
-+	}
-+	return false;
-+}
-+
- struct bios_args {
- 	u32 arg0;
- 	u32 arg1;
-@@ -1025,6 +1035,9 @@ static int asus_new_rfkill(struct asus_wmi *asus,
- 
- static void asus_wmi_rfkill_exit(struct asus_wmi *asus)
- {
-+	if (asus->driver->wlan_ctrl_by_user && ashs_present())
-+		return;
-+
- 	asus_unregister_rfkill_notifier(asus, "\\_SB.PCI0.P0P5");
- 	asus_unregister_rfkill_notifier(asus, "\\_SB.PCI0.P0P6");
- 	asus_unregister_rfkill_notifier(asus, "\\_SB.PCI0.P0P7");
-@@ -2120,16 +2133,6 @@ static int asus_wmi_fan_init(struct asus_wmi *asus)
- 	return 0;
- }
- 
--static bool ashs_present(void)
--{
--	int i = 0;
--	while (ashs_ids[i]) {
--		if (acpi_dev_found(ashs_ids[i++]))
--			return true;
--	}
--	return false;
--}
--
- /*
-  * WMI Driver
-  */
--- 
-2.17.0
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
