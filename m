@@ -1,36 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753098AbeEVTke (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 15:40:34 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:46846 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752970AbeEVTkc (ORCPT
+        id S1753124AbeEVTko (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 15:40:44 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:44267 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753109AbeEVTkl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 15:40:32 -0400
-Date: Tue, 22 May 2018 15:40:30 -0400 (EDT)
-Message-Id: <20180522.154030.1125958648647752585.davem@davemloft.net>
-To: chenbo@pdx.edu
-Cc: pcnet32@frontier.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pcnet32: add an error handling path in
- pcnet32_probe_pci()
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180521214449.18516-1-chenbo@pdx.edu>
-References: <20180521214449.18516-1-chenbo@pdx.edu>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Tue, 22 May 2018 15:40:41 -0400
+X-Google-Smtp-Source: AB8JxZqGw6ZVkocy+M3Ztv7FgV3Kjl2FR579iAIYWVbFkpUeSyViMZMxM7dkQaQZt/ocvrjTEPWt8Q==
+Date: Tue, 22 May 2018 14:40:39 -0500
+From: Rob Herring <robh@kernel.org>
+To: Michal =?utf-8?B?Vm9rw6HEjQ==?= <vokac.m@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, f.fainelli@gmail.com,
+        vivien.didelot@savoirfairelinux.com, andrew@lunn.ch,
+        mark.rutland@arm.com, davem@davemloft.net, michal.vokac@ysoft.com
+Subject: Re: [PATCH net-next v2 1/7] net: dsa: qca8k: Add QCA8334 binding
+ documentation
+Message-ID: <20180522194039.GA15413@rob-hp-laptop>
+References: <1526987792-56861-1-git-send-email-michal.vokac@ysoft.com>
+ <1526987792-56861-2-git-send-email-michal.vokac@ysoft.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1526987792-56861-2-git-send-email-michal.vokac@ysoft.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bo Chen <chenbo@pdx.edu>
-Date: Mon, 21 May 2018 14:44:49 -0700
-
-> Make sure to invoke pci_disable_device() when errors occur in
-> pcnet32_probe_pci().
+On Tue, May 22, 2018 at 01:16:26PM +0200, Michal Vokáč wrote:
+> Add support for the four-port variant of the Qualcomm QCA833x switch.
 > 
-> Signed-off-by: Bo Chen <chenbo@pdx.edu>
+> The CPU port default link settings can be reconfigured using
+> a fixed-link sub-node.
+> 
+> Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
+> ---
+> Changes in v2:
+>  - Add commit message and document fixed-link binding.
+> 
+>  .../devicetree/bindings/net/dsa/qca8k.txt          | 23 +++++++++++++++++++++-
+>  1 file changed, 22 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/dsa/qca8k.txt b/Documentation/devicetree/bindings/net/dsa/qca8k.txt
+> index 9c67ee4..15b9057 100644
+> --- a/Documentation/devicetree/bindings/net/dsa/qca8k.txt
+> +++ b/Documentation/devicetree/bindings/net/dsa/qca8k.txt
+> @@ -2,7 +2,10 @@
+>  
+>  Required properties:
+>  
+> -- compatible: should be "qca,qca8337"
+> +- compatible: should be one of:
+> +    "qca,qca8334"
+> +    "qca,qca8337"
+> +
+>  - #size-cells: must be 0
+>  - #address-cells: must be 1
+>  
+> @@ -14,6 +17,20 @@ port and PHY id, each subnode describing a port needs to have a valid phandle
+>  referencing the internal PHY connected to it. The CPU port of this switch is
+>  always port 0.
+>  
+> +A CPU port node has the following optional property:
 
-Applied, thank you.
+s/property/node/
+
+Otherwise,
+
+Reviewed-by: Rob Herring <robh@kernel.org>
