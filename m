@@ -1,57 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751512AbeEVM6G (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 08:58:06 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37558 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751189AbeEVM6A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 08:58:00 -0400
-Date: Tue, 22 May 2018 14:57:57 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>, peterz@infradead.org,
-        viro@zeniv.linux.org.uk, mingo@kernel.org, paulmck@linux.vnet.ibm.com,
-        keescook@chromium.org, riel@redhat.com, tglx@linutronix.de,
-        kirill.shutemov@linux.intel.com, marcos.souza.org@gmail.com,
-        hoeun.ryu@gmail.com, pasha.tatashin@oracle.com, gs051095@gmail.com,
-        dhowells@redhat.com, rppt@linux.vnet.ibm.com,
-        linux-kernel@vger.kernel.org, Balbir Singh <balbir@linux.vnet.ibm.com>,
-        Tejun Heo <tj@kernel.org>, Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [PATCH 0/2] mm->owner to mm->memcg fixes
-Message-ID: <20180522125757.GL20020@dhcp22.suse.cz>
-References: <20180503133338.GA23401@redhat.com>
- <87y3h0x0qg.fsf@xmission.com>
- <20180504142056.GA26151@redhat.com>
- <87r2mrh4is.fsf@xmission.com>
- <20180504145435.GA26573@redhat.com>
- <87y3gzfmjt.fsf@xmission.com>
- <20180504162209.GB26573@redhat.com>
- <871serfk77.fsf@xmission.com>
- <87tvrncoyc.fsf_-_@xmission.com>
- <20180510121418.GD5325@dhcp22.suse.cz>
+        id S1751416AbeEVM7u (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 08:59:50 -0400
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:32276 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751192AbeEVM7s (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 08:59:48 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w4MCxhOG022143
+X-Nifty-SrcIP: [209.85.213.54]
+X-Google-Smtp-Source: AB8JxZpqam0nIPamVk5RguGlRgtgyXoHtbSMEELVangi01FSzS+MbVma0+DvGRyOpclHbzPbE4Ec1J+PjebWm6y0w/k=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180510121418.GD5325@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180522091606.uxvnrz7bbotpxnhn@gmail.com>
+References: <20180522091606.uxvnrz7bbotpxnhn@gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Tue, 22 May 2018 21:59:02 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASA1VQcrqYAtN-8mTNC=Fhy5tcy_ZkWTnv3=13WL9xwSQ@mail.gmail.com>
+Message-ID: <CAK7LNASA1VQcrqYAtN-8mTNC=Fhy5tcy_ZkWTnv3=13WL9xwSQ@mail.gmail.com>
+Subject: Re: [PATCH v5] scripts/tags.sh: use `find` for $ALLSOURCE_ARCHS generation
+To: Joey Pabalinas <joeypabalinas@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 10-05-18 14:14:18, Michal Hocko wrote:
-> On Fri 04-05-18 12:26:03, Eric W. Biederman wrote:
-> > 
-> > Andrew can you pick up these two fixes as well.
-> > 
-> > These address the issues Michal Hocko and Oleg Nesterov noticed.
-> 
-> I completely got lost in this thread. There are way too many things
-> discussed at once. Could you repost the full series for a proper review
-> please?
+2018-05-22 18:16 GMT+09:00 Joey Pabalinas <joeypabalinas@gmail.com>:
+> The current code includes 'Kconfig' in ALLSOURCE_ARCHS, but
+> it should not (Kconfig is not an architecture). Replace this
+> with a find-generated string and directly assign it to
+> $ALLSOURCE_ARCHS. The find_all_archs() function is no longer
+> needed for a one-liner with obvious semantics, so inline the
+> arch generation into the surrounding conditional.
+>
+> Signed-off-by: Joey Pabalinas <joeypabalinas@gmail.com>
+>
 
-ping
+Applied to linux-kbuild. Thanks!
+
+
+
+>  1 file changed, 1 insertion(+), 10 deletions(-)
+>
+> diff --git a/scripts/tags.sh b/scripts/tags.sh
+> index 78e546ff689c2d5f40..e587610d149271171d 100755
+> --- a/scripts/tags.sh
+> +++ b/scripts/tags.sh
+> @@ -26,24 +26,15 @@ else
+>  fi
+>
+>  # ignore userspace tools
+>  ignore="$ignore ( -path ${tree}tools ) -prune -o"
+>
+> -# Find all available archs
+> -find_all_archs()
+> -{
+> -       ALLSOURCE_ARCHS=""
+> -       for arch in `ls ${tree}arch`; do
+> -               ALLSOURCE_ARCHS="${ALLSOURCE_ARCHS} "${arch##\/}
+> -       done
+> -}
+> -
+>  # Detect if ALLSOURCE_ARCHS is set. If not, we assume SRCARCH
+>  if [ "${ALLSOURCE_ARCHS}" = "" ]; then
+>         ALLSOURCE_ARCHS=${SRCARCH}
+>  elif [ "${ALLSOURCE_ARCHS}" = "all" ]; then
+> -       find_all_archs
+> +       ALLSOURCE_ARCHS=$(find ${tree}arch/ -mindepth 1 -maxdepth 1 -type d -printf '%f ')
+>  fi
+>
+>  # find sources in arch/$ARCH
+>  find_arch_sources()
+>  {
+> --
+> 2.17.0.rc1.35.g90bbd502d54fe92035.dirty
+
+
+
 -- 
-Michal Hocko
-SUSE Labs
+Best Regards
+Masahiro Yamada
