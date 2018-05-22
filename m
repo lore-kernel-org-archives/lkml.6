@@ -1,50 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752783AbeEVDp7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 23:45:59 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45234 "EHLO mx1.redhat.com"
+        id S1752715AbeEVDqn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 23:46:43 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38070 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752637AbeEVDor (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 23:44:47 -0400
-From: Jason Wang <jasowang@redhat.com>
-To: mst@redhat.com, jasowang@redhat.com
-Cc: virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        John Fastabend <john.fastabend@gmail.com>
-Subject: [PATCH net V2 2/4] virtio-net: correctly transmit XDP buff after linearizing
-Date: Tue, 22 May 2018 11:44:29 +0800
-Message-Id: <1526960671-11782-3-git-send-email-jasowang@redhat.com>
-In-Reply-To: <1526960671-11782-1-git-send-email-jasowang@redhat.com>
-References: <1526960671-11782-1-git-send-email-jasowang@redhat.com>
+        id S1751745AbeEVDqm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 23:46:42 -0400
+Date: Tue, 22 May 2018 06:46:40 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, hannes@stressinduktion.org,
+        edumazet@google.com
+Subject: Re: [PATCH net] tuntap: raise EPOLLOUT on device up
+Message-ID: <20180522064529-mutt-send-email-mst@kernel.org>
+References: <1526648443-24128-1-git-send-email-jasowang@redhat.com>
+ <20180521.114742.427929977852677864.davem@davemloft.net>
+ <20180522010700-mutt-send-email-mst@kernel.org>
+ <358628f8-a296-ad0e-985b-307895ed5520@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <358628f8-a296-ad0e-985b-307895ed5520@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We should not go for the error path after successfully transmitting a
-XDP buffer after linearizing. Since the error path may try to pop and
-drop next packet and increase the drop counters. Fixing this by simply
-drop the refcnt of original page and go for xmit path.
+On Tue, May 22, 2018 at 11:22:11AM +0800, Jason Wang wrote:
+> 
+> 
+> On 2018年05月22日 06:08, Michael S. Tsirkin wrote:
+> > On Mon, May 21, 2018 at 11:47:42AM -0400, David Miller wrote:
+> > > From: Jason Wang <jasowang@redhat.com>
+> > > Date: Fri, 18 May 2018 21:00:43 +0800
+> > > 
+> > > > We return -EIO on device down but can not raise EPOLLOUT after it was
+> > > > up. This may confuse user like vhost which expects tuntap to raise
+> > > > EPOLLOUT to re-enable its TX routine after tuntap is down. This could
+> > > > be easily reproduced by transmitting packets from VM while down and up
+> > > > the tap device. Fixing this by set SOCKWQ_ASYNC_NOSPACE on -EIO.
+> > > > 
+> > > > Cc: Hannes Frederic Sowa <hannes@stressinduktion.org>
+> > > > Cc: Eric Dumazet <edumazet@google.com>
+> > > > Fixes: 1bd4978a88ac2 ("tun: honor IFF_UP in tun_get_user()")
+> > > > Signed-off-by: Jason Wang <jasowang@redhat.com>
+> > > I'm no so sure what to do with this patch.
+> > > 
+> > > Like Michael says, this flag bit is only checks upon transmit which
+> > > may or may not happen after this point.  It doesn't seem to be
+> > > guaranteed.
+> 
+> The flag is checked in tun_chr_poll() as well.
+> 
+> > Jason, can't we detect a link up transition and respond accordingly?
+> > What do you think?
+> > 
+> 
+> I think we've already tried to do this, in tun_net_open() we call
+> write_space(). But the problem is the bit may not be set at that time.
+> 
+> A second thought is to set the bit in tun_chr_poll() instead of -EIO like:
+> 
+> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+> index d45ac37..46a1573 100644
+> --- a/drivers/net/tun.c
+> +++ b/drivers/net/tun.c
+> @@ -1423,6 +1423,13 @@ static void tun_net_init(struct net_device *dev)
+>         dev->max_mtu = MAX_MTU - dev->hard_header_len;
+>  }
+> 
+> +static bool tun_sock_writeable(struct tun_struct *tun, struct tun_file
+> *tfile)
+> +{
+> +       struct sock *sk = tfile->socket.sk;
+> +
+> +       return (tun->dev->flags & IFF_UP) && sock_writeable(sk);
+> +}
+> +
+>  /* Character device part */
+> 
+>  /* Poll */
+> @@ -1445,10 +1452,9 @@ static __poll_t tun_chr_poll(struct file *file,
+> poll_table *wait)
+>         if (!ptr_ring_empty(&tfile->tx_ring))
+>                 mask |= EPOLLIN | EPOLLRDNORM;
+> 
+> -       if (tun->dev->flags & IFF_UP &&
+> -           (sock_writeable(sk) ||
+> -            (!test_and_set_bit(SOCKWQ_ASYNC_NOSPACE, &sk->sk_socket->flags)
+> &&
+> -             sock_writeable(sk))))
+> +       if (tun_sock_writeable(tun, tfile) ||
+> +           (!test_and_set_bit(SOCKWQ_ASYNC_NOSPACE, &sk->sk_socket->flags)
+> &&
+> +            tun_sock_writeable(tun, tfile)));
+>                 mask |= EPOLLOUT | EPOLLWRNORM;
+> 
+>         if (tun->dev->reg_state != NETREG_REGISTERED)
+> 
+> Does this make more sense?
+> 
+> Thanks
 
-Fixes: 72979a6c3590 ("virtio_net: xdp, add slowpath case for non contiguous buffers")
-Cc: John Fastabend <john.fastabend@gmail.com>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: Jason Wang <jasowang@redhat.com>
----
- drivers/net/virtio_net.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index c15d240..6260d65 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -775,7 +775,7 @@ static struct sk_buff *receive_mergeable(struct net_device *dev,
- 			}
- 			*xdp_xmit = true;
- 			if (unlikely(xdp_page != page))
--				goto err_xdp;
-+				put_page(page);
- 			rcu_read_unlock();
- 			goto xdp_xmit;
- 		case XDP_REDIRECT:
--- 
-2.7.4
+I just understood the motivation for doing it on EIO.
+Maybe there's a reason it makes sense here as well,
+but it's far from obvious. I suggest you repost adding
+an explanation in the comment. The original patch will
+be fine with an explanation as well.
