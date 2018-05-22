@@ -1,153 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751505AbeEVLzN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 07:55:13 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44752 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751172AbeEVLzK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 07:55:10 -0400
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: devel@linuxdriverproject.org
-Cc: Dexuan Cui <decui@microsoft.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Alex Ng <alexng@microsoft.com>,
-        Vyronas Tsingaras <vyronas@vtsingaras.me>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] Tools: hv: vss: fix loop device detection
-Date: Tue, 22 May 2018 13:55:06 +0200
-Message-Id: <20180522115506.7084-1-vkuznets@redhat.com>
+        id S1751394AbeEVL5y (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 07:57:54 -0400
+Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:46991 "EHLO
+        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751172AbeEVL5w (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 07:57:52 -0400
+Subject: Re: [PATCH v10 09/16] cobalt: add .is_unordered() for cobalt
+To: Ezequiel Garcia <ezequiel@collabora.com>, linux-media@vger.kernel.org
+Cc: kernel@collabora.com, Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+        Shuah Khan <shuahkh@osg.samsung.com>, Pawel Osciak <pawel@osciak.com>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        Brian Starkey <brian.starkey@arm.com>, linux-kernel@vger.kernel.org,
+        Gustavo Padovan <gustavo.padovan@collabora.com>
+References: <20180521165946.11778-1-ezequiel@collabora.com>
+ <20180521165946.11778-10-ezequiel@collabora.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <27bdf91f-920c-a5b6-1114-42996fff9813@xs4all.nl>
+Date: Tue, 22 May 2018 13:57:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180521165946.11778-10-ezequiel@collabora.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfG8z4f4J2bK5uNtYBLGCg3N+2h7obxNmg27oOlLOTj0NnQuGH9G2C0GpyO4Ax2l+3eXJZ1PYxSKkgbIlbdzeDeY2ZRDXjDL9GjRxTTMmP3YglmS62GpC
+ BKCNlMBeQO5BVkGQVW2DatmQrLQAHEabcYdALWvN1V6JG65z0Nqu7xMTeyl4NK770ZXxQbKpYKQ4K9SVnLl+Ce47S+CbZHOgr8du8tHQQ5XVGQgadvzY4T4E
+ NkxWRwcmQychHMO8LwsFKS9lSZvAWEifK0qITrRdK2tdebt8sJbdr1PtiOzSX0Oi0J0l89SDFhwybGzDndfp8Kx+JN4L6rZI0AaEVAavm6VXoRiUehYR4v7M
+ 3/AxhiZGarbvGdd+J9k0Mmus2yqxOUig5YfOYnkOG4CxSRNq2xtbN/U3bey67cr05aPAMyHSEU7ZAAzj9mwKUqHD+kK5YmJpOMmcbA71EgnhirPa5gMPGOr6
+ ZPN6Xat6B0kY39amXddTC1jjsFpVUfqKDXaA5EK4ISg1OPjy1S8E/W0mnSdWoLrS2STEJ8Y7RdHs2+jE/qFBoeK1j1Z5Ry/zl2NRar85+1yBMGKnRGkU4/HQ
+ wDyqtMwm0PGaMdXxhfungqW3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit ea81fdf0981d ("Tools: hv: vss: Skip freezing filesystems backed by
-loop") added skip for filesystems backed by loop device. However, it seems
-the detection of such cases is incomplete.
+On 21/05/18 18:59, Ezequiel Garcia wrote:
+> From: Gustavo Padovan <gustavo.padovan@collabora.com>
+> 
+> The cobalt driver may reorder the capture buffers so we need to report
+> it as such.
+> 
+> v3: set formats as unordered
+> v2: use vb2_ops_set_unordered() helper
+> 
+> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
+> Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
+> ---
+>  drivers/media/pci/cobalt/cobalt-v4l2.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/media/pci/cobalt/cobalt-v4l2.c b/drivers/media/pci/cobalt/cobalt-v4l2.c
+> index e2a4c705d353..ccca1a96df90 100644
+> --- a/drivers/media/pci/cobalt/cobalt-v4l2.c
+> +++ b/drivers/media/pci/cobalt/cobalt-v4l2.c
+> @@ -430,6 +430,7 @@ static const struct vb2_ops cobalt_qops = {
+>  	.stop_streaming = cobalt_stop_streaming,
+>  	.wait_prepare = vb2_ops_wait_prepare,
+>  	.wait_finish = vb2_ops_wait_finish,
+> +	.is_unordered = vb2_ops_is_unordered,
+>  };
+>  
+>  /* V4L2 ioctls */
+> @@ -695,14 +696,17 @@ static int cobalt_enum_fmt_vid_cap(struct file *file, void *priv_fh,
+>  	case 0:
+>  		strlcpy(f->description, "YUV 4:2:2", sizeof(f->description));
+>  		f->pixelformat = V4L2_PIX_FMT_YUYV;
+> +		f->flags |= V4L2_FMT_FLAG_UNORDERED;
+>  		break;
+>  	case 1:
+>  		strlcpy(f->description, "RGB24", sizeof(f->description));
+>  		f->pixelformat = V4L2_PIX_FMT_RGB24;
+> +		f->flags |= V4L2_FMT_FLAG_UNORDERED;
+>  		break;
+>  	case 2:
+>  		strlcpy(f->description, "RGB32", sizeof(f->description));
+>  		f->pixelformat = V4L2_PIX_FMT_BGR32;
+> +		f->flags |= V4L2_FMT_FLAG_UNORDERED;
 
-It was found that with 'devicemapper' storage driver docker creates the
-following chain:
+Rather than adding this for every case, just move it out of the switch and
+set it just before the 'return 0'.
 
-NAME					MAJ:MIN
-loop0					7:0
-└─docker-8:4-8473394-pool		253:0
-  └─docker-8:4-8473394-eac...		253:1
+Regards,
 
-so when we're looking at the mounted device we see major '253' and not '7'.
+	Hans
 
-Solve the issue by walking /sys/dev/block/*/slaves chain and checking if
-there's a loop device somewhere.
-
-Other than that, don't skip mountpoints silently when stat() fails. In case
-e.g. SELinux is failing stat we don't want to skip freezing everything
-without letting user know about the failure.
-
-Fixes: ea81fdf0981d ("Tools: hv: vss: Skip freezing filesystems backed by loop")
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
- tools/hv/hv_vss_daemon.c | 65 +++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 61 insertions(+), 4 deletions(-)
-
-diff --git a/tools/hv/hv_vss_daemon.c b/tools/hv/hv_vss_daemon.c
-index 34031a297f02..b13300172762 100644
---- a/tools/hv/hv_vss_daemon.c
-+++ b/tools/hv/hv_vss_daemon.c
-@@ -36,6 +36,8 @@
- #include <linux/hyperv.h>
- #include <syslog.h>
- #include <getopt.h>
-+#include <stdbool.h>
-+#include <dirent.h>
- 
- /* Don't use syslog() in the function since that can cause write to disk */
- static int vss_do_freeze(char *dir, unsigned int cmd)
-@@ -68,6 +70,55 @@ static int vss_do_freeze(char *dir, unsigned int cmd)
- 	return !!ret;
- }
- 
-+static bool is_dev_loop(const char *blkname)
-+{
-+	char *buffer;
-+	DIR *dir;
-+	struct dirent *entry;
-+	bool ret = false;
-+
-+	buffer = malloc(PATH_MAX);
-+	if (!buffer) {
-+		syslog(LOG_ERR, "Can't allocate memory!");
-+		exit(1);
-+	}
-+
-+	snprintf(buffer, PATH_MAX, "%s/loop", blkname);
-+	if (!access(buffer, R_OK | X_OK)) {
-+		ret = true;
-+		goto free_buffer;
-+	} else if (errno != ENOENT) {
-+		syslog(LOG_ERR, "Can't access: %s; error:%d %s!",
-+		       buffer, errno, strerror(errno));
-+	}
-+
-+	snprintf(buffer, PATH_MAX, "%s/slaves", blkname);
-+	dir = opendir(buffer);
-+	if (!dir) {
-+		if (errno != ENOENT)
-+			syslog(LOG_ERR, "Can't opendir: %s; error:%d %s!",
-+			       buffer, errno, strerror(errno));
-+		goto free_buffer;
-+	}
-+
-+	while ((entry = readdir(dir)) != NULL) {
-+		if (strcmp(entry->d_name, ".") == 0 ||
-+		    strcmp(entry->d_name, "..") == 0)
-+			continue;
-+
-+		snprintf(buffer, PATH_MAX, "%s/slaves/%s", blkname,
-+			 entry->d_name);
-+		if (is_dev_loop(buffer)) {
-+			ret = true;
-+			break;
-+		}
-+	}
-+	closedir(dir);
-+free_buffer:
-+	free(buffer);
-+	return ret;
-+}
-+
- static int vss_operate(int operation)
- {
- 	char match[] = "/dev/";
-@@ -75,6 +126,7 @@ static int vss_operate(int operation)
- 	struct mntent *ent;
- 	struct stat sb;
- 	char errdir[1024] = {0};
-+	char blkdir[23]; /* /sys/dev/block/XXX:XXX */
- 	unsigned int cmd;
- 	int error = 0, root_seen = 0, save_errno = 0;
- 
-@@ -96,10 +148,15 @@ static int vss_operate(int operation)
- 	while ((ent = getmntent(mounts))) {
- 		if (strncmp(ent->mnt_fsname, match, strlen(match)))
- 			continue;
--		if (stat(ent->mnt_fsname, &sb) == -1)
--			continue;
--		if (S_ISBLK(sb.st_mode) && major(sb.st_rdev) == LOOP_MAJOR)
--			continue;
-+		if (stat(ent->mnt_fsname, &sb)) {
-+			syslog(LOG_ERR, "Can't stat: %s; error:%d %s!",
-+			       ent->mnt_fsname, errno, strerror(errno));
-+		} else {
-+			sprintf(blkdir, "/sys/dev/block/%d:%d",
-+				major(sb.st_rdev), minor(sb.st_rdev));
-+			if (is_dev_loop(blkdir))
-+				continue;
-+		}
- 		if (hasmntopt(ent, MNTOPT_RO) != NULL)
- 			continue;
- 		if (strcmp(ent->mnt_type, "vfat") == 0)
--- 
-2.14.3
+>  		break;
+>  	default:
+>  		return -EINVAL;
+> 
