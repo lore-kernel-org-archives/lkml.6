@@ -1,176 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752807AbeEVUcZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 16:32:25 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:35282 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751748AbeEVUcY (ORCPT
+        id S1752803AbeEVUej (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 16:34:39 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:39128 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752636AbeEVUeh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 16:32:24 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: ming_qian@realsil.com.cn
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Ana Guerrero Lopez <ana.guerrero@collabora.com>
-Subject: Re: [PATCH] media: uvcvideo: Support realtek's UVC 1.5 device
-Date: Tue, 22 May 2018 23:32:19 +0300
-Message-ID: <2510852.fx2XduE8hM@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <1525831988-32017-1-git-send-email-ming_qian@realsil.com.cn>
-References: <1525831988-32017-1-git-send-email-ming_qian@realsil.com.cn>
+        Tue, 22 May 2018 16:34:37 -0400
+X-Google-Smtp-Source: AB8JxZoOYaJQPKS2cejlaElJLc9NaKNkPKWEZFiEdEWusbeQPihEEcxkQuY4SruAwQgO1VwsdQoduIVVxao94rB3yLI=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <dca52e6e-451c-2ca4-a001-867708622d7b@ti.com>
+References: <20180522142417.19639-1-dmurphy@ti.com> <20180522142417.19639-2-dmurphy@ti.com>
+ <CAHp75VfTtD3Mnyqb63R_BP8BoAGNZProLCgWoDMo-aTk5C-iVA@mail.gmail.com> <dca52e6e-451c-2ca4-a001-867708622d7b@ti.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 22 May 2018 23:34:36 +0300
+Message-ID: <CAHp75Vdg9HTyQhv1KMOCqq5FjgPAC2q015Opnh3jDWvZY2bbNQ@mail.gmail.com>
+Subject: Re: [PATCH v8 2/2] leds: lm3601x: Introduce the lm3601x LED driver
+To: Dan Murphy <dmurphy@ti.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Tue, May 22, 2018 at 11:26 PM, Dan Murphy <dmurphy@ti.com> wrote:
+> On 05/22/2018 03:12 PM, Andy Shevchenko wrote:
+>> On Tue, May 22, 2018 at 5:24 PM, Dan Murphy <dmurphy@ti.com> wrote:
 
-Thank you for the patch.
 
-On Wednesday, 9 May 2018 05:13:08 EEST ming_qian@realsil.com.cn wrote:
-> From: ming_qian <ming_qian@realsil.com.cn>
-> 
-> The length of UVC 1.5 video control is 48, and it id 34 for UVC 1.1.
-> Change it to 48 for UVC 1.5 device,
-> and the UVC 1.5 device can be recognized.
-> 
-> More changes to the driver are needed for full UVC 1.5 compatibility.
-> However, at least the UVC 1.5 Realtek RTS5847/RTS5852 cameras have
-> been reported to work well.
+>>> +static struct lm3601x_led *fled_cdev_to_led(
+>>> +                               struct led_classdev_flash *fled_cdev)
+>>
+>> Didn't notice before. This will look much better in one line.
+>
+> Gives LTL warning.
 
-This patch is however not specific to Realtek devices, so I think we should
-make the subject line more generic. It's fine mentioning in the commit message
-itself that the Realtek RTS5847/RTS5852 cameras have been successfully tested.
+I wouldn't really care about it.
+But I leave to Jacek to decide.
 
-> Signed-off-by: ming_qian <ming_qian@realsil.com.cn>
-> ---
->  drivers/media/usb/uvc/uvc_video.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/media/usb/uvc/uvc_video.c
-> b/drivers/media/usb/uvc/uvc_video.c index aa0082f..32dfb32 100644
-> --- a/drivers/media/usb/uvc/uvc_video.c
-> +++ b/drivers/media/usb/uvc/uvc_video.c
-> @@ -171,6 +171,8 @@ static int uvc_get_video_ctrl(struct uvc_streaming
-> *stream, int ret;
-> 
->  	size = stream->dev->uvc_version >= 0x0110 ? 34 : 26;
-> +	if (stream->dev->uvc_version >= 0x0150)
-> +		size = 48;
->  	if ((stream->dev->quirks & UVC_QUIRK_PROBE_DEF) &&
->  			query == UVC_GET_DEF)
->  		return -EIO;
-> @@ -259,6 +261,8 @@ static int uvc_set_video_ctrl(struct uvc_streaming
-> *stream, int ret;
-> 
->  	size = stream->dev->uvc_version >= 0x0110 ? 34 : 26;
-> +	if (stream->dev->uvc_version >= 0x0150)
-> +		size = 48;
->  	data = kzalloc(size, GFP_KERNEL);
->  	if (data == NULL)
->  		return -ENOMEM;
+After addressing the rest, FWIW,
 
-Instead of duplicating the computation in both functions, I think we should
-move the code to a helper function.
-
-Furthermore there are equality checks further down both functions that compare
-the size to 34, they should be updated to also support UVC 1.5.
-
-I propose the following updated patch. If you're fine with it there's no need
-to resubmit, I'll queue it for v4.19.
-
-I have dropped the Reviewed-by and Tested-by tags as the patch has changed.
-
-commit a9c002732695eab2096580a0d1a1687bc2f95928
-Author: ming_qian <ming_qian@realsil.com.cn>
-Date:   Wed May 9 10:13:08 2018 +0800
-
-    media: uvcvideo: Support UVC 1.5 video probe & commit controls
-    
-    The length of UVC 1.5 video control is 48, and it is 34 for UVC 1.1.
-    Change it to 48 for UVC 1.5 device, and the UVC 1.5 device can be
-    recognized.
-    
-    More changes to the driver are needed for full UVC 1.5 compatibility.
-    However, at least the UVC 1.5 Realtek RTS5847/RTS5852 cameras have been
-    reported to work well.
-    
-    Cc: stable@vger.kernel.org
-    Signed-off-by: ming_qian <ming_qian@realsil.com.cn>
-    [Factor out code to helper function, update size checks]
-    Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
-index eb9e04a59427..285b0e813b9d 100644
---- a/drivers/media/usb/uvc/uvc_video.c
-+++ b/drivers/media/usb/uvc/uvc_video.c
-@@ -207,14 +207,27 @@ static void uvc_fixup_video_ctrl(struct uvc_streaming *stream,
- 	}
- }
- 
-+static size_t uvc_video_ctrl_size(struct uvc_streaming *stream)
-+{
-+	/*
-+	 * Return the size of the video probe and commit controls, which depends
-+	 * on the protocol version.
-+	 */
-+	if (stream->dev->uvc_version < 0x0110)
-+		return 26;
-+	else if (stream->dev->uvc_version < 0x0150)
-+		return 34;
-+	else
-+		return 48;
-+}
-+
- static int uvc_get_video_ctrl(struct uvc_streaming *stream,
- 	struct uvc_streaming_control *ctrl, int probe, u8 query)
- {
-+	u16 size = uvc_video_ctrl_size(stream);
- 	u8 *data;
--	u16 size;
- 	int ret;
- 
--	size = stream->dev->uvc_version >= 0x0110 ? 34 : 26;
- 	if ((stream->dev->quirks & UVC_QUIRK_PROBE_DEF) &&
- 			query == UVC_GET_DEF)
- 		return -EIO;
-@@ -271,7 +284,7 @@ static int uvc_get_video_ctrl(struct uvc_streaming *stream,
- 	ctrl->dwMaxVideoFrameSize = get_unaligned_le32(&data[18]);
- 	ctrl->dwMaxPayloadTransferSize = get_unaligned_le32(&data[22]);
- 
--	if (size == 34) {
-+	if (size >= 34) {
- 		ctrl->dwClockFrequency = get_unaligned_le32(&data[26]);
- 		ctrl->bmFramingInfo = data[30];
- 		ctrl->bPreferedVersion = data[31];
-@@ -300,11 +313,10 @@ static int uvc_get_video_ctrl(struct uvc_streaming *stream,
- static int uvc_set_video_ctrl(struct uvc_streaming *stream,
- 	struct uvc_streaming_control *ctrl, int probe)
- {
-+	u16 size = uvc_video_ctrl_size(stream);
- 	u8 *data;
--	u16 size;
- 	int ret;
- 
--	size = stream->dev->uvc_version >= 0x0110 ? 34 : 26;
- 	data = kzalloc(size, GFP_KERNEL);
- 	if (data == NULL)
- 		return -ENOMEM;
-@@ -321,7 +333,7 @@ static int uvc_set_video_ctrl(struct uvc_streaming *stream,
- 	put_unaligned_le32(ctrl->dwMaxVideoFrameSize, &data[18]);
- 	put_unaligned_le32(ctrl->dwMaxPayloadTransferSize, &data[22]);
- 
--	if (size == 34) {
-+	if (size >= 34) {
- 		put_unaligned_le32(ctrl->dwClockFrequency, &data[26]);
- 		data[30] = ctrl->bmFramingInfo;
- 		data[31] = ctrl->bPreferedVersion;
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
 -- 
-Regards,
-
-Laurent Pinchart
+With Best Regards,
+Andy Shevchenko
