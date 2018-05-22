@@ -1,60 +1,172 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752075AbeEVQGy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 12:06:54 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:2108 "EHLO pegase1.c-s.fr"
+        id S1752186AbeEVQG6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 12:06:58 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:21909 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751340AbeEVQGv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 12:06:51 -0400
-Message-Id: <cover.1527004752.git.christophe.leroy@c-s.fr>
+        id S1752096AbeEVQGz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 12:06:55 -0400
+Message-Id: <787b0c233d33834dea3243ce27fb0fe5b541eb9b.1527004752.git.christophe.leroy@c-s.fr>
+In-Reply-To: <cover.1527004752.git.christophe.leroy@c-s.fr>
+References: <cover.1527004752.git.christophe.leroy@c-s.fr>
 From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v3 0/3] powerpc/lib: Optimisation of string functions for PPC32 - part 1
+Subject: [PATCH v3 2/3] powerpc/lib: optimise 32 bits __clear_user()
 To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>, segher@kernel.crashing.org
 Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Tue, 22 May 2018 18:06:49 +0200 (CEST)
+Date: Tue, 22 May 2018 18:06:53 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This serie intends to optimise string functions for PPC32 in the
-same spirit as already done on PPC64.
+Rewrite clear_user() on the same principle as memset(0), making use
+of dcbz to clear complete cache lines.
 
-The first patch moves PPC32 specific functions from string.S into
-a dedicated file named string_32.S
-The second patch rewrites __clear_user() by using dcbz intruction
-The third patch rewrites memcmp() to compare 32 bits words instead
-of comparing byte per byte.
+This code is a copy/paste of memset(), with some modifications
+in order to retrieve remaining number of bytes to be cleared,
+as it needs to be returned in case of error.
 
-As shown in each individual commit log, second and third patches provide
-significant improvment.
+On a MPC885, throughput is almost doubled:
 
-Changes in v3:
-- Fixed the sign of the result returned by memcmp() by using a logical
-comparison of u32 words and returning -1, 0 or 1 instead of doing a substract.
-- In first patch, replaced PPC_LCMPI by cmpwi
-- Fixed licence in string_32.S
-- Removed the two last patches from the serie. They will be handled later as
-they require further tests and analysis to properly identify their real benefit
-in all possible cases.
+Before:
+~# dd if=/dev/zero of=/dev/null bs=1M count=1000
+1048576000 bytes (1000.0MB) copied, 18.990779 seconds, 52.7MB/s
 
-Changes in v2:
-- Moved out the patch removing the hot loop alignment on PPC32
-- Squashed the changes related to NUL size verification in a single patch
-- Reordered the patches in a more logical order
-- Modified the inlining patch to avoid warning about impossibility to version symbols.
+After:
+~# dd if=/dev/zero of=/dev/null bs=1M count=1000
+1048576000 bytes (1000.0MB) copied, 9.611468 seconds, 104.0MB/s
 
-Christophe Leroy (3):
-  powerpc/lib: move PPC32 specific functions out of string.S
-  powerpc/lib: optimise 32 bits __clear_user()
-  powerpc/lib: optimise PPC32 memcmp
+On a MPC8321, throughput is multiplied by 2.12:
 
- arch/powerpc/lib/Makefile    |   5 +-
- arch/powerpc/lib/string.S    |  61 -------------------
- arch/powerpc/lib/string_32.S | 140 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 143 insertions(+), 63 deletions(-)
- create mode 100644 arch/powerpc/lib/string_32.S
+Before:
+root@vgoippro:~# dd if=/dev/zero of=/dev/null bs=1M count=1000
+1048576000 bytes (1000.0MB) copied, 6.844352 seconds, 146.1MB/s
 
+After:
+root@vgoippro:~# dd if=/dev/zero of=/dev/null bs=1M count=1000
+1048576000 bytes (1000.0MB) copied, 3.218854 seconds, 310.7MB/s
+
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/lib/string_32.S | 85 +++++++++++++++++++++++++++++++-------------
+ 1 file changed, 60 insertions(+), 25 deletions(-)
+
+diff --git a/arch/powerpc/lib/string_32.S b/arch/powerpc/lib/string_32.S
+index 204db8a834fd..40a576d56ac7 100644
+--- a/arch/powerpc/lib/string_32.S
++++ b/arch/powerpc/lib/string_32.S
+@@ -11,6 +11,7 @@
+ #include <asm/errno.h>
+ #include <asm/ppc_asm.h>
+ #include <asm/export.h>
++#include <asm/cache.h>
+ 
+ 	.text
+ 
+@@ -29,44 +30,78 @@ _GLOBAL(memcmp)
+ 	blr
+ EXPORT_SYMBOL(memcmp)
+ 
++CACHELINE_BYTES = L1_CACHE_BYTES
++LG_CACHELINE_BYTES = L1_CACHE_SHIFT
++CACHELINE_MASK = (L1_CACHE_BYTES-1)
++
+ _GLOBAL(__clear_user)
+-	addi	r6,r3,-4
+-	li	r3,0
+-	li	r5,0
+-	cmplwi	0,r4,4
++/*
++ * Use dcbz on the complete cache lines in the destination
++ * to set them to zero.  This requires that the destination
++ * area is cacheable.
++ */
++	cmplwi	cr0, r4, 4
++	mr	r10, r3
++	li	r3, 0
+ 	blt	7f
+-	/* clear a single word */
+-11:	stwu	r5,4(r6)
++
++11:	stw	r3, 0(r10)
+ 	beqlr
+-	/* clear word sized chunks */
+-	andi.	r0,r6,3
+-	add	r4,r0,r4
+-	subf	r6,r0,r6
+-	srwi	r0,r4,2
+-	andi.	r4,r4,3
++	andi.	r0, r10, 3
++	add	r11, r0, r4
++	subf	r6, r0, r10
++
++	clrlwi	r7, r6, 32 - LG_CACHELINE_BYTES
++	add	r8, r7, r11
++	srwi	r9, r8, LG_CACHELINE_BYTES
++	addic.	r9, r9, -1	/* total number of complete cachelines */
++	ble	2f
++	xori	r0, r7, CACHELINE_MASK & ~3
++	srwi.	r0, r0, 2
++	beq	3f
++	mtctr	r0
++4:	stwu	r3, 4(r6)
++	bdnz	4b
++3:	mtctr	r9
++	li	r7, 4
++10:	dcbz	r7, r6
++	addi	r6, r6, CACHELINE_BYTES
++	bdnz	10b
++	clrlwi	r11, r8, 32 - LG_CACHELINE_BYTES
++	addi	r11, r11, 4
++
++2:	srwi	r0 ,r11 ,2
+ 	mtctr	r0
+-	bdz	7f
+-1:	stwu	r5,4(r6)
++	bdz	6f
++1:	stwu	r3, 4(r6)
+ 	bdnz	1b
+-	/* clear byte sized chunks */
+-7:	cmpwi	0,r4,0
++6:	andi.	r11, r11, 3
+ 	beqlr
+-	mtctr	r4
+-	addi	r6,r6,3
+-8:	stbu	r5,1(r6)
++	mtctr	r11
++	addi	r6, r6, 3
++8:	stbu	r3, 1(r6)
+ 	bdnz	8b
+ 	blr
+-90:	mr	r3,r4
++
++7:	cmpwi	cr0, r4, 0
++	beqlr
++	mtctr	r4
++	addi	r6, r10, -1
++9:	stbu	r3, 1(r6)
++	bdnz	9b
+ 	blr
+-91:	mfctr	r3
+-	slwi	r3,r3,2
+-	add	r3,r3,r4
++
++90:	mr	r3, r4
+ 	blr
+-92:	mfctr	r3
++91:	add	r3, r10, r4
++	subf	r3, r6, r3
+ 	blr
+ 
+ 	EX_TABLE(11b, 90b)
++	EX_TABLE(4b, 91b)
++	EX_TABLE(10b, 91b)
+ 	EX_TABLE(1b, 91b)
+-	EX_TABLE(8b, 92b)
++	EX_TABLE(8b, 91b)
++	EX_TABLE(9b, 91b)
+ 
+ EXPORT_SYMBOL(__clear_user)
 -- 
 2.13.3
