@@ -1,69 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751827AbeEVSbB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 14:31:01 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:45404 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751740AbeEVSa6 (ORCPT
+        id S1751525AbeEVScx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 14:32:53 -0400
+Received: from mail02.iobjects.de ([188.40.134.68]:38238 "EHLO
+        mail02.iobjects.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751278AbeEVScw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 14:30:58 -0400
-X-Google-Smtp-Source: AB8JxZpUw1661J+WqXe6KoSsqFb+21YioWJHGQv7hcGW9ya4eDe5XpfJqYx0EbQqHf+BUcHevJsvaw==
-Subject: Re: [PATCH v7 0/5] AIO add per-command iopriority
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: adam.manzanares@wdc.com, linux-fsdevel@vger.kernel.org, bcrl@kvack.org,
-        mingo@kernel.org, tglx@linutronix.de, kstewart@linuxfoundation.org,
-        peterz@infradead.org, pombredanne@nexb.com, gregkh@linuxfoundation.org,
-        bigeasy@linutronix.de, rgoldwyn@suse.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-aio@kvack.org,
-        linux-api@vger.kernel.org, hch@infradread.org, jmoyer@redhat.com
-References: <20180522175221.2391-1-adam.manzanares@wdc.com>
- <da84d129-4dcd-c861-bfc4-62cd425e60e3@kernel.dk>
- <20180522183019.GD30522@ZenIV.linux.org.uk>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <4b8732e8-1c51-3181-56a1-d03f7b229f63@kernel.dk>
-Date: Tue, 22 May 2018 12:30:53 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 22 May 2018 14:32:52 -0400
+Subject: Re: [PATCH] block: kyber: make kyber more friendly with merging
+To: Jens Axboe <axboe@kernel.dk>,
+        Jianchao Wang <jianchao.w.wang@oracle.com>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1527000509-2619-1-git-send-email-jianchao.w.wang@oracle.com>
+ <163c5760-cf0e-faea-ee4e-ac5d688310fe@applied-asynchrony.com>
+ <00e5dfd4-d3a2-b008-3d8b-390a788f61c9@kernel.dk>
+ <7c93b85f-6a02-bdcf-5e92-a9533500df20@kernel.dk>
+From: =?UTF-8?Q?Holger_Hoffst=c3=a4tte?= <holger@applied-asynchrony.com>
+Organization: Applied Asynchrony, Inc.
+Message-ID: <fc26ef08-2e2a-3b2d-2190-8419307b243e@applied-asynchrony.com>
+Date: Tue, 22 May 2018 20:32:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180522183019.GD30522@ZenIV.linux.org.uk>
+In-Reply-To: <7c93b85f-6a02-bdcf-5e92-a9533500df20@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/22/18 12:30 PM, Al Viro wrote:
-> On Tue, May 22, 2018 at 11:55:04AM -0600, Jens Axboe wrote:
->> On 5/22/18 11:52 AM, adam.manzanares@wdc.com wrote:
->>> From: Adam Manzanares <adam.manzanares@wdc.com>
+On 05/22/18 19:46, Jens Axboe wrote:
+> On 5/22/18 10:20 AM, Jens Axboe wrote:
+>> On 5/22/18 10:17 AM, Holger Hoffstätte wrote:
+>>> On 05/22/18 16:48, Jianchao Wang wrote:
+>>>> Currently, kyber is very unfriendly with merging. kyber depends
+>>>> on ctx rq_list to do merging, however, most of time, it will not
+>>>> leave any requests in ctx rq_list. This is because even if tokens
+>>>> of one domain is used up, kyber will try to dispatch requests
+>>>> from other domain and flush the rq_list there.
+>>>>
+>>>> To improve this, we setup kyber_ctx_queue (kcq) which is similar
+>>>> with ctx, but it has rq_lists for different domain and build same
+>>>> mapping between kcq and khd as the ctx & hctx. Then we could merge,
+>>>> insert and dispatch for different domains separately. If one domain
+>>>> token is used up, the requests could be left in the rq_list of
+>>>> that domain and maybe merged with following io.
+>>>>
+>>>> Following is my test result on machine with 8 cores and NVMe card
+>>>> INTEL SSDPEKKR128G7
+>>>>
+>>>> fio size=256m ioengine=libaio iodepth=64 direct=1 numjobs=8
+>>>> seq/random
+>>>> +------+---------------------------------------------------------------+
+>>>> |patch?| bw(MB/s) |   iops    | slat(usec) |    clat(usec)   |  merge  |
+>>>> +----------------------------------------------------------------------+
+>>>> | w/o  |  606/612 | 151k/153k |  6.89/7.03 | 3349.21/3305.40 |   0/0   |
+>>>> +----------------------------------------------------------------------+
+>>>> | w/   | 1083/616 | 277k/154k |  4.93/6.95 | 1830.62/3279.95 | 223k/3k |
+>>>> +----------------------------------------------------------------------+
+>>>> When set numjobs to 16, the bw and iops could reach 1662MB/s and 425k
+>>>> on my platform.
+>>>>
+>>>> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
 >>>
->>> This is the per-I/O equivalent of the ioprio_set system call.
->>> See the following link for performance implications on a SATA HDD:
->>> https://lkml.org/lkml/2016/12/6/495
+>>> <snip>
 >>>
->>> First patch factors ioprio_check_cap function out of ioprio_set system call to
->>> also be used by the aio ioprio interface.
+>>> This looks great but prevents kyber from being built as module,
+>>> which is AFAIK supposed to work (and works now):
 >>>
->>> Second patch converts kiocb ki_hint field to a u16 to avoid kiocb bloat.
+>>> ..
+>>>   CC [M]  block/kyber-iosched.o
+>>>   Building modules, stage 2.
+>>>   MODPOST 313 modules
+>>> ERROR: "bio_attempt_back_merge" [block/kyber-iosched.ko] undefined!
+>>> ERROR: "bio_attempt_front_merge" [block/kyber-iosched.ko] undefined!
+>>> ERROR: "bio_attempt_discard_merge" [block/kyber-iosched.ko] undefined!
+>>> ERROR: "blk_try_merge" [block/kyber-iosched.ko] undefined!
+>>> ERROR: "blk_rq_merge_ok" [block/kyber-iosched.ko] undefined!
+>>> ..
 >>>
->>> Third patch passes ioprio hint from aio iocb to kiocb and initializes kiocb
->>> ioprio value appropriately when it is not explicitly set.
->>>
->>> Fourth patch enables the feature for blkdev.
->>>
->>> Fifth patch enables the feature for iomap direct IO
+>>> It does build fine when compiled in, obviously. :)
 >>
->> LGTM, you can add:
->>
->> Reviewed-by: Jens Axboe <axboe@kernel.dk>
->>
->> Al, are you picking this series up, or should I?
+>> It's basically duplicating the contents of blk_attempt_plug_merge().
+>> I would suggest abstracting out the list loop and merge check
+>> into a helper, that could then both be called from kyber and the
+>> plug merge function.
 > 
-> Probably better if I do, once I finish reviewing Christoph's patchset -
-> we already have a bunch of stuff around fs/aio.c in this cycle...
+> See attached, prep patch and yours rebased on top of it.
 
-Alright, sounds good, thanks Al.
+That was quick. :)
 
--- 
-Jens Axboe
+Applies smoothly on top of my 4.16++ tree, now builds correctly as
+module and is reproducibly (slightly) faster even on my pedestrian
+SATA SSDs, now on par or occasionally even faster than mq-deadline.
+What's not to like? So:
+
+Tested-by: Holger Hoffstätte <holger@applied-asynchrony.com>
+
+cheers,
+Holger
