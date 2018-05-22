@@ -1,110 +1,139 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752715AbeEVDqn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 23:46:43 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38070 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751745AbeEVDqm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 23:46:42 -0400
-Date: Tue, 22 May 2018 06:46:40 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, hannes@stressinduktion.org,
-        edumazet@google.com
-Subject: Re: [PATCH net] tuntap: raise EPOLLOUT on device up
-Message-ID: <20180522064529-mutt-send-email-mst@kernel.org>
-References: <1526648443-24128-1-git-send-email-jasowang@redhat.com>
- <20180521.114742.427929977852677864.davem@davemloft.net>
- <20180522010700-mutt-send-email-mst@kernel.org>
- <358628f8-a296-ad0e-985b-307895ed5520@redhat.com>
+        id S1752631AbeEVDtR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 23:49:17 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:40994 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751719AbeEVDtL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 23:49:11 -0400
+X-Google-Smtp-Source: AB8JxZpmxjkY6aQVugm/IWHgdLTrio/1jqhfzoefuJ2zEcb4GeEwh7f2jR6ziAJKEXXAt8T6RBzjqg==
+Date: Mon, 21 May 2018 23:49:06 -0400
+From: Kent Overstreet <kent.overstreet@gmail.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        peterz@infradead.org
+Subject: Re: [PATCH] [RFC] bcachefs: SIX locks (shared/intent/exclusive)
+Message-ID: <20180522034906.GA4535@kmo-pixel>
+References: <20180522021951.1453-1-kent.overstreet@gmail.com>
+ <20180522030416.GB18682@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <358628f8-a296-ad0e-985b-307895ed5520@redhat.com>
+In-Reply-To: <20180522030416.GB18682@bombadil.infradead.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 11:22:11AM +0800, Jason Wang wrote:
-> 
-> 
-> On 2018年05月22日 06:08, Michael S. Tsirkin wrote:
-> > On Mon, May 21, 2018 at 11:47:42AM -0400, David Miller wrote:
-> > > From: Jason Wang <jasowang@redhat.com>
-> > > Date: Fri, 18 May 2018 21:00:43 +0800
-> > > 
-> > > > We return -EIO on device down but can not raise EPOLLOUT after it was
-> > > > up. This may confuse user like vhost which expects tuntap to raise
-> > > > EPOLLOUT to re-enable its TX routine after tuntap is down. This could
-> > > > be easily reproduced by transmitting packets from VM while down and up
-> > > > the tap device. Fixing this by set SOCKWQ_ASYNC_NOSPACE on -EIO.
-> > > > 
-> > > > Cc: Hannes Frederic Sowa <hannes@stressinduktion.org>
-> > > > Cc: Eric Dumazet <edumazet@google.com>
-> > > > Fixes: 1bd4978a88ac2 ("tun: honor IFF_UP in tun_get_user()")
-> > > > Signed-off-by: Jason Wang <jasowang@redhat.com>
-> > > I'm no so sure what to do with this patch.
-> > > 
-> > > Like Michael says, this flag bit is only checks upon transmit which
-> > > may or may not happen after this point.  It doesn't seem to be
-> > > guaranteed.
-> 
-> The flag is checked in tun_chr_poll() as well.
-> 
-> > Jason, can't we detect a link up transition and respond accordingly?
-> > What do you think?
+On Mon, May 21, 2018 at 08:04:16PM -0700, Matthew Wilcox wrote:
+> On Mon, May 21, 2018 at 10:19:51PM -0400, Kent Overstreet wrote:
+> > New lock for bcachefs, like read/write locks but with a third state,
+> > intent.
 > > 
+> > Intent locks conflict with each other, but not with read locks; taking a
+> > write lock requires first holding an intent lock.
 > 
-> I think we've already tried to do this, in tun_net_open() we call
-> write_space(). But the problem is the bit may not be set at that time.
-> 
-> A second thought is to set the bit in tun_chr_poll() instead of -EIO like:
-> 
-> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-> index d45ac37..46a1573 100644
-> --- a/drivers/net/tun.c
-> +++ b/drivers/net/tun.c
-> @@ -1423,6 +1423,13 @@ static void tun_net_init(struct net_device *dev)
->         dev->max_mtu = MAX_MTU - dev->hard_header_len;
->  }
-> 
-> +static bool tun_sock_writeable(struct tun_struct *tun, struct tun_file
-> *tfile)
-> +{
-> +       struct sock *sk = tfile->socket.sk;
-> +
-> +       return (tun->dev->flags & IFF_UP) && sock_writeable(sk);
-> +}
-> +
->  /* Character device part */
-> 
->  /* Poll */
-> @@ -1445,10 +1452,9 @@ static __poll_t tun_chr_poll(struct file *file,
-> poll_table *wait)
->         if (!ptr_ring_empty(&tfile->tx_ring))
->                 mask |= EPOLLIN | EPOLLRDNORM;
-> 
-> -       if (tun->dev->flags & IFF_UP &&
-> -           (sock_writeable(sk) ||
-> -            (!test_and_set_bit(SOCKWQ_ASYNC_NOSPACE, &sk->sk_socket->flags)
-> &&
-> -             sock_writeable(sk))))
-> +       if (tun_sock_writeable(tun, tfile) ||
-> +           (!test_and_set_bit(SOCKWQ_ASYNC_NOSPACE, &sk->sk_socket->flags)
-> &&
-> +            tun_sock_writeable(tun, tfile)));
->                 mask |= EPOLLOUT | EPOLLWRNORM;
-> 
->         if (tun->dev->reg_state != NETREG_REGISTERED)
-> 
-> Does this make more sense?
-> 
-> Thanks
+> Can you put something in the description that these are sleeping locks
+> (like mutexes), not spinning locks (like spinlocks)?  (Yeah, I know
+> there's the opportunistic spin, but conceptually, they're sleeping locks).
 
-I just understood the motivation for doing it on EIO.
-Maybe there's a reason it makes sense here as well,
-but it's far from obvious. I suggest you repost adding
-an explanation in the comment. The original patch will
-be fine with an explanation as well.
+Yup, I'll add that
+
+> 
+> Some other things I'd like documented:
+> 
+>  - Any number of readers can hold the lock
+>  - Once one thread acquires the lock for intent, further intent acquisitions
+>    will block.  May new readers acquire the lock?
+
+I think I should have that covered already - "Intent does not block read, but
+does block other intent locks"
+
+>  - You cannot acquire the lock for write directly, you must acquire it for
+>    intent first, then upgrade to write.
+>  - Can you downgrade to read from intent, or downgrade from write back to
+>    intent?
+
+You hold both write and intent, like so:
+
+six_lock_intent(&foo->lock);
+six_lock_write(&foo->lock);
+six_unlock_write(&foo->lock);
+six_unlock_intent(&foo->lock);
+
+
+>  - Once you are trying to upgrade from intent to write, are new read
+>    acquisitions blocked? (can readers starve writers?)
+
+Readers can starve writers in the current implementation, but that's something
+that should probably be fixed...
+
+>  - When you drop the lock as a writer, do we prefer reader acquisitions
+>    over intent acquisitions?  That is, if we have a queue of RRIRIRIR,
+>    and we drop the lock, does the queue look like II or IRIR?
+
+Separate queues per lock type, so dropping a write lock will wake up everyone
+trying to take a read lock, and dropping an intent lock wakes up everyone trying
+to take an intent lock.
+
+---
+
+Here's the new documentation I just wrote:
+
+/*
+ * Shared/intent/exclusive locks: sleepable read/write locks, much like rw
+ * semaphores, except with a third intermediate state, intent. Basic operations
+ * are:
+ *
+ * six_lock_read(&foo->lock);
+ * six_unlock_read(&foo->lock);
+ *
+ * six_lock_intent(&foo->lock);
+ * six_unlock_intent(&foo->lock);
+ *
+ * six_lock_write(&foo->lock);
+ * six_unlock_write(&foo->lock);
+ *
+ * Intent locks block other intent locks, but do not block read locks, and you
+ * must have an intent lock held before taking a write lock, like so:
+ *
+ * six_lock_intent(&foo->lock);
+ * six_lock_write(&foo->lock);
+ * six_unlock_write(&foo->lock);
+ * six_unlock_intent(&foo->lock);
+ *
+ * Other operations:
+ *
+ *   six_trylock_read()
+ *   six_trylock_intent()
+ *   six_trylock_write()
+ *
+ *   six_lock_downgrade():	convert from intent to read
+ *   six_lock_tryupgrade():	attempt to convert from read to intent
+ *
+ * Locks also embed a sequence number, which is incremented when the lock is
+ * locked or unlocked for write. The current sequence number can be grabbed
+ * while a lock is held from lock->state.seq; then, if you drop the lock you can
+ * use six_relock_(read|intent_write)(lock, seq) to attempt to retake the lock
+ * iff it hasn't been locked for write in the meantime.
+ *
+ * There are also operations that take the lock type as a parameter, where the
+ * type is one of SIX_LOCK_read, SIX_LOCK_intent, or SIX_LOCK_write:
+ *
+ *   six_lock_type(lock, type)
+ *   six_unlock_type(lock, type)
+ *   six_relock(lock, type, seq)
+ *   six_trylock_type(lock, type)
+ *   six_trylock_convert(lock, from, to)
+ *
+ * A lock may be held multiple types by the same thread (for read or intent,
+ * not write) - up to SIX_LOCK_MAX_RECURSE. However, the six locks code does
+ * _not_ implement the actual recursive checks itself though - rather, if your
+ * code (e.g. btree iterator code) knows that the current thread already has a
+ * lock held, and for the correct type, six_lock_increment() may be used to
+ * bump up the counter for that type - the only effect is that one more call to
+ * unlock will be required before the lock is unlocked.
+ *
+ */
