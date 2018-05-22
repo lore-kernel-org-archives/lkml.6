@@ -1,75 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751579AbeEVQKf (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 12:10:35 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:35917 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751196AbeEVQKd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 12:10:33 -0400
-Subject: Re: [PATCH] tc-testing: flush gact actions on test teardown
-To: David Miller <davem@davemloft.net>
-Cc: vladbu@mellanox.com, linux-kselftest@vger.kernel.org,
-        lucasb@mojatatu.com, jhs@mojatatu.com, mrv@mojatatu.com,
-        linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>
-References: <1526660482-10424-1-git-send-email-vladbu@mellanox.com>
- <11f03b6a-a8c4-e64c-7e2d-fb8218bc6320@kernel.org>
- <20180522.114930.689064251143958449.davem@davemloft.net>
-From: Shuah Khan <shuah@kernel.org>
-Message-ID: <6ea08cc0-709c-09cd-03d7-cd23bc757299@kernel.org>
-Date: Tue, 22 May 2018 10:10:19 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180522.114930.689064251143958449.davem@davemloft.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1752232AbeEVQLA convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 12:11:00 -0400
+Received: from prv1-mh.provo.novell.com ([137.65.248.33]:49780 "EHLO
+        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751837AbeEVQK5 (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:5:1>);
+        Tue, 22 May 2018 12:10:57 -0400
+Message-Id: <5B04410D02000078001C4CC5@prv1-mh.provo.novell.com>
+X-Mailer: Novell GroupWise Internet Agent 18.0.0 
+Date: Tue, 22 May 2018 10:10:53 -0600
+From: "Jan Beulich" <JBeulich@suse.com>
+To: <brgerst@gmail.com>
+Cc: "xen-devel" <xen-devel@lists.xenproject.org>,
+        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
+        "Juergen Gross" <jgross@suse.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 1/2] xen/PVH: Set up GS segment for stack canary
+References: <20180522035445.16911-1-boris.ostrovsky@oracle.com>
+ <20180522035445.16911-2-boris.ostrovsky@oracle.com>
+ <CAMzpN2iMrEqee+8yGP_qk-qAuXf+_o6vrOUSDTvX=8JAUDT5Fg@mail.gmail.com>
+ <5B0421E502000078001C4B91@prv1-mh.provo.novell.com>
+ <CAMzpN2gRvYMmaf2+Fpi2wkAV_rcH=uDfM8sQQaaGGK2U=7XqMA@mail.gmail.com>
+In-Reply-To: <CAMzpN2gRvYMmaf2+Fpi2wkAV_rcH=uDfM8sQQaaGGK2U=7XqMA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/22/2018 09:49 AM, David Miller wrote:
-> From: Shuah Khan <shuah@kernel.org>
-> Date: Tue, 22 May 2018 09:43:28 -0600
-> 
->> On 05/18/2018 10:21 AM, Vlad Buslov wrote:
->>> Test 6fb4 creates one mirred and one pipe action, but only flushes mirred
->>> on teardown. Leaking pipe action causes failures in other tests.
+>>> On 22.05.18 at 17:15, <brgerst@gmail.com> wrote:
+> On Tue, May 22, 2018 at 9:57 AM, Jan Beulich <JBeulich@suse.com> wrote:
+>>>>> On 22.05.18 at 15:45, <brgerst@gmail.com> wrote:
+>>> On Mon, May 21, 2018 at 11:54 PM, Boris Ostrovsky <boris.ostrovsky@oracle.com> wrote:
+>>>> @@ -98,6 +101,12 @@ ENTRY(pvh_start_xen)
+>>>>         /* 64-bit entry point. */
+>>>>         .code64
+>>>>  1:
+>>>> +       /* Set base address in stack canary descriptor. */
+>>>> +       mov $MSR_GS_BASE,%ecx
+>>>> +       mov $canary, %rax
+>>>> +       cdq
+>>>> +       wrmsr
 >>>
->>> Add additional teardown command to also flush gact actions.
->>>
->>> Signed-off-by: Vlad Buslov <vladbu@mellanox.com>
->>> ---
->>>  tools/testing/selftests/tc-testing/tc-tests/actions/mirred.json | 3 ++-
->>>  1 file changed, 2 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/tools/testing/selftests/tc-testing/tc-tests/actions/mirred.json b/tools/testing/selftests/tc-testing/tc-tests/actions/mirred.json
->>> index 443c9b3..acb24f7 100644
->>> --- a/tools/testing/selftests/tc-testing/tc-tests/actions/mirred.json
->>> +++ b/tools/testing/selftests/tc-testing/tc-tests/actions/mirred.json
->>> @@ -44,7 +44,8 @@
->>>          "matchPattern": "action order [0-9]*: mirred \\(Egress Redirect to device lo\\).*index 2 ref",
->>>          "matchCount": "1",
->>>          "teardown": [
->>> -            "$TC actions flush action mirred"
->>> +            "$TC actions flush action mirred",
->>> +            "$TC actions flush action gact"
->>>          ]
->>>      },
->>>      {
->>>
+>>> CDQ only sign-extends EAX to RAX.  What you really want is to move the
+>>> high 32-bits to EDX (or zero EDX if we can guarantee it is loaded
+>>> below 4G).
 >>
->> I can get this into 4.18-rc1 unless there is a reason for this to go
->> through net tree.
+>> What you describe is CDQE (AT&T name: CLTD); CDQ (AT&T: CLTQ)
+>> sign-extends EAX to EDX:EAX.
 > 
-> Why wouldn't a networking testing bug fix go through my tree?
-> 
+> But that would still be wrong, as it would set EDX to 0xFFFFFFFF if
+> the kernel was loaded between 2G and 4G.  Looking closer at the code,
+> we just left 32-bit mode, so we must have been loaded below 4G,
+> therefore EDX must be zero.
 
-I usually take the selftest patches unless there is dependency on another
-tree. I am fine with it going through net tree
+Ah, yes, indeed.
 
-Acked-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
-
-thanks,
--- Shuah
+Jan
