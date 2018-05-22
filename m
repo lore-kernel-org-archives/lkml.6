@@ -1,5 +1,5 @@
 Return-Path: <linux-efi-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1741794-1526958796-2-14665103491917143398
+X-Cyrus-Session-Id: sloti22d1t05-1741794-1526958802-2-15021616455496910522
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-charsets: 
@@ -8,22 +8,23 @@ X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-efi-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526958796; b=QtMJFoFAKBz1oIXXG3J21HI1icpw2slNNiZzYe+F4FaGk/walD
-    UlHoVw27tAqqsEfYXNxVpE6ljRKoPdddNmFoYwfGDVRWYwJZA5Y7ElhLH4E5Z+EB
-    38o4S+I1A0pFzdFrbl1vTBEFx+dBMjHpVNTEwbxLt7b76udhJNB1oSy0GwQi8qGc
-    rtzA+fOPatvrowlwGdv9XWiODoVcxTyaJcl/YogNuQI8GMUN9KAMj6rYR0zaMLD4
-    u1i+aurLinOgHQyck1Mx94iLkmz282H7HpB4GwovkzvUk/m0N8pkhx0AJg5+4vRx
-    Fr1uK4XvuORy/sxt0D/3M+KR7XKke6OygSLg==
+    1526958801; b=X3/QBqS51Fprc3XO+YQEoDt3RNWDqCmDSJusQEfUPgU6Y7qFlV
+    WRD8ty66UOmo0Ct7oQqSLXI17lX5m/f5YR+fqXi9eJX/7qakOc+ysre5LjZWTPw5
+    nYZvAM/K9VZNgO3BqrNiaCkaf7VYLPZmH/tlg/yCMaGeyBIzO6wLRDWOC2x1o7bl
+    Cw8bT6CUnvPUJKWGTD6V4CB18Tc/jXVDwqI29n5jWklPkIxBpWVnKh65+m1YJ0Nf
+    /Ir1GRrHSbzQMe+dd+2Scstb1r/qvOKG6hJq0f14/x+LLYW8zcAERJ865XIyGitd
+    1Eq9aGGDwsTffuaBF6WeiiQPS0lSr9/RuQBA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=fm2; t=1526958796; bh=IEwlwk2oEa9V3fPPDrl7UwrbdnS17t
-    ZULJ7vMf6C0+U=; b=YbM6M1bPAJeRHLtkceQOmEKAwP+3Xd4+jQDUUNYxViN1QK
-    6lGuzYAcgZ29tKHbD0zrPf3cmh+M9D5Mh2OLfwB7gSTTJDffaknE6so6aw0fLxEF
-    XF80Jq8HvMKSvjRZh8JpzTqyewqS0vGmUYwwRY6k5LvaeYBhCPKTtUZybxczo0lT
-    YzFxWcSme40arj8YXCPaIXzRkf0hFkSZ18YIaUaHKjzbfZOplmR7RlPyoMgx57ep
-    Zt7yrksrgFogehaNXaMPnntVJhuszWM4ycW0O7wLtVluIjPG7xRVQsQSeYDuQlGP
-    JVpLFSVBbKqXnhNJEmyrGIhQ7vD/bBxZcsdD1hjA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=fm2; t=1526958801; bh=
+    njURIa7PDOVn173k1Ir9mzyw4Whu+QSNVyFtfhEn8u8=; b=fxvw3reOxFz8A1WY
+    MarIk3tWD4xUDWWg7aoorkUmYmsFVoVxGVRLWt8qxdUudx87Nuz1m996Cpue8oi/
+    L0G+NuKVem3TUAb8GPjQV4vsxGOLI8y+yUV/dC3OPmRCd79Dz8DhkTd3ShNLHgX6
+    crAifrFQzP2RFPMEK07MX8+MGTfnysO9+Lv/IDRYphtasDqJjm1p07SghpthfGSP
+    YOTlrOkQmpdkecF2KGUTi3n3Z4DoyMjO3NOs5M+enxzsZHYqBCB86/zJaxpiZLN6
+    fbxzf9UF+IeyUvwao7BYMUfTUtfSSLdwJtDvZnFJuxOhTa1hY0JXTnf3vKQviS5W
+    r7qXQA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -36,7 +37,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=intel.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=intel.com;
@@ -51,30 +52,29 @@ Authentication-Results: mx2.messagingengine.com;
       header.domain=intel.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEi1Ljdw4DrvnYrsh7Oz5tt0ftystHGayYHFsRjHSVSeUzT3cGOgkNhkjpvVcjrm1xpA5WfL02AhpDd67UCn12mhxi7/sS63ZYPV1ZgXaLZu+NPLszxp
-    qrQnuhVhrSOHxS9j5DkrB5kM1kAt7iR1dUTYaZKNINKJ3Srrh2/+I8gmxg61tSlBsXSMsgcXW4eW3SRb9CcNYBTOG1PVzI/Plj8WJremH/3dRsKuVL3NyHUF
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfE9DPpqDJF7CUogdvp4OU6l0PTjL7a4JY4v51esWX+E98aDMjo+Jfi4sdVbkS5cZyBYB55dUvZSl73PbQEILUaAnxoqipF6mnvXqCS4vF1iFJpNtIMU4
+    uTw9QARQGZtQzqnMH42XcJiBX/7wqjvQ6LSxPMkqbvmAfNzZK7PkoVOT0xPj90OeojyWFPj/ubsfI3xlhd3sJuZ6KEGp9OKw5UckEx0lCgeuDQQkPOdll8vD
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=QyXUC8HyAAAA:8
-    a=i3X5FwGiAAAA:8 a=VwQbUJbxAAAA:8 a=iox4zFpeAAAA:8 a=7CQSdrXTAAAA:8
-    a=20KFwNOVAAAA:8 a=KKAkSRfTAAAA:8 a=JfrnYn6hAAAA:8 a=CxaZg77CAAAA:8
-    a=pGLkceISAAAA:8 a=s8EWgBTSiC7UjTd6gCEA:9 a=tu5o3xbZoH-invnD:21
-    a=7L6yVLmnT3y2kCmw:21 a=x8gzFH9gYPwA:10 a=mmqRlSCDY2ywfjPLJ4af:22
-    a=AjGcO6oz07-iQ99wixmX:22 a=WzC6qhA0u3u7Ye7llzcV:22 a=a-qgeE7W1pNrGK8U0ZQC:22
-    a=cvBusfyB2V15izCimMoJ:22 a=1CNFftbPRP8L7MoqJWF3:22 a=HxQw6O0h_v37Y3_G5fB_:22
+    a=VwQbUJbxAAAA:8 a=iox4zFpeAAAA:8 a=7CQSdrXTAAAA:8 a=20KFwNOVAAAA:8
+    a=KKAkSRfTAAAA:8 a=JfrnYn6hAAAA:8 a=CxaZg77CAAAA:8 a=pGLkceISAAAA:8
+    a=lGoDwvWgg58GksNul8QA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=WzC6qhA0u3u7Ye7llzcV:22 a=a-qgeE7W1pNrGK8U0ZQC:22 a=cvBusfyB2V15izCimMoJ:22
+    a=1CNFftbPRP8L7MoqJWF3:22 a=HxQw6O0h_v37Y3_G5fB_:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752569AbeEVDNP (ORCPT <rfc822;linux@kroah.com>);
-        Mon, 21 May 2018 23:13:15 -0400
+        id S1752638AbeEVDNT (ORCPT <rfc822;linux@kroah.com>);
+        Mon, 21 May 2018 23:13:19 -0400
 Received: from mga06.intel.com ([134.134.136.31]:55066 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751932AbeEVDNO (ORCPT <rfc822;linux-efi@vger.kernel.org>);
-        Mon, 21 May 2018 23:13:14 -0400
+        id S1752595AbeEVDNQ (ORCPT <rfc822;linux-efi@vger.kernel.org>);
+        Mon, 21 May 2018 23:13:16 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,428,1520924400";
-   d="scan'208";a="41795474"
+   d="scan'208";a="41795482"
 From: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
 To: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: Sai Praneeth <sai.praneeth.prakhya@intel.com>,
@@ -92,10 +92,12 @@ Cc: Sai Praneeth <sai.praneeth.prakhya@intel.com>,
         Dan Williams <dan.j.williams@intel.com>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Subject: [PATCH V3 0/3] Use efi_rts_wq to invoke EFI Runtime Services
-Date: Mon, 21 May 2018 20:13:01 -0700
-Message-Id: <1526958784-14688-1-git-send-email-sai.praneeth.prakhya@intel.com>
+Subject: [PATCH V3 2/3] efi: Introduce efi_queue_work() to queue any efi_runtime_service() on efi_rts_wq
+Date: Mon, 21 May 2018 20:13:03 -0700
+Message-Id: <1526958784-14688-3-git-send-email-sai.praneeth.prakhya@intel.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1526958784-14688-1-git-send-email-sai.praneeth.prakhya@intel.com>
+References: <1526958784-14688-1-git-send-email-sai.praneeth.prakhya@intel.com>
 Sender: linux-efi-owner@vger.kernel.org
 X-Mailing-List: linux-efi@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
@@ -104,156 +106,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
 
-Problem statement:
-------------------
-Presently, efi_runtime_services() silently switch %cr3 from swapper_pgd
-to efi_pgd. As a consequence, kernel code that runs in efi_pgd (e.g.,
-perf code via an NMI) will have incorrect user space mappings[1]. This
-could lead to otherwise unexpected access errors and, worse, unauthorized
-access to firmware code and data.
+When a process requests the kernel to execute any efi_runtime_service(),
+the requested efi_runtime_service (represented as an identifier) and its
+arguments are packed into a struct named efi_runtime_work and queued
+onto work queue named efi_rts_wq. The caller then waits until the work
+is completed.
 
-Detailed discussion of problem statement:
------------------------------------------
-As this switch is not propagated to other kernel subsystems; they will
-wrongly assume that swapper_pgd is still in use and it can lead to
-following issues:
+Introduce efi_queue_work() that 1. Populates efi_runtime_work 2. Queues
+work onto efi_rts_wq and 3. Waits until worker thread returns.
 
-1. If kernel code tries to access user space addresses while in efi_pgd,
-it could lead to unauthorized accesses to firmware code/data.
-(e.g: <__>/copy_from_user_nmi()).
-[This could also be disastrous if the frame pointer happens to point at
-MMIO in the EFI runtime mappings] - Mark Rutland.
+The caller thread has to wait until the worker thread returns, because
+it depends on the return status of efi_runtime_service() and, in
+specific cases, the arguments populated by efi_runtime_service(). Some
+efi_runtime_services() takes a pointer to buffer as an argument and
+fills up the buffer with requested data. For instance,
+efi_get_variable() and efi_get_next_variable(). Hence, caller process
+cannot just post the work and get going.
 
-An example of a subsystem that could touch user space while in efi_pgd is
-perf. Assume that we are in efi_pgd, a user could use perf to profile
-some user data and depending on the address the user is trying to
-profile, two things could happen.
-1. If the mappings are absent, perf fails to profile.
-2. If efi_pgd does have mappings for the requested address (these
-  mappings are erroneous), perf profiles firmware code/data. If the
-  address is MMIO'ed, perf could have potentially changed some device state.
-
-The culprit in both the cases is, EFI subsystem swapping out pgd and not
-perf. Because, EFI subsystem has broken the *general assumption* that
-all other subsystems rely on - "user space might be valid and nobody has
-switched %cr3".
-
-Solutions:
-----------
-There are two ways to fix this issue:
-1. Educate about pgd change to *all* the subsystems that could
-   potentially access user space while in efi_pgd.
-  On x86, AFAIK, it could happen only when some one touches user space
-  from the back of an NMI (a quick audit on <__>/copy_from_user_nmi,
-  showed perf and oprofile). On arm, it could happen from multiple
-  places as arm runs efi_runtime_services() interrupts enabled (ARM folks,
-  please comment on this as I might be wrong); whereas x86 runs
-  efi_runtime_services() interrupts disabled.
-
-  I think, this solution isn't holistic because
-  a. Any other subsystem might well do the same, if not now, in future.
-  b. Also, this solutions looks simpler on x86 but not true if it's the
-    same for arm (ARM folks, please comment on this as I might be wrong).
-  c. This solution looks like a work around rather than addressing the issue.
-
-2. Running efi_runtime_services() in kthread context.
-  This makes sense because efi_pgd doesn't have user space and kthread
-  by definition means that user space is not valid. Any kernel code that
-  tries to touch user space while in kthread is buggy in itself. If so,
-  it should be an easy fix in the other subsystem. This also take us one
-  step closer to long awaiting proposal of Andy - Running EFI at CPL 3.
-
-What does this patch set do?
-----------------------------
-Introduce efi_rts_wq (EFI runtime services work queue).
-When a user process requests the kernel to execute any efi_runtime_service(),
-kernel queues the work to efi_rts_wq, a kthread comes along, switches to
-efi_pgd and executes efi_runtime_service() in kthread context. IOW, this
-patch set adds support to the EFI subsystem to handle all calls to
-efi_runtime_services() using a work queue (which in turn uses kthread).
-
-How running efi_runtime_services() in kthread fixes above discussed issues?
----------------------------------------------------------------------------
-If we run efi_runtime_services() in kthread context and if perf
-checks for it, we could get both the above scenarios correct by perf
-aborting the profiling. Not only perf, but any subsystem that tries to
-touch user space should first check for kthread context and if so,
-should abort.
-
-Q. If we still need check for kthread context in other subsystems that
-access user space, what does this patch set fix?
-A. This patch set makes sure that EFI subsystem is not at fault.
-Without this patch set the blame is upon EFI subsystem, because it's the
-one that changed pgd and hasn't communicated this change to everyone and
-hence broke the general assumption. Running efi_runtime_services() in
-kthread means explicitly communicating that user space is invalid, now 
-it's the responsibility of other subsystem to make sure that it's
-running in right context.
-
-Testing:
---------
-Tested using LUV (Linux UEFI Validation) for x86_64, x86_32 and arm64
-(qemu only). Will appreciate the effort if someone could test the
-patches on real ARM/ARM64 machines.
-LUV: https://01.org/linux-uefi-validation
-
-Credits:
---------
-Thanks to Ricardo, Dan, Miguel and Mark for initial reviews and
-suggestions. Thanks to Boris and Andy for making me think through/help
-on what I am addressing with this patch set. Please feel free to pour in
-your comments and concerns.
-
-Note:
------
-Patches are based on Linus's kernel v4.17-rc6
-
-[1] Backup: Detailing efi_pgd:
-------------------------------
-efi_pgd has mappings for EFI Runtime Code/Data (on x86, plus EFI Boot time
-Code/Data) regions. Due to the nature of these mappings, they fall
-in user space address ranges and they are not the same as swapper.
-
-[On arm64, the EFI mappings are in the VA range usually used for user
-space. The two halves of the address space are managed by separate
-tables, TTBR0 and TTBR1. We always map the kernel in TTBR1, and we map
-user space or EFI runtime mappings in TTBR0.] - Mark Rutland
-
-Changes from V2 to V3:
-----------------------
-1. Rewrite the cover letter to clearly state the problem. What we are
-fixing and what we are not fixing.
-2. Make efi_delete_dummy_variable() change local to x86.
-3. Avoid using BUG(), instead, print error message and exit gracefully.
-4. Move struct efi_runtime_work to runtime-wrappers.c file.
-5. Give enum a name (efi_rts_ids) and use it in efi_runtime_work.
-6. Add Naresh (maintainer of LUV for ARM) and Miguel to the CC list.
-
-Changes from V1 to V2:
-----------------------
-1. Remove unnecessary include of asm/efi.h file - Fixes build error on
-ia64, reported by 0-day
-2. Use enum to identify efi_runtime_services()
-3. Use alloc_ordered_workqueue() to create efi_rts_wq as
-create_workqueue() is scheduled for depreciation.
-4. Make efi_call_rts() static, as it has no callers outside
-runtime-wrappers.c
-5. Use BUG(), when we are unable to queue work or unable to identify
-requested efi_runtime_service() - Because these two situations should
-*never* happen.
-
-Sai Praneeth (3):
-  x86/efi: Call efi_delete_dummy_variable() after creating efi_rts_wq
-  efi: Introduce efi_queue_work() to queue any efi_runtime_service() on 
-       efi_rts_wq
-  efi: Use efi_rts_wq to invoke EFI Runtime Services
-
- arch/x86/platform/efi/efi.c             |  15 +-
- drivers/firmware/efi/arm-runtime.c      |   3 +
- drivers/firmware/efi/efi.c              |  25 ++++
- drivers/firmware/efi/runtime-wrappers.c | 250 +++++++++++++++++++++++++++++---
- include/linux/efi.h                     |   4 +
- 5 files changed, 271 insertions(+), 26 deletions(-)
+Some facts about efi_runtime_services():
+1. A quick look at all the efi_runtime_services() shows that any
+efi_runtime_service() has five or less arguments.
+2. An argument of efi_runtime_service() can be a value (of any type) or
+a pointer (of any type).
+Hence, efi_runtime_work has five void pointers to store these arguments.
 
 Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
 Suggested-by: Andy Lutomirski <luto@kernel.org>
@@ -272,7 +147,115 @@ Cc: Matt Fleming <matt@codeblueprint.co.uk>
 Cc: Dan Williams <dan.j.williams@intel.com>
 Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+---
+ drivers/firmware/efi/runtime-wrappers.c | 80 +++++++++++++++++++++++++++++++++
+ 1 file changed, 80 insertions(+)
 
+diff --git a/drivers/firmware/efi/runtime-wrappers.c b/drivers/firmware/efi/runtime-wrappers.c
+index ae54870b2788..a9866045ed52 100644
+--- a/drivers/firmware/efi/runtime-wrappers.c
++++ b/drivers/firmware/efi/runtime-wrappers.c
+@@ -1,6 +1,14 @@
+ /*
+  * runtime-wrappers.c - Runtime Services function call wrappers
+  *
++ * Implementation summary:
++ * -----------------------
++ * 1. When user/kernel thread requests to execute efi_runtime_service(),
++ * enqueue work to efi_rts_wq.
++ * 2. Caller thread waits until the work is finished because it's
++ * dependent on the return status and execution of efi_runtime_service().
++ * For instance, get_variable() and get_next_variable().
++ *
+  * Copyright (C) 2014 Linaro Ltd. <ard.biesheuvel@linaro.org>
+  *
+  * Split off from arch/x86/platform/efi/efi.c
+@@ -22,6 +30,8 @@
+ #include <linux/mutex.h>
+ #include <linux/semaphore.h>
+ #include <linux/stringify.h>
++#include <linux/workqueue.h>
++
+ #include <asm/efi.h>
+ 
+ /*
+@@ -33,6 +43,76 @@
+ #define __efi_call_virt(f, args...) \
+ 	__efi_call_virt_pointer(efi.systab->runtime, f, args)
+ 
++/* efi_runtime_service() function identifiers */
++enum efi_rts_ids {
++	GET_TIME,
++	SET_TIME,
++	GET_WAKEUP_TIME,
++	SET_WAKEUP_TIME,
++	GET_VARIABLE,
++	GET_NEXT_VARIABLE,
++	SET_VARIABLE,
++	SET_VARIABLE_NONBLOCKING,
++	QUERY_VARIABLE_INFO,
++	QUERY_VARIABLE_INFO_NONBLOCKING,
++	GET_NEXT_HIGH_MONO_COUNT,
++	RESET_SYSTEM,
++	UPDATE_CAPSULE,
++	QUERY_CAPSULE_CAPS,
++};
++
++/*
++ * efi_runtime_work:	Details of EFI Runtime Service work
++ * @func:		EFI Runtime Service function identifier
++ * @arg<1-5>:		EFI Runtime Service function arguments
++ * @status:		Status of executing EFI Runtime Service
++ */
++struct efi_runtime_work {
++	void *arg1;
++	void *arg2;
++	void *arg3;
++	void *arg4;
++	void *arg5;
++	efi_status_t status;
++	struct work_struct work;
++	enum efi_rts_ids efi_rts_id;
++};
++
++/*
++ * efi_queue_work:	Queue efi_runtime_service() and wait until it's done
++ * @rts:		efi_runtime_service() function identifier
++ * @rts_arg<1-5>:	efi_runtime_service() function arguments
++ *
++ * Accesses to efi_runtime_services() are serialized by a binary
++ * semaphore (efi_runtime_lock) and caller waits until the work is
++ * finished, hence _only_ one work is queued at a time and the queued
++ * work gets flushed.
++ */
++#define efi_queue_work(_rts, _arg1, _arg2, _arg3, _arg4, _arg5)	\
++({									\
++	struct efi_runtime_work efi_rts_work;				\
++	efi_rts_work.status = EFI_ABORTED;				\
++									\
++	INIT_WORK_ONSTACK(&efi_rts_work.work, efi_call_rts);		\
++	efi_rts_work.arg1 = _arg1;					\
++	efi_rts_work.arg2 = _arg2;					\
++	efi_rts_work.arg3 = _arg3;					\
++	efi_rts_work.arg4 = _arg4;					\
++	efi_rts_work.arg5 = _arg5;					\
++	efi_rts_work.efi_rts_id = _rts;					\
++									\
++	/*								\
++	 * queue_work() returns 0 if work was already on queue,         \
++	 * _ideally_ this should never happen.                          \
++	 */								\
++	if (queue_work(efi_rts_wq, &efi_rts_work.work))			\
++		flush_work(&efi_rts_work.work);				\
++	else								\
++		pr_err("Failed to queue work to efi_rts_wq.\n");	\
++									\
++	efi_rts_work.status;						\
++})
++
+ void efi_call_virt_check_flags(unsigned long flags, const char *call)
+ {
+ 	unsigned long cur_flags, mismatch;
 -- 
 2.7.4
 
