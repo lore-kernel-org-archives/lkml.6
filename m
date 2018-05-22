@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752679AbeEVDAZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 23:00:25 -0400
-Received: from mga04.intel.com ([192.55.52.120]:35887 "EHLO mga04.intel.com"
+        id S1752669AbeEVC6N (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 22:58:13 -0400
+Received: from mga11.intel.com ([192.55.52.93]:35028 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752566AbeEVC6O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 22:58:14 -0400
+        id S1752556AbeEVC6D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 22:58:03 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,428,1520924400";
-   d="scan'208";a="201335931"
+   d="scan'208";a="201335906"
 From: Luwei Kang <luwei.kang@intel.com>
 To: kvm@vger.kernel.org
 Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
@@ -22,9 +22,9 @@ Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
         pbonzini@redhat.com, rkrcmar@redhat.com, david@redhat.com,
         bsd@redhat.com, yu.c.zhang@linux.intel.com, joro@8bytes.org,
         Luwei Kang <luwei.kang@intel.com>
-Subject: [PATCH v9 04/12] perf/x86/intel/pt: add new capability for Intel PT
-Date: Tue, 22 May 2018 12:52:07 +0800
-Message-Id: <1526964735-16566-5-git-send-email-luwei.kang@intel.com>
+Subject: [PATCH v9 02/12] perf/x86/intel/pt: Change pt_cap_get() to a public function
+Date: Tue, 22 May 2018 12:52:05 +0800
+Message-Id: <1526964735-16566-3-git-send-email-luwei.kang@intel.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1526964735-16566-1-git-send-email-luwei.kang@intel.com>
 References: <1526964735-16566-1-git-send-email-luwei.kang@intel.com>
@@ -32,45 +32,113 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CPUID(EAX=14H,ECX=0):EBX[bit 3] = 1 indicates support of
-output to Trace Transport subsystem.
-MSR IA32_RTIT_CTL.FabricEn[bit 6] is reserved if
-CPUID.(EAX=14H, ECX=0):ECX[bit 3] = 0.
-This is use for emulate IA32_RTIT_CTL MSR read/write
-in KVM. KVM guest write IA32_RTIT_CTL will trap to
-root mode and a #GP would be injected to guest if set
-IA32_RTIT_CTL.FabricEn with
-CPUID.(EAX=14H, ECX=0):ECX[bit 3] = 0.
+From: Chao Peng <chao.p.peng@linux.intel.com>
 
+Change pt_cap_get() to a public function that KVM
+can access this function to check if specific
+feature is supported on hardware.
+
+Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
 Signed-off-by: Luwei Kang <luwei.kang@intel.com>
 ---
- arch/x86/events/intel/pt.c      | 1 +
- arch/x86/include/asm/intel_pt.h | 1 +
- 2 files changed, 2 insertions(+)
+ arch/x86/events/intel/pt.c      |  3 ++-
+ arch/x86/events/intel/pt.h      | 21 ---------------------
+ arch/x86/include/asm/intel_pt.h | 23 +++++++++++++++++++++++
+ 3 files changed, 25 insertions(+), 22 deletions(-)
 
 diff --git a/arch/x86/events/intel/pt.c b/arch/x86/events/intel/pt.c
-index c80e2f5..f65f97a 100644
+index 3b99394..c80e2f5 100644
 --- a/arch/x86/events/intel/pt.c
 +++ b/arch/x86/events/intel/pt.c
-@@ -68,6 +68,7 @@
- 	PT_CAP(topa_output,		0, CPUID_ECX, BIT(0)),
- 	PT_CAP(topa_multiple_entries,	0, CPUID_ECX, BIT(1)),
- 	PT_CAP(single_range_output,	0, CPUID_ECX, BIT(2)),
-+	PT_CAP(output_subsys,		0, CPUID_ECX, BIT(3)),
- 	PT_CAP(payloads_lip,		0, CPUID_ECX, BIT(31)),
- 	PT_CAP(num_address_ranges,	1, CPUID_EAX, 0x3),
- 	PT_CAP(mtc_periods,		1, CPUID_EAX, 0xffff0000),
+@@ -75,7 +75,7 @@
+ 	PT_CAP(psb_periods,		1, CPUID_EBX, 0xffff0000),
+ };
+ 
+-static u32 pt_cap_get(enum pt_capabilities cap)
++u32 pt_cap_get(enum pt_capabilities cap)
+ {
+ 	struct pt_cap_desc *cd = &pt_caps[cap];
+ 	u32 c = pt_pmu.caps[cd->leaf * PT_CPUID_REGS_NUM + cd->reg];
+@@ -83,6 +83,7 @@ static u32 pt_cap_get(enum pt_capabilities cap)
+ 
+ 	return (c & cd->mask) >> shift;
+ }
++EXPORT_SYMBOL_GPL(pt_cap_get);
+ 
+ static ssize_t pt_cap_show(struct device *cdev,
+ 			   struct device_attribute *attr,
+diff --git a/arch/x86/events/intel/pt.h b/arch/x86/events/intel/pt.h
+index 0050ca1..269e15a 100644
+--- a/arch/x86/events/intel/pt.h
++++ b/arch/x86/events/intel/pt.h
+@@ -45,30 +45,9 @@ struct topa_entry {
+ 	u64	rsvd4	: 16;
+ };
+ 
+-#define PT_CPUID_LEAVES		2
+-#define PT_CPUID_REGS_NUM	4 /* number of regsters (eax, ebx, ecx, edx) */
+-
+ /* TSC to Core Crystal Clock Ratio */
+ #define CPUID_TSC_LEAF		0x15
+ 
+-enum pt_capabilities {
+-	PT_CAP_max_subleaf = 0,
+-	PT_CAP_cr3_filtering,
+-	PT_CAP_psb_cyc,
+-	PT_CAP_ip_filtering,
+-	PT_CAP_mtc,
+-	PT_CAP_ptwrite,
+-	PT_CAP_power_event_trace,
+-	PT_CAP_topa_output,
+-	PT_CAP_topa_multiple_entries,
+-	PT_CAP_single_range_output,
+-	PT_CAP_payloads_lip,
+-	PT_CAP_num_address_ranges,
+-	PT_CAP_mtc_periods,
+-	PT_CAP_cycle_thresholds,
+-	PT_CAP_psb_periods,
+-};
+-
+ struct pt_pmu {
+ 	struct pmu		pmu;
+ 	u32			caps[PT_CPUID_REGS_NUM * PT_CPUID_LEAVES];
 diff --git a/arch/x86/include/asm/intel_pt.h b/arch/x86/include/asm/intel_pt.h
-index 4270421..2de4db0 100644
+index b523f51..4270421 100644
 --- a/arch/x86/include/asm/intel_pt.h
 +++ b/arch/x86/include/asm/intel_pt.h
-@@ -16,6 +16,7 @@ enum pt_capabilities {
- 	PT_CAP_topa_output,
- 	PT_CAP_topa_multiple_entries,
- 	PT_CAP_single_range_output,
-+	PT_CAP_output_subsys,
- 	PT_CAP_payloads_lip,
- 	PT_CAP_num_address_ranges,
- 	PT_CAP_mtc_periods,
+@@ -2,10 +2,33 @@
+ #ifndef _ASM_X86_INTEL_PT_H
+ #define _ASM_X86_INTEL_PT_H
+ 
++#define PT_CPUID_LEAVES		2
++#define PT_CPUID_REGS_NUM	4 /* number of regsters (eax, ebx, ecx, edx) */
++
++enum pt_capabilities {
++	PT_CAP_max_subleaf = 0,
++	PT_CAP_cr3_filtering,
++	PT_CAP_psb_cyc,
++	PT_CAP_ip_filtering,
++	PT_CAP_mtc,
++	PT_CAP_ptwrite,
++	PT_CAP_power_event_trace,
++	PT_CAP_topa_output,
++	PT_CAP_topa_multiple_entries,
++	PT_CAP_single_range_output,
++	PT_CAP_payloads_lip,
++	PT_CAP_num_address_ranges,
++	PT_CAP_mtc_periods,
++	PT_CAP_cycle_thresholds,
++	PT_CAP_psb_periods,
++};
++
+ #if defined(CONFIG_PERF_EVENTS) && defined(CONFIG_CPU_SUP_INTEL)
+ void cpu_emergency_stop_pt(void);
++extern u32 pt_cap_get(enum pt_capabilities cap);
+ #else
+ static inline void cpu_emergency_stop_pt(void) {}
++static inline u32 pt_cap_get(enum pt_capabilities cap) { return 0; }
+ #endif
+ 
+ #endif /* _ASM_X86_INTEL_PT_H */
 -- 
 1.8.3.1
