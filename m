@@ -1,199 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751445AbeEVLzG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 07:55:06 -0400
-Received: from lb2-smtp-cloud7.xs4all.net ([194.109.24.28]:35657 "EHLO
-        lb2-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751172AbeEVLzE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 07:55:04 -0400
-Subject: Re: [PATCH v10 08/16] v4l: mark unordered formats
-To: Ezequiel Garcia <ezequiel@collabora.com>, linux-media@vger.kernel.org
-Cc: kernel@collabora.com, Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
-        Shuah Khan <shuahkh@osg.samsung.com>, Pawel Osciak <pawel@osciak.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Brian Starkey <brian.starkey@arm.com>, linux-kernel@vger.kernel.org,
-        Gustavo Padovan <gustavo.padovan@collabora.com>
-References: <20180521165946.11778-1-ezequiel@collabora.com>
- <20180521165946.11778-9-ezequiel@collabora.com>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <2df0ec97-9e0f-8fc3-1481-ac0a72e52e4d@xs4all.nl>
-Date: Tue, 22 May 2018 13:55:01 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751505AbeEVLzN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 07:55:13 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44752 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751172AbeEVLzK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 07:55:10 -0400
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: devel@linuxdriverproject.org
+Cc: Dexuan Cui <decui@microsoft.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Alex Ng <alexng@microsoft.com>,
+        Vyronas Tsingaras <vyronas@vtsingaras.me>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] Tools: hv: vss: fix loop device detection
+Date: Tue, 22 May 2018 13:55:06 +0200
+Message-Id: <20180522115506.7084-1-vkuznets@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180521165946.11778-9-ezequiel@collabora.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfIm49SoNFLv0qi9C1iQ85iFzXF79l8Mhr6VKyHc8dYe63fwZlapCOJcMBfu48625lJHcHHK2tM0BfRbewlvOozfaJxvPb/S7zNmuHD/Xp6Xeoq77apQ/
- RZO+ShpOrz4N7mB5JPLUZItmotvyShW52b4Q/8/P7+ExgF/wCRxRj7IDshh+PSuGmwwizNzFKxyhML8hMuurDYyaoNGnhPBYkRuUH+3HpZ1+avCGNdpr0vdI
- l8Ko7AUJGiKX0wPkvyOKS8WteE6tF1cbUz+1YFjI/ED7lPmwvM6cIoP8qAbZZPfGfhQP/cK6C6qC7rs4w3q8ZMoqL932rDvMvm8+zliNEp9hFrn8wSJo309A
- JVwRMH3sjBFJkqgT9r5B5DKBJj6PLXK9oU7jEKD8WQo/jbyW5LB6HIQx56QK0AZWp0gGt/uJ8alPjcvbdLFv7iVUIstrZB7jttI/DPO8Y4eF5ZjXIL56pwWt
- FsX4xcxoDiFb1UNA5oUM0rXswc65Neq3SxUModTsK9bIWAGK5qPPHhaKPHjHPuQ/5M3kaTEkSEBaQaNFT+wjWVud9jK+sNQdFbiczPXUS7cSUSNQb47Fex/3
- vCPdR2Eu57DX8e3EsFigL43u
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/05/18 18:59, Ezequiel Garcia wrote:
-> From: Gustavo Padovan <gustavo.padovan@collabora.com>
-> 
-> Now that we've introduced the V4L2_FMT_FLAG_UNORDERED flag,
-> mark the appropriate formats.
-> 
-> v2: Set unordered flag before calling the driver callback.
-> 
-> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
-> Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
-> ---
->  drivers/media/v4l2-core/v4l2-ioctl.c | 74 +++++++++++++++++++++++++++---------
->  1 file changed, 57 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-> index f48c505550e0..2135ac235a96 100644
-> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
-> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-> @@ -1102,6 +1102,27 @@ static int v4l_enumoutput(const struct v4l2_ioctl_ops *ops,
->  	return ops->vidioc_enum_output(file, fh, p);
->  }
->  
-> +static void v4l_fill_unordered_fmtdesc(struct v4l2_fmtdesc *fmt)
-> +{
-> +	switch (fmt->pixelformat) {
-> +	case V4L2_PIX_FMT_MPEG:
-> +	case V4L2_PIX_FMT_H264:
-> +	case V4L2_PIX_FMT_H264_NO_SC:
-> +	case V4L2_PIX_FMT_H264_MVC:
-> +	case V4L2_PIX_FMT_H263:
-> +	case V4L2_PIX_FMT_MPEG1:
-> +	case V4L2_PIX_FMT_MPEG2:
-> +	case V4L2_PIX_FMT_MPEG4:
-> +	case V4L2_PIX_FMT_XVID:
-> +	case V4L2_PIX_FMT_VC1_ANNEX_G:
-> +	case V4L2_PIX_FMT_VC1_ANNEX_L:
-> +	case V4L2_PIX_FMT_VP8:
-> +	case V4L2_PIX_FMT_VP9:
-> +	case V4L2_PIX_FMT_HEVC:
-> +		fmt->flags |= V4L2_FMT_FLAG_UNORDERED;
+Commit ea81fdf0981d ("Tools: hv: vss: Skip freezing filesystems backed by
+loop") added skip for filesystems backed by loop device. However, it seems
+the detection of such cases is incomplete.
 
-Please add a break here. This prevents potential future errors if new cases
-are added below this line.
+It was found that with 'devicemapper' storage driver docker creates the
+following chain:
 
-> +	}
-> +}
-> +
->  static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
->  {
->  	const unsigned sz = sizeof(fmt->description);
-> @@ -1310,61 +1331,80 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
->  
->  	if (descr)
->  		WARN_ON(strlcpy(fmt->description, descr, sz) >= sz);
-> -	fmt->flags = flags;
-> +	fmt->flags |= flags;
->  }
->  
-> -static int v4l_enum_fmt(const struct v4l2_ioctl_ops *ops,
-> -				struct file *file, void *fh, void *arg)
-> -{
-> -	struct v4l2_fmtdesc *p = arg;
-> -	int ret = check_fmt(file, p->type);
->  
-> -	if (ret)
-> -		return ret;
-> -	ret = -EINVAL;
-> +static int __vidioc_enum_fmt(const struct v4l2_ioctl_ops *ops,
-> +			     struct v4l2_fmtdesc *p,
-> +			     struct file *file, void *fh)
-> +{
-> +	int ret = 0;
->  
->  	switch (p->type) {
->  	case V4L2_BUF_TYPE_VIDEO_CAPTURE:
->  		if (unlikely(!ops->vidioc_enum_fmt_vid_cap))
->  			break;
-> -		ret = ops->vidioc_enum_fmt_vid_cap(file, fh, arg);
-> +		ret = ops->vidioc_enum_fmt_vid_cap(file, fh, p);
->  		break;
->  	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
->  		if (unlikely(!ops->vidioc_enum_fmt_vid_cap_mplane))
->  			break;
-> -		ret = ops->vidioc_enum_fmt_vid_cap_mplane(file, fh, arg);
-> +		ret = ops->vidioc_enum_fmt_vid_cap_mplane(file, fh, p);
->  		break;
->  	case V4L2_BUF_TYPE_VIDEO_OVERLAY:
->  		if (unlikely(!ops->vidioc_enum_fmt_vid_overlay))
->  			break;
-> -		ret = ops->vidioc_enum_fmt_vid_overlay(file, fh, arg);
-> +		ret = ops->vidioc_enum_fmt_vid_overlay(file, fh, p);
->  		break;
->  	case V4L2_BUF_TYPE_VIDEO_OUTPUT:
->  		if (unlikely(!ops->vidioc_enum_fmt_vid_out))
->  			break;
-> -		ret = ops->vidioc_enum_fmt_vid_out(file, fh, arg);
-> +		ret = ops->vidioc_enum_fmt_vid_out(file, fh, p);
->  		break;
->  	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
->  		if (unlikely(!ops->vidioc_enum_fmt_vid_out_mplane))
->  			break;
-> -		ret = ops->vidioc_enum_fmt_vid_out_mplane(file, fh, arg);
-> +		ret = ops->vidioc_enum_fmt_vid_out_mplane(file, fh, p);
->  		break;
->  	case V4L2_BUF_TYPE_SDR_CAPTURE:
->  		if (unlikely(!ops->vidioc_enum_fmt_sdr_cap))
->  			break;
-> -		ret = ops->vidioc_enum_fmt_sdr_cap(file, fh, arg);
-> +		ret = ops->vidioc_enum_fmt_sdr_cap(file, fh, p);
->  		break;
->  	case V4L2_BUF_TYPE_SDR_OUTPUT:
->  		if (unlikely(!ops->vidioc_enum_fmt_sdr_out))
->  			break;
-> -		ret = ops->vidioc_enum_fmt_sdr_out(file, fh, arg);
-> +		ret = ops->vidioc_enum_fmt_sdr_out(file, fh, p);
->  		break;
->  	case V4L2_BUF_TYPE_META_CAPTURE:
->  		if (unlikely(!ops->vidioc_enum_fmt_meta_cap))
->  			break;
-> -		ret = ops->vidioc_enum_fmt_meta_cap(file, fh, arg);
-> +		ret = ops->vidioc_enum_fmt_meta_cap(file, fh, p);
->  		break;
->  	}
-> +	return ret;
-> +}
-> +
-> +static int v4l_enum_fmt(const struct v4l2_ioctl_ops *ops,
-> +				struct file *file, void *fh, void *arg)
-> +{
-> +	struct v4l2_fmtdesc *p = arg;
-> +	int ret = check_fmt(file, p->type);
-> +
-> +	if (ret)
-> +		return ret;
-> +	ret = -EINVAL;
+NAME					MAJ:MIN
+loop0					7:0
+└─docker-8:4-8473394-pool		253:0
+  └─docker-8:4-8473394-eac...		253:1
 
-Why set ret when it is overwritten below?
+so when we're looking at the mounted device we see major '253' and not '7'.
 
-> +
-> +	ret = __vidioc_enum_fmt(ops, p, file, fh);
-> +	if (ret)
-> +		return ret;
+Solve the issue by walking /sys/dev/block/*/slaves chain and checking if
+there's a loop device somewhere.
 
-Huh? Why call the driver twice? As far as I can see you can just drop
-these three lines above.
+Other than that, don't skip mountpoints silently when stat() fails. In case
+e.g. SELinux is failing stat we don't want to skip freezing everything
+without letting user know about the failure.
 
-Regards,
+Fixes: ea81fdf0981d ("Tools: hv: vss: Skip freezing filesystems backed by loop")
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+---
+ tools/hv/hv_vss_daemon.c | 65 +++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 61 insertions(+), 4 deletions(-)
 
-	Hans
-
-> +	/*
-> +	 * Set the unordered flag and call the driver
-> +	 * again so it has the chance to clear the flag.
-> +	 */
-> +	v4l_fill_unordered_fmtdesc(p);
-> +	ret = __vidioc_enum_fmt(ops, p, file, fh);
->  	if (ret == 0)
->  		v4l_fill_fmtdesc(p);
->  	return ret;
-> 
+diff --git a/tools/hv/hv_vss_daemon.c b/tools/hv/hv_vss_daemon.c
+index 34031a297f02..b13300172762 100644
+--- a/tools/hv/hv_vss_daemon.c
++++ b/tools/hv/hv_vss_daemon.c
+@@ -36,6 +36,8 @@
+ #include <linux/hyperv.h>
+ #include <syslog.h>
+ #include <getopt.h>
++#include <stdbool.h>
++#include <dirent.h>
+ 
+ /* Don't use syslog() in the function since that can cause write to disk */
+ static int vss_do_freeze(char *dir, unsigned int cmd)
+@@ -68,6 +70,55 @@ static int vss_do_freeze(char *dir, unsigned int cmd)
+ 	return !!ret;
+ }
+ 
++static bool is_dev_loop(const char *blkname)
++{
++	char *buffer;
++	DIR *dir;
++	struct dirent *entry;
++	bool ret = false;
++
++	buffer = malloc(PATH_MAX);
++	if (!buffer) {
++		syslog(LOG_ERR, "Can't allocate memory!");
++		exit(1);
++	}
++
++	snprintf(buffer, PATH_MAX, "%s/loop", blkname);
++	if (!access(buffer, R_OK | X_OK)) {
++		ret = true;
++		goto free_buffer;
++	} else if (errno != ENOENT) {
++		syslog(LOG_ERR, "Can't access: %s; error:%d %s!",
++		       buffer, errno, strerror(errno));
++	}
++
++	snprintf(buffer, PATH_MAX, "%s/slaves", blkname);
++	dir = opendir(buffer);
++	if (!dir) {
++		if (errno != ENOENT)
++			syslog(LOG_ERR, "Can't opendir: %s; error:%d %s!",
++			       buffer, errno, strerror(errno));
++		goto free_buffer;
++	}
++
++	while ((entry = readdir(dir)) != NULL) {
++		if (strcmp(entry->d_name, ".") == 0 ||
++		    strcmp(entry->d_name, "..") == 0)
++			continue;
++
++		snprintf(buffer, PATH_MAX, "%s/slaves/%s", blkname,
++			 entry->d_name);
++		if (is_dev_loop(buffer)) {
++			ret = true;
++			break;
++		}
++	}
++	closedir(dir);
++free_buffer:
++	free(buffer);
++	return ret;
++}
++
+ static int vss_operate(int operation)
+ {
+ 	char match[] = "/dev/";
+@@ -75,6 +126,7 @@ static int vss_operate(int operation)
+ 	struct mntent *ent;
+ 	struct stat sb;
+ 	char errdir[1024] = {0};
++	char blkdir[23]; /* /sys/dev/block/XXX:XXX */
+ 	unsigned int cmd;
+ 	int error = 0, root_seen = 0, save_errno = 0;
+ 
+@@ -96,10 +148,15 @@ static int vss_operate(int operation)
+ 	while ((ent = getmntent(mounts))) {
+ 		if (strncmp(ent->mnt_fsname, match, strlen(match)))
+ 			continue;
+-		if (stat(ent->mnt_fsname, &sb) == -1)
+-			continue;
+-		if (S_ISBLK(sb.st_mode) && major(sb.st_rdev) == LOOP_MAJOR)
+-			continue;
++		if (stat(ent->mnt_fsname, &sb)) {
++			syslog(LOG_ERR, "Can't stat: %s; error:%d %s!",
++			       ent->mnt_fsname, errno, strerror(errno));
++		} else {
++			sprintf(blkdir, "/sys/dev/block/%d:%d",
++				major(sb.st_rdev), minor(sb.st_rdev));
++			if (is_dev_loop(blkdir))
++				continue;
++		}
+ 		if (hasmntopt(ent, MNTOPT_RO) != NULL)
+ 			continue;
+ 		if (strcmp(ent->mnt_type, "vfat") == 0)
+-- 
+2.14.3
