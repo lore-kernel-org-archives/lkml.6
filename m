@@ -1,75 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752177AbeEVR5r (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 13:57:47 -0400
-Received: from mga09.intel.com ([134.134.136.24]:35196 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751291AbeEVR5o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 13:57:44 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,430,1520924400";
-   d="scan'208";a="60810705"
-Date: Tue, 22 May 2018 10:57:42 -0700
-From: "Luck, Tony" <tony.luck@intel.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: "Alex G." <mr.nuke.me@gmail.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>, alex_gagniuc@dellteam.com,
-        austin_bolen@dell.com, shyam_iyer@dell.com,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
-        Tyler Baicar <tbaicar@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>, James Morse <james.morse@arm.com>,
-        Shiju Jose <shiju.jose@huawei.com>,
-        "Jonathan (Zhixiong) Zhang" <zjzhang@codeaurora.org>,
-        Dongjiu Geng <gengdongjiu@huawei.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 1/2] acpi: apei: Rename ghes_severity() to
- ghes_cper_severity()
-Message-ID: <20180522175742.GA3543@agluck-desk>
-References: <20180521135003.32459-1-mr.nuke.me@gmail.com>
- <20180521135003.32459-2-mr.nuke.me@gmail.com>
- <CAJZ5v0hKfgTOJb47NjeOP1BBPXPjWqdfu_TXVwWMzOHicEx0Xw@mail.gmail.com>
- <53d0ba88-6929-a7cf-6c3e-4ca389f7249a@gmail.com>
- <20180522135015.GF5512@pd.tnic>
- <0b758a1c-90e3-6f76-4f83-1e22c8fc9cd6@gmail.com>
- <20180522145426.GG5512@pd.tnic>
+        id S1752329AbeEVR6g (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 13:58:36 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:50403 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751329AbeEVR6c (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 13:58:32 -0400
+X-Google-Smtp-Source: AB8JxZo14swpvgEYU04utScl//S6FrYQCA+1DxB4BvqacevWVcDd1vUn4DCXdHsGgRk0jtVI1DO++/lIkvK+xGBSn+U=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180522145426.GG5512@pd.tnic>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <86k1rzc4ba.wl-marc.zyngier@arm.com>
+References: <20180518170202.11458-1-samitolvanen@google.com>
+ <05d14ac7-0feb-63a3-e7ef-b8ca1ae2fd1d@arm.com> <CAKwvOdm1kYedukCq=g74AvqJHp6KC03oNoouQy2nkvfo4idoEw@mail.gmail.com>
+ <8c7be44f-086d-65e3-9969-8182261ce82f@arm.com> <CAKwvOd=XZqg5=mkXZb-cxq3i_AGoJGAbmF=Fwc7Q98oi0tbN9g@mail.gmail.com>
+ <3fd89842-86cd-ee01-0c2c-5438dd2d5f2a@arm.com> <CAKwvOdk+=JKcQP1ieLEkZftRGf-pqCTTzEuYvT_45YNMkEw_wA@mail.gmail.com>
+ <86k1rzc4ba.wl-marc.zyngier@arm.com>
+From: Andrey Konovalov <andreyknvl@google.com>
+Date: Tue, 22 May 2018 19:58:31 +0200
+Message-ID: <CAAeHK+z2LmMYasYtRTt2U=QF8Pe_i10RA3-SkLzGXXByZqLh1w@mail.gmail.com>
+Subject: Re: [PATCH] arm64: kvm: use -fno-jump-tables with clang
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Nick Desaulniers <ndesaulniers@google.com>,
+        Sami Tolvanen <samitolvanen@google.com>, christoffer.dall@arm.com,
+        Takahiro Akashi <takahiro.akashi@linaro.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        kvmarm@lists.cs.columbia.edu, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 04:54:26PM +0200, Borislav Petkov wrote:
-> I especially don't want to have the case where a PCIe error is *really*
-> fatal and then we noodle in some handlers debating about the severity
-> because it got marked as recoverable intermittently and end up causing
-> data corruption on the storage device. Here's a real no-no for ya.
+On Sat, May 19, 2018 at 12:44 PM, Marc Zyngier <marc.zyngier@arm.com> wrote:
+> That would definitely be the right thing to do. Make sure you (or
+> Andrey tests with the latest released mainline kernel (4.16 for now)
+> or (even better) the tip of Linus' tree.
 
-All that we have is a message from the BIOS that this is a "fatal"
-error.  When did we start trusting the BIOS to give us accurate
-information?
+Hi!
 
-PCIe fatal means that the link or the device is broken. But that
-seems a poor reason to take down a large server that may have
-dozens of devices (some of them set up specifically to handle
-errors ... e.g. mirrored disks on separate controllers, or NIC
-devices that have been "bonded" together).
+I can confirm that after applying this patch onto 4.17-rc4 kernel the
+Odroid C2 board that I have boots (it doesn't without the patch).
 
-So, as long as the action for a "fatal" error is to mark a link
-down and offline the device, that seems a pretty reasonable course
-of action.
+This is the result of running KVM tests that I was able to find [1]:
 
-The argument gets a lot more marginal if you simply reset the
-link and re-enable the device to "fix" it. That might be enough,
-but I don't think the OS has enough data to make the call.
+root@odroid64:/home/odroid/kvm-unit-tests# ./run_tests.sh
+PASS selftest-setup (2 tests)
+PASS selftest-vectors-kernel (2 tests)
+PASS selftest-vectors-user (2 tests)
+PASS selftest-smp (5 tests)
+PASS pci-test (1 tests)
+FAIL pmu (3 tests, 3 unexpected failures)
+PASS gicv2-ipi (3 tests)
+SKIP gicv3-ipi (qemu-system-aarch64: Initialization of device
+kvm-arm-gicv3 failed: error creating in-kernel VGIC: No such device)
+PASS gicv2-active (1 tests)
+SKIP gicv3-active (qemu-system-aarch64: Initialization of device
+kvm-arm-gicv3 failed: error creating in-kernel VGIC: No such device)
+PASS psci (4 tests)
+PASS timer (8 tests)
 
--Tony
+Here is the result of running the same tests on GCC compiled kernel
+(looks the same):
 
-P.S. I deliberately put "fatal" in quotes above because to
-quote "The Princess Bride" -- "that word, I do not think it
-means what you think it means". :-)
+root@odroid64:/home/odroid/kvm-unit-tests# ./run_tests.sh
+PASS selftest-setup (2 tests)
+PASS selftest-vectors-kernel (2 tests)
+PASS selftest-vectors-user (2 tests)
+PASS selftest-smp (5 tests)
+PASS pci-test (1 tests)
+FAIL pmu (3 tests, 3 unexpected failures)
+PASS gicv2-ipi (3 tests)
+SKIP gicv3-ipi (qemu-system-aarch64: Initialization of device
+kvm-arm-gicv3 failed: error creating in-kernel VGIC: No such device)
+PASS gicv2-active (1 tests)
+SKIP gicv3-active (qemu-system-aarch64: Initialization of device
+kvm-arm-gicv3 failed: error creating in-kernel VGIC: No such device)
+PASS psci (4 tests)
+PASS timer (8 tests)
+
+Tested-by: Andrey Konovalov <andreyknvl@google.com>
+
+Thanks!
+
+[1] https://www.linux-kvm.org/page/KVM-unit-tests
