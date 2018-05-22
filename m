@@ -1,66 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751455AbeEVOjU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 10:39:20 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:39329 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751196AbeEVOjS (ORCPT
+        id S1751539AbeEVOj1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 10:39:27 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:45361 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751445AbeEVOjU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 10:39:18 -0400
-X-Google-Smtp-Source: AB8JxZr/JmB/fnnQeFApBA8AdADMup7y8AuG3/N2mwrTWfW3rnXhJJ5uQUaqK87L/3OBbMnRjwwceg==
-Subject: Re: [PATCH v6 1/2] acpi: apei: Rename ghes_severity() to
- ghes_cper_severity()
-To: Borislav Petkov <bp@alien8.de>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, alex_gagniuc@dellteam.com,
-        austin_bolen@dell.com, shyam_iyer@dell.com,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
-        Tony Luck <tony.luck@intel.com>, Tyler Baicar <tbaicar@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>, James Morse <james.morse@arm.com>,
-        Shiju Jose <shiju.jose@huawei.com>,
-        "Jonathan (Zhixiong) Zhang" <zjzhang@codeaurora.org>,
-        Dongjiu Geng <gengdongjiu@huawei.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180521135003.32459-1-mr.nuke.me@gmail.com>
- <20180521135003.32459-2-mr.nuke.me@gmail.com>
- <CAJZ5v0hKfgTOJb47NjeOP1BBPXPjWqdfu_TXVwWMzOHicEx0Xw@mail.gmail.com>
- <53d0ba88-6929-a7cf-6c3e-4ca389f7249a@gmail.com>
- <20180522135015.GF5512@pd.tnic>
-From: "Alex G." <mr.nuke.me@gmail.com>
-Message-ID: <0b758a1c-90e3-6f76-4f83-1e22c8fc9cd6@gmail.com>
-Date: Tue, 22 May 2018 09:39:15 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 22 May 2018 10:39:20 -0400
+X-ME-Proxy: <xmx:lSsEW0i0Rz2t9b7I0YzjKAdiOF1wHsXlmlJsvsF3z-MOFFfz8-laFQ>
+X-ME-Proxy: <xmx:lSsEWxGgYYm9D-QlF7yDEPeA5AdRFd7Nd_UgzklQLBcyNmnNAhKDGg>
+X-ME-Proxy: <xmx:lSsEW2zlHqGR8LyYRZ1NKgilyhw-oC3mmXBwlnE3cxLBPSozNihIZQ>
+X-ME-Proxy: <xmx:lSsEW0lNOTAme8xb4C-Fsf351OJTs_rHILtX0tFvyIE-oWCItO6ZDQ>
+X-ME-Proxy: <xmx:lSsEW3GlzL0GSrjrzzEMp0JHuqs0KecXxWLUKJiOeDRGDBlZhiHuiA>
+X-ME-Proxy: <xmx:lSsEW6mxmIfYaV8McGkLiWID5J4QP15_ZBCflhEZp4QDS5pfsbBkmw>
+X-ME-Sender: <xms:lSsEWx9AouvXQv1WWup_drf-7_GdVQfOhhWBf068ZX3iyxLknCRsgA>
+Date: Tue, 22 May 2018 07:39:14 -0700
+From: Mark Greer <mgreer@animalcreek.com>
+To: Colin King <colin.king@canonical.com>
+Cc: Vaibhav Agarwal <vaibhav.sr@gmail.com>,
+        Mark Greer <mgreer@animalcreek.com>, Johan Hovold <johan@kernel.org>,
+        Alex Elder <elder@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: greybus: fix spelling mistake: "Inavlid" ->
+ "Invalid"
+Message-ID: <20180522143914.GA28655@animalcreek.com>
+References: <20180522083342.5722-1-colin.king@canonical.com>
 MIME-Version: 1.0
-In-Reply-To: <20180522135015.GF5512@pd.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180522083342.5722-1-colin.king@canonical.com>
+Organization: Animal Creek Technologies, Inc.
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 05/22/2018 08:50 AM, Borislav Petkov wrote:
-> On Tue, May 22, 2018 at 08:38:39AM -0500, Alex G. wrote:
->>> It looks like the *real* reason for this change is that you
->>> re-introduce ghes_severity() as a different function in the second
->>> patch.
->>
->> /me holds fist at Borislav
+On Tue, May 22, 2018 at 09:33:42AM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> That was a misunderstanding with Rafael and me - we fixed it on IRC.
+> Trivial fix to spelling mistake in dev_err error message
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/staging/greybus/audio_topology.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/greybus/audio_topology.c b/drivers/staging/greybus/audio_topology.c
+> index de4b1b2b12f3..15e57f701630 100644
+> --- a/drivers/staging/greybus/audio_topology.c
+> +++ b/drivers/staging/greybus/audio_topology.c
+> @@ -996,7 +996,7 @@ static int gbaudio_tplg_create_widget(struct gbaudio_module_info *module,
+>  
+>  	ret = gbaudio_validate_kcontrol_count(w);
+>  	if (ret) {
+> -		dev_err(module->dev, "Inavlid kcontrol count=%d for %s\n",
+> +		dev_err(module->dev, "Invalid kcontrol count=%d for %s\n",
+>  			w->ncontrols, w->name);
+>  		return ret;
+>  	}
 
-You mean to say this whole time I've been struggling to write emails,
-there was an IRC?
-
-> But this is not the real problem with your approach - it is the marking
-> of all PCIe errors as recoverable, regardless of the signature. That's a
-> no-no, IMO.
-
-No, the problem is with the current approach, not with mine. The problem
-is trying to handle the error outside of the existing handler. That's a
-no-no, IMO.
-
-Alex
+Acked-by: Mark Greer <mgreer@animalcreek.com>
