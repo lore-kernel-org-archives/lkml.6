@@ -1,208 +1,151 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752247AbeEVH7e (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 03:59:34 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:55178 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751380AbeEVH7X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 03:59:23 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E6A44604D4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
-From: <ilialin@codeaurora.org>
-To: "'Sudeep Holla'" <sudeep.holla@arm.com>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <robh@kernel.org>, <mark.rutland@arm.com>,
-        <viresh.kumar@linaro.org>, <nm@ti.com>, <lgirdwood@gmail.com>,
-        <broonie@kernel.org>, <andy.gross@linaro.org>,
-        <david.brown@linaro.org>, <catalin.marinas@arm.com>,
-        <will.deacon@arm.com>, <rjw@rjwysocki.net>,
-        <linux-clk@vger.kernel.org>
-Cc: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-soc@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <rnayak@codeaurora.org>, <amit.kucheria@linaro.org>,
-        <nicolas.dechesne@linaro.org>, <celster@codeaurora.org>,
-        <tfinkel@codeaurora.org>
-References: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org> <1526729701-8589-1-git-send-email-ilialin@codeaurora.org> <153cc316-dcb5-972f-5a2f-c91fe0f6348b@arm.com> <000f01d3f103$3ff78ba0$bfe6a2e0$@codeaurora.org> <2ace10bc-e1c4-2060-94d3-eb71e966ffbe@arm.com> 
-In-Reply-To: 
-Subject: RE: [PATCH] cpufreq: Add Kryo CPU scaling driver
-Date: Tue, 22 May 2018 10:59:07 +0300
-Message-ID: <001401d3f1a2$c7328850$559798f0$@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQF4oTaoNxz6XIk2qh8MCLQUCquwggJzguYXAj6kKpQCSNS3vQG6YwsHAY+VlECkn9smEA==
-Content-Language: en-us
+        id S1751559AbeEVIAU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 04:00:20 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52906 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751401AbeEVHzo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 03:55:44 -0400
+From: Eric Auger <eric.auger@redhat.com>
+To: eric.auger.pro@gmail.com, eric.auger@redhat.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
+        christoffer.dall@arm.com, peter.maydell@linaro.org
+Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
+Subject: [PATCH v8 06/13] KVM: arm/arm64: Adapt vgic_v3_check_base to multiple rdist regions
+Date: Tue, 22 May 2018 09:55:11 +0200
+Message-Id: <1526975718-18567-7-git-send-email-eric.auger@redhat.com>
+In-Reply-To: <1526975718-18567-1-git-send-email-eric.auger@redhat.com>
+References: <1526975718-18567-1-git-send-email-eric.auger@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4M7xdUC016428
 
-OK, I think I found out the way. Would this be correct?
------------------------------------------------------------------------------------------------
-extern struct cpu_topology cpu_topology[NR_CPUS];
+vgic_v3_check_base() currently only handles the case of a unique
+legacy redistributor region whose size is not explicitly set but
+inferred, instead, from the number of online vcpus.
 
-static struct device *qcom_cpufreq_kryo_get_cluster_lead(int cluster)
-{
-	unsigned cpu;
+We adapt it to handle the case of multiple redistributor regions
+with explicitly defined size. We rely on two new helpers:
+- vgic_v3_rdist_overlap() is used to detect overlap with the dist
+  region if defined
+- vgic_v3_rd_region_size computes the size of the redist region,
+  would it be a legacy unique region or a new explicitly sized
+  region.
 
-	for_each_possible_cpu(cpu) {
-		if ((cluster == cpu_topology[cpu].cluster_id) &&
-			(0 == cpu_topology[cpu].core_id))
-			return get_cpu_device(cpu);
-	}
+Signed-off-by: Eric Auger <eric.auger@redhat.com>
+Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
 
-	return NULL;
-}
------------------------------------------------------------------------------------------------
+---
 
-> -----Original Message-----
-> From: ilialin@codeaurora.org <ilialin@codeaurora.org>
-> Sent: Tuesday, May 22, 2018 09:56
-> To: 'Sudeep Holla' <sudeep.holla@arm.com>; 'mturquette@baylibre.com'
-> <mturquette@baylibre.com>; 'sboyd@kernel.org' <sboyd@kernel.org>;
-> 'robh@kernel.org' <robh@kernel.org>; 'mark.rutland@arm.com'
-> <mark.rutland@arm.com>; 'viresh.kumar@linaro.org'
-> <viresh.kumar@linaro.org>; 'nm@ti.com' <nm@ti.com>;
-> 'lgirdwood@gmail.com' <lgirdwood@gmail.com>; 'broonie@kernel.org'
-> <broonie@kernel.org>; 'andy.gross@linaro.org' <andy.gross@linaro.org>;
-> 'david.brown@linaro.org' <david.brown@linaro.org>;
-> 'catalin.marinas@arm.com' <catalin.marinas@arm.com>;
-> 'will.deacon@arm.com' <will.deacon@arm.com>; 'rjw@rjwysocki.net'
-> <rjw@rjwysocki.net>; 'linux-clk@vger.kernel.org' <linux-
-> clk@vger.kernel.org>
-> Cc: 'devicetree@vger.kernel.org' <devicetree@vger.kernel.org>; 'linux-
-> kernel@vger.kernel.org' <linux-kernel@vger.kernel.org>; 'linux-
-> pm@vger.kernel.org' <linux-pm@vger.kernel.org>; 'linux-arm-
-> msm@vger.kernel.org' <linux-arm-msm@vger.kernel.org>; 'linux-
-> soc@vger.kernel.org' <linux-soc@vger.kernel.org>; 'linux-arm-
-> kernel@lists.infradead.org' <linux-arm-kernel@lists.infradead.org>;
-> 'rnayak@codeaurora.org' <rnayak@codeaurora.org>;
-> 'amit.kucheria@linaro.org' <amit.kucheria@linaro.org>;
-> 'nicolas.dechesne@linaro.org' <nicolas.dechesne@linaro.org>;
-> 'celster@codeaurora.org' <celster@codeaurora.org>;
-> 'tfinkel@codeaurora.org' <tfinkel@codeaurora.org>
-> Subject: RE: [PATCH] cpufreq: Add Kryo CPU scaling driver
-> 
-> 
-> 
-> > -----Original Message-----
-> > From: Sudeep Holla <sudeep.holla@arm.com>
-> > Sent: Monday, May 21, 2018 16:05
-> > To: ilialin@codeaurora.org; mturquette@baylibre.com; sboyd@kernel.org;
-> > robh@kernel.org; mark.rutland@arm.com; viresh.kumar@linaro.org;
-> > nm@ti.com; lgirdwood@gmail.com; broonie@kernel.org;
-> > andy.gross@linaro.org; david.brown@linaro.org;
-> > catalin.marinas@arm.com; will.deacon@arm.com; rjw@rjwysocki.net;
-> > linux-clk@vger.kernel.org
-> > Cc: Sudeep Holla <sudeep.holla@arm.com>; devicetree@vger.kernel.org;
-> > linux-kernel@vger.kernel.org; linux-pm@vger.kernel.org; linux-arm-
-> > msm@vger.kernel.org; linux-soc@vger.kernel.org; linux-arm-
-> > kernel@lists.infradead.org; rnayak@codeaurora.org;
-> > amit.kucheria@linaro.org; nicolas.dechesne@linaro.org;
-> > celster@codeaurora.org; tfinkel@codeaurora.org
-> > Subject: Re: [PATCH] cpufreq: Add Kryo CPU scaling driver
-> >
-> >
-> >
-> > On 21/05/18 13:57, ilialin@codeaurora.org wrote:
-> > >
-> > [...]
-> >
-> > >>> +#include <linux/cpu.h>
-> > >>> +#include <linux/err.h>
-> > >>> +#include <linux/init.h>
-> > >>> +#include <linux/kernel.h>
-> > >>> +#include <linux/module.h>
-> > >>> +#include <linux/nvmem-consumer.h> #include <linux/of.h> #include
-> > >>> +<linux/platform_device.h> #include <linux/pm_opp.h> #include
-> > >>> +<linux/slab.h> #include <linux/soc/qcom/smem.h>
-> > >>> +
-> > >>> +#define MSM_ID_SMEM	137
-> > >>> +#define SILVER_LEAD	0
-> > >>> +#define GOLD_LEAD	2
-> > >>> +
-> > >>
-> > >> So I gather form other emails, that these are physical cpu
-> > >> number(not even unique identifier like MPIDR). Will this work on
-> > >> parts or platforms that need to boot in GOLD LEAD cpus.
-> > >
-> > > The driver is for Kryo CPU, which (and AFAIK all multicore MSMs)
-> > > always boots on the CPU0.
-> >
-> >
-> > That may be true and I am not that bothered about it. But assuming
-> > physical ordering from the logical cpu number is *incorrect* and will
-> > break if kernel decides to change the allocation algorithm. Kernel
-> > provides no guarantee on that, so you need to depend on some physical
-> > ID or may be DT to achieve what your want. But the current code as it
-> stands is wrong.
-> 
-> Got your point. In fact CPUs are numbered 0-3 and ordered into 2 clusters in
-> the DT:
-> 
-> cpus {
-> 	#address-cells = <2>;
-> 	#size-cells = <0>;
-> 
-> 	CPU0: cpu@0 {
-> 		...
-> 		reg = <0x0 0x0>;
-> 		...
-> 	};
-> 
-> 	CPU1: cpu@1 {
-> 		...
-> 		reg = <0x0 0x1>;
-> 		...
-> 	};
-> 
-> 	CPU2: cpu@100 {
-> 		...
-> 		reg = <0x0 0x100>;
-> 		...
-> 	};
-> 
-> 	CPU3: cpu@101 {
-> 		...
-> 		reg = <0x0 0x101>;
-> 		...
-> 	};
-> 
-> 	cpu-map {
-> 		cluster0 {
-> 			core0 {
-> 				cpu = <&CPU0>;
-> 			};
-> 
-> 			core1 {
-> 				cpu = <&CPU1>;
-> 			};
-> 		};
-> 
-> 		cluster1 {
-> 			core0 {
-> 				cpu = <&CPU2>;
-> 			};
-> 
-> 			core1 {
-> 				cpu = <&CPU3>;
-> 			};
-> 		};
-> 	};
-> };
-> 
-> As far, as I understand, they are probed in the same order. However, to be
-> certain that the physical CPU is the one I intend to configure, I have to fetch
-> the device structure pointer for the cpu-map -> clusterX -> core0 -> cpu path.
-> Could you suggest a kernel API to do that?
-> 
-> 
-> 
-> >
-> > --
-> > Regards,
-> > Sudeep
+v4 -> v5:
+- s/infered/inferred in the commit msg
+- Added Christoffer's R-b
+
+v3 -> v4:
+- squash vgic_v3_check_base adaptation and vgic_v3_rdist_overlap
+  + vgic_v3_rd_region_size introduction  and put this patch
+  before v3 patch 6
+---
+ virt/kvm/arm/vgic/vgic-v3.c | 49 +++++++++++++++++++++++++++++----------------
+ virt/kvm/arm/vgic/vgic.h    | 10 +++++++++
+ 2 files changed, 42 insertions(+), 17 deletions(-)
+
+diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
+index 6a1c932..a006914 100644
+--- a/virt/kvm/arm/vgic/vgic-v3.c
++++ b/virt/kvm/arm/vgic/vgic-v3.c
+@@ -419,6 +419,29 @@ int vgic_v3_save_pending_tables(struct kvm *kvm)
+ 	return 0;
+ }
+ 
++/**
++ * vgic_v3_rdist_overlap - check if a region overlaps with any
++ * existing redistributor region
++ *
++ * @kvm: kvm handle
++ * @base: base of the region
++ * @size: size of region
++ *
++ * Return: true if there is an overlap
++ */
++bool vgic_v3_rdist_overlap(struct kvm *kvm, gpa_t base, size_t size)
++{
++	struct vgic_dist *d = &kvm->arch.vgic;
++	struct vgic_redist_region *rdreg;
++
++	list_for_each_entry(rdreg, &d->rd_regions, list) {
++		if ((base + size > rdreg->base) &&
++			(base < rdreg->base + vgic_v3_rd_region_size(kvm, rdreg)))
++			return true;
++	}
++	return false;
++}
++
+ /*
+  * Check for overlapping regions and for regions crossing the end of memory
+  * for base addresses which have already been set.
+@@ -426,31 +449,23 @@ int vgic_v3_save_pending_tables(struct kvm *kvm)
+ bool vgic_v3_check_base(struct kvm *kvm)
+ {
+ 	struct vgic_dist *d = &kvm->arch.vgic;
+-	gpa_t redist_size = KVM_VGIC_V3_REDIST_SIZE;
+-	struct vgic_redist_region *rdreg =
+-		list_first_entry(&d->rd_regions,
+-				 struct vgic_redist_region, list);
+-
+-	redist_size *= atomic_read(&kvm->online_vcpus);
++	struct vgic_redist_region *rdreg;
+ 
+ 	if (!IS_VGIC_ADDR_UNDEF(d->vgic_dist_base) &&
+ 	    d->vgic_dist_base + KVM_VGIC_V3_DIST_SIZE < d->vgic_dist_base)
+ 		return false;
+ 
+-	if (rdreg && (rdreg->base + redist_size < rdreg->base))
+-		return false;
++	list_for_each_entry(rdreg, &d->rd_regions, list) {
++		if (rdreg->base + vgic_v3_rd_region_size(kvm, rdreg) <
++			rdreg->base)
++			return false;
++	}
+ 
+-	/* Both base addresses must be set to check if they overlap */
+-	if (IS_VGIC_ADDR_UNDEF(d->vgic_dist_base) || !rdreg)
++	if (IS_VGIC_ADDR_UNDEF(d->vgic_dist_base))
+ 		return true;
+ 
+-	if (d->vgic_dist_base + KVM_VGIC_V3_DIST_SIZE <= rdreg->base)
+-		return true;
+-
+-	if (rdreg->base + redist_size <= d->vgic_dist_base)
+-		return true;
+-
+-	return false;
++	return !vgic_v3_rdist_overlap(kvm, d->vgic_dist_base,
++				      KVM_VGIC_V3_DIST_SIZE);
+ }
+ 
+ /**
+diff --git a/virt/kvm/arm/vgic/vgic.h b/virt/kvm/arm/vgic/vgic.h
+index fddd57f..e9f1926 100644
+--- a/virt/kvm/arm/vgic/vgic.h
++++ b/virt/kvm/arm/vgic/vgic.h
+@@ -276,6 +276,16 @@ vgic_v3_redist_region_full(struct vgic_redist_region *region)
+ 
+ struct vgic_redist_region *vgic_v3_rdist_free_slot(struct list_head *rdregs);
+ 
++static inline size_t
++vgic_v3_rd_region_size(struct kvm *kvm, struct vgic_redist_region *rdreg)
++{
++	if (!rdreg->count)
++		return atomic_read(&kvm->online_vcpus) * KVM_VGIC_V3_REDIST_SIZE;
++	else
++		return rdreg->count * KVM_VGIC_V3_REDIST_SIZE;
++}
++bool vgic_v3_rdist_overlap(struct kvm *kvm, gpa_t base, size_t size);
++
+ int vgic_its_resolve_lpi(struct kvm *kvm, struct vgic_its *its,
+ 			 u32 devid, u32 eventid, struct vgic_irq **irq);
+ struct vgic_its *vgic_msi_to_its(struct kvm *kvm, struct kvm_msi *msi);
+-- 
+2.5.5
