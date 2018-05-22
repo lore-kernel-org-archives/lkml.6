@@ -1,231 +1,524 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752660AbeEVKKT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 06:10:19 -0400
-Received: from mail-he1eur01on0125.outbound.protection.outlook.com ([104.47.0.125]:9578
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        id S1752686AbeEVKKb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 06:10:31 -0400
+Received: from mail-bn3nam01on0046.outbound.protection.outlook.com ([104.47.33.46]:7344
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751443AbeEVKJx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 06:09:53 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=ktkhai@virtuozzo.com;
-Subject: [PATCH v7 14/17] mm: Iterate only over charged shrinkers during
- memcg shrink_slab()
-From: Kirill Tkhai <ktkhai@virtuozzo.com>
-To: akpm@linux-foundation.org, vdavydov.dev@gmail.com, shakeelb@google.com,
-        viro@zeniv.linux.org.uk, hannes@cmpxchg.org, mhocko@kernel.org,
-        ktkhai@virtuozzo.com, tglx@linutronix.de, pombredanne@nexb.com,
-        stummala@codeaurora.org, gregkh@linuxfoundation.org,
-        sfr@canb.auug.org.au, guro@fb.com, mka@chromium.org,
-        penguin-kernel@I-love.SAKURA.ne.jp, chris@chris-wilson.co.uk,
-        longman@redhat.com, minchan@kernel.org, ying.huang@intel.com,
-        mgorman@techsingularity.net, jbacik@fb.com, linux@roeck-us.net,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org, willy@infradead.org,
-        lirongqing@baidu.com, aryabinin@virtuozzo.com
-Date: Tue, 22 May 2018 13:09:43 +0300
-Message-ID: <152698378300.3393.14754283083814172297.stgit@localhost.localdomain>
-In-Reply-To: <152698356466.3393.5351712806709424140.stgit@localhost.localdomain>
-References: <152698356466.3393.5351712806709424140.stgit@localhost.localdomain>
-User-Agent: StGit/0.18
+        id S1751172AbeEVKKX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 06:10:23 -0400
+From: Javier Gonzalez <javier@cnexlabs.com>
+To: Kent Overstreet <kent.overstreet@gmail.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>,
+        "colyli@suse.de" <colyli@suse.de>,
+        "snitzer@redhat.com" <snitzer@redhat.com>,
+        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
+        "clm@fb.com" <clm@fb.com>, "bacik@fb.com" <bacik@fb.com>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "drbd-dev@lists.linbit.com" <drbd-dev@lists.linbit.com>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
+        NeilBrown <neilb@suse.com>
+Subject: Re: [PATCH 04/12] lightnvm: convert to bioset_init()/mempool_init()
+Thread-Topic: [PATCH 04/12] lightnvm: convert to bioset_init()/mempool_init()
+Thread-Index: AQHT8bUS93JYiqv/TkCxQWRD0GOgGw==
+Date: Tue, 22 May 2018 10:10:13 +0000
+Message-ID: <84EF687A-078F-4807-A667-39A8A91D48D0@cnexlabs.com>
+References: <20180520222558.7053-1-kent.overstreet@gmail.com>
+ <20180520222558.7053-5-kent.overstreet@gmail.com>
+In-Reply-To: <20180520222558.7053-5-kent.overstreet@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator: 
+x-originating-ip: [193.106.164.211]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CO2PR06MB667;7:YiDOTOLcTv+dPQPOhpKycj9dVSGEEwrYXAOGyOYYQ/tUtSS6Tj2G2O7w0m5ztRnPDHrDzngct6as0IrimNVvsa4fuQed+cOAb81QS2Fxytetg1Xzq/h547DI/EZDYcL5I+7W5IulFYHO2Ir/GOm00IpJr4lfP+QDqB+l383ztFFrEglxfgQmIr3gTEzR4N1ka388KDy0pUb0R/iavIlsEPUIGW3hz+d+8MyxtavppYNOfUPXwEHH/+Ymu3fYGyeM
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(49563074)(7193020);SRVR:CO2PR06MB667;
+x-ms-traffictypediagnostic: CO2PR06MB667:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=javier@cnexlabs.com;
+x-microsoft-antispam-prvs: <CO2PR06MB66738CE4C90D3DDF579CE1EBA940@CO2PR06MB667.namprd06.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(85827821059158);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(102415395)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(93006095)(93001095)(3231254)(944501410)(52105095)(149027)(150027)(6041310)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:CO2PR06MB667;BCL:0;PCL:0;RULEID:;SRVR:CO2PR06MB667;
+x-forefront-prvs: 0680FADD48
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(39380400002)(376002)(396003)(366004)(39840400004)(189003)(199004)(97736004)(8676002)(86362001)(66066001)(7416002)(83716003)(81156014)(478600001)(316002)(8936002)(82746002)(6486002)(229853002)(36756003)(6246003)(81166006)(99286004)(4326008)(76176011)(68736007)(6916009)(486006)(39060400002)(5660300001)(25786009)(11346002)(446003)(105586002)(3280700002)(99936001)(2906002)(53936002)(3660700001)(106356001)(2900100001)(14454004)(476003)(2616005)(6512007)(3846002)(305945005)(54906003)(26005)(33656002)(102836004)(6506007)(6116002)(59450400001)(5250100002)(186003)(7736002)(6436002);DIR:OUT;SFP:1101;SCL:1;SRVR:CO2PR06MB667;H:CO2PR06MB538.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: pKfNpMpcrmc4pmjKk8gANam4uv+KPB4oF5iecWl72+KNVqsjVhEqi6ILGi7asC+wtd7BESnFbqEfax/3IdJ1ioa1MmLY1jyFO0ghriydHE1fDxgqmojTQdULnKijh/ybdQ9wbw3K6jSMbTmp2zl3vpXIb4Ns5k2bUkmar9yWYGndJ+V9N+038/2DRXCPoeio
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: multipart/signed;
+        boundary="Apple-Mail=_D7977032-5A8D-4CA1-930F-7A6C48C19BE4";
+        protocol="application/pgp-signature"; micalg=pgp-sha512
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [195.214.232.6]
-X-ClientProxiedBy: AM6P193CA0013.EURP193.PROD.OUTLOOK.COM
- (2603:10a6:209:3e::26) To VI1PR0801MB1342.eurprd08.prod.outlook.com
- (2603:10a6:800:3a::28)
-X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0801MB1342;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0801MB1342;3:FIao7FOzdzGiKAoF+arv6ubYmD3i0UtpLQg0D/O/+dpcxLuQzwgFhGVh+rPhMAre5IY6pLYT6LJlLXpnZcEPtu3X9Z0TF4bHbNWYoC8BLvClH5PrRYO0UK7/rAdI8qLjRdSqFGzcYHI59JD1DI67Em/AibVFaovQl0HRJyDG/crVpuGa0zpG7l3PDVaB//PQL3AVZrwd3jtfXqxdfo2E0J42xlxtyTjbWixDJfPEc1s5oX/kcpVu2gDuNsJAg/Au;25:d/c/6IV57TA2fek9U/cflM+x4KLdshWLXc2SlvoH/GiUBAo1v2wb1URc0zADL7lfFnvEj3gqi7kXMpq7QCxi8dHFI55vfRyJ5z9Vyync/IQ2GtapfDDKrn1DiDw2U3Ul/K8aH72tS90rBpR10+RVoktPNjyqLxBTXnFlnuxsvnK8HCXcah2EyNrnfO0ApJr/Fj/o0cpfO5b3i6VI6o3Mp6/nOJGwKfgZ3vlTFYwnI3t4vJQ5ju2qepRkIbm3rjGg8yHRltaUCUVu9FsfHD4c9gwBFbur1KgYQne97tSpNn/j3RvxGNQNv6IHQxFadl53YYcXkpj4/TOulDnrnyFPBA==;31:k3T+g2AXVZrn9JzQwcDnzyCgj2Mcwm5jW8NgYiJAvDUke0Ap24s+mLNn4AH8BxJcCY3Nz0de881JCwm+mMGaTpHUToXtGSvEF2Z82A1ubWVMVVdiVE97yBYN6xUPNUudSJ0RiQsO+3/tdcAxl9aSFN2rpnYf7eqW40tl5cScmgWjTpanRJZDYcSXibyf8C5kmMBHmTYVeD3w6331qaPNozZNlveDVLSbPeC9f6kNwZI=
-X-MS-TrafficTypeDiagnostic: VI1PR0801MB1342:
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0801MB1342;20:AzvgOlTV2j+/5+8g2Mwng00XQzdcM7yVcDbIPH6RMINLuHnlAOA37kOlWDL9DPNUyJK9aEURngLStFWppb5eyanbddDppLfwxdozB+SemdCyUajtY8+4gpPQLGvLT6tQPkRMkp6v6+ebcfvZh6pnEgpRj7nPL1p8jNbuWrG4h3MTrLJAl2NbYr3GAlNKXqOSAHcWqp2+ITY0hMdQoL0dqIhq5VXX2ZUHj7OsHCmOyxJm1museCgeVgExyjJmSdcS2wi4eCldSIvCOtMSJZ0CKkBelfQuh1+/jdLIWi9krjmy69OlrKAZEn+zVuIBb4f50MyfDWoDCyyGTVWk3mF4L01gWwvOqzmmKKr3vQM4wJYLfygTmELyWYkU5trGVxYWq77MYVZRvhi72+0aPcqvTxTJEvFuQ810fuO96WpqbNGKad2kjAHSVJZiF8P2Fw7dhjOAk5oHDDPHhRVmtfzSrMuqNKpxkgSYi3lYE6LC9CDK8oz0/RD1AmSj8Ws7BbeH;4:01P3fehXqvm0pXWVOiP24v7VnMnz74Ewsk5zFB2nQA73soghFEH5Mbq6hRU3sIrtghPzbpusiiZRvVkwtwmons9/gUHNOYIQgSRSASvSY8sFMUMvF3SGpfr+WoxgiYfaGVDqhKWC6hHHHLOLBhgvhqf6eljoVm4jXgxnyONE2R9LaffwvhoaIepnpLO9JWbDEK2bnnSHU2L8pLfyQnYhT7zfTlhIabRDT6bGVzni7r6DCx6jPenin6K/wAOJt/7ulvY4m3yLvN3xtMhvn6SOlg==
-X-Microsoft-Antispam-PRVS: <VI1PR0801MB1342F8EBCB67A5F7001AE77ECD940@VI1PR0801MB1342.eurprd08.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231254)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:VI1PR0801MB1342;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0801MB1342;
-X-Forefront-PRVS: 0680FADD48
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(346002)(39850400004)(396003)(366004)(39380400002)(376002)(189003)(199004)(39060400002)(50466002)(81166006)(61506002)(55016002)(53936002)(103116003)(478600001)(6636002)(7736002)(316002)(305945005)(8676002)(81156014)(66066001)(47776003)(8936002)(105586002)(58126008)(106356001)(230700001)(476003)(97736004)(11346002)(956004)(68736007)(446003)(486006)(25786009)(7416002)(26005)(52116002)(23676004)(386003)(6506007)(9686003)(59450400001)(33896004)(55236004)(86362001)(2486003)(76176011)(6116002)(7696005)(5660300001)(186003)(16526019)(2906002)(3846002)(921003)(1121003)(309714004);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0801MB1342;H:localhost.localdomain;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtWSTFQUjA4MDFNQjEzNDI7MjM6WlFmYmpsbWowellDK2ozWmFIbnlLaTFY?=
- =?utf-8?B?WDRTZFlUOGRZSndGK1Mxd0thTmNpbW9reVcwcXhGM2JRVlVkY2k4ZndHVEdE?=
- =?utf-8?B?MllzbmlzK2VWOWVaa1hvNkRLR2JTaGdsOGFwbFBsRzZYZVZYN2hFb2RyTjJX?=
- =?utf-8?B?ZnlabFM3SVpHN3Y2bFZ6VXBLMnl3eThjVFFXTGhnQk84UjlsR1lRNExSc1Er?=
- =?utf-8?B?U0x5T0VCRk5wYXVHaGJQSFZmS1lZSVViUjNhU3FVL2N6bzJtUjVIc2huWk1M?=
- =?utf-8?B?cFpYQTVsRC9kam8yVExrbDJSYWdXU05WS3lQN29XYmgxaTJlbStaeC82dDZ5?=
- =?utf-8?B?M0VvbElBalhvUmR0VXlkZzM3RlZHMC9lWFJOQjlMdVNuRWV3WTRjc2Zna21z?=
- =?utf-8?B?Nkx4djZ0WWdtKzA1Wmh2ek5hbXRYSi9VeGNHZ1UxNHpyaEE5dGRaR2swdU41?=
- =?utf-8?B?dys0TWpwS2psWHNSZWxEbSt4N0NMSmN6Z3A1VGdUdVVyQjZFdkxvb005WE1C?=
- =?utf-8?B?ZkxoK0dzRzBiVzlrMVM1YlA2eEU5RnhERmo5WnJUQi9CODlHbGhWSkwzZ0ZL?=
- =?utf-8?B?MDJBY25LZGpCUy9xQndldTV4R0c2N2ZTVnJNZWJZcGZoT1pmYzRld0VPT0hQ?=
- =?utf-8?B?M1hKOVc5Q2hZdlIzYVRkaWZMQmZTV1NMNFg1MUJZUUFlTkdJMTV4UmFFbVlH?=
- =?utf-8?B?Nk13NW15a05xYklDNjVlby90TFcrNjJNc0J2TGZrdUN0akRyZzZDaC9rbzlU?=
- =?utf-8?B?WkhMeUVuVDdaWE5vVUFVVXRYeHd6N0VtS0YvbTdDb3Bwc3VaVmpOdnk1cU1h?=
- =?utf-8?B?N0VjdVNyTlMzckpZWnBHN3pSbWpyVlVkTHlTRnVVb291aVJEY3BZRk83ZGNl?=
- =?utf-8?B?SmJKV0Y2NEV6bnpHa3hIMEMzeHdtWXE4UVBRaFhjMjI5ODhFQVphWmZ0VlZw?=
- =?utf-8?B?TS8zeVR6cW1QZHJOSytrTDNuRi9jOHIrMWVqYVlXTElJYzhkMVZvWmJQYmFn?=
- =?utf-8?B?VUdEdjN5aE11cVZIUFBRYXk3Y1dWWUFLNGZqT21TVzJtLzc0RWlITUNPT3Fh?=
- =?utf-8?B?ZmNHakZzeFZiaVFDL29LZythRlMzVDJub0ZHRlB5ZlZmQVplYXU5clpDb3dQ?=
- =?utf-8?B?dENRc1BTQlBDbGQ5Q0lqQTZsM1pOYytHOFI1NUhSNW5qSnhpdzFPM2FPWnNQ?=
- =?utf-8?B?dVFZbFEya0JSSVRvRjNrWmdWbjdna3NzdnlxUmRHMlUySWFobHREMk9sUEFq?=
- =?utf-8?B?clRzNVNUQUNBbnNmY3kwSlFINlFJMGt2b3YwQnhCYUN4a29wVUNBYkJMcVkr?=
- =?utf-8?B?M0I4aVNNbjF2b2dmYjFSRi9XVzdBcHR4SEUwTkR0Z21rYVNSaENGVjdDcUdU?=
- =?utf-8?B?NEZrT0doaXhnMjY1YXhGUUlSRnRDbHIzYURvdjczTnF0eGdkWXhUQ1Y3OE9O?=
- =?utf-8?B?SDdyaVJMdlhOa1dJZGVMRjNxK0IxZEkxK2FzR2UvbkVqSWRDV1pKZkhaK1J1?=
- =?utf-8?B?WVlVN0ltVC9BUTQ3amQzVitHUDd4aUxjQW9qQ1FMbVVob21HR2ZJVmoyQTJy?=
- =?utf-8?B?M3lWdUVmendqVGdVOU8xalJzQ2hqdVduUVBqaTlRejQyZEpsVHdpYnlaV01L?=
- =?utf-8?B?UVFlYmtWckYvRTNrWVAzRDJGaXFKSDMyTEhBTzh5amIrangrTEpwdHdrdWNH?=
- =?utf-8?B?Q1B3UmxLNWJsUUJsZGYvWEtWeEZVeTV6RHZITmY4ZHoxR2hITm51dEpGVnVw?=
- =?utf-8?B?Sm00azBTejl1NGtYMjlydDgwWXhGUUJNTmRNeGQyUjhhOGRweGorZGlOeFVn?=
- =?utf-8?B?bFNiU3R4b3VrMThvZlZsdCtOb0hTVklYMTFOL2hmQ3c4NVE3dz09?=
-X-Microsoft-Antispam-Message-Info: e5M/02CbFPZ8Zu9YbQoKw5VYNzgzDtZU3+ObKviXYCmftgDBhCL1A4iW6SgUeBVR+nh53wHMRZ4zJlxNa2FeX1g5Cz5yvtIf9u2qTIUVrKi4hiebGBweUCWCGXw1564Wh8Wif5Tcon9OphQ6F9KBoPfkOCRY8s6gIJx7XQFyVyDHF6h5GTi/sCLSg5RaKpyE
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0801MB1342;6:r3DXbQ6aJ54kKjXWE4mE23x19qhMta7YXP9/yfNyP+6b9QvjVh2ybK3XWbnHYdKamw8TsVMMqcdCjXnIPe80jgI8M+mM/0cP0IZTFS9qv9R0RJ7wcNB/tKeFK6TlM+QLlxOG8Q6vv5J5dfXquPzs1t9FJ5HKXKBGkSPjpJIBiqqonT8QC7XjhCugvFMIrH10WzN4Fwn44A9M+C2qsDDVg8m2fK+r6re4QsnwKv45C+cQuAcMijsu0g1Ys7GU1gZ4DXd1ZrU/F+6wgj9X3M3bnAB4FoZ/9zrDQWeRtL03DBMiVlw/u5RZ3H0/4PauQSteYZwCEqbtfJ/43Zl0Yg1f44Y0+5Jej0x3Jj2L39RTHUM9N1XaAuYOiB0xPCMY7QR4uTofIDgm4nQ7Dk00uQ7G4Eq7fH8/0mvll4Fow3ot+TUJE7RFyky4lTqXR6G9dzzEbjmjOdtD20ZiL55wetUlIg==;5:iM1ks/X4a55sbqAVk+zQPd7rWlcOJcICy6zjRNkX7yELW0nS+llnxZ+z6qf+KOlQ8RERcIFl+wQ2CtJAvcUDfEaJhNj8GkvZd2MQiCc1PjTVZIclm5KwX826r6ayttB8YEuVLvSQrzfTyFPol3KmT28RgInHRWUrz4gI71pI+Xs=;24:nHOvBjk20fguY97Nj8nV1k6TxW9gCn2P1VO+qReX4ytJ/6PBCprtWN3kdq+vwr9wbvVLQrzoDa3cxnP4m2IpfD2E564hSm27lmXyYKBB4gs=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0801MB1342;7:nw/XocK7Myc1nokt6bhYjmKA4Qleo95XuJNygSXX0qT9pWwuwLBnO+TJxUPkOMKNmqZbSgqWuTas6vhpjvY85ka3+GHmsm+/4Oxu7HXIaj0ncKA9iayKwIdMfuTYCHF0gp0mHmexprSGgGWE/6vQa8QHfw334CbBjgY+gdmsa0uSUF5MtJN9g24awpPf09sf6/GAPyJnkBJflkWlb0oSF+cA3OT8RZG8mUREje7SJftjs6Qbg29rpseKfUA5O/nx;20:ebpZNr0QYg37E07oRWFwxlxTtXFnQajQeH2nWMd3YLWlPae5glqBdRbSn+DuJOW6XfvjN8Of/e8W6a6fLC4kdELFXbcDZdddOMp37fyW9V0dIkuiqXsUhVAvVL15IN08QEpKGjkCtvgB4GBZUS9DofmTFvPHCM9jX4c6yOnm0ZM=
-X-MS-Office365-Filtering-Correlation-Id: 8a5f9f1b-f042-47e4-b3f0-08d5bfcc25ff
-X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2018 10:09:45.5476 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8a5f9f1b-f042-47e4-b3f0-08d5bfcc25ff
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0801MB1342
+X-MS-Office365-Filtering-Correlation-Id: 526c574e-280c-4ded-10f7-08d5bfcc3576
+X-OriginatorOrg: cnexlabs.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 526c574e-280c-4ded-10f7-08d5bfcc3576
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 May 2018 10:10:13.1925
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: e40dfc2e-c6c1-463a-a598-38602b2c3cff
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO2PR06MB667
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using the preparations made in previous patches, in case of memcg
-shrink, we may avoid shrinkers, which are not set in memcg's shrinkers
-bitmap. To do that, we separate iterations over memcg-aware and
-!memcg-aware shrinkers, and memcg-aware shrinkers are chosen
-via for_each_set_bit() from the bitmap. In case of big nodes,
-having many isolated environments, this gives significant
-performance growth. See next patches for the details.
+--Apple-Mail=_D7977032-5A8D-4CA1-930F-7A6C48C19BE4
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=utf-8
 
-Note, that the patch does not respect to empty memcg shrinkers,
-since we never clear the bitmap bits after we set it once.
-Their shrinkers will be called again, with no shrinked objects
-as result. This functionality is provided by next patches.
+> On 21 May 2018, at 00.25, Kent Overstreet <kent.overstreet@gmail.com> =
+wrote:
+>=20
+> Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
+> ---
+> drivers/lightnvm/pblk-core.c     | 30 ++++++-------
+> drivers/lightnvm/pblk-init.c     | 72 ++++++++++++++++----------------
+> drivers/lightnvm/pblk-read.c     |  4 +-
+> drivers/lightnvm/pblk-recovery.c |  2 +-
+> drivers/lightnvm/pblk-write.c    |  8 ++--
+> drivers/lightnvm/pblk.h          | 14 +++----
+> 6 files changed, 65 insertions(+), 65 deletions(-)
+>=20
+> diff --git a/drivers/lightnvm/pblk-core.c =
+b/drivers/lightnvm/pblk-core.c
+> index 94d5d97c9d..934341b104 100644
+> --- a/drivers/lightnvm/pblk-core.c
+> +++ b/drivers/lightnvm/pblk-core.c
+> @@ -40,7 +40,7 @@ static void pblk_line_mark_bb(struct work_struct =
+*work)
+> 	}
+>=20
+> 	kfree(ppa);
+> -	mempool_free(line_ws, pblk->gen_ws_pool);
+> +	mempool_free(line_ws, &pblk->gen_ws_pool);
+> }
+>=20
+> static void pblk_mark_bb(struct pblk *pblk, struct pblk_line *line,
+> @@ -102,7 +102,7 @@ static void pblk_end_io_erase(struct nvm_rq *rqd)
+> 	struct pblk *pblk =3D rqd->private;
+>=20
+> 	__pblk_end_io_erase(pblk, rqd);
+> -	mempool_free(rqd, pblk->e_rq_pool);
+> +	mempool_free(rqd, &pblk->e_rq_pool);
+> }
+>=20
+> /*
+> @@ -237,15 +237,15 @@ struct nvm_rq *pblk_alloc_rqd(struct pblk *pblk, =
+int type)
+> 	switch (type) {
+> 	case PBLK_WRITE:
+> 	case PBLK_WRITE_INT:
+> -		pool =3D pblk->w_rq_pool;
+> +		pool =3D &pblk->w_rq_pool;
+> 		rq_size =3D pblk_w_rq_size;
+> 		break;
+> 	case PBLK_READ:
+> -		pool =3D pblk->r_rq_pool;
+> +		pool =3D &pblk->r_rq_pool;
+> 		rq_size =3D pblk_g_rq_size;
+> 		break;
+> 	default:
+> -		pool =3D pblk->e_rq_pool;
+> +		pool =3D &pblk->e_rq_pool;
+> 		rq_size =3D pblk_g_rq_size;
+> 	}
+>=20
+> @@ -265,13 +265,13 @@ void pblk_free_rqd(struct pblk *pblk, struct =
+nvm_rq *rqd, int type)
+> 	case PBLK_WRITE:
+> 		kfree(((struct pblk_c_ctx =
+*)nvm_rq_to_pdu(rqd))->lun_bitmap);
+> 	case PBLK_WRITE_INT:
+> -		pool =3D pblk->w_rq_pool;
+> +		pool =3D &pblk->w_rq_pool;
+> 		break;
+> 	case PBLK_READ:
+> -		pool =3D pblk->r_rq_pool;
+> +		pool =3D &pblk->r_rq_pool;
+> 		break;
+> 	case PBLK_ERASE:
+> -		pool =3D pblk->e_rq_pool;
+> +		pool =3D &pblk->e_rq_pool;
+> 		break;
+> 	default:
+> 		pr_err("pblk: trying to free unknown rqd type\n");
+> @@ -292,7 +292,7 @@ void pblk_bio_free_pages(struct pblk *pblk, struct =
+bio *bio, int off,
+>=20
+> 	for (i =3D off; i < nr_pages + off; i++) {
+> 		bv =3D bio->bi_io_vec[i];
+> -		mempool_free(bv.bv_page, pblk->page_bio_pool);
+> +		mempool_free(bv.bv_page, &pblk->page_bio_pool);
+> 	}
+> }
+>=20
+> @@ -304,12 +304,12 @@ int pblk_bio_add_pages(struct pblk *pblk, struct =
+bio *bio, gfp_t flags,
+> 	int i, ret;
+>=20
+> 	for (i =3D 0; i < nr_pages; i++) {
+> -		page =3D mempool_alloc(pblk->page_bio_pool, flags);
+> +		page =3D mempool_alloc(&pblk->page_bio_pool, flags);
+>=20
+> 		ret =3D bio_add_pc_page(q, bio, page, =
+PBLK_EXPOSED_PAGE_SIZE, 0);
+> 		if (ret !=3D PBLK_EXPOSED_PAGE_SIZE) {
+> 			pr_err("pblk: could not add page to bio\n");
+> -			mempool_free(page, pblk->page_bio_pool);
+> +			mempool_free(page, &pblk->page_bio_pool);
+> 			goto err;
+> 		}
+> 	}
+> @@ -1593,7 +1593,7 @@ static void pblk_line_put_ws(struct work_struct =
+*work)
+> 	struct pblk_line *line =3D line_put_ws->line;
+>=20
+> 	__pblk_line_put(pblk, line);
+> -	mempool_free(line_put_ws, pblk->gen_ws_pool);
+> +	mempool_free(line_put_ws, &pblk->gen_ws_pool);
+> }
+>=20
+> void pblk_line_put(struct kref *ref)
+> @@ -1610,7 +1610,7 @@ void pblk_line_put_wq(struct kref *ref)
+> 	struct pblk *pblk =3D line->pblk;
+> 	struct pblk_line_ws *line_put_ws;
+>=20
+> -	line_put_ws =3D mempool_alloc(pblk->gen_ws_pool, GFP_ATOMIC);
+> +	line_put_ws =3D mempool_alloc(&pblk->gen_ws_pool, GFP_ATOMIC);
+> 	if (!line_put_ws)
+> 		return;
+>=20
+> @@ -1752,7 +1752,7 @@ void pblk_line_close_ws(struct work_struct =
+*work)
+> 	struct pblk_line *line =3D line_ws->line;
+>=20
+> 	pblk_line_close(pblk, line);
+> -	mempool_free(line_ws, pblk->gen_ws_pool);
+> +	mempool_free(line_ws, &pblk->gen_ws_pool);
+> }
+>=20
+> void pblk_gen_run_ws(struct pblk *pblk, struct pblk_line *line, void =
+*priv,
+> @@ -1761,7 +1761,7 @@ void pblk_gen_run_ws(struct pblk *pblk, struct =
+pblk_line *line, void *priv,
+> {
+> 	struct pblk_line_ws *line_ws;
+>=20
+> -	line_ws =3D mempool_alloc(pblk->gen_ws_pool, gfp_mask);
+> +	line_ws =3D mempool_alloc(&pblk->gen_ws_pool, gfp_mask);
+>=20
+> 	line_ws->pblk =3D pblk;
+> 	line_ws->line =3D line;
+> diff --git a/drivers/lightnvm/pblk-init.c =
+b/drivers/lightnvm/pblk-init.c
+> index 91a5bc2556..9a984abd3d 100644
+> --- a/drivers/lightnvm/pblk-init.c
+> +++ b/drivers/lightnvm/pblk-init.c
+> @@ -23,7 +23,7 @@
+> static struct kmem_cache *pblk_ws_cache, *pblk_rec_cache, =
+*pblk_g_rq_cache,
+> 				*pblk_w_rq_cache;
+> static DECLARE_RWSEM(pblk_lock);
+> -struct bio_set *pblk_bio_set;
+> +struct bio_set pblk_bio_set;
+>=20
+> static int pblk_rw_io(struct request_queue *q, struct pblk *pblk,
+> 			  struct bio *bio)
+> @@ -341,7 +341,7 @@ static int pblk_core_init(struct pblk *pblk)
+> {
+> 	struct nvm_tgt_dev *dev =3D pblk->dev;
+> 	struct nvm_geo *geo =3D &dev->geo;
+> -	int max_write_ppas;
+> +	int ret, max_write_ppas;
+>=20
+> 	atomic64_set(&pblk->user_wa, 0);
+> 	atomic64_set(&pblk->pad_wa, 0);
+> @@ -375,33 +375,33 @@ static int pblk_core_init(struct pblk *pblk)
+> 		goto fail_free_pad_dist;
+>=20
+> 	/* Internal bios can be at most the sectors signaled by the =
+device. */
+> -	pblk->page_bio_pool =3D mempool_create_page_pool(NVM_MAX_VLBA, =
+0);
+> -	if (!pblk->page_bio_pool)
+> +	ret =3D mempool_init_page_pool(&pblk->page_bio_pool, =
+NVM_MAX_VLBA, 0);
+> +	if (ret)
+> 		goto free_global_caches;
+>=20
+> -	pblk->gen_ws_pool =3D =
+mempool_create_slab_pool(PBLK_GEN_WS_POOL_SIZE,
+> -							pblk_ws_cache);
+> -	if (!pblk->gen_ws_pool)
+> +	ret =3D mempool_init_slab_pool(&pblk->gen_ws_pool, =
+PBLK_GEN_WS_POOL_SIZE,
+> +				     pblk_ws_cache);
+> +	if (ret)
+> 		goto free_page_bio_pool;
+>=20
+> -	pblk->rec_pool =3D mempool_create_slab_pool(geo->all_luns,
+> -							pblk_rec_cache);
+> -	if (!pblk->rec_pool)
+> +	ret =3D mempool_init_slab_pool(&pblk->rec_pool, geo->all_luns,
+> +				     pblk_rec_cache);
+> +	if (ret)
+> 		goto free_gen_ws_pool;
+>=20
+> -	pblk->r_rq_pool =3D mempool_create_slab_pool(geo->all_luns,
+> -							=
+pblk_g_rq_cache);
+> -	if (!pblk->r_rq_pool)
+> +	ret =3D mempool_init_slab_pool(&pblk->r_rq_pool, geo->all_luns,
+> +				     pblk_g_rq_cache);
+> +	if (ret)
+> 		goto free_rec_pool;
+>=20
+> -	pblk->e_rq_pool =3D mempool_create_slab_pool(geo->all_luns,
+> -							=
+pblk_g_rq_cache);
+> -	if (!pblk->e_rq_pool)
+> +	ret =3D mempool_init_slab_pool(&pblk->e_rq_pool, geo->all_luns,
+> +				     pblk_g_rq_cache);
+> +	if (ret)
+> 		goto free_r_rq_pool;
+>=20
+> -	pblk->w_rq_pool =3D mempool_create_slab_pool(geo->all_luns,
+> -							=
+pblk_w_rq_cache);
+> -	if (!pblk->w_rq_pool)
+> +	ret =3D mempool_init_slab_pool(&pblk->w_rq_pool, geo->all_luns,
+> +				     pblk_w_rq_cache);
+> +	if (ret)
+> 		goto free_e_rq_pool;
+>=20
+> 	pblk->close_wq =3D alloc_workqueue("pblk-close-wq",
+> @@ -433,17 +433,17 @@ static int pblk_core_init(struct pblk *pblk)
+> free_close_wq:
+> 	destroy_workqueue(pblk->close_wq);
+> free_w_rq_pool:
+> -	mempool_destroy(pblk->w_rq_pool);
+> +	mempool_exit(&pblk->w_rq_pool);
+> free_e_rq_pool:
+> -	mempool_destroy(pblk->e_rq_pool);
+> +	mempool_exit(&pblk->e_rq_pool);
+> free_r_rq_pool:
+> -	mempool_destroy(pblk->r_rq_pool);
+> +	mempool_exit(&pblk->r_rq_pool);
+> free_rec_pool:
+> -	mempool_destroy(pblk->rec_pool);
+> +	mempool_exit(&pblk->rec_pool);
+> free_gen_ws_pool:
+> -	mempool_destroy(pblk->gen_ws_pool);
+> +	mempool_exit(&pblk->gen_ws_pool);
+> free_page_bio_pool:
+> -	mempool_destroy(pblk->page_bio_pool);
+> +	mempool_exit(&pblk->page_bio_pool);
+> free_global_caches:
+> 	pblk_free_global_caches(pblk);
+> fail_free_pad_dist:
+> @@ -462,12 +462,12 @@ static void pblk_core_free(struct pblk *pblk)
+> 	if (pblk->bb_wq)
+> 		destroy_workqueue(pblk->bb_wq);
+>=20
+> -	mempool_destroy(pblk->page_bio_pool);
+> -	mempool_destroy(pblk->gen_ws_pool);
+> -	mempool_destroy(pblk->rec_pool);
+> -	mempool_destroy(pblk->r_rq_pool);
+> -	mempool_destroy(pblk->e_rq_pool);
+> -	mempool_destroy(pblk->w_rq_pool);
+> +	mempool_exit(&pblk->page_bio_pool);
+> +	mempool_exit(&pblk->gen_ws_pool);
+> +	mempool_exit(&pblk->rec_pool);
+> +	mempool_exit(&pblk->r_rq_pool);
+> +	mempool_exit(&pblk->e_rq_pool);
+> +	mempool_exit(&pblk->w_rq_pool);
+>=20
+> 	pblk_free_global_caches(pblk);
+> 	kfree(pblk->pad_dist);
+> @@ -1297,18 +1297,18 @@ static int __init pblk_module_init(void)
+> {
+> 	int ret;
+>=20
+> -	pblk_bio_set =3D bioset_create(BIO_POOL_SIZE, 0, 0);
+> -	if (!pblk_bio_set)
+> -		return -ENOMEM;
+> +	ret =3D bioset_init(&pblk_bio_set, BIO_POOL_SIZE, 0, 0);
+> +	if (ret)
+> +		return ret;
+> 	ret =3D nvm_register_tgt_type(&tt_pblk);
+> 	if (ret)
+> -		bioset_free(pblk_bio_set);
+> +		bioset_exit(&pblk_bio_set);
+> 	return ret;
+> }
+>=20
+> static void pblk_module_exit(void)
+> {
+> -	bioset_free(pblk_bio_set);
+> +	bioset_exit(&pblk_bio_set);
+> 	nvm_unregister_tgt_type(&tt_pblk);
+> }
+>=20
+> diff --git a/drivers/lightnvm/pblk-read.c =
+b/drivers/lightnvm/pblk-read.c
+> index 9eee10f69d..c844ffb6ae 100644
+> --- a/drivers/lightnvm/pblk-read.c
+> +++ b/drivers/lightnvm/pblk-read.c
+> @@ -294,7 +294,7 @@ static int pblk_partial_read_bio(struct pblk =
+*pblk, struct nvm_rq *rqd,
+> 		kunmap_atomic(src_p);
+> 		kunmap_atomic(dst_p);
+>=20
+> -		mempool_free(src_bv.bv_page, pblk->page_bio_pool);
+> +		mempool_free(src_bv.bv_page, &pblk->page_bio_pool);
+>=20
+> 		hole =3D find_next_zero_bit(read_bitmap, nr_secs, hole + =
+1);
+> 	} while (hole < nr_secs);
+> @@ -429,7 +429,7 @@ int pblk_submit_read(struct pblk *pblk, struct bio =
+*bio)
+> 		struct bio *int_bio =3D NULL;
+>=20
+> 		/* Clone read bio to deal with read errors internally */
+> -		int_bio =3D bio_clone_fast(bio, GFP_KERNEL, =
+pblk_bio_set);
+> +		int_bio =3D bio_clone_fast(bio, GFP_KERNEL, =
+&pblk_bio_set);
+> 		if (!int_bio) {
+> 			pr_err("pblk: could not clone read bio\n");
+> 			goto fail_end_io;
+> diff --git a/drivers/lightnvm/pblk-recovery.c =
+b/drivers/lightnvm/pblk-recovery.c
+> index 3e079c2afa..364ad52a5b 100644
+> --- a/drivers/lightnvm/pblk-recovery.c
+> +++ b/drivers/lightnvm/pblk-recovery.c
+> @@ -60,7 +60,7 @@ void pblk_submit_rec(struct work_struct *work)
+> 		goto err;
+> 	}
+>=20
+> -	mempool_free(recovery, pblk->rec_pool);
+> +	mempool_free(recovery, &pblk->rec_pool);
+> 	return;
+>=20
+> err:
+> diff --git a/drivers/lightnvm/pblk-write.c =
+b/drivers/lightnvm/pblk-write.c
+> index 3e6f1ebd74..aef7fa2d40 100644
+> --- a/drivers/lightnvm/pblk-write.c
+> +++ b/drivers/lightnvm/pblk-write.c
+> @@ -122,7 +122,7 @@ static void pblk_end_w_fail(struct pblk *pblk, =
+struct nvm_rq *rqd)
+> 	if (unlikely(nr_ppas =3D=3D 1))
+> 		ppa_list =3D &rqd->ppa_addr;
+>=20
+> -	recovery =3D mempool_alloc(pblk->rec_pool, GFP_ATOMIC);
+> +	recovery =3D mempool_alloc(&pblk->rec_pool, GFP_ATOMIC);
+>=20
+> 	INIT_LIST_HEAD(&recovery->failed);
+>=20
+> @@ -134,7 +134,7 @@ static void pblk_end_w_fail(struct pblk *pblk, =
+struct nvm_rq *rqd)
+> 		/* Logic error */
+> 		if (bit > c_ctx->nr_valid) {
+> 			WARN_ONCE(1, "pblk: corrupted write request\n");
+> -			mempool_free(recovery, pblk->rec_pool);
+> +			mempool_free(recovery, &pblk->rec_pool);
+> 			goto out;
+> 		}
+>=20
+> @@ -142,7 +142,7 @@ static void pblk_end_w_fail(struct pblk *pblk, =
+struct nvm_rq *rqd)
+> 		entry =3D pblk_rb_sync_scan_entry(&pblk->rwb, &ppa);
+> 		if (!entry) {
+> 			pr_err("pblk: could not scan entry on write =
+failure\n");
+> -			mempool_free(recovery, pblk->rec_pool);
+> +			mempool_free(recovery, &pblk->rec_pool);
+> 			goto out;
+> 		}
+>=20
+> @@ -156,7 +156,7 @@ static void pblk_end_w_fail(struct pblk *pblk, =
+struct nvm_rq *rqd)
+> 	ret =3D pblk_recov_setup_rq(pblk, c_ctx, recovery, comp_bits, =
+c_entries);
+> 	if (ret) {
+> 		pr_err("pblk: could not recover from write failure\n");
+> -		mempool_free(recovery, pblk->rec_pool);
+> +		mempool_free(recovery, &pblk->rec_pool);
+> 		goto out;
+> 	}
+>=20
+> diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
+> index 9c682acfc5..feafa4de26 100644
+> --- a/drivers/lightnvm/pblk.h
+> +++ b/drivers/lightnvm/pblk.h
+> @@ -664,12 +664,12 @@ struct pblk {
+>=20
+> 	struct list_head compl_list;
+>=20
+> -	mempool_t *page_bio_pool;
+> -	mempool_t *gen_ws_pool;
+> -	mempool_t *rec_pool;
+> -	mempool_t *r_rq_pool;
+> -	mempool_t *w_rq_pool;
+> -	mempool_t *e_rq_pool;
+> +	mempool_t page_bio_pool;
+> +	mempool_t gen_ws_pool;
+> +	mempool_t rec_pool;
+> +	mempool_t r_rq_pool;
+> +	mempool_t w_rq_pool;
+> +	mempool_t e_rq_pool;
+>=20
+> 	struct workqueue_struct *close_wq;
+> 	struct workqueue_struct *bb_wq;
+> @@ -841,7 +841,7 @@ void pblk_write_should_kick(struct pblk *pblk);
+> /*
+>  * pblk read path
+>  */
+> -extern struct bio_set *pblk_bio_set;
+> +extern struct bio_set pblk_bio_set;
+> int pblk_submit_read(struct pblk *pblk, struct bio *bio);
+> int pblk_submit_read_gc(struct pblk *pblk, struct pblk_gc_rq *gc_rq);
+> /*
+> --
+> 2.17.0
 
-Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
----
- mm/vmscan.c |   87 +++++++++++++++++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 78 insertions(+), 9 deletions(-)
+Looks like two patches in one, but the changes look good to me as part =
+of
+the series.
 
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index d8a1ca350a58..f26ca1e00efb 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -367,6 +367,20 @@ int prealloc_shrinker(struct shrinker *shrinker)
- 			goto free_deferred;
- 	}
- 
-+	/*
-+	 * There is a window between prealloc_shrinker()
-+	 * and register_shrinker_prepared(). We don't want
-+	 * to clear bit of a shrinker in such the state
-+	 * in shrink_slab_memcg(), since this will impose
-+	 * restrictions on a code registering a shrinker
-+	 * (they would have to guarantee, their LRU lists
-+	 * are empty till shrinker is completely registered).
-+	 * So, we differ the situation, when 1)a shrinker
-+	 * is semi-registered (id is assigned, but it has
-+	 * not yet linked to shrinker_list) and 2)shrinker
-+	 * is not registered (id is not assigned).
-+	 */
-+	INIT_LIST_HEAD(&shrinker->list);
- 	return 0;
- 
- free_deferred:
-@@ -541,6 +555,67 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
- 	return freed;
- }
- 
-+#ifdef CONFIG_MEMCG_KMEM
-+static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
-+			struct mem_cgroup *memcg, int priority)
-+{
-+	struct memcg_shrinker_map *map;
-+	unsigned long freed = 0;
-+	int ret, i;
-+
-+	if (!memcg_kmem_enabled() || !mem_cgroup_online(memcg))
-+		return 0;
-+
-+	if (!down_read_trylock(&shrinker_rwsem))
-+		return 0;
-+
-+	/*
-+	 * 1) Caller passes only alive memcg, so map can't be NULL.
-+	 * 2) shrinker_rwsem protects from maps expanding.
-+	 */
-+	map = rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_map,
-+					true);
-+	BUG_ON(!map);
-+
-+	for_each_set_bit(i, map->map, shrinker_nr_max) {
-+		struct shrink_control sc = {
-+			.gfp_mask = gfp_mask,
-+			.nid = nid,
-+			.memcg = memcg,
-+		};
-+		struct shrinker *shrinker;
-+
-+		shrinker = idr_find(&shrinker_idr, i);
-+		if (unlikely(!shrinker)) {
-+			clear_bit(i, map->map);
-+			continue;
-+		}
-+		BUG_ON(!(shrinker->flags & SHRINKER_MEMCG_AWARE));
-+
-+		/* See comment in prealloc_shrinker() */
-+		if (unlikely(list_empty(&shrinker->list)))
-+			continue;
-+
-+		ret = do_shrink_slab(&sc, shrinker, priority);
-+		freed += ret;
-+
-+		if (rwsem_is_contended(&shrinker_rwsem)) {
-+			freed = freed ? : 1;
-+			break;
-+		}
-+	}
-+
-+	up_read(&shrinker_rwsem);
-+	return freed;
-+}
-+#else /* CONFIG_MEMCG_KMEM */
-+static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
-+			struct mem_cgroup *memcg, int priority)
-+{
-+	return 0;
-+}
-+#endif /* CONFIG_MEMCG_KMEM */
-+
- /**
-  * shrink_slab - shrink slab caches
-  * @gfp_mask: allocation context
-@@ -570,8 +645,8 @@ static unsigned long shrink_slab(gfp_t gfp_mask, int nid,
- 	struct shrinker *shrinker;
- 	unsigned long freed = 0;
- 
--	if (memcg && (!memcg_kmem_enabled() || !mem_cgroup_online(memcg)))
--		return 0;
-+	if (memcg && !mem_cgroup_is_root(memcg))
-+		return shrink_slab_memcg(gfp_mask, nid, memcg, priority);
- 
- 	if (!down_read_trylock(&shrinker_rwsem))
- 		goto out;
-@@ -583,13 +658,7 @@ static unsigned long shrink_slab(gfp_t gfp_mask, int nid,
- 			.memcg = memcg,
- 		};
- 
--		/*
--		 * If kernel memory accounting is disabled, we ignore
--		 * SHRINKER_MEMCG_AWARE flag and call all shrinkers
--		 * passing NULL for memcg.
--		 */
--		if (memcg_kmem_enabled() &&
--		    !!memcg != !!(shrinker->flags & SHRINKER_MEMCG_AWARE))
-+		if (!!memcg != !!(shrinker->flags & SHRINKER_MEMCG_AWARE))
- 			continue;
- 
- 		if (!(shrinker->flags & SHRINKER_NUMA_AWARE))
+checkpatch complains on a couple of patches in the series. Nothing big,
+but you probably want to have a look.
+
+Reviewed-by: Javier Gonz=C3=A1lez <javier@cnexlabs.com>
+
+
+--Apple-Mail=_D7977032-5A8D-4CA1-930F-7A6C48C19BE4
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename="signature.asc"
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE+ws7Qq+qZPG1bJoyIX4xUKFRnnQFAlsD7IEACgkQIX4xUKFR
+nnQJjw/+NH6iHDT0GWNvH1Sm+9q7oSCR3jKn6z1iWLSl1jn769+VPciqMkaSmFfD
+DHQiZd1w2/jZTMOntnl862u6eOLggaZy3TS5GukpScd1JxshPeQzBpWRszsU6q9t
+/nSroB9h/2TmvXr/MU5Am4JVxQuPHDdk7M5icx/Kqe9DT67V4SUZgPqcxNuwNcnZ
+C/rwmH/Usm6KyDdPLyFoYGb3aXh/DsAOTCjfJgq+18sc2huA+s6NABfjr7ZdWszD
+Th7vnlYxa0y6EkRivwFu4rwZc4K1km+GrfPsA1YnoZ5tEwoHb//oe6aUbM9JiBxX
+lDiQH9M9i7HMG8f6XYfUjKD1ij6LVIry3upy/VwU2QP5Rq8B4vmnzFtP3mqKG7vN
+K3fRWgjjggIH+P1us6RPrWeOYAOZ9OLc0u3X5vzL3pdA1DhoHYCx8wVhKpM4rPd6
+BeivGn4jGU0kDS9i0rE6q1Vw+vcHWJOH4E0KaaiQKTlk5eCMZnEVgLay1V9GUZuZ
+gGxJwn/NIYnrqOh3OVJJIoxjEXApEUXEUl0KOlEdu97/EuppHgX0sK73RXUpbMXH
+ZUHER951lo72t4RL0UvJKRDPzg0rr/cQoynCWQiFiOyLLABzT20akFVoe+LKCnc8
+2LgUL5NtaGXnewSgg8jexNJ/4xkaLA/I0dAsyoFxCqICq8K9eUY=
+=aSf2
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_D7977032-5A8D-4CA1-930F-7A6C48C19BE4--
