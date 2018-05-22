@@ -1,101 +1,217 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751317AbeEVJ3f (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 05:29:35 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:39363 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750707AbeEVJ3c (ORCPT
+        id S1751279AbeEVJdB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 05:33:01 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59224 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750707AbeEVJdA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 05:29:32 -0400
-X-Google-Smtp-Source: AB8JxZonbx4iSLsiRHJeoMpxJNNVJTk4Iu+Qnx/am8fNfUm3MfN1OoHswlKs4zGTYbQ9HHA2/HnD3w==
-Subject: Re: [RFC] perf: Allow fine-grained PMU access control
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org,
-        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
-References: <20180521092549.5349-1-tvrtko.ursulin@linux.intel.com>
- <20180522090527.GP12198@hirez.programming.kicks-ass.net>
-From: Tvrtko Ursulin <tursulin@ursulin.net>
-Message-ID: <017c4a20-b597-9c0e-4cf3-c0fd1d7bf3d7@ursulin.net>
-Date: Tue, 22 May 2018 10:29:29 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 22 May 2018 05:33:00 -0400
+Date: Tue, 22 May 2018 02:32:59 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: John Johansen <john.johansen@canonical.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH] Use an IDR to allocate apparmor secids
+Message-ID: <20180522093259.GA30182@bombadil.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20180522090527.GP12198@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Replace the custom usage of the radix tree to store a list of free IDs
+with the IDR.
 
-On 22/05/18 10:05, Peter Zijlstra wrote:
-> On Mon, May 21, 2018 at 10:25:49AM +0100, Tvrtko Ursulin wrote:
->> From: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
->>
->> For situations where sysadmins might want to allow different level of
->> of access control for different PMUs, we start creating per-PMU
->> perf_event_paranoid controls in sysfs.
-> 
-> Could you explain how exactly this makes sense?
-> 
-> For example, how does it make sense for one PMU to reveal kernel data
-> while another PMU is not allowed.
-> 
-> Once you allow one PMU to do so, the secret is out.
-> 
-> So please explain, in excruciating detail, how you want to use this and
-> how exactly that makes sense from a security pov.
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 
-Not sure it will be excruciating but will try to explain once again.
+ security/apparmor/secid.c |  114 ++++------------------------------------------
+ 1 file changed, 11 insertions(+), 103 deletions(-)
 
-There are two things:
-
-1. i915 PMU which exports data such as different engine busyness levels. 
-(Perhaps you remember, you helped us implement this from the perf API 
-angle.)
-
-2. Customers who want to look at those stats in production.
-
-They want to use it to answer questions such as:
-
-a) How loaded is my server and can it take one more of X type of job?
-b) What is the least utilised video engine to submit the next packet of 
-work to?
-c) What is the least utilised server to schedule the next transcoding 
-job on?
-
-Current option for them is to turn off the global paranoid setting which 
-then enables unprivileged access to _all_ PMU providers.
-
-To me it sounded quite logical that it would be better for the paranoid 
-knob to be more fine-grained, so that they can configure their servers 
-so only access to needed data is possible.
-
-I am not sure what do you mean by "Once you allow one PMU to do so, the 
-secret is out."? What secret? Are you implying that enabling 
-unprivileged access to i915 engine busyness data opens up access to CPU 
-PMU's as well via some side channel?
-
-Regards,
-
-Tvrtko
-
->> These work in equivalent fashion as the existing perf_event_paranoid
->> sysctl, which now becomes the parent control for each PMU.
->>
->> On PMU registration the global/parent value will be inherited by each PMU,
->> as it will be propagated to all registered PMUs when the sysctl is
->> updated.
->>
->> At any later point individual PMU access controls, located in
->> <sysfs>/device/<pmu-name>/perf_event_paranoid, can be adjusted to achieve
->> fine grained access control.
->>
-> 
+diff --git a/security/apparmor/secid.c b/security/apparmor/secid.c
+index c2f0c1571156..3ad94b2ffbb2 100644
+--- a/security/apparmor/secid.c
++++ b/security/apparmor/secid.c
+@@ -18,6 +18,7 @@
+ #include <linux/errno.h>
+ #include <linux/err.h>
+ #include <linux/gfp.h>
++#include <linux/idr.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+ 
+@@ -30,18 +31,10 @@
+ /*
+  * secids - do not pin labels with a refcount. They rely on the label
+  * properly updating/freeing them
+- *
+- * A singly linked free list is used to track secids that have been
+- * freed and reuse them before allocating new ones
+  */
+ 
+-#define FREE_LIST_HEAD 1
+-
+-static RADIX_TREE(aa_secids_map, GFP_ATOMIC);
++static DEFINE_IDR(aa_secids);
+ static DEFINE_SPINLOCK(secid_lock);
+-static u32 alloced_secid = FREE_LIST_HEAD;
+-static u32 free_list = FREE_LIST_HEAD;
+-static unsigned long free_count;
+ 
+ /*
+  * TODO: allow policy to reserve a secid range?
+@@ -49,65 +42,6 @@ static unsigned long free_count;
+  * TODO: use secid_update in label replace
+  */
+ 
+-#define SECID_MAX U32_MAX
+-
+-/* TODO: mark free list as exceptional */
+-static void *to_ptr(u32 secid)
+-{
+-	return (void *)
+-		((((unsigned long) secid) << RADIX_TREE_EXCEPTIONAL_SHIFT));
+-}
+-
+-static u32 to_secid(void *ptr)
+-{
+-	return (u32) (((unsigned long) ptr) >> RADIX_TREE_EXCEPTIONAL_SHIFT);
+-}
+-
+-
+-/* TODO: tag free_list entries to mark them as different */
+-static u32 __pop(struct aa_label *label)
+-{
+-	u32 secid = free_list;
+-	void __rcu **slot;
+-	void *entry;
+-
+-	if (free_list == FREE_LIST_HEAD)
+-		return AA_SECID_INVALID;
+-
+-	slot = radix_tree_lookup_slot(&aa_secids_map, secid);
+-	AA_BUG(!slot);
+-	entry = radix_tree_deref_slot_protected(slot, &secid_lock);
+-	free_list = to_secid(entry);
+-	radix_tree_replace_slot(&aa_secids_map, slot, label);
+-	free_count--;
+-
+-	return secid;
+-}
+-
+-static void __push(u32 secid)
+-{
+-	void __rcu **slot;
+-
+-	slot = radix_tree_lookup_slot(&aa_secids_map, secid);
+-	AA_BUG(!slot);
+-	radix_tree_replace_slot(&aa_secids_map, slot, to_ptr(free_list));
+-	free_list = secid;
+-	free_count++;
+-}
+-
+-static struct aa_label * __secid_update(u32 secid, struct aa_label *label)
+-{
+-	struct aa_label *old;
+-	void __rcu **slot;
+-
+-	slot = radix_tree_lookup_slot(&aa_secids_map, secid);
+-	AA_BUG(!slot);
+-	old = radix_tree_deref_slot_protected(slot, &secid_lock);
+-	radix_tree_replace_slot(&aa_secids_map, slot, label);
+-
+-	return old;
+-}
+-
+ /**
+  * aa_secid_update - update a secid mapping to a new label
+  * @secid: secid to update
+@@ -115,11 +49,10 @@ static struct aa_label * __secid_update(u32 secid, struct aa_label *label)
+  */
+ void aa_secid_update(u32 secid, struct aa_label *label)
+ {
+-	struct aa_label *old;
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&secid_lock, flags);
+-	old = __secid_update(secid, label);
++	idr_replace(&aa_secids, label, secid);
+ 	spin_unlock_irqrestore(&secid_lock, flags);
+ }
+ 
+@@ -132,7 +65,7 @@ struct aa_label *aa_secid_to_label(u32 secid)
+ 	struct aa_label *label;
+ 
+ 	rcu_read_lock();
+-	label = radix_tree_lookup(&aa_secids_map, secid);
++	label = idr_find(&aa_secids, secid);
+ 	rcu_read_unlock();
+ 
+ 	return label;
+@@ -167,7 +100,6 @@ int apparmor_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
+ 	return 0;
+ }
+ 
+-
+ int apparmor_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid)
+ {
+ 	struct aa_label *label;
+@@ -186,7 +118,6 @@ void apparmor_release_secctx(char *secdata, u32 seclen)
+ 	kfree(secdata);
+ }
+ 
+-
+ /**
+  * aa_alloc_secid - allocate a new secid for a profile
+  */
+@@ -195,35 +126,12 @@ u32 aa_alloc_secid(struct aa_label *label, gfp_t gfp)
+ 	unsigned long flags;
+ 	u32 secid;
+ 
+-	/* racey, but at worst causes new allocation instead of reuse */
+-	if (free_list == FREE_LIST_HEAD) {
+-		bool preload = 0;
+-		int res;
+-
+-retry:
+-		if (gfpflags_allow_blocking(gfp) && !radix_tree_preload(gfp))
+-			preload = 1;
+-		spin_lock_irqsave(&secid_lock, flags);
+-		if (alloced_secid != SECID_MAX) {
+-			secid = ++alloced_secid;
+-			res = radix_tree_insert(&aa_secids_map, secid, label);
+-			AA_BUG(res == -EEXIST);
+-		} else {
+-			secid = AA_SECID_INVALID;
+-		}
+-		spin_unlock_irqrestore(&secid_lock, flags);
+-		if (preload)
+-			radix_tree_preload_end();
+-	} else {
+-		spin_lock_irqsave(&secid_lock, flags);
+-		/* remove entry from free list */
+-		secid = __pop(label);
+-		if (secid == AA_SECID_INVALID) {
+-			spin_unlock_irqrestore(&secid_lock, flags);
+-			goto retry;
+-		}
+-		spin_unlock_irqrestore(&secid_lock, flags);
+-	}
++	idr_preload(gfp);
++	spin_lock_irqsave(&secid_lock, flags);
++	secid = idr_alloc(&aa_secids, label, 0, 0, GFP_ATOMIC);
++	/* XXX: Can return -ENOMEM */
++	spin_unlock_irqrestore(&secid_lock, flags);
++	idr_preload_end();
+ 
+ 	return secid;
+ }
+@@ -237,6 +145,6 @@ void aa_free_secid(u32 secid)
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&secid_lock, flags);
+-	__push(secid);
++	idr_remove(&aa_secids, secid);
+ 	spin_unlock_irqrestore(&secid_lock, flags);
+ }
