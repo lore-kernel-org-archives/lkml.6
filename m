@@ -1,73 +1,154 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753124AbeEVTko (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 15:40:44 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:44267 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753109AbeEVTkl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 15:40:41 -0400
-X-Google-Smtp-Source: AB8JxZqGw6ZVkocy+M3Ztv7FgV3Kjl2FR579iAIYWVbFkpUeSyViMZMxM7dkQaQZt/ocvrjTEPWt8Q==
-Date: Tue, 22 May 2018 14:40:39 -0500
-From: Rob Herring <robh@kernel.org>
-To: Michal =?utf-8?B?Vm9rw6HEjQ==?= <vokac.m@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, f.fainelli@gmail.com,
-        vivien.didelot@savoirfairelinux.com, andrew@lunn.ch,
-        mark.rutland@arm.com, davem@davemloft.net, michal.vokac@ysoft.com
-Subject: Re: [PATCH net-next v2 1/7] net: dsa: qca8k: Add QCA8334 binding
- documentation
-Message-ID: <20180522194039.GA15413@rob-hp-laptop>
-References: <1526987792-56861-1-git-send-email-michal.vokac@ysoft.com>
- <1526987792-56861-2-git-send-email-michal.vokac@ysoft.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1526987792-56861-2-git-send-email-michal.vokac@ysoft.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1752940AbeEVTlQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 15:41:16 -0400
+Received: from mga04.intel.com ([192.55.52.120]:18869 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752257AbeEVTcC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 15:32:02 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,430,1520924400";
+   d="scan'208";a="226406347"
+From: Reinette Chatre <reinette.chatre@intel.com>
+To: tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
+        vikas.shivappa@linux.intel.com
+Cc: gavin.hindman@intel.com, jithu.joseph@intel.com, dave.hansen@intel.com,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Reinette Chatre <reinette.chatre@intel.com>
+Subject: [PATCH V4 04/38] x86/intel_rdt: Introduce resource group's mode resctrl file
+Date: Tue, 22 May 2018 04:28:52 -0700
+Message-Id: <902574465439924850a6e7c4cc06b8a79bd7d2b4.1526987654.git.reinette.chatre@intel.com>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <cover.1526987654.git.reinette.chatre@intel.com>
+References: <cover.1526987654.git.reinette.chatre@intel.com>
+In-Reply-To: <cover.1526987654.git.reinette.chatre@intel.com>
+References: <cover.1526987654.git.reinette.chatre@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 01:16:26PM +0200, Michal Vokáč wrote:
-> Add support for the four-port variant of the Qualcomm QCA833x switch.
-> 
-> The CPU port default link settings can be reconfigured using
-> a fixed-link sub-node.
-> 
-> Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
-> ---
-> Changes in v2:
->  - Add commit message and document fixed-link binding.
-> 
->  .../devicetree/bindings/net/dsa/qca8k.txt          | 23 +++++++++++++++++++++-
->  1 file changed, 22 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/dsa/qca8k.txt b/Documentation/devicetree/bindings/net/dsa/qca8k.txt
-> index 9c67ee4..15b9057 100644
-> --- a/Documentation/devicetree/bindings/net/dsa/qca8k.txt
-> +++ b/Documentation/devicetree/bindings/net/dsa/qca8k.txt
-> @@ -2,7 +2,10 @@
->  
->  Required properties:
->  
-> -- compatible: should be "qca,qca8337"
-> +- compatible: should be one of:
-> +    "qca,qca8334"
-> +    "qca,qca8337"
-> +
->  - #size-cells: must be 0
->  - #address-cells: must be 1
->  
-> @@ -14,6 +17,20 @@ port and PHY id, each subnode describing a port needs to have a valid phandle
->  referencing the internal PHY connected to it. The CPU port of this switch is
->  always port 0.
->  
-> +A CPU port node has the following optional property:
+A new resctrl file "mode" associated with each resource group
+is introduced. This file will display the resource group's current mode
+and an administrator can also use it to modify the resource group's
+mode.
 
-s/property/node/
+Only shareable mode is currently supported.
 
-Otherwise,
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+---
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 83 ++++++++++++++++++++++++++++++++
+ 1 file changed, 83 insertions(+)
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+index 70d7846041fe..eac60602c87b 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
++++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+@@ -147,6 +147,24 @@ enum rdtgrp_mode rdtgroup_mode_by_closid(int closid)
+ 	return RDT_NUM_MODES;
+ }
+ 
++static const char * const rdt_mode_str[] = {
++	[RDT_MODE_SHAREABLE]	= "shareable",
++};
++
++/**
++ * rdtgroup_mode_str - Return the string representation of mode
++ * @mode: the resource group mode as &enum rdtgroup_mode
++ *
++ * Return: string representation of valid mode, "unknown" otherwise
++ */
++static const char *rdtgroup_mode_str(enum rdtgrp_mode mode)
++{
++	if (mode < RDT_MODE_SHAREABLE || mode >= RDT_NUM_MODES)
++		return "unknown";
++
++	return rdt_mode_str[mode];
++}
++
+ /* set uid and gid of rdtgroup dirs and files to that of the creator */
+ static int rdtgroup_kn_set_ugid(struct kernfs_node *kn)
+ {
+@@ -761,6 +779,63 @@ static ssize_t max_threshold_occ_write(struct kernfs_open_file *of,
+ 	return nbytes;
+ }
+ 
++/*
++ * rdtgroup_mode_show - Display mode of this resource group
++ */
++static int rdtgroup_mode_show(struct kernfs_open_file *of,
++			      struct seq_file *s, void *v)
++{
++	struct rdtgroup *rdtgrp;
++
++	rdtgrp = rdtgroup_kn_lock_live(of->kn);
++	if (!rdtgrp) {
++		rdtgroup_kn_unlock(of->kn);
++		return -ENOENT;
++	}
++
++	seq_printf(s, "%s\n", rdtgroup_mode_str(rdtgrp->mode));
++
++	rdtgroup_kn_unlock(of->kn);
++	return 0;
++}
++
++static ssize_t rdtgroup_mode_write(struct kernfs_open_file *of,
++				   char *buf, size_t nbytes, loff_t off)
++{
++	struct rdtgroup *rdtgrp;
++	enum rdtgrp_mode mode;
++	int ret = 0;
++
++	/* Valid input requires a trailing newline */
++	if (nbytes == 0 || buf[nbytes - 1] != '\n')
++		return -EINVAL;
++	buf[nbytes - 1] = '\0';
++
++	rdtgrp = rdtgroup_kn_lock_live(of->kn);
++	if (!rdtgrp) {
++		rdtgroup_kn_unlock(of->kn);
++		return -ENOENT;
++	}
++
++	rdt_last_cmd_clear();
++
++	mode = rdtgrp->mode;
++
++	if ((!strcmp(buf, "shareable") && mode == RDT_MODE_SHAREABLE))
++		goto out;
++
++	if (!strcmp(buf, "shareable")) {
++		rdtgrp->mode = RDT_MODE_SHAREABLE;
++	} else {
++		rdt_last_cmd_printf("unknown/unsupported mode\n");
++		ret = -EINVAL;
++	}
++
++out:
++	rdtgroup_kn_unlock(of->kn);
++	return ret ?: nbytes;
++}
++
+ /* rdtgroup information files for one cache resource. */
+ static struct rftype res_common_files[] = {
+ 	{
+@@ -874,6 +949,14 @@ static struct rftype res_common_files[] = {
+ 		.seq_show	= rdtgroup_schemata_show,
+ 		.fflags		= RF_CTRL_BASE,
+ 	},
++	{
++		.name		= "mode",
++		.mode		= 0644,
++		.kf_ops		= &rdtgroup_kf_single_ops,
++		.write		= rdtgroup_mode_write,
++		.seq_show	= rdtgroup_mode_show,
++		.fflags		= RF_CTRL_BASE,
++	},
+ };
+ 
+ static int rdtgroup_add_files(struct kernfs_node *kn, unsigned long fflags)
+-- 
+2.13.6
