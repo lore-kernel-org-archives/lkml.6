@@ -1,62 +1,198 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753042AbeEVV2k (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 17:28:40 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:50530 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752660AbeEVV2h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 17:28:37 -0400
-To: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-block@vger.kernel.org
-Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Jonathan Corbet <corbet@lwn.net>
-References: <20180423233046.21476-1-logang@deltatee.com>
- <20180423233046.21476-7-logang@deltatee.com>
- <59b7762e-6d38-7746-20f3-22fd762ecfe7@infradead.org>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <9e20024d-8b32-61ff-4b9a-c9392082987f@deltatee.com>
-Date: Tue, 22 May 2018 15:28:19 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1753130AbeEVV3i (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 17:29:38 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:39374 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752733AbeEVV3g (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 17:29:36 -0400
+X-Google-Smtp-Source: AB8JxZolr+KN+euYzY5cZ0IZgYX6udzlIt3FqMQYS8DIdLIE1r8qB1Qn2oJyCrUeRo81+DkrrmkBQw==
+From: "=?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?=" <jprvita@gmail.com>
+X-Google-Original-From: =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>
+To: Johannes Berg <johannes@sipsolutions.net>,
+        "David S. Miller" <davem@davemloft.net>
+Cc: linux@endlessm.com,
+        =?UTF-8?q?Micha=C5=82=20K=C4=99pie=C5=84?= <kernel@kempniu.pl>,
+        =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] rfkill: Rename rfkill_any_led_trigger* functions
+Date: Tue, 22 May 2018 14:29:31 -0700
+Message-Id: <20180522212932.5357-1-jprvita@endlessm.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-In-Reply-To: <59b7762e-6d38-7746-20f3-22fd762ecfe7@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: corbet@lwn.net, christian.koenig@amd.com, alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, rdunlap@infradead.org
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v4 06/14] PCI/P2PDMA: Add P2P DMA driver writer's
- documentation
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for the review Randy! I'll make the changes for the next time we
-post the series.
+Rename these functions to rfkill_global_led_trigger*, as they are going
+to be extended to handle another global rfkill led trigger.
 
-On 22/05/18 03:24 PM, Randy Dunlap wrote:
->> +The first task an orchestrator driver must do is compile a list of
->> +all client drivers that will be involved in a given transaction. For
->> +example, the NVMe Target driver creates a list including all NVMe drives
->                                                                      ^^^^^^
->                                                                    or drivers ?
-> Could be either, I guess, but the previous sentence says "compile a list of drivers."
+This commit does not change any functionality.
 
-I did mean "drives". But perhaps "devices" would be more clear. A list
-of all NVMe drivers doesn't make much sense as I'm pretty sure there is
-only one NVMe driver.
+Signed-off-by: João Paulo Rechi Vita <jprvita@endlessm.com>
+---
+ net/rfkill/core.c | 47 ++++++++++++++++++++++++-----------------------
+ 1 file changed, 24 insertions(+), 23 deletions(-)
 
-Logan
+diff --git a/net/rfkill/core.c b/net/rfkill/core.c
+index 59d0eb960275..6d64d14f4b0a 100644
+--- a/net/rfkill/core.c
++++ b/net/rfkill/core.c
+@@ -178,9 +178,9 @@ static void rfkill_led_trigger_unregister(struct rfkill *rfkill)
+ }
+ 
+ static struct led_trigger rfkill_any_led_trigger;
+-static struct work_struct rfkill_any_work;
++static struct work_struct rfkill_global_led_trigger_work;
+ 
+-static void rfkill_any_led_trigger_worker(struct work_struct *work)
++static void rfkill_global_led_trigger_worker(struct work_struct *work)
+ {
+ 	enum led_brightness brightness = LED_OFF;
+ 	struct rfkill *rfkill;
+@@ -197,28 +197,29 @@ static void rfkill_any_led_trigger_worker(struct work_struct *work)
+ 	led_trigger_event(&rfkill_any_led_trigger, brightness);
+ }
+ 
+-static void rfkill_any_led_trigger_event(void)
++static void rfkill_global_led_trigger_event(void)
+ {
+-	schedule_work(&rfkill_any_work);
++	schedule_work(&rfkill_global_led_trigger_work);
+ }
+ 
+-static void rfkill_any_led_trigger_activate(struct led_classdev *led_cdev)
++static void rfkill_global_led_trigger_activate(struct led_classdev *led_cdev)
+ {
+-	rfkill_any_led_trigger_event();
++	rfkill_global_led_trigger_event();
+ }
+ 
+-static int rfkill_any_led_trigger_register(void)
++static int rfkill_global_led_trigger_register(void)
+ {
+-	INIT_WORK(&rfkill_any_work, rfkill_any_led_trigger_worker);
++	INIT_WORK(&rfkill_global_led_trigger_work,
++			rfkill_global_led_trigger_worker);
+ 	rfkill_any_led_trigger.name = "rfkill-any";
+-	rfkill_any_led_trigger.activate = rfkill_any_led_trigger_activate;
++	rfkill_any_led_trigger.activate = rfkill_global_led_trigger_activate;
+ 	return led_trigger_register(&rfkill_any_led_trigger);
+ }
+ 
+-static void rfkill_any_led_trigger_unregister(void)
++static void rfkill_global_led_trigger_unregister(void)
+ {
+ 	led_trigger_unregister(&rfkill_any_led_trigger);
+-	cancel_work_sync(&rfkill_any_work);
++	cancel_work_sync(&rfkill_global_led_trigger_work);
+ }
+ #else
+ static void rfkill_led_trigger_event(struct rfkill *rfkill)
+@@ -234,16 +235,16 @@ static inline void rfkill_led_trigger_unregister(struct rfkill *rfkill)
+ {
+ }
+ 
+-static void rfkill_any_led_trigger_event(void)
++static void rfkill_global_led_trigger_event(void)
+ {
+ }
+ 
+-static int rfkill_any_led_trigger_register(void)
++static int rfkill_global_led_trigger_register(void)
+ {
+ 	return 0;
+ }
+ 
+-static void rfkill_any_led_trigger_unregister(void)
++static void rfkill_global_led_trigger_unregister(void)
+ {
+ }
+ #endif /* CONFIG_RFKILL_LEDS */
+@@ -354,7 +355,7 @@ static void rfkill_set_block(struct rfkill *rfkill, bool blocked)
+ 	spin_unlock_irqrestore(&rfkill->lock, flags);
+ 
+ 	rfkill_led_trigger_event(rfkill);
+-	rfkill_any_led_trigger_event();
++	rfkill_global_led_trigger_event();
+ 
+ 	if (prev != curr)
+ 		rfkill_event(rfkill);
+@@ -535,7 +536,7 @@ bool rfkill_set_hw_state(struct rfkill *rfkill, bool blocked)
+ 	spin_unlock_irqrestore(&rfkill->lock, flags);
+ 
+ 	rfkill_led_trigger_event(rfkill);
+-	rfkill_any_led_trigger_event();
++	rfkill_global_led_trigger_event();
+ 
+ 	if (rfkill->registered && prev != blocked)
+ 		schedule_work(&rfkill->uevent_work);
+@@ -579,7 +580,7 @@ bool rfkill_set_sw_state(struct rfkill *rfkill, bool blocked)
+ 		schedule_work(&rfkill->uevent_work);
+ 
+ 	rfkill_led_trigger_event(rfkill);
+-	rfkill_any_led_trigger_event();
++	rfkill_global_led_trigger_event();
+ 
+ 	return blocked;
+ }
+@@ -629,7 +630,7 @@ void rfkill_set_states(struct rfkill *rfkill, bool sw, bool hw)
+ 			schedule_work(&rfkill->uevent_work);
+ 
+ 		rfkill_led_trigger_event(rfkill);
+-		rfkill_any_led_trigger_event();
++		rfkill_global_led_trigger_event();
+ 	}
+ }
+ EXPORT_SYMBOL(rfkill_set_states);
+@@ -1046,7 +1047,7 @@ int __must_check rfkill_register(struct rfkill *rfkill)
+ #endif
+ 	}
+ 
+-	rfkill_any_led_trigger_event();
++	rfkill_global_led_trigger_event();
+ 	rfkill_send_events(rfkill, RFKILL_OP_ADD);
+ 
+ 	mutex_unlock(&rfkill_global_mutex);
+@@ -1079,7 +1080,7 @@ void rfkill_unregister(struct rfkill *rfkill)
+ 	mutex_lock(&rfkill_global_mutex);
+ 	rfkill_send_events(rfkill, RFKILL_OP_DEL);
+ 	list_del_init(&rfkill->node);
+-	rfkill_any_led_trigger_event();
++	rfkill_global_led_trigger_event();
+ 	mutex_unlock(&rfkill_global_mutex);
+ 
+ 	rfkill_led_trigger_unregister(rfkill);
+@@ -1332,7 +1333,7 @@ static int __init rfkill_init(void)
+ 	if (error)
+ 		goto error_misc;
+ 
+-	error = rfkill_any_led_trigger_register();
++	error = rfkill_global_led_trigger_register();
+ 	if (error)
+ 		goto error_led_trigger;
+ 
+@@ -1346,7 +1347,7 @@ static int __init rfkill_init(void)
+ 
+ #ifdef CONFIG_RFKILL_INPUT
+ error_input:
+-	rfkill_any_led_trigger_unregister();
++	rfkill_global_led_trigger_unregister();
+ #endif
+ error_led_trigger:
+ 	misc_deregister(&rfkill_miscdev);
+@@ -1362,7 +1363,7 @@ static void __exit rfkill_exit(void)
+ #ifdef CONFIG_RFKILL_INPUT
+ 	rfkill_handler_exit();
+ #endif
+-	rfkill_any_led_trigger_unregister();
++	rfkill_global_led_trigger_unregister();
+ 	misc_deregister(&rfkill_miscdev);
+ 	class_unregister(&rfkill_class);
+ }
+-- 
+2.17.0
