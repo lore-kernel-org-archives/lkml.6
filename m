@@ -1,112 +1,175 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751451AbeEVQsT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 12:48:19 -0400
-Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:48648 "EHLO
-        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751196AbeEVQsS (ORCPT
+        id S1751479AbeEVQtE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 12:49:04 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:41642 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751269AbeEVQtB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 12:48:18 -0400
-Subject: Re: [PATCH v10 12/16] vb2: add in-fence support to QBUF
-To: Ezequiel Garcia <ezequiel@collabora.com>, linux-media@vger.kernel.org
-Cc: kernel@collabora.com, Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
-        Shuah Khan <shuahkh@osg.samsung.com>, Pawel Osciak <pawel@osciak.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Brian Starkey <brian.starkey@arm.com>, linux-kernel@vger.kernel.org,
-        Gustavo Padovan <gustavo.padovan@collabora.com>
-References: <20180521165946.11778-1-ezequiel@collabora.com>
- <20180521165946.11778-13-ezequiel@collabora.com>
- <7462919b-ad6f-eb8c-7389-ef0ff6e9d1a2@xs4all.nl>
- <062e8128491e63927f4669ad08c40d29dfbb4141.camel@collabora.com>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <8848cdb3-73cf-2122-4c50-a57fcd83e151@xs4all.nl>
-Date: Tue, 22 May 2018 18:48:15 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Tue, 22 May 2018 12:49:01 -0400
+X-Google-Smtp-Source: AB8JxZqa2mfqws2iSnFr5n5UuTTLHYGMUGDXocl0qAylQzc/IThJaFojQOQ/ONtuU6Oz46cdXFBEeA==
+Subject: Re: [PATCH INTERNAL 3/3] PCI: iproc: Disable MSI parsing in certain
+ PAXC blocks
+To: Robin Murphy <robin.murphy@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: poza@codeaurora.org, Bjorn Helgaas <bhelgaas@google.com>,
+        Bjorn Helgaas <helgaas@kernel.org>, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, linux-pci@vger.kernel.org,
+        linux-pci-owner@vger.kernel.org
+References: <1526577692-21104-1-git-send-email-ray.jui@broadcom.com>
+ <1526577692-21104-4-git-send-email-ray.jui@broadcom.com>
+ <ad41ea7f16414a83a2b3d7e6192bcf79@codeaurora.org>
+ <20180518135614.GA18605@e107981-ln.cambridge.arm.com>
+ <e433f2cf-63c5-37c3-f7ef-15ff0aa67e4f@broadcom.com>
+ <20180521133305.GB1443@e107981-ln.cambridge.arm.com>
+ <073832d4-88a0-efa1-2da8-5e07479e51e0@arm.com>
+From: Ray Jui <ray.jui@broadcom.com>
+Message-ID: <d8988a30-f604-f00d-cc8f-db01b4def3c9@broadcom.com>
+Date: Tue, 22 May 2018 09:48:55 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <062e8128491e63927f4669ad08c40d29dfbb4141.camel@collabora.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <073832d4-88a0-efa1-2da8-5e07479e51e0@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfDB6XVyB+Eakn8YN8QDAih+/rFGhG+RlEcd6nYpYTZICHwR1H60ncVvnCSToyd0N5lrsEtsWt7BMu+hj0WOtvTCOZsHxnpys9tmtNvAAQAimBQ/pWph7
- APdj8GUfjNd6RTGrY4DidGalb34n8mVx7C5PSE6PC4ztH1jUXjlqVMQp7nEOBsVNybpAq7bixNBLUHHaDfAMCjw/8j9bjo19ILTFmOUlN0DatDdsugcynJM1
- eYpehRkLF0GdpU3LlDVtucR4o+0yCR92PcQmvQyFwEJ/HohdInY1vz89iiCEYBfvFeuDbcZHzSv8Fk7/vG8zx7DhUA+QHFsdhXa/HiMajPeqWEHYbc7gwRB5
- FnsF0wdlfUiAqu7gJgRjkR5QKVwkDUi6DvTSs77iuFeMgn6CpEwyQbX2a5EjSsfgBUlATsP7oqdAVnGyboFz51Ik65YVrdztQdUnhKOjAoqVRLCu3mJSdkQR
- bgVPTThJByAxJVzfRQ4pM1ApqRq3S/z6kQMQQJTwA1JE6bOyryQ+4h67H04ZfLUgGyjGGpAMaGWkKLHFsPrSMES4w1EWJZHS61cseQw/OhFYauaMD4e7XUny
- gwlyASYdugYy53SzEu6vvOay
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/05/18 18:22, Ezequiel Garcia wrote:
->>> @@ -1615,7 +1762,12 @@ static void __vb2_dqbuf(struct vb2_buffer *vb)
->>>  		return;
->>>  
->>>  	vb->state = VB2_BUF_STATE_DEQUEUED;
->>> -
->>> +	if (vb->in_fence) {
->>> +		if (dma_fence_remove_callback(vb->in_fence, &vb->fence_cb))
->>> +			__vb2_buffer_put(vb);
->>> +		dma_fence_put(vb->in_fence);
->>> +		vb->in_fence = NULL;
->>> +	}
->>>  	/* unmap DMABUF buffer */
->>>  	if (q->memory == VB2_MEMORY_DMABUF)
->>>  		for (i = 0; i < vb->num_planes; ++i) {
->>> @@ -1653,7 +1805,7 @@ int vb2_core_dqbuf(struct vb2_queue *q, unsigned int *pindex, void *pb,
->>>  	if (pindex)
->>>  		*pindex = vb->index;
->>>  
->>> -	/* Fill buffer information for the userspace */
->>> +	/* Fill buffer information for userspace */
->>>  	if (pb)
->>>  		call_void_bufop(q, fill_user_buffer, vb, pb);
->>>  
->>> @@ -1700,8 +1852,8 @@ static void __vb2_queue_cancel(struct vb2_queue *q)
->>>  	if (WARN_ON(atomic_read(&q->owned_by_drv_count))) {
->>>  		for (i = 0; i < q->num_buffers; ++i)
->>>  			if (q->bufs[i]->state == VB2_BUF_STATE_ACTIVE) {
->>> -				pr_warn("driver bug: stop_streaming operation is leaving buf %p in active state\n",
->>> -					q->bufs[i]);
->>> +				pr_warn("driver bug: stop_streaming operation is leaving buf[%d] 0x%p in active
->>> state\n",
->>> +					q->bufs[i]->index, q->bufs[i]);
->>>  				vb2_buffer_done(q->bufs[i], VB2_BUF_STATE_ERROR);
->>>  			}
->>
->> Shouldn't any pending fences be canceled here?
->>
-> 
-> No, we don't have to flush -- that's the reason of the refcount :)
-> The qbuf_work won't do anything if all the buffers are returned
-> by the driver (with error or done state), and if !streaming.
-> 
-> Also, note that's why qbuf_work checks for the queued state, and not
-> for the error state.
-> 
->> I feel uncomfortable with the refcounting of buffers, I'd rather that when we
->> cancel the queue all fences for buffers are removed/canceled/whatever.
->>
->> Is there any reason for refcounting if we cancel all pending fences here?
->>
->> Note that besides canceling fences you also need to cancel/flush __qbuf_work.
->>
->>
-> 
-> Like I said above, I'm trying to avoid cancel/flushing the workqueue.
-> Currently, I believe it works fine without any flushing, provided we refcount
-> the buffers.
-> 
-> The problem with cancelling the workqueue, is that you need to unlock the queue
-> lock, to avoid a deadlock. It seemed to me that having a refcount is more natural.
-> 
-> Thoughts?
-> 
+Hi Robin/Lorenzo,
 
-I'll take another look tomorrow morning. Do you have a public git tree containing
-this series that I can browse?
+On 5/21/2018 7:26 AM, Robin Murphy wrote:
+> On 21/05/18 14:33, Lorenzo Pieralisi wrote:
+>> [+Robin]
+>>
+>> On Fri, May 18, 2018 at 12:48:28PM -0700, Ray Jui wrote:
+>>> Hi Lorenzo,
+>>>
+>>> On 5/18/2018 6:56 AM, Lorenzo Pieralisi wrote:
+>>>> On Fri, May 18, 2018 at 02:53:41PM +0530, poza@codeaurora.org wrote:
+>>>>> On 2018-05-17 22:51, Ray Jui wrote:
+>>>>>> The internal MSI parsing logic in certain revisions of PAXC root
+>>>>>> complexes does not work properly and can casue corruptions on the
+>>>>>> writes. They need to be disabled
+>>>>>>
+>>>>>> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+>>>>>> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+>>>>>> ---
+>>>>>> drivers/pci/host/pcie-iproc.c | 34 ++++++++++++++++++++++++++++++++--
+>>>>>> 1 file changed, 32 insertions(+), 2 deletions(-)
+>>>>>>
+>>>>>> diff --git a/drivers/pci/host/pcie-iproc.c 
+>>>>>> b/drivers/pci/host/pcie-iproc.c
+>>>>>> index 3c76c5f..b906d80 100644
+>>>>>> --- a/drivers/pci/host/pcie-iproc.c
+>>>>>> +++ b/drivers/pci/host/pcie-iproc.c
+>>>>>> @@ -1144,10 +1144,22 @@ static int 
+>>>>>> iproc_pcie_paxb_v2_msi_steer(struct
+>>>>>> iproc_pcie *pcie, u64 msi_addr)
+>>>>>>     return ret;
+>>>>>> }
+>>>>>>
+>>>>>> -static void iproc_pcie_paxc_v2_msi_steer(struct iproc_pcie *pcie, 
+>>>>>> u64
+>>>>>> msi_addr)
+>>>>>> +static void iproc_pcie_paxc_v2_msi_steer(struct iproc_pcie *pcie, 
+>>>>>> u64
+>>>>>> msi_addr,
+>>>>>> +                     bool enable)
+>>>>>> {
+>>>>>>     u32 val;
+>>>>>>
+>>>>>> +    if (!enable) {
+>>>>>> +        /*
+>>>>>> +         * Disable PAXC MSI steering. All write transfers will be
+>>>>>> +         * treated as non-MSI transfers
+>>>>>> +         */
+>>>>>> +        val = iproc_pcie_read_reg(pcie, IPROC_PCIE_MSI_EN_CFG);
+>>>>>> +        val &= ~MSI_ENABLE_CFG;
+>>>>>> +        iproc_pcie_write_reg(pcie, IPROC_PCIE_MSI_EN_CFG, val);
+>>>>>> +        return;
+>>>>>> +    }
+>>>>>> +
+>>>>>>     /*
+>>>>>>      * Program bits [43:13] of address of GITS_TRANSLATER register 
+>>>>>> into
+>>>>>>      * bits [30:0] of the MSI base address register.  In fact, in 
+>>>>>> all iProc
+>>>>>> @@ -1201,7 +1213,7 @@ static int iproc_pcie_msi_steer(struct 
+>>>>>> iproc_pcie
+>>>>>> *pcie,
+>>>>>>             return ret;
+>>>>>>         break;
+>>>>>>     case IPROC_PCIE_PAXC_V2:
+>>>>>> -        iproc_pcie_paxc_v2_msi_steer(pcie, msi_addr);
+>>>>>> +        iproc_pcie_paxc_v2_msi_steer(pcie, msi_addr, true);
+>>>>>
+>>>>> Are you calling iproc_pcie_paxc_v2_msi_steer() anywhere else with 
+>>>>> 'false' ?
+>>>>> I see its getting called only from one place in current code
+>>>>> iproc_pcie_msi_steer().
+>>>>
+>>>> It is called below with the false field to disable MSIs. That's 
+>>>> probably
+>>>> one reason more to create a function to enable/disable MSIs instead of
+>>>> adding a parameter to iproc_pcie_paxc_v2_msi_steer().
+>>>
+>>> Correct. Thanks for helping to explain.
+>>>
+>>>>
+>>>> Which brings me to the question: what happens to those MSIs writes
+>>>> when MSIs are disabled according to this patch ? Are they terminated
+>>>> at the root complex ?
+>>>
+>>> Note the PAXC block parses MSI writes from our internally connected
+>>> endpoints (i.e., an embedded network processor). The PAXC block examines
+>>> these MSI writes and modifies the memory attributes (to DEVICE) of these
+>>> data and then send them out to the AXI bus. These MSI writes will 
+>>> then be
+>>> forwarded to the GIC (e.g., GICv2m, GICv3-ITS from ARM) for further
+>>> processing. This is saying, PAXC itself does not process these MSI 
+>>> writes.
+>>> They are processed by the GIC and associated interrupt will be generated
+>>> form the GIC. PAXC's job is to parse and tag them properly so these MSI
+>>> writes can reach the GIC, and at the same, reach the GIC at the right 
+>>> order.
+>>>
+>>> On some of these problematic PAXCs, we are being forced to disable 
+>>> this PAXC
+>>> internal parsing logic. In this case, we set up static mapping with the
+>>> IOMMU to modify the memory attributes of these MSI writes. These MSI 
+>>> writes
+>>> are always designated towards a specific memory address (e.g., on the 
+>>> GICv3
+>>> based system, it's the address of the translator register), and 
+>>> that's why
+>>> static mapping table can be set up to work around this.
+>>
+>> Which means, I presume, that there must be some code that somehow
+>> somewhere in the kernel sets-up those mappings and it has to be related
+>> to this patch, in which case I wonder why we enable the PAXC steering at
+>> all given that this (hack) can be done through the IOMMU (and I assume
+>> that on all PAXC platforms that do need MSIs there is an IOMMU IP
+>> upstream the root bridge, otherwise I have no idea what will happen to
+>> those MSI writes).
+> 
+> If it's only rewriting memory attributes (FWIW it sounds like this thing 
+> is comparable to the AXI translation table of the PLDA root complex we 
+> have in Juno), then if the IOMMU is controlled by Linux the PAXC 
+> shouldn't be needed anyway. In that situation the GICv2m/ITS doorbell 
+> will be already mapped for the endpoint as device memory (and usually at 
+> some arbitrary address that the PAXC won't recognise anyway) - see 
+> iommu_dma_get_msi_page().
+> 
+> If Linux *doesn't* know about the IOMMU, then the firmware should be 
+> free to set it up with a static 1:1 mapping of the PA space and leave it 
+> that way, provided Linux can't inadvertently stomp on those page tables 
+> later.
 
-Regards,
+Right, in our case, we had our ATF bootloader set up 1:1 mapping for 
+this. In this case, PAXC internal MSI parsing is completely disabled 
+(which is what this patch does for those PAXC blocks that have this issue).
 
-	Hans
+> 
+> Robin.
