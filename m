@@ -1,74 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753274AbeEVWBr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 18:01:47 -0400
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:46303 "EHLO
-        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753170AbeEVWBp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 18:01:45 -0400
-X-ME-Proxy: <xmx:SJMEW422uzNj-PN_5bC7-pap0ODWW75WZ691I0uqphXGZmvzyfP68Q>
-X-ME-Proxy: <xmx:SJMEW4j9gw2w4TVpcpnu6EBXPxQuUir6sw0byFhuAu7ZTVGdSv3GYA>
-X-ME-Proxy: <xmx:SJMEW1pCYtM-snEH8bm9prad8FbXrp2WkcKzPk4BV3MjEnv7uUkGLw>
-X-ME-Proxy: <xmx:SJMEWyyF3sNwrNaqcfsOy4uORGScxpGENy7xleDv1W0EKzTNSU5vUw>
-X-ME-Proxy: <xmx:SJMEW4niodCbok1vGhVBN6gq7A3ECZM3gJAQKh59kDMtF85T8gfE1Q>
-X-ME-Proxy: <xmx:SZMEW3RFvSxGLDGbQaLeY4ELMeqkMF6wMmwfokEPsFWk0meXuwYQ5A>
-X-ME-Sender: <xms:SJMEW64bv6J-fzPpszVjCbSjV6uzG-7oYHpC-pKaQiQpQsuBC0p1Iw>
-Date: Wed, 23 May 2018 08:01:40 +1000
-From: "Tobin C . Harding" <me@tobin.cc>
-To: Thierry Escande <thierry.escande@linaro.org>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] lib/test_printf.c: call wait_for_random_bytes() before
- plain %p tests
-Message-ID: <20180522220140.GG31095@eros>
-References: <20180522174114.9197-1-thierry.escande@linaro.org>
+        id S1753305AbeEVWBy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 18:01:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46760 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753023AbeEVWBv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 18:01:51 -0400
+Date: Tue, 22 May 2018 17:01:49 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux PCI <linux-pci@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH] PCI / PM: Do not clear state_saved for devices that
+ remain suspended
+Message-ID: <20180522220149.GB22385@bhelgaas-glaptop.roam.corp.google.com>
+References: <11415287.ki0m5Bqgns@aspire.rjw.lan>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180522174114.9197-1-thierry.escande@linaro.org>
-X-Mailer: Mutt 1.5.24 (2015-08-30)
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <11415287.ki0m5Bqgns@aspire.rjw.lan>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 07:41:14PM +0200, Thierry Escande wrote:
-> If the test_printf module is loaded before the crng is initialized, the
-> plain 'p' tests will fail because the printed address will not be hashed
-> and the buffer will contain '(ptrval)' instead.
-> This patch adds a call to wait_for_random_bytes() before plain 'p' tests
-> to make sure the crng is initialized.
+On Fri, May 18, 2018 at 10:17:42AM +0200, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
-> Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
+> The state_saved flag should not be cleared in pci_pm_suspend() if the
+> given device is going to remain suspended, or the device's config
+> space will not be restored properly during the subsequent resume.
+> 
+> Namely, if the device is going to stay in suspend, both the late
+> and noirq callbacks return early for it, so if its state_saved flag
+> is cleared in pci_pm_suspend(), it will remain unset throughout the
+> remaining part of suspend and resume and pci_restore_state() called
+> for the device going forward will return without doing anything.
+> 
+> For this reason, change pci_pm_suspend() to only clear state_saved
+> if the given device is not going to remain suspended.  [This is
+> analogous to what commit ae860a19f37c (PCI / PM: Do not clear
+> state_saved in pci_pm_freeze() when smart suspend is set) did for
+> hibernation.]
+> 
+> Fixes: c4b65157aeef (PCI / PM: Take SMART_SUSPEND driver flag into account)
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+
+I assume you'll take this one, too.
+
 > ---
->  lib/test_printf.c | 7 +++++++
->  1 file changed, 7 insertions(+)
+>  drivers/pci/pci-driver.c |    5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 > 
-> diff --git a/lib/test_printf.c b/lib/test_printf.c
-> index 71ebfa43ad05..839be9385a8a 100644
-> --- a/lib/test_printf.c
-> +++ b/lib/test_printf.c
-> @@ -260,6 +260,13 @@ plain(void)
->  {
->  	int err;
+> Index: linux-pm/drivers/pci/pci-driver.c
+> ===================================================================
+> --- linux-pm.orig/drivers/pci/pci-driver.c
+> +++ linux-pm/drivers/pci/pci-driver.c
+> @@ -753,10 +753,11 @@ static int pci_pm_suspend(struct device
+>  	 * better to resume the device from runtime suspend here.
+>  	 */
+>  	if (!dev_pm_test_driver_flags(dev, DPM_FLAG_SMART_SUSPEND) ||
+> -	    !pci_dev_keep_suspended(pci_dev))
+> +	    !pci_dev_keep_suspended(pci_dev)) {
+>  		pm_runtime_resume(dev);
+> +		pci_dev->state_saved = false;
+> +	}
 >  
-> +	/*
-> +	 * Make sure crng is ready. Otherwise we get "(ptrval)" instead
-> +	 * of a hashed address when printing '%p' in plain_hash() and
-> +	 * plain_format().
-> +	 */
-> +	wait_for_random_bytes();
-> +
->  	err = plain_hash();
->  	if (err) {
->  		pr_warn("plain 'p' does not appear to be hashed\n");
-> -- 
-> 2.14.1
-
-Not sure if I'm qualified for this but here goes
-
-Acked-by: Tobin C. Harding <me@tobin.cc>
-
-thanks,
-Tobin.
+> -	pci_dev->state_saved = false;
+>  	if (pm->suspend) {
+>  		pci_power_t prev = pci_dev->current_state;
+>  		int error;
+> 
