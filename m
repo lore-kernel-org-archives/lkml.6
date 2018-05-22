@@ -1,70 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751879AbeEVSmT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 14:42:19 -0400
-Received: from a2nlsmtp01-04.prod.iad2.secureserver.net ([198.71.225.38]:53090
-        "EHLO a2nlsmtp01-04.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751621AbeEVSmR (ORCPT
+        id S1751735AbeEVSmu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 14:42:50 -0400
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:33708 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751469AbeEVSms (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 14:42:17 -0400
-x-originating-ip: 107.180.71.197
-From: Haiyang Zhang <haiyangz@linuxonhyperv.com>
-To: davem@davemloft.net, netdev@vger.kernel.org
-Cc: haiyangz@microsoft.com, kys@microsoft.com, sthemmin@microsoft.com,
-        olaf@aepfle.de, vkuznets@redhat.com, devel@linuxdriverproject.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH net-next] hv_netvsc: Add handlers for ethtool get/set msg level
-Date: Tue, 22 May 2018 11:29:34 -0700
-Message-Id: <20180522182934.31515-1-haiyangz@linuxonhyperv.com>
-X-Mailer: git-send-email 2.17.0
-Reply-To: haiyangz@microsoft.com
-X-CMAE-Envelope: MS4wfHjOUQl2leqoEZLelNsy23isSNfyrwdfzVs4aXIVVrrE/FfylFSa5nACwmsadAxkaYbbwQsHYxsOIxBxfyTqua7Uwpp2CTHaZ3rvYwANRQwAiRZR66zV
- 5ntu5Yt3jSJB74YBgeMkrrou7NPCSQydj+U70gnD9zeCuqmUWVWmPkDP4uFCJHm694VpN8BtsuZjYp0AdFUliAAAsk04UIqzwk2vusG4JrZv1XKVRrYEThPp
- JsH1ZwlCkY9jeVPTfRHAUP2RFm7yTzlB/kECz6B040WLjmU05L3WyPs//Ud0T0zkdwVCuUQ92sWu203DW3t/4hvido7ejWzc9Vx/+i/fBJC2y1E5Kchp2a9O
- 9Bs55my6Ggj5HpOXuftdr6KM7oj6zpoh8VmhTZtB8NYbiO4WdSOYuzQEWqe0nbQ4gvztHfvileMyAKdoGkrOX3eMULoBl7gkz3Zzdy91NLTuPHds1uIja1V3
- rMujHCbENGQ8GlHKNWG7WRP15ZmQj2fII9fGkA==
+        Tue, 22 May 2018 14:42:48 -0400
+X-Google-Smtp-Source: AB8JxZofgEDBBIIGyTvBQff6ZMYrvBol55LftFpyR5UT2Izp11Kv8sR3NzIY+GuS5qWyTFnq6itpm60vmL72Dr/1IAU=
+MIME-Version: 1.0
+In-Reply-To: <1526983321-41949-4-git-send-email-michel.pollet@bp.renesas.com>
+References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com> <1526983321-41949-4-git-send-email-michel.pollet@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 22 May 2018 20:42:46 +0200
+X-Google-Sender-Auth: uH3ASG17bWm1dDlrxctnxiQurxg
+Message-ID: <CAMuHMdUW-tteZ26J4rd9=KsrHotjCs7BR_pjyjFQnfoOF5=oFQ@mail.gmail.com>
+Subject: Re: [PATCH v6 3/6] dt-bindings: clock: renesas,rzn1-clocks: document
+ RZ/N1 clock driver
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Haiyang Zhang <haiyangz@microsoft.com>
+Hi Michel,
 
-The handlers for ethtool get/set msg level are missing from netvsc.
-This patch adds them.
+On Tue, May 22, 2018 at 12:01 PM, Michel Pollet
+<michel.pollet@bp.renesas.com> wrote:
+> The Renesas RZ/N1 Family (Part #R9A06G0xx) requires a driver
+> to provide the SoC clock infrastructure for Linux.
+>
+> This documents the driver bindings.
+>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 
-Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
----
- drivers/net/hyperv/netvsc_drv.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+Thanks for your patch!
 
-diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
-index da07ccdf84bf..60a5769ef5a1 100644
---- a/drivers/net/hyperv/netvsc_drv.c
-+++ b/drivers/net/hyperv/netvsc_drv.c
-@@ -1618,8 +1618,24 @@ static int netvsc_set_ringparam(struct net_device *ndev,
- 	return ret;
- }
- 
-+static u32 netvsc_get_msglevel(struct net_device *ndev)
-+{
-+	struct net_device_context *ndev_ctx = netdev_priv(ndev);
-+
-+	return ndev_ctx->msg_enable;
-+}
-+
-+static void netvsc_set_msglevel(struct net_device *ndev, u32 val)
-+{
-+	struct net_device_context *ndev_ctx = netdev_priv(ndev);
-+
-+	ndev_ctx->msg_enable = val;
-+}
-+
- static const struct ethtool_ops ethtool_ops = {
- 	.get_drvinfo	= netvsc_get_drvinfo,
-+	.get_msglevel	= netvsc_get_msglevel,
-+	.set_msglevel	= netvsc_set_msglevel,
- 	.get_link	= ethtool_op_get_link,
- 	.get_ethtool_stats = netvsc_get_ethtool_stats,
- 	.get_sset_count = netvsc_get_sset_count,
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
+> @@ -0,0 +1,44 @@
+> +* Renesas RZ/N1 Clock Driver
+> +
+> +This driver provides the clock infrastructure used by all the other drivers.
+> +
+> +One of the 'special' feature of this infrastructure is that Linux doesn't
+> +necessary 'own' all the clocks on the SoC, some other OS runs on
+> +the Cortex-M3 core and that OS can access and claim it's own clocks.
+> +
+> +Required Properties:
+> +
+> +  - compatible: Must be
+> +    - "renesas,r9a06g032-clocks" for the RZ/N1D
+> +    and "renesas,rzn1-clocks" as a fallback.
+
+Why the fallback? I doubt all existing (and future) RZ/N1D SoCs provide the
+exact same clock hierarchy.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.17.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
