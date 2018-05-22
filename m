@@ -1,49 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751423AbeEVIhf (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 04:37:35 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:58717 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751161AbeEVIhc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 04:37:32 -0400
-From: Colin King <colin.king@canonical.com>
-To: Tariq Toukan <tariqt@mellanox.com>,
-        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] net/mlx4: fix spelling mistake: "Inrerface" -> "Interface"
-Date: Tue, 22 May 2018 09:37:28 +0100
-Message-Id: <20180522083728.5874-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+        id S1751470AbeEVIiB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 04:38:01 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37735 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751161AbeEVIh5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 04:37:57 -0400
+Date: Tue, 22 May 2018 10:37:53 +0200
+From: Jan Kara <jack@suse.cz>
+To: Gabriel Krisman Bertazi <krisman@collabora.co.uk>
+Cc: viro@ZenIV.linux.org.uk, jra@google.com, tytso@mit.edu, olaf@sgi.com,
+        darrick.wong@oracle.com, kernel@lists.collabora.co.uk,
+        linux-fsdevel@vger.kernel.org, david@fromorbit.com, jack@suse.cz,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 01/15] nls: Wrap uni2char/char2uni callers
+Message-ID: <20180522083753.sphuqufm5edg7dja@quack2.suse.cz>
+References: <20180521173617.31625-1-krisman@collabora.co.uk>
+ <20180521173617.31625-2-krisman@collabora.co.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180521173617.31625-2-krisman@collabora.co.uk>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Mon 21-05-18 14:36:03, Gabriel Krisman Bertazi wrote:
+> Generated with the following coccinele script:
+> 
+> <smpl>
+> 
+> @@
+> expression A, B, C, D;
+> @@
+> (
+> - A->uni2char(B, C, D)
+> + nls_uni2char(A, B, C, D)
+> |
+> - A->char2uni(B, C, D)
+> + nls_char2uni(A, B, C, D)
+> )
+> 
+> </smpl>
+> 
+> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.co.uk>
 
-Trivial fix to spelling mistake in mlx4_dbg debug message
+fs/udf/unicode.c also uses char2uni and uni2char but evades your SMPL
+patch. So you'll need to fix that up manually. Also note that I have some
+changes to that area queued in my tree.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/mellanox/mlx4/intf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+								Honza
 
-diff --git a/drivers/net/ethernet/mellanox/mlx4/intf.c b/drivers/net/ethernet/mellanox/mlx4/intf.c
-index 2edcce98ab2d..6bd4103265d2 100644
---- a/drivers/net/ethernet/mellanox/mlx4/intf.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/intf.c
-@@ -172,7 +172,7 @@ int mlx4_do_bond(struct mlx4_dev *dev, bool enable)
- 		list_add_tail(&dev_ctx->list, &priv->ctx_list);
- 		spin_unlock_irqrestore(&priv->ctx_lock, flags);
- 
--		mlx4_dbg(dev, "Inrerface for protocol %d restarted with when bonded mode is %s\n",
-+		mlx4_dbg(dev, "Interface for protocol %d restarted with when bonded mode is %s\n",
- 			 dev_ctx->intf->protocol, enable ?
- 			 "enabled" : "disabled");
- 	}
 -- 
-2.17.0
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
