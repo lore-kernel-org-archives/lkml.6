@@ -1,203 +1,289 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751753AbeEVOEw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 10:04:52 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:38925 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751339AbeEVOEu (ORCPT
+        id S1751429AbeEVOHF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 10:07:05 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41168 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751196AbeEVOHC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 10:04:50 -0400
-Message-ID: <1526997879.3671.27.camel@pengutronix.de>
-Subject: Re: [reset-control] How to initialize hardware state with the
- shared reset line?
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        DTML <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Date: Tue, 22 May 2018 16:04:39 +0200
-In-Reply-To: <CAFBinCBTTmPqD0UP8zzMBjsjzP9fJx9_pmhGz0_Vy-V+wmhLXQ@mail.gmail.com>
-References: <CAK7LNATZgJ4MxOFLUCNARWv3Zz=gpL-jGReDnBnArquiaXRWoQ@mail.gmail.com>
-         <CAFBinCADQsXoc6CUKabH6VX3ZBYb5apo-xBbe1w0BiO8wBAsPw@mail.gmail.com>
-         <CAK7LNAR1b_F_eLEWAdQc3L=daGz=ttKq0mQP78BkjzTOssaXvw@mail.gmail.com>
-         <CAFBinCBTTmPqD0UP8zzMBjsjzP9fJx9_pmhGz0_Vy-V+wmhLXQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
+        Tue, 22 May 2018 10:07:02 -0400
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Date: Tue, 22 May 2018 19:37:01 +0530
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        Andy Gross <andy.gross@linaro.org>,
+        Archit Taneja <architt@codeaurora.org>
+Subject: Re: [PATCH v2 05/14] mtd: rawnand: qcom: wait for desc completion in
+ all BAM channels
+In-Reply-To: <20180522084754.0c3a53a4@xps13>
+References: <1525350041-22995-1-git-send-email-absahu@codeaurora.org>
+ <1525350041-22995-6-git-send-email-absahu@codeaurora.org>
+ <20180522084754.0c3a53a4@xps13>
+Message-ID: <8f101f393618923129342f97e4a842f7@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Martin,
-
-On Mon, 2018-05-21 at 12:40 +0200, Martin Blumenstingl wrote:
-> Hello,
+On 2018-05-22 12:17, Miquel Raynal wrote:
+> Hi Abhishek,
 > 
-> On Mon, May 21, 2018 at 3:27 AM, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
-> > Hi.
-> > 
-> > 
-> > 2018-05-20 19:57 GMT+09:00 Martin Blumenstingl
-> > <martin.blumenstingl@googlemail.com>:
-> > > Hi,
-> > > 
-> > > On Thu, May 10, 2018 at 11:16 AM, Masahiro Yamada
-> > > <yamada.masahiro@socionext.com> wrote:
-> > > [snip]
-> > > > I may be missing something, but
-> > > > one solution might be reset hogging on the
-> > > > reset provider side.  This allows us to describe
-> > > > the initial state of reset lines in the reset controller.
-> > > > 
-> > > > The idea for "reset-hog" is similar to:
-> > > >  - "gpio-hog" defined in
-> > > >    Documentation/devicetree/bindings/gpio/gpio.txt
-> > > >  - "assigned-clocks" defined in
-> > > >    Documetation/devicetree/bindings/clock/clock-bindings.txt
-> > > > 
-> > > > 
-> > > > 
-> > > > For example,
-> > > > 
-> > > >    reset-controller {
-> > > >             ....
-> > > > 
-> > > >             line_a {
-> > > >                   reset-hog;
-> > > >                   resets = <1>;
-> > > >                   reset-assert;
-> > > >             };
-> > > >    }
-> > > > 
-> > > > 
-> > > > When the reset controller is registered,
-> > > > the reset ID '1' is asserted.
-> > > > 
-> > > > 
-> > > > So, all reset consumers that share the reset line '1'
-> > > > will start from the asserted state
-> > > > (i.e. defined state machine state).
-> > > 
-> > > I wonder if a "reset hog" can be board specific:
-> > > - GPIO hogs are definitely board specific (meson-gxbb-odroidc2.dts for
-> > > example uses it to take the USB hub out of reset)
-> > > - assigned-clock-parents (and the like) can also be board specific (I
-> > > made up a use-case since I don't know of any actual examples: board A
-> > > uses an external XTAL while board B uses some other internal
-> > > clock-source because it doesn't have an external XTAL)
-> > > 
-> > > however, can reset lines be board specific? or in other words: do we
-> > > need to describe them in device-tree?
-> > 
-> > Indeed.
-> > 
-> > I did not come up with board-specific cases.
-> > 
-> > The problem we are discussing is SoC-specific,
-> > and reset-controller drivers are definitely SoC-specific.
-> > 
-> > So, I think the initial state can be coded in drivers instead of DT.
+> On Thu,  3 May 2018 17:50:32 +0530, Abhishek Sahu
+> <absahu@codeaurora.org> wrote:
 > 
-> OK, let's also hear Philipp's (reset framework maintainer) opinion on this
-
-I'd like to know if there are other SoC families besides Amlogic Meson
-that potentially could have this problem and about how many of the
-resets that are documented in include/dt-bindings/reset/amlogic,meson*
-we are actually talking. Are all of those initially deasserted and none
-of the connected peripherals have power-on reset mechanisms?
-
-> > > we could extend struct reset_controller_dev (= reset controller
-> > > driver) if they are not board specific:
-> > > - either assert all reset lines by default except if they are listed
-> > > in a new field (may break backwards compatibility, requires testing of
-> > > all reset controller drivers)
-> > 
-> > This is quite simple, but I am afraid there are some cases where the forcible
-> > reset-assert is not preferred.
-> > 
-> > For example, the earlycon.  When we use earlycon, we would expect it has been
-> > initialized by a boot-loader, or something.
-> > If it is reset-asserted on the while, the console output
-> > will not be good.
+>> The BAM has 3 channels - tx, rx and command. command channel
+>> is used for register read/writes, tx channel for data writes
+>> and rx channel for data reads. Currently, the driver assumes the
+>> transfer completion once it gets all the command descriptor
+>> completed. Sometimes, there is race condition in data channel
 > 
-> indeed, so let's skip this idea
-
-Maybe we should at first add initial reset assertion to the Meson driver
-on a case by case bases?
-We can't add required reset hog DT bindings to the Meson reset
-controller anyway without breaking DT backwards compatibility.
-
-> > > - specify a list of reset lines and their desired state (or to keep it
-> > > easy: specify a list of reset lines that should be asserted)
-> > > (I must admit that this is basically your idea but the definition is
-> > > moved from device-tree to the reset controller driver)
-> > 
-> > Yes, I think the list of "reset line ID" and "init state" pairs
-> > would be nicer.
+> "Sometimes, there is a race condition between the data channel (rx/tx)
+> and the command channel completion. In these cases, ..."
 > 
-> $ grep -R "of_reset_n_cells = [^1]" drivers/reset/
-> drivers/reset/reset-berlin.c:   priv->rcdev.of_reset_n_cells = 2;
-> drivers/reset/hisilicon/reset-hi3660.c: rc->rst.of_reset_n_cells = 2;
-> drivers/reset/reset-ti-sci.c:   data->rcdev.of_reset_n_cells = 2;
-> drivers/reset/reset-lantiq.c:   priv->rcdev.of_reset_n_cells = 2;
+>> (tx/rx) and command channel completion and in these cases,
+>> the data in buffer is not valid during the small window between
 > 
-> everything else uses only one reset cell
-> from the lantiq reset dt-binding documentation: "The first cell takes
-> the reset set bit and the second cell takes the status bit."
+>            ^ present in the buffer ?
 > 
-> I'm not sure what to do with drivers that specify != 1 reset-cell
-> though if we use a simple "init state pair"
-> maybe Philipp can share his opinion on this one as well
-
-See above, so far I am not convinced (either way) whether this should be
-described in the DT at all.
-
-> > > any "chip" specific differences could be expressed by using a
-> > > different of_device_id
-> > > 
-> > > one the other hand: your "reset hog" solution looks fine to me if
-> > > reset lines can be board specific
-> > > 
-> > > > From the discussion with Martin Blumenstingl
-> > > > (https://lkml.org/lkml/2018/4/28/115),
-> > > > the problem for Amlogic is that
-> > > > the reset line is "de-asserted" by default.
-> > > > If so, the 'reset-hog' would fix the problem,
-> > > > and DWC3 driver would be able to use
-> > > > shared, level reset, I think.
-> > > 
-> > > I think you are right: if we could control the initial state then we
-> > > should be able to use level resets
-> > 
-> > 
-> > Even further, can we drop the shared reset_control_reset() support, maybe?
-> > (in other words, revert commit 7da33a37b48f11)
+>> command descriptor completion and data descriptor completion.
+>> 
+>> Now, the changes have been made to assign the callback for
 > 
-> I believe we need to keep this if there's hardware out there:
-> - where the reset controller only supports reset pulses
-> - at least one reset line is shared between multiple devices
+> It is preferable to use a descriptive tense when you expose what the
+> patch does. Something like "Change <this> to assign ..."
 > 
-> I didn't have a closer look at the Amlogic Meson6 SoC yet, but I think
-> it matches above criteria. as far as I know:
-> - the USB situation there is similar to Meson8b (USB controllers and
-> PHYs share a reset line)
-> - it uses an older reset controller IP block which does not support
-> level resets (only reset pulses)
 
-See my answer to Masahiro's first mail. I think somebody suggested in
-the past to add a fallback from the deassert to the reset op. I think
-this is something that should work in this case.
+  Thanks Miquel for your review.
+  I will change the sentence.
 
-regards
-Philipp
+>> channel's final descriptor. The DMA will generate the callback
+>> when all the descriptors have completed in that channel.
+>> The NAND transfer will be completed only when all required
+>> DMA channels have generated the completion callback.
+>> 
+> 
+> It looks like this is a fix that is a good candidate for stable trees,
+> you might want to add the relevant tags.
+
+  Sure. I will add the relevant tags.
+
+> 
+>> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+>> ---
+>> * Changes from v1:
+>> 
+>>   NONE
+>> 
+>>   1. Removed the custom logic and used the helper fuction.
+>>  drivers/mtd/nand/raw/qcom_nandc.c | 55 
+>> ++++++++++++++++++++++++++++++++++++++-
+>>  1 file changed, 54 insertions(+), 1 deletion(-)
+>> 
+>> diff --git a/drivers/mtd/nand/raw/qcom_nandc.c 
+>> b/drivers/mtd/nand/raw/qcom_nandc.c
+>> index a8d71ce..3d1ff54 100644
+>> --- a/drivers/mtd/nand/raw/qcom_nandc.c
+>> +++ b/drivers/mtd/nand/raw/qcom_nandc.c
+>> @@ -213,6 +213,8 @@
+>>  #define QPIC_PER_CW_CMD_SGL		32
+>>  #define QPIC_PER_CW_DATA_SGL		8
+>> 
+>> +#define QPIC_NAND_COMPLETION_TIMEOUT	msecs_to_jiffies(2000)
+> 
+> That's huge, but why not, it's a timeout anyway.
+> 
+
+   Correct. This timeout will never happen in normal case.
+   It will hit if something bad happened in the board.
+
+>> +
+>>  /*
+>>   * Flags used in DMA descriptor preparation helper functions
+>>   * (i.e. read_reg_dma/write_reg_dma/read_data_dma/write_data_dma)
+>> @@ -245,6 +247,11 @@
+>>   * @tx_sgl_start - start index in data sgl for tx.
+>>   * @rx_sgl_pos - current index in data sgl for rx.
+>>   * @rx_sgl_start - start index in data sgl for rx.
+>> + * @first_chan_done - if current transfer already has got first 
+>> channel
+>> + *		      DMA desc completion.
+>> + * @txn_done - completion for nand transfer.
+> 
+> s/nand/NAND/
+> 
+>> + * @last_data_desc - last DMA desc in data channel (tx/rx).
+>> + * @last_cmd_desc - last DMA desc in command channel.
+>>   */
+>>  struct bam_transaction {
+>>  	struct bam_cmd_element *bam_ce;
+>> @@ -258,6 +265,10 @@ struct bam_transaction {
+>>  	u32 tx_sgl_start;
+>>  	u32 rx_sgl_pos;
+>>  	u32 rx_sgl_start;
+>> +	bool first_chan_done;
+>> +	struct completion txn_done;
+>> +	struct dma_async_tx_descriptor *last_data_desc;
+>> +	struct dma_async_tx_descriptor *last_cmd_desc;
+>>  };
+>> 
+>>  /*
+>> @@ -504,6 +515,8 @@ static void free_bam_transaction(struct 
+>> qcom_nand_controller *nandc)
+>> 
+>>  	bam_txn->data_sgl = bam_txn_buf;
+>> 
+>> +	init_completion(&bam_txn->txn_done);
+>> +
+>>  	return bam_txn;
+>>  }
+>> 
+>> @@ -523,11 +536,36 @@ static void clear_bam_transaction(struct 
+>> qcom_nand_controller *nandc)
+>>  	bam_txn->tx_sgl_start = 0;
+>>  	bam_txn->rx_sgl_pos = 0;
+>>  	bam_txn->rx_sgl_start = 0;
+>> +	bam_txn->last_data_desc = NULL;
+>> +	bam_txn->first_chan_done = false;
+> 
+> Are you sure you don't want to reinit last_cmd_desc here?
+
+  Each NAND data transfer will definitely have at least one command
+  desc so that reinit is redundant.
+
+  But some of the NAND transfers can have only command descriptors
+  (i.e. no data desc) so, we need to reinit last_data_desc.
+
+> 
+>> 
+>>  	sg_init_table(bam_txn->cmd_sgl, nandc->max_cwperpage *
+>>  		      QPIC_PER_CW_CMD_SGL);
+>>  	sg_init_table(bam_txn->data_sgl, nandc->max_cwperpage *
+>>  		      QPIC_PER_CW_DATA_SGL);
+>> +
+>> +	reinit_completion(&bam_txn->txn_done);
+>> +}
+>> +
+>> +/* Callback for DMA descriptor completion */
+>> +static void qpic_bam_dma_done(void *data)
+>> +{
+>> +	struct bam_transaction *bam_txn = data;
+>> +
+>> +	/*
+>> +	 * In case of data transfer with NAND, 2 callbacks will be 
+>> generated.
+>> +	 * One for command channel and another one for data channel.
+>> +	 * If current transaction has data descriptors then check if its
+>> +	 * already got one DMA channel completion callback. In this case
+>> +	 * make the NAND transfer complete otherwise mark first_chan_done 
+>> true
+>> +	 * and wait for next channel DMA completion callback.
+>> +	 */
+>> +	if (bam_txn->last_data_desc && !bam_txn->first_chan_done) {
+>> +		bam_txn->first_chan_done = true;
+>> +		return;
+>> +	}
+> 
+> There is a lot of new variables just to wait for two bam_dma_done().
+> Why not just creating a boolean like "wait_second completion",
+> initialize it in prepare_bam_async_desc to true when needed and
+> complete txn_done when it's false, that's all:
+> 
+>         if (bam_txn->wait_second_completion) {
+>                 bam_txn->wait_second_completion = false;
+>                 return;
+>         }
+> 
+>> +
+>> +	complete(&bam_txn->txn_done);
+>>  }
+>> 
+>>  static inline struct qcom_nand_host *to_qcom_nand_host(struct 
+>> nand_chip *chip)
+>> @@ -756,6 +794,12 @@ static int prepare_bam_async_desc(struct 
+>> qcom_nand_controller *nandc,
+>> 
+>>  	desc->dma_desc = dma_desc;
+>> 
+>> +	/* update last data/command descriptor */
+>> +	if (chan == nandc->cmd_chan)
+>> +		bam_txn->last_cmd_desc = dma_desc;
+>> +	else
+>> +		bam_txn->last_data_desc = dma_desc;
+>> +
+> 
+> Is there a reason for the "last_" prefix? why not current_*_desc or
+> just *_desc? (this is a real question :) ). Correct me if I'm wrong but
+> you have a scatter-gather list of DMA transfers that are mapped to form
+> one DMA descriptor, so there is no "last" descriptor, right?
+> 
+
+  We have 3 DMA channels (tx/rx and command) and each channel has 
+multiple
+  DMA descriptors. The callback needs to be set for last
+  descriptor only for that channel.
+
+> Otherwise, as I told you above, why not just a:
+> 
+>         if (chan == nandc->data_chan)
+>                 bam_txn->wait_second_completion = true;
+> 
+
+  This is nice idea.
+  I will change the implementation accordingly.
+
+>>  	list_add_tail(&desc->node, &nandc->desc_list);
+>> 
+>>  	return 0;
+>> @@ -1273,10 +1317,19 @@ static int submit_descs(struct 
+>> qcom_nand_controller *nandc)
+>>  		cookie = dmaengine_submit(desc->dma_desc);
+>> 
+>>  	if (nandc->props->is_bam) {
+>> +		bam_txn->last_cmd_desc->callback = qpic_bam_dma_done;
+>> +		bam_txn->last_cmd_desc->callback_param = bam_txn;
+>> +		if (bam_txn->last_data_desc) {
+>> +			bam_txn->last_data_desc->callback = qpic_bam_dma_done;
+>> +			bam_txn->last_data_desc->callback_param = bam_txn;
+>> +		}
+> 
+> Why don't you do this directly in prepare_bam_async_desc?
+> 
+> With:
+> 
+>         dma_desc->callback = ...
+>         dma_desc->callback_param = ...
+> 
+
+  prepare_bam_async_desc can be called multiple times since
+  each channel can have list of DMA descriptors. We want
+  to set callback only for last DMA descriptor in that
+  channel.
+
+  CMD desc1 -> Data desc1 -> Data desc2-> CMD desc2 -> CMD desc3
+
+  In the above case, the callback should be set for
+  Data desc2 and CMD desc3.
+
+  Thanks,
+  Abhishek
+
+>> +
+>>  		dma_async_issue_pending(nandc->tx_chan);
+>>  		dma_async_issue_pending(nandc->rx_chan);
+>> +		dma_async_issue_pending(nandc->cmd_chan);
+>> 
+>> -		if (dma_sync_wait(nandc->cmd_chan, cookie) != DMA_COMPLETE)
+>> +		if (!wait_for_completion_timeout(&bam_txn->txn_done,
+>> +						 QPIC_NAND_COMPLETION_TIMEOUT))
+>>  			return -ETIMEDOUT;
+>>  	} else {
+>>  		if (dma_sync_wait(nandc->chan, cookie) != DMA_COMPLETE)
