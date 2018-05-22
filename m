@@ -1,62 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751678AbeEVJmV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 05:42:21 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:49751 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751528AbeEVJlH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 05:41:07 -0400
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>, Haim Boot <hayim@marvell.com>,
-        Hanna Hawa <hannah@marvell.com>, linux-kernel@vger.kernel.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH v2 16/16] arm64: dts: marvell: add CP110 ICU SEI subnode
-Date: Tue, 22 May 2018 11:40:42 +0200
-Message-Id: <20180522094042.24770-17-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180522094042.24770-1-miquel.raynal@bootlin.com>
-References: <20180522094042.24770-1-miquel.raynal@bootlin.com>
+        id S1752044AbeEVJm2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 05:42:28 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33794 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751189AbeEVJmZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 05:42:25 -0400
+Subject: Re: [PATCH 2/6] arm_pmu: Change API to support 64bit counter values
+To: kbuild test robot <lkp@intel.com>
+Cc: kbuild-all@01.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        will.deacon@arm.com, robin.murphy@arm.com
+References: <1526638943-2110-3-git-send-email-suzuki.poulose@arm.com>
+ <201805220546.ySDTMDEX%fengguang.wu@intel.com>
+From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <8b243663-5ea6-b2a4-a57f-4e0f5b130070@arm.com>
+Date: Tue, 22 May 2018 10:42:21 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <201805220546.ySDTMDEX%fengguang.wu@intel.com>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ICU handles several interrupt groups, each of them being a subpart
-of the ICU node.
+On 22/05/18 00:30, kbuild test robot wrote:
+> Hi Suzuki,
+> 
+> Thank you for the patch! Yet something to improve:
+> 
+> [auto build test ERROR on tip/perf/core]
+> [also build test ERROR on v4.17-rc6 next-20180517]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> 
+> url:    https://github.com/0day-ci/linux/commits/Suzuki-K-Poulose/arm64-perf-Support-for-chaining-event-counters/20180521-102117
+> config: arm-corgi_defconfig (attached as .config)
+> compiler: arm-linux-gnueabi-gcc (Debian 7.2.0-11) 7.2.0
+> reproduce:
+>          wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>          chmod +x ~/bin/make.cross
+>          # save the attached .config to linux build tree
+>          make.cross ARCH=arm
+> 
+> All errors (new ones prefixed by >>):
+> 
+>     arch/arm/kernel/perf_event_xscale.c: In function 'xscale2pmu_init':
+>>> arch/arm/kernel/perf_event_xscale.c:741:24: error: assignment from incompatible pointer type [-Werror=incompatible-pointer-types]
+>       cpu_pmu->read_counter = xscale2pmu_read_counter;
+>                             ^
+>     arch/arm/kernel/perf_event_xscale.c:742:25: error: assignment from incompatible pointer type [-Werror=incompatible-pointer-types]
+>       cpu_pmu->write_counter = xscale2pmu_write_counter;
+>                              ^
+>     cc1: some warnings being treated as errors
 
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
----
- arch/arm64/boot/dts/marvell/armada-cp110.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/marvell/armada-cp110.dtsi b/arch/arm64/boot/dts/marvell/armada-cp110.dtsi
-index 5637ff2601c9..0038a922e7db 100644
---- a/arch/arm64/boot/dts/marvell/armada-cp110.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-cp110.dtsi
-@@ -154,6 +154,13 @@
- 				interrupt-controller;
- 				msi-parent = <&gicp>;
- 			};
-+
-+			CP110_LABEL(icu_sei): icu-sei {
-+				compatible = "marvell,cp110-icu-sei";
-+				#interrupt-cells = <2>;
-+				interrupt-controller;
-+				msi-parent = <&sei>;
-+			};
- 		};
- 
- 		CP110_LABEL(rtc): rtc@284000 {
--- 
-2.14.1
+Thanks for the report, I have fixed this for the next version.
+
+Suzuki
