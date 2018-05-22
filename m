@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751539AbeEVSlJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 14:41:09 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34222 "EHLO
+        id S1751721AbeEVSlY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 14:41:24 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34240 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751277AbeEVSlH (ORCPT
+        with ESMTP id S1751351AbeEVSlV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 14:41:07 -0400
-Date: Tue, 22 May 2018 11:41:01 -0700
+        Tue, 22 May 2018 14:41:21 -0400
+Date: Tue, 22 May 2018 11:41:17 -0700
 From: Christoph Hellwig <hch@infradead.org>
 To: Kees Cook <keescook@chromium.org>
 Cc: Jens Axboe <axboe@kernel.dk>,
@@ -20,14 +20,14 @@ Cc: Jens Axboe <axboe@kernel.dk>,
         Uma Krishnan <ukrishn@linux.vnet.ibm.com>, linux-block@vger.kernel.org,
         linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/6] ide-cd: Drop unused sense buffers
-Message-ID: <20180522184101.GA15537@infradead.org>
+Subject: Re: [PATCH 2/6] scsi: cxlflash: Drop unused sense buffers
+Message-ID: <20180522184117.GB15537@infradead.org>
 References: <20180522181512.39316-1-keescook@chromium.org>
- <20180522181512.39316-2-keescook@chromium.org>
+ <20180522181512.39316-3-keescook@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180522181512.39316-2-keescook@chromium.org>
+In-Reply-To: <20180522181512.39316-3-keescook@chromium.org>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
