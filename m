@@ -1,60 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751269AbeEVEZH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 00:25:07 -0400
-Received: from mout.gmx.net ([212.227.17.20]:51017 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750707AbeEVEZG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 00:25:06 -0400
-From: Chengguang Xu <cgxu519@gmx.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: dsterba@suse.com, dhowells@redhat.com, jlayton@redhat.com,
-        viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        Chengguang Xu <cgxu519@gmx.com>
-Subject: [PATCH] fs/affs: fix potential memory leak in option parsing
-Date: Tue, 22 May 2018 12:24:25 +0800
-Message-Id: <1526963065-21134-1-git-send-email-cgxu519@gmx.com>
-X-Mailer: git-send-email 1.8.3.1
-X-Provags-ID: V03:K1:NYtj1vKjUjRHqVWL/ibx/z3Fs3xQ3UMPAfdvATUUhMILJ/cszpW
- 9F0USEbR+3E46I1ln5eGYIIas2paapj0b7Mc1KDBxrMv6ooNLp/4yQ6EnIgUfKIFcgUWnhV
- 7WoaW59QI1bEq2QiRmPSkejfCsxuBSQx7r3GQQe8hIkO69RiSV7ic8NnA22l4IWEGlKtYnp
- +jGDW6Ge1yJAeEDY9ooaA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:PTq92YDhiz8=:QgxHL5b8DVHK0Pf0OgzIqW
- pufYyHB/qilb2g2F1Mk8s44uXbqaZmL2GUTKQbrb7dcLoAAGaTzjmOhKyfnxKB/45A5qSZbU4
- OXTWZHEZA7OA2uNiqB/m9QPYF7A445kzUCLtNm63YMv9AG8LDy9FVwjGlmUwy2ih/YsR5U6t/
- lWJdVv8qIQ4UvbmJAL+2Co6Ax8KNBy4PVXV9zuLUs3HvMDvV9GiRkxW3ItZOCf170HMUUJnlJ
- t9kcV3nrH+y7VrNNf53qfsUwtpV+QjIVaROC0bMd06j8m0dqtnhFfqQiz5QZccVobuyB5YcTZ
- 0dmyCluS+8MTT73wnqVlfIHF8dskfyIquwMpBGNLE/hbI1PCzNTiyBK38rZ2zCN3dlE+G7l5C
- 5zBhAUPDJiYWKWPlcrUGy/l2/NzKw76ZXp8nQ4ByXwCWzErUXdLadzzAP1c9thVc9StFExxgG
- uXNTuK4z/F444EJMiKU9pcqdiMrZnpRjaBkZb7SR3hWUnlKTYZXZObDpbJdHf2wuVlDm95r3L
- j3vcue5Jvf7A9vT0jQcjdxjavG32D75S+q5tSXuENHm6mDSZkXnWor7oz5gfYyrDDTRjZZA18
- niTM9mNazNyu0xNnnqHSCHGhdxQCCxQy5KB1H65jPXNlw76/7E6f6+OmHKEVGjFLuy+AA/ZA0
- OItYEVze3K42stCq8RZh2eEbTRubORmTqQ+fKtktYf69TNIzkB9soLxsUcvMmfCg9JskYWowd
- D/XqGAlYPc//we3UcrPTg6uoF39E2TMbwsUdhoea20f1PD97MGDQQqlXorA=
+        id S1751172AbeEVEba (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 00:31:30 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44584 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750709AbeEVEb2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 00:31:28 -0400
+Date: Tue, 22 May 2018 10:01:19 +0530
+From: Gautham R Shenoy <ego@linux.vnet.ibm.com>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Gautham R Shenoy <ego@linux.vnet.ibm.com>,
+        Michael Neuling <mikey@neuling.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
+        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] powerpc: Detect the presence of big-core with
+ interleaved threads
+Reply-To: ego@linux.vnet.ibm.com
+References: <1526037444-22876-1-git-send-email-ego@linux.vnet.ibm.com>
+ <1526037444-22876-2-git-send-email-ego@linux.vnet.ibm.com>
+ <1526268071.30369.20.camel@neuling.org>
+ <20180516043516.GA14826@in.ibm.com>
+ <87k1s1xg0z.fsf@concordia.ellerman.id.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87k1s1xg0z.fsf@concordia.ellerman.id.au>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-TM-AS-GCONF: 00
+x-cbid: 18052204-0004-0000-0000-00001421454F
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009064; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000261; SDB=6.01035843; UDB=6.00529854; IPR=6.00814971;
+ MB=3.00021230; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-22 04:31:26
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18052204-0005-0000-0000-0000874CAC9D
+Message-Id: <20180522043119.GA5213@in.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-22_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805220052
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When specifying option 'prefix' multiple times,
-current option parsing will cause memory leak.
-Hence, call kfree for previous one in this case.
+Hello Michael,
 
-Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
----
- fs/affs/super.c | 1 +
- 1 file changed, 1 insertion(+)
+On Fri, May 18, 2018 at 11:14:04PM +1000, Michael Ellerman wrote:
+> Gautham R Shenoy <ego@linux.vnet.ibm.com> writes:
+> ...
+> >> > @@ -565,7 +615,16 @@ void __init smp_setup_cpu_maps(void)
+> >> >  	vdso_data->processorCount = num_present_cpus();
+> >> >  #endif /* CONFIG_PPC64 */
+> >> >  
+> >> > -        /* Initialize CPU <=> thread mapping/
+> >> > +	dn = of_find_node_by_type(NULL, "cpu");
+> >> > +	if (dn) {
+> >> > +		if (check_for_interleaved_big_core(dn)) {
+> >> > +			has_interleaved_big_core = true;
+> >> > +			pr_info("Detected interleaved big-cores\n");
+> >> 
+> >> Is there a runtime way to check this also?  If the dmesg buffer overflows, we
+> >> lose this.
+> >
+> > Where do you suggest we put this ? Should it be a part of
+> > /proc/cpuinfo ?
+> 
+> Hmm, it'd be nice not to pollute it with more junk.
+> 
+> Can you just look at the pir files in sysfs?
 
-diff --git a/fs/affs/super.c b/fs/affs/super.c
-index e602619..d1ad11a 100644
---- a/fs/affs/super.c
-+++ b/fs/affs/super.c
-@@ -241,6 +241,7 @@ enum {
- 			affs_set_opt(*mount_opts, SF_NO_TRUNCATE);
- 			break;
- 		case Opt_prefix:
-+			kfree(*prefix);
- 			*prefix = match_strdup(&args[0]);
- 			if (!*prefix)
- 				return 0;
--- 
-1.8.3.1
+Sure Michael. I will explore this option.
+
+If we add a file called l1cache_thread_group, then the siblings of the
+big-core that share the L1-cache can be described as follows.
+
+	# cd  /sys/devices/system/cpu
+	# grep . cpu[0-7]/l1cache_thread_group
+	cpu0/l1cache_thread_group:0,2,4,6
+	cpu1/l1cache_thread_group:1,3,5,7
+	cpu2/l1cache_thread_group:0,2,4,6
+	cpu3/l1cache_thread_group:1,3,5,7
+	cpu4/l1cache_thread_group:0,2,4,6
+	cpu5/l1cache_thread_group:1,3,5,7
+	cpu6/l1cache_thread_group:0,2,4,6
+	cpu7/l1cache_thread_group:1,3,5,7
+
+> 
+> eg. on a normal system:
+> 
+>   # cd /sys/devices/system/cpu
+>   # grep . cpu[0-7]/pir
+>   cpu0/pir:20
+>   cpu1/pir:21
+>   cpu2/pir:22
+>   cpu3/pir:23
+>   cpu4/pir:24
+>   cpu5/pir:25
+>   cpu6/pir:26
+>   cpu7/pir:27
+
+
+> 
+> 
+> cheers
+> 
