@@ -1,35 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751753AbeEVPSb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 11:18:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36368 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751566AbeEVPS2 (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 11:18:28 -0400
-Date: Tue, 22 May 2018 12:18:25 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Jin Yao <yao.jin@linux.intel.com>
-Cc: jolsa@kernel.org, peterz@infradead.org, mingo@redhat.com,
-        alexander.shishkin@linux.intel.com, Linux-kernel@vger.kernel.org,
-        ak@linux.intel.com, kan.liang@intel.com, yao.jin@intel.com
-Subject: Re: [PATCH] perf annotate: Show group event string for stdio
-Message-ID: <20180522151825.GC25467@kernel.org>
-References: <1526989115-14435-1-git-send-email-yao.jin@linux.intel.com>
+        id S1751455AbeEVPVy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 11:21:54 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:39772 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751257AbeEVPVt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 11:21:49 -0400
+X-Google-Smtp-Source: AB8JxZqGxFSoOj0peJ/r3EZrnT0vWLwjltYwE3sOy3V/0IvXF77R583HzoP2kpw0aovAQXBhZOd1UeV3pvQfI0tV+Ms=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526989115-14435-1-git-send-email-yao.jin@linux.intel.com>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180522130612.GB161672@bhelgaas-glaptop.roam.corp.google.com>
+References: <2360046.ecez94sF1Y@aspire.rjw.lan> <20180522130612.GB161672@bhelgaas-glaptop.roam.corp.google.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 22 May 2018 17:21:47 +0200
+X-Google-Sender-Auth: mV9CUHihBVpGsiTfVwVVqd7_c4Y
+Message-ID: <CAJZ5v0gssLSpaN+OdeGP5-O4RFwwONL6FF0=swo+kc2R0+Av1g@mail.gmail.com>
+Subject: Re: [PATCH] PCI / PM: Clean up outdated comments in pci_target_state()
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, May 22, 2018 at 07:38:35PM +0800, Jin Yao escreveu:
-> When we enable the group, for tui/stdio2, the output first
-> line includes the group event string. While for stdio,
-> it will show only one event.
+On Tue, May 22, 2018 at 3:06 PM, Bjorn Helgaas <helgaas@kernel.org> wrote:
+> On Mon, May 21, 2018 at 01:11:12PM +0200, Rafael J. Wysocki wrote:
+>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>
+>> Two comments in pci_target_state() are outdated, as the function
+>> doesn't set the target power state for the device any more, only
+>> finds one for it, so fix them accordingly.
+>>
+>> Reported-by: Bjorn Helgaas <bhelgaas@google.com>
+>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+>
+> I assume you'll merge this; let me know if you'd rather that I take it.
 
-Thanks, applied.
+I will take it, thanks!
 
-- Arnaldo
+Can you have a look at https://patchwork.kernel.org/patch/10408977/
+too, please, while at it?
