@@ -1,56 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751525AbeEVN5S (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 09:57:18 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:34124 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751236AbeEVN5P (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 09:57:15 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A82B5604D4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From: Kalle Valo <kvalo@codeaurora.org>
-To: Ramon Fried <ramon.fried@gmail.com>
-Cc: jjohnson@codeaurora.org, linux-kernel@vger.kernel.org,
-        wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, Eyal Ilsar <eilsar@codeaurora.org>,
-        Ramon Fried <ramon.fried@linaro.org>
-Subject: Re: [PATCH v2] wcn36xx: Add support for Factory Test Mode (FTM)
-References: <20180518103122.28439-1-ramon.fried@gmail.com>
-Date: Tue, 22 May 2018 16:57:09 +0300
-In-Reply-To: <20180518103122.28439-1-ramon.fried@gmail.com> (Ramon Fried's
-        message of "Fri, 18 May 2018 13:31:22 +0300")
-Message-ID: <87a7srvlmy.fsf@purkki.adurom.net>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        id S1751666AbeEVN6H convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 09:58:07 -0400
+Received: from prv1-mh.provo.novell.com ([137.65.248.33]:48485 "EHLO
+        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751613AbeEVN6B (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:5:1>);
+        Tue, 22 May 2018 09:58:01 -0400
+Message-Id: <5B0421E502000078001C4B91@prv1-mh.provo.novell.com>
+X-Mailer: Novell GroupWise Internet Agent 18.0.0 
+Date: Tue, 22 May 2018 07:57:57 -0600
+From: "Jan Beulich" <JBeulich@suse.com>
+To: <brgerst@gmail.com>
+Cc: "xen-devel" <xen-devel@lists.xenproject.org>,
+        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
+        "Juergen Gross" <jgross@suse.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 1/2] xen/PVH: Set up GS segment for stack canary
+References: <20180522035445.16911-1-boris.ostrovsky@oracle.com>
+ <20180522035445.16911-2-boris.ostrovsky@oracle.com>
+ <CAMzpN2iMrEqee+8yGP_qk-qAuXf+_o6vrOUSDTvX=8JAUDT5Fg@mail.gmail.com>
+In-Reply-To: <CAMzpN2iMrEqee+8yGP_qk-qAuXf+_o6vrOUSDTvX=8JAUDT5Fg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ramon Fried <ramon.fried@gmail.com> writes:
+>>> On 22.05.18 at 15:45, <brgerst@gmail.com> wrote:
+> On Mon, May 21, 2018 at 11:54 PM, Boris Ostrovsky <boris.ostrovsky@oracle.com> wrote:
+>> @@ -98,6 +101,12 @@ ENTRY(pvh_start_xen)
+>>         /* 64-bit entry point. */
+>>         .code64
+>>  1:
+>> +       /* Set base address in stack canary descriptor. */
+>> +       mov $MSR_GS_BASE,%ecx
+>> +       mov $canary, %rax
+>> +       cdq
+>> +       wrmsr
+> 
+> CDQ only sign-extends EAX to RAX.  What you really want is to move the
+> high 32-bits to EDX (or zero EDX if we can guarantee it is loaded
+> below 4G).
 
-> From: Eyal Ilsar <eilsar@codeaurora.org>
->
-> Introduce infrastructure for supporting Factory Test Mode (FTM) of the
-> wireless LAN subsystem. In order for the user space to access the
-> firmware in test mode the relevant netlink channel needs to be exposed
-> from the kernel driver.
->
-> The above is achieved as follows:
-> 1) Register wcn36xx driver to testmode callback from netlink
-> 2) Add testmode callback implementation to handle incoming FTM commands
-> 3) Add FTM command packet structure
-> 4) Add handling for GET_BUILD_RELEASE_NUMBER (msgid=0x32A2)
-> 5) Add generic handling for all PTT_MSG packets
->
-> Signed-off-by: Eyal Ilsar <eilsar@codeaurora.org>
-> Signed-off-by: Ramon Fried <ramon.fried@linaro.org>
+What you describe is CDQE (AT&T name: CLTD); CDQ (AT&T: CLTQ)
+sign-extends EAX to EDX:EAX.
 
-kbuild bot reported a warning:
-
-drivers/net/wireless/ath/wcn36xx/testmode.c:122:5: warning: 'msg' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--- 
-Kalle Valo
+Jan
