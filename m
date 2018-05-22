@@ -1,74 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751557AbeEVJKD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 05:10:03 -0400
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:40004 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751283AbeEVJJr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 05:09:47 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w4M99gvi010069
-X-Nifty-SrcIP: [209.85.213.46]
-X-Google-Smtp-Source: AB8JxZqpRfhvF0K3fQk31uBoC1e4xwadAI8s/s/M/u4Q4oNlxKT8yDEkwHHg8iaG5XLO6SD4hrQ9rPdI8ISZ76kr42c=
+        id S1751340AbeEVJMO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 05:12:14 -0400
+Received: from mga02.intel.com ([134.134.136.20]:61358 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750707AbeEVJMN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 05:12:13 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,429,1520924400";
+   d="scan'208";a="226263775"
+Subject: Re: [PATCH 1/2] drm/fourcc: add a 10bits fully packed variant of NV12
+To: Randy Li <ayaka@soulik.info>, dri-devel@lists.freedesktop.org
+Cc: hjc@rock-chips.com, heiko@sntech.de,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        nicolas.dufresne@collabora.com, gustavo@padovan.org,
+        seanpaul@chromium.org, airlied@linux.ie
+References: <20180520171705.29690-1-ayaka@soulik.info>
+ <20180520171705.29690-2-ayaka@soulik.info>
+From: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Message-ID: <fd131abe-613b-b539-b35c-2ebd6c29addb@linux.intel.com>
+Date: Tue, 22 May 2018 11:12:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180522090647.pmy7c4zwax4jlp7w@gmail.com>
-References: <20180518115619.jqb4hqdym7fmrs2p@gmail.com> <CAK7LNASuhoJsaBz6RjumbQnqhtyLJGLjkhGSs5-bvDz1TOuGww@mail.gmail.com>
- <20180522082117.p2b5jt5qtuwarqwo@gmail.com> <CAK7LNARgW-YdGbtT3sJt_UpE02CEAvE9csm8Oc2SoSZo71Bt8w@mail.gmail.com>
- <20180522090647.pmy7c4zwax4jlp7w@gmail.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Tue, 22 May 2018 18:09:01 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATK3iUG4q7EAwt1Kynjp5Aihw144O=SveZe3fdzPbWp_g@mail.gmail.com>
-Message-ID: <CAK7LNATK3iUG4q7EAwt1Kynjp5Aihw144O=SveZe3fdzPbWp_g@mail.gmail.com>
-Subject: Re: [PATCH v4] scripts/tags.sh: use `find` for $ALLSOURCE_ARCHS generation
-To: Joey Pabalinas <joeypabalinas@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180520171705.29690-2-ayaka@soulik.info>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-05-22 18:06 GMT+09:00 Joey Pabalinas <joeypabalinas@gmail.com>:
-> On Tue, May 22, 2018 at 05:41:48PM +0900, Masahiro Yamada wrote:
->> I see some new motivations for this patch now.
->>
->>   - The current code includes 'Kconfig' in ALLSOURCE_ARCHS,
->>     but it should not.
->>
->>   - Simplify the code, removing the find_all_archs().
->>
->>
->> If you are motivated for v5,
->> how about this?
->>
->>   - Remove the double-quotes from "${tree}arch/"
->>     (Because the rest parts of this script do not have double-quoting,
->>      I do not see point in adding it in this line only.)
->>
->>   - Update the git-log to not mention the hypothetical space things.
+Op 20-05-18 om 19:17 schreef Randy Li:
+> This pixel format is a fully packed and 10bits variant of NV12.
+> A luma pixel would take 10bits in memory, without any
+> filled bits between pixels in a stride. The color gamut
+> follows the BT.2020 standard.
 >
-> Alright, that sounds reasonable. What do you think of:
+> Signed-off-by: Randy Li <ayaka@soulik.info>
+> ---
+>  drivers/gpu/drm/drm_fourcc.c  | 1 +
+>  include/uapi/drm/drm_fourcc.h | 3 +++
+>  2 files changed, 4 insertions(+)
 >
->> ALLSOURCE_ARCHS=$(find ${tree}arch/ -mindepth 1 -maxdepth 1 -type d -printf '%f ')
->
-> The double quotes surrounding the arguments have been removed to be more
-> consistent with the other find commands in the script.
->
-> The ' %f' was changed to '%f ' so that you don't get that weird leading
-> space; I couldn't think of a way this could break anything but I wanted
-> to be 100% sure instead of needing to make a v6, heh.
+> diff --git a/drivers/gpu/drm/drm_fourcc.c b/drivers/gpu/drm/drm_fourcc.c
+> index 5ca6395cd4d3..1f43967c4013 100644
+> --- a/drivers/gpu/drm/drm_fourcc.c
+> +++ b/drivers/gpu/drm/drm_fourcc.c
+> @@ -173,6 +173,7 @@ const struct drm_format_info *__drm_format_info(u32 format)
+>  		{ .format = DRM_FORMAT_UYVY,		.depth = 0,  .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 2, .vsub = 1 },
+>  		{ .format = DRM_FORMAT_VYUY,		.depth = 0,  .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 2, .vsub = 1 },
+>  		{ .format = DRM_FORMAT_AYUV,		.depth = 0,  .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+> +		{ .format = DRM_FORMAT_NV12_10LE40,	.depth = 0,  .num_planes = 2, .cpp = { 1, 2, 0 }, .hsub = 2, .vsub = 2 },
+>  	};
+>  
+>  	unsigned int i;
+> diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
+> index e04613d30a13..8eabf01e966f 100644
+> --- a/include/uapi/drm/drm_fourcc.h
+> +++ b/include/uapi/drm/drm_fourcc.h
+> @@ -140,6 +140,9 @@ extern "C" {
+>  #define DRM_FORMAT_NV61		fourcc_code('N', 'V', '6', '1') /* 2x1 subsampled Cb:Cr plane */
+>  #define DRM_FORMAT_NV24		fourcc_code('N', 'V', '2', '4') /* non-subsampled Cr:Cb plane */
+>  #define DRM_FORMAT_NV42		fourcc_code('N', 'V', '4', '2') /* non-subsampled Cb:Cr plane */
+> +/* A fully packed variant of NV12_10LE32 */
+> +#define DRM_FORMAT_NV12_10LE40	fourcc_code('R', 'K', '2', '0') /* 2x2 subsampled Cr:Cb plane */
+> +
+>  
+>  /*
+>   * 3 plane YCbCr
 
+I think the description here is slightly too terse for adding a new packed format. I think it would be better
+to define a new category for 10-bit 2 plane formats.
 
-Fine with me.
-
-
-
-
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+~Maarten
