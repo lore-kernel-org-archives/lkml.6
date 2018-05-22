@@ -1,63 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753182AbeEVVb5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 17:31:57 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:55187 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753017AbeEVVby (ORCPT
+        id S1753062AbeEVViF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 17:38:05 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:36335 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752713AbeEVViE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 17:31:54 -0400
-X-Google-Smtp-Source: AB8JxZqf9k01onlPJsi69DMwjcanaj7j69vcut65BaE77dulhRHbL0ZpE2nFZmacjT8MGJC51cMCqTy0/i72C3wa8yo=
+        Tue, 22 May 2018 17:38:04 -0400
+X-Google-Smtp-Source: AB8JxZpLK9PDVRLSsvF2fyR1voVhqGxc+c6f0StNDZBIKZG25fY2BbMU6EQUvf8lu+2TXoJxCvX+Njf6yL0JZDstDg4=
 MIME-Version: 1.0
-References: <0879f797135033e05e8e9166a3c85628@codeaurora.org>
- <CA+55aFyGHhPvbqGaA0+tx7fbH+Uc6sbGKk2PLoFYCt-agCOgOw@mail.gmail.com> <20180522211724.GR12217@hirez.programming.kicks-ass.net>
-In-Reply-To: <20180522211724.GR12217@hirez.programming.kicks-ass.net>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 22 May 2018 14:31:42 -0700
-Message-ID: <CA+55aFySqSVh+WsAbpYQcE4r87z7BXm1wuZpobYxVjVWsWULsQ@mail.gmail.com>
-Subject: Re: write_lock_irq(&tasklist_lock)
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: psodagud@codeaurora.org, Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Rik van Riel <riel@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Eric Biggers <ebiggers@google.com>,
-        Frederic Weisbecker <fweisbec@gmail.com>, sherryy@android.com,
-        Vegard Nossum <vegard.nossum@oracle.com>,
-        Christoph Lameter <cl@linux.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Sasha Levin <alexander.levin@verizon.com>,
+In-Reply-To: <45b62e4b-ee9a-a2de-579f-24642bb1fbc7@deltatee.com>
+References: <152694211402.5484.2277538346144115181.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <152694213486.5484.5340142369038375338.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <45b62e4b-ee9a-a2de-579f-24642bb1fbc7@deltatee.com>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Tue, 22 May 2018 14:38:02 -0700
+Message-ID: <CAPcyv4idV8JbwUQ8tkzFzMV-sfLY15zwE_Xp3F6C_+zajVbxng@mail.gmail.com>
+Subject: Re: [PATCH 4/5] mm, hmm: replace hmm_devmem_pages_create() with devm_memremap_pages()
+To: Logan Gunthorpe <logang@deltatee.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Linux MM <linux-mm@kvack.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 2:17 PM Peter Zijlstra <peterz@infradead.org> wrote:
+On Tue, May 22, 2018 at 10:13 AM, Logan Gunthorpe <logang@deltatee.com> wrote:
+>
+>
+> On 21/05/18 04:35 PM, Dan Williams wrote:
+>> +     /*
+>> +      * For device private memory we call add_pages() as we only need to
+>> +      * allocate and initialize struct page for the device memory. More-
+>> +      * over the device memory is un-accessible thus we do not want to
+>> +      * create a linear mapping for the memory like arch_add_memory()
+>> +      * would do.
+>> +      *
+>> +      * For all other device memory types, which are accessible by
+>> +      * the CPU, we do want the linear mapping and thus use
+>> +      * arch_add_memory().
+>> +      */
+>> +     if (pgmap->type == MEMORY_DEVICE_PRIVATE) {
+>> +             error = add_pages(nid, align_start >> PAGE_SHIFT,
+>> +                             align_size >> PAGE_SHIFT, NULL, false);
+>> +     } else {
+>> +             struct zone *zone;
+>> +
+>> +             error = arch_add_memory(nid, align_start, align_size, altmap,
+>> +                             false);
+>> +             zone = &NODE_DATA(nid)->node_zones[ZONE_DEVICE];
+>> +             if (!error)
+>> +                     move_pfn_range_to_zone(zone, align_start >> PAGE_SHIFT,
+>>                                       align_size >> PAGE_SHIFT, altmap);
+>> +     }
+>
+> Maybe I missed it in the patch but, don't we need the same thing in
+> devm_memremap_pages_release() such that it calls the correct remove
+> function? Similar to the replaced hmm code:
+>
+>> -     mem_hotplug_begin();
+>> -     if (resource->desc == IORES_DESC_DEVICE_PRIVATE_MEMORY)
+>> -             __remove_pages(zone, start_pfn, npages, NULL);
+>> -     else
+>> -             arch_remove_memory(start_pfn << PAGE_SHIFT,
+>> -                                npages << PAGE_SHIFT, NULL);
+>> -     mem_hotplug_done();
+>> -
+>> -     hmm_devmem_radix_release(resource);
+>
+> Perhaps it should be a separate patch too as it would be easier to see
+> outside the big removal of HMM code.
+>
 
-> qrwlock is a fair lock and should not exhibit writer starvation.
-
-We actually have a special rule to make it *not* be fair, in that
-interrupts are allowed to take the read lock if there are readers - even if
-there are waiting writers.
-
-I'm not sure how much of an fairness effect this has, but it's required
-because of our rule that you can take it for reading without disabling
-interrupts.
-
-See
-
-      void queued_read_lock_slowpath(struct qrwlock *lock)
-
-in kernel/locking/qrwlock.c.
-
-> You basically want to spin-wait with interrupts enabled, right?
-
-That was the intent of my (untested) pseudo-code. It should work fine. Note
-that I used write_trylock() only, so there is no queueing (which also
-implies no fairness).
-
-I'm not saying it's a _good_ idea.  I'm saying it might work if all you
-worry about is the irq-disabled part.
-
-                 Linus
+Yes, I'll split it out.
