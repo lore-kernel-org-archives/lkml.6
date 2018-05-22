@@ -1,241 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751526AbeEVObm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 10:31:42 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:8176 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751173AbeEVObh (ORCPT
+        id S1751587AbeEVOdB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 10:33:01 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:41059 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751291AbeEVOc6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 10:31:37 -0400
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Tue, 22 May 2018 07:31:39 -0700
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 8/9] PM / Domains: Add support for multi PM domains per
- device to genpd
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>, <linux-pm@vger.kernel.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Kevin Hilman <khilman@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>
-References: <1526639490-12167-1-git-send-email-ulf.hansson@linaro.org>
- <1526639490-12167-9-git-send-email-ulf.hansson@linaro.org>
-Message-ID: <f5589b88-acf8-b491-df79-e359e596c8d0@nvidia.com>
-Date: Tue, 22 May 2018 15:31:16 +0100
+        Tue, 22 May 2018 10:32:58 -0400
+X-Google-Smtp-Source: AB8JxZrt32PZzjOcdrIE9VCXDw5YBayCD2IZJxP17j+tcvd0ZhQsPPFtU80Q0G8/9DvCjIuX+26Tag==
+Subject: Re: [PATCH v6 2/2] acpi: apei: Do not panic() on PCIe errors reported
+ through GHES
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>, alex_gagniuc@dellteam.com,
+        austin_bolen@dell.com, shyam_iyer@dell.com,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
+        Tony Luck <tony.luck@intel.com>, Tyler Baicar <tbaicar@codeaurora.org>,
+        Will Deacon <will.deacon@arm.com>, James Morse <james.morse@arm.com>,
+        Shiju Jose <shiju.jose@huawei.com>,
+        "Jonathan (Zhixiong) Zhang" <zjzhang@codeaurora.org>,
+        Dongjiu Geng <gengdongjiu@huawei.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180521135003.32459-1-mr.nuke.me@gmail.com>
+ <20180521135003.32459-3-mr.nuke.me@gmail.com>
+ <CAJZ5v0h+U1zNK+LdOH_pU7kb+c6VK7erZCRqaV2WauDE2cwc6w@mail.gmail.com>
+From: "Alex G." <mr.nuke.me@gmail.com>
+Message-ID: <5a72a503-e8d5-c317-89b4-86e574c48064@gmail.com>
+Date: Tue, 22 May 2018 09:32:55 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <1526639490-12167-9-git-send-email-ulf.hansson@linaro.org>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <CAJZ5v0h+U1zNK+LdOH_pU7kb+c6VK7erZCRqaV2WauDE2cwc6w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ulf,
-
-On 18/05/18 11:31, Ulf Hansson wrote:
-> To support devices being partitioned across multiple PM domains, let's
-> start by extending genpd to cope with these configurations.
+On 05/22/2018 04:02 AM, Rafael J. Wysocki wrote:
+> On Mon, May 21, 2018 at 3:49 PM, Alexandru Gagniuc <mr.nuke.me@gmail.com> wrote:
+>> The policy was to panic() when GHES said that an error is "Fatal".
+>> This logic is wrong for several reasons, as it doesn't account for the
+>> cause of the error.
+>>
+>> PCIe fatal errors indicate that the link to a device is either
+>> unstable or unusable. They don't indicate that the machine is on fire,
 > 
-> More precisely, add a new exported function, genpd_dev_pm_attach_by_id(),
-> similar to genpd_dev_pm_attach(), but the new function also allows the
-> caller to provide an index to what PM domain it wants to attach.
+> But they very well may indicate just that AFAICS.
+
+I guess it's possible to set a machine on fire, and get a PCIe error as
+one of the links melts. Although in that case, I doubt how we try to
+handle the error makes a difference. Sarcasm aside, my point is that it
+makes little sense to crash a machine when we lose a PCIe link.
+
+
+>> and they are not severe enough to justify a panic(). Do not blindly
+>> rely on firmware to evaluate the severity for us. Instead, look at
+>> the error severity based on what caused the error (GHES subsections).
 > 
-> Furthermore, let genpd register a new virtual struct device via calling
-> device_register() and attach it to the corresponding PM domain, which is
-> looked up via calling the existing genpd OF functions. Note that the new
-> device is needed, because only one PM domain can be attached per device. At
-> successful attachment, genpd_dev_pm_attach_by_id() returns the new device,
-> allowing the caller to operate on it to deal with power management.
+> Which bit also comes from the firmware, right?  So why is it regarded
+> as a better source of information?
+
+It's less bad (not using 'better') because it relates more closely to
+the error than the specific mechanism through which it is reported. The
+header severity is an artificial concept that firmware has to make up,
+whereas the subsection severity usually comes directly from hardware.
+
+> Or are you trying to say that both of the pieces of information in
+> question should be consistent with each other?  But if they aren't,
+> which one should we trust more and why?
+
+The header severity is letting someone else make the decisions for you.
+
+(snip)
+>> +/* PCIe errors should not cause a panic. */
 > 
-> To deal with detaching of a PM domain for multiple PM domain case, we can
-> still re-use the existing genpd_dev_pm_detach() function, although we need
-> to extend it to cover cleanup of the earlier registered device, via calling
-> device_unregister().
+> This comment is not sufficient and it should go inside of the function.
+
+What would make a "sufficient" comment?
+
+>> +static int ghes_sec_pcie_severity(struct acpi_hest_generic_data *gdata)
+>> +{
+>> +       struct cper_sec_pcie *pcie_err = acpi_hest_get_payload(gdata);
+>> +
+>> +       if (pcie_err->validation_bits & CPER_PCIE_VALID_DEVICE_ID &&
+>> +           pcie_err->validation_bits & CPER_PCIE_VALID_AER_INFO &&
+>> +           IS_ENABLED(CONFIG_ACPI_APEI_PCIEAER))
+>> +               return GHES_SEV_RECOVERABLE;
 > 
-> An important note, genpd_dev_pm_attach_by_id() shall only be called by the
-> driver core / PM core, similar to how genpd_dev_pm_attach() is used.
-> Following changes deploys this.
+> You have not explained convincingly enough why the above condition
+> makes sense at all.
+
+Is this a test? I think it's self-explanatory:
+How can you invoke a handler when you don't have a source for the error?
+Or how can you invoke a handler when you don't have that handler?
+
+>> +
+>> +       return ghes_cper_severity(gdata->error_severity);
+>> +}
+>> +
+>> +/*
+>> + * The severity field in the status block is an unreliable metric for the
+>> + * severity. A more reliable way is to look at each subsection and see how safe
+>> + * it is to call the approproate error handler.
+>> + * We're not conerned with handling the error. We're concerned with being able
+>> + * to notify an error handler by crossing the NMI/IRQ boundary, being able to
+>> + * schedule_work, and so forth.
+>> + *   - SEC_PCIE: All PCIe errors can be handled by AER.
 > 
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
->   drivers/base/power/domain.c | 79 +++++++++++++++++++++++++++++++++++++++++++++
->   include/linux/pm_domain.h   |  8 +++++
->   2 files changed, 87 insertions(+)
-> 
-> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> index d538640..ffeb6ea 100644
-> --- a/drivers/base/power/domain.c
-> +++ b/drivers/base/power/domain.c
-> @@ -2171,6 +2171,15 @@ struct generic_pm_domain *of_genpd_remove_last(struct device_node *np)
->   }
->   EXPORT_SYMBOL_GPL(of_genpd_remove_last);
->   
-> +static void genpd_release_dev(struct device *dev)
-> +{
-> +	kfree(dev);
-> +}
-> +
-> +static struct bus_type genpd_bus_type = {
-> +	.name		= "genpd",
-> +};
-> +
->   /**
->    * genpd_dev_pm_detach - Detach a device from its PM domain.
->    * @dev: Device to detach.
-> @@ -2208,6 +2217,10 @@ static void genpd_dev_pm_detach(struct device *dev, bool power_off)
->   
->   	/* Check if PM domain can be powered off after removing this device. */
->   	genpd_queue_power_off_work(pd);
-> +
-> +	/* Unregister the device if it was created by genpd. */
-> +	if (dev->bus == &genpd_bus_type)
-> +		device_unregister(dev);
->   }
->   
->   static void genpd_dev_pm_sync(struct device *dev)
-> @@ -2298,6 +2311,66 @@ int genpd_dev_pm_attach(struct device *dev)
->   }
->   EXPORT_SYMBOL_GPL(genpd_dev_pm_attach);
->   
-> +/**
-> + * genpd_dev_pm_attach_by_id() - Attach a device to one of its PM domain.
-> + * @dev: Device to attach.
-> + * @index: The index of the PM domain.
-> + *
-> + * Parse device's OF node to find a PM domain specifier at the provided @index.
-> + * If such is found, allocates a new device and attaches it to retrieved
-> + * pm_domain ops.
-> + *
-> + * Returns the allocated device if successfully attached PM domain, NULL when
-> + * the device don't need a PM domain or have a single PM domain, else PTR_ERR()
-> + * in case of failures. Note that if a power-domain exists for the device, but
-> + * cannot be found or turned on, then return PTR_ERR(-EPROBE_DEFER) to ensure
-> + * that the device is not probed and to re-try again later.
-> + */
-> +struct device *genpd_dev_pm_attach_by_id(struct device *dev,
-> +					 unsigned int index)
-> +{
-> +	struct device *genpd_dev;
-> +	int num_domains;
-> +	int ret;
-> +
-> +	if (!dev->of_node)
-> +		return NULL;
-> +
-> +	/* Deal only with devices using multiple PM domains. */
-> +	num_domains = of_count_phandle_with_args(dev->of_node, "power-domains",
-> +						 "#power-domain-cells");
-> +	if (num_domains < 2 || index >= num_domains)
-> +		return NULL;
-> +
-> +	/* Allocate and register device on the genpd bus. */
-> +	genpd_dev = kzalloc(sizeof(*genpd_dev), GFP_KERNEL);
-> +	if (!genpd_dev)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	dev_set_name(genpd_dev, "genpd:%u:%s", index, dev_name(dev));
-> +	genpd_dev->bus = &genpd_bus_type;
-> +	genpd_dev->release = genpd_release_dev;
-> +
-> +	ret = device_register(genpd_dev);
-> +	if (ret) {
-> +		kfree(genpd_dev);
-> +		return ERR_PTR(ret);
-> +	}
-> +
-> +	/* Try to attach the device to the PM domain at the specified index. */
-> +	ret = __genpd_dev_pm_attach(genpd_dev, dev->of_node, index);
-> +	if (ret < 1) {
-> +		device_unregister(genpd_dev);
-> +		return ret ? ERR_PTR(ret) : NULL;
-> +	}
-> +
-> +	pm_runtime_set_active(genpd_dev);
-> +	pm_runtime_enable(genpd_dev);
-> +
-> +	return genpd_dev;
-> +}
-> +EXPORT_SYMBOL_GPL(genpd_dev_pm_attach_by_id);
+> Make this comment a proper kerneldoc or move it inside of the function.
 
-Thanks for sending this. Believe it or not this has still been on my to-do list
-and so we definitely need a solution for Tegra.
+I don't like moving long comments inside a function, as it breaks code
+flow. Above-function explanation is also consistent with how
+ghes_handle_aer() is documented.
 
-Looking at the above it appears that additional power-domains exposed as devices
-to the client device. So I assume that this means that the drivers for devices
-with multiple power-domains will need to call RPM APIs for each of these
-additional power-domains. Is that correct?
+Rafael, thank you very much for taking the time to review these patches.
+Although, after reading through your emails, I'm at a loss on how you
+want to to solve the problem. It appears everyone has a very strong and
+different opinion how to proceed.
 
-If so, I can see that that would work, but it does not seem to fit the RPM model
-where currently for something like device clocks, the RPM callbacks can handle
-all clocks at once.
+I think the biggest problem is having a policy to panic on "fatal"
+errors, instead of letting the error handler make that decision. I'd
+much rather kill that stupid policy, but people seem to like it for some
+reason.
 
-I was wondering why we could not add a list of genpd domains to the
-dev_pm_domain struct for the device? For example ...
-
-diff --git a/include/linux/pm.h b/include/linux/pm.h
-index e723b78d8357..a11d6db3c077 100644
---- a/include/linux/pm.h
-+++ b/include/linux/pm.h
-@@ -659,6 +659,7 @@ extern void dev_pm_put_subsys_data(struct device *dev);
-  * subsystem-level and driver-level callbacks.
-  */
- struct dev_pm_domain {
-+       struct list_head        genpd_list;
-        struct dev_pm_ops       ops;
-        void (*detach)(struct device *dev, bool power_off);
-        int (*activate)(struct device *dev);
-@@ -666,6 +667,11 @@ struct dev_pm_domain {
-        void (*dismiss)(struct device *dev);
- };
-
-+struct dev_pm_domain_link {
-+       struct generic_pm_domain *genpd;
-+       struct list_head node;
-+};
-+
- /*
-  * The PM_EVENT_ messages are also used by drivers implementing the legacy
-  * suspend framework, based on the ->suspend() and ->resume() callbacks common
-diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-index e61b5cd79fe2..019593804670 100644
---- a/include/linux/pm_domain.h
-+++ b/include/linux/pm_domain.h
-@@ -51,7 +51,6 @@ struct dev_pm_opp;
-
- struct generic_pm_domain {
-        struct device dev;
--       struct dev_pm_domain domain;    /* PM domain operations */
-        struct list_head gpd_list_node; /* Node in the global PM domains list */
-        struct list_head master_links;  /* Links with PM domain as a master */
-        struct list_head slave_links;   /* Links with PM domain as a slave */
-@@ -99,11 +98,6 @@ struct generic_pm_domain {
-
- };
-
--static inline struct generic_pm_domain *pd_to_genpd(struct dev_pm_domain *pd)
--{
--       return container_of(pd, struct generic_pm_domain, domain);
--}
--
-
-Obviously the above will not compile but the intent would be to allocate a
-dev_pm_domain_link struct per power-domain that the device needs and add
-to the genpd_list for the device. It would be a much bigger change in
-having to iterate through all the power-domains when turning devices on
-and off, however, it would simplify the client driver. 
-
-Cheers
-Jon
-
--- 
-nvpublic
+Alex
