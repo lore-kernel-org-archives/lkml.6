@@ -1,81 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752967AbeEVUuR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 16:50:17 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:55199 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752764AbeEVUuP (ORCPT
+        id S1753006AbeEVUuY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 16:50:24 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:44536 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752969AbeEVUuT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 16:50:15 -0400
-X-Google-Smtp-Source: AB8JxZqt9Yyh8zcu2w8DcZ81A+SgWnu3W5hnuCxRGEJ1wO63d9+gAolb02Qhvj3MPEcAWbH72GljHA==
-Subject: Re: [PATCH net-next v2 1/7] net: dsa: qca8k: Add QCA8334 binding
- documentation
-To: Rob Herring <robh@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, f.fainelli@gmail.com,
-        vivien.didelot@savoirfairelinux.com, andrew@lunn.ch,
-        mark.rutland@arm.com, davem@davemloft.net, michal.vokac@ysoft.com
-References: <1526987792-56861-1-git-send-email-michal.vokac@ysoft.com>
- <1526987792-56861-2-git-send-email-michal.vokac@ysoft.com>
- <20180522194039.GA15413@rob-hp-laptop>
-From: Michal <vokac.m@gmail.com>
-Message-ID: <67783b3a-e7df-2b22-eba5-a86e5de22c32@gmail.com>
-Date: Tue, 22 May 2018 22:50:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 22 May 2018 16:50:19 -0400
+X-Google-Smtp-Source: AB8JxZqEVRH9NxqMDPCycsEf1dXMOkzdfBT5uZ2LKpedEoPqlF5waB4t5wKr7tb8mOv1QqACtn/+NVDsJavg6cNXPVQ=
 MIME-Version: 1.0
-In-Reply-To: <20180522194039.GA15413@rob-hp-laptop>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <161a0513-1029-a76c-f967-1e606081599d@embeddedor.com>
+References: <20180515030038.GA11822@embeddedor.com> <20180515150859.1bccbd8d4543848b30fea859@linux-foundation.org>
+ <alpine.DEB.2.21.1805160027260.1605@nanos.tec.linutronix.de>
+ <CAPcyv4iksLzZ=eMjWw6Wi87F2OSXHd16gKRLExgGhx=Mdr+AwQ@mail.gmail.com>
+ <50481b83-4c03-f354-bd11-cef7aecdd85f@embeddedor.com> <b5e5e160-6ac7-87c8-af1a-4eb88f1f020d@embeddedor.com>
+ <CAPcyv4iO67AG5ytc7gRBTnu6V8bdTOMb9eBwjGJtkGpMLKkpwg@mail.gmail.com>
+ <3d2e5771-c2c9-6e45-3e85-21c0bc86876e@embeddedor.com> <58df7ae3-8ef0-4f42-9ab2-b551d2ffff00@embeddedor.com>
+ <161a0513-1029-a76c-f967-1e606081599d@embeddedor.com>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Tue, 22 May 2018 13:50:18 -0700
+Message-ID: <CAPcyv4i6zOJZakNVW=y8NyUFB1EzOxBtoOGVhWCwysuTi6grvg@mail.gmail.com>
+Subject: Re: [PATCH] kernel: sys: fix potential Spectre v1
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22.5.2018 21:40, Rob Herring wrote:
-> On Tue, May 22, 2018 at 01:16:26PM +0200, Michal Vokáč wrote:
->> Add support for the four-port variant of the Qualcomm QCA833x switch.
+On Sun, May 20, 2018 at 7:00 PM, Gustavo A. R. Silva
+<gustavo@embeddedor.com> wrote:
+>
+>
+> On 05/20/2018 07:50 PM, Gustavo A. R. Silva wrote:
 >>
->> The CPU port default link settings can be reconfigured using
->> a fixed-link sub-node.
 >>
->> Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
->> ---
->> Changes in v2:
->>   - Add commit message and document fixed-link binding.
 >>
->>   .../devicetree/bindings/net/dsa/qca8k.txt          | 23 +++++++++++++++++++++-
->>   1 file changed, 22 insertions(+), 1 deletion(-)
+>> On 05/18/2018 03:44 PM, Gustavo A. R. Silva wrote:
+>>>>>
+>>>>>
+>>>>> #ifndef sanitize_index_nospec
+>>>>> inline bool sanitize_index_nospec(unsigned long *index,
+>>>>>                                    unsigned long size)
+>>>>> {
+>>>>>          if (*index >= size)
+>>>>>                  return false;
+>>>>>          *index = array_index_nospec(*index, size);
+>>>>>
+>>>>>          return true;
+>>>>> }
+>>>>> #endif
+>>>>
+>>>>
+>>>> I think this is fine in concept, we already do something similar in
+>>>> mpls_label_ok(). Perhaps call it validate_index_nospec() since
+>>>> validation is something that can fail, but sanitization in theory is
+>>>> something that can always succeed.
+>>>>
+>>>
+>>> OK. I got it.
+>>>
+>>>> However, the problem is the data type of the index. I expect you would
+>>>> need to do this in a macro and use typeof() if you wanted this to be
+>>>> generally useful, and also watch out for multiple usage of a macro
+>>>> argument. Is it still worth it at that point?
+>>>>
+>>>
+>>> Yeah. I think it is worth it. I'll work on this during the weekend and
+>>> send a proper patch for review.
+>>>
 >>
->> diff --git a/Documentation/devicetree/bindings/net/dsa/qca8k.txt b/Documentation/devicetree/bindings/net/dsa/qca8k.txt
->> index 9c67ee4..15b9057 100644
->> --- a/Documentation/devicetree/bindings/net/dsa/qca8k.txt
->> +++ b/Documentation/devicetree/bindings/net/dsa/qca8k.txt
->> @@ -2,7 +2,10 @@
->>   
->>   Required properties:
->>   
->> -- compatible: should be "qca,qca8337"
->> +- compatible: should be one of:
->> +    "qca,qca8334"
->> +    "qca,qca8337"
+>> Dan,
+>>
+>> What do you think about this first draft:
+>>
+>> diff --git a/include/linux/nospec.h b/include/linux/nospec.h
+>> index e791ebc..6154183 100644
+>> --- a/include/linux/nospec.h
+>> +++ b/include/linux/nospec.h
+>> @@ -55,4 +55,16 @@ static inline unsigned long
+>> array_index_mask_nospec(unsigned long index,
+>>                                                                         \
+>>          (typeof(_i)) (_i & _mask);                                     \
+>>   })
 >> +
->>   - #size-cells: must be 0
->>   - #address-cells: must be 1
->>   
->> @@ -14,6 +17,20 @@ port and PHY id, each subnode describing a port needs to have a valid phandle
->>   referencing the internal PHY connected to it. The CPU port of this switch is
->>   always port 0.
->>   
->> +A CPU port node has the following optional property:
-> 
-> s/property/node/
-> 
-> Otherwise,
-> 
-> Reviewed-by: Rob Herring <robh@kernel.org>
+>> +#define validate_index_nospec(index, size)                            \
+>> +({                                                                    \
+>> +       typeof(index) *ptr = &(index);                                 \
+>> +       typeof(size) _s = (size);                                      \
+>> +                                                                      \
+>> +       BUILD_BUG_ON(sizeof(*ptr) > sizeof(long));                     \
+>> +       BUILD_BUG_ON(sizeof(_s) > sizeof(long));                       \
+>> +                                                                      \
+>> +       *ptr >= _s ? false :                                           \
+>> +       (*ptr = array_index_nospec(*ptr, _s) ? true : true);           \
+>
+>
+> This actually should be:
+>
+> ((*ptr = array_index_nospec(*ptr, _s)) ? true : true);
+>
 
-Good catch, I will correct this.
-Thanks for the review Rob.
-
-Michal
+Let's not use ternary conditionals at all to make this more readable.
