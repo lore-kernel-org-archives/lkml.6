@@ -1,73 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751432AbeEVLC6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 07:02:58 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:48934 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750733AbeEVLC5 (ORCPT
+        id S1751412AbeEVLHA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 07:07:00 -0400
+Received: from 10.mo178.mail-out.ovh.net ([46.105.76.150]:59142 "EHLO
+        10.mo178.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750733AbeEVLG5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 07:02:57 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Thomas Martitz <kugel@rockbox.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Lukas Wunner <lukas@wunner.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH] PM / core: Fix direct_complete handling for devices with no callbacks
-Date: Tue, 22 May 2018 13:02:17 +0200
-Message-ID: <6238546.EnOBWIOf9o@aspire.rjw.lan>
+        Tue, 22 May 2018 07:06:57 -0400
+From: =?UTF-8?q?S=C3=A9bastien=20Szymanski?=
+        <sebastien.szymanski@armadeus.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>, Stefan Agner <stefan@agner.ch>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org,
+        =?UTF-8?q?S=C3=A9bastien=20Szymanski?=
+        <sebastien.szymanski@armadeus.com>
+Subject: [PATCH v3 3/3] ARM: dts: imx6ull-colibri-wifi: remove operating points
+Date: Tue, 22 May 2018 08:28:53 +0200
+Message-Id: <20180522062853.24799-3-sebastien.szymanski@armadeus.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180522062853.24799-1-sebastien.szymanski@armadeus.com>
+References: <20180522062853.24799-1-sebastien.szymanski@armadeus.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 13138407488661902588
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedthedrgedtgddutdegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddm
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Operating points are now defined in the imx6ull.dtsi file so remove
+them from board device trees.
 
-Commit 08810a4119aa (PM / core: Add NEVER_SKIP and SMART_PREPARE
-driver flags) inadvertently prevented the power.direct_complete flag
-from being set for devices without PM callbacks and with disabled
-runtime PM which also prevents power.direct_complete from being set
-for their parents.  That led to problems including a resume crash on
-HP ZBook 14u.
-
-Restore the previous behavior by causing power.direct_complete to be
-set for those devices again, but do that in a more direct way to
-avoid overlooking that case in the future.
-
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=199693
-Fixes: 08810a4119aa (PM / core: Add NEVER_SKIP and SMART_PREPARE driver flags)
-Reported-by: Thomas Martitz <kugel@rockbox.org>
-Tested-by: Thomas Martitz <kugel@rockbox.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Sébastien Szymanski <sebastien.szymanski@armadeus.com>
 ---
- drivers/base/power/main.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/imx6ull-colibri-wifi.dtsi | 14 --------------
+ 1 file changed, 14 deletions(-)
 
-Index: linux-pm/drivers/base/power/main.c
-===================================================================
---- linux-pm.orig/drivers/base/power/main.c
-+++ linux-pm/drivers/base/power/main.c
-@@ -1920,10 +1920,8 @@ static int device_prepare(struct device
+diff --git a/arch/arm/boot/dts/imx6ull-colibri-wifi.dtsi b/arch/arm/boot/dts/imx6ull-colibri-wifi.dtsi
+index 3dffbcd50bf6..183193e8580d 100644
+--- a/arch/arm/boot/dts/imx6ull-colibri-wifi.dtsi
++++ b/arch/arm/boot/dts/imx6ull-colibri-wifi.dtsi
+@@ -20,20 +20,6 @@
  
- 	dev->power.wakeup_path = false;
+ &cpu0 {
+ 	clock-frequency = <792000000>;
+-	operating-points = <
+-		/* kHz	uV */
+-		792000  1225000
+-		528000	1175000
+-		396000	1025000
+-		198000	950000
+-	>;
+-	fsl,soc-operating-points = <
+-		/* KHz	uV */
+-		792000  1175000
+-		528000	1175000
+-		396000	1175000
+-		198000	1175000
+-	>;
+ };
  
--	if (dev->power.no_pm_callbacks) {
--		ret = 1;	/* Let device go direct_complete */
-+	if (dev->power.no_pm_callbacks)
- 		goto unlock;
--	}
- 
- 	if (dev->pm_domain)
- 		callback = dev->pm_domain->ops.prepare;
-@@ -1957,7 +1955,8 @@ unlock:
- 	 */
- 	spin_lock_irq(&dev->power.lock);
- 	dev->power.direct_complete = state.event == PM_EVENT_SUSPEND &&
--		pm_runtime_suspended(dev) && ret > 0 &&
-+		((pm_runtime_suspended(dev) && ret > 0) ||
-+		 dev->power.no_pm_callbacks) &&
- 		!dev_pm_test_driver_flags(dev, DPM_FLAG_NEVER_SKIP);
- 	spin_unlock_irq(&dev->power.lock);
- 	return 0;
+ &iomuxc {
+-- 
+2.16.1
