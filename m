@@ -1,68 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752186AbeEVMRZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 08:17:25 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:55619 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751283AbeEVMQm (ORCPT
+        id S1752719AbeEVMTR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 08:19:17 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:40718 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751710AbeEVMTL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 08:16:42 -0400
-X-Google-Smtp-Source: AB8JxZruSN0sSQijdcG84cXbaWrmG1ghoLTYSdQx+KBOpti3IAalzAJk09YupbW+l/rsEgGcjOozMg==
+        Tue, 22 May 2018 08:19:11 -0400
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date: Tue, 22 May 2018 14:19:09 +0200
+From: Stefan Agner <stefan@agner.ch>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: boris.brezillon@bootlin.com, dwmw2@infradead.org,
+        computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, thierry.reding@gmail.com,
+        mturquette@baylibre.com, sboyd@kernel.org, dev@lynxeye.de,
+        miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com,
+        krzk@kernel.org, benjamin.lindqvist@endian.se, jonathanh@nvidia.com,
+        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com,
+        linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
 Subject: Re: [RESEND PATCH 2/5] mtd: rawnand: add NVIDIA Tegra NAND Flash
  controller driver
-To: Stefan Agner <stefan@agner.ch>, boris.brezillon@bootlin.com,
-        dwmw2@infradead.org, computersforpeace@gmail.com,
-        marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        thierry.reding@gmail.com, mturquette@baylibre.com, sboyd@kernel.org
-Cc: dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
-        marcel@ziswiler.com, krzk@kernel.org, benjamin.lindqvist@endian.se,
-        jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        mirza.krak@gmail.com, linux-mtd@lists.infradead.org,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+In-Reply-To: <86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
 References: <cover.1526990589.git.stefan@agner.ch>
  <86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
-From: Dmitry Osipenko <digetx@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=digetx@gmail.com; prefer-encrypt=mutual; keydata=
- xsBNBFpX5TwBCADQhg+lBnTunWSPbP5I+rM9q6EKPm5fu2RbqyVAh/W3fRvLyghdb58Yrmjm
- KpDYUhBIZvAQoFLEL1IPAgJBtmPvemO1XUGPxfYNh/3BlcDFBAgERrI3BfA/6pk7SAFn8u84
- p+J1TW4rrPYcusfs44abJrn8CH0GZKt2AZIsGbGQ79O2HHXKHr9V95ZEPWH5AR0UtL6wxg6o
- O56UNG3rIzSL5getRDQW3yCtjcqM44mz6GPhSE2sxNgqureAbnzvr4/93ndOHtQUXPzzTrYB
- z/WqLGhPdx5Ouzn0Q0kSVCQiqeExlcQ7i7aKRRrELz/5/IXbCo2O+53twlX8xOps9iMfABEB
- AAHNIkRtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT7CwJQEEwEIAD4WIQSczHcO
- 3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgIDAQIeAQIX
- gAAKCRDTNNaPsNRzvFjTCACqAh1M9/YPq73/ai5h2ExDquTgJnjegL8KL2yHL3G+XINwzN5E
- nPI7esoYm+zVWDJbv3UuRqylpookLNSRA01yyvkaMcipB/B128UnqmUiGRqezj9QE20yIauo
- uHRuwHPE2q+UkfUhRX9iuOaEyQtZDiCa0myMjmRkJ+Z8ZetclEPG8dYZu47w04phuMlu1QAt
- a0gkZOaMKvXgj21ushALS6nYnvm7HiIPQXfnEXThartatRvFdmbG4PCn0IoICkQBizwJtXrL
- HEjELIFap0M8krVJlUoZTFaZnaZkGpUDWikeFtAuie2KuIxmVBYPM4X7pM3eP3AVvIPGS7EE
- UUFuzsBNBFpX5TwBCADFNDou220thijaLLGaQsebWjzc/gPRxMixIpk856MRyRaQin+IbGD6
- YskMb5ZSD3nS88LIKNfY4MMH0LwfYztI++ICG2vdFLkbBt78E+LqEa+kZ9072l4W5KO3mWQo
- +jMfxXbpgGlc7iuEReDgl8iyZ27r51kSW665CYvvu2YJhLqgdj6QM1lN2D1UnhEhkkU+pRAj
- 1rJVOxdfJaQNQS4+204p3TrURovzNGkN/brqakpNIcqGOAGQqb8F0tuwwuP7ERq/BzDNkbdr
- qJOrVC/wkHRq1jfabQczWKf8MwYOvivR3HY8d3CpSQxmUXDtdOWfg0XGm1dxYnVfqPjuJaZt
- ABEBAAHCwHwEGAEIACYWIQSczHcO3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbDAUJA8JnAAAK
- CRDTNNaPsNRzvJzuB/9d+sxcwHbO8ZDcgaLX9N+bXFqN9fIRVmBUyWa+qqTSREA4uVAtYcRT
- lfPE2OQ7aMFxaYPwo+/z5SLpu8HcEhN/FG9uIkfYwK0mdCO0vgvlfvBJm4VHe7C6vyAeEPJQ
- DKbBvdgeqFqO+PsLkk2sawF/9sontMJ5iFfjNDj4UeAo4VsdlduTBZv5hHFvIbv/p7jKH6OT
- 90FsgUSVbShh7SH5OzAcgqSy4kxuS1AHizWo6P3f9vei987LZWTyhuEuhJsOfivDsjKIq7qQ
- c5eR+JJtyLEA0Jt4cQGhpzHtWB0yB3XxXzHVa4QUp00BNVWyiJ/t9JHT4S5mdyLfcKm7ddc9
-Message-ID: <fde238d6-5e95-53c9-b704-8fc9e0697328@gmail.com>
-Date: Tue, 22 May 2018 15:16:38 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Message-ID: <2e858be88e00e26495fe47c6cd5cd70c@agner.ch>
+User-Agent: Roundcube Webmail/1.3.4
+X-Spamd-Result: default: False [-3.10 / 15.00];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MID_RHS_MATCH_FROM(0.00)[];
+         RCPT_COUNT_TWELVE(0.00)[25];
+         TAGGED_RCPT(0.00)[dt];
+         MIME_GOOD(-0.10)[text/plain];
+         FROM_HAS_DN(0.00)[];
+         FROM_EQ_ENVFROM(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         TO_DN_SOME(0.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
+         RCVD_TLS_ALL(0.00)[];
+         BAYES_HAM(-3.00)[100.00%];
+         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Re-sending the review I made before of the series RESEND]
+[review sent to my first patch sent off-ml, moving to ml thread]
 
+On 21.05.2018 16:05, Dmitry Osipenko wrote:
 > Hello Stefan,
 > 
 > I don't have expertise to review the actual NAND-related driver logic, so I only
@@ -75,7 +64,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 >> command queue feature. Regular operations/data transfers are
 >> done in PIO mode. Page read/writes with hardware ECC make
 >> use of the DMA for data transfer.
->> 
+>>
 >> Signed-off-by: Lucas Stach <dev@lynxeye.de>
 >> Signed-off-by: Stefan Agner <stefan@agner.ch>
 >> ---
@@ -85,7 +74,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 >>  drivers/mtd/nand/raw/tegra_nand.c | 915 ++++++++++++++++++++++++++++++
 >>  4 files changed, 929 insertions(+)
 >>  create mode 100644 drivers/mtd/nand/raw/tegra_nand.c
->> 
+>>
 >> diff --git a/MAINTAINERS b/MAINTAINERS
 >> index 58b9861ccf99..a65739681279 100644
 >> --- a/MAINTAINERS
@@ -93,7 +82,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 >> @@ -13844,6 +13844,13 @@ M:	Laxman Dewangan <ldewangan@nvidia.com>
 >>  S:	Supported
 >>  F:	drivers/input/keyboard/tegra-kbc.c
->>  
+>>
 >> +TEGRA NAND DRIVER
 >> +M:	Stefan Agner <stefan@agner.ch>
 >> +M:	Lucas Stach <dev@lynxeye.de>
@@ -111,7 +100,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 >> @@ -534,4 +534,10 @@ config MTD_NAND_MTK
 >>  	  Enables support for NAND controller on MTK SoCs.
 >>  	  This controller is found on mt27xx, mt81xx, mt65xx SoCs.
->>  
+>>
 >> +config MTD_NAND_TEGRA
 >> +	tristate "Support for NAND on NVIDIA Tegra"
 >> +	depends on ARCH_TEGRA
@@ -128,7 +117,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 >>  obj-$(CONFIG_MTD_NAND_QCOM)		+= qcom_nandc.o
 >>  obj-$(CONFIG_MTD_NAND_MTK)		+= mtk_ecc.o mtk_nand.o
 >> +obj-$(CONFIG_MTD_NAND_TEGRA)		+= tegra_nand.o
->>  
+>>
 >>  nand-objs := nand_base.o nand_bbt.o nand_timings.o nand_ids.o
 >>  nand-objs += nand_amd.o
 >> diff --git a/drivers/mtd/nand/raw/tegra_nand.c b/drivers/mtd/nand/raw/tegra_nand.c
@@ -491,6 +480,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 > Both variants are fine, but the for-loop is a bit more explicit. You could omit
 > the above op_id variable initialization for consistency.
 > 
+
+Agreed, will do the for loop variant.
+
 >> +	for (op_id = 0; op_id < subop->ninstrs; op_id++) {
 >> +		unsigned int naddrs, i;
 >> +		const u8 *addrs;
@@ -657,6 +649,13 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 > Wouldn't be more efficient to set DMA burst to 16 words? The writesize seems
 > always aligned to at least 64 words.
 > 
+
+Hm, haven't tested 16 words, 8 was the setting Lucas used.
+
+Are you sure this is only about write size? Not sure, but isn't the ECC
+area also DMA'd? On Colibri we use RS with t=8, hence 144 bytes parity,
+so this would be properly aligned non the less...
+
 >> +	if (oob_required)
 >> +		value |= DMA_CTRL_EN_B;
 >> +	writel(value, nand->regs + DMA_CTRL);
@@ -924,6 +923,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 > may want to move devm_request_irq() after resetting the HW state, to be on a
 > safe side.
 > 
+
+Agreed.
+
 >> +
 >> +	writel(DMA_CTRL_IS_DONE, nand->regs + DMA_CTRL);
 >> +
@@ -936,10 +938,23 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 > 
 > Is this "reset config" really needed? It is overwritten below in the code.
 > 
+
+We already use the NAND peripheral in nand_scan_ident, and then properly
+set it up later. I think it is better to have a known config state
+during this phase...
+
 > 
 > Also, maybe you could factor out the HW reset/init stuff into a respective
 > tegra_nand_hw_reset() / tegra_nand_hw_init(), just for consistency.
 > 
+
+I will consider that.
+
+Thanks for your review!
+
+--
+Stefan
+
 >> +
 >> +	chip = &nand->chip;
 >> +	mtd = nand_to_mtd(chip);
@@ -1096,4 +1111,4 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 >> +MODULE_AUTHOR("Stefan Agner <stefan@agner.ch>");
 >> +MODULE_LICENSE("GPL v2");
 >> +MODULE_DEVICE_TABLE(of, tegra_nand_of_match);
->> 
+>>
