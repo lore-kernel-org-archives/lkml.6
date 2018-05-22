@@ -1,208 +1,262 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751404AbeEVNU6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 09:20:58 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54214 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751199AbeEVNUz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 09:20:55 -0400
-Subject: Re: [PATCH v8 2/6] cpuset: Add new v2 cpuset.sched.domain flag
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
-        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>
-References: <1526590545-3350-1-git-send-email-longman@redhat.com>
- <1526590545-3350-3-git-send-email-longman@redhat.com>
- <20180522125750.GA31040@localhost.localdomain>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <1ad1c5ad-bb78-7d26-682f-a5dd8cf05a61@redhat.com>
-Date: Tue, 22 May 2018 09:20:53 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <20180522125750.GA31040@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        id S1751380AbeEVNXG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 09:23:06 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:32897 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751236AbeEVNXC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 09:23:02 -0400
+X-Google-Smtp-Source: AB8JxZrNlIq+1okeXHiRSiMDSi/wsoPF6FOnEgclqVG6XEYL7mglaT3cIGu+gpS4QGupH/ZTm/0SWQ==
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Icenowy Zheng <icenowy@aosc.io>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v3] arm64: allwinner: a64: Add Amarula A64-Relic initial support
+Date: Tue, 22 May 2018 18:52:28 +0530
+Message-Id: <20180522132228.6564-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/22/2018 08:57 AM, Juri Lelli wrote:
-> Hi,
->
-> On 17/05/18 16:55, Waiman Long wrote:
->
-> [...]
->
->>  /**
->> + * update_isolated_cpumask - update the isolated_cpus mask of parent cpuset
->> + * @cpuset:  The cpuset that requests CPU isolation
->> + * @oldmask: The old isolated cpumask to be removed from the parent
->> + * @newmask: The new isolated cpumask to be added to the parent
->> + * Return: 0 if successful, an error code otherwise
->> + *
->> + * Changes to the isolated CPUs are not allowed if any of CPUs changing
->> + * state are in any of the child cpusets of the parent except the requesting
->> + * child.
->> + *
->> + * If the sched_domain flag changes, either the oldmask (0=>1) or the
->> + * newmask (1=>0) will be NULL.
->> + *
->> + * Called with cpuset_mutex held.
->> + */
->> +static int update_isolated_cpumask(struct cpuset *cpuset,
->> +	struct cpumask *oldmask, struct cpumask *newmask)
->> +{
->> +	int retval;
->> +	int adding, deleting;
->> +	cpumask_var_t addmask, delmask;
->> +	struct cpuset *parent = parent_cs(cpuset);
->> +	struct cpuset *sibling;
->> +	struct cgroup_subsys_state *pos_css;
->> +	int old_count = parent->isolation_count;
->> +	bool dying = cpuset->css.flags & CSS_DYING;
->> +
->> +	/*
->> +	 * Parent must be a scheduling domain with non-empty cpus_allowed.
->> +	 */
->> +	if (!is_sched_domain(parent) || cpumask_empty(parent->cpus_allowed))
->> +		return -EINVAL;
->> +
->> +	/*
->> +	 * The oldmask, if present, must be a subset of parent's isolated
->> +	 * CPUs.
->> +	 */
->> +	if (oldmask && !cpumask_empty(oldmask) && (!parent->isolation_count ||
->> +			!cpumask_subset(oldmask, parent->isolated_cpus))) {
->> +		WARN_ON_ONCE(1);
->> +		return -EINVAL;
->> +	}
->> +
->> +	/*
->> +	 * A sched_domain state change is not allowed if there are
->> +	 * online children and the cpuset is not dying.
->> +	 */
->> +	if (!dying && (!oldmask || !newmask) &&
->> +	    css_has_online_children(&cpuset->css))
->> +		return -EBUSY;
->> +
->> +	if (!zalloc_cpumask_var(&addmask, GFP_KERNEL))
->> +		return -ENOMEM;
->> +	if (!zalloc_cpumask_var(&delmask, GFP_KERNEL)) {
->> +		free_cpumask_var(addmask);
->> +		return -ENOMEM;
->> +	}
->> +
->> +	if (!old_count) {
->> +		if (!zalloc_cpumask_var(&parent->isolated_cpus, GFP_KERNEL)) {
->> +			retval = -ENOMEM;
->> +			goto out;
->> +		}
->> +		old_count = 1;
->> +	}
->> +
->> +	retval = -EBUSY;
->> +	adding = deleting = false;
->> +	if (newmask)
->> +		cpumask_copy(addmask, newmask);
->> +	if (oldmask)
->> +		deleting = cpumask_andnot(delmask, oldmask, addmask);
->> +	if (newmask)
->> +		adding = cpumask_andnot(addmask, newmask, delmask);
->> +
->> +	if (!adding && !deleting)
->> +		goto out_ok;
->> +
->> +	/*
->> +	 * The cpus to be added must be in the parent's effective_cpus mask
->> +	 * but not in the isolated_cpus mask.
->> +	 */
->> +	if (!cpumask_subset(addmask, parent->effective_cpus))
->> +		goto out;
->> +	if (parent->isolation_count &&
->> +	    cpumask_intersects(parent->isolated_cpus, addmask))
->> +		goto out;
->> +
->> +	/*
->> +	 * Check if any CPUs in addmask or delmask are in a sibling cpuset.
->> +	 * An empty sibling cpus_allowed means it is the same as parent's
->> +	 * effective_cpus. This checking is skipped if the cpuset is dying.
->> +	 */
->> +	if (dying)
->> +		goto updated_isolated_cpus;
->> +
->> +	cpuset_for_each_child(sibling, pos_css, parent) {
->> +		if ((sibling == cpuset) || !(sibling->css.flags & CSS_ONLINE))
->> +			continue;
->> +		if (cpumask_empty(sibling->cpus_allowed))
->> +			goto out;
->> +		if (adding &&
->> +		    cpumask_intersects(sibling->cpus_allowed, addmask))
->> +			goto out;
->> +		if (deleting &&
->> +		    cpumask_intersects(sibling->cpus_allowed, delmask))
->> +			goto out;
->> +	}
-> Just got the below by echoing 1 into cpuset.sched.domain of a sibling with
-> "isolated" cpuset.cpus. Guess you are missing proper locking about here
-> above.
->
-> --->8---
-> [ 7509.905005] =============================
-> [ 7509.905009] WARNING: suspicious RCU usage
-> [ 7509.905014] 4.17.0-rc5+ #11 Not tainted
-> [ 7509.905017] -----------------------------
-> [ 7509.905023] /home/juri/work/kernel/linux/kernel/cgroup/cgroup.c:3826 cgroup_mutex or RCU read lock required!
-> [ 7509.905026] 
->                other info that might help us debug this:
->
-> [ 7509.905031] 
->                rcu_scheduler_active = 2, debug_locks = 1
-> [ 7509.905036] 4 locks held by bash/1480:
-> [ 7509.905039]  #0: 00000000bf288709 (sb_writers#6){.+.+}, at: vfs_write+0x18a/0x1b0
-> [ 7509.905072]  #1: 00000000ebf23fc9 (&of->mutex){+.+.}, at: kernfs_fop_write+0xe2/0x1a0
-> [ 7509.905098]  #2: 00000000de7c626e (kn->count#302){.+.+}, at: kernfs_fop_write+0xeb/0x1a0
-> [ 7509.905124]  #3: 00000000a6a2bd9f (cpuset_mutex){+.+.}, at: cpuset_write_u64+0x23/0x140
-> [ 7509.905149] 
->                stack backtrace:
-> [ 7509.905156] CPU: 6 PID: 1480 Comm: bash Not tainted 4.17.0-rc5+ #11
-> [ 7509.905160] Hardware name: LENOVO 30B6S2F900/1030, BIOS S01KT56A 01/15/2018
-> [ 7509.905164] Call Trace:
-> [ 7509.905176]  dump_stack+0x85/0xcb
-> [ 7509.905187]  css_next_child+0x90/0xd0
-> [ 7509.905195]  update_isolated_cpumask+0x18f/0x2e0
-> [ 7509.905208]  update_flag+0x1f3/0x210
-> [ 7509.905220]  cpuset_write_u64+0xff/0x140
-> [ 7509.905230]  cgroup_file_write+0x178/0x230
-> [ 7509.905244]  kernfs_fop_write+0x113/0x1a0
-> [ 7509.905254]  __vfs_write+0x36/0x180
-> [ 7509.905264]  ? rcu_read_lock_sched_held+0x6b/0x80
-> [ 7509.905270]  ? rcu_sync_lockdep_assert+0x2e/0x60
-> [ 7509.905278]  ? __sb_start_write+0x13e/0x1a0
-> [ 7509.905283]  ? vfs_write+0x18a/0x1b0
-> [ 7509.905293]  vfs_write+0xc1/0x1b0
-> [ 7509.905302]  ksys_write+0x55/0xc0
-> [ 7509.905317]  do_syscall_64+0x60/0x200
-> [ 7509.905327]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> [ 7509.905333] RIP: 0033:0x7fee4fdfe414
-> [ 7509.905338] RSP: 002b:00007fff364a80a8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-> [ 7509.905346] RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007fee4fdfe414
-> [ 7509.905350] RDX: 0000000000000002 RSI: 000055eb12f93740 RDI: 0000000000000001
-> [ 7509.905354] RBP: 000055eb12f93740 R08: 000000000000000a R09: 00007fff364a7c30
-> [ 7509.905358] R10: 000000000000000a R11: 0000000000000246 R12: 00007fee500cd760
-> [ 7509.905361] R13: 0000000000000002 R14: 00007fee500c8760 R15: 0000000000000002
-> --->8---
->
-> Best,
->
-> - Juri
->
-Thanks for the testing. I will fix that in the next version.
+Amarula A64-Relic is Allwinner A64 based IoT device, which support
+- Allwinner A64 Cortex-A53
+- Mali-400MP2 GPU
+- AXP803 PMIC
+- 1GB DDR3 RAM
+- 8GB eMMC
+- AP6330 Wifi/BLE
+- MIPI-DSI
+- CSI: OV5640 sensor
+- USB OTG
+- 12V DC power supply
 
--Longman
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+Changes for v3:
+- Use sun50i-a64-amarula-relic.dts name
+- add eldo3 for dvdd-csi
+- update dldo4 min voltage as 3.3v as per schematics
+- use dldo3 name as dovdd-csi
+- update aldo1, aldo2 voltages as per schematics
+Changes for v2:
+- Rename dts name to sun50i-a64-relic.dts which is simple to use
+- Update dldo4 min voltage as 1.8
+- Use licence year as 2018
+
+ arch/arm64/boot/dts/allwinner/Makefile             |   1 +
+ .../dts/allwinner/sun50i-a64-amarula-relic.dts     | 188 +++++++++++++++++++++
+ 2 files changed, 189 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
+
+diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
+index c31f90a49481..67ce8c500b2e 100644
+--- a/arch/arm64/boot/dts/allwinner/Makefile
++++ b/arch/arm64/boot/dts/allwinner/Makefile
+@@ -1,4 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0
++dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-amarula-relic.dtb
+ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-bananapi-m64.dtb
+ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-nanopi-a64.dtb
+ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-olinuxino.dtb
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
+new file mode 100644
+index 000000000000..6101ea83291c
+--- /dev/null
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
+@@ -0,0 +1,188 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright (C) 2018 Amarula Solutions B.V.
++ * Author: Jagan Teki <jagan@amarulasolutions.com>
++ */
++
++/dts-v1/;
++
++#include "sun50i-a64.dtsi"
++
++#include <dt-bindings/gpio/gpio.h>
++
++/ {
++	model = "Amarula A64-Relic";
++	compatible = "amarula,a64-relic", "allwinner,sun50i-a64";
++
++	aliases {
++		serial0 = &uart0;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++};
++
++&ehci0 {
++	status = "okay";
++};
++
++&mmc2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&mmc2_pins>;
++	vmmc-supply = <&reg_dcdc1>;
++	bus-width = <8>;
++	non-removable;
++	cap-mmc-hw-reset;
++	status = "okay";
++};
++
++&ohci0 {
++	status = "okay";
++};
++
++&r_rsb {
++	status = "okay";
++
++	axp803: pmic@3a3 {
++		compatible = "x-powers,axp803";
++		reg = <0x3a3>;
++		interrupt-parent = <&r_intc>;
++		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
++		x-powers,drive-vbus-en; /* set N_VBUSEN as output pin */
++	};
++};
++
++#include "axp803.dtsi"
++
++&reg_aldo1 {
++	regulator-always-on;
++	regulator-min-microvolt = <2800000>;
++	regulator-max-microvolt = <2800000>;
++	regulator-name = "avdd-csi";
++};
++
++&reg_aldo2 {
++	regulator-always-on;
++	regulator-min-microvolt = <1800000>;
++	regulator-max-microvolt = <3300000>;
++	regulator-name = "vcc-pl";
++};
++
++&reg_aldo3 {
++	regulator-always-on;
++	regulator-min-microvolt = <3000000>;
++	regulator-max-microvolt = <3000000>;
++	regulator-name = "vcc-pll-avcc";
++};
++
++&reg_dcdc1 {
++	regulator-always-on;
++	regulator-min-microvolt = <3300000>;
++	regulator-max-microvolt = <3300000>;
++	regulator-name = "vcc-3v3";
++};
++
++&reg_dcdc2 {
++	regulator-always-on;
++	regulator-min-microvolt = <1040000>;
++	regulator-max-microvolt = <1300000>;
++	regulator-name = "vdd-cpux";
++};
++
++/* DCDC3 is polyphased with DCDC2 */
++
++&reg_dcdc5 {
++	regulator-always-on;
++	regulator-min-microvolt = <1500000>;
++	regulator-max-microvolt = <1500000>;
++	regulator-name = "vcc-dram";
++};
++
++&reg_dcdc6 {
++	regulator-always-on;
++	regulator-min-microvolt = <1100000>;
++	regulator-max-microvolt = <1100000>;
++	regulator-name = "vdd-sys";
++};
++
++&reg_dldo1 {
++	regulator-min-microvolt = <3300000>;
++	regulator-max-microvolt = <3300000>;
++	regulator-name = "vcc-hdmi-dsi-sensor";
++};
++
++&reg_dldo2 {
++	regulator-min-microvolt = <3300000>;
++	regulator-max-microvolt = <3300000>;
++	regulator-name = "vcc-mipi";
++};
++
++&reg_dldo3 {
++	regulator-min-microvolt = <2800000>;
++	regulator-max-microvolt = <2800000>;
++	regulator-name = "dovdd-csi";
++};
++
++&reg_dldo4 {
++	regulator-min-microvolt = <3300000>;
++	regulator-max-microvolt = <3300000>;
++	regulator-name = "vcc-wifi-io";
++};
++
++&reg_drivevbus {
++	regulator-name = "usb0-vbus";
++	status = "okay";
++};
++
++&reg_eldo1 {
++	regulator-always-on;
++	regulator-min-microvolt = <1800000>;
++	regulator-max-microvolt = <1800000>;
++	regulator-name = "cpvdd";
++};
++
++&reg_eldo3 {
++	regulator-min-microvolt = <1800000>;
++	regulator-max-microvolt = <1800000>;
++	regulator-name = "dvdd-csi";
++};
++
++&reg_fldo1 {
++	regulator-min-microvolt = <1200000>;
++	regulator-max-microvolt = <1200000>;
++	regulator-name = "vcc-1v2-hsic";
++};
++
++/*
++ * The A64 chip cannot work without this regulator off, although
++ * it seems to be only driving the AR100 core.
++ * Maybe we don't still know well about CPUs domain.
++ */
++&reg_fldo2 {
++	regulator-always-on;
++	regulator-min-microvolt = <1100000>;
++	regulator-max-microvolt = <1100000>;
++	regulator-name = "vdd-cpus";
++};
++
++&reg_rtc_ldo {
++	regulator-name = "vcc-rtc";
++};
++
++&uart0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart0_pins_a>;
++	status = "okay";
++};
++
++&usb_otg {
++	dr_mode = "peripheral";
++	status = "okay";
++};
++
++&usbphy {
++	usb0_id_det-gpios = <&pio 7 9 GPIO_ACTIVE_HIGH>; /* PH9 */
++	usb0_vbus-supply = <&reg_drivevbus>;
++	status = "okay";
++};
+-- 
+2.14.3
