@@ -1,459 +1,189 @@
-Return-Path: <linux-efi-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1741794-1526958819-2-14335672287142189566
+Return-Path: <linux-arch-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2741439-1527005132-2-16615590354814036939
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-charsets: 
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
-X-Mail-from: linux-efi-owner@vger.kernel.org
+X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526958819; b=KqP12bNQDoHSBgwmsAhBzaSKCsjfxxzAgrkgSO+h7gxBSpWB92
-    yS61wxbz72Qbov1tFsqtygOScRCyEYhP74ylJGy96o30kVE4tqvgPuEp1St/orZk
-    kvl4cz/p7EdppFribLAXufYevn1pu/MbONBevhV3poX/Ib0EPzGH3pbWNWaaHBkK
-    wqzovpGDw5edvbMKN77lM2j7IjBzTCj+YPIJRURNTpLLqFbrHY/4SuwOZv44wDjI
-    2HgZRFyW/UlsK6KSQrGl2YyVoZiSSHFo4GHVfQnFPGBj5ZHu2bUWc88a7gnEOVIK
-    W2Q5v+8mpL90pWAo0b5VgB3eR+tEu0/mqwSw==
+    1527005132; b=CrlSDUMYce0AEhZ2AsJF6UPO6vt9dGF1E3KjVNW8L3tyGjHUJE
+    iu2z4cd5Wq+Wr9QRwq2H7nn2nF+zbOCLILYL+TbEtHNztr6l7RZLd+/K1zT9xMNB
+    /bZbcajDF0DKxCzDM7WcoVcaTO0Jah5JPWKmCsDurEtDBgnysKq1uDwKMzAyJGHx
+    vXrM++UXe5MwEZDqDJkz21UWqkE+lVqFZ/0bveTqvVYK2KtheA5HPp64/qf710TF
+    8JQNbeWeqZ3EaAwJIWxOzD96VG5GWLlIutIddhbtGr40pJkxCF5X4cwZK60IbZmq
+    S5OW2WvD1aEQ3ahhmqWZlgcO7+K+Ng2gGT7A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1526958819; bh=
-    CODAeFLsgIndlIoePwToCuqfln6W8Bze7RzJluujwic=; b=dPUYTZaO1AkZjgvR
-    ktxvPDFSmtHA1UfX5z8kNpNCsW+EecQ4MGodoZdfm/7hhpKbBsCff+JPjj9xQMLZ
-    u9cgI6IO/lnlpyn5Zz6pPm33sf8ZlMDGlNQeBf5LDQfBhzEkadDeYPeClT30BJcP
-    82yoFZKgF8LxrkqMq1FLoUvDBPwr+F7Ei6cVuWjc1o9PU4Z5aUiqdAumhrNVZqwu
-    Qrt6xAeZ+YCy1jZKWx5ZWrwpH1DNhLDWttrcw4GQVSf6+ievZFkozqRKM00b55w6
-    MH29le112vY7QdEwyqLO7Er3YOhBUzg2C1E6yOWBDHB5qEEGGFpJAoTA7WJtk4XX
-    O+TxyA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1527005132; bh=ruQBqk+4YZ24lsT+G51p7o24ptIEs0
+    +mcR5ZbX905CQ=; b=Gb7l13WLbYzGn9x3t9bOl0oGhDbZEQiy4NabZcDo8Iigxo
+    +WuaEoZadbqoqv2H8X10ncyVaxlKm4UXaBNqUkdqItwmrAsoApxxQvHGBcDHmuqV
+    49tAg+Mrd5L5teU78edD2MJO9zMnDl0QNDmId9oksz2HN9TD44X6WseLrcGEe9ks
+    /A/mGlquRtaTPjkFcD+6DYWahhIusozxmJWDVvI0dgNJV9hdVYf3jPBabEItviGN
+    ldom3I494jzU1+AbYqhNjmKjhVS1MuVqSAzCLxbYT8J16VHmkOrblPbMnSO8HBPh
+    KJy9UztzPuev+LXs7ZelyyU511si3DWqbcU6UjjA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arm.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-efi-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=intel.com header.result=pass header_is_org_domain=yes;
+    header.domain=arm.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arm.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-efi-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=intel.com header.result=pass header_is_org_domain=yes;
+      header.domain=arm.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPAQldnfqSuw7Lrj7WHtNNviZyx1gFBgBfAykDo/BHwWWdiMGWxRTkdUCxi3HBd5FE3DXvr3jbwEx6g1AVF04g8BQbHA0hVmrB2S9WbD4z3Nw0bSrbpZ
-    d+DBQVQLWr4pQ/88OV5F425WgY/oEbcrJFPXTDgqFMdNErKWuiN7KQPzPWhM+l0ES16RlaYgsSyHpUhnDTFFi8X7Cl4XPSvFit2SNlZOe2ACicGNPLwW94rK
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=QyXUC8HyAAAA:8
-    a=VwQbUJbxAAAA:8 a=iox4zFpeAAAA:8 a=7CQSdrXTAAAA:8 a=20KFwNOVAAAA:8
-    a=KKAkSRfTAAAA:8 a=JfrnYn6hAAAA:8 a=CxaZg77CAAAA:8 a=pGLkceISAAAA:8
-    a=7LFl7l15pGqXSYIrI-EA:9 a=Po6V9GpjeiP7lU5f:21 a=cXZ8r7zTJBXWeGBb:21
-    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22 a=WzC6qhA0u3u7Ye7llzcV:22
-    a=a-qgeE7W1pNrGK8U0ZQC:22 a=cvBusfyB2V15izCimMoJ:22 a=1CNFftbPRP8L7MoqJWF3:22
-    a=HxQw6O0h_v37Y3_G5fB_:22
+X-CM-Envelope: MS4wfLLmbL8k1erzH2et4adano5Qs+pY1sf8l4bkpZfnZcnOot4XqS9JG7HO3FF6VsqMm5u+pAIwS1qu65/BJkRjBdcNTsGbZuzzKZqh/mCPU8AsQb4UPbK9
+    7MCfu7db1sLoDAiAZdJgu6tyUW5LlrzSrH79/K75He3+sMW66BSppMootpJ4DE9kBeu0BCJJKAP4gbCOe/4GyjnPOL+fArURI7RBbdio5wed4bzYPKB9vYS6
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=JfrnYn6hAAAA:8
+    a=p7Au9uXeTtAe-OaG0FYA:9 a=Q2i2xoE4Z_IA:10 a=I7Fl0iNTEZgA:10 a=G5WYf6J1rTwA:10
+    a=d0Eap3aq__YA:10 a=aXqy-N0K3ocA:10 a=1CNFftbPRP8L7MoqJWF3:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752687AbeEVDNf (ORCPT <rfc822;linux@kroah.com>);
-        Mon, 21 May 2018 23:13:35 -0400
-Received: from mga06.intel.com ([134.134.136.31]:55066 "EHLO mga06.intel.com"
+        id S1751196AbeEVQF3 (ORCPT <rfc822;linux@kroah.com>);
+        Tue, 22 May 2018 12:05:29 -0400
+Received: from foss.arm.com ([217.140.101.70]:40550 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751932AbeEVDNR (ORCPT <rfc822;linux-efi@vger.kernel.org>);
-        Mon, 21 May 2018 23:13:17 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,428,1520924400";
-   d="scan'208";a="41795486"
-From: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-To: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Sai Praneeth <sai.praneeth.prakhya@intel.com>,
-        Lee Chun-Yi <jlee@suse.com>, Borislav Petkov <bp@alien8.de>,
-        Tony Luck <tony.luck@intel.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Naresh Bhat <naresh.bhat@linaro.org>,
-        Ricardo Neri <ricardo.neri@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ravi Shankar <ravi.v.shankar@intel.com>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Dan Williams <dan.j.williams@intel.com>,
+        id S1751436AbeEVQF2 (ORCPT <rfc822;linux-arch@vger.kernel.org>);
+        Tue, 22 May 2018 12:05:28 -0400
+From: Dave Martin <Dave.Martin@arm.com>
+To: kvmarm@lists.cs.columbia.edu
+Cc: linux-arm-kernel@lists.infradead.org,
+        Christoffer Dall <cdall@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Subject: [PATCH V3 3/3] efi: Use efi_rts_wq to invoke EFI Runtime Services
-Date: Mon, 21 May 2018 20:13:04 -0700
-Message-Id: <1526958784-14688-4-git-send-email-sai.praneeth.prakhya@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1526958784-14688-1-git-send-email-sai.praneeth.prakhya@intel.com>
-References: <1526958784-14688-1-git-send-email-sai.praneeth.prakhya@intel.com>
-Sender: linux-efi-owner@vger.kernel.org
-X-Mailing-List: linux-efi@vger.kernel.org
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Oleg Nesterov <oleg@redhat.com>
+Subject: [PATCH v10 00/18] KVM: arm64: Optimise FPSIMD context switching
+Date: Tue, 22 May 2018 17:05:01 +0100
+Message-Id: <1527005119-6842-1-git-send-email-Dave.Martin@arm.com>
+X-Mailer: git-send-email 2.1.4
+Sender: linux-arch-owner@vger.kernel.org
+X-Mailing-List: linux-arch@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
+Note: Most of these patches are Arm-specific.  People not Cc'd on the
+whole series can find it in the linux-arm-kernel archive [2].
 
-Presently, when a user process requests the kernel to execute any
-efi_runtime_service(), kernel switches the page directory (%cr3) from
-swapper_pgd to efi_pgd. Other subsystems in the kernel aren't aware of
-this switch and they might think, user space is still valid (i.e. the
-user space mappings are still pointing to the process that requested to
-run efi_runtime_service()) but in reality it is not so.
+This series aims to improve the way FPSIMD context is handled by KVM.
+Changes since the previous v9 [1] are mostly minor, but there are some
+fixes worthy of closer attention.
 
-A solution for this issue is to use kthread to run efi_runtime_service()
-When a user process requests the kernel to execute any
-efi_runtime_service(), kernel queues the work to efi_rts_wq, a kthread
-comes along, switches to efi_pgd and executes efi_runtime_service() in
-kthread context. Anything that tries to touch user space addresses while
-in kthread is terminally broken.
+In addition to addressing a review comment by Marc on the changes in v9,
+this series attempts to fix a NULL-dereference bug observed by Marc on
+ESPRESSOBin [5].  A reproducer for a similar bug is documented in [6],
+and this series fixes the observed bug (in patches 1 and 7).  At the
+moment, this is my best hypothesis for the ESPRESSOBin failure, though
+the relationship is unproven and we have no reproducer for the latter.
 
-Implementation summary:
------------------------
-1. When user/kernel thread requests to execute efi_runtime_service(),
-enqueue work to efi_rts_wq.
-2. Caller thread waits until the work is finished because it's dependent
-on the return status of efi_runtime_service().
+The changes are summarised in the individual patches.
 
-Semantics to pack arguments in efi_runtime_work (has void pointers):
-1. If argument is a pointer (of any type), pass it as is.
-2. If argument is a value (of any type), address of the value is passed.
+Reviewers please note:
 
-Introduce a handler function (called efi_call_rts()) that
-1. Understands efi_runtime_work and
-2. Invokes the appropriate efi_runtime_service() with the appropriate
-arguments
+ * Since v8, patches 10 and 14 have changed.  Reviewer tags have been
+   stripped from patch 14, due to non-trivial changes in v9 of the
+   series: see the patch for details.
 
-Semantics followed by efi_call_rts() to understand efi_runtime_work:
-1. If argument was a pointer, recast it from void pointer to original
-pointer type.
-2. If argument was a value, recast it from void pointer to original
-pointer type and dereference it.
+ * Since v9, patches 1 and 7 are also new, and correct a latent bug in
+   FPSIMD context handling which is exposed by this series.
 
-pstore writes could potentially be invoked in atomic context and it uses
-set_variable<>() and query_variable_info<>() to store logs. If we invoke
-efi_runtime_services() through efi_rts_wq while in atomic(), kernel
-issues a warning ("scheduling wile in atomic") and prints stack trace.
-One way to overcome this is to not make the caller process wait for the
-worker thread to finish. This approach breaks pstore i.e. the log
-messages aren't written to efi variables. Hence, pstore calls
-efi_runtime_services() without using efi_rts_wq or in other words
-efi_rts_wq will be used unconditionally for all the
-efi_runtime_services() except set_variable<>() and
-query_variable_info<>().
+If people could take a close look at the above patches, that would be
+much appreciated.
 
-Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Suggested-by: Andy Lutomirski <luto@kernel.org>
-Cc: Lee Chun-Yi <jlee@suse.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Bhupesh Sharma <bhsharma@redhat.com>
-Cc: Naresh Bhat <naresh.bhat@linaro.org>
-Cc: Ricardo Neri <ricardo.neri@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ravi Shankar <ravi.v.shankar@intel.com>
-Cc: Matt Fleming <matt@codeblueprint.co.uk>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
----
- drivers/firmware/efi/runtime-wrappers.c | 170 ++++++++++++++++++++++++++++----
- 1 file changed, 150 insertions(+), 20 deletions(-)
+Cheers
+---Dave
 
-diff --git a/drivers/firmware/efi/runtime-wrappers.c b/drivers/firmware/efi/runtime-wrappers.c
-index a9866045ed52..23ff128fcb2f 100644
---- a/drivers/firmware/efi/runtime-wrappers.c
-+++ b/drivers/firmware/efi/runtime-wrappers.c
-@@ -170,13 +170,107 @@ void efi_call_virt_check_flags(unsigned long flags, const char *call)
-  */
- static DEFINE_SEMAPHORE(efi_runtime_lock);
- 
-+/*
-+ * Calls the appropriate efi_runtime_service() with the appropriate
-+ * arguments.
-+ *
-+ * Semantics followed by efi_call_rts() to understand efi_runtime_work:
-+ * 1. If argument was a pointer, recast it from void pointer to original
-+ * pointer type.
-+ * 2. If argument was a value, recast it from void pointer to original
-+ * pointer type and dereference it.
-+ */
-+static void efi_call_rts(struct work_struct *work)
-+{
-+	struct efi_runtime_work *efi_rts_work;
-+	void *arg1, *arg2, *arg3, *arg4, *arg5;
-+	efi_status_t status = EFI_NOT_FOUND;
-+
-+	efi_rts_work = container_of(work, struct efi_runtime_work, work);
-+	arg1 = efi_rts_work->arg1;
-+	arg2 = efi_rts_work->arg2;
-+	arg3 = efi_rts_work->arg3;
-+	arg4 = efi_rts_work->arg4;
-+	arg5 = efi_rts_work->arg5;
-+
-+	switch (efi_rts_work->efi_rts_id) {
-+	case GET_TIME:
-+		status = efi_call_virt(get_time, (efi_time_t *)arg1,
-+				       (efi_time_cap_t *)arg2);
-+		break;
-+	case SET_TIME:
-+		status = efi_call_virt(set_time, (efi_time_t *)arg1);
-+		break;
-+	case GET_WAKEUP_TIME:
-+		status = efi_call_virt(get_wakeup_time, (efi_bool_t *)arg1,
-+				       (efi_bool_t *)arg2, (efi_time_t *)arg3);
-+		break;
-+	case SET_WAKEUP_TIME:
-+		status = efi_call_virt(set_wakeup_time, *(efi_bool_t *)arg1,
-+				       (efi_time_t *)arg2);
-+		break;
-+	case GET_VARIABLE:
-+		status = efi_call_virt(get_variable, (efi_char16_t *)arg1,
-+				       (efi_guid_t *)arg2, (u32 *)arg3,
-+				       (unsigned long *)arg4, (void *)arg5);
-+		break;
-+	case GET_NEXT_VARIABLE:
-+		status = efi_call_virt(get_next_variable, (unsigned long *)arg1,
-+				       (efi_char16_t *)arg2,
-+				       (efi_guid_t *)arg3);
-+		break;
-+	case SET_VARIABLE:
-+		/* fall through */
-+	case SET_VARIABLE_NONBLOCKING:
-+		status = efi_call_virt(set_variable, (efi_char16_t *)arg1,
-+				       (efi_guid_t *)arg2, *(u32 *)arg3,
-+				       *(unsigned long *)arg4, (void *)arg5);
-+		break;
-+	case QUERY_VARIABLE_INFO:
-+		/* fall through */
-+	case QUERY_VARIABLE_INFO_NONBLOCKING:
-+		status = efi_call_virt(query_variable_info, *(u32 *)arg1,
-+				       (u64 *)arg2, (u64 *)arg3, (u64 *)arg4);
-+		break;
-+	case GET_NEXT_HIGH_MONO_COUNT:
-+		status = efi_call_virt(get_next_high_mono_count, (u32 *)arg1);
-+		break;
-+	case RESET_SYSTEM:
-+		__efi_call_virt(reset_system, *(int *)arg1,
-+				*(efi_status_t *)arg2,
-+				*(unsigned long *)arg3,
-+				(efi_char16_t *)arg4);
-+		break;
-+	case UPDATE_CAPSULE:
-+		status = efi_call_virt(update_capsule,
-+				       (efi_capsule_header_t **)arg1,
-+				       *(unsigned long *)arg2,
-+				       *(unsigned long *)arg3);
-+		break;
-+	case QUERY_CAPSULE_CAPS:
-+		status = efi_call_virt(query_capsule_caps,
-+				       (efi_capsule_header_t **)arg1,
-+				       *(unsigned long *)arg2, (u64 *)arg3,
-+				       (int *)arg4);
-+		break;
-+	default:
-+		/*
-+		 * Ideally, we should never reach here because a caller of this
-+		 * function should have put the right efi_runtime_service()
-+		 * function identifier into efi_rts_work->efi_rts_id
-+		 */
-+		pr_err("Requested executing invalid EFI Runtime Service.\n");
-+	}
-+	efi_rts_work->status = status;
-+}
-+
- static efi_status_t virt_efi_get_time(efi_time_t *tm, efi_time_cap_t *tc)
- {
- 	efi_status_t status;
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_call_virt(get_time, tm, tc);
-+	status = efi_queue_work(GET_TIME, tm, tc, NULL, NULL, NULL);
- 	up(&efi_runtime_lock);
- 	return status;
- }
-@@ -187,7 +281,7 @@ static efi_status_t virt_efi_set_time(efi_time_t *tm)
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_call_virt(set_time, tm);
-+	status = efi_queue_work(SET_TIME, tm, NULL, NULL, NULL, NULL);
- 	up(&efi_runtime_lock);
- 	return status;
- }
-@@ -200,7 +294,8 @@ static efi_status_t virt_efi_get_wakeup_time(efi_bool_t *enabled,
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_call_virt(get_wakeup_time, enabled, pending, tm);
-+	status = efi_queue_work(GET_WAKEUP_TIME, enabled, pending, tm, NULL,
-+				NULL);
- 	up(&efi_runtime_lock);
- 	return status;
- }
-@@ -211,7 +306,8 @@ static efi_status_t virt_efi_set_wakeup_time(efi_bool_t enabled, efi_time_t *tm)
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_call_virt(set_wakeup_time, enabled, tm);
-+	status = efi_queue_work(SET_WAKEUP_TIME, &enabled, tm, NULL, NULL,
-+				NULL);
- 	up(&efi_runtime_lock);
- 	return status;
- }
-@@ -226,8 +322,8 @@ static efi_status_t virt_efi_get_variable(efi_char16_t *name,
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_call_virt(get_variable, name, vendor, attr, data_size,
--			       data);
-+	status = efi_queue_work(GET_VARIABLE, name, vendor, attr, data_size,
-+				data);
- 	up(&efi_runtime_lock);
- 	return status;
- }
-@@ -240,7 +336,8 @@ static efi_status_t virt_efi_get_next_variable(unsigned long *name_size,
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_call_virt(get_next_variable, name_size, name, vendor);
-+	status = efi_queue_work(GET_NEXT_VARIABLE, name_size, name, vendor,
-+				NULL, NULL);
- 	up(&efi_runtime_lock);
- 	return status;
- }
-@@ -255,8 +352,15 @@ static efi_status_t virt_efi_set_variable(efi_char16_t *name,
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_call_virt(set_variable, name, vendor, attr, data_size,
--			       data);
-+
-+	/* pstore shouldn't use efi_rts_wq while in atomic */
-+	if (!in_atomic())
-+		status = efi_queue_work(SET_VARIABLE, name, vendor, &attr,
-+					&data_size, data);
-+	else
-+		status = efi_call_virt(set_variable, name, vendor, attr,
-+				       data_size, data);
-+
- 	up(&efi_runtime_lock);
- 	return status;
- }
-@@ -271,8 +375,14 @@ virt_efi_set_variable_nonblocking(efi_char16_t *name, efi_guid_t *vendor,
- 	if (down_trylock(&efi_runtime_lock))
- 		return EFI_NOT_READY;
- 
--	status = efi_call_virt(set_variable, name, vendor, attr, data_size,
--			       data);
-+	/* pstore shouldn't use efi_rts_wq while in atomic */
-+	if (!in_atomic())
-+		status = efi_queue_work(SET_VARIABLE_NONBLOCKING, &name, vendor,
-+					&attr,	&data_size, data);
-+	else
-+		status = efi_call_virt(set_variable, name, vendor, attr,
-+				       data_size, data);
-+
- 	up(&efi_runtime_lock);
- 	return status;
- }
-@@ -290,8 +400,17 @@ static efi_status_t virt_efi_query_variable_info(u32 attr,
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_call_virt(query_variable_info, attr, storage_space,
--			       remaining_space, max_variable_size);
-+
-+	/* pstore shouldn't use efi_rts_wq while in atomic */
-+	if (!in_atomic())
-+		status = efi_queue_work(QUERY_VARIABLE_INFO, &attr,
-+					storage_space, remaining_space,
-+					max_variable_size, NULL);
-+	else
-+		status = efi_call_virt(query_variable_info, attr,
-+				       storage_space, remaining_space,
-+				       max_variable_size);
-+
- 	up(&efi_runtime_lock);
- 	return status;
- }
-@@ -310,8 +429,16 @@ virt_efi_query_variable_info_nonblocking(u32 attr,
- 	if (down_trylock(&efi_runtime_lock))
- 		return EFI_NOT_READY;
- 
--	status = efi_call_virt(query_variable_info, attr, storage_space,
--			       remaining_space, max_variable_size);
-+	/* pstore shouldn't use efi_rts_wq while in atomic */
-+	if (!in_atomic())
-+		status = efi_queue_work(QUERY_VARIABLE_INFO_NONBLOCKING, &attr,
-+					storage_space, remaining_space,
-+					max_variable_size, NULL);
-+	else
-+		status = efi_call_virt(query_variable_info, attr,
-+				       storage_space, remaining_space,
-+				       max_variable_size);
-+
- 	up(&efi_runtime_lock);
- 	return status;
- }
-@@ -322,7 +449,8 @@ static efi_status_t virt_efi_get_next_high_mono_count(u32 *count)
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_call_virt(get_next_high_mono_count, count);
-+	status = efi_queue_work(GET_NEXT_HIGH_MONO_COUNT, count, NULL, NULL,
-+				NULL, NULL);
- 	up(&efi_runtime_lock);
- 	return status;
- }
-@@ -337,7 +465,8 @@ static void virt_efi_reset_system(int reset_type,
- 			"could not get exclusive access to the firmware\n");
- 		return;
- 	}
--	__efi_call_virt(reset_system, reset_type, status, data_size, data);
-+	efi_queue_work(RESET_SYSTEM, &reset_type, &status, &data_size, data,
-+		       NULL);
- 	up(&efi_runtime_lock);
- }
- 
-@@ -352,7 +481,8 @@ static efi_status_t virt_efi_update_capsule(efi_capsule_header_t **capsules,
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_call_virt(update_capsule, capsules, count, sg_list);
-+	status = efi_queue_work(UPDATE_CAPSULE, capsules, &count, &sg_list,
-+				NULL, NULL);
- 	up(&efi_runtime_lock);
- 	return status;
- }
-@@ -369,8 +499,8 @@ static efi_status_t virt_efi_query_capsule_caps(efi_capsule_header_t **capsules,
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_call_virt(query_capsule_caps, capsules, count, max_size,
--			       reset_type);
-+	status = efi_queue_work(QUERY_CAPSULE_CAPS, capsules, &count,
-+				max_size, reset_type, NULL);
- 	up(&efi_runtime_lock);
- 	return status;
- }
+[1] [PATCH v9 00/16] KVM: arm64: Optimise FPSIMD context switching
+http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/579569.html
+
+[2] linux-arm-kernel archive
+http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/thread.html
+
+[3] [kvmarm:queue 9/29] arch/arm/kvm/../../../virt/kvm/arm/arm.c:783:3: error: implicit declaration of function 'kvm_arch_vcpu_ctxsync_fp'; did you mean 'kvm_arch_vcpu_put_fp'?
+http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/579400.html
+
+[4] [kvmarm:queue 13/29] arch/arm/kvm/../../../virt/kvm/arm/arm.c:1598:6: error: implicit declaration of function 'system_supports_sve'
+http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/579399.html
+
+[5] [PULL v8] KVM: arm64: Optimise FPSIMD context switching
+http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/579353.html
+
+
+Christoffer Dall (1):
+  KVM: arm/arm64: Introduce kvm_arch_vcpu_run_pid_change
+
+Dave Martin (17):
+  arm64: fpsimd: Fix TIF_FOREIGN_FPSTATE after invalidating cpu regs
+  thread_info: Add update_thread_flag() helpers
+  arm64: Use update{,_tsk}_thread_flag()
+  KVM: arm64: Convert lazy FPSIMD context switch trap to C
+  arm64: fpsimd: Generalise context saving for non-task contexts
+  arm64: fpsimd: Eliminate task->mm checks
+  arm64/sve: Refactor user SVE trap maintenance for external use
+  KVM: arm64: Repurpose vcpu_arch.debug_flags for general-purpose flags
+  KVM: arm64: Optimise FPSIMD handling to reduce guest/host thrashing
+  arm64/sve: Move read_zcr_features() out of cpufeature.h
+  arm64/sve: Switch sve_pffr() argument from task to thread
+  arm64/sve: Move sve_pffr() to fpsimd.h and make inline
+  KVM: arm64: Save host SVE context as appropriate
+  KVM: arm64: Remove eager host SVE state saving
+  KVM: arm64: Remove redundant *exit_code changes in fpsimd_guest_exit()
+  KVM: arm64: Fold redundant exit code checks out of fixup_guest_exit()
+  KVM: arm64: Invoke FPSIMD context switch trap from C
+
+ arch/arm/include/asm/kvm_host.h      |  10 +-
+ arch/arm64/Kconfig                   |   7 ++
+ arch/arm64/include/asm/cpufeature.h  |  29 ------
+ arch/arm64/include/asm/fpsimd.h      |  21 +++++
+ arch/arm64/include/asm/kvm_asm.h     |   3 -
+ arch/arm64/include/asm/kvm_host.h    |  45 +++++++--
+ arch/arm64/include/asm/processor.h   |   2 +
+ arch/arm64/include/asm/thread_info.h |   1 +
+ arch/arm64/kernel/fpsimd.c           | 176 +++++++++++++++++------------------
+ arch/arm64/kernel/ptrace.c           |   1 +
+ arch/arm64/kvm/Kconfig               |   1 +
+ arch/arm64/kvm/Makefile              |   2 +-
+ arch/arm64/kvm/debug.c               |   8 +-
+ arch/arm64/kvm/fpsimd.c              | 110 ++++++++++++++++++++++
+ arch/arm64/kvm/hyp/debug-sr.c        |   6 +-
+ arch/arm64/kvm/hyp/entry.S           |  43 ---------
+ arch/arm64/kvm/hyp/hyp-entry.S       |  19 ----
+ arch/arm64/kvm/hyp/switch.c          | 124 ++++++++++++++++--------
+ arch/arm64/kvm/hyp/sysreg-sr.c       |   4 +-
+ arch/arm64/kvm/sys_regs.c            |   9 +-
+ include/linux/kvm_host.h             |   9 ++
+ include/linux/sched.h                |   6 ++
+ include/linux/thread_info.h          |  11 +++
+ virt/kvm/Kconfig                     |   3 +
+ virt/kvm/arm/arm.c                   |  14 ++-
+ virt/kvm/kvm_main.c                  |   7 +-
+ 26 files changed, 416 insertions(+), 255 deletions(-)
+ create mode 100644 arch/arm64/kvm/fpsimd.c
+
 -- 
-2.7.4
-
+2.1.4
