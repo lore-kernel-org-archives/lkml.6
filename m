@@ -1,56 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751480AbeEVO1Y (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 10:27:24 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:32948 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751173AbeEVO1U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 10:27:20 -0400
-X-Google-Smtp-Source: AB8JxZo6XrcSrXqgRVvLInAF+JDykMW4NaRh0EnVUt1q9y/W0XHUlwyJIqy1Gn2QeTpVKK+roZDv8H/aXxBNQbWeS/o=
+        id S1751559AbeEVO12 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 10:27:28 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:60995 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751173AbeEVO1Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 10:27:25 -0400
+Date: Tue, 22 May 2018 16:27:23 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Emmanuel Vadot <manu@freebsd.org>
+Cc: wens@csie.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] ARM64: dts: sun50i: h5: Add spi flash node for
+ OrangePi PC2
+Message-ID: <20180522142723.lm4ivndgwr6mzdpp@flea>
+References: <20180521115426.92115-1-manu@freebsd.org>
 MIME-Version: 1.0
-In-Reply-To: <20180522033751.GB18351@vkoul-mobl>
-References: <CAJz5Opfd9zeEAShFtUNhW4yLfVykef=2QdWWzq88Dtddn4eymQ@mail.gmail.com>
- <06f54061-c537-b399-e493-ec2cdf4def5d@samsung.com> <20180515062144.GC13271@vkoul-mobl>
- <CAJz5Open++Dj=a4ty-JbnZBFoqbMQKU6qYumJKSRMRLp_3erSw@mail.gmail.com>
- <20180517041946.GQ13271@vkoul-mobl> <CAJz5Opfep+TL0k_3kG7uQc_nU-BdFy1wsD1jo1agwtSvw0JibQ@mail.gmail.com>
- <20180518040349.GB2932@vkoul-mobl> <CAJz5OpfSanwNS7Z=3FapR97XZzjWF_J23HqVouxVnPn2HwkKLw@mail.gmail.com>
- <20180521091626.GB14654@vkoul-mobl> <CAJz5OpdW7ZgX_K-+6H_mkHhzRf1_km8Usf306_HrnD7qCztdpw@mail.gmail.com>
- <20180522033751.GB18351@vkoul-mobl>
-From: Frank Mori Hess <fmh6jj@gmail.com>
-Date: Tue, 22 May 2018 10:27:18 -0400
-Message-ID: <CAJz5OpckWsRwBK5ZtrF11QG_C-W+qBJDroEWXN0de5Cc0XA=1Q@mail.gmail.com>
-Subject: Re: Revert "dmaengine: pl330: add DMA_PAUSE feature"
-To: Vinod Koul <vinod.koul@linaro.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
-        r.baldyga@hackerion.com, Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="bshvfimtksmbvbss"
+Content-Disposition: inline
+In-Reply-To: <20180521115426.92115-1-manu@freebsd.org>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 11:37 PM, Vinod Koul <vinod.koul@linaro.org> wrote:
->
-> Well looks like even adding support for sync_pause doesn't solve your issue on
-> pl330. Do you want to move this to PIO mode then..?
->
 
-I'm not sure what you think my issue is with the pl330, are you
-confusing me with Marek?  My position is that pause is unsupported by
-the pl330 at the hardware level.  Nothing the pl330.c driver or
-dmaengine api or 8250 serial driver does will change that.  That is
-why I sent a patch to remove pause support from pl330.c.  The rest is
-just trying to fix some bugs in mainline Linux I hit when I was a
-naive youngster who thought Linux support for the computer world's
-canonical serial uart could be counted on to move data from point A to
-point B.  In truth though, I've already concluded it's not worth it to
-slog though the linux kernel development process just to clean up
-other people's messes.  I've already fixed my issues out-of-tree.  I
-don't mind answering questions if anyone else cares about the issue
-though.  Other than that, I think I'll just be ghosting out now.
+--bshvfimtksmbvbss
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Frank
+On Mon, May 21, 2018 at 01:54:26PM +0200, Emmanuel Vadot wrote:
+> The OrangePi PC2 have an mx25l1606e spi flash.
+> Add a node for it.
+>=20
+> Signed-off-by: Emmanuel Vadot <manu@freebsd.org>
+
+Fixed the prefix and applied, thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--bshvfimtksmbvbss
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsEKMoACgkQ0rTAlCFN
+r3RclA/+Kyil79U+LvX9vMgRFrGsBgJvsrdYzXNs5zp9a2dRIr3IopP0y15OeB7T
++sgM2N2ppEkKNVp2nGGTFXmyZeDiQ26BADPCYBwEfxqqkvCb+Sx5O4uT+dPKSrQ2
+ZxOAUHYaFoPBRTPOx+k5BKe1nuUCyh8ZHFSJpkueMpUwFAL2291AHAjbhz13SnyA
+3n3hmMK/p+0ryBb+xBkRQtcUFq+B58neoDxkY/rdEqNf8LPkQy3Kn1KzKwqOvUoD
+7tykYKcJg+aTBfS9dx8GWioH0bS9Fy4P65PWd2j5lN3I0LT3enmwjlW43y2MZIH+
+C9C3dwIt9glxTV8qqVRLhAC0f6U2mDWIgNTEMXeS+I4hZMjT7CAkCLmS7WLonMLU
+E8PEylq5LctAHHU5HlMrCi/5xpW4lfCkZj8ZT/WQXrfJkr/gcyjdmntl6FPoZPxD
+p3sjU8o4hkM9XG6YA/Leou0BsX2sMCLuRHnFI2rsNFCYVjlpDvyDjp6uQd0RXo3M
+3ubJ4TnCXi0/JTQPFtndunBQlhe8RT1SzauflNuWzK39S90LjNKKkuHYr4GSEOdB
+dv5ROQkHzn/oyeh9sagz+75oK43qlASM6hU4GDjcogjfC04m/savUbEz2Unp9fme
+qKjZwWymf9UPr6SWdLkNRrZc468wtkRLl0hnOb5nsDpVKyetY2k=
+=jK8G
+-----END PGP SIGNATURE-----
+
+--bshvfimtksmbvbss--
