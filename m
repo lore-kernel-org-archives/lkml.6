@@ -1,65 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752912AbeEVVI3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 17:08:29 -0400
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:33868 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752675AbeEVVI2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 17:08:28 -0400
-X-Google-Smtp-Source: AB8JxZp7ELMpWZOLkuicSlzu/1ZmZbByBdjkKIgaWXVDimqHXnEE0NykCzjtsujNuTrDBu5V+s29fRmQ1w1ZPWub5pg=
-MIME-Version: 1.0
-In-Reply-To: <a0997fec-ba06-0d1d-a43d-fcc1600484f5@deltatee.com>
-References: <1526558413-23113-1-git-send-email-dmeyer@gigaio.com>
- <1526558413-23113-3-git-send-email-dmeyer@gigaio.com> <a0997fec-ba06-0d1d-a43d-fcc1600484f5@deltatee.com>
-From: Doug Meyer <dmeyer@gigaio.com>
-Date: Tue, 22 May 2018 14:08:27 -0700
-Message-ID: <CA+GK6enp==Xb8w2mCCJGuJwWNNPuseuS-jvp00cVszgWvfbODA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] NTB: PCI Quirk to Enable Switchtec NT Functionality
- with IOMMU On
-To: Logan Gunthorpe <logang@deltatee.com>
-Cc: kurt.schwemmer@microsemi.com, linux-pci@vger.kernel.org,
-        linux-ntb <linux-ntb@googlegroups.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Jon Mason <jdmason@kudzu.us>,
-        "Jiang, Dave" <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
+        id S1752932AbeEVVJu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 17:09:50 -0400
+Received: from mga14.intel.com ([192.55.52.115]:1541 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752717AbeEVVJt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 17:09:49 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,430,1520924400";
+   d="scan'208";a="43396067"
+Subject: Re: [PATCH V4 13/38] x86/intel_rdt: Introduce "bit_usage" to display
+ cache allocations details
+To: Randy Dunlap <rdunlap@infradead.org>, tglx@linutronix.de,
+        fenghua.yu@intel.com, tony.luck@intel.com,
+        vikas.shivappa@linux.intel.com
+Cc: gavin.hindman@intel.com, jithu.joseph@intel.com, dave.hansen@intel.com,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
         linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+References: <cover.1526987654.git.reinette.chatre@intel.com>
+ <ce0208727776e5a523657ce5607325fc6c33cf98.1526987654.git.reinette.chatre@intel.com>
+ <06e4e2d6-aeb0-21c1-1472-47c14ff37f00@infradead.org>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Message-ID: <949cb2bb-a5b2-3287-acaf-48a0fd53df87@intel.com>
+Date: Tue, 22 May 2018 14:09:47 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <06e4e2d6-aeb0-21c1-1472-47c14ff37f00@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[resending because I forgot the mailing lists want plain text mode]
+Hi Randy,
 
+On 5/22/2018 2:03 PM, Randy Dunlap wrote:
+> On 05/22/2018 04:29 AM, Reinette Chatre wrote:
+>> With cache regions now explicitly marked as "shareable" or "exclusive"
+>> we would like to communicate to the user how portions of the cache
+>> are used.
+>>
+>> Introduce "bit_usage" that indicates for each resource
+>> how portions of the cache are configured to be used.
+>>
+>> To assist the user to distinguish whether the sharing is from software or
+>> hardware we add the following annotation:
+>>
+>> 0 - currently unused
+>> X - currently available for sharing and used by software and hardware
+>> H - currently used by hardware only but available for software use
+>> S - currently used and shareable by software only
+>> E - currently used exclusively by one resource group
+>>
+>> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+>> ---
+>>  arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 79 ++++++++++++++++++++++++++++++++
+>>  1 file changed, 79 insertions(+)
+>>
+> 
+> Hi,
+> 
+> All occurrences of seq_puts(f, one_char_string); should instead be
+> seq_putc(f, one_char);
+> 
+> Same for patch 14.
 
-Dear Logan,
+Thank you very much for catching this. Will do.
 
-I agree. I'll add pci_disable_device().
-
-Blessings,
-Doug
-
-
-
-On Thu, May 17, 2018 at 8:48 AM, Logan Gunthorpe <logang@deltatee.com> wrote:
->
-> Thanks for your hard work on this Doug!
->
-> On 17/05/18 06:00 AM, dmeyer@gigaio.com wrote:
->
-> > +     if (pci_enable_device(pdev)) {
-> > +             dev_err(&pdev->dev, "Cannot enable Switchtec device\n");
-> > +             return;
-> > +     }
->
-> I suspect we should probably cass pci_disable_device() before leaving
-> this function so it's in the same state we started. Just like we unmap
-> the mmio.
->
-> Logan
->
-> --
-> You received this message because you are subscribed to the Google Groups "linux-ntb" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to linux-ntb+unsubscribe@googlegroups.com.
-> To post to this group, send email to linux-ntb@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/linux-ntb/a0997fec-ba06-0d1d-a43d-fcc1600484f5%40deltatee.com.
-> For more options, visit https://groups.google.com/d/optout.
+Reinette
