@@ -1,97 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753470AbeEVW2m (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 18:28:42 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:39536 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753406AbeEVW2j (ORCPT
+        id S1753426AbeEVWa2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 18:30:28 -0400
+Received: from mail-yw0-f195.google.com ([209.85.161.195]:42161 "EHLO
+        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753279AbeEVWa0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 18:28:39 -0400
-X-Google-Smtp-Source: AB8JxZprvagXdHMMBRiXeWGhmdcobZFEKxEXrvyp0UWajLROJF69wxwLadQZvDNb5M7qCGe+l8KIQg==
-Date: Tue, 22 May 2018 15:28:37 -0700
-From: Joel Fernandes <joel@joelfernandes.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>, Todd Kjos <tkjos@google.com>,
-        Claudio Scordino <claudio@evidence.eu.com>, kernel-team@android.com,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Joel Fernandes (Google.)" <joelaf@google.com>
-Subject: Re: [PATCH v2] schedutil: Allow cpufreq requests to be made even
- when kthread kicked
-Message-ID: <20180522222837.GA55359@joelaf.mtv.corp.google.com>
-References: <20180518185501.173552-1-joel@joelfernandes.org>
- <20180522113844.5rz3skjeck57arft@vireshk-i7>
- <CAJZ5v0hP+gCiLa+6YvKHaj7u-DuRfmVq_vjFRMj6CnVktJRxVg@mail.gmail.com>
- <4237890.zlzv5C60QP@aspire.rjw.lan>
- <CAJZ5v0henS+LZ64JQwrXR8LrY7xzcsnnYS7AoBuR9dNaC4mTRw@mail.gmail.com>
- <20180522213113.GA40506@joelaf.mtv.corp.google.com>
- <CAJZ5v0ir7Chz6jCZTKRNT12oMd4uyu+JgFLKmZ8RJkcRkyrzBg@mail.gmail.com>
+        Tue, 22 May 2018 18:30:26 -0400
+X-Google-Smtp-Source: AB8JxZrI6+8xhtGP49HN0n9nqMQMhXNupIsg9NJrfS0r3oxy+9Lzs4CiLvFo6Bk8NMQ7WvyFFiyXkw==
+Date: Tue, 22 May 2018 17:30:24 -0500
+From: Rob Herring <robh@kernel.org>
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, Doug Berger <opendmb@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE"
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Justin Chen <justinpopo6@gmail.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] soc: bcm: brcmstb: pm: Add support for newer rev
+ B3.0 controllers
+Message-ID: <20180522223024.GA7817@rob-hp-laptop>
+References: <20180511220242.837-1-f.fainelli@gmail.com>
+ <20180511220242.837-2-f.fainelli@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJZ5v0ir7Chz6jCZTKRNT12oMd4uyu+JgFLKmZ8RJkcRkyrzBg@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180511220242.837-2-f.fainelli@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 11:52:46PM +0200, Rafael J. Wysocki wrote:
-> On Tue, May 22, 2018 at 11:41 PM, Joel Fernandes <joel@joelfernandes.org> wrote:
-> > On Tue, May 22, 2018 at 05:27:11PM +0200, Rafael J. Wysocki wrote:
-> >> On Tue, May 22, 2018 at 2:22 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> >> > On Tuesday, May 22, 2018 1:42:05 PM CEST Rafael J. Wysocki wrote:
-> >> >> On Tue, May 22, 2018 at 1:38 PM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> >> >> > On 22-05-18, 13:31, Rafael J. Wysocki wrote:
-> >> >> >> So below is my (compiled-only) version of the $subject patch, obviously based
-> >> >> >> on the Joel's work.
-> >> >> >>
-> >> >> >> Roughly, what it does is to move the fast_switch_enabled path entirely to
-> >> >> >> sugov_update_single() and take the spinlock around sugov_update_commit()
-> >> >> >> in the one-CPU case too.
-> >> >
-> >> > [cut]
-> >> >
-> >> >> >
-> >> >> > Why do you assume that fast switch isn't possible in shared policy
-> >> >> > cases ? It infact is already enabled for few drivers.
-> >> >
-> >> > I hope that fast_switch is not used with devfs_possible_from_any_cpu set in the
-> >> > one-CPU policy case, as that looks racy even without any patching.
-> >>
-> >> Which would be the only case in which sugov_update_single() would run
-> >> on a CPU that is not the target.
-> >>
-> >> And running sugov_update_single() concurrently on two different CPUs
-> >> for the same target is a no-no, as we don't prevent concurrent updates
-> >> from occurring in that path.
-> >>
-> >> Which means that the original patch from Joel will be sufficient as
-> >> long as we ensure that sugov_update_single() can only run on one CPU
-> >> at a time.
-> >
-> > Since target CPU's runqueue lock is held, I don't see how we can run
-> > sugov_update_single concurrently with any other CPU for single policy, so
-> > protecting such race shouldn't be necessary.
+On Fri, May 11, 2018 at 03:02:41PM -0700, Florian Fainelli wrote:
+> From: Doug Berger <opendmb@gmail.com>
 > 
-> If dvfs_possible_from_any_cpu is set, any CPU can run
-> sugov_update_single(), but the kthread will only run on the target
-> itself.  So another CPU running sugov_update_single() for the target
-> may be racing with the target's kthread.
+> Update the Device Tree binding document and add a matching entry for the
+> MEMC DDR controller revision B3.0 which is found on chips like 7278A0
+> and newer.
 > 
-Yes, I agree. I thought you meant the case of sugov_update_single running
-currently with other sugov_update_single. So just to be on the same page,
-I'll fix the commit log and repost this one as is.
+> Signed-off-by: Doug Berger <opendmb@gmail.com>
+> [florian: tweak commit message, make it apply to upstream kernel]
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/arm/bcm/brcm,brcmstb.txt | 1 +
+>  drivers/soc/bcm/brcmstb/pm/pm-arm.c                        | 4 ++++
+>  2 files changed, 5 insertions(+)
 
-And then I'll post the smp_rmb() patch separately to address the memory order
-issue (which I believe is in mainline as well). Basically I was thinking to
-address Viresh's issue, there should be an smp_mb() after the next_freq is
-read, but before the write to work_in_progress.
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-thanks,
+Side note: this should really move out of bindings/arm/ to 
+bindings/memory-controllers/ or at least to its own file.
 
- - Joel
+Rob
