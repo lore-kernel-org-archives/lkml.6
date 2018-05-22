@@ -1,52 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751984AbeEVH51 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 03:57:27 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51822 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751519AbeEVH4D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 03:56:03 -0400
-From: Eric Auger <eric.auger@redhat.com>
-To: eric.auger.pro@gmail.com, eric.auger@redhat.com,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
-        christoffer.dall@arm.com, peter.maydell@linaro.org
-Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
-Subject: [PATCH v8 13/13] KVM: arm/arm64: Bump VGIC_V3_MAX_CPUS to 512
-Date: Tue, 22 May 2018 09:55:18 +0200
-Message-Id: <1526975718-18567-14-git-send-email-eric.auger@redhat.com>
-In-Reply-To: <1526975718-18567-1-git-send-email-eric.auger@redhat.com>
-References: <1526975718-18567-1-git-send-email-eric.auger@redhat.com>
+        id S1752096AbeEVH5g (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 03:57:36 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:40882 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751189AbeEVH5c (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 03:57:32 -0400
+Subject: Re: [PATCH 12/14] OMAP: CLK: CLKSRC: Add suspend resume hooks
+To: Tony Lindgren <tony@atomide.com>
+CC: <linus.walleij@linaro.org>, <grygorii.strashko@ti.com>,
+        <t-kristo@ti.com>, <Russ.Dill@ti.com>, <linux-omap@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <ssantosh@kernel.org>,
+        <haojian.zhuang@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+        <d-gerlach@ti.com>
+References: <1523505239-16229-1-git-send-email-j-keerthy@ti.com>
+ <1523505239-16229-13-git-send-email-j-keerthy@ti.com>
+ <20180412142714.GX5700@atomide.com>
+From: Keerthy <j-keerthy@ti.com>
+Message-ID: <038cc2cd-ff72-c9c9-257b-1c1cc09a66a8@ti.com>
+Date: Tue, 22 May 2018 13:27:10 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
+MIME-Version: 1.0
+In-Reply-To: <20180412142714.GX5700@atomide.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let's raise the number of supported vcpus along with
-vgic v3 now that HW is looming with more physical CPUs.
 
-Signed-off-by: Eric Auger <eric.auger@redhat.com>
-Acked-by: Christoffer Dall <christoffer.dall@arm.com>
 
----
+On Thursday 12 April 2018 07:57 PM, Tony Lindgren wrote:
+> * Keerthy <j-keerthy@ti.com> [180412 03:56]:
+>> Add the save and restore for clksrc as part of suspend and resume
+>> so that it saves the counter value and restores. This is needed in
+>> modes like rtc+ddr in self-refresh not doing this stalls the time.
+> 
+> I suspect this too should really happen with cpu_pm.
 
-v4 -> v5:
-- addded Christoffer's A-b
----
- include/kvm/arm_vgic.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I believe going by the previous set of patches this fits better with
+suspend/resume?
 
-diff --git a/include/kvm/arm_vgic.h b/include/kvm/arm_vgic.h
-index 08ccbe3..cfdd248 100644
---- a/include/kvm/arm_vgic.h
-+++ b/include/kvm/arm_vgic.h
-@@ -28,7 +28,7 @@
- 
- #include <linux/irqchip/arm-gic-v4.h>
- 
--#define VGIC_V3_MAX_CPUS	255
-+#define VGIC_V3_MAX_CPUS	512
- #define VGIC_V2_MAX_CPUS	8
- #define VGIC_NR_IRQS_LEGACY     256
- #define VGIC_NR_SGIS		16
--- 
-2.5.5
+> 
+>> --- a/arch/arm/mach-omap2/timer.c
+>> +++ b/arch/arm/mach-omap2/timer.c
+>> @@ -442,6 +442,38 @@ static int __init __maybe_unused omap2_sync32k_clocksource_init(void)
+>>  	return ret;
+>>  }
+>>  
+>> +static unsigned int omap2_gptimer_clksrc_load;
+>> +
+>> +static void omap2_gptimer_clksrc_suspend(struct clocksource *unused)
+>> +{
+>> +	struct omap_hwmod *oh;
+>> +
+>> +	omap2_gptimer_clksrc_load =
+>> +		__omap_dm_timer_read_counter(&clksrc, OMAP_TIMER_NONPOSTED);
+>> +
+>> +	oh = omap_hwmod_lookup(clocksource_gpt.name);
+>> +	if (!oh)
+>> +		return;
+>> +
+>> +	omap_hwmod_idle(oh);
+>> +}
+> 
+> Probably no need to look up the hwmod every time? Especially if am437x
+> will start supporting deeper idle modes during runtime.
+
+Like clockevent i will store the hwmod pointer for clocksource as well.
+
+> 
+> And probably the cpu_pm notifies should be directly in the hwmod
+> code so we don't need to add more any more dependencies to hwmod
+> functions to timer code. We should have this code move to drivers
+> anyways at some point.
+> 
+> Regards,
+> 
+> Tony
+> 
