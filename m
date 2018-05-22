@@ -1,116 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751507AbeEVMcX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 08:32:23 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:37470 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751192AbeEVMcU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 08:32:20 -0400
-Date: Tue, 22 May 2018 14:32:13 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Tvrtko Ursulin <tursulin@ursulin.net>
-Cc: linux-kernel@vger.kernel.org,
-        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
-Subject: Re: [RFC] perf: Allow fine-grained PMU access control
-Message-ID: <20180522123213.GR12198@hirez.programming.kicks-ass.net>
-References: <20180521092549.5349-1-tvrtko.ursulin@linux.intel.com>
- <20180522090527.GP12198@hirez.programming.kicks-ass.net>
- <017c4a20-b597-9c0e-4cf3-c0fd1d7bf3d7@ursulin.net>
+        id S1751528AbeEVMdD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 08:33:03 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7730 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751192AbeEVMdC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 08:33:02 -0400
+Subject: Re: [PATCH 31/33] ASoC: max98088: use match_string() helper
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
+ <1526903890-35761-32-git-send-email-xieyisheng1@huawei.com>
+ <CAHp75Vf2ZTf0w=Kg_w7CJ-9XdGqipe3UVS=E=aeRDxGt3BHM3w@mail.gmail.com>
+CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        "ALSA Development Mailing List" <alsa-devel@alsa-project.org>
+From: Yisheng Xie <xieyisheng1@huawei.com>
+Message-ID: <92b32dee-7ba9-ad6d-573b-9924453a69fb@huawei.com>
+Date: Tue, 22 May 2018 20:30:16 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.1.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <017c4a20-b597-9c0e-4cf3-c0fd1d7bf3d7@ursulin.net>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <CAHp75Vf2ZTf0w=Kg_w7CJ-9XdGqipe3UVS=E=aeRDxGt3BHM3w@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.40]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 10:29:29AM +0100, Tvrtko Ursulin wrote:
+Hi Andy,
+
+On 2018/5/22 6:24, Andy Shevchenko wrote:
+> On Mon, May 21, 2018 at 2:58 PM, Yisheng Xie <xieyisheng1@huawei.com> wrote:
+>> match_string() returns the index of an array for a matching string,
+>> which can be used intead of open coded variant.
 > 
-> On 22/05/18 10:05, Peter Zijlstra wrote:
-> > On Mon, May 21, 2018 at 10:25:49AM +0100, Tvrtko Ursulin wrote:
-> > > From: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
-> > > 
-> > > For situations where sysadmins might want to allow different level of
-> > > of access control for different PMUs, we start creating per-PMU
-> > > perf_event_paranoid controls in sysfs.
-> > 
-> > Could you explain how exactly this makes sense?
-> > 
-> > For example, how does it make sense for one PMU to reveal kernel data
-> > while another PMU is not allowed.
-> > 
-> > Once you allow one PMU to do so, the secret is out.
-> > 
-> > So please explain, in excruciating detail, how you want to use this and
-> > how exactly that makes sense from a security pov.
+>>  static int max98088_get_channel(struct snd_soc_component *component, const char *name)
+>>  {
 > 
-> Not sure it will be excruciating but will try to explain once again.
+>> +       int ret = match_string(eq_mode_name, ARRAY_SIZE(eq_mode_name), name);
+> I would rather split this and move an assignment to the line before 'if'
+
+hmm, you mean something like:
+
+	int ret;
+
+	ret = match_string(eq_mode_name, ARRAY_SIZE(eq_mode_name), name);
+	if (ret < 0) /* Shouldn't happen */
+		dev_err(component->dev, "Bad EQ channel name '%s'\n", name);
+	return ret;
+>>
+>>         /* Shouldn't happen */
 > 
-> There are two things:
+>> +       if (ret < 0)
+>> +               dev_err(component->dev, "Bad EQ channel name '%s'\n", name);
 > 
-> 1. i915 PMU which exports data such as different engine busyness levels.
-> (Perhaps you remember, you helped us implement this from the perf API
-> angle.)
-
-Right, but I completely forgot everything again.. So thanks for
-reminding.
-
-> 2. Customers who want to look at those stats in production.
+>>         return -EINVAL;
 > 
-> They want to use it to answer questions such as:
+> return ret;
+Right, sorry for this big mistake.
+
+Thanks
+Yisheng
 > 
-> a) How loaded is my server and can it take one more of X type of job?
-> b) What is the least utilised video engine to submit the next packet of work
-> to?
-> c) What is the least utilised server to schedule the next transcoding job
-> on?
-
-On the other hand, do those counters provide enough information for a
-side-channel (timing) attack on GPGPU workloads? Because, as you say, it
-is a shared resource. So if user A is doing GPGPU crypto, and user B is
-observing, might he infer things from the counters?
-
-> Current option for them is to turn off the global paranoid setting which
-> then enables unprivileged access to _all_ PMU providers.
-
-Right.
-
-> To me it sounded quite logical that it would be better for the paranoid knob
-> to be more fine-grained, so that they can configure their servers so only
-> access to needed data is possible.
-
-The proposed semantics are a tad awkward though, the moment you prod at
-the sysctl you loose all individual PMU settings. Ideally the per-pmu
-would have a special setting that says follow-global in addition to the
-existing ones.
-
-> I am not sure what do you mean by "Once you allow one PMU to do so, the
-> secret is out."? What secret? Are you implying that enabling unprivileged
-> access to i915 engine busyness data opens up access to CPU PMU's as well via
-> some side channel?
-
-It was not i915 specific; but if you look at the descriptions:
-
- * perf event paranoia level:
- *  -1 - not paranoid at all
- *   0 - disallow raw tracepoint access for unpriv
- *   1 - disallow cpu events for unpriv
- *   2 - disallow kernel profiling for unpriv
-
-Then the moment you allow some data to escape, it cannot be put back.
-i915 is fairly special in that (afaict) it doesn't leak kernel specific
-data
-
-In general I think allowing access to uncore PMUs will leak kernel data.
-Thus in general I'm fairly wary of all this.
-
-Is there no other way to expose this information? Can't we do a
-traditional load-avg like thing for the GPU?
+> ?
+> 
+>>  }
+>>
+>> --
+>> 1.7.12.4
+>>
+> 
+> 
+> 
