@@ -1,134 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751257AbeEVEej (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 00:34:39 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59554 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750733AbeEVEei (ORCPT
+        id S1751336AbeEVEes (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 00:34:48 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:40061 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751272AbeEVEel (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 00:34:38 -0400
-Date: Tue, 22 May 2018 10:04:30 +0530
-From: Gautham R Shenoy <ego@linux.vnet.ibm.com>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Neuling <mikey@neuling.org>,
-        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
-        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
-        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
-        Balbir Singh <bsingharora@gmail.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] powerpc: Detect the presence of big-core with
- interleaved threads
-Reply-To: ego@linux.vnet.ibm.com
-References: <1526037444-22876-1-git-send-email-ego@linux.vnet.ibm.com>
- <1526037444-22876-2-git-send-email-ego@linux.vnet.ibm.com>
- <87h8n5xfot.fsf@concordia.ellerman.id.au>
+        Tue, 22 May 2018 00:34:41 -0400
+X-Google-Smtp-Source: AB8JxZoFbnsNJi9LItKyHCFEf1ux25IL6vPPFQRm6hu6F+Q0lqJov8xHHxc1ZTnNqf+X1ArZQkTrhk9ETSnpCSyKoSo=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87h8n5xfot.fsf@concordia.ellerman.id.au>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-TM-AS-GCONF: 00
-x-cbid: 18052204-0024-0000-0000-000018745FA4
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009064; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000261; SDB=6.01035844; UDB=6.00529854; IPR=6.00814972;
- MB=3.00021230; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-22 04:34:35
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052204-0025-0000-0000-000050179DAF
-Message-Id: <20180522043430.GB5213@in.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-22_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805220053
+References: <20180518183623.GA163151@joelaf.mtv.corp.google.com>
+ <20180519022918.GV3803@linux.vnet.ibm.com> <20180519225905.GB134184@joelaf.mtv.corp.google.com>
+ <20180520004938.GZ3803@linux.vnet.ibm.com> <20180520112843.57079857@grimm.local.home>
+ <20180520191846.GA248075@joelaf.mtv.corp.google.com> <20180521215951.2d6abfcb@gandalf.local.home>
+In-Reply-To: <20180521215951.2d6abfcb@gandalf.local.home>
+From: Joel Fernandes <joelaf@google.com>
+Date: Mon, 21 May 2018 21:34:28 -0700
+Message-ID: <CAJWu+or3WXt68erpat_mJHmGVfg=GJHgmKcK0tq3LOjZuPrSMw@mail.gmail.com>
+Subject: Re: Tasks RCU vs Preempt RCU
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Michael,
+On Mon, May 21, 2018 at 6:59 PM Steven Rostedt <rostedt@goodmis.org> wrote:
+[...]
+> >
+> > Just thinking out loud and probably some food for thought..
+> >
+> > The rcu_read_lock/unlock primitive are extrememly fast, so I don't
+personally
+> > think there's a time hit.
+> >
+> > Could we get around the trampoline code == data issue by say using a
+> > multi-stage trampoline like so? :
+> >
+> >       call func_tramp --> (static
+> >                           trampoline)               (dynamic trampoline)
+> >                           rcu_read_lock()  -------> set up stack
+> >                                                     call
+function_tracer()
+> >                                                     pop stack
+> >                             rcu_read_unlock() <------ ret
+> >
+> > I know there's probably more to it than this, but conceptually atleast,
+it
 
-On Fri, May 18, 2018 at 11:21:22PM +1000, Michael Ellerman wrote:
-> "Gautham R. Shenoy" <ego@linux.vnet.ibm.com> writes:
-> 
-> > diff --git a/arch/powerpc/kernel/setup-common.c b/arch/powerpc/kernel/setup-common.c
-> > index 0af5c11..884dff2 100644
-> > --- a/arch/powerpc/kernel/setup-common.c
-> > +++ b/arch/powerpc/kernel/setup-common.c
-> > @@ -436,8 +438,56 @@ static void __init cpu_init_thread_core_maps(int tpc)
-> >  	printk(KERN_DEBUG " (thread shift is %d)\n", threads_shift);
-> >  }
-> >  
-> > -
-> >  u32 *cpu_to_phys_id = NULL;
-> > +/*
-> > + * check_for_interleaved_big_core - Checks if the core represented by
-> > + *	 dn is a big-core whose threads are interleavings of the
-> > + *	 threads of the component small cores.
-> > + *
-> > + * @dn: device node corresponding to the core.
-> > + *
-> > + * Returns true if the core is a interleaved big-core.
-> > + * Returns false otherwise.
-> > + */
-> > +static inline bool check_for_interleaved_big_core(struct device_node *dn)
-> > +{
-> > +	int len, nr_groups, threads_per_group;
-> > +	const __be32 *thread_groups;
-> > +	__be32 *thread_list, *first_cpu_idx;
-> > +	int cur_cpu, next_cpu, i, j;
-> > +
-> > +	thread_groups = of_get_property(dn, "ibm,thread-groups", &len);
-> > +	if (!thread_groups)
-> > +		return false;
-> 
-> There are better device tree APIs than bare of_get_property() these
-> days, can you try to use those?
+> Yes, there is more to it. Think about why we create a dynamic
+> trampoline. It is to make a custom call per callback for a group of
+> functions being traced by that callback.
 
-Ok, I will use them.
+> Now, if we make that static trampoline, we just lost the reason for the
+> dynamic one. How would that work if you have 5 different users of the
+> callbacks (and lets not forget about optimized kprobes)? How do you
+> jump from the static trampoline to the dynamic one with a single call?
 
-> 
-> > +	nr_groups = be32_to_cpu(*(thread_groups + 1));
-> > +	if (nr_groups <= 1)
-> > +		return false;
-> 
-> eg. this would be of_property_read_u32_index()
-> 
+> > feels like all the RCU infrastructure is already there to handle
+preemption
+> > within a trampoline and it would be cool if the trampoline were as shown
+> > above for the dynamically allocated trampolines. Atleast I feel it will
+be
+> > faster than the pre-trampoline code that did the hash lookups /
+matching to
+> > call the right function callbacks, and could help eliminiate need for
+the
+> > RCU-tasks subsystem and its kthread then.
 
-Ok.
+> I don't see how the static trampoline would be able to call. Do we
+> create a static trampoline for every function that is traced and never
+> delete it? That's a lot of memory.
 
-> > @@ -565,7 +615,16 @@ void __init smp_setup_cpu_maps(void)
-> >  	vdso_data->processorCount = num_present_cpus();
-> >  #endif /* CONFIG_PPC64 */
-> >  
-> > -        /* Initialize CPU <=> thread mapping/
-> > +	dn = of_find_node_by_type(NULL, "cpu");
-> > +	if (dn) {
-> > +		if (check_for_interleaved_big_core(dn)) {
-> > +			has_interleaved_big_core = true;
-> > +			pr_info("Detected interleaved big-cores\n");
-> > +		}
-> > +		of_node_put(dn);
-> > +	}
-> 
-> This is a bit untidy, given how unlikely it is that you would have no
-> CPUs :)
+Yeah, ok. That was a dumb idea. :) I see it defeats the point.
 
-This can actually go into the earlier loop where we initialize the
-smp_processor_ids(). I have fixed it in the next iteration.
+> Also, we trace rcu_read_lock/unlock(), and I use that for a lot of
+> debugging. And we also need to deal with tracing code that RCU does not
+> watch, because function tracing does a lot of that too. I finally gave
+> up trying to have the stack tracer trace those locations, because it
+> was a serious game of whack a mole that would never end. I don't want
+> to give up full function tracing for the same reason.
 
-> 
-> You should be able to do the lookup of the property and the setting of
-> has_interleaved_big_core all inside
-> check_for_interleaved_big_core().
+Yes, I understand. Its good to not have it depend on too many things which
+may limit its utility.
 
-Yes, that's what I am doing in the next iteration.
+> > If you still feel its nots worth it, then that's okay too and clearly
+the
+> > RCU-tasks has benefits such as a simpler trampoline implementation..
 
-> 
-> cheers
-> 
+> If you are worried about making RCU simpler, we can go to my original
+> thought which was to make a home grown RCU like system that we can use,
+> as this has different requirements than normal RCU has. Like we don't
+> need a "lock" at all. We just need guaranteed quiescent points that we
+> make sure all tasks would go through before freeing the trampolines.
+> But it was decided to create a new flavor of RCU instead of doing that.
+
+Yes, lets brain storm this if you like. One way I was thinking if we can
+manually check every CPU and see what state its in (usermode, kernel, idle
+etc) using an IPI mechanism. Once all CPUs have been seen to be usermode,
+or idle atleast once - then we are done. You have probably already thought
+about this so feel free to say why its not a good idea, but to me there are
+3 places that a tasks quiescent state is recorded. During the timer tick,
+during task sleep and during cond_resched_tasks_qs.  Of these, I feel only
+the cond_resched case isn't trackable with and IPI mechanism.
+
+thanks,
+
+- Joel
