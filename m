@@ -1,123 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752855AbeEVLiz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 07:38:55 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:33066 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752551AbeEVLir (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 07:38:47 -0400
-X-Google-Smtp-Source: AB8JxZqU6fWS3LnrUVtCBtJGQoJ4Pmto+JdSx6sDPyswYrthtzbazCJPSZFOCYBTuCb0fE7Aoz+inQ==
-Date: Tue, 22 May 2018 17:08:44 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: "Joel Fernandes (Google.)" <joelaf@google.com>,
-        linux-kernel@vger.kernel.org,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>, Todd Kjos <tkjos@google.com>,
-        claudio@evidence.eu.com, kernel-team@android.com,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2] schedutil: Allow cpufreq requests to be made even
- when kthread kicked
-Message-ID: <20180522113844.5rz3skjeck57arft@vireshk-i7>
-References: <20180518185501.173552-1-joel@joelfernandes.org>
- <4393838.cQWhzXzUcj@aspire.rjw.lan>
- <20180522105429.yn2omuz63oa2w3ez@vireshk-i7>
- <6163159.YL3rkaEOau@aspire.rjw.lan>
+        id S1752673AbeEVLjQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 07:39:16 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:50894 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751624AbeEVLjK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 07:39:10 -0400
+From: Wei Yongjun <weiyongjun1@huawei.com>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Sagar Dharia <sdharia@codeaurora.org>
+CC: Wei Yongjun <weiyongjun1@huawei.com>, <alsa-devel@alsa-project.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] slimbus: qcom: fix potential NULL dereference in qcom_slim_prg_slew()
+Date: Tue, 22 May 2018 11:46:22 +0000
+Message-ID: <1526989582-139939-1-git-send-email-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6163159.YL3rkaEOau@aspire.rjw.lan>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22-05-18, 13:31, Rafael J. Wysocki wrote:
-> So below is my (compiled-only) version of the $subject patch, obviously based
-> on the Joel's work.
-> 
-> Roughly, what it does is to move the fast_switch_enabled path entirely to
-> sugov_update_single() and take the spinlock around sugov_update_commit()
-> in the one-CPU case too.
-> 
-> ---
->  kernel/sched/cpufreq_schedutil.c |   57 ++++++++++++++++++++++++++-------------
->  1 file changed, 38 insertions(+), 19 deletions(-)
-> 
-> Index: linux-pm/kernel/sched/cpufreq_schedutil.c
-> ===================================================================
-> --- linux-pm.orig/kernel/sched/cpufreq_schedutil.c
-> +++ linux-pm/kernel/sched/cpufreq_schedutil.c
-> @@ -92,9 +92,6 @@ static bool sugov_should_update_freq(str
->  	    !cpufreq_can_do_remote_dvfs(sg_policy->policy))
->  		return false;
->  
-> -	if (sg_policy->work_in_progress)
-> -		return false;
-> -
->  	if (unlikely(sg_policy->need_freq_update))
->  		return true;
->  
-> @@ -103,25 +100,25 @@ static bool sugov_should_update_freq(str
->  	return delta_ns >= sg_policy->freq_update_delay_ns;
->  }
->  
-> -static void sugov_update_commit(struct sugov_policy *sg_policy, u64 time,
-> -				unsigned int next_freq)
-> +static bool sugov_update_next_freq(struct sugov_policy *sg_policy, u64 time,
-> +				   unsigned int next_freq)
->  {
-> -	struct cpufreq_policy *policy = sg_policy->policy;
-> -
->  	if (sg_policy->next_freq == next_freq)
-> -		return;
-> +		return false;
->  
->  	sg_policy->next_freq = next_freq;
->  	sg_policy->last_freq_update_time = time;
->  
-> -	if (policy->fast_switch_enabled) {
-> -		next_freq = cpufreq_driver_fast_switch(policy, next_freq);
-> -		if (!next_freq)
-> -			return;
-> +	return true;
-> +}
->  
-> -		policy->cur = next_freq;
-> -		trace_cpu_frequency(next_freq, smp_processor_id());
-> -	} else {
-> +static void sugov_update_commit(struct sugov_policy *sg_policy, u64 time,
-> +				unsigned int next_freq)
-> +{
-> +	if (!sugov_update_next_freq(sg_policy, time, next_freq))
-> +		return;
-> +
-> +	if (!sg_policy->work_in_progress) {
->  		sg_policy->work_in_progress = true;
->  		irq_work_queue(&sg_policy->irq_work);
->  	}
-> @@ -277,6 +274,7 @@ static void sugov_update_single(struct u
->  {
->  	struct sugov_cpu *sg_cpu = container_of(hook, struct sugov_cpu, update_util);
->  	struct sugov_policy *sg_policy = sg_cpu->sg_policy;
-> +	struct cpufreq_policy *policy = sg_policy->policy;
->  	unsigned long util, max;
->  	unsigned int next_f;
->  	bool busy;
-> @@ -307,7 +305,23 @@ static void sugov_update_single(struct u
->  		sg_policy->cached_raw_freq = 0;
->  	}
->  
-> -	sugov_update_commit(sg_policy, time, next_f);
-> +	if (policy->fast_switch_enabled) {
+platform_get_resource() may fail and return NULL, so we should
+better check it's return value to avoid a NULL pointer dereference
+a bit later in the code.
 
-Why do you assume that fast switch isn't possible in shared policy
-cases ? It infact is already enabled for few drivers.
+This is detected by Coccinelle semantic patch.
 
--- 
-viresh
+@@
+expression pdev, res, n, t, e, e1, e2;
+@@
+
+res = platform_get_resource_byname(pdev, t, n);
++ if (!res)
++   return -EINVAL;
+... when != res == NULL
+e = devm_ioremap(e1, res->start, e2);
+
+Fixes: ad7fcbc308b0 ("slimbus: qcom: Add Qualcomm Slimbus controller driver")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/slimbus/qcom-ctrl.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/slimbus/qcom-ctrl.c b/drivers/slimbus/qcom-ctrl.c
+index bb36a8f..caea3b9 100644
+--- a/drivers/slimbus/qcom-ctrl.c
++++ b/drivers/slimbus/qcom-ctrl.c
+@@ -478,6 +478,8 @@ static void qcom_slim_prg_slew(struct platform_device *pdev,
+ 		/* SLEW RATE register for this SLIMbus */
+ 		slew_mem = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+ 				"slew");
++		if (!slew_mem)
++			return;
+ 		ctrl->slew_reg = devm_ioremap(&pdev->dev, slew_mem->start,
+ 				resource_size(slew_mem));
+ 		if (!ctrl->slew_reg)
