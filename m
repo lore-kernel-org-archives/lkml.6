@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752467AbeEVMF3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 08:05:29 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52890 "EHLO
+        id S1752154AbeEVMP1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 08:15:27 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:53574 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751344AbeEVMFQ (ORCPT
+        with ESMTP id S1752367AbeEVMF3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 08:05:16 -0400
+        Tue, 22 May 2018 08:05:29 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: iommu@lists.linux-foundation.org
 Cc: linux-arch@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
@@ -18,9 +18,9 @@ Cc: linux-arch@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
         linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org,
         sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 10/25] nds32: use generic dma_noncoherent_ops
-Date: Tue, 22 May 2018 14:04:15 +0200
-Message-Id: <20180522120430.28709-11-hch@lst.de>
+Subject: [PATCH 12/25] openrisc: remove the sync_single_for_cpu DMA operation
+Date: Tue, 22 May 2018 14:04:17 +0200
+Message-Id: <20180522120430.28709-13-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180522120430.28709-1-hch@lst.de>
 References: <20180522120430.28709-1-hch@lst.de>
@@ -29,231 +29,49 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switch to the generic noncoherent direct mapping implementation.
+openrisc does all the required cache maintainance at dma map time, and none
+at unmap time.  It thus has to implement sync_single_for_device to match
+the map cace for buffer reuse, but there is no point in doing another
+invalidation in the sync_single_cpu_case, which in terms of cache
+maintainance is equivalent to the unmap case.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/nds32/Kconfig                   |   3 +
- arch/nds32/include/asm/Kbuild        |   1 +
- arch/nds32/include/asm/dma-mapping.h |  14 ----
- arch/nds32/kernel/dma.c              | 113 +++------------------------
- 4 files changed, 15 insertions(+), 116 deletions(-)
- delete mode 100644 arch/nds32/include/asm/dma-mapping.h
+ arch/openrisc/kernel/dma.c | 15 ---------------
+ 1 file changed, 15 deletions(-)
 
-diff --git a/arch/nds32/Kconfig b/arch/nds32/Kconfig
-index 249f38d3388f..67d0ac0a989c 100644
---- a/arch/nds32/Kconfig
-+++ b/arch/nds32/Kconfig
-@@ -5,10 +5,13 @@
- 
- config NDS32
-         def_bool y
-+	select ARCH_HAS_SYNC_DMA_FOR_CPU
-+	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
- 	select ARCH_WANT_FRAME_POINTERS if FTRACE
- 	select CLKSRC_MMIO
- 	select CLONE_BACKWARDS
- 	select COMMON_CLK
-+	select DMA_NONCOHERENT_OPS
- 	select GENERIC_ATOMIC64
- 	select GENERIC_CPU_DEVICES
- 	select GENERIC_CLOCKEVENTS
-diff --git a/arch/nds32/include/asm/Kbuild b/arch/nds32/include/asm/Kbuild
-index 06bdf8167f5a..b3e951f805f8 100644
---- a/arch/nds32/include/asm/Kbuild
-+++ b/arch/nds32/include/asm/Kbuild
-@@ -13,6 +13,7 @@ generic-y += cputime.h
- generic-y += device.h
- generic-y += div64.h
- generic-y += dma.h
-+generic-y += dma-mapping.h
- generic-y += emergency-restart.h
- generic-y += errno.h
- generic-y += exec.h
-diff --git a/arch/nds32/include/asm/dma-mapping.h b/arch/nds32/include/asm/dma-mapping.h
-deleted file mode 100644
-index 2dd47d245c25..000000000000
---- a/arch/nds32/include/asm/dma-mapping.h
-+++ /dev/null
-@@ -1,14 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--// Copyright (C) 2005-2017 Andes Technology Corporation
--
--#ifndef ASMNDS32_DMA_MAPPING_H
--#define ASMNDS32_DMA_MAPPING_H
--
--extern struct dma_map_ops nds32_dma_ops;
--
--static inline struct dma_map_ops *get_arch_dma_ops(struct bus_type *bus)
--{
--	return &nds32_dma_ops;
--}
--
--#endif
-diff --git a/arch/nds32/kernel/dma.c b/arch/nds32/kernel/dma.c
-index 43d7fd432bb6..2b3167a1f259 100644
---- a/arch/nds32/kernel/dma.c
-+++ b/arch/nds32/kernel/dma.c
-@@ -3,17 +3,14 @@
- 
- #include <linux/types.h>
- #include <linux/mm.h>
--#include <linux/export.h>
- #include <linux/string.h>
--#include <linux/scatterlist.h>
--#include <linux/dma-mapping.h>
-+#include <linux/dma-noncoherent.h>
- #include <linux/io.h>
- #include <linux/cache.h>
- #include <linux/highmem.h>
- #include <linux/slab.h>
- #include <asm/cacheflush.h>
- #include <asm/tlbflush.h>
--#include <asm/dma-mapping.h>
- #include <asm/proc-fns.h>
- 
- /*
-@@ -119,10 +116,8 @@ static struct arch_vm_region *vm_region_find(struct arch_vm_region *head,
- 	return c;
- }
- 
--/* FIXME: attrs is not used. */
--static void *nds32_dma_alloc_coherent(struct device *dev, size_t size,
--				      dma_addr_t * handle, gfp_t gfp,
--				      unsigned long attrs)
-+void *arch_dma_alloc(struct device *dev, size_t size, dma_addr_t *handle,
-+		gfp_t gfp, unsigned long attrs)
- {
- 	struct page *page;
- 	struct arch_vm_region *c;
-@@ -227,8 +222,8 @@ static void *nds32_dma_alloc_coherent(struct device *dev, size_t size,
- 	return NULL;
- }
- 
--static void nds32_dma_free(struct device *dev, size_t size, void *cpu_addr,
--			   dma_addr_t handle, unsigned long attrs)
-+void arch_dma_free(struct device *dev, size_t size, void *cpu_addr,
-+		dma_addr_t handle, unsigned long attrs)
- {
- 	struct arch_vm_region *c;
- 	unsigned long flags, addr;
-@@ -329,11 +324,10 @@ static int __init consistent_init(void)
- 
- core_initcall(consistent_init);
- 
--static void
--nds32_dma_sync_single_for_device(struct device *dev, dma_addr_t handle,
--				 size_t size, enum dma_data_direction dir)
-+void arch_sync_dma_for_device(struct device *dev, phys_addr_t paddr,
-+		size_t size, enum dma_data_direction dir)
- {
--	unsigned long start = (unsigned long)phys_to_virt(handle);
-+	unsigned long start = (unsigned long)phys_to_virt(paddr);
- 
- 	switch (dir) {
- 	case DMA_FROM_DEVICE:
-@@ -347,11 +341,10 @@ nds32_dma_sync_single_for_device(struct device *dev, dma_addr_t handle,
+diff --git a/arch/openrisc/kernel/dma.c b/arch/openrisc/kernel/dma.c
+index ec7fd45704d2..47601274abf7 100644
+--- a/arch/openrisc/kernel/dma.c
++++ b/arch/openrisc/kernel/dma.c
+@@ -208,20 +208,6 @@ or1k_unmap_sg(struct device *dev, struct scatterlist *sg,
  	}
  }
  
 -static void
--nds32_dma_sync_single_for_cpu(struct device *dev, dma_addr_t handle,
--			      size_t size, enum dma_data_direction dir)
-+void arch_sync_dma_for_cpu(struct device *dev, phys_addr_t paddr,
-+		size_t size, enum dma_data_direction dir)
- {
--	unsigned long start = (unsigned long)phys_to_virt(handle);
-+	unsigned long start = (unsigned long)phys_to_virt(paddr);
- 
- 	switch (dir) {
- 	case DMA_TO_DEVICE:
-@@ -364,87 +357,3 @@ nds32_dma_sync_single_for_cpu(struct device *dev, dma_addr_t handle,
- 		BUG();
- 	}
- }
--
--static dma_addr_t nds32_dma_map_page(struct device *dev, struct page *page,
--				     unsigned long offset, size_t size,
--				     enum dma_data_direction dir,
--				     unsigned long attrs)
+-or1k_sync_single_for_cpu(struct device *dev,
+-			 dma_addr_t dma_handle, size_t size,
+-			 enum dma_data_direction dir)
 -{
--	dma_addr_t dma_addr = page_to_phys(page) + offset;
+-	unsigned long cl;
+-	dma_addr_t addr = dma_handle;
+-	struct cpuinfo_or1k *cpuinfo = &cpuinfo_or1k[smp_processor_id()];
 -
--	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
--		nds32_dma_sync_single_for_device(dev, handle, size, dir);
--	return dma_addr;
+-	/* Invalidate the dcache for the requested range */
+-	for (cl = addr; cl < addr + size; cl += cpuinfo->dcache_block_size)
+-		mtspr(SPR_DCBIR, cl);
 -}
 -
--static void nds32_dma_unmap_page(struct device *dev, dma_addr_t handle,
--				 size_t size, enum dma_data_direction dir,
--				 unsigned long attrs)
--{
--	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
--		nds32_dma_sync_single_for_cpu(dev, handle, size, dir);
--}
--
--static void
--nds32_dma_sync_sg_for_device(struct device *dev, struct scatterlist *sg,
--			     int nents, enum dma_data_direction dir)
--{
--	int i;
--
--	for (i = 0; i < nents; i++, sg++) {
--		nds32_dma_sync_single_for_device(dev, sg_dma_address(sg),
--				sg->length, dir);
--	}
--}
--
--static void
--nds32_dma_sync_sg_for_cpu(struct device *dev, struct scatterlist *sg, int nents,
--			  enum dma_data_direction dir)
--{
--	int i;
--
--	for (i = 0; i < nents; i++, sg++) {
--		nds32_dma_sync_single_for_cpu(dev, sg_dma_address(sg),
--				sg->length, dir);
--	}
--}
--
--static int nds32_dma_map_sg(struct device *dev, struct scatterlist *sg,
--			    int nents, enum dma_data_direction dir,
--			    unsigned long attrs)
--{
--	int i;
--
--	for (i = 0; i < nents; i++, sg++) {
--		nds32_dma_sync_single_for_device(dev, sg_dma_address(sg),
--				sg->length, dir);
--	}
--	return nents;
--}
--
--static void nds32_dma_unmap_sg(struct device *dev, struct scatterlist *sg,
--			       int nhwentries, enum dma_data_direction dir,
--			       unsigned long attrs)
--{
--	int i;
--
--	for (i = 0; i < nhwentries; i++, sg++) {
--		nds32_dma_sync_single_for_cpu(dev, sg_dma_address(sg),
--				sg->length, dir);
--	}
--}
--
--struct dma_map_ops nds32_dma_ops = {
--	.alloc = nds32_dma_alloc_coherent,
--	.free = nds32_dma_free,
--	.map_page = nds32_dma_map_page,
--	.unmap_page = nds32_dma_unmap_page,
--	.map_sg = nds32_dma_map_sg,
--	.unmap_sg = nds32_dma_unmap_sg,
--	.sync_single_for_device = nds32_dma_sync_single_for_device,
--	.sync_single_for_cpu = nds32_dma_sync_single_for_cpu,
--	.sync_sg_for_cpu = nds32_dma_sync_sg_for_cpu,
--	.sync_sg_for_device = nds32_dma_sync_sg_for_device,
--};
--
--EXPORT_SYMBOL(nds32_dma_ops);
+ static void
+ or1k_sync_single_for_device(struct device *dev,
+ 			    dma_addr_t dma_handle, size_t size,
+@@ -243,7 +229,6 @@ const struct dma_map_ops or1k_dma_map_ops = {
+ 	.unmap_page = or1k_unmap_page,
+ 	.map_sg = or1k_map_sg,
+ 	.unmap_sg = or1k_unmap_sg,
+-	.sync_single_for_cpu = or1k_sync_single_for_cpu,
+ 	.sync_single_for_device = or1k_sync_single_for_device,
+ };
+ EXPORT_SYMBOL(or1k_dma_map_ops);
 -- 
 2.17.0
