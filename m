@@ -1,72 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753069AbeEVTkJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 15:40:09 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:54488 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752724AbeEVTkG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 15:40:06 -0400
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date: Tue, 22 May 2018 12:40:05 -0700
-From: Sodagudi Prasad <psodagud@codeaurora.org>
-To: keescook@chromium.org, luto@amacapital.net, wad@chromium.org,
-        akpm@linux-foundation.org, riel@redhat.com, tglx@linutronix.de,
-        mingo@kernel.org, peterz@infradead.org, ebiggers@google.com,
-        fweisbec@gmail.com, sherryy@android.com, vegard.nossum@oracle.com,
-        cl@linux.com, aarcange@redhat.com, alexander.levin@verizon.com,
-        vegard.nossum@oracle.com, sherryy@android.com, fweisbec@gmail.com,
-        ebiggers@google.com, peterz@infradead.org
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org
-Subject: write_lock_irq(&tasklist_lock)
-Message-ID: <0879f797135033e05e8e9166a3c85628@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+        id S1753038AbeEVTkA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 15:40:00 -0400
+Received: from mga07.intel.com ([134.134.136.100]:16707 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752318AbeEVTcC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 15:32:02 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,430,1520924400";
+   d="scan'208";a="226406382"
+From: Reinette Chatre <reinette.chatre@intel.com>
+To: tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
+        vikas.shivappa@linux.intel.com
+Cc: gavin.hindman@intel.com, jithu.joseph@intel.com, dave.hansen@intel.com,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Reinette Chatre <reinette.chatre@intel.com>
+Subject: [PATCH V4 16/38] x86/intel_rdt: Introduce the Cache Pseudo-Locking modes
+Date: Tue, 22 May 2018 04:29:04 -0700
+Message-Id: <35492bea9659fe5db706769c4644596a1b6c7d6d.1526987654.git.reinette.chatre@intel.com>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <cover.1526987654.git.reinette.chatre@intel.com>
+References: <cover.1526987654.git.reinette.chatre@intel.com>
+In-Reply-To: <cover.1526987654.git.reinette.chatre@intel.com>
+References: <cover.1526987654.git.reinette.chatre@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi All,
+The two modes used to manage Cache Pseudo-Locked regions are introduced.
+A resource group is assigned "pseudo-locksetup" mode when the user
+indicates that this resource group will be used for a Cache
+Pseudo-Locked region. When the Cache Pseudo-Locked region has been set
+up successfully after the user wrote the requested schemata to the
+"schemata" file, then the mode will automatically changed to
+"pseudo-locked".  The user is not able to modify the mode to
+"pseudo-locked" by writing "pseudo-locked" to the "mode" file directly.
 
-When following test is executed on 4.14.41 stable kernel, observed that 
-one of the core is waiting for tasklist_lock for long time with IRQs 
-disabled.
-./stress-ng-64 --get 8 -t 3h --times --metrics-brief
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+---
+ arch/x86/kernel/cpu/intel_rdt.h          | 10 ++++++++++
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 13 +++++++++++--
+ 2 files changed, 21 insertions(+), 2 deletions(-)
 
-Every time when device is crashed, I observed that one the task stuck at 
-fork system call and waiting for tasklist_lock as writer with irq 
-disabled.
-https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git/tree/kernel/fork.c?h=linux-4.14.y#n1843
-
-Some other tasks are making getrlimit, prlimit system calls, so that 
-these readers are continuously taking tasklist_list read lock.
-
-Writer has disabled local IRQs for long time and waiting to readers to 
-finish but readers are keeping tasklist_lock busy
-for quite long time.
-
-I think, −−get N option creates N thread and they make following system 
-calls.
-========================================================================
-start N workers that call system calls that fetch data from the kernel, 
-currently these are: getpid,
-getppid, getcwd, getgid, getegid, getuid, getgroups, getpgrp, getpgid, 
-getpriority, getresgid, getresuid,
-getrlimit, prlimit, getrusage, getsid, gettid, getcpu, gettimeofday, 
-uname, adjtimex, sysfs.
-Some of these system calls are OS specific.
-========================================================================
-
-Have you observed this type of issues with tasklist_lock ?
-Do we need write_lock_irq(&tasklist_lock) in below portion of code ? Can 
-I use write_unlock instead of write_lock_irq in portion of code?
-https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git/tree/kernel/fork.c?h=linux-4.14.y#n1843
-
--Thanks, Prasad
-
+diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
+index 8bbb047bf37c..bda87f5ef7bc 100644
+--- a/arch/x86/kernel/cpu/intel_rdt.h
++++ b/arch/x86/kernel/cpu/intel_rdt.h
+@@ -84,15 +84,25 @@ enum rdt_group_type {
+  * enum rdtgrp_mode - Mode of a RDT resource group
+  * @RDT_MODE_SHAREABLE: This resource group allows sharing of its allocations
+  * @RDT_MODE_EXCLUSIVE: No sharing of this resource group's allocations allowed
++ * @RDT_MODE_PSEUDO_LOCKSETUP: Resource group will be used for Pseudo-Locking
++ * @RDT_MODE_PSEUDO_LOCKED: No sharing of this resource group's allocations
++ *                          allowed AND the allocations are Cache Pseudo-Locked
+  *
+  * The mode of a resource group enables control over the allowed overlap
+  * between allocations associated with different resource groups (classes
+  * of service). User is able to modify the mode of a resource group by
+  * writing to the "mode" resctrl file associated with the resource group.
++ *
++ * The "shareable", "exclusive", and "pseudo-locksetup" modes are set by
++ * writing the appropriate text to the "mode" file. A resource group enters
++ * "pseudo-locked" mode after the schemata is written while the resource
++ * group is in "pseudo-locksetup" mode.
+  */
+ enum rdtgrp_mode {
+ 	RDT_MODE_SHAREABLE = 0,
+ 	RDT_MODE_EXCLUSIVE,
++	RDT_MODE_PSEUDO_LOCKSETUP,
++	RDT_MODE_PSEUDO_LOCKED,
+ 
+ 	/* Must be last */
+ 	RDT_NUM_MODES,
+diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+index 2af99e03faae..e6069822f592 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
++++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+@@ -161,8 +161,10 @@ enum rdtgrp_mode rdtgroup_mode_by_closid(int closid)
+ }
+ 
+ static const char * const rdt_mode_str[] = {
+-	[RDT_MODE_SHAREABLE]	= "shareable",
+-	[RDT_MODE_EXCLUSIVE]	= "exclusive",
++	[RDT_MODE_SHAREABLE]		= "shareable",
++	[RDT_MODE_EXCLUSIVE]		= "exclusive",
++	[RDT_MODE_PSEUDO_LOCKSETUP]	= "pseudo-locksetup",
++	[RDT_MODE_PSEUDO_LOCKED]	= "pseudo-locked",
+ };
+ 
+ /**
+@@ -759,6 +761,13 @@ static int rdt_bit_usage_show(struct kernfs_open_file *of,
+ 			case RDT_MODE_EXCLUSIVE:
+ 				exclusive |= *ctrl;
+ 				break;
++			/*
++			 * Temporarily handle pseudo-locking enums
++			 * to silence compile warnings until handling
++			 * added in later patches.
++			 */
++			case RDT_MODE_PSEUDO_LOCKSETUP:
++			case RDT_MODE_PSEUDO_LOCKED:
+ 			case RDT_NUM_MODES:
+ 				WARN(1,
+ 				     "invalid mode for closid %d\n", i);
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
-Forum,
-Linux Foundation Collaborative Project
+2.13.6
