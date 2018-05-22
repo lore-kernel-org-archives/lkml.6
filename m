@@ -1,76 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751516AbeEVMEV convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 08:04:21 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:54677 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751269AbeEVMET (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 08:04:19 -0400
-Date: Tue, 22 May 2018 14:04:16 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Abhishek Sahu <absahu@codeaurora.org>
-Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        Andy Gross <andy.gross@linaro.org>,
-        Archit Taneja <architt@codeaurora.org>
-Subject: Re: [PATCH v2 10/14] mtd: rawnand: qcom: fix return value for raw
- page read
-Message-ID: <20180522140416.252fb398@xps13>
-In-Reply-To: <1525350041-22995-11-git-send-email-absahu@codeaurora.org>
-References: <1525350041-22995-1-git-send-email-absahu@codeaurora.org>
-        <1525350041-22995-11-git-send-email-absahu@codeaurora.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        id S1751801AbeEVMFC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 08:05:02 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:51658 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751605AbeEVMEy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 08:04:54 -0400
+From: Christoph Hellwig <hch@lst.de>
+To: iommu@lists.linux-foundation.org
+Cc: linux-arch@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
+        Greentime Hu <green.hu@gmail.com>, Vincent Chen <deanbo422@gmail.com>,
+        linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
+        linux-hexagon@vger.kernel.org, linux-m68k@vger.kernel.org,
+        nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
+        linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 02/25] hexagon: implement the sync_sg_for_device DMA operation
+Date: Tue, 22 May 2018 14:04:07 +0200
+Message-Id: <20180522120430.28709-3-hch@lst.de>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180522120430.28709-1-hch@lst.de>
+References: <20180522120430.28709-1-hch@lst.de>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Abhishek,
+This methods needs to provide the equivalent of sync_single_for_device
+for each S/G list element, but was missing.
 
-On Thu,  3 May 2018 17:50:37 +0530, Abhishek Sahu
-<absahu@codeaurora.org> wrote:
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ arch/hexagon/kernel/dma.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-> Currently zero is being returned for all raw page read so
-> fix the same.
-
-What about "Fix value returned by ->read_page_raw() to be the
-actual operation status, instead of always 0."?
-
-> 
-> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-> ---
-> * Changes from v1:
-> 
->  NEW CHANGE
-> 
->  drivers/mtd/nand/raw/qcom_nandc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mtd/nand/raw/qcom_nandc.c b/drivers/mtd/nand/raw/qcom_nandc.c
-> index f85d8ab..17b7f3af 100644
-> --- a/drivers/mtd/nand/raw/qcom_nandc.c
-> +++ b/drivers/mtd/nand/raw/qcom_nandc.c
-> @@ -1900,7 +1900,7 @@ static int qcom_nandc_read_page_raw(struct mtd_info *mtd,
->  
->  	free_descs(nandc);
->  
-> -	return 0;
-> +	return ret;
->  }
->  
->  /* implements ecc->read_oob() */
-
-Thanks,
-Miquèl
-
+diff --git a/arch/hexagon/kernel/dma.c b/arch/hexagon/kernel/dma.c
+index d2b717f352f4..9e46556a227d 100644
+--- a/arch/hexagon/kernel/dma.c
++++ b/arch/hexagon/kernel/dma.c
+@@ -188,6 +188,18 @@ static void hexagon_sync_single_for_device(struct device *dev,
+ 	dma_sync(dma_addr_to_virt(dma_handle), size, dir);
+ }
+ 
++static void hexagon_sync_sg_for_device(struct device *dev,
++		struct scatterlist *sgl, int nents, enum dma_data_direction dir)
++{
++	struct scatterlist *sg;
++	int i;
++
++	for_each_sg(sgl, sg, nents, i)
++		hexagon_sync_single_for_device(dev, sg_dma_address(sg),
++				sg->length, dir);
++}
++
++
+ static int hexagon_mapping_error(struct device *dev, dma_addr_t dma_addr)
+ {
+ 	return dma_addr == HEXAGON_MAPPING_ERROR;
+@@ -199,6 +211,7 @@ const struct dma_map_ops hexagon_dma_ops = {
+ 	.map_sg		= hexagon_map_sg,
+ 	.map_page	= hexagon_map_page,
+ 	.sync_single_for_device = hexagon_sync_single_for_device,
++	.sync_sg_for_device = hexagon_sync_sg_for_device,
+ 	.mapping_error	= hexagon_mapping_error,
+ };
+ 
 -- 
-Miquel Raynal, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.17.0
