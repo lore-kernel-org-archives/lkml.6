@@ -1,91 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753285AbeEVWQl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 18:16:41 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:53660 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753023AbeEVWQj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 18:16:39 -0400
+        id S1753253AbeEVWXX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 18:23:23 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:50948 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753088AbeEVWXW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 18:23:22 -0400
+To: Bjorn Helgaas <helgaas@kernel.org>, Doug Meyer <dmeyer@gigaio.com>
+Cc: kurt.schwemmer@microsemi.com, linux-pci@vger.kernel.org,
+        linux-ntb <linux-ntb@googlegroups.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Jon Mason <jdmason@kudzu.us>,
+        "Jiang, Dave" <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        Alex Williamson <alex.williamson@redhat.com>
+References: <1526558413-23113-1-git-send-email-dmeyer@gigaio.com>
+ <1526558413-23113-3-git-send-email-dmeyer@gigaio.com>
+ <20180517134521.GC19955@bhelgaas-glaptop.roam.corp.google.com>
+ <9dd68ac0-5b9e-b257-49d2-20327c2ab282@deltatee.com>
+ <CA+GK6en+g+T9H0sOMdVXv-_aD3rRcuzZ1JdfK0moEoTuuJnrqQ@mail.gmail.com>
+ <20180522215126.GA22385@bhelgaas-glaptop.roam.corp.google.com>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <598f5880-22b2-bbb4-4a37-5a60bae2348b@deltatee.com>
+Date: Tue, 22 May 2018 16:23:13 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <20180522215126.GA22385@bhelgaas-glaptop.roam.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date: Tue, 22 May 2018 15:16:37 -0700
-From: Rajkumar Manoharan <rmanohar@codeaurora.org>
-To: Niklas Cassel <niklas.cassel@linaro.org>
-Cc: Kalle Valo <kvalo@qca.qualcomm.com>,
-        "David S. Miller" <davem@davemloft.net>, ath10k@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-wireless-owner@vger.kernel.org,
-        erik.stromdahl@gmail.com
-Subject: Re: [PATCH v2] ath10k: transmit queued frames after waking queues
-In-Reply-To: <20180522211521.GA26123@localhost.localdomain>
-References: <20180521204359.23884-1-niklas.cassel@linaro.org>
- <8195be7603a8cd659d25a9c3d898b891@codeaurora.org>
- <20180522211521.GA26123@localhost.localdomain>
-Message-ID: <a57b21c3e2f23ef2b7e6a6ffbabe111b@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: alex.williamson@redhat.com, linux-kernel@vger.kernel.org, allenbh@gmail.com, dave.jiang@intel.com, jdmason@kudzu.us, bhelgaas@google.com, linux-ntb@googlegroups.com, linux-pci@vger.kernel.org, kurt.schwemmer@microsemi.com, dmeyer@gigaio.com, helgaas@kernel.org
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH 2/2] NTB: PCI Quirk to Enable Switchtec NT Functionality
+ with IOMMU On
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-22 14:15, Niklas Cassel wrote:
-> On Mon, May 21, 2018 at 04:11:38PM -0700, Rajkumar Manoharan wrote:
->> On 2018-05-21 13:43, Niklas Cassel wrote:
->> > The following problem was observed when running iperf:
-[...]
->> 
->> Sorry for the late response. ath10k_mac_tx_push_pending is already 
->> called
->> at the end of NAPI handler. Isn't that enough to process pending 
->> frames?
-> 
-> This is true for e.g. ATH10K_BUS_PCI and ATH10K_BUS_SNOC,
-> but not for e.g. ATH10K_BUS_SDIO and ATH10K_BUS_USB.
-> 
-> While there is some SDIO code merged in Kalle's tree already,
-> this problem was found when merging
-> https://git.kernel.org/pub/scm/linux/kernel/git/kvalo/ath.git/?h=ath10k-pending-sdio-usb
-> with Kalle's ath-next branch.
-> 
->> 
->> Earlier we observed performance issues in calling push_pending from 
->> each
->> tx completion. IMHO this change may introduce the same problem again.
-> 
-> I prefer functional TX over performance issues,
-> but I agree that it is unfortunate that SDIO doesn't use
-> ath10k_htt_txrx_compl_task().
-> Erik, is there a reason for this?
-> 
-Thanks for details. Now I see your problem. In case of low latency 
-devices (PCI/SNOC/AHB),
-all CE rings interrupts are serviced first and later consolidated data 
-processing done
-from ath10k_htt_txrx_compl_task and then ath10k_mac_tx_push_pending is 
-called from NAPI Poll.
 
-In case of high latency devices (USB/SDIO), each endpoints are serviced 
-and all tx/rx jobs
-are completed from the same context. Hence no need of consolidated 
-processing.
 
-> Perhaps it would be possible to call ath10k_mac_tx_push_pending()
-> from the equivalent to ath10k_htt_txrx_compl_task(),
-> but from SDIO's point of view.
-> 
-> Another solution might be to change so that we only call
-> ath10k_mac_tx_push_pending() from ath10k_txrx_tx_unref()
-> if (htt->num_pending_tx == 0). That should decrease the number
-> of calls to ath10k_mac_tx_push_pending(), while still avoiding
-> a "TX deadlock" scenario for SDIO.
-> 
-This issue is specific to HL devices. But your change is common which 
-will impact LL devices.
-I would prefer to call ath10k_mac_tx_push_pending after processing all 
-received mbox/urb messages.
-Export ath10k_mac_tx_push_pending API and call it from USB/SDIO irq 
-handler. Any thoughts?
+On 22/05/18 03:51 PM, Bjorn Helgaas wrote:
+> I don't think the question of when the aliases need to be added is
+> quite closed.  Logan said "it seems pci_add_dma_alias() must be called
+> before the driver is initialized and therefore in a quirk", but that
+> doesn't make clear *why* the alias needs to be added before the driver
+> is initialized.  The alias shouldn't be needed until the device does a
+> DMA, and it shouldn't do that until after the driver initializes.
 
--Rajkumar
+No, Doug tried it in the driver first and it didn't work. The symbol is
+also not exported which was probably done because it can't be used in
+the driver.
+
+> I suspect the reason the existing quirks are in drivers/pci/quirks.c
+> is because the IOMMU driver is in the host OS, but the host may not
+> have a driver for the device if the device is passed through to a
+> guest OS.  In that case, the only way to add the alias is by using a
+> quirk that is always built into the host OS.
+
+Digging into the code a bit, it's not because it must be done by the
+Host OS but because it must be done before the IOMMU groups are created.
+The IOMMU code registers a bus_notifier and creates the groups based on
+the dma_alias mask when it receives the BUS_NOTIFY_ADD_DEVICE event.
+This event is notified in device_add() just before a call to
+bus_probe_device()[1]. Therefore, if a driver attempts to use
+pci_add_dma_alias() as part of it's probe routine, it will be too late
+as the IOMMU has already setup the groups based on the original version
+of the dma_alias_mask.
+
+I suspect this is by design as the groups must be created before and any
+dma_maps are done on the device and some drivers may create dma_maps
+during probe.
+
+Logan
+
+[1]
+https://elixir.bootlin.com/linux/v4.17-rc6/source/drivers/base/core.c#L1863
