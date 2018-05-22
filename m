@@ -1,86 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753229AbeEVVwt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 17:52:49 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:34533 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752936AbeEVVwr (ORCPT
+        id S1753180AbeEVV4n (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 17:56:43 -0400
+Received: from emh06.mail.saunalahti.fi ([62.142.5.116]:47284 "EHLO
+        emh06.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753137AbeEVV4l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 17:52:47 -0400
-X-Google-Smtp-Source: AB8JxZrL9vHLvDGyCUEgAqEeh5UUcUdyzJxwm56Q9lyYxTzREVZmmLiYUxsgh6VnQdoXCWAt62eCh+WUl3igIsU4Bsk=
+        Tue, 22 May 2018 17:56:41 -0400
+Date: Wed, 23 May 2018 00:56:38 +0300
+From: Aaro Koskinen <aaro.koskinen@iki.fi>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>, sre@kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, tony@atomide.com, khilman@kernel.org,
+        ivo.g.dimitrov.75@gmail.com, patrikbachan@gmail.com, serge@hallyn.com,
+        abcloriens@gmail.com, clayton@craftyguy.net, martijn@brixit.nl,
+        sakari.ailus@linux.intel.com,
+        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
+        Thorsten Leemhuis <regressions@leemhuis.info>
+Subject: Re: v4.17-rc1: regressions on N900, N950
+Message-ID: <20180522215638.GC2299@darkstar.musicnaut.iki.fi>
+References: <20180422074213.GA12428@amd>
+ <20180423202940.ig6iud5lrbgnu35a@darkstar.musicnaut.iki.fi>
+ <20180521213952.GA11596@amd>
+ <20180522080250.4fzyvqrgw5oigexn@pali>
+ <20180522194139.GB2299@darkstar.musicnaut.iki.fi>
+ <20180522205824.GA24927@amd>
 MIME-Version: 1.0
-In-Reply-To: <20180522213113.GA40506@joelaf.mtv.corp.google.com>
-References: <20180518185501.173552-1-joel@joelfernandes.org>
- <20180522113844.5rz3skjeck57arft@vireshk-i7> <CAJZ5v0hP+gCiLa+6YvKHaj7u-DuRfmVq_vjFRMj6CnVktJRxVg@mail.gmail.com>
- <4237890.zlzv5C60QP@aspire.rjw.lan> <CAJZ5v0henS+LZ64JQwrXR8LrY7xzcsnnYS7AoBuR9dNaC4mTRw@mail.gmail.com>
- <20180522213113.GA40506@joelaf.mtv.corp.google.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 22 May 2018 23:52:46 +0200
-X-Google-Sender-Auth: B109BwcKxswt9J12eLwrryJGiVo
-Message-ID: <CAJZ5v0ir7Chz6jCZTKRNT12oMd4uyu+JgFLKmZ8RJkcRkyrzBg@mail.gmail.com>
-Subject: Re: [PATCH v2] schedutil: Allow cpufreq requests to be made even when
- kthread kicked
-To: Joel Fernandes <joel@joelfernandes.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>, Todd Kjos <tkjos@google.com>,
-        Claudio Scordino <claudio@evidence.eu.com>, kernel-team@android.com,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Joel Fernandes (Google.)" <joelaf@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180522205824.GA24927@amd>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 11:41 PM, Joel Fernandes <joel@joelfernandes.org> wrote:
-> On Tue, May 22, 2018 at 05:27:11PM +0200, Rafael J. Wysocki wrote:
->> On Tue, May 22, 2018 at 2:22 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->> > On Tuesday, May 22, 2018 1:42:05 PM CEST Rafael J. Wysocki wrote:
->> >> On Tue, May 22, 2018 at 1:38 PM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
->> >> > On 22-05-18, 13:31, Rafael J. Wysocki wrote:
->> >> >> So below is my (compiled-only) version of the $subject patch, obviously based
->> >> >> on the Joel's work.
->> >> >>
->> >> >> Roughly, what it does is to move the fast_switch_enabled path entirely to
->> >> >> sugov_update_single() and take the spinlock around sugov_update_commit()
->> >> >> in the one-CPU case too.
->> >
->> > [cut]
->> >
->> >> >
->> >> > Why do you assume that fast switch isn't possible in shared policy
->> >> > cases ? It infact is already enabled for few drivers.
->> >
->> > I hope that fast_switch is not used with devfs_possible_from_any_cpu set in the
->> > one-CPU policy case, as that looks racy even without any patching.
->>
->> Which would be the only case in which sugov_update_single() would run
->> on a CPU that is not the target.
->>
->> And running sugov_update_single() concurrently on two different CPUs
->> for the same target is a no-no, as we don't prevent concurrent updates
->> from occurring in that path.
->>
->> Which means that the original patch from Joel will be sufficient as
->> long as we ensure that sugov_update_single() can only run on one CPU
->> at a time.
->
-> Since target CPU's runqueue lock is held, I don't see how we can run
-> sugov_update_single concurrently with any other CPU for single policy, so
-> protecting such race shouldn't be necessary.
+Hi,
 
-If dvfs_possible_from_any_cpu is set, any CPU can run
-sugov_update_single(), but the kthread will only run on the target
-itself.  So another CPU running sugov_update_single() for the target
-may be racing with the target's kthread.
+On Tue, May 22, 2018 at 10:58:26PM +0200, Pavel Machek wrote:
+> On Tue 2018-05-22 22:41:39, Aaro Koskinen wrote:
+> > My device worked with v4.17-rc1 (haven't found time to test newer kernels),
+> > but if you say the probe order is random then we must find some proper way
+> > to express the dependency.
+> 
+> I started bisect, but.. that will probably not be useful.
+> 
+> If your device works ok in v4.17-rc1, it probably works in newer -rcs,
+> too.
 
-> Also the "if (work_in_progress)" check I added to the sugov_update_single
-> doesn't change the behavior of single policy from what it is in mainline
-> since we were doing the same thing in already sugov_should_update_freq.
+Actually, my statement may be bogus... Now I tried again with -rc1
+(and also -rc6) and it fails... But v4.16 works.
 
-No, it doesn't, which doesn't mean that this is all OK. :-)
+> Thanks for the ordering hint, I'll try to figure out what is going on
+> there.
+
+My bisection pointed to 6fa7324ac5489ad43c4b6351355b869bc5458bef which
+doesn't seem to make any sense...?! So maybe there really is something
+random stuff going on? :-(
+
+A.
