@@ -1,88 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751380AbeEVLMv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 07:12:51 -0400
-Received: from mx1.mailbox.org ([80.241.60.212]:57284 "EHLO mx1.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750733AbeEVLMs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 07:12:48 -0400
-Subject: Re: [PATCH] PM / core: Fix direct_complete handling for devices with
- no callbacks
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Lukas Wunner <lukas@wunner.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org
-References: <6238546.EnOBWIOf9o@aspire.rjw.lan>
-From: Thomas Martitz <kugel@rockbox.org>
-Organization: Rockbox
-Message-ID: <229515f7-d812-b92e-6918-886b62718991@rockbox.org>
-Date: Tue, 22 May 2018 13:12:40 +0200
+        id S1751343AbeEVLRo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 07:17:44 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:37795 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750733AbeEVLRm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 07:17:42 -0400
+X-Google-Smtp-Source: AB8JxZpPUK7PjZwyBDMFHgBZeAoxXP94RTCUcDoNMHxuf9gWtpJ1w1Tuuw7looPc97DenPuyL/VlKA==
+From: "=?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?=" <vokac.m@gmail.com>
+X-Google-Original-From: =?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>
+To: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        f.fainelli@gmail.com, vivien.didelot@savoirfairelinux.com,
+        andrew@lunn.ch, mark.rutland@arm.com, robh+dt@kernel.org,
+        davem@davemloft.net, michal.vokac@ysoft.com
+Subject: [PATCH net-next v2 0/7] Add support for QCA8334 switch
+Date: Tue, 22 May 2018 13:16:25 +0200
+Message-Id: <1526987792-56861-1-git-send-email-michal.vokac@ysoft.com>
+X-Mailer: git-send-email 2.1.4
 MIME-Version: 1.0
-In-Reply-To: <6238546.EnOBWIOf9o@aspire.rjw.lan>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+This series basically adds support for a QCA8334 ethernet switch to the
+qca8k driver. It is a four-port variant of the already supported seven
+port QCA8337. Register map is the same for the whole familly and all chips
+have the same device ID.
 
-thanks for for your effort and the patch.
+Major part of this series enhances the CPU port setting. Currently the CPU
+port is not set to any sensible defaults compatible with the xGMII
+interface. This series forces the CPU port to its maximum bandwidth and
+also allows to adjust the new defaults using fixed-link device tree
+sub-node.
 
-Is this eligible for stable?
+Alongside these changes I fixed two checkpatch warnings regarding SPDX and
+redundant parentheses.
 
-Best regards
+Michal Vokáč (7):
+  net: dsa: qca8k: Add QCA8334 binding documentation
+  net: dsa: qca8k: Add support for QCA8334 switch
+  net: dsa: qca8k: Enable RXMAC when bringing up a port
+  net: dsa: qca8k: Force CPU port to its highest bandwidth
+  net: dsa: qca8k: Allow overwriting CPU port setting
+  net: dsa: qca8k: Replace GPL boilerplate by SPDX
+  net: dsa: qca8k: Remove redundant parentheses
 
-Am 22.05.2018 um 13:02 schrieb Rafael J. Wysocki:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> Commit 08810a4119aa (PM / core: Add NEVER_SKIP and SMART_PREPARE
-> driver flags) inadvertently prevented the power.direct_complete flag
-> from being set for devices without PM callbacks and with disabled
-> runtime PM which also prevents power.direct_complete from being set
-> for their parents.  That led to problems including a resume crash on
-> HP ZBook 14u.
-> 
-> Restore the previous behavior by causing power.direct_complete to be
-> set for those devices again, but do that in a more direct way to
-> avoid overlooking that case in the future.
-> 
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=199693
-> Fixes: 08810a4119aa (PM / core: Add NEVER_SKIP and SMART_PREPARE driver flags)
-> Reported-by: Thomas Martitz <kugel@rockbox.org>
-> Tested-by: Thomas Martitz <kugel@rockbox.org>
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
->   drivers/base/power/main.c |    7 +++----
->   1 file changed, 3 insertions(+), 4 deletions(-)
-> 
-> Index: linux-pm/drivers/base/power/main.c
-> ===================================================================
-> --- linux-pm.orig/drivers/base/power/main.c
-> +++ linux-pm/drivers/base/power/main.c
-> @@ -1920,10 +1920,8 @@ static int device_prepare(struct device
->   
->   	dev->power.wakeup_path = false;
->   
-> -	if (dev->power.no_pm_callbacks) {
-> -		ret = 1;	/* Let device go direct_complete */
-> +	if (dev->power.no_pm_callbacks)
->   		goto unlock;
-> -	}
->   
->   	if (dev->pm_domain)
->   		callback = dev->pm_domain->ops.prepare;
-> @@ -1957,7 +1955,8 @@ unlock:
->   	 */
->   	spin_lock_irq(&dev->power.lock);
->   	dev->power.direct_complete = state.event == PM_EVENT_SUSPEND &&
-> -		pm_runtime_suspended(dev) && ret > 0 &&
-> +		((pm_runtime_suspended(dev) && ret > 0) ||
-> +		 dev->power.no_pm_callbacks) &&
->   		!dev_pm_test_driver_flags(dev, DPM_FLAG_NEVER_SKIP);
->   	spin_unlock_irq(&dev->power.lock);
->   	return 0;
-> 
+ .../devicetree/bindings/net/dsa/qca8k.txt          | 23 +++++++-
+ drivers/net/dsa/qca8k.c                            | 64 ++++++++++++++++++----
+ drivers/net/dsa/qca8k.h                            |  7 ++-
+ 3 files changed, 79 insertions(+), 15 deletions(-)
+
+-- 
+2.1.4
