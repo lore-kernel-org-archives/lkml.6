@@ -1,116 +1,577 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752805AbeEVTev (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 15:34:51 -0400
-Received: from mga07.intel.com ([134.134.136.100]:16707 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752611AbeEVTcG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 15:32:06 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,430,1520924400";
-   d="scan'208";a="226406432"
-From: Reinette Chatre <reinette.chatre@intel.com>
-To: tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
-        vikas.shivappa@linux.intel.com
-Cc: gavin.hindman@intel.com, jithu.joseph@intel.com, dave.hansen@intel.com,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH V4 32/38] x86/intel_rdt: Ensure RDT cleanup on exit
-Date: Tue, 22 May 2018 04:29:20 -0700
-Message-Id: <67f746928704c4a7a11a4c21cadc7ba4d487929a.1526987654.git.reinette.chatre@intel.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <cover.1526987654.git.reinette.chatre@intel.com>
-References: <cover.1526987654.git.reinette.chatre@intel.com>
-In-Reply-To: <cover.1526987654.git.reinette.chatre@intel.com>
-References: <cover.1526987654.git.reinette.chatre@intel.com>
+        id S1752710AbeEVTfq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 15:35:46 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:35409 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751522AbeEVTfm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 15:35:42 -0400
+X-Google-Smtp-Source: AB8JxZreSZL+1zSis33KUeXovi5cO26gsK9txU4erHsJgEh5kGTtFcyXh2gzcN00mrZyRzMJmwgEZQ==
+From: Christian Brauner <christianvanbrauner@gmail.com>
+X-Google-Original-From: Christian Brauner <christian@brauner.io>
+To: shuah@kernel.org, keescook@chromium.org, tglx@linutronix.de,
+        kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
+        mic@digikod.net, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Cc: ebiederm@xmission.com, netdev@vger.kernel.org, davem@davemloft.net,
+        Christian Brauner <christian@brauner.io>
+Subject: [PATCH] selftests: uevent filtering
+Date: Tue, 22 May 2018 21:34:21 +0200
+Message-Id: <20180522193421.7017-1-christian@brauner.io>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The RDT system's initialization does not have the corresponding exit
-handling to ensure everything initialized on load is cleaned up also.
+Recent discussions around uevent filtering (cf. net-next commit [1], [2],
+and [3] and discussions in [4], [5], and [6]) have shown that the semantics
+around uevent filtering where not well understood.
+Now that we have settled - at least for the moment - how uevent filtering
+should look like let's add some selftests to ensure we don't regress
+anything in the future.
+Note, the semantics of uevent filtering are described in detail in my
+commit message to [2] so I won't repeat them here.
 
-Introduce the cleanup routines that complement all initialization. This
-includes the removal of a duplicate rdtgroup_init() declaration.
+[1]: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=90d52d4fd82007005125d9a8d2d560a1ca059b9d
+[2]: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=a3498436b3a0f8ec289e6847e1de40b4123e1639
+[3]: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=26045a7b14bc7a5455e411d820110f66557d6589
+[4]: https://lkml.org/lkml/2018/4/4/739
+[5]: https://lkml.org/lkml/2018/4/26/767
+[6]: https://lkml.org/lkml/2018/4/26/738
 
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+Signed-off-by: Christian Brauner <christian@brauner.io>
 ---
- arch/x86/kernel/cpu/intel_rdt.c          | 11 +++++++++++
- arch/x86/kernel/cpu/intel_rdt.h          |  3 +--
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c |  7 +++++++
- 3 files changed, 19 insertions(+), 2 deletions(-)
+ tools/testing/selftests/uevent/Makefile       |  17 +
+ tools/testing/selftests/uevent/config         |   2 +
+ .../selftests/uevent/uevent_filtering.c       | 486 ++++++++++++++++++
+ 3 files changed, 505 insertions(+)
+ create mode 100644 tools/testing/selftests/uevent/Makefile
+ create mode 100644 tools/testing/selftests/uevent/config
+ create mode 100644 tools/testing/selftests/uevent/uevent_filtering.c
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt.c b/arch/x86/kernel/cpu/intel_rdt.c
-index 24bfa63e86cf..35dca2187cdc 100644
---- a/arch/x86/kernel/cpu/intel_rdt.c
-+++ b/arch/x86/kernel/cpu/intel_rdt.c
-@@ -857,6 +857,8 @@ static __init bool get_rdt_resources(void)
- 	return (rdt_mon_capable || rdt_alloc_capable);
- }
- 
-+static enum cpuhp_state rdt_online;
+diff --git a/tools/testing/selftests/uevent/Makefile b/tools/testing/selftests/uevent/Makefile
+new file mode 100644
+index 000000000000..f7baa9aa2932
+--- /dev/null
++++ b/tools/testing/selftests/uevent/Makefile
+@@ -0,0 +1,17 @@
++# SPDX-License-Identifier: GPL-2.0
++all:
 +
- static int __init intel_rdt_late_init(void)
- {
- 	struct rdt_resource *r;
-@@ -878,6 +880,7 @@ static int __init intel_rdt_late_init(void)
- 		cpuhp_remove_state(state);
- 		return ret;
- 	}
-+	rdt_online = state;
- 
- 	for_each_alloc_capable_rdt_resource(r)
- 		pr_info("Intel RDT %s allocation detected\n", r->name);
-@@ -889,3 +892,11 @@ static int __init intel_rdt_late_init(void)
- }
- 
- late_initcall(intel_rdt_late_init);
++include ../lib.mk
 +
-+static void __exit intel_rdt_exit(void)
++.PHONY: all clean
++
++BINARIES := uevent_filtering
++CFLAGS += -Wl,-no-as-needed -Wall
++
++uevent_filtering: uevent_filtering.c ../kselftest.h ../kselftest_harness.h
++	$(CC) $(CFLAGS) $< -o $@
++
++TEST_PROGS += $(BINARIES)
++EXTRA_CLEAN := $(BINARIES)
++
++all: $(BINARIES)
+diff --git a/tools/testing/selftests/uevent/config b/tools/testing/selftests/uevent/config
+new file mode 100644
+index 000000000000..1038f4515be8
+--- /dev/null
++++ b/tools/testing/selftests/uevent/config
+@@ -0,0 +1,2 @@
++CONFIG_USER_NS=y
++CONFIG_NET=y
+diff --git a/tools/testing/selftests/uevent/uevent_filtering.c b/tools/testing/selftests/uevent/uevent_filtering.c
+new file mode 100644
+index 000000000000..f83391aa42cf
+--- /dev/null
++++ b/tools/testing/selftests/uevent/uevent_filtering.c
+@@ -0,0 +1,486 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#define _GNU_SOURCE
++#include <errno.h>
++#include <fcntl.h>
++#include <linux/netlink.h>
++#include <signal.h>
++#include <stdbool.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <sys/prctl.h>
++#include <sys/socket.h>
++#include <sched.h>
++#include <sys/eventfd.h>
++#include <sys/stat.h>
++#include <sys/syscall.h>
++#include <sys/types.h>
++#include <sys/wait.h>
++#include <unistd.h>
++
++#include "../kselftest.h"
++#include "../kselftest_harness.h"
++
++#define __DEV_FULL "/sys/devices/virtual/mem/full/uevent"
++#define __UEVENT_BUFFER_SIZE (2048 * 2)
++#define __UEVENT_HEADER "add@/devices/virtual/mem/full"
++#define __UEVENT_HEADER_LEN sizeof("add@/devices/virtual/mem/full")
++#define __UEVENT_LISTEN_ALL -1
++
++ssize_t read_nointr(int fd, void *buf, size_t count)
 +{
-+	cpuhp_remove_state(rdt_online);
-+	rdtgroup_exit();
++	ssize_t ret;
++
++again:
++	ret = read(fd, buf, count);
++	if (ret < 0 && errno == EINTR)
++		goto again;
++
++	return ret;
 +}
 +
-+__exitcall(intel_rdt_exit);
-diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
-index 886cd28b305f..c948266d59c8 100644
---- a/arch/x86/kernel/cpu/intel_rdt.h
-+++ b/arch/x86/kernel/cpu/intel_rdt.h
-@@ -209,6 +209,7 @@ extern struct list_head rdt_all_groups;
- extern int max_name_width, max_data_width;
- 
- int __init rdtgroup_init(void);
-+void __exit rdtgroup_exit(void);
- 
- /**
-  * struct rftype - describe each file in the resctrl file system
-@@ -431,8 +432,6 @@ extern struct rdt_resource rdt_resources_all[];
- extern struct rdtgroup rdtgroup_default;
- DECLARE_STATIC_KEY_FALSE(rdt_alloc_enable_key);
- 
--int __init rdtgroup_init(void);
--
- enum {
- 	RDT_RESOURCE_L3,
- 	RDT_RESOURCE_L3DATA,
-diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index d08670ea1a3d..e3380cbca914 100644
---- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -2773,3 +2773,10 @@ int __init rdtgroup_init(void)
- 
- 	return ret;
- }
-+
-+void __exit rdtgroup_exit(void)
++ssize_t write_nointr(int fd, const void *buf, size_t count)
 +{
-+	unregister_filesystem(&rdt_fs_type);
-+	sysfs_remove_mount_point(fs_kobj, "resctrl");
-+	kernfs_destroy_root(rdt_root);
++	ssize_t ret;
++
++again:
++	ret = write(fd, buf, count);
++	if (ret < 0 && errno == EINTR)
++		goto again;
++
++	return ret;
 +}
++
++int wait_for_pid(pid_t pid)
++{
++	int status, ret;
++
++again:
++	ret = waitpid(pid, &status, 0);
++	if (ret == -1) {
++		if (errno == EINTR)
++			goto again;
++
++		return -1;
++	}
++
++	if (ret != pid)
++		goto again;
++
++	if (!WIFEXITED(status) || WEXITSTATUS(status) != 0)
++		return -1;
++
++	return 0;
++}
++
++static int uevent_listener(unsigned long post_flags, bool expect_uevent,
++			   int sync_fd)
++{
++	int sk_fd, ret;
++	socklen_t sk_addr_len;
++	int fret = -1, rcv_buf_sz = __UEVENT_BUFFER_SIZE;
++	uint64_t sync_add = 1;
++	struct sockaddr_nl sk_addr = { 0 }, rcv_addr = { 0 };
++	char buf[__UEVENT_BUFFER_SIZE] = { 0 };
++	struct iovec iov = { buf, __UEVENT_BUFFER_SIZE };
++	char control[CMSG_SPACE(sizeof(struct ucred))];
++	struct msghdr hdr = {
++		&rcv_addr, sizeof(rcv_addr), &iov, 1,
++		control,   sizeof(control),  0,
++	};
++
++	sk_fd = socket(AF_NETLINK, SOCK_RAW | SOCK_CLOEXEC,
++		       NETLINK_KOBJECT_UEVENT);
++	if (sk_fd < 0) {
++		fprintf(stderr, "%s - Failed to open uevent socket\n", strerror(errno));
++		return -1;
++	}
++
++	ret = setsockopt(sk_fd, SOL_SOCKET, SO_RCVBUF, &rcv_buf_sz,
++			 sizeof(rcv_buf_sz));
++	if (ret < 0) {
++		fprintf(stderr, "%s - Failed to set socket options\n", strerror(errno));
++		goto on_error;
++	}
++
++	sk_addr.nl_family = AF_NETLINK;
++	sk_addr.nl_groups = __UEVENT_LISTEN_ALL;
++
++	sk_addr_len = sizeof(sk_addr);
++	ret = bind(sk_fd, (struct sockaddr *)&sk_addr, sk_addr_len);
++	if (ret < 0) {
++		fprintf(stderr, "%s - Failed to bind socket\n", strerror(errno));
++		goto on_error;
++	}
++
++	ret = getsockname(sk_fd, (struct sockaddr *)&sk_addr, &sk_addr_len);
++	if (ret < 0) {
++		fprintf(stderr, "%s - Failed to retrieve socket name\n", strerror(errno));
++		goto on_error;
++	}
++
++	if ((size_t)sk_addr_len != sizeof(sk_addr)) {
++		fprintf(stderr, "Invalid socket address size\n");
++		goto on_error;
++	}
++
++	if (post_flags & CLONE_NEWUSER) {
++		ret = unshare(CLONE_NEWUSER);
++		if (ret < 0) {
++			fprintf(stderr,
++				"%s - Failed to unshare user namespace\n",
++				strerror(errno));
++			goto on_error;
++		}
++	}
++
++	if (post_flags & CLONE_NEWNET) {
++		ret = unshare(CLONE_NEWNET);
++		if (ret < 0) {
++			fprintf(stderr,
++				"%s - Failed to unshare network namespace\n",
++				strerror(errno));
++			goto on_error;
++		}
++	}
++
++	ret = write_nointr(sync_fd, &sync_add, sizeof(sync_add));
++	close(sync_fd);
++	if (ret != sizeof(sync_add)) {
++		fprintf(stderr, "Failed to synchronize with parent process\n");
++		goto on_error;
++	}
++
++	fret = 0;
++	for (;;) {
++		ssize_t r;
++
++		r = recvmsg(sk_fd, &hdr, 0);
++		if (r <= 0) {
++			fprintf(stderr, "%s - Failed to receive uevent\n", strerror(errno));
++			ret = -1;
++			break;
++		}
++
++		/* ignore libudev messages */
++		if (memcmp(buf, "libudev", 8) == 0)
++			continue;
++
++		/* ignore uevents we didn't trigger */
++		if (memcmp(buf, __UEVENT_HEADER, __UEVENT_HEADER_LEN) != 0)
++			continue;
++
++		if (!expect_uevent) {
++			fprintf(stderr, "Received unexpected uevent:\n");
++			ret = -1;
++		}
++
++		if (TH_LOG_ENABLED) {
++			/* If logging is enabled dump the received uevent. */
++			(void)write_nointr(STDERR_FILENO, buf, r);
++			(void)write_nointr(STDERR_FILENO, "\n", 1);
++		}
++
++		break;
++	}
++
++on_error:
++	close(sk_fd);
++
++	return fret;
++}
++
++int trigger_uevent(unsigned int times)
++{
++	int fd, ret;
++	unsigned int i;
++
++	fd = open(__DEV_FULL, O_RDWR | O_CLOEXEC);
++	if (fd < 0) {
++		if (errno != ENOENT)
++			return -EINVAL;
++
++		return -1;
++	}
++
++	for (i = 0; i < times; i++) {
++		ret = write_nointr(fd, "add\n", sizeof("add\n") - 1);
++		if (ret < 0) {
++			fprintf(stderr, "Failed to trigger uevent\n");
++			break;
++		}
++	}
++	close(fd);
++
++	return ret;
++}
++
++int set_death_signal(void)
++{
++	int ret;
++	pid_t ppid;
++
++	ret = prctl(PR_SET_PDEATHSIG, SIGKILL, 0, 0, 0);
++
++	/* Check whether we have been orphaned. */
++	ppid = getppid();
++	if (ppid == 1) {
++		pid_t self;
++
++		self = getpid();
++		ret = kill(self, SIGKILL);
++	}
++
++	if (ret < 0)
++		return -1;
++
++	return 0;
++}
++
++static int do_test(unsigned long pre_flags, unsigned long post_flags,
++		   bool expect_uevent, int sync_fd)
++{
++	int ret;
++	uint64_t wait_val;
++	pid_t pid;
++	sigset_t mask;
++	sigset_t orig_mask;
++	struct timespec timeout;
++
++	sigemptyset(&mask);
++	sigaddset(&mask, SIGCHLD);
++
++	ret = sigprocmask(SIG_BLOCK, &mask, &orig_mask);
++	if (ret < 0) {
++		fprintf(stderr, "%s- Failed to block SIGCHLD\n", strerror(errno));
++		return -1;
++	}
++
++	pid = fork();
++	if (pid < 0) {
++		fprintf(stderr, "%s - Failed to fork() new process\n", strerror(errno));
++		return -1;
++	}
++
++	if (pid == 0) {
++		/* Make sure that we go away when our parent dies. */
++		ret = set_death_signal();
++		if (ret < 0) {
++			fprintf(stderr, "Failed to set PR_SET_PDEATHSIG to SIGKILL\n");
++			_exit(EXIT_FAILURE);
++		}
++
++		if (pre_flags & CLONE_NEWUSER) {
++			ret = unshare(CLONE_NEWUSER);
++			if (ret < 0) {
++				fprintf(stderr,
++					"%s - Failed to unshare user namespace\n",
++					strerror(errno));
++				_exit(EXIT_FAILURE);
++			}
++		}
++
++		if (pre_flags & CLONE_NEWNET) {
++			ret = unshare(CLONE_NEWNET);
++			if (ret < 0) {
++				fprintf(stderr,
++					"%s - Failed to unshare network namespace\n",
++					strerror(errno));
++				_exit(EXIT_FAILURE);
++			}
++		}
++
++		if (uevent_listener(post_flags, expect_uevent, sync_fd) < 0)
++			_exit(EXIT_FAILURE);
++
++		_exit(EXIT_SUCCESS);
++	}
++
++	ret = read_nointr(sync_fd, &wait_val, sizeof(wait_val));
++	if (ret != sizeof(wait_val)) {
++		fprintf(stderr, "Failed to synchronize with child process\n");
++		_exit(EXIT_FAILURE);
++	}
++
++	/* Trigger 10 uevents to account for the case where the kernel might
++	 * drop some.
++	 */
++	ret = trigger_uevent(10);
++	if (ret < 0)
++		fprintf(stderr, "Failed triggering uevents\n");
++
++	/* Wait for 2 seconds before considering this failed. This should be
++	 * plenty of time for the kernel to deliver the uevent even under heavy
++	 * load.
++	 */
++	timeout.tv_sec = 2;
++	timeout.tv_nsec = 0;
++
++again:
++	ret = sigtimedwait(&mask, NULL, &timeout);
++	if (ret < 0) {
++		if (errno == EINTR)
++			goto again;
++
++		if (!expect_uevent)
++			ret = kill(pid, SIGTERM); /* success */
++		else
++			ret = kill(pid, SIGUSR1); /* error */
++		if (ret < 0)
++			return -1;
++	}
++
++	ret = wait_for_pid(pid);
++	if (ret < 0)
++		return -1;
++
++	return ret;
++}
++
++static void signal_handler(int sig)
++{
++	if (sig == SIGTERM)
++		_exit(EXIT_SUCCESS);
++
++	_exit(EXIT_FAILURE);
++}
++
++TEST(uevent_filtering)
++{
++	int ret, sync_fd;
++	struct sigaction act;
++
++	if (geteuid()) {
++		TH_LOG("Uevent filtering tests require root privileges. Skipping test");
++		_exit(KSFT_SKIP);
++	}
++
++	ret = access(__DEV_FULL, F_OK);
++	EXPECT_EQ(0, ret) {
++		if (errno == ENOENT) {
++			TH_LOG(__DEV_FULL " does not exist. Skipping test");
++			_exit(KSFT_SKIP);
++		}
++
++		_exit(KSFT_FAIL);
++	}
++
++	act.sa_handler = signal_handler;
++	act.sa_flags = 0;
++	sigemptyset(&act.sa_mask);
++
++	ret = sigaction(SIGTERM, &act, NULL);
++	ASSERT_EQ(0, ret);
++
++	sync_fd = eventfd(0, EFD_CLOEXEC);
++	ASSERT_GE(sync_fd, 0);
++
++	/*
++	 * Setup:
++	 * - Open uevent listening socket in initial network namespace owned by
++	 *   initial user namespace.
++	 * - Trigger uevent in initial network namespace owned by initial user
++	 *   namespace.
++	 * Expected Result:
++	 * - uevent listening socket receives uevent
++	 */
++	ret = do_test(0, 0, true, sync_fd);
++	ASSERT_EQ(0, ret) {
++		goto do_cleanup;
++	}
++
++	/*
++	 * Setup:
++	 * - Open uevent listening socket in non-initial network namespace
++	 *   owned by initial user namespace.
++	 * - Trigger uevent in initial network namespace owned by initial user
++	 *   namespace.
++	 * Expected Result:
++	 * - uevent listening socket receives uevent
++	 */
++	ret = do_test(CLONE_NEWNET, 0, true, sync_fd);
++	ASSERT_EQ(0, ret) {
++		goto do_cleanup;
++	}
++
++	/*
++	 * Setup:
++	 * - unshare user namespace
++	 * - Open uevent listening socket in initial network namespace
++	 *   owned by initial user namespace.
++	 * - Trigger uevent in initial network namespace owned by initial user
++	 *   namespace.
++	 * Expected Result:
++	 * - uevent listening socket receives uevent
++	 */
++	ret = do_test(CLONE_NEWUSER, 0, true, sync_fd);
++	ASSERT_EQ(0, ret) {
++		goto do_cleanup;
++	}
++
++	/*
++	 * Setup:
++	 * - Open uevent listening socket in non-initial network namespace
++	 *   owned by non-initial user namespace.
++	 * - Trigger uevent in initial network namespace owned by initial user
++	 *   namespace.
++	 * Expected Result:
++	 * - uevent listening socket receives no uevent
++	 */
++	ret = do_test(CLONE_NEWUSER | CLONE_NEWNET, 0, false, sync_fd);
++	ASSERT_EQ(0, ret) {
++		goto do_cleanup;
++	}
++
++	/*
++	 * Setup:
++	 * - Open uevent listening socket in initial network namespace
++	 *   owned by initial user namespace.
++	 * - unshare network namespace
++	 * - Trigger uevent in initial network namespace owned by initial user
++	 *   namespace.
++	 * Expected Result:
++	 * - uevent listening socket receives uevent
++	 */
++	ret = do_test(0, CLONE_NEWNET, true, sync_fd);
++	ASSERT_EQ(0, ret) {
++		goto do_cleanup;
++	}
++
++	/*
++	 * Setup:
++	 * - Open uevent listening socket in initial network namespace
++	 *   owned by initial user namespace.
++	 * - unshare user namespace
++	 * - Trigger uevent in initial network namespace owned by initial user
++	 *   namespace.
++	 * Expected Result:
++	 * - uevent listening socket receives uevent
++	 */
++	ret = do_test(0, CLONE_NEWUSER, true, sync_fd);
++	ASSERT_EQ(0, ret) {
++		goto do_cleanup;
++	}
++
++	/*
++	 * Setup:
++	 * - Open uevent listening socket in initial network namespace
++	 *   owned by initial user namespace.
++	 * - unshare user namespace
++	 * - unshare network namespace
++	 * - Trigger uevent in initial network namespace owned by initial user
++	 *   namespace.
++	 * Expected Result:
++	 * - uevent listening socket receives uevent
++	 */
++	ret = do_test(0, CLONE_NEWUSER | CLONE_NEWNET, true, sync_fd);
++	ASSERT_EQ(0, ret) {
++		goto do_cleanup;
++	}
++
++do_cleanup:
++	close(sync_fd);
++}
++
++TEST_HARNESS_MAIN
 -- 
-2.13.6
+2.17.0
