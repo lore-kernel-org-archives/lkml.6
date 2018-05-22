@@ -1,161 +1,253 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751493AbeEVIiz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 04:38:55 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:40203 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750733AbeEVIiv (ORCPT
+        id S1751394AbeEVIji (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 04:39:38 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:36049 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750709AbeEVIje (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 04:38:51 -0400
-X-Google-Smtp-Source: AB8JxZoqO4yT4gEIG7uTbKrdtV8wN1u65YjCon1mHtXKtasTKlksHIxd/Pnz6YJ4JGfJlppcLMBmRA==
-Date: Tue, 22 May 2018 17:38:44 +0900
-From: DaeRyong Jeong <threeearcat@gmail.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: mst@redhat.com, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, byoungyoung@purdue.edu, kt0755@gmail.com,
-        bammanag@purdue.edu
-Subject: Re: KASAN: use-after-free Read in vhost_chr_write_iter
-Message-ID: <20180522083842.GA10604@dragonet.kaist.ac.kr>
-References: <20180517134544.GA20646@dragonet.kaist.ac.kr>
- <58419d62-3074-2e5a-8504-da1cdeb08280@redhat.com>
- <fb27c1fd-5172-252a-cb8f-b53927a26d06@redhat.com>
+        Tue, 22 May 2018 04:39:34 -0400
+X-Google-Smtp-Source: AB8JxZoYB00SGFI2rmRSc6LaaMXz1v6k29UBgqtcc340aEOQoBGdJICxmZH6FBFzFZ95uerlj97TBA==
+Date: Tue, 22 May 2018 16:39:20 +0800
+From: Leo Yan <leo.yan@linaro.org>
+To: Robert Walker <robert.walker@arm.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Tor Jeremiassen <tor@ti.com>,
+        mike.leach@linaro.org, kim.phillips@arm.com,
+        coresight@lists.linaro.org, Mike Leach <mike.leach@arm.com>
+Subject: Re: [RFT v2 1/4] perf cs-etm: Generate sample for missed packets
+Message-ID: <20180522083920.GD31075@leoy-ThinkPad-X240s>
+References: <1526892748-326-1-git-send-email-leo.yan@linaro.org>
+ <1526892748-326-2-git-send-email-leo.yan@linaro.org>
+ <bc320d6d-a21d-b5a4-e30d-511bb69aba32@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <fb27c1fd-5172-252a-cb8f-b53927a26d06@redhat.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <bc320d6d-a21d-b5a4-e30d-511bb69aba32@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 10:38:10AM +0800, Jason Wang wrote:
-> 
-> 
-> On 2018年05月18日 17:24, Jason Wang wrote:
-> > 
-> > 
-> > On 2018年05月17日 21:45, DaeRyong Jeong wrote:
-> > > We report the crash: KASAN: use-after-free Read in vhost_chr_write_iter
-> > > 
-> > > This crash has been found in v4.17-rc1 using RaceFuzzer (a modified
-> > > version of Syzkaller), which we describe more at the end of this
-> > > report. Our analysis shows that the race occurs when invoking two
-> > > syscalls concurrently, write$vnet and ioctl$VHOST_RESET_OWNER.
-> > > 
-> > > 
-> > > Analysis:
-> > > We think the concurrent execution of vhost_process_iotlb_msg() and
-> > > vhost_dev_cleanup() causes the crash.
-> > > Both of functions can run concurrently (please see call sequence below),
-> > > and possibly, there is a race on dev->iotlb.
-> > > If the switch occurs right after vhost_dev_cleanup() frees
-> > > dev->iotlb, vhost_process_iotlb_msg() still sees the non-null value
-> > > and it
-> > > keep executing without returning -EFAULT. Consequently, use-after-free
-> > > occures
-> > > 
-> > > 
-> > > Thread interleaving:
-> > > CPU0 (vhost_process_iotlb_msg)                CPU1 (vhost_dev_cleanup)
-> > > (In the case of both VHOST_IOTLB_UPDATE and
-> > > VHOST_IOTLB_INVALIDATE)
-> > > =====                            =====
-> > >                             vhost_umem_clean(dev->iotlb);
-> > > if (!dev->iotlb) {
-> > >             ret = -EFAULT;
-> > >                 break;
-> > > }
-> > >                             dev->iotlb = NULL;
-> > > 
-> > > 
-> > > Call Sequence:
-> > > CPU0
-> > > =====
-> > > vhost_net_chr_write_iter
-> > >     vhost_chr_write_iter
-> > >         vhost_process_iotlb_msg
-> > > 
-> > > CPU1
-> > > =====
-> > > vhost_net_ioctl
-> > >     vhost_net_reset_owner
-> > >         vhost_dev_reset_owner
-> > >             vhost_dev_cleanup
-> > 
-> > Thanks a lot for the analysis.
-> > 
-> > This could be addressed by simply protect it with dev mutex.
-> > 
-> > Will post a patch.
-> > 
-> 
-> Could you please help to test the attached patch? I've done some smoking
-> test.
-> 
-> Thanks
+Hi Rob,
 
-Sorry to say this, but we don't have a reproducer for this bug since our
-reproducer is being implemented.
+On Mon, May 21, 2018 at 12:27:42PM +0100, Robert Walker wrote:
+> Hi Leo,
+> 
+> On 21/05/18 09:52, Leo Yan wrote:
+> >Commit e573e978fb12 ("perf cs-etm: Inject capabilitity for CoreSight
+> >traces") reworks the samples generation flow from CoreSight trace to
+> >match the correct format so Perf report tool can display the samples
+> >properly.  But the change has side effect for packet handling, it only
+> >generate samples when 'prev_packet->last_instr_taken_branch' is true,
+> >this results in the start tracing packet and exception packets are
+> >dropped.
+> >
+> >This patch checks extra two conditions for complete samples:
+> >
+> >- If 'prev_packet->sample_type' is zero we can use this condition to
+> >   get to know this is the start tracing packet; for this case, the start
+> >   packet's end_addr is zero as well so we need to handle it in the
+> >   function cs_etm__last_executed_instr();
+> >
+> 
+> I think you also need to add something in to handle discontinuities in
+> trace - for example it is possible to configure the ETM to only trace
+> execution in specific code regions or to trace a few cycles every so
+> often. In these cases, prev_packet->sample_type will not be zero, but
+> whatever the previous packet was.  You will get a CS_ETM_TRACE_ON packet in
+> such cases, generated by an I_TRACE_ON element in the trace stream.
+> You also get this on exception return.
+> 
+> However, you should also keep the test for prev_packet->sample_type == 0
+> as you may not see a CS_ETM_TRACE_ON when decoding a buffer that has
+> wrapped.
 
-This crash had occrued a few times in our fuzzer, so I inspected the code
-manually.
+Thanks for reviewing.  Let's dig more detailed into this issue,
+especially for handling packet CS_ETM_TRACE_ON, I'd like divide into two
+sub cases.
 
-It seems the patch is good for me, but we can't test the patch for now.
-Sorry.
+- The first case is for using python script:
 
-> From 88328386f3f652e684ee33dc4cf63dcaed871aea Mon Sep 17 00:00:00 2001
-> From: Jason Wang <jasowang@redhat.com>
-> Date: Fri, 18 May 2018 17:33:27 +0800
-> Subject: [PATCH] vhost: synchronize IOTLB message with dev cleanup
-> 
-> DaeRyong Jeong reports a race between vhost_dev_cleanup() and
-> vhost_process_iotlb_msg():
-> 
-> Thread interleaving:
-> CPU0 (vhost_process_iotlb_msg)			CPU1 (vhost_dev_cleanup)
-> (In the case of both VHOST_IOTLB_UPDATE and
-> VHOST_IOTLB_INVALIDATE)
-> =====						=====
-> 						vhost_umem_clean(dev->iotlb);
-> if (!dev->iotlb) {
-> 	        ret = -EFAULT;
-> 		        break;
-> }
-> 						dev->iotlb = NULL;
-> 
-> The reason is we don't synchronize between them, fixing by protecting
-> vhost_process_iotlb_msg() with dev mutex.
-> 
-> Reported-by: DaeRyong Jeong <threeearcat@gmail.com>
-> Fixes: 6b1e6cc7855b0 ("vhost: new device IOTLB API")
-> Reported-by: DaeRyong Jeong <threeearcat@gmail.com>
-> ---
->  drivers/vhost/vhost.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-> index f3bd8e9..f0be5f3 100644
-> --- a/drivers/vhost/vhost.c
-> +++ b/drivers/vhost/vhost.c
-> @@ -981,6 +981,7 @@ static int vhost_process_iotlb_msg(struct vhost_dev *dev,
->  {
->  	int ret = 0;
->  
-> +	mutex_lock(&dev->mutex);
->  	vhost_dev_lock_vqs(dev);
->  	switch (msg->type) {
->  	case VHOST_IOTLB_UPDATE:
-> @@ -1016,6 +1017,8 @@ static int vhost_process_iotlb_msg(struct vhost_dev *dev,
->  	}
->  
->  	vhost_dev_unlock_vqs(dev);
-> +	mutex_unlock(&dev->mutex);
-> +
->  	return ret;
->  }
->  ssize_t vhost_chr_write_iter(struct vhost_dev *dev,
-> -- 
-> 2.7.4
-> 
+  I use python script to analyze packets with below command:
+  ./perf script --itrace=ril128 -s arm-cs-trace-disasm.py -F cpu,event,ip,addr,sym -- -v -d objdump -k ./vmlinux
+
+  What I observe is after we pass python script with parameter '-s
+  arm-cs-trace-disasm.py', then instruction tracing options
+  '--itrace=ril128' isn't really used;  the perf tool creates another
+  new process for launch python script and re-enter cmd_script()
+  function, but at the second time when invoke cmd_script() for python
+  script execution the option '--itrace=ril128' is dropped and all
+  parameters are only valid defined by the python script.
+
+  As result, I can the variable 'etmq->etm->synth_opts.last_branch' is
+  always FALSE for running python script.  So all CS_ETM_TRACE_ON
+  packets will be ignored in the function cs_etm__flush().
+
+  Even the CS_ETM_TRACE_ON packets are missed to handle, the program
+  flow still can work well.  The reason is without the interference by
+  CS_ETM_TRACE_ON, the CS_ETM_RANGE packets can smoothly create
+  instruction range by ignore the middle CS_ETM_TRACE_ON packet.
+
+  Please see below example, in this example there have 3 packets, the
+  first one packet is CS_ETM_RANGE packet which is labelled with
+  'PACKET_1', the first one packet can properly generate branch sample
+  data with previous packet as expected;  the second packet is
+  PACKET_2 which is CS_ETM_TRACE_ON, but
+  'etmq->etm->synth_opts.last_branch' is false so function
+  cs_etm__flush() doesn't handle it and skip the swap operation
+  "etmq->prev_packet = tmp"; the third packet is PACKET_3, which is
+  CS_ETM_RANGE packet and we can see it's smoontly to create
+  continous instruction range between PACKET_1 and PACKET_3.
+
+  cs_etm__sample: prev_packet: sample_type=1 exc=0 exc_ret=0 cpu=1 start_addr=0xffff000008a5f79c end_addr=0xffff000008a5f7bc last_instr_taken_branch=1
+  PACKET_1: cs_etm__sample: packet: sample_type=1 exc=0 exc_ret=0 cpu=1 start_addr=0xffff000008a5f858 end_addr=0xffff000008a5f864 last_instr_taken_branch=1
+  cs_etm__synth_branch_sample: ip=0xffff000008a5f7b8 addr=0xffff000008a5f858 pid=2290 tid=2290 id=1000000021 stream_id=1000000021 period=1 cpu=1 flags=0 cpumode=2
+
+  cs_etm__flush: prev_packet: sample_type=1 exc=0 exc_ret=0 cpu=1 start_addr=0xffff000008a5f858 end_addr=0xffff000008a5f864 last_instr_taken_branch=1
+  PACKET_2: cs_etm__flush: packet: sample_type=2 exc=0 exc_ret=0 cpu=2 start_addr=0xdeadbeefdeadbeef end_addr=0xdeadbeefdeadbeef last_instr_taken_branch=1
+
+  cs_etm__sample: prev_packet: sample_type=1 exc=0 exc_ret=0 cpu=1 start_addr=0xffff000008a5f858 end_addr=0xffff000008a5f864 last_instr_taken_branch=1
+  PACKET_3: cs_etm__sample: packet: sample_type=1 exc=0 exc_ret=0 cpu=2 start_addr=0xffff000008be7528 end_addr=0xffff000008be7538 last_instr_taken_branch=1
+  cs_etm__synth_branch_sample: ip=0xffff000008a5f860 addr=0xffff000008be7528 pid=2290 tid=2290 id=1000000021 stream_id=1000000021 period=1 cpu=2 flags=0 cpumode=2
+
+  So seems to me, the CS_ETM_TRACE_ON packet doesn't introduce trouble
+  for the program flow analysis if we can handle all CS_ETM_RANGE
+  packets and without handling CS_ETM_TRACE_ON packet for branch
+  samples.
+
+- The second case is for --itrace option without python script:
+  ./perf script --itrace=ril -F cpu,event,ip,addr,sym -k ./vmlinux
+
+  In this case, the flag 'etmq->etm->synth_opts.last_branch' is true
+  so CS_ETM_TRACE_ON packet will be handled; but I can observe the
+  CS_ETM_RANGE packet in etmq->prev_packet isn't handled in the
+  function cs_etm__flush() for branch sample, so actually we miss some
+  branch sample for this case.
+
+  So I think we also need handle CS_ETM_RANGE packet in function
+  cs_etm__flush() to generate branch samples.  But this has side
+  effect, we introduce the extra track for CS_ETM_TRACE_ON packet for
+  branch samples, so we will see one branch range like:
+  [ 0xdeadbeefdeadbeef .. 0xdeadbeefdeadbeef ].
+
+Please reivew below change is okay for you?  Thanks a lot for
+suggestions.
+
+diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+index 822ba91..37d3722 100644
+--- a/tools/perf/util/cs-etm.c
++++ b/tools/perf/util/cs-etm.c
+@@ -495,6 +495,13 @@ static inline void cs_etm__reset_last_branch_rb(struct cs_etm_queue *etmq)
+ static inline u64 cs_etm__last_executed_instr(struct cs_etm_packet *packet)
+ {
+ 	/*
++	 * The packet is the start tracing packet if the end_addr is zero,
++	 * returns 0 for this case.
++	 */
++	if (!packet->end_addr)
++		return 0;
++
++	/*
+ 	 * The packet records the execution range with an exclusive end address
+ 	 *
+ 	 * A64 instructions are constant size, so the last executed
+@@ -897,13 +904,28 @@ static int cs_etm__sample(struct cs_etm_queue *etmq)
+ 		etmq->period_instructions = instrs_over;
+ 	}
+ 
+-	if (etm->sample_branches &&
+-	    etmq->prev_packet &&
+-	    etmq->prev_packet->sample_type == CS_ETM_RANGE &&
+-	    etmq->prev_packet->last_instr_taken_branch) {
+-		ret = cs_etm__synth_branch_sample(etmq);
+-		if (ret)
+-			return ret;
++	if (etm->sample_branches && etmq->prev_packet) {
++		bool generate_sample = false;
++
++		/* Generate sample for start tracing packet */
++		if (etmq->prev_packet->sample_type == 0 ||
++		    etmq->prev_packet->sample_type == CS_ETM_TRACE_ON)
++			generate_sample = true;
++
++		/* Generate sample for exception packet */
++		if (etmq->prev_packet->exc == true)
++			generate_sample = true;
++
++		/* Generate sample for normal branch packet */
++		if (etmq->prev_packet->sample_type == CS_ETM_RANGE &&
++		    etmq->prev_packet->last_instr_taken_branch)
++			generate_sample = true;
++
++		if (generate_sample) {
++			ret = cs_etm__synth_branch_sample(etmq);
++			if (ret)
++				return ret;
++		}
+ 	}
+ 
+ 	if (etm->sample_branches || etm->synth_opts.last_branch) {
+@@ -921,12 +943,17 @@ static int cs_etm__sample(struct cs_etm_queue *etmq)
+ 
+ static int cs_etm__flush(struct cs_etm_queue *etmq)
+ {
++	struct cs_etm_auxtrace *etm = etmq->etm;
+ 	int err = 0;
+ 	struct cs_etm_packet *tmp;
+ 
+-	if (etmq->etm->synth_opts.last_branch &&
+-	    etmq->prev_packet &&
+-	    etmq->prev_packet->sample_type == CS_ETM_RANGE) {
++	if (!etmq->prev_packet)
++		return 0;
++
++	if (etmq->prev_packet->sample_type != CS_ETM_RANGE)
++		return 0;
++
++	if (etmq->etm->synth_opts.last_branch) {
+ 		/*
+ 		 * Generate a last branch event for the branches left in the
+ 		 * circular buffer at the end of the trace.
+@@ -939,18 +966,25 @@ static int cs_etm__flush(struct cs_etm_queue *etmq)
+ 		err = cs_etm__synth_instruction_sample(
+ 			etmq, addr,
+ 			etmq->period_instructions);
++		if (err)
++			return err;
+ 		etmq->period_instructions = 0;
++	}
+ 
+-		/*
+-		 * Swap PACKET with PREV_PACKET: PACKET becomes PREV_PACKET for
+-		 * the next incoming packet.
+-		 */
+-		tmp = etmq->packet;
+-		etmq->packet = etmq->prev_packet;
+-		etmq->prev_packet = tmp;
++	if (etm->sample_branches) {
++		err = cs_etm__synth_branch_sample(etmq);
++		if (err)
++			return err;
+ 	}
+ 
+-	return err;
++	/*
++	 * Swap PACKET with PREV_PACKET: PACKET becomes PREV_PACKET for
++	 * the next incoming packet.
++	 */
++	tmp = etmq->packet;
++	etmq->packet = etmq->prev_packet;
++	etmq->prev_packet = tmp;
++	return 0;
+ }
+ 
+ static int cs_etm__run_decoder(struct cs_etm_queue *etmq)
+-- 
+2.7.4
