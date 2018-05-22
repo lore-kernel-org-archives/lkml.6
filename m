@@ -1,69 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751624AbeEVQc7 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 12:32:59 -0400
-Received: from prv1-mh.provo.novell.com ([137.65.248.33]:55728 "EHLO
-        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751196AbeEVQc6 (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:5:1>);
-        Tue, 22 May 2018 12:32:58 -0400
-Message-Id: <5B04463502000078001C4CEE@prv1-mh.provo.novell.com>
-X-Mailer: Novell GroupWise Internet Agent 18.0.0 
-Date: Tue, 22 May 2018 10:32:53 -0600
-From: "Jan Beulich" <JBeulich@suse.com>
-To: "Boris Ostrovsky" <boris.ostrovsky@oracle.com>
-Cc: <brgerst@gmail.com>, "xen-devel" <xen-devel@lists.xenproject.org>,
-        "Juergen Gross" <jgross@suse.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 1/2] xen/PVH: Set up GS segment for stack canary
-References: <20180522035445.16911-1-boris.ostrovsky@oracle.com>
- <20180522035445.16911-2-boris.ostrovsky@oracle.com>
- <CAMzpN2iMrEqee+8yGP_qk-qAuXf+_o6vrOUSDTvX=8JAUDT5Fg@mail.gmail.com>
- <5B0421E502000078001C4B91@prv1-mh.provo.novell.com>
- <CAMzpN2gRvYMmaf2+Fpi2wkAV_rcH=uDfM8sQQaaGGK2U=7XqMA@mail.gmail.com>
- <5B04410D02000078001C4CC5@prv1-mh.provo.novell.com>
- <70aad5f3-67b9-b1fa-d39c-cfa8615f38da@oracle.com>
-In-Reply-To: <70aad5f3-67b9-b1fa-d39c-cfa8615f38da@oracle.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
+        id S1751501AbeEVQeU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 12:34:20 -0400
+Received: from mail-yb0-f196.google.com ([209.85.213.196]:43218 "EHLO
+        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751196AbeEVQeQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 12:34:16 -0400
+X-Google-Smtp-Source: AB8JxZqE7ALFNv3nlKRWHndPIBsf95ZD0BqeNn83jhoio5SnXQoA9LOiha4OVVCZBG16VeM6MyG1Qg==
+Date: Tue, 22 May 2018 11:34:13 -0500
+From: Rob Herring <robh@kernel.org>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
+        horms@verge.net.au, geert@glider.be, magnus.damm@gmail.com,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] dt-bindings: media: rcar-vin: Add R8A77995 support
+Message-ID: <20180522163413.GA8032@rob-hp-laptop>
+References: <1526913942-15426-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1526913942-15426-2-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1526913942-15426-2-git-send-email-jacopo+renesas@jmondi.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->>> On 22.05.18 at 18:20, <boris.ostrovsky@oracle.com> wrote:
-> On 05/22/2018 12:10 PM, Jan Beulich wrote:
->>>>> On 22.05.18 at 17:15, <brgerst@gmail.com> wrote:
->>> On Tue, May 22, 2018 at 9:57 AM, Jan Beulich <JBeulich@suse.com> wrote:
->>>>>>> On 22.05.18 at 15:45, <brgerst@gmail.com> wrote:
->>>>> On Mon, May 21, 2018 at 11:54 PM, Boris Ostrovsky <boris.ostrovsky@oracle.com> 
-> wrote:
->>>>>> @@ -98,6 +101,12 @@ ENTRY(pvh_start_xen)
->>>>>>         /* 64-bit entry point. */
->>>>>>         .code64
->>>>>>  1:
->>>>>> +       /* Set base address in stack canary descriptor. */
->>>>>> +       mov $MSR_GS_BASE,%ecx
->>>>>> +       mov $canary, %rax
->>>>>> +       cdq
->>>>>> +       wrmsr
->>>>> CDQ only sign-extends EAX to RAX.  What you really want is to move the
->>>>> high 32-bits to EDX (or zero EDX if we can guarantee it is loaded
->>>>> below 4G).
->>>> What you describe is CDQE (AT&T name: CLTD); CDQ (AT&T: CLTQ)
->>>> sign-extends EAX to EDX:EAX.
->>> But that would still be wrong, as it would set EDX to 0xFFFFFFFF if
->>> the kernel was loaded between 2G and 4G.  Looking closer at the code,
->>> we just left 32-bit mode, so we must have been loaded below 4G,
->>> therefore EDX must be zero.
->> Ah, yes, indeed.
+On Mon, May 21, 2018 at 04:45:40PM +0200, Jacopo Mondi wrote:
+> Add compatible string for R-Car D3 R8A7795 to list of SoCs supported by
+> rcar-vin driver.
 > 
-> We are loading virtual address for $canary so we will always have EDX
-> set to 0xffffffff. Isn't that what we want?
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> ---
+>  Documentation/devicetree/bindings/media/rcar_vin.txt | 1 +
+>  1 file changed, 1 insertion(+)
 
-Oh, that's rather confusing - we're still running on the low 1:1
-mapping when we're here. But yes, by the time we enter C code
-(where the GS base starts to matter) we ought to be on the high
-mappings - if only there wasn't xen_prepare_pvh().
-
-Jan
+Acked-by: Rob Herring <robh@kernel.org>
