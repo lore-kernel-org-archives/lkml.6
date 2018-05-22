@@ -1,109 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752714AbeEVMRc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 08:17:32 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:57203 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751514AbeEVMRR (ORCPT
+        id S1752517AbeEVMRu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 08:17:50 -0400
+Received: from mail-wm0-f48.google.com ([74.125.82.48]:53597 "EHLO
+        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751514AbeEVMRq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 08:17:17 -0400
-Subject: Re: [PATCH v7 2/2] leds: lm3601x: Introduce the lm3601x LED driver
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-CC: Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>
-References: <20180521180927.18472-1-dmurphy@ti.com>
- <20180521180927.18472-2-dmurphy@ti.com>
- <69a920da-f759-de50-865c-0ebc43044b66@gmail.com>
- <3b20c9cf-5f7e-3ed9-454d-c8e8ca6c0627@ti.com>
- <CAHp75Vf_KaRDJU83d8o1Sy1v+oztucJSYBEK9=cqNw6FQspFvg@mail.gmail.com>
-From: Dan Murphy <dmurphy@ti.com>
-Message-ID: <c5bbffef-5263-f2ff-6394-a14cbc8971b2@ti.com>
-Date: Tue, 22 May 2018 07:17:08 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 22 May 2018 08:17:46 -0400
+X-Google-Smtp-Source: AB8JxZrJ5g24sy29lFwzL8wiTg5HvJSTNYQF2I7fodSVOlfERwDit22Jnl6ZBZqERhnmR565eVRN/DU4R47cgS1GO7c=
 MIME-Version: 1.0
-In-Reply-To: <CAHp75Vf_KaRDJU83d8o1Sy1v+oztucJSYBEK9=cqNw6FQspFvg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Reply-To: sedat.dilek@gmail.com
+In-Reply-To: <CA+icZUVD8+vRR4uokcuOadjvG99qsHDC6j+Gojemnfo0SXEXNg@mail.gmail.com>
+References: <CA+icZUUPGQsRWpdmASzPQAdjmSFmhBwPKGh_CO65C9ot9+nOSQ@mail.gmail.com>
+ <20180423174224.GA243180@google.com> <CA+icZUUpxh=99JP5K_R1KpxouqDW4KY5BjCn5VTcmyByEb0R5w@mail.gmail.com>
+ <20180424230645.GB243180@google.com> <CA+icZUWhLNvjbyMv+2dB9iXgHnkLZwy5+_GZYG7-sk2b_TJa8Q@mail.gmail.com>
+ <20180507174909.GF19594@google.com> <CA+icZUUCBoHiuK+qCPX-H3=4Si2UXxMBMwQCmzWmq=U1sHebRg@mail.gmail.com>
+ <CAH7mPviH3EiozBxkdZ685ZOo1bNJLLaOPFYwbn2NvD77w=P3Aw@mail.gmail.com>
+ <CA+icZUVsV=5jvTcXVWqMs6ROhT3mv+7zBOoJ0JkUy5Mf+a4GNw@mail.gmail.com>
+ <CA+icZUUfmgJPmmjuaVckvdLwWuWOPDAuFFyLq_ZPkc__LZbtSA@mail.gmail.com>
+ <CA+icZUW_wWA9f_obFWOixg2+=W8SN1zPO9KA4u3AXO91uzHEtA@mail.gmail.com>
+ <CA+icZUWFskFk6qChPRW6qUdmEAy7r8t=1OKQCuTLyHSczH01vw@mail.gmail.com> <CA+icZUVD8+vRR4uokcuOadjvG99qsHDC6j+Gojemnfo0SXEXNg@mail.gmail.com>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Date: Tue, 22 May 2018 14:17:45 +0200
+Message-ID: <CA+icZUW14BygHdBC8Ktx1d9Cm3eTcGmmoHH_L1690tjmwATHDA@mail.gmail.com>
+Subject: Re: Clang patch stacks for LTS kernels (v4.4 and v4.9) and status update
+To: Nick Desaulniers <nick.desaulniers@gmail.com>
+Cc: Matthias Kaehlcke <mka@chromium.org>,
+        lkml <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Manoj Gupta <manojgupta@chromium.org>,
+        AlistairStrachan <astrachan@google.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andy
+For the sake of completeness...
 
-On 05/21/2018 06:05 PM, Andy Shevchenko wrote:
-> On Tue, May 22, 2018 at 12:44 AM, Dan Murphy <dmurphy@ti.com> wrote:
-> 
-> 
->>>> +    child = device_get_next_child_node(&led->client->dev, child);
->>>> +    if (!child) {
->>>> +        dev_err(&led->client->dev, "No LED Child node\n");
->>>> +        return ret;
->>>> +    }
->>>> +
->>>> +    ret = fwnode_property_read_u32(child, "reg", &led->led_mode);
->>>> +    if (ret) {
->>>> +        dev_err(&led->client->dev, "reg DT property missing\n");
->>>> +        goto out_err;
->>>> +    }
->>>> +
->>>> +    if (led->led_mode > LM3601X_LED_TORCH ||
->>>> +        led->led_mode < LM3601X_LED_IR) {
->>>> +        dev_warn(&led->client->dev, "Invalid led mode requested\n");
->>>> +        ret = -EINVAL;
->>>> +        goto out_err;
->>>> +    }
->>>> +
->>>> +    ret = fwnode_property_read_string(child, "label", &name);
->>>> +    if (ret) {
->>>> +        if (led->led_mode == LM3601X_LED_TORCH)
->>>> +            name = "torch";
->>>> +        else
->>>> +            name = "infrared";
->>>> +    }
->>>> +
->>>> +    snprintf(led->led_name, sizeof(led->led_name),
->>>> +        "%s:%s", node->name, name);
->>>
->>> Reading once again my recent explanation regarding this I realized
->>> that I didn't provide clear conclusion, which is: we no longer
->>> use child node name for LED class device name if label is absent.
->>> (apart from that - you're using parent DT node now, i.e.
->>> led-controller).
->>>
->>> Please follow what was done for drivers/leds/leds-cr0014114.c.
->>
->> Hmmm.  If this is calling dev->of_node->name to store the name will this
->> work in non-DT configurations?
-> 
-> I didn't found this kind of use in linux-next, perhaps I missed something?
-> 
+[ CLANG VERSION ]
 
-Linux next has a different version then what I found doing a search for the driver.
+# dpkg -l | grep clang-7
+ii  clang-7
+1:7~svn332830-1~exp1+0~20180521091322.1776~1.gbp198359 amd64        C,
+C++ and Objective-C compiler
 
-I will change the code to match what is in linux-next.
+[ OBJDUMP native_save_fl() ]
 
-Dan
+$ objdump -d -S --start-address=0x$(grep native_save_fl System.map |
+sed -e "s/ \+.*//") vmlinux | less
 
-> In the driver Jacek referred to I found, though, use of of_node, which
-> at some point should be changed to fwnode.
-> 
-> For now you can fill that if you want to using something like this
-> (IIRC it should work):
-> 
-> if (is_of_node(fwnode))
->  ...->of_node = to_of_node(...);
-> 
->> I have not dug to deeply into the fwnode code to find out how the nodes
->> get populated.  So my question may not even be valid.
-> 
+vmlinux:     file format elf64-x86-64
 
 
--- 
-------------------
-Dan Murphy
+Disassembly of section .text:
+
+ffffffff810633a0 <native_save_fl>:
+/*
+ * Interrupt control:
+ */
+
+static inline __nostackprotector unsigned long native_save_fl(void)
+{
+ffffffff810633a0:       55                      push   %rbp
+ffffffff810633a1:       48 89 e5                mov    %rsp,%rbp
+ffffffff810633a4:       50                      push   %rax
+        /*
+         * "=rm" is safe here, because "pop" adjusts the stack before
+         * it evaluates its effective address -- this is part of the
+         * documented behavior of the "pop" instruction.
+         */
+        asm volatile("# __raw_save_flags\n\t"
+ffffffff810633a5:       9c                      pushfq
+ffffffff810633a6:       8f 45 f8                popq   -0x8(%rbp)
+                     "pushf ; pop %0"
+                     : "=rm" (flags)
+                     : /* no input */
+                     : "memory");
+
+        return flags;
+ffffffff810633a9:       48 8b 45 f8             mov    -0x8(%rbp),%rax
+ffffffff810633ad:       48 83 c4 08             add    $0x8,%rsp
+ffffffff810633b1:       5d                      pop    %rbp
+ffffffff810633b2:       c3                      retq
+ffffffff810633b3:       0f 1f 00                nopl   (%rax)
+ffffffff810633b6:       66 2e 0f 1f 84 00 00    nopw   %cs:0x0(%rax,%rax,1)
+ffffffff810633bd:       00 00 00
+
+ffffffff810633c0 <native_restore_fl>:
+}
+
+static inline void native_restore_fl(unsigned long flags)
+{
+...
+
+- Sedat -
