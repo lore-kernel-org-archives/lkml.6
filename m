@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751236AbeEVKHD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 06:07:03 -0400
-Received: from relmlor3.renesas.com ([210.160.252.173]:7328 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751060AbeEVKG6 (ORCPT
+        id S1751538AbeEVKHQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 06:07:16 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:60503 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751060AbeEVKHM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 06:06:58 -0400
+        Tue, 22 May 2018 06:07:12 -0400
 X-IronPort-AV: E=Sophos;i="5.49,429,1520866800";
-   d="scan'208";a="280253470"
+   d="scan'208";a="280253499"
 From: Michel Pollet <michel.pollet@bp.renesas.com>
 To: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>
 Cc: phil.edworthy@renesas.com, Michel Pollet <buserror+upstream@gmail.com>,
@@ -20,9 +20,9 @@ Cc: phil.edworthy@renesas.com, Michel Pollet <buserror+upstream@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH v6 2/6] dt-bindings: Add the rzn1-clocks.h file
-Date: Tue, 22 May 2018 11:01:22 +0100
-Message-Id: <1526983321-41949-3-git-send-email-michel.pollet@bp.renesas.com>
+Subject: [PATCH v6 3/6] dt-bindings: clock: renesas,rzn1-clocks: document RZ/N1 clock driver
+Date: Tue, 22 May 2018 11:01:23 +0100
+Message-Id: <1526983321-41949-4-git-send-email-michel.pollet@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
 References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
@@ -30,206 +30,66 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds the constants necessary to use the renesas,rzn1-clocks driver.
+The Renesas RZ/N1 Family (Part #R9A06G0xx) requires a driver
+to provide the SoC clock infrastructure for Linux.
+
+This documents the driver bindings.
 
 Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 ---
- include/dt-bindings/clock/rzn1-clocks.h | 187 ++++++++++++++++++++++++++++++++
- 1 file changed, 187 insertions(+)
- create mode 100644 include/dt-bindings/clock/rzn1-clocks.h
+ .../bindings/clock/renesas,rzn1-clocks.txt         | 44 ++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
 
-diff --git a/include/dt-bindings/clock/rzn1-clocks.h b/include/dt-bindings/clock/rzn1-clocks.h
+diff --git a/Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
 new file mode 100644
-index 0000000..8a73db2
+index 0000000..0c41137
 --- /dev/null
-+++ b/include/dt-bindings/clock/rzn1-clocks.h
-@@ -0,0 +1,187 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * RZ/N1 clock IDs
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Europe Limited
-+ *
-+ * Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>
-+ * Derived from zx-reboot.c
-+ */
++++ b/Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
+@@ -0,0 +1,44 @@
++* Renesas RZ/N1 Clock Driver
 +
-+#ifndef __DT_BINDINGS_RZN1_CLOCK_H__
-+#define __DT_BINDINGS_RZN1_CLOCK_H__
++This driver provides the clock infrastructure used by all the other drivers.
 +
-+#define RZN1_CLKOUT			0
-+#define RZN1_CLK_PLL_USB		1
-+#define RZN1_CLK_48			1	/* AKA CLK_PLL_USB */
-+#define RZN1_CLKOUT_D10			2
-+#define RZN1_CLKOUT_D16			3
-+#define RZN1_MSEBIS_CLK			3	/* AKA CLKOUT_D16 */
-+#define RZN1_MSEBIM_CLK			3	/* AKA CLKOUT_D16 */
-+#define RZN1_CLKOUT_D160		4
-+#define RZN1_CLKOUT_D1OR2		5
-+#define RZN1_CLK_DDRPHY_PLLCLK		5	/* AKA CLKOUT_D1OR2 */
-+#define RZN1_CLKOUT_D20			6
-+#define RZN1_CLK50			6	/* AKA CLKOUT_D20 */
-+#define RZN1_CLKOUT_D40			7
-+#define RZN1_CLK25			7	/* AKA CLKOUT_D40 */
-+#define RZN1_CLKOUT_D5			8
-+#define RZN1_CLKOUT_D8			9
-+#define RZN1_CLK125			9	/* AKA CLKOUT_D8 */
-+#define RZN1_DIV_ADC			10
-+#define RZN1_DIV_I2C			11
-+#define RZN1_DIV_NAND			12
-+#define RZN1_DIV_P1_PG			13
-+#define RZN1_DIV_P2_PG			14
-+#define RZN1_DIV_P3_PG			15
-+#define RZN1_DIV_P4_PG			16
-+#define RZN1_DIV_P5_PG			17
-+#define RZN1_CLK_P5_PG1			17	/* AKA DIV_P5_PG */
-+#define RZN1_DIV_P6_PG			18
-+#define RZN1_DIV_QSPI0			19
-+#define RZN1_DIV_QSPI1			20
-+#define RZN1_DIV_REF_SYNC		21
-+#define RZN1_CLK_REF_SYNC		21	/* AKA DIV_REF_SYNC */
-+#define RZN1_DIV_SDIO0			22
-+#define RZN1_DIV_SDIO1			23
-+#define RZN1_DIV_SWITCH			24
-+#define RZN1_DIV_UART			25
-+#define RZN1_CLK_25_PG4			26
-+#define RZN1_CLK_25_PG5			27
-+#define RZN1_CLK_25_PG6			28
-+#define RZN1_CLK_25_PG7			29
-+#define RZN1_CLK_25_PG8			30
-+#define RZN1_CLK_ADC			31
-+#define RZN1_CLK_ECAT100		32
-+#define RZN1_CLK_HSR100			33
-+#define RZN1_CLK_I2C0			34
-+#define RZN1_CLK_I2C1			35
-+#define RZN1_CLK_MII_REF		36
-+#define RZN1_CLK_NAND			37
-+#define RZN1_CLK_NOUSBP2_PG6		38
-+#define RZN1_CLK_P1_PG2			39
-+#define RZN1_CLK_P1_PG3			40
-+#define RZN1_CLK_P1_PG4			41
-+#define RZN1_CLK_P4_PG3			42
-+#define RZN1_CLK_P4_PG4			43
-+#define RZN1_CLK_P6_PG1			44
-+#define RZN1_CLK_P6_PG2			45
-+#define RZN1_CLK_P6_PG3			46
-+#define RZN1_CLK_P6_PG4			47
-+#define RZN1_CLK_PCI_USB		48
-+#define RZN1_CLK_QSPI0			49
-+#define RZN1_CLK_QSPI1			50
-+#define RZN1_CLK_RGMII_REF		51
-+#define RZN1_CLK_RMII_REF		52
-+#define RZN1_CLK_SDIO0			53
-+#define RZN1_CLK_SDIO1			54
-+#define RZN1_CLK_SERCOS100		55
-+#define RZN1_CLK_SLCD			56
-+#define RZN1_CLK_SPI0			57
-+#define RZN1_CLK_SPI1			58
-+#define RZN1_CLK_SPI2			59
-+#define RZN1_CLK_SPI3			60
-+#define RZN1_CLK_SPI4			61
-+#define RZN1_CLK_SPI5			62
-+#define RZN1_CLK_SWITCH			63
-+#define RZN1_DIV_MOTOR			64
-+#define RZN1_HCLK_ECAT125		65
-+#define RZN1_HCLK_PINCONFIG		66
-+#define RZN1_HCLK_SERCOS		67
-+#define RZN1_HCLK_SGPIO2		68
-+#define RZN1_HCLK_SGPIO3		69
-+#define RZN1_HCLK_SGPIO4		70
-+#define RZN1_HCLK_TIMER0		71
-+#define RZN1_HCLK_TIMER1		72
-+#define RZN1_HCLK_USBF			73
-+#define RZN1_HCLK_USBH			74
-+#define RZN1_HCLK_USBPM			75
-+#define RZN1_CLK_48_PG_F		76
-+#define RZN1_CLK_48_PG4			77
-+#define RZN1_CLK_DDRPHY_PLLCLK_D4	78
-+#define RZN1_CLK_ECAT100_D4		79
-+#define RZN1_CLK_HSR100_D2		80
-+#define RZN1_CLK_REF_SYNC_D4		81
-+#define RZN1_CLK_DDRPHY_PCLK		81	/* AKA CLK_REF_SYNC_D4 */
-+#define RZN1_CLK_FW			81	/* AKA CLK_REF_SYNC_D4 */
-+#define RZN1_CLK_CRYPTO			81	/* AKA CLK_REF_SYNC_D4 */
-+#define RZN1_CLK_REF_SYNC_D8		82
-+#define RZN1_CLK_SERCOS100_D2		83
-+#define RZN1_DIV_CA7			84
-+#define RZN1_CLK_A7MP			84	/* AKA DIV_CA7 */
-+#define RZN1_HCLK_CAN0			85
-+#define RZN1_HCLK_CAN1			86
-+#define RZN1_HCLK_DELTASIGMA		87
-+#define RZN1_HCLK_PWMPTO		88
-+#define RZN1_HCLK_RSV			89
-+#define RZN1_HCLK_SGPIO0		90
-+#define RZN1_HCLK_SGPIO1		91
-+#define RZN1_RTOS_MDC			92
-+#define RZN1_CLK_CM3			93
-+#define RZN1_CLK_DDRC			94
-+#define RZN1_CLK_ECAT25			95
-+#define RZN1_CLK_HSR50			96
-+#define RZN1_CLK_HW_RTOS		97
-+#define RZN1_CLK_SERCOS50		98
-+#define RZN1_HCLK_ADC			99
-+#define RZN1_HCLK_CM3			100
-+#define RZN1_HCLK_CRYPTO_EIP150		101
-+#define RZN1_HCLK_CRYPTO_EIP93		102
-+#define RZN1_HCLK_DDRC			103
-+#define RZN1_HCLK_DMA0			104
-+#define RZN1_HCLK_DMA1			105
-+#define RZN1_HCLK_GMAC0			106
-+#define RZN1_HCLK_GMAC1			107
-+#define RZN1_HCLK_GPIO0			108
-+#define RZN1_HCLK_GPIO1			109
-+#define RZN1_HCLK_GPIO2			110
-+#define RZN1_HCLK_HSR			111
-+#define RZN1_HCLK_I2C0			112
-+#define RZN1_HCLK_I2C1			113
-+#define RZN1_HCLK_LCD			114
-+#define RZN1_HCLK_MSEBI_M		115
-+#define RZN1_HCLK_MSEBI_S		116
-+#define RZN1_HCLK_NAND			117
-+#define RZN1_HCLK_PG_I			118
-+#define RZN1_HCLK_PG19			119
-+#define RZN1_HCLK_PG20			120
-+#define RZN1_HCLK_PG3			121
-+#define RZN1_HCLK_PG4			122
-+#define RZN1_HCLK_QSPI0			123
-+#define RZN1_HCLK_QSPI1			124
-+#define RZN1_HCLK_ROM			125
-+#define RZN1_HCLK_RTC			126
-+#define RZN1_HCLK_SDIO0			127
-+#define RZN1_HCLK_SDIO1			128
-+#define RZN1_HCLK_SEMAP			129
-+#define RZN1_HCLK_SPI0			130
-+#define RZN1_HCLK_SPI1			131
-+#define RZN1_HCLK_SPI2			132
-+#define RZN1_HCLK_SPI3			133
-+#define RZN1_HCLK_SPI4			134
-+#define RZN1_HCLK_SPI5			135
-+#define RZN1_HCLK_SWITCH		136
-+#define RZN1_HCLK_SWITCH_RG		137
-+#define RZN1_HCLK_UART0			138
-+#define RZN1_HCLK_UART1			139
-+#define RZN1_HCLK_UART2			140
-+#define RZN1_HCLK_UART3			141
-+#define RZN1_HCLK_UART4			142
-+#define RZN1_HCLK_UART5			143
-+#define RZN1_HCLK_UART6			144
-+#define RZN1_HCLK_UART7			145
-+#define RZN1_CLK_UART0			146
-+#define RZN1_CLK_UART1			147
-+#define RZN1_CLK_UART2			148
-+#define RZN1_CLK_UART3			149
-+#define RZN1_CLK_UART4			150
-+#define RZN1_CLK_UART5			151
-+#define RZN1_CLK_UART6			152
-+#define RZN1_CLK_UART7			153
++One of the 'special' feature of this infrastructure is that Linux doesn't
++necessary 'own' all the clocks on the SoC, some other OS runs on
++the Cortex-M3 core and that OS can access and claim it's own clocks.
 +
-+#define RZN1_UART_GROUP_012		154
-+#define RZN1_UART_GROUP_34567		155
++Required Properties:
 +
-+#define RZN1_CLOCK_COUNT		(RZN1_UART_GROUP_34567 + 1)
++  - compatible: Must be
++    - "renesas,r9a06g032-clocks" for the RZ/N1D
++    and "renesas,rzn1-clocks" as a fallback.
++  - reg: Base address and length of the memory resource used by the driver
++  - #clock-cells: Must be 1
 +
-+#endif /* __DT_BINDINGS_RZN1_CLOCK_H__ */
++Examples
++--------
++
++  - Clock driver device node:
++
++	clock: clocks@4000c000 {
++		compatible = "renesas,r9a06g032-clocks",
++				"renesas,rzn1-clocks";
++		reg = <0x4000c000 0x1000>;
++		status = "okay";
++		#clock-cells = <1>;
++	};
++
++
++  - Other drivers can use the clocks as in:
++
++	uart0: serial@40060000 {
++		compatible = "snps,dw-apb-uart";
++		reg = <0x40060000 0x400>;
++		interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
++		reg-shift = <2>;
++		reg-io-width = <4>;
++		clocks = <&clock RZN1_CLK_UART0>;
++		clock-names = "baudclk";
++	};
++    Note the use of RZN1_CLK_UART0 -- these constants are declared in
++    the rzn1-clocks.h header file. These are not hardware based constants
++    and are Linux specific.
 -- 
 2.7.4
