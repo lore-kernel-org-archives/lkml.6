@@ -1,58 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751547AbeEVP1k (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 11:27:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37914 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751199AbeEVP1i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 11:27:38 -0400
-Date: Tue, 22 May 2018 11:27:36 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: RCU branching for the v4.19 merge window
-Message-ID: <20180522112736.4b44ae3c@gandalf.local.home>
-In-Reply-To: <20180517144044.GA6089@linux.vnet.ibm.com>
-References: <20180517144044.GA6089@linux.vnet.ibm.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1751390AbeEVP3i (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 11:29:38 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:44266 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751199AbeEVP3h (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 11:29:37 -0400
+Subject: Re: [PATCH 05/14] arm64: Add 'ssbd' command-line option
+To: Marc Zyngier <marc.zyngier@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu
+Cc: Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>, Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christoffer Dall <christoffer.dall@arm.com>
+References: <20180522150648.28297-1-marc.zyngier@arm.com>
+ <20180522150648.28297-6-marc.zyngier@arm.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <77a402ab-d119-cc71-518c-a6d4755b7889@infradead.org>
+Date: Tue, 22 May 2018 08:29:24 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180522150648.28297-6-marc.zyngier@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 17 May 2018 07:40:44 -0700
-"Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+On 05/22/2018 08:06 AM, Marc Zyngier wrote:
+> On a system where the firmware implements ARCH_WORKAROUND_2,
+> it may be useful to either permanently enable or disable the
+> workaround for cases where the user decides that they'd rather
+> not get a trap overhead, and keep the mitigation permanently
+> on or off instead of switching it on exception entry/exit.
+> 
+> In any case, default to the mitigation being enabled.
+> 
+> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+> ---
+>  Documentation/admin-guide/kernel-parameters.txt |  17 ++++
+>  arch/arm64/include/asm/cpufeature.h             |   6 ++
+>  arch/arm64/kernel/cpu_errata.c                  | 102 ++++++++++++++++++++----
+>  3 files changed, 109 insertions(+), 16 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index f2040d46f095..646e112c6f63 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -4092,6 +4092,23 @@
+>  			expediting.  Set to zero to disable automatic
+>  			expediting.
+>  
+> +	ssbd=		[ARM64,HW]
+> +			Speculative Store Bypass Disable control
+> +
+> +			On CPUs that are vulnerable to the Speculative
+> +			Store Bypass vulnerability and offer a
+> +			firmware based mitigation, this parameter
+> +			indicates how the mitigation should be used:
+> +
+> +			force-on:  Unconditionnaly enable mitigation for
 
-> Hello, Steve!
-> 
-> Another year, another difficult-to-branch set of RCU commits.
-> 
-> In happy contrast to last year, I can make some branches (SRCU, some
-> of the torture commits, and a few miscellaneous commits), but I will
-> likely end up with several short branches and one huge one.  My thought
-> is to keep the long branch, but email the patches out in a few separate
-> serieses, with each depending on its predecessor.  For example, one series
-> from the big branch would be folding the ->gpnum and ->completed fields
-> into a single ->gp_seq, which helps the RCU-flavor consolidation task.
-> Another series suppresses some rare false-positive splats that have been
-> plaguing me for more than a year.  Yet another series within this huge
-> branch applies and optimizes funnel locking for grace-period startup.
-> 
-> The problem is that the conversion to ->gp_seq has a very large footprint,
-> which of course generates lots of conflicts.  I could of course collapse
-> these commits into a single commit, but if I did that I would also defer
-> to the merge window following v4.19 due to the resulting loss of bisection
-> within that change.
-> 
-> Any advice?
-> 
-> The commits are for-mingo..rcu/dev in my -rcu tree.
+			           Unconditionally
 
-I don't see these branches (and I don't pull tags).
+> +				   for both kernel and userspace
+> +			force-off: Unconditionnaly disable mitigation for
 
-How bad are the conflicts? Or is it too late to respond to help (sorry,
-was on vacation :-)
+			           Unconditionally
 
--- Steve
+> +				   for both kernel and userspace
+> +			kernel:    Always enable mitigation in the
+> +				   kernel, and offer a prctl interface
+> +				   to allow userspace to register its
+> +				   interest in being mitigated too.
+> +
+>  	stack_guard_gap=	[MM]
+>  			override the default stack gap protection. The value
+>  			is in page units and it defines how many pages prior
+
+
+
+-- 
+~Randy
