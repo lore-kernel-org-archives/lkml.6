@@ -1,72 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753042AbeEVMIm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 08:08:42 -0400
-Received: from esa4.microchip.iphmx.com ([68.232.154.123]:32405 "EHLO
-        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753023AbeEVMIi (ORCPT
+        id S1753066AbeEVMIs (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 08:08:48 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:36425 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751507AbeEVMIm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 08:08:38 -0400
-X-IronPort-AV: E=Sophos;i="5.49,430,1520924400";
-   d="scan'208";a="14214844"
-From: Claudiu Beznea <claudiu.beznea@microchip.com>
-To: <thierry.reding@gmail.com>, <shc_work@mail.ru>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <corbet@lwn.net>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@free-electrons.com>
-CC: <linux-pwm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [PATCH v5 7/9] pwm: add push-pull mode support
-Date: Tue, 22 May 2018 15:07:11 +0300
-Message-ID: <1526990833-30707-8-git-send-email-claudiu.beznea@microchip.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1526990833-30707-1-git-send-email-claudiu.beznea@microchip.com>
-References: <1526990833-30707-1-git-send-email-claudiu.beznea@microchip.com>
+        Tue, 22 May 2018 08:08:42 -0400
+X-Google-Smtp-Source: AB8JxZrDDKE45cY6TvSx2QNJqJ8R7TaYSCGf3cIkmEAEUyAdCSs2lXZhkTZSMUHk2OVoua+Ti/yidFQkZwvMFojqu5A=
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180521223503.152131-1-evgreen@chromium.org>
+References: <20180521223503.152131-1-evgreen@chromium.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 22 May 2018 14:08:40 +0200
+Message-ID: <CAPDyKFq3+rfSgUMv1R3AEEw-v7e-J2wvbye8ztXsoaJSwxDLbQ@mail.gmail.com>
+Subject: Re: [PATCH] mmc: Allow non-sleeping GPIO cd
+To: Evan Green <evgreen@chromium.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Doug Anderson <dianders@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add push-pull mode support. In push-pull mode the channels' outputs have
-same polarities and the edges are complementary delayed for one period.
+On 22 May 2018 at 00:35, Evan Green <evgreen@chromium.org> wrote:
+> This change uses the appropriate _cansleep or non-sleeping API for
+> reading GPIO card detect state. This allows users with GPIOs that
+> never sleep to avoid a warning when certain quirks are present.
+>
+> The sdhci controller has an SDHCI_QUIRK_NO_CARD_NO_RESET, which
+> indicates that a controller will not reset properly if no card is
+> inserted. With this quirk enabled, mmc_get_cd_gpio is called in
+> several places with a spinlock held and interrupts disabled.
+> gpiod_get_raw_value_cansleep is not happy with this situation,
+> and throws out a warning.
+>
+> For boards that a) use controllers that have this quirk, and b) wire
+> card detect up to a GPIO that doesn't sleep, this is a spurious warning.
+> This change silences that warning, at the cost of pushing this problem
+> down to users that have sleeping GPIOs and controllers with this quirk.
+>
+> Signed-off-by: Evan Green <evgreen@chromium.org>
+> ---
+> This is my initial solution to the warning I was trying to face down
+> in my previous RFC [1]. Upsides of this solution is it manages to
+> avoid the warning in places where the warning doesn't apply, and is
+> low-risk. Other approaches I considered:
+>
+> 1. Changing sdhci_get_cd to reach through mmc and get the GPIO value
+> directly (without sleeping) rather than calling mmc_gpio_get_cd,
+> which uses the cansleep functions. I didn't love this because a) it
+> seemed ugly to be reaching into mmc_host like that and b) I'd have to
+> duplicate the logic in mmc_gpio_get_cd, which seemed brittle.
+>
+> 2. Using mmc_gpio_set_cd_isr to record when the card detect pin
+> changes, and then in sdhci_do_reset we wouldn't actually need to
+> get CD state, just look at the cached value. This seemed risky to me
+> since it would affect all sdhci controllers, and I don't know that
+> everybody using gpio-cd can do interrupts on their pins.
+>
+> 3. Adding mmc_gpio_get_cd_nosleep(). That one's still doable if
+> preferred, but I'd have to give some thought to when sdhci wires
+> up to which one.
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
----
- drivers/pwm/core.c  | 1 +
- include/linux/pwm.h | 3 +++
- 2 files changed, 4 insertions(+)
+First, I thought I preferred this option, as it becomes clear of what
+goes on. However I then realize, that it may not be worth it, because
+in the end I guess the caller (sdhci), will not be able to deal with
+error codes. For example, what would it do if it receives  a -ENOTSUPP
+from mmc_gpio_get_cd_nosleep()?
 
-diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-index 59a9df9120de..5fde2e685ca7 100644
---- a/drivers/pwm/core.c
-+++ b/drivers/pwm/core.c
-@@ -348,6 +348,7 @@ const char *pwm_mode_desc(struct pwm_device *pwm, unsigned long mode)
- 		"invalid",
- 		"normal",
- 		"complementary",
-+		"push-pull",
- 	};
- 
- 	if (!pwm_mode_valid(pwm, mode))
-diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-index a4ce4ad7edf0..eb170e2ab431 100644
---- a/include/linux/pwm.h
-+++ b/include/linux/pwm.h
-@@ -29,11 +29,14 @@ enum pwm_polarity {
-  * PWM modes capabilities
-  * @PWMC_MODE_NORMAL_BIT: PWM has one output
-  * @PWMC_MODE_COMPLEMENTARY_BIT: PWM has 2 outputs with opposite polarities
-+ * @PWMC_MODE_PUSH_PULL_BIT: PWM has 2 outputs with same polarities and the
-+ * edges are complementary delayed for one period
-  * @PWMC_MODE_CNT: PWM modes count
-  */
- enum {
- 	PWMC_MODE_NORMAL_BIT,
- 	PWMC_MODE_COMPLEMENTARY_BIT,
-+	PWMC_MODE_PUSH_PULL_BIT,
- 	PWMC_MODE_CNT,
- };
- 
--- 
-2.7.4
+>
+> I'm up for other suggestions. This one most just seemed like the
+> best first stab of minimally addressing the warning without rocking
+> the boat otherwise.
+>
+> [1] https://patchwork.kernel.org/patch/10374633/
+> ---
+>  drivers/mmc/core/slot-gpio.c | 14 ++++++++++----
+>  1 file changed, 10 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/mmc/core/slot-gpio.c b/drivers/mmc/core/slot-gpio.c
+> index 31f7dbb15668..0f497b69f4b8 100644
+> --- a/drivers/mmc/core/slot-gpio.c
+> +++ b/drivers/mmc/core/slot-gpio.c
+> @@ -75,16 +75,22 @@ EXPORT_SYMBOL(mmc_gpio_get_ro);
+>
+>  int mmc_gpio_get_cd(struct mmc_host *host)
+>  {
+> +       int can_sleep;
+>         struct mmc_gpio *ctx = host->slot.handler_priv;
+>
+>         if (!ctx || !ctx->cd_gpio)
+>                 return -ENOSYS;
+>
+> -       if (ctx->override_cd_active_level)
+> -               return !gpiod_get_raw_value_cansleep(ctx->cd_gpio) ^
+> -                       !!(host->caps2 & MMC_CAP2_CD_ACTIVE_HIGH);
+> +       can_sleep = gpiod_cansleep(ctx->cd_gpio);
+> +       if (ctx->override_cd_active_level) {
+> +               int value = can_sleep ?
+> +                               gpiod_get_raw_value_cansleep(ctx->cd_gpio) :
+> +                               gpiod_get_raw_value(ctx->cd_gpio);
+> +               return !value ^ !!(host->caps2 & MMC_CAP2_CD_ACTIVE_HIGH);
+> +       }
+>
+> -       return gpiod_get_value_cansleep(ctx->cd_gpio);
+> +       return can_sleep ? gpiod_get_value_cansleep(ctx->cd_gpio) :
+> +                       gpiod_get_value(ctx->cd_gpio);
+>  }
+>  EXPORT_SYMBOL(mmc_gpio_get_cd);
+>
+> --
+> 2.13.5
+>
+
+Kind regards
+Uffe
