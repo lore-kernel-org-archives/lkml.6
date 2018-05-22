@@ -1,61 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751493AbeEVIBS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 04:01:18 -0400
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:23029 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751349AbeEVHzj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 03:55:39 -0400
-X-IronPort-AV: E=Sophos;i="5.49,429,1520924400";
-   d="scan'208";a="12323653"
-From: Eugen Hristev <eugen.hristev@microchip.com>
-To: <jic23@kernel.org>, <ludovic.desroches@microchip.com>,
-        <alexandre.belloni@bootlin.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
-        <linux-input@vger.kernel.org>, <nicolas.ferre@microchip.com>,
-        <dmitry.torokhov@gmail.com>, <robh@kernel.org>
-CC: Eugen Hristev <eugen.hristev@microchip.com>
-Subject: [PATCH v7 3/9] dt-bindings: input: touchscreen: add minimum pressure touchscreen property
-Date: Tue, 22 May 2018 10:52:33 +0300
-Message-ID: <1526975559-18966-4-git-send-email-eugen.hristev@microchip.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1526975559-18966-1-git-send-email-eugen.hristev@microchip.com>
-References: <1526975559-18966-1-git-send-email-eugen.hristev@microchip.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1751655AbeEVIBz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 04:01:55 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37620 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751301AbeEVHzg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 03:55:36 -0400
+From: Eric Auger <eric.auger@redhat.com>
+To: eric.auger.pro@gmail.com, eric.auger@redhat.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
+        christoffer.dall@arm.com, peter.maydell@linaro.org
+Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
+Subject: [PATCH v8 02/13] KVM: arm/arm64: Document KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
+Date: Tue, 22 May 2018 09:55:07 +0200
+Message-Id: <1526975718-18567-3-git-send-email-eric.auger@redhat.com>
+In-Reply-To: <1526975718-18567-1-git-send-email-eric.auger@redhat.com>
+References: <1526975718-18567-1-git-send-email-eric.auger@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a common touchscreen optional property that will specify
-the minimum pressure applied to the screen that is needed
-such that the driver will report the touch event.
+We introduce a new KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION attribute in
+KVM_DEV_ARM_VGIC_GRP_ADDR group. It allows userspace to provide the
+base address and size of a redistributor region
 
-Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Compared to KVM_VGIC_V3_ADDR_TYPE_REDIST, this new attribute allows
+to declare several separate redistributor regions.
+
+So the whole redist space does not need to be contiguous anymore.
+
+Signed-off-by: Eric Auger <eric.auger@redhat.com>
+Reviewed-by: Peter Maydell <peter.maydell@linaro.org>
+Acked-by: Christoffer Dall <christoffer.dall@arm.com>
+
 ---
-Changes in v5:
- - Modified property name to touchscreen-min-pressure from
-touchscreen-threshold-property
+v5 -> v6:
+- s/pointed by/pointed to by
+- add Peter's R-b and Christoffer's A-b
 
- Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt | 3 +++
- 1 file changed, 3 insertions(+)
+v4 -> v5:
+- Document read access
+- removed Peter's R-b
 
-diff --git a/Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt b/Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt
-index 537643e..d092d5d 100644
---- a/Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt
-+++ b/Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt
-@@ -7,6 +7,9 @@ Optional properties for Touchscreens:
- 				  (in pixels)
-  - touchscreen-max-pressure	: maximum reported pressure (arbitrary range
- 				  dependent on the controller)
-+ - touchscreen-min-pressure	: minimum pressure on the touchscreen to be
-+				  achieved in order for the touchscreen
-+				  driver to report a touch event.
-  - touchscreen-fuzz-x		: horizontal noise value of the absolute input
- 				  device (in pixels)
-  - touchscreen-fuzz-y		: vertical noise value of the absolute input
+v3 -> v4:
+- Added Peter's R-b
+---
+ Documentation/virtual/kvm/devices/arm-vgic-v3.txt | 30 +++++++++++++++++++++--
+ 1 file changed, 28 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/virtual/kvm/devices/arm-vgic-v3.txt b/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
+index 9293b45..2408ab7 100644
+--- a/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
++++ b/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
+@@ -27,16 +27,42 @@ Groups:
+       VCPU and all of the redistributor pages are contiguous.
+       Only valid for KVM_DEV_TYPE_ARM_VGIC_V3.
+       This address needs to be 64K aligned.
++
++    KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION (rw, 64-bit)
++      The attribute data pointed to by kvm_device_attr.addr is a __u64 value:
++      bits:     | 63   ....  52  |  51   ....   16 | 15 - 12  |11 - 0
++      values:   |     count      |       base      |  flags   | index
++      - index encodes the unique redistributor region index
++      - flags: reserved for future use, currently 0
++      - base field encodes bits [51:16] of the guest physical base address
++        of the first redistributor in the region.
++      - count encodes the number of redistributors in the region. Must be
++        greater than 0.
++      There are two 64K pages for each redistributor in the region and
++      redistributors are laid out contiguously within the region. Regions
++      are filled with redistributors in the index order. The sum of all
++      region count fields must be greater than or equal to the number of
++      VCPUs. Redistributor regions must be registered in the incremental
++      index order, starting from index 0.
++      The characteristics of a specific redistributor region can be read
++      by presetting the index field in the attr data.
++      Only valid for KVM_DEV_TYPE_ARM_VGIC_V3.
++
++  It is invalid to mix calls with KVM_VGIC_V3_ADDR_TYPE_REDIST and
++  KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION attributes.
++
+   Errors:
+     -E2BIG:  Address outside of addressable IPA range
+-    -EINVAL: Incorrectly aligned address
++    -EINVAL: Incorrectly aligned address, bad redistributor region
++             count/index, mixed redistributor region attribute usage
+     -EEXIST: Address already configured
++    -ENOENT: Attempt to read the characteristics of a non existing
++             redistributor region
+     -ENXIO:  The group or attribute is unknown/unsupported for this device
+              or hardware support is missing.
+     -EFAULT: Invalid user pointer for attr->addr.
+ 
+ 
+-
+   KVM_DEV_ARM_VGIC_GRP_DIST_REGS
+   KVM_DEV_ARM_VGIC_GRP_REDIST_REGS
+   Attributes:
 -- 
-2.7.4
+2.5.5
