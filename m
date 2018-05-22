@@ -1,61 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752673AbeEVLjQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 07:39:16 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:50894 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751624AbeEVLjK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 07:39:10 -0400
-From: Wei Yongjun <weiyongjun1@huawei.com>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Sagar Dharia <sdharia@codeaurora.org>
-CC: Wei Yongjun <weiyongjun1@huawei.com>, <alsa-devel@alsa-project.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] slimbus: qcom: fix potential NULL dereference in qcom_slim_prg_slew()
-Date: Tue, 22 May 2018 11:46:22 +0000
-Message-ID: <1526989582-139939-1-git-send-email-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+        id S1752748AbeEVLlN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 07:41:13 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:36468 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751440AbeEVLlH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 07:41:07 -0400
+X-Google-Smtp-Source: AB8JxZoVJa5oaqSpslJo+Ve9Htv16dWnZRGuYuWD8oneNok/FueN+oX4WlcdhJXyJnR2A4q4upq2G3+COBljEemJ/Es=
 MIME-Version: 1.0
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+In-Reply-To: <6238546.EnOBWIOf9o@aspire.rjw.lan>
+References: <6238546.EnOBWIOf9o@aspire.rjw.lan>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 22 May 2018 13:41:06 +0200
+Message-ID: <CAPDyKFonGtpv+oEW5bm1XAO7VNuqRR7ZQ7NT5ow3OuoQJQPwmg@mail.gmail.com>
+Subject: Re: [PATCH] PM / core: Fix direct_complete handling for devices with
+ no callbacks
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Martitz <kugel@rockbox.org>, Lukas Wunner <lukas@wunner.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-platform_get_resource() may fail and return NULL, so we should
-better check it's return value to avoid a NULL pointer dereference
-a bit later in the code.
+On 22 May 2018 at 13:02, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> Commit 08810a4119aa (PM / core: Add NEVER_SKIP and SMART_PREPARE
+> driver flags) inadvertently prevented the power.direct_complete flag
+> from being set for devices without PM callbacks and with disabled
+> runtime PM which also prevents power.direct_complete from being set
+> for their parents.  That led to problems including a resume crash on
+> HP ZBook 14u.
+>
+> Restore the previous behavior by causing power.direct_complete to be
+> set for those devices again, but do that in a more direct way to
+> avoid overlooking that case in the future.
+>
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=199693
+> Fixes: 08810a4119aa (PM / core: Add NEVER_SKIP and SMART_PREPARE driver flags)
+> Reported-by: Thomas Martitz <kugel@rockbox.org>
+> Tested-by: Thomas Martitz <kugel@rockbox.org>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-This is detected by Coccinelle semantic patch.
+It seems like the resume path of HP ZBook 14u is kind of fragile, in
+case it *requires* dev->power.direct_complete to be set for devices
+like these. And that makes me wonder, that perhaps we should try to
+address that issue as well, no?
 
-@@
-expression pdev, res, n, t, e, e1, e2;
-@@
+In either way:
 
-res = platform_get_resource_byname(pdev, t, n);
-+ if (!res)
-+   return -EINVAL;
-... when != res == NULL
-e = devm_ioremap(e1, res->start, e2);
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Fixes: ad7fcbc308b0 ("slimbus: qcom: Add Qualcomm Slimbus controller driver")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/slimbus/qcom-ctrl.c | 2 ++
- 1 file changed, 2 insertions(+)
+Kind regards
+Uffe
 
-diff --git a/drivers/slimbus/qcom-ctrl.c b/drivers/slimbus/qcom-ctrl.c
-index bb36a8f..caea3b9 100644
---- a/drivers/slimbus/qcom-ctrl.c
-+++ b/drivers/slimbus/qcom-ctrl.c
-@@ -478,6 +478,8 @@ static void qcom_slim_prg_slew(struct platform_device *pdev,
- 		/* SLEW RATE register for this SLIMbus */
- 		slew_mem = platform_get_resource_byname(pdev, IORESOURCE_MEM,
- 				"slew");
-+		if (!slew_mem)
-+			return;
- 		ctrl->slew_reg = devm_ioremap(&pdev->dev, slew_mem->start,
- 				resource_size(slew_mem));
- 		if (!ctrl->slew_reg)
+> ---
+>  drivers/base/power/main.c |    7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+>
+> Index: linux-pm/drivers/base/power/main.c
+> ===================================================================
+> --- linux-pm.orig/drivers/base/power/main.c
+> +++ linux-pm/drivers/base/power/main.c
+> @@ -1920,10 +1920,8 @@ static int device_prepare(struct device
+>
+>         dev->power.wakeup_path = false;
+>
+> -       if (dev->power.no_pm_callbacks) {
+> -               ret = 1;        /* Let device go direct_complete */
+> +       if (dev->power.no_pm_callbacks)
+>                 goto unlock;
+> -       }
+>
+>         if (dev->pm_domain)
+>                 callback = dev->pm_domain->ops.prepare;
+> @@ -1957,7 +1955,8 @@ unlock:
+>          */
+>         spin_lock_irq(&dev->power.lock);
+>         dev->power.direct_complete = state.event == PM_EVENT_SUSPEND &&
+> -               pm_runtime_suspended(dev) && ret > 0 &&
+> +               ((pm_runtime_suspended(dev) && ret > 0) ||
+> +                dev->power.no_pm_callbacks) &&
+>                 !dev_pm_test_driver_flags(dev, DPM_FLAG_NEVER_SKIP);
+>         spin_unlock_irq(&dev->power.lock);
+>         return 0;
+>
