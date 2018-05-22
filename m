@@ -1,124 +1,161 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751440AbeEVOsm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 10:48:42 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60866 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751269AbeEVOsj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 10:48:39 -0400
-Date: Tue, 22 May 2018 05:12:16 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Joel Fernandes <joel@joelfernandes.org>
-Cc: Joel Fernandes <joelaf@google.com>, linux-kernel@vger.kernel.org,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>, byungchul.park@lge.com,
-        kernel-team@android.com
-Subject: Re: [PATCH v3 4/4] rcu: Unlock non-start node only after accessing
- its gp_seq_needed
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180521044220.123933-1-joel@joelfernandes.org>
- <20180521044220.123933-5-joel@joelfernandes.org>
- <20180521232537.GJ3803@linux.vnet.ibm.com>
- <20180522000734.GD40541@joelaf.mtv.corp.google.com>
- <20180522002823.GP3803@linux.vnet.ibm.com>
- <20180522041651.GA18405@linux.vnet.ibm.com>
- <20180522044327.GF40541@joelaf.mtv.corp.google.com>
+        id S1751601AbeEVOu6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 10:50:58 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:34509 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751420AbeEVOu5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 10:50:57 -0400
+Subject: Re: [PATCH v7 2/3] powerpc/mm: Only read faulting instruction when
+ necessary in do_page_fault()
+To: Nicholas Piggin <npiggin@gmail.com>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+References: <1053e5f43a2ea9a9d9abb1f45c88dffb60b9b4fc.1526995927.git.christophe.leroy@c-s.fr>
+ <d37d9ce7b925bc254082cd664e37a062131d04b8.1526995927.git.christophe.leroy@c-s.fr>
+ <20180523003801.43070ddc@roar.ozlabs.ibm.com>
+From: Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <cb0eaf6d-80ab-b503-d797-cadcd60d4c17@c-s.fr>
+Date: Tue, 22 May 2018 16:50:55 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180522044327.GF40541@joelaf.mtv.corp.google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18052214-0012-0000-0000-00001649BCBC
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009066; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000261; SDB=6.01036048; UDB=6.00529977; IPR=6.00815177;
- MB=3.00021240; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-22 14:48:36
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052214-0013-0000-0000-000052E2AD49
-Message-Id: <20180522121216.GR3803@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-22_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805220169
+In-Reply-To: <20180523003801.43070ddc@roar.ozlabs.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 09:43:27PM -0700, Joel Fernandes wrote:
-> On Mon, May 21, 2018 at 09:16:51PM -0700, Paul E. McKenney wrote:
-> > On Mon, May 21, 2018 at 05:28:23PM -0700, Paul E. McKenney wrote:
-> > > On Mon, May 21, 2018 at 05:07:34PM -0700, Joel Fernandes wrote:
-> > > > On Mon, May 21, 2018 at 04:25:38PM -0700, Paul E. McKenney wrote:
-> > > > > On Sun, May 20, 2018 at 09:42:20PM -0700, Joel Fernandes wrote:
-> > > > > > We acquire gp_seq_needed locklessly. To be safe, lets do the unlocking
-> > > > > > after the access.
-> > > > > 
-> > > > > Actually, no, we hold rnp_start's ->lock throughout.  And this CPU (or in
-> > > > > the case of no-CBs CPUs, this task) is in charge of rdp->gp_seq_needed,
-> > > > > so nothing else is accessing it.  Or at least that is the intent.  ;-)
-> > > > 
-> > > > I was talking about protecting the internal node's rnp->gp_seq_needed, not
-> > > > the rnp_start's gp_seq_needed.
-> > > 
-> > > Ah, good point, I missed the "if" condition.  This can be argued to work,
-> > > sort of, given that we still hold the leaf rcu_node structure's lock,
-> > > so that there is a limit to how far grace periods can advance.
-> > > 
-> > > But the code would of course be much cleaner with your change.
-> > > 
-> > > > We are protecting them in the loop:
-> > > > 
-> > > > like this:
-> > > > for(...)
-> > > > 	if (rnp != rnp_start)
-> > > > 		raw_spin_lock_rcu_node(rnp);
-> > > > 	[...]
-> > > > 	// access rnp->gp_seq and rnp->gp_seq_needed
-> > > > 	[...]
-> > > > 	if (rnp != rnp_start)
-> > > > 		raw_spin_unlock_rcu_node(rnp);
-> > > > 
-> > > > But we don't need to do such protection in unlock_out ? I'm sorry if I'm
-> > > > missing something, but I'm wondering if rnp->gp_seq_needed of an internal
-> > > > node can be accessed locklessly, then why can't that be done also in the
-> > > > funnel locking loop - after all we are holding the rnp_start's lock through
-> > > > out right?
-> > > 
-> > > I was focused on the updates, and missed the rnp->gp_seq_req access in the
-> > > "if" statement.  The current code does sort of work, but only assuming
-> > > that the compiler doesn't tear the load, and so your change would help.
-> > > Could you please resend with your other two updated patches?  It depends
-> > > on one of the earlier patches, so does not apply cleanly as-is.  I could
-> > > hand-apply it, but that sounds like a good way to make your updated
-> > > series fail to apply.  ;-)
-> > > 
-> > > But could you also make the commit log explicitly call out the "if"
-> > > condition as being the offending access?
-> > 
-> > Never mind, me being stupid.  I need to apply this change to the original
-> > commit "rcu: Make rcu_nocb_wait_gp() check if GP already requested", which
-> > I have done with this attribution:
-> > 
-> > [ paulmck: Move lock release past "if" as suggested by Joel Fernandes. ]
-> > 
-> > I have rebased my stack on top of the updated commit.
+
+
+Le 22/05/2018 à 16:38, Nicholas Piggin a écrit :
+> On Tue, 22 May 2018 16:02:56 +0200 (CEST)
+> Christophe Leroy <christophe.leroy@c-s.fr> wrote:
 > 
-> Cool, makes sense. I am assuming this means I don't have to resend this
-> patch, if I do let me know :)
+>> Commit a7a9dcd882a67 ("powerpc: Avoid taking a data miss on every
+>> userspace instruction miss") has shown that limiting the read of
+>> faulting instruction to likely cases improves performance.
+>>
+>> This patch goes further into this direction by limiting the read
+>> of the faulting instruction to the only cases where it is likely
+>> needed.
+>>
+>> On an MPC885, with the same benchmark app as in the commit referred
+>> above, we see a reduction of about 3900 dTLB misses (approx 3%):
+>>
+>> Before the patch:
+>>   Performance counter stats for './fault 500' (10 runs):
+>>
+>>           683033312      cpu-cycles                                                    ( +-  0.03% )
+>>              134538      dTLB-load-misses                                              ( +-  0.03% )
+>>               46099      iTLB-load-misses                                              ( +-  0.02% )
+>>               19681      faults                                                        ( +-  0.02% )
+>>
+>>         5.389747878 seconds time elapsed                                          ( +-  0.06% )
+>>
+>> With the patch:
+>>
+>>   Performance counter stats for './fault 500' (10 runs):
+>>
+>>           682112862      cpu-cycles                                                    ( +-  0.03% )
+>>              130619      dTLB-load-misses                                              ( +-  0.03% )
+>>               46073      iTLB-load-misses                                              ( +-  0.05% )
+>>               19681      faults                                                        ( +-  0.01% )
+>>
+>>         5.381342641 seconds time elapsed                                          ( +-  0.07% )
+>>
+>> The proper work of the huge stack expansion was tested with the
+>> following app:
+>>
+>> int main(int argc, char **argv)
+>> {
+>> 	char buf[1024 * 1025];
+>>
+>> 	sprintf(buf, "Hello world !\n");
+>> 	printf(buf);
+>>
+>> 	exit(0);
+>> }
+>>
+>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>> ---
+>>   v7: Following comment from Nicholas on v6 on possibility of the page getting removed from the pagetables
+>>       between the fault and the read, I have reworked the patch in order to do the get_user() in
+>>       __do_page_fault() directly in order to reduce complexity compared to version v5
+> 
+> This is looking better, thanks.
+> 
+>> diff --git a/arch/powerpc/mm/fault.c b/arch/powerpc/mm/fault.c
+>> index fcbb34431da2..dc64b8e06477 100644
+>> --- a/arch/powerpc/mm/fault.c
+>> +++ b/arch/powerpc/mm/fault.c
+>> @@ -450,9 +450,6 @@ static int __do_page_fault(struct pt_regs *regs, unsigned long address,
+>>   	 * can result in fault, which will cause a deadlock when called with
+>>   	 * mmap_sem held
+>>   	 */
+>> -	if (is_write && is_user)
+>> -		get_user(inst, (unsigned int __user *)regs->nip);
+>> -
+>>   	if (is_user)
+>>   		flags |= FAULT_FLAG_USER;
+>>   	if (is_write)
+>> @@ -498,6 +495,26 @@ static int __do_page_fault(struct pt_regs *regs, unsigned long address,
+>>   	if (unlikely(!(vma->vm_flags & VM_GROWSDOWN)))
+>>   		return bad_area(regs, address);
+>>   
+>> +	if (unlikely(is_write && is_user && address + 0x100000 < vma->vm_end &&
+>> +		     !inst)) {
+>> +		unsigned int __user *nip = (unsigned int __user *)regs->nip;
+>> +
+>> +		if (likely(access_ok(VERIFY_READ, nip, sizeof(inst)))) {
+>> +			int res;
+>> +
+>> +			pagefault_disable();
+>> +			res = __get_user_inatomic(inst, nip);
+>> +			pagefault_enable();
+>> +			if (unlikely(res)) {
+>> +				up_read(&mm->mmap_sem);
+>> +				res = __get_user(inst, nip);
+>> +				if (!res && inst)
+>> +					goto retry;
+> 
+> You're handling error here but the previous code did not?
 
-No need.
+The previous code did in store_updates_sp()
 
-> Either way, once you push your updated tree to kernel.org, I'll double check
-> to make sure the change is in :)
+When I moved get_user() out of that function in preceeding patch, I did 
+consider that if get_user() fails, inst will remain 0, which means that 
+store_updates_sp() will return false if ever called.
 
-Please see 9624746baf6b ("rcu: Make rcu_nocb_wait_gp() check if GP
-already requested") on branch rcu/dev.
+Now, as the semaphore has been released, we really need to do something, 
+because if we goto retry inconditionally, we may end up in an infinite 
+loop, and we can't let it continue either as the semaphore is not held 
+anymore.
 
-								Thanx, Paul
+> 
+>> +				return bad_area_nosemaphore(regs, address);
+>> +			}
+>> +		}
+>> +	}
+> 
+> Would it be nicer to move all this up into bad_stack_expansion().
+> It would need a way to handle the retry and insn, but I think it
+> would still look better.
+
+That's what I did in v5 indeed, but it looked too complex to me at the 
+end. Can you have a look at it 
+(https://patchwork.ozlabs.org/patch/799053/) and tell me if you feel it 
+better than v7, or if you have any suggestion to improve based on v5 
+and/or v7 ?
+
+Thanks
+Christophe
+
+> 
+> Thanks,
+> Nick
+> 
