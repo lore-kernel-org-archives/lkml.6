@@ -1,101 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752187AbeEVB75 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 21 May 2018 21:59:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54124 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751177AbeEVB7y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 May 2018 21:59:54 -0400
-Date: Mon, 21 May 2018 21:59:51 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Joel Fernandes <joel@joelfernandes.org>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        byungchul.park@lge.com, mathieu.desnoyers@efficios.com,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org,
-        kernel-team@android.com
-Subject: Re: Tasks RCU vs Preempt RCU
-Message-ID: <20180521215951.2d6abfcb@gandalf.local.home>
-In-Reply-To: <20180520191846.GA248075@joelaf.mtv.corp.google.com>
-References: <20180518183623.GA163151@joelaf.mtv.corp.google.com>
-        <20180519022918.GV3803@linux.vnet.ibm.com>
-        <20180519225905.GB134184@joelaf.mtv.corp.google.com>
-        <20180520004938.GZ3803@linux.vnet.ibm.com>
-        <20180520112843.57079857@grimm.local.home>
-        <20180520191846.GA248075@joelaf.mtv.corp.google.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1751870AbeEVCQD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 21 May 2018 22:16:03 -0400
+Received: from exmail.andestech.com ([59.124.169.137]:61454 "EHLO
+        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751177AbeEVCQA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 May 2018 22:16:00 -0400
+Date: Tue, 22 May 2018 10:15:21 +0800
+From: Vincent Chen <vincentc@andestech.com>
+To: Arnd Bergmann <arnd@arndb.de>
+CC: Greentime Hu <green.hu@gmail.com>,
+        Guenter Roeck <private@roeck-us.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Greentime Ying-Han Hu(?????????)" <greentime@andestech.com>,
+        "Alec I-Wei Wu(?????????)" <wuiw@andestech.com>,
+        Chung-Ju Wu <jasonwucj@gmail.com>,
+        "Kito Huang-Jia Cheng(?????????)" <kito@andestech.com>,
+        Vincent Chen <deanbo422@gmail.com>
+Subject: Re: nds32 build failures
+Message-ID: <20180522021521.GB23455@andestech.com>
+References: <4ccb747b-fb3b-18c8-8737-2cc02d7b1c34@roeck-us.net>
+ <CAEbi=3cr5i3HKLKOacFih9pz00c7UBKrd=o4ER8HAUT1j_oqGg@mail.gmail.com>
+ <CAK8P3a2cogDMEdvhNt8CsJwaONWOgBR7zR3sABun4u8pAgTtqQ@mail.gmail.com>
+ <CAEbi=3d11ZcxgyoL-ZEruUzj0odDZ2GZXALNTtC7p55nfkkObA@mail.gmail.com>
+ <CAK8P3a1xDCS1X-4UETB5WW5txD38hrRUGKAfqU=SUy93o3DH5g@mail.gmail.com>
+ <CA+yXCZBqrz5Ftmen8wH5uBWGAKQ0cxPiK_nqKS6meUxXCPQ3Og@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CA+yXCZBqrz5Ftmen8wH5uBWGAKQ0cxPiK_nqKS6meUxXCPQ3Og@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [10.0.1.85]
+X-DNSRBL: 
+X-MAIL: ATCSQR.andestech.com w4M2HRIT030036
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 20 May 2018 12:18:46 -0700
-Joel Fernandes <joel@joelfernandes.org> wrote:
-
-> > There is no feasible way to know when a task is on a trampoline
-> > without adding overhead that negates the speed up we receive by making
-> > individual trampolines to begin with.  
+On Fri, May 11, 2018 at 01:17:05PM +0800, Kito Cheng wrote:
+> Hi Arnd:
 > 
-> Are you speaking of time overhead or space overhead, or both?
-
-Both.
-
+> I am GCC guy from Andes, we've missed the release schedule for GCC 8,
+> we didn't upstream the Linux support on time.
 > 
-> Just thinking out loud and probably some food for thought..
+> Our plan is put our GCC 8 on github and continue commit rest patches
+> to upstream.
+> And we'll put our source on github after our internal testing done.
 > 
-> The rcu_read_lock/unlock primitive are extrememly fast, so I don't personally
-> think there's a time hit.
+> Thanks.
 > 
-> Could we get around the trampoline code == data issue by say using a
-> multi-stage trampoline like so? :
-> 
->  	call func_tramp --> (static
-> 			    trampoline)               (dynamic trampoline)
-> 			    rcu_read_lock()  -------> set up stack
-> 		 	                              call function_tracer()
->  			                              pop stack
->                             rcu_read_unlock() <------ ret
->  
-> I know there's probably more to it than this, but conceptually atleast, it
+Dear Arnd:
 
-Yes, there is more to it. Think about why we create a dynamic
-trampoline. It is to make a custom call per callback for a group of
-functions being traced by that callback.
+The prebuilt nds32 toochain with gcc 8 is placed here
+https://github.com/vincentzwc/prebuilt-nds32-toolchain/releases
 
-Now, if we make that static trampoline, we just lost the reason for the
-dynamic one. How would that work if you have 5 different users of the
-callbacks (and lets not forget about optimized kprobes)? How do you
-jump from the static trampoline to the dynamic one with a single call?
+The source code of each component for this toolchain is placed here.
+a. gcc:
+   path: https://github.com/andestech/gcc.git
+   branch: nds32-8.1.0-upstream
+b. binutils
+   path: https://github.com/andestech/binutils.git
+   branch: nds32-binutils-2.30-branch-open
+c. glibc
+   path: https://github.com/andestech/glibc.git
+   branch: nds32-glibc-2.27-v0
+d. Linux
+   path: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+   branch: master
 
-> feels like all the RCU infrastructure is already there to handle preemption
-> within a trampoline and it would be cool if the trampoline were as shown
-> above for the dynamically allocated trampolines. Atleast I feel it will be
-> faster than the pre-trampoline code that did the hash lookups / matching to
-> call the right function callbacks, and could help eliminiate need for the
-> RCU-tasks subsystem and its kthread then.
+This toolchain also can be manually generated by the following script
+https://github.com/andestech/build_script/blob/master/build_toolchain.sh
 
-I don't see how the static trampoline would be able to call. Do we
-create a static trampoline for every function that is traced and never
-delete it? That's a lot of memory.
+We successfully generate a bootable kernel image with nds32 defconfig by this
+toolchain. However, we find a new compiler warning, Wstringop-overflow, when
+building arch/nds32/kernel/vdso.o. We have sent a patch to fix it.
 
-Also, we trace rcu_read_lock/unlock(), and I use that for a lot of
-debugging. And we also need to deal with tracing code that RCU does not
-watch, because function tracing does a lot of that too. I finally gave
-up trying to have the stack tracer trace those locations, because it
-was a serious game of whack a mole that would never end. I don't want
-to give up full function tracing for the same reason.
 
-> 
-> If you still feel its nots worth it, then that's okay too and clearly the
-> RCU-tasks has benefits such as a simpler trampoline implementation..
+Best regards
+Vincent
 
-If you are worried about making RCU simpler, we can go to my original
-thought which was to make a home grown RCU like system that we can use,
-as this has different requirements than normal RCU has. Like we don't
-need a "lock" at all. We just need guaranteed quiescent points that we
-make sure all tasks would go through before freeing the trampolines.
-But it was decided to create a new flavor of RCU instead of doing that.
-
--- Steve
+> On Fri, May 11, 2018 at 10:40 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+> > On Wed, Apr 18, 2018 at 3:19 AM, Greentime Hu <green.hu@gmail.com> wrote:
+> >> 2018-04-17 20:47 GMT+08:00 Arnd Bergmann <arnd@arndb.de>:
+> >>> On Mon, Apr 16, 2018 at 11:06 AM, Greentime Hu <green.hu@gmail.com> wrote:
+> >>>> 2018-04-16 11:58 GMT+08:00 Guenter Roeck <private@roeck-us.net>:
+> >>>>
+> >>>> This built failure is because the toolchain version you used is not
+> >>>> supported the latest intrinsic function/macro.
+> >>>> We are sending the latest patchset now and we expect the whole new
+> >>>> features will be supported in gcc8.0.0 and binutil2.31+.
+> >>>>
+> >>>> If you'd like to get these new features of toolchain, you may use the
+> >>>> github version.
+> >>>> This is the built-script repo. https://github.com/andestech/build_script.git
+> >>>
+> >>> I've taken the gcc-6.3 sources from there, and updated them to gcc-6.4.0
+> >>> in order to build a nds32le-linux toolchain based on the same version as
+> >>> the other ones.
+> >>>
+> >>> Unfortunately neither the usual binutils-2.29.1 nor your binutils worked
+> >>> for me, but I eventually managed to get a build using the binutils-2.30
+> >>> release.
+> >>>
+> >>> With this, I could build a mainline kernel with a couple of warnings,
+> >>> but an 'allmodconfig' build still failed.
+> >>>
+> >>> Guenter, can you try my binary from
+> >>> www.kernel.org/pub/tools/crosstool/files/bin/x86_64/6.4.0/x86_64-gcc-6.4.0-nolibc-nds32le-linux.tar.xz
+> >>> ?
+> >>>
+> >>> If that works for you, I'll update the front-page and remove the nds32-elf
+> >>> toolchains.
+> >>>
+> >>> Greentime, do you have a patch set for gcc-7.3 as well, or are 6.3 and 8.0 the
+> >>> only working compilers for nds32le-linux?
+> >>>
+> >>
+> >> Hi, all:
+> >>
+> >> I just discuss with our toolchain colleagues. We have only gcc6.3 and
+> >> gcc8.0 for nds32le-linux.
+> >> I have the ld segmentation fault issue too when building kernel with
+> >> 'allmodconfig'. We are dealing with it.
+> >
+> > I've tried building the mainline gcc-8.1 sources for nds32le-linux and
+> > still got a failure with those (building gcc), building a nds32le-elf gcc-8.1.0
+> > worked fine, but that fails to build the vdso (no support for -fPIC), so
+> > it's again unusable for building kernels. Any other ideas?
+> >
+> >           Arnd
