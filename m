@@ -1,84 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932231AbeEWJhO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 05:37:14 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:41500 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754411AbeEWJhK (ORCPT
+        id S932238AbeEWJje (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 05:39:34 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:39425 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932137AbeEWJja (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 05:37:10 -0400
-X-Google-Smtp-Source: AB8JxZq1wLA2nZkkQCYdkO2kpc68NV3ZN8kcyg9ESkFqTj6xALtbXkYcozFJLHyR114YkoTHKEGmwg==
-Date: Wed, 23 May 2018 19:36:59 +1000
-From: Nicholas Piggin <npiggin@gmail.com>
-To: Christophe Leroy <christophe.leroy@c-s.fr>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v9] powerpc/mm: Only read faulting instruction when
- necessary in do_page_fault()
-Message-ID: <20180523193659.03857d14@roar.ozlabs.ibm.com>
-In-Reply-To: <3f8c7feadca2d52fa97c8feb5170c2ab67b6f992.1527065339.git.christophe.leroy@c-s.fr>
-References: <3f8c7feadca2d52fa97c8feb5170c2ab67b6f992.1527065339.git.christophe.leroy@c-s.fr>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 23 May 2018 05:39:30 -0400
+X-Google-Smtp-Source: AB8JxZp6lX/2NwMGNSTRoilsh3oZH4Nrz8zin2vLCuJsxIzfvRwa6sVRanRaZVjjSxVo1G2eTaPSW6nwfcueFVmgYuk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAFqt6zY2amJC4bkRZJgjs7=wCuTTxZbufk9cXcMZLE8VGh_dww@mail.gmail.com>
+References: <20180510150448.GA26306@jordon-HP-15-Notebook-PC>
+ <20180511092205.GB16141@n2100.armlinux.org.uk> <CAFqt6zY2amJC4bkRZJgjs7=wCuTTxZbufk9cXcMZLE8VGh_dww@mail.gmail.com>
+From: Souptick Joarder <jrdr.linux@gmail.com>
+Date: Wed, 23 May 2018 15:09:28 +0530
+Message-ID: <CAFqt6zYyL6YfvmiX90=Te3PQdcK32irdPPU0awEbp9Q16Bz9=w@mail.gmail.com>
+Subject: Re: [PATCH v2] gpu: drm: armada: Adding new typedef vm_fault_t
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 23 May 2018 10:53:22 +0200 (CEST)
-Christophe Leroy <christophe.leroy@c-s.fr> wrote:
+On Wed, May 16, 2018 at 10:05 AM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> On Fri, May 11, 2018 at 2:52 PM, Russell King - ARM Linux
+> <linux@armlinux.org.uk> wrote:
+>> On Thu, May 10, 2018 at 08:34:48PM +0530, Souptick Joarder wrote:
+>>> Use new return type vm_fault_t for fault handler in
+>>> struct vm_operations_struct. For now, this is just
+>>> documenting that the function returns a VM_FAULT
+>>> value rather than an errno. Once all instances are
+>>> converted, vm_fault_t will become a distinct type.
+>>>
+>>> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
+>>>
+>>> Previously vm_insert_pfn() returns err which driver
+>>> mapped into VM_FAULT_* type. The new function
+>>> vmf_insert_pfn() will replace this inefficiency by
+>>> returning VM_FAULT_* type.
+>>>
+>>> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+>>> Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+>>
+>> Acked-by: Russell King <rmk+kernel@armlinux.org.uk>
+>>
+>> Thanks.
+>
+> If no further comment, we would like to get this patch in queue
+> for 4.18.
 
-> Commit a7a9dcd882a67 ("powerpc: Avoid taking a data miss on every
-> userspace instruction miss") has shown that limiting the read of
-> faulting instruction to likely cases improves performance.
-> 
-> This patch goes further into this direction by limiting the read
-> of the faulting instruction to the only cases where it is likely
-> needed.
-> 
-> On an MPC885, with the same benchmark app as in the commit referred
-> above, we see a reduction of about 3900 dTLB misses (approx 3%):
-> 
-> Before the patch:
->  Performance counter stats for './fault 500' (10 runs):
-> 
->          683033312      cpu-cycles                                                    ( +-  0.03% )
->             134538      dTLB-load-misses                                              ( +-  0.03% )
->              46099      iTLB-load-misses                                              ( +-  0.02% )
->              19681      faults                                                        ( +-  0.02% )
-> 
->        5.389747878 seconds time elapsed                                          ( +-  0.06% )
-> 
-> With the patch:
-> 
->  Performance counter stats for './fault 500' (10 runs):
-> 
->          682112862      cpu-cycles                                                    ( +-  0.03% )
->             130619      dTLB-load-misses                                              ( +-  0.03% )
->              46073      iTLB-load-misses                                              ( +-  0.05% )
->              19681      faults                                                        ( +-  0.01% )
-> 
->        5.381342641 seconds time elapsed                                          ( +-  0.07% )
-> 
-> The proper work of the huge stack expansion was tested with the
-> following app:
-> 
-> int main(int argc, char **argv)
-> {
-> 	char buf[1024 * 1025];
-> 
-> 	sprintf(buf, "Hello world !\n");
-> 	printf(buf);
-> 
-> 	exit(0);
-> }
-> 
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-
-Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
-
-Thanks,
-Nick
+We would like to get this patch in queue
+for 4.18.
