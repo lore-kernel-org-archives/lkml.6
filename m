@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-582301-1527103598-2-16882827483463751666
+X-Cyrus-Session-Id: sloti22d1t05-604614-1527103578-2-14708151134468282879
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527103598; b=PS/GOwA+j+O30OEbuJpYYO5JerRpHAxB2oUNd4Gq6ISH1yZzf5
-    CSExNqcVRKZ6rspH+sxYgUwej/57FDA3HKq2+GmUmvMm88PZWFAoLq6mJfcREJCG
-    WWlJgyANAWX9gSj1zxSB9SS4vMJv8MClS2lJ1Ugwl2q4FuWLCoSRnFLSikcbY76m
-    cVF4/Mn0DvoZbBp8MX0ealbUgv9Fce1s4AvnfxiTGXiy8hhjoZRIcnzBMwDDjkEY
-    V1e9EvN7U1sHJZvGBeHWJWdEoF4d5lKL4EfmNDBGffo16dHUbe4h3rBe+D9esESG
-    KeERbd78F4jmpW8pfIBRtGwj2gBxCFapCFvg==
+    1527103578; b=VKmzU3te34Jx5JmrBwZpD9kPNDZJYaaCtExLUFfmB4pT3oOSFv
+    4ZldFqPd7yZ/qqck+fQPcrzXbpnMkw6oDbaKSMGXf1RzYnqKVDGRCBg9wNFkWWBV
+    a4vxUE4eqjvUQFd6VtRx5iCt5e7T+zJabVSm+dU15NKmZW+n+DFqUotoh3Vo55NP
+    qUa2OdbTaAOQ+rJC/mW1c/qEuc8FXbhCN8ERG/szpyI01Ka+TcCurVwjEhxazw+9
+    /6nu8SFrsvJmoTZxEpdYjInHb9HVRsdOlI8/7AsH3YeJ26l+wfRqMwhfVoWMh2r+
+    NXwLZoahXZjWQ2ae34OJaVZxhlI9fBWuX+cg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1527103598; bh=
-    zjdWjIDKyBHop9CSuh+FqcyPHZgcHXP4acfDdvzZ8K4=; b=WLUxlQ8aq+SpjShm
-    Giv07vJ32jWOxRPFcBhX2S0AaSwGocA1mRRxeCgppyvcgtcbc+/sVlFc2j+3sGfg
-    ORR4vm6o/g0s8ZH0E8oAksOAZlt3U2st5aDLDZQv93/F0Q5jWRvhQ0kx/Kplvf+7
-    NNzrVMMQeox7upB160dL/rmY55Z47njRI2YyQFrqQ3yyQm5SVEoOFGT+AlZk26Tv
-    IPgAyLr7++xUMzARRnWohqHWrISJKVFFeNy4Izo3wp4LPq87VuuwFKN0ZIQWybam
-    Xr00NNkSzPbKxfAAULKyhmm8eX6TLNGtDCYCyHSVcf/5O/jVvPJRkBWs7VmnQOX6
-    5QSzXw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=fm2; t=1527103578; bh=
+    jOnRF9SHaf4vjB13zbQNLlY4eR5MxvJVa4HgaHVCSaQ=; b=P7KrhlqX9C0LXU64
+    n1rSJdxFIjfvYwrydvn2uPSyhaYl4pTVaufP+62T4GB/foypWJjysfFx1AyliHwF
+    TQ//EAcYO8WjNrlfVDIbV122MBzk3gQ9pTrp8dbs7yaDgogqySDxnCD5oNPZtBtg
+    AAMjQU9TZg/aFyzaqTVYSRz8N+uFZzvlQPG++0p5nRxFlzkCumrXmWWNZ6Rj36eQ
+    K7S5BKKt5GTl3suJ9C0kzawFX3FS01c8KGLMe4kGCNbSAZUeM3tYOzsDmkrjHFsG
+    pvdPL2C0wf3dX03Rpe7G8eAP9lCnlI6OKuDNVBLlxTlUlWxI3Lau7cIYr13NTz8g
+    ZShn+w==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=infradead.org header.i=@infradead.org header.b=mx33a2FI
+    header.d=infradead.org header.i=@infradead.org header.b=jKq1DJEu
     x-bits=2048 x-keytype=rsa x-algorithm=sha256
     x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=infradead.org header.i=@infradead.org header.b=mx33a2FI
+      header.d=infradead.org header.i=@infradead.org header.b=jKq1DJEu
       x-bits=2048 x-keytype=rsa x-algorithm=sha256
       x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -63,28 +63,28 @@ Authentication-Results: mx5.messagingengine.com;
       header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCL1WzQ5aWvjtmJOFmZrrxUuzSE4/dZtgu5eSJGe64AayrAwm19tuaAjC986DOnAejXMODiwfUdss6hU1MxV/SPVP1BEFkmesWHQ6wsDnA8BPchT7wBp
-    XA8SFvD1q8mTkwcfDhpfcg2elxX3Q8s8j1MhMjwEpjWdGnlblaq0PQ6BT1ShgY8vrh3FentXbe4r/0MhX7rrbe+7PS3a2n34rlG16D7548B5jeMu3gVOO17i
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfEuM3idz6/Scd2/Qo7fAujYFAiV2VZlQ51H/Zhlf8IYByu2As/LYSWkN4rJJzx/onmHXa9kzlesNcUr6Ce3kMtBRvev749rD3GURohXFlxJ36YyPERcl
+    775m2an/jhTg35d4DLK4rHYL2iDYnmdKhA1Lj/XRp3UocCoEzJN3P9umq8B0OMKRKbAPyHEM41x9AlOhCK2n+ZU0G4BnT6YkP3Tdi5aSW1OtzV0ao7F4ijBc
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8
-    a=8Ql5ahqjzFPP2Dbx7CcA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=ad68_8OTSUJq81Ci_wQA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934552AbeEWT0S (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 23 May 2018 15:26:18 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40896 "EHLO
+        id S934522AbeEWTVc (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 23 May 2018 15:21:32 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40888 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934268AbeEWTVa (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Wed, 23 May 2018 15:21:30 -0400
+        with ESMTP id S934518AbeEWTV1 (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Wed, 23 May 2018 15:21:27 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: viro@zeniv.linux.org.uk
 Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
         linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 22/33] net/sctp: convert to ->poll_mask
-Date: Wed, 23 May 2018 21:20:11 +0200
-Message-Id: <20180523192022.1703-23-hch@lst.de>
+Subject: [PATCH 21/33] net/tipc: convert to ->poll_mask
+Date: Wed, 23 May 2018 21:20:10 +0200
+Message-Id: <20180523192022.1703-22-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180523192022.1703-1-hch@lst.de>
 References: <20180523192022.1703-1-hch@lst.de>
@@ -97,72 +97,69 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- include/net/sctp/sctp.h | 3 +--
- net/sctp/ipv6.c         | 2 +-
- net/sctp/protocol.c     | 2 +-
- net/sctp/socket.c       | 4 +---
- 4 files changed, 4 insertions(+), 7 deletions(-)
+ net/tipc/socket.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-diff --git a/include/net/sctp/sctp.h b/include/net/sctp/sctp.h
-index 28b996d63490..206100cc665b 100644
---- a/include/net/sctp/sctp.h
-+++ b/include/net/sctp/sctp.h
-@@ -107,8 +107,7 @@ int sctp_backlog_rcv(struct sock *sk, struct sk_buff *skb);
- int sctp_inet_listen(struct socket *sock, int backlog);
- void sctp_write_space(struct sock *sk);
- void sctp_data_ready(struct sock *sk);
--__poll_t sctp_poll(struct file *file, struct socket *sock,
--		poll_table *wait);
-+__poll_t sctp_poll_mask(struct socket *sock, __poll_t events);
- void sctp_sock_rfree(struct sk_buff *skb);
- void sctp_copy_sock(struct sock *newsk, struct sock *sk,
- 		    struct sctp_association *asoc);
-diff --git a/net/sctp/ipv6.c b/net/sctp/ipv6.c
-index 42247110d842..2bcbc41aaffb 100644
---- a/net/sctp/ipv6.c
-+++ b/net/sctp/ipv6.c
-@@ -1010,7 +1010,7 @@ static const struct proto_ops inet6_seqpacket_ops = {
- 	.socketpair	   = sock_no_socketpair,
- 	.accept		   = inet_accept,
- 	.getname	   = sctp_getname,
--	.poll		   = sctp_poll,
-+	.poll_mask	   = sctp_poll_mask,
- 	.ioctl		   = inet6_ioctl,
- 	.listen		   = sctp_inet_listen,
- 	.shutdown	   = inet_shutdown,
-diff --git a/net/sctp/protocol.c b/net/sctp/protocol.c
-index d685f8456762..a1d2ea3ff4c9 100644
---- a/net/sctp/protocol.c
-+++ b/net/sctp/protocol.c
-@@ -1016,7 +1016,7 @@ static const struct proto_ops inet_seqpacket_ops = {
- 	.socketpair	   = sock_no_socketpair,
- 	.accept		   = inet_accept,
- 	.getname	   = inet_getname,	/* Semantics are different.  */
--	.poll		   = sctp_poll,
-+	.poll_mask	   = sctp_poll_mask,
- 	.ioctl		   = inet_ioctl,
- 	.listen		   = sctp_inet_listen,
- 	.shutdown	   = inet_shutdown,	/* Looks harmless.  */
-diff --git a/net/sctp/socket.c b/net/sctp/socket.c
-index 80835ac26d2c..f6bb1b89525c 100644
---- a/net/sctp/socket.c
-+++ b/net/sctp/socket.c
-@@ -7701,14 +7701,12 @@ int sctp_inet_listen(struct socket *sock, int backlog)
-  * here, again, by modeling the current TCP/UDP code.  We don't have
-  * a good way to test with it yet.
+diff --git a/net/tipc/socket.c b/net/tipc/socket.c
+index 6be21575503a..3bb45042e833 100644
+--- a/net/tipc/socket.c
++++ b/net/tipc/socket.c
+@@ -692,10 +692,9 @@ static int tipc_getname(struct socket *sock, struct sockaddr *uaddr,
+ }
+ 
+ /**
+- * tipc_poll - read and possibly block on pollmask
++ * tipc_poll - read pollmask
+  * @file: file structure associated with the socket
+  * @sock: socket for which to calculate the poll bits
+- * @wait: ???
+  *
+  * Returns pollmask value
+  *
+@@ -709,15 +708,12 @@ static int tipc_getname(struct socket *sock, struct sockaddr *uaddr,
+  * imply that the operation will succeed, merely that it should be performed
+  * and will not block.
   */
--__poll_t sctp_poll(struct file *file, struct socket *sock, poll_table *wait)
-+__poll_t sctp_poll_mask(struct socket *sock, __poll_t events)
+-static __poll_t tipc_poll(struct file *file, struct socket *sock,
+-			      poll_table *wait)
++static __poll_t tipc_poll_mask(struct socket *sock, __poll_t events)
  {
  	struct sock *sk = sock->sk;
- 	struct sctp_sock *sp = sctp_sk(sk);
- 	__poll_t mask;
+ 	struct tipc_sock *tsk = tipc_sk(sk);
+ 	__poll_t revents = 0;
  
--	poll_wait(file, sk_sleep(sk), wait);
+-	sock_poll_wait(file, sk_sleep(sk), wait);
 -
- 	sock_rps_record_flow(sk);
- 
- 	/* A TCP-style listening socket becomes readable when the accept queue
+ 	if (sk->sk_shutdown & RCV_SHUTDOWN)
+ 		revents |= EPOLLRDHUP | EPOLLIN | EPOLLRDNORM;
+ 	if (sk->sk_shutdown == SHUTDOWN_MASK)
+@@ -3028,7 +3024,7 @@ static const struct proto_ops msg_ops = {
+ 	.socketpair	= tipc_socketpair,
+ 	.accept		= sock_no_accept,
+ 	.getname	= tipc_getname,
+-	.poll		= tipc_poll,
++	.poll_mask	= tipc_poll_mask,
+ 	.ioctl		= tipc_ioctl,
+ 	.listen		= sock_no_listen,
+ 	.shutdown	= tipc_shutdown,
+@@ -3049,7 +3045,7 @@ static const struct proto_ops packet_ops = {
+ 	.socketpair	= tipc_socketpair,
+ 	.accept		= tipc_accept,
+ 	.getname	= tipc_getname,
+-	.poll		= tipc_poll,
++	.poll_mask	= tipc_poll_mask,
+ 	.ioctl		= tipc_ioctl,
+ 	.listen		= tipc_listen,
+ 	.shutdown	= tipc_shutdown,
+@@ -3070,7 +3066,7 @@ static const struct proto_ops stream_ops = {
+ 	.socketpair	= tipc_socketpair,
+ 	.accept		= tipc_accept,
+ 	.getname	= tipc_getname,
+-	.poll		= tipc_poll,
++	.poll_mask	= tipc_poll_mask,
+ 	.ioctl		= tipc_ioctl,
+ 	.listen		= tipc_listen,
+ 	.shutdown	= tipc_shutdown,
 -- 
 2.17.0
 
