@@ -1,146 +1,151 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933697AbeEWQpg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 12:45:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58440 "EHLO mail.kernel.org"
+        id S933678AbeEWQrN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 12:47:13 -0400
+Received: from mga11.intel.com ([192.55.52.93]:15485 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754623AbeEWQpe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 12:45:34 -0400
-Date: Wed, 23 May 2018 12:45:31 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Joel Fernandes <joelaf@google.com>, linux-kernel@vger.kernel.org,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Boqun Feng <boqun.feng@gmail.com>, byungchul.park@lge.com,
-        kernel-team@android.com, Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH 1/4] rcu: Speed up calling of RCU tasks callbacks
-Message-ID: <20180523124531.7b0e972a@gandalf.local.home>
-In-Reply-To: <20180523155734.GK3803@linux.vnet.ibm.com>
-References: <20180523063815.198302-1-joel@joelfernandes.org>
-        <20180523063815.198302-2-joel@joelfernandes.org>
-        <20180523155734.GK3803@linux.vnet.ibm.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S932649AbeEWQrJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 12:47:09 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,433,1520924400";
+   d="scan'208";a="231174132"
+Date: Wed, 23 May 2018 10:47:08 -0600
+From: Ross Zwisler <ross.zwisler@linux.intel.com>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Ross Zwisler <ross.zwisler@linux.intel.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        "Luck, Tony" <tony.luck@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        X86 ML <x86@kernel.org>, Christoph Hellwig <hch@lst.de>,
+        Andy Lutomirski <luto@amacapital.net>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>, Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v3 7/9] dax: report bytes remaining in dax_iomap_actor()
+Message-ID: <20180523164708.GD29519@linux.intel.com>
+Mail-Followup-To: Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        "Luck, Tony" <tony.luck@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        X86 ML <x86@kernel.org>, Christoph Hellwig <hch@lst.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <152539236455.31796.7516599166555186700.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <152539240242.31796.4162676712193177396.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20180523163442.GB29519@linux.intel.com>
+ <CAPcyv4gaM+vMLQKzfQ3J0LBhN2L6uNUzqwH_m39pFN-TeQHavA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4gaM+vMLQKzfQ3J0LBhN2L6uNUzqwH_m39pFN-TeQHavA@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 23 May 2018 08:57:34 -0700
-"Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+On Wed, May 23, 2018 at 09:39:04AM -0700, Dan Williams wrote:
+> On Wed, May 23, 2018 at 9:34 AM, Ross Zwisler
+> <ross.zwisler@linux.intel.com> wrote:
+> > On Thu, May 03, 2018 at 05:06:42PM -0700, Dan Williams wrote:
+> >> In preparation for protecting the dax read(2) path from media errors
+> >> with copy_to_iter_mcsafe() (via dax_copy_to_iter()), convert the
+> >> implementation to report the bytes successfully transferred.
+> >>
+> >> Cc: <x86@kernel.org>
+> >> Cc: Ingo Molnar <mingo@redhat.com>
+> >> Cc: Borislav Petkov <bp@alien8.de>
+> >> Cc: Tony Luck <tony.luck@intel.com>
+> >> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> >> Cc: Thomas Gleixner <tglx@linutronix.de>
+> >> Cc: Andy Lutomirski <luto@amacapital.net>
+> >> Cc: Peter Zijlstra <peterz@infradead.org>
+> >> Cc: Andrew Morton <akpm@linux-foundation.org>
+> >> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> >> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> >> ---
+> >>  fs/dax.c |   20 +++++++++++---------
+> >>  1 file changed, 11 insertions(+), 9 deletions(-)
+> >>
+> >> diff --git a/fs/dax.c b/fs/dax.c
+> >> index a64afdf7ec0d..34a2d435ae4b 100644
+> >> --- a/fs/dax.c
+> >> +++ b/fs/dax.c
+> >> @@ -991,6 +991,7 @@ dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+> >>       struct iov_iter *iter = data;
+> >>       loff_t end = pos + length, done = 0;
+> >>       ssize_t ret = 0;
+> >> +     size_t xfer;
+> >>       int id;
+> >>
+> >>       if (iov_iter_rw(iter) == READ) {
+> >> @@ -1054,19 +1055,20 @@ dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+> >>                * vfs_write(), depending on which operation we are doing.
+> >>                */
+> >>               if (iov_iter_rw(iter) == WRITE)
+> >> -                     map_len = dax_copy_from_iter(dax_dev, pgoff, kaddr,
+> >> +                     xfer = dax_copy_from_iter(dax_dev, pgoff, kaddr,
+> >>                                       map_len, iter);
+> >>               else
+> >> -                     map_len = dax_copy_to_iter(dax_dev, pgoff, kaddr,
+> >> +                     xfer = dax_copy_to_iter(dax_dev, pgoff, kaddr,
+> >>                                       map_len, iter);
+> >> -             if (map_len <= 0) {
+> >> -                     ret = map_len ? map_len : -EFAULT;
+> >> -                     break;
+> >> -             }
+> >>
+> >> -             pos += map_len;
+> >> -             length -= map_len;
+> >> -             done += map_len;
+> >> +             pos += xfer;
+> >> +             length -= xfer;
+> >> +             done += xfer;
+> >> +
+> >> +             if (xfer == 0)
+> >> +                     ret = -EFAULT;
+> >> +             if (xfer < map_len)
+> >> +                     break;
+> >
+> > I'm confused by this error handling.  So if we hit an error on a given iov and
+> > we don't transfer the expected number of bytes, we have two cases:
+> >
+> > 1) We transferred *something* on this iov but not everything - return success.
+> > 2) We didn't transfer anything on this iov - return -EFAULT.
+> >
+> > Both of these are true regardless of data transferred on previous iovs.
+> >
+> > Why the distinction?  If a given iov is interrupted, regardless of whether it
+> > transferred 0 bytes or 1, shouldn't the error path be the same?
+> 
+> This is is the semantics of read(2) / write(2). Quoting the pwrite man page:
+> 
+>        Note that is not an error for  a  successful  call  to
+> transfer  fewer  bytes  than
+>        requested (see read(2) and write(2)).
 
-> On Tue, May 22, 2018 at 11:38:12PM -0700, Joel Fernandes wrote:
-> > From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
-> > 
-> > RCU tasks callbacks can take at least 1 second before the callbacks are
-> > executed. This happens even if the hold-out tasks enter their quiescent states
-> > quickly. I noticed this when I was testing trampoline callback execution.
-> > 
-> > To test the trampoline freeing, I wrote a simple script:
-> > cd /sys/kernel/debug/tracing/
-> > echo '__schedule_bug:traceon' > set_ftrace_filter;
-> > echo '!__schedule_bug:traceon' > set_ftrace_filter;
-> > 
-> > In the background I had simple bash while loop:
-> > while [ 1 ]; do x=1; done &
-> > 
-> > Total time of completion of above commands in seconds:
-> > 
-> > With this patch:
-> > real    0m0.179s
-> > user    0m0.000s
-> > sys     0m0.054s
-> > 
-> > Without this patch:
-> > real    0m1.098s
-> > user    0m0.000s
-> > sys     0m0.053s
-> > 
-> > That's a greater than 6X speed up in performance. In order to accomplish
-> > this, I am waiting for HZ/10 time before entering the hold-out checking
-> > loop. The loop still preserves its checking of held tasks every 1 second
-> > as before, in case this first test doesn't succeed.
-> > 
-> > Cc: Steven Rostedt <rostedt@goodmis.org>  
-> 
-> Given an ack from Steven, I would be happy to take this, give or take
-> some nits below.
+Consider this case:
 
-I'm currently testing it, and trying to understand it better.
+I have 4 IOVs, each of a full page.  The first three transfer their full page,
+but on the third we hit an error.
 
-> 
-> 							Thanx, Paul
-> 
-> > Cc: Peter Zilstra <peterz@infradead.org>
-> > Cc: Ingo Molnar <mingo@redhat.com>
-> > Cc: Boqun Feng <boqun.feng@gmail.com>
-> > Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>
-> > Cc: byungchul.park@lge.com
-> > Cc: kernel-team@android.com
-> > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> > ---
-> >  kernel/rcu/update.c | 12 +++++++++++-
-> >  1 file changed, 11 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
-> > index 5783bdf86e5a..a28698e44b08 100644
-> > --- a/kernel/rcu/update.c
-> > +++ b/kernel/rcu/update.c
-> > @@ -743,6 +743,12 @@ static int __noreturn rcu_tasks_kthread(void *arg)
-> >  		 */
-> >  		synchronize_srcu(&tasks_rcu_exit_srcu);
-> > 
-> > +		/*
-> > +		 * Wait a little bit incase held tasks are released  
-> 
-> 				in case
-> 
-> > +		 * during their next timer ticks.
-> > +		 */
-> > +		schedule_timeout_interruptible(HZ/10);
-> > +
-> >  		/*
-> >  		 * Each pass through the following loop scans the list
-> >  		 * of holdout tasks, removing any that are no longer
-> > @@ -755,7 +761,6 @@ static int __noreturn rcu_tasks_kthread(void *arg)
-> >  			int rtst;
-> >  			struct task_struct *t1;
-> > 
-> > -			schedule_timeout_interruptible(HZ);
-> >  			rtst = READ_ONCE(rcu_task_stall_timeout);
-> >  			needreport = rtst > 0 &&
-> >  				     time_after(jiffies, lastreport + rtst);
-> > @@ -768,6 +773,11 @@ static int __noreturn rcu_tasks_kthread(void *arg)
-> >  				check_holdout_task(t, needreport, &firstreport);
-> >  				cond_resched();
-> >  			}
-> > +
-> > +			if (list_empty(&rcu_tasks_holdouts))
-> > +				break;
-> > +
-> > +			schedule_timeout_interruptible(HZ);  
+If we transferred 0 bytes in the fourth page, we'll return -EFAULT.
 
-Why is this a full second wait and not the HZ/10 like the others?
+If we transferred 1 byte in the fourth page, we'll return the total length
+transferred, so 3 pages + 1 byte.
 
--- Steve
-
-> 
-> Is there a better way to do this?  Can this be converted into a for-loop?
-> Alternatively, would it make sense to have a firsttime local variable
-> initialized to true, to keep the schedule_timeout_interruptible() at
-> the beginning of the loop, but skip it on the first pass through the loop?
-> 
-> Don't get me wrong, what you have looks functionally correct, but
-> duplicating the condition might cause problems later on, for example,
-> should a bug fix be needed in the condition.
-> 
-> >  		}
-> > 
-> >  		/*
-> > -- 
-> > 2.17.0.441.gb46fe60e1d-goog
-> >   
+Why?  pwrite(2) says it returns the number of bytes written, which can be less
+than the total requested.  Why not just return the length transferred in both
+cases, instead of returning -EFAULT for one of them?
