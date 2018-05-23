@@ -1,85 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751086AbeEWEAt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 00:00:49 -0400
-Received: from smtp-proxy004.phy.lolipop.jp ([157.7.104.45]:51041 "EHLO
-        smtp-proxy004.phy.lolipop.jp" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750725AbeEWEAr (ORCPT
+        id S1753849AbeEWEBw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 00:01:52 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:40572 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751183AbeEWEBs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 00:00:47 -0400
-Subject: Re: [PATCH v3 5/6] ALSA: xen-front: Implement ALSA virtual sound
- driver
-To: Oleksandr Andrushchenko <andr2000@gmail.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org, jgross@suse.com,
-        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com, perex@perex.cz,
-        tiwai@suse.com
-Cc: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180514062742.25879-1-andr2000@gmail.com>
- <20180514062742.25879-6-andr2000@gmail.com>
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Message-ID: <510b107c-c136-7748-0cfa-9de849887c61@sakamocchi.jp>
-Date: Wed, 23 May 2018 13:00:45 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180514062742.25879-6-andr2000@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 23 May 2018 00:01:48 -0400
+X-Google-Smtp-Source: AB8JxZpRHIM86hfmoLW4XxIMzKd96USplNeFLoJnN74pIrtwx/EqQSmYl8dGIwYka4+U8k3hHfqCDg==
+From: Eric Biggers <ebiggers3@gmail.com>
+To: linux-ppp@vger.kernel.org, Paul Mackerras <paulus@samba.org>
+Cc: netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Guillaume Nault <g.nault@alphalink.fr>,
+        syzkaller-bugs@googlegroups.com, Eric Biggers <ebiggers@google.com>
+Subject: [PATCH] ppp: remove the PPPIOCDETACH ioctl
+Date: Tue, 22 May 2018 20:59:52 -0700
+Message-Id: <20180523035952.25768-1-ebiggers3@gmail.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180523032958.GE658@sol.localdomain>
+References: <20180523032958.GE658@sol.localdomain>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: Eric Biggers <ebiggers@google.com>
 
-On May 14 2018 15:27, Oleksandr Andrushchenko wrote:
- > diff --git a/sound/xen/xen_snd_front_alsa.c 
-b/sound/xen/xen_snd_front_alsa.c
- > new file mode 100644
- > index 000000000000..5041f83e98d2
- > --- /dev/null
- > +++ b/sound/xen/xen_snd_front_alsa.c
- > ...
- > +/*
- > + * FIXME: The mmaped data transfer is asynchronous and there is no
- > + * ack signal from user-space when it is done. This is the
- > + * reason it is not implemented in the PV driver as we do need
- > + * to know when the buffer can be transferred to the backend.
- > + */
- > ...
+The PPPIOCDETACH ioctl effectively tries to "close" the given ppp file
+before f_count has reached 0, which is fundamentally a bad idea.  It
+does check 'f_count < 2', which excludes concurrent operations on the
+file since they would only be possible with a shared fd table, in which
+case each fdget() would take a file reference.  However, it fails to
+account for the fact that even with 'f_count == 1' the file can still be
+linked into epoll instances.  As reported by syzbot, this can trivially
+be used to cause a use-after-free.
 
-In ALSA PCM interface v2.0.14 or later, SNDRV_PCM_INFO_SYNC_APPLPTR is
-available. This flag express that userspace applications are expected to
-call ioctl(2) with 'SNDRV_PCM_IOCTL_SYNC_PTR' even if they oprate to
-memory mapped page frames for PCM samples. For detail, please refer to a
-commit 42f945970af9 ('ALSA: pcm: Add the explicit appl_ptr sync
-support')[1].
+Yet, the only known user of PPPIOCDETACH is pppd versions older than
+ppp-2.4.2, which was released almost 15 years ago (November 2003).
+Also, PPPIOCDETACH apparently stopped working reliably at around the
+same time, when the f_count check was added to the kernel, e.g. see
+https://lkml.org/lkml/2002/12/31/83.  Also, the current 'f_count < 2'
+check makes PPPIOCDETACH only work in single-threaded applications; it
+always fails if called from a multithreaded application.
 
-As a supplement, please refer to below commits:
-  * 4b671f577474 ('ALSA: pcm: Add an ioctl to specify the supported
-    protocol version')[2]
-  * b602aa8eb1a0 ('ALSA: pcm: Disable only control mmap for explicit
-    appl_ptr sync')[3]
+All pppd versions released in the last 15 years just close() the file
+descriptor instead.
 
-Alsa-lib v1.1.5 or later supports this flag and existent applications
-can run transparently.
+Therefore, instead of hacking around this bug by exporting epoll
+internals to modules, and probably missing other related bugs, just
+remove the PPPIOCDETACH ioctl and see if anyone actually notices.
 
-For developers, a tracepoint may be useful:
-  * fccf53881e9b ('ALSA: pcm: add 'applptr' event of tracepoint')[4]
+Reported-by: syzbot+16363c99d4134717c05b@syzkaller.appspotmail.com
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Cc: stable@vger.kernel.org
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ Documentation/networking/ppp_generic.txt |  6 -----
+ drivers/net/ppp/ppp_generic.c            | 29 ------------------------
+ fs/compat_ioctl.c                        |  1 -
+ include/uapi/linux/ppp-ioctl.h           |  1 -
+ 4 files changed, 37 deletions(-)
 
-For your information.
-
-[1] 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=42f945970af9
-[2] 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=4b671f577474
-[3] 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=b602aa8eb1a0
-[4] 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=fccf53881e9b
-
-
-Regards
-
-Takashi Sakamoto
+diff --git a/Documentation/networking/ppp_generic.txt b/Documentation/networking/ppp_generic.txt
+index 091d20273dcb..61daf4b39600 100644
+--- a/Documentation/networking/ppp_generic.txt
++++ b/Documentation/networking/ppp_generic.txt
+@@ -300,12 +300,6 @@ unattached instance are:
+ The ioctl calls available on an instance of /dev/ppp attached to a
+ channel are:
+ 
+-* PPPIOCDETACH detaches the instance from the channel.  This ioctl is
+-  deprecated since the same effect can be achieved by closing the
+-  instance.  In order to prevent possible races this ioctl will fail
+-  with an EINVAL error if more than one file descriptor refers to this
+-  instance (i.e. as a result of dup(), dup2() or fork()).
+-
+ * PPPIOCCONNECT connects this channel to a PPP interface.  The
+   argument should point to an int containing the interface unit
+   number.  It will return an EINVAL error if the channel is already
+diff --git a/drivers/net/ppp/ppp_generic.c b/drivers/net/ppp/ppp_generic.c
+index dc7c7ec43202..dce8812fe802 100644
+--- a/drivers/net/ppp/ppp_generic.c
++++ b/drivers/net/ppp/ppp_generic.c
+@@ -603,35 +603,6 @@ static long ppp_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 		goto out;
+ 	}
+ 
+-	if (cmd == PPPIOCDETACH) {
+-		/*
+-		 * We have to be careful here... if the file descriptor
+-		 * has been dup'd, we could have another process in the
+-		 * middle of a poll using the same file *, so we had
+-		 * better not free the interface data structures -
+-		 * instead we fail the ioctl.  Even in this case, we
+-		 * shut down the interface if we are the owner of it.
+-		 * Actually, we should get rid of PPPIOCDETACH, userland
+-		 * (i.e. pppd) could achieve the same effect by closing
+-		 * this fd and reopening /dev/ppp.
+-		 */
+-		err = -EINVAL;
+-		if (pf->kind == INTERFACE) {
+-			ppp = PF_TO_PPP(pf);
+-			rtnl_lock();
+-			if (file == ppp->owner)
+-				unregister_netdevice(ppp->dev);
+-			rtnl_unlock();
+-		}
+-		if (atomic_long_read(&file->f_count) < 2) {
+-			ppp_release(NULL, file);
+-			err = 0;
+-		} else
+-			pr_warn("PPPIOCDETACH file->f_count=%ld\n",
+-				atomic_long_read(&file->f_count));
+-		goto out;
+-	}
+-
+ 	if (pf->kind == CHANNEL) {
+ 		struct channel *pch;
+ 		struct ppp_channel *chan;
+diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
+index ef80085ed564..8285b570d635 100644
+--- a/fs/compat_ioctl.c
++++ b/fs/compat_ioctl.c
+@@ -917,7 +917,6 @@ COMPATIBLE_IOCTL(PPPIOCSDEBUG)
+ /* PPPIOCGIDLE is translated */
+ COMPATIBLE_IOCTL(PPPIOCNEWUNIT)
+ COMPATIBLE_IOCTL(PPPIOCATTACH)
+-COMPATIBLE_IOCTL(PPPIOCDETACH)
+ COMPATIBLE_IOCTL(PPPIOCSMRRU)
+ COMPATIBLE_IOCTL(PPPIOCCONNECT)
+ COMPATIBLE_IOCTL(PPPIOCDISCONN)
+diff --git a/include/uapi/linux/ppp-ioctl.h b/include/uapi/linux/ppp-ioctl.h
+index b19a9c249b15..d46caf217ea4 100644
+--- a/include/uapi/linux/ppp-ioctl.h
++++ b/include/uapi/linux/ppp-ioctl.h
+@@ -106,7 +106,6 @@ struct pppol2tp_ioc_stats {
+ #define PPPIOCGIDLE	_IOR('t', 63, struct ppp_idle) /* get idle time */
+ #define PPPIOCNEWUNIT	_IOWR('t', 62, int)	/* create new ppp unit */
+ #define PPPIOCATTACH	_IOW('t', 61, int)	/* attach to ppp unit */
+-#define PPPIOCDETACH	_IOW('t', 60, int)	/* detach from ppp unit/chan */
+ #define PPPIOCSMRRU	_IOW('t', 59, int)	/* set multilink MRU */
+ #define PPPIOCCONNECT	_IOW('t', 58, int)	/* connect channel to unit */
+ #define PPPIOCDISCONN	_IO('t', 57)		/* disconnect channel */
+-- 
+2.17.0
