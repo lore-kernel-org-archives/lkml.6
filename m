@@ -1,105 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934028AbeEWSlG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 14:41:06 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:35365 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933886AbeEWSlC (ORCPT
+        id S934130AbeEWSoU (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 14:44:20 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:44434 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934109AbeEWSoC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 14:41:02 -0400
-X-Google-Smtp-Source: AB8JxZomtFtfMOwzkE9m4wnomjIaYOV+mm5PyeQsL7d3vuSRqN07nPK3xuYxmzcI/lApzyx/jhw7LQ==
-Subject: Re: [PATCH net-next v2 0/3] net: sfp: small improvements
-To: Antoine Tenart <antoine.tenart@bootlin.com>, davem@davemloft.net,
-        linux@armlinux.org.uk
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
-        gregory.clement@bootlin.com, miquel.raynal@bootlin.com,
-        nadavh@marvell.com, stefanc@marvell.com, ymarkman@marvell.com,
-        mw@semihalf.com
-References: <20180522101801.18947-1-antoine.tenart@bootlin.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-Message-ID: <decfdf6b-6047-4338-5b81-2b8ef9bc8e48@gmail.com>
-Date: Wed, 23 May 2018 11:40:50 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180522101801.18947-1-antoine.tenart@bootlin.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 23 May 2018 14:44:02 -0400
+X-Google-Smtp-Source: AB8JxZpZ+qZrx7wkiMHWabDXp3CPD/qv8u+rzTWKsJOey5rIP0dQr21DMi0A0FefV8i+pGhj5++hcA==
+From: Laura Abbott <labbott@redhat.com>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Laura Abbott <labbott@redhat.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>,
+        Peter Robinson <pbrobinson@gmail.com>
+Subject: [PATCHv2] arm64: Make sure permission updates happen for pmd/pud
+Date: Wed, 23 May 2018 11:43:46 -0700
+Message-Id: <20180523184346.487-1-labbott@redhat.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/22/2018 03:17 AM, Antoine Tenart wrote:
-> Hi Russell, David,
-> 
-> A small series of patches improving the SFP support by adding a warning
-> when no Tx disable pin is available, and making the i2c-bus property
-> mandatory.
-> 
-> Thanks!
-> Antoine
+Commit 15122ee2c515 ("arm64: Enforce BBM for huge IO/VMAP mappings")
+disallowed block mappings for ioremap since that code does not honor
+break-before-make. The same APIs are also used for permission updating
+though and the extra checks prevent the permission updates from happening,
+even though this should be permitted. This results in read-only permissions
+not being fully applied. Visibly, this can occasionaly be seen as a failure
+on the built in rodata test when the test data ends up in a section or
+as an odd RW gap on the page table dump. Fix this by using
+pgattr_change_is_safe instead of p*d_present for determining if the
+change is permitted.
 
-Antoine, can you please do CC the people who worked on that code before,
-arguably, send an update to MAINTAINERS file to create a specific
-section for PHYLINK.
+Reported-by: Peter Robinson <pbrobinson@gmail.com>
+Fixes: 15122ee2c515 ("arm64: Enforce BBM for huge IO/VMAP mappings")
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+---
+v2: Switch to using pgattr_change_is_safe per suggestion of Will
+---
+ arch/arm64/mm/mmu.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
-Thank you
-
-> 
-> Since v1:
->   - Removed the patch fixing the sfp driver when no i2c bus was described.
->   - Made two new patches to make the i2c-bus property mandatory for sfp modules.
-> 
-> Since the phylink series:
->   - s/-EOPNOTSUPP/-ENODEV/ in patch 1/2.
->   - I added the acked-by tag in patch 2/2.
-> 
-> Antoine Tenart (3):
->   net: phy: sfp: warn the user when no tx_disable pin is available
->   net: phy: sfp: make the i2c-bus dt property mandatory
->   Documentation/bindings: net: the sfp i2c-bus property is now mandatory
-> 
->  .../devicetree/bindings/net/sff,sfp.txt       |  4 +-
->  drivers/net/phy/sfp.c                         | 37 ++++++++++++-------
->  2 files changed, 26 insertions(+), 15 deletions(-)
-> 
-
-
+diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+index 2dbb2c9f1ec1..493ff75670ff 100644
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -933,13 +933,15 @@ int pud_set_huge(pud_t *pudp, phys_addr_t phys, pgprot_t prot)
+ {
+ 	pgprot_t sect_prot = __pgprot(PUD_TYPE_SECT |
+ 					pgprot_val(mk_sect_prot(prot)));
++	pud_t new_pud = pfn_pud(__phys_to_pfn(phys), sect_prot);
+ 
+-	/* ioremap_page_range doesn't honour BBM */
+-	if (pud_present(READ_ONCE(*pudp)))
++	/* Only allow permission changes for now */
++	if (!pgattr_change_is_safe(READ_ONCE(pud_val(*pudp)),
++				   pud_val(new_pud)))
+ 		return 0;
+ 
+ 	BUG_ON(phys & ~PUD_MASK);
+-	set_pud(pudp, pfn_pud(__phys_to_pfn(phys), sect_prot));
++	set_pud(pudp, new_pud);
+ 	return 1;
+ }
+ 
+@@ -947,13 +949,15 @@ int pmd_set_huge(pmd_t *pmdp, phys_addr_t phys, pgprot_t prot)
+ {
+ 	pgprot_t sect_prot = __pgprot(PMD_TYPE_SECT |
+ 					pgprot_val(mk_sect_prot(prot)));
++	pmd_t new_pmd = pfn_pmd(__phys_to_pfn(phys), sect_prot);
+ 
+-	/* ioremap_page_range doesn't honour BBM */
+-	if (pmd_present(READ_ONCE(*pmdp)))
++	/* Only allow permission changes for now */
++	if (!pgattr_change_is_safe(READ_ONCE(pmd_val(*pmdp)),
++				   pmd_val(new_pmd)))
+ 		return 0;
+ 
+ 	BUG_ON(phys & ~PMD_MASK);
+-	set_pmd(pmdp, pfn_pmd(__phys_to_pfn(phys), sect_prot));
++	set_pmd(pmdp, new_pmd);
+ 	return 1;
+ }
+ 
 -- 
-Florian
+2.17.0
