@@ -1,62 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754026AbeEWGVC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 02:21:02 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:54193 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751085AbeEWGVB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 02:21:01 -0400
-Date: Wed, 23 May 2018 08:20:47 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org,
-        Atsushi Nemoto <anemo@mba.ocn.ne.jp>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: cmdlinepart: Update comment for introduction of
- OFFSET_CONTINUOUS
-Message-ID: <20180523082047.2aa9e6ac@bbrezillon>
-In-Reply-To: <1527001673-16318-1-git-send-email-geert+renesas@glider.be>
-References: <1527001673-16318-1-git-send-email-geert+renesas@glider.be>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1754077AbeEWGVR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 02:21:17 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:40618 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754031AbeEWGVN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 02:21:13 -0400
+X-Google-Smtp-Source: AB8JxZpa4lRrmxkuLd2r2CoKZRrgbcb6mFp8cYvt+K1r7wg1uJpcaLeKmWhPbIR40jggLtE9siVtZQ==
+From: "=?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?=" <vokac.m@gmail.com>
+X-Google-Original-From: =?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>
+To: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        f.fainelli@gmail.com, vivien.didelot@savoirfairelinux.com,
+        andrew@lunn.ch, mark.rutland@arm.com, robh+dt@kernel.org,
+        davem@davemloft.net, michal.vokac@ysoft.com
+Subject: [PATCH net-next v3 0/7] Add support for QCA8334 switch
+Date: Wed, 23 May 2018 08:20:17 +0200
+Message-Id: <1527056424-14528-1-git-send-email-michal.vokac@ysoft.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 22 May 2018 17:07:53 +0200
-Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+This series basically adds support for a QCA8334 ethernet switch to the
+qca8k driver. It is a four-port variant of the already supported seven
+port QCA8337. Register map is the same for the whole familly and all chips
+have the same device ID.
 
-> The comment about offset zero was not updated when changing behavior:
->   - Automatic offset calculation is indicated by OFFSET_CONTINUOUS,
->   - Zero really means offset zero.
-> 
-> Fixes: b175d03dd2072836 ("[PATCH] mtd cmdlinepart: allow zero offset value")
+Major part of this series enhances the CPU port setting. Currently the CPU
+port is not set to any sensible defaults compatible with the xGMII
+interface. This series forces the CPU port to its maximum bandwidth and
+also allows to adjust the new defaults using fixed-link device tree
+sub-node.
 
-Did we switch to 16bytes for the short commit ids (I usually use 12
-bytes)?
+Alongside these changes I fixed two checkpatch warnings regarding SPDX and
+redundant parentheses.
 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  drivers/mtd/cmdlinepart.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mtd/cmdlinepart.c b/drivers/mtd/cmdlinepart.c
-> index fbd5affc0acfe3fe..3ea44cff9b759e3c 100644
-> --- a/drivers/mtd/cmdlinepart.c
-> +++ b/drivers/mtd/cmdlinepart.c
-> @@ -190,7 +190,10 @@ static struct mtd_partition * newpart(char *s,
->  		extra_mem = (unsigned char *)(parts + *num_parts);
->  	}
->  
-> -	/* enter this partition (offset will be calculated later if it is zero at this point) */
-> +	/*
-> +	 * enter this partition (offset will be calculated later if it is
-> +	 * OFFSET_CONTINUOUS at this point)
-> +	 */
->  	parts[this_part].size = size;
->  	parts[this_part].offset = offset;
->  	parts[this_part].mask_flags = mask_flags;
+Changes in v3:
+ - Rebased on latest net-next/master.
+ - Corrected fixed-link documentation.
+
+Michal Vokáč (7):
+  net: dsa: qca8k: Add QCA8334 binding documentation
+  net: dsa: qca8k: Add support for QCA8334 switch
+  net: dsa: qca8k: Enable RXMAC when bringing up a port
+  net: dsa: qca8k: Force CPU port to its highest bandwidth
+  net: dsa: qca8k: Allow overwriting CPU port setting
+  net: dsa: qca8k: Replace GPL boilerplate by SPDX
+  net: dsa: qca8k: Remove redundant parentheses
+
+ .../devicetree/bindings/net/dsa/qca8k.txt          | 23 +++++++-
+ drivers/net/dsa/qca8k.c                            | 64 ++++++++++++++++++----
+ drivers/net/dsa/qca8k.h                            |  7 ++-
+ 3 files changed, 79 insertions(+), 15 deletions(-)
+
+-- 
+2.7.4
