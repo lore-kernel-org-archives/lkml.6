@@ -1,153 +1,223 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753537AbeEWAX5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 20:23:57 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:44191 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751340AbeEWAXz (ORCPT
+        id S1753639AbeEWAZz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 20:25:55 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49304 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753571AbeEWAZs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 20:23:55 -0400
-X-Google-Smtp-Source: AB8JxZqbH51KRX3U5BvsS8jySSyHkdJwfUkACZf3K5nc6VGbp6CCKAGHecfjmqd0jYuZ5CK//f6OBQ==
-From: Brian Norris <briannorris@chromium.org>
-To: Lee Jones <lee.jones@linaro.org>, Benson Leung <bleung@chromium.org>,
-        Olof Johansson <olof@lixom.net>
-Cc: <linux-kernel@vger.kernel.org>,
-        Shawn Nematbakhsh <shawnn@chromium.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Alexandru Stan <amstan@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Brian Norris <briannorris@chromium.org>
-Subject: [PATCH] mfd: cros_ec: retry commands when EC is known to be busy
-Date: Tue, 22 May 2018 17:23:10 -0700
-Message-Id: <20180523002310.87011-1-briannorris@chromium.org>
-X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+        Tue, 22 May 2018 20:25:48 -0400
+From: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+To: linux-integrity@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>, Jessica Yu <jeyu@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Subject: [PATCH v7 02/14] PKCS#7: Refactor verify_pkcs7_signature() and add pkcs7_get_message_sig()
+Date: Tue, 22 May 2018 21:12:41 -0300
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180523001253.15247-1-bauerman@linux.ibm.com>
+References: <20180523001253.15247-1-bauerman@linux.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18052300-0004-0000-0000-000014237B78
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009068; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000261; SDB=6.01036241; UDB=6.00530093; IPR=6.00815369;
+ MB=3.00021248; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-23 00:25:46
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18052300-0005-0000-0000-000087514955
+Message-Id: <20180523001253.15247-3-bauerman@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-22_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805230002
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 001dde9400d5 ("mfd: cros ec: spi: Fix "in progress" error
-signaling") pointed out some bad code, but its analysis and conclusion
-was not 100% correct.
+IMA will need to verify a PKCS#7 which has already been parsed. For this
+reason, factor out the code which does that from verify_pkcs7_signature()
+into a new function which takes a struct pkcs7_message instead of a data
+buffer.
 
-It *is* correct that we should not propagate result==EC_RES_IN_PROGRESS
-for transport errors, because this has a special meaning -- that we
-should follow up with EC_CMD_GET_COMMS_STATUS until the EC is no longer
-busy. This is definitely the wrong thing for many commands, because
-among other problems, EC_CMD_GET_COMMS_STATUS doesn't actually retrieve
-any RX data from the EC, so commands that expected some data back will
-instead start processing junk.
+In addition, IMA will need to know the key that signed a given PKCS#7
+message, so add pkcs7_get_message_sig().
 
-For such commands, the right answer is to either propagate the error
-(and return that error to the caller) or resend the original command
-(*not* EC_CMD_GET_COMMS_STATUS).
-
-Unfortunately, commit 001dde9400d5 forgets a crucial point: that for
-some long-running operations, the EC physically cannot respond to
-commands any more. For example, with EC_CMD_FLASH_ERASE, the EC may be
-re-flashing its own code regions, so it can't respond to SPI interrupts.
-Instead, the EC prepares us ahead of time for being busy for a "long"
-time, and fills its hardware buffer with EC_SPI_PAST_END. Thus, we
-expect to see several "transport" errors (or, messages filled with
-EC_SPI_PAST_END). So we should really translate that to a retryable
-error (-EAGAIN) and continue sending EC_CMD_GET_COMMS_STATUS until we
-get a ready status.
-
-IOW, it is actually important to treat some of these "junk" values as
-retryable errors.
-
-Together with commit 001dde9400d5, this resolves bugs like the
-following:
-
-1. EC_CMD_FLASH_ERASE now works again (with commit 001dde9400d5, we
-   would abort the first time we saw EC_SPI_PAST_END)
-2. Before commit 001dde9400d5, transport errors (e.g.,
-   EC_SPI_RX_BAD_DATA) seen in other commands (e.g.,
-   EC_CMD_RTC_GET_VALUE) used to yield junk data in the RX buffer; they
-   will now yield -EAGAIN return values, and tools like 'hwclock' will
-   simply fail instead of retrieving and re-programming undefined time
-   values
-
-Fixes: 001dde9400d5 ("mfd: cros ec: spi: Fix "in progress" error signaling")
-Signed-off-by: Brian Norris <briannorris@chromium.org>
+Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: "David S. Miller" <davem@davemloft.net>
 ---
- drivers/mfd/cros_ec_spi.c               | 24 ++++++++++++++++++++----
- drivers/platform/chrome/cros_ec_proto.c |  2 ++
- 2 files changed, 22 insertions(+), 4 deletions(-)
+ certs/system_keyring.c                | 61 ++++++++++++++++++++++++++---------
+ crypto/asymmetric_keys/pkcs7_parser.c | 16 +++++++++
+ include/crypto/pkcs7.h                |  2 ++
+ include/linux/verification.h          | 10 ++++++
+ 4 files changed, 73 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
-index 1b52b8557034..2060d1483043 100644
---- a/drivers/mfd/cros_ec_spi.c
-+++ b/drivers/mfd/cros_ec_spi.c
-@@ -419,10 +419,25 @@ static int cros_ec_pkt_xfer_spi(struct cros_ec_device *ec_dev,
- 		/* Verify that EC can process command */
- 		for (i = 0; i < len; i++) {
- 			rx_byte = rx_buf[i];
-+			/*
-+			 * Seeing the PAST_END, RX_BAD_DATA, or NOT_READY
-+			 * markers are all signs that the EC didn't fully
-+			 * receive our command. e.g., if the EC is flashing
-+			 * itself, it can't respond to any commands and instead
-+			 * clocks out EC_SPI_PAST_END from its SPI hardware
-+			 * buffer. Similar occurrences can happen if the AP is
-+			 * too slow to clock out data after asserting CS -- the
-+			 * EC will abort and fill its buffer with
-+			 * EC_SPI_RX_BAD_DATA.
-+			 *
-+			 * In all cases, these errors should be safe to retry.
-+			 * Report -EAGAIN and let the caller decide what to do
-+			 * about that.
-+			 */
- 			if (rx_byte == EC_SPI_PAST_END  ||
- 			    rx_byte == EC_SPI_RX_BAD_DATA ||
- 			    rx_byte == EC_SPI_NOT_READY) {
--				ret = -EREMOTEIO;
-+				ret = -EAGAIN;
- 				break;
- 			}
- 		}
-@@ -431,7 +446,7 @@ static int cros_ec_pkt_xfer_spi(struct cros_ec_device *ec_dev,
- 	if (!ret)
- 		ret = cros_ec_spi_receive_packet(ec_dev,
- 				ec_msg->insize + sizeof(*response));
--	else
-+	else if (ret != -EAGAIN)
- 		dev_err(ec_dev->dev, "spi transfer failed: %d\n", ret);
+diff --git a/certs/system_keyring.c b/certs/system_keyring.c
+index 6251d1b27f0c..7ddc8b7a3062 100644
+--- a/certs/system_keyring.c
++++ b/certs/system_keyring.c
+@@ -190,33 +190,27 @@ late_initcall(load_system_certificate_list);
+ #ifdef CONFIG_SYSTEM_DATA_VERIFICATION
  
- 	final_ret = terminate_request(ec_dev);
-@@ -537,10 +552,11 @@ static int cros_ec_cmd_xfer_spi(struct cros_ec_device *ec_dev,
- 		/* Verify that EC can process command */
- 		for (i = 0; i < len; i++) {
- 			rx_byte = rx_buf[i];
-+			/* See comments in cros_ec_pkt_xfer_spi() */
- 			if (rx_byte == EC_SPI_PAST_END  ||
- 			    rx_byte == EC_SPI_RX_BAD_DATA ||
- 			    rx_byte == EC_SPI_NOT_READY) {
--				ret = -EREMOTEIO;
-+				ret = -EAGAIN;
- 				break;
- 			}
- 		}
-@@ -549,7 +565,7 @@ static int cros_ec_cmd_xfer_spi(struct cros_ec_device *ec_dev,
- 	if (!ret)
- 		ret = cros_ec_spi_receive_response(ec_dev,
- 				ec_msg->insize + EC_MSG_TX_PROTO_BYTES);
--	else
-+	else if (ret != -EAGAIN)
- 		dev_err(ec_dev->dev, "spi transfer failed: %d\n", ret);
+ /**
+- * verify_pkcs7_signature - Verify a PKCS#7-based signature on system data.
++ * verify_pkcs7_message_sig - Verify a PKCS#7-based signature on system data.
+  * @data: The data to be verified (NULL if expecting internal data).
+  * @len: Size of @data.
+- * @raw_pkcs7: The PKCS#7 message that is the signature.
+- * @pkcs7_len: The size of @raw_pkcs7.
++ * @pkcs7: The PKCS#7 message that is the signature.
+  * @trusted_keys: Trusted keys to use (NULL for builtin trusted keys only,
+  *					(void *)1UL for all trusted keys).
+  * @usage: The use to which the key is being put.
+  * @view_content: Callback to gain access to content.
+  * @ctx: Context for callback.
+  */
+-int verify_pkcs7_signature(const void *data, size_t len,
+-			   const void *raw_pkcs7, size_t pkcs7_len,
+-			   struct key *trusted_keys,
+-			   enum key_being_used_for usage,
+-			   int (*view_content)(void *ctx,
+-					       const void *data, size_t len,
+-					       size_t asn1hdrlen),
+-			   void *ctx)
++int verify_pkcs7_message_sig(const void *data, size_t len,
++			     struct pkcs7_message *pkcs7,
++			     struct key *trusted_keys,
++			     enum key_being_used_for usage,
++			     int (*view_content)(void *ctx,
++						 const void *data, size_t len,
++						 size_t asn1hdrlen),
++			     void *ctx)
+ {
+-	struct pkcs7_message *pkcs7;
+ 	int ret;
  
- 	final_ret = terminate_request(ec_dev);
-diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
-index e7bbdf947bbc..8350ca2311c7 100644
---- a/drivers/platform/chrome/cros_ec_proto.c
-+++ b/drivers/platform/chrome/cros_ec_proto.c
-@@ -91,6 +91,8 @@ static int send_command(struct cros_ec_device *ec_dev,
- 			usleep_range(10000, 11000);
+-	pkcs7 = pkcs7_parse_message(raw_pkcs7, pkcs7_len);
+-	if (IS_ERR(pkcs7))
+-		return PTR_ERR(pkcs7);
+-
+ 	/* The data should be detached - so we need to supply it. */
+ 	if (data && pkcs7_supply_detached_data(pkcs7, data, len) < 0) {
+ 		pr_err("PKCS#7 signature with non-detached data\n");
+@@ -258,6 +252,41 @@ int verify_pkcs7_signature(const void *data, size_t len,
+ 	}
  
- 			ret = (*xfer_fxn)(ec_dev, status_msg);
-+			if (ret == -EAGAIN)
-+				continue;
- 			if (ret < 0)
- 				break;
+ error:
++	pr_devel("<==%s() = %d\n", __func__, ret);
++	return ret;
++}
++
++/**
++ * verify_pkcs7_signature - Verify a PKCS#7-based signature on system data.
++ * @data: The data to be verified (NULL if expecting internal data).
++ * @len: Size of @data.
++ * @raw_pkcs7: The PKCS#7 message that is the signature.
++ * @pkcs7_len: The size of @raw_pkcs7.
++ * @trusted_keys: Trusted keys to use (NULL for builtin trusted keys only,
++ *					(void *)1UL for all trusted keys).
++ * @usage: The use to which the key is being put.
++ * @view_content: Callback to gain access to content.
++ * @ctx: Context for callback.
++ */
++int verify_pkcs7_signature(const void *data, size_t len,
++			   const void *raw_pkcs7, size_t pkcs7_len,
++			   struct key *trusted_keys,
++			   enum key_being_used_for usage,
++			   int (*view_content)(void *ctx,
++					       const void *data, size_t len,
++					       size_t asn1hdrlen),
++			   void *ctx)
++{
++	struct pkcs7_message *pkcs7;
++	int ret;
++
++	pkcs7 = pkcs7_parse_message(raw_pkcs7, pkcs7_len);
++	if (IS_ERR(pkcs7))
++		return PTR_ERR(pkcs7);
++
++	ret = verify_pkcs7_message_sig(data, len, pkcs7, trusted_keys, usage,
++				       view_content, ctx);
++
+ 	pkcs7_free_message(pkcs7);
+ 	pr_devel("<==%s() = %d\n", __func__, ret);
+ 	return ret;
+diff --git a/crypto/asymmetric_keys/pkcs7_parser.c b/crypto/asymmetric_keys/pkcs7_parser.c
+index 0f134162cef4..4c7a00734e03 100644
+--- a/crypto/asymmetric_keys/pkcs7_parser.c
++++ b/crypto/asymmetric_keys/pkcs7_parser.c
+@@ -683,3 +683,19 @@ int pkcs7_note_signed_info(void *context, size_t hdrlen,
+ 		return -ENOMEM;
+ 	return 0;
+ }
++
++/**
++ * pkcs7_get_message_sig - get signature in @pkcs7
++ */
++const struct public_key_signature *pkcs7_get_message_sig(
++					const struct pkcs7_message *pkcs7)
++{
++	/*
++	 * This function doesn't support messages with more than one signature,
++	 * so don't return anything in that case.
++	 */
++	if (pkcs7->signed_infos == NULL || pkcs7->signed_infos->next != NULL)
++		return NULL;
++
++	return pkcs7->signed_infos->sig;
++}
+diff --git a/include/crypto/pkcs7.h b/include/crypto/pkcs7.h
+index 583f199400a3..6f51d0cb6d12 100644
+--- a/include/crypto/pkcs7.h
++++ b/include/crypto/pkcs7.h
+@@ -28,6 +28,8 @@ extern void pkcs7_free_message(struct pkcs7_message *pkcs7);
+ extern int pkcs7_get_content_data(const struct pkcs7_message *pkcs7,
+ 				  const void **_data, size_t *_datalen,
+ 				  size_t *_headerlen);
++extern const struct public_key_signature *pkcs7_get_message_sig(
++					const struct pkcs7_message *pkcs7);
  
--- 
-2.17.0.441.gb46fe60e1d-goog
+ /*
+  * pkcs7_trust.c
+diff --git a/include/linux/verification.h b/include/linux/verification.h
+index a10549a6c7cd..f04dac2728ec 100644
+--- a/include/linux/verification.h
++++ b/include/linux/verification.h
+@@ -29,6 +29,7 @@ extern const char *const key_being_used_for[NR__KEY_BEING_USED_FOR];
+ #ifdef CONFIG_SYSTEM_DATA_VERIFICATION
+ 
+ struct key;
++struct pkcs7_message;
+ 
+ extern int verify_pkcs7_signature(const void *data, size_t len,
+ 				  const void *raw_pkcs7, size_t pkcs7_len,
+@@ -38,6 +39,15 @@ extern int verify_pkcs7_signature(const void *data, size_t len,
+ 						      const void *data, size_t len,
+ 						      size_t asn1hdrlen),
+ 				  void *ctx);
++extern int verify_pkcs7_message_sig(const void *data, size_t len,
++				    struct pkcs7_message *pkcs7,
++				    struct key *trusted_keys,
++				    enum key_being_used_for usage,
++				    int (*view_content)(void *ctx,
++							const void *data,
++							size_t len,
++							size_t asn1hdrlen),
++				    void *ctx);
+ 
+ #ifdef CONFIG_SIGNED_PE_FILE_VERIFICATION
+ extern int verify_pefile_signature(const void *pebuf, unsigned pelen,
