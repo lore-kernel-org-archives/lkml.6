@@ -1,203 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932442AbeEWKGE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 06:06:04 -0400
-Received: from srv-hp10-72.netsons.net ([94.141.22.72]:33643 "EHLO
-        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932157AbeEWKFr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 06:05:47 -0400
-From: Luca Ceresoli <luca@lucaceresoli.net>
-To: linux-media@vger.kernel.org
-Cc: Sakari Ailus <sakari.ailus@iki.fi>,
-        Luca Ceresoli <luca@lucaceresoli.net>,
-        Leon Luo <leonl@leopardimaging.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: [PATCH v3 6/7] media: imx274: add helper function to fill a reg_8 table chunk
-Date: Wed, 23 May 2018 12:05:19 +0200
-Message-Id: <1527069921-21084-7-git-send-email-luca@lucaceresoli.net>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1527069921-21084-1-git-send-email-luca@lucaceresoli.net>
-References: <1527069921-21084-1-git-send-email-luca@lucaceresoli.net>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        id S932454AbeEWKGO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 06:06:14 -0400
+Received: from foss.arm.com ([217.140.101.70]:52286 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932258AbeEWKGM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 06:06:12 -0400
+Subject: Re: [PATCH 04/14] arm64: Add ARCH_WORKAROUND_2 probing
+To: Marc Zyngier <marc.zyngier@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu
+Cc: Kees Cook <keescook@chromium.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Andy Lutomirski <luto@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <20180522150648.28297-1-marc.zyngier@arm.com>
+ <20180522150648.28297-5-marc.zyngier@arm.com>
+From: Julien Grall <julien.grall@arm.com>
+Message-ID: <0f980dce-170e-1d43-5927-c5d508839001@arm.com>
+Date: Wed, 23 May 2018 11:06:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180522150648.28297-5-marc.zyngier@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tables of struct reg_8 are used to simplify multi-byte register
-assignment. However filling these snippets with values computed at
-runtime is currently implemented by very similar functions doing the
-needed shift & mask manipulation.
+Hi Marc,
 
-Replace all those functions with a unique helper function to fill
-reg_8 tables in a simple and clean way.
+On 05/22/2018 04:06 PM, Marc Zyngier wrote:
+> As for Spectre variant-2, we rely on SMCCC 1.1 to provide the
+> discovery mechanism for detecting the SSBD mitigation.
+> 
+> A new capability is also allocated for that purpose, and a
+> config option.
+> 
+> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+> ---
+>   arch/arm64/Kconfig               |  9 ++++++
+>   arch/arm64/include/asm/cpucaps.h |  3 +-
+>   arch/arm64/kernel/cpu_errata.c   | 69 ++++++++++++++++++++++++++++++++++++++++
+>   3 files changed, 80 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index eb2cf4938f6d..b2103b4df467 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -938,6 +938,15 @@ config HARDEN_EL2_VECTORS
+>   
+>   	  If unsure, say Y.
+>   
+> +config ARM64_SSBD
+> +	bool "Speculative Store Bypass Disable" if EXPERT
+> +	default y
+> +	help
+> +	  This enables mitigation of the bypassing of previous stores
+> +	  by speculative loads.
+> +
+> +	  If unsure, say Y.
+> +
+>   menuconfig ARMV8_DEPRECATED
+>   	bool "Emulate deprecated/obsolete ARMv8 instructions"
+>   	depends on COMPAT
+> diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
+> index bc51b72fafd4..5b2facf786ba 100644
+> --- a/arch/arm64/include/asm/cpucaps.h
+> +++ b/arch/arm64/include/asm/cpucaps.h
+> @@ -48,7 +48,8 @@
+>   #define ARM64_HAS_CACHE_IDC			27
+>   #define ARM64_HAS_CACHE_DIC			28
+>   #define ARM64_HW_DBM				29
+> +#define ARM64_SSBD			30
 
-Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+NIT: Could you indent 30 the same way as the other number?
 
----
-Changed v2 -> v3:
- - minor reformatting in prepare_reg() documentation
+Reviewed-by: Julien Grall <julien.grall@arm.com>
 
-Changed v1 -> v2:
- - add "media: " prefix to commit message
----
- drivers/media/i2c/imx274.c | 90 ++++++++++++++++++++++++++++------------------
- 1 file changed, 55 insertions(+), 35 deletions(-)
+Cheers,
 
-diff --git a/drivers/media/i2c/imx274.c b/drivers/media/i2c/imx274.c
-index 48343c2ade83..e5ba19b97083 100644
---- a/drivers/media/i2c/imx274.c
-+++ b/drivers/media/i2c/imx274.c
-@@ -597,6 +597,58 @@ static inline struct stimx274 *to_imx274(struct v4l2_subdev *sd)
- }
- 
- /*
-+ * Fill consecutive reg_8 items in order to set a multibyte register.
-+ *
-+ * The sensor has many 2-bytes registers and a 3-byte register. This
-+ * simplifies code to set them by filling consecutive entries of a
-+ * struct reg_8 table with the data to set a register.
-+ *
-+ * The number of table entries that is filled is the minimum needed
-+ * for the given number of bits (i.e. nbits / 8, rounded up). If nbits
-+ * is not a multiple of 8, extra bits in the most significant byte are
-+ * zeroed.
-+ *
-+ * Example:
-+ *   Calling prepare_reg(&regs[10], 0x3000, 0xcafe, 12) will set:
-+ *   regs[10] = { .addr = 0x3000, .val = 0xfe }
-+ *   regs[11] = { .addr = 0x3001, .val = 0x0a }
-+ *
-+ * @table_base: Pointer to the first reg_8 struct to be filled.  The
-+ *              following entries will also be set, make sure they are
-+ *              properly allocated!
-+ * @addr_lsb: Address of the LSB register.  Other registers must be
-+ *            consecutive, least-to-most significant.
-+ * @value: Value to be written to the register.
-+ * @nbits: Number of bits to write (range: [1..24])
-+ */
-+static void prepare_reg(struct reg_8 *table_base,
-+			u16 addr_lsb,
-+			u32 value,
-+			size_t nbits)
-+{
-+	struct reg_8 *cmd = table_base;
-+	u16 addr = addr_lsb;
-+	size_t bits; /* how many bits at this round */
-+
-+	WARN_ON(nbits > 24);
-+
-+	if (nbits > 24)
-+		nbits = 24;
-+
-+	while (nbits > 0) {
-+		bits = min_t(size_t, 8, nbits);
-+
-+		cmd->addr = addr;
-+		cmd->val = value & ((1 << bits) - 1);
-+
-+		nbits -= bits;
-+		value >>= 8;
-+		addr++;
-+		cmd++;
-+	}
-+}
-+
-+/*
-  * Writing a register table
-  *
-  * @priv: Pointer to device
-@@ -1163,15 +1215,6 @@ static int imx274_set_digital_gain(struct stimx274 *priv, u32 dgain)
- 				reg_val & IMX274_MASK_LSB_4_BITS);
- }
- 
--static inline void imx274_calculate_gain_regs(struct reg_8 regs[2], u16 gain)
--{
--	regs->addr = IMX274_ANALOG_GAIN_ADDR_MSB;
--	regs->val = (gain >> IMX274_SHIFT_8_BITS) & IMX274_MASK_LSB_3_BITS;
--
--	(regs + 1)->addr = IMX274_ANALOG_GAIN_ADDR_LSB;
--	(regs + 1)->val = (gain) & IMX274_MASK_LSB_8_BITS;
--}
--
- /*
-  * imx274_set_gain - Function called when setting gain
-  * @priv: Pointer to device structure
-@@ -1229,7 +1272,7 @@ static int imx274_set_gain(struct stimx274 *priv, struct v4l2_ctrl *ctrl)
- 	if (gain_reg > IMX274_GAIN_REG_MAX)
- 		gain_reg = IMX274_GAIN_REG_MAX;
- 
--	imx274_calculate_gain_regs(reg_list, (u16)gain_reg);
-+	prepare_reg(reg_list, IMX274_ANALOG_GAIN_ADDR_LSB, gain_reg, 11);
- 
- 	for (i = 0; i < ARRAY_SIZE(reg_list); i++) {
- 		err = imx274_write_reg(priv, reg_list[i].addr,
-@@ -1258,16 +1301,6 @@ static int imx274_set_gain(struct stimx274 *priv, struct v4l2_ctrl *ctrl)
- 	return err;
- }
- 
--static inline void imx274_calculate_coarse_time_regs(struct reg_8 regs[2],
--						     u32 coarse_time)
--{
--	regs->addr = IMX274_SHR_REG_MSB;
--	regs->val = (coarse_time >> IMX274_SHIFT_8_BITS)
--			& IMX274_MASK_LSB_8_BITS;
--	(regs + 1)->addr = IMX274_SHR_REG_LSB;
--	(regs + 1)->val = (coarse_time) & IMX274_MASK_LSB_8_BITS;
--}
--
- /*
-  * imx274_set_coarse_time - Function called when setting SHR value
-  * @priv: Pointer to device structure
-@@ -1292,7 +1325,7 @@ static int imx274_set_coarse_time(struct stimx274 *priv, u32 *val)
- 		goto fail;
- 
- 	/* prepare SHR registers */
--	imx274_calculate_coarse_time_regs(reg_list, coarse_time);
-+	prepare_reg(reg_list, IMX274_SHR_REG_LSB, coarse_time, 16);
- 
- 	/* write to SHR registers */
- 	for (i = 0; i < ARRAY_SIZE(reg_list); i++) {
-@@ -1429,19 +1462,6 @@ static int imx274_set_test_pattern(struct stimx274 *priv, int val)
- 	return err;
- }
- 
--static inline void imx274_calculate_frame_length_regs(struct reg_8 regs[3],
--						      u32 frame_length)
--{
--	regs->addr = IMX274_VMAX_REG_1;
--	regs->val = (frame_length >> IMX274_SHIFT_16_BITS)
--			& IMX274_MASK_LSB_4_BITS;
--	(regs + 1)->addr = IMX274_VMAX_REG_2;
--	(regs + 1)->val = (frame_length >> IMX274_SHIFT_8_BITS)
--			& IMX274_MASK_LSB_8_BITS;
--	(regs + 2)->addr = IMX274_VMAX_REG_3;
--	(regs + 2)->val = (frame_length) & IMX274_MASK_LSB_8_BITS;
--}
--
- /*
-  * imx274_set_frame_length - Function called when setting frame length
-  * @priv: Pointer to device structure
-@@ -1463,7 +1483,7 @@ static int imx274_set_frame_length(struct stimx274 *priv, u32 val)
- 
- 	frame_length = (u32)val;
- 
--	imx274_calculate_frame_length_regs(reg_list, frame_length);
-+	prepare_reg(reg_list, IMX274_VMAX_REG_3, frame_length, 20);
- 	for (i = 0; i < ARRAY_SIZE(reg_list); i++) {
- 		err = imx274_write_reg(priv, reg_list[i].addr,
- 				       reg_list[i].val);
 -- 
-2.7.4
+Julien Grall
