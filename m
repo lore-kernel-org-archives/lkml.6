@@ -1,117 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754138AbeEWGc7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 02:32:59 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:32832 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754046AbeEWGco (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 02:32:44 -0400
-From: Jianchao Wang <jianchao.w.wang@oracle.com>
-To: axboe@kernel.dk
-Cc: osandov@osandov.com, holger@applied-asynchrony.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V2 1/2] blk-mq: abstract out blk-mq-sched rq list iteration bio merge helper
-Date: Wed, 23 May 2018 14:33:21 +0800
-Message-Id: <1527057202-2802-2-git-send-email-jianchao.w.wang@oracle.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1527057202-2802-1-git-send-email-jianchao.w.wang@oracle.com>
-References: <1527057202-2802-1-git-send-email-jianchao.w.wang@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8901 signatures=668700
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805230062
+        id S1754060AbeEWGiT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 02:38:19 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7732 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753902AbeEWGiS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 02:38:18 -0400
+Subject: Re: [PATCH rdma-next 5/5] RDMA/hns: Fix the illegal memory operation
+ when cross page
+To: Leon Romanovsky <leon@kernel.org>
+References: <1526544173-106587-1-git-send-email-xavier.huwei@huawei.com>
+ <1526544173-106587-6-git-send-email-xavier.huwei@huawei.com>
+ <20180523061706.GA5729@mtr-leonro.mtl.com>
+CC: <dledford@redhat.com>, <jgg@ziepe.ca>, <linux-rdma@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <xavier.huwei@tom.com>,
+        <lijun_nudt@163.com>
+From: "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
+Message-ID: <5B050C4A.8090307@huawei.com>
+Date: Wed, 23 May 2018 14:38:02 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
+MIME-Version: 1.0
+In-Reply-To: <20180523061706.GA5729@mtr-leonro.mtl.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.57.115.182]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jens Axboe <axboe@kernel.dk>
 
-No functional changes in this patch, just a prep patch for utilizing
-this in an IO scheduler.
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- block/blk-mq-sched.c   | 34 ++++++++++++++++++++++++----------
- include/linux/blk-mq.h |  3 ++-
- 2 files changed, 26 insertions(+), 11 deletions(-)
-
-diff --git a/block/blk-mq-sched.c b/block/blk-mq-sched.c
-index 25c14c5..b0f2c2a 100644
---- a/block/blk-mq-sched.c
-+++ b/block/blk-mq-sched.c
-@@ -268,19 +268,16 @@ bool blk_mq_sched_try_merge(struct request_queue *q, struct bio *bio,
- EXPORT_SYMBOL_GPL(blk_mq_sched_try_merge);
- 
- /*
-- * Reverse check our software queue for entries that we could potentially
-- * merge with. Currently includes a hand-wavy stop count of 8, to not spend
-- * too much time checking for merges.
-+ * Iterate list of requests and see if we can merge this bio with any
-+ * of them.
-  */
--static bool blk_mq_attempt_merge(struct request_queue *q,
--				 struct blk_mq_ctx *ctx, struct bio *bio)
-+bool blk_mq_bio_list_merge(struct request_queue *q, struct list_head *list,
-+			   struct bio *bio)
- {
- 	struct request *rq;
- 	int checked = 8;
- 
--	lockdep_assert_held(&ctx->lock);
--
--	list_for_each_entry_reverse(rq, &ctx->rq_list, queuelist) {
-+	list_for_each_entry_reverse(rq, list, queuelist) {
- 		bool merged = false;
- 
- 		if (!checked--)
-@@ -305,13 +302,30 @@ static bool blk_mq_attempt_merge(struct request_queue *q,
- 			continue;
- 		}
- 
--		if (merged)
--			ctx->rq_merged++;
- 		return merged;
- 	}
- 
- 	return false;
- }
-+EXPORT_SYMBOL_GPL(blk_mq_bio_list_merge);
-+
-+/*
-+ * Reverse check our software queue for entries that we could potentially
-+ * merge with. Currently includes a hand-wavy stop count of 8, to not spend
-+ * too much time checking for merges.
-+ */
-+static bool blk_mq_attempt_merge(struct request_queue *q,
-+				 struct blk_mq_ctx *ctx, struct bio *bio)
-+{
-+	lockdep_assert_held(&ctx->lock);
-+
-+	if (blk_mq_bio_list_merge(q, &ctx->rq_list, bio)) {
-+		ctx->rq_merged++;
-+		return true;
-+	}
-+
-+	return false;
-+}
- 
- bool __blk_mq_sched_bio_merge(struct request_queue *q, struct bio *bio)
- {
-diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
-index ebc34a5..fb35517 100644
---- a/include/linux/blk-mq.h
-+++ b/include/linux/blk-mq.h
-@@ -259,7 +259,8 @@ void blk_mq_add_to_requeue_list(struct request *rq, bool at_head,
- void blk_mq_kick_requeue_list(struct request_queue *q);
- void blk_mq_delay_kick_requeue_list(struct request_queue *q, unsigned long msecs);
- void blk_mq_complete_request(struct request *rq);
--
-+bool blk_mq_bio_list_merge(struct request_queue *q, struct list_head *list,
-+			   struct bio *bio);
- bool blk_mq_queue_stopped(struct request_queue *q);
- void blk_mq_stop_hw_queue(struct blk_mq_hw_ctx *hctx);
- void blk_mq_start_hw_queue(struct blk_mq_hw_ctx *hctx);
--- 
-2.7.4
+On 2018/5/23 14:17, Leon Romanovsky wrote:
+> On Thu, May 17, 2018 at 04:02:53PM +0800, Wei Hu (Xavier) wrote:
+>> This patch fixed the potential illegal operation when using the
+>> extend sge buffer cross page in post send operation. The bug
+>> will cause the calltrace.
+>>
+>> Reported-by: Jie Chen <chenjie103@huawei.com>
+>> Reported-by: Xiping Zhang (Francis) <zhangxiping3@huawei.com>
+>> Fixes: b1c1583("RDMA/hns: Get rid of virt_to_page and vmap calls after dma_alloc_coherent")
+> Documentation/process/submitting-patches.rst
+> 183 If your patch fixes a bug in a specific commit, e.g. you found an issue using
+> 184 ``git bisect``, please use the 'Fixes:' tag with the first 12 characters of
+> 185 the SHA-1 ID, and the one line summary.  For example::
+> 186
+> 187         Fixes: e21d2170f366 ("video: remove unnecessary platform_set_drvdata()")
+>
+> Thanks
+Thanks, Leon
+    Got it. We will fix it in v2.
+Wei Hu
+>> Signed-off-by: Wei Hu (Xavier) <xavier.huwei@huawei.com>
