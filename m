@@ -1,24 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753966AbeEWEhs (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 00:37:48 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:37750 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753856AbeEWEho (ORCPT
+        id S1753941AbeEWEhr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 00:37:47 -0400
+Received: from mail-ot0-f179.google.com ([74.125.82.179]:43037 "EHLO
+        mail-ot0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753834AbeEWEhn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 00:37:44 -0400
-X-Google-Smtp-Source: AB8JxZqELKv90uPJRxqOJpsE0clKTpXqBzvMtERmf2CESx6M32xvn2epFD2X77EpjP1qUYLgmJQ7Dw==
+        Wed, 23 May 2018 00:37:43 -0400
+X-Google-Smtp-Source: AB8JxZowreHJZTpRU5PBktPfMNRU4X34zQI1y4eD/Y1PzL8QTbBkGvTMcapVaiLxBPf78dfV6htM4g==
 From: Andy Gross <andy.gross@linaro.org>
 To: arm@kernel.org
 Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
         Kevin Hilman <khilman@baylibre.com>, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org
-Subject: [GIT PULL] Qualcomm Driver updates for 4.18
-Date: Tue, 22 May 2018 23:37:40 -0500
-Message-Id: <1527050261-19887-2-git-send-email-andy.gross@linaro.org>
+Subject: [GIT PULL] Qualcomm ARM64 DT updates for 4.18
+Date: Tue, 22 May 2018 23:37:39 -0500
+Message-Id: <1527050261-19887-1-git-send-email-andy.gross@linaro.org>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1527050261-19887-1-git-send-email-andy.gross@linaro.org>
-References: <1527050261-19887-1-git-send-email-andy.gross@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -29,77 +27,82 @@ The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/agross/linux.git tags/qcom-drivers-for-4.18
+  git://git.kernel.org/pub/scm/linux/kernel/git/agross/linux.git tags/qcom-arm64-for-4.18
 
-for you to fetch changes up to f378dab2c576ab1ef30ff26d2a96687a5a855271:
+for you to fetch changes up to 57fc67ef0d35af11fbb1b928e359b370889994ae:
 
-  soc: qcom: smem: introduce qcom_smem_virt_to_phys() (2018-05-14 14:06:49 -0500)
-
-----------------------------------------------------------------
-Qualcomm ARM Based Driver Updates for v4.18
-
-* Various SMEM updates/fixes
-* Add qcom_smem_virt_to_phys SMEM API
-* Update MAINTAINERS to include qcom_scm pattern
-* Add Qualcomm Command DB driver
-* Fix crash in Qualcomm SCM atomic1 call
-* Add Qualcomm SCM compatible for IPQ4019
-* Add MSM8998 to smd-rpm compatible list
-* Add Qualcomm GENI based QUP wrapper
-* Fix Qualcomm QMI buffer sizing bug
+  arm64: dts: qcom: msm8996: Add ufs related nodes (2018-05-22 23:29:03 -0500)
 
 ----------------------------------------------------------------
-Alex Elder (8):
-      soc: qcom: smem: fix first cache entry calculation
-      soc: qcom: smem: return proper type for cached entry functions
-      soc: qcom: smem: byte swap values properly
-      soc: qcom: smem: fix off-by-one error in qcom_smem_alloc_private()
-      soc: qcom: smem: fix qcom_smem_set_global_partition()
-      soc: qcom: smem: check sooner in qcom_smem_set_global_partition()
-      soc: qcom: qmi: fix a buffer sizing bug
-      soc: qcom: smem: introduce qcom_smem_virt_to_phys()
+Qualcomm ARM64 Updates for v4.18
+
+* Add support for SDM845 and associated peripherals
+* Fix gic_irq_domain_translation warnings on Qualcomm platforms
+* Add binding for GENI SE, Qualcomm bluetooth, and Command DB
+* Add support for SDHCI and ramoops on MSM8992
+* Fixup qcom,pcie devices to pcie
+* Add wlan, bluetooth, and micro SD supplies on db820c
+* Add UFS related nodes on MSM8996
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      arm64: dts: qcom: rename qcom,pcie devices to pcie
 
 Bjorn Andersson (1):
-      soc: qcom: smd-rpm: Add msm8998 compatible
+      arm64: dts: qcom: msm8996: Add ufs related nodes
 
-Guenter Roeck (1):
-      soc: Unconditionally include qcom Makefile
+Douglas Anderson (4):
+      arm64: dts: sdm845: Fix xo_board clock name and speed
+      arm64: dts: sdm845: Add command DB node
+      arm64: dts: qcom: sdm845: Sort nodes in the reserved mem by address
+      arm64: dts: qcom: sdm845: Sort nodes in the soc by address
+
+Jeremy McNicoll (2):
+      arm64: dts: Enable onboard SDHCI on msm8992
+      arm64: dts: msm8992: add pstore-ramoops support
 
 Karthikeyan Ramasubramanian (1):
-      soc: qcom: Add GENI based QUP Wrapper driver
+      dt-bindings: soc: qcom: Add device tree binding for GENI SE
 
 Mahesh Sivasubramanian (1):
-      drivers: qcom: add command DB driver
+      dt-bindings: introduce Command DB for QCOM SoCs
 
-Niklas Cassel (2):
-      firmware: qcom: scm: Fix crash in qcom_scm_call_atomic1()
-      MAINTAINERS: Update pattern for qcom_scm
+Rajendra Nayak (1):
+      arm64: dts: sdm845: Add minimal dts/dtsi files for sdm845 SoC and MTP
 
-Sricharan R (1):
-      firmware: qcom: scm: Add ipq4019 soc compatible
+Sibi S (2):
+      arm64: dts: qcom: Add APSS shared mailbox node to SDM845
+      arm64: dts: qcom: Add SDM845 SMEM nodes
 
-Stephen Boyd (1):
-      soc: qcom: cmd-db: Make endian-agnostic
+Srinivas Kandagatla (3):
+      arm64: dts: apq8096-db820c: Enable wlan and bt en pins
+      arm64: dts: apq8096-db820c: Add micro sd card supplies
+      arm64: dts: msm8916: fix gic_irq_domain_translate warnings
 
- .../devicetree/bindings/firmware/qcom,scm.txt      |   3 +-
- .../devicetree/bindings/soc/qcom/qcom,smd-rpm.txt  |   1 +
- MAINTAINERS                                        |   2 +-
- drivers/firmware/qcom_scm-32.c                     |   8 +-
- drivers/firmware/qcom_scm.c                        |   3 +
- drivers/of/platform.c                              |   1 +
- drivers/soc/Makefile                               |   2 +-
- drivers/soc/qcom/Kconfig                           |  18 +
- drivers/soc/qcom/Makefile                          |   2 +
- drivers/soc/qcom/cmd-db.c                          | 317 +++++++++
- drivers/soc/qcom/qcom-geni-se.c                    | 748 +++++++++++++++++++++
- drivers/soc/qcom/qmi_interface.c                   |   5 +-
- drivers/soc/qcom/smd-rpm.c                         |   1 +
- drivers/soc/qcom/smem.c                            |  77 ++-
- include/linux/qcom-geni-se.h                       | 425 ++++++++++++
- include/linux/soc/qcom/smem.h                      |   2 +
- include/soc/qcom/cmd-db.h                          |  45 ++
- 17 files changed, 1629 insertions(+), 31 deletions(-)
- create mode 100644 drivers/soc/qcom/cmd-db.c
- create mode 100644 drivers/soc/qcom/qcom-geni-se.c
- create mode 100644 include/linux/qcom-geni-se.h
- create mode 100644 include/soc/qcom/cmd-db.h
+Thierry Escande (3):
+      arm64: dts: apq8096-db820c: enable bluetooth node
+      dt-bindings: net: bluetooth: Add qualcomm-bluetooth
+      arm64: dts: msm8996: fix gic_irq_domain_translate warnings
+
+ .../devicetree/bindings/net/qualcomm-bluetooth.txt |  30 ++
+ .../bindings/reserved-memory/qcom,cmd-db.txt       |  37 +++
+ .../devicetree/bindings/soc/qcom/qcom,geni-se.txt  | 119 ++++++++
+ arch/arm64/boot/dts/qcom/Makefile                  |   1 +
+ arch/arm64/boot/dts/qcom/apq8096-db820c-pins.dtsi  |  26 ++
+ .../boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi    |  32 ++
+ arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi       |  77 ++++-
+ arch/arm64/boot/dts/qcom/msm8916.dtsi              |  18 +-
+ .../boot/dts/qcom/msm8992-bullhead-rev-101.dts     |  17 ++
+ arch/arm64/boot/dts/qcom/msm8992-pins.dtsi         |  60 ++++
+ arch/arm64/boot/dts/qcom/msm8992.dtsi              |  87 +++++-
+ arch/arm64/boot/dts/qcom/msm8994-smd-rpm.dtsi      | 276 +++++++++++++++++
+ arch/arm64/boot/dts/qcom/msm8996.dtsi              | 120 +++++++-
+ arch/arm64/boot/dts/qcom/sdm845-mtp.dts            |  15 +
+ arch/arm64/boot/dts/qcom/sdm845.dtsi               | 327 +++++++++++++++++++++
+ 15 files changed, 1217 insertions(+), 25 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
+ create mode 100644 Documentation/devicetree/bindings/reserved-memory/qcom,cmd-db.txt
+ create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt
+ create mode 100644 arch/arm64/boot/dts/qcom/msm8994-smd-rpm.dtsi
+ create mode 100644 arch/arm64/boot/dts/qcom/sdm845-mtp.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/sdm845.dtsi
