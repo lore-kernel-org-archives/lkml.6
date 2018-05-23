@@ -1,109 +1,161 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934753AbeEWTdm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 15:33:42 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36382 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934690AbeEWTdc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 15:33:32 -0400
-Date: Wed, 23 May 2018 12:23:49 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Joel Fernandes <joelaf@google.com>
-Cc: linux-kernel@vger.kernel.org,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Boqun Feng <boqun.feng@gmail.com>, byungchul.park@lge.com,
-        Ingo Molnar <mingo@redhat.com>, Josh Triplett <josh@joshtriplett.org>,
-        kernel-team@android.com, Lai Jiangshan <jiangshanlai@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Peter Zilstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH 3/4] rcu: Use better variable names in funnel locking loop
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180523063815.198302-1-joel@joelfernandes.org>
- <20180523063815.198302-4-joel@joelfernandes.org>
- <20180523160617.GM3803@linux.vnet.ibm.com>
+        id S934762AbeEWTd6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 15:33:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40976 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934288AbeEWTdv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 15:33:51 -0400
+X-Google-Smtp-Source: AB8JxZqrrQ6oAjjRjXy25Uz5Lo5EeO18TevMQMdkL6RKE9lKQ4YE8z4I5gXuVVuJqqL/1kyqreFHc8UJkRhDd2rVSPs=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180523160617.GM3803@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18052319-8235-0000-0000-00000D8F3D74
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009073; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000261; SDB=6.01036623; UDB=6.00530321; IPR=6.00815751;
- MB=3.00021262; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-23 19:33:30
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052319-8236-0000-0000-0000411CA5EC
-Message-Id: <20180523192349.GA5845@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-23_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805230190
+In-Reply-To: <51752610-d2c1-7fbc-101e-e99346fa29e4@linux.intel.com>
+References: <20180521195905.27983-1-jae.hyun.yoo@linux.intel.com>
+ <20180522164230.GA11707@rob-hp-laptop> <a05b44a2-ecc8-b028-4308-47d88523a6f1@linux.intel.com>
+ <CAL_JsqJ8rjRzaqasjbdq-jkYfWxdo72YnmKAVNxDwo6wtyv1xg@mail.gmail.com> <51752610-d2c1-7fbc-101e-e99346fa29e4@linux.intel.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 23 May 2018 14:33:24 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqK9ap=p67HDb_aka809nvpzL3K9VOdbMKJbf3EMR8D2XQ@mail.gmail.com>
+Message-ID: <CAL_JsqK9ap=p67HDb_aka809nvpzL3K9VOdbMKJbf3EMR8D2XQ@mail.gmail.com>
+Subject: Re: [v4 07/11] dt-bindings: hwmon: Add documents for PECI hwmon
+ client drivers
+To: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Haiyue Wang <haiyue.wang@linux.intel.com>,
+        Vernon Mauery <vernon.mauery@linux.intel.com>,
+        James Feist <james.feist@linux.intel.com>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andrew Jeffery <andrew@aj.id.au>, Arnd Bergmann <arnd@arndb.de>,
+        Jason M Biils <jason.m.bills@linux.intel.com>,
+        Joel Stanley <joel@jms.id.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 09:06:17AM -0700, Paul E. McKenney wrote:
-> On Tue, May 22, 2018 at 11:38:14PM -0700, Joel Fernandes wrote:
-> > From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
-> > 
-> > The funnel locking loop in rcu_start_this_gp uses rcu_root as a
-> > temporary variable while walking the combining tree. This causes a
-> > tiresome exercise of a code reader reminding themselves that rcu_root
-> > may not be root. Lets just call it rnp, and rename other variables as
-> > well to be more appropriate.
-> > 
-> > Original patch: https://patchwork.kernel.org/patch/10396577/
-> > 
-> > Signed-off-by: Joel Fernandes <joel@joelfernandes.org>
-> > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> 
-> I used to have double Signed-off-by back when I was seconded to Linaro.
-> But I am guessing that you want the second and don't need the first
-> one.  Unless you tell me otherwise, I will remove the first one on
-> my next rebase.
-> 
-> Anyway, the new variable names are much more clear, good stuff,
-> queued for further review and testing, thank you!
+On Wed, May 23, 2018 at 11:37 AM, Jae Hyun Yoo
+<jae.hyun.yoo@linux.intel.com> wrote:
+> On 5/23/2018 8:11 AM, Rob Herring wrote:
+>>
+>> On Tue, May 22, 2018 at 12:18 PM, Jae Hyun Yoo
+>> <jae.hyun.yoo@linux.intel.com> wrote:
+>>>
+>>> On 5/22/2018 9:42 AM, Rob Herring wrote:
+>>>>
+>>>>
+>>>> On Mon, May 21, 2018 at 12:59:05PM -0700, Jae Hyun Yoo wrote:
+>>>>>
+>>>>>
+>>>>> This commit adds dt-bindings documents for PECI hwmon client drivers.
+>>>>>
+>>>>> Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+>>>>> Reviewed-by: Haiyue Wang <haiyue.wang@linux.intel.com>
+>>>>> Reviewed-by: James Feist <james.feist@linux.intel.com>
+>>>>> Reviewed-by: Vernon Mauery <vernon.mauery@linux.intel.com>
+>>>>> Cc: Andrew Jeffery <andrew@aj.id.au>
+>>>>> Cc: Arnd Bergmann <arnd@arndb.de>
+>>>>> Cc: Jason M Biils <jason.m.bills@linux.intel.com>
+>>>>> Cc: Joel Stanley <joel@jms.id.au>
+>>>>> ---
+>>>>>    .../bindings/hwmon/peci-cputemp.txt           | 23
+>>>>> ++++++++++++++++++
+>>>>>    .../bindings/hwmon/peci-dimmtemp.txt          | 24
+>>>>> +++++++++++++++++++
+>>>>>    2 files changed, 47 insertions(+)
+>>>>>    create mode 100644
+>>>>> Documentation/devicetree/bindings/hwmon/peci-cputemp.txt
+>>>>>    create mode 100644
+>>>>> Documentation/devicetree/bindings/hwmon/peci-dimmtemp.txt
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/hwmon/peci-cputemp.txt
+>>>>> b/Documentation/devicetree/bindings/hwmon/peci-cputemp.txt
+>>>>> new file mode 100644
+>>>>> index 000000000000..2f59aee12d9e
+>>>>> --- /dev/null
+>>>>> +++ b/Documentation/devicetree/bindings/hwmon/peci-cputemp.txt
+>>>>> @@ -0,0 +1,23 @@
+>>>>> +Bindings for Intel PECI (Platform Environment Control Interface)
+>>>>> cputemp
+>>>>> driver.
+>>>>> +
+>>>>> +Required properties:
+>>>>> +- compatible : Should be "intel,peci-cputemp".
+>>>>> +- reg        : Should contain address of a client CPU. Address range
+>>>>> of
+>>>>> CPU
+>>>>> +              clients is starting from 0x30 based on PECI
+>>>>> specification.
+>>>>> +
+>>>>> +Example:
+>>>>> +       peci-bus@0 {
+>>>>> +               #address-cells = <1>;
+>>>>> +               #size-cells = <0>;
+>>>>> +               < more properties >
+>>>>> +
+>>>>> +               peci-cputemp@30 {
+>>>>> +                       compatible = "intel,peci-cputemp";
+>>>>> +                       reg = <0x30>;
+>>>>> +               };
+>>>>
+>>>>
+>>>>
+>>>> [...]
+>>>>
+>>>>> +               peci-dimmtemp@30 {
+>>>>> +                       compatible = "intel,peci-dimmtemp";
+>>>>> +                       reg = <0x30>;
+>>>>> +               };
+>>>>
+>>>>
+>>>>
+>>>> As I said in the prior version, 2 nodes at the same address is wrong.
+>>>>
+>>>> Rob
+>>>>
+>>>
+>>> In PECI bus, there is one and only bus host (adapter) and multiple
+>>> clients on a PECI bus, and PECI spec doesn't allow multiple originators
+>>> so only the host device can originate message.
+>>
+>>
+>> Yes, I get that. A single host still has to address slave devices.
+>>
+>>> In this implementation,
+>>> all message transactions on a bus from client driver modules and user
+>>> space will be serialized well in the PECI core bus driver so bus
+>>> occupation and traffic arbitration will be managed well in the PECI core
+>>> bus driver even in case of a bus has 2 client drivers at the same
+>>> address. I'm sure that this implementation doesn't make that kind of
+>>> problem to OS.
+>>
+>>
+>> Multiple clients to a single device is common, but that is a software
+>> problem and doesn't belong in DT.
+>>
+>> I don't think there is a single other case in the kernel where
+>> multiple drivers can bind to the same device at a given bus address.
+>> That is why we have things like MFD. Though in this case, why can't
+>> one hwmon driver register multiple hwmon devices (cpu and dimm temps)?
+>>
+>
+> It was implemented as a single driver until v2 but dimm temps need
+> delayed creation unlikely the cpu temps on hwmon subsystem because of
+> memory training behavior of remote x86 cpus. Since hwmon doesn't allow
+> incremental creation, I had to divide it into two, cputemp and dimmtemp,
+> so that cputemp can be registered immediately when the remote x86 cpu
+> turns on and dimmtemp can be registered by delayed creation. It is the
+> reason why I had to make the two hwmon driver modules that sharing a
+> single device address.
 
-And it looks to me like I should fold in the patchlet below to change to
-rnp_start in a comment.  Please let me know if this would mess things up.
+That all sounds like kernel problems to me. Stop designing your DT
+binding around what the kernel can or can't *currently* support.
 
-							Thanx, Paul
+> Additionally, PECI isn't limited for temperature
+> monitoring feature but it can be used for other functions such as
+> platform management, cpu interface tuning and diagnostics and failure
+> analysis, so in case of adding a new driver for the functions, we should
+> add an another DT node which is sharing the same cpu address.
 
-------------------------------------------------------------------------
+No, the driver should add support for those additional functions.
+Perhaps you will need to use MFD.
 
-commit 94ce05d9d110b8c34eca6641ca5221c1b150e99f
-Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Date:   Wed May 23 12:22:01 2018 -0700
-
-    fixup! rcu: Use better variable names in funnel locking loop
-    
-    Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 65e49282429c..fdba8ab95e2c 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -1550,11 +1550,11 @@ static bool rcu_start_this_gp(struct rcu_node *rnp_start, struct rcu_data *rdp,
- 	/*
- 	 * Use funnel locking to either acquire the root rcu_node
- 	 * structure's lock or bail out if the need for this grace period
--	 * has already been recorded -- or has already started.  If there
--	 * is already a grace period in progress in a non-leaf node, no
--	 * recording is needed because the end of the grace period will
--	 * scan the leaf rcu_node structures.  Note that rnp->lock must
--	 * not be released.
-+	 * has already been recorded -- or if that grace period has in
-+	 * fact already started.  If there is already a grace period in
-+	 * progress in a non-leaf node, no recording is needed because the
-+	 * end of the grace period will scan the leaf rcu_node structures.
-+	 * Note that rnp_start->lock must not be released.
- 	 */
- 	raw_lockdep_assert_held_rcu_node(rnp_start);
- 	trace_rcu_this_gp(rnp_start, rdp, gp_seq_req, TPS("Startleaf"));
+Rob
