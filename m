@@ -1,59 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754346AbeEWILn (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 04:11:43 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:37385 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754175AbeEWILj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 04:11:39 -0400
-X-Google-Smtp-Source: AB8JxZpE4smopSN3MypRBFtsPP2qAj6W/MWwTxDDSHb3hsjxA/lQY73Z1Q4G0qb5/TI6r789BHp/SrtOkLCdOGmZwwQ=
-MIME-Version: 1.0
-In-Reply-To: <20180522220149.GB22385@bhelgaas-glaptop.roam.corp.google.com>
-References: <11415287.ki0m5Bqgns@aspire.rjw.lan> <20180522220149.GB22385@bhelgaas-glaptop.roam.corp.google.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 23 May 2018 10:11:38 +0200
-X-Google-Sender-Auth: AmRBjdwBk5Ko_LBT3MWYfR1hftA
-Message-ID: <CAJZ5v0hE+_PUqngC3JcRDd7SW3ioP6hT3Vpmz98obqgXi1vuEA@mail.gmail.com>
-Subject: Re: [PATCH] PCI / PM: Do not clear state_saved for devices that
- remain suspended
+        id S1754226AbeEWIO4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 04:14:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56912 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754082AbeEWIOw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 04:14:52 -0400
+Date: Wed, 23 May 2018 09:14:48 +0100
+From: James Hogan <jhogan@kernel.org>
 To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Cc: linux-pci@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
+        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] MIPS: PCI: Use dev_printk() when possible
+Message-ID: <20180523081447.GA15645@jamesdev>
+References: <152699466671.162686.1029992586935534102.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <152699470263.162686.16975145205315900817.stgit@bhelgaas-glaptop.roam.corp.google.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="OXfL5xGRrasGEqWY"
+Content-Disposition: inline
+In-Reply-To: <152699470263.162686.16975145205315900817.stgit@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 12:01 AM, Bjorn Helgaas <helgaas@kernel.org> wrote:
-> On Fri, May 18, 2018 at 10:17:42AM +0200, Rafael J. Wysocki wrote:
->> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>
->> The state_saved flag should not be cleared in pci_pm_suspend() if the
->> given device is going to remain suspended, or the device's config
->> space will not be restored properly during the subsequent resume.
->>
->> Namely, if the device is going to stay in suspend, both the late
->> and noirq callbacks return early for it, so if its state_saved flag
->> is cleared in pci_pm_suspend(), it will remain unset throughout the
->> remaining part of suspend and resume and pci_restore_state() called
->> for the device going forward will return without doing anything.
->>
->> For this reason, change pci_pm_suspend() to only clear state_saved
->> if the given device is not going to remain suspended.  [This is
->> analogous to what commit ae860a19f37c (PCI / PM: Do not clear
->> state_saved in pci_pm_freeze() when smart suspend is set) did for
->> hibernation.]
->>
->> Fixes: c4b65157aeef (PCI / PM: Take SMART_SUSPEND driver flag into account)
->> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->
-> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
->
-> I assume you'll take this one, too.
 
-Yes, I will, thank you!
+--OXfL5xGRrasGEqWY
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, May 22, 2018 at 08:11:42AM -0500, Bjorn Helgaas wrote:
+> From: Bjorn Helgaas <bhelgaas@google.com>
+>=20
+> Use the pci_info() and pci_err() wrappers for dev_printk() when possible.
+>=20
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> ---
+>  arch/mips/pci/pci-legacy.c |    7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/arch/mips/pci/pci-legacy.c b/arch/mips/pci/pci-legacy.c
+> index 0c65c38e05d6..73643e80f02d 100644
+> --- a/arch/mips/pci/pci-legacy.c
+> +++ b/arch/mips/pci/pci-legacy.c
+> @@ -263,9 +263,7 @@ static int pcibios_enable_resources(struct pci_dev *d=
+ev, int mask)
+>  				(!(r->flags & IORESOURCE_ROM_ENABLE)))
+>  			continue;
+>  		if (!r->start && r->end) {
+> -			printk(KERN_ERR "PCI: Device %s not available "
+> -			       "because of resource collisions\n",
+> -			       pci_name(dev));
+> +			pci_err(dev, "can't enable device: resource collisions\n");
+
+The pedantic side of me wants to point out that you could wrap that line
+after the comma to keep it within 80 columns.
+
+Either way though:
+Acked-by: James Hogan <jhogan@kernel.org>
+
+Cheers
+James
+
+--OXfL5xGRrasGEqWY
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYIAB0WIQS7lRNBWUYtqfDOVL41zuSGKxAj8gUCWwUi9QAKCRA1zuSGKxAj
+8l/hAP9wRhKTLcj7bgyBloqtW+lACwcm1L6ZG8rvMTYeyETdsQD/Ub0CM0qhhbwf
+dcBrWIGOv/N8paHxgYfocG/YUmMdTgE=
+=PUQd
+-----END PGP SIGNATURE-----
+
+--OXfL5xGRrasGEqWY--
