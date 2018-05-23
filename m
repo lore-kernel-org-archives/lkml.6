@@ -1,144 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933961AbeEWR7P (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 13:59:15 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:36308 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933949AbeEWR7I (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 13:59:08 -0400
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Wed, 23 May 2018 10:59:07 -0700
-From: rishabhb@codeaurora.org
+        id S933970AbeEWR7d (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 13:59:33 -0400
+Received: from muru.com ([72.249.23.125]:44188 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933936AbeEWR7D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 13:59:03 -0400
+Date: Wed, 23 May 2018 10:58:59 -0700
+From: Tony Lindgren <tony@atomide.com>
 To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm@lists.infradead.org, tsoni@codeaurora.org,
-        ckadabi@codeaurora.org, Evan Green <evgreen@chromium.org>,
-        Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v7 2/2] drivers: soc: Add LLCC driver
-In-Reply-To: <CAHp75Vd8HZU+BT38-OfXHiihv1yZG6YBeMWyfweBA+kAwk6HUw@mail.gmail.com>
-References: <1526492623-20527-1-git-send-email-rishabhb@codeaurora.org>
- <1526492623-20527-3-git-send-email-rishabhb@codeaurora.org>
- <CAHp75VdO7+u-PQ+RBH71sxHHG0WkAyEVxv0BNPaycbcRnrZang@mail.gmail.com>
- <f1970a64be17267e0f044242dc0764d6@codeaurora.org>
- <CAHp75Vd8HZU+BT38-OfXHiihv1yZG6YBeMWyfweBA+kAwk6HUw@mail.gmail.com>
-Message-ID: <e2fd7e4b452d955b766401fd871e93c4@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v1 0/3] console, serial8250: Disable PM and DMA ops
+Message-ID: <20180523175859.GO98604@atomide.com>
+References: <20180515183409.78046-1-andriy.shevchenko@linux.intel.com>
+ <ca78895ac7ac84ec1c7f2f33024237af329ffd7a.camel@linux.intel.com>
+ <20180516100842.xuma7b3e727w7bpz@linutronix.de>
+ <CAHp75Vc2bJQHiWYcdKK+7wwMw2fSWxMauxP-dMRUAUdKnet7WQ@mail.gmail.com>
+ <20180516104734.357oevogppu5bsg4@linutronix.de>
+ <ed9879ef42a70d2609f60f73834cabb7e3df9e2f.camel@linux.intel.com>
+ <20180517135621.GJ98604@atomide.com>
+ <CAHp75VfqAK6+dPWWkQXjy0V-AFSGLSDJ9CmnUv=ba0F66TDTVg@mail.gmail.com>
+ <20180517193008.GV25808@atomide.com>
+ <CAHp75Ve56pyEC41XZ9i9yxBNberQe=ee2miQL0v9T4vRtkWPBQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHp75Ve56pyEC41XZ9i9yxBNberQe=ee2miQL0v9T4vRtkWPBQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-22 12:38, Andy Shevchenko wrote:
-> On Tue, May 22, 2018 at 9:33 PM,  <rishabhb@codeaurora.org> wrote:
->> On 2018-05-18 14:01, Andy Shevchenko wrote:
->>> On Wed, May 16, 2018 at 8:43 PM, Rishabh Bhatnagar
->>> <rishabhb@codeaurora.org> wrote:
+* Andy Shevchenko <andy.shevchenko@gmail.com> [180522 21:42]:
+> On Thu, May 17, 2018 at 10:30 PM, Tony Lindgren <tony@atomide.com> wrote:
+> > So how about add some "noidle" kernel command line parameter for console
+> > that calls
+> > pm_runtime_forbid() and then you have the UART permanently
+> > on.
 > 
->>>> +#define ACTIVATE                      0x1
->>>> +#define DEACTIVATE                    0x2
->>>> +#define ACT_CTRL_OPCODE_ACTIVATE      0x1
->>>> +#define ACT_CTRL_OPCODE_DEACTIVATE    0x2
->>>> +#define ACT_CTRL_ACT_TRIG             0x1
->>> 
->>> 
->>> Are these bits? Perhaps BIT() ?
->>> 
->> isn't it just better to use fixed size as u suggest in the next 
->> comment?
-> 
-> If the are bits, use BIT() macro.
-> 
->>>> +struct llcc_slice_desc *llcc_slice_getd(u32 uid)
->>>> +{
->>>> +       const struct llcc_slice_config *cfg;
->>>> +       struct llcc_slice_desc *desc;
->>>> +       u32 sz, count = 0;
->>>> +
->>>> +       cfg = drv_data->cfg;
->>>> +       sz = drv_data->cfg_size;
->>>> +
->>> 
->>> 
->>>> +       while (cfg && count < sz) {
->>>> +               if (cfg->usecase_id == uid)
->>>> +                       break;
->>>> +               cfg++;
->>>> +               count++;
->>>> +       }
->>>> +       if (cfg == NULL || count == sz)
->>>> +               return ERR_PTR(-ENODEV);
->>> 
->>> 
->>> if (!cfg)
->>>           return ERR_PTR(-ENODEV);
->>> 
->>> while (cfg->... != uid) {
->>>   cfg++;
->>>   count++;
->>> }
->>> 
->>> if (count == sz)
->>>  return ...
->>> 
->>> Though I would rather put it to for () loop.
->>> 
->> In each while loop iteration the cfg pointer needs to be checked for
->> NULL. What if the usecase id never matches the uid passed by client
->> and we keep iterating. At some point it will crash.
-> 
-> do {
->   if (!cfg || count == sz)
->    return ...(-ENODEV);
->  ...
-> } while (...);
-> 
-> Though, as I said for-loop will look slightly better I think.
-> 
->>>> +       ret = llcc_update_act_ctrl(desc->slice_id, act_ctrl_val,
->>>> +                                 DEACTIVATE);
->>> 
->>> 
->>> Perhaps one line (~83 characters here is OK) ?
->> 
->> The checkpatch script complains about such lines.
-> 
-> So what if it just 3 characters out?
-> 
-Many upstream reviewers have objection to lines crossing over 80 
-characters
-I have gotten reviews to reduce the line length even if its like 81~82
-characters. Can we keep this as it is? I have addressed all other
-comments and will send out the next patch by today.
+> IIUC _forbid() can be overwritten via sysfs.
+> And I would prefer to do other way around, something like console.idle
+> and put default for OMAP to yes and no for everything else.
 
->>>> +       ret = llcc_update_act_ctrl(desc->slice_id, act_ctrl_val,
->>>> +                                 ACTIVATE);
+OK yeah console.idle sounds good to me. We should default to a
+safe option.
+
+> > Hmm I guess you could make also serial8250_rpm_get() do nothing
+> > based on that.
 > 
->>> Ditto.
+> Have you seen entire series which I keep here:
+> https://bitbucket.org/andy-shev/linux/branch/topic/uart/rpm?
+> Among other things it gets rid of those specific callbacks entirely.
+
+Well I was not Cc:ed on it, I browsed it in some archive and it
+seemed unsafe to me. But if you figured out a way to do it conditionally
+based on console.idle without causing regressions.
+
+> > I do agree the serial runtime PM has an issue if it depends on
+> > pm_runtime_irq_safe() being set.
 > 
->>>> +               attr1_cfg = bcast_off +
->>>> +
->>>> LLCC_TRP_ATTR1_CFGn(llcc_table[i].slice_id);
->>>> +               attr0_cfg = bcast_off +
->>>> +
->>>> LLCC_TRP_ATTR0_CFGn(llcc_table[i].slice_id);
+> It's more than an issue. The  so called "support" of RPM for UART is
+> _based on the hack_.
+> I would love to NAK that in the first place if I would have known of it in time.
+
+Hmm well it seems that you too have been patching the 8250_rpm
+functions for years and then now what after multiple years you
+hit this issue? :)
+
+> >> So, I can, of course just remove callbacks from the console ->write().
+> >> Though it will prevent to use kernel console anyway.
+> >
+> > Please et's not start breaking things, we already see a constant
+> > flow of regressions on weekly basis.
 > 
->>> Ditto.
-> 
->>>> +               attr1_val |= llcc_table[i].probe_target_ways <<
->>>> +                               ATTR1_PROBE_TARGET_WAYS_SHIFT;
->>>> +               attr1_val |= llcc_table[i].fixed_size <<
->>>> +                               ATTR1_FIXED_SIZE_SHIFT;
->>>> +               attr1_val |= llcc_table[i].priority <<
->>>> ATTR1_PRIORITY_SHIFT;
-> 
->>> foo |=
->>>   bar << SHIFT;
->>> 
->>> would look slightly better.
-> 
-> Did you consider this option ?
+> Now we are stick with a hack and the case based on that is against
+> fixing things.
+> This is how it looks from my side.
+
+Sorry yeah I agree there are issues, but let's fix it properly with
+no regressions.
+
+Regards,
+
+TOny
