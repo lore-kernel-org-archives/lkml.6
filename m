@@ -1,148 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934189AbeEWSuK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 14:50:10 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44446 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933928AbeEWSuF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 14:50:05 -0400
-Date: Wed, 23 May 2018 21:50:02 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Anshuman Khandual <khandual@linux.vnet.ibm.com>
-Cc: virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
-        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
-        jasowang@redhat.com, benh@kernel.crashing.org, mpe@ellerman.id.au,
-        hch@infradead.org
-Subject: Re: [RFC V2] virtio: Add platform specific DMA API translation for
- virito devices
-Message-ID: <20180523213703-mutt-send-email-mst@kernel.org>
-References: <20180522063317.20956-1-khandual@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180522063317.20956-1-khandual@linux.vnet.ibm.com>
+        id S934203AbeEWSuf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 14:50:35 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:33288 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933928AbeEWSua (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 14:50:30 -0400
+Date: Wed, 23 May 2018 14:50:29 -0400 (EDT)
+Message-Id: <20180523.145029.1858332695324159064.davem@davemloft.net>
+To: colin.king@canonical.com
+Cc: jdmason@kudzu.us, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][V2] net: vxge: fix spelling mistake in macro
+ VXGE_HW_ERR_PRIVILAGED_OPEARATION
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180522161809.30299-1-colin.king@canonical.com>
+References: <20180522161809.30299-1-colin.king@canonical.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-subj: s/virito/virtio/
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 22 May 2018 17:18:09 +0100
 
-On Tue, May 22, 2018 at 12:03:17PM +0530, Anshuman Khandual wrote:
-> This adds a hook which a platform can define in order to allow it to
-> force the use of the DMA API for all virtio devices even if they don't
-> have the VIRTIO_F_IOMMU_PLATFORM flag set.  We want to use this to do
-> bounce-buffering of data on the new secure pSeries platform, currently
-> under development, where a KVM host cannot access all of the memory
-> space of a secure KVM guest.  The host can only access the pages which
-> the guest has explicitly requested to be shared with the host, thus
-> the virtio implementation in the guest has to copy data to and from
-> shared pages.
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> With this hook, the platform code in the secure guest can force the
-> use of swiotlb for virtio buffers, with a back-end for swiotlb which
-> will use a pool of pre-allocated shared pages.  Thus all data being
-> sent or received by virtio devices will be copied through pages which
-> the host has access to.
+> Rename VXGE_HW_ERR_PRIVILAGED_OPEARATION to VXGE_HW_ERR_PRIVILEGED_OPERATION
+> to fix spelling mistake.
 > 
-> Signed-off-by: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
-> Changes in V2:
-> 
-> The arch callback has been enabled through an weak symbol defintion
-> so that it is enabled only for those architectures subscribing to
-> this new framework. Clarified the patch description. The primary
-> objective for this RFC has been to get an in principle agreement
-> on this approach.
-> 
-> Original V1:
-> 
-> Original RFC and discussions https://patchwork.kernel.org/patch/10324405/
+> V2: PRIVILAGED -> PRIVILEGED, thanks to Edward Cree for spotting that mistake
 
-I re-read that discussion and I'm still unclear on the
-original question, since I got several apparently
-conflicting answers.
-
-I asked:
-
-	Why isn't setting VIRTIO_F_IOMMU_PLATFORM on the
-	hypervisor side sufficient?
-
-
-
->  arch/powerpc/include/asm/dma-mapping.h |  6 ++++++
->  arch/powerpc/platforms/pseries/iommu.c | 11 +++++++++++
->  drivers/virtio/virtio_ring.c           | 10 ++++++++++
->  3 files changed, 27 insertions(+)
-> 
-> diff --git a/arch/powerpc/include/asm/dma-mapping.h b/arch/powerpc/include/asm/dma-mapping.h
-> index 8fa3945..056e578 100644
-> --- a/arch/powerpc/include/asm/dma-mapping.h
-> +++ b/arch/powerpc/include/asm/dma-mapping.h
-> @@ -115,4 +115,10 @@ extern u64 __dma_get_required_mask(struct device *dev);
->  #define ARCH_HAS_DMA_MMAP_COHERENT
->  
->  #endif /* __KERNEL__ */
-> +
-> +#define platform_forces_virtio_dma platform_forces_virtio_dma
-> +
-> +struct virtio_device;
-> +
-> +extern bool platform_forces_virtio_dma(struct virtio_device *vdev);
->  #endif	/* _ASM_DMA_MAPPING_H */
-> diff --git a/arch/powerpc/platforms/pseries/iommu.c b/arch/powerpc/platforms/pseries/iommu.c
-> index 06f0296..a2ec15a 100644
-> --- a/arch/powerpc/platforms/pseries/iommu.c
-> +++ b/arch/powerpc/platforms/pseries/iommu.c
-> @@ -38,6 +38,7 @@
->  #include <linux/of.h>
->  #include <linux/iommu.h>
->  #include <linux/rculist.h>
-> +#include <linux/virtio.h>
->  #include <asm/io.h>
->  #include <asm/prom.h>
->  #include <asm/rtas.h>
-> @@ -1396,3 +1397,13 @@ static int __init disable_multitce(char *str)
->  __setup("multitce=", disable_multitce);
->  
->  machine_subsys_initcall_sync(pseries, tce_iommu_bus_notifier_init);
-> +
-> +bool platform_forces_virtio_dma(struct virtio_device *vdev)
-> +{
-> +	/*
-> +	 * On protected guest platforms, force virtio core to use DMA
-> +	 * MAP API for all virtio devices. But there can also be some
-> +	 * exceptions for individual devices like virtio balloon.
-> +	 */
-> +	return (of_find_compatible_node(NULL, NULL, "ibm,ultravisor") != NULL);
-> +}
-
-Isn't this kind of slow?  vring_use_dma_api is on
-data path and supposed to be very fast.
-
-> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> index 21d464a..47ea6c3 100644
-> --- a/drivers/virtio/virtio_ring.c
-> +++ b/drivers/virtio/virtio_ring.c
-> @@ -141,8 +141,18 @@ struct vring_virtqueue {
->   * unconditionally on data path.
->   */
->  
-> +#ifndef platform_forces_virtio_dma
-> +static inline bool platform_forces_virtio_dma(struct virtio_device *vdev)
-> +{
-> +	return false;
-> +}
-> +#endif
-> +
->  static bool vring_use_dma_api(struct virtio_device *vdev)
->  {
-> +	if (platform_forces_virtio_dma(vdev))
-> +		return true;
-> +
->  	if (!virtio_has_iommu_quirk(vdev))
->  		return true;
->  
-> -- 
-> 2.9.3
+Applied to net-next, thanks Colin.
