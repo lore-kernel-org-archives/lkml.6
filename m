@@ -1,66 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933324AbeEWOZ4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 10:25:56 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59972 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933114AbeEWOZw (ORCPT
+        id S933350AbeEWO2M (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 10:28:12 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:38342 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754205AbeEWO2H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 10:25:52 -0400
-Date: Wed, 23 May 2018 07:25:45 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Kees Cook <keescook@chromium.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Tejun Heo <tj@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Manoj N. Kumar" <manoj@linux.vnet.ibm.com>,
-        "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>,
-        Uma Krishnan <ukrishn@linux.vnet.ibm.com>,
-        linux-block <linux-block@vger.kernel.org>, linux-ide@vger.kernel.org,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/6] block: Create scsi_sense.h for SCSI and ATAPI
-Message-ID: <20180523142545.GA16248@infradead.org>
-References: <20180522183613.GA3784@infradead.org>
- <yq1efi3bk3g.fsf@oracle.com>
- <CAGXu5jJ0Sice+fdpWgzBhQR=NGz-DT9qmYVdV1GeH73_q9pbmw@mail.gmail.com>
- <732f4249-5681-4a54-ec21-4ecc3d3a74e5@kernel.dk>
- <20180522191309.GA23615@infradead.org>
- <8d4af5c4-96fa-54ee-d5c1-b887b1de5a3c@kernel.dk>
- <CAGXu5j+mgGZkTDS6EDRspJKKbU=vMT4ehv9T-SekPba=ESoGDg@mail.gmail.com>
- <9A0BC289-4203-4C77-A012-AAB07F42061F@kernel.dk>
- <CAGXu5jJsGWDsZNDJvUUqncSaAcvond_B_J7=BbvVW0X3r6Sxww@mail.gmail.com>
- <aa150272-ffeb-fb8f-7303-0d9502cf9a71@kernel.dk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aa150272-ffeb-fb8f-7303-0d9502cf9a71@kernel.dk>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Wed, 23 May 2018 10:28:07 -0400
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+To: linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org
+Cc: jgross@suse.com, JBeulich@suse.com, brgerst@gmail.com,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Subject: [PATCH v5 2/2] xen/PVH: Make GDT selectors PVH-specific
+Date: Wed, 23 May 2018 10:30:02 -0400
+Message-Id: <20180523143002.29252-3-boris.ostrovsky@oracle.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180523143002.29252-1-boris.ostrovsky@oracle.com>
+References: <20180523143002.29252-1-boris.ostrovsky@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8901 signatures=668700
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=658
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805230146
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 08:13:56AM -0600, Jens Axboe wrote:
-> > Should I move to code to a new drivers/scsi/scsi_sense.c and add it to
-> > drivers/scsi/Makefile as:
-> > 
-> > obj-$(CONFIG_BLK_SCSI_REQUEST)    += scsi_sense.o
-> > 
-> > Every place I want to use the code is already covered by
-> > CONFIG_BLK_SCSI_REQUEST, so it seems like I just need to know where to
-> > put the .c file. :P
-> 
-> I think this is so much saner than a SCSI select or dependency, so I'll
-> have to disagree with Martin and Christoph. Just put it in drivers/scsi,
-> if it's the location they care about.
+We don't need to share PVH GDT layout with other GDTs, especially
+since we now have a PVH-speciific entry (for stack canary segment).
 
-I actually plan to remove CONFIG_BLK_SCSI_REQUEST in a merge window
-or two.  The only users are scsi and the ide layer, (virtio_blk
-support has already been accidentally disabled for a while), and getting
-rid of it allows to to shrink and simply the scsi data structures.
+Define PVH's own selectors.
 
-But if you want this for now lets keep scsi_sense.c in drivers/scsi
-but depend on CONFIG_BLK_SCSI_REQUEST, that is easy enough to fix up.
+(As a side effect of this change we are also fixing improper
+reference to __KERNEL_CS)
+
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+---
+ arch/x86/xen/xen-pvh.S | 23 +++++++++++++----------
+ 1 file changed, 13 insertions(+), 10 deletions(-)
+
+diff --git a/arch/x86/xen/xen-pvh.S b/arch/x86/xen/xen-pvh.S
+index d6a17b9..dd852ac 100644
+--- a/arch/x86/xen/xen-pvh.S
++++ b/arch/x86/xen/xen-pvh.S
+@@ -54,7 +54,11 @@
+  * charge of setting up it's own stack, GDT and IDT.
+  */
+ 
+-#define PVH_GDT_ENTRY_CANARY	4
++#define PVH_GDT_ENTRY_CS	1
++#define PVH_GDT_ENTRY_DS	2
++#define PVH_GDT_ENTRY_CANARY	3
++#define PVH_CS_SEL		(PVH_GDT_ENTRY_CS * 8)
++#define PVH_DS_SEL		(PVH_GDT_ENTRY_DS * 8)
+ #define PVH_CANARY_SEL		(PVH_GDT_ENTRY_CANARY * 8)
+ 
+ ENTRY(pvh_start_xen)
+@@ -62,7 +66,7 @@ ENTRY(pvh_start_xen)
+ 
+ 	lgdt (_pa(gdt))
+ 
+-	mov $(__BOOT_DS),%eax
++	mov $PVH_DS_SEL,%eax
+ 	mov %eax,%ds
+ 	mov %eax,%es
+ 	mov %eax,%ss
+@@ -96,7 +100,7 @@ ENTRY(pvh_start_xen)
+ 	mov %eax, %cr0
+ 
+ 	/* Jump to 64-bit mode. */
+-	ljmp $__KERNEL_CS, $_pa(1f)
++	ljmp $PVH_CS_SEL, $_pa(1f)
+ 
+ 	/* 64-bit entry point. */
+ 	.code64
+@@ -136,13 +140,13 @@ ENTRY(pvh_start_xen)
+ 	or $(X86_CR0_PG | X86_CR0_PE), %eax
+ 	mov %eax, %cr0
+ 
+-	ljmp $__BOOT_CS, $1f
++	ljmp $PVH_CS_SEL, $1f
+ 1:
+ 	call xen_prepare_pvh
+ 	mov $_pa(pvh_bootparams), %esi
+ 
+ 	/* startup_32 doesn't expect paging and PAE to be on. */
+-	ljmp $__BOOT_CS, $_pa(2f)
++	ljmp $PVH_CS_SEL, $_pa(2f)
+ 2:
+ 	mov %cr0, %eax
+ 	and $~X86_CR0_PG, %eax
+@@ -151,7 +155,7 @@ ENTRY(pvh_start_xen)
+ 	and $~X86_CR4_PAE, %eax
+ 	mov %eax, %cr4
+ 
+-	ljmp $__BOOT_CS, $_pa(startup_32)
++	ljmp $PVH_CS_SEL, $_pa(startup_32)
+ #endif
+ END(pvh_start_xen)
+ 
+@@ -163,13 +167,12 @@ gdt:
+ 	.word 0
+ gdt_start:
+ 	.quad 0x0000000000000000            /* NULL descriptor */
+-	.quad 0x0000000000000000            /* reserved */
+ #ifdef CONFIG_X86_64
+-	.quad GDT_ENTRY(0xa09a, 0, 0xfffff) /* __KERNEL_CS */
++	.quad GDT_ENTRY(0xa09a, 0, 0xfffff) /* PVH_CS_SEL */
+ #else
+-	.quad GDT_ENTRY(0xc09a, 0, 0xfffff) /* __KERNEL_CS */
++	.quad GDT_ENTRY(0xc09a, 0, 0xfffff) /* PVH_CS_SEL */
+ #endif
+-	.quad GDT_ENTRY(0xc092, 0, 0xfffff) /* __KERNEL_DS */
++	.quad GDT_ENTRY(0xc092, 0, 0xfffff) /* PVH_DS_SEL */
+ 	.quad GDT_ENTRY(0x4090, 0, 0x18)    /* PVH_CANARY_SEL */
+ gdt_end:
+ 
+-- 
+2.9.3
