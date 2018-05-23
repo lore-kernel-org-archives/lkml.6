@@ -1,56 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934993AbeEWWxs (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 18:53:48 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:41215 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934516AbeEWWxp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 18:53:45 -0400
-X-Google-Smtp-Source: AB8JxZrQtrVnCMTPAF5oXv4Q5Cp+eWyliiopUxQ9ZlaVRftT8OyJ9Rxwc2E3aiLd5wYrqNzgcwDNwQ==
-Subject: Re: [PATCHv3 2/2] x86/vdso: Add build salt to the vDSO
-To: Andy Lutomirski <luto@kernel.org>
-Cc: Mark Wielaard <mjw@fedoraproject.org>,
-        "H. J. Lu" <hjl.tools@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Nick Clifton <nickc@redhat.com>, Cary Coutant <ccoutant@gmail.com>,
-        linux-kbuild@vger.kernel.org
-References: <20180523001939.9431-1-labbott@redhat.com>
- <20180523001939.9431-3-labbott@redhat.com>
- <CALCETrX9P2Lwrx7wGc22poVWX2AHAqXbUdhcijyoJ3tGhaxijg@mail.gmail.com>
-From: Laura Abbott <labbott@redhat.com>
-Message-ID: <15dcff14-ea1b-18c8-4cd1-06586cf6f05b@redhat.com>
-Date: Wed, 23 May 2018 15:53:39 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S935030AbeEWXEp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 19:04:45 -0400
+Received: from ozlabs.org ([203.11.71.1]:34275 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934854AbeEWXEn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 19:04:43 -0400
+Date: Thu, 24 May 2018 09:04:00 +1000
+From: Paul Mackerras <paulus@ozlabs.org>
+To: Eric Biggers <ebiggers3@gmail.com>
+Cc: linux-ppp@vger.kernel.org, netdev@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Guillaume Nault <g.nault@alphalink.fr>,
+        syzkaller-bugs@googlegroups.com, Eric Biggers <ebiggers@google.com>
+Subject: Re: [PATCH v2] ppp: remove the PPPIOCDETACH ioctl
+Message-ID: <20180523230400.GA13256@fergus.ozlabs.ibm.com>
+References: <20180523035952.25768-1-ebiggers3@gmail.com>
+ <20180523213738.146911-1-ebiggers3@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CALCETrX9P2Lwrx7wGc22poVWX2AHAqXbUdhcijyoJ3tGhaxijg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180523213738.146911-1-ebiggers3@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/22/2018 05:33 PM, Andy Lutomirski wrote:
-> On Tue, May 22, 2018 at 5:19 PM Laura Abbott <labbott@redhat.com> wrote:
+On Wed, May 23, 2018 at 02:37:38PM -0700, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
 > 
+> The PPPIOCDETACH ioctl effectively tries to "close" the given ppp file
+> before f_count has reached 0, which is fundamentally a bad idea.  It
+> does check 'f_count < 2', which excludes concurrent operations on the
+> file since they would only be possible with a shared fd table, in which
+> case each fdget() would take a file reference.  However, it fails to
+> account for the fact that even with 'f_count == 1' the file can still be
+> linked into epoll instances.  As reported by syzbot, this can trivially
+> be used to cause a use-after-free.
 > 
->> The vDSO is linked separately from the kernel and modules. Ensure it picks
->> up the comment section, if available.
+> Yet, the only known user of PPPIOCDETACH is pppd versions older than
+> ppp-2.4.2, which was released almost 15 years ago (November 2003).
+> Also, PPPIOCDETACH apparently stopped working reliably at around the
+> same time, when the f_count check was added to the kernel, e.g. see
+> https://lkml.org/lkml/2002/12/31/83.  Also, the current 'f_count < 2'
+> check makes PPPIOCDETACH only work in single-threaded applications; it
+> always fails if called from a multithreaded application.
 > 
-> Did you end up preferring this to just sticking the kernel version in a
-> .comment in the vDSO for some reason?
+> All pppd versions released in the last 15 years just close() the file
+> descriptor instead.
 > 
+> Therefore, instead of hacking around this bug by exporting epoll
+> internals to modules, and probably missing other related bugs, just
+> remove the PPPIOCDETACH ioctl and see if anyone actually notices.  Leave
+> a stub in place that prints a one-time warning and returns EINVAL.
+> 
+> Reported-by: syzbot+16363c99d4134717c05b@syzkaller.appspotmail.com
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-Actually I remember now why this is necessary: there is not a simple way
-to encode a string into a linker file as it has to be spit out byte
-by byte. The autogeneration was the easiest way to make that happen.
-Maybe there's some horrific c preprocessing or other generation that
-could happen but I doubt that's any worse than the generated linker
-script.
-
-Thanks,
-Laura
+Acked-by: Paul Mackerras <paulus@ozlabs.org>
