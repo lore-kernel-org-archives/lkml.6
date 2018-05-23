@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932119AbeEWHmx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 03:42:53 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:36415 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932102AbeEWHms (ORCPT
+        id S932133AbeEWHnA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 03:43:00 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:41832 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932114AbeEWHmw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 03:42:48 -0400
-X-Google-Smtp-Source: AB8JxZoGbv5ziMppXtOdoa0zzp6KZN6p4dh618+FThdJ2Fknp5mygZImHV/GLfCXjvLUTa3hOHzFvQ==
+        Wed, 23 May 2018 03:42:52 -0400
+X-Google-Smtp-Source: AB8JxZrrxxDyzBuWw8wl3fpZeP2T/cKQsrZQ0Jljzc/xQl1dsKYa8v/+i6SAFZpk/RwmpcUAuLn0tw==
 From: Lin Huang <hl@rock-chips.com>
 To: seanpaul@chromium.org, airlied@linux.ie, zyw@rock-chips.com,
         kishon@ti.com
@@ -17,9 +17,9 @@ Cc: dianders@chromium.org, briannorris@chromium.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         eballetbo@gmail.com, robh+dt@kernel.org, devicetree@vger.kernel.org,
         Lin Huang <hl@rock-chips.com>
-Subject: [PATCH v7 2/5] Documentation: dt-bindings: phy: add phy_config for Rockchip USB Type-C PHY
-Date: Wed, 23 May 2018 15:42:30 +0800
-Message-Id: <1527061353-16902-2-git-send-email-hl@rock-chips.com>
+Subject: [PATCH v7 3/5] soc: rockchip: split rockchip_typec_phy struct to separate header
+Date: Wed, 23 May 2018 15:42:31 +0800
+Message-Id: <1527061353-16902-3-git-send-email-hl@rock-chips.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1527061353-16902-1-git-send-email-hl@rock-chips.com>
 References: <1527061353-16902-1-git-send-email-hl@rock-chips.com>
@@ -27,88 +27,154 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If want to do training outside DP Firmware, need phy voltage swing
-and pre_emphasis value.
+we may use rockchip_phy_typec struct in other driver, so split
+it to separate header.
 
 Signed-off-by: Lin Huang <hl@rock-chips.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
 Changes in v2:
-- None 
+- None
 Changes in v3:
-- modify property description and add this property to Example
+- None
 Changes in v4:
 - None
 Changes in v5:
 - None
 Changes in v6:
-- change rockchip,phy_config to rockchip,phy-config and descript it in detail.
+- new patch here
 Changes in v7:
-- None
+- move new element to next patch
 
- .../devicetree/bindings/phy/phy-rockchip-typec.txt | 36 +++++++++++++++++++++-
- 1 file changed, 35 insertions(+), 1 deletion(-)
+ drivers/phy/rockchip/phy-rockchip-typec.c | 47 +-------------------------
+ include/soc/rockchip/rockchip_phy_typec.h | 55 +++++++++++++++++++++++++++++++
+ 2 files changed, 56 insertions(+), 46 deletions(-)
+ create mode 100644 include/soc/rockchip/rockchip_phy_typec.h
 
-diff --git a/Documentation/devicetree/bindings/phy/phy-rockchip-typec.txt b/Documentation/devicetree/bindings/phy/phy-rockchip-typec.txt
-index 960da7f..40d5e7a 100644
---- a/Documentation/devicetree/bindings/phy/phy-rockchip-typec.txt
-+++ b/Documentation/devicetree/bindings/phy/phy-rockchip-typec.txt
-@@ -17,7 +17,11 @@ Required properties:
+diff --git a/drivers/phy/rockchip/phy-rockchip-typec.c b/drivers/phy/rockchip/phy-rockchip-typec.c
+index 76a4b58..795055f 100644
+--- a/drivers/phy/rockchip/phy-rockchip-typec.c
++++ b/drivers/phy/rockchip/phy-rockchip-typec.c
+@@ -63,6 +63,7 @@
  
- Optional properties:
-  - extcon : extcon specifier for the Power Delivery
+ #include <linux/mfd/syscon.h>
+ #include <linux/phy/phy.h>
++#include <soc/rockchip/rockchip_phy_typec.h>
+ 
+ #define CMN_SSM_BANDGAP			(0x21 << 2)
+ #define CMN_SSM_BIAS			(0x22 << 2)
+@@ -349,52 +350,6 @@
+ #define MODE_DFP_USB			BIT(1)
+ #define MODE_DFP_DP			BIT(2)
+ 
+-struct usb3phy_reg {
+-	u32 offset;
+-	u32 enable_bit;
+-	u32 write_enable;
+-};
 -
-+ - rockchip,phy-config : A list of voltage swing(mV) and pre-emphasis
-+			(dB) pairs. They are 3 blocks of 4 entries and
-+			correspond to s0p0 ~ s0p3, s1p0 ~ s1p3,
-+			s2p0 ~ s2p3, s3p0 ~ s2p3 swing and pre-emphasis
-+			values.
- Required nodes : a sub-node is required for each port the phy provides.
- 		 The sub-node name is used to identify dp or usb3 port,
- 		 and shall be the following entries:
-@@ -50,6 +54,21 @@ Example:
- 			 <&cru SRST_P_UPHY0_TCPHY>;
- 		reset-names = "uphy", "uphy-pipe", "uphy-tcphy";
- 
-+		rockchip,phy-config = <0x2a 0x00>,
-+			<0x1f 0x15>,
-+			<0x14 0x22>,
-+			<0x02 0x2b>,
+-/**
+- * struct rockchip_usb3phy_port_cfg: usb3-phy port configuration.
+- * @reg: the base address for usb3-phy config.
+- * @typec_conn_dir: the register of type-c connector direction.
+- * @usb3tousb2_en: the register of type-c force usb2 to usb2 enable.
+- * @external_psm: the register of type-c phy external psm clock.
+- * @pipe_status: the register of type-c phy pipe status.
+- * @usb3_host_disable: the register of type-c usb3 host disable.
+- * @usb3_host_port: the register of type-c usb3 host port.
+- * @uphy_dp_sel: the register of type-c phy DP select control.
+- */
+-struct rockchip_usb3phy_port_cfg {
+-	unsigned int reg;
+-	struct usb3phy_reg typec_conn_dir;
+-	struct usb3phy_reg usb3tousb2_en;
+-	struct usb3phy_reg external_psm;
+-	struct usb3phy_reg pipe_status;
+-	struct usb3phy_reg usb3_host_disable;
+-	struct usb3phy_reg usb3_host_port;
+-	struct usb3phy_reg uphy_dp_sel;
+-};
+-
+-struct rockchip_typec_phy {
+-	struct device *dev;
+-	void __iomem *base;
+-	struct extcon_dev *extcon;
+-	struct regmap *grf_regs;
+-	struct clk *clk_core;
+-	struct clk *clk_ref;
+-	struct reset_control *uphy_rst;
+-	struct reset_control *pipe_rst;
+-	struct reset_control *tcphy_rst;
+-	const struct rockchip_usb3phy_port_cfg *port_cfgs;
+-	/* mutex to protect access to individual PHYs */
+-	struct mutex lock;
+-
+-	bool flip;
+-	u8 mode;
+-};
+-
+ struct phy_reg {
+ 	u16 value;
+ 	u32 addr;
+diff --git a/include/soc/rockchip/rockchip_phy_typec.h b/include/soc/rockchip/rockchip_phy_typec.h
+new file mode 100644
+index 0000000..4afe039
+--- /dev/null
++++ b/include/soc/rockchip/rockchip_phy_typec.h
+@@ -0,0 +1,55 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
++ * Author: Lin Huang <hl@rock-chips.com>
++ */
 +
-+			<0x21 0x00>,
-+			<0x12 0x15>,
-+			<0x02 0x22>,
-+			<0 0>,
++#ifndef __SOC_ROCKCHIP_PHY_TYPEC_H
++#define __SOC_ROCKCHIP_PHY_TYPEC_H
 +
-+			<0x15 0x00>,
-+			<0x00 0x15>,
-+			<0 0>,
-+			<0 0>;
++struct usb3phy_reg {
++	u32 offset;
++	u32 enable_bit;
++	u32 write_enable;
++};
 +
- 		tcphy0_dp: dp-port {
- 			#phy-cells = <0>;
- 		};
-@@ -74,6 +93,21 @@ Example:
- 			 <&cru SRST_P_UPHY1_TCPHY>;
- 		reset-names = "uphy", "uphy-pipe", "uphy-tcphy";
- 
-+		rockchip,phy-config = <0x2a 0x00>,
-+			<0x1f 0x15>,
-+			<0x14 0x22>,
-+			<0x02 0x2b>,
++/**
++ * struct rockchip_usb3phy_port_cfg: usb3-phy port configuration.
++ * @reg: the base address for usb3-phy config.
++ * @typec_conn_dir: the register of type-c connector direction.
++ * @usb3tousb2_en: the register of type-c force usb2 to usb2 enable.
++ * @external_psm: the register of type-c phy external psm clock.
++ * @pipe_status: the register of type-c phy pipe status.
++ * @usb3_host_disable: the register of type-c usb3 host disable.
++ * @usb3_host_port: the register of type-c usb3 host port.
++ * @uphy_dp_sel: the register of type-c phy DP select control.
++ */
++struct rockchip_usb3phy_port_cfg {
++	unsigned int reg;
++	struct usb3phy_reg typec_conn_dir;
++	struct usb3phy_reg usb3tousb2_en;
++	struct usb3phy_reg external_psm;
++	struct usb3phy_reg pipe_status;
++	struct usb3phy_reg usb3_host_disable;
++	struct usb3phy_reg usb3_host_port;
++	struct usb3phy_reg uphy_dp_sel;
++};
 +
-+			<0x21 0x00>,
-+			<0x12 0x15>,
-+			<0x02 0x22>,
-+			<0 0>,
++struct rockchip_typec_phy {
++	struct device *dev;
++	void __iomem *base;
++	struct extcon_dev *extcon;
++	struct regmap *grf_regs;
++	struct clk *clk_core;
++	struct clk *clk_ref;
++	struct reset_control *uphy_rst;
++	struct reset_control *pipe_rst;
++	struct reset_control *tcphy_rst;
++	const struct rockchip_usb3phy_port_cfg *port_cfgs;
++	/* mutex to protect access to individual PHYs */
++	struct mutex lock;
++	bool flip;
++	u8 mode;
++};
 +
-+			<0x15 0x00>,
-+			<0x00 0x15>,
-+			<0 0>,
-+			<0 0>;
-+
- 		tcphy1_dp: dp-port {
- 			#phy-cells = <0>;
- 		};
++#endif
 -- 
 2.7.4
