@@ -1,126 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935117AbeEWXX3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 19:23:29 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:37252 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934671AbeEWXX1 (ORCPT
+        id S935105AbeEWXZO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 19:25:14 -0400
+Received: from mail-yb0-f195.google.com ([209.85.213.195]:44284 "EHLO
+        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934671AbeEWXZL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 19:23:27 -0400
-From: Qing Huang <qing.huang@oracle.com>
-To: tariqt@mellanox.com, davem@davemloft.net, haakon.bugge@oracle.com,
-        yanjun.zhu@oracle.com
-Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, gi-oh.kim@profitbricks.com,
-        Qing Huang <qing.huang@oracle.com>
-Subject: [PATCH V4] mlx4_core: allocate ICM memory in page size chunks
-Date: Wed, 23 May 2018 16:22:46 -0700
-Message-Id: <20180523232246.20445-1-qing.huang@oracle.com>
-X-Mailer: git-send-email 2.9.3
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8902 signatures=668700
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805230233
+        Wed, 23 May 2018 19:25:11 -0400
+X-Google-Smtp-Source: AB8JxZrCiGSSm7G6Q7eIlGINALTGgxdpJ3qemhBx2/tScjc+7NfWte17zu7jlnSFunbS2cxA+YX6Qg==
+Date: Wed, 23 May 2018 16:25:08 -0700
+From: Tejun Heo <tj@kernel.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-kernel@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Jan Kara <jack@suse.com>, Andrew Morton <akpm@linux-foundation.org>,
+        kernel-team@fb.com, Rik van Riel <riel@surriel.com>
+Subject: [PATCH] bdi: Increase the concurrecy level of cgwb_release_wq
+Message-ID: <20180523232508.GA1351649@devbig577.frc2.facebook.com>
+References: <20180523175632.GO1718769@devbig577.frc2.facebook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180523175632.GO1718769@devbig577.frc2.facebook.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a system is under memory presure (high usage with fragments),
-the original 256KB ICM chunk allocations will likely trigger kernel
-memory management to enter slow path doing memory compact/migration
-ops in order to complete high order memory allocations.
+cgwb_release_wq was added to isolate and limit the concurrency level
+of cgwb release work items.  The max concurrency was set to 1 per CPU
+but we do want some level of concurrency as otherwise it ends up
+calling, through bdi_unregister(), synchronize_sched_expedited()
+back-to-back for each release work item.
 
-When that happens, user processes calling uverb APIs may get stuck
-for more than 120s easily even though there are a lot of free pages
-in smaller chunks available in the system.
+Let's allow them to bunch up a bit.
 
-Syslog:
-...
-Dec 10 09:04:51 slcc03db02 kernel: [397078.572732] INFO: task
-oracle_205573_e:205573 blocked for more than 120 seconds.
-...
-
-With 4KB ICM chunk size on x86_64 arch, the above issue is fixed.
-
-However in order to support smaller ICM chunk size, we need to fix
-another issue in large size kcalloc allocations.
-
-E.g.
-Setting log_num_mtt=30 requires 1G mtt entries. With the 4KB ICM chunk
-size, each ICM chunk can only hold 512 mtt entries (8 bytes for each mtt
-entry). So we need a 16MB allocation for a table->icm pointer array to
-hold 2M pointers which can easily cause kcalloc to fail.
-
-The solution is to use kvzalloc to replace kcalloc which will fall back
-to vmalloc automatically if kmalloc fails.
-
-Signed-off-by: Qing Huang <qing.huang@oracle.com>
-Acked-by: Daniel Jurgens <danielj@mellanox.com>
-Reviewed-by: Zhu Yanjun <yanjun.zhu@oracle.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Suggested-by: Rik van Riel <riel@surriel.com>
 ---
-v4: use kvzalloc instead of vzalloc
-    add one err condition check
-    don't include vmalloc.h any more
+ mm/backing-dev.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-v3: use PAGE_SIZE instead of PAGE_SHIFT
-    add comma to the end of enum variables
-    include vmalloc.h header file to avoid build issues on Sparc
-
-v2: adjusted chunk size to reflect different architectures
-
- drivers/net/ethernet/mellanox/mlx4/icm.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/net/ethernet/mellanox/mlx4/icm.c b/drivers/net/ethernet/mellanox/mlx4/icm.c
-index a822f7a..685337d 100644
---- a/drivers/net/ethernet/mellanox/mlx4/icm.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/icm.c
-@@ -43,12 +43,12 @@
- #include "fw.h"
- 
- /*
-- * We allocate in as big chunks as we can, up to a maximum of 256 KB
-- * per chunk.
-+ * We allocate in page size (default 4KB on many archs) chunks to avoid high
-+ * order memory allocations in fragmented/high usage memory situation.
-  */
- enum {
--	MLX4_ICM_ALLOC_SIZE	= 1 << 18,
--	MLX4_TABLE_CHUNK_SIZE	= 1 << 18
-+	MLX4_ICM_ALLOC_SIZE	= PAGE_SIZE,
-+	MLX4_TABLE_CHUNK_SIZE	= PAGE_SIZE,
- };
- 
- static void mlx4_free_icm_pages(struct mlx4_dev *dev, struct mlx4_icm_chunk *chunk)
-@@ -398,9 +398,11 @@ int mlx4_init_icm_table(struct mlx4_dev *dev, struct mlx4_icm_table *table,
- 	u64 size;
- 
- 	obj_per_chunk = MLX4_TABLE_CHUNK_SIZE / obj_size;
-+	if (WARN_ON(!obj_per_chunk))
-+		return -EINVAL;
- 	num_icm = (nobj + obj_per_chunk - 1) / obj_per_chunk;
- 
--	table->icm      = kcalloc(num_icm, sizeof(*table->icm), GFP_KERNEL);
-+	table->icm      = kvzalloc(num_icm * sizeof(*table->icm), GFP_KERNEL);
- 	if (!table->icm)
+diff --git a/mm/backing-dev.c b/mm/backing-dev.c
+index 8fe3ebd..f9a2268 100644
+--- a/mm/backing-dev.c
++++ b/mm/backing-dev.c
+@@ -790,9 +790,10 @@ static int __init cgwb_init(void)
+ 	/*
+ 	 * There can be many concurrent release work items overwhelming
+ 	 * system_wq.  Put them in a separate wq and limit concurrency.
+-	 * There's no point in executing many of these in parallel.
++	 * Allow some level of concurrency so that we can batch on
++	 * synchronize_rcu_expedited() calls in bdi_unregister().
+ 	 */
+-	cgwb_release_wq = alloc_workqueue("cgwb_release", 0, 1);
++	cgwb_release_wq = alloc_workqueue("cgwb_release", 0, 16);
+ 	if (!cgwb_release_wq)
  		return -ENOMEM;
- 	table->virt     = virt;
-@@ -446,7 +448,7 @@ int mlx4_init_icm_table(struct mlx4_dev *dev, struct mlx4_icm_table *table,
- 			mlx4_free_icm(dev, table->icm[i], use_coherent);
- 		}
  
--	kfree(table->icm);
-+	kvfree(table->icm);
- 
- 	return -ENOMEM;
- }
-@@ -462,5 +464,5 @@ void mlx4_cleanup_icm_table(struct mlx4_dev *dev, struct mlx4_icm_table *table)
- 			mlx4_free_icm(dev, table->icm[i], table->coherent);
- 		}
- 
--	kfree(table->icm);
-+	kvfree(table->icm);
- }
--- 
-2.9.3
