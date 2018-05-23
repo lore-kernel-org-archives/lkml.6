@@ -1,55 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753984AbeEWEsS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 00:48:18 -0400
-Received: from asavdk3.altibox.net ([109.247.116.14]:48255 "EHLO
-        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751157AbeEWEsP (ORCPT
+        id S1753934AbeEWEt5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 00:49:57 -0400
+Received: from vps01.wiesinger.com ([46.36.37.179]:33670 "EHLO
+        vps01.wiesinger.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751193AbeEWEt4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 00:48:15 -0400
-Date: Wed, 23 May 2018 06:48:12 +0200
-From: Sam Ravnborg <sam@ravnborg.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-kbuild@vger.kernel.org, Ulf Magnusson <ulfalizer@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fixup! kconfig: refactor ncurses package checks for
- building mconf and nconf
-Message-ID: <20180523044812.GA24650@ravnborg.org>
-References: <1527041491-12647-1-git-send-email-yamada.masahiro@socionext.com>
+        Wed, 23 May 2018 00:49:56 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 wiesinger.com w4N4nnal025926
+Subject: Re: B53 DSA switch problem on Banana Pi-R1 on Fedora 26
+To: Florian Fainelli <f.fainelli@gmail.com>, Andrew Lunn <andrew@lunn.ch>
+Cc: linux-kernel@vger.kernel.org
+References: <3bdb712d-38bd-e2ca-63cf-8406a7b5689d@wiesinger.com>
+ <20180522201632.GB4396@lunn.ch>
+ <59d6b55f-d50a-063c-90a9-31a758e01383@gmail.com>
+From: Gerhard Wiesinger <lists@wiesinger.com>
+Message-ID: <fa5c2615-40b3-62bc-3dda-59f9ef574686@wiesinger.com>
+Date: Wed, 23 May 2018 06:49:49 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1527041491-12647-1-git-send-email-yamada.masahiro@socionext.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=dqr19Wo4 c=1 sm=1 tr=0
-        a=ddpE2eP9Sid01c7MzoqXPA==:117 a=ddpE2eP9Sid01c7MzoqXPA==:17
-        a=kj9zAlcOel0A:10 a=c-n4J4-pAAAA:8 a=VwQbUJbxAAAA:8 a=7gkXJVJtAAAA:8
-        a=_8JLyp63Z2Dxe0gkRoQA:9 a=CjuIK1q_8ugA:10 a=L0NDqeB7ZLmQzAogN4cw:22
-        a=AjGcO6oz07-iQ99wixmX:22 a=E9Po1WZjFZOl8hwRPBS3:22
+In-Reply-To: <59d6b55f-d50a-063c-90a9-31a758e01383@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 11:11:31AM +0900, Masahiro Yamada wrote:
-> It is redundant to pass -DNCURSES_WIDECHAR=1 explicitly; when we use
-> 'pkg-config --cflags', it takes care of appropriate flags.
-> 
-> Actually, 'pkg-config --cflags' will add -D_GNU_SOURCE, which will
-> define _XOPEN_SOURCE_EXTENDED, and NCURSES_WIDECHAR=1, anyway.
-> 
-> I added -D_GNU_SOURCE to follow the suggestion of pkg-config
-> for cases where pkg-config is not useful.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
-> 
-> The v3 (https://patchwork.kernel.org/patch/10417413/) was
-> reviewed and tested.
-> 
-> I'd like to squash this into it.
+On 22.05.2018 22:42, Florian Fainelli wrote:
+> On 05/22/2018 01:16 PM, Andrew Lunn wrote:
+>>> Planned network structure will be as with 4.7.x kernels:
+>>>
+>>> br0 <=> eth0.101 <=> eth0 (vlan 101 tagged) <=> lan 1-lan4 (vlan 101
+>>> untagged pvid)
+>>>
+>>> br1 <=> eth0.102 <=> eth0 (vlan 102 tagged) <=> wan (vlan 102 untagged pvid)
+>> Do you even need these vlans?
+> Yes, remember, b53 does not currently turn on Broadcom tags, so the only
+> way to segregate traffic is to have VLANs for that.
+>
+>> Are you doing this for port separation? To keep lan1-4 traffic
+>> separate from wan? DSA does that by default, no vlan needed.
+>>
+>> So you can just do
+>>
+>> ip link add name br0 type bridge
+>> ip link set dev br0 up
+>> ip link set dev lan1 master br0
+>> ip link set dev lan2 master br0
+>> ip link set dev lan3 master br0
+>> ip link set dev lan4 master br0
+>>
+>> and use interface wan directly, no bridge needed.
+> That would work once Broadcom tags are turned on which requires turning
+> on managed mode, which requires work that I have not been able to get
+> done :)
 
-Looks good.
-Reviewed-off-by: Sam Ravnborg <sam@ravnborg.org>
+Setup with swconfig:
 
-	Sam
+#!/usr/bin/bash
+
+
+INTERFACE=eth0
+
+# Delete all IP addresses and get link up
+ip addr flush dev ${INTERFACE}
+ip link set ${INTERFACE} up
+
+# Lamobo R1 aka BPi R1 Routerboard
+#
+# Speaker | LAN1 | LAN2 | LAN3 | LAN4 || LAN5 | HDMI
+# SW-Port |  P2  |  P1  |  P0  |  P4  ||  P3  |
+# VLAN    |  11  |  12  |  13  |  14  ||ALL(t)|
+#
+# Switch-Port P8 - ALL(t) boards internal CPU Port
+
+# Setup switch
+swconfig dev ${INTERFACE} set reset 1
+swconfig dev ${INTERFACE} set enable_vlan 1
+swconfig dev ${INTERFACE} vlan 101 set ports '3 8t'
+swconfig dev ${INTERFACE} vlan 102 set ports '4 0 1 2 8t'
+swconfig dev ${INTERFACE} set apply 1
+
+How to achieve this setup CURRENTLY with DSA?
+
+And in the future (time plan)?
+
+Thank you.
+
+Ciao,
+Gerhard
