@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933934AbeEWR7B (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 13:59:01 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:34936 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933870AbeEWR6u (ORCPT
+        id S933947AbeEWR7H (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 13:59:07 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:35873 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933899AbeEWR6z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 13:58:50 -0400
-X-Google-Smtp-Source: AB8JxZpANP7RRVLgE9Map1o+daOHFMLJQf8w7bGDmcbQM/YJK0CR6JK8FrlDveuA7A2vvFWsTO/u8g==
+        Wed, 23 May 2018 13:58:55 -0400
+X-Google-Smtp-Source: AB8JxZomxsrEJinog35+5xAo3ZeUIpJNr3Xq4Si+cwbjBhi7QbK75AGd3dqLdO+Ysk/Lt5/jLRH0qQ==
 From: Rajat Jain <rajatja@google.com>
 To: Bjorn Helgaas <bhelgaas@google.com>, Jonathan Corbet <corbet@lwn.net>,
         Philippe Ombredanne <pombredanne@nexb.com>,
@@ -24,10 +24,10 @@ To: Bjorn Helgaas <bhelgaas@google.com>, Jonathan Corbet <corbet@lwn.net>,
         linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org, Jes Sorensen <jsorensen@fb.com>,
         Kyle McMartin <jkkm@fb.com>
-Cc: rajatxjain@gmail.com, Rajat Jain <rajatj@google.com>
-Subject: [PATCH v2 3/5] PCI/AER: Add sysfs attributes to provide breakdown of AERs
-Date: Wed, 23 May 2018 10:58:06 -0700
-Message-Id: <20180523175808.28030-4-rajatja@google.com>
+Cc: rajatxjain@gmail.com
+Subject: [PATCH v2 5/5] Documentation/ABI: Add details of PCI AER statistics
+Date: Wed, 23 May 2018 10:58:08 -0700
+Message-Id: <20180523175808.28030-6-rajatja@google.com>
 X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
 In-Reply-To: <20180523175808.28030-1-rajatja@google.com>
 References: <20180522222805.80314-1-rajatja@google.com>
@@ -36,105 +36,144 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add sysfs attributes to provide breakdown of the AERs seen,
-into different type of correctable or uncorrectable errors:
+Add the PCI AER statistics details to
+Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
+and provide a pointer to it in
+Documentation/PCI/pcieaer-howto.txt
 
-dev_breakdown_correctable
-dev_breakdown_uncorrectable
-
-Signed-off-by: Rajat Jain <rajatj@google.com>
+Signed-off-by: Rajat Jain <rajatja@google.com>
 ---
-v2: Use tabs instead of spaces, fix the subject, and print
-    all non zero counters.
+v2: Move the documentation to Documentation/ABI/
 
- drivers/pci/pcie/aer/aerdrv.h          |  6 ++++++
- drivers/pci/pcie/aer/aerdrv_errprint.c |  6 ++++--
- drivers/pci/pcie/aer/aerdrv_stats.c    | 28 ++++++++++++++++++++++++++
- 3 files changed, 38 insertions(+), 2 deletions(-)
+ .../testing/sysfs-bus-pci-devices-aer_stats   | 103 ++++++++++++++++++
+ Documentation/PCI/pcieaer-howto.txt           |   5 +
+ 2 files changed, 108 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
 
-diff --git a/drivers/pci/pcie/aer/aerdrv.h b/drivers/pci/pcie/aer/aerdrv.h
-index b5d5ad6f2c03..048fbd7c9633 100644
---- a/drivers/pci/pcie/aer/aerdrv.h
-+++ b/drivers/pci/pcie/aer/aerdrv.h
-@@ -89,6 +89,12 @@ int pci_aer_stats_init(struct pci_dev *pdev);
- void pci_aer_stats_exit(struct pci_dev *pdev);
- void pci_dev_aer_stats_incr(struct pci_dev *pdev, struct aer_err_info *info);
- 
-+extern const char
-+*aer_correctable_error_string[AER_MAX_TYPEOF_CORRECTABLE_ERRS];
+diff --git a/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats b/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
+new file mode 100644
+index 000000000000..f55c389290ac
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
+@@ -0,0 +1,103 @@
++==========================
++PCIe Device AER statistics
++==========================
++These attributes show up under all the devices that are AER capable. These
++statistical counters indicate the errors "as seen/reported by the device".
++Note that this may mean that if an end point is causing problems, the AER
++counters may increment at its link partner (e.g. root port) because the
++errors will be "seen" / reported by the link partner and not the the
++problematic end point itself (which may report all counters as 0 as it never
++saw any problems).
 +
-+extern const char
-+*aer_uncorrectable_error_string[AER_MAX_TYPEOF_UNCORRECTABLE_ERRS];
++Where:		/sys/bus/pci/devices/<dev>/aer_stats/dev_total_cor_errs
++Date:		May 2018
++Kernel Version: 4.17.0
++Contact:	linux-pci@vger.kernel.org, rajatja@google.com
++Description:	Total number of correctable errors seen and reported by this
++		PCI device using ERR_COR.
 +
- #ifdef CONFIG_ACPI_APEI
- int pcie_aer_get_firmware_first(struct pci_dev *pci_dev);
- #else
-diff --git a/drivers/pci/pcie/aer/aerdrv_errprint.c b/drivers/pci/pcie/aer/aerdrv_errprint.c
-index 5e8b98deda08..5585f309f1a8 100644
---- a/drivers/pci/pcie/aer/aerdrv_errprint.c
-+++ b/drivers/pci/pcie/aer/aerdrv_errprint.c
-@@ -68,7 +68,8 @@ static const char *aer_error_layer[] = {
- 	"Transaction Layer"
- };
- 
--static const char *aer_correctable_error_string[] = {
-+const char
-+*aer_correctable_error_string[AER_MAX_TYPEOF_CORRECTABLE_ERRS] = {
- 	"Receiver Error",		/* Bit Position 0	*/
- 	NULL,
- 	NULL,
-@@ -87,7 +88,8 @@ static const char *aer_correctable_error_string[] = {
- 	"Header Log Overflow",		/* Bit Position 15	*/
- };
- 
--static const char *aer_uncorrectable_error_string[] = {
-+const char
-+*aer_uncorrectable_error_string[AER_MAX_TYPEOF_UNCORRECTABLE_ERRS] = {
- 	"Undefined",			/* Bit Position 0	*/
- 	NULL,
- 	NULL,
-diff --git a/drivers/pci/pcie/aer/aerdrv_stats.c b/drivers/pci/pcie/aer/aerdrv_stats.c
-index 5555beffef2b..e47321b267f6 100644
---- a/drivers/pci/pcie/aer/aerdrv_stats.c
-+++ b/drivers/pci/pcie/aer/aerdrv_stats.c
-@@ -58,10 +58,38 @@ aer_stats_aggregate_attr(dev_total_cor_errs);
- aer_stats_aggregate_attr(dev_total_fatal_errs);
- aer_stats_aggregate_attr(dev_total_nonfatal_errs);
- 
-+#define aer_stats_breakdown_attr(field, stats_array, strings_array)	\
-+	static ssize_t							\
-+	field##_show(struct device *dev, struct device_attribute *attr,	\
-+		     char *buf)						\
-+{									\
-+	unsigned int i;							\
-+	char *str = buf;						\
-+	struct pci_dev *pdev = to_pci_dev(dev);				\
-+	u64 *stats = pdev->aer_stats->stats_array;			\
-+	for (i = 0; i < ARRAY_SIZE(strings_array); i++) {		\
-+		if (strings_array[i])					\
-+			str += sprintf(str, "%s = 0x%llx\n",		\
-+				       strings_array[i], stats[i]);	\
-+		else if (stats[i])					\
-+			str += sprintf(str, #stats_array "bit[%d] = 0x%llx\n",\
-+				       i, stats[i]);			\
-+	}								\
-+	return str-buf;							\
-+}									\
-+static DEVICE_ATTR_RO(field)
++Where:		/sys/bus/pci/devices/<dev>/aer_stats/dev_total_fatal_errs
++Date:		May 2018
++Kernel Version: 4.17.0
++Contact:	linux-pci@vger.kernel.org, rajatja@google.com
++Description:	Total number of uncorrectable fatal errors seen and reported
++		by this PCI device using ERR_FATAL.
 +
-+aer_stats_breakdown_attr(dev_breakdown_correctable, dev_cor_errs,
-+			 aer_correctable_error_string);
-+aer_stats_breakdown_attr(dev_breakdown_uncorrectable, dev_uncor_errs,
-+			 aer_uncorrectable_error_string);
++Where:		/sys/bus/pci/devices/<dev>/aer_stats/dev_total_nonfatal_errs
++Date:		May 2018
++Kernel Version: 4.17.0
++Contact:	linux-pci@vger.kernel.org, rajatja@google.com
++Description:	Total number of uncorrectable non-fatal errors seen and reported
++		by this PCI device using ERR_NONFATAL.
 +
- static struct attribute *aer_stats_attrs[] __ro_after_init = {
- 	&dev_attr_dev_total_cor_errs.attr,
- 	&dev_attr_dev_total_fatal_errs.attr,
- 	&dev_attr_dev_total_nonfatal_errs.attr,
-+	&dev_attr_dev_breakdown_correctable.attr,
-+	&dev_attr_dev_breakdown_uncorrectable.attr,
- 	NULL
- };
++Where:		/sys/bus/pci/devices/<dev>/aer_stats/dev_breakdown_correctable
++Date:		May 2018
++Kernel Version: 4.17.0
++Contact:	linux-pci@vger.kernel.org, rajatja@google.com
++Description:	Breakdown of of correctable errors seen and reported by this
++		PCI device using ERR_COR. A sample result looks like this:
++-----------------------------------------
++Receiver Error = 0x174
++Bad TLP = 0x19
++Bad DLLP = 0x3
++RELAY_NUM Rollover = 0x0
++Replay Timer Timeout = 0x1
++Advisory Non-Fatal = 0x0
++Corrected Internal Error = 0x0
++Header Log Overflow = 0x0
++-----------------------------------------
++
++Where:		/sys/bus/pci/devices/<dev>/aer_stats/dev_breakdown_uncorrectable
++Date:		May 2018
++Kernel Version: 4.17.0
++Contact:	linux-pci@vger.kernel.org, rajatja@google.com
++Description:	Breakdown of of correctable errors seen and reported by this
++		PCI device using ERR_FATAL or ERR_NONFATAL. A sample result
++		looks like this:
++-----------------------------------------
++Undefined = 0x0
++Data Link Protocol = 0x0
++Surprise Down Error = 0x0
++Poisoned TLP = 0x0
++Flow Control Protocol = 0x0
++Completion Timeout = 0x0
++Completer Abort = 0x0
++Unexpected Completion = 0x0
++Receiver Overflow = 0x0
++Malformed TLP = 0x0
++ECRC = 0x0
++Unsupported Request = 0x0
++ACS Violation = 0x0
++Uncorrectable Internal Error = 0x0
++MC Blocked TLP = 0x0
++AtomicOp Egress Blocked = 0x0
++TLP Prefix Blocked Error = 0x0
++-----------------------------------------
++
++============================
++PCIe Rootport AER statistics
++============================
++These attributes showup under only the rootports that are AER capable. These
++indicate the number of error messages as "reported to" the rootport. Please note
++that the rootports also transmit (internally) the ERR_* messages for errors seen
++by the internal rootport PCI device, so these counters includes them and are
++thus cumulative of all the error messages on the PCI hierarchy originating
++at that root port.
++
++Where:		/sys/bus/pci/devices/<dev>/aer_stats/rootport_total_cor_errs
++Date:		May 2018
++Kernel Version: 4.17.0
++Contact:	linux-pci@vger.kernel.org, rajatja@google.com
++Description:	Total number of ERR_COR messages reported to rootport.
++
++Where:		/sys/bus/pci/devices/<dev>/aer_stats/rootport_total_fatal_errs
++Date:		May 2018
++Kernel Version: 4.17.0
++Contact:	linux-pci@vger.kernel.org, rajatja@google.com
++Description:	Total number of ERR_FATAL messages reported to rootport.
++
++Where:	    /sys/bus/pci/devices/<dev>/aer_stats/rootport_total_nonfatal_errs
++Date:		May 2018
++Kernel Version: 4.17.0
++Contact:	linux-pci@vger.kernel.org, rajatja@google.com
++Description:	Total number of ERR_NONFATAL messages reported to rootport.
+diff --git a/Documentation/PCI/pcieaer-howto.txt b/Documentation/PCI/pcieaer-howto.txt
+index acd0dddd6bb8..91b6e677cb8c 100644
+--- a/Documentation/PCI/pcieaer-howto.txt
++++ b/Documentation/PCI/pcieaer-howto.txt
+@@ -73,6 +73,11 @@ In the example, 'Requester ID' means the ID of the device who sends
+ the error message to root port. Pls. refer to pci express specs for
+ other fields.
+ 
++2.4 AER Statistics / Counters
++
++When PCIe AER errors are captured, the counters / statistics are also exposed
++in form of sysfs attributes which are documented at
++Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
+ 
+ 3. Developer Guide
  
 -- 
 2.17.0.441.gb46fe60e1d-goog
