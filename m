@@ -1,122 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754838AbeEWSKn (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 14:10:43 -0400
-Received: from foss.arm.com ([217.140.101.70]:59746 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752282AbeEWSKj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 14:10:39 -0400
-Date: Wed, 23 May 2018 19:10:06 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Boaz Harrosh <boazh@netapp.com>
-Cc: Christopher Lameter <cl@linux.com>, Jeff Moyer <jmoyer@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Rik van Riel <riel@redhat.com>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Amit Golander <Amit.Golander@netapp.com>
-Subject: Re: [PATCH] mm: Add new vma flag VM_LOCAL_CPU
-Message-ID: <20180523181004.txe4x6rx52wtcvjx@lakrids.cambridge.arm.com>
-References: <0efb5547-9250-6b6c-fe8e-cf4f44aaa5eb@netapp.com>
- <20180514191551.GA27939@bombadil.infradead.org>
- <7ec6fa37-8529-183d-d467-df3642bcbfd2@netapp.com>
- <20180515004137.GA5168@bombadil.infradead.org>
- <f3a66d8b-b9dc-b110-08aa-a63f0c309fb2@netapp.com>
- <010001637399f796-3ffe3ed2-2fb1-4d43-84f0-6a65b6320d66-000000@email.amazonses.com>
- <5aea6aa0-88cc-be7a-7012-7845499ced2c@netapp.com>
+        id S1754855AbeEWSLC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 14:11:02 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:38378 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752282AbeEWSLA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 14:11:00 -0400
+Date: Wed, 23 May 2018 11:10:58 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Ray Jui <ray.jui@broadcom.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/5] Documentation: DT: Add optional 'timeout-sec'
+ property for sp805
+Message-ID: <20180523181058.GC27570@roeck-us.net>
+References: <1527014840-21236-1-git-send-email-ray.jui@broadcom.com>
+ <1527014840-21236-2-git-send-email-ray.jui@broadcom.com>
+ <af81ea74-fb80-11e2-7bdc-d3607bdbd46b@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5aea6aa0-88cc-be7a-7012-7845499ced2c@netapp.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <af81ea74-fb80-11e2-7bdc-d3607bdbd46b@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Authenticated_sender: guenter@roeck-us.net
+X-OutGoing-Spam-Status: No, score=-1.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
+X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 07:05:48PM +0300, Boaz Harrosh wrote:
-> On 18/05/18 17:14, Christopher Lameter wrote:
-> > On Tue, 15 May 2018, Boaz Harrosh wrote:
-> > 
-> >>> I don't think page tables work the way you think they work.
-> >>>
-> >>> +               err = vm_insert_pfn_prot(zt->vma, zt_addr, pfn, prot);
-> >>>
-> >>> That doesn't just insert it into the local CPU's page table.  Any CPU
-> >>> which directly accesses or even prefetches that address will also get
-> >>> the translation into its cache.
-> >>>
-> >>
-> >> Yes I know, but that is exactly the point of this flag. I know that this
-> >> address is only ever accessed from a single core. Because it is an mmap (vma)
-> >> of an O_TMPFILE-exclusive file created in a core-pinned thread and I allow
-> >> only that thread any kind of access to this vma. Both the filehandle and the
-> >> mmaped pointer are kept on the thread stack and have no access from outside.
-> >>
-> >> So the all point of this flag is the kernel driver telling mm that this
-> >> address is enforced to only be accessed from one core-pinned thread.
-> > 
-> > But there are no provisions for probhiting accesses from other cores?
-> > 
-> > This means that a casual accidental write from a thread executing on
-> > another core can lead to arbitrary memory corruption because the cache
-> > flushing has been bypassed.
+On Wed, May 23, 2018 at 11:57:25AM +0100, Robin Murphy wrote:
+> On 22/05/18 19:47, Ray Jui wrote:
+> >Update the SP805 binding document to add optional 'timeout-sec'
+> >devicetree property
+> >
+> >Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+> >Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+> >---
+> >  Documentation/devicetree/bindings/watchdog/sp805-wdt.txt | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> >diff --git a/Documentation/devicetree/bindings/watchdog/sp805-wdt.txt b/Documentation/devicetree/bindings/watchdog/sp805-wdt.txt
+> >index edc4f0e..f898a86 100644
+> >--- a/Documentation/devicetree/bindings/watchdog/sp805-wdt.txt
+> >+++ b/Documentation/devicetree/bindings/watchdog/sp805-wdt.txt
+> >@@ -19,6 +19,8 @@ Required properties:
+> >  Optional properties:
+> >  - interrupts : Should specify WDT interrupt number.
+> >+- timeout-sec : Should specify default WDT timeout in seconds. If unset, the
+> >+                default timeout is 30 seconds
 > 
-> No this is not accurate. A "casual accidental write" will not do any harm.
-> Only a well concerted malicious server can exploit this. A different thread
-> on a different core will need to hit the exact time to read from the exact
-> pointer at the narrow window while the IO is going on. fault-in a TLB at the
-> time of the valid mapping.
-
-TLB entries can be allocated at any time, for any reason. Even if a
-program doesn't explicitly read from the exact pointer at that time, it
-doesn't guarantee that a TLB entry won't be allocated.
-
-> Then later after the IO has ended and before any
-> of the threads where scheduled out, maliciously write. 
-
-... or, regardless of the application's wishes, the core mm code decides
-it needs to swap this page out (only doing local TLB invalidation), and
-later pages it back in.
-
-Several things can happen, e.g.
-
-* a casual write can corrupt the original page, which is now in use for
-  something else.
-
-* a CPU might re-allocate a TLB entry for that page, finding it
-  conflicts with an existing entry. This is *fatal* on some
-  architectures.
-
-> All the while the App has freed its buffers and the buffer was used
-> for something else.  Please bear in mind that this is only As root, in
-> an /sbin/ executable signed by the Kernel's key.
-
-That isn't enforced by the core API additions, and regardless, root does
-not necessarily imply access to kernel-internal stuff (e.g. if the
-lockdown stuff goes in).
-
-Claiming that root access means we don't need to care about robustness
-is not a good argument.
-
-[...]
-
-> So lets start from the Beginning.
+> According to the SP805 TRM, the default interval is dependent on the rate of
+> WDOGCLK, but would typically be a lot longer than that :/
 > 
-> How can we implement "Private memory"?
+Depends on the definition of "default". In the context of watchdog drivers,
+it is (or should be) a driver default, not a chip default.
 
-Use separate processes rather than threads. Each will have a separate
-mm, so the arch can get away with local TLB invalidation.
+Guenter
 
-If you wish to share portions of memory between these processes, we have
-shared memory APIs to do so.
-
-Thanks,
-Mark.
+> On a related note, anyone have any idea why we seem to have two subtly
+> different SP805 bindings defined?
+> 
+> Robin.
+> 
+> >  Examples:
+> >
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
