@@ -1,62 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935030AbeEWXEp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 19:04:45 -0400
-Received: from ozlabs.org ([203.11.71.1]:34275 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934854AbeEWXEn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 19:04:43 -0400
-Date: Thu, 24 May 2018 09:04:00 +1000
-From: Paul Mackerras <paulus@ozlabs.org>
-To: Eric Biggers <ebiggers3@gmail.com>
-Cc: linux-ppp@vger.kernel.org, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Guillaume Nault <g.nault@alphalink.fr>,
-        syzkaller-bugs@googlegroups.com, Eric Biggers <ebiggers@google.com>
-Subject: Re: [PATCH v2] ppp: remove the PPPIOCDETACH ioctl
-Message-ID: <20180523230400.GA13256@fergus.ozlabs.ibm.com>
-References: <20180523035952.25768-1-ebiggers3@gmail.com>
- <20180523213738.146911-1-ebiggers3@gmail.com>
+        id S935019AbeEWXHT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 19:07:19 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35310 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934671AbeEWXHR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 19:07:17 -0400
+Date: Thu, 24 May 2018 00:07:13 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Tree for May 17
+Message-ID: <20180523230713.GQ4828@sirena.org.uk>
+References: <20180517170656.1f746914@canb.auug.org.au>
+ <20180522141843.GC24776@sirena.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="de1H0RjRxOSdb4we"
 Content-Disposition: inline
-In-Reply-To: <20180523213738.146911-1-ebiggers3@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180522141843.GC24776@sirena.org.uk>
+X-Cookie: Excellent day to have a rotten day.
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 02:37:38PM -0700, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> The PPPIOCDETACH ioctl effectively tries to "close" the given ppp file
-> before f_count has reached 0, which is fundamentally a bad idea.  It
-> does check 'f_count < 2', which excludes concurrent operations on the
-> file since they would only be possible with a shared fd table, in which
-> case each fdget() would take a file reference.  However, it fails to
-> account for the fact that even with 'f_count == 1' the file can still be
-> linked into epoll instances.  As reported by syzbot, this can trivially
-> be used to cause a use-after-free.
-> 
-> Yet, the only known user of PPPIOCDETACH is pppd versions older than
-> ppp-2.4.2, which was released almost 15 years ago (November 2003).
-> Also, PPPIOCDETACH apparently stopped working reliably at around the
-> same time, when the f_count check was added to the kernel, e.g. see
-> https://lkml.org/lkml/2002/12/31/83.  Also, the current 'f_count < 2'
-> check makes PPPIOCDETACH only work in single-threaded applications; it
-> always fails if called from a multithreaded application.
-> 
-> All pppd versions released in the last 15 years just close() the file
-> descriptor instead.
-> 
-> Therefore, instead of hacking around this bug by exporting epoll
-> internals to modules, and probably missing other related bugs, just
-> remove the PPPIOCDETACH ioctl and see if anyone actually notices.  Leave
-> a stub in place that prints a one-time warning and returns EINVAL.
-> 
-> Reported-by: syzbot+16363c99d4134717c05b@syzkaller.appspotmail.com
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-Acked-by: Paul Mackerras <paulus@ozlabs.org>
+--de1H0RjRxOSdb4we
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, May 22, 2018 at 03:18:43PM +0100, Mark Brown wrote:
+> On Thu, May 17, 2018 at 05:06:56PM +1000, Stephen Rothwell wrote:
+>=20
+> > News: I will not be doing any linux-next releases between Friday 18 May
+> > and Friday 25 May inclusive.
+>=20
+> Just noticed this, I'm going to try to cover starting tomorrow.  The
+> usual caveats about reduced service and reliability apply.
+
+This isn't going to happen for today, I ran into some scripting/infrastruct=
+ure
+issues which effectively delayed the start of the build by about six
+hours.  Those are fixed now so fingers crossed things should be fine
+tomorrow, I'll let the build run for a while longer today and report any
+further issues but there won't be a tree.
+
+--de1H0RjRxOSdb4we
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsF9CEACgkQJNaLcl1U
+h9B5Awf9GK92w7QS1c8BjUvYg9yw61GzpW9RNkeHxHXezeHoyFvlGh1GlQNrOwfm
+diu3aDYyrNCgMpi1rnJdV5h/WIrwTPuo2UzLLIpSii5u5q2NaAPgFGiS1NX3IIio
+T8yst3k5v7y0pUWBYL6Ow3+DrcG8u+Zz5rWW8ZhxXu0b+BVyKVL64BuclJ2l+OH9
+Axv7VLaMzyUeWO/rZvFzmYuszI1dhgEgErj74jVPurcHMPpNdwK+QL9u/K+8aC1S
+Rie9CKsK1wvPSVfoy05ngEBRN5fUeX+loLO+IwEFMxB9m7Jqo7s8gS2fPBj+CxZ7
+AzHOb+M54VudD3zX9jeljYpH7D1q1g==
+=Zu3k
+-----END PGP SIGNATURE-----
+
+--de1H0RjRxOSdb4we--
