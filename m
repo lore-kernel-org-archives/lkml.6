@@ -1,75 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934952AbeEWWsP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 18:48:15 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:40510 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934544AbeEWWsO (ORCPT
+        id S934971AbeEWWvx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 18:51:53 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:38498 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934516AbeEWWvu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 18:48:14 -0400
-X-Google-Smtp-Source: AB8JxZpcGnmlAZY2yfOmwVKignMIrKu6OQ3dLKtVB2GUsRUl/fqKqF0vSrEdBCiiVH7t8SwjuaRyBI+skECqx/1tZiA=
+        Wed, 23 May 2018 18:51:50 -0400
+X-Google-Smtp-Source: AB8JxZp++Dw/Y4iRLh7SKiPvyrhWd1yk4+nkre3RAeFg+Jta+T7MnqtGIPilg8TJKm+9wLsyp7aTRAS3mL/OIomfR34=
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5j+OyUWm8N0s-6NnREFakpR6xFJTt7+KK99JRm4i+ZAmyQ@mail.gmail.com>
-References: <20180313162411.GA1983@embeddedgus> <20180314110834.GB8564@ulmo>
- <CACAvsv6NhUrskZGMJGyO42LtuNTWygsutddo_-fuhHRPCs2KWA@mail.gmail.com> <CAGXu5j+OyUWm8N0s-6NnREFakpR6xFJTt7+KK99JRm4i+ZAmyQ@mail.gmail.com>
+In-Reply-To: <20180328175957.23904-1-labbott@redhat.com>
+References: <20180328175957.23904-1-labbott@redhat.com>
 From: Kees Cook <keescook@chromium.org>
-Date: Wed, 23 May 2018 15:48:12 -0700
-X-Google-Sender-Auth: xLD7YV5Bjof2xLwrG0_9hnyPAW4
-Message-ID: <CAGXu5jKAVxzftPJkY3YJ2P-M4bfk1+8UHZZYRG32qBxauTf43g@mail.gmail.com>
-Subject: Re: [PATCH v2] drm/nouveau/secboot: remove VLA usage
-To: Ben Skeggs <skeggsb@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        David Airlie <airlied@linux.ie>, nouveau@lists.freedesktop.org,
+Date: Wed, 23 May 2018 15:51:48 -0700
+X-Google-Sender-Auth: _bVW6TCRAe00dRlMQl3aOR6h_rQ
+Message-ID: <CAGXu5jJwPbUHherfpPbyN8o9NntKN_CYY_TRyvrd+K_LSvZMFw@mail.gmail.com>
+Subject: Re: [PATCH v3] gpio: Remove VLA from stmpe driver
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Laura Abbott <labbott@redhat.com>,
+        Patrice Chotard <patrice.chotard@st.com>, linux-gpio@vger.kernel.org,
         LKML <linux-kernel@vger.kernel.org>,
-        Maling list - DRI developers
-        <dri-devel@lists.freedesktop.org>,
-        David Laight <David.Laight@aculab.com>,
-        Ben Skeggs <bskeggs@redhat.com>
+        Kernel Hardening <kernel-hardening@lists.openwall.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 4:25 PM, Kees Cook <keescook@chromium.org> wrote:
-> On Thu, Mar 15, 2018 at 7:05 PM, Ben Skeggs <skeggsb@gmail.com> wrote:
->> On 14 March 2018 at 21:08, Thierry Reding <thierry.reding@gmail.com> wrote:
->>> On Tue, Mar 13, 2018 at 11:24:11AM -0500, Gustavo A. R. Silva wrote:
->>>> In preparation to enabling -Wvla, remove VLA. In this particular
->>>> case directly use macro NVKM_MSGQUEUE_CMDLINE_SIZE instead of local
->>>> variable cmdline_size. Also, remove cmdline_size as it is not
->>>> actually useful anymore.
->>>>
->>>> The use of stack Variable Length Arrays needs to be avoided, as they
->>>> can be a vector for stack exhaustion, which can be both a runtime bug
->>>> or a security flaw. Also, in general, as code evolves it is easy to
->>>> lose track of how big a VLA can get. Thus, we can end up having runtime
->>>> failures that are hard to debug.
->>>>
->>>> Also, fixed as part of the directive to remove all VLAs from
->>>> the kernel: https://lkml.org/lkml/2018/3/7/621
->>>>
->>>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->>>> ---
->>>> Changes in v2:
->>>>  - Use sizeof(buf) instead of NVKM_MSGQUEUE_CMDLINE_SIZE. This change
->>>>    is based on the feedback provided by David Laight. Thanks David.
->>>>
->>>>  drivers/gpu/drm/nouveau/nvkm/subdev/secboot/ls_ucode_msgqueue.c | 7 +++----
->>>>  1 file changed, 3 insertions(+), 4 deletions(-)
->>>
->>> Reviewed-by: Thierry Reding <treding@nvidia.com>
->> Thanks everyone.  I've taken the patch in my tree.
+On Wed, Mar 28, 2018 at 10:59 AM, Laura Abbott <labbott@redhat.com> wrote:
+> The new challenge is to remove VLAs from the kernel
+> (see https://lkml.org/lkml/2018/3/7/621)
 >
-> Hi!
+> The number of GPIOs on the supported chips is fairly small
+> so stack allocate to a known upper bound and spit out a warning
+> if any new chips have more gpios.
 >
-> Just checking in on this -- I don't see this patch in linux-next. Is
-> this queued somewhere else?
+> Signed-off-by: Laura Abbott <labbott@redhat.com>
 
-Hi, it's been another month; I still don't see this in linux-next.
-Daniel, can this go via drm-misc?
+Reviewed-by: Kees Cook <keescook@chromium.org>
+
+Linus, I think this patch is still needed and got missed? Can you take
+it as well?
+
+Thanks!
 
 -Kees
+
+> ---
+> v3: Split this off from the rest of the series since some of the
+> patches had been picked up. Switched to just hardcoding an upper
+> bound for the stack array since it's only a few extra bytes
+> of stack space.
+> ---
+>  drivers/gpio/gpio-stmpe.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
+> index f8d7d1cd8488..8d6a5a7e612d 100644
+> --- a/drivers/gpio/gpio-stmpe.c
+> +++ b/drivers/gpio/gpio-stmpe.c
+> @@ -363,13 +363,15 @@ static struct irq_chip stmpe_gpio_irq_chip = {
+>         .irq_set_type           = stmpe_gpio_irq_set_type,
+>  };
+>
+> +#define MAX_GPIOS 24
+> +
+>  static irqreturn_t stmpe_gpio_irq(int irq, void *dev)
+>  {
+>         struct stmpe_gpio *stmpe_gpio = dev;
+>         struct stmpe *stmpe = stmpe_gpio->stmpe;
+>         u8 statmsbreg;
+>         int num_banks = DIV_ROUND_UP(stmpe->num_gpios, 8);
+> -       u8 status[num_banks];
+> +       u8 status[DIV_ROUND_UP(MAX_GPIOS, 8)];
+>         int ret;
+>         int i;
+>
+> @@ -434,6 +436,11 @@ static int stmpe_gpio_probe(struct platform_device *pdev)
+>         struct stmpe_gpio *stmpe_gpio;
+>         int ret, irq;
+>
+> +       if (stmpe->num_gpios > MAX_GPIOS) {
+> +               dev_err(&pdev->dev, "Need to increase maximum GPIO number\n");
+> +               return -EINVAL;
+> +       }
+> +
+>         stmpe_gpio = kzalloc(sizeof(*stmpe_gpio), GFP_KERNEL);
+>         if (!stmpe_gpio)
+>                 return -ENOMEM;
+> --
+> 2.14.3
+>
+
+
 
 -- 
 Kees Cook
