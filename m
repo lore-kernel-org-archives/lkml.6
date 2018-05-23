@@ -1,50 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933657AbeEWPl1 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 11:41:27 -0400
-Received: from prv1-mh.provo.novell.com ([137.65.248.33]:39496 "EHLO
-        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932578AbeEWPlY (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:5:1>);
-        Wed, 23 May 2018 11:41:24 -0400
-Message-Id: <5B058BA002000078001C523F@prv1-mh.provo.novell.com>
-X-Mailer: Novell GroupWise Internet Agent 18.0.0 
-Date: Wed, 23 May 2018 09:41:20 -0600
-From: "Jan Beulich" <JBeulich@suse.com>
-To: "Boris Ostrovsky" <boris.ostrovsky@oracle.com>
-Cc: <brgerst@gmail.com>, "xen-devel" <xen-devel@lists.xenproject.org>,
-        "Juergen Gross" <jgross@suse.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 1/2] xen/PVH: Set up GS segment for stack canary
-References: <20180523143002.29252-1-boris.ostrovsky@oracle.com>
- <20180523143002.29252-2-boris.ostrovsky@oracle.com>
-In-Reply-To: <20180523143002.29252-2-boris.ostrovsky@oracle.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
+        id S933687AbeEWPli (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 11:41:38 -0400
+Received: from foss.arm.com ([217.140.101.70]:57400 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933548AbeEWPld (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 11:41:33 -0400
+Date: Wed, 23 May 2018 16:41:25 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Ilia Lin <ilialin@codeaurora.org>
+Cc: vireshk@kernel.org, nm@ti.com, sboyd@kernel.org, robh@kernel.org,
+        mark.rutland@arm.com, rjw@rjwysocki.net, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH v11 0/2] Kryo CPU scaling driver
+Message-ID: <20180523154125.GA30427@e107155-lin>
+References: <b4c28b51-ecd5-649b-e8fa-e5ce1bbb3139@arm.com>
+ <f53d6035-d409-4535-9dd0-03baedc9b4a8@email.android.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <f53d6035-d409-4535-9dd0-03baedc9b4a8@email.android.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->>> On 23.05.18 at 16:30, <boris.ostrovsky@oracle.com> wrote:
-> @@ -98,6 +101,12 @@ ENTRY(pvh_start_xen)
->  	/* 64-bit entry point. */
->  	.code64
->  1:
-> +	/* Set base address in stack canary descriptor. */
-> +	mov $MSR_GS_BASE,%ecx
-> +	mov $_pa(canary), %rax
-> +	xor %rdx, %rdx
+On Wed, May 23, 2018 at 06:34:06PM +0300, Ilia Lin wrote:
+> It may be merged alone safely. However to actually work, it needs a clock
+> driver as well, and the OPP tables in tue device tree. Those are submitted now
+> 8n 2 separate series. This is in order to provide each maintainer with domain
+> specific series, as per Viresh's suggestion.
 
-Why rax and rdx instead of eax and edx? In the former case, the
-relocation produced might confuse whatever entity processing it
-(it'll have a sign-extended 32-bit quantity to deal with, which
-wouldn't allow representing an address in the [2Gb, 4Gb) range).
-In the latter case, while surely neither performance nor code size
-matter much here, it's still a bad precedent (people copy-and-paste
-code all the time): Zero-ing of registers should generally use the
-32-bit forms of the insn. Gas has actually gained an optimization
-mode recently (upon request from Linus and the x86 maintainers)
-to silently "repair" such inefficiencies.
+I understand that. I was trying to get overall structure to better understand
+how it all glue together in the system(just for self education).
 
-Jan
+--
+Regards,
+Sudeep
