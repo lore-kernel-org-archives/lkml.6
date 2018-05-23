@@ -1,107 +1,156 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934912AbeEWWU0 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 18:20:26 -0400
-Received: from mail-out.m-online.net ([212.18.0.9]:39037 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934666AbeEWWUW (ORCPT
+        id S934869AbeEWWVi (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 18:21:38 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:46201 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934486AbeEWWVd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 18:20:22 -0400
-X-Auth-Info: nEhTM1XWKMmdF+CupLZ2wd1Zg5NzVffKPEgynt8QJK8=
-Date: Thu, 24 May 2018 00:18:33 +0200
-From: Lukasz Majewski <lukma@denx.de>
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] ARM: DTS: imx53: Add support for imx53 HSC/DDC boards
- from K+P
-Message-ID: <20180524001833.58b9b59d@jawa>
-In-Reply-To: <CAOMZO5DoLwEmQz5BQHDLk8sBq7mDH_UxBjRA0RGKb+PunMYu-Q@mail.gmail.com>
-References: <20180509153428.1440-1-lukma@denx.de>
-        <CAOMZO5AexXNEGVoXa9K_GAm+aFLNRQOXOhF_SdKAjV1qmuD2nA@mail.gmail.com>
-        <20180519140202.3449e3c1@jawa>
-        <CAOMZO5DoLwEmQz5BQHDLk8sBq7mDH_UxBjRA0RGKb+PunMYu-Q@mail.gmail.com>
-Organization: denx.de
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_//Jhrf4jMObQ6LFENPwbIPV1"; protocol="application/pgp-signature"
+        Wed, 23 May 2018 18:21:33 -0400
+X-Google-Smtp-Source: AB8JxZpD1o6ezL7xArfM3IaYxu7wDQ37stcGFVb0itR6agZKp5YxbJmuY8RJ5p4NMsGONQi0rQkgog==
+From: Tim Bird <tbird20d@gmail.com>
+X-Google-Original-From: Tim Bird <tim.bird@sony.com>
+To: corbet@lwn.net
+Cc: tim.bird@sony.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] docs: update kernel versions and dates in tables
+Date: Wed, 23 May 2018 15:20:14 -0700
+Message-Id: <1527114014-26240-1-git-send-email-tim.bird@sony.com>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_//Jhrf4jMObQ6LFENPwbIPV1
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Every once in a while, we should update the examples
+to reflect more recent kernel versions.
 
-Hi Fabio,
+Update the tables describing kernel releases, the merge window,
+and current longterm maintained kernel, from 2.6-era kernels
+to 4.x.
 
-> Hi Lukasz,
->=20
-> On Sat, May 19, 2018 at 9:02 AM, Lukasz Majewski <lukma@denx.de>
-> wrote:
->=20
-> > After removing imx53-kp-ddc and imx53-kp-common iomux subnodes I do
-> > see following errors in the dmesg (v4.17-rc5):
-> >
-> > imx53-pinctrl 53fa8000.iomuxc: function 'iomuxc' not supported
-> > imx53-pinctrl 53fa8000.iomuxc: invalid function iomuxc in map
-> > table =20
->=20
-> Could you please investigate this error?
->=20
+Signed-off-by: Tim Bird <tim.bird@sony.com>
+---
+ Documentation/process/2.Process.rst | 72 +++++++++++++++++++------------------
+ 1 file changed, 38 insertions(+), 34 deletions(-)
 
-Ok.
-
-> I have just tried the following change on a imx53-qsb:
-> http://code.bulix.org/ik01yu-339697
-
-I've noticed that this is the "common" dtsi file:
-imx53-qsb-common.dtsi
-
-Is there any board inheriting it? Is it extending the iomux node with
-its own code ?
-
->=20
-> and it works as expected:
-> # dmesg  | grep iomux
-> [    0.100046] imx53-pinctrl 53fa8000.iomuxc: initialized IMX pinctrl
-> driver
-
-
-
-
-Best regards,
-
-Lukasz Majewski
-
---
-
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: (+49)-8142-66989-10 Fax: (+49)-8142-66989-80 Email: wd@denx.de
-
---Sig_//Jhrf4jMObQ6LFENPwbIPV1
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAlsF6LwACgkQAR8vZIA0
-zr20+gf+J2hrtfcLBfqnvvYkTZrGiMYqV6mhq7nE5vh0pxVezR1m0Uwv0iVZfeJL
-i5ELl7IFgS73Mn9zdLoEug4pBB+xBCt8kPg2ixO8YbohaDS1+gviOcSflmLY8Hsj
-9X7KMpKjjHQvlyF6uHGs38bLGbTysnk6E+Q+DBb6COReLpsLHequoQ5Aa63GTFVk
-IMj/PEpCnS1279An3eNK4WhwLFn8OrTXzJL9vFzr3MSQCRE+Ix9I0ik2yB8AwUhE
-CKpbpGvc3FZP/V3su73WLj1NhZBHwDNZQv1PBR6ntSuV9OEnjj3IqYkCDUtAtz8l
-mZk2UC1PanoYhjlZvRc9StMf7b0I4Q==
-=1ag9
------END PGP SIGNATURE-----
-
---Sig_//Jhrf4jMObQ6LFENPwbIPV1--
+diff --git a/Documentation/process/2.Process.rst b/Documentation/process/2.Process.rst
+index ce5561b..a9c46dd 100644
+--- a/Documentation/process/2.Process.rst
++++ b/Documentation/process/2.Process.rst
+@@ -18,17 +18,17 @@ major kernel release happening every two or three months.  The recent
+ release history looks like this:
+ 
+ 	======  =================
+-	2.6.38	March 14, 2011
+-	2.6.37	January 4, 2011
+-	2.6.36	October 20, 2010
+-	2.6.35	August 1, 2010
+-	2.6.34	May 15, 2010
+-	2.6.33	February 24, 2010
++	4.11	April 30, 2017
++	4.12	July 2, 2017
++	4.13	September 3, 2017
++	4.14	November 12, 2017
++	4.15	January 28, 2018
++	4.16	April 1, 2018
+ 	======  =================
+ 
+-Every 2.6.x release is a major kernel release with new features, internal
+-API changes, and more.  A typical 2.6 release can contain nearly 10,000
+-changesets with changes to several hundred thousand lines of code.  2.6 is
++Every 4.x release is a major kernel release with new features, internal
++API changes, and more.  A typical 4.x release contain about 13,000
++changesets with changes to several hundred thousand lines of code.  4.x is
+ thus the leading edge of Linux kernel development; the kernel uses a
+ rolling development model which is continually integrating major changes.
+ 
+@@ -70,20 +70,19 @@ will get up to somewhere between -rc6 and -rc9 before the kernel is
+ considered to be sufficiently stable and the final 2.6.x release is made.
+ At that point the whole process starts over again.
+ 
+-As an example, here is how the 2.6.38 development cycle went (all dates in
+-2011):
++As an example, here is how the 4.16 development cycle went (all dates in
++2018):
+ 
+ 	==============  ===============================
+-	January 4	2.6.37 stable release
+-	January 18	2.6.38-rc1, merge window closes
+-	January 21	2.6.38-rc2
+-	February 1	2.6.38-rc3
+-	February 7	2.6.38-rc4
+-	February 15	2.6.38-rc5
+-	February 21	2.6.38-rc6
+-	March 1		2.6.38-rc7
+-	March 7		2.6.38-rc8
+-	March 14	2.6.38 stable release
++	January 28	4.15 stable release
++	February 11	4.16-rc1, merge window closes
++	February 18	4.16-rc2
++	February 25	4.16-rc3
++	March 4		4.16-rc4
++	March 11	4.16-rc5
++	March 18	4.16-rc6
++	March 25	4.16-rc7
++	April 1		4.17 stable release
+ 	==============  ===============================
+ 
+ How do the developers decide when to close the development cycle and create
+@@ -99,37 +98,42 @@ release is made.  In the real world, this kind of perfection is hard to
+ achieve; there are just too many variables in a project of this size.
+ There comes a point where delaying the final release just makes the problem
+ worse; the pile of changes waiting for the next merge window will grow
+-larger, creating even more regressions the next time around.  So most 2.6.x
++larger, creating even more regressions the next time around.  So most 4.x
+ kernels go out with a handful of known regressions though, hopefully, none
+ of them are serious.
+ 
+ Once a stable release is made, its ongoing maintenance is passed off to the
+ "stable team," currently consisting of Greg Kroah-Hartman.  The stable team
+-will release occasional updates to the stable release using the 2.6.x.y
++will release occasional updates to the stable release using the 4.x.y
+ numbering scheme.  To be considered for an update release, a patch must (1)
+ fix a significant bug, and (2) already be merged into the mainline for the
+ next development kernel.  Kernels will typically receive stable updates for
+ a little more than one development cycle past their initial release.  So,
+-for example, the 2.6.36 kernel's history looked like:
++for example, the 4.13 kernel's history looked like:
+ 
+ 	==============  ===============================
+-	October 10	2.6.36 stable release
+-	November 22	2.6.36.1
+-	December 9	2.6.36.2
+-	January 7	2.6.36.3
+-	February 17	2.6.36.4
++	September 3 	4.13 stable release
++	September 13	4.13.1
++	September 20	4.13.2
++	September 27	4.13.3
++	October 5	4.13.4
++	October 12  	4.13.5
++	...		...
++	November 24	4.13.16
+ 	==============  ===============================
+ 
+-2.6.36.4 was the final stable update for the 2.6.36 release.
++4.13.16 was the final stable update of the 4.13 release.
+ 
+ Some kernels are designated "long term" kernels; they will receive support
+ for a longer period.  As of this writing, the current long term kernels
+ and their maintainers are:
+ 
+-	======  ======================  ===========================
+-	2.6.27	Willy Tarreau		(Deep-frozen stable kernel)
+-	2.6.32	Greg Kroah-Hartman
+-	2.6.35	Andi Kleen		(Embedded flag kernel)
++	======  ======================  ==============================
++	3.16	Ben Hutchings		(very long-term stable kernel)
++	4.1	Sasha Levin
++	4.4	Greg Kroah-Hartman	(very long-term stable kernel)
++	4.9	Greg Kroah-Hartman
++	4.14	Greg Kroah-Hartman
+ 	======  ======================  ===========================
+ 
+ The selection of a kernel for long-term support is purely a matter of a
+-- 
+2.1.4
