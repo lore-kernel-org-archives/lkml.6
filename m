@@ -1,147 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933834AbeEWRPt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 13:15:49 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:46254 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933637AbeEWRPn (ORCPT
+        id S933859AbeEWRRm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 13:17:42 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:44900 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933767AbeEWRRk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 13:15:43 -0400
-X-Google-Smtp-Source: ADUXVKIoJ16EU/wvnlwMCme8V86Ter/Wp2j8ax0RUnS7WLtMArtiFcqfio7g1lG99ASC255sfXGZrA==
-Subject: Re: [PATCH 3/5] watchdog: sp805: set WDOG_HW_RUNNING when appropriate
-To: Ray Jui <ray.jui@broadcom.com>, Robin Murphy <robin.murphy@arm.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <1527014840-21236-1-git-send-email-ray.jui@broadcom.com>
- <1527014840-21236-4-git-send-email-ray.jui@broadcom.com>
- <20180522205457.GA16363@roeck-us.net>
- <0d92b9e9-a3d1-6e91-8371-b5ed3a83e399@broadcom.com>
- <00c121ea-d197-93b8-2f56-bcca963f70fb@broadcom.com>
- <76d47e02-7a5f-3fc2-3905-cd4aa03ac69c@arm.com>
- <5a996888-d3d3-9ae6-e438-5de4d5e3ea32@broadcom.com>
-From: Scott Branden <scott.branden@broadcom.com>
-Message-ID: <eb1b8beb-4027-606b-200c-c97f128c9bf1@broadcom.com>
-Date: Wed, 23 May 2018 10:15:38 -0700
+        Wed, 23 May 2018 13:17:40 -0400
+X-Google-Smtp-Source: AB8JxZpAsLi2PZqJYqPY0rW1pt3G1l9f9qEImiw2Ttje7Dnno5AuutnEiipL8GUGZili7/4CntLqEQ==
+Subject: Re: [RFC PATCH] mtd: spi-nor: add support to non-uniform SPI NOR
+ flash memories
+To: Tudor Ambarus <tudor.ambarus@microchip.com>,
+        cyrille.pitchen@microchip.com, dwmw2@infradead.org,
+        computersforpeace@gmail.com, boris.brezillon@bootlin.com,
+        richard@nod.at
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        nicolas.ferre@microchip.com, Cristian.Birsan@microchip.com
+References: <20180518093233.24241-1-tudor.ambarus@microchip.com>
+ <89d45190-95b0-b780-b219-e6c6adcb6147@gmail.com>
+ <4cd7d47a-fd56-6b54-3b38-262adf46a97f@microchip.com>
+ <bbb9387b-4404-e6a0-b8b5-f48bcebdd474@gmail.com>
+ <123e50da-e49e-f876-bdb4-2719f7f7640a@microchip.com>
+ <a32aa2ee-7d9e-37b6-811f-799570ce1cea@gmail.com>
+ <66b2b859-72db-33cc-75ae-2493a4aad235@microchip.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <aa083709-c3e2-f075-1a99-c31399a1cb77@gmail.com>
+Date: Wed, 23 May 2018 14:54:17 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <5a996888-d3d3-9ae6-e438-5de4d5e3ea32@broadcom.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <66b2b859-72db-33cc-75ae-2493a4aad235@microchip.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Raym
+On 05/23/2018 02:52 PM, Tudor Ambarus wrote:
+> Hi, Marek,
 
+Hi,
 
-On 18-05-23 09:29 AM, Ray Jui wrote:
-> Hi Robin,
->
-> On 5/23/2018 4:48 AM, Robin Murphy wrote:
->> On 23/05/18 08:52, Scott Branden wrote:
->>>
->>>
->>> On 18-05-22 04:24 PM, Ray Jui wrote:
->>>> Hi Guenter,
+> On 05/23/2018 12:56 PM, Marek Vasut wrote:
+> [...]
+>>>> [...]
 >>>>
->>>> On 5/22/2018 1:54 PM, Guenter Roeck wrote:
->>>>> On Tue, May 22, 2018 at 11:47:18AM -0700, Ray Jui wrote:
->>>>>> If the watchdog hardware is already enabled during the boot process,
->>>>>> when the Linux watchdog driver loads, it should reset the 
->>>>>> watchdog and
->>>>>> tell the watchdog framework. As a result, ping can be generated from
->>>>>> the watchdog framework, until the userspace watchdog daemon takes 
->>>>>> over
->>>>>> control
->>>>>>
->>>>>> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
->>>>>> Reviewed-by: Vladimir Olovyannikov 
->>>>>> <vladimir.olovyannikov@broadcom.com>
->>>>>> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
->>>>>> ---
->>>>>>   drivers/watchdog/sp805_wdt.c | 22 ++++++++++++++++++++++
->>>>>>   1 file changed, 22 insertions(+)
->>>>>>
->>>>>> diff --git a/drivers/watchdog/sp805_wdt.c 
->>>>>> b/drivers/watchdog/sp805_wdt.c
->>>>>> index 1484609..408ffbe 100644
->>>>>> --- a/drivers/watchdog/sp805_wdt.c
->>>>>> +++ b/drivers/watchdog/sp805_wdt.c
->>>>>> @@ -42,6 +42,7 @@
->>>>>>       /* control register masks */
->>>>>>       #define    INT_ENABLE    (1 << 0)
->>>>>>       #define    RESET_ENABLE    (1 << 1)
->>>>>> +    #define    ENABLE_MASK    (INT_ENABLE | RESET_ENABLE)
->>>>>>   #define WDTINTCLR        0x00C
->>>>>>   #define WDTRIS            0x010
->>>>>>   #define WDTMIS            0x014
->>>>>> @@ -74,6 +75,18 @@ module_param(nowayout, bool, 0);
->>>>>>   MODULE_PARM_DESC(nowayout,
->>>>>>           "Set to 1 to keep watchdog running after device release");
->>>>>>   +/* returns true if wdt is running; otherwise returns false */
->>>>>> +static bool wdt_is_running(struct watchdog_device *wdd)
->>>>>> +{
->>>>>> +    struct sp805_wdt *wdt = watchdog_get_drvdata(wdd);
->>>>>> +
->>>>>> +    if ((readl_relaxed(wdt->base + WDTCONTROL) & ENABLE_MASK) ==
->>>>>> +        ENABLE_MASK)
->>>>>> +        return true;
->>>>>> +    else
->>>>>> +        return false;
->>>>>
->>>>>     return !!(readl_relaxed(wdt->base + WDTCONTROL) & ENABLE_MASK));
->>>>>
->>>>
->>>> Note ENABLE_MASK contains two bits (INT_ENABLE and RESET_ENABLE); 
->>>> therefore, a simple !!(expression) would not work? That is, the 
->>>> masked result needs to be compared against the mask again to ensure 
->>>> both bits are set, right?
->>> Ray - your original code looks correct to me.  Easier to read and 
->>> less prone to errors as shown in the attempted translation to a 
->>> single statement.
->>
->>      if (<boolean condition>)
->>          return true;
->>      else
->>          return false;
->>
->> still looks really dumb, though, and IMO is actually harder to read 
->> than just "return <boolean condition>;" because it forces you to stop 
->> and double-check that the logic is, in fact, only doing the obvious 
->> thing.
->
-> If you can propose a way to modify my original code above to make it 
-> more readable, I'm fine to make the change.
->
-> As I mentioned, I don't think the following change proposed by Guenter 
-> will work due to the reason I pointed out:
->
-> return !!(readl_relaxed(wdt->base + WDTCONTROL) & ENABLE_MASK));
-What they are looking for is:
-return ((readl_relaxed(wdt->base + WDTCONTROL) & ENABLE_MASK) == 
-ENABLE_MASK);
+>>>>>>> +    while (len) {
+>>>>>>> +        cmd = spi_nor_find_best_erase_cmd(map, region, addr, len);
+>>>>>>> +        if (!cmd)
+>>>>>>> +            return -EINVAL;
+>>>>>> What would happen if you realize mid-way that you cannot erase some
+>>>>>> sector , do you end up with partial erase ?
+>>>>> Is this possible? In non-overlaid regions, the address is aligned with
+>>>>> at least one of the erase commands, else -EINVAL. For overlaid regions
+>>>>> alignment doesn't matter. But yes, if this is possible, in this case,
+>>>>> this proposal will do a partial erase.
+>>>> Shouldn't we fail up front instead ?
+>>> It will be great if we can do this without having performance penalties.
+>>> Can we loose the conditions for the last erase command? If one wants to
+>>> erase 80k chunk starting from offset 0 and only 32k and 64k erase type
+>>> are supported, can we erase 96k?
+>> No. But can you maybe build a list of erase commands to be executed once
+>> you validate that the erase can be performed for example ?
+> 
+> My second choice was an array witch saves u8 opcode and u32 erasesize.
+> There are flashes of 256MB, in the worst case scenario with 4k erase
+> type, we will end up with 64K entries.
 
-or maybe:
-return !!((readl_relaxed(wdt->base + WDTCONTROL) & ENABLE_MASK) == 
-ENABLE_MASK);
->
->>
->> Robin.
->>
->>
->>
->> p.s. No thanks for making me remember the mind-boggling horror of 
->> briefly maintaining part of this legacy codebase... :P
->>
->> $ grep -r '? true : false' --include=*.cpp . | wc -l
->> 951
+Some RLE encoding might help here ?
+
+> How about enforcing the length to be multiple of mtd->erasesize, like we
+> do in uniform_erase? With this, the problem disappears.
+
+What is the erase size for the 4k-sector 256MiB flash ?
+
+-- 
+Best regards,
+Marek Vasut
