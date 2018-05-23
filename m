@@ -1,70 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753980AbeEWEiJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 00:38:09 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:41813 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753866AbeEWEhq (ORCPT
+        id S1753946AbeEWEqv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 00:46:51 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:34009 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751157AbeEWEqt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 00:37:46 -0400
-X-Google-Smtp-Source: AB8JxZpwcgtUEhKBL0O59/RqIbZt7AENDmgN34VlBP6cLQct5SSQpYbHRRL2UkYLrV1cqgruEEC9UQ==
-From: Andy Gross <andy.gross@linaro.org>
-To: arm@kernel.org
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        Kevin Hilman <khilman@baylibre.com>, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: [GIT PULL] Qualcomm Device Tree updates for 4.18
-Date: Tue, 22 May 2018 23:37:41 -0500
-Message-Id: <1527050261-19887-3-git-send-email-andy.gross@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1527050261-19887-1-git-send-email-andy.gross@linaro.org>
-References: <1527050261-19887-1-git-send-email-andy.gross@linaro.org>
+        Wed, 23 May 2018 00:46:49 -0400
+X-Google-Smtp-Source: AB8JxZqQrNzsU7hMXDIatK3ofDl9Mrd4izsJLSKU2U4Nuzp3zO8IXKwm4bcUoslrqHYQyBm0nxcb+Q==
+Subject: Re: [PATCH v2] pinctrl: cherryview: limit Strago DMI workarounds to
+ version 1.0
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180522204753.GA260493@dtor-ws>
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <4d8b3dd4-5218-8595-d840-ce8c106e5b08@roeck-us.net>
+Date: Tue, 22 May 2018 21:46:46 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180522204753.GA260493@dtor-ws>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
+On 05/22/2018 01:47 PM, Dmitry Torokhov wrote:
+> As Google/Intel will fix the BIOS/Coreboot issues with hardcoding
+> virtual interrupt numbers for keyboard/touchpad/touchscreen controllers
+> in ACPI tables, they will also update BOARD version number from 1.0
+> to 1.1. Let's limit the DMI quirks that try to preserve virtual IRQ
+> numbers on Strago boards to those that still carry older BIOSes.
+> 
+> Note that ideally not BOARD but BIOS version should have been updated.
+> However the BIOS version used by Chrome devices has format of
+> Google_BUILD.BRANCH.PATCH which is not well suited for DMI matching as
+> we do not have "less than" match mode for DMI data.
+> 
+> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=197953
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/agross/linux.git tags/qcom-dts-for-4.18
-
-for you to fetch changes up to 90ce62659994b87723ec6ba26815f9634c18e449:
-
-  ARM: dts: qcom-apq8064: use correct pci address for address translation (2018-05-14 15:22:28 -0500)
-
-----------------------------------------------------------------
-Qualcomm Device Tree Changes for v4.18
-
-* APQ8064 fixes for irq translations and pci address translation
-* Fix RPM clock controller compatible on MSM8660
-* Add TZ and SMEM reserved regions on IPQ4019
-* Add vadc nodes for PM8941
-* Disable i2c by default at top level APQ8064 dtsi
-
-----------------------------------------------------------------
-Craig Tatlor (1):
-      ARM: dts: qcom: pm8941: Add vadc nodes needed to estimate an ocv
-
-Linus Walleij (1):
-      ARM: dts: Fix the RPM clock controller compatible string
-
-Niklas Cassel (1):
-      ARM: dts: qcom-apq8064: use correct pci address for address translation
-
-Srinivas Kandagatla (1):
-      ARM: dts: qcom-apq8064: disable i2c by default at soc dtsi
-
-Sven Eckelmann (1):
-      ARM: dts: ipq4019: Add TZ and SMEM reserved regions
-
-Thierry Escande (1):
-      ARM: dts: qcom-apq8064: fix gic_irq_domain_translate warnings
-
- arch/arm/boot/dts/qcom-apq8064.dtsi | 58 ++++++++++++++++++++-----------------
- arch/arm/boot/dts/qcom-ipq4019.dtsi | 16 ++++++++++
- arch/arm/boot/dts/qcom-msm8660.dtsi |  2 +-
- arch/arm/boot/dts/qcom-pm8941.dtsi  |  6 ++++
- 4 files changed, 54 insertions(+), 28 deletions(-)
+> ---
+> 
+> v1->v2:
+> 
+> - switch from matching on DMI_BIOS_VERSION to DMI_BOARD_VERSION
+> 
+> 
+>   drivers/pinctrl/intel/pinctrl-cherryview.c | 4 ++++
+>   1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
+> index b1ae1618fefea..44133e6846303 100644
+> --- a/drivers/pinctrl/intel/pinctrl-cherryview.c
+> +++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
+> @@ -1527,6 +1527,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
+>   		.matches = {
+>   			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+>   			DMI_MATCH(DMI_PRODUCT_FAMILY, "Intel_Strago"),
+> +			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
+>   		},
+>   	},
+>   	{
+> @@ -1534,6 +1535,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
+>   		.matches = {
+>   			DMI_MATCH(DMI_SYS_VENDOR, "HP"),
+>   			DMI_MATCH(DMI_PRODUCT_NAME, "Setzer"),
+> +			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
+>   		},
+>   	},
+>   	{
+> @@ -1541,6 +1543,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
+>   		.matches = {
+>   			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+>   			DMI_MATCH(DMI_PRODUCT_NAME, "Cyan"),
+> +			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
+>   		},
+>   	},
+>   	{
+> @@ -1548,6 +1551,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
+>   		.matches = {
+>   			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+>   			DMI_MATCH(DMI_PRODUCT_NAME, "Celes"),
+> +			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
+>   		},
+>   	},
+>   	{}
+> 
