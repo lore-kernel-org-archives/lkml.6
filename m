@@ -1,38 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933881AbeEWRiD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 13:38:03 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:60376 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932667AbeEWRiA (ORCPT
+        id S933901AbeEWRjD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 13:39:03 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:53586 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932667AbeEWRjC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 13:38:00 -0400
-Date: Wed, 23 May 2018 13:37:58 -0400 (EDT)
-Message-Id: <20180523.133758.2273298453278600346.davem@davemloft.net>
-To: jasowang@redhat.com
-Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net V2 0/4] Fix several issues of virtio-net mergeable
- XDP
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <1526960671-11782-1-git-send-email-jasowang@redhat.com>
-References: <1526960671-11782-1-git-send-email-jasowang@redhat.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Wed, 23 May 2018 13:39:02 -0400
+X-Google-Smtp-Source: AB8JxZrtIKm5HulER+oEGU4rtpVLHIoL9vedAe774Y2i3CTth0QuuKutd2QNRTvBT8L/aXUjiq1L1RVhxfMT44zL7+8=
+MIME-Version: 1.0
+In-Reply-To: <1526661567-4578-8-git-send-email-suzuki.poulose@arm.com>
+References: <1526661567-4578-1-git-send-email-suzuki.poulose@arm.com> <1526661567-4578-8-git-send-email-suzuki.poulose@arm.com>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Wed, 23 May 2018 11:39:00 -0600
+Message-ID: <CANLsYkz8d_RrFojz=ZQwOBB6J3-W9+edaVWC6R7Arg5GvhwcOA@mail.gmail.com>
+Subject: Re: [PATCH 07/11] dts: juno: Add scatter-gather support for all revisions
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
+        Frank Rowand <frowand.list@gmail.com>, coresight@lists.linaro.org,
+        Mark Rutland <mark.rutland@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Wang <jasowang@redhat.com>
-Date: Tue, 22 May 2018 11:44:27 +0800
+On 18 May 2018 at 10:39, Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
+> Advertise that the scatter-gather is properly integrated on
+> all revisions of Juno board.
+>
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Cc: Sudeep Holla <sudeep.holla@arm.com>
+> Cc: Liviu Dudau <liviu.dudau@arm.com>
+> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-> Please review the patches that tries to fix sevreal issues of
-> virtio-net mergeable XDP.
-> 
-> Changes from V1:
-> - check against 1 before decreasing instead of resetting to 1
-> - typoe fixes
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-Series applied and queued up for -stable.
+> ---
+>  arch/arm64/boot/dts/arm/juno-base.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/arch/arm64/boot/dts/arm/juno-base.dtsi b/arch/arm64/boot/dts/arm/juno-base.dtsi
+> index eb749c5..6ce9090 100644
+> --- a/arch/arm64/boot/dts/arm/juno-base.dtsi
+> +++ b/arch/arm64/boot/dts/arm/juno-base.dtsi
+> @@ -198,6 +198,7 @@
+>                 clocks = <&soc_smc50mhz>;
+>                 clock-names = "apb_pclk";
+>                 power-domains = <&scpi_devpd 0>;
+> +               arm,scatter-gather;
+>                 port {
+>                         etr_in_port: endpoint {
+>                                 slave-mode;
+> --
+> 2.7.4
+>
