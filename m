@@ -1,226 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932642AbeEWL3J (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 07:29:09 -0400
-Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:52747 "EHLO
-        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932531AbeEWL3F (ORCPT
+        id S932611AbeEWLbL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 07:31:11 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:37807 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932071AbeEWLbI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 07:29:05 -0400
-Subject: Re: [PATCH v10 08/16] v4l: mark unordered formats
-To: Ezequiel Garcia <ezequiel@collabora.com>, linux-media@vger.kernel.org
-Cc: kernel@collabora.com, Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
-        Shuah Khan <shuahkh@osg.samsung.com>, Pawel Osciak <pawel@osciak.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Brian Starkey <brian.starkey@arm.com>, linux-kernel@vger.kernel.org,
-        Gustavo Padovan <gustavo.padovan@collabora.com>
-References: <20180521165946.11778-1-ezequiel@collabora.com>
- <20180521165946.11778-9-ezequiel@collabora.com>
- <2df0ec97-9e0f-8fc3-1481-ac0a72e52e4d@xs4all.nl>
- <70b7ddaf685c2fc08dfd1caaab45bb0cc9c99a21.camel@collabora.com>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <db537395-836a-3f6c-0039-1f4ed957f126@xs4all.nl>
-Date: Wed, 23 May 2018 13:29:01 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 23 May 2018 07:31:08 -0400
+X-Google-Smtp-Source: ADUXVKKjWxE66Wdn5f4aQ4fvvuBCbR5GSn1NFCknssIzC2Xsfjnp7RfD6DzD0TFdG/Uu/PjWufXOIm5dwwIB0Q5VYMw=
 MIME-Version: 1.0
-In-Reply-To: <70b7ddaf685c2fc08dfd1caaab45bb0cc9c99a21.camel@collabora.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfMlcjNgTcjBnfday/RRCwLxdkfuaYg2uFWroDTPP5tAXkbNYRkevTGx1joHJyAr3+j9D+sgJ7GjnS6K6eXQhZFXWbkXNgQ1xylflzPmfOXcShE/v/ucX
- LZFhaLZYjvuRNZiMg2CjixRuxQisJcVlxoH0v+D43pe5VMvrxHE8+lG1GpraoBNgKj/W9MqtJd4hdz2hSBsRqByxd76Ua/REMe4/9prqzI0BckghKc27VBBz
- s7s/RmnWZkKFppHhSom4tKMuOKD/rpZhJoOAnsrLEy4u1Mw2LJK9eFOZW7HhitVnVWO4AniYG10xKXE5xA5Fnlmt9LFQzFYq5L0+p+ko1E2PwBsjzcUZjRJp
- jhKmbCNA86wY+xgYDZmThCT5KWXT/c6xGkom+noiM5ehXN0wuTzoQDEVQyIDmHPEim3gQVmG3DiHWttG8KjjWje+Gql+/XEmkstGZ598xVwXMiABM3KMFdaz
- tR5WoQsZpj9FlSXbfHPdmFVJ3tofFwaN9gPxMg3kTgJPybCr5XYzqpcwvSpbaHVp9+x/szmU2Ee0D0+K5cSXuJbV0dE+w5L4yk9seHl/axIE7tkg+yiwpZkc
- zX6saR6GDyjHIhkUYyn1OPu5
+In-Reply-To: <002901d3f286$198878b0$4c996a10$@codeaurora.org>
+References: <1527068454-28921-1-git-send-email-ilialin@codeaurora.org>
+ <1527068454-28921-2-git-send-email-ilialin@codeaurora.org>
+ <3f1ca60e-7aa8-fccc-ab1c-4b7c37731cce@arm.com> <002901d3f286$198878b0$4c996a10$@codeaurora.org>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Date: Wed, 23 May 2018 17:01:07 +0530
+Message-ID: <CAKohponbpErCeTYu9iQm_-dupz5SUr+TKsYXzqmmARB-pq95iA@mail.gmail.com>
+Subject: Re: [PATCH v10 1/2] cpufreq: Add Kryo CPU scaling driver
+To: Ilia Lin <ilialin@codeaurora.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, Viresh Kumar <vireshk@kernel.org>,
+        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/05/18 12:30, Ezequiel Garcia wrote:
-> On Tue, 2018-05-22 at 13:55 +0200, Hans Verkuil wrote:
->> On 21/05/18 18:59, Ezequiel Garcia wrote:
->>> From: Gustavo Padovan <gustavo.padovan@collabora.com>
->>>
->>> Now that we've introduced the V4L2_FMT_FLAG_UNORDERED flag,
->>> mark the appropriate formats.
->>>
->>> v2: Set unordered flag before calling the driver callback.
->>>
->>> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
->>> Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
->>> ---
->>>  drivers/media/v4l2-core/v4l2-ioctl.c | 74 +++++++++++++++++++++++++++---------
->>>  1 file changed, 57 insertions(+), 17 deletions(-)
->>>
->>> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
->>> index f48c505550e0..2135ac235a96 100644
->>> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
->>> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
->>> @@ -1102,6 +1102,27 @@ static int v4l_enumoutput(const struct v4l2_ioctl_ops *ops,
->>>  	return ops->vidioc_enum_output(file, fh, p);
->>>  }
->>>  
->>> +static void v4l_fill_unordered_fmtdesc(struct v4l2_fmtdesc *fmt)
->>> +{
->>> +	switch (fmt->pixelformat) {
->>> +	case V4L2_PIX_FMT_MPEG:
->>> +	case V4L2_PIX_FMT_H264:
->>> +	case V4L2_PIX_FMT_H264_NO_SC:
->>> +	case V4L2_PIX_FMT_H264_MVC:
->>> +	case V4L2_PIX_FMT_H263:
->>> +	case V4L2_PIX_FMT_MPEG1:
->>> +	case V4L2_PIX_FMT_MPEG2:
->>> +	case V4L2_PIX_FMT_MPEG4:
->>> +	case V4L2_PIX_FMT_XVID:
->>> +	case V4L2_PIX_FMT_VC1_ANNEX_G:
->>> +	case V4L2_PIX_FMT_VC1_ANNEX_L:
->>> +	case V4L2_PIX_FMT_VP8:
->>> +	case V4L2_PIX_FMT_VP9:
->>> +	case V4L2_PIX_FMT_HEVC:
->>> +		fmt->flags |= V4L2_FMT_FLAG_UNORDERED;
->>
->> Please add a break here. This prevents potential future errors if new cases
->> are added below this line.
->>
-> 
-> Sure.
-> 
->>> +	}
->>> +}
->>> +
->>>  static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
->>>  {
->>>  	const unsigned sz = sizeof(fmt->description);
->>> @@ -1310,61 +1331,80 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
->>>  
->>>  	if (descr)
->>>  		WARN_ON(strlcpy(fmt->description, descr, sz) >= sz);
->>> -	fmt->flags = flags;
->>> +	fmt->flags |= flags;
->>>  }
->>>  
->>> -static int v4l_enum_fmt(const struct v4l2_ioctl_ops *ops,
->>> -				struct file *file, void *fh, void *arg)
->>> -{
->>> -	struct v4l2_fmtdesc *p = arg;
->>> -	int ret = check_fmt(file, p->type);
->>>  
->>> -	if (ret)
->>> -		return ret;
->>> -	ret = -EINVAL;
->>> +static int __vidioc_enum_fmt(const struct v4l2_ioctl_ops *ops,
->>> +			     struct v4l2_fmtdesc *p,
->>> +			     struct file *file, void *fh)
->>> +{
->>> +	int ret = 0;
->>>  
->>>  	switch (p->type) {
->>>  	case V4L2_BUF_TYPE_VIDEO_CAPTURE:
->>>  		if (unlikely(!ops->vidioc_enum_fmt_vid_cap))
->>>  			break;
->>> -		ret = ops->vidioc_enum_fmt_vid_cap(file, fh, arg);
->>> +		ret = ops->vidioc_enum_fmt_vid_cap(file, fh, p);
->>>  		break;
->>>  	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
->>>  		if (unlikely(!ops->vidioc_enum_fmt_vid_cap_mplane))
->>>  			break;
->>> -		ret = ops->vidioc_enum_fmt_vid_cap_mplane(file, fh, arg);
->>> +		ret = ops->vidioc_enum_fmt_vid_cap_mplane(file, fh, p);
->>>  		break;
->>>  	case V4L2_BUF_TYPE_VIDEO_OVERLAY:
->>>  		if (unlikely(!ops->vidioc_enum_fmt_vid_overlay))
->>>  			break;
->>> -		ret = ops->vidioc_enum_fmt_vid_overlay(file, fh, arg);
->>> +		ret = ops->vidioc_enum_fmt_vid_overlay(file, fh, p);
->>>  		break;
->>>  	case V4L2_BUF_TYPE_VIDEO_OUTPUT:
->>>  		if (unlikely(!ops->vidioc_enum_fmt_vid_out))
->>>  			break;
->>> -		ret = ops->vidioc_enum_fmt_vid_out(file, fh, arg);
->>> +		ret = ops->vidioc_enum_fmt_vid_out(file, fh, p);
->>>  		break;
->>>  	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
->>>  		if (unlikely(!ops->vidioc_enum_fmt_vid_out_mplane))
->>>  			break;
->>> -		ret = ops->vidioc_enum_fmt_vid_out_mplane(file, fh, arg);
->>> +		ret = ops->vidioc_enum_fmt_vid_out_mplane(file, fh, p);
->>>  		break;
->>>  	case V4L2_BUF_TYPE_SDR_CAPTURE:
->>>  		if (unlikely(!ops->vidioc_enum_fmt_sdr_cap))
->>>  			break;
->>> -		ret = ops->vidioc_enum_fmt_sdr_cap(file, fh, arg);
->>> +		ret = ops->vidioc_enum_fmt_sdr_cap(file, fh, p);
->>>  		break;
->>>  	case V4L2_BUF_TYPE_SDR_OUTPUT:
->>>  		if (unlikely(!ops->vidioc_enum_fmt_sdr_out))
->>>  			break;
->>> -		ret = ops->vidioc_enum_fmt_sdr_out(file, fh, arg);
->>> +		ret = ops->vidioc_enum_fmt_sdr_out(file, fh, p);
->>>  		break;
->>>  	case V4L2_BUF_TYPE_META_CAPTURE:
->>>  		if (unlikely(!ops->vidioc_enum_fmt_meta_cap))
->>>  			break;
->>> -		ret = ops->vidioc_enum_fmt_meta_cap(file, fh, arg);
->>> +		ret = ops->vidioc_enum_fmt_meta_cap(file, fh, p);
->>>  		break;
->>>  	}
->>> +	return ret;
->>> +}
->>> +
->>> +static int v4l_enum_fmt(const struct v4l2_ioctl_ops *ops,
->>> +				struct file *file, void *fh, void *arg)
->>> +{
->>> +	struct v4l2_fmtdesc *p = arg;
->>> +	int ret = check_fmt(file, p->type);
->>> +
->>> +	if (ret)
->>> +		return ret;
->>> +	ret = -EINVAL;
->>
->> Why set ret when it is overwritten below?
->>
-> 
-> Oops, seems to be some leftover code.
-> 
->>> +
->>> +	ret = __vidioc_enum_fmt(ops, p, file, fh);
->>> +	if (ret)
->>> +		return ret;
->>
->> Huh? Why call the driver twice? As far as I can see you can just drop
->> these three lines above.
+On 23 May 2018 at 16:36,  <ilialin@codeaurora.org> wrote:
+>
+>
+>> -----Original Message-----
+>> From: Sudeep Holla <sudeep.holla@arm.com>
+>> Sent: Wednesday, May 23, 2018 13:40
+>> To: Ilia Lin <ilialin@codeaurora.org>; vireshk@kernel.org; nm@ti.com;
+>> sboyd@kernel.org; robh@kernel.org; mark.rutland@arm.com;
+>> rjw@rjwysocki.net; linux-pm@vger.kernel.org; devicetree@vger.kernel.org;
+>> linux-kernel@vger.kernel.org
+>> Cc: Sudeep Holla <sudeep.holla@arm.com>
+>> Subject: Re: [PATCH v10 1/2] cpufreq: Add Kryo CPU scaling driver
 >>
 >>
-> 
-> Well, because I thought this was the outcome of v9 [1]. Let me quote you:
-> 
-> ""
-> I realized that this is a problem since this function is called *after*
-> the driver. So the driver has no chance to clear this flag if it knows
-> that the queue is always ordered.
-> ""
-> 
-> So, we first call the driver to get struct v4l2_fmtdesc pixelformat field
-> filled by the driver, then we call v4l_fill_unordered_fmtdesc()
-> to set FLAG_UNORDERED if needed, and finally we call the driver again
-> so it can clear the FLAG_UNORDERED.
-> 
-> Does that make sense?
+>>
+>> On 23/05/18 10:40, Ilia Lin wrote:
+>> > In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO
+>> > processors, the CPU frequency subset and voltage value of each OPP
+>> > varies based on the silicon variant in use. Qualcomm Process Voltage
+>> > Scaling Tables defines the voltage and frequency value based on the
+>> > msm-id in SMEM and speedbin blown in the efuse combination.
+>> > The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the
+>> > SoC to provide the OPP framework with required information.
+>> > This is used to determine the voltage and frequency value for each OPP
+>> > of
+>> > operating-points-v2 table when it is parsed by the OPP framework.
+>> >
+>> > Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+>>
+>> [...]
+>>
+>> > +   pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
+>> > +   if (!IS_ERR(pdev))
+>> > +           return 0;
+>> > +
+>> > +   ret = PTR_ERR(pdev);
+>> > +   dev_err(cpu_dev, "Failed to register platform device\n");
+>> > +
+>> > +free_opp:
+>> > +   for_each_possible_cpu(cpu) {
+>> > +           if (IS_ERR_OR_NULL(opp_tables[cpu]))
+>> > +                   break;
+>> > +           dev_pm_opp_put_supported_hw(opp_tables[cpu]);
+>> > +   }
+>> > +free_np:
+>> > +   of_node_put(np);
+>> > +
+>> > +   return ret;
+>> > +}
+>> > +late_initcall(qcom_cpufreq_kryo_driver_init);
+>>
+>> Any particular reason why this *has* to be late initcall ?
+>> Please change it to module_initcall otherwise.
+>
+> The purpose is to give the cpufreq-dt the time to register the driver and only then my driver will add the platform device.
 
-Not what I meant. v4l_fill_unordered_fmtdesc() should be called first, then
-the driver (which can now fiddle with the flag if it wants to) and finally
-v4l_fill_fmtdesc(p) is called.
-
-Drivers that support these compressed formats need to be checked though:
-they shouldn't overwrite flags unconditionally.
-
-Regards,
-
-	Hans
-
-> 
-> [1] https://lkml.org/lkml/2018/5/7/349
-> 
+That isn't required, the device and its driver can be registered in any order.
