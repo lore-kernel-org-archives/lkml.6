@@ -1,78 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754391AbeEWIIt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 04:08:49 -0400
-Received: from mga07.intel.com ([134.134.136.100]:51532 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754352AbeEWIIo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 04:08:44 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,432,1520924400";
-   d="scan'208";a="44059758"
-Date: Wed, 23 May 2018 16:08:28 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Shakeel Butt <shakeelb@google.com>
-Cc: kbuild-all@01.org, Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Thelen <gthelen@google.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Vlastimil Babka <vbabka@suse.cz>, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Shakeel Butt <shakeelb@google.com>
-Subject: Re: [PATCH] mm: save two stranding bit in gfp_mask
-Message-ID: <201805231335.RIR9HxYj%fengguang.wu@intel.com>
-References: <20180516202023.167627-1-shakeelb@google.com>
+        id S1754231AbeEWIKh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 04:10:37 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57422 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754082AbeEWIKe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 04:10:34 -0400
+Date: Wed, 23 May 2018 10:10:29 +0200
+From: Cornelia Huck <cohuck@redhat.com>
+To: Pierre Morel <pmorel@linux.ibm.com>
+Cc: Pierre Morel <pmorel@linux.vnet.ibm.com>,
+        Dong Jia Shi <bjsdjshi@linux.ibm.com>,
+        Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>, pasic@linux.vnet.ibm.com,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Subject: Re: [PATCH 04/10] vfio: ccw: replace IO_REQ event with SSCH_REQ
+ event
+Message-ID: <20180523101029.0f717f08.cohuck@redhat.com>
+In-Reply-To: <86a4be7f-6c4c-19db-f743-ed4af0173125@linux.ibm.com>
+References: <1524149293-12658-1-git-send-email-pmorel@linux.vnet.ibm.com>
+        <1524149293-12658-5-git-send-email-pmorel@linux.vnet.ibm.com>
+        <20180426073053.GZ12194@bjsdjshi@linux.vnet.ibm.com>
+        <20180426074806.GB12194@bjsdjshi@linux.vnet.ibm.com>
+        <20180430173305.632faa80.cohuck@redhat.com>
+        <20180502074622.GV5428@bjsdjshi@linux.vnet.ibm.com>
+        <5816643d-5406-06b9-0727-fdcd771aba63@linux.vnet.ibm.com>
+        <20180504011916.GA26081@bjsdjshi@linux.ibm.com>
+        <8c75acd1-c00b-4d7f-ea4b-d32e9b05989b@linux.vnet.ibm.com>
+        <20180522174120.2a56adb7.cohuck@redhat.com>
+        <86a4be7f-6c4c-19db-f743-ed4af0173125@linux.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180516202023.167627-1-shakeelb@google.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Shakeel,
+On Wed, 23 May 2018 09:50:00 +0200
+Pierre Morel <pmorel@linux.ibm.com> wrote:
 
-Thank you for the patch! Perhaps something to improve:
+> On 22/05/2018 17:41, Cornelia Huck wrote:
+> > On Fri, 4 May 2018 13:02:36 +0200
+> > Pierre Morel <pmorel@linux.vnet.ibm.com> wrote:
+> >  
+> >> On 04/05/2018 03:19, Dong Jia Shi wrote:  
+> >>> * Pierre Morel <pmorel@linux.vnet.ibm.com> [2018-05-03 16:26:29 +0200]:
+> >>>     
+> >>>> On 02/05/2018 09:46, Dong Jia Shi wrote:  
+> >>>>> * Cornelia Huck <cohuck@redhat.com> [2018-04-30 17:33:05 +0200]:
+> >>>>>     
+> >>>>>> On Thu, 26 Apr 2018 15:48:06 +0800
+> >>>>>> Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com> wrote:
+> >>>>>>     
+> >>>>>>> * Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com> [2018-04-26 15:30:54 +0800]:
+> >>>>>>>
+> >>>>>>> [...]
+> >>>>>>>     
+> >>>>>>>>> @@ -179,7 +160,7 @@ static int fsm_irq(struct vfio_ccw_private *private,
+> >>>>>>>>>    	if (private->io_trigger)
+> >>>>>>>>>    		eventfd_signal(private->io_trigger, 1);
+> >>>>>>>>>
+> >>>>>>>>> -	return private->state;
+> >>>>>>>>> +	return VFIO_CCW_STATE_IDLE;  
+> >>>>>>>> This is not right. For example, if we are in STANDBY state (subch driver
+> >>>>>>>> is probed, but mdev device is not created), we can not jump to IDLE
+> >>>>>>>> state.  
+> >>>>>>> I see my problem, for STANDBY state, we should introduce another event
+> >>>>>>> callback for VFIO_CCW_EVENT_INTERRUPT. It doesn't make sense to call
+> >>>>>>> fsm_irq() which tries to signal userspace with interrupt notification
+> >>>>>>> when mdev is not created yet... So we'd need a separated fix for this
+> >>>>>>> issue too.  
+> >>>>>> But how do we even get into that situation when we don't have an mdev
+> >>>>>> yet?
+> >>>>>>     
+> >>>>> We cann't... So let's assign fsm_nop() as the interrupt callback for
+> >>>>> STANDBY state?
+> >>>>>     
+> >>>> :) Isn't it exactly what my patch series handle?  
+> >>> As far as I see, that's not true. ;)
+> >>>
+> >>> After this series applied,
+> >>> vfio_ccw_jumptable[VFIO_CCW_STATE_STANDBY][VFIO_CCW_EVENT_INTERRUPT] is
+> >>> still fsm_irq().
+> >>>     
+> >>
+> >> What I mean is, this code tries to handle design problems
+> >> without changing too much of the original code at first.
+> >>
+> >> The problem here is not that the fsm_irq function is called on interrupt,
+> >> if we have an interrupt it must be signaled to user land.
+> >> The problem is that this state is entered at the wrong moment.
+> >>
+> >> STANDBY should be entered, during the mdev_open when we realize the QEMU
+> >> device,
+> >> and not during the probe, in which we should stay in NOT_OPER until we
+> >> get the QEMU device.
+> >>
+> >> The probe() and mdev_open() function should be modified, not the state
+> >> table.  
+> > So, the takeaway is that we should handle starting via the init
+> > callbacks and not via the state machine?
+> >  
+> hum, sorry, I think that my previous answer was not completely right,
+> and did not really answer to Dong Jia comment, yes fsm_irq was not
+> at its place, thinking again about the comments of both of you
+> I think that we can suppress the INIT event.
+> 
+> I would like to rebase the patch to include the comments you both did.
+> 
+> 
 
-[auto build test WARNING on mmotm/master]
-[also build test WARNING on v4.17-rc6]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Shakeel-Butt/mm-save-two-stranding-bit-in-gfp_mask/20180518-202316
-base:   git://git.cmpxchg.org/linux-mmotm.git master
-
-
-vim +/jl +2585 fs/reiserfs/journal.c
-
-^1da177e Linus Torvalds 2005-04-16  2573  
-^1da177e Linus Torvalds 2005-04-16  2574  static struct reiserfs_journal_list *alloc_journal_list(struct super_block *s)
-^1da177e Linus Torvalds 2005-04-16  2575  {
-^1da177e Linus Torvalds 2005-04-16  2576  	struct reiserfs_journal_list *jl;
-8c777cc4 Pekka Enberg   2006-02-01  2577  	jl = kzalloc(sizeof(struct reiserfs_journal_list),
-8c777cc4 Pekka Enberg   2006-02-01  2578  		     GFP_NOFS | __GFP_NOFAIL);
-^1da177e Linus Torvalds 2005-04-16  2579  	INIT_LIST_HEAD(&jl->j_list);
-^1da177e Linus Torvalds 2005-04-16  2580  	INIT_LIST_HEAD(&jl->j_working_list);
-^1da177e Linus Torvalds 2005-04-16  2581  	INIT_LIST_HEAD(&jl->j_tail_bh_list);
-^1da177e Linus Torvalds 2005-04-16  2582  	INIT_LIST_HEAD(&jl->j_bh_list);
-90415dea Jeff Mahoney   2008-07-25  2583  	mutex_init(&jl->j_commit_mutex);
-^1da177e Linus Torvalds 2005-04-16  2584  	SB_JOURNAL(s)->j_num_lists++;
-^1da177e Linus Torvalds 2005-04-16 @2585  	get_journal_list(jl);
-^1da177e Linus Torvalds 2005-04-16  2586  	return jl;
-^1da177e Linus Torvalds 2005-04-16  2587  }
-^1da177e Linus Torvalds 2005-04-16  2588  
-
-:::::: The code at line 2585 was first introduced by commit
-:::::: 1da177e4c3f41524e886b7f1b8a0c1fc7321cac2 Linux-2.6.12-rc2
-
-:::::: TO: Linus Torvalds <torvalds@ppc970.osdl.org>
-:::::: CC: Linus Torvalds <torvalds@ppc970.osdl.org>
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Yes, a respin is probably best before we get confused even more :)
