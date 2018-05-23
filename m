@@ -1,71 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934280AbeEWTS0 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 15:18:26 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:37916 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934220AbeEWTR6 (ORCPT
+        id S934297AbeEWTTD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 15:19:03 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:33700 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934282AbeEWTTC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 15:17:58 -0400
-X-Google-Smtp-Source: AB8JxZo6SwZdnnspDQJ6ePbc7Q1A/ir7ze4OIpV2WHnl0ehIpl5Tq5yrt+xHTXHjesualgacAQLdbQ==
-From: Fabio Estevam <festevam@gmail.com>
-To: broonie@kernel.org
-Cc: linux-kernel@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>
-Subject: [PATCH 5/5] regulator: mc13xxx-core: Switch to SPDX identifier
-Date: Wed, 23 May 2018 16:17:38 -0300
-Message-Id: <1527103058-8422-5-git-send-email-festevam@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1527103058-8422-1-git-send-email-festevam@gmail.com>
-References: <1527103058-8422-1-git-send-email-festevam@gmail.com>
+        Wed, 23 May 2018 15:19:02 -0400
+Date: Wed, 23 May 2018 15:19:00 -0400 (EDT)
+Message-Id: <20180523.151900.1685171518319860725.davem@davemloft.net>
+To: f.fainelli@gmail.com
+Cc: netdev@vger.kernel.org, jon.mason@broadcom.com, andrew@lunn.ch,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] net: phy: broadcom: Fix auxiliary control register
+ reads
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180522232227.6355-1-f.fainelli@gmail.com>
+References: <20180522232227.6355-1-f.fainelli@gmail.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fabio Estevam <fabio.estevam@nxp.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Date: Tue, 22 May 2018 16:22:26 -0700
 
-Adopt the SPDX license identifier headers to ease license compliance
-management.
+> We are currently doing auxiliary control register reads with the shadow
+> register value 0b111 (0x7) which incidentally is also the selector value
+> that should be present in bits [2:0]. Fix this by using the appropriate
+> selector mask which is defined (MII_BCM54XX_AUXCTL_SHDWSEL_MASK).
+> 
+> This does not have a functional impact yet because we always access the
+> MII_BCM54XX_AUXCTL_SHDWSEL_MISC (0x7) register in the current code.
+> This might change at some point though.
+> 
+> Fixes: 5b4e29005123 ("net: phy: broadcom: add bcm54xx_auxctl_read")
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> ---
+> David, please queue this for -stable as well, thank you!
 
-Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
----
- drivers/regulator/mc13xxx-regulator-core.c | 28 ++++++++++++----------------
- 1 file changed, 12 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/regulator/mc13xxx-regulator-core.c b/drivers/regulator/mc13xxx-regulator-core.c
-index 0281c31..41271ae 100644
---- a/drivers/regulator/mc13xxx-regulator-core.c
-+++ b/drivers/regulator/mc13xxx-regulator-core.c
-@@ -1,19 +1,15 @@
--/*
-- * Regulator Driver for Freescale MC13xxx PMIC
-- *
-- * Copyright 2010 Yong Shen <yong.shen@linaro.org>
-- *
-- * Based on mc13783 regulator driver :
-- * Copyright (C) 2008 Sascha Hauer, Pengutronix <s.hauer@pengutronix.de>
-- * Copyright 2009 Alberto Panizzo <maramaopercheseimorto@gmail.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-- * Regs infos taken from mc13xxx drivers from freescale and mc13xxx.pdf file
-- * from freescale
-- */
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Regulator Driver for Freescale MC13xxx PMIC
-+//
-+// Copyright 2010 Yong Shen <yong.shen@linaro.org>
-+//
-+// Based on mc13783 regulator driver :
-+// Copyright (C) 2008 Sascha Hauer, Pengutronix <s.hauer@pengutronix.de>
-+// Copyright 2009 Alberto Panizzo <maramaopercheseimorto@gmail.com>
-+//
-+// Regs infos taken from mc13xxx drivers from freescale and mc13xxx.pdf file
-+// from freescale
- 
- #include <linux/mfd/mc13xxx.h>
- #include <linux/regulator/machine.h>
--- 
-2.7.4
+Applied and queued up for -stable.
