@@ -1,135 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932363AbeEWJlv (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 05:41:51 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:43342 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932178AbeEWJlq (ORCPT
+        id S932384AbeEWJmV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 05:42:21 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:35143 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932155AbeEWJmQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 05:41:46 -0400
-Date: Wed, 23 May 2018 11:41:41 +0200
-From: Ana Guerrero Lopez <ana.guerrero@collabora.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: ming_qian@realsil.com.cn, Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Kai Heng Feng <kai.heng.feng@canonical.com>
-Subject: Re: [PATCH] media: uvcvideo: Support realtek's UVC 1.5 device
-Message-ID: <20180523094141.GA32594@delenn>
-References: <1525831988-32017-1-git-send-email-ming_qian@realsil.com.cn>
- <2510852.fx2XduE8hM@avalon>
- <C2D9C61E-F990-4C47-8E9E-18CA74C79FA2@canonical.com>
+        Wed, 23 May 2018 05:42:16 -0400
+X-Google-Smtp-Source: AB8JxZpsNJH4lkoAn0KhFVkpy+LDP1kDJ8lJMcdLK+xaao1ZC25+hs/pDN+U0vp6A0DeWhXRhysamKLvSGnxzp+ivMM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <C2D9C61E-F990-4C47-8E9E-18CA74C79FA2@canonical.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <57e4bbdd-1e30-0352-f758-998b64a6b77f@xilinx.com>
+References: <6ee982f8eb6e07f9ecbb0cc5093152f4a16b9c31.1523454899.git.michal.simek@xilinx.com>
+ <CACRpkdbOa+AvhQT1RCWA_zQuTpp4qfNjZBFDOKLdaFqMGAe+cw@mail.gmail.com>
+ <f9dd4f64-4026-f495-5810-32affb5b0944@xilinx.com> <CACRpkdaxwRc0zoDKogVGisXTPJ0EwLbOQjHzz1pSEjvWCsSCTQ@mail.gmail.com>
+ <cc8d864a-e8e6-d30d-ae54-91819e5d0b8d@xilinx.com> <CACRpkdYgw+HaC5bUCZKiD7j+2ZLYbCTG+DdPdAEkRDq0xF5b3w@mail.gmail.com>
+ <60652f48-2a98-414b-5cff-25890a6da37f@xilinx.com> <CACRpkdaNJzW+LO97oxavzYJwfkj0xu7wxTNRaGiaKm98ON5JMA@mail.gmail.com>
+ <57e4bbdd-1e30-0352-f758-998b64a6b77f@xilinx.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 23 May 2018 11:42:14 +0200
+Message-ID: <CACRpkdbCsUBMcHg+xGOQCBmhoJsqh9VjK+4pjhG5Hf6Fjzwjww@mail.gmail.com>
+Subject: Re: [PATCH] gpio: zynq: Setup chip->base based on alias ID
+To: Michal Simek <michal.simek@xilinx.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michal Simek <monstr@monstr.eu>,
+        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
+        Peter Crosthwaite <peter.crosthwaite@xilinx.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Rob Herring <robherring2@gmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > commit a9c002732695eab2096580a0d1a1687bc2f95928
-> > Author: ming_qian <ming_qian@realsil.com.cn>
-> > Date:   Wed May 9 10:13:08 2018 +0800
-> > 
-> >     media: uvcvideo: Support UVC 1.5 video probe & commit controls
-> > 
-> >     The length of UVC 1.5 video control is 48, and it is 34 for UVC 1.1.
-> >     Change it to 48 for UVC 1.5 device, and the UVC 1.5 device can be
-> >     recognized.
-> > 
-> >     More changes to the driver are needed for full UVC 1.5 compatibility.
-> >     However, at least the UVC 1.5 Realtek RTS5847/RTS5852 cameras have been
-> >     reported to work well.
-> > 
-> >     Cc: stable@vger.kernel.org
-> >     Signed-off-by: ming_qian <ming_qian@realsil.com.cn>
-> >     [Factor out code to helper function, update size checks]
-> >     Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> 
-> I tested this new patch and it works well.
-> 
-> Tested-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+On Wed, May 2, 2018 at 4:19 PM, Michal Simek <michal.simek@xilinx.com> wrote:
+> On 2.5.2018 15:56, Linus Walleij wrote:
 
-I tested it as well and it works well.
+>> Would it be possible that I apply the patch, and somehow also
+>> establish some understanding with all users of the Xilinx
+>> platform that whatever legacy applications are out there
+>> must start to migrate towards using the character device so
+>> this reliance on the numberspace doesn't stick around forever?
+>
+> When someone contacts me for asking guidance for gpio I am telling them
+> not to use legacy sysfs interface and use libgpiod.
 
-Tested-by: Ana Guerrero Lopez <ana.guerrero@collabora.com>
+Awesome, thanks for your support :)
 
+> Last one was a week
+> ago in connection to Ultra96 and libmraa.
+>
+> But even chardev is not supported there now.
+> https://github.com/intel-iot-devkit/mraa/issues/713
 
-> > 
-> > diff --git a/drivers/media/usb/uvc/uvc_video.c
-> > b/drivers/media/usb/uvc/uvc_video.c
-> > index eb9e04a59427..285b0e813b9d 100644
-> > --- a/drivers/media/usb/uvc/uvc_video.c
-> > +++ b/drivers/media/usb/uvc/uvc_video.c
-> > @@ -207,14 +207,27 @@ static void uvc_fixup_video_ctrl(struct
-> > uvc_streaming *stream,
-> >  	}
-> >  }
-> > 
-> > +static size_t uvc_video_ctrl_size(struct uvc_streaming *stream)
-> > +{
-> > +	/*
-> > +	 * Return the size of the video probe and commit controls, which depends
-> > +	 * on the protocol version.
-> > +	 */
-> > +	if (stream->dev->uvc_version < 0x0110)
-> > +		return 26;
-> > +	else if (stream->dev->uvc_version < 0x0150)
-> > +		return 34;
-> > +	else
-> > +		return 48;
-> > +}
-> > +
-> >  static int uvc_get_video_ctrl(struct uvc_streaming *stream,
-> >  	struct uvc_streaming_control *ctrl, int probe, u8 query)
-> >  {
-> > +	u16 size = uvc_video_ctrl_size(stream);
-> >  	u8 *data;
-> > -	u16 size;
-> >  	int ret;
-> > 
-> > -	size = stream->dev->uvc_version >= 0x0110 ? 34 : 26;
-> >  	if ((stream->dev->quirks & UVC_QUIRK_PROBE_DEF) &&
-> >  			query == UVC_GET_DEF)
-> >  		return -EIO;
-> > @@ -271,7 +284,7 @@ static int uvc_get_video_ctrl(struct uvc_streaming
-> > *stream,
-> >  	ctrl->dwMaxVideoFrameSize = get_unaligned_le32(&data[18]);
-> >  	ctrl->dwMaxPayloadTransferSize = get_unaligned_le32(&data[22]);
-> > 
-> > -	if (size == 34) {
-> > +	if (size >= 34) {
-> >  		ctrl->dwClockFrequency = get_unaligned_le32(&data[26]);
-> >  		ctrl->bmFramingInfo = data[30];
-> >  		ctrl->bPreferedVersion = data[31];
-> > @@ -300,11 +313,10 @@ static int uvc_get_video_ctrl(struct uvc_streaming
-> > *stream,
-> >  static int uvc_set_video_ctrl(struct uvc_streaming *stream,
-> >  	struct uvc_streaming_control *ctrl, int probe)
-> >  {
-> > +	u16 size = uvc_video_ctrl_size(stream);
-> >  	u8 *data;
-> > -	u16 size;
-> >  	int ret;
-> > 
-> > -	size = stream->dev->uvc_version >= 0x0110 ? 34 : 26;
-> >  	data = kzalloc(size, GFP_KERNEL);
-> >  	if (data == NULL)
-> >  		return -ENOMEM;
-> > @@ -321,7 +333,7 @@ static int uvc_set_video_ctrl(struct uvc_streaming
-> > *stream,
-> >  	put_unaligned_le32(ctrl->dwMaxVideoFrameSize, &data[18]);
-> >  	put_unaligned_le32(ctrl->dwMaxPayloadTransferSize, &data[22]);
-> > 
-> > -	if (size == 34) {
-> > +	if (size >= 34) {
-> >  		put_unaligned_le32(ctrl->dwClockFrequency, &data[26]);
-> >  		data[30] = ctrl->bmFramingInfo;
-> >  		data[31] = ctrl->bPreferedVersion;
-> > 
-> > -- 
-> > Regards,
-> > 
-> > Laurent Pinchart
+Hm I hope this happens soon. Manavanninan is doing a great
+job in switching this over, I just have to accept that the pace
+isn't always what it should be in all upstream projects, and
+deal with an imperfect world.
+
+> If you take a look at
+> arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts
+> which is Ultra96 board gpio-line-names are filled there for the whole PS
+> part. Definitely take a look and let know if you find out any issue there.
+
+It looks good. I even managed to boot my Ultra96 board which
+was sent over as price in some competition (great hardware!)
+
+> zynq/zynqmp gpio controller contains PS pins (hard part) and PL pins
+> coming to logic.
+>
+> I can't describe PL gpio pins because it can be whatever even I have
+> done that for one fixed hw design.
+>
+> Interesting part on that sha1 you shared is how "NC" pin is described.
+>
+> gpio pin 35 I have on zcu100 as "" but it should be maybe TP_PAD which
+> is really just a pad on real board. And the rest of "" gpio names are
+> connected to PL.
+
+How to handle anything routed to/from programmable logic is
+in a bit of mess right now, I understand this work isn't the
+easiest :/
+
+Let's go for this patch and try to improve the situation gradually
+moving forward.
+
+Yours,
+Linus Walleij
