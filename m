@@ -1,46 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933749AbeEWRGF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 13:06:05 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:46648 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933495AbeEWRGD (ORCPT
+        id S933777AbeEWRHQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 13:07:16 -0400
+Received: from freki.datenkhaos.de ([81.7.17.101]:39176 "EHLO
+        freki.datenkhaos.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932649AbeEWRHO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 13:06:03 -0400
-X-Google-Smtp-Source: AB8JxZouIDyNPshnjmFFbAuov0MqTLuwWqsQa0liG3LuzaCB5coYSxMH2oIN2yb/9/ySKIOxtN+YAg==
-From: Kevin Hilman <khilman@baylibre.com>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Carlo Caione <carlo@caione.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] ARM64: dts: meson-axg: i2c updates
-Organization: BayLibre
-References: <20180517093100.22225-1-jbrunet@baylibre.com>
-Date: Wed, 23 May 2018 10:06:00 -0700
-In-Reply-To: <20180517093100.22225-1-jbrunet@baylibre.com> (Jerome Brunet's
-        message of "Thu, 17 May 2018 11:30:56 +0200")
-Message-ID: <7hd0xms3nr.fsf@baylibre.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Wed, 23 May 2018 13:07:14 -0400
+Date: Wed, 23 May 2018 19:07:07 +0200
+From: Johannes Hirte <johannes.hirte@datenkhaos.de>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Christian =?utf-8?Q?Kr=C3=BCger?= <C.Krueger.B@web.de>,
+        linux-kernel@vger.kernel.org
+Subject: Re: Suggestion: =?utf-8?B?4oCec3BlY3RyZV92?=
+ =?utf-8?B?Mj1vZmbigJwgYW5kIOKAnm5vcHRp?= =?utf-8?B?4oCc?= per default in
+ "Intel Atom N270" case?
+Message-ID: <20180523170706.GA21118@probook>
+References: <72a7122d-0020-f307-a76d-bb80a2c19842@web.de>
+ <20180523105302.GE15312@amd>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180523105302.GE15312@amd>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jerome Brunet <jbrunet@baylibre.com> writes:
+On 2018 Mai 23, Pavel Machek wrote:
+> On Sat 2018-05-19 21:53:02, Christian Krüger wrote:
+> > Hi,
+> > 
+> > Since the old "in-order-execution" Intel CPUs like the Intel Atom N270
+> > (known for being installed in many Netbooks and Nettops) are not sensitive
+> > for "Meltdown" & "Spectre" , wouldn't it be a good idea to exclude these
+> > anyway "weak" CPUs from the costly patches by default?
+> > 
+> > Browsing the web, I can "feel the difference" if the matching kernel options
+> > are applied on such a device.
+> 
+> Can you also measure the difference? Placebo effect is hard to avoid.
+> 
+> But yes, we do not need to do workarounds on non-buggy machines...
+> 
+> 								Pavel
 
-> This patchset fixes a few problems found in the i2c nodes of
-> amlogic's meson-axg platform. It also adds the missing pins for
-> AO controller so we can use it on the S400
->
-> This series has been tested on the S400 board.
->
-> Jerome Brunet (4):
->   ARM64: dts: meson-axg: clean-up i2c nodes
->   ARM64: dts: meson-axg: correct i2c AO clock
->   ARM64: dts: meson-axg: add i2c AO pins
->   ARM64: dts: meson-axg: enable i2c AO on the S400 board
+On my Atom N270 there doesn't seem to be any workaround active with
+kernel 4.14.42:
 
-Applied to v4.18/dt64,
+localhost ~ # cat /sys/devices/system/cpu/vulnerabilities/*
+Not affected
+Not affected
+Not affected
 
-Kevin
+Christian, did you verified the mitigations are active on your system?
+What kernels are affected? 
+
+-- 
+Regards,
+  Johannes
