@@ -1,240 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932388AbeEWJe3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 05:34:29 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:43183 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932285AbeEWJbv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 05:31:51 -0400
-X-Google-Smtp-Source: AB8JxZrq2OQ+ZNM7WotYF6ZJfgdOsv1T9yHM/Ej0lVJ8nlHrGAcGWVUpHuEMY61C2q6nD6njrs+BOA==
-From: Baolin Wang <baolin.wang@linaro.org>
-To: dan.j.williams@intel.com, vkoul@kernel.org
-Cc: eric.long@spreadtrum.com, broonie@kernel.org, baolin.wang@linaro.org,
-        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V4 1/2] dmaengine: sprd: Optimize the sprd_dma_prep_dma_memcpy()
-Date: Wed, 23 May 2018 17:31:10 +0800
-Message-Id: <08819489e52add194fecf2b4b234fff9deecdb4c.1527065569.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
+        id S932334AbeEWJek (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 05:34:40 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:43553 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932257AbeEWJeY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 05:34:24 -0400
+Subject: Re: [PATCH rdma-next 1/5] RDMA/hns: Implement the
+ disassociate_ucontext API
+To: Jason Gunthorpe <jgg@ziepe.ca>
+References: <1526544173-106587-1-git-send-email-xavier.huwei@huawei.com>
+ <1526544173-106587-2-git-send-email-xavier.huwei@huawei.com>
+ <20180517150019.GB10842@ziepe.ca> <5AFFDF48.9010805@huawei.com>
+ <20180522202141.GA21148@ziepe.ca>
+CC: <dledford@redhat.com>, <linux-rdma@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <xavier.huwei@tom.com>,
+        <lijun_nudt@163.com>
+From: "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
+Message-ID: <5B053586.8090800@huawei.com>
+Date: Wed, 23 May 2018 17:33:58 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
+MIME-Version: 1.0
+In-Reply-To: <20180522202141.GA21148@ziepe.ca>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.57.115.182]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Long <eric.long@spreadtrum.com>
 
-This is one preparation patch, we can use default DMA configuration to
-implement the device_prep_dma_memcpy() interface instead of issuing
-sprd_dma_config().
 
-We will implement one new sprd_dma_config() function with introducing
-device_prep_slave_sg() interface in following patch. So we can remove
-the obsolete sprd_dma_config() firstly.
+On 2018/5/23 4:21, Jason Gunthorpe wrote:
+> On Sat, May 19, 2018 at 04:24:40PM +0800, Wei Hu (Xavier) wrote:
+>>
+>> On 2018/5/17 23:00, Jason Gunthorpe wrote:
+>>> On Thu, May 17, 2018 at 04:02:49PM +0800, Wei Hu (Xavier) wrote:
+>>>> This patch Implements the IB core disassociate_ucontext API.
+>>>>
+>>>> Signed-off-by: Wei Hu (Xavier) <xavier.huwei@huawei.com>
+>>>>  drivers/infiniband/hw/hns/hns_roce_main.c | 36 +++++++++++++++++++++++++++++++
+>>>>  1 file changed, 36 insertions(+)
+>>>>
+>>>> diff --git a/drivers/infiniband/hw/hns/hns_roce_main.c b/drivers/infiniband/hw/hns/hns_roce_main.c
+>>>> index 96fb6a9..7fafe9d 100644
+>>>> +++ b/drivers/infiniband/hw/hns/hns_roce_main.c
+>>>> @@ -33,6 +33,9 @@
+>>>>  #include <linux/acpi.h>
+>>>>  #include <linux/of_platform.h>
+>>>>  #include <linux/module.h>
+>>>> +#include <linux/sched.h>
+>>>> +#include <linux/sched/mm.h>
+>>>> +#include <linux/sched/task.h>
+>>>>  #include <rdma/ib_addr.h>
+>>>>  #include <rdma/ib_smi.h>
+>>>>  #include <rdma/ib_user_verbs.h>
+>>>> @@ -422,6 +425,38 @@ static int hns_roce_port_immutable(struct ib_device *ib_dev, u8 port_num,
+>>>>  	return 0;
+>>>>  }
+>>>>  
+>>>> +static void hns_roce_disassociate_ucontext(struct ib_ucontext *ibcontext)
+>>>> +{
+>>>> +	struct task_struct *process;
+>>>> +	struct mm_struct   *mm;
+>>>> +
+>>>> +	process = get_pid_task(ibcontext->tgid, PIDTYPE_PID);
+>>>> +	if (!process)
+>>>> +		return;
+>>>> +
+>>>> +	mm = get_task_mm(process);
+>>>> +	if (!mm) {
+>>>> +		pr_info("no mm, disassociate ucontext is pending task termination\n");
+>>>> +		while (1) {
+>>>> +			put_task_struct(process);
+>>>> +			usleep_range(1000, 2000);
+>>>> +			process = get_pid_task(ibcontext->tgid, PIDTYPE_PID);
+>>>> +			if (!process || process->state == TASK_DEAD) {
+>>>> +				pr_info("disassociate ucontext done, task was terminated\n");
+>>>> +				/* if task was dead, need to release the task
+>>>> +				 * struct.
+>>>> +				 */
+>>>> +				if (process)
+>>>> +					put_task_struct(process);
+>>>> +				return;
+>>>> +			}
+>>>> +		}
+>>>> +	}
+>>> I don't want to see this boilerplate code copied into every
+>>> driver. Hoist it into the core code, have the disassociate driver callback
+>>> accept a mm_struct parameter, and refactor the other drivers using this.
+>> When the userspace RDMA application process is suspended for some reason
+>> without executing ibv_close_device function,
+>> There will be calltrace as follows when rmmod roce kernel driver ko in
+>> the current version.
+>> It looks like a common problem to every driver and the code segment
+>> above is suitable for every driver.
+>> Pardon me for asking, but if you have any plan to do this?
+> My plan is to ask you to do it :)
+Hi, Jason
+    I will pull this patch out of the series and send V2.
+    We will think how to hoist it into the core code later.
+    Thanks
 
-Signed-off-by: Eric Long <eric.long@spreadtrum.com>
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
-Changes since v3:
- - No updates.
-
-Changes since v2:
- - Change logic to make code more readable.
-
-Changes since v1:
- - No updates.
----
- drivers/dma/sprd-dma.c |  167 +++++++++++-------------------------------------
- 1 file changed, 39 insertions(+), 128 deletions(-)
-
-diff --git a/drivers/dma/sprd-dma.c b/drivers/dma/sprd-dma.c
-index e715d07..924ada4 100644
---- a/drivers/dma/sprd-dma.c
-+++ b/drivers/dma/sprd-dma.c
-@@ -552,147 +552,58 @@ static void sprd_dma_issue_pending(struct dma_chan *chan)
- 	spin_unlock_irqrestore(&schan->vc.lock, flags);
- }
- 
--static int sprd_dma_config(struct dma_chan *chan, struct sprd_dma_desc *sdesc,
--			   dma_addr_t dest, dma_addr_t src, size_t len)
--{
--	struct sprd_dma_dev *sdev = to_sprd_dma_dev(chan);
--	struct sprd_dma_chn_hw *hw = &sdesc->chn_hw;
--	u32 datawidth, src_step, des_step, fragment_len;
--	u32 block_len, req_mode, irq_mode, transcation_len;
--	u32 fix_mode = 0, fix_en = 0;
--
--	if (IS_ALIGNED(len, 4)) {
--		datawidth = SPRD_DMA_DATAWIDTH_4_BYTES;
--		src_step = SPRD_DMA_WORD_STEP;
--		des_step = SPRD_DMA_WORD_STEP;
--	} else if (IS_ALIGNED(len, 2)) {
--		datawidth = SPRD_DMA_DATAWIDTH_2_BYTES;
--		src_step = SPRD_DMA_SHORT_STEP;
--		des_step = SPRD_DMA_SHORT_STEP;
--	} else {
--		datawidth = SPRD_DMA_DATAWIDTH_1_BYTE;
--		src_step = SPRD_DMA_BYTE_STEP;
--		des_step = SPRD_DMA_BYTE_STEP;
--	}
--
--	fragment_len = SPRD_DMA_MEMCPY_MIN_SIZE;
--	if (len <= SPRD_DMA_BLK_LEN_MASK) {
--		block_len = len;
--		transcation_len = 0;
--		req_mode = SPRD_DMA_BLK_REQ;
--		irq_mode = SPRD_DMA_BLK_INT;
--	} else {
--		block_len = SPRD_DMA_MEMCPY_MIN_SIZE;
--		transcation_len = len;
--		req_mode = SPRD_DMA_TRANS_REQ;
--		irq_mode = SPRD_DMA_TRANS_INT;
--	}
--
--	hw->cfg = SPRD_DMA_DONOT_WAIT_BDONE << SPRD_DMA_WAIT_BDONE_OFFSET;
--	hw->wrap_ptr = (u32)((src >> SPRD_DMA_HIGH_ADDR_OFFSET) &
--			     SPRD_DMA_HIGH_ADDR_MASK);
--	hw->wrap_to = (u32)((dest >> SPRD_DMA_HIGH_ADDR_OFFSET) &
--			    SPRD_DMA_HIGH_ADDR_MASK);
--
--	hw->src_addr = (u32)(src & SPRD_DMA_LOW_ADDR_MASK);
--	hw->des_addr = (u32)(dest & SPRD_DMA_LOW_ADDR_MASK);
--
--	if ((src_step != 0 && des_step != 0) || (src_step | des_step) == 0) {
--		fix_en = 0;
--	} else {
--		fix_en = 1;
--		if (src_step)
--			fix_mode = 1;
--		else
--			fix_mode = 0;
--	}
--
--	hw->frg_len = datawidth << SPRD_DMA_SRC_DATAWIDTH_OFFSET |
--		datawidth << SPRD_DMA_DES_DATAWIDTH_OFFSET |
--		req_mode << SPRD_DMA_REQ_MODE_OFFSET |
--		fix_mode << SPRD_DMA_FIX_SEL_OFFSET |
--		fix_en << SPRD_DMA_FIX_EN_OFFSET |
--		(fragment_len & SPRD_DMA_FRG_LEN_MASK);
--	hw->blk_len = block_len & SPRD_DMA_BLK_LEN_MASK;
--
--	hw->intc = SPRD_DMA_CFG_ERR_INT_EN;
--
--	switch (irq_mode) {
--	case SPRD_DMA_NO_INT:
--		break;
--
--	case SPRD_DMA_FRAG_INT:
--		hw->intc |= SPRD_DMA_FRAG_INT_EN;
--		break;
--
--	case SPRD_DMA_BLK_INT:
--		hw->intc |= SPRD_DMA_BLK_INT_EN;
--		break;
--
--	case SPRD_DMA_BLK_FRAG_INT:
--		hw->intc |= SPRD_DMA_BLK_INT_EN | SPRD_DMA_FRAG_INT_EN;
--		break;
--
--	case SPRD_DMA_TRANS_INT:
--		hw->intc |= SPRD_DMA_TRANS_INT_EN;
--		break;
--
--	case SPRD_DMA_TRANS_FRAG_INT:
--		hw->intc |= SPRD_DMA_TRANS_INT_EN | SPRD_DMA_FRAG_INT_EN;
--		break;
--
--	case SPRD_DMA_TRANS_BLK_INT:
--		hw->intc |= SPRD_DMA_TRANS_INT_EN | SPRD_DMA_BLK_INT_EN;
--		break;
--
--	case SPRD_DMA_LIST_INT:
--		hw->intc |= SPRD_DMA_LIST_INT_EN;
--		break;
--
--	case SPRD_DMA_CFGERR_INT:
--		hw->intc |= SPRD_DMA_CFG_ERR_INT_EN;
--		break;
--
--	default:
--		dev_err(sdev->dma_dev.dev, "invalid irq mode\n");
--		return -EINVAL;
--	}
--
--	if (transcation_len == 0)
--		hw->trsc_len = block_len & SPRD_DMA_TRSC_LEN_MASK;
--	else
--		hw->trsc_len = transcation_len & SPRD_DMA_TRSC_LEN_MASK;
--
--	hw->trsf_step = (des_step & SPRD_DMA_TRSF_STEP_MASK) <<
--			SPRD_DMA_DEST_TRSF_STEP_OFFSET |
--			(src_step & SPRD_DMA_TRSF_STEP_MASK) <<
--			SPRD_DMA_SRC_TRSF_STEP_OFFSET;
--
--	hw->frg_step = 0;
--	hw->src_blk_step = 0;
--	hw->des_blk_step = 0;
--	hw->src_blk_step = 0;
--	return 0;
--}
--
- static struct dma_async_tx_descriptor *
- sprd_dma_prep_dma_memcpy(struct dma_chan *chan, dma_addr_t dest, dma_addr_t src,
- 			 size_t len, unsigned long flags)
- {
- 	struct sprd_dma_chn *schan = to_sprd_dma_chan(chan);
- 	struct sprd_dma_desc *sdesc;
--	int ret;
-+	struct sprd_dma_chn_hw *hw;
-+	enum sprd_dma_datawidth datawidth;
-+	u32 step, temp;
- 
- 	sdesc = kzalloc(sizeof(*sdesc), GFP_NOWAIT);
- 	if (!sdesc)
- 		return NULL;
- 
--	ret = sprd_dma_config(chan, sdesc, dest, src, len);
--	if (ret) {
--		kfree(sdesc);
--		return NULL;
-+	hw = &sdesc->chn_hw;
-+
-+	hw->cfg = SPRD_DMA_DONOT_WAIT_BDONE << SPRD_DMA_WAIT_BDONE_OFFSET;
-+	hw->intc = SPRD_DMA_TRANS_INT | SPRD_DMA_CFG_ERR_INT_EN;
-+	hw->src_addr = src & SPRD_DMA_LOW_ADDR_MASK;
-+	hw->des_addr = dest & SPRD_DMA_LOW_ADDR_MASK;
-+	hw->wrap_ptr = (src >> SPRD_DMA_HIGH_ADDR_OFFSET) &
-+		SPRD_DMA_HIGH_ADDR_MASK;
-+	hw->wrap_to = (dest >> SPRD_DMA_HIGH_ADDR_OFFSET) &
-+		SPRD_DMA_HIGH_ADDR_MASK;
-+
-+	if (IS_ALIGNED(len, 8)) {
-+		datawidth = SPRD_DMA_DATAWIDTH_8_BYTES;
-+		step = SPRD_DMA_DWORD_STEP;
-+	} else if (IS_ALIGNED(len, 4)) {
-+		datawidth = SPRD_DMA_DATAWIDTH_4_BYTES;
-+		step = SPRD_DMA_WORD_STEP;
-+	} else if (IS_ALIGNED(len, 2)) {
-+		datawidth = SPRD_DMA_DATAWIDTH_2_BYTES;
-+		step = SPRD_DMA_SHORT_STEP;
-+	} else {
-+		datawidth = SPRD_DMA_DATAWIDTH_1_BYTE;
-+		step = SPRD_DMA_BYTE_STEP;
- 	}
- 
-+	temp = datawidth << SPRD_DMA_SRC_DATAWIDTH_OFFSET;
-+	temp |= datawidth << SPRD_DMA_DES_DATAWIDTH_OFFSET;
-+	temp |= SPRD_DMA_TRANS_REQ << SPRD_DMA_REQ_MODE_OFFSET;
-+	temp |= len & SPRD_DMA_FRG_LEN_MASK;
-+	hw->frg_len = temp;
-+
-+	hw->blk_len = len & SPRD_DMA_BLK_LEN_MASK;
-+	hw->trsc_len = len & SPRD_DMA_TRSC_LEN_MASK;
-+
-+	temp = (step & SPRD_DMA_TRSF_STEP_MASK) << SPRD_DMA_DEST_TRSF_STEP_OFFSET;
-+	temp |= (step & SPRD_DMA_TRSF_STEP_MASK) << SPRD_DMA_SRC_TRSF_STEP_OFFSET;
-+	hw->trsf_step = temp;
-+
- 	return vchan_tx_prep(&schan->vc, &sdesc->vd, flags);
- }
- 
--- 
-1.7.9.5
+    Regards
+Wei Hu
+> Jason
+>
+> .
+>
