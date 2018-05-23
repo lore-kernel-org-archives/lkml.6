@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754518AbeEWI0s (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 04:26:48 -0400
-Received: from mga03.intel.com ([134.134.136.65]:7708 "EHLO mga03.intel.com"
+        id S932108AbeEWI05 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 04:26:57 -0400
+Received: from mga03.intel.com ([134.134.136.65]:7709 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754195AbeEWI0o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 04:26:44 -0400
+        id S1754520AbeEWI0v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 04:26:51 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,432,1520924400";
-   d="scan'208";a="57726023"
+   d="scan'208";a="57726050"
 From: "Huang, Ying" <ying.huang@intel.com>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
@@ -23,9 +23,9 @@ Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
         Zi Yan <zi.yan@cs.rutgers.edu>
-Subject: [PATCH -mm -V3 04/21] mm, THP, swap: Support PMD swap mapping in swapcache_free_cluster()
-Date: Wed, 23 May 2018 16:26:08 +0800
-Message-Id: <20180523082625.6897-5-ying.huang@intel.com>
+Subject: [PATCH -mm -V3 07/21] mm, THP, swap: Support PMD swap mapping in split_swap_cluster()
+Date: Wed, 23 May 2018 16:26:11 +0800
+Message-Id: <20180523082625.6897-8-ying.huang@intel.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180523082625.6897-1-ying.huang@intel.com>
 References: <20180523082625.6897-1-ying.huang@intel.com>
@@ -35,14 +35,26 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Huang Ying <ying.huang@intel.com>
 
-Previously, during swapout, all PMD page mapping will be split and
-replaced with PTE swap mapping.  And when clearing the SWAP_HAS_CACHE
-flag for the huge swap cluster in swapcache_free_cluster(), the huge
-swap cluster will be split.  Now, during swapout, the PMD page mapping
-will be changed to PMD swap mapping.  So when clearing the
-SWAP_HAS_CACHE flag, the huge swap cluster will only be split if the
-PMD swap mapping count is 0.  Otherwise, we will keep it as the huge
-swap cluster.  So that we can swapin a THP as a whole later.
+When splitting a THP in swap cache or failing to allocate a THP when
+swapin a huge swap cluster, the huge swap cluster will be split.  In
+addition to clear the huge flag of the swap cluster, the PMD swap
+mapping count recorded in cluster_count() will be set to 0.  But we
+will not touch PMD swap mappings themselves, because it is hard to
+find them all sometimes.  When the PMD swap mappings are operated
+later, it will be found that the huge swap cluster has been split and
+the PMD swap mappings will be split at that time.
+
+Unless splitting a THP in swap cache (specified via "force"
+parameter), split_swap_cluster() will return -EEXIST if there is
+SWAP_HAS_CACHE flag in swap_map[offset].  Because this indicates there
+is a THP corresponds to this huge swap cluster, and it isn't desired
+to split the THP.
+
+When splitting a THP in swap cache, the position to call
+split_swap_cluster() is changed to before unlocking sub-pages.  So
+that all sub-pages will be kept locked from the THP has been split to
+the huge swap cluster is split.  This makes the code much easier to be
+reasoned.
 
 Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
 Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
@@ -57,81 +69,126 @@ Cc: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 Cc: Zi Yan <zi.yan@cs.rutgers.edu>
 ---
- mm/swapfile.c | 41 ++++++++++++++++++++++++++++++-----------
- 1 file changed, 30 insertions(+), 11 deletions(-)
+ include/linux/swap.h |  4 ++--
+ mm/huge_memory.c     | 18 ++++++++++++------
+ mm/swapfile.c        | 45 ++++++++++++++++++++++++++++++---------------
+ 3 files changed, 44 insertions(+), 23 deletions(-)
 
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index bb9de2cb952a..878f132dabc0 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -617,10 +617,10 @@ static inline swp_entry_t get_swap_page(struct page *page)
+ #endif /* CONFIG_SWAP */
+ 
+ #ifdef CONFIG_THP_SWAP
+-extern int split_swap_cluster(swp_entry_t entry);
++extern int split_swap_cluster(swp_entry_t entry, bool force);
+ extern int split_swap_cluster_map(swp_entry_t entry);
+ #else
+-static inline int split_swap_cluster(swp_entry_t entry)
++static inline int split_swap_cluster(swp_entry_t entry, bool force)
+ {
+ 	return 0;
+ }
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 84d5d8ff869e..e363e13f6751 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -2502,6 +2502,17 @@ static void __split_huge_page(struct page *page, struct list_head *list,
+ 
+ 	unfreeze_page(head);
+ 
++	/*
++	 * Split swap cluster before unlocking sub-pages.  So all
++	 * sub-pages will be kept locked from THP has been split to
++	 * swap cluster is split.
++	 */
++	if (PageSwapCache(head)) {
++		swp_entry_t entry = { .val = page_private(head) };
++
++		split_swap_cluster(entry, true);
++	}
++
+ 	for (i = 0; i < HPAGE_PMD_NR; i++) {
+ 		struct page *subpage = head + i;
+ 		if (subpage == page)
+@@ -2728,12 +2739,7 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
+ 			__dec_node_page_state(page, NR_SHMEM_THPS);
+ 		spin_unlock(&pgdata->split_queue_lock);
+ 		__split_huge_page(page, list, flags);
+-		if (PageSwapCache(head)) {
+-			swp_entry_t entry = { .val = page_private(head) };
+-
+-			ret = split_swap_cluster(entry);
+-		} else
+-			ret = 0;
++		ret = 0;
+ 	} else {
+ 		if (IS_ENABLED(CONFIG_DEBUG_VM) && mapcount) {
+ 			pr_alert("total_mapcount: %u, page_count(): %u\n",
 diff --git a/mm/swapfile.c b/mm/swapfile.c
-index 075048032383..8dbc0f9b2f90 100644
+index 05f53c4c0cfe..1e723d3a9a6f 100644
 --- a/mm/swapfile.c
 +++ b/mm/swapfile.c
-@@ -514,6 +514,18 @@ static void dec_cluster_info_page(struct swap_info_struct *p,
- 		free_cluster(p, idx);
+@@ -1414,21 +1414,6 @@ static void swapcache_free_cluster(swp_entry_t entry)
+ 		}
+ 	}
  }
- 
-+#ifdef CONFIG_THP_SWAP
-+static inline int cluster_swapcount(struct swap_cluster_info *ci)
-+{
-+	if (!ci || !cluster_is_huge(ci))
-+		return 0;
-+
-+	return cluster_count(ci) - SWAPFILE_CLUSTER;
-+}
-+#else
-+#define cluster_swapcount(ci)			0
-+#endif
-+
- /*
-  * It's possible scan_swap_map() uses a free cluster in the middle of free
-  * cluster list. Avoiding such abuse to avoid list corruption.
-@@ -905,6 +917,7 @@ static void swap_free_cluster(struct swap_info_struct *si, unsigned long idx)
- 	struct swap_cluster_info *ci;
- 
- 	ci = lock_cluster(si, offset);
-+	memset(si->swap_map + offset, 0, SWAPFILE_CLUSTER);
- 	cluster_set_count_flag(ci, 0, 0);
- 	free_cluster(si, idx);
+-
+-int split_swap_cluster(swp_entry_t entry)
+-{
+-	struct swap_info_struct *si;
+-	struct swap_cluster_info *ci;
+-	unsigned long offset = swp_offset(entry);
+-
+-	si = _swap_info_get(entry);
+-	if (!si)
+-		return -EBUSY;
+-	ci = lock_cluster(si, offset);
+-	cluster_clear_huge(ci);
+-	unlock_cluster(ci);
+-	return 0;
+-}
+ #else
+ static inline void swapcache_free_cluster(swp_entry_t entry)
+ {
+@@ -4072,6 +4057,36 @@ int split_swap_cluster_map(swp_entry_t entry)
  	unlock_cluster(ci);
-@@ -1288,24 +1301,30 @@ static void swapcache_free_cluster(swp_entry_t entry)
- 
- 	ci = lock_cluster(si, offset);
- 	VM_BUG_ON(!cluster_is_huge(ci));
+ 	return 0;
+ }
++
++int split_swap_cluster(swp_entry_t entry, bool force)
++{
++	struct swap_info_struct *si;
++	struct swap_cluster_info *ci;
++	unsigned long offset = swp_offset(entry);
++	int ret = 0;
++
++	si = get_swap_device(entry);
++	if (!si)
++		return -EINVAL;
++	ci = lock_cluster(si, offset);
++	/* The swap cluster has been split by someone else */
++	if (!cluster_is_huge(ci))
++		goto out;
 +	VM_BUG_ON(!is_cluster_offset(offset));
 +	VM_BUG_ON(cluster_count(ci) < SWAPFILE_CLUSTER);
- 	map = si->swap_map + offset;
--	for (i = 0; i < SWAPFILE_CLUSTER; i++) {
--		val = map[i];
--		VM_BUG_ON(!(val & SWAP_HAS_CACHE));
--		if (val == SWAP_HAS_CACHE)
--			free_entries++;
-+	if (!cluster_swapcount(ci)) {
-+		for (i = 0; i < SWAPFILE_CLUSTER; i++) {
-+			val = map[i];
-+			VM_BUG_ON(!(val & SWAP_HAS_CACHE));
-+			if (val == SWAP_HAS_CACHE)
-+				free_entries++;
-+		}
-+		if (free_entries != SWAPFILE_CLUSTER)
-+			cluster_clear_huge(ci);
- 	}
- 	if (!free_entries) {
--		for (i = 0; i < SWAPFILE_CLUSTER; i++)
--			map[i] &= ~SWAP_HAS_CACHE;
-+		for (i = 0; i < SWAPFILE_CLUSTER; i++) {
-+			val = map[i];
-+			VM_BUG_ON(!(val & SWAP_HAS_CACHE) ||
-+				  val == SWAP_HAS_CACHE);
-+			map[i] = val & ~SWAP_HAS_CACHE;
-+		}
- 	}
--	cluster_clear_huge(ci);
- 	unlock_cluster(ci);
- 	if (free_entries == SWAPFILE_CLUSTER) {
- 		spin_lock(&si->lock);
--		ci = lock_cluster(si, offset);
--		memset(map, 0, SWAPFILE_CLUSTER);
--		unlock_cluster(ci);
- 		mem_cgroup_uncharge_swap(entry, SWAPFILE_CLUSTER);
- 		swap_free_cluster(si, idx);
- 		spin_unlock(&si->lock);
++	/* If not forced, don't split swap cluster has swap cache */
++	if (!force && si->swap_map[offset] & SWAP_HAS_CACHE) {
++		ret = -EEXIST;
++		goto out;
++	}
++	cluster_set_count(ci, SWAPFILE_CLUSTER);
++	cluster_clear_huge(ci);
++
++out:
++	unlock_cluster(ci);
++	put_swap_device(si);
++	return ret;
++}
+ #endif
+ 
+ static int __init swapfile_init(void)
 -- 
 2.16.1
