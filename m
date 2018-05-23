@@ -1,108 +1,250 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933633AbeEWPjK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 11:39:10 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:45557 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932649AbeEWPjG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 11:39:06 -0400
-X-Google-Smtp-Source: AB8JxZroO0nJEhRmeoGfMqzazAT88ogfwSivBIsKgZJsIxqKt5coqo2KorIUgDHyAXq3avZRRqa26Q==
-Subject: Re: [PATCH net-next v3 0/7] Add support for QCA8334 switch
-To: =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <vokac.m@gmail.com>,
-        netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        vivien.didelot@savoirfairelinux.com, andrew@lunn.ch,
-        mark.rutland@arm.com, robh+dt@kernel.org, davem@davemloft.net,
-        michal.vokac@ysoft.com
-References: <1527056424-14528-1-git-send-email-michal.vokac@ysoft.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-Message-ID: <29ea7cdd-5690-e39a-a2ef-4f48fbcb7659@gmail.com>
-Date: Wed, 23 May 2018 08:39:02 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S933643AbeEWPjh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 11:39:37 -0400
+Received: from mga05.intel.com ([192.55.52.43]:50283 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932649AbeEWPje (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 11:39:34 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,433,1520924400";
+   d="scan'208";a="51579932"
+Date: Wed, 23 May 2018 23:28:41 +0800
+From: Wu Hao <hao.wu@intel.com>
+To: Alan Tull <atull@kernel.org>
+Cc: Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org,
+        "Kang, Luwei" <luwei.kang@intel.com>,
+        "Zhang, Yi Z" <yi.z.zhang@intel.com>,
+        Tim Whisonant <tim.whisonant@intel.com>,
+        Enno Luebbers <enno.luebbers@intel.com>,
+        Shiva Rao <shiva.rao@intel.com>,
+        Christopher Rauer <christopher.rauer@intel.com>
+Subject: Re: [PATCH v5 20/28] fpga: dfl: add fpga bridge platform driver for
+ FME
+Message-ID: <20180523152841.GA23834@hao-dev>
+References: <1525229431-3087-1-git-send-email-hao.wu@intel.com>
+ <1525229431-3087-21-git-send-email-hao.wu@intel.com>
+ <CANk1AXS3M=GyTtdk=YYMadD22VqDPbB_XRYrnoue6nXrNQqqkQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1527056424-14528-1-git-send-email-michal.vokac@ysoft.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANk1AXS3M=GyTtdk=YYMadD22VqDPbB_XRYrnoue6nXrNQqqkQ@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, May 23, 2018 at 10:15:00AM -0500, Alan Tull wrote:
+> On Tue, May 1, 2018 at 9:50 PM, Wu Hao <hao.wu@intel.com> wrote:
+> 
+> Hi Hao,
+> 
+> > This patch adds fpga bridge platform driver for FPGA Management Engine.
+> > It implements the enable_set callback for fpga bridge.
+> >
+> > Signed-off-by: Tim Whisonant <tim.whisonant@intel.com>
+> > Signed-off-by: Enno Luebbers <enno.luebbers@intel.com>
+> > Signed-off-by: Shiva Rao <shiva.rao@intel.com>
+> > Signed-off-by: Christopher Rauer <christopher.rauer@intel.com>
+> > Signed-off-by: Wu Hao <hao.wu@intel.com>
+> > Acked-by: Alan Tull <atull@kernel.org>
+> > Acked-by: Moritz Fischer <mdf@kernel.org>
+> > ---
+> > v3: rename driver to fpga-dfl-fme-br
+> >     remove useless dev_dbg in probe function.
+> >     rebased due to fpga api change.
+> > v4: rename to dfl-fme-br and fix SPDX license issue
+> >     include dfl-fme-pr.h instead of dfl-fme.h
+> >     add Acked-by from Alan and Moritz
+> > v5: rebase due to API changes.
+> >     defer port and its ops finding when really need.
+> > ---
+> >  drivers/fpga/Kconfig      |   6 +++
+> >  drivers/fpga/Makefile     |   1 +
+> >  drivers/fpga/dfl-fme-br.c | 114 ++++++++++++++++++++++++++++++++++++++++++++++
+> >  3 files changed, 121 insertions(+)
+> >  create mode 100644 drivers/fpga/dfl-fme-br.c
+> >
+> > diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
+> > index 89f76e8..a8f939a 100644
+> > --- a/drivers/fpga/Kconfig
+> > +++ b/drivers/fpga/Kconfig
+> > @@ -156,6 +156,12 @@ config FPGA_DFL_FME_MGR
+> >         help
+> >           Say Y to enable FPGA Manager driver for FPGA Management Engine.
+> >
+> > +config FPGA_DFL_FME_BRIDGE
+> > +       tristate "FPGA DFL FME Bridge Driver"
+> > +       depends on FPGA_DFL_FME
+> > +       help
+> > +         Say Y to enable FPGA Bridge driver for FPGA Management Engine.
+> > +
+> >  config FPGA_DFL_PCI
+> >         tristate "FPGA Device Feature List (DFL) PCIe Device Driver"
+> >         depends on PCI && FPGA_DFL
+> > diff --git a/drivers/fpga/Makefile b/drivers/fpga/Makefile
+> > index f82814a..75096e9 100644
+> > --- a/drivers/fpga/Makefile
+> > +++ b/drivers/fpga/Makefile
+> > @@ -32,6 +32,7 @@ obj-$(CONFIG_OF_FPGA_REGION)          += of-fpga-region.o
+> >  obj-$(CONFIG_FPGA_DFL)                 += dfl.o
+> >  obj-$(CONFIG_FPGA_DFL_FME)             += dfl-fme.o
+> >  obj-$(CONFIG_FPGA_DFL_FME_MGR)         += dfl-fme-mgr.o
+> > +obj-$(CONFIG_FPGA_DFL_FME_BRIDGE)      += dfl-fme-br.o
+> >
+> >  dfl-fme-objs := dfl-fme-main.o dfl-fme-pr.o
+> >
+> > diff --git a/drivers/fpga/dfl-fme-br.c b/drivers/fpga/dfl-fme-br.c
+> > new file mode 100644
+> > index 0000000..5c51b08
+> > --- /dev/null
+> > +++ b/drivers/fpga/dfl-fme-br.c
+> > @@ -0,0 +1,114 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * FPGA Bridge Driver for FPGA Management Engine (FME)
+> > + *
+> > + * Copyright (C) 2017 Intel Corporation, Inc.
+> > + *
+> > + * Authors:
+> > + *   Wu Hao <hao.wu@intel.com>
+> > + *   Joseph Grecco <joe.grecco@intel.com>
+> > + *   Enno Luebbers <enno.luebbers@intel.com>
+> > + *   Tim Whisonant <tim.whisonant@intel.com>
+> > + *   Ananda Ravuri <ananda.ravuri@intel.com>
+> > + *   Henry Mitchel <henry.mitchel@intel.com>
+> > + */
+> > +
+> > +#include <linux/module.h>
+> > +#include <linux/fpga/fpga-bridge.h>
+> > +
+> > +#include "dfl.h"
+> > +#include "dfl-fme-pr.h"
+> > +
+> > +struct fme_br_priv {
+> > +       struct dfl_fme_br_pdata *pdata;
+> > +       struct dfl_fpga_port_ops *port_ops;
+> > +       struct platform_device *port_pdev;
+> > +};
+> > +
+> > +static int fme_bridge_enable_set(struct fpga_bridge *bridge, bool enable)
+> > +{
+> > +       struct fme_br_priv *priv = bridge->priv;
+> > +       struct platform_device *port_pdev;
+> > +       struct dfl_fpga_port_ops *ops;
+> > +
+> > +       if (!priv->port_pdev) {
+> > +               port_pdev = dfl_fpga_cdev_find_port(priv->pdata->cdev,
+> > +                                                   &priv->pdata->port_id,
+> > +                                                   dfl_fpga_check_port_id);
+> > +               if (!port_pdev)
+> > +                       return -ENODEV;
+> > +
+> > +               priv->port_pdev = port_pdev;
+> > +       }
+> > +
+> > +       if (priv->port_pdev && !priv->port_ops) {
+> > +               ops = dfl_fpga_get_port_ops(priv->port_pdev);
+> > +               if (!ops || !ops->enable_set)
+> > +                       return -ENOENT;
+> > +
+> > +               priv->port_ops = ops;
+> > +       }
+> 
+> This is saving some pointers.  Is it possible that the port_pdev or
+> port_ops could go away?
 
+Hi Alan
 
-On 05/22/2018 11:20 PM, Michal Vokáč wrote:
-> This series basically adds support for a QCA8334 ethernet switch to the
-> qca8k driver. It is a four-port variant of the already supported seven
-> port QCA8337. Register map is the same for the whole familly and all chips
-> have the same device ID.
-> 
-> Major part of this series enhances the CPU port setting. Currently the CPU
-> port is not set to any sensible defaults compatible with the xGMII
-> interface. This series forces the CPU port to its maximum bandwidth and
-> also allows to adjust the new defaults using fixed-link device tree
-> sub-node.
-> 
-> Alongside these changes I fixed two checkpatch warnings regarding SPDX and
-> redundant parentheses.
+Thanks for the comments.
 
-Looks great, thanks Michal! Do you have any features or things you are
-working on that would be added later to the driver?
+The find_port function will get the port device to prevent that.
+You can see put device in remove function. And it's similar for the
+port ops. In dfl_fpga_get_port_ops function, it will prevent unexpected
+port ops removing by try module get.
 
 > 
-> Changes in v3:
->  - Rebased on latest net-next/master.
->  - Corrected fixed-link documentation.
-> 
-> Michal Vokáč (7):
->   net: dsa: qca8k: Add QCA8334 binding documentation
->   net: dsa: qca8k: Add support for QCA8334 switch
->   net: dsa: qca8k: Enable RXMAC when bringing up a port
->   net: dsa: qca8k: Force CPU port to its highest bandwidth
->   net: dsa: qca8k: Allow overwriting CPU port setting
->   net: dsa: qca8k: Replace GPL boilerplate by SPDX
->   net: dsa: qca8k: Remove redundant parentheses
-> 
->  .../devicetree/bindings/net/dsa/qca8k.txt          | 23 +++++++-
->  drivers/net/dsa/qca8k.c                            | 64 ++++++++++++++++++----
->  drivers/net/dsa/qca8k.h                            |  7 ++-
->  3 files changed, 79 insertions(+), 15 deletions(-)
-> 
+> Also, the port ops routines probably should be named
+> dfl_fpga_port_ops_get/find_port/etc
+>
 
--- 
-Florian
+Hm.. as I see there are functions named as get_device(), put_device(), so
+I just name it as ..._get_port_ops and ..._put_port_ops in similar way. :)
+If you think that could be a better name, it's fine for me to change them.
+
+Thanks
+Hao
+ 
+> Alan
+> 
+> > +
+> > +       return priv->port_ops->enable_set(priv->port_pdev, enable);
+> > +}
+> > +
+> > +static const struct fpga_bridge_ops fme_bridge_ops = {
+> > +       .enable_set = fme_bridge_enable_set,
+> > +};
+> > +
+> > +static int fme_br_probe(struct platform_device *pdev)
+> > +{
+> > +       struct device *dev = &pdev->dev;
+> > +       struct fme_br_priv *priv;
+> > +       struct fpga_bridge *br;
+> > +       int ret;
+> > +
+> > +       priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> > +       if (!priv)
+> > +               return -ENOMEM;
+> > +
+> > +       priv->pdata = dev_get_platdata(dev);
+> > +
+> > +       br = fpga_bridge_create(dev, "DFL FPGA FME Bridge",
+> > +                               &fme_bridge_ops, priv);
+> > +       if (!br)
+> > +               return -ENOMEM;
+> > +
+> > +       platform_set_drvdata(pdev, br);
+> > +
+> > +       ret = fpga_bridge_register(br);
+> > +       if (ret)
+> > +               fpga_bridge_free(br);
+> > +
+> > +       return ret;
+> > +}
+> > +
+> > +static int fme_br_remove(struct platform_device *pdev)
+> > +{
+> > +       struct fpga_bridge *br = platform_get_drvdata(pdev);
+> > +       struct fme_br_priv *priv = br->priv;
+> > +
+> > +       fpga_bridge_unregister(br);
+> > +
+> > +       if (priv->port_pdev)
+> > +               put_device(&priv->port_pdev->dev);
+> > +       if (priv->port_ops)
+> > +               dfl_fpga_put_port_ops(priv->port_ops);
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +static struct platform_driver fme_br_driver = {
+> > +       .driver = {
+> > +               .name    = DFL_FPGA_FME_BRIDGE,
+> > +       },
+> > +       .probe   = fme_br_probe,
+> > +       .remove  = fme_br_remove,
+> > +};
+> > +
+> > +module_platform_driver(fme_br_driver);
+> > +
+> > +MODULE_DESCRIPTION("FPGA Bridge for DFL FPGA Management Engine");
+> > +MODULE_AUTHOR("Intel Corporation");
+> > +MODULE_LICENSE("GPL v2");
+> > +MODULE_ALIAS("platform:dfl-fme-bridge");
+> > --
+> > 1.8.3.1
+> >
