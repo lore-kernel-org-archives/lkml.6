@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935045AbeEWUXD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 16:23:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34604 "EHLO mail.kernel.org"
+        id S934866AbeEWUWP (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 16:22:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34356 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935000AbeEWUW0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 16:22:26 -0400
+        id S934291AbeEWUWJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 16:22:09 -0400
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -18,9 +18,9 @@ Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         Joerg Roedel <joro@8bytes.org>, Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 17/18] perf kcore_copy: Copy x86 PTI entry trampoline sections
-Date: Wed, 23 May 2018 17:21:05 -0300
-Message-Id: <20180523202106.17286-18-acme@kernel.org>
+Subject: [PATCH 13/18] perf kcore_copy: Calculate offset from phnum
+Date: Wed, 23 May 2018 17:21:01 -0300
+Message-Id: <20180523202106.17286-14-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180523202106.17286-1-acme@kernel.org>
 References: <20180523202106.17286-1-acme@kernel.org>
@@ -30,7 +30,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Adrian Hunter <adrian.hunter@intel.com>
 
-Identify and copy any sections for x86 PTI entry trampolines.
+In preparation to add more program headers, calculate offset from the
+number of phdrs.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
@@ -43,113 +44,35 @@ Cc: Joerg Roedel <joro@8bytes.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: x86@kernel.org
-Link: http://lkml.kernel.org/r/1526986485-6562-17-git-send-email-adrian.hunter@intel.com
+Link: http://lkml.kernel.org/r/1526986485-6562-13-git-send-email-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/symbol-elf.c | 42 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ tools/perf/util/symbol-elf.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
-index 37d9324c277c..584966913aeb 100644
+index 4e7b71e8ac0e..4aec12102e19 100644
 --- a/tools/perf/util/symbol-elf.c
 +++ b/tools/perf/util/symbol-elf.c
-@@ -1392,6 +1392,11 @@ struct phdr_data {
- 	struct list_head node;
- };
+@@ -1682,7 +1682,7 @@ int kcore_copy(const char *from_dir, const char *to_dir)
+ 	struct kcore kcore;
+ 	struct kcore extract;
+ 	int idx = 0, err = -1;
+-	off_t offset = page_size, sz, modules_offset = 0;
++	off_t offset, sz, modules_offset = 0;
+ 	struct kcore_copy_info kci = { .stext = 0, };
+ 	char kcore_filename[PATH_MAX];
+ 	char extract_filename[PATH_MAX];
+@@ -1710,6 +1710,10 @@ int kcore_copy(const char *from_dir, const char *to_dir)
+ 	if (kcore__copy_hdr(&kcore, &extract, kci.phnum))
+ 		goto out_extract_close;
  
-+struct sym_data {
-+	u64 addr;
-+	struct list_head node;
-+};
++	offset = gelf_fsize(extract.elf, ELF_T_EHDR, 1, EV_CURRENT) +
++		 gelf_fsize(extract.elf, ELF_T_PHDR, kci.phnum, EV_CURRENT);
++	offset = round_up(offset, page_size);
 +
- struct kcore_copy_info {
- 	u64 stext;
- 	u64 etext;
-@@ -1401,6 +1406,7 @@ struct kcore_copy_info {
- 	u64 last_module_symbol;
- 	size_t phnum;
- 	struct list_head phdrs;
-+	struct list_head syms;
- };
- 
- #define kcore_copy__for_each_phdr(k, p) \
-@@ -1441,6 +1447,29 @@ static void kcore_copy__free_phdrs(struct kcore_copy_info *kci)
- 	}
- }
- 
-+static struct sym_data *kcore_copy__new_sym(struct kcore_copy_info *kci,
-+					    u64 addr)
-+{
-+	struct sym_data *s = zalloc(sizeof(*s));
-+
-+	if (s) {
-+		s->addr = addr;
-+		list_add_tail(&s->node, &kci->syms);
-+	}
-+
-+	return s;
-+}
-+
-+static void kcore_copy__free_syms(struct kcore_copy_info *kci)
-+{
-+	struct sym_data *s, *tmp;
-+
-+	list_for_each_entry_safe(s, tmp, &kci->syms, node) {
-+		list_del(&s->node);
-+		free(s);
-+	}
-+}
-+
- static int kcore_copy__process_kallsyms(void *arg, const char *name, char type,
- 					u64 start)
- {
-@@ -1471,6 +1500,9 @@ static int kcore_copy__process_kallsyms(void *arg, const char *name, char type,
- 		return 0;
- 	}
- 
-+	if (is_entry_trampoline(name) && !kcore_copy__new_sym(kci, start))
-+		return -1;
-+
- 	return 0;
- }
- 
-@@ -1538,6 +1570,7 @@ static int kcore_copy__read_map(u64 start, u64 len, u64 pgoff, void *data)
- {
- 	struct kcore_copy_info *kci = data;
- 	u64 end = start + len;
-+	struct sym_data *sdat;
- 
- 	if (kcore_copy__map(kci, start, end, pgoff, kci->stext, kci->etext))
- 		return -1;
-@@ -1546,6 +1579,13 @@ static int kcore_copy__read_map(u64 start, u64 len, u64 pgoff, void *data)
- 			    kci->last_module_symbol))
- 		return -1;
- 
-+	list_for_each_entry(sdat, &kci->syms, node) {
-+		u64 s = round_down(sdat->addr, page_size);
-+
-+		if (kcore_copy__map(kci, start, end, pgoff, s, s + len))
-+			return -1;
-+	}
-+
- 	return 0;
- }
- 
-@@ -1740,6 +1780,7 @@ int kcore_copy(const char *from_dir, const char *to_dir)
- 	struct phdr_data *p;
- 
- 	INIT_LIST_HEAD(&kci.phdrs);
-+	INIT_LIST_HEAD(&kci.syms);
- 
- 	if (kcore_copy__copy_file(from_dir, to_dir, "kallsyms"))
- 		return -1;
-@@ -1806,6 +1847,7 @@ int kcore_copy(const char *from_dir, const char *to_dir)
- 		kcore_copy__unlink(to_dir, "kallsyms");
- 
- 	kcore_copy__free_phdrs(&kci);
-+	kcore_copy__free_syms(&kci);
- 
- 	return err;
- }
+ 	if (kcore__add_phdr(&extract, idx++, offset, kci.kernel_map.addr,
+ 			    kci.kernel_map.len))
+ 		goto out_extract_close;
 -- 
 2.14.3
