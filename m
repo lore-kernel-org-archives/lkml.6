@@ -1,258 +1,311 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754184AbeEWHmS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 03:42:18 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33346 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753992AbeEWHmP (ORCPT
+        id S932099AbeEWHmp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 03:42:45 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:44598 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754192AbeEWHmn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 03:42:15 -0400
-From: Mike Rapoport <rppt@linux.vnet.ibm.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm <linux-mm@kvack.org>, lkml <linux-kernel@vger.kernel.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Andrei Vagin <avagin@virtuozzo.com>
-Subject: [PATCH] userfaultfd: prevent non-cooperative events vs mcopy_atomic races
-Date: Wed, 23 May 2018 10:42:04 +0300
+        Wed, 23 May 2018 03:42:43 -0400
+X-Google-Smtp-Source: AB8JxZphn6hNivA9h5B7mz+3ks/zYQ4dsVhPQO5eSbYfapR0m69QxW1osJjVL/FKdZdUaRECRIn2pA==
+From: Lin Huang <hl@rock-chips.com>
+To: seanpaul@chromium.org, airlied@linux.ie, zyw@rock-chips.com,
+        kishon@ti.com
+Cc: dianders@chromium.org, briannorris@chromium.org,
+        linux-rockchip@lists.infradead.org, heiko@sntech.de,
+        daniel.vetter@intel.com, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        eballetbo@gmail.com, robh+dt@kernel.org, devicetree@vger.kernel.org,
+        Lin Huang <hl@rock-chips.com>
+Subject: [PATCH v7 1/5] drm/rockchip: add transfer function for cdn-dp
+Date: Wed, 23 May 2018 15:42:29 +0800
+Message-Id: <1527061353-16902-1-git-send-email-hl@rock-chips.com>
 X-Mailer: git-send-email 2.7.4
-X-TM-AS-GCONF: 00
-x-cbid: 18052307-0040-0000-0000-0000043CE2E9
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052307-0041-0000-0000-0000264219DA
-Message-Id: <1527061324-19949-1-git-send-email-rppt@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-23_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805230075
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If a process monitored with userfaultfd changes it's memory mappings or
-forks() at the same time as uffd monitor fills the process memory with
-UFFDIO_COPY, the actual creation of page table entries and copying of the
-data in mcopy_atomic may happen either before of after the memory mapping
-modifications and there is no way for the uffd monitor to maintain
-consistent view of the process memory layout.
+From: Chris Zhong <zyw@rock-chips.com>
 
-For instance, let's consider fork() running in parallel with
-userfaultfd_copy():
+We may support training outside firmware, so we need support
+dpcd read/write to get the message or do some setting with
+display.
 
-process        		         |	uffd monitor
----------------------------------+------------------------------
-fork()        		         | userfaultfd_copy()
-...        		         | ...
-    dup_mmap()        	         |     down_read(mmap_sem)
-    down_write(mmap_sem)         |     /* create PTEs, copy data */
-        dup_uffd()               |     up_read(mmap_sem)
-        copy_page_range()        |
-        up_write(mmap_sem)       |
-        dup_uffd_complete()      |
-            /* notify monitor */ |
-
-If the userfaultfd_copy() takes the mmap_sem first, the new page(s) will be
-present by the time copy_page_range() is called and they will appear in the
-child's memory mappings. However, if the fork() is the first to take the
-mmap_sem, the new pages won't be mapped in the child's address space.
-
-Since userfaultfd monitor has no way to determine what was the order, let's
-disallow userfaultfd_copy in parallel with the non-cooperative events. In
-such case we return -EAGAIN and the uffd monitor can understand that
-userfaultfd_copy() clashed with a non-cooperative event and take an
-appropriate action.
-
-Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Pavel Emelyanov <xemul@virtuozzo.com>
-Cc: Andrei Vagin <avagin@virtuozzo.com>
+Signed-off-by: Chris Zhong <zyw@rock-chips.com>
+Signed-off-by: Lin Huang <hl@rock-chips.com>
+Reviewed-by: Sean Paul <seanpaul@chromium.org>
+Reviewed-by: Enric Balletbo <enric.balletbo@collabora.com>
 ---
- fs/userfaultfd.c              | 22 ++++++++++++++++++++--
- include/linux/userfaultfd_k.h |  6 ++++--
- mm/userfaultfd.c              | 22 +++++++++++++++++-----
- 3 files changed, 41 insertions(+), 9 deletions(-)
+Changes in v2:
+- update patch following Enric suggest
+Changes in v3:
+- None
+Changes in v4:
+- None
+Changes in v5:
+- None
+Changes in v6:
+- None
+Changes in v7:
+- None
 
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index cec550c8468f..123bf7d516fc 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -62,6 +62,8 @@ struct userfaultfd_ctx {
- 	enum userfaultfd_state state;
- 	/* released */
- 	bool released;
-+	/* memory mappings are changing because of non-cooperative event */
-+	bool mmap_changing;
- 	/* mm with one ore more vmas attached to this userfaultfd_ctx */
- 	struct mm_struct *mm;
- };
-@@ -641,6 +643,7 @@ static void userfaultfd_event_wait_completion(struct userfaultfd_ctx *ctx,
- 	 * already released.
- 	 */
- out:
-+	WRITE_ONCE(ctx->mmap_changing, false);
- 	userfaultfd_ctx_put(ctx);
- }
+ drivers/gpu/drm/rockchip/cdn-dp-core.c | 55 +++++++++++++++++++++++----
+ drivers/gpu/drm/rockchip/cdn-dp-core.h |  1 +
+ drivers/gpu/drm/rockchip/cdn-dp-reg.c  | 69 ++++++++++++++++++++++++++++++----
+ drivers/gpu/drm/rockchip/cdn-dp-reg.h  | 14 ++++++-
+ 4 files changed, 122 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/gpu/drm/rockchip/cdn-dp-core.c b/drivers/gpu/drm/rockchip/cdn-dp-core.c
+index c6fbdcd..cce64c1 100644
+--- a/drivers/gpu/drm/rockchip/cdn-dp-core.c
++++ b/drivers/gpu/drm/rockchip/cdn-dp-core.c
+@@ -176,8 +176,8 @@ static int cdn_dp_get_sink_count(struct cdn_dp_device *dp, u8 *sink_count)
+ 	u8 value;
  
-@@ -686,10 +689,12 @@ int dup_userfaultfd(struct vm_area_struct *vma, struct list_head *fcs)
- 		ctx->state = UFFD_STATE_RUNNING;
- 		ctx->features = octx->features;
- 		ctx->released = false;
-+		ctx->mmap_changing = false;
- 		ctx->mm = vma->vm_mm;
- 		mmgrab(ctx->mm);
+ 	*sink_count = 0;
+-	ret = cdn_dp_dpcd_read(dp, DP_SINK_COUNT, &value, 1);
+-	if (ret)
++	ret = drm_dp_dpcd_read(&dp->aux, DP_SINK_COUNT, &value, 1);
++	if (ret < 0)
+ 		return ret;
  
- 		userfaultfd_ctx_get(octx);
-+		WRITE_ONCE(octx->mmap_changing, true);
- 		fctx->orig = octx;
- 		fctx->new = ctx;
- 		list_add_tail(&fctx->list, fcs);
-@@ -732,6 +737,7 @@ void mremap_userfaultfd_prep(struct vm_area_struct *vma,
- 	if (ctx && (ctx->features & UFFD_FEATURE_EVENT_REMAP)) {
- 		vm_ctx->ctx = ctx;
- 		userfaultfd_ctx_get(ctx);
-+		WRITE_ONCE(ctx->mmap_changing, true);
+ 	*sink_count = DP_GET_SINK_COUNT(value);
+@@ -374,9 +374,9 @@ static int cdn_dp_get_sink_capability(struct cdn_dp_device *dp)
+ 	if (!cdn_dp_check_sink_connection(dp))
+ 		return -ENODEV;
+ 
+-	ret = cdn_dp_dpcd_read(dp, DP_DPCD_REV, dp->dpcd,
+-			       DP_RECEIVER_CAP_SIZE);
+-	if (ret) {
++	ret = drm_dp_dpcd_read(&dp->aux, DP_DPCD_REV, dp->dpcd,
++			       sizeof(dp->dpcd));
++	if (ret < 0) {
+ 		DRM_DEV_ERROR(dp->dev, "Failed to get caps %d\n", ret);
+ 		return ret;
  	}
+@@ -582,8 +582,8 @@ static bool cdn_dp_check_link_status(struct cdn_dp_device *dp)
+ 	if (!port || !dp->link.rate || !dp->link.num_lanes)
+ 		return false;
+ 
+-	if (cdn_dp_dpcd_read(dp, DP_LANE0_1_STATUS, link_status,
+-			     DP_LINK_STATUS_SIZE)) {
++	if (drm_dp_dpcd_read_link_status(&dp->aux, link_status) !=
++	    DP_LINK_STATUS_SIZE) {
+ 		DRM_ERROR("Failed to get link status\n");
+ 		return false;
+ 	}
+@@ -1012,6 +1012,40 @@ static int cdn_dp_pd_event(struct notifier_block *nb,
+ 	return NOTIFY_DONE;
  }
  
-@@ -772,6 +778,7 @@ bool userfaultfd_remove(struct vm_area_struct *vma,
- 		return true;
- 
- 	userfaultfd_ctx_get(ctx);
-+	WRITE_ONCE(ctx->mmap_changing, true);
- 	up_read(&mm->mmap_sem);
- 
- 	msg_init(&ewq.msg);
-@@ -815,6 +822,7 @@ int userfaultfd_unmap_prep(struct vm_area_struct *vma,
- 			return -ENOMEM;
- 
- 		userfaultfd_ctx_get(ctx);
-+		WRITE_ONCE(ctx->mmap_changing, true);
- 		unmap_ctx->ctx = ctx;
- 		unmap_ctx->start = start;
- 		unmap_ctx->end = end;
-@@ -1653,6 +1661,10 @@ static int userfaultfd_copy(struct userfaultfd_ctx *ctx,
- 
- 	user_uffdio_copy = (struct uffdio_copy __user *) arg;
- 
-+	ret = -EAGAIN;
-+	if (READ_ONCE(ctx->mmap_changing))
-+		goto out;
++static ssize_t cdn_dp_aux_transfer(struct drm_dp_aux *aux,
++				   struct drm_dp_aux_msg *msg)
++{
++	struct cdn_dp_device *dp = container_of(aux, struct cdn_dp_device, aux);
++	int ret;
++	u8 status;
 +
- 	ret = -EFAULT;
- 	if (copy_from_user(&uffdio_copy, user_uffdio_copy,
- 			   /* don't copy "copy" last field */
-@@ -1674,7 +1686,7 @@ static int userfaultfd_copy(struct userfaultfd_ctx *ctx,
- 		goto out;
- 	if (mmget_not_zero(ctx->mm)) {
- 		ret = mcopy_atomic(ctx->mm, uffdio_copy.dst, uffdio_copy.src,
--				   uffdio_copy.len);
-+				   uffdio_copy.len, &ctx->mmap_changing);
- 		mmput(ctx->mm);
- 	} else {
- 		return -ESRCH;
-@@ -1705,6 +1717,10 @@ static int userfaultfd_zeropage(struct userfaultfd_ctx *ctx,
- 
- 	user_uffdio_zeropage = (struct uffdio_zeropage __user *) arg;
- 
-+	ret = -EAGAIN;
-+	if (READ_ONCE(ctx->mmap_changing))
-+		goto out;
++	switch (msg->request & ~DP_AUX_I2C_MOT) {
++	case DP_AUX_NATIVE_WRITE:
++	case DP_AUX_I2C_WRITE:
++	case DP_AUX_I2C_WRITE_STATUS_UPDATE:
++		ret = cdn_dp_dpcd_write(dp, msg->address, msg->buffer,
++					msg->size);
++		break;
++	case DP_AUX_NATIVE_READ:
++	case DP_AUX_I2C_READ:
++		ret = cdn_dp_dpcd_read(dp, msg->address, msg->buffer,
++				       msg->size);
++		break;
++	default:
++		return -EINVAL;
++	}
 +
- 	ret = -EFAULT;
- 	if (copy_from_user(&uffdio_zeropage, user_uffdio_zeropage,
- 			   /* don't copy "zeropage" last field */
-@@ -1721,7 +1737,8 @@ static int userfaultfd_zeropage(struct userfaultfd_ctx *ctx,
- 
- 	if (mmget_not_zero(ctx->mm)) {
- 		ret = mfill_zeropage(ctx->mm, uffdio_zeropage.range.start,
--				     uffdio_zeropage.range.len);
-+				     uffdio_zeropage.range.len,
-+				     &ctx->mmap_changing);
- 		mmput(ctx->mm);
- 	} else {
- 		return -ESRCH;
-@@ -1900,6 +1917,7 @@ SYSCALL_DEFINE1(userfaultfd, int, flags)
- 	ctx->features = 0;
- 	ctx->state = UFFD_STATE_WAIT_API;
- 	ctx->released = false;
-+	ctx->mmap_changing = false;
- 	ctx->mm = current->mm;
- 	/* prevent the mm struct to be freed */
- 	mmgrab(ctx->mm);
-diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
-index f2f3b68ba910..e091f0a11b11 100644
---- a/include/linux/userfaultfd_k.h
-+++ b/include/linux/userfaultfd_k.h
-@@ -31,10 +31,12 @@
- extern int handle_userfault(struct vm_fault *vmf, unsigned long reason);
- 
- extern ssize_t mcopy_atomic(struct mm_struct *dst_mm, unsigned long dst_start,
--			    unsigned long src_start, unsigned long len);
-+			    unsigned long src_start, unsigned long len,
-+			    bool *mmap_changing);
- extern ssize_t mfill_zeropage(struct mm_struct *dst_mm,
- 			      unsigned long dst_start,
--			      unsigned long len);
-+			      unsigned long len,
-+			      bool *mmap_changing);
- 
- /* mm helpers */
- static inline bool is_mergeable_vm_userfaultfd_ctx(struct vm_area_struct *vma,
-diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-index 39791b81ede7..5029f241908f 100644
---- a/mm/userfaultfd.c
-+++ b/mm/userfaultfd.c
-@@ -404,7 +404,8 @@ static __always_inline ssize_t __mcopy_atomic(struct mm_struct *dst_mm,
- 					      unsigned long dst_start,
- 					      unsigned long src_start,
- 					      unsigned long len,
--					      bool zeropage)
-+					      bool zeropage,
-+					      bool *mmap_changing)
- {
- 	struct vm_area_struct *dst_vma;
- 	ssize_t err;
-@@ -431,6 +432,15 @@ static __always_inline ssize_t __mcopy_atomic(struct mm_struct *dst_mm,
- 	down_read(&dst_mm->mmap_sem);
- 
- 	/*
-+	 * If memory mappings are changing because of non-cooperative
-+	 * operation (e.g. mremap) running in parallel, bail out and
-+	 * request the user to retry later
-+	 */
-+	err = -EAGAIN;
-+	if (mmap_changing && READ_ONCE(*mmap_changing))
-+		goto out_unlock;
++	status = cdn_dp_get_aux_status(dp);
++	if (status == AUX_STATUS_ACK)
++		msg->reply = DP_AUX_NATIVE_REPLY_ACK;
++	else if (status == AUX_STATUS_NACK)
++		msg->reply = DP_AUX_NATIVE_REPLY_NACK;
++	else if (status == AUX_STATUS_DEFER)
++		msg->reply = DP_AUX_NATIVE_REPLY_DEFER;
 +
-+	/*
- 	 * Make sure the vma is not shared, that the dst range is
- 	 * both valid and fully within a single existing vma.
- 	 */
-@@ -563,13 +573,15 @@ static __always_inline ssize_t __mcopy_atomic(struct mm_struct *dst_mm,
++	return ret;
++}
++
+ static int cdn_dp_bind(struct device *dev, struct device *master, void *data)
+ {
+ 	struct cdn_dp_device *dp = dev_get_drvdata(dev);
+@@ -1030,6 +1064,13 @@ static int cdn_dp_bind(struct device *dev, struct device *master, void *data)
+ 	dp->active = false;
+ 	dp->active_port = -1;
+ 	dp->fw_loaded = false;
++	dp->aux.name = "DP-AUX";
++	dp->aux.transfer = cdn_dp_aux_transfer;
++	dp->aux.dev = dev;
++
++	ret = drm_dp_aux_register(&dp->aux);
++	if (ret)
++		return ret;
+ 
+ 	INIT_WORK(&dp->event_work, cdn_dp_pd_event_work);
+ 
+diff --git a/drivers/gpu/drm/rockchip/cdn-dp-core.h b/drivers/gpu/drm/rockchip/cdn-dp-core.h
+index f57e296..46159b2 100644
+--- a/drivers/gpu/drm/rockchip/cdn-dp-core.h
++++ b/drivers/gpu/drm/rockchip/cdn-dp-core.h
+@@ -78,6 +78,7 @@ struct cdn_dp_device {
+ 	struct platform_device *audio_pdev;
+ 	struct work_struct event_work;
+ 	struct edid *edid;
++	struct drm_dp_aux aux;
+ 
+ 	struct mutex lock;
+ 	bool connected;
+diff --git a/drivers/gpu/drm/rockchip/cdn-dp-reg.c b/drivers/gpu/drm/rockchip/cdn-dp-reg.c
+index eb3042c..979355d 100644
+--- a/drivers/gpu/drm/rockchip/cdn-dp-reg.c
++++ b/drivers/gpu/drm/rockchip/cdn-dp-reg.c
+@@ -221,7 +221,12 @@ static int cdn_dp_reg_write_bit(struct cdn_dp_device *dp, u16 addr,
+ 				   sizeof(field), field);
  }
  
- ssize_t mcopy_atomic(struct mm_struct *dst_mm, unsigned long dst_start,
--		     unsigned long src_start, unsigned long len)
-+		     unsigned long src_start, unsigned long len,
-+		     bool *mmap_changing)
+-int cdn_dp_dpcd_read(struct cdn_dp_device *dp, u32 addr, u8 *data, u16 len)
++/*
++ * Returns the number of bytes transferred on success, or a negative
++ * error code on failure. -ETIMEDOUT is returned if mailbox message was
++ * not send successfully;
++ */
++ssize_t cdn_dp_dpcd_read(struct cdn_dp_device *dp, u32 addr, u8 *data, u16 len)
  {
--	return __mcopy_atomic(dst_mm, dst_start, src_start, len, false);
-+	return __mcopy_atomic(dst_mm, dst_start, src_start, len, false,
-+			      mmap_changing);
+ 	u8 msg[5], reg[5];
+ 	int ret;
+@@ -247,24 +252,41 @@ int cdn_dp_dpcd_read(struct cdn_dp_device *dp, u32 addr, u8 *data, u16 len)
+ 		goto err_dpcd_read;
+ 
+ 	ret = cdn_dp_mailbox_read_receive(dp, data, len);
++	if (!ret)
++		return len;
+ 
+ err_dpcd_read:
++	DRM_DEV_ERROR(dp->dev, "dpcd read failed: %d\n", ret);
+ 	return ret;
  }
  
- ssize_t mfill_zeropage(struct mm_struct *dst_mm, unsigned long start,
--		       unsigned long len)
-+		       unsigned long len, bool *mmap_changing)
+-int cdn_dp_dpcd_write(struct cdn_dp_device *dp, u32 addr, u8 value)
++#define CDN_AUX_HEADER_SIZE	5
++#define CDN_AUX_MSG_SIZE	20
++/*
++ * Returns the number of bytes transferred on success, or a negative error
++ * code on failure. -ETIMEDOUT is returned if mailbox message was not send
++ * success; -EINVAL is returned if get the wrong data size after message
++ * is sent
++ */
++ssize_t cdn_dp_dpcd_write(struct cdn_dp_device *dp, u32 addr, u8 *data, u16 len)
  {
--	return __mcopy_atomic(dst_mm, start, 0, len, true);
-+	return __mcopy_atomic(dst_mm, start, 0, len, true, mmap_changing);
+-	u8 msg[6], reg[5];
++	u8 msg[CDN_AUX_MSG_SIZE + CDN_AUX_HEADER_SIZE];
++	u8 reg[CDN_AUX_HEADER_SIZE];
+ 	int ret;
+ 
+-	msg[0] = 0;
+-	msg[1] = 1;
++	if (WARN_ON(len > CDN_AUX_MSG_SIZE) || WARN_ON(len <= 0))
++		return -EINVAL;
++
++	msg[0] = (len >> 8) & 0xff;
++	msg[1] = len & 0xff;
+ 	msg[2] = (addr >> 16) & 0xff;
+ 	msg[3] = (addr >> 8) & 0xff;
+ 	msg[4] = addr & 0xff;
+-	msg[5] = value;
++
++	memcpy(msg + CDN_AUX_HEADER_SIZE, data, len);
++
+ 	ret = cdn_dp_mailbox_send(dp, MB_MODULE_ID_DP_TX, DPTX_WRITE_DPCD,
+-				  sizeof(msg), msg);
++				  CDN_AUX_HEADER_SIZE + len, msg);
+ 	if (ret)
+ 		goto err_dpcd_write;
+ 
+@@ -277,8 +299,12 @@ int cdn_dp_dpcd_write(struct cdn_dp_device *dp, u32 addr, u8 value)
+ 	if (ret)
+ 		goto err_dpcd_write;
+ 
+-	if (addr != (reg[2] << 16 | reg[3] << 8 | reg[4]))
++	if ((len != (reg[0] << 8 | reg[1])) ||
++	    (addr != (reg[2] << 16 | reg[3] << 8 | reg[4]))) {
+ 		ret = -EINVAL;
++	} else {
++		return len;
++	}
+ 
+ err_dpcd_write:
+ 	if (ret)
+@@ -286,6 +312,33 @@ int cdn_dp_dpcd_write(struct cdn_dp_device *dp, u32 addr, u8 value)
+ 	return ret;
  }
+ 
++int cdn_dp_get_aux_status(struct cdn_dp_device *dp)
++{
++	u8 status;
++	int ret;
++
++	ret = cdn_dp_mailbox_send(dp, MB_MODULE_ID_DP_TX,
++				  DPTX_GET_LAST_AUX_STAUS, 0, NULL);
++	if (ret)
++		goto err_get_hpd;
++
++	ret = cdn_dp_mailbox_validate_receive(dp, MB_MODULE_ID_DP_TX,
++					      DPTX_GET_LAST_AUX_STAUS,
++					      sizeof(status));
++	if (ret)
++		goto err_get_hpd;
++
++	ret = cdn_dp_mailbox_read_receive(dp, &status, sizeof(status));
++	if (ret)
++		goto err_get_hpd;
++
++	return status;
++
++err_get_hpd:
++	DRM_DEV_ERROR(dp->dev, "get aux status failed: %d\n", ret);
++	return ret;
++}
++
+ int cdn_dp_load_firmware(struct cdn_dp_device *dp, const u32 *i_mem,
+ 			 u32 i_size, const u32 *d_mem, u32 d_size)
+ {
+diff --git a/drivers/gpu/drm/rockchip/cdn-dp-reg.h b/drivers/gpu/drm/rockchip/cdn-dp-reg.h
+index c4bbb4a83..6580b11 100644
+--- a/drivers/gpu/drm/rockchip/cdn-dp-reg.h
++++ b/drivers/gpu/drm/rockchip/cdn-dp-reg.h
+@@ -328,6 +328,13 @@
+ #define GENERAL_BUS_SETTINGS            0x03
+ #define GENERAL_TEST_ACCESS             0x04
+ 
++/* AUX status*/
++#define AUX_STATUS_ACK			0
++#define AUX_STATUS_NACK			1
++#define AUX_STATUS_DEFER			2
++#define AUX_STATUS_SINK_ERROR		3
++#define AUX_STATUS_BUS_ERROR		4
++
+ #define DPTX_SET_POWER_MNG			0x00
+ #define DPTX_SET_HOST_CAPABILITIES		0x01
+ #define DPTX_GET_EDID				0x02
+@@ -469,8 +476,11 @@ int cdn_dp_set_host_cap(struct cdn_dp_device *dp, u8 lanes, bool flip);
+ int cdn_dp_event_config(struct cdn_dp_device *dp);
+ u32 cdn_dp_get_event(struct cdn_dp_device *dp);
+ int cdn_dp_get_hpd_status(struct cdn_dp_device *dp);
+-int cdn_dp_dpcd_write(struct cdn_dp_device *dp, u32 addr, u8 value);
+-int cdn_dp_dpcd_read(struct cdn_dp_device *dp, u32 addr, u8 *data, u16 len);
++ssize_t cdn_dp_dpcd_write(struct cdn_dp_device *dp, u32 addr,
++			  u8 *data, u16 len);
++ssize_t cdn_dp_dpcd_read(struct cdn_dp_device *dp, u32 addr,
++			 u8 *data, u16 len);
++int cdn_dp_get_aux_status(struct cdn_dp_device *dp);
+ int cdn_dp_get_edid_block(void *dp, u8 *edid,
+ 			  unsigned int block, size_t length);
+ int cdn_dp_train_link(struct cdn_dp_device *dp);
 -- 
 2.7.4
