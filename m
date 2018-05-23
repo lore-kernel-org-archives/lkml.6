@@ -1,58 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754194AbeEWGXk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 02:23:40 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:32797 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754042AbeEWGVP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 02:21:15 -0400
-X-Google-Smtp-Source: AB8JxZqdHysLGsVL0UZ2CvZK6zKDoxlr0sZofmSRPta+d7N8tuGT0+9EBvl42kNXFhonLVk2C81qyg==
-From: "=?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?=" <vokac.m@gmail.com>
-X-Google-Original-From: =?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>
-To: netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        f.fainelli@gmail.com, vivien.didelot@savoirfairelinux.com,
-        andrew@lunn.ch, mark.rutland@arm.com, robh+dt@kernel.org,
-        davem@davemloft.net, michal.vokac@ysoft.com
-Subject: [PATCH net-next v3 2/7] net: dsa: qca8k: Add support for QCA8334 switch
-Date: Wed, 23 May 2018 08:20:19 +0200
-Message-Id: <1527056424-14528-3-git-send-email-michal.vokac@ysoft.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1527056424-14528-1-git-send-email-michal.vokac@ysoft.com>
-References: <1527056424-14528-1-git-send-email-michal.vokac@ysoft.com>
+        id S1754198AbeEWGXy (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 02:23:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38688 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754031AbeEWGXu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 02:23:50 -0400
+Date: Wed, 23 May 2018 09:23:46 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
+Cc: dledford@redhat.com, jgg@ziepe.ca, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, xavier.huwei@tom.com, lijun_nudt@163.com
+Subject: Re: [PATCH rdma-next 3/5] RDMA/hns: Increase checking CMQ status
+ timeout value
+Message-ID: <20180523062346.GB5729@mtr-leonro.mtl.com>
+References: <1526544173-106587-1-git-send-email-xavier.huwei@huawei.com>
+ <1526544173-106587-4-git-send-email-xavier.huwei@huawei.com>
+ <20180523054918.GB2933@mtr-leonro.mtl.com>
+ <5B0505A9.8040908@huawei.com>
+ <5B050714.2040205@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="BwCQnh7xodEAoBMC"
+Content-Disposition: inline
+In-Reply-To: <5B050714.2040205@huawei.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for the four-port variant of the Qualcomm QCA833x switch.
 
-Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
----
-Changes in v3:
- - Add "Reviewed-by" tag from Andrew
+--BwCQnh7xodEAoBMC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Changes in v2:
- - Add commit message
+On Wed, May 23, 2018 at 02:15:48PM +0800, Wei Hu (Xavier) wrote:
+>
+>
+> On 2018/5/23 14:09, Wei Hu (Xavier) wrote:
+> >
+> > On 2018/5/23 13:49, Leon Romanovsky wrote:
+> >> On Thu, May 17, 2018 at 04:02:51PM +0800, Wei Hu (Xavier) wrote:
+> >>> This patch increases checking CMQ status timeout value and
+> >>> uses the same value with NIC driver to avoid deficiency of
+> >>> time.
+> >>>
+> >>> Signed-off-by: Wei Hu (Xavier) <xavier.huwei@huawei.com>
+> >>> ---
+> >>>  drivers/infiniband/hw/hns/hns_roce_hw_v2.h | 2 +-
+> >>>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.h b/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
+> >>> index 182b672..f16df1b 100644
+> >>> --- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
+> >>> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
+> >>> @@ -76,7 +76,7 @@
+> >>>  #define HNS_ROCE_V2_PAGE_SIZE_SUPPORTED		0xFFFFF000
+> >>>  #define HNS_ROCE_V2_MAX_INNER_MTPT_NUM		2
+> >>>  #define HNS_ROCE_INVALID_LKEY			0x100
+> >>> -#define HNS_ROCE_CMQ_TX_TIMEOUT			200
+> >>> +#define HNS_ROCE_CMQ_TX_TIMEOUT			30000
+> >> Don't you think that loop of 30 seconds too much?
+> >>
+> >> Thanks
+> > Leon, 30ms
+> Because firmware take turns excuting NIC and RoCE command.
+> Although RoCE command does not  take so long,  we still use
+> the same timeout value with NIC driver.
 
- drivers/net/dsa/qca8k.c | 1 +
- 1 file changed, 1 insertion(+)
+Sorry, you are right it is 30ms and not 30s.
 
-diff --git a/drivers/net/dsa/qca8k.c b/drivers/net/dsa/qca8k.c
-index 3684e56..6a3ffb2 100644
---- a/drivers/net/dsa/qca8k.c
-+++ b/drivers/net/dsa/qca8k.c
-@@ -1010,6 +1010,7 @@ static SIMPLE_DEV_PM_OPS(qca8k_pm_ops,
- 			 qca8k_suspend, qca8k_resume);
- 
- static const struct of_device_id qca8k_of_match[] = {
-+	{ .compatible = "qca,qca8334" },
- 	{ .compatible = "qca,qca8337" },
- 	{ /* sentinel */ },
- };
--- 
-2.7.4
+Thanks,
+Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+
+--BwCQnh7xodEAoBMC
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJbBQjyAAoJEORje4g2clinxMkQAIJ5hCq4bFowGwpaaSdlwkp8
+gy9JTUMq7a456zR3NQJ2iaU0rF1tWAr4mI3FcGjTCYTpbrPdBpM54z4xBF/vmqI8
+xNG2WWE91FwCw1YsJ9Hl5YC1cQ16J5Ot0vKOWKUbIGJjXEzmxsegGUL/LfpzXoRn
+chEh0Jikt0+zQcUMdIqurFzAoqC8jXXL3m4Idos7YfZc/J1krSBc2b5TfdfgLODB
+E6LimI2xoJnUzIjYamGu7jYFMzwPSoW9ThdVbstk5rQLkX7UfrBmnMIN7kwdx7GG
+LEaX8cZnHbqN+XtXAwPXmToRbPjyfozdrBNAMlpaNdvdlzk6LM3OcwQX6r7JrE9K
+V5YoTyhaYFqENw3FmapMNo9PKwziqrHFAveDXCTRPQLY6vqMbSIqpVWtD7FH6ztl
+NMKtmthJZGxMUAXAzSqb6o/j++sLAxeppg3OdNEBod7wFa7fU/2ztWRg2Uq0OgrN
+LeuQSoGjKZwLyGYqzO6Dz4wANdDXn6aAEfoFIULeDhQTp/S7NYudEPmEVrl+rINA
+YDQsfD3Qvix1e9T6tHgcRvf27uR5KoClDNcvnK/RsqJR0X2dXlFUCVs8Oh4Kpo4j
+715XNsOO4tmF6gVzzDnUXLrtqR0gvesjyRQNkAQNPlIzF+RPywn8nhHKbSft0TA1
+0WIvHlQWjnap7xVz/s7Z
+=8nhN
+-----END PGP SIGNATURE-----
+
+--BwCQnh7xodEAoBMC--
