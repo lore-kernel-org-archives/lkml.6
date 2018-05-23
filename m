@@ -1,155 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933930AbeEWRm1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 13:42:27 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:53772 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933884AbeEWRmX (ORCPT
+        id S933905AbeEWRqc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 13:46:32 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:33644 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932667AbeEWRq3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 13:42:23 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 28912601E8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
-From: <ilialin@codeaurora.org>
-To: "'Sudeep Holla'" <sudeep.holla@arm.com>, <vireshk@kernel.org>,
-        <nm@ti.com>, <sboyd@kernel.org>, <robh@kernel.org>,
-        <mark.rutland@arm.com>, <rjw@rjwysocki.net>,
-        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1527079139-3558-1-git-send-email-ilialin@codeaurora.org> <1527079139-3558-2-git-send-email-ilialin@codeaurora.org> <1ec7645d-72b6-5a1a-48c3-831a3c484a0e@arm.com>
-In-Reply-To: <1ec7645d-72b6-5a1a-48c3-831a3c484a0e@arm.com>
-Subject: RE: [PATCH v11 1/2] cpufreq: Add Kryo CPU scaling driver
-Date: Wed, 23 May 2018 20:42:15 +0300
-Message-ID: <004301d3f2bd$66cf03a0$346d0ae0$@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQLuzorm6MUHRcprQ6BNjG7R6Sz68AJAPGpWAZZZsIGh6SitkA==
-Content-Language: en-us
+        Wed, 23 May 2018 13:46:29 -0400
+X-Google-Smtp-Source: AB8JxZpFFjL8OCn3mBII83AAy8AqD7gavx0Xv8ia1huv085n3WqG3o54LA1jXD9ZwWuVzuGQ8i6mZg==
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [PATCH] mm: Add new vma flag VM_LOCAL_CPU
+From: Nadav Amit <nadav.amit@gmail.com>
+In-Reply-To: <5e20be19-28ba-189a-6935-698a012a6665@linux.intel.com>
+Date: Wed, 23 May 2018 10:46:26 -0700
+Cc: Matthew Wilcox <willy@infradead.org>,
+        Christopher Lameter <cl@linux.com>, Boaz Harrosh <boazh@netapp.com>,
+        Jeff Moyer <jmoyer@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, Rik van Riel <riel@redhat.com>,
+        Jan Kara <jack@suse.cz>, Matthew Wilcox <mawilcox@microsoft.com>,
+        Amit Golander <Amit.Golander@netapp.com>
+Message-Id: <45CBAC53-610A-485B-95D8-4357261338BF@gmail.com>
+References: <0efb5547-9250-6b6c-fe8e-cf4f44aaa5eb@netapp.com>
+ <20180514191551.GA27939@bombadil.infradead.org>
+ <7ec6fa37-8529-183d-d467-df3642bcbfd2@netapp.com>
+ <20180515004137.GA5168@bombadil.infradead.org>
+ <f3a66d8b-b9dc-b110-08aa-a63f0c309fb2@netapp.com>
+ <010001637399f796-3ffe3ed2-2fb1-4d43-84f0-6a65b6320d66-000000@email.amazonses.com>
+ <5aea6aa0-88cc-be7a-7012-7845499ced2c@netapp.com>
+ <50cbc27f-0014-0185-048d-25640f744b5b@linux.intel.com>
+ <0100016388be5738-df8f9d12-7011-4e4e-ba5b-33973e5da794-000000@email.amazonses.com>
+ <c4bb7ea8-16d5-ca31-2a9b-db90841211ba@linux.intel.com>
+ <20180522175114.GA1237@bombadil.infradead.org>
+ <5e20be19-28ba-189a-6935-698a012a6665@linux.intel.com>
+To: Dave Hansen <dave.hansen@linux.intel.com>
+X-Mailer: Apple Mail (2.3273)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4NHkb1r013415
 
+Dave Hansen <dave.hansen@linux.intel.com> wrote:
 
+> On 05/22/2018 10:51 AM, Matthew Wilcox wrote:
+>> But CR3 is a per-CPU register.  So it'd be *possible* to allocate one
+>> PGD per CPU (per process).  Have them be identical in all but one of
+>> the PUD entries.  Then you've reserved 1/512 of your address space for
+>> per-CPU pages.
+>> 
+>> Complicated, ugly, memory-consuming.  But possible.
+> 
+> Yep, and you'd probably want a cache of them so you don't end up having
+> to go rewrite half of the PGD every time you context-switch.  But, on
+> the plus side, the logic would be pretty similar if not identical to the
+> way that we manage PCIDs.  If your mm was recently active on the CPU,
+> you can use a PGD that's already been constructed.  If not, you're stuck
+> making a new one.
+> 
+> Andy L. was alto talking about using this kind of mechanism to simplify
+> the entry code.  Instead of needing per-cpu areas where we index by the
+> CPU number, or by using %GS, we could have per-cpu data or code that has
+> a fixed virtual address.
+> 
+> It'd be a fun project, but it might not ever pan out.
 
-> -----Original Message-----
-> From: Sudeep Holla <sudeep.holla@arm.com>
-> Sent: Wednesday, May 23, 2018 16:25
-> To: Ilia Lin <ilialin@codeaurora.org>; vireshk@kernel.org; nm@ti.com;
-> sboyd@kernel.org; robh@kernel.org; mark.rutland@arm.com;
-> rjw@rjwysocki.net; linux-pm@vger.kernel.org; devicetree@vger.kernel.org;
-> linux-kernel@vger.kernel.org
-> Cc: Sudeep Holla <sudeep.holla@arm.com>
-> Subject: Re: [PATCH v11 1/2] cpufreq: Add Kryo CPU scaling driver
-> 
-> 
-> 
-> On 23/05/18 13:38, Ilia Lin wrote:
-> > In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO
-> > processors, the CPU frequency subset and voltage value of each OPP
-> > varies based on the silicon variant in use. Qualcomm Process Voltage
-> > Scaling Tables defines the voltage and frequency value based on the
-> > msm-id in SMEM and speedbin blown in the efuse combination.
-> > The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the
-> > SoC to provide the OPP framework with required information.
-> > This is used to determine the voltage and frequency value for each OPP
-> > of
-> > operating-points-v2 table when it is parsed by the OPP framework.
-> >
-> > Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-> > ---
-> >  drivers/cpufreq/Kconfig.arm          |  10 ++
-> >  drivers/cpufreq/Makefile             |   1 +
-> >  drivers/cpufreq/cpufreq-dt-platdev.c |   3 +
-> >  drivers/cpufreq/qcom-cpufreq-kryo.c  | 181
-> > +++++++++++++++++++++++++++++++++++
-> >  4 files changed, 195 insertions(+)
-> >  create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
-> >
-> > diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-> > index de55c7d..0bfd40e 100644
-> > --- a/drivers/cpufreq/Kconfig.arm
-> > +++ b/drivers/cpufreq/Kconfig.arm
-> > @@ -124,6 +124,16 @@ config ARM_OMAP2PLUS_CPUFREQ
-> >  	depends on ARCH_OMAP2PLUS
-> >  	default ARCH_OMAP2PLUS
-> >
-> > +config ARM_QCOM_CPUFREQ_KRYO
-> > +	bool "Qualcomm Kryo based CPUFreq"
-> > +	depends on QCOM_QFPROM
-> > +	depends on QCOM_SMEM
-> > +	select PM_OPP
-> > +	help
-> > +	  This adds the CPUFreq driver for Qualcomm Kryo SoC based boards.
-> > +
-> > +	  If in doubt, say N.
-> > +
-> 
-> Sorry but just noticed now, any reason why this can't be module. I can't
-> imagine any.
+For the record: there are several academic studies about this subject. The
+most notable one is Corey [1].
 
-I was asked previously to change this from tristate to bool.
-
-> 
-> [..]
-> 
-> > +static int qcom_cpufreq_kryo_probe(struct platform_device *pdev) {
-> > +	struct opp_table *opp_tables[NR_CPUS] = {0};
-> > +	struct platform_device *cpufreq_dt_pdev;
-> > +	enum _msm8996_version msm8996_version;
-> > +	struct nvmem_cell *speedbin_nvmem;
-> > +	struct device_node *np;
-> > +	struct device *cpu_dev;
-> 
-> [..]
-> 
-> > +
-> > +	cpufreq_dt_pdev = platform_device_register_simple("cpufreq-dt", -
-> 1, NULL, 0);
-> > +	if (!IS_ERR(cpufreq_dt_pdev))
-> > +		return 0;
-> > +
-> > +	ret = PTR_ERR(cpufreq_dt_pdev);
-> > +	dev_err(cpu_dev, "Failed to register platform device\n");
-> > +
-> > +free_opp:
-> > +	for_each_possible_cpu(cpu) {
-> > +		if (IS_ERR_OR_NULL(opp_tables[cpu]))
-> > +			break;
-> > +		dev_pm_opp_put_supported_hw(opp_tables[cpu]);
-> > +	}
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +static int __init qcom_cpufreq_kryo_init(void) {
-> > +	/*
-> > +	 * Since the driver depends on smem and nvmem drivers, which may
-> > +	 * return EPROBE_DEFER, all the real activity is done in the probe,
-> > +	 * which may be defered as well. The init here is only registering
-> > +	 * a platform device.
-> > +	 */
-> > +	platform_device_register_simple("qcom-cpufreq-kryo", -1, NULL, 0);
-> > +	return 0;
-> > +}
-> > +module_init(qcom_cpufreq_kryo_init);
-> 
-> Do you need this at all ? See below on how to eliminate the need for this.
-> 
-> > +
-> > +static struct platform_driver qcom_cpufreq_kryo_driver = {
-> > +	.probe = qcom_cpufreq_kryo_probe,
-> > +	.driver = {
-> > +		.name = "qcom-cpufreq-kryo",
-> > +	},
-> > +};
-> > +builtin_platform_driver(qcom_cpufreq_kryo_driver);
-> 
-> Use builtin_platform_driver_probe and remove qcom_cpufreq_kryo_init or
-> use module_platform_driver_probe if it can be module.
-> 
-> --
-> Regards,
-> Sudeep
+[1] https://www.usenix.org/legacy/event/osdi08/tech/full_papers/boyd-wickizer/boyd_wickizer.pdf
