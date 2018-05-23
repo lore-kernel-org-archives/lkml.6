@@ -1,88 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754176AbeEWGjR (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 02:39:17 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:40206 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753902AbeEWGif (ORCPT
+        id S1754088AbeEWGn3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 02:43:29 -0400
+Received: from regular1.263xmail.com ([211.150.99.132]:38575 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753985AbeEWGnZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 02:38:35 -0400
-X-Google-Smtp-Source: AB8JxZoHRx/3mE2XIsSXX/H0+uuUl63jD14yLJIWDRjhA9PDAK6gqFspD6Y4wWBk0FSyelbkWC5xnA==
-From: Joel Fernandes <joelaf@google.com>
-X-Google-Original-From: Joel Fernandes <joel@joelfernandes.org>
-To: linux-kernel@vger.kernel.org
-Cc: "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Boqun Feng <boqun.feng@gmail.com>, byungchul.park@lge.com,
-        Ingo Molnar <mingo@redhat.com>, Josh Triplett <josh@joshtriplett.org>,
-        kernel-team@android.com, Lai Jiangshan <jiangshanlai@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Peter Zilstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: [PATCH 2/4] rcu: Add comment documenting how rcu_seq_snap works
-Date: Tue, 22 May 2018 23:38:13 -0700
-Message-Id: <20180523063815.198302-3-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
-In-Reply-To: <20180523063815.198302-1-joel@joelfernandes.org>
-References: <20180523063815.198302-1-joel@joelfernandes.org>
+        Wed, 23 May 2018 02:43:25 -0400
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-RL-SENDER: zhangqing@rock-chips.com
+X-FST-TO: heiko@sntech.de
+X-SENDER-IP: 58.22.7.114
+X-LOGIN-NAME: zhangqing@rock-chips.com
+X-UNIQUE-TAG: <eb61fb999325c9e9068c5c0fed640709>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: heiko@sntech.de, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, rjw@rjwysocki.net, khilman@kernel.org,
+        ulf.hansson@linaro.org, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        wxt@rock-chips.com, xxx@rock-chips.com, xf@rock-chips.com,
+        huangtao@rock-chips.com, Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v3 01/13] dt-bindings: power: add RK3036 SoCs header for power-domain
+Date: Wed, 23 May 2018 14:48:37 +0800
+Message-Id: <1527058129-10260-2-git-send-email-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1527058129-10260-1-git-send-email-zhangqing@rock-chips.com>
+References: <1527058129-10260-1-git-send-email-zhangqing@rock-chips.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+From: Caesar Wang <wxt@rock-chips.com>
 
-rcu_seq_snap may be tricky to decipher. Lets document how it works with
-an example to make it easier.
+According to a description from TRM, add all the power domains.
 
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Signed-off-by: Caesar Wang <wxt@rock-chips.com>
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 ---
- kernel/rcu/rcu.h | 34 +++++++++++++++++++++++++++++++++-
- 1 file changed, 33 insertions(+), 1 deletion(-)
+ include/dt-bindings/power/rk3036-power.h | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+ create mode 100644 include/dt-bindings/power/rk3036-power.h
 
-diff --git a/kernel/rcu/rcu.h b/kernel/rcu/rcu.h
-index 0453a7d12b3f..5819a37f19fb 100644
---- a/kernel/rcu/rcu.h
-+++ b/kernel/rcu/rcu.h
-@@ -91,7 +91,39 @@ static inline void rcu_seq_end(unsigned long *sp)
- 	WRITE_ONCE(*sp, rcu_seq_endval(sp));
- }
- 
--/* Take a snapshot of the update side's sequence number. */
-+/*
-+ * rcu_seq_snap - Take a snapshot of the update side's sequence number.
-+ *
-+ * This function returns the earliest value of the grace-period sequence number
-+ * that will indicate that a full grace period has elapsed since the current
-+ * time.  Once the grace-period sequence number has reached this value, it will
-+ * be safe to invoke all callbacks that have been registered prior to the
-+ * current time. This value is the current grace-period number plus two to the
-+ * power of the number of low-order bits reserved for state, then rounded up to
-+ * the next value in which the state bits are all zero.
-+ *
-+ * In the current design, RCU_SEQ_STATE_MASK=3 and the least significant bit of
-+ * the seq is used to track if a GP is in progress or not. Given this, it is
-+ * sufficient if we add (6+1) and mask with ~3 to get the next GP. Let's see
-+ * why with an example:
-+ *
-+ * Say the current seq is 12 which is 0b1100 (GP is 3 and state bits are 0b00).
-+ * To get to the next GP number of 4, we have to add 0b100 to this (0x1 << 2)
-+ * to account for the shift due to 2 state bits. Now, if the current seq is
-+ * 13 (GP is 3 and state bits are 0b01), then it means the current grace period
-+ * is already in progress so the next GP that a future call back will be queued
-+ * to run at is GP+2 = 5, not 4. To account for the extra +1, we just overflow
-+ * the 2 lower bits by adding 0b11. In case the lower bit was set, the overflow
-+ * will cause the extra +1 to the GP, along with the usual +1 explained before.
-+ * This gives us GP+2. Finally we mask the lower to bits by ~0x3 in case the
-+ * overflow didn't occur. This masking is needed because in case RCU was idle
-+ * (no GP in progress so lower 2 bits are 0b00), then the overflow of the lower
-+ * 2 state bits wouldn't occur, so we mask to zero out those lower 2 bits.
-+ *
-+ * In other words, the next seq can be obtained by (0b11 + 0b100) & (~0b11)
-+ * which can be generalized to:
-+ * seq + (RCU_SEQ_STATE_MASK + (RCU_SEQ_STATE_MASK + 1)) & (~RCU_SEQ_STATE_MASK)
-+ */
- static inline unsigned long rcu_seq_snap(unsigned long *sp)
- {
- 	unsigned long s;
+diff --git a/include/dt-bindings/power/rk3036-power.h b/include/dt-bindings/power/rk3036-power.h
+new file mode 100644
+index 000000000000..0bc6b5d5075e
+--- /dev/null
++++ b/include/dt-bindings/power/rk3036-power.h
+@@ -0,0 +1,13 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __DT_BINDINGS_POWER_RK3036_POWER_H__
++#define __DT_BINDINGS_POWER_RK3036_POWER_H__
++
++#define RK3036_PD_MSCH		0
++#define RK3036_PD_CORE		1
++#define RK3036_PD_PERI		2
++#define RK3036_PD_VIO		3
++#define RK3036_PD_VPU		4
++#define RK3036_PD_GPU		5
++#define RK3036_PD_SYS		6
++
++#endif
 -- 
-2.17.0.441.gb46fe60e1d-goog
+1.9.1
