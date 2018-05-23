@@ -1,113 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932123AbeEWIys (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 04:54:48 -0400
-Received: from mga09.intel.com ([134.134.136.24]:15903 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754473AbeEWIyq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 04:54:46 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,432,1520924400";
-   d="scan'208";a="60994321"
-Message-ID: <c0daaf807c557063afe8f2caaedb502ddb8e6296.camel@linux.intel.com>
-Subject: Re: [PATCH v2] pinctrl: cherryview: limit Strago DMI workarounds to
- version 1.0
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Guenter Roeck <linux@roeck-us.net>, linux-gpio@vger.kernel.org,
+        id S1754526AbeEWI4x (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 04:56:53 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49362 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754273AbeEWI4s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 04:56:48 -0400
+Date: Wed, 23 May 2018 10:56:41 +0200
+From: Cornelia Huck <cohuck@redhat.com>
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: Halil Pasic <pasic@linux.ibm.com>, kwankhede@nvidia.com,
+        Dong Jia <bjsdjshi@linux.vnet.ibm.com>, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Date: Wed, 23 May 2018 11:54:43 +0300
-In-Reply-To: <20180522204753.GA260493@dtor-ws>
-References: <20180522204753.GA260493@dtor-ws>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
+Subject: Re: [PATCH v4 0/2] vfio/mdev: Device namespace protection
+Message-ID: <20180523105641.0d89701b.cohuck@redhat.com>
+In-Reply-To: <20180522123829.4e758646@w520.home>
+References: <20180518190145.3187.7620.stgit@gimli.home>
+        <c666f6b7-bd49-79e4-703d-2724f7549c53@linux.ibm.com>
+        <20180522123829.4e758646@w520.home>
+Organization: Red Hat GmbH
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-05-22 at 13:47 -0700, Dmitry Torokhov wrote:
-> As Google/Intel will fix the BIOS/Coreboot issues with hardcoding
-> virtual interrupt numbers for keyboard/touchpad/touchscreen
-> controllers
-> in ACPI tables, they will also update BOARD version number from 1.0
-> to 1.1. Let's limit the DMI quirks that try to preserve virtual IRQ
-> numbers on Strago boards to those that still carry older BIOSes.
-> 
-> Note that ideally not BOARD but BIOS version should have been updated.
-> However the BIOS version used by Chrome devices has format of
-> Google_BUILD.BRANCH.PATCH which is not well suited for DMI matching as
-> we do not have "less than" match mode for DMI data.
-> 
+On Tue, 22 May 2018 12:38:29 -0600
+Alex Williamson <alex.williamson@redhat.com> wrote:
 
-Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> On Tue, 22 May 2018 19:17:07 +0200
+> Halil Pasic <pasic@linux.ibm.com> wrote:
+> 
+> >  From vfio-ccw perspective I join Connie's assessment: vfio-ccw should
+> > be fine with these changes. I'm however not too deeply involved with
+> > the mdev framework, thus I don't feel comfortable r-b-ing. That results
+> > in
+> > Acked-by: Halil Pasic <pasic@linux.ibm.com>
+> > for both patches.
+> > 
+> > While at it I have would like to ask about the semantics and intended
+> > use of the mdev interfaces.
+> > 
+> > static int vfio_ccw_sch_probe(struct subchannel *sch)
+> > {
+> > 
+> > /* HALIL: 8< Not so interesting stuff happens here. >8 */  
+> 
+> This was interesting:
+> 
+> 	private->state = VFIO_CCW_STATE_NOT_OPER;
+> 
+> >          ret = vfio_ccw_mdev_reg(sch);
+> >          if (ret)
+> >                  goto out_disable;
+> > /*
+> >   * HALIL:  
+> >   * This might be racy. Somewhere in vfio_ccw_mdev_reg() the create attribute
+> >   * is made available (it calls mdev_register_device()). For instance create will
+> >   * attempt to decrement private->avail which is initialized below. I fail to
+> >   * understand how is  this well synchronized.
+> >   */
+> >          INIT_WORK(&private->io_work, vfio_ccw_sch_io_todo);
+> >          atomic_set(&private->avail, 1);
+> >          private->state = VFIO_CCW_STATE_STANDBY;
+> > 
+> >          return 0;
+> > 
+> > out_disable:
+> >          cio_disable_subchannel(sch);
+> > out_free:
+> >          dev_set_drvdata(&sch->dev, NULL);
+> >          kfree(private);
+> >          return ret;
+> > }
+> > 
+> > Should not initialization  of go before mdev_register_device(), and then rolled
+> > back if necessary if mdev_register_device() fails?
+> > 
+> > In practice it does not seem very likely that userspace can trigger
+> > mdev_device_create() before vfio_ccw_sch_probe() finishes so it should
+> > not be a practical problem. But I would like to understand how synchronization
+> > is supposed to work.
+> > 
+> > [Added Dong Jia, maybe he is also able to answer my question.]  
+> 
+> vfio_ccw_mdev_create() requires that private->state is not
+> VFIO_CCW_STATE_NOT_OPER but vfio_ccw_sch_probe() explicitly sets state
+> to this value before calling vfio_ccw_mdev_reg(), so a create should
+> return -ENODEV if racing with parent registration.  Is there something
+> else that I'm missing?  Thanks,
+> 
+> Alex
 
-> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=197953
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
-> 
-> v1->v2:
-> 
-> - switch from matching on DMI_BIOS_VERSION to DMI_BOARD_VERSION
-> 
-> 
->  drivers/pinctrl/intel/pinctrl-cherryview.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c
-> b/drivers/pinctrl/intel/pinctrl-cherryview.c
-> index b1ae1618fefea..44133e6846303 100644
-> --- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-> +++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-> @@ -1527,6 +1527,7 @@ static const struct dmi_system_id
-> chv_no_valid_mask[] = {
->  		.matches = {
->  			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
->  			DMI_MATCH(DMI_PRODUCT_FAMILY,
-> "Intel_Strago"),
-> +			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
->  		},
->  	},
->  	{
-> @@ -1534,6 +1535,7 @@ static const struct dmi_system_id
-> chv_no_valid_mask[] = {
->  		.matches = {
->  			DMI_MATCH(DMI_SYS_VENDOR, "HP"),
->  			DMI_MATCH(DMI_PRODUCT_NAME, "Setzer"),
-> +			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
->  		},
->  	},
->  	{
-> @@ -1541,6 +1543,7 @@ static const struct dmi_system_id
-> chv_no_valid_mask[] = {
->  		.matches = {
->  			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
->  			DMI_MATCH(DMI_PRODUCT_NAME, "Cyan"),
-> +			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
->  		},
->  	},
->  	{
-> @@ -1548,6 +1551,7 @@ static const struct dmi_system_id
-> chv_no_valid_mask[] = {
->  		.matches = {
->  			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
->  			DMI_MATCH(DMI_PRODUCT_NAME, "Celes"),
-> +			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
->  		},
->  	},
->  	{}
-> -- 
-> 2.17.0.441.gb46fe60e1d-goog
-> 
-> 
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+No, I think your understanding is correct. We move the state from
+NOT_OPER to STANDBY only after we're set up completely, so our create
+callback will simply fail early with -ENODEV. This looks fine to me.
