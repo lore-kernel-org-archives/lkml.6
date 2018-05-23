@@ -1,69 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933025AbeEWNTh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 09:19:37 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:52570 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932988AbeEWNTe (ORCPT
+        id S932977AbeEWNV1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 09:21:27 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44882 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932844AbeEWNVW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 09:19:34 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 48D57602BC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vinmenon@codeaurora.org
-Subject: Re: [PATCH 6/7] psi: pressure stall information for CPU, memory, and
- IO
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linuxfoundation.org>, Tejun Heo <tj@kernel.org>,
-        Balbir Singh <bsingharora@gmail.com>, Mike Galbraith <efault@gmx.de>,
-        Oliver Yang <yangoliver@me.com>, Shakeel Butt <shakeelb@google.com>,
-        xxx xxx <x.qendo@gmail.com>, Taras Kondratiuk <takondra@cisco.com>,
-        Daniel Walker <danielwa@cisco.com>,
-        Ruslan Ruslichenko <rruslich@cisco.com>, kernel-team@fb.com
-References: <20180507210135.1823-1-hannes@cmpxchg.org>
- <20180507210135.1823-7-hannes@cmpxchg.org>
- <87060553-2e09-2e2a-13a2-a91345d6df30@codeaurora.org>
- <20180523131747.GA4086@cmpxchg.org>
-From: Vinayak Menon <vinmenon@codeaurora.org>
-Message-ID: <47beeaa6-74aa-35d0-2808-e5c54be854a6@codeaurora.org>
-Date: Wed, 23 May 2018 18:49:25 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 23 May 2018 09:21:22 -0400
+Date: Wed, 23 May 2018 06:21:19 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        linux-mm@kvack.org, Shaohua Li <shli@kernel.org>,
+        linux-raid@vger.kernel.org,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>
+Subject: Re: [PATCH 3/8] md: raid5: use refcount_t for reference counting
+ instead atomic_t
+Message-ID: <20180523132119.GC19987@bombadil.infradead.org>
+References: <20180509193645.830-1-bigeasy@linutronix.de>
+ <20180509193645.830-4-bigeasy@linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <20180523131747.GA4086@cmpxchg.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180509193645.830-4-bigeasy@linutronix.de>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, May 09, 2018 at 09:36:40PM +0200, Sebastian Andrzej Siewior wrote:
+> refcount_t type and corresponding API should be used instead of atomic_t when
+> the variable is used as a reference counter. This allows to avoid accidental
+> refcounter overflows that might lead to use-after-free situations.
+> 
+> Most changes are 1:1 replacements except for
+> 	BUG_ON(atomic_inc_return(&sh->count) != 1);
+> 
+> which has been turned into
+>         refcount_inc(&sh->count);
+>         BUG_ON(refcount_read(&sh->count) != 1);
 
-On 5/23/2018 6:47 PM, Johannes Weiner wrote:
-> On Wed, May 09, 2018 at 04:33:24PM +0530, Vinayak Menon wrote:
->> On 5/8/2018 2:31 AM, Johannes Weiner wrote:
->>> +	/* Kick the stats aggregation worker if it's gone to sleep */
->>> +	if (!delayed_work_pending(&group->clock_work))
->> This causes a crash when the work is scheduled before system_wq is up. In my case when the first
->> schedule was called from kthreadd. And I had to do this to make it work.
->> if (keventd_up() && !delayed_work_pending(&group->clock_work))
->>
->>> +		schedule_delayed_work(&group->clock_work, MY_LOAD_FREQ);
-> I was trying to figure out how this is possible, and it didn't make
-> sense because we do initialize the system_wq way before kthreadd.
->
-> Did you by any chance backport this to a pre-4.10 kernel which does
-> not have 3347fa092821 ("workqueue: make workqueue available early
-> during boot") yet?
+@@ -5387,7 +5387,8 @@ static struct stripe_head *__get_priority_stripe(struct
++r5conf *conf, int group)
+                sh->group = NULL;
+        }
+        list_del_init(&sh->lru);
+-       BUG_ON(atomic_inc_return(&sh->count) != 1);
++       refcount_inc(&sh->count);
++	BUG_ON(refcount_read(&sh->count) != 1);
+        return sh;
+ }
 
-Sorry I did not mention that. I was trying on 4.9 kernel. It's clear now. Thanks.
 
->>> +void psi_task_change(struct task_struct *task, u64 now, int clear, int set)
->>> +{
->>> +	struct cgroup *cgroup, *parent;
->> unused variables
-> They're used in the next patch, I'll fix that up.
->
-> Thanks
+That's the only problematic usage.  And I think what it's really saying is:
+
+	BUG_ON(refcount_read(&sh->count) != 0);
+	refcount_set(&sh->count, 1);
+
+With that, this looks like a reasonable use of refcount_t to me.
