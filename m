@@ -1,101 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932144AbeEWISh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 04:18:37 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:57345 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932105AbeEWISb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 04:18:31 -0400
-Date: Wed, 23 May 2018 10:18:30 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [PATCH v3] arm64: allwinner: a64: Add Amarula A64-Relic initial
- support
-Message-ID: <20180523081830.4ly6sj34reabbttn@flea>
-References: <20180522132228.6564-1-jagan@amarulasolutions.com>
- <20180522143044.pgwawojiwnk2lzxb@flea>
- <CAMty3ZD3JT-ToGAUHN_uj7uVK-jkyAwfEdTBCmJSj34bACFpYQ@mail.gmail.com>
+        id S932165AbeEWIT2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 04:19:28 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46638 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754153AbeEWITY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 04:19:24 -0400
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH 04/10] vfio: ccw: replace IO_REQ event with SSCH_REQ event
+To: Cornelia Huck <cohuck@redhat.com>,
+        Pierre Morel <pmorel@linux.vnet.ibm.com>
+Cc: pasic@linux.vnet.ibm.com, bjsdjshi@linux.vnet.ibm.com,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+References: <1524149293-12658-1-git-send-email-pmorel@linux.vnet.ibm.com>
+ <1524149293-12658-5-git-send-email-pmorel@linux.vnet.ibm.com>
+ <20180425104138.1337aff5.cohuck@redhat.com>
+ <24f638e4-2f7e-00e1-1efb-ff3fe524bca0@linux.vnet.ibm.com>
+ <20180430173028.0dca976c.cohuck@redhat.com>
+ <3c5a0677-4ed2-9bde-e6d8-d02ab69e0c2c@linux.vnet.ibm.com>
+ <20180522173831.08f3b481.cohuck@redhat.com>
+From: Pierre Morel <pmorel@linux.ibm.com>
+Date: Wed, 23 May 2018 10:19:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="mamnyo2i4rxbn4ji"
-Content-Disposition: inline
-In-Reply-To: <CAMty3ZD3JT-ToGAUHN_uj7uVK-jkyAwfEdTBCmJSj34bACFpYQ@mail.gmail.com>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <20180522173831.08f3b481.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18052308-0020-0000-0000-000004204EFA
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18052308-0021-0000-0000-000042B58C60
+Message-Id: <3746e8a0-415f-3ba7-d7dc-be7835adc42f@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-23_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805230082
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 22/05/2018 17:38, Cornelia Huck wrote:
+> [still backlog processing...]
+>
+> On Thu, 3 May 2018 14:06:51 +0200
+> Pierre Morel <pmorel@linux.vnet.ibm.com> wrote:
+>
+>> On 30/04/2018 17:30, Cornelia Huck wrote:
+>>> On Wed, 25 Apr 2018 15:52:19 +0200
+>>> Pierre Morel <pmorel@linux.vnet.ibm.com> wrote:
+>>>   
+>>>> On 25/04/2018 10:41, Cornelia Huck wrote:
+>>>>> On Thu, 19 Apr 2018 16:48:07 +0200
+>>>>> Pierre Morel<pmorel@linux.vnet.ibm.com>  wrote:
+>>>>>> diff --git a/drivers/s390/cio/vfio_ccw_private.h b/drivers/s390/cio/vfio_ccw_private.h
+>>>>>> index 3284e64..93aab87 100644
+>>>>>> --- a/drivers/s390/cio/vfio_ccw_private.h
+>>>>>> +++ b/drivers/s390/cio/vfio_ccw_private.h
+>>>>>> @@ -76,7 +76,7 @@ enum vfio_ccw_state {
+>>>>>>      */
+>>>>>>     enum vfio_ccw_event {
+>>>>>>     	VFIO_CCW_EVENT_NOT_OPER,
+>>>>>> -	VFIO_CCW_EVENT_IO_REQ,
+>>>>>> +	VFIO_CCW_EVENT_SSCH_REQ,
+>>>>>>     	VFIO_CCW_EVENT_INTERRUPT,
+>>>>>>     	VFIO_CCW_EVENT_SCH_EVENT,
+>>>>>>     	/* last element! */
+>>>>> I don't think we should separate the ssch handling. The major
+>>>>> difference to halt/clear is that it needs channel program translation.
+>>>>> Everything else (issuing the instruction and processing the interrupt)
+>>>>> are basically the same. If we just throw everything at the hardware
+>>>>> and let the host's channel subsystem figure it out, we already should
+>>>>> be fine with regard to most of the races.
+>>>> We must test at a moment or another the kind of request we do,
+>>>> cancel, halt and clear only need the subchannel id in register 1 and as
+>>>> you said are much more direct to implement.
+>>>>
+>>>> If we do not separate them here, we need a switch in the "do_io_request"
+>>>> function.
+>>>> Is it what you mean?
+>>> Yes. Most of the handling should be the same for any function.
+>> I really don't know, the 4 functions are quite different.
+>>
+>> - SSCH uses an ORB, and has a quite long kernel execution time for VFIO
+>> - there is a race between SSCH and the others instructions
+>> - XSCH makes subchannel no longer start pending, also reset the busy
+>> indications
+>> - CSCH cancels both SSCH and HSCH instruction, and perform path management
+>> - HSCH has different busy (entry) conditions
+> Roughly speaking, we have two categories: An asynchronous function is
+> performed (SSCH, HSCH, CSCH) or not (XSCH). So I would split out XSCH
+> in any case.
+>
+> SSCH, HSCH, CSCH all perform path management. I see them as kind of
+> escalating (i.e. CSCH 'beats' HSCH which 'beats' SSCH). I think they
+> are all similar enough, though, as we can call through to the real
+> hardware and have it sorted out there.
+>
+> Looking through the channel I/O instructions:
+> - RSCH should be handled with SSCH (as a special case).
+> - MSCH should also be handled in the long run, STSCH as well.
+> - SCHM is interesting, as it's not per-subchannel. We have some basic
+>    handling of the instruction in QEMU, but it only emulates some ssch
+>    counters and completely lacks support for the other fields.
+> - IIRC, there's also a CHSC command dealing with channel monitoring. We
+>    currently fence off any CHSC that is not needed for Linux to run, but
+>    there are some that might be useful for the guest (path handling
+>    etc.) Hard to come to a conclusion here without access to the
+>    documentation.
+> - I don't think we need to care about TSCH (other than keeping the
+>    schib up to date, which we also need to do for STSCH).
+> - Likewise, TPI should be handled via emulation.
+>
+> Coming back to the original issue, I think we can easily handle SSCH
+> (and RSCH), HSCH and CSCH together (with the actual hardware doing the
+> heavy lifting anyway). For other instructions, we need separate
+> states/processing.
+>
 
---mamnyo2i4rxbn4ji
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+OK, I make the next version with this in mind.
 
-On Wed, May 23, 2018 at 11:44:56AM +0530, Jagan Teki wrote:
-> On Tue, May 22, 2018 at 8:00 PM, Maxime Ripard
-> <maxime.ripard@bootlin.com> wrote:
-> > On Tue, May 22, 2018 at 06:52:28PM +0530, Jagan Teki wrote:
-> >> Amarula A64-Relic is Allwinner A64 based IoT device, which support
-> >> - Allwinner A64 Cortex-A53
-> >> - Mali-400MP2 GPU
-> >> - AXP803 PMIC
-> >> - 1GB DDR3 RAM
-> >> - 8GB eMMC
-> >> - AP6330 Wifi/BLE
-> >> - MIPI-DSI
-> >> - CSI: OV5640 sensor
-> >> - USB OTG
-> >
-> > You claim that this is doing OTG...
-> >
-> > [..]
-> >
-> >> +&usb_otg {
-> >> +     dr_mode =3D "peripheral";
-> >> +     status =3D "okay";
-> >> +};
-> >
-> > ... and yet you're setting it as peripheral...
->=20
-> Though it claims OTG, board doesn't have any USB ports to operate(not
-> even Mini-AB) the only way to use the board as peripheral to transfer
-> images from host.
+Thanks
 
-I'm not sure what you mean here. If there's no USB connector, why do
-you even enable it?
+Pierre
 
-maxime
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---mamnyo2i4rxbn4ji
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsFI9UACgkQ0rTAlCFN
-r3TRxQ//YUtgozefeDLqseqYu7KoRTtEqw4a0UiNTFtIg8LV3VRuBlycSyGvL3wH
-PS4Gv37Xy+P6ubDCb4wBMjuaOkB8Xt8Uu6yrWA2YXLsnOCCSI1VMSdp1uaCi83vu
-WhjhzOsxquVd+xSw5LkSR1cE2sfDFzQ1e10akQfzivzSYjar2xGUPnc2jCHgoc08
-xHSAkw8qVZ7skxbqg1b1zxfvgCkRN3bYA0Vt9Kuprb1JpBnRlh1kPzNK15r50oft
-BebQ/RRpTIixs1f5mBYZyn6QBIRWNI7jKKJLBL+TMqlFUI30qK19qheibgHkbmtd
-bPpakQrIpY2pjJEUsm2QNhABOnoIDN8iiV0+DKyWxbbmCt4ZZTBZcM6s2Hbr0t5M
-7CbBqkuyDqw4I1CzdgQtVuGQcAm7CjfUy9vGef3xbqQHZomlrWpTFVcwVpcqnuWu
-6eJ3SKiEMLXUh17PZyy1kk9+6v+McYaKNbDV9DUwJ1PtPD4Ya/A9IyRwunBzagU+
-inrsMLvwhlLNVvH0mcedAXwKfTcxc7x7VZ7rISr9TLcijkWpcduIAtiv28bnO/ih
-xQBLIyw8bJYtQ+PvbCuDKmGSLUPAa+rX+WuboSpv2RRZ5ZlTymSwQJVIwJ/MLogz
-7A45abThiHLYRiBecgVZS+w83AAqXZMUj7BPUl3aO50I9zgJ8eQ=
-=5v+K
------END PGP SIGNATURE-----
-
---mamnyo2i4rxbn4ji--
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
