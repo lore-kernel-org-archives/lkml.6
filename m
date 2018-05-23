@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932740AbeEWMRU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 08:17:20 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59824 "EHLO mx1.redhat.com"
+        id S932782AbeEWMR2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 08:17:28 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54518 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932087AbeEWMRP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 08:17:15 -0400
+        id S932744AbeEWMRV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 08:17:21 -0400
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 5/8] proc: Add a way to make network proc files writable
+Subject: [PATCH 6/8] afs: Fix a Sparse warning in xdr_decode_AFSFetchStatus()
 From: David Howells <dhowells@redhat.com>
 To: viro@zeniv.linux.org.uk
 Cc: dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
         linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Wed, 23 May 2018 13:17:13 +0100
-Message-ID: <152707783321.27887.9233346185915064182.stgit@warthog.procyon.org.uk>
+Date: Wed, 23 May 2018 13:17:19 +0100
+Message-ID: <152707783954.27887.13200491028680328553.stgit@warthog.procyon.org.uk>
 In-Reply-To: <152707780120.27887.10118775145086304138.stgit@warthog.procyon.org.uk>
 References: <152707780120.27887.10118775145086304138.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.17.1-dirty
@@ -27,233 +27,223 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide two extra functions, proc_create_net_data_write() and
-proc_create_net_single_write() that act like their non-write versions but
-also set a write method in the proc_dir_entry struct.
+Sparse doesn't appear able to handle the conditionally-taken locks in
+xdr_decode_AFSFetchStatus(), even though the lock and unlock are both
+contingent on the same unvarying function argument.
 
-An internal simple write function is provided that will copy its buffer and
-hand it to the pde->write() method if available (or give an error if not).
-The buffer may be modified by the write method.
+Deal with this by interpolating a wrapper function that takes the lock if
+needed and calls xdr_decode_AFSFetchStatus() on two separate branches, one
+with the lock held and one without.
+
+This allows Sparse to work out the locking.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- fs/proc/generic.c       |   24 ++++++++++++
- fs/proc/internal.h      |    2 +
- fs/proc/proc_net.c      |   92 +++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/proc_fs.h |   12 ++++++
- 4 files changed, 130 insertions(+)
+ fs/afs/fsclient.c |   97 ++++++++++++++++++++++++++++++-----------------------
+ 1 file changed, 55 insertions(+), 42 deletions(-)
 
-diff --git a/fs/proc/generic.c b/fs/proc/generic.c
-index 02bb1914f5f7..d0e5a68ae14a 100644
---- a/fs/proc/generic.c
-+++ b/fs/proc/generic.c
-@@ -741,3 +741,27 @@ void *PDE_DATA(const struct inode *inode)
- 	return __PDE_DATA(inode);
- }
- EXPORT_SYMBOL(PDE_DATA);
+diff --git a/fs/afs/fsclient.c b/fs/afs/fsclient.c
+index efacdb7c1dee..b695d9e16c65 100644
+--- a/fs/afs/fsclient.c
++++ b/fs/afs/fsclient.c
+@@ -137,10 +137,6 @@ static int xdr_decode_AFSFetchStatus(struct afs_call *call,
+ 	u64 data_version, size;
+ 	u32 type, abort_code;
+ 	u8 flags = 0;
+-	int ret;
+-
+-	if (vnode)
+-		write_seqlock(&vnode->cb_lock);
+ 
+ 	if (xdr->if_version != htonl(AFS_FSTATUS_VERSION)) {
+ 		pr_warn("Unknown AFSFetchStatus version %u\n", ntohl(xdr->if_version));
+@@ -168,8 +164,7 @@ static int xdr_decode_AFSFetchStatus(struct afs_call *call,
+ 	case AFS_FTYPE_INVALID:
+ 		if (abort_code != 0) {
+ 			status->abort_code = abort_code;
+-			ret = 0;
+-			goto out;
++			return 0;
+ 		}
+ 		/* Fall through */
+ 	default:
+@@ -222,17 +217,35 @@ static int xdr_decode_AFSFetchStatus(struct afs_call *call,
+ 					     flags);
+ 	}
+ 
+-	ret = 0;
+-
+-out:
+-	if (vnode)
+-		write_sequnlock(&vnode->cb_lock);
+-	return ret;
++	return 0;
+ 
+ bad:
+ 	xdr_dump_bad(*_bp);
+-	ret = afs_protocol_error(call, -EBADMSG);
+-	goto out;
++	return afs_protocol_error(call, -EBADMSG);
++}
 +
 +/*
-+ * Pull a user buffer into memory and pass it to the file's write handler if
-+ * one is supplied.  The ->write() method is permitted to modify the
-+ * kernel-side buffer.
++ * Decode the file status.  We need to lock the target vnode if we're going to
++ * update its status so that stat() sees the attributes update atomically.
 + */
-+ssize_t proc_simple_write(struct file *f, const char __user *ubuf, size_t size,
-+			  loff_t *_pos)
++static int afs_decode_status(struct afs_call *call,
++			     const __be32 **_bp,
++			     struct afs_file_status *status,
++			     struct afs_vnode *vnode,
++			     const afs_dataversion_t *expected_version,
++			     struct afs_read *read_req)
 +{
-+	struct proc_dir_entry *pde = PDE(file_inode(f));
-+	char *buf;
 +	int ret;
 +
-+	if (!pde->write)
-+		return -EACCES;
-+	if (size == 0 || size > PAGE_SIZE - 1)
-+		return -EINVAL;
-+	buf = memdup_user_nul(ubuf, size);
-+	if (IS_ERR(buf))
-+		return PTR_ERR(buf);
-+	ret = pde->write(f, buf, size);
-+	kfree(buf);
-+	return ret == 0 ? size : ret;
-+}
-diff --git a/fs/proc/internal.h b/fs/proc/internal.h
-index a318ae5b36b4..916ccc39073d 100644
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@ -48,6 +48,7 @@ struct proc_dir_entry {
- 		const struct seq_operations *seq_ops;
- 		int (*single_show)(struct seq_file *, void *);
- 	};
-+	proc_write_t write;
- 	void *data;
- 	unsigned int state_size;
- 	unsigned int low_ino;
-@@ -187,6 +188,7 @@ static inline bool is_empty_pde(const struct proc_dir_entry *pde)
- {
- 	return S_ISDIR(pde->mode) && !pde->proc_iops;
++	if (!vnode)
++		return xdr_decode_AFSFetchStatus(call, _bp, status, vnode,
++						 expected_version, read_req);
++
++	write_seqlock(&vnode->cb_lock);
++	ret = xdr_decode_AFSFetchStatus(call, _bp, status, vnode,
++					expected_version, read_req);
++	write_sequnlock(&vnode->cb_lock);
++	return ret;
  }
-+extern ssize_t proc_simple_write(struct file *, const char __user *, size_t, loff_t *);
  
  /*
-  * inode.c
-diff --git a/fs/proc/proc_net.c b/fs/proc/proc_net.c
-index 7d94fa005b0d..d5e0fcb3439e 100644
---- a/fs/proc/proc_net.c
-+++ b/fs/proc/proc_net.c
-@@ -46,6 +46,9 @@ static int seq_open_net(struct inode *inode, struct file *file)
+@@ -374,8 +387,8 @@ static int afs_deliver_fs_fetch_status_vnode(struct afs_call *call)
  
- 	WARN_ON_ONCE(state_size < sizeof(*p));
+ 	/* unmarshall the reply once we've received all of it */
+ 	bp = call->buffer;
+-	if (xdr_decode_AFSFetchStatus(call, &bp, &vnode->status, vnode,
+-				      &call->expected_version, NULL) < 0)
++	if (afs_decode_status(call, &bp, &vnode->status, vnode,
++			      &call->expected_version, NULL) < 0)
+ 		return afs_protocol_error(call, -EBADMSG);
+ 	xdr_decode_AFSCallBack(call, vnode, &bp);
+ 	if (call->reply[1])
+@@ -555,8 +568,8 @@ static int afs_deliver_fs_fetch_data(struct afs_call *call)
+ 			return ret;
  
-+	if (file->f_mode & FMODE_WRITE && !PDE(inode)->write)
-+		return -EACCES;
-+
- 	net = get_proc_net(inode);
- 	if (!net)
- 		return -ENXIO;
-@@ -73,6 +76,7 @@ static int seq_release_net(struct inode *ino, struct file *f)
- static const struct file_operations proc_net_seq_fops = {
- 	.open		= seq_open_net,
- 	.read		= seq_read,
-+	.write		= proc_simple_write,
- 	.llseek		= seq_lseek,
- 	.release	= seq_release_net,
- };
-@@ -93,6 +97,50 @@ struct proc_dir_entry *proc_create_net_data(const char *name, umode_t mode,
- }
- EXPORT_SYMBOL_GPL(proc_create_net_data);
+ 		bp = call->buffer;
+-		if (xdr_decode_AFSFetchStatus(call, &bp, &vnode->status, vnode,
+-					      &vnode->status.data_version, req) < 0)
++		if (afs_decode_status(call, &bp, &vnode->status, vnode,
++				      &vnode->status.data_version, req) < 0)
+ 			return afs_protocol_error(call, -EBADMSG);
+ 		xdr_decode_AFSCallBack(call, vnode, &bp);
+ 		if (call->reply[1])
+@@ -708,9 +721,9 @@ static int afs_deliver_fs_create_vnode(struct afs_call *call)
+ 	/* unmarshall the reply once we've received all of it */
+ 	bp = call->buffer;
+ 	xdr_decode_AFSFid(&bp, call->reply[1]);
+-	if (xdr_decode_AFSFetchStatus(call, &bp, call->reply[2], NULL, NULL, NULL) < 0 ||
+-	    xdr_decode_AFSFetchStatus(call, &bp, &vnode->status, vnode,
+-				      &call->expected_version, NULL) < 0)
++	if (afs_decode_status(call, &bp, call->reply[2], NULL, NULL, NULL) < 0 ||
++	    afs_decode_status(call, &bp, &vnode->status, vnode,
++			      &call->expected_version, NULL) < 0)
+ 		return afs_protocol_error(call, -EBADMSG);
+ 	xdr_decode_AFSCallBack_raw(&bp, call->reply[3]);
+ 	/* xdr_decode_AFSVolSync(&bp, call->reply[X]); */
+@@ -814,8 +827,8 @@ static int afs_deliver_fs_remove(struct afs_call *call)
  
-+/**
-+ * proc_create_net_data_write - Create a writable net_ns-specific proc file
-+ * @name: The name of the file.
-+ * @mode: The file's access mode.
-+ * @parent: The parent directory in which to create.
-+ * @ops: The seq_file ops with which to read the file.
-+ * @write: The write method which which to 'modify' the file.
-+ * @data: Data for retrieval by PDE_DATA().
-+ *
-+ * Create a network namespaced proc file in the @parent directory with the
-+ * specified @name and @mode that allows reading of a file that displays a
-+ * series of elements and also provides for the file accepting writes that have
-+ * some arbitrary effect.
-+ *
-+ * The functions in the @ops table are used to iterate over items to be
-+ * presented and extract the readable content using the seq_file interface.
-+ *
-+ * The @write function is called with the data copied into a kernel space
-+ * scratch buffer and has a NUL appended for convenience.  The buffer may be
-+ * modified by the @write function.  @write should return 0 on success.
-+ *
-+ * The @data value is accessible from the @show and @write functions by calling
-+ * PDE_DATA() on the file inode.  The network namespace must be accessed by
-+ * calling seq_file_net() on the seq_file struct.
-+ */
-+struct proc_dir_entry *proc_create_net_data_write(const char *name, umode_t mode,
-+						  struct proc_dir_entry *parent,
-+						  const struct seq_operations *ops,
-+						  proc_write_t write,
-+						  unsigned int state_size, void *data)
-+{
-+	struct proc_dir_entry *p;
-+
-+	p = proc_create_reg(name, mode, &parent, data);
-+	if (!p)
-+		return NULL;
-+	p->proc_fops = &proc_net_seq_fops;
-+	p->seq_ops = ops;
-+	p->state_size = state_size;
-+	p->write = write;
-+	return proc_register(parent, p);
-+}
-+EXPORT_SYMBOL_GPL(proc_create_net_data_write);
-+
- static int single_open_net(struct inode *inode, struct file *file)
- {
- 	struct proc_dir_entry *de = PDE(inode);
-@@ -119,6 +167,7 @@ static int single_release_net(struct inode *ino, struct file *f)
- static const struct file_operations proc_net_single_fops = {
- 	.open		= single_open_net,
- 	.read		= seq_read,
-+	.write		= proc_simple_write,
- 	.llseek		= seq_lseek,
- 	.release	= single_release_net,
- };
-@@ -138,6 +187,49 @@ struct proc_dir_entry *proc_create_net_single(const char *name, umode_t mode,
- }
- EXPORT_SYMBOL_GPL(proc_create_net_single);
+ 	/* unmarshall the reply once we've received all of it */
+ 	bp = call->buffer;
+-	if (xdr_decode_AFSFetchStatus(call, &bp, &vnode->status, vnode,
+-				      &call->expected_version, NULL) < 0)
++	if (afs_decode_status(call, &bp, &vnode->status, vnode,
++			      &call->expected_version, NULL) < 0)
+ 		return afs_protocol_error(call, -EBADMSG);
+ 	/* xdr_decode_AFSVolSync(&bp, call->reply[X]); */
  
-+/**
-+ * proc_create_net_single_write - Create a writable net_ns-specific proc file
-+ * @name: The name of the file.
-+ * @mode: The file's access mode.
-+ * @parent: The parent directory in which to create.
-+ * @show: The seqfile show method with which to read the file.
-+ * @write: The write method which which to 'modify' the file.
-+ * @data: Data for retrieval by PDE_DATA().
-+ *
-+ * Create a network-namespaced proc file in the @parent directory with the
-+ * specified @name and @mode that allows reading of a file that displays a
-+ * single element rather than a series and also provides for the file accepting
-+ * writes that have some arbitrary effect.
-+ *
-+ * The @show function is called to extract the readable content via the
-+ * seq_file interface.
-+ *
-+ * The @write function is called with the data copied into a kernel space
-+ * scratch buffer and has a NUL appended for convenience.  The buffer may be
-+ * modified by the @write function.  @write should return 0 on success.
-+ *
-+ * The @data value is accessible from the @show and @write functions by calling
-+ * PDE_DATA() on the file inode.  The network namespace must be accessed by
-+ * calling seq_file_single_net() on the seq_file struct.
-+ */
-+struct proc_dir_entry *proc_create_net_single_write(const char *name, umode_t mode,
-+						    struct proc_dir_entry *parent,
-+						    int (*show)(struct seq_file *, void *),
-+						    proc_write_t write,
-+						    void *data)
-+{
-+	struct proc_dir_entry *p;
-+
-+	p = proc_create_reg(name, mode, &parent, data);
-+	if (!p)
-+		return NULL;
-+	p->proc_fops = &proc_net_single_fops;
-+	p->single_show = show;
-+	p->write = write;
-+	return proc_register(parent, p);
-+}
-+EXPORT_SYMBOL_GPL(proc_create_net_single_write);
-+
- static struct net *get_proc_task_net(struct inode *dir)
- {
- 	struct task_struct *task;
-diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
-index e518352137e7..626fc65c4336 100644
---- a/include/linux/proc_fs.h
-+++ b/include/linux/proc_fs.h
-@@ -14,6 +14,8 @@ struct seq_operations;
+@@ -904,9 +917,9 @@ static int afs_deliver_fs_link(struct afs_call *call)
  
- #ifdef CONFIG_PROC_FS
+ 	/* unmarshall the reply once we've received all of it */
+ 	bp = call->buffer;
+-	if (xdr_decode_AFSFetchStatus(call, &bp, &vnode->status, vnode, NULL, NULL) < 0 ||
+-	    xdr_decode_AFSFetchStatus(call, &bp, &dvnode->status, dvnode,
+-				      &call->expected_version, NULL) < 0)
++	if (afs_decode_status(call, &bp, &vnode->status, vnode, NULL, NULL) < 0 ||
++	    afs_decode_status(call, &bp, &dvnode->status, dvnode,
++			      &call->expected_version, NULL) < 0)
+ 		return afs_protocol_error(call, -EBADMSG);
+ 	/* xdr_decode_AFSVolSync(&bp, call->reply[X]); */
  
-+typedef int (*proc_write_t)(struct file *, char *, size_t);
-+
- extern void proc_root_init(void);
- extern void proc_flush_task(struct task_struct *);
+@@ -991,9 +1004,9 @@ static int afs_deliver_fs_symlink(struct afs_call *call)
+ 	/* unmarshall the reply once we've received all of it */
+ 	bp = call->buffer;
+ 	xdr_decode_AFSFid(&bp, call->reply[1]);
+-	if (xdr_decode_AFSFetchStatus(call, &bp, call->reply[2], NULL, NULL, NULL) ||
+-	    xdr_decode_AFSFetchStatus(call, &bp, &vnode->status, vnode,
+-				      &call->expected_version, NULL) < 0)
++	if (afs_decode_status(call, &bp, call->reply[2], NULL, NULL, NULL) ||
++	    afs_decode_status(call, &bp, &vnode->status, vnode,
++			      &call->expected_version, NULL) < 0)
+ 		return afs_protocol_error(call, -EBADMSG);
+ 	/* xdr_decode_AFSVolSync(&bp, call->reply[X]); */
  
-@@ -61,6 +63,16 @@ struct proc_dir_entry *proc_create_net_data(const char *name, umode_t mode,
- struct proc_dir_entry *proc_create_net_single(const char *name, umode_t mode,
- 		struct proc_dir_entry *parent,
- 		int (*show)(struct seq_file *, void *), void *data);
-+struct proc_dir_entry *proc_create_net_data_write(const char *name, umode_t mode,
-+						  struct proc_dir_entry *parent,
-+						  const struct seq_operations *ops,
-+						  proc_write_t write,
-+						  unsigned int state_size, void *data);
-+struct proc_dir_entry *proc_create_net_single_write(const char *name, umode_t mode,
-+						    struct proc_dir_entry *parent,
-+						    int (*show)(struct seq_file *, void *),
-+						    proc_write_t write,
-+						    void *data);
+@@ -1097,12 +1110,12 @@ static int afs_deliver_fs_rename(struct afs_call *call)
  
- #else /* CONFIG_PROC_FS */
+ 	/* unmarshall the reply once we've received all of it */
+ 	bp = call->buffer;
+-	if (xdr_decode_AFSFetchStatus(call, &bp, &orig_dvnode->status, orig_dvnode,
+-				      &call->expected_version, NULL) < 0)
++	if (afs_decode_status(call, &bp, &orig_dvnode->status, orig_dvnode,
++			      &call->expected_version, NULL) < 0)
+ 		return afs_protocol_error(call, -EBADMSG);
+ 	if (new_dvnode != orig_dvnode &&
+-	    xdr_decode_AFSFetchStatus(call, &bp, &new_dvnode->status, new_dvnode,
+-				      &call->expected_version_2, NULL) < 0)
++	    afs_decode_status(call, &bp, &new_dvnode->status, new_dvnode,
++			      &call->expected_version_2, NULL) < 0)
+ 		return afs_protocol_error(call, -EBADMSG);
+ 	/* xdr_decode_AFSVolSync(&bp, call->reply[X]); */
  
+@@ -1206,8 +1219,8 @@ static int afs_deliver_fs_store_data(struct afs_call *call)
+ 
+ 	/* unmarshall the reply once we've received all of it */
+ 	bp = call->buffer;
+-	if (xdr_decode_AFSFetchStatus(call, &bp, &vnode->status, vnode,
+-				      &call->expected_version, NULL) < 0)
++	if (afs_decode_status(call, &bp, &vnode->status, vnode,
++			      &call->expected_version, NULL) < 0)
+ 		return afs_protocol_error(call, -EBADMSG);
+ 	/* xdr_decode_AFSVolSync(&bp, call->reply[X]); */
+ 
+@@ -1382,8 +1395,8 @@ static int afs_deliver_fs_store_status(struct afs_call *call)
+ 
+ 	/* unmarshall the reply once we've received all of it */
+ 	bp = call->buffer;
+-	if (xdr_decode_AFSFetchStatus(call, &bp, &vnode->status, vnode,
+-				      &call->expected_version, NULL) < 0)
++	if (afs_decode_status(call, &bp, &vnode->status, vnode,
++			      &call->expected_version, NULL) < 0)
+ 		return afs_protocol_error(call, -EBADMSG);
+ 	/* xdr_decode_AFSVolSync(&bp, call->reply[X]); */
+ 
+@@ -2084,8 +2097,8 @@ static int afs_deliver_fs_fetch_status(struct afs_call *call)
+ 
+ 	/* unmarshall the reply once we've received all of it */
+ 	bp = call->buffer;
+-	xdr_decode_AFSFetchStatus(call, &bp, status, vnode,
+-				  &call->expected_version, NULL);
++	afs_decode_status(call, &bp, status, vnode,
++			  &call->expected_version, NULL);
+ 	callback[call->count].version	= ntohl(bp[0]);
+ 	callback[call->count].expiry	= ntohl(bp[1]);
+ 	callback[call->count].type	= ntohl(bp[2]);
+@@ -2196,9 +2209,9 @@ static int afs_deliver_fs_inline_bulk_status(struct afs_call *call)
+ 
+ 		bp = call->buffer;
+ 		statuses = call->reply[1];
+-		if (xdr_decode_AFSFetchStatus(call, &bp, &statuses[call->count],
+-					      call->count == 0 ? vnode : NULL,
+-					      NULL, NULL) < 0)
++		if (afs_decode_status(call, &bp, &statuses[call->count],
++				      call->count == 0 ? vnode : NULL,
++				      NULL, NULL) < 0)
+ 			return afs_protocol_error(call, -EBADMSG);
+ 
+ 		call->count++;
