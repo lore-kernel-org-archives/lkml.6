@@ -1,522 +1,195 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934184AbeEWSyQ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 14:54:16 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:45600 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933928AbeEWSyM (ORCPT
+        id S934208AbeEWSy5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 14:54:57 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:42115 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933928AbeEWSyz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 14:54:12 -0400
-X-Google-Smtp-Source: AB8JxZpGeIz5azsULk+AT6GU/sClG4ctyI4+U2ukQkkNUr8CqyEShtRFW8zDlqm2FR+qzymKladFZg==
-Subject: Re: [PATCH] Revert "mm/cma: manage the memory of the CMA area by
- using the ZONE_MOVABLE"
-To: js1304@gmail.com, Andrew Morton <akpm@linux-foundation.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>,
-        Laura Abbott <lauraa@codeaurora.org>,
-        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>
-References: <1527038301-24368-1-git-send-email-iamjoonsoo.kim@lge.com>
-From: Laura Abbott <labbott@redhat.com>
-Message-ID: <a41c2038-f4fa-7cc9-4977-2cdcaec56db1@redhat.com>
-Date: Wed, 23 May 2018 11:54:08 -0700
+        Wed, 23 May 2018 14:54:55 -0400
+X-Google-Smtp-Source: ADUXVKJp5nff6mBvI2pEeq6AqmfBj++2lqP+W2dqxRK3g1qUh/qoxCqhZzz6c8A1NhOg4i2rXtyzRg==
+Subject: Re: B53 DSA switch problem on Banana Pi-R1 on Fedora 26
+To: Gerhard Wiesinger <lists@wiesinger.com>, Andrew Lunn <andrew@lunn.ch>
+Cc: linux-kernel@vger.kernel.org
+References: <3bdb712d-38bd-e2ca-63cf-8406a7b5689d@wiesinger.com>
+ <20180522201632.GB4396@lunn.ch>
+ <59d6b55f-d50a-063c-90a9-31a758e01383@gmail.com>
+ <fa5c2615-40b3-62bc-3dda-59f9ef574686@wiesinger.com>
+ <76c3f5ec-0ab2-c06d-98e8-277284bb1a8e@gmail.com>
+ <779f2be3-3e74-e650-5240-efaf1003d77c@wiesinger.com>
+ <4f7c5173-019d-ba0e-70b3-addf64a6a9fa@gmail.com>
+ <aba2788a-ba54-dbc8-dd60-e862ba31d66d@wiesinger.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+Message-ID: <53c9272a-0e1a-e8fb-a3e4-b4e23e77be10@gmail.com>
+Date: Wed, 23 May 2018 11:54:45 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <1527038301-24368-1-git-send-email-iamjoonsoo.kim@lge.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <aba2788a-ba54-dbc8-dd60-e862ba31d66d@wiesinger.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/22/2018 06:18 PM, js1304@gmail.com wrote:
-> From: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+On 05/23/2018 11:27 AM, Gerhard Wiesinger wrote:
+> On 23.05.2018 19:55, Florian Fainelli wrote:
+>> On 05/23/2018 10:35 AM, Gerhard Wiesinger wrote:
+>>> On 23.05.2018 17:28, Florian Fainelli wrote:
+>>>>> And in the future (time plan)?
+>>>> If you don't care about multicast then you can use those patches:
+>>>>
+>>>> https://github.com/ffainelli/linux/commit/de055bf5f34e9806463ab2793e0852f5dfc380df
+>>>>
+>>>>
+>>>>
+>>>> and you have to change the part of drivers/net/dsa/b53/b53_common.c
+>>>> that
+>>>> returns DSA_TAG_PROTO_NONE for 53125:
+>>>>
+>>>>
+>>>> diff --git a/drivers/net/dsa/b53/b53_common.c
+>>>> b/drivers/net/dsa/b53/b53_common.c
+>>>> index 9f561fe505cb..3c64f026a8ce 100644
+>>>> --- a/drivers/net/dsa/b53/b53_common.c
+>>>> +++ b/drivers/net/dsa/b53/b53_common.c
+>>>> @@ -1557,7 +1557,7 @@ enum dsa_tag_protocol b53_get_tag_protocol(struct
+>>>> dsa_switch *ds, int port)
+>>>>            * mode to be turned on which means we need to specifically
+>>>> manage ARL
+>>>>            * misses on multicast addresses (TBD).
+>>>>            */
+>>>> -       if (is5325(dev) || is5365(dev) || is539x(dev) ||
+>>>> is531x5(dev) ||
+>>>> +       if (is5325(dev) || is5365(dev) || is539x(dev) ||
+>>>>               !b53_can_enable_brcm_tags(ds, port))
+>>>>                   return DSA_TAG_PROTO_NONE;
+>>>>
+>>>>
+>>>> That would bring Broadcom tags to the 53125 switch and you would be
+>>>> able
+>>>> to use the configuration lines from Andrew in that case.
+>>> What's the plan here regarding these 2 config option mode (how do you
+>>> call them?)?
+>> Broadcom tags is the underlying feature that provides per-port
+>> information about the packets going in and out. Turning on Broadcom tags
+>> requires turning on managed mode which means that the host now has to
+>> manage how MAC addresses are programmed into the switch, it's not rocket
+>> science, but I don't have a good test framework to automate the testing
+>> of those changes yet. If you are willing to help in the testing, I can
+>> certainly give you patches to try.
 > 
-> This reverts the following commits that change CMA design in MM.
-> 
-> Revert "ARM: CMA: avoid double mapping to the CMA area if CONFIG_HIGHMEM=y"
-> This reverts commit 3d2054ad8c2d5100b68b0c0405f89fd90bf4107b.
-> 
-> Revert "mm/cma: remove ALLOC_CMA"
-> This reverts commit 1d47a3ec09b5489cd915e8f492aa623cdab5d002.
-> 
-> Revert "mm/cma: manage the memory of the CMA area by using the ZONE_MOVABLE"
-> This reverts commit bad8c6c0b1144694ecb0bc5629ede9b8b578b86e.
-> 
-> Ville reported a following error on i386.
-> 
-> [    0.000000] Inode-cache hash table entries: 65536 (order: 6, 262144 bytes)
-> [    0.000000] microcode: microcode updated early to revision 0x4, date = 2013-06-28
-> [    0.000000] Initializing CPU#0
-> [    0.000000] Initializing HighMem for node 0 (000377fe:00118000)
-> [    0.000000] Initializing Movable for node 0 (00000001:00118000)
-> [    0.000000] BUG: Bad page state in process swapper  pfn:377fe
-> [    0.000000] page:f53effc0 count:0 mapcount:-127 mapping:00000000 index:0x0
-> [    0.000000] flags: 0x80000000()
-> [    0.000000] raw: 80000000 00000000 00000000 ffffff80 00000000 00000100 00000200 00000001
-> [    0.000000] page dumped because: nonzero mapcount
-> [    0.000000] Modules linked in:
-> [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.17.0-rc5-elk+ #145
-> [    0.000000] Hardware name: Dell Inc. Latitude E5410/03VXMC, BIOS A15 07/11/2013
-> [    0.000000] Call Trace:
-> [    0.000000]  dump_stack+0x60/0x96
-> [    0.000000]  bad_page+0x9a/0x100
-> [    0.000000]  free_pages_check_bad+0x3f/0x60
-> [    0.000000]  free_pcppages_bulk+0x29d/0x5b0
-> [    0.000000]  free_unref_page_commit+0x84/0xb0
-> [    0.000000]  free_unref_page+0x3e/0x70
-> [    0.000000]  __free_pages+0x1d/0x20
-> [    0.000000]  free_highmem_page+0x19/0x40
-> [    0.000000]  add_highpages_with_active_regions+0xab/0xeb
-> [    0.000000]  set_highmem_pages_init+0x66/0x73
-> [    0.000000]  mem_init+0x1b/0x1d7
-> [    0.000000]  start_kernel+0x17a/0x363
-> [    0.000000]  i386_start_kernel+0x95/0x99
-> [    0.000000]  startup_32_smp+0x164/0x168
-> 
-> Reason for this error is that the span of MOVABLE_ZONE is extended to
-> whole node span for future CMA initialization, and, normal memory is
-> wrongly freed here. I submitted the fix and it seems to work, but,
-> the other problem happened. It's so late time to fix the later problem
-> so I decide to reverting the series.
-> 
+> Yes, patches are welcome.
 
-Acked-by: Laura Abbott <labbott@redhat.com>
+I gave you the two things that would be required to have Broadcom tags
+working already, feel free to givem them a try. Make sure your kernel
+also has that patch:
 
+8cad443eacf661796a740903a75cb8944c675b4e ("net: stmmac: Fix reception of
+Broadcom switches tags")
 
-> Reported-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> Signed-off-by: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> ---
->   arch/arm/mm/dma-mapping.c      | 16 +-------
->   include/linux/memory_hotplug.h |  3 ++
->   include/linux/mm.h             |  1 -
->   mm/cma.c                       | 83 ++++++------------------------------------
->   mm/compaction.c                |  4 +-
->   mm/internal.h                  |  4 +-
->   mm/page_alloc.c                | 83 +++++++++++++++---------------------------
->   7 files changed, 49 insertions(+), 145 deletions(-)
 > 
-> diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-> index 8c398fe..ada8eb2 100644
-> --- a/arch/arm/mm/dma-mapping.c
-> +++ b/arch/arm/mm/dma-mapping.c
-> @@ -466,12 +466,6 @@ void __init dma_contiguous_early_fixup(phys_addr_t base, unsigned long size)
->   void __init dma_contiguous_remap(void)
->   {
->   	int i;
-> -
-> -	if (!dma_mmu_remap_num)
-> -		return;
-> -
-> -	/* call flush_cache_all() since CMA area would be large enough */
-> -	flush_cache_all();
->   	for (i = 0; i < dma_mmu_remap_num; i++) {
->   		phys_addr_t start = dma_mmu_remap[i].base;
->   		phys_addr_t end = start + dma_mmu_remap[i].size;
-> @@ -504,15 +498,7 @@ void __init dma_contiguous_remap(void)
->   		flush_tlb_kernel_range(__phys_to_virt(start),
->   				       __phys_to_virt(end));
->   
-> -		/*
-> -		 * All the memory in CMA region will be on ZONE_MOVABLE.
-> -		 * If that zone is considered as highmem, the memory in CMA
-> -		 * region is also considered as highmem even if it's
-> -		 * physical address belong to lowmem. In this case,
-> -		 * re-mapping isn't required.
-> -		 */
-> -		if (!is_highmem_idx(ZONE_MOVABLE))
-> -			iotable_init(&map, 1);
-> +		iotable_init(&map, 1);
->   	}
->   }
->   
-> diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
-> index e0e49b5..2b02652 100644
-> --- a/include/linux/memory_hotplug.h
-> +++ b/include/linux/memory_hotplug.h
-> @@ -216,6 +216,9 @@ void put_online_mems(void);
->   void mem_hotplug_begin(void);
->   void mem_hotplug_done(void);
->   
-> +extern void set_zone_contiguous(struct zone *zone);
-> +extern void clear_zone_contiguous(struct zone *zone);
-> +
->   #else /* ! CONFIG_MEMORY_HOTPLUG */
->   #define pfn_to_online_page(pfn)			\
->   ({						\
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index c6fa9a2..02a616e 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -2109,7 +2109,6 @@ extern void setup_per_cpu_pageset(void);
->   
->   extern void zone_pcp_update(struct zone *zone);
->   extern void zone_pcp_reset(struct zone *zone);
-> -extern void setup_zone_pageset(struct zone *zone);
->   
->   /* page_alloc.c */
->   extern int min_free_kbytes;
-> diff --git a/mm/cma.c b/mm/cma.c
-> index aa40e6c..5809bbe 100644
-> --- a/mm/cma.c
-> +++ b/mm/cma.c
-> @@ -39,7 +39,6 @@
->   #include <trace/events/cma.h>
->   
->   #include "cma.h"
-> -#include "internal.h"
->   
->   struct cma cma_areas[MAX_CMA_AREAS];
->   unsigned cma_area_count;
-> @@ -110,25 +109,23 @@ static int __init cma_activate_area(struct cma *cma)
->   	if (!cma->bitmap)
->   		return -ENOMEM;
->   
-> +	WARN_ON_ONCE(!pfn_valid(pfn));
-> +	zone = page_zone(pfn_to_page(pfn));
-> +
->   	do {
->   		unsigned j;
->   
->   		base_pfn = pfn;
-> -		if (!pfn_valid(base_pfn))
-> -			goto err;
-> -
-> -		zone = page_zone(pfn_to_page(base_pfn));
->   		for (j = pageblock_nr_pages; j; --j, pfn++) {
-> -			if (!pfn_valid(pfn))
-> -				goto err;
-> -
-> +			WARN_ON_ONCE(!pfn_valid(pfn));
->   			/*
-> -			 * In init_cma_reserved_pageblock(), present_pages
-> -			 * is adjusted with assumption that all pages in
-> -			 * the pageblock come from a single zone.
-> +			 * alloc_contig_range requires the pfn range
-> +			 * specified to be in the same zone. Make this
-> +			 * simple by forcing the entire CMA resv range
-> +			 * to be in the same zone.
->   			 */
->   			if (page_zone(pfn_to_page(pfn)) != zone)
-> -				goto err;
-> +				goto not_in_zone;
->   		}
->   		init_cma_reserved_pageblock(pfn_to_page(base_pfn));
->   	} while (--i);
-> @@ -142,7 +139,7 @@ static int __init cma_activate_area(struct cma *cma)
->   
->   	return 0;
->   
-> -err:
-> +not_in_zone:
->   	pr_err("CMA area %s could not be activated\n", cma->name);
->   	kfree(cma->bitmap);
->   	cma->count = 0;
-> @@ -152,41 +149,6 @@ static int __init cma_activate_area(struct cma *cma)
->   static int __init cma_init_reserved_areas(void)
->   {
->   	int i;
-> -	struct zone *zone;
-> -	pg_data_t *pgdat;
-> -
-> -	if (!cma_area_count)
-> -		return 0;
-> -
-> -	for_each_online_pgdat(pgdat) {
-> -		unsigned long start_pfn = UINT_MAX, end_pfn = 0;
-> -
-> -		zone = &pgdat->node_zones[ZONE_MOVABLE];
-> -
-> -		/*
-> -		 * In this case, we cannot adjust the zone range
-> -		 * since it is now maximum node span and we don't
-> -		 * know original zone range.
-> -		 */
-> -		if (populated_zone(zone))
-> -			continue;
-> -
-> -		for (i = 0; i < cma_area_count; i++) {
-> -			if (pfn_to_nid(cma_areas[i].base_pfn) !=
-> -				pgdat->node_id)
-> -				continue;
-> -
-> -			start_pfn = min(start_pfn, cma_areas[i].base_pfn);
-> -			end_pfn = max(end_pfn, cma_areas[i].base_pfn +
-> -						cma_areas[i].count);
-> -		}
-> -
-> -		if (!end_pfn)
-> -			continue;
-> -
-> -		zone->zone_start_pfn = start_pfn;
-> -		zone->spanned_pages = end_pfn - start_pfn;
-> -	}
->   
->   	for (i = 0; i < cma_area_count; i++) {
->   		int ret = cma_activate_area(&cma_areas[i]);
-> @@ -195,32 +157,9 @@ static int __init cma_init_reserved_areas(void)
->   			return ret;
->   	}
->   
-> -	/*
-> -	 * Reserved pages for ZONE_MOVABLE are now activated and
-> -	 * this would change ZONE_MOVABLE's managed page counter and
-> -	 * the other zones' present counter. We need to re-calculate
-> -	 * various zone information that depends on this initialization.
-> -	 */
-> -	build_all_zonelists(NULL);
-> -	for_each_populated_zone(zone) {
-> -		if (zone_idx(zone) == ZONE_MOVABLE) {
-> -			zone_pcp_reset(zone);
-> -			setup_zone_pageset(zone);
-> -		} else
-> -			zone_pcp_update(zone);
-> -
-> -		set_zone_contiguous(zone);
-> -	}
-> -
-> -	/*
-> -	 * We need to re-init per zone wmark by calling
-> -	 * init_per_zone_wmark_min() but doesn't call here because it is
-> -	 * registered on core_initcall and it will be called later than us.
-> -	 */
-> -
->   	return 0;
->   }
-> -pure_initcall(cma_init_reserved_areas);
-> +core_initcall(cma_init_reserved_areas);
->   
->   /**
->    * cma_init_reserved_mem() - create custom contiguous area from reserved memory
-> diff --git a/mm/compaction.c b/mm/compaction.c
-> index 028b721..29bd1df 100644
-> --- a/mm/compaction.c
-> +++ b/mm/compaction.c
-> @@ -1450,12 +1450,14 @@ static enum compact_result __compaction_suitable(struct zone *zone, int order,
->   	 * if compaction succeeds.
->   	 * For costly orders, we require low watermark instead of min for
->   	 * compaction to proceed to increase its chances.
-> +	 * ALLOC_CMA is used, as pages in CMA pageblocks are considered
-> +	 * suitable migration targets
->   	 */
->   	watermark = (order > PAGE_ALLOC_COSTLY_ORDER) ?
->   				low_wmark_pages(zone) : min_wmark_pages(zone);
->   	watermark += compact_gap(order);
->   	if (!__zone_watermark_ok(zone, 0, watermark, classzone_idx,
-> -						0, wmark_target))
-> +						ALLOC_CMA, wmark_target))
->   		return COMPACT_SKIPPED;
->   
->   	return COMPACT_CONTINUE;
-> diff --git a/mm/internal.h b/mm/internal.h
-> index 62d8c34..502d141 100644
-> --- a/mm/internal.h
-> +++ b/mm/internal.h
-> @@ -168,9 +168,6 @@ extern void post_alloc_hook(struct page *page, unsigned int order,
->   					gfp_t gfp_flags);
->   extern int user_min_free_kbytes;
->   
-> -extern void set_zone_contiguous(struct zone *zone);
-> -extern void clear_zone_contiguous(struct zone *zone);
-> -
->   #if defined CONFIG_COMPACTION || defined CONFIG_CMA
->   
->   /*
-> @@ -498,6 +495,7 @@ unsigned long reclaim_clean_pages_from_list(struct zone *zone,
->   #define ALLOC_HARDER		0x10 /* try to alloc harder */
->   #define ALLOC_HIGH		0x20 /* __GFP_HIGH set */
->   #define ALLOC_CPUSET		0x40 /* check for correct cpuset */
-> +#define ALLOC_CMA		0x80 /* allow allocations from CMA areas */
->   
->   enum ttu_flags;
->   struct tlbflush_unmap_batch;
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 905db9d..511a712 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -1743,38 +1743,16 @@ void __init page_alloc_init_late(void)
->   }
->   
->   #ifdef CONFIG_CMA
-> -static void __init adjust_present_page_count(struct page *page, long count)
-> -{
-> -	struct zone *zone = page_zone(page);
-> -
-> -	/* We don't need to hold a lock since it is boot-up process */
-> -	zone->present_pages += count;
-> -}
-> -
->   /* Free whole pageblock and set its migration type to MIGRATE_CMA. */
->   void __init init_cma_reserved_pageblock(struct page *page)
->   {
->   	unsigned i = pageblock_nr_pages;
-> -	unsigned long pfn = page_to_pfn(page);
->   	struct page *p = page;
-> -	int nid = page_to_nid(page);
-> -
-> -	/*
-> -	 * ZONE_MOVABLE will steal present pages from other zones by
-> -	 * changing page links so page_zone() is changed. Before that,
-> -	 * we need to adjust previous zone's page count first.
-> -	 */
-> -	adjust_present_page_count(page, -pageblock_nr_pages);
->   
->   	do {
->   		__ClearPageReserved(p);
->   		set_page_count(p, 0);
-> -
-> -		/* Steal pages from other zones */
-> -		set_page_links(p, ZONE_MOVABLE, nid, pfn);
-> -	} while (++p, ++pfn, --i);
-> -
-> -	adjust_present_page_count(page, pageblock_nr_pages);
-> +	} while (++p, --i);
->   
->   	set_pageblock_migratetype(page, MIGRATE_CMA);
->   
-> @@ -2889,7 +2867,7 @@ int __isolate_free_page(struct page *page, unsigned int order)
->   		 * exists.
->   		 */
->   		watermark = min_wmark_pages(zone) + (1UL << order);
-> -		if (!zone_watermark_ok(zone, 0, watermark, 0, 0))
-> +		if (!zone_watermark_ok(zone, 0, watermark, 0, ALLOC_CMA))
->   			return 0;
->   
->   		__mod_zone_freepage_state(zone, -(1UL << order), mt);
-> @@ -3165,6 +3143,12 @@ bool __zone_watermark_ok(struct zone *z, unsigned int order, unsigned long mark,
->   	}
->   
->   
-> +#ifdef CONFIG_CMA
-> +	/* If allocation can't use CMA areas don't use free CMA pages */
-> +	if (!(alloc_flags & ALLOC_CMA))
-> +		free_pages -= zone_page_state(z, NR_FREE_CMA_PAGES);
-> +#endif
-> +
->   	/*
->   	 * Check watermarks for an order-0 allocation request. If these
->   	 * are not met, then a high-order request also cannot go ahead
-> @@ -3191,8 +3175,10 @@ bool __zone_watermark_ok(struct zone *z, unsigned int order, unsigned long mark,
->   		}
->   
->   #ifdef CONFIG_CMA
-> -		if (!list_empty(&area->free_list[MIGRATE_CMA]))
-> +		if ((alloc_flags & ALLOC_CMA) &&
-> +		    !list_empty(&area->free_list[MIGRATE_CMA])) {
->   			return true;
-> +		}
->   #endif
->   		if (alloc_harder &&
->   			!list_empty(&area->free_list[MIGRATE_HIGHATOMIC]))
-> @@ -3212,6 +3198,13 @@ static inline bool zone_watermark_fast(struct zone *z, unsigned int order,
->   		unsigned long mark, int classzone_idx, unsigned int alloc_flags)
->   {
->   	long free_pages = zone_page_state(z, NR_FREE_PAGES);
-> +	long cma_pages = 0;
-> +
-> +#ifdef CONFIG_CMA
-> +	/* If allocation can't use CMA areas don't use free CMA pages */
-> +	if (!(alloc_flags & ALLOC_CMA))
-> +		cma_pages = zone_page_state(z, NR_FREE_CMA_PAGES);
-> +#endif
->   
->   	/*
->   	 * Fast check for order-0 only. If this fails then the reserves
-> @@ -3220,7 +3213,7 @@ static inline bool zone_watermark_fast(struct zone *z, unsigned int order,
->   	 * the caller is !atomic then it'll uselessly search the free
->   	 * list. That corner case is then slower but it is harmless.
->   	 */
-> -	if (!order && free_pages > mark + z->lowmem_reserve[classzone_idx])
-> +	if (!order && (free_pages - cma_pages) > mark + z->lowmem_reserve[classzone_idx])
->   		return true;
->   
->   	return __zone_watermark_ok(z, order, mark, classzone_idx, alloc_flags,
-> @@ -3856,6 +3849,10 @@ gfp_to_alloc_flags(gfp_t gfp_mask)
->   	} else if (unlikely(rt_task(current)) && !in_interrupt())
->   		alloc_flags |= ALLOC_HARDER;
->   
-> +#ifdef CONFIG_CMA
-> +	if (gfpflags_to_migratetype(gfp_mask) == MIGRATE_MOVABLE)
-> +		alloc_flags |= ALLOC_CMA;
-> +#endif
->   	return alloc_flags;
->   }
->   
-> @@ -4322,6 +4319,9 @@ static inline bool prepare_alloc_pages(gfp_t gfp_mask, unsigned int order,
->   	if (should_fail_alloc_page(gfp_mask, order))
->   		return false;
->   
-> +	if (IS_ENABLED(CONFIG_CMA) && ac->migratetype == MIGRATE_MOVABLE)
-> +		*alloc_flags |= ALLOC_CMA;
-> +
->   	return true;
->   }
->   
-> @@ -6204,7 +6204,6 @@ static void __paginginit free_area_init_core(struct pglist_data *pgdat)
->   {
->   	enum zone_type j;
->   	int nid = pgdat->node_id;
-> -	unsigned long node_end_pfn = 0;
->   
->   	pgdat_resize_init(pgdat);
->   #ifdef CONFIG_NUMA_BALANCING
-> @@ -6232,13 +6231,9 @@ static void __paginginit free_area_init_core(struct pglist_data *pgdat)
->   		struct zone *zone = pgdat->node_zones + j;
->   		unsigned long size, realsize, freesize, memmap_pages;
->   		unsigned long zone_start_pfn = zone->zone_start_pfn;
-> -		unsigned long movable_size = 0;
->   
->   		size = zone->spanned_pages;
->   		realsize = freesize = zone->present_pages;
-> -		if (zone_end_pfn(zone) > node_end_pfn)
-> -			node_end_pfn = zone_end_pfn(zone);
-> -
->   
->   		/*
->   		 * Adjust freesize so that it accounts for how much memory
-> @@ -6287,30 +6282,12 @@ static void __paginginit free_area_init_core(struct pglist_data *pgdat)
->   		zone_seqlock_init(zone);
->   		zone_pcp_init(zone);
->   
-> -		/*
-> -		 * The size of the CMA area is unknown now so we need to
-> -		 * prepare the memory for the usemap at maximum.
-> -		 */
-> -		if (IS_ENABLED(CONFIG_CMA) && j == ZONE_MOVABLE &&
-> -			pgdat->node_spanned_pages) {
-> -			movable_size = node_end_pfn - pgdat->node_start_pfn;
-> -		}
-> -
-> -		if (!size && !movable_size)
-> +		if (!size)
->   			continue;
->   
->   		set_pageblock_order();
-> -		if (movable_size) {
-> -			zone->zone_start_pfn = pgdat->node_start_pfn;
-> -			zone->spanned_pages = movable_size;
-> -			setup_usemap(pgdat, zone,
-> -				pgdat->node_start_pfn, movable_size);
-> -			init_currently_empty_zone(zone,
-> -				pgdat->node_start_pfn, movable_size);
-> -		} else {
-> -			setup_usemap(pgdat, zone, zone_start_pfn, size);
-> -			init_currently_empty_zone(zone, zone_start_pfn, size);
-> -		}
-> +		setup_usemap(pgdat, zone, zone_start_pfn, size);
-> +		init_currently_empty_zone(zone, zone_start_pfn, size);
->   		memmap_init(size, nid, j, zone_start_pfn);
->   	}
->   }
-> @@ -7951,7 +7928,7 @@ void free_contig_range(unsigned long pfn, unsigned nr_pages)
->   }
->   #endif
->   
-> -#if defined CONFIG_MEMORY_HOTPLUG || defined CONFIG_CMA
-> +#ifdef CONFIG_MEMORY_HOTPLUG
->   /*
->    * The zone indicated has a new number of managed_pages; batch sizes and percpu
->    * page high values need to be recalulated.
+>>> I mean, will this be a breaking change in the future where config has to
+>>> be done in a different way then?
+>> When Broadcom tags are enabled the switch gets usable the way Andrew
+>> expressed it, the only difference that makes on your configuration if
+>> you want e.g: VLAN 101 to be for port 1-4 and VLAN 102 to be for port 5,
+>> is that you no longer create an eth0.101 and eth0.102, but you create
+>> br0.101 and br0.102.
 > 
+> I think documentation (dsa.txt) should provide more examples.
+
+Fair enough.
+
+> 
+>>
+>>> Or will it be configurable via module parameters or /proc or /sys
+>>> filesystem options?
+>> We might be able to expose a sysfs attribute which shows the type of
+>> tagging being enabled by a particular switch, that way scripts can
+>> detect which variant: configuring the host controller or the bridge is
+>> required. Would that be acceptable?
+> 
+> Yes, acceptable for me. But what's the long term concept for DSA (and
+> also other implementations)?
+> 
+> - "old" mode variant, mode can only be read
+> 
+> - "new" mode variant, mode can only be read
+> 
+> - mode settable/configurable by the user, mode can be read
+
+Having tags enabled is a "superior" mode of operation so it should
+always be enabled when possible and working, using DSA_TAG_PROTO_NONE
+creates unfortunate confusion because the switch becomes "dumb" so that
+is not to be maintained in the future.
+
+The plan is to bring Broadcom tags at some point into b53, for all
+generation of the switches, that requires time that I do not have right
+now, but which I will hopefully have at some point. There is not
+necessarily a plan to avoid breaking user-space because, see below, this
+is really niche hardware.
+
+> 
+> 
+> In general:
+> 
+> OK, thank you for your explainations.
+> 
+> 
+> I think DSA (at least with b53) had secveral topics. implementation
+> bugs, missing documentation, lack of distribution support (e.g.
+> systemd), etc. which were not understood by the users.
+
+Yes, that is entirely fair enough, the concepts are pretty simple, but
+they are sometimes hard to communicate clearly.
+
+> 
+> So everything which clarifies the topics for DSA in the future is welcome.
+> 
+> BTW: systemd-networkd support for DSA #7478
+> 
+> https://github.com/systemd/systemd/issues/7478
+
+Well, you have to understand where this is coming from, people don't run
+mainline distributions on the routers that typically have support for
+DSA, they use Buildroot, Yocto, OpenWrt, whatever, and they know their
+platform and that this platform requires Tender Love and Care to work as
+they expect it to behave, because that's what embedded is all about.
+--
+Florian
