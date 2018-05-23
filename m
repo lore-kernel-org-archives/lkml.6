@@ -1,193 +1,151 @@
-Return-Path: <jonathanh@nvidia.com>
-X-Google-Smtp-Source: ADUXVKKH9xzTQ4F5JRrt6PISXcgRA+tZqcn0+gI58viGNH1NeDY6GHplEW1HlGm79o04ET1lqZPW
-ARC-Seal: i=1; a=rsa-sha256; t=1527070934; cv=none;
-        d=google.com; s=arc-20160816;
-        b=ti1my79y1WLT8DyKm/gkkKgv3fblSyy4Q4fYltFNRqxIbtzpU1Lkws2Hz5ktL45qe8
-         GL3pLG5pa/yMB02zCQj4Vt4yjvLBMi14AAt1lcg6MiJjJQhYYva4ly9N3YMqZ0m+581A
-         YlMoGj19hNyp30Z7YAdSNLRFDp01RVwYTkGk1mySVF2ELthgBZQbZOWNf+jjHQoq1Pja
-         zKRs00eI01pwplMK4awe/UaDuYi53ukq6QID3KnLmqz2vbamgFuE5bkdp1UhjGKBd0sZ
-         ZkwYPrXK024tV4RhTge1+teovZJYXeGrx/Mk4se6hTxmnuWJP625ctNDLF41BMxpQCgV
-         Xeyg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :arc-authentication-results;
-        bh=KkDrtB8y4CMBXYdSeKCCDUg31bzdxgSuzNW7Cdp9+a8=;
-        b=EItOtfGGcZxk7g8uP6jqHAeE8j2aqUSCsgkm3FNywKE91myym9MDmpXoz67mITmXxd
-         BBPLmCAKpyJr88Lv1yaU/CqSz8x3oH0RXCsWMxC6jvf7zywzbH5fciSd3P/BXiCEOKvS
-         bD25iYTCLCzfZXoLnZin41k5kb40G6RhzTwPHtl2A+WRUju/wZvMufjoNXS0oJRLCpuj
-         MX/Q41i/5rk4OJoNBzZNntGmVsx3vhUJoe1D4FTiV8NzxaUNJJCWMoAAHKtLnHQHWBqS
-         2Q1BGaUyD/Ruibpd/xjXnjHb/O0rB5PKPBNqMdTM+8sljCOXdlIW9aPMXCvVxuX89zkl
-         v6qA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jonathanh@nvidia.com designates 216.228.121.143 as permitted sender) smtp.mailfrom=jonathanh@nvidia.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nvidia.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jonathanh@nvidia.com designates 216.228.121.143 as permitted sender) smtp.mailfrom=jonathanh@nvidia.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nvidia.com
-X-PGP-Universal: processed;
-	by hqpgpgate101.nvidia.com on Wed, 23 May 2018 03:22:13 -0700
-Subject: Re: [PATCH 8/9] PM / Domains: Add support for multi PM domains per
- device to genpd
-To: Ulf Hansson <ulf.hansson@linaro.org>
-CC: Rajendra Nayak <rnayak@codeaurora.org>, Geert Uytterhoeven
-	<geert+renesas@glider.be>, Linux PM <linux-pm@vger.kernel.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Kevin Hilman
-	<khilman@kernel.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>, Todor Tomov
-	<todor.tomov@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>,
-	<linux-tegra@vger.kernel.org>, Vincent Guittot <vincent.guittot@linaro.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>
-References: <1526639490-12167-1-git-send-email-ulf.hansson@linaro.org>
- <1526639490-12167-9-git-send-email-ulf.hansson@linaro.org>
- <f5589b88-acf8-b491-df79-e359e596c8d0@nvidia.com>
- <CAPDyKFr_7hbs-MC1jQn5uAgSnb1UGufXZdEmUqNTM63KemTe1g@mail.gmail.com>
- <5a79d3a2-d090-645b-da69-524b7e7a4d90@nvidia.com>
- <51f7de26-579a-8b9e-4e79-f4eee923ab38@codeaurora.org>
- <CAPDyKFo_69kSS6UzdsJeyeiiED=S=chsdkP+R43qMHDEbZ8n_A@mail.gmail.com>
- <3838f17a-2ac8-bf3f-f0b1-f69bbe17629c@nvidia.com>
- <00ba829d-faf4-168c-db00-531621b9280f@codeaurora.org>
- <CAPDyKFoqLPRwEJ9b+XBpB4Zy79SGEC-a8V8shNhMkYOCQa0=oA@mail.gmail.com>
- <22068fb1-f6e8-f2ec-d7f4-ab9e93469d7f@nvidia.com>
- <CAPDyKFoHwujfL4vpB8kq+rxDP4cThW4xB4nwb8Qc6_bZwTPbzA@mail.gmail.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <8a3d0762-7d9c-8960-cdf9-f7f328f53692@nvidia.com>
-Date: Wed, 23 May 2018 11:22:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3751275-1527056601-2-10730024103346137361
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
+  MailFrom='org'
+X-Spam-charsets: cc='UTF-8', plain='utf-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1527056600; b=WDWDZRZWJdEJoL1HoOpjqgMfwm5s6SLxMlitux9nBzsQdX2Uln
+    3mPtWYPSeLVCqaIeBMLDSg0+9IGl7nRHRmzUEzeISdMEYdDXkJVrpl1x0WbsnTKT
+    4PlvSts/K1NPK5fcyTnpm3fPag0Sh7N5MpZVtLbBaLE0Jb5ruv9u56sA7m5SQ2ts
+    pMLTL8IplaDfNgVYudV2IRu01q/rCQwTi7LvJSeYGTfFLk8hpWh5JSEfJjxqWxnP
+    /gH+ExGBaaPtTXl9SBJNfkjxLtY4zWT5TIyeqoRzZR+78CCZBD7z7zSluETxem7q
+    SvwklwvvzSwxYDhdPqcudQLL7pB7bjw8zz4g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type
+    :content-transfer-encoding:to:sender:list-id; s=fm2; t=
+    1527056600; bh=IXcxZnG+ssvqvUgII1IvTB6WTYMbx39zzxDfcxZ5pec=; b=e
+    a1LF7RWOV0imKZg7KRZ3x0F2Zi1WRs5WtNpPCdyqmL4LMmDuzNbGdJfMhKu5ebaY
+    a7p4N9vphYfpDLFg1e1mDVVGQuRm0ji3ivVm71Lh5873eFxogRS7db+6DGDyd38W
+    zQf+ZCyA5tJU+xmW8c1pChw0ftVtJk62etKBGCkBpr7UJH0mjMhsfZVeCcnwSKUr
+    QZCxsJFpAjAkBZPBohpjvv0RrF5XF4wwlK/oFVFosj/rlafZZffWse90K4oF3dxB
+    aPOIpdVWzsWE92UNMF9N6S55CXwAmDbQBfr6X0z5149rGZ1FoD4rOu+Zc1G2OBj2
+    XDc6qA4byBpVfKj0LEgwg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim-adsp=discard (ADSP policy from amazon.de);
+    dkim=fail (message has been altered, 1024-bit rsa key sha256)
+    header.d=amazon.de header.i=@amazon.de header.b=tJsRxTc+ x-bits=1024
+    x-keytype=rsa x-algorithm=sha256 x-selector=amazon201209;
+    dmarc=fail (p=quarantine,has-list-id=yes,d=quarantine)
+    header.from=amazon.de;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=amazon.de header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-60 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim-adsp=discard (ADSP policy from amazon.de);
+    dkim=fail (message has been altered, 1024-bit rsa key sha256)
+      header.d=amazon.de header.i=@amazon.de header.b=tJsRxTc+ x-bits=1024
+      x-keytype=rsa x-algorithm=sha256 x-selector=amazon201209;
+    dmarc=fail (p=quarantine,has-list-id=yes,d=quarantine)
+      header.from=amazon.de;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=amazon.de header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-60 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfC37EyDKPZvyv03q5/8/z66MTUplIfKBxZXfI0Jq1Cb43CloEaaU/nzraIJIgmPbZAB3k3U0j+9h/bh9mFwW50g4C/IhBAk51EklSQA6Qxjv5hz9WTYP
+    0iAmIge/P5ABxMCZikS1ReDLVidk3WauGtNPeSrGw7VUmjG3/cH+UPZcIgG2P5lOlkaelhvPSjIV2Dedgq3RXS8PL9O3yG4KoIzAMViyyrg9EBp9CQlLMVb6
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=O76VCmqbo-wA:10
+    a=VUJBJC2UJ8kA:10 a=fXe6s7U_Q94W9MA4-jYA:9 a=QEXdDO2ut3YA:10
+    a=fkqBw3BD5RLjSgApC7jY:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1754064AbeEWGXQ (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 23 May 2018 02:23:16 -0400
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:33595 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754011AbeEWGWd (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 23 May 2018 02:22:33 -0400
+X-IronPort-AV: E=Sophos;i="5.49,432,1520899200";
+   d="scan'208";a="613693846"
+From: Norbert Manthey <nmanthey@amazon.de>
+CC: Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        <stable@vger.kernel.org>, Norbert Manthey <nmanthey@amazon.de>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Tony Cheng <tony.cheng@amd.com>,
+        Yongqiang Sun <yongqiang.sun@amd.com>,
+        Anthony Koo <Anthony.Koo@amd.com>,
+        =?UTF-8?q?Michel=20D=C3=A4nzer?= <michel.daenzer@amd.com>,
+        Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>,
+        Jordan Lazare <Jordan.Lazare@amd.com>,
+        "Colin Ian King" <colin.king@canonical.com>,
+        <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] drm: fix off-by-one in logger
+Date: Wed, 23 May 2018 08:22:04 +0200
+Message-ID: <1527056531-9568-1-git-send-email-nmanthey@amazon.de>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1527054785-5417-1-git-send-email-nmanthey@amazon.de>
+References: <1527054785-5417-1-git-send-email-nmanthey@amazon.de>
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFoHwujfL4vpB8kq+rxDP4cThW4xB4nwb8Qc6_bZwTPbzA@mail.gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+To: unlisted-recipients:; (no To-header on input)
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600797559708396041?=
-X-GMAIL-MSGID: =?utf-8?q?1601249932699074821?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-
-On 23/05/18 10:47, Ulf Hansson wrote:
-> On 23 May 2018 at 11:45, Jon Hunter <jonathanh@nvidia.com> wrote:
->>
->> On 23/05/18 10:33, Ulf Hansson wrote:
->>>
->>> On 23 May 2018 at 11:27, Rajendra Nayak <rnayak@codeaurora.org> wrote:
->>>>
->>>>
->>>>
->>>> On 05/23/2018 02:37 PM, Jon Hunter wrote:
->>>>>
->>>>>
->>>>> On 23/05/18 07:12, Ulf Hansson wrote:
->>>>>
->>>>> ...
->>>>>
->>>>>>>>>> Thanks for sending this. Believe it or not this has still been on
->>>>>>>>>> my to-do list
->>>>>>>>>> and so we definitely need a solution for Tegra.
->>>>>>>>>>
->>>>>>>>>> Looking at the above it appears that additional power-domains
->>>>>>>>>> exposed as devices
->>>>>>>>>> to the client device. So I assume that this means that the drivers
->>>>>>>>>> for devices
->>>>>>>>>> with multiple power-domains will need to call RPM APIs for each of
->>>>>>>>>> these
->>>>>>>>>> additional power-domains. Is that correct?
->>>>>>>>>
->>>>>>>>>
->>>>>>>>> They can, but should not!
->>>>>>>>>
->>>>>>>>> Instead, the driver shall use device_link_add() and
->>>>>>>>> device_link_del(),
->>>>>>>>> dynamically, depending on what PM domain that their original device
->>>>>>>>> needs for the current running use case.
->>>>>>>>>
->>>>>>>>> In that way, they keep existing runtime PM deployment, operating on
->>>>>>>>> its original device.
->>>>>>>>
->>>>>>>>
->>>>>>>> OK, sounds good. Any reason why the linking cannot be handled by the
->>>>>>>> above API? Is there a use-case where you would not want it linked?
->>>>>>>
->>>>>>>
->>>>>>> I am guessing the linking is what would give the driver the ability to
->>>>>>> decide which subset of powerdomains it actually wants to control
->>>>>>> at any point using runtime PM. If we have cases wherein the driver
->>>>>>> would want to turn on/off _all_ its associated powerdomains _always_
->>>>>>> then a default linking of all would help.
->>>>>>
->>>>>>
->>>>>> First, I think we need to decide on *where* the linking should be
->>>>>> done, not at both places, as that would just mess up synchronization
->>>>>> of who is responsible for calling the device_link_del() at detach.
->>>>>>
->>>>>> Second, It would in principle be fine to call device_link_add() and
->>>>>> device_link_del() as a part of the attach/detach APIs. However, there
->>>>>> is a downside to such solution, which would be that the driver then
->>>>>> needs call the detach API, just to do device_link_del(). Of course
->>>>>> then it would also needs to call the attach API later if/when needed.
->>>>>> Doing this adds unnecessary overhead - comparing to just let the
->>>>>> driver call device_link_add|del() when needed. On the upside, yes, it
->>>>>> would put less burden on the drivers as it then only needs to care
->>>>>> about using one set of functions.
->>>>>>
->>>>>> Which solution do you prefer?
->>>>>
->>>>>
->>>>> Any reason why we could not add a 'boolean' argument to the API to
->>>>> indicate whether the new device should be linked? I think that I prefer the
->>>>> API handles it, but I can see there could be instances where drivers may
->>>>> wish to handle it themselves.
->>>>>
->>>>> Rajendra, do you have a use-case right now where the driver would want
->>>>> to handle the linking?
->>>>
->>>>
->>>> So if I understand this right, any driver which does want to control
->>>> individual powerdomain state would
->>>> need to do the linking itself right?
->>>>
->>>> What I am saying is, if I have device A, with powerdomains X and Y, and
->>>> if I want to turn on only X,
->>>> then I would want only X to be linked with A, and at a later point if I
->>>> want both X and Y to be turned on,
->>>> I would then go ahead and link both X and Y to A? Is that correct or did
->>>> I get it all wrong?
->>>
->>>
->>> Correct!
->>>
->>>>
->>>> I know atleast Camera on msm8996 would need to do this since it has 2 vfe
->>>> powerdoamins, which can be
->>>> turned on one at a time (depending on what resolution needs to be
->>>> supported) or both together if we
->>>> really need very high resolution using both vfe modules.
->>>
->>>
->>> I think this is also the case for the Tegra XUSB subsystem.
->>>
->>> The usb device is always attached to one PM domain, but depending on
->>> if super-speed mode is used, another PM domain for that logic needs to
->>> be powered on as well.
->>>
->>> Jon, please correct me if I am wrong!
->>
->>
->> Yes this is technically correct, however, in reality I think we are always
->> going to enable the superspeed domain if either the host or device domain is
->> enabled. So we would probably always link the superspeed with the host and
->> device devices.
-> 
-> Why? Wouldn't that waste power if the superspeed mode isn't used?
-
-Simply to reduce complexity.
-
-Jon
-
--- 
-nvpublic
+VGhlIGN1cnJlbnQgaW1wbGVtZW50YXRpb24gd2lsbCBsZWFrIGEgYnl0ZSB0byB0aGUgbG9nIHZp
+YSBtZW1tb3ZlLiBUaGUKc3BlY2lmaWVkIDI3IGJ5dGVzIGFyZSBvZmYtYnktb25lLCBhcyB0aGUg
+cGF5bG9hZCBpcyAyNSBieXRlcywgYW5kIHRoZQp0ZXJtaW5hdGlvbiBjaGFyYWN0ZXIgaXMgb25s
+eSBvbmUgYnl0ZSBsYXJnZS4gVG8gYXZvaWQgdGhpcywgZmFjdG9yIG91dAp0aGUgZXJyb3IgbWVz
+c2FnZSwgYW5kIGZ1cnRoZXJtb3JlIG1ha2UgdGhlIHNlY29uZCBwYXJhbWV0ZXIgb2YgdGhlCmFw
+cGVuZF9lbnRyeSBmdW5jdGlvbiBjb25zdC4KClRoZSBmdWxsIHRyYWNlIGlzIGFzIGZvbGxvd3M6
+CgpJbiBmdW5jdGlvbiDigJhtZW1tb3Zl4oCZLAogICBmcm9tIOKAmGFwcGVuZF9lbnRyeeKAmSBh
+dAogICAgICAgIGRyaXZlcnMvZ3B1L2RybS9hbWQvZGlzcGxheS9kYy9iYXNpY3MvbG9nZ2VyLmM6
+MjU3OjIsCiAgIGZyb20g4oCYZG1fbG9nZ2VyX2FwcGVuZF92YeKAmSBhdAogICAgICAgIGRyaXZl
+cnMvZ3B1L2RybS9hbWQvZGlzcGxheS9kYy9iYXNpY3MvbG9nZ2VyLmM6MzQ4OjQKICAgZGV0ZWN0
+ZWQgcmVhZCBiZXlvbmQgc2l6ZSBvZiBvYmplY3QgcGFzc2VkIGFzIDJuZCBwYXJhbWV0ZXIKClNp
+Z25lZC1vZmYtYnk6IE5vcmJlcnQgTWFudGhleSA8bm1hbnRoZXlAYW1hem9uLmRlPgotLS0KIGRy
+aXZlcnMvZ3B1L2RybS9hbWQvZGlzcGxheS9kYy9iYXNpY3MvbG9nZ2VyLmMgfCA2ICsrKystLQog
+MSBmaWxlIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkKCmRpZmYgLS1n
+aXQgYS9kcml2ZXJzL2dwdS9kcm0vYW1kL2Rpc3BsYXkvZGMvYmFzaWNzL2xvZ2dlci5jIGIvZHJp
+dmVycy9ncHUvZHJtL2FtZC9kaXNwbGF5L2RjL2Jhc2ljcy9sb2dnZXIuYwppbmRleCAzMWJlZTA1
+Li42YmE4ZDBjIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vYW1kL2Rpc3BsYXkvZGMvYmFz
+aWNzL2xvZ2dlci5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9hbWQvZGlzcGxheS9kYy9iYXNpY3Mv
+bG9nZ2VyLmMKQEAgLTI0NCw3ICsyNDQsNyBAQCBzdGF0aWMgdm9pZCBsb2dfaGVhZGluZyhzdHJ1
+Y3QgbG9nX2VudHJ5ICplbnRyeSkKIAogc3RhdGljIHZvaWQgYXBwZW5kX2VudHJ5KAogCQlzdHJ1
+Y3QgbG9nX2VudHJ5ICplbnRyeSwKLQkJY2hhciAqYnVmZmVyLAorCQljb25zdCBjaGFyICpidWZm
+ZXIsCiAJCXVpbnQzMl90IGJ1Zl9zaXplKQogewogCWlmICghZW50cnktPmJ1ZiB8fApAQCAtMzQ2
+LDcgKzM0Niw5IEBAIHZvaWQgZG1fbG9nZ2VyX2FwcGVuZF92YSgKIAkJaWYgKHNpemUgPCBMT0df
+TUFYX0xJTkVfU0laRSAtIDEpIHsKIAkJCWFwcGVuZF9lbnRyeShlbnRyeSwgYnVmZmVyLCBzaXpl
+KTsKIAkJfSBlbHNlIHsKLQkJCWFwcGVuZF9lbnRyeShlbnRyeSwgIkxPR19FUlJPUiwgbGluZSB0
+b28gbG9uZ1xuIiwgMjcpOworCQkJc3RhdGljIGNvbnN0IGNoYXIgbXNnW10gPSAiTE9HX0VSUk9S
+LCBsaW5lIHRvbyBsb25nXG4iOworCisJCQlhcHBlbmRfZW50cnkoZW50cnksIG1zZywgc2l6ZW9m
+KG1zZykpOwogCQl9CiAJfQogfQotLSAKMi43LjQKCkFtYXpvbiBEZXZlbG9wbWVudCBDZW50ZXIg
+R2VybWFueSBHbWJICkJlcmxpbiAtIERyZXNkZW4gLSBBYWNoZW4KbWFpbiBvZmZpY2U6IEtyYXVz
+ZW5zdHIuIDM4LCAxMDExNyBCZXJsaW4KR2VzY2hhZWZ0c2Z1ZWhyZXI6IERyLiBSYWxmIEhlcmJy
+aWNoLCBDaHJpc3RpYW4gU2NobGFlZ2VyClVzdC1JRDogREUyODkyMzc4NzkKRWluZ2V0cmFnZW4g
+YW0gQW10c2dlcmljaHQgQ2hhcmxvdHRlbmJ1cmcgSFJCIDE0OTE3MyBCCg==
