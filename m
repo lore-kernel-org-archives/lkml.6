@@ -1,234 +1,259 @@
-Return-Path: <yehs2007@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1526916047; cv=none;
-        d=google.com; s=arc-20160816;
-        b=csY4a9XIpUeeKs/XfIRLt1BjHo0mBrZpsGr+roEAhRiCtMBYygWFW0OwHCpjAfjld2
-         uGhJ7MeVnhH1AHoDxjYYrYoK0MZLXMtuD5Pafyn59C+GyakC4Ldv+Jsf8qYy62IPaFSv
-         1LuYkchL1T8TkcKsBrO2e1+GY6VNoZFIq3PoVXGZa29WaUxzCCIHxswUwg+WbFSgAsEE
-         qwJszPHqM+uyInmIsgMtqTp0N1YU91DL9KeO1fxnGQgbzB1CNyxVeeL2GhY8bh4Z30TU
-         U3A4cUN73XBwkv0llcNGGeTcrheDE9w3043G05I9HSGBq9rGsdC1YlwCJp2LbMcFvQpt
-         qICg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=EIMhtX0QxMyxblxuQCMiltxD9z6VtPX8+7ssCjNHexA=;
-        b=gXhdRLf07QtEu1T9LUFZLqRJur2+jDMrSOOLEVs++h2aJVFlknTSyZt9Je7z24F0AK
-         jSR4J/REjX4KJWtfjalJgB30+Ejf9Imz8faA1WtZ6U1nFapX8l7KoWdmMr6xquMJ6VvK
-         X2B7si8u+1zfmwY2fQavG8zd7LL8kPxzpbO1kRvQAalxiAMBSAPFJWvI7JsQCUZiUHSk
-         8MjtcueSLxMALmaxe09zsU4khr1154/0vrnXLZ7ljY/jlw1OTgtGMbWWXWeAr07frT6s
-         4CgL6BXHW8OcMpgvtrqdlmrmwP01kj7zqaRrqjoutcXPFVXeJiY37kqHwjpptUEneeW3
-         Ztqg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=tnHNXQSi;
-       spf=pass (google.com: domain of yehs2007@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=yehs2007@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=tnHNXQSi;
-       spf=pass (google.com: domain of yehs2007@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=yehs2007@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AB8JxZrecJFW/fHz+LvV898mtsxErEBmxuJADV95H//WBiHDW8dWb9vT8AhZZ+5pBsvI1yIhYUysgQ==
-From: Huaisheng Ye <yehs2007@gmail.com>
-To: akpm@linux-foundation.org,
-	linux-mm@kvack.org
-Cc: mhocko@suse.com,
-	willy@infradead.org,
-	vbabka@suse.cz,
-	mgorman@techsingularity.net,
-	kstewart@linuxfoundation.org,
-	alexander.levin@verizon.com,
-	gregkh@linuxfoundation.org,
-	colyli@suse.de,
-	chengnt@lenovo.com,
-	hehy1@lenovo.com,
-	linux-kernel@vger.kernel.org,
-	iommu@lists.linux-foundation.org,
-	xen-devel@lists.xenproject.org,
-	linux-btrfs@vger.kernel.org,
-	Huaisheng Ye <yehs1@lenovo.com>
-Subject: [RFC PATCH v2 01/12] include/linux/gfp.h: get rid of GFP_ZONE_TABLE/BAD
-Date: Mon, 21 May 2018 23:20:22 +0800
-Message-Id: <1526916033-4877-2-git-send-email-yehs2007@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1526916033-4877-1-git-send-email-yehs2007@gmail.com>
-References: <1526916033-4877-1-git-send-email-yehs2007@gmail.com>
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3452472-1527041865-2-13036496807112210086
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES enro, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1527041864; b=RUZCPReDEJj1aCVKbyNibLPg28jMmdxHiyJrBCNyn/cbhE4ZTA
+    84XpwOx2ZbgUxXuNVJA40DaI5IYtQMykayXL3JT5qSgETQZjzFv3h2fEsI1oGTbf
+    uPz4w1eIJVDV/EMh0cCgxnSOquce6VtfS82+au3XtWk/9U7G0qkPIh/xE9vA/v2S
+    RTeJgZCGeifqUSUozlE4mpmXDprDR93fzVplFeX5ks0W2kya3ux9Jlxqwe3rhOGM
+    Xdj9tBzKGzwDxElG87I56KKPNMQp2SzxPNwan3wa1VhaeLqjm0eYmuBRQyQtHxz+
+    yER+eSuEaIIvB2td160L5r2gnVuCRgY1Z6BQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1527041864; bh=yM4bznCmJK6SDW33U3jTGpfGiPGaS7
+    iA9j7uk4ZY1L0=; b=LblW8MVRwiIQqQuM8lC51v8i95bxURUjBqnAJLzIGiAEHm
+    EQD9fQMz9v7Abf2Q6GlQP+eaku53BrZYNpMLkgmUVccOkwvUfb6pAd4aqXppeeg6
+    YR3NxDeFXp2I7/xQjmQJSKJ3KpPm6wMq44nP6VAAiF8+UEyQ+AX4m3FrgxiiTRzI
+    zZ+WCTJ8Tp42/Q3b6z8LrHJHTbkw34DaPKgsr5ufx6riGZpXeCFpDfJRs8szIehG
+    R8kQARlbiYL10d4N04lXlpjJ5I1JMUvR8FjPVo5F7iJwmnEYfhL7H2b9H/PPDfah
+    JaVypXt11zgcCy2ppa2+i81WR2Q8N8V8j2Feuhig==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 1024-bit rsa key sha256)
+    header.d=chromium.org header.i=@chromium.org header.b=e09gF/tl
+    x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
+    header.d=1e100.net header.i=@1e100.net header.b=qWdwXVkz;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=chromium.org header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (body has been altered, 1024-bit rsa key sha256)
+      header.d=chromium.org header.i=@chromium.org header.b=e09gF/tl
+      x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
+      header.d=1e100.net header.i=@1e100.net header.b=qWdwXVkz;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=chromium.org header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfGW4+X4UAQHSpOgNIY+m4OHfglLKnBbg/CcKpVqTbPJldMhdaDrs2D0V5GkJlaJerUclxjHbFmY+EaRC1uzaCvske3laaaRqSgN2mBapp5fjFvoiuqsu
+    RB4gWOcQ4IfAxd9PQNWyfcNABAiaTkxDnQzGU2ZnDmciw2gcopuI3hqGEnjtie0XiXpIfY0NHSLCmi8gaXWpXt1b1YtFegNk/xI2BpbrsxOpisUSZVYgrpxl
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=xqWC_Br6kY4A:10 a=VUJBJC2UJ8kA:10
+    a=cm27Pg_UAAAA:8 a=VwQbUJbxAAAA:8 a=d8j6sh8cZkN2rbr-90YA:9 a=x8gzFH9gYPwA:10
+    a=xmb-EsYY8bH0VWELuYED:22 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753717AbeEWCR1 (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 22 May 2018 22:17:27 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:41315 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753165AbeEWCR0 (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Tue, 22 May 2018 22:17:26 -0400
+X-Google-Smtp-Source: AB8JxZoJtM7Qj5moVofDPveGuyqLKksQnhJt9l2+X1aC4rtNNRR4odZfmX9BapiUGI0RFfaYqm8XHA==
+From: Nicolas Boichat <drinkcat@chromium.org>
+To: linux-usb@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Eugene Korenevsky <ekorenevsky@gmail.com>,
+        Peter Chen <peter.chen@nxp.com>,
+        Daniel Drake <drake@endlessm.com>,
+        Joe Perches <joe@perches.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Johan Hovold <johan@kernel.org>,
+        Richard Leitner <richard.leitner@skidata.com>,
+        linux-kernel@vger.kernel.org, groeck@chromium.org
+Subject: [PATCH] usb: hub: Per-port setting to use old enumeration scheme
+Date: Wed, 23 May 2018 10:16:56 +0800
+Message-Id: <20180523021656.122455-1-drinkcat@chromium.org>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1601087520971796804?=
-X-GMAIL-MSGID: =?utf-8?q?1601087520971796804?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Huaisheng Ye <yehs1@lenovo.com>
+The "old" enumeration scheme is considerably faster (it takes
+~294ms instead of ~439ms to get the descriptor).
 
-Replace GFP_ZONE_TABLE and GFP_ZONE_BAD with encoded zone number.
+It is currently only possible to use the old scheme globally
+(/sys/module/usbcore/parameters/old_scheme_first), which is not
+desirable as the new scheme was introduced to increase compatibility
+with more devices.
 
-Delete ___GFP_DMA, ___GFP_HIGHMEM and ___GFP_DMA32 from GFP bitmasks,
-the bottom three bits of GFP mask is reserved for storing encoded
-zone number.
+However, in our case, we care about time-to-active for a specific
+USB device (which we make the firmware for), on a specific port
+(that is pogo-pin based: not a standard USB port). This new
+sysfs option makes it possible to use the old scheme on a single
+port only.
 
-The encoding method is XOR. Get zone number from enum zone_type,
-then encode the number with ZONE_NORMAL by XOR operation.
-The goal is to make sure ZONE_NORMAL can be encoded to zero. So,
-the compatibility can be guaranteed, such as GFP_KERNEL and GFP_ATOMIC
-can be used as before.
-
-Reserve __GFP_MOVABLE in bit 3, so that it can continue to be used as
-a flag. Same as before, __GFP_MOVABLE respresents movable migrate type
-for ZONE_DMA, ZONE_DMA32, and ZONE_NORMAL. But when it is enabled with
-__GFP_HIGHMEM, ZONE_MOVABLE shall be returned instead of ZONE_HIGHMEM.
-__GFP_ZONE_MOVABLE is created to realize it.
-
-With this patch, just enabling __GFP_MOVABLE and __GFP_HIGHMEM is not
-enough to get ZONE_MOVABLE from gfp_zone. All subsystems should use
-GFP_HIGHUSER_MOVABLE directly to achieve that.
-
-Decode zone number directly from bottom three bits of flags in gfp_zone.
-The theory of encoding and decoding is,
-        A ^ B ^ B = A
-
-Suggested-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Huaisheng Ye <yehs1@lenovo.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>
-Cc: "Levin, Alexander (Sasha Levin)" <alexander.levin@verizon.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
 ---
- include/linux/gfp.h | 98 ++++++-----------------------------------------------
- 1 file changed, 11 insertions(+), 87 deletions(-)
 
-diff --git a/include/linux/gfp.h b/include/linux/gfp.h
-index 1a4582b..ab0fb7f 100644
---- a/include/linux/gfp.h
-+++ b/include/linux/gfp.h
-@@ -16,9 +16,7 @@
+There are other "quirks" that we could add to reduce further
+enumeration time (e.g. reduce USB debounce time, reduce TRSTRCY
+to 10ms instead of 50ms as used currently), but the logic is quite
+similar, so it'd be good to have this reviewed first.
+
+ drivers/usb/core/hub.c  | 13 +++++++++----
+ drivers/usb/core/hub.h  |  1 +
+ drivers/usb/core/port.c | 23 +++++++++++++++++++++++
+ include/linux/usb.h     |  7 +++++++
+ 4 files changed, 40 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+index c2d993d3816f0..f900f66a62856 100644
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -2636,7 +2636,7 @@ static unsigned hub_is_wusb(struct usb_hub *hub)
+ #define SET_ADDRESS_TRIES	2
+ #define GET_DESCRIPTOR_TRIES	2
+ #define SET_CONFIG_TRIES	(2 * (use_both_schemes + 1))
+-#define USE_NEW_SCHEME(i)	((i) / 2 == (int)old_scheme_first)
++#define USE_NEW_SCHEME(i, scheme)	((i) / 2 == (int)scheme)
+ 
+ #define HUB_ROOT_RESET_TIME	60	/* times are in msec */
+ #define HUB_SHORT_RESET_TIME	10
+@@ -2651,12 +2651,16 @@ static unsigned hub_is_wusb(struct usb_hub *hub)
+  * enumeration failures, so disable this enumeration scheme for USB3
+  * devices.
   */
- 
- /* Plain integer GFP bitmasks. Do not use this directly. */
--#define ___GFP_DMA		0x01u
--#define ___GFP_HIGHMEM		0x02u
--#define ___GFP_DMA32		0x04u
-+#define ___GFP_ZONE_MASK	0x07u
- #define ___GFP_MOVABLE		0x08u
- #define ___GFP_RECLAIMABLE	0x10u
- #define ___GFP_HIGH		0x20u
-@@ -53,11 +51,15 @@
-  * without the underscores and use them consistently. The definitions here may
-  * be used in bit comparisons.
-  */
--#define __GFP_DMA	((__force gfp_t)___GFP_DMA)
--#define __GFP_HIGHMEM	((__force gfp_t)___GFP_HIGHMEM)
--#define __GFP_DMA32	((__force gfp_t)___GFP_DMA32)
-+#define __GFP_DMA	((__force gfp_t)OPT_ZONE_DMA ^ ZONE_NORMAL)
-+#define __GFP_HIGHMEM	((__force gfp_t)OPT_ZONE_HIGHMEM ^ ZONE_NORMAL)
-+#define __GFP_DMA32	((__force gfp_t)OPT_ZONE_DMA32 ^ ZONE_NORMAL)
- #define __GFP_MOVABLE	((__force gfp_t)___GFP_MOVABLE)  /* ZONE_MOVABLE allowed */
--#define GFP_ZONEMASK	(__GFP_DMA|__GFP_HIGHMEM|__GFP_DMA32|__GFP_MOVABLE)
-+#define GFP_ZONEMASK	((__force gfp_t)___GFP_ZONE_MASK | ___GFP_MOVABLE)
-+/* bottom 3 bits of GFP bitmasks are used for zone number encoded*/
-+#define __GFP_ZONE_MASK ((__force gfp_t)___GFP_ZONE_MASK)
-+#define __GFP_ZONE_MOVABLE	\
-+		((__force gfp_t)(ZONE_MOVABLE ^ ZONE_NORMAL) | ___GFP_MOVABLE)
- 
- /*
-  * Page mobility and placement hints
-@@ -279,7 +281,7 @@
- #define GFP_DMA		__GFP_DMA
- #define GFP_DMA32	__GFP_DMA32
- #define GFP_HIGHUSER	(GFP_USER | __GFP_HIGHMEM)
--#define GFP_HIGHUSER_MOVABLE	(GFP_HIGHUSER | __GFP_MOVABLE)
-+#define GFP_HIGHUSER_MOVABLE	(GFP_USER | __GFP_ZONE_MOVABLE)
- #define GFP_TRANSHUGE_LIGHT	((GFP_HIGHUSER_MOVABLE | __GFP_COMP | \
- 			 __GFP_NOMEMALLOC | __GFP_NOWARN) & ~__GFP_RECLAIM)
- #define GFP_TRANSHUGE	(GFP_TRANSHUGE_LIGHT | __GFP_DIRECT_RECLAIM)
-@@ -326,87 +328,9 @@ static inline bool gfpflags_allow_blocking(const gfp_t gfp_flags)
- #define OPT_ZONE_DMA32 ZONE_NORMAL
- #endif
- 
--/*
-- * GFP_ZONE_TABLE is a word size bitstring that is used for looking up the
-- * zone to use given the lowest 4 bits of gfp_t. Entries are GFP_ZONES_SHIFT
-- * bits long and there are 16 of them to cover all possible combinations of
-- * __GFP_DMA, __GFP_DMA32, __GFP_MOVABLE and __GFP_HIGHMEM.
-- *
-- * The zone fallback order is MOVABLE=>HIGHMEM=>NORMAL=>DMA32=>DMA.
-- * But GFP_MOVABLE is not only a zone specifier but also an allocation
-- * policy. Therefore __GFP_MOVABLE plus another zone selector is valid.
-- * Only 1 bit of the lowest 3 bits (DMA,DMA32,HIGHMEM) can be set to "1".
-- *
-- *       bit       result
-- *       =================
-- *       0x0    => NORMAL
-- *       0x1    => DMA or NORMAL
-- *       0x2    => HIGHMEM or NORMAL
-- *       0x3    => BAD (DMA+HIGHMEM)
-- *       0x4    => DMA32 or DMA or NORMAL
-- *       0x5    => BAD (DMA+DMA32)
-- *       0x6    => BAD (HIGHMEM+DMA32)
-- *       0x7    => BAD (HIGHMEM+DMA32+DMA)
-- *       0x8    => NORMAL (MOVABLE+0)
-- *       0x9    => DMA or NORMAL (MOVABLE+DMA)
-- *       0xa    => MOVABLE (Movable is valid only if HIGHMEM is set too)
-- *       0xb    => BAD (MOVABLE+HIGHMEM+DMA)
-- *       0xc    => DMA32 (MOVABLE+DMA32)
-- *       0xd    => BAD (MOVABLE+DMA32+DMA)
-- *       0xe    => BAD (MOVABLE+DMA32+HIGHMEM)
-- *       0xf    => BAD (MOVABLE+DMA32+HIGHMEM+DMA)
-- *
-- * GFP_ZONES_SHIFT must be <= 2 on 32 bit platforms.
-- */
--
--#if defined(CONFIG_ZONE_DEVICE) && (MAX_NR_ZONES-1) <= 4
--/* ZONE_DEVICE is not a valid GFP zone specifier */
--#define GFP_ZONES_SHIFT 2
--#else
--#define GFP_ZONES_SHIFT ZONES_SHIFT
--#endif
--
--#if 16 * GFP_ZONES_SHIFT > BITS_PER_LONG
--#error GFP_ZONES_SHIFT too large to create GFP_ZONE_TABLE integer
--#endif
--
--#define GFP_ZONE_TABLE ( \
--	(ZONE_NORMAL << 0 * GFP_ZONES_SHIFT)				       \
--	| (OPT_ZONE_DMA << ___GFP_DMA * GFP_ZONES_SHIFT)		       \
--	| (OPT_ZONE_HIGHMEM << ___GFP_HIGHMEM * GFP_ZONES_SHIFT)	       \
--	| (OPT_ZONE_DMA32 << ___GFP_DMA32 * GFP_ZONES_SHIFT)		       \
--	| (ZONE_NORMAL << ___GFP_MOVABLE * GFP_ZONES_SHIFT)		       \
--	| (OPT_ZONE_DMA << (___GFP_MOVABLE | ___GFP_DMA) * GFP_ZONES_SHIFT)    \
--	| (ZONE_MOVABLE << (___GFP_MOVABLE | ___GFP_HIGHMEM) * GFP_ZONES_SHIFT)\
--	| (OPT_ZONE_DMA32 << (___GFP_MOVABLE | ___GFP_DMA32) * GFP_ZONES_SHIFT)\
--)
--
--/*
-- * GFP_ZONE_BAD is a bitmap for all combinations of __GFP_DMA, __GFP_DMA32
-- * __GFP_HIGHMEM and __GFP_MOVABLE that are not permitted. One flag per
-- * entry starting with bit 0. Bit is set if the combination is not
-- * allowed.
-- */
--#define GFP_ZONE_BAD ( \
--	1 << (___GFP_DMA | ___GFP_HIGHMEM)				      \
--	| 1 << (___GFP_DMA | ___GFP_DMA32)				      \
--	| 1 << (___GFP_DMA32 | ___GFP_HIGHMEM)				      \
--	| 1 << (___GFP_DMA | ___GFP_DMA32 | ___GFP_HIGHMEM)		      \
--	| 1 << (___GFP_MOVABLE | ___GFP_HIGHMEM | ___GFP_DMA)		      \
--	| 1 << (___GFP_MOVABLE | ___GFP_DMA32 | ___GFP_DMA)		      \
--	| 1 << (___GFP_MOVABLE | ___GFP_DMA32 | ___GFP_HIGHMEM)		      \
--	| 1 << (___GFP_MOVABLE | ___GFP_DMA32 | ___GFP_DMA | ___GFP_HIGHMEM)  \
--)
--
- static inline enum zone_type gfp_zone(gfp_t flags)
+-static bool use_new_scheme(struct usb_device *udev, int retry)
++static bool use_new_scheme(struct usb_device *udev, int retry,
++			   struct usb_port *port_dev)
  {
--	enum zone_type z;
--	int bit = (__force int) (flags & GFP_ZONEMASK);
--
--	z = (GFP_ZONE_TABLE >> (bit * GFP_ZONES_SHIFT)) &
--					 ((1 << GFP_ZONES_SHIFT) - 1);
--	VM_BUG_ON((GFP_ZONE_BAD >> bit) & 1);
--	return z;
-+	return ((__force unsigned int)flags & __GFP_ZONE_MASK) ^ ZONE_NORMAL;
++	int old_scheme_first_port =
++		port_dev->quirks & USB_PORT_QUIRK_OLD_SCHEME;
++
+ 	if (udev->speed >= USB_SPEED_SUPER)
+ 		return false;
+ 
+-	return USE_NEW_SCHEME(retry);
++	return USE_NEW_SCHEME(retry, old_scheme_first_port || old_scheme_first);
  }
  
+ /* Is a USB 3.0 port in the Inactive or Compliance Mode state?
+@@ -4392,6 +4396,7 @@ hub_port_init(struct usb_hub *hub, struct usb_device *udev, int port1,
+ {
+ 	struct usb_device	*hdev = hub->hdev;
+ 	struct usb_hcd		*hcd = bus_to_hcd(hdev->bus);
++	struct usb_port		*port_dev = hub->ports[port1 - 1];
+ 	int			retries, operations, retval, i;
+ 	unsigned		delay = HUB_SHORT_RESET_TIME;
+ 	enum usb_device_speed	oldspeed = udev->speed;
+@@ -4513,7 +4518,7 @@ hub_port_init(struct usb_hub *hub, struct usb_device *udev, int port1,
+ 	for (retries = 0; retries < GET_DESCRIPTOR_TRIES; (++retries, msleep(100))) {
+ 		bool did_new_scheme = false;
+ 
+-		if (use_new_scheme(udev, retry_counter)) {
++		if (use_new_scheme(udev, retry_counter, port_dev)) {
+ 			struct usb_device_descriptor *buf;
+ 			int r = 0;
+ 
+diff --git a/drivers/usb/core/hub.h b/drivers/usb/core/hub.h
+index 4dc769ee9c740..4accfb63f7dcb 100644
+--- a/drivers/usb/core/hub.h
++++ b/drivers/usb/core/hub.h
+@@ -98,6 +98,7 @@ struct usb_port {
+ 	struct mutex status_lock;
+ 	u32 over_current_count;
+ 	u8 portnum;
++	u32 quirks;
+ 	unsigned int is_superspeed:1;
+ 	unsigned int usb3_lpm_u1_permit:1;
+ 	unsigned int usb3_lpm_u2_permit:1;
+diff --git a/drivers/usb/core/port.c b/drivers/usb/core/port.c
+index 6979bde87d310..4a21431953953 100644
+--- a/drivers/usb/core/port.c
++++ b/drivers/usb/core/port.c
+@@ -50,6 +50,28 @@ static ssize_t over_current_count_show(struct device *dev,
+ }
+ static DEVICE_ATTR_RO(over_current_count);
+ 
++static ssize_t quirks_show(struct device *dev,
++			   struct device_attribute *attr, char *buf)
++{
++	struct usb_port *port_dev = to_usb_port(dev);
++
++	return sprintf(buf, "%08x\n", port_dev->quirks);
++}
++
++static ssize_t quirks_store(struct device *dev, struct device_attribute *attr,
++			    const char *buf, size_t count)
++{
++	struct usb_port *port_dev = to_usb_port(dev);
++	u32 value;
++
++	if (kstrtou32(buf, 16, &value))
++		return -EINVAL;
++
++	port_dev->quirks = value;
++	return count;
++}
++static DEVICE_ATTR_RW(quirks);
++
+ static ssize_t usb3_lpm_permit_show(struct device *dev,
+ 			      struct device_attribute *attr, char *buf)
+ {
+@@ -118,6 +140,7 @@ static DEVICE_ATTR_RW(usb3_lpm_permit);
+ 
+ static struct attribute *port_dev_attrs[] = {
+ 	&dev_attr_connect_type.attr,
++	&dev_attr_quirks.attr,
+ 	&dev_attr_over_current_count.attr,
+ 	NULL,
+ };
+diff --git a/include/linux/usb.h b/include/linux/usb.h
+index beffceec49158..2ade17992ed66 100644
+--- a/include/linux/usb.h
++++ b/include/linux/usb.h
+@@ -489,6 +489,13 @@ enum usb_port_connect_type {
+ 	USB_PORT_NOT_USED,
+ };
+ 
++/*
++ * USB port quirks.
++ */
++
++/* For the given port, prefer the old (faster) enumeration scheme. */
++#define USB_PORT_QUIRK_OLD_SCHEME	BIT(0)
++
  /*
+  * USB 2.0 Link Power Management (LPM) parameters.
+  */
 -- 
-1.8.3.1
+2.17.0.441.gb46fe60e1d-goog
+
