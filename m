@@ -1,91 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754354AbeEWIGi (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 04:06:38 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:55470 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754092AbeEWIGe (ORCPT
+        id S1754211AbeEWIIT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 04:08:19 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:53671 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754082AbeEWIIQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 04:06:34 -0400
-X-Google-Smtp-Source: AB8JxZrijYnIGvsMEE+o1HvTGOc+9GYQ9k3hEteOQeXHGoRHhPTOkGJjyJXdbYefxfze6dDp53VEMA==
-Subject: Re: [PATCH 2/4] clocksource: timer-imx-gpt: Switch to SPDX identifier
-To: Fabio Estevam <festevam@gmail.com>, tglx@linutronix.de
-Cc: linux-kernel@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>
-References: <1527030306-3791-1-git-send-email-festevam@gmail.com>
- <1527030306-3791-2-git-send-email-festevam@gmail.com>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <2775439f-a37a-3118-3532-a4c2260db53e@linaro.org>
-Date: Wed, 23 May 2018 10:06:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 23 May 2018 04:08:16 -0400
+X-Google-Smtp-Source: AB8JxZpc1dy1cpmBfUosxJBREKzTQBmNHe62huYnIIubyfXQgIB0Yfpo51aeiqPTXrBW1sKV1eMe2Sgz+4rC278in6o=
 MIME-Version: 1.0
-In-Reply-To: <1527030306-3791-2-git-send-email-festevam@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1526615528-9707-1-git-send-email-djw@t-chip.com.cn>
+References: <1526614328-6869-1-git-send-email-djw@t-chip.com.cn> <1526615528-9707-1-git-send-email-djw@t-chip.com.cn>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 23 May 2018 10:08:15 +0200
+Message-ID: <CACRpkdYsDiTWL8MkWCP55ZnB8xoxcDFDEuuqA=Ov=opi-kyc1w@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] gpio: syscon: allow fetching syscon from parent node
+To: djw@t-chip.com.cn
+Cc: "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Wayne Chou <zxf@t-chip.com.cn>, Heiko Stuebner <heiko@sntech.de>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/05/2018 01:05, Fabio Estevam wrote:
-> From: Fabio Estevam <fabio.estevam@nxp.com>
-> 
-> Adopt the SPDX license identifier headers to ease license compliance
-> management.
-> 
-> Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+On Fri, May 18, 2018 at 5:52 AM,  <djw@t-chip.com.cn> wrote:
+
+> From: Heiko Stuebner <heiko@sntech.de>
+>
+> Syscon nodes can be a simple-mfd and the syscon-users then be declared
+> as children of this node. That way the parent-child structure can be
+> better represented for devices that are fully embedded in the syscon.
+>
+> Therefore allow getting the syscon from the parent if neither
+> a special compatible nor a gpio,syscon-dev property is defined.
+>
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> Signed-off-by: Levin Du <djw@t-chip.com.cn>
 > ---
->  drivers/clocksource/timer-imx-gpt.c | 26 ++++++--------------------
->  1 file changed, 6 insertions(+), 20 deletions(-)
-> 
-> diff --git a/drivers/clocksource/timer-imx-gpt.c b/drivers/clocksource/timer-imx-gpt.c
-> index b63b834..165fbbb 100644
-> --- a/drivers/clocksource/timer-imx-gpt.c
-> +++ b/drivers/clocksource/timer-imx-gpt.c
-> @@ -1,23 +1,9 @@
-> -/*
-> - *  Copyright (C) 2000-2001 Deep Blue Solutions
-> - *  Copyright (C) 2002 Shane Nay (shane@minirl.com)
-> - *  Copyright (C) 2006-2007 Pavel Pisa (ppisa@pikron.com)
-> - *  Copyright (C) 2008 Juergen Beisert (kernel@pengutronix.de)
-> - *
-> - * This program is free software; you can redistribute it and/or
-> - * modify it under the terms of the GNU General Public License
-> - * as published by the Free Software Foundation; either version 2
-> - * of the License, or (at your option) any later version.
-> - * This program is distributed in the hope that it will be useful,
-> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - * GNU General Public License for more details.
-> - *
-> - * You should have received a copy of the GNU General Public License
-> - * along with this program; if not, write to the Free Software
-> - * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-> - * MA 02110-1301, USA.
-> - */
-> +// SPDX-License-Identifier: GPL-2.0+
-> +//
-> +//  Copyright (C) 2000-2001 Deep Blue Solutions
-> +//  Copyright (C) 2002 Shane Nay (shane@minirl.com)
-> +//  Copyright (C) 2006-2007 Pavel Pisa (ppisa@pikron.com)
-> +//  Copyright (C) 2008 Juergen Beisert (kernel@pengutronix.de)
+>
+> Changes in v2: None
+> Changes in v1:
+> - New: allow fetching syscon from parent node in gpio-syscon driver
 
-Hi Philippe,
+Regardless of what happens with the rest of the patches this
+looks sane and generally useful, so patch applied!
 
-I went through the code and didn't find any information about the format
-of the lines following the SPDX, it seems it is relatively free.
-
-Can you confirm the above changes are ok ?
-
-Thanks
-
-  -- Daniel
-
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Yours,
+Linus Walleij
