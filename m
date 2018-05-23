@@ -1,121 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932262AbeEWJbO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 05:31:14 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:56542 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932118AbeEWJbL (ORCPT
+        id S932273AbeEWJbR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 05:31:17 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:59253 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S932196AbeEWJbN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 05:31:11 -0400
-From: Fabrice Gasnier <fabrice.gasnier@st.com>
-To: <alexandre.torgue@st.com>
-CC: <robh+dt@kernel.org>, <mcoquelin.stm32@gmail.com>,
-        <mark.rutland@arm.com>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <fabrice.gasnier@st.com>, <arnaud.pouliquen@st.com>
-Subject: [PATCH] ARM: dts: stm32: Add DFSDM support to stm32mp157c
-Date: Wed, 23 May 2018 11:30:35 +0200
-Message-ID: <1527067835-22303-1-git-send-email-fabrice.gasnier@st.com>
-X-Mailer: git-send-email 1.9.1
+        Wed, 23 May 2018 05:31:13 -0400
+X-UUID: e8198ed3252a43af8b563a641819357a-20180523
+Message-ID: <1527067869.19074.29.camel@mtksdaap41>
+Subject: Re: [PATCH v2 4/4] drm/mediatek: add connection from OD1 to RDMA1
+From: Stu Hsieh <stu.hsieh@mediatek.com>
+To: CK Hu <ck.hu@mediatek.com>
+CC: Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>
+Date: Wed, 23 May 2018 17:31:09 +0800
+In-Reply-To: <1527055278.21354.3.camel@mtksdaap41>
+References: <20180523022517.12103-1-stu.hsieh@mediatek.com>
+         <20180523022517.12103-5-stu.hsieh@mediatek.com>
+         <1527055278.21354.3.camel@mtksdaap41>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG5NODE3.st.com
- (10.75.127.15)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-23_04:,,
- signatures=0
+Content-Transfer-Encoding: 7bit
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-stm32mp157c has DFSDM (Digital Filter For Sigma Delta Modulators) hardware
-with 6 filter instances.
+Hi, CK:
 
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
----
- arch/arm/boot/dts/stm32mp157c.dtsi | 70 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
+On Wed, 2018-05-23 at 14:01 +0800, CK Hu wrote:
+> Hi, Stu:
+> 
+> On Wed, 2018-05-23 at 10:25 +0800, Stu Hsieh wrote:
+> > This patch add the connection from OD1 to RDMA1 for ext path.
+> > 
+> 
+> I would like to apply this patch before the patch 'Add support for
+> mediatek SOC MT2712' because this patch is necessary for mt2712.
+ok
 
-diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
-index 66d7496..3d2f4e7 100644
---- a/arch/arm/boot/dts/stm32mp157c.dtsi
-+++ b/arch/arm/boot/dts/stm32mp157c.dtsi
-@@ -556,6 +556,76 @@
- 			};
- 		};
- 
-+		dfsdm: dfsdm@4400d000 {
-+			compatible = "st,stm32mp1-dfsdm";
-+			reg = <0x4400d000 0x800>;
-+			clocks = <&rcc DFSDM_K>;
-+			clock-names = "dfsdm";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+
-+			dfsdm0: filter@0 {
-+				compatible = "st,stm32-dfsdm-adc";
-+				#io-channel-cells = <1>;
-+				reg = <0>;
-+				interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&dmamux1 101 0x400 0x01>;
-+				dma-names = "rx";
-+				status = "disabled";
-+			};
-+
-+			dfsdm1: filter@1 {
-+				compatible = "st,stm32-dfsdm-adc";
-+				#io-channel-cells = <1>;
-+				reg = <1>;
-+				interrupts = <GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&dmamux1 102 0x400 0x01>;
-+				dma-names = "rx";
-+				status = "disabled";
-+			};
-+
-+			dfsdm2: filter@2 {
-+				compatible = "st,stm32-dfsdm-adc";
-+				#io-channel-cells = <1>;
-+				reg = <2>;
-+				interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&dmamux1 103 0x400 0x01>;
-+				dma-names = "rx";
-+				status = "disabled";
-+			};
-+
-+			dfsdm3: filter@3 {
-+				compatible = "st,stm32-dfsdm-adc";
-+				#io-channel-cells = <1>;
-+				reg = <3>;
-+				interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&dmamux1 104 0x400 0x01>;
-+				dma-names = "rx";
-+				status = "disabled";
-+			};
-+
-+			dfsdm4: filter@4 {
-+				compatible = "st,stm32-dfsdm-adc";
-+				#io-channel-cells = <1>;
-+				reg = <4>;
-+				interrupts = <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&dmamux1 91 0x400 0x01>;
-+				dma-names = "rx";
-+				status = "disabled";
-+			};
-+
-+			dfsdm5: filter@5 {
-+				compatible = "st,stm32-dfsdm-adc";
-+				#io-channel-cells = <1>;
-+				reg = <5>;
-+				interrupts = <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&dmamux1 92 0x400 0x01>;
-+				dma-names = "rx";
-+				status = "disabled";
-+			};
-+		};
-+
- 		dma1: dma@48000000 {
- 			compatible = "st,stm32-dma";
- 			reg = <0x48000000 0x400>;
--- 
-1.9.1
+> 
+> Regards,
+> CK
+> 
+> > Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
+> > ---
+> >  drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> > index 3c7bd453cf42..0450ecbbc356 100644
+> > --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> > +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> > @@ -193,6 +193,9 @@ static unsigned int mtk_ddp_mout_en(enum mtk_ddp_comp_id cur,
+> >  	} else if (cur == DDP_COMPONENT_GAMMA && next == DDP_COMPONENT_RDMA1) {
+> >  		*addr = DISP_REG_CONFIG_DISP_GAMMA_MOUT_EN;
+> >  		value = GAMMA_MOUT_EN_RDMA1;
+> > +	} else if (cur == DDP_COMPONENT_OD1 && next == DDP_COMPONENT_RDMA1) {
+> > +		*addr = DISP_REG_CONFIG_DISP_OD_MOUT_EN;
+> > +		value = OD1_MOUT_EN_RDMA1;
+> >  	} else if (cur == DDP_COMPONENT_RDMA1 && next == DDP_COMPONENT_DPI0) {
+> >  		*addr = DISP_REG_CONFIG_DISP_RDMA1_MOUT_EN;
+> >  		value = RDMA1_MOUT_DPI0;
+> 
+> 
