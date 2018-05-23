@@ -1,203 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754242AbeEWHG4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 03:06:56 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51454 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754056AbeEWHGw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 03:06:52 -0400
-Date: Wed, 23 May 2018 15:06:41 +0800
-From: Dave Young <dyoung@redhat.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
-        Cong Wang <xiyou.wangcong@gmail.com>, Neil Horman <nhorman@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Vivek Goyal <vgoyal@redhat.com>, Tony Luck <tony.luck@intel.com>,
-        Anton Vorontsov <avorontsov@ru.mvista.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Hari Bathini <hbathini@linux.vnet.ibm.com>, dzickus@redhat.com,
-        bhe@redhat.com
-Subject: Re: [PATCH] kdump: add default crashkernel reserve kernel config
- options
-Message-ID: <20180523070641.GA1689@dhcp-128-65.nay.redhat.com>
-References: <20180521025337.GA4627@dhcp-128-65.nay.redhat.com>
- <20180521120215.117d963a7619eb0d1f54bced@linux-foundation.org>
+        id S1754245AbeEWHMz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 03:12:55 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:45144 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753985AbeEWHMw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 03:12:52 -0400
+Subject: Re: [PATCH rdma-next 2/5] RDMA/hns: Modify uar allocation algorithm
+ to avoid bitmap exhaust
+To: Leon Romanovsky <leon@kernel.org>
+References: <1526544173-106587-1-git-send-email-xavier.huwei@huawei.com>
+ <1526544173-106587-3-git-send-email-xavier.huwei@huawei.com>
+ <20180523060515.GD2933@mtr-leonro.mtl.com> <5B050EFF.4040908@huawei.com>
+ <20180523070055.GD5729@mtr-leonro.mtl.com>
+CC: <dledford@redhat.com>, <jgg@ziepe.ca>, <linux-rdma@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <xavier.huwei@tom.com>,
+        <lijun_nudt@163.com>
+From: "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
+Message-ID: <5B05146D.901@huawei.com>
+Date: Wed, 23 May 2018 15:12:45 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180521120215.117d963a7619eb0d1f54bced@linux-foundation.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180523070055.GD5729@mtr-leonro.mtl.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.57.115.182]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[snip]
 
-> >  
-> > +config CRASHKERNEL_DEFAULT_THRESHOLD_MB
-> > +	int "System memory size threshold for kdump memory default reserving"
-> > +	depends on CRASH_CORE
-> > +	default 0
-> > +	help
-> > +	  CRASHKERNEL_DEFAULT_MB is used as default crashkernel value if
-> > +	  the system memory size is equal or bigger than the threshold.
-> 
-> "the threshold" is rather vague.  Can it be clarified?
-> 
-> In fact I'm really struggling to understand the logic here....
-> 
-> 
-> > +config CRASHKERNEL_DEFAULT_MB
-> > +	int "Default crashkernel memory size reserved for kdump"
-> > +	depends on CRASH_CORE
-> > +	default 0
-> > +	help
-> > +	  This is used as the default kdump reserved memory size in MB.
-> > +	  crashkernel=X kernel cmdline can overwrite this value.
-> > +
-> >  config HAVE_IMA_KEXEC
-> >  	bool
-> >  
-> > @@ -143,6 +144,24 @@ static int __init parse_crashkernel_simp
-> >  	return 0;
-> >  }
-> >  
-> > +static int __init get_crashkernel_default(unsigned long long system_ram,
-> > +					  unsigned long long *size)
-> > +{
-> > +	unsigned long long sz = CONFIG_CRASHKERNEL_DEFAULT_MB;
-> > +	unsigned long long thres = CONFIG_CRASHKERNEL_DEFAULT_THRESHOLD_MB;
-> > +
-> > +	thres *= SZ_1M;
-> > +	sz *= SZ_1M;
-> > +
-> > +	if (sz >= system_ram || system_ram < thres) {
-> > +		pr_debug("crashkernel default size can not be used.\n");
-> > +		return -EINVAL;
-> 
-> In other words,
-> 
-> 	if (system_ram <= CONFIG_CRASHKERNEL_DEFAULT_MB ||
-> 	    system_ram < CONFIG_CRASHKERNEL_DEFAULT_THRESHOLD_MB)
-> 		fail;
-> 
-> yes?
-> 
-> How come?  What's happening here?  Perhaps a (good) explanatory comment
-> is needed.  And clearer Kconfig text.
-> 
-> All confused :(
 
-Andrew, I tuned it a bit, removed the check of sz >= system_ram, so if
-the size is too large and kernel can not find enough memory it will
-still fail in latter code.
+On 2018/5/23 15:00, Leon Romanovsky wrote:
+> On Wed, May 23, 2018 at 02:49:35PM +0800, Wei Hu (Xavier) wrote:
+>>
+>> On 2018/5/23 14:05, Leon Romanovsky wrote:
+>>> On Thu, May 17, 2018 at 04:02:50PM +0800, Wei Hu (Xavier) wrote:
+>>>> This patch modified uar allocation algorithm in hns_roce_uar_alloc
+>>>> function to avoid bitmap exhaust.
+>>>>
+>>>> Signed-off-by: Wei Hu (Xavier) <xavier.huwei@huawei.com>
+>>>> ---
+>>>>  drivers/infiniband/hw/hns/hns_roce_device.h |  1 +
+>>>>  drivers/infiniband/hw/hns/hns_roce_pd.c     | 10 ++++++----
+>>>>  2 files changed, 7 insertions(+), 4 deletions(-)
+>>>>
+>>>> diff --git a/drivers/infiniband/hw/hns/hns_roce_device.h b/drivers/infiniband/hw/hns/hns_roce_device.h
+>>>> index 53c2f1b..412297d4 100644
+>>>> --- a/drivers/infiniband/hw/hns/hns_roce_device.h
+>>>> +++ b/drivers/infiniband/hw/hns/hns_roce_device.h
+>>>> @@ -214,6 +214,7 @@ enum {
+>>>>  struct hns_roce_uar {
+>>>>  	u64		pfn;
+>>>>  	unsigned long	index;
+>>>> +	unsigned long	logic_idx;
+>>>>  };
+>>>>
+>>>>  struct hns_roce_ucontext {
+>>>> diff --git a/drivers/infiniband/hw/hns/hns_roce_pd.c b/drivers/infiniband/hw/hns/hns_roce_pd.c
+>>>> index 4b41e04..b9f2c87 100644
+>>>> --- a/drivers/infiniband/hw/hns/hns_roce_pd.c
+>>>> +++ b/drivers/infiniband/hw/hns/hns_roce_pd.c
+>>>> @@ -107,13 +107,15 @@ int hns_roce_uar_alloc(struct hns_roce_dev *hr_dev, struct hns_roce_uar *uar)
+>>>>  	int ret = 0;
+>>>>
+>>>>  	/* Using bitmap to manager UAR index */
+>>>> -	ret = hns_roce_bitmap_alloc(&hr_dev->uar_table.bitmap, &uar->index);
+>>>> +	ret = hns_roce_bitmap_alloc(&hr_dev->uar_table.bitmap, &uar->logic_idx);
+>>>>  	if (ret == -1)
+>>>>  		return -ENOMEM;
+>>>>
+>>>> -	if (uar->index > 0)
+>>>> -		uar->index = (uar->index - 1) %
+>>>> +	if (uar->logic_idx > 0 && hr_dev->caps.phy_num_uars > 1)
+>>>> +		uar->index = (uar->logic_idx - 1) %
+>>>>  			     (hr_dev->caps.phy_num_uars - 1) + 1;
+>>>> +	else
+>>>> +		uar->index = 0;
+>>>>
+>>> Sorry, but maybe I didn't understand this change fully, but logic_idx is
+>>> not initialized at all and one of two (needs to check your uar
+>>> allocation): the logic_idx is always zero -> index will be zero too,
+>>> or logic_idx is random variable -> index will be random too.
+>>>
+>>> What did you want to do?
+>>>
+>> Hi, Leon
+>>
+>>     The prototype of hns_roce_bitmap_alloc as belows:
+>>         int hns_roce_bitmap_alloc(struct hns_roce_bitmap *bitmap,
+>> unsigned long *obj);
+>>     In this statement,  we evaluate uar->logic_idx.
+>>         ret = hns_roce_bitmap_alloc(&hr_dev->uar_table.bitmap,
+>> &uar->logic_idx);
+>>
+>>     In hip06,  hr_dev->caps.phy_num_uars equals 8,
+>>         if (uar->logic_idx > 0)
+>>              uar-> index = 0;
+>>        else
+>>              uar-> index =(uar->logic_idx - 1) %
+>> (hr_dev->caps.phy_num_uars - 1) + 1;
+>>     In hip08,  hr_dev->caps.phy_num_uars equals 1,  uar-> index = 0;
+>>
+>>    Regards
+> Where did you change/set logic_idx?
+In hns_roce_uar_alloc,
+    ret = hns_roce_bitmap_alloc(&hr_dev->uar_table.bitmap, &uar->logic_idx);
+In hns_roce_uar_free,
+    hns_roce_bitmap_free(&hr_dev->uar_table.bitmap, uar->logic_idx,
+BITMAP_NO_RR);
 
-Is below version looks clearer?
----
-
-This is a rework of the crashkernel=auto patches back to 2009 although
-I'm not sure if below is the last version of the old effort:
-https://lkml.org/lkml/2009/8/12/61
-https://lwn.net/Articles/345344/
-
-I changed the original design, instead of adding the auto reserve logic
-in code, in this patch just introduce two kernel config options for
-the default crashkernel value in MB and the threshold of system memory
-in MB so that only reserve default when system memory is equal or
-above the threshold.
-
-Signed-off-by: Dave Young <dyoung@redhat.com>
----
-Another difference is with original design the crashkernel size scales
-with system memory, according to test, large machine may need more
-memory in kdump kernel because of several factors:
-1. cpu numbers, because of the percpu memory allocated for cpus.
-   (kdump can use nr_cpus=1 to workaround this, but some
-    arches do not support nr_cpus=X for example powerpc) 
-2. IO devices, large system can have a lot of io devices, although we
-   can try to only add those device drivers we needed, it is still a
-   problem because of some built-in drivers, some stacked logical devices
-   eg. device mapper devices, acpi etc.  Even if only considering the
-   meta data for driver model it will still be a big number eg. sysfs
-   files etc.
-3. The minimum memory requirement for some device drivers are big, even
-   if some of them have implemented low meory profile.  It is usual to see
-   10M memory use for a storage driver.
-4. user space initramfs size growing.  Busybox is not usable if we need
-   to add udev support and some complicate storage support.  Use dracut
-   with systemd, especially networking stuff need more memory.
-
-So probably add another kernel config option to scale the memory size
-eg.  CRASHKERNEL_DEFAULT_SCALE_RATIO is also good to have,  in RHEL we
-use base_value + system_mem >> (2^14) for x86.  I'm still hesatating
-how to describe and add this option. Any suggestions will be appreciated.
-
- arch/Kconfig        |   17 +++++++++++++++++
- kernel/crash_core.c |   19 ++++++++++++++++++-
- 2 files changed, 35 insertions(+), 1 deletion(-)
-
---- linux-x86.orig/arch/Kconfig
-+++ linux-x86/arch/Kconfig
-@@ -10,6 +10,23 @@ config KEXEC_CORE
- 	select CRASH_CORE
- 	bool
- 
-+config CRASHKERNEL_DEFAULT_THRESHOLD_MB
-+	int "System memory size threshold for using CRASHKERNEL_DEFAULT_MB"
-+	depends on CRASH_CORE
-+	default 0
-+	help
-+	  CRASHKERNEL_DEFAULT_MB will be reserved for kdump if the system
-+	  memory is above or equal to CRASHKERNEL_DEFAULT_THRESHOLD_MB MB.
-+	  It is only effective in case no crashkernel=X parameter is used.
-+
-+config CRASHKERNEL_DEFAULT_MB
-+	int "Default crashkernel memory size reserved for kdump"
-+	depends on CRASH_CORE
-+	default 0
-+	help
-+	  This is used as the default kdump reserved memory size in MB.
-+	  crashkernel=X kernel cmdline can overwrite this value.
-+
- config HAVE_IMA_KEXEC
- 	bool
- 
---- linux-x86.orig/kernel/crash_core.c
-+++ linux-x86/kernel/crash_core.c
-@@ -143,6 +143,21 @@ static int __init parse_crashkernel_simp
- 	return 0;
- }
- 
-+static int __init get_crashkernel_default(unsigned long long system_ram,
-+					  unsigned long long *size)
-+{
-+	unsigned long long system_ram_mb = system_ram >> 20;
-+
-+	if (system_ram_mb < CONFIG_CRASHKERNEL_DEFAULT_THRESHOLD_MB) {
-+		pr_debug("crashkernel: system memory size is lower than %d\n",
-+			 CONFIG_CRASHKERNEL_DEFAULT_THRESHOLD_MB);
-+		return -EINVAL;
-+	}
-+	*size = (unsigned long long)CONFIG_CRASHKERNEL_DEFAULT_MB << 20;
-+
-+	return 0;
-+}
-+
- #define SUFFIX_HIGH 0
- #define SUFFIX_LOW  1
- #define SUFFIX_NULL 2
-@@ -240,8 +255,10 @@ static int __init __parse_crashkernel(ch
- 	*crash_size = 0;
- 	*crash_base = 0;
- 
--	ck_cmdline = get_last_crashkernel(cmdline, name, suffix);
-+	if (!strstr(cmdline, "crashkernel="))
-+		return get_crashkernel_default(system_ram, crash_size);
- 
-+	ck_cmdline = get_last_crashkernel(cmdline, name, suffix);
- 	if (!ck_cmdline)
- 		return -EINVAL;
- 
+Thanks
+> Thanks
+>
+>
+>> Wei Hu
+>>>>  	if (!dev_is_pci(hr_dev->dev)) {
+>>>>  		res = platform_get_resource(hr_dev->pdev, IORESOURCE_MEM, 0);
+>>>> @@ -132,7 +134,7 @@ int hns_roce_uar_alloc(struct hns_roce_dev *hr_dev, struct hns_roce_uar *uar)
+>>>>
+>>>>  void hns_roce_uar_free(struct hns_roce_dev *hr_dev, struct hns_roce_uar *uar)
+>>>>  {
+>>>> -	hns_roce_bitmap_free(&hr_dev->uar_table.bitmap, uar->index,
+>>>> +	hns_roce_bitmap_free(&hr_dev->uar_table.bitmap, uar->logic_idx,
+>>>>  			     BITMAP_NO_RR);
+>>>>  }
+>>>>
+>>>> --
+>>>> 1.9.1
+>>>>
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
