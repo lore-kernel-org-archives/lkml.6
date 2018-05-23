@@ -1,90 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932846AbeEWLwL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 07:52:11 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59172 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932629AbeEWLwK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 07:52:10 -0400
-Subject: Re: [PATCH v2 2/2] kasan: fix memory hotplug during boot
-To: Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        "open list:KASAN" <kasan-dev@googlegroups.com>
-References: <20180522100756.18478-1-david@redhat.com>
- <20180522100756.18478-3-david@redhat.com>
- <f4378c56-acc2-a5cf-724c-76cffee28235@virtuozzo.com>
- <ff21c6e7-cb32-60d8-abd3-dfc6be3d05f7@redhat.com>
- <09c36096-f8c8-b9e9-0bed-113e494f159a@virtuozzo.com>
- <20180522140735.71dcd92e7b013629a7f15f91@linux-foundation.org>
- <6642e0d8-671c-1c1e-3ae8-99ac34c3b667@virtuozzo.com>
-From: David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <4ec53da0-bdf6-9db4-b70b-6a05c4d40161@redhat.com>
-Date: Wed, 23 May 2018 13:52:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S932709AbeEWLxt (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 07:53:49 -0400
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:44548 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932501AbeEWLxp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 07:53:45 -0400
+X-Google-Smtp-Source: AB8JxZpbsB4AS4aEO1Gab82Jru29duYZ3qypi6ZlbqjcquiwqkMlrjI6CQMIdYE4JistIA6BBbMeYwurlShaRpmaBFg=
 MIME-Version: 1.0
-In-Reply-To: <6642e0d8-671c-1c1e-3ae8-99ac34c3b667@virtuozzo.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180523114230.10109-1-marek.vasut+renesas@gmail.com>
+References: <20180523114230.10109-1-marek.vasut+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 23 May 2018 13:53:43 +0200
+X-Google-Sender-Auth: M5D0A_XN6buBhjyjjM0VlXczbBQ
+Message-ID: <CAMuHMdV5q2JrHSMN2hjt0384AMg64W8w+g6LL6Z3HhzLNZGMFw@mail.gmail.com>
+Subject: Re: [PATCH 1/6] mfd: da9063: Rename PMIC_DA9063 to PMIC_CHIP_ID_DA9063
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23.05.2018 11:59, Andrey Ryabinin wrote:
-> 
-> 
-> On 05/23/2018 12:07 AM, Andrew Morton wrote:
->> On Tue, 22 May 2018 22:50:12 +0300 Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
->>
->>>
->>>
->>> On 05/22/2018 07:36 PM, David Hildenbrand wrote:
->>>> On 22.05.2018 18:26, Andrey Ryabinin wrote:
->>>>>
->>>>>
->>>>> On 05/22/2018 01:07 PM, David Hildenbrand wrote:
->>>>>> Using module_init() is wrong. E.g. ACPI adds and onlines memory before
->>>>>> our memory notifier gets registered.
->>>>>>
->>>>>> This makes sure that ACPI memory detected during boot up will not
->>>>>> result in a kernel crash.
->>>>>>
->>>>>> Easily reproducable with QEMU, just specify a DIMM when starting up.
->>>>>
->>>>>          reproducible
->>>>>>
->>>>>> Signed-off-by: David Hildenbrand <david@redhat.com>
->>>>>> ---
->>>>>
->>>>> Fixes: fa69b5989bb0 ("mm/kasan: add support for memory hotplug")
->>>>> Acked-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
->>>>> Cc: <stable@vger.kernel.org>
->>>>
->>>> Think this even dates back to:
->>>>
->>>> 786a8959912e ("kasan: disable memory hotplug")
->>>>
->>>
->>> Indeed.
->>
->> Is a backport to -stable justified for either of these patches?
->>
-> 
-> I don't see any reasons to not backport these.
-> The first one fixes failure to online memory, why it shouldn't be fixed in -stable?
-> The second one is fixes boot crash, it's definitely stable material IMO.
-> 
+On Wed, May 23, 2018 at 1:42 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+> The PMIC_DA9063 is a complete misnomer, it denotes the value of the
+> DA9063 chip ID register, so rename it as such. It is also the value
+> of chip ID register of DA9063L though, so drop the enum as all the
+> DA9063 "models" share the same chip ID and thus the distinction will
+> have to be made using DT or otherwise.
+>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 
-Agreed, at least the second one should be cc stable, as I can reproduce
-it with a simple QEMU command.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Thanks,
-
-David / dhildenb
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
