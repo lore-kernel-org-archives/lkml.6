@@ -1,485 +1,203 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754342AbeEWHFI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 03:05:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45590 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754286AbeEWHFG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 03:05:06 -0400
-X-Google-Smtp-Source: AB8JxZrFzNUETXWjk9kdI9rS1w8LXwm40dNavMfW1XtxskW79C3BwcpWQ8LU3932hYkwPXk9f+JukxbYVzAJevU7yfg=
+        id S1754242AbeEWHG4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 03:06:56 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51454 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754056AbeEWHGw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 03:06:52 -0400
+Date: Wed, 23 May 2018 15:06:41 +0800
+From: Dave Young <dyoung@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+        Cong Wang <xiyou.wangcong@gmail.com>, Neil Horman <nhorman@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Vivek Goyal <vgoyal@redhat.com>, Tony Luck <tony.luck@intel.com>,
+        Anton Vorontsov <avorontsov@ru.mvista.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Hari Bathini <hbathini@linux.vnet.ibm.com>, dzickus@redhat.com,
+        bhe@redhat.com
+Subject: Re: [PATCH] kdump: add default crashkernel reserve kernel config
+ options
+Message-ID: <20180523070641.GA1689@dhcp-128-65.nay.redhat.com>
+References: <20180521025337.GA4627@dhcp-128-65.nay.redhat.com>
+ <20180521120215.117d963a7619eb0d1f54bced@linux-foundation.org>
 MIME-Version: 1.0
-In-Reply-To: <cbcc6f929d2bd912c11530391d03cdf3@agner.ch>
-References: <1526543103-21668-1-git-send-email-krzk@kernel.org> <cbcc6f929d2bd912c11530391d03cdf3@agner.ch>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Wed, 23 May 2018 09:05:02 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPeOg7Xjx0qr2qZ0dLs56HFD=1=gbGh8VPeS+PgQm6QQZg@mail.gmail.com>
-Message-ID: <CAJKOXPeOg7Xjx0qr2qZ0dLs56HFD=1=gbGh8VPeS+PgQm6QQZg@mail.gmail.com>
-Subject: Re: [PATCH v5 1/3] ARM: dts: tegra: Remove skeleton.dtsi and fix DTC
- warnings for /memory
-To: Stefan Agner <stefan@agner.ch>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Lucas Stach <dev@lynxeye.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180521120215.117d963a7619eb0d1f54bced@linux-foundation.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 17, 2018 at 1:39 PM, Stefan Agner <stefan@agner.ch> wrote:
-> On 17.05.2018 09:45, Krzysztof Kozlowski wrote:
->> Remove the usage of skeleton.dtsi and add necessary properties to /memory
->> node to fix the DTC warnings:
->>
->>     arch/arm/boot/dts/tegra20-harmony.dtb: Warning (unit_address_vs_reg):
->>         /memory: node has a reg or ranges property, but no unit name
->>
->> The DTB after the change is the same as before except adding
->> unit-address to /memory node.
->>
->> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->>
->> ---
->>
->> Changes since v4:
->> 1. None
->> ---
->>  arch/arm/boot/dts/tegra114-dalmore.dts      | 3 ++-
->>  arch/arm/boot/dts/tegra114-roth.dts         | 3 ++-
->>  arch/arm/boot/dts/tegra114-tn7.dts          | 3 ++-
->>  arch/arm/boot/dts/tegra114.dtsi             | 4 ++--
->>  arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 3 ++-
->>  arch/arm/boot/dts/tegra124-apalis.dtsi      | 3 ++-
->>  arch/arm/boot/dts/tegra124-jetson-tk1.dts   | 3 ++-
->>  arch/arm/boot/dts/tegra124-nyan.dtsi        | 3 ++-
->>  arch/arm/boot/dts/tegra124-venice2.dts      | 3 ++-
->>  arch/arm/boot/dts/tegra124.dtsi             | 2 --
->>  arch/arm/boot/dts/tegra20-colibri-512.dtsi  | 3 ++-
->>  arch/arm/boot/dts/tegra20-harmony.dts       | 3 ++-
->>  arch/arm/boot/dts/tegra20-paz00.dts         | 3 ++-
->>  arch/arm/boot/dts/tegra20-seaboard.dts      | 3 ++-
->>  arch/arm/boot/dts/tegra20-tamonten.dtsi     | 3 ++-
->>  arch/arm/boot/dts/tegra20-trimslice.dts     | 3 ++-
->>  arch/arm/boot/dts/tegra20-ventana.dts       | 3 ++-
->>  arch/arm/boot/dts/tegra20.dtsi              | 7 +++++--
->>  arch/arm/boot/dts/tegra30-apalis.dtsi       | 5 +++++
->>  arch/arm/boot/dts/tegra30-beaver.dts        | 3 ++-
->>  arch/arm/boot/dts/tegra30-cardhu.dtsi       | 3 ++-
->>  arch/arm/boot/dts/tegra30-colibri.dtsi      | 3 ++-
->>  arch/arm/boot/dts/tegra30.dtsi              | 7 +++++--
->>  23 files changed, 53 insertions(+), 26 deletions(-)
->>
->> diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts
->> b/arch/arm/boot/dts/tegra114-dalmore.dts
->> index eafff16765b4..5cdcedfc19cb 100644
->> --- a/arch/arm/boot/dts/tegra114-dalmore.dts
->> +++ b/arch/arm/boot/dts/tegra114-dalmore.dts
->> @@ -23,7 +23,8 @@
->>               stdout-path = "serial0:115200n8";
->>       };
->>
->> -     memory {
->> +     memory@80000000 {
->> +             device_type = "memory";
->>               reg = <0x80000000 0x40000000>;
->>       };
->>
->> diff --git a/arch/arm/boot/dts/tegra114-roth.dts
->> b/arch/arm/boot/dts/tegra114-roth.dts
->> index 7ed7370ee67a..b4f329a07c60 100644
->> --- a/arch/arm/boot/dts/tegra114-roth.dts
->> +++ b/arch/arm/boot/dts/tegra114-roth.dts
->> @@ -28,7 +28,8 @@
->>               };
->>       };
->>
->> -     memory {
->> +     memory@80000000 {
->> +             device_type = "memory";
->>               /* memory >= 0x79600000 is reserved for firmware usage */
->>               reg = <0x80000000 0x79600000>;
->>       };
->> diff --git a/arch/arm/boot/dts/tegra114-tn7.dts
->> b/arch/arm/boot/dts/tegra114-tn7.dts
->> index 7fc4a8b31e45..12092d344ce8 100644
->> --- a/arch/arm/boot/dts/tegra114-tn7.dts
->> +++ b/arch/arm/boot/dts/tegra114-tn7.dts
->> @@ -28,7 +28,8 @@
->>               };
->>       };
->>
->> -     memory {
->> +     memory@80000000 {
->> +             device_type = "memory";
->>               /* memory >= 0x37e00000 is reserved for firmware usage */
->>               reg = <0x80000000 0x37e00000>;
->>       };
->> diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
->> index 0e4a13295d8a..b917784d3f97 100644
->> --- a/arch/arm/boot/dts/tegra114.dtsi
->> +++ b/arch/arm/boot/dts/tegra114.dtsi
->> @@ -5,11 +5,11 @@
->>  #include <dt-bindings/pinctrl/pinctrl-tegra.h>
->>  #include <dt-bindings/interrupt-controller/arm-gic.h>
->>
->> -#include "skeleton.dtsi"
->> -
->>  / {
->>       compatible = "nvidia,tegra114";
->>       interrupt-parent = <&lic>;
->> +     #address-cells = <1>;
->> +     #size-cells = <1>;
->>
->>       host1x@50000000 {
->>               compatible = "nvidia,tegra114-host1x", "simple-bus";
->> diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
->> b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
->> index bb67edb016c5..80b52c612891 100644
->> --- a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
->> +++ b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
->> @@ -15,7 +15,8 @@
->>       compatible = "toradex,apalis-tk1-v1.2", "toradex,apalis-tk1",
->>                    "nvidia,tegra124";
->>
->> -     memory {
->> +     memory@0 {
->> +             device_type = "memory";
->>               reg = <0x0 0x80000000 0x0 0x80000000>;
->>       };
->>
->> diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi
->> b/arch/arm/boot/dts/tegra124-apalis.dtsi
->> index 65a2161b9b8e..3ca7601cafe9 100644
->> --- a/arch/arm/boot/dts/tegra124-apalis.dtsi
->> +++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
->> @@ -50,7 +50,8 @@
->>       model = "Toradex Apalis TK1";
->>       compatible = "toradex,apalis-tk1", "nvidia,tegra124";
->>
->> -     memory {
->> +     memory@0 {
->> +             device_type = "memory";
->>               reg = <0x0 0x80000000 0x0 0x80000000>;
->>       };
->>
->> diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
->> b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
->> index 6dbcf84dafbc..8d9e6ee6c6a7 100644
->> --- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
->> +++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
->> @@ -24,7 +24,8 @@
->>               stdout-path = "serial0:115200n8";
->>       };
->>
->> -     memory {
->> +     memory@0 {
->> +             device_type = "memory";
->>               reg = <0x0 0x80000000 0x0 0x80000000>;
->>       };
->>
->> diff --git a/arch/arm/boot/dts/tegra124-nyan.dtsi
->> b/arch/arm/boot/dts/tegra124-nyan.dtsi
->> index 3609367037a6..15a2b0e3237e 100644
->> --- a/arch/arm/boot/dts/tegra124-nyan.dtsi
->> +++ b/arch/arm/boot/dts/tegra124-nyan.dtsi
->> @@ -13,7 +13,8 @@
->>               stdout-path = "serial0:115200n8";
->>       };
->>
->> -     memory {
->> +     memory@0 {
->> +             device_type = "memory";
->>               reg = <0x0 0x80000000 0x0 0x80000000>;
->>       };
->>
->> diff --git a/arch/arm/boot/dts/tegra124-venice2.dts
->> b/arch/arm/boot/dts/tegra124-venice2.dts
->> index 89bcc178994d..241cdc4b6600 100644
->> --- a/arch/arm/boot/dts/tegra124-venice2.dts
->> +++ b/arch/arm/boot/dts/tegra124-venice2.dts
->> @@ -18,7 +18,8 @@
->>               stdout-path = "serial0:115200n8";
->>       };
->>
->> -     memory {
->> +     memory@0 {
->> +             device_type = "memory";
->>               reg = <0x0 0x80000000 0x0 0x80000000>;
->>       };
->>
->> diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
->> index 174092bfac90..df1642876a4c 100644
->> --- a/arch/arm/boot/dts/tegra124.dtsi
->> +++ b/arch/arm/boot/dts/tegra124.dtsi
->> @@ -7,8 +7,6 @@
->>  #include <dt-bindings/reset/tegra124-car.h>
->>  #include <dt-bindings/thermal/tegra124-soctherm.h>
->>
->> -#include "skeleton.dtsi"
->> -
->>  / {
->>       compatible = "nvidia,tegra124";
->>       interrupt-parent = <&lic>;
->> diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
->> b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
->> index 5c202b3e3bb1..305efb275b48 100644
->> --- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
->> +++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
->> @@ -10,7 +10,8 @@
->>               rtc1 = "/rtc@7000e000";
->>       };
->>
->> -     memory {
->> +     memory@0 {
->> +             device_type = "memory";
->>               reg = <0x00000000 0x20000000>;
->>       };
->>
->> diff --git a/arch/arm/boot/dts/tegra20-harmony.dts
->> b/arch/arm/boot/dts/tegra20-harmony.dts
->> index 628a55a9318b..5009a55ae15c 100644
->> --- a/arch/arm/boot/dts/tegra20-harmony.dts
->> +++ b/arch/arm/boot/dts/tegra20-harmony.dts
->> @@ -18,7 +18,8 @@
->>               stdout-path = "serial0:115200n8";
->>       };
->>
->> -     memory {
->> +     memory@0 {
->> +             device_type = "memory";
->>               reg = <0x00000000 0x40000000>;
->>       };
->>
->> diff --git a/arch/arm/boot/dts/tegra20-paz00.dts
->> b/arch/arm/boot/dts/tegra20-paz00.dts
->> index 30436969adc0..e794ac5442ef 100644
->> --- a/arch/arm/boot/dts/tegra20-paz00.dts
->> +++ b/arch/arm/boot/dts/tegra20-paz00.dts
->> @@ -19,7 +19,8 @@
->>               stdout-path = "serial0:115200n8";
->>       };
->>
->> -     memory {
->> +     memory@0 {
->> +             device_type = "memory";
->>               reg = <0x00000000 0x20000000>;
->>       };
->>
->> diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts
->> b/arch/arm/boot/dts/tegra20-seaboard.dts
->> index 284aae351ff2..6cb832cfa4f3 100644
->> --- a/arch/arm/boot/dts/tegra20-seaboard.dts
->> +++ b/arch/arm/boot/dts/tegra20-seaboard.dts
->> @@ -18,7 +18,8 @@
->>               stdout-path = "serial0:115200n8";
->>       };
->>
->> -     memory {
->> +     memory@0 {
->> +             device_type = "memory";
->>               reg = <0x00000000 0x40000000>;
->>       };
->>
->> diff --git a/arch/arm/boot/dts/tegra20-tamonten.dtsi
->> b/arch/arm/boot/dts/tegra20-tamonten.dtsi
->> index 872046d48709..6ceb1228fed3 100644
->> --- a/arch/arm/boot/dts/tegra20-tamonten.dtsi
->> +++ b/arch/arm/boot/dts/tegra20-tamonten.dtsi
->> @@ -15,7 +15,8 @@
->>               stdout-path = "serial0:115200n8";
->>       };
->>
->> -     memory {
->> +     memory@0 {
->> +             device_type = "memory";
->>               reg = <0x00000000 0x20000000>;
->>       };
->>
->> diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts
->> b/arch/arm/boot/dts/tegra20-trimslice.dts
->> index d55c6b240a30..3f94be3da9e5 100644
->> --- a/arch/arm/boot/dts/tegra20-trimslice.dts
->> +++ b/arch/arm/boot/dts/tegra20-trimslice.dts
->> @@ -18,7 +18,8 @@
->>               stdout-path = "serial0:115200n8";
->>       };
->>
->> -     memory {
->> +     memory@0 {
->> +             device_type = "memory";
->>               reg = <0x00000000 0x40000000>;
->>       };
->>
->> diff --git a/arch/arm/boot/dts/tegra20-ventana.dts
->> b/arch/arm/boot/dts/tegra20-ventana.dts
->> index ee3fbf941e79..c897a90289bc 100644
->> --- a/arch/arm/boot/dts/tegra20-ventana.dts
->> +++ b/arch/arm/boot/dts/tegra20-ventana.dts
->> @@ -18,7 +18,8 @@
->>               stdout-path = "serial0:115200n8";
->>       };
->>
->> -     memory {
->> +     memory@0 {
->> +             device_type = "memory";
->>               reg = <0x00000000 0x40000000>;
->>       };
->>
->> diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
->> index 0a7136462a1a..290ebbeb210f 100644
->> --- a/arch/arm/boot/dts/tegra20.dtsi
->> +++ b/arch/arm/boot/dts/tegra20.dtsi
->> @@ -4,11 +4,14 @@
->>  #include <dt-bindings/pinctrl/pinctrl-tegra.h>
->>  #include <dt-bindings/interrupt-controller/arm-gic.h>
->>
->> -#include "skeleton.dtsi"
->> -
->>  / {
->>       compatible = "nvidia,tegra20";
->>       interrupt-parent = <&lic>;
->> +     #address-cells = <1>;
->> +     #size-cells = <1>;
->> +
->> +     chosen { };
->> +     aliases { };
->>
->>       iram@40000000 {
->>               compatible = "mmio-sram";
->> diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi
->> b/arch/arm/boot/dts/tegra30-apalis.dtsi
->> index d1d21ec2a844..184f60c720fa 100644
->> --- a/arch/arm/boot/dts/tegra30-apalis.dtsi
->> +++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
->> @@ -10,6 +10,11 @@
->>       model = "Toradex Apalis T30";
->>       compatible = "toradex,apalis_t30", "nvidia,tegra30";
->>
->> +     memory@0 {
->> +             device_type = "memory";
->> +             reg = <0 0>;
->> +     };
->> +
->>       pcie@3000 {
->>               avdd-pexa-supply = <&vdd2_reg>;
->>               vdd-pexa-supply = <&vdd2_reg>;
->> diff --git a/arch/arm/boot/dts/tegra30-beaver.dts
->> b/arch/arm/boot/dts/tegra30-beaver.dts
->> index ae52a5039506..72369877d284 100644
->> --- a/arch/arm/boot/dts/tegra30-beaver.dts
->> +++ b/arch/arm/boot/dts/tegra30-beaver.dts
->> @@ -17,7 +17,8 @@
->>               stdout-path = "serial0:115200n8";
->>       };
->>
->> -     memory {
->> +     memory@80000000 {
->> +             device_type = "memory";
->>               reg = <0x80000000 0x7ff00000>;
->>       };
->>
->> diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi
->> b/arch/arm/boot/dts/tegra30-cardhu.dtsi
->> index 92a9740c533f..24c04d4c335d 100644
->> --- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
->> +++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
->> @@ -40,7 +40,8 @@
->>               stdout-path = "serial0:115200n8";
->>       };
->>
->> -     memory {
->> +     memory@80000000 {
->> +             device_type = "memory";
->>               reg = <0x80000000 0x40000000>;
->>       };
->>
->> diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi
->> b/arch/arm/boot/dts/tegra30-colibri.dtsi
->> index c44d8c40c410..cc46cedf80b9 100644
->> --- a/arch/arm/boot/dts/tegra30-colibri.dtsi
->> +++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
->> @@ -10,7 +10,8 @@
->>       model = "Toradex Colibri T30";
->>       compatible = "toradex,colibri_t30", "nvidia,tegra30";
->>
->> -     memory {
->> +     memory@80000000 {
->> +             device_type = "memory";
->>               reg = <0x80000000 0x40000000>;
->>       };
->>
->> diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
->> index a110cf84d85f..4383f0fd789d 100644
->> --- a/arch/arm/boot/dts/tegra30.dtsi
->> +++ b/arch/arm/boot/dts/tegra30.dtsi
->> @@ -5,11 +5,14 @@
->>  #include <dt-bindings/pinctrl/pinctrl-tegra.h>
->>  #include <dt-bindings/interrupt-controller/arm-gic.h>
->>
->> -#include "skeleton.dtsi"
->> -
->>  / {
->>       compatible = "nvidia,tegra30";
->>       interrupt-parent = <&lic>;
->> +     #address-cells = <1>;
->> +     #size-cells = <1>;
->> +
->> +     chosen { };
->> +     aliases { };
->
-> Could we not add
->
->         memory { device_type = "memory"; };
->
-> in the SoC level device trees?
->
-> This would save device_type in all other instances.
->
-> That is also how it is done in other places, e.g.
-> arch/arm/boot/dts/imx6qdl.dtsi
+[snip]
 
-Not really because the unit address will not match between different
-boards. The imx6qdl, as I see, has the same issue:
- - imx6qdl.dtsi defines "memory" node
- - imx6dl-apf6dev.dts includes the previous and defines "memory@10000000"
+> >  
+> > +config CRASHKERNEL_DEFAULT_THRESHOLD_MB
+> > +	int "System memory size threshold for kdump memory default reserving"
+> > +	depends on CRASH_CORE
+> > +	default 0
+> > +	help
+> > +	  CRASHKERNEL_DEFAULT_MB is used as default crashkernel value if
+> > +	  the system memory size is equal or bigger than the threshold.
+> 
+> "the threshold" is rather vague.  Can it be clarified?
+> 
+> In fact I'm really struggling to understand the logic here....
+> 
+> 
+> > +config CRASHKERNEL_DEFAULT_MB
+> > +	int "Default crashkernel memory size reserved for kdump"
+> > +	depends on CRASH_CORE
+> > +	default 0
+> > +	help
+> > +	  This is used as the default kdump reserved memory size in MB.
+> > +	  crashkernel=X kernel cmdline can overwrite this value.
+> > +
+> >  config HAVE_IMA_KEXEC
+> >  	bool
+> >  
+> > @@ -143,6 +144,24 @@ static int __init parse_crashkernel_simp
+> >  	return 0;
+> >  }
+> >  
+> > +static int __init get_crashkernel_default(unsigned long long system_ram,
+> > +					  unsigned long long *size)
+> > +{
+> > +	unsigned long long sz = CONFIG_CRASHKERNEL_DEFAULT_MB;
+> > +	unsigned long long thres = CONFIG_CRASHKERNEL_DEFAULT_THRESHOLD_MB;
+> > +
+> > +	thres *= SZ_1M;
+> > +	sz *= SZ_1M;
+> > +
+> > +	if (sz >= system_ram || system_ram < thres) {
+> > +		pr_debug("crashkernel default size can not be used.\n");
+> > +		return -EINVAL;
+> 
+> In other words,
+> 
+> 	if (system_ram <= CONFIG_CRASHKERNEL_DEFAULT_MB ||
+> 	    system_ram < CONFIG_CRASHKERNEL_DEFAULT_THRESHOLD_MB)
+> 		fail;
+> 
+> yes?
+> 
+> How come?  What's happening here?  Perhaps a (good) explanatory comment
+> is needed.  And clearer Kconfig text.
+> 
+> All confused :(
 
-This is wrong - two memory nodes.
+Andrew, I tuned it a bit, removed the check of sz >= system_ram, so if
+the size is too large and kernel can not find enough memory it will
+still fail in latter code.
 
-> Also, could we maybe split this in two?
->
-> ARM: dts: tegra: Remove skeleton.dtsi
-> ARM: dts: tegra: fix DTC warnings for /memory
+Is below version looks clearer?
+---
 
-It is possible to split it but this really won't bring any benefit
-because the removal of skeleton.dtsi is the way to fix the errors. Or
-saying it differently - the warnings are the reason to remove the
-skeleton.dtsi. If you split them, what is the reason to remove the
-skeleton.dtsi? (Theoretically it was deprecated so this could be
-explanation).
+This is a rework of the crashkernel=auto patches back to 2009 although
+I'm not sure if below is the last version of the old effort:
+https://lkml.org/lkml/2009/8/12/61
+https://lwn.net/Articles/345344/
 
-If you wish, I can prepare something like:
-1. Remove skeleton.dtsi and add everywhere 'device_type = "memory"'.
-All the warnings will stay but the end DTB should be equal between
-changes.
-2. Fix warnings.
+I changed the original design, instead of adding the auto reserve logic
+in code, in this patch just introduce two kernel config options for
+the default crashkernel value in MB and the threshold of system memory
+in MB so that only reserve default when system memory is equal or
+above the threshold.
 
-> The first would only touch SoC level dts.
+Signed-off-by: Dave Young <dyoung@redhat.com>
+---
+Another difference is with original design the crashkernel size scales
+with system memory, according to test, large machine may need more
+memory in kdump kernel because of several factors:
+1. cpu numbers, because of the percpu memory allocated for cpus.
+   (kdump can use nr_cpus=1 to workaround this, but some
+    arches do not support nr_cpus=X for example powerpc) 
+2. IO devices, large system can have a lot of io devices, although we
+   can try to only add those device drivers we needed, it is still a
+   problem because of some built-in drivers, some stacked logical devices
+   eg. device mapper devices, acpi etc.  Even if only considering the
+   meta data for driver model it will still be a big number eg. sysfs
+   files etc.
+3. The minimum memory requirement for some device drivers are big, even
+   if some of them have implemented low meory profile.  It is usual to see
+   10M memory use for a storage driver.
+4. user space initramfs size growing.  Busybox is not usable if we need
+   to add udev support and some complicate storage support.  Use dracut
+   with systemd, especially networking stuff need more memory.
 
-No, because device_type has to be added everywhere. And because of
-warnings (explained before) it cannot be added to SoC DTSI.
+So probably add another kernel config option to scale the memory size
+eg.  CRASHKERNEL_DEFAULT_SCALE_RATIO is also good to have,  in RHEL we
+use base_value + system_mem >> (2^14) for x86.  I'm still hesatating
+how to describe and add this option. Any suggestions will be appreciated.
 
-Best regards,
-Krzysztof
+ arch/Kconfig        |   17 +++++++++++++++++
+ kernel/crash_core.c |   19 ++++++++++++++++++-
+ 2 files changed, 35 insertions(+), 1 deletion(-)
 
->
-> The second then would fix DTC warnings by adding the address to the
-> memory nodes in all board files.
->
-> --
-> Stefan
->
->>
->>       pcie@3000 {
->>               compatible = "nvidia,tegra30-pcie";
+--- linux-x86.orig/arch/Kconfig
++++ linux-x86/arch/Kconfig
+@@ -10,6 +10,23 @@ config KEXEC_CORE
+ 	select CRASH_CORE
+ 	bool
+ 
++config CRASHKERNEL_DEFAULT_THRESHOLD_MB
++	int "System memory size threshold for using CRASHKERNEL_DEFAULT_MB"
++	depends on CRASH_CORE
++	default 0
++	help
++	  CRASHKERNEL_DEFAULT_MB will be reserved for kdump if the system
++	  memory is above or equal to CRASHKERNEL_DEFAULT_THRESHOLD_MB MB.
++	  It is only effective in case no crashkernel=X parameter is used.
++
++config CRASHKERNEL_DEFAULT_MB
++	int "Default crashkernel memory size reserved for kdump"
++	depends on CRASH_CORE
++	default 0
++	help
++	  This is used as the default kdump reserved memory size in MB.
++	  crashkernel=X kernel cmdline can overwrite this value.
++
+ config HAVE_IMA_KEXEC
+ 	bool
+ 
+--- linux-x86.orig/kernel/crash_core.c
++++ linux-x86/kernel/crash_core.c
+@@ -143,6 +143,21 @@ static int __init parse_crashkernel_simp
+ 	return 0;
+ }
+ 
++static int __init get_crashkernel_default(unsigned long long system_ram,
++					  unsigned long long *size)
++{
++	unsigned long long system_ram_mb = system_ram >> 20;
++
++	if (system_ram_mb < CONFIG_CRASHKERNEL_DEFAULT_THRESHOLD_MB) {
++		pr_debug("crashkernel: system memory size is lower than %d\n",
++			 CONFIG_CRASHKERNEL_DEFAULT_THRESHOLD_MB);
++		return -EINVAL;
++	}
++	*size = (unsigned long long)CONFIG_CRASHKERNEL_DEFAULT_MB << 20;
++
++	return 0;
++}
++
+ #define SUFFIX_HIGH 0
+ #define SUFFIX_LOW  1
+ #define SUFFIX_NULL 2
+@@ -240,8 +255,10 @@ static int __init __parse_crashkernel(ch
+ 	*crash_size = 0;
+ 	*crash_base = 0;
+ 
+-	ck_cmdline = get_last_crashkernel(cmdline, name, suffix);
++	if (!strstr(cmdline, "crashkernel="))
++		return get_crashkernel_default(system_ram, crash_size);
+ 
++	ck_cmdline = get_last_crashkernel(cmdline, name, suffix);
+ 	if (!ck_cmdline)
+ 		return -EINVAL;
+ 
