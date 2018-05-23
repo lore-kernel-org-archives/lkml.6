@@ -1,75 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932899AbeEWM6N (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 08:58:13 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53878 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932672AbeEWM6L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 08:58:11 -0400
-Subject: Re: [PATCH v4 2/2] xen/PVH: Make GDT selectors PVH-specific
-To: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-Cc: JBeulich@suse.com
-References: <20180522035445.16911-1-boris.ostrovsky@oracle.com>
- <20180522035445.16911-3-boris.ostrovsky@oracle.com>
-From: Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <62d76299-a8a2-7b05-df0b-7d9637e58e0b@suse.com>
-Date: Wed, 23 May 2018 14:58:09 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S932885AbeEWNBc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 09:01:32 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:42524 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932089AbeEWNBb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 09:01:31 -0400
+Date: Wed, 23 May 2018 15:01:25 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        Ingo Molnar <mingo@redhat.com>, linux-mm@kvack.org,
+        Shaohua Li <shli@kernel.org>, linux-raid@vger.kernel.org,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>
+Subject: Re: [PATCH v2 0/8] Introduce refcount_dec_and_lock_irqsave()
+Message-ID: <20180523130125.GZ12217@hirez.programming.kicks-ass.net>
+References: <20180509193645.830-1-bigeasy@linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <20180522035445.16911-3-boris.ostrovsky@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180509193645.830-1-bigeasy@linutronix.de>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/05/18 05:54, Boris Ostrovsky wrote:
-> We don't need to share PVH GDT layout with other GDTs, especially
-> since we now have a PVH-speciific entry (for stack canary segment).
+On Wed, May 09, 2018 at 09:36:37PM +0200, Sebastian Andrzej Siewior wrote:
+> This series is a v2 of the atomic_dec_and_lock_irqsave(). Now refcount_*
+> is used instead of atomic_* as suggested by Peter Zijlstra.
 > 
-> Define PVH's own selectors.
+> Patch
+> - 1-3 converts the user from atomic_* API to refcount_* API
+> - 4 implements refcount_dec_and_lock_irqsave
+> - 5-8 converts the local_irq_save() + refcount_dec_and_lock() users to
+>   refcount_dec_and_lock_irqsave()
 > 
-> (As a side effect of this change we are also fixing improper
-> reference to __KERNEL_CS)
+> The whole series sits also at
+>   git://git.kernel.org/pub/scm/linux/kernel/git/bigeasy/staging.git refcount_t_irqsave
 > 
-> Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 
-Reviewed-by: Juergen Gross <jgross@suse.com>
+1-2, 4-6:
 
-
-Juergen
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
