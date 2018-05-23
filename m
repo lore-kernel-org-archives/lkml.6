@@ -1,71 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932882AbeEWMwV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 08:52:21 -0400
-Received: from esa4.microchip.iphmx.com ([68.232.154.123]:3099 "EHLO
-        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932089AbeEWMwU (ORCPT
+        id S932904AbeEWMxL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 08:53:11 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:54652 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932089AbeEWMxI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 08:52:20 -0400
-X-IronPort-AV: E=Sophos;i="5.49,433,1520924400";
-   d="scan'208";a="14264235"
-Subject: Re: [RFC PATCH] mtd: spi-nor: add support to non-uniform SPI NOR
- flash memories
-To: Marek Vasut <marek.vasut@gmail.com>, <cyrille.pitchen@microchip.com>,
-        <dwmw2@infradead.org>, <computersforpeace@gmail.com>,
-        <boris.brezillon@bootlin.com>, <richard@nod.at>
-CC: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <nicolas.ferre@microchip.com>, <Cristian.Birsan@microchip.com>
-References: <20180518093233.24241-1-tudor.ambarus@microchip.com>
- <89d45190-95b0-b780-b219-e6c6adcb6147@gmail.com>
- <4cd7d47a-fd56-6b54-3b38-262adf46a97f@microchip.com>
- <bbb9387b-4404-e6a0-b8b5-f48bcebdd474@gmail.com>
- <123e50da-e49e-f876-bdb4-2719f7f7640a@microchip.com>
- <a32aa2ee-7d9e-37b6-811f-799570ce1cea@gmail.com>
-From: Tudor Ambarus <tudor.ambarus@microchip.com>
-Message-ID: <66b2b859-72db-33cc-75ae-2493a4aad235@microchip.com>
-Date: Wed, 23 May 2018 15:52:15 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <a32aa2ee-7d9e-37b6-811f-799570ce1cea@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 23 May 2018 08:53:08 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 67341601D7
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+        mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org,
+        will.deacon@arm.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        vireshk@kernel.org, ilialin@codeaurora.org
+Subject: [PATCH v11 0/8] CPU scaling support for msm8996
+Date: Wed, 23 May 2018 15:52:53 +0300
+Message-Id: <1527079981-11179-1-git-send-email-ilialin@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Marek,
+[v11]
+ * Split the series into domains
 
-On 05/23/2018 12:56 PM, Marek Vasut wrote:
-[...]
->>> [...]
->>>
->>>>>> +    while (len) {
->>>>>> +        cmd = spi_nor_find_best_erase_cmd(map, region, addr, len);
->>>>>> +        if (!cmd)
->>>>>> +            return -EINVAL;
->>>>> What would happen if you realize mid-way that you cannot erase some
->>>>> sector , do you end up with partial erase ?
->>>> Is this possible? In non-overlaid regions, the address is aligned with
->>>> at least one of the erase commands, else -EINVAL. For overlaid regions
->>>> alignment doesn't matter. But yes, if this is possible, in this case,
->>>> this proposal will do a partial erase.
->>> Shouldn't we fail up front instead ?
->> It will be great if we can do this without having performance penalties.
->> Can we loose the conditions for the last erase command? If one wants to
->> erase 80k chunk starting from offset 0 and only 32k and 64k erase type
->> are supported, can we erase 96k?
-> No. But can you maybe build a list of erase commands to be executed once
-> you validate that the erase can be performed for example ?
+[v9]
+ * Addressed comments from Viresh and Russel about the error handling
 
-My second choice was an array witch saves u8 opcode and u32 erasesize.
-There are flashes of 256MB, in the worst case scenario with 4k erase
-type, we will end up with 64K entries.
+[v8]
+ * Reordered the patch series into 4 groups
+ * Addressed comments from Amit about the comments and commit messages
+ * Addressed comments from Amit and Viresh about the resourses deallocation
 
-How about enforcing the length to be multiple of mtd->erasesize, like we
-do in uniform_erase? With this, the problem disappears.
+[v7]
+ * Addressed comments from Viresh about resourses deallocation
+   and DT compatible
 
-Thanks,
-ta
+[v6]
+ * Addressed comments from Viresh about:
+ ** Comments style
+ ** Kconfig bool instead of tristate
+ ** DT and documentation style
+ ** Resourses deallocation on an error
+ ** Typos
+
+[v5]
+ * Rebased
+ * Addressed comments from Bjorn about SPDX style,
+   functions and parameters naming
+ * Addressed comments from Viresh DT properties and style, comments style,
+   resourses deallocation, documentation placement
+ * Addressed comments from Sricharan about unnessesary include
+ * Addressed comments from Nicolas
+ * Addressed comments from Rob about the commit messages and acks
+ * Addressed comments from Mark
+
+[v4]
+ * Adressed all comments from Stephen
+ * Added CPU regulator support
+ * Added qcom-cpufreq-kryo driver
+
+[v3]
+ * Rebased on top of the latest PLL driver changes
+ * Addressed comment from Rob Herring for bindings
+
+[v2]
+ * Addressed comments from Rob Herring for bindings
+ * Addressed comments from Mark Rutland for memory barrier
+ * Addressed comments from Julien Thierry for clock reenabling condition
+ * Tuned the HW configuration for clock frequencies below 600MHz
+
+SOC (1/15):
+Extracts the kryo l2 accessors driver from the QCOM PMU driver
+
+Clocks (2/15-9/15):
+This series adds support for the CPU clocks on msm8996 devices.
+The driver uses the existing PLL drivers and is required to control
+the CPU frequency scaling on the MSM8996.
+
+Ilia Lin (6):
+  soc: qcom: Separate kryo l2 accessors from PMU driver
+  clk: Use devm_ in the register fixed factor clock
+  clk: qcom: Add CPU clock driver for msm8996
+  dt-bindings: clk: qcom: Add bindings for CPU clock for msm8996
+  clk: qcom: cpu-8996: Add support to switch below 600Mhz
+  clk: qcom: Add ACD path to CPU clock driver for msm8996
+
+Rajendra Nayak (2):
+  clk: qcom: Make clk_alpha_pll_configure available to modules
+  clk: qcom: cpu-8996: Add support to switch to alternate PLL
+
+ .../devicetree/bindings/clock/qcom,kryocc.txt      |  17 +
+ drivers/clk/clk-fixed-factor.c                     |   2 +-
+ drivers/clk/qcom/Kconfig                           |   9 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/clk-alpha-pll.c                   |   1 +
+ drivers/clk/qcom/clk-alpha-pll.h                   |   6 +
+ drivers/clk/qcom/clk-cpu-8996.c                    | 510 +++++++++++++++++++++
+ drivers/perf/Kconfig                               |   1 +
+ drivers/perf/qcom_l2_pmu.c                         |  90 +---
+ drivers/soc/qcom/Kconfig                           |   3 +
+ drivers/soc/qcom/Makefile                          |   1 +
+ drivers/soc/qcom/kryo-l2-accessors.c               |  56 +++
+ include/soc/qcom/kryo-l2-accessors.h               |  12 +
+ 13 files changed, 642 insertions(+), 67 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,kryocc.txt
+ create mode 100644 drivers/clk/qcom/clk-cpu-8996.c
+ create mode 100644 drivers/soc/qcom/kryo-l2-accessors.c
+ create mode 100644 include/soc/qcom/kryo-l2-accessors.h
+
+-- 
+1.9.1
