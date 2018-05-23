@@ -1,95 +1,154 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932677AbeEWMZm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 08:25:42 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59618 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932070AbeEWMZk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 08:25:40 -0400
-Date: Wed, 23 May 2018 13:25:30 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        ARM <linux-arm-kernel@lists.infradead.org>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Doug Berger <opendmb@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: manual merge of the arm-soc tree with the arm tree
-Message-ID: <20180523122530.GJ4828@sirena.org.uk>
+        id S932668AbeEWM1W (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 08:27:22 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54496 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932083AbeEWM1T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 08:27:19 -0400
+Date: Wed, 23 May 2018 13:27:17 +0100
+From: Liviu Dudau <Liviu.Dudau@arm.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Gustavo Padovan <gustavo@padovan.org>,
+        Sean Paul <seanpaul@chromium.org>, Jonathan Corbet <corbet@lwn.net>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        David Airlie <airlied@linux.ie>, Brian Starkey <brian.starkey@arm.com>,
+        Alexandru-Cosmin Gheorghe <alexandru-cosmin.gheorghe@arm.com>,
+        Eric Anholt <eric@anholt.net>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Daniel Stone <daniels@collabora.com>
+Subject: Re: [PATCH v8 3/3] drm: writeback: Add client capability for
+ exposing writeback connectors
+Message-ID: <20180523122716.GF1582@e110455-lin.cambridge.arm.com>
+References: <20180518151743.29937-1-Liviu.Dudau@arm.com>
+ <20180518151743.29937-4-Liviu.Dudau@arm.com>
+ <7d0201a9-8eed-f332-b6cb-241560cd05c4@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="YPJ8CVbwFUtL7OFW"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7d0201a9-8eed-f332-b6cb-241560cd05c4@linux.intel.com>
 User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, May 23, 2018 at 11:34:32AM +0200, Maarten Lankhorst wrote:
+> Op 18-05-18 om 17:17 schreef Liviu Dudau:
+> > Due to the fact that writeback connectors behave in a special way
+> > in DRM (they always report being disconnected) we might confuse some
+> > userspace. Add a client capability for writeback connectors that will
+> > filter them out for clients that don't understand the capability.
+> >
+> > Re-requested-by: Sean Paul <seanpaul@chromium.org>
+> > Cc: Brian Starkey <brian.starkey@arm.com>
+> > Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
+> > ---
+> >  drivers/gpu/drm/drm_ioctl.c       | 7 +++++++
+> >  drivers/gpu/drm/drm_mode_config.c | 5 +++++
+> >  include/drm/drm_file.h            | 7 +++++++
+> >  include/uapi/drm/drm.h            | 9 +++++++++
+> >  4 files changed, 28 insertions(+)
+> >
+> > diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/drm_ioctl.c
+> > index af782911c505d..59951ff3e3630 100644
+> > --- a/drivers/gpu/drm/drm_ioctl.c
+> > +++ b/drivers/gpu/drm/drm_ioctl.c
+> > @@ -325,6 +325,13 @@ drm_setclientcap(struct drm_device *dev, void *data, struct drm_file *file_priv)
+> >  		file_priv->atomic = req->value;
+> >  		file_priv->universal_planes = req->value;
+> >  		break;
+> > +	case DRM_CLIENT_CAP_WRITEBACK_CONNECTORS:
+> > +		if (!file_priv->atomic || !drm_core_check_feature(dev, DRIVER_ATOMIC))
+> > +			return -EINVAL;
+> Wondering how you can set the atomic cap without DRIVER_ATOMIC. :)
 
---YPJ8CVbwFUtL7OFW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Caps can only be set one at a time. I was trying to cater for the cases
+where userspace can set the WRITEBACK_CONNECTORS client cap before or
+after setting the atomic cap.
 
-Hi all,
+> 
+> That part could be dropped I think. We should probably WARN when trying to create a writeback connector without the DRIVER_ATOMIC cap set.
 
-Today's linux-next merge of the arm-soc tree got a conflict in:
+I could still keep the check for file_priv->atomic being set when
+accepting the DRM_CLIENT_CAP_WRITEBACK_CONNECTORS and would not need a
+warn.
 
-  arch/arm/include/asm/cputype.h
+Best regards,
+Liviu
 
-between commit:
+> > +		if (req->value > 1)
+> > +			return -EINVAL;
+> > +		file_priv->writeback_connectors = req->value;
+> > +		break;
+> >  	default:
+> >  		return -EINVAL;
+> >  	}
+> > diff --git a/drivers/gpu/drm/drm_mode_config.c b/drivers/gpu/drm/drm_mode_config.c
+> > index e5c653357024d..21e353bd3948e 100644
+> > --- a/drivers/gpu/drm/drm_mode_config.c
+> > +++ b/drivers/gpu/drm/drm_mode_config.c
+> > @@ -145,6 +145,11 @@ int drm_mode_getresources(struct drm_device *dev, void *data,
+> >  	count = 0;
+> >  	connector_id = u64_to_user_ptr(card_res->connector_id_ptr);
+> >  	drm_for_each_connector_iter(connector, &conn_iter) {
+> > +		/* only expose writeback connectors if userspace understands them */
+> > +		if (!file_priv->writeback_connectors &&
+> > +		    (connector->connector_type == DRM_MODE_CONNECTOR_WRITEBACK))
+> > +			continue;
+> > +
+> >  		if (drm_lease_held(file_priv, connector->base.id)) {
+> >  			if (count < card_res->count_connectors &&
+> >  			    put_user(connector->base.id, connector_id + count)) {
+> > diff --git a/include/drm/drm_file.h b/include/drm/drm_file.h
+> > index 5176c3797680c..2a09b3c8965c6 100644
+> > --- a/include/drm/drm_file.h
+> > +++ b/include/drm/drm_file.h
+> > @@ -181,6 +181,13 @@ struct drm_file {
+> >  	/** @atomic: True if client understands atomic properties. */
+> >  	unsigned atomic:1;
+> >  
+> > +	/**
+> > +	 * @writeback_connectors:
+> > +	 *
+> > +	 * True if client understands writeback connectors
+> > +	 */
+> > +	unsigned writeback_connectors:1;
+> > +
+> >  	/**
+> >  	 * @is_master:
+> >  	 *
+> > diff --git a/include/uapi/drm/drm.h b/include/uapi/drm/drm.h
+> > index 6fdff5945c8a0..59f27ea928b42 100644
+> > --- a/include/uapi/drm/drm.h
+> > +++ b/include/uapi/drm/drm.h
+> > @@ -680,6 +680,15 @@ struct drm_get_cap {
+> >   */
+> >  #define DRM_CLIENT_CAP_ATOMIC	3
+> >  
+> > +/**
+> > + * DRM_CLIENT_CAP_WRITEBACK_CONNECTORS
+> > + *
+> > + * If set to 1, the DRM core will expose special connectors to be used for
+> > + * writing back to memory the scene setup in the commit. Depends on client
+> > + * also supporting DRM_CLIENT_CAP_ATOMIC
+> > + */
+> > +#define DRM_CLIENT_CAP_WRITEBACK_CONNECTORS	4
+> > +
+> >  /** DRM_IOCTL_SET_CLIENT_CAP ioctl argument type */
+> >  struct drm_set_client_cap {
+> >  	__u64 capability;
+> 
+> ~Maarten
+> 
 
-  b2ccaa851e9882c10 ("ARM: add CPU part numbers for Cortex A73, A75 and Bra=
-hma B15")
-
-=66rom the arm tree and several commits from the arm-soc tree:
-
-  842fa17d6c95368d7 ("ARM: add Broadcom Brahma-B15 main ID definition")
-  9e35ddc962a656bf4 ("ARM: add Broadcom Brahma-B53 main ID definition")
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc arch/arm/include/asm/cputype.h
-index adc4a3eef815,d1b62ee69f3b..000000000000
---- a/arch/arm/include/asm/cputype.h
-+++ b/arch/arm/include/asm/cputype.h
-@@@ -77,12 -75,11 +75,13 @@@
-  #define ARM_CPU_PART_CORTEX_A12		0x4100c0d0
-  #define ARM_CPU_PART_CORTEX_A17		0x4100c0e0
-  #define ARM_CPU_PART_CORTEX_A15		0x4100c0f0
- +#define ARM_CPU_PART_CORTEX_A73		0x4100d090
- +#define ARM_CPU_PART_CORTEX_A75		0x4100d0a0
-  #define ARM_CPU_PART_MASK		0xff00fff0
- =20
- -/* Broadcom implemented processors */
- +/* Broadcom cores */
-  #define ARM_CPU_PART_BRAHMA_B15		0x420000f0
-+ #define ARM_CPU_PART_BRAHMA_B53		0x42001000
- =20
-  /* DEC implemented cores */
-  #define ARM_CPU_PART_SA1100		0x4400a110
-
---YPJ8CVbwFUtL7OFW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsFXbkACgkQJNaLcl1U
-h9B44Qf+IV0QSACk3u+0oDrLeggpqItPMwZuS8Rxh9zAbNsIa9fCBZ3KzriX3T+t
-pFV26OSD5tWRn2YvI3IBPanaJqnJYvGq/nicIjc7LV65BMBcA/lDu81eYkCvDZ/r
-w0WNb88y7StUnMdHdiGVsLuvh/m12jZJMOMqJoRAZGA5rF+NHtl8Z0kQ+o3ej2r7
-0fs/nGdQqgGblp40h3QN7Sx90J2PX29IN02HA9/LB/5uvfjHZJOSYIaiUAqF4AF2
-5bDT/BlGc9QpfDGq71s2eIt5za0KomePilJzHAza7AhFTvYOcLssbHtcUmv6Z7z6
-Wp0QwdluQkcNYPm8+IcgnTguWUqkpg==
-=7lBX
------END PGP SIGNATURE-----
-
---YPJ8CVbwFUtL7OFW--
+-- 
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
