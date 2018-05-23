@@ -1,125 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753632AbeEWBe0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 21:34:26 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:51188 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753513AbeEWBeX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 21:34:23 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
-   d="scan'208";a="40231300"
-Subject: Re: [PATCH 4/5] acpi/processor: Fix the return value of
- acpi_processor_ids_walk()
-To: Thomas Gleixner <tglx@linutronix.de>
-CC: LKML <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
-        <linux-acpi@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Len Brown <lenb@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-References: <20180320110432.28127-1-douly.fnst@cn.fujitsu.com>
- <20180320110432.28127-5-douly.fnst@cn.fujitsu.com>
- <alpine.DEB.2.21.1805191704150.1599@nanos.tec.linutronix.de>
- <7c33b3bd-7e9d-1583-737c-d2edd457bd1a@cn.fujitsu.com>
-From: Dou Liyang <douly.fnst@cn.fujitsu.com>
-Message-ID: <425bceb1-a03c-06da-f39c-1299662fb6b0@cn.fujitsu.com>
-Date: Wed, 23 May 2018 09:34:18 +0800
+        id S1753709AbeEWBjk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 21:39:40 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36762 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753532AbeEWBji (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 21:39:38 -0400
+Subject: Re: [RFC V4 PATCH 7/8] vhost: packed ring support
+To: Wei Xu <wexu@redhat.com>
+Cc: mst@redhat.com, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jfreimann@redhat.com,
+        tiwei.bie@intel.com
+References: <1526473941-16199-1-git-send-email-jasowang@redhat.com>
+ <1526473941-16199-8-git-send-email-jasowang@redhat.com>
+ <20180522165448.GA13523@wei-ubt>
+From: Jason Wang <jasowang@redhat.com>
+Message-ID: <e12d4055-6ae6-4d00-ae8b-1acd88633f48@redhat.com>
+Date: Wed, 23 May 2018 09:39:28 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <7c33b3bd-7e9d-1583-737c-d2edd457bd1a@cn.fujitsu.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
+In-Reply-To: <20180522165448.GA13523@wei-ubt>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.167.226.106]
-X-yoursite-MailScanner-ID: BB5034B40403.A96C0
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-At 05/22/2018 09:47 AM, Dou Liyang wrote:
-> 
-> 
-> At 05/19/2018 11:06 PM, Thomas Gleixner wrote:
->> On Tue, 20 Mar 2018, Dou Liyang wrote:
+
+
+On 2018年05月23日 00:54, Wei Xu wrote:
+> On Wed, May 16, 2018 at 08:32:20PM +0800, Jason Wang wrote:
+>> Signed-off-by: Jason Wang <jasowang@redhat.com>
+>> ---
+>>   drivers/vhost/net.c   |   3 +-
+>>   drivers/vhost/vhost.c | 539 ++++++++++++++++++++++++++++++++++++++++++++++----
+>>   drivers/vhost/vhost.h |   8 +-
+>>   3 files changed, 513 insertions(+), 37 deletions(-)
 >>
->>> ACPI driver should make sure all the processor IDs in their ACPI 
->>> Namespace
->>> are unique for CPU hotplug. the driver performs a depth-first walk of 
->>> the
->>> namespace tree and calls the acpi_processor_ids_walk().
->>>
->>> But, the acpi_processor_ids_walk() will return true if one processor is
->>> checked, that cause the walk break after walking pass the first 
->>> processor.
->>>
->>> Repace the value with AE_OK which is the standard acpi_status value.
->>>
->>> Fixes 8c8cb30f49b8 ("acpi/processor: Implement DEVICE operator for 
->>> processor enumeration")
->>>
->>> Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
->>> ---
->>>   drivers/acpi/acpi_processor.c | 4 ++--
->>>   1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/acpi/acpi_processor.c 
->>> b/drivers/acpi/acpi_processor.c
->>> index 449d86d39965..db5bdb59639c 100644
->>> --- a/drivers/acpi/acpi_processor.c
->>> +++ b/drivers/acpi/acpi_processor.c
->>> @@ -663,11 +663,11 @@ static acpi_status __init (acpi_handle handle,
->>>       }
->>>       processor_validated_ids_update(uid);
->>> -    return true;
->>> +    return AE_OK;
->>>   err:
->>>       acpi_handle_info(handle, "Invalid processor object\n");
->>> -    return false;
->>> +    return AE_OK;
->>
->> I'm not sure whether this is the right return value here. Rafael?
->>
+>> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+>> index 8304c30..f2a0f5b 100644
+>> --- a/drivers/vhost/vhost.c
+>> +++ b/drivers/vhost/vhost.c
+>> @@ -1358,6 +1382,8 @@ long vhost_vring_ioctl(struct vhost_dev *d, unsigned int ioctl, void __user *arg
+>>   			break;
+>>   		}
+>>   		vq->last_avail_idx = s.num;
+>> +		if (vhost_has_feature(vq, VIRTIO_F_RING_PACKED))
+>> +			vq->avail_wrap_counter = s.num >> 31;
+>>   		/* Forget the cached index value. */
+>>   		vq->avail_idx = vq->last_avail_idx;
+>>   		break;
+>> @@ -1366,6 +1392,8 @@ long vhost_vring_ioctl(struct vhost_dev *d, unsigned int ioctl, void __user *arg
+>>   		s.num = vq->last_avail_idx;
+>>   		if (copy_to_user(argp, &s, sizeof s))
+>>   			r = -EFAULT;
+>> +		if (vhost_has_feature(vq, VIRTIO_F_RING_PACKED))
+>> +			s.num |= vq->avail_wrap_counter << 31;
+>>   		break;
+>>   	case VHOST_SET_VRING_ADDR:
+>>   		if (copy_from_user(&a, argp, sizeof a)) {
+> 'last_used_idx' also needs to be saved/restored here.
+>
+> I have figured out the root cause of broken device after reloading
+> 'virtio-net' module, all indices have been reset for a reloading but
+> 'last_used_idx' is not properly reset in this case. This confuses
+> handle_rx()/tx().
+>
+> Wei
+>
 
-+Cc Rafael's common used email address.
+Good catch, so we probably need a new ioctl to sync between qemu and vhost.
 
-I am sorry, I created the cc list using ./script/get_maintainers.pl ...
-and didn't check it.
+Something like VHOST_SET/GET_USED_BASE.
 
-Thanks,
-	dou
-
-> Hi, Thomas, Rafael,
-> 
-> Yes, I used AE_OK to make sure it can skip the invalid objects and
-> continue to do the following other objects, I'm also not sure.
-> 
-> For this bug, recently, I sent another patch to remove this check code
-> away.
-> 
->     https://lkml.org/lkml/2018/5/17/320
-> 
-> IMO, the duplicate IDs can be avoid by the other code
-> 
->     if (invalid_logical_cpuid(pr->id) || !cpu_present(pr->id)) ---- 1)
-> 
-> As the mapping of cpu_id(pr->id) and processor_id is fixed, when
-> hot-plugging a physical CPU, if its processor_id is duplicated with the
-> present, the above condition 1) will be 0, and Linux will do not add
-> this CPU.
-> 
-> And, when every time the system starts, this code will be executed, it
-> will waste more time with the increase in the number of CPU.
-> 
-> So I prefer to remove this code.
-> 
-> Thanks,
->      dou
-> 
-> 
-> 
+Thanks
