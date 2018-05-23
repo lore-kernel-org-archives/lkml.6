@@ -1,111 +1,364 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754191AbeEWHAH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 03:00:07 -0400
-Received: from mail-eopbgr40061.outbound.protection.outlook.com ([40.107.4.61]:61440
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754005AbeEWHAB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 03:00:01 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=vladbu@mellanox.com;
-References: <20180519.230258.1374885458106197707.davem@davemloft.net> <1526932984-11544-1-git-send-email-vladbu@mellanox.com> <CAM_iQpVMFSxnN6dEi0U4=aw7s7TcJ88ShiNTDXcoRUVL82jTZw@mail.gmail.com>
-User-agent: mu4e 0.9.16; emacs 25.3.50.2
-From: Vlad Buslov <vladbu@mellanox.com>
-To: Cong Wang <xiyou.wangcong@gmail.com>
-Cc: David Miller <davem@davemloft.net>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        Jamal Hadi Salim <jhs@mojatatu.com>, Jiri Pirko <jiri@resnulli.us>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next v2] net: sched: don't disable bh when accessing action idr
-In-reply-to: <CAM_iQpVMFSxnN6dEi0U4=aw7s7TcJ88ShiNTDXcoRUVL82jTZw@mail.gmail.com>
-Date: Wed, 23 May 2018 09:57:34 +0300
-Message-ID: <vbfy3gaj1up.fsf@reg-r-vrt-018-180.mtr.labs.mlnx>
+        id S1754221AbeEWHAi (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 03:00:38 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:28133 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754005AbeEWHAf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 03:00:35 -0400
+Subject: Re: [PATCH v7 2/3] powerpc/mm: Only read faulting instruction when
+ necessary in do_page_fault()
+To: Nicholas Piggin <npiggin@gmail.com>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+References: <1053e5f43a2ea9a9d9abb1f45c88dffb60b9b4fc.1526995927.git.christophe.leroy@c-s.fr>
+ <d37d9ce7b925bc254082cd664e37a062131d04b8.1526995927.git.christophe.leroy@c-s.fr>
+ <20180523003801.43070ddc@roar.ozlabs.ibm.com>
+ <cb0eaf6d-80ab-b503-d797-cadcd60d4c17@c-s.fr>
+ <20180523162901.791deea9@roar.ozlabs.ibm.com>
+From: Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <2214c384-5821-ef5e-d074-ef85b4f7f92d@c-s.fr>
+Date: Wed, 23 May 2018 09:00:33 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [37.142.13.130]
-X-ClientProxiedBy: VI1PR0102CA0073.eurprd01.prod.exchangelabs.com
- (2603:10a6:803:15::14) To HE1PR05MB4700.eurprd05.prod.outlook.com
- (2603:10a6:7:9a::13)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:HE1PR05MB4700;
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR05MB4700;3:4n7UYmDxIhQ82DJcnhIg3PdxaN2O3XPIFXL7MDbgYg4eSP5wHMP0iMeHV8y3nFiVgMLJHaLisgiLnI9PYRw3cs4H+69RiioxX2tzUDFkDMFzY1I7Rx3MO5P5VB8m/c1B5+0RoJAyYLH9kR34PR5oMq9qao0eXZa+3V7QYF5o9EtBHXrGKDO542hyCWauf3fh6L5IiTa/EPi4GejORwV1bjmJbbHIcCY79U+Y3anpn5C6wQjx/bRTqHWj7wBcyxDw;25:LY4maJIssWbk6Tk2fndklmWvUthQfIEdym7DeHq0Fzbk2lJIWq34HaxksRJcNjzTjrVAzQ3YLns9QMR/XpNsNetPDEdBNkq7jZMsnsCMO9I1M81Q20G2NykUwkBKCrqFvf3hmNHPt6ZHtZ8+SzaUK3fExEJSVFeWrGiJZlWbVqbiSGBtrtg3TWpADESbKv7ihPKMOc50SaJ+rY2AhroucqxVfn6uyxuTnc0XpUR2TDsGrk6tzSV5WjUVYvIJaltrrBJ97mQSG6aBTdgaDuZVhW0sdH9ZUGVtVq8Hpy1kJ/9YJRWfRkYIWnC5NA3zZCBfSVxUadXgtQjyK33WGg0P0w==;31:rCiLjb9PdhUtElHhP9iTUXZepLoZJCFefJONDXF9Zyrvx3urce/sLXTpD42PW3OC694vORrR0IWOa9fh9pgXp38+OEr/6KKhfPVitmAeb9dGdOkpX/4GVxrqN1oz85t3527gCpYKmsbRF+QDiqTvi6ZbWRXwJrDLmwhvyN3T4zy14sEidWhuDISywcxfevqseJq3gd/MSZ6dyk3yo5IB/EdHl5p50SmxcXWydt/C18o=
-X-MS-TrafficTypeDiagnostic: HE1PR05MB4700:
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR05MB4700;20:S5OEMPkEbzf53DZi8AwsTOMOD9dwHbOEjG8Pv0aUXmaWxTJNKgIY7TTqInc5HqAqJ+f8BH66pJSaBMFFoBQpYHmF/dU1YyPoEaWulcP6iVB3cJq7628OeiAoN9tvtLLTCJ49y0fecdbUo7ZjlqnIh1vnU5vzHMByEgbj2WAYjHgYlrUfpW822F3zph1DxrYQU3bS7/FpJ0SikKhneCbC0Ixda2s9qVLVrvvgpgYzdmBrWD+R/wVkIb7pXODyUMOYrW8lrmrppGk9uiFkJTmeLJ1WKCWn4X4hltIU/EQg5sZHDzNyEiffAl36VhXzb00VwhlqJkdQih8ayyUot9NZumZQlz8Nk5zNF980bCm6igmor08mRWmktDk5Sb6wzxHLc3W9V2jSCpwvcu0zHDdmLJaV7oPAZHhQvJdM6ugR0gO6dunxHxNtPCUeLyjYCkmJbAfRdBkQUrMhbJIkuL/iENPLax9bAsPzEUviY0y2i4A1fgYqDKY4M7XPiDqN3I04;4:MBiKFFtGAA0BYPAR2ke4i9OVIPEdFeGTUjmhazRLN90vsF7e4xtTMD32hxOYFDV4F79h4L//BfiqOcY4mh9xw6zaokh6a6s/xbQRPBnEa+2pVFacXsZc1GyMQaALtpE76BDMAMhl3jtHo0vom+qOX+j6wwuJGcxLuwKOWLJ7AgL8ZUtpTCcQ3fNi0pXPIGQFj6rzDdBrLzUzlx5OnO8HeHeFoVlf3xS/1eCi0tOiGQppZ665YJims3jUVd764MQwL/O0Z56D3G9PWkXZQR0/CZ92NfKuVLUN8sODg4KP0FBQSu9QxYaXN1fPEIFcs4gmxm4gzuFTo2IfdgDdUHuE8/ZX3ylPLJChPdGoeEVXd10=
-X-Microsoft-Antispam-PRVS: <HE1PR05MB4700D271D3A5DFB200FDFC5AAD6B0@HE1PR05MB4700.eurprd05.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(85827821059158)(788757137089);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231254)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:HE1PR05MB4700;BCL:0;PCL:0;RULEID:;SRVR:HE1PR05MB4700;
-X-Forefront-PRVS: 06818431B9
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(396003)(346002)(376002)(39380400002)(39860400002)(199004)(189003)(76176011)(3846002)(53936002)(52116002)(2906002)(39060400002)(7696005)(6666003)(305945005)(229853002)(6246003)(59450400001)(66066001)(6486002)(53546011)(7736002)(386003)(4326008)(26005)(51416003)(6116002)(106356001)(81156014)(105586002)(9686003)(81166006)(186003)(47776003)(6916009)(16526019)(6512007)(8676002)(8936002)(50466002)(5660300001)(956004)(486006)(478600001)(16586007)(68736007)(97736004)(476003)(58126008)(316002)(446003)(86362001)(25786009)(54906003)(11346002)(48376002);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR05MB4700;H:reg-r-vrt-018-180.mtr.labs.mlnx.mellanox.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;HE1PR05MB4700;23:ok4ymQDBQPUFNGaSsF72zF3W3a/BV7vtytQs4NoD1?=
- =?us-ascii?Q?NPzqdkqg7qoiwJzZ5TP2LadR9SSlOEj4RUXkqW9qtT5J8XBK+preC+OIiq9x?=
- =?us-ascii?Q?8gMkOJNO7R6HKTfQFxeNaPNlCkQ8528jYsLPCXUD6k8eaWz0csbxGJt01AtY?=
- =?us-ascii?Q?pEz39rfx1CeYU5OMGyjZRKrRr6Y6wkf9zbUO25ResC0Qlx9U/GoCgQkUDn73?=
- =?us-ascii?Q?pCDq+Er1o3oqRWi3yAc748+gEWim1LI0qMsGQ6jHvCQPMuh7KWYgH3AK223w?=
- =?us-ascii?Q?zPopLiSyz+zX82N5+odMqnLeEFx2B3fXb0kGMPcCbeiFHF67jAFhkgYI4OoE?=
- =?us-ascii?Q?fEr+6Kq2egg0s0YIzfzJTBiHQqkJqbHuzO2CD7LNai9TFsfXg1biAlSTLwJC?=
- =?us-ascii?Q?KqqUQtzxmj2ig1eLVMDXat3Nmsg0o8sv1e5hYiGz7HXTzzyrFo5NK+6l+bfU?=
- =?us-ascii?Q?8nKTe8tpZZJ/6YEX0lMzA/mozEJTaAFtqP+KrigXrGsQ2BlAJjgvF4u/lDHa?=
- =?us-ascii?Q?SkpboK1tVAyjlmLj6SPub715bnimMTmhvSPttqrRHYbdJh6PZz7M3mH0+VFF?=
- =?us-ascii?Q?mLFEYJdVcQ4R7TtPSprVR+QyZfc816g8J2mq/cxn44bJeEuMv7UnSvSaiPJE?=
- =?us-ascii?Q?1iE44aTamp5zPeX70CbBW633CbRT9hmOZzf6ObfuxnlLt9qkHz1GsU+AFprm?=
- =?us-ascii?Q?kjuoKdWiInoPAqnkBwl12+55xvjefgUsiwRMZ323TjirprKlnJqTNxn0aUQU?=
- =?us-ascii?Q?PQtZNOXhWX+yPq9cd5CBaT6FRn7G4MaehKbu+ZDfpMA+gx2TgwsfJ7j4JQ6x?=
- =?us-ascii?Q?FeyH1KfKvMRRvdIrtXJGkuebU3ck/KZ38SMRFXXf5VF867WF+QlWZ48hFCBf?=
- =?us-ascii?Q?sKtgP8SoxAqmhoz3gWr6nrBbLAebespAipEAZa9ktxdXp6U0eLRaI9yP7jJb?=
- =?us-ascii?Q?/wlxKMaM7FtgUtSytPyBvbW2jBBAIFcYSutyDYNb7MWDC8Sv9NFbL5G/gSsx?=
- =?us-ascii?Q?majce3U6NDzfpKzuF4Oyjiyc2Cbv77j1shmvk4umYQQ/v2RF2YSZIlLV3pWH?=
- =?us-ascii?Q?PtUEPQaq98yaKM7noV8xCZSNTXpscCK5nMuS5XgmRGeK9yGuMnhTW8vsv26z?=
- =?us-ascii?Q?1FgUEC6XNJqsobDWqTE1dKF5M0SJkV3yEqRvT+mywRvVEmebWO8Ig+UzBp2I?=
- =?us-ascii?Q?s0O9HswB+xUjKxB2xl5xTAshHkcTL2AIwZ5K+oZZFkpuOeJxtEmvr1qOzcG3?=
- =?us-ascii?Q?DADSrOxHI/T4FN2q61sTpjf1agKvApYNtUwHNcvjk9dIwgg0SpXP+XimKphe?=
- =?us-ascii?B?UT09?=
-X-Microsoft-Antispam-Message-Info: CWDZZsObZbL/grsPbeFosdWG3U+jxuW8Ih/wsjpMM4BSLy46GmfHEbh8ACqQ0FPYahUzlXv2VMEWXgHOqznaHi9iQVgiPCChVeILcGBRzMNaRvvJ2C83Ns572bvYIHZOidts+4lSH7o0XlcZqw2HSfSW4KcEudDduZjqRFBI9iSIpMh0fMpVG5drMqIFCTMM
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR05MB4700;6:36gm8V2pVW3znIGlF9/m8nMxH6RDy8KKnMclj43p3SVEUD0GbeB+IFjLAG5saYe9V+lu3UK+Yq8XZPhyTEJcNiFptj92aKTSvmz+USYHNqalz8HwztRmRDHmbk7W917+y8gJ7FhPUm0uyUblPyfwCv5ZiSuVkf4so4QV/If3LefaqBNqx+N5GU+vjAKNCrh0G5XgG71TY/vaSXtfpaVIf9hGG0pd3mqpEoLzpgjHedYGbtP8n9awPMCSu9sweBGpraz7SGDNK2nCIjd7tB7LTaMSvTrB/1XsGe+B14yq2RK/RjcBcbeE/UZ4qAkWDClqvtKuShnT8PbD2g4iJKiwT5t/+KbaP9kiPH6zQuha20tLIcQADUI2FMuJGDWrxN+CSen/wf+h9q+SUrq6mg3BKgfEfAR0ujD5HVwcmgBebYgoUJOLOo8ViSqZLgl2FLg+NOIIgwfycWNLdnYlaXgiWQ==;5:puDdzAstX7r9y0WrY5pE/Ptc3KNlZoAgxymiJY8Yccd3N+wH38ofW5kvE4kDi3EIEjvikEro/8jExb48buSxDUjk3jWzm9fR/l+YbWc0uQQwyWGLve6GwzTRjWPlE/6GSt18KFAxeV8MF0dz3VBBr4mFu/r7tVcCH3whrds3f98=;24:NU5XYJMP7xGGHTFj1Po13z21Fx5YcmL96tCQmB1zn0aNQx2fHmAmHDauBCaKSO4lpsQ1MfDtylHtcRpe5c7FkPrswCgOIKVAbImexj+e/HA=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR05MB4700;7:yPmipzpsWu4bqs4x2uAab4SCpcqVjM3bOj91LrBtwuCbmJN9+xP5rhHP+piRRALqsp+3c9fFOwbysxfZ1eHm86KMzADRp455JR2JVjRzOtYZ/KKKAHQDLfE1dSeC6cz1Hyf1lg3d8jthUmX5yZsbSIyqZWDAE/1q5IoUP/NxhBDsYybXYLtiqFNrX5gvEHpRF/ZbfWN69cbVvgLAt00CkStcr0qJyV0aLSAvvm+TBgRlrvzMCNKWkGmh8+S1mHSR
-X-MS-Office365-Filtering-Correlation-Id: cc65ce38-ff59-4885-ea37-08d5c07acb62
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 May 2018 06:59:56.0780 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: cc65ce38-ff59-4885-ea37-08d5c07acb62
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR05MB4700
+In-Reply-To: <20180523162901.791deea9@roar.ozlabs.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On Wed 23 May 2018 at 01:10, Cong Wang <xiyou.wangcong@gmail.com> wrote:
-> On Mon, May 21, 2018 at 1:03 PM, Vlad Buslov <vladbu@mellanox.com> wrote:
->> Initial net_device implementation used ingress_lock spinlock to synchronize
->> ingress path of device. This lock was used in both process and bh context.
->> In some code paths action map lock was obtained while holding ingress_lock.
->> Commit e1e992e52faa ("[NET_SCHED] protect action config/dump from irqs")
->> modified actions to always disable bh, while using action map lock, in
->> order to prevent deadlock on ingress_lock in softirq. This lock was removed
->> from net_device, so disabling bh, while accessing action map, is no longer
->> necessary.
+
+Le 23/05/2018 à 08:29, Nicholas Piggin a écrit :
+> On Tue, 22 May 2018 16:50:55 +0200
+> Christophe LEROY <christophe.leroy@c-s.fr> wrote:
+> 
+>> Le 22/05/2018 à 16:38, Nicholas Piggin a écrit :
+>>> On Tue, 22 May 2018 16:02:56 +0200 (CEST)
+>>> Christophe Leroy <christophe.leroy@c-s.fr> wrote:
+>>>    
+>>>> Commit a7a9dcd882a67 ("powerpc: Avoid taking a data miss on every
+>>>> userspace instruction miss") has shown that limiting the read of
+>>>> faulting instruction to likely cases improves performance.
+>>>>
+>>>> This patch goes further into this direction by limiting the read
+>>>> of the faulting instruction to the only cases where it is likely
+>>>> needed.
+>>>>
+>>>> On an MPC885, with the same benchmark app as in the commit referred
+>>>> above, we see a reduction of about 3900 dTLB misses (approx 3%):
+>>>>
+>>>> Before the patch:
+>>>>    Performance counter stats for './fault 500' (10 runs):
+>>>>
+>>>>            683033312      cpu-cycles                                                    ( +-  0.03% )
+>>>>               134538      dTLB-load-misses                                              ( +-  0.03% )
+>>>>                46099      iTLB-load-misses                                              ( +-  0.02% )
+>>>>                19681      faults                                                        ( +-  0.02% )
+>>>>
+>>>>          5.389747878 seconds time elapsed                                          ( +-  0.06% )
+>>>>
+>>>> With the patch:
+>>>>
+>>>>    Performance counter stats for './fault 500' (10 runs):
+>>>>
+>>>>            682112862      cpu-cycles                                                    ( +-  0.03% )
+>>>>               130619      dTLB-load-misses                                              ( +-  0.03% )
+>>>>                46073      iTLB-load-misses                                              ( +-  0.05% )
+>>>>                19681      faults                                                        ( +-  0.01% )
+>>>>
+>>>>          5.381342641 seconds time elapsed                                          ( +-  0.07% )
+>>>>
+>>>> The proper work of the huge stack expansion was tested with the
+>>>> following app:
+>>>>
+>>>> int main(int argc, char **argv)
+>>>> {
+>>>> 	char buf[1024 * 1025];
+>>>>
+>>>> 	sprintf(buf, "Hello world !\n");
+>>>> 	printf(buf);
+>>>>
+>>>> 	exit(0);
+>>>> }
+>>>>
+>>>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>>>> ---
+>>>>    v7: Following comment from Nicholas on v6 on possibility of the page getting removed from the pagetables
+>>>>        between the fault and the read, I have reworked the patch in order to do the get_user() in
+>>>>        __do_page_fault() directly in order to reduce complexity compared to version v5
+>>>
+>>> This is looking better, thanks.
+>>>    
+>>>> diff --git a/arch/powerpc/mm/fault.c b/arch/powerpc/mm/fault.c
+>>>> index fcbb34431da2..dc64b8e06477 100644
+>>>> --- a/arch/powerpc/mm/fault.c
+>>>> +++ b/arch/powerpc/mm/fault.c
+>>>> @@ -450,9 +450,6 @@ static int __do_page_fault(struct pt_regs *regs, unsigned long address,
+>>>>    	 * can result in fault, which will cause a deadlock when called with
+>>>>    	 * mmap_sem held
+>>>>    	 */
+>>>> -	if (is_write && is_user)
+>>>> -		get_user(inst, (unsigned int __user *)regs->nip);
+>>>> -
+>>>>    	if (is_user)
+>>>>    		flags |= FAULT_FLAG_USER;
+>>>>    	if (is_write)
+>>>> @@ -498,6 +495,26 @@ static int __do_page_fault(struct pt_regs *regs, unsigned long address,
+>>>>    	if (unlikely(!(vma->vm_flags & VM_GROWSDOWN)))
+>>>>    		return bad_area(regs, address);
+>>>>    
+>>>> +	if (unlikely(is_write && is_user && address + 0x100000 < vma->vm_end &&
+>>>> +		     !inst)) {
+>>>> +		unsigned int __user *nip = (unsigned int __user *)regs->nip;
+>>>> +
+>>>> +		if (likely(access_ok(VERIFY_READ, nip, sizeof(inst)))) {
+>>>> +			int res;
+>>>> +
+>>>> +			pagefault_disable();
+>>>> +			res = __get_user_inatomic(inst, nip);
+>>>> +			pagefault_enable();
+>>>> +			if (unlikely(res)) {
+>>>> +				up_read(&mm->mmap_sem);
+>>>> +				res = __get_user(inst, nip);
+>>>> +				if (!res && inst)
+>>>> +					goto retry;
+>>>
+>>> You're handling error here but the previous code did not?
 >>
->> Replace all action idr spinlock usage with regular calls that do not
->> disable bh.
->
-> While your patch is probably fine, the above justification seems not.
+>> The previous code did in store_updates_sp()
+>>
+>> When I moved get_user() out of that function in preceeding patch, I did
+>> consider that if get_user() fails, inst will remain 0, which means that
+>> store_updates_sp() will return false if ever called.
+> 
+> Well it handles it just by saying no the store does not update SP.
+> Yours now segfaults it, doesn't it?
 
-Sorry if I missed something. My justification is based on commit
-description that added bh disable in subject code.
+Yes it segfaults the same way as before, as it tell the expansion is bad.
 
->
-> In the past, tc actions could be released in BH context because tc
-> filters use call_rcu(). However, I moved them to a workqueue recently.
-> So before my change I don't think you can remove the BH protection,
-> otherwise race with idr_remove()...
+> 
+> I don't think that's a bad idea, I think it should go in a patch by
+> itself though. In theory we can have execute but not read, I guess
+> that's not really going to work here either way and I don't know if
+> Linux exposes it ever.
 
-Found commit series that you described. Will modify commit message
-accordingly.
+I don't understand what you mean, that's not different from before, is it ?
+
+> 
+>>
+>> Now, as the semaphore has been released, we really need to do something,
+>> because if we goto retry inconditionally, we may end up in an infinite
+>> loop, and we can't let it continue either as the semaphore is not held
+>> anymore.
+>>
+>>>    
+>>>> +				return bad_area_nosemaphore(regs, address);
+>>>> +			}
+>>>> +		}
+>>>> +	}
+>>>
+>>> Would it be nicer to move all this up into bad_stack_expansion().
+>>> It would need a way to handle the retry and insn, but I think it
+>>> would still look better.
+>>
+>> That's what I did in v5 indeed, but it looked too complex to me at the
+>> end. Can you have a look at it
+>> (https://patchwork.ozlabs.org/patch/799053/) and tell me if you feel it
+>> better than v7, or if you have any suggestion to improve based on v5
+>> and/or v7 ?
+> 
+> Yeah I'm kind of liking that direction a bit more. I took your code
+> and hacked on it a bit more... Completely untested but I wonder what
+> you think?
+> 
+> We can put almost all the checking logic out of the main fault
+> path, and the retry stuff can fit into the unlikely failure
+> path. Also we only get_user at the last minute.
+> 
+> It does use fault_in_pages_readable which in theory means you might
+> repeat the loop if the page gets faulted out between retry, but that
+> same pattern exists in places in the filesystem code. Basically it
+> would be edge case trashing and if it persists then the system is
+> already finished. So I think it's okay. Just makes the retry loop a
+> bit simpler.
+> 
+> Any thoughts?
+
+Indeed, after writing you I looked at it once more and I think I ended 
+up with something rather similar as what you are proposing here.
+The complexity in v5 was because I left the get_user() in 
+store_updates_sp(). By moving it up into bad_stack_expansion(), it looks 
+better.
+The main difference I see between your proposal and my v8 is that I do 
+the up_read() in bad_stack_expansion(). Maybe that's not a good idea.
+
+I'll release it in a few minutes, let me know what you think about it.
 
 Thanks,
-Vlad
+Christophe
+
+> 
+> Thanks,
+> Nick
+> 
+> 
+> diff --git a/arch/powerpc/mm/fault.c b/arch/powerpc/mm/fault.c
+> index c01d627e687a..f0d36ec949b3 100644
+> --- a/arch/powerpc/mm/fault.c
+> +++ b/arch/powerpc/mm/fault.c
+> @@ -69,12 +69,8 @@ static inline bool notify_page_fault(struct pt_regs *regs)
+>    * Check whether the instruction at regs->nip is a store using
+>    * an update addressing form which will update r1.
+>    */
+> -static bool store_updates_sp(struct pt_regs *regs)
+> +static bool store_updates_sp(unsigned int inst)
+>   {
+> -	unsigned int inst;
+> -
+> -	if (get_user(inst, (unsigned int __user *)regs->nip))
+> -		return false;
+>   	/* check for 1 in the rA field */
+>   	if (((inst >> 16) & 0x1f) != 1)
+>   		return false;
+> @@ -233,10 +229,23 @@ static bool bad_kernel_fault(bool is_exec, unsigned long error_code,
+>   	return is_exec || (address >= TASK_SIZE);
+>   }
+>   
+> -static bool bad_stack_expansion(struct pt_regs *regs, unsigned long address,
+> +static bool bad_stack_expand(struct pt_regs *regs, unsigned long address,
+>   				struct vm_area_struct *vma,
+> -				bool store_update_sp)
+> +				bool *retry)
+>   {
+> +	unsigned int __user *nip = (unsigned int __user *)regs->nip;
+> +	struct pt_regs *uregs = current->thread.regs;
+> +	unsigned int inst;
+> +	int res;
+> +
+> +	/*
+> +	 * We want to do this outside mmap_sem, because reading code around nip
+> +	 * can result in fault, which will cause a deadlock when called with
+> +	 * mmap_sem held
+> +	 */
+> +	if (is_write && is_user)
+> +		store_update_sp = store_updates_sp(regs);
+> +
+>   	/*
+>   	 * N.B. The POWER/Open ABI allows programs to access up to
+>   	 * 288 bytes below the stack pointer.
+> @@ -246,26 +255,46 @@ static bool bad_stack_expansion(struct pt_regs *regs, unsigned long address,
+>   	 * before setting the user r1.  Thus we allow the stack to
+>   	 * expand to 1MB without further checks.
+>   	 */
+> -	if (address + 0x100000 < vma->vm_end) {
+> -		/* get user regs even if this fault is in kernel mode */
+> -		struct pt_regs *uregs = current->thread.regs;
+> -		if (uregs == NULL)
+> -			return true;
+> +	if (address + 0x100000 >= vma->vm_end)
+> +		return false;
+>   
+> -		/*
+> -		 * A user-mode access to an address a long way below
+> -		 * the stack pointer is only valid if the instruction
+> -		 * is one which would update the stack pointer to the
+> -		 * address accessed if the instruction completed,
+> -		 * i.e. either stwu rs,n(r1) or stwux rs,r1,rb
+> -		 * (or the byte, halfword, float or double forms).
+> -		 *
+> -		 * If we don't check this then any write to the area
+> -		 * between the last mapped region and the stack will
+> -		 * expand the stack rather than segfaulting.
+> -		 */
+> -		if (address + 2048 < uregs->gpr[1] && !store_update_sp)
+> -			return true;
+> +	/* get user regs even if this fault is in kernel mode */
+> +	if (unlikely(uregs == NULL)) {
+> +		*must_retry = false;
+> +		return true;
+> +	}
+> +
+> +	/*
+> +	 * A user-mode access to an address a long way below
+> +	 * the stack pointer is only valid if the instruction
+> +	 * is one which would update the stack pointer to the
+> +	 * address accessed if the instruction completed,
+> +	 * i.e. either stwu rs,n(r1) or stwux rs,r1,rb
+> +	 * (or the byte, halfword, float or double forms).
+> +	 *
+> +	 * If we don't check this then any write to the area
+> +	 * between the last mapped region and the stack will
+> +	 * expand the stack rather than segfaulting.
+> +	 */
+> +	if (address + 2048 >= uregs->gpr[1])
+> +		return false;
+> +
+> +	if (unlikely(!access_ok(VERIFY_READ, nip, sizeof(inst)))) {
+> +		*must_retry = true;
+> +		return true;
+> +	}
+> +
+> +	pagefault_disable();
+> +	res = __get_user_inatomic(inst, nip);
+> +	pagefault_enable();
+> +	if (unlikely(res)) {
+> +		*must_retry = true;
+> +		return true;
+> +	}
+> +
+> +	if (!store_updates_sp(inst)) {
+> +		*must_retry = true;
+> +		return true;
+>   	}
+>   	return false;
+>   }
+> @@ -403,7 +432,7 @@ static int __do_page_fault(struct pt_regs *regs, unsigned long address,
+>   	int is_user = user_mode(regs);
+>   	int is_write = page_fault_is_write(error_code);
+>   	int fault, major = 0;
+> -	bool store_update_sp = false;
+> +	bool must_retry;
+>   
+>   	if (notify_page_fault(regs))
+>   		return 0;
+> @@ -449,14 +478,6 @@ static int __do_page_fault(struct pt_regs *regs, unsigned long address,
+>   		return bad_key_fault_exception(regs, address,
+>   					       get_mm_addr_key(mm, address));
+>   
+> -	/*
+> -	 * We want to do this outside mmap_sem, because reading code around nip
+> -	 * can result in fault, which will cause a deadlock when called with
+> -	 * mmap_sem held
+> -	 */
+> -	if (is_write && is_user)
+> -		store_update_sp = store_updates_sp(regs);
+> -
+>   	if (is_user)
+>   		flags |= FAULT_FLAG_USER;
+>   	if (is_write)
+> @@ -503,8 +524,17 @@ static int __do_page_fault(struct pt_regs *regs, unsigned long address,
+>   		return bad_area(regs, address);
+>   
+>   	/* The stack is being expanded, check if it's valid */
+> -	if (unlikely(bad_stack_expansion(regs, address, vma, store_update_sp)))
+> +	if (unlikely(bad_stack_expand(regs, address, vma, &must_retry))) {
+> +		if (must_retry) {
+> +			up_read(&mm->mmap_sem);
+> +			if (fault_in_pages_readable(address, sizeof(unsigned int)))
+> +				return bad_area_nosemaphore(regs, address);
+> +			goto retry;
+> +		}
+> +
+>   		return bad_area(regs, address);
+> +	}
+> +
+>   
+>   	/* Try to expand it */
+>   	if (unlikely(expand_stack(vma, address)))
+> 
