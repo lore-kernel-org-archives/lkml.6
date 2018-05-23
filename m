@@ -1,98 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934971AbeEWWvx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 18:51:53 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:38498 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934516AbeEWWvu (ORCPT
+        id S934993AbeEWWxs (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 18:53:48 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:41215 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934516AbeEWWxp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 18:51:50 -0400
-X-Google-Smtp-Source: AB8JxZp++Dw/Y4iRLh7SKiPvyrhWd1yk4+nkre3RAeFg+Jta+T7MnqtGIPilg8TJKm+9wLsyp7aTRAS3mL/OIomfR34=
+        Wed, 23 May 2018 18:53:45 -0400
+X-Google-Smtp-Source: AB8JxZrQtrVnCMTPAF5oXv4Q5Cp+eWyliiopUxQ9ZlaVRftT8OyJ9Rxwc2E3aiLd5wYrqNzgcwDNwQ==
+Subject: Re: [PATCHv3 2/2] x86/vdso: Add build salt to the vDSO
+To: Andy Lutomirski <luto@kernel.org>
+Cc: Mark Wielaard <mjw@fedoraproject.org>,
+        "H. J. Lu" <hjl.tools@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Nick Clifton <nickc@redhat.com>, Cary Coutant <ccoutant@gmail.com>,
+        linux-kbuild@vger.kernel.org
+References: <20180523001939.9431-1-labbott@redhat.com>
+ <20180523001939.9431-3-labbott@redhat.com>
+ <CALCETrX9P2Lwrx7wGc22poVWX2AHAqXbUdhcijyoJ3tGhaxijg@mail.gmail.com>
+From: Laura Abbott <labbott@redhat.com>
+Message-ID: <15dcff14-ea1b-18c8-4cd1-06586cf6f05b@redhat.com>
+Date: Wed, 23 May 2018 15:53:39 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180328175957.23904-1-labbott@redhat.com>
-References: <20180328175957.23904-1-labbott@redhat.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Wed, 23 May 2018 15:51:48 -0700
-X-Google-Sender-Auth: _bVW6TCRAe00dRlMQl3aOR6h_rQ
-Message-ID: <CAGXu5jJwPbUHherfpPbyN8o9NntKN_CYY_TRyvrd+K_LSvZMFw@mail.gmail.com>
-Subject: Re: [PATCH v3] gpio: Remove VLA from stmpe driver
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Laura Abbott <labbott@redhat.com>,
-        Patrice Chotard <patrice.chotard@st.com>, linux-gpio@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CALCETrX9P2Lwrx7wGc22poVWX2AHAqXbUdhcijyoJ3tGhaxijg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 28, 2018 at 10:59 AM, Laura Abbott <labbott@redhat.com> wrote:
-> The new challenge is to remove VLAs from the kernel
-> (see https://lkml.org/lkml/2018/3/7/621)
->
-> The number of GPIOs on the supported chips is fairly small
-> so stack allocate to a known upper bound and spit out a warning
-> if any new chips have more gpios.
->
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
+On 05/22/2018 05:33 PM, Andy Lutomirski wrote:
+> On Tue, May 22, 2018 at 5:19 PM Laura Abbott <labbott@redhat.com> wrote:
+> 
+> 
+>> The vDSO is linked separately from the kernel and modules. Ensure it picks
+>> up the comment section, if available.
+> 
+> Did you end up preferring this to just sticking the kernel version in a
+> .comment in the vDSO for some reason?
+> 
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+Actually I remember now why this is necessary: there is not a simple way
+to encode a string into a linker file as it has to be spit out byte
+by byte. The autogeneration was the easiest way to make that happen.
+Maybe there's some horrific c preprocessing or other generation that
+could happen but I doubt that's any worse than the generated linker
+script.
 
-Linus, I think this patch is still needed and got missed? Can you take
-it as well?
-
-Thanks!
-
--Kees
-
-> ---
-> v3: Split this off from the rest of the series since some of the
-> patches had been picked up. Switched to just hardcoding an upper
-> bound for the stack array since it's only a few extra bytes
-> of stack space.
-> ---
->  drivers/gpio/gpio-stmpe.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
-> index f8d7d1cd8488..8d6a5a7e612d 100644
-> --- a/drivers/gpio/gpio-stmpe.c
-> +++ b/drivers/gpio/gpio-stmpe.c
-> @@ -363,13 +363,15 @@ static struct irq_chip stmpe_gpio_irq_chip = {
->         .irq_set_type           = stmpe_gpio_irq_set_type,
->  };
->
-> +#define MAX_GPIOS 24
-> +
->  static irqreturn_t stmpe_gpio_irq(int irq, void *dev)
->  {
->         struct stmpe_gpio *stmpe_gpio = dev;
->         struct stmpe *stmpe = stmpe_gpio->stmpe;
->         u8 statmsbreg;
->         int num_banks = DIV_ROUND_UP(stmpe->num_gpios, 8);
-> -       u8 status[num_banks];
-> +       u8 status[DIV_ROUND_UP(MAX_GPIOS, 8)];
->         int ret;
->         int i;
->
-> @@ -434,6 +436,11 @@ static int stmpe_gpio_probe(struct platform_device *pdev)
->         struct stmpe_gpio *stmpe_gpio;
->         int ret, irq;
->
-> +       if (stmpe->num_gpios > MAX_GPIOS) {
-> +               dev_err(&pdev->dev, "Need to increase maximum GPIO number\n");
-> +               return -EINVAL;
-> +       }
-> +
->         stmpe_gpio = kzalloc(sizeof(*stmpe_gpio), GFP_KERNEL);
->         if (!stmpe_gpio)
->                 return -ENOMEM;
-> --
-> 2.14.3
->
-
-
-
--- 
-Kees Cook
-Pixel Security
+Thanks,
+Laura
