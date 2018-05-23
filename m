@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934950AbeEWUV5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 16:21:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34140 "EHLO mail.kernel.org"
+        id S934965AbeEWUWH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 16:22:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34260 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934411AbeEWUVw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 16:21:52 -0400
+        id S934291AbeEWUWA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 16:22:00 -0400
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -18,9 +18,9 @@ Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         Joerg Roedel <joro@8bytes.org>, Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 09/18] perf machine: Synthesize and process mmap events for x86 PTI entry trampolines
-Date: Wed, 23 May 2018 17:20:57 -0300
-Message-Id: <20180523202106.17286-10-acme@kernel.org>
+Subject: [PATCH 11/18] perf kcore_copy: Keep phdr data in a list
+Date: Wed, 23 May 2018 17:20:59 -0300
+Message-Id: <20180523202106.17286-12-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180523202106.17286-1-acme@kernel.org>
 References: <20180523202106.17286-1-acme@kernel.org>
@@ -30,9 +30,13 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Adrian Hunter <adrian.hunter@intel.com>
 
-Like the kernel text, the location of x86 PTI entry trampolines must be
-recorded in the perf.data file. Like the kernel, synthesize a mmap event
-for that, and add processing for it.
+Currently, kcore_copy makes 2 program headers, one for the kernel text
+(namely kernel_map) and one for the modules (namely modules_map). Now
+more program headers are needed, but treating each program header as a
+special case results in much more code.
+
+Instead, in preparation to add more program headers, change to keep
+program header data (phdr_data) in a list.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
@@ -45,241 +49,52 @@ Cc: Joerg Roedel <joro@8bytes.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: x86@kernel.org
-Link: http://lkml.kernel.org/r/1526986485-6562-10-git-send-email-adrian.hunter@intel.com
+Link: http://lkml.kernel.org/r/1526986485-6562-11-git-send-email-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/arch/x86/util/Build   |  1 +
- tools/perf/arch/x86/util/event.c | 76 ++++++++++++++++++++++++++++++++++++++++
- tools/perf/util/event.c          | 34 ++++++++++++++----
- tools/perf/util/event.h          |  8 +++++
- tools/perf/util/machine.c        | 28 +++++++++++++++
- 5 files changed, 140 insertions(+), 7 deletions(-)
- create mode 100644 tools/perf/arch/x86/util/event.c
+ tools/perf/util/symbol-elf.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/tools/perf/arch/x86/util/Build b/tools/perf/arch/x86/util/Build
-index aa1ce5f6cc00..844b8f335532 100644
---- a/tools/perf/arch/x86/util/Build
-+++ b/tools/perf/arch/x86/util/Build
-@@ -5,6 +5,7 @@ libperf-y += kvm-stat.o
- libperf-y += perf_regs.o
- libperf-y += group.o
- libperf-y += machine.o
-+libperf-y += event.o
+diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
+index 48943b834f11..b13873a6f368 100644
+--- a/tools/perf/util/symbol-elf.c
++++ b/tools/perf/util/symbol-elf.c
+@@ -1388,6 +1388,7 @@ struct phdr_data {
+ 	off_t offset;
+ 	u64 addr;
+ 	u64 len;
++	struct list_head node;
+ };
  
- libperf-$(CONFIG_DWARF) += dwarf-regs.o
- libperf-$(CONFIG_BPF_PROLOGUE) += dwarf-regs.o
-diff --git a/tools/perf/arch/x86/util/event.c b/tools/perf/arch/x86/util/event.c
-new file mode 100644
-index 000000000000..675a0213044d
---- /dev/null
-+++ b/tools/perf/arch/x86/util/event.c
-@@ -0,0 +1,76 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/types.h>
-+#include <linux/string.h>
-+
-+#include "../../util/machine.h"
-+#include "../../util/tool.h"
-+#include "../../util/map.h"
-+#include "../../util/util.h"
-+#include "../../util/debug.h"
-+
-+#if defined(__x86_64__)
-+
-+int perf_event__synthesize_extra_kmaps(struct perf_tool *tool,
-+				       perf_event__handler_t process,
-+				       struct machine *machine)
-+{
-+	int rc = 0;
-+	struct map *pos;
-+	struct map_groups *kmaps = &machine->kmaps;
-+	struct maps *maps = &kmaps->maps;
-+	union perf_event *event = zalloc(sizeof(event->mmap) +
-+					 machine->id_hdr_size);
-+
-+	if (!event) {
-+		pr_debug("Not enough memory synthesizing mmap event "
-+			 "for extra kernel maps\n");
-+		return -1;
-+	}
-+
-+	for (pos = maps__first(maps); pos; pos = map__next(pos)) {
-+		struct kmap *kmap;
-+		size_t size;
-+
-+		if (!__map__is_extra_kernel_map(pos))
-+			continue;
-+
-+		kmap = map__kmap(pos);
-+
-+		size = sizeof(event->mmap) - sizeof(event->mmap.filename) +
-+		       PERF_ALIGN(strlen(kmap->name) + 1, sizeof(u64)) +
-+		       machine->id_hdr_size;
-+
-+		memset(event, 0, size);
-+
-+		event->mmap.header.type = PERF_RECORD_MMAP;
-+
-+		/*
-+		 * kernel uses 0 for user space maps, see kernel/perf_event.c
-+		 * __perf_event_mmap
-+		 */
-+		if (machine__is_host(machine))
-+			event->header.misc = PERF_RECORD_MISC_KERNEL;
-+		else
-+			event->header.misc = PERF_RECORD_MISC_GUEST_KERNEL;
-+
-+		event->mmap.header.size = size;
-+
-+		event->mmap.start = pos->start;
-+		event->mmap.len   = pos->end - pos->start;
-+		event->mmap.pgoff = pos->pgoff;
-+		event->mmap.pid   = machine->pid;
-+
-+		strlcpy(event->mmap.filename, kmap->name, PATH_MAX);
-+
-+		if (perf_tool__process_synth_event(tool, event, machine,
-+						   process) != 0) {
-+			rc = -1;
-+			break;
-+		}
-+	}
-+
-+	free(event);
-+	return rc;
-+}
-+
-+#endif
-diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
-index aafa9878465f..0c8ecf0c78a4 100644
---- a/tools/perf/util/event.c
-+++ b/tools/perf/util/event.c
-@@ -88,10 +88,10 @@ static const char *perf_ns__name(unsigned int id)
- 	return perf_ns__names[id];
- }
+ struct kcore_copy_info {
+@@ -1399,6 +1400,7 @@ struct kcore_copy_info {
+ 	u64 last_module_symbol;
+ 	struct phdr_data kernel_map;
+ 	struct phdr_data modules_map;
++	struct list_head phdrs;
+ };
  
--static int perf_tool__process_synth_event(struct perf_tool *tool,
--					  union perf_event *event,
--					  struct machine *machine,
--					  perf_event__handler_t process)
-+int perf_tool__process_synth_event(struct perf_tool *tool,
-+				   union perf_event *event,
-+				   struct machine *machine,
-+				   perf_event__handler_t process)
- {
- 	struct perf_sample synth_sample = {
- 	.pid	   = -1,
-@@ -888,9 +888,16 @@ int kallsyms__get_function_start(const char *kallsyms_filename,
+ static int kcore_copy__process_kallsyms(void *arg, const char *name, char type,
+@@ -1510,6 +1512,11 @@ static int kcore_copy__read_maps(struct kcore_copy_info *kci, Elf *elf)
+ 	if (elf_read_maps(elf, true, kcore_copy__read_map, kci) < 0)
+ 		return -1;
+ 
++	if (kci->kernel_map.len)
++		list_add_tail(&kci->kernel_map.node, &kci->phdrs);
++	if (kci->modules_map.len)
++		list_add_tail(&kci->modules_map.node, &kci->phdrs);
++
  	return 0;
  }
  
--int perf_event__synthesize_kernel_mmap(struct perf_tool *tool,
--				       perf_event__handler_t process,
--				       struct machine *machine)
-+int __weak perf_event__synthesize_extra_kmaps(struct perf_tool *tool __maybe_unused,
-+					      perf_event__handler_t process __maybe_unused,
-+					      struct machine *machine __maybe_unused)
-+{
-+	return 0;
-+}
-+
-+static int __perf_event__synthesize_kernel_mmap(struct perf_tool *tool,
-+						perf_event__handler_t process,
-+						struct machine *machine)
- {
- 	size_t size;
- 	struct map *map = machine__kernel_map(machine);
-@@ -943,6 +950,19 @@ int perf_event__synthesize_kernel_mmap(struct perf_tool *tool,
- 	return err;
- }
+@@ -1678,6 +1685,8 @@ int kcore_copy(const char *from_dir, const char *to_dir)
+ 	char kcore_filename[PATH_MAX];
+ 	char extract_filename[PATH_MAX];
  
-+int perf_event__synthesize_kernel_mmap(struct perf_tool *tool,
-+				       perf_event__handler_t process,
-+				       struct machine *machine)
-+{
-+	int err;
++	INIT_LIST_HEAD(&kci.phdrs);
 +
-+	err = __perf_event__synthesize_kernel_mmap(tool, process, machine);
-+	if (err < 0)
-+		return err;
-+
-+	return perf_event__synthesize_extra_kmaps(tool, process, machine);
-+}
-+
- int perf_event__synthesize_thread_map2(struct perf_tool *tool,
- 				      struct thread_map *threads,
- 				      perf_event__handler_t process,
-diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
-index 0f794744919c..bfa60bcafbde 100644
---- a/tools/perf/util/event.h
-+++ b/tools/perf/util/event.h
-@@ -750,6 +750,10 @@ int perf_event__process_exit(struct perf_tool *tool,
- 			     union perf_event *event,
- 			     struct perf_sample *sample,
- 			     struct machine *machine);
-+int perf_tool__process_synth_event(struct perf_tool *tool,
-+				   union perf_event *event,
-+				   struct machine *machine,
-+				   perf_event__handler_t process);
- int perf_event__process(struct perf_tool *tool,
- 			union perf_event *event,
- 			struct perf_sample *sample,
-@@ -796,6 +800,10 @@ int perf_event__synthesize_mmap_events(struct perf_tool *tool,
- 				       bool mmap_data,
- 				       unsigned int proc_map_timeout);
+ 	if (kcore_copy__copy_file(from_dir, to_dir, "kallsyms"))
+ 		return -1;
  
-+int perf_event__synthesize_extra_kmaps(struct perf_tool *tool,
-+				       perf_event__handler_t process,
-+				       struct machine *machine);
-+
- size_t perf_event__fprintf_comm(union perf_event *event, FILE *fp);
- size_t perf_event__fprintf_mmap(union perf_event *event, FILE *fp);
- size_t perf_event__fprintf_mmap2(union perf_event *event, FILE *fp);
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index dd7ab0731167..e7b4a8b513f2 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -1387,6 +1387,32 @@ static bool machine__uses_kcore(struct machine *machine)
- 	return false;
- }
- 
-+static bool perf_event__is_extra_kernel_mmap(struct machine *machine,
-+					     union perf_event *event)
-+{
-+	return machine__is(machine, "x86_64") &&
-+	       is_entry_trampoline(event->mmap.filename);
-+}
-+
-+static int machine__process_extra_kernel_map(struct machine *machine,
-+					     union perf_event *event)
-+{
-+	struct map *kernel_map = machine__kernel_map(machine);
-+	struct dso *kernel = kernel_map ? kernel_map->dso : NULL;
-+	struct extra_kernel_map xm = {
-+		.start = event->mmap.start,
-+		.end   = event->mmap.start + event->mmap.len,
-+		.pgoff = event->mmap.pgoff,
-+	};
-+
-+	if (kernel == NULL)
-+		return -1;
-+
-+	strlcpy(xm.name, event->mmap.filename, KMAP_NAME_LEN);
-+
-+	return machine__create_extra_kernel_map(machine, kernel, &xm);
-+}
-+
- static int machine__process_kernel_mmap_event(struct machine *machine,
- 					      union perf_event *event)
- {
-@@ -1490,6 +1516,8 @@ static int machine__process_kernel_mmap_event(struct machine *machine,
- 			 */
- 			dso__load(kernel, machine__kernel_map(machine));
- 		}
-+	} else if (perf_event__is_extra_kernel_mmap(machine, event)) {
-+		return machine__process_extra_kernel_map(machine, event);
- 	}
- 	return 0;
- out_problem:
 -- 
 2.14.3
