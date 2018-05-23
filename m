@@ -1,23 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932121AbeEWMQ4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 08:16:56 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60710 "EHLO mx1.redhat.com"
+        id S932636AbeEWMRD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 08:17:03 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54502 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754588AbeEWMQt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 08:16:49 -0400
+        id S932087AbeEWMQz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 08:16:55 -0400
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 1/8] afs: Move /proc management functions to the end of the
- file
+Subject: [PATCH 2/8] afs: Rearrange fs/afs/proc.c by moving fops and open
+ functions down
 From: David Howells <dhowells@redhat.com>
 To: viro@zeniv.linux.org.uk
 Cc: dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
         linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Wed, 23 May 2018 13:16:47 +0100
-Message-ID: <152707780776.27887.9678675851308301587.stgit@warthog.procyon.org.uk>
+Date: Wed, 23 May 2018 13:16:54 +0100
+Message-ID: <152707781409.27887.10331627111201756585.stgit@warthog.procyon.org.uk>
 In-Reply-To: <152707780120.27887.10118775145086304138.stgit@warthog.procyon.org.uk>
 References: <152707780120.27887.10118775145086304138.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.17.1-dirty
@@ -28,195 +28,145 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In fs/afs/proc.c, move functions that create and remove /proc files to the
-end of the source file as a first stage in getting rid of all the forward
-declarations.
+Rearrange fs/afs/proc.c by moving fops and open functions down so as to
+remove predeclarations.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- fs/afs/proc.c |  160 ++++++++++++++++++++++++++++-----------------------------
- 1 file changed, 79 insertions(+), 81 deletions(-)
+ fs/afs/proc.c |   71 ++++++++++++++++++++++-----------------------------------
+ 1 file changed, 27 insertions(+), 44 deletions(-)
 
 diff --git a/fs/afs/proc.c b/fs/afs/proc.c
-index 3aad32762989..4bb612b04f3c 100644
+index 4bb612b04f3c..22ce99df3208 100644
 --- a/fs/afs/proc.c
 +++ b/fs/afs/proc.c
-@@ -127,45 +127,6 @@ static const struct file_operations afs_proc_sysname_fops = {
- 	.write		= afs_proc_sysname_write,
- };
- 
--static int afs_proc_stats_show(struct seq_file *m, void *v);
--
--/*
-- * initialise the /proc/fs/afs/ directory
-- */
--int afs_proc_init(struct afs_net *net)
--{
--	_enter("");
--
--	net->proc_afs = proc_mkdir("fs/afs", NULL);
--	if (!net->proc_afs)
--		goto error_dir;
--
--	if (!proc_create("cells", 0644, net->proc_afs, &afs_proc_cells_fops) ||
--	    !proc_create("rootcell", 0644, net->proc_afs, &afs_proc_rootcell_fops) ||
--	    !proc_create_seq("servers", 0644, net->proc_afs, &afs_proc_servers_ops) ||
--	    !proc_create_single("stats", 0644, net->proc_afs, afs_proc_stats_show) ||
--	    !proc_create("sysname", 0644, net->proc_afs, &afs_proc_sysname_fops))
--		goto error_tree;
--
--	_leave(" = 0");
--	return 0;
--
--error_tree:
--	proc_remove(net->proc_afs);
--error_dir:
--	_leave(" = -ENOMEM");
--	return -ENOMEM;
--}
--
--/*
-- * clean up the /proc/fs/afs/ directory
-- */
--void afs_proc_cleanup(struct afs_net *net)
--{
--	proc_remove(net->proc_afs);
--	net->proc_afs = NULL;
--}
--
- /*
-  * open "/proc/fs/afs/cells" which provides a summary of extant cells
-  */
-@@ -383,48 +344,6 @@ static ssize_t afs_proc_rootcell_write(struct file *file,
- 	return ret;
+@@ -27,13 +27,10 @@ static inline struct afs_net *afs_seq2net(struct seq_file *m)
+ 	return &__afs_net; // TODO: use seq_file_net(m)
  }
  
+-static int afs_proc_cells_open(struct inode *inode, struct file *file);
+ static void *afs_proc_cells_start(struct seq_file *p, loff_t *pos);
+ static void *afs_proc_cells_next(struct seq_file *p, void *v, loff_t *pos);
+ static void afs_proc_cells_stop(struct seq_file *p, void *v);
+ static int afs_proc_cells_show(struct seq_file *m, void *v);
+-static ssize_t afs_proc_cells_write(struct file *file, const char __user *buf,
+-				    size_t size, loff_t *_pos);
+ 
+ static const struct seq_operations afs_proc_cells_ops = {
+ 	.start	= afs_proc_cells_start,
+@@ -42,26 +39,6 @@ static const struct seq_operations afs_proc_cells_ops = {
+ 	.show	= afs_proc_cells_show,
+ };
+ 
+-static const struct file_operations afs_proc_cells_fops = {
+-	.open		= afs_proc_cells_open,
+-	.read		= seq_read,
+-	.write		= afs_proc_cells_write,
+-	.llseek		= seq_lseek,
+-	.release	= seq_release,
+-};
+-
+-static ssize_t afs_proc_rootcell_read(struct file *file, char __user *buf,
+-				      size_t size, loff_t *_pos);
+-static ssize_t afs_proc_rootcell_write(struct file *file,
+-				       const char __user *buf,
+-				       size_t size, loff_t *_pos);
+-
+-static const struct file_operations afs_proc_rootcell_fops = {
+-	.read		= afs_proc_rootcell_read,
+-	.write		= afs_proc_rootcell_write,
+-	.llseek		= no_llseek,
+-};
+-
+ static void *afs_proc_cell_volumes_start(struct seq_file *p, loff_t *pos);
+ static void *afs_proc_cell_volumes_next(struct seq_file *p, void *v,
+ 					loff_t *pos);
+@@ -101,16 +78,11 @@ static const struct seq_operations afs_proc_servers_ops = {
+ 	.show	= afs_proc_servers_show,
+ };
+ 
+-static int afs_proc_sysname_open(struct inode *inode, struct file *file);
+-static int afs_proc_sysname_release(struct inode *inode, struct file *file);
+ static void *afs_proc_sysname_start(struct seq_file *p, loff_t *pos);
+ static void *afs_proc_sysname_next(struct seq_file *p, void *v,
+ 					loff_t *pos);
+ static void afs_proc_sysname_stop(struct seq_file *p, void *v);
+ static int afs_proc_sysname_show(struct seq_file *m, void *v);
+-static ssize_t afs_proc_sysname_write(struct file *file,
+-				      const char __user *buf,
+-				      size_t size, loff_t *_pos);
+ 
+ static const struct seq_operations afs_proc_sysname_ops = {
+ 	.start	= afs_proc_sysname_start,
+@@ -119,22 +91,6 @@ static const struct seq_operations afs_proc_sysname_ops = {
+ 	.show	= afs_proc_sysname_show,
+ };
+ 
+-static const struct file_operations afs_proc_sysname_fops = {
+-	.open		= afs_proc_sysname_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= afs_proc_sysname_release,
+-	.write		= afs_proc_sysname_write,
+-};
+-
 -/*
-- * initialise /proc/fs/afs/<cell>/
+- * open "/proc/fs/afs/cells" which provides a summary of extant cells
 - */
--int afs_proc_cell_setup(struct afs_net *net, struct afs_cell *cell)
+-static int afs_proc_cells_open(struct inode *inode, struct file *file)
 -{
--	struct proc_dir_entry *dir;
--
--	_enter("%p{%s},%p", cell, cell->name, net->proc_afs);
--
--	dir = proc_mkdir(cell->name, net->proc_afs);
--	if (!dir)
--		goto error_dir;
--
--	if (!proc_create_seq_data("vlservers", 0, dir,
--			&afs_proc_cell_vlservers_ops, cell))
--		goto error_tree;
--	if (!proc_create_seq_data("volumes", 0, dir, &afs_proc_cell_volumes_ops,
--			cell))
--		goto error_tree;
--
--	_leave(" = 0");
--	return 0;
--
--error_tree:
--	remove_proc_subtree(cell->name, net->proc_afs);
--error_dir:
--	_leave(" = -ENOMEM");
--	return -ENOMEM;
--}
--
--/*
-- * remove /proc/fs/afs/<cell>/
-- */
--void afs_proc_cell_remove(struct afs_net *net, struct afs_cell *cell)
--{
--	_enter("");
--
--	remove_proc_subtree(cell->name, net->proc_afs);
--
--	_leave("");
+-	return seq_open(file, &afs_proc_cells_ops);
 -}
 -
  /*
   * set up the iterator to start reading from the cells list and return the
   * first item
-@@ -842,3 +761,82 @@ static int afs_proc_stats_show(struct seq_file *m, void *v)
- 		   atomic_long_read(&net->n_store_bytes));
+@@ -261,6 +217,19 @@ static ssize_t afs_proc_cells_write(struct file *file, const char __user *buf,
+ 	goto done;
+ }
+ 
++static int afs_proc_cells_open(struct inode *inode, struct file *file)
++{
++	return seq_open(file, &afs_proc_cells_ops);
++}
++
++static const struct file_operations afs_proc_cells_fops = {
++	.open		= afs_proc_cells_open,
++	.read		= seq_read,
++	.write		= afs_proc_cells_write,
++	.llseek		= seq_lseek,
++	.release	= seq_release,
++};
++
+ static ssize_t afs_proc_rootcell_read(struct file *file, char __user *buf,
+ 				      size_t size, loff_t *_pos)
+ {
+@@ -344,6 +313,12 @@ static ssize_t afs_proc_rootcell_write(struct file *file,
+ 	return ret;
+ }
+ 
++static const struct file_operations afs_proc_rootcell_fops = {
++	.read		= afs_proc_rootcell_read,
++	.write		= afs_proc_rootcell_write,
++	.llseek		= no_llseek,
++};
++
+ /*
+  * set up the iterator to start reading from the cells list and return the
+  * first item
+@@ -731,6 +706,14 @@ static int afs_proc_sysname_show(struct seq_file *m, void *v)
  	return 0;
  }
+ 
++static const struct file_operations afs_proc_sysname_fops = {
++	.open		= afs_proc_sysname_open,
++	.read		= seq_read,
++	.llseek		= seq_lseek,
++	.release	= afs_proc_sysname_release,
++	.write		= afs_proc_sysname_write,
++};
 +
-+/*
-+ * initialise /proc/fs/afs/<cell>/
-+ */
-+int afs_proc_cell_setup(struct afs_net *net, struct afs_cell *cell)
-+{
-+	struct proc_dir_entry *dir;
-+
-+	_enter("%p{%s},%p", cell, cell->name, net->proc_afs);
-+
-+	dir = proc_mkdir(cell->name, net->proc_afs);
-+	if (!dir)
-+		goto error_dir;
-+
-+	if (!proc_create_seq_data("vlservers", 0, dir,
-+				  &afs_proc_cell_vlservers_ops, cell))
-+		goto error_tree;
-+	if (!proc_create_seq_data("volumes", 0, dir,
-+				  &afs_proc_cell_volumes_ops, cell))
-+		goto error_tree;
-+
-+	_leave(" = 0");
-+	return 0;
-+
-+error_tree:
-+	remove_proc_subtree(cell->name, net->proc_afs);
-+error_dir:
-+	_leave(" = -ENOMEM");
-+	return -ENOMEM;
-+}
-+
-+/*
-+ * remove /proc/fs/afs/<cell>/
-+ */
-+void afs_proc_cell_remove(struct afs_net *net, struct afs_cell *cell)
-+{
-+	_enter("");
-+
-+	remove_proc_subtree(cell->name, net->proc_afs);
-+
-+	_leave("");
-+}
-+
-+/*
-+ * initialise the /proc/fs/afs/ directory
-+ */
-+int afs_proc_init(struct afs_net *net)
-+{
-+	_enter("");
-+
-+	net->proc_afs = proc_mkdir("fs/afs", NULL);
-+	if (!net->proc_afs)
-+		goto error_dir;
-+
-+	if (!proc_create("cells", 0644, net->proc_afs, &afs_proc_cells_fops) ||
-+	    !proc_create("rootcell", 0644, net->proc_afs, &afs_proc_rootcell_fops) ||
-+	    !proc_create_seq("servers", 0644, net->proc_afs, &afs_proc_servers_ops) ||
-+	    !proc_create_single("stats", 0644, net->proc_afs, afs_proc_stats_show) ||
-+	    !proc_create("sysname", 0644, net->proc_afs, &afs_proc_sysname_fops))
-+		goto error_tree;
-+
-+	_leave(" = 0");
-+	return 0;
-+
-+error_tree:
-+	proc_remove(net->proc_afs);
-+error_dir:
-+	_leave(" = -ENOMEM");
-+	return -ENOMEM;
-+}
-+
-+/*
-+ * clean up the /proc/fs/afs/ directory
-+ */
-+void afs_proc_cleanup(struct afs_net *net)
-+{
-+	proc_remove(net->proc_afs);
-+	net->proc_afs = NULL;
-+}
+ /*
+  * Display general per-net namespace statistics
+  */
