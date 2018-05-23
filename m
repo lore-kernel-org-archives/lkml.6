@@ -1,68 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933064AbeEWNqE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 09:46:04 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40764 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932941AbeEWNqD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 09:46:03 -0400
-Subject: Re: [PATCH 2/2] mm: do not warn on offline nodes unless the specific
- node is explicitly requested
-To: Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20180523125555.30039-1-mhocko@kernel.org>
- <20180523125555.30039-3-mhocko@kernel.org>
-Cc: Oscar Salvador <osalvador@techadventures.net>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Reza Arbab <arbab@linux.vnet.ibm.com>,
-        Igor Mammedov <imammedo@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        Michal Hocko <mhocko@suse.com>
-From: Anshuman Khandual <khandual@linux.vnet.ibm.com>
-Date: Wed, 23 May 2018 19:15:51 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.5.1
+        id S933107AbeEWNsu (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 09:48:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48878 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932976AbeEWNst (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 09:48:49 -0400
+Date: Wed, 23 May 2018 08:48:47 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: James Hogan <jhogan@kernel.org>
+Cc: linux-pci@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
+        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] MIPS: PCI: Use dev_printk() when possible
+Message-ID: <20180523134847.GB150632@bhelgaas-glaptop.roam.corp.google.com>
+References: <152699466671.162686.1029992586935534102.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <152699470263.162686.16975145205315900817.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <20180523081447.GA15645@jamesdev>
 MIME-Version: 1.0
-In-Reply-To: <20180523125555.30039-3-mhocko@kernel.org>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18052313-0012-0000-0000-000005D9C71C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052313-0013-0000-0000-0000195711D7
-Message-Id: <11e26a4e-552e-b1dc-316e-ce3e92973556@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-23_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805230140
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180523081447.GA15645@jamesdev>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/23/2018 06:25 PM, Michal Hocko wrote:
-> when adding memory to a node that is currently offline.
+On Wed, May 23, 2018 at 09:14:48AM +0100, James Hogan wrote:
+> On Tue, May 22, 2018 at 08:11:42AM -0500, Bjorn Helgaas wrote:
+> > From: Bjorn Helgaas <bhelgaas@google.com>
+> > 
+> > Use the pci_info() and pci_err() wrappers for dev_printk() when possible.
+> > 
+> > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> > ---
+> >  arch/mips/pci/pci-legacy.c |    7 ++-----
+> >  1 file changed, 2 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/arch/mips/pci/pci-legacy.c b/arch/mips/pci/pci-legacy.c
+> > index 0c65c38e05d6..73643e80f02d 100644
+> > --- a/arch/mips/pci/pci-legacy.c
+> > +++ b/arch/mips/pci/pci-legacy.c
+> > @@ -263,9 +263,7 @@ static int pcibios_enable_resources(struct pci_dev *dev, int mask)
+> >  				(!(r->flags & IORESOURCE_ROM_ENABLE)))
+> >  			continue;
+> >  		if (!r->start && r->end) {
+> > -			printk(KERN_ERR "PCI: Device %s not available "
+> > -			       "because of resource collisions\n",
+> > -			       pci_name(dev));
+> > +			pci_err(dev, "can't enable device: resource collisions\n");
 > 
-> The VM_WARN_ON is just too loud without a good reason. In this
-> particular case we are doing
-> 	alloc_pages_node(node, GFP_KERNEL|__GFP_RETRY_MAYFAIL|__GFP_NOWARN, order)
-> 
-> so we do not insist on allocating from the given node (it is more a
-> hint) so we can fall back to any other populated node and moreover we
-> explicitly ask to not warn for the allocation failure.
-> 
-> Soften the warning only to cases when somebody asks for the given node
-> explicitly by __GFP_THISNODE.
+> The pedantic side of me wants to point out that you could wrap that line
+> after the comma to keep it within 80 columns.
 
-node hint passed here eventually goes into __alloc_pages_nodemask()
-function which then picks up the applicable zonelist irrespective of
-the GFP flag __GFP_THISNODE. Though we can go into zones of other
-nodes if the present node (whose zonelist got picked up) does not
-have any memory in it's zones. So warning here might not be without
-any reason. But yes, if the request has __GFP_NOWARN it makes sense
-not to print any warning.
+Done, thanks!
+
+> Either way though:
+> Acked-by: James Hogan <jhogan@kernel.org>
+> 
+> Cheers
+> James
