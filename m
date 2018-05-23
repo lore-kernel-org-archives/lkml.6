@@ -1,104 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753995AbeEWF6Y (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 01:58:24 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:43728 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751085AbeEWF6U (ORCPT
+        id S1753945AbeEWGB1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 02:01:27 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:35387 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753826AbeEWGBX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 01:58:20 -0400
-X-Google-Smtp-Source: AB8JxZpsoCfaCEhqJLCBvOQpmDDKobM0WNP0cYiLlrniKsgMp+ua/fy652ZfxKywPllGbtQb7IGzeQ==
-Date: Wed, 23 May 2018 11:28:17 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] cpufreq: tegra20: Fix imbalanced clock enable count
-Message-ID: <20180523055817.subrv6oeckfecpcp@vireshk-i7>
-References: <20180522211420.2006-1-digetx@gmail.com>
+        Wed, 23 May 2018 02:01:23 -0400
+X-UUID: 2e36f803cada46e784c00468cbb84cdf-20180523
+Message-ID: <1527055278.21354.3.camel@mtksdaap41>
+Subject: Re: [PATCH v2 4/4] drm/mediatek: add connection from OD1 to RDMA1
+From: CK Hu <ck.hu@mediatek.com>
+To: Stu Hsieh <stu.hsieh@mediatek.com>
+CC: Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>
+Date: Wed, 23 May 2018 14:01:18 +0800
+In-Reply-To: <20180523022517.12103-5-stu.hsieh@mediatek.com>
+References: <20180523022517.12103-1-stu.hsieh@mediatek.com>
+         <20180523022517.12103-5-stu.hsieh@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180522211420.2006-1-digetx@gmail.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+Content-Transfer-Encoding: 7bit
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23-05-18, 00:14, Dmitry Osipenko wrote:
-> Tegra20-cpufreq driver missed enabling the CPU clocks. This results in a
-> clock-enable refcount disbalance on PLL_P <-> PLL_X reparent, causing
-> PLL_X to get disabled while it shouldn't. Fix this by enabling the clocks
-> on the driver probe.
+Hi, Stu:
+
+On Wed, 2018-05-23 at 10:25 +0800, Stu Hsieh wrote:
+> This patch add the connection from OD1 to RDMA1 for ext path.
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+
+I would like to apply this patch before the patch 'Add support for
+mediatek SOC MT2712' because this patch is necessary for mt2712.
+
+Regards,
+CK
+
+> Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
 > ---
+>  drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> CPUFreq maintainers,
-> 
-> Please take into account that this patch is made on top of my recent
-> series of patches [0] "Clean up Tegra20 cpufreq driver" that was fully
-> reviewed, but seems not applied yet. Let me know if you prefer to re-spin
-> the [0], including this patch into the series.
-> 
-> [0] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=45321
-
-This is already picked by Rafael and is sitting in pm/bleeding-edge
-branch. Should get merged into linux-next in a day or two.
-
->  drivers/cpufreq/tegra20-cpufreq.c | 16 +++++++++++++++-
->  1 file changed, 15 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
-> index 05f57dcd5215..ca5229265b60 100644
-> --- a/drivers/cpufreq/tegra20-cpufreq.c
-> +++ b/drivers/cpufreq/tegra20-cpufreq.c
-> @@ -176,6 +176,14 @@ static int tegra20_cpufreq_probe(struct platform_device *pdev)
->  		goto put_pll_x;
->  	}
->  
-> +	err = clk_prepare_enable(cpufreq->pll_x_clk);
-> +	if (err)
-> +		goto put_pll_p;
-> +
-> +	err = clk_prepare_enable(cpufreq->pll_p_clk);
-> +	if (err)
-> +		goto disable_pll_x;
-> +
->  	cpufreq->dev = &pdev->dev;
->  	cpufreq->driver.get = cpufreq_generic_get;
->  	cpufreq->driver.attr = cpufreq_generic_attr;
-> @@ -192,12 +200,16 @@ static int tegra20_cpufreq_probe(struct platform_device *pdev)
->  
->  	err = cpufreq_register_driver(&cpufreq->driver);
->  	if (err)
-> -		goto put_pll_p;
-> +		goto disable_pll_p;
->  
->  	platform_set_drvdata(pdev, cpufreq);
->  
->  	return 0;
->  
-> +disable_pll_p:
-> +	clk_disable_unprepare(cpufreq->pll_p_clk);
-> +disable_pll_x:
-> +	clk_disable_unprepare(cpufreq->pll_x_clk);
->  put_pll_p:
->  	clk_put(cpufreq->pll_p_clk);
->  put_pll_x:
-> @@ -214,6 +226,8 @@ static int tegra20_cpufreq_remove(struct platform_device *pdev)
->  
->  	cpufreq_unregister_driver(&cpufreq->driver);
->  
-> +	clk_disable_unprepare(cpufreq->pll_p_clk);
-> +	clk_disable_unprepare(cpufreq->pll_x_clk);
->  	clk_put(cpufreq->pll_p_clk);
->  	clk_put(cpufreq->pll_x_clk);
->  	clk_put(cpufreq->cpu_clk);
-
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-
--- 
-viresh
+> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> index 3c7bd453cf42..0450ecbbc356 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> @@ -193,6 +193,9 @@ static unsigned int mtk_ddp_mout_en(enum mtk_ddp_comp_id cur,
+>  	} else if (cur == DDP_COMPONENT_GAMMA && next == DDP_COMPONENT_RDMA1) {
+>  		*addr = DISP_REG_CONFIG_DISP_GAMMA_MOUT_EN;
+>  		value = GAMMA_MOUT_EN_RDMA1;
+> +	} else if (cur == DDP_COMPONENT_OD1 && next == DDP_COMPONENT_RDMA1) {
+> +		*addr = DISP_REG_CONFIG_DISP_OD_MOUT_EN;
+> +		value = OD1_MOUT_EN_RDMA1;
+>  	} else if (cur == DDP_COMPONENT_RDMA1 && next == DDP_COMPONENT_DPI0) {
+>  		*addr = DISP_REG_CONFIG_DISP_RDMA1_MOUT_EN;
+>  		value = RDMA1_MOUT_DPI0;
