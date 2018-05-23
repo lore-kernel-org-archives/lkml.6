@@ -1,170 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754835AbeEWSJY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 14:09:24 -0400
-Received: from bh-25.webhostbox.net ([208.91.199.152]:43001 "EHLO
-        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750866AbeEWSJW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 14:09:22 -0400
-Date: Wed, 23 May 2018 11:09:20 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Ray Jui <ray.jui@broadcom.com>,
-        Scott Branden <scott.branden@broadcom.com>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 3/5] watchdog: sp805: set WDOG_HW_RUNNING when appropriate
-Message-ID: <20180523180920.GB27570@roeck-us.net>
-References: <1527014840-21236-1-git-send-email-ray.jui@broadcom.com>
- <1527014840-21236-4-git-send-email-ray.jui@broadcom.com>
- <20180522205457.GA16363@roeck-us.net>
- <0d92b9e9-a3d1-6e91-8371-b5ed3a83e399@broadcom.com>
- <00c121ea-d197-93b8-2f56-bcca963f70fb@broadcom.com>
- <76d47e02-7a5f-3fc2-3905-cd4aa03ac69c@arm.com>
- <5a996888-d3d3-9ae6-e438-5de4d5e3ea32@broadcom.com>
- <ef3539fd-c95c-f364-93c7-680aabd1eea3@arm.com>
+        id S1754838AbeEWSKn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 14:10:43 -0400
+Received: from foss.arm.com ([217.140.101.70]:59746 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752282AbeEWSKj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 14:10:39 -0400
+Date: Wed, 23 May 2018 19:10:06 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Boaz Harrosh <boazh@netapp.com>
+Cc: Christopher Lameter <cl@linux.com>, Jeff Moyer <jmoyer@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Rik van Riel <riel@redhat.com>, Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Amit Golander <Amit.Golander@netapp.com>
+Subject: Re: [PATCH] mm: Add new vma flag VM_LOCAL_CPU
+Message-ID: <20180523181004.txe4x6rx52wtcvjx@lakrids.cambridge.arm.com>
+References: <0efb5547-9250-6b6c-fe8e-cf4f44aaa5eb@netapp.com>
+ <20180514191551.GA27939@bombadil.infradead.org>
+ <7ec6fa37-8529-183d-d467-df3642bcbfd2@netapp.com>
+ <20180515004137.GA5168@bombadil.infradead.org>
+ <f3a66d8b-b9dc-b110-08aa-a63f0c309fb2@netapp.com>
+ <010001637399f796-3ffe3ed2-2fb1-4d43-84f0-6a65b6320d66-000000@email.amazonses.com>
+ <5aea6aa0-88cc-be7a-7012-7845499ced2c@netapp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ef3539fd-c95c-f364-93c7-680aabd1eea3@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Authenticated_sender: guenter@roeck-us.net
-X-OutGoing-Spam-Status: No, score=-1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
-X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+In-Reply-To: <5aea6aa0-88cc-be7a-7012-7845499ced2c@netapp.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 06:15:14PM +0100, Robin Murphy wrote:
-> On 23/05/18 17:29, Ray Jui wrote:
-> >Hi Robin,
-> >
-> >On 5/23/2018 4:48 AM, Robin Murphy wrote:
-> >>On 23/05/18 08:52, Scott Branden wrote:
+On Tue, May 22, 2018 at 07:05:48PM +0300, Boaz Harrosh wrote:
+> On 18/05/18 17:14, Christopher Lameter wrote:
+> > On Tue, 15 May 2018, Boaz Harrosh wrote:
+> > 
+> >>> I don't think page tables work the way you think they work.
 > >>>
+> >>> +               err = vm_insert_pfn_prot(zt->vma, zt_addr, pfn, prot);
 > >>>
-> >>>On 18-05-22 04:24 PM, Ray Jui wrote:
-> >>>>Hi Guenter,
-> >>>>
-> >>>>On 5/22/2018 1:54 PM, Guenter Roeck wrote:
-> >>>>>On Tue, May 22, 2018 at 11:47:18AM -0700, Ray Jui wrote:
-> >>>>>>If the watchdog hardware is already enabled during the boot process,
-> >>>>>>when the Linux watchdog driver loads, it should reset the
-> >>>>>>watchdog and
-> >>>>>>tell the watchdog framework. As a result, ping can be generated from
-> >>>>>>the watchdog framework, until the userspace watchdog daemon
-> >>>>>>takes over
-> >>>>>>control
-> >>>>>>
-> >>>>>>Signed-off-by: Ray Jui <ray.jui@broadcom.com>
-> >>>>>>Reviewed-by: Vladimir Olovyannikov
-> >>>>>><vladimir.olovyannikov@broadcom.com>
-> >>>>>>Reviewed-by: Scott Branden <scott.branden@broadcom.com>
-> >>>>>>---
-> >>>>>>  drivers/watchdog/sp805_wdt.c | 22 ++++++++++++++++++++++
-> >>>>>>  1 file changed, 22 insertions(+)
-> >>>>>>
-> >>>>>>diff --git a/drivers/watchdog/sp805_wdt.c
-> >>>>>>b/drivers/watchdog/sp805_wdt.c
-> >>>>>>index 1484609..408ffbe 100644
-> >>>>>>--- a/drivers/watchdog/sp805_wdt.c
-> >>>>>>+++ b/drivers/watchdog/sp805_wdt.c
-> >>>>>>@@ -42,6 +42,7 @@
-> >>>>>>      /* control register masks */
-> >>>>>>      #define    INT_ENABLE    (1 << 0)
-> >>>>>>      #define    RESET_ENABLE    (1 << 1)
-> >>>>>>+    #define    ENABLE_MASK    (INT_ENABLE | RESET_ENABLE)
-> >>>>>>  #define WDTINTCLR        0x00C
-> >>>>>>  #define WDTRIS            0x010
-> >>>>>>  #define WDTMIS            0x014
-> >>>>>>@@ -74,6 +75,18 @@ module_param(nowayout, bool, 0);
-> >>>>>>  MODULE_PARM_DESC(nowayout,
-> >>>>>>          "Set to 1 to keep watchdog running after device release");
-> >>>>>>  +/* returns true if wdt is running; otherwise returns false */
-> >>>>>>+static bool wdt_is_running(struct watchdog_device *wdd)
-> >>>>>>+{
-> >>>>>>+    struct sp805_wdt *wdt = watchdog_get_drvdata(wdd);
-> >>>>>>+
-> >>>>>>+    if ((readl_relaxed(wdt->base + WDTCONTROL) & ENABLE_MASK) ==
-> >>>>>>+        ENABLE_MASK)
-> >>>>>>+        return true;
-> >>>>>>+    else
-> >>>>>>+        return false;
-> >>>>>
-> >>>>>    return !!(readl_relaxed(wdt->base + WDTCONTROL) & ENABLE_MASK));
-> >>>>>
-> >>>>
-> >>>>Note ENABLE_MASK contains two bits (INT_ENABLE and RESET_ENABLE);
-> >>>>therefore, a simple !!(expression) would not work? That is, the
-> >>>>masked result needs to be compared against the mask again to ensure
-> >>>>both bits are set, right?
-> >>>Ray - your original code looks correct to me.  Easier to read and less
-> >>>prone to errors as shown in the attempted translation to a single
-> >>>statement.
+> >>> That doesn't just insert it into the local CPU's page table.  Any CPU
+> >>> which directly accesses or even prefetches that address will also get
+> >>> the translation into its cache.
+> >>>
 > >>
-> >>     if (<boolean condition>)
-> >>         return true;
-> >>     else
-> >>         return false;
+> >> Yes I know, but that is exactly the point of this flag. I know that this
+> >> address is only ever accessed from a single core. Because it is an mmap (vma)
+> >> of an O_TMPFILE-exclusive file created in a core-pinned thread and I allow
+> >> only that thread any kind of access to this vma. Both the filehandle and the
+> >> mmaped pointer are kept on the thread stack and have no access from outside.
 > >>
-> >>still looks really dumb, though, and IMO is actually harder to read than
-> >>just "return <boolean condition>;" because it forces you to stop and
-> >>double-check that the logic is, in fact, only doing the obvious thing.
-> >
-> >If you can propose a way to modify my original code above to make it more
-> >readable, I'm fine to make the change.
+> >> So the all point of this flag is the kernel driver telling mm that this
+> >> address is enforced to only be accessed from one core-pinned thread.
+> > 
+> > But there are no provisions for probhiting accesses from other cores?
+> > 
+> > This means that a casual accidental write from a thread executing on
+> > another core can lead to arbitrary memory corruption because the cache
+> > flushing has been bypassed.
 > 
-> Well,
-> 
-> 	return readl_relaxed(wdt->base + WDTCONTROL) & ENABLE_MASK == ENABLE_MASK;
-> 
-> would probably be reasonable to anyone other than the 80-column zealots, but
-> removing the silly boolean-to-boolean translation idiom really only
-> emphasises the fact that it's fundamentally a big complex statement; for
-> maximum clarity I'd be inclined to separate the two logical operations (read
-> and comparison), e.g.:
-> 
-> 	u32 wdtcontrol = readl_relaxed(wdt->base + WDTCONTROL);
-> 
-> 	return wdtcontrol & ENABLE_MASK == ENABLE_MASK;
+> No this is not accurate. A "casual accidental write" will not do any harm.
+> Only a well concerted malicious server can exploit this. A different thread
+> on a different core will need to hit the exact time to read from the exact
+> pointer at the narrow window while the IO is going on. fault-in a TLB at the
+> time of the valid mapping.
 
-== has higher precendence than bitwise &, so this will need ( ),
-but otherwise I agree.
+TLB entries can be allocated at any time, for any reason. Even if a
+program doesn't explicitly read from the exact pointer at that time, it
+doesn't guarantee that a TLB entry won't be allocated.
 
-> 
-> which is still -3 lines vs. the original.
-> 
-> >As I mentioned, I don't think the following change proposed by Guenter
-> >will work due to the reason I pointed out:
-> >
-> >return !!(readl_relaxed(wdt->base + WDTCONTROL) & ENABLE_MASK));
-> 
-> FWIW, getting the desired result should only need one logical not swapping
-> for a bitwise one there:
-> 
-> 	return !(~readl_relaxed(wdt->base + WDTCONTROL) & ENABLE_MASK);
-> 
-> but that's well into "too clever for its own good" territory ;)
+> Then later after the IO has ended and before any
+> of the threads where scheduled out, maliciously write. 
 
-Yes, that would be confusing.
+... or, regardless of the application's wishes, the core mm code decides
+it needs to swap this page out (only doing local TLB invalidation), and
+later pages it back in.
 
+Several things can happen, e.g.
+
+* a casual write can corrupt the original page, which is now in use for
+  something else.
+
+* a CPU might re-allocate a TLB entry for that page, finding it
+  conflicts with an existing entry. This is *fatal* on some
+  architectures.
+
+> All the while the App has freed its buffers and the buffer was used
+> for something else.  Please bear in mind that this is only As root, in
+> an /sbin/ executable signed by the Kernel's key.
+
+That isn't enforced by the core API additions, and regardless, root does
+not necessarily imply access to kernel-internal stuff (e.g. if the
+lockdown stuff goes in).
+
+Claiming that root access means we don't need to care about robustness
+is not a good argument.
+
+[...]
+
+> So lets start from the Beginning.
 > 
-> Robin.
+> How can we implement "Private memory"?
+
+Use separate processes rather than threads. Each will have a separate
+mm, so the arch can get away with local TLB invalidation.
+
+If you wish to share portions of memory between these processes, we have
+shared memory APIs to do so.
+
+Thanks,
+Mark.
