@@ -1,91 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754233AbeEWIIe (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 04:08:34 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:39640 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754255AbeEWII3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 04:08:29 -0400
-X-Google-Smtp-Source: AB8JxZo/F3AbRTxPyqjaBUAS3DVA43hIMteXXrlAsPr5rxhPhrPcEWyOgd3WF1Z4T9yGuw/q6Fr2mZy7Gl2DlmmC7uo=
-MIME-Version: 1.0
-In-Reply-To: <425bceb1-a03c-06da-f39c-1299662fb6b0@cn.fujitsu.com>
-References: <20180320110432.28127-1-douly.fnst@cn.fujitsu.com>
- <20180320110432.28127-5-douly.fnst@cn.fujitsu.com> <alpine.DEB.2.21.1805191704150.1599@nanos.tec.linutronix.de>
- <7c33b3bd-7e9d-1583-737c-d2edd457bd1a@cn.fujitsu.com> <425bceb1-a03c-06da-f39c-1299662fb6b0@cn.fujitsu.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 23 May 2018 10:08:28 +0200
-X-Google-Sender-Auth: 4gUbRATX0y3GUCK0e4BtZMqBycY
-Message-ID: <CAJZ5v0hVUL0OdErMrKZyEST-LqboDfvVXYDMGiiuvTXewMCEnQ@mail.gmail.com>
-Subject: Re: [PATCH 4/5] acpi/processor: Fix the return value of acpi_processor_ids_walk()
-To: Dou Liyang <douly.fnst@cn.fujitsu.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
+        id S1754391AbeEWIIt (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 04:08:49 -0400
+Received: from mga07.intel.com ([134.134.136.100]:51532 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754352AbeEWIIo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 04:08:44 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,432,1520924400";
+   d="scan'208";a="44059758"
+Date: Wed, 23 May 2018 16:08:28 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Shakeel Butt <shakeelb@google.com>
+Cc: kbuild-all@01.org, Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Thelen <gthelen@google.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Vlastimil Babka <vbabka@suse.cz>, Linux MM <linux-mm@kvack.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Len Brown <lenb@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Content-Type: text/plain; charset="UTF-8"
+        Shakeel Butt <shakeelb@google.com>
+Subject: Re: [PATCH] mm: save two stranding bit in gfp_mask
+Message-ID: <201805231335.RIR9HxYj%fengguang.wu@intel.com>
+References: <20180516202023.167627-1-shakeelb@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180516202023.167627-1-shakeelb@google.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 3:34 AM, Dou Liyang <douly.fnst@cn.fujitsu.com> wrote:
-> At 05/22/2018 09:47 AM, Dou Liyang wrote:
->>
->>
->>
->> At 05/19/2018 11:06 PM, Thomas Gleixner wrote:
->>>
->>> On Tue, 20 Mar 2018, Dou Liyang wrote:
->>>
->>>> ACPI driver should make sure all the processor IDs in their ACPI
->>>> Namespace
->>>> are unique for CPU hotplug. the driver performs a depth-first walk of
->>>> the
->>>> namespace tree and calls the acpi_processor_ids_walk().
->>>>
->>>> But, the acpi_processor_ids_walk() will return true if one processor is
->>>> checked, that cause the walk break after walking pass the first
->>>> processor.
->>>>
->>>> Repace the value with AE_OK which is the standard acpi_status value.
->>>>
->>>> Fixes 8c8cb30f49b8 ("acpi/processor: Implement DEVICE operator for
->>>> processor enumeration")
->>>>
->>>> Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
->>>> ---
->>>>   drivers/acpi/acpi_processor.c | 4 ++--
->>>>   1 file changed, 2 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/drivers/acpi/acpi_processor.c
->>>> b/drivers/acpi/acpi_processor.c
->>>> index 449d86d39965..db5bdb59639c 100644
->>>> --- a/drivers/acpi/acpi_processor.c
->>>> +++ b/drivers/acpi/acpi_processor.c
->>>> @@ -663,11 +663,11 @@ static acpi_status __init (acpi_handle handle,
->>>>       }
->>>>       processor_validated_ids_update(uid);
->>>> -    return true;
->>>> +    return AE_OK;
->>>>   err:
->>>>       acpi_handle_info(handle, "Invalid processor object\n");
->>>> -    return false;
->>>> +    return AE_OK;
->>>
->>>
->>> I'm not sure whether this is the right return value here. Rafael?
->>>
->
-> +Cc Rafael's common used email address.
->
-> I am sorry, I created the cc list using ./script/get_maintainers.pl ...
-> and didn't check it.
+Hi Shakeel,
 
-No worries, I saw your messages, but thanks!
+Thank you for the patch! Perhaps something to improve:
+
+[auto build test WARNING on mmotm/master]
+[also build test WARNING on v4.17-rc6]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+
+url:    https://github.com/0day-ci/linux/commits/Shakeel-Butt/mm-save-two-stranding-bit-in-gfp_mask/20180518-202316
+base:   git://git.cmpxchg.org/linux-mmotm.git master
+
+
+vim +/jl +2585 fs/reiserfs/journal.c
+
+^1da177e Linus Torvalds 2005-04-16  2573  
+^1da177e Linus Torvalds 2005-04-16  2574  static struct reiserfs_journal_list *alloc_journal_list(struct super_block *s)
+^1da177e Linus Torvalds 2005-04-16  2575  {
+^1da177e Linus Torvalds 2005-04-16  2576  	struct reiserfs_journal_list *jl;
+8c777cc4 Pekka Enberg   2006-02-01  2577  	jl = kzalloc(sizeof(struct reiserfs_journal_list),
+8c777cc4 Pekka Enberg   2006-02-01  2578  		     GFP_NOFS | __GFP_NOFAIL);
+^1da177e Linus Torvalds 2005-04-16  2579  	INIT_LIST_HEAD(&jl->j_list);
+^1da177e Linus Torvalds 2005-04-16  2580  	INIT_LIST_HEAD(&jl->j_working_list);
+^1da177e Linus Torvalds 2005-04-16  2581  	INIT_LIST_HEAD(&jl->j_tail_bh_list);
+^1da177e Linus Torvalds 2005-04-16  2582  	INIT_LIST_HEAD(&jl->j_bh_list);
+90415dea Jeff Mahoney   2008-07-25  2583  	mutex_init(&jl->j_commit_mutex);
+^1da177e Linus Torvalds 2005-04-16  2584  	SB_JOURNAL(s)->j_num_lists++;
+^1da177e Linus Torvalds 2005-04-16 @2585  	get_journal_list(jl);
+^1da177e Linus Torvalds 2005-04-16  2586  	return jl;
+^1da177e Linus Torvalds 2005-04-16  2587  }
+^1da177e Linus Torvalds 2005-04-16  2588  
+
+:::::: The code at line 2585 was first introduced by commit
+:::::: 1da177e4c3f41524e886b7f1b8a0c1fc7321cac2 Linux-2.6.12-rc2
+
+:::::: TO: Linus Torvalds <torvalds@ppc970.osdl.org>
+:::::: CC: Linus Torvalds <torvalds@ppc970.osdl.org>
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
