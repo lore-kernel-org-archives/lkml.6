@@ -1,73 +1,182 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754093AbeEWFVE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 01:21:04 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:34186 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754068AbeEWFU6 (ORCPT
+        id S1754110AbeEWFVH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 01:21:07 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:40240 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754072AbeEWFVA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 01:20:58 -0400
-X-Google-Smtp-Source: AB8JxZq1Cqdc6l2DHHqA6JzLOo7sM6XlUOwrb0XOWZkEzLksgjqNgyYQXvKdQRo4QUGi49//lgOVcQ==
+        Wed, 23 May 2018 01:21:00 -0400
+X-Google-Smtp-Source: AB8JxZq75fotTb9LkwX7U/FqLjXMXhvTN6GrBhQ9+1eNuLTWZk/binDLy9F48uxj9J5XqsD+5A8xiQ==
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
 To: Ohad Ben-Cohen <ohad@wizery.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Sricharan R <sricharan@codeaurora.org>,
         Sibi Sankar <sibis@codeaurora.org>,
-        Rohit kumar <rohitkr@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, linux-kernel@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: [RFC PATCH 0/5] Hexagon remoteproc spring cleaning
-Date: Tue, 22 May 2018 22:20:49 -0700
-Message-Id: <20180523052054.19025-1-bjorn.andersson@linaro.org>
+        Rohit kumar <rohitkr@codeaurora.org>,
+        Andy Gross <andy.gross@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: [RFC PATCH 1/5] remoteproc: qcom: mdt_loader: Make the firmware authentication optional
+Date: Tue, 22 May 2018 22:20:50 -0700
+Message-Id: <20180523052054.19025-2-bjorn.andersson@linaro.org>
 X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180523052054.19025-1-bjorn.andersson@linaro.org>
+References: <20180523052054.19025-1-bjorn.andersson@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the introduction of support for the non-MSA Hexagon WCSS driver from
-Sricharan and the non-PAS ADSP driver from Rohit it makes sense to overhaul the
-structure of the Qualcomm "Q6V5 drivers".
+From: Sricharan R <sricharan@codeaurora.org>
 
-The first patch is from Sricharan's series and included here for completeness.
-The second patch introduces a set of helper functions, based on the current
-state of the qcom_q6v5_pil driver. The third and forth patch migrates the PAS
-and the MSA drivers over to using these helpers. Finally a (completely)
-reworked version of Sricharan's WCSS remoteproc driver is introduced.
+qcom_mdt_load function loads the mdt type firmware and
+initialises the secure memory as well. Make the initialisation only
+when requested by the caller, so that the function can be used
+by self-authenticating remoteproc as well.
 
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
 
-With this in place I suggest that we rename qcom_adsp_pil.c to qcom_q6v5_pas.c,
-qcom_q6v5_pil.c to qcom_q6v5_msa.c and depending on the details of the non-PAS
-ADSP we could potentially combine that into a qcom_q6v5_pil.c - or we carry
-them as separate files.
+No changes from Sricharan's V6.
 
-Looking at the remaining non-essential parts of these drivers we have
-memory-region handling and halt_axi handling. The prior is actively being
-worked on and the latter should (if no better abstraction is presented) be
-possible to just put in the new qcom_q6v5.c.
+ drivers/soc/qcom/mdt_loader.c       | 87 ++++++++++++++++++++---------
+ include/linux/soc/qcom/mdt_loader.h |  4 ++
+ 2 files changed, 66 insertions(+), 25 deletions(-)
 
-Bjorn Andersson (3):
-  remoteproc: q6v5: Extract common resource handling
-  remoteproc: qcom: adsp: Use common q6v5 helpers
-  remoteproc: qcom: q6v5-pil: Use common q6v5 helpers
-
-Sricharan R (2):
-  remoteproc: qcom: mdt_loader: Make the firmware authentication
-    optional
-  remoteproc: qcom: Introduce Hexagon V5 based WCSS driver
-
- drivers/remoteproc/Kconfig          |  23 ++
- drivers/remoteproc/Makefile         |   2 +
- drivers/remoteproc/qcom_adsp_pil.c  | 156 ++------
- drivers/remoteproc/qcom_q6v5.c      | 243 ++++++++++++
- drivers/remoteproc/qcom_q6v5.h      |  46 +++
- drivers/remoteproc/qcom_q6v5_pil.c  | 157 +-------
- drivers/remoteproc/qcom_q6v5_wcss.c | 580 ++++++++++++++++++++++++++++
- drivers/soc/qcom/mdt_loader.c       |  87 +++--
- include/linux/soc/qcom/mdt_loader.h |   4 +
- 9 files changed, 1002 insertions(+), 296 deletions(-)
- create mode 100644 drivers/remoteproc/qcom_q6v5.c
- create mode 100644 drivers/remoteproc/qcom_q6v5.h
- create mode 100644 drivers/remoteproc/qcom_q6v5_wcss.c
-
+diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
+index dc09d7ac905f..1c488024c698 100644
+--- a/drivers/soc/qcom/mdt_loader.c
++++ b/drivers/soc/qcom/mdt_loader.c
+@@ -74,23 +74,10 @@ ssize_t qcom_mdt_get_size(const struct firmware *fw)
+ }
+ EXPORT_SYMBOL_GPL(qcom_mdt_get_size);
+ 
+-/**
+- * qcom_mdt_load() - load the firmware which header is loaded as fw
+- * @dev:	device handle to associate resources with
+- * @fw:		firmware object for the mdt file
+- * @firmware:	name of the firmware, for construction of segment file names
+- * @pas_id:	PAS identifier
+- * @mem_region:	allocated memory region to load firmware into
+- * @mem_phys:	physical address of allocated memory region
+- * @mem_size:	size of the allocated memory region
+- * @reloc_base:	adjusted physical address after relocation
+- *
+- * Returns 0 on success, negative errno otherwise.
+- */
+-int qcom_mdt_load(struct device *dev, const struct firmware *fw,
+-		  const char *firmware, int pas_id, void *mem_region,
+-		  phys_addr_t mem_phys, size_t mem_size,
+-		  phys_addr_t *reloc_base)
++static int __qcom_mdt_load(struct device *dev, const struct firmware *fw,
++			   const char *firmware, int pas_id, void *mem_region,
++			   phys_addr_t mem_phys, size_t mem_size,
++			   phys_addr_t *reloc_base, bool pas_init)
+ {
+ 	const struct elf32_phdr *phdrs;
+ 	const struct elf32_phdr *phdr;
+@@ -121,10 +108,12 @@ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
+ 	if (!fw_name)
+ 		return -ENOMEM;
+ 
+-	ret = qcom_scm_pas_init_image(pas_id, fw->data, fw->size);
+-	if (ret) {
+-		dev_err(dev, "invalid firmware metadata\n");
+-		goto out;
++	if (pas_init) {
++		ret = qcom_scm_pas_init_image(pas_id, fw->data, fw->size);
++		if (ret) {
++			dev_err(dev, "invalid firmware metadata\n");
++			goto out;
++		}
+ 	}
+ 
+ 	for (i = 0; i < ehdr->e_phnum; i++) {
+@@ -144,10 +133,13 @@ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
+ 	}
+ 
+ 	if (relocate) {
+-		ret = qcom_scm_pas_mem_setup(pas_id, mem_phys, max_addr - min_addr);
+-		if (ret) {
+-			dev_err(dev, "unable to setup relocation\n");
+-			goto out;
++		if (pas_init) {
++			ret = qcom_scm_pas_mem_setup(pas_id, mem_phys,
++						     max_addr - min_addr);
++			if (ret) {
++				dev_err(dev, "unable to setup relocation\n");
++				goto out;
++			}
+ 		}
+ 
+ 		/*
+@@ -202,7 +194,52 @@ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
+ 
+ 	return ret;
+ }
++
++/**
++ * qcom_mdt_load() - load the firmware which header is loaded as fw
++ * @dev:	device handle to associate resources with
++ * @fw:		firmware object for the mdt file
++ * @firmware:	name of the firmware, for construction of segment file names
++ * @pas_id:	PAS identifier
++ * @mem_region:	allocated memory region to load firmware into
++ * @mem_phys:	physical address of allocated memory region
++ * @mem_size:	size of the allocated memory region
++ * @reloc_base:	adjusted physical address after relocation
++ *
++ * Returns 0 on success, negative errno otherwise.
++ */
++int qcom_mdt_load(struct device *dev, const struct firmware *fw,
++		  const char *firmware, int pas_id, void *mem_region,
++		  phys_addr_t mem_phys, size_t mem_size,
++		  phys_addr_t *reloc_base)
++{
++	return __qcom_mdt_load(dev, fw, firmware, pas_id, mem_region, mem_phys,
++			       mem_size, reloc_base, true);
++}
+ EXPORT_SYMBOL_GPL(qcom_mdt_load);
+ 
++/**
++ * qcom_mdt_load_no_init() - load the firmware which header is loaded as fw
++ * @dev:	device handle to associate resources with
++ * @fw:		firmware object for the mdt file
++ * @firmware:	name of the firmware, for construction of segment file names
++ * @pas_id:	PAS identifier
++ * @mem_region:	allocated memory region to load firmware into
++ * @mem_phys:	physical address of allocated memory region
++ * @mem_size:	size of the allocated memory region
++ * @reloc_base:	adjusted physical address after relocation
++ *
++ * Returns 0 on success, negative errno otherwise.
++ */
++int qcom_mdt_load_no_init(struct device *dev, const struct firmware *fw,
++			  const char *firmware, int pas_id,
++			  void *mem_region, phys_addr_t mem_phys,
++			  size_t mem_size, phys_addr_t *reloc_base)
++{
++	return __qcom_mdt_load(dev, fw, firmware, pas_id, mem_region, mem_phys,
++			       mem_size, reloc_base, false);
++}
++EXPORT_SYMBOL_GPL(qcom_mdt_load_no_init);
++
+ MODULE_DESCRIPTION("Firmware parser for Qualcomm MDT format");
+ MODULE_LICENSE("GPL v2");
+diff --git a/include/linux/soc/qcom/mdt_loader.h b/include/linux/soc/qcom/mdt_loader.h
+index 5b98bbdabc25..944b06aefb0f 100644
+--- a/include/linux/soc/qcom/mdt_loader.h
++++ b/include/linux/soc/qcom/mdt_loader.h
+@@ -17,4 +17,8 @@ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
+ 		  phys_addr_t mem_phys, size_t mem_size,
+ 		  phys_addr_t *reloc_base);
+ 
++int qcom_mdt_load_no_init(struct device *dev, const struct firmware *fw,
++			  const char *fw_name, int pas_id, void *mem_region,
++			  phys_addr_t mem_phys, size_t mem_size,
++			  phys_addr_t *reloc_base);
+ #endif
 -- 
 2.17.0
