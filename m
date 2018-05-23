@@ -1,55 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754060AbeEWGiT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 02:38:19 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:7732 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753902AbeEWGiS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 02:38:18 -0400
-Subject: Re: [PATCH rdma-next 5/5] RDMA/hns: Fix the illegal memory operation
- when cross page
-To: Leon Romanovsky <leon@kernel.org>
-References: <1526544173-106587-1-git-send-email-xavier.huwei@huawei.com>
- <1526544173-106587-6-git-send-email-xavier.huwei@huawei.com>
- <20180523061706.GA5729@mtr-leonro.mtl.com>
-CC: <dledford@redhat.com>, <jgg@ziepe.ca>, <linux-rdma@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <xavier.huwei@tom.com>,
-        <lijun_nudt@163.com>
-From: "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
-Message-ID: <5B050C4A.8090307@huawei.com>
-Date: Wed, 23 May 2018 14:38:02 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
-MIME-Version: 1.0
-In-Reply-To: <20180523061706.GA5729@mtr-leonro.mtl.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.57.115.182]
-X-CFilter-Loop: Reflected
+        id S1754095AbeEWGid (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 02:38:33 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:37678 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753902AbeEWGib (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 02:38:31 -0400
+X-Google-Smtp-Source: AB8JxZr8UefJasMp0J7LpzXoCiH3+Alv8RpfJ8cKb4/Vj/oH8CeZ52I3Yw3Sav1wn+SlcO76KY27+g==
+From: Joel Fernandes <joelaf@google.com>
+X-Google-Original-From: Joel Fernandes <joel@joelfernandes.org>
+To: linux-kernel@vger.kernel.org
+Cc: Joel Fernandes <joel@joelfernandes.org>,
+        Boqun Feng <boqun.feng@gmail.com>, byungchul.park@lge.com,
+        Ingo Molnar <mingo@redhat.com>, Josh Triplett <josh@joshtriplett.org>,
+        kernel-team@android.com, Lai Jiangshan <jiangshanlai@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Peter Zilstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCH 0/4] cleanups, fixes for rcu/dev
+Date: Tue, 22 May 2018 23:38:11 -0700
+Message-Id: <20180523063815.198302-1-joel@joelfernandes.org>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Paul,
 
+Here's an updated series for rcu/dev addressing some of your comments along
+with the performance optimization. I also threw in the RCU-tasks speed up
+patch again, hopefully that doesn't annoy you :)
 
-On 2018/5/23 14:17, Leon Romanovsky wrote:
-> On Thu, May 17, 2018 at 04:02:53PM +0800, Wei Hu (Xavier) wrote:
->> This patch fixed the potential illegal operation when using the
->> extend sge buffer cross page in post send operation. The bug
->> will cause the calltrace.
->>
->> Reported-by: Jie Chen <chenjie103@huawei.com>
->> Reported-by: Xiping Zhang (Francis) <zhangxiping3@huawei.com>
->> Fixes: b1c1583("RDMA/hns: Get rid of virt_to_page and vmap calls after dma_alloc_coherent")
-> Documentation/process/submitting-patches.rst
-> 183 If your patch fixes a bug in a specific commit, e.g. you found an issue using
-> 184 ``git bisect``, please use the 'Fixes:' tag with the first 12 characters of
-> 185 the SHA-1 ID, and the one line summary.  For example::
-> 186
-> 187         Fixes: e21d2170f366 ("video: remove unnecessary platform_set_drvdata()")
->
-> Thanks
-Thanks, Leon
-    Got it. We will fix it in v2.
-Wei Hu
->> Signed-off-by: Wei Hu (Xavier) <xavier.huwei@huawei.com>
+cheers,
+ - Joel
+
+Joel Fernandes (Google) (4):
+  rcu: Speed up calling of RCU tasks callbacks
+  rcu: Add comment documenting how rcu_seq_snap works
+  rcu: Use better variable names in funnel locking loop
+  rcu: Identify grace period is in progress as we advance up the tree
+
+ kernel/rcu/rcu.h    | 34 ++++++++++++++++++++++++++-
+ kernel/rcu/tree.c   | 57 +++++++++++++++++++++++----------------------
+ kernel/rcu/update.c | 12 +++++++++-
+ 3 files changed, 73 insertions(+), 30 deletions(-)
+
+-- 
+2.17.0.441.gb46fe60e1d-goog
