@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754163AbeEWGjA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 02:39:00 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:32965 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754111AbeEWGii (ORCPT
+        id S1754176AbeEWGjR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 02:39:17 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:40206 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753902AbeEWGif (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 02:38:38 -0400
-X-Google-Smtp-Source: AB8JxZrAmapH+Aldmj3gHFDDK3N/bgcHwRcaU1fhVZJ1mU2I9wiHzYy/b6C38DoysMqkZDpObaALFA==
+        Wed, 23 May 2018 02:38:35 -0400
+X-Google-Smtp-Source: AB8JxZoHRx/3mE2XIsSXX/H0+uuUl63jD14yLJIWDRjhA9PDAK6gqFspD6Y4wWBk0FSyelbkWC5xnA==
 From: Joel Fernandes <joelaf@google.com>
 X-Google-Original-From: Joel Fernandes <joel@joelfernandes.org>
 To: linux-kernel@vger.kernel.org
@@ -19,9 +19,9 @@ Cc: "Joel Fernandes (Google)" <joel@joelfernandes.org>,
         Paul McKenney <paulmck@linux.vnet.ibm.com>,
         Peter Zilstra <peterz@infradead.org>,
         Steven Rostedt <rostedt@goodmis.org>
-Subject: [PATCH 4/4] rcu: Identify grace period is in progress as we advance up the tree
-Date: Tue, 22 May 2018 23:38:15 -0700
-Message-Id: <20180523063815.198302-5-joel@joelfernandes.org>
+Subject: [PATCH 2/4] rcu: Add comment documenting how rcu_seq_snap works
+Date: Tue, 22 May 2018 23:38:13 -0700
+Message-Id: <20180523063815.198302-3-joel@joelfernandes.org>
 X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
 In-Reply-To: <20180523063815.198302-1-joel@joelfernandes.org>
 References: <20180523063815.198302-1-joel@joelfernandes.org>
@@ -31,40 +31,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
 
-There's no need to keep checking the same starting node for whether a
-grace period is in progress as we advance up the funnel lock loop. Its
-sufficient if we just checked it in the start, and then subsequently
-checked the internal nodes as we advanced up the combining tree. This
-also makes sense because the grace-period updates propogate from the
-root to the leaf, so there's a chance we may find a grace period has
-started as we advance up, lets check for the same.
+rcu_seq_snap may be tricky to decipher. Lets document how it works with
+an example to make it easier.
 
-Reported-by: Paul McKenney <paulmck@linux.vnet.ibm.com>
 Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 ---
- kernel/rcu/tree.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ kernel/rcu/rcu.h | 34 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 33 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 31f4b4b7d824..65e49282429c 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -1570,11 +1570,12 @@ static bool rcu_start_this_gp(struct rcu_node *rnp_start, struct rcu_data *rdp,
- 			goto unlock_out;
- 		}
- 		rnp->gp_seq_needed = gp_seq_req;
--		if (rcu_seq_state(rcu_seq_current(&rnp_start->gp_seq))) {
-+		if (rcu_seq_state(rcu_seq_current(&rnp->gp_seq))) {
- 			/*
--			 * We just marked the leaf, and a grace period
--			 * is in progress, which means that rcu_gp_cleanup()
--			 * will see the marking.  Bail to reduce contention.
-+			 * We just marked the leaf or internal node, and a
-+			 * grace period is in progress, which means that
-+			 * rcu_gp_cleanup() will see the marking.  Bail to
-+			 * reduce contention.
- 			 */
- 			trace_rcu_this_gp(rnp_start, rdp, gp_seq_req,
- 					  TPS("Startedleaf"));
+diff --git a/kernel/rcu/rcu.h b/kernel/rcu/rcu.h
+index 0453a7d12b3f..5819a37f19fb 100644
+--- a/kernel/rcu/rcu.h
++++ b/kernel/rcu/rcu.h
+@@ -91,7 +91,39 @@ static inline void rcu_seq_end(unsigned long *sp)
+ 	WRITE_ONCE(*sp, rcu_seq_endval(sp));
+ }
+ 
+-/* Take a snapshot of the update side's sequence number. */
++/*
++ * rcu_seq_snap - Take a snapshot of the update side's sequence number.
++ *
++ * This function returns the earliest value of the grace-period sequence number
++ * that will indicate that a full grace period has elapsed since the current
++ * time.  Once the grace-period sequence number has reached this value, it will
++ * be safe to invoke all callbacks that have been registered prior to the
++ * current time. This value is the current grace-period number plus two to the
++ * power of the number of low-order bits reserved for state, then rounded up to
++ * the next value in which the state bits are all zero.
++ *
++ * In the current design, RCU_SEQ_STATE_MASK=3 and the least significant bit of
++ * the seq is used to track if a GP is in progress or not. Given this, it is
++ * sufficient if we add (6+1) and mask with ~3 to get the next GP. Let's see
++ * why with an example:
++ *
++ * Say the current seq is 12 which is 0b1100 (GP is 3 and state bits are 0b00).
++ * To get to the next GP number of 4, we have to add 0b100 to this (0x1 << 2)
++ * to account for the shift due to 2 state bits. Now, if the current seq is
++ * 13 (GP is 3 and state bits are 0b01), then it means the current grace period
++ * is already in progress so the next GP that a future call back will be queued
++ * to run at is GP+2 = 5, not 4. To account for the extra +1, we just overflow
++ * the 2 lower bits by adding 0b11. In case the lower bit was set, the overflow
++ * will cause the extra +1 to the GP, along with the usual +1 explained before.
++ * This gives us GP+2. Finally we mask the lower to bits by ~0x3 in case the
++ * overflow didn't occur. This masking is needed because in case RCU was idle
++ * (no GP in progress so lower 2 bits are 0b00), then the overflow of the lower
++ * 2 state bits wouldn't occur, so we mask to zero out those lower 2 bits.
++ *
++ * In other words, the next seq can be obtained by (0b11 + 0b100) & (~0b11)
++ * which can be generalized to:
++ * seq + (RCU_SEQ_STATE_MASK + (RCU_SEQ_STATE_MASK + 1)) & (~RCU_SEQ_STATE_MASK)
++ */
+ static inline unsigned long rcu_seq_snap(unsigned long *sp)
+ {
+ 	unsigned long s;
 -- 
 2.17.0.441.gb46fe60e1d-goog
