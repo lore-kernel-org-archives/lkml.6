@@ -1,104 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754494AbeEWInB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 04:43:01 -0400
-Received: from foss.arm.com ([217.140.101.70]:50480 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754347AbeEWInA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 04:43:00 -0400
-Subject: Re: [PATCHv4 06/10] arm64: add basic pointer authentication support
-To: Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
-        catalin.marinas@arm.com, christoffer.dall@arm.com, drjones@redhat.com,
-        marc.zyngier@arm.com, ramana.radhakrishnan@arm.com,
-        will.deacon@arm.com, awallis@codeaurora.org
-References: <20180503132031.25705-1-mark.rutland@arm.com>
- <20180503132031.25705-7-mark.rutland@arm.com>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <114d65a8-ffa5-7061-864a-a32aa3baa5c5@arm.com>
-Date: Wed, 23 May 2018 09:42:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1754535AbeEWIpA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 04:45:00 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:36175 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754323AbeEWIoz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 04:44:55 -0400
+X-Google-Smtp-Source: AB8JxZoEIlw1fUbm2bjeo2xQwk9eN1wpthmTY+PHWemd6FWM+DIu1dpMkBfOElLUZV/ypHv/F8Aing==
+Date: Wed, 23 May 2018 10:44:51 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Kees Cook <keescook@chromium.org>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Laura Abbott <labbott@redhat.com>,
+        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Maling list - DRI developers
+        <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>
+Subject: Re: [PATCH] drm/gma500: Remove VLA
+Message-ID: <20180523084451.GK3438@phenom.ffwll.local>
+Mail-Followup-To: Kees Cook <keescook@chromium.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Maling list - DRI developers <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>
+References: <20180409210647.3718-1-labbott@redhat.com>
+ <CAGXu5jLcRqjk17BqprGsWJXqGusoR6nRSf8986w7chQ9UONKMA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180503132031.25705-7-mark.rutland@arm.com>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGXu5jLcRqjk17BqprGsWJXqGusoR6nRSf8986w7chQ9UONKMA@mail.gmail.com>
+X-Operating-System: Linux phenom 4.15.0-3-amd64 
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mark,
-
-
-On 03/05/18 14:20, Mark Rutland wrote:
-> This patch adds basic support for pointer authentication, allowing
-> userspace to make use of APIAKey. The kernel maintains an APIAKey value
-> for each process (shared by all threads within), which is initialised to
-> a random value at exec() time.
+On Fri, May 18, 2018 at 10:58:40AM -0700, Kees Cook wrote:
+> On Mon, Apr 9, 2018 at 2:06 PM, Laura Abbott <labbott@redhat.com> wrote:
+> >
+> > There's an ongoing effort to remove VLAs[1] from the kernel to eventually
+> > turn on -Wvla. Switch to a reasonable upper bound for the VLAs in
+> > the gma500 driver.
+> >
+> > [1] https://lkml.org/lkml/2018/3/7/621
+> >
+> > Signed-off-by: Laura Abbott <labbott@redhat.com>
 > 
-> To describe that address authentication instructions are available, the
-> ID_AA64ISAR0.{APA,API} fields are exposed to userspace. A new hwcap,
-> APIA, is added to describe that the kernel manages APIAKey.
+> Reviewed-by: Kees Cook <keescook@chromium.org>
 > 
-> Instructions using other keys (APIBKey, APDAKey, APDBKey) are disabled,
-> and will behave as NOPs. These may be made use of in future patches.
+> Daniel, can this go via you, or what's the best path for this patch?
+
+Applied to drm-misc-next for 4.19, thanks.
+-Daniel
+
 > 
-> No support is added for the generic key (APGAKey), though this cannot be
-> trapped or made to behave as a NOP. Its presence is not advertised with
-> a hwcap.
+> Thanks!
 > 
-> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>
-> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
+> -Kees
+> 
+> > ---
+> > This was a little hard to figure out but I think 32 should be a
+> > comfortable upper bound based on all the structures I saw. Of course I
+> > can't test it.
+> > ---
+> >  drivers/gpu/drm/gma500/psb_intel_sdvo.c | 11 +++++++++--
+> >  1 file changed, 9 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/gma500/psb_intel_sdvo.c b/drivers/gpu/drm/gma500/psb_intel_sdvo.c
+> > index 84507912be84..3d4fa9f6b94c 100644
+> > --- a/drivers/gpu/drm/gma500/psb_intel_sdvo.c
+> > +++ b/drivers/gpu/drm/gma500/psb_intel_sdvo.c
+> > @@ -429,13 +429,20 @@ static const char *cmd_status_names[] = {
+> >         "Scaling not supported"
+> >  };
+> >
+> > +#define MAX_ARG_LEN 32
+> > +
+> >  static bool psb_intel_sdvo_write_cmd(struct psb_intel_sdvo *psb_intel_sdvo, u8 cmd,
+> >                                  const void *args, int args_len)
+> >  {
+> > -       u8 buf[args_len*2 + 2], status;
+> > -       struct i2c_msg msgs[args_len + 3];
+> > +       u8 buf[MAX_ARG_LEN*2 + 2], status;
+> > +       struct i2c_msg msgs[MAX_ARG_LEN + 3];
+> >         int i, ret;
+> >
+> > +       if (args_len > MAX_ARG_LEN) {
+> > +               DRM_ERROR("Need to increase arg length\n");
+> > +               return false;
+> > +       }
+> > +
+> >         psb_intel_sdvo_debug_write(psb_intel_sdvo, cmd, args, args_len);
+> >
+> >         for (i = 0; i < args_len; i++) {
+> > --
+> > 2.14.3
+> >
+> 
+> 
+> 
+> -- 
+> Kees Cook
+> Pixel Security
 
-
-> diff --git a/arch/arm64/include/asm/pointer_auth.h b/arch/arm64/include/asm/pointer_auth.h
-> new file mode 100644
-> index 000000000000..034877ee28bc
-> --- /dev/null
-> +++ b/arch/arm64/include/asm/pointer_auth.h
-
-...
-
-> +
-> +#define __ptrauth_key_install(k, v)			\
-> +do {							\
-> +	write_sysreg_s(v.lo, SYS_ ## k ## KEYLO_EL1);	\
-> +	write_sysreg_s(v.hi, SYS_ ## k ## KEYHI_EL1);	\
-> +} while (0)
-
-I think it might be safer to have parentheses around v, to prevent
-something like __ptrauth_key_install(APIA, *key_val) work fine.
-
-> diff --git a/arch/arm64/include/uapi/asm/hwcap.h b/arch/arm64/include/uapi/asm/hwcap.h
-> index 17c65c8f33cb..01f02ac500ae 100644
-> --- a/arch/arm64/include/uapi/asm/hwcap.h
-> +++ b/arch/arm64/include/uapi/asm/hwcap.h
-> @@ -48,5 +48,6 @@
->   #define HWCAP_USCAT		(1 << 25)
->   #define HWCAP_ILRCPC		(1 << 26)
->   #define HWCAP_FLAGM		(1 << 27)
-> +#define HWCAP_APIA		(1 << 28)
->   
->   #endif /* _UAPI__ASM_HWCAP_H */
-> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> index 01b1a7e7d70f..f418d4cb6691 100644
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@ -1030,6 +1030,11 @@ static void cpu_copy_el2regs(const struct arm64_cpu_capabilities *__unused)
->   #endif
-...
-
-> +#ifdef CONFIG_ARM64_PNTR_AUTH
-> +	HWCAP_CAP(SYS_ID_AA64ISAR1_EL1, ID_AA64ISAR1_APA_SHIFT, FTR_UNSIGNED, 1, CAP_HWCAP, HWCAP_APIA),
-> +#endif
-
-Did you mean CONFIG_ARM64_PTR_AUTH here ?
-
-Cheers
-
-Suzuki
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
