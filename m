@@ -1,77 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932468AbeEWKLH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 06:11:07 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52402 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932258AbeEWKLG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 06:11:06 -0400
-Subject: Re: [PATCH 06/14] arm64: ssbd: Add global mitigation state accessor
-To: Marc Zyngier <marc.zyngier@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu
-Cc: Kees Cook <keescook@chromium.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Andy Lutomirski <luto@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <20180522150648.28297-1-marc.zyngier@arm.com>
- <20180522150648.28297-7-marc.zyngier@arm.com>
-From: Julien Grall <julien.grall@arm.com>
-Message-ID: <af0780d1-5c13-be8f-7401-1c5c54b1dfe0@arm.com>
-Date: Wed, 23 May 2018 11:11:02 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S932315AbeEWKNw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 06:13:52 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:42047 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932180AbeEWKNs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 06:13:48 -0400
+X-Google-Smtp-Source: AB8JxZp6LAU62/D5FPUwKzsZJE9YaKVDomyXx2iluI2s/YJlJDiLGqZw7rzP3d4gh76aBL/r2M//gQ==
+Date: Wed, 23 May 2018 12:13:44 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Patrick Bellasi <patrick.bellasi@arm.com>, claudio@evidence.eu.com,
+        Todd Kjos <tkjos@google.com>
+Subject: Re: [PATCH] cpufreq: schedutil: Avoid missing updates for one-CPU
+ policies
+Message-ID: <20180523101344.GB30909@localhost.localdomain>
+References: <1672734.JYOlA1IWnU@aspire.rjw.lan>
 MIME-Version: 1.0
-In-Reply-To: <20180522150648.28297-7-marc.zyngier@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1672734.JYOlA1IWnU@aspire.rjw.lan>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
-
-On 05/22/2018 04:06 PM, Marc Zyngier wrote:
-> We're about to need the mitigation state in various parts of the
-> kernel in order to do the right thing for userspace and guests.
+On 23/05/18 11:47, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
-> Let's expose an accessor that will let other subsystems know
-> about the state.
+> Commit 152db033d775 (schedutil: Allow cpufreq requests to be made
+> even when kthread kicked) made changes to prevent utilization updates
+> from being discarded during processing a previous request, but it
+> left a small window in which that still can happen in the one-CPU
+> policy case.  Namely, updates coming in after setting work_in_progress
+> in sugov_update_commit() and clearing it in sugov_work() will still
+> be dropped due to the work_in_progress check in sugov_update_single().
 > 
-> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-
-Reviewed-by: Julien Grall <julien.grall@arm.com>
-
-Cheers,
-
-> ---
->   arch/arm64/include/asm/cpufeature.h | 10 ++++++++++
->   1 file changed, 10 insertions(+)
+> To close that window, rearrange the code so as to acquire the update
+> lock around the deferred update branch in sugov_update_single()
+> and drop the work_in_progress check from it.
 > 
-> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-> index 9bc548e22784..1bacdf57f0af 100644
-> --- a/arch/arm64/include/asm/cpufeature.h
-> +++ b/arch/arm64/include/asm/cpufeature.h
-> @@ -543,6 +543,16 @@ static inline u64 read_zcr_features(void)
->   #define ARM64_SSBD_FORCE_ENABLE		2
->   #define ARM64_SSBD_MITIGATED		3
->   
-> +static inline int arm64_get_ssbd_state(void)
-> +{
-> +#ifdef CONFIG_ARM64_SSBD
-> +	extern int ssbd_state;
-> +	return ssbd_state;
-> +#else
-> +	return ARM64_SSBD_UNKNOWN;
-> +#endif
-> +}
-> +
->   #endif /* __ASSEMBLY__ */
->   
->   #endif
-> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
--- 
-Julien Grall
+I don't have a platform at hand where to test this. But, it looks OK to
+me.
+
+Reviewed-by: Juri Lelli <juri.lelli@redhat.com>
+
+Best,
+
+- Juri
