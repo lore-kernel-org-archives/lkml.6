@@ -1,101 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932516AbeEWKkn (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 06:40:43 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:37509 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932350AbeEWKkk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 06:40:40 -0400
-Date: Wed, 23 May 2018 12:40:37 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>, tcharding <me@tobin.cc>
-Subject: Re: [PATCH] vsprintf: Fix memory barriers of ptr_key to
- have_filed_random_ptr_key
-Message-ID: <20180523104037.GD15312@amd>
-References: <20180515100558.21df515e@gandalf.local.home>
- <CA+55aFyBHRmXLo07f_7qt7szaDvppMStfX5Sq9Df6mZSy+qYvA@mail.gmail.com>
- <20180515145744.3bdcbbe9@gandalf.local.home>
+        id S932449AbeEWKmx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 06:42:53 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:35961 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932394AbeEWKmu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 06:42:50 -0400
+Date: Wed, 23 May 2018 12:42:45 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Peter Rosin <peda@axentia.se>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Josh Wu <rainyfeeling@outlook.com>, linux-kernel@vger.kernel.org,
+        Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] mtd: nand: raw: atmel: add module param to avoid using
+ dma
+Message-ID: <20180523124245.4ca332fd@bbrezillon>
+In-Reply-To: <498f4a40-0f4b-fb32-2d6c-032b5341f2b0@axentia.se>
+References: <20180329131054.22506-1-peda@axentia.se>
+        <20180329153322.5e2fc1e7@bbrezillon>
+        <ed87cf13-a69a-6115-f0a8-5f51c4957d1d@axentia.se>
+        <20180329154416.5c1a0013@bbrezillon>
+        <b740406a-e91c-67ad-24a3-cbdbe259d00d@axentia.se>
+        <20180402142249.7e076a64@bbrezillon>
+        <e0d9bd59-8031-e387-676e-dc5811170a0c@axentia.se>
+        <20180402212843.164d5d21@bbrezillon>
+        <20180402222020.1d344c14@bbrezillon>
+        <d7e6f78d-b57b-4d0f-c07c-ca6c1930cd51@axentia.se>
+        <20180403091813.5fb5c18c@bbrezillon>
+        <d0afd431-6e51-a9b7-c103-ecf1f6e07c2e@axentia.se>
+        <959d826d-1a98-ca22-acee-a4548427fcd3@microchip.com>
+        <498f4a40-0f4b-fb32-2d6c-032b5341f2b0@axentia.se>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="9UV9rz0O2dU/yYYn"
-Content-Disposition: inline
-In-Reply-To: <20180515145744.3bdcbbe9@gandalf.local.home>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 22 May 2018 20:03:41 +0200
+Peter Rosin <peda@axentia.se> wrote:
 
---9UV9rz0O2dU/yYYn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On 2018-04-11 17:34, Nicolas Ferre wrote:
+> > On 11/04/2018 at 16:44, Peter Rosin wrote:  
+> >> Hi Nicolas,
+> >>
+> >> Boris asked for your input on this (the datasheet difference appears to
+> >> have no bearing on the issue) elsewhere in the tree of messages. It's
+> >> now been a week or so and I'm starting to wonder if you missed this
+> >> altogether or if you are simply out of office or something?  
+> > 
+> > Hi Peter,
+> > 
+> > I didn't dig into this issue with matrix datasheet reset values and your 
+> > findings below. I'll try to move forward with your detailed explanation 
+> > and with my contacts within the "product" team internally.  
+> 
+> Hi again, just checking in to see if there is any progress? If not, maybe
+> it's time to just take the patch as-is, warts and imperfections included,
+> and even if we all hate it. But what to do...
 
-On Tue 2018-05-15 14:57:44, Steven Rostedt wrote:
-> On Tue, 15 May 2018 09:55:13 -0700
-> Linus Torvalds <torvalds@linux-foundation.org> wrote:
->=20
-> > On Tue, May 15, 2018 at 7:06 AM Steven Rostedt <rostedt@goodmis.org> wr=
-ote:
-> > > -       smp_mb();
-> > > +       smp_wmb();
-> > >          WRITE_ONCE(have_filled_random_ptr_key, true); =20
-> >=20
-> >=20
-> > > +       /* Read ptr_key after reading have_filled_random_ptr_key */
-> > > +       smp_rmb();
-> > > +
-> > >   #ifdef CONFIG_64BIT
-> > >          hashval =3D (unsigned long)siphash_1u64((u64)ptr, &ptr_key);=
- =20
-> >=20
-> > Hmm. smp_wmb/rmb are basically free on x86, but on some architectures
-> > smp_rmb() in particular can be pretty expensive.
-> >=20
-> > So when you have a "handoff" situation like this, it's _probably_ bette=
-r to
-> > use use "smp_store_release()" and "smp_load_acquire()". To some degree =
-that
-> > might also be better for documentation purposes, because that's exactly=
- the
-> > "release-acquire" pattern.
-> >=20
-> > That said, I'm not convinced this really matters all that much for a
-> > boot-time flag like this. The race is pretty theoretical.
-> >
->=20
-> I was thinking the same. But since the smp_mb() is there, then it
-> should be correct, which it currently isn't.
->=20
-> We could change this to a static key, and enable it after we set up
-> the ptr_key. That would be a one time change at boot up, wont have
-> races, and have no overhead.
-
-OTOH... fixing theoretical races is nice, but probably should not go
-to stable?
-								Pavel
-							=09
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---9UV9rz0O2dU/yYYn
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlsFRSUACgkQMOfwapXb+vJsCQCeKXyxrrMqeNo75baa1rmeRqGn
-nzgAoKFndt91MU+qHxBXYUhubNrucZDo
-=PEme
------END PGP SIGNATURE-----
-
---9UV9rz0O2dU/yYYn--
+Well, it's not really that the fix is ugly, but I'm pretty sure it's
+actually not fixing the problem, just make it less likely to happen.
+And, as soon as you'll have more traffic going through the DRAM
+controller you'll experience the same problem again.
