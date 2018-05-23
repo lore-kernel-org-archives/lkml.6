@@ -1,60 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932818AbeEWMDG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 08:03:06 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:40392 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932544AbeEWMDE (ORCPT
+        id S1754414AbeEWMFg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 08:05:36 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:35257 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754024AbeEWMFe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 08:03:04 -0400
-X-Google-Smtp-Source: AB8JxZqq7/RZ4DPlssAKlnADfLlnqnbCaaqzK24fFNCLeBAqj6M02m+6/7MvnK1F5rfswgm8QhkjTNT5Q+MkUxA43tw=
+        Wed, 23 May 2018 08:05:34 -0400
+X-Google-Smtp-Source: AB8JxZrpUauCcB/+3Sa/ROfSrTADorsXA4C9W/Rpdyx3B/1SKYMlXDqVsFmkYdU0NBu2bcQaL0mBCfTnix7cWTD/H3g=
 MIME-Version: 1.0
-In-Reply-To: <20180521175707.6653-1-labbott@redhat.com>
-References: <20180521175707.6653-1-labbott@redhat.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 23 May 2018 14:03:02 +0200
-Message-ID: <CACRpkdZNGSd+1Z=GAC1d3sdemM_WG8KztHELtBerwAHUrUvXUA@mail.gmail.com>
-Subject: Re: [PATCHv9] gpio: Remove VLA from gpiolib
-To: Laura Abbott <labbott@redhat.com>
-Cc: Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        kernel-hardening@lists.openwall.com,
-        Phil Reid <preid@electromag.com.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
+In-Reply-To: <20180523114230.10109-5-marek.vasut+renesas@gmail.com>
+References: <20180523114230.10109-1-marek.vasut+renesas@gmail.com> <20180523114230.10109-5-marek.vasut+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 23 May 2018 14:05:33 +0200
+X-Google-Sender-Auth: Z_6gfjlR6CIFVCKZs_OK3L-IG7k
+Message-ID: <CAMuHMdVzNgaS6cnuW0x-mNK4vF3-9Ry+0GNZ3fYjjSUapeZW7A@mail.gmail.com>
+Subject: Re: [PATCH 5/6] mfd: da9063: Handle less LDOs on DA9063L
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 7:57 PM, Laura Abbott <labbott@redhat.com> wrote:
-
-> The new challenge is to remove VLAs from the kernel
-> (see https://lkml.org/lkml/2018/3/7/621) to eventually
-> turn on -Wvla.
+On Wed, May 23, 2018 at 1:42 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+> Move the LDOs present only on DA9063 at the end of the list, so that
+> the DA9063L can simply indicate less LDOs and still share the list of
+> regulators with DA9063.
 >
-> Using a kmalloc array is the easy way to fix this but kmalloc is still
-> more expensive than stack allocation. Introduce a fast path with a
-> fixed size stack array to cover most chip with gpios below some fixed
-> amount. The slow path dynamically allocates an array to cover those
-> chips with a large number of gpios.
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Phil Reid <preid@electromag.com.au>
-> Reviewed-and-tested-by: Lukas Wunner <lukas@wunner.de>
-> Signed-off-by: Lukas Wunner <lukas@wunner.de>
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
-> ---
-> v9: switch to bitmap_zero
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 
-This v9 applied with Andy's review tag on top and pushed to
-the servers for testing!
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-THANKS A LOT for your tireless work on this, it looks really
-really good now, and as it seems we cleaned up some other
-code on the way.
+Gr{oetje,eeting}s,
 
-Yours,
-Linus Walleij
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
