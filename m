@@ -1,135 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754571AbeEWIxm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 04:53:42 -0400
-Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:39049 "EHLO
-        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1754540AbeEWIxi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 04:53:38 -0400
-From: Vlad Buslov <vladbu@mellanox.com>
-To: jiri@resnulli.us
-Cc: netdev@vger.kernel.org, jhs@mojatatu.com, xiyou.wangcong@gmail.com,
-        davem@davemloft.net, linux-kernel@vger.kernel.org,
-        Vlad Buslov <vladbu@mellanox.com>
-Subject: [PATCH net-next v3] net: sched: don't disable bh when accessing action idr
-Date: Wed, 23 May 2018 11:52:54 +0300
-Message-Id: <1527065574-11299-1-git-send-email-vladbu@mellanox.com>
-X-Mailer: git-send-email 2.7.5
-In-Reply-To: <20180523073239.GC3155@nanopsycho>
-References: <20180523073239.GC3155@nanopsycho>
+        id S932123AbeEWIys (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 04:54:48 -0400
+Received: from mga09.intel.com ([134.134.136.24]:15903 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754473AbeEWIyq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 04:54:46 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,432,1520924400";
+   d="scan'208";a="60994321"
+Message-ID: <c0daaf807c557063afe8f2caaedb502ddb8e6296.camel@linux.intel.com>
+Subject: Re: [PATCH v2] pinctrl: cherryview: limit Strago DMI workarounds to
+ version 1.0
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Guenter Roeck <linux@roeck-us.net>, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Wed, 23 May 2018 11:54:43 +0300
+In-Reply-To: <20180522204753.GA260493@dtor-ws>
+References: <20180522204753.GA260493@dtor-ws>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Initial net_device implementation used ingress_lock spinlock to synchronize
-ingress path of device. This lock was used in both process and bh context.
-In some code paths action map lock was obtained while holding ingress_lock.
-Commit e1e992e52faa ("[NET_SCHED] protect action config/dump from irqs")
-modified actions to always disable bh, while using action map lock, in
-order to prevent deadlock on ingress_lock in softirq. This lock was removed
-in commit 555353cfa1ae ("netdev: The ingress_lock member is no longer
-needed.").
+On Tue, 2018-05-22 at 13:47 -0700, Dmitry Torokhov wrote:
+> As Google/Intel will fix the BIOS/Coreboot issues with hardcoding
+> virtual interrupt numbers for keyboard/touchpad/touchscreen
+> controllers
+> in ACPI tables, they will also update BOARD version number from 1.0
+> to 1.1. Let's limit the DMI quirks that try to preserve virtual IRQ
+> numbers on Strago boards to those that still carry older BIOSes.
+> 
+> Note that ideally not BOARD but BIOS version should have been updated.
+> However the BIOS version used by Chrome devices has format of
+> Google_BUILD.BRANCH.PATCH which is not well suited for DMI matching as
+> we do not have "less than" match mode for DMI data.
+> 
 
-Another reason to disable bh was filters delete code, that released actions
-in rcu callback. This code was changed to release actions from workqueue
-context in patch set "net_sched: close the race between call_rcu() and
-cleanup_net()".
+Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-With these changes it is no longer necessary to continue disable bh while
-accessing action map.
+> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=197953
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> ---
+> 
+> v1->v2:
+> 
+> - switch from matching on DMI_BIOS_VERSION to DMI_BOARD_VERSION
+> 
+> 
+>  drivers/pinctrl/intel/pinctrl-cherryview.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c
+> b/drivers/pinctrl/intel/pinctrl-cherryview.c
+> index b1ae1618fefea..44133e6846303 100644
+> --- a/drivers/pinctrl/intel/pinctrl-cherryview.c
+> +++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
+> @@ -1527,6 +1527,7 @@ static const struct dmi_system_id
+> chv_no_valid_mask[] = {
+>  		.matches = {
+>  			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+>  			DMI_MATCH(DMI_PRODUCT_FAMILY,
+> "Intel_Strago"),
+> +			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
+>  		},
+>  	},
+>  	{
+> @@ -1534,6 +1535,7 @@ static const struct dmi_system_id
+> chv_no_valid_mask[] = {
+>  		.matches = {
+>  			DMI_MATCH(DMI_SYS_VENDOR, "HP"),
+>  			DMI_MATCH(DMI_PRODUCT_NAME, "Setzer"),
+> +			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
+>  		},
+>  	},
+>  	{
+> @@ -1541,6 +1543,7 @@ static const struct dmi_system_id
+> chv_no_valid_mask[] = {
+>  		.matches = {
+>  			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+>  			DMI_MATCH(DMI_PRODUCT_NAME, "Cyan"),
+> +			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
+>  		},
+>  	},
+>  	{
+> @@ -1548,6 +1551,7 @@ static const struct dmi_system_id
+> chv_no_valid_mask[] = {
+>  		.matches = {
+>  			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+>  			DMI_MATCH(DMI_PRODUCT_NAME, "Celes"),
+> +			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
+>  		},
+>  	},
+>  	{}
+> -- 
+> 2.17.0.441.gb46fe60e1d-goog
+> 
+> 
 
-Replace all action idr spinlock usage with regular calls that do not
-disable bh.
-
-Acked-by: Jiri Pirko <jiri@mellanox.com>
-Acked-by: Jamal Hadi Salim <jhs@mojatatu.com>
-Signed-off-by: Vlad Buslov <vladbu@mellanox.com>
----
-Changes from V2 to V3:
- - Expanded commit message.
-
-Changes from V1 to V2:
- - Expanded commit message.
-
- net/sched/act_api.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
-
-diff --git a/net/sched/act_api.c b/net/sched/act_api.c
-index 72251241665a..3f4cf930f809 100644
---- a/net/sched/act_api.c
-+++ b/net/sched/act_api.c
-@@ -77,9 +77,9 @@ static void free_tcf(struct tc_action *p)
- 
- static void tcf_idr_remove(struct tcf_idrinfo *idrinfo, struct tc_action *p)
- {
--	spin_lock_bh(&idrinfo->lock);
-+	spin_lock(&idrinfo->lock);
- 	idr_remove(&idrinfo->action_idr, p->tcfa_index);
--	spin_unlock_bh(&idrinfo->lock);
-+	spin_unlock(&idrinfo->lock);
- 	gen_kill_estimator(&p->tcfa_rate_est);
- 	free_tcf(p);
- }
-@@ -156,7 +156,7 @@ static int tcf_dump_walker(struct tcf_idrinfo *idrinfo, struct sk_buff *skb,
- 	struct tc_action *p;
- 	unsigned long id = 1;
- 
--	spin_lock_bh(&idrinfo->lock);
-+	spin_lock(&idrinfo->lock);
- 
- 	s_i = cb->args[0];
- 
-@@ -191,7 +191,7 @@ static int tcf_dump_walker(struct tcf_idrinfo *idrinfo, struct sk_buff *skb,
- 	if (index >= 0)
- 		cb->args[0] = index + 1;
- 
--	spin_unlock_bh(&idrinfo->lock);
-+	spin_unlock(&idrinfo->lock);
- 	if (n_i) {
- 		if (act_flags & TCA_FLAG_LARGE_DUMP_ON)
- 			cb->args[1] = n_i;
-@@ -261,9 +261,9 @@ static struct tc_action *tcf_idr_lookup(u32 index, struct tcf_idrinfo *idrinfo)
- {
- 	struct tc_action *p = NULL;
- 
--	spin_lock_bh(&idrinfo->lock);
-+	spin_lock(&idrinfo->lock);
- 	p = idr_find(&idrinfo->action_idr, index);
--	spin_unlock_bh(&idrinfo->lock);
-+	spin_unlock(&idrinfo->lock);
- 
- 	return p;
- }
-@@ -323,7 +323,7 @@ int tcf_idr_create(struct tc_action_net *tn, u32 index, struct nlattr *est,
- 	}
- 	spin_lock_init(&p->tcfa_lock);
- 	idr_preload(GFP_KERNEL);
--	spin_lock_bh(&idrinfo->lock);
-+	spin_lock(&idrinfo->lock);
- 	/* user doesn't specify an index */
- 	if (!index) {
- 		index = 1;
-@@ -331,7 +331,7 @@ int tcf_idr_create(struct tc_action_net *tn, u32 index, struct nlattr *est,
- 	} else {
- 		err = idr_alloc_u32(idr, NULL, &index, index, GFP_ATOMIC);
- 	}
--	spin_unlock_bh(&idrinfo->lock);
-+	spin_unlock(&idrinfo->lock);
- 	idr_preload_end();
- 	if (err)
- 		goto err3;
-@@ -369,9 +369,9 @@ void tcf_idr_insert(struct tc_action_net *tn, struct tc_action *a)
- {
- 	struct tcf_idrinfo *idrinfo = tn->idrinfo;
- 
--	spin_lock_bh(&idrinfo->lock);
-+	spin_lock(&idrinfo->lock);
- 	idr_replace(&idrinfo->action_idr, a, a->tcfa_index);
--	spin_unlock_bh(&idrinfo->lock);
-+	spin_unlock(&idrinfo->lock);
- }
- EXPORT_SYMBOL(tcf_idr_insert);
- 
 -- 
-2.7.5
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
