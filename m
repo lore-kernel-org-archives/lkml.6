@@ -1,312 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934167AbeEWTM1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 15:12:27 -0400
-Received: from mga04.intel.com ([192.55.52.120]:61091 "EHLO mga04.intel.com"
+        id S934118AbeEWTNn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 15:13:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35358 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933928AbeEWTM0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 15:12:26 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,434,1520924400";
-   d="scan'208";a="49469417"
-Date: Wed, 23 May 2018 22:12:22 +0300
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To: Vito Caputo <vcaputo@pengaru.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, daniel.vetter@ffwll.ch
-Subject: Re: [REGRESSION] v4.17-rc4: xgalaga fails to start in fullscreen
- (default) mode
-Message-ID: <20180523191222.GP23723@intel.com>
-References: <20180521195320.6stbpnebgjowxwjp@shells.gnugeneration.com>
- <20180521215718.7zwhhdanpnibp6la@shells.gnugeneration.com>
- <20180523094919.s47ldq33hhbnodu2@shells.gnugeneration.com>
- <20180523131805.GK23723@intel.com>
- <20180523180600.n66ffkumkvhqnawk@shells.gnugeneration.com>
- <20180523182037.GO23723@intel.com>
- <20180523183900.ozvgdaniulspxn55@shells.gnugeneration.com>
+        id S934122AbeEWTNk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 15:13:40 -0400
+Date: Wed, 23 May 2018 15:13:37 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Joel Fernandes <joelaf@google.com>, linux-kernel@vger.kernel.org,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Boqun Feng <boqun.feng@gmail.com>, byungchul.park@lge.com,
+        kernel-team@android.com, Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH 1/4] rcu: Speed up calling of RCU tasks callbacks
+Message-ID: <20180523151337.469bba34@gandalf.local.home>
+In-Reply-To: <20180523170303.GR3803@linux.vnet.ibm.com>
+References: <20180523063815.198302-1-joel@joelfernandes.org>
+        <20180523063815.198302-2-joel@joelfernandes.org>
+        <20180523155734.GK3803@linux.vnet.ibm.com>
+        <20180523124531.7b0e972a@gandalf.local.home>
+        <20180523170303.GR3803@linux.vnet.ibm.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180523183900.ozvgdaniulspxn55@shells.gnugeneration.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 11:39:00AM -0700, Vito Caputo wrote:
-> On Wed, May 23, 2018 at 09:20:37PM +0300, Ville Syrjälä wrote:
-> > On Wed, May 23, 2018 at 11:06:00AM -0700, Vito Caputo wrote:
-> > > On Wed, May 23, 2018 at 04:18:05PM +0300, Ville Syrjälä wrote:
-> > > > On Wed, May 23, 2018 at 02:49:19AM -0700, Vito Caputo wrote:
-> > > > > On Mon, May 21, 2018 at 02:57:18PM -0700, Vito Caputo wrote:
-> > > > > > On Mon, May 21, 2018 at 12:53:20PM -0700, Vito Caputo wrote:
-> > > > > > > Hello all,
-> > > > > > > 
-> > > > > > > 4.17-rc4 (my latest kernel ATM) consistently fails to start xgalaga
-> > > > > > > without -window.  I will try find time to build the latest rc this
-> > > > > > > evening.
-> > > > > > > 
-> > > > > > > > ~$ xgalaga
-> > > > > > > > X Error of failed request:  BadValue (integer parameter out of range for operation)
-> > > > > > > >   Major opcode of failed request:  152 (XFree86-VidModeExtension)
-> > > > > > > >   Minor opcode of failed request:  10 (XF86VidModeSwitchToMode)
-> > > > > > > >   Value in failed request:  0x120004e
-> > > > > > > >   Serial number of failed request:  199
-> > > > > > > >   Current serial number in output stream:  203
-> > > > > > > 
-> > > > > > > Haven't dug into this much yet, only did a perfunctory check by booting into a
-> > > > > > > few older kernels (4.11, 4.12, 4.16) and the problem is absent on all of them.
-> > > > > > > It appears to be a 4.17-specific regression right now.
-> > > > > > > 
-> > > > > > > Also observed, though this is surely a different regression, the game
-> > > > > > > ran like molasses with -window, showing some prominent kworkers in top:
-> > > > > > > 
-> > > > > > >   692 vc        20   0  312852  45884  20556 R  32.0  1.2   0:08.69 Xorg           
-> > > > > > >   102 root      20   0       0      0      0 R  11.2  0.0   0:01.43 kworker/1:3    
-> > > > > > >    94 root      20   0       0      0      0 I   8.9  0.0   0:00.83 kworker/0:2    
-> > > > > > >   696 vc        20   0   39948   4124   2912 S   1.0  0.1   0:05.57 vwm            
-> > > > > > >   902 vc        30  10   46372   4144   3500 S   0.7  0.1   0:00.08 xgalaga        
-> > > > > > >   891 vc        30  10   44924   3868   3156 R   0.3  0.1   0:00.09 top            
-> > > > > > >   903 vc        30  10    4180   1184   1100 S   0.3  0.0   0:00.01 xgal.sndsrv.oss
-> > > > > > > 
-> > > > > > > The windowed performance issue was observed on the older kernels tested
-> > > > > > > as well, though 4.11 felt better and didn't have the busy kworkers.
-> > > > > > > 
-> > > > > > > I have not attempted to play xgalaga for ages, but it used to be perfectly
-> > > > > > > playable on this machine in windowed mode when I last did.
-> > > > > > > 
-> > > > > > > Machine is the venerable Thinkpad X61s, 1.8Ghz, Debian 9, config attached.
-> > > > > > > 
-> > > > > > 
-> > > > > > Just built and booted v4.17-rc6, still broken.
-> > > > > 
-> > > > > Bisected to:
-> > > > > 
-> > > > > e995ca0b8139c5f6807095464e969931b443f55a is the first bad commit
-> > > > > commit e995ca0b8139c5f6807095464e969931b443f55a
-> > > > > Author: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> > > > > Date:   Tue Nov 14 20:32:58 2017 +0200
-> > > > > 
-> > > > >     drm/i915: Provide a device level .mode_valid() hook
-> > > > >     
-> > > > >     We never support certain mode flags etc. Reject those early on in the
-> > > > >     mode_config.mode_valid() hook. That allows us to remove some duplicated
-> > > > >     checks from the connector .mode_valid() hooks, and it guarantees that
-> > > > >     we never see those flags even from user mode as the
-> > > > >     mode_config.mode_valid() hooks gets executed for those as well.
-> > > > >     
-> > > > >     Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> > > > >     Link: https://patchwork.freedesktop.org/patch/msgid/20171114183258.16976-11-ville.syrjala@linux.intel.com
-> > > > >     Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+On Wed, 23 May 2018 10:03:03 -0700
+"Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+
+> > > > diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
+> > > > index 5783bdf86e5a..a28698e44b08 100644
+> > > > --- a/kernel/rcu/update.c
+> > > > +++ b/kernel/rcu/update.c
+> > > > @@ -743,6 +743,12 @@ static int __noreturn rcu_tasks_kthread(void *arg)
+> > > >  		 */
+> > > >  		synchronize_srcu(&tasks_rcu_exit_srcu);
 > > > > 
-> > > > Hmm. I guess xgalaga passes some garbage in via xf86vidmode which
-> > > > the ddx doesn't validate before passing it on to the kernel. So far
-> > > > I can't reproduce the problem here unfortnately.
+> > > > +		/*
+> > > > +		 * Wait a little bit incase held tasks are released    
+> > > 
+> > > 				in case
+> > >   
+> > > > +		 * during their next timer ticks.
+> > > > +		 */
+> > > > +		schedule_timeout_interruptible(HZ/10);
+> > > > +
+> > > >  		/*
+> > > >  		 * Each pass through the following loop scans the list
+> > > >  		 * of holdout tasks, removing any that are no longer
+> > > > @@ -755,7 +761,6 @@ static int __noreturn rcu_tasks_kthread(void *arg)
+> > > >  			int rtst;
+> > > >  			struct task_struct *t1;
 > > > > 
-> > > > Can you try the following patch and reproduce the problem with
-> > > > drm.debug=0xe passed to the kernel so that we can seewhat the bad
-> > > > modeline looks like?
-> > > > 
-> > > 
-> > > dmesg after xgalaga fails:
-> > > 
-> > > ```
-> > > [   75.617448] [drm:drm_mode_convert_umode] Bad user mode:
-> > > [   75.617455] [drm:drm_mode_debug_printmodeline] Modeline 57:"800x600" 0 81000 800 832 928 1080 600 600 602 625 0x0 0x25
+> > > > -			schedule_timeout_interruptible(HZ);
+> > > >  			rtst = READ_ONCE(rcu_task_stall_timeout);
+> > > >  			needreport = rtst > 0 &&
+> > > >  				     time_after(jiffies, lastreport + rtst);
+> > > > @@ -768,6 +773,11 @@ static int __noreturn rcu_tasks_kthread(void *arg)
+> > > >  				check_holdout_task(t, needreport, &firstreport);
+> > > >  				cond_resched();
+> > > >  			}
+> > > > +
+> > > > +			if (list_empty(&rcu_tasks_holdouts))
+> > > > +				break;
+> > > > +
+> > > > +			schedule_timeout_interruptible(HZ);    
 > > 
-> > 0x20 == dblscan
-> > 
-> > > [   75.617458] [drm:drm_mode_setcrtc] Invalid mode
-> > > ```
-> > > 
-> > > xrandr --verbose:
-> > > 
-> > > ```
-> > > Screen 0: minimum 320 x 200, current 1024 x 768, maximum 8192 x 8192
-> > > LVDS-1 connected primary 1024x768+0+0 (0x44) normal (normal left inverted right x axis y axis) 246mm x 184mm
-> > > 	Identifier: 0x41
-> > > 	Timestamp:  23375
-> > > 	Subpixel:   horizontal rgb
-> > > 	Gamma:      1.0:1.0:1.0
-> > > 	Brightness: 1.0
-> > > 	Clones:    
-> > > 	CRTC:       0
-> > > 	CRTCs:      0 1
-> > > 	Transform:  1.000000 0.000000 0.000000
-> > > 	            0.000000 1.000000 0.000000
-> > > 	            0.000000 0.000000 1.000000
-> > > 	           filter: 
-> > > 	EDID: 
-> > > 		00ffffffffffff0030ae004000000000
-> > > 		3010010380191278eafe609555518726
-> > > 		22505421080001010101010101010101
-> > > 		01010101010128150040410026301888
-> > > 		3600f6b800000018ed10004041002630
-> > > 		18883600f6b9000000180000000f0061
-> > > 		43326143280f01000daf0714000000fe
-> > > 		004e31323158352d4c303620202000ed
-> > > 	scaling mode: Full aspect 
-> > > 		supported: Full, Center, Full aspect
-> > > 	non-desktop: 0 
-> > > 		range: (0, 1)
-> > > 	link-status: Good 
-> > > 		supported: Good, Bad
-> > >   1024x768 (0x44) 54.160MHz -HSync -VSync *current +preferred
-> > >         h: width  1024 start 1048 end 1184 total 1344 skew    0 clock  40.30KHz
-> > >         v: height  768 start  771 end  777 total  806           clock  50.00Hz
-> > >   1024x768 (0x45) 65.000MHz -HSync -VSync
-> > >         h: width  1024 start 1048 end 1184 total 1344 skew    0 clock  48.36KHz
-> > >         v: height  768 start  771 end  777 total  806           clock  60.00Hz
-> > >   1024x768 (0x46) 43.330MHz -HSync -VSync
-> > >         h: width  1024 start 1048 end 1184 total 1344 skew    0 clock  32.24KHz
-> > >         v: height  768 start  771 end  777 total  806           clock  40.00Hz
-> > >   960x720 (0x47) 117.000MHz -HSync +VSync DoubleScan
-> > >         h: width   960 start 1024 end 1128 total 1300 skew    0 clock  90.00KHz
-> > >         v: height  720 start  720 end  722 total  750           clock  60.00Hz
-> > >   928x696 (0x48) 109.150MHz -HSync +VSync DoubleScan
-> > >         h: width   928 start  976 end 1088 total 1264 skew    0 clock  86.35KHz
-> > >         v: height  696 start  696 end  698 total  719           clock  60.05Hz
-> > 
-> > Where are all these dblscan modes coming from?
-> > 
-> > Did you add them manually or are they being automatically
-> > generated by something?
-> > 
+> > Why is this a full second wait and not the HZ/10 like the others?  
 > 
-> This is pure automagic xserver-xorg-video-intel on i915 drm/kms.
-> 
-> After booting back into a working 4.16 kernel I see the same xrandr --verbose
-> list with all the DoubleScan modes, with which xgalaga is functional.
-> 
-> There's this in the Xorg.log:
-> 
-> ```
-> [    12.856] (II) intel(0): Output LVDS1 using monitor section Monitor0
-> [    12.857] (--) intel(0): found backlight control interface /sys/class/backlight/acpi_video0
-> [    12.882] (II) intel(0): Output VGA1 has no monitor section
-> [    12.883] (II) intel(0): EDID for output LVDS1
-> [    12.883] (II) intel(0): Manufacturer: LEN  Model: 4000  Serial#: 0
-> [    12.883] (II) intel(0): Year: 2006  Week: 48
-> [    12.883] (II) intel(0): EDID Version: 1.3
-> [    12.883] (II) intel(0): Digital Display Input
-> [    12.883] (II) intel(0): Max Image Size [cm]: horiz.: 25  vert.: 18
-> [    12.883] (II) intel(0): Gamma: 2.20
-> [    12.883] (II) intel(0): DPMS capabilities: StandBy Suspend Off
-> [    12.883] (II) intel(0): Supported color encodings: RGB 4:4:4 YCrCb 4:4:4 
-> [    12.883] (II) intel(0): First detailed timing is preferred mode
-> [    12.883] (II) intel(0): redX: 0.585 redY: 0.335   greenX: 0.319 greenY: 0.529
-> [    12.883] (II) intel(0): blueX: 0.149 blueY: 0.135   whiteX: 0.312 whiteY: 0.328
-> [    12.883] (II) intel(0): Supported established timings:
-> [    12.883] (II) intel(0): 640x480@60Hz
-> [    12.883] (II) intel(0): 800x600@60Hz
-> [    12.883] (II) intel(0): 1024x768@60Hz
-> [    12.883] (II) intel(0): Manufacturer's mask: 0
-> [    12.883] (II) intel(0): Supported detailed timing:
-> [    12.883] (II) intel(0): clock: 54.2 MHz   Image Size:  246 x 184 mm
-> [    12.883] (II) intel(0): h_active: 1024  h_sync: 1048  h_sync_end 1184 h_blank_end 1344 h_border: 0
-> [    12.883] (II) intel(0): v_active: 768  v_sync: 771  v_sync_end 777 v_blanking: 806 v_border: 0
-> [    12.883] (II) intel(0): Supported detailed timing:
-> [    12.883] (II) intel(0): clock: 43.3 MHz   Image Size:  246 x 185 mm
-> [    12.883] (II) intel(0): h_active: 1024  h_sync: 1048  h_sync_end 1184 h_blank_end 1344 h_border: 0
-> [    12.883] (II) intel(0): v_active: 768  v_sync: 771  v_sync_end 777 v_blanking: 806 v_border: 0
-> [    12.883] (II) intel(0): Unknown vendor-specific block f
-> [    12.883] (II) intel(0):  N121X5-L06
-> [    12.883] (II) intel(0): EDID (in hex):
-> [    12.883] (II) intel(0):     00ffffffffffff0030ae004000000000
-> [    12.883] (II) intel(0):     3010010380191278eafe609555518726
-> [    12.883] (II) intel(0):     22505421080001010101010101010101
-> [    12.883] (II) intel(0):     01010101010128150040410026301888
-> [    12.883] (II) intel(0):     3600f6b800000018ed10004041002630
-> [    12.883] (II) intel(0):     18883600f6b9000000180000000f0061
-> [    12.883] (II) intel(0):     43326143280f01000daf0714000000fe
-> [    12.883] (II) intel(0):     004e31323158352d4c303620202000ed
-> [    12.883] (II) intel(0): Not using default mode "320x240" (doublescan mode not supported)
-> [    12.883] (II) intel(0): Not using default mode "400x300" (doublescan mode not supported)
-> [    12.883] (II) intel(0): Not using default mode "400x300" (doublescan mode not supported)
-> [    12.883] (II) intel(0): Not using default mode "512x384" (doublescan mode not supported)
-> [    12.883] (II) intel(0): Not using default mode "640x480" (doublescan mode not supported)
-> [    12.883] (II) intel(0): Not using default mode "640x512" (doublescan mode not supported)
-> [    12.883] (II) intel(0): Not using default mode "800x600" (doublescan mode not supported)
-> [    12.883] (II) intel(0): Not using default mode "896x672" (doublescan mode not supported)
-> [    12.883] (II) intel(0): Not using default mode "928x696" (doublescan mode not supported)
-> [    12.883] (II) intel(0): Not using default mode "960x720" (doublescan mode not supported)
-> [    12.883] (II) intel(0): Not using default mode "576x432" (doublescan mode not supported)
-> [    12.883] (II) intel(0): Not using default mode "680x384" (doublescan mode not supported)
-> [    12.883] (II) intel(0): Not using default mode "680x384" (doublescan mode not supported)
-> [    12.883] (II) intel(0): Not using default mode "700x525" (doublescan mode not supported)
-> [    12.883] (II) intel(0): Not using default mode "720x450" (doublescan mode not supported)
-> [    12.883] (II) intel(0): Not using default mode "800x512" (doublescan mode not supported)
-> [    12.883] (II) intel(0): Not using default mode "840x525" (doublescan mode not supported)
-> [    12.883] (II) intel(0): Not using default mode "840x525" (doublescan mode not supported)
-> [    12.884] (II) intel(0): Not using default mode "960x540" (doublescan mode not supported)
-> [    12.884] (II) intel(0): Not using default mode "960x600" (doublescan mode not supported)
+> The idea is to respond quickly on small idle systems and to reduce the
+> number of possibly quite lengthy traversals of the task list otherwise.
+> I actually considered exponential backoff, but decided to keep it simple,
+> at least to start with.
 
-So first it rejected them all, but somehow later they get added back?
-Very odd.
+Ah, now it makes sense. Reading what you wrote, we can still do a
+backoff and keep it simple. What about the patch below. It appears to
+have the same performance improvement as Joel's
 
-Hmm. Must be coming from that default modes thing...
+-- Steve
 
-Looks pretty much like ddx bug to me. Does the following ddx patch get
-rid of the bogus dblscan modes?
+> > > 
+> > > Is there a better way to do this?  Can this be converted into a for-loop?
+> > > Alternatively, would it make sense to have a firsttime local variable
+> > > initialized to true, to keep the schedule_timeout_interruptible() at
+> > > the beginning of the loop, but skip it on the first pass through the loop?
+> > > 
+> > > Don't get me wrong, what you have looks functionally correct, but
+> > > duplicating the condition might cause problems later on, for example,
+> > > should a bug fix be needed in the condition.
+> > >   
 
->From 40672b8527313d8bc01aa5cdcda8602687ec0f23 Mon Sep 17 00:00:00 2001
-From: =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>
-Date: Wed, 23 May 2018 22:10:07 +0300
-Subject: [PATCH xf86-video-intel] Don't accept dblscan from xf86DefaultModes[]
 
----
- src/sna/sna_display.c   | 3 +++
- src/uxa/intel_display.c | 3 +++
- 2 files changed, 6 insertions(+)
-
-diff --git a/src/sna/sna_display.c b/src/sna/sna_display.c
-index 6f6bea2e9cad..b38a915ca4ec 100644
---- a/src/sna/sna_display.c
-+++ b/src/sna/sna_display.c
-@@ -4204,6 +4204,8 @@ sna_output_add_default_modes(xf86OutputPtr output, DisplayModePtr modes)
- 	DisplayModePtr i, m, preferred = NULL;
- 	int max_x = 0, max_y = 0, max_clock = 0;
- 	float max_vrefresh = 0.0;
-+	int flags = (output->interlaceAllowed ? V_INTERLACE : 0) |
-+		(output->doubleScanAllowed ? V_DBLSCAN : 0);
+diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
+index 68fa19a5e7bd..c6df9fa916cf 100644
+--- a/kernel/rcu/update.c
++++ b/kernel/rcu/update.c
+@@ -796,13 +796,22 @@ static int __noreturn rcu_tasks_kthread(void *arg)
+ 		 * holdouts.  When the list is empty, we are done.
+ 		 */
+ 		lastreport = jiffies;
+-		while (!list_empty(&rcu_tasks_holdouts)) {
++		for (;;) {
+ 			bool firstreport;
+ 			bool needreport;
+ 			int rtst;
+ 			struct task_struct *t1;
++			int fract = 15;
++
++			/* Slowly back off waiting for holdouts */
++			schedule_timeout_interruptible(HZ/fract);
++
++			if (list_empty(&rcu_tasks_holdouts))
++				break;
++
++			if (fract > 1)
++				fract--;
  
- 	if (mon && GTF_SUPPORTED(mon->features.msc))
- 		return modes;
-@@ -4220,6 +4222,7 @@ sna_output_add_default_modes(xf86OutputPtr output, DisplayModePtr modes)
- 
- 	m = default_modes(preferred);
- 	xf86ValidateModesSize(output->scrn, m, max_x, max_y, 0);
-+	xf86ValidateModesFlags(output->scrn, m, flags);
- 
- 	for (i = m; i; i = i->next) {
- 		if (i->Clock > max_clock)
-diff --git a/src/uxa/intel_display.c b/src/uxa/intel_display.c
-index 809cda1dd56b..431727fc4ac2 100644
---- a/src/uxa/intel_display.c
-+++ b/src/uxa/intel_display.c
-@@ -919,6 +919,8 @@ intel_output_panel_edid(xf86OutputPtr output, DisplayModePtr modes)
- 		DisplayModePtr i, m, p = NULL;
- 		int max_x = 0, max_y = 0;
- 		float max_vrefresh = 0.0;
-+		int flags = (output->interlaceAllowed ? V_INTERLACE : 0) |
-+			(output->doubleScanAllowed ? V_DBLSCAN : 0);
- 
- 		for (m = modes; m; m = m->next) {
- 			if (m->type & M_T_PREFERRED)
-@@ -938,6 +940,7 @@ intel_output_panel_edid(xf86OutputPtr output, DisplayModePtr modes)
- #endif
- 
- 		xf86ValidateModesSize(output->scrn, m, max_x, max_y, 0);
-+		xf86ValidateModesFlags(output->scrn, m, flags);
- 
- 		for (i = m; i; i = i->next) {
- 			if (xf86ModeVRefresh(i) > max_vrefresh)
--- 
-2.16.1
-
--- 
-Ville Syrjälä
-Intel
+-			schedule_timeout_interruptible(HZ);
+ 			rtst = READ_ONCE(rcu_task_stall_timeout);
+ 			needreport = rtst > 0 &&
+ 				     time_after(jiffies, lastreport + rtst);
