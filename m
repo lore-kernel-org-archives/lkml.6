@@ -1,64 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933309AbeEWOZf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 10:25:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55130 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933284AbeEWOZW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 10:25:22 -0400
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 2/2] f2fs: detect synchronous writeback more earlier
-Date: Wed, 23 May 2018 22:25:09 +0800
-Message-Id: <20180523142509.17905-2-chao@kernel.org>
-X-Mailer: git-send-email 2.16.2.17.g38e79b1fd
-In-Reply-To: <20180523142509.17905-1-chao@kernel.org>
-References: <20180523142509.17905-1-chao@kernel.org>
+        id S933324AbeEWOZ4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 10:25:56 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59972 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933114AbeEWOZw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 10:25:52 -0400
+Date: Wed, 23 May 2018 07:25:45 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Kees Cook <keescook@chromium.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Tejun Heo <tj@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Manoj N. Kumar" <manoj@linux.vnet.ibm.com>,
+        "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>,
+        Uma Krishnan <ukrishn@linux.vnet.ibm.com>,
+        linux-block <linux-block@vger.kernel.org>, linux-ide@vger.kernel.org,
+        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/6] block: Create scsi_sense.h for SCSI and ATAPI
+Message-ID: <20180523142545.GA16248@infradead.org>
+References: <20180522183613.GA3784@infradead.org>
+ <yq1efi3bk3g.fsf@oracle.com>
+ <CAGXu5jJ0Sice+fdpWgzBhQR=NGz-DT9qmYVdV1GeH73_q9pbmw@mail.gmail.com>
+ <732f4249-5681-4a54-ec21-4ecc3d3a74e5@kernel.dk>
+ <20180522191309.GA23615@infradead.org>
+ <8d4af5c4-96fa-54ee-d5c1-b887b1de5a3c@kernel.dk>
+ <CAGXu5j+mgGZkTDS6EDRspJKKbU=vMT4ehv9T-SekPba=ESoGDg@mail.gmail.com>
+ <9A0BC289-4203-4C77-A012-AAB07F42061F@kernel.dk>
+ <CAGXu5jJsGWDsZNDJvUUqncSaAcvond_B_J7=BbvVW0X3r6Sxww@mail.gmail.com>
+ <aa150272-ffeb-fb8f-7303-0d9502cf9a71@kernel.dk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aa150272-ffeb-fb8f-7303-0d9502cf9a71@kernel.dk>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Yu <yuchao0@huawei.com>
+On Wed, May 23, 2018 at 08:13:56AM -0600, Jens Axboe wrote:
+> > Should I move to code to a new drivers/scsi/scsi_sense.c and add it to
+> > drivers/scsi/Makefile as:
+> > 
+> > obj-$(CONFIG_BLK_SCSI_REQUEST)    += scsi_sense.o
+> > 
+> > Every place I want to use the code is already covered by
+> > CONFIG_BLK_SCSI_REQUEST, so it seems like I just need to know where to
+> > put the .c file. :P
+> 
+> I think this is so much saner than a SCSI select or dependency, so I'll
+> have to disagree with Martin and Christoph. Just put it in drivers/scsi,
+> if it's the location they care about.
 
-This patch changes to detect synchronous writeback more earlier before,
-in order to avoid unnecessary page writeback before exiting asynchronous
-writeback.
+I actually plan to remove CONFIG_BLK_SCSI_REQUEST in a merge window
+or two.  The only users are scsi and the ide layer, (virtio_blk
+support has already been accidentally disabled for a while), and getting
+rid of it allows to to shrink and simply the scsi data structures.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/data.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
-
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index feb4c224b305..91cbf20b448a 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1919,6 +1919,13 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
- 			struct page *page = pvec.pages[i];
- 			bool submitted = false;
- 
-+			/* give a priority to WB_SYNC threads */
-+			if (atomic_read(&F2FS_M_SB(mapping)->wb_sync_req) &&
-+					wbc->sync_mode == WB_SYNC_NONE) {
-+				done = 1;
-+				break;
-+			}
-+
- 			done_index = page->index;
- retry_write:
- 			lock_page(page);
-@@ -1973,9 +1980,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
- 				last_idx = page->index;
- 			}
- 
--			/* give a priority to WB_SYNC threads */
--			if ((atomic_read(&F2FS_M_SB(mapping)->wb_sync_req) ||
--					--wbc->nr_to_write <= 0) &&
-+			if (--wbc->nr_to_write <= 0 &&
- 					wbc->sync_mode == WB_SYNC_NONE) {
- 				done = 1;
- 				break;
--- 
-2.16.2.17.g38e79b1fd
+But if you want this for now lets keep scsi_sense.c in drivers/scsi
+but depend on CONFIG_BLK_SCSI_REQUEST, that is easy enough to fix up.
