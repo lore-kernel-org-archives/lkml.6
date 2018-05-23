@@ -1,742 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932862AbeEWMjb (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 08:39:31 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49440 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932070AbeEWMjL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 08:39:11 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 72FC3601D4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
-From: Ilia Lin <ilialin@codeaurora.org>
-To: vireshk@kernel.org, nm@ti.com, sboyd@kernel.org, robh@kernel.org,
-        mark.rutland@arm.com, rjw@rjwysocki.net, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v11 2/2] dt-bindings: cpufreq: Document operating-points-v2-kryo-cpu
-Date: Wed, 23 May 2018 15:38:59 +0300
-Message-Id: <1527079139-3558-3-git-send-email-ilialin@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1527079139-3558-1-git-send-email-ilialin@codeaurora.org>
-References: <1527079139-3558-1-git-send-email-ilialin@codeaurora.org>
+        id S932751AbeEWMob (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 08:44:31 -0400
+Received: from mail-he1eur01on0127.outbound.protection.outlook.com ([104.47.0.127]:6303
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932070AbeEWMo3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 08:44:29 -0400
+Subject: Re: Expected result when racing listen(2) on two sockets bound to the
+ same address
+To: Alexander Kurtz <alexander@kurtz.be>, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+References: <a3ecf04de4fded7c71284a9695b7146d284d1f22.camel@kurtz.be>
+From: Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <4887534b-cac3-65b5-8c9f-f736c1e56ba3@virtuozzo.com>
+Date: Wed, 23 May 2018 15:44:22 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <a3ecf04de4fded7c71284a9695b7146d284d1f22.camel@kurtz.be>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [195.214.232.6]
+X-ClientProxiedBy: AM5PR04CA0021.eurprd04.prod.outlook.com
+ (2603:10a6:206:1::34) To HE1PR0801MB1340.eurprd08.prod.outlook.com
+ (2603:10a6:3:3a::8)
+X-MS-PublicTrafficType: Email
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:HE1PR0801MB1340;
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB1340;3:ikCR7RQXoG06NhwhIOZ7bjVcA3zMYmOknVeOTyk8ixh5fgSv/nJkecQSVjW7Cr2BulUUspSJRLLMShrLYJ+jLeftqHr2Zy8DSH+JujhWZj8IzdH+HGjX2LczRfUk/ijaLZLSZ9+gGQ1oikH7O4a/C6JvdNxBXMRcpneiERkJsXGYYB+Ol7RqCGIUoJQX7g8RSCivV/guqN90xAF0opeA6HQP2cFysIPOm58O+SQ5tmxmDNVGIUGAvBGyquxG0eeq;25:XwkFOPcJU4dZFXTncW6demY4vO5sL7i8cfT5Utzz8X5HTqSPzyk8F7DBgWdOvnD7w265rKz2ljgZB7F6qVP6CGYo33ZgJ2ZTX/eO8DZQOkG6kVJ9YvtAo5pZKJn1rGaMdjWMEn0/qu6e0He/pqcEDv2o06tWO+saI1JtgG2HXwQg6n4FeKrmayNRYRyq8CAKzSvCyW02d6lNMpU0GbdCv1XWccKTie5OGJ+WoqNu5GYFU8tn2tSFSNI6XsZxIp/n6k1sSDt5p9HV1PAPW77cdqcLzqqnKIbHsG9/4RvhAKJWDqVnvw1CDM/Gy5k3DXjkBjhPNnvCNAI7InDk8pXlrA==;31:uxSoQKMZ6tmrTebS+CN1QmRfQzNq9ZagRBD8jMCdy97KhReI1jkAufw86hphdDtYwdjjYNHvgGE7GfpnkUhocfaYjV5kCcFn99XUqgMcL8IQ8uezEvXsGXqX4Wa7CgM9a6W/QkIVWoF6LsaH7SpAhf3UnLJFBNIVt23vliFkVJCTiT4vqpe4/CZ2EV/dfvz1nCw7cUGnVeVN0Tbes6Ht1kgylV5JJKkCxS/8Nsa1dhA=
+X-MS-TrafficTypeDiagnostic: HE1PR0801MB1340:
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=ktkhai@virtuozzo.com;
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB1340;20:SlErrXG8VkqfL5LnKr+GDvfrVUQK1r571AwySrIlCNd18ZwFB/DgieqOiuGhi25jxP0+n8fSnNDjTv13/pMev8NE8HyJ+JLEpIOWaYKETtOKIJFSR/GE5kCny75WFh1INWZN5DPhT1R3heMhBkrKXA+j7tSc1b+onpdOcqEpmBbWwKaZt/vNAHX2YM8RJsIM5IHxjbUMsO7EDF5XB7ykbba2DYeAbv3OR0QRuWABPfdZIXgqDutoWvueQhArU6PUzUirAQoIb7VoOnsTsAZBF2r0aMqXt2Ecf4RI/2HyCHPz0Zg2QTgqsZQTNxg+EN5izbChgTiolpPJmleR2y80GXRw+1XLOTVpFFcYki2hyh17Hv8BTB3m32DDt/yrmMLwYge/6P1zp5KshRE88tCoYANVj5xJqNL0pWyjUlIet+rNps0Mn+Xlv8daLgkToEqqzdJWX/wE9I/w3Ck6nt76DYBgiTAo7yJLJ/SSUeNN6lQu3/ymrYz1QeuO4WlR08ch;4:jVzgEdXPkLEFOU+tEdKqyCsVlhWFvCpgc+YKL+3mC+zNogURs8jdtP8upaV11xaT3/unj6tm/zyJO9Iam0tHNSXM6fRDgGcHRuKMt5IJxs0LtMlcwVwgW69AjKlG0ViWpgiASK2WOCAtdttNYZFli7w86YfyhkTEPtEpwsN0q0IIlcGuzWtMk8scjF7ooR0+GONpBsT0N6IJ0xb6fFQYCStcny0CioS8DhB+b7SXoJQKOghncOg0FFaFJv6g7Mz8mvzFlqVeF4RHYqxxNCkyLA==
+X-Microsoft-Antispam-PRVS: <HE1PR0801MB1340D8C916C58BAAFC28F761CD6B0@HE1PR0801MB1340.eurprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(3231254)(944501410)(52105095)(10201501046)(149027)(150027)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:HE1PR0801MB1340;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0801MB1340;
+X-Forefront-PRVS: 06818431B9
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6049001)(39380400002)(396003)(39850400004)(376002)(366004)(346002)(189003)(199004)(377424004)(65826007)(68736007)(5660300001)(8676002)(105586002)(106356001)(6116002)(6486002)(81166006)(2906002)(478600001)(6246003)(81156014)(31686004)(53936002)(65956001)(58126008)(50466002)(3846002)(65806001)(6666003)(25786009)(66066001)(230700001)(47776003)(86362001)(52116002)(52146003)(36756003)(229853002)(305945005)(446003)(97736004)(186003)(23676004)(16576012)(2486003)(53546011)(316002)(64126003)(59450400001)(956004)(7736002)(55236004)(8936002)(476003)(26005)(76176011)(11346002)(77096007)(16526019)(386003)(2616005)(31696002)(486006);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0801MB1340;H:[172.16.25.5];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtIRTFQUjA4MDFNQjEzNDA7MjM6aERZSkZsblppczZXNVFYcGdwNW5UWkI4?=
+ =?utf-8?B?NmNTTU9iMEpsN0FJNUJ4U2d1aUNwenpkTWFaRXEzbzdqMjQ2bC9IOGp5b25Z?=
+ =?utf-8?B?RmJKOTgxMWV2djExWXFSRFdNKzVUV3JIS25WQmVpZnBIV2xUa3E2WU9LRGZH?=
+ =?utf-8?B?bk5lQTQ3K28vaE42WUpSdzlQeERwa0tqNEZUN1hiQmdIY3NpdExtcEdaVzlo?=
+ =?utf-8?B?MXJNOEtxWnhlYWdsSmIvakZLWTUwZkF2VGFCa3l5eFpuSWVHdVNVS0JyRVR3?=
+ =?utf-8?B?MVdGQnJsV0ErM1JXNUxPWkxybzVjRG4zTUxOTnp2T0VEdEgvS1ZkQnBDcytF?=
+ =?utf-8?B?Smcza2tpV0MzZW02L3JiQmpLejZxTy93SnNPdzJnaVgzSm1QanJQRURHM0g4?=
+ =?utf-8?B?cHZiV0l2K0hnNXJIa05sTzBGNVpoaXdJS0NFaFVOV0VyRXBGQ2huU3cvRWV3?=
+ =?utf-8?B?c0poM0p3M0xyUTdLa0hubkM4R1YvNncxbDVZL3hzbXU3dUMrWW5iRDNqQUZ1?=
+ =?utf-8?B?cDVEaDhMRkw0Q1I0Z3ZvbUtVVjY3bFNoMjZEcnQ2NjdQZTJzRGNhUjRqTUZy?=
+ =?utf-8?B?QU1GR3VmdmJmVWhmd2loZ3BXb1V1L3FLWG9XTWVCcmRrSmtwRm5nTGw2eHd3?=
+ =?utf-8?B?VjlrazFQUzNUK0pMSklQQnVMa0I4NStBYzlPdG4rL1AxRlVjQm5MNHp1ODNw?=
+ =?utf-8?B?WDcwOVRVWlY4N3IzTDVJN2xFbHJyVU9ONlpGNnlLa1pZZUdJU05IQ3BlMWZB?=
+ =?utf-8?B?WG84QnBFTTBUNVR5b3FNUkhGUG1FbDlzZTJ5QUxCNmppYzlGVEhSdGJvUnhC?=
+ =?utf-8?B?ckFTdERsdHNMWTByczdhb3FWN2pKSnB4RmJGVEhkVnJhMnZaYWV5dUQ4MGcy?=
+ =?utf-8?B?Wk1JY0FrTGR2MHppeWVmKzdqQmI3eXpMTkJjbjR6K1lsemcxUjlkN0F5bi9a?=
+ =?utf-8?B?QjhwalJnc3hOTk4remNrWHlQblZ5ZFNaRVE0Q2pOd1FTU1hERFphVjhaZVVm?=
+ =?utf-8?B?U3ZIS2NFWUl3V1puMEQrNnIxZGJlYTQvMVV0QWs1ZWxvdm1IdzFVYVZYdkRV?=
+ =?utf-8?B?c1J4YXR0U2twcE5URnJ4cXp5QWIyeTlRdVBQVW5OTVBsbmVMa3hxaXdRYy9W?=
+ =?utf-8?B?Sy9yMnJOVXJ1czBuVHZ2aDZzTjN4M0ZuVkR5TUZXaWJYQ09vV2tsM0s2MjRs?=
+ =?utf-8?B?MFdVQ2hFWW5TZ0o4SDdGNWo2aTcvWUZiNDBmY0JtU1FVZThjY2tXSTdrcWUw?=
+ =?utf-8?B?RVFTMnFiT0hrOEUzaElSSnY5RmZTNmJ2cVN2OGF6a2xzYytnSnJKbXh3bEl3?=
+ =?utf-8?B?clZjc21KN2RNa1BnM0dSdCtNMWhJbzE5Sm51NEVMKzNqWGh5QXBnL2YyMnRV?=
+ =?utf-8?B?dmpFT254cTAzZWxSQTQ4eWZESFdXU1ZoY1BqL0xJNVVIdk90ZkJUWFFkZEI1?=
+ =?utf-8?B?ckxiQktQYWU4d3NhT3poZ25ZVkVSZVlRUmFIM3UzSFFERUNzZmRNUHo4SXVy?=
+ =?utf-8?B?eE82WGZUV3kvMVJzKzlkeEIrejRWdFM4Q0JRTWxtamNzWExGY0F0L1dERnVn?=
+ =?utf-8?B?OTBneThGa3ZrbExMYkNJTi9RbWhKbEVncDBETk85RE9EemQvUXYvSldRYWRQ?=
+ =?utf-8?B?dDBJb3BhV3V4K0YrT2VoU0ZWZW01UUNQRDZvM0JOZHlMWTdreWp4MzdQbDZQ?=
+ =?utf-8?B?QTJiemcraW80VmJVcFo0WTd2bnpnSjMyMy83dG56QWF0dk1xdUJ4elhEd1NH?=
+ =?utf-8?B?OVVkcnBlSkVKbkVYYmczL0c1bEZ1czMrQm02T3czS1lzOFpPMUVOMDdWQXNw?=
+ =?utf-8?B?Zk5zcjAwczRDc2xvV0s3ejZJOWJ2Nld0cENVNDl4MWltTVh0YjJhMGJpUVZV?=
+ =?utf-8?B?ek9yaUhWU3R4NWluM0c1Q0VHeGJwLzM2eW1LZGZLempNdGR6d3NxcHVUbzU3?=
+ =?utf-8?Q?mK1DWU9lyXFRoyXwfO7sQ80IXEvy4fWE=3D?=
+X-Microsoft-Antispam-Message-Info: i18f1YIZ/M8a/TgsXwQPbHHdSQ7xD02I3sTVwcH37dtxolCxlJghmJ7nXAsgL0fE9Qx47V60rmGnCTRxUMAhyq3SZsy1OoAbuNaXpetH+JdU7cC5TSptVhHUtC8Wy1DN0yVGUBCrcYELFP2h6FAnguugODDeS9PkS8C6Jp7RP8LGUzBpvLmxbp2AgZ3Sj1EO
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB1340;6:VPNZYwwawCRs0XMoYDmXhCdEDIOzO1WFuvfkBE8y/IpiwEbirkFLUcFDhrYvFr1NzbOaD0jHnOjVRFzSejyd4i3mwXPvIIHPJD9VgsoEOJgErxEApQdwJExO4P3vx1hJvkiHn/wZUI3dxwPBx8kHz3+PVo+6Qzo4k54ODkheu4nGTYwDQnBpjntKG1iWD5LIaSEd13c8fVCEBSf8UPb6nk+Pyw5S6UXzZ44GQqdqRO355L6RsCKcpvHgNZijysFX2tgKV4RS0u/RkuHFZUVnqduxG7Zz6e3A7NEMw30e/k1Fr/ThjPcpkFFRfg8JA4ddzldxiVagsxJm2tuA6XHHDhcH5ZbyJSvLIjthw7gef3v15fJAWuw4WCeq3txExY77CW4ch0/9/cH3YYbEgLYrRlC/lNNYxUK0O5HjMi8ZwgIPwFNCIhNPwEq9dompgHbT27iRxqt2ZENrS1j/0VcGbw==;5:Np2ZkzUaX6xzZk3w83xR259eq1OP9hjRztH0tfxoEClSz7w+TZClkcuVZCyjZCUrgE+AbvUCosZuLyFbx53gCExXbFLC6dVRsc2vHMB3YH6flmYyNO+a2hxhcRmO1POhua6P5ZpQJE0wK/QpWCwUh1Ft2umerOI8BXw+S2J/J5o=;24:wS1S2FqFj6Nrh1bkUulwTCedOgSzCMAqAZ2o8YD+E8Yxt67oOL3kKhO9wFkv+NGv9Oiz6QKIMCqx9raBy4ZEsMpAiAfgDEcb+LBF0t7S1RM=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB1340;7:zLAT4lzOvwVcvxt+7V6pZVOQfId77lYPxVXdgpFYAXyvbx/1AOqmb5uXv1/q5KYG2sjxu0LPU679FFd+QmKsbWQJXcPvfcjOYJ2J4GPrpHZirGAoGZrYRaKF5PNuCuuzdOZNMRg7/0OisacKzYTiW3LDUV6bamllFqhUIMKpQY9inVYpGO367zhm4mdMHCiAGaIPV+3tBmLS1NPqW1EWFgZ8IBxLNR2rMx8QMDqpRmWlDBaVi5FNMfWgrj1hen8D;20:Qyh8xgoc1a4yl3pUoOlobIuwizj3+BrnGDMIu60MHsY1HbKhyhwpqm6tq+tl2CcT7+/OVt5CS6SOcHY9j6vQjG/pSXefTuXRNeIl7sq8dkUNE83E2c5KlLIpOuUYRzcuOk5FQZ25fK3NgdluLO8SGTEPfvr2Byn3YiYcHKaxZxM=
+X-MS-Office365-Filtering-Correlation-Id: b84b66cb-7f6c-44f0-8235-08d5c0aaeb07
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 May 2018 12:44:25.9154 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b84b66cb-7f6c-44f0-8235-08d5c0aaeb07
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0801MB1340
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
-to provide the OPP framework with required information.
-This is used to determine the voltage and frequency value for each OPP of
-operating-points-v2 table when it is parsed by the OPP framework.
+Hi,
 
-This change adds documentation for the DT bindings.
-The "operating-points-v2-kryo-cpu" DT extends the "operating-points-v2"
-with following parameters:
-- nvmem-cells (NVMEM area containig the speedbin information)
-- opp-supported-hw: A single 32 bit bitmap value,
-  representing compatible HW:
-			0:	MSM8996 V3, speedbin 0
-			1:	MSM8996 V3, speedbin 1
-			2:	MSM8996 V3, speedbin 2
-			3:	unused
-			4:	MSM8996 SG, speedbin 0
-			5:	MSM8996 SG, speedbin 1
-			6:	MSM8996 SG, speedbin 2
-			7-31:	unused
+On 23.05.2018 14:15, Alexander Kurtz wrote:
+> [Please keep me CC'ed; I'm not subscribed to the list]
+> 
+> Hi!
+> 
+> The program shown below (also available at [0]) does the following:
+> 
+>  * Create two sockets
+>  * Enable SO_REUSEADDR on both
+>  * Bind both sockets to [::1]:12345
+>  * Spawn two threads which both call listen(2) on one socket each
+>  * Check that at least one thread succeeded
+> 
+> Unfortunately, when running this program on Linux 4.16, it is sometimes
+> possible that neither thread succeeds in calling listen(2):
+> 
+>     $ uname -a
+>     Linux shepard 4.16.0-1-amd64 #1 SMP Debian 4.16.5-1 (2018-04-29) x86_64 GNU/Linux
+>     $ time make
+>     cc -Wall -Wextra -pedantic -Werror -O3    listenrace.c  -lpthread -o listenrace
+>     for i in `seq 10000`; do ./listenrace; done
+>     listenrace: listenrace.c:58: main: Assertion `result1 == 0 || result2 == 0' failed.
+>     Aborted
+>     listenrace: listenrace.c:58: main: Assertion `result1 == 0 || result2 == 0' failed.
+>     Aborted
+>     listenrace: listenrace.c:58: main: Assertion `result1 == 0 || result2 == 0' failed.
+>     Aborted
+> 
+>     real	0m8.201s
+>     user	0m6.801s
+>     sys	0m2.141s
+>     $ 
+> 
+> As can be seen, on 3 runs (out of 10000) calling listen(2) failed in
+> *both* threads. Is this to be expected (i.e. "don't do this then") or
+> could this be some race condition in the Linux kernel?
 
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- .../devicetree/bindings/opp/kryo-cpufreq.txt       | 680 +++++++++++++++++++++
- 1 file changed, 680 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
+At the first sight, it is in kernel and is expected:
 
-diff --git a/Documentation/devicetree/bindings/opp/kryo-cpufreq.txt b/Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
-new file mode 100644
-index 0000000..c2127b9
---- /dev/null
-+++ b/Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
-@@ -0,0 +1,680 @@
-+Qualcomm Technologies, Inc. KRYO CPUFreq and OPP bindings
-+===================================
-+
-+In Certain Qualcomm Technologies, Inc. SoCs like apq8096 and msm8996
-+that have KRYO processors, the CPU ferequencies subset and voltage value
-+of each OPP varies based on the silicon variant in use.
-+Qualcomm Technologies, Inc. Process Voltage Scaling Tables
-+defines the voltage and frequency value based on the msm-id in SMEM
-+and speedbin blown in the efuse combination.
-+The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
-+to provide the OPP framework with required information (existing HW bitmap).
-+This is used to determine the voltage and frequency value for each OPP of
-+operating-points-v2 table when it is parsed by the OPP framework.
-+
-+Required properties:
-+--------------------
-+In 'cpus' nodes:
-+- operating-points-v2: Phandle to the operating-points-v2 table to use.
-+
-+In 'operating-points-v2' table:
-+- compatible: Should be
-+	- 'operating-points-v2-kryo-cpu' for apq8096 and msm8996.
-+- nvmem-cells: A phandle pointing to a nvmem-cells node representing the
-+		efuse registers that has information about the
-+		speedbin that is used to select the right frequency/voltage
-+		value pair.
-+		Please refer the for nvmem-cells
-+		bindings Documentation/devicetree/bindings/nvmem/nvmem.txt
-+		and also examples below.
-+
-+In every OPP node:
-+- opp-supported-hw: A single 32 bit bitmap value, representing compatible HW.
-+		    Bitmap:
-+			0:	MSM8996 V3, speedbin 0
-+			1:	MSM8996 V3, speedbin 1
-+			2:	MSM8996 V3, speedbin 2
-+			3:	unused
-+			4:	MSM8996 SG, speedbin 0
-+			5:	MSM8996 SG, speedbin 1
-+			6:	MSM8996 SG, speedbin 2
-+			7-31:	unused
-+
-+Example 1:
-+---------
-+
-+	cpus {
-+		#address-cells = <2>;
-+		#size-cells = <0>;
-+
-+		CPU0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "qcom,kryo";
-+			reg = <0x0 0x0>;
-+			enable-method = "psci";
-+			clocks = <&kryocc 0>;
-+			cpu-supply = <&pm8994_s11_saw>;
-+			operating-points-v2 = <&cluster0_opp>;
-+			#cooling-cells = <2>;
-+			next-level-cache = <&L2_0>;
-+			L2_0: l2-cache {
-+			      compatible = "cache";
-+			      cache-level = <2>;
-+			};
-+		};
-+
-+		CPU1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "qcom,kryo";
-+			reg = <0x0 0x1>;
-+			enable-method = "psci";
-+			clocks = <&kryocc 0>;
-+			cpu-supply = <&pm8994_s11_saw>;
-+			operating-points-v2 = <&cluster0_opp>;
-+			#cooling-cells = <2>;
-+			next-level-cache = <&L2_0>;
-+		};
-+
-+		CPU2: cpu@100 {
-+			device_type = "cpu";
-+			compatible = "qcom,kryo";
-+			reg = <0x0 0x100>;
-+			enable-method = "psci";
-+			clocks = <&kryocc 1>;
-+			cpu-supply = <&pm8994_s11_saw>;
-+			operating-points-v2 = <&cluster1_opp>;
-+			#cooling-cells = <2>;
-+			next-level-cache = <&L2_1>;
-+			L2_1: l2-cache {
-+			      compatible = "cache";
-+			      cache-level = <2>;
-+			};
-+		};
-+
-+		CPU3: cpu@101 {
-+			device_type = "cpu";
-+			compatible = "qcom,kryo";
-+			reg = <0x0 0x101>;
-+			enable-method = "psci";
-+			clocks = <&kryocc 1>;
-+			cpu-supply = <&pm8994_s11_saw>;
-+			operating-points-v2 = <&cluster1_opp>;
-+			#cooling-cells = <2>;
-+			next-level-cache = <&L2_1>;
-+		};
-+
-+		cpu-map {
-+			cluster0 {
-+				core0 {
-+					cpu = <&CPU0>;
-+				};
-+
-+				core1 {
-+					cpu = <&CPU1>;
-+				};
-+			};
-+
-+			cluster1 {
-+				core0 {
-+					cpu = <&CPU2>;
-+				};
-+
-+				core1 {
-+					cpu = <&CPU3>;
-+				};
-+			};
-+		};
-+	};
-+
-+	cluster0_opp: opp_table0 {
-+		compatible = "operating-points-v2-kryo-cpu";
-+		nvmem-cells = <&speedbin_efuse>;
-+		opp-shared;
-+
-+		opp-307200000 {
-+			opp-hz = /bits/ 64 <307200000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-384000000 {
-+			opp-hz = /bits/ 64 <384000000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x70>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-422400000 {
-+			opp-hz = /bits/ 64 <422400000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-460800000 {
-+			opp-hz = /bits/ 64 <460800000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x70>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-480000000 {
-+			opp-hz = /bits/ 64 <480000000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-537600000 {
-+			opp-hz = /bits/ 64 <537600000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x70>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-556800000 {
-+			opp-hz = /bits/ 64 <556800000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-614400000 {
-+			opp-hz = /bits/ 64 <614400000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x70>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-652800000 {
-+			opp-hz = /bits/ 64 <652800000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-691200000 {
-+			opp-hz = /bits/ 64 <691200000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x70>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-729600000 {
-+			opp-hz = /bits/ 64 <729600000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-768000000 {
-+			opp-hz = /bits/ 64 <768000000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x70>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-844800000 {
-+			opp-hz = /bits/ 64 <844800000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-902400000 {
-+			opp-hz = /bits/ 64 <902400000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x70>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-960000000 {
-+			opp-hz = /bits/ 64 <960000000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-979200000 {
-+			opp-hz = /bits/ 64 <979200000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x70>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1036800000 {
-+			opp-hz = /bits/ 64 <1036800000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1056000000 {
-+			opp-hz = /bits/ 64 <1056000000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x70>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1113600000 {
-+			opp-hz = /bits/ 64 <1113600000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1132800000 {
-+			opp-hz = /bits/ 64 <1132800000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x70>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1190400000 {
-+			opp-hz = /bits/ 64 <1190400000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1209600000 {
-+			opp-hz = /bits/ 64 <1209600000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x70>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1228800000 {
-+			opp-hz = /bits/ 64 <1228800000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1286400000 {
-+			opp-hz = /bits/ 64 <1286400000>;
-+			opp-microvolt = <1140000 905000 1140000>;
-+			opp-supported-hw = <0x70>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1324800000 {
-+			opp-hz = /bits/ 64 <1324800000>;
-+			opp-microvolt = <1140000 905000 1140000>;
-+			opp-supported-hw = <0x5>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1363200000 {
-+			opp-hz = /bits/ 64 <1363200000>;
-+			opp-microvolt = <1140000 905000 1140000>;
-+			opp-supported-hw = <0x72>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1401600000 {
-+			opp-hz = /bits/ 64 <1401600000>;
-+			opp-microvolt = <1140000 905000 1140000>;
-+			opp-supported-hw = <0x5>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1440000000 {
-+			opp-hz = /bits/ 64 <1440000000>;
-+			opp-microvolt = <1140000 905000 1140000>;
-+			opp-supported-hw = <0x70>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1478400000 {
-+			opp-hz = /bits/ 64 <1478400000>;
-+			opp-microvolt = <1140000 905000 1140000>;
-+			opp-supported-hw = <0x1>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1497600000 {
-+			opp-hz = /bits/ 64 <1497600000>;
-+			opp-microvolt = <1140000 905000 1140000>;
-+			opp-supported-hw = <0x4>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1516800000 {
-+			opp-hz = /bits/ 64 <1516800000>;
-+			opp-microvolt = <1140000 905000 1140000>;
-+			opp-supported-hw = <0x70>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1593600000 {
-+			opp-hz = /bits/ 64 <1593600000>;
-+			opp-microvolt = <1140000 905000 1140000>;
-+			opp-supported-hw = <0x71>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1996800000 {
-+			opp-hz = /bits/ 64 <1996800000>;
-+			opp-microvolt = <1140000 905000 1140000>;
-+			opp-supported-hw = <0x20>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-2188800000 {
-+			opp-hz = /bits/ 64 <2188800000>;
-+			opp-microvolt = <1140000 905000 1140000>;
-+			opp-supported-hw = <0x10>;
-+			clock-latency-ns = <200000>;
-+		};
-+	};
-+
-+	cluster1_opp: opp_table1 {
-+		compatible = "operating-points-v2-kryo-cpu";
-+		nvmem-cells = <&speedbin_efuse>;
-+		opp-shared;
-+
-+		opp-307200000 {
-+			opp-hz = /bits/ 64 <307200000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-384000000 {
-+			opp-hz = /bits/ 64 <384000000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x70>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-403200000 {
-+			opp-hz = /bits/ 64 <403200000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-460800000 {
-+			opp-hz = /bits/ 64 <460800000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x70>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-480000000 {
-+			opp-hz = /bits/ 64 <480000000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-537600000 {
-+			opp-hz = /bits/ 64 <537600000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x70>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-556800000 {
-+			opp-hz = /bits/ 64 <556800000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-614400000 {
-+			opp-hz = /bits/ 64 <614400000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x70>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-652800000 {
-+			opp-hz = /bits/ 64 <652800000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-691200000 {
-+			opp-hz = /bits/ 64 <691200000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x70>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-729600000 {
-+			opp-hz = /bits/ 64 <729600000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-748800000 {
-+			opp-hz = /bits/ 64 <748800000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x70>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-806400000 {
-+			opp-hz = /bits/ 64 <806400000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-825600000 {
-+			opp-hz = /bits/ 64 <825600000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x70>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-883200000 {
-+			opp-hz = /bits/ 64 <883200000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-902400000 {
-+			opp-hz = /bits/ 64 <902400000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x70>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-940800000 {
-+			opp-hz = /bits/ 64 <940800000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-979200000 {
-+			opp-hz = /bits/ 64 <979200000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x70>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1036800000 {
-+			opp-hz = /bits/ 64 <1036800000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1056000000 {
-+			opp-hz = /bits/ 64 <1056000000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x70>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1113600000 {
-+			opp-hz = /bits/ 64 <1113600000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1132800000 {
-+			opp-hz = /bits/ 64 <1132800000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x70>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1190400000 {
-+			opp-hz = /bits/ 64 <1190400000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1209600000 {
-+			opp-hz = /bits/ 64 <1209600000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x70>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1248000000 {
-+			opp-hz = /bits/ 64 <1248000000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1286400000 {
-+			opp-hz = /bits/ 64 <1286400000>;
-+			opp-microvolt = <905000 905000 1140000>;
-+			opp-supported-hw = <0x70>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1324800000 {
-+			opp-hz = /bits/ 64 <1324800000>;
-+			opp-microvolt = <1140000 905000 1140000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1363200000 {
-+			opp-hz = /bits/ 64 <1363200000>;
-+			opp-microvolt = <1140000 905000 1140000>;
-+			opp-supported-hw = <0x70>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1401600000 {
-+			opp-hz = /bits/ 64 <1401600000>;
-+			opp-microvolt = <1140000 905000 1140000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1440000000 {
-+			opp-hz = /bits/ 64 <1440000000>;
-+			opp-microvolt = <1140000 905000 1140000>;
-+			opp-supported-hw = <0x70>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1478400000 {
-+			opp-hz = /bits/ 64 <1478400000>;
-+			opp-microvolt = <1140000 905000 1140000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1516800000 {
-+			opp-hz = /bits/ 64 <1516800000>;
-+			opp-microvolt = <1140000 905000 1140000>;
-+			opp-supported-hw = <0x70>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1555200000 {
-+			opp-hz = /bits/ 64 <1555200000>;
-+			opp-microvolt = <1140000 905000 1140000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1593600000 {
-+			opp-hz = /bits/ 64 <1593600000>;
-+			opp-microvolt = <1140000 905000 1140000>;
-+			opp-supported-hw = <0x70>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1632000000 {
-+			opp-hz = /bits/ 64 <1632000000>;
-+			opp-microvolt = <1140000 905000 1140000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1670400000 {
-+			opp-hz = /bits/ 64 <1670400000>;
-+			opp-microvolt = <1140000 905000 1140000>;
-+			opp-supported-hw = <0x70>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1708800000 {
-+			opp-hz = /bits/ 64 <1708800000>;
-+			opp-microvolt = <1140000 905000 1140000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1747200000 {
-+			opp-hz = /bits/ 64 <1747200000>;
-+			opp-microvolt = <1140000 905000 1140000>;
-+			opp-supported-hw = <0x70>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1785600000 {
-+			opp-hz = /bits/ 64 <1785600000>;
-+			opp-microvolt = <1140000 905000 1140000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1804800000 {
-+			opp-hz = /bits/ 64 <1804800000>;
-+			opp-microvolt = <1140000 905000 1140000>;
-+			opp-supported-hw = <0x6>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1824000000 {
-+			opp-hz = /bits/ 64 <1824000000>;
-+			opp-microvolt = <1140000 905000 1140000>;
-+			opp-supported-hw = <0x71>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1900800000 {
-+			opp-hz = /bits/ 64 <1900800000>;
-+			opp-microvolt = <1140000 905000 1140000>;
-+			opp-supported-hw = <0x74>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1920000000 {
-+			opp-hz = /bits/ 64 <1920000000>;
-+			opp-microvolt = <1140000 905000 1140000>;
-+			opp-supported-hw = <0x1>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1977600000 {
-+			opp-hz = /bits/ 64 <1977600000>;
-+			opp-microvolt = <1140000 905000 1140000>;
-+			opp-supported-hw = <0x30>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1996800000 {
-+			opp-hz = /bits/ 64 <1996800000>;
-+			opp-microvolt = <1140000 905000 1140000>;
-+			opp-supported-hw = <0x1>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-2054400000 {
-+			opp-hz = /bits/ 64 <2054400000>;
-+			opp-microvolt = <1140000 905000 1140000>;
-+			opp-supported-hw = <0x30>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-2073600000 {
-+			opp-hz = /bits/ 64 <2073600000>;
-+			opp-microvolt = <1140000 905000 1140000>;
-+			opp-supported-hw = <0x1>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-2150400000 {
-+			opp-hz = /bits/ 64 <2150400000>;
-+			opp-microvolt = <1140000 905000 1140000>;
-+			opp-supported-hw = <0x31>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-2246400000 {
-+			opp-hz = /bits/ 64 <2246400000>;
-+			opp-microvolt = <1140000 905000 1140000>;
-+			opp-supported-hw = <0x10>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-2342400000 {
-+			opp-hz = /bits/ 64 <2342400000>;
-+			opp-microvolt = <1140000 905000 1140000>;
-+			opp-supported-hw = <0x10>;
-+			clock-latency-ns = <200000>;
-+		};
-+	};
-+
-+....
-+
-+reserved-memory {
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+	ranges;
-+....
-+	smem_mem: smem-mem@86000000 {
-+		reg = <0x0 0x86000000 0x0 0x200000>;
-+		no-map;
-+	};
-+....
-+};
-+
-+smem {
-+	compatible = "qcom,smem";
-+	memory-region = <&smem_mem>;
-+	hwlocks = <&tcsr_mutex 3>;
-+};
-+
-+soc {
-+....
-+	qfprom: qfprom@74000 {
-+		compatible = "qcom,qfprom";
-+		reg = <0x00074000 0x8ff>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		....
-+		speedbin_efuse: speedbin@133 {
-+			reg = <0x133 0x1>;
-+			bits = <5 3>;
-+		};
-+	};
-+};
--- 
-1.9.1
+inet_csk_listen_start()
+{
+	/* There is race window here: we announce ourselves listening,
+	 * but this transition is still not validated by get_port().
+	 * It is OK, because this socket enters to hash table only
+	 * after validation is complete.
+	 */
+        inet_sk_state_store(sk, TCP_LISTEN);
+        if (!sk->sk_prot->get_port(sk, inet->inet_num)) {
+
+}
+
+CC netdev.
+
+Kirill
