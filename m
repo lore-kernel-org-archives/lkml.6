@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754283AbeEWGrJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 02:47:09 -0400
-Received: from regular1.263xmail.com ([211.150.99.140]:55780 "EHLO
+        id S1754230AbeEWGrk (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 02:47:40 -0400
+Received: from regular1.263xmail.com ([211.150.99.141]:33160 "EHLO
         regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754040AbeEWGrF (ORCPT
+        with ESMTP id S1754041AbeEWGrf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 02:47:05 -0400
+        Wed, 23 May 2018 02:47:35 -0400
 X-263anti-spam: KSV:0;
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
@@ -17,7 +17,7 @@ X-RL-SENDER: zhangqing@rock-chips.com
 X-FST-TO: heiko@sntech.de
 X-SENDER-IP: 58.22.7.114
 X-LOGIN-NAME: zhangqing@rock-chips.com
-X-UNIQUE-TAG: <01cdab065b302336612cbe548d766559>
+X-UNIQUE-TAG: <5c8e95b57af346ede520a38716b4daa0>
 X-ATTACHMENT-NUM: 0
 X-DNS-TYPE: 0
 From: Elaine Zhang <zhangqing@rock-chips.com>
@@ -29,9 +29,9 @@ Cc: devicetree@vger.kernel.org, rjw@rjwysocki.net, khilman@kernel.org,
         wxt@rock-chips.com, xxx@rock-chips.com, xf@rock-chips.com,
         huangtao@rock-chips.com, Finley Xiao <finley.xiao@rock-chips.com>,
         Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v3 11/13] dt-bindings: power: add PX30 SoCs header for power-domain
-Date: Wed, 23 May 2018 14:52:21 +0800
-Message-Id: <1527058341-10658-1-git-send-email-zhangqing@rock-chips.com>
+Subject: [PATCH v3 12/13] dt-bindings: add binding for px30 power domains
+Date: Wed, 23 May 2018 14:52:51 +0800
+Message-Id: <1527058371-10706-1-git-send-email-zhangqing@rock-chips.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1527058129-10260-1-git-send-email-zhangqing@rock-chips.com>
 References: <1527058129-10260-1-git-send-email-zhangqing@rock-chips.com>
@@ -41,47 +41,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Finley Xiao <finley.xiao@rock-chips.com>
 
-According to a description from TRM, add all the power domains.
+Add binding documentation for the power domains
+found on Rockchip PX30 SoCs.
 
 Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
 Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 ---
- include/dt-bindings/power/px30-power.h | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
- create mode 100644 include/dt-bindings/power/px30-power.h
+ Documentation/devicetree/bindings/soc/rockchip/power_domain.txt | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/include/dt-bindings/power/px30-power.h b/include/dt-bindings/power/px30-power.h
-new file mode 100644
-index 000000000000..30917a99ad20
---- /dev/null
-+++ b/include/dt-bindings/power/px30-power.h
-@@ -0,0 +1,27 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __DT_BINDINGS_POWER_PX30_POWER_H__
-+#define __DT_BINDINGS_POWER_PX30_POWER_H__
-+
-+/* VD_CORE */
-+#define PX30_PD_A35_0		0
-+#define PX30_PD_A35_1		1
-+#define PX30_PD_A35_2		2
-+#define PX30_PD_A35_3		3
-+#define PX30_PD_SCU		4
-+
-+/* VD_LOGIC */
-+#define PX30_PD_USB		5
-+#define PX30_PD_DDR		6
-+#define PX30_PD_SDCARD		7
-+#define PX30_PD_CRYPTO		8
-+#define PX30_PD_GMAC		9
-+#define PX30_PD_MMC_NAND	10
-+#define PX30_PD_VPU		11
-+#define PX30_PD_VO		12
-+#define PX30_PD_VI		13
-+#define PX30_PD_GPU		14
-+
-+/* VD_PMU */
-+#define PX30_PD_PMU		15
-+
-+#endif
+diff --git a/Documentation/devicetree/bindings/soc/rockchip/power_domain.txt b/Documentation/devicetree/bindings/soc/rockchip/power_domain.txt
+index affe36dcfa17..5d49d0a2ff29 100644
+--- a/Documentation/devicetree/bindings/soc/rockchip/power_domain.txt
++++ b/Documentation/devicetree/bindings/soc/rockchip/power_domain.txt
+@@ -5,6 +5,7 @@ powered up/down by software based on different application scenes to save power.
+ 
+ Required properties for power domain controller:
+ - compatible: Should be one of the following.
++	"rockchip,px30-power-controller" - for PX30 SoCs.
+ 	"rockchip,rk3036-power-controller" - for RK3036 SoCs.
+ 	"rockchip,rk3128-power-controller" - for RK3128 SoCs.
+ 	"rockchip,rk3228-power-controller" - for RK3228 SoCs.
+@@ -20,6 +21,7 @@ Required properties for power domain controller:
+ 
+ Required properties for power domain sub nodes:
+ - reg: index of the power domain, should use macros in:
++	"include/dt-bindings/power/px30-power.h" - for PX30 type power domain.
+ 	"include/dt-bindings/power/rk3036-power.h" - for RK3036 type power domain.
+ 	"include/dt-bindings/power/rk3128-power.h" - for RK3128 type power domain.
+ 	"include/dt-bindings/power/rk3228-power.h" - for RK3228 type power domain.
+@@ -99,6 +101,7 @@ Node of a device using power domains must have a power-domains property,
+ containing a phandle to the power device node and an index specifying which
+ power domain to use.
+ The index should use macros in:
++	"include/dt-bindings/power/px30-power.h" - for px30 type power domain.
+ 	"include/dt-bindings/power/rk3036-power.h" - for rk3036 type power domain.
+ 	"include/dt-bindings/power/rk3128-power.h" - for rk3128 type power domain.
+ 	"include/dt-bindings/power/rk3128-power.h" - for rk3228 type power domain.
 -- 
 1.9.1
