@@ -1,71 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935042AbeEWVHw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 17:07:52 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:59504 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934299AbeEWVHt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 17:07:49 -0400
-From: Logan Gunthorpe <logang@deltatee.com>
-To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-ntb@googlegroups.com
-Cc: Logan Gunthorpe <logang@deltatee.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Doug Meyer <dmeyer@gigaio.com>
-Date: Wed, 23 May 2018 15:07:38 -0600
-Message-Id: <20180523210738.2883-1-logang@deltatee.com>
-X-Mailer: git-send-email 2.11.0
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-ntb@googlegroups.com, logang@deltatee.com, bhelgaas@google.com, alex.williamson@redhat.com, dmeyer@gigaio.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH] PCI: Expand documentation for pci_add_dma_alias()
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+        id S935077AbeEWVIY (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 17:08:24 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:36033 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934230AbeEWVIV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 17:08:21 -0400
+X-Google-Smtp-Source: AB8JxZo2x9srDww7yHpgz+MDRe713Onqy/8igUoeO/mzQUiSit4gBWSLdo1faVXfD5lNmi4KzPmB3JRc4Q74SJ+hFnI=
+MIME-Version: 1.0
+In-Reply-To: <7de525d4-52f4-80f2-1f55-a3a5c37d7bf9@cogentembedded.com>
+References: <20180522181512.39316-1-keescook@chromium.org> <20180522181512.39316-7-keescook@chromium.org>
+ <7de525d4-52f4-80f2-1f55-a3a5c37d7bf9@cogentembedded.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Wed, 23 May 2018 14:08:19 -0700
+X-Google-Sender-Auth: cu8eg49o3-RiHiZjQeh0mmyTZJ8
+Message-ID: <CAGXu5jLonX60J2LFPk95=tdx-+zSdaV3y6CTGk6R=-DP-X0sWg@mail.gmail.com>
+Subject: Re: [PATCH 6/6] scsi: Check sense buffer size at build time
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Jens Axboe <axboe@kernel.dk>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Tejun Heo <tj@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Manoj N. Kumar" <manoj@linux.vnet.ibm.com>,
+        "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>,
+        Uma Krishnan <ukrishn@linux.vnet.ibm.com>,
+        linux-block <linux-block@vger.kernel.org>, linux-ide@vger.kernel.org,
+        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Seeing there's been some confusion about the use of pci_add_dma_alias(),
-expand the comment to describe why it must be called early and how
-early it must be called.
+On Wed, May 23, 2018 at 1:25 AM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Hello!
+>
+> On 5/22/2018 9:15 PM, Kees Cook wrote:
+>
+>> To avoid introducing problems like those fixed in commit f7068114d45e
+>> ("sr: pass down correctly sized SCSI sense buffer"), this creates a macro
+>> wrapper for scsi_execute() that verifies the size of the sense buffer
+>> similar to what was done for command string sizes in commit 3756f6401c30
+>> ("exec: avoid gcc-8 warning for get_task_comm").
+>>
+>> Another solution could be to add another argument to scsi_execute(),
+>> but this function already takes a lot of arguments and Jens was not fond
+>> of that approach. As there was only a pair of dynamically allocated sense
+>> buffers, this also moves those 96 bytes onto the stack to avoid triggering
+>> the sizeof() check.
+>>
+>> Signed-off-by: Kees Cook <keescook@chromium.org>
+>> ---
+>>   drivers/scsi/scsi_lib.c    |  6 +++---
+>>   include/scsi/scsi_device.h | 12 +++++++++++-
+>>   2 files changed, 14 insertions(+), 4 deletions(-)
+>>
+> [...]
+>>
+>> diff --git a/include/scsi/scsi_device.h b/include/scsi/scsi_device.h
+>> index 7ae177c8e399..1bb87b6c0ad2 100644
+>> --- a/include/scsi/scsi_device.h
+>> +++ b/include/scsi/scsi_device.h
+>> @@ -426,11 +426,21 @@ extern const char *scsi_device_state_name(enum
+>> scsi_device_state);
+>>   extern int scsi_is_sdev_device(const struct device *);
+>>   extern int scsi_is_target_device(const struct device *);
+>>   extern void scsi_sanitize_inquiry_string(unsigned char *s, int len);
+>> -extern int scsi_execute(struct scsi_device *sdev, const unsigned char
+>> *cmd,
+>> +extern int __scsi_execute(struct scsi_device *sdev, const unsigned char
+>> *cmd,
+>>                         int data_direction, void *buffer, unsigned
+>> bufflen,
+>>                         unsigned char *sense, struct scsi_sense_hdr
+>> *sshdr,
+>>                         int timeout, int retries, u64 flags,
+>>                         req_flags_t rq_flags, int *resid);
+>> +/* Make sure any sense buffer is the correct size. */
+>> +#define scsi_execute(sdev, cmd, data_direction, buffer, bufflen, sense,
+>> \
+>> +                    sshdr, timeout, retries, flags, rq_flags, resid)   \
+>> +({                                                                     \
+>> +       BUILD_BUG_ON((sense) != NULL &&                                 \
+>> +                    sizeof(sense) != SCSI_SENSE_BUFFERSIZE);           \
+>
+>
+>    This would only check the size of the 'sense' pointer, no?
 
-Also, expand on the purpose of this function and common reasons it would
-be used.
+Correct. Passing in a variable that was declared as:
 
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Alex Williamson <alex.williamson@redhat.com>
-Cc: Doug Meyer <dmeyer@gigaio.com>
----
- drivers/pci/pci.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+char sense[SCSI_SENSE_BUFFERSIZE];
 
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index dbfe7c4f3776..2a410745a95a 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -5395,8 +5395,19 @@ int pci_set_vga_state(struct pci_dev *dev, bool decode,
-  * @dev: the PCI device for which alias is added
-  * @devfn: alias slot and function
-  *
-- * This helper encodes 8-bit devfn as bit number in dma_alias_mask.
-- * It should be called early, preferably as PCI fixup header quirk.
-+ * This helper encodes an 8-bit devfn as a bit number in dma_alias_mask
-+ * which is used to program permissible BDF source addresses for
-+ * DMA requests in an IOMMU. This is useful for non-transparent bridges
-+ * which use BDFs that are not visible on the bus as proxies for devices
-+ * in another domain. It's also useful for grouping of multiple devices
-+ * that must be done without a host endpoint driver.
-+ *
-+ * This function must be called early, before the IOMMU creates
-+ * the groups for the device which happens with a BUS_NOTIFY_ADD_DEVICE
-+ * event. This occurs before the driver's probe function is called seeing
-+ * the groups must be ready before any DMA mappings for the device are created.
-+ * Therefore, this function cannot be called in a driver and, instead,
-+ * should be called as a PCI fixup header quirk.
-  */
- void pci_add_dma_alias(struct pci_dev *dev, u8 devfn)
- {
+would pass this check. Dynamically allocated would not (and we don't
+have any cases of that left after the prior patch in this series), and
+it should cast improper casts.
+
+If people don't like this bit of robustness vs complexity/limit, I'm
+happy to leave it off the series.
+
+-Kees
+
 -- 
-2.11.0
+Kees Cook
+Pixel Security
