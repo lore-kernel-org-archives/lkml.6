@@ -1,69 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933464AbeEWPfo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 11:35:44 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57282 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932578AbeEWPfk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 11:35:40 -0400
-Date: Wed, 23 May 2018 16:36:07 +0100
-From: Will Deacon <will.deacon@arm.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: psodagud@codeaurora.org, Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Rik van Riel <riel@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-        Eric Biggers <ebiggers@google.com>,
-        Frederic Weisbecker <fweisbec@gmail.com>, sherryy@android.com,
-        Vegard Nossum <vegard.nossum@oracle.com>,
-        Christoph Lameter <cl@linux.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Sasha Levin <alexander.levin@verizon.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        boqun.feng@gmail.com
-Subject: Re: write_lock_irq(&tasklist_lock)
-Message-ID: <20180523153607.GD2983@arm.com>
-References: <0879f797135033e05e8e9166a3c85628@codeaurora.org>
- <20180523130547.GF26965@arm.com>
- <CA+55aFwKLBKdf3gdWkJSdewQYYXYYfN29SPT+etPqpopxA0CMQ@mail.gmail.com>
+        id S933550AbeEWPhx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 11:37:53 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:33594 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932646AbeEWPhu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 11:37:50 -0400
+X-Google-Smtp-Source: AB8JxZrUGidZFxwoIILFEASnm4GU+s+6z4vP1xVXf+P5gO8MYscePi3ThAXwtQ2gR6wGQXkimWNj8g==
+Subject: Re: [PATCH net-next v3 1/7] net: dsa: qca8k: Add QCA8334 binding
+ documentation
+To: =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <vokac.m@gmail.com>,
+        netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        vivien.didelot@savoirfairelinux.com, andrew@lunn.ch,
+        mark.rutland@arm.com, robh+dt@kernel.org, davem@davemloft.net,
+        michal.vokac@ysoft.com
+References: <1527056424-14528-1-git-send-email-michal.vokac@ysoft.com>
+ <1527056424-14528-2-git-send-email-michal.vokac@ysoft.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ xsDiBEjPuBIRBACW9MxSJU9fvEOCTnRNqG/13rAGsj+vJqontvoDSNxRgmafP8d3nesnqPyR
+ xGlkaOSDuu09rxuW+69Y2f1TzjFuGpBk4ysWOR85O2Nx8AJ6fYGCoeTbovrNlGT1M9obSFGQ
+ X3IzRnWoqlfudjTO5TKoqkbOgpYqIo5n1QbEjCCwCwCg3DOH/4ug2AUUlcIT9/l3pGvoRJ0E
+ AICDzi3l7pmC5IWn2n1mvP5247urtHFs/uusE827DDj3K8Upn2vYiOFMBhGsxAk6YKV6IP0d
+ ZdWX6fqkJJlu9cSDvWtO1hXeHIfQIE/xcqvlRH783KrihLcsmnBqOiS6rJDO2x1eAgC8meAX
+ SAgsrBhcgGl2Rl5gh/jkeA5ykwbxA/9u1eEuL70Qzt5APJmqVXR+kWvrqdBVPoUNy/tQ8mYc
+ nzJJ63ng3tHhnwHXZOu8hL4nqwlYHRa9eeglXYhBqja4ZvIvCEqSmEukfivk+DlIgVoOAJbh
+ qIWgvr3SIEuR6ayY3f5j0f2ejUMYlYYnKdiHXFlF9uXm1ELrb0YX4GMHz80nRmxvcmlhbiBG
+ YWluZWxsaSA8Zi5mYWluZWxsaUBnbWFpbC5jb20+wmYEExECACYCGyMGCwkIBwMCBBUCCAME
+ FgIDAQIeAQIXgAUCVF/S8QUJHlwd3wAKCRBhV5kVtWN2DvCVAJ4u4/bPF4P3jxb4qEY8I2gS
+ 6hG0gACffNWlqJ2T4wSSn+3o7CCZNd7SLSDOw00ESM+4EhAQAL/o09boR9D3Vk1Tt7+gpYr3
+ WQ6hgYVON905q2ndEoA2J0dQxJNRw3snabHDDzQBAcqOvdi7YidfBVdKi0wxHhSuRBfuOppu
+ pdXkb7zxuPQuSveCLqqZWRQ+Cc2QgF7SBqgznbe6Ngout5qXY5Dcagk9LqFNGhJQzUGHAsIs
+ hap1f0B1PoUyUNeEInV98D8Xd/edM3mhO9nRpUXRK9Bvt4iEZUXGuVtZLT52nK6Wv2EZ1TiT
+ OiqZlf1P+vxYLBx9eKmabPdm3yjalhY8yr1S1vL0gSA/C6W1o/TowdieF1rWN/MYHlkpyj9c
+ Rpc281gAO0AP3V1G00YzBEdYyi0gaJbCEQnq8Vz1vDXFxHzyhgGz7umBsVKmYwZgA8DrrB0M
+ oaP35wuGR3RJcaG30AnJpEDkBYHznI2apxdcuTPOHZyEilIRrBGzDwGtAhldzlBoBwE3Z3MY
+ 31TOpACu1ZpNOMysZ6xiE35pWkwc0KYm4hJA5GFfmWSN6DniimW3pmdDIiw4Ifcx8b3mFrRO
+ BbDIW13E51j9RjbO/nAaK9ndZ5LRO1B/8Fwat7bLzmsCiEXOJY7NNpIEpkoNoEUfCcZwmLrU
+ +eOTPzaF6drw6ayewEi5yzPg3TAT6FV3oBsNg3xlwU0gPK3v6gYPX5w9+ovPZ1/qqNfOrbsE
+ FRuiSVsZQ5s3AAMFD/9XjlnnVDh9GX/r/6hjmr4U9tEsM+VQXaVXqZuHKaSmojOLUCP/YVQo
+ 7IiYaNssCS4FCPe4yrL4FJJfJAsbeyDykMN7wAnBcOkbZ9BPJPNCbqU6dowLOiy8AuTYQ48m
+ vIyQ4Ijnb6GTrtxIUDQeOBNuQC/gyyx3nbL/lVlHbxr4tb6YkhkO6shjXhQh7nQb33FjGO4P
+ WU11Nr9i/qoV8QCo12MQEo244RRA6VMud06y/E449rWZFSTwGqb0FS0seTcYNvxt8PB2izX+
+ HZA8SL54j479ubxhfuoTu5nXdtFYFj5Lj5x34LKPx7MpgAmj0H7SDhpFWF2FzcC1bjiW9mjW
+ HaKaX23Awt97AqQZXegbfkJwX2Y53ufq8Np3e1542lh3/mpiGSilCsaTahEGrHK+lIusl6mz
+ Joil+u3k01ofvJMK0ZdzGUZ/aPMZ16LofjFA+MNxWrZFrkYmiGdv+LG45zSlZyIvzSiG2lKy
+ kuVag+IijCIom78P9jRtB1q1Q5lwZp2TLAJlz92DmFwBg1hyFzwDADjZ2nrDxKUiybXIgZp9
+ aU2d++ptEGCVJOfEW4qpWCCLPbOT7XBr+g/4H3qWbs3j/cDDq7LuVYIe+wchy/iXEJaQVeTC
+ y5arMQorqTFWlEOgRA8OP47L9knl9i4xuR0euV6DChDrguup2aJVU8JPBBgRAgAPAhsMBQJU
+ X9LxBQkeXB3fAAoJEGFXmRW1Y3YOj4UAn3nrFLPZekMeqX5aD/aq/dsbXSfyAKC45Go0YyxV
+ HGuUuzv+GKZ6nsysJw==
+Message-ID: <08b89ba8-abf9-7df3-7a59-dda0303d6854@gmail.com>
+Date: Wed, 23 May 2018 08:37:45 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFwKLBKdf3gdWkJSdewQYYXYYfN29SPT+etPqpopxA0CMQ@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1527056424-14528-2-git-send-email-michal.vokac@ysoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+Boqun]
 
-On Wed, May 23, 2018 at 08:25:06AM -0700, Linus Torvalds wrote:
-> On Wed, May 23, 2018 at 6:05 AM Will Deacon <will.deacon@arm.com> wrote:
+
+On 05/22/2018 11:20 PM, Michal Vokáč wrote:
+> Add support for the four-port variant of the Qualcomm QCA833x switch.
 > 
-> > Please use a newer kernel. We've addressed this in mainline by moving
-> > arm64 over to the qrwlock implementation which (after some other changes)
-> > guarantees forward progress for well-behaved readers and writers.
+> The CPU port default link settings can be reconfigured using
+> a fixed-link sub-node.
 > 
-> Oh, I didn't even realize that this wasn't x86, and that there was still
-> the very unfair rwlock issue on 4.14 on arm.
-> 
-> Yeah, the queuing rwlocks shouldn't show the really pathological problems
-> we used to have long ago.
+> Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Yup, although they do reveal new issues that Boqun has been running into
-recently with his lockdep improvements. The general pattern is if you
-have:
-
-P0:			P1:			P2:
-
-spin_lock(&slock)	read_lock(&rwlock)	write_lock(&rwlock)
-read_lock(&rwlock)	spin_lock(&slock)
-
-then the CPUs can be queued on the rwlock such that P1 has the lock, then
-P2 is queued and then P0. If P0 has taken the spinlock, we have a deadlock
-which wouldn't arise with the non-queued version.
-
-In other words, qrwlock requires consistent locking order wrt spinlocks.
-
-Will
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+-- 
+Florian
