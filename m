@@ -1,108 +1,163 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935151AbeEWXlX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 19:41:23 -0400
-Received: from imap.thunk.org ([74.207.234.97]:46962 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935015AbeEWXlV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 19:41:21 -0400
-Date: Wed, 23 May 2018 19:41:15 -0400
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-To: Eric Sandeen <sandeen@sandeen.net>
-Cc: Eric Biggers <ebiggers3@gmail.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>, Brian Foster <bfoster@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Bugs involving maliciously crafted file system
-Message-ID: <20180523234114.GA3434@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        Eric Biggers <ebiggers3@gmail.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Brian Foster <bfoster@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <000000000000457b2d056cbb0044@google.com>
- <20180522123107.GC3751@bfoster.bfoster>
- <20180522222620.GW23861@dastard>
- <20180522225208.GB658@sol.localdomain>
- <20180523074425.GM14384@magnolia>
- <20180523162015.GA3684@sol.localdomain>
- <a52266f9-0096-b28c-c01c-046ababcfe3a@sandeen.net>
+        id S935191AbeEWXln (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 19:41:43 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:49855 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935015AbeEWXlk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 19:41:40 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Linux Containers <containers@lists.linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org,
+        Seth Forshee <seth.forshee@canonical.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian@brauner.io>, linux-kernel@vger.kernel.org
+References: <87o9h6554f.fsf@xmission.com>
+        <20180523232538.4880-3-ebiederm@xmission.com>
+Date: Wed, 23 May 2018 18:41:29 -0500
+In-Reply-To: <20180523232538.4880-3-ebiederm@xmission.com> (Eric
+        W. Biederman's message of "Wed, 23 May 2018 18:25:35 -0500")
+Message-ID: <87bmd6549i.fsf_-_@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a52266f9-0096-b28c-c01c-046ababcfe3a@sandeen.net>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+Content-Type: text/plain
+X-XM-SPF: eid=1fLdNx-0006Lt-8b;;;mid=<87bmd6549i.fsf_-_@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+e5/KwyvILWLBIc+aryMSwj8fEFaC69pg=
+X-SA-Exim-Connect-IP: 97.119.174.25
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.7 XMSubLong Long Subject
+        *  1.5 TR_Symld_Words too many words that have symbols inside
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa01 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.1 XMSolicitRefs_0 Weightloss drug
+X-Spam-DCC: XMission; sa01 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Linux Containers <containers@lists.linux-foundation.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 1825 ms - load_scoreonly_sql: 0.06 (0.0%),
+        signal_user_changed: 3.4 (0.2%), b_tie_ro: 2.3 (0.1%), parse: 1.44 (0.1%),
+        extract_message_metadata: 32 (1.8%), get_uri_detail_list: 5 (0.3%),
+        tests_pri_-1000: 14 (0.8%), tests_pri_-950: 2.0 (0.1%), tests_pri_-900: 1.66
+        (0.1%), tests_pri_-400: 43 (2.3%), check_bayes: 41 (2.2%), b_tokenize: 17
+        (1.0%), b_tok_get_all: 10 (0.6%), b_comp_prob: 6 (0.3%), b_tok_touch_all: 3.2
+        (0.2%), b_finish: 0.76 (0.0%), tests_pri_0: 1716 (94.0%),
+        check_dkim_signature: 0.90 (0.0%), check_dkim_adsp: 7 (0.4%), tests_pri_500:
+        7 (0.4%), rewrite_mail: 0.00 (0.0%)
+Subject: [REVIEW][PATCH v2 3/6] fs: Allow superblock owner to replace invalid owners of inodes
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 01:01:59PM -0500, Eric Sandeen wrote:
-> 
-> What I'm personally hung up on are the bugs where the "exploit" involves merely
-> mounting a crafted filesystem that in reality would never (until the heat death
-> of the universe) corrupt itself into that state on its own; it's the "malicious
-> image" case, which is quite different than exposing fundamental bugs like the
-> SB_BORN race or or the user-exploitable ext4 flaw you mentioned in your reply.
-> Those are more insidious and/or things which can be hit by real users in real life.
 
-Well, it *can* be hit in real life.  If you have a system which auto
-mounts USB sticks, then an attacker might be able to weaponize that
-bug by creating a USB stick where mounted and the user opens a
-particular file, the buffer overrun causes code to be executed that
-grabs the user's credentials (e.g., ssh-agent keys, OATH creds, etc.)
-and exfiltrates them to a collection server.
+Allow users with CAP_SYS_CHOWN over the superblock of a filesystem to
+chown files when inode owner is invalid.  Ordinarily the
+capable_wrt_inode_uidgid check is sufficient to allow access to files
+but when the underlying filesystem has uids or gids that don't map to
+the current user namespace it is not enough, so the chown permission
+checks need to be extended to allow this case.
 
-Fedora and Chrome OS might be two such platforms where someone could
-very easily create a weaponized exploit tool where you could insert a
-file system buffer overrun bug, and "hey presto!" it becomes a serious
-zero day vulnerability.
+Calling chown on filesystem nodes whose uid or gid don't map is
+necessary if those nodes are going to be modified as writing back
+inodes which contain uids or gids that don't map is likely to cause
+filesystem corruption of the uid or gid fields.
 
-(I recently suggested to a security researcher who was concerned that
-file system developers weren't taking these sorts of things seriously
-enough could do a service to the community by creating a demonstration
-about how these sorts of bugs can be weaponized.  And I suspect it
-could be about just as easily on Chrome OS as Fedora, and that can be
-one way that an argument could be made to management that more
-resources should be applied to this problem.  :-)
+Once chown has been called the existing capable_wrt_inode_uidgid
+checks are sufficient to allow the owner of a superblock to do anything
+the global root user can do with an appropriate set of capabilities.
 
-Of course, not all bugs triggered by a maliciously crafted file system
-are equally weaponizable.  An errors=panic or a NULL derefrence are
-probably not easily exploitable at all.  A buffer overrun (and I fixed
-two in ext4 in the last two days while being stuck in a T13 standards
-meeting, so I do feel your pain) might be a very different story.
+An ordinary filesystem mountable by a userns root will limit all uids
+and gids in s_user_ns or the INVALID_UID and INVALID_GID to flag all
+others.  So having this added permission limited to just INVALID_UID
+and INVALID_GID is sufficient to handle every case on an ordinary filesystem.
 
-Solutions
----------
+Of the virtual filesystems at least proc is known to set s_user_ns to
+something other than &init_user_ns, while at the same time presenting
+some files owned by GLOBAL_ROOT_UID.  Those files the mounter of proc
+in a user namespace should not be able to chown to get access to.
+Limiting the relaxation in permission to just the minimum of allowing
+changing INVALID_UID and INVALID_GID prevents problems with cases like
+that.
 
-One of the things I've wanted to get help from the syzbot folks is if
-there was some kind of machine learning or expert system evaluation
-that could be done so malicious image bugs could be binned into
-different categories, based on how easily they can be weaponized.
-That way, when there is a resource shortage situation, humans can be
-more easily guided into detremining which bugs should be prioritized
-and given attention, and which we can defer to when we have more time.
-Or maybe it would be useful if there was a way where maintainers could
-be able to annotate bugs with priority and severity levels, and maybe
-make comments that can be viewed from the Syzbot dashboard UI.
+The original version of this patch was written by: Seth Forshee.  I
+have rewritten and rethought this patch enough so it's really not the
+same thing (certainly it needs a different description), but he
+deserves credit for getting out there and getting the conversation
+started, and finding the potential gotcha's and putting up with my
+semi-paranoid feedback.
 
+Inspired-by: Seth Forshee <seth.forshee@canonical.com>
+Acked-by: Seth Forshee <seth.forshee@canonical.com>
+Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
+---
 
-The other thing that perhaps could be done is to set up a system where
-the USB stick is automounted in a guest VM (using libvirt in Fedora,
-and perhaps Crostini for Chrome OS), and the contents of the file
-system would then get exported from the guest OS to the host OS using
-either NFS or 9P.  (9P2000.u is the solution that was used in
-gVisor[1].)
+Sigh.  In simplifying this change so it would not require a change to
+proc (or any other similar filesystem) I accidentally introduced some
+badly placed semicolons.  The kbuild test robot was very nice and found
+those for me.  Resend with those unnecessary semicolons removed.
 
-[1] https://github.com/google/gvisor
+ fs/attr.c | 36 ++++++++++++++++++++++++++++--------
+ 1 file changed, 28 insertions(+), 8 deletions(-)
 
-It could be that putting this kind of security layer in front to
-automounted USB sticks is less work than playing whack-a-mole fixing a
-lot of security bugs with maliciously crafted file systems.  
-
-					- Ted
+diff --git a/fs/attr.c b/fs/attr.c
+index 12ffdb6fb63c..d0b4d34878fb 100644
+--- a/fs/attr.c
++++ b/fs/attr.c
+@@ -18,6 +18,32 @@
+ #include <linux/evm.h>
+ #include <linux/ima.h>
+ 
++static bool chown_ok(const struct inode *inode, kuid_t uid)
++{
++	if (uid_eq(current_fsuid(), inode->i_uid) &&
++	    uid_eq(uid, inode->i_uid))
++		return true;
++	if (capable_wrt_inode_uidgid(inode, CAP_CHOWN))
++		return true;
++	if (uid_eq(inode->i_uid, INVALID_UID) &&
++	    ns_capable(inode->i_sb->s_user_ns, CAP_CHOWN))
++		return true;
++	return false;
++}
++
++static bool chgrp_ok(const struct inode *inode, kgid_t gid)
++{
++	if (uid_eq(current_fsuid(), inode->i_uid) &&
++	    (in_group_p(gid) || gid_eq(gid, inode->i_gid)))
++		return true;
++	if (capable_wrt_inode_uidgid(inode, CAP_CHOWN))
++		return true;
++	if (gid_eq(inode->i_gid, INVALID_GID) &&
++	    ns_capable(inode->i_sb->s_user_ns, CAP_CHOWN))
++		return true;
++	return false;
++}
++
+ /**
+  * setattr_prepare - check if attribute changes to a dentry are allowed
+  * @dentry:	dentry to check
+@@ -52,17 +78,11 @@ int setattr_prepare(struct dentry *dentry, struct iattr *attr)
+ 		goto kill_priv;
+ 
+ 	/* Make sure a caller can chown. */
+-	if ((ia_valid & ATTR_UID) &&
+-	    (!uid_eq(current_fsuid(), inode->i_uid) ||
+-	     !uid_eq(attr->ia_uid, inode->i_uid)) &&
+-	    !capable_wrt_inode_uidgid(inode, CAP_CHOWN))
++	if ((ia_valid & ATTR_UID) && !chown_ok(inode, attr->ia_uid))
+ 		return -EPERM;
+ 
+ 	/* Make sure caller can chgrp. */
+-	if ((ia_valid & ATTR_GID) &&
+-	    (!uid_eq(current_fsuid(), inode->i_uid) ||
+-	    (!in_group_p(attr->ia_gid) && !gid_eq(attr->ia_gid, inode->i_gid))) &&
+-	    !capable_wrt_inode_uidgid(inode, CAP_CHOWN))
++	if ((ia_valid & ATTR_GID) && !chgrp_ok(inode, attr->ia_gid))
+ 		return -EPERM;
+ 
+ 	/* Make sure a caller can chmod. */
