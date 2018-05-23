@@ -1,97 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935082AbeEWXXJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 19:23:09 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:47865 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934671AbeEWXXH (ORCPT
+        id S935117AbeEWXX3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 19:23:29 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:37252 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934671AbeEWXX1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 19:23:07 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Linux Containers <containers@lists.linux-foundation.org>
-Cc: <linux-fsdevel@vger.kernel.org>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian@brauner.io>,
-        <linux-kernel@vger.kernel.org>
-Date: Wed, 23 May 2018 18:22:56 -0500
-Message-ID: <87o9h6554f.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fLd5z-0005QO-VP;;;mid=<87o9h6554f.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18gA29VGk1RUOs/zesLWKoUnvF0aKxl7N8=
-X-SA-Exim-Connect-IP: 97.119.174.25
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.7 XMSubLong Long Subject
-        *  1.5 TR_Symld_Words too many words that have symbols inside
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa01 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa01 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ***;Linux Containers <containers@lists.linux-foundation.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 445 ms - load_scoreonly_sql: 0.06 (0.0%),
-        signal_user_changed: 3.1 (0.7%), b_tie_ro: 2.1 (0.5%), parse: 1.20 (0.3%),
-        extract_message_metadata: 5 (1.1%), get_uri_detail_list: 2.5 (0.6%),
-        tests_pri_-1000: 5 (1.1%), tests_pri_-950: 2.2 (0.5%), tests_pri_-900: 1.62
-        (0.4%), tests_pri_-400: 29 (6.5%), check_bayes: 27 (6.1%), b_tokenize: 10
-        (2.3%), b_tok_get_all: 7 (1.5%), b_comp_prob: 4.3 (1.0%), b_tok_touch_all:
-        2.7 (0.6%), b_finish: 0.82 (0.2%), tests_pri_0: 370 (83.1%),
-        check_dkim_signature: 0.80 (0.2%), check_dkim_adsp: 6 (1.4%), tests_pri_500:
-        6 (1.4%), rewrite_mail: 0.00 (0.0%)
-Subject: [REVIEW][PATCH 0/6] Wrapping up the vfs support for unprivileged mounts
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+        Wed, 23 May 2018 19:23:27 -0400
+From: Qing Huang <qing.huang@oracle.com>
+To: tariqt@mellanox.com, davem@davemloft.net, haakon.bugge@oracle.com,
+        yanjun.zhu@oracle.com
+Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, gi-oh.kim@profitbricks.com,
+        Qing Huang <qing.huang@oracle.com>
+Subject: [PATCH V4] mlx4_core: allocate ICM memory in page size chunks
+Date: Wed, 23 May 2018 16:22:46 -0700
+Message-Id: <20180523232246.20445-1-qing.huang@oracle.com>
+X-Mailer: git-send-email 2.9.3
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8902 signatures=668700
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805230233
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When a system is under memory presure (high usage with fragments),
+the original 256KB ICM chunk allocations will likely trigger kernel
+memory management to enter slow path doing memory compact/migration
+ops in order to complete high order memory allocations.
 
-Very slowly the work has been progressing to ensure the vfs has the
-necessary support for mounting filesystems without privilege.
+When that happens, user processes calling uverb APIs may get stuck
+for more than 120s easily even though there are a lot of free pages
+in smaller chunks available in the system.
 
-This patchset contains one more core piece of that work, ensuring a few
-more operations that would write back an inode and confuse an exisiting
-filesystem are denied.
+Syslog:
+...
+Dec 10 09:04:51 slcc03db02 kernel: [397078.572732] INFO: task
+oracle_205573_e:205573 blocked for more than 120 seconds.
+...
 
-The rest of the changes actually enable userns root to do things with
-filesystems that the userns root has mounted.  Most of these have been
-waiting in the wings a long time, held back because I wanted the core
-of the patchset to be solid before I started allowing additional
-behavor.
+With 4KB ICM chunk size on x86_64 arch, the above issue is fixed.
 
-It is definitely time for these changes so the effect of s_user_ns
-becomes less theoretical.
+However in order to support smaller ICM chunk size, we need to fix
+another issue in large size kcalloc allocations.
 
-The change to allow mknod is new, but consistent with everything else
-and harmless as device nodes on filesystems mounted without privilege
-are ignored.
+E.g.
+Setting log_num_mtt=30 requires 1G mtt entries. With the 4KB ICM chunk
+size, each ICM chunk can only hold 512 mtt entries (8 bytes for each mtt
+entry). So we need a 16MB allocation for a table->icm pointer array to
+hold 2M pointers which can easily cause kcalloc to fail.
 
-Unless problems show up in the during review I plan to merge these changes.
+The solution is to use kvzalloc to replace kcalloc which will fall back
+to vmalloc automatically if kmalloc fails.
 
-These changes are also available at:
-  git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git userns-test
+Signed-off-by: Qing Huang <qing.huang@oracle.com>
+Acked-by: Daniel Jurgens <danielj@mellanox.com>
+Reviewed-by: Zhu Yanjun <yanjun.zhu@oracle.com>
+---
+v4: use kvzalloc instead of vzalloc
+    add one err condition check
+    don't include vmalloc.h any more
 
-Eric W. Biederman (5):
-      vfs: Don't allow changing the link count of an inode with an invalid uid or gid
-      vfs: Allow userns root to call mknod on owned filesystems.
-      fs: Allow superblock owner to replace invalid owners of inodes
-      fs: Allow superblock owner to access do_remount_sb()
-      capabilities: Allow privileged user in s_user_ns to set security.* xattrs
+v3: use PAGE_SIZE instead of PAGE_SHIFT
+    add comma to the end of enum variables
+    include vmalloc.h header file to avoid build issues on Sparc
 
-Seth Forshee (1):
-      fs: Allow CAP_SYS_ADMIN in s_user_ns to freeze and thaw filesystems
+v2: adjusted chunk size to reflect different architectures
 
- fs/attr.c            | 36 ++++++++++++++++++++++++++++--------
- fs/ioctl.c           |  4 ++--
- fs/namei.c           | 16 ++++++++++++----
- fs/namespace.c       |  4 ++--
- security/commoncap.c |  8 ++++++--
- 5 files changed, 50 insertions(+), 18 deletions(-)
+ drivers/net/ethernet/mellanox/mlx4/icm.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-Eric
+diff --git a/drivers/net/ethernet/mellanox/mlx4/icm.c b/drivers/net/ethernet/mellanox/mlx4/icm.c
+index a822f7a..685337d 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/icm.c
++++ b/drivers/net/ethernet/mellanox/mlx4/icm.c
+@@ -43,12 +43,12 @@
+ #include "fw.h"
+ 
+ /*
+- * We allocate in as big chunks as we can, up to a maximum of 256 KB
+- * per chunk.
++ * We allocate in page size (default 4KB on many archs) chunks to avoid high
++ * order memory allocations in fragmented/high usage memory situation.
+  */
+ enum {
+-	MLX4_ICM_ALLOC_SIZE	= 1 << 18,
+-	MLX4_TABLE_CHUNK_SIZE	= 1 << 18
++	MLX4_ICM_ALLOC_SIZE	= PAGE_SIZE,
++	MLX4_TABLE_CHUNK_SIZE	= PAGE_SIZE,
+ };
+ 
+ static void mlx4_free_icm_pages(struct mlx4_dev *dev, struct mlx4_icm_chunk *chunk)
+@@ -398,9 +398,11 @@ int mlx4_init_icm_table(struct mlx4_dev *dev, struct mlx4_icm_table *table,
+ 	u64 size;
+ 
+ 	obj_per_chunk = MLX4_TABLE_CHUNK_SIZE / obj_size;
++	if (WARN_ON(!obj_per_chunk))
++		return -EINVAL;
+ 	num_icm = (nobj + obj_per_chunk - 1) / obj_per_chunk;
+ 
+-	table->icm      = kcalloc(num_icm, sizeof(*table->icm), GFP_KERNEL);
++	table->icm      = kvzalloc(num_icm * sizeof(*table->icm), GFP_KERNEL);
+ 	if (!table->icm)
+ 		return -ENOMEM;
+ 	table->virt     = virt;
+@@ -446,7 +448,7 @@ int mlx4_init_icm_table(struct mlx4_dev *dev, struct mlx4_icm_table *table,
+ 			mlx4_free_icm(dev, table->icm[i], use_coherent);
+ 		}
+ 
+-	kfree(table->icm);
++	kvfree(table->icm);
+ 
+ 	return -ENOMEM;
+ }
+@@ -462,5 +464,5 @@ void mlx4_cleanup_icm_table(struct mlx4_dev *dev, struct mlx4_icm_table *table)
+ 			mlx4_free_icm(dev, table->icm[i], table->coherent);
+ 		}
+ 
+-	kfree(table->icm);
++	kvfree(table->icm);
+ }
+-- 
+2.9.3
