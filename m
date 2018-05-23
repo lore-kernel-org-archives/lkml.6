@@ -1,39 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753550AbeEWAdX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 20:33:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48134 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751618AbeEWAdW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 20:33:22 -0400
-X-Google-Smtp-Source: AB8JxZoeXiJ7fvFuKVL/TSg/cwr3nGwurYwxIYzFyNj0Tp5iRC7lbczQFjnrb8PPKlXdxTM/V+C0MjWAVYhWjC3aYv8=
+        id S1753597AbeEWAfT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 20:35:19 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:41269 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752681AbeEWAfR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 20:35:17 -0400
+X-Google-Smtp-Source: AB8JxZoiE+0KA5ufN4gPuWR1PYz3FTsK3MvI6/00Dl/wr9I9rQMhfCsqV45UlfXEGxkCligyUzN3zlCDugNUiCovKYw=
 MIME-Version: 1.0
-References: <20180523001939.9431-1-labbott@redhat.com> <20180523001939.9431-3-labbott@redhat.com>
-In-Reply-To: <20180523001939.9431-3-labbott@redhat.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Tue, 22 May 2018 17:33:09 -0700
-X-Gmail-Original-Message-ID: <CALCETrX9P2Lwrx7wGc22poVWX2AHAqXbUdhcijyoJ3tGhaxijg@mail.gmail.com>
-Message-ID: <CALCETrX9P2Lwrx7wGc22poVWX2AHAqXbUdhcijyoJ3tGhaxijg@mail.gmail.com>
-Subject: Re: [PATCHv3 2/2] x86/vdso: Add build salt to the vDSO
-To: Laura Abbott <labbott@redhat.com>
-Cc: Andrew Lutomirski <luto@kernel.org>,
-        Mark Wielaard <mjw@fedoraproject.org>,
-        "H. J. Lu" <hjl.tools@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Nick Clifton <nickc@redhat.com>, Cary Coutant <ccoutant@gmail.com>,
-        linux-kbuild@vger.kernel.org
+In-Reply-To: <CANWdNRCQCteO7L+Of7T2vWBW7GbMHyvyF5aSQMVYNGg_afxNhg@mail.gmail.com>
+References: <20180522062017.5193-1-xiyou.wangcong@gmail.com>
+ <20180522062017.5193-4-xiyou.wangcong@gmail.com> <CANWdNRCQCteO7L+Of7T2vWBW7GbMHyvyF5aSQMVYNGg_afxNhg@mail.gmail.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
+Date: Tue, 22 May 2018 17:34:57 -0700
+Message-ID: <CAM_iQpV3o6Dj4xEgVQvJz0tvVLh4Tmvkjp=DdHFui+tNGevU+w@mail.gmail.com>
+Subject: Re: [PATCH 3/3] sched/fair: add tracepoints for cfs throttle
+To: Ivan Babrou <ibobrik@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Paul Turner <pjt@google.com>,
+        Peter Zijlstra <peterz@infradead.org>, Mike Galbraith <efault@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 5:19 PM Laura Abbott <labbott@redhat.com> wrote:
+On Mon, May 21, 2018 at 11:35 PM, Ivan Babrou <ibobrik@gmail.com> wrote:
+>
+>
+> On Mon, May 21, 2018 at 11:20 PM Cong Wang <xiyou.wangcong@gmail.com> wrote:
+>>
+>> +
+>> +       TP_printk("path=%s cpu=%d runtime_remaining=%lld",
+>> __get_str(cfs_path),
+>> +                 __entry->cpu, __entry->runtime_remaining)
+>
+>
+> Can you add "[ns]" as the unit to runtime_remaining? We have it in
+> "sched:sched_stat_runtime".
 
-
-> The vDSO is linked separately from the kernel and modules. Ensure it picks
-> up the comment section, if available.
-
-Did you end up preferring this to just sticking the kernel version in a
-.comment in the vDSO for some reason?
+Hmm, although it is indeed ns, this ->runtime_remaining can be negative,
+unlike sched_stat_runtime. So I am not sure if I should marked it as "[ns]".
