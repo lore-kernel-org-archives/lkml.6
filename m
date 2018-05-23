@@ -1,65 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932801AbeEWLsk (ORCPT <rfc822;w@1wt.eu>);
+        id S932813AbeEWLsr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 07:48:47 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:51995 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932796AbeEWLsk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 23 May 2018 07:48:40 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:37622 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932627AbeEWLsh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 07:48:37 -0400
-Date: Wed, 23 May 2018 13:48:23 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org,
-        Atsushi Nemoto <anemo@mba.ocn.ne.jp>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: cmdlinepart: Update comment for introduction of
- OFFSET_CONTINUOUS
-Message-ID: <20180523134823.1dffb315@bbrezillon>
-In-Reply-To: <1527001673-16318-1-git-send-email-geert+renesas@glider.be>
-References: <1527001673-16318-1-git-send-email-geert+renesas@glider.be>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+X-Google-Smtp-Source: AB8JxZrSkch9OXQNX9NfDoXaWm7L4Gc7N1rLmoH6Wjplse0/U6N78pcQtfG+mNVUThYkwuGWUx8vttU9v9R/+2HA/EM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <e70e83f07aebaf702fef90a9fac61e41d8b558b0.1526533188.git.hns@goldelico.com>
+References: <cover.1526533188.git.hns@goldelico.com> <e70e83f07aebaf702fef90a9fac61e41d8b558b0.1526533188.git.hns@goldelico.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 23 May 2018 13:48:38 +0200
+Message-ID: <CACRpkdYfjqRaUnYXhksXANbgyn++nUAda4D1prawGU1vZ06wQg@mail.gmail.com>
+Subject: Re: [PATCH v7 3/3] gpio: pca953x: fix address calculation for pcal6524
+To: "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc: Kumar Gala <galak@codeaurora.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Alexandre Courbot <gnurou@gmail.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Discussions about the Letux Kernel
+        <letux-kernel@openphoenux.org>,
+        kernel@pyra-handheld.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 22 May 2018 17:07:53 +0200
-Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+On Thu, May 17, 2018 at 6:59 AM, H. Nikolaus Schaller <hns@goldelico.com> wrote:
 
-> The comment about offset zero was not updated when changing behavior:
->   - Automatic offset calculation is indicated by OFFSET_CONTINUOUS,
->   - Zero really means offset zero.
-> 
-> Fixes: b175d03dd2072836 ("[PATCH] mtd cmdlinepart: allow zero offset value")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> The register constants are so far defined in a way that they fit
+> for the pcal9555a when shifted by the number of banks, i.e. are
+> multiplied by 2 in the accessor function.
+>
+> Now, the pcal6524 has 3 banks which means the relative offset
+> is multiplied by 4 for the standard registers.
+>
+> Simply applying the bit shift to the extended registers gives
+> a wrong result, since the base offset is already included in
+> the offset.
+>
+> Therefore, we have to add code to the 24 bit accessor functions
+> that adjusts the register number for these exended registers.
+>
+> The formula finally used was developed and proposed by
+> Andy Shevchenko <andy.shevchenko@gmail.com>.
+>
+> Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 
-Applied.
+Patch applied.
 
-Thanks,
-
-Boris
-
-> ---
->  drivers/mtd/cmdlinepart.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mtd/cmdlinepart.c b/drivers/mtd/cmdlinepart.c
-> index fbd5affc0acfe3fe..3ea44cff9b759e3c 100644
-> --- a/drivers/mtd/cmdlinepart.c
-> +++ b/drivers/mtd/cmdlinepart.c
-> @@ -190,7 +190,10 @@ static struct mtd_partition * newpart(char *s,
->  		extra_mem = (unsigned char *)(parts + *num_parts);
->  	}
->  
-> -	/* enter this partition (offset will be calculated later if it is zero at this point) */
-> +	/*
-> +	 * enter this partition (offset will be calculated later if it is
-> +	 * OFFSET_CONTINUOUS at this point)
-> +	 */
->  	parts[this_part].size = size;
->  	parts[this_part].offset = offset;
->  	parts[this_part].mask_flags = mask_flags;
+Yours,
+Linus Walleij
