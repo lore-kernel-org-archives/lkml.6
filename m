@@ -1,163 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932265AbeEWJpA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 05:45:00 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:7736 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932209AbeEWJny (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 05:43:54 -0400
-From: "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
-To: <dledford@redhat.com>, <jgg@ziepe.ca>
-CC: <linux-rdma@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH V2 rdma-next 4/4] RDMA/hns: Fix the illegal memory operation when cross page
-Date: Wed, 23 May 2018 18:16:30 +0800
-Message-ID: <1527070590-94399-5-git-send-email-xavier.huwei@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1527070590-94399-1-git-send-email-xavier.huwei@huawei.com>
-References: <1527070590-94399-1-git-send-email-xavier.huwei@huawei.com>
+        id S932353AbeEWJpq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 05:45:46 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:19928 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932187AbeEWJpo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 05:45:44 -0400
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 23 May 2018 02:45:43 -0700
+Subject: Re: [PATCH 8/9] PM / Domains: Add support for multi PM domains per
+ device to genpd
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>, <linux-tegra@vger.kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <1526639490-12167-1-git-send-email-ulf.hansson@linaro.org>
+ <1526639490-12167-9-git-send-email-ulf.hansson@linaro.org>
+ <f5589b88-acf8-b491-df79-e359e596c8d0@nvidia.com>
+ <CAPDyKFr_7hbs-MC1jQn5uAgSnb1UGufXZdEmUqNTM63KemTe1g@mail.gmail.com>
+ <5a79d3a2-d090-645b-da69-524b7e7a4d90@nvidia.com>
+ <51f7de26-579a-8b9e-4e79-f4eee923ab38@codeaurora.org>
+ <CAPDyKFo_69kSS6UzdsJeyeiiED=S=chsdkP+R43qMHDEbZ8n_A@mail.gmail.com>
+ <3838f17a-2ac8-bf3f-f0b1-f69bbe17629c@nvidia.com>
+ <00ba829d-faf4-168c-db00-531621b9280f@codeaurora.org>
+ <CAPDyKFoqLPRwEJ9b+XBpB4Zy79SGEC-a8V8shNhMkYOCQa0=oA@mail.gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <22068fb1-f6e8-f2ec-d7f4-ab9e93469d7f@nvidia.com>
+Date: Wed, 23 May 2018 10:45:38 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.71.200.31]
-X-CFilter-Loop: Reflected
+In-Reply-To: <CAPDyKFoqLPRwEJ9b+XBpB4Zy79SGEC-a8V8shNhMkYOCQa0=oA@mail.gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixed the potential illegal operation when using the
-extend sge buffer cross page in post send operation. The bug
-will cause the calltrace.
 
-Reported-by: Jie Chen <chenjie103@huawei.com>
-Reported-by: Xiping Zhang (Francis) <zhangxiping3@huawei.com>
-Fixes: b1c158350968("RDMA/hns: Get rid of virt_to_page and vmap calls after dma_alloc_coherent")
-Signed-off-by: Wei Hu (Xavier) <xavier.huwei@huawei.com>
+On 23/05/18 10:33, Ulf Hansson wrote:
+> On 23 May 2018 at 11:27, Rajendra Nayak <rnayak@codeaurora.org> wrote:
+>>
+>>
+>> On 05/23/2018 02:37 PM, Jon Hunter wrote:
+>>>
+>>> On 23/05/18 07:12, Ulf Hansson wrote:
+>>>
+>>> ...
+>>>
+>>>>>>>> Thanks for sending this. Believe it or not this has still been on my to-do list
+>>>>>>>> and so we definitely need a solution for Tegra.
+>>>>>>>>
+>>>>>>>> Looking at the above it appears that additional power-domains exposed as devices
+>>>>>>>> to the client device. So I assume that this means that the drivers for devices
+>>>>>>>> with multiple power-domains will need to call RPM APIs for each of these
+>>>>>>>> additional power-domains. Is that correct?
+>>>>>>>
+>>>>>>> They can, but should not!
+>>>>>>>
+>>>>>>> Instead, the driver shall use device_link_add() and device_link_del(),
+>>>>>>> dynamically, depending on what PM domain that their original device
+>>>>>>> needs for the current running use case.
+>>>>>>>
+>>>>>>> In that way, they keep existing runtime PM deployment, operating on
+>>>>>>> its original device.
+>>>>>>
+>>>>>> OK, sounds good. Any reason why the linking cannot be handled by the above API? Is there a use-case where you would not want it linked?
+>>>>>
+>>>>> I am guessing the linking is what would give the driver the ability to decide which subset of powerdomains it actually wants to control
+>>>>> at any point using runtime PM. If we have cases wherein the driver would want to turn on/off _all_ its associated powerdomains _always_
+>>>>> then a default linking of all would help.
+>>>>
+>>>> First, I think we need to decide on *where* the linking should be
+>>>> done, not at both places, as that would just mess up synchronization
+>>>> of who is responsible for calling the device_link_del() at detach.
+>>>>
+>>>> Second, It would in principle be fine to call device_link_add() and
+>>>> device_link_del() as a part of the attach/detach APIs. However, there
+>>>> is a downside to such solution, which would be that the driver then
+>>>> needs call the detach API, just to do device_link_del(). Of course
+>>>> then it would also needs to call the attach API later if/when needed.
+>>>> Doing this adds unnecessary overhead - comparing to just let the
+>>>> driver call device_link_add|del() when needed. On the upside, yes, it
+>>>> would put less burden on the drivers as it then only needs to care
+>>>> about using one set of functions.
+>>>>
+>>>> Which solution do you prefer?
+>>>
+>>> Any reason why we could not add a 'boolean' argument to the API to indicate whether the new device should be linked? I think that I prefer the API handles it, but I can see there could be instances where drivers may wish to handle it themselves.
+>>>
+>>> Rajendra, do you have a use-case right now where the driver would want to handle the linking?
+>>
+>> So if I understand this right, any driver which does want to control individual powerdomain state would
+>> need to do the linking itself right?
+>>
+>> What I am saying is, if I have device A, with powerdomains X and Y, and if I want to turn on only X,
+>> then I would want only X to be linked with A, and at a later point if I want both X and Y to be turned on,
+>> I would then go ahead and link both X and Y to A? Is that correct or did I get it all wrong?
+> 
+> Correct!
+> 
+>>
+>> I know atleast Camera on msm8996 would need to do this since it has 2 vfe powerdoamins, which can be
+>> turned on one at a time (depending on what resolution needs to be supported) or both together if we
+>> really need very high resolution using both vfe modules.
+> 
+> I think this is also the case for the Tegra XUSB subsystem.
+> 
+> The usb device is always attached to one PM domain, but depending on
+> if super-speed mode is used, another PM domain for that logic needs to
+> be powered on as well.
+> 
+> Jon, please correct me if I am wrong!
 
----
-v1->v2: Modify the Fixes statement according to Leon's comment.
----
- drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 70 +++++++++++++++++++++---------
- drivers/infiniband/hw/hns/hns_roce_hw_v2.h |  1 +
- 2 files changed, 51 insertions(+), 20 deletions(-)
+Yes this is technically correct, however, in reality I think we are 
+always going to enable the superspeed domain if either the host or 
+device domain is enabled. So we would probably always link the 
+superspeed with the host and device devices.
 
-diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-index a70d07b..62c1eb5 100644
---- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-@@ -52,6 +52,52 @@ static void set_data_seg_v2(struct hns_roce_v2_wqe_data_seg *dseg,
- 	dseg->len  = cpu_to_le32(sg->length);
- }
- 
-+static void set_extend_sge(struct hns_roce_qp *qp, struct ib_send_wr *wr,
-+			   unsigned int *sge_ind)
-+{
-+	struct hns_roce_v2_wqe_data_seg *dseg;
-+	struct ib_sge *sg;
-+	int num_in_wqe = 0;
-+	int extend_sge_num;
-+	int fi_sge_num;
-+	int se_sge_num;
-+	int shift;
-+	int i;
-+
-+	if (qp->ibqp.qp_type == IB_QPT_RC || qp->ibqp.qp_type == IB_QPT_UC)
-+		num_in_wqe = HNS_ROCE_V2_UC_RC_SGE_NUM_IN_WQE;
-+	extend_sge_num = wr->num_sge - num_in_wqe;
-+	sg = wr->sg_list + num_in_wqe;
-+	shift = qp->hr_buf.page_shift;
-+
-+	/*
-+	 * Check whether wr->num_sge sges are in the same page. If not, we
-+	 * should calculate how many sges in the first page and the second
-+	 * page.
-+	 */
-+	dseg = get_send_extend_sge(qp, (*sge_ind) & (qp->sge.sge_cnt - 1));
-+	fi_sge_num = (((((u64)dseg >> shift) + 1) << shift) - (u64)dseg) /
-+		      sizeof(struct hns_roce_v2_wqe_data_seg);
-+	if (extend_sge_num > fi_sge_num) {
-+		se_sge_num = extend_sge_num - fi_sge_num;
-+		for (i = 0; i < fi_sge_num; i++) {
-+			set_data_seg_v2(dseg++, sg + i);
-+			(*sge_ind)++;
-+		}
-+		dseg = get_send_extend_sge(qp,
-+					   (*sge_ind) & (qp->sge.sge_cnt - 1));
-+		for (i = 0; i < se_sge_num; i++) {
-+			set_data_seg_v2(dseg++, sg + fi_sge_num + i);
-+			(*sge_ind)++;
-+		}
-+	} else {
-+		for (i = 0; i < extend_sge_num; i++) {
-+			set_data_seg_v2(dseg++, sg + i);
-+			(*sge_ind)++;
-+		}
-+	}
-+}
-+
- static int set_rwqe_data_seg(struct ib_qp *ibqp, struct ib_send_wr *wr,
- 			     struct hns_roce_v2_rc_send_wqe *rc_sq_wqe,
- 			     void *wqe, unsigned int *sge_ind,
-@@ -85,7 +131,7 @@ static int set_rwqe_data_seg(struct ib_qp *ibqp, struct ib_send_wr *wr,
- 		roce_set_bit(rc_sq_wqe->byte_4, V2_RC_SEND_WQE_BYTE_4_INLINE_S,
- 			     1);
- 	} else {
--		if (wr->num_sge <= 2) {
-+		if (wr->num_sge <= HNS_ROCE_V2_UC_RC_SGE_NUM_IN_WQE) {
- 			for (i = 0; i < wr->num_sge; i++) {
- 				if (likely(wr->sg_list[i].length)) {
- 					set_data_seg_v2(dseg, wr->sg_list + i);
-@@ -98,24 +144,14 @@ static int set_rwqe_data_seg(struct ib_qp *ibqp, struct ib_send_wr *wr,
- 				     V2_RC_SEND_WQE_BYTE_20_MSG_START_SGE_IDX_S,
- 				     (*sge_ind) & (qp->sge.sge_cnt - 1));
- 
--			for (i = 0; i < 2; i++) {
-+			for (i = 0; i < HNS_ROCE_V2_UC_RC_SGE_NUM_IN_WQE; i++) {
- 				if (likely(wr->sg_list[i].length)) {
- 					set_data_seg_v2(dseg, wr->sg_list + i);
- 					dseg++;
- 				}
- 			}
- 
--			dseg = get_send_extend_sge(qp,
--					    (*sge_ind) & (qp->sge.sge_cnt - 1));
--
--			for (i = 0; i < wr->num_sge - 2; i++) {
--				if (likely(wr->sg_list[i + 2].length)) {
--					set_data_seg_v2(dseg,
--							wr->sg_list + 2 + i);
--					dseg++;
--					(*sge_ind)++;
--				}
--			}
-+			set_extend_sge(qp, wr, sge_ind);
- 		}
- 
- 		roce_set_field(rc_sq_wqe->byte_16,
-@@ -318,13 +354,7 @@ static int hns_roce_v2_post_send(struct ib_qp *ibqp, struct ib_send_wr *wr,
- 			memcpy(&ud_sq_wqe->dgid[0], &ah->av.dgid[0],
- 			       GID_LEN_V2);
- 
--			dseg = get_send_extend_sge(qp,
--					    sge_ind & (qp->sge.sge_cnt - 1));
--			for (i = 0; i < wr->num_sge; i++) {
--				set_data_seg_v2(dseg + i, wr->sg_list + i);
--				sge_ind++;
--			}
--
-+			set_extend_sge(qp, wr, &sge_ind);
- 			ind++;
- 		} else if (ibqp->qp_type == IB_QPT_RC) {
- 			rc_sq_wqe = wqe;
-diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.h b/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
-index f16df1b..97f9bef 100644
---- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
-+++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
-@@ -77,6 +77,7 @@
- #define HNS_ROCE_V2_MAX_INNER_MTPT_NUM		2
- #define HNS_ROCE_INVALID_LKEY			0x100
- #define HNS_ROCE_CMQ_TX_TIMEOUT			30000
-+#define HNS_ROCE_V2_UC_RC_SGE_NUM_IN_WQE	2
- 
- #define HNS_ROCE_CONTEXT_HOP_NUM		1
- #define HNS_ROCE_MTT_HOP_NUM			1
+Cheers
+Jon
+
 -- 
-1.9.1
+nvpublic
