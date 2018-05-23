@@ -1,21 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934528AbeEWTjH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 15:39:07 -0400
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:30112 "EHLO
+        id S934389AbeEWTjG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 15:39:06 -0400
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:13785 "EHLO
         mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934286AbeEWTjD (ORCPT
+        by vger.kernel.org with ESMTP id S934311AbeEWTjD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 23 May 2018 15:39:03 -0400
 X-IronPort-AV: E=Sophos;i="5.49,434,1520895600";
-   d="scan'208";a="328129392"
+   d="scan'208";a="328129393"
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-To: Santosh Shilimkar <ssantosh@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 3/5] soc: ti: knav_dma: add missing of_node_put
-Date: Wed, 23 May 2018 21:07:14 +0200
-Message-Id: <1527102436-13447-4-git-send-email-Julia.Lawall@lip6.fr>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: kernel-janitors@vger.kernel.org, Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Bjorn Helgaas <bhelgaas@google.com>, linuxppc-dev@lists.ozlabs.org,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 4/5] pci/hotplug/pnv-php: add missing of_node_put
+Date: Wed, 23 May 2018 21:07:15 +0200
+Message-Id: <1527102436-13447-5-git-send-email-Julia.Lawall@lip6.fr>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1527102436-13447-1-git-send-email-Julia.Lawall@lip6.fr>
 References: <1527102436-13447-1-git-send-email-Julia.Lawall@lip6.fr>
@@ -49,18 +51,29 @@ iterator name for_each_child_of_node;
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/soc/ti/knav_dma.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/pci/hotplug/pnv_php.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/soc/ti/knav_dma.c b/drivers/soc/ti/knav_dma.c
-index 224d7dd..bda3173 100644
---- a/drivers/soc/ti/knav_dma.c
-+++ b/drivers/soc/ti/knav_dma.c
-@@ -768,6 +768,7 @@ static int knav_dma_probe(struct platform_device *pdev)
- 		ret = dma_init(node, child);
- 		if (ret) {
- 			dev_err(&pdev->dev, "init failed with %d\n", ret);
+diff --git a/drivers/pci/hotplug/pnv_php.c b/drivers/pci/hotplug/pnv_php.c
+index d441006..6c2e8d7 100644
+--- a/drivers/pci/hotplug/pnv_php.c
++++ b/drivers/pci/hotplug/pnv_php.c
+@@ -220,12 +220,16 @@ static int pnv_php_populate_changeset(struct of_changeset *ocs,
+ 
+ 	for_each_child_of_node(dn, child) {
+ 		ret = of_changeset_attach_node(ocs, child);
+-		if (ret)
++		if (ret) {
 +			of_node_put(child);
  			break;
- 		}
++		}
+ 
+ 		ret = pnv_php_populate_changeset(ocs, child);
+-		if (ret)
++		if (ret) {
++			of_node_put(child);
+ 			break;
++		}
  	}
+ 
+ 	return ret;
