@@ -1,391 +1,175 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933481AbeEWPMP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 11:12:15 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59964 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933151AbeEWPMK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 11:12:10 -0400
-From: David Hildenbrand <david@redhat.com>
-To: linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Michal Hocko <mhocko@suse.com>, Jan Kara <jack@suse.cz>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Hugh Dickins <hughd@google.com>, Huang Ying <ying.huang@intel.com>,
-        Miles Chen <miles.chen@mediatek.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Reza Arbab <arbab@linux.vnet.ibm.com>, Mel Gorman <mgorman@suse.de>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: [PATCH v1 01/10] mm: introduce and use PageOffline()
-Date: Wed, 23 May 2018 17:11:42 +0200
-Message-Id: <20180523151151.6730-2-david@redhat.com>
-In-Reply-To: <20180523151151.6730-1-david@redhat.com>
-References: <20180523151151.6730-1-david@redhat.com>
+        id S933558AbeEWPMa (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 11:12:30 -0400
+Received: from gloria.sntech.de ([95.129.55.99]:48012 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933522AbeEWPMW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 11:12:22 -0400
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Rob Herring <robh@kernel.org>
+Cc: Levin Du <djw@t-chip.com.cn>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Wayne Chou <zxf@t-chip.com.cn>, devicetree@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 2/5] gpio: syscon: Add gpio-syscon for rockchip
+Date: Wed, 23 May 2018 17:12:10 +0200
+Message-ID: <1685755.J6GI985WX3@diego>
+In-Reply-To: <CAL_Jsq+_QEBWdxW=J4oVGWeokc-+nMzxzX_pgCayaxg-ehivfQ@mail.gmail.com>
+References: <1526614328-6869-1-git-send-email-djw@t-chip.com.cn> <6ffb43dc-55a5-14eb-eb18-3a731cdaf424@t-chip.com.cn> <CAL_Jsq+_QEBWdxW=J4oVGWeokc-+nMzxzX_pgCayaxg-ehivfQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-offline_pages() theoretically works on sub-section sizes. Problem is that
-we have no way to know which pages are actually offline. So right now,
-offline_pages() will always mark the whole section as offline.
+Hi Rob, Levin,
 
-In addition, in virtualized environments, we might soon have pages that are
-logically offline and shall no longer be read or written - e.g. because
-we offline a subsection and told our hypervisor to remove it. We need a way
-(e.g. for kdump) to flag these pages (like PG_hwpoison), otherwise kdump
-will happily access all memory and crash the system when accessing
-memory that is not meant to be accessed.
+sorry for being late to the party.
 
-Marking pages as offline will also later to give kdump that information
-and to mark a section as offline once all pages are offline. It is save
-to use mapcount as all pages are logically removed from the system
-(offline_pages()).
+Am Mittwoch, 23. Mai 2018, 16:43:07 CEST schrieb Rob Herring:
+> On Tue, May 22, 2018 at 9:02 PM, Levin Du <djw@t-chip.com.cn> wrote:
+> > On 2018-05-23 2:02 AM, Rob Herring wrote:
+> >> On Fri, May 18, 2018 at 11:52:05AM +0800, djw@t-chip.com.cn wrote:
+> >>> From: Levin Du <djw@t-chip.com.cn>
+> >>> 
+> >>> Some GPIOs sit in the GRF_SOC_CON registers of Rockchip SoCs,
+> >>> which do not belong to the general pinctrl.
+> >>> 
+> >>> Adding gpio-syscon support makes controlling regulator or
+> >>> LED using these special pins very easy by reusing existing
+> >>> drivers, such as gpio-regulator and led-gpio.
+> >>> 
+> >>> Signed-off-by: Levin Du <djw@t-chip.com.cn>
+> >>> 
+> >>> ---
+> >>> 
+> >>> Changes in v2:
+> >>> - Rename gpio_syscon10 to gpio_mute in doc
+> >>> 
+> >>> Changes in v1:
+> >>> - Refactured for general gpio-syscon usage for Rockchip SoCs.
+> >>> - Add doc rockchip,gpio-syscon.txt
+> >>> 
+> >>>   .../bindings/gpio/rockchip,gpio-syscon.txt         | 41
+> >>> 
+> >>> ++++++++++++++++++++++
+> >>> 
+> >>>   drivers/gpio/gpio-syscon.c                         | 30
+> >>> 
+> >>> ++++++++++++++++
+> >>> 
+> >>>   2 files changed, 71 insertions(+)
+> >>>   create mode 100644
+> >>> 
+> >>> Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
+> >>> 
+> >>> diff --git
+> >>> a/Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
+> >>> b/Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
+> >>> new file mode 100644
+> >>> index 0000000..b1b2a67
+> >>> --- /dev/null
+> >>> +++ b/Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
+> >>> @@ -0,0 +1,41 @@
+> >>> +* Rockchip GPIO support for GRF_SOC_CON registers
+> >>> +
+> >>> +Required properties:
+> >>> +- compatible: Should contain "rockchip,gpio-syscon".
+> >>> +- gpio-controller: Marks the device node as a gpio controller.
+> >>> +- #gpio-cells: Should be two. The first cell is the pin number and
+> >>> +  the second cell is used to specify the gpio polarity:
+> >>> +    0 = Active high,
+> >>> +    1 = Active low.
+> >> 
+> >> There's no need for this child node. Just make the parent node a gpio
+> >> controller.
+> >> 
+> >> Rob
+> > 
+> > Hi Rob, it is not clear to me. Do you suggest that the grf node should be
+> > a
+> > gpio controller,
+> > like below?
+> > 
+> > +    grf: syscon at ff100000 {
+> > +        compatible = "rockchip,gpio-syscon", "rockchip,rk3328-grf",
+> > "syscon", "simple-mfd";
+> 
+> Yes, but drop "rockchip,gpio-syscon" and "simple-mfd".
 
-This e.g. allows us to add/remove memory to Linux in a VM in 4MB chunks
+I would disagree quite a bit here. The grf are the "general register files",
+a bunch of registers used for quite a lot of things, and so it seems
+among other users, also a gpio-controller for some more random pins
+not controlled through the regular gpio controllers.
 
-Please note that we can't use PG_reserved for this. PG_reserved does not
-imply that
-- a page should not be dumped
-- a page is offline and we should mark the section offline
+For a more fully stocked grf, please see
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm/boot/dts/rk3288.dtsi#n855
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/rockchip/rk3399.dtsi#n1338
 
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Jan Kara <jack@suse.cz>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: "Jérôme Glisse" <jglisse@redhat.com>
-Cc: Matthew Wilcox <mawilcox@microsoft.com>
-Cc: Souptick Joarder <jrdr.linux@gmail.com>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Huang Ying <ying.huang@intel.com>
-Cc: Miles Chen <miles.chen@mediatek.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Reza Arbab <arbab@linux.vnet.ibm.com>
-Cc: Mel Gorman <mgorman@suse.de>
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- drivers/base/node.c        |  1 -
- include/linux/memory.h     |  1 -
- include/linux/mm.h         | 10 ++++++++++
- include/linux/page-flags.h |  9 +++++++++
- mm/memory_hotplug.c        | 32 +++++++++++++++++++++++---------
- mm/page_alloc.c            | 32 ++++++++++++++++++--------------
- mm/sparse.c                | 25 ++++++++++++++++++++++++-
- 7 files changed, 84 insertions(+), 26 deletions(-)
+So the gpio controller should definitly also be a subnode.
 
-diff --git a/drivers/base/node.c b/drivers/base/node.c
-index 7a3a580821e0..58a889b2b2f4 100644
---- a/drivers/base/node.c
-+++ b/drivers/base/node.c
-@@ -408,7 +408,6 @@ int register_mem_sect_under_node(struct memory_block *mem_blk, int nid,
- 	if (!mem_blk)
- 		return -EFAULT;
- 
--	mem_blk->nid = nid;
- 	if (!node_online(nid))
- 		return 0;
- 
-diff --git a/include/linux/memory.h b/include/linux/memory.h
-index 31ca3e28b0eb..9f8cd856ca1e 100644
---- a/include/linux/memory.h
-+++ b/include/linux/memory.h
-@@ -33,7 +33,6 @@ struct memory_block {
- 	void *hw;			/* optional pointer to fw/hw data */
- 	int (*phys_callback)(struct memory_block *);
- 	struct device dev;
--	int nid;			/* NID for this memory block */
- };
- 
- int arch_get_memory_phys_device(unsigned long start_pfn);
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index c6fa9a255dbf..197c251be775 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1111,7 +1111,15 @@ static inline void set_page_address(struct page *page, void *address)
- {
- 	page->virtual = address;
- }
-+static void set_page_virtual(struct page *page, and enum zone_type zone)
-+{
-+	/* The shift won't overflow because ZONE_NORMAL is below 4G. */
-+	if (!is_highmem_idx(zone))
-+		set_page_address(page, __va(pfn << PAGE_SHIFT));
-+}
- #define page_address_init()  do { } while(0)
-+#else
-+#define set_page_virtual(page, zone)  do { } while(0)
- #endif
- 
- #if defined(HASHED_PAGE_VIRTUAL)
-@@ -2063,6 +2071,8 @@ extern unsigned long find_min_pfn_with_active_regions(void);
- extern void free_bootmem_with_active_regions(int nid,
- 						unsigned long max_low_pfn);
- extern void sparse_memory_present_with_active_regions(int nid);
-+extern void __meminit init_single_page(struct page *page, unsigned long pfn,
-+				       unsigned long zone, int nid);
- 
- #endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
- 
-diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index e34a27727b9a..07ec6e48073b 100644
---- a/include/linux/page-flags.h
-+++ b/include/linux/page-flags.h
-@@ -686,6 +686,15 @@ PAGE_MAPCOUNT_OPS(Balloon, BALLOON)
- #define PAGE_KMEMCG_MAPCOUNT_VALUE		(-512)
- PAGE_MAPCOUNT_OPS(Kmemcg, KMEMCG)
- 
-+/*
-+ * PageOffline() indicates that a page is offline (either never online via
-+ * online_pages() or offlined via offline_pages()). Nobody in the system
-+ * should have a reference to these pages. In virtual environments,
-+ * the backing storage might already have been removed. Don't touch!
-+ */
-+#define PAGE_OFFLINE_MAPCOUNT_VALUE		(-1024)
-+PAGE_MAPCOUNT_OPS(Offline, OFFLINE)
-+
- extern bool is_free_buddy_page(struct page *page);
- 
- __PAGEFLAG(Isolated, isolated, PF_ANY);
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index f74826cdceea..7f7bd2acb55b 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -250,6 +250,7 @@ static int __meminit __add_section(int nid, unsigned long phys_start_pfn,
- 		struct vmem_altmap *altmap, bool want_memblock)
- {
- 	int ret;
-+	int i;
- 
- 	if (pfn_valid(phys_start_pfn))
- 		return -EEXIST;
-@@ -258,6 +259,25 @@ static int __meminit __add_section(int nid, unsigned long phys_start_pfn,
- 	if (ret < 0)
- 		return ret;
- 
-+	/*
-+	 * Mark all the pages in the section as offline before creating the
-+	 * memblock and onlining any sub-sections (and therefore marking the
-+	 * whole section as online). Mark them reserved so nobody will stumble
-+	 * over a half inititalized state.
-+	 */
-+	for (i = 0; i < PAGES_PER_SECTION; i++) {
-+		unsigned long pfn = phys_start_pfn + i;
-+		struct page *page;
-+		if (!pfn_valid(pfn))
-+			continue;
-+		page = pfn_to_page(pfn);
-+
-+		/* dummy zone, the actual one will be set when onlining pages */
-+		init_single_page(page, pfn, ZONE_NORMAL, nid);
-+		SetPageReserved(page);
-+		__SetPageOffline(page);
-+	}
-+
- 	if (!want_memblock)
- 		return 0;
- 
-@@ -651,6 +671,7 @@ EXPORT_SYMBOL_GPL(__online_page_increment_counters);
- 
- void __online_page_free(struct page *page)
- {
-+	__ClearPageOffline(page);
- 	__free_reserved_page(page);
- }
- EXPORT_SYMBOL_GPL(__online_page_free);
-@@ -891,15 +912,8 @@ int __ref online_pages(unsigned long pfn, unsigned long nr_pages, int online_typ
- 	int nid;
- 	int ret;
- 	struct memory_notify arg;
--	struct memory_block *mem;
--
--	/*
--	 * We can't use pfn_to_nid() because nid might be stored in struct page
--	 * which is not yet initialized. Instead, we find nid from memory block.
--	 */
--	mem = find_memory_block(__pfn_to_section(pfn));
--	nid = mem->nid;
- 
-+	nid = pfn_to_nid(pfn);
- 	/* associate pfn range with the zone */
- 	zone = move_pfn_range(online_type, nid, pfn, nr_pages);
- 
-@@ -1426,7 +1440,7 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
- }
- 
- /*
-- * remove from free_area[] and mark all as Reserved.
-+ * remove from free_area[] and mark all as Reserved and Offline.
-  */
- static int
- offline_isolated_pages_cb(unsigned long start, unsigned long nr_pages,
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 905db9d7962f..cd75686ff1d7 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1171,7 +1171,7 @@ static void free_one_page(struct zone *zone,
- 	spin_unlock(&zone->lock);
- }
- 
--static void __meminit __init_single_page(struct page *page, unsigned long pfn,
-+void __meminit init_single_page(struct page *page, unsigned long pfn,
- 				unsigned long zone, int nid)
- {
- 	mm_zero_struct_page(page);
-@@ -1181,11 +1181,7 @@ static void __meminit __init_single_page(struct page *page, unsigned long pfn,
- 	page_cpupid_reset_last(page);
- 
- 	INIT_LIST_HEAD(&page->lru);
--#ifdef WANT_PAGE_VIRTUAL
--	/* The shift won't overflow because ZONE_NORMAL is below 4G. */
--	if (!is_highmem_idx(zone))
--		set_page_address(page, __va(pfn << PAGE_SHIFT));
--#endif
-+	set_page_virtual(page, zone);
- }
- 
- #ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
-@@ -1206,7 +1202,7 @@ static void __meminit init_reserved_page(unsigned long pfn)
- 		if (pfn >= zone->zone_start_pfn && pfn < zone_end_pfn(zone))
- 			break;
- 	}
--	__init_single_page(pfn_to_page(pfn), pfn, zid, nid);
-+	init_single_page(pfn_to_page(pfn), pfn, zid, nid);
- }
- #else
- static inline void init_reserved_page(unsigned long pfn)
-@@ -1523,7 +1519,7 @@ static unsigned long  __init deferred_init_pages(int nid, int zid,
- 		} else {
- 			page++;
- 		}
--		__init_single_page(page, pfn, zid, nid);
-+		init_single_page(page, pfn, zid, nid);
- 		nr_pages++;
- 	}
- 	return (nr_pages);
-@@ -5514,9 +5510,13 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
- 
- not_early:
- 		page = pfn_to_page(pfn);
--		__init_single_page(page, pfn, zone, nid);
--		if (context == MEMMAP_HOTPLUG)
--			SetPageReserved(page);
-+		if (context == MEMMAP_HOTPLUG) {
-+			/* everything but the zone was inititalized */
-+			set_page_zone(page, zone);
-+			set_page_virtual(page, zone);
-+		}
-+		else
-+			init_single_page(page, pfn, zone, nid);
- 
- 		/*
- 		 * Mark the block movable so that blocks are reserved for
-@@ -6404,7 +6404,7 @@ void __paginginit free_area_init_node(int nid, unsigned long *zones_size,
- #ifdef CONFIG_HAVE_MEMBLOCK
- /*
-  * Only struct pages that are backed by physical memory are zeroed and
-- * initialized by going through __init_single_page(). But, there are some
-+ * initialized by going through init_single_page(). But, there are some
-  * struct pages which are reserved in memblock allocator and their fields
-  * may be accessed (for example page_to_pfn() on some configuration accesses
-  * flags). We must explicitly zero those struct pages.
-@@ -8005,7 +8005,6 @@ __offline_isolated_pages(unsigned long start_pfn, unsigned long end_pfn)
- 			break;
- 	if (pfn == end_pfn)
- 		return;
--	offline_mem_sections(pfn, end_pfn);
- 	zone = page_zone(pfn_to_page(pfn));
- 	spin_lock_irqsave(&zone->lock, flags);
- 	pfn = start_pfn;
-@@ -8022,11 +8021,13 @@ __offline_isolated_pages(unsigned long start_pfn, unsigned long end_pfn)
- 		if (unlikely(!PageBuddy(page) && PageHWPoison(page))) {
- 			pfn++;
- 			SetPageReserved(page);
-+			__SetPageOffline(page);
- 			continue;
- 		}
- 
- 		BUG_ON(page_count(page));
- 		BUG_ON(!PageBuddy(page));
-+		BUG_ON(PageOffline(page));
- 		order = page_order(page);
- #ifdef CONFIG_DEBUG_VM
- 		pr_info("remove from free list %lx %d %lx\n",
-@@ -8035,11 +8036,14 @@ __offline_isolated_pages(unsigned long start_pfn, unsigned long end_pfn)
- 		list_del(&page->lru);
- 		rmv_page_order(page);
- 		zone->free_area[order].nr_free--;
--		for (i = 0; i < (1 << order); i++)
-+		for (i = 0; i < (1 << order); i++) {
- 			SetPageReserved((page+i));
-+			__SetPageOffline(page + i);
-+		}
- 		pfn += (1 << order);
- 	}
- 	spin_unlock_irqrestore(&zone->lock, flags);
-+	offline_mem_sections(start_pfn, end_pfn);
- }
- #endif
- 
-diff --git a/mm/sparse.c b/mm/sparse.c
-index 73dc2fcc0eab..645d8a4e41a0 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -623,7 +623,24 @@ void online_mem_sections(unsigned long start_pfn, unsigned long end_pfn)
- }
- 
- #ifdef CONFIG_MEMORY_HOTREMOVE
--/* Mark all memory sections within the pfn range as online */
-+static bool all_pages_in_section_offline(unsigned long section_nr)
-+{
-+	unsigned long pfn = section_nr_to_pfn(section_nr);
-+	struct page *page;
-+	int i;
-+
-+	for (i = 0; i < PAGES_PER_SECTION; i++, pfn++) {
-+		if (!pfn_valid(pfn))
-+			continue;
-+
-+		page = pfn_to_page(pfn);
-+		if (!PageOffline(page))
-+			return false;
-+	}
-+	return true;
-+}
-+
-+/* Try to mark all memory sections within the pfn range as offline */
- void offline_mem_sections(unsigned long start_pfn, unsigned long end_pfn)
- {
- 	unsigned long pfn;
-@@ -639,6 +656,12 @@ void offline_mem_sections(unsigned long start_pfn, unsigned long end_pfn)
- 		if (WARN_ON(!valid_section_nr(section_nr)))
- 			continue;
- 
-+		/* if we don't cover whole sections, check all pages */
-+		if ((section_nr_to_pfn(section_nr) != start_pfn ||
-+		     start_pfn + PAGES_PER_SECTION >= end_pfn) &&
-+		    !all_pages_in_section_offline(section_nr))
-+			continue;
-+
- 		ms = __nr_to_section(section_nr);
- 		ms->section_mem_map &= ~SECTION_IS_ONLINE;
- 	}
--- 
-2.17.0
+The gpio in question is called "mute", so I'd think the gpio-syscon driver
+should just define a "rockchip,rk3328-gpio-mute" compatible and contain
+all the register voodoo in the driver itself and not define it in the dt.
+
+So it should probably look like
+
+grf: syscon at ff100000 {
+        compatible = "rockchip,rk3328-grf", "syscon", "simple-mfd";
+
+	[all the other syscon sub-devices]
+
+	gpio_mute: gpio-mute {
+		compatible = "rockchip,rk3328-gpio-mute";
+		gpio-controller;
+		#gpio-cells = <2>;
+	};
+
+	[more other syscon sub-devices]
+};
+
+
+Heiko	
+	
+
+
+
+> > +        //...
+> > +        gpio-controller;
+> > +        #gpio-cells = <2>;
+> > +        gpio,syscon-dev = <&grf 0x0428 0>;
+> 
+> And drop this. It may be used in the kernel, but it is not a
+> documented property.
+> 
+> > +    };
+> > 
+> > or just reserve the following case in the doc?
+> > 
+> > +    grf: syscon at ff100000 {
+> > +        compatible = "rockchip,rk3328-grf", "syscon", "simple-mfd";
+> > +        //...
+> > +    };
+> > +
+> > +    gpio_mute: gpio-mute {
+> > +        compatible = "rockchip,gpio-syscon";
+> > +        gpio-controller;
+> > +        #gpio-cells = <2>;
+> > +        gpio,syscon-dev = <&grf 0x0428 0>;
+> > +    };
+> > 
+> > 
+> > Thanks
+> > Levin
+> > 
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
