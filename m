@@ -1,131 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932917AbeEWMVc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 08:21:32 -0400
-Received: from www62.your-server.de ([213.133.104.62]:46210 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932534AbeEWMVa (ORCPT
+        id S932920AbeEWMWE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 08:22:04 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:40690 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932620AbeEWMWA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 08:21:30 -0400
-Subject: Re: [PATCH v4 0/3] IR decoding using BPF
-To: Sean Young <sean@mess.org>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>, netdev@vger.kernel.org,
-        Matthias Reichl <hias@horus.com>,
-        Devin Heitmueller <dheitmueller@kernellabs.com>,
-        Y Song <ys114321@gmail.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>
-References: <cover.1526651592.git.sean@mess.org>
-From: Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <860cf2a8-dd2e-ba78-8b98-3d8f4330f3d0@iogearbox.net>
-Date: Wed, 23 May 2018 14:21:27 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Wed, 23 May 2018 08:22:00 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A14E860314
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rplsssn@codeaurora.org
+Subject: Re: [PATCH v8 07/10] drivers: qcom: rpmh: cache sleep/wake state
+ requests
+To: Doug Anderson <dianders@chromium.org>,
+        Lina Iyer <ilina@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>, msivasub@codeaurora.org,
+        mkshah@codeaurora.org, Bjorn Andersson <bjorn.andersson@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Evan Green <evgreen@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+References: <20180509170159.29682-1-ilina@codeaurora.org>
+ <20180509170159.29682-8-ilina@codeaurora.org>
+ <CAD=FV=VLQRHfWgbVhcCBJxd5iRh+R_kbdtT=fPixK0O_iqYwOg@mail.gmail.com>
+From: Raju P L S S S N <rplsssn@codeaurora.org>
+Message-ID: <2c6fc480-7894-2a69-b1ff-fc3cbc96a9a1@codeaurora.org>
+Date: Wed, 23 May 2018 17:51:48 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <cover.1526651592.git.sean@mess.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAD=FV=VLQRHfWgbVhcCBJxd5iRh+R_kbdtT=fPixK0O_iqYwOg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/18/2018 04:07 PM, Sean Young wrote:
-> The kernel IR decoders (drivers/media/rc/ir-*-decoder.c) support the most
-> widely used IR protocols, but there are many protocols which are not
-> supported[1]. For example, the lirc-remotes[2] repo has over 2700 remotes,
-> many of which are not supported by rc-core. There is a "long tail" of
-> unsupported IR protocols, for which lircd is need to decode the IR .
-> 
-> IR encoding is done in such a way that some simple circuit can decode it;
-> therefore, bpf is ideal.
-> 
-> In order to support all these protocols, here we have bpf based IR decoding.
-> The idea is that user-space can define a decoder in bpf, attach it to
-> the rc device through the lirc chardev.
-> 
-> Separate work is underway to extend ir-keytable to have an extensive library
-> of bpf-based decoders, and a much expanded library of rc keymaps.
-> 
-> Another future application would be to compile IRP[3] to a IR BPF program, and
-> so support virtually every remote without having to write a decoder for each.
-> It might also be possible to support non-button devices such as analog
-> directional pads or air conditioning remote controls and decode the target
-> temperature in bpf, and pass that to an input device.
+Hi,
 
-Mauro, are you fine with this series going via bpf-next? How ugly would this
-get with regards to merge conflicts wrt drivers/media/rc/?
+On 5/12/2018 1:48 AM, Doug Anderson wrote:
+> Hi,
+> 
+> On Wed, May 9, 2018 at 10:01 AM, Lina Iyer <ilina@codeaurora.org> wrote:
+>>   /**
+>>    * struct rpmh_request: the message to be sent to rpmh-rsc
+>>    *
+>> @@ -54,9 +71,15 @@ struct rpmh_request {
+>>    * struct rpmh_ctrlr: our representation of the controller
+>>    *
+>>    * @drv: the controller instance
+>> + * @cache: the list of cached requests
+>> + * @lock: synchronize access to the controller data
+> 
+> nit: this makes it sound like this lock will be grabbed for all calls
+> into rpmh-rsc.  In fact, it only protects access to the cache.
+> Ideally name it cache_lock and document that it's for protecting the
+> cache.
+> 
+> 
+>> +/**
+>> + * rpmh_flush: Flushes the buffered active and sleep sets to TCS
+>> + *
+>> + * @dev: The device making the request
+>> + *
+>> + * Return: -EBUSY if the controller is busy, probably waiting on a response
+>> + * to a RPMH request sent earlier.
+>> + *
+>> + * This function is generally called from the sleep code from the last CPU
+> 
+> "is generally" implies that sometimes it's not called from the sleep
+> code.  Change to "is always".  If "is generally" is more correct, you
+> can't run lockless right?
+> 
+> 
+> -Doug
+> 
+
+Yes. Will change in next patch.
 
 Thanks,
-Daniel
-
-> Thanks,
-> 
-> Sean Young
-> 
-> [1] http://www.hifi-remote.com/wiki/index.php?title=DecodeIR
-> [2] https://sourceforge.net/p/lirc-remotes/code/ci/master/tree/remotes/
-> [3] http://www.hifi-remote.com/wiki/index.php?title=IRP_Notation
-> 
-> Changes since v3:
->  - Implemented review comments from Quentin Monnet and Y Song (thanks!)
->  - More helpful and better formatted bpf helper documentation
->  - Changed back to bpf_prog_array rather than open-coded implementation
->  - scancodes can be 64 bit
->  - bpf gets passed values in microseconds, not nanoseconds.
->    microseconds is more than than enough (IR receivers support carriers upto
->    70kHz, at which point a single period is already 14 microseconds). Also,
->    this makes it much more consistent with lirc mode2.
->  - Since it looks much more like lirc mode2, rename the program type to
->    BPF_PROG_TYPE_LIRC_MODE2.
->  - Rebased on bpf-next
-> 
-> Changes since v2:
->  - Fixed locking issues
->  - Improved self-test to cover more cases
->  - Rebased on bpf-next again
-> 
-> Changes since v1:
->  - Code review comments from Y Song <ys114321@gmail.com> and
->    Randy Dunlap <rdunlap@infradead.org>
->  - Re-wrote sample bpf to be selftest
->  - Renamed RAWIR_DECODER -> RAWIR_EVENT (Kconfig, context, bpf prog type)
->  - Rebase on bpf-next
->  - Introduced bpf_rawir_event context structure with simpler access checking
-> 
-> Sean Young (3):
->   bpf: bpf_prog_array_copy() should return -ENOENT if exclude_prog not
->     found
->   media: rc: introduce BPF_PROG_LIRC_MODE2
->   bpf: add selftest for lirc_mode2 type program
-> 
->  drivers/media/rc/Kconfig                      |  13 +
->  drivers/media/rc/Makefile                     |   1 +
->  drivers/media/rc/bpf-lirc.c                   | 308 ++++++++++++++++++
->  drivers/media/rc/lirc_dev.c                   |  30 ++
->  drivers/media/rc/rc-core-priv.h               |  22 ++
->  drivers/media/rc/rc-ir-raw.c                  |  12 +-
->  include/linux/bpf_rcdev.h                     |  30 ++
->  include/linux/bpf_types.h                     |   3 +
->  include/uapi/linux/bpf.h                      |  53 ++-
->  kernel/bpf/core.c                             |  11 +-
->  kernel/bpf/syscall.c                          |   7 +
->  kernel/trace/bpf_trace.c                      |   2 +
->  tools/bpf/bpftool/prog.c                      |   1 +
->  tools/include/uapi/linux/bpf.h                |  53 ++-
->  tools/include/uapi/linux/lirc.h               | 217 ++++++++++++
->  tools/lib/bpf/libbpf.c                        |   1 +
->  tools/testing/selftests/bpf/Makefile          |   8 +-
->  tools/testing/selftests/bpf/bpf_helpers.h     |   6 +
->  .../testing/selftests/bpf/test_lirc_mode2.sh  |  28 ++
->  .../selftests/bpf/test_lirc_mode2_kern.c      |  23 ++
->  .../selftests/bpf/test_lirc_mode2_user.c      | 154 +++++++++
->  21 files changed, 974 insertions(+), 9 deletions(-)
->  create mode 100644 drivers/media/rc/bpf-lirc.c
->  create mode 100644 include/linux/bpf_rcdev.h
->  create mode 100644 tools/include/uapi/linux/lirc.h
->  create mode 100755 tools/testing/selftests/bpf/test_lirc_mode2.sh
->  create mode 100644 tools/testing/selftests/bpf/test_lirc_mode2_kern.c
->  create mode 100644 tools/testing/selftests/bpf/test_lirc_mode2_user.c
-> 
+Raju
