@@ -1,183 +1,255 @@
-Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-604614-1527103287-2-4516459042886930503
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
-  MailFrom='org'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-api-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527103286; b=jiBngPh1t6nkRYAgWIFElHiG922jvk9Sc04Vo7e4mKY3IxZH0v
-    xdYdPqze8buLfFc9yiKtoheV06SiLHrRRssgsggMh4/AbXkQLy1zkFJJPhsu6xgQ
-    yvZZTrHAJzeNi4Sjc1O/PeX3O8SMGYTs9gohMrxCrHf/PdcblllhDd+NObG1Nu62
-    Z4z3uYEpzvw+LamXvA76iP4duBeernqs8tu0Xkqg5NxbGSu0jMcTBL3gLwE72Xic
-    l998qItXRjiQ5fxl5+JYMHbtaoE6HzMSSR3yef/Uqbs0vhhdx90qh27dQa5FKgvq
-    +uQFy6q5WrZTIzrqK9XXf0JaZwF726jRW+8w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1527103286; bh=
-    RZebh14Nxj1OTkiJRsLKYf2pbv45iCPYG4H13ATN/xg=; b=mR2V+E3qp+n2uBPk
-    qV7U3WTqHs1V981DYeE0Hrn9VWM0kaSXJCoKs/vABtPEYhQY9X27q7SG2XDGI2MK
-    12xP9bNAKu9Ok95af2qvB6vmEDKbwsRukC0E4LqVyL/3WVMIe/z91P3dIBVVPm86
-    0j4dBzCMusnncV4xVCDeYhDXAbfUgOAEd0mvXibQ8kTVJvoTZPp0j1rf8pZ/50CL
-    cTJIS52qBGZ9Vbw3oS7SC+9CYLZyRO+wJsAFuEnOdYrNbiUu5dLtp/KfQJH+XT9s
-    M0azKeMjcimA/BxI/FTX7ZS+if+lMD6EOga0mbIRcQ9caS8cJNN2TuvgwLgfaXq5
-    A5SH7g==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=infradead.org header.i=@infradead.org header.b=L6Fc5Oiz
-    x-bits=2048 x-keytype=rsa x-algorithm=sha256
-    x-selector=bombadil.20170209;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=lst.de header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=infradead.org header.i=@infradead.org header.b=L6Fc5Oiz
-      x-bits=2048 x-keytype=rsa x-algorithm=sha256
-      x-selector=bombadil.20170209;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=lst.de header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDCT9ZICbF2kcRiYZC4D+NAnOSMiNMeNbBltF2dyJ8G0A4BBdYC3VuC6wQtfqDC0FmVWYbC613kS5cwbI2oZ63EV+woaPXjG7sOQAsK/T9/WwYLaPfjk
-    BvEDpTbUBuo1i5KBvNyrdAaEybzP6qfx3p+MoPJVhwbI+081hlZSBlF1Bj8BDUid7Q1K1Ahy+HlPrs3CAJsTb/g2zDaIjKHlOWBBOXSHEZfIUQW+EBGH4VyL
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8
-    a=qBVkKzBwSuRwKVmLvv4A:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934481AbeEWTVY (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 23 May 2018 15:21:24 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40856 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934468AbeEWTVT (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Wed, 23 May 2018 15:21:19 -0400
-From: Christoph Hellwig <hch@lst.de>
-To: viro@zeniv.linux.org.uk
-Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
-        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 18/33] net/dccp: convert to ->poll_mask
-Date: Wed, 23 May 2018 21:20:07 +0200
-Message-Id: <20180523192022.1703-19-hch@lst.de>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180523192022.1703-1-hch@lst.de>
-References: <20180523192022.1703-1-hch@lst.de>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-Sender: linux-api-owner@vger.kernel.org
-X-Mailing-List: linux-api@vger.kernel.org
+Return-Path: <david@redhat.com>
+X-Google-Smtp-Source: AB8JxZqWifNzlxGsrXv0aUn7elBIBdUYQqAI3YKtTA1ZlurDHEtl7E7Fky3taTIIMzpG4KKlo1sv
+ARC-Seal: i=1; a=rsa-sha256; t=1527099855; cv=none;
+        d=google.com; s=arc-20160816;
+        b=ZMkiBl2xnFoh+Sgp9h/I/15nMgvUSa09nrGsoam8z0gxm2jgyV70xVqkJfGnYcxsEI
+         d0TICyhjx6WXaXRS3RWYioNXchGW3BhGFmh5I9mWFzReGuj0XJzz5aGpAkkY4SaDvwy1
+         S3Kh4f8mIZxl1nLa/I1/X+ecT+N2v/Wwok9DM0bpuGevYYabshMBlBGe1cCIVJc/S1qh
+         AVrCpviWcUqAyyuyCNohXvXTYhxSWybYfvuyWdO9LdgxpkToLs9cm4pp/vnyTEh9GQ86
+         BYOz0hBFGa7EIA5E6wXAyKhU9hN4tTp+jY1V+aF4QBQw5Ny7K82aVmjqyQreCDePoRPG
+         2Qvg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=/Meb5K96Zic6wwR3HckbCK43zrZSCWqw4glWBgy7fC8=;
+        b=Wo+lFPcgGQnDyFbWM2C4WE7hiUg0MMe3AW1GBIflJCEi/K+QcpvPZrHShsB6arW4w6
+         zVgCOvL5PxPha1dCWXcEv5CHRD96huIRtQbv7rZE+aIvxn13XpRaEuTIf02g40KHNjZq
+         CcwnrZP4lx1KCDM8303j2YyyOiDTBS4PSO97zBPT4yyMDEfSPE4uSIfvwwWtE/8t+WF9
+         iNnSKcHL4uKt+XRMmPmCc5yr7xnQ/fQVbHlxxzQC7CXTQjWSJg+IiWYCNkN/WPQ/p7Zf
+         k4dol/bmQjb86eY5yCymaBrP0tIfO4vWbMV0jKlIu7BmxvD+MRG37a//jtDT0scLZFKw
+         diRA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of david@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=david@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of david@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=david@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+From: David Hildenbrand <david@redhat.com>
+To: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org,
+	David Hildenbrand <david@redhat.com>,
+	Andrea Arcangeli <aarcange@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Cornelia Huck <cohuck@redhat.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Halil Pasic <pasic@linux.ibm.com>,
+	Heiko Carstens <heiko.carstens@de.ibm.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Len Brown <lenb@kernel.org>,
+	Martin Schwidefsky <schwidefsky@de.ibm.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Pavel Tatashin <pasha.tatashin@oracle.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vlastimil Babka <vbabka@suse.cz>
+Subject: [PATCH RFCv2 0/4] virtio-mem: paravirtualized memory
+Date: Wed, 23 May 2018 20:24:00 +0200
+Message-Id: <20180523182404.11433-1-david@redhat.com>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1601280257893566577?=
+X-GMAIL-MSGID: =?utf-8?q?1601280257893566577?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- net/dccp/dccp.h  |  3 +--
- net/dccp/ipv4.c  |  2 +-
- net/dccp/ipv6.c  |  2 +-
- net/dccp/proto.c | 13 ++-----------
- 4 files changed, 5 insertions(+), 15 deletions(-)
+This is the Linux driver side of virtio-mem. Compared to the QEMU side,
+it is in a pretty complete and clean state.
 
-diff --git a/net/dccp/dccp.h b/net/dccp/dccp.h
-index f91e3816806b..0ea2ee56ac1b 100644
---- a/net/dccp/dccp.h
-+++ b/net/dccp/dccp.h
-@@ -316,8 +316,7 @@ int dccp_recvmsg(struct sock *sk, struct msghdr *msg, size_t len, int nonblock,
- 		 int flags, int *addr_len);
- void dccp_shutdown(struct sock *sk, int how);
- int inet_dccp_listen(struct socket *sock, int backlog);
--__poll_t dccp_poll(struct file *file, struct socket *sock,
--		       poll_table *wait);
-+__poll_t dccp_poll_mask(struct socket *sock, __poll_t events);
- int dccp_v4_connect(struct sock *sk, struct sockaddr *uaddr, int addr_len);
- void dccp_req_err(struct sock *sk, u64 seq);
- 
-diff --git a/net/dccp/ipv4.c b/net/dccp/ipv4.c
-index b08feb219b44..a9e478cd3787 100644
---- a/net/dccp/ipv4.c
-+++ b/net/dccp/ipv4.c
-@@ -984,7 +984,7 @@ static const struct proto_ops inet_dccp_ops = {
- 	.accept		   = inet_accept,
- 	.getname	   = inet_getname,
- 	/* FIXME: work on tcp_poll to rename it to inet_csk_poll */
--	.poll		   = dccp_poll,
-+	.poll_mask	   = dccp_poll_mask,
- 	.ioctl		   = inet_ioctl,
- 	/* FIXME: work on inet_listen to rename it to sock_common_listen */
- 	.listen		   = inet_dccp_listen,
-diff --git a/net/dccp/ipv6.c b/net/dccp/ipv6.c
-index 6344f1b18a6a..17fc4e0166ba 100644
---- a/net/dccp/ipv6.c
-+++ b/net/dccp/ipv6.c
-@@ -1070,7 +1070,7 @@ static const struct proto_ops inet6_dccp_ops = {
- 	.socketpair	   = sock_no_socketpair,
- 	.accept		   = inet_accept,
- 	.getname	   = inet6_getname,
--	.poll		   = dccp_poll,
-+	.poll_mask	   = dccp_poll_mask,
- 	.ioctl		   = inet6_ioctl,
- 	.listen		   = inet_dccp_listen,
- 	.shutdown	   = inet_shutdown,
-diff --git a/net/dccp/proto.c b/net/dccp/proto.c
-index 84cd4e3fd01b..88b668db244b 100644
---- a/net/dccp/proto.c
-+++ b/net/dccp/proto.c
-@@ -314,20 +314,11 @@ int dccp_disconnect(struct sock *sk, int flags)
- 
- EXPORT_SYMBOL_GPL(dccp_disconnect);
- 
--/*
-- *	Wait for a DCCP event.
-- *
-- *	Note that we don't need to lock the socket, as the upper poll layers
-- *	take care of normal races (between the test and the event) and we don't
-- *	go look at any of the socket buffers directly.
-- */
--__poll_t dccp_poll(struct file *file, struct socket *sock,
--		       poll_table *wait)
-+__poll_t dccp_poll_mask(struct socket *sock, __poll_t events)
- {
- 	__poll_t mask;
- 	struct sock *sk = sock->sk;
- 
--	sock_poll_wait(file, sk_sleep(sk), wait);
- 	if (sk->sk_state == DCCP_LISTEN)
- 		return inet_csk_listen_poll(sk);
- 
-@@ -369,7 +360,7 @@ __poll_t dccp_poll(struct file *file, struct socket *sock,
- 	return mask;
- }
- 
--EXPORT_SYMBOL_GPL(dccp_poll);
-+EXPORT_SYMBOL_GPL(dccp_poll_mask);
- 
- int dccp_ioctl(struct sock *sk, int cmd, unsigned long arg)
- {
+virtio-mem is a paravirtualized mechanism of adding/removing memory to/from
+a VM. We can do this on a 4MB granularity right now. In Linux, all
+memory is added to the ZONE_NORMAL, so unplugging cannot be guaranteed -
+but will be more likely to succeed compared to unplugging 128MB+ chunks.
+We might implement some optimizations in that area in the future that will
+make memory unplug more reliable.
+
+For now, this is an easy way to give a VM access to more memory and
+eventually to remove some memory again. I am testing it on x86 and
+s390x (under QEMU TCG so far only).
+
+This is the follow up on [1], but the concept, user interface and
+virtio protocol has been heavily changed. I am only including the important
+parts in this cover letter (because otherwise nobody will read it).  Please
+feel free to ask in case there are any questions.
+
+This series is based on [4] and shows how it is being used. It contains
+further information. Also have a look at the description of patch nr 4 in
+this series.
+
+This work is the result of the initital idea of Andrea Arcangeli to host
+enforce guest access to memory inflated in virtio-balloon using
+userfaultfd, which turned out to be problematic to implement. That's how
+I came up with virtio-mem.
+
+--------------------------------------------------------------------------
+1. High level concept
+--------------------------------------------------------------------------
+
+Each virtio-mem device owns a memory region in the physical address space.
+The guest is allowed to plug and online up to 'requested_size' of memory.
+It will not be allowed to plug more than that size. Unplugged memory will
+be protected by configurable mechanisms (e.g. random discard, userfaultfd
+protection, etc.). virtio-mem is designed in a way that a guest may never
+assume to be able to even read unplugged memory. This is a big difference
+to classical balloon drivers.
+
+The usable memory region might grow over time, so not all parts of the
+device memory region might be usable from the start. This is an
+optimization to allow a smarter implementation in the hypervisor (reduce
+size of dirty bitmaps, size of memory regions ...).
+
+When the device driver starts up, it will query 'requested_size' and start
+to add memory to the system. This memory is not indicated e.g. via ACPI,
+so unmodified systems will not silently try to use unplugged memory that
+they are not supposed to touch.
+
+Updates on the 'requested_size' indicate hypervisor requests to plug or
+unplug memory.
+
+As each virtio-mem device can belong to a NUMA node, we can easily
+plug/unplug memory on a NUMA basis. And of course, we can have several
+independent virtio-mem devices for a VM.
+
+The idea is *not* to add new virtio-mem devices when hotplugging memory,
+the idea is to resize (grow/shrink) virtio-mem devices.
+
+--------------------------------------------------------------------------
+2. Benefits
+--------------------------------------------------------------------------
+
+Guest side:
+- Increase memory usable by Linux in 4MB steps (vs. section size like 128MB
+  on x86 or 2GB on e.g. some arm if I'm not mistaking)
+- Remove struct pages once all 4MB chunks of a section are offline (in
+  contrast to all balloon drivers where this never happens)
+- Don't fragment memory, while still being able to unplug smaller chunks
+  than ordinary DIMM sizes.
+- Memory hotplug support for architectures that have no proper interface
+  (e.g. s390x misses the external notification part) or e.g. QEMU/Linux
+  support is complicated to implement.
+- Automatic management of onlining/offlining in the device driver -
+  no manual interaction from an admin/tool necessary.
+
+QEMU side:
+- Resizing (plug/unplug) has a single interface - in contrast to a mixture
+  of ACPI and virtio-balloon. See the example below.
+- Migration works out of the box - no need to specify new DIMMs or new
+  sizes on the migration target. It simply works.
+- We can resize in arbitrary steps and sizes (in contrast to e.g. ACPI,
+  where we have to know upfront in which granularity we later on want to
+  remove memory or even how much memory we eventually want to add to our
+  guest)
+- One interface to rule them (architectures) all :)
+
+--------------------------------------------------------------------------
+3. Reboot handling
+--------------------------------------------------------------------------
+
+After a reboot, all memory is unplugged. This allows the hypervisor
+to see if support for virtio-mem is available in the freshly booted system.
+This way we could charge only for the actually "plugged" memory size. And
+it avoids to sense for plugged memory in the guest.
+
+E.g. on every size change of a virtio-mem device, we can notify management
+layers. So we can track how much memory a VM has plugged.
+
+--------------------------------------------------------------------------
+4. Example
+--------------------------------------------------------------------------
+
+(not including resizable memory regions on the QEMU side yet, so don't
+ focus on that part - it will consume a lot of memory right now for e.g.
+ dirty bitmaps and memory slot tracking data)
+
+Start QEMU with two virtio-mem devices that provide little memory inititally.
+	$ qemu-system-x86_64 -m 4G,maxmem=504G \
+		-smp sockets=2,cores=2 \
+		[...]
+		-object memory-backend-ram,id=mem0,size=256G \
+		-device virtio-mem-pci,id=vm0,memdev=mem0,node=0,size=4160M \
+		-object memory-backend-ram,id=mem1,size=256G \
+		-device virtio-mem-pci,id=vm1,memdev=mem1,node=1,size=3G
+
+Query the configuration ('size' tells us the guest driver is active):
+	(qemu) info memory-devices
+	info memory-devices
+	Memory device [virtio-mem]: "vm0"
+	  phys-addr: 0x140000000
+	  node: 0
+	  requested-size: 4362076160
+	  size: 4362076160
+	  max-size: 274877906944
+	  block-size: 4194304
+	  memdev: /objects/mem0
+	Memory device [virtio-mem]: "vm1"
+	  phys-addr: 0x4140000000
+	  node: 1
+	  requested-size: 3221225472
+	  size: 3221225472
+	  max-size: 274877906944
+	  block-size: 4194304
+	  memdev: /objects/mem1
+
+Change the size of a virtio-mem device:
+	(qemu) memory-device-resize vm0 40960
+	memory-device-resize vm0 40960
+	...
+	(qemu) info memory-devices
+	info memory-devices
+	Memory device [virtio-mem]: "vm0"
+	  phys-addr: 0x140000000
+	  node: 0
+	  requested-size: 42949672960
+	  size: 42949672960
+	  max-size: 274877906944
+	  block-size: 4194304
+	  memdev: /objects/mem0
+	...
+
+Try to unplug memory (KASAN active in the guest - a lot of memory wasted):
+	(qemu) memory-device-resize vm0 1024
+	memory-device-resize vm0 1024
+	...
+	(qemu) info memory-devices
+	info memory-devices
+	Memory device [virtio-mem]: "vm0"
+	  phys-addr: 0x140000000
+	  node: 0
+	  requested-size: 1073741824
+	  size: 6169821184
+	  max-size: 274877906944
+	  block-size: 4194304
+	  memdev: /objects/mem0
+	...
+
+I am sharing for now only the linux driver side. The current code can be
+found at [2]. The QEMU side is still heavily WIP, the current QEMU
+prototype can be found at [3].
+
+
+[1] https://lists.gnu.org/archive/html/qemu-devel/2017-06/msg03870.html
+[2] https://github.com/davidhildenbrand/linux/tree/virtio-mem
+[3] https://github.com/davidhildenbrand/qemu/tree/virtio-mem
+[4] https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1698014.html
+
+David Hildenbrand (4):
+  ACPI: NUMA: export pxm_to_node
+  s390: mm: support removal of memory
+  s390: numa: implement memory_add_physaddr_to_nid()
+  virtio-mem: paravirtualized memory
+
+ arch/s390/mm/init.c             |   18 +-
+ arch/s390/numa/numa.c           |   12 +
+ drivers/acpi/numa.c             |    1 +
+ drivers/virtio/Kconfig          |   15 +
+ drivers/virtio/Makefile         |    1 +
+ drivers/virtio/virtio_mem.c     | 1040 +++++++++++++++++++++++++++++++
+ include/uapi/linux/virtio_ids.h |    1 +
+ include/uapi/linux/virtio_mem.h |  134 ++++
+ 8 files changed, 1216 insertions(+), 6 deletions(-)
+ create mode 100644 drivers/virtio/virtio_mem.c
+ create mode 100644 include/uapi/linux/virtio_mem.h
+
 -- 
 2.17.0
-
