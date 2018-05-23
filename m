@@ -1,74 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934133AbeEWSsi (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 14:48:38 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:35580 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934034AbeEWSsc (ORCPT
+        id S934144AbeEWSsz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 14:48:55 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55876 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933944AbeEWSsx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 14:48:32 -0400
-X-Google-Smtp-Source: AB8JxZpT29bfg9G9mCZBqq8PZHE/zVhG4v7cmg52IyCsE7CBaNp+j2U0kZo0LdbfBYUTQacjs7spJg==
-Date: Wed, 23 May 2018 13:48:30 -0500
-From: Rob Herring <robh@kernel.org>
-To: Sayali Lokhande <sayalil@codeaurora.org>
-Cc: subhashj@codeaurora.org, cang@codeaurora.org,
-        vivek.gautam@codeaurora.org, rnayak@codeaurora.org,
-        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, asutoshd@codeaurora.org,
-        linux-scsi@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RFC 1/3] scsi: ufs: set the device reference clock setting
-Message-ID: <20180523184830.GA29198@rob-hp-laptop>
-References: <1526962900-20683-1-git-send-email-sayalil@codeaurora.org>
- <1526962900-20683-2-git-send-email-sayalil@codeaurora.org>
+        Wed, 23 May 2018 14:48:53 -0400
+Date: Wed, 23 May 2018 11:39:07 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+        Jan Kara <jack@suse.com>, Andrew Morton <akpm@linux-foundation.org>,
+        kernel-team@fb.com
+Subject: Re: [PATCH] bdi: Move cgroup bdi_writeback to a dedicated low
+ concurrency workqueue
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180523175632.GO1718769@devbig577.frc2.facebook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1526962900-20683-2-git-send-email-sayalil@codeaurora.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180523175632.GO1718769@devbig577.frc2.facebook.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18052318-0016-0000-0000-000008C9CA85
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009073; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000261; SDB=6.01036609; UDB=6.00530312; IPR=6.00815736;
+ MB=3.00021262; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-23 18:48:51
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18052318-0017-0000-0000-00003EDFE9E0
+Message-Id: <20180523183907.GZ3803@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-23_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805230183
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 09:51:38AM +0530, Sayali Lokhande wrote:
-> From: Subhash Jadavani <subhashj@codeaurora.org>
+On Wed, May 23, 2018 at 10:56:32AM -0700, Tejun Heo wrote:
+> >From 0aa2e9b921d6db71150633ff290199554f0842a8 Mon Sep 17 00:00:00 2001
+> From: Tejun Heo <tj@kernel.org>
+> Date: Wed, 23 May 2018 10:29:00 -0700
 > 
-> UFS host supplies the reference clock to UFS device and UFS device
-> specification allows host to provide one of the 4 frequencies (19.2 MHz,
-> 26 MHz, 38.4 MHz, 52 MHz) for reference clock. Host should set the
-> device reference clock frequency setting in the device based on what
-> frequency it is supplying to UFS device.
+> cgwb_release() punts the actual release to cgwb_release_workfn() on
+> system_wq.  Depending on the number of cgroups or block devices, there
+> can be a lot of cgwb_release_workfn() in flight at the same time.
 > 
-> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
-> [cang@codeaurora.org: Resolved trivial merge conflicts]
-> Signed-off-by: Can Guo <cang@codeaurora.org>
-> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
-> ---
->  .../devicetree/bindings/ufs/ufshcd-pltfrm.txt      |  8 +++
->  drivers/scsi/ufs/ufs.h                             |  9 ++++
->  drivers/scsi/ufs/ufshcd-pltfrm.c                   | 20 ++++++++
->  drivers/scsi/ufs/ufshcd.c                          | 60 ++++++++++++++++++++++
->  drivers/scsi/ufs/ufshcd.h                          |  2 +
->  5 files changed, 99 insertions(+)
+> We're periodically seeing close to 256 kworkers getting stuck with the
+> following stack trace and overtime the entire system gets stuck.
 > 
-> diff --git a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
-> index c39dfef..ac94220 100644
-> --- a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
-> +++ b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
-> @@ -41,6 +41,12 @@ Optional properties:
->  -lanes-per-direction	: number of lanes available per direction - either 1 or 2.
->  			  Note that it is assume same number of lanes is used both
->  			  directions at once. If not specified, default is 2 lanes per direction.
-> +- dev-ref-clk-freq	: Specify the device reference clock frequency, must be one of the following:
-> +			  0: 19.2 MHz
-> +			  1: 26 MHz
-> +			  2: 38.4 MHz
-> +			  3: 52 MHz
-> +			  Defaults to 26 MHz if not specified.
+>   [<ffffffff810ee40c>] _synchronize_rcu_expedited.constprop.72+0x2fc/0x330
+>   [<ffffffff810ee634>] synchronize_rcu_expedited+0x24/0x30
+>   [<ffffffff811ccf23>] bdi_unregister+0x53/0x290
+>   [<ffffffff811cd1e9>] release_bdi+0x89/0xc0
+>   [<ffffffff811cd645>] wb_exit+0x85/0xa0
+>   [<ffffffff811cdc84>] cgwb_release_workfn+0x54/0xb0
+>   [<ffffffff810a68d0>] process_one_work+0x150/0x410
+>   [<ffffffff810a71fd>] worker_thread+0x6d/0x520
+>   [<ffffffff810ad3dc>] kthread+0x12c/0x160
+>   [<ffffffff81969019>] ret_from_fork+0x29/0x40
+>   [<ffffffffffffffff>] 0xffffffffffffffff
+> 
+> The events leading to the lockup are...
+> 
+> 1. A lot of cgwb_release_workfn() is queued at the same time and all
+>    system_wq kworkers are assigned to execute them.
+> 
+> 2. They all end up calling synchronize_rcu_expedited().  One of them
+>    wins and tries to perform the expedited synchronization.
+> 
+> 3. However, that invovles queueing rcu_exp_work to system_wq and
+>    waiting for it.  Because #1 is holding all available kworkers on
+>    system_wq, rcu_exp_work can't be executed.  cgwb_release_workfn()
+>    is waiting for synchronize_rcu_expedited() which in turn is waiting
+>    for cgwb_release_workfn() to free up some of the kworkers.
+> 
+> We shouldn't be scheduling hundreds of cgwb_release_workfn() at the
+> same time.  There's nothing to be gained from that.  This patch
+> updates cgwb release path to use a dedicated percpu workqueue with
+> @max_active of 1.
+> 
+> While this resolves the problem at hand, it might be a good idea to
+> isolate rcu_exp_work to its own workqueue too as it can be used from
+> various paths and is prone to this sort of indirect A-A deadlocks.
 
-You already have "ref_clk", can't you just read its frequency?
+Commit ad7c946b35ad4 ("rcu: Create RCU-specific workqueues with rescuers")
+was accepted into mainline this past merge window.  Does that do what
+you want, or are you looking for something else?
 
-Rob
+							Thanx, Paul
