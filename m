@@ -1,155 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753825AbeEWCCL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 22:02:11 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51288 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753715AbeEWCCJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 22:02:09 -0400
-Subject: Re: [PATCH 0/2] support kdump for AMD secure memory encryption(sme)
-To: Tom Lendacky <thomas.lendacky@amd.com>, linux-kernel@vger.kernel.org
-Cc: kexec@lists.infradead.org, dyoung@redhat.com, bhe@redhat.com
-References: <20180515015133.4363-1-lijiang@redhat.com>
- <55bda494-bee4-5696-03e5-fc21c9d6b631@amd.com>
- <18309611-c8c4-92cb-161e-f35ef3d243ea@redhat.com>
- <a0b95743-209a-aca7-33e4-828375df1826@redhat.com>
- <3972e681-d8eb-4f4d-843a-6ddbf339f0bb@amd.com>
-From: lijiang <lijiang@redhat.com>
-Message-ID: <2cabcbab-264a-2ac5-524e-6e3a9e388e56@redhat.com>
-Date: Wed, 23 May 2018 10:02:00 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+        id S1753858AbeEWCCt (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 22:02:49 -0400
+Received: from regular1.263xmail.com ([211.150.99.130]:38904 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753701AbeEWCCr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 22:02:47 -0400
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-IP-DOMAINF: 1
+X-RL-SENDER: djw@t-chip.com.cn
+X-FST-TO: linux-arm-kernel@lists.infradead.org
+X-SENDER-IP: 59.33.100.150
+X-LOGIN-NAME: djw@t-chip.com.cn
+X-UNIQUE-TAG: <44bf2a732710535411c1926523a7acd8>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 7
+Subject: Re: [PATCH v2 2/5] gpio: syscon: Add gpio-syscon for rockchip
+To: Rob Herring <robh@kernel.org>
+Cc: linux-rockchip@lists.infradead.org, Wayne Chou <zxf@t-chip.com.cn>,
+        Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <1526614328-6869-1-git-send-email-djw@t-chip.com.cn>
+ <1526615528-9707-1-git-send-email-djw@t-chip.com.cn>
+ <1526615528-9707-2-git-send-email-djw@t-chip.com.cn>
+ <20180522180238.GA7328@rob-hp-laptop>
+From: Levin Du <djw@t-chip.com.cn>
+Message-ID: <6ffb43dc-55a5-14eb-eb18-3a731cdaf424@t-chip.com.cn>
+Date: Wed, 23 May 2018 10:02:15 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <3972e681-d8eb-4f4d-843a-6ddbf339f0bb@amd.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20180522180238.GA7328@rob-hp-laptop>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2018年05月21日 21:23, Tom Lendacky 写道:
-> On 5/20/2018 10:45 PM, lijiang wrote:
->> 在 2018年05月17日 21:45, lijiang 写道:
->>> 在 2018年05月15日 21:31, Tom Lendacky 写道:
->>>> On 5/14/2018 8:51 PM, Lianbo Jiang wrote:
->>>>> It is convenient to remap the old memory encrypted to the second kernel by
->>>>> calling ioremap_encrypted().
->>>>>
->>>>> When sme enabled on AMD server, we also need to support kdump. Because
->>>>> the memory is encrypted in the first kernel, we will remap the old memory
->>>>> encrypted to the second kernel(crash kernel), and sme is also enabled in
->>>>> the second kernel, otherwise the old memory encrypted can not be decrypted.
->>>>> Because simply changing the value of a C-bit on a page will not
->>>>> automatically encrypt the existing contents of a page, and any data in the
->>>>> page prior to the C-bit modification will become unintelligible. A page of
->>>>> memory that is marked encrypted will be automatically decrypted when read
->>>>> from DRAM and will be automatically encrypted when written to DRAM.
->>>>>
->>>>> For the kdump, it is necessary to distinguish whether the memory is
->>>>> encrypted. Furthermore, we should also know which part of the memory is
->>>>> encrypted or decrypted. We will appropriately remap the memory according
->>>>> to the specific situation in order to tell cpu how to deal with the
->>>>> data(encrypted or decrypted). For example, when sme enabled, if the old
->>>>> memory is encrypted, we will remap the old memory in encrypted way, which
->>>>> will automatically decrypt the old memory encrypted when we read those data
->>>>> from the remapping address.
->>>>>
->>>>>  ----------------------------------------------
->>>>> | first-kernel | second-kernel | kdump support |
->>>>> |      (mem_encrypt=on|off)    |   (yes|no)    | 
->>>>> |--------------+---------------+---------------|
->>>>> |     on       |     on        |     yes       |
->>>>> |     off      |     off       |     yes       |
->>>>> |     on       |     off       |     no        |
->>>>> |     off      |     on        |     no        |
->>>>> |______________|_______________|_______________|
->>>>>
->>>>> Test tools:
->>>>> makedumpfile[v1.6.3]: https://github.com/LianboJ/makedumpfile
->>>>> commit e1de103eca8f (A draft for kdump vmcore about AMD SME)
->>>>> Author: Lianbo Jiang <lijiang@redhat.com>
->>>>> Date:   Mon May 14 17:02:40 2018 +0800
->>>>> Note: This patch can only dump vmcore in the case of SME enabled.
->>>>>
->>>>> crash-7.2.1: https://github.com/crash-utility/crash.git
->>>>> commit 1e1bd9c4c1be (Fix for the "bpf" command display on Linux 4.17-rc1)
->>>>> Author: Dave Anderson <anderson@redhat.com>
->>>>> Date:   Fri May 11 15:54:32 2018 -0400
->>>>>
->>>>> Test environment:
->>>>> HP ProLiant DL385Gen10 AMD EPYC 7251
->>>>> 8-Core Processor
->>>>> 32768 MB memory
->>>>> 600 GB disk space
->>>>>
->>>>> Linux 4.17-rc4:
->>>>> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
->>>>> commit 75bc37fefc44 ("Linux 4.17-rc4")
->>>>> Author: Linus Torvalds <torvalds@linux-foundation.org>
->>>>> Date:   Sun May 6 16:57:38 2018 -1000
->>>>>
->>>>> Reference:
->>>>> AMD64 Architecture Programmer's Manual
->>>>> https://support.amd.com/TechDocs/24593.pdf
->>>>>
->>>>
->>>> Have you also tested this with SEV?  It would be nice if the kdump
->>>> changes you make work with both SME and SEV.
->>>>
->>> Thank you, Tom.
->>> This is a great question, we originally plan to implement SEV in subsequent patches, and
->>> we are also working on SEV at present.
->>> Furthermore, we have another known issue that the system can't jump into the second kernel
->>> when SME is enabled and kaslr is disabled in kdump mode. It seems that is a complex problems,
->>> maybe it is related to kaslr and SME, currently, i'm not sure the root cause, but we will
->>> also plan to fix it. Can you give me any advice about this issue?
->>>
->> Based on upstream 4.17-rc5, we have recently found a new issue that the system can't boot to
->> use kexec when SME is enabled and kaslr is disabled. Have you ever run into this issue? 
->> They have similar reproduction scenarios.
+On 2018-05-23 2:02 AM, Rob Herring wrote:
+> On Fri, May 18, 2018 at 11:52:05AM +0800, djw@t-chip.com.cn wrote:
+>> From: Levin Du <djw@t-chip.com.cn>
 >>
->> CC Tom & Baoquan
-> 
-> I haven't encountered this issue.  Can you send the kernel config that you
-> are using?  And your kernel command line?  I'll try your config and see if
-> I can reproduce the issue.
-> 
-Thank you, Tom.
-It doesn't have anything special config, and it's always reproduced.
-I will send another email to you about kernel config and command line.
-> Just to be clarify, you perform a power-on boot with SME enabled and KASLR
-> disabled (e.g. mem_encrypt=on nokaslr), correct, and that won't boot?
+>> Some GPIOs sit in the GRF_SOC_CON registers of Rockchip SoCs,
+>> which do not belong to the general pinctrl.
+>>
+>> Adding gpio-syscon support makes controlling regulator or
+>> LED using these special pins very easy by reusing existing
+>> drivers, such as gpio-regulator and led-gpio.
+>>
+>> Signed-off-by: Levin Du <djw@t-chip.com.cn>
+>>
+>> ---
+>>
+>> Changes in v2:
+>> - Rename gpio_syscon10 to gpio_mute in doc
+>>
+>> Changes in v1:
+>> - Refactured for general gpio-syscon usage for Rockchip SoCs.
+>> - Add doc rockchip,gpio-syscon.txt
+>>
+>>   .../bindings/gpio/rockchip,gpio-syscon.txt         | 41 ++++++++++++++++++++++
+>>   drivers/gpio/gpio-syscon.c                         | 30 ++++++++++++++++
+>>   2 files changed, 71 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt b/Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
+>> new file mode 100644
+>> index 0000000..b1b2a67
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
+>> @@ -0,0 +1,41 @@
+>> +* Rockchip GPIO support for GRF_SOC_CON registers
+>> +
+>> +Required properties:
+>> +- compatible: Should contain "rockchip,gpio-syscon".
+>> +- gpio-controller: Marks the device node as a gpio controller.
+>> +- #gpio-cells: Should be two. The first cell is the pin number and
+>> +  the second cell is used to specify the gpio polarity:
+>> +    0 = Active high,
+>> +    1 = Active low.
+> There's no need for this child node. Just make the parent node a gpio
+> controller.
 >
-The system can boot in this case.
+> Rob
+Hi Rob, it is not clear to me. Do you suggest that the grf node should 
+be a gpio controller,
+like below?
 
-Thanks.
-Lianbo
-> Thanks,
-> Tom
-> 
->>
->> Thanks.
->> Lianbo
->>
->>> Thanks.
->>> Lianbo
->>>> Thanks,
->>>> Tom
->>>>
->>>>> Lianbo Jiang (2):
->>>>>   add a function(ioremap_encrypted) for kdump when AMD sme enabled.
->>>>>   support kdump when AMD secure memory encryption is active
->>>>>
->>>>>  arch/x86/include/asm/dmi.h      | 14 +++++++++++++-
->>>>>  arch/x86/include/asm/io.h       |  2 ++
->>>>>  arch/x86/kernel/acpi/boot.c     |  8 ++++++++
->>>>>  arch/x86/kernel/crash_dump_64.c | 27 +++++++++++++++++++++++++++
->>>>>  arch/x86/mm/ioremap.c           | 25 +++++++++++++++++--------
->>>>>  drivers/acpi/tables.c           | 14 +++++++++++++-
->>>>>  drivers/iommu/amd_iommu_init.c  |  9 ++++++++-
->>>>>  fs/proc/vmcore.c                | 36 +++++++++++++++++++++++++++++++-----
->>>>>  include/linux/crash_dump.h      |  4 ++++
->>>>>  kernel/kexec_core.c             | 12 ++++++++++++
->>>>>  10 files changed, 135 insertions(+), 16 deletions(-)
->>>>>
++    grf: syscon at ff100000 {
++        compatible = "rockchip,gpio-syscon", "rockchip,rk3328-grf", 
+"syscon", "simple-mfd";
++        //...
++        gpio-controller;
++        #gpio-cells = <2>;
++        gpio,syscon-dev = <&grf 0x0428 0>;
++    };
+
+or just reserve the following case in the doc?
+
++    grf: syscon at ff100000 {
++        compatible = "rockchip,rk3328-grf", "syscon", "simple-mfd";
++        //...
++    };
++
++    gpio_mute: gpio-mute {
++        compatible = "rockchip,gpio-syscon";
++        gpio-controller;
++        #gpio-cells = <2>;
++        gpio,syscon-dev = <&grf 0x0428 0>;
++    };
+
+
+Thanks
+Levin
