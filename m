@@ -1,49 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754768AbeEWQ0w (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 12:26:52 -0400
-Received: from mail-io0-f177.google.com ([209.85.223.177]:34836 "EHLO
-        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754438AbeEWQ0r (ORCPT
+        id S1754798AbeEWQ1A (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 12:27:00 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:37266 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754739AbeEWQ0u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 12:26:47 -0400
-X-Google-Smtp-Source: AB8JxZrq2V0pH7s7FOUi7iBY0SP122A2GESXz6LdyIu3Bm8Ee9WhZ5BsXEwsAnuGXGdFpkmT+SCKdPzH2OpcT9l5BFk=
+        Wed, 23 May 2018 12:26:50 -0400
+X-Google-Smtp-Source: AB8JxZpIVf2UKcsHSY0B1hPYnhT1D+D0LtfoTVir2BMwtVKTg5Q1Efb+x/+Sp00wJkNc2STdsX1vOA==
+Subject: Re: [PATCH v2] ath10k: transmit queued frames after waking queues
+To: Niklas Cassel <niklas.cassel@linaro.org>,
+        Rajkumar Manoharan <rmanohar@codeaurora.org>
+Cc: Kalle Valo <kvalo@qca.qualcomm.com>,
+        "David S. Miller" <davem@davemloft.net>, ath10k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-wireless-owner@vger.kernel.org
+References: <20180521204359.23884-1-niklas.cassel@linaro.org>
+ <8195be7603a8cd659d25a9c3d898b891@codeaurora.org>
+ <20180522211521.GA26123@localhost.localdomain>
+From: Erik Stromdahl <erik.stromdahl@gmail.com>
+Message-ID: <c131da6e-6479-3a40-fbd3-9c61d6690ba8@gmail.com>
+Date: Wed, 23 May 2018 18:25:49 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-References: <0879f797135033e05e8e9166a3c85628@codeaurora.org>
- <20180523130547.GF26965@arm.com> <CA+55aFwKLBKdf3gdWkJSdewQYYXYYfN29SPT+etPqpopxA0CMQ@mail.gmail.com>
- <20180523153607.GD2983@arm.com>
-In-Reply-To: <20180523153607.GD2983@arm.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 23 May 2018 09:26:35 -0700
-Message-ID: <CA+55aFy9mVCJUniAMVvJjqaa=ke2mx6HfkPhCGP54ncdh70peQ@mail.gmail.com>
-Subject: Re: write_lock_irq(&tasklist_lock)
-To: Will Deacon <will.deacon@arm.com>
-Cc: psodagud@codeaurora.org, Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Rik van Riel <riel@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-        Eric Biggers <ebiggers@google.com>,
-        Frederic Weisbecker <fweisbec@gmail.com>, sherryy@android.com,
-        Vegard Nossum <vegard.nossum@oracle.com>,
-        Christoph Lameter <cl@linux.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Sasha Levin <alexander.levin@verizon.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Boqun Feng <boqun.feng@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180522211521.GA26123@localhost.localdomain>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 8:35 AM Will Deacon <will.deacon@arm.com> wrote:
 
-> In other words, qrwlock requires consistent locking order wrt spinlocks.
 
-I *thought* lockdep already tracked and detected this. Or is that only with
-with the sleeping versions?
+On 05/22/2018 11:15 PM, Niklas Cassel wrote:
 
-But yes, that's equivalent to the irq-unfairness thing we have a special
-case for.
+<snip>
+>>
+>> Earlier we observed performance issues in calling push_pending from each
+>> tx completion. IMHO this change may introduce the same problem again.
+> 
+> I prefer functional TX over performance issues,
+> but I agree that it is unfortunate that SDIO doesn't use
+> ath10k_htt_txrx_compl_task().
+> Erik, is there a reason for this?
+The reason is that the SDIO code has been derived mainly from qcacld and ath6kl
+and they don't implement napi.
 
-              Linus
+ath10k_htt_txrx_compl_task is currently only called from the napi poll function,
+and the sdio bus driver doesn't have such a function.
+
+> 
+> Perhaps it would be possible to call ath10k_mac_tx_push_pending()
+> from the equivalent to ath10k_htt_txrx_compl_task(),
+> but from SDIO's point of view.
+An equivalent for SDIO would most likely be *ath10k_htt_htc_t2h_msg_handler*
+or any of the other functions called from this function.
+
+*ath10k_txrx_tx_unref* is actually called from *ath10k_htt_htc_t2h_msg_handler*,
+so that function could be viewed as an equivalent.
+
+If the call should be added in the bus driver (sdio.c) it should most likely be
+placed in *ath10k_sdio_mbox_rx_process_packets*
+
+		if (!pkt->trailer_only) {
+			ep->ep_ops.ep_rx_complete(ar_sdio->ar, pkt->skb);
+			ath10k_mac_tx_push_pending(ar_sdio->ar);
+		} else {
+			kfree_skb(pkt->skb)
+		}
+
+The above call would of course result in lot's of calls to *ath10k_mac_tx_push_pending*
+Adding a htt_num_pending check here wouldn't look nice.
+
+The HL RX path differs from the LL path in that the t2h_msg_handler returns
+false indicating that it has consumed the skb.
+
+This is because it is the HL RX indication handler that delivers the skb's
+to mac80211.
+
+Another solution could be to add an *else-statement* as a part of the *if (release)*
+in *ath10k_htt_htc_t2h_msg_handler*, where *ath10k_mac_tx_push_pending* could be called.
+
+Something like this perhaps:
+
+	/* Free the indication buffer */
+	if (release)
+		dev_kfree_skb_any(skb);
+	else if (!ar->htt.num_pending_tx)
+		ath10k_mac_tx_push_pending(ar);
+
+I think I prefer your original patch though.
+> 
+> Another solution might be to change so that we only call
+> ath10k_mac_tx_push_pending() from ath10k_txrx_tx_unref()
+> if (htt->num_pending_tx == 0). That should decrease the number
+> of calls to ath10k_mac_tx_push_pending(), while still avoiding
+> a "TX deadlock" scenario for SDIO.
+Just out of curiosity, where did the limit of 3 come from?
+If it works with a limit of 0, I think it should be used instead.
+
+Another intersting thing that I stumbled upon when looking into the
+code (while writing this email) is the *wake_up(&htt->empty_tx_wq);*
+
+For some reason I have considered it not to be applicable for HL devices.
+
+The queue is waited for in the flush op (*ath10k_flush*).
+I am unsure what it is used for, but I don't think it affects the TX
+deadlock scenario.
+
+--
+Erik
