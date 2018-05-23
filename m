@@ -1,63 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933840AbeEWR0y (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 13:26:54 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:60198 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933760AbeEWR0u (ORCPT
+        id S933873AbeEWR23 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 13:28:29 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:48862 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932667AbeEWR22 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 13:26:50 -0400
-Date: Wed, 23 May 2018 13:26:48 -0400 (EDT)
-Message-Id: <20180523.132648.459690706167609338.davem@davemloft.net>
-To: ast@kernel.org
-Cc: daniel@iogearbox.net, torvalds@linux-foundation.org,
-        gregkh@linuxfoundation.org, luto@amacapital.net, mcgrof@kernel.org,
-        keescook@chromium.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com
-Subject: Re: [PATCH v3 net-next 0/2] bpfilter
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180522022230.2492505-1-ast@kernel.org>
-References: <20180522022230.2492505-1-ast@kernel.org>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Wed, 23 May 2018 13:28:28 -0400
+Date: Wed, 23 May 2018 19:28:19 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] sched,tracing: Correct trace_sched_pi_setprio() for
+ deboosting
+Message-ID: <20180523172819.GW12198@hirez.programming.kicks-ass.net>
+References: <20180523141107.6417-1-bigeasy@linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180523141107.6417-1-bigeasy@linutronix.de>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexei Starovoitov <ast@kernel.org>
-Date: Mon, 21 May 2018 19:22:28 -0700
+On Wed, May 23, 2018 at 04:11:07PM +0200, Sebastian Andrzej Siewior wrote:
 
-> v2->v3:
-> - followed Luis's suggestion and significantly simplied first patch
->   with shmem_kernel_file_setup+kernel_write. Added kdoc for new helper
-> - fixed typos and race to access pipes with mutex
-> - tested with bpfilter being 'builtin'. CONFIG_BPFILTER_UMH=y|m both work.
->   Interesting to see a usermode executable being embedded inside vmlinux.
-> - it doesn't hurt to enable bpfilter in .config.
->   ip_setsockopt commands sent to usermode via pipes and -ENOPROTOOPT is
->   returned from userspace, so kernel falls back to original iptables code
+> Since that commit I see during a deboost a task this:
+> |futex sched_pi_setprio: comm=futex_requeue_p pid=2234 oldprio=98 newprio=98
+> |futex sched_switch: prev_comm=futex_requeue_p prev_pid=2234 prev_prio=120
 > 
-> v1->v2:
-> this patch set is almost a full rewrite of the earlier umh modules approach
-> The v1 of patches and follow up discussion was covered by LWN:
-> https://lwn.net/Articles/749108/
+> and after the revert, the `newprio' shows the correct value again:
 > 
-> I believe the v2 addresses all issues brought up by Andy and others.
-> Mainly there are zero changes to kernel/module.c
-> Instead of teaching module loading logic to recognize special
-> umh module, let normal kernel modules execute part of its own
-> .init.rodata as a new user space process (Andy's idea)
-> Patch 1 introduces this new helper:
-> int fork_usermode_blob(void *data, size_t len, struct umh_info *info);
-> Input:
->   data + len == executable file
-> Output:
->   struct umh_info {
->        struct file *pipe_to_umh;
->        struct file *pipe_from_umh;
->        pid_t pid;
->   };
+> |futex sched_pi_setprio: comm=futex_requeue_p pid=2220 oldprio=98 newprio=120
+> |futex sched_switch: prev_comm=futex_requeue_p prev_pid=2220 prev_prio=120
 
-Series applied, let the madness begin... :-)
+> @@ -435,7 +435,7 @@ TRACE_EVENT(sched_pi_setprio,
+>  		memcpy(__entry->comm, tsk->comm, TASK_COMM_LEN);
+>  		__entry->pid		= tsk->pid;
+>  		__entry->oldprio	= tsk->prio;
+> -		__entry->newprio	= pi_task ? pi_task->prio : tsk->prio;
+> +		__entry->newprio	= new_prio;
+>  		/* XXX SCHED_DEADLINE bits missing */
+>  	),
+>  
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 092f7c4de903..888df643b99b 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -3823,7 +3823,7 @@ void rt_mutex_setprio(struct task_struct *p, struct task_struct *pi_task)
+>  		goto out_unlock;
+>  	}
+>  
+> -	trace_sched_pi_setprio(p, pi_task);
+> +	trace_sched_pi_setprio(p, prio);
+
+at this point:
+
+	prio = pi_task ? min(p->normal_prio, pi->task->prio) : p->normal_prio;
+
+(aka __rt_effective_prio)
+
+Should we put that in the tracepoint instead?
+
+>  	oldprio = p->prio;
+>  
+>  	if (oldprio == prio)
