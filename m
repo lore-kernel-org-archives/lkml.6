@@ -1,190 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753953AbeEWC5l (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 22:57:41 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58344 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753850AbeEWC5A (ORCPT
+        id S1753768AbeEWDKG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 23:10:06 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:36263 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753165AbeEWDKF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 22:57:00 -0400
-From: Dong Jia Shi <bjsdjshi@linux.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc: cohuck@redhat.com, borntraeger@de.ibm.com, bjsdjshi@linux.ibm.com,
-        pasic@linux.ibm.com, pmorel@linux.ibm.com
-Subject: [PATCH v4 2/4] vfio: ccw: refactor and improve pfn_array_alloc_pin()
-Date: Wed, 23 May 2018 04:56:43 +0200
-X-Mailer: git-send-email 2.16.3
-In-Reply-To: <20180523025645.8978-1-bjsdjshi@linux.ibm.com>
-References: <20180523025645.8978-1-bjsdjshi@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18052302-0028-0000-0000-000009ABB58E
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009069; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000261; SDB=6.01036291; UDB=6.00530123; IPR=6.00815419;
- MB=3.00021250; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-23 02:56:58
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052302-0029-0000-0000-00003AF458B1
-Message-Id: <20180523025645.8978-3-bjsdjshi@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-23_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805230025
+        Tue, 22 May 2018 23:10:05 -0400
+X-Google-Smtp-Source: AB8JxZoaTN0vno4Yj2Cr6s7MUqREjb9XxwkO9/5KV2E5gkW4xEjhi8GRuB1a/c5fFFqt+uci/g12qw==
+Date: Tue, 22 May 2018 20:10:03 -0700
+From: Joel Fernandes <joel@joelfernandes.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        byungchul.park@lge.com, mathieu.desnoyers@efficios.com,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org,
+        kernel-team@android.com
+Subject: Re: Tasks RCU vs Preempt RCU
+Message-ID: <20180523031003.GA60111@joelaf.mtv.corp.google.com>
+References: <20180518183623.GA163151@joelaf.mtv.corp.google.com>
+ <20180519022918.GV3803@linux.vnet.ibm.com>
+ <20180519225905.GB134184@joelaf.mtv.corp.google.com>
+ <20180520004938.GZ3803@linux.vnet.ibm.com>
+ <20180520112843.57079857@grimm.local.home>
+ <20180520191846.GA248075@joelaf.mtv.corp.google.com>
+ <20180521215951.2d6abfcb@gandalf.local.home>
+ <20180522045414.GG40541@joelaf.mtv.corp.google.com>
+ <20180522083832.45353d5f@gandalf.local.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180522083832.45353d5f@gandalf.local.home>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This refactors pfn_array_alloc_pin() and also improves it by adding
-defensive code in error handling so that calling pfn_array_unpin_free()
-after error return won't lead to problem. This mainly does:
-1. Merge pfn_array_pin() into pfn_array_alloc_pin(), since there is no
-   other user of pfn_array_pin(). As a result, also remove kernel-doc
-   for pfn_array_pin() and add/update kernel-doc for pfn_array_alloc_pin()
-   and struct pfn_array.
-2. For a vfio_pin_pages() failure, set pa->pa_nr to zero to indicate
-   zero pages were pinned.
-3. Set pa->pa_iova_pfn to NULL right after it was freed.
+On Tue, May 22, 2018 at 08:38:32AM -0400, Steven Rostedt wrote:
+> On Mon, 21 May 2018 21:54:14 -0700
+> Joel Fernandes <joel@joelfernandes.org> wrote:
+> 
+> 
+> > Yes, lets brain storm this if you like. One way I was thinking if we can
+> > manually check every CPU and see what state its in (usermode, kernel, idle
+> > etc) using an IPI mechanism. Once all CPUs have been seen to be in usermode,
+> > or idle atleast once - then we are done. You have probably already thought
+> 
+> Nope, it has nothing to do with CPUs, it really has to do with tasks.
+> 
+> 	CPU0
+> 	----
+>  task 1: (pinned to CPU 0)
+> 	 call func_tracer_trampoline
+> 	 [on trampoline]
+> 	 [timer tick, schedule ]
+> 
+>  task 2: (higher priority, also pinned to CPU 0)
+> 	 goes to user space
+> 	 [ Runs for along time ]
+> 
+> We cannot free the trampoline until task 2 releases the CPU and lets
+> task 1 run again to get off the CPU.
 
-Suggested-by: Pierre Morel <pmorel@linux.ibm.com>,
-Signed-off-by: Dong Jia Shi <bjsdjshi@linux.ibm.com>
----
- drivers/s390/cio/vfio_ccw_cp.c | 82 +++++++++++++++++++-----------------------
- 1 file changed, 36 insertions(+), 46 deletions(-)
+Right. I totally missed that. Ofcourse, its not sufficient to see if a CPU is
+in usermode. :(
 
-diff --git a/drivers/s390/cio/vfio_ccw_cp.c b/drivers/s390/cio/vfio_ccw_cp.c
-index b38ef387e4f0..262f969b3b33 100644
---- a/drivers/s390/cio/vfio_ccw_cp.c
-+++ b/drivers/s390/cio/vfio_ccw_cp.c
-@@ -29,7 +29,7 @@ struct pfn_array {
- 	unsigned long		*pa_iova_pfn;
- 	/* Array that receives PFNs of the pages pinned. */
- 	unsigned long		*pa_pfn;
--	/* Number of pages to pin/pinned from @pa_iova. */
-+	/* Number of pages pinned from @pa_iova. */
- 	int			pa_nr;
- };
- 
-@@ -50,64 +50,33 @@ struct ccwchain {
- };
- 
- /*
-- * pfn_array_pin() - pin user pages in memory
-+ * pfn_array_alloc_pin() - alloc memory for PFNs, then pin user pages in memory
-  * @pa: pfn_array on which to perform the operation
-  * @mdev: the mediated device to perform pin/unpin operations
-+ * @iova: target guest physical address
-+ * @len: number of bytes that should be pinned from @iova
-  *
-- * Attempt to pin user pages in memory.
-+ * Attempt to allocate memory for PFNs, and pin user pages in memory.
-  *
-  * Usage of pfn_array:
-- * Any field in this structure should be initialized by caller.
-- * We expect @pa->pa_nr > 0, and its value will be assigned by callee.
-+ * We expect (pa_nr == 0) and (pa_iova_pfn == NULL), any field in
-+ * this structure will be filled in by this function.
-  *
-  * Returns:
-  *   Number of pages pinned on success.
-- *   If @pa->pa_nr is 0 or negative, returns 0.
-+ *   If @pa->pa_nr is not 0, or @pa->pa_iova_pfn is not NULL initially,
-+ *   returns -EINVAL.
-  *   If no pages were pinned, returns -errno.
-  */
--static int pfn_array_pin(struct pfn_array *pa, struct device *mdev)
--{
--	int i, ret;
--
--	if (pa->pa_nr <= 0) {
--		pa->pa_nr = 0;
--		return 0;
--	}
--
--	pa->pa_iova_pfn[0] = pa->pa_iova >> PAGE_SHIFT;
--	for (i = 1; i < pa->pa_nr; i++)
--		pa->pa_iova_pfn[i] = pa->pa_iova_pfn[i - 1] + 1;
--
--	ret = vfio_pin_pages(mdev, pa->pa_iova_pfn, pa->pa_nr,
--			     IOMMU_READ | IOMMU_WRITE, pa->pa_pfn);
--
--	if (ret > 0 && ret != pa->pa_nr) {
--		vfio_unpin_pages(mdev, pa->pa_iova_pfn, ret);
--		pa->pa_nr = 0;
--		return 0;
--	}
--
--	return ret;
--}
--
--/* Unpin the pages before releasing the memory. */
--static void pfn_array_unpin_free(struct pfn_array *pa, struct device *mdev)
--{
--	vfio_unpin_pages(mdev, pa->pa_iova_pfn, pa->pa_nr);
--	pa->pa_nr = 0;
--	kfree(pa->pa_iova_pfn);
--}
--
--/* Alloc memory for PFNs, then pin pages with them. */
- static int pfn_array_alloc_pin(struct pfn_array *pa, struct device *mdev,
- 			       u64 iova, unsigned int len)
- {
--	int ret = 0;
-+	int i, ret = 0;
- 
- 	if (!len)
- 		return 0;
- 
--	if (pa->pa_nr)
-+	if (pa->pa_nr || pa->pa_iova_pfn)
- 		return -EINVAL;
- 
- 	pa->pa_iova = iova;
-@@ -124,18 +93,39 @@ static int pfn_array_alloc_pin(struct pfn_array *pa, struct device *mdev,
- 		return -ENOMEM;
- 	pa->pa_pfn = pa->pa_iova_pfn + pa->pa_nr;
- 
--	ret = pfn_array_pin(pa, mdev);
-+	pa->pa_iova_pfn[0] = pa->pa_iova >> PAGE_SHIFT;
-+	for (i = 1; i < pa->pa_nr; i++)
-+		pa->pa_iova_pfn[i] = pa->pa_iova_pfn[i - 1] + 1;
-+
-+	ret = vfio_pin_pages(mdev, pa->pa_iova_pfn, pa->pa_nr,
-+			     IOMMU_READ | IOMMU_WRITE, pa->pa_pfn);
- 
--	if (ret > 0)
--		return ret;
--	else if (!ret)
-+	if (ret < 0) {
-+		goto err_out;
-+	} else if (ret > 0 && ret != pa->pa_nr) {
-+		vfio_unpin_pages(mdev, pa->pa_iova_pfn, ret);
- 		ret = -EINVAL;
-+		goto err_out;
-+	}
-+
-+	return ret;
- 
-+err_out:
-+	pa->pa_nr = 0;
- 	kfree(pa->pa_iova_pfn);
-+	pa->pa_iova_pfn = NULL;
- 
- 	return ret;
- }
- 
-+/* Unpin the pages before releasing the memory. */
-+static void pfn_array_unpin_free(struct pfn_array *pa, struct device *mdev)
-+{
-+	vfio_unpin_pages(mdev, pa->pa_iova_pfn, pa->pa_nr);
-+	pa->pa_nr = 0;
-+	kfree(pa->pa_iova_pfn);
-+}
-+
- static int pfn_array_table_init(struct pfn_array_table *pat, int nr)
- {
- 	pat->pat_pa = kcalloc(nr, sizeof(*pat->pat_pa), GFP_KERNEL);
--- 
-2.16.3
+> > about this so feel free to say why its not a good idea, but to me there are 3
+> > places that a tasks quiescent state is recorded: during the timer tick,
+> > during task sleep and during rcu_note_voluntary_context_switch in
+> > cond_resched_rcu_qs. Of these, I feel only the cond_resched_rcu_qs case isn't
+> > trackable with IPI mechanism which may make the detection a bit slower, but
+> > tasks-RCU in mainline is slow right now anyway (~ 1 second delay if any task
+> > was held).
+> 
+> 
+> The way I was originally going to handle this was with a per task
+> counter, where it can be incremented at certain points via tracepoints.
+> 
+> Thus my synchronize tasks, would have connected to a bunch of
+> tracepoints at known quiescent states that would increment the counter,
+> and then check each task until they all pass a certain point, or are in
+> a quiescent state (userspace or idle). But this would be doing much of
+> what RCU does today, and that is why we decided to hook with the RCU
+> infrastructure.
+> 
+> I have to ask, what's your motivation for getting rid of RCU tasks?
+
+Again, my motivation was just to see if we could use RCU-preempt. Linus was
+talking about unifying RCU variants/API better. I believe Paul is well on top of
+that task and I have been helping as I could with his recent series for that.
+Since RCU-preempt doesn't suit this job, looks like we have keep RCU tasks
+around. That said I sent you a patch to speed up RCU-tasks a bit, could you a
+take a look? Paul was asking for your input: https://lkml.org/lkml/2018/5/20/263
+
+Welcome back from your vacation, hope it was fun!
+
+thanks,
+
+ - Joel
