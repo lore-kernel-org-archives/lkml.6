@@ -1,73 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753830AbeEWBTr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 21:19:47 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:39726 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753740AbeEWBTO (ORCPT
+        id S1753885AbeEWBUt (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 21:20:49 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:34934 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753538AbeEWBUp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 21:19:14 -0400
-X-Google-Smtp-Source: AB8JxZoK/c+LI+F/cp/rExcbXKmQeSHorF3FrAuvT1q6FhDaZk0nuNWf+fGgjOS6pyYGfNa2/yTOqA==
-Date: Tue, 22 May 2018 18:19:11 -0700
-From: Joel Fernandes <joel@joelfernandes.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, byungchul.park@lge.com,
-        mathieu.desnoyers@efficios.com, Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org,
-        kernel-team@android.com
-Subject: Re: Tasks RCU vs Preempt RCU
-Message-ID: <20180523011911.GD55359@joelaf.mtv.corp.google.com>
-References: <20180519225905.GB134184@joelaf.mtv.corp.google.com>
- <20180520004938.GZ3803@linux.vnet.ibm.com>
- <20180520112843.57079857@grimm.local.home>
- <20180520191846.GA248075@joelaf.mtv.corp.google.com>
- <20180521215951.2d6abfcb@gandalf.local.home>
- <20180522045414.GG40541@joelaf.mtv.corp.google.com>
- <20180522083832.45353d5f@gandalf.local.home>
- <20180522160949.GU3803@linux.vnet.ibm.com>
- <20180522132700.68b6660d@gandalf.local.home>
- <20180522174711.GY3803@linux.vnet.ibm.com>
+        Tue, 22 May 2018 21:20:45 -0400
+X-Google-Smtp-Source: AB8JxZrkvWEBnO7bHG4t0wYdQHXgDAUXRBeLOvg9amOPp6kXpY6mZDvlf+CeGWQQskorKZKW0wXbxw==
+Subject: Re: [PATCH net] net: phy: broadcom: Fix bcm_write_exp()
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: netdev@vger.kernel.org, arunp@broadcom.com,
+        "David S. Miller" <davem@davemloft.net>, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Jon Mason <jonmason@broadcom.com>,
+        "maintainer:BROADCOM IPROC ARM ARCHITECTURE"
+        <bcm-kernel-feedback-list@broadcom.com>,
+        "moderated list:BROADCOM IPROC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20180523000450.9384-1-f.fainelli@gmail.com>
+ <20180523001503.GA16062@lunn.ch>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+Message-ID: <89a1f8d7-5303-f3c0-aa38-43e64488ec5a@gmail.com>
+Date: Tue, 22 May 2018 18:20:41 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180522174711.GY3803@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180523001503.GA16062@lunn.ch>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 10:47:11AM -0700, Paul E. McKenney wrote:
-> On Tue, May 22, 2018 at 01:27:00PM -0400, Steven Rostedt wrote:
-> > On Tue, 22 May 2018 09:09:49 -0700
-> > "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
-> > 
-> > > Just for the record, if you guys realy want to take over Tasks RCU,
-> > > I have no objections.  For one thing, I don't anticipate any other use
-> > > cases for it (famous last words!).  But you break it, you buy it!  ;-)
-> > 
-> > It really matters how much of a burden is RCU_tasks to RCU itself? If
-> > it causes a lot of headache for you, and it prevents you from cleaning
-> > up RCU or making it better, then I would be happy to take it out of RCU
-> > and maintain it separately myself. But if that's not the case, I'm happy
-> > with keeping it within the RCU umbrella. Which brings me to the
-> > question of what motivation does Joel have to remove it?
+Hi Andrew,
+
+On 05/22/2018 05:15 PM, Andrew Lunn wrote:
+> On Tue, May 22, 2018 at 05:04:49PM -0700, Florian Fainelli wrote:
+>> On newer PHYs, we need to select the expansion register to write with
+>> setting bits [11:8] to 0xf. This was done correctly by bcm7xxx.c prior
+>> to being migrated to generic code under bcm-phy-lib.c which
+>> unfortunately used the older implementation from the BCM54xx days.
 > 
-> The burden on me from Tasks RCU has been quite light, so no need for a
-> change from my end.
+> Hi Florian
 > 
-> Over to you, Joel!  ;-)
+> Does selecting the expansion register affect access to the standard
+> registers? Does this need locking like the Marvell PHY has when
+> changing pages?
 
-My motivation was I felt RCU-preempt already did the same thing (which I
-still believe it does) so its redundant. Although now I'm convinced from our
-earlier discussions that its not feasible to do an rcu_read_lock and
-rcu_read_unlock in trampoline code.
-
-Sorry I didn't mean you should really nuke RCU-tasks if it has a purpose, but
-I was more trying to understand what its purpose was that RCU-preempt didn't
-solve. That's all.
-
-And welcome back from Vacation Steve. I'm about to send v7 of my preempt/irq
-tracepoint patches so the timing seems great. I hope you will be able to take
-a look at them. thanks!
-
- - Joel
+We should probably convert this to the page accessors since the
+expansion, misc and other shadow 0x1c accesses are all indirection
+layers to poke into a different address space of the PHY. That would be
+a separate fix though for a number of reasons.
+-- 
+Florian
