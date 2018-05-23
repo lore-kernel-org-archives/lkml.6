@@ -1,455 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932565AbeEWLA0 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 07:00:26 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:52820 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932312AbeEWLAV (ORCPT
+        id S932545AbeEWLGh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 07:06:37 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:51668 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932312AbeEWLGe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 07:00:21 -0400
+        Wed, 23 May 2018 07:06:34 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 277BB602BC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
+From: <ilialin@codeaurora.org>
+To: "'Sudeep Holla'" <sudeep.holla@arm.com>
+Cc: <vireshk@kernel.org>, <nm@ti.com>, <sboyd@kernel.org>,
+        <robh@kernel.org>, <mark.rutland@arm.com>, <rjw@rjwysocki.net>,
+        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1527068454-28921-1-git-send-email-ilialin@codeaurora.org> <1527068454-28921-2-git-send-email-ilialin@codeaurora.org> <3f1ca60e-7aa8-fccc-ab1c-4b7c37731cce@arm.com>
+In-Reply-To: <3f1ca60e-7aa8-fccc-ab1c-4b7c37731cce@arm.com>
+Subject: RE: [PATCH v10 1/2] cpufreq: Add Kryo CPU scaling driver
+Date: Wed, 23 May 2018 14:06:24 +0300
+Message-ID: <002901d3f286$198878b0$4c996a10$@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date: Wed, 23 May 2018 13:00:19 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Lucas Stach <dev@lynxeye.de>
-Subject: Re: [PATCH v6 2/4] ARM: dts: tegra: Fix unit_address_vs_reg DTC
- warnings for /memory
-In-Reply-To: <1527069406-6359-2-git-send-email-krzk@kernel.org>
-References: <1527069406-6359-1-git-send-email-krzk@kernel.org>
- <1527069406-6359-2-git-send-email-krzk@kernel.org>
-Message-ID: <870361d2b9451af2e21cc570c8fca2c2@agner.ch>
-User-Agent: Roundcube Webmail/1.3.4
-X-Spamd-Result: default: False [-3.10 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MID_RHS_MATCH_FROM(0.00)[];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         RCPT_COUNT_SEVEN(0.00)[10];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
-         RCVD_TLS_ALL(0.00)[];
-         BAYES_HAM(-3.00)[100.00%];
-         ARC_NA(0.00)[]
+Content-Type: text/plain;
+        charset="utf-8"
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHGHkKLWrrdHode7ZinDUAwaNCKTQIQamVJAy14mKykLuAkUA==
+Content-Language: en-us
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4NB6hYg022311
 
-On 23.05.2018 11:56, Krzysztof Kozlowski wrote:
-> Add a generic /memory node in each Tegra DTSI (with empty reg property,
-> to be overidden by each DTS) and set proper unit address for /memory
-> nodes to fix the DTC warnings:
+
+
+> -----Original Message-----
+> From: Sudeep Holla <sudeep.holla@arm.com>
+> Sent: Wednesday, May 23, 2018 13:40
+> To: Ilia Lin <ilialin@codeaurora.org>; vireshk@kernel.org; nm@ti.com;
+> sboyd@kernel.org; robh@kernel.org; mark.rutland@arm.com;
+> rjw@rjwysocki.net; linux-pm@vger.kernel.org; devicetree@vger.kernel.org;
+> linux-kernel@vger.kernel.org
+> Cc: Sudeep Holla <sudeep.holla@arm.com>
+> Subject: Re: [PATCH v10 1/2] cpufreq: Add Kryo CPU scaling driver
 > 
->     arch/arm/boot/dts/tegra20-harmony.dtb: Warning (unit_address_vs_reg):
->         /memory: node has a reg or ranges property, but no unit name
 > 
-> The DTB after the change is the same as before except adding
-> unit-address to /memory node.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> On 23/05/18 10:40, Ilia Lin wrote:
+> > In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO
+> > processors, the CPU frequency subset and voltage value of each OPP
+> > varies based on the silicon variant in use. Qualcomm Process Voltage
+> > Scaling Tables defines the voltage and frequency value based on the
+> > msm-id in SMEM and speedbin blown in the efuse combination.
+> > The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the
+> > SoC to provide the OPP framework with required information.
+> > This is used to determine the voltage and frequency value for each OPP
+> > of
+> > operating-points-v2 table when it is parsed by the OPP framework.
+> >
+> > Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
 > 
-> ---
+> [...]
 > 
-> Changes since v5:
-> 1. Split with skeleton.dtsi removal (suggested by Stefan).
+> > +	pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
+> > +	if (!IS_ERR(pdev))
+> > +		return 0;
+> > +
+> > +	ret = PTR_ERR(pdev);
+> > +	dev_err(cpu_dev, "Failed to register platform device\n");
+> > +
+> > +free_opp:
+> > +	for_each_possible_cpu(cpu) {
+> > +		if (IS_ERR_OR_NULL(opp_tables[cpu]))
+> > +			break;
+> > +		dev_pm_opp_put_supported_hw(opp_tables[cpu]);
+> > +	}
+> > +free_np:
+> > +	of_node_put(np);
+> > +
+> > +	return ret;
+> > +}
+> > +late_initcall(qcom_cpufreq_kryo_driver_init);
 > 
-> Changes since v4:
-> 1. None
-> ---
->  arch/arm/boot/dts/tegra114-dalmore.dts      | 2 +-
->  arch/arm/boot/dts/tegra114-roth.dts         | 2 +-
->  arch/arm/boot/dts/tegra114-tn7.dts          | 2 +-
->  arch/arm/boot/dts/tegra114.dtsi             | 3 ++-
->  arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 2 +-
->  arch/arm/boot/dts/tegra124-apalis.dtsi      | 2 +-
->  arch/arm/boot/dts/tegra124-jetson-tk1.dts   | 2 +-
->  arch/arm/boot/dts/tegra124-nyan.dtsi        | 2 +-
->  arch/arm/boot/dts/tegra124-venice2.dts      | 2 +-
->  arch/arm/boot/dts/tegra124.dtsi             | 3 ++-
->  arch/arm/boot/dts/tegra20-colibri-512.dtsi  | 2 +-
->  arch/arm/boot/dts/tegra20-harmony.dts       | 2 +-
->  arch/arm/boot/dts/tegra20-paz00.dts         | 2 +-
->  arch/arm/boot/dts/tegra20-seaboard.dts      | 2 +-
->  arch/arm/boot/dts/tegra20-tamonten.dtsi     | 2 +-
->  arch/arm/boot/dts/tegra20-trimslice.dts     | 2 +-
->  arch/arm/boot/dts/tegra20-ventana.dts       | 2 +-
->  arch/arm/boot/dts/tegra20.dtsi              | 3 ++-
->  arch/arm/boot/dts/tegra30-apalis.dtsi       | 4 ++--
->  arch/arm/boot/dts/tegra30-beaver.dts        | 2 +-
->  arch/arm/boot/dts/tegra30-cardhu.dtsi       | 2 +-
->  arch/arm/boot/dts/tegra30-colibri.dtsi      | 2 +-
->  arch/arm/boot/dts/tegra30.dtsi              | 3 ++-
->  23 files changed, 28 insertions(+), 24 deletions(-)
+> Any particular reason why this *has* to be late initcall ?
+> Please change it to module_initcall otherwise.
+
+The purpose is to give the cpufreq-dt the time to register the driver and only then my driver will add the platform device.
+
+> Also address the of_node comments from Viresh.
 > 
-> diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts
-> b/arch/arm/boot/dts/tegra114-dalmore.dts
-> index eafff16765b4..1788556b4977 100644
-> --- a/arch/arm/boot/dts/tegra114-dalmore.dts
-> +++ b/arch/arm/boot/dts/tegra114-dalmore.dts
-> @@ -23,7 +23,7 @@
->  		stdout-path = "serial0:115200n8";
->  	};
->  
-> -	memory {
-> +	memory@80000000 {
->  		reg = <0x80000000 0x40000000>;
->  	};
->  
-> diff --git a/arch/arm/boot/dts/tegra114-roth.dts
-> b/arch/arm/boot/dts/tegra114-roth.dts
-> index 7ed7370ee67a..3d3835591cd2 100644
-> --- a/arch/arm/boot/dts/tegra114-roth.dts
-> +++ b/arch/arm/boot/dts/tegra114-roth.dts
-> @@ -28,7 +28,7 @@
->  		};
->  	};
->  
-> -	memory {
-> +	memory@80000000 {
->  		/* memory >= 0x79600000 is reserved for firmware usage */
->  		reg = <0x80000000 0x79600000>;
->  	};
-> diff --git a/arch/arm/boot/dts/tegra114-tn7.dts
-> b/arch/arm/boot/dts/tegra114-tn7.dts
-> index 7fc4a8b31e45..bfdd1bf61816 100644
-> --- a/arch/arm/boot/dts/tegra114-tn7.dts
-> +++ b/arch/arm/boot/dts/tegra114-tn7.dts
-> @@ -28,7 +28,7 @@
->  		};
->  	};
->  
-> -	memory {
-> +	memory@80000000 {
->  		/* memory >= 0x37e00000 is reserved for firmware usage */
->  		reg = <0x80000000 0x37e00000>;
->  	};
-> diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-> index 27ef515e5640..aff4b8e115bc 100644
-> --- a/arch/arm/boot/dts/tegra114.dtsi
-> +++ b/arch/arm/boot/dts/tegra114.dtsi
-> @@ -11,8 +11,9 @@
->  	#address-cells = <1>;
->  	#size-cells = <1>;
->  
-> -	memory {
-> +	memory@80000000 {
->  		device_type = "memory";
-> +		reg = <0x80000000 0>;
-
-Nit: I'd rather prefer
-
-reg = <0x80000000 0x0>;
-
-
->  	};
->  
->  	host1x@50000000 {
-> diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-> b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-> index bb67edb016c5..6a7f45651d38 100644
-> --- a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-> +++ b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-> @@ -15,7 +15,7 @@
->  	compatible = "toradex,apalis-tk1-v1.2", "toradex,apalis-tk1",
->  		     "nvidia,tegra124";
->  
-> -	memory {
-> +	memory@0 {
->  		reg = <0x0 0x80000000 0x0 0x80000000>;
->  	};
-
-Unit address combines all address cells, so this should be 80000000
-here. See also the device tree spec (v0.2) which has an example in
-chapter 3.4 /memory node.
-
-So this should be:
-
-memory@80000000 {
-...
-
-Same with all the board files below.
-
->  
-> diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi
-> b/arch/arm/boot/dts/tegra124-apalis.dtsi
-> index 65a2161b9b8e..e4625abd0a8a 100644
-> --- a/arch/arm/boot/dts/tegra124-apalis.dtsi
-> +++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
-> @@ -50,7 +50,7 @@
->  	model = "Toradex Apalis TK1";
->  	compatible = "toradex,apalis-tk1", "nvidia,tegra124";
->  
-> -	memory {
-> +	memory@0 {
->  		reg = <0x0 0x80000000 0x0 0x80000000>;
->  	};
->  
-> diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-> b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-> index 6dbcf84dafbc..e23b1159e8fd 100644
-> --- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-> +++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-> @@ -24,7 +24,7 @@
->  		stdout-path = "serial0:115200n8";
->  	};
->  
-> -	memory {
-> +	memory@0 {
->  		reg = <0x0 0x80000000 0x0 0x80000000>;
->  	};
->  
-> diff --git a/arch/arm/boot/dts/tegra124-nyan.dtsi
-> b/arch/arm/boot/dts/tegra124-nyan.dtsi
-> index 3609367037a6..f45ac668d88c 100644
-> --- a/arch/arm/boot/dts/tegra124-nyan.dtsi
-> +++ b/arch/arm/boot/dts/tegra124-nyan.dtsi
-> @@ -13,7 +13,7 @@
->  		stdout-path = "serial0:115200n8";
->  	};
->  
-> -	memory {
-> +	memory@0 {
->  		reg = <0x0 0x80000000 0x0 0x80000000>;
->  	};
->  
-> diff --git a/arch/arm/boot/dts/tegra124-venice2.dts
-> b/arch/arm/boot/dts/tegra124-venice2.dts
-> index 89bcc178994d..44492b48e165 100644
-> --- a/arch/arm/boot/dts/tegra124-venice2.dts
-> +++ b/arch/arm/boot/dts/tegra124-venice2.dts
-> @@ -18,7 +18,7 @@
->  		stdout-path = "serial0:115200n8";
->  	};
->  
-> -	memory {
-> +	memory@0 {
->  		reg = <0x0 0x80000000 0x0 0x80000000>;
->  	};
->  
-> diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-> index 951feea784af..ad9c9cd6fa8a 100644
-> --- a/arch/arm/boot/dts/tegra124.dtsi
-> +++ b/arch/arm/boot/dts/tegra124.dtsi
-> @@ -13,8 +13,9 @@
->  	#address-cells = <2>;
->  	#size-cells = <2>;
->  
-> -	memory {
-> +	memory@0 {
->  		device_type = "memory";
-> +		reg = <0 0>;
->  	};
-
-This should have two address and two size cells I guess. And DDR for all
-TK1 start at 0x0 0x80000000...
-
-So here with a default length of 0:
-
-	memory@80000000 {
- 		reg = <0x0 0x80000000 0x0 0x0>;
- 	};
-
->  
->  	pcie@1003000 {
-> diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-> b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-> index 5c202b3e3bb1..5623ff8d128c 100644
-> --- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-> +++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-> @@ -10,7 +10,7 @@
->  		rtc1 = "/rtc@7000e000";
->  	};
->  
-> -	memory {
-> +	memory@0 {
->  		reg = <0x00000000 0x20000000>;
->  	};
->  
-> diff --git a/arch/arm/boot/dts/tegra20-harmony.dts
-> b/arch/arm/boot/dts/tegra20-harmony.dts
-> index 628a55a9318b..1d96d92b72a7 100644
-> --- a/arch/arm/boot/dts/tegra20-harmony.dts
-> +++ b/arch/arm/boot/dts/tegra20-harmony.dts
-> @@ -18,7 +18,7 @@
->  		stdout-path = "serial0:115200n8";
->  	};
->  
-> -	memory {
-> +	memory@0 {
->  		reg = <0x00000000 0x40000000>;
->  	};
->  
-> diff --git a/arch/arm/boot/dts/tegra20-paz00.dts
-> b/arch/arm/boot/dts/tegra20-paz00.dts
-> index 30436969adc0..ef245291924f 100644
-> --- a/arch/arm/boot/dts/tegra20-paz00.dts
-> +++ b/arch/arm/boot/dts/tegra20-paz00.dts
-> @@ -19,7 +19,7 @@
->  		stdout-path = "serial0:115200n8";
->  	};
->  
-> -	memory {
-> +	memory@0 {
->  		reg = <0x00000000 0x20000000>;
->  	};
->  
-> diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts
-> b/arch/arm/boot/dts/tegra20-seaboard.dts
-> index 284aae351ff2..f91441683aad 100644
-> --- a/arch/arm/boot/dts/tegra20-seaboard.dts
-> +++ b/arch/arm/boot/dts/tegra20-seaboard.dts
-> @@ -18,7 +18,7 @@
->  		stdout-path = "serial0:115200n8";
->  	};
->  
-> -	memory {
-> +	memory@0 {
->  		reg = <0x00000000 0x40000000>;
->  	};
->  
-> diff --git a/arch/arm/boot/dts/tegra20-tamonten.dtsi
-> b/arch/arm/boot/dts/tegra20-tamonten.dtsi
-> index 872046d48709..20137fc578b1 100644
-> --- a/arch/arm/boot/dts/tegra20-tamonten.dtsi
-> +++ b/arch/arm/boot/dts/tegra20-tamonten.dtsi
-> @@ -15,7 +15,7 @@
->  		stdout-path = "serial0:115200n8";
->  	};
->  
-> -	memory {
-> +	memory@0 {
->  		reg = <0x00000000 0x20000000>;
->  	};
->  
-> diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts
-> b/arch/arm/boot/dts/tegra20-trimslice.dts
-> index d55c6b240a30..9eb26dc15f6b 100644
-> --- a/arch/arm/boot/dts/tegra20-trimslice.dts
-> +++ b/arch/arm/boot/dts/tegra20-trimslice.dts
-> @@ -18,7 +18,7 @@
->  		stdout-path = "serial0:115200n8";
->  	};
->  
-> -	memory {
-> +	memory@0 {
->  		reg = <0x00000000 0x40000000>;
->  	};
->  
-> diff --git a/arch/arm/boot/dts/tegra20-ventana.dts
-> b/arch/arm/boot/dts/tegra20-ventana.dts
-> index ee3fbf941e79..f44551e2d9d0 100644
-> --- a/arch/arm/boot/dts/tegra20-ventana.dts
-> +++ b/arch/arm/boot/dts/tegra20-ventana.dts
-> @@ -18,7 +18,7 @@
->  		stdout-path = "serial0:115200n8";
->  	};
->  
-> -	memory {
-> +	memory@0 {
->  		reg = <0x00000000 0x40000000>;
->  	};
->  
-> diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-> index 88dd1afb5877..55581c0e5105 100644
-> --- a/arch/arm/boot/dts/tegra20.dtsi
-> +++ b/arch/arm/boot/dts/tegra20.dtsi
-> @@ -13,8 +13,9 @@
->  	chosen { };
->  	aliases { };
->  
-> -	memory {
-> +	memory@0 {
->  		device_type = "memory";
-> +		reg = <0 0>;
->  	};
->  
->  	iram@40000000 {
-> diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi
-> b/arch/arm/boot/dts/tegra30-apalis.dtsi
-> index 6f29cbad6e8a..9465fc592b7b 100644
-> --- a/arch/arm/boot/dts/tegra30-apalis.dtsi
-> +++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-> @@ -10,8 +10,8 @@
->  	model = "Toradex Apalis T30";
->  	compatible = "toradex,apalis_t30", "nvidia,tegra30";
->  
-> -	memory {
-> -		reg = <0 0>;
-> +	memory@80000000 {
-> +		reg = <0x80000000 0x40000000>;
->  	};
->  
->  	pcie@3000 {
-> diff --git a/arch/arm/boot/dts/tegra30-beaver.dts
-> b/arch/arm/boot/dts/tegra30-beaver.dts
-> index ae52a5039506..1434d50438f9 100644
-> --- a/arch/arm/boot/dts/tegra30-beaver.dts
-> +++ b/arch/arm/boot/dts/tegra30-beaver.dts
-> @@ -17,7 +17,7 @@
->  		stdout-path = "serial0:115200n8";
->  	};
->  
-> -	memory {
-> +	memory@80000000 {
->  		reg = <0x80000000 0x7ff00000>;
->  	};
->  
-> diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi
-> b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-> index 92a9740c533f..33b73dca16a3 100644
-> --- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
-> +++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-> @@ -40,7 +40,7 @@
->  		stdout-path = "serial0:115200n8";
->  	};
->  
-> -	memory {
-> +	memory@80000000 {
->  		reg = <0x80000000 0x40000000>;
->  	};
->  
-> diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi
-> b/arch/arm/boot/dts/tegra30-colibri.dtsi
-> index c44d8c40c410..9bf3327665d3 100644
-> --- a/arch/arm/boot/dts/tegra30-colibri.dtsi
-> +++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
-> @@ -10,7 +10,7 @@
->  	model = "Toradex Colibri T30";
->  	compatible = "toradex,colibri_t30", "nvidia,tegra30";
->  
-> -	memory {
-> +	memory@80000000 {
->  		reg = <0x80000000 0x40000000>;
->  	};
->  
-> diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-> index 19237c08c166..2b6243b0c6d6 100644
-> --- a/arch/arm/boot/dts/tegra30.dtsi
-> +++ b/arch/arm/boot/dts/tegra30.dtsi
-> @@ -14,8 +14,9 @@
->  	chosen { };
->  	aliases { };
->  
-> -	memory {
-> +	memory@80000000 {
->  		device_type = "memory";
-> +		reg = <0x80000000 0>;
-
-Nit: for consistency sake, 0x0 :-)
-
---
-Stefan
-
->  	};
->  
->  	pcie@3000 {
+> Otherwise, it looks good.
+> --
+> Regards,
+> Sudeep
