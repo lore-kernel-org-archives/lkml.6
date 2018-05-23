@@ -1,69 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935057AbeEWXNs (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 19:13:48 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:34042 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934671AbeEWXNq (ORCPT
+        id S935095AbeEWXPS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 19:15:18 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:36701 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935051AbeEWXPN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 19:13:46 -0400
-X-Google-Smtp-Source: ADUXVKISiAJr0dRoSURQKi5EkQGjSaWeOsAPthGFUcL4+Zf/568LXuCPB00UnFt5jDshJQG9PQWovA==
-Date: Wed, 23 May 2018 20:13:40 -0300
-From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-To: Eric Dumazet <eric.dumazet@gmail.com>
-Cc: David Miller <davem@davemloft.net>,
-        syzbot+f116bc1994efe725d51b@syzkaller.appspotmail.com,
-        kuznet@ms2.inr.ac.ru, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        yoshfuji@linux-ipv6.org, dsahern@kernel.org, roopa@cumulusnetworks.com,
-        linux-sctp@vger.kernel.org, Xin Long <lucien.xin@gmail.com>
-Subject: Re: INFO: rcu detected stall in corrupted
-Message-ID: <20180523231340.GN5488@localhost.localdomain>
-References: <00000000000007eb20056cbb245f@google.com>
- <20180521.140924.2255125685012645769.davem@davemloft.net>
- <f8d0d282-1e75-d86a-8872-e32b57a6ec14@gmail.com>
+        Wed, 23 May 2018 19:15:13 -0400
+X-Google-Smtp-Source: AB8JxZocta2grHAFODEOh5jTbK+SyyJgW3VmFCL70dV3UUfeEMiSOSEbBQ+HcWpWHbHv6pSp6UKVKjtWeGwFxQoECmM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f8d0d282-1e75-d86a-8872-e32b57a6ec14@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1527065574-11299-1-git-send-email-vladbu@mellanox.com>
+References: <20180523073239.GC3155@nanopsycho> <1527065574-11299-1-git-send-email-vladbu@mellanox.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
+Date: Wed, 23 May 2018 16:14:51 -0700
+Message-ID: <CAM_iQpWNRRND4+uav4Sqwe1ctsb_J61eueShaSkRmYeW1=KMJw@mail.gmail.com>
+Subject: Re: [PATCH net-next v3] net: sched: don't disable bh when accessing
+ action idr
+To: Vlad Buslov <vladbu@mellanox.com>
+Cc: Jiri Pirko <jiri@resnulli.us>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        David Miller <davem@davemloft.net>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 11:13:46AM -0700, Eric Dumazet wrote:
-> 
-> 
-> On 05/21/2018 11:09 AM, David Miller wrote:
-> > From: syzbot <syzbot+f116bc1994efe725d51b@syzkaller.appspotmail.com>
-> > Date: Mon, 21 May 2018 11:05:02 -0700
-> > 
-> >>  find_match+0x244/0x13a0 net/ipv6/route.c:691
-> >>  find_rr_leaf net/ipv6/route.c:729 [inline]
-> >>  rt6_select net/ipv6/route.c:779 [inline]
-> > 
-> > Hmmm, endless loop in find_rr_leaf or similar?
-> > 
-> 
-> 
-> I do not think so, this really looks like SCTP specific 
-> , we now have dozens of traces all sharing :
-> 
->  sctp_transport_route+0xad/0x450 net/sctp/transport.c:293
->  sctp_packet_config+0xb89/0xfd0 net/sctp/output.c:123
->  sctp_outq_flush+0x79c/0x4370 net/sctp/outqueue.c:894
->  sctp_outq_uncork+0x6a/0x80 net/sctp/outqueue.c:776
->  sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1820 [inline]
->  sctp_side_effects net/sctp/sm_sideeffect.c:1220 [inline]
->  sctp_do_sm+0x596/0x7160 net/sctp/sm_sideeffect.c:1191
->  sctp_generate_heartbeat_event+0x218/0x450 net/sctp/sm_sideeffect.c:406
->  call_timer_fn+0x230/0x940 kernel/time/timer.c:1326 
-> 
-> 
-> Some kind of infinite loop.
-> 
-> When the hrtimer fires, it can point to any code that sits below but does not necessarily have a bug.
+On Wed, May 23, 2018 at 1:52 AM, Vlad Buslov <vladbu@mellanox.com> wrote:
+> Initial net_device implementation used ingress_lock spinlock to synchronize
+> ingress path of device. This lock was used in both process and bh context.
+> In some code paths action map lock was obtained while holding ingress_lock.
+> Commit e1e992e52faa ("[NET_SCHED] protect action config/dump from irqs")
+> modified actions to always disable bh, while using action map lock, in
+> order to prevent deadlock on ingress_lock in softirq. This lock was removed
+> in commit 555353cfa1ae ("netdev: The ingress_lock member is no longer
+> needed.").
+>
+> Another reason to disable bh was filters delete code, that released actions
+> in rcu callback. This code was changed to release actions from workqueue
+> context in patch set "net_sched: close the race between call_rcu() and
+> cleanup_net()".
+>
+> With these changes it is no longer necessary to continue disable bh while
+> accessing action map.
+>
+> Replace all action idr spinlock usage with regular calls that do not
+> disable bh.
 
-Agreed. Xin Long identified the root cause. syzkaller is setting too
-aggressive parameters to SCTP RTO, leading to issues with the
-heartbeat timer.
+Looks much better now!
+
+I _guess_ we perhaps can even get rid of this spinlock since most of
+the callers hold RTNL lock, not sure about the dump() path where
+RTNL might be removed recently.
+
+Anyway,
+
+Acked-by: Cong Wang <xiyou.wangcong@gmail.com>
