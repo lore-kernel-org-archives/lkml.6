@@ -1,90 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934449AbeEWWId (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 18:08:33 -0400
-Received: from mail-pf0-f176.google.com ([209.85.192.176]:45119 "EHLO
-        mail-pf0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933791AbeEWWIb (ORCPT
+        id S934723AbeEWWPa (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 18:15:30 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:38783 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934512AbeEWWP1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 18:08:31 -0400
-X-Google-Smtp-Source: AB8JxZpyEpXqZvVGpn0lZzOGLIfULAdvDu7gDaPNIQhJnUYB81Dfa6Us1N57tYqyo0iIWCQOcfkWNqmniM1378P8HzE=
-MIME-Version: 1.0
-From: Nick Desaulniers <ndesaulniers@google.com>
-Date: Wed, 23 May 2018 15:08:19 -0700
-Message-ID: <CAKwvOd=jmi_7LvZbS0PA5-zt62m5ZFPUNG7JtMQVmerCR63ebQ@mail.gmail.com>
-Subject: [clang] stack protector and f1f029c7bf
-To: hpa@zytor.com
-Cc: Alistair Strachan <astrachan@google.com>,
-        Manoj Gupta <manojgupta@google.com>,
-        Matthias Kaehlcke <mka@google.com>,
-        Greg Hackmann <ghackmann@google.com>, sedat.dilek@gmail.com,
-        tstellar@redhat.com, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 23 May 2018 18:15:27 -0400
+X-Google-Smtp-Source: AB8JxZryQ/eX76JTUh0Fbg4H4Ffqy4thCG+Hv5qH7JAsdZEh7SEP/toucIr82kZS2QRDRvIOtjlfhw==
+From: Niklas Cassel <niklas.cassel@linaro.org>
+To: Kalle Valo <kvalo@qca.qualcomm.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc: Niklas Cassel <niklas.cassel@linaro.org>, ath10k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3] ath10k: transmit queued frames after processing rx packets
+Date: Thu, 24 May 2018 00:15:08 +0200
+Message-Id: <20180523221508.26391-1-niklas.cassel@linaro.org>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-H. Peter,
+When running iperf on ath10k SDIO, TX can stop working:
 
-It was reported [0] that compiling the Linux kernel with Clang +
-CC_STACKPROTECTOR_STRONG was causing a crash in native_save_fl(), due to
-how GCC does not emit a stack guard for static inline functions (see
-Alistair's excellent report in [1]) but Clang does.
+iperf -c 192.168.1.1 -i 1 -t 20 -w 10K
+[  3]  0.0- 1.0 sec  2.00 MBytes  16.8 Mbits/sec
+[  3]  1.0- 2.0 sec  3.12 MBytes  26.2 Mbits/sec
+[  3]  2.0- 3.0 sec  3.25 MBytes  27.3 Mbits/sec
+[  3]  3.0- 4.0 sec   655 KBytes  5.36 Mbits/sec
+[  3]  4.0- 5.0 sec  0.00 Bytes  0.00 bits/sec
+[  3]  5.0- 6.0 sec  0.00 Bytes  0.00 bits/sec
+[  3]  6.0- 7.0 sec  0.00 Bytes  0.00 bits/sec
+[  3]  7.0- 8.0 sec  0.00 Bytes  0.00 bits/sec
+[  3]  8.0- 9.0 sec  0.00 Bytes  0.00 bits/sec
+[  3]  9.0-10.0 sec  0.00 Bytes  0.00 bits/sec
+[  3]  0.0-10.3 sec  9.01 MBytes  7.32 Mbits/sec
 
-When working with the LLVM release maintainers, Tom had suggested [2]
-changing the inline assembly constraint in native_save_fl() from '=rm' to
-'=r', and Alistair had verified the disassembly:
+There are frames in the ieee80211_txq and there are frames that have
+been removed from from this queue, but haven't yet been sent on the wire
+(num_pending_tx).
 
-(good) code generated w/o -fstack-protector-strong:
+When num_pending_tx reaches max_num_pending_tx, we will stop the queues
+by calling ieee80211_stop_queues().
 
-native_save_fl:
-          pushfq
-          popq    -8(%rsp)
-          movq    -8(%rsp), %rax
-          retq
+As frames that have previously been sent for transmission
+(num_pending_tx) are completed, we will decrease num_pending_tx and wake
+the queues by calling ieee80211_wake_queue(). ieee80211_wake_queue()
+does not call wake_tx_queue, so we might still have frames in the
+queue at this point.
 
-(good) code generated w/ =r input constraint:
+While the queues were stopped, the socket buffer might have filled up,
+and in order for user space to write more, we need to free the frames
+in the queue, since they are accounted to the socket. In order to free
+them, we first need to transmit them.
 
-native_save_fl:
-          pushfq
-          popq    %rax
-          retq
+This problem cannot be reproduced on low-latency devices, e.g. pci,
+since they call ath10k_mac_tx_push_pending() from
+ath10k_htt_txrx_compl_task(). ath10k_htt_txrx_compl_task() is not called
+on high-latency devices.
+Fix the problem by calling ath10k_mac_tx_push_pending(), after
+processing rx packets, just like for low-latency devices, also in the
+SDIO case. Since we are calling ath10k_mac_tx_push_pending() directly,
+we also need to export it.
 
-(bad) code generated with -fstack-protector-strong:
+Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+---
+Changes since V2:
+Moved ath10k_mac_tx_push_pending() call to ath10k_sdio_irq_handler().
 
-native_save_fl:
-          subq    $24, %rsp
-          movq    %fs:40, %rax
-          movq    %rax, 16(%rsp)
-          pushfq
-          popq    8(%rsp)
-          movq    8(%rsp), %rax
-          movq    %fs:40, %rcx
-          cmpq    16(%rsp), %rcx
-          jne     .LBB0_2
-          addq    $24, %rsp
-          retq
-.LBB0_2:
-          callq   __stack_chk_fail
+ drivers/net/wireless/ath/ath10k/mac.c  | 1 +
+ drivers/net/wireless/ath/ath10k/sdio.c | 3 +++
+ 2 files changed, 4 insertions(+)
 
-It looks like the sugguestion is actually a revert of your commit:
-ab94fcf528d127fcb490175512a8910f37e5b346:
-x86: allow "=rm" in native_save_fl()
-
-It seemed like there was a question internally about why worry about pop
-adjusting the stack if the stack could be avoided altogether.
-
-I think Sedat can retest this, but I was curious as well about the commit
-message in ab94fcf528d: "[ Impact: performance ]", but Alistair's analysis
-of the disassembly seems to indicate there is no performance impact (in
-fact, looks better as there's one less mov).
-
-Is there a reason we should not revert ab94fcf528d12, or maybe a better
-approach?
-
-[0] https://lkml.org/lkml/2018/5/7/534
-[1] https://bugs.llvm.org/show_bug.cgi?id=37512#c15
-[2] https://bugs.llvm.org/show_bug.cgi?id=37512#c22
+diff --git a/drivers/net/wireless/ath/ath10k/mac.c b/drivers/net/wireless/ath/ath10k/mac.c
+index 487a7a7380fd..bfcd9705ed54 100644
+--- a/drivers/net/wireless/ath/ath10k/mac.c
++++ b/drivers/net/wireless/ath/ath10k/mac.c
+@@ -4038,6 +4038,7 @@ void ath10k_mac_tx_push_pending(struct ath10k *ar)
+ 	rcu_read_unlock();
+ 	spin_unlock_bh(&ar->txqs_lock);
+ }
++EXPORT_SYMBOL(ath10k_mac_tx_push_pending);
+ 
+ /************/
+ /* Scanning */
+diff --git a/drivers/net/wireless/ath/ath10k/sdio.c b/drivers/net/wireless/ath/ath10k/sdio.c
+index d612ce8c9cff..2856c75f9011 100644
+--- a/drivers/net/wireless/ath/ath10k/sdio.c
++++ b/drivers/net/wireless/ath/ath10k/sdio.c
+@@ -30,6 +30,7 @@
+ #include "debug.h"
+ #include "hif.h"
+ #include "htc.h"
++#include "mac.h"
+ #include "targaddrs.h"
+ #include "trace.h"
+ #include "sdio.h"
+@@ -1342,6 +1343,8 @@ static void ath10k_sdio_irq_handler(struct sdio_func *func)
+ 			break;
+ 	} while (time_before(jiffies, timeout) && !done);
+ 
++	ath10k_mac_tx_push_pending(ar);
++
+ 	sdio_claim_host(ar_sdio->func);
+ 
+ 	if (ret && ret != -ECANCELED)
 -- 
-Thanks,
-~Nick Desaulniers
+2.17.0
