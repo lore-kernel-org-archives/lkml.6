@@ -1,131 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754742AbeEWRzh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 13:55:37 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:52995 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751685AbeEWRzg (ORCPT
+        id S933221AbeEWR4k (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 13:56:40 -0400
+Received: from mail-yw0-f195.google.com ([209.85.161.195]:37658 "EHLO
+        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754623AbeEWR4g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 13:55:36 -0400
-X-Google-Smtp-Source: AB8JxZoHa2BJhkWru+/T87W+F/uw94AN6thGpCRqo6wq99Yc4gK4hqGBMzVygTqYbeaNXoFoyOckcg==
-Subject: Re: B53 DSA switch problem on Banana Pi-R1 on Fedora 26
-To: Gerhard Wiesinger <lists@wiesinger.com>, Andrew Lunn <andrew@lunn.ch>
-Cc: linux-kernel@vger.kernel.org
-References: <3bdb712d-38bd-e2ca-63cf-8406a7b5689d@wiesinger.com>
- <20180522201632.GB4396@lunn.ch>
- <59d6b55f-d50a-063c-90a9-31a758e01383@gmail.com>
- <fa5c2615-40b3-62bc-3dda-59f9ef574686@wiesinger.com>
- <76c3f5ec-0ab2-c06d-98e8-277284bb1a8e@gmail.com>
- <779f2be3-3e74-e650-5240-efaf1003d77c@wiesinger.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- xsDiBEjPuBIRBACW9MxSJU9fvEOCTnRNqG/13rAGsj+vJqontvoDSNxRgmafP8d3nesnqPyR
- xGlkaOSDuu09rxuW+69Y2f1TzjFuGpBk4ysWOR85O2Nx8AJ6fYGCoeTbovrNlGT1M9obSFGQ
- X3IzRnWoqlfudjTO5TKoqkbOgpYqIo5n1QbEjCCwCwCg3DOH/4ug2AUUlcIT9/l3pGvoRJ0E
- AICDzi3l7pmC5IWn2n1mvP5247urtHFs/uusE827DDj3K8Upn2vYiOFMBhGsxAk6YKV6IP0d
- ZdWX6fqkJJlu9cSDvWtO1hXeHIfQIE/xcqvlRH783KrihLcsmnBqOiS6rJDO2x1eAgC8meAX
- SAgsrBhcgGl2Rl5gh/jkeA5ykwbxA/9u1eEuL70Qzt5APJmqVXR+kWvrqdBVPoUNy/tQ8mYc
- nzJJ63ng3tHhnwHXZOu8hL4nqwlYHRa9eeglXYhBqja4ZvIvCEqSmEukfivk+DlIgVoOAJbh
- qIWgvr3SIEuR6ayY3f5j0f2ejUMYlYYnKdiHXFlF9uXm1ELrb0YX4GMHz80nRmxvcmlhbiBG
- YWluZWxsaSA8Zi5mYWluZWxsaUBnbWFpbC5jb20+wmYEExECACYCGyMGCwkIBwMCBBUCCAME
- FgIDAQIeAQIXgAUCVF/S8QUJHlwd3wAKCRBhV5kVtWN2DvCVAJ4u4/bPF4P3jxb4qEY8I2gS
- 6hG0gACffNWlqJ2T4wSSn+3o7CCZNd7SLSDOw00ESM+4EhAQAL/o09boR9D3Vk1Tt7+gpYr3
- WQ6hgYVON905q2ndEoA2J0dQxJNRw3snabHDDzQBAcqOvdi7YidfBVdKi0wxHhSuRBfuOppu
- pdXkb7zxuPQuSveCLqqZWRQ+Cc2QgF7SBqgznbe6Ngout5qXY5Dcagk9LqFNGhJQzUGHAsIs
- hap1f0B1PoUyUNeEInV98D8Xd/edM3mhO9nRpUXRK9Bvt4iEZUXGuVtZLT52nK6Wv2EZ1TiT
- OiqZlf1P+vxYLBx9eKmabPdm3yjalhY8yr1S1vL0gSA/C6W1o/TowdieF1rWN/MYHlkpyj9c
- Rpc281gAO0AP3V1G00YzBEdYyi0gaJbCEQnq8Vz1vDXFxHzyhgGz7umBsVKmYwZgA8DrrB0M
- oaP35wuGR3RJcaG30AnJpEDkBYHznI2apxdcuTPOHZyEilIRrBGzDwGtAhldzlBoBwE3Z3MY
- 31TOpACu1ZpNOMysZ6xiE35pWkwc0KYm4hJA5GFfmWSN6DniimW3pmdDIiw4Ifcx8b3mFrRO
- BbDIW13E51j9RjbO/nAaK9ndZ5LRO1B/8Fwat7bLzmsCiEXOJY7NNpIEpkoNoEUfCcZwmLrU
- +eOTPzaF6drw6ayewEi5yzPg3TAT6FV3oBsNg3xlwU0gPK3v6gYPX5w9+ovPZ1/qqNfOrbsE
- FRuiSVsZQ5s3AAMFD/9XjlnnVDh9GX/r/6hjmr4U9tEsM+VQXaVXqZuHKaSmojOLUCP/YVQo
- 7IiYaNssCS4FCPe4yrL4FJJfJAsbeyDykMN7wAnBcOkbZ9BPJPNCbqU6dowLOiy8AuTYQ48m
- vIyQ4Ijnb6GTrtxIUDQeOBNuQC/gyyx3nbL/lVlHbxr4tb6YkhkO6shjXhQh7nQb33FjGO4P
- WU11Nr9i/qoV8QCo12MQEo244RRA6VMud06y/E449rWZFSTwGqb0FS0seTcYNvxt8PB2izX+
- HZA8SL54j479ubxhfuoTu5nXdtFYFj5Lj5x34LKPx7MpgAmj0H7SDhpFWF2FzcC1bjiW9mjW
- HaKaX23Awt97AqQZXegbfkJwX2Y53ufq8Np3e1542lh3/mpiGSilCsaTahEGrHK+lIusl6mz
- Joil+u3k01ofvJMK0ZdzGUZ/aPMZ16LofjFA+MNxWrZFrkYmiGdv+LG45zSlZyIvzSiG2lKy
- kuVag+IijCIom78P9jRtB1q1Q5lwZp2TLAJlz92DmFwBg1hyFzwDADjZ2nrDxKUiybXIgZp9
- aU2d++ptEGCVJOfEW4qpWCCLPbOT7XBr+g/4H3qWbs3j/cDDq7LuVYIe+wchy/iXEJaQVeTC
- y5arMQorqTFWlEOgRA8OP47L9knl9i4xuR0euV6DChDrguup2aJVU8JPBBgRAgAPAhsMBQJU
- X9LxBQkeXB3fAAoJEGFXmRW1Y3YOj4UAn3nrFLPZekMeqX5aD/aq/dsbXSfyAKC45Go0YyxV
- HGuUuzv+GKZ6nsysJw==
-Message-ID: <4f7c5173-019d-ba0e-70b3-addf64a6a9fa@gmail.com>
-Date: Wed, 23 May 2018 10:55:26 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 23 May 2018 13:56:36 -0400
+X-Google-Smtp-Source: AB8JxZrtATll9xlSCklSiRli1/m6lffKvTwcUgoxLdnroRX2cFZplnrxG351+vk3kJ2kU1gjv6mw2Q==
+Date: Wed, 23 May 2018 10:56:32 -0700
+From: Tejun Heo <tj@kernel.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-kernel@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Jan Kara <jack@suse.com>, Andrew Morton <akpm@linux-foundation.org>,
+        kernel-team@fb.com
+Subject: [PATCH] bdi: Move cgroup bdi_writeback to a dedicated low
+ concurrency workqueue
+Message-ID: <20180523175632.GO1718769@devbig577.frc2.facebook.com>
 MIME-Version: 1.0
-In-Reply-To: <779f2be3-3e74-e650-5240-efaf1003d77c@wiesinger.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/23/2018 10:35 AM, Gerhard Wiesinger wrote:
-> On 23.05.2018 17:28, Florian Fainelli wrote:
->>
->>> And in the future (time plan)?
->> If you don't care about multicast then you can use those patches:
->>
->> https://github.com/ffainelli/linux/commit/de055bf5f34e9806463ab2793e0852f5dfc380df
->>
->>
->> and you have to change the part of drivers/net/dsa/b53/b53_common.c that
->> returns DSA_TAG_PROTO_NONE for 53125:
->>
->>
->> diff --git a/drivers/net/dsa/b53/b53_common.c
->> b/drivers/net/dsa/b53/b53_common.c
->> index 9f561fe505cb..3c64f026a8ce 100644
->> --- a/drivers/net/dsa/b53/b53_common.c
->> +++ b/drivers/net/dsa/b53/b53_common.c
->> @@ -1557,7 +1557,7 @@ enum dsa_tag_protocol b53_get_tag_protocol(struct
->> dsa_switch *ds, int port)
->>           * mode to be turned on which means we need to specifically
->> manage ARL
->>           * misses on multicast addresses (TBD).
->>           */
->> -       if (is5325(dev) || is5365(dev) || is539x(dev) || is531x5(dev) ||
->> +       if (is5325(dev) || is5365(dev) || is539x(dev) ||
->>              !b53_can_enable_brcm_tags(ds, port))
->>                  return DSA_TAG_PROTO_NONE;
->>
->>
->> That would bring Broadcom tags to the 53125 switch and you would be able
->> to use the configuration lines from Andrew in that case.
-> 
-> What's the plan here regarding these 2 config option mode (how do you
-> call them?)?
+>From 0aa2e9b921d6db71150633ff290199554f0842a8 Mon Sep 17 00:00:00 2001
+From: Tejun Heo <tj@kernel.org>
+Date: Wed, 23 May 2018 10:29:00 -0700
 
-Broadcom tags is the underlying feature that provides per-port
-information about the packets going in and out. Turning on Broadcom tags
-requires turning on managed mode which means that the host now has to
-manage how MAC addresses are programmed into the switch, it's not rocket
-science, but I don't have a good test framework to automate the testing
-of those changes yet. If you are willing to help in the testing, I can
-certainly give you patches to try.
+cgwb_release() punts the actual release to cgwb_release_workfn() on
+system_wq.  Depending on the number of cgroups or block devices, there
+can be a lot of cgwb_release_workfn() in flight at the same time.
 
-> 
-> I mean, will this be a breaking change in the future where config has to
-> be done in a different way then?
+We're periodically seeing close to 256 kworkers getting stuck with the
+following stack trace and overtime the entire system gets stuck.
 
-When Broadcom tags are enabled the switch gets usable the way Andrew
-expressed it, the only difference that makes on your configuration if
-you want e.g: VLAN 101 to be for port 1-4 and VLAN 102 to be for port 5,
-is that you no longer create an eth0.101 and eth0.102, but you create
-br0.101 and br0.102.
+  [<ffffffff810ee40c>] _synchronize_rcu_expedited.constprop.72+0x2fc/0x330
+  [<ffffffff810ee634>] synchronize_rcu_expedited+0x24/0x30
+  [<ffffffff811ccf23>] bdi_unregister+0x53/0x290
+  [<ffffffff811cd1e9>] release_bdi+0x89/0xc0
+  [<ffffffff811cd645>] wb_exit+0x85/0xa0
+  [<ffffffff811cdc84>] cgwb_release_workfn+0x54/0xb0
+  [<ffffffff810a68d0>] process_one_work+0x150/0x410
+  [<ffffffff810a71fd>] worker_thread+0x6d/0x520
+  [<ffffffff810ad3dc>] kthread+0x12c/0x160
+  [<ffffffff81969019>] ret_from_fork+0x29/0x40
+  [<ffffffffffffffff>] 0xffffffffffffffff
 
-> 
-> Or will it be configurable via module parameters or /proc or /sys
-> filesystem options?
+The events leading to the lockup are...
 
-We might be able to expose a sysfs attribute which shows the type of
-tagging being enabled by a particular switch, that way scripts can
-detect which variant: configuring the host controller or the bridge is
-required. Would that be acceptable?
+1. A lot of cgwb_release_workfn() is queued at the same time and all
+   system_wq kworkers are assigned to execute them.
+
+2. They all end up calling synchronize_rcu_expedited().  One of them
+   wins and tries to perform the expedited synchronization.
+
+3. However, that invovles queueing rcu_exp_work to system_wq and
+   waiting for it.  Because #1 is holding all available kworkers on
+   system_wq, rcu_exp_work can't be executed.  cgwb_release_workfn()
+   is waiting for synchronize_rcu_expedited() which in turn is waiting
+   for cgwb_release_workfn() to free up some of the kworkers.
+
+We shouldn't be scheduling hundreds of cgwb_release_workfn() at the
+same time.  There's nothing to be gained from that.  This patch
+updates cgwb release path to use a dedicated percpu workqueue with
+@max_active of 1.
+
+While this resolves the problem at hand, it might be a good idea to
+isolate rcu_exp_work to its own workqueue too as it can be used from
+various paths and is prone to this sort of indirect A-A deadlocks.
+
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: stable@vger.kernel.org
+---
+ mm/backing-dev.c | 18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
+
+diff --git a/mm/backing-dev.c b/mm/backing-dev.c
+index 7441bd9..8fe3ebd 100644
+--- a/mm/backing-dev.c
++++ b/mm/backing-dev.c
+@@ -412,6 +412,7 @@ static void wb_exit(struct bdi_writeback *wb)
+  * protected.
+  */
+ static DEFINE_SPINLOCK(cgwb_lock);
++static struct workqueue_struct *cgwb_release_wq;
+ 
+ /**
+  * wb_congested_get_create - get or create a wb_congested
+@@ -522,7 +523,7 @@ static void cgwb_release(struct percpu_ref *refcnt)
+ {
+ 	struct bdi_writeback *wb = container_of(refcnt, struct bdi_writeback,
+ 						refcnt);
+-	schedule_work(&wb->release_work);
++	queue_work(cgwb_release_wq, &wb->release_work);
+ }
+ 
+ static void cgwb_kill(struct bdi_writeback *wb)
+@@ -784,6 +785,21 @@ static void cgwb_bdi_register(struct backing_dev_info *bdi)
+ 	spin_unlock_irq(&cgwb_lock);
+ }
+ 
++static int __init cgwb_init(void)
++{
++	/*
++	 * There can be many concurrent release work items overwhelming
++	 * system_wq.  Put them in a separate wq and limit concurrency.
++	 * There's no point in executing many of these in parallel.
++	 */
++	cgwb_release_wq = alloc_workqueue("cgwb_release", 0, 1);
++	if (!cgwb_release_wq)
++		return -ENOMEM;
++
++	return 0;
++}
++subsys_initcall(cgwb_init);
++
+ #else	/* CONFIG_CGROUP_WRITEBACK */
+ 
+ static int cgwb_bdi_init(struct backing_dev_info *bdi)
 -- 
-Florian
+2.9.5
