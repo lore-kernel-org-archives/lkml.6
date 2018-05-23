@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935142AbeEWX0n (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 19:26:43 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:56739 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934671AbeEWX0l (ORCPT
+        id S935161AbeEWX0u (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 19:26:50 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:40264 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934671AbeEWX0o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 19:26:41 -0400
+        Wed, 23 May 2018 19:26:44 -0400
 From: "Eric W. Biederman" <ebiederm@xmission.com>
 To: Linux Containers <containers@lists.linux-foundation.org>
 Cc: linux-fsdevel@vger.kernel.org,
@@ -14,38 +14,37 @@ Cc: linux-fsdevel@vger.kernel.org,
         "Serge E. Hallyn" <serge@hallyn.com>,
         Christian Brauner <christian@brauner.io>, linux-kernel@vger.kernel.org,
         "Eric W. Biederman" <ebiederm@xmission.com>
-Date: Wed, 23 May 2018 18:25:34 -0500
-Message-Id: <20180523232538.4880-2-ebiederm@xmission.com>
+Date: Wed, 23 May 2018 18:25:35 -0500
+Message-Id: <20180523232538.4880-3-ebiederm@xmission.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <87o9h6554f.fsf@xmission.com>
 References: <87o9h6554f.fsf@xmission.com>
-X-XM-SPF: eid=1fLd9F-0004ID-Kh;;;mid=<20180523232538.4880-2-ebiederm@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+fAn2sq8mnivDR6zl//L8yQoi6KgBI1lU=
+X-XM-SPF: eid=1fLd9W-0004ID-VI;;;mid=<20180523232538.4880-3-ebiederm@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+FRCWa5Jt02u8Bp5N774N27n63DhuhACc=
 X-SA-Exim-Connect-IP: 97.119.174.25
 X-SA-Exim-Mail-From: ebiederm@xmission.com
 X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  1.5 TR_Symld_Words too many words that have symbols inside
-        *  0.7 XMSubLong Long Subject
         *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.7 XMSubLong Long Subject
+        *  1.5 TR_Symld_Words too many words that have symbols inside
         *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
         *      [score: 0.5000]
         * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+        *      [sa04 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.1 XMSolicitRefs_0 Weightloss drug
+X-Spam-DCC: XMission; sa04 1397; Body=1 Fuz1=1 Fuz2=1 
 X-Spam-Combo: ***;Linux Containers <containers@lists.linux-foundation.org>
 X-Spam-Relay-Country: 
-X-Spam-Timing: total 15022 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 2.7 (0.0%), b_tie_ro: 1.91 (0.0%), parse: 0.74 (0.0%),
-        extract_message_metadata: 9 (0.1%), get_uri_detail_list: 0.69 (0.0%),
-        tests_pri_-1000: 2.8 (0.0%), tests_pri_-950: 1.15 (0.0%), tests_pri_-900:
-        0.97 (0.0%), tests_pri_-400: 17 (0.1%), check_bayes: 16 (0.1%), b_tokenize: 6
-        (0.0%), b_tok_get_all: 4.8 (0.0%), b_comp_prob: 1.43 (0.0%), b_tok_touch_all:
-        2.3 (0.0%), b_finish: 0.58 (0.0%), tests_pri_0: 106 (0.7%),
-        check_dkim_signature: 0.42 (0.0%), check_dkim_adsp: 3.3 (0.0%),
-        tests_pri_500: 14880 (99.1%), poll_dns_idle: 14869 (99.0%), rewrite_mail:
-        0.00 (0.0%)
-Subject: [REVIEW][PATCH 2/6] vfs: Allow userns root to call mknod on owned filesystems.
+X-Spam-Timing: total 438 ms - load_scoreonly_sql: 0.07 (0.0%),
+        signal_user_changed: 3.8 (0.9%), b_tie_ro: 2.5 (0.6%), parse: 1.35 (0.3%),
+        extract_message_metadata: 20 (4.6%), get_uri_detail_list: 3.7 (0.8%),
+        tests_pri_-1000: 9 (2.0%), tests_pri_-950: 1.49 (0.3%), tests_pri_-900: 1.29
+        (0.3%), tests_pri_-400: 28 (6.5%), check_bayes: 27 (6.2%), b_tokenize: 11
+        (2.5%), b_tok_get_all: 8 (1.8%), b_comp_prob: 2.8 (0.6%), b_tok_touch_all:
+        3.2 (0.7%), b_finish: 0.74 (0.2%), tests_pri_0: 365 (83.3%),
+        check_dkim_signature: 0.57 (0.1%), check_dkim_adsp: 4.0 (0.9%),
+        tests_pri_500: 3.7 (0.8%), rewrite_mail: 0.00 (0.0%)
+Subject: [REVIEW][PATCH 3/6] fs: Allow superblock owner to replace invalid owners of inodes
 X-Spam-Flag: No
 X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
 X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
@@ -53,29 +52,105 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These filesystems already always set SB_I_NODEV so mknod will not be
-useful for gaining control of any devices no matter their permissions.
-This will allow overlayfs and applications to fakeroot to use device
-nodes to represent things on disk.
+Allow users with CAP_SYS_CHOWN over the superblock of a filesystem to
+chown files when inode owner is invalid.  Ordinarily the
+capable_wrt_inode_uidgid check is sufficient to allow access to files
+but when the underlying filesystem has uids or gids that don't map to
+the current user namespace it is not enough, so the chown permission
+checks need to be extended to allow this case.
 
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Calling chown on filesystem nodes whose uid or gid don't map is
+necessary if those nodes are going to be modified as writing back
+inodes which contain uids or gids that don't map is likely to cause
+filesystem corruption of the uid or gid fields.
+
+Once chown has been called the existing capable_wrt_inode_uidgid
+checks are sufficient to allow the owner of a superblock to do anything
+the global root user can do with an appropriate set of capabilities.
+
+An ordinary filesystem mountable by a userns root will limit all uids
+and gids in s_user_ns or the INVALID_UID and INVALID_GID to flag all
+others.  So having this added permission limited to just INVALID_UID
+and INVALID_GID is sufficient to handle every case on an ordinary filesystem.
+
+Of the virtual filesystems at least proc is known to set s_user_ns to
+something other than &init_user_ns, while at the same time presenting
+some files owned by GLOBAL_ROOT_UID.  Those files the mounter of proc
+in a user namespace should not be able to chown to get access to.
+Limiting the relaxation in permission to just the minimum of allowing
+changing INVALID_UID and INVALID_GID prevents problems with cases like
+that.
+
+The original version of this patch was written by: Seth Forshee.  I
+have rewritten and rethought this patch enough so it's really not the
+same thing (certainly it needs a different description), but he
+deserves credit for getting out there and getting the conversation
+started, and finding the potential gotcha's and putting up with my
+semi-paranoid feedback.
+
+Inspired-by: Seth Forshee <seth.forshee@canonical.com>
+Acked-by: Seth Forshee <seth.forshee@canonical.com>
+Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
 ---
- fs/namei.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/attr.c | 36 ++++++++++++++++++++++++++++--------
+ 1 file changed, 28 insertions(+), 8 deletions(-)
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 942c1f096f6b..20335896dcce 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3679,7 +3679,8 @@ int vfs_mknod(struct inode *dir, struct dentry *dentry, umode_t mode, dev_t dev)
- 	if (error)
- 		return error;
+diff --git a/fs/attr.c b/fs/attr.c
+index 12ffdb6fb63c..4220c98f41a5 100644
+--- a/fs/attr.c
++++ b/fs/attr.c
+@@ -18,6 +18,32 @@
+ #include <linux/evm.h>
+ #include <linux/ima.h>
  
--	if ((S_ISCHR(mode) || S_ISBLK(mode)) && !capable(CAP_MKNOD))
-+	if ((S_ISCHR(mode) || S_ISBLK(mode)) &&
-+	    !ns_capable(dentry->d_sb->s_user_ns, CAP_MKNOD))
++static bool chown_ok(const struct inode *inode, kuid_t uid)
++{
++	if (uid_eq(current_fsuid(), inode->i_uid) &&
++	    uid_eq(uid, inode->i_uid))
++		return true;
++	if (capable_wrt_inode_uidgid(inode, CAP_CHOWN))
++		return true;
++	if (uid_eq(inode->i_uid, INVALID_UID) &&
++	    ns_capable(inode->i_sb->s_user_ns, CAP_CHOWN));
++		return true;
++	return false;
++}
++
++static bool chgrp_ok(const struct inode *inode, kgid_t gid)
++{
++	if (uid_eq(current_fsuid(), inode->i_uid) &&
++	    (in_group_p(gid) || gid_eq(gid, inode->i_gid)))
++		return true;
++	if (capable_wrt_inode_uidgid(inode, CAP_CHOWN))
++		return true;
++	if (gid_eq(inode->i_gid, INVALID_GID) &&
++	    ns_capable(inode->i_sb->s_user_ns, CAP_CHOWN));
++		return true;
++	return false;
++}
++
+ /**
+  * setattr_prepare - check if attribute changes to a dentry are allowed
+  * @dentry:	dentry to check
+@@ -52,17 +78,11 @@ int setattr_prepare(struct dentry *dentry, struct iattr *attr)
+ 		goto kill_priv;
+ 
+ 	/* Make sure a caller can chown. */
+-	if ((ia_valid & ATTR_UID) &&
+-	    (!uid_eq(current_fsuid(), inode->i_uid) ||
+-	     !uid_eq(attr->ia_uid, inode->i_uid)) &&
+-	    !capable_wrt_inode_uidgid(inode, CAP_CHOWN))
++	if ((ia_valid & ATTR_UID) && !chown_ok(inode, attr->ia_uid))
  		return -EPERM;
  
- 	if (!dir->i_op->mknod)
+ 	/* Make sure caller can chgrp. */
+-	if ((ia_valid & ATTR_GID) &&
+-	    (!uid_eq(current_fsuid(), inode->i_uid) ||
+-	    (!in_group_p(attr->ia_gid) && !gid_eq(attr->ia_gid, inode->i_gid))) &&
+-	    !capable_wrt_inode_uidgid(inode, CAP_CHOWN))
++	if ((ia_valid & ATTR_GID) && !chgrp_ok(inode, attr->ia_gid))
+ 		return -EPERM;
+ 
+ 	/* Make sure a caller can chmod. */
 -- 
 2.14.1
