@@ -1,47 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934975AbeEWUcg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 16:32:36 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:59194 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934919AbeEWUcb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 16:32:31 -0400
-To: dmeyer@gigaio.com, kurt.schwemmer@microsemi.com,
-        linux-pci@vger.kernel.org, linux-ntb@googlegroups.com
-Cc: bhelgaas@google.com, jdmason@kudzu.us, dave.jiang@intel.com,
-        allenbh@gmail.com, linux-kernel@vger.kernel.org
-References: <1527106686-18852-1-git-send-email-dmeyer@gigaio.com>
- <1527106686-18852-3-git-send-email-dmeyer@gigaio.com>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <fe49ebd5-648b-1719-42ed-3d8b82572f26@deltatee.com>
-Date: Wed, 23 May 2018 14:32:26 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <1527106686-18852-3-git-send-email-dmeyer@gigaio.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, allenbh@gmail.com, dave.jiang@intel.com, jdmason@kudzu.us, bhelgaas@google.com, linux-ntb@googlegroups.com, linux-pci@vger.kernel.org, kurt.schwemmer@microsemi.com, dmeyer@gigaio.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v2 2/2] NTB: PCI Quirk to Enable Switchtec NT
- Functionality with IOMMU On
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+        id S935006AbeEWUcp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 16:32:45 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:46256 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934978AbeEWUci (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 16:32:38 -0400
+X-Google-Smtp-Source: ADUXVKJCEVO8rDkwR4o0SiTS/RFajPCSsTeforsOptX6gzRMxaxdowghzgah9z1pWy0z2xEK6gTDRw==
+From: Ray Jui <ray.jui@broadcom.com>
+To: Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>
+Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, Ray Jui <ray.jui@broadcom.com>
+Subject: [PATCH v2 4/6] watchdog: sp805: set WDOG_HW_RUNNING when appropriate
+Date: Wed, 23 May 2018 13:32:05 -0700
+Message-Id: <1527107527-8093-5-git-send-email-ray.jui@broadcom.com>
+X-Mailer: git-send-email 2.1.4
+In-Reply-To: <1527107527-8093-1-git-send-email-ray.jui@broadcom.com>
+References: <1527107527-8093-1-git-send-email-ray.jui@broadcom.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+If the watchdog hardware is already enabled during the boot process,
+when the Linux watchdog driver loads, it should reset the watchdog and
+tell the watchdog framework. As a result, ping can be generated from
+the watchdog framework, until the userspace watchdog daemon takes over
+control
 
+Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+Reviewed-by: Vladimir Olovyannikov <vladimir.olovyannikov@broadcom.com>
+Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+---
+ drivers/watchdog/sp805_wdt.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-On 23/05/18 02:18 PM, dmeyer@gigaio.com wrote:
-> Signed-off-by: Doug Meyer <dmeyer@gigaio.com>
-
-Modulo the device ID issue:
-
-Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
-
-Thanks for your work on this Doug!
-
-Logan
+diff --git a/drivers/watchdog/sp805_wdt.c b/drivers/watchdog/sp805_wdt.c
+index 1484609..d662a6f 100644
+--- a/drivers/watchdog/sp805_wdt.c
++++ b/drivers/watchdog/sp805_wdt.c
+@@ -42,6 +42,7 @@
+ 	/* control register masks */
+ 	#define	INT_ENABLE	(1 << 0)
+ 	#define	RESET_ENABLE	(1 << 1)
++	#define	ENABLE_MASK	(INT_ENABLE | RESET_ENABLE)
+ #define WDTINTCLR		0x00C
+ #define WDTRIS			0x010
+ #define WDTMIS			0x014
+@@ -74,6 +75,15 @@ module_param(nowayout, bool, 0);
+ MODULE_PARM_DESC(nowayout,
+ 		"Set to 1 to keep watchdog running after device release");
+ 
++/* returns true if wdt is running; otherwise returns false */
++static bool wdt_is_running(struct watchdog_device *wdd)
++{
++	struct sp805_wdt *wdt = watchdog_get_drvdata(wdd);
++	u32 wdtcontrol = readl_relaxed(wdt->base + WDTCONTROL);
++
++	return (wdtcontrol & ENABLE_MASK) == ENABLE_MASK;
++}
++
+ /* This routine finds load value that will reset system in required timout */
+ static int wdt_setload(struct watchdog_device *wdd, unsigned int timeout)
+ {
+@@ -239,6 +249,15 @@ sp805_wdt_probe(struct amba_device *adev, const struct amba_id *id)
+ 	watchdog_init_timeout(&wdt->wdd, 0, &adev->dev);
+ 	wdt_setload(&wdt->wdd, wdt->wdd.timeout);
+ 
++	/*
++	 * If HW is already running, enable/reset the wdt and set the running
++	 * bit to tell the wdt subsystem
++	 */
++	if (wdt_is_running(&wdt->wdd)) {
++		wdt_enable(&wdt->wdd);
++		set_bit(WDOG_HW_RUNNING, &wdt->wdd.status);
++	}
++
+ 	ret = watchdog_register_device(&wdt->wdd);
+ 	if (ret) {
+ 		dev_err(&adev->dev, "watchdog_register_device() failed: %d\n",
+-- 
+2.1.4
