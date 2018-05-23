@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932670AbeEWMA0 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 08:00:26 -0400
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:45987 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932534AbeEWMAX (ORCPT
+        id S932806AbeEWMBG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 08:01:06 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:43691 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932702AbeEWMA7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 08:00:23 -0400
-X-Google-Smtp-Source: AB8JxZpvlBZTrrtDRmvhMwLZ/JRFLwfPL5LBzc9l7QEgsE9RwdMCqsxjKw6/WXQtO/wLCP54v2vGTKdJJuixofZQyEQ=
+        Wed, 23 May 2018 08:00:59 -0400
+X-Google-Smtp-Source: AB8JxZrh33WRarmbVtYE9IdmPT8xd1GKgV8/lzhE99H6GvkG/6vH5dPA/wPE2VNQcJLJ5PTGqgnn6+Tf3zYD6v/EB/k=
 MIME-Version: 1.0
-In-Reply-To: <20180523114230.10109-3-marek.vasut+renesas@gmail.com>
-References: <20180523114230.10109-1-marek.vasut+renesas@gmail.com> <20180523114230.10109-3-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20180523114230.10109-4-marek.vasut+renesas@gmail.com>
+References: <20180523114230.10109-1-marek.vasut+renesas@gmail.com> <20180523114230.10109-4-marek.vasut+renesas@gmail.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 23 May 2018 14:00:21 +0200
-X-Google-Sender-Auth: uf2n1olL2-WW9ODinaI1ty1Qows
-Message-ID: <CAMuHMdVXkP8kueeepdD86PLiqpE3DEWDGXZ7QQqDRr8fyszyRQ@mail.gmail.com>
-Subject: Re: [PATCH 3/6] mfd: da9063: Add DA9063L type
+Date: Wed, 23 May 2018 14:00:58 +0200
+X-Google-Sender-Auth: EIqrjb5bd32KnkLqqI29JTMgPKc
+Message-ID: <CAMuHMdVFVFxKGuM39N4R6+TUgEX3sHKnud44uQSwjYK4LUiWKw@mail.gmail.com>
+Subject: Re: [PATCH 4/6] mfd: da9063: Disallow RTC on DA9063L
 To: Marek Vasut <marek.vasut@gmail.com>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
@@ -30,8 +30,8 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Wed, May 23, 2018 at 1:42 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
-> Add type for DA9063L, which is a reduced variant of the DA9063
-> without RTC block and with less regulators.
+> The DA9063L does not contain RTC block, unlike the full DA9063.
+> Do not allow binding RTC driver on this variant of the chip.
 >
 > Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 
