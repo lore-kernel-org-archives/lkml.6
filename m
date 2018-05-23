@@ -1,82 +1,128 @@
-Return-Path: <chunfeng.yun@mediatek.com>
-X-Google-Smtp-Source: AB8JxZq5vhdW+s5116L5TZVjvdlJkeN1aizsK17PezcdUtwEaZlBU8Najb38uBrxJYon/ZLP5yL5
-ARC-Seal: i=1; a=rsa-sha256; t=1527065638; cv=none;
-        d=google.com; s=arc-20160816;
-        b=PO2MW1E8i4PeSOP9H2EGKQE2zgcrjHS3Q+6XMwNIvlFGqh2aA7NB+l8TM0R2RUSX2w
-         sB4oNVfiR9L6AzMXT1mPvcYSWeJZMfs+691nMvV8AylQc3eQz18VJajCEu9go8kVP67b
-         IVEe/kI4H6JrTVQjcWOm4n1hQ3gu2zafFGmO8LymETNVrYPwJDfv8oGhetlDMqXM2C3N
-         n+JFsBZugJQh+z0kPeA2atjE3I8/a3XsH79ErADYneMkyTH3RiwcIrNbEzqW9dAbCR6D
-         2bWERcjfy1DJoV7871nPqOdXoK0YESe8wNQtUA9h4ot0gxEv5M36jxAbmLvYPmj/qUDi
-         tqxQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=je/h++EzoZGjEdlRWpUHZ1KifGm9E3rPJOqOXRzYDvQ=;
-        b=jG4ihyhqPWOu1MxRjhrqcUE1V1NS0EzeGDOAiTy7XCbGRFEu6eIltB7UnwxvaLkXaO
-         6VjnU/Bu/ZIDpTMI0MhnXWAjKdgjgiTFrnMz2uvKpVWgyrksxVWaIuz0gkh/o12keRu9
-         aGggRSteM2SE1A6fqp4XmJOH8HJjXv+PmCGoBUlHRMuhM0PbKfgJffhxDtIPsYeisN19
-         FaNyn/7G4npO3o0HHS7FPE3eFKVBZAIVEYPzzEEPC/E/pcpMgLgBjqAmD55TL6aJnlko
-         xc44B7F2QyoNoXvEKzpwRFMPI6FF1Dl0e6v0vcKcnbqUZGMaSv1CnZYuuQvjenS2q6Vs
-         9wug==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of chunfeng.yun@mediatek.com designates 1.203.163.78 as permitted sender) smtp.mailfrom=chunfeng.yun@mediatek.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of chunfeng.yun@mediatek.com designates 1.203.163.78 as permitted sender) smtp.mailfrom=chunfeng.yun@mediatek.com
-X-UUID: e5cee852ca4543feb5db63c95b5b0af9-20180523
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3988127-1527065662-2-1554961758141886506
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, UNPARSEABLE_RELAY 0.001,
+  LANGUAGES enroda, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1527065661; b=ZpjnhH3J94xPrq8f7zLmyWjWRzpmCQChzOZGDPaXaqMuXAYCCo
+    A2ZzNzbf0RSUCoGsXPtw0ipWXro+SPJgLwv4d2235fUrl8rHTygPjCBJUrohtXkJ
+    1e6xmtg2VTUr5m4fmRIoLF8WbkuwEdQzNBueQ4nHXbswOlJOsAQz/yGT5otwuS6L
+    Zh/nqAfLU2vBhaD1fq+sr+hd9WMtNjWT/YF1CGGGhWDkcNOHTzrz+OhmesDP7loq
+    XqIK2ajPnZJ8u4o9sy6r3XkeJC0XhWfVbrJJFvwFSFaZ66X55g1dhs+zXbKpdL+5
+    caze3RAzI2oN7Lmvc50XORVzBANTlRkj8IAA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1527065661; bh=EEVwrPBXAFXgJAlJ+UwB4BZV+yru3W
+    NRoyaU90KJcbw=; b=aU7r/y/qOm1tsHMy+b6k5yKv4jSAInY3YRVagBxUJx7OhF
+    WalmaiMcV2kqXyVT/66vcCk3xw+XQgOaGq46Yephm5XlSheJOrcOLfOSrQAURj6i
+    NRw4C/QY0Jd+9Ic5xLN3Jmdx4y/0WBC9gltG10jJkZG4DcdM/lBdAmeR2zP1YCiv
+    F7CaNCXCMbRFRmZoJwTX8iDTL6nTFJIHXv+Fh2s60EGazxcS86eVgbwW1ko/mGUn
+    aruItKU54zwZOkfTPZ3PY6hdajav0BTBA+1wbAJb5y/4OSgKSoJbmzVm0+DorzHK
+    UW9dGqF72heP5FpsFSAlh9IELcPDNX71kmpJiUEQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mediatek.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=mediatek.com header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mediatek.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=mediatek.com header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfI9neRxi0c+ILJkzHQHwiVeMi7yROPL7pA0/LjFiELOj0MippcsjDKtpIxgEPw9Zwweh08xuCiSHmQbvKYQZMsu9rR8AvgzxvcoBs0bfxziqSiXg4KDV
+    IFIq7tLtsV+1QrX0do7sRpOTALz2cTmplKeSzqNNVtujB3vr+NSU1GEW3tORxmMVv1FTMTgR+EzSIOo6VLT5SP2lNeYbsBXIsTXSJyE01AQvrOUL68RCbMVN
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=mpaa-ttXAAAA:8
+    a=VwQbUJbxAAAA:8 a=Ndx7yIVex8M7RJDNeXoA:9 a=x8gzFH9gYPwA:10
+    a=6heAxKwa5pAsJatQ0mat:22 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1754580AbeEWIyH (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 23 May 2018 04:54:07 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:18908 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1754493AbeEWIxc (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Wed, 23 May 2018 04:53:32 -0400
+X-UUID: 113bf5d384d5430999316a89700230b9-20180523
 From: Chunfeng Yun <chunfeng.yun@mediatek.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi
-	<felipe.balbi@linux.intel.com>
-CC: Matthias Brugger <matthias.bgg@gmail.com>, Chunfeng Yun
-	<chunfeng.yun@mediatek.com>, <linux-usb@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
-Subject: [next, PATCH 1/6] usb: mtu3: re-enable controller to accept LPM request after LPM resume
-Date: Wed, 23 May 2018 16:53:15 +0800
-Message-ID: <1291b13a362eaa0cccd30cb8dd4f56d33e1d172d.1527065109.git.chunfeng.yun@mediatek.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+CC: Matthias Brugger <matthias.bgg@gmail.com>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>
+Subject: [next, PATCH 5/6] usb: mtu3: reset gadget when VBUS_FALL interrupt arises
+Date: Wed, 23 May 2018 16:53:19 +0800
+Message-ID: <4def1d8ab49ab7733693c037c979ea89895856df.1527065109.git.chunfeng.yun@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <1291b13a362eaa0cccd30cb8dd4f56d33e1d172d.1527065109.git.chunfeng.yun@mediatek.com>
+References: <1291b13a362eaa0cccd30cb8dd4f56d33e1d172d.1527065109.git.chunfeng.yun@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MTK: N
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1601244378966734632?=
-X-GMAIL-MSGID: =?utf-8?q?1601244378966734632?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-After the controller receives a LPM request, it will reject the LPM
-request, and need software to re-enable it after LPM resume if the
-controller doesn't remote wakeup from L1 automatically
+When VBUS_FALL interrupt arises, it means U3 device is disconnected
+with host, so need reset status of gadget
 
 Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
 ---
- drivers/usb/mtu3/mtu3_core.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/usb/mtu3/mtu3_core.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/usb/mtu3/mtu3_core.c b/drivers/usb/mtu3/mtu3_core.c
-index b1b99a8..65ff53a 100644
+index 279f9cd..eecfd06 100644
 --- a/drivers/usb/mtu3/mtu3_core.c
 +++ b/drivers/usb/mtu3/mtu3_core.c
-@@ -176,7 +176,7 @@ static void mtu3_intr_enable(struct mtu3 *mtu)
- 	mtu3_writel(mbase, U3D_LV1IESR, value);
- 
- 	/* Enable U2 common USB interrupts */
--	value = SUSPEND_INTR | RESUME_INTR | RESET_INTR;
-+	value = SUSPEND_INTR | RESUME_INTR | RESET_INTR | LPM_RESUME_INTR;
- 	mtu3_writel(mbase, U3D_COMMON_USB_INTR_ENABLE, value);
- 
- 	if (mtu->is_u3_ip) {
-@@ -692,6 +692,12 @@ static irqreturn_t mtu3_u2_common_isr(struct mtu3 *mtu)
- 	if (u2comm & RESET_INTR)
+@@ -668,8 +668,10 @@ static irqreturn_t mtu3_u3_ltssm_isr(struct mtu3 *mtu)
+ 	if (ltssm & (HOT_RST_INTR | WARM_RST_INTR))
  		mtu3_gadget_reset(mtu);
  
-+	if (u2comm & LPM_RESUME_INTR) {
-+		if (!(mtu3_readl(mbase, U3D_POWER_MANAGEMENT) & LPM_HRWE))
-+			mtu3_setbits(mbase, U3D_USB20_MISC_CONTROL,
-+				     LPM_U3_ACK_EN);
+-	if (ltssm & VBUS_FALL_INTR)
++	if (ltssm & VBUS_FALL_INTR) {
+ 		mtu3_ss_func_set(mtu, false);
++		mtu3_gadget_reset(mtu);
 +	}
-+
- 	return IRQ_HANDLED;
- }
  
+ 	if (ltssm & VBUS_RISE_INTR)
+ 		mtu3_ss_func_set(mtu, true);
 -- 
 1.9.1
+
