@@ -1,148 +1,193 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4169591-1526659292-2-7393239248706985678
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526659291; b=eF4KRhQq0CH6cd/EZsOkTamv4AOAZJML/ilxU5O7yE38g8lOHc
-    8JxcfARorcNZ0eUPNpAgMgKTo7FKnRptwp3c07V23+wS7+CFEXCSUBC8sd5KNGD0
-    Tv9hIjBcaX/vAVTJJGA6eBfxp0KPoSztZh7YLtxuhBycP8k4rqu9oiylIJQ8gZb3
-    HGmD3eCXDS9h0qZk2YgOmflOKwznZfhf1ZBy/aFBtffMWBZHgFmVYvs9gbN6nxgk
-    6zw4h99/U3pgEDVId8EgV286oyMUI5eV5rRMJpkNdGSuCHuktZMuzA81WUfJqLdj
-    gro0r86Kq4E201LCB3OqXLC3HEryzXEcvdtg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:from:to:cc:references:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1526659291;
-    bh=PkKozU8W6af51fs1X9nOQ4f9c9ZsZCcGd3wgtQmvlXM=; b=kglX4Sv+4zGI
-    Uj6OLmEWMnZZj212NNnfSu+e7vpcwgZcZqiYXNhX9aZVEpzCwxuXe1exngwL815G
-    qFwul61gN1t8GjWtyJfWCPUXQsxP47lN/qzpWhmOPX0MlYJKprkPlENRqrt1yw+C
-    9YdIf0a4CBxpN3QPmtc85TpofBP6w069Zy/MrS+bpEIupJ7SiNlSuJd6QZzX2foO
-    x4OcV7y+7h6kMo5CZgRQjHU6CJlerg4CZea8kqO5K7H1oCaccvhlrjKkadc/7LK6
-    3Qhra5Hz7Xk2aBYI452vaK+v7UOk1G19qc3aLRHwLS22+cwKFSOY3JliCgLOBdl6
-    QczeVe9KNg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=redhat.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=redhat.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfA8hwrTP6DCH06UF5sK0pDCfyJSaVXW1VJ6x6PdOIW5L4gJQZ0kiJZpH8mIEm5aYl4IWmBBouxyNKM+xHrMu6JXRtQP12sJ+XRqfAohKQUlmTTQHonBI
-    7PyEU+50or+iETUTlVpTqaqtB/5Z8lQ8qNB/6d8f/Jv37tphZ5EzFdrMHPL8jttjvdB+Lt22RephCkkhKNddmJSPfk4l1L0DxSjMBoKs/xd8jLnnBuvAgmk2
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=Fa0RexZ47R90H7BigGIA:9 a=QEXdDO2ut3YA:10
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752228AbeERQBG (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 18 May 2018 12:01:06 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37436 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752223AbeERQBF (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 18 May 2018 12:01:05 -0400
-Subject: Re: [PATCH] mm/kasan: Don't vfree() nonexistent vm_area.
-From: David Hildenbrand <david@redhat.com>
-To: Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: Paul Menzel <pmenzel+linux-kasan-dev@molgen.mpg.de>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        stable@vger.kernel.org
-References: <12c9e499-9c11-d248-6a3f-14ec8c4e07f1@molgen.mpg.de>
- <20180201163349.8700-1-aryabinin@virtuozzo.com>
- <784dfdf6-8fc3-be08-833b-a9097c3d1b96@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <6982f59e-c836-1064-c05c-a926446b6f48@redhat.com>
-Date: Fri, 18 May 2018 18:01:02 +0200
+Return-Path: <jonathanh@nvidia.com>
+X-Google-Smtp-Source: ADUXVKKH9xzTQ4F5JRrt6PISXcgRA+tZqcn0+gI58viGNH1NeDY6GHplEW1HlGm79o04ET1lqZPW
+ARC-Seal: i=1; a=rsa-sha256; t=1527070934; cv=none;
+        d=google.com; s=arc-20160816;
+        b=ti1my79y1WLT8DyKm/gkkKgv3fblSyy4Q4fYltFNRqxIbtzpU1Lkws2Hz5ktL45qe8
+         GL3pLG5pa/yMB02zCQj4Vt4yjvLBMi14AAt1lcg6MiJjJQhYYva4ly9N3YMqZ0m+581A
+         YlMoGj19hNyp30Z7YAdSNLRFDp01RVwYTkGk1mySVF2ELthgBZQbZOWNf+jjHQoq1Pja
+         zKRs00eI01pwplMK4awe/UaDuYi53ukq6QID3KnLmqz2vbamgFuE5bkdp1UhjGKBd0sZ
+         ZkwYPrXK024tV4RhTge1+teovZJYXeGrx/Mk4se6hTxmnuWJP625ctNDLF41BMxpQCgV
+         Xeyg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :arc-authentication-results;
+        bh=KkDrtB8y4CMBXYdSeKCCDUg31bzdxgSuzNW7Cdp9+a8=;
+        b=EItOtfGGcZxk7g8uP6jqHAeE8j2aqUSCsgkm3FNywKE91myym9MDmpXoz67mITmXxd
+         BBPLmCAKpyJr88Lv1yaU/CqSz8x3oH0RXCsWMxC6jvf7zywzbH5fciSd3P/BXiCEOKvS
+         bD25iYTCLCzfZXoLnZin41k5kb40G6RhzTwPHtl2A+WRUju/wZvMufjoNXS0oJRLCpuj
+         MX/Q41i/5rk4OJoNBzZNntGmVsx3vhUJoe1D4FTiV8NzxaUNJJCWMoAAHKtLnHQHWBqS
+         2Q1BGaUyD/Ruibpd/xjXnjHb/O0rB5PKPBNqMdTM+8sljCOXdlIW9aPMXCvVxuX89zkl
+         v6qA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of jonathanh@nvidia.com designates 216.228.121.143 as permitted sender) smtp.mailfrom=jonathanh@nvidia.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nvidia.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of jonathanh@nvidia.com designates 216.228.121.143 as permitted sender) smtp.mailfrom=jonathanh@nvidia.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nvidia.com
+X-PGP-Universal: processed;
+	by hqpgpgate101.nvidia.com on Wed, 23 May 2018 03:22:13 -0700
+Subject: Re: [PATCH 8/9] PM / Domains: Add support for multi PM domains per
+ device to genpd
+To: Ulf Hansson <ulf.hansson@linaro.org>
+CC: Rajendra Nayak <rnayak@codeaurora.org>, Geert Uytterhoeven
+	<geert+renesas@glider.be>, Linux PM <linux-pm@vger.kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Kevin Hilman
+	<khilman@kernel.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>, Todor Tomov
+	<todor.tomov@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>,
+	<linux-tegra@vger.kernel.org>, Vincent Guittot <vincent.guittot@linaro.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <1526639490-12167-1-git-send-email-ulf.hansson@linaro.org>
+ <1526639490-12167-9-git-send-email-ulf.hansson@linaro.org>
+ <f5589b88-acf8-b491-df79-e359e596c8d0@nvidia.com>
+ <CAPDyKFr_7hbs-MC1jQn5uAgSnb1UGufXZdEmUqNTM63KemTe1g@mail.gmail.com>
+ <5a79d3a2-d090-645b-da69-524b7e7a4d90@nvidia.com>
+ <51f7de26-579a-8b9e-4e79-f4eee923ab38@codeaurora.org>
+ <CAPDyKFo_69kSS6UzdsJeyeiiED=S=chsdkP+R43qMHDEbZ8n_A@mail.gmail.com>
+ <3838f17a-2ac8-bf3f-f0b1-f69bbe17629c@nvidia.com>
+ <00ba829d-faf4-168c-db00-531621b9280f@codeaurora.org>
+ <CAPDyKFoqLPRwEJ9b+XBpB4Zy79SGEC-a8V8shNhMkYOCQa0=oA@mail.gmail.com>
+ <22068fb1-f6e8-f2ec-d7f4-ab9e93469d7f@nvidia.com>
+ <CAPDyKFoHwujfL4vpB8kq+rxDP4cThW4xB4nwb8Qc6_bZwTPbzA@mail.gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <8a3d0762-7d9c-8960-cdf9-f7f328f53692@nvidia.com>
+Date: Wed, 23 May 2018 11:22:08 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <784dfdf6-8fc3-be08-833b-a9097c3d1b96@redhat.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAPDyKFoHwujfL4vpB8kq+rxDP4cThW4xB4nwb8Qc6_bZwTPbzA@mail.gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1600797559708396041?=
+X-GMAIL-MSGID: =?utf-8?q?1601249932699074821?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 18.05.2018 17:57, David Hildenbrand wrote:
-> On 01.02.2018 17:33, Andrey Ryabinin wrote:
->> KASAN uses different routines to map shadow for hot added memory and memory
->> obtained in boot process. Attempt to offline memory onlined by normal boot
->> process leads to this:
->>
->>     Trying to vfree() nonexistent vm area (000000005d3b34b9)
->>     WARNING: CPU: 2 PID: 13215 at mm/vmalloc.c:1525 __vunmap+0x147/0x190
->>
->>     Call Trace:
->>      kasan_mem_notifier+0xad/0xb9
->>      notifier_call_chain+0x166/0x260
->>      __blocking_notifier_call_chain+0xdb/0x140
->>      __offline_pages+0x96a/0xb10
->>      memory_subsys_offline+0x76/0xc0
->>      device_offline+0xb8/0x120
->>      store_mem_state+0xfa/0x120
->>      kernfs_fop_write+0x1d5/0x320
->>      __vfs_write+0xd4/0x530
->>      vfs_write+0x105/0x340
->>      SyS_write+0xb0/0x140
->>
->> Obviously we can't call vfree() to free memory that wasn't allocated via
->> vmalloc(). Use find_vm_area() to see if we can call vfree().
->>
->> Unfortunately it's a bit tricky to properly unmap and free shadow allocated
->> during boot, so we'll have to keep it. If memory will come online again
->> that shadow will be reused.
->>
-> 
-> While debugging kasan memory hotplug problems I am having, stumbled over
-> this patch.
-> 
-> Couldn't we handle that via VM_KASAN like in kasan_module_alloc/free
-> instead?
-> 
 
-Just realized that this will most probably not work. So please ignore my
-comment for now :)
+On 23/05/18 10:47, Ulf Hansson wrote:
+> On 23 May 2018 at 11:45, Jon Hunter <jonathanh@nvidia.com> wrote:
+>>
+>> On 23/05/18 10:33, Ulf Hansson wrote:
+>>>
+>>> On 23 May 2018 at 11:27, Rajendra Nayak <rnayak@codeaurora.org> wrote:
+>>>>
+>>>>
+>>>>
+>>>> On 05/23/2018 02:37 PM, Jon Hunter wrote:
+>>>>>
+>>>>>
+>>>>> On 23/05/18 07:12, Ulf Hansson wrote:
+>>>>>
+>>>>> ...
+>>>>>
+>>>>>>>>>> Thanks for sending this. Believe it or not this has still been on
+>>>>>>>>>> my to-do list
+>>>>>>>>>> and so we definitely need a solution for Tegra.
+>>>>>>>>>>
+>>>>>>>>>> Looking at the above it appears that additional power-domains
+>>>>>>>>>> exposed as devices
+>>>>>>>>>> to the client device. So I assume that this means that the drivers
+>>>>>>>>>> for devices
+>>>>>>>>>> with multiple power-domains will need to call RPM APIs for each of
+>>>>>>>>>> these
+>>>>>>>>>> additional power-domains. Is that correct?
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> They can, but should not!
+>>>>>>>>>
+>>>>>>>>> Instead, the driver shall use device_link_add() and
+>>>>>>>>> device_link_del(),
+>>>>>>>>> dynamically, depending on what PM domain that their original device
+>>>>>>>>> needs for the current running use case.
+>>>>>>>>>
+>>>>>>>>> In that way, they keep existing runtime PM deployment, operating on
+>>>>>>>>> its original device.
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> OK, sounds good. Any reason why the linking cannot be handled by the
+>>>>>>>> above API? Is there a use-case where you would not want it linked?
+>>>>>>>
+>>>>>>>
+>>>>>>> I am guessing the linking is what would give the driver the ability to
+>>>>>>> decide which subset of powerdomains it actually wants to control
+>>>>>>> at any point using runtime PM. If we have cases wherein the driver
+>>>>>>> would want to turn on/off _all_ its associated powerdomains _always_
+>>>>>>> then a default linking of all would help.
+>>>>>>
+>>>>>>
+>>>>>> First, I think we need to decide on *where* the linking should be
+>>>>>> done, not at both places, as that would just mess up synchronization
+>>>>>> of who is responsible for calling the device_link_del() at detach.
+>>>>>>
+>>>>>> Second, It would in principle be fine to call device_link_add() and
+>>>>>> device_link_del() as a part of the attach/detach APIs. However, there
+>>>>>> is a downside to such solution, which would be that the driver then
+>>>>>> needs call the detach API, just to do device_link_del(). Of course
+>>>>>> then it would also needs to call the attach API later if/when needed.
+>>>>>> Doing this adds unnecessary overhead - comparing to just let the
+>>>>>> driver call device_link_add|del() when needed. On the upside, yes, it
+>>>>>> would put less burden on the drivers as it then only needs to care
+>>>>>> about using one set of functions.
+>>>>>>
+>>>>>> Which solution do you prefer?
+>>>>>
+>>>>>
+>>>>> Any reason why we could not add a 'boolean' argument to the API to
+>>>>> indicate whether the new device should be linked? I think that I prefer the
+>>>>> API handles it, but I can see there could be instances where drivers may
+>>>>> wish to handle it themselves.
+>>>>>
+>>>>> Rajendra, do you have a use-case right now where the driver would want
+>>>>> to handle the linking?
+>>>>
+>>>>
+>>>> So if I understand this right, any driver which does want to control
+>>>> individual powerdomain state would
+>>>> need to do the linking itself right?
+>>>>
+>>>> What I am saying is, if I have device A, with powerdomains X and Y, and
+>>>> if I want to turn on only X,
+>>>> then I would want only X to be linked with A, and at a later point if I
+>>>> want both X and Y to be turned on,
+>>>> I would then go ahead and link both X and Y to A? Is that correct or did
+>>>> I get it all wrong?
+>>>
+>>>
+>>> Correct!
+>>>
+>>>>
+>>>> I know atleast Camera on msm8996 would need to do this since it has 2 vfe
+>>>> powerdoamins, which can be
+>>>> turned on one at a time (depending on what resolution needs to be
+>>>> supported) or both together if we
+>>>> really need very high resolution using both vfe modules.
+>>>
+>>>
+>>> I think this is also the case for the Tegra XUSB subsystem.
+>>>
+>>> The usb device is always attached to one PM domain, but depending on
+>>> if super-speed mode is used, another PM domain for that logic needs to
+>>> be powered on as well.
+>>>
+>>> Jon, please correct me if I am wrong!
+>>
+>>
+>> Yes this is technically correct, however, in reality I think we are always
+>> going to enable the superspeed domain if either the host or device domain is
+>> enabled. So we would probably always link the superspeed with the host and
+>> device devices.
+> 
+> Why? Wouldn't that waste power if the superspeed mode isn't used?
+
+Simply to reduce complexity.
+
+Jon
 
 -- 
-
-Thanks,
-
-David / dhildenb
+nvpublic
