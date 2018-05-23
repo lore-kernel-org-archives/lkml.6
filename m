@@ -1,89 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932384AbeEWJmV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 05:42:21 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:35143 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932155AbeEWJmQ (ORCPT
+        id S932305AbeEWJmj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 05:42:39 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:38151 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932186AbeEWJmg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 05:42:16 -0400
-X-Google-Smtp-Source: AB8JxZpsNJH4lkoAn0KhFVkpy+LDP1kDJ8lJMcdLK+xaao1ZC25+hs/pDN+U0vp6A0DeWhXRhysamKLvSGnxzp+ivMM=
+        Wed, 23 May 2018 05:42:36 -0400
+X-Google-Smtp-Source: AB8JxZoZoLVFOJ3L2Az26H/l+89xsn4dprQqpVobE2B5ExAZMBWMBtXAjNR1vt0cILux4SC8bea74g==
+Date: Wed, 23 May 2018 02:42:32 -0700
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20180523090101.6xifikvjpirqafox@vireshk-i7>
+References: <20180518185501.173552-1-joel@joelfernandes.org> <20180522103415.cuutobi5kbhj4gcw@vireshk-i7> <20180522220953.GB40506@joelaf.mtv.corp.google.com> <20180523090101.6xifikvjpirqafox@vireshk-i7>
 MIME-Version: 1.0
-In-Reply-To: <57e4bbdd-1e30-0352-f758-998b64a6b77f@xilinx.com>
-References: <6ee982f8eb6e07f9ecbb0cc5093152f4a16b9c31.1523454899.git.michal.simek@xilinx.com>
- <CACRpkdbOa+AvhQT1RCWA_zQuTpp4qfNjZBFDOKLdaFqMGAe+cw@mail.gmail.com>
- <f9dd4f64-4026-f495-5810-32affb5b0944@xilinx.com> <CACRpkdaxwRc0zoDKogVGisXTPJ0EwLbOQjHzz1pSEjvWCsSCTQ@mail.gmail.com>
- <cc8d864a-e8e6-d30d-ae54-91819e5d0b8d@xilinx.com> <CACRpkdYgw+HaC5bUCZKiD7j+2ZLYbCTG+DdPdAEkRDq0xF5b3w@mail.gmail.com>
- <60652f48-2a98-414b-5cff-25890a6da37f@xilinx.com> <CACRpkdaNJzW+LO97oxavzYJwfkj0xu7wxTNRaGiaKm98ON5JMA@mail.gmail.com>
- <57e4bbdd-1e30-0352-f758-998b64a6b77f@xilinx.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 23 May 2018 11:42:14 +0200
-Message-ID: <CACRpkdbCsUBMcHg+xGOQCBmhoJsqh9VjK+4pjhG5Hf6Fjzwjww@mail.gmail.com>
-Subject: Re: [PATCH] gpio: zynq: Setup chip->base based on alias ID
-To: Michal Simek <michal.simek@xilinx.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michal Simek <monstr@monstr.eu>,
-        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
-        Peter Crosthwaite <peter.crosthwaite@xilinx.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Rob Herring <robherring2@gmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: [PATCH v2] schedutil: Allow cpufreq requests to be made even when kthread kicked
+To: Viresh Kumar <viresh.kumar@linaro.org>
+CC: "Joel Fernandes (Google.)" <joelaf@google.com>,
+        linux-kernel@vger.kernel.org,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Luca Abeni <luca.abeni@santannapisa.it>, Todd Kjos <tkjos@google.com>,
+        claudio@evidence.eu.com, kernel-team@android.com,
+        linux-pm@vger.kernel.org
+From: Joel Fernandes <joel@joelfernandes.org>
+Message-ID: <6A76301E-E383-439D-AD1E-6DC2B2CAC3CE@joelfernandes.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4N9ggLF014996
 
-On Wed, May 2, 2018 at 4:19 PM, Michal Simek <michal.simek@xilinx.com> wrote:
-> On 2.5.2018 15:56, Linus Walleij wrote:
 
->> Would it be possible that I apply the patch, and somehow also
->> establish some understanding with all users of the Xilinx
->> platform that whatever legacy applications are out there
->> must start to migrate towards using the character device so
->> this reliance on the numberspace doesn't stick around forever?
+
+On May 23, 2018 2:01:01 AM PDT, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>On 22-05-18, 15:09, Joel Fernandes wrote:
+>> I agree with the race you describe for single policy slow-switch.
+>Good find :)
+>> 
+>> The mainline sugov_work could also do such reordering in sugov_work,
+>I think. Even
+>> with the mutex_unlock in mainline's sugov_work, that work_in_progress
+>write could
+>> be reordered by the CPU to happen before the read of next_freq. AIUI,
+>> mutex_unlock is expected to be only a release-barrier.
+>> 
+>> Although to be safe, I could just put an smp_mb() there. I believe
+>with that,
+>> no locking would be needed for such case.
+>> 
+>> I'll send out a v3 with Acks for the original patch, and the send out
+>the
+>> smp_mb() as a separate patch if that's Ok.
 >
-> When someone contacts me for asking guidance for gpio I am telling them
-> not to use legacy sysfs interface and use libgpiod.
+>Maybe it would be better to get the fix (with smp_mb) first and then
+>this optimization patch on the top? That would mean that the fix can
+>get applied to stable kernels easily.
 
-Awesome, thanks for your support :)
+Probably. But then Rafael is changing single policy to use the lock so then barrier wouldn't be needed at all. In that case, both mine and Rafael new patch can go into stable which handles your race ( optimization == fix in this case :P )
 
-> Last one was a week
-> ago in connection to Ultra96 and libmraa.
->
-> But even chardev is not supported there now.
-> https://github.com/intel-iot-devkit/mraa/issues/713
+thanks,
 
-Hm I hope this happens soon. Manavanninan is doing a great
-job in switching this over, I just have to accept that the pace
-isn't always what it should be in all upstream projects, and
-deal with an imperfect world.
+- Joel
 
-> If you take a look at
-> arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts
-> which is Ultra96 board gpio-line-names are filled there for the whole PS
-> part. Definitely take a look and let know if you find out any issue there.
-
-It looks good. I even managed to boot my Ultra96 board which
-was sent over as price in some competition (great hardware!)
-
-> zynq/zynqmp gpio controller contains PS pins (hard part) and PL pins
-> coming to logic.
->
-> I can't describe PL gpio pins because it can be whatever even I have
-> done that for one fixed hw design.
->
-> Interesting part on that sha1 you shared is how "NC" pin is described.
->
-> gpio pin 35 I have on zcu100 as "" but it should be maybe TP_PAD which
-> is really just a pad on real board. And the rest of "" gpio names are
-> connected to PL.
-
-How to handle anything routed to/from programmable logic is
-in a bit of mess right now, I understand this work isn't the
-easiest :/
-
-Let's go for this patch and try to improve the situation gradually
-moving forward.
-
-Yours,
-Linus Walleij
+-- 
+Sent from my Android device with K-9 Mail. Please excuse my brevity.
