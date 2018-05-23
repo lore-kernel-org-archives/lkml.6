@@ -1,86 +1,161 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754014AbeEWFtZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 01:49:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60710 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750725AbeEWFtW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 01:49:22 -0400
-Date: Wed, 23 May 2018 08:49:18 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
-Cc: dledford@redhat.com, jgg@ziepe.ca, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, xavier.huwei@tom.com, lijun_nudt@163.com
-Subject: Re: [PATCH rdma-next 3/5] RDMA/hns: Increase checking CMQ status
- timeout value
-Message-ID: <20180523054918.GB2933@mtr-leonro.mtl.com>
-References: <1526544173-106587-1-git-send-email-xavier.huwei@huawei.com>
- <1526544173-106587-4-git-send-email-xavier.huwei@huawei.com>
+        id S1753908AbeEWFy7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 01:54:59 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:35602 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751085AbeEWFy5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 01:54:57 -0400
+X-Google-Smtp-Source: AB8JxZqwist897bRwZXoXO9YtuBbJJJ8gw/0tSvg8GsZd8gIuoyA7Km4Pk4Eet0CIImOAQt/1DkdXw==
+Date: Wed, 23 May 2018 11:24:53 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Taniya Das <tdas@codeaurora.org>
+Cc: skannan@codeaurora.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>, robh@kernel.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Amit Nischal <anischal@codeaurora.org>, devicetree@vger.kernel.org,
+        amit.kucheria@linaro.org
+Subject: Re: [PATCH v2 2/2] cpufreq: qcom-fw: Add support for QCOM cpufreq FW
+ driver
+Message-ID: <20180523055453.uzsbm2ub4stgthzg@vireshk-i7>
+References: <1526751291-17873-1-git-send-email-tdas@codeaurora.org>
+ <1526751291-17873-3-git-send-email-tdas@codeaurora.org>
+ <20180521090113.qo2lrafjrh2xi6va@vireshk-i7>
+ <0fccdc1880c912102548a85008482fa0@codeaurora.org>
+ <bf5b09d3-4d97-5357-3fb2-926227bb7229@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="sdtB3X0nJg68CQEu"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1526544173-106587-4-git-send-email-xavier.huwei@huawei.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <bf5b09d3-4d97-5357-3fb2-926227bb7229@codeaurora.org>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 22-05-18, 16:13, Taniya Das wrote:
+> On 5/22/2018 12:36 AM, skannan@codeaurora.org wrote:
+> > On 2018-05-21 02:01, Viresh Kumar wrote:
+> > > On 19-05-18, 23:04, Taniya Das wrote:
 
---sdtB3X0nJg68CQEu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> > > > +    /* Make sure the write goes through before proceeding */
+> > > > +    mb();
+> > > 
+> > > Btw what happens right after this is done ? Are we guaranteed that the
+> > > frequency is updated in the hardware after this ? What about enabling
+> > > fast-switch for your platform ? Look at drivers/cpufreq/scmi-cpufreq.c
+> > > to see how that is done.
+> > 
+> > Yeah, I don't think this is needed really.
+> > 
+> 
+> Just want to make sure it doesn't really sit in the write buffer before
+> return.
 
-On Thu, May 17, 2018 at 04:02:51PM +0800, Wei Hu (Xavier) wrote:
-> This patch increases checking CMQ status timeout value and
-> uses the same value with NIC driver to avoid deficiency of
-> time.
->
-> Signed-off-by: Wei Hu (Xavier) <xavier.huwei@huawei.com>
-> ---
->  drivers/infiniband/hw/hns/hns_roce_hw_v2.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.h b/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
-> index 182b672..f16df1b 100644
-> --- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
-> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
-> @@ -76,7 +76,7 @@
->  #define HNS_ROCE_V2_PAGE_SIZE_SUPPORTED		0xFFFFF000
->  #define HNS_ROCE_V2_MAX_INNER_MTPT_NUM		2
->  #define HNS_ROCE_INVALID_LKEY			0x100
-> -#define HNS_ROCE_CMQ_TX_TIMEOUT			200
-> +#define HNS_ROCE_CMQ_TX_TIMEOUT			30000
+As per Saravana you will be dropping it now, right ?
 
-Don't you think that loop of 30 seconds too much?
+> > > > +    index = readl_relaxed(c->perf_base);
+> > > > +    index = min(index, LUT_MAX_ENTRIES - 1);
+> > > 
+> > > Will the hardware ever read a value over 39 here ?
+> > 
+> > The register could be initialized to whatever before the kernel is
+> > brought up. Don't want to depend on it being correct to avoid out of
+> > bounds access that could leak data.
 
-Thanks
+Fair enough.
 
->
->  #define HNS_ROCE_CONTEXT_HOP_NUM		1
->  #define HNS_ROCE_MTT_HOP_NUM			1
-> --
-> 1.9.1
->
+> > > > +static int qcom_read_lut(struct platform_device *pdev,
+> > > > +             struct cpufreq_qcom *c)
+> > > > +{
+> > > > +    struct device *dev = &pdev->dev;
+> > > > +    u32 data, src, lval, i, core_count, prev_cc;
+> > > > +
+> > > > +    c->table = devm_kcalloc(dev, LUT_MAX_ENTRIES + 1,
+> > > > +                sizeof(*c->table), GFP_KERNEL);
+> > > > +    if (!c->table)
+> > > > +        return -ENOMEM;
+> > > > +
+> > > > +    for (i = 0; i < LUT_MAX_ENTRIES; i++) {
+> > > > +        data = readl_relaxed(c->lut_base + i * LUT_ROW_SIZE);
+> > > > +        src = ((data & GENMASK(31, 30)) >> 30);
+> > > > +        lval = (data & GENMASK(7, 0));
+> > > > +        core_count = CORE_COUNT_VAL(data);
+> > > > +
+> > > > +        if (!src)
+> > > > +            c->table[i].frequency = INIT_RATE / 1000;
+> > > > +        else
+> > > > +            c->table[i].frequency = XO_RATE * lval / 1000;
+> > > > +
+> > > > +        c->table[i].driver_data = c->table[i].frequency;
+> > > 
+> > > Why do you need to use driver_data here? Why can't you simple use
+> > > frequency field in the below conditional expressions ?
+> > > 
+> 
+> The frequency field would be marked INVALID in case the core count does not
+> match and the frequency data would be lost.
+> 
+> > > > +
+> > > > +        dev_dbg(dev, "index=%d freq=%d, core_count %d\n",
+> > > > +            i, c->table[i].frequency, core_count);
+> > > > +
+> > > > +        if (core_count != c->max_cores)
+> > > > +            c->table[i].frequency = CPUFREQ_ENTRY_INVALID;
+> > > > +
+> > > > +        /*
+> > > > +         * Two of the same frequencies with the same core counts means
+> > > > +         * end of table.
+> > > > +         */
+> > > > +        if (i > 0 && c->table[i - 1].driver_data ==
+> > > > +            c->table[i].driver_data && prev_cc == core_count) {
+> > > > +            struct cpufreq_frequency_table *prev = &c->table[i - 1];
+> > > > +
+> > > > +            if (prev->frequency == CPUFREQ_ENTRY_INVALID) {
+> > > 
+> > > There can only be a single boost frequency at max ?
+> > 
+> > As of now, yes. If that changes, we'll change this code later.
+> > 
+> > > > +                prev->flags = CPUFREQ_BOOST_FREQ;
+> > > > +                prev->frequency = prev->driver_data;
+> > > 
+> > > Okay you are using driver_data as a local variable to keep this value
+> > > safe which you might have overwritten. Maybe use a simple variable
+> > > prev_freq for this. It would be much more readable in that case and
+> > > you wouldn't end up abusing the driver_data field.
+> > > 
+> 
+> Please correct me, currently the driver_data is not used by cpufreq core and
+> that was the reason to use it. In case you still think it is not a good way
+> to handle it, I would try to handle it differently.
 
---sdtB3X0nJg68CQEu
-Content-Type: application/pgp-signature; name="signature.asc"
+Yeah, the driver data will not be used by cpufreq core, but I think
+the code would be far more readable if you use a local variable like
+prev_freq instead.
 
------BEGIN PGP SIGNATURE-----
+> > > > +            }
+> > > > +
+> > > > +            break;
+> > > > +        }
+> > > > +        prev_cc = core_count;
+> > > > +    }
+> > > > +    c->table[i].frequency = CPUFREQ_TABLE_END;
+> > > 
+> > > Wouldn't you end up writing on c->table[40].frequency here if there
+> > > are 40 frequency value present ?
+> > 
+> > Yeah, the loop condition needs to be fixed.
+> > 
+> 
+> The table allocation is done for 'LUT_MAX_ENTRIES + 1'.
+> Yes in case we have all [0-39] (i.e 40 entries) read from the hardware,
+> would store the same and mark the 40th index as table end. Please correct if
+> I missed something in your comment.
 
-iQIcBAEBAgAGBQJbBQDeAAoJEORje4g2clintsUQAJcvwgqpEgKrAVIxgFaidJRv
-eDjfyHnwXsDwS0wDe+57XdQQVJkGVHRUgb3fvGr69BLgIjgaO0zlj0SXJF9w8azc
-sySVeUOMh5Uios85PCgu5/ukgk0x8kJnTvC1i53f9D63nsgaVrO2ahpTr228qymZ
-XxG6yvlAZ+uqSbzmtHLCnyLnAA1wItifhKgby+Z8Ahw1InHq+puz/SfU1GEPo+iE
-c7ClnXt71O1IB/D8XY+uvmhtPHS63U+suLuwciijAF5Q0z53X4CzRF09yYsn0Ynh
-xWDaCBNbeZW1xB1Yr9Fm6OqTIsjBYxqTGXgD2UNYF1/VJ6FmF5CBdDohFnzyI2b5
-yfT/E0iKL77z0HBnRhHCPoEXJcJ/7IdwRwyLMnNhJ5mrS4juBpKwBTtnsiJtjKM4
-W6E2lULN6wM6tejaB2T3XrIZpHg0Q/Dn+Beur4BEwM5tgrs5crIxaNB5V0DitIOj
-4u3F33t9ZurR3g9iGKPeM5osxMDnsXpGtqRokwgF1MPZ3CVOPG57w1tJhKwmamKx
-ufhWjuqTFf/0HPqpxrF0Xla8M3/HQD95qcfGe23NjnB1PGmxnzHrR8mzyljnOdYL
-zdJQy26FXlz/bmGGlptEc/Sb0jPBUitNaaZGBLC6SwYL2/lyz84hNdycaZtPUAMr
-WCpbUCfpwU49IP1TvTlx
-=0aCv
------END PGP SIGNATURE-----
+Ahh, you are right. I misread it.
 
---sdtB3X0nJg68CQEu--
+-- 
+viresh
