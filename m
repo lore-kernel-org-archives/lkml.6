@@ -1,200 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754479AbeEWIxZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 04:53:25 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:40006 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754168AbeEWIxY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 04:53:24 -0400
-Message-Id: <3f8c7feadca2d52fa97c8feb5170c2ab67b6f992.1527065339.git.christophe.leroy@c-s.fr>
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v9] powerpc/mm: Only read faulting instruction when necessary
- in do_page_fault()
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Wed, 23 May 2018 10:53:22 +0200 (CEST)
+        id S1754571AbeEWIxm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 04:53:42 -0400
+Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:39049 "EHLO
+        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1754540AbeEWIxi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 04:53:38 -0400
+From: Vlad Buslov <vladbu@mellanox.com>
+To: jiri@resnulli.us
+Cc: netdev@vger.kernel.org, jhs@mojatatu.com, xiyou.wangcong@gmail.com,
+        davem@davemloft.net, linux-kernel@vger.kernel.org,
+        Vlad Buslov <vladbu@mellanox.com>
+Subject: [PATCH net-next v3] net: sched: don't disable bh when accessing action idr
+Date: Wed, 23 May 2018 11:52:54 +0300
+Message-Id: <1527065574-11299-1-git-send-email-vladbu@mellanox.com>
+X-Mailer: git-send-email 2.7.5
+In-Reply-To: <20180523073239.GC3155@nanopsycho>
+References: <20180523073239.GC3155@nanopsycho>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit a7a9dcd882a67 ("powerpc: Avoid taking a data miss on every
-userspace instruction miss") has shown that limiting the read of
-faulting instruction to likely cases improves performance.
+Initial net_device implementation used ingress_lock spinlock to synchronize
+ingress path of device. This lock was used in both process and bh context.
+In some code paths action map lock was obtained while holding ingress_lock.
+Commit e1e992e52faa ("[NET_SCHED] protect action config/dump from irqs")
+modified actions to always disable bh, while using action map lock, in
+order to prevent deadlock on ingress_lock in softirq. This lock was removed
+in commit 555353cfa1ae ("netdev: The ingress_lock member is no longer
+needed.").
 
-This patch goes further into this direction by limiting the read
-of the faulting instruction to the only cases where it is likely
-needed.
+Another reason to disable bh was filters delete code, that released actions
+in rcu callback. This code was changed to release actions from workqueue
+context in patch set "net_sched: close the race between call_rcu() and
+cleanup_net()".
 
-On an MPC885, with the same benchmark app as in the commit referred
-above, we see a reduction of about 3900 dTLB misses (approx 3%):
+With these changes it is no longer necessary to continue disable bh while
+accessing action map.
 
-Before the patch:
- Performance counter stats for './fault 500' (10 runs):
+Replace all action idr spinlock usage with regular calls that do not
+disable bh.
 
-         683033312      cpu-cycles                                                    ( +-  0.03% )
-            134538      dTLB-load-misses                                              ( +-  0.03% )
-             46099      iTLB-load-misses                                              ( +-  0.02% )
-             19681      faults                                                        ( +-  0.02% )
-
-       5.389747878 seconds time elapsed                                          ( +-  0.06% )
-
-With the patch:
-
- Performance counter stats for './fault 500' (10 runs):
-
-         682112862      cpu-cycles                                                    ( +-  0.03% )
-            130619      dTLB-load-misses                                              ( +-  0.03% )
-             46073      iTLB-load-misses                                              ( +-  0.05% )
-             19681      faults                                                        ( +-  0.01% )
-
-       5.381342641 seconds time elapsed                                          ( +-  0.07% )
-
-The proper work of the huge stack expansion was tested with the
-following app:
-
-int main(int argc, char **argv)
-{
-	char buf[1024 * 1025];
-
-	sprintf(buf, "Hello world !\n");
-	printf(buf);
-
-	exit(0);
-}
-
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Acked-by: Jiri Pirko <jiri@mellanox.com>
+Acked-by: Jamal Hadi Salim <jhs@mojatatu.com>
+Signed-off-by: Vlad Buslov <vladbu@mellanox.com>
 ---
- v9: Handling the semaphore drop and the retry directly in __do_page_fault(),
-     using fault_in_pages_readable() then perform a full retry, as suggested by Nicholas
+Changes from V2 to V3:
+ - Expanded commit message.
 
- v8: Back to a single patch as it now makes no sense to split the first part in two. The third patch has no
-     dependencies with the ones before, so it will be resend independantly. As suggested by Nicholas, the
-     patch now does the get_user() stuff inside bad_stack_expansion(), that's a mid way between v5 and v7.
+Changes from V1 to V2:
+ - Expanded commit message.
 
- v7: Following comment from Nicholas on v6 on possibility of the page getting removed from the pagetables
-     between the fault and the read, I have reworked the patch in order to do the get_user() in
-     __do_page_fault() directly in order to reduce complexity compared to version v5
+ net/sched/act_api.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
- v6: Rebased on latest powerpc/merge branch ; Using __get_user_inatomic() instead of get_user() in order
-     to move it inside the semaphored area. That removes all the complexity of the patch.
-
- v5: Reworked to fit after Benh do_fault improvement and rebased on top of powerpc/merge (65152902e43fef)
-
- v4: Rebased on top of powerpc/next (f718d426d7e42e) and doing access_ok() verification before __get_user_xxx()
-
- v3: Do a first try with pagefault disabled before releasing the semaphore
-
- v2: Changes 'if (cond1) if (cond2)' by 'if (cond1 && cond2)'
-
- arch/powerpc/mm/fault.c | 49 +++++++++++++++++++++++++++++++++----------------
- 1 file changed, 33 insertions(+), 16 deletions(-)
-
-diff --git a/arch/powerpc/mm/fault.c b/arch/powerpc/mm/fault.c
-index 0c99f9b45e8f..8e3f440a5b75 100644
---- a/arch/powerpc/mm/fault.c
-+++ b/arch/powerpc/mm/fault.c
-@@ -66,15 +66,11 @@ static inline bool notify_page_fault(struct pt_regs *regs)
- }
+diff --git a/net/sched/act_api.c b/net/sched/act_api.c
+index 72251241665a..3f4cf930f809 100644
+--- a/net/sched/act_api.c
++++ b/net/sched/act_api.c
+@@ -77,9 +77,9 @@ static void free_tcf(struct tc_action *p)
  
- /*
-- * Check whether the instruction at regs->nip is a store using
-+ * Check whether the instruction inst is a store using
-  * an update addressing form which will update r1.
-  */
--static bool store_updates_sp(struct pt_regs *regs)
-+static bool store_updates_sp(unsigned int inst)
+ static void tcf_idr_remove(struct tcf_idrinfo *idrinfo, struct tc_action *p)
  {
--	unsigned int inst;
--
--	if (get_user(inst, (unsigned int __user *)regs->nip))
--		return false;
- 	/* check for 1 in the rA field */
- 	if (((inst >> 16) & 0x1f) != 1)
- 		return false;
-@@ -234,8 +230,8 @@ static bool bad_kernel_fault(bool is_exec, unsigned long error_code,
+-	spin_lock_bh(&idrinfo->lock);
++	spin_lock(&idrinfo->lock);
+ 	idr_remove(&idrinfo->action_idr, p->tcfa_index);
+-	spin_unlock_bh(&idrinfo->lock);
++	spin_unlock(&idrinfo->lock);
+ 	gen_kill_estimator(&p->tcfa_rate_est);
+ 	free_tcf(p);
  }
+@@ -156,7 +156,7 @@ static int tcf_dump_walker(struct tcf_idrinfo *idrinfo, struct sk_buff *skb,
+ 	struct tc_action *p;
+ 	unsigned long id = 1;
  
- static bool bad_stack_expansion(struct pt_regs *regs, unsigned long address,
--				struct vm_area_struct *vma,
--				bool store_update_sp)
-+				struct vm_area_struct *vma, unsigned int flags,
-+				bool *must_retry)
+-	spin_lock_bh(&idrinfo->lock);
++	spin_lock(&idrinfo->lock);
+ 
+ 	s_i = cb->args[0];
+ 
+@@ -191,7 +191,7 @@ static int tcf_dump_walker(struct tcf_idrinfo *idrinfo, struct sk_buff *skb,
+ 	if (index >= 0)
+ 		cb->args[0] = index + 1;
+ 
+-	spin_unlock_bh(&idrinfo->lock);
++	spin_unlock(&idrinfo->lock);
+ 	if (n_i) {
+ 		if (act_flags & TCA_FLAG_LARGE_DUMP_ON)
+ 			cb->args[1] = n_i;
+@@ -261,9 +261,9 @@ static struct tc_action *tcf_idr_lookup(u32 index, struct tcf_idrinfo *idrinfo)
  {
- 	/*
- 	 * N.B. The POWER/Open ABI allows programs to access up to
-@@ -247,6 +243,7 @@ static bool bad_stack_expansion(struct pt_regs *regs, unsigned long address,
- 	 * expand to 1MB without further checks.
- 	 */
- 	if (address + 0x100000 < vma->vm_end) {
-+		unsigned int __user *nip = (unsigned int __user *)regs->nip;
- 		/* get user regs even if this fault is in kernel mode */
- 		struct pt_regs *uregs = current->thread.regs;
- 		if (uregs == NULL)
-@@ -264,8 +261,22 @@ static bool bad_stack_expansion(struct pt_regs *regs, unsigned long address,
- 		 * between the last mapped region and the stack will
- 		 * expand the stack rather than segfaulting.
- 		 */
--		if (address + 2048 < uregs->gpr[1] && !store_update_sp)
--			return true;
-+		if (address + 2048 >= uregs->gpr[1])
-+			return false;
-+
-+		if ((flags & FAULT_FLAG_WRITE) && (flags & FAULT_FLAG_USER) &&
-+		    access_ok(VERIFY_READ, nip, sizeof(*nip))) {
-+			unsigned int inst;
-+			int res;
-+
-+			pagefault_disable();
-+			res = __get_user_inatomic(inst, nip);
-+			pagefault_enable();
-+			if (!res)
-+				return !store_updates_sp(inst);
-+			*must_retry = true;
-+		}
-+		return true;
+ 	struct tc_action *p = NULL;
+ 
+-	spin_lock_bh(&idrinfo->lock);
++	spin_lock(&idrinfo->lock);
+ 	p = idr_find(&idrinfo->action_idr, index);
+-	spin_unlock_bh(&idrinfo->lock);
++	spin_unlock(&idrinfo->lock);
+ 
+ 	return p;
+ }
+@@ -323,7 +323,7 @@ int tcf_idr_create(struct tc_action_net *tn, u32 index, struct nlattr *est,
  	}
- 	return false;
+ 	spin_lock_init(&p->tcfa_lock);
+ 	idr_preload(GFP_KERNEL);
+-	spin_lock_bh(&idrinfo->lock);
++	spin_lock(&idrinfo->lock);
+ 	/* user doesn't specify an index */
+ 	if (!index) {
+ 		index = 1;
+@@ -331,7 +331,7 @@ int tcf_idr_create(struct tc_action_net *tn, u32 index, struct nlattr *est,
+ 	} else {
+ 		err = idr_alloc_u32(idr, NULL, &index, index, GFP_ATOMIC);
+ 	}
+-	spin_unlock_bh(&idrinfo->lock);
++	spin_unlock(&idrinfo->lock);
+ 	idr_preload_end();
+ 	if (err)
+ 		goto err3;
+@@ -369,9 +369,9 @@ void tcf_idr_insert(struct tc_action_net *tn, struct tc_action *a)
+ {
+ 	struct tcf_idrinfo *idrinfo = tn->idrinfo;
+ 
+-	spin_lock_bh(&idrinfo->lock);
++	spin_lock(&idrinfo->lock);
+ 	idr_replace(&idrinfo->action_idr, a, a->tcfa_index);
+-	spin_unlock_bh(&idrinfo->lock);
++	spin_unlock(&idrinfo->lock);
  }
-@@ -403,7 +414,7 @@ static int __do_page_fault(struct pt_regs *regs, unsigned long address,
- 	int is_user = user_mode(regs);
- 	int is_write = page_fault_is_write(error_code);
- 	int fault, major = 0;
--	bool store_update_sp = false;
-+	bool must_retry = false;
+ EXPORT_SYMBOL(tcf_idr_insert);
  
- 	if (notify_page_fault(regs))
- 		return 0;
-@@ -454,9 +465,6 @@ static int __do_page_fault(struct pt_regs *regs, unsigned long address,
- 	 * can result in fault, which will cause a deadlock when called with
- 	 * mmap_sem held
- 	 */
--	if (is_write && is_user)
--		store_update_sp = store_updates_sp(regs);
--
- 	if (is_user)
- 		flags |= FAULT_FLAG_USER;
- 	if (is_write)
-@@ -503,8 +511,17 @@ static int __do_page_fault(struct pt_regs *regs, unsigned long address,
- 		return bad_area(regs, address);
- 
- 	/* The stack is being expanded, check if it's valid */
--	if (unlikely(bad_stack_expansion(regs, address, vma, store_update_sp)))
--		return bad_area(regs, address);
-+	if (unlikely(bad_stack_expansion(regs, address, vma, flags,
-+					 &must_retry))) {
-+		if (!must_retry)
-+			return bad_area(regs, address);
-+
-+		up_read(&mm->mmap_sem);
-+		if (fault_in_pages_readable((const char __user *)regs->nip,
-+					    sizeof(unsigned int)))
-+			return bad_area_nosemaphore(regs, address);
-+		goto retry;
-+	}
- 
- 	/* Try to expand it */
- 	if (unlikely(expand_stack(vma, address)))
 -- 
-2.13.3
+2.7.5
