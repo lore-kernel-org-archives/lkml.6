@@ -1,90 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933557AbeEWQ2E (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 12:28:04 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:47414 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933476AbeEWQ2D (ORCPT
+        id S933573AbeEWQ3c (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 12:29:32 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:33624 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754629AbeEWQ33 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 12:28:03 -0400
-Date: Wed, 23 May 2018 18:27:41 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>
-Subject: Re: [PATCH] kernel: sys: fix potential Spectre v1
-Message-ID: <20180523162741.GU12198@hirez.programming.kicks-ass.net>
-References: <50481b83-4c03-f354-bd11-cef7aecdd85f@embeddedor.com>
- <b5e5e160-6ac7-87c8-af1a-4eb88f1f020d@embeddedor.com>
- <CAPcyv4iO67AG5ytc7gRBTnu6V8bdTOMb9eBwjGJtkGpMLKkpwg@mail.gmail.com>
- <3d2e5771-c2c9-6e45-3e85-21c0bc86876e@embeddedor.com>
- <58df7ae3-8ef0-4f42-9ab2-b551d2ffff00@embeddedor.com>
- <161a0513-1029-a76c-f967-1e606081599d@embeddedor.com>
- <CAPcyv4i6zOJZakNVW=y8NyUFB1EzOxBtoOGVhWCwysuTi6grvg@mail.gmail.com>
- <112349fb-837c-7b91-e256-a1c443710150@embeddedor.com>
- <20180523090840.GU12217@hirez.programming.kicks-ass.net>
- <20180523150737.ycuulapggtu3hpc3@lakrids.cambridge.arm.com>
+        Wed, 23 May 2018 12:29:29 -0400
+X-Google-Smtp-Source: AB8JxZrWnM+N68w/0Z2QF3MU0jGn6f0FMBw6QhwLpeuQw/dyg9nBA+zLzfC3T9+SGUM+NUdaiEV94A==
+Subject: Re: [PATCH 3/5] watchdog: sp805: set WDOG_HW_RUNNING when appropriate
+To: Robin Murphy <robin.murphy@arm.com>,
+        Scott Branden <scott.branden@broadcom.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <1527014840-21236-1-git-send-email-ray.jui@broadcom.com>
+ <1527014840-21236-4-git-send-email-ray.jui@broadcom.com>
+ <20180522205457.GA16363@roeck-us.net>
+ <0d92b9e9-a3d1-6e91-8371-b5ed3a83e399@broadcom.com>
+ <00c121ea-d197-93b8-2f56-bcca963f70fb@broadcom.com>
+ <76d47e02-7a5f-3fc2-3905-cd4aa03ac69c@arm.com>
+From: Ray Jui <ray.jui@broadcom.com>
+Message-ID: <5a996888-d3d3-9ae6-e438-5de4d5e3ea32@broadcom.com>
+Date: Wed, 23 May 2018 09:29:23 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180523150737.ycuulapggtu3hpc3@lakrids.cambridge.arm.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <76d47e02-7a5f-3fc2-3905-cd4aa03ac69c@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 04:07:37PM +0100, Mark Rutland wrote:
-> I think that either way, we have a potential problem if the compiler
-> generates a branch dependent on the result of validate_index_nospec().
-> 
-> In that case, we could end up with codegen approximating:
-> 
-> 	bool safe = false;
-> 
-> 	if (idx < bound) {
-> 		idx = array_index_nospec(idx, bound);
-> 		safe = true;
-> 	}
-> 
-> 	// this branch can be mispredicted
-> 	if (safe) {
-> 		foo = array[idx];
-> 	}
-> 
-> ... and thus we lose the nospec protection.
+Hi Robin,
 
-I was assuming the compiler would not do that, that's pretty stupid
-code-gen. But you're right in calling that out, because I think it's
-entirely in it's right to do that :/
+On 5/23/2018 4:48 AM, Robin Murphy wrote:
+> On 23/05/18 08:52, Scott Branden wrote:
+>>
+>>
+>> On 18-05-22 04:24 PM, Ray Jui wrote:
+>>> Hi Guenter,
+>>>
+>>> On 5/22/2018 1:54 PM, Guenter Roeck wrote:
+>>>> On Tue, May 22, 2018 at 11:47:18AM -0700, Ray Jui wrote:
+>>>>> If the watchdog hardware is already enabled during the boot process,
+>>>>> when the Linux watchdog driver loads, it should reset the watchdog and
+>>>>> tell the watchdog framework. As a result, ping can be generated from
+>>>>> the watchdog framework, until the userspace watchdog daemon takes over
+>>>>> control
+>>>>>
+>>>>> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+>>>>> Reviewed-by: Vladimir Olovyannikov 
+>>>>> <vladimir.olovyannikov@broadcom.com>
+>>>>> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+>>>>> ---
+>>>>>   drivers/watchdog/sp805_wdt.c | 22 ++++++++++++++++++++++
+>>>>>   1 file changed, 22 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/watchdog/sp805_wdt.c 
+>>>>> b/drivers/watchdog/sp805_wdt.c
+>>>>> index 1484609..408ffbe 100644
+>>>>> --- a/drivers/watchdog/sp805_wdt.c
+>>>>> +++ b/drivers/watchdog/sp805_wdt.c
+>>>>> @@ -42,6 +42,7 @@
+>>>>>       /* control register masks */
+>>>>>       #define    INT_ENABLE    (1 << 0)
+>>>>>       #define    RESET_ENABLE    (1 << 1)
+>>>>> +    #define    ENABLE_MASK    (INT_ENABLE | RESET_ENABLE)
+>>>>>   #define WDTINTCLR        0x00C
+>>>>>   #define WDTRIS            0x010
+>>>>>   #define WDTMIS            0x014
+>>>>> @@ -74,6 +75,18 @@ module_param(nowayout, bool, 0);
+>>>>>   MODULE_PARM_DESC(nowayout,
+>>>>>           "Set to 1 to keep watchdog running after device release");
+>>>>>   +/* returns true if wdt is running; otherwise returns false */
+>>>>> +static bool wdt_is_running(struct watchdog_device *wdd)
+>>>>> +{
+>>>>> +    struct sp805_wdt *wdt = watchdog_get_drvdata(wdd);
+>>>>> +
+>>>>> +    if ((readl_relaxed(wdt->base + WDTCONTROL) & ENABLE_MASK) ==
+>>>>> +        ENABLE_MASK)
+>>>>> +        return true;
+>>>>> +    else
+>>>>> +        return false;
+>>>>
+>>>>     return !!(readl_relaxed(wdt->base + WDTCONTROL) & ENABLE_MASK));
+>>>>
+>>>
+>>> Note ENABLE_MASK contains two bits (INT_ENABLE and RESET_ENABLE); 
+>>> therefore, a simple !!(expression) would not work? That is, the 
+>>> masked result needs to be compared against the mask again to ensure 
+>>> both bits are set, right?
+>> Ray - your original code looks correct to me.  Easier to read and less 
+>> prone to errors as shown in the attempted translation to a single 
+>> statement.
+> 
+>      if (<boolean condition>)
+>          return true;
+>      else
+>          return false;
+> 
+> still looks really dumb, though, and IMO is actually harder to read than 
+> just "return <boolean condition>;" because it forces you to stop and 
+> double-check that the logic is, in fact, only doing the obvious thing.
 
-> I also suspect that compiler transformations mean that this might
-> already be the case for patterns like:
-> 
-> 	if (idx < bound)  {
-> 		safe_idx = array_index_nospec(idx, bound)];
-> 		...
-> 		foo = array[safe_idx];
-> 	}
-> 
-> ... if the compiler can transform that to something like:
-> 
-> 	if (idx < bound) {
-> 		idx = array_index_nospec(idx, bound);
-> 	}
-> 
-> 	// can be mispredicted
-> 	if (idx < bound) {
-> 		foo = array[idx];
-> 	}
-> 
-> ... which I think a compiler might be capable of, depending on the rest
-> of the function body (e.g. if there's a common portion shared with the
-> else case).
-> 
-> I'll see if I can trigger that in a test case. :/
+If you can propose a way to modify my original code above to make it 
+more readable, I'm fine to make the change.
 
-*groan*...
+As I mentioned, I don't think the following change proposed by Guenter 
+will work due to the reason I pointed out:
+
+return !!(readl_relaxed(wdt->base + WDTCONTROL) & ENABLE_MASK));
+
+> 
+> Robin.
+> 
+> 
+> 
+> p.s. No thanks for making me remember the mind-boggling horror of 
+> briefly maintaining part of this legacy codebase... :P
+> 
+> $ grep -r '? true : false' --include=*.cpp . | wc -l
+> 951
