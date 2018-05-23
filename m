@@ -1,65 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932504AbeEWKHT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 06:07:19 -0400
-Received: from mga18.intel.com ([134.134.136.126]:16728 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932264AbeEWKHD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 06:07:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,432,1520924400";
-   d="scan'208";a="61010128"
-Subject: Re: [PATCH v2]: perf/x86: store user space frame-pointer value on a
- sample
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org, Andy Lutomirski <luto@kernel.org>
-References: <31205dc8-b756-e12b-0249-2ed06c2db9c9@linux.intel.com>
- <20180509145436.GV12217@hirez.programming.kicks-ass.net>
- <3ecedd91-1c01-6fc5-4648-89eaf5ff0930@linux.intel.com>
- <20180510101406.GA12217@hirez.programming.kicks-ass.net>
-From: Alexey Budankov <alexey.budankov@linux.intel.com>
-Message-ID: <7051f72e-2570-68c8-1488-33ad1b024031@linux.intel.com>
-Date: Wed, 23 May 2018 13:06:58 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S932510AbeEWKHp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 06:07:45 -0400
+Received: from srv-hp10-72.netsons.net ([94.141.22.72]:46072 "EHLO
+        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932260AbeEWKFo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 06:05:44 -0400
+From: Luca Ceresoli <luca@lucaceresoli.net>
+To: linux-media@vger.kernel.org
+Cc: Sakari Ailus <sakari.ailus@iki.fi>,
+        Luca Ceresoli <luca@lucaceresoli.net>,
+        Leon Luo <leonl@leopardimaging.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: [PATCH v3 3/7] media: imx274: get rid of mode_index
+Date: Wed, 23 May 2018 12:05:16 +0200
+Message-Id: <1527069921-21084-4-git-send-email-luca@lucaceresoli.net>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1527069921-21084-1-git-send-email-luca@lucaceresoli.net>
+References: <1527069921-21084-1-git-send-email-luca@lucaceresoli.net>
 MIME-Version: 1.0
-In-Reply-To: <20180510101406.GA12217@hirez.programming.kicks-ass.net>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
+After restructuring struct imx274_frmfmt, the mode_index field is
+still in use only for two dev_dbg() calls in imx274_s_stream(). Let's
+remove it and avoid duplicated information.
 
-On 10.05.2018 13:14, Peter Zijlstra wrote:
-> On Thu, May 10, 2018 at 12:42:38PM +0300, Alexey Budankov wrote:
->>> The Changelog needs to state that user_regs->bp is in fact valid and
->>
->> That actually was tested on binaries compiled without and with BP exposed 
->> and in the latter case proved the value of that change.
-> 
-> Mostly works is not the same as 'always initialized', if there are entry
-> paths that do not store that register, then using the value might leak
-> values from the kernel stack, which would be bad.
-> 
-> But like said, I think much of the kernel entry code was sanitized with
-> the PTI effort and I suspect things are in fact fine now, but lets wait
-> for Andy to confirm.
-> 
+Replacing the first usage requires some rather annoying but trivial
+pointer math. The other one can be removed entirely since it would
+print the same value anyway.
 
-It looks like Andy confirmed on the questions above.
+Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Is the patch ready to be up streamed now? 
+---
+Changed v2 -> v3:
+ - really fix dev_dbg() format mismatch warning for both 32 and 64 bit
 
-Thanks,
-Alexey
+Changed v1 -> v2:
+ - add "media: " prefix to commit message
+ - fix dev_dbg() format mismatch warning
+   ("warning: format ‘%ld’ expects argument of type ‘long int’, but argument 6 has type ‘int’")
+ - slightly improve commit message
+---
+ drivers/media/i2c/imx274.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/media/i2c/imx274.c b/drivers/media/i2c/imx274.c
+index 2ec31ae4e60d..f075715ffced 100644
+--- a/drivers/media/i2c/imx274.c
++++ b/drivers/media/i2c/imx274.c
+@@ -553,8 +553,6 @@ struct imx274_ctrls {
+  * @reset_gpio: Pointer to reset gpio
+  * @lock: Mutex structure
+  * @mode: Parameters for the selected readout mode
+- *        (points to imx274_formats[mode_index])
+- * @mode_index: Resolution mode index
+  */
+ struct stimx274 {
+ 	struct v4l2_subdev sd;
+@@ -567,7 +565,6 @@ struct stimx274 {
+ 	struct gpio_desc *reset_gpio;
+ 	struct mutex lock; /* mutex lock for operations */
+ 	const struct imx274_frmfmt *mode;
+-	u32 mode_index;
+ };
+ 
+ /*
+@@ -880,7 +877,6 @@ static int imx274_set_fmt(struct v4l2_subdev *sd,
+ 		index = 0;
+ 	}
+ 
+-	imx274->mode_index = index;
+ 	imx274->mode = &imx274_formats[index];
+ 
+ 	if (fmt->width > IMX274_MAX_WIDTH)
+@@ -1028,8 +1024,9 @@ static int imx274_s_stream(struct v4l2_subdev *sd, int on)
+ 	struct stimx274 *imx274 = to_imx274(sd);
+ 	int ret = 0;
+ 
+-	dev_dbg(&imx274->client->dev, "%s : %s, mode index = %d\n", __func__,
+-		on ? "Stream Start" : "Stream Stop", imx274->mode_index);
++	dev_dbg(&imx274->client->dev, "%s : %s, mode index = %td\n", __func__,
++		on ? "Stream Start" : "Stream Stop",
++		imx274->mode - &imx274_formats[0]);
+ 
+ 	mutex_lock(&imx274->lock);
+ 
+@@ -1068,8 +1065,7 @@ static int imx274_s_stream(struct v4l2_subdev *sd, int on)
+ 	}
+ 
+ 	mutex_unlock(&imx274->lock);
+-	dev_dbg(&imx274->client->dev,
+-		"%s : Done: mode = %d\n", __func__, imx274->mode_index);
++	dev_dbg(&imx274->client->dev, "%s : Done\n", __func__);
+ 	return 0;
+ 
+ fail:
+@@ -1625,8 +1621,7 @@ static int imx274_probe(struct i2c_client *client,
+ 	mutex_init(&imx274->lock);
+ 
+ 	/* initialize format */
+-	imx274->mode_index = IMX274_MODE_3840X2160;
+-	imx274->mode = &imx274_formats[imx274->mode_index];
++	imx274->mode = &imx274_formats[IMX274_MODE_3840X2160];
+ 	imx274->format.width = imx274->mode->size.width;
+ 	imx274->format.height = imx274->mode->size.height;
+ 	imx274->format.field = V4L2_FIELD_NONE;
+-- 
+2.7.4
