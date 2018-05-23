@@ -1,41 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933984AbeEWSev (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 14:34:51 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:32926 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933291AbeEWSet (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 14:34:49 -0400
-Date: Wed, 23 May 2018 14:34:47 -0400 (EDT)
-Message-Id: <20180523.143447.200125497788988369.davem@davemloft.net>
-To: antoine.tenart@bootlin.com
-Cc: linux@armlinux.org.uk, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        maxime.chevallier@bootlin.com, gregory.clement@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
-        ymarkman@marvell.com, mw@semihalf.com
-Subject: Re: [PATCH net-next v2 0/3] net: sfp: small improvements
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180522101801.18947-1-antoine.tenart@bootlin.com>
-References: <20180522101801.18947-1-antoine.tenart@bootlin.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+        id S934013AbeEWSfo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 14:35:44 -0400
+Received: from gate.crashing.org ([63.228.1.57]:56417 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933291AbeEWSfl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 14:35:41 -0400
+Date: Wed, 23 May 2018 13:34:47 -0500
+From: Segher Boessenkool <segher@kernel.crashing.org>
+To: Christophe Leroy <christophe.leroy@c-s.fr>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v3] powerpc: Implement csum_ipv6_magic in assembly
+Message-ID: <20180523183447.GV17342@gate.crashing.org>
+References: <20180522065701.9DE696CCB4@po14934vm.idsi0.si.c-s.fr>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180522065701.9DE696CCB4@po14934vm.idsi0.si.c-s.fr>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Antoine Tenart <antoine.tenart@bootlin.com>
-Date: Tue, 22 May 2018 12:17:58 +0200
+On Tue, May 22, 2018 at 08:57:01AM +0200, Christophe Leroy wrote:
+> The generic csum_ipv6_magic() generates a pretty bad result
 
-> A small series of patches improving the SFP support by adding a warning
-> when no Tx disable pin is available, and making the i2c-bus property
-> mandatory.
- ...
-> Since v1:
->   - Removed the patch fixing the sfp driver when no i2c bus was described.
->   - Made two new patches to make the i2c-bus property mandatory for sfp modules.
+<snip>
 
-Series applied, thank you.
+Please try with a more recent compiler, what you used is pretty ancient.
+It's not like recent compilers do great on this either, but it's not
+*that* bad anymore ;-)
+
+> --- a/arch/powerpc/lib/checksum_32.S
+> +++ b/arch/powerpc/lib/checksum_32.S
+> @@ -293,3 +293,36 @@ dst_error:
+>  	EX_TABLE(51b, dst_error);
+>  
+>  EXPORT_SYMBOL(csum_partial_copy_generic)
+> +
+> +/*
+> + * static inline __sum16 csum_ipv6_magic(const struct in6_addr *saddr,
+> + *				      const struct in6_addr *daddr,
+> + *				      __u32 len, __u8 proto, __wsum sum)
+> + */
+> +
+> +_GLOBAL(csum_ipv6_magic)
+> +	lwz	r8, 0(r3)
+> +	lwz	r9, 4(r3)
+> +	lwz	r10, 8(r3)
+> +	lwz	r11, 12(r3)
+> +	addc	r0, r5, r6
+> +	adde	r0, r0, r7
+> +	adde	r0, r0, r8
+> +	adde	r0, r0, r9
+> +	adde	r0, r0, r10
+> +	adde	r0, r0, r11
+> +	lwz	r8, 0(r4)
+> +	lwz	r9, 4(r4)
+> +	lwz	r10, 8(r4)
+> +	lwz	r11, 12(r4)
+> +	adde	r0, r0, r8
+> +	adde	r0, r0, r9
+> +	adde	r0, r0, r10
+> +	adde	r0, r0, r11
+> +	addze	r0, r0
+> +	rotlwi	r3, r0, 16
+> +	add	r3, r0, r3
+> +	not	r3, r3
+> +	rlwinm	r3, r3, 16, 16, 31
+> +	blr
+> +EXPORT_SYMBOL(csum_ipv6_magic)
+
+Clustering the loads and carry insns together is pretty much the worst you
+can do on most 32-bit CPUs.
+
+
+Segher
