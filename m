@@ -1,129 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934118AbeEWTNn (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 15:13:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35358 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934122AbeEWTNk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 15:13:40 -0400
-Date: Wed, 23 May 2018 15:13:37 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Joel Fernandes <joelaf@google.com>, linux-kernel@vger.kernel.org,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Boqun Feng <boqun.feng@gmail.com>, byungchul.park@lge.com,
-        kernel-team@android.com, Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH 1/4] rcu: Speed up calling of RCU tasks callbacks
-Message-ID: <20180523151337.469bba34@gandalf.local.home>
-In-Reply-To: <20180523170303.GR3803@linux.vnet.ibm.com>
-References: <20180523063815.198302-1-joel@joelfernandes.org>
-        <20180523063815.198302-2-joel@joelfernandes.org>
-        <20180523155734.GK3803@linux.vnet.ibm.com>
-        <20180523124531.7b0e972a@gandalf.local.home>
-        <20180523170303.GR3803@linux.vnet.ibm.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S934182AbeEWTRw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 15:17:52 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:44430 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933928AbeEWTRt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 15:17:49 -0400
+X-Google-Smtp-Source: AB8JxZpbT38OcNMOgjj+lY6sFKflvnufIbaSQ6uLcrMxZ08rdSPcs6BpTaWkRg0AcScd4Fu2kYVmzQ==
+From: Fabio Estevam <festevam@gmail.com>
+To: broonie@kernel.org
+Cc: linux-kernel@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>
+Subject: [PATCH 1/5] regulator: pfuze100: Switch to SPDX identifier
+Date: Wed, 23 May 2018 16:17:34 -0300
+Message-Id: <1527103058-8422-1-git-send-email-festevam@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 23 May 2018 10:03:03 -0700
-"Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+From: Fabio Estevam <fabio.estevam@nxp.com>
 
-> > > > diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
-> > > > index 5783bdf86e5a..a28698e44b08 100644
-> > > > --- a/kernel/rcu/update.c
-> > > > +++ b/kernel/rcu/update.c
-> > > > @@ -743,6 +743,12 @@ static int __noreturn rcu_tasks_kthread(void *arg)
-> > > >  		 */
-> > > >  		synchronize_srcu(&tasks_rcu_exit_srcu);
-> > > > 
-> > > > +		/*
-> > > > +		 * Wait a little bit incase held tasks are released    
-> > > 
-> > > 				in case
-> > >   
-> > > > +		 * during their next timer ticks.
-> > > > +		 */
-> > > > +		schedule_timeout_interruptible(HZ/10);
-> > > > +
-> > > >  		/*
-> > > >  		 * Each pass through the following loop scans the list
-> > > >  		 * of holdout tasks, removing any that are no longer
-> > > > @@ -755,7 +761,6 @@ static int __noreturn rcu_tasks_kthread(void *arg)
-> > > >  			int rtst;
-> > > >  			struct task_struct *t1;
-> > > > 
-> > > > -			schedule_timeout_interruptible(HZ);
-> > > >  			rtst = READ_ONCE(rcu_task_stall_timeout);
-> > > >  			needreport = rtst > 0 &&
-> > > >  				     time_after(jiffies, lastreport + rtst);
-> > > > @@ -768,6 +773,11 @@ static int __noreturn rcu_tasks_kthread(void *arg)
-> > > >  				check_holdout_task(t, needreport, &firstreport);
-> > > >  				cond_resched();
-> > > >  			}
-> > > > +
-> > > > +			if (list_empty(&rcu_tasks_holdouts))
-> > > > +				break;
-> > > > +
-> > > > +			schedule_timeout_interruptible(HZ);    
-> > 
-> > Why is this a full second wait and not the HZ/10 like the others?  
-> 
-> The idea is to respond quickly on small idle systems and to reduce the
-> number of possibly quite lengthy traversals of the task list otherwise.
-> I actually considered exponential backoff, but decided to keep it simple,
-> at least to start with.
+Adopt the SPDX license identifier headers to ease license compliance
+management.
 
-Ah, now it makes sense. Reading what you wrote, we can still do a
-backoff and keep it simple. What about the patch below. It appears to
-have the same performance improvement as Joel's
+Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+---
+ drivers/regulator/pfuze100-regulator.c | 21 ++++-----------------
+ 1 file changed, 4 insertions(+), 17 deletions(-)
 
--- Steve
-
-> > > 
-> > > Is there a better way to do this?  Can this be converted into a for-loop?
-> > > Alternatively, would it make sense to have a firsttime local variable
-> > > initialized to true, to keep the schedule_timeout_interruptible() at
-> > > the beginning of the loop, but skip it on the first pass through the loop?
-> > > 
-> > > Don't get me wrong, what you have looks functionally correct, but
-> > > duplicating the condition might cause problems later on, for example,
-> > > should a bug fix be needed in the condition.
-> > >   
-
-
-diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
-index 68fa19a5e7bd..c6df9fa916cf 100644
---- a/kernel/rcu/update.c
-+++ b/kernel/rcu/update.c
-@@ -796,13 +796,22 @@ static int __noreturn rcu_tasks_kthread(void *arg)
- 		 * holdouts.  When the list is empty, we are done.
- 		 */
- 		lastreport = jiffies;
--		while (!list_empty(&rcu_tasks_holdouts)) {
-+		for (;;) {
- 			bool firstreport;
- 			bool needreport;
- 			int rtst;
- 			struct task_struct *t1;
-+			int fract = 15;
+diff --git a/drivers/regulator/pfuze100-regulator.c b/drivers/regulator/pfuze100-regulator.c
+index 680f076..8cd692d 100644
+--- a/drivers/regulator/pfuze100-regulator.c
++++ b/drivers/regulator/pfuze100-regulator.c
+@@ -1,20 +1,7 @@
+-/*
+- * Copyright (C) 2011-2013 Freescale Semiconductor, Inc. All Rights Reserved.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+- */
++// SPDX-License-Identifier: GPL-2.0+
++//
++// Copyright (C) 2011-2013 Freescale Semiconductor, Inc. All Rights Reserved.
 +
-+			/* Slowly back off waiting for holdouts */
-+			schedule_timeout_interruptible(HZ/fract);
-+
-+			if (list_empty(&rcu_tasks_holdouts))
-+				break;
-+
-+			if (fract > 1)
-+				fract--;
- 
--			schedule_timeout_interruptible(HZ);
- 			rtst = READ_ONCE(rcu_task_stall_timeout);
- 			needreport = rtst > 0 &&
- 				     time_after(jiffies, lastreport + rtst);
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/init.h>
+-- 
+2.7.4
