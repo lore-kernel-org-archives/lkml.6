@@ -1,94 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934672AbeEWTWp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 15:22:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37676 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934287AbeEWTWl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 15:22:41 -0400
-Date: Wed, 23 May 2018 12:22:39 -0700
-From: Shaohua Li <shli@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Matthew Wilcox <willy@infradead.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        Ingo Molnar <mingo@redhat.com>, linux-mm@kvack.org,
-        linux-raid@vger.kernel.org,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>
-Subject: Re: [PATCH 3/8] md: raid5: use refcount_t for reference counting
- instead atomic_t
-Message-ID: <20180523192239.GA59657@kernel.org>
-References: <20180509193645.830-1-bigeasy@linutronix.de>
- <20180509193645.830-4-bigeasy@linutronix.de>
- <20180523132119.GC19987@bombadil.infradead.org>
- <20180523174904.GY12198@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180523174904.GY12198@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S934724AbeEWTYr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 15:24:47 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:33782 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934667AbeEWTYn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 15:24:43 -0400
+Date: Wed, 23 May 2018 15:24:40 -0400 (EDT)
+Message-Id: <20180523.152440.915264101771444714.davem@davemloft.net>
+To: christianvanbrauner@gmail.com
+Cc: shuah@kernel.org, keescook@chromium.org, tglx@linutronix.de,
+        kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
+        mic@digikod.net, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, ebiederm@xmission.com,
+        netdev@vger.kernel.org, christian@brauner.io
+Subject: Re: [PATCH] selftests: uevent filtering
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180522193421.7017-1-christian@brauner.io>
+References: <20180522193421.7017-1-christian@brauner.io>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 07:49:04PM +0200, Peter Zijlstra wrote:
-> On Wed, May 23, 2018 at 06:21:19AM -0700, Matthew Wilcox wrote:
-> > On Wed, May 09, 2018 at 09:36:40PM +0200, Sebastian Andrzej Siewior wrote:
-> > > refcount_t type and corresponding API should be used instead of atomic_t when
-> > > the variable is used as a reference counter. This allows to avoid accidental
-> > > refcounter overflows that might lead to use-after-free situations.
-> > > 
-> > > Most changes are 1:1 replacements except for
-> > > 	BUG_ON(atomic_inc_return(&sh->count) != 1);
-> > > 
-> > > which has been turned into
-> > >         refcount_inc(&sh->count);
-> > >         BUG_ON(refcount_read(&sh->count) != 1);
-> > 
-> > @@ -5387,7 +5387,8 @@ static struct stripe_head *__get_priority_stripe(struct
-> > +r5conf *conf, int group)
-> >                 sh->group = NULL;
-> >         }
-> >         list_del_init(&sh->lru);
-> > -       BUG_ON(atomic_inc_return(&sh->count) != 1);
-> > +       refcount_inc(&sh->count);
-> > +	BUG_ON(refcount_read(&sh->count) != 1);
-> >         return sh;
-> >  }
-> > 
-> > 
-> > That's the only problematic usage.  And I think what it's really saying is:
-> > 
-> > 	BUG_ON(refcount_read(&sh->count) != 0);
-> > 	refcount_set(&sh->count, 1);
-> > 
-> > With that, this looks like a reasonable use of refcount_t to me.
-> 
-> I'm not so sure, look at:
-> 
->   r5c_do_reclaim():
-> 
-> 	if (!list_empty(&sh->lru) &&
-> 	    !test_bit(STRIPE_HANDLE, &sh->state) &&
-> 	    atomic_read(&sh->count) == 0) {
-> 	      r5c_flush_stripe(cond, sh)
-> 
-> Which does:
-> 
->   r5c_flush_stripe():
-> 
-> 	atomic_inc(&sh->count);
-> 
-> Which is another inc-from-zero. Also, having sh's with count==0 in a
-> list is counter to the concept of refcounts and smells like usage-counts
-> to me. For refcount 0 really means deads and gone.
-> 
-> If this really is supposed to be a refcount, someone more familiar with
-> the raid5 should do the patch and write a comprehensive changelog on it.
+From: Christian Brauner <christianvanbrauner@gmail.com>
+Date: Tue, 22 May 2018 21:34:21 +0200
 
-I don't know what is changed in the refcount, such raid5 change has attempted
-before and didn't work. 0 for the stripe count is a valid usage and we do
-inc-from-zero in several places.
+> Recent discussions around uevent filtering (cf. net-next commit [1], [2],
+> and [3] and discussions in [4], [5], and [6]) have shown that the semantics
+> around uevent filtering where not well understood.
+> Now that we have settled - at least for the moment - how uevent filtering
+> should look like let's add some selftests to ensure we don't regress
+> anything in the future.
+> Note, the semantics of uevent filtering are described in detail in my
+> commit message to [2] so I won't repeat them here.
+> 
+> [1]: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=90d52d4fd82007005125d9a8d2d560a1ca059b9d
+> [2]: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=a3498436b3a0f8ec289e6847e1de40b4123e1639
+> [3]: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=26045a7b14bc7a5455e411d820110f66557d6589
+> [4]: https://lkml.org/lkml/2018/4/4/739
+> [5]: https://lkml.org/lkml/2018/4/26/767
+> [6]: https://lkml.org/lkml/2018/4/26/738
+> 
+> Signed-off-by: Christian Brauner <christian@brauner.io>
 
-Thanks,
-Shaohua
+Applied to net-next, thanks.
