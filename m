@@ -1,28 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932441AbeEWKKp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 06:10:45 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:37397 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932258AbeEWKKm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 06:10:42 -0400
-X-Google-Smtp-Source: AB8JxZr6gkja1MbRyXJQY2WuHHhQjPiFff1TZdXdasmTx0hcKp1pFz39GylQeLnLQXUnEhgLJGeBDQ==
-Subject: Re: [RESEND PATCH] PCI: qcom: add runtime pm support to pcie_port
-To: Vinod <vkoul@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180518070736.3003-1-bjorn.andersson@linaro.org>
- <20180523061536.GE20991@vkoul-mobl>
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <89bc5fc1-d4a3-4121-208c-546c62138699@linaro.org>
-Date: Wed, 23 May 2018 11:10:39 +0100
+        id S932468AbeEWKLH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 06:11:07 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52402 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932258AbeEWKLG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 06:11:06 -0400
+Subject: Re: [PATCH 06/14] arm64: ssbd: Add global mitigation state accessor
+To: Marc Zyngier <marc.zyngier@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu
+Cc: Kees Cook <keescook@chromium.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Andy Lutomirski <luto@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <20180522150648.28297-1-marc.zyngier@arm.com>
+ <20180522150648.28297-7-marc.zyngier@arm.com>
+From: Julien Grall <julien.grall@arm.com>
+Message-ID: <af0780d1-5c13-be8f-7401-1c5c54b1dfe0@arm.com>
+Date: Wed, 23 May 2018 11:11:02 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180523061536.GE20991@vkoul-mobl>
+In-Reply-To: <20180522150648.28297-7-marc.zyngier@arm.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -30,39 +31,47 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Marc,
 
-
-On 23/05/18 07:15, Vinod wrote:
-> On 18-05-18, 00:07, Bjorn Andersson wrote:
+On 05/22/2018 04:06 PM, Marc Zyngier wrote:
+> We're about to need the mitigation state in various parts of the
+> kernel in order to do the right thing for userspace and guests.
 > 
->> diff --git a/drivers/pci/dwc/pcie-qcom.c b/drivers/pci/dwc/pcie-qcom.c
->> index 5897af7d3355..3f35098b71b1 100644
->> --- a/drivers/pci/dwc/pcie-qcom.c
->> +++ b/drivers/pci/dwc/pcie-qcom.c
->> @@ -1088,6 +1088,8 @@ static int qcom_pcie_host_init(struct pcie_port *pp)
->>   	struct qcom_pcie *pcie = to_qcom_pcie(pci);
->>   	int ret;
->>   
->> +	pm_runtime_get_sync(pci->dev);
->> +
->>   	qcom_ep_reset_assert(pcie);
->>   
->>   	ret = pcie->ops->init(pcie);
->> @@ -1124,6 +1126,7 @@ static int qcom_pcie_host_init(struct pcie_port *pp)
->>   	phy_power_off(pcie->phy);
->>   err_deinit:
->>   	pcie->ops->deinit(pcie);
->> +	pm_runtime_put_sync(pci->dev);
+> Let's expose an accessor that will let other subsystems know
+> about the state.
 > 
-> Wondering if there is a reason for sync put here?
-pm_runtime_get_sync() call paired with a pm_runtime_put() call will be
-appropriate here I guess as per 
-https://www.kernel.org/doc/Documentation/power/runtime_pm.txt
+> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 
-I will respin this patch.
+Reviewed-by: Julien Grall <julien.grall@arm.com>
 
-Thanks,
-srini
+Cheers,
 
-
+> ---
+>   arch/arm64/include/asm/cpufeature.h | 10 ++++++++++
+>   1 file changed, 10 insertions(+)
 > 
+> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
+> index 9bc548e22784..1bacdf57f0af 100644
+> --- a/arch/arm64/include/asm/cpufeature.h
+> +++ b/arch/arm64/include/asm/cpufeature.h
+> @@ -543,6 +543,16 @@ static inline u64 read_zcr_features(void)
+>   #define ARM64_SSBD_FORCE_ENABLE		2
+>   #define ARM64_SSBD_MITIGATED		3
+>   
+> +static inline int arm64_get_ssbd_state(void)
+> +{
+> +#ifdef CONFIG_ARM64_SSBD
+> +	extern int ssbd_state;
+> +	return ssbd_state;
+> +#else
+> +	return ARM64_SSBD_UNKNOWN;
+> +#endif
+> +}
+> +
+>   #endif /* __ASSEMBLY__ */
+>   
+>   #endif
+> 
+
+-- 
+Julien Grall
