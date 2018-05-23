@@ -1,131 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932339AbeEWJfa (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 05:35:30 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:44073 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932260AbeEWJfZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 05:35:25 -0400
-Subject: Re: [PATCH rdma-next 4/5] RDMA/hns: Add reset process for RoCE in
- hip08
-To: Jason Gunthorpe <jgg@ziepe.ca>
-References: <1526544173-106587-1-git-send-email-xavier.huwei@huawei.com>
- <1526544173-106587-5-git-send-email-xavier.huwei@huawei.com>
- <20180517151459.GD10842@ziepe.ca> <5AFE484B.2080206@huawei.com>
- <20180518041502.GS10842@ziepe.ca> <5AFE7F54.9030201@huawei.com>
- <20180522202612.GB21148@ziepe.ca> <5B04D7FE.70806@huawei.com>
- <20180523034748.GC21148@ziepe.ca>
-CC: <dledford@redhat.com>, <linux-rdma@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <xavier.huwei@tom.com>,
-        <lijun_nudt@163.com>
-From: "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
-Message-ID: <5B0535D6.3020203@huawei.com>
-Date: Wed, 23 May 2018 17:35:18 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        id S932386AbeEWJfn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 05:35:43 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:37583 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932231AbeEWJfh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 05:35:37 -0400
+X-Google-Smtp-Source: AB8JxZq8xe5THlrlEsLjh7IlRLonOOJtLfBwDNt7i4vmU9ggl0k92NJ3CuLrXq65BbcioB6aqaJQ2JOOo9v2eN6V0JU=
 MIME-Version: 1.0
-In-Reply-To: <20180523034748.GC21148@ziepe.ca>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.57.115.182]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20180514162617.GD28661@phenom.ffwll.local>
+References: <20180416150232.GA26745@jordon-HP-15-Notebook-PC>
+ <CAFqt6zZ6VaPXoPs+3exLjNZ6yzS=v9=2TMXdFqHf_Zv5zEvSAA@mail.gmail.com>
+ <20180510185138.GL33053@art_vandelay> <20180514162617.GD28661@phenom.ffwll.local>
+From: Souptick Joarder <jrdr.linux@gmail.com>
+Date: Wed, 23 May 2018 15:05:35 +0530
+Message-ID: <CAFqt6zZ+ExTFKmzRycJiSW-u718pbGm1Ute+1UXF2NPn1WpLfA@mail.gmail.com>
+Subject: Re: [PATCH] gpu: drm: vgem: Change return type to vm_fault_t
+To: Sean Paul <seanpaul@chromium.org>,
+        Souptick Joarder <jrdr.linux@gmail.com>, linux-kernel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2018/5/23 11:47, Jason Gunthorpe wrote:
-> On Wed, May 23, 2018 at 10:54:54AM +0800, Wei Hu (Xavier) wrote:
+On Mon, May 14, 2018 at 9:56 PM, Daniel Vetter <daniel@ffwll.ch> wrote:
+> On Thu, May 10, 2018 at 02:51:38PM -0400, Sean Paul wrote:
+>> On Thu, May 10, 2018 at 07:58:11PM +0530, Souptick Joarder wrote:
+>> > Hi Sean,
+>> >
+>> > On Mon, Apr 16, 2018 at 8:32 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+>> > > Use new return type vm_fault_t for fault handler.
+>> > >
+>> > > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+>> > > Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+>> > > ---
+>> > >  drivers/gpu/drm/vgem/vgem_drv.c | 5 ++---
+>> > >  1 file changed, 2 insertions(+), 3 deletions(-)
+>> > >
+>> > > diff --git a/drivers/gpu/drm/vgem/vgem_drv.c b/drivers/gpu/drm/vgem/vgem_drv.c
+>> > > index 2524ff1..c64a859 100644
+>> > > --- a/drivers/gpu/drm/vgem/vgem_drv.c
+>> > > +++ b/drivers/gpu/drm/vgem/vgem_drv.c
+>> > > @@ -61,13 +61,13 @@ static void vgem_gem_free_object(struct drm_gem_object *obj)
+>> > >         kfree(vgem_obj);
+>> > >  }
+>> > >
+>> > > -static int vgem_gem_fault(struct vm_fault *vmf)
+>> > > +static vm_fault_t vgem_gem_fault(struct vm_fault *vmf)
+>> > >  {
+>> > >         struct vm_area_struct *vma = vmf->vma;
+>> > >         struct drm_vgem_gem_object *obj = vma->vm_private_data;
+>> > >         /* We don't use vmf->pgoff since that has the fake offset */
+>> > >         unsigned long vaddr = vmf->address;
+>> > > -       int ret;
+>> > > +       vm_fault_t ret = VM_FAULT_SIGBUS;
+>> > >         loff_t num_pages;
+>> > >         pgoff_t page_offset;
+>> > >         page_offset = (vaddr - vma->vm_start) >> PAGE_SHIFT;
+>> > > @@ -77,7 +77,6 @@ static int vgem_gem_fault(struct vm_fault *vmf)
+>> > >         if (page_offset > num_pages)
+>> > >                 return VM_FAULT_SIGBUS;
+>> > >
+>> > > -       ret = -ENOENT;
+>> > >         mutex_lock(&obj->pages_lock);
+>> > >         if (obj->pages) {
+>> > >                 get_page(obj->pages[page_offset]);
+>> > > --
+>> > > 1.9.1
+>> > >
+>> >
+>> > Any further comment on this patch ?
 >>
->> On 2018/5/23 4:26, Jason Gunthorpe wrote:
->>> On Fri, May 18, 2018 at 03:23:00PM +0800, Wei Hu (Xavier) wrote:
->>>> On 2018/5/18 12:15, Jason Gunthorpe wrote:
->>>>> On Fri, May 18, 2018 at 11:28:11AM +0800, Wei Hu (Xavier) wrote:
->>>>>> On 2018/5/17 23:14, Jason Gunthorpe wrote:
->>>>>>> On Thu, May 17, 2018 at 04:02:52PM +0800, Wei Hu (Xavier) wrote:
->>>>>>>> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
->>>>>>>> index 86ef15f..e1c44a6 100644
->>>>>>>> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
->>>>>>>> @@ -774,6 +774,9 @@ static int hns_roce_cmq_send(struct hns_roce_dev *hr_dev,
->>>>>>>>  	int ret = 0;
->>>>>>>>  	int ntc;
->>>>>>>>  
->>>>>>>> +	if (hr_dev->is_reset)
->>>>>>>> +		return 0;
->>>>>>>> +
->>>>>>>>  	spin_lock_bh(&csq->lock);
->>>>>>>>  
->>>>>>>>  	if (num > hns_roce_cmq_space(csq)) {
->>>>>>>> @@ -4790,6 +4793,7 @@ static int hns_roce_hw_v2_init_instance(struct hnae3_handle *handle)
->>>>>>>>  	return 0;
->>>>>>>>  
->>>>>>>>  error_failed_get_cfg:
->>>>>>>> +	handle->priv = NULL;
->>>>>>>>  	kfree(hr_dev->priv);
->>>>>>>>  
->>>>>>>>  error_failed_kzalloc:
->>>>>>>> @@ -4803,14 +4807,70 @@ static void hns_roce_hw_v2_uninit_instance(struct hnae3_handle *handle,
->>>>>>>>  {
->>>>>>>>  	struct hns_roce_dev *hr_dev = (struct hns_roce_dev *)handle->priv;
->>>>>>>>  
->>>>>>>> +	if (!hr_dev)
->>>>>>>> +		return;
->>>>>>>> +
->>>>>>>>  	hns_roce_exit(hr_dev);
->>>>>>>> +	handle->priv = NULL;
->>>>>>>>  	kfree(hr_dev->priv);
->>>>>>>>  	ib_dealloc_device(&hr_dev->ib_dev);
->>>>>>>>  }
->>>>>>> Why are these hunks here? If init fails then uninit should not be
->>>>>>> called, so why meddle with priv?
->>>>>> In hns_roce_hw_v2_init_instance function, we evaluate handle->priv with 
->>>>>> hr_dev,
->>>>>> We want clear the value in hns_roce_hw_v2_uninit_instance function.
->>>>>> So we can ensure no problem in RoCE driver.
->>>>> What problem could happen?
->>>>>
->>>>> I keep removing unnecessary sets to null and checks of null, so please
->>>>> don't add them if they cannot happen.
->>>>>
->>>>> Eg uninit should never be called with a null priv, that is a serious
->>>>> logic mis-design someplace if it happens.
->>>>>
->>>>> Jason
->>>> NIC driver call the registered reset_notify() function to finish the
->>>> part of RoCE reset process.
->>>> In RoCE driver,  when hnae3_reset_notify_type is HNAE3_UNINIT_CLIENT,
->>>> we call hns_roce_hw_v2_uninit_instance(handle, false) to release the
->>>> resources.
->>>> when hnae3_reset_notify_type is HNAE3_INIT_CLIENT, we call
->>>> hns_roce_hw_v2_init_instance.
->>>> if hns_roce_hw_v2_init_instance failed, we should ensure no problem in
->>>> the other callback
->>>> function registered by RoCE driver.
->>> Don't design things like this.
->>>
->>> init/uninit are paired - do not call something uninit if it can be
->>> called after init fails, or better, arrange to prevent that so things
->>> are sane.
->>>
->>> Jason
->>>
->>> .
->> The current RoCE driver registered 3 callback function to NIC driver as
->> belows:
->> 1.init_instance/uninit_instance are paired.
->> 2.In reset_notify function,  RoCE dirver still call
->> init_instance/uninit_instance function.
->> but NIC driver does not perceive the behavior.  We need to judge in RoCE
->> driver.
-Hi, Jason
-    I will send v2, thanks.
-    Regards
-Wei Hu
+>> Patch looks good to me. My build test fails, though, since vm_fault_t doesn't
+>> exist in drm-misc-next yet.
+>
+> vm_fault_t is already in upstream, just needs Maarten to do a backmerge.
+> Which I think he's done by now ... Otherwise nag him more :-)
+> -Daniel
+>
+>>
+>> So, for now,
+>>
+>> Reviewed-by: Sean Paul <seanpaul@chromium.org>
+>>
+>>
+>> --
+>> Sean Paul, Software Engineer, Google / Chromium OS
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>
+> --
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> http://blog.ffwll.ch
 
-> fix the nic driver
->
-> Jason
->
-> .
->
+Daniel/ Sean, is this patch already merged for 4.18 ?
