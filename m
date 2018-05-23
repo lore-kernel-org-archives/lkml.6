@@ -1,98 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754526AbeEWI4x (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 04:56:53 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49362 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754273AbeEWI4s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 04:56:48 -0400
-Date: Wed, 23 May 2018 10:56:41 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: Halil Pasic <pasic@linux.ibm.com>, kwankhede@nvidia.com,
-        Dong Jia <bjsdjshi@linux.vnet.ibm.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/2] vfio/mdev: Device namespace protection
-Message-ID: <20180523105641.0d89701b.cohuck@redhat.com>
-In-Reply-To: <20180522123829.4e758646@w520.home>
-References: <20180518190145.3187.7620.stgit@gimli.home>
-        <c666f6b7-bd49-79e4-703d-2724f7549c53@linux.ibm.com>
-        <20180522123829.4e758646@w520.home>
-Organization: Red Hat GmbH
+        id S1754572AbeEWI5K (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 04:57:10 -0400
+Received: from www62.your-server.de ([213.133.104.62]:54202 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754334AbeEWI5J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 04:57:09 -0400
+Subject: Re: [PATCH] [RFC] bpf: tracing: new helper bpf_get_current_cgroup_ino
+To: Y Song <ys114321@gmail.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Alban Crequy <alban.crequy@gmail.com>, netdev <netdev@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, containers@lists.linux-foundation.org,
+        cgroups@vger.kernel.org, Alban Crequy <alban@kinvolk.io>,
+        tj@kernel.org
+References: <20180513173318.21680-1-alban@kinvolk.io>
+ <20180521162609.lpdrnozowmzdn57m@ast-mbp.dhcp.thefacebook.com>
+ <CAH3MdRWgruVq+3r+2pHTah-c2zTO03vPkepjWDZ0_KrYcroy9A@mail.gmail.com>
+ <CAH3MdRVdfw52atavT3KL8MpPw7zDM_hR6aUcqDP1PogLn_sH+w@mail.gmail.com>
+ <20180523033550.z3tqo4lhd3zrmtdu@ast-mbp>
+ <CAH3MdRVwmKd84ePvNX+NuAj3TfA_28BObEmzBqGXv=P5_A=8fQ@mail.gmail.com>
+From: Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <ef833a5c-8307-fee7-26ec-057f623a9049@iogearbox.net>
+Date: Wed, 23 May 2018 10:57:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <CAH3MdRVwmKd84ePvNX+NuAj3TfA_28BObEmzBqGXv=P5_A=8fQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 22 May 2018 12:38:29 -0600
-Alex Williamson <alex.williamson@redhat.com> wrote:
+On 05/23/2018 06:31 AM, Y Song wrote:
+> On Tue, May 22, 2018 at 8:35 PM, Alexei Starovoitov
+> <alexei.starovoitov@gmail.com> wrote:
+>> On Tue, May 22, 2018 at 08:33:24PM -0700, Y Song wrote:
+>>> +       struct cgroup *cgrp = task_dfl_cgroup(current);
+>>> +       if (!cgrp)
+>>> +               return -EINVAL;
+>>
+>> why this check is needed?
+> 
+> No reason :-) Originally I am concerned whether it is possible cgrp
+> could be NULL.
+> By looking at the code, it SEEMS to me that it could not be NULL, but I am not
+> 100% sure (as I am not a cgroup expert). Since you are asking,
+> probably means it cannot be NULL, so will remove it in formal upstream patch.
 
-> On Tue, 22 May 2018 19:17:07 +0200
-> Halil Pasic <pasic@linux.ibm.com> wrote:
-> 
-> >  From vfio-ccw perspective I join Connie's assessment: vfio-ccw should
-> > be fine with these changes. I'm however not too deeply involved with
-> > the mdev framework, thus I don't feel comfortable r-b-ing. That results
-> > in
-> > Acked-by: Halil Pasic <pasic@linux.ibm.com>
-> > for both patches.
-> > 
-> > While at it I have would like to ask about the semantics and intended
-> > use of the mdev interfaces.
-> > 
-> > static int vfio_ccw_sch_probe(struct subchannel *sch)
-> > {
-> > 
-> > /* HALIL: 8< Not so interesting stuff happens here. >8 */  
-> 
-> This was interesting:
-> 
-> 	private->state = VFIO_CCW_STATE_NOT_OPER;
-> 
-> >          ret = vfio_ccw_mdev_reg(sch);
-> >          if (ret)
-> >                  goto out_disable;
-> > /*
-> >   * HALIL:  
-> >   * This might be racy. Somewhere in vfio_ccw_mdev_reg() the create attribute
-> >   * is made available (it calls mdev_register_device()). For instance create will
-> >   * attempt to decrement private->avail which is initialized below. I fail to
-> >   * understand how is  this well synchronized.
-> >   */
-> >          INIT_WORK(&private->io_work, vfio_ccw_sch_io_todo);
-> >          atomic_set(&private->avail, 1);
-> >          private->state = VFIO_CCW_STATE_STANDBY;
-> > 
-> >          return 0;
-> > 
-> > out_disable:
-> >          cio_disable_subchannel(sch);
-> > out_free:
-> >          dev_set_drvdata(&sch->dev, NULL);
-> >          kfree(private);
-> >          return ret;
-> > }
-> > 
-> > Should not initialization  of go before mdev_register_device(), and then rolled
-> > back if necessary if mdev_register_device() fails?
-> > 
-> > In practice it does not seem very likely that userspace can trigger
-> > mdev_device_create() before vfio_ccw_sch_probe() finishes so it should
-> > not be a practical problem. But I would like to understand how synchronization
-> > is supposed to work.
-> > 
-> > [Added Dong Jia, maybe he is also able to answer my question.]  
-> 
-> vfio_ccw_mdev_create() requires that private->state is not
-> VFIO_CCW_STATE_NOT_OPER but vfio_ccw_sch_probe() explicitly sets state
-> to this value before calling vfio_ccw_mdev_reg(), so a create should
-> return -ENODEV if racing with parent registration.  Is there something
-> else that I'm missing?  Thanks,
-> 
-> Alex
-
-No, I think your understanding is correct. We move the state from
-NOT_OPER to STANDBY only after we're set up completely, so our create
-callback will simply fail early with -ENODEV. This looks fine to me.
+Aside from this the cgrp->kn->id.id is also u64, so overlapping this with
+error codes we'll get into a similar issue as with bpf_perf_event_read().
