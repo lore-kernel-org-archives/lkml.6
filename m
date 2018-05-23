@@ -1,102 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754135AbeEWFWt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 01:22:49 -0400
-Received: from mga17.intel.com ([192.55.52.151]:48094 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754019AbeEWFUg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 01:20:36 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,431,1520924400";
-   d="scan'208";a="60950340"
-Subject: [PATCH v2 4/7] mm,
- devm_memremap_pages: Add MEMORY_DEVICE_PRIVATE support
-From: Dan Williams <dan.j.williams@intel.com>
-To: akpm@linux-foundation.org
-Cc: Christoph Hellwig <hch@lst.de>,
-        =?utf-8?b?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Logan Gunthorpe <logang@deltatee.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Date: Tue, 22 May 2018 22:10:39 -0700
-Message-ID: <152705223910.21414.17294372359464462569.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <152705221686.21414.771870778478134768.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <152705221686.21414.771870778478134768.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+        id S1754143AbeEWFW7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 01:22:59 -0400
+Received: from gateway34.websitewelcome.com ([192.185.149.46]:38708 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754019AbeEWFWv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 01:22:51 -0400
+X-Authority-Reason: nr=8
+Subject: Re: [PATCH] kernel: sys: fix potential Spectre v1
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+References: <20180515030038.GA11822@embeddedor.com>
+ <20180515150859.1bccbd8d4543848b30fea859@linux-foundation.org>
+ <alpine.DEB.2.21.1805160027260.1605@nanos.tec.linutronix.de>
+ <CAPcyv4iksLzZ=eMjWw6Wi87F2OSXHd16gKRLExgGhx=Mdr+AwQ@mail.gmail.com>
+ <50481b83-4c03-f354-bd11-cef7aecdd85f@embeddedor.com>
+ <b5e5e160-6ac7-87c8-af1a-4eb88f1f020d@embeddedor.com>
+ <CAPcyv4iO67AG5ytc7gRBTnu6V8bdTOMb9eBwjGJtkGpMLKkpwg@mail.gmail.com>
+ <3d2e5771-c2c9-6e45-3e85-21c0bc86876e@embeddedor.com>
+ <58df7ae3-8ef0-4f42-9ab2-b551d2ffff00@embeddedor.com>
+ <161a0513-1029-a76c-f967-1e606081599d@embeddedor.com>
+ <CAPcyv4i6zOJZakNVW=y8NyUFB1EzOxBtoOGVhWCwysuTi6grvg@mail.gmail.com>
+ <112349fb-837c-7b91-e256-a1c443710150@embeddedor.com>
+ <CAPcyv4jJ6g7nOAv4hV9RtduiDmdK=MPuE1tzybVROmH3S6994A@mail.gmail.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <9d6eaa24-2872-c93c-81b7-01b6a3ced67c@embeddedor.com>
+Date: Wed, 23 May 2018 00:22:42 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPcyv4jJ6g7nOAv4hV9RtduiDmdK=MPuE1tzybVROmH3S6994A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.192.46.223
+X-Source-L: No
+X-Exim-ID: 1fLMEc-002tBJ-5y
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.70]) [187.192.46.223]:33236
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 10
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for consolidating all ZONE_DEVICE enabling via
-devm_memremap_pages(), teach it how to handle the constraints of
-MEMORY_DEVICE_PRIVATE ranges.
 
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: "Jérôme Glisse" <jglisse@redhat.com>
-Reported-by: Logan Gunthorpe <logang@deltatee.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- kernel/memremap.c |   38 ++++++++++++++++++++++++++++++++------
- 1 file changed, 32 insertions(+), 6 deletions(-)
 
-diff --git a/kernel/memremap.c b/kernel/memremap.c
-index dfec0801f652..89eed25e2a80 100644
---- a/kernel/memremap.c
-+++ b/kernel/memremap.c
-@@ -303,8 +303,13 @@ static void devm_memremap_pages_release(void *data)
- 		- align_start;
- 
- 	mem_hotplug_begin();
--	arch_remove_memory(align_start, align_size, pgmap->altmap_valid ?
--			&pgmap->altmap : NULL);
-+	if (pgmap->type == MEMORY_DEVICE_PRIVATE) {
-+		pfn = align_start >> PAGE_SHIFT;
-+		__remove_pages(page_zone(pfn_to_page(pfn)), pfn,
-+				align_size >> PAGE_SHIFT, NULL);
-+	} else
-+		arch_remove_memory(align_start, align_size,
-+				pgmap->altmap_valid ? &pgmap->altmap : NULL);
- 	mem_hotplug_done();
- 
- 	untrack_pfn(NULL, PHYS_PFN(align_start), align_size);
-@@ -388,11 +393,32 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap,
- 		goto err_pfn_remap;
- 
- 	mem_hotplug_begin();
--	error = arch_add_memory(nid, align_start, align_size, altmap, false);
--	if (!error)
--		move_pfn_range_to_zone(&NODE_DATA(nid)->node_zones[ZONE_DEVICE],
--					align_start >> PAGE_SHIFT,
-+
-+	/*
-+	 * For device private memory we call add_pages() as we only need to
-+	 * allocate and initialize struct page for the device memory. More-
-+	 * over the device memory is un-accessible thus we do not want to
-+	 * create a linear mapping for the memory like arch_add_memory()
-+	 * would do.
-+	 *
-+	 * For all other device memory types, which are accessible by
-+	 * the CPU, we do want the linear mapping and thus use
-+	 * arch_add_memory().
-+	 */
-+	if (pgmap->type == MEMORY_DEVICE_PRIVATE) {
-+		error = add_pages(nid, align_start >> PAGE_SHIFT,
-+				align_size >> PAGE_SHIFT, NULL, false);
-+	} else {
-+		struct zone *zone;
-+
-+		error = arch_add_memory(nid, align_start, align_size, altmap,
-+				false);
-+		zone = &NODE_DATA(nid)->node_zones[ZONE_DEVICE];
-+		if (!error)
-+			move_pfn_range_to_zone(zone, align_start >> PAGE_SHIFT,
- 					align_size >> PAGE_SHIFT, altmap);
-+	}
-+
- 	mem_hotplug_done();
- 	if (error)
- 		goto err_add_memory;
+On 05/23/2018 12:15 AM, Dan Williams wrote:
+>>
+>> OK. How about this:
+>>
+>> diff --git a/include/linux/nospec.h b/include/linux/nospec.h
+>> index e791ebc..498995b 100644
+>> --- a/include/linux/nospec.h
+>> +++ b/include/linux/nospec.h
+>> @@ -55,4 +55,21 @@ static inline unsigned long
+>> array_index_mask_nospec(unsigned long index,
+>>                                                                         \
+>>          (typeof(_i)) (_i & _mask);                                     \
+>>   })
+>> +
+>> +#define validate_index_nospec(index, size)                            \
+>> +({                                                                    \
+>> +       bool ret = true;                                               \
+>> +       typeof(index) *ptr = &(index);                                 \
+>> +       typeof(size) _s = (size);                                      \
+>> +                                                                      \
+>> +       BUILD_BUG_ON(sizeof(*ptr) > sizeof(long));                     \
+>> +       BUILD_BUG_ON(sizeof(_s) > sizeof(long));                       \
+>> +                                                                      \
+>> +       if (*ptr >= size)                                              \
+
+I'll change the line above by this one:
+
+if (*ptr >= _s)
+
+>> +               ret = false;                                           \
+>> +                                                                      \
+>> +       *ptr = array_index_nospec(*ptr, _s);                           \
+>> +                                                                      \
+>> +       ret;                                                           \
+>>
+>> +})
+>>   #endif /* _LINUX_NOSPEC_H */
+> 
+> Assuming the assembly generation is comparable with the open coded
+> version, this looks ok to me.
+> 
+
+OK. I'll send a proper patch tomorrow morning.
+
+Thanks for the feedback, Dan.
+--
+Gustavo
