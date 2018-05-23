@@ -1,573 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933155AbeEWOFo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 10:05:44 -0400
-Received: from foss.arm.com ([217.140.101.70]:55924 "EHLO foss.arm.com"
+        id S933212AbeEWOGK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 10:06:10 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60404 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932942AbeEWOFj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 10:05:39 -0400
-Subject: Re: [PATCH v2 09/16] irqchip/irq-mvebu-sei: add new driver for
- Marvell SEI
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>, Haim Boot <hayim@marvell.com>,
-        Hanna Hawa <hannah@marvell.com>, linux-kernel@vger.kernel.org
-References: <20180522094042.24770-1-miquel.raynal@bootlin.com>
- <20180522094042.24770-10-miquel.raynal@bootlin.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <b11849f0-3593-51e1-8d4f-b05bfe6412a1@arm.com>
-Date: Wed, 23 May 2018 15:05:34 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S932942AbeEWOGH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 10:06:07 -0400
+Date: Wed, 23 May 2018 16:06:02 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <osalvador@techadventures.net>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Reza Arbab <arbab@linux.vnet.ibm.com>,
+        Igor Mammedov <imammedo@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
+Subject: Re: [PATCH 2/2] mm: do not warn on offline nodes unless the specific
+ node is explicitly requested
+Message-ID: <20180523140601.GQ20441@dhcp22.suse.cz>
+References: <20180523125555.30039-1-mhocko@kernel.org>
+ <20180523125555.30039-3-mhocko@kernel.org>
+ <11e26a4e-552e-b1dc-316e-ce3e92973556@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180522094042.24770-10-miquel.raynal@bootlin.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <11e26a4e-552e-b1dc-316e-ce3e92973556@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/05/18 10:40, Miquel Raynal wrote:
-> This is a cascaded interrupt controller in the AP806 GIC that collapses
-> SEIs (System Error Interrupt) coming from the AP and the CPs (through
-> the ICU).
+On Wed 23-05-18 19:15:51, Anshuman Khandual wrote:
+> On 05/23/2018 06:25 PM, Michal Hocko wrote:
+> > when adding memory to a node that is currently offline.
+> > 
+> > The VM_WARN_ON is just too loud without a good reason. In this
+> > particular case we are doing
+> > 	alloc_pages_node(node, GFP_KERNEL|__GFP_RETRY_MAYFAIL|__GFP_NOWARN, order)
+> > 
+> > so we do not insist on allocating from the given node (it is more a
+> > hint) so we can fall back to any other populated node and moreover we
+> > explicitly ask to not warn for the allocation failure.
+> > 
+> > Soften the warning only to cases when somebody asks for the given node
+> > explicitly by __GFP_THISNODE.
 > 
-> The SEI handles up to 64 interrupts. The first 21 interrupts are wired
-> and come from the AP. The next 43 interrupts are from the CPs and are
+> node hint passed here eventually goes into __alloc_pages_nodemask()
+> function which then picks up the applicable zonelist irrespective of
+> the GFP flag __GFP_THISNODE.
 
-wired to the AP (no interrupts come from it)
+__GFP_THISNODE should enforce the given node without any fallbacks
+unless something has changed recently.
 
-> triggered through MSI messages. To handle this complexity, the driver
-> has to declare to the upper layer: one IRQ domain for the wired
-> interrupts, one IRQ domain for the MSIs; and acts as a MSI server
+> Though we can go into zones of other
+> nodes if the present node (whose zonelist got picked up) does not
+> have any memory in it's zones. So warning here might not be without
+> any reason.
 
-s/server/controller/
-
-> ('parent') by declaring an MSI domain.
-> 
-> Suggested-by: Haim Boot <hayim@marvell.com>
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> ---
->  drivers/irqchip/Kconfig         |   3 +
->  drivers/irqchip/Makefile        |   1 +
->  drivers/irqchip/irq-mvebu-sei.c | 422 ++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 426 insertions(+)
->  create mode 100644 drivers/irqchip/irq-mvebu-sei.c
-> 
-> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-> index e9233db16e03..922e2a919cf3 100644
-> --- a/drivers/irqchip/Kconfig
-> +++ b/drivers/irqchip/Kconfig
-> @@ -310,6 +310,9 @@ config MVEBU_ODMI
->  config MVEBU_PIC
->  	bool
->  
-> +config MVEBU_SEI
-> +        bool
-> +
->  config LS_SCFG_MSI
->  	def_bool y if SOC_LS1021A || ARCH_LAYERSCAPE
->  	depends on PCI && PCI_MSI
-> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-> index 15f268f646bf..69d2ccb454ef 100644
-> --- a/drivers/irqchip/Makefile
-> +++ b/drivers/irqchip/Makefile
-> @@ -76,6 +76,7 @@ obj-$(CONFIG_MVEBU_GICP)		+= irq-mvebu-gicp.o
->  obj-$(CONFIG_MVEBU_ICU)			+= irq-mvebu-icu.o
->  obj-$(CONFIG_MVEBU_ODMI)		+= irq-mvebu-odmi.o
->  obj-$(CONFIG_MVEBU_PIC)			+= irq-mvebu-pic.o
-> +obj-$(CONFIG_MVEBU_SEI)			+= irq-mvebu-sei.o
->  obj-$(CONFIG_LS_SCFG_MSI)		+= irq-ls-scfg-msi.o
->  obj-$(CONFIG_EZNPS_GIC)			+= irq-eznps.o
->  obj-$(CONFIG_ARCH_ASPEED)		+= irq-aspeed-vic.o irq-aspeed-i2c-ic.o
-> diff --git a/drivers/irqchip/irq-mvebu-sei.c b/drivers/irqchip/irq-mvebu-sei.c
-> new file mode 100644
-> index 000000000000..d9abd5e10741
-> --- /dev/null
-> +++ b/drivers/irqchip/irq-mvebu-sei.c
-> @@ -0,0 +1,422 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#define pr_fmt(fmt) "mvebu-sei: " fmt
-> +
-> +#include <linux/irq.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/irqchip/chained_irq.h>
-> +#include <linux/irqdomain.h>
-> +#include <linux/kernel.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_irq.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/msi.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/irqchip.h>
-> +
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +/* Cause register */
-> +#define GICP_SECR(idx)		(0x0  + (idx * 0x4))
-> +/* Mask register */
-> +#define GICP_SEMR(idx)		(0x20 + (idx * 0x4))
-> +#define GICP_SET_SEI_OFFSET	0x30
-> +
-> +#define SEI_IRQ_COUNT_PER_REG	32
-> +#define SEI_IRQ_REG_COUNT	2
-> +#define SEI_IRQ_COUNT		(SEI_IRQ_COUNT_PER_REG * SEI_IRQ_REG_COUNT)
-> +#define SEI_IRQ_REG_IDX(irq_id)	(irq_id / SEI_IRQ_COUNT_PER_REG)
-> +#define SEI_IRQ_REG_BIT(irq_id)	(irq_id % SEI_IRQ_COUNT_PER_REG)
-> +
-> +struct mvebu_sei_interrupt_range {
-> +	u32 first;
-> +	u32 number;
-> +};
-> +
-> +struct mvebu_sei {
-> +	struct device *dev;
-> +	void __iomem *base;
-> +	struct resource *res;
-> +	struct irq_domain *ap_domain;
-> +	struct irq_domain *cp_domain;
-> +	struct mvebu_sei_interrupt_range ap_interrupts;
-> +	struct mvebu_sei_interrupt_range cp_interrupts;
-> +	/* Lock on MSI allocations/releases */
-> +	spinlock_t cp_msi_lock;
-> +	DECLARE_BITMAP(cp_msi_bitmap, SEI_IRQ_COUNT);
-> +};
-> +
-> +static int mvebu_sei_domain_to_sei_irq(struct mvebu_sei *sei,
-> +				       struct irq_domain *domain,
-> +				       irq_hw_number_t hwirq)
-> +{
-> +	if (domain == sei->ap_domain)
-> +		return sei->ap_interrupts.first + hwirq;
-> +	else
-> +		return sei->cp_interrupts.first + hwirq;
-> +}
-> +
-> +static void mvebu_sei_reset(struct mvebu_sei *sei)
-> +{
-> +	u32 reg_idx;
-> +
-> +	/* Clear IRQ cause registers */
-> +	for (reg_idx = 0; reg_idx < SEI_IRQ_REG_COUNT; reg_idx++)
-> +		writel(0xFFFFFFFF, sei->base + GICP_SECR(reg_idx));
-> +}
-> +
-> +static void mvebu_sei_mask_irq(struct irq_data *d)
-> +{
-> +	struct mvebu_sei *sei = irq_data_get_irq_chip_data(d);
-> +	u32 sei_irq = mvebu_sei_domain_to_sei_irq(sei, d->domain, d->hwirq);
-> +	u32 reg_idx = SEI_IRQ_REG_IDX(sei_irq);
-> +	u32 reg;
-> +
-> +	/* 1 disables the interrupt */
-> +	reg = readl(sei->base + GICP_SEMR(reg_idx));
-> +	reg |= BIT(SEI_IRQ_REG_BIT(sei_irq));
-> +	writel(reg, sei->base + GICP_SEMR(reg_idx));
-> +}
-> +
-> +static void mvebu_sei_unmask_irq(struct irq_data *d)
-> +{
-> +	struct mvebu_sei *sei = irq_data_get_irq_chip_data(d);
-> +	u32 sei_irq = mvebu_sei_domain_to_sei_irq(sei, d->domain, d->hwirq);
-> +	u32 reg_idx = SEI_IRQ_REG_IDX(sei_irq);
-> +	u32 reg;
-> +
-> +	/* 0 enables the interrupt */
-> +	reg = readl(sei->base + GICP_SEMR(reg_idx));
-> +	reg &= ~BIT(SEI_IRQ_REG_BIT(sei_irq));
-> +	writel(reg, sei->base + GICP_SEMR(reg_idx));
-> +}
-> +
-> +static void mvebu_sei_compose_msi_msg(struct irq_data *data,
-> +				      struct msi_msg *msg)
-> +{
-> +	struct mvebu_sei *sei = data->chip_data;
-> +	phys_addr_t set = sei->res->start + GICP_SET_SEI_OFFSET;
-> +
-> +	msg->data = mvebu_sei_domain_to_sei_irq(sei, data->domain, data->hwirq);
-> +	msg->address_lo = lower_32_bits(set);
-> +	msg->address_hi = upper_32_bits(set);
-> +}
-> +
-> +static struct irq_chip mvebu_sei_ap_wired_irq_chip = {
-> +	.name			= "AP wired SEI",
-> +	.irq_mask		= mvebu_sei_mask_irq,
-> +	.irq_unmask		= mvebu_sei_unmask_irq,
-> +	.irq_eoi		= irq_chip_eoi_parent,
-> +	.irq_set_affinity	= irq_chip_set_affinity_parent,
-> +	.irq_set_type		= irq_chip_set_type_parent,
-
-You seem to assume that this driver is purely dealing with edge
-interrupts. And yet you pass the request directly to the parrent. What
-does it mean? Shouldn't you at least check that this is an edge request
-and fail otherwise?
-
-> +};
-> +
-> +static struct irq_chip mvebu_sei_cp_msi_irq_chip = {
-> +	.name			= "CP MSI SEI",
-> +	.irq_mask		= mvebu_sei_mask_irq,
-> +	.irq_unmask		= mvebu_sei_unmask_irq,
-> +	.irq_eoi		= irq_chip_eoi_parent,
-> +	.irq_set_affinity	= irq_chip_set_affinity_parent,
-> +	.irq_set_type		= irq_chip_set_type_parent,
-
-Same here.
-
-> +	.irq_compose_msi_msg	= mvebu_sei_compose_msi_msg,
-> +};
-> +
-> +static int mvebu_sei_irq_domain_alloc(struct irq_domain *domain,
-> +				      unsigned int virq, unsigned int nr_irqs,
-> +				      void *args)
-> +{
-> +	struct mvebu_sei *sei = domain->host_data;
-> +	struct irq_fwspec *fwspec = args;
-> +	struct irq_chip *irq_chip;
-> +	int sei_hwirq, hwirq;
-> +	int ret;
-> +
-> +	/* Software only supports single allocations for now */
-> +	if (nr_irqs != 1)
-> +		return -ENOTSUPP;
-> +
-> +	if (domain == sei->ap_domain) {
-
-That's not great, really. Pushing the management of the two domains into
-the same callbacks is pretty ugly, and makes the code rather confusing.
-Is there anything really preventing the two domains from being managed
-independently?
-
-> +		irq_chip = &mvebu_sei_ap_wired_irq_chip;
-> +		hwirq = fwspec->param[0];
-> +	} else {
-> +		irq_chip = &mvebu_sei_cp_msi_irq_chip;
-> +		spin_lock(&sei->cp_msi_lock);
-
-This could as well be a mutex.
-
-> +		hwirq = bitmap_find_free_region(sei->cp_msi_bitmap,
-> +						SEI_IRQ_COUNT, 0);
-
-It is a bit weird that you're allocating from a 64bit bitmap while you
-only have 43 interrupts available... At the 44th interrupt, something
-bad is going to happen.
-
-> +		spin_unlock(&sei->cp_msi_lock);
-> +		if (hwirq < 0)
-> +			return -ENOSPC;
-> +	}
-> +
-> +	sei_hwirq = mvebu_sei_domain_to_sei_irq(sei, domain, hwirq);
-
-Splitting the callbacks would definitely avoid that kind of horror.
-
-> +
-> +	fwspec->fwnode = domain->parent->fwnode;
-> +	fwspec->param_count = 3;
-> +	fwspec->param[0] = GIC_SPI;
-> +	fwspec->param[1] = sei_hwirq;
-> +	fwspec->param[2] = IRQ_TYPE_EDGE_RISING;
-> +
-> +	ret = irq_domain_alloc_irqs_parent(domain, virq, nr_irqs, fwspec);
-> +	if (ret)
-> +		goto release_region;
-> +
-> +	ret = irq_domain_set_hwirq_and_chip(domain, virq, hwirq, irq_chip, sei);
-> +	if (ret)
-> +		goto free_irq_parents;
-> +
-> +	return 0;
-> +
-> +free_irq_parents:
-> +	irq_domain_free_irqs_parent(domain, virq, nr_irqs);
-> +release_region:
-> +	if (domain == sei->cp_domain) {
-> +		spin_lock(&sei->cp_msi_lock);
-> +		bitmap_release_region(sei->cp_msi_bitmap, hwirq, 0);
-> +		spin_unlock(&sei->cp_msi_lock);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static void mvebu_sei_irq_domain_free(struct irq_domain *domain,
-> +				      unsigned int virq, unsigned int nr_irqs)
-> +{
-> +	struct mvebu_sei *sei = domain->host_data;
-> +	struct irq_data *d = irq_domain_get_irq_data(domain, virq);
-> +	u32 irq_nb = sei->ap_interrupts.number + sei->cp_interrupts.number;
-> +
-> +	if (nr_irqs != 1 || d->hwirq >= irq_nb) {
-> +		dev_err(sei->dev, "Invalid hwirq %lu\n", d->hwirq);
-> +		return;
-> +	}
-> +
-> +	irq_domain_free_irqs_parent(domain, virq, nr_irqs);
-> +
-> +	spin_lock(&sei->cp_msi_lock);
-> +	bitmap_release_region(sei->cp_msi_bitmap, d->hwirq, 0);
-> +	spin_unlock(&sei->cp_msi_lock);
-> +}
-> +
-> +static const struct irq_domain_ops mvebu_sei_ap_domain_ops = {
-> +	.xlate = irq_domain_xlate_onecell,
-> +	.alloc = mvebu_sei_irq_domain_alloc,
-> +	.free = mvebu_sei_irq_domain_free,
-> +};
-> +
-> +static const struct irq_domain_ops mvebu_sei_cp_domain_ops = {
-> +	.alloc = mvebu_sei_irq_domain_alloc,
-> +	.free = mvebu_sei_irq_domain_free,
-> +};
-> +
-> +static struct irq_chip mvebu_sei_msi_irq_chip = {
-> +	.name		= "SEI",
-> +	.irq_set_type	= irq_chip_set_type_parent,
-
-Same question here.
-
-> +};
-> +
-> +static struct msi_domain_ops mvebu_sei_msi_ops = {
-> +};
-> +
-> +static struct msi_domain_info mvebu_sei_msi_domain_info = {
-> +	.flags	= MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS,
-> +	.ops	= &mvebu_sei_msi_ops,
-> +	.chip	= &mvebu_sei_msi_irq_chip,
-> +};
-> +
-> +static void mvebu_sei_handle_cascade_irq(struct irq_desc *desc)
-> +{
-> +	struct mvebu_sei *sei = irq_desc_get_handler_data(desc);
-> +	struct irq_chip *chip = irq_desc_get_chip(desc);
-> +	unsigned long irqmap, irq_bit;
-> +	u32 reg_idx, virq, irqn;
-> +
-> +	chained_irq_enter(chip, desc);
-> +
-> +	/* Read both SEI cause registers (64 bits) */
-> +	for (reg_idx = 0; reg_idx < SEI_IRQ_REG_COUNT; reg_idx++) {
-> +		irqmap = readl_relaxed(sei->base + GICP_SECR(reg_idx));
-> +
-> +		/* Call handler for each set bit */
-> +		for_each_set_bit(irq_bit, &irqmap, SEI_IRQ_COUNT_PER_REG) {
-> +			/* Cause Register gives the SEI number */
-> +			irqn = irq_bit + reg_idx * SEI_IRQ_COUNT_PER_REG;
-> +			/*
-> +			 * Finding Linux mapping (virq) needs the right domain
-> +			 * and the relative hwirq (which start at 0 in both
-> +			 * cases, while irqn is relative to all SEI interrupts).
-> +			 */
-
-It is a bit odd that you're virtualizing the hwirq number. The whole
-point of splitting hwirq from virq is that you don't have to do that and
-can use the the raw HW number. You're saving a tiny bit of memory in the
-irq_domain, at the expense of more complexity. I don't know if that's
-worth it...
-
-> +			if (irqn < sei->ap_interrupts.number) {
-> +				virq = irq_find_mapping(sei->ap_domain, irqn);
-> +			} else {
-> +				irqn -= sei->ap_interrupts.number;
-> +				virq = irq_find_mapping(sei->cp_domain, irqn);
-> +			}
-> +
-> +			/* Call IRQ handler */
-> +			generic_handle_irq(virq);
-> +		}
-> +
-> +		/* Clear interrupt indication by writing 1 to it */
-> +		writel(irqmap, sei->base + GICP_SECR(reg_idx));
-> +	}
-> +
-> +	chained_irq_exit(chip, desc);
-> +}
-> +
-> +static int mvebu_sei_probe(struct platform_device *pdev)
-> +{
-> +	struct device_node *node = pdev->dev.of_node, *parent, *child;
-> +	struct irq_domain *parent_domain, *plat_domain;
-> +	struct mvebu_sei *sei;
-> +	const __be32 *property;
-> +	u32 parent_irq, size;
-> +	int ret;
-> +
-> +	sei = devm_kzalloc(&pdev->dev, sizeof(*sei), GFP_KERNEL);
-> +	if (!sei)
-> +		return -ENOMEM;
-> +
-> +	sei->dev = &pdev->dev;
-> +
-> +	spin_lock_init(&sei->cp_msi_lock);
-> +
-> +	sei->res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	sei->base = devm_ioremap_resource(sei->dev, sei->res);
-> +	if (!sei->base) {
-> +		dev_err(sei->dev, "Failed to remap SEI resource\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	mvebu_sei_reset(sei);
-> +
-> +	/*
-> +	 * Reserve the single (top-level) parent SPI IRQ from which all the
-> +	 * interrupts handled by this driver will be signaled.
-> +	 */
-> +	parent_irq = irq_of_parse_and_map(node, 0);
-> +	if (parent_irq <= 0) {
-> +		dev_err(sei->dev, "Failed to retrieve top-level SPI IRQ\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	irq_set_chained_handler(parent_irq, mvebu_sei_handle_cascade_irq);
-> +	irq_set_handler_data(parent_irq, sei);
-> +
-> +	/*
-> +	 * SEIs in the range [ 0; 20] are wired and come from the AP.
-> +	 * SEIs in the range [21; 63] are CP SEI and are triggered through MSIs.
-> +	 *
-> +	 * Each SEI 'domain' is represented as a subnode.
-> +	 */
-> +
-> +	/* Get a reference to the parent domain to create a hierarchy */
-> +	parent = of_irq_find_parent(node);
-> +	if (!parent) {
-> +		dev_err(sei->dev, "Failed to find parent IRQ node\n");
-> +		ret = -ENODEV;
-> +		goto dispose_irq;
-> +	}
-> +
-> +	parent_domain = irq_find_host(parent);
-> +	if (!parent_domain) {
-> +		dev_err(sei->dev, "Failed to find parent IRQ domain\n");
-> +		ret = -ENODEV;
-> +		goto dispose_irq;
-> +	}
-> +
-> +	/* Create the 'wired' hierarchy */
-> +	child = of_find_node_by_name(node, "sei-wired-controller");
-> +	if (!child) {
-> +		dev_err(sei->dev, "Missing 'sei-wired-controller' subnode\n");
-> +		ret = -ENODEV;
-> +		goto dispose_irq;
-> +	}
-> +
-> +	property = of_get_property(child, "marvell,sei-ranges", &size);
-> +	if (!property || size != (2 * sizeof(u32))) {
-> +		dev_err(sei->dev, "Missing 'marvell,sei-ranges' property\n");
-> +		of_node_put(child);
-> +		ret = -ENODEV;
-> +		goto dispose_irq;
-> +	}
-> +
-> +	sei->ap_interrupts.first = be32_to_cpu(property[0]);
-> +	sei->ap_interrupts.number = be32_to_cpu(property[1]);
-> +	sei->ap_domain = irq_domain_create_hierarchy(parent_domain, 0,
-> +						     sei->ap_interrupts.number,
-> +						     of_node_to_fwnode(child),
-> +						     &mvebu_sei_ap_domain_ops,
-> +						     sei);
-> +	of_node_put(child);
-> +	if (!sei->ap_domain) {
-> +		dev_err(sei->dev, "Failed to create AP IRQ domain\n");
-> +		ret = -ENOMEM;
-> +		goto dispose_irq;
-> +	}
-> +
-> +	/* Create the 'MSI' hierarchy */
-> +	child = of_find_node_by_name(node, "sei-msi-controller");
-> +	if (!child) {
-> +		dev_err(sei->dev, "Missing 'sei-msi-controller' subnode\n");
-> +		ret = -ENODEV;
-> +		goto remove_ap_domain;
-> +	}
-> +
-> +	property = of_get_property(child, "marvell,sei-ranges", &size);
-> +	if (!property || size != (2 * sizeof(u32))) {
-> +		dev_err(sei->dev, "Missing 'marvell,sei-ranges' property\n");
-> +		of_node_put(child);
-> +		ret = -ENODEV;
-> +		goto remove_ap_domain;
-> +	}
-> +
-> +	sei->cp_interrupts.first = be32_to_cpu(property[0]);
-> +	sei->cp_interrupts.number = be32_to_cpu(property[1]);
-> +	sei->cp_domain = irq_domain_create_hierarchy(parent_domain, 0,
-> +						     sei->cp_interrupts.number,
-> +						     of_node_to_fwnode(child),
-> +						     &mvebu_sei_cp_domain_ops,
-> +						     sei);
-> +	if (!sei->cp_domain) {
-> +		pr_err("Failed to create CPs IRQ domain\n");
-> +		of_node_put(child);
-> +		ret = -ENOMEM;
-> +		goto remove_ap_domain;
-> +	}
-> +
-> +	plat_domain = platform_msi_create_irq_domain(of_node_to_fwnode(child),
-> +						     &mvebu_sei_msi_domain_info,
-> +						     sei->cp_domain);
-> +	of_node_put(child);
-> +	if (!plat_domain) {
-> +		pr_err("Failed to create CPs MSI domain\n");
-> +		ret = -ENOMEM;
-> +		goto remove_cp_domain;
-> +	}
-> +
-> +	platform_set_drvdata(pdev, sei);
-> +
-> +	return 0;
-> +
-> +remove_cp_domain:
-> +	irq_domain_remove(sei->cp_domain);
-> +remove_ap_domain:
-> +	irq_domain_remove(sei->ap_domain);
-> +dispose_irq:
-> +	irq_dispose_mapping(parent_irq);
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct of_device_id mvebu_sei_of_match[] = {
-> +	{ .compatible = "marvell,armada-8k-sei", },
-> +	{},
-> +};
-> +
-> +static struct platform_driver mvebu_sei_driver = {
-> +	.probe  = mvebu_sei_probe,
-> +	.driver = {
-> +		.name = "mvebu-sei",
-> +		.of_match_table = mvebu_sei_of_match,
-> +	},
-> +};
-> +builtin_platform_driver(mvebu_sei_driver);
-> 
-
-It feels like this patch could do with a total split:
-
-- Introduce the wired side of the driver
-- then the MSI part
-
-Drop the common domain callbacks, and treat the two domains separately.
-I seriously doubt there will be much of an overlap anyway.
-
-Thanks,
-
-	M.
+I am not sure I follow. Are you suggesting a different VM_WARN_ON?
 -- 
-Jazz is not dead. It just smells funny...
+Michal Hocko
+SUSE Labs
