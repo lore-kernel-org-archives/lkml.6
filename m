@@ -1,75 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933471AbeEWP6V (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 11:58:21 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49432 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753723AbeEWP6U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 11:58:20 -0400
-Date: Wed, 23 May 2018 16:58:11 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Guenter Roeck <groeck@google.com>
-Cc: Takashi Iwai <tiwai@suse.de>, Liam Girdwood <lgirdwood@gmail.com>,
-        alsa-devel@alsa-project.org, Guenter Roeck <groeck@chromium.org>,
-        "Patel, Chintan M" <chintan.m.patel@intel.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC/RFT PATCH] ASoC: topology: Improve backwards compatibility
- with v4 topology files
-Message-ID: <20180523155811.GO4828@sirena.org.uk>
-References: <20180522165842.233949-1-groeck@google.com>
- <s5hmuwqpjdd.wl-tiwai@suse.de>
- <20180523135609.GK4828@sirena.org.uk>
- <CABXOdTeCr-ExO9O3XAHK-DnNf5yLGO0TPkXgs60TB90jGNB2_Q@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="DITGHUV3p5DjDsXt"
-Content-Disposition: inline
-In-Reply-To: <CABXOdTeCr-ExO9O3XAHK-DnNf5yLGO0TPkXgs60TB90jGNB2_Q@mail.gmail.com>
-X-Cookie: Excellent day to have a rotten day.
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S1754685AbeEWP7V (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 11:59:21 -0400
+Received: from zulu.geekplace.eu ([5.45.100.158]:38412 "EHLO zulu.geekplace.eu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751058AbeEWP7R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 11:59:17 -0400
+From: Florian Schmaus <flo@geekplace.eu>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Florian Schmaus <flo@geekplace.eu>, linux-kernel@vger.kernel.org
+Subject: [PATCH v6 1/3] driver-core: return EINVAL error instead of BUG_ON()
+Date: Wed, 23 May 2018 17:59:11 +0200
+Message-Id: <20180523155913.29679-2-flo@geekplace.eu>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180523155913.29679-1-flo@geekplace.eu>
+References: <20180523155913.29679-1-flo@geekplace.eu>
+In-Reply-To: <20180516160816.20251-1-flo@geekplace.eu>
+References: <20180516160816.20251-1-flo@geekplace.eu>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+I triggerd the BUG_ON() in driver_register() when booting a domU Xen
+domain. Since there was no contextual information logged, I needed to
+attach kgdb to determine the culprit (the wmi-bmof driver in my
+case). The BUG_ON() was added in commit f48f3febb2cb ("driver-core: do
+not register a driver with bus_type not registered").
 
---DITGHUV3p5DjDsXt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Instead of running into a BUG_ON() we print an error message
+identifying the, likely faulty, driver but continue booting.
 
-On Wed, May 23, 2018 at 08:54:18AM -0700, Guenter Roeck wrote:
-> On Wed, May 23, 2018 at 6:56 AM Mark Brown <broonie@kernel.org> wrote:
-> > On Wed, May 23, 2018 at 03:54:54PM +0200, Takashi Iwai wrote:
+Signed-off-by: Florian Schmaus <flo@geekplace.eu>
+---
 
-> > > And I'm wondering whether we should move these definitions to uapi
-> > > headers.
+Notes:
+    Make it clear in the error message that the bus was not initialized
+    and *not* the driver.
 
-> > Yes, we should.
+ drivers/base/driver.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-> Are you sure ? They used to be in
->  sound/soc/intel/skylake/skl-tplg-interface.h.
-> I took my clue from sound/soc/soc-topology.c, where the v4 structures are
-> also
-> declared locally and not in the uapi files.
-
-I'm saying we should move them there.  They're clearly part of the
-userspace ABI and therefore belong in uapi, it was a mistake to let them
-be elsewhere.
-
---DITGHUV3p5DjDsXt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsFj5MACgkQJNaLcl1U
-h9A0bAf9EMfDKlkBtgCzOARzcE+FvBVIXQ4el59+N1yXkXVotFiuE79QhAwNUAu0
-A0YxklDRct3QdIGoPZNxxYaLLsLswhdxf7IenKzPsvK8GMAeJEyjSn47NMglcOqx
-2KuerqnF0DL8lPrmsV563ndp0Kio4BOVMSz8CY6K8mOMK/v2TuQCSuhyzSnOZvhu
-a6tvUcqQfv7Bj/KQiUD6KasuQ8vyACvUPwgVFRyjPGm5pVoA3rdRphkoQKgfNx+5
-MI2j71sQ/BRiDOy4H20yfblN++72trejv6P1heYYcriQV6Eo8sAzIHT0kVOYqN/N
-ZJE9dpki1+Q2K8iiXVPmwRWFsRKtQw==
-=EzJI
------END PGP SIGNATURE-----
-
---DITGHUV3p5DjDsXt--
+diff --git a/drivers/base/driver.c b/drivers/base/driver.c
+index ba912558a510..857c8f1b876e 100644
+--- a/drivers/base/driver.c
++++ b/drivers/base/driver.c
+@@ -148,7 +148,11 @@ int driver_register(struct device_driver *drv)
+ 	int ret;
+ 	struct device_driver *other;
+ 
+-	BUG_ON(!drv->bus->p);
++	if (!drv->bus->p) {
++		pr_err("Driver '%s' was unable to register with bus_type '%s' because the bus was not initialized.\n",
++			   drv->name, drv->bus->name);
++		return -EINVAL;
++	}
+ 
+ 	if ((drv->bus->probe && drv->probe) ||
+ 	    (drv->bus->remove && drv->remove) ||
+-- 
+2.16.1
