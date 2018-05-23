@@ -1,44 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754745AbeEWQfw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 12:35:52 -0400
-Received: from mga03.intel.com ([134.134.136.65]:31274 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754623AbeEWQft (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 12:35:49 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,433,1520924400";
-   d="scan'208";a="53256472"
-Date: Wed, 23 May 2018 10:35:48 -0600
-From: Ross Zwisler <ross.zwisler@linux.intel.com>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: linux-nvdimm@lists.01.org, linux-fsdevel@vger.kernel.org,
-        tony.luck@intel.com, hch@lst.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 8/9] pmem: switch to copy_to_iter_mcsafe()
-Message-ID: <20180523163548.GC29519@linux.intel.com>
-Mail-Followup-To: Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>, linux-nvdimm@lists.01.org,
-        linux-fsdevel@vger.kernel.org, tony.luck@intel.com, hch@lst.de,
-        linux-kernel@vger.kernel.org
-References: <152539236455.31796.7516599166555186700.stgit@dwillia2-desk3.amr.corp.intel.com>
- <152539240757.31796.14176557943876214824.stgit@dwillia2-desk3.amr.corp.intel.com>
+        id S1754783AbeEWQf7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 12:35:59 -0400
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:41865 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754623AbeEWQfx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 12:35:53 -0400
+X-Google-Smtp-Source: ADUXVKIzmwzBz0SwlQaV5oHnUFr69hIUtUQvpKAm+bxFIZaOiX4e1HdLSizEXRif9AZiWm/rjGRCm6+rqCk5W+KZ/pg=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <152539240757.31796.14176557943876214824.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180509230630.258755-1-gwendal@chromium.org>
+References: <20180509230630.258755-1-gwendal@chromium.org>
+From: Enric Balletbo Serra <eballetbo@gmail.com>
+Date: Wed, 23 May 2018 18:35:51 +0200
+Message-ID: <CAFqH_50VYJC7aep6P+KtN4qmFeV66GEXvxmFy8KrNp1BRv33xg@mail.gmail.com>
+Subject: Re: [PATCH] cros_ec: Use devm_kzalloc for private data
+To: Gwendal Grignou <gwendal@chromium.org>
+Cc: Benson Leung <bleung@chromium.org>, Lee Jones <lee.jones@linaro.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 03, 2018 at 05:06:47PM -0700, Dan Williams wrote:
-> Use the machine check safe version of copy_to_iter() for the
-> ->copy_to_iter() operation published by the pmem driver.
-> 
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Hi Gwendal,
 
-Sure.
+2018-05-10 1:06 GMT+02:00 Gwendal Grignou <gwendal@chromium.org>:
+> Use dev_kzmalloc, remove .release entry point.
+>
+> Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
+> ---
+>  drivers/mfd/cros_ec_dev.c | 10 +---------
+>  1 file changed, 1 insertion(+), 9 deletions(-)
+>
+> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
+> index eafd06f62a3a..45d42511a3e5 100644
+> --- a/drivers/mfd/cros_ec_dev.c
+> +++ b/drivers/mfd/cros_ec_dev.c
+> @@ -262,13 +262,6 @@ static const struct file_operations fops = {
+>  #endif
+>  };
+>
+> -static void __remove(struct device *dev)
+> -{
+> -       struct cros_ec_dev *ec = container_of(dev, struct cros_ec_dev,
+> -                                             class_dev);
+> -       kfree(ec);
+> -}
+> -
+>  static void cros_ec_sensors_register(struct cros_ec_dev *ec)
+>  {
+>         /*
+> @@ -388,7 +381,7 @@ static int ec_device_probe(struct platform_device *pdev)
+>         int retval = -ENOMEM;
+>         struct device *dev = &pdev->dev;
+>         struct cros_ec_platform *ec_platform = dev_get_platdata(dev);
+> -       struct cros_ec_dev *ec = kzalloc(sizeof(*ec), GFP_KERNEL);
+> +       struct cros_ec_dev *ec = devm_kzalloc(dev, sizeof(*ec), GFP_KERNEL);
+>
+>         if (!ec)
+>                 return retval;
+> @@ -410,7 +403,6 @@ static int ec_device_probe(struct platform_device *pdev)
+>         ec->class_dev.devt = MKDEV(ec_major, pdev->id);
+>         ec->class_dev.class = &cros_class;
+>         ec->class_dev.parent = dev;
+> -       ec->class_dev.release = __remove;
+>
+>         retval = dev_set_name(&ec->class_dev, "%s", ec_platform->ec_name);
+>         if (retval) {
+> --
+> 2.17.0.441.gb46fe60e1d-goog
+>
 
-Reviewed-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+The patch looks good to me, however, the patch doesn't apply cleanly
+if you have [1] already applied, and if not, then is this patch ([2])
+which doesn't apply cleanly. To not have interdependencies I'd suggest
+apply first this patch and remove the following from [1]
+
+diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
+index eafd06f62a3a..cad12da7f884 100644
+--- a/drivers/mfd/cros_ec_dev.c
++++ b/drivers/mfd/cros_ec_dev.c
+@@ -264,8 +264,8 @@ static const struct file_operations fops = {
+
+ static void __remove(struct device *dev)
+ {
+-       struct cros_ec_dev *ec = container_of(dev, struct cros_ec_dev,
+-                                             class_dev);
++       struct cros_ec_dev *ec = to_cros_ec_dev(dev);
++
+        kfree(ec);
+ }
+
+With this change, [1] can go through the Benson tree and [2] through
+Lee tree independently. With the above change feel free to add my
+
+Reviewed-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+
+If you want I can do this rework for you.
+
+Best regards,
+ Enric
+
+[1] https://patchwork.kernel.org/patch/10390959/
+[2] https://patchwork.kernel.org/patch/10390965/
