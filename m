@@ -1,31 +1,31 @@
 Return-Path: <yehs2007@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1527093560; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1527093510; cv=none;
         d=google.com; s=arc-20160816;
-        b=OqARsZyvnpr6Pcm0B/cnTyhoH/370iLIZChj4CTd+k6Cgwfwg7iSyTtrGdeUVJV5Uy
-         odULbu20uBtC3jSNrv2deM5ntgpqh1N8sDmOqenPSZZODc3CnLiD8P/+y2b7Y5IeKAXE
-         WIMeWG5JmebOJe49LFmavXjZ/O25KeBIDDSAryq1q71zsOLl5lmB4pVL8y4IH6DRo9Ty
-         vdrQc+LSBIWVrirQo1XUfEZpictbyhLpXJ6pW91eY9pFcnJ78n9iTPXUr4eUY1WJXaWC
-         ukyd7DnN90Uq7ln9SPgYRkufiWEJt+IheGPzkRmqkokpKZBvtfvdQaytkeGI9i0On9+O
-         UNSQ==
+        b=iktq1yNd4Eho8bfy+erQ1cK08C74yqB330yxkUzWzV8SNdtBB7mSlMcJNwjtZMG/D9
+         XkzOEIP32CemferplGgE8LUy/B02pRGO58gkpyC6iLHiKVuqH9M1v9Pj7ZrMb7CSouIr
+         kbp/Q3tEq9I1a13zeJ594LyfPdSXbi3HQaAxAF8/7K18QUaY3yiAm//k13ASiKFIa7L5
+         uSdd8Y/HgodMj6Lsm85Y9BOnNk9wZX4eaeu/Sm+rQIDPKOy16vC+CwBGKR9fAE67xpxk
+         g2c+jEtyeyBzB4h9hBTZd2usHWfaWXZIkW4VnmS27/omeaeWIh8KOFNMcC91ByLrqudD
+         5wNg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=message-id:date:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
-        bh=1zBkKMItrypN9B4fxKZ67AXYmiFJtTKxi6aHDwsB9Dw=;
-        b=IOcIHZKrady0GLOSr8FLYr1uf4eYtcJUbgvpTX8y5i4HbRocugwamSaRCVr1HqLVtG
-         8RCnMshF4lm7L7/AEWWSAOM3mWadQJw8YDxTwME2T4BOCTJac/tls7vwerZqs7cV6XYl
-         k8nIceSrFWCBza+3ExKkubHEILyatqeL/TNlpofSU/wsHjffJ/k0/Tp3YwHtPF0SdhWl
-         NBoDAMLeItaeT9R3zF5sRXS25BrRQNL892AGnO0f6baxAGW9HbC60eKtNx6RfQoDo89d
-         NiBWLLdRr1LVSrCM+b+q9zKEgDUW3Zn9RLanGnpD1J2/mmJRVQGz4tkCbAzj42X+8ae4
-         iYAg==
+        bh=rwgMJP14wb0uFoS0zdJwwHXsIOYPahnbwRwtIOhhtFI=;
+        b=lXNZeiTLBJyeBOKHv0JquZa65kpA+XfKaRTuGQuz4r0Z1k9JmVpsTbcxjixyedAyx8
+         47VfsnjzFrYF+kMe08d0AKeebfVrmoMVITXk9EDzp6VxMuhIwq0Ottd0z20MkVgEtmTn
+         qebuZUSELgUCS2ARy3IymhGOLr3nvd7Ra2cIqHbSSWm3wiQxWDSJdBSAnTv0R5trwl+A
+         dpuUJQvmBJogBwKB7e6iLwicDiqILm74IZAxf8sVZPqAMXydlf7LmzITA2pks5P7g6IB
+         GV4YDyC4yLlJjvB887oBrD6cujVJmMUrtZHyPAlHlQ4Ir5qdGJerdDpDlB3nEpKfvUqo
+         dbhQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=krI0dL1/;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=VhcavFsq;
        spf=pass (google.com: domain of yehs2007@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=yehs2007@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=krI0dL1/;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=VhcavFsq;
        spf=pass (google.com: domain of yehs2007@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=yehs2007@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AB8JxZqyhfYx9llnrcDVfch2aZsZx9qK1CdAa+2yg6jnY+p4NlkdxlT49OLUTiakcoMX2C4OWqvYDA==
+X-Google-Smtp-Source: AB8JxZrPdl+Qgsx53geaR729cZo8UYw0vu0GyhzWZnWU8mbvBCZdxhUKhr5eVW4yqboTn+hvMKsimg==
 From: Huaisheng Ye <yehs2007@gmail.com>
 To: akpm@linux-foundation.org,
 	linux-mm@kvack.org
@@ -44,52 +44,211 @@ Cc: mhocko@suse.com,
 	xen-devel@lists.xenproject.org,
 	linux-btrfs@vger.kernel.org,
 	Huaisheng Ye <yehs1@lenovo.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Robin Murphy <robin.murphy@arm.com>,
+	"Levin, Alexander (Sasha Levin)" <alexander.levin@verizon.com>,
 	Christoph Hellwig <hch@infradead.org>
-Subject: [RFC PATCH v3 2/9] include/linux/dma-mapping: update usage of zone modifiers
-Date: Thu, 24 May 2018 00:38:50 +0800
-Message-Id: <1527093530-4000-1-git-send-email-yehs2007@gmail.com>
+Subject: [RFC PATCH v3 1/9] include/linux/gfp.h: get rid of GFP_ZONE_TABLE/BAD
+Date: Thu, 24 May 2018 00:38:22 +0800
+Message-Id: <1527093502-3950-1-git-send-email-yehs2007@gmail.com>
 X-Mailer: git-send-email 1.8.3.1
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1601273657034491951?=
-X-GMAIL-MSGID: =?utf-8?q?1601273657034491951?=
+X-GMAIL-THRID: =?utf-8?q?1601273604682913592?=
+X-GMAIL-MSGID: =?utf-8?q?1601273604682913592?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Huaisheng Ye <yehs1@lenovo.com>
 
-Use __GFP_ZONE_MASK to replace (__GFP_DMA | __GFP_HIGHMEM | __GFP_DMA32).
+Replace GFP_ZONE_TABLE and GFP_ZONE_BAD with encoded zone number.
 
-___GFP_DMA, ___GFP_HIGHMEM and ___GFP_DMA32 have been deleted from GFP
-bitmasks, the bottom three bits of GFP mask is reserved for storing
-encoded zone number.
-__GFP_DMA, __GFP_HIGHMEM and __GFP_DMA32 should not be operated with
-each others by OR.
+Delete ___GFP_DMA, ___GFP_HIGHMEM and ___GFP_DMA32 from GFP bitmasks,
+the bottom three bits of GFP mask is reserved for storing encoded
+zone number.
 
-Use GFP_NORMAL() to clear bottom 3 bits of GFP bitmaks.
+The encoding method is XOR. Get zone number from enum zone_type,
+then encode the number with ZONE_NORMAL by XOR operation.
+The goal is to make sure ZONE_NORMAL can be encoded to zero. So,
+the compatibility can be guaranteed, such as GFP_KERNEL and GFP_ATOMIC
+can be used as before.
 
+Reserve __GFP_MOVABLE in bit 3, so that it can continue to be used as
+a flag. Same as before, __GFP_MOVABLE respresents movable migrate type
+for ZONE_DMA, ZONE_DMA32, and ZONE_NORMAL. But when it is enabled with
+__GFP_HIGHMEM, ZONE_MOVABLE shall be returned instead of ZONE_HIGHMEM.
+__GFP_ZONE_MOVABLE is created to realize it.
+
+With this patch, just enabling __GFP_MOVABLE and __GFP_HIGHMEM is not
+enough to get ZONE_MOVABLE from gfp_zone. All subsystems should use
+GFP_HIGHUSER_MOVABLE directly to achieve that.
+
+Decode zone number directly from bottom three bits of flags in gfp_zone.
+The theory of encoding and decoding is,
+	A ^ B ^ B = A
+
+Suggested-by: Matthew Wilcox <willy@infradead.org>
 Signed-off-by: Huaisheng Ye <yehs1@lenovo.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Robin Murphy <robin.murphy@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Mel Gorman <mgorman@techsingularity.net>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: "Levin, Alexander (Sasha Levin)" <alexander.levin@verizon.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Christoph Hellwig <hch@infradead.org>
 ---
- include/linux/dma-mapping.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/gfp.h | 107 ++++++++++------------------------------------------
+ 1 file changed, 20 insertions(+), 87 deletions(-)
 
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index f8ab1c0..8fe524d 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -519,7 +519,7 @@ static inline void *dma_alloc_attrs(struct device *dev, size_t size,
- 		return cpu_addr;
+diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+index 1a4582b..f76ccd76 100644
+--- a/include/linux/gfp.h
++++ b/include/linux/gfp.h
+@@ -16,9 +16,7 @@
+  */
  
- 	/* let the implementation decide on the zone to allocate from: */
--	flag &= ~(__GFP_DMA | __GFP_DMA32 | __GFP_HIGHMEM);
-+	flag = GFP_NORMAL(flag);
+ /* Plain integer GFP bitmasks. Do not use this directly. */
+-#define ___GFP_DMA		0x01u
+-#define ___GFP_HIGHMEM		0x02u
+-#define ___GFP_DMA32		0x04u
++#define ___GFP_ZONE_MASK	0x07u
+ #define ___GFP_MOVABLE		0x08u
+ #define ___GFP_RECLAIMABLE	0x10u
+ #define ___GFP_HIGH		0x20u
+@@ -53,11 +51,15 @@
+  * without the underscores and use them consistently. The definitions here may
+  * be used in bit comparisons.
+  */
+-#define __GFP_DMA	((__force gfp_t)___GFP_DMA)
+-#define __GFP_HIGHMEM	((__force gfp_t)___GFP_HIGHMEM)
+-#define __GFP_DMA32	((__force gfp_t)___GFP_DMA32)
++#define __GFP_DMA	((__force gfp_t)OPT_ZONE_DMA ^ ZONE_NORMAL)
++#define __GFP_HIGHMEM	((__force gfp_t)OPT_ZONE_HIGHMEM ^ ZONE_NORMAL)
++#define __GFP_DMA32	((__force gfp_t)OPT_ZONE_DMA32 ^ ZONE_NORMAL)
+ #define __GFP_MOVABLE	((__force gfp_t)___GFP_MOVABLE)  /* ZONE_MOVABLE allowed */
+-#define GFP_ZONEMASK	(__GFP_DMA|__GFP_HIGHMEM|__GFP_DMA32|__GFP_MOVABLE)
++#define GFP_ZONEMASK	((__force gfp_t)___GFP_ZONE_MASK | ___GFP_MOVABLE)
++/* bottom 3 bits of GFP bitmasks are used for zone number encoded*/
++#define __GFP_ZONE_MASK ((__force gfp_t)___GFP_ZONE_MASK)
++#define __GFP_ZONE_MOVABLE	\
++		((__force gfp_t)(ZONE_MOVABLE ^ ZONE_NORMAL) | ___GFP_MOVABLE)
  
- 	if (!arch_dma_alloc_attrs(&dev, &flag))
- 		return NULL;
+ /*
+  * Page mobility and placement hints
+@@ -268,6 +270,13 @@
+  *   available and will not wake kswapd/kcompactd on failure. The _LIGHT
+  *   version does not attempt reclaim/compaction at all and is by default used
+  *   in page fault path, while the non-light is used by khugepaged.
++ *
++ * GFP_NORMAL() is used to clear bottom 3 bits of GFP bitmask. Actually it
++ *   returns encoded ZONE_NORMAL bits.
++ *
++ * GFP_NORMAL_UNMOVABLE() is similar to GFP_NORMAL, but it clear bottom 4 bits
++ *   of GFP bitmask. Excepting the encoded ZONE_NORMAL bits, it clears MOVABLE
++ *   flags as well.
+  */
+ #define GFP_ATOMIC	(__GFP_HIGH|__GFP_ATOMIC|__GFP_KSWAPD_RECLAIM)
+ #define GFP_KERNEL	(__GFP_RECLAIM | __GFP_IO | __GFP_FS)
+@@ -279,10 +288,12 @@
+ #define GFP_DMA		__GFP_DMA
+ #define GFP_DMA32	__GFP_DMA32
+ #define GFP_HIGHUSER	(GFP_USER | __GFP_HIGHMEM)
+-#define GFP_HIGHUSER_MOVABLE	(GFP_HIGHUSER | __GFP_MOVABLE)
++#define GFP_HIGHUSER_MOVABLE	(GFP_USER | __GFP_ZONE_MOVABLE)
+ #define GFP_TRANSHUGE_LIGHT	((GFP_HIGHUSER_MOVABLE | __GFP_COMP | \
+ 			 __GFP_NOMEMALLOC | __GFP_NOWARN) & ~__GFP_RECLAIM)
+ #define GFP_TRANSHUGE	(GFP_TRANSHUGE_LIGHT | __GFP_DIRECT_RECLAIM)
++#define GFP_NORMAL(gfp)	((gfp) & ~__GFP_ZONE_MASK)
++#define GFP_NORMAL_UNMOVABLE(gfp) ((gfp) & ~GFP_ZONEMASK)
+ 
+ /* Convert GFP flags to their corresponding migrate type */
+ #define GFP_MOVABLE_MASK (__GFP_RECLAIMABLE|__GFP_MOVABLE)
+@@ -326,87 +337,9 @@ static inline bool gfpflags_allow_blocking(const gfp_t gfp_flags)
+ #define OPT_ZONE_DMA32 ZONE_NORMAL
+ #endif
+ 
+-/*
+- * GFP_ZONE_TABLE is a word size bitstring that is used for looking up the
+- * zone to use given the lowest 4 bits of gfp_t. Entries are GFP_ZONES_SHIFT
+- * bits long and there are 16 of them to cover all possible combinations of
+- * __GFP_DMA, __GFP_DMA32, __GFP_MOVABLE and __GFP_HIGHMEM.
+- *
+- * The zone fallback order is MOVABLE=>HIGHMEM=>NORMAL=>DMA32=>DMA.
+- * But GFP_MOVABLE is not only a zone specifier but also an allocation
+- * policy. Therefore __GFP_MOVABLE plus another zone selector is valid.
+- * Only 1 bit of the lowest 3 bits (DMA,DMA32,HIGHMEM) can be set to "1".
+- *
+- *       bit       result
+- *       =================
+- *       0x0    => NORMAL
+- *       0x1    => DMA or NORMAL
+- *       0x2    => HIGHMEM or NORMAL
+- *       0x3    => BAD (DMA+HIGHMEM)
+- *       0x4    => DMA32 or DMA or NORMAL
+- *       0x5    => BAD (DMA+DMA32)
+- *       0x6    => BAD (HIGHMEM+DMA32)
+- *       0x7    => BAD (HIGHMEM+DMA32+DMA)
+- *       0x8    => NORMAL (MOVABLE+0)
+- *       0x9    => DMA or NORMAL (MOVABLE+DMA)
+- *       0xa    => MOVABLE (Movable is valid only if HIGHMEM is set too)
+- *       0xb    => BAD (MOVABLE+HIGHMEM+DMA)
+- *       0xc    => DMA32 (MOVABLE+DMA32)
+- *       0xd    => BAD (MOVABLE+DMA32+DMA)
+- *       0xe    => BAD (MOVABLE+DMA32+HIGHMEM)
+- *       0xf    => BAD (MOVABLE+DMA32+HIGHMEM+DMA)
+- *
+- * GFP_ZONES_SHIFT must be <= 2 on 32 bit platforms.
+- */
+-
+-#if defined(CONFIG_ZONE_DEVICE) && (MAX_NR_ZONES-1) <= 4
+-/* ZONE_DEVICE is not a valid GFP zone specifier */
+-#define GFP_ZONES_SHIFT 2
+-#else
+-#define GFP_ZONES_SHIFT ZONES_SHIFT
+-#endif
+-
+-#if 16 * GFP_ZONES_SHIFT > BITS_PER_LONG
+-#error GFP_ZONES_SHIFT too large to create GFP_ZONE_TABLE integer
+-#endif
+-
+-#define GFP_ZONE_TABLE ( \
+-	(ZONE_NORMAL << 0 * GFP_ZONES_SHIFT)				       \
+-	| (OPT_ZONE_DMA << ___GFP_DMA * GFP_ZONES_SHIFT)		       \
+-	| (OPT_ZONE_HIGHMEM << ___GFP_HIGHMEM * GFP_ZONES_SHIFT)	       \
+-	| (OPT_ZONE_DMA32 << ___GFP_DMA32 * GFP_ZONES_SHIFT)		       \
+-	| (ZONE_NORMAL << ___GFP_MOVABLE * GFP_ZONES_SHIFT)		       \
+-	| (OPT_ZONE_DMA << (___GFP_MOVABLE | ___GFP_DMA) * GFP_ZONES_SHIFT)    \
+-	| (ZONE_MOVABLE << (___GFP_MOVABLE | ___GFP_HIGHMEM) * GFP_ZONES_SHIFT)\
+-	| (OPT_ZONE_DMA32 << (___GFP_MOVABLE | ___GFP_DMA32) * GFP_ZONES_SHIFT)\
+-)
+-
+-/*
+- * GFP_ZONE_BAD is a bitmap for all combinations of __GFP_DMA, __GFP_DMA32
+- * __GFP_HIGHMEM and __GFP_MOVABLE that are not permitted. One flag per
+- * entry starting with bit 0. Bit is set if the combination is not
+- * allowed.
+- */
+-#define GFP_ZONE_BAD ( \
+-	1 << (___GFP_DMA | ___GFP_HIGHMEM)				      \
+-	| 1 << (___GFP_DMA | ___GFP_DMA32)				      \
+-	| 1 << (___GFP_DMA32 | ___GFP_HIGHMEM)				      \
+-	| 1 << (___GFP_DMA | ___GFP_DMA32 | ___GFP_HIGHMEM)		      \
+-	| 1 << (___GFP_MOVABLE | ___GFP_HIGHMEM | ___GFP_DMA)		      \
+-	| 1 << (___GFP_MOVABLE | ___GFP_DMA32 | ___GFP_DMA)		      \
+-	| 1 << (___GFP_MOVABLE | ___GFP_DMA32 | ___GFP_HIGHMEM)		      \
+-	| 1 << (___GFP_MOVABLE | ___GFP_DMA32 | ___GFP_DMA | ___GFP_HIGHMEM)  \
+-)
+-
+ static inline enum zone_type gfp_zone(gfp_t flags)
+ {
+-	enum zone_type z;
+-	int bit = (__force int) (flags & GFP_ZONEMASK);
+-
+-	z = (GFP_ZONE_TABLE >> (bit * GFP_ZONES_SHIFT)) &
+-					 ((1 << GFP_ZONES_SHIFT) - 1);
+-	VM_BUG_ON((GFP_ZONE_BAD >> bit) & 1);
+-	return z;
++	return ((__force unsigned int)flags & __GFP_ZONE_MASK) ^ ZONE_NORMAL;
+ }
+ 
+ /*
 -- 
 1.8.3.1
