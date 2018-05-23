@@ -1,45 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932826AbeEWLvG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 07:51:06 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:54950 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932806AbeEWLvB (ORCPT
+        id S932838AbeEWLvr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 07:51:47 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:50406 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932669AbeEWLvk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 07:51:01 -0400
-X-Google-Smtp-Source: ADUXVKK9AiH3jw7gZa8FdbzcJsHMC1PPWSEyJwzkvI2a/Pjo6y8jM/DnbNmZnPh7WDGBJwECn1QC33BjvjNiqpcsUIk=
+        Wed, 23 May 2018 07:51:40 -0400
+From: Dan Murphy <dmurphy@ti.com>
+To: <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <jacek.anaszewski@gmail.com>, <andy.shevchenko@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-leds@vger.kernel.org>, Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH v9 1/2] dt: bindings: lm3601x: Introduce the lm3601x driver
+Date: Wed, 23 May 2018 06:51:28 -0500
+Message-ID: <20180523115129.21674-1-dmurphy@ti.com>
+X-Mailer: git-send-email 2.12.2
 MIME-Version: 1.0
-In-Reply-To: <002d01d3f28b$d3ce3980$7b6aac80$@codeaurora.org>
-References: <1527068454-28921-1-git-send-email-ilialin@codeaurora.org>
- <1527068454-28921-2-git-send-email-ilialin@codeaurora.org>
- <3f1ca60e-7aa8-fccc-ab1c-4b7c37731cce@arm.com> <002901d3f286$198878b0$4c996a10$@codeaurora.org>
- <CAKohponbpErCeTYu9iQm_-dupz5SUr+TKsYXzqmmARB-pq95iA@mail.gmail.com>
- <002b01d3f28a$0d033900$2709ab00$@codeaurora.org> <CAKohponruWpcjuSDg-=ZbZ1=qm2iPZs36mfKYJ3nQZREkc3JCw@mail.gmail.com>
- <002d01d3f28b$d3ce3980$7b6aac80$@codeaurora.org>
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Date: Wed, 23 May 2018 17:21:00 +0530
-Message-ID: <CAKohpo=V_7a3-gDr0qoH=uPnH3+=SNGtgFWPzSU7U61uKqsHyg@mail.gmail.com>
-Subject: Re: [PATCH v10 1/2] cpufreq: Add Kryo CPU scaling driver
-To: Ilia Lin <ilialin@codeaurora.org>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, Viresh Kumar <vireshk@kernel.org>,
-        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23 May 2018 at 17:17,  <ilialin@codeaurora.org> wrote:
-> The nvmem will return EPROBE_DEFER, and so will my driver's init. But then no one will call the init again.
+Introduce the device tree bindings for the lm3601x
+family of LED torch, flash and IR drivers.
 
-So even your driver needs to be registered as a platform driver then
-and you can create its device
-from the init function, and add a comment on why you create the
-platform device in the driver itself.
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
 
---
-viresh
+v9 - No changes - https://patchwork.kernel.org/patch/10418729/
+
+v8 - No changes - https://patchwork.kernel.org/patch/10416161/
+v7 - Removed led-sources in favor of reg, fixed malformatted ranges - https://patchwork.kernel.org/patch/10401435/
+v6 - Removed multiple led child nodes, fixed example to display micro ranges
+for corresponding child nodes and added led-sources to define the current driver -
+https://patchwork.kernel.org/patch/10392121/
+v5 - No changes - https://patchwork.kernel.org/patch/10391743/
+v4 - Added " " around "=", changed strobe to flash on label, removed "support and
+register" comment and change ir lable to ir:torch - See v2 patchworks for comments
+v3 - Removed wildcard compatible - https://patchwork.kernel.org/patch/10386241/
+v2 - No changes - https://patchwork.kernel.org/patch/10384587/
+
+ .../devicetree/bindings/leds/leds-lm3601x.txt | 45 +++++++++++++++++++
+ 1 file changed, 45 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3601x.txt
+
+diff --git a/Documentation/devicetree/bindings/leds/leds-lm3601x.txt b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
+new file mode 100644
+index 000000000000..a88b2c41e75b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
+@@ -0,0 +1,45 @@
++* Texas Instruments - lm3601x Single-LED Flash Driver
++
++The LM3601X are ultra-small LED flash drivers that
++provide a high level of adjustability.
++
++Required properties:
++	- compatible : Can be one of the following
++		"ti,lm36010"
++		"ti,lm36011"
++	- reg : I2C slave address
++	- #address-cells : 1
++	- #size-cells : 0
++
++Required child properties:
++	- reg : 0 - Indicates a IR mode
++		1 - Indicates a Torch (white LED) mode
++
++Required properties for flash LED child nodes:
++	See Documentation/devicetree/bindings/leds/common.txt
++	- flash-max-microamp : Range from 11mA - 1.5A
++	- flash-max-timeout-us : Range from 40ms - 1600ms
++	- led-max-microamp : Range from 2.4mA - 376mA
++
++Optional child properties:
++	- label : see Documentation/devicetree/bindings/leds/common.txt
++
++Example:
++led-controller@64 {
++	compatible = "ti,lm36010";
++	#address-cells = <1>;
++	#size-cells = <0>;
++	reg = <0x64>;
++
++	led@0 {
++		reg = <1>;
++		label = "white:torch";
++		led-max-microamp = <376000>;
++		flash-max-microamp = <1500000>;
++		flash-max-timeout-us = <1600000>;
++	};
++}
++
++For more product information please see the links below:
++http://www.ti.com/product/LM36010
++http://www.ti.com/product/LM36011
+-- 
+2.17.0.582.gccdcbd54c
