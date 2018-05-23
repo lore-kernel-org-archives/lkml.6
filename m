@@ -1,60 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933541AbeEWP7l (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 11:59:41 -0400
-Received: from zulu.geekplace.eu ([5.45.100.158]:38420 "EHLO zulu.geekplace.eu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754671AbeEWP7T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 11:59:19 -0400
-From: Florian Schmaus <flo@geekplace.eu>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Florian Schmaus <flo@geekplace.eu>, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 3/3] driver-core: print bus registration error value
-Date: Wed, 23 May 2018 17:59:13 +0200
-Message-Id: <20180523155913.29679-4-flo@geekplace.eu>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180523155913.29679-1-flo@geekplace.eu>
-References: <20180523155913.29679-1-flo@geekplace.eu>
-In-Reply-To: <20180516160816.20251-1-flo@geekplace.eu>
-References: <20180516160816.20251-1-flo@geekplace.eu>
+        id S1754662AbeEWQBO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 12:01:14 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:56074 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750880AbeEWQBL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 12:01:11 -0400
+X-Google-Smtp-Source: AB8JxZqsjtzO2uNZ6qoC0zTwoAHbxm4numfMJT8x/R2rTmY43trx5BJsWjd/p2Ee+k3pRacFYFWDPw==
+From: Dmitry Osipenko <digetx@gmail.com>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1 1/2] cpufreq: tegra20: Constify rate value of the intermediate clk
+Date: Wed, 23 May 2018 19:00:19 +0300
+Message-Id: <20180523160020.15291-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If driver_register() is called with an device driver which previously
-called bus_register() but failed, then print out the bus_register()
-error code.
+PLL_P is known to be always running at 216MHz, hence there is no need to
+query its rate.
 
-Signed-off-by: Florian Schmaus <flo@geekplace.eu>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
+ drivers/cpufreq/tegra20-cpufreq.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-Notes:
-    Make it clear in the error message that the error code is from the bus
-    registration and *not* from the driver registration.
-
- drivers/base/driver.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/base/driver.c b/drivers/base/driver.c
-index 857c8f1b876e..b21fed9687c9 100644
---- a/drivers/base/driver.c
-+++ b/drivers/base/driver.c
-@@ -149,8 +149,14 @@ int driver_register(struct device_driver *drv)
- 	struct device_driver *other;
+diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
+index 05f57dcd5215..3ad6bded6efc 100644
+--- a/drivers/cpufreq/tegra20-cpufreq.c
++++ b/drivers/cpufreq/tegra20-cpufreq.c
+@@ -24,6 +24,8 @@
+ #include <linux/platform_device.h>
+ #include <linux/types.h>
  
- 	if (!drv->bus->p) {
--		pr_err("Driver '%s' was unable to register with bus_type '%s' because the bus was not initialized.\n",
--			   drv->name, drv->bus->name);
-+		if (drv->bus->bus_register_error) {
-+			pr_err("Driver '%s' was unable to register with bus_type '%s' because bus registration failed with error %d.\n",
-+				   drv->name, drv->bus->name,
-+				   drv->bus->bus_register_error);
-+		} else {
-+			pr_err("Driver '%s' was unable to register with bus_type '%s' because the bus was not initialized.\n",
-+				   drv->name, drv->bus->name);
-+		}
- 		return -EINVAL;
- 	}
++#define PLL_P_FREQ	216000
++
+ static struct cpufreq_frequency_table freq_table[] = {
+ 	{ .frequency = 216000 },
+ 	{ .frequency = 312000 },
+@@ -48,18 +50,15 @@ struct tegra20_cpufreq {
+ static unsigned int tegra_get_intermediate(struct cpufreq_policy *policy,
+ 					   unsigned int index)
+ {
+-	struct tegra20_cpufreq *cpufreq = cpufreq_get_driver_data();
+-	unsigned int ifreq = clk_get_rate(cpufreq->pll_p_clk) / 1000;
+-
+ 	/*
+ 	 * Don't switch to intermediate freq if:
+ 	 * - we are already at it, i.e. policy->cur == ifreq
+ 	 * - index corresponds to ifreq
+ 	 */
+-	if (freq_table[index].frequency == ifreq || policy->cur == ifreq)
++	if (index == 0 || policy->cur == PLL_P_FREQ)
+ 		return 0;
  
+-	return ifreq;
++	return PLL_P_FREQ;
+ }
+ 
+ static int tegra_target_intermediate(struct cpufreq_policy *policy,
+@@ -93,14 +92,13 @@ static int tegra_target(struct cpufreq_policy *policy, unsigned int index)
+ {
+ 	struct tegra20_cpufreq *cpufreq = cpufreq_get_driver_data();
+ 	unsigned long rate = freq_table[index].frequency;
+-	unsigned int ifreq = clk_get_rate(cpufreq->pll_p_clk) / 1000;
+ 	int ret;
+ 
+ 	/*
+ 	 * target freq == pll_p, don't need to take extra reference to pll_x_clk
+ 	 * as it isn't used anymore.
+ 	 */
+-	if (rate == ifreq)
++	if (index == 0)
+ 		return clk_set_parent(cpufreq->cpu_clk, cpufreq->pll_p_clk);
+ 
+ 	ret = clk_set_rate(cpufreq->pll_x_clk, rate * 1000);
 -- 
-2.16.1
+2.17.0
