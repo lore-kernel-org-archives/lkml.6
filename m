@@ -1,145 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753849AbeEWEBw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 00:01:52 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:40572 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751183AbeEWEBs (ORCPT
+        id S1753898AbeEWECV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 00:02:21 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:43086 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750741AbeEWECT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 00:01:48 -0400
-X-Google-Smtp-Source: AB8JxZpRHIM86hfmoLW4XxIMzKd96USplNeFLoJnN74pIrtwx/EqQSmYl8dGIwYka4+U8k3hHfqCDg==
-From: Eric Biggers <ebiggers3@gmail.com>
-To: linux-ppp@vger.kernel.org, Paul Mackerras <paulus@samba.org>
-Cc: netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Guillaume Nault <g.nault@alphalink.fr>,
-        syzkaller-bugs@googlegroups.com, Eric Biggers <ebiggers@google.com>
-Subject: [PATCH] ppp: remove the PPPIOCDETACH ioctl
-Date: Tue, 22 May 2018 20:59:52 -0700
-Message-Id: <20180523035952.25768-1-ebiggers3@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180523032958.GE658@sol.localdomain>
-References: <20180523032958.GE658@sol.localdomain>
+        Wed, 23 May 2018 00:02:19 -0400
+X-Google-Smtp-Source: AB8JxZqkTVn5ETioNIt9Pn4TX6lefZWZCfIQUEQ5W3QqAhOpgozrObxs7XD4Ily+v4rcdumdlX7fug==
+Date: Tue, 22 May 2018 21:02:17 -0700
+From: Matt Turner <mattst88@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christoph Hellwig <hch@lst.de>, Sinan Kaya <okaya@codeaurora.org>,
+        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PULL] alpha.git
+Message-ID: <20180523040217.GA6512@ivybridge.mattst88.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="2fHTh5uZTiUOsy+g"
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
 
-The PPPIOCDETACH ioctl effectively tries to "close" the given ppp file
-before f_count has reached 0, which is fundamentally a bad idea.  It
-does check 'f_count < 2', which excludes concurrent operations on the
-file since they would only be possible with a shared fd table, in which
-case each fdget() would take a file reference.  However, it fails to
-account for the fact that even with 'f_count == 1' the file can still be
-linked into epoll instances.  As reported by syzbot, this can trivially
-be used to cause a use-after-free.
+--2fHTh5uZTiUOsy+g
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Yet, the only known user of PPPIOCDETACH is pppd versions older than
-ppp-2.4.2, which was released almost 15 years ago (November 2003).
-Also, PPPIOCDETACH apparently stopped working reliably at around the
-same time, when the f_count check was added to the kernel, e.g. see
-https://lkml.org/lkml/2002/12/31/83.  Also, the current 'f_count < 2'
-check makes PPPIOCDETACH only work in single-threaded applications; it
-always fails if called from a multithreaded application.
+Hi Linus,
 
-All pppd versions released in the last 15 years just close() the file
-descriptor instead.
+Please pull a few small changes for alpha.
 
-Therefore, instead of hacking around this bug by exporting epoll
-internals to modules, and probably missing other related bugs, just
-remove the PPPIOCDETACH ioctl and see if anyone actually notices.
+Thanks,
+Matt
 
-Reported-by: syzbot+16363c99d4134717c05b@syzkaller.appspotmail.com
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Cc: stable@vger.kernel.org
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- Documentation/networking/ppp_generic.txt |  6 -----
- drivers/net/ppp/ppp_generic.c            | 29 ------------------------
- fs/compat_ioctl.c                        |  1 -
- include/uapi/linux/ppp-ioctl.h           |  1 -
- 4 files changed, 37 deletions(-)
 
-diff --git a/Documentation/networking/ppp_generic.txt b/Documentation/networking/ppp_generic.txt
-index 091d20273dcb..61daf4b39600 100644
---- a/Documentation/networking/ppp_generic.txt
-+++ b/Documentation/networking/ppp_generic.txt
-@@ -300,12 +300,6 @@ unattached instance are:
- The ioctl calls available on an instance of /dev/ppp attached to a
- channel are:
- 
--* PPPIOCDETACH detaches the instance from the channel.  This ioctl is
--  deprecated since the same effect can be achieved by closing the
--  instance.  In order to prevent possible races this ioctl will fail
--  with an EINVAL error if more than one file descriptor refers to this
--  instance (i.e. as a result of dup(), dup2() or fork()).
--
- * PPPIOCCONNECT connects this channel to a PPP interface.  The
-   argument should point to an int containing the interface unit
-   number.  It will return an EINVAL error if the channel is already
-diff --git a/drivers/net/ppp/ppp_generic.c b/drivers/net/ppp/ppp_generic.c
-index dc7c7ec43202..dce8812fe802 100644
---- a/drivers/net/ppp/ppp_generic.c
-+++ b/drivers/net/ppp/ppp_generic.c
-@@ -603,35 +603,6 @@ static long ppp_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 		goto out;
- 	}
- 
--	if (cmd == PPPIOCDETACH) {
--		/*
--		 * We have to be careful here... if the file descriptor
--		 * has been dup'd, we could have another process in the
--		 * middle of a poll using the same file *, so we had
--		 * better not free the interface data structures -
--		 * instead we fail the ioctl.  Even in this case, we
--		 * shut down the interface if we are the owner of it.
--		 * Actually, we should get rid of PPPIOCDETACH, userland
--		 * (i.e. pppd) could achieve the same effect by closing
--		 * this fd and reopening /dev/ppp.
--		 */
--		err = -EINVAL;
--		if (pf->kind == INTERFACE) {
--			ppp = PF_TO_PPP(pf);
--			rtnl_lock();
--			if (file == ppp->owner)
--				unregister_netdevice(ppp->dev);
--			rtnl_unlock();
--		}
--		if (atomic_long_read(&file->f_count) < 2) {
--			ppp_release(NULL, file);
--			err = 0;
--		} else
--			pr_warn("PPPIOCDETACH file->f_count=%ld\n",
--				atomic_long_read(&file->f_count));
--		goto out;
--	}
--
- 	if (pf->kind == CHANNEL) {
- 		struct channel *pch;
- 		struct ppp_channel *chan;
-diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
-index ef80085ed564..8285b570d635 100644
---- a/fs/compat_ioctl.c
-+++ b/fs/compat_ioctl.c
-@@ -917,7 +917,6 @@ COMPATIBLE_IOCTL(PPPIOCSDEBUG)
- /* PPPIOCGIDLE is translated */
- COMPATIBLE_IOCTL(PPPIOCNEWUNIT)
- COMPATIBLE_IOCTL(PPPIOCATTACH)
--COMPATIBLE_IOCTL(PPPIOCDETACH)
- COMPATIBLE_IOCTL(PPPIOCSMRRU)
- COMPATIBLE_IOCTL(PPPIOCCONNECT)
- COMPATIBLE_IOCTL(PPPIOCDISCONN)
-diff --git a/include/uapi/linux/ppp-ioctl.h b/include/uapi/linux/ppp-ioctl.h
-index b19a9c249b15..d46caf217ea4 100644
---- a/include/uapi/linux/ppp-ioctl.h
-+++ b/include/uapi/linux/ppp-ioctl.h
-@@ -106,7 +106,6 @@ struct pppol2tp_ioc_stats {
- #define PPPIOCGIDLE	_IOR('t', 63, struct ppp_idle) /* get idle time */
- #define PPPIOCNEWUNIT	_IOWR('t', 62, int)	/* create new ppp unit */
- #define PPPIOCATTACH	_IOW('t', 61, int)	/* attach to ppp unit */
--#define PPPIOCDETACH	_IOW('t', 60, int)	/* detach from ppp unit/chan */
- #define PPPIOCSMRRU	_IOW('t', 59, int)	/* set multilink MRU */
- #define PPPIOCCONNECT	_IOW('t', 58, int)	/* connect channel to unit */
- #define PPPIOCDISCONN	_IO('t', 57)		/* disconnect channel */
--- 
-2.17.0
+The following changes since commit c61a56ababa404961fa769a2b24229f18e461961:
+
+  Merge branch 'x86-urgent-for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip (2018-04-29 10:06:05 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mattst88/alpha.git for-linus
+
+for you to fetch changes up to 92d7223a74235054f2aa7227d207d9c57f84dca0:
+
+  alpha: io: reorder barriers to guarantee writeX() and iowriteX() ordering #2 (2018-05-22 18:10:36 -0700)
+
+----------------------------------------------------------------
+Christoph Hellwig (2):
+      alpha: use dma_direct_ops for jensen
+      alpha: simplify get_arch_dma_ops
+
+Sinan Kaya (1):
+      alpha: io: reorder barriers to guarantee writeX() and iowriteX() ordering #2
+
+ arch/alpha/Kconfig                   |  1 +
+ arch/alpha/include/asm/dma-mapping.h |  8 ++++++--
+ arch/alpha/kernel/io.c               | 14 +++++++-------
+ arch/alpha/kernel/pci-noop.c         | 33 ---------------------------------
+ arch/alpha/kernel/pci_iommu.c        |  4 +---
+ 5 files changed, 15 insertions(+), 45 deletions(-)
+
+--2fHTh5uZTiUOsy+g
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEO7Y55W+GH6LoZQVpD91oLZdMpyoFAlsE58UACgkQD91oLZdM
+pyoH0RAAjH0zXHAixaRf1rrKhXtytCnW/Zwv/XcrewOnbJFVWUmjJi5iIg+Nbooi
+7WVfpf2f843FMG55/Ie/KVA3f5VA9NdHvOJ5tNBq3Nj2oi+K0PBr7il+DOCRWIWE
+yMWa/hcjw1aoO7nWsqodKYtn/X44yY1KRxUcrPtW1Mrzy6XYDaJxlkCLiWMrEvXe
+2YjU9UKHRusvPaVJAemYU++qnAoUbnu2nlnk/3J+txTQLUGc0oPcqYkp5fhfOneR
+9L+k3XLenvsZWwdcvhR/rghoL16spVaS7bkeIFtZCs3HWqnNTBo7fo2ulXT221ei
+ERpBfQPyf9vhWx+w5tyKSrDXQbNnaWFFNeDA0oe/JsPP+krW1JgEtD1uE8pbqrx+
+5gsSSreF974MzOIXLFJt8yaWisnWHTBny0PSWkexx/QwfOFH8rzl/QCjgxe/X4re
+BdjYTzIPMFPtGWWnqxsmq3YxpgncpNtubgzDcUtsLuuxqyhwylmRqQCNXIgg+2GU
+FqUmAGBI4EqqAGaP7eB7WjefshxxS7ETOUQ0alm3ilarsb2rXp7nP9j35dHFN9xL
+UedwzJAULLm/WRS/O8m3b8SoJ5mRlZk6kFAojIxpdfqrHgB7+3BvpUOPsMwC/cao
+MeRPOW+URajpGp6hVVRlKofY0pRsN26Al8qeW+Xh6qvmWtyPYAE=
+=eVuD
+-----END PGP SIGNATURE-----
+
+--2fHTh5uZTiUOsy+g--
