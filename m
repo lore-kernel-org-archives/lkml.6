@@ -1,96 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754198AbeEWGXy (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 02:23:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38688 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754031AbeEWGXu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 02:23:50 -0400
-Date: Wed, 23 May 2018 09:23:46 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
-Cc: dledford@redhat.com, jgg@ziepe.ca, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, xavier.huwei@tom.com, lijun_nudt@163.com
-Subject: Re: [PATCH rdma-next 3/5] RDMA/hns: Increase checking CMQ status
- timeout value
-Message-ID: <20180523062346.GB5729@mtr-leonro.mtl.com>
-References: <1526544173-106587-1-git-send-email-xavier.huwei@huawei.com>
- <1526544173-106587-4-git-send-email-xavier.huwei@huawei.com>
- <20180523054918.GB2933@mtr-leonro.mtl.com>
- <5B0505A9.8040908@huawei.com>
- <5B050714.2040205@huawei.com>
+        id S1754081AbeEWGZJ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 02:25:09 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:36033 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753970AbeEWGZF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 02:25:05 -0400
+X-Google-Smtp-Source: AB8JxZpWfHyypu2dfG67NKNTc7BJWQhIqNTqUCl6lih+R0TlTJBIEycFu3BDR9cWNPyTxxQliZxi5w==
+Date: Wed, 23 May 2018 07:25:02 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org
+Subject: [GIT PULL] MFD fixes for v4.17
+Message-ID: <20180523062502.GS5130@dell>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="BwCQnh7xodEAoBMC"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <5B050714.2040205@huawei.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Linus,
 
---BwCQnh7xodEAoBMC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This fix seemingly builds fine for me locally:
 
-On Wed, May 23, 2018 at 02:15:48PM +0800, Wei Hu (Xavier) wrote:
->
->
-> On 2018/5/23 14:09, Wei Hu (Xavier) wrote:
-> >
-> > On 2018/5/23 13:49, Leon Romanovsky wrote:
-> >> On Thu, May 17, 2018 at 04:02:51PM +0800, Wei Hu (Xavier) wrote:
-> >>> This patch increases checking CMQ status timeout value and
-> >>> uses the same value with NIC driver to avoid deficiency of
-> >>> time.
-> >>>
-> >>> Signed-off-by: Wei Hu (Xavier) <xavier.huwei@huawei.com>
-> >>> ---
-> >>>  drivers/infiniband/hw/hns/hns_roce_hw_v2.h | 2 +-
-> >>>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.h b/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
-> >>> index 182b672..f16df1b 100644
-> >>> --- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
-> >>> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
-> >>> @@ -76,7 +76,7 @@
-> >>>  #define HNS_ROCE_V2_PAGE_SIZE_SUPPORTED		0xFFFFF000
-> >>>  #define HNS_ROCE_V2_MAX_INNER_MTPT_NUM		2
-> >>>  #define HNS_ROCE_INVALID_LKEY			0x100
-> >>> -#define HNS_ROCE_CMQ_TX_TIMEOUT			200
-> >>> +#define HNS_ROCE_CMQ_TX_TIMEOUT			30000
-> >> Don't you think that loop of 30 seconds too much?
-> >>
-> >> Thanks
-> > Leon, 30ms
-> Because firmware take turns excuting NIC and RoCE command.
-> Although RoCE command does not  take so long,  we still use
-> the same timeout value with NIC driver.
+ [for-mfd-fixes]$ ls -l build-x86/drivers/mfd/cros_ec_spi.o 
+  -rw-rw-r-- 1 lee lee 39880 May 23 06:59 build-x86/drivers/mfd/cros_ec_spi.o
+ [for-mfd-fixes]$ ls -l build-multi-v7/drivers/mfd/cros_ec_spi.o 
+  -rw-rw-r-- 1 lee lee 10032 May 23 06:59 build-multi-v7/drivers/mfd/cros_ec_spi.o
 
-Sorry, you are right it is 30ms and not 30s.
+... but hasn't been soak tested in -next for any length of time.
 
-Thanks,
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+The following changes since commit 771c577c23bac90597c685971d7297ea00f99d11:
 
---BwCQnh7xodEAoBMC
-Content-Type: application/pgp-signature; name="signature.asc"
+  Linux 4.17-rc6 (2018-05-20 15:31:38 -0700)
 
------BEGIN PGP SIGNATURE-----
+are available in the Git repository at:
 
-iQIcBAEBAgAGBQJbBQjyAAoJEORje4g2clinxMkQAIJ5hCq4bFowGwpaaSdlwkp8
-gy9JTUMq7a456zR3NQJ2iaU0rF1tWAr4mI3FcGjTCYTpbrPdBpM54z4xBF/vmqI8
-xNG2WWE91FwCw1YsJ9Hl5YC1cQ16J5Ot0vKOWKUbIGJjXEzmxsegGUL/LfpzXoRn
-chEh0Jikt0+zQcUMdIqurFzAoqC8jXXL3m4Idos7YfZc/J1krSBc2b5TfdfgLODB
-E6LimI2xoJnUzIjYamGu7jYFMzwPSoW9ThdVbstk5rQLkX7UfrBmnMIN7kwdx7GG
-LEaX8cZnHbqN+XtXAwPXmToRbPjyfozdrBNAMlpaNdvdlzk6LM3OcwQX6r7JrE9K
-V5YoTyhaYFqENw3FmapMNo9PKwziqrHFAveDXCTRPQLY6vqMbSIqpVWtD7FH6ztl
-NMKtmthJZGxMUAXAzSqb6o/j++sLAxeppg3OdNEBod7wFa7fU/2ztWRg2Uq0OgrN
-LeuQSoGjKZwLyGYqzO6Dz4wANdDXn6aAEfoFIULeDhQTp/S7NYudEPmEVrl+rINA
-YDQsfD3Qvix1e9T6tHgcRvf27uR5KoClDNcvnK/RsqJR0X2dXlFUCVs8Oh4Kpo4j
-715XNsOO4tmF6gVzzDnUXLrtqR0gvesjyRQNkAQNPlIzF+RPywn8nhHKbSft0TA1
-0WIvHlQWjnap7xVz/s7Z
-=8nhN
------END PGP SIGNATURE-----
+  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags/mfd-fixes-4.17
 
---BwCQnh7xodEAoBMC--
+for you to fetch changes up to 11799564fc7eedff50801950090773928f867996:
+
+  mfd: cros_ec: Retry commands when EC is known to be busy (2018-05-23 06:59:00 +0100)
+
+----------------------------------------------------------------
+Single fix correcting the handling for long-running commands; cros_ec_spi
+
+----------------------------------------------------------------
+Brian Norris (1):
+      mfd: cros_ec: Retry commands when EC is known to be busy
+
+ drivers/mfd/cros_ec_spi.c               | 24 ++++++++++++++++++++----
+ drivers/platform/chrome/cros_ec_proto.c |  2 ++
+ 2 files changed, 22 insertions(+), 4 deletions(-)
+ 
+--
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
