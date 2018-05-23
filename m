@@ -1,27 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754150AbeEWGin (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 02:38:43 -0400
-Received: from mail-pg0-f49.google.com ([74.125.83.49]:44824 "EHLO
-        mail-pg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754103AbeEWGig (ORCPT
+        id S1754131AbeEWGij (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 02:38:39 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:40862 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754101AbeEWGid (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 02:38:36 -0400
-X-Google-Smtp-Source: AB8JxZrH5UmvaYTkKbPCtWrhlyXdy8vxwhKrbCUk5VybLDJykQqVd3xgRoMmLE0mi2sz94kqnjki9A==
+        Wed, 23 May 2018 02:38:33 -0400
+X-Google-Smtp-Source: AB8JxZp9DNNmnLvyay7WJbTfVc9XxWU1/LVzlmjjihdRP5WaGsPbiMfKwYHbks0prKankNCuXbcebQ==
 From: Joel Fernandes <joelaf@google.com>
 X-Google-Original-From: Joel Fernandes <joel@joelfernandes.org>
 To: linux-kernel@vger.kernel.org
 Cc: "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Boqun Feng <boqun.feng@gmail.com>, byungchul.park@lge.com,
-        Ingo Molnar <mingo@redhat.com>, Josh Triplett <josh@joshtriplett.org>,
-        kernel-team@android.com, Lai Jiangshan <jiangshanlai@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Peter Zilstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: [PATCH 3/4] rcu: Use better variable names in funnel locking loop
-Date: Tue, 22 May 2018 23:38:14 -0700
-Message-Id: <20180523063815.198302-4-joel@joelfernandes.org>
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>, byungchul.park@lge.com,
+        kernel-team@android.com, Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: [PATCH 1/4] rcu: Speed up calling of RCU tasks callbacks
+Date: Tue, 22 May 2018 23:38:12 -0700
+Message-Id: <20180523063815.198302-2-joel@joelfernandes.org>
 X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
 In-Reply-To: <20180523063815.198302-1-joel@joelfernandes.org>
 References: <20180523063815.198302-1-joel@joelfernandes.org>
@@ -31,129 +31,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
 
-The funnel locking loop in rcu_start_this_gp uses rcu_root as a
-temporary variable while walking the combining tree. This causes a
-tiresome exercise of a code reader reminding themselves that rcu_root
-may not be root. Lets just call it rnp, and rename other variables as
-well to be more appropriate.
+RCU tasks callbacks can take at least 1 second before the callbacks are
+executed. This happens even if the hold-out tasks enter their quiescent states
+quickly. I noticed this when I was testing trampoline callback execution.
 
-Original patch: https://patchwork.kernel.org/patch/10396577/
+To test the trampoline freeing, I wrote a simple script:
+cd /sys/kernel/debug/tracing/
+echo '__schedule_bug:traceon' > set_ftrace_filter;
+echo '!__schedule_bug:traceon' > set_ftrace_filter;
 
-Signed-off-by: Joel Fernandes <joel@joelfernandes.org>
+In the background I had simple bash while loop:
+while [ 1 ]; do x=1; done &
+
+Total time of completion of above commands in seconds:
+
+With this patch:
+real    0m0.179s
+user    0m0.000s
+sys     0m0.054s
+
+Without this patch:
+real    0m1.098s
+user    0m0.000s
+sys     0m0.053s
+
+That's a greater than 6X speed up in performance. In order to accomplish
+this, I am waiting for HZ/10 time before entering the hold-out checking
+loop. The loop still preserves its checking of held tasks every 1 second
+as before, in case this first test doesn't succeed.
+
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Peter Zilstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>
+Cc: byungchul.park@lge.com
+Cc: kernel-team@android.com
 Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 ---
- kernel/rcu/tree.c | 52 +++++++++++++++++++++++------------------------
- 1 file changed, 26 insertions(+), 26 deletions(-)
+ kernel/rcu/update.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 0ad61c97da69..31f4b4b7d824 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -1526,7 +1526,7 @@ static void trace_rcu_this_gp(struct rcu_node *rnp, struct rcu_data *rdp,
+diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
+index 5783bdf86e5a..a28698e44b08 100644
+--- a/kernel/rcu/update.c
++++ b/kernel/rcu/update.c
+@@ -743,6 +743,12 @@ static int __noreturn rcu_tasks_kthread(void *arg)
+ 		 */
+ 		synchronize_srcu(&tasks_rcu_exit_srcu);
  
- /*
-  * rcu_start_this_gp - Request the start of a particular grace period
-- * @rnp: The leaf node of the CPU from which to start.
-+ * @rnp_start: The leaf node of the CPU from which to start.
-  * @rdp: The rcu_data corresponding to the CPU from which to start.
-  * @gp_seq_req: The gp_seq of the grace period to start.
-  *
-@@ -1540,12 +1540,12 @@ static void trace_rcu_this_gp(struct rcu_node *rnp, struct rcu_data *rdp,
-  *
-  * Returns true if the GP thread needs to be awakened else false.
-  */
--static bool rcu_start_this_gp(struct rcu_node *rnp, struct rcu_data *rdp,
-+static bool rcu_start_this_gp(struct rcu_node *rnp_start, struct rcu_data *rdp,
- 			      unsigned long gp_seq_req)
- {
- 	bool ret = false;
- 	struct rcu_state *rsp = rdp->rsp;
--	struct rcu_node *rnp_root;
-+	struct rcu_node *rnp;
++		/*
++		 * Wait a little bit incase held tasks are released
++		 * during their next timer ticks.
++		 */
++		schedule_timeout_interruptible(HZ/10);
++
+ 		/*
+ 		 * Each pass through the following loop scans the list
+ 		 * of holdout tasks, removing any that are no longer
+@@ -755,7 +761,6 @@ static int __noreturn rcu_tasks_kthread(void *arg)
+ 			int rtst;
+ 			struct task_struct *t1;
  
- 	/*
- 	 * Use funnel locking to either acquire the root rcu_node
-@@ -1556,58 +1556,58 @@ static bool rcu_start_this_gp(struct rcu_node *rnp, struct rcu_data *rdp,
- 	 * scan the leaf rcu_node structures.  Note that rnp->lock must
- 	 * not be released.
- 	 */
--	raw_lockdep_assert_held_rcu_node(rnp);
--	trace_rcu_this_gp(rnp, rdp, gp_seq_req, TPS("Startleaf"));
--	for (rnp_root = rnp; 1; rnp_root = rnp_root->parent) {
--		if (rnp_root != rnp)
--			raw_spin_lock_rcu_node(rnp_root);
--		if (ULONG_CMP_GE(rnp_root->gp_seq_needed, gp_seq_req) ||
--		    rcu_seq_started(&rnp_root->gp_seq, gp_seq_req) ||
--		    (rnp != rnp_root &&
--		     rcu_seq_state(rcu_seq_current(&rnp_root->gp_seq)))) {
--			trace_rcu_this_gp(rnp_root, rdp, gp_seq_req,
-+	raw_lockdep_assert_held_rcu_node(rnp_start);
-+	trace_rcu_this_gp(rnp_start, rdp, gp_seq_req, TPS("Startleaf"));
-+	for (rnp = rnp_start; 1; rnp = rnp->parent) {
-+		if (rnp != rnp_start)
-+			raw_spin_lock_rcu_node(rnp);
-+		if (ULONG_CMP_GE(rnp->gp_seq_needed, gp_seq_req) ||
-+		    rcu_seq_started(&rnp->gp_seq, gp_seq_req) ||
-+		    (rnp != rnp_start &&
-+		     rcu_seq_state(rcu_seq_current(&rnp->gp_seq)))) {
-+			trace_rcu_this_gp(rnp, rdp, gp_seq_req,
- 					  TPS("Prestarted"));
- 			goto unlock_out;
+-			schedule_timeout_interruptible(HZ);
+ 			rtst = READ_ONCE(rcu_task_stall_timeout);
+ 			needreport = rtst > 0 &&
+ 				     time_after(jiffies, lastreport + rtst);
+@@ -768,6 +773,11 @@ static int __noreturn rcu_tasks_kthread(void *arg)
+ 				check_holdout_task(t, needreport, &firstreport);
+ 				cond_resched();
+ 			}
++
++			if (list_empty(&rcu_tasks_holdouts))
++				break;
++
++			schedule_timeout_interruptible(HZ);
  		}
--		rnp_root->gp_seq_needed = gp_seq_req;
--		if (rcu_seq_state(rcu_seq_current(&rnp->gp_seq))) {
-+		rnp->gp_seq_needed = gp_seq_req;
-+		if (rcu_seq_state(rcu_seq_current(&rnp_start->gp_seq))) {
- 			/*
- 			 * We just marked the leaf, and a grace period
- 			 * is in progress, which means that rcu_gp_cleanup()
- 			 * will see the marking.  Bail to reduce contention.
- 			 */
--			trace_rcu_this_gp(rnp, rdp, gp_seq_req,
-+			trace_rcu_this_gp(rnp_start, rdp, gp_seq_req,
- 					  TPS("Startedleaf"));
- 			goto unlock_out;
- 		}
--		if (rnp_root != rnp && rnp_root->parent != NULL)
--			raw_spin_unlock_rcu_node(rnp_root);
--		if (!rnp_root->parent)
-+		if (rnp != rnp_start && rnp->parent != NULL)
-+			raw_spin_unlock_rcu_node(rnp);
-+		if (!rnp->parent)
- 			break;  /* At root, and perhaps also leaf. */
- 	}
  
- 	/* If GP already in progress, just leave, otherwise start one. */
- 	if (rcu_gp_in_progress(rsp)) {
--		trace_rcu_this_gp(rnp_root, rdp, gp_seq_req, TPS("Startedleafroot"));
-+		trace_rcu_this_gp(rnp, rdp, gp_seq_req, TPS("Startedleafroot"));
- 		goto unlock_out;
- 	}
--	trace_rcu_this_gp(rnp_root, rdp, gp_seq_req, TPS("Startedroot"));
-+	trace_rcu_this_gp(rnp, rdp, gp_seq_req, TPS("Startedroot"));
- 	WRITE_ONCE(rsp->gp_flags, rsp->gp_flags | RCU_GP_FLAG_INIT);
- 	rsp->gp_req_activity = jiffies;
- 	if (!rsp->gp_kthread) {
--		trace_rcu_this_gp(rnp_root, rdp, gp_seq_req, TPS("NoGPkthread"));
-+		trace_rcu_this_gp(rnp, rdp, gp_seq_req, TPS("NoGPkthread"));
- 		goto unlock_out;
- 	}
- 	trace_rcu_grace_period(rsp->name, READ_ONCE(rsp->gp_seq), TPS("newreq"));
- 	ret = true;  /* Caller must wake GP kthread. */
- unlock_out:
- 	/* Push furthest requested GP to leaf node and rcu_data structure. */
--	if (ULONG_CMP_GE(rnp_root->gp_seq_needed, gp_seq_req)) {
--		rnp->gp_seq_needed = gp_seq_req;
-+	if (ULONG_CMP_GE(rnp->gp_seq_needed, gp_seq_req)) {
-+		rnp_start->gp_seq_needed = gp_seq_req;
- 		rdp->gp_seq_needed = gp_seq_req;
- 	}
--	if (rnp != rnp_root)
--		raw_spin_unlock_rcu_node(rnp_root);
-+	if (rnp != rnp_start)
-+		raw_spin_unlock_rcu_node(rnp);
- 	return ret;
- }
- 
+ 		/*
 -- 
 2.17.0.441.gb46fe60e1d-goog
