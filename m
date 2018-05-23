@@ -1,159 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754336AbeEWIdZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 04:33:25 -0400
-Received: from mga03.intel.com ([134.134.136.65]:7695 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754331AbeEWI0e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 04:26:34 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,432,1520924400";
-   d="scan'208";a="57725948"
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Huang Ying <ying.huang@intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>, Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, Shaohua Li <shli@kernel.org>,
-        Hugh Dickins <hughd@google.com>, Minchan Kim <minchan@kernel.org>,
-        Rik van Riel <riel@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Zi Yan <zi.yan@cs.rutgers.edu>
-Subject: [PATCH -mm -V3 01/21] mm, THP, swap: Enable PMD swap operations for CONFIG_THP_SWAP
-Date: Wed, 23 May 2018 16:26:05 +0800
-Message-Id: <20180523082625.6897-2-ying.huang@intel.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180523082625.6897-1-ying.huang@intel.com>
-References: <20180523082625.6897-1-ying.huang@intel.com>
+        id S1754614AbeEWIdq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 04:33:46 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:55281 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754540AbeEWIdn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 04:33:43 -0400
+X-Google-Smtp-Source: AB8JxZoqKc9OwOV+Lq90kfPiFkzlyk05z3FP88VQZ5dkmSDpKKgDN44OopULZIkaGOIyTRSPUPnDri+rSHhOK60jWTE=
+MIME-Version: 1.0
+In-Reply-To: <20180520051736.4842-2-manivannan.sadhasivam@linaro.org>
+References: <20180520051736.4842-1-manivannan.sadhasivam@linaro.org> <20180520051736.4842-2-manivannan.sadhasivam@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 23 May 2018 10:33:42 +0200
+Message-ID: <CACRpkdY3cwpt=xOAOHY2oC7HrTx0hHE8ZnpC40F7y-vPwEPPfQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] dt-bindings: pinctrl: Add gpio bindings for
+ Actions S900 SoC
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        liuwei@actions-semi.com, mp-cs@actions-semi.com,
+        96boards@ucrobotics.com,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        hzhang@ucrobotics.com, bdong@ucrobotics.com,
+        Mani Sadhasivam <manivannanece23@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Huang Ying <ying.huang@intel.com>
+On Sun, May 20, 2018 at 7:17 AM, Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
 
-Previously, the PMD swap operations are only enabled for
-CONFIG_ARCH_ENABLE_THP_MIGRATION.  Because they are only used by the
-THP migration support.  We will support PMD swap mapping to the huge
-swap cluster and swapin the THP as a whole.  That will be enabled via
-CONFIG_THP_SWAP and needs these PMD swap operations.  So enable the
-PMD swap operations for CONFIG_THP_SWAP too.
+> Add gpio bindings for Actions Semi S900 SoC.
+>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Shaohua Li <shli@kernel.org>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Minchan Kim <minchan@kernel.org>
-Cc: Rik van Riel <riel@redhat.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc: Zi Yan <zi.yan@cs.rutgers.edu>
----
- arch/x86/include/asm/pgtable.h |  2 +-
- include/asm-generic/pgtable.h  |  2 +-
- include/linux/swapops.h        | 44 ++++++++++++++++++++++--------------------
- 3 files changed, 25 insertions(+), 23 deletions(-)
+Patch applied with Rob's review tag.
 
-diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-index f1633de5a675..0dff03085197 100644
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -1224,7 +1224,7 @@ static inline pte_t pte_swp_clear_soft_dirty(pte_t pte)
- 	return pte_clear_flags(pte, _PAGE_SWP_SOFT_DIRTY);
- }
- 
--#ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
-+#if defined(CONFIG_ARCH_ENABLE_THP_MIGRATION) || defined(CONFIG_THP_SWAP)
- static inline pmd_t pmd_swp_mksoft_dirty(pmd_t pmd)
- {
- 	return pmd_set_flags(pmd, _PAGE_SWP_SOFT_DIRTY);
-diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
-index f59639afaa39..bb8354981a36 100644
---- a/include/asm-generic/pgtable.h
-+++ b/include/asm-generic/pgtable.h
-@@ -675,7 +675,7 @@ static inline void ptep_modify_prot_commit(struct mm_struct *mm,
- #endif
- 
- #ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
--#ifndef CONFIG_ARCH_ENABLE_THP_MIGRATION
-+#if !defined(CONFIG_ARCH_ENABLE_THP_MIGRATION) && !defined(CONFIG_THP_SWAP)
- static inline pmd_t pmd_swp_mksoft_dirty(pmd_t pmd)
- {
- 	return pmd;
-diff --git a/include/linux/swapops.h b/include/linux/swapops.h
-index 1d3877c39a00..f1be5a52f5c8 100644
---- a/include/linux/swapops.h
-+++ b/include/linux/swapops.h
-@@ -258,17 +258,7 @@ static inline int is_write_migration_entry(swp_entry_t entry)
- 
- #endif
- 
--struct page_vma_mapped_walk;
--
--#ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
--extern void set_pmd_migration_entry(struct page_vma_mapped_walk *pvmw,
--		struct page *page);
--
--extern void remove_migration_pmd(struct page_vma_mapped_walk *pvmw,
--		struct page *new);
--
--extern void pmd_migration_entry_wait(struct mm_struct *mm, pmd_t *pmd);
--
-+#if defined(CONFIG_ARCH_ENABLE_THP_MIGRATION) || defined(CONFIG_THP_SWAP)
- static inline swp_entry_t pmd_to_swp_entry(pmd_t pmd)
- {
- 	swp_entry_t arch_entry;
-@@ -286,6 +276,28 @@ static inline pmd_t swp_entry_to_pmd(swp_entry_t entry)
- 	arch_entry = __swp_entry(swp_type(entry), swp_offset(entry));
- 	return __swp_entry_to_pmd(arch_entry);
- }
-+#else
-+static inline swp_entry_t pmd_to_swp_entry(pmd_t pmd)
-+{
-+	return swp_entry(0, 0);
-+}
-+
-+static inline pmd_t swp_entry_to_pmd(swp_entry_t entry)
-+{
-+	return __pmd(0);
-+}
-+#endif
-+
-+struct page_vma_mapped_walk;
-+
-+#ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
-+extern void set_pmd_migration_entry(struct page_vma_mapped_walk *pvmw,
-+		struct page *page);
-+
-+extern void remove_migration_pmd(struct page_vma_mapped_walk *pvmw,
-+		struct page *new);
-+
-+extern void pmd_migration_entry_wait(struct mm_struct *mm, pmd_t *pmd);
- 
- static inline int is_pmd_migration_entry(pmd_t pmd)
- {
-@@ -306,16 +318,6 @@ static inline void remove_migration_pmd(struct page_vma_mapped_walk *pvmw,
- 
- static inline void pmd_migration_entry_wait(struct mm_struct *m, pmd_t *p) { }
- 
--static inline swp_entry_t pmd_to_swp_entry(pmd_t pmd)
--{
--	return swp_entry(0, 0);
--}
--
--static inline pmd_t swp_entry_to_pmd(swp_entry_t entry)
--{
--	return __pmd(0);
--}
--
- static inline int is_pmd_migration_entry(pmd_t pmd)
- {
- 	return 0;
--- 
-2.16.1
+Yours,
+Linus Walleij
