@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754585AbeEWI1X (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 04:27:23 -0400
+        id S1754594AbeEWI1b (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 04:27:31 -0400
 Received: from mga03.intel.com ([134.134.136.65]:7732 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754573AbeEWI1S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 04:27:18 -0400
+        id S1754196AbeEWI11 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 04:27:27 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,432,1520924400";
-   d="scan'208";a="57726233"
+   d="scan'208";a="57726271"
 From: "Huang, Ying" <ying.huang@intel.com>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
@@ -23,9 +23,9 @@ Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
         Zi Yan <zi.yan@cs.rutgers.edu>
-Subject: [PATCH -mm -V3 16/21] mm, THP, swap: Free PMD swap mapping when zap_huge_pmd()
-Date: Wed, 23 May 2018 16:26:20 +0800
-Message-Id: <20180523082625.6897-17-ying.huang@intel.com>
+Subject: [PATCH -mm -V3 18/21] mm, THP, swap: Support PMD swap mapping in mincore()
+Date: Wed, 23 May 2018 16:26:22 +0800
+Message-Id: <20180523082625.6897-19-ying.huang@intel.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180523082625.6897-1-ying.huang@intel.com>
 References: <20180523082625.6897-1-ying.huang@intel.com>
@@ -35,9 +35,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Huang Ying <ying.huang@intel.com>
 
-For a PMD swap mapping, zap_huge_pmd() will clear the PMD and call
-free_swap_and_cache() to decrease the swap reference count and maybe
-free or split the huge swap cluster and the THP in swap cache.
+During mincore(), for PMD swap mapping, swap cache will be looked up.
+If the resulting page isn't compound page, the PMD swap mapping will
+be split and fallback to PTE swap mapping processing.
 
 Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
 Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
@@ -52,67 +52,98 @@ Cc: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 Cc: Zi Yan <zi.yan@cs.rutgers.edu>
 ---
- mm/huge_memory.c | 32 +++++++++++++++++++++-----------
- 1 file changed, 21 insertions(+), 11 deletions(-)
+ mm/mincore.c | 37 +++++++++++++++++++++++++++++++------
+ 1 file changed, 31 insertions(+), 6 deletions(-)
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 01fdd59fe6d4..e057b966ea68 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -2007,7 +2007,7 @@ int zap_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 		spin_unlock(ptl);
- 		if (is_huge_zero_pmd(orig_pmd))
- 			tlb_remove_page_size(tlb, pmd_page(orig_pmd), HPAGE_PMD_SIZE);
--	} else if (is_huge_zero_pmd(orig_pmd)) {
-+	} else if (pmd_present(orig_pmd) && is_huge_zero_pmd(orig_pmd)) {
- 		zap_deposited_table(tlb->mm, pmd);
- 		spin_unlock(ptl);
- 		tlb_remove_page_size(tlb, pmd_page(orig_pmd), HPAGE_PMD_SIZE);
-@@ -2020,17 +2020,27 @@ int zap_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 			page_remove_rmap(page, true);
- 			VM_BUG_ON_PAGE(page_mapcount(page) < 0, page);
- 			VM_BUG_ON_PAGE(!PageHead(page), page);
--		} else if (thp_migration_supported()) {
--			swp_entry_t entry;
--
--			VM_BUG_ON(!is_pmd_migration_entry(orig_pmd));
--			entry = pmd_to_swp_entry(orig_pmd);
--			page = pfn_to_page(swp_offset(entry));
-+		} else {
-+			swp_entry_t entry = pmd_to_swp_entry(orig_pmd);
-+
-+			if (thp_migration_supported() &&
-+			    is_migration_entry(entry))
-+				page = pfn_to_page(swp_offset(entry));
-+			else if (thp_swap_supported() &&
-+				 !non_swap_entry(entry))
-+				free_swap_and_cache(entry, true);
-+			else {
-+				WARN_ONCE(1,
-+"Non present huge pmd without pmd migration or swap enabled!");
-+				goto unlock;
-+			}
- 			flush_needed = 0;
--		} else
--			WARN_ONCE(1, "Non present huge pmd without pmd migration enabled!");
-+		}
+diff --git a/mm/mincore.c b/mm/mincore.c
+index a66f2052c7b1..897dd2c187e8 100644
+--- a/mm/mincore.c
++++ b/mm/mincore.c
+@@ -48,7 +48,8 @@ static int mincore_hugetlb(pte_t *pte, unsigned long hmask, unsigned long addr,
+  * and is up to date; i.e. that no page-in operation would be required
+  * at this time if an application were to map and access this page.
+  */
+-static unsigned char mincore_page(struct address_space *mapping, pgoff_t pgoff)
++static unsigned char mincore_page(struct address_space *mapping, pgoff_t pgoff,
++				  bool *compound)
+ {
+ 	unsigned char present = 0;
+ 	struct page *page;
+@@ -86,6 +87,8 @@ static unsigned char mincore_page(struct address_space *mapping, pgoff_t pgoff)
+ #endif
+ 	if (page) {
+ 		present = PageUptodate(page);
++		if (compound)
++			*compound = PageCompound(page);
+ 		put_page(page);
+ 	}
  
--		if (PageAnon(page)) {
-+		if (!page) {
-+			zap_deposited_table(tlb->mm, pmd);
-+			add_mm_counter(tlb->mm, MM_SWAPENTS, -HPAGE_PMD_NR);
-+		} else if (PageAnon(page)) {
- 			zap_deposited_table(tlb->mm, pmd);
- 			add_mm_counter(tlb->mm, MM_ANONPAGES, -HPAGE_PMD_NR);
- 		} else {
-@@ -2038,7 +2048,7 @@ int zap_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 				zap_deposited_table(tlb->mm, pmd);
- 			add_mm_counter(tlb->mm, MM_FILEPAGES, -HPAGE_PMD_NR);
- 		}
--
-+unlock:
+@@ -103,7 +106,8 @@ static int __mincore_unmapped_range(unsigned long addr, unsigned long end,
+ 
+ 		pgoff = linear_page_index(vma, addr);
+ 		for (i = 0; i < nr; i++, pgoff++)
+-			vec[i] = mincore_page(vma->vm_file->f_mapping, pgoff);
++			vec[i] = mincore_page(vma->vm_file->f_mapping,
++					      pgoff, NULL);
+ 	} else {
+ 		for (i = 0; i < nr; i++)
+ 			vec[i] = 0;
+@@ -127,14 +131,36 @@ static int mincore_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
+ 	pte_t *ptep;
+ 	unsigned char *vec = walk->private;
+ 	int nr = (end - addr) >> PAGE_SHIFT;
++	swp_entry_t entry;
+ 
+ 	ptl = pmd_trans_huge_lock(pmd, vma);
+ 	if (ptl) {
+-		memset(vec, 1, nr);
++		unsigned char val = 1;
++		bool compound;
++
++		if (thp_swap_supported() && is_swap_pmd(*pmd)) {
++			entry = pmd_to_swp_entry(*pmd);
++			if (!non_swap_entry(entry)) {
++				val = mincore_page(swap_address_space(entry),
++						   swp_offset(entry),
++						   &compound);
++				/*
++				 * The huge swap cluster has been
++				 * split under us
++				 */
++				if (!compound) {
++					__split_huge_swap_pmd(vma, addr, pmd);
++					spin_unlock(ptl);
++					goto fallback;
++				}
++			}
++		}
++		memset(vec, val, nr);
  		spin_unlock(ptl);
- 		if (flush_needed)
- 			tlb_remove_page_size(tlb, page, HPAGE_PMD_SIZE);
+ 		goto out;
+ 	}
+ 
++fallback:
+ 	if (pmd_trans_unstable(pmd)) {
+ 		__mincore_unmapped_range(addr, end, vma, vec);
+ 		goto out;
+@@ -150,8 +176,7 @@ static int mincore_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
+ 		else if (pte_present(pte))
+ 			*vec = 1;
+ 		else { /* pte is a swap entry */
+-			swp_entry_t entry = pte_to_swp_entry(pte);
+-
++			entry = pte_to_swp_entry(pte);
+ 			if (non_swap_entry(entry)) {
+ 				/*
+ 				 * migration or hwpoison entries are always
+@@ -161,7 +186,7 @@ static int mincore_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
+ 			} else {
+ #ifdef CONFIG_SWAP
+ 				*vec = mincore_page(swap_address_space(entry),
+-						    swp_offset(entry));
++						    swp_offset(entry), NULL);
+ #else
+ 				WARN_ON(1);
+ 				*vec = 1;
 -- 
 2.16.1
