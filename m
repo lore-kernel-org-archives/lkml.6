@@ -1,114 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754798AbeEWQ1A (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 12:27:00 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:37266 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754739AbeEWQ0u (ORCPT
+        id S933442AbeEWQ1j (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 12:27:39 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:48514 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754627AbeEWQ1h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 12:26:50 -0400
-X-Google-Smtp-Source: AB8JxZpIVf2UKcsHSY0B1hPYnhT1D+D0LtfoTVir2BMwtVKTg5Q1Efb+x/+Sp00wJkNc2STdsX1vOA==
-Subject: Re: [PATCH v2] ath10k: transmit queued frames after waking queues
-To: Niklas Cassel <niklas.cassel@linaro.org>,
-        Rajkumar Manoharan <rmanohar@codeaurora.org>
-Cc: Kalle Valo <kvalo@qca.qualcomm.com>,
-        "David S. Miller" <davem@davemloft.net>, ath10k@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-wireless-owner@vger.kernel.org
-References: <20180521204359.23884-1-niklas.cassel@linaro.org>
- <8195be7603a8cd659d25a9c3d898b891@codeaurora.org>
- <20180522211521.GA26123@localhost.localdomain>
-From: Erik Stromdahl <erik.stromdahl@gmail.com>
-Message-ID: <c131da6e-6479-3a40-fbd3-9c61d6690ba8@gmail.com>
-Date: Wed, 23 May 2018 18:25:49 +0200
+        Wed, 23 May 2018 12:27:37 -0400
+Subject: Re: [PATCH v5 1/2] xen/PVH: Set up GS segment for stack canary
+To: Jan Beulich <JBeulich@suse.com>
+Cc: brgerst@gmail.com, xen-devel <xen-devel@lists.xenproject.org>,
+        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org
+References: <20180523143002.29252-1-boris.ostrovsky@oracle.com>
+ <20180523143002.29252-2-boris.ostrovsky@oracle.com>
+ <5B058BA002000078001C523F@prv1-mh.provo.novell.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ xsFNBFH8CgsBEAC0KiOi9siOvlXatK2xX99e/J3OvApoYWjieVQ9232Eb7GzCWrItCzP8FUV
+ PQg8rMsSd0OzIvvjbEAvaWLlbs8wa3MtVLysHY/DfqRK9Zvr/RgrsYC6ukOB7igy2PGqZd+M
+ MDnSmVzik0sPvB6xPV7QyFsykEgpnHbvdZAUy/vyys8xgT0PVYR5hyvhyf6VIfGuvqIsvJw5
+ C8+P71CHI+U/IhsKrLrsiYHpAhQkw+Zvyeml6XSi5w4LXDbF+3oholKYCkPwxmGdK8MUIdkM
+ d7iYdKqiP4W6FKQou/lC3jvOceGupEoDV9botSWEIIlKdtm6C4GfL45RD8V4B9iy24JHPlom
+ woVWc0xBZboQguhauQqrBFooHO3roEeM1pxXjLUbDtH4t3SAI3gt4dpSyT3EvzhyNQVVIxj2
+ FXnIChrYxR6S0ijSqUKO0cAduenhBrpYbz9qFcB/GyxD+ZWY7OgQKHUZMWapx5bHGQ8bUZz2
+ SfjZwK+GETGhfkvNMf6zXbZkDq4kKB/ywaKvVPodS1Poa44+B9sxbUp1jMfFtlOJ3AYB0WDS
+ Op3d7F2ry20CIf1Ifh0nIxkQPkTX7aX5rI92oZeu5u038dHUu/dO2EcuCjl1eDMGm5PLHDSP
+ 0QUw5xzk1Y8MG1JQ56PtqReO33inBXG63yTIikJmUXFTw6lLJwARAQABzTNCb3JpcyBPc3Ry
+ b3Zza3kgKFdvcmspIDxib3Jpcy5vc3Ryb3Zza3lAb3JhY2xlLmNvbT7CwXgEEwECACIFAlH8
+ CgsCGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEIredpCGysGyasEP/j5xApopUf4g
+ 9Fl3UxZuBx+oduuw3JHqgbGZ2siA3EA4bKwtKq8eT7ekpApn4c0HA8TWTDtgZtLSV5IdH+9z
+ JimBDrhLkDI3Zsx2CafL4pMJvpUavhc5mEU8myp4dWCuIylHiWG65agvUeFZYK4P33fGqoaS
+ VGx3tsQIAr7MsQxilMfRiTEoYH0WWthhE0YVQzV6kx4wj4yLGYPPBtFqnrapKKC8yFTpgjaK
+ jImqWhU9CSUAXdNEs/oKVR1XlkDpMCFDl88vKAuJwugnixjbPFTVPyoC7+4Bm/FnL3iwlJVE
+ qIGQRspt09r+datFzPqSbp5Fo/9m4JSvgtPp2X2+gIGgLPWp2ft1NXHHVWP19sPgEsEJXSr9
+ tskM8ScxEkqAUuDs6+x/ISX8wa5Pvmo65drN+JWA8EqKOHQG6LUsUdJolFM2i4Z0k40BnFU/
+ kjTARjrXW94LwokVy4x+ZYgImrnKWeKac6fMfMwH2aKpCQLlVxdO4qvJkv92SzZz4538az1T
+ m+3ekJAimou89cXwXHCFb5WqJcyjDfdQF857vTn1z4qu7udYCuuV/4xDEhslUq1+GcNDjAhB
+ nNYPzD+SvhWEsrjuXv+fDONdJtmLUpKs4Jtak3smGGhZsqpcNv8nQzUGDQZjuCSmDqW8vn2o
+ hWwveNeRTkxh+2x1Qb3GT46uzsFNBFH8CgsBEADGC/yx5ctcLQlB9hbq7KNqCDyZNoYu1HAB
+ Hal3MuxPfoGKObEktawQPQaSTB5vNlDxKihezLnlT/PKjcXC2R1OjSDinlu5XNGc6mnky03q
+ yymUPyiMtWhBBftezTRxWRslPaFWlg/h/Y1iDuOcklhpr7K1h1jRPCrf1yIoxbIpDbffnuyz
+ kuto4AahRvBU4Js4sU7f/btU+h+e0AcLVzIhTVPIz7PM+Gk2LNzZ3/on4dnEc/qd+ZZFlOQ4
+ KDN/hPqlwA/YJsKzAPX51L6Vv344pqTm6Z0f9M7YALB/11FO2nBB7zw7HAUYqJeHutCwxm7i
+ BDNt0g9fhviNcJzagqJ1R7aPjtjBoYvKkbwNu5sWDpQ4idnsnck4YT6ctzN4I+6lfkU8zMzC
+ gM2R4qqUXmxFIS4Bee+gnJi0Pc3KcBYBZsDK44FtM//5Cp9DrxRQOh19kNHBlxkmEb8kL/pw
+ XIDcEq8MXzPBbxwHKJ3QRWRe5jPNpf8HCjnZz0XyJV0/4M1JvOua7IZftOttQ6KnM4m6WNIZ
+ 2ydg7dBhDa6iv1oKdL7wdp/rCulVWn8R7+3cRK95SnWiJ0qKDlMbIN8oGMhHdin8cSRYdmHK
+ kTnvSGJNlkis5a+048o0C6jI3LozQYD/W9wq7MvgChgVQw1iEOB4u/3FXDEGulRVko6xCBU4
+ SQARAQABwsFfBBgBAgAJBQJR/AoLAhsMAAoJEIredpCGysGyfvMQAIywR6jTqix6/fL0Ip8G
+ jpt3uk//QNxGJE3ZkUNLX6N786vnEJvc1beCu6EwqD1ezG9fJKMl7F3SEgpYaiKEcHfoKGdh
+ 30B3Hsq44vOoxR6zxw2B/giADjhmWTP5tWQ9548N4VhIZMYQMQCkdqaueSL+8asp8tBNP+TJ
+ PAIIANYvJaD8xA7sYUXGTzOXDh2THWSvmEWWmzok8er/u6ZKdS1YmZkUy8cfzrll/9hiGCTj
+ u3qcaOM6i/m4hqtvsI1cOORMVwjJF4+IkC5ZBoeRs/xW5zIBdSUoC8L+OCyj5JETWTt40+lu
+ qoqAF/AEGsNZTrwHJYu9rbHH260C0KYCNqmxDdcROUqIzJdzDKOrDmebkEVnxVeLJBIhYZUd
+ t3Iq9hdjpU50TA6sQ3mZxzBdfRgg+vaj2DsJqI5Xla9QGKD+xNT6v14cZuIMZzO7w0DoojM4
+ ByrabFsOQxGvE0w9Dch2BDSI2Xyk1zjPKxG1VNBQVx3flH37QDWpL2zlJikW29Ws86PHdthh
+ Fm5PY8YtX576DchSP6qJC57/eAAe/9ztZdVAdesQwGb9hZHJc75B+VNm4xrh/PJO6c1THqdQ
+ 19WVJ+7rDx3PhVncGlbAOiiiE3NOFPJ1OQYxPKtpBUukAlOTnkKE6QcA4zckFepUkfmBV1wM
+ Jg6OxFYd01z+a+oL
+Message-ID: <19ab48d1-333c-73fa-8586-c433b5bd7b90@oracle.com>
+Date: Wed, 23 May 2018 12:30:47 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180522211521.GA26123@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+In-Reply-To: <5B058BA002000078001C523F@prv1-mh.provo.novell.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8902 signatures=668700
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=493
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805230162
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 05/23/2018 11:41 AM, Jan Beulich wrote:
+>>>> On 23.05.18 at 16:30, <boris.ostrovsky@oracle.com> wrote:
+>> @@ -98,6 +101,12 @@ ENTRY(pvh_start_xen)
+>>  	/* 64-bit entry point. */
+>>  	.code64
+>>  1:
+>> +	/* Set base address in stack canary descriptor. */
+>> +	mov $MSR_GS_BASE,%ecx
+>> +	mov $_pa(canary), %rax
+>> +	xor %rdx, %rdx
+> Why rax and rdx instead of eax and edx? In the former case, the
+> relocation produced might confuse whatever entity processing it
+> (it'll have a sign-extended 32-bit quantity to deal with, which
+> wouldn't allow representing an address in the [2Gb, 4Gb) range).
+> In the latter case, while surely neither performance nor code size
+> matter much here, it's still a bad precedent (people copy-and-paste
+> code all the time): Zero-ing of registers should generally use the
+> 32-bit forms of the insn. Gas has actually gained an optimization
+> mode recently (upon request from Linus and the x86 maintainers)
+> to silently "repair" such inefficiencies.
 
 
-On 05/22/2018 11:15 PM, Niklas Cassel wrote:
+Sure, I can replace these two with 32-bit variants. If there are no
+other comments I won't re-send this again.
 
-<snip>
->>
->> Earlier we observed performance issues in calling push_pending from each
->> tx completion. IMHO this change may introduce the same problem again.
-> 
-> I prefer functional TX over performance issues,
-> but I agree that it is unfortunate that SDIO doesn't use
-> ath10k_htt_txrx_compl_task().
-> Erik, is there a reason for this?
-The reason is that the SDIO code has been derived mainly from qcacld and ath6kl
-and they don't implement napi.
-
-ath10k_htt_txrx_compl_task is currently only called from the napi poll function,
-and the sdio bus driver doesn't have such a function.
-
-> 
-> Perhaps it would be possible to call ath10k_mac_tx_push_pending()
-> from the equivalent to ath10k_htt_txrx_compl_task(),
-> but from SDIO's point of view.
-An equivalent for SDIO would most likely be *ath10k_htt_htc_t2h_msg_handler*
-or any of the other functions called from this function.
-
-*ath10k_txrx_tx_unref* is actually called from *ath10k_htt_htc_t2h_msg_handler*,
-so that function could be viewed as an equivalent.
-
-If the call should be added in the bus driver (sdio.c) it should most likely be
-placed in *ath10k_sdio_mbox_rx_process_packets*
-
-		if (!pkt->trailer_only) {
-			ep->ep_ops.ep_rx_complete(ar_sdio->ar, pkt->skb);
-			ath10k_mac_tx_push_pending(ar_sdio->ar);
-		} else {
-			kfree_skb(pkt->skb)
-		}
-
-The above call would of course result in lot's of calls to *ath10k_mac_tx_push_pending*
-Adding a htt_num_pending check here wouldn't look nice.
-
-The HL RX path differs from the LL path in that the t2h_msg_handler returns
-false indicating that it has consumed the skb.
-
-This is because it is the HL RX indication handler that delivers the skb's
-to mac80211.
-
-Another solution could be to add an *else-statement* as a part of the *if (release)*
-in *ath10k_htt_htc_t2h_msg_handler*, where *ath10k_mac_tx_push_pending* could be called.
-
-Something like this perhaps:
-
-	/* Free the indication buffer */
-	if (release)
-		dev_kfree_skb_any(skb);
-	else if (!ar->htt.num_pending_tx)
-		ath10k_mac_tx_push_pending(ar);
-
-I think I prefer your original patch though.
-> 
-> Another solution might be to change so that we only call
-> ath10k_mac_tx_push_pending() from ath10k_txrx_tx_unref()
-> if (htt->num_pending_tx == 0). That should decrease the number
-> of calls to ath10k_mac_tx_push_pending(), while still avoiding
-> a "TX deadlock" scenario for SDIO.
-Just out of curiosity, where did the limit of 3 come from?
-If it works with a limit of 0, I think it should be used instead.
-
-Another intersting thing that I stumbled upon when looking into the
-code (while writing this email) is the *wake_up(&htt->empty_tx_wq);*
-
-For some reason I have considered it not to be applicable for HL devices.
-
-The queue is waited for in the flush op (*ath10k_flush*).
-I am unsure what it is used for, but I don't think it affects the TX
-deadlock scenario.
-
---
-Erik
+-boris
