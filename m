@@ -1,70 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754348AbeEWIYm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 04:24:42 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50248 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754153AbeEWIYi (ORCPT
+        id S1754470AbeEWIZz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 04:25:55 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:38056 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754319AbeEWIZt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 04:24:38 -0400
-Date: Wed, 23 May 2018 09:24:24 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: Guenter Roeck <groeck@google.com>, Liam Girdwood <lgirdwood@gmail.com>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        Takashi Iwai <tiwai@suse.com>,
-        Chintan Patel <chintan.m.patel@intel.com>,
-        Guenter Roeck <groeck@chromium.org>
-Subject: Re: [alsa-devel] [RFC/RFT PATCH] ASoC: topology: Improve backwards
- compatibility with v4 topology files
-Message-ID: <20180523082424.GA4828@sirena.org.uk>
-References: <20180522165842.233949-1-groeck@google.com>
- <fb9aebba-919a-2e80-aec7-2fd44e5e1861@linux.intel.com>
+        Wed, 23 May 2018 04:25:49 -0400
+X-Google-Smtp-Source: AB8JxZr6DcVQeWkyGL4Q03+p7nVQooCkocBcNzKbj2g7dMIbfxFzj4H7ROKwqlE1NgaiJkgZkzVJdQ==
+Subject: Re: [PATCH 6/6] scsi: Check sense buffer size at build time
+To: Kees Cook <keescook@chromium.org>, Jens Axboe <axboe@kernel.dk>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Tejun Heo <tj@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Manoj N. Kumar" <manoj@linux.vnet.ibm.com>,
+        "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>,
+        Uma Krishnan <ukrishn@linux.vnet.ibm.com>, linux-block@vger.kernel.org,
+        linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180522181512.39316-1-keescook@chromium.org>
+ <20180522181512.39316-7-keescook@chromium.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <7de525d4-52f4-80f2-1f55-a3a5c37d7bf9@cogentembedded.com>
+Date: Wed, 23 May 2018 11:25:45 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="y0ulUmNC+osPPQO6"
-Content-Disposition: inline
-In-Reply-To: <fb9aebba-919a-2e80-aec7-2fd44e5e1861@linux.intel.com>
-X-Cookie: Excellent day to have a rotten day.
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180522181512.39316-7-keescook@chromium.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello!
 
---y0ulUmNC+osPPQO6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 5/22/2018 9:15 PM, Kees Cook wrote:
 
-On Tue, May 22, 2018 at 02:59:35PM -0500, Pierre-Louis Bossart wrote:
+> To avoid introducing problems like those fixed in commit f7068114d45e
+> ("sr: pass down correctly sized SCSI sense buffer"), this creates a macro
+> wrapper for scsi_execute() that verifies the size of the sense buffer
+> similar to what was done for command string sizes in commit 3756f6401c30
+> ("exec: avoid gcc-8 warning for get_task_comm").
+> 
+> Another solution could be to add another argument to scsi_execute(),
+> but this function already takes a lot of arguments and Jens was not fond
+> of that approach. As there was only a pair of dynamically allocated sense
+> buffers, this also moves those 96 bytes onto the stack to avoid triggering
+> the sizeof() check.
+> 
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+>   drivers/scsi/scsi_lib.c    |  6 +++---
+>   include/scsi/scsi_device.h | 12 +++++++++++-
+>   2 files changed, 14 insertions(+), 4 deletions(-)
+> 
+[...]
+> diff --git a/include/scsi/scsi_device.h b/include/scsi/scsi_device.h
+> index 7ae177c8e399..1bb87b6c0ad2 100644
+> --- a/include/scsi/scsi_device.h
+> +++ b/include/scsi/scsi_device.h
+> @@ -426,11 +426,21 @@ extern const char *scsi_device_state_name(enum scsi_device_state);
+>   extern int scsi_is_sdev_device(const struct device *);
+>   extern int scsi_is_target_device(const struct device *);
+>   extern void scsi_sanitize_inquiry_string(unsigned char *s, int len);
+> -extern int scsi_execute(struct scsi_device *sdev, const unsigned char *cmd,
+> +extern int __scsi_execute(struct scsi_device *sdev, const unsigned char *cmd,
+>   			int data_direction, void *buffer, unsigned bufflen,
+>   			unsigned char *sense, struct scsi_sense_hdr *sshdr,
+>   			int timeout, int retries, u64 flags,
+>   			req_flags_t rq_flags, int *resid);
+> +/* Make sure any sense buffer is the correct size. */
+> +#define scsi_execute(sdev, cmd, data_direction, buffer, bufflen, sense,	\
+> +		     sshdr, timeout, retries, flags, rq_flags, resid)	\
+> +({									\
+> +	BUILD_BUG_ON((sense) != NULL &&					\
+> +		     sizeof(sense) != SCSI_SENSE_BUFFERSIZE);		\
 
-> I am also not convinced by the notion that maintaining topology files is
-> only a userspace/distro issue. This would mean some distros will have access
-> to the required topology files, possibly enabling DSP processing
-> capabilities, but other will not and will not be able to enable even basic
-> playback/capture. Just like we have a basic firmware with limited
-> functionality in /lib/firmware/intel, it would make sense to require a basic
-> .conf file in alsa-lib for every upstream machine driver - along possibly
-> with a basic UCM file so that audio works no matter what distro people use.
+    This would only check the size of the 'sense' pointer, no?
 
-The point here is that people should be able to update their kernel
-without updating their userspace so things have to work with whatever
-they have right now - anything that relies on shipping new firmware or
-configuration files to userspace is a problem.
+> +	__scsi_execute(sdev, cmd, data_direction, buffer, bufflen,	\
+> +		       sense, sshdr, timeout, retries, flags, rq_flags,	\
+> +		       resid);						\
+> +})
+>   static inline int scsi_execute_req(struct scsi_device *sdev,
+>   	const unsigned char *cmd, int data_direction, void *buffer,
+>   	unsigned bufflen, struct scsi_sense_hdr *sshdr, int timeout,
 
---y0ulUmNC+osPPQO6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsFJTcACgkQJNaLcl1U
-h9AS4wf+NiCBQ9NPvTyXDKTk07Ae2ufTmBc4iMUvFK5il01eXr02pmf2FtRRodk0
-M9R1BVCtmPBDeruSIAbnA9x+u6SUxWwszTbDp6AL5p7oz5VjyJ9o9XBcWcvXKivy
-iB3uIommTHeY+9ESd3HBO7SI2UfZtgpVxa9pqYWpIlUyjpeAq7UwN34qbqdmuRu4
-tm8n3//+hp09MfiixFoWmOdfbNPIh8iz4sPYSzahAYZ7fYgN355eOE4yLDuZPB08
-DsXRyGBqHWD3uIaleZXIvyatKjyJI1uLpS8xb+E64ntcblwh8ph7rrf3Ojb44PCp
-6FXCx4HBw1TNTzECC11WsQ8FvZt6Cw==
-=m9Pa
------END PGP SIGNATURE-----
-
---y0ulUmNC+osPPQO6--
+MBR, Sergei
