@@ -1,150 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933388AbeEWOkE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 10:40:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57912 "EHLO mail.kernel.org"
+        id S933369AbeEWOnb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 10:43:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58710 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933174AbeEWOkC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 10:40:02 -0400
-X-Google-Smtp-Source: ADUXVKIe8PnBGP4Bg2/YJoygp/LKzqPErVw7vvbV8RFUQEW3aOyggFLfmBN9EzeP0xqo8i99fhSKCfxH/lt6EgO9QEA=
+        id S933199AbeEWOn3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 10:43:29 -0400
+X-Google-Smtp-Source: AB8JxZqppVJZSS2IlWV4C/ynZ0MCWzbROEbi7suymlic8dyrC0jarcz3NtKjD8TsNKh9mD2S29XcwXoXuZ6PQMIFZkA=
 MIME-Version: 1.0
-In-Reply-To: <5B0461D1.1050900@codeaurora.org>
-References: <1526629965-28729-1-git-send-email-skannan@codeaurora.org>
- <20180522180838.GA13423@rob-hp-laptop> <5B0461D1.1050900@codeaurora.org>
+In-Reply-To: <6ffb43dc-55a5-14eb-eb18-3a731cdaf424@t-chip.com.cn>
+References: <1526614328-6869-1-git-send-email-djw@t-chip.com.cn>
+ <1526615528-9707-1-git-send-email-djw@t-chip.com.cn> <1526615528-9707-2-git-send-email-djw@t-chip.com.cn>
+ <20180522180238.GA7328@rob-hp-laptop> <6ffb43dc-55a5-14eb-eb18-3a731cdaf424@t-chip.com.cn>
 From: Rob Herring <robh@kernel.org>
-Date: Wed, 23 May 2018 09:39:40 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqL8W5219_rCQFCbo+Vc0Yv6HvrpXTpOpgixH4sNg7gg1w@mail.gmail.com>
-Message-ID: <CAL_JsqL8W5219_rCQFCbo+Vc0Yv6HvrpXTpOpgixH4sNg7gg1w@mail.gmail.com>
-Subject: Re: [PATCH v2] PM / devfreq: Add support for QCOM devfreq firmware
-To: Saravana Kannan <skannan@codeaurora.org>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
+Date: Wed, 23 May 2018 09:43:07 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+_QEBWdxW=J4oVGWeokc-+nMzxzX_pgCayaxg-ehivfQ@mail.gmail.com>
+Message-ID: <CAL_Jsq+_QEBWdxW=J4oVGWeokc-+nMzxzX_pgCayaxg-ehivfQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/5] gpio: syscon: Add gpio-syscon for rockchip
+To: Levin Du <djw@t-chip.com.cn>
+Cc: "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Wayne Chou <zxf@t-chip.com.cn>, Heiko Stuebner <heiko@sntech.de>,
+        devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Rajendra Nayak <rjendra@codeaurora.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 1:30 PM, Saravana Kannan <skannan@codeaurora.org> wrote:
-> On 05/22/2018 11:08 AM, Rob Herring wrote:
+On Tue, May 22, 2018 at 9:02 PM, Levin Du <djw@t-chip.com.cn> wrote:
+> On 2018-05-23 2:02 AM, Rob Herring wrote:
 >>
->> On Fri, May 18, 2018 at 12:52:40AM -0700, Saravana Kannan wrote:
+>> On Fri, May 18, 2018 at 11:52:05AM +0800, djw@t-chip.com.cn wrote:
 >>>
->>> The firmware present in some QCOM chipsets offloads the steps necessary
->>> for
->>> changing the frequency of some devices (Eg: L3). This driver implements
->>> the
->>> devfreq interface for this firmware so that various governors could be
->>> used
->>> to scale the frequency of these devices.
+>>> From: Levin Du <djw@t-chip.com.cn>
 >>>
->>> Each client (say cluster 0 and cluster 1) that wants to vote for a
->>> particular device's frequency (say, L3 frequency) is represented as a
->>> separate voter device (qcom,devfreq-fw-voter) that's a child of the
->>> firmware device (qcom,devfreq-fw).
+>>> Some GPIOs sit in the GRF_SOC_CON registers of Rockchip SoCs,
+>>> which do not belong to the general pinctrl.
 >>>
->>> Signed-off-by: Saravana Kannan <skannan@codeaurora.org>
+>>> Adding gpio-syscon support makes controlling regulator or
+>>> LED using these special pins very easy by reusing existing
+>>> drivers, such as gpio-regulator and led-gpio.
+>>>
+>>> Signed-off-by: Levin Du <djw@t-chip.com.cn>
+>>>
 >>> ---
->>>   .../bindings/devfreq/devfreq-qcom-fw.txt           |  41 +++
->>>   drivers/devfreq/Kconfig                            |  14 +
->>>   drivers/devfreq/Makefile                           |   1 +
->>>   drivers/devfreq/devfreq_qcom_fw.c                  | 330
->>> +++++++++++++++++++++
->>>   4 files changed, 386 insertions(+)
+>>>
+>>> Changes in v2:
+>>> - Rename gpio_syscon10 to gpio_mute in doc
+>>>
+>>> Changes in v1:
+>>> - Refactured for general gpio-syscon usage for Rockchip SoCs.
+>>> - Add doc rockchip,gpio-syscon.txt
+>>>
+>>>   .../bindings/gpio/rockchip,gpio-syscon.txt         | 41
+>>> ++++++++++++++++++++++
+>>>   drivers/gpio/gpio-syscon.c                         | 30
+>>> ++++++++++++++++
+>>>   2 files changed, 71 insertions(+)
 >>>   create mode 100644
->>> Documentation/devicetree/bindings/devfreq/devfreq-qcom-fw.txt
->>>   create mode 100644 drivers/devfreq/devfreq_qcom_fw.c
+>>> Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
 >>>
 >>> diff --git
->>> a/Documentation/devicetree/bindings/devfreq/devfreq-qcom-fw.txt
->>> b/Documentation/devicetree/bindings/devfreq/devfreq-qcom-fw.txt
+>>> a/Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
+>>> b/Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
 >>> new file mode 100644
->>> index 0000000..f882a0b
+>>> index 0000000..b1b2a67
 >>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/devfreq/devfreq-qcom-fw.txt
+>>> +++ b/Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
 >>> @@ -0,0 +1,41 @@
->>> +QCOM Devfreq firmware device
->>> +
->>> +Some Qualcomm Technologies, Inc. (QTI) chipsets have a firmware that
->>> +offloads the steps for frequency switching. It provides a table of
->>> +supported frequencies and a register to request one of the supported
->>> +freqencies.
->>> +
->>> +The qcom,devfreq-fw represents this firmware as a device. Sometimes,
->>> +multiple entities want to vote on the frequency request that is sent to
->>> the
->>> +firmware. The qcom,devfreq-fw-voter represents these voters as child
->>> +devices of the corresponding qcom,devfreq-fw device.
+>>> +* Rockchip GPIO support for GRF_SOC_CON registers
 >>> +
 >>> +Required properties:
->>> +- compatible:          Must be "qcom,devfreq-fw" or
->>> "qcom,devfreq-fw-voter"
+>>> +- compatible: Should contain "rockchip,gpio-syscon".
+>>> +- gpio-controller: Marks the device node as a gpio controller.
+>>> +- #gpio-cells: Should be two. The first cell is the pin number and
+>>> +  the second cell is used to specify the gpio polarity:
+>>> +    0 = Active high,
+>>> +    1 = Active low.
 >>
+>> There's no need for this child node. Just make the parent node a gpio
+>> controller.
 >>
->> No versions of firmware?
+>> Rob
 >
+> Hi Rob, it is not clear to me. Do you suggest that the grf node should be a
+> gpio controller,
+> like below?
 >
-> Sure, I can add a v1. Right now the interface has always been identical. I
-> thought if it changed in the future I'll add -v2.
+> +    grf: syscon at ff100000 {
+> +        compatible = "rockchip,gpio-syscon", "rockchip,rk3328-grf",
+> "syscon", "simple-mfd";
 
-Sounds like you are making up version numbers. If you don't have real
-h/w or firmware version numbers, then use an SoC specific compatible
-string.
+Yes, but drop "rockchip,gpio-syscon" and "simple-mfd".
 
->>> +Only for qcom,devfreq-fw:
->>> +- reg:                 Pairs of physical base addresses and region sizes
->>> of
->>> +                       memory mapped registers.
->>
->>
->> Registers? Is this firmware or h/w block?
+> +        //...
+> +        gpio-controller;
+> +        #gpio-cells = <2>;
+> +        gpio,syscon-dev = <&grf 0x0428 0>;
+
+And drop this. It may be used in the kernel, but it is not a
+documented property.
+
+> +    };
+>
+> or just reserve the following case in the doc?
+>
+> +    grf: syscon at ff100000 {
+> +        compatible = "rockchip,rk3328-grf", "syscon", "simple-mfd";
+> +        //...
+> +    };
+> +
+> +    gpio_mute: gpio-mute {
+> +        compatible = "rockchip,gpio-syscon";
+> +        gpio-controller;
+> +        #gpio-cells = <2>;
+> +        gpio,syscon-dev = <&grf 0x0428 0>;
+> +    };
 >
 >
-> It's a HW block that has its own firmware.
-
-So you have 2 things that could change: the h/w interface and the
-firmware version. Make sure the compatible string(s) is specific
-enough for the OS to know the exact combination.
-
->>> +- reg-names:           Names of the bases for the above registers.
->>> +                       Required register regions are:
->>> +                       - "en-base": address of register to check if the
->>> +                         firmware is enabled.
->>> +                       - "ftbl-base": address region for the frequency
->>> +                         table.
->>> +                       - "perf-base": address of register to request a
->>> +                         frequency.
->>> +
->>> +Example:
->>> +
->>> +       qcom,devfreq-l3 {
->>> +               compatible = "qcom,devfreq-fw";
->>> +               reg-names = "en-base", "ftbl-base", "perf-base";
->>> +               reg = <0x18321000 0x4>, <0x18321110 0x600>, <0x18321920
->>> 0x4>;
->>> +
->>> +               qcom,cpu0-l3 {
->>> +                       compatible = "qcom,devfreq-fw-voter";
->>
->>
->> There's no point in these nodes. They don't have any properties or
->> resources.
+> Thanks
+> Levin
 >
->
-> These nodes decide how many voters this device supports. Each voter would be
-> a devfreq node that will have its own governor set. For example, one of them
-> would use this governor:
-> http://lkml.iu.edu/hypermail/linux/kernel/1805.2/02474.html
->
-> You can also attach different devfreq-event devices to each one of these
-> voter devices based on what events you want to use for scaling each voter.
-> So, the devices are definitely needed in the larger context.
-
-Sorry, I still don't understand.
-
-Rob
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
