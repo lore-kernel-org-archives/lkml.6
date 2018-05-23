@@ -1,57 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932903AbeEWNEl (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 09:04:41 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:19959 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932089AbeEWNEj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 09:04:39 -0400
-Subject: Re: [PATCH] MAINTAINERS: Change hugetlbfs maintainer and update files
-To: Mike Kravetz <mike.kravetz@oracle.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Nadia Yvette Chambers <nyc@holomorphy.com>
-References: <20180518225236.19079-1-mike.kravetz@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Jan Kara <jack@suse.cz>
-From: Anshuman Khandual <khandual@linux.vnet.ibm.com>
-Date: Wed, 23 May 2018 18:34:29 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.5.1
+        id S932944AbeEWNFW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 09:05:22 -0400
+Received: from foss.arm.com ([217.140.101.70]:54874 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932089AbeEWNFV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 09:05:21 -0400
+Date: Wed, 23 May 2018 14:05:48 +0100
+From: Will Deacon <will.deacon@arm.com>
+To: Sodagudi Prasad <psodagud@codeaurora.org>
+Cc: keescook@chromium.org, luto@amacapital.net, wad@chromium.org,
+        akpm@linux-foundation.org, riel@redhat.com, tglx@linutronix.de,
+        mingo@kernel.org, peterz@infradead.org, ebiggers@google.com,
+        fweisbec@gmail.com, sherryy@android.com, vegard.nossum@oracle.com,
+        cl@linux.com, aarcange@redhat.com, alexander.levin@verizon.com,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org
+Subject: Re: write_lock_irq(&tasklist_lock)
+Message-ID: <20180523130547.GF26965@arm.com>
+References: <0879f797135033e05e8e9166a3c85628@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20180518225236.19079-1-mike.kravetz@oracle.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18052313-0040-0000-0000-0000043D0372
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052313-0041-0000-0000-000026423BFD
-Message-Id: <b4960569-0fe0-bad7-327c-398bf2abd7af@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-23_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805230133
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0879f797135033e05e8e9166a3c85628@codeaurora.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/19/2018 04:22 AM, Mike Kravetz wrote:
-> The current hugetlbfs maintainer has not been active for more than
-> a few years.  I have been been active in this area for more than
-> two years and plan to remain active in the foreseeable future.
-> 
-> Also, update the hugetlbfs entry to include linux-mm mail list and
-> additional hugetlbfs related files.  hugetlb.c and hugetlb.h are
-> not 100% hugetlbfs, but a majority of their content is hugetlbfs
-> related.
-> 
-> Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+Hi Prasad,
 
-Thanks Mike !
+On Tue, May 22, 2018 at 12:40:05PM -0700, Sodagudi Prasad wrote:
+> When following test is executed on 4.14.41 stable kernel, observed that one
+> of the core is waiting for tasklist_lock for long time with IRQs disabled.
+> ./stress-ng-64 --get 8 -t 3h --times --metrics-brief
+> 
+> Every time when device is crashed, I observed that one the task stuck at
+> fork system call and waiting for tasklist_lock as writer with irq disabled.
+> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git/tree/kernel/fork.c?h=linux-4.14.y#n1843
+
+Please use a newer kernel. We've addressed this in mainline by moving
+arm64 over to the qrwlock implementation which (after some other changes)
+guarantees forward progress for well-behaved readers and writers.
+
+To give an example from locktorture with 2 writers and 8 readers, after
+a few seconds I see:
+
+rwlock:
+	Writes:	Total: 6725	Max/Min: 0/0	Fail: 0
+	Reads:	Total: 5103727	Max/Min: 0/0	Fail: 0
+
+qrwlock:
+	Writes:	Total: 155284	Max/Min: 0/0	Fail: 0
+	Reads:	Total: 767703	Max/Min: 0/0	Fail: 0
+
+so the ratio is closer to ~6:1 rather than ~191:1 for this case. The
+total locking throughput has dropped, but that's expected for this type
+of lock where maximum throughput would be achieved by favouring readers.
+
+Will
