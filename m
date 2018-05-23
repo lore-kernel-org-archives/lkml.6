@@ -1,52 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933191AbeEWN4T (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 09:56:19 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:43547 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932900AbeEWN4O (ORCPT
+        id S933208AbeEWN4Z (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 09:56:25 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42342 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932900AbeEWN4U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 09:56:14 -0400
-X-Google-Smtp-Source: AB8JxZp/XcV7wfEN0nrsKU1wWBpE2tHtXGoxz5S/ajDWNyD86ql+KnmKREu6TzyhZkWFgw6szTZ2+T7QdYyTnBL64yk=
+        Wed, 23 May 2018 09:56:20 -0400
+Date: Wed, 23 May 2018 14:56:09 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Guenter Roeck <groeck@google.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        alsa-devel@alsa-project.org, Guenter Roeck <groeck@chromium.org>,
+        Chintan Patel <chintan.m.patel@intel.com>,
+        Jaroslav Kysela <perex@perex.cz>, linux-kernel@vger.kernel.org
+Subject: Re: [RFC/RFT PATCH] ASoC: topology: Improve backwards compatibility
+ with v4 topology files
+Message-ID: <20180523135609.GK4828@sirena.org.uk>
+References: <20180522165842.233949-1-groeck@google.com>
+ <s5hmuwqpjdd.wl-tiwai@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <20180519140202.3449e3c1@jawa>
-References: <20180509153428.1440-1-lukma@denx.de> <CAOMZO5AexXNEGVoXa9K_GAm+aFLNRQOXOhF_SdKAjV1qmuD2nA@mail.gmail.com>
- <20180519140202.3449e3c1@jawa>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Wed, 23 May 2018 10:56:13 -0300
-Message-ID: <CAOMZO5DoLwEmQz5BQHDLk8sBq7mDH_UxBjRA0RGKb+PunMYu-Q@mail.gmail.com>
-Subject: Re: [PATCH] ARM: DTS: imx53: Add support for imx53 HSC/DDC boards
- from K+P
-To: Lukasz Majewski <lukma@denx.de>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="IJAclU0AInkryoed"
+Content-Disposition: inline
+In-Reply-To: <s5hmuwqpjdd.wl-tiwai@suse.de>
+X-Cookie: Excellent day to have a rotten day.
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lukasz,
 
-On Sat, May 19, 2018 at 9:02 AM, Lukasz Majewski <lukma@denx.de> wrote:
+--IJAclU0AInkryoed
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> After removing imx53-kp-ddc and imx53-kp-common iomux subnodes I do see
-> following errors in the dmesg (v4.17-rc5):
->
-> imx53-pinctrl 53fa8000.iomuxc: function 'iomuxc' not supported
-> imx53-pinctrl 53fa8000.iomuxc: invalid function iomuxc in map table
+On Wed, May 23, 2018 at 03:54:54PM +0200, Takashi Iwai wrote:
 
-Could you please investigate this error?
+> And I'm wondering whether we should move these definitions to uapi
+> headers.
 
-I have just tried the following change on a imx53-qsb:
-http://code.bulix.org/ik01yu-339697
+Yes, we should.
 
-and it works as expected:
-# dmesg  | grep iomux
-[    0.100046] imx53-pinctrl 53fa8000.iomuxc: initialized IMX pinctrl driver
+--IJAclU0AInkryoed
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsFcvgACgkQJNaLcl1U
+h9DoKAf/USPmjJ56h/dkk2Lo8ldpcGetP2ZQMIa3AcdlOdduDJK/gi4NSf+cF5eo
+n0H1IdBK9pwF2PVjCtGnXm+DivEvhD4IH6nKG0e94OKSAvP+S2vqT3LJSIX5+h59
+G7D17OtHQABd4VOMCGIGMx1PZRvKO9Kui3YUWr+uCMUreNlAvJ+W+bnmO10l3oWm
+NoPQDAWPkpDinukGVO3fZueTF/QI2o4lowMf0UgPdshsXNDv3xk4VpH7l+nMG4H3
+pWRQF8nnqVz++h0Ckwns7Zs2mct8w9CICK6Fu4APfU4uhCCPBEzQACE1+39na6+e
+lJd6E5HsJhDqOt2sGKQy4UrsTZ4J1w==
+=dMFf
+-----END PGP SIGNATURE-----
+
+--IJAclU0AInkryoed--
