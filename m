@@ -1,148 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935037AbeEWUWp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 16:22:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36773 "EHLO mx2.suse.de"
+        id S935045AbeEWUXD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 16:23:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34604 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934849AbeEWUWl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 16:22:41 -0400
-Date: Wed, 23 May 2018 22:22:36 +0200
-From: Petr Tesarik <ptesarik@suse.cz>
-To: ebiederm@xmission.com (Eric W. Biederman)
-Cc: Dave Young <dyoung@redhat.com>, dzickus@redhat.com,
-        Neil Horman <nhorman@redhat.com>, Tony Luck <tony.luck@intel.com>,
-        bhe@redhat.com, Michael Ellerman <mpe@ellerman.id.au>,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Hari Bathini <hbathini@linux.vnet.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Anton Vorontsov <avorontsov@ru.mvista.com>,
-        Ingo Molnar <mingo@kernel.org>, Vivek Goyal <vgoyal@redhat.com>
-Subject: Re: [PATCH] kdump: add default crashkernel reserve kernel config
- options
-Message-ID: <20180523222236.5a96732e@ezekiel.suse.cz>
-In-Reply-To: <877enucqr0.fsf@xmission.com>
-References: <20180521025337.GA4627@dhcp-128-65.nay.redhat.com>
-        <20180521120215.117d963a7619eb0d1f54bced@linux-foundation.org>
-        <20180523070641.GA1689@dhcp-128-65.nay.redhat.com>
-        <877enucqr0.fsf@xmission.com>
-Organization: SUSE Linux, s.r.o.
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S935000AbeEWUW0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 16:22:26 -0400
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Jiri Olsa <jolsa@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>, Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 17/18] perf kcore_copy: Copy x86 PTI entry trampoline sections
+Date: Wed, 23 May 2018 17:21:05 -0300
+Message-Id: <20180523202106.17286-18-acme@kernel.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180523202106.17286-1-acme@kernel.org>
+References: <20180523202106.17286-1-acme@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 23 May 2018 10:53:55 -0500
-ebiederm@xmission.com (Eric W. Biederman) wrote:
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-> Dave Young <dyoung@redhat.com> writes:
-> 
-> > [snip]
-> >  
-> >> >  
-> >> > +config CRASHKERNEL_DEFAULT_THRESHOLD_MB
-> >> > +	int "System memory size threshold for kdump memory default reserving"
-> >> > +	depends on CRASH_CORE
-> >> > +	default 0
-> >> > +	help
-> >> > +	  CRASHKERNEL_DEFAULT_MB is used as default crashkernel value if
-> >> > +	  the system memory size is equal or bigger than the threshold.  
-> >> 
-> >> "the threshold" is rather vague.  Can it be clarified?
-> >> 
-> >> In fact I'm really struggling to understand the logic here....
-> >> 
-> >>   
-> >> > +config CRASHKERNEL_DEFAULT_MB
-> >> > +	int "Default crashkernel memory size reserved for kdump"
-> >> > +	depends on CRASH_CORE
-> >> > +	default 0
-> >> > +	help
-> >> > +	  This is used as the default kdump reserved memory size in MB.
-> >> > +	  crashkernel=X kernel cmdline can overwrite this value.
-> >> > +
-> >> >  config HAVE_IMA_KEXEC
-> >> >  	bool
-> >> >  
-> >> > @@ -143,6 +144,24 @@ static int __init parse_crashkernel_simp
-> >> >  	return 0;
-> >> >  }
-> >> >  
-> >> > +static int __init get_crashkernel_default(unsigned long long system_ram,
-> >> > +					  unsigned long long *size)
-> >> > +{
-> >> > +	unsigned long long sz = CONFIG_CRASHKERNEL_DEFAULT_MB;
-> >> > +	unsigned long long thres = CONFIG_CRASHKERNEL_DEFAULT_THRESHOLD_MB;
-> >> > +
-> >> > +	thres *= SZ_1M;
-> >> > +	sz *= SZ_1M;
-> >> > +
-> >> > +	if (sz >= system_ram || system_ram < thres) {
-> >> > +		pr_debug("crashkernel default size can not be used.\n");
-> >> > +		return -EINVAL;  
-> >> 
-> >> In other words,
-> >> 
-> >> 	if (system_ram <= CONFIG_CRASHKERNEL_DEFAULT_MB ||
-> >> 	    system_ram < CONFIG_CRASHKERNEL_DEFAULT_THRESHOLD_MB)
-> >> 		fail;
-> >> 
-> >> yes?
-> >> 
-> >> How come?  What's happening here?  Perhaps a (good) explanatory comment
-> >> is needed.  And clearer Kconfig text.
-> >> 
-> >> All confused :(  
-> >
-> > Andrew, I tuned it a bit, removed the check of sz >= system_ram, so if
-> > the size is too large and kernel can not find enough memory it will
-> > still fail in latter code.
-> >
-> > Is below version looks clearer?  
-> 
-> What is the advantage of providing this in a kconfig option rather
-> than on the kernel command line as we can now?
+Identify and copy any sections for x86 PTI entry trampolines.
 
-Yeah, I was about to ask the very same question.
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Joerg Roedel <joro@8bytes.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86@kernel.org
+Link: http://lkml.kernel.org/r/1526986485-6562-17-git-send-email-adrian.hunter@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/symbol-elf.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-Having spent quite some time on estimating RAM required to save a crash
-dump, I can tell you that there is no silver bullet. My main objection
-is that core dumps are saved from user space, and the kernel cannot
-have a clue what it is going to be.
-
-First, the primary kernel cannot know how much memory will be needed
-for the panic kernel (not necessarily same as the primary kernel) and
-the panic initrd. If you build a minimal initrd for your system, then
-at least it depends on which modules must be included, which in turn
-depends on where you want to store the resulting dump. Mounting a local
-ext2 partition will require less software than mounting an LVM logical
-volume in a PV accessed through iSCSI over two bonded Ethernet NICs.
-
-Second, run-time requirements may vary wildly. While sending the data
-over a simple TCP connection (e.g. using FTP) consumes just a few
-megabytes even on 10G Ethernet, dm block devices tend to consume much
-more, because of the additional buffers allocated by device mapper.
-
-Third, systems should be treated as "big" not so much because of the
-amount of RAM, but more so because of the amount of attached devices.
-I've seen a machine with devices from /dev/sda to /dev/sdvm; try to
-calculate how much kernel memory is taken just by their in-kernel
-representation...
-
-Fourth, quite often there is a trade-off between how much memory is
-reserved for the panic environment, and how long dumping will take. For
-example, you may take advantage of multi-threading in makedumpfile, but
-obviously, the additional threads need more memory (or makedumpfile
-will have to do its job in more cycles, reducing speed again). Oh, did
-I mention that even bringing up more CPUs has an impact on kernel
-runtime memory requirements?
-
-In short, if one size fits none, what good is it to hardcode that "one
-size" into the kernel image?
-
-Petr T
+diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
+index 37d9324c277c..584966913aeb 100644
+--- a/tools/perf/util/symbol-elf.c
++++ b/tools/perf/util/symbol-elf.c
+@@ -1392,6 +1392,11 @@ struct phdr_data {
+ 	struct list_head node;
+ };
+ 
++struct sym_data {
++	u64 addr;
++	struct list_head node;
++};
++
+ struct kcore_copy_info {
+ 	u64 stext;
+ 	u64 etext;
+@@ -1401,6 +1406,7 @@ struct kcore_copy_info {
+ 	u64 last_module_symbol;
+ 	size_t phnum;
+ 	struct list_head phdrs;
++	struct list_head syms;
+ };
+ 
+ #define kcore_copy__for_each_phdr(k, p) \
+@@ -1441,6 +1447,29 @@ static void kcore_copy__free_phdrs(struct kcore_copy_info *kci)
+ 	}
+ }
+ 
++static struct sym_data *kcore_copy__new_sym(struct kcore_copy_info *kci,
++					    u64 addr)
++{
++	struct sym_data *s = zalloc(sizeof(*s));
++
++	if (s) {
++		s->addr = addr;
++		list_add_tail(&s->node, &kci->syms);
++	}
++
++	return s;
++}
++
++static void kcore_copy__free_syms(struct kcore_copy_info *kci)
++{
++	struct sym_data *s, *tmp;
++
++	list_for_each_entry_safe(s, tmp, &kci->syms, node) {
++		list_del(&s->node);
++		free(s);
++	}
++}
++
+ static int kcore_copy__process_kallsyms(void *arg, const char *name, char type,
+ 					u64 start)
+ {
+@@ -1471,6 +1500,9 @@ static int kcore_copy__process_kallsyms(void *arg, const char *name, char type,
+ 		return 0;
+ 	}
+ 
++	if (is_entry_trampoline(name) && !kcore_copy__new_sym(kci, start))
++		return -1;
++
+ 	return 0;
+ }
+ 
+@@ -1538,6 +1570,7 @@ static int kcore_copy__read_map(u64 start, u64 len, u64 pgoff, void *data)
+ {
+ 	struct kcore_copy_info *kci = data;
+ 	u64 end = start + len;
++	struct sym_data *sdat;
+ 
+ 	if (kcore_copy__map(kci, start, end, pgoff, kci->stext, kci->etext))
+ 		return -1;
+@@ -1546,6 +1579,13 @@ static int kcore_copy__read_map(u64 start, u64 len, u64 pgoff, void *data)
+ 			    kci->last_module_symbol))
+ 		return -1;
+ 
++	list_for_each_entry(sdat, &kci->syms, node) {
++		u64 s = round_down(sdat->addr, page_size);
++
++		if (kcore_copy__map(kci, start, end, pgoff, s, s + len))
++			return -1;
++	}
++
+ 	return 0;
+ }
+ 
+@@ -1740,6 +1780,7 @@ int kcore_copy(const char *from_dir, const char *to_dir)
+ 	struct phdr_data *p;
+ 
+ 	INIT_LIST_HEAD(&kci.phdrs);
++	INIT_LIST_HEAD(&kci.syms);
+ 
+ 	if (kcore_copy__copy_file(from_dir, to_dir, "kallsyms"))
+ 		return -1;
+@@ -1806,6 +1847,7 @@ int kcore_copy(const char *from_dir, const char *to_dir)
+ 		kcore_copy__unlink(to_dir, "kallsyms");
+ 
+ 	kcore_copy__free_phdrs(&kci);
++	kcore_copy__free_syms(&kci);
+ 
+ 	return err;
+ }
+-- 
+2.14.3
