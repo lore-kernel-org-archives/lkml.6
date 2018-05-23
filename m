@@ -1,10 +1,10 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-639720-1527104105-2-14620573317030317425
+X-Cyrus-Session-Id: sloti22d1t05-639720-1527104099-3-14589316088809673609
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES enro, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
   MailFrom='org'
 X-Spam-charsets: 
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527104104; b=U9iM8fS9whfXO/kcm/Ui9qgtGuxPDdqIMN5VIRyfioA4zfa2PK
-    xsCA0eM34bQ5Ek9fCPwIw6F/ErUmjNngqKAys5IWJZ0RmnAovk5xA9oKh7Rfft9F
-    yi/NCdYEr+iE1t1Zxr419Vl9Y91Lzq0EKSpi8j7bH5CFblOi5MQG2nurLK2B5zbO
-    FdCN0ZSz1ilbOvfIbCs3taQ7ReDZp/t2OTXv5vTTdcBzzeEdPv0oCILdcChXncQD
-    wX8C1gQFm4R9BBHNK91FLJVe0k8IsNJhXlOgTipYvRt1qO5AYLBjDib72vwE0uME
-    W8RVl0c3PG8Vs9+ehz6R9phvhY89KYzNGyiw==
+    1527104098; b=JCEiKD4LQywP9/ng7kMl2gZTsPXyOFn64EjMIO+AnquYvf3Fuz
+    f0dERP8P86Cwg2tew77P62OqzQaz/WihZmYjJ04xkjzmktNv0HU3Vb+NAoZphBzH
+    n8hM6RUrGfrE7U5vQwaApCL3kNbjIsh3DRVl0591dER4oPhagm9dBBx+VgMYTaDP
+    BzdV91Tnv9PlwJBXU7UM7LOOoQViCg80bzucJoHdhHbcaXWvmS63VyEdDk3dOu/X
+    roEtjbQLlZdU783VNlMFtRhUkod0Se386hVSJ2yZNwGHjnU7Vtqg7AmRJEG6vyqe
+    2GfY8TuGc54BotdyWpnMqbBQSWHb1FLJrqxg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1527104104; bh=
-    9uJ/9rkyQkHxVxsxFFs+avSoniZM4kOrtCAaQkrMDb0=; b=heUDMDOzJzRvm2xj
-    NrUCpGXxybRppWvBROFGl59r2a7iPzPwKZgfE6hy3oc+8Wji/XATEctLgJhy014T
-    szGtiT9HLJg9aglVQSiaNvlkTKnp6/oUiK7QSxux2CiGMBeISOYaQIleNc1pSB0d
-    +kzeFNgpi30Q3uxJEu/sy8EOdMuextRkdjx+8u+GS+fmoR34qNDFV5rAkRJVGSKb
-    Wc+6eFrJAifWj7fXGdhMMubFO51sVPK2IODtx7GSCxngRCthGUYMQC1SoIk+gAJY
-    6eYr4HiGht6DS48YCQO9zMwVocG18eYkkSuxSWbL8e4lDQ9aL+mgL0SMOAJA/V82
-    vLl0mg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=fm2; t=1527104098; bh=
+    OHSs6cba2aXI5p6vrTO/kooD0u1SzY5p0PglyfX7dtM=; b=kigQM5dhuWs3e2b5
+    jQICF27LJlp9JJ1/5ANzkSYng7QPlCyBsem5QJtT3STKbbXg3M8mXx1ygVB+0HGH
+    pnFmVzAfcuK+W2EMN3yM41pwLKywD/i0v8A1SfmTF2N8QHlEOJ099YI29S9W8AWU
+    Jr4rkK4qtDi4vJRBYHFqmdQX4HjkcYnbw+rAOftkcvUK9fLKDq+Mq20QqyKL5MZ8
+    qI8fk71+76Q5YFWuUh9ECkbranIbE2AHMs/B04lNWdkzv9iDFoQ3+cjvE57JPivU
+    IkjCzvXoJqCxianCzRRdlO3nuwzdJkI8cHlhDOrcpOjqzKBdQuDCL0AjrdoNdD5d
+    +kpi0w==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=infradead.org header.i=@infradead.org header.b=uILGLEP9
+    header.d=infradead.org header.i=@infradead.org header.b=mHKVbQZx
     x-bits=2048 x-keytype=rsa x-algorithm=sha256
     x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -44,10 +44,10 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=infradead.org header.i=@infradead.org header.b=uILGLEP9
+      header.d=infradead.org header.i=@infradead.org header.b=mHKVbQZx
       x-bits=2048 x-keytype=rsa x-algorithm=sha256
       x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -62,31 +62,30 @@ Authentication-Results: mx6.messagingengine.com;
       header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIU8+abt9T2RxlXtdIUhUPfXobSK4TURAgk81XVOg6h57jePYWO2++yDTJfXVBHN534GAoGANXMhucKzq2DCXbFkIKNJj3ufoxBRZi5gHu2gWSQZrMO5
-    0cYifVgsKwGFDrkTjqaNFmLj0ojVmKZcuHpc6aIQtb8xAhyhiYswBTh62bysD+Mjj9b2zhG5l6Dnc5HRiMOCHpfmGeaU5wSe2s/VO5lGjL0i2ZSVxqxVr6as
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=drOt6m5kAAAA:8
-    a=VwQbUJbxAAAA:8 a=32GxPdB41DALxrjWDjkA:9 a=ZIexoJY8WHTOOgZQ:21
-    a=xH4ctsHu6irhgxCo:21 a=x8gzFH9gYPwA:10 a=RMMjzBEyIzXRtoq5n5K6:22
-    a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfO6CSBLEqaA89XH6TOOlXvbFMtDIujXbyg1c7ucru21rvU/ptypW63A+8LMBDlan3U6u65o+2qSnzjditK0zgPLA7mFvM7aGKB5sNTPO5luZs5A4JgWA
+    DL4Vu/mITgGqzf2bHymlb8q7RBqPGf9CNdPzqLPhtbmMkdU91VOVD5Qk33XiEyWfkZA50xeajzOB8o7JDSeju3yeax8ltw30CYb37WZjA8ZZWVfD7UuaiQ+c
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=ag1SF4gXAAAA:8
+    a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=HZieObWGZi2sKBCXc30A:9
+    a=0BbEcRPqd4U_uuMe:21 a=Na2JX_2fIBq9m8En:21 a=x8gzFH9gYPwA:10
+    a=Yupwre4RP9_Eg_Bd0iYG:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934282AbeEWTUe (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 23 May 2018 15:20:34 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40654 "EHLO
+        id S934294AbeEWTed (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 23 May 2018 15:34:33 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40672 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934256AbeEWTU3 (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Wed, 23 May 2018 15:20:29 -0400
+        with ESMTP id S934304AbeEWTUf (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Wed, 23 May 2018 15:20:35 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: viro@zeniv.linux.org.uk
 Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@kernel.org
-Subject: [PATCH 01/33] fix io_destroy()/aio_complete() race
-Date: Wed, 23 May 2018 21:19:50 +0200
-Message-Id: <20180523192022.1703-2-hch@lst.de>
+        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 03/33] fs: unexport poll_schedule_timeout
+Date: Wed, 23 May 2018 21:19:52 +0200
+Message-Id: <20180523192022.1703-4-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180523192022.1703-1-hch@lst.de>
 References: <20180523192022.1703-1-hch@lst.de>
@@ -97,42 +96,50 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+No users outside of select.c.
 
-If io_destroy() gets to cancelling everything that can be cancelled and
-gets to kiocb_cancel() calling the function driver has left in ->ki_cancel,
-it becomes vulnerable to a race with IO completion.  At that point req
-is already taken off the list and aio_complete() does *NOT* spin until
-we (in free_ioctx_users()) releases ->ctx_lock.  As the result, it proceeds
-to kiocb_free(), freing req just it gets passed to ->ki_cancel().
-
-Fix is simple - remove from the list after the call of kiocb_cancel().  All
-instances of ->ki_cancel() already have to cope with the being called with
-iocb still on list - that's what happens in io_cancel(2).
-
-Cc: stable@kernel.org
-Fixes: 0460fef2a921 "aio: use cancellation list lazily"
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 ---
- fs/aio.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/select.c          | 3 +--
+ include/linux/poll.h | 2 --
+ 2 files changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/fs/aio.c b/fs/aio.c
-index 755d3f57bcc8..1c383bb44b2d 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -639,9 +639,8 @@ static void free_ioctx_users(struct percpu_ref *ref)
- 	while (!list_empty(&ctx->active_reqs)) {
- 		req = list_first_entry(&ctx->active_reqs,
- 				       struct aio_kiocb, ki_list);
--
--		list_del_init(&req->ki_list);
- 		kiocb_cancel(req);
-+		list_del_init(&req->ki_list);
- 	}
+diff --git a/fs/select.c b/fs/select.c
+index ba879c51288f..a87f396f0313 100644
+--- a/fs/select.c
++++ b/fs/select.c
+@@ -233,7 +233,7 @@ static void __pollwait(struct file *filp, wait_queue_head_t *wait_address,
+ 	add_wait_queue(wait_address, &entry->wait);
+ }
  
- 	spin_unlock_irq(&ctx->ctx_lock);
+-int poll_schedule_timeout(struct poll_wqueues *pwq, int state,
++static int poll_schedule_timeout(struct poll_wqueues *pwq, int state,
+ 			  ktime_t *expires, unsigned long slack)
+ {
+ 	int rc = -EINTR;
+@@ -258,7 +258,6 @@ int poll_schedule_timeout(struct poll_wqueues *pwq, int state,
+ 
+ 	return rc;
+ }
+-EXPORT_SYMBOL(poll_schedule_timeout);
+ 
+ /**
+  * poll_select_set_timeout - helper function to setup the timeout value
+diff --git a/include/linux/poll.h b/include/linux/poll.h
+index f45ebd017eaa..a3576da63377 100644
+--- a/include/linux/poll.h
++++ b/include/linux/poll.h
+@@ -96,8 +96,6 @@ struct poll_wqueues {
+ 
+ extern void poll_initwait(struct poll_wqueues *pwq);
+ extern void poll_freewait(struct poll_wqueues *pwq);
+-extern int poll_schedule_timeout(struct poll_wqueues *pwq, int state,
+-				 ktime_t *expires, unsigned long slack);
+ extern u64 select_estimate_accuracy(struct timespec64 *tv);
+ 
+ #define MAX_INT64_SECONDS (((s64)(~((u64)0)>>1)/HZ)-1)
 -- 
 2.17.0
 
