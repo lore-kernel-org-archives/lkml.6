@@ -1,14 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933808AbeEWRPX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 13:15:23 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58816 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933565AbeEWRPS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 13:15:18 -0400
+        id S933834AbeEWRPt (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 13:15:49 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:46254 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933637AbeEWRPn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 13:15:43 -0400
+X-Google-Smtp-Source: ADUXVKIoJ16EU/wvnlwMCme8V86Ter/Wp2j8ax0RUnS7WLtMArtiFcqfio7g1lG99ASC255sfXGZrA==
 Subject: Re: [PATCH 3/5] watchdog: sp805: set WDOG_HW_RUNNING when appropriate
-To: Ray Jui <ray.jui@broadcom.com>,
-        Scott Branden <scott.branden@broadcom.com>,
+To: Ray Jui <ray.jui@broadcom.com>, Robin Murphy <robin.murphy@arm.com>,
         Guenter Roeck <linux@roeck-us.net>
 Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
         linux-watchdog@vger.kernel.org,
@@ -26,23 +27,26 @@ References: <1527014840-21236-1-git-send-email-ray.jui@broadcom.com>
  <00c121ea-d197-93b8-2f56-bcca963f70fb@broadcom.com>
  <76d47e02-7a5f-3fc2-3905-cd4aa03ac69c@arm.com>
  <5a996888-d3d3-9ae6-e438-5de4d5e3ea32@broadcom.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <ef3539fd-c95c-f364-93c7-680aabd1eea3@arm.com>
-Date: Wed, 23 May 2018 18:15:14 +0100
+From: Scott Branden <scott.branden@broadcom.com>
+Message-ID: <eb1b8beb-4027-606b-200c-c97f128c9bf1@broadcom.com>
+Date: Wed, 23 May 2018 10:15:38 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
 In-Reply-To: <5a996888-d3d3-9ae6-e438-5de4d5e3ea32@broadcom.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/05/18 17:29, Ray Jui wrote:
+Raym
+
+
+On 18-05-23 09:29 AM, Ray Jui wrote:
 > Hi Robin,
-> 
+>
 > On 5/23/2018 4:48 AM, Robin Murphy wrote:
 >> On 23/05/18 08:52, Scott Branden wrote:
 >>>
@@ -53,8 +57,8 @@ On 23/05/18 17:29, Ray Jui wrote:
 >>>> On 5/22/2018 1:54 PM, Guenter Roeck wrote:
 >>>>> On Tue, May 22, 2018 at 11:47:18AM -0700, Ray Jui wrote:
 >>>>>> If the watchdog hardware is already enabled during the boot process,
->>>>>> when the Linux watchdog driver loads, it should reset the watchdog 
->>>>>> and
+>>>>>> when the Linux watchdog driver loads, it should reset the 
+>>>>>> watchdog and
 >>>>>> tell the watchdog framework. As a result, ping can be generated from
 >>>>>> the watchdog framework, until the userspace watchdog daemon takes 
 >>>>>> over
@@ -115,36 +119,29 @@ On 23/05/18 17:29, Ray Jui wrote:
 >> than just "return <boolean condition>;" because it forces you to stop 
 >> and double-check that the logic is, in fact, only doing the obvious 
 >> thing.
-> 
+>
 > If you can propose a way to modify my original code above to make it 
 > more readable, I'm fine to make the change.
-
-Well,
-
-	return readl_relaxed(wdt->base + WDTCONTROL) & ENABLE_MASK == ENABLE_MASK;
-
-would probably be reasonable to anyone other than the 80-column zealots, 
-but removing the silly boolean-to-boolean translation idiom really only 
-emphasises the fact that it's fundamentally a big complex statement; for 
-maximum clarity I'd be inclined to separate the two logical operations 
-(read and comparison), e.g.:
-
-	u32 wdtcontrol = readl_relaxed(wdt->base + WDTCONTROL);
-
-	return wdtcontrol & ENABLE_MASK == ENABLE_MASK;
-
-which is still -3 lines vs. the original.
-
+>
 > As I mentioned, I don't think the following change proposed by Guenter 
 > will work due to the reason I pointed out:
-> 
+>
 > return !!(readl_relaxed(wdt->base + WDTCONTROL) & ENABLE_MASK));
+What they are looking for is:
+return ((readl_relaxed(wdt->base + WDTCONTROL) & ENABLE_MASK) == 
+ENABLE_MASK);
 
-FWIW, getting the desired result should only need one logical not 
-swapping for a bitwise one there:
-
-	return !(~readl_relaxed(wdt->base + WDTCONTROL) & ENABLE_MASK);
-
-but that's well into "too clever for its own good" territory ;)
-
-Robin.
+or maybe:
+return !!((readl_relaxed(wdt->base + WDTCONTROL) & ENABLE_MASK) == 
+ENABLE_MASK);
+>
+>>
+>> Robin.
+>>
+>>
+>>
+>> p.s. No thanks for making me remember the mind-boggling horror of 
+>> briefly maintaining part of this legacy codebase... :P
+>>
+>> $ grep -r '? true : false' --include=*.cpp . | wc -l
+>> 951
