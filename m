@@ -1,92 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933233AbeEWOOE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 10:14:04 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:46397 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933080AbeEWOOA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 10:14:00 -0400
-X-Google-Smtp-Source: AB8JxZp9SBVnKOfxmkoI/jsdouHVv6eKgqH0wq+pszH3OnA/kAbt8GA7BOCFnBJWEKDj3aIgfa38Aw==
-Subject: Re: [PATCH 3/6] block: Create scsi_sense.h for SCSI and ATAPI
-To: Kees Cook <keescook@chromium.org>
-Cc: Christoph Hellwig <hch@infradead.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Tejun Heo <tj@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Manoj N. Kumar" <manoj@linux.vnet.ibm.com>,
-        "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>,
-        Uma Krishnan <ukrishn@linux.vnet.ibm.com>,
-        linux-block <linux-block@vger.kernel.org>, linux-ide@vger.kernel.org,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-References: <20180522181512.39316-1-keescook@chromium.org>
- <20180522181512.39316-4-keescook@chromium.org>
- <20180522183613.GA3784@infradead.org> <yq1efi3bk3g.fsf@oracle.com>
- <CAGXu5jJ0Sice+fdpWgzBhQR=NGz-DT9qmYVdV1GeH73_q9pbmw@mail.gmail.com>
- <732f4249-5681-4a54-ec21-4ecc3d3a74e5@kernel.dk>
- <20180522191309.GA23615@infradead.org>
- <8d4af5c4-96fa-54ee-d5c1-b887b1de5a3c@kernel.dk>
- <CAGXu5j+mgGZkTDS6EDRspJKKbU=vMT4ehv9T-SekPba=ESoGDg@mail.gmail.com>
- <9A0BC289-4203-4C77-A012-AAB07F42061F@kernel.dk>
- <CAGXu5jJsGWDsZNDJvUUqncSaAcvond_B_J7=BbvVW0X3r6Sxww@mail.gmail.com>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <aa150272-ffeb-fb8f-7303-0d9502cf9a71@kernel.dk>
-Date: Wed, 23 May 2018 08:13:56 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <CAGXu5jJsGWDsZNDJvUUqncSaAcvond_B_J7=BbvVW0X3r6Sxww@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S933177AbeEWOQF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 10:16:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52460 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932342AbeEWOQE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 10:16:04 -0400
+Date: Wed, 23 May 2018 23:15:59 +0900
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Clark Williams <williams@redhat.com>,
+        Karim Yaghmour <karim.yaghmour@opersys.com>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, Yann Ylavic <ylavic.dev@gmail.com>,
+        linux-rt-users@vger.kernel.org
+Subject: Re: [PATCH v3 14/14] tracing/selftest: Add test to test hist
+ trigger between kernel event and trace_marker
+Message-Id: <20180523231559.fdc6c528b49ce9764a0ceda5@kernel.org>
+In-Reply-To: <20180516150201.411972764@goodmis.org>
+References: <20180516150012.135869655@goodmis.org>
+        <20180516150201.411972764@goodmis.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/22/18 5:49 PM, Kees Cook wrote:
-> On Tue, May 22, 2018 at 4:42 PM, Jens Axboe <axboe@kernel.dk> wrote:
->> On May 22, 2018, at 5:31 PM, Kees Cook <keescook@chromium.org> wrote:
->>>
->>>> On Tue, May 22, 2018 at 12:16 PM, Jens Axboe <axboe@kernel.dk> wrote:
->>>>> On 5/22/18 1:13 PM, Christoph Hellwig wrote:
->>>>>> On Tue, May 22, 2018 at 01:09:41PM -0600, Jens Axboe wrote:
->>>>>> I think Martin and Christoph are objecting to moving the code to
->>>>>> block/scsi_ioctl.h. I don't care too much about where the code is, but
->>>>>> think it would be nice to have the definitions in a separate header. But
->>>>>> if they prefer just pulling in all of SCSI for it, well then I guess
->>>>>> it's pointless to move the header bits. Seems very heavy handed to me,
->>>>>> though.
->>>>>
->>>>> It might be heavy handed for the 3 remaining users of drivers/ide,
->>>>
->>>> Brutal :-)
->>>
->>> Heh. I noticed a similar sense buffer use in drivers/cdrom/cdrom.c
->>> too. Is this okay under the same considerations?
->>
->> This is going from somewhat crazy to pretty nuts, imho. I guess in practical terms it doesn’t matter that much, since most folks would be using sr. I still think a split would be vastly superior. Just keep the scsi code in drivers/scsi/ and make it independently selectable.
-> 
-> I had originally tied it to BLK_SCSI_REQUEST. Logically speaking,
-> sense buffers are part of the request, and the CONFIG work is already
-> done. This is roughly what I tried to do before, since scsi_ioctl.c is
-> the only code pulled in for CONFIG_BLK_SCSI_REQUEST:
-> 
-> $ git grep BLK_SCSI_REQUEST | grep Makefile
-> block/Makefile:obj-$(CONFIG_BLK_SCSI_REQUEST)   += scsi_ioctl.o
-> 
-> Should I move to code to a new drivers/scsi/scsi_sense.c and add it to
-> drivers/scsi/Makefile as:
-> 
-> obj-$(CONFIG_BLK_SCSI_REQUEST)    += scsi_sense.o
-> 
-> Every place I want to use the code is already covered by
-> CONFIG_BLK_SCSI_REQUEST, so it seems like I just need to know where to
-> put the .c file. :P
+On Wed, 16 May 2018 11:00:26 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-I think this is so much saner than a SCSI select or dependency, so I'll
-have to disagree with Martin and Christoph. Just put it in drivers/scsi,
-if it's the location they care about.
+> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+> 
+> Add a test that tests a trigger that is initiated by a kernel event
+> (sched_waking) and compared to a write to the trace_marker.
+> 
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> ---
+>  .../trigger/trigger-trace-marker-synthetic.tc | 22 +++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic.tc b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic.tc
+> index 3666dd6ab02a..b06996ecd5e0 100644
+> --- a/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic.tc
+> +++ b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic.tc
+> @@ -31,6 +31,11 @@ if [ ! -d events/ftrace/print ]; then
+>      exit_unsupported
+>  fi
+>  
+> +if [ ! -d events/sched/sched_waking ]; then
+> +    echo "event sched_waking is not supported"
+> +    exit_unsupported
+> +fi
+
+Hmm, this looks no good sign... Can you split this out to another testcase,
+since this check is only for new test case below?
+
+[..]
+> @@ -63,4 +68,21 @@ grep 'hitcount: *1$' events/synthetic/latency/hist > /dev/null || \
+>  
+>  do_reset
+>  
+> +echo "Test histogram kernel event to trace_marker latency histogram trigger"
+> +
+> +echo 'latency u64 lat' > synthetic_events
+> +echo 'hist:keys=pid:ts0=common_timestamp.usecs' > events/sched/sched_waking/trigger
+> +echo 'hist:keys=common_pid:lat=common_timestamp.usecs-$ts0:onmatch(sched.sched_waking).latency($lat)' > events/ftrace/print/trigger
+> +echo 'hist:keys=common_pid,lat:sort=lat' > events/synthetic/latency/trigger
+> +sleep 1
+> +echo "hello" > trace_marker
+> +
+> +grep 'hitcount: *1$' events/ftrace/print/hist > /dev/null || \
+> +    fail "hist trigger did not trigger correct times on trace_marker"
+> +
+> +grep 'hitcount: *1$' events/synthetic/latency/hist > /dev/null || \
+> +    fail "hist trigger did not trigger "
+> +
+> +do_reset
+> +
+
+Thank you,
+
+
 
 -- 
-Jens Axboe
+Masami Hiramatsu <mhiramat@kernel.org>
