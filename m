@@ -1,74 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933097AbeEWOBU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 10:01:20 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:35842 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932900AbeEWOBT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 10:01:19 -0400
-X-Google-Smtp-Source: AB8JxZoOP+QfgKckzYBTkl9MsOpDFUMKa2pOB6woNSNG4r+Bcqe7Re1OPDM5A3UilRYllsFy2aATZSDINrsoH6UjdB0=
+        id S933147AbeEWOBc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 10:01:32 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55860 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933104AbeEWOBa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 10:01:30 -0400
+Date: Wed, 23 May 2018 15:01:58 +0100
+From: Will Deacon <will.deacon@arm.com>
+To: Chintan Pandya <cpandya@codeaurora.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Mark Rutland <mark.rutland@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Philip Elcan <pelcan@codeaurora.org>,
+        James Morse <james.morse@arm.com>,
+        Kristina Martsenko <kristina.martsenko@arm.com>,
+        Toshi Kani <toshi.kani@hpe.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>, Joerg Roedel <joro@8bytes.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org
+Subject: Re: [PATCH v9 3/4] arm64: Implement page table free interfaces
+Message-ID: <20180523140157.GG26965@arm.com>
+References: <1525074094-25839-1-git-send-email-cpandya@codeaurora.org>
+ <1525074094-25839-4-git-send-email-cpandya@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20180523133533.1076-2-mark.rutland@arm.com>
-References: <20180523133533.1076-1-mark.rutland@arm.com> <20180523133533.1076-2-mark.rutland@arm.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 23 May 2018 16:01:17 +0200
-X-Google-Sender-Auth: -CMllusc0f3D5P8u5X5pvj58UWw
-Message-ID: <CAMuHMdXuj3Z-42Hxo2qqj+E4-WVazMHaaFXGknFE=YJ-Zx4+Yg@mail.gmail.com>
-Subject: Re: [PATCH 01/13] atomics/treewide: s/__atomic_add_unless/atomic_fetch_add_unless/
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1525074094-25839-4-git-send-email-cpandya@codeaurora.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 3:35 PM, Mark Rutland <mark.rutland@arm.com> wrote:
-> While __atomic_add_unless was originally intended as a building-block
-> for atomic_add_unless, it's now used in a number of places around the
-> kernel. It's the only common atomic operation named __atomic*(), rather
-> than atomic_*(), and for consistency it would be better named
-> atomic_fetch_add_unless().
->
-> This lack of consistency is slightly confusing, and gets in the way of
-> scripting atomics. Given that, let's clean things up and promote it to
-> an offical part of the atomics API, in the form of
-> atomic_fetch_add_unless().
->
-> This patch converts definitions and uses over to the new name, including
-> the instrumented version, using the following script:
->
-> ----
-> git grep -w __atomic_add_unless | while read line; do
-> sed -i '{s/\<__atomic_add_unless\>/atomic_fetch_add_unless/}' "${line%%:*}";
-> done
-> git grep -w __arch_atomic_add_unless | while read line; do
-> sed -i '{s/\<__arch_atomic_add_unless\>/arch_atomic_fetch_add_unless/}' "${line%%:*}";
-> done
-> ----
->
-> Note that we do not have atomic{64,_long}_fetch_add_unless(), which will
-> be introduced by later patches.
->
-> There should be no functional change as a result of this patch.
->
-> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Hi Chintan,
 
->  arch/m68k/include/asm/atomic.h            | 2 +-
+[as a side note: I'm confused on the status of this patch series, as part
+ of it was reposted separately by Toshi. Please can you work together?]
 
-For m68k:
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+On Mon, Apr 30, 2018 at 01:11:33PM +0530, Chintan Pandya wrote:
+> Implement pud_free_pmd_page() and pmd_free_pte_page().
+> 
+> Implementation requires,
+>  1) Clearing off the current pud/pmd entry
+>  2) Invalidate TLB which could have previously
+>     valid but not stale entry
+>  3) Freeing of the un-used next level page tables
+> 
+> Signed-off-by: Chintan Pandya <cpandya@codeaurora.org>
+> ---
+>  arch/arm64/mm/mmu.c | 29 +++++++++++++++++++++++++----
+>  1 file changed, 25 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+> index da98828..0f651db 100644
+> --- a/arch/arm64/mm/mmu.c
+> +++ b/arch/arm64/mm/mmu.c
+> @@ -45,6 +45,7 @@
+>  #include <asm/memblock.h>
+>  #include <asm/mmu_context.h>
+>  #include <asm/ptdump.h>
+> +#include <asm/tlbflush.h>
+>  
+>  #define NO_BLOCK_MAPPINGS	BIT(0)
+>  #define NO_CONT_MAPPINGS	BIT(1)
+> @@ -973,12 +974,32 @@ int pmd_clear_huge(pmd_t *pmdp)
+>  	return 1;
+>  }
+>  
+> -int pud_free_pmd_page(pud_t *pud, unsigned long addr)
+> +int pmd_free_pte_page(pmd_t *pmdp, unsigned long addr)
+>  {
+> -	return pud_none(*pud);
+> +	pmd_t *table;
+> +
+> +	if (pmd_present(READ_ONCE(*pmdp))) {
 
-Gr{oetje,eeting}s,
+Might also be worth checking pmd_table here, just in case. (same for pud)
 
-                        Geert
+> +		table = __va(pmd_val(*pmdp));
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Can you avoid dereferencing *pmdp twice, and instead READ_ONCE into a local
+variable, please? (same for pud)
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> +		pmd_clear(pmdp);
+> +		__flush_tlb_kernel_pgtable(addr);
+> +		free_page((unsigned long) table);
+
+Shouldn't this be pte_free_kernel, to pair with pte_alloc_kernel which
+was used to allocate the page in the first place? (similarly for pud)
+
+> +	}
+> +	return 1;
+>  }
+>  
+> -int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
+> +int pud_free_pmd_page(pud_t *pudp, unsigned long addr)
+>  {
+> -	return pmd_none(*pmd);
+> +	pmd_t *table;
+> +	int i;
+> +
+> +	if (pud_present(READ_ONCE(*pudp))) {
+> +		table = __va(pud_val(*pudp));
+> +		for (i = 0; i < PTRS_PER_PMD; i++)
+> +			pmd_free_pte_page(&table[i], addr + (i * PMD_SIZE));
+
+I think it would be cleaner to write this as a do { ... } while, for
+consistency with the ioremap and vmalloc code.
+
+Will
