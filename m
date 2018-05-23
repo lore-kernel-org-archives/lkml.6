@@ -1,93 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932318AbeEWJtU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 05:49:20 -0400
-Received: from shells.gnugeneration.com ([66.240.222.126]:33008 "EHLO
-        shells.gnugeneration.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932186AbeEWJtT (ORCPT
+        id S932361AbeEWJtg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 05:49:36 -0400
+Received: from mail-io0-f173.google.com ([209.85.223.173]:41942 "EHLO
+        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932343AbeEWJtb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 05:49:19 -0400
-Date: Wed, 23 May 2018 02:49:19 -0700
-From: Vito Caputo <vcaputo@pengaru.com>
-To: linux-kernel <linux-kernel@vger.kernel.org>
-Cc: ville.syrjala@linux.intel.com, daniel.vetter@ffwll.ch
-Subject: Re: [REGRESSION] v4.17-rc4: xgalaga fails to start in fullscreen
- (default) mode
-Message-ID: <20180523094919.s47ldq33hhbnodu2@shells.gnugeneration.com>
-References: <20180521195320.6stbpnebgjowxwjp@shells.gnugeneration.com>
- <20180521215718.7zwhhdanpnibp6la@shells.gnugeneration.com>
+        Wed, 23 May 2018 05:49:31 -0400
+X-Google-Smtp-Source: AB8JxZqrxNmBQIzeatMFkS2AIneJqoiCPFHPiNBH1epywfFdMt0E1xKiFSZuQ4IxtORBcWa8T4ePmI30eYYqCMv/YiA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180521215718.7zwhhdanpnibp6la@shells.gnugeneration.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CAMuHMdXhE8WZnL5fR9pvDkMDVrRXQdajL0r=113eHuK9RKoigw@mail.gmail.com>
+References: <20180516072753.49dd4d88@canb.auug.org.au> <CAMuHMdVEOmrd9da8XR0_wKJw9+KygkCUTSWvQjtP2Xh9aOkSFQ@mail.gmail.com>
+ <CACRpkdYgE+UWqTZPSbxBP0ucQK5xS7qCsT=5hne-LevXdU3O5A@mail.gmail.com>
+ <CAMuHMdVPonsrrmEeTmBR+3YW65hSaHbVOz-8_A10cLoAd2SXyw@mail.gmail.com>
+ <CACRpkdZTMqf0sFCMPaX2aAcxrJ3LXAi7-Cfx5qevvp7To0V6NA@mail.gmail.com> <CAMuHMdXhE8WZnL5fR9pvDkMDVrRXQdajL0r=113eHuK9RKoigw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 23 May 2018 11:49:29 +0200
+Message-ID: <CACRpkdYH5ik_TJeouGh0CfhM8Kt=p7Sr3pUceVPBBjEGS2rZ_g@mail.gmail.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the pinctrl tree
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 02:57:18PM -0700, Vito Caputo wrote:
-> On Mon, May 21, 2018 at 12:53:20PM -0700, Vito Caputo wrote:
-> > Hello all,
-> > 
-> > 4.17-rc4 (my latest kernel ATM) consistently fails to start xgalaga
-> > without -window.  I will try find time to build the latest rc this
-> > evening.
-> > 
-> > > ~$ xgalaga
-> > > X Error of failed request:  BadValue (integer parameter out of range for operation)
-> > >   Major opcode of failed request:  152 (XFree86-VidModeExtension)
-> > >   Minor opcode of failed request:  10 (XF86VidModeSwitchToMode)
-> > >   Value in failed request:  0x120004e
-> > >   Serial number of failed request:  199
-> > >   Current serial number in output stream:  203
-> > 
-> > Haven't dug into this much yet, only did a perfunctory check by booting into a
-> > few older kernels (4.11, 4.12, 4.16) and the problem is absent on all of them.
-> > It appears to be a 4.17-specific regression right now.
-> > 
-> > Also observed, though this is surely a different regression, the game
-> > ran like molasses with -window, showing some prominent kworkers in top:
-> > 
-> >   692 vc        20   0  312852  45884  20556 R  32.0  1.2   0:08.69 Xorg           
-> >   102 root      20   0       0      0      0 R  11.2  0.0   0:01.43 kworker/1:3    
-> >    94 root      20   0       0      0      0 I   8.9  0.0   0:00.83 kworker/0:2    
-> >   696 vc        20   0   39948   4124   2912 S   1.0  0.1   0:05.57 vwm            
-> >   902 vc        30  10   46372   4144   3500 S   0.7  0.1   0:00.08 xgalaga        
-> >   891 vc        30  10   44924   3868   3156 R   0.3  0.1   0:00.09 top            
-> >   903 vc        30  10    4180   1184   1100 S   0.3  0.0   0:00.01 xgal.sndsrv.oss
-> > 
-> > The windowed performance issue was observed on the older kernels tested
-> > as well, though 4.11 felt better and didn't have the busy kworkers.
-> > 
-> > I have not attempted to play xgalaga for ages, but it used to be perfectly
-> > playable on this machine in windowed mode when I last did.
-> > 
-> > Machine is the venerable Thinkpad X61s, 1.8Ghz, Debian 9, config attached.
-> > 
-> 
-> Just built and booted v4.17-rc6, still broken.
+On Wed, May 16, 2018 at 7:40 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
 
-Bisected to:
+> I guess I should base my next pull request on the new commit
+> 73dacc3403436fc2 ("pinctrl: sh-pfc: Add r8a77470 PFC support") in your
+> tree, instead of on my previous pull request? Else there will be some
+> conflicts (I checked: so far in one file only).
 
-e995ca0b8139c5f6807095464e969931b443f55a is the first bad commit
-commit e995ca0b8139c5f6807095464e969931b443f55a
-Author: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Date:   Tue Nov 14 20:32:58 2017 +0200
+Yeah that should work. I try not to rebase my tree too much,
+sometimes it happens anyway. This commit should be stable
+and nice.
 
-    drm/i915: Provide a device level .mode_valid() hook
-    
-    We never support certain mode flags etc. Reject those early on in the
-    mode_config.mode_valid() hook. That allows us to remove some duplicated
-    checks from the connector .mode_valid() hooks, and it guarantees that
-    we never see those flags even from user mode as the
-    mode_config.mode_valid() hooks gets executed for those as well.
-    
-    Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-    Link: https://patchwork.freedesktop.org/patch/msgid/20171114183258.16976-11-ville.syrjala@linux.intel.com
-    Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-
-Will CC Ville and Daniel.
-
-Regards,
-Vito Caputo
+Yours,
+Linus Walleij
