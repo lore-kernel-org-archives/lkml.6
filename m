@@ -1,50 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932767AbeEWLrf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 07:47:35 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:35109 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932627AbeEWLrb (ORCPT
+        id S932783AbeEWLrn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 07:47:43 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:46536 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932627AbeEWLrj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 07:47:31 -0400
-X-Google-Smtp-Source: AB8JxZpsLVjno18qK5RrLJEJOiVm9hxCNV9cnZSFPzQsmlpwUJr0W+6P3fJ0wb3/xTT1ZeKCFxJSGHAhSq4wQLSVL1o=
-MIME-Version: 1.0
-In-Reply-To: <2fe132b534a4b1ca717932e78cc3cdae5aacba0d.1526533188.git.hns@goldelico.com>
-References: <cover.1526533188.git.hns@goldelico.com> <2fe132b534a4b1ca717932e78cc3cdae5aacba0d.1526533188.git.hns@goldelico.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 23 May 2018 13:47:29 +0200
-Message-ID: <CACRpkdZepB55eBfrJzvxQxa9w9YPN00esUoE43SszaYCeMrAeA@mail.gmail.com>
-Subject: Re: [PATCH v7 2/3] gpio: pca953x: define masks for addressing common
- and extended registers
-To: "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc: Kumar Gala <galak@codeaurora.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Alexandre Courbot <gnurou@gmail.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        Wed, 23 May 2018 07:47:39 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E0D94602BC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
+From: <ilialin@codeaurora.org>
+To: "'Viresh Kumar'" <viresh.kumar@linaro.org>
+Cc: "'Sudeep Holla'" <sudeep.holla@arm.com>,
+        "'Viresh Kumar'" <vireshk@kernel.org>, "'Nishanth Menon'" <nm@ti.com>,
+        "'Stephen Boyd'" <sboyd@kernel.org>, "'Rob Herring'" <robh@kernel.org>,
+        "'Mark Rutland'" <mark.rutland@arm.com>,
+        "'Rafael J. Wysocki'" <rjw@rjwysocki.net>, <linux-pm@vger.kernel.org>,
         <devicetree@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Discussions about the Letux Kernel
-        <letux-kernel@openphoenux.org>,
-        kernel@pyra-handheld.com
-Content-Type: text/plain; charset="UTF-8"
+        "'Linux Kernel Mailing List'" <linux-kernel@vger.kernel.org>
+References: <1527068454-28921-1-git-send-email-ilialin@codeaurora.org> <1527068454-28921-2-git-send-email-ilialin@codeaurora.org> <3f1ca60e-7aa8-fccc-ab1c-4b7c37731cce@arm.com> <002901d3f286$198878b0$4c996a10$@codeaurora.org> <CAKohponbpErCeTYu9iQm_-dupz5SUr+TKsYXzqmmARB-pq95iA@mail.gmail.com> <002b01d3f28a$0d033900$2709ab00$@codeaurora.org> <CAKohponruWpcjuSDg-=ZbZ1=qm2iPZs36mfKYJ3nQZREkc3JCw@mail.gmail.com>
+In-Reply-To: <CAKohponruWpcjuSDg-=ZbZ1=qm2iPZs36mfKYJ3nQZREkc3JCw@mail.gmail.com>
+Subject: RE: [PATCH v10 1/2] cpufreq: Add Kryo CPU scaling driver
+Date: Wed, 23 May 2018 14:47:24 +0300
+Message-ID: <002d01d3f28b$d3ce3980$7b6aac80$@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain;
+        charset="utf-8"
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHGHkKLWrrdHode7ZinDUAwaNCKTQIQamVJAy14mKwB0DCraALLdumlAZEqbIIB7UALhqPuG0cQ
+Content-Language: en-us
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4NBllNE025942
 
-On Thu, May 17, 2018 at 6:59 AM, H. Nikolaus Schaller <hns@goldelico.com> wrote:
+The nvmem will return EPROBE_DEFER, and so will my driver's init. But then no one will call the init again.
 
-> These mask bits are to be used to map the extended register
-> addreseses (which are defined for an unsupported 8-bit pcal chip)
-> to 16 and 24 bit chips (pcal6524).
->
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
-
-Patch applied.
-
-Yours,
-Linus Walleij
+> -----Original Message-----
+> From: Viresh Kumar <viresh.kumar@linaro.org>
+> Sent: Wednesday, May 23, 2018 14:46
+> To: Ilia Lin <ilialin@codeaurora.org>
+> Cc: Sudeep Holla <sudeep.holla@arm.com>; Viresh Kumar
+> <vireshk@kernel.org>; Nishanth Menon <nm@ti.com>; Stephen Boyd
+> <sboyd@kernel.org>; Rob Herring <robh@kernel.org>; Mark Rutland
+> <mark.rutland@arm.com>; Rafael J. Wysocki <rjw@rjwysocki.net>; linux-
+> pm@vger.kernel.org; devicetree@vger.kernel.org; Linux Kernel Mailing List
+> <linux-kernel@vger.kernel.org>
+> Subject: Re: [PATCH v10 1/2] cpufreq: Add Kryo CPU scaling driver
+> 
+> On 23 May 2018 at 17:04,  <ilialin@codeaurora.org> wrote:
+> > You are right. I already checked that in the code...
+> > However, with module_init() the driver fails on reading the nvmem.
+> 
+> And why is it failing ?
