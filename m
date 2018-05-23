@@ -1,166 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932325AbeEWJsc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 05:48:32 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:43061 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932266AbeEWJs0 (ORCPT
+        id S932318AbeEWJtU (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 05:49:20 -0400
+Received: from shells.gnugeneration.com ([66.240.222.126]:33008 "EHLO
+        shells.gnugeneration.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932186AbeEWJtT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 05:48:26 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Patrick Bellasi <patrick.bellasi@arm.com>, claudio@evidence.eu.com,
-        Todd Kjos <tkjos@google.com>
-Subject: [PATCH] cpufreq: schedutil: Avoid missing updates for one-CPU policies
-Date: Wed, 23 May 2018 11:47:45 +0200
-Message-ID: <1672734.JYOlA1IWnU@aspire.rjw.lan>
+        Wed, 23 May 2018 05:49:19 -0400
+Date: Wed, 23 May 2018 02:49:19 -0700
+From: Vito Caputo <vcaputo@pengaru.com>
+To: linux-kernel <linux-kernel@vger.kernel.org>
+Cc: ville.syrjala@linux.intel.com, daniel.vetter@ffwll.ch
+Subject: Re: [REGRESSION] v4.17-rc4: xgalaga fails to start in fullscreen
+ (default) mode
+Message-ID: <20180523094919.s47ldq33hhbnodu2@shells.gnugeneration.com>
+References: <20180521195320.6stbpnebgjowxwjp@shells.gnugeneration.com>
+ <20180521215718.7zwhhdanpnibp6la@shells.gnugeneration.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180521215718.7zwhhdanpnibp6la@shells.gnugeneration.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Mon, May 21, 2018 at 02:57:18PM -0700, Vito Caputo wrote:
+> On Mon, May 21, 2018 at 12:53:20PM -0700, Vito Caputo wrote:
+> > Hello all,
+> > 
+> > 4.17-rc4 (my latest kernel ATM) consistently fails to start xgalaga
+> > without -window.  I will try find time to build the latest rc this
+> > evening.
+> > 
+> > > ~$ xgalaga
+> > > X Error of failed request:  BadValue (integer parameter out of range for operation)
+> > >   Major opcode of failed request:  152 (XFree86-VidModeExtension)
+> > >   Minor opcode of failed request:  10 (XF86VidModeSwitchToMode)
+> > >   Value in failed request:  0x120004e
+> > >   Serial number of failed request:  199
+> > >   Current serial number in output stream:  203
+> > 
+> > Haven't dug into this much yet, only did a perfunctory check by booting into a
+> > few older kernels (4.11, 4.12, 4.16) and the problem is absent on all of them.
+> > It appears to be a 4.17-specific regression right now.
+> > 
+> > Also observed, though this is surely a different regression, the game
+> > ran like molasses with -window, showing some prominent kworkers in top:
+> > 
+> >   692 vc        20   0  312852  45884  20556 R  32.0  1.2   0:08.69 Xorg           
+> >   102 root      20   0       0      0      0 R  11.2  0.0   0:01.43 kworker/1:3    
+> >    94 root      20   0       0      0      0 I   8.9  0.0   0:00.83 kworker/0:2    
+> >   696 vc        20   0   39948   4124   2912 S   1.0  0.1   0:05.57 vwm            
+> >   902 vc        30  10   46372   4144   3500 S   0.7  0.1   0:00.08 xgalaga        
+> >   891 vc        30  10   44924   3868   3156 R   0.3  0.1   0:00.09 top            
+> >   903 vc        30  10    4180   1184   1100 S   0.3  0.0   0:00.01 xgal.sndsrv.oss
+> > 
+> > The windowed performance issue was observed on the older kernels tested
+> > as well, though 4.11 felt better and didn't have the busy kworkers.
+> > 
+> > I have not attempted to play xgalaga for ages, but it used to be perfectly
+> > playable on this machine in windowed mode when I last did.
+> > 
+> > Machine is the venerable Thinkpad X61s, 1.8Ghz, Debian 9, config attached.
+> > 
+> 
+> Just built and booted v4.17-rc6, still broken.
 
-Commit 152db033d775 (schedutil: Allow cpufreq requests to be made
-even when kthread kicked) made changes to prevent utilization updates
-from being discarded during processing a previous request, but it
-left a small window in which that still can happen in the one-CPU
-policy case.  Namely, updates coming in after setting work_in_progress
-in sugov_update_commit() and clearing it in sugov_work() will still
-be dropped due to the work_in_progress check in sugov_update_single().
+Bisected to:
 
-To close that window, rearrange the code so as to acquire the update
-lock around the deferred update branch in sugov_update_single()
-and drop the work_in_progress check from it.
+e995ca0b8139c5f6807095464e969931b443f55a is the first bad commit
+commit e995ca0b8139c5f6807095464e969931b443f55a
+Author: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Date:   Tue Nov 14 20:32:58 2017 +0200
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- kernel/sched/cpufreq_schedutil.c |   70 ++++++++++++++++++++++++++-------------
- 1 file changed, 47 insertions(+), 23 deletions(-)
+    drm/i915: Provide a device level .mode_valid() hook
+    
+    We never support certain mode flags etc. Reject those early on in the
+    mode_config.mode_valid() hook. That allows us to remove some duplicated
+    checks from the connector .mode_valid() hooks, and it guarantees that
+    we never see those flags even from user mode as the
+    mode_config.mode_valid() hooks gets executed for those as well.
+    
+    Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+    Link: https://patchwork.freedesktop.org/patch/msgid/20171114183258.16976-11-ville.syrjala@linux.intel.com
+    Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-Index: linux-pm/kernel/sched/cpufreq_schedutil.c
-===================================================================
---- linux-pm.orig/kernel/sched/cpufreq_schedutil.c
-+++ linux-pm/kernel/sched/cpufreq_schedutil.c
-@@ -100,25 +100,41 @@ static bool sugov_should_update_freq(str
- 	return delta_ns >= sg_policy->freq_update_delay_ns;
- }
- 
--static void sugov_update_commit(struct sugov_policy *sg_policy, u64 time,
--				unsigned int next_freq)
-+static bool sugov_update_next_freq(struct sugov_policy *sg_policy, u64 time,
-+				   unsigned int next_freq)
- {
--	struct cpufreq_policy *policy = sg_policy->policy;
--
- 	if (sg_policy->next_freq == next_freq)
--		return;
-+		return false;
- 
- 	sg_policy->next_freq = next_freq;
- 	sg_policy->last_freq_update_time = time;
- 
--	if (policy->fast_switch_enabled) {
--		next_freq = cpufreq_driver_fast_switch(policy, next_freq);
--		if (!next_freq)
--			return;
-+	return true;
-+}
-+
-+static void sugov_fast_switch(struct sugov_policy *sg_policy, u64 time,
-+			      unsigned int next_freq)
-+{
-+	struct cpufreq_policy *policy = sg_policy->policy;
-+
-+	if (!sugov_update_next_freq(sg_policy, time, next_freq))
-+		return;
-+
-+	next_freq = cpufreq_driver_fast_switch(policy, next_freq);
-+	if (!next_freq)
-+		return;
- 
--		policy->cur = next_freq;
--		trace_cpu_frequency(next_freq, smp_processor_id());
--	} else if (!sg_policy->work_in_progress) {
-+	policy->cur = next_freq;
-+	trace_cpu_frequency(next_freq, smp_processor_id());
-+}
-+
-+static void sugov_deferred_update(struct sugov_policy *sg_policy, u64 time,
-+				  unsigned int next_freq)
-+{
-+	if (!sugov_update_next_freq(sg_policy, time, next_freq))
-+		return;
-+
-+	if (!sg_policy->work_in_progress) {
- 		sg_policy->work_in_progress = true;
- 		irq_work_queue(&sg_policy->irq_work);
- 	}
-@@ -363,13 +379,6 @@ static void sugov_update_single(struct u
- 
- 	ignore_dl_rate_limit(sg_cpu, sg_policy);
- 
--	/*
--	 * For slow-switch systems, single policy requests can't run at the
--	 * moment if update is in progress, unless we acquire update_lock.
--	 */
--	if (sg_policy->work_in_progress)
--		return;
--
- 	if (!sugov_should_update_freq(sg_policy, time))
- 		return;
- 
-@@ -391,7 +400,18 @@ static void sugov_update_single(struct u
- 		sg_policy->cached_raw_freq = 0;
- 	}
- 
--	sugov_update_commit(sg_policy, time, next_f);
-+	/*
-+	 * This code runs under rq->lock for the target CPU, so it won't run
-+	 * concurrently on two different CPUs for the same target and it is not
-+	 * necessary to acquire the lock in the fast switch case.
-+	 */
-+	if (sg_policy->policy->fast_switch_enabled) {
-+		sugov_fast_switch(sg_policy, time, next_f);
-+	} else {
-+		raw_spin_lock(&sg_policy->update_lock);
-+		sugov_deferred_update(sg_policy, time, next_f);
-+		raw_spin_unlock(&sg_policy->update_lock);
-+	}
- }
- 
- static unsigned int sugov_next_freq_shared(struct sugov_cpu *sg_cpu, u64 time)
-@@ -435,7 +455,11 @@ sugov_update_shared(struct update_util_d
- 
- 	if (sugov_should_update_freq(sg_policy, time)) {
- 		next_f = sugov_next_freq_shared(sg_cpu, time);
--		sugov_update_commit(sg_policy, time, next_f);
-+
-+		if (sg_policy->policy->fast_switch_enabled)
-+			sugov_fast_switch(sg_policy, time, next_f);
-+		else
-+			sugov_deferred_update(sg_policy, time, next_f);
- 	}
- 
- 	raw_spin_unlock(&sg_policy->update_lock);
-@@ -450,11 +474,11 @@ static void sugov_work(struct kthread_wo
- 	/*
- 	 * Hold sg_policy->update_lock shortly to handle the case where:
- 	 * incase sg_policy->next_freq is read here, and then updated by
--	 * sugov_update_shared just before work_in_progress is set to false
-+	 * sugov_deferred_update() just before work_in_progress is set to false
- 	 * here, we may miss queueing the new update.
- 	 *
- 	 * Note: If a work was queued after the update_lock is released,
--	 * sugov_work will just be called again by kthread_work code; and the
-+	 * sugov_work() will just be called again by kthread_work code; and the
- 	 * request will be proceed before the sugov thread sleeps.
- 	 */
- 	raw_spin_lock_irqsave(&sg_policy->update_lock, flags);
+Will CC Ville and Daniel.
+
+Regards,
+Vito Caputo
