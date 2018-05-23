@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935053AbeEWUX0 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 16:23:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34468 "EHLO mail.kernel.org"
+        id S934922AbeEWUVr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 16:21:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33992 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934980AbeEWUWR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 16:22:17 -0400
+        id S934434AbeEWUVo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 16:21:44 -0400
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -18,9 +18,9 @@ Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         Joerg Roedel <joro@8bytes.org>, Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 15/18] perf kcore_copy: Iterate phdrs
-Date: Wed, 23 May 2018 17:21:03 -0300
-Message-Id: <20180523202106.17286-16-acme@kernel.org>
+Subject: [PATCH 07/18] perf machine: Allow for extra kernel maps
+Date: Wed, 23 May 2018 17:20:55 -0300
+Message-Id: <20180523202106.17286-8-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180523202106.17286-1-acme@kernel.org>
 References: <20180523202106.17286-1-acme@kernel.org>
@@ -30,8 +30,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Adrian Hunter <adrian.hunter@intel.com>
 
-In preparation to add more program headers, iterate phdrs instead of
-assuming there is only one for the kernel text and one for the modules.
+Identify extra kernel maps by name so that they can be distinguished
+from the kernel map and module maps.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
@@ -44,66 +44,179 @@ Cc: Joerg Roedel <joro@8bytes.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: x86@kernel.org
-Link: http://lkml.kernel.org/r/1526986485-6562-15-git-send-email-adrian.hunter@intel.com
+Link: http://lkml.kernel.org/r/1526986485-6562-8-git-send-email-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/symbol-elf.c | 25 ++++++++++---------------
- 1 file changed, 10 insertions(+), 15 deletions(-)
+ tools/perf/util/event.c   |  2 +-
+ tools/perf/util/machine.c |  8 ++++++--
+ tools/perf/util/map.c     | 22 ++++++++++++++++++----
+ tools/perf/util/map.h     |  7 ++++++-
+ tools/perf/util/symbol.c  |  7 +++----
+ 5 files changed, 34 insertions(+), 12 deletions(-)
 
-diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
-index 3e76a0efd15c..91b8cfb045ec 100644
---- a/tools/perf/util/symbol-elf.c
-+++ b/tools/perf/util/symbol-elf.c
-@@ -1701,10 +1701,11 @@ int kcore_copy(const char *from_dir, const char *to_dir)
- 	struct kcore kcore;
- 	struct kcore extract;
- 	int idx = 0, err = -1;
--	off_t offset, sz, modules_offset = 0;
-+	off_t offset, sz;
- 	struct kcore_copy_info kci = { .stext = 0, };
- 	char kcore_filename[PATH_MAX];
- 	char extract_filename[PATH_MAX];
-+	struct phdr_data *p;
+diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
+index 244135b5ea43..aafa9878465f 100644
+--- a/tools/perf/util/event.c
++++ b/tools/perf/util/event.c
+@@ -487,7 +487,7 @@ int perf_event__synthesize_modules(struct perf_tool *tool,
+ 	for (pos = maps__first(maps); pos; pos = map__next(pos)) {
+ 		size_t size;
  
- 	INIT_LIST_HEAD(&kci.phdrs);
+-		if (__map__is_kernel(pos))
++		if (!__map__is_kmodule(pos))
+ 			continue;
  
-@@ -1733,14 +1734,10 @@ int kcore_copy(const char *from_dir, const char *to_dir)
- 		 gelf_fsize(extract.elf, ELF_T_PHDR, kci.phnum, EV_CURRENT);
- 	offset = round_up(offset, page_size);
+ 		size = PERF_ALIGN(pos->dso->long_name_len + 1, sizeof(u64));
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index db695603873b..355d23bcd443 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -856,6 +856,7 @@ struct extra_kernel_map {
+ 	u64 start;
+ 	u64 end;
+ 	u64 pgoff;
++	char name[KMAP_NAME_LEN];
+ };
  
--	if (kcore__add_phdr(&extract, idx++, offset, kci.kernel_map.addr,
--			    kci.kernel_map.len))
--		goto out_extract_close;
-+	kcore_copy__for_each_phdr(&kci, p) {
-+		off_t offs = p->rel + offset;
+ static int machine__create_extra_kernel_map(struct machine *machine,
+@@ -875,11 +876,12 @@ static int machine__create_extra_kernel_map(struct machine *machine,
+ 	kmap = map__kmap(map);
  
--	if (kci.modules_map.addr) {
--		modules_offset = offset + kci.kernel_map.len;
--		if (kcore__add_phdr(&extract, idx, modules_offset,
--				    kci.modules_map.addr, kci.modules_map.len))
-+		if (kcore__add_phdr(&extract, idx++, offs, p->addr, p->len))
- 			goto out_extract_close;
+ 	kmap->kmaps = &machine->kmaps;
++	strlcpy(kmap->name, xm->name, KMAP_NAME_LEN);
+ 
+ 	map_groups__insert(&machine->kmaps, map);
+ 
+-	pr_debug2("Added extra kernel map %" PRIx64 "-%" PRIx64 "\n",
+-		  map->start, map->end);
++	pr_debug2("Added extra kernel map %s %" PRIx64 "-%" PRIx64 "\n",
++		  kmap->name, map->start, map->end);
+ 
+ 	map__put(map);
+ 
+@@ -940,6 +942,8 @@ int machine__map_x86_64_entry_trampolines(struct machine *machine,
+ 			.pgoff = pgoff,
+ 		};
+ 
++		strlcpy(xm.name, ENTRY_TRAMPOLINE_NAME, KMAP_NAME_LEN);
++
+ 		if (machine__create_extra_kernel_map(machine, kernel, &xm) < 0)
+ 			return -1;
  	}
+diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
+index c8fe836e4c3c..6ae97eda370b 100644
+--- a/tools/perf/util/map.c
++++ b/tools/perf/util/map.c
+@@ -252,6 +252,13 @@ bool __map__is_kernel(const struct map *map)
+ 	return machine__kernel_map(map->groups->machine) == map;
+ }
  
-@@ -1748,14 +1745,12 @@ int kcore_copy(const char *from_dir, const char *to_dir)
- 	if (sz < 0 || sz > offset)
- 		goto out_extract_close;
++bool __map__is_extra_kernel_map(const struct map *map)
++{
++	struct kmap *kmap = __map__kmap((struct map *)map);
++
++	return kmap && kmap->name[0];
++}
++
+ bool map__has_symbols(const struct map *map)
+ {
+ 	return dso__has_symbols(map->dso);
+@@ -846,15 +853,22 @@ struct map *map__next(struct map *map)
+ 	return NULL;
+ }
  
--	if (copy_bytes(kcore.fd, kci.kernel_map.offset, extract.fd, offset,
--		       kci.kernel_map.len))
--		goto out_extract_close;
-+	kcore_copy__for_each_phdr(&kci, p) {
-+		off_t offs = p->rel + offset;
+-struct kmap *map__kmap(struct map *map)
++struct kmap *__map__kmap(struct map *map)
+ {
+-	if (!map->dso || !map->dso->kernel) {
+-		pr_err("Internal error: map__kmap with a non-kernel map\n");
++	if (!map->dso || !map->dso->kernel)
+ 		return NULL;
+-	}
+ 	return (struct kmap *)(map + 1);
+ }
  
--	if (modules_offset && copy_bytes(kcore.fd, kci.modules_map.offset,
--					 extract.fd, modules_offset,
--					 kci.modules_map.len))
--		goto out_extract_close;
-+		if (copy_bytes(kcore.fd, p->offset, extract.fd, offs, p->len))
-+			goto out_extract_close;
-+	}
++struct kmap *map__kmap(struct map *map)
++{
++	struct kmap *kmap = __map__kmap(map);
++
++	if (!kmap)
++		pr_err("Internal error: map__kmap with a non-kernel map\n");
++	return kmap;
++}
++
+ struct map_groups *map__kmaps(struct map *map)
+ {
+ 	struct kmap *kmap = map__kmap(map);
+diff --git a/tools/perf/util/map.h b/tools/perf/util/map.h
+index fafcc375ed37..97e2a063bd65 100644
+--- a/tools/perf/util/map.h
++++ b/tools/perf/util/map.h
+@@ -47,9 +47,12 @@ struct map {
+ 	refcount_t		refcnt;
+ };
  
- 	if (kcore_copy__compare_file(from_dir, to_dir, "modules"))
- 		goto out_extract_close;
++#define KMAP_NAME_LEN 256
++
+ struct kmap {
+ 	struct ref_reloc_sym	*ref_reloc_sym;
+ 	struct map_groups	*kmaps;
++	char			name[KMAP_NAME_LEN];
+ };
+ 
+ struct maps {
+@@ -76,6 +79,7 @@ static inline struct map_groups *map_groups__get(struct map_groups *mg)
+ 
+ void map_groups__put(struct map_groups *mg);
+ 
++struct kmap *__map__kmap(struct map *map);
+ struct kmap *map__kmap(struct map *map);
+ struct map_groups *map__kmaps(struct map *map);
+ 
+@@ -232,10 +236,11 @@ int map_groups__fixup_overlappings(struct map_groups *mg, struct map *map,
+ struct map *map_groups__find_by_name(struct map_groups *mg, const char *name);
+ 
+ bool __map__is_kernel(const struct map *map);
++bool __map__is_extra_kernel_map(const struct map *map);
+ 
+ static inline bool __map__is_kmodule(const struct map *map)
+ {
+-	return !__map__is_kernel(map);
++	return !__map__is_kernel(map) && !__map__is_extra_kernel_map(map);
+ }
+ 
+ bool map__has_symbols(const struct map *map);
+diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+index 929058da6727..cdddae67f40c 100644
+--- a/tools/perf/util/symbol.c
++++ b/tools/perf/util/symbol.c
+@@ -1030,7 +1030,7 @@ struct map *map_groups__first(struct map_groups *mg)
+ 	return maps__first(&mg->maps);
+ }
+ 
+-static int do_validate_kcore_modules(const char *filename, struct map *map,
++static int do_validate_kcore_modules(const char *filename,
+ 				  struct map_groups *kmaps)
+ {
+ 	struct rb_root modules = RB_ROOT;
+@@ -1046,8 +1046,7 @@ static int do_validate_kcore_modules(const char *filename, struct map *map,
+ 		struct map *next = map_groups__next(old_map);
+ 		struct module_info *mi;
+ 
+-		if (old_map == map || old_map->start == map->start) {
+-			/* The kernel map */
++		if (!__map__is_kmodule(old_map)) {
+ 			old_map = next;
+ 			continue;
+ 		}
+@@ -1104,7 +1103,7 @@ static int validate_kcore_modules(const char *kallsyms_filename,
+ 					     kallsyms_filename))
+ 		return -EINVAL;
+ 
+-	if (do_validate_kcore_modules(modules_filename, map, kmaps))
++	if (do_validate_kcore_modules(modules_filename, kmaps))
+ 		return -EINVAL;
+ 
+ 	return 0;
 -- 
 2.14.3
