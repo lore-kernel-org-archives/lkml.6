@@ -1,107 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932138AbeEWJHV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 05:07:21 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:51592 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754378AbeEWJHS (ORCPT
+        id S932171AbeEWJHy (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 05:07:54 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:18729 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754378AbeEWJHt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 05:07:18 -0400
+        Wed, 23 May 2018 05:07:49 -0400
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Wed, 23 May 2018 02:07:50 -0700
+Subject: Re: [PATCH 8/9] PM / Domains: Add support for multi PM domains per
+ device to genpd
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>, <linux-tegra@vger.kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <1526639490-12167-1-git-send-email-ulf.hansson@linaro.org>
+ <1526639490-12167-9-git-send-email-ulf.hansson@linaro.org>
+ <f5589b88-acf8-b491-df79-e359e596c8d0@nvidia.com>
+ <CAPDyKFr_7hbs-MC1jQn5uAgSnb1UGufXZdEmUqNTM63KemTe1g@mail.gmail.com>
+ <5a79d3a2-d090-645b-da69-524b7e7a4d90@nvidia.com>
+ <51f7de26-579a-8b9e-4e79-f4eee923ab38@codeaurora.org>
+ <CAPDyKFo_69kSS6UzdsJeyeiiED=S=chsdkP+R43qMHDEbZ8n_A@mail.gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <3838f17a-2ac8-bf3f-f0b1-f69bbe17629c@nvidia.com>
+Date: Wed, 23 May 2018 10:07:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Date: Wed, 23 May 2018 11:07:17 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: =?UTF-8?Q?S=C3=A9bastien_Szymanski?=
-        <sebastien.szymanski@armadeus.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] ARM: dts: imx6ull-colibri-wifi: remove operating
- points
-In-Reply-To: <20180523043032.2htohlypynnvpiye@vireshk-i7>
-References: <20180522062853.24799-1-sebastien.szymanski@armadeus.com>
- <20180522062853.24799-3-sebastien.szymanski@armadeus.com>
- <20180523043032.2htohlypynnvpiye@vireshk-i7>
-Message-ID: <dc3523800c274e96dc5642c9c5b65ebe@agner.ch>
-User-Agent: Roundcube Webmail/1.3.4
-X-Spamd-Result: default: False [-3.10 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MID_RHS_MATCH_FROM(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[12];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
-         RCVD_TLS_ALL(0.00)[];
-         BAYES_HAM(-3.00)[100.00%];
-         ARC_NA(0.00)[]
+In-Reply-To: <CAPDyKFo_69kSS6UzdsJeyeiiED=S=chsdkP+R43qMHDEbZ8n_A@mail.gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23.05.2018 06:30, Viresh Kumar wrote:
-> On 22-05-18, 08:28, Sébastien Szymanski wrote:
->> Operating points are now defined in the imx6ull.dtsi file so remove
->> them from board device trees.
+
+On 23/05/18 07:12, Ulf Hansson wrote:
+
+...
+
+>>>>> Thanks for sending this. Believe it or not this has still been on my to-do list
+>>>>> and so we definitely need a solution for Tegra.
+>>>>>
+>>>>> Looking at the above it appears that additional power-domains exposed as devices
+>>>>> to the client device. So I assume that this means that the drivers for devices
+>>>>> with multiple power-domains will need to call RPM APIs for each of these
+>>>>> additional power-domains. Is that correct?
+>>>>
+>>>> They can, but should not!
+>>>>
+>>>> Instead, the driver shall use device_link_add() and device_link_del(),
+>>>> dynamically, depending on what PM domain that their original device
+>>>> needs for the current running use case.
+>>>>
+>>>> In that way, they keep existing runtime PM deployment, operating on
+>>>> its original device.
+>>>
+>>> OK, sounds good. Any reason why the linking cannot be handled by the above API? Is there a use-case where you would not want it linked?
 >>
->> Signed-off-by: Sébastien Szymanski <sebastien.szymanski@armadeus.com>
->> ---
->>  arch/arm/boot/dts/imx6ull-colibri-wifi.dtsi | 14 --------------
->>  1 file changed, 14 deletions(-)
->>
->> diff --git a/arch/arm/boot/dts/imx6ull-colibri-wifi.dtsi b/arch/arm/boot/dts/imx6ull-colibri-wifi.dtsi
->> index 3dffbcd50bf6..183193e8580d 100644
->> --- a/arch/arm/boot/dts/imx6ull-colibri-wifi.dtsi
->> +++ b/arch/arm/boot/dts/imx6ull-colibri-wifi.dtsi
->> @@ -20,20 +20,6 @@
->>
->>  &cpu0 {
->>  	clock-frequency = <792000000>;
->> -	operating-points = <
->> -		/* kHz	uV */
->> -		792000  1225000
->> -		528000	1175000
->> -		396000	1025000
->> -		198000	950000
->> -	>;
->> -	fsl,soc-operating-points = <
->> -		/* KHz	uV */
->> -		792000  1175000
->> -		528000	1175000
->> -		396000	1175000
->> -		198000	1175000
->> -	>;
->>  };
->>
->>  &iomuxc {
+>> I am guessing the linking is what would give the driver the ability to decide which subset of powerdomains it actually wants to control
+>> at any point using runtime PM. If we have cases wherein the driver would want to turn on/off _all_ its associated powerdomains _always_
+>> then a default linking of all would help.
 > 
-> Maybe you should merge this with the previous patch itself.
+> First, I think we need to decide on *where* the linking should be
+> done, not at both places, as that would just mess up synchronization
+> of who is responsible for calling the device_link_del() at detach.
+> 
+> Second, It would in principle be fine to call device_link_add() and
+> device_link_del() as a part of the attach/detach APIs. However, there
+> is a downside to such solution, which would be that the driver then
+> needs call the detach API, just to do device_link_del(). Of course
+> then it would also needs to call the attach API later if/when needed.
+> Doing this adds unnecessary overhead - comparing to just let the
+> driver call device_link_add|del() when needed. On the upside, yes, it
+> would put less burden on the drivers as it then only needs to care
+> about using one set of functions.
+> 
+> Which solution do you prefer?
 
+Any reason why we could not add a 'boolean' argument to the API to 
+indicate whether the new device should be linked? I think that I prefer 
+the API handles it, but I can see there could be instances where drivers 
+may wish to handle it themselves.
 
-I am with Viresh here, I rather prefer this in a single commit so it is
-clear that frequencies moved to the base device tree.
+Rajendra, do you have a use-case right now where the driver would want 
+to handle the linking?
 
-Also, add a comment that frequency selection is now handled in code,
-e.g.:
+Cheers
+Jon
 
-"The valid frequencies for a particular SKU are now selected by the
-cpufreq driver according to ratings stored in OTP fuses."
-
-But the two device tree changes with the driver do what they should do
-here, so:
-
-Tested-by: Stefan Agner <stefan@agner.ch>
-Reviewed-by: Stefan Agner <stefan@agner.ch>
-
---
-Stefan
+-- 
+nvpublic
