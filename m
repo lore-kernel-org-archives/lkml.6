@@ -1,70 +1,284 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754654AbeEWI3c (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 04:29:32 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:54791 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754614AbeEWI3W (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 04:29:22 -0400
-X-Google-Smtp-Source: AB8JxZozQcsQTRVJ6oiylFBSrYfa8eF2gWJTODfj4q1RYZSs//w8DVFpgElF52/mbR36FIJsT5+8xuuJtg5qaBJoiuM=
-MIME-Version: 1.0
-In-Reply-To: <1526027497-32556-1-git-send-email-phil.edworthy@renesas.com>
-References: <1526027497-32556-1-git-send-email-phil.edworthy@renesas.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 23 May 2018 10:29:20 +0200
-Message-ID: <CACRpkdZAdhAn97iWPsym_K+A8iVwa3tRacpeEu=J6C=b+xAO6g@mail.gmail.com>
-Subject: Re: [PATCH v6] gpio: dwapb: Add support for 1 interrupt per port A GPIO
-To: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Hoan Tran <hotran@apm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S932152AbeEWIaN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 04:30:13 -0400
+Received: from mga03.intel.com ([134.134.136.65]:7726 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754540AbeEWI1D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 04:27:03 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,432,1520924400";
+   d="scan'208";a="57726126"
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Huang Ying <ying.huang@intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrea Arcangeli <aarcange@redhat.com>, Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, Shaohua Li <shli@kernel.org>,
+        Hugh Dickins <hughd@google.com>, Minchan Kim <minchan@kernel.org>,
+        Rik van Riel <riel@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Zi Yan <zi.yan@cs.rutgers.edu>
+Subject: [PATCH -mm -V3 12/21] mm, THP, swap: Support PMD swap mapping in swapoff
+Date: Wed, 23 May 2018 16:26:16 +0800
+Message-Id: <20180523082625.6897-13-ying.huang@intel.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180523082625.6897-1-ying.huang@intel.com>
+References: <20180523082625.6897-1-ying.huang@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 11, 2018 at 10:31 AM, Phil Edworthy
-<phil.edworthy@renesas.com> wrote:
+From: Huang Ying <ying.huang@intel.com>
 
-> The DesignWare GPIO IP can be configured for either 1 interrupt or 1
-> per GPIO in port A, but the driver currently only supports 1 interrupt.
-> See the DesignWare DW_apb_gpio Databook description of the
-> 'GPIO_INTR_IO' parameter.
->
-> This change allows the driver to work with up to 32 interrupts, it will
-> get as many interrupts as specified in the DT 'interrupts' property.
-> It doesn't do anything clever with the different interrupts, it just calls
-> the same handler used for single interrupt hardware.
->
-> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Acked-by: Lee Jones <lee.jones@linaro.org>
-> ---
-> One point to mention is that I have made it possible for users to have
-> unconnected interrupts by specifying holes in the list of interrupts. This is
-> done by supporting the interrupts-extended DT prop.
-> However, I have no use for this and had to hack some test case for this.
-> Perhaps the driver should support 1 interrupt or all GPIOa as interrupts?
->
-> v6:
->  - Treat DT and ACPI the same as much as possible. Note that we can't use
->    platform_get_irq() to get the DT interrupts as they are in the port
->    sub-node and hence do not have an associated platform device.
+During swapoff, for a huge swap cluster, we need to allocate a THP,
+read its contents into the THP and unuse the PMD and PTE swap mappings
+to it.  If failed to allocate a THP, the huge swap cluster will be
+split.
 
-I already applied this patch in some version, can you check what is
-in my devel branch and send incremental patches on top if
-something needs changing?
-https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/commit/?h=devel&id=e6ca26abd37606ba4864f20c85d3fe4a2173b93f
+During unuse, if it is found that the swap cluster mapped by a PMD
+swap mapping is split already, we will split the PMD swap mapping and
+unuse the PTEs.
 
-Sorry for not knowing by heart what was applied or when, it's
-just too much for me sometimes.
+Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Shaohua Li <shli@kernel.org>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Rik van Riel <riel@redhat.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc: Zi Yan <zi.yan@cs.rutgers.edu>
+---
+ include/asm-generic/pgtable.h | 15 ++------
+ include/linux/huge_mm.h       |  8 ++++
+ mm/huge_memory.c              |  4 +-
+ mm/swapfile.c                 | 86 ++++++++++++++++++++++++++++++++++++++++++-
+ 4 files changed, 98 insertions(+), 15 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
+index bb8354981a36..caa381962cd2 100644
+--- a/include/asm-generic/pgtable.h
++++ b/include/asm-generic/pgtable.h
+@@ -931,22 +931,13 @@ static inline int pmd_none_or_trans_huge_or_clear_bad(pmd_t *pmd)
+ 	barrier();
+ #endif
+ 	/*
+-	 * !pmd_present() checks for pmd migration entries
+-	 *
+-	 * The complete check uses is_pmd_migration_entry() in linux/swapops.h
+-	 * But using that requires moving current function and pmd_trans_unstable()
+-	 * to linux/swapops.h to resovle dependency, which is too much code move.
+-	 *
+-	 * !pmd_present() is equivalent to is_pmd_migration_entry() currently,
+-	 * because !pmd_present() pages can only be under migration not swapped
+-	 * out.
+-	 *
+-	 * pmd_none() is preseved for future condition checks on pmd migration
++	 * pmd_none() is preseved for future condition checks on pmd swap
+ 	 * entries and not confusing with this function name, although it is
+ 	 * redundant with !pmd_present().
+ 	 */
+ 	if (pmd_none(pmdval) || pmd_trans_huge(pmdval) ||
+-		(IS_ENABLED(CONFIG_ARCH_ENABLE_THP_MIGRATION) && !pmd_present(pmdval)))
++	    ((IS_ENABLED(CONFIG_ARCH_ENABLE_THP_MIGRATION) ||
++	      IS_ENABLED(CONFIG_THP_SWAP)) && !pmd_present(pmdval)))
+ 		return 1;
+ 	if (unlikely(pmd_bad(pmdval))) {
+ 		pmd_clear_bad(pmd);
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index 1cfd43047f0d..4e299e327720 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -405,6 +405,8 @@ static inline gfp_t alloc_hugepage_direct_gfpmask(struct vm_area_struct *vma)
+ #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+ 
+ #ifdef CONFIG_THP_SWAP
++extern int split_huge_swap_pmd(struct vm_area_struct *vma, pmd_t *pmd,
++			       unsigned long address, pmd_t orig_pmd);
+ extern int do_huge_pmd_swap_page(struct vm_fault *vmf, pmd_t orig_pmd);
+ 
+ static inline bool transparent_hugepage_swapin_enabled(
+@@ -430,6 +432,12 @@ static inline bool transparent_hugepage_swapin_enabled(
+ 	return false;
+ }
+ #else /* CONFIG_THP_SWAP */
++static inline int split_huge_swap_pmd(struct vm_area_struct *vma, pmd_t *pmd,
++				      unsigned long address, pmd_t orig_pmd)
++{
++	return 0;
++}
++
+ static inline int do_huge_pmd_swap_page(struct vm_fault *vmf, pmd_t orig_pmd)
+ {
+ 	return 0;
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 3fd129a21f2e..668d77cec14d 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -1663,8 +1663,8 @@ static void __split_huge_swap_pmd(struct vm_area_struct *vma,
+ 	pmd_populate(mm, pmd, pgtable);
+ }
+ 
+-static int split_huge_swap_pmd(struct vm_area_struct *vma, pmd_t *pmd,
+-			       unsigned long address, pmd_t orig_pmd)
++int split_huge_swap_pmd(struct vm_area_struct *vma, pmd_t *pmd,
++			unsigned long address, pmd_t orig_pmd)
+ {
+ 	struct mm_struct *mm = vma->vm_mm;
+ 	spinlock_t *ptl;
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index 1a62fbc13381..77b2ddd37d9b 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -1937,6 +1937,11 @@ static inline int pte_same_as_swp(pte_t pte, pte_t swp_pte)
+ 	return pte_same(pte_swp_clear_soft_dirty(pte), swp_pte);
+ }
+ 
++static inline int pmd_same_as_swp(pmd_t pmd, pmd_t swp_pmd)
++{
++	return pmd_same(pmd_swp_clear_soft_dirty(pmd), swp_pmd);
++}
++
+ /*
+  * No need to decide whether this PTE shares the swap entry with others,
+  * just let do_wp_page work it out if a write is requested later - to
+@@ -1998,6 +2003,57 @@ static int unuse_pte(struct vm_area_struct *vma, pmd_t *pmd,
+ 	return ret;
+ }
+ 
++#ifdef CONFIG_THP_SWAP
++static int unuse_pmd(struct vm_area_struct *vma, pmd_t *pmd,
++		     unsigned long addr, swp_entry_t entry, struct page *page)
++{
++	struct mem_cgroup *memcg;
++	struct swap_info_struct *si;
++	spinlock_t *ptl;
++	int ret = 1;
++
++	if (mem_cgroup_try_charge(page, vma->vm_mm, GFP_KERNEL,
++				  &memcg, true)) {
++		ret = -ENOMEM;
++		goto out_nolock;
++	}
++
++	ptl = pmd_lock(vma->vm_mm, pmd);
++	if (unlikely(!pmd_same_as_swp(*pmd, swp_entry_to_pmd(entry)))) {
++		mem_cgroup_cancel_charge(page, memcg, true);
++		ret = 0;
++		goto out;
++	}
++
++	add_mm_counter(vma->vm_mm, MM_SWAPENTS, -HPAGE_PMD_NR);
++	add_mm_counter(vma->vm_mm, MM_ANONPAGES, HPAGE_PMD_NR);
++	get_page(page);
++	set_pmd_at(vma->vm_mm, addr, pmd,
++		   pmd_mkold(mk_huge_pmd(page, vma->vm_page_prot)));
++	page_add_anon_rmap(page, vma, addr, true);
++	mem_cgroup_commit_charge(page, memcg, true, true);
++	si = _swap_info_get(entry);
++	if (si)
++		swap_free_cluster(si, entry);
++	/*
++	 * Move the page to the active list so it is not
++	 * immediately swapped out again after swapon.
++	 */
++	activate_page(page);
++out:
++	spin_unlock(ptl);
++out_nolock:
++	return ret;
++}
++#else
++static inline int unuse_pmd(struct vm_area_struct *vma, pmd_t *pmd,
++			    unsigned long addr, swp_entry_t entry,
++			    struct page *page)
++{
++	return 0;
++}
++#endif
++
+ static int unuse_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
+ 				unsigned long addr, unsigned long end,
+ 				swp_entry_t entry, struct page *page)
+@@ -2038,7 +2094,7 @@ static inline int unuse_pmd_range(struct vm_area_struct *vma, pud_t *pud,
+ 				unsigned long addr, unsigned long end,
+ 				swp_entry_t entry, struct page *page)
+ {
+-	pmd_t *pmd;
++	pmd_t swp_pmd = swp_entry_to_pmd(entry), *pmd, orig_pmd;
+ 	unsigned long next;
+ 	int ret;
+ 
+@@ -2046,6 +2102,24 @@ static inline int unuse_pmd_range(struct vm_area_struct *vma, pud_t *pud,
+ 	do {
+ 		cond_resched();
+ 		next = pmd_addr_end(addr, end);
++		orig_pmd = *pmd;
++		if (thp_swap_supported() && is_swap_pmd(orig_pmd)) {
++			if (likely(!pmd_same_as_swp(orig_pmd, swp_pmd)))
++				continue;
++			/* Huge cluster has been split already */
++			if (!PageTransCompound(page)) {
++				ret = split_huge_swap_pmd(vma, pmd,
++							  addr, orig_pmd);
++				if (ret)
++					return ret;
++				ret = unuse_pte_range(vma, pmd, addr,
++						      next, entry, page);
++			} else
++				ret = unuse_pmd(vma, pmd, addr, entry, page);
++			if (ret)
++				return ret;
++			continue;
++		}
+ 		if (pmd_none_or_trans_huge_or_clear_bad(pmd))
+ 			continue;
+ 		ret = unuse_pte_range(vma, pmd, addr, next, entry, page);
+@@ -2210,6 +2284,7 @@ int try_to_unuse(unsigned int type, bool frontswap,
+ 					   * to prevent compiler doing
+ 					   * something odd.
+ 					   */
++	struct swap_cluster_info *ci = NULL;
+ 	unsigned char swcount;
+ 	struct page *page;
+ 	swp_entry_t entry;
+@@ -2239,6 +2314,7 @@ int try_to_unuse(unsigned int type, bool frontswap,
+ 	 * there are races when an instance of an entry might be missed.
+ 	 */
+ 	while ((i = find_next_to_unuse(si, i, frontswap)) != 0) {
++retry:
+ 		if (signal_pending(current)) {
+ 			retval = -EINTR;
+ 			break;
+@@ -2250,6 +2326,8 @@ int try_to_unuse(unsigned int type, bool frontswap,
+ 		 * page and read the swap into it.
+ 		 */
+ 		swap_map = &si->swap_map[i];
++		if (si->cluster_info)
++			ci = si->cluster_info + i / SWAPFILE_CLUSTER;
+ 		entry = swp_entry(type, i);
+ 		page = read_swap_cache_async(entry,
+ 					GFP_HIGHUSER_MOVABLE, NULL, 0, false);
+@@ -2270,6 +2348,12 @@ int try_to_unuse(unsigned int type, bool frontswap,
+ 			 */
+ 			if (!swcount || swcount == SWAP_MAP_BAD)
+ 				continue;
++			/* Split huge cluster if failed to allocate huge page */
++			if (thp_swap_supported() && cluster_is_huge(ci)) {
++				retval = split_swap_cluster(entry, false);
++				if (!retval || retval == -EEXIST)
++					goto retry;
++			}
+ 			retval = -ENOMEM;
+ 			break;
+ 		}
+-- 
+2.16.1
