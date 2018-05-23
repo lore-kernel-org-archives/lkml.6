@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754154AbeEWGnf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 02:43:35 -0400
-Received: from regular1.263xmail.com ([211.150.99.138]:53522 "EHLO
+        id S1754169AbeEWGnx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 02:43:53 -0400
+Received: from regular1.263xmail.com ([211.150.99.134]:37468 "EHLO
         regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754005AbeEWGn1 (ORCPT
+        with ESMTP id S1754105AbeEWGnb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 02:43:27 -0400
+        Wed, 23 May 2018 02:43:31 -0400
 X-263anti-spam: KSV:0;
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
@@ -16,7 +16,7 @@ X-RL-SENDER: zhangqing@rock-chips.com
 X-FST-TO: heiko@sntech.de
 X-SENDER-IP: 58.22.7.114
 X-LOGIN-NAME: zhangqing@rock-chips.com
-X-UNIQUE-TAG: <6e13f36f3541fa49f3b0de1b2c3bc774>
+X-UNIQUE-TAG: <998905113f9ecec5eb6203383af0911a>
 X-ATTACHMENT-NUM: 0
 X-DNS-TYPE: 0
 From: Elaine Zhang <zhangqing@rock-chips.com>
@@ -26,10 +26,11 @@ Cc: devicetree@vger.kernel.org, rjw@rjwysocki.net, khilman@kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
         wxt@rock-chips.com, xxx@rock-chips.com, xf@rock-chips.com,
-        huangtao@rock-chips.com, Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v3 02/13] dt-bindings: add binding for rk3036 power domains
-Date: Wed, 23 May 2018 14:48:38 +0800
-Message-Id: <1527058129-10260-3-git-send-email-zhangqing@rock-chips.com>
+        huangtao@rock-chips.com, Finley Xiao <finley.xiao@rock-chips.com>,
+        Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v3 04/13] soc: rockchip: power-domain: Fix wrong value when power up pd
+Date: Wed, 23 May 2018 14:48:40 +0800
+Message-Id: <1527058129-10260-5-git-send-email-zhangqing@rock-chips.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1527058129-10260-1-git-send-email-zhangqing@rock-chips.com>
 References: <1527058129-10260-1-git-send-email-zhangqing@rock-chips.com>
@@ -37,45 +38,42 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Caesar Wang <wxt@rock-chips.com>
+From: Finley Xiao <finley.xiao@rock-chips.com>
 
-Add binding documentation for the power domains
-found on Rockchip RK3036 SoCs.
+Solve the pd could only ever turn off but never turn them on again,
+If the pd registers have the writemask bits.
 
-Signed-off-by: Caesar Wang <wxt@rock-chips.com>
+Fix up the code error for commit:
+	commit 79bb17ce8edb3141339b5882e372d0ec7346217c
+	Author: Elaine Zhang <zhangqing@rock-chips.com>
+	Date:   Fri Dec 23 11:47:52 2016 +0800
+
+	soc: rockchip: power-domain: Support domain control in hiword-registers
+
+	New Rockchips SoCs may have their power-domain control in registers
+	using a writemask-based access scheme (upper 16bit being the write
+	mask). So add a DOMAIN_M type and handle this case accordingly.
+	Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+	Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+
+Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
 Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-Acked-by: Rob Herring <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/soc/rockchip/power_domain.txt | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/soc/rockchip/pm_domains.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/soc/rockchip/power_domain.txt b/Documentation/devicetree/bindings/soc/rockchip/power_domain.txt
-index 301d2a9bc1b8..79924ee9ae86 100644
---- a/Documentation/devicetree/bindings/soc/rockchip/power_domain.txt
-+++ b/Documentation/devicetree/bindings/soc/rockchip/power_domain.txt
-@@ -5,6 +5,7 @@ powered up/down by software based on different application scenes to save power.
- 
- Required properties for power domain controller:
- - compatible: Should be one of the following.
-+	"rockchip,rk3036-power-controller" - for RK3036 SoCs.
- 	"rockchip,rk3288-power-controller" - for RK3288 SoCs.
- 	"rockchip,rk3328-power-controller" - for RK3328 SoCs.
- 	"rockchip,rk3366-power-controller" - for RK3366 SoCs.
-@@ -17,6 +18,7 @@ Required properties for power domain controller:
- 
- Required properties for power domain sub nodes:
- - reg: index of the power domain, should use macros in:
-+	"include/dt-bindings/power/rk3036-power.h" - for RK3036 type power domain.
- 	"include/dt-bindings/power/rk3288-power.h" - for RK3288 type power domain.
- 	"include/dt-bindings/power/rk3328-power.h" - for RK3328 type power domain.
- 	"include/dt-bindings/power/rk3366-power.h" - for RK3366 type power domain.
-@@ -93,6 +95,7 @@ Node of a device using power domains must have a power-domains property,
- containing a phandle to the power device node and an index specifying which
- power domain to use.
- The index should use macros in:
-+	"include/dt-bindings/power/rk3036-power.h" - for rk3036 type power domain.
- 	"include/dt-bindings/power/rk3288-power.h" - for rk3288 type power domain.
- 	"include/dt-bindings/power/rk3328-power.h" - for rk3328 type power domain.
- 	"include/dt-bindings/power/rk3366-power.h" - for rk3366 type power domain.
+diff --git a/drivers/soc/rockchip/pm_domains.c b/drivers/soc/rockchip/pm_domains.c
+index ebd7c41898c0..01d4ba26a054 100644
+--- a/drivers/soc/rockchip/pm_domains.c
++++ b/drivers/soc/rockchip/pm_domains.c
+@@ -264,7 +264,7 @@ static void rockchip_do_pmu_set_power_domain(struct rockchip_pm_domain *pd,
+ 		return;
+ 	else if (pd->info->pwr_w_mask)
+ 		regmap_write(pmu->regmap, pmu->info->pwr_offset,
+-			     on ? pd->info->pwr_mask :
++			     on ? pd->info->pwr_w_mask :
+ 			     (pd->info->pwr_mask | pd->info->pwr_w_mask));
+ 	else
+ 		regmap_update_bits(pmu->regmap, pmu->info->pwr_offset,
 -- 
 1.9.1
