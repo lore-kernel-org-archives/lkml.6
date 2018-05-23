@@ -1,126 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753718AbeEWCzJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 22:55:09 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:46713 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753441AbeEWCzI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 22:55:08 -0400
-Subject: Re: [PATCH rdma-next 4/5] RDMA/hns: Add reset process for RoCE in
- hip08
-To: Jason Gunthorpe <jgg@ziepe.ca>
-References: <1526544173-106587-1-git-send-email-xavier.huwei@huawei.com>
- <1526544173-106587-5-git-send-email-xavier.huwei@huawei.com>
- <20180517151459.GD10842@ziepe.ca> <5AFE484B.2080206@huawei.com>
- <20180518041502.GS10842@ziepe.ca> <5AFE7F54.9030201@huawei.com>
- <20180522202612.GB21148@ziepe.ca>
-CC: <dledford@redhat.com>, <linux-rdma@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <xavier.huwei@tom.com>,
-        <lijun_nudt@163.com>
-From: "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
-Message-ID: <5B04D7FE.70806@huawei.com>
-Date: Wed, 23 May 2018 10:54:54 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
-MIME-Version: 1.0
-In-Reply-To: <20180522202612.GB21148@ziepe.ca>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.57.115.182]
-X-CFilter-Loop: Reflected
+        id S1753833AbeEWC4z (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 22:56:55 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57950 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753705AbeEWC4y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 22:56:54 -0400
+From: Dong Jia Shi <bjsdjshi@linux.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc: cohuck@redhat.com, borntraeger@de.ibm.com, bjsdjshi@linux.ibm.com,
+        pasic@linux.ibm.com, pmorel@linux.ibm.com
+Subject: [PATCH v4 0/4] vfio: ccw: error handling fixes and improvements
+Date: Wed, 23 May 2018 04:56:41 +0200
+X-Mailer: git-send-email 2.16.3
+X-TM-AS-GCONF: 00
+x-cbid: 18052302-0016-0000-0000-000008C8397A
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009069; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000261; SDB=6.01036291; UDB=6.00530123; IPR=6.00815420;
+ MB=3.00021250; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-23 02:56:52
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18052302-0017-0000-0000-00003EDB9583
+Message-Id: <20180523025645.8978-1-bjsdjshi@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-23_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805230025
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Dear Reviewers,
 
+Here is a new version for this patch series.
 
-On 2018/5/23 4:26, Jason Gunthorpe wrote:
-> On Fri, May 18, 2018 at 03:23:00PM +0800, Wei Hu (Xavier) wrote:
->>
->> On 2018/5/18 12:15, Jason Gunthorpe wrote:
->>> On Fri, May 18, 2018 at 11:28:11AM +0800, Wei Hu (Xavier) wrote:
->>>> On 2018/5/17 23:14, Jason Gunthorpe wrote:
->>>>> On Thu, May 17, 2018 at 04:02:52PM +0800, Wei Hu (Xavier) wrote:
->>>>>> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
->>>>>> index 86ef15f..e1c44a6 100644
->>>>>> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
->>>>>> @@ -774,6 +774,9 @@ static int hns_roce_cmq_send(struct hns_roce_dev *hr_dev,
->>>>>>  	int ret = 0;
->>>>>>  	int ntc;
->>>>>>  
->>>>>> +	if (hr_dev->is_reset)
->>>>>> +		return 0;
->>>>>> +
->>>>>>  	spin_lock_bh(&csq->lock);
->>>>>>  
->>>>>>  	if (num > hns_roce_cmq_space(csq)) {
->>>>>> @@ -4790,6 +4793,7 @@ static int hns_roce_hw_v2_init_instance(struct hnae3_handle *handle)
->>>>>>  	return 0;
->>>>>>  
->>>>>>  error_failed_get_cfg:
->>>>>> +	handle->priv = NULL;
->>>>>>  	kfree(hr_dev->priv);
->>>>>>  
->>>>>>  error_failed_kzalloc:
->>>>>> @@ -4803,14 +4807,70 @@ static void hns_roce_hw_v2_uninit_instance(struct hnae3_handle *handle,
->>>>>>  {
->>>>>>  	struct hns_roce_dev *hr_dev = (struct hns_roce_dev *)handle->priv;
->>>>>>  
->>>>>> +	if (!hr_dev)
->>>>>> +		return;
->>>>>> +
->>>>>>  	hns_roce_exit(hr_dev);
->>>>>> +	handle->priv = NULL;
->>>>>>  	kfree(hr_dev->priv);
->>>>>>  	ib_dealloc_device(&hr_dev->ib_dev);
->>>>>>  }
->>>>> Why are these hunks here? If init fails then uninit should not be
->>>>> called, so why meddle with priv?
->>>> In hns_roce_hw_v2_init_instance function, we evaluate handle->priv with 
->>>> hr_dev,
->>>> We want clear the value in hns_roce_hw_v2_uninit_instance function.
->>>> So we can ensure no problem in RoCE driver.
->>> What problem could happen?
->>>
->>> I keep removing unnecessary sets to null and checks of null, so please
->>> don't add them if they cannot happen.
->>>
->>> Eg uninit should never be called with a null priv, that is a serious
->>> logic mis-design someplace if it happens.
->>>
->>> Jason
->> NIC driver call the registered reset_notify() function to finish the
->> part of RoCE reset process.
->> In RoCE driver,  when hnae3_reset_notify_type is HNAE3_UNINIT_CLIENT,
->> we call hns_roce_hw_v2_uninit_instance(handle, false) to release the
->> resources.
->> when hnae3_reset_notify_type is HNAE3_INIT_CLIENT, we call
->> hns_roce_hw_v2_init_instance.
->> if hns_roce_hw_v2_init_instance failed, we should ensure no problem in
->> the other callback
->> function registered by RoCE driver.
-> Don't design things like this.
->
-> init/uninit are paired - do not call something uninit if it can be
-> called after init fails, or better, arrange to prevent that so things
-> are sane.
->
-> Jason
->
-> .
-The current RoCE driver registered 3 callback function to NIC driver as
-belows:
-1.init_instance/uninit_instance are paired.
-2.In reset_notify function,  RoCE dirver still call
-init_instance/uninit_instance function.
-but NIC driver does not perceive the behavior.  We need to judge in RoCE
-driver.
+We didn't get agreement on patch #4 (#5 in v2) in the former cycle though,
+I made it based on my understanding. We can continue discussing on it.
 
-static const struct hnae3_client_ops hns_roce_hw_v2_ops = {
-    .init_instance = hns_roce_hw_v2_init_instance,
-    .uninit_instance = hns_roce_hw_v2_uninit_instance,
-    .reset_notify = hns_roce_hw_v2_reset_notify,
-};
+Changelog:
+v3->v4:
+ - Change mail address from @linux.vnet.ibm.com to @linux.ibm.com
 
-Wei Hu
->
+v2->v3:
+ - #2. Reworded comment message.
+ - #4. Trace failure only, trace all error path, and a common knob for all
+       failure paths.
+
+v1->v2:
+ - #1. Reworded commit message and comment, plus some typo fixes.
+ - #2. New patch.
+ - #3. Added the missing suggested-by Pierre.
+       Fixed typos.
+       Added sanity check on pa->pa_iova_pfn and updated comments accordingly.
+ - #4. Removed unused idaw_nr.
+ - #5. Replaced leading white spaces with TABs.
+       Traced the function in anycase.
+
+Dong Jia Shi (3):
+  vfio: ccw: shorten kernel doc description for pfn_array_pin()
+  vfio: ccw: refactor and improve pfn_array_alloc_pin()
+  vfio: ccw: set ccw->cda to NULL defensively
+
+Halil Pasic (1):
+  vfio: ccw: add traceponits for interesting error paths
+
+ drivers/s390/cio/Makefile         |   1 +
+ drivers/s390/cio/vfio_ccw_cp.c    | 121 +++++++++++++++++++-------------------
+ drivers/s390/cio/vfio_ccw_fsm.c   |  17 +++++-
+ drivers/s390/cio/vfio_ccw_trace.h |  54 +++++++++++++++++
+ 4 files changed, 130 insertions(+), 63 deletions(-)
+ create mode 100644 drivers/s390/cio/vfio_ccw_trace.h
+
+-- 
+2.16.3
