@@ -1,93 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933776AbeEWR6f (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 13:58:35 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50545 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754623AbeEWR6b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 13:58:31 -0400
-Date: Wed, 23 May 2018 19:58:28 +0200
-From: Michal =?UTF-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>
-To: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>, Breno Leitao <leitao@debian.org>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        "Guilherme G. Piccoli" <gpiccoli@linux.vnet.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] powerpc/xmon: really enable xmon when a breakpoint is
- set
-Message-ID: <20180523195828.764f4356@kitsune.suse.cz>
-In-Reply-To: <87bmd8xieu.fsf@vajain21.in.ibm.com>
-References: <20180521132108.7938-1-msuchanek@suse.de>
-        <87bmd8xieu.fsf@vajain21.in.ibm.com>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S933854AbeEWR6r (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 13:58:47 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:41697 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933800AbeEWR6l (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 13:58:41 -0400
+X-Google-Smtp-Source: AB8JxZr+nXKflSzonvmuyIkHGZPogAXr2gS2wjHGixOAB9l52Sm6p8nx0ByFghoFr5nltfa5gAOS5A==
+From: Rajat Jain <rajatja@google.com>
+To: Bjorn Helgaas <bhelgaas@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rajat Jain <rajatja@google.com>, Frederick Lawler <fred@fredlawl.com>,
+        Oza Pawandeep <poza@codeaurora.org>,
+        Keith Busch <keith.busch@intel.com>,
+        Gabriele Paoloni <gabriele.paoloni@huawei.com>,
+        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+        Thomas Tai <thomas.tai@oracle.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jes Sorensen <jsorensen@fb.com>,
+        Kyle McMartin <jkkm@fb.com>
+Cc: rajatxjain@gmail.com
+Subject: [PATCH v2 0/5] Expose PCIe AER stats via sysfs
+Date: Wed, 23 May 2018 10:58:03 -0700
+Message-Id: <20180523175808.28030-1-rajatja@google.com>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+In-Reply-To: <20180522222805.80314-1-rajatja@google.com>
+References: <20180522222805.80314-1-rajatja@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 22 May 2018 12:53:53 +0530
-Vaibhav Jain <vaibhav@linux.vnet.ibm.com> wrote:
+This patchset exposes the AER stats via the sysfs attributes.
 
-> Thanks for the patch Michal,
-> 
-> Michal Suchanek <msuchanek@suse.de> writes:
-> 
-> > When single-stepping kernel code from xmon without a debug hook
-> > enabled the kernel crashes. This can happen when kernel starts with
-> > xmon on crash disabled but xmon is entered using sysrq.
-> >
-> > Commit e1368d0c9edb ("powerpc/xmon: Setup debugger hooks when first
-> > break-point is set") adds force_enable_xmon function that prints
-> > "xmon: Enabling debugger hooks" but does not enable them.  
-> Debugger hooks are enabled just befores debugger() is entered from
-> sysrq_handle_xmon(). Thats why force_enable_xmon() simply sets sets
-> 'xmon_on=1' and exits.
-> 
-> The problem you are seeing is probably due to sysrq_handle_xmon()
-> clearing the debugger hooks on return from debugger() as xmon_on was
-> never set for the 's' xmon command.
+Patchset v2 has minor changes to v1 based on the review comments,
+no functional change.
+Primarily:
+ * Fix license header
+ * Use tabs instead of spaces
+ * Remove use on unlikely() etc
+ * Move documentation to Documentation/ABI/
 
-Indeed, setting xmon_on is sufficient. Will resend the patch.
+Rajat Jain (5):
+  PCI/AER: Define and allocate aer_stats structure for AER capable
+    devices
+  PCI/AER: Add sysfs stats for AER capable devices
+  PCI/AER: Add sysfs attributes to provide breakdown of AERs
+  PCI/AER: Add sysfs attributes for rootport cumulative stats
+  Documentation/ABI: Add details of PCI AER statistics
 
-Thanks
+ .../testing/sysfs-bus-pci-devices-aer_stats   | 103 ++++++++++
+ Documentation/PCI/pcieaer-howto.txt           |   5 +
+ drivers/pci/pci-sysfs.c                       |   3 +
+ drivers/pci/pci.h                             |   4 +-
+ drivers/pci/pcie/aer/Makefile                 |   2 +-
+ drivers/pci/pcie/aer/aerdrv.h                 |  15 ++
+ drivers/pci/pcie/aer/aerdrv_core.c            |  11 +
+ drivers/pci/pcie/aer/aerdrv_errprint.c        |   7 +-
+ drivers/pci/pcie/aer/aerdrv_stats.c           | 192 ++++++++++++++++++
+ drivers/pci/probe.c                           |   1 +
+ include/linux/pci.h                           |   3 +
+ 11 files changed, 342 insertions(+), 4 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
+ create mode 100644 drivers/pci/pcie/aer/aerdrv_stats.c
 
-Michal
-
-> 
-> > Add the call to xmon_init to install the debugger hooks in
-> > force_enable_xmon and also call force_enable_xmon when
-> > single-stepping in xmon.  
-> Only calling force_enable_xmon() from do_step() should be suffice as
-> on exit from the debugger() the value of xmon_on is checked and if
-> required the debugger hooks are kept instead of getting cleared.
-> 
-> 
-> >  arch/powerpc/xmon/xmon.c | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> >
-> > diff --git a/arch/powerpc/xmon/xmon.c b/arch/powerpc/xmon/xmon.c
-> > index a0842f1ff72c..504bd1c3d8b0 100644
-> > --- a/arch/powerpc/xmon/xmon.c
-> > +++ b/arch/powerpc/xmon/xmon.c  
-> 
-> 
-> > @@ -1275,6 +1279,7 @@ static inline void force_enable_xmon(void)
-> >  	if (!xmon_on) {
-> >  		printf("xmon: Enabling debugger hooks\n");
-> >  		xmon_on = 1;
-> > +		xmon_init(1);
-> >  	}
-> >  }  
-> 
-> As mentioned above call to force_enable_xmon() is usually done in
-> context of sysrq_handle_xmon() which sets the debugger hooks as soon
-> as its entered. So I think that this hunk is not really needed.
-> 
-> 
+-- 
+2.17.0.441.gb46fe60e1d-goog
