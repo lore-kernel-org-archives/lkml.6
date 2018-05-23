@@ -1,96 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934265AbeEWWFC convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 18:05:02 -0400
-Received: from muru.com ([72.249.23.125]:44358 "EHLO muru.com"
+        id S934691AbeEWWGo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 18:06:44 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38030 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933791AbeEWWFA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 18:05:00 -0400
-Date: Wed, 23 May 2018 15:04:56 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>, sre@kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, khilman@kernel.org,
-        ivo.g.dimitrov.75@gmail.com, patrikbachan@gmail.com, serge@hallyn.com,
-        abcloriens@gmail.com, clayton@craftyguy.net, martijn@brixit.nl,
-        sakari.ailus@linux.intel.com,
-        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
-        Thorsten Leemhuis <regressions@leemhuis.info>
-Subject: Re: v4.17-rc1: regressions on N900, N950
-Message-ID: <20180523220456.GY98604@atomide.com>
-References: <20180422074213.GA12428@amd>
- <20180423202940.ig6iud5lrbgnu35a@darkstar.musicnaut.iki.fi>
- <20180521213952.GA11596@amd>
- <20180522080250.4fzyvqrgw5oigexn@pali>
- <20180522194139.GB2299@darkstar.musicnaut.iki.fi>
- <20180522205824.GA24927@amd>
- <20180522215638.GC2299@darkstar.musicnaut.iki.fi>
- <20180523140615.GA27180@amd>
- <20180523201208.GA31731@amd>
+        id S933791AbeEWWGj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 18:06:39 -0400
+Date: Wed, 23 May 2018 16:06:38 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Logan Gunthorpe <logang@deltatee.com>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-ntb@googlegroups.com, Bjorn Helgaas <bhelgaas@google.com>,
+        Doug Meyer <dmeyer@gigaio.com>
+Subject: Re: [PATCH] PCI: Expand documentation for pci_add_dma_alias()
+Message-ID: <20180523160638.03f6db90@w520.home>
+In-Reply-To: <20180523210738.2883-1-logang@deltatee.com>
+References: <20180523210738.2883-1-logang@deltatee.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20180523201208.GA31731@amd>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Pavel Machek <pavel@ucw.cz> [180523 20:14]:
-> On Wed 2018-05-23 16:06:15, Pavel Machek wrote:
-> > On Wed 2018-05-23 00:56:38, Aaro Koskinen wrote:
-> > > Hi,
-> > > 
-> > > On Tue, May 22, 2018 at 10:58:26PM +0200, Pavel Machek wrote:
-> > > > On Tue 2018-05-22 22:41:39, Aaro Koskinen wrote:
-> > > > > My device worked with v4.17-rc1 (haven't found time to test newer kernels),
-> > > > > but if you say the probe order is random then we must find some proper way
-> > > > > to express the dependency.
-> > > > 
-> > > > I started bisect, but.. that will probably not be useful.
-> > > > 
-> > > > If your device works ok in v4.17-rc1, it probably works in newer -rcs,
-> > > > too.
-> > > 
-> > > Actually, my statement may be bogus... Now I tried again with -rc1
-> > > (and also -rc6) and it fails... But v4.16 works.
-> > > 
-> > > > Thanks for the ordering hint, I'll try to figure out what is going on
-> > > > there.
-> > > 
-> > > My bisection pointed to 6fa7324ac5489ad43c4b6351355b869bc5458bef which
-> > > doesn't seem to make any sense...?! So maybe there really is something
-> > > random stuff going on? :-(
-> > 
-> > So... I did some experiments on v4.16.
-> > 
-> > Swapping tsc2005@0 and lcd: acx565akm@2 entries in the dts does break
-> > stuff.
-> > 
-> > I thought it might be due to vio regulator, but it does not appear
-> > so... screen still works with tsc2005 driver disabled in .config. (so
-> > there's noone to enable vio regulator).
-> 
-> Deleting tsc2005@0 entry also breaks screen.
-> 
-> Replacing tsc2005@0 entry with 
-> 
->         foobar@0 {
-> 	               compatible = "not really with anything";
->  		       spi-max-frequency = <6000000>;
->  		       reg = <0>;
->  };
-> 
-> still results in working touchscreen, removing any of the three fields
-> breaks it again.
+On Wed, 23 May 2018 15:07:38 -0600
+Logan Gunthorpe <logang@deltatee.com> wrote:
 
-I bisected one regression down, see "omapdrm regression in v4.17-rc series"
-not sure if it covers all the issues being discussed here though.
+> Seeing there's been some confusion about the use of pci_add_dma_alias(),
+> expand the comment to describe why it must be called early and how
+> early it must be called.
+> 
+> Also, expand on the purpose of this function and common reasons it would
+> be used.
+> 
+> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Alex Williamson <alex.williamson@redhat.com>
+> Cc: Doug Meyer <dmeyer@gigaio.com>
+> ---
+>  drivers/pci/pci.c | 15 +++++++++++++--
+>  1 file changed, 13 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index dbfe7c4f3776..2a410745a95a 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -5395,8 +5395,19 @@ int pci_set_vga_state(struct pci_dev *dev, bool decode,
+>   * @dev: the PCI device for which alias is added
+>   * @devfn: alias slot and function
+>   *
+> - * This helper encodes 8-bit devfn as bit number in dma_alias_mask.
+> - * It should be called early, preferably as PCI fixup header quirk.
+> + * This helper encodes an 8-bit devfn as a bit number in dma_alias_mask
+> + * which is used to program permissible BDF source addresses for
+> + * DMA requests in an IOMMU. This is useful for non-transparent bridges
+> + * which use BDFs that are not visible on the bus as proxies for devices
+> + * in another domain. It's also useful for grouping of multiple devices
+> + * that must be done without a host endpoint driver.
+> + *
+> + * This function must be called early, before the IOMMU creates
+> + * the groups for the device which happens with a BUS_NOTIFY_ADD_DEVICE
+> + * event. This occurs before the driver's probe function is called seeing
+> + * the groups must be ready before any DMA mappings for the device are created.
+> + * Therefore, this function cannot be called in a driver and, instead,
+> + * should be called as a PCI fixup header quirk.
+>   */
+>  void pci_add_dma_alias(struct pci_dev *dev, u8 devfn)
+>  {
 
-Regards,
+I might massage this a little further, something like:
 
-Tony
+  This helper encodes an 8-bit devfn as a bit number in dma_alias_mask,
+  which is used to program permissible BDF source addresses for DMA
+  requests in the IOMMU.  These aliases factor into IOMMU group
+  creation and are useful for devices generating DMA requests beyond or
+  different from their logical bus devfn.  Examples include device
+  quirks where the device simply uses the wrong devfn, as well as
+  non-transparent bridges where the alias may be a proxy for devices in
+  another domain.
+
+  IOMMU group creation is performed during device discovery or
+  addition, prior to any potential DMA mapping and therefore prior to
+  driver probing, particularly for userspace assigned devices where
+  IOMMU group definition cannot be left as a userspace activity.  DMA
+  aliases should therefore be configured via quirks, such as the PCI
+  fixup header quirk.
+
+Thanks,
+Alex
