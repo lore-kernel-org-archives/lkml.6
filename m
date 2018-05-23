@@ -1,62 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932813AbeEWLsr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 07:48:47 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:51995 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932796AbeEWLsk (ORCPT
+        id S932713AbeEWLt6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 07:49:58 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56112 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932501AbeEWLt5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 07:48:40 -0400
-X-Google-Smtp-Source: AB8JxZrSkch9OXQNX9NfDoXaWm7L4Gc7N1rLmoH6Wjplse0/U6N78pcQtfG+mNVUThYkwuGWUx8vttU9v9R/+2HA/EM=
+        Wed, 23 May 2018 07:49:57 -0400
+Date: Wed, 23 May 2018 12:49:52 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/6] mfd: da9063: Rename PMIC_DA9063 to
+ PMIC_CHIP_ID_DA9063
+Message-ID: <20180523114952.GF4828@sirena.org.uk>
+References: <20180523114230.10109-1-marek.vasut+renesas@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <e70e83f07aebaf702fef90a9fac61e41d8b558b0.1526533188.git.hns@goldelico.com>
-References: <cover.1526533188.git.hns@goldelico.com> <e70e83f07aebaf702fef90a9fac61e41d8b558b0.1526533188.git.hns@goldelico.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 23 May 2018 13:48:38 +0200
-Message-ID: <CACRpkdYfjqRaUnYXhksXANbgyn++nUAda4D1prawGU1vZ06wQg@mail.gmail.com>
-Subject: Re: [PATCH v7 3/3] gpio: pca953x: fix address calculation for pcal6524
-To: "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc: Kumar Gala <galak@codeaurora.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Alexandre Courbot <gnurou@gmail.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Discussions about the Letux Kernel
-        <letux-kernel@openphoenux.org>,
-        kernel@pyra-handheld.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="R6sEYoIZpp9JErk7"
+Content-Disposition: inline
+In-Reply-To: <20180523114230.10109-1-marek.vasut+renesas@gmail.com>
+X-Cookie: Excellent day to have a rotten day.
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 17, 2018 at 6:59 AM, H. Nikolaus Schaller <hns@goldelico.com> wrote:
 
-> The register constants are so far defined in a way that they fit
-> for the pcal9555a when shifted by the number of banks, i.e. are
-> multiplied by 2 in the accessor function.
->
-> Now, the pcal6524 has 3 banks which means the relative offset
-> is multiplied by 4 for the standard registers.
->
-> Simply applying the bit shift to the extended registers gives
-> a wrong result, since the base offset is already included in
-> the offset.
->
-> Therefore, we have to add code to the 24 bit accessor functions
-> that adjusts the register number for these exended registers.
->
-> The formula finally used was developed and proposed by
-> Andy Shevchenko <andy.shevchenko@gmail.com>.
->
-> Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+--R6sEYoIZpp9JErk7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Patch applied.
+On Wed, May 23, 2018 at 01:42:25PM +0200, Marek Vasut wrote:
+> The PMIC_DA9063 is a complete misnomer, it denotes the value of the
+> DA9063 chip ID register, so rename it as such. It is also the value
+> of chip ID register of DA9063L though, so drop the enum as all the
 
-Yours,
-Linus Walleij
+Acked-by: Mark Brown <broonie@kernel.org>
+
+--R6sEYoIZpp9JErk7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsFVWAACgkQJNaLcl1U
+h9AsYgf+KDlReTOZjH1w6DAx9HPYN1ofo5xNWK49+LubVw+9Ap+MEfg5XkZH+GTD
+pVzoN45/myCd+UXwNoQF/MDTpEoItXldjyTcDWZQ5n1mHED6R0bHiuEqkqnqzna4
+E6Qm+llhf/gUHAYBgU/ZBJEG9ujeTnuWCrs7Lr7gdlMpy/Fz8HXE0bvRNa4WWkDj
+nYGFlA6i4CFzKzdMlII+IVd9Rjhaxdwtfx3vEYSWOYV1s7PhDSfDZMThA6UK8Zj7
++hKrNVU+AbQI7koNuJacVQKY6Mv4lOIEjM+WkRJS1SXE4AgXBLmmetF0f9EVIMGO
+IqonHNZ+ETnafKHmPXNyFdicW6gpoQ==
+=5OuJ
+-----END PGP SIGNATURE-----
+
+--R6sEYoIZpp9JErk7--
