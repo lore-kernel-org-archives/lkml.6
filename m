@@ -1,150 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754882AbeEWSLz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 14:11:55 -0400
-Received: from vps01.wiesinger.com ([46.36.37.179]:36164 "EHLO
-        vps01.wiesinger.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754589AbeEWSLv (ORCPT
+        id S1754818AbeEWSOk (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 14:14:40 -0400
+Received: from mail-yb0-f196.google.com ([209.85.213.196]:34349 "EHLO
+        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754658AbeEWSOh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 14:11:51 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 wiesinger.com w4NIBWMq008511
-Subject: Re: B53 DSA switch problem on Banana Pi-R1 on Fedora 26
-To: Florian Fainelli <f.fainelli@gmail.com>, Andrew Lunn <andrew@lunn.ch>
-References: <3bdb712d-38bd-e2ca-63cf-8406a7b5689d@wiesinger.com>
- <20180522201632.GB4396@lunn.ch>
- <59d6b55f-d50a-063c-90a9-31a758e01383@gmail.com>
- <fa5c2615-40b3-62bc-3dda-59f9ef574686@wiesinger.com>
- <76c3f5ec-0ab2-c06d-98e8-277284bb1a8e@gmail.com>
- <e1b56677-50e5-94e0-86f0-b0c797c4897d@gmail.com>
- <88af3639-f3f9-ed45-c6bd-b30021347633@wiesinger.com>
- <fb898d25-3e5a-787b-cc4b-f670e4b61f58@gmail.com>
-From: Gerhard Wiesinger <lists@wiesinger.com>
-Cc: linux-kernel@vger.kernel.org
-Message-ID: <f0a85a79-2d4a-cdc2-f007-a707b8619b23@wiesinger.com>
-Date: Wed, 23 May 2018 20:11:31 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 23 May 2018 14:14:37 -0400
+X-Google-Smtp-Source: AB8JxZpfhO08CUwksM2yyN4RHUoNaoKoLboYQ+dNSH5e4nRBCV1ViD47j2oUJ4vBrXy7sEeTxPfwug==
+Date: Wed, 23 May 2018 11:14:33 -0700
+From: Tejun Heo <tj@kernel.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: kernel test robot <xiaolong.ye@intel.com>, lkp@01.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org,
+        cgroups@vger.kernel.org, kernel-team@fb.com
+Subject: Subject: [PATCH] cgroup: css_set_lock should nest inside
+ tasklist_lock
+Message-ID: <20180523181433.GP1718769@devbig577.frc2.facebook.com>
+References: <20180521054022.GE19015@yexl-desktop>
+ <20180521073808.GA21726@localhost>
+ <20180521153331.GM1718769@devbig577.frc2.facebook.com>
+ <20180522002001.GA13023@localhost>
 MIME-Version: 1.0
-In-Reply-To: <fb898d25-3e5a-787b-cc4b-f670e4b61f58@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180522002001.GA13023@localhost>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23.05.2018 19:47, Florian Fainelli wrote:
-> On 05/23/2018 10:29 AM, Gerhard Wiesinger wrote:
->> On 23.05.2018 17:50, Florian Fainelli wrote:
->>> On 05/23/2018 08:28 AM, Florian Fainelli wrote:
->>>> On 05/22/2018 09:49 PM, Gerhard Wiesinger wrote:
->>>>> On 22.05.2018 22:42, Florian Fainelli wrote:
->>>>>> On 05/22/2018 01:16 PM, Andrew Lunn wrote:
->>>>>>>> Planned network structure will be as with 4.7.x kernels:
->>>>>>>>
->>>>>>>> br0 <=> eth0.101 <=> eth0 (vlan 101 tagged) <=> lan 1-lan4 (vlan 101
->>>>>>>> untagged pvid)
->>>>>>>>
->>>>>>>> br1 <=> eth0.102 <=> eth0 (vlan 102 tagged) <=> wan (vlan 102
->>>>>>>> untagged pvid)
->>>>>>> Do you even need these vlans?
->>>>>> Yes, remember, b53 does not currently turn on Broadcom tags, so the
->>>>>> only
->>>>>> way to segregate traffic is to have VLANs for that.
->>>>>>
->>>>>>> Are you doing this for port separation? To keep lan1-4 traffic
->>>>>>> separate from wan? DSA does that by default, no vlan needed.
->>>>>>>
->>>>>>> So you can just do
->>>>>>>
->>>>>>> ip link add name br0 type bridge
->>>>>>> ip link set dev br0 up
->>>>>>> ip link set dev lan1 master br0
->>>>>>> ip link set dev lan2 master br0
->>>>>>> ip link set dev lan3 master br0
->>>>>>> ip link set dev lan4 master br0
->>>>>>>
->>>>>>> and use interface wan directly, no bridge needed.
->>>>>> That would work once Broadcom tags are turned on which requires
->>>>>> turning
->>>>>> on managed mode, which requires work that I have not been able to get
->>>>>> done :)
->>>>> Setup with swconfig:
->>>>>
->>>>> #!/usr/bin/bash
->>>>>
->>>>>
->>>>> INTERFACE=eth0
->>>>>
->>>>> # Delete all IP addresses and get link up
->>>>> ip addr flush dev ${INTERFACE}
->>>>> ip link set ${INTERFACE} up
->>>>>
->>>>> # Lamobo R1 aka BPi R1 Routerboard
->>>>> #
->>>>> # Speaker | LAN1 | LAN2 | LAN3 | LAN4 || LAN5 | HDMI
->>>>> # SW-Port |  P2  |  P1  |  P0  |  P4  ||  P3  |
->>>>> # VLAN    |  11  |  12  |  13  |  14  ||ALL(t)|
->>>>> #
->>>>> # Switch-Port P8 - ALL(t) boards internal CPU Port
->>>>>
->>>>> # Setup switch
->>>>> swconfig dev ${INTERFACE} set reset 1
->>>>> swconfig dev ${INTERFACE} set enable_vlan 1
->>>>> swconfig dev ${INTERFACE} vlan 101 set ports '3 8t'
->>>>> swconfig dev ${INTERFACE} vlan 102 set ports '4 0 1 2 8t'
->>>>> swconfig dev ${INTERFACE} set apply 1
->>>>>
->>>>> How to achieve this setup CURRENTLY with DSA?
->>>> Your first email had the right programming sequence, but you did not
->>>> answer whether you have CONFIG_BRIDGE_VLAN_FILTERING enabled or not,
->>>> which is likely your problem.
->>> Here are some reference configurations that should work:
->>>
->>> https://github.com/armbian/build/issues/511#issuecomment-320473246
->> I know, some comments are from me but none of them worked, therefore on
->> LKML :-)
-> I see, maybe you could have started there, that would have saved me a
-> trip to github to find out the thread.
->
->> /boot/config-4.16.7-100.fc26.armv7hl:CONFIG_BRIDGE_VLAN_FILTERING=y
->>
->> so this can't be the issue, any further ideas?
-> Yes, remove the "self" from your bridge vlan commands, I don't see that
-> being necessary.
+Applied the following patch to cgroup/for-4.18.
 
-Same:
-[root@bpi ~]# bridge vlan add dev lan1 vid 101 pvid untagged self
-RTNETLINK answers: Operation not supported
-[root@bpi ~]# bridge vlan add dev lan1 vid 101 pvid untagged
-RTNETLINK answers: Operation not supported
-[root@bpi ~]# bridge vlan add dev lan1 vid 101
-RTNETLINK answers: Operation not supported
+Thanks.
 
-Any ideas how to debug further?
+------ 8< ------
+>From d8742e22902186e30c346b1ba881cb52942ae3e4 Mon Sep 17 00:00:00 2001
+From: Tejun Heo <tj@kernel.org>
+Date: Wed, 23 May 2018 11:04:54 -0700
 
->
->> On my 2nd Banana Pi-R1 still on Fedora 25 with kernel
->> 4.12.8-200.fc25.armv7hl the commands still work well, but I wanted to
->> test the upgrade on another one.
->>
->> /boot/config-4.12.8-200.fc25.armv7hl:CONFIG_BRIDGE_VLAN_FILTERING=y
-> Is using an upstream or compiled by yourself kernel an option at all? I
-> have no clue what is in a distribution kernel.
+cgroup_enable_task_cg_lists() incorrectly nests non-irq-safe
+tasklist_lock inside irq-safe css_set_lock triggering the following
+lockdep warning.
 
-Typically the Fedora kernels work fine (long term experience since 
-Fedora Core 1 from 2004 :-) ). I had some custom patches in there in the 
-past for external RTC and b53_switch.kernel_4.5+.patch, but otherwise no 
-topics. Therefore with upstream DSA support that should be fine then.
+  WARNING: possible irq lock inversion dependency detected
+  4.17.0-rc1-00027-gb37d049 #6 Not tainted
+  --------------------------------------------------------
+  systemd/1 just changed the state of lock:
+  00000000fe57773b (css_set_lock){..-.}, at: cgroup_free+0xf2/0x12a
+  but this lock took another, SOFTIRQ-unsafe lock in the past:
+   (tasklist_lock){.+.+}
 
+  and interrupts could create inverse lock ordering between them.
 
-Infos can be found here:
+  other info that might help us debug this:
+   Possible interrupt unsafe locking scenario:
 
-https://koji.fedoraproject.org/koji/packageinfo?packageID=8
+	 CPU0                    CPU1
+	 ----                    ----
+    lock(tasklist_lock);
+				 local_irq_disable();
+				 lock(css_set_lock);
+				 lock(tasklist_lock);
+    <Interrupt>
+      lock(css_set_lock);
 
-https://koji.fedoraproject.org/koji/buildinfo?buildID=1078638
+   *** DEADLOCK ***
 
+The condition is highly unlikely to actually happen especially given
+that the path is executed only once per boot.
 
-Ciao,
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Reported-by: Boqun Feng <boqun.feng@gmail.com>
+---
+ kernel/cgroup/cgroup.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-Gerhard
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index 04b7e7f..63989cb 100644
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -1798,13 +1798,6 @@ static void cgroup_enable_task_cg_lists(void)
+ {
+ 	struct task_struct *p, *g;
+ 
+-	spin_lock_irq(&css_set_lock);
+-
+-	if (use_task_css_set_links)
+-		goto out_unlock;
+-
+-	use_task_css_set_links = true;
+-
+ 	/*
+ 	 * We need tasklist_lock because RCU is not safe against
+ 	 * while_each_thread(). Besides, a forking task that has passed
+@@ -1813,6 +1806,13 @@ static void cgroup_enable_task_cg_lists(void)
+ 	 * tasklist if we walk through it with RCU.
+ 	 */
+ 	read_lock(&tasklist_lock);
++	spin_lock_irq(&css_set_lock);
++
++	if (use_task_css_set_links)
++		goto out_unlock;
++
++	use_task_css_set_links = true;
++
+ 	do_each_thread(g, p) {
+ 		WARN_ON_ONCE(!list_empty(&p->cg_list) ||
+ 			     task_css_set(p) != &init_css_set);
+@@ -1840,9 +1840,9 @@ static void cgroup_enable_task_cg_lists(void)
+ 		}
+ 		spin_unlock(&p->sighand->siglock);
+ 	} while_each_thread(g, p);
+-	read_unlock(&tasklist_lock);
+ out_unlock:
+ 	spin_unlock_irq(&css_set_lock);
++	read_unlock(&tasklist_lock);
+ }
+ 
+ static void init_cgroup_housekeeping(struct cgroup *cgrp)
+-- 
+2.9.5
