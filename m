@@ -1,185 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933515AbeEWPMV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 11:12:21 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45280 "EHLO mx1.redhat.com"
+        id S933542AbeEWPM1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 11:12:27 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45310 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933475AbeEWPMP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 11:12:15 -0400
+        id S933475AbeEWPMV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 11:12:21 -0400
 From: David Hildenbrand <david@redhat.com>
 To: linux-mm@kvack.org
 Cc: linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com
-Subject: [PATCH v1 03/10] kasan: prepare for online/offline of different start/size
-Date: Wed, 23 May 2018 17:11:44 +0200
-Message-Id: <20180523151151.6730-4-david@redhat.com>
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Reza Arbab <arbab@linux.vnet.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH v1 05/10] mm/memory_hotplug: limit offline_pages() to sizes we can actually handle
+Date: Wed, 23 May 2018 17:11:46 +0200
+Message-Id: <20180523151151.6730-6-david@redhat.com>
 In-Reply-To: <20180523151151.6730-1-david@redhat.com>
 References: <20180523151151.6730-1-david@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The memory notifier has an important restriction right now: it only
-works if offline_pages() is called with the same parameters as
-online_pages().
+We have to take care of MAX_ORDER. Page blocks might contain references
+to the next page block. So sometimes a page block cannot be offlined
+independently. E.g. on x86: page block size is 2MB, MAX_ORDER -1 (10)
+allows 4MB allocations.
 
-To overcome this restriction, let's handle it per section. We could do
-it in smaller granularity, but then we get more vm_area overhead and
-cannot check that cleanly for actual online parts.
+E.g. a buddy page could either overlap at the beginning or the end of the
+range to offline. While the end case could be handled easily (shrink the
+buddy page), overlaps at the beginning are hard to handle (unknown page
+order).
 
-A section is marked online as soon as at least one page is online.
-Similarly, a section is marked offline as soon as all pages are offline.
+Let document offline_pages() while at it.
 
-So handling it on a per-section basis allows us to be more flexible. We
-asssume here, that a section is not split between boot and hotplug
-memory.
-
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: kasan-dev@googlegroups.com
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc: Reza Arbab <arbab@linux.vnet.ibm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- mm/kasan/kasan.c | 107 ++++++++++++++++++++++++++++++-----------------
- 1 file changed, 69 insertions(+), 38 deletions(-)
+ include/linux/memory_hotplug.h |  6 ++++++
+ mm/memory_hotplug.c            | 22 ++++++++++++++++++----
+ 2 files changed, 24 insertions(+), 4 deletions(-)
 
-diff --git a/mm/kasan/kasan.c b/mm/kasan/kasan.c
-index a8b85706e2d6..901601a562a9 100644
---- a/mm/kasan/kasan.c
-+++ b/mm/kasan/kasan.c
-@@ -827,62 +827,93 @@ static bool shadow_mapped(unsigned long addr)
- 	return !pte_none(*pte);
+diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
+index e0e49b5b1ee1..d71829d54360 100644
+--- a/include/linux/memory_hotplug.h
++++ b/include/linux/memory_hotplug.h
+@@ -294,6 +294,12 @@ static inline void pgdat_resize_init(struct pglist_data *pgdat) {}
+ #endif /* !(CONFIG_MEMORY_HOTPLUG || CONFIG_DEFERRED_STRUCT_PAGE_INIT) */
+ 
+ #ifdef CONFIG_MEMORY_HOTREMOVE
++/*
++ * Isolation and offlining code cannot deal with pages (e.g. buddy)
++ * overlapping with the range to be offlined yet.
++ */
++#define offline_nr_pages	max((unsigned long)pageblock_nr_pages, \
++				    (unsigned long)MAX_ORDER_NR_PAGES)
+ 
+ extern bool is_mem_section_removable(unsigned long pfn, unsigned long nr_pages);
+ extern void try_offline_node(int nid);
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index 7f7bd2acb55b..c971295a1100 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -1599,10 +1599,9 @@ static int __ref __offline_pages(unsigned long start_pfn,
+ 	struct zone *zone;
+ 	struct memory_notify arg;
+ 
+-	/* at least, alignment against pageblock is necessary */
+-	if (!IS_ALIGNED(start_pfn, pageblock_nr_pages))
++	if (!IS_ALIGNED(start_pfn, offline_nr_pages))
+ 		return -EINVAL;
+-	if (!IS_ALIGNED(end_pfn, pageblock_nr_pages))
++	if (!IS_ALIGNED(end_pfn, offline_nr_pages))
+ 		return -EINVAL;
+ 	/* This makes hotplug much easier...and readable.
+ 	   we assume this for now. .*/
+@@ -1700,7 +1699,22 @@ static int __ref __offline_pages(unsigned long start_pfn,
+ 	return ret;
  }
  
--static int __meminit kasan_mem_notifier(struct notifier_block *nb,
--			unsigned long action, void *data)
-+static void kasan_offline_pages(unsigned long start_pfn, unsigned long nr_pages)
+-/* Must be protected by mem_hotplug_begin() or a device_lock */
++/**
++ * offline_pages - offline pages in a given range (that are currently online)
++ * @start_pfn: start pfn of the memory range
++ * @nr_pages: the number of pages
++ *
++ * This function tries to offline the given pages. The alignment/size that
++ * can be used is given by offline_nr_pages.
++ *
++ * Returns 0 if sucessful, -EBUSY if the pages cannot be offlined and
++ * -EINVAL if start_pfn/nr_pages is not properly aligned or not in a zone.
++ * -EINTR is returned if interrupted by a signal.
++ *
++ * Bad things will happen if pages in the range are already offline.
++ *
++ * Must be protected by mem_hotplug_begin() or a device_lock
++ */
+ int offline_pages(unsigned long start_pfn, unsigned long nr_pages)
  {
--	struct memory_notify *mem_data = data;
--	unsigned long nr_shadow_pages, start_kaddr, shadow_start;
--	unsigned long shadow_end, shadow_size;
-+	unsigned long start = SECTION_ALIGN_DOWN(start_pfn);
-+	unsigned long end = SECTION_ALIGN_UP(start_pfn + nr_pages);
-+	unsigned long pfn;
- 
--	nr_shadow_pages = mem_data->nr_pages >> KASAN_SHADOW_SCALE_SHIFT;
--	start_kaddr = (unsigned long)pfn_to_kaddr(mem_data->start_pfn);
--	shadow_start = (unsigned long)kasan_mem_to_shadow((void *)start_kaddr);
--	shadow_size = nr_shadow_pages << PAGE_SHIFT;
--	shadow_end = shadow_start + shadow_size;
-+	for (pfn = start; pfn < end; pfn += PAGES_PER_SECTION) {
-+		void *addr, *shadow_start;
-+		struct vm_struct *vm;
- 
--	if (WARN_ON(mem_data->nr_pages % KASAN_SHADOW_SCALE_SIZE) ||
--		WARN_ON(start_kaddr % (KASAN_SHADOW_SCALE_SIZE << PAGE_SHIFT)))
--		return NOTIFY_BAD;
-+		/* still online? nothing to do then */
-+		if (online_section_nr(pfn_to_section_nr(pfn)))
-+			continue;
- 
--	switch (action) {
--	case MEM_GOING_ONLINE: {
--		void *ret;
-+		addr = pfn_to_kaddr(pfn);
-+		shadow_start = kasan_mem_to_shadow(addr);
-+
-+		/*
-+		 * Only hot-added memory has a vm_area. Freeing shadow mapped
-+		 * during boot would be tricky, so we'll just have to keep it.
-+		 */
-+		vm = find_vm_area(shadow_start);
-+		if (vm)
-+			vfree(shadow_start);
-+	}
-+}
-+
-+static int kasan_online_pages(unsigned long start_pfn, unsigned long nr_pages)
-+{
-+	unsigned long start = SECTION_ALIGN_DOWN(start_pfn);
-+	unsigned long end = SECTION_ALIGN_UP(start_pfn + nr_pages);
-+	unsigned long pfn;
-+
-+	for (pfn = start; pfn < end; pfn += PAGES_PER_SECTION) {
-+		unsigned long shadow_start, shadow_size;
-+		void *addr, *ret;
-+
-+		/* already online? nothing to do then */
-+		if (online_section_nr(pfn_to_section_nr(pfn)))
-+			continue;
-+
-+		addr = pfn_to_kaddr(pfn);
-+		shadow_size = (PAGES_PER_SECTION << PAGE_SHIFT) >>
-+			      KASAN_SHADOW_SCALE_SHIFT;
-+		shadow_start = (unsigned long)kasan_mem_to_shadow(addr);
- 
- 		/*
- 		 * If shadow is mapped already than it must have been mapped
--		 * during the boot. This could happen if we onlining previously
-+		 * during boot. This could happen if we're onlining previously
- 		 * offlined memory.
- 		 */
- 		if (shadow_mapped(shadow_start))
--			return NOTIFY_OK;
-+			continue;
- 
- 		ret = __vmalloc_node_range(shadow_size, PAGE_SIZE, shadow_start,
--					shadow_end, GFP_KERNEL,
--					PAGE_KERNEL, VM_NO_GUARD,
--					pfn_to_nid(mem_data->start_pfn),
--					__builtin_return_address(0));
-+					   shadow_start + shadow_size,
-+					   GFP_KERNEL, PAGE_KERNEL, VM_NO_GUARD,
-+					   pfn_to_nid(pfn),
-+					   __builtin_return_address(0));
- 		if (!ret)
--			return NOTIFY_BAD;
--
-+			goto out_free;
- 		kmemleak_ignore(ret);
--		return NOTIFY_OK;
- 	}
--	case MEM_CANCEL_ONLINE:
--	case MEM_OFFLINE: {
--		struct vm_struct *vm;
-+	return 0;
-+out_free:
-+	kasan_offline_pages(start_pfn, nr_pages);
-+	return -ENOMEM;
-+}
- 
--		/*
--		 * Only hot-added memory have vm_area. Freeing shadow
--		 * mapped during boot would be tricky, so we'll just
--		 * have to keep it.
--		 */
--		vm = find_vm_area((void *)shadow_start);
--		if (vm)
--			vfree((void *)shadow_start);
--	}
-+static int __meminit kasan_mem_notifier(struct notifier_block *nb,
-+			unsigned long action, void *data)
-+{
-+	struct memory_notify *mem_data = data;
-+	int ret = 0;
-+
-+	switch (action) {
-+	case MEM_GOING_ONLINE:
-+		ret = kasan_online_pages(mem_data->start_pfn,
-+					 mem_data->nr_pages);
-+		break;
-+	case MEM_CANCEL_ONLINE:
-+	case MEM_OFFLINE:
-+		kasan_offline_pages(mem_data->start_pfn, mem_data->nr_pages);
-+		break;
- 	}
- 
--	return NOTIFY_OK;
-+	return notifier_from_errno(ret);
- }
- 
- static int __init kasan_memhotplug_init(void)
+ 	return __offline_pages(start_pfn, start_pfn + nr_pages);
 -- 
 2.17.0
