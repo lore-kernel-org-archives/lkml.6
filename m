@@ -1,104 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932142AbeEWIX7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 04:23:59 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:41205 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932117AbeEWIX5 (ORCPT
+        id S1754348AbeEWIYm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 04:24:42 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50248 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754153AbeEWIYi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 04:23:57 -0400
-X-Google-Smtp-Source: AB8JxZpZgQZthVI55SP4A1ETr6JhoBLVtkLBiNgcsrggcE/7ezsYOrz25faLJKZuIrbUjIxHskJ1/j6GDfQhm+jgT3M=
+        Wed, 23 May 2018 04:24:38 -0400
+Date: Wed, 23 May 2018 09:24:24 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: Guenter Roeck <groeck@google.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        Takashi Iwai <tiwai@suse.com>,
+        Chintan Patel <chintan.m.patel@intel.com>,
+        Guenter Roeck <groeck@chromium.org>
+Subject: Re: [alsa-devel] [RFC/RFT PATCH] ASoC: topology: Improve backwards
+ compatibility with v4 topology files
+Message-ID: <20180523082424.GA4828@sirena.org.uk>
+References: <20180522165842.233949-1-groeck@google.com>
+ <fb9aebba-919a-2e80-aec7-2fd44e5e1861@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180522235028.80564-1-joel@joelfernandes.org>
-References: <20180522235028.80564-1-joel@joelfernandes.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 23 May 2018 10:23:56 +0200
-X-Google-Sender-Auth: AQL0W9ghiQitNYBYvbivT5T6Mok
-Message-ID: <CAJZ5v0hKB7s52K+=0Gk-_10tLzORN+VXnJuVe9odyEdwgK-PnQ@mail.gmail.com>
-Subject: Re: [PATCH RFC] schedutil: Address the r/w ordering race in kthread
-To: "Joel Fernandes (Google)" <joelaf@google.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>, Todd Kjos <tkjos@google.com>,
-        Claudio Scordino <claudio@evidence.eu.com>, kernel-team@android.com,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="y0ulUmNC+osPPQO6"
+Content-Disposition: inline
+In-Reply-To: <fb9aebba-919a-2e80-aec7-2fd44e5e1861@linux.intel.com>
+X-Cookie: Excellent day to have a rotten day.
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 1:50 AM, Joel Fernandes (Google)
-<joelaf@google.com> wrote:
-> Currently there is a race in schedutil code for slow-switch single-CPU
-> systems. Fix it by enforcing ordering the write to work_in_progress to
-> happen before the read of next_freq.
->
-> Kthread                                       Sched update
->
-> sugov_work()                                  sugov_update_single()
->
->       lock();
->       // The CPU is free to rearrange below
->       // two in any order, so it may clear
->       // the flag first and then read next
->       // freq. Lets assume it does.
->       work_in_progress = false
->
->                                                if (work_in_progress)
->                                                      return;
->
->                                                sg_policy->next_freq = 0;
->       freq = sg_policy->next_freq;
->                                                sg_policy->next_freq = real-freq;
->       unlock();
->
-> Reported-by: Viresh Kumar <viresh.kumar@linaro.org>
-> CC: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> CC: Peter Zijlstra <peterz@infradead.org>
-> CC: Ingo Molnar <mingo@redhat.com>
-> CC: Patrick Bellasi <patrick.bellasi@arm.com>
-> CC: Juri Lelli <juri.lelli@redhat.com>
-> Cc: Luca Abeni <luca.abeni@santannapisa.it>
-> CC: Todd Kjos <tkjos@google.com>
-> CC: claudio@evidence.eu.com
-> CC: kernel-team@android.com
-> CC: linux-pm@vger.kernel.org
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> ---
-> I split this into separate patch, because this race can also happen in
-> mainline.
->
->  kernel/sched/cpufreq_schedutil.c | 7 +++++++
->  1 file changed, 7 insertions(+)
->
-> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-> index 5c482ec38610..ce7749da7a44 100644
-> --- a/kernel/sched/cpufreq_schedutil.c
-> +++ b/kernel/sched/cpufreq_schedutil.c
-> @@ -401,6 +401,13 @@ static void sugov_work(struct kthread_work *work)
->          */
->         raw_spin_lock_irqsave(&sg_policy->update_lock, flags);
->         freq = sg_policy->next_freq;
-> +
-> +       /*
-> +        * sugov_update_single can access work_in_progress without update_lock,
-> +        * make sure next_freq is read before work_in_progress is set.
-> +        */
-> +       smp_mb();
-> +
 
-This requires a corresponding barrier somewhere else.
+--y0ulUmNC+osPPQO6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
->         sg_policy->work_in_progress = false;
->         raw_spin_unlock_irqrestore(&sg_policy->update_lock, flags);
->
-> --
+On Tue, May 22, 2018 at 02:59:35PM -0500, Pierre-Louis Bossart wrote:
 
-Also, as I said I actually would prefer to use the spinlock in the
-one-CPU case when the kthread is used.
+> I am also not convinced by the notion that maintaining topology files is
+> only a userspace/distro issue. This would mean some distros will have access
+> to the required topology files, possibly enabling DSP processing
+> capabilities, but other will not and will not be able to enable even basic
+> playback/capture. Just like we have a basic firmware with limited
+> functionality in /lib/firmware/intel, it would make sense to require a basic
+> .conf file in alsa-lib for every upstream machine driver - along possibly
+> with a basic UCM file so that audio works no matter what distro people use.
 
-I'll have a patch for that shortly.
+The point here is that people should be able to update their kernel
+without updating their userspace so things have to work with whatever
+they have right now - anything that relies on shipping new firmware or
+configuration files to userspace is a problem.
+
+--y0ulUmNC+osPPQO6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsFJTcACgkQJNaLcl1U
+h9AS4wf+NiCBQ9NPvTyXDKTk07Ae2ufTmBc4iMUvFK5il01eXr02pmf2FtRRodk0
+M9R1BVCtmPBDeruSIAbnA9x+u6SUxWwszTbDp6AL5p7oz5VjyJ9o9XBcWcvXKivy
+iB3uIommTHeY+9ESd3HBO7SI2UfZtgpVxa9pqYWpIlUyjpeAq7UwN34qbqdmuRu4
+tm8n3//+hp09MfiixFoWmOdfbNPIh8iz4sPYSzahAYZ7fYgN355eOE4yLDuZPB08
+DsXRyGBqHWD3uIaleZXIvyatKjyJI1uLpS8xb+E64ntcblwh8ph7rrf3Ojb44PCp
+6FXCx4HBw1TNTzECC11WsQ8FvZt6Cw==
+=m9Pa
+-----END PGP SIGNATURE-----
+
+--y0ulUmNC+osPPQO6--
