@@ -1,1026 +1,613 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934586AbeEWUFV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 16:05:21 -0400
-Received: from smtprelay0205.hostedemail.com ([216.40.44.205]:40087 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933729AbeEWUFO (ORCPT
+        id S934745AbeEWUI1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 16:08:27 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:43138 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933518AbeEWUIY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 16:05:14 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::::::::::::::::::::::::,RULES_HIT:69:146:327:355:379:541:960:967:968:973:982:988:989:1260:1345:1437:1500:1605:1730:1747:1777:1792:1801:1981:2194:2198:2199:2200:2393:2525:2559:2563:2682:2685:2731:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3865:3866:3867:3868:3870:3871:3872:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4250:4321:4384:4605:5007:6261:6691:6737:7903:8603:8957:9025:10004:10848:11026:11914:12043:12048:12296:12438:12555:12679:12683:12698:12737:12895:12986:13869:13870:13972:14394:14877:21080:21220:21222:21325:21433:21451:21524:21611:21627:21740:30005:30009:30012:30029:30034:30045:30046:30054:30075,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:22,LUA_SUMMARY:none
-X-HE-Tag: coal05_8446af54c5608
-X-Filterd-Recvd-Size: 42702
-From: Joe Perches <joe@perches.com>
-To: Jens Axboe <axboe@kernel.dk>, "Ed L. Cashin" <ed.cashin@acm.org>,
-        Philipp Reisner <philipp.reisner@linbit.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Jiri Kosina <jikos@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
-        linux-block@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
-        Sage Weil <sage@redhat.com>, Alex Elder <elder@kernel.org>,
-        Joshua Morris <josh.h.morris@us.ibm.com>,
-        Philip Kelleher <pjk1939@linux.vnet.ibm.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        =?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>
-Cc: linux-kernel@vger.kernel.org, drbd-dev@lists.linbit.com,
-        nbd@other.debian.org, ceph-devel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        xen-devel@lists.xenproject.org
-Subject: [PATCH] block drivers/block: Use octal not symbolic permissions
-Date: Wed, 23 May 2018 13:05:04 -0700
-Message-Id: <5e97a292c1ba38a6b5a0caa271d85dc3de1b2aa7.1527105857.git.joe@perches.com>
-X-Mailer: git-send-email 2.15.0
+        Wed, 23 May 2018 16:08:24 -0400
+X-Google-Smtp-Source: AB8JxZpSAd5xINE0lotspj0ZWrBcBJA/1rzWqIvV5rnOLnOXJOHWsY3zyTZlJw+lDGn4mzQi2UU41Q==
+Subject: Re: [PATCH v9 2/2] leds: lm3601x: Introduce the lm3601x LED driver
+To: Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org, mark.rutland@arm.com,
+        andy.shevchenko@gmail.com
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org
+References: <20180523115129.21674-1-dmurphy@ti.com>
+ <20180523115129.21674-2-dmurphy@ti.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <b209a1d4-026b-642e-376b-50ce8f00b79a@gmail.com>
+Date: Wed, 23 May 2018 22:07:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180523115129.21674-2-dmurphy@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the S_<FOO> symbolic permissions to their octal equivalents as
-using octal and not symbolic permissions is preferred by many as more
-readable.
+Hi Dan,
 
-see: https://lkml.org/lkml/2016/8/2/1945
+Thank you for the updated set.
 
-Done with automated conversion via:
-$ ./scripts/checkpatch.pl -f --types=SYMBOLIC_PERMS --fix-inplace <files...>
+On 05/23/2018 01:51 PM, Dan Murphy wrote:
+> Introduce the family of LED devices that can
+> drive a torch, strobe or IR LED.
+> 
+> The LED driver can be configured with a strobe
+> timer to execute a strobe flash.  The IR LED
+> brightness is controlled via the torch brightness
+> register.
+> 
+> The data sheet for each the LM36010 and LM36011
+> LED drivers can be found here:
+> http://www.ti.com/product/LM36010
+> http://www.ti.com/product/LM36011
+> 
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> ---
+> 
+> v9 - Changed "strobe" to flash in some cases, removed some redundant variable
+> assignments, updated a couple of line to make them more readable, converted to
+> probe_new from old probe, and change err to ret - https://patchwork.kernel.org/patch/10418731/
+> 
+> v8 - Removed OF Kconfig dependency, change strobe to flash, updated label generation,
+> fixed brightness calculation, added mutex_destroy and flash_unregister - https://patchwork.kernel.org/patch/10416163/
+> v7 - Numerous fixes to many to list.  Highlights are moved from OF APIs to device_property
+> APIs, updated LED registration, timeout to reg algorithim, and fixed label generation -
+> https://patchwork.kernel.org/patch/10401437/
+> v6 - This driver has been heavily modified from v5.  There is no longer reading
+> of individual child nodes.  There are too many changes to list here see -
+> https://patchwork.kernel.org/patch/10392123/
+> v5 - Fixed magic numbers, change reg cache type, added of_put_node to release
+> the dt node ref, and I did not change the remove function to leave the LED in its
+> state on driver removal - https://patchwork.kernel.org/patch/10391741/
+> v4 - Fixed Cocci issue using ARRAY_SIZE - https://patchwork.kernel.org/patch/10389259/
+> v3 - removed wildcard dt compatible, fixed copyright, fixed struct doc, removed
+> RO registers from default, added regmap volatile for FLAGS_REG, updated regmap cache type,
+> fixed unlock and extra semi colon in strobe_set, removed unnecessary out label
+> in led register and fixed checking of the ret in brightness_set - https://patchwork.kernel.org/patch/10386243/
+> v2 - Fixed kbuild issue and removed unused cdev_strobe - https://patchwork.kernel.org/patch/10384585/
+> 
+>   drivers/leds/Kconfig        |   9 +
+>   drivers/leds/Makefile       |   1 +
+>   drivers/leds/leds-lm3601x.c | 487 ++++++++++++++++++++++++++++++++++++
+>   3 files changed, 497 insertions(+)
+>   create mode 100644 drivers/leds/leds-lm3601x.c
+> 
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 2c896c0e69e1..d95d436e6089 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -145,6 +145,15 @@ config LEDS_LM3692X
+>   	  This option enables support for the TI LM3692x family
+>   	  of white LED string drivers used for backlighting.
+>   
+> +config LEDS_LM3601X
+> +	tristate "LED support for LM3601x Chips"
+> +	depends on LEDS_CLASS && I2C
+> +	depends on LEDS_CLASS_FLASH
+> +	select REGMAP_I2C
+> +	help
+> +	  This option enables support for the TI LM3601x family
+> +	  of flash, torch and indicator classes.
+> +
+>   config LEDS_LOCOMO
+>   	tristate "LED Support for Locomo device"
+>   	depends on LEDS_CLASS
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index 91eca81cae82..b79807fe1b67 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -76,6 +76,7 @@ obj-$(CONFIG_LEDS_MLXREG)		+= leds-mlxreg.o
+>   obj-$(CONFIG_LEDS_NIC78BX)		+= leds-nic78bx.o
+>   obj-$(CONFIG_LEDS_MT6323)		+= leds-mt6323.o
+>   obj-$(CONFIG_LEDS_LM3692X)		+= leds-lm3692x.o
+> +obj-$(CONFIG_LEDS_LM3601X)		+= leds-lm3601x.o
+>   
+>   # LED SPI Drivers
+>   obj-$(CONFIG_LEDS_DAC124S085)		+= leds-dac124s085.o
+> diff --git a/drivers/leds/leds-lm3601x.c b/drivers/leds/leds-lm3601x.c
+> new file mode 100644
+> index 000000000000..081aa71e43a3
+> --- /dev/null
+> +++ b/drivers/leds/leds-lm3601x.c
+> @@ -0,0 +1,487 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Flash and torch driver for Texas Instruments LM3601X LED
+> +// Flash driver chip family
+> +// Copyright (C) 2018 Texas Instruments Incorporated - http://www.ti.com/
+> +
+> +#include <linux/delay.h>
+> +#include <linux/i2c.h>
+> +#include <linux/leds.h>
+> +#include <linux/led-class-flash.h>
+> +#include <linux/module.h>
+> +#include <linux/regmap.h>
+> +#include <linux/slab.h>
+> +#include <uapi/linux/uleds.h>
+> +
+> +#define LM3601X_LED_IR		0x0
+> +#define LM3601X_LED_TORCH	0x1
+> +
+> +/* Registers */
+> +#define LM3601X_ENABLE_REG	0x01
+> +#define LM3601X_CFG_REG		0x02
+> +#define LM3601X_LED_FLASH_REG	0x03
+> +#define LM3601X_LED_TORCH_REG	0x04
+> +#define LM3601X_FLAGS_REG	0x05
+> +#define LM3601X_DEV_ID_REG	0x06
+> +
+> +#define LM3601X_SW_RESET	BIT(7)
+> +
+> +/* Enable Mode bits */
+> +#define LM3601X_MODE_STANDBY	0x00
+> +#define LM3601X_MODE_IR_DRV	BIT(0)
+> +#define LM3601X_MODE_TORCH	BIT(1)
+> +#define LM3601X_MODE_STROBE	(BIT(0) | BIT(1))
+> +#define LM3601X_STRB_EN		BIT(2)
+> +#define LM3601X_STRB_EDGE_TRIG	BIT(3)
+> +#define LM3601X_IVFM_EN		BIT(4)
+> +
+> +#define LM36010_BOOST_LIMIT_28	BIT(5)
+> +#define LM36010_BOOST_FREQ_4MHZ	BIT(6)
+> +#define LM36010_BOOST_MODE_PASS	BIT(7)
+> +
+> +/* Flag Mask */
+> +#define LM3601X_FLASH_TIME_OUT	BIT(0)
+> +#define LM3601X_UVLO_FAULT	BIT(1)
+> +#define LM3601X_THERM_SHUTDOWN	BIT(2)
+> +#define LM3601X_THERM_CURR	BIT(3)
+> +#define LM36010_CURR_LIMIT	BIT(4)
+> +#define LM3601X_SHORT_FAULT	BIT(5)
+> +#define LM3601X_IVFM_TRIP	BIT(6)
+> +#define LM36010_OVP_FAULT	BIT(7)
+> +
+> +#define LM3601X_MAX_TORCH_I_UA	376000
+> +#define LM3601X_MIN_TORCH_I_UA	2400
+> +#define LM3601X_TORCH_REG_DIV	2965
+> +
+> +#define LM3601X_MAX_STROBE_I_UA	1500000
+> +#define LM3601X_MIN_STROBE_I_UA	11000
+> +#define LM3601X_STROBE_REG_DIV	11800
+> +
+> +#define LM3601X_TIMEOUT_MASK	0x1e
+> +#define LM3601X_ENABLE_MASK	(LM3601X_MODE_IR_DRV | LM3601X_MODE_TORCH)
+> +
+> +#define LM3601X_LOWER_STEP_US	40000
+> +#define LM3601X_UPPER_STEP_US	200000
+> +#define LM3601X_MIN_TIMEOUT_US	40000
+> +#define LM3601X_MAX_TIMEOUT_US	1600000
+> +#define LM3601X_TIMEOUT_XOVER_US 400000
+> +
+> +enum lm3601x_type {
+> +	CHIP_LM36010 = 0,
+> +	CHIP_LM36011,
+> +};
+> +
+> +/**
+> + * struct lm3601x_led -
+> + * @fled_cdev: flash LED class device pointer
+> + * @client: Pointer to the I2C client
+> + * @regmap: Devices register map
+> + * @lock: Lock for reading/writing the device
+> + * @led_name: LED label for the Torch or IR LED
+> + * @flash_timeout: the timeout for the flash
+> + * @last_flag: last known flags register value
+> + * @torch_current_max: maximum current for the torch
+> + * @flash_current_max: maximum current for the flash
+> + * @max_flash_timeout: maximum timeout for the flash
+> + * @led_mode: The mode to enable either IR or Torch
+> + */
+> +struct lm3601x_led {
+> +	struct led_classdev_flash fled_cdev;
+> +	struct i2c_client *client;
+> +	struct regmap *regmap;
+> +	struct mutex lock;
+> +
+> +	char led_name[LED_MAX_NAME_SIZE];
+> +
+> +	unsigned int flash_timeout;
+> +	unsigned int last_flag;
+> +
+> +	u32 torch_current_max;
+> +	u32 flash_current_max;
+> +	u32 max_flash_timeout;
+> +
+> +	u32 led_mode;
+> +};
+> +
+> +static const struct reg_default lm3601x_regmap_defs[] = {
+> +	{ LM3601X_ENABLE_REG, 0x20 },
+> +	{ LM3601X_CFG_REG, 0x15 },
+> +	{ LM3601X_LED_FLASH_REG, 0x00 },
+> +	{ LM3601X_LED_TORCH_REG, 0x00 },
+> +};
+> +
+> +static bool lm3601x_volatile_reg(struct device *dev, unsigned int reg)
+> +{
+> +	switch (reg) {
+> +	case LM3601X_FLAGS_REG:
+> +		return true;
+> +	default:
+> +		return false;
+> +	}
+> +}
+> +
+> +static const struct regmap_config lm3601x_regmap = {
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +
+> +	.max_register = LM3601X_DEV_ID_REG,
+> +	.reg_defaults = lm3601x_regmap_defs,
+> +	.num_reg_defaults = ARRAY_SIZE(lm3601x_regmap_defs),
+> +	.cache_type = REGCACHE_RBTREE,
+> +	.volatile_reg = lm3601x_volatile_reg,
+> +};
+> +
+> +static struct lm3601x_led *fled_cdev_to_led(struct led_classdev_flash *fled_cdev)
+> +{
+> +	return container_of(fled_cdev, struct lm3601x_led, fled_cdev);
+> +}
+> +
+> +static int lm3601x_read_faults(struct lm3601x_led *led)
+> +{
+> +	int flags_val;
+> +	int ret;
+> +
+> +	ret = regmap_read(led->regmap, LM3601X_FLAGS_REG, &flags_val);
+> +	if (ret < 0)
+> +		return -EIO;
+> +
+> +	led->last_flag = 0;
+> +
+> +	if (flags_val & LM36010_OVP_FAULT)
+> +		led->last_flag |= LED_FAULT_OVER_VOLTAGE;
+> +
+> +	if (flags_val & (LM3601X_THERM_SHUTDOWN | LM3601X_THERM_CURR))
+> +		led->last_flag |= LED_FAULT_OVER_TEMPERATURE;
+> +
+> +	if (flags_val & LM3601X_SHORT_FAULT)
+> +		led->last_flag |= LED_FAULT_SHORT_CIRCUIT;
+> +
+> +	if (flags_val & LM36010_CURR_LIMIT)
+> +		led->last_flag |= LED_FAULT_OVER_CURRENT;
+> +
+> +	if (flags_val & LM3601X_UVLO_FAULT)
+> +		led->last_flag |= LED_FAULT_UNDER_VOLTAGE;
+> +
+> +	if (flags_val & LM3601X_IVFM_TRIP)
+> +		led->last_flag |= LED_FAULT_INPUT_VOLTAGE;
+> +
+> +	if (flags_val & LM3601X_THERM_SHUTDOWN)
+> +		led->last_flag |= LED_FAULT_LED_OVER_TEMPERATURE;
+> +
+> +	return led->last_flag;
+> +}
+> +
+> +static int lm3601x_brightness_set(struct led_classdev *cdev,
+> +					enum led_brightness brightness)
+> +{
+> +	struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(cdev);
+> +	struct lm3601x_led *led = fled_cdev_to_led(fled_cdev);
+> +	int ret, led_mode_val;
+> +
+> +	mutex_lock(&led->lock);
+> +
+> +	ret = lm3601x_read_faults(led);
+> +	if (ret < 0)
+> +		goto out;
+> +
+> +	if (led->led_mode == LM3601X_LED_TORCH)
+> +		led_mode_val = LM3601X_MODE_TORCH;
+> +	else
+> +		led_mode_val = LM3601X_MODE_IR_DRV;
+> +
+> +	if (brightness == LED_OFF) {
+> +		ret = regmap_update_bits(led->regmap, LM3601X_ENABLE_REG,
+> +					led_mode_val, LED_OFF);
+> +		goto out;
+> +	}
+> +
+> +	ret = regmap_write(led->regmap, LM3601X_LED_TORCH_REG, brightness);
+> +	if (ret < 0)
+> +		goto out;
+> +
+> +	ret = regmap_update_bits(led->regmap, LM3601X_ENABLE_REG,
+> +				LM3601X_MODE_TORCH | LM3601X_MODE_IR_DRV,
+> +				led_mode_val);
+> +out:
+> +	mutex_unlock(&led->lock);
+> +	return ret;
+> +}
+> +
+> +static int lm3601x_strobe_set(struct led_classdev_flash *fled_cdev,
+> +				bool state)
+> +{
+> +	struct lm3601x_led *led = fled_cdev_to_led(fled_cdev);
+> +	int timeout_reg_val;
+> +	int current_timeout;
+> +	int ret;
+> +
+> +	mutex_lock(&led->lock);
+> +
+> +	ret = regmap_read(led->regmap, LM3601X_CFG_REG, &current_timeout);
+> +	if (ret < 0)
+> +		goto out;
+> +
+> +	if (led->flash_timeout >= LM3601X_TIMEOUT_XOVER_US)
+> +		timeout_reg_val = led->flash_timeout / LM3601X_UPPER_STEP_US + 0x07;
+> +	else
+> +		timeout_reg_val = led->flash_timeout / LM3601X_LOWER_STEP_US - 0x01;
+> +
+> +	if (led->flash_timeout != current_timeout)
+> +		ret = regmap_update_bits(led->regmap, LM3601X_CFG_REG,
+> +					LM3601X_TIMEOUT_MASK, timeout_reg_val);
+> +
+> +	if (state)
+> +		ret = regmap_update_bits(led->regmap, LM3601X_ENABLE_REG,
+> +					LM3601X_MODE_TORCH | LM3601X_MODE_IR_DRV,
+> +					LM3601X_MODE_STROBE);
+> +	else
+> +		ret = regmap_update_bits(led->regmap, LM3601X_ENABLE_REG,
+> +					LM3601X_MODE_STROBE, LED_OFF);
+> +
+> +	ret = lm3601x_read_faults(led);
+> +out:
+> +	mutex_unlock(&led->lock);
+> +	return ret;
+> +}
+> +
+> +static int lm3601x_flash_brightness_set(struct led_classdev_flash *fled_cdev,
+> +					u32 brightness)
+> +{
+> +	struct lm3601x_led *led = fled_cdev_to_led(fled_cdev);
+> +	u8 brightness_val;
+> +	int ret;
+> +
+> +	mutex_lock(&led->lock);
+> +	ret = lm3601x_read_faults(led);
+> +	if (ret < 0)
+> +		goto out;
+> +
+> +	if (brightness == LED_OFF) {
+> +		ret = regmap_update_bits(led->regmap, LM3601X_ENABLE_REG,
+> +					LM3601X_MODE_STROBE, LED_OFF);
+> +		goto out;
+> +	}
+> +
+> +	brightness_val = brightness / LM3601X_STROBE_REG_DIV;
+> +
+> +	ret = regmap_write(led->regmap, LM3601X_LED_FLASH_REG, brightness_val);
+> +out:
+> +	mutex_unlock(&led->lock);
+> +	return ret;
+> +}
+> +
+> +static int lm3601x_flash_timeout_set(struct led_classdev_flash *fled_cdev,
+> +				u32 timeout)
+> +{
+> +	struct lm3601x_led *led = fled_cdev_to_led(fled_cdev);
+> +
+> +	mutex_lock(&led->lock);
+> +
+> +	led->flash_timeout = timeout;
+> +
+> +	mutex_unlock(&led->lock);
+> +
+> +	return 0;
+> +}
+> +
+> +static int lm3601x_strobe_get(struct led_classdev_flash *fled_cdev, bool *state)
+> +{
+> +	struct lm3601x_led *led = fled_cdev_to_led(fled_cdev);
+> +	int strobe_state;
+> +	int ret;
+> +
+> +	mutex_lock(&led->lock);
+> +
+> +	ret = regmap_read(led->regmap, LM3601X_ENABLE_REG, &strobe_state);
+> +	if (ret < 0)
+> +		goto out;
+> +
+> +	*state = strobe_state & LM3601X_MODE_STROBE;
+> +
+> +out:
+> +	mutex_unlock(&led->lock);
+> +	return ret;
+> +}
+> +
+> +static int lm3601x_flash_fault_get(struct led_classdev_flash *fled_cdev,
+> +				u32 *fault)
+> +{
+> +	struct lm3601x_led *led = fled_cdev_to_led(fled_cdev);
+> +
+> +	lm3601x_read_faults(led);
+> +
+> +	*fault = led->last_flag;
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct led_flash_ops flash_ops = {
+> +	.flash_brightness_set	= lm3601x_flash_brightness_set,
+> +	.strobe_set		= lm3601x_strobe_set,
+> +	.strobe_get		= lm3601x_strobe_get,
+> +	.timeout_set		= lm3601x_flash_timeout_set,
+> +	.fault_get		= lm3601x_flash_fault_get,
+> +};
+> +
+> +static int lm3601x_register_leds(struct lm3601x_led *led)
+> +{
+> +	struct led_classdev *led_cdev;
+> +	struct led_flash_setting *setting;
+> +
+> +	led->fled_cdev.ops = &flash_ops;
+> +
+> +	setting = &led->fled_cdev.timeout;
+> +	setting->min = LM3601X_MIN_TIMEOUT_US;
+> +	setting->max = led->max_flash_timeout;
+> +	setting->step = LM3601X_LOWER_STEP_US;
+> +	setting->val = led->max_flash_timeout;
+> +
+> +	setting = &led->fled_cdev.brightness;
+> +	setting->min = LM3601X_MIN_STROBE_I_UA;
+> +	setting->max = led->flash_current_max;
+> +	setting->step = LM3601X_TORCH_REG_DIV;
+> +	setting->val = led->flash_current_max;
+> +
+> +	led_cdev = &led->fled_cdev.led_cdev;
+> +	led_cdev->name = led->led_name;
+> +	led_cdev->brightness_set_blocking = lm3601x_brightness_set;
+> +	led_cdev->max_brightness = DIV_ROUND_UP(led->torch_current_max,
+> +						LM3601X_TORCH_REG_DIV);
+> +	led_cdev->flags |= LED_DEV_CAP_FLASH;
+> +
+> +	return led_classdev_flash_register(&led->client->dev, &led->fled_cdev);
+> +}
+> +
+> +static int lm3601x_parse_node(struct lm3601x_led *led)
+> +{
+> +	struct fwnode_handle *child = NULL;
+> +	int ret = -ENODEV;
+> +	const char *name;
+> +
+> +	child = device_get_next_child_node(&led->client->dev, child);
+> +	if (!child) {
+> +		dev_err(&led->client->dev, "No LED Child node\n");
+> +		return ret;
+> +	}
+> +
+> +	ret = fwnode_property_read_u32(child, "reg", &led->led_mode);
+> +	if (ret) {
+> +		dev_err(&led->client->dev, "reg DT property missing\n");
+> +		goto out_err;
+> +	}
+> +
+> +	if (led->led_mode > LM3601X_LED_TORCH ||
+> +	    led->led_mode < LM3601X_LED_IR) {
+> +		dev_warn(&led->client->dev, "Invalid led mode requested\n");
+> +		ret = -EINVAL;
+> +		goto out_err;
+> +	}
+> +
+> +	ret = fwnode_property_read_string(child, "label", &name);
+> +	if (ret) {
+> +		if (led->led_mode == LM3601X_LED_TORCH)
+> +			name = "torch";
+> +		else
+> +			name = "infrared";
+> +	}
+> +
+> +	snprintf(led->led_name, sizeof(led->led_name),
+> +		"%s:%s", led->client->name, name);
+> +
+> +	ret = fwnode_property_read_u32(child, "led-max-microamp",
+> +					&led->torch_current_max);
+> +	if (ret) {
+> +		dev_warn(&led->client->dev,
+> +			"led-max-microamp DT property missing\n");
+> +		goto out_err;
+> +	}
+> +
+> +	ret = fwnode_property_read_u32(child, "flash-max-microamp",
+> +				&led->flash_current_max);
+> +	if (ret) {
+> +		dev_warn(&led->client->dev,
+> +			 "flash-max-microamp DT property missing\n");
+> +		goto out_err;
+> +	}
+> +
+> +	ret = fwnode_property_read_u32(child, "flash-max-timeout-us",
+> +				&led->max_flash_timeout);
+> +	if (ret) {
+> +		dev_warn(&led->client->dev,
+> +			 "flash-max-timeout-us DT property missing\n");
+> +		goto out_err;
+> +	}
+> +
+> +out_err:
+> +	fwnode_handle_put(child);
+> +	return ret;
+> +}
+> +
+> +static int lm3601x_probe(struct i2c_client *client)
+> +{
+> +	struct lm3601x_led *led;
+> +	int ret;
+> +
+> +	led = devm_kzalloc(&client->dev, sizeof(*led), GFP_KERNEL);
+> +	if (!led)
+> +		return -ENOMEM;
+> +
+> +	led->client = client;
+> +	i2c_set_clientdata(client, led);
+> +
+> +	ret = lm3601x_parse_node(led);
+> +	if (ret)
+> +		return -ENODEV;
+> +
+> +	led->regmap = devm_regmap_init_i2c(client, &lm3601x_regmap);
+> +	if (IS_ERR(led->regmap)) {
+> +		ret = PTR_ERR(led->regmap);
+> +		dev_err(&client->dev,
+> +			"Failed to allocate register map: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	mutex_init(&led->lock);
+> +
+> +	return lm3601x_register_leds(led);
+> +}
+> +
+> +static int lm3601x_remove(struct i2c_client *client)
+> +{
+> +	struct lm3601x_led *led = i2c_get_clientdata(client);
+> +
+> +	led_classdev_flash_unregister(&led->fled_cdev);
+> +	mutex_destroy(&led->lock);
+> +
+> +	return regmap_update_bits(led->regmap, LM3601X_ENABLE_REG,
+> +			   LM3601X_ENABLE_MASK,
+> +			   LM3601X_MODE_STANDBY);
+> +}
+> +
+> +static const struct i2c_device_id lm3601x_id[] = {
+> +	{ "LM36010", CHIP_LM36010 },
+> +	{ "LM36011", CHIP_LM36011 },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(i2c, lm3601x_id);
+> +
+> +static const struct of_device_id of_lm3601x_leds_match[] = {
+> +	{ .compatible = "ti,lm36010", },
+> +	{ .compatible = "ti,lm36011", },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, of_lm3601x_leds_match);
+> +
+> +static struct i2c_driver lm3601x_i2c_driver = {
+> +	.driver = {
+> +		.name = "lm3601x",
+> +		.of_match_table = of_lm3601x_leds_match,
+> +	},
+> +	.probe_new = lm3601x_probe,
+> +	.remove = lm3601x_remove,
+> +	.id_table = lm3601x_id,
+> +};
+> +module_i2c_driver(lm3601x_i2c_driver);
+> +
+> +MODULE_DESCRIPTION("Texas Instruments Flash Lighting driver for LM3601X");
+> +MODULE_AUTHOR("Dan Murphy <dmurphy@ti.com>");
+> +MODULE_LICENSE("GPL v2");
+> 
 
-Miscellanea:
+Patch set applied to the for-next branch of linux-leds.git.
 
-o Wrapped modified multi-line calls to a single line where appropriate
-o Realign modified multi-line calls to open parenthesis
-
-Signed-off-by: Joe Perches <joe@perches.com>
----
- block/blk-integrity.c               | 12 +++----
- block/blk-mq-sysfs.c                |  6 ++--
- block/blk-sysfs.c                   | 68 ++++++++++++++++++-------------------
- block/cfq-iosched.c                 |  2 +-
- block/deadline-iosched.c            |  3 +-
- block/genhd.c                       | 37 ++++++++++----------
- block/mq-deadline.c                 |  3 +-
- block/partition-generic.c           | 22 ++++++------
- drivers/block/DAC960.c              |  3 +-
- drivers/block/aoe/aoeblk.c          | 10 +++---
- drivers/block/brd.c                 |  6 ++--
- drivers/block/drbd/drbd_debugfs.c   | 20 +++++------
- drivers/block/drbd/drbd_main.c      |  4 +--
- drivers/block/floppy.c              |  2 +-
- drivers/block/loop.c                |  6 ++--
- drivers/block/mtip32xx/mtip32xx.c   | 11 +++---
- drivers/block/nbd.c                 |  2 +-
- drivers/block/null_blk.c            | 30 ++++++++--------
- drivers/block/pktcdvd.c             |  4 +--
- drivers/block/rbd.c                 | 44 ++++++++++++------------
- drivers/block/rsxx/core.c           |  6 ++--
- drivers/block/virtio_blk.c          |  6 ++--
- drivers/block/xen-blkback/blkback.c |  2 +-
- drivers/block/xen-blkback/xenbus.c  |  4 +--
- drivers/block/xen-blkfront.c        |  7 ++--
- 25 files changed, 156 insertions(+), 164 deletions(-)
-
-diff --git a/block/blk-integrity.c b/block/blk-integrity.c
-index feb30570eaf5..6121611e1316 100644
---- a/block/blk-integrity.c
-+++ b/block/blk-integrity.c
-@@ -333,34 +333,34 @@ static ssize_t integrity_device_show(struct blk_integrity *bi, char *page)
- }
- 
- static struct integrity_sysfs_entry integrity_format_entry = {
--	.attr = { .name = "format", .mode = S_IRUGO },
-+	.attr = { .name = "format", .mode = 0444 },
- 	.show = integrity_format_show,
- };
- 
- static struct integrity_sysfs_entry integrity_tag_size_entry = {
--	.attr = { .name = "tag_size", .mode = S_IRUGO },
-+	.attr = { .name = "tag_size", .mode = 0444 },
- 	.show = integrity_tag_size_show,
- };
- 
- static struct integrity_sysfs_entry integrity_interval_entry = {
--	.attr = { .name = "protection_interval_bytes", .mode = S_IRUGO },
-+	.attr = { .name = "protection_interval_bytes", .mode = 0444 },
- 	.show = integrity_interval_show,
- };
- 
- static struct integrity_sysfs_entry integrity_verify_entry = {
--	.attr = { .name = "read_verify", .mode = S_IRUGO | S_IWUSR },
-+	.attr = { .name = "read_verify", .mode = 0644 },
- 	.show = integrity_verify_show,
- 	.store = integrity_verify_store,
- };
- 
- static struct integrity_sysfs_entry integrity_generate_entry = {
--	.attr = { .name = "write_generate", .mode = S_IRUGO | S_IWUSR },
-+	.attr = { .name = "write_generate", .mode = 0644 },
- 	.show = integrity_generate_show,
- 	.store = integrity_generate_store,
- };
- 
- static struct integrity_sysfs_entry integrity_device_entry = {
--	.attr = { .name = "device_is_integrity_capable", .mode = S_IRUGO },
-+	.attr = { .name = "device_is_integrity_capable", .mode = 0444 },
- 	.show = integrity_device_show,
- };
- 
-diff --git a/block/blk-mq-sysfs.c b/block/blk-mq-sysfs.c
-index a54b4b070f1c..aafb44224c89 100644
---- a/block/blk-mq-sysfs.c
-+++ b/block/blk-mq-sysfs.c
-@@ -166,15 +166,15 @@ static struct attribute *default_ctx_attrs[] = {
- };
- 
- static struct blk_mq_hw_ctx_sysfs_entry blk_mq_hw_sysfs_nr_tags = {
--	.attr = {.name = "nr_tags", .mode = S_IRUGO },
-+	.attr = {.name = "nr_tags", .mode = 0444 },
- 	.show = blk_mq_hw_sysfs_nr_tags_show,
- };
- static struct blk_mq_hw_ctx_sysfs_entry blk_mq_hw_sysfs_nr_reserved_tags = {
--	.attr = {.name = "nr_reserved_tags", .mode = S_IRUGO },
-+	.attr = {.name = "nr_reserved_tags", .mode = 0444 },
- 	.show = blk_mq_hw_sysfs_nr_reserved_tags_show,
- };
- static struct blk_mq_hw_ctx_sysfs_entry blk_mq_hw_sysfs_cpus = {
--	.attr = {.name = "cpu_list", .mode = S_IRUGO },
-+	.attr = {.name = "cpu_list", .mode = 0444 },
- 	.show = blk_mq_hw_sysfs_cpus_show,
- };
- 
-diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
-index cae525b7aae6..31347e31daa3 100644
---- a/block/blk-sysfs.c
-+++ b/block/blk-sysfs.c
-@@ -502,187 +502,187 @@ static ssize_t queue_dax_show(struct request_queue *q, char *page)
- }
- 
- static struct queue_sysfs_entry queue_requests_entry = {
--	.attr = {.name = "nr_requests", .mode = S_IRUGO | S_IWUSR },
-+	.attr = {.name = "nr_requests", .mode = 0644 },
- 	.show = queue_requests_show,
- 	.store = queue_requests_store,
- };
- 
- static struct queue_sysfs_entry queue_ra_entry = {
--	.attr = {.name = "read_ahead_kb", .mode = S_IRUGO | S_IWUSR },
-+	.attr = {.name = "read_ahead_kb", .mode = 0644 },
- 	.show = queue_ra_show,
- 	.store = queue_ra_store,
- };
- 
- static struct queue_sysfs_entry queue_max_sectors_entry = {
--	.attr = {.name = "max_sectors_kb", .mode = S_IRUGO | S_IWUSR },
-+	.attr = {.name = "max_sectors_kb", .mode = 0644 },
- 	.show = queue_max_sectors_show,
- 	.store = queue_max_sectors_store,
- };
- 
- static struct queue_sysfs_entry queue_max_hw_sectors_entry = {
--	.attr = {.name = "max_hw_sectors_kb", .mode = S_IRUGO },
-+	.attr = {.name = "max_hw_sectors_kb", .mode = 0444 },
- 	.show = queue_max_hw_sectors_show,
- };
- 
- static struct queue_sysfs_entry queue_max_segments_entry = {
--	.attr = {.name = "max_segments", .mode = S_IRUGO },
-+	.attr = {.name = "max_segments", .mode = 0444 },
- 	.show = queue_max_segments_show,
- };
- 
- static struct queue_sysfs_entry queue_max_discard_segments_entry = {
--	.attr = {.name = "max_discard_segments", .mode = S_IRUGO },
-+	.attr = {.name = "max_discard_segments", .mode = 0444 },
- 	.show = queue_max_discard_segments_show,
- };
- 
- static struct queue_sysfs_entry queue_max_integrity_segments_entry = {
--	.attr = {.name = "max_integrity_segments", .mode = S_IRUGO },
-+	.attr = {.name = "max_integrity_segments", .mode = 0444 },
- 	.show = queue_max_integrity_segments_show,
- };
- 
- static struct queue_sysfs_entry queue_max_segment_size_entry = {
--	.attr = {.name = "max_segment_size", .mode = S_IRUGO },
-+	.attr = {.name = "max_segment_size", .mode = 0444 },
- 	.show = queue_max_segment_size_show,
- };
- 
- static struct queue_sysfs_entry queue_iosched_entry = {
--	.attr = {.name = "scheduler", .mode = S_IRUGO | S_IWUSR },
-+	.attr = {.name = "scheduler", .mode = 0644 },
- 	.show = elv_iosched_show,
- 	.store = elv_iosched_store,
- };
- 
- static struct queue_sysfs_entry queue_hw_sector_size_entry = {
--	.attr = {.name = "hw_sector_size", .mode = S_IRUGO },
-+	.attr = {.name = "hw_sector_size", .mode = 0444 },
- 	.show = queue_logical_block_size_show,
- };
- 
- static struct queue_sysfs_entry queue_logical_block_size_entry = {
--	.attr = {.name = "logical_block_size", .mode = S_IRUGO },
-+	.attr = {.name = "logical_block_size", .mode = 0444 },
- 	.show = queue_logical_block_size_show,
- };
- 
- static struct queue_sysfs_entry queue_physical_block_size_entry = {
--	.attr = {.name = "physical_block_size", .mode = S_IRUGO },
-+	.attr = {.name = "physical_block_size", .mode = 0444 },
- 	.show = queue_physical_block_size_show,
- };
- 
- static struct queue_sysfs_entry queue_chunk_sectors_entry = {
--	.attr = {.name = "chunk_sectors", .mode = S_IRUGO },
-+	.attr = {.name = "chunk_sectors", .mode = 0444 },
- 	.show = queue_chunk_sectors_show,
- };
- 
- static struct queue_sysfs_entry queue_io_min_entry = {
--	.attr = {.name = "minimum_io_size", .mode = S_IRUGO },
-+	.attr = {.name = "minimum_io_size", .mode = 0444 },
- 	.show = queue_io_min_show,
- };
- 
- static struct queue_sysfs_entry queue_io_opt_entry = {
--	.attr = {.name = "optimal_io_size", .mode = S_IRUGO },
-+	.attr = {.name = "optimal_io_size", .mode = 0444 },
- 	.show = queue_io_opt_show,
- };
- 
- static struct queue_sysfs_entry queue_discard_granularity_entry = {
--	.attr = {.name = "discard_granularity", .mode = S_IRUGO },
-+	.attr = {.name = "discard_granularity", .mode = 0444 },
- 	.show = queue_discard_granularity_show,
- };
- 
- static struct queue_sysfs_entry queue_discard_max_hw_entry = {
--	.attr = {.name = "discard_max_hw_bytes", .mode = S_IRUGO },
-+	.attr = {.name = "discard_max_hw_bytes", .mode = 0444 },
- 	.show = queue_discard_max_hw_show,
- };
- 
- static struct queue_sysfs_entry queue_discard_max_entry = {
--	.attr = {.name = "discard_max_bytes", .mode = S_IRUGO | S_IWUSR },
-+	.attr = {.name = "discard_max_bytes", .mode = 0644 },
- 	.show = queue_discard_max_show,
- 	.store = queue_discard_max_store,
- };
- 
- static struct queue_sysfs_entry queue_discard_zeroes_data_entry = {
--	.attr = {.name = "discard_zeroes_data", .mode = S_IRUGO },
-+	.attr = {.name = "discard_zeroes_data", .mode = 0444 },
- 	.show = queue_discard_zeroes_data_show,
- };
- 
- static struct queue_sysfs_entry queue_write_same_max_entry = {
--	.attr = {.name = "write_same_max_bytes", .mode = S_IRUGO },
-+	.attr = {.name = "write_same_max_bytes", .mode = 0444 },
- 	.show = queue_write_same_max_show,
- };
- 
- static struct queue_sysfs_entry queue_write_zeroes_max_entry = {
--	.attr = {.name = "write_zeroes_max_bytes", .mode = S_IRUGO },
-+	.attr = {.name = "write_zeroes_max_bytes", .mode = 0444 },
- 	.show = queue_write_zeroes_max_show,
- };
- 
- static struct queue_sysfs_entry queue_nonrot_entry = {
--	.attr = {.name = "rotational", .mode = S_IRUGO | S_IWUSR },
-+	.attr = {.name = "rotational", .mode = 0644 },
- 	.show = queue_show_nonrot,
- 	.store = queue_store_nonrot,
- };
- 
- static struct queue_sysfs_entry queue_zoned_entry = {
--	.attr = {.name = "zoned", .mode = S_IRUGO },
-+	.attr = {.name = "zoned", .mode = 0444 },
- 	.show = queue_zoned_show,
- };
- 
- static struct queue_sysfs_entry queue_nomerges_entry = {
--	.attr = {.name = "nomerges", .mode = S_IRUGO | S_IWUSR },
-+	.attr = {.name = "nomerges", .mode = 0644 },
- 	.show = queue_nomerges_show,
- 	.store = queue_nomerges_store,
- };
- 
- static struct queue_sysfs_entry queue_rq_affinity_entry = {
--	.attr = {.name = "rq_affinity", .mode = S_IRUGO | S_IWUSR },
-+	.attr = {.name = "rq_affinity", .mode = 0644 },
- 	.show = queue_rq_affinity_show,
- 	.store = queue_rq_affinity_store,
- };
- 
- static struct queue_sysfs_entry queue_iostats_entry = {
--	.attr = {.name = "iostats", .mode = S_IRUGO | S_IWUSR },
-+	.attr = {.name = "iostats", .mode = 0644 },
- 	.show = queue_show_iostats,
- 	.store = queue_store_iostats,
- };
- 
- static struct queue_sysfs_entry queue_random_entry = {
--	.attr = {.name = "add_random", .mode = S_IRUGO | S_IWUSR },
-+	.attr = {.name = "add_random", .mode = 0644 },
- 	.show = queue_show_random,
- 	.store = queue_store_random,
- };
- 
- static struct queue_sysfs_entry queue_poll_entry = {
--	.attr = {.name = "io_poll", .mode = S_IRUGO | S_IWUSR },
-+	.attr = {.name = "io_poll", .mode = 0644 },
- 	.show = queue_poll_show,
- 	.store = queue_poll_store,
- };
- 
- static struct queue_sysfs_entry queue_poll_delay_entry = {
--	.attr = {.name = "io_poll_delay", .mode = S_IRUGO | S_IWUSR },
-+	.attr = {.name = "io_poll_delay", .mode = 0644 },
- 	.show = queue_poll_delay_show,
- 	.store = queue_poll_delay_store,
- };
- 
- static struct queue_sysfs_entry queue_wc_entry = {
--	.attr = {.name = "write_cache", .mode = S_IRUGO | S_IWUSR },
-+	.attr = {.name = "write_cache", .mode = 0644 },
- 	.show = queue_wc_show,
- 	.store = queue_wc_store,
- };
- 
- static struct queue_sysfs_entry queue_fua_entry = {
--	.attr = {.name = "fua", .mode = S_IRUGO },
-+	.attr = {.name = "fua", .mode = 0444 },
- 	.show = queue_fua_show,
- };
- 
- static struct queue_sysfs_entry queue_dax_entry = {
--	.attr = {.name = "dax", .mode = S_IRUGO },
-+	.attr = {.name = "dax", .mode = 0444 },
- 	.show = queue_dax_show,
- };
- 
- static struct queue_sysfs_entry queue_wb_lat_entry = {
--	.attr = {.name = "wbt_lat_usec", .mode = S_IRUGO | S_IWUSR },
-+	.attr = {.name = "wbt_lat_usec", .mode = 0644 },
- 	.show = queue_wb_lat_show,
- 	.store = queue_wb_lat_store,
- };
- 
- #ifdef CONFIG_BLK_DEV_THROTTLING_LOW
- static struct queue_sysfs_entry throtl_sample_time_entry = {
--	.attr = {.name = "throttle_sample_time", .mode = S_IRUGO | S_IWUSR },
-+	.attr = {.name = "throttle_sample_time", .mode = 0644 },
- 	.show = blk_throtl_sample_time_show,
- 	.store = blk_throtl_sample_time_store,
- };
-diff --git a/block/cfq-iosched.c b/block/cfq-iosched.c
-index 6b9f6b1cd33b..82b6c27b3245 100644
---- a/block/cfq-iosched.c
-+++ b/block/cfq-iosched.c
-@@ -4786,7 +4786,7 @@ USEC_STORE_FUNCTION(cfq_target_latency_us_store, &cfqd->cfq_target_latency, 1, U
- #undef USEC_STORE_FUNCTION
- 
- #define CFQ_ATTR(name) \
--	__ATTR(name, S_IRUGO|S_IWUSR, cfq_##name##_show, cfq_##name##_store)
-+	__ATTR(name, 0644, cfq_##name##_show, cfq_##name##_store)
- 
- static struct elv_fs_entry cfq_attrs[] = {
- 	CFQ_ATTR(quantum),
-diff --git a/block/deadline-iosched.c b/block/deadline-iosched.c
-index 9de9f156e203..ef2f1f09e9b3 100644
---- a/block/deadline-iosched.c
-+++ b/block/deadline-iosched.c
-@@ -512,8 +512,7 @@ STORE_FUNCTION(deadline_fifo_batch_store, &dd->fifo_batch, 0, INT_MAX, 0);
- #undef STORE_FUNCTION
- 
- #define DD_ATTR(name) \
--	__ATTR(name, S_IRUGO|S_IWUSR, deadline_##name##_show, \
--				      deadline_##name##_store)
-+	__ATTR(name, 0644, deadline_##name##_show, deadline_##name##_store)
- 
- static struct elv_fs_entry deadline_attrs[] = {
- 	DD_ATTR(read_expire),
-diff --git a/block/genhd.c b/block/genhd.c
-index 066de6d321c7..cb65a3013480 100644
---- a/block/genhd.c
-+++ b/block/genhd.c
-@@ -1127,28 +1127,25 @@ static ssize_t disk_discard_alignment_show(struct device *dev,
- 	return sprintf(buf, "%d\n", queue_discard_alignment(disk->queue));
- }
- 
--static DEVICE_ATTR(range, S_IRUGO, disk_range_show, NULL);
--static DEVICE_ATTR(ext_range, S_IRUGO, disk_ext_range_show, NULL);
--static DEVICE_ATTR(removable, S_IRUGO, disk_removable_show, NULL);
--static DEVICE_ATTR(hidden, S_IRUGO, disk_hidden_show, NULL);
--static DEVICE_ATTR(ro, S_IRUGO, disk_ro_show, NULL);
--static DEVICE_ATTR(size, S_IRUGO, part_size_show, NULL);
--static DEVICE_ATTR(alignment_offset, S_IRUGO, disk_alignment_offset_show, NULL);
--static DEVICE_ATTR(discard_alignment, S_IRUGO, disk_discard_alignment_show,
--		   NULL);
--static DEVICE_ATTR(capability, S_IRUGO, disk_capability_show, NULL);
--static DEVICE_ATTR(stat, S_IRUGO, part_stat_show, NULL);
--static DEVICE_ATTR(inflight, S_IRUGO, part_inflight_show, NULL);
--static DEVICE_ATTR(badblocks, S_IRUGO | S_IWUSR, disk_badblocks_show,
--		disk_badblocks_store);
-+static DEVICE_ATTR(range, 0444, disk_range_show, NULL);
-+static DEVICE_ATTR(ext_range, 0444, disk_ext_range_show, NULL);
-+static DEVICE_ATTR(removable, 0444, disk_removable_show, NULL);
-+static DEVICE_ATTR(hidden, 0444, disk_hidden_show, NULL);
-+static DEVICE_ATTR(ro, 0444, disk_ro_show, NULL);
-+static DEVICE_ATTR(size, 0444, part_size_show, NULL);
-+static DEVICE_ATTR(alignment_offset, 0444, disk_alignment_offset_show, NULL);
-+static DEVICE_ATTR(discard_alignment, 0444, disk_discard_alignment_show, NULL);
-+static DEVICE_ATTR(capability, 0444, disk_capability_show, NULL);
-+static DEVICE_ATTR(stat, 0444, part_stat_show, NULL);
-+static DEVICE_ATTR(inflight, 0444, part_inflight_show, NULL);
-+static DEVICE_ATTR(badblocks, 0644, disk_badblocks_show, disk_badblocks_store);
- #ifdef CONFIG_FAIL_MAKE_REQUEST
- static struct device_attribute dev_attr_fail =
--	__ATTR(make-it-fail, S_IRUGO|S_IWUSR, part_fail_show, part_fail_store);
-+	__ATTR(make-it-fail, 0644, part_fail_show, part_fail_store);
- #endif
- #ifdef CONFIG_FAIL_IO_TIMEOUT
- static struct device_attribute dev_attr_fail_timeout =
--	__ATTR(io-timeout-fail,  S_IRUGO|S_IWUSR, part_timeout_show,
--		part_timeout_store);
-+	__ATTR(io-timeout-fail, 0644, part_timeout_show, part_timeout_store);
- #endif
- 
- static struct attribute *disk_attrs[] = {
-@@ -1900,9 +1897,9 @@ static ssize_t disk_events_poll_msecs_store(struct device *dev,
- 	return count;
- }
- 
--static const DEVICE_ATTR(events, S_IRUGO, disk_events_show, NULL);
--static const DEVICE_ATTR(events_async, S_IRUGO, disk_events_async_show, NULL);
--static const DEVICE_ATTR(events_poll_msecs, S_IRUGO|S_IWUSR,
-+static const DEVICE_ATTR(events, 0444, disk_events_show, NULL);
-+static const DEVICE_ATTR(events_async, 0444, disk_events_async_show, NULL);
-+static const DEVICE_ATTR(events_poll_msecs, 0644,
- 			 disk_events_poll_msecs_show,
- 			 disk_events_poll_msecs_store);
- 
-diff --git a/block/mq-deadline.c b/block/mq-deadline.c
-index 8ec0ba9f5386..099a9e05854c 100644
---- a/block/mq-deadline.c
-+++ b/block/mq-deadline.c
-@@ -630,8 +630,7 @@ STORE_FUNCTION(deadline_fifo_batch_store, &dd->fifo_batch, 0, INT_MAX, 0);
- #undef STORE_FUNCTION
- 
- #define DD_ATTR(name) \
--	__ATTR(name, S_IRUGO|S_IWUSR, deadline_##name##_show, \
--				      deadline_##name##_store)
-+	__ATTR(name, 0644, deadline_##name##_show, deadline_##name##_store)
- 
- static struct elv_fs_entry deadline_attrs[] = {
- 	DD_ATTR(read_expire),
-diff --git a/block/partition-generic.c b/block/partition-generic.c
-index db57cced9b98..93ef8ce568a1 100644
---- a/block/partition-generic.c
-+++ b/block/partition-generic.c
-@@ -179,18 +179,17 @@ ssize_t part_fail_store(struct device *dev,
- }
- #endif
- 
--static DEVICE_ATTR(partition, S_IRUGO, part_partition_show, NULL);
--static DEVICE_ATTR(start, S_IRUGO, part_start_show, NULL);
--static DEVICE_ATTR(size, S_IRUGO, part_size_show, NULL);
--static DEVICE_ATTR(ro, S_IRUGO, part_ro_show, NULL);
--static DEVICE_ATTR(alignment_offset, S_IRUGO, part_alignment_offset_show, NULL);
--static DEVICE_ATTR(discard_alignment, S_IRUGO, part_discard_alignment_show,
--		   NULL);
--static DEVICE_ATTR(stat, S_IRUGO, part_stat_show, NULL);
--static DEVICE_ATTR(inflight, S_IRUGO, part_inflight_show, NULL);
-+static DEVICE_ATTR(partition, 0444, part_partition_show, NULL);
-+static DEVICE_ATTR(start, 0444, part_start_show, NULL);
-+static DEVICE_ATTR(size, 0444, part_size_show, NULL);
-+static DEVICE_ATTR(ro, 0444, part_ro_show, NULL);
-+static DEVICE_ATTR(alignment_offset, 0444, part_alignment_offset_show, NULL);
-+static DEVICE_ATTR(discard_alignment, 0444, part_discard_alignment_show, NULL);
-+static DEVICE_ATTR(stat, 0444, part_stat_show, NULL);
-+static DEVICE_ATTR(inflight, 0444, part_inflight_show, NULL);
- #ifdef CONFIG_FAIL_MAKE_REQUEST
- static struct device_attribute dev_attr_fail =
--	__ATTR(make-it-fail, S_IRUGO|S_IWUSR, part_fail_show, part_fail_store);
-+	__ATTR(make-it-fail, 0644, part_fail_show, part_fail_store);
- #endif
- 
- static struct attribute *part_attrs[] = {
-@@ -291,8 +290,7 @@ static ssize_t whole_disk_show(struct device *dev,
- {
- 	return 0;
- }
--static DEVICE_ATTR(whole_disk, S_IRUSR | S_IRGRP | S_IROTH,
--		   whole_disk_show, NULL);
-+static DEVICE_ATTR(whole_disk, 0444, whole_disk_show, NULL);
- 
- /*
-  * Must be called either with bd_mutex held, before a disk can be opened or
-diff --git a/drivers/block/DAC960.c b/drivers/block/DAC960.c
-index 55d9ff54ce15..b7e4aa624667 100644
---- a/drivers/block/DAC960.c
-+++ b/drivers/block/DAC960.c
-@@ -6552,7 +6552,8 @@ static void DAC960_CreateProcEntries(DAC960_Controller_T *Controller)
- 			dac960_initial_status_proc_show, Controller);
- 	proc_create_single_data("current_status", 0, ControllerProcEntry,
- 			dac960_current_status_proc_show, Controller);
--	proc_create_data("user_command", S_IWUSR | S_IRUSR, ControllerProcEntry, &dac960_user_command_proc_fops, Controller);
-+	proc_create_data("user_command", 0600, ControllerProcEntry,
-+			 &dac960_user_command_proc_fops, Controller);
- 	Controller->ControllerProcEntry = ControllerProcEntry;
- }
- 
-diff --git a/drivers/block/aoe/aoeblk.c b/drivers/block/aoe/aoeblk.c
-index 027b876370bc..429ebb84b592 100644
---- a/drivers/block/aoe/aoeblk.c
-+++ b/drivers/block/aoe/aoeblk.c
-@@ -159,14 +159,14 @@ static int aoe_debugfs_open(struct inode *inode, struct file *file)
- 	return single_open(file, aoedisk_debugfs_show, inode->i_private);
- }
- 
--static DEVICE_ATTR(state, S_IRUGO, aoedisk_show_state, NULL);
--static DEVICE_ATTR(mac, S_IRUGO, aoedisk_show_mac, NULL);
--static DEVICE_ATTR(netif, S_IRUGO, aoedisk_show_netif, NULL);
-+static DEVICE_ATTR(state, 0444, aoedisk_show_state, NULL);
-+static DEVICE_ATTR(mac, 0444, aoedisk_show_mac, NULL);
-+static DEVICE_ATTR(netif, 0444, aoedisk_show_netif, NULL);
- static struct device_attribute dev_attr_firmware_version = {
--	.attr = { .name = "firmware-version", .mode = S_IRUGO },
-+	.attr = { .name = "firmware-version", .mode = 0444 },
- 	.show = aoedisk_show_fwver,
- };
--static DEVICE_ATTR(payload, S_IRUGO, aoedisk_show_payload, NULL);
-+static DEVICE_ATTR(payload, 0444, aoedisk_show_payload, NULL);
- 
- static struct attribute *aoe_attrs[] = {
- 	&dev_attr_state.attr,
-diff --git a/drivers/block/brd.c b/drivers/block/brd.c
-index 39c5b90cc187..bb976598ee43 100644
---- a/drivers/block/brd.c
-+++ b/drivers/block/brd.c
-@@ -331,15 +331,15 @@ static const struct block_device_operations brd_fops = {
-  * And now the modules code and kernel interface.
-  */
- static int rd_nr = CONFIG_BLK_DEV_RAM_COUNT;
--module_param(rd_nr, int, S_IRUGO);
-+module_param(rd_nr, int, 0444);
- MODULE_PARM_DESC(rd_nr, "Maximum number of brd devices");
- 
- unsigned long rd_size = CONFIG_BLK_DEV_RAM_SIZE;
--module_param(rd_size, ulong, S_IRUGO);
-+module_param(rd_size, ulong, 0444);
- MODULE_PARM_DESC(rd_size, "Size of each RAM disk in kbytes.");
- 
- static int max_part = 1;
--module_param(max_part, int, S_IRUGO);
-+module_param(max_part, int, 0444);
- MODULE_PARM_DESC(max_part, "Num Minors to reserve between devices");
- 
- MODULE_LICENSE("GPL");
-diff --git a/drivers/block/drbd/drbd_debugfs.c b/drivers/block/drbd/drbd_debugfs.c
-index ab21976a87b2..5d5e8d6a8a56 100644
---- a/drivers/block/drbd/drbd_debugfs.c
-+++ b/drivers/block/drbd/drbd_debugfs.c
-@@ -481,9 +481,9 @@ void drbd_debugfs_resource_add(struct drbd_resource *resource)
- 		goto fail;
- 	resource->debugfs_res_connections = dentry;
- 
--	dentry = debugfs_create_file("in_flight_summary", S_IRUSR|S_IRGRP,
--			resource->debugfs_res, resource,
--			&in_flight_summary_fops);
-+	dentry = debugfs_create_file("in_flight_summary", 0440,
-+				     resource->debugfs_res, resource,
-+				     &in_flight_summary_fops);
- 	if (IS_ERR_OR_NULL(dentry))
- 		goto fail;
- 	resource->debugfs_res_in_flight_summary = dentry;
-@@ -645,16 +645,16 @@ void drbd_debugfs_connection_add(struct drbd_connection *connection)
- 		goto fail;
- 	connection->debugfs_conn = dentry;
- 
--	dentry = debugfs_create_file("callback_history", S_IRUSR|S_IRGRP,
--			connection->debugfs_conn, connection,
--			&connection_callback_history_fops);
-+	dentry = debugfs_create_file("callback_history", 0440,
-+				     connection->debugfs_conn, connection,
-+				     &connection_callback_history_fops);
- 	if (IS_ERR_OR_NULL(dentry))
- 		goto fail;
- 	connection->debugfs_conn_callback_history = dentry;
- 
--	dentry = debugfs_create_file("oldest_requests", S_IRUSR|S_IRGRP,
--			connection->debugfs_conn, connection,
--			&connection_oldest_requests_fops);
-+	dentry = debugfs_create_file("oldest_requests", 0440,
-+				     connection->debugfs_conn, connection,
-+				     &connection_oldest_requests_fops);
- 	if (IS_ERR_OR_NULL(dentry))
- 		goto fail;
- 	connection->debugfs_conn_oldest_requests = dentry;
-@@ -824,7 +824,7 @@ void drbd_debugfs_device_add(struct drbd_device *device)
- 	device->debugfs_minor = dentry;
- 
- #define DCF(name)	do {					\
--	dentry = debugfs_create_file(#name, S_IRUSR|S_IRGRP,	\
-+	dentry = debugfs_create_file(#name, 0440,	\
- 			device->debugfs_vol, device,		\
- 			&device_ ## name ## _fops);		\
- 	if (IS_ERR_OR_NULL(dentry))				\
-diff --git a/drivers/block/drbd/drbd_main.c b/drivers/block/drbd/drbd_main.c
-index c2d154faac02..7916e0af25ec 100644
---- a/drivers/block/drbd/drbd_main.c
-+++ b/drivers/block/drbd/drbd_main.c
-@@ -3010,8 +3010,8 @@ static int __init drbd_init(void)
- 		goto fail;
- 
- 	err = -ENOMEM;
--	drbd_proc = proc_create_single("drbd", S_IFREG | S_IRUGO , NULL,
--			drbd_seq_show);
-+	drbd_proc = proc_create_single("drbd", S_IFREG | 0444, NULL,
-+				       drbd_seq_show);
- 	if (!drbd_proc)	{
- 		pr_err("unable to register proc file\n");
- 		goto fail;
-diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
-index 8ec7235fc93b..8871b5044d9e 100644
---- a/drivers/block/floppy.c
-+++ b/drivers/block/floppy.c
-@@ -4450,7 +4450,7 @@ static ssize_t floppy_cmos_show(struct device *dev,
- 	return sprintf(buf, "%X\n", UDP->cmos);
- }
- 
--static DEVICE_ATTR(cmos, S_IRUGO, floppy_cmos_show, NULL);
-+static DEVICE_ATTR(cmos, 0444, floppy_cmos_show, NULL);
- 
- static struct attribute *floppy_dev_attrs[] = {
- 	&dev_attr_cmos.attr,
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 5f0df2efc26c..66c1f0786ae8 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -732,7 +732,7 @@ static ssize_t loop_attr_do_show_##_name(struct device *d,		\
- 	return loop_attr_show(d, b, loop_attr_##_name##_show);		\
- }									\
- static struct device_attribute loop_attr_##_name =			\
--	__ATTR(_name, S_IRUGO, loop_attr_do_show_##_name, NULL);
-+	__ATTR(_name, 0444, loop_attr_do_show_##_name, NULL);
- 
- static ssize_t loop_attr_backing_file_show(struct loop_device *lo, char *buf)
- {
-@@ -1677,9 +1677,9 @@ static const struct block_device_operations lo_fops = {
-  * And now the modules code and kernel interface.
-  */
- static int max_loop;
--module_param(max_loop, int, S_IRUGO);
-+module_param(max_loop, int, 0444);
- MODULE_PARM_DESC(max_loop, "Maximum number of loop devices");
--module_param(max_part, int, S_IRUGO);
-+module_param(max_part, int, 0444);
- MODULE_PARM_DESC(max_part, "Maximum number of partitions per loop device");
- MODULE_LICENSE("GPL");
- MODULE_ALIAS_BLOCKDEV_MAJOR(LOOP_MAJOR);
-diff --git a/drivers/block/mtip32xx/mtip32xx.c b/drivers/block/mtip32xx/mtip32xx.c
-index 6df5b0b1517a..e873daca9d13 100644
---- a/drivers/block/mtip32xx/mtip32xx.c
-+++ b/drivers/block/mtip32xx/mtip32xx.c
-@@ -2285,7 +2285,7 @@ static ssize_t mtip_hw_show_status(struct device *dev,
- 	return size;
- }
- 
--static DEVICE_ATTR(status, S_IRUGO, mtip_hw_show_status, NULL);
-+static DEVICE_ATTR(status, 0444, mtip_hw_show_status, NULL);
- 
- /* debugsfs entries */
- 
-@@ -2566,10 +2566,9 @@ static int mtip_hw_debugfs_init(struct driver_data *dd)
- 		return -1;
- 	}
- 
--	debugfs_create_file("flags", S_IRUGO, dd->dfs_node, dd,
--							&mtip_flags_fops);
--	debugfs_create_file("registers", S_IRUGO, dd->dfs_node, dd,
--							&mtip_regs_fops);
-+	debugfs_create_file("flags", 0444, dd->dfs_node, dd, &mtip_flags_fops);
-+	debugfs_create_file("registers", 0444, dd->dfs_node, dd,
-+			    &mtip_regs_fops);
- 
- 	return 0;
- }
-@@ -4613,7 +4612,7 @@ static int __init mtip_init(void)
- 	}
- 	if (dfs_parent) {
- 		dfs_device_status = debugfs_create_file("device_status",
--					S_IRUGO, dfs_parent, NULL,
-+					0444, dfs_parent, NULL,
- 					&mtip_device_status_fops);
- 		if (IS_ERR_OR_NULL(dfs_device_status)) {
- 			pr_err("Error creating device_status node\n");
-diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-index abc0a815354f..54dd91a67e03 100644
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -166,7 +166,7 @@ static ssize_t pid_show(struct device *dev,
- }
- 
- static const struct device_attribute pid_attr = {
--	.attr = { .name = "pid", .mode = S_IRUGO},
-+	.attr = { .name = "pid", .mode = 0444},
- 	.show = pid_show,
- };
- 
-diff --git a/drivers/block/null_blk.c b/drivers/block/null_blk.c
-index a76553293a31..b4d368e3ddcd 100644
---- a/drivers/block/null_blk.c
-+++ b/drivers/block/null_blk.c
-@@ -157,23 +157,23 @@ enum {
- };
- 
- static int g_no_sched;
--module_param_named(no_sched, g_no_sched, int, S_IRUGO);
-+module_param_named(no_sched, g_no_sched, int, 0444);
- MODULE_PARM_DESC(no_sched, "No io scheduler");
- 
- static int g_submit_queues = 1;
--module_param_named(submit_queues, g_submit_queues, int, S_IRUGO);
-+module_param_named(submit_queues, g_submit_queues, int, 0444);
- MODULE_PARM_DESC(submit_queues, "Number of submission queues");
- 
- static int g_home_node = NUMA_NO_NODE;
--module_param_named(home_node, g_home_node, int, S_IRUGO);
-+module_param_named(home_node, g_home_node, int, 0444);
- MODULE_PARM_DESC(home_node, "Home node for the device");
- 
- #ifdef CONFIG_BLK_DEV_NULL_BLK_FAULT_INJECTION
- static char g_timeout_str[80];
--module_param_string(timeout, g_timeout_str, sizeof(g_timeout_str), S_IRUGO);
-+module_param_string(timeout, g_timeout_str, sizeof(g_timeout_str), 0444);
- 
- static char g_requeue_str[80];
--module_param_string(requeue, g_requeue_str, sizeof(g_requeue_str), S_IRUGO);
-+module_param_string(requeue, g_requeue_str, sizeof(g_requeue_str), 0444);
- #endif
- 
- static int g_queue_mode = NULL_Q_MQ;
-@@ -203,27 +203,27 @@ static const struct kernel_param_ops null_queue_mode_param_ops = {
- 	.get	= param_get_int,
- };
- 
--device_param_cb(queue_mode, &null_queue_mode_param_ops, &g_queue_mode, S_IRUGO);
-+device_param_cb(queue_mode, &null_queue_mode_param_ops, &g_queue_mode, 0444);
- MODULE_PARM_DESC(queue_mode, "Block interface to use (0=bio,1=rq,2=multiqueue)");
- 
- static int g_gb = 250;
--module_param_named(gb, g_gb, int, S_IRUGO);
-+module_param_named(gb, g_gb, int, 0444);
- MODULE_PARM_DESC(gb, "Size in GB");
- 
- static int g_bs = 512;
--module_param_named(bs, g_bs, int, S_IRUGO);
-+module_param_named(bs, g_bs, int, 0444);
- MODULE_PARM_DESC(bs, "Block size (in bytes)");
- 
- static int nr_devices = 1;
--module_param(nr_devices, int, S_IRUGO);
-+module_param(nr_devices, int, 0444);
- MODULE_PARM_DESC(nr_devices, "Number of devices to register");
- 
- static bool g_blocking;
--module_param_named(blocking, g_blocking, bool, S_IRUGO);
-+module_param_named(blocking, g_blocking, bool, 0444);
- MODULE_PARM_DESC(blocking, "Register as a blocking blk-mq driver device");
- 
- static bool shared_tags;
--module_param(shared_tags, bool, S_IRUGO);
-+module_param(shared_tags, bool, 0444);
- MODULE_PARM_DESC(shared_tags, "Share tag set between devices for blk-mq");
- 
- static int g_irqmode = NULL_IRQ_SOFTIRQ;
-@@ -239,19 +239,19 @@ static const struct kernel_param_ops null_irqmode_param_ops = {
- 	.get	= param_get_int,
- };
- 
--device_param_cb(irqmode, &null_irqmode_param_ops, &g_irqmode, S_IRUGO);
-+device_param_cb(irqmode, &null_irqmode_param_ops, &g_irqmode, 0444);
- MODULE_PARM_DESC(irqmode, "IRQ completion handler. 0-none, 1-softirq, 2-timer");
- 
- static unsigned long g_completion_nsec = 10000;
--module_param_named(completion_nsec, g_completion_nsec, ulong, S_IRUGO);
-+module_param_named(completion_nsec, g_completion_nsec, ulong, 0444);
- MODULE_PARM_DESC(completion_nsec, "Time in ns to complete a request in hardware. Default: 10,000ns");
- 
- static int g_hw_queue_depth = 64;
--module_param_named(hw_queue_depth, g_hw_queue_depth, int, S_IRUGO);
-+module_param_named(hw_queue_depth, g_hw_queue_depth, int, 0444);
- MODULE_PARM_DESC(hw_queue_depth, "Queue depth for each hardware queue. Default: 64");
- 
- static bool g_use_per_node_hctx;
--module_param_named(use_per_node_hctx, g_use_per_node_hctx, bool, S_IRUGO);
-+module_param_named(use_per_node_hctx, g_use_per_node_hctx, bool, 0444);
- MODULE_PARM_DESC(use_per_node_hctx, "Use per-node allocation for hardware context queues. Default: false");
- 
- static struct nullb_device *null_alloc_dev(void);
-diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
-index 3c1a49545e06..949a648fe560 100644
---- a/drivers/block/pktcdvd.c
-+++ b/drivers/block/pktcdvd.c
-@@ -478,8 +478,8 @@ static void pkt_debugfs_dev_new(struct pktcdvd_device *pd)
- 	if (!pd->dfs_d_root)
- 		return;
- 
--	pd->dfs_f_info = debugfs_create_file("info", S_IRUGO,
--				pd->dfs_d_root, pd, &debug_fops);
-+	pd->dfs_f_info = debugfs_create_file("info", 0444,
-+					     pd->dfs_d_root, pd, &debug_fops);
- }
- 
- static void pkt_debugfs_dev_remove(struct pktcdvd_device *pd)
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 33b36fea1d73..af354047ac4b 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -424,7 +424,7 @@ static struct workqueue_struct *rbd_wq;
-  * single-major requires >= 0.75 version of userspace rbd utility.
-  */
- static bool single_major = true;
--module_param(single_major, bool, S_IRUGO);
-+module_param(single_major, bool, 0444);
- MODULE_PARM_DESC(single_major, "Use a single major number for all rbd devices (default: true)");
- 
- static ssize_t rbd_add(struct bus_type *bus, const char *buf,
-@@ -468,11 +468,11 @@ static ssize_t rbd_supported_features_show(struct bus_type *bus, char *buf)
- 	return sprintf(buf, "0x%llx\n", RBD_FEATURES_SUPPORTED);
- }
- 
--static BUS_ATTR(add, S_IWUSR, NULL, rbd_add);
--static BUS_ATTR(remove, S_IWUSR, NULL, rbd_remove);
--static BUS_ATTR(add_single_major, S_IWUSR, NULL, rbd_add_single_major);
--static BUS_ATTR(remove_single_major, S_IWUSR, NULL, rbd_remove_single_major);
--static BUS_ATTR(supported_features, S_IRUGO, rbd_supported_features_show, NULL);
-+static BUS_ATTR(add, 0200, NULL, rbd_add);
-+static BUS_ATTR(remove, 0200, NULL, rbd_remove);
-+static BUS_ATTR(add_single_major, 0200, NULL, rbd_add_single_major);
-+static BUS_ATTR(remove_single_major, 0200, NULL, rbd_remove_single_major);
-+static BUS_ATTR(supported_features, 0444, rbd_supported_features_show, NULL);
- 
- static struct attribute *rbd_bus_attrs[] = {
- 	&bus_attr_add.attr,
-@@ -4204,22 +4204,22 @@ static ssize_t rbd_image_refresh(struct device *dev,
- 	return size;
- }
- 
--static DEVICE_ATTR(size, S_IRUGO, rbd_size_show, NULL);
--static DEVICE_ATTR(features, S_IRUGO, rbd_features_show, NULL);
--static DEVICE_ATTR(major, S_IRUGO, rbd_major_show, NULL);
--static DEVICE_ATTR(minor, S_IRUGO, rbd_minor_show, NULL);
--static DEVICE_ATTR(client_addr, S_IRUGO, rbd_client_addr_show, NULL);
--static DEVICE_ATTR(client_id, S_IRUGO, rbd_client_id_show, NULL);
--static DEVICE_ATTR(cluster_fsid, S_IRUGO, rbd_cluster_fsid_show, NULL);
--static DEVICE_ATTR(config_info, S_IRUSR, rbd_config_info_show, NULL);
--static DEVICE_ATTR(pool, S_IRUGO, rbd_pool_show, NULL);
--static DEVICE_ATTR(pool_id, S_IRUGO, rbd_pool_id_show, NULL);
--static DEVICE_ATTR(name, S_IRUGO, rbd_name_show, NULL);
--static DEVICE_ATTR(image_id, S_IRUGO, rbd_image_id_show, NULL);
--static DEVICE_ATTR(refresh, S_IWUSR, NULL, rbd_image_refresh);
--static DEVICE_ATTR(current_snap, S_IRUGO, rbd_snap_show, NULL);
--static DEVICE_ATTR(snap_id, S_IRUGO, rbd_snap_id_show, NULL);
--static DEVICE_ATTR(parent, S_IRUGO, rbd_parent_show, NULL);
-+static DEVICE_ATTR(size, 0444, rbd_size_show, NULL);
-+static DEVICE_ATTR(features, 0444, rbd_features_show, NULL);
-+static DEVICE_ATTR(major, 0444, rbd_major_show, NULL);
-+static DEVICE_ATTR(minor, 0444, rbd_minor_show, NULL);
-+static DEVICE_ATTR(client_addr, 0444, rbd_client_addr_show, NULL);
-+static DEVICE_ATTR(client_id, 0444, rbd_client_id_show, NULL);
-+static DEVICE_ATTR(cluster_fsid, 0444, rbd_cluster_fsid_show, NULL);
-+static DEVICE_ATTR(config_info, 0400, rbd_config_info_show, NULL);
-+static DEVICE_ATTR(pool, 0444, rbd_pool_show, NULL);
-+static DEVICE_ATTR(pool_id, 0444, rbd_pool_id_show, NULL);
-+static DEVICE_ATTR(name, 0444, rbd_name_show, NULL);
-+static DEVICE_ATTR(image_id, 0444, rbd_image_id_show, NULL);
-+static DEVICE_ATTR(refresh, 0200, NULL, rbd_image_refresh);
-+static DEVICE_ATTR(current_snap, 0444, rbd_snap_show, NULL);
-+static DEVICE_ATTR(snap_id, 0444, rbd_snap_id_show, NULL);
-+static DEVICE_ATTR(parent, 0444, rbd_parent_show, NULL);
- 
- static struct attribute *rbd_attrs[] = {
- 	&dev_attr_size.attr,
-diff --git a/drivers/block/rsxx/core.c b/drivers/block/rsxx/core.c
-index 34997df132e2..09537bee387f 100644
---- a/drivers/block/rsxx/core.c
-+++ b/drivers/block/rsxx/core.c
-@@ -247,19 +247,19 @@ static void rsxx_debugfs_dev_new(struct rsxx_cardinfo *card)
- 	if (IS_ERR_OR_NULL(card->debugfs_dir))
- 		goto failed_debugfs_dir;
- 
--	debugfs_stats = debugfs_create_file("stats", S_IRUGO,
-+	debugfs_stats = debugfs_create_file("stats", 0444,
- 					    card->debugfs_dir, card,
- 					    &debugfs_stats_fops);
- 	if (IS_ERR_OR_NULL(debugfs_stats))
- 		goto failed_debugfs_stats;
- 
--	debugfs_pci_regs = debugfs_create_file("pci_regs", S_IRUGO,
-+	debugfs_pci_regs = debugfs_create_file("pci_regs", 0444,
- 					       card->debugfs_dir, card,
- 					       &debugfs_pci_regs_fops);
- 	if (IS_ERR_OR_NULL(debugfs_pci_regs))
- 		goto failed_debugfs_pci_regs;
- 
--	debugfs_cram = debugfs_create_file("cram", S_IRUGO | S_IWUSR,
-+	debugfs_cram = debugfs_create_file("cram", 0644,
- 					   card->debugfs_dir, card,
- 					   &debugfs_cram_fops);
- 	if (IS_ERR_OR_NULL(debugfs_cram))
-diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
-index 0617b9922d59..23752dc99b00 100644
---- a/drivers/block/virtio_blk.c
-+++ b/drivers/block/virtio_blk.c
-@@ -371,7 +371,7 @@ static ssize_t virtblk_serial_show(struct device *dev,
- 	return err;
- }
- 
--static DEVICE_ATTR(serial, S_IRUGO, virtblk_serial_show, NULL);
-+static DEVICE_ATTR(serial, 0444, virtblk_serial_show, NULL);
- 
- /* The queue's logical block size must be set before calling this */
- static void virtblk_update_capacity(struct virtio_blk *vblk, bool resize)
-@@ -576,10 +576,10 @@ virtblk_cache_type_show(struct device *dev, struct device_attribute *attr,
- }
- 
- static const struct device_attribute dev_attr_cache_type_ro =
--	__ATTR(cache_type, S_IRUGO,
-+	__ATTR(cache_type, 0444,
- 	       virtblk_cache_type_show, NULL);
- static const struct device_attribute dev_attr_cache_type_rw =
--	__ATTR(cache_type, S_IRUGO|S_IWUSR,
-+	__ATTR(cache_type, 0644,
- 	       virtblk_cache_type_show, virtblk_cache_type_store);
- 
- static int virtblk_init_request(struct blk_mq_tag_set *set, struct request *rq,
-diff --git a/drivers/block/xen-blkback/blkback.c b/drivers/block/xen-blkback/blkback.c
-index 987d665e82de..b55b245e8052 100644
---- a/drivers/block/xen-blkback/blkback.c
-+++ b/drivers/block/xen-blkback/blkback.c
-@@ -98,7 +98,7 @@ MODULE_PARM_DESC(max_queues,
-  * backend, 4KB page granularity is used.
-  */
- unsigned int xen_blkif_max_ring_order = XENBUS_MAX_RING_GRANT_ORDER;
--module_param_named(max_ring_page_order, xen_blkif_max_ring_order, int, S_IRUGO);
-+module_param_named(max_ring_page_order, xen_blkif_max_ring_order, int, 0444);
- MODULE_PARM_DESC(max_ring_page_order, "Maximum order of pages to be used for the shared ring");
- /*
-  * The LRU mechanism to clean the lists of persistent grants needs to
-diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-blkback/xenbus.c
-index 21c1be1eb226..66412eededda 100644
---- a/drivers/block/xen-blkback/xenbus.c
-+++ b/drivers/block/xen-blkback/xenbus.c
-@@ -367,7 +367,7 @@ int __init xen_blkif_interface_init(void)
- out:									\
- 		return sprintf(buf, format, result);			\
- 	}								\
--	static DEVICE_ATTR(name, S_IRUGO, show_##name, NULL)
-+	static DEVICE_ATTR(name, 0444, show_##name, NULL)
- 
- VBD_SHOW_ALLRING(oo_req,  "%llu\n");
- VBD_SHOW_ALLRING(rd_req,  "%llu\n");
-@@ -403,7 +403,7 @@ static const struct attribute_group xen_vbdstat_group = {
- 									\
- 		return sprintf(buf, format, ##args);			\
- 	}								\
--	static DEVICE_ATTR(name, S_IRUGO, show_##name, NULL)
-+	static DEVICE_ATTR(name, 0444, show_##name, NULL)
- 
- VBD_SHOW(physical_device, "%x:%x\n", be->major, be->minor);
- VBD_SHOW(mode, "%s\n", be->mode);
-diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
-index 2a8e7813bd1a..ae00a82f350b 100644
---- a/drivers/block/xen-blkfront.c
-+++ b/drivers/block/xen-blkfront.c
-@@ -129,13 +129,12 @@ static const struct block_device_operations xlvbd_block_fops;
-  */
- 
- static unsigned int xen_blkif_max_segments = 32;
--module_param_named(max_indirect_segments, xen_blkif_max_segments, uint,
--		   S_IRUGO);
-+module_param_named(max_indirect_segments, xen_blkif_max_segments, uint, 0444);
- MODULE_PARM_DESC(max_indirect_segments,
- 		 "Maximum amount of segments in indirect requests (default is 32)");
- 
- static unsigned int xen_blkif_max_queues = 4;
--module_param_named(max_queues, xen_blkif_max_queues, uint, S_IRUGO);
-+module_param_named(max_queues, xen_blkif_max_queues, uint, 0444);
- MODULE_PARM_DESC(max_queues, "Maximum number of hardware queues/rings used per virtual disk");
- 
- /*
-@@ -143,7 +142,7 @@ MODULE_PARM_DESC(max_queues, "Maximum number of hardware queues/rings used per v
-  * backend, 4KB page granularity is used.
-  */
- static unsigned int xen_blkif_max_ring_order;
--module_param_named(max_ring_page_order, xen_blkif_max_ring_order, int, S_IRUGO);
-+module_param_named(max_ring_page_order, xen_blkif_max_ring_order, int, 0444);
- MODULE_PARM_DESC(max_ring_page_order, "Maximum order of pages to be used for the shared ring");
- 
- #define BLK_RING_SIZE(info)	\
 -- 
-2.15.0
+Best regards,
+Jacek Anaszewski
