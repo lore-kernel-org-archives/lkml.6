@@ -1,148 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933527AbeEWP3y (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 11:29:54 -0400
-Received: from rcdn-iport-1.cisco.com ([173.37.86.72]:46140 "EHLO
-        rcdn-iport-1.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932534AbeEWP3w (ORCPT
+        id S933551AbeEWPas (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 11:30:48 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:42223 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932667AbeEWPap (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 11:29:52 -0400
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0DyAAD4hwVb/5FdJa1dGQEBAQEBAQE?=
- =?us-ascii?q?BAQEBAQcBAQEBAYNEgV8oCoNtiASMZIF5gQ+HA4w0gSIDUwuEbAIXghAhNBg?=
- =?us-ascii?q?BAgEBAQEBAQJsKIUoAQEBAwEjEUUMBAIBCBEEAQEBAgIjAwICAh8RFAEICAI?=
- =?us-ascii?q?EDgUIE4RwAw0IqlWCHIcLDYEsgXyBCYctgVQ/hByCT4F9E4MUglQChyKRDCw?=
- =?us-ascii?q?JAog+gxqCd40Jii+GKQIREwGBJAEcODOBH3AVO4JDgh0DFxGOBm+LFAElgQi?=
- =?us-ascii?q?BGAEB?=
-X-IronPort-AV: E=Sophos;i="5.49,433,1520899200";
-   d="scan'208";a="399530732"
-From: "Jon Rosen (jrosen)" <jrosen@cisco.com>
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-CC: "David S. Miller" <davem@davemloft.net>,
-        Willem de Bruijn <willemb@google.com>,
-        Eric Dumazet <edumazet@google.com>, Kees Cook <keescook@chromium.org>,
-        David Windsor <dwindsor@gmail.com>,
-        "Rosen, Rami" <rami.rosen@intel.com>,
-        "Reshetova, Elena" <elena.reshetova@intel.com>,
-        "Mike Maloney" <maloney@google.com>,
-        Benjamin Poirier <bpoirier@suse.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2] packet: track ring entry use using a shadow ring to
- prevent RX ring overrun
-Thread-Topic: [PATCH v2] packet: track ring entry use using a shadow ring to
- prevent RX ring overrun
-Thread-Index: AQHT72oCSQesQH+wcU+iC1K5zWLMg6Q5fnUAgAAIkQCAAJ/kcIADDMuwgABm4YD//9j9kA==
-Date: Wed, 23 May 2018 15:29:49 +0000
-Message-ID: <3d1ac567c6d24265909aeec748a743e0@XCH-RTP-016.cisco.com>
-References: <1526731655-10087-1-git-send-email-jrosen@cisco.com>
- <CAF=yD-+kjceErK=CApiu1oY9uTjVWG2qeX=NkGVYufVVC_L2PA@mail.gmail.com>
- <CAF=yD-KvTyTibhqpKP79Obfk8KRVDLMyb6THNwNgrJzs47bAtQ@mail.gmail.com>
- <9cbf19b5765746b88af6dadc71b99d78@XCH-RTP-016.cisco.com>
- <CAF=yD-LpGOTx_jrh10G59M4Y-vpdtx_q5SG1Hjc7452y9KUt4w@mail.gmail.com>
-In-Reply-To: <CAF=yD-LpGOTx_jrh10G59M4Y-vpdtx_q5SG1Hjc7452y9KUt4w@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.150.24.241]
-Content-Type: text/plain; charset="utf-8"
+        Wed, 23 May 2018 11:30:45 -0400
+X-Google-Smtp-Source: AB8JxZrYioCn73SbEGKTwlwr8ThI4cqjugQdX4a7m7r1hsF+FcFJi1ok/dK6A6RxcjNigOZRnRPgmA==
+Date: Wed, 23 May 2018 21:02:58 +0530
+From: Souptick Joarder <jrdr.linux@gmail.com>
+To: mfasheh@versity.com, jlbec@evilplan.org, willy@infradead.org
+Cc: ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] fs: ocfs2: Adding new return type vm_fault_t
+Message-ID: <20180523153258.GA28451@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4NFU4Fs005367
 
+Use new return type vm_fault_t for fault handler. For
+now, this is just documenting that the function returns
+a VM_FAULT value rather than an errno. Once all instances
+are converted, vm_fault_t will become a distinct type.
 
+Ref-> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
 
-> -----Original Message-----
-> From: Willem de Bruijn [mailto:willemdebruijn.kernel@gmail.com]
-> Sent: Wednesday, May 23, 2018 9:37 AM
-> To: Jon Rosen (jrosen) <jrosen@cisco.com>
-> Cc: David S. Miller <davem@davemloft.net>; Willem de Bruijn <willemb@google.com>; Eric Dumazet
-> <edumazet@google.com>; Kees Cook <keescook@chromium.org>; David Windsor <dwindsor@gmail.com>; Rosen,
-> Rami <rami.rosen@intel.com>; Reshetova, Elena <elena.reshetova@intel.com>; Mike Maloney
-> <maloney@google.com>; Benjamin Poirier <bpoirier@suse.com>; Thomas Gleixner <tglx@linutronix.de>; Greg
-> Kroah-Hartman <gregkh@linuxfoundation.org>; open list:NETWORKING [GENERAL] <netdev@vger.kernel.org>;
-> open list <linux-kernel@vger.kernel.org>
-> Subject: Re: [PATCH v2] packet: track ring entry use using a shadow ring to prevent RX ring overrun
-> 
-> On Wed, May 23, 2018 at 7:54 AM, Jon Rosen (jrosen) <jrosen@cisco.com> wrote:
-> >> > For the ring, there is no requirement to allocate exactly the amount
-> >> > specified by the user request. Safer than relying on shared memory
-> >> > and simpler than the extra allocation in this patch would be to allocate
-> >> > extra shadow memory at the end of the ring (and not mmap that).
-> >> >
-> >> > That still leaves an extra cold cacheline vs using tp_padding.
-> >>
-> >> Given my lack of experience and knowledge in writing kernel code
-> >> it was easier for me to allocate the shadow ring as a separate
-> >> structure.  Of course it's not about me and my skills so if it's
-> >> more appropriate to allocate at the tail of the existing ring
-> >> then certainly I can look at doing that.
-> >
-> > The memory for the ring is not one contiguous block, it's an array of
-> > blocks of pages (or 'order' sized blocks of pages). I don't think
-> > increasing the size of each of the blocks to provided storage would be
-> > such a good idea as it will risk spilling over into the next order and
-> > wasting lots of memory. I suspect it's also more complex than a single
-> > shadow ring to do both the allocation and the access.
-> >
-> > It could be tacked onto the end of the pg_vec[] used to store the
-> > pointers to the blocks. The challenge with that is that a pg_vec[] is
-> > created for each of RX and TX rings so either it would have to
-> > allocate unnecessary storage for TX or the caller will have to say if
-> > extra space should be allocated or not.  E.g.:
-> >
-> > static struct pgv *alloc_pg_vec(struct tpacket_req *req, int order, int scratch, void **scratch_p)
-> >
-> > I'm not sure avoiding the extra allocation and moving it to the
-> > pg_vec[] for the RX ring is going to get the simplification you were
-> > hoping for.  Is there another way of storing the shadow ring which
-> > I should consider?
-> 
-> I did indeed mean attaching extra pages to pg_vec[]. It should be
-> simpler than a separate structure, but I may be wrong.
+vmf_error() is the newly introduce inline function
+in 4.18.
 
-I don't think it would be too bad, it may actually turn out to be
-convenient to implement.
+Fix one checkpatch.pl warning by replacing BUG_ON()
+with WARN_ON()
 
-> 
-> Either way, I still would prefer to avoid the shadow buffer completely.
-> It incurs complexity and cycle cost on all users because of only the
-> rare (non-existent?) consumer that overwrites the padding bytes.
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+ fs/ocfs2/mmap.c | 44 ++++++++++++++++++++------------------------
+ 1 file changed, 20 insertions(+), 24 deletions(-)
 
-I prefer that as well.  I'm just not sure there is a bulletproof
-solution without the shadow state.  I also wish it were only a
-theoretical issue but unfortunately it is actually something our
-customers have seen.
-> 
-> Perhaps we can use padding yet avoid deadlock by writing a
-> timed value. The simplest would be jiffies >> N. Then only a
-> process that writes this exact value would be subject to drops and
-> then still only for a limited period.
-> 
-> Instead of depending on wall clock time, like jiffies, another option
-> would be to keep a percpu array of values. Each cpu has a zero
-> entry if it is not writing, nonzero if it is. If a writer encounters a
-> number in padding that is > num_cpus, then the state is garbage
-> from userspace. If <= num_cpus, it is adhered to only until that cpu
-> clears its entry, which is guaranteed to happen eventually.
-> 
-> Just a quick thought. This might not fly at all upon closer scrutiny.
-
-I'm not sure I understand the suggestion, but I'll think on it
-some more.
-
-Some other options maybe worth considering (in no specific order):
-- test the application to see if it will consume entries if tp_status
-  is set to anything other than TP_STATUS_USER, only use shadow if
-  it doesn't strictly honor the TP_STATUS_USER bit.
-
-- skip shadow if we see new TP_STATUS_USER_TO_KERNEL is used
-
-- use tp_len == -1 to indicate inuse
+diff --git a/fs/ocfs2/mmap.c b/fs/ocfs2/mmap.c
+index fb9a20e..036177e 100644
+--- a/fs/ocfs2/mmap.c
++++ b/fs/ocfs2/mmap.c
+@@ -44,11 +44,11 @@
+ #include "ocfs2_trace.h"
+ 
+ 
+-static int ocfs2_fault(struct vm_fault *vmf)
++static vm_fault_t ocfs2_fault(struct vm_fault *vmf)
+ {
+ 	struct vm_area_struct *vma = vmf->vma;
+ 	sigset_t oldset;
+-	int ret;
++	vm_fault_t ret;
+ 
+ 	ocfs2_block_signals(&oldset);
+ 	ret = filemap_fault(vmf);
+@@ -59,10 +59,11 @@ static int ocfs2_fault(struct vm_fault *vmf)
+ 	return ret;
+ }
+ 
+-static int __ocfs2_page_mkwrite(struct file *file, struct buffer_head *di_bh,
+-				struct page *page)
++static vm_fault_t __ocfs2_page_mkwrite(struct file *file,
++			struct buffer_head *di_bh, struct page *page)
+ {
+-	int ret = VM_FAULT_NOPAGE;
++	int err;
++	vm_fault_t ret = VM_FAULT_NOPAGE;
+ 	struct inode *inode = file_inode(file);
+ 	struct address_space *mapping = inode->i_mapping;
+ 	loff_t pos = page_offset(page);
+@@ -105,15 +106,12 @@ static int __ocfs2_page_mkwrite(struct file *file, struct buffer_head *di_bh,
+ 	if (page->index == last_index)
+ 		len = ((size - 1) & ~PAGE_MASK) + 1;
+ 
+-	ret = ocfs2_write_begin_nolock(mapping, pos, len, OCFS2_WRITE_MMAP,
++	err = ocfs2_write_begin_nolock(mapping, pos, len, OCFS2_WRITE_MMAP,
+ 				       &locked_page, &fsdata, di_bh, page);
+-	if (ret) {
+-		if (ret != -ENOSPC)
+-			mlog_errno(ret);
+-		if (ret == -ENOMEM)
+-			ret = VM_FAULT_OOM;
+-		else
+-			ret = VM_FAULT_SIGBUS;
++	if (err) {
++		if (err != -ENOSPC)
++			mlog_errno(err);
++		ret = vmf_error(err);
+ 		goto out;
+ 	}
+ 
+@@ -121,20 +119,21 @@ static int __ocfs2_page_mkwrite(struct file *file, struct buffer_head *di_bh,
+ 		ret = VM_FAULT_NOPAGE;
+ 		goto out;
+ 	}
+-	ret = ocfs2_write_end_nolock(mapping, pos, len, len, fsdata);
+-	BUG_ON(ret != len);
++	err = ocfs2_write_end_nolock(mapping, pos, len, len, fsdata);
++	WARN_ON(err != len);
+ 	ret = VM_FAULT_LOCKED;
+ out:
+ 	return ret;
+ }
+ 
+-static int ocfs2_page_mkwrite(struct vm_fault *vmf)
++static vm_fault_t ocfs2_page_mkwrite(struct vm_fault *vmf)
+ {
+ 	struct page *page = vmf->page;
+ 	struct inode *inode = file_inode(vmf->vma->vm_file);
+ 	struct buffer_head *di_bh = NULL;
+ 	sigset_t oldset;
+-	int ret;
++	int err;
++	vm_fault_t ret;
+ 
+ 	sb_start_pagefault(inode->i_sb);
+ 	ocfs2_block_signals(&oldset);
+@@ -144,13 +143,10 @@ static int ocfs2_page_mkwrite(struct vm_fault *vmf)
+ 	 * node. Taking the data lock will also ensure that we don't
+ 	 * attempt page truncation as part of a downconvert.
+ 	 */
+-	ret = ocfs2_inode_lock(inode, &di_bh, 1);
+-	if (ret < 0) {
+-		mlog_errno(ret);
+-		if (ret == -ENOMEM)
+-			ret = VM_FAULT_OOM;
+-		else
+-			ret = VM_FAULT_SIGBUS;
++	err = ocfs2_inode_lock(inode, &di_bh, 1);
++	if (err < 0) {
++		mlog_errno(err);
++		ret = vmf_error(err);
+ 		goto out;
+ 	}
+ 
+-- 
+1.9.1
