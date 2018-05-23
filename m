@@ -1,373 +1,319 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754087AbeEWFWL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 01:22:11 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:36704 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754075AbeEWFVB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 01:21:01 -0400
-X-Google-Smtp-Source: AB8JxZq6nkyzFSi3GwG5hgCSX1ILYmbIGcGmTag4WLzMnpGpATyNhHlnvgFzV3PHCvqRkGJUh5+zMg==
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Sricharan R <sricharan@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Rohit kumar <rohitkr@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, linux-kernel@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: [RFC PATCH 2/5] remoteproc: q6v5: Extract common resource handling
-Date: Tue, 22 May 2018 22:20:51 -0700
-Message-Id: <20180523052054.19025-3-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180523052054.19025-1-bjorn.andersson@linaro.org>
-References: <20180523052054.19025-1-bjorn.andersson@linaro.org>
+        id S1754129AbeEWFWe (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 01:22:34 -0400
+Received: from mga02.intel.com ([134.134.136.20]:27891 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754025AbeEWFUq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 01:20:46 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,431,1520924400";
+   d="scan'208";a="44025643"
+Subject: [PATCH v2 6/7] mm,
+ hmm: Replace hmm_devmem_pages_create() with devm_memremap_pages()
+From: Dan Williams <dan.j.williams@intel.com>
+To: akpm@linux-foundation.org
+Cc: Christoph Hellwig <hch@lst.de>,
+        =?utf-8?b?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Logan Gunthorpe <logang@deltatee.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Date: Tue, 22 May 2018 22:10:49 -0700
+Message-ID: <152705224935.21414.2023354160412207966.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <152705221686.21414.771870778478134768.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <152705221686.21414.771870778478134768.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Shared between all Hexagon V5 based remoteprocs is the handling of the 5
-interrupts and the SMP2P stop request, so break this out into a separate
-function in order to allow these drivers to be cleaned up.
+Commit e8d513483300 "memremap: change devm_memremap_pages interface to
+use struct dev_pagemap" refactored devm_memremap_pages() to allow a
+dev_pagemap instance to be supplied. Passing in a dev_pagemap interface
+simplifies the design of pgmap type drivers in that they can rely on
+container_of() to lookup any private data associated with the given
+dev_pagemap instance.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+In addition to the cleanups this also gives hmm users multi-order-radix
+improvements that arrived with commit ab1b597ee0e4 "mm,
+devm_memremap_pages: use multi-order radix for ZONE_DEVICE lookups"
+
+As part of the conversion to the devm_memremap_pages() method of
+handling the percpu_ref relative to when pages are put, the percpu_ref
+completion needs to move to hmm_devmem_ref_exit(). See commit
+71389703839e ("mm, zone_device: Replace {get, put}_zone_device_page...")
+for details.
+
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Cc: "Jérôme Glisse" <jglisse@redhat.com>
+Cc: Logan Gunthorpe <logang@deltatee.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- drivers/remoteproc/Kconfig     |   5 +
- drivers/remoteproc/Makefile    |   1 +
- drivers/remoteproc/qcom_q6v5.c | 243 +++++++++++++++++++++++++++++++++
- drivers/remoteproc/qcom_q6v5.h |  46 +++++++
- 4 files changed, 295 insertions(+)
- create mode 100644 drivers/remoteproc/qcom_q6v5.c
- create mode 100644 drivers/remoteproc/qcom_q6v5.h
+ mm/hmm.c |  198 ++++++++------------------------------------------------------
+ 1 file changed, 26 insertions(+), 172 deletions(-)
 
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index cd1c168fd188..63b79ea91a21 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -102,6 +102,11 @@ config QCOM_ADSP_PIL
- config QCOM_RPROC_COMMON
- 	tristate
+diff --git a/mm/hmm.c b/mm/hmm.c
+index d081857f29b5..5723331f6910 100644
+--- a/mm/hmm.c
++++ b/mm/hmm.c
+@@ -927,7 +927,6 @@ struct page *hmm_vma_alloc_locked_page(struct vm_area_struct *vma,
+ }
+ EXPORT_SYMBOL(hmm_vma_alloc_locked_page);
  
-+config QCOM_Q6V5_COMMON
-+	tristate
-+	depends on ARCH_QCOM
-+	depends on QCOM_SMEM
-+
- config QCOM_Q6V5_PIL
- 	tristate "Qualcomm Hexagon V5 Peripherial Image Loader"
- 	depends on OF && ARCH_QCOM
-diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-index 02627ede8d4a..5dd0249cf76a 100644
---- a/drivers/remoteproc/Makefile
-+++ b/drivers/remoteproc/Makefile
-@@ -16,6 +16,7 @@ obj-$(CONFIG_DA8XX_REMOTEPROC)		+= da8xx_remoteproc.o
- obj-$(CONFIG_KEYSTONE_REMOTEPROC)	+= keystone_remoteproc.o
- obj-$(CONFIG_QCOM_ADSP_PIL)		+= qcom_adsp_pil.o
- obj-$(CONFIG_QCOM_RPROC_COMMON)		+= qcom_common.o
-+obj-$(CONFIG_QCOM_Q6V5_COMMON)		+= qcom_q6v5.o
- obj-$(CONFIG_QCOM_Q6V5_PIL)		+= qcom_q6v5_pil.o
- obj-$(CONFIG_QCOM_SYSMON)		+= qcom_sysmon.o
- obj-$(CONFIG_QCOM_WCNSS_PIL)		+= qcom_wcnss_pil.o
-diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
-new file mode 100644
-index 000000000000..9076537a1671
---- /dev/null
-+++ b/drivers/remoteproc/qcom_q6v5.c
-@@ -0,0 +1,243 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Qualcomm Peripheral Image Loader for Q6V5 WCSS
-+ *
-+ * Copyright (C) 2016-2018 Linaro Ltd.
-+ * Copyright (C) 2014 Sony Mobile Communications AB
-+ * Copyright (c) 2012-2013, The Linux Foundation. All rights reserved.
-+ */
-+#include <linux/kernel.h>
-+#include <linux/platform_device.h>
-+#include <linux/interrupt.h>
-+#include <linux/soc/qcom/smem.h>
-+#include <linux/soc/qcom/smem_state.h>
-+#include <linux/remoteproc.h>
-+#include "qcom_q6v5.h"
-+
-+/**
-+ * qcom_q6v5_prepare() - reinitialize the qcom_q6v5 context before start
-+ * @q6v5:	reference to qcom_q6v5 context to be reinitialized
-+ *
-+ * Return: 0 on success, negative errno on failure
-+ */
-+int qcom_q6v5_prepare(struct qcom_q6v5 *q6v5)
-+{
-+	reinit_completion(&q6v5->start_done);
-+	reinit_completion(&q6v5->stop_done);
-+
-+	q6v5->running = true;
-+	q6v5->handover_issued = false;
-+
-+	enable_irq(q6v5->handover_irq);
-+
-+	return 0;
-+}
-+
-+/**
-+ * qcom_q6v5_unprepare() - unprepare the qcom_q6v5 context after stop
-+ * @q6v5:	reference to qcom_q6v5 context to be unprepared
-+ *
-+ * Return: 0 on success, 1 if handover hasn't yet been called
-+ */
-+int qcom_q6v5_unprepare(struct qcom_q6v5 *q6v5)
-+{
-+	disable_irq(q6v5->handover_irq);
-+
-+	return !q6v5->handover_issued;
-+}
-+
-+static irqreturn_t q6v5_wdog_interrupt(int irq, void *data)
-+{
-+	struct qcom_q6v5 *q6v5 = data;
-+	size_t len;
-+	char *msg;
-+
-+	/* Sometimes the stop triggers a watchdog rather than a stop-ack */
-+	if (!q6v5->running) {
-+		complete(&q6v5->stop_done);
-+		return IRQ_HANDLED;
-+	}
-+
-+	msg = qcom_smem_get(QCOM_SMEM_HOST_ANY, q6v5->crash_reason, &len);
-+	if (!IS_ERR(msg) && len > 0 && msg[0])
-+		dev_err(q6v5->dev, "watchdog received: %s\n", msg);
-+	else
-+		dev_err(q6v5->dev, "watchdog without message\n");
-+
-+	rproc_report_crash(q6v5->rproc, RPROC_FATAL_ERROR);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t q6v5_fatal_interrupt(int irq, void *data)
-+{
-+	struct qcom_q6v5 *q6v5 = data;
-+	size_t len;
-+	char *msg;
-+
-+	msg = qcom_smem_get(QCOM_SMEM_HOST_ANY, q6v5->crash_reason, &len);
-+	if (!IS_ERR(msg) && len > 0 && msg[0])
-+		dev_err(q6v5->dev, "fatal error received: %s\n", msg);
-+	else
-+		dev_err(q6v5->dev, "fatal error without message\n");
-+
-+	rproc_report_crash(q6v5->rproc, RPROC_FATAL_ERROR);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t q6v5_ready_interrupt(int irq, void *data)
-+{
-+	struct qcom_q6v5 *q6v5 = data;
-+
-+	complete(&q6v5->start_done);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+/**
-+ * qcom_q6v5_wait_for_start() - wait for remote processor start signal
-+ * @q6v5:	reference to qcom_q6v5 context
-+ * @timeout:	timeout to wait for the event, in jiffies
-+ *
-+ * qcom_q6v5_unprepare() should not be called when this function fails.
-+ *
-+ * Return: 0 on success, -ETIMEDOUT on timeout
-+ */
-+int qcom_q6v5_wait_for_start(struct qcom_q6v5 *q6v5, int timeout)
-+{
-+	int ret;
-+
-+	ret = wait_for_completion_timeout(&q6v5->start_done, timeout);
-+	if (!ret)
-+		disable_irq(q6v5->handover_irq);
-+
-+	return !ret ? -ETIMEDOUT : 0;
-+}
-+
-+static irqreturn_t q6v5_handover_interrupt(int irq, void *data)
-+{
-+	struct qcom_q6v5 *q6v5 = data;
-+
-+	if (q6v5->handover)
-+		q6v5->handover(q6v5);
-+
-+	q6v5->handover_issued = true;
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t q6v5_stop_interrupt(int irq, void *data)
-+{
-+	struct qcom_q6v5 *q6v5 = data;
-+
-+	complete(&q6v5->stop_done);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+/**
-+ * qcom_q6v5_request_stop() - request the remote processor to stop
-+ * @q6v5:	reference to qcom_q6v5 context
-+ *
-+ * Return: 0 on success, negative errno on failure
-+ */
-+int qcom_q6v5_request_stop(struct qcom_q6v5 *q6v5)
-+{
-+	int ret;
-+
-+	q6v5->running = false;
-+
-+	qcom_smem_state_update_bits(q6v5->state,
-+				    BIT(q6v5->stop_bit), BIT(q6v5->stop_bit));
-+
-+	ret = wait_for_completion_timeout(&q6v5->stop_done, 5 * HZ);
-+
-+	qcom_smem_state_update_bits(q6v5->state, BIT(q6v5->stop_bit), 0);
-+
-+	return ret == 0 ? -ETIMEDOUT : 0;
-+}
-+
-+/**
-+ * qcom_q6v5_init() - initializer of the q6v5 common struct
-+ * @q6v5:	handle to be initialized
-+ * @pdev:	platform_device reference for acquiring resources
-+ * @rproc:	associated remoteproc instance
-+ * @crash_reason: SMEM id for crash reason string, or 0 if none
-+ * @handover:	function to be called when proxy resources should be released
-+ *
-+ * Return: 0 on success, negative errno on failure
-+ */
-+int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
-+		   struct rproc *rproc, int crash_reason,
-+		   void (*handover)(struct qcom_q6v5 *q6v5))
-+{
-+	int ret;
-+
-+	q6v5->rproc = rproc;
-+	q6v5->dev = &pdev->dev;
-+	q6v5->crash_reason = crash_reason;
-+	q6v5->handover = handover;
-+
-+	init_completion(&q6v5->start_done);
-+	init_completion(&q6v5->stop_done);
-+
-+	q6v5->wdog_irq = platform_get_irq_byname(pdev, "wdog");
-+	ret = devm_request_threaded_irq(&pdev->dev, q6v5->wdog_irq,
-+					NULL, q6v5_wdog_interrupt,
-+					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-+					"q6v5 wdog", q6v5);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to acquire wdog IRQ\n");
-+		return ret;
-+	}
-+
-+	q6v5->fatal_irq = platform_get_irq_byname(pdev, "fatal");
-+	ret = devm_request_threaded_irq(&pdev->dev, q6v5->fatal_irq,
-+					NULL, q6v5_fatal_interrupt,
-+					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-+					"q6v5 fatal", q6v5);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to acquire fatal IRQ\n");
-+		return ret;
-+	}
-+
-+	q6v5->ready_irq = platform_get_irq_byname(pdev, "ready");
-+	ret = devm_request_threaded_irq(&pdev->dev, q6v5->ready_irq,
-+					NULL, q6v5_ready_interrupt,
-+					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-+					"q6v5 ready", q6v5);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to acquire ready IRQ\n");
-+		return ret;
-+	}
-+
-+	q6v5->handover_irq = platform_get_irq_byname(pdev, "handover");
-+	ret = devm_request_threaded_irq(&pdev->dev, q6v5->handover_irq,
-+					NULL, q6v5_handover_interrupt,
-+					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-+					"q6v5 handover", q6v5);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to acquire handover IRQ\n");
-+		return ret;
-+	}
-+	disable_irq(q6v5->handover_irq);
-+
-+	q6v5->stop_irq = platform_get_irq_byname(pdev, "stop-ack");
-+	ret = devm_request_threaded_irq(&pdev->dev, q6v5->stop_irq,
-+					NULL, q6v5_stop_interrupt,
-+					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-+					"q6v5 stop", q6v5);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to acquire stop-ack IRQ\n");
-+		return ret;
-+	}
-+
-+	q6v5->state = qcom_smem_state_get(&pdev->dev, "stop", &q6v5->stop_bit);
-+	if (IS_ERR(q6v5->state)) {
-+		dev_err(&pdev->dev, "failed to acquire stop state\n");
-+		return PTR_ERR(q6v5->state);
-+	}
-+
-+	return 0;
-+}
-diff --git a/drivers/remoteproc/qcom_q6v5.h b/drivers/remoteproc/qcom_q6v5.h
-new file mode 100644
-index 000000000000..7ac92c1e0f49
---- /dev/null
-+++ b/drivers/remoteproc/qcom_q6v5.h
-@@ -0,0 +1,46 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef __QCOM_Q6V5_H__
-+#define __QCOM_Q6V5_H__
-+
-+#include <linux/kernel.h>
-+#include <linux/completion.h>
-+
-+struct rproc;
-+struct qcom_smem_state;
-+
-+struct qcom_q6v5 {
-+	struct device *dev;
-+	struct rproc *rproc;
-+
-+	struct qcom_smem_state *state;
-+	unsigned stop_bit;
-+
-+	int wdog_irq;
-+	int fatal_irq;
-+	int ready_irq;
-+	int handover_irq;
-+	int stop_irq;
-+
-+	bool handover_issued;
-+
-+	struct completion start_done;
-+	struct completion stop_done;
-+
-+	int crash_reason;
-+
-+	bool running;
-+
-+	void (*handover)(struct qcom_q6v5 *q6v5);
-+};
-+
-+int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
-+		   struct rproc *rproc, int crash_reason,
-+		   void (*handover)(struct qcom_q6v5 *q6v5));
-+
-+int qcom_q6v5_prepare(struct qcom_q6v5 *q6v5);
-+int qcom_q6v5_unprepare(struct qcom_q6v5 *q6v5);
-+int qcom_q6v5_request_stop(struct qcom_q6v5 *q6v5);
-+int qcom_q6v5_wait_for_start(struct qcom_q6v5 *q6v5, int timeout);
-+
-+#endif
--- 
-2.17.0
+-
+ static void hmm_devmem_ref_release(struct percpu_ref *ref)
+ {
+ 	struct hmm_devmem *devmem;
+@@ -942,17 +941,16 @@ static void hmm_devmem_ref_exit(void *data)
+ 	struct hmm_devmem *devmem;
+ 
+ 	devmem = container_of(ref, struct hmm_devmem, ref);
++	wait_for_completion(&devmem->completion);
+ 	percpu_ref_exit(ref);
+ }
+ 
+-static void hmm_devmem_ref_kill(void *data)
++static void hmm_devmem_ref_kill(struct percpu_ref *ref)
+ {
+-	struct percpu_ref *ref = data;
+ 	struct hmm_devmem *devmem;
+ 
+ 	devmem = container_of(ref, struct hmm_devmem, ref);
+ 	percpu_ref_kill(ref);
+-	wait_for_completion(&devmem->completion);
+ }
+ 
+ static int hmm_devmem_fault(struct vm_area_struct *vma,
+@@ -973,155 +971,6 @@ static void hmm_devmem_free(struct page *page, void *data)
+ 	devmem->ops->free(devmem, page);
+ }
+ 
+-static DEFINE_MUTEX(hmm_devmem_lock);
+-static RADIX_TREE(hmm_devmem_radix, GFP_KERNEL);
+-
+-static void hmm_devmem_radix_release(struct resource *resource)
+-{
+-	resource_size_t key, align_start, align_size;
+-
+-	align_start = resource->start & ~(PA_SECTION_SIZE - 1);
+-	align_size = ALIGN(resource_size(resource), PA_SECTION_SIZE);
+-
+-	mutex_lock(&hmm_devmem_lock);
+-	for (key = resource->start;
+-	     key <= resource->end;
+-	     key += PA_SECTION_SIZE)
+-		radix_tree_delete(&hmm_devmem_radix, key >> PA_SECTION_SHIFT);
+-	mutex_unlock(&hmm_devmem_lock);
+-}
+-
+-static void hmm_devmem_release(void *data)
+-{
+-	struct hmm_devmem *devmem = data;
+-	struct resource *resource = devmem->resource;
+-	unsigned long start_pfn, npages;
+-	struct zone *zone;
+-	struct page *page;
+-
+-	/* pages are dead and unused, undo the arch mapping */
+-	start_pfn = (resource->start & ~(PA_SECTION_SIZE - 1)) >> PAGE_SHIFT;
+-	npages = ALIGN(resource_size(resource), PA_SECTION_SIZE) >> PAGE_SHIFT;
+-
+-	page = pfn_to_page(start_pfn);
+-	zone = page_zone(page);
+-
+-	mem_hotplug_begin();
+-	if (resource->desc == IORES_DESC_DEVICE_PRIVATE_MEMORY)
+-		__remove_pages(zone, start_pfn, npages, NULL);
+-	else
+-		arch_remove_memory(start_pfn << PAGE_SHIFT,
+-				   npages << PAGE_SHIFT, NULL);
+-	mem_hotplug_done();
+-
+-	hmm_devmem_radix_release(resource);
+-}
+-
+-static int hmm_devmem_pages_create(struct hmm_devmem *devmem)
+-{
+-	resource_size_t key, align_start, align_size, align_end;
+-	struct device *device = devmem->device;
+-	int ret, nid, is_ram;
+-	unsigned long pfn;
+-
+-	align_start = devmem->resource->start & ~(PA_SECTION_SIZE - 1);
+-	align_size = ALIGN(devmem->resource->start +
+-			   resource_size(devmem->resource),
+-			   PA_SECTION_SIZE) - align_start;
+-
+-	is_ram = region_intersects(align_start, align_size,
+-				   IORESOURCE_SYSTEM_RAM,
+-				   IORES_DESC_NONE);
+-	if (is_ram == REGION_MIXED) {
+-		WARN_ONCE(1, "%s attempted on mixed region %pr\n",
+-				__func__, devmem->resource);
+-		return -ENXIO;
+-	}
+-	if (is_ram == REGION_INTERSECTS)
+-		return -ENXIO;
+-
+-	if (devmem->resource->desc == IORES_DESC_DEVICE_PUBLIC_MEMORY)
+-		devmem->pagemap.type = MEMORY_DEVICE_PUBLIC;
+-	else
+-		devmem->pagemap.type = MEMORY_DEVICE_PRIVATE;
+-
+-	devmem->pagemap.res = *devmem->resource;
+-	devmem->pagemap.page_fault = hmm_devmem_fault;
+-	devmem->pagemap.page_free = hmm_devmem_free;
+-	devmem->pagemap.dev = devmem->device;
+-	devmem->pagemap.ref = &devmem->ref;
+-	devmem->pagemap.data = devmem;
+-
+-	mutex_lock(&hmm_devmem_lock);
+-	align_end = align_start + align_size - 1;
+-	for (key = align_start; key <= align_end; key += PA_SECTION_SIZE) {
+-		struct hmm_devmem *dup;
+-
+-		dup = radix_tree_lookup(&hmm_devmem_radix,
+-					key >> PA_SECTION_SHIFT);
+-		if (dup) {
+-			dev_err(device, "%s: collides with mapping for %s\n",
+-				__func__, dev_name(dup->device));
+-			mutex_unlock(&hmm_devmem_lock);
+-			ret = -EBUSY;
+-			goto error;
+-		}
+-		ret = radix_tree_insert(&hmm_devmem_radix,
+-					key >> PA_SECTION_SHIFT,
+-					devmem);
+-		if (ret) {
+-			dev_err(device, "%s: failed: %d\n", __func__, ret);
+-			mutex_unlock(&hmm_devmem_lock);
+-			goto error_radix;
+-		}
+-	}
+-	mutex_unlock(&hmm_devmem_lock);
+-
+-	nid = dev_to_node(device);
+-	if (nid < 0)
+-		nid = numa_mem_id();
+-
+-	mem_hotplug_begin();
+-	/*
+-	 * For device private memory we call add_pages() as we only need to
+-	 * allocate and initialize struct page for the device memory. More-
+-	 * over the device memory is un-accessible thus we do not want to
+-	 * create a linear mapping for the memory like arch_add_memory()
+-	 * would do.
+-	 *
+-	 * For device public memory, which is accesible by the CPU, we do
+-	 * want the linear mapping and thus use arch_add_memory().
+-	 */
+-	if (devmem->pagemap.type == MEMORY_DEVICE_PUBLIC)
+-		ret = arch_add_memory(nid, align_start, align_size, NULL,
+-				false);
+-	else
+-		ret = add_pages(nid, align_start >> PAGE_SHIFT,
+-				align_size >> PAGE_SHIFT, NULL, false);
+-	if (ret) {
+-		mem_hotplug_done();
+-		goto error_add_memory;
+-	}
+-	move_pfn_range_to_zone(&NODE_DATA(nid)->node_zones[ZONE_DEVICE],
+-				align_start >> PAGE_SHIFT,
+-				align_size >> PAGE_SHIFT, NULL);
+-	mem_hotplug_done();
+-
+-	for (pfn = devmem->pfn_first; pfn < devmem->pfn_last; pfn++) {
+-		struct page *page = pfn_to_page(pfn);
+-
+-		page->pgmap = &devmem->pagemap;
+-	}
+-	return 0;
+-
+-error_add_memory:
+-	untrack_pfn(NULL, PHYS_PFN(align_start), align_size);
+-error_radix:
+-	hmm_devmem_radix_release(devmem->resource);
+-error:
+-	return ret;
+-}
+-
+ /*
+  * hmm_devmem_add() - hotplug ZONE_DEVICE memory for device memory
+  *
+@@ -1145,6 +994,7 @@ struct hmm_devmem *hmm_devmem_add(const struct hmm_devmem_ops *ops,
+ {
+ 	struct hmm_devmem *devmem;
+ 	resource_size_t addr;
++	void *result;
+ 	int ret;
+ 
+ 	static_branch_enable(&device_private_key);
+@@ -1199,14 +1049,18 @@ struct hmm_devmem *hmm_devmem_add(const struct hmm_devmem_ops *ops,
+ 	devmem->pfn_last = devmem->pfn_first +
+ 			   (resource_size(devmem->resource) >> PAGE_SHIFT);
+ 
+-	ret = hmm_devmem_pages_create(devmem);
+-	if (ret)
+-		return ERR_PTR(ret);
+-
+-	ret = devm_add_action_or_reset(device, hmm_devmem_release, devmem);
+-	if (ret)
+-		return ERR_PTR(ret);
++	devmem->pagemap.type = MEMORY_DEVICE_PRIVATE;
++	devmem->pagemap.res = *devmem->resource;
++	devmem->pagemap.page_fault = hmm_devmem_fault;
++	devmem->pagemap.page_free = hmm_devmem_free;
++	devmem->pagemap.altmap_valid = false;
++	devmem->pagemap.ref = &devmem->ref;
++	devmem->pagemap.data = devmem;
+ 
++	result = devm_memremap_pages(devmem->device, &devmem->pagemap,
++			hmm_devmem_ref_kill);
++	if (IS_ERR(result))
++		return result;
+ 	return devmem;
+ }
+ EXPORT_SYMBOL(hmm_devmem_add);
+@@ -1216,6 +1070,7 @@ struct hmm_devmem *hmm_devmem_add_resource(const struct hmm_devmem_ops *ops,
+ 					   struct resource *res)
+ {
+ 	struct hmm_devmem *devmem;
++	void *result;
+ 	int ret;
+ 
+ 	if (res->desc != IORES_DESC_DEVICE_PUBLIC_MEMORY)
+@@ -1248,19 +1103,18 @@ struct hmm_devmem *hmm_devmem_add_resource(const struct hmm_devmem_ops *ops,
+ 	devmem->pfn_last = devmem->pfn_first +
+ 			   (resource_size(devmem->resource) >> PAGE_SHIFT);
+ 
+-	ret = hmm_devmem_pages_create(devmem);
+-	if (ret)
+-		return ERR_PTR(ret);
+-
+-	ret = devm_add_action_or_reset(device, hmm_devmem_release, devmem);
+-	if (ret)
+-		return ERR_PTR(ret);
+-
+-	ret = devm_add_action_or_reset(device, hmm_devmem_ref_kill,
+-			&devmem->ref);
+-	if (ret)
+-		return ERR_PTR(ret);
++	devmem->pagemap.type = MEMORY_DEVICE_PUBLIC;
++	devmem->pagemap.res = *devmem->resource;
++	devmem->pagemap.page_fault = hmm_devmem_fault;
++	devmem->pagemap.page_free = hmm_devmem_free;
++	devmem->pagemap.altmap_valid = false;
++	devmem->pagemap.ref = &devmem->ref;
++	devmem->pagemap.data = devmem;
+ 
++	result = devm_memremap_pages(devmem->device, &devmem->pagemap,
++			hmm_devmem_ref_kill);
++	if (IS_ERR(result))
++		return result;
+ 	return devmem;
+ }
+ EXPORT_SYMBOL(hmm_devmem_add_resource);
