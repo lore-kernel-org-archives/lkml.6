@@ -1,78 +1,181 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932609AbeEWLWL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 07:22:11 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:35022 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932071AbeEWLWG (ORCPT
+        id S932582AbeEWLZ3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 07:25:29 -0400
+Received: from mxf9a3.netcup.net ([46.38.249.163]:60880 "EHLO
+        mxf9a3.netcup.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932071AbeEWLZ2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 07:22:06 -0400
-X-Google-Smtp-Source: AB8JxZpItG65+epwLerTfBZGRptQ+/7fg/CLBIkV3Gy8wJd/KKxlP5H8sbQT9tkcFH8NElenDSkSbXNrfVCO5MFAHp0=
-MIME-Version: 1.0
-In-Reply-To: <1520855584-10079-1-git-send-email-wanpengli@tencent.com>
-References: <1520855584-10079-1-git-send-email-wanpengli@tencent.com>
-From: Wanpeng Li <kernellwp@gmail.com>
-Date: Wed, 23 May 2018 19:22:05 +0800
-Message-ID: <CANRm+Cwtqvn=6UQ308vNnPxTtWJONTrDt3L5ydteYpvYMqDuQQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] Provides userspace with per-VM capability to
- improve latency
-To: LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        =?UTF-8?B?SmFuIEggLiBTY2jDtm5oZXJy?= <jschoenh@amazon.de>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 23 May 2018 07:25:28 -0400
+Authentication-Results: mxf9a3;
+        spf=pass (sender IP is 91.41.193.50) smtp.mailfrom=alexander@kurtz.be smtp.helo=shepard
+Message-ID: <a3ecf04de4fded7c71284a9695b7146d284d1f22.camel@kurtz.be>
+Subject: Expected result when racing listen(2) on two sockets bound to the
+ same address
+From: Alexander Kurtz <alexander@kurtz.be>
+To: linux-kernel@vger.kernel.org
+Date: Wed, 23 May 2018 13:15:42 +0200
+Content-Type: multipart/signed; micalg="pgp-sha512";
+ protocol="application/pgp-signature"; boundary="=-/sHIrILijOpUIkZJdKf8"
+X-Mailer: Evolution 3.28.2-1
+Mime-Version: 1.0
+X-PPP-Message-ID: <20180523111543.3626.54019@mxf9a3.netcup.net>
+X-PPP-Vhost: kurtz.be
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4NBMF0Y022407
 
-2018-03-12 19:53 GMT+08:00 Wanpeng Li <kernellwp@gmail.com>:
-> Provides userspace with per-VM capability(KVM_CAP_X86_DISABLE_EXITS) to
-> not intercept MWAIT/HLT/PAUSE in order that to improve latency in some
-> workloads.
 
-When running cyclictest in the guest w/ vCPU pin on host and
-cyclictest pin in guest, the avg latency can be reduced 40%.
+--=-/sHIrILijOpUIkZJdKf8
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Regards,
-Wanpeng Li
+[Please keep me CC'ed; I'm not subscribed to the list]
 
->
-> The patchset implements the original proposal from Radim.
-> https://www.spinics.net/lists/kvm/msg146879.html
->
-> In addition, thanks to Jan H. Schönherr's attempt last year.
->
-> v1 -> v2:
->  * remove blinding setting KVM_ENABLE_CAP statement in doc
->  * move PV_UNHALT associated statement to 2/3
->  * rename kvm_mwait_can_in_guest to kvm_can_mwait_in_guest
->  * remove unconditionally set INTERCEPT HLT in svm
->  * call vmx_clear_hlt() from pre_enter_smm()
->  * add a check to kvm_update_cpuid() that forbits KVM_FEATURE_PV_UNHALT
->    when halt exits are disabld
->
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Cc: Jan H. Schönherr <jschoenh@amazon.de>
->
-> Wanpeng Li (3):
->   KVM: X86: Provides userspace with a capability to not intercept MWAIT
->   KVM: X86: Provides userspace with a capability to not intercept HLT
->   KVM: X86: Provides userspace with a capability to not intercept PAUSE
->
->  Documentation/virtual/kvm/api.txt | 24 ++++++++++++-------
->  arch/x86/include/asm/kvm_host.h   |  4 ++++
->  arch/x86/kvm/cpuid.c              |  5 ++++
->  arch/x86/kvm/svm.c                |  9 ++++---
->  arch/x86/kvm/vmx.c                | 50 ++++++++++++++++++++++++++++++++-------
->  arch/x86/kvm/x86.c                | 29 +++++++++++++++++++----
->  arch/x86/kvm/x86.h                | 24 +++++++++++++++----
->  include/uapi/linux/kvm.h          |  2 +-
->  tools/include/uapi/linux/kvm.h    |  2 +-
->  9 files changed, 118 insertions(+), 31 deletions(-)
->
-> --
-> 2.7.4
->
+Hi!
+
+The program shown below (also available at [0]) does the following:
+
+ * Create two sockets
+ * Enable SO_REUSEADDR on both
+ * Bind both sockets to [::1]:12345
+ * Spawn two threads which both call listen(2) on one socket each
+ * Check that at least one thread succeeded
+
+Unfortunately, when running this program on Linux 4.16, it is sometimes
+possible that neither thread succeeds in calling listen(2):
+
+    $ uname -a
+    Linux shepard 4.16.0-1-amd64 #1 SMP Debian 4.16.5-1 (2018-04-29) x86_64=
+ GNU/Linux
+    $ time make
+    cc -Wall -Wextra -pedantic -Werror -O3    listenrace.c  -lpthread -o li=
+stenrace
+    for i in `seq 10000`; do ./listenrace; done
+    listenrace: listenrace.c:58: main: Assertion `result1 =3D=3D 0 || resul=
+t2 =3D=3D 0' failed.
+    Aborted
+    listenrace: listenrace.c:58: main: Assertion `result1 =3D=3D 0 || resul=
+t2 =3D=3D 0' failed.
+    Aborted
+    listenrace: listenrace.c:58: main: Assertion `result1 =3D=3D 0 || resul=
+t2 =3D=3D 0' failed.
+    Aborted
+
+    real	0m8.201s
+    user	0m6.801s
+    sys	0m2.141s
+    $=20
+
+As can be seen, on 3 runs (out of 10000) calling listen(2) failed in
+*both* threads. Is this to be expected (i.e. "don't do this then") or
+could this be some race condition in the Linux kernel?
+
+Best regards
+
+Alexander Kurtz
+
+[0] https://github.com/AlexanderKurtz/listenrace
+
+=3D=3D> Makefile <=3D=3D
+CFLAGS =3D -Wall -Wextra -pedantic -Werror -O3
+LDLIBS =3D -lpthread
+
+all: listenrace
+	for i in `seq 10000`; do ./listenrace; done
+
+listenrace: listenrace.c
+
+clean:
+	rm 'listenrace'
+
+.PHONY: all clean
+
+=3D=3D> listenrace.c <=3D=3D
+#include <assert.h>      // for assert
+#include <netdb.h>       // for addrinfo, getaddrinfo
+#include <pthread.h>     // for pthread_create, pthread_join, pthread_t
+#include <stdint.h>      // for intptr_t
+#include <stdio.h>       // for NULL
+#include <sys/socket.h>  // for bind, setsockopt, listen, socket, AF_INET6
+
+int my_socket (struct addrinfo* address) {
+    // Create socket
+    int fd =3D socket (address->ai_family, address->ai_socktype, 0);
+    assert (fd >=3D 0);
+
+    // Enable SO_REUSEADDR
+    assert (setsockopt (fd, SOL_SOCKET, SO_REUSEADDR, & (int) { 1 }, sizeof=
+ (int)) =3D=3D 0);
+
+    // Bind socket
+    assert (bind (fd, address->ai_addr, address->ai_addrlen) =3D=3D 0);
+
+    // Return socket
+    return fd;
+}
+
+void* my_listen (void* data) {
+    int fd =3D (intptr_t) data;
+
+    intptr_t result =3D listen (fd, 64);
+
+    return (void*) result;
+}
+
+int main () {
+    // Create sockaddr struct
+    struct addrinfo hints =3D {
+        .ai_family   =3D AF_INET6,
+        .ai_socktype =3D SOCK_STREAM,
+    };
+    struct addrinfo* address =3D NULL;
+    assert (getaddrinfo ("::1", "12345", &hints, &address) =3D=3D 0);
+    assert (address);
+
+    // Create sockets
+    int socket1 =3D my_socket (address);
+    int socket2 =3D my_socket (address);
+
+    // Create threads
+    pthread_t thread1;
+    pthread_t thread2;
+    assert (pthread_create (&thread1, NULL, my_listen, (void*) (intptr_t) s=
+ocket1) =3D=3D 0);
+    assert (pthread_create (&thread2, NULL, my_listen, (void*) (intptr_t) s=
+ocket2) =3D=3D 0);
+
+    // Wait for the threads
+    void* result1 =3D NULL;
+    void* result2 =3D NULL;
+    assert (pthread_join (thread1, &result1) =3D=3D 0);
+    assert (pthread_join (thread2, &result2) =3D=3D 0);
+
+    // Check that at least one thread could successfully call listen
+    assert (result1 =3D=3D 0 || result2 =3D=3D 0);
+
+    return 0;
+}
+--=-/sHIrILijOpUIkZJdKf8
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE+DNlMSKIDZ1tz4e4KZScQvp1/pEFAlsFTV4ACgkQKZScQvp1
+/pEvDQ/9FE+RhzJn1F8JLajR2qitvMb0mgZfBN+Ea5JFUQmSG3OB+W4jSrBDb8Fy
+NJI1oM5mkSaLJhZL16boLU90FD9/iMoJZBainj7puI3jSBwLITgQfjTFdawAsnIp
+jzHJSTItZ/cpxvfiTp9cjemNLSJmrK+3H4QxuWn3gKyN8H+EkJ0WU+KtrqrI6fn5
+MHH8AAb5+9g8QbGfMEPsKUw6eiDJhiSAPeEkzC1HA2Ip0DyWT1N6A4T2+5C/cZ1M
+P2xsfT5kNdJSNGs+VY3fH2I0THfrrSGzQ8K4X4PsCEXPrNMpKWo9SVVlrp8q/bE3
+C2NVd6iLPpfiR/sZYw1VmbabA8/ZrCHOTIzuf79z64+WfslxeaK66bqFeJjLH2pk
+A2dfd53nk+FH9NPS5n/egkKRLO/sZ7JF+Owqr0YRq/b5O8l7DdUH09RJaWJ2ZQ1p
+h14t6bnrkE2I4alJ443IaFQhhP9YLY8seYNvS+YFxu6AfvXz6gHeZfgvhB4SAeMO
+8m2jsXizbe9Y+vwyIZ+vtqULk1g0lWdIkDKPhN72o/eWuYmiCrZr8C50NqI8GrB3
+JOdj8ozv92yufaW2rSuLxH4V2+wEG3KX4LVO0DU8ZMqjvInXq//MWNLp2QQA3NK6
+wRwWPYur+ljVXzeZ8W1CkEozP/LLKJ4sRpe0AFGceEqcCc7ek9w=
+=RUOn
+-----END PGP SIGNATURE-----
+
+--=-/sHIrILijOpUIkZJdKf8--
