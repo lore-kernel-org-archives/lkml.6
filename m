@@ -1,77 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754752AbeEWSCC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 14:02:02 -0400
-Received: from sandeen.net ([63.231.237.45]:56092 "EHLO sandeen.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750771AbeEWSCB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 14:02:01 -0400
-Subject: Re: INFO: task hung in xlog_grant_head_check
-To: Eric Biggers <ebiggers3@gmail.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc: Dave Chinner <david@fromorbit.com>, Brian Foster <bfoster@redhat.com>,
-        syzbot <syzbot+568245b88fbaedcb1959@syzkaller.appspotmail.com>,
-        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-References: <000000000000457b2d056cbb0044@google.com>
- <20180522123107.GC3751@bfoster.bfoster> <20180522222620.GW23861@dastard>
- <20180522225208.GB658@sol.localdomain> <20180523074425.GM14384@magnolia>
- <20180523162015.GA3684@sol.localdomain>
-From: Eric Sandeen <sandeen@sandeen.net>
-Message-ID: <a52266f9-0096-b28c-c01c-046ababcfe3a@sandeen.net>
-Date: Wed, 23 May 2018 13:01:59 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        id S933800AbeEWSFh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 14:05:37 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39192 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750866AbeEWSFd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 14:05:33 -0400
 MIME-Version: 1.0
-In-Reply-To: <20180523162015.GA3684@sol.localdomain>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date: Wed, 23 May 2018 11:05:32 -0700
+From: Rajkumar Manoharan <rmanohar@codeaurora.org>
+To: Erik Stromdahl <erik.stromdahl@gmail.com>
+Cc: Niklas Cassel <niklas.cassel@linaro.org>,
+        Kalle Valo <kvalo@qca.qualcomm.com>,
+        "David S. Miller" <davem@davemloft.net>, ath10k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-wireless-owner@vger.kernel.org
+Subject: Re: [PATCH v2] ath10k: transmit queued frames after waking queues
+In-Reply-To: <c131da6e-6479-3a40-fbd3-9c61d6690ba8@gmail.com>
+References: <20180521204359.23884-1-niklas.cassel@linaro.org>
+ <8195be7603a8cd659d25a9c3d898b891@codeaurora.org>
+ <20180522211521.GA26123@localhost.localdomain>
+ <c131da6e-6479-3a40-fbd3-9c61d6690ba8@gmail.com>
+Message-ID: <ddcd48cc8b1a77c489214a4f63c54b1a@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/23/18 11:20 AM, Eric Biggers wrote:
-> Hi Darrick,
+On 2018-05-23 09:25, Erik Stromdahl wrote:
+> On 05/22/2018 11:15 PM, Niklas Cassel wrote:
+> 
+[...]
+>> 
+>> Perhaps it would be possible to call ath10k_mac_tx_push_pending()
+>> from the equivalent to ath10k_htt_txrx_compl_task(),
+>> but from SDIO's point of view.
+> An equivalent for SDIO would most likely be 
+> *ath10k_htt_htc_t2h_msg_handler*
+> or any of the other functions called from this function.
+> 
+> *ath10k_txrx_tx_unref* is actually called from 
+> *ath10k_htt_htc_t2h_msg_handler*,
+> so that function could be viewed as an equivalent.
+> 
+> If the call should be added in the bus driver (sdio.c) it should most 
+> likely be
+> placed in *ath10k_sdio_mbox_rx_process_packets*
+> 
+> 		if (!pkt->trailer_only) {
+> 			ep->ep_ops.ep_rx_complete(ar_sdio->ar, pkt->skb);
+> 			ath10k_mac_tx_push_pending(ar_sdio->ar);
+> 		} else {
+> 			kfree_skb(pkt->skb)
+> 		}
+> 
+> The above call would of course result in lot's of calls to
+> *ath10k_mac_tx_push_pending*
+> Adding a htt_num_pending check here wouldn't look nice.
+> 
+> The HL RX path differs from the LL path in that the t2h_msg_handler 
+> returns
+> false indicating that it has consumed the skb.
+> 
+> This is because it is the HL RX indication handler that delivers the 
+> skb's
+> to mac80211.
+> 
+I also dont prefer to call *_push_pending for every HTC packets. Similar 
+to
+LL approach, call ath10k_mac_tx_push_pending after processing all 
+pending
+rx messages like calling from ath10k_sdio_mbox_rxmsg_pending_handler.
 
-...
+--- a/drivers/net/wireless/ath/ath10k/sdio.c
++++ b/drivers/net/wireless/ath/ath10k/sdio.c
+@@ -807,6 +807,8 @@ static int 
+ath10k_sdio_mbox_rxmsg_pending_handler(struct ath10k *ar,
+                 ath10k_warn(ar, "failed to get pending recv messages: 
+%d\n",
+                             ret);
 
-> Now, if you *really* don't want syzbot to report XFS bugs as you believe XFS
-> contains known unfixable bugs or for other reasons, you can formally ask Dmitry
-> to remove CONFIG_XFS_FS from the syzbot config.  But of course that doesn't make
-> the bugs go away, it just makes the bug reports go away; you'll have to fix them
-> eventually anyway, one way or another.
++       ath10k_mac_tx_push_pending(ar);
++
+         return ret;
+  }
 
-I'd revise that to "have to fix /some/ of them anyway."
+> Another solution could be to add an *else-statement* as a part of the
+> *if (release)*
+> in *ath10k_htt_htc_t2h_msg_handler*, where
+> *ath10k_mac_tx_push_pending* could be called.
+> 
+> Something like this perhaps:
+> 
+> 	/* Free the indication buffer */
+> 	if (release)
+> 		dev_kfree_skb_any(skb);
+> 	else if (!ar->htt.num_pending_tx)
+> 		ath10k_mac_tx_push_pending(ar);
+> 
+> I think I prefer your original patch though.
+>> 
 
-What I'm personally hung up on are the bugs where the "exploit" involves merely
-mounting a crafted filesystem that in reality would never (until the heat death
-of the universe) corrupt itself into that state on its own; it's the "malicious
-image" case, which is quite different than exposing fundamental bugs like the
-SB_BORN race or or the user-exploitable ext4 flaw you mentioned in your reply.
-Those are more insidious and/or things which can be hit by real users in real life.
+Better to do changes as HL specific path instead in common path.
+The above change will impact QCA6174 based devices.
 
-I don't know if I can win the "malicious images aren't a critical security
-threat" battle, but I do think they are at least a different class of flaws,
-because as Dave said, mount is supposed to be a privileged operation.
-In a perfect world we'd fix them anyway, but I don't know that our resource
-pool can keep up with your google-scale bot and still make progress in other
-critical areas.
-
-Anyway, the upshot is that we're probably just not going to care much about V4
-filesystem oops-or-hang-on-mount bugs.  Those problems are solved (largely) with
-V5 filesystem format.  Maybe I /will/ propose a system-wide tunable to disallow
-V4 for those who are worried about such things.
-
-To Darrick's points about more collaboration, I still wish that our requests
-for more traditional fs fuzzer reporting (i.e. a filesystem image) weren't met
-with such resistance.Tailoring your bug reports to the needs of the developer
-community you're interacting with seems like a pretty reasonable thing to do.
-
-As an aside, I wonder how much coverage of the V5 format code syzkaller /has/
-achieved; that would be another useful datapoint google could provide - if
-syzkaller is in fact traversing the V5 codepaths and isn't turning anything
-up, that'd be pretty useful to know.
-
-Thanks,
--Eric
+-Rajkumar
