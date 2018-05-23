@@ -1,76 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753749AbeEWB7S (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 21:59:18 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:55434 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753672AbeEWB7Q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 21:59:16 -0400
-Subject: Re: [PATCH] block: kyber: make kyber more friendly with merging
-To: =?UTF-8?Q?Holger_Hoffst=c3=a4tte?= <holger@applied-asynchrony.com>,
-        Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1527000509-2619-1-git-send-email-jianchao.w.wang@oracle.com>
- <163c5760-cf0e-faea-ee4e-ac5d688310fe@applied-asynchrony.com>
- <00e5dfd4-d3a2-b008-3d8b-390a788f61c9@kernel.dk>
- <7c93b85f-6a02-bdcf-5e92-a9533500df20@kernel.dk>
- <fc26ef08-2e2a-3b2d-2190-8419307b243e@applied-asynchrony.com>
-From: "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <d5c15cb9-cef9-3d05-8895-b826fa1c7f01@oracle.com>
-Date: Wed, 23 May 2018 09:59:15 +0800
+        id S1753825AbeEWCCL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 22:02:11 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51288 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753715AbeEWCCJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 22:02:09 -0400
+Subject: Re: [PATCH 0/2] support kdump for AMD secure memory encryption(sme)
+To: Tom Lendacky <thomas.lendacky@amd.com>, linux-kernel@vger.kernel.org
+Cc: kexec@lists.infradead.org, dyoung@redhat.com, bhe@redhat.com
+References: <20180515015133.4363-1-lijiang@redhat.com>
+ <55bda494-bee4-5696-03e5-fc21c9d6b631@amd.com>
+ <18309611-c8c4-92cb-161e-f35ef3d243ea@redhat.com>
+ <a0b95743-209a-aca7-33e4-828375df1826@redhat.com>
+ <3972e681-d8eb-4f4d-843a-6ddbf339f0bb@amd.com>
+From: lijiang <lijiang@redhat.com>
+Message-ID: <2cabcbab-264a-2ac5-524e-6e3a9e388e56@redhat.com>
+Date: Wed, 23 May 2018 10:02:00 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-In-Reply-To: <fc26ef08-2e2a-3b2d-2190-8419307b243e@applied-asynchrony.com>
+In-Reply-To: <3972e681-d8eb-4f4d-843a-6ddbf339f0bb@amd.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8901 signatures=668700
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805230015
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jens and Holger
-
-Thank for your kindly response.
-That's really appreciated.
-
-I will post next version based on Jens' patch.
-
-Thanks
-Jianchao
-
-On 05/23/2018 02:32 AM, Holger Hoffstätte wrote:
->>>> This looks great but prevents kyber from being built as module,
->>>> which is AFAIK supposed to work (and works now):
+在 2018年05月21日 21:23, Tom Lendacky 写道:
+> On 5/20/2018 10:45 PM, lijiang wrote:
+>> 在 2018年05月17日 21:45, lijiang 写道:
+>>> 在 2018年05月15日 21:31, Tom Lendacky 写道:
+>>>> On 5/14/2018 8:51 PM, Lianbo Jiang wrote:
+>>>>> It is convenient to remap the old memory encrypted to the second kernel by
+>>>>> calling ioremap_encrypted().
+>>>>>
+>>>>> When sme enabled on AMD server, we also need to support kdump. Because
+>>>>> the memory is encrypted in the first kernel, we will remap the old memory
+>>>>> encrypted to the second kernel(crash kernel), and sme is also enabled in
+>>>>> the second kernel, otherwise the old memory encrypted can not be decrypted.
+>>>>> Because simply changing the value of a C-bit on a page will not
+>>>>> automatically encrypt the existing contents of a page, and any data in the
+>>>>> page prior to the C-bit modification will become unintelligible. A page of
+>>>>> memory that is marked encrypted will be automatically decrypted when read
+>>>>> from DRAM and will be automatically encrypted when written to DRAM.
+>>>>>
+>>>>> For the kdump, it is necessary to distinguish whether the memory is
+>>>>> encrypted. Furthermore, we should also know which part of the memory is
+>>>>> encrypted or decrypted. We will appropriately remap the memory according
+>>>>> to the specific situation in order to tell cpu how to deal with the
+>>>>> data(encrypted or decrypted). For example, when sme enabled, if the old
+>>>>> memory is encrypted, we will remap the old memory in encrypted way, which
+>>>>> will automatically decrypt the old memory encrypted when we read those data
+>>>>> from the remapping address.
+>>>>>
+>>>>>  ----------------------------------------------
+>>>>> | first-kernel | second-kernel | kdump support |
+>>>>> |      (mem_encrypt=on|off)    |   (yes|no)    | 
+>>>>> |--------------+---------------+---------------|
+>>>>> |     on       |     on        |     yes       |
+>>>>> |     off      |     off       |     yes       |
+>>>>> |     on       |     off       |     no        |
+>>>>> |     off      |     on        |     no        |
+>>>>> |______________|_______________|_______________|
+>>>>>
+>>>>> Test tools:
+>>>>> makedumpfile[v1.6.3]: https://github.com/LianboJ/makedumpfile
+>>>>> commit e1de103eca8f (A draft for kdump vmcore about AMD SME)
+>>>>> Author: Lianbo Jiang <lijiang@redhat.com>
+>>>>> Date:   Mon May 14 17:02:40 2018 +0800
+>>>>> Note: This patch can only dump vmcore in the case of SME enabled.
+>>>>>
+>>>>> crash-7.2.1: https://github.com/crash-utility/crash.git
+>>>>> commit 1e1bd9c4c1be (Fix for the "bpf" command display on Linux 4.17-rc1)
+>>>>> Author: Dave Anderson <anderson@redhat.com>
+>>>>> Date:   Fri May 11 15:54:32 2018 -0400
+>>>>>
+>>>>> Test environment:
+>>>>> HP ProLiant DL385Gen10 AMD EPYC 7251
+>>>>> 8-Core Processor
+>>>>> 32768 MB memory
+>>>>> 600 GB disk space
+>>>>>
+>>>>> Linux 4.17-rc4:
+>>>>> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+>>>>> commit 75bc37fefc44 ("Linux 4.17-rc4")
+>>>>> Author: Linus Torvalds <torvalds@linux-foundation.org>
+>>>>> Date:   Sun May 6 16:57:38 2018 -1000
+>>>>>
+>>>>> Reference:
+>>>>> AMD64 Architecture Programmer's Manual
+>>>>> https://support.amd.com/TechDocs/24593.pdf
+>>>>>
 >>>>
->>>> ..
->>>>   CC [M]  block/kyber-iosched.o
->>>>   Building modules, stage 2.
->>>>   MODPOST 313 modules
->>>> ERROR: "bio_attempt_back_merge" [block/kyber-iosched.ko] undefined!
->>>> ERROR: "bio_attempt_front_merge" [block/kyber-iosched.ko] undefined!
->>>> ERROR: "bio_attempt_discard_merge" [block/kyber-iosched.ko] undefined!
->>>> ERROR: "blk_try_merge" [block/kyber-iosched.ko] undefined!
->>>> ERROR: "blk_rq_merge_ok" [block/kyber-iosched.ko] undefined!
->>>> ..
+>>>> Have you also tested this with SEV?  It would be nice if the kdump
+>>>> changes you make work with both SME and SEV.
 >>>>
->>>> It does build fine when compiled in, obviously. :)
->>> It's basically duplicating the contents of blk_attempt_plug_merge().
->>> I would suggest abstracting out the list loop and merge check
->>> into a helper, that could then both be called from kyber and the
->>> plug merge function.
->> See attached, prep patch and yours rebased on top of it.
-> That was quick. :)
+>>> Thank you, Tom.
+>>> This is a great question, we originally plan to implement SEV in subsequent patches, and
+>>> we are also working on SEV at present.
+>>> Furthermore, we have another known issue that the system can't jump into the second kernel
+>>> when SME is enabled and kaslr is disabled in kdump mode. It seems that is a complex problems,
+>>> maybe it is related to kaslr and SME, currently, i'm not sure the root cause, but we will
+>>> also plan to fix it. Can you give me any advice about this issue?
+>>>
+>> Based on upstream 4.17-rc5, we have recently found a new issue that the system can't boot to
+>> use kexec when SME is enabled and kaslr is disabled. Have you ever run into this issue? 
+>> They have similar reproduction scenarios.
+>>
+>> CC Tom & Baoquan
 > 
-> Applies smoothly on top of my 4.16++ tree, now builds correctly as
-> module and is reproducibly (slightly) faster even on my pedestrian
-> SATA SSDs, now on par or occasionally even faster than mq-deadline.
-> What's not to like? So:
+> I haven't encountered this issue.  Can you send the kernel config that you
+> are using?  And your kernel command line?  I'll try your config and see if
+> I can reproduce the issue.
 > 
-> Tested-by: Holger Hoffstätte <holger@applied-asynchrony.com>
+Thank you, Tom.
+It doesn't have anything special config, and it's always reproduced.
+I will send another email to you about kernel config and command line.
+> Just to be clarify, you perform a power-on boot with SME enabled and KASLR
+> disabled (e.g. mem_encrypt=on nokaslr), correct, and that won't boot?
+>
+The system can boot in this case.
+
+Thanks.
+Lianbo
+> Thanks,
+> Tom
+> 
+>>
+>> Thanks.
+>> Lianbo
+>>
+>>> Thanks.
+>>> Lianbo
+>>>> Thanks,
+>>>> Tom
+>>>>
+>>>>> Lianbo Jiang (2):
+>>>>>   add a function(ioremap_encrypted) for kdump when AMD sme enabled.
+>>>>>   support kdump when AMD secure memory encryption is active
+>>>>>
+>>>>>  arch/x86/include/asm/dmi.h      | 14 +++++++++++++-
+>>>>>  arch/x86/include/asm/io.h       |  2 ++
+>>>>>  arch/x86/kernel/acpi/boot.c     |  8 ++++++++
+>>>>>  arch/x86/kernel/crash_dump_64.c | 27 +++++++++++++++++++++++++++
+>>>>>  arch/x86/mm/ioremap.c           | 25 +++++++++++++++++--------
+>>>>>  drivers/acpi/tables.c           | 14 +++++++++++++-
+>>>>>  drivers/iommu/amd_iommu_init.c  |  9 ++++++++-
+>>>>>  fs/proc/vmcore.c                | 36 +++++++++++++++++++++++++++++++-----
+>>>>>  include/linux/crash_dump.h      |  4 ++++
+>>>>>  kernel/kexec_core.c             | 12 ++++++++++++
+>>>>>  10 files changed, 135 insertions(+), 16 deletions(-)
+>>>>>
