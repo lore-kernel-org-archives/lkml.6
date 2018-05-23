@@ -1,182 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934860AbeEWUSt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 16:18:49 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:36480 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934825AbeEWUSo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 16:18:44 -0400
-X-Google-Smtp-Source: AB8JxZqLwDPcTpRPmIt2q37ZSJ4+TEOaHgawEXg2KiOkxuUaQN0iK88Fd/zlzK9y2mBgEc3tdHAG4g==
-From: dmeyer@gigaio.com
-To: logang@deltatee.com, kurt.schwemmer@microsemi.com,
-        linux-pci@vger.kernel.org, linux-ntb@googlegroups.com
-Cc: bhelgaas@google.com, jdmason@kudzu.us, dave.jiang@intel.com,
-        allenbh@gmail.com, linux-kernel@vger.kernel.org,
-        Doug Meyer <dmeyer@gigaio.com>
-Subject: [PATCH v2 1/2] NTB: Migrate PCI Constants to Cannonical PCI Header
-Date: Wed, 23 May 2018 13:18:05 -0700
-Message-Id: <1527106686-18852-2-git-send-email-dmeyer@gigaio.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1527106686-18852-1-git-send-email-dmeyer@gigaio.com>
-References: <1527106686-18852-1-git-send-email-dmeyer@gigaio.com>
+        id S934893AbeEWUTB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 16:19:01 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42094 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934873AbeEWUS5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 16:18:57 -0400
+Subject: Re: [PATCH v8 4/6] cpuset: Make generate_sched_domains() recognize
+ isolated_cpus
+To: Patrick Bellasi <patrick.bellasi@arm.com>
+Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
+        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>
+References: <1526590545-3350-1-git-send-email-longman@redhat.com>
+ <1526590545-3350-5-git-send-email-longman@redhat.com>
+ <20180523173453.GY30654@e110439-lin>
+From: Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <bf4cb72b-9ff3-eb8b-ca2c-f6c4fee5c123@redhat.com>
+Date: Wed, 23 May 2018 16:18:53 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
+MIME-Version: 1.0
+In-Reply-To: <20180523173453.GY30654@e110439-lin>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Doug Meyer <dmeyer@gigaio.com>
+On 05/23/2018 01:34 PM, Patrick Bellasi wrote:
+> Hi Waiman,
+>
+> On 17-May 16:55, Waiman Long wrote:
+>
+> [...]
+>
+>> @@ -672,13 +672,14 @@ static int generate_sched_domains(cpumask_var_t **domains,
+>>  	int ndoms = 0;		/* number of sched domains in result */
+>>  	int nslot;		/* next empty doms[] struct cpumask slot */
+>>  	struct cgroup_subsys_state *pos_css;
+>> +	bool root_load_balance = is_sched_load_balance(&top_cpuset);
+>>  
+>>  	doms = NULL;
+>>  	dattr = NULL;
+>>  	csa = NULL;
+>>  
+>>  	/* Special case for the 99% of systems with one, full, sched domain */
+>> -	if (is_sched_load_balance(&top_cpuset)) {
+>> +	if (root_load_balance && !top_cpuset.isolation_count) {
+> Perhaps I'm missing something but, it seems to me that, when the two
+> conditions above are true, then we are going to destroy and rebuild
+> the exact same scheduling domains.
+>
+> IOW, on 99% of systems where:
+>
+>    is_sched_load_balance(&top_cpuset)
+>    top_cpuset.isolation_count = 0
+>
+> since boot time and forever, then every time we update a value for
+> cpuset.cpus we keep rebuilding the same SDs.
+>
+> It's not strictly related to this patch, the same already happens in
+> mainline based just on the first condition, but since you are extending
+> that optimization, perhaps you can tell me where I'm possibly wrong or
+> which cases I'm not considering.
+>
+> I'm interested mainly because on Android systems those conditions
+> are always true and we see SDs rebuilds every time we write
+> something in cpuset.cpus, which ultimately accounts for almost all the
+> 6-7[ms] time required for the write to return, depending on the CPU
+> frequency.
+>
+> Cheers Patrick
+>
+Yes, that is true. I will look into how to further optimize this. Thanks
+for the suggestion.
 
-This is the first of two patches to implement a PCI quirk which will
-allow the Switchtec NTB code to work with the IOMMU turned on.
-
-Here, the Microsemi Switchtec PCI vendor and device ID constants are
-moved to the canonical location in pci_ids.h. Also, Microsemi class
-constants are replaced with the standard PCI usage.
-
-Signed-off-by: Doug Meyer <dmeyer@gigaio.com>
----
- drivers/ntb/hw/mscc/ntb_hw_switchtec.c |  3 ++-
- drivers/pci/switch/switchtec.c         | 15 +++++++--------
- include/linux/pci_ids.h                | 32 ++++++++++++++++++++++++++++++++
- include/linux/switchtec.h              |  4 ----
- 4 files changed, 41 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-index f624ae2..5ee5f40 100644
---- a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-+++ b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-@@ -19,6 +19,7 @@
- #include <linux/kthread.h>
- #include <linux/interrupt.h>
- #include <linux/ntb.h>
-+#include <linux/pci.h>
- 
- MODULE_DESCRIPTION("Microsemi Switchtec(tm) NTB Driver");
- MODULE_VERSION("0.1");
-@@ -1487,7 +1488,7 @@ static int switchtec_ntb_add(struct device *dev,
- 
- 	stdev->sndev = NULL;
- 
--	if (stdev->pdev->class != MICROSEMI_NTB_CLASSCODE)
-+	if (stdev->pdev->class != (PCI_CLASS_BRIDGE_OTHER << 8))
- 		return -ENODEV;
- 
- 	sndev = kzalloc_node(sizeof(*sndev), GFP_KERNEL, dev_to_node(dev));
-diff --git a/drivers/pci/switch/switchtec.c b/drivers/pci/switch/switchtec.c
-index 47cd0c0..07a03b9 100644
---- a/drivers/pci/switch/switchtec.c
-+++ b/drivers/pci/switch/switchtec.c
-@@ -1,4 +1,3 @@
--// SPDX-License-Identifier: GPL-2.0
- /*
-  * Microsemi Switchtec(tm) PCIe Management Driver
-  * Copyright (c) 2017, Microsemi Corporation
-@@ -641,7 +640,7 @@ static int ioctl_event_summary(struct switchtec_dev *stdev,
- 
- 	for (i = 0; i < SWITCHTEC_MAX_PFF_CSR; i++) {
- 		reg = ioread16(&stdev->mmio_pff_csr[i].vendor_id);
--		if (reg != MICROSEMI_VENDOR_ID)
-+		if (reg != PCI_VENDOR_ID_MICROSEMI)
- 			break;
- 
- 		reg = ioread32(&stdev->mmio_pff_csr[i].pff_event_summary);
-@@ -1203,7 +1202,7 @@ static void init_pff(struct switchtec_dev *stdev)
- 
- 	for (i = 0; i < SWITCHTEC_MAX_PFF_CSR; i++) {
- 		reg = ioread16(&stdev->mmio_pff_csr[i].vendor_id);
--		if (reg != MICROSEMI_VENDOR_ID)
-+		if (reg != PCI_VENDOR_ID_MICROSEMI)
- 			break;
- 	}
- 
-@@ -1267,7 +1266,7 @@ static int switchtec_pci_probe(struct pci_dev *pdev,
- 	struct switchtec_dev *stdev;
- 	int rc;
- 
--	if (pdev->class == MICROSEMI_NTB_CLASSCODE)
-+	if (pdev->class == (PCI_CLASS_BRIDGE_OTHER << 8))
- 		request_module_nowait("ntb_hw_switchtec");
- 
- 	stdev = stdev_create(pdev);
-@@ -1321,19 +1320,19 @@ static void switchtec_pci_remove(struct pci_dev *pdev)
- 
- #define SWITCHTEC_PCI_DEVICE(device_id) \
- 	{ \
--		.vendor     = MICROSEMI_VENDOR_ID, \
-+		.vendor     = PCI_VENDOR_ID_MICROSEMI, \
- 		.device     = device_id, \
- 		.subvendor  = PCI_ANY_ID, \
- 		.subdevice  = PCI_ANY_ID, \
--		.class      = MICROSEMI_MGMT_CLASSCODE, \
-+		.class      = (PCI_CLASS_MEMORY_OTHER << 8), \
- 		.class_mask = 0xFFFFFFFF, \
- 	}, \
- 	{ \
--		.vendor     = MICROSEMI_VENDOR_ID, \
-+		.vendor     = PCI_VENDOR_ID_MICROSEMI, \
- 		.device     = device_id, \
- 		.subvendor  = PCI_ANY_ID, \
- 		.subdevice  = PCI_ANY_ID, \
--		.class      = MICROSEMI_NTB_CLASSCODE, \
-+		.class      = (PCI_CLASS_BRIDGE_OTHER << 8), \
- 		.class_mask = 0xFFFFFFFF, \
- 	}
- 
-diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-index cc608fc5..7b04ca95 100644
---- a/include/linux/pci_ids.h
-+++ b/include/linux/pci_ids.h
-@@ -3073,4 +3073,36 @@
- 
- #define PCI_VENDOR_ID_OCZ		0x1b85
- 
-+#define PCI_VENDOR_ID_MICROSEMI			0x11f8
-+#define PCI_DEVICE_ID_MICROSEMI_PFX24XG3	0x8531
-+#define PCI_DEVICE_ID_MICROSEMI_PFX32XG3	0x8532
-+#define PCI_DEVICE_ID_MICROSEMI_PFX48XG3	0x8533
-+#define PCI_DEVICE_ID_MICROSEMI_PFX64XG3	0x8534
-+#define PCI_DEVICE_ID_MICROSEMI_PFX80XG3	0x8535
-+#define PCI_DEVICE_ID_MICROSEMI_PFX96XG3	0x8536
-+#define PCI_DEVICE_ID_MICROSEMI_PSX24XG3	0x8541
-+#define PCI_DEVICE_ID_MICROSEMI_PSX32XG3	0x8542
-+#define PCI_DEVICE_ID_MICROSEMI_PSX48XG3	0x8543
-+#define PCI_DEVICE_ID_MICROSEMI_PSX64XG3	0x8544
-+#define PCI_DEVICE_ID_MICROSEMI_PSX80XG3	0x8545
-+#define PCI_DEVICE_ID_MICROSEMI_PSX96XG3	0x8546
-+#define PCI_DEVICE_ID_MICROSEMI_PAX24XG3	0x8551
-+#define PCI_DEVICE_ID_MICROSEMI_PAX32XG3	0x8552
-+#define PCI_DEVICE_ID_MICROSEMI_PAX48XG3	0x8553
-+#define PCI_DEVICE_ID_MICROSEMI_PAX64XG3	0x8554
-+#define PCI_DEVICE_ID_MICROSEMI_PAX80XG3	0x8555
-+#define PCI_DEVICE_ID_MICROSEMI_PAX96XG3	0x8556
-+#define PCI_DEVICE_ID_MICROSEMI_PFXL24XG3	0x8561
-+#define PCI_DEVICE_ID_MICROSEMI_PFXL32XG3	0x8562
-+#define PCI_DEVICE_ID_MICROSEMI_PFXL48XG3	0x8563
-+#define PCI_DEVICE_ID_MICROSEMI_PFXL64XG3	0x8564
-+#define PCI_DEVICE_ID_MICROSEMI_PFXL80XG3	0x8565
-+#define PCI_DEVICE_ID_MICROSEMI_PFXL96XG3	0x8566
-+#define PCI_DEVICE_ID_MICROSEMI_PFXI24XG3	0x8571
-+#define PCI_DEVICE_ID_MICROSEMI_PFXI32XG3	0x8572
-+#define PCI_DEVICE_ID_MICROSEMI_PFXI48XG3	0x8573
-+#define PCI_DEVICE_ID_MICROSEMI_PFXI64XG3	0x8574
-+#define PCI_DEVICE_ID_MICROSEMI_PFXI80XG3	0x8575
-+#define PCI_DEVICE_ID_MICROSEMI_PFXI96XG3	0x8576
-+
- #endif /* _LINUX_PCI_IDS_H */
-diff --git a/include/linux/switchtec.h b/include/linux/switchtec.h
-index ec93e93..ab400af 100644
---- a/include/linux/switchtec.h
-+++ b/include/linux/switchtec.h
-@@ -19,10 +19,6 @@
- #include <linux/pci.h>
- #include <linux/cdev.h>
- 
--#define MICROSEMI_VENDOR_ID         0x11f8
--#define MICROSEMI_NTB_CLASSCODE     0x068000
--#define MICROSEMI_MGMT_CLASSCODE    0x058000
--
- #define SWITCHTEC_MRPC_PAYLOAD_SIZE 1024
- #define SWITCHTEC_MAX_PFF_CSR 48
- 
--- 
-1.8.3.1
+-Longman
