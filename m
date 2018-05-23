@@ -1,114 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935137AbeEWXfl (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 19:35:41 -0400
-Received: from ipmail06.adl6.internode.on.net ([150.101.137.145]:13132 "EHLO
-        ipmail06.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935022AbeEWXfh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 19:35:37 -0400
-Date: Thu, 24 May 2018 09:35:33 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Eric Biggers <ebiggers3@gmail.com>
-Cc: "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Brian Foster <bfoster@redhat.com>,
-        syzbot <syzbot+568245b88fbaedcb1959@syzkaller.appspotmail.com>,
+        id S935151AbeEWXlX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 19:41:23 -0400
+Received: from imap.thunk.org ([74.207.234.97]:46962 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935015AbeEWXlV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 19:41:21 -0400
+Date: Wed, 23 May 2018 19:41:15 -0400
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: Eric Sandeen <sandeen@sandeen.net>
+Cc: Eric Biggers <ebiggers3@gmail.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>, Brian Foster <bfoster@redhat.com>,
         linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
         syzkaller-bugs@googlegroups.com
-Subject: Re: INFO: task hung in xlog_grant_head_check
-Message-ID: <20180523233533.GA23861@dastard>
+Subject: Bugs involving maliciously crafted file system
+Message-ID: <20180523234114.GA3434@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        Eric Biggers <ebiggers3@gmail.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Brian Foster <bfoster@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
 References: <000000000000457b2d056cbb0044@google.com>
  <20180522123107.GC3751@bfoster.bfoster>
  <20180522222620.GW23861@dastard>
  <20180522225208.GB658@sol.localdomain>
  <20180523074425.GM14384@magnolia>
  <20180523162015.GA3684@sol.localdomain>
+ <a52266f9-0096-b28c-c01c-046ababcfe3a@sandeen.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180523162015.GA3684@sol.localdomain>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <a52266f9-0096-b28c-c01c-046ababcfe3a@sandeen.net>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 09:20:15AM -0700, Eric Biggers wrote:
-> Now, if you *really* don't want syzbot to report XFS bugs as you believe XFS
-> contains known unfixable bugs or for other reasons, you can formally ask Dmitry
-> to remove CONFIG_XFS_FS from the syzbot config.
+On Wed, May 23, 2018 at 01:01:59PM -0500, Eric Sandeen wrote:
+> 
+> What I'm personally hung up on are the bugs where the "exploit" involves merely
+> mounting a crafted filesystem that in reality would never (until the heat death
+> of the universe) corrupt itself into that state on its own; it's the "malicious
+> image" case, which is quite different than exposing fundamental bugs like the
+> SB_BORN race or or the user-exploitable ext4 flaw you mentioned in your reply.
+> Those are more insidious and/or things which can be hit by real users in real life.
 
-We haven't said "we don't want syzbot to run on XFS" - we've been
-saying "we want syzbot to run on the new XFS format". i.e. you've
-got completely the wrong end of the stick.
+Well, it *can* be hit in real life.  If you have a system which auto
+mounts USB sticks, then an attacker might be able to weaponize that
+bug by creating a USB stick where mounted and the user opens a
+particular file, the buffer overrun causes code to be executed that
+grabs the user's credentials (e.g., ssh-agent keys, OATH creds, etc.)
+and exfiltrates them to a collection server.
 
-> But of course that doesn't make
-> the bugs go away, it just makes the bug reports go away; you'll have to fix them
-> eventually anyway, one way or another.  I do think you're drastically
-> underestimating how useful the syzbot bug reports can be too -- note e.g. that
-> the bug Dave fixed by "fs: don't scan the inode cache before SB_BORN is set"
-> took only 3 days to be reported by syzbot after it gained support for mounting
-> XFS filesystems.  AFAICS that bug was in XFS for 7 years and was causing
-> production systems to mysteriously crash (very rarely), yet it took syzbot only
-> 3 days to send you a C reproducer.
+Fedora and Chrome OS might be two such platforms where someone could
+very easily create a weaponized exploit tool where you could insert a
+file system buffer overrun bug, and "hey presto!" it becomes a serious
+zero day vulnerability.
 
-We got the first ever usable user bug report for this in late
-February on a v5 filesystem. Just because a bug has been there for
-a long time, it doesn't mean that users or test programs are
-tripping over it.  e.g.  trinity has been fuzzing filesystems (as
-have many other tools), but they never hit this because of the
-unlikely combination of events needed to trigger the failure.
+(I recently suggested to a security researcher who was concerned that
+file system developers weren't taking these sorts of things seriously
+enough could do a service to the community by creating a demonstration
+about how these sorts of bugs can be weaponized.  And I suspect it
+could be about just as easily on Chrome OS as Fedora, and that can be
+one way that an argument could be made to management that more
+resources should be applied to this problem.  :-)
 
-The first proposed fix was mid-march:
+Of course, not all bugs triggered by a maliciously crafted file system
+are equally weaponizable.  An errors=panic or a NULL derefrence are
+probably not easily exploitable at all.  A buffer overrun (and I fixed
+two in ext4 in the last two days while being stuck in a T13 standards
+meeting, so I do feel your pain) might be a very different story.
 
-https://www.spinics.net/lists/linux-xfs/msg16601.html
+Solutions
+---------
 
-IOWs, trying to associate this bug with the on-disk format issues we
-want fixed, or even attributing the finding and fixing this bug to
-syzbot is stretching the truth somewhat. Yes, syzbot tripped over it
-fairly quickly and that is great, but let's no try to rewrite
-history....
+One of the things I've wanted to get help from the syzbot folks is if
+there was some kind of machine learning or expert system evaluation
+that could be done so malicious image bugs could be binned into
+different categories, based on how easily they can be weaponized.
+That way, when there is a resource shortage situation, humans can be
+more easily guided into detremining which bugs should be prioritized
+and given attention, and which we can defer to when we have more time.
+Or maybe it would be useful if there was a way where maintainers could
+be able to annotate bugs with priority and severity levels, and maybe
+make comments that can be viewed from the Syzbot dashboard UI.
 
-However, I think this silly desire to get everything syzbot reports
-attributed to syzbot regardless of reality has clouded the important
-observation that should have been made here.  Everyone seems to have
-missed the fact that syzbot uncovered a general class of filesystem
-implementation error.  i.e.  Several filesystem implementations have
-failed to handle ->fill_super errors correctly and syzbot tripped
-over many of them - XFS is just one example.
 
-The common mistake being made is failing to clear sb->s_fs_info when
-it was freed on ->fill_super failure, and hence had subsequent
-problems when ->kill_super was called and the code assumed
-->s_fs_info was still valid. There have been other problems due to
-sb->s_fs_info needing to be being assigned before the filesystem is
-fully set up, and some of them were fixed by the SB_BORN change the
-above patch morphed into after initial review.
+The other thing that perhaps could be done is to set up a system where
+the USB stick is automounted in a guest VM (using libvirt in Fedora,
+and perhaps Crostini for Chrome OS), and the contents of the file
+system would then get exported from the guest OS to the host OS using
+either NFS or 9P.  (9P2000.u is the solution that was used in
+gVisor[1].)
 
-IOWs, there is a general class of implementation bug here, and maybe
-there's something we can learn from that - is our documentation
-lacking, the API too convoluted, etc? Understanding why this
-happened and making sure we don't do it again is far more important
-than fixing any individual bug. And what other general
-programming/API error patterns has syzbot tripped over that nobody
-has noticed because there's no-one actually paying attention to the
-general scope of bugs that syzbot is discovering?
+[1] https://github.com/google/gvisor
 
-> This is only at the early stage too --- syzkaller doesn't know how to fuzz the
-> XFS-specific ioctls yet, for example, but it could be taught.  It's already been
-> finding ext4 bugs that allowed anyone with access to an ext4 directory to
-> corrupt the filesystem and crash the kernel.  And note that syzkaller is
-> coverage-guided, using CONFIG_KCOV, so it *will* find bugs that you never
-> thought to test for in manually written (fuzz) tests.  Non-coverage-guided
-> fuzzers are no longer state of the art.  I've been really amazed at the bugs
-> syzkaller been able to find in other kernel subsystems, e.g. obscure races that
-> no one would have ever thought to test for.
+It could be that putting this kind of security layer in front to
+automounted USB sticks is less work than playing whack-a-mole fixing a
+lot of security bugs with maliciously crafted file systems.  
 
-OTOH, knowing how many bugs lurk in our code base, I'm still amazed
-that tools like syzbot find so few of them.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+					- Ted
