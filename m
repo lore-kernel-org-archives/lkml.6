@@ -1,91 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933956AbeEWSBH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 14:01:07 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50942 "EHLO mx2.suse.de"
+        id S1754752AbeEWSCC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 14:02:02 -0400
+Received: from sandeen.net ([63.231.237.45]:56092 "EHLO sandeen.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933460AbeEWSA6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 14:00:58 -0400
-From: Michal Suchanek <msuchanek@suse.de>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>, Breno Leitao <leitao@debian.org>,
-        Vaibhav Jain <vaibhav@linux.vnet.ibm.com>,
-        "Guilherme G. Piccoli" <gpiccoli@linux.vnet.ibm.com>,
-        Michal Suchanek <msuchanek@suse.de>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] powerpc/xmon: Also setup debugger hooks when single-stepping
-Date: Wed, 23 May 2018 20:00:54 +0200
-Message-Id: <20180523180054.9937-1-msuchanek@suse.de>
-X-Mailer: git-send-email 2.13.6
+        id S1750771AbeEWSCB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 14:02:01 -0400
+Subject: Re: INFO: task hung in xlog_grant_head_check
+To: Eric Biggers <ebiggers3@gmail.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc: Dave Chinner <david@fromorbit.com>, Brian Foster <bfoster@redhat.com>,
+        syzbot <syzbot+568245b88fbaedcb1959@syzkaller.appspotmail.com>,
+        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+References: <000000000000457b2d056cbb0044@google.com>
+ <20180522123107.GC3751@bfoster.bfoster> <20180522222620.GW23861@dastard>
+ <20180522225208.GB658@sol.localdomain> <20180523074425.GM14384@magnolia>
+ <20180523162015.GA3684@sol.localdomain>
+From: Eric Sandeen <sandeen@sandeen.net>
+Message-ID: <a52266f9-0096-b28c-c01c-046ababcfe3a@sandeen.net>
+Date: Wed, 23 May 2018 13:01:59 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180523162015.GA3684@sol.localdomain>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When single-stepping kernel code from xmon without a debug hook enabled
-the kernel crashes. This can happen when kernel starts with xmon on
-crash disabled but xmon is entered using sysrq.
+On 5/23/18 11:20 AM, Eric Biggers wrote:
+> Hi Darrick,
 
-Call force_enable_xmon when single-stepping in xmon to install the xmon
-debug hooks.
+...
 
-Fixes: e1368d0c9edb ("powerpc/xmon: Setup debugger hooks when first
-break-point is set")
+> Now, if you *really* don't want syzbot to report XFS bugs as you believe XFS
+> contains known unfixable bugs or for other reasons, you can formally ask Dmitry
+> to remove CONFIG_XFS_FS from the syzbot config.  But of course that doesn't make
+> the bugs go away, it just makes the bug reports go away; you'll have to fix them
+> eventually anyway, one way or another.
 
-Signed-off-by: Michal Suchanek <msuchanek@suse.de>
----
- arch/powerpc/xmon/xmon.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+I'd revise that to "have to fix /some/ of them anyway."
 
-v2: calling force_enable_xmon in do_step is sufficient
+What I'm personally hung up on are the bugs where the "exploit" involves merely
+mounting a crafted filesystem that in reality would never (until the heat death
+of the universe) corrupt itself into that state on its own; it's the "malicious
+image" case, which is quite different than exposing fundamental bugs like the
+SB_BORN race or or the user-exploitable ext4 flaw you mentioned in your reply.
+Those are more insidious and/or things which can be hit by real users in real life.
 
-diff --git a/arch/powerpc/xmon/xmon.c b/arch/powerpc/xmon/xmon.c
-index a0842f1ff72c..252df9741d20 100644
---- a/arch/powerpc/xmon/xmon.c
-+++ b/arch/powerpc/xmon/xmon.c
-@@ -778,6 +778,16 @@ static int xmon_fault_handler(struct pt_regs *regs)
- 	return 0;
- }
- 
-+/* Force enable xmon if not already enabled */
-+static inline void force_enable_xmon(void)
-+{
-+	/* Enable xmon hooks if needed */
-+	if (!xmon_on) {
-+		printf("xmon: Enabling debugger hooks\n");
-+		xmon_on = 1;
-+	}
-+}
-+
- static struct bpt *at_breakpoint(unsigned long pc)
- {
- 	int i;
-@@ -1094,6 +1104,7 @@ static int do_step(struct pt_regs *regs)
- 	unsigned int instr;
- 	int stepped;
- 
-+	force_enable_xmon();
- 	/* check we are in 64-bit kernel mode, translation enabled */
- 	if ((regs->msr & (MSR_64BIT|MSR_PR|MSR_IR)) == (MSR_64BIT|MSR_IR)) {
- 		if (mread(regs->nip, &instr, 4) == 4) {
-@@ -1268,16 +1279,6 @@ static long check_bp_loc(unsigned long addr)
- 	return 1;
- }
- 
--/* Force enable xmon if not already enabled */
--static inline void force_enable_xmon(void)
--{
--	/* Enable xmon hooks if needed */
--	if (!xmon_on) {
--		printf("xmon: Enabling debugger hooks\n");
--		xmon_on = 1;
--	}
--}
--
- static char *breakpoint_help_string =
-     "Breakpoint command usage:\n"
-     "b                show breakpoints\n"
--- 
-2.13.6
+I don't know if I can win the "malicious images aren't a critical security
+threat" battle, but I do think they are at least a different class of flaws,
+because as Dave said, mount is supposed to be a privileged operation.
+In a perfect world we'd fix them anyway, but I don't know that our resource
+pool can keep up with your google-scale bot and still make progress in other
+critical areas.
+
+Anyway, the upshot is that we're probably just not going to care much about V4
+filesystem oops-or-hang-on-mount bugs.  Those problems are solved (largely) with
+V5 filesystem format.  Maybe I /will/ propose a system-wide tunable to disallow
+V4 for those who are worried about such things.
+
+To Darrick's points about more collaboration, I still wish that our requests
+for more traditional fs fuzzer reporting (i.e. a filesystem image) weren't met
+with such resistance.Tailoring your bug reports to the needs of the developer
+community you're interacting with seems like a pretty reasonable thing to do.
+
+As an aside, I wonder how much coverage of the V5 format code syzkaller /has/
+achieved; that would be another useful datapoint google could provide - if
+syzkaller is in fact traversing the V5 codepaths and isn't turning anything
+up, that'd be pretty useful to know.
+
+Thanks,
+-Eric
