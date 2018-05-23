@@ -1,78 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933074AbeEWNmh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 09:42:37 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:52950 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932900AbeEWNme (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 09:42:34 -0400
-X-Google-Smtp-Source: AB8JxZowjuTOQMfgs0d3TfVG185KXOofhQYf8K2bvNyF6fN046zGqEMUCykpBIK3KHl6cwiMrmjNEA==
-Subject: Re: [PATCH -next] slimbus: qcom: fix potential NULL dereference in
- qcom_slim_prg_slew()
-To: Wei Yongjun <weiyongjun1@huawei.com>,
-        Sagar Dharia <sdharia@codeaurora.org>
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <1526989582-139939-1-git-send-email-weiyongjun1@huawei.com>
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <5b5c4eb4-0d13-7fa4-c0b6-e9949af4e1e1@linaro.org>
-Date: Wed, 23 May 2018 14:42:26 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        id S933100AbeEWNnG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 09:43:06 -0400
+Received: from mga14.intel.com ([192.55.52.115]:34199 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932876AbeEWNnB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 09:43:01 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,433,1520924400";
+   d="scan'208";a="61050816"
+Subject: Re: [alsa-devel] [RFC/RFT PATCH] ASoC: topology: Improve backwards
+ compatibility with v4 topology files
+To: Mark Brown <broonie@kernel.org>
+Cc: Guenter Roeck <groeck@google.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        Takashi Iwai <tiwai@suse.com>,
+        Chintan Patel <chintan.m.patel@intel.com>,
+        Guenter Roeck <groeck@chromium.org>
+References: <20180522165842.233949-1-groeck@google.com>
+ <fb9aebba-919a-2e80-aec7-2fd44e5e1861@linux.intel.com>
+ <20180523082424.GA4828@sirena.org.uk>
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <521b23cd-f083-6a19-1374-fde7057c869b@linux.intel.com>
+Date: Wed, 23 May 2018 08:42:59 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:52.0)
+ Gecko/20100101 Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <1526989582-139939-1-git-send-email-weiyongjun1@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180523082424.GA4828@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 5/23/18 3:24 AM, Mark Brown wrote:
+> On Tue, May 22, 2018 at 02:59:35PM -0500, Pierre-Louis Bossart wrote:
+> 
+>> I am also not convinced by the notion that maintaining topology files is
+>> only a userspace/distro issue. This would mean some distros will have access
+>> to the required topology files, possibly enabling DSP processing
+>> capabilities, but other will not and will not be able to enable even basic
+>> playback/capture. Just like we have a basic firmware with limited
+>> functionality in /lib/firmware/intel, it would make sense to require a basic
+>> .conf file in alsa-lib for every upstream machine driver - along possibly
+>> with a basic UCM file so that audio works no matter what distro people use.
+> 
+> The point here is that people should be able to update their kernel
+> without updating their userspace so things have to work with whatever
+> they have right now - anything that relies on shipping new firmware or
+> configuration files to userspace is a problem.
 
+Agree.
 
-On 22/05/18 12:46, Wei Yongjun wrote:
-> platform_get_resource() may fail and return NULL, so we should
-> better check it's return value to avoid a NULL pointer dereference
-> a bit later in the code.
-> 
-> This is detected by Coccinelle semantic patch.
-> 
-> @@
-> expression pdev, res, n, t, e, e1, e2;
-> @@
-> 
-> res = platform_get_resource_byname(pdev, t, n);
-> + if (!res)
-> +   return -EINVAL;
-> ... when != res == NULL
-> e = devm_ioremap(e1, res->start, e2);
-> 
-
-> Fixes: ad7fcbc308b0 ("slimbus: qcom: Add Qualcomm Slimbus controller driver")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->   drivers/slimbus/qcom-ctrl.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/slimbus/qcom-ctrl.c b/drivers/slimbus/qcom-ctrl.c
-> index bb36a8f..caea3b9 100644
-> --- a/drivers/slimbus/qcom-ctrl.c
-> +++ b/drivers/slimbus/qcom-ctrl.c
-> @@ -478,6 +478,8 @@ static void qcom_slim_prg_slew(struct platform_device *pdev,
->   		/* SLEW RATE register for this SLIMbus */
->   		slew_mem = platform_get_resource_byname(pdev, IORESOURCE_MEM,
->   				"slew");
-> +		if (!slew_mem)
-> +			return;
-
-I think a better fix would be to do a devm_ioremap_resource() instead of 
-  devm_ioremap, which already has this check. This will also be inline 
-with other resource handled in this driver.
-
-thanks,
-srini
->   		ctrl->slew_reg = devm_ioremap(&pdev->dev, slew_mem->start,
->   				resource_size(slew_mem));
->   		if (!ctrl->slew_reg)
-> 
+My point was a bit different: distributions like Gallium start without 
+the relevant topology files and UCM settings, and we should have a 
+reference to quickly enable audio without having to borrow and modify 
+files from another distro. I faced this issue when I worked with the 
+Gallium folks to enable audio on Rambi and Cyan Chromebooks and ended-up 
+creating this reference myself.
