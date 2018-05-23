@@ -1,103 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933250AbeEWOGV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 10:06:21 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:43244 "EHLO
+        id S933292AbeEWOGk (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 10:06:40 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:43295 "EHLO
         atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932942AbeEWOGR (ORCPT
+        with ESMTP id S933093AbeEWOGh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 10:06:17 -0400
-Date: Wed, 23 May 2018 16:06:15 +0200
+        Wed, 23 May 2018 10:06:37 -0400
+Date: Wed, 23 May 2018 16:06:36 +0200
 From: Pavel Machek <pavel@ucw.cz>
-To: Aaro Koskinen <aaro.koskinen@iki.fi>
-Cc: Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>, sre@kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, khilman@kernel.org,
-        ivo.g.dimitrov.75@gmail.com, patrikbachan@gmail.com, serge@hallyn.com,
-        abcloriens@gmail.com, clayton@craftyguy.net, martijn@brixit.nl,
-        sakari.ailus@linux.intel.com,
-        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
-        Thorsten Leemhuis <regressions@leemhuis.info>
-Subject: Re: v4.17-rc1: regressions on N900, N950
-Message-ID: <20180523140615.GA27180@amd>
-References: <20180422074213.GA12428@amd>
- <20180423202940.ig6iud5lrbgnu35a@darkstar.musicnaut.iki.fi>
- <20180521213952.GA11596@amd>
- <20180522080250.4fzyvqrgw5oigexn@pali>
- <20180522194139.GB2299@darkstar.musicnaut.iki.fi>
- <20180522205824.GA24927@amd>
- <20180522215638.GC2299@darkstar.musicnaut.iki.fi>
+To: "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc: galak@codeaurora.org, andy.shevchenko@gmail.com,
+        Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        letux-kernel@openphoenux.org, kernel@pyra-handheld.com
+Subject: Re: [PATCH v7 3/3] gpio: pca953x: fix address calculation for
+ pcal6524
+Message-ID: <20180523140635.GB27215@amd>
+References: <cover.1526533188.git.hns@goldelico.com>
+ <e70e83f07aebaf702fef90a9fac61e41d8b558b0.1526533188.git.hns@goldelico.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="sdtB3X0nJg68CQEu"
+        protocol="application/pgp-signature"; boundary="WhfpMioaduB5tiZL"
 Content-Disposition: inline
-In-Reply-To: <20180522215638.GC2299@darkstar.musicnaut.iki.fi>
+In-Reply-To: <e70e83f07aebaf702fef90a9fac61e41d8b558b0.1526533188.git.hns@goldelico.com>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---sdtB3X0nJg68CQEu
-Content-Type: text/plain; charset=us-ascii
+--WhfpMioaduB5tiZL
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed 2018-05-23 00:56:38, Aaro Koskinen wrote:
-> Hi,
+On Thu 2018-05-17 06:59:49, H. Nikolaus Schaller wrote:
+> The register constants are so far defined in a way that they fit
+> for the pcal9555a when shifted by the number of banks, i.e. are
+> multiplied by 2 in the accessor function.
 >=20
-> On Tue, May 22, 2018 at 10:58:26PM +0200, Pavel Machek wrote:
-> > On Tue 2018-05-22 22:41:39, Aaro Koskinen wrote:
-> > > My device worked with v4.17-rc1 (haven't found time to test newer ker=
-nels),
-> > > but if you say the probe order is random then we must find some prope=
-r way
-> > > to express the dependency.
-> >=20
-> > I started bisect, but.. that will probably not be useful.
-> >=20
-> > If your device works ok in v4.17-rc1, it probably works in newer -rcs,
-> > too.
+> Now, the pcal6524 has 3 banks which means the relative offset
+> is multiplied by 4 for the standard registers.
 >=20
-> Actually, my statement may be bogus... Now I tried again with -rc1
-> (and also -rc6) and it fails... But v4.16 works.
+> Simply applying the bit shift to the extended registers gives
+> a wrong result, since the base offset is already included in
+> the offset.
 >=20
-> > Thanks for the ordering hint, I'll try to figure out what is going on
-> > there.
+> Therefore, we have to add code to the 24 bit accessor functions
+> that=A0adjusts the register number for these exended registers.
 >=20
-> My bisection pointed to 6fa7324ac5489ad43c4b6351355b869bc5458bef which
-> doesn't seem to make any sense...?! So maybe there really is something
-> random stuff going on? :-(
+> The formula finally used was developed and proposed by
+> Andy Shevchenko <andy.shevchenko@gmail.com>.
+>=20
+> Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+> ---
+>  drivers/gpio/gpio-pca953x.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+> index c682921d7019..4ad553f4e41f 100644
+> --- a/drivers/gpio/gpio-pca953x.c
+> +++ b/drivers/gpio/gpio-pca953x.c
+> @@ -222,9 +222,11 @@ static int pca957x_write_regs_16(struct pca953x_chip=
+ *chip, int reg, u8 *val)
+>  static int pca953x_write_regs_24(struct pca953x_chip *chip, int reg, u8 =
+*val)
+>  {
+>  	int bank_shift =3D fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
+> +	int addr =3D (reg & PCAL_GPIO_MASK) << bank_shift;
+> +	int pinctrl =3D (reg & PCAL_PINCTRL_MASK) << 1;
 
-So... I did some experiments on v4.16.
+Is this reasonable to do on each register access? Compiler will not be
+able to optimize out fls and shifts, right?
 
-Swapping tsc2005@0 and lcd: acx565akm@2 entries in the dts does break
-stuff.
-
-I thought it might be due to vio regulator, but it does not appear
-so... screen still works with tsc2005 driver disabled in .config. (so
-there's noone to enable vio regulator).
-
-									Pavel
-
-
-
+								Pavel
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---sdtB3X0nJg68CQEu
+--WhfpMioaduB5tiZL
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlsFdVcACgkQMOfwapXb+vKw2QCfZHxmUPEnzgwLJepZL0ktgDYD
-1Y8An1Bo+mPN/0du/tfzMHqQzZQZHXL3
-=JKWD
+iEYEARECAAYFAlsFdWsACgkQMOfwapXb+vITrwCcDj//GiI8j4gSWTwrTovWV1af
+B5QAniiu4Ct5Fy1mqITZSjntXGb4B+4F
+=uPYg
 -----END PGP SIGNATURE-----
 
---sdtB3X0nJg68CQEu--
+--WhfpMioaduB5tiZL--
