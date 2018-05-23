@@ -1,56 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933519AbeEWPWq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 11:22:46 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48054 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933282AbeEWPWm (ORCPT
+        id S933539AbeEWPXa (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 11:23:30 -0400
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:36780 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933165AbeEWPXY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 11:22:42 -0400
-Date: Wed, 23 May 2018 08:22:39 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Kent Overstreet <kent.overstreet@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Chinner <dchinner@redhat.com>, darrick.wong@oracle.com,
-        tytso@mit.edu, linux-btrfs@vger.kernel.org, clm@fb.com, jbacik@fb.com,
-        viro@zeniv.linux.org.uk, peterz@infradead.org
-Subject: Re: [PATCH 01/10] mm: pagecache add lock
-Message-ID: <20180523152239.GA2425@infradead.org>
-References: <20180518074918.13816-1-kent.overstreet@gmail.com>
- <20180518074918.13816-3-kent.overstreet@gmail.com>
- <20180518131305.GA6361@bombadil.infradead.org>
- <20180518155330.GA16931@infradead.org>
- <20180520224524.GC11495@kmo-pixel>
+        Wed, 23 May 2018 11:23:24 -0400
+X-Google-Smtp-Source: AB8JxZom9sn4hjpuY2Y1w34djT6NAWjuYKc0+Sz55JjIsvLFe+qZnGdi0wNeC0U18/LvHpVoWT2x8cQ1sijGDIs/h1E=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180520224524.GC11495@kmo-pixel>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20180523082908.GB4828@sirena.org.uk>
+References: <41d5df73ddac772551d2966e0752bb0c357b1ded.1526088081.git.collinsd@codeaurora.org>
+ <CAD=FV=XegPeFR8pdZM-YiBBJjrbej=C+2biBt4zJKnE90uTYZA@mail.gmail.com>
+ <869aad59-1cc5-28ef-1fb5-4ef846696c40@codeaurora.org> <CAD=FV=U-QOQekUHj=ck57YJbTFdFjCAWr4t2A92x+fCNf+yV9A@mail.gmail.com>
+ <dc1fbe9c-8973-1c4d-0fbd-809c1ec0a6be@codeaurora.org> <CAD=FV=XfSGs14VB464cvMGDNwGS4yvSXjN8itZLffm+Sj-D=ww@mail.gmail.com>
+ <fb390ccb-927a-8449-05c3-8dcac964bfae@codeaurora.org> <CAD=FV=XARtQNo5Cyg78XuT26JUFgn=7BjWRnXPjP566=a-sF1w@mail.gmail.com>
+ <a106c337-0713-e5d6-cb40-13e05f4d361d@codeaurora.org> <CAD=FV=W=BquL5ojORz4HNP889s=-uNJ-QEzUfAxwXj2Oa3cGew@mail.gmail.com>
+ <20180523082908.GB4828@sirena.org.uk>
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 23 May 2018 08:23:22 -0700
+X-Google-Sender-Auth: 44I7_IIcAIQc9zdXNWzhNt1k2gI
+Message-ID: <CAD=FV=XfPkpGD32MfTfcw02wQ+QetpUhY=P299uhpX6pY_iEvg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] regulator: dt-bindings: add QCOM RPMh regulator bindings
+To: Mark Brown <broonie@kernel.org>
+Cc: David Collins <collinsd@codeaurora.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 20, 2018 at 06:45:24PM -0400, Kent Overstreet wrote:
-> > 
-> > Honestly I think this probably should be in the core.  But IFF we move
-> > it to the core the existing users of per-fs locks need to be moved
-> > over first.  E.g. XFS as the very first one, and at least ext4 and f2fs
-> > that copied the approach, and probably more if you audit deep enough.
-> 
-> I'm not going to go and redo locking in XFS and ext4 as a prerequisite to
-> merging bcachefs. Sorry, but that's a bit crazy.
+Hi,
 
-It isn't crazy at all.  In general we expect people to do their fair
-share of core work to get their pet feature in.  How much is acceptable
-is a difficult question and not black and white.
+On Wed, May 23, 2018 at 1:29 AM, Mark Brown <broonie@kernel.org> wrote:
 
-But if you want to grow a critical core structure you better take a stab
-at converting existing users.  Without that the tradeoff of growing
-that core structure is simply not given.
+> It's arguable either way - you could say that the client gets to specify
+> a safe range at all times or you could say that the machine constraints
+> should cover all cases where the hardware is idling.  Of course RPMh
+> is missing anything like the machine constraints (as we can see from all
+> the fixing up of undesirable hard coding we have to do) so it's kind of
+> pushed towards the first case.
 
-Or to put it in words for this exact feature:  unless your new field
-is also used by mainstream file systems it is not going to be added.
+OK, fair enough.  If others all agree that it's OK to make requests
+about the voltage of a disabled regulator then I won't stand in the
+way.  I guess it does call into question the whole idea of caching /
+not sending the voltage until the first enable because it means
+there's no way for the client to use this feature until they've
+enabled / disabled the regulator once.  If you think of it as invalid
+to adjust the voltage of a disabled regulator then the caching
+argument is super clean, but once you say that you should normally be
+able to do it it feels more like a hacky workaround.  ...but I suppose
+that's what we've got to live with...
+
+-Doug
