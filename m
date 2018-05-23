@@ -1,38 +1,39 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4125586-1527074297-2-5269666460426922549
+X-Cyrus-Session-Id: sloti22d1t05-522845-1527098883-2-7296231694712519393
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
   ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='cz',
-  MailFrom='org'
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='utf-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527074297; b=D1Dy9OclcRr61ZZzfCyJ6g6wUP04A6avGYATJyP7TTqz89eegv
-    4rA2251FZ4beJ6rCF+eC+V7EgbR3mKEGKHI8w5ijLcFHdLZ0wxL8njjkvKfwmAks
-    y6eMYVobqIwqO2mx3tVOFFbIwD+WwH9vbh6eV71x2QCy9YNYuv2YpXsOQUJsOM55
-    4xq83u3H16/FAUkw6yGJVMekq21+QTNKU6e/lg9DCVgn/G1BFy9oA3ziNM5+dNIl
-    7kNBaUumwuq+YgCgvzTEoWX70E72ori8wD95B0dqhzQvHvp9g2QrE4zURXqTjr7x
-    E578JCxuJipHt6b/79+HTKES9XIliiTYvg+Q==
+    1527098883; b=fHHaIDq/1wPUmekDqFUHmioDkqIkOogDe9Pq/agSppec6J2RUs
+    rfQ1qLvHJLP2unY1JpTRkT3MdKDSAKIy0zxGhz+IKbWpIqte5lVkm1KUxYSsFDiH
+    ZkD67sZFcsy86Cs6D8tYNzI9qd0/uQWpDULATWeA4aQdB8jGuv39yEjBOGl6JLBv
+    HqoFV8joUXpFsr1ti2GHTZ9pLvXNxdNiJcMPitd2k1Fz1TsaM+yK0BV7MP1Eu1MH
+    ZT/RagYZyTUHuVZfVeAHtalMkjYfRN209yLjM5dRQH9ImZyEnNDVxiiS8EoZQoXn
+    1HqVWUrzPbzu6cWDkRx/hfgacRV1gNbIUa5w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=subject:to:cc:references:from:message-id
     :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1527074297;
-    bh=zgP70x2OY/T1YtvSLy6lTDxkg2+WUl5h7M2InS9a1/E=; b=MFFPTOvEip9t
-    9J8pyiVjYCgTMPARSDI6DAyani8Iyi0acjWwMJPShjOV4Y2XTUwGlYBNeLSU3Ad3
-    SQzHOjKFGtJEi2zOfiygANrf1oh1rhRDBr9tNl4VZnyITc0eAGNb4mDv1X+2011e
-    HtCCQcPof9VhOzaI0SA0Qm466dntzUbyzsfsRF2Rc6sLrMs4IxOUfvqbMsYdcvHb
-    aox/GP2fGwVU7JOrIUmtaafxzR7OBiVQkHIv6/PvokWsQvs7BPhKCfwxdZLF+orz
-    jhg6kwHw0gcPIW1A1lj7UCE64rglOFu93SH9KLFefeZ7dNk1Nb2R3Go9WZLF7Vju
-    jO56RwsHNA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1527098883;
+    bh=gd7QLodxc6GgBrN7fB+GabYzghW/3izmb6wuEMNQq8A=; b=dDblk3bXp5Pu
+    gEQSHMeX9Azb/ZZLIvx2+jgs83tEOCLJwY3LK0uqdiDbEz3ZBOu7q+k5lq1c6iD8
+    rbQbsP97HqmxyGGK8WCaxHFyGQEnmTivLdh0IoLRicSJdN6ZTo8FUJhl0DBFnb97
+    8jS85xUix36fVtpoFNqsZ/hMhgteFdyRjrBVfIcOcbXfNnUhHPhJdRYcxlz4a9FZ
+    dyNfbIz8TYTdNNjVXq8EztXy1uPHWAY5NRCd598UowhzK6Pg3bwOE1HzcPWBtiGE
+    IRw1gt5H/WFGcBba/DqSCkkLC7ZdtMsx+huEwC8BedRk/lQ9AmVuoHDdCVaLGZLp
+    HJImVYAXgg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.cz;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -41,12 +42,12 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=suse.cz header.result=pass header_is_org_domain=yes;
+    header.domain=intel.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.cz;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -55,26 +56,31 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=suse.cz header.result=pass header_is_org_domain=yes;
+      header.domain=intel.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNsWBIXACINgoFyLQcvqHemj1ru9S6cbQoojPir49ARqoj65exD3WtuGnMEV2v7jZCJAZ7mIHG4TS5XHKQENmg4ZqZgoZG+C8udvGZ9ztyg+8hIp86Gi
-    Q1KvtHs1V0jRa8WElyevxQLXgqKo1acPLmvbnDDwcrgk5q6FdyTwKcdw+EpQdYy2N1gGC2S8ZShyAxz4zr9Z73BcHO82lnpbTtmASQffORbljCXE8zaR1SaA
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfAksgledoeGDj7nt74NYARiBvHgbAkYjD+X5O1Yym2JBs2D/GLm+72gXq9s0VzpBnFDso0IDQUzowwkscY6K0CuPse8e/DpVc2ohavo4yvivj033BWhN
+    kOz7Ow9t3g2k7B2e5XM6Ey+CukvpQyDdkp9CRMhiSw/EP7chUI+0ZckYEC1+RifqIOhQfU/pAoKyOv19HO/5GHKLrimEhJ5S6DOY8+peqGWtcazyVeiDj5NO
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=e0I4XAHI7SAVHnqLyEAA:9 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
+    a=VwQbUJbxAAAA:8 a=5KZAJ698FjEBQ8-kRuUA:9 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
     a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932312AbeEWLSO (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 23 May 2018 07:18:14 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45903 "EHLO mx2.suse.de"
+        id S1754681AbeEWSIB (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 23 May 2018 14:08:01 -0400
+Received: from mga17.intel.com ([192.55.52.151]:21631 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932071AbeEWLSN (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Wed, 23 May 2018 07:18:13 -0400
+        id S1750866AbeEWSIB (ORCPT <rfc822;linux-api@vger.kernel.org>);
+        Wed, 23 May 2018 14:08:01 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,433,1520924400";
+   d="scan'208";a="44195171"
 Subject: Re: [PATCH v2 3/4] mm: add find_alloc_contig_pages() interface
-To: Reinette Chatre <reinette.chatre@intel.com>,
+To: Vlastimil Babka <vbabka@suse.cz>,
         Mike Kravetz <mike.kravetz@oracle.com>, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
 Cc: Michal Hocko <mhocko@kernel.org>,
@@ -91,68 +97,14 @@ References: <20180503232935.22539-1-mike.kravetz@oracle.com>
  <eaa40ac0-365b-fd27-e096-b171ed28888f@suse.cz>
  <57dfd52c-22a5-5546-f8f3-848f21710cc1@oracle.com>
  <c7972da1-a908-7550-7253-9de9a963174c@intel.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- A3XDrKOXTZil3g8D
-Message-ID: <01793788-1870-858e-2061-a0e6ef3a3171@suse.cz>
-Date: Wed, 23 May 2018 13:18:10 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+ <01793788-1870-858e-2061-a0e6ef3a3171@suse.cz>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Message-ID: <0db4cd65-8b03-fea5-0a30-512f10241d54@intel.com>
+Date: Wed, 23 May 2018 11:07:59 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <c7972da1-a908-7550-7253-9de9a963174c@intel.com>
+In-Reply-To: <01793788-1870-858e-2061-a0e6ef3a3171@suse.cz>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -162,29 +114,45 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 05/22/2018 06:41 PM, Reinette Chatre wrote:
-> On 5/21/2018 4:48 PM, Mike Kravetz wrote:
->> I'm guessing that most (?all?) allocations will be order based.  The use
->> cases I am aware of (hugetlbfs, Intel Cache Pseudo-Locking, RDMA) are all
->> order based.  However, as commented in previous version taking arbitrary
->> nr_pages makes interface more future proof.
+Hi Vlastimil,
+
+On 5/23/2018 4:18 AM, Vlastimil Babka wrote:
+> On 05/22/2018 06:41 PM, Reinette Chatre wrote:
+>> On 5/21/2018 4:48 PM, Mike Kravetz wrote:
+>>> I'm guessing that most (?all?) allocations will be order based.  The use
+>>> cases I am aware of (hugetlbfs, Intel Cache Pseudo-Locking, RDMA) are all
+>>> order based.  However, as commented in previous version taking arbitrary
+>>> nr_pages makes interface more future proof.
+>>>
 >>
+>> I noticed this Cache Pseudo-Locking statement and would like to clarify.
+>> I have not been following this thread in detail so I would like to
+>> apologize first if my comments are out of context.
+>>
+>> Currently the Cache Pseudo-Locking allocations are order based because I
+>> assumed it was required by the allocator. The contiguous regions needed
+>> by Cache Pseudo-Locking will not always be order based - instead it is
+>> based on the granularity of the cache allocation. One example is a
+>> platform with 55MB L3 cache that can be divided into 20 equal portions.
+>> To support Cache Pseudo-Locking on this platform we need to be able to
+>> allocate contiguous regions at increments of 2816KB (the size of each
+>> portion). In support of this example platform regions needed would thus
+>> be 2816KB, 5632KB, 8448KB, etc.
 > 
-> I noticed this Cache Pseudo-Locking statement and would like to clarify.
-> I have not been following this thread in detail so I would like to
-> apologize first if my comments are out of context.
-> 
-> Currently the Cache Pseudo-Locking allocations are order based because I
-> assumed it was required by the allocator. The contiguous regions needed
-> by Cache Pseudo-Locking will not always be order based - instead it is
-> based on the granularity of the cache allocation. One example is a
-> platform with 55MB L3 cache that can be divided into 20 equal portions.
-> To support Cache Pseudo-Locking on this platform we need to be able to
-> allocate contiguous regions at increments of 2816KB (the size of each
-> portion). In support of this example platform regions needed would thus
-> be 2816KB, 5632KB, 8448KB, etc.
+> Will there be any alignment requirements for these allocations e.g. for
+> minimizing conflict misses?
 
-Will there be any alignment requirements for these allocations e.g. for
-minimizing conflict misses?
+Two views on the usage of the allocated memory are: On the user space
+side, the kernel memory is mapped to userspace (using remap_pfn_range())
+and thus need to be page aligned. On the kernel side the memory is
+loaded into the cache and it is here where the requirement originates
+for it to be contiguous. The memory being contiguous reduces the
+likelihood of physical addresses from the allocated memory mapping to
+the same cache line and thus cause cache evictions of memory we are
+trying to load into the cache.
 
-Vlastimil
+I hope I answered your question, if not, please let me know which parts
+I missed and I will try again.
+
+Reinette
+
