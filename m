@@ -1,144 +1,166 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933509AbeEWOqb (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 10:46:31 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:34877 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933149AbeEWOq3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 10:46:29 -0400
-X-Google-Smtp-Source: AB8JxZokh/2U99sek2S6uS3eYOKQ4v19D/WPfH579aIxhY2wPKBtG2lMd0iJDycrY4LMWURIhrYD2w==
-Subject: Re: [PATCH v1] cpufreq: tegra20: Fix imbalanced clock enable count
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180522211420.2006-1-digetx@gmail.com>
- <20180523055817.subrv6oeckfecpcp@vireshk-i7>
- <68f62691-9108-9bee-a24d-5c978af8a5ab@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=digetx@gmail.com; prefer-encrypt=mutual; keydata=
- xsBNBFpX5TwBCADQhg+lBnTunWSPbP5I+rM9q6EKPm5fu2RbqyVAh/W3fRvLyghdb58Yrmjm
- KpDYUhBIZvAQoFLEL1IPAgJBtmPvemO1XUGPxfYNh/3BlcDFBAgERrI3BfA/6pk7SAFn8u84
- p+J1TW4rrPYcusfs44abJrn8CH0GZKt2AZIsGbGQ79O2HHXKHr9V95ZEPWH5AR0UtL6wxg6o
- O56UNG3rIzSL5getRDQW3yCtjcqM44mz6GPhSE2sxNgqureAbnzvr4/93ndOHtQUXPzzTrYB
- z/WqLGhPdx5Ouzn0Q0kSVCQiqeExlcQ7i7aKRRrELz/5/IXbCo2O+53twlX8xOps9iMfABEB
- AAHNIkRtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT7CwJQEEwEIAD4WIQSczHcO
- 3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgIDAQIeAQIX
- gAAKCRDTNNaPsNRzvFjTCACqAh1M9/YPq73/ai5h2ExDquTgJnjegL8KL2yHL3G+XINwzN5E
- nPI7esoYm+zVWDJbv3UuRqylpookLNSRA01yyvkaMcipB/B128UnqmUiGRqezj9QE20yIauo
- uHRuwHPE2q+UkfUhRX9iuOaEyQtZDiCa0myMjmRkJ+Z8ZetclEPG8dYZu47w04phuMlu1QAt
- a0gkZOaMKvXgj21ushALS6nYnvm7HiIPQXfnEXThartatRvFdmbG4PCn0IoICkQBizwJtXrL
- HEjELIFap0M8krVJlUoZTFaZnaZkGpUDWikeFtAuie2KuIxmVBYPM4X7pM3eP3AVvIPGS7EE
- UUFuzsBNBFpX5TwBCADFNDou220thijaLLGaQsebWjzc/gPRxMixIpk856MRyRaQin+IbGD6
- YskMb5ZSD3nS88LIKNfY4MMH0LwfYztI++ICG2vdFLkbBt78E+LqEa+kZ9072l4W5KO3mWQo
- +jMfxXbpgGlc7iuEReDgl8iyZ27r51kSW665CYvvu2YJhLqgdj6QM1lN2D1UnhEhkkU+pRAj
- 1rJVOxdfJaQNQS4+204p3TrURovzNGkN/brqakpNIcqGOAGQqb8F0tuwwuP7ERq/BzDNkbdr
- qJOrVC/wkHRq1jfabQczWKf8MwYOvivR3HY8d3CpSQxmUXDtdOWfg0XGm1dxYnVfqPjuJaZt
- ABEBAAHCwHwEGAEIACYWIQSczHcO3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbDAUJA8JnAAAK
- CRDTNNaPsNRzvJzuB/9d+sxcwHbO8ZDcgaLX9N+bXFqN9fIRVmBUyWa+qqTSREA4uVAtYcRT
- lfPE2OQ7aMFxaYPwo+/z5SLpu8HcEhN/FG9uIkfYwK0mdCO0vgvlfvBJm4VHe7C6vyAeEPJQ
- DKbBvdgeqFqO+PsLkk2sawF/9sontMJ5iFfjNDj4UeAo4VsdlduTBZv5hHFvIbv/p7jKH6OT
- 90FsgUSVbShh7SH5OzAcgqSy4kxuS1AHizWo6P3f9vei987LZWTyhuEuhJsOfivDsjKIq7qQ
- c5eR+JJtyLEA0Jt4cQGhpzHtWB0yB3XxXzHVa4QUp00BNVWyiJ/t9JHT4S5mdyLfcKm7ddc9
-Message-ID: <4521eab5-70a5-90e9-65f3-d6548310a54e@gmail.com>
-Date: Wed, 23 May 2018 17:46:25 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S933537AbeEWOq4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 10:46:56 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36361 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933149AbeEWOqu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 10:46:50 -0400
+Date: Wed, 23 May 2018 16:46:21 +0200
+From: Borislav Petkov <bp@suse.de>
+To: Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>
+Cc: x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>, Radim Krcmar <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH] Use 'imply' with SEV Kconfig CRYPTO dependencies
+Message-ID: <20180523144621.GB25143@pd.tnic>
+References: <1526915573-22917-1-git-send-email-Janakarajan.Natarajan@amd.com>
 MIME-Version: 1.0
-In-Reply-To: <68f62691-9108-9bee-a24d-5c978af8a5ab@gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1526915573-22917-1-git-send-email-Janakarajan.Natarajan@amd.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23.05.2018 13:44, Dmitry Osipenko wrote:
-> On 23.05.2018 08:58, Viresh Kumar wrote:
->> On 23-05-18, 00:14, Dmitry Osipenko wrote:
->>> Tegra20-cpufreq driver missed enabling the CPU clocks. This results in a
->>> clock-enable refcount disbalance on PLL_P <-> PLL_X reparent, causing
->>> PLL_X to get disabled while it shouldn't. Fix this by enabling the clocks
->>> on the driver probe.
->>>
->>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>> ---
->>>
->>> CPUFreq maintainers,
->>>
->>> Please take into account that this patch is made on top of my recent
->>> series of patches [0] "Clean up Tegra20 cpufreq driver" that was fully
->>> reviewed, but seems not applied yet. Let me know if you prefer to re-spin
->>> the [0], including this patch into the series.
->>>
->>> [0] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=45321
->>
->> This is already picked by Rafael and is sitting in pm/bleeding-edge
->> branch. Should get merged into linux-next in a day or two.
->>
->>>  drivers/cpufreq/tegra20-cpufreq.c | 16 +++++++++++++++-
->>>  1 file changed, 15 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
->>> index 05f57dcd5215..ca5229265b60 100644
->>> --- a/drivers/cpufreq/tegra20-cpufreq.c
->>> +++ b/drivers/cpufreq/tegra20-cpufreq.c
->>> @@ -176,6 +176,14 @@ static int tegra20_cpufreq_probe(struct platform_device *pdev)
->>>  		goto put_pll_x;
->>>  	}
->>>  
->>> +	err = clk_prepare_enable(cpufreq->pll_x_clk);
->>> +	if (err)
->>> +		goto put_pll_p;
->>> +
->>> +	err = clk_prepare_enable(cpufreq->pll_p_clk);
->>> +	if (err)
->>> +		goto disable_pll_x;
->>> +
->>>  	cpufreq->dev = &pdev->dev;
->>>  	cpufreq->driver.get = cpufreq_generic_get;
->>>  	cpufreq->driver.attr = cpufreq_generic_attr;
->>> @@ -192,12 +200,16 @@ static int tegra20_cpufreq_probe(struct platform_device *pdev)
->>>  
->>>  	err = cpufreq_register_driver(&cpufreq->driver);
->>>  	if (err)
->>> -		goto put_pll_p;
->>> +		goto disable_pll_p;
->>>  
->>>  	platform_set_drvdata(pdev, cpufreq);
->>>  
->>>  	return 0;
->>>  
->>> +disable_pll_p:
->>> +	clk_disable_unprepare(cpufreq->pll_p_clk);
->>> +disable_pll_x:
->>> +	clk_disable_unprepare(cpufreq->pll_x_clk);
->>>  put_pll_p:
->>>  	clk_put(cpufreq->pll_p_clk);
->>>  put_pll_x:
->>> @@ -214,6 +226,8 @@ static int tegra20_cpufreq_remove(struct platform_device *pdev)
->>>  
->>>  	cpufreq_unregister_driver(&cpufreq->driver);
->>>  
->>> +	clk_disable_unprepare(cpufreq->pll_p_clk);
->>> +	clk_disable_unprepare(cpufreq->pll_x_clk);
->>>  	clk_put(cpufreq->pll_p_clk);
->>>  	clk_put(cpufreq->pll_x_clk);
->>>  	clk_put(cpufreq->cpu_clk);
->>
->> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
->>
-> 
-> Please hold on this patch, seems I interpreted the cpufreq driver logic
-> incorrectly and it is probably fine as it is. I'll re-check later today.
-> 
++ Tom and Brijesh.
 
-I've re-checked the driver and it is fine, PLL_X disabling is expected on a
-switching parent clock to PLL_P as for the target frequency. This patch isn't
-needed, please scratch it.
+On Mon, May 21, 2018 at 10:12:53AM -0500, Janakarajan Natarajan wrote:
+> Use Kconfig imply 'option' when specifying SEV CRYPTO dependencies.
+> 
+> Example configuration:
+> .
+> .
+> CONFIG_CRYPTO_DEV_CCP=y
+> CONFIG_CRYPTO_DEV_CCP_DD=m
+> CONFIG_CRYPTO_DEV_SP_CCP=y
+> CONFIG_CRYPTO_DEV_CCP_CRYPTO=m
+> CONFIG_CRYPTO_DEV_SP_PSP=y
+> .
+> .
+> CONFIG_KVM_AMD=y
+> CONFIG_KVM_AMD_SEV=y
+> .
+> .
+> 
+> When the CRYPTO_DEV_SP_DD is m, KVM_AMD set to y produces compile time
+> errors.
+> 
+> Since KVM_AMD_SEV depends on KVM_AMD and CRYPTO_DEV_CCP_DD, the
+> issue can be prevented by using 'imply' Kconfig option when specifying
+> the CRYPTO dependencies.
+> 
+> Fixes: 505c9e94d832 ("KVM: x86: prefer "depends on" to "select" for SEV")
+> 
+> Signed-off-by: Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
+> ---
+>  arch/x86/kvm/Kconfig | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
+> index 92fd433..d9b16b7 100644
+> --- a/arch/x86/kvm/Kconfig
+> +++ b/arch/x86/kvm/Kconfig
+> @@ -85,7 +85,9 @@ config KVM_AMD_SEV
+>  	def_bool y
+>  	bool "AMD Secure Encrypted Virtualization (SEV) support"
+>  	depends on KVM_AMD && X86_64
+> -	depends on CRYPTO_DEV_CCP && CRYPTO_DEV_CCP_DD && CRYPTO_DEV_SP_PSP
+> +	imply CRYPTO_DEV_CCP
+> +	imply CRYPTO_DEV_CCP_DD
+> +	imply CRYPTO_DEV_SP_PSP
+>  	---help---
+>  	Provides support for launching Encrypted VMs on AMD processors.
 
-It occurred to me that the driver could be improved further a tad while I was
-performing the re-check, hence likely there will be couple more patches from me.
+Well, this solves the build issue but I just created a config:
+
+$ grep -E "(KVM|PSP)" .config | grep -v '#'
+CONFIG_HAVE_KVM=y
+CONFIG_HAVE_KVM_IRQCHIP=y
+CONFIG_HAVE_KVM_IRQFD=y
+CONFIG_HAVE_KVM_IRQ_ROUTING=y
+CONFIG_HAVE_KVM_EVENTFD=y
+CONFIG_KVM_MMIO=y
+CONFIG_KVM_ASYNC_PF=y
+CONFIG_HAVE_KVM_MSI=y
+CONFIG_HAVE_KVM_CPU_RELAX_INTERCEPT=y
+CONFIG_KVM_VFIO=y
+CONFIG_KVM_GENERIC_DIRTYLOG_READ_PROTECT=y
+CONFIG_KVM_COMPAT=y
+CONFIG_HAVE_KVM_IRQ_BYPASS=y
+CONFIG_KVM=y
+CONFIG_KVM_AMD=m
+
+which builds but the PSP functionality is not there. And I don't think
+this is serving the user: she should be able to select what she wants
+and get the required functionality added and not have build errors with
+any possible configuration.
+
+Now, looking at the security processor Kconfig stuff, it is somewhat
+confusing but maybe I didn't look at it long enough. A couple of points:
+
+config CRYPTO_DEV_CCP_DD
+        tristate "Secure Processor device driver"
+
+If this is going to be the top-level menu item for the SP, call that
+
+ CRYPTO_DEV_SP
+
+to mean, this is the security processor. CCP_DD is confusing because you
+have CRYPTO_DEV_SP_CCP which is the crypto coprocessor support.
+
+And "DD" for device driver is a pure tautology - most of the Kconfig
+items are device drivers :)
+
+Then,
+
+ config KVM_AMD_SEV
+        def_bool y
+        bool "AMD Secure Encrypted Virtualization (SEV) support"
+        depends on KVM_AMD && X86_64
+        depends on CRYPTO_DEV_CCP && CRYPTO_DEV_CCP_DD && CRYPTO_DEV_SP_PSP
+
+that last line is pulling the required functionality for SEV but - and
+I *think* we have talked about this before - having a hierarchical
+dependency should make this a lot clearer and fix the build issues along
+the way.
+
+Because, IMHO, KVM_AMD_SEV should depend only on CRYPTO_DEV_SP_PSP -
+i.e., the PSP device because SEV needs the PSP, right?
+
+Now, the PSP device *itself* should depend on whatever it needs to
+function properly, CRYPTO_DEV_CCP_DD I guess.
+
+But SEV should not depend on CRYPTO_DEV_CCP - which is the top-level
+Kconfig item - that should be expressed implicitly through the
+dependency chain where PSP ends up depending on it.
+
+So that you have one-hop deps:
+
+KVM_SEV -> PSP -> CCP -> ...
+
+IOW, a config item, say PSP - if enabled - should make sure it
+selects/depends on everything it needs to function. The upper level
+item KVM_SEV - which selects/depends on that config item shouldn't
+be responsible for making sure the correct items for PSP's proper
+functioning are enabled - that's PSP's item's job.
+
+Makes sense?
+
+Maybe I'm missing something but applying this simple logic would prevent
+such Kconfig build issues and make the whole dependency chain almost
+trivial.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+-- 
