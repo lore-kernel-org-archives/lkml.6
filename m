@@ -1,85 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754562AbeEWIqh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 04:46:37 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:38592 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754513AbeEWIqR (ORCPT
+        id S1754529AbeEWIrq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 04:47:46 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:18594 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754341AbeEWIro (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 04:46:17 -0400
-X-Google-Smtp-Source: AB8JxZrwLWIsDE0+LaRGfHBaT95h4KNj1bfokb69aWC15sbTAGEeOm8s62xD8W9X0oXtMOoJKxAY5w==
-Date: Wed, 23 May 2018 10:46:14 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: Kees Cook <keescook@chromium.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Laura Abbott <labbott@redhat.com>, David Airlie <airlied@linux.ie>,
-        Maling list - DRI developers
-        <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-Subject: Re: [PATCHv2] drm/i2c: tda998x: Remove VLA usage
-Message-ID: <20180523084614.GL3438@phenom.ffwll.local>
-Mail-Followup-To: Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        Laura Abbott <labbott@redhat.com>, David Airlie <airlied@linux.ie>,
-        Maling list - DRI developers <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-References: <20180411010330.17866-1-labbott@redhat.com>
- <CAGXu5jK-qTdkDi2bC7DZg-bR-tFjSGOZsNB9_b-F++qMgdcF+Q@mail.gmail.com>
- <20180519100707.GI17671@n2100.armlinux.org.uk>
+        Wed, 23 May 2018 04:47:44 -0400
+Subject: Re: [PATCH 01/14] memory: ti-emif-sram: Add resume function to recopy
+ sram code
+From: Keerthy <j-keerthy@ti.com>
+To: "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>,
+        <linus.walleij@linaro.org>, <grygorii.strashko@ti.com>,
+        <tony@atomide.com>
+CC: <t-kristo@ti.com>, <Russ.Dill@ti.com>, <linux-omap@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <ssantosh@kernel.org>,
+        <haojian.zhuang@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+        <d-gerlach@ti.com>
+References: <1523505239-16229-1-git-send-email-j-keerthy@ti.com>
+ <1523505239-16229-2-git-send-email-j-keerthy@ti.com>
+ <31688cf4-b6ca-e7ce-3407-46262006b38f@oracle.com>
+ <d52373eb-1707-17ff-fabb-9f7200cf54c0@ti.com>
+Message-ID: <739d9bbf-2acc-9c90-db43-cf78f5b184e3@ti.com>
+Date: Wed, 23 May 2018 14:17:09 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180519100707.GI17671@n2100.armlinux.org.uk>
-X-Operating-System: Linux phenom 4.15.0-3-amd64 
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <d52373eb-1707-17ff-fabb-9f7200cf54c0@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 19, 2018 at 11:07:08AM +0100, Russell King - ARM Linux wrote:
-> On Fri, May 18, 2018 at 11:01:55AM -0700, Kees Cook wrote:
-> > On Tue, Apr 10, 2018 at 6:03 PM, Laura Abbott <labbott@redhat.com> wrote:
-> > > There's an ongoing effort to remove VLAs[1] from the kernel to eventually
-> > > turn on -Wvla. The vla in reg_write_range is based on the length of data
-> > > passed. The one use of a non-constant size for this range is bounded by
-> > > the size buffer passed to hdmi_infoframe_pack which is a fixed size.
-> > > Switch to this upper bound.
-> > >
-> > > [1] https://lkml.org/lkml/2018/3/7/621
-> > >
-> > > Signed-off-by: Laura Abbott <labbott@redhat.com>
-> > 
-> > Reviewed-by: Kees Cook <keescook@chromium.org>
-> > 
-> > Same question for this patch: who's best to take this?
-> 
-> I had decided that I'm not taking any tda998x stuff until we get the
-> CEC support merged upstream, as that has been hanging around for ages.
-> Progress has been slow on that, but it finally got to the point where
-> everyone was happy with it, and I sent a pull request to David Airlie
-> on April 24th for it.
-> 
-> Unfortunately, that pull request has not been actioned to date.  I've
-> sent a chaser, and last night, I checked with David Airlie on IRC.
-> It seems David is not aware of my pull request.  David says he'll look
-> into this on Monday.
-> 
-> Until David does take it, I can't add anything further to my git tree
-> for tda998x development, as that would change what was sent to David
-> back in April.
-> 
-> The alternative would be for drm-misc to take it - I don't think it
-> will conflict with anything I've already asked David to take, so that
-> should be a safe route for _this_ patch.
 
-Sounds reasonable, applied to drm-misc-next for 4.19 just to make sure it
-won't get lost.
 
-Thanks, Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+On Monday 16 April 2018 03:59 PM, Keerthy wrote:
+> 
+> 
+> On Thursday 12 April 2018 10:14 PM, santosh.shilimkar@oracle.com wrote:
+>> On 4/11/18 9:53 PM, Keerthy wrote:
+>>> From: Dave Gerlach <d-gerlach@ti.com>
+>>>
+>>> After an RTC+DDR cycle we lose sram context so emif pm functions present
+>>> in sram are lost. We can check if the first byte of the original
+>>> code in DDR contains the same first byte as the code in sram, and if
+>>> they do not match we know we have lost context and must recopy the
+>>> functions to the previous address to maintain PM functionality.
+>>>
+>>> Signed-off-by: Dave Gerlach <d-gerlach@ti.com>
+>>> Signed-off-by: Keerthy <j-keerthy@ti.com>
+>>> ---
+>>>   drivers/memory/ti-emif-pm.c | 24 ++++++++++++++++++++++++
+>>>   1 file changed, 24 insertions(+)
+>>>
+>>> diff --git a/drivers/memory/ti-emif-pm.c b/drivers/memory/ti-emif-pm.c
+>>> index 632651f..ec4a62c 100644
+>>> --- a/drivers/memory/ti-emif-pm.c
+>>> +++ b/drivers/memory/ti-emif-pm.c
+>>> @@ -249,6 +249,25 @@ int ti_emif_get_mem_type(void)
+>>>   };
+>>>   MODULE_DEVICE_TABLE(of, ti_emif_of_match);
+>>>   +#ifdef CONFIG_PM_SLEEP
+>>> +static int ti_emif_resume(struct device *dev)
+>>> +{
+>>> +    unsigned long tmp =
+>>> +            __raw_readl((void *)emif_instance->ti_emif_sram_virt);
+>>> +
+>>> +    /*
+>>> +     * Check to see if what we are copying is already present in the
+>>> +     * first byte at the destination, only copy if it is not which
+>>> +     * indicates we have lost context and sram no longer contains
+>>> +     * the PM code
+>>> +     */
+>>
+>>> +    if (tmp != ti_emif_sram)
+>>> +        ti_emif_push_sram(dev, emif_instance);
+>>> +
+>>> +    return 0;
+>>> +}
+>>> +#endif /* CONFIG_PM_SLEEP */
+>> Instead of this indirect method , why can't just check the previous
+>> deep sleep mode and based on that do copy or not. EMIF power status
+>> register should have something like that ?
+> 
+> I will check if we have a register that tells the previous state of sram.
+
+Unfortunately i do not see any such register for knowing SRAM previous
+state in am43 TRM and hence this indirect way of knowing.
+
+http://www.ti.com/lit/ug/spruhl7h/spruhl7h.pdf
+
+> 
+>>
+>> Another minor point is even though there is nothing to do in suspend,
+>> might be good to have a callback with comment that nothing to do with
+>> some explanation why not. Don't have strong preference but may for
+>> better readability.
+
+I can add a blank suspend call with comment
+
+"The contents are already present in DDR hence no need to explicitly save"
+
+The comment in resume function pretty much explains the above. So let me
+know if i need to add the suspend callback.
+
+Regards,
+Keerthy
+
+> 
+> Okay. Thanks a lot for the quick feedback!
+> 
+>>
+>> Regards,
+>> Santosh
+>>
+>>
