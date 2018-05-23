@@ -1,85 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932920AbeEWMWE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 08:22:04 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:40690 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932620AbeEWMWA (ORCPT
+        id S932936AbeEWMWN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 08:22:13 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:39398 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932620AbeEWMWG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 08:22:00 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A14E860314
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rplsssn@codeaurora.org
-Subject: Re: [PATCH v8 07/10] drivers: qcom: rpmh: cache sleep/wake state
- requests
-To: Doug Anderson <dianders@chromium.org>,
-        Lina Iyer <ilina@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>, msivasub@codeaurora.org,
-        mkshah@codeaurora.org, Bjorn Andersson <bjorn.andersson@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Evan Green <evgreen@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-References: <20180509170159.29682-1-ilina@codeaurora.org>
- <20180509170159.29682-8-ilina@codeaurora.org>
- <CAD=FV=VLQRHfWgbVhcCBJxd5iRh+R_kbdtT=fPixK0O_iqYwOg@mail.gmail.com>
-From: Raju P L S S S N <rplsssn@codeaurora.org>
-Message-ID: <2c6fc480-7894-2a69-b1ff-fc3cbc96a9a1@codeaurora.org>
-Date: Wed, 23 May 2018 17:51:48 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 23 May 2018 08:22:06 -0400
+X-Google-Smtp-Source: AB8JxZpwNvdwdSe6+4zycEspbTC+bfTquujZIhSRN3LUuIoh28cPU8nRzThTErqsaYBeMuKakrYjUg==
+Subject: Re: [PATCH 2/6] mfd: da9063: Replace model with type
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+References: <20180523114230.10109-1-marek.vasut+renesas@gmail.com>
+ <20180523114230.10109-2-marek.vasut+renesas@gmail.com>
+ <CAMuHMdWxzDKcHWBD12nAJf_wLtupyAxtL38_faitSOZy+6xGjA@mail.gmail.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <9a3e05ee-2ba4-e72b-8aee-662b67985ebb@gmail.com>
+Date: Wed, 23 May 2018 14:15:56 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <CAD=FV=VLQRHfWgbVhcCBJxd5iRh+R_kbdtT=fPixK0O_iqYwOg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <CAMuHMdWxzDKcHWBD12nAJf_wLtupyAxtL38_faitSOZy+6xGjA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 05/23/2018 01:55 PM, Geert Uytterhoeven wrote:
+> On Wed, May 23, 2018 at 1:42 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+>> The model number stored in the struct da9063 is the same for all
+>> variants of the da9063 since it is the chip ID, which is always
+>> the same. Replace that with a separate identifier instead, which
+>> allows us to discern the DA9063 variants by setting the type
+>> based on either DT match or otherwise.
+>>
+>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+>> --- a/drivers/mfd/da9063-i2c.c
+>> +++ b/drivers/mfd/da9063-i2c.c
+>> @@ -248,6 +248,7 @@ static int da9063_i2c_probe(struct i2c_client *i2c,
+>>         i2c_set_clientdata(i2c, da9063);
+>>         da9063->dev = &i2c->dev;
+>>         da9063->chip_irq = i2c->irq;
+>> +       da9063->type = (enum da9063_type)id->driver_data;
+> 
+> Nit: I think this cast (from unsigned long) is not needed.
 
-On 5/12/2018 1:48 AM, Doug Anderson wrote:
-> Hi,
-> 
-> On Wed, May 9, 2018 at 10:01 AM, Lina Iyer <ilina@codeaurora.org> wrote:
->>   /**
->>    * struct rpmh_request: the message to be sent to rpmh-rsc
->>    *
->> @@ -54,9 +71,15 @@ struct rpmh_request {
->>    * struct rpmh_ctrlr: our representation of the controller
->>    *
->>    * @drv: the controller instance
->> + * @cache: the list of cached requests
->> + * @lock: synchronize access to the controller data
-> 
-> nit: this makes it sound like this lock will be grabbed for all calls
-> into rpmh-rsc.  In fact, it only protects access to the cache.
-> Ideally name it cache_lock and document that it's for protecting the
-> cache.
-> 
-> 
->> +/**
->> + * rpmh_flush: Flushes the buffered active and sleep sets to TCS
->> + *
->> + * @dev: The device making the request
->> + *
->> + * Return: -EBUSY if the controller is busy, probably waiting on a response
->> + * to a RPMH request sent earlier.
->> + *
->> + * This function is generally called from the sleep code from the last CPU
-> 
-> "is generally" implies that sometimes it's not called from the sleep
-> code.  Change to "is always".  If "is generally" is more correct, you
-> can't run lockless right?
-> 
-> 
-> -Doug
-> 
+Dropped
 
-Yes. Will change in next patch.
-
-Thanks,
-Raju
+-- 
+Best regards,
+Marek Vasut
