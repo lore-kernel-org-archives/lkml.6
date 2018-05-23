@@ -1,71 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934786AbeEWWfj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 18:35:39 -0400
-Received: from smtprelay0112.hostedemail.com ([216.40.44.112]:33792 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933083AbeEWWfh (ORCPT
+        id S934855AbeEWWht (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 18:37:49 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42266 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934544AbeEWWhr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 18:35:37 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::::::::::::::::::::::,RULES_HIT:41:355:379:541:599:960:967:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2393:2525:2559:2563:2682:2685:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:5007:6737:7903:9025:10004:10400:10848:11232:11658:11914:12043:12048:12679:12740:12760:12895:13069:13161:13229:13311:13357:13439:14096:14097:14181:14659:14721:21080:21433:21627:30054:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:23,LUA_SUMMARY:none
-X-HE-Tag: part69_87cf87e16915a
-X-Filterd-Recvd-Size: 2482
-Message-ID: <56ee8810463b6c537ca0c10c9f82e6d922acd1f1.camel@perches.com>
-Subject: Re: [PATCH] block drivers/block: Use octal not symbolic permissions
-From: Joe Perches <joe@perches.com>
-To: Jens Axboe <axboe@kernel.dk>, "Ed L. Cashin" <ed.cashin@acm.org>,
-        Philipp Reisner <philipp.reisner@linbit.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Jiri Kosina <jikos@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
-        linux-block@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
-        Sage Weil <sage@redhat.com>, Alex Elder <elder@kernel.org>,
-        Philip Kelleher <pjk1939@linux.vnet.ibm.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Roger Pau =?ISO-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>
-Cc: linux-kernel@vger.kernel.org, drbd-dev@lists.linbit.com,
-        nbd@other.debian.org, ceph-devel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        xen-devel@lists.xenproject.org
-Date: Wed, 23 May 2018 15:35:31 -0700
-In-Reply-To: <6bf44255-145f-bf14-e254-860731ff9296@kernel.dk>
-References: <5e97a292c1ba38a6b5a0caa271d85dc3de1b2aa7.1527105857.git.joe@perches.com>
-         <6bf44255-145f-bf14-e254-860731ff9296@kernel.dk>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 23 May 2018 18:37:47 -0400
+Date: Wed, 23 May 2018 23:37:39 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Petr Mladek <pmladek@suse.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: manual merge of the printk tree with Linus' tree
+Message-ID: <20180523223739.GP4828@sirena.org.uk>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="CUrluEZVXmx7ezWQ"
+Content-Disposition: inline
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-05-23 at 15:27 -0600, Jens Axboe wrote:
-> On 5/23/18 2:05 PM, Joe Perches wrote:
-> > Convert the S_<FOO> symbolic permissions to their octal equivalents as
-> > using octal and not symbolic permissions is preferred by many as more
-> > readable.
-> > 
-> > see: https://lkml.org/lkml/2016/8/2/1945
-> > 
-> > Done with automated conversion via:
-> > $ ./scripts/checkpatch.pl -f --types=SYMBOLIC_PERMS --fix-inplace <files...>
-> > 
-> > Miscellanea:
-> > 
-> > o Wrapped modified multi-line calls to a single line where appropriate
-> > o Realign modified multi-line calls to open parenthesis
-> 
-> Honestly, I see this as pretty needless churn.
 
-btw:
+--CUrluEZVXmx7ezWQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-There is currently a mixture of symbolic and octal
-permissions uses in block and drivers/block
+Hi Petr,
 
-ie: 94 octal and 146 symbolic uses.
+Today's linux-next merge of the printk tree got a conflict in:
 
-If this is applied, all would become octal.
+  lib/vsprintf.c
+
+between commit:
+
+  85f4f12d51397f164 ("vsprintf: Replace memory barrier with static_key for =
+random_ptr_key update")
+
+=66rom Linus' tree and commits:
+
+  558594f3c2a5cd65f ("lib/vsprintf: Move pointer_string() upper)"
+  496a9a5f3806d58b1 ("lib/vsprintf: Deduplicate pointer_string()")
+
+=66rom the printk tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc lib/vsprintf.c
+index 23920c5ff728,7649ef4ed7d0..000000000000
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@@ -1655,36 -1644,19 +1654,22 @@@ char *device_node_string(char *buf, cha
+  	return widen_string(buf, buf - buf_start, end, spec);
+  }
+ =20
+- static noinline_for_stack
+- char *pointer_string(char *buf, char *end, const void *ptr,
+- 		     struct printf_spec spec)
+- {
+- 	spec.base =3D 16;
+- 	spec.flags |=3D SMALL;
+- 	if (spec.field_width =3D=3D -1) {
+- 		spec.field_width =3D 2 * sizeof(ptr);
+- 		spec.flags |=3D ZEROPAD;
+- 	}
+-=20
+- 	return number(buf, end, (unsigned long int)ptr, spec);
+- }
+-=20
+ -static bool have_filled_random_ptr_key __read_mostly;
+ +static DEFINE_STATIC_KEY_TRUE(not_filled_random_ptr_key);
+  static siphash_key_t ptr_key __read_mostly;
+ =20
+ -static void fill_random_ptr_key(struct random_ready_callback *unused)
+ +static void enable_ptr_key_workfn(struct work_struct *work)
+  {
+  	get_random_bytes(&ptr_key, sizeof(ptr_key));
+ -	/*
+ -	 * have_filled_random_ptr_key=3D=3Dtrue is dependent on get_random_bytes=
+().
+ -	 * ptr_to_id() needs to see have_filled_random_ptr_key=3D=3Dtrue
+ -	 * after get_random_bytes() returns.
+ -	 */
+ -	smp_mb();
+ -	WRITE_ONCE(have_filled_random_ptr_key, true);
+ +	/* Needs to run from preemptible context */
+ +	static_branch_disable(&not_filled_random_ptr_key);
+ +}
+ +
+ +static DECLARE_WORK(enable_ptr_key_work, enable_ptr_key_workfn);
+ +
+ +static void fill_random_ptr_key(struct random_ready_callback *unused)
+ +{
+ +	/* This may be in an interrupt handler. */
+ +	queue_work(system_unbound_wq, &enable_ptr_key_work);
+  }
+ =20
+  static struct random_ready_callback random_ready =3D {
+@@@ -1710,13 -1681,13 +1695,13 @@@ early_initcall(initialize_ptr_random)
+  /* Maps a pointer to a 32 bit unique identifier. */
+  static char *ptr_to_id(char *buf, char *end, void *ptr, struct printf_spe=
+c spec)
+  {
++ 	const char *str =3D sizeof(ptr) =3D=3D 8 ? "(____ptrval____)" : "(ptrval=
+)";
+  	unsigned long hashval;
+- 	const int default_width =3D 2 * sizeof(ptr);
+ =20
+ -	if (unlikely(!have_filled_random_ptr_key)) {
+ +	if (static_branch_unlikely(&not_filled_random_ptr_key)) {
+- 		spec.field_width =3D default_width;
++ 		spec.field_width =3D 2 * sizeof(ptr);
+  		/* string length must be less than default_width */
+- 		return string(buf, end, "(ptrval)", spec);
++ 		return string(buf, end, str, spec);
+  	}
+ =20
+  #ifdef CONFIG_64BIT
+
+--CUrluEZVXmx7ezWQ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsF7TIACgkQJNaLcl1U
+h9AFdwf/YgdjIavRRQ2/3TTIF6wvD9SGotx7Iq0J8574YCSnae6dx+lerHfDI+tu
+qV1jORZ8Ps3Hw4JzgdS5Z1VO5P+1k6e9vBfASIKub24VAENO7uGff+oLrzAkkLw3
+MuqF3IQoB4aOCc3yNPk1f19K1KhKSmsWQDb/7tdtY/aCqUmVI/jMias/SuYHVw0/
+4g/oXblXoumvFbqtXpj+lu0mxWVKyS2SXkxPa/JbbmYlyL4FGnJyePy1ZiUIB0UL
++KnjgDHvGIjnUbcOFZARZjLkJhG5QJ8PHWWHo/D+bMV/H3dV6GQWSS1cULBzcW4j
+AzE0mj50wHY1rriFF6U/snadIGfrDw==
+=jeJA
+-----END PGP SIGNATURE-----
+
+--CUrluEZVXmx7ezWQ--
