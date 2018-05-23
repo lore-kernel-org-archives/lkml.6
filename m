@@ -1,136 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932990AbeEWNZ3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 09:25:29 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55118 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932844AbeEWNZ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 09:25:27 -0400
-Cc: Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH v11 1/2] cpufreq: Add Kryo CPU scaling driver
-To: Ilia Lin <ilialin@codeaurora.org>, vireshk@kernel.org, nm@ti.com,
-        sboyd@kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        rjw@rjwysocki.net, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1527079139-3558-1-git-send-email-ilialin@codeaurora.org>
- <1527079139-3558-2-git-send-email-ilialin@codeaurora.org>
-From: Sudeep Holla <sudeep.holla@arm.com>
-Organization: ARM
-Message-ID: <1ec7645d-72b6-5a1a-48c3-831a3c484a0e@arm.com>
-Date: Wed, 23 May 2018 14:25:22 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S933051AbeEWN00 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 09:26:26 -0400
+Received: from zimbra.alphalink.fr ([217.15.80.77]:41561 "EHLO
+        zimbra.alphalink.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932845AbeEWN0W (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 09:26:22 -0400
+Date: Wed, 23 May 2018 15:26:18 +0200
+From: Guillaume Nault <g.nault@alphalink.fr>
+To: Eric Biggers <ebiggers3@gmail.com>
+Cc: linux-ppp@vger.kernel.org, Paul Mackerras <paulus@samba.org>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com,
+        syzbot <syzbot+16363c99d4134717c05b@syzkaller.appspotmail.com>,
+        viro@zeniv.linux.org.uk
+Subject: Re: KASAN: use-after-free Read in remove_wait_queue (2)
+Message-ID: <20180523132618.GA1569@alphalink.fr>
+References: <f403043d0f18f879cc056648a875@google.com>
+ <20180514061155.GL677@sol.localdomain>
+ <20180518160223.GF1534@alphalink.fr>
+ <20180523032958.GE658@sol.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <1527079139-3558-2-git-send-email-ilialin@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180523032958.GE658@sol.localdomain>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 23/05/18 13:38, Ilia Lin wrote:
-> In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
-> the CPU frequency subset and voltage value of each OPP varies
-> based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
-> defines the voltage and frequency value based on the msm-id in SMEM
-> and speedbin blown in the efuse combination.
-> The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
-> to provide the OPP framework with required information.
-> This is used to determine the voltage and frequency value for each OPP of
-> operating-points-v2 table when it is parsed by the OPP framework.
+On Tue, May 22, 2018 at 08:29:58PM -0700, Eric Biggers wrote:
+> On Fri, May 18, 2018 at 06:02:23PM +0200, Guillaume Nault wrote:
+> > On Sun, May 13, 2018 at 11:11:55PM -0700, Eric Biggers wrote:
+> > > [+ppp list and maintainer]
+> > > 
+> > > This is a bug in ppp_generic.c; it still happens on Linus' tree and it's easily
+> > > reproducible, see program below.  The bug is that the PPPIOCDETACH ioctl doesn't
+> > > consider that the file can still be attached to epoll instances even when
+> > > ->f_count == 1.
+> > 
+> > Right. What would it take to remove the file for the epoll instances?
+> > Sorry for the naive question, but I'm not familiar with VFS and didn't
+> > find a helper function we could call.
+> > 
 > 
-> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-> ---
->  drivers/cpufreq/Kconfig.arm          |  10 ++
->  drivers/cpufreq/Makefile             |   1 +
->  drivers/cpufreq/cpufreq-dt-platdev.c |   3 +
->  drivers/cpufreq/qcom-cpufreq-kryo.c  | 181 +++++++++++++++++++++++++++++++++++
->  4 files changed, 195 insertions(+)
->  create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
+> There is eventpoll_release_file(), but it's not exported to modules.  It might
+> work to call it, but it seems like a hack.
 > 
-> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-> index de55c7d..0bfd40e 100644
-> --- a/drivers/cpufreq/Kconfig.arm
-> +++ b/drivers/cpufreq/Kconfig.arm
-> @@ -124,6 +124,16 @@ config ARM_OMAP2PLUS_CPUFREQ
->  	depends on ARCH_OMAP2PLUS
->  	default ARCH_OMAP2PLUS
->  
-> +config ARM_QCOM_CPUFREQ_KRYO
-> +	bool "Qualcomm Kryo based CPUFreq"
-> +	depends on QCOM_QFPROM
-> +	depends on QCOM_SMEM
-> +	select PM_OPP
-> +	help
-> +	  This adds the CPUFreq driver for Qualcomm Kryo SoC based boards.
-> +
-> +	  If in doubt, say N.
-> +
-
-Sorry but just noticed now, any reason why this can't be module. I can't
-imagine any.
-
-[..]
-
-> +static int qcom_cpufreq_kryo_probe(struct platform_device *pdev)
-> +{
-> +	struct opp_table *opp_tables[NR_CPUS] = {0};
-> +	struct platform_device *cpufreq_dt_pdev;
-> +	enum _msm8996_version msm8996_version;
-> +	struct nvmem_cell *speedbin_nvmem;
-> +	struct device_node *np;
-> +	struct device *cpu_dev;
-
-[..]
-
-> +
-> +	cpufreq_dt_pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
-> +	if (!IS_ERR(cpufreq_dt_pdev))
-> +		return 0;
-> +
-> +	ret = PTR_ERR(cpufreq_dt_pdev);
-> +	dev_err(cpu_dev, "Failed to register platform device\n");
-> +
-> +free_opp:
-> +	for_each_possible_cpu(cpu) {
-> +		if (IS_ERR_OR_NULL(opp_tables[cpu]))
-> +			break;
-> +		dev_pm_opp_put_supported_hw(opp_tables[cpu]);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static int __init qcom_cpufreq_kryo_init(void)
-> +{
-> +	/*
-> +	 * Since the driver depends on smem and nvmem drivers, which may
-> +	 * return EPROBE_DEFER, all the real activity is done in the probe,
-> +	 * which may be defered as well. The init here is only registering
-> +	 * a platform device.
-> +	 */
-> +	platform_device_register_simple("qcom-cpufreq-kryo", -1, NULL, 0);
-> +	return 0;
-> +}
-> +module_init(qcom_cpufreq_kryo_init);
-
-Do you need this at all ? See below on how to eliminate the need for this.
-
-> +
-> +static struct platform_driver qcom_cpufreq_kryo_driver = {
-> +	.probe = qcom_cpufreq_kryo_probe,
-> +	.driver = {
-> +		.name = "qcom-cpufreq-kryo",
-> +	},
-> +};
-> +builtin_platform_driver(qcom_cpufreq_kryo_driver);
-
-Use builtin_platform_driver_probe and remove qcom_cpufreq_kryo_init
-or use module_platform_driver_probe if it can be module.
-
--- 
-Regards,
-Sudeep
+> > > Also, the reproducer doesn't test this but I think ppp_poll(),
+> > > ppp_read(), and ppp_write() can all race with PPPIOCDETACH, causing
+> > > use-after-frees as well.
+> > 
+> > I also believe so. ppp_release() resets ->private_data, and even though
+> > functions like ppp_read() test ->private_data before executing, there's
+> > no synchronisation mechanism to ensure that the update is visible
+> > before the unit or channel is destroyed. Is that the kind of race you
+> > had in mind?
+> 
+> Yes, though after looking into it more I *think* these additional races aren't
+> actually possible, due to the 'f_count < 2' check.  These races could only
+> happen with a shared fd table, but in that case fdget() would increment f_count
+> for the duration of each operation, resulting in 'f_count >= 2' if both ioctl()
+> and something else is running on the same file concurrently.
+> 
+> Note that this also means PPPIOCDETACH doesn't work at all if called from a
+> multithreaded application...
+> 
+> > 
+> > > Any chance that PPPIOCDETACH can simply be removed,
+> > > given that it's apparently been "deprecated" for 16 years?
+> > > Does anyone use it?
+> > 
+> > The only users I'm aware of are pppd versions older than ppp-2.4.2
+> > (released in November 2003). But even at that time, there were issues
+> > with PPPIOCDETACH as pppd didn't seem to react properly when this call
+> > failed. An Internet search on the "PPPIOCDETACH file->f_count=" kernel
+> > log string, or on the "Couldn't release PPP unit: Invalid argument"
+> > error message of pppd, returns several related bug reports.
+> > 
+> > Originally, PPPIOCDETACH never failed, but testing ->f_count was
+> > later introduced to fix crashes when the file descriptor had been
+> > duplicated. It seems that this was motivated by polling issues too.
+> > 
+> > Long story short, it looks like PPPIOCDETACH never has worked well
+> > and we have at least two more bugs to fix. Given how it has proven
+> > fragile, I wouldn't be surprised if there were even more lurking
+> > around. I'd say that it's probably safer to drop it than to add more
+> > workarounds and playing wack-a-mole with those bugs.
+> 
+> IMO, if we can get away with removing it without any users noticing, that would
+> be much better than trying to fix it with a VFS-level hack, and probably missing
+> some cases.  I'll send a patch to get things started...
+> 
+Yes, I fully agree. That looks much safer, and given the track record
+of this ioctl I very much doubt anyone would depend on it.
