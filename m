@@ -1,193 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753957AbeEWCqI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 22:46:08 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43752 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753894AbeEWCpR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 22:45:17 -0400
-From: Dong Jia Shi <bjsdjshi@linux.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc: cohuck@redhat.com, borntraeger@de.ibm.com, bjsdjshi@linux.ibm.com,
-        pasic@linux.ibm.com, pmorel@linux.ibm.com,
-        Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
-Subject: [PATCH v3 2/4] vfio: ccw: refactor and improve pfn_array_alloc_pin()
-Date: Wed, 23 May 2018 04:45:00 +0200
-X-Mailer: git-send-email 2.16.3
-In-Reply-To: <20180523024502.94244-1-bjsdjshi@linux.ibm.com>
-References: <20180523024502.94244-1-bjsdjshi@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18052302-0020-0000-0000-00000DFD946C
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009069; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000261; SDB=6.01036287; UDB=6.00530120; IPR=6.00815416;
- MB=3.00021249; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-23 02:45:16
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052302-0021-0000-0000-0000618360C4
-Message-Id: <20180523024502.94244-3-bjsdjshi@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-23_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805230023
+        id S1753733AbeEWCst (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 22:48:49 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7731 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753441AbeEWCss (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 22:48:48 -0400
+From: Pengcheng Li <lipengcheng8@huawei.com>
+To: <amira@ti.com>, <pavan_savoy@ti.com>, <x0153368@ti.com>,
+        <gigi.joseph@ti.com>, <marcel@holtmann.org>, <johan.hedberg@gmail.com>,
+        <arnd@arndb.de>, <gregkh@linuxfoundation.org>, <guodong.xu@linaro.org>,
+        <john.stultz@linaro.org>, <dimitrysh@google.com>,
+        <linux-kernel@vger.kernel.org>
+CC: <lipengcheng8@huawei.com>, <yaobaofeng@huawei.com>,
+        <lijiangxiong@hisilicon.com>, <kongfei@hisilicon.com>
+Subject: [PATCH] misc: st_core: Fix skb double free corruption
+Date: Wed, 23 May 2018 10:39:51 +0800
+Message-ID: <1527043191-23610-1-git-send-email-lipengcheng8@huawei.com>
+X-Mailer: git-send-email 2.8.0
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.177.181.43]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
+St_gdata->list[chnl_id]->recv function pointer to hci_recv_frame interface,
+hci_recv_frame interface releases skb buffer in case of exception.
 
-This refactors pfn_array_alloc_pin() and also improves it by adding
-defensive code in error handling so that calling pfn_array_unpin_free()
-after error return won't lead to problem. This mainly does:
-1. Merge pfn_array_pin() into pfn_array_alloc_pin(), since there is no
-   other user of pfn_array_pin(). As a result, also remove kernel-doc
-   for pfn_array_pin() and add/update kernel-doc for pfn_array_alloc_pin()
-   and struct pfn_array.
-2. For a vfio_pin_pages() failure, set pa->pa_nr to zero to indicate
-   zero pages were pinned.
-3. Set pa->pa_iova_pfn to NULL right after it was freed.
-
-Suggested-by: Pierre Morel <pmorel@linux.ibm.com>,
-Signed-off-by: Dong Jia Shi <bjsdjshi@linux.ibm.com>
+Signed-off-by: Li Pengcheng <lipengcheng8@huawei.com>
+Signed-off-by: Yao Baofeng <yaobaofeng@huawei.com>
+Signed-off-by: Li Jiangxiong <lijiangxiong@hisilicon.com>
 ---
- drivers/s390/cio/vfio_ccw_cp.c | 82 +++++++++++++++++++-----------------------
- 1 file changed, 36 insertions(+), 46 deletions(-)
+ drivers/misc/ti-st/st_core.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/s390/cio/vfio_ccw_cp.c b/drivers/s390/cio/vfio_ccw_cp.c
-index b38ef387e4f0..262f969b3b33 100644
---- a/drivers/s390/cio/vfio_ccw_cp.c
-+++ b/drivers/s390/cio/vfio_ccw_cp.c
-@@ -29,7 +29,7 @@ struct pfn_array {
- 	unsigned long		*pa_iova_pfn;
- 	/* Array that receives PFNs of the pages pinned. */
- 	unsigned long		*pa_pfn;
--	/* Number of pages to pin/pinned from @pa_iova. */
-+	/* Number of pages pinned from @pa_iova. */
- 	int			pa_nr;
- };
- 
-@@ -50,64 +50,33 @@ struct ccwchain {
- };
- 
- /*
-- * pfn_array_pin() - pin user pages in memory
-+ * pfn_array_alloc_pin() - alloc memory for PFNs, then pin user pages in memory
-  * @pa: pfn_array on which to perform the operation
-  * @mdev: the mediated device to perform pin/unpin operations
-+ * @iova: target guest physical address
-+ * @len: number of bytes that should be pinned from @iova
-  *
-- * Attempt to pin user pages in memory.
-+ * Attempt to allocate memory for PFNs, and pin user pages in memory.
-  *
-  * Usage of pfn_array:
-- * Any field in this structure should be initialized by caller.
-- * We expect @pa->pa_nr > 0, and its value will be assigned by callee.
-+ * We expect (pa_nr == 0) and (pa_iova_pfn == NULL), any field in
-+ * this structure will be filled in by this function.
-  *
-  * Returns:
-  *   Number of pages pinned on success.
-- *   If @pa->pa_nr is 0 or negative, returns 0.
-+ *   If @pa->pa_nr is not 0, or @pa->pa_iova_pfn is not NULL initially,
-+ *   returns -EINVAL.
-  *   If no pages were pinned, returns -errno.
-  */
--static int pfn_array_pin(struct pfn_array *pa, struct device *mdev)
--{
--	int i, ret;
--
--	if (pa->pa_nr <= 0) {
--		pa->pa_nr = 0;
--		return 0;
--	}
--
--	pa->pa_iova_pfn[0] = pa->pa_iova >> PAGE_SHIFT;
--	for (i = 1; i < pa->pa_nr; i++)
--		pa->pa_iova_pfn[i] = pa->pa_iova_pfn[i - 1] + 1;
--
--	ret = vfio_pin_pages(mdev, pa->pa_iova_pfn, pa->pa_nr,
--			     IOMMU_READ | IOMMU_WRITE, pa->pa_pfn);
--
--	if (ret > 0 && ret != pa->pa_nr) {
--		vfio_unpin_pages(mdev, pa->pa_iova_pfn, ret);
--		pa->pa_nr = 0;
--		return 0;
--	}
--
--	return ret;
--}
--
--/* Unpin the pages before releasing the memory. */
--static void pfn_array_unpin_free(struct pfn_array *pa, struct device *mdev)
--{
--	vfio_unpin_pages(mdev, pa->pa_iova_pfn, pa->pa_nr);
--	pa->pa_nr = 0;
--	kfree(pa->pa_iova_pfn);
--}
--
--/* Alloc memory for PFNs, then pin pages with them. */
- static int pfn_array_alloc_pin(struct pfn_array *pa, struct device *mdev,
- 			       u64 iova, unsigned int len)
- {
--	int ret = 0;
-+	int i, ret = 0;
- 
- 	if (!len)
- 		return 0;
- 
--	if (pa->pa_nr)
-+	if (pa->pa_nr || pa->pa_iova_pfn)
- 		return -EINVAL;
- 
- 	pa->pa_iova = iova;
-@@ -124,18 +93,39 @@ static int pfn_array_alloc_pin(struct pfn_array *pa, struct device *mdev,
- 		return -ENOMEM;
- 	pa->pa_pfn = pa->pa_iova_pfn + pa->pa_nr;
- 
--	ret = pfn_array_pin(pa, mdev);
-+	pa->pa_iova_pfn[0] = pa->pa_iova >> PAGE_SHIFT;
-+	for (i = 1; i < pa->pa_nr; i++)
-+		pa->pa_iova_pfn[i] = pa->pa_iova_pfn[i - 1] + 1;
-+
-+	ret = vfio_pin_pages(mdev, pa->pa_iova_pfn, pa->pa_nr,
-+			     IOMMU_READ | IOMMU_WRITE, pa->pa_pfn);
- 
--	if (ret > 0)
--		return ret;
--	else if (!ret)
-+	if (ret < 0) {
-+		goto err_out;
-+	} else if (ret > 0 && ret != pa->pa_nr) {
-+		vfio_unpin_pages(mdev, pa->pa_iova_pfn, ret);
- 		ret = -EINVAL;
-+		goto err_out;
-+	}
-+
-+	return ret;
- 
-+err_out:
-+	pa->pa_nr = 0;
- 	kfree(pa->pa_iova_pfn);
-+	pa->pa_iova_pfn = NULL;
- 
- 	return ret;
- }
- 
-+/* Unpin the pages before releasing the memory. */
-+static void pfn_array_unpin_free(struct pfn_array *pa, struct device *mdev)
-+{
-+	vfio_unpin_pages(mdev, pa->pa_iova_pfn, pa->pa_nr);
-+	pa->pa_nr = 0;
-+	kfree(pa->pa_iova_pfn);
-+}
-+
- static int pfn_array_table_init(struct pfn_array_table *pat, int nr)
- {
- 	pat->pat_pa = kcalloc(nr, sizeof(*pat->pat_pa), GFP_KERNEL);
+diff --git a/drivers/misc/ti-st/st_core.c b/drivers/misc/ti-st/st_core.c
+index 0005159..f4ce211 100644
+--- a/drivers/misc/ti-st/st_core.c
++++ b/drivers/misc/ti-st/st_core.c
+@@ -124,7 +124,6 @@ static void st_send_frame(unsigned char chnl_id, struct st_data_s *st_gdata)
+ 			(st_gdata->list[chnl_id]->priv_data, st_gdata->rx_skb)
+ 			     != 0)) {
+ 			pr_err(" proto stack %d's ->recv failed", chnl_id);
+-			kfree_skb(st_gdata->rx_skb);
+ 			return;
+ 		}
+ 	} else {
 -- 
-2.16.3
+2.8.0
