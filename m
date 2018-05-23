@@ -1,204 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932450AbeEWKb3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 06:31:29 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:43624 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932285AbeEWKb2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 06:31:28 -0400
-Message-ID: <70b7ddaf685c2fc08dfd1caaab45bb0cc9c99a21.camel@collabora.com>
-Subject: Re: [PATCH v10 08/16] v4l: mark unordered formats
-From: Ezequiel Garcia <ezequiel@collabora.com>
-To: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: kernel@collabora.com, Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
-        Shuah Khan <shuahkh@osg.samsung.com>, Pawel Osciak <pawel@osciak.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Brian Starkey <brian.starkey@arm.com>, linux-kernel@vger.kernel.org,
-        Gustavo Padovan <gustavo.padovan@collabora.com>
-Date: Wed, 23 May 2018 07:30:00 -0300
-In-Reply-To: <2df0ec97-9e0f-8fc3-1481-ac0a72e52e4d@xs4all.nl>
-References: <20180521165946.11778-1-ezequiel@collabora.com>
-         <20180521165946.11778-9-ezequiel@collabora.com>
-         <2df0ec97-9e0f-8fc3-1481-ac0a72e52e4d@xs4all.nl>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1 
-Mime-Version: 1.0
+        id S932444AbeEWKjr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 06:39:47 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53082 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932180AbeEWKjn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 06:39:43 -0400
+Cc: Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH v10 1/2] cpufreq: Add Kryo CPU scaling driver
+To: Ilia Lin <ilialin@codeaurora.org>, vireshk@kernel.org, nm@ti.com,
+        sboyd@kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        rjw@rjwysocki.net, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1527068454-28921-1-git-send-email-ilialin@codeaurora.org>
+ <1527068454-28921-2-git-send-email-ilialin@codeaurora.org>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Organization: ARM
+Message-ID: <3f1ca60e-7aa8-fccc-ab1c-4b7c37731cce@arm.com>
+Date: Wed, 23 May 2018 11:39:37 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <1527068454-28921-2-git-send-email-ilialin@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-05-22 at 13:55 +0200, Hans Verkuil wrote:
-> On 21/05/18 18:59, Ezequiel Garcia wrote:
-> > From: Gustavo Padovan <gustavo.padovan@collabora.com>
-> > 
-> > Now that we've introduced the V4L2_FMT_FLAG_UNORDERED flag,
-> > mark the appropriate formats.
-> > 
-> > v2: Set unordered flag before calling the driver callback.
-> > 
-> > Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
-> > Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
-> > ---
-> >  drivers/media/v4l2-core/v4l2-ioctl.c | 74 +++++++++++++++++++++++++++---------
-> >  1 file changed, 57 insertions(+), 17 deletions(-)
-> > 
-> > diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-> > index f48c505550e0..2135ac235a96 100644
-> > --- a/drivers/media/v4l2-core/v4l2-ioctl.c
-> > +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-> > @@ -1102,6 +1102,27 @@ static int v4l_enumoutput(const struct v4l2_ioctl_ops *ops,
-> >  	return ops->vidioc_enum_output(file, fh, p);
-> >  }
-> >  
-> > +static void v4l_fill_unordered_fmtdesc(struct v4l2_fmtdesc *fmt)
-> > +{
-> > +	switch (fmt->pixelformat) {
-> > +	case V4L2_PIX_FMT_MPEG:
-> > +	case V4L2_PIX_FMT_H264:
-> > +	case V4L2_PIX_FMT_H264_NO_SC:
-> > +	case V4L2_PIX_FMT_H264_MVC:
-> > +	case V4L2_PIX_FMT_H263:
-> > +	case V4L2_PIX_FMT_MPEG1:
-> > +	case V4L2_PIX_FMT_MPEG2:
-> > +	case V4L2_PIX_FMT_MPEG4:
-> > +	case V4L2_PIX_FMT_XVID:
-> > +	case V4L2_PIX_FMT_VC1_ANNEX_G:
-> > +	case V4L2_PIX_FMT_VC1_ANNEX_L:
-> > +	case V4L2_PIX_FMT_VP8:
-> > +	case V4L2_PIX_FMT_VP9:
-> > +	case V4L2_PIX_FMT_HEVC:
-> > +		fmt->flags |= V4L2_FMT_FLAG_UNORDERED;
+
+
+On 23/05/18 10:40, Ilia Lin wrote:
+> In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
+> the CPU frequency subset and voltage value of each OPP varies
+> based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
+> defines the voltage and frequency value based on the msm-id in SMEM
+> and speedbin blown in the efuse combination.
+> The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
+> to provide the OPP framework with required information.
+> This is used to determine the voltage and frequency value for each OPP of
+> operating-points-v2 table when it is parsed by the OPP framework.
 > 
-> Please add a break here. This prevents potential future errors if new cases
-> are added below this line.
-> 
+> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
 
-Sure.
+[...]
 
-> > +	}
-> > +}
-> > +
-> >  static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
-> >  {
-> >  	const unsigned sz = sizeof(fmt->description);
-> > @@ -1310,61 +1331,80 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
-> >  
-> >  	if (descr)
-> >  		WARN_ON(strlcpy(fmt->description, descr, sz) >= sz);
-> > -	fmt->flags = flags;
-> > +	fmt->flags |= flags;
-> >  }
-> >  
-> > -static int v4l_enum_fmt(const struct v4l2_ioctl_ops *ops,
-> > -				struct file *file, void *fh, void *arg)
-> > -{
-> > -	struct v4l2_fmtdesc *p = arg;
-> > -	int ret = check_fmt(file, p->type);
-> >  
-> > -	if (ret)
-> > -		return ret;
-> > -	ret = -EINVAL;
-> > +static int __vidioc_enum_fmt(const struct v4l2_ioctl_ops *ops,
-> > +			     struct v4l2_fmtdesc *p,
-> > +			     struct file *file, void *fh)
-> > +{
-> > +	int ret = 0;
-> >  
-> >  	switch (p->type) {
-> >  	case V4L2_BUF_TYPE_VIDEO_CAPTURE:
-> >  		if (unlikely(!ops->vidioc_enum_fmt_vid_cap))
-> >  			break;
-> > -		ret = ops->vidioc_enum_fmt_vid_cap(file, fh, arg);
-> > +		ret = ops->vidioc_enum_fmt_vid_cap(file, fh, p);
-> >  		break;
-> >  	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
-> >  		if (unlikely(!ops->vidioc_enum_fmt_vid_cap_mplane))
-> >  			break;
-> > -		ret = ops->vidioc_enum_fmt_vid_cap_mplane(file, fh, arg);
-> > +		ret = ops->vidioc_enum_fmt_vid_cap_mplane(file, fh, p);
-> >  		break;
-> >  	case V4L2_BUF_TYPE_VIDEO_OVERLAY:
-> >  		if (unlikely(!ops->vidioc_enum_fmt_vid_overlay))
-> >  			break;
-> > -		ret = ops->vidioc_enum_fmt_vid_overlay(file, fh, arg);
-> > +		ret = ops->vidioc_enum_fmt_vid_overlay(file, fh, p);
-> >  		break;
-> >  	case V4L2_BUF_TYPE_VIDEO_OUTPUT:
-> >  		if (unlikely(!ops->vidioc_enum_fmt_vid_out))
-> >  			break;
-> > -		ret = ops->vidioc_enum_fmt_vid_out(file, fh, arg);
-> > +		ret = ops->vidioc_enum_fmt_vid_out(file, fh, p);
-> >  		break;
-> >  	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
-> >  		if (unlikely(!ops->vidioc_enum_fmt_vid_out_mplane))
-> >  			break;
-> > -		ret = ops->vidioc_enum_fmt_vid_out_mplane(file, fh, arg);
-> > +		ret = ops->vidioc_enum_fmt_vid_out_mplane(file, fh, p);
-> >  		break;
-> >  	case V4L2_BUF_TYPE_SDR_CAPTURE:
-> >  		if (unlikely(!ops->vidioc_enum_fmt_sdr_cap))
-> >  			break;
-> > -		ret = ops->vidioc_enum_fmt_sdr_cap(file, fh, arg);
-> > +		ret = ops->vidioc_enum_fmt_sdr_cap(file, fh, p);
-> >  		break;
-> >  	case V4L2_BUF_TYPE_SDR_OUTPUT:
-> >  		if (unlikely(!ops->vidioc_enum_fmt_sdr_out))
-> >  			break;
-> > -		ret = ops->vidioc_enum_fmt_sdr_out(file, fh, arg);
-> > +		ret = ops->vidioc_enum_fmt_sdr_out(file, fh, p);
-> >  		break;
-> >  	case V4L2_BUF_TYPE_META_CAPTURE:
-> >  		if (unlikely(!ops->vidioc_enum_fmt_meta_cap))
-> >  			break;
-> > -		ret = ops->vidioc_enum_fmt_meta_cap(file, fh, arg);
-> > +		ret = ops->vidioc_enum_fmt_meta_cap(file, fh, p);
-> >  		break;
-> >  	}
-> > +	return ret;
-> > +}
-> > +
-> > +static int v4l_enum_fmt(const struct v4l2_ioctl_ops *ops,
-> > +				struct file *file, void *fh, void *arg)
-> > +{
-> > +	struct v4l2_fmtdesc *p = arg;
-> > +	int ret = check_fmt(file, p->type);
-> > +
-> > +	if (ret)
-> > +		return ret;
-> > +	ret = -EINVAL;
-> 
-> Why set ret when it is overwritten below?
-> 
+> +	pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
+> +	if (!IS_ERR(pdev))
+> +		return 0;
+> +
+> +	ret = PTR_ERR(pdev);
+> +	dev_err(cpu_dev, "Failed to register platform device\n");
+> +
+> +free_opp:
+> +	for_each_possible_cpu(cpu) {
+> +		if (IS_ERR_OR_NULL(opp_tables[cpu]))
+> +			break;
+> +		dev_pm_opp_put_supported_hw(opp_tables[cpu]);
+> +	}
+> +free_np:
+> +	of_node_put(np);
+> +
+> +	return ret;
+> +}
+> +late_initcall(qcom_cpufreq_kryo_driver_init);
 
-Oops, seems to be some leftover code.
+Any particular reason why this *has* to be late initcall ?
+Please change it to module_initcall otherwise.
+Also address the of_node comments from Viresh.
 
-> > +
-> > +	ret = __vidioc_enum_fmt(ops, p, file, fh);
-> > +	if (ret)
-> > +		return ret;
-> 
-> Huh? Why call the driver twice? As far as I can see you can just drop
-> these three lines above.
-> 
-> 
-
-Well, because I thought this was the outcome of v9 [1]. Let me quote you:
-
-""
-I realized that this is a problem since this function is called *after*
-the driver. So the driver has no chance to clear this flag if it knows
-that the queue is always ordered.
-""
-
-So, we first call the driver to get struct v4l2_fmtdesc pixelformat field
-filled by the driver, then we call v4l_fill_unordered_fmtdesc()
-to set FLAG_UNORDERED if needed, and finally we call the driver again
-so it can clear the FLAG_UNORDERED.
-
-Does that make sense?
-
-[1] https://lkml.org/lkml/2018/5/7/349
+Otherwise, it looks good.
+-- 
+Regards,
+Sudeep
