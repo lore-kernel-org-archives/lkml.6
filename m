@@ -1,82 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933892AbeEWRfB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 13:35:01 -0400
-Received: from foss.arm.com ([217.140.101.70]:59200 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932667AbeEWRe6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 13:34:58 -0400
-Date: Wed, 23 May 2018 18:34:53 +0100
-From: Patrick Bellasi <patrick.bellasi@arm.com>
-To: Waiman Long <longman@redhat.com>
-Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
-        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>
-Subject: Re: [PATCH v8 4/6] cpuset: Make generate_sched_domains() recognize
- isolated_cpus
-Message-ID: <20180523173453.GY30654@e110439-lin>
-References: <1526590545-3350-1-git-send-email-longman@redhat.com>
- <1526590545-3350-5-git-send-email-longman@redhat.com>
+        id S933908AbeEWRfm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 13:35:42 -0400
+Received: from vps01.wiesinger.com ([46.36.37.179]:36022 "EHLO
+        vps01.wiesinger.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932667AbeEWRfk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 13:35:40 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 wiesinger.com w4NHZX5Y004714
+Subject: Re: B53 DSA switch problem on Banana Pi-R1 on Fedora 26
+To: Florian Fainelli <f.fainelli@gmail.com>, Andrew Lunn <andrew@lunn.ch>
+Cc: linux-kernel@vger.kernel.org
+References: <3bdb712d-38bd-e2ca-63cf-8406a7b5689d@wiesinger.com>
+ <20180522201632.GB4396@lunn.ch>
+ <59d6b55f-d50a-063c-90a9-31a758e01383@gmail.com>
+ <fa5c2615-40b3-62bc-3dda-59f9ef574686@wiesinger.com>
+ <76c3f5ec-0ab2-c06d-98e8-277284bb1a8e@gmail.com>
+From: Gerhard Wiesinger <lists@wiesinger.com>
+Message-ID: <779f2be3-3e74-e650-5240-efaf1003d77c@wiesinger.com>
+Date: Wed, 23 May 2018 19:35:33 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526590545-3350-5-git-send-email-longman@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <76c3f5ec-0ab2-c06d-98e8-277284bb1a8e@gmail.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Waiman,
+On 23.05.2018 17:28, Florian Fainelli wrote:
+>
+>> And in the future (time plan)?
+> If you don't care about multicast then you can use those patches:
+>
+> https://github.com/ffainelli/linux/commit/de055bf5f34e9806463ab2793e0852f5dfc380df
+>
+> and you have to change the part of drivers/net/dsa/b53/b53_common.c that
+> returns DSA_TAG_PROTO_NONE for 53125:
+>
+>
+> diff --git a/drivers/net/dsa/b53/b53_common.c
+> b/drivers/net/dsa/b53/b53_common.c
+> index 9f561fe505cb..3c64f026a8ce 100644
+> --- a/drivers/net/dsa/b53/b53_common.c
+> +++ b/drivers/net/dsa/b53/b53_common.c
+> @@ -1557,7 +1557,7 @@ enum dsa_tag_protocol b53_get_tag_protocol(struct
+> dsa_switch *ds, int port)
+>           * mode to be turned on which means we need to specifically
+> manage ARL
+>           * misses on multicast addresses (TBD).
+>           */
+> -       if (is5325(dev) || is5365(dev) || is539x(dev) || is531x5(dev) ||
+> +       if (is5325(dev) || is5365(dev) || is539x(dev) ||
+>              !b53_can_enable_brcm_tags(ds, port))
+>                  return DSA_TAG_PROTO_NONE;
+>
+>
+> That would bring Broadcom tags to the 53125 switch and you would be able
+> to use the configuration lines from Andrew in that case.
 
-On 17-May 16:55, Waiman Long wrote:
+What's the plan here regarding these 2 config option mode (how do you 
+call them?)?
 
-[...]
+I mean, will this be a breaking change in the future where config has to 
+be done in a different way then?
 
-> @@ -672,13 +672,14 @@ static int generate_sched_domains(cpumask_var_t **domains,
->  	int ndoms = 0;		/* number of sched domains in result */
->  	int nslot;		/* next empty doms[] struct cpumask slot */
->  	struct cgroup_subsys_state *pos_css;
-> +	bool root_load_balance = is_sched_load_balance(&top_cpuset);
->  
->  	doms = NULL;
->  	dattr = NULL;
->  	csa = NULL;
->  
->  	/* Special case for the 99% of systems with one, full, sched domain */
-> -	if (is_sched_load_balance(&top_cpuset)) {
-> +	if (root_load_balance && !top_cpuset.isolation_count) {
+Or will it be configurable via module parameters or /proc or /sys 
+filesystem options?
 
-Perhaps I'm missing something but, it seems to me that, when the two
-conditions above are true, then we are going to destroy and rebuild
-the exact same scheduling domains.
 
-IOW, on 99% of systems where:
+Thank you.
 
-   is_sched_load_balance(&top_cpuset)
-   top_cpuset.isolation_count = 0
+Ciao,
 
-since boot time and forever, then every time we update a value for
-cpuset.cpus we keep rebuilding the same SDs.
-
-It's not strictly related to this patch, the same already happens in
-mainline based just on the first condition, but since you are extending
-that optimization, perhaps you can tell me where I'm possibly wrong or
-which cases I'm not considering.
-
-I'm interested mainly because on Android systems those conditions
-are always true and we see SDs rebuilds every time we write
-something in cpuset.cpus, which ultimately accounts for almost all the
-6-7[ms] time required for the write to return, depending on the CPU
-frequency.
-
-Cheers Patrick
-
--- 
-#include <best/regards.h>
-
-Patrick Bellasi
+Gerhard
