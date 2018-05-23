@@ -1,11 +1,10 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-582301-1527103402-2-10936188360615616019
+X-Cyrus-Session-Id: sloti22d1t05-582301-1527103391-2-17642733078034201208
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES sk.us-asciienro, BAYES_USED global,
-  SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES enro, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
   MailFrom='org'
 X-Spam-charsets: 
@@ -13,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527103402; b=L/GX9AVOu8XEi5W/Cf/SPmXXZd3iWkpgD3tgSkulMsMIh1pgLm
-    aSLTNNmK03FzBPFRma+uPJZpuC9dps9OsclveAkyCDf4slLsSOvcAWy4WuPPzfTb
-    qHJ028wFdojqJWdRxMMwdKX+PoOL8lMaAQ7HnzgiP0Pzr6aqVwlqxo96Cr/BslPX
-    nQq6VuD1UVOsaKe8Lun+270kubKG7oVQ5qnyzyWvIS5Z2f+7RcVrtcX0cEF1+Qy4
-    9EWag6R3kSc1IUeFJqrMofMTXqIReWCJTkqbN4AfjCoJn+FQZZfZ5arCUv3UwD9p
-    6lz+AxF3rzA9gaVmXrQ71ccGnHyDV7ewi8dg==
+    1527103391; b=jOyRrjOu69LXVl0bZ54A7SoiL45bjX1e13vOF7XHTLJqF0N0cJ
+    RQaWCljOUEWeaZkeOezhbV6cYSsOtuD3SaYVVeVGWy9VnOLN7dYAsCmatW2Cn8Sb
+    hs+Qxx/jV8MHAk8J2kP2TmOMfIWJRMLjClt39bX3YgAPU140ePQoZFplooBYJtTi
+    +vETYZF3lkWWOACGbgyEROSvdoejVNoklugirsm1BepEzGsSDwWK1LH2Jar78Rwq
+    g8qIPaMPn3rA+eRJH3d49iueg7aMMIIeINWOUd88a/6nbp6aicFHyIZdDCDxtQOr
+    AHS4lSyiMwsiqEi1o0Wyjet/cDAXRLPKZJCQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1527103402; bh=
-    U53uYYGUbgEN4EZWDxE0U7DcmVM684CThQNXqWAQW9o=; b=k29nZMFkAhRrv36q
-    4aHRUsLYgWLLwJpwz9U4rMAJB6hrUsN9TrZcrCrZ/wJtRBUMjAUTJIyQvHxgoELG
-    Nrad+zcDg62kwQUXgMsjDeEq3JIixlUbkxG6AsWt3meMGva3KCruyF1sxHb4cL8w
-    9KJFCgciM4uH1+4VISAxbOTJKaDf/SuggIp2COEgd0DqDIdZdV+wph84VS4OoGLM
-    K6WzTcT12VQ1bH1SnFgY4IYKIsXqnQduIWe3F6nBd3Ocum4lWOYaUEYD5rLaYLN7
-    H0EfV8wfwlu1AL6nsiov+qdcLH9KjYP6BE9Dvk22LrtLuvc4Ud6Fi6xZ0K6hHQiE
-    N00I9Q==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=fm2; t=1527103391; bh=
+    uJn/To6VYUDEjKcSYub3SdH98zvS9dNsSYgNjfzCeB0=; b=OWLf0UjYu+3BYJJd
+    JSl9YJLoN0LYZSjwtaIi3lfowUnbMx8vvC1pB9O24uvjgmbtIvvTlGrfV3xUNOZW
+    Itse0ObTS5nUl2uuwL+1pg9HUzIGg/hhsFl+PmI4ScbIAqu7EBd2Pm5U8yC/4LpQ
+    D1twbG7yVJv1f+7DqqSarQT48DY+qVa25MYf6s3abtTiVy1VmYO9hnUqzLuS79Um
+    WHe0WYoBcPAfOj8Z2IQuwqsXU08QdoLKF8/Y8hheU56SID3iSfGd0wiIPX4O6bzV
+    zzyOQgJuczgt+SkK05hJjoKg31QnjwqhzuOiLls2tP5Bfqj6ZrI2mbQc2Nl+4L5E
+    nvwOig==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=infradead.org header.i=@infradead.org header.b=MwMov+YL
+    header.d=infradead.org header.i=@infradead.org header.b=OLluqTv4
     x-bits=2048 x-keytype=rsa x-algorithm=sha256
     x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -45,10 +44,10 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=infradead.org header.i=@infradead.org header.b=MwMov+YL
+      header.d=infradead.org header.i=@infradead.org header.b=OLluqTv4
       x-bits=2048 x-keytype=rsa x-algorithm=sha256
       x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -63,28 +62,30 @@ Authentication-Results: mx6.messagingengine.com;
       header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBlwNXgNBL25QD8b0vEz+J6vAVxmy7KKje98hx2NfpaamzXE76/fDyKq6xLjGGyxjnM9aJPLlLNIseuwVa0B+kUAjDJXGvk/2d1m6a0olM3bjAek4wzd
-    ZJLi9orLwF/dWh8tjWxa1PYiXeiX0ni6tqkjI5xBXcZ1GRDpE842smJ4YYEseUR98R3xv5lSsC54W7sAHIXR9VNlS32OdN7K1HNHktmDK9jmZaVcgEJqw8TE
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8
-    a=Bt-OzgS1u0sNeZ1bWukA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfL8gul8aq8b1dXAsnnlHet1vICfyd/6gzzS2NZTMRmQQQhOzJQJYkNJCzbKoRaytDT+260laRvq7zEcMbVcVjc6eThGmkTL2GKzn+1aPmtU8H/FR72la
+    grQJJEyJeNdV/C+rqW8vsf4y/gqUzInmbOxQFRdTD5iUTlEQHMvWmx25jAzCvC6BJtUcmDAVFTgCh1lNyFZDjZ86eHKiPZzwiqKbNzo91/TWt5fI1tcbNSK7
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=ag1SF4gXAAAA:8
+    a=VwQbUJbxAAAA:8 a=dwbJVg4bI4FPQ6Sax70A:9 a=J8stc7JTyTpJgnB_:21
+    a=cpt_DQMj--x9qBRp:21 a=x8gzFH9gYPwA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934598AbeEWTV6 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 23 May 2018 15:21:58 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41046 "EHLO
+        id S934232AbeEWTWf (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 23 May 2018 15:22:35 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41124 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934592AbeEWTVv (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Wed, 23 May 2018 15:21:51 -0400
+        with ESMTP id S934287AbeEWTWE (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Wed, 23 May 2018 15:22:04 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: viro@zeniv.linux.org.uk
 Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
         linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 29/33] crypto: af_alg: convert to ->poll_mask
-Date: Wed, 23 May 2018 21:20:18 +0200
-Message-Id: <20180523192022.1703-30-hch@lst.de>
+Subject: [PATCH 33/33] random: convert to ->poll_mask
+Date: Wed, 23 May 2018 21:20:22 +0200
+Message-Id: <20180523192022.1703-34-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180523192022.1703-1-hch@lst.de>
 References: <20180523192022.1703-1-hch@lst.de>
@@ -95,107 +96,104 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- crypto/af_alg.c         | 13 +++----------
- crypto/algif_aead.c     |  4 ++--
- crypto/algif_skcipher.c |  4 ++--
- include/crypto/if_alg.h |  3 +--
- 4 files changed, 8 insertions(+), 16 deletions(-)
+The big change is that random_read_wait and random_write_wait are merged
+into a single waitqueue that uses keyed wakeups.  Because wait_event_*
+doesn't know about that this will lead to occassional spurious wakeups
+in _random_read and add_hwgenerator_randomness, but wait_event_* is
+designed to handle these and were are not in a a hot path there.
 
-diff --git a/crypto/af_alg.c b/crypto/af_alg.c
-index 80838c1cef94..89ed613c017e 100644
---- a/crypto/af_alg.c
-+++ b/crypto/af_alg.c
-@@ -1060,19 +1060,12 @@ void af_alg_async_cb(struct crypto_async_request *_req, int err)
- }
- EXPORT_SYMBOL_GPL(af_alg_async_cb);
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Acked-by: Theodore Ts'o <tytso@mit.edu>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/char/random.c | 29 ++++++++++++++++-------------
+ 1 file changed, 16 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/char/random.c b/drivers/char/random.c
+index cd888d4ee605..a8fb0020ba5c 100644
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@ -402,8 +402,7 @@ static struct poolinfo {
+ /*
+  * Static global variables
+  */
+-static DECLARE_WAIT_QUEUE_HEAD(random_read_wait);
+-static DECLARE_WAIT_QUEUE_HEAD(random_write_wait);
++static DECLARE_WAIT_QUEUE_HEAD(random_wait);
+ static struct fasync_struct *fasync;
  
--/**
-- * af_alg_poll - poll system call handler
-- */
--__poll_t af_alg_poll(struct file *file, struct socket *sock,
--			 poll_table *wait)
-+__poll_t af_alg_poll_mask(struct socket *sock, __poll_t events)
+ static DEFINE_SPINLOCK(random_ready_list_lock);
+@@ -722,8 +721,8 @@ static void credit_entropy_bits(struct entropy_store *r, int nbits)
+ 
+ 		/* should we wake readers? */
+ 		if (entropy_bits >= random_read_wakeup_bits &&
+-		    wq_has_sleeper(&random_read_wait)) {
+-			wake_up_interruptible(&random_read_wait);
++		    wq_has_sleeper(&random_wait)) {
++			wake_up_interruptible_poll(&random_wait, POLLIN);
+ 			kill_fasync(&fasync, SIGIO, POLL_IN);
+ 		}
+ 		/* If the input pool is getting full, send some
+@@ -1397,7 +1396,7 @@ static size_t account(struct entropy_store *r, size_t nbytes, int min,
+ 	trace_debit_entropy(r->name, 8 * ibytes);
+ 	if (ibytes &&
+ 	    (r->entropy_count >> ENTROPY_SHIFT) < random_write_wakeup_bits) {
+-		wake_up_interruptible(&random_write_wait);
++		wake_up_interruptible_poll(&random_wait, POLLOUT);
+ 		kill_fasync(&fasync, SIGIO, POLL_OUT);
+ 	}
+ 
+@@ -1839,7 +1838,7 @@ _random_read(int nonblock, char __user *buf, size_t nbytes)
+ 		if (nonblock)
+ 			return -EAGAIN;
+ 
+-		wait_event_interruptible(random_read_wait,
++		wait_event_interruptible(random_wait,
+ 			ENTROPY_BITS(&input_pool) >=
+ 			random_read_wakeup_bits);
+ 		if (signal_pending(current))
+@@ -1876,14 +1875,17 @@ urandom_read(struct file *file, char __user *buf, size_t nbytes, loff_t *ppos)
+ 	return ret;
+ }
+ 
++static struct wait_queue_head *
++random_get_poll_head(struct file *file, __poll_t events)
++{
++	return &random_wait;
++}
++
+ static __poll_t
+-random_poll(struct file *file, poll_table * wait)
++random_poll_mask(struct file *file, __poll_t events)
  {
- 	struct sock *sk = sock->sk;
- 	struct alg_sock *ask = alg_sk(sk);
- 	struct af_alg_ctx *ctx = ask->private;
 -	__poll_t mask;
--
--	sock_poll_wait(file, sk_sleep(sk), wait);
--	mask = 0;
 +	__poll_t mask = 0;
  
- 	if (!ctx->more || ctx->used)
+-	poll_wait(file, &random_read_wait, wait);
+-	poll_wait(file, &random_write_wait, wait);
+-	mask = 0;
+ 	if (ENTROPY_BITS(&input_pool) >= random_read_wakeup_bits)
  		mask |= EPOLLIN | EPOLLRDNORM;
-@@ -1082,7 +1075,7 @@ __poll_t af_alg_poll(struct file *file, struct socket *sock,
- 
- 	return mask;
- }
--EXPORT_SYMBOL_GPL(af_alg_poll);
-+EXPORT_SYMBOL_GPL(af_alg_poll_mask);
- 
- /**
-  * af_alg_alloc_areq - allocate struct af_alg_async_req
-diff --git a/crypto/algif_aead.c b/crypto/algif_aead.c
-index 4b07edd5a9ff..330cf9f2b767 100644
---- a/crypto/algif_aead.c
-+++ b/crypto/algif_aead.c
-@@ -375,7 +375,7 @@ static struct proto_ops algif_aead_ops = {
- 	.sendmsg	=	aead_sendmsg,
- 	.sendpage	=	af_alg_sendpage,
- 	.recvmsg	=	aead_recvmsg,
--	.poll		=	af_alg_poll,
-+	.poll_mask	=	af_alg_poll_mask,
- };
- 
- static int aead_check_key(struct socket *sock)
-@@ -471,7 +471,7 @@ static struct proto_ops algif_aead_ops_nokey = {
- 	.sendmsg	=	aead_sendmsg_nokey,
- 	.sendpage	=	aead_sendpage_nokey,
- 	.recvmsg	=	aead_recvmsg_nokey,
--	.poll		=	af_alg_poll,
-+	.poll_mask	=	af_alg_poll_mask,
- };
- 
- static void *aead_bind(const char *name, u32 type, u32 mask)
-diff --git a/crypto/algif_skcipher.c b/crypto/algif_skcipher.c
-index c4e885df4564..15cf3c5222e0 100644
---- a/crypto/algif_skcipher.c
-+++ b/crypto/algif_skcipher.c
-@@ -205,7 +205,7 @@ static struct proto_ops algif_skcipher_ops = {
- 	.sendmsg	=	skcipher_sendmsg,
- 	.sendpage	=	af_alg_sendpage,
- 	.recvmsg	=	skcipher_recvmsg,
--	.poll		=	af_alg_poll,
-+	.poll_mask	=	af_alg_poll_mask,
- };
- 
- static int skcipher_check_key(struct socket *sock)
-@@ -301,7 +301,7 @@ static struct proto_ops algif_skcipher_ops_nokey = {
- 	.sendmsg	=	skcipher_sendmsg_nokey,
- 	.sendpage	=	skcipher_sendpage_nokey,
- 	.recvmsg	=	skcipher_recvmsg_nokey,
--	.poll		=	af_alg_poll,
-+	.poll_mask	=	af_alg_poll_mask,
- };
- 
- static void *skcipher_bind(const char *name, u32 type, u32 mask)
-diff --git a/include/crypto/if_alg.h b/include/crypto/if_alg.h
-index 482461d8931d..cc414db9da0a 100644
---- a/include/crypto/if_alg.h
-+++ b/include/crypto/if_alg.h
-@@ -245,8 +245,7 @@ ssize_t af_alg_sendpage(struct socket *sock, struct page *page,
- 			int offset, size_t size, int flags);
- void af_alg_free_resources(struct af_alg_async_req *areq);
- void af_alg_async_cb(struct crypto_async_request *_req, int err);
--__poll_t af_alg_poll(struct file *file, struct socket *sock,
--			 poll_table *wait);
-+__poll_t af_alg_poll_mask(struct socket *sock, __poll_t events);
- struct af_alg_async_req *af_alg_alloc_areq(struct sock *sk,
- 					   unsigned int areqlen);
- int af_alg_get_rsgl(struct sock *sk, struct msghdr *msg, int flags,
+ 	if (ENTROPY_BITS(&input_pool) < random_write_wakeup_bits)
+@@ -1990,7 +1992,8 @@ static int random_fasync(int fd, struct file *filp, int on)
+ const struct file_operations random_fops = {
+ 	.read  = random_read,
+ 	.write = random_write,
+-	.poll  = random_poll,
++	.get_poll_head  = random_get_poll_head,
++	.poll_mask  = random_poll_mask,
+ 	.unlocked_ioctl = random_ioctl,
+ 	.fasync = random_fasync,
+ 	.llseek = noop_llseek,
+@@ -2323,7 +2326,7 @@ void add_hwgenerator_randomness(const char *buffer, size_t count,
+ 	 * We'll be woken up again once below random_write_wakeup_thresh,
+ 	 * or when the calling thread is about to terminate.
+ 	 */
+-	wait_event_interruptible(random_write_wait, kthread_should_stop() ||
++	wait_event_interruptible(random_wait, kthread_should_stop() ||
+ 			ENTROPY_BITS(&input_pool) <= random_write_wakeup_bits);
+ 	mix_pool_bytes(poolp, buffer, count);
+ 	credit_entropy_bits(poolp, entropy);
 -- 
 2.17.0
 
