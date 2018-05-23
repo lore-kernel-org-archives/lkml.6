@@ -1,62 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932692AbeEWLij (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 07:38:39 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:51146 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932543AbeEWLid (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 07:38:33 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>
-Subject: Re: [PATCH v4 0/2] Fix and cleanup iowait boost
-Date: Wed, 23 May 2018 13:37:52 +0200
-Message-ID: <1864026.X9Jp3j4sSN@aspire.rjw.lan>
-In-Reply-To: <20180522110754.20832-1-patrick.bellasi@arm.com>
-References: <20180522110754.20832-1-patrick.bellasi@arm.com>
+        id S932652AbeEWLih (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 07:38:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60752 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932541AbeEWLic (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 07:38:32 -0400
+X-Google-Smtp-Source: AB8JxZrM43G22lUdfwRdPy91vXgoWfIobNtHUuw0ehu8EWK4pZh7EdQlamLxbBj4VRsQVMi5p2W+j86Fk3YZ1xyyXfM=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <a8969b297da304c292e6587fba7fcc23@agner.ch>
+References: <1527069406-6359-1-git-send-email-krzk@kernel.org>
+ <1527069406-6359-4-git-send-email-krzk@kernel.org> <a8969b297da304c292e6587fba7fcc23@agner.ch>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Wed, 23 May 2018 13:38:29 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPfK+GGbvpGx4CVV5+AuskXZ=yEfiMu3NFQpezM46xQRog@mail.gmail.com>
+Message-ID: <CAJKOXPfK+GGbvpGx4CVV5+AuskXZ=yEfiMu3NFQpezM46xQRog@mail.gmail.com>
+Subject: Re: [PATCH v6 4/4] ARM: dts: tegra: Work safely with 256 MB
+ Colibri-T20 modules
+To: Stefan Agner <stefan@agner.ch>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Lucas Stach <dev@lynxeye.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, May 22, 2018 1:07:52 PM CEST Patrick Bellasi wrote:
-> Here is the (hopefully) final update of:
-> 
->    https://lkml.org/lkml/2018/5/21/114
->    20180521085120.7902-1-patrick.bellasi@arm.com
-> 
-> which just includes the small typo fixes suggested by Jeol and the ack
-> and review tags collected so far.
-> 
-> Cheers Patrick
-> 
-> Changes in v4:
->  - fixed typos in changelog (Joel)
->  - added Reviewed-by Joel Fernandes
->  - added Acked-by Viresh and Peter
-> 
-> Changes in v3:
->  - renamed the iowait boost functions (Peter)
->  - moved boost reset into a dedicated function (Peter)
->  - split the fix into a separated patch (Viresh)
->  - added "Fixes" tag (Viresh)
-> 
-> Patrick Bellasi (2):
->   cpufreq: schedutil: Fix iowait boost reset
->   cpufreq: schedutil: Cleanup and document iowait boost
-> 
->  kernel/sched/cpufreq_schedutil.c | 152 +++++++++++++++++++++++++++------------
->  1 file changed, 108 insertions(+), 44 deletions(-)
-> 
-> 
+On Wed, May 23, 2018 at 1:35 PM, Stefan Agner <stefan@agner.ch> wrote:
+> On 23.05.2018 11:56, Krzysztof Kozlowski wrote:
+>> Colibri-T20 can come in 256 MB RAM (with 512 MB NAND) or 512 MB RAM
+>> (with 1024 MB NAND) flavors.  Both of them will use the same DTSI
+>> expecting the bootloader to do the fixup of /memory node.  However in
+>> case it does not happen, let's stay on safe side by limiting the memory
+>> to 256 MB for both versions of Colibri-T20.
+>>
+>
+> Maybe also mention the renaming stuff:
+>
+> "Rename to remove the unnecessary memory size from the device tree file
+> name. While at it, also follow the typical Toradex SoC, module, carrier
+> board hierarchy."
 
-Both patches applied, thanks!
+Since I am going to resend it for v7... no problem.
+
+Best regards,
+Krzysztof
