@@ -1,54 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933351AbeEWOxT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 10:53:19 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:55803 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933132AbeEWOxR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 10:53:17 -0400
-X-Google-Smtp-Source: AB8JxZp9Ar4Bg9UWrYrkOAc9yHUkFSt+PU8WokNVnNTo//Zk+md39aV6rudYQgCBaxJ7yCTJoBW+HA==
-From: Ivan Bornyakov <brnkv.i1@gmail.com>
-To: linux-nvme@lists.infradead.org
-Cc: keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me,
-        linux-kernel@vger.kernel.org, Ivan Bornyakov <brnkv.i1@gmail.com>
-Subject: [PATCH] nvme: host: core: fix precedence of ternary operator
-Date: Wed, 23 May 2018 17:56:11 +0300
-Message-Id: <20180523145611.10297-1-brnkv.i1@gmail.com>
-X-Mailer: git-send-email 2.16.1
+        id S933434AbeEWOyW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 10:54:22 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36957 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933132AbeEWOyW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 10:54:22 -0400
+Date: Wed, 23 May 2018 16:54:20 +0200
+From: Johannes Thumshirn <jthumshirn@suse.de>
+To: Keith Busch <keith.busch@intel.com>
+Cc: Sagi Grimberg <sagi@grimberg.me>, Christoph Hellwig <hch@lst.de>,
+        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Hannes Reinecke <hare@suse.de>
+Subject: Re: [PATCH v3] nvme: fix lockdep warning in
+ nvme_mpath_clear_current_path
+Message-ID: <20180523145420.5ly2r4xjq2u25vv2@linux-x5ow.site>
+References: <20180517115250.10027-1-jthumshirn@suse.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180517115250.10027-1-jthumshirn@suse.de>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ternary operator have lower precedence then bitwise or, so 'cdw10' was
-calculated wrong.
-
-Signed-off-by: Ivan Bornyakov <brnkv.i1@gmail.com>
----
- drivers/nvme/host/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index b070c659391f..1eba9b0cb9dc 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -1577,7 +1577,7 @@ static int nvme_pr_reserve(struct block_device *bdev, u64 key,
- static int nvme_pr_preempt(struct block_device *bdev, u64 old, u64 new,
- 		enum pr_type type, bool abort)
- {
--	u32 cdw10 = nvme_pr_type(type) << 8 | abort ? 2 : 1;
-+	u32 cdw10 = nvme_pr_type(type) << 8 | (abort ? 2 : 1);
- 	return nvme_pr_command(bdev, cdw10, old, new, nvme_cmd_resv_acquire);
- }
- 
-@@ -1589,7 +1589,7 @@ static int nvme_pr_clear(struct block_device *bdev, u64 key)
- 
- static int nvme_pr_release(struct block_device *bdev, u64 key, enum pr_type type)
- {
--	u32 cdw10 = nvme_pr_type(type) << 8 | key ? 1 << 3 : 0;
-+	u32 cdw10 = nvme_pr_type(type) << 8 | (key ? 1 << 3 : 0);
- 	return nvme_pr_command(bdev, cdw10, key, 0, nvme_cmd_resv_release);
- }
- 
+Keith, Sagi, Christoph ping?
 -- 
-2.16.1
+Johannes Thumshirn                                          Storage
+jthumshirn@suse.de                                +49 911 74053 689
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
+Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
