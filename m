@@ -1,151 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933678AbeEWQrN (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 12:47:13 -0400
-Received: from mga11.intel.com ([192.55.52.93]:15485 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932649AbeEWQrJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 12:47:09 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,433,1520924400";
-   d="scan'208";a="231174132"
-Date: Wed, 23 May 2018 10:47:08 -0600
-From: Ross Zwisler <ross.zwisler@linux.intel.com>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Ross Zwisler <ross.zwisler@linux.intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        "Luck, Tony" <tony.luck@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        X86 ML <x86@kernel.org>, Christoph Hellwig <hch@lst.de>,
-        Andy Lutomirski <luto@amacapital.net>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v3 7/9] dax: report bytes remaining in dax_iomap_actor()
-Message-ID: <20180523164708.GD29519@linux.intel.com>
-Mail-Followup-To: Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        "Luck, Tony" <tony.luck@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        X86 ML <x86@kernel.org>, Christoph Hellwig <hch@lst.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <152539236455.31796.7516599166555186700.stgit@dwillia2-desk3.amr.corp.intel.com>
- <152539240242.31796.4162676712193177396.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20180523163442.GB29519@linux.intel.com>
- <CAPcyv4gaM+vMLQKzfQ3J0LBhN2L6uNUzqwH_m39pFN-TeQHavA@mail.gmail.com>
+        id S933671AbeEWQtg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 12:49:36 -0400
+Received: from mail-yb0-f195.google.com ([209.85.213.195]:39984 "EHLO
+        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932649AbeEWQte (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 12:49:34 -0400
+X-Google-Smtp-Source: AB8JxZoX4Xfo5pcDiIXRVI1VZVryYQB0WoSjb5JRSw1BTPC2Y/5VrZ51FTm1xDiGCpXkZEcop4BJfw==
+Date: Wed, 23 May 2018 11:49:31 -0500
+From: Rob Herring <robh@kernel.org>
+To: Andrea Greco <andrea.greco.gapmilano@gmail.com>
+Cc: tobin@apporbit.com, Andrea Greco <a.greco@4sigma.it>,
+        Mark Rutland <mark.rutland@arm.com>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] arcnet: com20020: bindings for smsc com20020
+Message-ID: <20180523164931.GA3635@rob-hp-laptop>
+References: <20180517130628.2770-1-andrea.greco.gapmilano@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPcyv4gaM+vMLQKzfQ3J0LBhN2L6uNUzqwH_m39pFN-TeQHavA@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180517130628.2770-1-andrea.greco.gapmilano@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 09:39:04AM -0700, Dan Williams wrote:
-> On Wed, May 23, 2018 at 9:34 AM, Ross Zwisler
-> <ross.zwisler@linux.intel.com> wrote:
-> > On Thu, May 03, 2018 at 05:06:42PM -0700, Dan Williams wrote:
-> >> In preparation for protecting the dax read(2) path from media errors
-> >> with copy_to_iter_mcsafe() (via dax_copy_to_iter()), convert the
-> >> implementation to report the bytes successfully transferred.
-> >>
-> >> Cc: <x86@kernel.org>
-> >> Cc: Ingo Molnar <mingo@redhat.com>
-> >> Cc: Borislav Petkov <bp@alien8.de>
-> >> Cc: Tony Luck <tony.luck@intel.com>
-> >> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> >> Cc: Thomas Gleixner <tglx@linutronix.de>
-> >> Cc: Andy Lutomirski <luto@amacapital.net>
-> >> Cc: Peter Zijlstra <peterz@infradead.org>
-> >> Cc: Andrew Morton <akpm@linux-foundation.org>
-> >> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> >> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> >> ---
-> >>  fs/dax.c |   20 +++++++++++---------
-> >>  1 file changed, 11 insertions(+), 9 deletions(-)
-> >>
-> >> diff --git a/fs/dax.c b/fs/dax.c
-> >> index a64afdf7ec0d..34a2d435ae4b 100644
-> >> --- a/fs/dax.c
-> >> +++ b/fs/dax.c
-> >> @@ -991,6 +991,7 @@ dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
-> >>       struct iov_iter *iter = data;
-> >>       loff_t end = pos + length, done = 0;
-> >>       ssize_t ret = 0;
-> >> +     size_t xfer;
-> >>       int id;
-> >>
-> >>       if (iov_iter_rw(iter) == READ) {
-> >> @@ -1054,19 +1055,20 @@ dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
-> >>                * vfs_write(), depending on which operation we are doing.
-> >>                */
-> >>               if (iov_iter_rw(iter) == WRITE)
-> >> -                     map_len = dax_copy_from_iter(dax_dev, pgoff, kaddr,
-> >> +                     xfer = dax_copy_from_iter(dax_dev, pgoff, kaddr,
-> >>                                       map_len, iter);
-> >>               else
-> >> -                     map_len = dax_copy_to_iter(dax_dev, pgoff, kaddr,
-> >> +                     xfer = dax_copy_to_iter(dax_dev, pgoff, kaddr,
-> >>                                       map_len, iter);
-> >> -             if (map_len <= 0) {
-> >> -                     ret = map_len ? map_len : -EFAULT;
-> >> -                     break;
-> >> -             }
-> >>
-> >> -             pos += map_len;
-> >> -             length -= map_len;
-> >> -             done += map_len;
-> >> +             pos += xfer;
-> >> +             length -= xfer;
-> >> +             done += xfer;
-> >> +
-> >> +             if (xfer == 0)
-> >> +                     ret = -EFAULT;
-> >> +             if (xfer < map_len)
-> >> +                     break;
-> >
-> > I'm confused by this error handling.  So if we hit an error on a given iov and
-> > we don't transfer the expected number of bytes, we have two cases:
-> >
-> > 1) We transferred *something* on this iov but not everything - return success.
-> > 2) We didn't transfer anything on this iov - return -EFAULT.
-> >
-> > Both of these are true regardless of data transferred on previous iovs.
-> >
-> > Why the distinction?  If a given iov is interrupted, regardless of whether it
-> > transferred 0 bytes or 1, shouldn't the error path be the same?
+On Thu, May 17, 2018 at 03:06:26PM +0200, Andrea Greco wrote:
+> From: Andrea Greco <a.greco@4sigma.it>
 > 
-> This is is the semantics of read(2) / write(2). Quoting the pwrite man page:
+> Add devicetree bindings for smsc com20020
 > 
->        Note that is not an error for  a  successful  call  to
-> transfer  fewer  bytes  than
->        requested (see read(2) and write(2)).
+> Signed-off-by: Andrea Greco <a.greco@4sigma.it>
+> ---
+>  .../devicetree/bindings/net/smsc-com20020.txt       | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/net/smsc-com20020.txt
 
-Consider this case:
+One typo, otherwise:
 
-I have 4 IOVs, each of a full page.  The first three transfer their full page,
-but on the third we hit an error.
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-If we transferred 0 bytes in the fourth page, we'll return -EFAULT.
+> 
+> diff --git a/Documentation/devicetree/bindings/net/smsc-com20020.txt b/Documentation/devicetree/bindings/net/smsc-com20020.txt
+> new file mode 100644
+> index 000000000000..92360b054873
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/smsc-com20020.txt
+> @@ -0,0 +1,21 @@
+> +SMSC com20020 Arcnet network controller
+> +
+> +Required propelty:
 
-If we transferred 1 byte in the fourth page, we'll return the total length
-transferred, so 3 pages + 1 byte.
+property
 
-Why?  pwrite(2) says it returns the number of bytes written, which can be less
-than the total requested.  Why not just return the length transferred in both
-cases, instead of returning -EFAULT for one of them?
+> +- timeout-ns: Arcnet bus timeout, Idle Time (328000 - 20500)
+> +- bus-speed-bps: Arcnet bus speed (10000000 - 156250)
+> +- smsc,xtal-mhz: External oscillator frequency
+> +- smsc,backplane-enabled: Controller use backplane mode
+> +- reset-gpios: Chip reset pin
+> +- interrupts: Should contain controller interrupt
+> +
+> +arcnet@28000000 {
+> +    compatible = "smsc,com20020";
+> +
+> +	timeout-ns = <20500>;
+> +	bus-speed-bps = <10000000>;
+> +	smsc,xtal-mhz = <20>;
+> +	smsc,backplane-enabled;
+> +
+> +	reset-gpios = <&gpio3 21 GPIO_ACTIVE_LOW>;
+> +	interrupts = <&gpio2 10 GPIO_ACTIVE_LOW>;
+> +};
+> -- 
+> 2.14.3
+> 
