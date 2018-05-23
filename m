@@ -1,67 +1,455 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932530AbeEWK7Y (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 06:59:24 -0400
-Received: from mga03.intel.com ([134.134.136.65]:14103 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932312AbeEWK7W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 06:59:22 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,432,1520924400";
-   d="scan'208";a="231077559"
-Date: Wed, 23 May 2018 18:58:59 +0800
-From: kbuild test robot <fengguang.wu@intel.com>
-To: Laura Garcia Liebana <nevola@gmail.com>
-Cc: kbuild-all@01.org, Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] netfilter: nft_numgen: fix ptr_ret.cocci warnings
-Message-ID: <20180523105859.GA74092@ivb42>
-References: <201805231855.2507c2Vh%fengguang.wu@intel.com>
+        id S932565AbeEWLA0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 07:00:26 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:52820 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932312AbeEWLAV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 07:00:21 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201805231855.2507c2Vh%fengguang.wu@intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date: Wed, 23 May 2018 13:00:19 +0200
+From: Stefan Agner <stefan@agner.ch>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Lucas Stach <dev@lynxeye.de>
+Subject: Re: [PATCH v6 2/4] ARM: dts: tegra: Fix unit_address_vs_reg DTC
+ warnings for /memory
+In-Reply-To: <1527069406-6359-2-git-send-email-krzk@kernel.org>
+References: <1527069406-6359-1-git-send-email-krzk@kernel.org>
+ <1527069406-6359-2-git-send-email-krzk@kernel.org>
+Message-ID: <870361d2b9451af2e21cc570c8fca2c2@agner.ch>
+User-Agent: Roundcube Webmail/1.3.4
+X-Spamd-Result: default: False [-3.10 / 15.00];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MID_RHS_MATCH_FROM(0.00)[];
+         TAGGED_RCPT(0.00)[dt];
+         MIME_GOOD(-0.10)[text/plain];
+         FROM_HAS_DN(0.00)[];
+         RCPT_COUNT_SEVEN(0.00)[10];
+         FROM_EQ_ENVFROM(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         TO_DN_SOME(0.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
+         RCVD_TLS_ALL(0.00)[];
+         BAYES_HAM(-3.00)[100.00%];
+         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: kbuild test robot <fengguang.wu@intel.com>
+On 23.05.2018 11:56, Krzysztof Kozlowski wrote:
+> Add a generic /memory node in each Tegra DTSI (with empty reg property,
+> to be overidden by each DTS) and set proper unit address for /memory
+> nodes to fix the DTC warnings:
+> 
+>     arch/arm/boot/dts/tegra20-harmony.dtb: Warning (unit_address_vs_reg):
+>         /memory: node has a reg or ranges property, but no unit name
+> 
+> The DTB after the change is the same as before except adding
+> unit-address to /memory node.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> ---
+> 
+> Changes since v5:
+> 1. Split with skeleton.dtsi removal (suggested by Stefan).
+> 
+> Changes since v4:
+> 1. None
+> ---
+>  arch/arm/boot/dts/tegra114-dalmore.dts      | 2 +-
+>  arch/arm/boot/dts/tegra114-roth.dts         | 2 +-
+>  arch/arm/boot/dts/tegra114-tn7.dts          | 2 +-
+>  arch/arm/boot/dts/tegra114.dtsi             | 3 ++-
+>  arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 2 +-
+>  arch/arm/boot/dts/tegra124-apalis.dtsi      | 2 +-
+>  arch/arm/boot/dts/tegra124-jetson-tk1.dts   | 2 +-
+>  arch/arm/boot/dts/tegra124-nyan.dtsi        | 2 +-
+>  arch/arm/boot/dts/tegra124-venice2.dts      | 2 +-
+>  arch/arm/boot/dts/tegra124.dtsi             | 3 ++-
+>  arch/arm/boot/dts/tegra20-colibri-512.dtsi  | 2 +-
+>  arch/arm/boot/dts/tegra20-harmony.dts       | 2 +-
+>  arch/arm/boot/dts/tegra20-paz00.dts         | 2 +-
+>  arch/arm/boot/dts/tegra20-seaboard.dts      | 2 +-
+>  arch/arm/boot/dts/tegra20-tamonten.dtsi     | 2 +-
+>  arch/arm/boot/dts/tegra20-trimslice.dts     | 2 +-
+>  arch/arm/boot/dts/tegra20-ventana.dts       | 2 +-
+>  arch/arm/boot/dts/tegra20.dtsi              | 3 ++-
+>  arch/arm/boot/dts/tegra30-apalis.dtsi       | 4 ++--
+>  arch/arm/boot/dts/tegra30-beaver.dts        | 2 +-
+>  arch/arm/boot/dts/tegra30-cardhu.dtsi       | 2 +-
+>  arch/arm/boot/dts/tegra30-colibri.dtsi      | 2 +-
+>  arch/arm/boot/dts/tegra30.dtsi              | 3 ++-
+>  23 files changed, 28 insertions(+), 24 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts
+> b/arch/arm/boot/dts/tegra114-dalmore.dts
+> index eafff16765b4..1788556b4977 100644
+> --- a/arch/arm/boot/dts/tegra114-dalmore.dts
+> +++ b/arch/arm/boot/dts/tegra114-dalmore.dts
+> @@ -23,7 +23,7 @@
+>  		stdout-path = "serial0:115200n8";
+>  	};
+>  
+> -	memory {
+> +	memory@80000000 {
+>  		reg = <0x80000000 0x40000000>;
+>  	};
+>  
+> diff --git a/arch/arm/boot/dts/tegra114-roth.dts
+> b/arch/arm/boot/dts/tegra114-roth.dts
+> index 7ed7370ee67a..3d3835591cd2 100644
+> --- a/arch/arm/boot/dts/tegra114-roth.dts
+> +++ b/arch/arm/boot/dts/tegra114-roth.dts
+> @@ -28,7 +28,7 @@
+>  		};
+>  	};
+>  
+> -	memory {
+> +	memory@80000000 {
+>  		/* memory >= 0x79600000 is reserved for firmware usage */
+>  		reg = <0x80000000 0x79600000>;
+>  	};
+> diff --git a/arch/arm/boot/dts/tegra114-tn7.dts
+> b/arch/arm/boot/dts/tegra114-tn7.dts
+> index 7fc4a8b31e45..bfdd1bf61816 100644
+> --- a/arch/arm/boot/dts/tegra114-tn7.dts
+> +++ b/arch/arm/boot/dts/tegra114-tn7.dts
+> @@ -28,7 +28,7 @@
+>  		};
+>  	};
+>  
+> -	memory {
+> +	memory@80000000 {
+>  		/* memory >= 0x37e00000 is reserved for firmware usage */
+>  		reg = <0x80000000 0x37e00000>;
+>  	};
+> diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
+> index 27ef515e5640..aff4b8e115bc 100644
+> --- a/arch/arm/boot/dts/tegra114.dtsi
+> +++ b/arch/arm/boot/dts/tegra114.dtsi
+> @@ -11,8 +11,9 @@
+>  	#address-cells = <1>;
+>  	#size-cells = <1>;
+>  
+> -	memory {
+> +	memory@80000000 {
+>  		device_type = "memory";
+> +		reg = <0x80000000 0>;
 
-net/netfilter/nft_numgen.c:117:1-3: WARNING: PTR_ERR_OR_ZERO can be used
+Nit: I'd rather prefer
+
+reg = <0x80000000 0x0>;
 
 
- Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
+>  	};
+>  
+>  	host1x@50000000 {
+> diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
+> b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
+> index bb67edb016c5..6a7f45651d38 100644
+> --- a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
+> +++ b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
+> @@ -15,7 +15,7 @@
+>  	compatible = "toradex,apalis-tk1-v1.2", "toradex,apalis-tk1",
+>  		     "nvidia,tegra124";
+>  
+> -	memory {
+> +	memory@0 {
+>  		reg = <0x0 0x80000000 0x0 0x80000000>;
+>  	};
 
-Generated by: scripts/coccinelle/api/ptr_ret.cocci
+Unit address combines all address cells, so this should be 80000000
+here. See also the device tree spec (v0.2) which has an example in
+chapter 3.4 /memory node.
 
-Fixes: d734a2888922 ("netfilter: nft_numgen: add map lookups for numgen statements")
-CC: Laura Garcia Liebana <nevola@gmail.com>
-Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
----
+So this should be:
 
- nft_numgen.c |    5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+memory@80000000 {
+...
 
---- a/net/netfilter/nft_numgen.c
-+++ b/net/netfilter/nft_numgen.c
-@@ -114,10 +114,7 @@ static int nft_ng_inc_map_init(const str
- 					  tb[NFTA_NG_SET_NAME],
- 					  tb[NFTA_NG_SET_ID], genmask);
- 
--	if (IS_ERR(priv->map))
--		return PTR_ERR(priv->map);
--
--	return 0;
-+	return PTR_ERR_OR_ZERO(priv->map);
- }
- 
- static int nft_ng_dump(struct sk_buff *skb, enum nft_registers dreg,
+Same with all the board files below.
+
+>  
+> diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi
+> b/arch/arm/boot/dts/tegra124-apalis.dtsi
+> index 65a2161b9b8e..e4625abd0a8a 100644
+> --- a/arch/arm/boot/dts/tegra124-apalis.dtsi
+> +++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
+> @@ -50,7 +50,7 @@
+>  	model = "Toradex Apalis TK1";
+>  	compatible = "toradex,apalis-tk1", "nvidia,tegra124";
+>  
+> -	memory {
+> +	memory@0 {
+>  		reg = <0x0 0x80000000 0x0 0x80000000>;
+>  	};
+>  
+> diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+> b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+> index 6dbcf84dafbc..e23b1159e8fd 100644
+> --- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+> +++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+> @@ -24,7 +24,7 @@
+>  		stdout-path = "serial0:115200n8";
+>  	};
+>  
+> -	memory {
+> +	memory@0 {
+>  		reg = <0x0 0x80000000 0x0 0x80000000>;
+>  	};
+>  
+> diff --git a/arch/arm/boot/dts/tegra124-nyan.dtsi
+> b/arch/arm/boot/dts/tegra124-nyan.dtsi
+> index 3609367037a6..f45ac668d88c 100644
+> --- a/arch/arm/boot/dts/tegra124-nyan.dtsi
+> +++ b/arch/arm/boot/dts/tegra124-nyan.dtsi
+> @@ -13,7 +13,7 @@
+>  		stdout-path = "serial0:115200n8";
+>  	};
+>  
+> -	memory {
+> +	memory@0 {
+>  		reg = <0x0 0x80000000 0x0 0x80000000>;
+>  	};
+>  
+> diff --git a/arch/arm/boot/dts/tegra124-venice2.dts
+> b/arch/arm/boot/dts/tegra124-venice2.dts
+> index 89bcc178994d..44492b48e165 100644
+> --- a/arch/arm/boot/dts/tegra124-venice2.dts
+> +++ b/arch/arm/boot/dts/tegra124-venice2.dts
+> @@ -18,7 +18,7 @@
+>  		stdout-path = "serial0:115200n8";
+>  	};
+>  
+> -	memory {
+> +	memory@0 {
+>  		reg = <0x0 0x80000000 0x0 0x80000000>;
+>  	};
+>  
+> diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+> index 951feea784af..ad9c9cd6fa8a 100644
+> --- a/arch/arm/boot/dts/tegra124.dtsi
+> +++ b/arch/arm/boot/dts/tegra124.dtsi
+> @@ -13,8 +13,9 @@
+>  	#address-cells = <2>;
+>  	#size-cells = <2>;
+>  
+> -	memory {
+> +	memory@0 {
+>  		device_type = "memory";
+> +		reg = <0 0>;
+>  	};
+
+This should have two address and two size cells I guess. And DDR for all
+TK1 start at 0x0 0x80000000...
+
+So here with a default length of 0:
+
+	memory@80000000 {
+ 		reg = <0x0 0x80000000 0x0 0x0>;
+ 	};
+
+>  
+>  	pcie@1003000 {
+> diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+> b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+> index 5c202b3e3bb1..5623ff8d128c 100644
+> --- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+> +++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+> @@ -10,7 +10,7 @@
+>  		rtc1 = "/rtc@7000e000";
+>  	};
+>  
+> -	memory {
+> +	memory@0 {
+>  		reg = <0x00000000 0x20000000>;
+>  	};
+>  
+> diff --git a/arch/arm/boot/dts/tegra20-harmony.dts
+> b/arch/arm/boot/dts/tegra20-harmony.dts
+> index 628a55a9318b..1d96d92b72a7 100644
+> --- a/arch/arm/boot/dts/tegra20-harmony.dts
+> +++ b/arch/arm/boot/dts/tegra20-harmony.dts
+> @@ -18,7 +18,7 @@
+>  		stdout-path = "serial0:115200n8";
+>  	};
+>  
+> -	memory {
+> +	memory@0 {
+>  		reg = <0x00000000 0x40000000>;
+>  	};
+>  
+> diff --git a/arch/arm/boot/dts/tegra20-paz00.dts
+> b/arch/arm/boot/dts/tegra20-paz00.dts
+> index 30436969adc0..ef245291924f 100644
+> --- a/arch/arm/boot/dts/tegra20-paz00.dts
+> +++ b/arch/arm/boot/dts/tegra20-paz00.dts
+> @@ -19,7 +19,7 @@
+>  		stdout-path = "serial0:115200n8";
+>  	};
+>  
+> -	memory {
+> +	memory@0 {
+>  		reg = <0x00000000 0x20000000>;
+>  	};
+>  
+> diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts
+> b/arch/arm/boot/dts/tegra20-seaboard.dts
+> index 284aae351ff2..f91441683aad 100644
+> --- a/arch/arm/boot/dts/tegra20-seaboard.dts
+> +++ b/arch/arm/boot/dts/tegra20-seaboard.dts
+> @@ -18,7 +18,7 @@
+>  		stdout-path = "serial0:115200n8";
+>  	};
+>  
+> -	memory {
+> +	memory@0 {
+>  		reg = <0x00000000 0x40000000>;
+>  	};
+>  
+> diff --git a/arch/arm/boot/dts/tegra20-tamonten.dtsi
+> b/arch/arm/boot/dts/tegra20-tamonten.dtsi
+> index 872046d48709..20137fc578b1 100644
+> --- a/arch/arm/boot/dts/tegra20-tamonten.dtsi
+> +++ b/arch/arm/boot/dts/tegra20-tamonten.dtsi
+> @@ -15,7 +15,7 @@
+>  		stdout-path = "serial0:115200n8";
+>  	};
+>  
+> -	memory {
+> +	memory@0 {
+>  		reg = <0x00000000 0x20000000>;
+>  	};
+>  
+> diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts
+> b/arch/arm/boot/dts/tegra20-trimslice.dts
+> index d55c6b240a30..9eb26dc15f6b 100644
+> --- a/arch/arm/boot/dts/tegra20-trimslice.dts
+> +++ b/arch/arm/boot/dts/tegra20-trimslice.dts
+> @@ -18,7 +18,7 @@
+>  		stdout-path = "serial0:115200n8";
+>  	};
+>  
+> -	memory {
+> +	memory@0 {
+>  		reg = <0x00000000 0x40000000>;
+>  	};
+>  
+> diff --git a/arch/arm/boot/dts/tegra20-ventana.dts
+> b/arch/arm/boot/dts/tegra20-ventana.dts
+> index ee3fbf941e79..f44551e2d9d0 100644
+> --- a/arch/arm/boot/dts/tegra20-ventana.dts
+> +++ b/arch/arm/boot/dts/tegra20-ventana.dts
+> @@ -18,7 +18,7 @@
+>  		stdout-path = "serial0:115200n8";
+>  	};
+>  
+> -	memory {
+> +	memory@0 {
+>  		reg = <0x00000000 0x40000000>;
+>  	};
+>  
+> diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+> index 88dd1afb5877..55581c0e5105 100644
+> --- a/arch/arm/boot/dts/tegra20.dtsi
+> +++ b/arch/arm/boot/dts/tegra20.dtsi
+> @@ -13,8 +13,9 @@
+>  	chosen { };
+>  	aliases { };
+>  
+> -	memory {
+> +	memory@0 {
+>  		device_type = "memory";
+> +		reg = <0 0>;
+>  	};
+>  
+>  	iram@40000000 {
+> diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi
+> b/arch/arm/boot/dts/tegra30-apalis.dtsi
+> index 6f29cbad6e8a..9465fc592b7b 100644
+> --- a/arch/arm/boot/dts/tegra30-apalis.dtsi
+> +++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
+> @@ -10,8 +10,8 @@
+>  	model = "Toradex Apalis T30";
+>  	compatible = "toradex,apalis_t30", "nvidia,tegra30";
+>  
+> -	memory {
+> -		reg = <0 0>;
+> +	memory@80000000 {
+> +		reg = <0x80000000 0x40000000>;
+>  	};
+>  
+>  	pcie@3000 {
+> diff --git a/arch/arm/boot/dts/tegra30-beaver.dts
+> b/arch/arm/boot/dts/tegra30-beaver.dts
+> index ae52a5039506..1434d50438f9 100644
+> --- a/arch/arm/boot/dts/tegra30-beaver.dts
+> +++ b/arch/arm/boot/dts/tegra30-beaver.dts
+> @@ -17,7 +17,7 @@
+>  		stdout-path = "serial0:115200n8";
+>  	};
+>  
+> -	memory {
+> +	memory@80000000 {
+>  		reg = <0x80000000 0x7ff00000>;
+>  	};
+>  
+> diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi
+> b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+> index 92a9740c533f..33b73dca16a3 100644
+> --- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
+> +++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+> @@ -40,7 +40,7 @@
+>  		stdout-path = "serial0:115200n8";
+>  	};
+>  
+> -	memory {
+> +	memory@80000000 {
+>  		reg = <0x80000000 0x40000000>;
+>  	};
+>  
+> diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi
+> b/arch/arm/boot/dts/tegra30-colibri.dtsi
+> index c44d8c40c410..9bf3327665d3 100644
+> --- a/arch/arm/boot/dts/tegra30-colibri.dtsi
+> +++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
+> @@ -10,7 +10,7 @@
+>  	model = "Toradex Colibri T30";
+>  	compatible = "toradex,colibri_t30", "nvidia,tegra30";
+>  
+> -	memory {
+> +	memory@80000000 {
+>  		reg = <0x80000000 0x40000000>;
+>  	};
+>  
+> diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+> index 19237c08c166..2b6243b0c6d6 100644
+> --- a/arch/arm/boot/dts/tegra30.dtsi
+> +++ b/arch/arm/boot/dts/tegra30.dtsi
+> @@ -14,8 +14,9 @@
+>  	chosen { };
+>  	aliases { };
+>  
+> -	memory {
+> +	memory@80000000 {
+>  		device_type = "memory";
+> +		reg = <0x80000000 0>;
+
+Nit: for consistency sake, 0x0 :-)
+
+--
+Stefan
+
+>  	};
+>  
+>  	pcie@3000 {
