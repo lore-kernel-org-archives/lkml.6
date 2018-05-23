@@ -1,73 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933181AbeEWNzx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 09:55:53 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:34747 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932900AbeEWNzw (ORCPT
+        id S933191AbeEWN4T (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 09:56:19 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:43547 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932900AbeEWN4O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 09:55:52 -0400
-X-Google-Smtp-Source: AB8JxZq27eFRlgBkEhK+H80TcLXU2drYIJmL91h4RnndkwkmqltRyGYGCx+WzdKMEd9PbA4N95S/qB/yjhVsLxlfpaA=
+        Wed, 23 May 2018 09:56:14 -0400
+X-Google-Smtp-Source: AB8JxZp/XcV7wfEN0nrsKU1wWBpE2tHtXGoxz5S/ajDWNyD86ql+KnmKREu6TzyhZkWFgw6szTZ2+T7QdYyTnBL64yk=
 MIME-Version: 1.0
-In-Reply-To: <20180523090840.GU12217@hirez.programming.kicks-ass.net>
-References: <alpine.DEB.2.21.1805160027260.1605@nanos.tec.linutronix.de>
- <CAPcyv4iksLzZ=eMjWw6Wi87F2OSXHd16gKRLExgGhx=Mdr+AwQ@mail.gmail.com>
- <50481b83-4c03-f354-bd11-cef7aecdd85f@embeddedor.com> <b5e5e160-6ac7-87c8-af1a-4eb88f1f020d@embeddedor.com>
- <CAPcyv4iO67AG5ytc7gRBTnu6V8bdTOMb9eBwjGJtkGpMLKkpwg@mail.gmail.com>
- <3d2e5771-c2c9-6e45-3e85-21c0bc86876e@embeddedor.com> <58df7ae3-8ef0-4f42-9ab2-b551d2ffff00@embeddedor.com>
- <161a0513-1029-a76c-f967-1e606081599d@embeddedor.com> <CAPcyv4i6zOJZakNVW=y8NyUFB1EzOxBtoOGVhWCwysuTi6grvg@mail.gmail.com>
- <112349fb-837c-7b91-e256-a1c443710150@embeddedor.com> <20180523090840.GU12217@hirez.programming.kicks-ass.net>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Wed, 23 May 2018 06:55:50 -0700
-Message-ID: <CAPcyv4jOpZTvvRgx6N9_hJNvpdt+ABpnbMExsGfSDxGpMr5VuA@mail.gmail.com>
-Subject: Re: [PATCH] kernel: sys: fix potential Spectre v1
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>
+In-Reply-To: <20180519140202.3449e3c1@jawa>
+References: <20180509153428.1440-1-lukma@denx.de> <CAOMZO5AexXNEGVoXa9K_GAm+aFLNRQOXOhF_SdKAjV1qmuD2nA@mail.gmail.com>
+ <20180519140202.3449e3c1@jawa>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Wed, 23 May 2018 10:56:13 -0300
+Message-ID: <CAOMZO5DoLwEmQz5BQHDLk8sBq7mDH_UxBjRA0RGKb+PunMYu-Q@mail.gmail.com>
+Subject: Re: [PATCH] ARM: DTS: imx53: Add support for imx53 HSC/DDC boards
+ from K+P
+To: Lukasz Majewski <lukma@denx.de>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 2:08 AM, Peter Zijlstra <peterz@infradead.org> wrote:
->
-> Sorry for being late to the party..
->
-> On Wed, May 23, 2018 at 12:03:57AM -0500, Gustavo A. R. Silva wrote:
->
->> +#define validate_index_nospec(index, size)                            \
->> +({                                                                    \
->> +       bool ret = true;                                               \
->> +       typeof(index) *ptr = &(index);                                 \
->> +       typeof(size) _s = (size);                                      \
->> +                                                                      \
->> +       BUILD_BUG_ON(sizeof(*ptr) > sizeof(long));                     \
->> +       BUILD_BUG_ON(sizeof(_s) > sizeof(long));                       \
->> +                                                                      \
->> +       if (*ptr >= size)                                              \
->> +               ret = false;                                           \
->> +                                                                      \
->> +       *ptr = array_index_nospec(*ptr, _s);                           \
->> +                                                                      \
->> +       ret;                                                           \
->> +})
->
-> Would not something like:
->
->         bool ret = false;
->
->         ....
->
->         if (*ptr < _s) {
->                 *ptr = array_index_nospec(*ptr, _s);
->                 ret = true;
->         }
->
->         ret;
->
-> be more obvious?
+Hi Lukasz,
 
-Yes, that looks even better to me.
+On Sat, May 19, 2018 at 9:02 AM, Lukasz Majewski <lukma@denx.de> wrote:
+
+> After removing imx53-kp-ddc and imx53-kp-common iomux subnodes I do see
+> following errors in the dmesg (v4.17-rc5):
+>
+> imx53-pinctrl 53fa8000.iomuxc: function 'iomuxc' not supported
+> imx53-pinctrl 53fa8000.iomuxc: invalid function iomuxc in map table
+
+Could you please investigate this error?
+
+I have just tried the following change on a imx53-qsb:
+http://code.bulix.org/ik01yu-339697
+
+and it works as expected:
+# dmesg  | grep iomux
+[    0.100046] imx53-pinctrl 53fa8000.iomuxc: initialized IMX pinctrl driver
