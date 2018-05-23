@@ -1,72 +1,212 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753990AbeEWDbi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 23:31:38 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:36041 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753998AbeEWDbY (ORCPT
+        id S1753873AbeEWDeI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 23:34:08 -0400
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:32878 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753769AbeEWDeG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 23:31:24 -0400
+        Tue, 22 May 2018 23:34:06 -0400
+X-Google-Smtp-Source: AB8JxZpiZbTehM1Xyii60w47g2b6KufR1E/cTly2nLzDTS/bqfMkyh0rl9ktR5KTdZyKtDhp0TtDB0jIngMTlxifCJ4=
 MIME-Version: 1.0
-In-Reply-To: <20180522184702.64cd62f6@xeon-e3>
-References: <20180523001743.8492-1-chenbo@pdx.edu> <20180522184702.64cd62f6@xeon-e3>
-From: Bo Chen <chenbo@pdx.edu>
-Date: Tue, 22 May 2018 20:31:22 -0700
-Message-ID: <CAO8TxNjyhXuG-9EqH82urxWzHH8XnxcwmjX37=Ew4ifP8-+Wxg@mail.gmail.com>
-Subject: Re: [PATCH] e1000: check the return of pci_get_drvdata() in e1000_remove()
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <CAH3MdRWgruVq+3r+2pHTah-c2zTO03vPkepjWDZ0_KrYcroy9A@mail.gmail.com>
+References: <20180513173318.21680-1-alban@kinvolk.io> <20180521162609.lpdrnozowmzdn57m@ast-mbp.dhcp.thefacebook.com>
+ <CAH3MdRWgruVq+3r+2pHTah-c2zTO03vPkepjWDZ0_KrYcroy9A@mail.gmail.com>
+From: Y Song <ys114321@gmail.com>
+Date: Tue, 22 May 2018 20:33:24 -0700
+Message-ID: <CAH3MdRVdfw52atavT3KL8MpPw7zDM_hR6aUcqDP1PogLn_sH+w@mail.gmail.com>
+Subject: Re: [PATCH] [RFC] bpf: tracing: new helper bpf_get_current_cgroup_ino
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Alban Crequy <alban.crequy@gmail.com>, netdev <netdev@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, containers@lists.linux-foundation.org,
+        cgroups@vger.kernel.org, Alban Crequy <alban@kinvolk.io>,
+        tj@kernel.org
 Content-Type: text/plain; charset="UTF-8"
-To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Re-send to mailing lists as the previous email was rejected because of
-not using plain text.
+I did a quick prototyping and the above interface seems working fine.
 
------
+The kernel change:
+===============
 
-Hi Stephen,
+[yhs@localhost bpf-next]$ git diff
+diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+index 97446bbe2ca5..669b7383fddb 100644
+--- a/include/uapi/linux/bpf.h
++++ b/include/uapi/linux/bpf.h
+@@ -1976,7 +1976,8 @@ union bpf_attr {
+        FN(fib_lookup),                 \
+        FN(sock_hash_update),           \
+        FN(msg_redirect_hash),          \
+-       FN(sk_redirect_hash),
++       FN(sk_redirect_hash),           \
++       FN(get_current_cgroup_id),
 
-Thanks for the quick reply and your comments. I am new to network
-drivers, and certainly trust your assessment.
+ /* integer value in 'imm' field of BPF_CALL instruction selects which helper
+  * function eBPF program intends to call
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index ce2cbbff27e4..e11e3298f911 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -493,6 +493,21 @@ static const struct bpf_func_proto
+bpf_current_task_under_cgroup_proto = {
+        .arg2_type      = ARG_ANYTHING,
+ };
 
-I was assuming 'pdev->dev.p' can be NULL with a 'kzalloc()' failure in
-'pci_set_drvdata()' invoked by 'e1000_probe()', in which case the
-"pci_get_drvdata()" will return a NULL pointer. But I did not trace
-back to confirm whether 'pdev->dev.p' has to be valid before
-'e1000_probe()' is invoked. Maybe this is what I am missing? Please
-excuse my newbie questions and mistakes.
++BPF_CALL_0(bpf_get_current_cgroup_id)
++{
++       struct cgroup *cgrp = task_dfl_cgroup(current);
++       if (!cgrp)
++               return -EINVAL;
++
++       return cgrp->kn->id.id;
++}
++
++static const struct bpf_func_proto bpf_get_current_cgroup_id_proto = {
++       .func           = bpf_get_current_cgroup_id,
++       .gpl_only       = false,
++       .ret_type       = RET_INTEGER,
++};
++
+ BPF_CALL_3(bpf_probe_read_str, void *, dst, u32, size,
+           const void *, unsafe_ptr)
+ {
+@@ -563,6 +578,8 @@ tracing_func_proto(enum bpf_func_id func_id, const
+struct bpf_prog *prog)
+                return &bpf_get_prandom_u32_proto;
+        case BPF_FUNC_probe_read_str:
+                return &bpf_probe_read_str_proto;
++       case BPF_FUNC_get_current_cgroup_id:
++               return &bpf_get_current_cgroup_id_proto;
+        default:
+                return NULL;
+        }
 
-Here is some context about why I started this patch. I am building a
-tool to perform "grey-box" fault injection on linux-kernel-module
-binaries. In my tool, there is a set of kernel API functions that
-faults can be generated, for example making the return of
-'__kmalloc()' be NULL. My tool fired an alarm (a kernel panic), when a
-fault on ''dev_get_drvdata()" is injected to 'e1000.ko' (and other
-drivers were fine, such as e100.ko and pcnet32.ko). It seems that I
-was wrong to assume 'dev_get_drvdata()' can return NULL and inject
-faults from it. Do you have any suggestions about how I can avoid such
-wrong assumptions?
+The following program can be used to print out a cgroup id given a cgroup path.
+[yhs@localhost cg]$ cat get_cgroup_id.c
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
-Thanks again for your time and attention. I hope this patch is not
-wasting too much effort from the netdev community. Any other comments
-or suggestions will be appreciated.
+int main(int argc, char **argv)
+{
+    int dirfd, err, flags, mount_id, fhsize;
+    struct file_handle *fhp;
+    char *pathname;
 
-Best Regards,
-Bo Chen
+    if (argc != 2) {
+        printf("usage: %s <cgroup_path>\n", argv[0]);
+        return 1;
+    }
 
-On Tue, May 22, 2018 at 6:47 PM, Stephen Hemminger
-<stephen@networkplumber.org> wrote:
+    pathname = argv[1];
+    dirfd = AT_FDCWD;
+    flags = 0;
+
+    fhsize = sizeof(*fhp);
+    fhp = malloc(fhsize);
+    if (!fhp)
+        return 1;
+
+    err = name_to_handle_at(dirfd, pathname, fhp, &mount_id, flags);
+    if (err >= 0) {
+        printf("error\n");
+        return 1;
+    }
+
+    fhsize = sizeof(struct file_handle) + fhp->handle_bytes;
+    fhp = realloc(fhp, fhsize);
+    if (!fhp)
+        return 1;
+
+    err = name_to_handle_at(dirfd, pathname, fhp, &mount_id, flags);
+    if (err < 0)
+        perror("name_to_handle_at");
+    else {
+        int i;
+
+        printf("dir = %s, mount_id = %d\n", pathname, mount_id);
+        printf("handle_bytes = %d, handle_type = %d\n", fhp->handle_bytes,
+            fhp->handle_type);
+        if (fhp->handle_bytes != 8)
+            return 1;
+
+        printf("cgroup_id = 0x%llx\n", *(unsigned long long *)fhp->f_handle);
+    }
+
+    return 0;
+}
+[yhs@localhost cg]$
+
+Given a cgroup path, the user can get cgroup_id and use it in their bpf
+program for filtering purpose.
+
+I run a simple program t.c
+   int main() { while(1) sleep(1); return 0; }
+in the cgroup v2 directory /home/yhs/tmp/yhs
+   none on /home/yhs/tmp type cgroup2 (rw,relatime,seclabel)
+
+$ ./get_cgroup_id /home/yhs/tmp/yhs
+dir = /home/yhs/tmp/yhs, mount_id = 124
+handle_bytes = 8, handle_type = 1
+cgroup_id = 0x1000006b2
+
+// the below command to get cgroup_id from the kernel for the
+// process compiled with t.c and ran under /home/yhs/tmp/yhs:
+$ sudo ./trace.py -p 4067 '__x64_sys_nanosleep "cgid = %llx", $cgid'
+PID     TID     COMM            FUNC             -
+4067    4067    a.out           __x64_sys_nanosleep cgid = 1000006b2
+4067    4067    a.out           __x64_sys_nanosleep cgid = 1000006b2
+4067    4067    a.out           __x64_sys_nanosleep cgid = 1000006b2
+^C[yhs@localhost tools]$
+
+The kernel and user space cgid matches. Will provide a
+formal patch later.
+
+
+
+
+On Mon, May 21, 2018 at 5:24 PM, Y Song <ys114321@gmail.com> wrote:
+> On Mon, May 21, 2018 at 9:26 AM, Alexei Starovoitov
+> <alexei.starovoitov@gmail.com> wrote:
+>> On Sun, May 13, 2018 at 07:33:18PM +0200, Alban Crequy wrote:
+>>>
+>>> +BPF_CALL_2(bpf_get_current_cgroup_ino, u32, hierarchy, u64, flags)
+>>> +{
+>>> +     // TODO: pick the correct hierarchy instead of the mem controller
+>>> +     struct cgroup *cgrp = task_cgroup(current, memory_cgrp_id);
+>>> +
+>>> +     if (unlikely(!cgrp))
+>>> +             return -EINVAL;
+>>> +     if (unlikely(hierarchy))
+>>> +             return -EINVAL;
+>>> +     if (unlikely(flags))
+>>> +             return -EINVAL;
+>>> +
+>>> +     return cgrp->kn->id.ino;
+>>
+>> ino only is not enough to identify cgroup. It needs generation number too.
+>> I don't quite see how hierarchy and flags can be used in the future.
+>> Also why limit it to memcg?
+>>
+>> How about something like this instead:
+>>
+>> BPF_CALL_2(bpf_get_current_cgroup_id)
+>> {
+>>         struct cgroup *cgrp = task_dfl_cgroup(current);
+>>
+>>         return cgrp->kn->id.id;
+>> }
+>> The user space can use fhandle api to get the same 64-bit id.
 >
-> On Tue, 22 May 2018 17:17:43 -0700
-> Bo Chen <chenbo@pdx.edu> wrote:
->
-> > This check on pci_get_drvdata() prevents potential invalid pointer dereferences,
-> > and is a common practice in *_remove() functions from other drivers, such as
-> > 'intel/e100.c', 'amd/pcnet32.c', 'realtek/8139too.c', and 'broadcom/tg3.c'.
-> >
-> > Signed-off-by: Bo Chen <chenbo@pdx.edu>
->
-> Why check for something that can never be true.
-> You are creating dead code paths that can never be exercised.
+> I think this should work. This will also be useful to bcc as user
+> space can encode desired id
+> in the bpf program and compared that id to the current cgroup id, so we can have
+> cgroup level tracing (esp. stat collection) support. To cope with
+> cgroup hierarchy, user can use
+> cgroup-array based approach or explicitly compare against multiple cgroup id's.
