@@ -1,195 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934208AbeEWSy5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 14:54:57 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:42115 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933928AbeEWSyz (ORCPT
+        id S934100AbeEWS5e (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 14:57:34 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:39581 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933928AbeEWS5d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 14:54:55 -0400
-X-Google-Smtp-Source: ADUXVKJp5nff6mBvI2pEeq6AqmfBj++2lqP+W2dqxRK3g1qUh/qoxCqhZzz6c8A1NhOg4i2rXtyzRg==
-Subject: Re: B53 DSA switch problem on Banana Pi-R1 on Fedora 26
-To: Gerhard Wiesinger <lists@wiesinger.com>, Andrew Lunn <andrew@lunn.ch>
-Cc: linux-kernel@vger.kernel.org
-References: <3bdb712d-38bd-e2ca-63cf-8406a7b5689d@wiesinger.com>
- <20180522201632.GB4396@lunn.ch>
- <59d6b55f-d50a-063c-90a9-31a758e01383@gmail.com>
- <fa5c2615-40b3-62bc-3dda-59f9ef574686@wiesinger.com>
- <76c3f5ec-0ab2-c06d-98e8-277284bb1a8e@gmail.com>
- <779f2be3-3e74-e650-5240-efaf1003d77c@wiesinger.com>
- <4f7c5173-019d-ba0e-70b3-addf64a6a9fa@gmail.com>
- <aba2788a-ba54-dbc8-dd60-e862ba31d66d@wiesinger.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-Message-ID: <53c9272a-0e1a-e8fb-a3e4-b4e23e77be10@gmail.com>
-Date: Wed, 23 May 2018 11:54:45 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 23 May 2018 14:57:33 -0400
+X-Google-Smtp-Source: ADUXVKKEfx/NOJhWnb6cG+D+KyXVqkNDL5j9OxZ1bPcRV+cc6LmIt8l8mVKfZIlhoq3kobp+yoASFn1hryFjkZxbxSI=
 MIME-Version: 1.0
-In-Reply-To: <aba2788a-ba54-dbc8-dd60-e862ba31d66d@wiesinger.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKwvOd=fqk2bQSiPBsUmVSQLGUEGYSUev3iWvico6HOpYs5YJA@mail.gmail.com>
+References: <20180518170202.11458-1-samitolvanen@google.com>
+ <05d14ac7-0feb-63a3-e7ef-b8ca1ae2fd1d@arm.com> <CAKwvOdm1kYedukCq=g74AvqJHp6KC03oNoouQy2nkvfo4idoEw@mail.gmail.com>
+ <8c7be44f-086d-65e3-9969-8182261ce82f@arm.com> <CAKwvOd=XZqg5=mkXZb-cxq3i_AGoJGAbmF=Fwc7Q98oi0tbN9g@mail.gmail.com>
+ <3fd89842-86cd-ee01-0c2c-5438dd2d5f2a@arm.com> <CAKwvOdk+=JKcQP1ieLEkZftRGf-pqCTTzEuYvT_45YNMkEw_wA@mail.gmail.com>
+ <86k1rzc4ba.wl-marc.zyngier@arm.com> <CAAeHK+z2LmMYasYtRTt2U=QF8Pe_i10RA3-SkLzGXXByZqLh1w@mail.gmail.com>
+ <CAKwvOdmWg8o9yoZ+3dCwL8vYB8gzE+AatCbXENN-+Gge9Q6gtA@mail.gmail.com>
+ <CAAeHK+wk0hSH6iQcsLzrpjvsGocev-UZ6=z95ysecdFnAcHVSQ@mail.gmail.com> <CAKwvOd=fqk2bQSiPBsUmVSQLGUEGYSUev3iWvico6HOpYs5YJA@mail.gmail.com>
+From: Andrey Konovalov <andreyknvl@google.com>
+Date: Wed, 23 May 2018 20:57:32 +0200
+Message-ID: <CAAeHK+xNKhSLSa+w+gWJUosLUvK9P5OJfQDOw7+Emipo199HYg@mail.gmail.com>
+Subject: Re: [PATCH] arm64: kvm: use -fno-jump-tables with clang
+To: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>,
+        Sami Tolvanen <samitolvanen@google.com>, christoffer.dall@arm.com,
+        Takahiro Akashi <takahiro.akashi@linaro.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        kvmarm@lists.cs.columbia.edu, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/23/2018 11:27 AM, Gerhard Wiesinger wrote:
-> On 23.05.2018 19:55, Florian Fainelli wrote:
->> On 05/23/2018 10:35 AM, Gerhard Wiesinger wrote:
->>> On 23.05.2018 17:28, Florian Fainelli wrote:
->>>>> And in the future (time plan)?
->>>> If you don't care about multicast then you can use those patches:
->>>>
->>>> https://github.com/ffainelli/linux/commit/de055bf5f34e9806463ab2793e0852f5dfc380df
->>>>
->>>>
->>>>
->>>> and you have to change the part of drivers/net/dsa/b53/b53_common.c
->>>> that
->>>> returns DSA_TAG_PROTO_NONE for 53125:
->>>>
->>>>
->>>> diff --git a/drivers/net/dsa/b53/b53_common.c
->>>> b/drivers/net/dsa/b53/b53_common.c
->>>> index 9f561fe505cb..3c64f026a8ce 100644
->>>> --- a/drivers/net/dsa/b53/b53_common.c
->>>> +++ b/drivers/net/dsa/b53/b53_common.c
->>>> @@ -1557,7 +1557,7 @@ enum dsa_tag_protocol b53_get_tag_protocol(struct
->>>> dsa_switch *ds, int port)
->>>>            * mode to be turned on which means we need to specifically
->>>> manage ARL
->>>>            * misses on multicast addresses (TBD).
->>>>            */
->>>> -       if (is5325(dev) || is5365(dev) || is539x(dev) ||
->>>> is531x5(dev) ||
->>>> +       if (is5325(dev) || is5365(dev) || is539x(dev) ||
->>>>               !b53_can_enable_brcm_tags(ds, port))
->>>>                   return DSA_TAG_PROTO_NONE;
->>>>
->>>>
->>>> That would bring Broadcom tags to the 53125 switch and you would be
->>>> able
->>>> to use the configuration lines from Andrew in that case.
->>> What's the plan here regarding these 2 config option mode (how do you
->>> call them?)?
->> Broadcom tags is the underlying feature that provides per-port
->> information about the packets going in and out. Turning on Broadcom tags
->> requires turning on managed mode which means that the host now has to
->> manage how MAC addresses are programmed into the switch, it's not rocket
->> science, but I don't have a good test framework to automate the testing
->> of those changes yet. If you are willing to help in the testing, I can
->> certainly give you patches to try.
-> 
-> Yes, patches are welcome.
+On Wed, May 23, 2018 at 7:47 PM, Nick Desaulniers
+<ndesaulniers@google.com> wrote:
+> On Wed, May 23, 2018 at 4:54 AM Andrey Konovalov <andreyknvl@google.com>
+> wrote:
+>> On Tue, May 22, 2018 at 8:28 PM, Nick Desaulniers
+>> <ndesaulniers@google.com> wrote:
+>> > On Fri, May 18, 2018 at 11:13 AM Marc Zyngier <marc.zyngier@arm.com>
+> wrote:
+>> >> > - you have checked that with a released version of the compiler, you
+>> >
+>> > On Tue, May 22, 2018 at 10:58 AM Andrey Konovalov <andreyknvl@google.com
+>
+>> > wrote:
+>> >> Tested-by: Andrey Konovalov <andreyknvl@google.com>
+>> >
+>> > Hi Andrey,
+>> > Thank you very much for this report.  Can you confirm as well the
+> version
+>> > of Clang that you were using?
+>
+>> I'm on 86852a40 ("[InstCombine] Calloc-ed strings optimizations").
+>
+>> > If it's not a binary release (built from
+>> > source), would you be able to re-confirm with a released version?
+>
+>> Sure. Which release should I try and how do I get it?
+>
+> Maybe clang-6.0 as the latest release (though I suspect you may run into
+> the recently-fixed-in-clang-7.0 "S" constraint bug that you reported).
 
-I gave you the two things that would be required to have Broadcom tags
-working already, feel free to givem them a try. Make sure your kernel
-also has that patch:
+Yes, and also into the "support for "r" prefixed variables in ARM
+inline assembly" issue.
 
-8cad443eacf661796a740903a75cb8944c675b4e ("net: stmmac: Fix reception of
-Broadcom switches tags")
+Tested on upstream commit ded4c39e (before both issues were
+introduced) with -fno-jump-tables patch applied using clang 6.0.
 
-> 
->>> I mean, will this be a breaking change in the future where config has to
->>> be done in a different way then?
->> When Broadcom tags are enabled the switch gets usable the way Andrew
->> expressed it, the only difference that makes on your configuration if
->> you want e.g: VLAN 101 to be for port 1-4 and VLAN 102 to be for port 5,
->> is that you no longer create an eth0.101 and eth0.102, but you create
->> br0.101 and br0.102.
-> 
-> I think documentation (dsa.txt) should provide more examples.
+Same result, the patch helps.
 
-Fair enough.
-
-> 
->>
->>> Or will it be configurable via module parameters or /proc or /sys
->>> filesystem options?
->> We might be able to expose a sysfs attribute which shows the type of
->> tagging being enabled by a particular switch, that way scripts can
->> detect which variant: configuring the host controller or the bridge is
->> required. Would that be acceptable?
-> 
-> Yes, acceptable for me. But what's the long term concept for DSA (and
-> also other implementations)?
-> 
-> - "old" mode variant, mode can only be read
-> 
-> - "new" mode variant, mode can only be read
-> 
-> - mode settable/configurable by the user, mode can be read
-
-Having tags enabled is a "superior" mode of operation so it should
-always be enabled when possible and working, using DSA_TAG_PROTO_NONE
-creates unfortunate confusion because the switch becomes "dumb" so that
-is not to be maintained in the future.
-
-The plan is to bring Broadcom tags at some point into b53, for all
-generation of the switches, that requires time that I do not have right
-now, but which I will hopefully have at some point. There is not
-necessarily a plan to avoid breaking user-space because, see below, this
-is really niche hardware.
-
-> 
-> 
-> In general:
-> 
-> OK, thank you for your explainations.
-> 
-> 
-> I think DSA (at least with b53) had secveral topics. implementation
-> bugs, missing documentation, lack of distribution support (e.g.
-> systemd), etc. which were not understood by the users.
-
-Yes, that is entirely fair enough, the concepts are pretty simple, but
-they are sometimes hard to communicate clearly.
-
-> 
-> So everything which clarifies the topics for DSA in the future is welcome.
-> 
-> BTW: systemd-networkd support for DSA #7478
-> 
-> https://github.com/systemd/systemd/issues/7478
-
-Well, you have to understand where this is coming from, people don't run
-mainline distributions on the routers that typically have support for
-DSA, they use Buildroot, Yocto, OpenWrt, whatever, and they know their
-platform and that this platform requires Tender Love and Care to work as
-they expect it to behave, because that's what embedded is all about.
---
-Florian
+>
+> I've had luck on debian based distributions installing from:
+> http://apt.llvm.org/
+>
+> (These can be added to your /etc/apt/sources.list, then a `sudo apt update`
+> and `sudo apt install clang-6.0`)
+>
+> If you're not able to add remote repositories (some employers block this ;)
+> ), then you can find releases for download for a few different platforms:
+> https://releases.llvm.org/
+>
+> For example, a quick:
+> $ mkdir llvm-6.0
+> $ cd !$
+> $ wget
+> https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-linux-gnu-debian8.tar.xz
+> $ tar xvf clang+llvm-6.0.0-x86_64-linux-gnu-debian8.tar.xz
+> $ ./clang+llvm-6.0.0-x86_64-linux-gnu-debian8/bin/clang-6.0 -v
+> clang version 6.0.0 (tags/RELEASE_600/final)
+> Target: x86_64-unknown-linux-gnu
+> Thread model: posix
+> InstalledDir: .../llvm-6.0/./clang+llvm-6.0.0-x86_64-linux-gnu-debian8/bin
+> Found candidate GCC installation: ...
+> Candidate multilib: .;@m64
+> Selected multilib: .;@m64
+>
+> Seems to work.
+> --
+> Thanks,
+> ~Nick Desaulniers
