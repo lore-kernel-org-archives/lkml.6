@@ -1,119 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754263AbeEWHTk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 03:19:40 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:20630 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754024AbeEWHTi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 03:19:38 -0400
-From: Patrice CHOTARD <patrice.chotard@st.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 1/2] rtc: st-lpc: fix possible race condition
-Thread-Topic: [PATCH 1/2] rtc: st-lpc: fix possible race condition
-Thread-Index: AQHT8DbOL5DtmjZB0kuylYhbBYW1Z6Q8ysIA
-Date: Wed, 23 May 2018 07:19:16 +0000
-Message-ID: <21f4fd1a-1744-b46f-eb0f-09d6af04247b@st.com>
-References: <20180520123337.14856-1-alexandre.belloni@bootlin.com>
-In-Reply-To: <20180520123337.14856-1-alexandre.belloni@bootlin.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.46]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <BEDBAF998764A3409534836086B623A1@st.com>
+        id S1754203AbeEWHWy (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 03:22:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48084 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753985AbeEWHWx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 03:22:53 -0400
+Date: Wed, 23 May 2018 10:22:49 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
+Cc: dledford@redhat.com, jgg@ziepe.ca, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, xavier.huwei@tom.com, lijun_nudt@163.com
+Subject: Re: [PATCH rdma-next 2/5] RDMA/hns: Modify uar allocation algorithm
+ to avoid bitmap exhaust
+Message-ID: <20180523072249.GE5729@mtr-leonro.mtl.com>
+References: <1526544173-106587-1-git-send-email-xavier.huwei@huawei.com>
+ <1526544173-106587-3-git-send-email-xavier.huwei@huawei.com>
+ <20180523060515.GD2933@mtr-leonro.mtl.com>
+ <5B050EFF.4040908@huawei.com>
+ <20180523070055.GD5729@mtr-leonro.mtl.com>
+ <5B05146D.901@huawei.com>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-23_03:,,
- signatures=0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="YToU2i3Vx8H2dn7O"
+Content-Disposition: inline
+In-Reply-To: <5B05146D.901@huawei.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4N7Jiee007083
 
-Hi Alexandre
 
-On 05/20/2018 02:33 PM, Alexandre Belloni wrote:
-> The IRQ is requested before the struct rtc is allocated and registered, but
-> this struct is used in the IRQ handler. This may lead to a NULL pointer
-> dereference.
-> 
-> Switch to devm_rtc_allocate_device/rtc_register_device to allocate the rtc
-> before requesting the IRQ.
-> 
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> ---
->   drivers/rtc/rtc-st-lpc.c | 24 +++++++++---------------
->   1 file changed, 9 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/rtc/rtc-st-lpc.c b/drivers/rtc/rtc-st-lpc.c
-> index d5222667f892..2f1ef2c28740 100644
-> --- a/drivers/rtc/rtc-st-lpc.c
-> +++ b/drivers/rtc/rtc-st-lpc.c
-> @@ -212,6 +212,10 @@ static int st_rtc_probe(struct platform_device *pdev)
->   	if (!rtc)
->   		return -ENOMEM;
->   
-> +	rtc->rtc_dev = devm_rtc_allocate_device(&pdev->dev);
-> +	if (IS_ERR(rtc->rtc_dev))
-> +		return PTR_ERR(rtc->rtc_dev);
-> +
->   	spin_lock_init(&rtc->lock);
->   
->   	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> @@ -253,26 +257,17 @@ static int st_rtc_probe(struct platform_device *pdev)
->   
->   	platform_set_drvdata(pdev, rtc);
->   
-> -	rtc->rtc_dev = rtc_device_register("st-lpc-rtc", &pdev->dev,
-> -					   &st_rtc_ops, THIS_MODULE);
-> -	if (IS_ERR(rtc->rtc_dev)) {
-> +	rtc->rtc_dev->ops = &st_rtc_ops;
-> +
-> +	ret = rtc_register_device(rtc->rtc_dev);
-> +	if (ret) {
->   		clk_disable_unprepare(rtc->clk);
-> -		return PTR_ERR(rtc->rtc_dev);
-> +		return ret;
->   	}
->   
->   	return 0;
->   }
->   
-> -static int st_rtc_remove(struct platform_device *pdev)
-> -{
-> -	struct st_rtc *rtc = platform_get_drvdata(pdev);
-> -
-> -	if (likely(rtc->rtc_dev))
-> -		rtc_device_unregister(rtc->rtc_dev);
-> -
-> -	return 0;
-> -}
-> -
->   #ifdef CONFIG_PM_SLEEP
->   static int st_rtc_suspend(struct device *dev)
->   {
-> @@ -325,7 +320,6 @@ static struct platform_driver st_rtc_platform_driver = {
->   		.of_match_table = st_rtc_match,
->   	},
->   	.probe = st_rtc_probe,
-> -	.remove = st_rtc_remove,
->   };
->   
->   module_platform_driver(st_rtc_platform_driver);
-> 
+--YToU2i3Vx8H2dn7O
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Acked-by: Patrice Chotard <patrice.chotard@st.com>
+On Wed, May 23, 2018 at 03:12:45PM +0800, Wei Hu (Xavier) wrote:
+>
+>
+> On 2018/5/23 15:00, Leon Romanovsky wrote:
+> > On Wed, May 23, 2018 at 02:49:35PM +0800, Wei Hu (Xavier) wrote:
+> >>
+> >> On 2018/5/23 14:05, Leon Romanovsky wrote:
+> >>> On Thu, May 17, 2018 at 04:02:50PM +0800, Wei Hu (Xavier) wrote:
+> >>>> This patch modified uar allocation algorithm in hns_roce_uar_alloc
+> >>>> function to avoid bitmap exhaust.
+> >>>>
+> >>>> Signed-off-by: Wei Hu (Xavier) <xavier.huwei@huawei.com>
+> >>>> ---
+> >>>>  drivers/infiniband/hw/hns/hns_roce_device.h |  1 +
+> >>>>  drivers/infiniband/hw/hns/hns_roce_pd.c     | 10 ++++++----
+> >>>>  2 files changed, 7 insertions(+), 4 deletions(-)
+> >>>>
+> >>>> diff --git a/drivers/infiniband/hw/hns/hns_roce_device.h b/drivers/infiniband/hw/hns/hns_roce_device.h
+> >>>> index 53c2f1b..412297d4 100644
+> >>>> --- a/drivers/infiniband/hw/hns/hns_roce_device.h
+> >>>> +++ b/drivers/infiniband/hw/hns/hns_roce_device.h
+> >>>> @@ -214,6 +214,7 @@ enum {
+> >>>>  struct hns_roce_uar {
+> >>>>  	u64		pfn;
+> >>>>  	unsigned long	index;
+> >>>> +	unsigned long	logic_idx;
+> >>>>  };
+> >>>>
+> >>>>  struct hns_roce_ucontext {
+> >>>> diff --git a/drivers/infiniband/hw/hns/hns_roce_pd.c b/drivers/infiniband/hw/hns/hns_roce_pd.c
+> >>>> index 4b41e04..b9f2c87 100644
+> >>>> --- a/drivers/infiniband/hw/hns/hns_roce_pd.c
+> >>>> +++ b/drivers/infiniband/hw/hns/hns_roce_pd.c
+> >>>> @@ -107,13 +107,15 @@ int hns_roce_uar_alloc(struct hns_roce_dev *hr_dev, struct hns_roce_uar *uar)
+> >>>>  	int ret = 0;
+> >>>>
+> >>>>  	/* Using bitmap to manager UAR index */
+> >>>> -	ret = hns_roce_bitmap_alloc(&hr_dev->uar_table.bitmap, &uar->index);
+> >>>> +	ret = hns_roce_bitmap_alloc(&hr_dev->uar_table.bitmap, &uar->logic_idx);
+> >>>>  	if (ret == -1)
+> >>>>  		return -ENOMEM;
+> >>>>
+> >>>> -	if (uar->index > 0)
+> >>>> -		uar->index = (uar->index - 1) %
+> >>>> +	if (uar->logic_idx > 0 && hr_dev->caps.phy_num_uars > 1)
+> >>>> +		uar->index = (uar->logic_idx - 1) %
+> >>>>  			     (hr_dev->caps.phy_num_uars - 1) + 1;
+> >>>> +	else
+> >>>> +		uar->index = 0;
+> >>>>
+> >>> Sorry, but maybe I didn't understand this change fully, but logic_idx is
+> >>> not initialized at all and one of two (needs to check your uar
+> >>> allocation): the logic_idx is always zero -> index will be zero too,
+> >>> or logic_idx is random variable -> index will be random too.
+> >>>
+> >>> What did you want to do?
+> >>>
+> >> Hi, Leon
+> >>
+> >>     The prototype of hns_roce_bitmap_alloc as belows:
+> >>         int hns_roce_bitmap_alloc(struct hns_roce_bitmap *bitmap,
+> >> unsigned long *obj);
+> >>     In this statement,  we evaluate uar->logic_idx.
+> >>         ret = hns_roce_bitmap_alloc(&hr_dev->uar_table.bitmap,
+> >> &uar->logic_idx);
+> >>
+> >>     In hip06,  hr_dev->caps.phy_num_uars equals 8,
+> >>         if (uar->logic_idx > 0)
+> >>              uar-> index = 0;
+> >>        else
+> >>              uar-> index =(uar->logic_idx - 1) %
+> >> (hr_dev->caps.phy_num_uars - 1) + 1;
+> >>     In hip08,  hr_dev->caps.phy_num_uars equals 1,  uar-> index = 0;
+> >>
+> >>    Regards
+> > Where did you change/set logic_idx?
+> In hns_roce_uar_alloc,
+>     ret = hns_roce_bitmap_alloc(&hr_dev->uar_table.bitmap, &uar->logic_idx);
+> In hns_roce_uar_free,
+>     hns_roce_bitmap_free(&hr_dev->uar_table.bitmap, uar->logic_idx,
+> BITMAP_NO_RR);
+>
 
-Thanks
+I see it, thanks
+Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
 
-Patrice
+--YToU2i3Vx8H2dn7O
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJbBRbJAAoJEORje4g2clinepkP/0kcp5uz9zMH90ronD0N1Enh
+c9ISep3gEfNouC2uZJ7sMtniJI/ljFTR1mf1B4mRWFMCx7a6MEa4zd+yi6s4fhHb
+wRcOaLpYJv66okIbRmn/cbX3hJYTIfJ9YOTTZuUQRMm2NJ3Ugvu6jnbBcGkA4Vz5
+ot8gHIomA699Qsv/z0sfWF0VIWrb7IGkTdPVQNNAp0lEtCXAU2dslpgE7z0RBwVy
+U7wOHSMXLcP1FhQgy2pljDuRZZkcQgSlFHS5GZlJQ5kD1uoKwXgPuoJmKwaRRm1t
+dA+5ohX4VUm8wDsixvSBQqz1arKWQyn3vo8vSN7O1ganR7Iz/xCz73tbaLPLiWHV
+abZ3/yPgRpvNOTbF2da2K3mea6n6cXqObB67JHLcleeeV0Ikv0PDawk1CxJlvt5z
+JGSEO3CHJC8HeJjZ1wuIptuNTdQ+duRXQXy1bSAuOSaoRiWnjfAzmTpmJoTH2IEl
+yNXBhDOSwzOMv1O3Ow0+whDSBdcvf9teQuVjYLaYjO6a8yWtOQjA5zdmnFBt22cW
+6GbJIPXtDQsurNbkPIPtR5IOxFkuFZu/eNow/39TJL3DHtrm4wCFe7NjtGR+bpHF
+mVMyinM4o+Zn005a/SJZjjfqYsZ9wqmSnT7JIp/srdArdm/6QD+7xa/VZii0eH78
+O8SPErdw+mJlHjlIWvVb
+=oSfq
+-----END PGP SIGNATURE-----
+
+--YToU2i3Vx8H2dn7O--
