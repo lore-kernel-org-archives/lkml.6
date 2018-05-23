@@ -1,148 +1,286 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932302AbeEWJbz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 05:31:55 -0400
-Received: from mail-he1eur01on0139.outbound.protection.outlook.com ([104.47.0.139]:55616
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932163AbeEWJbr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 05:31:47 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=peda@axentia.se;
-From: Peter Rosin <peda@axentia.se>
-To: linux-kernel@vger.kernel.org
-Cc: Peter Rosin <peda@axentia.se>, David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, Jyri Sarha <jsarha@ti.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Andrzej Hajda <a.hajda@samsung.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>
-Subject: [PATCH v5 2/7] dt-bindings: display: atmel: optional video-interface of endpoints
-Date: Wed, 23 May 2018 11:31:17 +0200
-Message-Id: <20180523093122.27859-3-peda@axentia.se>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180523093122.27859-1-peda@axentia.se>
-References: <20180523093122.27859-1-peda@axentia.se>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [85.226.244.23]
-X-ClientProxiedBy: HE1PR0102CA0046.eurprd01.prod.exchangelabs.com
- (2603:10a6:7:7d::23) To VI1PR0202MB2782.eurprd02.prod.outlook.com
- (2603:10a6:800:db::7)
-X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:VI1PR0202MB2782;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0202MB2782;3:feh6wODSrbiqh7LFU5zHN+TvIamno5VWaDmjMFWlY5GO7iFSpgEzSi2FcrU0V1JYrTHPHfeiiNgnomFeoRu4axcHi2WspUpZ6KDWgQ27+iBP8cvU3Ncn8O2JFjHLOm7lGk+ye7znjVWeLNzpQpkSdIwhqxQQSI/Q5tBIMvHYEKfehxJG4e+NR4GU2SyBO2mGuD/k8XtGtAulup/l69ccI90MU3+amN5K4bufWw9W1sKlZhPBRyoA4AAh13dkL3d8;25:O9KyDEteR/e0R6LGUBrVQi7vKrkJHI857hCmdCzprDqIRQHVZAocrv6zEkDalgNM9tPFB/LFetjunbMTz6GMXLFXM++S39PK8GYj3TxrqVsbGO1l4aD+gA54ODcUThLHsCuLQaMdlh3zyU0NAXBPhQSZS3fm1v7CAqP+vADRyQmjpQxJMuGnHEJC0l3A6mRA2T9GSWXC7JEhUNrAwafZ8cjyZjdUxI4tpoB8Chru1+3oy7m72uGlAH0KycPrUWs7bVSS17Cea0WRYDMG4Wria4hiEZkKu4D9P9BpeucZc9jPgrhNHu7Os6lr7xlYFU4XnZdzPun8I+//9l8YtR+lbw==;31:oXGbu2l9ba9fyY5w/88jGcPQ9YGgIjnT3z+bfR5J+1H+pjhB/drB8AVO7rXXu5HHosEc3g9yBR/n1y6MScfOP6dhDcAhAbCCGHMS6dZ4gY25jRMyKBw3e42Q3ecDgCzlceiWvTh6CPMOeEzxgEcazQhuUBgp/BPWJiE9M9bH+xaVBg6ChIoXQGwHcqQy5DafZH56as+o4fCGEpvAkJsVXr6lai43jS3J7wO+gHlzz7E=
-X-MS-TrafficTypeDiagnostic: VI1PR0202MB2782:
-X-Microsoft-Antispam-PRVS: <VI1PR0202MB2782225F5E69158B00C06F82BC6B0@VI1PR0202MB2782.eurprd02.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(10201501046)(3231254)(944501410)(52105095)(149027)(150027)(6041310)(20161123564045)(20161123558120)(2016111802025)(20161123560045)(20161123562045)(6072148)(6043046)(201708071742011)(7699016);SRVR:VI1PR0202MB2782;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0202MB2782;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0202MB2782;4:x71uA6BMQOfrEZY9tl7YlzCxc65qDxjxIvVYrWFyrTnSlWAqlrhiU7t8pvqUHD180LqX6TpsJLdxRZAMJDhYBARuCZsRpKicLGg8Tzp7jGpKqLgIAAmReTis0COiSuYKxY0+7mO9JpvwHSnFjkZ+gSHq/nmNhE4UIQLfpy/cdXEBDGKuRn1NVxYnnaC5epomkHKvcZ+0CGhzDq9RKLt2tuStIT/3LdIIX4lqBfCvGMpw6vWi9T4tOd6GMHujlRVtl64cIExam+o4ypNRVYM5Lw==
-X-Forefront-PRVS: 06818431B9
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(39830400003)(396003)(39380400002)(376002)(346002)(366004)(189003)(199004)(486006)(68736007)(956004)(476003)(3846002)(97736004)(6116002)(478600001)(2616005)(5660300001)(6916009)(6666003)(53936002)(2906002)(4326008)(11346002)(6512007)(446003)(1076002)(36756003)(86362001)(16586007)(7736002)(76176011)(52116002)(51416003)(25786009)(7416002)(305945005)(8936002)(6486002)(2361001)(48376002)(106356001)(66066001)(74482002)(50466002)(47776003)(26005)(316002)(6506007)(81156014)(105586002)(16526019)(186003)(386003)(8676002)(81166006)(50226002)(2351001)(54906003)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0202MB2782;H:orc.pedanet;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR0202MB2782;23:CZlBttXl6tWOQFMqcJjP9/BQSeGCaunczUruCby?=
- =?us-ascii?Q?KvoSSaCvcUuAOor8jT+6za8jh6q8b4MbmXnCqNEeVI7VgAC3Q4BaPjrtyjw8?=
- =?us-ascii?Q?O2s99LCz+wfnUKn02dunrQuYbGma4GODN3S4naEXY3oC3FpIn0ultDy2uDzP?=
- =?us-ascii?Q?ulqfduzR2aMPk9yZcWI4PHcPiBd0iuqbxCcQOXBOXgmGep7hW9WRuHN4SnFj?=
- =?us-ascii?Q?urPR5jGr3z13XF9Zk89IRMqMdERWUwzYhRcLCKAiePp2nS430rqIGkWl4ZMY?=
- =?us-ascii?Q?WCw64d+YckVMdIGP7wiPQdfwbk9XD9zbBiGdSAaq/M8XrfneE9zf8I56mYW/?=
- =?us-ascii?Q?AqI91WnxCVj1MFSVYQpqBqCWMuzndB5hSHPacRo5FwSjXQ9N6wDc2v00LKoV?=
- =?us-ascii?Q?/hiEUkMfvUWZQelRjRv9YkV32XuS9/VPDS11GTOM2MziZuBYfOEB+ps/XpAM?=
- =?us-ascii?Q?0OjA26Tt88OpqJGKEfvrVCEsctcEaigL5SSu1v9adZ3vJ+SMokuDG1qw/a1z?=
- =?us-ascii?Q?lz37/YAj7PdANAS1zo0Hm1Uba/gGBIrsQM/YpuNmnwCSiUl5u7vUe371A6ob?=
- =?us-ascii?Q?n77YbyltkLhEV6EVrUd1viCGHpx2MWeYfLxX3CXg/BVSKan9RyiWygflpdKP?=
- =?us-ascii?Q?7jmjpPd/ADJZvDPGpym8msa+4f425y5IW0RCaL2Pa4dVB8A/u3UcU7oATCLx?=
- =?us-ascii?Q?Da4ciitbwh8Zkz/HnY+tp/cApJS/pc1rEHz24Z7mGU9x1Z6TB3Q/tSY1i6YL?=
- =?us-ascii?Q?zgtmGVLdtJxwQtLC/UtQPlgX/4FB4BKl1b1AQ8xVDoi0UsddxuU4WJaIVyy9?=
- =?us-ascii?Q?PlC0pbWxDCPehvGtcvYSKOkQ3rKsQ+XWHZvUR3t2ZzFUZKICCGtgSveO7RvA?=
- =?us-ascii?Q?ixDdyQbFMkbVUA+abvHh6D92k6BUHkWr9Z1Wd3xvs1f/zquOxE9DKiGcriBm?=
- =?us-ascii?Q?+SMesfcTIx/4h58YVRrxYo/sciy85yB+eavv9K7+ky+ZHmMy+64rpDX/TGu/?=
- =?us-ascii?Q?cG7QDK0FG4A2v7ohRCcqvsDsX0/VPiErASRImVvSNC6ecZ76gPzwsBuVrPbH?=
- =?us-ascii?Q?HGNoBVL8NJ9bu4Aohg0pCd9ajYNx8YQuxR1slXupTvaNgBm8i8cQ/g5Sv4uN?=
- =?us-ascii?Q?ZHzM3E8Pe7KVsQlBRNdCN4Cn5arlc7RaFj2T7U+NIrpyyyxO1GC6sjXTxEPm?=
- =?us-ascii?Q?gYcfThLkdbHub7d3PoXNDJ5TWWsdMthNE+C755vOhA/hsjQxiUybuZWPQoQz?=
- =?us-ascii?Q?X1q3s0GDLbwkJQSQpTnk2hoeja4ThDNWW2EaFvviOPk0gYAE2I24JoAeGtew?=
- =?us-ascii?Q?hlytGc1yenKNejwY9mDSmaw4=3D?=
-X-Microsoft-Antispam-Message-Info: +dQ5s+5iV2X5cugX3vtOOMGe6u1ahfTRgHQnYOA6EwcaWDof7kMKqFw+tWiHklxzcKVGXfNvQxzhdh0QXzz8Xe6UPuAxKgF3XaoBtyhZFcbayJarChOG0Z20Cr05pdbR11I1+HjLtL1jzFXlBPRx6ajnV5Uaynk1c36xUKQNpyM9yQu9e0jYYs4y5vAhSsQq
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0202MB2782;6:jq5OY/ypeD+VeQBrJmZDFqkSLvvswQefdhOS9iIkdjaYm5Bo12NEX9LeYO9xtPzZHMOuKkFqn3OqNZ/QlNMQ4OdBfRNBZ4ObY/07qX4NtVFZfoSc9exsp+lhv4UjElmnSU30ReFC9uTMIIuwjsFaAsuR3k9RP82FyjKa5TzdEcftdTo6+qhb5MazkY0j9Kj4gVSK2TCMu838S3/apj3kwwU7z41aV+dAiAP25F9G6XDDr+n3Wzce+QN5Dg9nH7ijPUohT0aFKlJmDrJysONavlIDSKEXWhbFJIPoVpH1ALSBsRaVNiMOwuZEyi5LaKaGhj+o1ZW2nAa3eM2tNb1/GJU5wTQjuR+9LoPx6n1oBlCbKXpjeT1cKODcAtjnEbXdPvA1hqFjz/g/gSlkiQrupDjUBZykumH83+7OFirkuZRKzTP6GnZXj3xVM8bAoUlRsTVslD7t65rdsVF0F3QuMw==;5:oB8/2SZSZtXMhR7LZLfrsvcUPMcry6/g/7yZascYyEbHOR3fSoYUm341HZX/hwN7PL7ym1o3PK5HV5ISMgurp87mG+kkqx+u1qT8T31L4jhvVqdoFaOwqXVhwQZIfIY8f2h0onHdeDMl1q1WzdZqBOUhj5Lh0bwNxlJfohv0jvA=;24:SwD4aF1bnIiQGVl40Paz+ZoO0pUS7grmnLJ8zScWH3opb175j0pnDlBQLvAf0nb2CxM44RMsSGCz/NIrd4NPKnCYFYWDfEUX0wZlfEl23tI=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0202MB2782;7:+7rH8RTqDb/lRTXTb7bOG9HGpF+wea3va9vExDk87JcP1chgfvvb0mioQXsJEHUyfK5+ptH0Iy5L3tS4YpOuvoVT/o1eEof32n/kPQNBYbnncS6lxTcZ5nb+FBi9alGS0XrkoiYcEDVoFjhETsP2wfM3LzGZcBs2u3seXqYRmDGXHrINVPq1r7aCWkGTdeGszJRLQ2CYez3KAxNioO0e/xPfmZpOJPxAgUVJfGW7NzbU1jLfMvH2z7cD1WFCdtRU
-X-MS-Office365-Filtering-Correlation-Id: 19164aa0-174e-4ca5-3e07-08d5c08ffe93
-X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 May 2018 09:31:41.4993 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 19164aa0-174e-4ca5-3e07-08d5c08ffe93
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0202MB2782
+        id S932319AbeEWJcB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 05:32:01 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:45488 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932292AbeEWJby (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 05:31:54 -0400
+X-Google-Smtp-Source: AB8JxZrnb8QQIceQay53vlRKP+i9D6TOODXdz2oXXpcFq14ZoICuqNS7gh0jDVN9KrCR16f0hMb90A==
+From: Baolin Wang <baolin.wang@linaro.org>
+To: dan.j.williams@intel.com, vkoul@kernel.org
+Cc: eric.long@spreadtrum.com, broonie@kernel.org, baolin.wang@linaro.org,
+        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH V4 2/2] dmaengine: sprd: Add Spreadtrum DMA configuration
+Date: Wed, 23 May 2018 17:31:11 +0800
+Message-Id: <ea34e18f29c37024fb0403c66176a60b3b253986.1527065569.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <08819489e52add194fecf2b4b234fff9deecdb4c.1527065569.git.baolin.wang@linaro.org>
+References: <08819489e52add194fecf2b4b234fff9deecdb4c.1527065569.git.baolin.wang@linaro.org>
+In-Reply-To: <08819489e52add194fecf2b4b234fff9deecdb4c.1527065569.git.baolin.wang@linaro.org>
+References: <08819489e52add194fecf2b4b234fff9deecdb4c.1527065569.git.baolin.wang@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With bus-type/bus-width properties in the endpoint nodes, the video-
-interface of the connection can be specified for cases where the
-heuristic fails to select the correct output mode. This can happen
-e.g. if not all RGB pins are routed on the PCB; the driver has no
-way of knowing this, and needs to be told explicitly.
+From: Eric Long <eric.long@spreadtrum.com>
 
-This is critical for the devices that have the "conflicting output
-formats" issue (SAM9N12, SAM9X5, SAMA5D3), since the most significant
-RGB bits move around depending on the selected output mode. For
-devices that do not have the "conflicting output formats" issue
-(SAMA5D2, SAMA5D4), this is completely irrelevant.
+This patch adds the 'device_config' and 'device_prep_slave_sg' interfaces
+for users to configure DMA, as well as adding one 'struct sprd_dma_config'
+structure to save Spreadtrum DMA configuration for each DMA channel.
 
-Acked-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Peter Rosin <peda@axentia.se>
+Signed-off-by: Eric Long <eric.long@spreadtrum.com>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- .../devicetree/bindings/display/atmel/hlcdc-dc.txt | 26 ++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+Changes since v3:
+ - Remove the 'struct sprd_dma_config'.
+ - Optimize the sprd_dma_fill_desc() function.
+ - Error out for default operation when checking datawidth.
+ - Add some comments to explain what we do.
+ - Remove some current unused configuration.
 
-diff --git a/Documentation/devicetree/bindings/display/atmel/hlcdc-dc.txt b/Documentation/devicetree/bindings/display/atmel/hlcdc-dc.txt
-index 82f2acb3d374..9de434a8f523 100644
---- a/Documentation/devicetree/bindings/display/atmel/hlcdc-dc.txt
-+++ b/Documentation/devicetree/bindings/display/atmel/hlcdc-dc.txt
-@@ -15,6 +15,14 @@ Required children nodes:
-  to external devices using the OF graph reprensentation (see ../graph.txt).
-  At least one port node is required.
+Changes since v2:
+ - Remove src/dst from struct sprd_dma_config.
+ - Simplify sprd_dma_get_datawidth()/sprd_dma_get_step().
+ - Change some logic to make code more readable.
+ - Other optimization.
+
+Changes since v1:
+ - Fix the incorrect parameter type of sprd_dma_get_step().
+---
+ drivers/dma/sprd-dma.c       |  182 ++++++++++++++++++++++++++++++++++++++++++
+ include/linux/dma/sprd-dma.h |    4 +
+ 2 files changed, 186 insertions(+)
+
+diff --git a/drivers/dma/sprd-dma.c b/drivers/dma/sprd-dma.c
+index 924ada4..c3161c1 100644
+--- a/drivers/dma/sprd-dma.c
++++ b/drivers/dma/sprd-dma.c
+@@ -164,6 +164,7 @@ struct sprd_dma_desc {
+ struct sprd_dma_chn {
+ 	struct virt_dma_chan	vc;
+ 	void __iomem		*chn_base;
++	struct dma_slave_config	slave_cfg;
+ 	u32			chn_num;
+ 	u32			dev_id;
+ 	struct sprd_dma_desc	*cur_desc;
+@@ -552,6 +553,129 @@ static void sprd_dma_issue_pending(struct dma_chan *chan)
+ 	spin_unlock_irqrestore(&schan->vc.lock, flags);
+ }
  
-+Optional properties in grandchild nodes:
-+ Any endpoint grandchild node may specify a desired video interface
-+ according to ../../media/video-interfaces.txt, specifically
-+ - bus-type: must be <0>.
-+ - bus-width: recognized values are <12>, <16>, <18> and <24>, and
-+   override any output mode selection heuristic, forcing "rgb444",
-+   "rgb565", "rgb666" and "rgb888" respectively.
++static int sprd_dma_get_datawidth(enum dma_slave_buswidth buswidth)
++{
++	switch (buswidth) {
++	case DMA_SLAVE_BUSWIDTH_1_BYTE:
++	case DMA_SLAVE_BUSWIDTH_2_BYTES:
++	case DMA_SLAVE_BUSWIDTH_4_BYTES:
++	case DMA_SLAVE_BUSWIDTH_8_BYTES:
++		return ffs(buswidth) - 1;
 +
- Example:
++	default:
++		return -EINVAL;
++	}
++}
++
++static int sprd_dma_get_step(enum dma_slave_buswidth buswidth)
++{
++	switch (buswidth) {
++	case DMA_SLAVE_BUSWIDTH_1_BYTE:
++	case DMA_SLAVE_BUSWIDTH_2_BYTES:
++	case DMA_SLAVE_BUSWIDTH_4_BYTES:
++	case DMA_SLAVE_BUSWIDTH_8_BYTES:
++		return buswidth;
++
++	default:
++		return -EINVAL;
++	}
++}
++
++static int sprd_dma_fill_desc(struct dma_chan *chan,
++			      struct sprd_dma_desc *sdesc,
++			      dma_addr_t src, dma_addr_t dst, u32 len,
++			      enum dma_transfer_direction dir,
++			      unsigned long flags,
++			      struct dma_slave_config *slave_cfg)
++{
++	struct sprd_dma_dev *sdev = to_sprd_dma_dev(chan);
++	struct sprd_dma_chn *schan = to_sprd_dma_chan(chan);
++	struct sprd_dma_chn_hw *hw = &sdesc->chn_hw;
++	u32 req_mode = (flags >> SPRD_DMA_REQ_SHIFT) & SPRD_DMA_REQ_MODE_MASK;
++	u32 int_mode = flags & SPRD_DMA_INT_MASK;
++	int src_datawidth, dst_datawidth, src_step, dst_step;
++	u32 temp, fix_mode = 0, fix_en = 0;
++
++	if (dir == DMA_MEM_TO_DEV) {
++		src_step = sprd_dma_get_step(slave_cfg->src_addr_width);
++		if (src_step < 0) {
++			dev_err(sdev->dma_dev.dev, "invalid source step\n");
++			return src_step;
++		}
++		dst_step = SPRD_DMA_NONE_STEP;
++	} else {
++		dst_step = sprd_dma_get_step(slave_cfg->dst_addr_width);
++		if (dst_step < 0) {
++			dev_err(sdev->dma_dev.dev, "invalid destination step\n");
++			return dst_step;
++		}
++		src_step = SPRD_DMA_NONE_STEP;
++	}
++
++	src_datawidth = sprd_dma_get_datawidth(slave_cfg->src_addr_width);
++	if (src_datawidth < 0) {
++		dev_err(sdev->dma_dev.dev, "invalid source datawidth\n");
++		return src_datawidth;
++	}
++
++	dst_datawidth = sprd_dma_get_datawidth(slave_cfg->dst_addr_width);
++	if (dst_datawidth < 0) {
++		dev_err(sdev->dma_dev.dev, "invalid destination datawidth\n");
++		return dst_datawidth;
++	}
++
++	if (slave_cfg->slave_id)
++		schan->dev_id = slave_cfg->slave_id;
++
++	hw->cfg = SPRD_DMA_DONOT_WAIT_BDONE << SPRD_DMA_WAIT_BDONE_OFFSET;
++
++	/*
++	 * wrap_ptr and wrap_to will save the high 4 bits source address and
++	 * destination address.
++	 */
++	hw->wrap_ptr = (src >> SPRD_DMA_HIGH_ADDR_OFFSET) & SPRD_DMA_HIGH_ADDR_MASK;
++	hw->wrap_to = (dst >> SPRD_DMA_HIGH_ADDR_OFFSET) & SPRD_DMA_HIGH_ADDR_MASK;
++	hw->src_addr = src & SPRD_DMA_LOW_ADDR_MASK;
++	hw->des_addr = dst & SPRD_DMA_LOW_ADDR_MASK;
++
++	/*
++	 * If the src step and dst step both are 0 or both are not 0, that means
++	 * we can not enable the fix mode. If one is 0 and another one is not,
++	 * we can enable the fix mode.
++	 */
++	if ((src_step != 0 && dst_step != 0) || (src_step | dst_step) == 0) {
++		fix_en = 0;
++	} else {
++		fix_en = 1;
++		if (src_step)
++			fix_mode = 1;
++		else
++			fix_mode = 0;
++	}
++
++	hw->intc = int_mode | SPRD_DMA_CFG_ERR_INT_EN;
++
++	temp = src_datawidth << SPRD_DMA_SRC_DATAWIDTH_OFFSET;
++	temp |= dst_datawidth << SPRD_DMA_DES_DATAWIDTH_OFFSET;
++	temp |= req_mode << SPRD_DMA_REQ_MODE_OFFSET;
++	temp |= fix_mode << SPRD_DMA_FIX_SEL_OFFSET;
++	temp |= fix_en << SPRD_DMA_FIX_EN_OFFSET;
++	temp |= slave_cfg->src_maxburst & SPRD_DMA_FRG_LEN_MASK;
++	hw->frg_len = temp;
++
++	hw->blk_len = len & SPRD_DMA_BLK_LEN_MASK;
++	hw->trsc_len = len & SPRD_DMA_TRSC_LEN_MASK;
++
++	temp = (dst_step & SPRD_DMA_TRSF_STEP_MASK) << SPRD_DMA_DEST_TRSF_STEP_OFFSET;
++	temp |= (src_step & SPRD_DMA_TRSF_STEP_MASK) << SPRD_DMA_SRC_TRSF_STEP_OFFSET;
++	hw->trsf_step = temp;
++
++	hw->frg_step = 0;
++	hw->src_blk_step = 0;
++	hw->des_blk_step = 0;
++	return 0;
++}
++
+ static struct dma_async_tx_descriptor *
+ sprd_dma_prep_dma_memcpy(struct dma_chan *chan, dma_addr_t dest, dma_addr_t src,
+ 			 size_t len, unsigned long flags)
+@@ -607,6 +731,62 @@ static void sprd_dma_issue_pending(struct dma_chan *chan)
+ 	return vchan_tx_prep(&schan->vc, &sdesc->vd, flags);
+ }
  
- 	hlcdc: hlcdc@f0030000 {
-@@ -50,3 +58,21 @@ Example:
- 			#pwm-cells = <3>;
- 		};
- 	};
++static struct dma_async_tx_descriptor *
++sprd_dma_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
++		       unsigned int sglen, enum dma_transfer_direction dir,
++		       unsigned long flags, void *context)
++{
++	struct sprd_dma_chn *schan = to_sprd_dma_chan(chan);
++	struct dma_slave_config *slave_cfg = &schan->slave_cfg;
++	dma_addr_t src = 0, dst = 0;
++	struct sprd_dma_desc *sdesc;
++	struct scatterlist *sg;
++	u32 len = 0;
++	int ret, i;
 +
++	/* TODO: now we only support one sg for each DMA configuration. */
++	if (!is_slave_direction(dir) || sglen > 1)
++		return NULL;
 +
-+Example 2: With a video interface override to force rgb565; as above
-+but with these changes/additions:
++	sdesc = kzalloc(sizeof(*sdesc), GFP_NOWAIT);
++	if (!sdesc)
++		return NULL;
 +
-+	&hlcdc {
-+		hlcdc-display-controller {
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pinctrl_lcd_base &pinctrl_lcd_rgb565>;
++	for_each_sg(sgl, sg, sglen, i) {
++		len = sg_dma_len(sg);
 +
-+			port@0 {
-+				hlcdc_panel_output: endpoint@0 {
-+					bus-type = <0>;
-+					bus-width = <16>;
-+				};
-+			};
-+		};
-+	};
++		if (dir == DMA_MEM_TO_DEV) {
++			src = sg_dma_address(sg);
++			dst = slave_cfg->dst_addr;
++		} else {
++			src = slave_cfg->src_addr;
++			dst = sg_dma_address(sg);
++		}
++	}
++
++	ret = sprd_dma_fill_desc(chan, sdesc, src, dst, len, dir, flags,
++				 slave_cfg);
++	if (ret) {
++		kfree(sdesc);
++		return NULL;
++	}
++
++	return vchan_tx_prep(&schan->vc, &sdesc->vd, flags);
++}
++
++static int sprd_dma_slave_config(struct dma_chan *chan,
++				 struct dma_slave_config *config)
++{
++	struct sprd_dma_chn *schan = to_sprd_dma_chan(chan);
++	struct dma_slave_config *slave_cfg = &schan->slave_cfg;
++
++	if (!is_slave_direction(config->direction))
++		return -EINVAL;
++
++	memcpy(slave_cfg, config, sizeof(*config));
++	return 0;
++}
++
+ static int sprd_dma_pause(struct dma_chan *chan)
+ {
+ 	struct sprd_dma_chn *schan = to_sprd_dma_chan(chan);
+@@ -733,6 +913,8 @@ static int sprd_dma_probe(struct platform_device *pdev)
+ 	sdev->dma_dev.device_tx_status = sprd_dma_tx_status;
+ 	sdev->dma_dev.device_issue_pending = sprd_dma_issue_pending;
+ 	sdev->dma_dev.device_prep_dma_memcpy = sprd_dma_prep_dma_memcpy;
++	sdev->dma_dev.device_prep_slave_sg = sprd_dma_prep_slave_sg;
++	sdev->dma_dev.device_config = sprd_dma_slave_config;
+ 	sdev->dma_dev.device_pause = sprd_dma_pause;
+ 	sdev->dma_dev.device_resume = sprd_dma_resume;
+ 	sdev->dma_dev.device_terminate_all = sprd_dma_terminate_all;
+diff --git a/include/linux/dma/sprd-dma.h b/include/linux/dma/sprd-dma.h
+index c545162..b0115e3 100644
+--- a/include/linux/dma/sprd-dma.h
++++ b/include/linux/dma/sprd-dma.h
+@@ -3,6 +3,10 @@
+ #ifndef _SPRD_DMA_H_
+ #define _SPRD_DMA_H_
+ 
++#define SPRD_DMA_REQ_SHIFT 16
++#define SPRD_DMA_FLAGS(req_mode, int_type) \
++	((req_mode) << SPRD_DMA_REQ_SHIFT | (int_type))
++
+ /*
+  * enum sprd_dma_req_mode: define the DMA request mode
+  * @SPRD_DMA_FRAG_REQ: fragment request mode
 -- 
-2.11.0
+1.7.9.5
