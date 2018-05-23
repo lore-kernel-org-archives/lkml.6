@@ -1,44 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932361AbeEWJtg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 05:49:36 -0400
-Received: from mail-io0-f173.google.com ([209.85.223.173]:41942 "EHLO
-        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932343AbeEWJtb (ORCPT
+        id S932406AbeEWJtn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 05:49:43 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51774 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932343AbeEWJtg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 05:49:31 -0400
-X-Google-Smtp-Source: AB8JxZqrxNmBQIzeatMFkS2AIneJqoiCPFHPiNBH1epywfFdMt0E1xKiFSZuQ4IxtORBcWa8T4ePmI30eYYqCMv/YiA=
+        Wed, 23 May 2018 05:49:36 -0400
+Date: Wed, 23 May 2018 10:49:28 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Guenter Roeck <groeck@google.com>
+Cc: pierre-louis.bossart@linux.intel.com,
+        Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        "Patel, Chintan M" <chintan.m.patel@intel.com>,
+        Guenter Roeck <groeck@chromium.org>
+Subject: Re: [alsa-devel] [RFC/RFT PATCH] ASoC: topology: Improve backwards
+ compatibility with v4 topology files
+Message-ID: <20180523094928.GE4828@sirena.org.uk>
+References: <20180522165842.233949-1-groeck@google.com>
+ <fb9aebba-919a-2e80-aec7-2fd44e5e1861@linux.intel.com>
+ <CABXOdTd5+QJHOZ6BcSO-TfJCqcLzdd+Gbnf4HYh9i9cG+UH+1g@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdXhE8WZnL5fR9pvDkMDVrRXQdajL0r=113eHuK9RKoigw@mail.gmail.com>
-References: <20180516072753.49dd4d88@canb.auug.org.au> <CAMuHMdVEOmrd9da8XR0_wKJw9+KygkCUTSWvQjtP2Xh9aOkSFQ@mail.gmail.com>
- <CACRpkdYgE+UWqTZPSbxBP0ucQK5xS7qCsT=5hne-LevXdU3O5A@mail.gmail.com>
- <CAMuHMdVPonsrrmEeTmBR+3YW65hSaHbVOz-8_A10cLoAd2SXyw@mail.gmail.com>
- <CACRpkdZTMqf0sFCMPaX2aAcxrJ3LXAi7-Cfx5qevvp7To0V6NA@mail.gmail.com> <CAMuHMdXhE8WZnL5fR9pvDkMDVrRXQdajL0r=113eHuK9RKoigw@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 23 May 2018 11:49:29 +0200
-Message-ID: <CACRpkdYH5ik_TJeouGh0CfhM8Kt=p7Sr3pUceVPBBjEGS2rZ_g@mail.gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the pinctrl tree
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="Oiv9uiLrevHtW1RS"
+Content-Disposition: inline
+In-Reply-To: <CABXOdTd5+QJHOZ6BcSO-TfJCqcLzdd+Gbnf4HYh9i9cG+UH+1g@mail.gmail.com>
+X-Cookie: Excellent day to have a rotten day.
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 7:40 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
 
-> I guess I should base my next pull request on the new commit
-> 73dacc3403436fc2 ("pinctrl: sh-pfc: Add r8a77470 PFC support") in your
-> tree, instead of on my previous pull request? Else there will be some
-> conflicts (I checked: so far in one file only).
+--Oiv9uiLrevHtW1RS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yeah that should work. I try not to rebase my tree too much,
-sometimes it happens anyway. This commit should be stable
-and nice.
+On Tue, May 22, 2018 at 02:59:50PM -0700, Guenter Roeck wrote:
 
-Yours,
-Linus Walleij
+> Most people are not aware that they have a backwards compatibility problem
+> with the topology file. They will typically notice and report that it is
+> impossible to get audio working with an upstream kernel on a recent
+> Chromebook, and as users they rarely know about development mailing lists.
+> Some technical discussions are at
+
+> https://github.com/GalliumOS/galliumos-distro/issues/379
+> https://github.com/GalliumOS/galliumos-distro/issues/274
+
+> though I had seen others earlier. Guess next time I'll have to preserve
+> links. Anyway, I am not really much interested in an argument/discussion
+> about my use of the term "widely". I'll rephrase that paragraph in the ne=
+xt
+> version of the patch, should it come to that.
+
+Right, looks like the disconnect I thought it was - this has been
+discussed a lot within your distro (and possibly others) but not outside
+it so the rest of us are all a bit surprised. =20
+
+--Oiv9uiLrevHtW1RS
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsFOScACgkQJNaLcl1U
+h9ApxQf/SJ5Eu72VC7VhHmf/bojOTotPNUtRXqeIrMmuJBSuSiJsY85LqExG4eKC
+RgTqp0eUyCi0xIv7kWXhzl1xP6XV6wINyoe+PIQE0u6Ehf5/uaxlqnX79ms8cxLH
+P855j2hijGgkLaDjqf3lKC8JdrPM4b7BaM8+wjY/es5Q1uTeLw8JvCHHZW6QROYG
+2/2SUXhzskJ7fri5t8EH5BmzyupWcOE5vEncGJ0677gMD1A8nA2mBcf648jUF+qK
+1TvpTwKiN8DY5LtSHuu7cKV27Wz95tNhyYSMibvTExzOOx04fyfhDic4giMJPi09
+NRdMaRPo9QUVkDojwpxSPDuKHQ/67w==
+=y/9D
+-----END PGP SIGNATURE-----
+
+--Oiv9uiLrevHtW1RS--
