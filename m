@@ -1,54 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933163AbeEWOCw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 10:02:52 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:47084 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932342AbeEWOCt (ORCPT
+        id S933179AbeEWODh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 10:03:37 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:37637 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932342AbeEWODg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 10:02:49 -0400
-X-Google-Smtp-Source: AB8JxZpELT9aRo2aBczNVmPEUznVcgsXZtAlxMjPt4Vw5x9+wwgnC9/x9bVGgO02wgGvX79zjK72KHLYME70MQurSOQ=
+        Wed, 23 May 2018 10:03:36 -0400
+X-Google-Smtp-Source: AB8JxZo3uq4A1V9w5TCzyNUf14ccNcESr/NYRyrthQsStXRRBg2eKTuNEvKChlAKrUVILILYZQjiMUUSitG3hCFlb6o=
 MIME-Version: 1.0
-In-Reply-To: <20180523133533.1076-5-mark.rutland@arm.com>
-References: <20180523133533.1076-1-mark.rutland@arm.com> <20180523133533.1076-5-mark.rutland@arm.com>
+In-Reply-To: <20180523133533.1076-14-mark.rutland@arm.com>
+References: <20180523133533.1076-1-mark.rutland@arm.com> <20180523133533.1076-14-mark.rutland@arm.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 23 May 2018 16:02:46 +0200
-X-Google-Sender-Auth: 1pKloS_E6GBXADYQEIW0rFWdcik
-Message-ID: <CAMuHMdUxahNNq=NiOX8eYtgWbtDOBToV633opkR65aXvDj82Tw@mail.gmail.com>
-Subject: Re: [PATCH 04/13] atomics/treewide: make atomic_fetch_add_unless() optional
+Date: Wed, 23 May 2018 16:03:35 +0200
+X-Google-Sender-Auth: xxfvgMh0oJT9Ox-EbDHM4h_7bGI
+Message-ID: <CAMuHMdUy-Vm+mFW6zbd6pe-p+j1gKoZk9BY=RtKezQ6eJLG8Rg@mail.gmail.com>
+Subject: Re: [PATCH 13/13] atomics/treewide: make test ops optional
 To: Mark Rutland <mark.rutland@arm.com>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Boqun Feng <boqun.feng@gmail.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>, Vineet Gupta <vgupta@synopsys.com>
+        Will Deacon <will.deacon@arm.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Wed, May 23, 2018 at 3:35 PM, Mark Rutland <mark.rutland@arm.com> wrote:
-> Several architectures these have a near-identical implementation based
-> on atomic_read() and atomic_cmpxchg() that we can instead define in
-> <linux/atomic.h>, so let's do so, using something close to the existing
-> x86 implementation with try_cmpxchg().
+> Some of the atomics return the result of a test applied after the atomic
+> operation, and almost all architectures implement these as trivial
+> wrappers around the underlying atomic. Specifically:
 >
-> Where an architecture provides its own atomic_fetch_add_unless(), it
-> must define a preprocessor symbol for it. The instrumented atomics are
-> updated accordingly.
+> * <atomic>_inc_and_test(v) is (<atomic>_inc_return(v) == 0)
 >
-> Note that arch/arc's existing atomic_fetch_add_unless() had redundant
-> barriers, as these are already present in its atomic_cmpxchg()
-> implementation.
+> * <atomic>_dec_and_test(v) is (<atomic>_dec_return(v) == 0)
+>
+> * <atomic>_sub_and_test(i, v) is (<atomic>_sub_return(i, v) == 0)
+>
+> * <atomic>_add_negative(i, v) is (<atomic>_add_return(i, v) < 0)
+>
+> Rather than have these definitions duplicated in all architectures, with
+> minor inconsistencies in formatting and documentation, let's make these
+> operations optional, with default fallbacks as above. Implementations
+> must now provide a preprocessor symbol.
+>
+> The instrumented atomics are updated accordingly.
+>
+> Both x86 and m68k have custom implementations, which are left as-is,
+> given preprocessor symbols to avoid being overridden.
 >
 > There should be no functional change as a result of this patch.
 >
 > Signed-off-by: Mark Rutland <mark.rutland@arm.com>
 
->  arch/m68k/include/asm/atomic.h            | 15 ---------------
->  include/linux/atomic.h                    | 23 +++++++++++++++++++++++
+>  arch/m68k/include/asm/atomic.h            |   4 +
 
 For m68k:
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
 Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
 Gr{oetje,eeting}s,
