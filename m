@@ -1,90 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932134AbeEWI55 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 04:57:57 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59140 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754334AbeEWI5y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 04:57:54 -0400
-Subject: Re: [RFC V4 PATCH 7/8] vhost: packed ring support
-To: Wei Xu <wexu@redhat.com>
-Cc: mst@redhat.com, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jfreimann@redhat.com,
-        tiwei.bie@intel.com
-References: <1526473941-16199-1-git-send-email-jasowang@redhat.com>
- <1526473941-16199-8-git-send-email-jasowang@redhat.com>
- <20180522165448.GA13523@wei-ubt>
- <e12d4055-6ae6-4d00-ae8b-1acd88633f48@redhat.com>
- <20180523071727.GA13373@wei-ubt>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <d2f9192f-9a4c-da35-72b5-c55df1efc01e@redhat.com>
-Date: Wed, 23 May 2018 16:57:46 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S932145AbeEWJBJ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 05:01:09 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:34929 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754378AbeEWJBG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 05:01:06 -0400
+X-Google-Smtp-Source: AB8JxZpHBwMCLHfvddBII282QaLulOths3mvnAQluWRhHrL/GCoxwD+L84+s2mjuGn/1hdGA3Fj69w==
+Date: Wed, 23 May 2018 14:31:01 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Joel Fernandes <joel@joelfernandes.org>
+Cc: "Joel Fernandes (Google.)" <joelaf@google.com>,
+        linux-kernel@vger.kernel.org,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Luca Abeni <luca.abeni@santannapisa.it>, Todd Kjos <tkjos@google.com>,
+        claudio@evidence.eu.com, kernel-team@android.com,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2] schedutil: Allow cpufreq requests to be made even
+ when kthread kicked
+Message-ID: <20180523090101.6xifikvjpirqafox@vireshk-i7>
+References: <20180518185501.173552-1-joel@joelfernandes.org>
+ <20180522103415.cuutobi5kbhj4gcw@vireshk-i7>
+ <20180522220953.GB40506@joelaf.mtv.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <20180523071727.GA13373@wei-ubt>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180522220953.GB40506@joelaf.mtv.corp.google.com>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 22-05-18, 15:09, Joel Fernandes wrote:
+> I agree with the race you describe for single policy slow-switch. Good find :)
+> 
+> The mainline sugov_work could also do such reordering in sugov_work, I think. Even
+> with the mutex_unlock in mainline's sugov_work, that work_in_progress write could
+> be reordered by the CPU to happen before the read of next_freq. AIUI,
+> mutex_unlock is expected to be only a release-barrier.
+> 
+> Although to be safe, I could just put an smp_mb() there. I believe with that,
+> no locking would be needed for such case.
+> 
+> I'll send out a v3 with Acks for the original patch, and the send out the
+> smp_mb() as a separate patch if that's Ok.
 
+Maybe it would be better to get the fix (with smp_mb) first and then
+this optimization patch on the top? That would mean that the fix can
+get applied to stable kernels easily.
 
-On 2018年05月23日 15:17, Wei Xu wrote:
-> On Wed, May 23, 2018 at 09:39:28AM +0800, Jason Wang wrote:
->>
->> On 2018年05月23日 00:54, Wei Xu wrote:
->>> On Wed, May 16, 2018 at 08:32:20PM +0800, Jason Wang wrote:
->>>> Signed-off-by: Jason Wang <jasowang@redhat.com>
->>>> ---
->>>>   drivers/vhost/net.c   |   3 +-
->>>>   drivers/vhost/vhost.c | 539 ++++++++++++++++++++++++++++++++++++++++++++++----
->>>>   drivers/vhost/vhost.h |   8 +-
->>>>   3 files changed, 513 insertions(+), 37 deletions(-)
->>>>
->>>> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
->>>> index 8304c30..f2a0f5b 100644
->>>> --- a/drivers/vhost/vhost.c
->>>> +++ b/drivers/vhost/vhost.c
->>>> @@ -1358,6 +1382,8 @@ long vhost_vring_ioctl(struct vhost_dev *d, unsigned int ioctl, void __user *arg
->>>>   			break;
->>>>   		}
->>>>   		vq->last_avail_idx = s.num;
->>>> +		if (vhost_has_feature(vq, VIRTIO_F_RING_PACKED))
->>>> +			vq->avail_wrap_counter = s.num >> 31;
->>>>   		/* Forget the cached index value. */
->>>>   		vq->avail_idx = vq->last_avail_idx;
->>>>   		break;
->>>> @@ -1366,6 +1392,8 @@ long vhost_vring_ioctl(struct vhost_dev *d, unsigned int ioctl, void __user *arg
->>>>   		s.num = vq->last_avail_idx;
->>>>   		if (copy_to_user(argp, &s, sizeof s))
->>>>   			r = -EFAULT;
->>>> +		if (vhost_has_feature(vq, VIRTIO_F_RING_PACKED))
->>>> +			s.num |= vq->avail_wrap_counter << 31;
->>>>   		break;
->>>>   	case VHOST_SET_VRING_ADDR:
->>>>   		if (copy_from_user(&a, argp, sizeof a)) {
->>> 'last_used_idx' also needs to be saved/restored here.
->>>
->>> I have figured out the root cause of broken device after reloading
->>> 'virtio-net' module, all indices have been reset for a reloading but
->>> 'last_used_idx' is not properly reset in this case. This confuses
->>> handle_rx()/tx().
->>>
->>> Wei
->>>
->> Good catch, so we probably need a new ioctl to sync between qemu and vhost.
->>
->> Something like VHOST_SET/GET_USED_BASE.
-> Sure, or can we expand 'vhost_vring_state' to keep them done in a bunch?
-
-It's port of uapi, so we can't.
-
-Thanks
-
->
->> Thanks
->>
+-- 
+viresh
