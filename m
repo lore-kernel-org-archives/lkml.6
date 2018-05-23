@@ -1,109 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932189AbeEWJMO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 05:12:14 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:35982 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754395AbeEWJMI (ORCPT
+        id S932205AbeEWJM0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 05:12:26 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:57416 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754395AbeEWJMY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 05:12:08 -0400
-X-Google-Smtp-Source: AB8JxZrxq8po2DPEkKEPc1kawkwP2+d/H0gQA+vSV+UGiipeqCAKQi1qRCRWnvv93rFVlluzc9+dZ5e7cxF3CqtPl2Q=
+        Wed, 23 May 2018 05:12:24 -0400
+Date: Wed, 23 May 2018 11:12:20 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpio: dwapb: Rework support for 1 interrupt per port A
+ GPIO
+Message-ID: <20180523091220.jfguqui75rup5qpl@verge.net.au>
+References: <1527065564-9127-1-git-send-email-phil.edworthy@renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <1526983321-41949-5-git-send-email-michel.pollet@bp.renesas.com>
-References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com> <1526983321-41949-5-git-send-email-michel.pollet@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 23 May 2018 11:12:07 +0200
-X-Google-Sender-Auth: Lp4bFmeXIfu5GWpgfaiu_U7nYPc
-Message-ID: <CAMuHMdXETt75rGyYRsNEK0O5CO3A-bG70g=-f23y6PO_uK6rWg@mail.gmail.com>
-Subject: Re: [PATCH v6 4/6] ARM: dts: Renesas RZ/N1 SoC base device tree file
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527065564-9127-1-git-send-email-phil.edworthy@renesas.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michel,
+On Wed, May 23, 2018 at 09:52:44AM +0100, Phil Edworthy wrote:
+> Treat DT and ACPI the same as much as possible. Note that we can't use
+> platform_get_irq() to get the DT interrupts as they are in the port
+> sub-node and hence do not have an associated platform device.
+> 
+> This also fixes a problem introduced with error checking when calling
+> platform_get_irq().
 
-On Tue, May 22, 2018 at 12:01 PM, Michel Pollet
-<michel.pollet@bp.renesas.com> wrote:
-> This adds the Renesas RZ/N1D (Part #R9A06G032) SoC bare
-> bone support.
->
-> This currently only handles generic parts (gic, architected timer)
-> and a UART.
-> For simplicity sake, this also relies on the bootloader to set the
-> pinctrl and clocks.
->
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+What is the problem? In general I think fixes should be in separate
+patches.
 
-Thanks for your patch!
-
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/r9a06g032.dtsi
-> @@ -0,0 +1,86 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Base Device Tree Source for the Renesas RZ/N1D (R9A06G032)
-> + *
-> + * Copyright (C) 2018 Renesas Electronics Europe Limited
-> + *
-> + */
+> 
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> ---
+>  drivers/gpio/gpio-dwapb.c | 53 ++++++++++++++++++++---------------------------
+>  1 file changed, 22 insertions(+), 31 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+> index 7dcd06b..15b4154 100644
+> --- a/drivers/gpio/gpio-dwapb.c
+> +++ b/drivers/gpio/gpio-dwapb.c
+> @@ -444,7 +444,7 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
+>  		int i;
+>  
+>  		for (i = 0; i < pp->ngpio; i++) {
+> -			if (pp->irq[i])
+> +			if (pp->irq[i] >= 0)
+>  				irq_set_chained_handler_and_data(pp->irq[i],
+>  						dwapb_irq_handler, gpio);
+>  		}
+> @@ -562,7 +562,7 @@ dwapb_gpio_get_pdata(struct device *dev)
+>  	struct dwapb_platform_data *pdata;
+>  	struct dwapb_port_property *pp;
+>  	int nports;
+> -	int i;
+> +	int i, j;
+>  
+>  	nports = device_get_child_node_count(dev);
+>  	if (nports == 0)
+> @@ -580,6 +580,8 @@ dwapb_gpio_get_pdata(struct device *dev)
+>  
+>  	i = 0;
+>  	device_for_each_child_node(dev, fwnode)  {
+> +		struct device_node *np = NULL;
 > +
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <dt-bindings/clock/rzn1-clock.h>
+>  		pp = &pdata->properties[i++];
+>  		pp->fwnode = fwnode;
+>  
+> @@ -599,46 +601,35 @@ dwapb_gpio_get_pdata(struct device *dev)
+>  			pp->ngpio = 32;
+>  		}
+>  
+> +		pp->irq_shared	= false;
+> +		pp->gpio_base	= -1;
 > +
-> +/ {
-> +       compatible = "renesas,r9a06g032", "renesas,rzn1";
-
-Please drop the "renesas,rzn1".
-
-
-> +       #address-cells = <1>;
-> +       #size-cells = <1>;
+>  		/*
+>  		 * Only port A can provide interrupts in all configurations of
+>  		 * the IP.
+>  		 */
+> -		if (dev->of_node && pp->idx == 0 &&
+> -			fwnode_property_read_bool(fwnode,
+> -						  "interrupt-controller")) {
+> -			struct device_node *np = to_of_node(fwnode);
+> -			unsigned int j;
+> -
+> -			/*
+> -			 * The IP has configuration options to allow a single
+> -			 * combined interrupt or one per gpio. If one per gpio,
+> -			 * some might not be used.
+> -			 */
+> -			for (j = 0; j < pp->ngpio; j++) {
+> -				int irq = of_irq_get(np, j);
+> -				if (irq < 0)
+> -					continue;
+> -
+> -				pp->irq[j] = irq;
+> -				pp->has_irq = true;
+> -			}
+> +		if (pp->idx != 0)
+> +			continue;
+>  
+> -			if (!pp->has_irq)
+> -				dev_warn(dev, "no irq for port%d\n", pp->idx);
+> +		if (dev->of_node && fwnode_property_read_bool(fwnode,
+> +						  "interrupt-controller")) {
+> +			np = to_of_node(fwnode);
+>  		}
+>  
+> -		if (has_acpi_companion(dev) && pp->idx == 0) {
+> -			unsigned int j;
+> +		for (j = 0; j < pp->ngpio; j++) {
+> +			pp->irq[j] = -ENXIO;
+>  
+> -			for (j = 0; j < pp->ngpio; j++) {
+> +			if (np)
+> +				pp->irq[j] = of_irq_get(np, j);
+> +			else if (has_acpi_companion(dev))
+>  				pp->irq[j] = platform_get_irq(to_platform_device(dev), j);
+> -				if (pp->irq[j])
+> -					pp->has_irq = true;
+> -			}
 > +
-> +       cpus {
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +               clocks = <&clock RZN1_DIV_CA7>;
-
-I think the clocks property should be moved to the individual CPU nodes.
-
-> +
-> +               cpu@0 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a7";
-> +                       reg = <0>;
-> +               };
-> +
-> +               cpu@1 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a7";
-> +                       reg = <1>;
-> +               };
-> +       };
-
-The rest looks OK to me (pending acceptance of the clock bindings).
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> +			if (pp->irq[j] >= 0)
+> +				pp->has_irq = true;
+>  		}
+>  
+> -		pp->irq_shared	= false;
+> -		pp->gpio_base	= -1;
+> +		if (!pp->has_irq)
+> +			dev_warn(dev, "no irq for port%d\n", pp->idx);
+>  	}
+>  
+>  	return pdata;
+> -- 
+> 2.7.4
+> 
