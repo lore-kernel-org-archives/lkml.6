@@ -1,111 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933800AbeEWSFh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 14:05:37 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39192 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750866AbeEWSFd (ORCPT
+        id S933878AbeEWSFn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 14:05:43 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:37619 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933706AbeEWSFg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 14:05:33 -0400
+        Wed, 23 May 2018 14:05:36 -0400
+X-Google-Smtp-Source: AB8JxZoTlMyeAf7+JQ0JBxt6RqM+fmRnlhKIz//4fpP90a+ejNdfdLVYokIG2E+Di1zUT5IKwyP+uxlxhUAScfQbz78=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Wed, 23 May 2018 11:05:32 -0700
-From: Rajkumar Manoharan <rmanohar@codeaurora.org>
-To: Erik Stromdahl <erik.stromdahl@gmail.com>
-Cc: Niklas Cassel <niklas.cassel@linaro.org>,
-        Kalle Valo <kvalo@qca.qualcomm.com>,
-        "David S. Miller" <davem@davemloft.net>, ath10k@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-wireless-owner@vger.kernel.org
-Subject: Re: [PATCH v2] ath10k: transmit queued frames after waking queues
-In-Reply-To: <c131da6e-6479-3a40-fbd3-9c61d6690ba8@gmail.com>
-References: <20180521204359.23884-1-niklas.cassel@linaro.org>
- <8195be7603a8cd659d25a9c3d898b891@codeaurora.org>
- <20180522211521.GA26123@localhost.localdomain>
- <c131da6e-6479-3a40-fbd3-9c61d6690ba8@gmail.com>
-Message-ID: <ddcd48cc8b1a77c489214a4f63c54b1a@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+In-Reply-To: <20180523113321.20404-1-mlichvar@redhat.com>
+References: <20180523113321.20404-1-mlichvar@redhat.com>
+From: John Stultz <john.stultz@linaro.org>
+Date: Wed, 23 May 2018 11:05:34 -0700
+Message-ID: <CALAqxLVeOiLu+QAi6A_PGkvi9nxJXvy357kqYDATDnZO69WFqw@mail.gmail.com>
+Subject: Re: [PATCH RFC] timekeeping: Update multiplier when NTP frequency is
+ set directly
+To: Miroslav Lichvar <mlichvar@redhat.com>
+Cc: lkml <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Prarit Bhargava <prarit@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-23 09:25, Erik Stromdahl wrote:
-> On 05/22/2018 11:15 PM, Niklas Cassel wrote:
-> 
-[...]
->> 
->> Perhaps it would be possible to call ath10k_mac_tx_push_pending()
->> from the equivalent to ath10k_htt_txrx_compl_task(),
->> but from SDIO's point of view.
-> An equivalent for SDIO would most likely be 
-> *ath10k_htt_htc_t2h_msg_handler*
-> or any of the other functions called from this function.
-> 
-> *ath10k_txrx_tx_unref* is actually called from 
-> *ath10k_htt_htc_t2h_msg_handler*,
-> so that function could be viewed as an equivalent.
-> 
-> If the call should be added in the bus driver (sdio.c) it should most 
-> likely be
-> placed in *ath10k_sdio_mbox_rx_process_packets*
-> 
-> 		if (!pkt->trailer_only) {
-> 			ep->ep_ops.ep_rx_complete(ar_sdio->ar, pkt->skb);
-> 			ath10k_mac_tx_push_pending(ar_sdio->ar);
-> 		} else {
-> 			kfree_skb(pkt->skb)
-> 		}
-> 
-> The above call would of course result in lot's of calls to
-> *ath10k_mac_tx_push_pending*
-> Adding a htt_num_pending check here wouldn't look nice.
-> 
-> The HL RX path differs from the LL path in that the t2h_msg_handler 
-> returns
-> false indicating that it has consumed the skb.
-> 
-> This is because it is the HL RX indication handler that delivers the 
-> skb's
-> to mac80211.
-> 
-I also dont prefer to call *_push_pending for every HTC packets. Similar 
-to
-LL approach, call ath10k_mac_tx_push_pending after processing all 
-pending
-rx messages like calling from ath10k_sdio_mbox_rxmsg_pending_handler.
+On Wed, May 23, 2018 at 4:33 AM, Miroslav Lichvar <mlichvar@redhat.com> wrote:
+> When the NTP frequency is set directly from userspace using the
+> ADJ_FREQUENCY or ADJ_TICK timex mode, immediately update the
+> timekeeper's multiplier instead of waiting for the next tick.
+>
+> This removes a hidden non-deterministic delay in setting of the
+> frequency and allows an extremely tight control of the system clock
+> with update rates close to or even exceeding the kernel HZ.
 
---- a/drivers/net/wireless/ath/ath10k/sdio.c
-+++ b/drivers/net/wireless/ath/ath10k/sdio.c
-@@ -807,6 +807,8 @@ static int 
-ath10k_sdio_mbox_rxmsg_pending_handler(struct ath10k *ar,
-                 ath10k_warn(ar, "failed to get pending recv messages: 
-%d\n",
-                             ret);
+Thanks for the patch!
 
-+       ath10k_mac_tx_push_pending(ar);
-+
-         return ret;
-  }
+I feel like we tried this years back, but had to revert it. But its
+been awhile. Am I confusing things?
 
-> Another solution could be to add an *else-statement* as a part of the
-> *if (release)*
-> in *ath10k_htt_htc_t2h_msg_handler*, where
-> *ath10k_mac_tx_push_pending* could be called.
-> 
-> Something like this perhaps:
-> 
-> 	/* Free the indication buffer */
-> 	if (release)
-> 		dev_kfree_skb_any(skb);
-> 	else if (!ar->htt.num_pending_tx)
-> 		ath10k_mac_tx_push_pending(ar);
-> 
-> I think I prefer your original patch though.
->> 
 
-Better to do changes as HL specific path instead in common path.
-The above change will impact QCA6174 based devices.
+> diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+> index 49cbceef5deb..6922dae7317c 100644
+> --- a/kernel/time/timekeeping.c
+> +++ b/kernel/time/timekeeping.c
+> @@ -2047,10 +2047,6 @@ void update_wall_time(void)
+>                                    tk->tkr_mono.cycle_last, tk->tkr_mono.mask);
+>  #endif
+>
+> -       /* Check if there's really nothing to do */
+> -       if (offset < real_tk->cycle_interval)
+> -               goto out;
+> -
 
--Rajkumar
+Apologies again, as I don't have a lot of context here these days, but
+ this could mean we end up doing unnecessary work on every
+update_wall_time, no?
+
+Would a "force" flag be better to pass to update_wall_time() to only
+avoid the short-cut in the non-adjtimex case?
+
+thanks
+-john
