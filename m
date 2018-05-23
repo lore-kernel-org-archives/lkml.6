@@ -1,149 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754575AbeEWJGl (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 05:06:41 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:57292 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754378AbeEWJGi (ORCPT
+        id S932138AbeEWJHV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 05:07:21 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:51592 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754378AbeEWJHS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 05:06:38 -0400
-Date: Wed, 23 May 2018 11:06:33 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, phil.edworthy@renesas.com,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v6 4/6] ARM: dts: Renesas RZ/N1 SoC base device tree file
-Message-ID: <20180523090633.jiasuisfu55a3pw2@verge.net.au>
-References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
- <1526983321-41949-5-git-send-email-michel.pollet@bp.renesas.com>
+        Wed, 23 May 2018 05:07:18 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526983321-41949-5-git-send-email-michel.pollet@bp.renesas.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Date: Wed, 23 May 2018 11:07:17 +0200
+From: Stefan Agner <stefan@agner.ch>
+To: =?UTF-8?Q?S=C3=A9bastien_Szymanski?=
+        <sebastien.szymanski@armadeus.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] ARM: dts: imx6ull-colibri-wifi: remove operating
+ points
+In-Reply-To: <20180523043032.2htohlypynnvpiye@vireshk-i7>
+References: <20180522062853.24799-1-sebastien.szymanski@armadeus.com>
+ <20180522062853.24799-3-sebastien.szymanski@armadeus.com>
+ <20180523043032.2htohlypynnvpiye@vireshk-i7>
+Message-ID: <dc3523800c274e96dc5642c9c5b65ebe@agner.ch>
+User-Agent: Roundcube Webmail/1.3.4
+X-Spamd-Result: default: False [-3.10 / 15.00];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MID_RHS_MATCH_FROM(0.00)[];
+         RCPT_COUNT_TWELVE(0.00)[12];
+         TAGGED_RCPT(0.00)[dt];
+         MIME_GOOD(-0.10)[text/plain];
+         FROM_HAS_DN(0.00)[];
+         FROM_EQ_ENVFROM(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         TO_DN_SOME(0.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
+         RCVD_TLS_ALL(0.00)[];
+         BAYES_HAM(-3.00)[100.00%];
+         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 11:01:24AM +0100, Michel Pollet wrote:
-> This adds the Renesas RZ/N1D (Part #R9A06G032) SoC bare
-> bone support.
+On 23.05.2018 06:30, Viresh Kumar wrote:
+> On 22-05-18, 08:28, Sébastien Szymanski wrote:
+>> Operating points are now defined in the imx6ull.dtsi file so remove
+>> them from board device trees.
+>>
+>> Signed-off-by: Sébastien Szymanski <sebastien.szymanski@armadeus.com>
+>> ---
+>>  arch/arm/boot/dts/imx6ull-colibri-wifi.dtsi | 14 --------------
+>>  1 file changed, 14 deletions(-)
+>>
+>> diff --git a/arch/arm/boot/dts/imx6ull-colibri-wifi.dtsi b/arch/arm/boot/dts/imx6ull-colibri-wifi.dtsi
+>> index 3dffbcd50bf6..183193e8580d 100644
+>> --- a/arch/arm/boot/dts/imx6ull-colibri-wifi.dtsi
+>> +++ b/arch/arm/boot/dts/imx6ull-colibri-wifi.dtsi
+>> @@ -20,20 +20,6 @@
+>>
+>>  &cpu0 {
+>>  	clock-frequency = <792000000>;
+>> -	operating-points = <
+>> -		/* kHz	uV */
+>> -		792000  1225000
+>> -		528000	1175000
+>> -		396000	1025000
+>> -		198000	950000
+>> -	>;
+>> -	fsl,soc-operating-points = <
+>> -		/* KHz	uV */
+>> -		792000  1175000
+>> -		528000	1175000
+>> -		396000	1175000
+>> -		198000	1175000
+>> -	>;
+>>  };
+>>
+>>  &iomuxc {
 > 
-> This currently only handles generic parts (gic, architected timer)
-> and a UART.
-> For simplicity sake, this also relies on the bootloader to set the
-> pinctrl and clocks.
-> 
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> Maybe you should merge this with the previous patch itself.
 
-I am marking this and the following patch as deferred
-pending acceptance of the bindings it uses.
 
-> ---
->  arch/arm/boot/dts/r9a06g032.dtsi | 86 ++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 86 insertions(+)
->  create mode 100644 arch/arm/boot/dts/r9a06g032.dtsi
-> 
-> diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-> new file mode 100644
-> index 0000000..c7764c7
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/r9a06g032.dtsi
-> @@ -0,0 +1,86 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Base Device Tree Source for the Renesas RZ/N1D (R9A06G032)
-> + *
-> + * Copyright (C) 2018 Renesas Electronics Europe Limited
-> + *
-> + */
-> +
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <dt-bindings/clock/rzn1-clock.h>
-> +
-> +/ {
-> +	compatible = "renesas,r9a06g032", "renesas,rzn1";
-> +	#address-cells = <1>;
-> +	#size-cells = <1>;
-> +
-> +	cpus {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		clocks = <&clock RZN1_DIV_CA7>;
-> +
-> +		cpu@0 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a7";
-> +			reg = <0>;
-> +		};
-> +
-> +		cpu@1 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a7";
-> +			reg = <1>;
-> +		};
-> +	};
-> +
-> +	soc {
-> +		compatible = "simple-bus";
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		interrupt-parent = <&gic>;
-> +		ranges;
-> +
-> +		clock: clocks@4000c000 {
-> +			compatible = "renesas,r9a06g032-clocks",
-> +					"renesas,rzn1-clocks";
-> +			reg = <0x4000c000 0x1000>;
-> +			status = "okay";
-> +			#clock-cells = <1>;
-> +		};
-> +
-> +		uart0: serial@40060000 {
-> +			compatible = "snps,dw-apb-uart";
-> +			reg = <0x40060000 0x400>;
-> +			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-> +			reg-shift = <2>;
-> +			reg-io-width = <4>;
-> +			clocks = <&clock RZN1_CLK_UART0>;
-> +			clock-names = "baudclk";
-> +			status = "disabled";
-> +		};
-> +
-> +		gic: gic@44101000 {
-> +			compatible = "arm,cortex-a7-gic", "arm,gic-400";
-> +			interrupt-controller;
-> +			#interrupt-cells = <3>;
-> +			reg = <0x44101000 0x1000>, /* Distributer */
-> +			      <0x44102000 0x2000>, /* CPU interface */
-> +			      <0x44104000 0x2000>, /* Virt interface control */
-> +			      <0x44106000 0x2000>; /* Virt CPU interface */
-> +			interrupts =
-> +				<GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
-> +		};
-> +	};
-> +
-> +	timer {
-> +		compatible = "arm,cortex-a7-timer",
-> +			     "arm,armv7-timer";
-> +		interrupt-parent = <&gic>;
-> +		arm,cpu-registers-not-fw-configured;
-> +		always-on;
-> +		interrupts =
-> +			<GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-> +			<GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-> +			<GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-> +			<GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
-> +	};
-> +};
-> -- 
-> 2.7.4
-> 
+I am with Viresh here, I rather prefer this in a single commit so it is
+clear that frequencies moved to the base device tree.
+
+Also, add a comment that frequency selection is now handled in code,
+e.g.:
+
+"The valid frequencies for a particular SKU are now selected by the
+cpufreq driver according to ratings stored in OTP fuses."
+
+But the two device tree changes with the driver do what they should do
+here, so:
+
+Tested-by: Stefan Agner <stefan@agner.ch>
+Reviewed-by: Stefan Agner <stefan@agner.ch>
+
+--
+Stefan
