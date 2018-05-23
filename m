@@ -1,115 +1,391 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933542AbeEWPM1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 11:12:27 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45310 "EHLO mx1.redhat.com"
+        id S933481AbeEWPMP (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 11:12:15 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59964 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933475AbeEWPMV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 11:12:21 -0400
+        id S933151AbeEWPMK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 11:12:10 -0400
 From: David Hildenbrand <david@redhat.com>
 To: linux-mm@kvack.org
 Cc: linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Reza Arbab <arbab@linux.vnet.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH v1 05/10] mm/memory_hotplug: limit offline_pages() to sizes we can actually handle
-Date: Wed, 23 May 2018 17:11:46 +0200
-Message-Id: <20180523151151.6730-6-david@redhat.com>
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Michal Hocko <mhocko@suse.com>, Jan Kara <jack@suse.cz>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        Hugh Dickins <hughd@google.com>, Huang Ying <ying.huang@intel.com>,
+        Miles Chen <miles.chen@mediatek.com>, Vlastimil Babka <vbabka@suse.cz>,
+        Reza Arbab <arbab@linux.vnet.ibm.com>, Mel Gorman <mgorman@suse.de>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: [PATCH v1 01/10] mm: introduce and use PageOffline()
+Date: Wed, 23 May 2018 17:11:42 +0200
+Message-Id: <20180523151151.6730-2-david@redhat.com>
 In-Reply-To: <20180523151151.6730-1-david@redhat.com>
 References: <20180523151151.6730-1-david@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We have to take care of MAX_ORDER. Page blocks might contain references
-to the next page block. So sometimes a page block cannot be offlined
-independently. E.g. on x86: page block size is 2MB, MAX_ORDER -1 (10)
-allows 4MB allocations.
+offline_pages() theoretically works on sub-section sizes. Problem is that
+we have no way to know which pages are actually offline. So right now,
+offline_pages() will always mark the whole section as offline.
 
-E.g. a buddy page could either overlap at the beginning or the end of the
-range to offline. While the end case could be handled easily (shrink the
-buddy page), overlaps at the beginning are hard to handle (unknown page
-order).
+In addition, in virtualized environments, we might soon have pages that are
+logically offline and shall no longer be read or written - e.g. because
+we offline a subsection and told our hypervisor to remove it. We need a way
+(e.g. for kdump) to flag these pages (like PG_hwpoison), otherwise kdump
+will happily access all memory and crash the system when accessing
+memory that is not meant to be accessed.
 
-Let document offline_pages() while at it.
+Marking pages as offline will also later to give kdump that information
+and to mark a section as offline once all pages are offline. It is save
+to use mapcount as all pages are logically removed from the system
+(offline_pages()).
 
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+This e.g. allows us to add/remove memory to Linux in a VM in 4MB chunks
+
+Please note that we can't use PG_reserved for this. PG_reserved does not
+imply that
+- a page should not be dumped
+- a page is offline and we should mark the section offline
+
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc: Reza Arbab <arbab@linux.vnet.ibm.com>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Jan Kara <jack@suse.cz>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: "Jérôme Glisse" <jglisse@redhat.com>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>
+Cc: Souptick Joarder <jrdr.linux@gmail.com>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Huang Ying <ying.huang@intel.com>
+Cc: Miles Chen <miles.chen@mediatek.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Reza Arbab <arbab@linux.vnet.ibm.com>
+Cc: Mel Gorman <mgorman@suse.de>
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- include/linux/memory_hotplug.h |  6 ++++++
- mm/memory_hotplug.c            | 22 ++++++++++++++++++----
- 2 files changed, 24 insertions(+), 4 deletions(-)
+ drivers/base/node.c        |  1 -
+ include/linux/memory.h     |  1 -
+ include/linux/mm.h         | 10 ++++++++++
+ include/linux/page-flags.h |  9 +++++++++
+ mm/memory_hotplug.c        | 32 +++++++++++++++++++++++---------
+ mm/page_alloc.c            | 32 ++++++++++++++++++--------------
+ mm/sparse.c                | 25 ++++++++++++++++++++++++-
+ 7 files changed, 84 insertions(+), 26 deletions(-)
 
-diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
-index e0e49b5b1ee1..d71829d54360 100644
---- a/include/linux/memory_hotplug.h
-+++ b/include/linux/memory_hotplug.h
-@@ -294,6 +294,12 @@ static inline void pgdat_resize_init(struct pglist_data *pgdat) {}
- #endif /* !(CONFIG_MEMORY_HOTPLUG || CONFIG_DEFERRED_STRUCT_PAGE_INIT) */
+diff --git a/drivers/base/node.c b/drivers/base/node.c
+index 7a3a580821e0..58a889b2b2f4 100644
+--- a/drivers/base/node.c
++++ b/drivers/base/node.c
+@@ -408,7 +408,6 @@ int register_mem_sect_under_node(struct memory_block *mem_blk, int nid,
+ 	if (!mem_blk)
+ 		return -EFAULT;
  
- #ifdef CONFIG_MEMORY_HOTREMOVE
+-	mem_blk->nid = nid;
+ 	if (!node_online(nid))
+ 		return 0;
+ 
+diff --git a/include/linux/memory.h b/include/linux/memory.h
+index 31ca3e28b0eb..9f8cd856ca1e 100644
+--- a/include/linux/memory.h
++++ b/include/linux/memory.h
+@@ -33,7 +33,6 @@ struct memory_block {
+ 	void *hw;			/* optional pointer to fw/hw data */
+ 	int (*phys_callback)(struct memory_block *);
+ 	struct device dev;
+-	int nid;			/* NID for this memory block */
+ };
+ 
+ int arch_get_memory_phys_device(unsigned long start_pfn);
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index c6fa9a255dbf..197c251be775 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1111,7 +1111,15 @@ static inline void set_page_address(struct page *page, void *address)
+ {
+ 	page->virtual = address;
+ }
++static void set_page_virtual(struct page *page, and enum zone_type zone)
++{
++	/* The shift won't overflow because ZONE_NORMAL is below 4G. */
++	if (!is_highmem_idx(zone))
++		set_page_address(page, __va(pfn << PAGE_SHIFT));
++}
+ #define page_address_init()  do { } while(0)
++#else
++#define set_page_virtual(page, zone)  do { } while(0)
+ #endif
+ 
+ #if defined(HASHED_PAGE_VIRTUAL)
+@@ -2063,6 +2071,8 @@ extern unsigned long find_min_pfn_with_active_regions(void);
+ extern void free_bootmem_with_active_regions(int nid,
+ 						unsigned long max_low_pfn);
+ extern void sparse_memory_present_with_active_regions(int nid);
++extern void __meminit init_single_page(struct page *page, unsigned long pfn,
++				       unsigned long zone, int nid);
+ 
+ #endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
+ 
+diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+index e34a27727b9a..07ec6e48073b 100644
+--- a/include/linux/page-flags.h
++++ b/include/linux/page-flags.h
+@@ -686,6 +686,15 @@ PAGE_MAPCOUNT_OPS(Balloon, BALLOON)
+ #define PAGE_KMEMCG_MAPCOUNT_VALUE		(-512)
+ PAGE_MAPCOUNT_OPS(Kmemcg, KMEMCG)
+ 
 +/*
-+ * Isolation and offlining code cannot deal with pages (e.g. buddy)
-+ * overlapping with the range to be offlined yet.
++ * PageOffline() indicates that a page is offline (either never online via
++ * online_pages() or offlined via offline_pages()). Nobody in the system
++ * should have a reference to these pages. In virtual environments,
++ * the backing storage might already have been removed. Don't touch!
 + */
-+#define offline_nr_pages	max((unsigned long)pageblock_nr_pages, \
-+				    (unsigned long)MAX_ORDER_NR_PAGES)
++#define PAGE_OFFLINE_MAPCOUNT_VALUE		(-1024)
++PAGE_MAPCOUNT_OPS(Offline, OFFLINE)
++
+ extern bool is_free_buddy_page(struct page *page);
  
- extern bool is_mem_section_removable(unsigned long pfn, unsigned long nr_pages);
- extern void try_offline_node(int nid);
+ __PAGEFLAG(Isolated, isolated, PF_ANY);
 diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 7f7bd2acb55b..c971295a1100 100644
+index f74826cdceea..7f7bd2acb55b 100644
 --- a/mm/memory_hotplug.c
 +++ b/mm/memory_hotplug.c
-@@ -1599,10 +1599,9 @@ static int __ref __offline_pages(unsigned long start_pfn,
- 	struct zone *zone;
- 	struct memory_notify arg;
+@@ -250,6 +250,7 @@ static int __meminit __add_section(int nid, unsigned long phys_start_pfn,
+ 		struct vmem_altmap *altmap, bool want_memblock)
+ {
+ 	int ret;
++	int i;
  
--	/* at least, alignment against pageblock is necessary */
--	if (!IS_ALIGNED(start_pfn, pageblock_nr_pages))
-+	if (!IS_ALIGNED(start_pfn, offline_nr_pages))
- 		return -EINVAL;
--	if (!IS_ALIGNED(end_pfn, pageblock_nr_pages))
-+	if (!IS_ALIGNED(end_pfn, offline_nr_pages))
- 		return -EINVAL;
- 	/* This makes hotplug much easier...and readable.
- 	   we assume this for now. .*/
-@@ -1700,7 +1699,22 @@ static int __ref __offline_pages(unsigned long start_pfn,
- 	return ret;
+ 	if (pfn_valid(phys_start_pfn))
+ 		return -EEXIST;
+@@ -258,6 +259,25 @@ static int __meminit __add_section(int nid, unsigned long phys_start_pfn,
+ 	if (ret < 0)
+ 		return ret;
+ 
++	/*
++	 * Mark all the pages in the section as offline before creating the
++	 * memblock and onlining any sub-sections (and therefore marking the
++	 * whole section as online). Mark them reserved so nobody will stumble
++	 * over a half inititalized state.
++	 */
++	for (i = 0; i < PAGES_PER_SECTION; i++) {
++		unsigned long pfn = phys_start_pfn + i;
++		struct page *page;
++		if (!pfn_valid(pfn))
++			continue;
++		page = pfn_to_page(pfn);
++
++		/* dummy zone, the actual one will be set when onlining pages */
++		init_single_page(page, pfn, ZONE_NORMAL, nid);
++		SetPageReserved(page);
++		__SetPageOffline(page);
++	}
++
+ 	if (!want_memblock)
+ 		return 0;
+ 
+@@ -651,6 +671,7 @@ EXPORT_SYMBOL_GPL(__online_page_increment_counters);
+ 
+ void __online_page_free(struct page *page)
+ {
++	__ClearPageOffline(page);
+ 	__free_reserved_page(page);
+ }
+ EXPORT_SYMBOL_GPL(__online_page_free);
+@@ -891,15 +912,8 @@ int __ref online_pages(unsigned long pfn, unsigned long nr_pages, int online_typ
+ 	int nid;
+ 	int ret;
+ 	struct memory_notify arg;
+-	struct memory_block *mem;
+-
+-	/*
+-	 * We can't use pfn_to_nid() because nid might be stored in struct page
+-	 * which is not yet initialized. Instead, we find nid from memory block.
+-	 */
+-	mem = find_memory_block(__pfn_to_section(pfn));
+-	nid = mem->nid;
+ 
++	nid = pfn_to_nid(pfn);
+ 	/* associate pfn range with the zone */
+ 	zone = move_pfn_range(online_type, nid, pfn, nr_pages);
+ 
+@@ -1426,7 +1440,7 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
  }
  
--/* Must be protected by mem_hotplug_begin() or a device_lock */
-+/**
-+ * offline_pages - offline pages in a given range (that are currently online)
-+ * @start_pfn: start pfn of the memory range
-+ * @nr_pages: the number of pages
-+ *
-+ * This function tries to offline the given pages. The alignment/size that
-+ * can be used is given by offline_nr_pages.
-+ *
-+ * Returns 0 if sucessful, -EBUSY if the pages cannot be offlined and
-+ * -EINVAL if start_pfn/nr_pages is not properly aligned or not in a zone.
-+ * -EINTR is returned if interrupted by a signal.
-+ *
-+ * Bad things will happen if pages in the range are already offline.
-+ *
-+ * Must be protected by mem_hotplug_begin() or a device_lock
-+ */
- int offline_pages(unsigned long start_pfn, unsigned long nr_pages)
+ /*
+- * remove from free_area[] and mark all as Reserved.
++ * remove from free_area[] and mark all as Reserved and Offline.
+  */
+ static int
+ offline_isolated_pages_cb(unsigned long start, unsigned long nr_pages,
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 905db9d7962f..cd75686ff1d7 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -1171,7 +1171,7 @@ static void free_one_page(struct zone *zone,
+ 	spin_unlock(&zone->lock);
+ }
+ 
+-static void __meminit __init_single_page(struct page *page, unsigned long pfn,
++void __meminit init_single_page(struct page *page, unsigned long pfn,
+ 				unsigned long zone, int nid)
  {
- 	return __offline_pages(start_pfn, start_pfn + nr_pages);
+ 	mm_zero_struct_page(page);
+@@ -1181,11 +1181,7 @@ static void __meminit __init_single_page(struct page *page, unsigned long pfn,
+ 	page_cpupid_reset_last(page);
+ 
+ 	INIT_LIST_HEAD(&page->lru);
+-#ifdef WANT_PAGE_VIRTUAL
+-	/* The shift won't overflow because ZONE_NORMAL is below 4G. */
+-	if (!is_highmem_idx(zone))
+-		set_page_address(page, __va(pfn << PAGE_SHIFT));
+-#endif
++	set_page_virtual(page, zone);
+ }
+ 
+ #ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
+@@ -1206,7 +1202,7 @@ static void __meminit init_reserved_page(unsigned long pfn)
+ 		if (pfn >= zone->zone_start_pfn && pfn < zone_end_pfn(zone))
+ 			break;
+ 	}
+-	__init_single_page(pfn_to_page(pfn), pfn, zid, nid);
++	init_single_page(pfn_to_page(pfn), pfn, zid, nid);
+ }
+ #else
+ static inline void init_reserved_page(unsigned long pfn)
+@@ -1523,7 +1519,7 @@ static unsigned long  __init deferred_init_pages(int nid, int zid,
+ 		} else {
+ 			page++;
+ 		}
+-		__init_single_page(page, pfn, zid, nid);
++		init_single_page(page, pfn, zid, nid);
+ 		nr_pages++;
+ 	}
+ 	return (nr_pages);
+@@ -5514,9 +5510,13 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+ 
+ not_early:
+ 		page = pfn_to_page(pfn);
+-		__init_single_page(page, pfn, zone, nid);
+-		if (context == MEMMAP_HOTPLUG)
+-			SetPageReserved(page);
++		if (context == MEMMAP_HOTPLUG) {
++			/* everything but the zone was inititalized */
++			set_page_zone(page, zone);
++			set_page_virtual(page, zone);
++		}
++		else
++			init_single_page(page, pfn, zone, nid);
+ 
+ 		/*
+ 		 * Mark the block movable so that blocks are reserved for
+@@ -6404,7 +6404,7 @@ void __paginginit free_area_init_node(int nid, unsigned long *zones_size,
+ #ifdef CONFIG_HAVE_MEMBLOCK
+ /*
+  * Only struct pages that are backed by physical memory are zeroed and
+- * initialized by going through __init_single_page(). But, there are some
++ * initialized by going through init_single_page(). But, there are some
+  * struct pages which are reserved in memblock allocator and their fields
+  * may be accessed (for example page_to_pfn() on some configuration accesses
+  * flags). We must explicitly zero those struct pages.
+@@ -8005,7 +8005,6 @@ __offline_isolated_pages(unsigned long start_pfn, unsigned long end_pfn)
+ 			break;
+ 	if (pfn == end_pfn)
+ 		return;
+-	offline_mem_sections(pfn, end_pfn);
+ 	zone = page_zone(pfn_to_page(pfn));
+ 	spin_lock_irqsave(&zone->lock, flags);
+ 	pfn = start_pfn;
+@@ -8022,11 +8021,13 @@ __offline_isolated_pages(unsigned long start_pfn, unsigned long end_pfn)
+ 		if (unlikely(!PageBuddy(page) && PageHWPoison(page))) {
+ 			pfn++;
+ 			SetPageReserved(page);
++			__SetPageOffline(page);
+ 			continue;
+ 		}
+ 
+ 		BUG_ON(page_count(page));
+ 		BUG_ON(!PageBuddy(page));
++		BUG_ON(PageOffline(page));
+ 		order = page_order(page);
+ #ifdef CONFIG_DEBUG_VM
+ 		pr_info("remove from free list %lx %d %lx\n",
+@@ -8035,11 +8036,14 @@ __offline_isolated_pages(unsigned long start_pfn, unsigned long end_pfn)
+ 		list_del(&page->lru);
+ 		rmv_page_order(page);
+ 		zone->free_area[order].nr_free--;
+-		for (i = 0; i < (1 << order); i++)
++		for (i = 0; i < (1 << order); i++) {
+ 			SetPageReserved((page+i));
++			__SetPageOffline(page + i);
++		}
+ 		pfn += (1 << order);
+ 	}
+ 	spin_unlock_irqrestore(&zone->lock, flags);
++	offline_mem_sections(start_pfn, end_pfn);
+ }
+ #endif
+ 
+diff --git a/mm/sparse.c b/mm/sparse.c
+index 73dc2fcc0eab..645d8a4e41a0 100644
+--- a/mm/sparse.c
++++ b/mm/sparse.c
+@@ -623,7 +623,24 @@ void online_mem_sections(unsigned long start_pfn, unsigned long end_pfn)
+ }
+ 
+ #ifdef CONFIG_MEMORY_HOTREMOVE
+-/* Mark all memory sections within the pfn range as online */
++static bool all_pages_in_section_offline(unsigned long section_nr)
++{
++	unsigned long pfn = section_nr_to_pfn(section_nr);
++	struct page *page;
++	int i;
++
++	for (i = 0; i < PAGES_PER_SECTION; i++, pfn++) {
++		if (!pfn_valid(pfn))
++			continue;
++
++		page = pfn_to_page(pfn);
++		if (!PageOffline(page))
++			return false;
++	}
++	return true;
++}
++
++/* Try to mark all memory sections within the pfn range as offline */
+ void offline_mem_sections(unsigned long start_pfn, unsigned long end_pfn)
+ {
+ 	unsigned long pfn;
+@@ -639,6 +656,12 @@ void offline_mem_sections(unsigned long start_pfn, unsigned long end_pfn)
+ 		if (WARN_ON(!valid_section_nr(section_nr)))
+ 			continue;
+ 
++		/* if we don't cover whole sections, check all pages */
++		if ((section_nr_to_pfn(section_nr) != start_pfn ||
++		     start_pfn + PAGES_PER_SECTION >= end_pfn) &&
++		    !all_pages_in_section_offline(section_nr))
++			continue;
++
+ 		ms = __nr_to_section(section_nr);
+ 		ms->section_mem_map &= ~SECTION_IS_ONLINE;
+ 	}
 -- 
 2.17.0
