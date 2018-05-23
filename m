@@ -1,31 +1,31 @@
 Return-Path: <yehs2007@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1527095797; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1527095651; cv=none;
         d=google.com; s=arc-20160816;
-        b=OFFxd+OW5rkaBh+ejVY5vlX9E5D7qOM/6MB2z9N7JerPyecXUvKC6ZR29sXBtYJ/CG
-         qVkvhncp/TbJlBBvdS4wa/F0VZ8Qlt1ghuTt7A6RHN73ZmgMZkTRltcx6C9qvC+y2xMD
-         FORAfRiEVhzIlqsn4SVv6DMwfi5FhXSK/lhvMpBEBA6nv6DfeP9P0tMOT2jCsPok/o3P
-         ZDMZ3AJXOF4EWayoWR5IzDkcpvMyP0nga9EmRwyHVfqEgfq9nj67h+JAnVLNiAQr5OSO
-         7zTz90gF0cRkm0TvytWt9+7eor2Ua/mz24T3O/YmJi/0ZtQs3eqK4nDBhz0cwpOGPCck
-         MqYw==
+        b=FWkNElUSC1xaFuGADzjq/2J3oBpIeXTs/Ew5pMHAQZ1Yx3Fi7ahdP6/Y7TIvZwxExF
+         uKQuHynyOrLTOSuo886MxJo982t3WhpKaXcLW4rDP6vGmDS+P8He2mowa2FntmxbLewX
+         gMBN0h62om5lW7FSpNgvy7+RHC6J2peNgp+fARKZIJ6JZdCYf02lqDbismkgL9jtUORy
+         cKzBfkpwYJycUtH8w4s/rBzPIcH66TCcKj4kBxvSrf7OHj8Baa86i5jyhniGuE9hHvNU
+         SLX5EwAYEw9W/M1hc2hJ8rAkqUWP6XQO18GB/ZopaXbnUBjLfdLVS83BD4Zf4UXg5Zgn
+         +C3w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=message-id:date:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
-        bh=WN3xM8hvrCzA4kc2v1+oKvwlya33IS5HgHqC0tiaCqg=;
-        b=NfzQAlDrev9DlciIi/lF5U+k6yxJjXMa+GYqEMxoMhbEaGd2b+XLRF2Ka0GQCFY6ia
-         1Of7IMEbgLQGf1uf6XBWIVs8UJkj6TolFomk5+hzUqtgeWmbTPBlNib4Ks7jryJc7qHm
-         JW3d9XonS0csuJCAiHwghQN7RlKje5gVxOoiDBEqbUjZaRXLWQSJJGQUvtrbC1qKh+mG
-         dexDl9zWkY8KWCnDn370w3/aIYR+Go8UvV8ZW9szpFQMdw11sNMX9IRqj/2dJoaVXjai
-         01gcWzf4AiqB8cU5ovDDn/vYbrmpVRblwB0L1xkmBsO8/vX4t0gxVF6EsxUClYiI3adb
-         E/eg==
+        bh=Jc5ICXCG0sq4ebqr99PgbA0c2yw6j3epJGQUQjIuc40=;
+        b=vWQigD5ufAegTLp0X9OJ242B42tYYqDfj37l1g19JL5G1aM9DOtJoWgYe7Brs6wLBs
+         2DCpttxnrIDnEP9gC7gFg78H96xuhIAkDNiAgbQfR/hi+mHJ3F2UsO0rCRrEB2+a/dfl
+         ejUEkrmxaON2pTbE9zahpeX+qKJa6WBvXSxt0lveuSbz1YCzLEUXSGcH9KXzAG1eGh3b
+         h5oc5TC60rLKqlfza/0f5djrWYrD82EU66XQ+lUlzO7yzhXrilZlWZVhV+nsJc+vZYmQ
+         sM1/aFeK3phNH6jc7ihiYNdutemEGS8BskNqkCLaJ0zVXDVazbNMYGukG08bINwwo03O
+         DS8A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=uZ3xSdrn;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=pvwCJlp6;
        spf=pass (google.com: domain of yehs2007@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=yehs2007@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=uZ3xSdrn;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=pvwCJlp6;
        spf=pass (google.com: domain of yehs2007@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=yehs2007@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AB8JxZq6fZN6w10LFzifH+DIo6Ko7FkvG+6YdASooynEr+0cXsciwcspLMNTVoEY6u7gxxcVVDnwCg==
+X-Google-Smtp-Source: AB8JxZorUSONWZo32qfGcRK1YhrjwyNV60ZkDMdev/1XyUs8Ut+gZ/ytxQlS07eumHCbEeUQ3zMHfA==
 From: Huaisheng Ye <yehs2007@gmail.com>
 To: akpm@linux-foundation.org,
 	linux-mm@kvack.org
@@ -44,64 +44,53 @@ Cc: mhocko@suse.com,
 	xen-devel@lists.xenproject.org,
 	linux-btrfs@vger.kernel.org,
 	Huaisheng Ye <yehs1@lenovo.com>,
-	Minchan Kim <minchan@kernel.org>,
-	Nitin Gupta <ngupta@vflare.org>,
-	Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	Philippe Ombredanne <pombredanne@nexb.com>,
 	Christoph Hellwig <hch@infradead.org>
-Subject: [RFC PATCH v3 5/9] drivers/block/zram/zram_drv: update usage of zone modifiers
-Date: Thu, 24 May 2018 01:16:29 +0800
-Message-Id: <1527095789-5668-1-git-send-email-yehs2007@gmail.com>
+Subject: [RFC PATCH v3 9/9] arch/x86/include/asm/page.h: update usage of movableflags
+Date: Thu, 24 May 2018 01:13:41 +0800
+Message-Id: <1527095621-5574-1-git-send-email-yehs2007@gmail.com>
 X-Mailer: git-send-email 1.8.3.1
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1601276002835516278?=
-X-GMAIL-MSGID: =?utf-8?q?1601276002835516278?=
+X-GMAIL-THRID: =?utf-8?q?1601275849153186587?=
+X-GMAIL-MSGID: =?utf-8?q?1601275849153186587?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Huaisheng Ye <yehs1@lenovo.com>
 
-Use __GFP_ZONE_MOVABLE to replace (__GFP_HIGHMEM | __GFP_MOVABLE).
-
-___GFP_DMA, ___GFP_HIGHMEM and ___GFP_DMA32 have been deleted from GFP
-bitmasks, the bottom three bits of GFP mask is reserved for storing
-encoded zone number.
-
-__GFP_ZONE_MOVABLE contains encoded ZONE_MOVABLE and __GFP_MOVABLE flag.
-
-With GFP_ZONE_TABLE, __GFP_HIGHMEM ORing __GFP_MOVABLE means gfp_zone
-should return ZONE_MOVABLE. In order to keep that compatible with
-GFP_ZONE_TABLE, replace (__GFP_HIGHMEM | __GFP_MOVABLE) with
-__GFP_ZONE_MOVABLE.
+GFP_HIGHUSER_MOVABLE doesn't equal to GFP_HIGHUSER | __GFP_MOVABLE,
+modify it to adapt patch of getting rid of GFP_ZONE_TABLE/BAD.
 
 Signed-off-by: Huaisheng Ye <yehs1@lenovo.com>
-Cc: Minchan Kim <minchan@kernel.org>
-Cc: Nitin Gupta <ngupta@vflare.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: x86@kernel.org <x86@kernel.org>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
 Cc: Christoph Hellwig <hch@infradead.org>
 ---
- drivers/block/zram/zram_drv.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/page.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index 0f3fadd..1bb5ca8 100644
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -1004,14 +1004,12 @@ static int __zram_bvec_write(struct zram *zram, struct bio_vec *bvec,
- 		handle = zs_malloc(zram->mem_pool, comp_len,
- 				__GFP_KSWAPD_RECLAIM |
- 				__GFP_NOWARN |
--				__GFP_HIGHMEM |
--				__GFP_MOVABLE);
-+				__GFP_ZONE_MOVABLE);
- 	if (!handle) {
- 		zcomp_stream_put(zram->comp);
- 		atomic64_inc(&zram->stats.writestall);
- 		handle = zs_malloc(zram->mem_pool, comp_len,
--				GFP_NOIO | __GFP_HIGHMEM |
--				__GFP_MOVABLE);
-+				GFP_NOIO | __GFP_ZONE_MOVABLE);
- 		if (handle)
- 			goto compress_again;
- 		return -ENOMEM;
+diff --git a/arch/x86/include/asm/page.h b/arch/x86/include/asm/page.h
+index 7555b48..a47f42d 100644
+--- a/arch/x86/include/asm/page.h
++++ b/arch/x86/include/asm/page.h
+@@ -35,7 +35,8 @@ static inline void copy_user_page(void *to, void *from, unsigned long vaddr,
+ }
+ 
+ #define __alloc_zeroed_user_highpage(movableflags, vma, vaddr) \
+-	alloc_page_vma(GFP_HIGHUSER | __GFP_ZERO | movableflags, vma, vaddr)
++	alloc_page_vma((movableflags ? GFP_HIGHUSER_MOVABLE : GFP_HIGHUSER) \
++	| __GFP_ZERO, vma, vaddr)
+ #define __HAVE_ARCH_ALLOC_ZEROED_USER_HIGHPAGE
+ 
+ #ifndef __pa
 -- 
 1.8.3.1
