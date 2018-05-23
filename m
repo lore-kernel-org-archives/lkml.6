@@ -1,188 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933167AbeEWO3c (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 10:29:32 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35012 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754327AbeEWO3a (ORCPT
+        id S933283AbeEWOb0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 10:31:26 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:33592 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932564AbeEWObX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 10:29:30 -0400
-Cc: akrowiak@linux.vnet.ibm.com, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com, cohuck@redhat.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
-        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-Subject: Re: [PATCH v5 06/13] KVM: s390: interfaces to manage guest's AP
- matrix
-To: pmorel@linux.ibm.com, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1525705912-12815-7-git-send-email-akrowiak@linux.vnet.ibm.com>
- <f2646170-1aaf-8447-4c02-0679909d754f@linux.ibm.com>
- <a9206728-2673-c8de-851b-323027a398fa@linux.vnet.ibm.com>
- <f8c88504-55dc-99a8-90a1-2ddf63a20091@linux.ibm.com>
- <13331f80-8821-6de3-ca29-7a3ea869e4f1@linux.vnet.ibm.com>
- <1891f565-284f-ab30-ebc7-8fef85b5fba7@linux.ibm.com>
- <a02a8fa0-9b05-41cf-4507-d4540b279247@linux.vnet.ibm.com>
- <2ae0b04a-f091-6c06-dc07-b6fa265b484a@linux.ibm.com>
-From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Date: Wed, 23 May 2018 10:29:11 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Wed, 23 May 2018 10:31:23 -0400
+X-Google-Smtp-Source: AB8JxZrVcOUKSb8uTfEGg+IcJy4MNIw6gEbilfOsCilqG2jsLQMq7zCpjiYI7z/M06WzoQgIYUB3Kw==
+Subject: Re: [PATCH 3/6] block: Create scsi_sense.h for SCSI and ATAPI
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Kees Cook <keescook@chromium.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Tejun Heo <tj@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Manoj N. Kumar" <manoj@linux.vnet.ibm.com>,
+        "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>,
+        Uma Krishnan <ukrishn@linux.vnet.ibm.com>,
+        linux-block <linux-block@vger.kernel.org>, linux-ide@vger.kernel.org,
+        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <20180522183613.GA3784@infradead.org> <yq1efi3bk3g.fsf@oracle.com>
+ <CAGXu5jJ0Sice+fdpWgzBhQR=NGz-DT9qmYVdV1GeH73_q9pbmw@mail.gmail.com>
+ <732f4249-5681-4a54-ec21-4ecc3d3a74e5@kernel.dk>
+ <20180522191309.GA23615@infradead.org>
+ <8d4af5c4-96fa-54ee-d5c1-b887b1de5a3c@kernel.dk>
+ <CAGXu5j+mgGZkTDS6EDRspJKKbU=vMT4ehv9T-SekPba=ESoGDg@mail.gmail.com>
+ <9A0BC289-4203-4C77-A012-AAB07F42061F@kernel.dk>
+ <CAGXu5jJsGWDsZNDJvUUqncSaAcvond_B_J7=BbvVW0X3r6Sxww@mail.gmail.com>
+ <aa150272-ffeb-fb8f-7303-0d9502cf9a71@kernel.dk>
+ <20180523142545.GA16248@infradead.org>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <24d36869-e037-042d-cb16-20a81b34eb76@kernel.dk>
+Date: Wed, 23 May 2018 08:31:19 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <2ae0b04a-f091-6c06-dc07-b6fa265b484a@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180523142545.GA16248@infradead.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18052314-0020-0000-0000-00000DFEABF4
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009072; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000261; SDB=6.01036522; UDB=6.00530260; IPR=6.00815649;
- MB=3.00021258; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-23 14:29:19
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052314-0021-0000-0000-0000618679DC
-Message-Id: <3e9035ce-0b41-f01e-526e-3ae3d3aba6b5@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-23_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805230147
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/18/2018 04:55 AM, Pierre Morel wrote:
-> On 16/05/2018 15:48, Tony Krowiak wrote:
->> On 05/16/2018 09:15 AM, Pierre Morel wrote:
->>> On 16/05/2018 15:12, Tony Krowiak wrote:
->>>> On 05/16/2018 03:48 AM, Pierre Morel wrote:
->>>>> On 15/05/2018 18:07, Tony Krowiak wrote:
->>>>>> On 05/15/2018 10:55 AM, Pierre Morel wrote:
->>>>>>> On 07/05/2018 17:11, Tony Krowiak wrote:
->>>>>>>> Provides interfaces to manage the AP adapters, usage domains
->>>>>>>> and control domains assigned to a KVM guest.
->>>>>>>>
->>>>>>>> The guest's SIE state description has a satellite structure 
->>>>>>>> called the
->>>>>>>> Crypto Control Block (CRYCB) containing three bitmask fields
->>>>>>>> identifying the adapters, queues (domains) and control domains
->>>>>>>> assigned to the KVM guest:
->>>>>>>>
->>>>> ...snip...
->>>>>>>> +}
->>>>>>>
->>>>>>> This function (ap_validate_queue_sharing) only verifies that VM 
->>>>>>> don't share queues.
->>>>>>> What about the queues used by a host application?
->>>>>>
->>>>>> How can that be verified from this function? I suppose I could 
->>>>>> put a check in here to
->>>>>> verify that the queues are reserved by the vfio_ap device driver, 
->>>>>> but that would
->>>>>> be redundant because an AP queue can not be assigned to a 
->>>>>> mediated matrix device
->>>>>> via its sysfs attributes unless it is reserved by the vfio_ap 
->>>>>> device driver (see
->>>>>> patches 7, 8 and 9).
->>>>>>
->>>>>>>
->>>>>>>
->>>>>>> I understand that you want to implement  these checks within KVM 
->>>>>>> but this is
->>>>>>> related to which queue devices are bound to the matrix and which 
->>>>>>> one are not.
->>>>>>
->>>>>> See my comments above and below about AP queue assignment to the 
->>>>>> mediated matrix
->>>>>> device. The one verification we can't do when the devices are 
->>>>>> assigned is whether
->>>>>> another guest is using the queue because assignment occurs before 
->>>>>> the guest using
->>>>>> the queue is started in which case we have no access to KVM. It 
->>>>>> makes no sense to
->>>>>> do so at assignment time anyway because it doesn't matter until 
->>>>>> the guest using
->>>>>> the mediated matrix device is started, so that check is done in KVM.
->>>>>>
->>>>>>>
->>>>>>>
->>>>>>> I think that this should be related somehow to the bounded queue 
->>>>>>> devices and
->>>>>>> therefor implemented inside the matrix driver.
->>>>>>
->>>>>> As I stated above, when an AP queue is assigned to the mediated 
->>>>>> matrix device via
->>>>>> its sysfs attributes, a check is done to verify that it is bound 
->>>>>> to the vfio_ap
->>>>>> device driver (see patches 7, 8 and 9). If not, then assignment 
->>>>>> will be rejected;
->>>>>> therefore, it will not be possible to configure a CRYCB with AP 
->>>>>> queues that are
->>>>>> not bound to the device driver.
->>>>>
->>>>> This patch and te followed patches take care that the queues are 
->>>>> bound to the
->>>>> matrix driver when they are assigned to the matrix using the sysfs 
->>>>> entries.
->>>>>
->>>>> But they do not take care that the queue can not be unbound before 
->>>>> you start
->>>>> the guest, and they are not in the path if the admin decide to 
->>>>> unbind a queue
->>>>> at some later time.
->>>>
->>>> That is a good point. I need to put a check in the device driver at 
->>>> the time
->>>> the mediated device fd is opened to verify that the queues being 
->>>> configured in
->>>> the guest's CRYCB are bound to the driver.
+On 5/23/18 8:25 AM, Christoph Hellwig wrote:
+> On Wed, May 23, 2018 at 08:13:56AM -0600, Jens Axboe wrote:
+>>> Should I move to code to a new drivers/scsi/scsi_sense.c and add it to
+>>> drivers/scsi/Makefile as:
 >>>
->>> not only, you also need to avoid the possibility of unbinding the 
->>> device.
->>> For this you need to use the remove callback from the driver.
+>>> obj-$(CONFIG_BLK_SCSI_REQUEST)    += scsi_sense.o
+>>>
+>>> Every place I want to use the code is already covered by
+>>> CONFIG_BLK_SCSI_REQUEST, so it seems like I just need to know where to
+>>> put the .c file. :P
 >>
->> I thought I addressed this already. The definition of the remove 
->> callback does
->> not specify a return value, so there is currently no way to prevent 
->> the AP bus
->> from removing the queue device on unbind. I sent an email to Harald 
->> to discuss
->> adding a return value to the callback.
->
-> If you can not prevent the unbinding you must remove
-> the according bits in the matrix.
+>> I think this is so much saner than a SCSI select or dependency, so I'll
+>> have to disagree with Martin and Christoph. Just put it in drivers/scsi,
+>> if it's the location they care about.
+> 
+> I actually plan to remove CONFIG_BLK_SCSI_REQUEST in a merge window
+> or two.  The only users are scsi and the ide layer, (virtio_blk
+> support has already been accidentally disabled for a while), and getting
+> rid of it allows to to shrink and simply the scsi data structures.
+> 
+> But if you want this for now lets keep scsi_sense.c in drivers/scsi
+> but depend on CONFIG_BLK_SCSI_REQUEST, that is easy enough to fix up.
 
-In which matrix? The bits in the matrix configured via the mediated 
-matrix device's
-sysfs attributes files? The bits in the guest's CRYCB? If the latter, 
-then what happens
-to in-process crypto transactions on the guest? Wouldn't this 
-essentially be like a hot
-unplug of the device from the guest?
+It could be a stand-alone dependency, doesn't have to be BLK_SCSI_REQUEST.
+BLA_SCSI_SENSE or something would do. I don't care too much about that,
+mostly getting rid of the entire stack dependency.
 
->
->
->>
->>>
->>>
->>>>
->>>>>
->>>>>
->>>>>>
->>>>>>>
->>>>>>>
->>>>>>> Regards,
->>>>>>>
->>>>>>> Pierre
->>>>>>>
->>>>>>
->>>>>
->>>>
->>>
->>
->
+-- 
+Jens Axboe
