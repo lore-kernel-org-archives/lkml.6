@@ -1,244 +1,186 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1526892851; cv=none;
-        d=google.com; s=arc-20160816;
-        b=YmuKpcs+Vqme9c2SFItatPK35+F7+NhrH0pk+ti+h7q8QY2v8MA1qp1/4EdCNNHQ7E
-         WSuL5srv992qRwR/vgMW1xnv7zc707oRk71VSVdbGd4810my8LeeFZReE3z5hPg+ii+T
-         rdlyAHDTNUCV37p59m7zUd/+Xe2Ar+Mgf7nOEaMnIqtVeMO6c0XNtEWgrlUCa3/7gYju
-         Pnl4y3Fa2Fdln3hpH6W0RofXbAPBrZwGeuCUqrEQAkrsGkrKkBsg+Ms8n1UiMo3Ih26J
-         /7hx2jvplkWiO1d/jT+XPa2vf9QBRW0dWA9VafpOk0WMjSY+9Xy2+W1OkMgsKRP3UvFp
-         1PzQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :dkim-signature:arc-authentication-results;
-        bh=nn9ybcNLB2n0l8p8fvHoc/7nqnNpXTq/WeUMRCn5m00=;
-        b=KmFWt5171RJbgyV/5AR5IIFCObDIY04vdtouHGZq4cppb6Vl+i9Mq/cbuotFgtRLFj
-         BWY/ICisqDHVmUshymUPD6MyHYhDZlhtZEXSYohBbdASw1QSo5AtZwXO4TrpFWqJxMtR
-         1UPkW+Nuixo+FPBn5okoHSc90ZT9Nl7efuC2j19kOoygf23qrQYXeRNRJoHAxPCJ9D6V
-         UyVWQ97PX7SOZUK6jdEhKR7UWqA4CaiojHdI5J5d1rWGmekAaYyZWrXSa1E2q4r/6ChS
-         nJrY5L486kfzFfAURSxNpIzfCrUSMM81z8V7HmH2WyH+aysF8LjVPDSFdAXBbyAdWoIe
-         9Fxw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=eU4NGZ9L;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=eU4NGZ9L;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZoNNR4ghuBP18iAHSeTePRpK5Oj8SQ2UkptCTALN1AFcZWeK2XP6H6dzM+CJK4BkZX++6n47A==
-Subject: Re: [PATCH 2/2] slimbus: ngd: Add qcom SLIMBus NGD driver
-To: kbuild test robot <lkp@intel.com>
-Cc: kbuild-all@01.org, gregkh@linuxfoundation.org, robh+dt@kernel.org,
- kramasub@codeaurora.org, sdharia@quicinc.com, girishm@quicinc.com,
- linux-kernel@vger.kernel.org, mark.rutland@arm.com, bgoswami@codeaurora.org,
- devicetree@vger.kernel.org, broonie@kernel.org,
- linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org
-References: <20180516165118.16551-3-srinivas.kandagatla@linaro.org>
- <201805190351.kbyN0JPN%fengguang.wu@intel.com>
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <cc6b47dc-2b91-68cf-0c27-b7f72305ba04@linaro.org>
-Date: Mon, 21 May 2018 09:54:09 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <201805190351.kbyN0JPN%fengguang.wu@intel.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Return-Path: <linux-api-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-604614-1527104099-2-16347063196184671130
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
+  MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-api-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1527104098; b=XZ5HvRx4+ftHCGp99G87FFoGwRVagJBmUrejKunZ+Htie9rTRW
+    Rg/tfOq/jemUpMycKoz2QdkuepK/ZuSDlTtPp8vpv4vRZUPBOS8bdTAFWjR1Ny5N
+    Or8FC4qw5z+F3ujW0sZ6JEdVda3Qt3SsbdcAdwFwiZiXmFwT5DVi8dMUqwN+QG9/
+    d6BnqpidRIR3/J2GdcRrLAb04E9w3SolCydXqgEmWxc9brALiDVqUtiHuG6akHkY
+    JpNeU6e4LOfd1DwDx8lyQc4WFi2LQI+lEjf1HFckh+yEwmxz356esXAVcVhCh7oN
+    ttvin/Bb3QJOKIF6cVfLIfZAUfVPeZAhGklA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1527104098; bh=Xjn9txeeRgfMcz1ITRNNCsJfJKDj94
+    Ie1xX5ptIGCuI=; b=KOC+CuQMz4VCFNMRVJ27okgW7Qn8N61UjfrBP3nFEUAvdO
+    KwXRrpWeRZc5fkKb97lLOPRezDychjLDtGApa+6/JubtlvNan2wlmyR5q3X90n6m
+    tQQ9WShtVCwRpWIpJFmqN5osVE9pIKzMDK4rxEYWuklhiPx4ZTUm54bmRFLKLqKt
+    u0/9nEfeEl2XECoswSv3aIS3ctuqX/NevHJc2P//jzN1q9l6bTb98Jc2beJ5o3xs
+    6fAB7x1gOqOscVqRROuNM7bhMdxuC4UMuKG028te6ntJ+wehVq/0T/5Co5M2PRtz
+    YxCcZgr4JJOUtlKb4RWdasi3/43EZ8DumIcnAd1A==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256)
+    header.d=infradead.org header.i=@infradead.org header.b=abDz70d8
+    x-bits=2048 x-keytype=rsa x-algorithm=sha256
+    x-selector=bombadil.20170209;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=lst.de header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256)
+      header.d=infradead.org header.i=@infradead.org header.b=abDz70d8
+      x-bits=2048 x-keytype=rsa x-algorithm=sha256
+      x-selector=bombadil.20170209;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=lst.de header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfO6CSBLEqaA89XH6TOOlXvbFMtDIujXbyg1c7ucru21rvU/ptypW63A+8LMBDlan3U6u65o+2qSnzjditK0zgPLA7mFvM7aGKB5sNTPO5luZs5A4JgWA
+    DL4Vu/mITgGqzf2bHymlb8q7RBqPGf9CNdPzqLPhtbmMkdU91VOVD5QkVL1q4K+CJC5XiUciWij/kylMrd/MlXlH37b0ImPZW2p8ZcnBDSLHRkTIyl3s566x
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=JfrnYn6hAAAA:8
+    a=lViJMyulAAAA:8 a=NEAV23lmAAAA:8 a=VwQbUJbxAAAA:8 a=EL8Olv3s59Ign0oMDOEA:9
+    a=x8gzFH9gYPwA:10 a=1CNFftbPRP8L7MoqJWF3:22 a=gb9IC-u5QvZuJU0a8fSk:22
+    a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S934306AbeEWTUf (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 23 May 2018 15:20:35 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40652 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934254AbeEWTU2 (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Wed, 23 May 2018 15:20:28 -0400
+From: Christoph Hellwig <hch@lst.de>
+To: viro@zeniv.linux.org.uk
+Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: aio poll and a new in-kernel poll API V13
+Date: Wed, 23 May 2018 21:19:49 +0200
+Message-Id: <20180523192022.1703-1-hch@lst.de>
+X-Mailer: git-send-email 2.17.0
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Sender: linux-api-owner@vger.kernel.org
+X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600640410451742727?=
-X-GMAIL-MSGID: =?utf-8?q?1601063199239824144?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Thanks for the report!
+Hi all,
 
-This patch has dependency on https://lkml.org/lkml/2018/5/17/251
+this series adds support for the IOCB_CMD_POLL operation to poll for the
+readyness of file descriptors using the aio subsystem.  The API is based
+on patches that existed in RHAS2.1 and RHEL3, which means it already is
+supported by libaio.  To implement the poll support efficiently new
+methods to poll are introduced in struct file_operations:  get_poll_head
+and poll_mask.  The first one returns a wait_queue_head to wait on
+(lifetime is bound by the file), and the second does a non-blocking
+check for the POLL* events.  This allows aio poll to work without
+any additional context switches, unlike epoll.
 
-I should have mentioned this in cover letter!
+This series sits on top of the aio-fsync series that also includes
+support for io_pgetevents.
 
-thanks,
-srini
+The changes were sponsored by Scylladb, and improve performance
+of the seastar framework up to 10%, while also removing the need
+for a privileged SCHED_FIFO epoll listener thread.
 
-On 18/05/18 22:39, kbuild test robot wrote:
-> Hi Srinivas,
-> 
-> I love your patch! Yet something to improve:
-> 
-> [auto build test ERROR on linus/master]
-> [also build test ERROR on v4.17-rc5 next-20180517]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Srinivas-Kandagatla/slimbus-ngd-dt-bindings-Add-slim-ngd-dt-bindings/20180518-193916
-> config: arm-allmodconfig (attached as .config)
-> compiler: arm-linux-gnueabi-gcc (Debian 7.2.0-11) 7.2.0
-> reproduce:
->          wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->          chmod +x ~/bin/make.cross
->          # save the attached .config to linux build tree
->          make.cross ARCH=arm
-> 
-> All error/warnings (new ones prefixed by >>):
-> 
->     drivers/slimbus/qcom-ngd-ctrl.c: In function 'qcom_slim_ngd_get_laddr':
->>> drivers/slimbus/qcom-ngd-ctrl.c:862:8: error: implicit declaration of function 'slim_prepare_txn'; did you mean 'slab_prepare_cpu'? [-Werror=implicit-function-declaration]
->       ret = slim_prepare_txn(sctrl, &txn, &done, true);
->             ^~~~~~~~~~~~~~~~
->             slab_prepare_cpu
->     drivers/slimbus/qcom-ngd-ctrl.c: In function 'qcom_slim_ngd_notify_slaves':
->>> drivers/slimbus/qcom-ngd-ctrl.c:969:11: error: implicit declaration of function 'of_slim_get_device'; did you mean 'slim_get_device'? [-Werror=implicit-function-declaration]
->        sbdev = of_slim_get_device(&ctrl->ctrl, node);
->                ^~~~~~~~~~~~~~~~~~
->                slim_get_device
->>> drivers/slimbus/qcom-ngd-ctrl.c:969:9: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
->        sbdev = of_slim_get_device(&ctrl->ctrl, node);
->              ^
->     cc1: some warnings being treated as errors
-> 
-> vim +862 drivers/slimbus/qcom-ngd-ctrl.c
-> 
->     839	
->     840	static int qcom_slim_ngd_get_laddr(struct slim_controller *sctrl,
->     841					   struct slim_eaddr *ea, u8 *laddr)
->     842	{
->     843		DECLARE_COMPLETION_ONSTACK(done);
->     844		struct slim_val_inf msg =  {0};
->     845		struct slim_msg_txn txn;
->     846		u8 wbuf[10] = {0};
->     847		u8 rbuf[10] = {0};
->     848		int ret;
->     849	
->     850		txn.mt = SLIM_MSG_MT_DEST_REFERRED_USER;
->     851		txn.dt = SLIM_MSG_DEST_LOGICALADDR;
->     852		txn.la = SLIM_LA_MGR;
->     853		txn.ec = 0;
->     854	
->     855		txn.mc = SLIM_USR_MC_ADDR_QUERY;
->     856		txn.rl = 11;
->     857		txn.msg = &msg;
->     858		txn.msg->num_bytes = 7;
->     859		txn.msg->wbuf = wbuf;
->     860		txn.msg->rbuf = rbuf;
->     861	
->   > 862		ret = slim_prepare_txn(sctrl, &txn, &done, true);
->     863		if (ret)
->     864			return ret;
->     865	
->     866		wbuf[0] = (u8)txn.tid;
->     867		memcpy(&wbuf[1], ea, sizeof(*ea));
->     868		ret = slim_do_transfer(sctrl, &txn);
->     869	
->     870		*laddr = rbuf[6];
->     871	
->     872		return ret;
->     873	}
->     874	
->     875	static int qcom_slim_ngd_exit_dma(struct qcom_slim_ngd_ctrl *ctrl)
->     876	{
->     877		if (ctrl->dma_rx_channel)
->     878			dma_release_channel(ctrl->dma_rx_channel);
->     879	
->     880		if (ctrl->dma_tx_channel)
->     881			dma_release_channel(ctrl->dma_tx_channel);
->     882	
->     883		ctrl->dma_tx_channel = ctrl->dma_rx_channel = NULL;
->     884	
->     885		return 0;
->     886	}
->     887	
->     888	static void qcom_slim_ngd_setup(struct qcom_slim_ngd_ctrl *ctrl)
->     889	{
->     890		u32 cfg = readl_relaxed(ctrl->base +
->     891					 NGD_BASE(ctrl->id, ctrl->ver));
->     892	
->     893		if (ctrl->state == QCOM_SLIM_NGD_CTRL_DOWN)
->     894			qcom_slim_ngd_init_dma(ctrl);
->     895	
->     896		/* By default enable message queues */
->     897		cfg |= NGD_CFG_RX_MSGQ_EN;
->     898		cfg |= NGD_CFG_TX_MSGQ_EN;
->     899	
->     900		/* Enable NGD if it's not already enabled*/
->     901		if (!(cfg & NGD_CFG_ENABLE))
->     902			cfg |= NGD_CFG_ENABLE;
->     903	
->     904		writel_relaxed(cfg, ctrl->base + NGD_BASE(ctrl->id, ctrl->ver));
->     905	}
->     906	
->     907	static int qcom_slim_ngd_power_up(struct qcom_slim_ngd_ctrl *ctrl)
->     908	{
->     909		enum qcom_slim_ngd_state cur_state = ctrl->state;
->     910		void __iomem *ngd;
->     911		u32 laddr, rx_msgq;
->     912		int timeout, ret = 0;
->     913	
->     914		if (ctrl->state == QCOM_SLIM_NGD_CTRL_DOWN) {
->     915			timeout = wait_for_completion_timeout(&ctrl->qmi.qmi_comp, HZ);
->     916			if (!timeout)
->     917				return -EREMOTEIO;
->     918		}
->     919	
->     920		if (ctrl->state == QCOM_SLIM_NGD_CTRL_ASLEEP ||
->     921			ctrl->state == QCOM_SLIM_NGD_CTRL_DOWN) {
->     922			ret = qcom_slim_qmi_power_request(ctrl, true);
->     923			if (ret) {
->     924				dev_err(ctrl->dev, "SLIM QMI power request failed:%d\n",
->     925						ret);
->     926				return ret;
->     927			}
->     928		}
->     929	
->     930		ctrl->ver = readl_relaxed(ctrl->base);
->     931		/* Version info in 16 MSbits */
->     932		ctrl->ver >>= 16;
->     933		ngd = ctrl->base + NGD_BASE(ctrl->id, ctrl->ver);
->     934		laddr = readl_relaxed(ngd + NGD_STATUS);
->     935		if (laddr & NGD_LADDR) {
->     936			/*
->     937			 * external MDM restart case where ADSP itself was active framer
->     938			 * For example, modem restarted when playback was active
->     939			 */
->     940			if (cur_state == QCOM_SLIM_NGD_CTRL_AWAKE) {
->     941				dev_info(ctrl->dev, "Subsys restart: ADSP active framer\n");
->     942				return 0;
->     943			}
->     944			return 0;
->     945		}
->     946	
->     947		writel_relaxed(DEF_NGD_INT_MASK, ctrl->base + NGD_INT_EN +
->     948					NGD_BASE(ctrl->id, ctrl->ver));
->     949		rx_msgq = readl_relaxed(ngd + NGD_RX_MSGQ_CFG);
->     950	
->     951		writel_relaxed(rx_msgq|SLIM_RX_MSGQ_TIMEOUT_VAL, ngd + NGD_RX_MSGQ_CFG);
->     952		qcom_slim_ngd_setup(ctrl);
->     953	
->     954		timeout = wait_for_completion_timeout(&ctrl->reconf, HZ);
->     955		if (!timeout) {
->     956			dev_err(ctrl->dev, "capability exchange timed-out\n");
->     957			return -ETIMEDOUT;
->     958		}
->     959	
->     960		return 0;
->     961	}
->     962	
->     963	static void qcom_slim_ngd_notify_slaves(struct qcom_slim_ngd_ctrl *ctrl)
->     964	{
->     965		struct slim_device *sbdev;
->     966		struct device_node *node;
->     967	
->     968		for_each_child_of_node(ctrl->dev->of_node, node) {
->   > 969			sbdev = of_slim_get_device(&ctrl->ctrl, node);
->     970			if (!sbdev)
->     971				continue;
->     972	
->     973			if (slim_get_logical_addr(sbdev))
->     974				dev_err(ctrl->dev, "Failed to get logical address\n");
->     975		}
->     976	}
->     977	
-> 
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-> 
+    git://git.infradead.org/users/hch/vfs.git aio-poll.13
+
+Gitweb:
+
+    http://git.infradead.org/users/hch/vfs.git/shortlog/refs/heads/aio-poll.13
+
+Libaio changes:
+
+    https://pagure.io/libaio.git io-poll
+
+Seastar changes (not updated for the new io_pgetevens ABI yet):
+
+    https://github.com/avikivity/seastar/commits/aio
+
+Changes since v12:
+ - remove iocb from ki_list only after ki_cancel has completed
+ - fix __poll_t annotations
+ - turn __poll_t sparse checkin on by default
+ - call fput after aio_complete
+ - only add the iocb to active_reqs if we wait for it
+
+Changes since v11:
+ - simplify cancellation by completion poll requests from a workqueue
+   if we can't take the ctx_lock
+
+Changes since v10:
+ - fixed a mismerge that let a sock_rps_record_flow sneak into
+   tcp_poll_mask
+ - remove the now unused struct proto_ops get_poll_head method
+
+Changes since v9:
+ - add to the delayed_cancel_reqs earlier to avoid a race
+ - get rid of POLL_TO_PTR magic
+
+Changes since v8:
+ - make delayed cancellation conditional again
+ - add a cancel_kiocb file operation to split delayed vs normal cancel
+
+Changes since v7:
+ - make delayed cancellation safe and unconditional
+
+Changes since v6:
+ - reworked cancellation
+
+Changes since v5:
+ - small changelog updates
+ - rebased on top of the aio-fsync changes
+
+Changes since v4:
+ - rebased ontop of Linux 4.16-rc4
+
+Changes since v3:
+ - remove the pre-sleep ->poll_mask call in vfs_poll,
+   allow ->get_poll_head to return POLL* values.
+
+Changes since v2:
+ - removed a double initialization
+ - new vfs_get_poll_head helper
+ - document that ->get_poll_head can return NULL
+ - call ->poll_mask before sleeping
+ - various ACKs
+ - add conversion of random to ->poll_mask
+ - add conversion of af_alg to ->poll_mask
+ - lacking ->poll_mask support now returns -EINVAL for IOCB_CMD_POLL
+ - reshuffled the series so that prep patches and everything not
+   requiring the new in-kernel poll API is in the beginning
+
+Changes since v1:
+ - handle the NULL ->poll case in vfs_poll
+ - dropped the file argument to the ->poll_mask socket operation
+ - replace the ->pre_poll socket operation with ->get_poll_head as
+   in the file operations
