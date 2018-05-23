@@ -1,267 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933034AbeEWNWU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 09:22:20 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:39263 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932957AbeEWNWP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 09:22:15 -0400
-X-Google-Smtp-Source: AB8JxZqFuadRFCTPtS7ykkVyZJEi9jVLGNMrlRhg5oAhZlXnRnbc9fVUUoZ7VGlQcxFdZnhB4zEEbQ==
-Date: Wed, 23 May 2018 21:22:03 +0800
-From: Leo Yan <leo.yan@linaro.org>
-To: Robert Walker <robert.walker@arm.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Tor Jeremiassen <tor@ti.com>,
-        mike.leach@linaro.org, kim.phillips@arm.com,
-        coresight@lists.linaro.org, Mike Leach <mike.leach@arm.com>
-Subject: Re: [RFT v2 1/4] perf cs-etm: Generate sample for missed packets
-Message-ID: <20180523132203.GA30299@leoy-ThinkPad-X240s>
-References: <1526892748-326-1-git-send-email-leo.yan@linaro.org>
- <1526892748-326-2-git-send-email-leo.yan@linaro.org>
- <bc320d6d-a21d-b5a4-e30d-511bb69aba32@arm.com>
- <20180522083920.GD31075@leoy-ThinkPad-X240s>
- <20180522095249.GE31075@leoy-ThinkPad-X240s>
- <3c9cdb5c-e1e0-f76d-5367-02aaf668b232@arm.com>
+        id S932990AbeEWNZ3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 09:25:29 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55118 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932844AbeEWNZ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 09:25:27 -0400
+Cc: Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH v11 1/2] cpufreq: Add Kryo CPU scaling driver
+To: Ilia Lin <ilialin@codeaurora.org>, vireshk@kernel.org, nm@ti.com,
+        sboyd@kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        rjw@rjwysocki.net, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1527079139-3558-1-git-send-email-ilialin@codeaurora.org>
+ <1527079139-3558-2-git-send-email-ilialin@codeaurora.org>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Organization: ARM
+Message-ID: <1ec7645d-72b6-5a1a-48c3-831a3c484a0e@arm.com>
+Date: Wed, 23 May 2018 14:25:22 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3c9cdb5c-e1e0-f76d-5367-02aaf668b232@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1527079139-3558-2-git-send-email-ilialin@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
 
-On Wed, May 23, 2018 at 12:21:18PM +0100, Robert Walker wrote:
-> Hi Leo,
+
+On 23/05/18 13:38, Ilia Lin wrote:
+> In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
+> the CPU frequency subset and voltage value of each OPP varies
+> based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
+> defines the voltage and frequency value based on the msm-id in SMEM
+> and speedbin blown in the efuse combination.
+> The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
+> to provide the OPP framework with required information.
+> This is used to determine the voltage and frequency value for each OPP of
+> operating-points-v2 table when it is parsed by the OPP framework.
 > 
-> On 22/05/18 10:52, Leo Yan wrote:
-> >On Tue, May 22, 2018 at 04:39:20PM +0800, Leo Yan wrote:
-> >
-> >[...]
-> >
-> >Rather than the patch I posted in my previous email, I think below new
-> >patch is more reasonable for me.
-> >
-> >In the below change, 'etmq->prev_packet' is only used to store the
-> >previous CS_ETM_RANGE packet, we don't need to save CS_ETM_TRACE_ON
-> >packet into 'etmq->prev_packet'.
-> >
-> >On the other hand, cs_etm__flush() can use 'etmq->period_instructions'
-> >to indicate if need to generate instruction sample or not.  If it's
-> >non-zero, then generate instruction sample and
-> >'etmq->period_instructions' will be cleared; so next time if there
-> >have more tracing CS_ETM_TRACE_ON packet, it can skip to generate
-> >instruction sample due 'etmq->period_instructions' is zero.
-> >
-> >How about you think for this?
-> >
-> >Thanks,
-> >Leo Yan
-> >
+> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+> ---
+>  drivers/cpufreq/Kconfig.arm          |  10 ++
+>  drivers/cpufreq/Makefile             |   1 +
+>  drivers/cpufreq/cpufreq-dt-platdev.c |   3 +
+>  drivers/cpufreq/qcom-cpufreq-kryo.c  | 181 +++++++++++++++++++++++++++++++++++
+>  4 files changed, 195 insertions(+)
+>  create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
 > 
-> I don't think this covers the cases where CS_ETM_TRACE_ON is used to
-> indicate a discontinuity in the trace.  For example, there is work in
-> progress to configure the ETM so that it only traces a few thousand cycles
-> with a gap of many thousands of cycles between each chunk of trace - this
-> can be used to sample program execution in the form of instruction events
-> with branch stacks for feedback directed optimization (AutoFDO).
-> 
-> In this case, the raw trace is something like:
-> 
->     ...
->     I_ADDR_L_64IS0 : Address, Long, 64 bit, IS0.; Addr=0x0000007E7B886908;
->     I_ATOM_F3 : Atom format 3.; EEN
->     I_ATOM_F1 : Atom format 1.; E
-> # Trace stops here
-> 
-> # Some time passes, and then trace is turned on again
->     I_TRACE_ON : Trace On.
->     I_ADDR_CTXT_L_64IS0 : Address & Context, Long, 64 bit, IS0.;
-> Addr=0x00000057224322F4; Ctxt: AArch64,EL0, NS;
->     I_ATOM_F3 : Atom format 3.; ENN
->     I_ATOM_F5 : Atom format 5.; ENENE
->     ...
-> 
-> This results in the following packets from the decoder:
-> 
-> CS_ETM_RANGE: [0x7e7b886908-0x7e7b886930] br
-> CS_ETM_RANGE: [0x7e7b88699c-0x7e7b8869a4] br
-> CS_ETM_RANGE: [0x7e7b8869d8-0x7e7b8869f0]
-> CS_ETM_RANGE: [0x7e7b8869f0-0x7e7b8869fc] br
-> CS_ETM_TRACE_ON
-> CS_ETM_RANGE: [0x57224322f4-0x5722432304] br
-> CS_ETM_RANGE: [0x57224320e8-0x57224320ec]
-> CS_ETM_RANGE: [0x57224320ec-0x57224320f8]
-> CS_ETM_RANGE: [0x57224320f8-0x572243212c] br
-> CS_ETM_RANGE: [0x5722439b80-0x5722439bec]
-> CS_ETM_RANGE: [0x5722439bec-0x5722439c14] br
-> CS_ETM_RANGE: [0x5722437c30-0x5722437c6c]
-> CS_ETM_RANGE: [0x5722437c6c-0x5722437c7c] br
-> 
-> Without handling the CS_ETM_TRACE_ON, this would be interpreted as a branch
-> from 0x7e7b8869f8 to 0x57224322f4, when there is actually a gap of many
-> thousand instructions between these.
-> 
-> I think this patch will break the branch stacks - by removing the
-> prev_packet swap from cs_etm__flush(), the next time a CS_ETM_RANGE packet
-> is handled, cs_etm__sample() will see prev_packet contains the last
-> CS_ETM_RANGE from the previous block of trace, causing an erroneous call to
-> cs_etm__update_last_branch_rb().  In the example above, the branch stack
-> will contain an erroneous branch from 0x7e7b8869f8 to 0x57224322f4.
-> 
-> I think what you need to do is add a check for the previous packet being a
-> CS_ETM_TRACE_ON when determining the generate_sample value.
+> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+> index de55c7d..0bfd40e 100644
+> --- a/drivers/cpufreq/Kconfig.arm
+> +++ b/drivers/cpufreq/Kconfig.arm
+> @@ -124,6 +124,16 @@ config ARM_OMAP2PLUS_CPUFREQ
+>  	depends on ARCH_OMAP2PLUS
+>  	default ARCH_OMAP2PLUS
+>  
+> +config ARM_QCOM_CPUFREQ_KRYO
+> +	bool "Qualcomm Kryo based CPUFreq"
+> +	depends on QCOM_QFPROM
+> +	depends on QCOM_SMEM
+> +	select PM_OPP
+> +	help
+> +	  This adds the CPUFreq driver for Qualcomm Kryo SoC based boards.
+> +
+> +	  If in doubt, say N.
+> +
 
-I still can see there have hole for packets handling with your
-suggestion, let's focus on below three packets:
+Sorry but just noticed now, any reason why this can't be module. I can't
+imagine any.
 
-CS_ETM_RANGE:    [0x7e7b8869f0-0x7e7b8869fc] br
-CS_ETM_TRACE_ON: [0xdeadbeefdeadbeef-0xdeadbeefdeadbeef]
-CS_ETM_RANGE:    [0x57224322f4-0x5722432304] br
+[..]
 
-When the CS_ETM_TRACE_ON packet is coming, cs_etm__flush() doesn't
-handle for 'etmq->prev_packet' to generate branch sample, this results
-in we miss the info for 0x7e7b8869fc, and with packet swapping
-'etmq->prev_packet' is assigned to CS_ETM_TRACE_ON packet.
+> +static int qcom_cpufreq_kryo_probe(struct platform_device *pdev)
+> +{
+> +	struct opp_table *opp_tables[NR_CPUS] = {0};
+> +	struct platform_device *cpufreq_dt_pdev;
+> +	enum _msm8996_version msm8996_version;
+> +	struct nvmem_cell *speedbin_nvmem;
+> +	struct device_node *np;
+> +	struct device *cpu_dev;
 
-When the last CS_ETM_RANGE packet is coming, cs_etm__sample() will
-combine the values from CS_ETM_TRACE_ON packet and the last
-CS_ETM_RANGE packet to generate branch sample packet; at the end
-we get below sample packets:
+[..]
 
-  packet(n):   sample::addr=0x7e7b8869f0
-  packet(n+1): sample::ip=0xdeadbeefdeadbeeb sample::addr=0x57224322f4
+> +
+> +	cpufreq_dt_pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
+> +	if (!IS_ERR(cpufreq_dt_pdev))
+> +		return 0;
+> +
+> +	ret = PTR_ERR(cpufreq_dt_pdev);
+> +	dev_err(cpu_dev, "Failed to register platform device\n");
+> +
+> +free_opp:
+> +	for_each_possible_cpu(cpu) {
+> +		if (IS_ERR_OR_NULL(opp_tables[cpu]))
+> +			break;
+> +		dev_pm_opp_put_supported_hw(opp_tables[cpu]);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static int __init qcom_cpufreq_kryo_init(void)
+> +{
+> +	/*
+> +	 * Since the driver depends on smem and nvmem drivers, which may
+> +	 * return EPROBE_DEFER, all the real activity is done in the probe,
+> +	 * which may be defered as well. The init here is only registering
+> +	 * a platform device.
+> +	 */
+> +	platform_device_register_simple("qcom-cpufreq-kryo", -1, NULL, 0);
+> +	return 0;
+> +}
+> +module_init(qcom_cpufreq_kryo_init);
 
-So I think we also need to generate branch sample, and we can get
-below results:
+Do you need this at all ? See below on how to eliminate the need for this.
 
-  packet(n):   sample::addr=0x7e7b8869f0
-  packet(n+1): sample::ip=0x7e7b8869f8 sample::addr=0xdeadbeefdeadbeef
-  packet(n+2): sample::ip=0xdeadbeefdeadbeeb sample::addr=0x57224322f4
+> +
+> +static struct platform_driver qcom_cpufreq_kryo_driver = {
+> +	.probe = qcom_cpufreq_kryo_probe,
+> +	.driver = {
+> +		.name = "qcom-cpufreq-kryo",
+> +	},
+> +};
+> +builtin_platform_driver(qcom_cpufreq_kryo_driver);
 
-So we also can rely on this to get to know there have one address
-range is [0xdeadbeefdeadbeef..0xdeadbeefdeadbeeb] to indicate there
-have a discontinuity in the trace.
+Use builtin_platform_driver_probe and remove qcom_cpufreq_kryo_init
+or use module_platform_driver_probe if it can be module.
 
-> Regards
-> 
-> Rob
-> 
-> >
-> >diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-> >index 822ba91..dd354ad 100644
-> >--- a/tools/perf/util/cs-etm.c
-> >+++ b/tools/perf/util/cs-etm.c
-> >@@ -495,6 +495,13 @@ static inline void cs_etm__reset_last_branch_rb(struct cs_etm_queue *etmq)
-> >  static inline u64 cs_etm__last_executed_instr(struct cs_etm_packet *packet)
-> >  {
-> >  	/*
-> >+	 * The packet is the start tracing packet if the end_addr is zero,
-> >+	 * returns 0 for this case.
-> >+	 */
-> >+	if (!packet->end_addr)
-> >+		return 0;
-> >+
-> >+	/*
-> >  	 * The packet records the execution range with an exclusive end address
-> >  	 *
-> >  	 * A64 instructions are constant size, so the last executed
-> >@@ -897,13 +904,27 @@ static int cs_etm__sample(struct cs_etm_queue *etmq)
-> >  		etmq->period_instructions = instrs_over;
-> >  	}
-> >-	if (etm->sample_branches &&
-> >-	    etmq->prev_packet &&
-> >-	    etmq->prev_packet->sample_type == CS_ETM_RANGE &&
-> >-	    etmq->prev_packet->last_instr_taken_branch) {
-> >-		ret = cs_etm__synth_branch_sample(etmq);
-> >-		if (ret)
-> >-			return ret;
-> >+	if (etm->sample_branches && etmq->prev_packet) {
-> >+		bool generate_sample = false;
-> >+
-> >+		/* Generate sample for start tracing packet */
-> >+		if (etmq->prev_packet->sample_type == 0)
-> >+			generate_sample = true;
-> 
-> Also check for etmq->prev_packet->sample_type == CS_ETM_TRACE_ON here and
-> set generate_sample = true.
-
-Agree, will add this.
-
-> >+
-> >+		/* Generate sample for exception packet */
-> >+		if (etmq->prev_packet->exc == true)
-> >+			generate_sample = true;
-> >+
-> >+		/* Generate sample for normal branch packet */
-> >+		if (etmq->prev_packet->sample_type == CS_ETM_RANGE &&
-> >+		    etmq->prev_packet->last_instr_taken_branch)
-> >+			generate_sample = true;
-> >+
-> >+		if (generate_sample) {
-> >+			ret = cs_etm__synth_branch_sample(etmq);
-> >+			if (ret)
-> >+				return ret;
-> >+		}
-> >  	}
-> >  	if (etm->sample_branches || etm->synth_opts.last_branch) {
-> >@@ -922,11 +943,12 @@ static int cs_etm__sample(struct cs_etm_queue *etmq)
-> >  static int cs_etm__flush(struct cs_etm_queue *etmq)
-> >  {
-> >  	int err = 0;
-> >-	struct cs_etm_packet *tmp;
-> >  	if (etmq->etm->synth_opts.last_branch &&
-> >  	    etmq->prev_packet &&
-> >-	    etmq->prev_packet->sample_type == CS_ETM_RANGE) {
-> >+	    etmq->prev_packet->sample_type == CS_ETM_RANGE &&
-> >+	    etmq->period_instructions) {
-> >+
-> 
-> I don't think this is needed.
-
-Okay, I will keep this.
-
-> >  		/*
-> >  		 * Generate a last branch event for the branches left in the
-> >  		 * circular buffer at the end of the trace.
-> >@@ -940,14 +962,6 @@ static int cs_etm__flush(struct cs_etm_queue *etmq)
-> >  			etmq, addr,
-> >  			etmq->period_instructions);
-> >  		etmq->period_instructions = 0;
-> >-
-> >-		/*
-> >-		 * Swap PACKET with PREV_PACKET: PACKET becomes PREV_PACKET for
-> >-		 * the next incoming packet.
-> >-		 */
-> >-		tmp = etmq->packet;
-> >-		etmq->packet = etmq->prev_packet;
-> >-		etmq->prev_packet = tmp;
-> 
-> This should not be changed as discussed above.
-
-Okay, will keep this.  But I suggest we add some change like below:
-
-+    if (etm->sample_branches) {
-+        err = cs_etm__synth_branch_sample(etmq);
-+        if (err)
-+            return err;
-+    }
-
-If so, could you review my posted another patch for this?
-http://archive.armlinux.org.uk/lurker/message/20180522.083920.184f1f78.en.html
-
-Thanks,
-Leo Yan
-
-> >  	}
-> >  	return err;
-> >
+-- 
+Regards,
+Sudeep
