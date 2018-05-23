@@ -1,65 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753945AbeEWGB1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 02:01:27 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:35387 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753826AbeEWGBX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 02:01:23 -0400
-X-UUID: 2e36f803cada46e784c00468cbb84cdf-20180523
-Message-ID: <1527055278.21354.3.camel@mtksdaap41>
-Subject: Re: [PATCH v2 4/4] drm/mediatek: add connection from OD1 to RDMA1
-From: CK Hu <ck.hu@mediatek.com>
-To: Stu Hsieh <stu.hsieh@mediatek.com>
-CC: Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>
-Date: Wed, 23 May 2018 14:01:18 +0800
-In-Reply-To: <20180523022517.12103-5-stu.hsieh@mediatek.com>
-References: <20180523022517.12103-1-stu.hsieh@mediatek.com>
-         <20180523022517.12103-5-stu.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        id S1753975AbeEWGDc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 02:03:32 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:8129 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753826AbeEWGDb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 02:03:31 -0400
+From: Zhen Lei <thunder.leizhen@huawei.com>
+To: Joerg Roedel <joro@8bytes.org>,
+        iommu <iommu@lists.linux-foundation.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: [PATCH 1/1] iommu/dma: fix trival coding style mistake
+Date: Wed, 23 May 2018 14:02:49 +0800
+Message-ID: <1527055369-13192-1-git-send-email-thunder.leizhen@huawei.com>
+X-Mailer: git-send-email 1.9.5.msysgit.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK: N
+Content-Type: text/plain
+X-Originating-IP: [10.177.23.164]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Stu:
+No functional changes.
 
-On Wed, 2018-05-23 at 10:25 +0800, Stu Hsieh wrote:
-> This patch add the connection from OD1 to RDMA1 for ext path.
-> 
+Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+---
+ drivers/iommu/dma-iommu.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-I would like to apply this patch before the patch 'Add support for
-mediatek SOC MT2712' because this patch is necessary for mt2712.
+diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+index ddcbbdb..4e885f7 100644
+--- a/drivers/iommu/dma-iommu.c
++++ b/drivers/iommu/dma-iommu.c
+@@ -231,6 +231,9 @@ static int iova_reserve_iommu_regions(struct device *dev,
+ 	LIST_HEAD(resv_regions);
+ 	int ret = 0;
 
-Regards,
-CK
++	if (!dev)
++		return 0;
++
+ 	if (dev_is_pci(dev))
+ 		iova_reserve_pci_windows(to_pci_dev(dev), iovad);
 
-> Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> index 3c7bd453cf42..0450ecbbc356 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> @@ -193,6 +193,9 @@ static unsigned int mtk_ddp_mout_en(enum mtk_ddp_comp_id cur,
->  	} else if (cur == DDP_COMPONENT_GAMMA && next == DDP_COMPONENT_RDMA1) {
->  		*addr = DISP_REG_CONFIG_DISP_GAMMA_MOUT_EN;
->  		value = GAMMA_MOUT_EN_RDMA1;
-> +	} else if (cur == DDP_COMPONENT_OD1 && next == DDP_COMPONENT_RDMA1) {
-> +		*addr = DISP_REG_CONFIG_DISP_OD_MOUT_EN;
-> +		value = OD1_MOUT_EN_RDMA1;
->  	} else if (cur == DDP_COMPONENT_RDMA1 && next == DDP_COMPONENT_DPI0) {
->  		*addr = DISP_REG_CONFIG_DISP_RDMA1_MOUT_EN;
->  		value = RDMA1_MOUT_DPI0;
+@@ -246,11 +249,12 @@ static int iova_reserve_iommu_regions(struct device *dev,
+ 		hi = iova_pfn(iovad, region->start + region->length - 1);
+ 		reserve_iova(iovad, lo, hi);
+
+-		if (region->type == IOMMU_RESV_MSI)
++		if (region->type == IOMMU_RESV_MSI) {
+ 			ret = cookie_init_hw_msi_region(cookie, region->start,
+ 					region->start + region->length);
+-		if (ret)
+-			break;
++			if (ret)
++				break;
++		}
+ 	}
+ 	iommu_put_resv_regions(dev, &resv_regions);
+
+@@ -308,8 +312,6 @@ int iommu_dma_init_domain(struct iommu_domain *domain, dma_addr_t base,
+ 	}
+
+ 	init_iova_domain(iovad, 1UL << order, base_pfn);
+-	if (!dev)
+-		return 0;
+
+ 	return iova_reserve_iommu_regions(dev, domain);
+ }
+--
+1.8.3
