@@ -1,113 +1,395 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932203AbeEWJ1s (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 05:27:48 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39856 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932180AbeEWJ1n (ORCPT
+        id S932224AbeEWJ2Y (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 05:28:24 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:57594 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S932180AbeEWJ2W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 05:27:43 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9A1F260213
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
-Subject: Re: [PATCH 8/9] PM / Domains: Add support for multi PM domains per
- device to genpd
-To: Jon Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>, linux-tegra@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-References: <1526639490-12167-1-git-send-email-ulf.hansson@linaro.org>
- <1526639490-12167-9-git-send-email-ulf.hansson@linaro.org>
- <f5589b88-acf8-b491-df79-e359e596c8d0@nvidia.com>
- <CAPDyKFr_7hbs-MC1jQn5uAgSnb1UGufXZdEmUqNTM63KemTe1g@mail.gmail.com>
- <5a79d3a2-d090-645b-da69-524b7e7a4d90@nvidia.com>
- <51f7de26-579a-8b9e-4e79-f4eee923ab38@codeaurora.org>
- <CAPDyKFo_69kSS6UzdsJeyeiiED=S=chsdkP+R43qMHDEbZ8n_A@mail.gmail.com>
- <3838f17a-2ac8-bf3f-f0b1-f69bbe17629c@nvidia.com>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-Message-ID: <00ba829d-faf4-168c-db00-531621b9280f@codeaurora.org>
-Date: Wed, 23 May 2018 14:57:33 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 23 May 2018 05:28:22 -0400
+X-UUID: 247001c7bb1142699cb3c75580720518-20180523
+Message-ID: <1527067696.19074.28.camel@mtksdaap41>
+Subject: Re: [PATCH v2 2/4] drm/mediatek: Add support for mediatek SOC MT2712
+From: Stu Hsieh <stu.hsieh@mediatek.com>
+To: CK Hu <ck.hu@mediatek.com>
+CC: Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>
+Date: Wed, 23 May 2018 17:28:16 +0800
+In-Reply-To: <1527053036.10410.18.camel@mtksdaap41>
+References: <20180523022517.12103-1-stu.hsieh@mediatek.com>
+         <20180523022517.12103-3-stu.hsieh@mediatek.com>
+         <1527053036.10410.18.camel@mtksdaap41>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-In-Reply-To: <3838f17a-2ac8-bf3f-f0b1-f69bbe17629c@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 05/23/2018 02:37 PM, Jon Hunter wrote:
+On Wed, 2018-05-23 at 13:23 +0800, CK Hu wrote:
+> Hi, Stu:
 > 
-> On 23/05/18 07:12, Ulf Hansson wrote:
+> I've some inline comment.
 > 
-> ...
+> On Wed, 2018-05-23 at 10:25 +0800, Stu Hsieh wrote:
+> > This patch add support for the Mediatek MT2712 DISP subsystem.
+> > There are two OVL engine and three disp output in MT2712.
+> > 
+> > Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
+> > ---
+> >  drivers/gpu/drm/mediatek/mtk_drm_ddp.c      | 50 +++++++++++++++++++++++++++--
+> >  drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c |  8 +++--
+> >  drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h |  7 ++--
+> >  drivers/gpu/drm/mediatek/mtk_drm_drv.c      | 47 +++++++++++++++++++++++++--
+> >  drivers/gpu/drm/mediatek/mtk_drm_drv.h      |  7 ++--
+> >  5 files changed, 108 insertions(+), 11 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> > index 8130f3dab661..e563dedd1999 100644
+> > --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> > +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> > @@ -29,6 +29,8 @@
+> >  #define DISP_REG_CONFIG_DISP_COLOR0_SEL_IN	0x084
+> >  #define DISP_REG_CONFIG_DISP_COLOR1_SEL_IN	0x088
+> >  #define DISP_REG_CONFIG_DPI_SEL_IN		0x0ac
+> > +#define DISP_REG_CONFIG_DISP_RDMA2_SOUT		0x0b8
+> > +#define DISP_REG_CONFIG_DISP_RDMA0_MOUT_EN	0x0c4
 > 
->>>>>> Thanks for sending this. Believe it or not this has still been on my to-do list
->>>>>> and so we definitely need a solution for Tegra.
->>>>>>
->>>>>> Looking at the above it appears that additional power-domains exposed as devices
->>>>>> to the client device. So I assume that this means that the drivers for devices
->>>>>> with multiple power-domains will need to call RPM APIs for each of these
->>>>>> additional power-domains. Is that correct?
->>>>>
->>>>> They can, but should not!
->>>>>
->>>>> Instead, the driver shall use device_link_add() and device_link_del(),
->>>>> dynamically, depending on what PM domain that their original device
->>>>> needs for the current running use case.
->>>>>
->>>>> In that way, they keep existing runtime PM deployment, operating on
->>>>> its original device.
->>>>
->>>> OK, sounds good. Any reason why the linking cannot be handled by the above API? Is there a use-case where you would not want it linked?
->>>
->>> I am guessing the linking is what would give the driver the ability to decide which subset of powerdomains it actually wants to control
->>> at any point using runtime PM. If we have cases wherein the driver would want to turn on/off _all_ its associated powerdomains _always_
->>> then a default linking of all would help.
->>
->> First, I think we need to decide on *where* the linking should be
->> done, not at both places, as that would just mess up synchronization
->> of who is responsible for calling the device_link_del() at detach.
->>
->> Second, It would in principle be fine to call device_link_add() and
->> device_link_del() as a part of the attach/detach APIs. However, there
->> is a downside to such solution, which would be that the driver then
->> needs call the detach API, just to do device_link_del(). Of course
->> then it would also needs to call the attach API later if/when needed.
->> Doing this adds unnecessary overhead - comparing to just let the
->> driver call device_link_add|del() when needed. On the upside, yes, it
->> would put less burden on the drivers as it then only needs to care
->> about using one set of functions.
->>
->> Which solution do you prefer?
+> These two definition are useless, so remove it.
+ok
+
+
 > 
-> Any reason why we could not add a 'boolean' argument to the API to indicate whether the new device should be linked? I think that I prefer the API handles it, but I can see there could be instances where drivers may wish to handle it themselves.
+> >  #define DISP_REG_CONFIG_DISP_RDMA1_MOUT_EN	0x0c8
+> >  #define DISP_REG_CONFIG_MMSYS_CG_CON0		0x100
+> >  
+> > @@ -41,6 +43,7 @@
+> >  #define DISP_REG_MUTEX_RST(n)	(0x28 + 0x20 * (n))
+> >  #define DISP_REG_MUTEX_MOD(n)	(0x2c + 0x20 * (n))
+> >  #define DISP_REG_MUTEX_SOF(n)	(0x30 + 0x20 * (n))
+> > +#define DISP_REG_MUTEX_MOD2(n)	(0x34 + 0x20 * (n))
 > 
-> Rajendra, do you have a use-case right now where the driver would want to handle the linking?
+> Move this to the patch 'drm/mediatek: support maximum 64 mutex mod' and
+> that patch should be applied before this patch.
+> 
+> >  
+> >  #define INT_MUTEX				BIT(1)
+> >  
+> > @@ -60,6 +63,25 @@
+> >  #define MT8173_MUTEX_MOD_DISP_PWM1		BIT(24)
+> >  #define MT8173_MUTEX_MOD_DISP_OD		BIT(25)
+> >  
+> > +#define MT2712_MUTEX_MOD_DISP_OVL0		BIT(11)
+> > +#define MT2712_MUTEX_MOD_DISP_OVL1		BIT(12)
+> > +#define MT2712_MUTEX_MOD_DISP_RDMA0		BIT(13)
+> > +#define MT2712_MUTEX_MOD_DISP_RDMA1		BIT(14)
+> > +#define MT2712_MUTEX_MOD_DISP_RDMA2		BIT(15)
+> > +#define MT2712_MUTEX_MOD_DISP_WDMA0		BIT(16)
+> > +#define MT2712_MUTEX_MOD_DISP_WDMA1		BIT(17)
+> > +#define MT2712_MUTEX_MOD_DISP_COLOR0		BIT(18)
+> > +#define MT2712_MUTEX_MOD_DISP_COLOR1		BIT(19)
+> > +#define MT2712_MUTEX_MOD_DISP_AAL0		BIT(20)
+> > +#define MT2712_MUTEX_MOD_DISP_UFOE		BIT(22)
+> > +#define MT2712_MUTEX_MOD_DISP_PWM0		BIT(23)
+> > +#define MT2712_MUTEX_MOD_DISP_PWM1		BIT(24)
+> > +#define MT2712_MUTEX_MOD_DISP_PWM2		BIT(10)
+> > +#define MT2712_MUTEX_MOD_DISP_OD0		BIT(25)
+> > +/* modules more than 32, add BIT(31) when using DISP_REG_MUTEX_MOD2 bit */
+> > +#define MT2712_MUTEX_MOD2_DISP_AAL1		(BIT(1) | BIT(31))
+> 
+> I think a better definition is
+> 
+> #define MT2712_MUTEX_MOD2_DISP_AAL1		BIT(33)
+> 
+> when you need to access this register,
+> 
+> if (ddp->mutex_mod[id] < BIT(32)) {
+> 	offset = DISP_REG_MUTEX_MOD(mutex->id);
+> 	reg = readl_relaxed(ddp->regs + offset);
+> 	reg |= ddp->mutex_mod[id];
+> 	writel_relaxed(reg, ddp->regs + offset);
+> } else {
+> 	offset = DISP_REG_MUTEX_MOD2(mutex->id);
+> 	reg = readl_relaxed(ddp->regs + offset);
+> 	reg |= (ddp->mutex_mod[id] >> 32);
+> 	writel_relaxed(reg, ddp->regs + offset);
+> }
+> 
+> because DISP_REG_MUTEX_MOD BIT(31) could be used for some module.
 
-So if I understand this right, any driver which does want to control individual powerdomain state would
-need to do the linking itself right?
+This modification is workable, but result some build warning like
+following:
+1. #define BIT(nr)   (1UL << (nr)) in include/linux/bitops.h
+2. [DDP_COMPONENT_AAL1] = MT2712_MUTEX_MOD2_DISP_AAL1,
+   => we need to modify the definition about "static const unsigned int
+mt2712_mutex_mod"
 
-What I am saying is, if I have device A, with powerdomains X and Y, and if I want to turn on only X,
-then I would want only X to be linked with A, and at a later point if I want both X and Y to be turned on,
-I would then go ahead and link both X and Y to A? Is that correct or did I get it all wrong?
+> > +#define MT2712_MUTEX_MOD2_DISP_OD1		(BIT(2) | BIT(31))
+> > +
+> >  #define MT2701_MUTEX_MOD_DISP_OVL		BIT(3)
+> >  #define MT2701_MUTEX_MOD_DISP_WDMA		BIT(6)
+> >  #define MT2701_MUTEX_MOD_DISP_COLOR		BIT(7)
+> > @@ -74,6 +96,7 @@
+> >  
+> >  #define OVL0_MOUT_EN_COLOR0		0x1
+> >  #define OD_MOUT_EN_RDMA0		0x1
+> > +#define OD1_MOUT_EN_RDMA1		BIT(16)
+> >  #define UFOE_MOUT_EN_DSI0		0x1
+> >  #define COLOR0_SEL_IN_OVL0		0x1
+> >  #define OVL1_MOUT_EN_COLOR1		0x1
+> > @@ -108,12 +131,32 @@ static const unsigned int mt2701_mutex_mod[DDP_COMPONENT_ID_MAX] = {
+> >  	[DDP_COMPONENT_WDMA0] = MT2701_MUTEX_MOD_DISP_WDMA,
+> >  };
+> >  
+> > +static const unsigned int mt2712_mutex_mod[DDP_COMPONENT_ID_MAX] = {
+> > +	[DDP_COMPONENT_AAL0] = MT2712_MUTEX_MOD_DISP_AAL0,
+> > +	[DDP_COMPONENT_AAL1] = MT2712_MUTEX_MOD2_DISP_AAL1,
+> > +	[DDP_COMPONENT_COLOR0] = MT2712_MUTEX_MOD_DISP_COLOR0,
+> > +	[DDP_COMPONENT_COLOR1] = MT2712_MUTEX_MOD_DISP_COLOR1,
+> > +	[DDP_COMPONENT_OD0] = MT2712_MUTEX_MOD_DISP_OD0,
+> > +	[DDP_COMPONENT_OD1] = MT2712_MUTEX_MOD2_DISP_OD1,
+> > +	[DDP_COMPONENT_OVL0] = MT2712_MUTEX_MOD_DISP_OVL0,
+> > +	[DDP_COMPONENT_OVL1] = MT2712_MUTEX_MOD_DISP_OVL1,
+> > +	[DDP_COMPONENT_PWM0] = MT2712_MUTEX_MOD_DISP_PWM0,
+> > +	[DDP_COMPONENT_PWM1] = MT2712_MUTEX_MOD_DISP_PWM1,
+> > +	[DDP_COMPONENT_PWM2] = MT2712_MUTEX_MOD_DISP_PWM2,
+> > +	[DDP_COMPONENT_RDMA0] = MT2712_MUTEX_MOD_DISP_RDMA0,
+> > +	[DDP_COMPONENT_RDMA1] = MT2712_MUTEX_MOD_DISP_RDMA1,
+> > +	[DDP_COMPONENT_RDMA2] = MT2712_MUTEX_MOD_DISP_RDMA2,
+> > +	[DDP_COMPONENT_UFOE] = MT2712_MUTEX_MOD_DISP_UFOE,
+> > +	[DDP_COMPONENT_WDMA0] = MT2712_MUTEX_MOD_DISP_WDMA0,
+> > +	[DDP_COMPONENT_WDMA1] = MT2712_MUTEX_MOD_DISP_WDMA1,
+> > +};
+> > +
+> >  static const unsigned int mt8173_mutex_mod[DDP_COMPONENT_ID_MAX] = {
+> > -	[DDP_COMPONENT_AAL] = MT8173_MUTEX_MOD_DISP_AAL,
+> > +	[DDP_COMPONENT_AAL0] = MT8173_MUTEX_MOD_DISP_AAL,
+> >  	[DDP_COMPONENT_COLOR0] = MT8173_MUTEX_MOD_DISP_COLOR0,
+> >  	[DDP_COMPONENT_COLOR1] = MT8173_MUTEX_MOD_DISP_COLOR1,
+> >  	[DDP_COMPONENT_GAMMA] = MT8173_MUTEX_MOD_DISP_GAMMA,
+> > -	[DDP_COMPONENT_OD] = MT8173_MUTEX_MOD_DISP_OD,
+> > +	[DDP_COMPONENT_OD0] = MT8173_MUTEX_MOD_DISP_OD,
+> >  	[DDP_COMPONENT_OVL0] = MT8173_MUTEX_MOD_DISP_OVL0,
+> >  	[DDP_COMPONENT_OVL1] = MT8173_MUTEX_MOD_DISP_OVL1,
+> >  	[DDP_COMPONENT_PWM0] = MT8173_MUTEX_MOD_DISP_PWM0,
+> > @@ -138,7 +181,7 @@ static unsigned int mtk_ddp_mout_en(enum mtk_ddp_comp_id cur,
+> >  	} else if (cur == DDP_COMPONENT_OVL0 && next == DDP_COMPONENT_RDMA0) {
+> >  		*addr = DISP_REG_CONFIG_DISP_OVL_MOUT_EN;
+> >  		value = OVL_MOUT_EN_RDMA;
+> > -	} else if (cur == DDP_COMPONENT_OD && next == DDP_COMPONENT_RDMA0) {
+> > +	} else if (cur == DDP_COMPONENT_OD0 && next == DDP_COMPONENT_RDMA0) {
+> >  		*addr = DISP_REG_CONFIG_DISP_OD_MOUT_EN;
+> >  		value = OD_MOUT_EN_RDMA0;
+> >  	} else if (cur == DDP_COMPONENT_UFOE && next == DDP_COMPONENT_DSI0) {
+> > @@ -407,6 +450,7 @@ static int mtk_ddp_remove(struct platform_device *pdev)
+> >  
+> >  static const struct of_device_id ddp_driver_dt_match[] = {
+> >  	{ .compatible = "mediatek,mt2701-disp-mutex", .data = mt2701_mutex_mod},
+> > +	{ .compatible = "mediatek,mt2712-disp-mutex", .data = mt2712_mutex_mod},
+> >  	{ .compatible = "mediatek,mt8173-disp-mutex", .data = mt8173_mutex_mod},
+> >  	{},
+> >  };
+> > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
+> > index 4672317e3ad1..86e8c9e5df41 100644
+> > --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
+> > +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
+> > @@ -218,7 +218,8 @@ struct mtk_ddp_comp_match {
+> >  };
+> >  
+> >  static const struct mtk_ddp_comp_match mtk_ddp_matches[DDP_COMPONENT_ID_MAX] = {
+> > -	[DDP_COMPONENT_AAL]	= { MTK_DISP_AAL,	0, &ddp_aal },
+> > +	[DDP_COMPONENT_AAL0]	= { MTK_DISP_AAL,	0, &ddp_aal },
+> > +	[DDP_COMPONENT_AAL1]	= { MTK_DISP_AAL,	1, &ddp_aal },
+> >  	[DDP_COMPONENT_BLS]	= { MTK_DISP_BLS,	0, NULL },
+> >  	[DDP_COMPONENT_COLOR0]	= { MTK_DISP_COLOR,	0, NULL },
+> >  	[DDP_COMPONENT_COLOR1]	= { MTK_DISP_COLOR,	1, NULL },
+> > @@ -226,10 +227,13 @@ static const struct mtk_ddp_comp_match mtk_ddp_matches[DDP_COMPONENT_ID_MAX] = {
+> >  	[DDP_COMPONENT_DSI0]	= { MTK_DSI,		0, NULL },
+> >  	[DDP_COMPONENT_DSI1]	= { MTK_DSI,		1, NULL },
+> >  	[DDP_COMPONENT_GAMMA]	= { MTK_DISP_GAMMA,	0, &ddp_gamma },
+> > -	[DDP_COMPONENT_OD]	= { MTK_DISP_OD,	0, &ddp_od },
+> > +	[DDP_COMPONENT_OD0]	= { MTK_DISP_OD,	0, &ddp_od },
+> > +	[DDP_COMPONENT_OD1]	= { MTK_DISP_OD,	1, &ddp_od },
+> >  	[DDP_COMPONENT_OVL0]	= { MTK_DISP_OVL,	0, NULL },
+> >  	[DDP_COMPONENT_OVL1]	= { MTK_DISP_OVL,	1, NULL },
+> >  	[DDP_COMPONENT_PWM0]	= { MTK_DISP_PWM,	0, NULL },
+> > +	[DDP_COMPONENT_PWM1]	= { MTK_DISP_PWM,	1, NULL },
+> > +	[DDP_COMPONENT_PWM2]	= { MTK_DISP_PWM,	2, NULL },
+> >  	[DDP_COMPONENT_RDMA0]	= { MTK_DISP_RDMA,	0, NULL },
+> >  	[DDP_COMPONENT_RDMA1]	= { MTK_DISP_RDMA,	1, NULL },
+> >  	[DDP_COMPONENT_RDMA2]	= { MTK_DISP_RDMA,	2, NULL },
+> > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
+> > index 0828cf8bf85c..e00c2e798abd 100644
+> > --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
+> > +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
+> > @@ -41,7 +41,8 @@ enum mtk_ddp_comp_type {
+> >  };
+> >  
+> >  enum mtk_ddp_comp_id {
+> > -	DDP_COMPONENT_AAL,
+> > +	DDP_COMPONENT_AAL0,
+> > +	DDP_COMPONENT_AAL1,
+> 
+> Move this to a patch 'add ddp component AAL1'.
+ok
 
-I know atleast Camera on msm8996 would need to do this since it has 2 vfe powerdoamins, which can be
-turned on one at a time (depending on what resolution needs to be supported) or both together if we
-really need very high resolution using both vfe modules. 
+> 
+> >  	DDP_COMPONENT_BLS,
+> >  	DDP_COMPONENT_COLOR0,
+> >  	DDP_COMPONENT_COLOR1,
+> > @@ -49,11 +50,13 @@ enum mtk_ddp_comp_id {
+> >  	DDP_COMPONENT_DSI0,
+> >  	DDP_COMPONENT_DSI1,
+> >  	DDP_COMPONENT_GAMMA,
+> > -	DDP_COMPONENT_OD,
+> > +	DDP_COMPONENT_OD0,
+> > +	DDP_COMPONENT_OD1,
+> 
+> Move this to a patch 'add ddp component OD1'.
+ok
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-hosted by The Linux Foundation
+> 
+> >  	DDP_COMPONENT_OVL0,
+> >  	DDP_COMPONENT_OVL1,
+> >  	DDP_COMPONENT_PWM0,
+> >  	DDP_COMPONENT_PWM1,
+> > +	DDP_COMPONENT_PWM2,
+> 
+> Move this to a patch 'add ddp component PWM2'.
+ok
+
+> 
+> >  	DDP_COMPONENT_RDMA0,
+> >  	DDP_COMPONENT_RDMA1,
+> >  	DDP_COMPONENT_RDMA2,
+> > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> > index a2ca90fc403c..3a866e1d6af4 100644
+> > --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> > +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> > @@ -146,11 +146,37 @@ static const enum mtk_ddp_comp_id mt2701_mtk_ddp_ext[] = {
+> >  	DDP_COMPONENT_DPI0,
+> >  };
+> >  
+> > +static const enum mtk_ddp_comp_id mt2712_mtk_ddp_main[] = {
+> > +	DDP_COMPONENT_OVL0,
+> > +	DDP_COMPONENT_COLOR0,
+> > +	DDP_COMPONENT_AAL0,
+> > +	DDP_COMPONENT_OD0,
+> > +	DDP_COMPONENT_RDMA0,
+> > +	DDP_COMPONENT_DPI0,
+> > +	DDP_COMPONENT_PWM0,
+> > +};
+> > +
+> > +static const enum mtk_ddp_comp_id mt2712_mtk_ddp_ext[] = {
+> > +	DDP_COMPONENT_OVL1,
+> > +	DDP_COMPONENT_COLOR1,
+> > +	DDP_COMPONENT_AAL1,
+> > +	DDP_COMPONENT_OD1,
+> > +	DDP_COMPONENT_RDMA1,
+> > +	DDP_COMPONENT_DPI1,
+> > +	DDP_COMPONENT_PWM1,
+> > +};
+> > +
+> > +static const enum mtk_ddp_comp_id mt2712_mtk_ddp_third[] = {
+> > +	DDP_COMPONENT_RDMA2,
+> > +	DDP_COMPONENT_DSI2,
+> > +	DDP_COMPONENT_PWM2,
+> > +};
+> > +
+> >  static const enum mtk_ddp_comp_id mt8173_mtk_ddp_main[] = {
+> >  	DDP_COMPONENT_OVL0,
+> >  	DDP_COMPONENT_COLOR0,
+> > -	DDP_COMPONENT_AAL,
+> > -	DDP_COMPONENT_OD,
+> > +	DDP_COMPONENT_AAL0,
+> > +	DDP_COMPONENT_OD0,
+> >  	DDP_COMPONENT_RDMA0,
+> >  	DDP_COMPONENT_UFOE,
+> >  	DDP_COMPONENT_DSI0,
+> > @@ -173,6 +199,15 @@ static const struct mtk_mmsys_driver_data mt2701_mmsys_driver_data = {
+> >  	.shadow_register = true,
+> >  };
+> >  
+> > +static const struct mtk_mmsys_driver_data mt2712_mmsys_driver_data = {
+> > +	.main_path = mt2712_mtk_ddp_main,
+> > +	.main_len = ARRAY_SIZE(mt2712_mtk_ddp_main),
+> > +	.ext_path = mt2712_mtk_ddp_ext,
+> > +	.ext_len = ARRAY_SIZE(mt2712_mtk_ddp_ext),
+> > +	.third_path = mt2712_mtk_ddp_third,
+> > +	.third_len = ARRAY_SIZE(mt2712_mtk_ddp_third),
+> > +};
+> > +
+> >  static const struct mtk_mmsys_driver_data mt8173_mmsys_driver_data = {
+> >  	.main_path = mt8173_mtk_ddp_main,
+> >  	.main_len = ARRAY_SIZE(mt8173_mtk_ddp_main),
+> > @@ -232,6 +267,11 @@ static int mtk_drm_kms_init(struct drm_device *drm)
+> >  	if (ret < 0)
+> >  		goto err_component_unbind;
+> >  
+> > +	ret = mtk_drm_crtc_create(drm, private->data->third_path,
+> > +				  private->data->third_len);
+> > +	if (ret < 0)
+> > +		goto err_component_unbind;
+> > +
+> 
+> Move this to a patch 'add third ddp path'.
+ok
+
+> 
+> Regards,
+> CK
+> 
+> >  	/* Use OVL device for all DMA memory allocations */
+> >  	np = private->comp_node[private->data->main_path[0]] ?:
+> >  	     private->comp_node[private->data->ext_path[0]];
+> > @@ -374,6 +414,7 @@ static const struct of_device_id mtk_ddp_comp_dt_ids[] = {
+> >  	{ .compatible = "mediatek,mt8173-dsi",        .data = (void *)MTK_DSI },
+> >  	{ .compatible = "mediatek,mt8173-dpi",        .data = (void *)MTK_DPI },
+> >  	{ .compatible = "mediatek,mt2701-disp-mutex", .data = (void *)MTK_DISP_MUTEX },
+> > +	{ .compatible = "mediatek,mt2712-disp-mutex", .data = (void *)MTK_DISP_MUTEX },
+> >  	{ .compatible = "mediatek,mt8173-disp-mutex", .data = (void *)MTK_DISP_MUTEX },
+> >  	{ .compatible = "mediatek,mt2701-disp-pwm",   .data = (void *)MTK_DISP_BLS },
+> >  	{ .compatible = "mediatek,mt8173-disp-pwm",   .data = (void *)MTK_DISP_PWM },
+> > @@ -552,6 +593,8 @@ static SIMPLE_DEV_PM_OPS(mtk_drm_pm_ops, mtk_drm_sys_suspend,
+> >  static const struct of_device_id mtk_drm_of_ids[] = {
+> >  	{ .compatible = "mediatek,mt2701-mmsys",
+> >  	  .data = &mt2701_mmsys_driver_data},
+> > +	{ .compatible = "mediatek,mt2712-mmsys",
+> > +	  .data = &mt2712_mmsys_driver_data},
+> >  	{ .compatible = "mediatek,mt8173-mmsys",
+> >  	  .data = &mt8173_mmsys_driver_data},
+> >  	{ }
+> > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.h b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+> > index c3378c452c0a..e821342bc2d3 100644
+> > --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+> > +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+> > @@ -17,8 +17,8 @@
+> >  #include <linux/io.h>
+> >  #include "mtk_drm_ddp_comp.h"
+> >  
+> > -#define MAX_CRTC	2
+> > -#define MAX_CONNECTOR	2
+> > +#define MAX_CRTC	3
+> > +#define MAX_CONNECTOR	3
+> >  
+> >  struct device;
+> >  struct device_node;
+> > @@ -33,6 +33,9 @@ struct mtk_mmsys_driver_data {
+> >  	unsigned int main_len;
+> >  	const enum mtk_ddp_comp_id *ext_path;
+> >  	unsigned int ext_len;
+> > +	enum mtk_ddp_comp_id *third_path;
+> > +	unsigned int third_len;
+> > +
+> >  	bool shadow_register;
+> >  };
+> >  
+> 
+> 
