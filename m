@@ -1,47 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933979AbeEWScn (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 14:32:43 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:32870 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932953AbeEWScm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 14:32:42 -0400
-Date: Wed, 23 May 2018 14:32:40 -0400 (EDT)
-Message-Id: <20180523.143240.210663170832759811.davem@davemloft.net>
-To: jasowang@redhat.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, mst@redhat.com,
-        hannes@stressinduktion.org, edumazet@google.com
-Subject: Re: [PATCH net] tuntap: correctly set SOCKWQ_ASYNC_NOSPACE
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <1526970064-29711-1-git-send-email-jasowang@redhat.com>
-References: <1526970064-29711-1-git-send-email-jasowang@redhat.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        id S934008AbeEWSc6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 14:32:58 -0400
+Received: from muru.com ([72.249.23.125]:44234 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933897AbeEWScy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 14:32:54 -0400
+Date: Wed, 23 May 2018 11:32:50 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v1 0/3] console, serial8250: Disable PM and DMA ops
+Message-ID: <20180523183250.GQ98604@atomide.com>
+References: <ca78895ac7ac84ec1c7f2f33024237af329ffd7a.camel@linux.intel.com>
+ <20180516100842.xuma7b3e727w7bpz@linutronix.de>
+ <CAHp75Vc2bJQHiWYcdKK+7wwMw2fSWxMauxP-dMRUAUdKnet7WQ@mail.gmail.com>
+ <20180516104734.357oevogppu5bsg4@linutronix.de>
+ <ed9879ef42a70d2609f60f73834cabb7e3df9e2f.camel@linux.intel.com>
+ <20180517135621.GJ98604@atomide.com>
+ <CAHp75VfqAK6+dPWWkQXjy0V-AFSGLSDJ9CmnUv=ba0F66TDTVg@mail.gmail.com>
+ <20180517193008.GV25808@atomide.com>
+ <CAHp75Ve56pyEC41XZ9i9yxBNberQe=ee2miQL0v9T4vRtkWPBQ@mail.gmail.com>
+ <20180523175859.GO98604@atomide.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180523175859.GO98604@atomide.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Wang <jasowang@redhat.com>
-Date: Tue, 22 May 2018 14:21:04 +0800
-
-> When link is down, writes to the device might fail with
-> -EIO. Userspace needs an indication when the status is resolved.  As a
-> fix, tun_net_open() attempts to wake up writers - but that is only
-> effective if SOCKWQ_ASYNC_NOSPACE has been set in the past. This is
-> not the case of vhost_net which only poll for EPOLLOUT after it meets
-> errors during sendmsg().
+* Tony Lindgren <tony@atomide.com> [180523 10:58]:
+> * Andy Shevchenko <andy.shevchenko@gmail.com> [180522 21:42]:
+> > Have you seen entire series which I keep here:
+> > https://bitbucket.org/andy-shev/linux/branch/topic/uart/rpm?
+> > Among other things it gets rid of those specific callbacks entirely.
 > 
-> This patch fixes this by making sure SOCKWQ_ASYNC_NOSPACE is set when
-> socket is not writable or device is down to guarantee EPOLLOUT will be
-> raised in either tun_chr_poll() or tun_sock_write_space() after device
-> is up.
-> 
-> Cc: Hannes Frederic Sowa <hannes@stressinduktion.org>
-> Cc: Eric Dumazet <edumazet@google.com>
-> Fixes: 1bd4978a88ac2 ("tun: honor IFF_UP in tun_get_user()")
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
+> Well I was not Cc:ed on it, I browsed it in some archive and it
+> seemed unsafe to me. But if you figured out a way to do it conditionally
+> based on console.idle without causing regressions.
 
-Applied and queued up for -stable, thanks Jason.
+Sorry incomplete sentence here.. If you have some branch that
+based on console.idle I'd be happy to test it.
+
+Regards,
+
+Tony
