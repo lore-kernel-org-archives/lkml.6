@@ -1,73 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932190AbeEWJUq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 05:20:46 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:55259 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932128AbeEWJUc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 05:20:32 -0400
-X-Google-Smtp-Source: AB8JxZrLaRLfow/yRLA8BlfLSOG7W21ZuLSsxnbBf+Pj5QYk11oMCD0BlbsZ6qYIlV52XvcEdW5gWTn8KAci0LLbw9k=
+        id S932207AbeEWJXe (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 05:23:34 -0400
+Received: from foss.arm.com ([217.140.101.70]:51426 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932111AbeEWJXZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 05:23:25 -0400
+Subject: Re: [PATCH 02/14] arm64: Call ARCH_WORKAROUND_2 on transitions
+ between EL0 and EL1
+To: Marc Zyngier <marc.zyngier@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu
+Cc: Kees Cook <keescook@chromium.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Andy Lutomirski <luto@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <20180522150648.28297-1-marc.zyngier@arm.com>
+ <20180522150648.28297-3-marc.zyngier@arm.com>
+From: Julien Grall <julien.grall@arm.com>
+Message-ID: <0b03ce12-510e-464b-63de-cd481d7cb1c5@arm.com>
+Date: Wed, 23 May 2018 10:23:20 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
- <1526983321-41949-5-git-send-email-michel.pollet@bp.renesas.com> <CAMuHMdXETt75rGyYRsNEK0O5CO3A-bG70g=-f23y6PO_uK6rWg@mail.gmail.com>
-In-Reply-To: <CAMuHMdXETt75rGyYRsNEK0O5CO3A-bG70g=-f23y6PO_uK6rWg@mail.gmail.com>
-From: M P <buserror@gmail.com>
-Date: Wed, 23 May 2018 10:20:20 +0100
-Message-ID: <CAMMfpEw=6POaZBU9HduKBb8Wk2mH0oAXhCdQo7c+hQWgxka3vA@mail.gmail.com>
-Subject: Re: [PATCH v6 4/6] ARM: dts: Renesas RZ/N1 SoC base device tree file
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: michel.pollet@bp.renesas.com, linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Phil Edworthy <phil.edworthy@renesas.com>, buserror+upstream@gmail.com,
-        Magnus Damm <magnus.damm@gmail.com>, robh+dt@kernel.org,
-        mark.rutland@arm.com, Michael Turquette <mturquette@baylibre.com>,
-        sboyd@kernel.org, geert+renesas@glider.be, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180522150648.28297-3-marc.zyngier@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
+Hi Marc,
 
-On Wed, 23 May 2018 at 10:12, Geert Uytterhoeven <geert@linux-m68k.org>
-wrote:
+On 05/22/2018 04:06 PM, Marc Zyngier wrote:
+> diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
+> index ec2ee720e33e..f33e6aed3037 100644
+> --- a/arch/arm64/kernel/entry.S
+> +++ b/arch/arm64/kernel/entry.S
+> @@ -18,6 +18,7 @@
+>    * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+>    */
+>   
+> +#include <linux/arm-smccc.h>
+>   #include <linux/init.h>
+>   #include <linux/linkage.h>
+>   
+> @@ -137,6 +138,18 @@ alternative_else_nop_endif
+>   	add	\dst, \dst, #(\sym - .entry.tramp.text)
+>   	.endm
+>   
+> +	// This macro corrupts x0-x3. It is the caller's duty
+> +	// to save/restore them if required.
 
-> Hi Michel,
+NIT: Shouldn't you use /* ... */ for multi-line comments?
 
-> On Tue, May 22, 2018 at 12:01 PM, Michel Pollet
-> <michel.pollet@bp.renesas.com> wrote:
-> > This adds the Renesas RZ/N1D (Part #R9A06G032) SoC bare
-> > bone support.
-> >
-> > This currently only handles generic parts (gic, architected timer)
-> > and a UART.
-> > For simplicity sake, this also relies on the bootloader to set the
-> > pinctrl and clocks.
-> >
-> > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Regardless that:
 
-> Thanks for your patch!
+Reviewed-by: Julien Grall <julien.grall@arm.com>
 
+Cheers,
 
-> > +       #address-cells = <1>;
-> > +       #size-cells = <1>;
-> > +
-> > +       cpus {
-> > +               #address-cells = <1>;
-> > +               #size-cells = <0>;
-> > +               clocks = <&clock RZN1_DIV_CA7>;
-
-> I think the clocks property should be moved to the individual CPU nodes.
-
-
-Ah, I had a look around, and I found some instances that are in the cpu
-sub-node, and others that are not -- it seems that having it in the cpu
-sub-node would implies it's core specific... here if that clock is changed
-both cores would change speed...
-Either way, it's not used by the kernel in any way at the moment -- I had
-hoped cpufreq or something would claim it, but it's not the case.
-
-Thanks,
-Michel
+-- 
+Julien Grall
