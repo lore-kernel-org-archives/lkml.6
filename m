@@ -1,125 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933937AbeEWS2F (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 14:28:05 -0400
-Received: from vps01.wiesinger.com ([46.36.37.179]:36222 "EHLO
-        vps01.wiesinger.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754759AbeEWS17 (ORCPT
+        id S933925AbeEWSaY (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 14:30:24 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:33632 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933638AbeEWSaV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 14:27:59 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 wiesinger.com w4NIRsD8010143
-Subject: Re: B53 DSA switch problem on Banana Pi-R1 on Fedora 26
-To: Florian Fainelli <f.fainelli@gmail.com>, Andrew Lunn <andrew@lunn.ch>
-Cc: linux-kernel@vger.kernel.org
-References: <3bdb712d-38bd-e2ca-63cf-8406a7b5689d@wiesinger.com>
- <20180522201632.GB4396@lunn.ch>
- <59d6b55f-d50a-063c-90a9-31a758e01383@gmail.com>
- <fa5c2615-40b3-62bc-3dda-59f9ef574686@wiesinger.com>
- <76c3f5ec-0ab2-c06d-98e8-277284bb1a8e@gmail.com>
- <779f2be3-3e74-e650-5240-efaf1003d77c@wiesinger.com>
- <4f7c5173-019d-ba0e-70b3-addf64a6a9fa@gmail.com>
-From: Gerhard Wiesinger <lists@wiesinger.com>
-Message-ID: <aba2788a-ba54-dbc8-dd60-e862ba31d66d@wiesinger.com>
-Date: Wed, 23 May 2018 20:27:54 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <4f7c5173-019d-ba0e-70b3-addf64a6a9fa@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        Wed, 23 May 2018 14:30:21 -0400
+X-Google-Smtp-Source: AB8JxZqES4ARa1tJuc23yFeOd1WuYxmSgcvTsVxx13Xezx6g/R5ZdWtF2pB6o6RSDD8vGwUlErLNgw==
+From: Ravi Chandra Sadineni <ravisadineni@chromium.org>
+To: dmitry.torokhov@gmail.com, lee.jones@linaro.org,
+        ravisadineni@chromium.org, ravisadineni@google.com, dtor@google.com
+Cc: tbroch@google.com, linux-kernel@vger.kernel.org,
+        linux-input@vger.kernel.org, rajatja@google.com, bleung@google.com
+Subject: [PATCH] cros_ec_keyb: Increment the wakeup count to the specific mfd device.
+Date: Wed, 23 May 2018 11:29:58 -0700
+Message-Id: <20180523182958.25195-1-ravisadineni@chromium.org>
+X-Mailer: git-send-email 2.13.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23.05.2018 19:55, Florian Fainelli wrote:
-> On 05/23/2018 10:35 AM, Gerhard Wiesinger wrote:
->> On 23.05.2018 17:28, Florian Fainelli wrote:
->>>> And in the future (time plan)?
->>> If you don't care about multicast then you can use those patches:
->>>
->>> https://github.com/ffainelli/linux/commit/de055bf5f34e9806463ab2793e0852f5dfc380df
->>>
->>>
->>> and you have to change the part of drivers/net/dsa/b53/b53_common.c that
->>> returns DSA_TAG_PROTO_NONE for 53125:
->>>
->>>
->>> diff --git a/drivers/net/dsa/b53/b53_common.c
->>> b/drivers/net/dsa/b53/b53_common.c
->>> index 9f561fe505cb..3c64f026a8ce 100644
->>> --- a/drivers/net/dsa/b53/b53_common.c
->>> +++ b/drivers/net/dsa/b53/b53_common.c
->>> @@ -1557,7 +1557,7 @@ enum dsa_tag_protocol b53_get_tag_protocol(struct
->>> dsa_switch *ds, int port)
->>>            * mode to be turned on which means we need to specifically
->>> manage ARL
->>>            * misses on multicast addresses (TBD).
->>>            */
->>> -       if (is5325(dev) || is5365(dev) || is539x(dev) || is531x5(dev) ||
->>> +       if (is5325(dev) || is5365(dev) || is539x(dev) ||
->>>               !b53_can_enable_brcm_tags(ds, port))
->>>                   return DSA_TAG_PROTO_NONE;
->>>
->>>
->>> That would bring Broadcom tags to the 53125 switch and you would be able
->>> to use the configuration lines from Andrew in that case.
->> What's the plan here regarding these 2 config option mode (how do you
->> call them?)?
-> Broadcom tags is the underlying feature that provides per-port
-> information about the packets going in and out. Turning on Broadcom tags
-> requires turning on managed mode which means that the host now has to
-> manage how MAC addresses are programmed into the switch, it's not rocket
-> science, but I don't have a good test framework to automate the testing
-> of those changes yet. If you are willing to help in the testing, I can
-> certainly give you patches to try.
+If the IRQ is processed during resume, increment the wakeup count to the
+specific mfd device based on the event, if the mfd device is wake enabled.
+This helps in identifying the specific device that caused the wake.
 
-Yes, patches are welcome.
+Signed-off-by: Ravi Chandra Sadineni <ravisadineni@chromium.org>
+---
+ drivers/input/keyboard/cros_ec_keyb.c | 20 +++++++++++++++-----
+ drivers/mfd/cros_ec.c                 | 25 +++++++++++--------------
+ 2 files changed, 26 insertions(+), 19 deletions(-)
 
->> I mean, will this be a breaking change in the future where config has to
->> be done in a different way then?
-> When Broadcom tags are enabled the switch gets usable the way Andrew
-> expressed it, the only difference that makes on your configuration if
-> you want e.g: VLAN 101 to be for port 1-4 and VLAN 102 to be for port 5,
-> is that you no longer create an eth0.101 and eth0.102, but you create
-> br0.101 and br0.102.
-
-I think documentation (dsa.txt) should provide more examples.
-
->
->> Or will it be configurable via module parameters or /proc or /sys
->> filesystem options?
-> We might be able to expose a sysfs attribute which shows the type of
-> tagging being enabled by a particular switch, that way scripts can
-> detect which variant: configuring the host controller or the bridge is
-> required. Would that be acceptable?
-
-Yes, acceptable for me. But what's the long term concept for DSA (and 
-also other implementations)?
-
-- "old" mode variant, mode can only be read
-
-- "new" mode variant, mode can only be read
-
-- mode settable/configurable by the user, mode can be read
-
-
-In general:
-
-OK, thank you for your explainations.
-
-
-I think DSA (at least with b53) had secveral topics. implementation 
-bugs, missing documentation, lack of distribution support (e.g. 
-systemd), etc. which were not understood by the users.
-
-So everything which clarifies the topics for DSA in the future is welcome.
-
-BTW: systemd-networkd support for DSA #7478
-
-https://github.com/systemd/systemd/issues/7478
-
-
-Ciao,
-
-Gerhard
+diff --git a/drivers/input/keyboard/cros_ec_keyb.c b/drivers/input/keyboard/cros_ec_keyb.c
+index 79eb29550c348..9b39289774405 100644
+--- a/drivers/input/keyboard/cros_ec_keyb.c
++++ b/drivers/input/keyboard/cros_ec_keyb.c
+@@ -245,12 +245,16 @@ static int cros_ec_keyb_work(struct notifier_block *nb,
+ 	switch (ckdev->ec->event_data.event_type) {
+ 	case EC_MKBP_EVENT_KEY_MATRIX:
+ 		/*
+-		 * If EC is not the wake source, discard key state changes
+-		 * during suspend.
++		 * If keyb input device is not wake enabled, discard key
++		 * state changes during suspend.
+ 		 */
+-		if (queued_during_suspend)
++		if (queued_during_suspend && ckdev->idev
++		    && !device_may_wakeup(&ckdev->idev->dev))
+ 			return NOTIFY_OK;
+ 
++		else if (queued_during_suspend && ckdev->idev)
++			pm_wakeup_event(&ckdev->idev->dev, 0);
++
+ 		if (ckdev->ec->event_size != ckdev->cols) {
+ 			dev_err(ckdev->dev,
+ 				"Discarded incomplete key matrix event.\n");
+@@ -270,13 +274,17 @@ static int cros_ec_keyb_work(struct notifier_block *nb,
+ 	case EC_MKBP_EVENT_BUTTON:
+ 	case EC_MKBP_EVENT_SWITCH:
+ 		/*
+-		 * If EC is not the wake source, discard key state
++		 * If bs is not wake enabled, discard key state
+ 		 * changes during suspend. Switches will be re-checked in
+ 		 * cros_ec_keyb_resume() to be sure nothing is lost.
+ 		 */
+-		if (queued_during_suspend)
++		if (queued_during_suspend && ckdev->bs_idev
++		    && !device_may_wakeup(&ckdev->bs_idev->dev))
+ 			return NOTIFY_OK;
+ 
++		else if (queued_during_suspend && ckdev->bs_idev)
++			pm_wakeup_event(&ckdev->bs_idev->dev, 0);
++
+ 		if (ckdev->ec->event_data.event_type == EC_MKBP_EVENT_BUTTON) {
+ 			val = get_unaligned_le32(
+ 					&ckdev->ec->event_data.data.buttons);
+@@ -522,6 +530,7 @@ static int cros_ec_keyb_register_bs(struct cros_ec_keyb *ckdev)
+ 		return ret;
+ 	}
+ 
++	device_init_wakeup(&idev->dev, true);
+ 	return 0;
+ }
+ 
+@@ -598,6 +607,7 @@ static int cros_ec_keyb_register_matrix(struct cros_ec_keyb *ckdev)
+ 		return err;
+ 	}
+ 
++	device_init_wakeup(&idev->dev, true);
+ 	return 0;
+ }
+ 
+diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
+index d61024141e2b6..df9520365e54b 100644
+--- a/drivers/mfd/cros_ec.c
++++ b/drivers/mfd/cros_ec.c
+@@ -64,12 +64,14 @@ static irqreturn_t ec_irq_thread(int irq, void *data)
+ 	 * cros_ec_get_next_event() returned an error (default value for
+ 	 * wake_event is true)
+ 	 */
+-	if (wake_event && device_may_wakeup(ec_dev->dev))
++	if (device_may_wakeup(ec_dev->dev) && wake_event
++	    && ec_dev->wake_enabled)
+ 		pm_wakeup_event(ec_dev->dev, 0);
+ 
+ 	if (ret > 0)
+ 		blocking_notifier_call_chain(&ec_dev->event_notifier,
+-					     0, ec_dev);
++					     wake_event && ec_dev->wake_enabled,
++					     ec_dev);
+ 	return IRQ_HANDLED;
+ }
+ 
+@@ -229,7 +231,7 @@ int cros_ec_suspend(struct cros_ec_device *ec_dev)
+ }
+ EXPORT_SYMBOL(cros_ec_suspend);
+ 
+-static void cros_ec_drain_events(struct cros_ec_device *ec_dev)
++static void cros_ec_report_events_during_suspend(struct cros_ec_device *ec_dev)
+ {
+ 	while (cros_ec_get_next_event(ec_dev, NULL) > 0)
+ 		blocking_notifier_call_chain(&ec_dev->event_notifier,
+@@ -253,21 +255,16 @@ int cros_ec_resume(struct cros_ec_device *ec_dev)
+ 		dev_dbg(ec_dev->dev, "Error %d sending resume event to ec",
+ 			ret);
+ 
+-	/*
+-	 * In some cases, we need to distinguish between events that occur
+-	 * during suspend if the EC is not a wake source. For example,
+-	 * keypresses during suspend should be discarded if it does not wake
+-	 * the system.
+-	 *
+-	 * If the EC is not a wake source, drain the event queue and mark them
+-	 * as "queued during suspend".
+-	 */
+ 	if (ec_dev->wake_enabled) {
+ 		disable_irq_wake(ec_dev->irq);
+ 		ec_dev->wake_enabled = 0;
+-	} else {
+-		cros_ec_drain_events(ec_dev);
+ 	}
++	/*
++	 * Let the mfd devices know about events that occur during
++	 * suspend. This way the clients know what to do with them.
++	 */
++	cros_ec_report_events_during_suspend(ec_dev);
++
+ 
+ 	return 0;
+ }
+-- 
+2.17.0.441.gb46fe60e1d-goog
