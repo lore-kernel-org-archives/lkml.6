@@ -1,250 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933643AbeEWPjh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 11:39:37 -0400
-Received: from mga05.intel.com ([192.55.52.43]:50283 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932649AbeEWPje (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 11:39:34 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,433,1520924400";
-   d="scan'208";a="51579932"
-Date: Wed, 23 May 2018 23:28:41 +0800
-From: Wu Hao <hao.wu@intel.com>
-To: Alan Tull <atull@kernel.org>
-Cc: Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org,
-        "Kang, Luwei" <luwei.kang@intel.com>,
-        "Zhang, Yi Z" <yi.z.zhang@intel.com>,
-        Tim Whisonant <tim.whisonant@intel.com>,
-        Enno Luebbers <enno.luebbers@intel.com>,
-        Shiva Rao <shiva.rao@intel.com>,
-        Christopher Rauer <christopher.rauer@intel.com>
-Subject: Re: [PATCH v5 20/28] fpga: dfl: add fpga bridge platform driver for
- FME
-Message-ID: <20180523152841.GA23834@hao-dev>
-References: <1525229431-3087-1-git-send-email-hao.wu@intel.com>
- <1525229431-3087-21-git-send-email-hao.wu@intel.com>
- <CANk1AXS3M=GyTtdk=YYMadD22VqDPbB_XRYrnoue6nXrNQqqkQ@mail.gmail.com>
+        id S933579AbeEWPlG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 11:41:06 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48576 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932578AbeEWPlC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 11:41:02 -0400
+Date: Wed, 23 May 2018 16:40:57 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: David Collins <collinsd@codeaurora.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v3 1/2] regulator: dt-bindings: add QCOM RPMh regulator
+ bindings
+Message-ID: <20180523154057.GL4828@sirena.org.uk>
+References: <869aad59-1cc5-28ef-1fb5-4ef846696c40@codeaurora.org>
+ <CAD=FV=U-QOQekUHj=ck57YJbTFdFjCAWr4t2A92x+fCNf+yV9A@mail.gmail.com>
+ <dc1fbe9c-8973-1c4d-0fbd-809c1ec0a6be@codeaurora.org>
+ <CAD=FV=XfSGs14VB464cvMGDNwGS4yvSXjN8itZLffm+Sj-D=ww@mail.gmail.com>
+ <fb390ccb-927a-8449-05c3-8dcac964bfae@codeaurora.org>
+ <CAD=FV=XARtQNo5Cyg78XuT26JUFgn=7BjWRnXPjP566=a-sF1w@mail.gmail.com>
+ <a106c337-0713-e5d6-cb40-13e05f4d361d@codeaurora.org>
+ <CAD=FV=W=BquL5ojORz4HNP889s=-uNJ-QEzUfAxwXj2Oa3cGew@mail.gmail.com>
+ <20180523082908.GB4828@sirena.org.uk>
+ <CAD=FV=XfPkpGD32MfTfcw02wQ+QetpUhY=P299uhpX6pY_iEvg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="UK1lfQXsnwKrySH9"
 Content-Disposition: inline
-In-Reply-To: <CANk1AXS3M=GyTtdk=YYMadD22VqDPbB_XRYrnoue6nXrNQqqkQ@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CAD=FV=XfPkpGD32MfTfcw02wQ+QetpUhY=P299uhpX6pY_iEvg@mail.gmail.com>
+X-Cookie: Excellent day to have a rotten day.
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 10:15:00AM -0500, Alan Tull wrote:
-> On Tue, May 1, 2018 at 9:50 PM, Wu Hao <hao.wu@intel.com> wrote:
-> 
-> Hi Hao,
-> 
-> > This patch adds fpga bridge platform driver for FPGA Management Engine.
-> > It implements the enable_set callback for fpga bridge.
-> >
-> > Signed-off-by: Tim Whisonant <tim.whisonant@intel.com>
-> > Signed-off-by: Enno Luebbers <enno.luebbers@intel.com>
-> > Signed-off-by: Shiva Rao <shiva.rao@intel.com>
-> > Signed-off-by: Christopher Rauer <christopher.rauer@intel.com>
-> > Signed-off-by: Wu Hao <hao.wu@intel.com>
-> > Acked-by: Alan Tull <atull@kernel.org>
-> > Acked-by: Moritz Fischer <mdf@kernel.org>
-> > ---
-> > v3: rename driver to fpga-dfl-fme-br
-> >     remove useless dev_dbg in probe function.
-> >     rebased due to fpga api change.
-> > v4: rename to dfl-fme-br and fix SPDX license issue
-> >     include dfl-fme-pr.h instead of dfl-fme.h
-> >     add Acked-by from Alan and Moritz
-> > v5: rebase due to API changes.
-> >     defer port and its ops finding when really need.
-> > ---
-> >  drivers/fpga/Kconfig      |   6 +++
-> >  drivers/fpga/Makefile     |   1 +
-> >  drivers/fpga/dfl-fme-br.c | 114 ++++++++++++++++++++++++++++++++++++++++++++++
-> >  3 files changed, 121 insertions(+)
-> >  create mode 100644 drivers/fpga/dfl-fme-br.c
-> >
-> > diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
-> > index 89f76e8..a8f939a 100644
-> > --- a/drivers/fpga/Kconfig
-> > +++ b/drivers/fpga/Kconfig
-> > @@ -156,6 +156,12 @@ config FPGA_DFL_FME_MGR
-> >         help
-> >           Say Y to enable FPGA Manager driver for FPGA Management Engine.
-> >
-> > +config FPGA_DFL_FME_BRIDGE
-> > +       tristate "FPGA DFL FME Bridge Driver"
-> > +       depends on FPGA_DFL_FME
-> > +       help
-> > +         Say Y to enable FPGA Bridge driver for FPGA Management Engine.
-> > +
-> >  config FPGA_DFL_PCI
-> >         tristate "FPGA Device Feature List (DFL) PCIe Device Driver"
-> >         depends on PCI && FPGA_DFL
-> > diff --git a/drivers/fpga/Makefile b/drivers/fpga/Makefile
-> > index f82814a..75096e9 100644
-> > --- a/drivers/fpga/Makefile
-> > +++ b/drivers/fpga/Makefile
-> > @@ -32,6 +32,7 @@ obj-$(CONFIG_OF_FPGA_REGION)          += of-fpga-region.o
-> >  obj-$(CONFIG_FPGA_DFL)                 += dfl.o
-> >  obj-$(CONFIG_FPGA_DFL_FME)             += dfl-fme.o
-> >  obj-$(CONFIG_FPGA_DFL_FME_MGR)         += dfl-fme-mgr.o
-> > +obj-$(CONFIG_FPGA_DFL_FME_BRIDGE)      += dfl-fme-br.o
-> >
-> >  dfl-fme-objs := dfl-fme-main.o dfl-fme-pr.o
-> >
-> > diff --git a/drivers/fpga/dfl-fme-br.c b/drivers/fpga/dfl-fme-br.c
-> > new file mode 100644
-> > index 0000000..5c51b08
-> > --- /dev/null
-> > +++ b/drivers/fpga/dfl-fme-br.c
-> > @@ -0,0 +1,114 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * FPGA Bridge Driver for FPGA Management Engine (FME)
-> > + *
-> > + * Copyright (C) 2017 Intel Corporation, Inc.
-> > + *
-> > + * Authors:
-> > + *   Wu Hao <hao.wu@intel.com>
-> > + *   Joseph Grecco <joe.grecco@intel.com>
-> > + *   Enno Luebbers <enno.luebbers@intel.com>
-> > + *   Tim Whisonant <tim.whisonant@intel.com>
-> > + *   Ananda Ravuri <ananda.ravuri@intel.com>
-> > + *   Henry Mitchel <henry.mitchel@intel.com>
-> > + */
-> > +
-> > +#include <linux/module.h>
-> > +#include <linux/fpga/fpga-bridge.h>
-> > +
-> > +#include "dfl.h"
-> > +#include "dfl-fme-pr.h"
-> > +
-> > +struct fme_br_priv {
-> > +       struct dfl_fme_br_pdata *pdata;
-> > +       struct dfl_fpga_port_ops *port_ops;
-> > +       struct platform_device *port_pdev;
-> > +};
-> > +
-> > +static int fme_bridge_enable_set(struct fpga_bridge *bridge, bool enable)
-> > +{
-> > +       struct fme_br_priv *priv = bridge->priv;
-> > +       struct platform_device *port_pdev;
-> > +       struct dfl_fpga_port_ops *ops;
-> > +
-> > +       if (!priv->port_pdev) {
-> > +               port_pdev = dfl_fpga_cdev_find_port(priv->pdata->cdev,
-> > +                                                   &priv->pdata->port_id,
-> > +                                                   dfl_fpga_check_port_id);
-> > +               if (!port_pdev)
-> > +                       return -ENODEV;
-> > +
-> > +               priv->port_pdev = port_pdev;
-> > +       }
-> > +
-> > +       if (priv->port_pdev && !priv->port_ops) {
-> > +               ops = dfl_fpga_get_port_ops(priv->port_pdev);
-> > +               if (!ops || !ops->enable_set)
-> > +                       return -ENOENT;
-> > +
-> > +               priv->port_ops = ops;
-> > +       }
-> 
-> This is saving some pointers.  Is it possible that the port_pdev or
-> port_ops could go away?
 
-Hi Alan
+--UK1lfQXsnwKrySH9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the comments.
+On Wed, May 23, 2018 at 08:23:22AM -0700, Doug Anderson wrote:
+> Hi,
+>=20
+> On Wed, May 23, 2018 at 1:29 AM, Mark Brown <broonie@kernel.org> wrote:
+>=20
+> > It's arguable either way - you could say that the client gets to specify
+> > a safe range at all times or you could say that the machine constraints
+> > should cover all cases where the hardware is idling.  Of course RPMh
+> > is missing anything like the machine constraints (as we can see from all
+> > the fixing up of undesirable hard coding we have to do) so it's kind of
+> > pushed towards the first case.
 
-The find_port function will get the port device to prevent that.
-You can see put device in remove function. And it's similar for the
-port ops. In dfl_fpga_get_port_ops function, it will prevent unexpected
-port ops removing by try module get.
+> OK, fair enough.  If others all agree that it's OK to make requests
+> about the voltage of a disabled regulator then I won't stand in the
+> way.  I guess it does call into question the whole idea of caching /
+> not sending the voltage until the first enable because it means
+> there's no way for the client to use this feature until they've
+> enabled / disabled the regulator once.  If you think of it as invalid
+> to adjust the voltage of a disabled regulator then the caching
+> argument is super clean, but once you say that you should normally be
 
-> 
-> Also, the port ops routines probably should be named
-> dfl_fpga_port_ops_get/find_port/etc
->
+It's got to be valid to think about the voltage of a disabled regulator
+since drivers want to be able make sure that the regulator gets enabled
+with a sensible config.  With most hardware this is really easy since
+you can just look at the status reported by the hardware but the RPM
+makes this hard since there's so much write only stuff in there.
 
-Hm.. as I see there are functions named as get_device(), put_device(), so
-I just name it as ..._get_port_ops and ..._put_port_ops in similar way. :)
-If you think that could be a better name, it's fine for me to change them.
+> able to do it it feels more like a hacky workaround.  ...but I suppose
+> that's what we've got to live with...
 
-Thanks
-Hao
- 
-> Alan
-> 
-> > +
-> > +       return priv->port_ops->enable_set(priv->port_pdev, enable);
-> > +}
-> > +
-> > +static const struct fpga_bridge_ops fme_bridge_ops = {
-> > +       .enable_set = fme_bridge_enable_set,
-> > +};
-> > +
-> > +static int fme_br_probe(struct platform_device *pdev)
-> > +{
-> > +       struct device *dev = &pdev->dev;
-> > +       struct fme_br_priv *priv;
-> > +       struct fpga_bridge *br;
-> > +       int ret;
-> > +
-> > +       priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> > +       if (!priv)
-> > +               return -ENOMEM;
-> > +
-> > +       priv->pdata = dev_get_platdata(dev);
-> > +
-> > +       br = fpga_bridge_create(dev, "DFL FPGA FME Bridge",
-> > +                               &fme_bridge_ops, priv);
-> > +       if (!br)
-> > +               return -ENOMEM;
-> > +
-> > +       platform_set_drvdata(pdev, br);
-> > +
-> > +       ret = fpga_bridge_register(br);
-> > +       if (ret)
-> > +               fpga_bridge_free(br);
-> > +
-> > +       return ret;
-> > +}
-> > +
-> > +static int fme_br_remove(struct platform_device *pdev)
-> > +{
-> > +       struct fpga_bridge *br = platform_get_drvdata(pdev);
-> > +       struct fme_br_priv *priv = br->priv;
-> > +
-> > +       fpga_bridge_unregister(br);
-> > +
-> > +       if (priv->port_pdev)
-> > +               put_device(&priv->port_pdev->dev);
-> > +       if (priv->port_ops)
-> > +               dfl_fpga_put_port_ops(priv->port_ops);
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static struct platform_driver fme_br_driver = {
-> > +       .driver = {
-> > +               .name    = DFL_FPGA_FME_BRIDGE,
-> > +       },
-> > +       .probe   = fme_br_probe,
-> > +       .remove  = fme_br_remove,
-> > +};
-> > +
-> > +module_platform_driver(fme_br_driver);
-> > +
-> > +MODULE_DESCRIPTION("FPGA Bridge for DFL FPGA Management Engine");
-> > +MODULE_AUTHOR("Intel Corporation");
-> > +MODULE_LICENSE("GPL v2");
-> > +MODULE_ALIAS("platform:dfl-fme-bridge");
-> > --
-> > 1.8.3.1
-> >
+These RPM systems are always going to have problems of some kind
+unfortunately unless the interface changes.
+
+--UK1lfQXsnwKrySH9
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsFi4gACgkQJNaLcl1U
+h9AAPwf9HbEl7cITEB2ThBWHPHov7x75fnfLf+B+F1OiRHUSW9PmiFaCEv6L8y3v
+tYMre9zclDiBbeDBvhwZIb8wtxrV8vNG8EJ5IjaXcrxXI5Y8E8SRyIT2PMARafeq
+h1xIn73J55Z5WByvp1+0CKM7G88RhZKvCo55bgVOwSuD7C3LOX+zkktIIyu2G7A+
+8zTl8lfMk6Wj2LvMywE0OC3nlMm3jhsso4xLhTVLzHe6Nsi8TGIOl/bVokJUHnnR
+iVhbbqXVVOKqguyyObsi2hFIuwOrpk/I/54LksQOygcZzbsb6c7/wDeEvQRlTIzX
+5Cyk63hdfSnbuWazYEFcpwMWZgsYIA==
+=nKyD
+-----END PGP SIGNATURE-----
+
+--UK1lfQXsnwKrySH9--
