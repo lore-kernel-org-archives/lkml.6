@@ -1,49 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933682AbeEWQo1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 12:44:27 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:34352 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933596AbeEWQoZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 12:44:25 -0400
-X-Google-Smtp-Source: AB8JxZr2JmH8l2mlh4VWP8yLZ1pWnMOhiUP5Pa477byL6YkilQ9RiSd1j/h0ZOJb+f0Kq9GPzK+meg==
-Date: Wed, 23 May 2018 11:44:23 -0500
-From: Rob Herring <robh@kernel.org>
-To: frowand.list@gmail.com
-Cc: pantelis.antoniou@konsulko.com,
-        Pantelis Antoniou <panto@antoniou-consulting.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] of: overlay: validate offset from property fixups
-Message-ID: <20180523164423.GA29515@rob-hp-laptop>
-References: <1526530791-18591-1-git-send-email-frowand.list@gmail.com>
+        id S933697AbeEWQpg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 12:45:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58440 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754623AbeEWQpe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 12:45:34 -0400
+Date: Wed, 23 May 2018 12:45:31 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Joel Fernandes <joelaf@google.com>, linux-kernel@vger.kernel.org,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Boqun Feng <boqun.feng@gmail.com>, byungchul.park@lge.com,
+        kernel-team@android.com, Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH 1/4] rcu: Speed up calling of RCU tasks callbacks
+Message-ID: <20180523124531.7b0e972a@gandalf.local.home>
+In-Reply-To: <20180523155734.GK3803@linux.vnet.ibm.com>
+References: <20180523063815.198302-1-joel@joelfernandes.org>
+        <20180523063815.198302-2-joel@joelfernandes.org>
+        <20180523155734.GK3803@linux.vnet.ibm.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526530791-18591-1-git-send-email-frowand.list@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 09:19:51PM -0700, frowand.list@gmail.com wrote:
-> From: Frank Rowand <frank.rowand@sony.com>
-> 
-> The smatch static checker marks the data in offset as untrusted,
-> leading it to warn:
-> 
->   drivers/of/resolver.c:125 update_usages_of_a_phandle_reference()
->   error: buffer underflow 'prop->value' 's32min-s32max'
-> 
-> Add check to verify that offset is within the property data.
-> 
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
-> ---
->  drivers/of/resolver.c | 5 +++++
->  1 file changed, 5 insertions(+)
+On Wed, 23 May 2018 08:57:34 -0700
+"Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
 
-Applied, thanks.
+> On Tue, May 22, 2018 at 11:38:12PM -0700, Joel Fernandes wrote:
+> > From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+> > 
+> > RCU tasks callbacks can take at least 1 second before the callbacks are
+> > executed. This happens even if the hold-out tasks enter their quiescent states
+> > quickly. I noticed this when I was testing trampoline callback execution.
+> > 
+> > To test the trampoline freeing, I wrote a simple script:
+> > cd /sys/kernel/debug/tracing/
+> > echo '__schedule_bug:traceon' > set_ftrace_filter;
+> > echo '!__schedule_bug:traceon' > set_ftrace_filter;
+> > 
+> > In the background I had simple bash while loop:
+> > while [ 1 ]; do x=1; done &
+> > 
+> > Total time of completion of above commands in seconds:
+> > 
+> > With this patch:
+> > real    0m0.179s
+> > user    0m0.000s
+> > sys     0m0.054s
+> > 
+> > Without this patch:
+> > real    0m1.098s
+> > user    0m0.000s
+> > sys     0m0.053s
+> > 
+> > That's a greater than 6X speed up in performance. In order to accomplish
+> > this, I am waiting for HZ/10 time before entering the hold-out checking
+> > loop. The loop still preserves its checking of held tasks every 1 second
+> > as before, in case this first test doesn't succeed.
+> > 
+> > Cc: Steven Rostedt <rostedt@goodmis.org>  
+> 
+> Given an ack from Steven, I would be happy to take this, give or take
+> some nits below.
 
-Rob
+I'm currently testing it, and trying to understand it better.
+
+> 
+> 							Thanx, Paul
+> 
+> > Cc: Peter Zilstra <peterz@infradead.org>
+> > Cc: Ingo Molnar <mingo@redhat.com>
+> > Cc: Boqun Feng <boqun.feng@gmail.com>
+> > Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>
+> > Cc: byungchul.park@lge.com
+> > Cc: kernel-team@android.com
+> > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> > ---
+> >  kernel/rcu/update.c | 12 +++++++++++-
+> >  1 file changed, 11 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
+> > index 5783bdf86e5a..a28698e44b08 100644
+> > --- a/kernel/rcu/update.c
+> > +++ b/kernel/rcu/update.c
+> > @@ -743,6 +743,12 @@ static int __noreturn rcu_tasks_kthread(void *arg)
+> >  		 */
+> >  		synchronize_srcu(&tasks_rcu_exit_srcu);
+> > 
+> > +		/*
+> > +		 * Wait a little bit incase held tasks are released  
+> 
+> 				in case
+> 
+> > +		 * during their next timer ticks.
+> > +		 */
+> > +		schedule_timeout_interruptible(HZ/10);
+> > +
+> >  		/*
+> >  		 * Each pass through the following loop scans the list
+> >  		 * of holdout tasks, removing any that are no longer
+> > @@ -755,7 +761,6 @@ static int __noreturn rcu_tasks_kthread(void *arg)
+> >  			int rtst;
+> >  			struct task_struct *t1;
+> > 
+> > -			schedule_timeout_interruptible(HZ);
+> >  			rtst = READ_ONCE(rcu_task_stall_timeout);
+> >  			needreport = rtst > 0 &&
+> >  				     time_after(jiffies, lastreport + rtst);
+> > @@ -768,6 +773,11 @@ static int __noreturn rcu_tasks_kthread(void *arg)
+> >  				check_holdout_task(t, needreport, &firstreport);
+> >  				cond_resched();
+> >  			}
+> > +
+> > +			if (list_empty(&rcu_tasks_holdouts))
+> > +				break;
+> > +
+> > +			schedule_timeout_interruptible(HZ);  
+
+Why is this a full second wait and not the HZ/10 like the others?
+
+-- Steve
+
+> 
+> Is there a better way to do this?  Can this be converted into a for-loop?
+> Alternatively, would it make sense to have a firsttime local variable
+> initialized to true, to keep the schedule_timeout_interruptible() at
+> the beginning of the loop, but skip it on the first pass through the loop?
+> 
+> Don't get me wrong, what you have looks functionally correct, but
+> duplicating the condition might cause problems later on, for example,
+> should a bug fix be needed in the condition.
+> 
+> >  		}
+> > 
+> >  		/*
+> > -- 
+> > 2.17.0.441.gb46fe60e1d-goog
+> >   
