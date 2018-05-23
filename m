@@ -1,222 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933669AbeEWPPr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 11:15:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42064 "EHLO mail.kernel.org"
+        id S933689AbeEWPPx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 11:15:53 -0400
+Received: from m50-134.163.com ([123.125.50.134]:54780 "EHLO m50-134.163.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933419AbeEWPPm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 11:15:42 -0400
-X-Google-Smtp-Source: AB8JxZqw3xZRt7XmZA0yBrurHpsO3+kzJGcNapqG1xU4a/eF4mKCYMDWwkxJnZht91C8n3ODCrBe+x2vyQqX46MXZ6k=
-MIME-Version: 1.0
-In-Reply-To: <1525229431-3087-21-git-send-email-hao.wu@intel.com>
-References: <1525229431-3087-1-git-send-email-hao.wu@intel.com> <1525229431-3087-21-git-send-email-hao.wu@intel.com>
-From: Alan Tull <atull@kernel.org>
-Date: Wed, 23 May 2018 10:15:00 -0500
-X-Gmail-Original-Message-ID: <CANk1AXS3M=GyTtdk=YYMadD22VqDPbB_XRYrnoue6nXrNQqqkQ@mail.gmail.com>
-Message-ID: <CANk1AXS3M=GyTtdk=YYMadD22VqDPbB_XRYrnoue6nXrNQqqkQ@mail.gmail.com>
-Subject: Re: [PATCH v5 20/28] fpga: dfl: add fpga bridge platform driver for FME
-To: Wu Hao <hao.wu@intel.com>
-Cc: Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org,
-        "Kang, Luwei" <luwei.kang@intel.com>,
-        "Zhang, Yi Z" <yi.z.zhang@intel.com>,
-        Tim Whisonant <tim.whisonant@intel.com>,
-        Enno Luebbers <enno.luebbers@intel.com>,
-        Shiva Rao <shiva.rao@intel.com>,
-        Christopher Rauer <christopher.rauer@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S933595AbeEWPPr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 11:15:47 -0400
+From: Huaisheng Ye <yehs2007@163.com>
+To: akpm@linux-foundation.org, linux-mm@kvack.org
+Cc: mhocko@suse.com, willy@infradead.org, hch@lst.de, vbabka@suse.cz,
+        mgorman@techsingularity.net, kstewart@linuxfoundation.org,
+        gregkh@linuxfoundation.org, colyli@suse.de, chengnt@lenovo.com,
+        hehy1@lenovo.com, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, xen-devel@lists.xenproject.org,
+        linux-btrfs@vger.kernel.org, Huaisheng Ye <yehs1@lenovo.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>, Christoph Hellwig <hch@infradead.org>
+Subject: [RFC PATCH v3 3/9] drivers/xen/swiotlb-xen: update usage of zone modifiers
+Date: Wed, 23 May 2018 22:57:48 +0800
+Message-Id: <1527087474-93986-4-git-send-email-yehs2007@163.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1527087474-93986-1-git-send-email-yehs2007@163.com>
+References: <1527087474-93986-1-git-send-email-yehs2007@163.com>
+X-CM-TRANSID: DtGowAAXEWSIgQVbCQ9NAA--.108S5
+X-Coremail-Antispam: 1Uf129KBjvJXoW7tryfCFWrtFW5AFyUWF4kZwb_yoW8Gw18pF
+        srCr1S9Fsxurn3A3yFyw1fWF1a9w1xuryUGFyav34UZr15JrWUWrs8KFyj93sxXw4fuF15
+        JrsrZw4rZFs8ArDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07bsTmhUUUUU=
+X-Originating-IP: [103.244.59.4]
+X-CM-SenderInfo: p1hk2jqqqxqiywtou0bp/xtbBFRZPT1Xlblwj4wAAsB
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 1, 2018 at 9:50 PM, Wu Hao <hao.wu@intel.com> wrote:
+From: Huaisheng Ye <yehs1@lenovo.com>
 
-Hi Hao,
+Use __GFP_ZONE_MASK to replace (__GFP_DMA | __GFP_HIGHMEM).
 
-> This patch adds fpga bridge platform driver for FPGA Management Engine.
-> It implements the enable_set callback for fpga bridge.
->
-> Signed-off-by: Tim Whisonant <tim.whisonant@intel.com>
-> Signed-off-by: Enno Luebbers <enno.luebbers@intel.com>
-> Signed-off-by: Shiva Rao <shiva.rao@intel.com>
-> Signed-off-by: Christopher Rauer <christopher.rauer@intel.com>
-> Signed-off-by: Wu Hao <hao.wu@intel.com>
-> Acked-by: Alan Tull <atull@kernel.org>
-> Acked-by: Moritz Fischer <mdf@kernel.org>
-> ---
-> v3: rename driver to fpga-dfl-fme-br
->     remove useless dev_dbg in probe function.
->     rebased due to fpga api change.
-> v4: rename to dfl-fme-br and fix SPDX license issue
->     include dfl-fme-pr.h instead of dfl-fme.h
->     add Acked-by from Alan and Moritz
-> v5: rebase due to API changes.
->     defer port and its ops finding when really need.
-> ---
->  drivers/fpga/Kconfig      |   6 +++
->  drivers/fpga/Makefile     |   1 +
->  drivers/fpga/dfl-fme-br.c | 114 ++++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 121 insertions(+)
->  create mode 100644 drivers/fpga/dfl-fme-br.c
->
-> diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
-> index 89f76e8..a8f939a 100644
-> --- a/drivers/fpga/Kconfig
-> +++ b/drivers/fpga/Kconfig
-> @@ -156,6 +156,12 @@ config FPGA_DFL_FME_MGR
->         help
->           Say Y to enable FPGA Manager driver for FPGA Management Engine.
->
-> +config FPGA_DFL_FME_BRIDGE
-> +       tristate "FPGA DFL FME Bridge Driver"
-> +       depends on FPGA_DFL_FME
-> +       help
-> +         Say Y to enable FPGA Bridge driver for FPGA Management Engine.
-> +
->  config FPGA_DFL_PCI
->         tristate "FPGA Device Feature List (DFL) PCIe Device Driver"
->         depends on PCI && FPGA_DFL
-> diff --git a/drivers/fpga/Makefile b/drivers/fpga/Makefile
-> index f82814a..75096e9 100644
-> --- a/drivers/fpga/Makefile
-> +++ b/drivers/fpga/Makefile
-> @@ -32,6 +32,7 @@ obj-$(CONFIG_OF_FPGA_REGION)          += of-fpga-region.o
->  obj-$(CONFIG_FPGA_DFL)                 += dfl.o
->  obj-$(CONFIG_FPGA_DFL_FME)             += dfl-fme.o
->  obj-$(CONFIG_FPGA_DFL_FME_MGR)         += dfl-fme-mgr.o
-> +obj-$(CONFIG_FPGA_DFL_FME_BRIDGE)      += dfl-fme-br.o
->
->  dfl-fme-objs := dfl-fme-main.o dfl-fme-pr.o
->
-> diff --git a/drivers/fpga/dfl-fme-br.c b/drivers/fpga/dfl-fme-br.c
-> new file mode 100644
-> index 0000000..5c51b08
-> --- /dev/null
-> +++ b/drivers/fpga/dfl-fme-br.c
-> @@ -0,0 +1,114 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * FPGA Bridge Driver for FPGA Management Engine (FME)
-> + *
-> + * Copyright (C) 2017 Intel Corporation, Inc.
-> + *
-> + * Authors:
-> + *   Wu Hao <hao.wu@intel.com>
-> + *   Joseph Grecco <joe.grecco@intel.com>
-> + *   Enno Luebbers <enno.luebbers@intel.com>
-> + *   Tim Whisonant <tim.whisonant@intel.com>
-> + *   Ananda Ravuri <ananda.ravuri@intel.com>
-> + *   Henry Mitchel <henry.mitchel@intel.com>
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/fpga/fpga-bridge.h>
-> +
-> +#include "dfl.h"
-> +#include "dfl-fme-pr.h"
-> +
-> +struct fme_br_priv {
-> +       struct dfl_fme_br_pdata *pdata;
-> +       struct dfl_fpga_port_ops *port_ops;
-> +       struct platform_device *port_pdev;
-> +};
-> +
-> +static int fme_bridge_enable_set(struct fpga_bridge *bridge, bool enable)
-> +{
-> +       struct fme_br_priv *priv = bridge->priv;
-> +       struct platform_device *port_pdev;
-> +       struct dfl_fpga_port_ops *ops;
-> +
-> +       if (!priv->port_pdev) {
-> +               port_pdev = dfl_fpga_cdev_find_port(priv->pdata->cdev,
-> +                                                   &priv->pdata->port_id,
-> +                                                   dfl_fpga_check_port_id);
-> +               if (!port_pdev)
-> +                       return -ENODEV;
-> +
-> +               priv->port_pdev = port_pdev;
-> +       }
-> +
-> +       if (priv->port_pdev && !priv->port_ops) {
-> +               ops = dfl_fpga_get_port_ops(priv->port_pdev);
-> +               if (!ops || !ops->enable_set)
-> +                       return -ENOENT;
-> +
-> +               priv->port_ops = ops;
-> +       }
+In function xen_swiotlb_alloc_coherent, it is obvious that __GFP_DMA32
+is not the expecting zone type.
 
-This is saving some pointers.  Is it possible that the port_pdev or
-port_ops could go away?
+___GFP_DMA, ___GFP_HIGHMEM and ___GFP_DMA32 have been deleted from GFP
+bitmasks, the bottom three bits of GFP mask is reserved for storing
+encoded zone number.
+__GFP_DMA, __GFP_HIGHMEM and __GFP_DMA32 should not be operated with
+each others by OR.
 
-Also, the port ops routines probably should be named
-dfl_fpga_port_ops_get/find_port/etc
+Use GFP_NORMAL() to clear bottom 3 bits of GFP bitmaks.
 
-Alan
+Signed-off-by: Huaisheng Ye <yehs1@lenovo.com>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Christoph Hellwig <hch@infradead.org>
+---
+ drivers/xen/swiotlb-xen.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> +
-> +       return priv->port_ops->enable_set(priv->port_pdev, enable);
-> +}
-> +
-> +static const struct fpga_bridge_ops fme_bridge_ops = {
-> +       .enable_set = fme_bridge_enable_set,
-> +};
-> +
-> +static int fme_br_probe(struct platform_device *pdev)
-> +{
-> +       struct device *dev = &pdev->dev;
-> +       struct fme_br_priv *priv;
-> +       struct fpga_bridge *br;
-> +       int ret;
-> +
-> +       priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +       if (!priv)
-> +               return -ENOMEM;
-> +
-> +       priv->pdata = dev_get_platdata(dev);
-> +
-> +       br = fpga_bridge_create(dev, "DFL FPGA FME Bridge",
-> +                               &fme_bridge_ops, priv);
-> +       if (!br)
-> +               return -ENOMEM;
-> +
-> +       platform_set_drvdata(pdev, br);
-> +
-> +       ret = fpga_bridge_register(br);
-> +       if (ret)
-> +               fpga_bridge_free(br);
-> +
-> +       return ret;
-> +}
-> +
-> +static int fme_br_remove(struct platform_device *pdev)
-> +{
-> +       struct fpga_bridge *br = platform_get_drvdata(pdev);
-> +       struct fme_br_priv *priv = br->priv;
-> +
-> +       fpga_bridge_unregister(br);
-> +
-> +       if (priv->port_pdev)
-> +               put_device(&priv->port_pdev->dev);
-> +       if (priv->port_ops)
-> +               dfl_fpga_put_port_ops(priv->port_ops);
-> +
-> +       return 0;
-> +}
-> +
-> +static struct platform_driver fme_br_driver = {
-> +       .driver = {
-> +               .name    = DFL_FPGA_FME_BRIDGE,
-> +       },
-> +       .probe   = fme_br_probe,
-> +       .remove  = fme_br_remove,
-> +};
-> +
-> +module_platform_driver(fme_br_driver);
-> +
-> +MODULE_DESCRIPTION("FPGA Bridge for DFL FPGA Management Engine");
-> +MODULE_AUTHOR("Intel Corporation");
-> +MODULE_LICENSE("GPL v2");
-> +MODULE_ALIAS("platform:dfl-fme-bridge");
-> --
-> 1.8.3.1
->
+diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
+index e1c6089..3999959 100644
+--- a/drivers/xen/swiotlb-xen.c
++++ b/drivers/xen/swiotlb-xen.c
+@@ -301,7 +301,7 @@ int __ref xen_swiotlb_init(int verbose, bool early)
+ 	* machine physical layout.  We can't allocate highmem
+ 	* because we can't return a pointer to it.
+ 	*/
+-	flags &= ~(__GFP_DMA | __GFP_HIGHMEM);
++	flags = GFP_NORMAL(flags);
+ 
+ 	/* On ARM this function returns an ioremap'ped virtual address for
+ 	 * which virt_to_phys doesn't return the corresponding physical
+-- 
+1.8.3.1
