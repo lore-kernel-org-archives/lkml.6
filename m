@@ -1,50 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932971AbeEWNKx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 09:10:53 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40602 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932865AbeEWNKu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 09:10:50 -0400
-Date: Wed, 23 May 2018 08:10:47 -0500
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Miroslav Benes <mbenes@suse.cz>
-Cc: Petr Mladek <pmladek@suse.com>, Jiri Kosina <jikos@kernel.org>,
-        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] livepatch: Remove not longer valid limitations from the
- documentation
-Message-ID: <20180523131047.27dcmnazdnhkexx7@treble>
-References: <20180523074742.20171-1-pmladek@suse.com>
- <alpine.LSU.2.21.1805231504240.26696@pobox.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <alpine.LSU.2.21.1805231504240.26696@pobox.suse.cz>
-User-Agent: NeoMutt/20180323
+        id S932981AbeEWNLi (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 09:11:38 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:45318 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932844AbeEWNLg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 09:11:36 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 54CCA601E8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
+From: Ilia Lin <ilialin@codeaurora.org>
+To: andy.gross@linaro.org, david.brown@linaro.org, robh@kernel.org,
+        mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com
+Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v11 0/2] CPU scaling support for msm8996 DT
+Date: Wed, 23 May 2018 16:11:29 +0300
+Message-Id: <1527081091-13389-1-git-send-email-ilialin@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 03:07:05PM +0200, Miroslav Benes wrote:
-> 
-> s/Remove not longer/Remove no longer/
-> 
-> On Wed, 23 May 2018, Petr Mladek wrote:
-> 
-> > Semantic changes are possible since the commit d83a7cb375eec21f04
-> > ("livepatch: change to a per-task consistency model").
-> > 
-> > Also data structures can be patched since the commit 439e7271dc2b63de37
-> > ("livepatch: introduce shadow variable API").
-> > 
-> > It is a high time we removed these limitations from the documentation.
-> > 
-> > Signed-off-by: Petr Mladek <pmladek@suse.com>
-> 
-> Acked-by: Miroslav Benes <mbenes@suse.cz>
+[v11]
+ * Split the series into domains
 
-Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
+The series adds OPP tables, thermal and CPU definitions in order to support
+the CPU frequency scaling on msm8996 CPUs.
+
+Ilia Lin (2):
+  dt: qcom: Add opp and thermal to the msm8996
+  dt: qcom: Add qcom-cpufreq-kryo driver configuration
+
+ arch/arm64/boot/dts/qcom/apq8096-db820c.dts |   2 +-
+ arch/arm64/boot/dts/qcom/msm8996.dtsi       | 546 +++++++++++++++++++++++++++-
+ 2 files changed, 528 insertions(+), 20 deletions(-)
 
 -- 
-Josh
+1.9.1
