@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935161AbeEWX0u (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 19:26:50 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:40264 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934671AbeEWX0o (ORCPT
+        id S935180AbeEWX0z (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 19:26:55 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:48370 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935144AbeEWX0r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 19:26:44 -0400
+        Wed, 23 May 2018 19:26:47 -0400
 From: "Eric W. Biederman" <ebiederm@xmission.com>
 To: Linux Containers <containers@lists.linux-foundation.org>
 Cc: linux-fsdevel@vger.kernel.org,
@@ -14,13 +14,13 @@ Cc: linux-fsdevel@vger.kernel.org,
         "Serge E. Hallyn" <serge@hallyn.com>,
         Christian Brauner <christian@brauner.io>, linux-kernel@vger.kernel.org,
         "Eric W. Biederman" <ebiederm@xmission.com>
-Date: Wed, 23 May 2018 18:25:35 -0500
-Message-Id: <20180523232538.4880-3-ebiederm@xmission.com>
+Date: Wed, 23 May 2018 18:25:36 -0500
+Message-Id: <20180523232538.4880-4-ebiederm@xmission.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <87o9h6554f.fsf@xmission.com>
 References: <87o9h6554f.fsf@xmission.com>
-X-XM-SPF: eid=1fLd9W-0004ID-VI;;;mid=<20180523232538.4880-3-ebiederm@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+FRCWa5Jt02u8Bp5N774N27n63DhuhACc=
+X-XM-SPF: eid=1fLd9a-0004ID-DJ;;;mid=<20180523232538.4880-4-ebiederm@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+ox6BYEU36ruf3Jktpvotef8Xvub+1C4Q=
 X-SA-Exim-Connect-IP: 97.119.174.25
 X-SA-Exim-Mail-From: ebiederm@xmission.com
 X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
@@ -31,20 +31,22 @@ X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
         *      [score: 0.5000]
         * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
         *      [sa04 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.1 XMSolicitRefs_0 Weightloss drug
+        *  0.0 T_TooManySym_02 5+ unique symbols in subject
+        *  0.0 T_TooManySym_03 6+ unique symbols in subject
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
 X-Spam-DCC: XMission; sa04 1397; Body=1 Fuz1=1 Fuz2=1 
 X-Spam-Combo: ***;Linux Containers <containers@lists.linux-foundation.org>
 X-Spam-Relay-Country: 
-X-Spam-Timing: total 438 ms - load_scoreonly_sql: 0.07 (0.0%),
-        signal_user_changed: 3.8 (0.9%), b_tie_ro: 2.5 (0.6%), parse: 1.35 (0.3%),
-        extract_message_metadata: 20 (4.6%), get_uri_detail_list: 3.7 (0.8%),
-        tests_pri_-1000: 9 (2.0%), tests_pri_-950: 1.49 (0.3%), tests_pri_-900: 1.29
-        (0.3%), tests_pri_-400: 28 (6.5%), check_bayes: 27 (6.2%), b_tokenize: 11
-        (2.5%), b_tok_get_all: 8 (1.8%), b_comp_prob: 2.8 (0.6%), b_tok_touch_all:
-        3.2 (0.7%), b_finish: 0.74 (0.2%), tests_pri_0: 365 (83.3%),
-        check_dkim_signature: 0.57 (0.1%), check_dkim_adsp: 4.0 (0.9%),
-        tests_pri_500: 3.7 (0.8%), rewrite_mail: 0.00 (0.0%)
-Subject: [REVIEW][PATCH 3/6] fs: Allow superblock owner to replace invalid owners of inodes
+X-Spam-Timing: total 209 ms - load_scoreonly_sql: 0.07 (0.0%),
+        signal_user_changed: 3.8 (1.8%), b_tie_ro: 2.6 (1.3%), parse: 1.30 (0.6%),
+        extract_message_metadata: 22 (10.3%), get_uri_detail_list: 2.2 (1.1%),
+        tests_pri_-1000: 11 (5.4%), tests_pri_-950: 1.65 (0.8%), tests_pri_-900: 1.31
+        (0.6%), tests_pri_-400: 20 (9.7%), check_bayes: 19 (9.1%), b_tokenize: 7
+        (3.4%), b_tok_get_all: 5 (2.6%), b_comp_prob: 2.0 (1.0%), b_tok_touch_all:
+        2.5 (1.2%), b_finish: 0.64 (0.3%), tests_pri_0: 139 (66.5%),
+        check_dkim_signature: 0.51 (0.2%), check_dkim_adsp: 5.0 (2.4%),
+        tests_pri_500: 4.4 (2.1%), rewrite_mail: 0.00 (0.0%)
+Subject: [REVIEW][PATCH 4/6] fs: Allow superblock owner to access do_remount_sb()
 X-Spam-Flag: No
 X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
 X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
@@ -52,105 +54,41 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow users with CAP_SYS_CHOWN over the superblock of a filesystem to
-chown files when inode owner is invalid.  Ordinarily the
-capable_wrt_inode_uidgid check is sufficient to allow access to files
-but when the underlying filesystem has uids or gids that don't map to
-the current user namespace it is not enough, so the chown permission
-checks need to be extended to allow this case.
+Superblock level remounts are currently restricted to global
+CAP_SYS_ADMIN, as is the path for changing the root mount to
+read only on umount. Loosen both of these permission checks to
+also allow CAP_SYS_ADMIN in any namespace which is privileged
+towards the userns which originally mounted the filesystem.
 
-Calling chown on filesystem nodes whose uid or gid don't map is
-necessary if those nodes are going to be modified as writing back
-inodes which contain uids or gids that don't map is likely to cause
-filesystem corruption of the uid or gid fields.
-
-Once chown has been called the existing capable_wrt_inode_uidgid
-checks are sufficient to allow the owner of a superblock to do anything
-the global root user can do with an appropriate set of capabilities.
-
-An ordinary filesystem mountable by a userns root will limit all uids
-and gids in s_user_ns or the INVALID_UID and INVALID_GID to flag all
-others.  So having this added permission limited to just INVALID_UID
-and INVALID_GID is sufficient to handle every case on an ordinary filesystem.
-
-Of the virtual filesystems at least proc is known to set s_user_ns to
-something other than &init_user_ns, while at the same time presenting
-some files owned by GLOBAL_ROOT_UID.  Those files the mounter of proc
-in a user namespace should not be able to chown to get access to.
-Limiting the relaxation in permission to just the minimum of allowing
-changing INVALID_UID and INVALID_GID prevents problems with cases like
-that.
-
-The original version of this patch was written by: Seth Forshee.  I
-have rewritten and rethought this patch enough so it's really not the
-same thing (certainly it needs a different description), but he
-deserves credit for getting out there and getting the conversation
-started, and finding the potential gotcha's and putting up with my
-semi-paranoid feedback.
-
-Inspired-by: Seth Forshee <seth.forshee@canonical.com>
-Acked-by: Seth Forshee <seth.forshee@canonical.com>
+Signed-off-by: Seth Forshee <seth.forshee@canonical.com>
+Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Acked-by: Serge Hallyn <serge.hallyn@canonical.com>
 Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
 ---
- fs/attr.c | 36 ++++++++++++++++++++++++++++--------
- 1 file changed, 28 insertions(+), 8 deletions(-)
+ fs/namespace.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/attr.c b/fs/attr.c
-index 12ffdb6fb63c..4220c98f41a5 100644
---- a/fs/attr.c
-+++ b/fs/attr.c
-@@ -18,6 +18,32 @@
- #include <linux/evm.h>
- #include <linux/ima.h>
- 
-+static bool chown_ok(const struct inode *inode, kuid_t uid)
-+{
-+	if (uid_eq(current_fsuid(), inode->i_uid) &&
-+	    uid_eq(uid, inode->i_uid))
-+		return true;
-+	if (capable_wrt_inode_uidgid(inode, CAP_CHOWN))
-+		return true;
-+	if (uid_eq(inode->i_uid, INVALID_UID) &&
-+	    ns_capable(inode->i_sb->s_user_ns, CAP_CHOWN));
-+		return true;
-+	return false;
-+}
-+
-+static bool chgrp_ok(const struct inode *inode, kgid_t gid)
-+{
-+	if (uid_eq(current_fsuid(), inode->i_uid) &&
-+	    (in_group_p(gid) || gid_eq(gid, inode->i_gid)))
-+		return true;
-+	if (capable_wrt_inode_uidgid(inode, CAP_CHOWN))
-+		return true;
-+	if (gid_eq(inode->i_gid, INVALID_GID) &&
-+	    ns_capable(inode->i_sb->s_user_ns, CAP_CHOWN));
-+		return true;
-+	return false;
-+}
-+
- /**
-  * setattr_prepare - check if attribute changes to a dentry are allowed
-  * @dentry:	dentry to check
-@@ -52,17 +78,11 @@ int setattr_prepare(struct dentry *dentry, struct iattr *attr)
- 		goto kill_priv;
- 
- 	/* Make sure a caller can chown. */
--	if ((ia_valid & ATTR_UID) &&
--	    (!uid_eq(current_fsuid(), inode->i_uid) ||
--	     !uid_eq(attr->ia_uid, inode->i_uid)) &&
--	    !capable_wrt_inode_uidgid(inode, CAP_CHOWN))
-+	if ((ia_valid & ATTR_UID) && !chown_ok(inode, attr->ia_uid))
- 		return -EPERM;
- 
- 	/* Make sure caller can chgrp. */
--	if ((ia_valid & ATTR_GID) &&
--	    (!uid_eq(current_fsuid(), inode->i_uid) ||
--	    (!in_group_p(attr->ia_gid) && !gid_eq(attr->ia_gid, inode->i_gid))) &&
--	    !capable_wrt_inode_uidgid(inode, CAP_CHOWN))
-+	if ((ia_valid & ATTR_GID) && !chgrp_ok(inode, attr->ia_gid))
- 		return -EPERM;
- 
- 	/* Make sure a caller can chmod. */
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 5f75969adff1..8ddd14806799 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -1590,7 +1590,7 @@ static int do_umount(struct mount *mnt, int flags)
+ 		 * Special case for "unmounting" root ...
+ 		 * we just try to remount it readonly.
+ 		 */
+-		if (!capable(CAP_SYS_ADMIN))
++		if (!ns_capable(sb->s_user_ns, CAP_SYS_ADMIN))
+ 			return -EPERM;
+ 		down_write(&sb->s_umount);
+ 		if (!sb_rdonly(sb))
+@@ -2333,7 +2333,7 @@ static int do_remount(struct path *path, int ms_flags, int sb_flags,
+ 	down_write(&sb->s_umount);
+ 	if (ms_flags & MS_BIND)
+ 		err = change_mount_flags(path->mnt, ms_flags);
+-	else if (!capable(CAP_SYS_ADMIN))
++	else if (!ns_capable(sb->s_user_ns, CAP_SYS_ADMIN))
+ 		err = -EPERM;
+ 	else
+ 		err = do_remount_sb(sb, sb_flags, data, 0);
 -- 
 2.14.1
