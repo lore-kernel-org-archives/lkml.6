@@ -1,94 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933970AbeEWR7d (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 13:59:33 -0400
-Received: from muru.com ([72.249.23.125]:44188 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933936AbeEWR7D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 13:59:03 -0400
-Date: Wed, 23 May 2018 10:58:59 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        id S933976AbeEWSAH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 14:00:07 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:44626 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933800AbeEWR6w (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 13:58:52 -0400
+X-Google-Smtp-Source: AB8JxZoJ0vsBkwR20eATk59eL6A+UeO5JRaGh5s88NT4oUzdax+soTzsJ9gthppCwZ9EpSbOnQy1vw==
+From: Rajat Jain <rajatja@google.com>
+To: Bjorn Helgaas <bhelgaas@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v1 0/3] console, serial8250: Disable PM and DMA ops
-Message-ID: <20180523175859.GO98604@atomide.com>
-References: <20180515183409.78046-1-andriy.shevchenko@linux.intel.com>
- <ca78895ac7ac84ec1c7f2f33024237af329ffd7a.camel@linux.intel.com>
- <20180516100842.xuma7b3e727w7bpz@linutronix.de>
- <CAHp75Vc2bJQHiWYcdKK+7wwMw2fSWxMauxP-dMRUAUdKnet7WQ@mail.gmail.com>
- <20180516104734.357oevogppu5bsg4@linutronix.de>
- <ed9879ef42a70d2609f60f73834cabb7e3df9e2f.camel@linux.intel.com>
- <20180517135621.GJ98604@atomide.com>
- <CAHp75VfqAK6+dPWWkQXjy0V-AFSGLSDJ9CmnUv=ba0F66TDTVg@mail.gmail.com>
- <20180517193008.GV25808@atomide.com>
- <CAHp75Ve56pyEC41XZ9i9yxBNberQe=ee2miQL0v9T4vRtkWPBQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75Ve56pyEC41XZ9i9yxBNberQe=ee2miQL0v9T4vRtkWPBQ@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Rajat Jain <rajatja@google.com>, Frederick Lawler <fred@fredlawl.com>,
+        Oza Pawandeep <poza@codeaurora.org>,
+        Keith Busch <keith.busch@intel.com>,
+        Gabriele Paoloni <gabriele.paoloni@huawei.com>,
+        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+        Thomas Tai <thomas.tai@oracle.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jes Sorensen <jsorensen@fb.com>,
+        Kyle McMartin <jkkm@fb.com>
+Cc: rajatxjain@gmail.com
+Subject: [PATCH v2 4/5] PCI/AER: Add sysfs attributes for rootport cumulative stats
+Date: Wed, 23 May 2018 10:58:07 -0700
+Message-Id: <20180523175808.28030-5-rajatja@google.com>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+In-Reply-To: <20180523175808.28030-1-rajatja@google.com>
+References: <20180522222805.80314-1-rajatja@google.com>
+ <20180523175808.28030-1-rajatja@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Andy Shevchenko <andy.shevchenko@gmail.com> [180522 21:42]:
-> On Thu, May 17, 2018 at 10:30 PM, Tony Lindgren <tony@atomide.com> wrote:
-> > So how about add some "noidle" kernel command line parameter for console
-> > that calls
-> > pm_runtime_forbid() and then you have the UART permanently
-> > on.
-> 
-> IIUC _forbid() can be overwritten via sysfs.
-> And I would prefer to do other way around, something like console.idle
-> and put default for OMAP to yes and no for everything else.
+Add sysfs attributes for rootport statistics (that are cumulative
+of all the ERR_* messages seen on this PCI hierarchy).
 
-OK yeah console.idle sounds good to me. We should default to a
-safe option.
+Signed-off-by: Rajat Jain <rajatja@google.com>
+---
+v2: same as v1
 
-> > Hmm I guess you could make also serial8250_rpm_get() do nothing
-> > based on that.
-> 
-> Have you seen entire series which I keep here:
-> https://bitbucket.org/andy-shev/linux/branch/topic/uart/rpm?
-> Among other things it gets rid of those specific callbacks entirely.
+ drivers/pci/pcie/aer/aerdrv.h       |  2 ++
+ drivers/pci/pcie/aer/aerdrv_core.c  |  2 ++
+ drivers/pci/pcie/aer/aerdrv_stats.c | 31 +++++++++++++++++++++++++++++
+ 3 files changed, 35 insertions(+)
 
-Well I was not Cc:ed on it, I browsed it in some archive and it
-seemed unsafe to me. But if you figured out a way to do it conditionally
-based on console.idle without causing regressions.
-
-> > I do agree the serial runtime PM has an issue if it depends on
-> > pm_runtime_irq_safe() being set.
-> 
-> It's more than an issue. The  so called "support" of RPM for UART is
-> _based on the hack_.
-> I would love to NAK that in the first place if I would have known of it in time.
-
-Hmm well it seems that you too have been patching the 8250_rpm
-functions for years and then now what after multiple years you
-hit this issue? :)
-
-> >> So, I can, of course just remove callbacks from the console ->write().
-> >> Though it will prevent to use kernel console anyway.
-> >
-> > Please et's not start breaking things, we already see a constant
-> > flow of regressions on weekly basis.
-> 
-> Now we are stick with a hack and the case based on that is against
-> fixing things.
-> This is how it looks from my side.
-
-Sorry yeah I agree there are issues, but let's fix it properly with
-no regressions.
-
-Regards,
-
-TOny
+diff --git a/drivers/pci/pcie/aer/aerdrv.h b/drivers/pci/pcie/aer/aerdrv.h
+index 048fbd7c9633..77d8355551d9 100644
+--- a/drivers/pci/pcie/aer/aerdrv.h
++++ b/drivers/pci/pcie/aer/aerdrv.h
+@@ -88,6 +88,8 @@ irqreturn_t aer_irq(int irq, void *context);
+ int pci_aer_stats_init(struct pci_dev *pdev);
+ void pci_aer_stats_exit(struct pci_dev *pdev);
+ void pci_dev_aer_stats_incr(struct pci_dev *pdev, struct aer_err_info *info);
++void pci_rootport_aer_stats_incr(struct pci_dev *pdev,
++				 struct aer_err_source *e_src);
+ 
+ extern const char
+ *aer_correctable_error_string[AER_MAX_TYPEOF_CORRECTABLE_ERRS];
+diff --git a/drivers/pci/pcie/aer/aerdrv_core.c b/drivers/pci/pcie/aer/aerdrv_core.c
+index 42a6f913069a..0f70e22563f3 100644
+--- a/drivers/pci/pcie/aer/aerdrv_core.c
++++ b/drivers/pci/pcie/aer/aerdrv_core.c
+@@ -424,6 +424,8 @@ static void aer_isr_one_error(struct pcie_device *p_device,
+ 	struct aer_rpc *rpc = get_service_data(p_device);
+ 	struct aer_err_info *e_info = &rpc->e_info;
+ 
++	pci_rootport_aer_stats_incr(p_device->port, e_src);
++
+ 	/*
+ 	 * There is a possibility that both correctable error and
+ 	 * uncorrectable error being logged. Report correctable error first.
+diff --git a/drivers/pci/pcie/aer/aerdrv_stats.c b/drivers/pci/pcie/aer/aerdrv_stats.c
+index e47321b267f6..898c9bc02ec2 100644
+--- a/drivers/pci/pcie/aer/aerdrv_stats.c
++++ b/drivers/pci/pcie/aer/aerdrv_stats.c
+@@ -57,6 +57,9 @@ static DEVICE_ATTR_RO(field)
+ aer_stats_aggregate_attr(dev_total_cor_errs);
+ aer_stats_aggregate_attr(dev_total_fatal_errs);
+ aer_stats_aggregate_attr(dev_total_nonfatal_errs);
++aer_stats_aggregate_attr(rootport_total_cor_errs);
++aer_stats_aggregate_attr(rootport_total_fatal_errs);
++aer_stats_aggregate_attr(rootport_total_nonfatal_errs);
+ 
+ #define aer_stats_breakdown_attr(field, stats_array, strings_array)	\
+ 	static ssize_t							\
+@@ -90,6 +93,9 @@ static struct attribute *aer_stats_attrs[] __ro_after_init = {
+ 	&dev_attr_dev_total_nonfatal_errs.attr,
+ 	&dev_attr_dev_breakdown_correctable.attr,
+ 	&dev_attr_dev_breakdown_uncorrectable.attr,
++	&dev_attr_rootport_total_cor_errs.attr,
++	&dev_attr_rootport_total_fatal_errs.attr,
++	&dev_attr_rootport_total_nonfatal_errs.attr,
+ 	NULL
+ };
+ 
+@@ -102,6 +108,12 @@ static umode_t aer_stats_attrs_are_visible(struct kobject *kobj,
+ 	if (!pdev->aer_stats)
+ 		return 0;
+ 
++	if ((a == &dev_attr_rootport_total_cor_errs.attr ||
++	     a == &dev_attr_rootport_total_fatal_errs.attr ||
++	     a == &dev_attr_rootport_total_nonfatal_errs.attr) &&
++	    pci_pcie_type(pdev) != PCI_EXP_TYPE_ROOT_PORT)
++		return 0;
++
+ 	return a->mode;
+ }
+ 
+@@ -144,6 +156,25 @@ void pci_dev_aer_stats_incr(struct pci_dev *pdev, struct aer_err_info *info)
+ 			counter[i]++;
+ }
+ 
++void pci_rootport_aer_stats_incr(struct pci_dev *pdev,
++				 struct aer_err_source *e_src)
++{
++	struct aer_stats *aer_stats = pdev->aer_stats;
++
++	if (!aer_stats)
++		return;
++
++	if (e_src->status & PCI_ERR_ROOT_COR_RCV)
++		aer_stats->rootport_total_cor_errs++;
++
++	if (e_src->status & PCI_ERR_ROOT_UNCOR_RCV) {
++		if (e_src->status & PCI_ERR_ROOT_FATAL_RCV)
++			aer_stats->rootport_total_fatal_errs++;
++		else
++			aer_stats->rootport_total_nonfatal_errs++;
++	}
++}
++
+ int pci_aer_stats_init(struct pci_dev *pdev)
+ {
+ 	pdev->aer_stats = kzalloc(sizeof(struct aer_stats), GFP_KERNEL);
+-- 
+2.17.0.441.gb46fe60e1d-goog
