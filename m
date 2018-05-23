@@ -1,105 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933442AbeEWQ1j (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 12:27:39 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:48514 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754627AbeEWQ1h (ORCPT
+        id S933557AbeEWQ2E (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 12:28:04 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:47414 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933476AbeEWQ2D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 12:27:37 -0400
-Subject: Re: [PATCH v5 1/2] xen/PVH: Set up GS segment for stack canary
-To: Jan Beulich <JBeulich@suse.com>
-Cc: brgerst@gmail.com, xen-devel <xen-devel@lists.xenproject.org>,
-        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org
-References: <20180523143002.29252-1-boris.ostrovsky@oracle.com>
- <20180523143002.29252-2-boris.ostrovsky@oracle.com>
- <5B058BA002000078001C523F@prv1-mh.provo.novell.com>
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <19ab48d1-333c-73fa-8586-c433b5bd7b90@oracle.com>
-Date: Wed, 23 May 2018 12:30:47 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 23 May 2018 12:28:03 -0400
+Date: Wed, 23 May 2018 18:27:41 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>
+Subject: Re: [PATCH] kernel: sys: fix potential Spectre v1
+Message-ID: <20180523162741.GU12198@hirez.programming.kicks-ass.net>
+References: <50481b83-4c03-f354-bd11-cef7aecdd85f@embeddedor.com>
+ <b5e5e160-6ac7-87c8-af1a-4eb88f1f020d@embeddedor.com>
+ <CAPcyv4iO67AG5ytc7gRBTnu6V8bdTOMb9eBwjGJtkGpMLKkpwg@mail.gmail.com>
+ <3d2e5771-c2c9-6e45-3e85-21c0bc86876e@embeddedor.com>
+ <58df7ae3-8ef0-4f42-9ab2-b551d2ffff00@embeddedor.com>
+ <161a0513-1029-a76c-f967-1e606081599d@embeddedor.com>
+ <CAPcyv4i6zOJZakNVW=y8NyUFB1EzOxBtoOGVhWCwysuTi6grvg@mail.gmail.com>
+ <112349fb-837c-7b91-e256-a1c443710150@embeddedor.com>
+ <20180523090840.GU12217@hirez.programming.kicks-ass.net>
+ <20180523150737.ycuulapggtu3hpc3@lakrids.cambridge.arm.com>
 MIME-Version: 1.0
-In-Reply-To: <5B058BA002000078001C523F@prv1-mh.provo.novell.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8902 signatures=668700
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=493
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805230162
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180523150737.ycuulapggtu3hpc3@lakrids.cambridge.arm.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/23/2018 11:41 AM, Jan Beulich wrote:
->>>> On 23.05.18 at 16:30, <boris.ostrovsky@oracle.com> wrote:
->> @@ -98,6 +101,12 @@ ENTRY(pvh_start_xen)
->>  	/* 64-bit entry point. */
->>  	.code64
->>  1:
->> +	/* Set base address in stack canary descriptor. */
->> +	mov $MSR_GS_BASE,%ecx
->> +	mov $_pa(canary), %rax
->> +	xor %rdx, %rdx
-> Why rax and rdx instead of eax and edx? In the former case, the
-> relocation produced might confuse whatever entity processing it
-> (it'll have a sign-extended 32-bit quantity to deal with, which
-> wouldn't allow representing an address in the [2Gb, 4Gb) range).
-> In the latter case, while surely neither performance nor code size
-> matter much here, it's still a bad precedent (people copy-and-paste
-> code all the time): Zero-ing of registers should generally use the
-> 32-bit forms of the insn. Gas has actually gained an optimization
-> mode recently (upon request from Linus and the x86 maintainers)
-> to silently "repair" such inefficiencies.
+On Wed, May 23, 2018 at 04:07:37PM +0100, Mark Rutland wrote:
+> I think that either way, we have a potential problem if the compiler
+> generates a branch dependent on the result of validate_index_nospec().
+> 
+> In that case, we could end up with codegen approximating:
+> 
+> 	bool safe = false;
+> 
+> 	if (idx < bound) {
+> 		idx = array_index_nospec(idx, bound);
+> 		safe = true;
+> 	}
+> 
+> 	// this branch can be mispredicted
+> 	if (safe) {
+> 		foo = array[idx];
+> 	}
+> 
+> ... and thus we lose the nospec protection.
 
+I was assuming the compiler would not do that, that's pretty stupid
+code-gen. But you're right in calling that out, because I think it's
+entirely in it's right to do that :/
 
-Sure, I can replace these two with 32-bit variants. If there are no
-other comments I won't re-send this again.
+> I also suspect that compiler transformations mean that this might
+> already be the case for patterns like:
+> 
+> 	if (idx < bound)  {
+> 		safe_idx = array_index_nospec(idx, bound)];
+> 		...
+> 		foo = array[safe_idx];
+> 	}
+> 
+> ... if the compiler can transform that to something like:
+> 
+> 	if (idx < bound) {
+> 		idx = array_index_nospec(idx, bound);
+> 	}
+> 
+> 	// can be mispredicted
+> 	if (idx < bound) {
+> 		foo = array[idx];
+> 	}
+> 
+> ... which I think a compiler might be capable of, depending on the rest
+> of the function body (e.g. if there's a common portion shared with the
+> else case).
+> 
+> I'll see if I can trigger that in a test case. :/
 
--boris
+*groan*...
