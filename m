@@ -1,78 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933905AbeEWRqc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 13:46:32 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:33644 "EHLO
+        id S933071AbeEWRr6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 13:47:58 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:34723 "EHLO
         mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932667AbeEWRq3 (ORCPT
+        with ESMTP id S1751685AbeEWRr4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 13:46:29 -0400
-X-Google-Smtp-Source: AB8JxZpFFjL8OCn3mBII83AAy8AqD7gavx0Xv8ia1huv085n3WqG3o54LA1jXD9ZwWuVzuGQ8i6mZg==
-Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [PATCH] mm: Add new vma flag VM_LOCAL_CPU
-From: Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <5e20be19-28ba-189a-6935-698a012a6665@linux.intel.com>
-Date: Wed, 23 May 2018 10:46:26 -0700
-Cc: Matthew Wilcox <willy@infradead.org>,
-        Christopher Lameter <cl@linux.com>, Boaz Harrosh <boazh@netapp.com>,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, Rik van Riel <riel@redhat.com>,
-        Jan Kara <jack@suse.cz>, Matthew Wilcox <mawilcox@microsoft.com>,
-        Amit Golander <Amit.Golander@netapp.com>
-Message-Id: <45CBAC53-610A-485B-95D8-4357261338BF@gmail.com>
-References: <0efb5547-9250-6b6c-fe8e-cf4f44aaa5eb@netapp.com>
- <20180514191551.GA27939@bombadil.infradead.org>
- <7ec6fa37-8529-183d-d467-df3642bcbfd2@netapp.com>
- <20180515004137.GA5168@bombadil.infradead.org>
- <f3a66d8b-b9dc-b110-08aa-a63f0c309fb2@netapp.com>
- <010001637399f796-3ffe3ed2-2fb1-4d43-84f0-6a65b6320d66-000000@email.amazonses.com>
- <5aea6aa0-88cc-be7a-7012-7845499ced2c@netapp.com>
- <50cbc27f-0014-0185-048d-25640f744b5b@linux.intel.com>
- <0100016388be5738-df8f9d12-7011-4e4e-ba5b-33973e5da794-000000@email.amazonses.com>
- <c4bb7ea8-16d5-ca31-2a9b-db90841211ba@linux.intel.com>
- <20180522175114.GA1237@bombadil.infradead.org>
- <5e20be19-28ba-189a-6935-698a012a6665@linux.intel.com>
-To: Dave Hansen <dave.hansen@linux.intel.com>
-X-Mailer: Apple Mail (2.3273)
+        Wed, 23 May 2018 13:47:56 -0400
+X-Google-Smtp-Source: AB8JxZqQ+ddTiXFnRDHBq+iS6BzUQDcWNOxPC0r3s5BWsFZFeWXEtJPI2VQb63jnpHnhehGdCSTveFbBGosDESHlMoI=
+MIME-Version: 1.0
+References: <20180518170202.11458-1-samitolvanen@google.com>
+ <05d14ac7-0feb-63a3-e7ef-b8ca1ae2fd1d@arm.com> <CAKwvOdm1kYedukCq=g74AvqJHp6KC03oNoouQy2nkvfo4idoEw@mail.gmail.com>
+ <8c7be44f-086d-65e3-9969-8182261ce82f@arm.com> <CAKwvOd=XZqg5=mkXZb-cxq3i_AGoJGAbmF=Fwc7Q98oi0tbN9g@mail.gmail.com>
+ <3fd89842-86cd-ee01-0c2c-5438dd2d5f2a@arm.com> <CAKwvOdk+=JKcQP1ieLEkZftRGf-pqCTTzEuYvT_45YNMkEw_wA@mail.gmail.com>
+ <86k1rzc4ba.wl-marc.zyngier@arm.com> <CAAeHK+z2LmMYasYtRTt2U=QF8Pe_i10RA3-SkLzGXXByZqLh1w@mail.gmail.com>
+ <CAKwvOdmWg8o9yoZ+3dCwL8vYB8gzE+AatCbXENN-+Gge9Q6gtA@mail.gmail.com> <CAAeHK+wk0hSH6iQcsLzrpjvsGocev-UZ6=z95ysecdFnAcHVSQ@mail.gmail.com>
+In-Reply-To: <CAAeHK+wk0hSH6iQcsLzrpjvsGocev-UZ6=z95ysecdFnAcHVSQ@mail.gmail.com>
+From: Nick Desaulniers <ndesaulniers@google.com>
+Date: Wed, 23 May 2018 10:47:43 -0700
+Message-ID: <CAKwvOd=fqk2bQSiPBsUmVSQLGUEGYSUev3iWvico6HOpYs5YJA@mail.gmail.com>
+Subject: Re: [PATCH] arm64: kvm: use -fno-jump-tables with clang
+To: Andrey Konovalov <andreyknvl@google.com>
+Cc: marc.zyngier@arm.com, Sami Tolvanen <samitolvanen@google.com>,
+        christoffer.dall@arm.com, Takahiro Akashi <takahiro.akashi@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4NHkb1r013415
 
-Dave Hansen <dave.hansen@linux.intel.com> wrote:
+On Wed, May 23, 2018 at 4:54 AM Andrey Konovalov <andreyknvl@google.com>
+wrote:
+> On Tue, May 22, 2018 at 8:28 PM, Nick Desaulniers
+> <ndesaulniers@google.com> wrote:
+> > On Fri, May 18, 2018 at 11:13 AM Marc Zyngier <marc.zyngier@arm.com>
+wrote:
+> >> > - you have checked that with a released version of the compiler, you
+> >
+> > On Tue, May 22, 2018 at 10:58 AM Andrey Konovalov <andreyknvl@google.com
 
-> On 05/22/2018 10:51 AM, Matthew Wilcox wrote:
->> But CR3 is a per-CPU register.  So it'd be *possible* to allocate one
->> PGD per CPU (per process).  Have them be identical in all but one of
->> the PUD entries.  Then you've reserved 1/512 of your address space for
->> per-CPU pages.
->> 
->> Complicated, ugly, memory-consuming.  But possible.
-> 
-> Yep, and you'd probably want a cache of them so you don't end up having
-> to go rewrite half of the PGD every time you context-switch.  But, on
-> the plus side, the logic would be pretty similar if not identical to the
-> way that we manage PCIDs.  If your mm was recently active on the CPU,
-> you can use a PGD that's already been constructed.  If not, you're stuck
-> making a new one.
-> 
-> Andy L. was alto talking about using this kind of mechanism to simplify
-> the entry code.  Instead of needing per-cpu areas where we index by the
-> CPU number, or by using %GS, we could have per-cpu data or code that has
-> a fixed virtual address.
-> 
-> It'd be a fun project, but it might not ever pan out.
+> > wrote:
+> >> Tested-by: Andrey Konovalov <andreyknvl@google.com>
+> >
+> > Hi Andrey,
+> > Thank you very much for this report.  Can you confirm as well the
+version
+> > of Clang that you were using?
 
-For the record: there are several academic studies about this subject. The
-most notable one is Corey [1].
+> I'm on 86852a40 ("[InstCombine] Calloc-ed strings optimizations").
 
-[1] https://www.usenix.org/legacy/event/osdi08/tech/full_papers/boyd-wickizer/boyd_wickizer.pdf
+> > If it's not a binary release (built from
+> > source), would you be able to re-confirm with a released version?
+
+> Sure. Which release should I try and how do I get it?
+
+Maybe clang-6.0 as the latest release (though I suspect you may run into
+the recently-fixed-in-clang-7.0 "S" constraint bug that you reported).
+
+I've had luck on debian based distributions installing from:
+http://apt.llvm.org/
+
+(These can be added to your /etc/apt/sources.list, then a `sudo apt update`
+and `sudo apt install clang-6.0`)
+
+If you're not able to add remote repositories (some employers block this ;)
+), then you can find releases for download for a few different platforms:
+https://releases.llvm.org/
+
+For example, a quick:
+$ mkdir llvm-6.0
+$ cd !$
+$ wget
+https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-linux-gnu-debian8.tar.xz
+$ tar xvf clang+llvm-6.0.0-x86_64-linux-gnu-debian8.tar.xz
+$ ./clang+llvm-6.0.0-x86_64-linux-gnu-debian8/bin/clang-6.0 -v
+clang version 6.0.0 (tags/RELEASE_600/final)
+Target: x86_64-unknown-linux-gnu
+Thread model: posix
+InstalledDir: .../llvm-6.0/./clang+llvm-6.0.0-x86_64-linux-gnu-debian8/bin
+Found candidate GCC installation: ...
+Candidate multilib: .;@m64
+Selected multilib: .;@m64
+
+Seems to work.
+-- 
+Thanks,
+~Nick Desaulniers
