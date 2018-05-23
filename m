@@ -1,91 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753951AbeEWF5W (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 01:57:22 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:37193 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750725AbeEWF5V (ORCPT
+        id S1753995AbeEWF6Y (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 01:58:24 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:43728 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751085AbeEWF6U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 01:57:21 -0400
-X-Google-Smtp-Source: AB8JxZrJiCnjjBjo52KSwJswiGX0VT86UsBXY6UF5lnj6ipC998+f9tA83cSjTbr18xLAG/xrY6EHQ==
-Date: Wed, 23 May 2018 06:57:17 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Brian Norris <briannorris@chromium.org>
-Cc: Benson Leung <bleung@chromium.org>, Olof Johansson <olof@lixom.net>,
-        linux-kernel@vger.kernel.org, Shawn Nematbakhsh <shawnn@chromium.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Alexandru Stan <amstan@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: Re: [PATCH] mfd: cros_ec: retry commands when EC is known to be busy
-Message-ID: <20180523055717.GR5130@dell>
-References: <20180523002310.87011-1-briannorris@chromium.org>
+        Wed, 23 May 2018 01:58:20 -0400
+X-Google-Smtp-Source: AB8JxZpsoCfaCEhqJLCBvOQpmDDKobM0WNP0cYiLlrniKsgMp+ua/fy652ZfxKywPllGbtQb7IGzeQ==
+Date: Wed, 23 May 2018 11:28:17 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] cpufreq: tegra20: Fix imbalanced clock enable count
+Message-ID: <20180523055817.subrv6oeckfecpcp@vireshk-i7>
+References: <20180522211420.2006-1-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180523002310.87011-1-briannorris@chromium.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180522211420.2006-1-digetx@gmail.com>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 22 May 2018, Brian Norris wrote:
-
-> Commit 001dde9400d5 ("mfd: cros ec: spi: Fix "in progress" error
-> signaling") pointed out some bad code, but its analysis and conclusion
-> was not 100% correct.
+On 23-05-18, 00:14, Dmitry Osipenko wrote:
+> Tegra20-cpufreq driver missed enabling the CPU clocks. This results in a
+> clock-enable refcount disbalance on PLL_P <-> PLL_X reparent, causing
+> PLL_X to get disabled while it shouldn't. Fix this by enabling the clocks
+> on the driver probe.
 > 
-> It *is* correct that we should not propagate result==EC_RES_IN_PROGRESS
-> for transport errors, because this has a special meaning -- that we
-> should follow up with EC_CMD_GET_COMMS_STATUS until the EC is no longer
-> busy. This is definitely the wrong thing for many commands, because
-> among other problems, EC_CMD_GET_COMMS_STATUS doesn't actually retrieve
-> any RX data from the EC, so commands that expected some data back will
-> instead start processing junk.
-> 
-> For such commands, the right answer is to either propagate the error
-> (and return that error to the caller) or resend the original command
-> (*not* EC_CMD_GET_COMMS_STATUS).
-> 
-> Unfortunately, commit 001dde9400d5 forgets a crucial point: that for
-> some long-running operations, the EC physically cannot respond to
-> commands any more. For example, with EC_CMD_FLASH_ERASE, the EC may be
-> re-flashing its own code regions, so it can't respond to SPI interrupts.
-> Instead, the EC prepares us ahead of time for being busy for a "long"
-> time, and fills its hardware buffer with EC_SPI_PAST_END. Thus, we
-> expect to see several "transport" errors (or, messages filled with
-> EC_SPI_PAST_END). So we should really translate that to a retryable
-> error (-EAGAIN) and continue sending EC_CMD_GET_COMMS_STATUS until we
-> get a ready status.
-> 
-> IOW, it is actually important to treat some of these "junk" values as
-> retryable errors.
-> 
-> Together with commit 001dde9400d5, this resolves bugs like the
-> following:
-> 
-> 1. EC_CMD_FLASH_ERASE now works again (with commit 001dde9400d5, we
->    would abort the first time we saw EC_SPI_PAST_END)
-> 2. Before commit 001dde9400d5, transport errors (e.g.,
->    EC_SPI_RX_BAD_DATA) seen in other commands (e.g.,
->    EC_CMD_RTC_GET_VALUE) used to yield junk data in the RX buffer; they
->    will now yield -EAGAIN return values, and tools like 'hwclock' will
->    simply fail instead of retrieving and re-programming undefined time
->    values
-> 
-> Fixes: 001dde9400d5 ("mfd: cros ec: spi: Fix "in progress" error signaling")
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/mfd/cros_ec_spi.c               | 24 ++++++++++++++++++++----
->  drivers/platform/chrome/cros_ec_proto.c |  2 ++
->  2 files changed, 22 insertions(+), 4 deletions(-)
+> 
+> CPUFreq maintainers,
+> 
+> Please take into account that this patch is made on top of my recent
+> series of patches [0] "Clean up Tegra20 cpufreq driver" that was fully
+> reviewed, but seems not applied yet. Let me know if you prefer to re-spin
+> the [0], including this patch into the series.
+> 
+> [0] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=45321
 
-I'm convinced.
+This is already picked by Rafael and is sitting in pm/bleeding-edge
+branch. Should get merged into linux-next in a day or two.
 
-Applied, thanks.
+>  drivers/cpufreq/tegra20-cpufreq.c | 16 +++++++++++++++-
+>  1 file changed, 15 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
+> index 05f57dcd5215..ca5229265b60 100644
+> --- a/drivers/cpufreq/tegra20-cpufreq.c
+> +++ b/drivers/cpufreq/tegra20-cpufreq.c
+> @@ -176,6 +176,14 @@ static int tegra20_cpufreq_probe(struct platform_device *pdev)
+>  		goto put_pll_x;
+>  	}
+>  
+> +	err = clk_prepare_enable(cpufreq->pll_x_clk);
+> +	if (err)
+> +		goto put_pll_p;
+> +
+> +	err = clk_prepare_enable(cpufreq->pll_p_clk);
+> +	if (err)
+> +		goto disable_pll_x;
+> +
+>  	cpufreq->dev = &pdev->dev;
+>  	cpufreq->driver.get = cpufreq_generic_get;
+>  	cpufreq->driver.attr = cpufreq_generic_attr;
+> @@ -192,12 +200,16 @@ static int tegra20_cpufreq_probe(struct platform_device *pdev)
+>  
+>  	err = cpufreq_register_driver(&cpufreq->driver);
+>  	if (err)
+> -		goto put_pll_p;
+> +		goto disable_pll_p;
+>  
+>  	platform_set_drvdata(pdev, cpufreq);
+>  
+>  	return 0;
+>  
+> +disable_pll_p:
+> +	clk_disable_unprepare(cpufreq->pll_p_clk);
+> +disable_pll_x:
+> +	clk_disable_unprepare(cpufreq->pll_x_clk);
+>  put_pll_p:
+>  	clk_put(cpufreq->pll_p_clk);
+>  put_pll_x:
+> @@ -214,6 +226,8 @@ static int tegra20_cpufreq_remove(struct platform_device *pdev)
+>  
+>  	cpufreq_unregister_driver(&cpufreq->driver);
+>  
+> +	clk_disable_unprepare(cpufreq->pll_p_clk);
+> +	clk_disable_unprepare(cpufreq->pll_x_clk);
+>  	clk_put(cpufreq->pll_p_clk);
+>  	clk_put(cpufreq->pll_x_clk);
+>  	clk_put(cpufreq->cpu_clk);
+
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+viresh
