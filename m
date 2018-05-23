@@ -1,24 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935077AbeEWVIY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 17:08:24 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:36033 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934230AbeEWVIV (ORCPT
+        id S934901AbeEWVO3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 17:14:29 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:54866 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934317AbeEWVOY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 17:08:21 -0400
-X-Google-Smtp-Source: AB8JxZo2x9srDww7yHpgz+MDRe713Onqy/8igUoeO/mzQUiSit4gBWSLdo1faVXfD5lNmi4KzPmB3JRc4Q74SJ+hFnI=
-MIME-Version: 1.0
-In-Reply-To: <7de525d4-52f4-80f2-1f55-a3a5c37d7bf9@cogentembedded.com>
-References: <20180522181512.39316-1-keescook@chromium.org> <20180522181512.39316-7-keescook@chromium.org>
- <7de525d4-52f4-80f2-1f55-a3a5c37d7bf9@cogentembedded.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Wed, 23 May 2018 14:08:19 -0700
-X-Google-Sender-Auth: cu8eg49o3-RiHiZjQeh0mmyTZJ8
-Message-ID: <CAGXu5jLonX60J2LFPk95=tdx-+zSdaV3y6CTGk6R=-DP-X0sWg@mail.gmail.com>
-Subject: Re: [PATCH 6/6] scsi: Check sense buffer size at build time
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Jens Axboe <axboe@kernel.dk>,
+        Wed, 23 May 2018 17:14:24 -0400
+X-Google-Smtp-Source: AB8JxZoswB5J90m2ebqaB9M0pe28NOazMPhcLJ2H+r6+/sdqnEmJavmyDYytIzf9GzAP9aPkX2cckw==
+Subject: Re: [PATCH 3/6] block: Create scsi_sense.h for SCSI and ATAPI
+To: Kees Cook <keescook@chromium.org>
+Cc: Christoph Hellwig <hch@infradead.org>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         James Bottomley <James.Bottomley@hansenpartnership.com>,
         Tejun Heo <tj@kernel.org>, Borislav Petkov <bp@alien8.de>,
@@ -28,80 +20,75 @@ Cc: Jens Axboe <axboe@kernel.dk>,
         Uma Krishnan <ukrishn@linux.vnet.ibm.com>,
         linux-block <linux-block@vger.kernel.org>, linux-ide@vger.kernel.org,
         linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <20180522183613.GA3784@infradead.org> <yq1efi3bk3g.fsf@oracle.com>
+ <CAGXu5jJ0Sice+fdpWgzBhQR=NGz-DT9qmYVdV1GeH73_q9pbmw@mail.gmail.com>
+ <732f4249-5681-4a54-ec21-4ecc3d3a74e5@kernel.dk>
+ <20180522191309.GA23615@infradead.org>
+ <8d4af5c4-96fa-54ee-d5c1-b887b1de5a3c@kernel.dk>
+ <CAGXu5j+mgGZkTDS6EDRspJKKbU=vMT4ehv9T-SekPba=ESoGDg@mail.gmail.com>
+ <9A0BC289-4203-4C77-A012-AAB07F42061F@kernel.dk>
+ <CAGXu5jJsGWDsZNDJvUUqncSaAcvond_B_J7=BbvVW0X3r6Sxww@mail.gmail.com>
+ <aa150272-ffeb-fb8f-7303-0d9502cf9a71@kernel.dk>
+ <20180523142545.GA16248@infradead.org>
+ <24d36869-e037-042d-cb16-20a81b34eb76@kernel.dk>
+ <CAGXu5jJn=1Rz=D8VUwv_VoaGoLtaD=+tcPZxQxntweZoZwFa5Q@mail.gmail.com>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <f4eb4cd5-8976-3990-69b0-26cca054aa45@kernel.dk>
+Date: Wed, 23 May 2018 15:14:19 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <CAGXu5jJn=1Rz=D8VUwv_VoaGoLtaD=+tcPZxQxntweZoZwFa5Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 1:25 AM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Hello!
->
-> On 5/22/2018 9:15 PM, Kees Cook wrote:
->
->> To avoid introducing problems like those fixed in commit f7068114d45e
->> ("sr: pass down correctly sized SCSI sense buffer"), this creates a macro
->> wrapper for scsi_execute() that verifies the size of the sense buffer
->> similar to what was done for command string sizes in commit 3756f6401c30
->> ("exec: avoid gcc-8 warning for get_task_comm").
+On 5/23/18 2:52 PM, Kees Cook wrote:
+> On Wed, May 23, 2018 at 7:31 AM, Jens Axboe <axboe@kernel.dk> wrote:
+>> On 5/23/18 8:25 AM, Christoph Hellwig wrote:
+>>> On Wed, May 23, 2018 at 08:13:56AM -0600, Jens Axboe wrote:
+>>>>> Should I move to code to a new drivers/scsi/scsi_sense.c and add it to
+>>>>> drivers/scsi/Makefile as:
+>>>>>
+>>>>> obj-$(CONFIG_BLK_SCSI_REQUEST)    += scsi_sense.o
+>>>>>
+>>>>> Every place I want to use the code is already covered by
+>>>>> CONFIG_BLK_SCSI_REQUEST, so it seems like I just need to know where to
+>>>>> put the .c file. :P
+>>>>
+>>>> I think this is so much saner than a SCSI select or dependency, so I'll
+>>>> have to disagree with Martin and Christoph. Just put it in drivers/scsi,
+>>>> if it's the location they care about.
+>>>
+>>> I actually plan to remove CONFIG_BLK_SCSI_REQUEST in a merge window
+>>> or two.  The only users are scsi and the ide layer, (virtio_blk
+>>> support has already been accidentally disabled for a while), and getting
+>>> rid of it allows to to shrink and simply the scsi data structures.
+>>>
+>>> But if you want this for now lets keep scsi_sense.c in drivers/scsi
+>>> but depend on CONFIG_BLK_SCSI_REQUEST, that is easy enough to fix up.
 >>
->> Another solution could be to add another argument to scsi_execute(),
->> but this function already takes a lot of arguments and Jens was not fond
->> of that approach. As there was only a pair of dynamically allocated sense
->> buffers, this also moves those 96 bytes onto the stack to avoid triggering
->> the sizeof() check.
->>
->> Signed-off-by: Kees Cook <keescook@chromium.org>
->> ---
->>   drivers/scsi/scsi_lib.c    |  6 +++---
->>   include/scsi/scsi_device.h | 12 +++++++++++-
->>   2 files changed, 14 insertions(+), 4 deletions(-)
->>
-> [...]
->>
->> diff --git a/include/scsi/scsi_device.h b/include/scsi/scsi_device.h
->> index 7ae177c8e399..1bb87b6c0ad2 100644
->> --- a/include/scsi/scsi_device.h
->> +++ b/include/scsi/scsi_device.h
->> @@ -426,11 +426,21 @@ extern const char *scsi_device_state_name(enum
->> scsi_device_state);
->>   extern int scsi_is_sdev_device(const struct device *);
->>   extern int scsi_is_target_device(const struct device *);
->>   extern void scsi_sanitize_inquiry_string(unsigned char *s, int len);
->> -extern int scsi_execute(struct scsi_device *sdev, const unsigned char
->> *cmd,
->> +extern int __scsi_execute(struct scsi_device *sdev, const unsigned char
->> *cmd,
->>                         int data_direction, void *buffer, unsigned
->> bufflen,
->>                         unsigned char *sense, struct scsi_sense_hdr
->> *sshdr,
->>                         int timeout, int retries, u64 flags,
->>                         req_flags_t rq_flags, int *resid);
->> +/* Make sure any sense buffer is the correct size. */
->> +#define scsi_execute(sdev, cmd, data_direction, buffer, bufflen, sense,
->> \
->> +                    sshdr, timeout, retries, flags, rq_flags, resid)   \
->> +({                                                                     \
->> +       BUILD_BUG_ON((sense) != NULL &&                                 \
->> +                    sizeof(sense) != SCSI_SENSE_BUFFERSIZE);           \
->
->
->    This would only check the size of the 'sense' pointer, no?
+>> It could be a stand-alone dependency, doesn't have to be BLK_SCSI_REQUEST.
+>> BLA_SCSI_SENSE or something would do. I don't care too much about that,
+>> mostly getting rid of the entire stack dependency.
+> 
+> Aaand, I can't do this and leave it in drivers/scsi because of drivers/Makefile:
+> 
+> obj-$(CONFIG_SCSI)              += scsi/
+> 
+> So: this needs to live in block/ just like CONFIG_BLK_SCSI_REQUEST's
+> scsi_ioctl.c. I will split it into CONFIG_BLK_SCSI_SENSE, but I'll
+> still need to move the code from drivers/scsi/ to block/. Is this
+> okay?
 
-Correct. Passing in a variable that was declared as:
-
-char sense[SCSI_SENSE_BUFFERSIZE];
-
-would pass this check. Dynamically allocated would not (and we don't
-have any cases of that left after the prior patch in this series), and
-it should cast improper casts.
-
-If people don't like this bit of robustness vs complexity/limit, I'm
-happy to leave it off the series.
-
--Kees
+Ugh, so that would necessitate a change there too. As I said before,
+I don't really care where it lives. I know the SCSI folks seem bothered
+by moving it, but in reality, it's not like this stuff will likely ever
+really change. Of the two choices (select entire SCSI stack, or just move
+this little bit), I know what I would consider the saner option...
 
 -- 
-Kees Cook
-Pixel Security
+Jens Axboe
