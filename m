@@ -1,55 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932238AbeEWJje (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 05:39:34 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:39425 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932137AbeEWJja (ORCPT
+        id S932250AbeEWJk5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 05:40:57 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:42468 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932137AbeEWJky (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 05:39:30 -0400
-X-Google-Smtp-Source: AB8JxZp6lX/2NwMGNSTRoilsh3oZH4Nrz8zin2vLCuJsxIzfvRwa6sVRanRaZVjjSxVo1G2eTaPSW6nwfcueFVmgYuk=
+        Wed, 23 May 2018 05:40:54 -0400
+Date: Wed, 23 May 2018 10:40:33 +0100
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Ilia Lin <ilialin@codeaurora.org>
+Cc: viresh.kumar@linaro.org, rjw@rjwysocki.net, sudeep.holla@arm.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] cpufreq: Add Kryo CPU scaling driver
+Message-ID: <20180523094033.GW17671@n2100.armlinux.org.uk>
+References: <1526729701-8589-1-git-send-email-ilialin@codeaurora.org>
+ <1527066324-24726-1-git-send-email-ilialin@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <CAFqt6zY2amJC4bkRZJgjs7=wCuTTxZbufk9cXcMZLE8VGh_dww@mail.gmail.com>
-References: <20180510150448.GA26306@jordon-HP-15-Notebook-PC>
- <20180511092205.GB16141@n2100.armlinux.org.uk> <CAFqt6zY2amJC4bkRZJgjs7=wCuTTxZbufk9cXcMZLE8VGh_dww@mail.gmail.com>
-From: Souptick Joarder <jrdr.linux@gmail.com>
-Date: Wed, 23 May 2018 15:09:28 +0530
-Message-ID: <CAFqt6zYyL6YfvmiX90=Te3PQdcK32irdPPU0awEbp9Q16Bz9=w@mail.gmail.com>
-Subject: Re: [PATCH v2] gpu: drm: armada: Adding new typedef vm_fault_t
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527066324-24726-1-git-send-email-ilialin@codeaurora.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 10:05 AM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> On Fri, May 11, 2018 at 2:52 PM, Russell King - ARM Linux
-> <linux@armlinux.org.uk> wrote:
->> On Thu, May 10, 2018 at 08:34:48PM +0530, Souptick Joarder wrote:
->>> Use new return type vm_fault_t for fault handler in
->>> struct vm_operations_struct. For now, this is just
->>> documenting that the function returns a VM_FAULT
->>> value rather than an errno. Once all instances are
->>> converted, vm_fault_t will become a distinct type.
->>>
->>> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
->>>
->>> Previously vm_insert_pfn() returns err which driver
->>> mapped into VM_FAULT_* type. The new function
->>> vmf_insert_pfn() will replace this inefficiency by
->>> returning VM_FAULT_* type.
->>>
->>> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
->>> Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
->>
->> Acked-by: Russell King <rmk+kernel@armlinux.org.uk>
->>
->> Thanks.
->
-> If no further comment, we would like to get this patch in queue
-> for 4.18.
+On Wed, May 23, 2018 at 12:05:24PM +0300, Ilia Lin wrote:
+> +	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev);
+> +	if (IS_ERR(np))
+> +		return PTR_ERR(np);
+...
+> +
+> +	pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
+> +	if (!IS_ERR(pdev))
 
-We would like to get this patch in queue
-for 4.18.
+Do you need to hold a reference to `np' here?
+
+> +		return 0;
+
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+According to speedtest.net: 8.21Mbps down 510kbps up
