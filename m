@@ -1,44 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932946AbeEWNHI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 09:07:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54662 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932089AbeEWNHH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 09:07:07 -0400
-Date: Wed, 23 May 2018 15:07:05 +0200 (CEST)
-From: Miroslav Benes <mbenes@suse.cz>
-To: Petr Mladek <pmladek@suse.com>
-cc: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] livepatch: Remove not longer valid limitations from the
- documentation
-In-Reply-To: <20180523074742.20171-1-pmladek@suse.com>
-Message-ID: <alpine.LSU.2.21.1805231504240.26696@pobox.suse.cz>
-References: <20180523074742.20171-1-pmladek@suse.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S932906AbeEWNJo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 09:09:44 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:44120 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932707AbeEWNJk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 09:09:40 -0400
+Date: Wed, 23 May 2018 15:09:27 +0200
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        Ingo Molnar <mingo@redhat.com>, linux-mm@kvack.org,
+        Shaohua Li <shli@kernel.org>, linux-raid@vger.kernel.org,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>
+Subject: Re: [PATCH v2 0/8] Introduce refcount_dec_and_lock_irqsave()
+Message-ID: <20180523130927.qhblygmszkp4iwne@linutronix.de>
+References: <20180509193645.830-1-bigeasy@linutronix.de>
+ <20180523130125.GZ12217@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180523130125.GZ12217@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-s/Remove not longer/Remove no longer/
-
-On Wed, 23 May 2018, Petr Mladek wrote:
-
-> Semantic changes are possible since the commit d83a7cb375eec21f04
-> ("livepatch: change to a per-task consistency model").
+On 2018-05-23 15:01:25 [+0200], Peter Zijlstra wrote:
+> 1-2, 4-6:
 > 
-> Also data structures can be patched since the commit 439e7271dc2b63de37
-> ("livepatch: introduce shadow variable API").
-> 
-> It is a high time we removed these limitations from the documentation.
-> 
-> Signed-off-by: Petr Mladek <pmladek@suse.com>
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
-Acked-by: Miroslav Benes <mbenes@suse.cz>
+Thank you.
 
-M
+Sebastian
