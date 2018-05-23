@@ -1,350 +1,263 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933216AbeEWOX7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 10:23:59 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56164 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932564AbeEWOX4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 10:23:56 -0400
-Subject: Re: [PATCH v2 11/16] irqchip/irq-mvebu-icu: add support for System
- Error Interrupts (SEI)
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>, Haim Boot <hayim@marvell.com>,
-        Hanna Hawa <hannah@marvell.com>, linux-kernel@vger.kernel.org
-References: <20180522094042.24770-1-miquel.raynal@bootlin.com>
- <20180522094042.24770-12-miquel.raynal@bootlin.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <cd000f57-e01f-e5b9-77f6-baf4e8f45551@arm.com>
-Date: Wed, 23 May 2018 15:23:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180522094042.24770-12-miquel.raynal@bootlin.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        id S933301AbeEWOZX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 10:25:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55126 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933174AbeEWOZV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 10:25:21 -0400
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH 1/2] f2fs: clean up with is_valid_blkaddr()
+Date: Wed, 23 May 2018 22:25:08 +0800
+Message-Id: <20180523142509.17905-1-chao@kernel.org>
+X-Mailer: git-send-email 2.16.2.17.g38e79b1fd
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/05/18 10:40, Miquel Raynal wrote:
-> An SEI driver provides an MSI domain through which it is possible to
-> raise SEIs.
-> 
-> Handle the NSR probe function in a more generic way to support other
-> type of interrupts (ie. the SEIs).
-> 
-> For clarity we do not use tree IRQ domains for now but linear ones
-> instead, allocating the 207 ICU lines for each interrupt group.
+From: Chao Yu <yuchao0@huawei.com>
 
-What's the rational for not using trees? Because that's effectively a
-100% overhead...
+- rename is_valid_blkaddr() to is_valid_meta_blkaddr() for readability.
+- introduce is_valid_blkaddr() for cleanup.
 
-> Reallocating an ICU slot is prevented by the use of an ICU-wide bitmap.
-> 
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> ---
->  drivers/irqchip/irq-mvebu-icu.c | 126 ++++++++++++++++++++++++++++++++++------
->  1 file changed, 108 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/irqchip/irq-mvebu-icu.c b/drivers/irqchip/irq-mvebu-icu.c
-> index 977e47b2716f..6ad6236d6ff1 100644
-> --- a/drivers/irqchip/irq-mvebu-icu.c
-> +++ b/drivers/irqchip/irq-mvebu-icu.c
-> @@ -28,6 +28,10 @@
->  #define ICU_SETSPI_NSR_AH	0x14
->  #define ICU_CLRSPI_NSR_AL	0x18
->  #define ICU_CLRSPI_NSR_AH	0x1c
-> +#define ICU_SET_SEI_AL		0x50
-> +#define ICU_SET_SEI_AH		0x54
-> +#define ICU_CLR_SEI_AL		0x58
-> +#define ICU_CLR_SEI_AH		0x5C
->  #define ICU_INT_CFG(x)          (0x100 + 4 * (x))
->  #define   ICU_INT_ENABLE	BIT(24)
->  #define   ICU_IS_EDGE		BIT(28)
-> @@ -38,12 +42,28 @@
->  #define ICU_SATA0_ICU_ID	109
->  #define ICU_SATA1_ICU_ID	107
->  
-> +struct mvebu_icu_subset_data {
-> +	unsigned int icu_group;
-> +	unsigned int offset_set_ah;
-> +	unsigned int offset_set_al;
-> +	unsigned int offset_clr_ah;
-> +	unsigned int offset_clr_al;
-> +};
-> +
->  struct mvebu_icu {
->  	struct irq_chip irq_chip;
->  	struct regmap *regmap;
->  	struct device *dev;
-> -	atomic_t initialized;
->  	bool legacy_bindings;
-> +	/* Lock on interrupt allocations/releases */
-> +	spinlock_t msi_lock;
-> +	DECLARE_BITMAP(msi_bitmap, ICU_MAX_IRQS);
-> +};
-> +
-> +struct mvebu_icu_msi_data {
-> +	struct mvebu_icu *icu;
-> +	atomic_t initialized;
-> +	const struct mvebu_icu_subset_data *subset_data;
->  };
->  
->  struct mvebu_icu_irq_data {
-> @@ -76,16 +96,25 @@ static struct mvebu_icu *mvebu_icu_dev_get_drvdata(struct platform_device *pdev)
->  	return icu;
->  }
->  
-> -static void mvebu_icu_init(struct mvebu_icu *icu, struct msi_msg *msg)
-> +static void mvebu_icu_init(struct mvebu_icu *icu, struct irq_domain *d,
-> +			   struct msi_msg *msg)
->  {
-> -	if (atomic_cmpxchg(&icu->initialized, false, true))
-> +	struct mvebu_icu_msi_data *msi_data = platform_msi_get_host_data(d);
-> +	const struct mvebu_icu_subset_data *subset = msi_data->subset_data;
-> +
-> +	if (atomic_cmpxchg(&msi_data->initialized, false, true))
-> +		return;
-> +
-> +	/* Set 'SET' ICU SPI message address in AP */
-> +	regmap_write(icu->regmap, subset->offset_set_ah, msg[0].address_hi);
-> +	regmap_write(icu->regmap, subset->offset_set_al, msg[0].address_lo);
-> +
-> +	if (subset->icu_group != ICU_GRP_NSR)
->  		return;
->  
-> -	/* Set Clear/Set ICU SPI message address in AP */
-> -	regmap_write(icu->regmap, ICU_SETSPI_NSR_AH, msg[0].address_hi);
-> -	regmap_write(icu->regmap, ICU_SETSPI_NSR_AL, msg[0].address_lo);
-> -	regmap_write(icu->regmap, ICU_CLRSPI_NSR_AH, msg[1].address_hi);
-> -	regmap_write(icu->regmap, ICU_CLRSPI_NSR_AL, msg[1].address_lo);
-> +	/* Set 'CLEAR' ICU SPI message address in AP (level-MSI only) */
-> +	regmap_write(icu->regmap, subset->offset_clr_ah, msg[1].address_hi);
-> +	regmap_write(icu->regmap, subset->offset_clr_al, msg[1].address_lo);
->  }
->  
->  static void mvebu_icu_write_msg(struct msi_desc *desc, struct msi_msg *msg)
-> @@ -96,8 +125,8 @@ static void mvebu_icu_write_msg(struct msi_desc *desc, struct msi_msg *msg)
->  	unsigned int icu_int;
->  
->  	if (msg->address_lo || msg->address_hi) {
-> -		/* One off initialization */
-> -		mvebu_icu_init(icu, msg);
-> +		/* One off initialization per domain */
-> +		mvebu_icu_init(icu, d->domain, msg);
->  		/* Configure the ICU with irq number & type */
->  		icu_int = msg->data | ICU_INT_ENABLE;
->  		if (icu_irqd->type & IRQ_TYPE_EDGE_RISING)
-> @@ -131,7 +160,8 @@ static int
->  mvebu_icu_irq_domain_translate(struct irq_domain *d, struct irq_fwspec *fwspec,
->  			       unsigned long *hwirq, unsigned int *type)
->  {
-> -	struct mvebu_icu *icu = platform_msi_get_host_data(d);
-> +	struct mvebu_icu_msi_data *msi_data = platform_msi_get_host_data(d);
-> +	struct mvebu_icu *icu = msi_data->icu;
->  	unsigned int param_count = icu->legacy_bindings ? 3 : 2;
->  
->  	/* Check the count of the parameters in dt */
-> @@ -172,7 +202,9 @@ mvebu_icu_irq_domain_alloc(struct irq_domain *domain, unsigned int virq,
->  	int err;
->  	unsigned long hwirq;
->  	struct irq_fwspec *fwspec = args;
-> -	struct mvebu_icu *icu = platform_msi_get_host_data(domain);
-> +	struct mvebu_icu_msi_data *msi_data =
-> +		platform_msi_get_host_data(domain);
-> +	struct mvebu_icu *icu = msi_data->icu;
->  	struct mvebu_icu_irq_data *icu_irqd;
->  
->  	icu_irqd = kmalloc(sizeof(*icu_irqd), GFP_KERNEL);
-> @@ -186,16 +218,22 @@ mvebu_icu_irq_domain_alloc(struct irq_domain *domain, unsigned int virq,
->  		goto free_irqd;
->  	}
->  
-> +	spin_lock(&icu->msi_lock);
-> +	err = bitmap_allocate_region(icu->msi_bitmap, hwirq, 0);
-> +	spin_unlock(&icu->msi_lock);
+No logic change in this patch.
 
-This (and the freeing counterpart) could deserve a couple of helpers.
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/checkpoint.c |  4 ++--
+ fs/f2fs/data.c       | 18 +++++-------------
+ fs/f2fs/f2fs.h       |  9 ++++++++-
+ fs/f2fs/file.c       |  2 +-
+ fs/f2fs/inode.c      |  2 +-
+ fs/f2fs/node.c       |  5 ++---
+ fs/f2fs/recovery.c   |  6 +++---
+ fs/f2fs/segment.c    |  4 ++--
+ fs/f2fs/segment.h    |  2 +-
+ 9 files changed, 25 insertions(+), 27 deletions(-)
 
-> +	if (err < 0)
-> +		goto free_irqd;
-> +
->  	if (icu->legacy_bindings)
->  		icu_irqd->icu_group = fwspec->param[0];
->  	else
-> -		icu_irqd->icu_group = ICU_GRP_NSR;
-> +		icu_irqd->icu_group = msi_data->subset_data->icu_group;
->  	icu_irqd->icu = icu;
->  
->  	err = platform_msi_domain_alloc(domain, virq, nr_irqs);
->  	if (err) {
->  		dev_err(icu->dev, "failed to allocate ICU interrupt in parent domain\n");
-> -		goto free_irqd;
-> +		goto free_bitmap;
->  	}
->  
->  	/* Make sure there is no interrupt left pending by the firmware */
-> @@ -214,6 +252,10 @@ mvebu_icu_irq_domain_alloc(struct irq_domain *domain, unsigned int virq,
->  
->  free_msi:
->  	platform_msi_domain_free(domain, virq, nr_irqs);
-> +free_bitmap:
-> +	spin_lock(&icu->msi_lock);
-> +	bitmap_release_region(icu->msi_bitmap, hwirq, 0);
-> +	spin_unlock(&icu->msi_lock);
->  free_irqd:
->  	kfree(icu_irqd);
->  	return err;
-> @@ -223,12 +265,19 @@ static void
->  mvebu_icu_irq_domain_free(struct irq_domain *domain, unsigned int virq,
->  			  unsigned int nr_irqs)
->  {
-> +	struct mvebu_icu_msi_data *msi_data =
-> +		platform_msi_get_host_data(domain);
-> +	struct mvebu_icu *icu = msi_data->icu;
->  	struct irq_data *d = irq_get_irq_data(virq);
->  	struct mvebu_icu_irq_data *icu_irqd = d->chip_data;
->  
->  	kfree(icu_irqd);
->  
->  	platform_msi_domain_free(domain, virq, nr_irqs);
-> +
-> +	spin_lock(&icu->msi_lock);
-> +	bitmap_release_region(icu->msi_bitmap, d->hwirq, 0);
-> +	spin_unlock(&icu->msi_lock);
->  }
->  
->  static const struct irq_domain_ops mvebu_icu_domain_ops = {
-> @@ -239,14 +288,29 @@ static const struct irq_domain_ops mvebu_icu_domain_ops = {
->  
->  static int mvebu_icu_subset_probe(struct platform_device *pdev)
->  {
-> +	const struct mvebu_icu_subset_data *subset;
-> +	struct mvebu_icu_msi_data *msi_data;
->  	struct device_node *msi_parent_dn;
->  	struct irq_domain *irq_domain;
->  	struct mvebu_icu *icu;
->  
-> +	msi_data = devm_kzalloc(&pdev->dev, sizeof(*msi_data), GFP_KERNEL);
-> +	if (!msi_data)
-> +		return -ENOMEM;
-> +
->  	icu = mvebu_icu_dev_get_drvdata(pdev);
->  	if (IS_ERR(icu))
->  		return PTR_ERR(icu);
->  
-> +	subset = of_device_get_match_data(&pdev->dev);
-> +	if (!subset) {
-> +		dev_err(&pdev->dev, "Could not retrieve subset data\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	msi_data->icu = icu;
-> +	msi_data->subset_data = subset;
-> +
->  	pdev->dev.msi_domain = of_msi_get_domain(&pdev->dev, pdev->dev.of_node,
->  						 DOMAIN_BUS_PLATFORM_MSI);
->  	if (!pdev->dev.msi_domain)
-> @@ -259,7 +323,7 @@ static int mvebu_icu_subset_probe(struct platform_device *pdev)
->  	irq_domain = platform_msi_create_device_domain(&pdev->dev, ICU_MAX_IRQS,
->  						       mvebu_icu_write_msg,
->  						       &mvebu_icu_domain_ops,
-> -						       icu);
-> +						       msi_data);
->  	if (!irq_domain) {
->  		dev_err(&pdev->dev, "Failed to create ICU MSI domain\n");
->  		return -ENOMEM;
-> @@ -268,9 +332,30 @@ static int mvebu_icu_subset_probe(struct platform_device *pdev)
->  	return 0;
->  }
->  
-> +static const struct mvebu_icu_subset_data mvebu_icu_nsr_subset_data = {
-> +	.icu_group = ICU_GRP_NSR,
-> +	.offset_set_ah = ICU_SETSPI_NSR_AH,
-> +	.offset_set_al = ICU_SETSPI_NSR_AL,
-> +	.offset_clr_ah = ICU_CLRSPI_NSR_AH,
-> +	.offset_clr_al = ICU_CLRSPI_NSR_AL,
-> +};
-> +
-> +static const struct mvebu_icu_subset_data mvebu_icu_sei_subset_data = {
-> +	.icu_group = ICU_GRP_SEI,
-> +	.offset_set_ah = ICU_SET_SEI_AH,
-> +	.offset_set_al = ICU_SET_SEI_AL,
-> +	.offset_clr_ah = ICU_CLR_SEI_AH,
-> +	.offset_clr_al = ICU_CLR_SEI_AL,
-
-I thought SEI was edge only, given what you do in mvebu_icu_init.
-Confused...
-
-> +};
-> +
->  static const struct of_device_id mvebu_icu_subset_of_match[] = {
->  	{
->  		.compatible = "marvell,cp110-icu-nsr",
-> +		.data = &mvebu_icu_nsr_subset_data,
-> +	},
-> +	{
-> +		.compatible = "marvell,cp110-icu-sei",
-> +		.data = &mvebu_icu_sei_subset_data,
->  	},
->  	{},
->  };
-> @@ -317,6 +402,8 @@ static int mvebu_icu_probe(struct platform_device *pdev)
->  	if (IS_ERR(icu->regmap))
->  		return PTR_ERR(icu->regmap);
->  
-> +	spin_lock_init(&icu->msi_lock);
-> +
->  	icu->irq_chip.name = devm_kasprintf(&pdev->dev, GFP_KERNEL,
->  					    "ICU.%x",
->  					    (unsigned int)res->start);
-> @@ -341,7 +428,7 @@ static int mvebu_icu_probe(struct platform_device *pdev)
->  #endif
->  
->  	/*
-> -	 * Clean all ICU interrupts with type SPI_NSR, required to
-> +	 * Clean all ICU interrupts of type NSR and SEI, required to
->  	 * avoid unpredictable SPI assignments done by firmware.
->  	 */
->  	for (i = 0 ; i < ICU_MAX_IRQS ; i++) {
-> @@ -350,7 +437,8 @@ static int mvebu_icu_probe(struct platform_device *pdev)
->  		regmap_read(icu->regmap, ICU_INT_CFG(i), &icu_int);
->  		icu_grp = icu_int >> ICU_GROUP_SHIFT;
->  
-> -		if (icu_grp == ICU_GRP_NSR)
-> +		if (icu_grp == ICU_GRP_NSR ||
-> +		    (icu_grp == ICU_GRP_SEI && !icu->legacy_bindings))
->  			regmap_write(icu->regmap, ICU_INT_CFG(i), 0);
->  	}
->  
-> @@ -363,7 +451,9 @@ static int mvebu_icu_probe(struct platform_device *pdev)
->  }
->  
->  static const struct of_device_id mvebu_icu_of_match[] = {
-> -	{ .compatible = "marvell,cp110-icu", },
-> +	{
-> +		.compatible = "marvell,cp110-icu",
-> +	},
->  	{},
->  };
->  
-> 
-
-Thanks,
-
-	M.
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 33d2da006789..e38221d96564 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -119,7 +119,7 @@ struct page *get_tmp_page(struct f2fs_sb_info *sbi, pgoff_t index)
+ 	return __get_meta_page(sbi, index, false);
+ }
+ 
+-bool is_valid_blkaddr(struct f2fs_sb_info *sbi, block_t blkaddr, int type)
++bool is_valid_meta_blkaddr(struct f2fs_sb_info *sbi, block_t blkaddr, int type)
+ {
+ 	switch (type) {
+ 	case META_NAT:
+@@ -175,7 +175,7 @@ int ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages,
+ 	blk_start_plug(&plug);
+ 	for (; nrpages-- > 0; blkno++) {
+ 
+-		if (!is_valid_blkaddr(sbi, blkno, type))
++		if (!is_valid_meta_blkaddr(sbi, blkno, type))
+ 			goto out;
+ 
+ 		switch (type) {
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index c368e651d3fd..feb4c224b305 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -428,7 +428,7 @@ int f2fs_submit_page_write(struct f2fs_io_info *fio)
+ 		spin_unlock(&io->io_lock);
+ 	}
+ 
+-	if (fio->old_blkaddr != NEW_ADDR)
++	if (is_valid_blkaddr(fio->old_blkaddr))
+ 		verify_block_addr(fio, fio->old_blkaddr);
+ 	verify_block_addr(fio, fio->new_blkaddr);
+ 
+@@ -984,7 +984,7 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+ next_block:
+ 	blkaddr = datablock_addr(dn.inode, dn.node_page, dn.ofs_in_node);
+ 
+-	if (blkaddr == NEW_ADDR || blkaddr == NULL_ADDR) {
++	if (!is_valid_blkaddr(blkaddr)) {
+ 		if (create) {
+ 			if (unlikely(f2fs_cp_error(sbi))) {
+ 				err = -EIO;
+@@ -1619,15 +1619,6 @@ static inline bool need_inplace_update(struct f2fs_io_info *fio)
+ 	return should_update_inplace(inode, fio);
+ }
+ 
+-static inline bool valid_ipu_blkaddr(struct f2fs_io_info *fio)
+-{
+-	if (fio->old_blkaddr == NEW_ADDR)
+-		return false;
+-	if (fio->old_blkaddr == NULL_ADDR)
+-		return false;
+-	return true;
+-}
+-
+ int do_write_data_page(struct f2fs_io_info *fio)
+ {
+ 	struct page *page = fio->page;
+@@ -1642,7 +1633,7 @@ int do_write_data_page(struct f2fs_io_info *fio)
+ 			f2fs_lookup_extent_cache(inode, page->index, &ei)) {
+ 		fio->old_blkaddr = ei.blk + page->index - ei.fofs;
+ 
+-		if (valid_ipu_blkaddr(fio)) {
++		if (is_valid_blkaddr(fio->old_blkaddr)) {
+ 			ipu_force = true;
+ 			fio->need_lock = LOCK_DONE;
+ 			goto got_it;
+@@ -1669,7 +1660,8 @@ int do_write_data_page(struct f2fs_io_info *fio)
+ 	 * If current allocation needs SSR,
+ 	 * it had better in-place writes for updated data.
+ 	 */
+-	if (ipu_force || (valid_ipu_blkaddr(fio) && need_inplace_update(fio))) {
++	if (ipu_force || (is_valid_blkaddr(fio->old_blkaddr) &&
++					need_inplace_update(fio))) {
+ 		err = encrypt_one_page(fio);
+ 		if (err)
+ 			goto out_writepage;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 76d8de0f21a7..49cd6c30843c 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2658,6 +2658,13 @@ static inline void f2fs_update_iostat(struct f2fs_sb_info *sbi,
+ 	spin_unlock(&sbi->iostat_lock);
+ }
+ 
++static inline bool is_valid_blkaddr(block_t blkaddr)
++{
++	if (blkaddr == NEW_ADDR || blkaddr == NULL_ADDR)
++		return false;
++	return true;
++}
++
+ /*
+  * file.c
+  */
+@@ -2878,7 +2885,7 @@ void f2fs_stop_checkpoint(struct f2fs_sb_info *sbi, bool end_io);
+ struct page *grab_meta_page(struct f2fs_sb_info *sbi, pgoff_t index);
+ struct page *get_meta_page(struct f2fs_sb_info *sbi, pgoff_t index);
+ struct page *get_tmp_page(struct f2fs_sb_info *sbi, pgoff_t index);
+-bool is_valid_blkaddr(struct f2fs_sb_info *sbi, block_t blkaddr, int type);
++bool is_valid_meta_blkaddr(struct f2fs_sb_info *sbi, block_t blkaddr, int type);
+ int ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages,
+ 			int type, bool sync);
+ void ra_meta_pages_cond(struct f2fs_sb_info *sbi, pgoff_t index);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index da13ea3e190a..b569c7c5db6d 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -352,7 +352,7 @@ static bool __found_offset(block_t blkaddr, pgoff_t dirty, pgoff_t pgofs,
+ 	switch (whence) {
+ 	case SEEK_DATA:
+ 		if ((blkaddr == NEW_ADDR && dirty == pgofs) ||
+-			(blkaddr != NEW_ADDR && blkaddr != NULL_ADDR))
++			is_valid_blkaddr(blkaddr))
+ 			return true;
+ 		break;
+ 	case SEEK_HOLE:
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 4b9dce9029ac..ffb7e8266db9 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -72,7 +72,7 @@ static bool __written_first_block(struct f2fs_inode *ri)
+ {
+ 	block_t addr = le32_to_cpu(ri->i_addr[offset_in_addr(ri)]);
+ 
+-	if (addr != NEW_ADDR && addr != NULL_ADDR)
++	if (is_valid_blkaddr(addr))
+ 		return true;
+ 	return false;
+ }
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 62ce49984a9e..67b3e89975af 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -379,8 +379,7 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
+ 			new_blkaddr == NULL_ADDR);
+ 	f2fs_bug_on(sbi, nat_get_blkaddr(e) == NEW_ADDR &&
+ 			new_blkaddr == NEW_ADDR);
+-	f2fs_bug_on(sbi, nat_get_blkaddr(e) != NEW_ADDR &&
+-			nat_get_blkaddr(e) != NULL_ADDR &&
++	f2fs_bug_on(sbi, is_valid_blkaddr(nat_get_blkaddr(e)) &&
+ 			new_blkaddr == NEW_ADDR);
+ 
+ 	/* increment version no as node is removed */
+@@ -391,7 +390,7 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
+ 
+ 	/* change address */
+ 	nat_set_blkaddr(e, new_blkaddr);
+-	if (new_blkaddr == NEW_ADDR || new_blkaddr == NULL_ADDR)
++	if (!is_valid_blkaddr(new_blkaddr))
+ 		set_nat_flag(e, IS_CHECKPOINTED, false);
+ 	__set_nat_cache_dirty(nm_i, e);
+ 
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 709dd4daaf29..bb519ba2558e 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -252,7 +252,7 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
+ 	while (1) {
+ 		struct fsync_inode_entry *entry;
+ 
+-		if (!is_valid_blkaddr(sbi, blkaddr, META_POR))
++		if (!is_valid_meta_blkaddr(sbi, blkaddr, META_POR))
+ 			return 0;
+ 
+ 		page = get_tmp_page(sbi, blkaddr);
+@@ -506,7 +506,7 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
+ 		}
+ 
+ 		/* dest is valid block, try to recover from src to dest */
+-		if (is_valid_blkaddr(sbi, dest, META_POR)) {
++		if (is_valid_meta_blkaddr(sbi, dest, META_POR)) {
+ 
+ 			if (src == NULL_ADDR) {
+ 				err = reserve_new_block(&dn);
+@@ -567,7 +567,7 @@ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
+ 	while (1) {
+ 		struct fsync_inode_entry *entry;
+ 
+-		if (!is_valid_blkaddr(sbi, blkaddr, META_POR))
++		if (!is_valid_meta_blkaddr(sbi, blkaddr, META_POR))
+ 			break;
+ 
+ 		ra_meta_pages_cond(sbi, blkaddr);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 5816ab471c41..ce60378cf93c 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1954,7 +1954,7 @@ bool is_checkpointed_data(struct f2fs_sb_info *sbi, block_t blkaddr)
+ 	struct seg_entry *se;
+ 	bool is_cp = false;
+ 
+-	if (blkaddr == NEW_ADDR || blkaddr == NULL_ADDR)
++	if (!is_valid_blkaddr(blkaddr))
+ 		return true;
+ 
+ 	down_read(&sit_i->sentry_lock);
+@@ -2948,7 +2948,7 @@ void f2fs_wait_on_block_writeback(struct f2fs_sb_info *sbi, block_t blkaddr)
+ {
+ 	struct page *cpage;
+ 
+-	if (blkaddr == NEW_ADDR || blkaddr == NULL_ADDR)
++	if (!is_valid_blkaddr(blkaddr))
+ 		return;
+ 
+ 	cpage = find_lock_page(META_MAPPING(sbi), blkaddr);
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index c385daabcb67..c574131ac7e1 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -85,7 +85,7 @@
+ 	(GET_SEGOFF_FROM_SEG0(sbi, blk_addr) & ((sbi)->blocks_per_seg - 1))
+ 
+ #define GET_SEGNO(sbi, blk_addr)					\
+-	((((blk_addr) == NULL_ADDR) || ((blk_addr) == NEW_ADDR)) ?	\
++	((!is_valid_blkaddr(blk_addr)) ?			\
+ 	NULL_SEGNO : GET_L2R_SEGNO(FREE_I(sbi),			\
+ 		GET_SEGNO_FROM_SEG0(sbi, blk_addr)))
+ #define BLKS_PER_SEC(sbi)					\
 -- 
-Jazz is not dead. It just smells funny...
+2.16.2.17.g38e79b1fd
