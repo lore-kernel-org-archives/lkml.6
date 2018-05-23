@@ -1,262 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932069AbeEWMUC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 08:20:02 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60718 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932534AbeEWMRC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 08:17:02 -0400
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 3/8] afs: Rearrange fs/afs/proc.c to move the show routines
- up
-From: David Howells <dhowells@redhat.com>
-To: viro@zeniv.linux.org.uk
-Cc: dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Wed, 23 May 2018 13:17:00 +0100
-Message-ID: <152707782047.27887.15439187207028313024.stgit@warthog.procyon.org.uk>
-In-Reply-To: <152707780120.27887.10118775145086304138.stgit@warthog.procyon.org.uk>
-References: <152707780120.27887.10118775145086304138.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.17.1-dirty
+        id S932917AbeEWMVc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 08:21:32 -0400
+Received: from www62.your-server.de ([213.133.104.62]:46210 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932534AbeEWMVa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 08:21:30 -0400
+Subject: Re: [PATCH v4 0/3] IR decoding using BPF
+To: Sean Young <sean@mess.org>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>, netdev@vger.kernel.org,
+        Matthias Reichl <hias@horus.com>,
+        Devin Heitmueller <dheitmueller@kernellabs.com>,
+        Y Song <ys114321@gmail.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>
+References: <cover.1526651592.git.sean@mess.org>
+From: Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <860cf2a8-dd2e-ba78-8b98-3d8f4330f3d0@iogearbox.net>
+Date: Wed, 23 May 2018 14:21:27 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <cover.1526651592.git.sean@mess.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rearrange fs/afs/proc.c to move the show routines up to the top of each
-block so the order is show, iteration, ops, file ops, fops.
+On 05/18/2018 04:07 PM, Sean Young wrote:
+> The kernel IR decoders (drivers/media/rc/ir-*-decoder.c) support the most
+> widely used IR protocols, but there are many protocols which are not
+> supported[1]. For example, the lirc-remotes[2] repo has over 2700 remotes,
+> many of which are not supported by rc-core. There is a "long tail" of
+> unsupported IR protocols, for which lircd is need to decode the IR .
+> 
+> IR encoding is done in such a way that some simple circuit can decode it;
+> therefore, bpf is ideal.
+> 
+> In order to support all these protocols, here we have bpf based IR decoding.
+> The idea is that user-space can define a decoder in bpf, attach it to
+> the rc device through the lirc chardev.
+> 
+> Separate work is underway to extend ir-keytable to have an extensive library
+> of bpf-based decoders, and a much expanded library of rc keymaps.
+> 
+> Another future application would be to compile IRP[3] to a IR BPF program, and
+> so support virtually every remote without having to write a decoder for each.
+> It might also be possible to support non-button devices such as analog
+> directional pads or air conditioning remote controls and decode the target
+> temperature in bpf, and pass that to an input device.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+Mauro, are you fine with this series going via bpf-next? How ugly would this
+get with regards to merge conflicts wrt drivers/media/rc/?
 
- fs/afs/proc.c |  150 +++++++++++++++++++++++++++++----------------------------
- 1 file changed, 75 insertions(+), 75 deletions(-)
+Thanks,
+Daniel
 
-diff --git a/fs/afs/proc.c b/fs/afs/proc.c
-index 22ce99df3208..b20098b7b7ee 100644
---- a/fs/afs/proc.c
-+++ b/fs/afs/proc.c
-@@ -91,6 +91,25 @@ static const struct seq_operations afs_proc_sysname_ops = {
- 	.show	= afs_proc_sysname_show,
- };
- 
-+/*
-+ * display a header line followed by a load of cell lines
-+ */
-+static int afs_proc_cells_show(struct seq_file *m, void *v)
-+{
-+	struct afs_cell *cell = list_entry(v, struct afs_cell, proc_link);
-+	struct afs_net *net = afs_seq2net(m);
-+
-+	if (v == &net->proc_cells) {
-+		/* display header on line 1 */
-+		seq_puts(m, "USE NAME\n");
-+		return 0;
-+	}
-+
-+	/* display one cell per line on subsequent lines */
-+	seq_printf(m, "%3u %s\n", atomic_read(&cell->usage), cell->name);
-+	return 0;
-+}
-+
- /*
-  * set up the iterator to start reading from the cells list and return the
-  * first item
-@@ -123,25 +142,6 @@ static void afs_proc_cells_stop(struct seq_file *m, void *v)
- 	rcu_read_unlock();
- }
- 
--/*
-- * display a header line followed by a load of cell lines
-- */
--static int afs_proc_cells_show(struct seq_file *m, void *v)
--{
--	struct afs_cell *cell = list_entry(v, struct afs_cell, proc_link);
--	struct afs_net *net = afs_seq2net(m);
--
--	if (v == &net->proc_cells) {
--		/* display header on line 1 */
--		seq_puts(m, "USE NAME\n");
--		return 0;
--	}
--
--	/* display one cell per line on subsequent lines */
--	seq_printf(m, "%3u %s\n", atomic_read(&cell->usage), cell->name);
--	return 0;
--}
--
- /*
-  * handle writes to /proc/fs/afs/cells
-  * - to add cells: echo "add <cellname> <IP>[:<IP>][:<IP>]"
-@@ -319,6 +319,33 @@ static const struct file_operations afs_proc_rootcell_fops = {
- 	.llseek		= no_llseek,
- };
- 
-+static const char afs_vol_types[3][3] = {
-+	[AFSVL_RWVOL]	= "RW",
-+	[AFSVL_ROVOL]	= "RO",
-+	[AFSVL_BACKVOL]	= "BK",
-+};
-+
-+/*
-+ * display a header line followed by a load of volume lines
-+ */
-+static int afs_proc_cell_volumes_show(struct seq_file *m, void *v)
-+{
-+	struct afs_cell *cell = PDE_DATA(file_inode(m->file));
-+	struct afs_volume *vol = list_entry(v, struct afs_volume, proc_link);
-+
-+	/* Display header on line 1 */
-+	if (v == &cell->proc_volumes) {
-+		seq_puts(m, "USE VID      TY\n");
-+		return 0;
-+	}
-+
-+	seq_printf(m, "%3d %08x %s\n",
-+		   atomic_read(&vol->usage), vol->vid,
-+		   afs_vol_types[vol->type]);
-+
-+	return 0;
-+}
-+
- /*
-  * set up the iterator to start reading from the cells list and return the
-  * first item
-@@ -357,30 +384,21 @@ static void afs_proc_cell_volumes_stop(struct seq_file *p, void *v)
- 	read_unlock(&cell->proc_lock);
- }
- 
--static const char afs_vol_types[3][3] = {
--	[AFSVL_RWVOL]	= "RW",
--	[AFSVL_ROVOL]	= "RO",
--	[AFSVL_BACKVOL]	= "BK",
--};
--
- /*
-  * display a header line followed by a load of volume lines
-  */
--static int afs_proc_cell_volumes_show(struct seq_file *m, void *v)
-+static int afs_proc_cell_vlservers_show(struct seq_file *m, void *v)
- {
--	struct afs_cell *cell = PDE_DATA(file_inode(m->file));
--	struct afs_volume *vol = list_entry(v, struct afs_volume, proc_link);
-+	struct sockaddr_rxrpc *addr = v;
- 
--	/* Display header on line 1 */
--	if (v == &cell->proc_volumes) {
--		seq_puts(m, "USE VID      TY\n");
-+	/* display header on line 1 */
-+	if (v == (void *)1) {
-+		seq_puts(m, "ADDRESS\n");
- 		return 0;
- 	}
- 
--	seq_printf(m, "%3d %08x %s\n",
--		   atomic_read(&vol->usage), vol->vid,
--		   afs_vol_types[vol->type]);
--
-+	/* display one cell per line on subsequent lines */
-+	seq_printf(m, "%pISp\n", &addr->transport);
- 	return 0;
- }
- 
-@@ -442,18 +460,22 @@ static void afs_proc_cell_vlservers_stop(struct seq_file *p, void *v)
- /*
-  * display a header line followed by a load of volume lines
-  */
--static int afs_proc_cell_vlservers_show(struct seq_file *m, void *v)
-+static int afs_proc_servers_show(struct seq_file *m, void *v)
- {
--	struct sockaddr_rxrpc *addr = v;
-+	struct afs_server *server;
-+	struct afs_addr_list *alist;
- 
--	/* display header on line 1 */
--	if (v == (void *)1) {
--		seq_puts(m, "ADDRESS\n");
-+	if (v == SEQ_START_TOKEN) {
-+		seq_puts(m, "UUID                                 USE ADDR\n");
- 		return 0;
- 	}
- 
--	/* display one cell per line on subsequent lines */
--	seq_printf(m, "%pISp\n", &addr->transport);
-+	server = list_entry(v, struct afs_server, proc_link);
-+	alist = rcu_dereference(server->addresses);
-+	seq_printf(m, "%pU %3d %pISp\n",
-+		   &server->uuid,
-+		   atomic_read(&server->usage),
-+		   &alist->addrs[alist->index].transport);
- 	return 0;
- }
- 
-@@ -489,28 +511,6 @@ static void afs_proc_servers_stop(struct seq_file *p, void *v)
- 	rcu_read_unlock();
- }
- 
--/*
-- * display a header line followed by a load of volume lines
-- */
--static int afs_proc_servers_show(struct seq_file *m, void *v)
--{
--	struct afs_server *server;
--	struct afs_addr_list *alist;
--
--	if (v == SEQ_START_TOKEN) {
--		seq_puts(m, "UUID                                 USE ADDR\n");
--		return 0;
--	}
--
--	server = list_entry(v, struct afs_server, proc_link);
--	alist = rcu_dereference(server->addresses);
--	seq_printf(m, "%pU %3d %pISp\n",
--		   &server->uuid,
--		   atomic_read(&server->usage),
--		   &alist->addrs[alist->index].transport);
--	return 0;
--}
--
- void afs_put_sysnames(struct afs_sysnames *sysnames)
- {
- 	int i;
-@@ -663,6 +663,17 @@ static int afs_proc_sysname_release(struct inode *inode, struct file *file)
- 	return seq_release(inode, file);
- }
- 
-+static int afs_proc_sysname_show(struct seq_file *m, void *v)
-+{
-+	struct afs_net *net = afs_seq2net(m);
-+	struct afs_sysnames *sysnames = net->sysnames;
-+	unsigned int i = (unsigned long)v - 1;
-+
-+	if (i < sysnames->nr)
-+		seq_printf(m, "%s\n", sysnames->subs[i]);
-+	return 0;
-+}
-+
- static void *afs_proc_sysname_start(struct seq_file *m, loff_t *pos)
- 	__acquires(&net->sysnames_lock)
- {
-@@ -695,17 +706,6 @@ static void afs_proc_sysname_stop(struct seq_file *m, void *v)
- 	read_unlock(&net->sysnames_lock);
- }
- 
--static int afs_proc_sysname_show(struct seq_file *m, void *v)
--{
--	struct afs_net *net = afs_seq2net(m);
--	struct afs_sysnames *sysnames = net->sysnames;
--	unsigned int i = (unsigned long)v - 1;
--
--	if (i < sysnames->nr)
--		seq_printf(m, "%s\n", sysnames->subs[i]);
--	return 0;
--}
--
- static const struct file_operations afs_proc_sysname_fops = {
- 	.open		= afs_proc_sysname_open,
- 	.read		= seq_read,
+> Thanks,
+> 
+> Sean Young
+> 
+> [1] http://www.hifi-remote.com/wiki/index.php?title=DecodeIR
+> [2] https://sourceforge.net/p/lirc-remotes/code/ci/master/tree/remotes/
+> [3] http://www.hifi-remote.com/wiki/index.php?title=IRP_Notation
+> 
+> Changes since v3:
+>  - Implemented review comments from Quentin Monnet and Y Song (thanks!)
+>  - More helpful and better formatted bpf helper documentation
+>  - Changed back to bpf_prog_array rather than open-coded implementation
+>  - scancodes can be 64 bit
+>  - bpf gets passed values in microseconds, not nanoseconds.
+>    microseconds is more than than enough (IR receivers support carriers upto
+>    70kHz, at which point a single period is already 14 microseconds). Also,
+>    this makes it much more consistent with lirc mode2.
+>  - Since it looks much more like lirc mode2, rename the program type to
+>    BPF_PROG_TYPE_LIRC_MODE2.
+>  - Rebased on bpf-next
+> 
+> Changes since v2:
+>  - Fixed locking issues
+>  - Improved self-test to cover more cases
+>  - Rebased on bpf-next again
+> 
+> Changes since v1:
+>  - Code review comments from Y Song <ys114321@gmail.com> and
+>    Randy Dunlap <rdunlap@infradead.org>
+>  - Re-wrote sample bpf to be selftest
+>  - Renamed RAWIR_DECODER -> RAWIR_EVENT (Kconfig, context, bpf prog type)
+>  - Rebase on bpf-next
+>  - Introduced bpf_rawir_event context structure with simpler access checking
+> 
+> Sean Young (3):
+>   bpf: bpf_prog_array_copy() should return -ENOENT if exclude_prog not
+>     found
+>   media: rc: introduce BPF_PROG_LIRC_MODE2
+>   bpf: add selftest for lirc_mode2 type program
+> 
+>  drivers/media/rc/Kconfig                      |  13 +
+>  drivers/media/rc/Makefile                     |   1 +
+>  drivers/media/rc/bpf-lirc.c                   | 308 ++++++++++++++++++
+>  drivers/media/rc/lirc_dev.c                   |  30 ++
+>  drivers/media/rc/rc-core-priv.h               |  22 ++
+>  drivers/media/rc/rc-ir-raw.c                  |  12 +-
+>  include/linux/bpf_rcdev.h                     |  30 ++
+>  include/linux/bpf_types.h                     |   3 +
+>  include/uapi/linux/bpf.h                      |  53 ++-
+>  kernel/bpf/core.c                             |  11 +-
+>  kernel/bpf/syscall.c                          |   7 +
+>  kernel/trace/bpf_trace.c                      |   2 +
+>  tools/bpf/bpftool/prog.c                      |   1 +
+>  tools/include/uapi/linux/bpf.h                |  53 ++-
+>  tools/include/uapi/linux/lirc.h               | 217 ++++++++++++
+>  tools/lib/bpf/libbpf.c                        |   1 +
+>  tools/testing/selftests/bpf/Makefile          |   8 +-
+>  tools/testing/selftests/bpf/bpf_helpers.h     |   6 +
+>  .../testing/selftests/bpf/test_lirc_mode2.sh  |  28 ++
+>  .../selftests/bpf/test_lirc_mode2_kern.c      |  23 ++
+>  .../selftests/bpf/test_lirc_mode2_user.c      | 154 +++++++++
+>  21 files changed, 974 insertions(+), 9 deletions(-)
+>  create mode 100644 drivers/media/rc/bpf-lirc.c
+>  create mode 100644 include/linux/bpf_rcdev.h
+>  create mode 100644 tools/include/uapi/linux/lirc.h
+>  create mode 100755 tools/testing/selftests/bpf/test_lirc_mode2.sh
+>  create mode 100644 tools/testing/selftests/bpf/test_lirc_mode2_kern.c
+>  create mode 100644 tools/testing/selftests/bpf/test_lirc_mode2_user.c
+> 
