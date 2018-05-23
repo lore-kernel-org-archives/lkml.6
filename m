@@ -1,45 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754853AbeEWQYP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 12:24:15 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:46121 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754530AbeEWQYN (ORCPT
+        id S1754757AbeEWQZ7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 12:25:59 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:32988 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754649AbeEWQZz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 12:24:13 -0400
-X-Google-Smtp-Source: AB8JxZo6PtG4FuWcmJhnzCVG9OYF4AQ2k1ag8Nl3w2Q7TtSG3F9Lv7yookNswSmc4MFG8oYluVzMaA==
-Date: Wed, 23 May 2018 11:24:10 -0500
-From: Rob Herring <robh@kernel.org>
-To: Elaine Zhang <zhangqing@rock-chips.com>
-Cc: heiko@sntech.de, mark.rutland@arm.com, devicetree@vger.kernel.org,
-        rjw@rjwysocki.net, khilman@kernel.org, ulf.hansson@linaro.org,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        wxt@rock-chips.com, xxx@rock-chips.com, xf@rock-chips.com,
-        huangtao@rock-chips.com, Finley Xiao <finley.xiao@rock-chips.com>
-Subject: Re: [PATCH v3 12/13] dt-bindings: add binding for px30 power domains
-Message-ID: <20180523162410.GA9844@rob-hp-laptop>
-References: <1527058129-10260-1-git-send-email-zhangqing@rock-chips.com>
- <1527058371-10706-1-git-send-email-zhangqing@rock-chips.com>
+        Wed, 23 May 2018 12:25:55 -0400
+X-Google-Smtp-Source: AB8JxZpVkj8vCb5zENbN1iU7CAd/CorpjsS/e1fmZnPIrGy5pN6PgG9EDXneTHicSDX/0qw8F9ZlDw==
+Subject: Re: [PATCH 1/5] Documentation: DT: Add optional 'timeout-sec'
+ property for sp805
+To: Robin Murphy <robin.murphy@arm.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc: devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org
+References: <1527014840-21236-1-git-send-email-ray.jui@broadcom.com>
+ <1527014840-21236-2-git-send-email-ray.jui@broadcom.com>
+ <af81ea74-fb80-11e2-7bdc-d3607bdbd46b@arm.com>
+From: Ray Jui <ray.jui@broadcom.com>
+Message-ID: <c542388f-e417-f624-ade1-95f9a2fc8a3b@broadcom.com>
+Date: Wed, 23 May 2018 09:25:49 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1527058371-10706-1-git-send-email-zhangqing@rock-chips.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <af81ea74-fb80-11e2-7bdc-d3607bdbd46b@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 02:52:51PM +0800, Elaine Zhang wrote:
-> From: Finley Xiao <finley.xiao@rock-chips.com>
-> 
-> Add binding documentation for the power domains
-> found on Rockchip PX30 SoCs.
-> 
-> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> ---
->  Documentation/devicetree/bindings/soc/rockchip/power_domain.txt | 3 +++
->  1 file changed, 3 insertions(+)
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+
+On 5/23/2018 3:57 AM, Robin Murphy wrote:
+> On 22/05/18 19:47, Ray Jui wrote:
+>> Update the SP805 binding document to add optional 'timeout-sec'
+>> devicetree property
+>>
+>> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+>> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+>> ---
+>>   Documentation/devicetree/bindings/watchdog/sp805-wdt.txt | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/watchdog/sp805-wdt.txt 
+>> b/Documentation/devicetree/bindings/watchdog/sp805-wdt.txt
+>> index edc4f0e..f898a86 100644
+>> --- a/Documentation/devicetree/bindings/watchdog/sp805-wdt.txt
+>> +++ b/Documentation/devicetree/bindings/watchdog/sp805-wdt.txt
+>> @@ -19,6 +19,8 @@ Required properties:
+>>   Optional properties:
+>>   - interrupts : Should specify WDT interrupt number.
+>> +- timeout-sec : Should specify default WDT timeout in seconds. If 
+>> unset, the
+>> +                default timeout is 30 seconds
+> 
+> According to the SP805 TRM, the default interval is dependent on the 
+> rate of WDOGCLK, but would typically be a lot longer than that :/
+> 
+> On a related note, anyone have any idea why we seem to have two subtly 
+> different SP805 bindings defined?
+
+Interesting, I did not even know that until you pointed this out (and 
+it's funny that I found that I actually reviewed arm,sp805.txt 
+internally in Broadcom code review).
+
+It looks like one was done by Bhupesh Sharma (sp805-wdt.txt) and the 
+other was done by Anup Patel (arm,sp805.txt). Both were merged at the 
+same time around March 20, 2016: 915c56bc01d6. I'd assume both were sent 
+out at around the same time.
+
+It sounds like we should definitely remove one of them. Given that 
+sp805-wdt.txt appears to have more detailed descriptions on the use of 
+the clocks, should we remove arm,sp805.txt?
+
+Thanks,
+
+Ray
+
+> 
+> Robin.
+> 
+>>   Examples:
+>>
