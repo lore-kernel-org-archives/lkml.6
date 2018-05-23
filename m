@@ -1,191 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754579AbeEWIsq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 04:48:46 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:43735 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754471AbeEWIsn (ORCPT
+        id S1754586AbeEWItM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 04:49:12 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:35149 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754341AbeEWItI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 04:48:43 -0400
-X-Google-Smtp-Source: AB8JxZrmNRczXIZIHN8KLjfDHWHzNh6tiSGFnh+D1ILlSinSWOIhenY0PPcafRH9KixTrnCIZo6HB0xg8Rw1c7MAdZA=
+        Wed, 23 May 2018 04:49:08 -0400
+X-Google-Smtp-Source: AB8JxZrvMw7Y4lcONrZXYBw0SIC8HC0v3XWZoJBzgDmPnK2Vcmx23RUSn0BRWMYVlqmpKd67r4rHOg==
+Date: Wed, 23 May 2018 10:49:04 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Souptick Joarder <jrdr.linux@gmail.com>
+Cc: airlied@redhat.com,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Cihangir =?iso-8859-1?Q?Akt=FCrk?= <cakturk@gmail.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Michal Hocko <mhocko@kernel.org>, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v2] gpu: drm: udl: Adding new typedef vm_fault_t
+Message-ID: <20180523084904.GN3438@phenom.ffwll.local>
+Mail-Followup-To: Souptick Joarder <jrdr.linux@gmail.com>,
+        airlied@redhat.com,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Cihangir =?iso-8859-1?Q?Akt=FCrk?= <cakturk@gmail.com>,
+        Sean Paul <seanpaul@chromium.org>, Michal Hocko <mhocko@kernel.org>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>
+References: <20180425045922.GA21590@jordon-HP-15-Notebook-PC>
+ <CAFqt6zZeQLMkdha4DD2uMp=LOX879BrR6pf4_fwXzc3nr=G-Rw@mail.gmail.com>
+ <CAFqt6zascSzTd9QR1rNxdRV=Ta-nuVksj9mtNE0Fzb4qQ21EvQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1527061353-16902-3-git-send-email-hl@rock-chips.com>
-References: <1527061353-16902-1-git-send-email-hl@rock-chips.com> <1527061353-16902-3-git-send-email-hl@rock-chips.com>
-From: Enric Balletbo Serra <eballetbo@gmail.com>
-Date: Wed, 23 May 2018 10:48:41 +0200
-Message-ID: <CAFqH_50+8V_CRZmdHUMGexiRb2T2cFFka0y1W7Smgf07_mBZJQ@mail.gmail.com>
-Subject: Re: [PATCH v7 3/5] soc: rockchip: split rockchip_typec_phy struct to
- separate header
-To: Lin Huang <hl@rock-chips.com>
-Cc: Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        Chris Zhong <zyw@rock-chips.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Doug Anderson <dianders@chromium.org>,
-        Brian Norris <briannorris@chromium.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        daniel.vetter@intel.com, dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFqt6zascSzTd9QR1rNxdRV=Ta-nuVksj9mtNE0Fzb4qQ21EvQ@mail.gmail.com>
+X-Operating-System: Linux phenom 4.15.0-3-amd64 
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-05-23 9:42 GMT+02:00 Lin Huang <hl@rock-chips.com>:
-> we may use rockchip_phy_typec struct in other driver, so split
-> it to separate header.
->
-> Signed-off-by: Lin Huang <hl@rock-chips.com>
-> ---
-> Changes in v2:
-> - None
-> Changes in v3:
-> - None
-> Changes in v4:
-> - None
-> Changes in v5:
-> - None
-> Changes in v6:
-> - new patch here
-> Changes in v7:
-> - move new element to next patch
->
->  drivers/phy/rockchip/phy-rockchip-typec.c | 47 +-------------------------
->  include/soc/rockchip/rockchip_phy_typec.h | 55 +++++++++++++++++++++++++++++++
->  2 files changed, 56 insertions(+), 46 deletions(-)
->  create mode 100644 include/soc/rockchip/rockchip_phy_typec.h
->
-> diff --git a/drivers/phy/rockchip/phy-rockchip-typec.c b/drivers/phy/rockchip/phy-rockchip-typec.c
-> index 76a4b58..795055f 100644
-> --- a/drivers/phy/rockchip/phy-rockchip-typec.c
-> +++ b/drivers/phy/rockchip/phy-rockchip-typec.c
-> @@ -63,6 +63,7 @@
->
->  #include <linux/mfd/syscon.h>
->  #include <linux/phy/phy.h>
-> +#include <soc/rockchip/rockchip_phy_typec.h>
->
->  #define CMN_SSM_BANDGAP                        (0x21 << 2)
->  #define CMN_SSM_BIAS                   (0x22 << 2)
-> @@ -349,52 +350,6 @@
->  #define MODE_DFP_USB                   BIT(1)
->  #define MODE_DFP_DP                    BIT(2)
->
-> -struct usb3phy_reg {
-> -       u32 offset;
-> -       u32 enable_bit;
-> -       u32 write_enable;
-> -};
-> -
-> -/**
-> - * struct rockchip_usb3phy_port_cfg: usb3-phy port configuration.
-> - * @reg: the base address for usb3-phy config.
-> - * @typec_conn_dir: the register of type-c connector direction.
-> - * @usb3tousb2_en: the register of type-c force usb2 to usb2 enable.
-> - * @external_psm: the register of type-c phy external psm clock.
-> - * @pipe_status: the register of type-c phy pipe status.
-> - * @usb3_host_disable: the register of type-c usb3 host disable.
-> - * @usb3_host_port: the register of type-c usb3 host port.
-> - * @uphy_dp_sel: the register of type-c phy DP select control.
-> - */
-> -struct rockchip_usb3phy_port_cfg {
-> -       unsigned int reg;
-> -       struct usb3phy_reg typec_conn_dir;
-> -       struct usb3phy_reg usb3tousb2_en;
-> -       struct usb3phy_reg external_psm;
-> -       struct usb3phy_reg pipe_status;
-> -       struct usb3phy_reg usb3_host_disable;
-> -       struct usb3phy_reg usb3_host_port;
-> -       struct usb3phy_reg uphy_dp_sel;
-> -};
-> -
-> -struct rockchip_typec_phy {
-> -       struct device *dev;
-> -       void __iomem *base;
-> -       struct extcon_dev *extcon;
-> -       struct regmap *grf_regs;
-> -       struct clk *clk_core;
-> -       struct clk *clk_ref;
-> -       struct reset_control *uphy_rst;
-> -       struct reset_control *pipe_rst;
-> -       struct reset_control *tcphy_rst;
-> -       const struct rockchip_usb3phy_port_cfg *port_cfgs;
-> -       /* mutex to protect access to individual PHYs */
-> -       struct mutex lock;
-> -
-> -       bool flip;
-> -       u8 mode;
-> -};
-> -
->  struct phy_reg {
->         u16 value;
->         u32 addr;
-> diff --git a/include/soc/rockchip/rockchip_phy_typec.h b/include/soc/rockchip/rockchip_phy_typec.h
-> new file mode 100644
-> index 0000000..4afe039
-> --- /dev/null
-> +++ b/include/soc/rockchip/rockchip_phy_typec.h
-> @@ -0,0 +1,55 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
-> + * Author: Lin Huang <hl@rock-chips.com>
-> + */
-> +
-> +#ifndef __SOC_ROCKCHIP_PHY_TYPEC_H
-> +#define __SOC_ROCKCHIP_PHY_TYPEC_H
-> +
-> +struct usb3phy_reg {
-> +       u32 offset;
-> +       u32 enable_bit;
-> +       u32 write_enable;
-> +};
-> +
-> +/**
-> + * struct rockchip_usb3phy_port_cfg: usb3-phy port configuration.
-> + * @reg: the base address for usb3-phy config.
-> + * @typec_conn_dir: the register of type-c connector direction.
-> + * @usb3tousb2_en: the register of type-c force usb2 to usb2 enable.
-> + * @external_psm: the register of type-c phy external psm clock.
-> + * @pipe_status: the register of type-c phy pipe status.
-> + * @usb3_host_disable: the register of type-c usb3 host disable.
-> + * @usb3_host_port: the register of type-c usb3 host port.
-> + * @uphy_dp_sel: the register of type-c phy DP select control.
-> + */
-> +struct rockchip_usb3phy_port_cfg {
-> +       unsigned int reg;
-> +       struct usb3phy_reg typec_conn_dir;
-> +       struct usb3phy_reg usb3tousb2_en;
-> +       struct usb3phy_reg external_psm;
-> +       struct usb3phy_reg pipe_status;
-> +       struct usb3phy_reg usb3_host_disable;
-> +       struct usb3phy_reg usb3_host_port;
-> +       struct usb3phy_reg uphy_dp_sel;
-> +};
-> +
-> +struct rockchip_typec_phy {
-> +       struct device *dev;
-> +       void __iomem *base;
-> +       struct extcon_dev *extcon;
-> +       struct regmap *grf_regs;
-> +       struct clk *clk_core;
-> +       struct clk *clk_ref;
-> +       struct reset_control *uphy_rst;
-> +       struct reset_control *pipe_rst;
-> +       struct reset_control *tcphy_rst;
-> +       const struct rockchip_usb3phy_port_cfg *port_cfgs;
-> +       /* mutex to protect access to individual PHYs */
-> +       struct mutex lock;
-> +       bool flip;
-> +       u8 mode;
-> +};
-> +
-> +#endif
-> --
-> 2.7.4
->
+On Mon, May 21, 2018 at 10:27:44AM +0530, Souptick Joarder wrote:
+> On Thu, May 10, 2018 at 7:18 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> > On Wed, Apr 25, 2018 at 10:29 AM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> >> Use new return type vm_fault_t for fault and huge_fault
+> >> handler. For now, this is just documenting that the
+> >> function returns a VM_FAULT value rather than an errno.
+> >> Once all instances are converted, vm_fault_t will become
+> >> a distinct type.
+> >>
+> >> Commit 1c8f422059ae ("mm: change return type to vm_fault_t")
+> >>
+> >> Previously vm_insert_page() returns err which driver
+> >> mapped into VM_FAULT_* type. The new function vmf_
+> >> insert_page() will replace this inefficiency by
+> >> returning VM_FAULT_* type.
+> >>
+> >> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> >> Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+> >> ---
+> >> v2: Updated the change log
+> >>
+> >>  drivers/gpu/drm/udl/udl_drv.h |  3 ++-
+> >>  drivers/gpu/drm/udl/udl_gem.c | 15 ++-------------
+> >>  2 files changed, 4 insertions(+), 14 deletions(-)
+> >>
+> >> diff --git a/drivers/gpu/drm/udl/udl_drv.h b/drivers/gpu/drm/udl/udl_drv.h
+> >> index 2a75ab8..11151c4 100644
+> >> --- a/drivers/gpu/drm/udl/udl_drv.h
+> >> +++ b/drivers/gpu/drm/udl/udl_drv.h
+> >> @@ -16,6 +16,7 @@
+> >>
+> >>  #include <linux/usb.h>
+> >>  #include <drm/drm_gem.h>
+> >> +#include <linux/mm_types.h>
+> >>
+> >>  #define DRIVER_NAME            "udl"
+> >>  #define DRIVER_DESC            "DisplayLink"
+> >> @@ -134,7 +135,7 @@ struct drm_gem_object *udl_gem_prime_import(struct drm_device *dev,
+> >>  int udl_gem_vmap(struct udl_gem_object *obj);
+> >>  void udl_gem_vunmap(struct udl_gem_object *obj);
+> >>  int udl_drm_gem_mmap(struct file *filp, struct vm_area_struct *vma);
+> >> -int udl_gem_fault(struct vm_fault *vmf);
+> >> +vm_fault_t udl_gem_fault(struct vm_fault *vmf);
+> >>
+> >>  int udl_handle_damage(struct udl_framebuffer *fb, int x, int y,
+> >>                       int width, int height);
+> >> diff --git a/drivers/gpu/drm/udl/udl_gem.c b/drivers/gpu/drm/udl/udl_gem.c
+> >> index dee6bd9..cf5fe35 100644
+> >> --- a/drivers/gpu/drm/udl/udl_gem.c
+> >> +++ b/drivers/gpu/drm/udl/udl_gem.c
+> >> @@ -100,13 +100,12 @@ int udl_drm_gem_mmap(struct file *filp, struct vm_area_struct *vma)
+> >>         return ret;
+> >>  }
+> >>
+> >> -int udl_gem_fault(struct vm_fault *vmf)
+> >> +vm_fault_t udl_gem_fault(struct vm_fault *vmf)
+> >>  {
+> >>         struct vm_area_struct *vma = vmf->vma;
+> >>         struct udl_gem_object *obj = to_udl_bo(vma->vm_private_data);
+> >>         struct page *page;
+> >>         unsigned int page_offset;
+> >> -       int ret = 0;
+> >>
+> >>         page_offset = (vmf->address - vma->vm_start) >> PAGE_SHIFT;
+> >>
+> >> @@ -114,17 +113,7 @@ int udl_gem_fault(struct vm_fault *vmf)
+> >>                 return VM_FAULT_SIGBUS;
+> >>
+> >>         page = obj->pages[page_offset];
+> >> -       ret = vm_insert_page(vma, vmf->address, page);
+> >> -       switch (ret) {
+> >> -       case -EAGAIN:
+> >> -       case 0:
+> >> -       case -ERESTARTSYS:
+> >> -               return VM_FAULT_NOPAGE;
+> >> -       case -ENOMEM:
+> >> -               return VM_FAULT_OOM;
+> >> -       default:
+> >> -               return VM_FAULT_SIGBUS;
+> >> -       }
+> >> +       return vmf_insert_page(vma, vmf->address, page);
+> >>  }
+> >>
+> >>  int udl_gem_get_pages(struct udl_gem_object *obj)
+> >> --
+> >> 1.9.1
+> >>
+> >
+> > Any comment on this patch ?
+> 
+> If no comment, we would like to get this patch in queue
+> for 4.18.
 
-Reviewed-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+4.18 is done already, queued up for 4.19 in drm-misc-next.
+
+Thanks, Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
