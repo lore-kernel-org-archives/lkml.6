@@ -1,94 +1,461 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934463AbeEWUYF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 16:24:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34300 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934907AbeEWUWE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 16:22:04 -0400
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Jiri Olsa <jolsa@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>, Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 12/18] perf kcore_copy: Keep a count of phdrs
-Date: Wed, 23 May 2018 17:21:00 -0300
-Message-Id: <20180523202106.17286-13-acme@kernel.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180523202106.17286-1-acme@kernel.org>
-References: <20180523202106.17286-1-acme@kernel.org>
+        id S935013AbeEWU0B (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 16:26:01 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:32969 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934461AbeEWUZ4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 16:25:56 -0400
+X-Google-Smtp-Source: AB8JxZo8k20Rk93pdwhaP7EEYAJu/aCBgLfvkSUkgyU1o99EOgQ0nVNJOCUQNlN1xjsB0fDR6PHitA==
+Date: Wed, 23 May 2018 14:25:52 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        robh@kernel.org, sudeep.holla@arm.com, frowand.list@gmail.com,
+        coresight@lists.linaro.org, mark.rutland@arm.com
+Subject: Re: [PATCH 08/11] coresight: Add generic TMC sg table framework
+Message-ID: <20180523202552.GA4609@xps15>
+References: <1526661567-4578-1-git-send-email-suzuki.poulose@arm.com>
+ <1526661567-4578-9-git-send-email-suzuki.poulose@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1526661567-4578-9-git-send-email-suzuki.poulose@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+On Fri, May 18, 2018 at 05:39:24PM +0100, Suzuki K Poulose wrote:
+> This patch introduces a generic sg table data structure and
+> associated operations. An SG table can be used to map a set
+> of Data pages where the trace data could be stored by the TMC
+> ETR. The information about the data pages could be stored in
+> different formats, depending on the type of the underlying
+> SG mechanism (e.g, TMC ETR SG vs Coresight CATU). The generic
+> structure provides book keeping of the pages used for the data
+> as well as the table contents. The table should be filled by
+> the user of the infrastructure.
+> 
+> A table can be created by specifying the number of data pages
+> as well as the number of table pages required to hold the
+> pointers, where the latter could be different for different
+> types of tables. The pages are mapped in the appropriate dma
+> data direction mode (i.e, DMA_TO_DEVICE for table pages
+> and DMA_FROM_DEVICE for data pages).  The framework can optionally
+> accept a set of allocated data pages (e.g, perf ring buffer) and
+> map them accordingly. The table and data pages are vmap'ed to allow
+> easier access by the drivers. The framework also provides helpers to
+> sync the data written to the pages with appropriate directions.
+> 
+> This will be later used by the TMC ETR SG unit and CATU.
+> 
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+> Changes since v1:
+>  - Address code style issues, more comments
+> ---
+>  drivers/hwtracing/coresight/coresight-tmc-etr.c | 290 ++++++++++++++++++++++++
+>  drivers/hwtracing/coresight/coresight-tmc.h     |  50 ++++
+>  2 files changed, 340 insertions(+)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+> index 9780798..1e844f8 100644
+> --- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
+> +++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+> @@ -17,9 +17,299 @@
+>  
+>  #include <linux/coresight.h>
+>  #include <linux/dma-mapping.h>
+> +#include <linux/slab.h>
+>  #include "coresight-priv.h"
+>  #include "coresight-tmc.h"
+>  
+> +/*
+> + * tmc_pages_get_offset:  Go through all the pages in the tmc_pages
+> + * and map the device address @addr to an offset within the virtual
+> + * contiguous buffer.
+> + */
+> +static long
+> +tmc_pages_get_offset(struct tmc_pages *tmc_pages, dma_addr_t addr)
+> +{
+> +	int i;
+> +	dma_addr_t page_start;
+> +
+> +	for (i = 0; i < tmc_pages->nr_pages; i++) {
+> +		page_start = tmc_pages->daddrs[i];
+> +		if (addr >= page_start && addr < (page_start + PAGE_SIZE))
+> +			return i * PAGE_SIZE + (addr - page_start);
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +/*
+> + * tmc_pages_free : Unmap and free the pages used by tmc_pages.
+> + * If the pages were not allocated in tmc_pages_alloc(), we would
+> + * simply drop the refcount.
+> + */
+> +static void tmc_pages_free(struct tmc_pages *tmc_pages,
+> +			   struct device *dev, enum dma_data_direction dir)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < tmc_pages->nr_pages; i++) {
+> +		if (tmc_pages->daddrs && tmc_pages->daddrs[i])
+> +			dma_unmap_page(dev, tmc_pages->daddrs[i],
+> +					 PAGE_SIZE, dir);
+> +		if (tmc_pages->pages && tmc_pages->pages[i])
+> +			__free_page(tmc_pages->pages[i]);
+> +	}
+> +
+> +	kfree(tmc_pages->pages);
+> +	kfree(tmc_pages->daddrs);
+> +	tmc_pages->pages = NULL;
+> +	tmc_pages->daddrs = NULL;
+> +	tmc_pages->nr_pages = 0;
+> +}
+> +
+> +/*
+> + * tmc_pages_alloc : Allocate and map pages for a given @tmc_pages.
+> + * If @pages is not NULL, the list of page virtual addresses are
+> + * used as the data pages. The pages are then dma_map'ed for @dev
+> + * with dma_direction @dir.
+> + *
+> + * Returns 0 upon success, else the error number.
+> + */
+> +static int tmc_pages_alloc(struct tmc_pages *tmc_pages,
+> +			   struct device *dev, int node,
+> +			   enum dma_data_direction dir, void **pages)
+> +{
+> +	int i, nr_pages;
+> +	dma_addr_t paddr;
+> +	struct page *page;
+> +
+> +	nr_pages = tmc_pages->nr_pages;
+> +	tmc_pages->daddrs = kcalloc(nr_pages, sizeof(*tmc_pages->daddrs),
+> +					 GFP_KERNEL);
+> +	if (!tmc_pages->daddrs)
+> +		return -ENOMEM;
+> +	tmc_pages->pages = kcalloc(nr_pages, sizeof(*tmc_pages->pages),
+> +					 GFP_KERNEL);
+> +	if (!tmc_pages->pages) {
+> +		kfree(tmc_pages->daddrs);
+> +		tmc_pages->daddrs = NULL;
+> +		return -ENOMEM;
+> +	}
+> +
+> +	for (i = 0; i < nr_pages; i++) {
+> +		if (pages && pages[i]) {
+> +			page = virt_to_page(pages[i]);
+> +			/* Hold a refcount on the page */
+> +			get_page(page);
+> +		} else {
+> +			page = alloc_pages_node(node,
+> +						GFP_KERNEL | __GFP_ZERO, 0);
+> +		}
+> +		paddr = dma_map_page(dev, page, 0, PAGE_SIZE, dir);
+> +		if (dma_mapping_error(dev, paddr))
+> +			goto err;
+> +		tmc_pages->daddrs[i] = paddr;
+> +		tmc_pages->pages[i] = page;
+> +	}
+> +	return 0;
+> +err:
+> +	tmc_pages_free(tmc_pages, dev, dir);
+> +	return -ENOMEM;
+> +}
+> +
+> +static inline dma_addr_t tmc_sg_table_base_paddr(struct tmc_sg_table *sg_table)
+> +{
+> +	if (WARN_ON(!sg_table->data_pages.pages[0]))
+> +		return 0;
+> +	return sg_table->table_daddr;
+> +}
+> +
+> +static inline void *tmc_sg_table_base_vaddr(struct tmc_sg_table *sg_table)
+> +{
+> +	if (WARN_ON(!sg_table->data_pages.pages[0]))
+> +		return NULL;
+> +	return sg_table->table_vaddr;
+> +}
 
-In preparation to add more program headers, keep a count of phdrs.
+The above two functions deal with DMA'able and virtual addresses for the table
+page buffer.  Yet the test in the WARN_ON is done on the data page array.
+Shouldn't this be sg_table->table_pages.pages[0] instead?
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86@kernel.org
-Link: http://lkml.kernel.org/r/1526986485-6562-12-git-send-email-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/symbol-elf.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+If not please add a comment justifying your position so that someone else
+looking at the code does't end up thinking the same in a year from now.
 
-diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
-index b13873a6f368..4e7b71e8ac0e 100644
---- a/tools/perf/util/symbol-elf.c
-+++ b/tools/perf/util/symbol-elf.c
-@@ -1398,6 +1398,7 @@ struct kcore_copy_info {
- 	u64 last_symbol;
- 	u64 first_module;
- 	u64 last_module_symbol;
-+	size_t phnum;
- 	struct phdr_data kernel_map;
- 	struct phdr_data modules_map;
- 	struct list_head phdrs;
-@@ -1517,6 +1518,8 @@ static int kcore_copy__read_maps(struct kcore_copy_info *kci, Elf *elf)
- 	if (kci->modules_map.len)
- 		list_add_tail(&kci->modules_map.node, &kci->phdrs);
- 
-+	kci->phnum = !!kci->kernel_map.len + !!kci->modules_map.len;
-+
- 	return 0;
- }
- 
-@@ -1678,7 +1681,6 @@ int kcore_copy(const char *from_dir, const char *to_dir)
- {
- 	struct kcore kcore;
- 	struct kcore extract;
--	size_t count = 2;
- 	int idx = 0, err = -1;
- 	off_t offset = page_size, sz, modules_offset = 0;
- 	struct kcore_copy_info kci = { .stext = 0, };
-@@ -1705,10 +1707,7 @@ int kcore_copy(const char *from_dir, const char *to_dir)
- 	if (kcore__init(&extract, extract_filename, kcore.elfclass, false))
- 		goto out_kcore_close;
- 
--	if (!kci.modules_map.addr)
--		count -= 1;
--
--	if (kcore__copy_hdr(&kcore, &extract, count))
-+	if (kcore__copy_hdr(&kcore, &extract, kci.phnum))
- 		goto out_extract_close;
- 
- 	if (kcore__add_phdr(&extract, idx++, offset, kci.kernel_map.addr,
--- 
-2.14.3
+> +
+> +static inline void *
+> +tmc_sg_table_data_vaddr(struct tmc_sg_table *sg_table)
+> +{
+> +	if (WARN_ON(!sg_table->data_pages.nr_pages))
+> +		return 0;
+> +	return sg_table->data_vaddr;
+> +}
+
+I see that tmc_sg_table_base_vaddr() and tmc_sg_table_data_vaddr() are both
+returning the virtual address of the contiguous buffer for table and data
+respectively.  Yet there is a discrepency in the naming convention.  I would
+have expected tmc_sg_table_base_vaddr() and tmc_sg_data_base_vaddr() so that
+there is a little symmetry between them.
+
+
+Otherwise looks good to me.
+
+> +
+> +static inline long
+> +tmc_sg_get_data_page_offset(struct tmc_sg_table *sg_table, dma_addr_t addr)
+> +{
+> +	return tmc_pages_get_offset(&sg_table->data_pages, addr);
+> +}
+> +
+> +static inline void tmc_free_table_pages(struct tmc_sg_table *sg_table)
+> +{
+> +	if (sg_table->table_vaddr)
+> +		vunmap(sg_table->table_vaddr);
+> +	tmc_pages_free(&sg_table->table_pages, sg_table->dev, DMA_TO_DEVICE);
+> +}
+> +
+> +static void tmc_free_data_pages(struct tmc_sg_table *sg_table)
+> +{
+> +	if (sg_table->data_vaddr)
+> +		vunmap(sg_table->data_vaddr);
+> +	tmc_pages_free(&sg_table->data_pages, sg_table->dev, DMA_FROM_DEVICE);
+> +}
+> +
+> +void tmc_free_sg_table(struct tmc_sg_table *sg_table)
+> +{
+> +	tmc_free_table_pages(sg_table);
+> +	tmc_free_data_pages(sg_table);
+> +}
+> +
+> +/*
+> + * Alloc pages for the table. Since this will be used by the device,
+> + * allocate the pages closer to the device (i.e, dev_to_node(dev)
+> + * rather than the CPU node).
+> + */
+> +static int tmc_alloc_table_pages(struct tmc_sg_table *sg_table)
+> +{
+> +	int rc;
+> +	struct tmc_pages *table_pages = &sg_table->table_pages;
+> +
+> +	rc = tmc_pages_alloc(table_pages, sg_table->dev,
+> +			     dev_to_node(sg_table->dev),
+> +			     DMA_TO_DEVICE, NULL);
+> +	if (rc)
+> +		return rc;
+> +	sg_table->table_vaddr = vmap(table_pages->pages,
+> +				     table_pages->nr_pages,
+> +				     VM_MAP,
+> +				     PAGE_KERNEL);
+> +	if (!sg_table->table_vaddr)
+> +		rc = -ENOMEM;
+> +	else
+> +		sg_table->table_daddr = table_pages->daddrs[0];
+> +	return rc;
+> +}
+> +
+> +static int tmc_alloc_data_pages(struct tmc_sg_table *sg_table, void **pages)
+> +{
+> +	int rc;
+> +
+> +	/* Allocate data pages on the node requested by the caller */
+> +	rc = tmc_pages_alloc(&sg_table->data_pages,
+> +			     sg_table->dev, sg_table->node,
+> +			     DMA_FROM_DEVICE, pages);
+> +	if (!rc) {
+> +		sg_table->data_vaddr = vmap(sg_table->data_pages.pages,
+> +					    sg_table->data_pages.nr_pages,
+> +					    VM_MAP,
+> +					    PAGE_KERNEL);
+> +		if (!sg_table->data_vaddr)
+> +			rc = -ENOMEM;
+> +	}
+> +	return rc;
+> +}
+> +
+> +/*
+> + * tmc_alloc_sg_table: Allocate and setup dma pages for the TMC SG table
+> + * and data buffers. TMC writes to the data buffers and reads from the SG
+> + * Table pages.
+> + *
+> + * @dev		- Device to which page should be DMA mapped.
+> + * @node	- Numa node for mem allocations
+> + * @nr_tpages	- Number of pages for the table entries.
+> + * @nr_dpages	- Number of pages for Data buffer.
+> + * @pages	- Optional list of virtual address of pages.
+> + */
+> +struct tmc_sg_table *tmc_alloc_sg_table(struct device *dev,
+> +					int node,
+> +					int nr_tpages,
+> +					int nr_dpages,
+> +					void **pages)
+> +{
+> +	long rc;
+> +	struct tmc_sg_table *sg_table;
+> +
+> +	sg_table = kzalloc(sizeof(*sg_table), GFP_KERNEL);
+> +	if (!sg_table)
+> +		return ERR_PTR(-ENOMEM);
+> +	sg_table->data_pages.nr_pages = nr_dpages;
+> +	sg_table->table_pages.nr_pages = nr_tpages;
+> +	sg_table->node = node;
+> +	sg_table->dev = dev;
+> +
+> +	rc  = tmc_alloc_data_pages(sg_table, pages);
+> +	if (!rc)
+> +		rc = tmc_alloc_table_pages(sg_table);
+> +	if (rc) {
+> +		tmc_free_sg_table(sg_table);
+> +		kfree(sg_table);
+> +		return ERR_PTR(rc);
+> +	}
+> +
+> +	return sg_table;
+> +}
+> +
+> +/*
+> + * tmc_sg_table_sync_data_range: Sync the data buffer written
+> + * by the device from @offset upto a @size bytes.
+> + */
+> +void tmc_sg_table_sync_data_range(struct tmc_sg_table *table,
+> +				  u64 offset, u64 size)
+> +{
+> +	int i, index, start;
+> +	int npages = DIV_ROUND_UP(size, PAGE_SIZE);
+> +	struct device *dev = table->dev;
+> +	struct tmc_pages *data = &table->data_pages;
+> +
+> +	start = offset >> PAGE_SHIFT;
+> +	for (i = start; i < (start + npages); i++) {
+> +		index = i % data->nr_pages;
+> +		dma_sync_single_for_cpu(dev, data->daddrs[index],
+> +					PAGE_SIZE, DMA_FROM_DEVICE);
+> +	}
+> +}
+> +
+> +/* tmc_sg_sync_table: Sync the page table */
+> +void tmc_sg_table_sync_table(struct tmc_sg_table *sg_table)
+> +{
+> +	int i;
+> +	struct device *dev = sg_table->dev;
+> +	struct tmc_pages *table_pages = &sg_table->table_pages;
+> +
+> +	for (i = 0; i < table_pages->nr_pages; i++)
+> +		dma_sync_single_for_device(dev, table_pages->daddrs[i],
+> +					   PAGE_SIZE, DMA_TO_DEVICE);
+> +}
+> +
+> +/*
+> + * tmc_sg_table_get_data: Get the buffer pointer for data @offset
+> + * in the SG buffer. The @bufpp is updated to point to the buffer.
+> + * Returns :
+> + *	the length of linear data available at @offset.
+> + *	or
+> + *	<= 0 if no data is available.
+> + */
+> +ssize_t tmc_sg_table_get_data(struct tmc_sg_table *sg_table,
+> +			      u64 offset, size_t len, char **bufpp)
+> +{
+> +	size_t size;
+> +	int pg_idx = offset >> PAGE_SHIFT;
+> +	int pg_offset = offset & (PAGE_SIZE - 1);
+> +	struct tmc_pages *data_pages = &sg_table->data_pages;
+> +
+> +	size = tmc_sg_table_buf_size(sg_table);
+> +	if (offset >= size)
+> +		return -EINVAL;
+> +
+> +	/* Make sure we don't go beyond the end */
+> +	len = (len < (size - offset)) ? len : size - offset;
+> +	/* Respect the page boundaries */
+> +	len = (len < (PAGE_SIZE - pg_offset)) ? len : (PAGE_SIZE - pg_offset);
+> +	if (len > 0)
+> +		*bufpp = page_address(data_pages->pages[pg_idx]) + pg_offset;
+> +	return len;
+> +}
+> +
+>  static void tmc_etr_enable_hw(struct tmc_drvdata *drvdata)
+>  {
+>  	u32 axictl, sts;
+> diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
+> index 73f944d..19a765c 100644
+> --- a/drivers/hwtracing/coresight/coresight-tmc.h
+> +++ b/drivers/hwtracing/coresight/coresight-tmc.h
+> @@ -18,6 +18,7 @@
+>  #ifndef _CORESIGHT_TMC_H
+>  #define _CORESIGHT_TMC_H
+>  
+> +#include <linux/dma-mapping.h>
+>  #include <linux/miscdevice.h>
+>  
+>  #define TMC_RSZ			0x004
+> @@ -171,6 +172,38 @@ struct tmc_drvdata {
+>  	u32			etr_caps;
+>  };
+>  
+> +/**
+> + * struct tmc_pages - Collection of pages used for SG.
+> + * @nr_pages:		Number of pages in the list.
+> + * @daddrs:		Array of DMA'able page address.
+> + * @pages:		Array pages for the buffer.
+> + */
+> +struct tmc_pages {
+> +	int nr_pages;
+> +	dma_addr_t	*daddrs;
+> +	struct page	**pages;
+> +};
+> +
+> +/*
+> + * struct tmc_sg_table - Generic SG table for TMC
+> + * @dev:		Device for DMA allocations
+> + * @table_vaddr:	Contiguous Virtual address for PageTable
+> + * @data_vaddr:		Contiguous Virtual address for Data Buffer
+> + * @table_daddr:	DMA address of the PageTable base
+> + * @node:		Node for Page allocations
+> + * @table_pages:	List of pages & dma address for Table
+> + * @data_pages:		List of pages & dma address for Data
+> + */
+> +struct tmc_sg_table {
+> +	struct device *dev;
+> +	void *table_vaddr;
+> +	void *data_vaddr;
+> +	dma_addr_t table_daddr;
+> +	int node;
+> +	struct tmc_pages table_pages;
+> +	struct tmc_pages data_pages;
+> +};
+> +
+>  /* Generic functions */
+>  void tmc_wait_for_tmcready(struct tmc_drvdata *drvdata);
+>  void tmc_flush_and_stop(struct tmc_drvdata *drvdata);
+> @@ -226,4 +259,21 @@ static inline bool tmc_etr_has_cap(struct tmc_drvdata *drvdata, u32 cap)
+>  	return !!(drvdata->etr_caps & cap);
+>  }
+>  
+> +struct tmc_sg_table *tmc_alloc_sg_table(struct device *dev,
+> +					int node,
+> +					int nr_tpages,
+> +					int nr_dpages,
+> +					void **pages);
+> +void tmc_free_sg_table(struct tmc_sg_table *sg_table);
+> +void tmc_sg_table_sync_table(struct tmc_sg_table *sg_table);
+> +void tmc_sg_table_sync_data_range(struct tmc_sg_table *table,
+> +				  u64 offset, u64 size);
+> +ssize_t tmc_sg_table_get_data(struct tmc_sg_table *sg_table,
+> +			      u64 offset, size_t len, char **bufpp);
+> +static inline unsigned long
+> +tmc_sg_table_buf_size(struct tmc_sg_table *sg_table)
+> +{
+> +	return sg_table->data_pages.nr_pages << PAGE_SHIFT;
+> +}
+> +
+>  #endif
+> -- 
+> 2.7.4
+> 
