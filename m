@@ -1,121 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935194AbeEWX1B (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 19:27:01 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:48382 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935156AbeEWX0u (ORCPT
+        id S935137AbeEWXfl (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 19:35:41 -0400
+Received: from ipmail06.adl6.internode.on.net ([150.101.137.145]:13132 "EHLO
+        ipmail06.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935022AbeEWXfh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 19:26:50 -0400
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Linux Containers <containers@lists.linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org,
-        Seth Forshee <seth.forshee@canonical.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian@brauner.io>, linux-kernel@vger.kernel.org,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Date: Wed, 23 May 2018 18:25:37 -0500
-Message-Id: <20180523232538.4880-5-ebiederm@xmission.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <87o9h6554f.fsf@xmission.com>
-References: <87o9h6554f.fsf@xmission.com>
-X-XM-SPF: eid=1fLd9c-0004ID-L7;;;mid=<20180523232538.4880-5-ebiederm@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18HpW5BPrTg4duoGHF2g1ZUqILm/2oIX6k=
-X-SA-Exim-Connect-IP: 97.119.174.25
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.7 XMSubLong Long Subject
-        *  1.5 TR_Symld_Words too many words that have symbols inside
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5001]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa01 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_02 5+ unique symbols in subject
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa01 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ***;Linux Containers <containers@lists.linux-foundation.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 600 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 3.0 (0.5%), b_tie_ro: 2.0 (0.3%), parse: 1.25 (0.2%),
-        extract_message_metadata: 31 (5.1%), get_uri_detail_list: 3.3 (0.6%),
-        tests_pri_-1000: 14 (2.3%), tests_pri_-950: 2.1 (0.4%), tests_pri_-900: 1.64
-        (0.3%), tests_pri_-400: 33 (5.6%), check_bayes: 32 (5.3%), b_tokenize: 13
-        (2.2%), b_tok_get_all: 8 (1.3%), b_comp_prob: 4.6 (0.8%), b_tok_touch_all:
-        2.9 (0.5%), b_finish: 0.81 (0.1%), tests_pri_0: 501 (83.6%),
-        check_dkim_signature: 0.87 (0.1%), check_dkim_adsp: 5 (0.9%), tests_pri_500:
-        7 (1.2%), rewrite_mail: 0.00 (0.0%)
-Subject: [REVIEW][PATCH 5/6] capabilities: Allow privileged user in s_user_ns to set security.* xattrs
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+        Wed, 23 May 2018 19:35:37 -0400
+Date: Thu, 24 May 2018 09:35:33 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Eric Biggers <ebiggers3@gmail.com>
+Cc: "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Brian Foster <bfoster@redhat.com>,
+        syzbot <syzbot+568245b88fbaedcb1959@syzkaller.appspotmail.com>,
+        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: INFO: task hung in xlog_grant_head_check
+Message-ID: <20180523233533.GA23861@dastard>
+References: <000000000000457b2d056cbb0044@google.com>
+ <20180522123107.GC3751@bfoster.bfoster>
+ <20180522222620.GW23861@dastard>
+ <20180522225208.GB658@sol.localdomain>
+ <20180523074425.GM14384@magnolia>
+ <20180523162015.GA3684@sol.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180523162015.GA3684@sol.localdomain>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A privileged user in s_user_ns will generally have the ability to
-manipulate the backing store and insert security.* xattrs into
-the filesystem directly. Therefore the kernel must be prepared to
-handle these xattrs from unprivileged mounts, and it makes little
-sense for commoncap to prevent writing these xattrs to the
-filesystem. The capability and LSM code have already been updated
-to appropriately handle xattrs from unprivileged mounts, so it
-is safe to loosen this restriction on setting xattrs.
+On Wed, May 23, 2018 at 09:20:15AM -0700, Eric Biggers wrote:
+> Now, if you *really* don't want syzbot to report XFS bugs as you believe XFS
+> contains known unfixable bugs or for other reasons, you can formally ask Dmitry
+> to remove CONFIG_XFS_FS from the syzbot config.
 
-The exception to this logic is that writing xattrs to a mounted
-filesystem may also cause the LSM inode_post_setxattr or
-inode_setsecurity callbacks to be invoked. SELinux will deny the
-xattr update by virtue of applying mountpoint labeling to
-unprivileged userns mounts, and Smack will deny the writes for
-any user without global CAP_MAC_ADMIN, so loosening the
-capability check in commoncap is safe in this respect as well.
+We haven't said "we don't want syzbot to run on XFS" - we've been
+saying "we want syzbot to run on the new XFS format". i.e. you've
+got completely the wrong end of the stick.
 
-Signed-off-by: Seth Forshee <seth.forshee@canonical.com>
-Acked-by: Serge Hallyn <serge.hallyn@canonical.com>
-Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
----
- security/commoncap.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+> But of course that doesn't make
+> the bugs go away, it just makes the bug reports go away; you'll have to fix them
+> eventually anyway, one way or another.  I do think you're drastically
+> underestimating how useful the syzbot bug reports can be too -- note e.g. that
+> the bug Dave fixed by "fs: don't scan the inode cache before SB_BORN is set"
+> took only 3 days to be reported by syzbot after it gained support for mounting
+> XFS filesystems.  AFAICS that bug was in XFS for 7 years and was causing
+> production systems to mysteriously crash (very rarely), yet it took syzbot only
+> 3 days to send you a C reproducer.
 
-diff --git a/security/commoncap.c b/security/commoncap.c
-index 1ce701fcb3f3..f4c33abd9959 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -919,6 +919,8 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
- int cap_inode_setxattr(struct dentry *dentry, const char *name,
- 		       const void *value, size_t size, int flags)
- {
-+	struct user_namespace *user_ns = dentry->d_sb->s_user_ns;
-+
- 	/* Ignore non-security xattrs */
- 	if (strncmp(name, XATTR_SECURITY_PREFIX,
- 			sizeof(XATTR_SECURITY_PREFIX) - 1) != 0)
-@@ -931,7 +933,7 @@ int cap_inode_setxattr(struct dentry *dentry, const char *name,
- 	if (strcmp(name, XATTR_NAME_CAPS) == 0)
- 		return 0;
- 
--	if (!capable(CAP_SYS_ADMIN))
-+	if (!ns_capable(user_ns, CAP_SYS_ADMIN))
- 		return -EPERM;
- 	return 0;
- }
-@@ -949,6 +951,8 @@ int cap_inode_setxattr(struct dentry *dentry, const char *name,
-  */
- int cap_inode_removexattr(struct dentry *dentry, const char *name)
- {
-+	struct user_namespace *user_ns = dentry->d_sb->s_user_ns;
-+
- 	/* Ignore non-security xattrs */
- 	if (strncmp(name, XATTR_SECURITY_PREFIX,
- 			sizeof(XATTR_SECURITY_PREFIX) - 1) != 0)
-@@ -964,7 +968,7 @@ int cap_inode_removexattr(struct dentry *dentry, const char *name)
- 		return 0;
- 	}
- 
--	if (!capable(CAP_SYS_ADMIN))
-+	if (!ns_capable(user_ns, CAP_SYS_ADMIN))
- 		return -EPERM;
- 	return 0;
- }
+We got the first ever usable user bug report for this in late
+February on a v5 filesystem. Just because a bug has been there for
+a long time, it doesn't mean that users or test programs are
+tripping over it.  e.g.  trinity has been fuzzing filesystems (as
+have many other tools), but they never hit this because of the
+unlikely combination of events needed to trigger the failure.
+
+The first proposed fix was mid-march:
+
+https://www.spinics.net/lists/linux-xfs/msg16601.html
+
+IOWs, trying to associate this bug with the on-disk format issues we
+want fixed, or even attributing the finding and fixing this bug to
+syzbot is stretching the truth somewhat. Yes, syzbot tripped over it
+fairly quickly and that is great, but let's no try to rewrite
+history....
+
+However, I think this silly desire to get everything syzbot reports
+attributed to syzbot regardless of reality has clouded the important
+observation that should have been made here.  Everyone seems to have
+missed the fact that syzbot uncovered a general class of filesystem
+implementation error.  i.e.  Several filesystem implementations have
+failed to handle ->fill_super errors correctly and syzbot tripped
+over many of them - XFS is just one example.
+
+The common mistake being made is failing to clear sb->s_fs_info when
+it was freed on ->fill_super failure, and hence had subsequent
+problems when ->kill_super was called and the code assumed
+->s_fs_info was still valid. There have been other problems due to
+sb->s_fs_info needing to be being assigned before the filesystem is
+fully set up, and some of them were fixed by the SB_BORN change the
+above patch morphed into after initial review.
+
+IOWs, there is a general class of implementation bug here, and maybe
+there's something we can learn from that - is our documentation
+lacking, the API too convoluted, etc? Understanding why this
+happened and making sure we don't do it again is far more important
+than fixing any individual bug. And what other general
+programming/API error patterns has syzbot tripped over that nobody
+has noticed because there's no-one actually paying attention to the
+general scope of bugs that syzbot is discovering?
+
+> This is only at the early stage too --- syzkaller doesn't know how to fuzz the
+> XFS-specific ioctls yet, for example, but it could be taught.  It's already been
+> finding ext4 bugs that allowed anyone with access to an ext4 directory to
+> corrupt the filesystem and crash the kernel.  And note that syzkaller is
+> coverage-guided, using CONFIG_KCOV, so it *will* find bugs that you never
+> thought to test for in manually written (fuzz) tests.  Non-coverage-guided
+> fuzzers are no longer state of the art.  I've been really amazed at the bugs
+> syzkaller been able to find in other kernel subsystems, e.g. obscure races that
+> no one would have ever thought to test for.
+
+OTOH, knowing how many bugs lurk in our code base, I'm still amazed
+that tools like syzbot find so few of them.
+
+Cheers,
+
+Dave.
 -- 
-2.14.1
+Dave Chinner
+david@fromorbit.com
