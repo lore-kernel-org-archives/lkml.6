@@ -1,134 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932502AbeEWKo0 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 06:44:26 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:52924 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932282AbeEWKoW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 06:44:22 -0400
-X-Google-Smtp-Source: AB8JxZoqDnWiStWYSQsj5WQhoZj+PaUxtwAwwukOYzI7An8TwdnBt6A6Ygu/PWwXOLDq5KEGRLrk6Q==
-Subject: Re: [PATCH v1] cpufreq: tegra20: Fix imbalanced clock enable count
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180522211420.2006-1-digetx@gmail.com>
- <20180523055817.subrv6oeckfecpcp@vireshk-i7>
-From: Dmitry Osipenko <digetx@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=digetx@gmail.com; prefer-encrypt=mutual; keydata=
- xsBNBFpX5TwBCADQhg+lBnTunWSPbP5I+rM9q6EKPm5fu2RbqyVAh/W3fRvLyghdb58Yrmjm
- KpDYUhBIZvAQoFLEL1IPAgJBtmPvemO1XUGPxfYNh/3BlcDFBAgERrI3BfA/6pk7SAFn8u84
- p+J1TW4rrPYcusfs44abJrn8CH0GZKt2AZIsGbGQ79O2HHXKHr9V95ZEPWH5AR0UtL6wxg6o
- O56UNG3rIzSL5getRDQW3yCtjcqM44mz6GPhSE2sxNgqureAbnzvr4/93ndOHtQUXPzzTrYB
- z/WqLGhPdx5Ouzn0Q0kSVCQiqeExlcQ7i7aKRRrELz/5/IXbCo2O+53twlX8xOps9iMfABEB
- AAHNIkRtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT7CwJQEEwEIAD4WIQSczHcO
- 3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgIDAQIeAQIX
- gAAKCRDTNNaPsNRzvFjTCACqAh1M9/YPq73/ai5h2ExDquTgJnjegL8KL2yHL3G+XINwzN5E
- nPI7esoYm+zVWDJbv3UuRqylpookLNSRA01yyvkaMcipB/B128UnqmUiGRqezj9QE20yIauo
- uHRuwHPE2q+UkfUhRX9iuOaEyQtZDiCa0myMjmRkJ+Z8ZetclEPG8dYZu47w04phuMlu1QAt
- a0gkZOaMKvXgj21ushALS6nYnvm7HiIPQXfnEXThartatRvFdmbG4PCn0IoICkQBizwJtXrL
- HEjELIFap0M8krVJlUoZTFaZnaZkGpUDWikeFtAuie2KuIxmVBYPM4X7pM3eP3AVvIPGS7EE
- UUFuzsBNBFpX5TwBCADFNDou220thijaLLGaQsebWjzc/gPRxMixIpk856MRyRaQin+IbGD6
- YskMb5ZSD3nS88LIKNfY4MMH0LwfYztI++ICG2vdFLkbBt78E+LqEa+kZ9072l4W5KO3mWQo
- +jMfxXbpgGlc7iuEReDgl8iyZ27r51kSW665CYvvu2YJhLqgdj6QM1lN2D1UnhEhkkU+pRAj
- 1rJVOxdfJaQNQS4+204p3TrURovzNGkN/brqakpNIcqGOAGQqb8F0tuwwuP7ERq/BzDNkbdr
- qJOrVC/wkHRq1jfabQczWKf8MwYOvivR3HY8d3CpSQxmUXDtdOWfg0XGm1dxYnVfqPjuJaZt
- ABEBAAHCwHwEGAEIACYWIQSczHcO3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbDAUJA8JnAAAK
- CRDTNNaPsNRzvJzuB/9d+sxcwHbO8ZDcgaLX9N+bXFqN9fIRVmBUyWa+qqTSREA4uVAtYcRT
- lfPE2OQ7aMFxaYPwo+/z5SLpu8HcEhN/FG9uIkfYwK0mdCO0vgvlfvBJm4VHe7C6vyAeEPJQ
- DKbBvdgeqFqO+PsLkk2sawF/9sontMJ5iFfjNDj4UeAo4VsdlduTBZv5hHFvIbv/p7jKH6OT
- 90FsgUSVbShh7SH5OzAcgqSy4kxuS1AHizWo6P3f9vei987LZWTyhuEuhJsOfivDsjKIq7qQ
- c5eR+JJtyLEA0Jt4cQGhpzHtWB0yB3XxXzHVa4QUp00BNVWyiJ/t9JHT4S5mdyLfcKm7ddc9
-Message-ID: <68f62691-9108-9bee-a24d-5c978af8a5ab@gmail.com>
-Date: Wed, 23 May 2018 13:44:18 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S932507AbeEWKqK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 06:46:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45058 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932311AbeEWKqI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 06:46:08 -0400
+Date: Wed, 23 May 2018 16:16:04 +0530
+From: Vinod <vkoul@kernel.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH] PCI: qcom: add runtime pm support to pcie_port
+Message-ID: <20180523104604.GH20991@vkoul-mobl>
+References: <20180518070736.3003-1-bjorn.andersson@linaro.org>
+ <20180523061536.GE20991@vkoul-mobl>
+ <89bc5fc1-d4a3-4121-208c-546c62138699@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20180523055817.subrv6oeckfecpcp@vireshk-i7>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <89bc5fc1-d4a3-4121-208c-546c62138699@linaro.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23.05.2018 08:58, Viresh Kumar wrote:
-> On 23-05-18, 00:14, Dmitry Osipenko wrote:
->> Tegra20-cpufreq driver missed enabling the CPU clocks. This results in a
->> clock-enable refcount disbalance on PLL_P <-> PLL_X reparent, causing
->> PLL_X to get disabled while it shouldn't. Fix this by enabling the clocks
->> on the driver probe.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>
->> CPUFreq maintainers,
->>
->> Please take into account that this patch is made on top of my recent
->> series of patches [0] "Clean up Tegra20 cpufreq driver" that was fully
->> reviewed, but seems not applied yet. Let me know if you prefer to re-spin
->> the [0], including this patch into the series.
->>
->> [0] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=45321
+On 23-05-18, 11:10, Srinivas Kandagatla wrote:
 > 
-> This is already picked by Rafael and is sitting in pm/bleeding-edge
-> branch. Should get merged into linux-next in a day or two.
 > 
->>  drivers/cpufreq/tegra20-cpufreq.c | 16 +++++++++++++++-
->>  1 file changed, 15 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
->> index 05f57dcd5215..ca5229265b60 100644
->> --- a/drivers/cpufreq/tegra20-cpufreq.c
->> +++ b/drivers/cpufreq/tegra20-cpufreq.c
->> @@ -176,6 +176,14 @@ static int tegra20_cpufreq_probe(struct platform_device *pdev)
->>  		goto put_pll_x;
->>  	}
->>  
->> +	err = clk_prepare_enable(cpufreq->pll_x_clk);
->> +	if (err)
->> +		goto put_pll_p;
->> +
->> +	err = clk_prepare_enable(cpufreq->pll_p_clk);
->> +	if (err)
->> +		goto disable_pll_x;
->> +
->>  	cpufreq->dev = &pdev->dev;
->>  	cpufreq->driver.get = cpufreq_generic_get;
->>  	cpufreq->driver.attr = cpufreq_generic_attr;
->> @@ -192,12 +200,16 @@ static int tegra20_cpufreq_probe(struct platform_device *pdev)
->>  
->>  	err = cpufreq_register_driver(&cpufreq->driver);
->>  	if (err)
->> -		goto put_pll_p;
->> +		goto disable_pll_p;
->>  
->>  	platform_set_drvdata(pdev, cpufreq);
->>  
->>  	return 0;
->>  
->> +disable_pll_p:
->> +	clk_disable_unprepare(cpufreq->pll_p_clk);
->> +disable_pll_x:
->> +	clk_disable_unprepare(cpufreq->pll_x_clk);
->>  put_pll_p:
->>  	clk_put(cpufreq->pll_p_clk);
->>  put_pll_x:
->> @@ -214,6 +226,8 @@ static int tegra20_cpufreq_remove(struct platform_device *pdev)
->>  
->>  	cpufreq_unregister_driver(&cpufreq->driver);
->>  
->> +	clk_disable_unprepare(cpufreq->pll_p_clk);
->> +	clk_disable_unprepare(cpufreq->pll_x_clk);
->>  	clk_put(cpufreq->pll_p_clk);
->>  	clk_put(cpufreq->pll_x_clk);
->>  	clk_put(cpufreq->cpu_clk);
-> 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> 
+> On 23/05/18 07:15, Vinod wrote:
+> > On 18-05-18, 00:07, Bjorn Andersson wrote:
+> > 
+> > > diff --git a/drivers/pci/dwc/pcie-qcom.c b/drivers/pci/dwc/pcie-qcom.c
+> > > index 5897af7d3355..3f35098b71b1 100644
+> > > --- a/drivers/pci/dwc/pcie-qcom.c
+> > > +++ b/drivers/pci/dwc/pcie-qcom.c
+> > > @@ -1088,6 +1088,8 @@ static int qcom_pcie_host_init(struct pcie_port *pp)
+> > >   	struct qcom_pcie *pcie = to_qcom_pcie(pci);
+> > >   	int ret;
+> > > +	pm_runtime_get_sync(pci->dev);
+> > > +
+> > >   	qcom_ep_reset_assert(pcie);
+> > >   	ret = pcie->ops->init(pcie);
+> > > @@ -1124,6 +1126,7 @@ static int qcom_pcie_host_init(struct pcie_port *pp)
+> > >   	phy_power_off(pcie->phy);
+> > >   err_deinit:
+> > >   	pcie->ops->deinit(pcie);
+> > > +	pm_runtime_put_sync(pci->dev);
+> > 
+> > Wondering if there is a reason for sync put here?
+> pm_runtime_get_sync() call paired with a pm_runtime_put() call will be
+> appropriate here I guess as per
+> https://www.kernel.org/doc/Documentation/power/runtime_pm.txt
 
-Please hold on this patch, seems I interpreted the cpufreq driver logic
-incorrectly and it is probably fine as it is. I'll re-check later today.
+Yeah for the get call sync() is mostly appropriate as you would want hardware to
+be up after this. For put most of cases people don't need it to be bought down
+synchronously unless you have something specific required which was my question
+here. Looks like that is not the case :)
+
+> I will respin this patch.
+
+Sure..
+
+-- 
+~Vinod
