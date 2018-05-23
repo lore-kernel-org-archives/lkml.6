@@ -1,70 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935128AbeEWXvT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 19:51:19 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:32890 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934981AbeEWXvR (ORCPT
+        id S935208AbeEWX4G (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 19:56:06 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:51788 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934770AbeEWX4D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 19:51:17 -0400
-X-Google-Smtp-Source: AB8JxZqTkd6LXPwWJnu0DALP226/KM/FcNFkGO1FT7hxjD4H0HFfywxVEwTwjmzJJjm5wS/cGDWnxg==
-Subject: Re: [PATCH v2 2/6] Documentation: DT: Add optional 'timeout-sec'
- property for sp805
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>,
-        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com
-References: <1527107527-8093-1-git-send-email-ray.jui@broadcom.com>
- <1527107527-8093-3-git-send-email-ray.jui@broadcom.com>
- <20180523222915.GA16779@roeck-us.net>
-From: Ray Jui <ray.jui@broadcom.com>
-Message-ID: <48dfe138-7bf5-3f91-0108-5b0ce3811ab7@broadcom.com>
-Date: Wed, 23 May 2018 16:51:12 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 23 May 2018 19:56:03 -0400
+X-Google-Smtp-Source: AB8JxZos31h/YRQWbhuXa/GxPrimhd46ZxNkd6dGEaFClP/OAzNpPeom4X7gfp3idwrRwEMYexyrbNqjUArspSVVdrs=
 MIME-Version: 1.0
-In-Reply-To: <20180523222915.GA16779@roeck-us.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180523001939.9431-1-labbott@redhat.com> <20180523001939.9431-3-labbott@redhat.com>
+ <CALCETrX9P2Lwrx7wGc22poVWX2AHAqXbUdhcijyoJ3tGhaxijg@mail.gmail.com> <15dcff14-ea1b-18c8-4cd1-06586cf6f05b@redhat.com>
+In-Reply-To: <15dcff14-ea1b-18c8-4cd1-06586cf6f05b@redhat.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 23 May 2018 16:55:52 -0700
+Message-ID: <CA+55aFxxUadENxUWU8jZqLnG=hvNA-fKCPQUMCKs2r0yWHc=rA@mail.gmail.com>
+Subject: Re: [PATCHv3 2/2] x86/vdso: Add build salt to the vDSO
+To: Laura Abbott <labbott@redhat.com>
+Cc: Andrew Lutomirski <luto@kernel.org>, mjw@fedoraproject.org,
+        "H.J. Lu" <hjl.tools@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        nickc@redhat.com, ccoutant@gmail.com,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, May 23, 2018 at 3:53 PM Laura Abbott <labbott@redhat.com> wrote:
 
+> Actually I remember now why this is necessary: there is not a simple way
+> to encode a string into a linker file as it has to be spit out byte
+> by byte.
 
-On 5/23/2018 3:29 PM, Guenter Roeck wrote:
-> On Wed, May 23, 2018 at 01:32:03PM -0700, Ray Jui wrote:
->> Update the SP805 binding document to add optional 'timeout-sec'
->> devicetree property
->>
->> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
->> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
->> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
->> ---
->>   Documentation/devicetree/bindings/watchdog/arm,sp805.txt | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/watchdog/arm,sp805.txt b/Documentation/devicetree/bindings/watchdog/arm,sp805.txt
->> index de93a4d..9cd7470 100644
->> --- a/Documentation/devicetree/bindings/watchdog/arm,sp805.txt
->> +++ b/Documentation/devicetree/bindings/watchdog/arm,sp805.txt
->> @@ -18,6 +18,8 @@ Required properties:
->>   
->>   Optional properties:
->>   - interrupts : Should specify WDT interrupt number.
->> +timeout-sec : Should specify default WDT timeout in seconds. If unset, the
->> +              default timeout in the driver is 30 seconds
-> 
-> That looks odd, with the changed indentation and the missing '-'
-> in front of 'timeout-sec' >
+I think you can use the "fill" thing to basically add any random data to a
+section.
 
-My bad. Will fix this in v3. Thanks.
+So you can do something like
 
-> Guenter
-> 
+        . = ALIGN(16);
+        .salt : AT(ADDR(.salt) - LOAD_OFFSET) {
+                LONG(0xffaa5500);
+                . = ALIGN(16);
+        } =0x01234567890abcdef
+
+in the lds file, and you'll get a section that looks like this:
+
+   [torvalds@i7 linux]$ objdump -h vmlinux -j .salt -s
+
+   vmlinux:     file format elf64-x86-64
+
+   Sections:
+    Idx Name          Size      VMA               LMA               File off
+  Algn
+     15 .salt         00000010  ffffffff8432b000  000000000432b000  0352b000
+  2**0
+                      CONTENTS, ALLOC, LOAD, DATA
+    Contents of section .salt:
+     ffffffff8432b000 0055aaff 00123456 7890abcd ef001234  .U....4Vx......4
+
+Now whether that is sufficient for your needs, I dunno.
+
+               Linus
