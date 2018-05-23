@@ -1,60 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754755AbeEWQaA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 12:30:00 -0400
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:43711 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754661AbeEWQ37 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 12:29:59 -0400
-X-Google-Smtp-Source: AB8JxZpywGTjgljGkw/5Zp9mdmbs/PkRdgZwx+2DORzTwhMciEgGmtAWnek8MvZ/VpDHunY1sefY5M/wtk4NMLHFFw8=
+        id S1754791AbeEWQaI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 12:30:08 -0400
+Received: from foss.arm.com ([217.140.101.70]:58116 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754771AbeEWQaB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 12:30:01 -0400
+Subject: Re: [PATCH 0/3] irqchip: meson-gpio: add support for Meson-AXG SoCs
+To: Yixun Lan <yixun.lan@amlogic.com>, Jason Cooper <jason@lakedaemon.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kevin Hilman <khilman@baylibre.com>
+Cc: Carlo Caione <carlo@caione.org>, Jerome Brunet <jbrunet@baylibre.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>, Rob Herring <robh@kernel.org>,
+        Xingyu Chen <xingyu.chen@amlogic.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20180408145700.23520-1-yixun.lan@amlogic.com>
+ <0c97c61b-c05b-21cf-c880-80cff04ed6f2@amlogic.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <09d70e1f-abba-79d0-4dc3-7130fd0d07a8@arm.com>
+Date: Wed, 23 May 2018 17:29:56 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-References: <20180522165842.233949-1-groeck@google.com> <s5hmuwqpjdd.wl-tiwai@suse.de>
-In-Reply-To: <s5hmuwqpjdd.wl-tiwai@suse.de>
-From: Guenter Roeck <groeck@google.com>
-Date: Wed, 23 May 2018 09:29:46 -0700
-Message-ID: <CABXOdTf4GhycxC6TNyigS6YyiLXbZK=DHpP2Wzhw7405xVB3BA@mail.gmail.com>
-Subject: Re: [RFC/RFT PATCH] ASoC: topology: Improve backwards compatibility
- with v4 topology files
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org,
-        Guenter Roeck <groeck@chromium.org>,
-        "Patel, Chintan M" <chintan.m.patel@intel.com>,
-        Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <0c97c61b-c05b-21cf-c880-80cff04ed6f2@amlogic.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 6:54 AM Takashi Iwai <tiwai@suse.de> wrote:
+On 16/05/18 03:50, Yixun Lan wrote:
+> Hi Marc (or anyone else)
+> 
+> On 04/08/18 22:56, Yixun Lan wrote:
+>>   This series try to add GPIO interrupt controller support for Meson-AXG SoCs.
+>>   The first patch is a trivial typo fix, I can fold the first two patches
+>> together if necessary.
+>>
+>> Yixun Lan (3):
+>>   dt-bindings: interrupt-controller: fix the double quotes
+>>   dt-bindings: interrupt-controller: New binding for Meson-AXG SoC
+>>   irqchip/meson-gpio: add support for Meson-AXG SoCs
+>>
+>>  .../bindings/interrupt-controller/amlogic,meson-gpio-intc.txt | 11 ++++++-----
+>>  drivers/irqchip/irq-meson-gpio.c                              |  5 +++++
+>>  2 files changed, 11 insertions(+), 5 deletions(-)
+>>
+> 
+> please consider this merely a ping..
+> will you take this series, or is there anything holding this?
 
-> On Tue, 22 May 2018 18:58:42 +0200,
-> Guenter Roeck wrote:
-> >
-> > +struct skl_dfw_v4_module_caps {
-> > +     u32 set_params:2;
-> > +     u32 rsvd:30;
-> > +     u32 param_id;
-> > +     u32 caps_size;
-> > +     u32 caps[HDA_SST_CFG_MAX];
-> > +};
+Sure, I'll queue that for 4.18.
 
-> Missing __packed attribute?
+Thanks,
 
-
-Yes and no. The original structure (see
-sound/soc/intel/skylake/skl-tplg-interface.h
-in v4.5.y and earlier) doesn't have the __packed attribute either. I guess
-it doesn't hurt,
-since it is all u32, so I'll add it in.
-
-Guenter
-
-> And I'm wondering whether we should move these definitions to uapi
-> headers.
-
-
-> thanks,
-
-> Takashi
+	M.
+-- 
+Jazz is not dead. It just smells funny...
