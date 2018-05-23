@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934251AbeEWTSD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 15:18:03 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:33938 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934218AbeEWTRz (ORCPT
+        id S934266AbeEWTSH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 15:18:07 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:46702 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934105AbeEWTRv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 15:17:55 -0400
-X-Google-Smtp-Source: ADUXVKJQN3D9fGX4CM4pki61JCfwIghArGWWlyuHzn+YvnkzJEgzkDBdChlwGxwKTF+INy4INsSqJg==
+        Wed, 23 May 2018 15:17:51 -0400
+X-Google-Smtp-Source: AB8JxZq5RIw4fh2Likw+GinJwE8dzo4xG0MTKFOBk8rpTZ5zxyFBTTzHSnNiXTNLk7a7JOaM7YZq6A==
 From: Fabio Estevam <festevam@gmail.com>
 To: broonie@kernel.org
 Cc: linux-kernel@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>
-Subject: [PATCH 4/5] regulator: mc13892: Switch to SPDX identifier
-Date: Wed, 23 May 2018 16:17:37 -0300
-Message-Id: <1527103058-8422-4-git-send-email-festevam@gmail.com>
+Subject: [PATCH 2/5] regulator: anatop: Switch to SPDX identifier
+Date: Wed, 23 May 2018 16:17:35 -0300
+Message-Id: <1527103058-8422-2-git-send-email-festevam@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1527103058-8422-1-git-send-email-festevam@gmail.com>
 References: <1527103058-8422-1-git-send-email-festevam@gmail.com>
@@ -28,34 +28,38 @@ management.
 
 Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
 ---
- drivers/regulator/mc13892-regulator.c | 18 +++++++-----------
- 1 file changed, 7 insertions(+), 11 deletions(-)
+ drivers/regulator/anatop-regulator.c | 22 +++-------------------
+ 1 file changed, 3 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/regulator/mc13892-regulator.c b/drivers/regulator/mc13892-regulator.c
-index 0d17c92..ab309ab 100644
---- a/drivers/regulator/mc13892-regulator.c
-+++ b/drivers/regulator/mc13892-regulator.c
-@@ -1,14 +1,10 @@
+diff --git a/drivers/regulator/anatop-regulator.c b/drivers/regulator/anatop-regulator.c
+index 7d6478e..d9d8155 100644
+--- a/drivers/regulator/anatop-regulator.c
++++ b/drivers/regulator/anatop-regulator.c
+@@ -1,22 +1,6 @@
 -/*
-- * Regulator Driver for Freescale MC13892 PMIC
-- *
-- * Copyright 2010 Yong Shen <yong.shen@linaro.org>
-- *
-- * Based on draft driver from Arnaud Patard <arnaud.patard@rtp-net.org>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
+- * Copyright (C) 2011 Freescale Semiconductor, Inc. All Rights Reserved.
 - */
-+// SPDX-License-Identifier: GPL-2.0
+-
+-/*
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+-
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+-
+- * You should have received a copy of the GNU General Public License along
+- * with this program; if not, write to the Free Software Foundation, Inc.,
+- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+- */
++// SPDX-License-Identifier: GPL-2.0+
 +//
-+// Regulator Driver for Freescale MC13892 PMIC
-+//
-+// Copyright 2010 Yong Shen <yong.shen@linaro.org>
-+//
-+// Based on draft driver from Arnaud Patard <arnaud.patard@rtp-net.org>
++// Copyright (C) 2011 Freescale Semiconductor, Inc. All Rights Reserved.
  
- #include <linux/mfd/mc13892.h>
- #include <linux/regulator/machine.h>
+ #include <linux/slab.h>
+ #include <linux/device.h>
 -- 
 2.7.4
