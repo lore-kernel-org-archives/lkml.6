@@ -1,95 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753853AbeEWDaD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 23:30:03 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:40813 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753520AbeEWDaB (ORCPT
+        id S1753909AbeEWDbK (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 23:31:10 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:34059 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753684AbeEWDbI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 23:30:01 -0400
-X-Google-Smtp-Source: AB8JxZrTHvuXKbJENmAYejSE0FgrEegO3wS5UjUizM8itjULsgEfWna8Jlu1FMuKqvg4GVSvchuY3w==
-Date: Tue, 22 May 2018 20:29:58 -0700
-From: Eric Biggers <ebiggers3@gmail.com>
-To: Guillaume Nault <g.nault@alphalink.fr>
-Cc: linux-ppp@vger.kernel.org, Paul Mackerras <paulus@samba.org>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com,
-        syzbot <syzbot+16363c99d4134717c05b@syzkaller.appspotmail.com>,
-        viro@zeniv.linux.org.uk
-Subject: Re: KASAN: use-after-free Read in remove_wait_queue (2)
-Message-ID: <20180523032958.GE658@sol.localdomain>
-References: <f403043d0f18f879cc056648a875@google.com>
- <20180514061155.GL677@sol.localdomain>
- <20180518160223.GF1534@alphalink.fr>
+        Tue, 22 May 2018 23:31:08 -0400
+X-UUID: c468b01ecfa44d63aa9a1d21f24bd81e-20180523
+Message-ID: <1527046258.2655.1.camel@mtksdaap41>
+Subject: Re: [PATCH v2 1/4] drm/mediatek: update dt-bindings for mt2712
+From: CK Hu <ck.hu@mediatek.com>
+To: Stu Hsieh <stu.hsieh@mediatek.com>
+CC: Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>
+Date: Wed, 23 May 2018 11:30:58 +0800
+In-Reply-To: <20180523022517.12103-2-stu.hsieh@mediatek.com>
+References: <20180523022517.12103-1-stu.hsieh@mediatek.com>
+         <20180523022517.12103-2-stu.hsieh@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180518160223.GF1534@alphalink.fr>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Transfer-Encoding: 7bit
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 18, 2018 at 06:02:23PM +0200, Guillaume Nault wrote:
-> On Sun, May 13, 2018 at 11:11:55PM -0700, Eric Biggers wrote:
-> > [+ppp list and maintainer]
-> > 
-> > This is a bug in ppp_generic.c; it still happens on Linus' tree and it's easily
-> > reproducible, see program below.  The bug is that the PPPIOCDETACH ioctl doesn't
-> > consider that the file can still be attached to epoll instances even when
-> > ->f_count == 1.
-> 
-> Right. What would it take to remove the file for the epoll instances?
-> Sorry for the naive question, but I'm not familiar with VFS and didn't
-> find a helper function we could call.
+Hi, Stu:
+
+On Wed, 2018-05-23 at 10:25 +0800, Stu Hsieh wrote:
+> Update device tree binding documentation for the display subsystem for
+> Mediatek MT2712 SoCs.
 > 
 
-There is eventpoll_release_file(), but it's not exported to modules.  It might
-work to call it, but it seems like a hack.
+Acked-by: CK Hu <ck.hu@mediatek.com>
 
-> > Also, the reproducer doesn't test this but I think ppp_poll(),
-> > ppp_read(), and ppp_write() can all race with PPPIOCDETACH, causing
-> > use-after-frees as well.
+> Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
+> ---
+>  Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> I also believe so. ppp_release() resets ->private_data, and even though
-> functions like ppp_read() test ->private_data before executing, there's
-> no synchronisation mechanism to ensure that the update is visible
-> before the unit or channel is destroyed. Is that the kind of race you
-> had in mind?
-
-Yes, though after looking into it more I *think* these additional races aren't
-actually possible, due to the 'f_count < 2' check.  These races could only
-happen with a shared fd table, but in that case fdget() would increment f_count
-for the duration of each operation, resulting in 'f_count >= 2' if both ioctl()
-and something else is running on the same file concurrently.
-
-Note that this also means PPPIOCDETACH doesn't work at all if called from a
-multithreaded application...
-
-> 
-> > Any chance that PPPIOCDETACH can simply be removed,
-> > given that it's apparently been "deprecated" for 16 years?
-> > Does anyone use it?
-> 
-> The only users I'm aware of are pppd versions older than ppp-2.4.2
-> (released in November 2003). But even at that time, there were issues
-> with PPPIOCDETACH as pppd didn't seem to react properly when this call
-> failed. An Internet search on the "PPPIOCDETACH file->f_count=" kernel
-> log string, or on the "Couldn't release PPP unit: Invalid argument"
-> error message of pppd, returns several related bug reports.
-> 
-> Originally, PPPIOCDETACH never failed, but testing ->f_count was
-> later introduced to fix crashes when the file descriptor had been
-> duplicated. It seems that this was motivated by polling issues too.
-> 
-> Long story short, it looks like PPPIOCDETACH never has worked well
-> and we have at least two more bugs to fix. Given how it has proven
-> fragile, I wouldn't be surprised if there were even more lurking
-> around. I'd say that it's probably safer to drop it than to add more
-> workarounds and playing wack-a-mole with those bugs.
-
-IMO, if we can get away with removing it without any users noticing, that would
-be much better than trying to fix it with a VFS-level hack, and probably missing
-some cases.  I'll send a patch to get things started...
-
-- Eric
+> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt b/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
+> index 383183a89164..8469de510001 100644
+> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
+> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
+> @@ -40,7 +40,7 @@ Required properties (all function blocks):
+>  	"mediatek,<chip>-dpi"        - DPI controller, see mediatek,dpi.txt
+>  	"mediatek,<chip>-disp-mutex" - display mutex
+>  	"mediatek,<chip>-disp-od"    - overdrive
+> -  the supported chips are mt2701 and mt8173.
+> +  the supported chips are mt2701, mt2712 and mt8173.
+>  - reg: Physical base address and length of the function block register space
+>  - interrupts: The interrupt signal from the function block (required, except for
+>    merge and split function blocks).
