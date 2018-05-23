@@ -1,150 +1,185 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933422AbeEWPMH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 11:12:07 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46440 "EHLO mx1.redhat.com"
+        id S933515AbeEWPMV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 11:12:21 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45280 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933151AbeEWPMG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 11:12:06 -0400
+        id S933475AbeEWPMP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 11:12:15 -0400
 From: David Hildenbrand <david@redhat.com>
 To: linux-mm@kvack.org
 Cc: linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>,
-        Alexander Potapenko <glider@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
         Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Balbir Singh <bsingharora@gmail.com>, Baoquan He <bhe@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Young <dyoung@redhat.com>, Dmitry Vyukov <dvyukov@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hari Bathini <hbathini@linux.vnet.ibm.com>,
-        Huang Ying <ying.huang@intel.com>, Hugh Dickins <hughd@google.com>,
-        Ingo Molnar <mingo@kernel.org>, Jaewon Kim <jaewon31.kim@samsung.com>,
-        Jan Kara <jack@suse.cz>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>, Juergen Gross <jgross@suse.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>, Mel Gorman <mgorman@suse.de>,
-        Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Oscar Salvador <osalvador@techadventures.net>,
-        Paul Mackerras <paulus@samba.org>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Rashmica Gupta <rashmica.g@gmail.com>,
-        Reza Arbab <arbab@linux.vnet.ibm.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>
-Subject: [PATCH v1 00/10] mm: online/offline 4MB chunks controlled by device driver
-Date: Wed, 23 May 2018 17:11:41 +0200
-Message-Id: <20180523151151.6730-1-david@redhat.com>
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com
+Subject: [PATCH v1 03/10] kasan: prepare for online/offline of different start/size
+Date: Wed, 23 May 2018 17:11:44 +0200
+Message-Id: <20180523151151.6730-4-david@redhat.com>
+In-Reply-To: <20180523151151.6730-1-david@redhat.com>
+References: <20180523151151.6730-1-david@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is now the !RFC version. I did some additional tests and inspected
-all memory notifiers. At least page_ext and kasan need fixes.
+The memory notifier has an important restriction right now: it only
+works if offline_pages() is called with the same parameters as
+online_pages().
 
-==========
+To overcome this restriction, let's handle it per section. We could do
+it in smaller granularity, but then we get more vm_area overhead and
+cannot check that cleanly for actual online parts.
 
-I am right now working on a paravirtualized memory device ("virtio-mem").
-These devices control a memory region and the amount of memory available
-via it. Memory will not be indicated/added/onlined via ACPI and friends,
-the device driver is responsible for it.
+A section is marked online as soon as at least one page is online.
+Similarly, a section is marked offline as soon as all pages are offline.
 
-When the device driver starts up, it will add and online the requested
-amount of memory from its assigned physical memory region. On request, it
-can add (online) either more memory or try to remove (offline) memory. As
-it will be a virtio module, we also want to be able to have it as a loadable
-kernel module.
+So handling it on a per-section basis allows us to be more flexible. We
+asssume here, that a section is not split between boot and hotplug
+memory.
 
-Such a device can be thought of like a "resizable DIMM" or a "huge
-number of 4MB DIMMS" that can be automatically managed.
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Alexander Potapenko <glider@google.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: kasan-dev@googlegroups.com
+Signed-off-by: David Hildenbrand <david@redhat.com>
+---
+ mm/kasan/kasan.c | 107 ++++++++++++++++++++++++++++++-----------------
+ 1 file changed, 69 insertions(+), 38 deletions(-)
 
-As we want to be able to add/remove small chunks of memory to a VM without
-fragmenting guest memory ("it's not what the guest pays for" and "what if
-the hypervisor wants to use huge pages"), it looks like we can do that
-under Linux in a 4MB granularity by using online_pages()/offline_pages()
-
-We add a segment and online only 4MB blocks of it on demand. So the other
-memory might not be accessible. For kdump and onlining/offlining code, we
-have to mark pages as offline before a new segment is visible to the system
-(e.g. as these pages might not be backed by real memory in the hypervisor).
-
-This is not a balloon driver. Main differences:
-- We can add more memory to a VM without having to use mixture of
-  technologies - e.g. ACPI for plugging, balloon for unplugging (in contrast
-  to virtio-balloon).
-- The device is responsible for its own memory only - will not inflate on
-  any system memory. (in contrast to all balloons)
-- Works on a coarser granularity (e.g. 4MB because that's what we can
-  online/offline in Linux). We are not using the buddy allocator when
-  unplugging but really search for chunks of memory we can offline. We
-  actually can support arbitrary block sizes. (in contrast to all balloons)
-- That's why we don't fragment guest memory.
-- A device can belong to exactly one NUMA node. This way we can online/
-  offline memory in a fine granularity NUMA aware. Even if the guest does
-  not even know how to spell NUMA. (in contrast to all balloons)
-- Architectures that don't have proper memory hotplug interfaces (e.g. s390x)
-  get memory hotplug support. I have a prototype for s390x.
-- Once all 4MB chunks of a memory block are offline, we can remove the
-  memory block and therefore the struct pages. (in contrast to all balloons)
-
-This essentially allows us to add/remove 4MB chunks to/from a VM. Especially
-without caring about the future when adding memory ("If I add a 128GB DIMM
-I can only unplug 128GB again") or running into limits ("If I want my VM to
-grow to 4TB, I have to plug at least 16GB per DIMM").
-
-Future work:
- - Performance improvements
- - Be smarter about which blocks to offline first (e.g. free ones)
- - Automatically manage assignemnt to NORMAL/MOVABLE zone to make
-   unplug more likely to succeed.
-
-I will post the next prototype of virtio-mem shortly. This time for real :)
-
-==========
-
-RFCv2 -> v1:
-- "mm: introduce and use PageOffline()"
--- fix set_page_address() handling for WANT_PAGE_VIRTUAL
-- Include "mm/page_ext.c: support online/offline of memory < section size"
-- Include "kasan: prepare for online/offline of different start/size"
-- Include "mm/memory_hotplug: onlining pages can only fail due to notifiers"
-
-
-David Hildenbrand (10):
-  mm: introduce and use PageOffline()
-  mm/page_ext.c: support online/offline of memory < section size
-  kasan: prepare for online/offline of different start/size
-  kdump: include PAGE_OFFLINE_MAPCOUNT_VALUE in VMCOREINFO
-  mm/memory_hotplug: limit offline_pages() to sizes we can actually
-    handle
-  mm/memory_hotplug: onlining pages can only fail due to notifiers
-  mm/memory_hotplug: print only with DEBUG_VM in online/offline_pages()
-  mm/memory_hotplug: allow to control onlining/offlining of memory by a
-    driver
-  mm/memory_hotplug: teach offline_pages() to not try forever
-  mm/memory_hotplug: allow online/offline memory by a kernel module
-
- arch/powerpc/platforms/powernv/memtrace.c |   2 +-
- drivers/base/memory.c                     |  25 +--
- drivers/base/node.c                       |   1 -
- drivers/xen/balloon.c                     |   2 +-
- include/linux/memory.h                    |   2 +-
- include/linux/memory_hotplug.h            |  20 ++-
- include/linux/mm.h                        |  10 ++
- include/linux/page-flags.h                |   9 ++
- kernel/crash_core.c                       |   1 +
- mm/kasan/kasan.c                          | 107 ++++++++-----
- mm/memory_hotplug.c                       | 180 +++++++++++++++++-----
- mm/page_alloc.c                           |  32 ++--
- mm/page_ext.c                             |   9 +-
- mm/sparse.c                               |  25 ++-
- 14 files changed, 315 insertions(+), 110 deletions(-)
-
+diff --git a/mm/kasan/kasan.c b/mm/kasan/kasan.c
+index a8b85706e2d6..901601a562a9 100644
+--- a/mm/kasan/kasan.c
++++ b/mm/kasan/kasan.c
+@@ -827,62 +827,93 @@ static bool shadow_mapped(unsigned long addr)
+ 	return !pte_none(*pte);
+ }
+ 
+-static int __meminit kasan_mem_notifier(struct notifier_block *nb,
+-			unsigned long action, void *data)
++static void kasan_offline_pages(unsigned long start_pfn, unsigned long nr_pages)
+ {
+-	struct memory_notify *mem_data = data;
+-	unsigned long nr_shadow_pages, start_kaddr, shadow_start;
+-	unsigned long shadow_end, shadow_size;
++	unsigned long start = SECTION_ALIGN_DOWN(start_pfn);
++	unsigned long end = SECTION_ALIGN_UP(start_pfn + nr_pages);
++	unsigned long pfn;
+ 
+-	nr_shadow_pages = mem_data->nr_pages >> KASAN_SHADOW_SCALE_SHIFT;
+-	start_kaddr = (unsigned long)pfn_to_kaddr(mem_data->start_pfn);
+-	shadow_start = (unsigned long)kasan_mem_to_shadow((void *)start_kaddr);
+-	shadow_size = nr_shadow_pages << PAGE_SHIFT;
+-	shadow_end = shadow_start + shadow_size;
++	for (pfn = start; pfn < end; pfn += PAGES_PER_SECTION) {
++		void *addr, *shadow_start;
++		struct vm_struct *vm;
+ 
+-	if (WARN_ON(mem_data->nr_pages % KASAN_SHADOW_SCALE_SIZE) ||
+-		WARN_ON(start_kaddr % (KASAN_SHADOW_SCALE_SIZE << PAGE_SHIFT)))
+-		return NOTIFY_BAD;
++		/* still online? nothing to do then */
++		if (online_section_nr(pfn_to_section_nr(pfn)))
++			continue;
+ 
+-	switch (action) {
+-	case MEM_GOING_ONLINE: {
+-		void *ret;
++		addr = pfn_to_kaddr(pfn);
++		shadow_start = kasan_mem_to_shadow(addr);
++
++		/*
++		 * Only hot-added memory has a vm_area. Freeing shadow mapped
++		 * during boot would be tricky, so we'll just have to keep it.
++		 */
++		vm = find_vm_area(shadow_start);
++		if (vm)
++			vfree(shadow_start);
++	}
++}
++
++static int kasan_online_pages(unsigned long start_pfn, unsigned long nr_pages)
++{
++	unsigned long start = SECTION_ALIGN_DOWN(start_pfn);
++	unsigned long end = SECTION_ALIGN_UP(start_pfn + nr_pages);
++	unsigned long pfn;
++
++	for (pfn = start; pfn < end; pfn += PAGES_PER_SECTION) {
++		unsigned long shadow_start, shadow_size;
++		void *addr, *ret;
++
++		/* already online? nothing to do then */
++		if (online_section_nr(pfn_to_section_nr(pfn)))
++			continue;
++
++		addr = pfn_to_kaddr(pfn);
++		shadow_size = (PAGES_PER_SECTION << PAGE_SHIFT) >>
++			      KASAN_SHADOW_SCALE_SHIFT;
++		shadow_start = (unsigned long)kasan_mem_to_shadow(addr);
+ 
+ 		/*
+ 		 * If shadow is mapped already than it must have been mapped
+-		 * during the boot. This could happen if we onlining previously
++		 * during boot. This could happen if we're onlining previously
+ 		 * offlined memory.
+ 		 */
+ 		if (shadow_mapped(shadow_start))
+-			return NOTIFY_OK;
++			continue;
+ 
+ 		ret = __vmalloc_node_range(shadow_size, PAGE_SIZE, shadow_start,
+-					shadow_end, GFP_KERNEL,
+-					PAGE_KERNEL, VM_NO_GUARD,
+-					pfn_to_nid(mem_data->start_pfn),
+-					__builtin_return_address(0));
++					   shadow_start + shadow_size,
++					   GFP_KERNEL, PAGE_KERNEL, VM_NO_GUARD,
++					   pfn_to_nid(pfn),
++					   __builtin_return_address(0));
+ 		if (!ret)
+-			return NOTIFY_BAD;
+-
++			goto out_free;
+ 		kmemleak_ignore(ret);
+-		return NOTIFY_OK;
+ 	}
+-	case MEM_CANCEL_ONLINE:
+-	case MEM_OFFLINE: {
+-		struct vm_struct *vm;
++	return 0;
++out_free:
++	kasan_offline_pages(start_pfn, nr_pages);
++	return -ENOMEM;
++}
+ 
+-		/*
+-		 * Only hot-added memory have vm_area. Freeing shadow
+-		 * mapped during boot would be tricky, so we'll just
+-		 * have to keep it.
+-		 */
+-		vm = find_vm_area((void *)shadow_start);
+-		if (vm)
+-			vfree((void *)shadow_start);
+-	}
++static int __meminit kasan_mem_notifier(struct notifier_block *nb,
++			unsigned long action, void *data)
++{
++	struct memory_notify *mem_data = data;
++	int ret = 0;
++
++	switch (action) {
++	case MEM_GOING_ONLINE:
++		ret = kasan_online_pages(mem_data->start_pfn,
++					 mem_data->nr_pages);
++		break;
++	case MEM_CANCEL_ONLINE:
++	case MEM_OFFLINE:
++		kasan_offline_pages(mem_data->start_pfn, mem_data->nr_pages);
++		break;
+ 	}
+ 
+-	return NOTIFY_OK;
++	return notifier_from_errno(ret);
+ }
+ 
+ static int __init kasan_memhotplug_init(void)
 -- 
 2.17.0
