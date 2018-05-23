@@ -1,205 +1,199 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754058AbeEWFmM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 01:42:12 -0400
-Received: from lgeamrelo11.lge.com ([156.147.23.51]:57175 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754026AbeEWFmH (ORCPT
+        id S1754086AbeEWFmt (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 01:42:49 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:49658 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754026AbeEWFmq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 01:42:07 -0400
-X-Original-SENDERIP: 156.147.1.126
-X-Original-MAILFROM: namhyung@kernel.org
-X-Original-SENDERIP: 10.177.227.17
-X-Original-MAILFROM: namhyung@kernel.org
-Date: Wed, 23 May 2018 14:41:08 +0900
-From: Namhyung Kim <namhyung@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Clark Williams <williams@redhat.com>,
-        Karim Yaghmour <karim.yaghmour@opersys.com>,
-        Brendan Gregg <bgregg@netflix.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Yann Ylavic <ylavic.dev@gmail.com>, linux-rt-users@vger.kernel.org,
-        kernel-team@lge.com
-Subject: Re: [PATCH v3 00/14] tracing: Add triggers to trace_marker writes
-Message-ID: <20180523054108.GA2763@sejong>
-References: <20180516150012.135869655@goodmis.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180516150012.135869655@goodmis.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Wed, 23 May 2018 01:42:46 -0400
+X-Google-Smtp-Source: AB8JxZrjFf1ybNHtVX5Br/RcWFtYHOmCaQnNHT3z6eFhy9Yl1QDac900rt+urHreIKJNDy6L0fbmsw==
+Content-Type: text/plain;
+        charset=us-ascii;
+        delsp=yes;
+        format=flowed
+Mime-Version: 1.0 (Mac OS X Mail 11.4 \(3445.8.2\))
+Subject: Re: [PATCH] media: uvcvideo: Support realtek's UVC 1.5 device
+From: Kai Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <2510852.fx2XduE8hM@avalon>
+Date: Wed, 23 May 2018 13:42:38 +0800
+Cc: ming_qian@realsil.com.cn, Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Ana Guerrero Lopez <ana.guerrero@collabora.com>
+Content-Transfer-Encoding: 7bit
+Message-Id: <C2D9C61E-F990-4C47-8E9E-18CA74C79FA2@canonical.com>
+References: <1525831988-32017-1-git-send-email-ming_qian@realsil.com.cn>
+ <2510852.fx2XduE8hM@avalon>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+X-Mailer: Apple Mail (2.3445.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steve,
 
-On Wed, May 16, 2018 at 11:00:12AM -0400, Steven Rostedt wrote:
-> A few people have asked for this in the past, and I finally got around
-> to implementing it. What this does is to allow writes into trace_marker
-> to initiate a trigger.
-> 
-> The trace_marker event is described in:
-> 
->  tracefs/events/ftrace/print
-> 
-> Thus the trigger file is added there:
-> 
->  tracefs/events/ftrace/print/trigger
-> 
-> As there's already a "hist" file there, everything appears to work
-> just like any other trigger to an event. See the last patch for
-> documentation on how to use the triggers to a trace_marker write.
-> 
-> By the way, the patch:
-> 
->   tracing: Prevent further users of zero size static arrays in trace events
-> 
-> May prevent your kernel from building if you include Xen. You will need
-> to add this patch to make it work (or include the git repo below).
-> 
->  http://lkml.kernel.org/r/20180509144605.5a220327@gandalf.local.home
-> 
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
-> ftrace/core
-> 
-> Head SHA1: dded7b759602085b4bd2c5581f58f6b179912d89
-> 
-> 
-> Steven Rostedt (VMware) (14):
->       tracing: Do not reference event data in post call triggers
->       tracing: Add __find_event_file() to find event files without restrictions
->       tracing: Have event_trace_init() called by trace_init_tracefs()
->       tracing: Add brackets in ftrace event dynamic arrays
->       tracing: Do not show filter file for ftrace internal events
->       tracing: Add trigger file for trace_markers tracefs/ftrace/print
->       tracing: Have zero size length in filter logic be full string
->       tracing: Prevent further users of zero size static arrays in trace events
->       tracing: Allow histogram triggers to access ftrace internal events
->       tracing: Document trace_marker triggers
->       ftrace/selftest: Have the reset_trigger code be a bit more careful
->       ftrace/selftest: Fix reset_trigger() to handle triggers with filters
->       tracing/selftest: Add selftests to test trace_marker histogram triggers
->       tracing/selftest: Add test to test hist trigger between kernel event and trace_marker
-> 
-> ----
+> On May 23, 2018, at 4:32 AM, Laurent Pinchart  
+> <laurent.pinchart@ideasonboard.com> wrote:
+>
+> Hello,
+>
+> Thank you for the patch.
+>
+> On Wednesday, 9 May 2018 05:13:08 EEST ming_qian@realsil.com.cn wrote:
+>> From: ming_qian <ming_qian@realsil.com.cn>
+>>
+>> The length of UVC 1.5 video control is 48, and it id 34 for UVC 1.1.
+>> Change it to 48 for UVC 1.5 device,
+>> and the UVC 1.5 device can be recognized.
+>>
+>> More changes to the driver are needed for full UVC 1.5 compatibility.
+>> However, at least the UVC 1.5 Realtek RTS5847/RTS5852 cameras have
+>> been reported to work well.
+>
+> This patch is however not specific to Realtek devices, so I think we should
+> make the subject line more generic. It's fine mentioning in the commit  
+> message
+> itself that the Realtek RTS5847/RTS5852 cameras have been successfully  
+> tested.
+>
+>> Signed-off-by: ming_qian <ming_qian@realsil.com.cn>
+>> ---
+>>  drivers/media/usb/uvc/uvc_video.c | 4 ++++
+>>  1 file changed, 4 insertions(+)
+>>
+>> diff --git a/drivers/media/usb/uvc/uvc_video.c
+>> b/drivers/media/usb/uvc/uvc_video.c index aa0082f..32dfb32 100644
+>> --- a/drivers/media/usb/uvc/uvc_video.c
+>> +++ b/drivers/media/usb/uvc/uvc_video.c
+>> @@ -171,6 +171,8 @@ static int uvc_get_video_ctrl(struct uvc_streaming
+>> *stream, int ret;
+>>
+>>  	size = stream->dev->uvc_version >= 0x0110 ? 34 : 26;
+>> +	if (stream->dev->uvc_version >= 0x0150)
+>> +		size = 48;
+>>  	if ((stream->dev->quirks & UVC_QUIRK_PROBE_DEF) &&
+>>  			query == UVC_GET_DEF)
+>>  		return -EIO;
+>> @@ -259,6 +261,8 @@ static int uvc_set_video_ctrl(struct uvc_streaming
+>> *stream, int ret;
+>>
+>>  	size = stream->dev->uvc_version >= 0x0110 ? 34 : 26;
+>> +	if (stream->dev->uvc_version >= 0x0150)
+>> +		size = 48;
+>>  	data = kzalloc(size, GFP_KERNEL);
+>>  	if (data == NULL)
+>>  		return -ENOMEM;
+>
+> Instead of duplicating the computation in both functions, I think we should
+> move the code to a helper function.
+>
+> Furthermore there are equality checks further down both functions that  
+> compare
+> the size to 34, they should be updated to also support UVC 1.5.
+>
+> I propose the following updated patch. If you're fine with it there's no  
+> need
+> to resubmit, I'll queue it for v4.19.
+>
+> I have dropped the Reviewed-by and Tested-by tags as the patch has changed.
+>
+> commit a9c002732695eab2096580a0d1a1687bc2f95928
+> Author: ming_qian <ming_qian@realsil.com.cn>
+> Date:   Wed May 9 10:13:08 2018 +0800
+>
+>     media: uvcvideo: Support UVC 1.5 video probe & commit controls
+>
+>     The length of UVC 1.5 video control is 48, and it is 34 for UVC 1.1.
+>     Change it to 48 for UVC 1.5 device, and the UVC 1.5 device can be
+>     recognized.
+>
+>     More changes to the driver are needed for full UVC 1.5 compatibility.
+>     However, at least the UVC 1.5 Realtek RTS5847/RTS5852 cameras have been
+>     reported to work well.
+>
+>     Cc: stable@vger.kernel.org
+>     Signed-off-by: ming_qian <ming_qian@realsil.com.cn>
+>     [Factor out code to helper function, update size checks]
+>     Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-For the series:
+I tested this new patch and it works well.
 
-Reviewed-by: Namhyung Kim <namhyung@kernel.org>
+Tested-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-Thanks,
-Namhyung
-
-
-> Changes since v2:
-> 
->  - typo fixes in documentation (Tom Zanussi)
->  - Rename trigger-trace-marker{-hist} in selftest (Masami Hiramatsu)
->  - Fix onmatch(sched.sched_waking) (Namhyung Kim)
->  - Rename test to say trace_marker trigger from event trigger (Steven Rostedt)
-> 
->  Diff from v2 below.
-> 
->  Documentation/trace/events.rst                     |   6 +-
->  Documentation/trace/ftrace.rst                     |   5 +
->  Documentation/trace/histogram.txt                  | 546 ++++++++++++++++++++-
->  include/linux/trace_events.h                       |   3 +-
->  include/trace/trace_events.h                       |   1 +
->  kernel/trace/trace.c                               |  19 +
->  kernel/trace/trace.h                               |   9 +-
->  kernel/trace/trace_entries.h                       |   6 +-
->  kernel/trace/trace_events.c                        |  36 +-
->  kernel/trace/trace_events_filter.c                 |  23 +-
->  kernel/trace/trace_events_hist.c                   |   2 +-
->  kernel/trace/trace_events_trigger.c                |   6 +-
->  kernel/trace/trace_export.c                        |   9 +-
->  tools/testing/selftests/ftrace/test.d/functions    |  23 +-
->  .../test.d/trigger/trigger-trace-marker-hist.tc    |  49 ++
->  .../trigger/trigger-trace-marker-synthetic.tc      |  88 ++++
->  16 files changed, 790 insertions(+), 41 deletions(-)
->  create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-hist.tc
->  create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic.tc
-> 
-> 
-> diff --git a/Documentation/trace/histogram.txt b/Documentation/trace/histogram.txt
-> index 8c871f0c0e33..ae2d4f9d0a62 100644
-> --- a/Documentation/trace/histogram.txt
-> +++ b/Documentation/trace/histogram.txt
-> @@ -2005,7 +2005,7 @@ and after it wakes up, something like this:
->  
->  static void traceputs(char *str)
+>
+> diff --git a/drivers/media/usb/uvc/uvc_video.c  
+> b/drivers/media/usb/uvc/uvc_video.c
+> index eb9e04a59427..285b0e813b9d 100644
+> --- a/drivers/media/usb/uvc/uvc_video.c
+> +++ b/drivers/media/usb/uvc/uvc_video.c
+> @@ -207,14 +207,27 @@ static void uvc_fixup_video_ctrl(struct  
+> uvc_streaming *stream,
+>  	}
+>  }
+>
+> +static size_t uvc_video_ctrl_size(struct uvc_streaming *stream)
+> +{
+> +	/*
+> +	 * Return the size of the video probe and commit controls, which depends
+> +	 * on the protocol version.
+> +	 */
+> +	if (stream->dev->uvc_version < 0x0110)
+> +		return 26;
+> +	else if (stream->dev->uvc_version < 0x0150)
+> +		return 34;
+> +	else
+> +		return 48;
+> +}
+> +
+>  static int uvc_get_video_ctrl(struct uvc_streaming *stream,
+>  	struct uvc_streaming_control *ctrl, int probe, u8 query)
 >  {
-> -	/* tracemark_fd is the trace_marker file descripto */
-> +	/* tracemark_fd is the trace_marker file descriptor */
->  	if (tracemark_fd < 0)
->  		return;
->  	/* write the tracemark message */
-> @@ -2048,7 +2048,7 @@ Now running cyclictest with:
->  
->  Note, the -b 1000 is used just to make --tracemark available.
->  
-> -The we can see the histogram created by this with:
-> +Then we can see the histogram created by this with:
->  
->   # cat events/synthetic/latency/hist
->  # event histogram
-> @@ -2360,7 +2360,7 @@ kernel with trace_marker.
->  
->  The difference this time is that instead of using the trace_marker to start
->  the latency, the sched_waking event is used, matching the common_pid for the
-> -trace_marker write with the pid that is being worken by sched_waking.
-> +trace_marker write with the pid that is being woken by sched_waking.
->  
->  After running cyclictest again with the same parameters, we now have:
->  
-> @@ -2535,5 +2535,5 @@ Totals:
->      Dropped: 0
->  
->  This doesn't tell us any information about how late cyclictest may have
-> -worken up, but it does show us a nice histogram of how long it took from
-> -the time that cyclictest was worken to the time it made it into user space.
-> +woken up, but it does show us a nice histogram of how long it took from
-> +the time that cyclictest was woken to the time it made it into user space.
-> diff --git a/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker.tc b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-hist.tc
-> similarity index 93%
-> rename from tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker.tc
-> rename to tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-hist.tc
-> index 48e7ac1ccbc1..2acbfe2c0c0c 100644
-> --- a/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker.tc
-> +++ b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-hist.tc
-> @@ -1,6 +1,6 @@
->  #!/bin/sh
->  # SPDX-License-Identifier: GPL-2.0
-> -# description: event trigger - test histogram trigger
-> +# description: trace_marker trigger - test histogram trigger
->  # flags: instance
->  
->  do_reset() {
-> diff --git a/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic.tc b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic.tc
-> index d8cfc36f228b..b06996ecd5e0 100644
-> --- a/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic.tc
-> +++ b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic.tc
-> @@ -1,6 +1,6 @@
->  #!/bin/sh
->  # SPDX-License-Identifier: GPL-2.0
-> -# description: event trigger - test histogram with synthetic event
-> +# description: trace_marker trigger - test histogram with synthetic event
->  # flags:
->  
->  do_reset() {
-> @@ -72,7 +72,7 @@ echo "Test histogram kernel event to trace_marker latency histogram trigger"
->  
->  echo 'latency u64 lat' > synthetic_events
->  echo 'hist:keys=pid:ts0=common_timestamp.usecs' > events/sched/sched_waking/trigger
-> -echo 'hist:keys=common_pid:lat=common_timestamp.usecs-$ts0:onmatch(ftrace.print).latency($lat)' > events/ftrace/print/trigger
-> +echo 'hist:keys=common_pid:lat=common_timestamp.usecs-$ts0:onmatch(sched.sched_waking).latency($lat)' > events/ftrace/print/trigger
->  echo 'hist:keys=common_pid,lat:sort=lat' > events/synthetic/latency/trigger
->  sleep 1
->  echo "hello" > trace_marker
+> +	u16 size = uvc_video_ctrl_size(stream);
+>  	u8 *data;
+> -	u16 size;
+>  	int ret;
+>
+> -	size = stream->dev->uvc_version >= 0x0110 ? 34 : 26;
+>  	if ((stream->dev->quirks & UVC_QUIRK_PROBE_DEF) &&
+>  			query == UVC_GET_DEF)
+>  		return -EIO;
+> @@ -271,7 +284,7 @@ static int uvc_get_video_ctrl(struct uvc_streaming  
+> *stream,
+>  	ctrl->dwMaxVideoFrameSize = get_unaligned_le32(&data[18]);
+>  	ctrl->dwMaxPayloadTransferSize = get_unaligned_le32(&data[22]);
+>
+> -	if (size == 34) {
+> +	if (size >= 34) {
+>  		ctrl->dwClockFrequency = get_unaligned_le32(&data[26]);
+>  		ctrl->bmFramingInfo = data[30];
+>  		ctrl->bPreferedVersion = data[31];
+> @@ -300,11 +313,10 @@ static int uvc_get_video_ctrl(struct uvc_streaming  
+> *stream,
+>  static int uvc_set_video_ctrl(struct uvc_streaming *stream,
+>  	struct uvc_streaming_control *ctrl, int probe)
+>  {
+> +	u16 size = uvc_video_ctrl_size(stream);
+>  	u8 *data;
+> -	u16 size;
+>  	int ret;
+>
+> -	size = stream->dev->uvc_version >= 0x0110 ? 34 : 26;
+>  	data = kzalloc(size, GFP_KERNEL);
+>  	if (data == NULL)
+>  		return -ENOMEM;
+> @@ -321,7 +333,7 @@ static int uvc_set_video_ctrl(struct uvc_streaming  
+> *stream,
+>  	put_unaligned_le32(ctrl->dwMaxVideoFrameSize, &data[18]);
+>  	put_unaligned_le32(ctrl->dwMaxPayloadTransferSize, &data[22]);
+>
+> -	if (size == 34) {
+> +	if (size >= 34) {
+>  		put_unaligned_le32(ctrl->dwClockFrequency, &data[26]);
+>  		data[30] = ctrl->bmFramingInfo;
+>  		data[31] = ctrl->bPreferedVersion;
+>
+> -- 
+> Regards,
+>
+> Laurent Pinchart
