@@ -1,53 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932637AbeEWLcf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 07:32:35 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:48480 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932528AbeEWLcb (ORCPT
+        id S932656AbeEWLcv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 07:32:51 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:57101 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932528AbeEWLcs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 07:32:31 -0400
-X-Google-Smtp-Source: AB8JxZqOo+s/DZn8sxXNb1p5DO3ADJmjE87owOdEekpLuu+umSDqtdQjprKERkgu62WvTjtwQRT1UJi91RnoyX+iKf8=
+        Wed, 23 May 2018 07:32:48 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Akshu Agrawal <akshu.agrawal@amd.com>
+Cc: djkurtz@chromium.org, Alexander.Deucher@amd.com,
+        mturquette@baylibre.com, sboyd@kernel.org, christian.koenig@amd.com,
+        airlied@redhat.com, Shaoyun.Liu@amd.com, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] Add support for general system clock on ST AMD platform
+Date: Wed, 23 May 2018 13:32:06 +0200
+Message-ID: <1850531.osTZcrXkZF@aspire.rjw.lan>
+In-Reply-To: <1525859941-23654-1-git-send-email-akshu.agrawal@amd.com>
+References: <1525859941-23654-1-git-send-email-akshu.agrawal@amd.com>
 MIME-Version: 1.0
-References: <20180505154040.28614-1-pasha.tatashin@oracle.com>
- <20180505154040.28614-2-pasha.tatashin@oracle.com> <20180523104029.GC15312@amd>
-In-Reply-To: <20180523104029.GC15312@amd>
-From: Pavel Tatashin <pasha.tatashin@oracle.com>
-Date: Wed, 23 May 2018 07:31:52 -0400
-X-Gmail-Original-Message-ID: <CAGM2reb8emos6F+zqKLxDg4u23PHXC=phUbDiJH2YU8k_DtFMg@mail.gmail.com>
-Message-ID: <CAGM2reb8emos6F+zqKLxDg4u23PHXC=phUbDiJH2YU8k_DtFMg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] drivers core: multi-threading device shutdown
-To: pavel@ucw.cz
-Cc: Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        LKML <linux-kernel@vger.kernel.org>, jeffrey.t.kirsher@intel.com,
-        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-        gregkh@linuxfoundation.org,
-        Alexander Duyck <alexander.duyck@gmail.com>, tobin@apporbit.com
-Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8901 signatures=668700
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=734
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805230117
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Pavel,
+On Wednesday, May 9, 2018 11:58:59 AM CEST Akshu Agrawal wrote:
+> AMD ST/CZ platform provides a general system clock which can be used
+> by any driver. Registration of this clock will done in clk-st driver.
+> While the ACPI misc device will create the required MMIO mappings
+> and pass the same to the clk-st driver. The clk-st driver will
+> use the address to enable/disable and set frequency.
+> 
+> Changelog:
+> v2:
+>   clk: x86: Add ST oscout platform clock: v3->v4 unregister clk_hw
+>   ACPI: APD: Add AMD misc clock handler support: No change (v2)
+> v3:
+>   clk: x86: Add ST oscout platform clock:
+> 		v4->v5 use static array, change license
+>   ACPI: APD: Add AMD misc clock handler support:
+> 		v2->v3 use devm_ioremap, fix warning
+> 
+> Akshu Agrawal (2):
+>   clk: x86: Add ST oscout platform clock
+>   ACPI: APD: Add AMD misc clock handler support
+> 
+>  drivers/acpi/acpi_apd.c              | 50 ++++++++++++++++++++
+>  drivers/clk/x86/Makefile             |  1 +
+>  drivers/clk/x86/clk-st.c             | 88 ++++++++++++++++++++++++++++++++++++
+>  include/linux/platform_data/clk-st.h | 35 ++++++++++++++
+>  4 files changed, 174 insertions(+)
+>  create mode 100644 drivers/clk/x86/clk-st.c
+>  create mode 100644 include/linux/platform_data/clk-st.h
+> 
+> 
 
-Thank you for looking at this patch. BTW, the version 5 is out. The latest
-thread is anchered here:
-http://lkml.kernel.org/r/20180516024004.28977-1-pasha.tatashin@oracle.com
-
-> ixgbe is network card, right? So ... it does not have any persistent
-> state and no moving parts, and there's no reason we could not "just
-> power it down"?
-
-True to what you said, but the same path is used for both regular reboot,
-and kexec reboot. In the later case we want to make sure that devices are
-quieced and do not send any interrupts, do not do any DMA activity, and
-basically in the same state as when system was first cold booted, so the
-driver initializing functions can pick and bring the devices up. My
-understanding is that because we do not want to diverge the regular reboot
-and kexec reboot, we do it for both cases.
+Both patches applied, thanks!
