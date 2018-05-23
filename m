@@ -1,58 +1,165 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934194AbeEWSwv convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 14:52:51 -0400
-Received: from muru.com ([72.249.23.125]:44280 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934080AbeEWSws (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 14:52:48 -0400
-Date: Wed, 23 May 2018 11:52:44 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Richard Weinberger <richard@nod.at>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Jarkko Nikula <jarkko.nikula@bitmer.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-fbdev@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Re: [PATCH 3/6] ASoC: ams_delta: use GPIO lookup table
-Message-ID: <20180523185244.GT98604@atomide.com>
-References: <20180518210954.29044-1-jmkrzyszt@gmail.com>
- <20180518210954.29044-3-jmkrzyszt@gmail.com>
- <20180521100503.GA24638@sirena.org.uk>
+        id S934195AbeEWSx1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 14:53:27 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:33637 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934035AbeEWSxZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 14:53:25 -0400
+X-Google-Smtp-Source: AB8JxZq7d3k2Pick9ST4SegHxCVlbUlYRlMRKqF4wCXogIe1sdpJHaJknf7exie++zH42lkJw40UBg==
+Date: Thu, 24 May 2018 00:25:38 +0530
+From: Souptick Joarder <jrdr.linux@gmail.com>
+To: christian.koenig@amd.com, Hongbo.He@amd.com, airlied@linux.ie
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        willY@infradead.org
+Subject: [PATCH] gpu: drm: ttm: Adding new return type vm_fault_t
+Message-ID: <20180523185538.GA975@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20180521100503.GA24638@sirena.org.uk>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Mark Brown <broonie@kernel.org> [180521 10:07]:
-> On Fri, May 18, 2018 at 11:09:51PM +0200, Janusz Krzysztofik wrote:
-> > Now as the Amstrad Delta board provides GPIO lookup tables, switch from
-> > GPIO numbers to GPIO descriptors and use the table to locate required
-> > GPIO pins.
-> 
-> Acked-by: Mark Brown <broonie@kernel.org>
+Use new return type vm_fault_t for fault handler. For
+now, this is just documenting that the function returns
+a VM_FAULT value rather than an errno. Once all instances
+are converted, vm_fault_t will become a distinct type.
 
-Thanks applying patches 1 and 3 of this series into omap-for-v4.18/soc.
-It's kind of getting late for v4.18, but let's see if we can still make
-it.
+Ref-> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
 
-Seems the others can be applied to the driver trees after no more
-comments, then once all that is done we can apply the last patch
-in this series.
+Previously vm_insert_{mixed,pfn} returns err which driver
+mapped into VM_FAULT_* type. The new function
+vmf_insert_{mixed,pfn} will replace this inefficiency by
+returning VM_FAULT_* type.
 
-Regards,
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+---
+ drivers/gpu/drm/ttm/ttm_bo_vm.c | 45 ++++++++++++++++++++---------------------
+ 1 file changed, 22 insertions(+), 23 deletions(-)
 
-Tony
+diff --git a/drivers/gpu/drm/ttm/ttm_bo_vm.c b/drivers/gpu/drm/ttm/ttm_bo_vm.c
+index 8eba95b..2d13f03 100644
+--- a/drivers/gpu/drm/ttm/ttm_bo_vm.c
++++ b/drivers/gpu/drm/ttm/ttm_bo_vm.c
+@@ -43,10 +43,11 @@
+ 
+ #define TTM_BO_VM_NUM_PREFAULT 16
+ 
+-static int ttm_bo_vm_fault_idle(struct ttm_buffer_object *bo,
++static vm_fault_t ttm_bo_vm_fault_idle(struct ttm_buffer_object *bo,
+ 				struct vm_fault *vmf)
+ {
+-	int ret = 0;
++	int err = 0;
++	vm_fault_t ret = 0;
+ 
+ 	if (likely(!bo->moving))
+ 		goto out_unlock;
+@@ -77,9 +78,9 @@ static int ttm_bo_vm_fault_idle(struct ttm_buffer_object *bo,
+ 	/*
+ 	 * Ordinary wait.
+ 	 */
+-	ret = dma_fence_wait(bo->moving, true);
+-	if (unlikely(ret != 0)) {
+-		ret = (ret != -ERESTARTSYS) ? VM_FAULT_SIGBUS :
++	err = dma_fence_wait(bo->moving, true);
++	if (unlikely(err != 0)) {
++		ret = (err != -ERESTARTSYS) ? VM_FAULT_SIGBUS :
+ 			VM_FAULT_NOPAGE;
+ 		goto out_unlock;
+ 	}
+@@ -104,7 +105,7 @@ static unsigned long ttm_bo_io_mem_pfn(struct ttm_buffer_object *bo,
+ 		+ page_offset;
+ }
+ 
+-static int ttm_bo_vm_fault(struct vm_fault *vmf)
++static vm_fault_t ttm_bo_vm_fault(struct vm_fault *vmf)
+ {
+ 	struct vm_area_struct *vma = vmf->vma;
+ 	struct ttm_buffer_object *bo = (struct ttm_buffer_object *)
+@@ -115,8 +116,9 @@ static int ttm_bo_vm_fault(struct vm_fault *vmf)
+ 	unsigned long pfn;
+ 	struct ttm_tt *ttm = NULL;
+ 	struct page *page;
+-	int ret;
++	int err;
+ 	int i;
++	vm_fault_t ret = VM_FAULT_NOPAGE;
+ 	unsigned long address = vmf->address;
+ 	struct ttm_mem_type_manager *man =
+ 		&bdev->man[bo->mem.mem_type];
+@@ -128,9 +130,9 @@ static int ttm_bo_vm_fault(struct vm_fault *vmf)
+ 	 * for reserve, and if it fails, retry the fault after waiting
+ 	 * for the buffer to become unreserved.
+ 	 */
+-	ret = ttm_bo_reserve(bo, true, true, NULL);
+-	if (unlikely(ret != 0)) {
+-		if (ret != -EBUSY)
++	err = ttm_bo_reserve(bo, true, true, NULL);
++	if (unlikely(err != 0)) {
++		if (err != -EBUSY)
+ 			return VM_FAULT_NOPAGE;
+ 
+ 		if (vmf->flags & FAULT_FLAG_ALLOW_RETRY) {
+@@ -162,8 +164,8 @@ static int ttm_bo_vm_fault(struct vm_fault *vmf)
+ 	}
+ 
+ 	if (bdev->driver->fault_reserve_notify) {
+-		ret = bdev->driver->fault_reserve_notify(bo);
+-		switch (ret) {
++		err = bdev->driver->fault_reserve_notify(bo);
++		switch (err) {
+ 		case 0:
+ 			break;
+ 		case -EBUSY:
+@@ -191,13 +193,13 @@ static int ttm_bo_vm_fault(struct vm_fault *vmf)
+ 		goto out_unlock;
+ 	}
+ 
+-	ret = ttm_mem_io_lock(man, true);
+-	if (unlikely(ret != 0)) {
++	err = ttm_mem_io_lock(man, true);
++	if (unlikely(err != 0)) {
+ 		ret = VM_FAULT_NOPAGE;
+ 		goto out_unlock;
+ 	}
+-	ret = ttm_mem_io_reserve_vm(bo);
+-	if (unlikely(ret != 0)) {
++	err = ttm_mem_io_reserve_vm(bo);
++	if (unlikely(err != 0)) {
+ 		ret = VM_FAULT_SIGBUS;
+ 		goto out_io_unlock;
+ 	}
+@@ -265,23 +267,20 @@ static int ttm_bo_vm_fault(struct vm_fault *vmf)
+ 		}
+ 
+ 		if (vma->vm_flags & VM_MIXEDMAP)
+-			ret = vm_insert_mixed(&cvma, address,
++			ret = vmf_insert_mixed(&cvma, address,
+ 					__pfn_to_pfn_t(pfn, PFN_DEV));
+ 		else
+-			ret = vm_insert_pfn(&cvma, address, pfn);
++			ret = vmf_insert_pfn(&cvma, address, pfn);
+ 
+ 		/*
+ 		 * Somebody beat us to this PTE or prefaulting to
+ 		 * an already populated PTE, or prefaulting error.
+ 		 */
+ 
+-		if (unlikely((ret == -EBUSY) || (ret != 0 && i > 0)))
++		if (unlikely((ret == VM_FAULT_NOPAGE && i > 0)))
+ 			break;
+-		else if (unlikely(ret != 0)) {
+-			ret =
+-			    (ret == -ENOMEM) ? VM_FAULT_OOM : VM_FAULT_SIGBUS;
++		else if (unlikely(ret & VM_FAULT_ERROR))
+ 			goto out_io_unlock;
+-		}
+ 
+ 		address += PAGE_SIZE;
+ 		if (unlikely(++page_offset >= page_last))
+-- 
+1.9.1
