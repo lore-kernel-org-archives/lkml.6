@@ -1,41 +1,37 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2904459-1527011913-2-39472770015780753
+X-Cyrus-Session-Id: sloti22d1t05-3452472-1527042301-2-12256379929924251039
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: 
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
+  MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527011912; b=GTeDimDg8wPBoNb+NgSFfIsNxIChX85qT4xIPknueeYay5Wb4e
-    dson+eZuZI44VcEn4dcSw1masSHUN2aLmhHmG3hHkx/aMiRKIgEVSuMeaLrR1TT5
-    T3+Ju/CToBqDzfOQFUeuGt4yA0Ch0YKZOGPpqH4Otva3dkgZklUeuoFEuSvoJaNg
-    cDAJTtRj2+6TnzDBQwm5RArwGEy/B5DBZHytcvyiNo5jDLWQlpkLVjFoKEdgNQ7h
-    J2ch+LIH+kobUvDRnEvlQOwD6PhI0wlNsJA6Jt91t9iCzR/B/+cFGhcr6C+sdjZ9
-    W12uYF2lSHOv9kMX4IZWXxguPuxPg7QJxWbw==
+    1527042300; b=FtIG66ziC+28h4xjwcTecgMyHafJYf9cDto9EYk8snOa8yXN75
+    1POUWhkDCPmlJFKZAQr+sUmDMz86HHGu/zHWXrH/9FHpAk8DHHWI9HFVV743Pr63
+    ryV7oEsKCJQI7uct1iK4bSvym62s4xrHtVlvjmk/fHzM50FrXdWjURLPSMmlntAb
+    2faumD0MtqKOB/jShDdGRqgTp+qJjhChzSgQw4oD5YkwjBzUTOSgTgsOvU2xX5hS
+    ERL3DGePG4fytkkuzRKATvdd6d8M49zbTn0QcfAhui2nsztj3epDW6GBl8XJ7iE9
+    Pd5SMFoh+UqRccGlZdTvQbHHRe/lTE+IRQMw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :mime-version:content-transfer-encoding:sender:list-id; s=fm2;
-    t=1527011912; bh=719B5pWUAEnYcWN9O3VJploJwyrIXp/WLc9PkvnItnI=; b=
-    JdDXskdBNz4sXJwBB8brhpKzWotMhozcPfaziNT07w2Tc+iRxIokU9DWtGXHRMmK
-    CIf6RsZ0Ne8mLyZfPriE/h3yxHrH4vPtdvaY2OeFzHjR81Hjjotg1rDD/JZt/KqG
-    orvlHxR0UjUYVGOKpSBtuVnQOZnLlF0MucVueYqTg7y9U2LFIOEn0O/aZ15StG1U
-    HrKfPgx2TW2OJN0jbM4TWdbqaGF9I3eZBFj/PGI4EdSFPgZigWyTT6opPDXaw0Y/
-    IsYp4XD3oETb1m8n0E5saVX7qbk5pBnUWn5JlEsRyF734b4+R+ODvQC90ymPw81s
-    IyHEXR9uM/hMIQ3zF4ZBJQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=codeaurora.org
-    header.i=@codeaurora.org header.b=fS4158Ga x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=default;
-    dkim=pass (1024-bit rsa key sha256) header.d=codeaurora.org
-    header.i=@codeaurora.org header.b=nymtImTk x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=codeaurora.org;
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1527042300; bh=3ug5j7NzslZrorvGaaNpKSdQWtKHfi
+    oBZNG9NlFyNKI=; b=eXoYLS7qFAnP66z6DF1Lg7lxE+5ukaW6FI/tDcweW9boJ0
+    68u347fBHvSSZGB4OznxTExWCTdmkMq2/wyP/kHz+vDh4FZ9RQ2V8a0OUQlXMIOR
+    fRvFSDIgQCBMSygsY46h6x3lr3l5mhWHF41tk1abMu7iiPzCz1pOCpAbKcTPkULK
+    8K1zTf8Gym1J5VqriUT+m1GRkR1oBRQYRtVDYqX4p/i7hDNp5ugs2jO4SvJR9u8n
+    +4gSpY7iUguNarYfBo77B35XIf0ThR1wSemw3IO2+982dMLMeO0VwkG4nFvPJfgN
+    fKV2zIOQeYBhf5MRanRqtHm7aAr3dmsU2r51VVyw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=wunner.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -44,18 +40,12 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=codeaurora.org header.result=pass
-    header_is_org_domain=yes;
+    header.domain=wunner.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=codeaurora.org
-      header.i=@codeaurora.org header.b=fS4158Ga x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=default;
-    dkim=pass (1024-bit rsa key sha256) header.d=codeaurora.org
-      header.i=@codeaurora.org header.b=nymtImTk x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=codeaurora.org;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=wunner.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -64,99 +54,65 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=codeaurora.org header.result=pass
-      header_is_org_domain=yes;
+      header.domain=wunner.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfG89cakjcvMzlVjHqwtsWHqf6wEkJPxqvpB+CnXnc9EK/3ytHZTyCSVVBNv/1f7HCgZduhvevnlHfGRS6QQ7Kg97VoAO1RljqZQjzVel49O/+H9Q6WQQ
-    mT2zMzuCrxcPYWFJUp/oMPllwpcZC4RDVxH+3AUQYguzrASKupheArG/OWarCp5MtnJv7G+M4JU8aiRbC2Fqp0c+HHpIZDxQN6WbTjjD1z1JT1+g/h1KKZ86
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=LpQP-O61AAAA:8
-    a=VwQbUJbxAAAA:8 a=zVRjdazwAAAA:8 a=UvkM4mIKH019wfpsRTYA:9
-    a=pioyyrs4ZptJ924tMmac:22 a=AjGcO6oz07-iQ99wixmX:22 a=000VuuKJPBW3DWPeRJJA:22
+X-CM-Envelope: MS4wfE+IVm55oNPql5ImfD09qCi2hZ9IymNlr2vwr+kk3UkcfGLuDj0DOhYGxjDQciHP0xL1XEtSSBmR7XgAda1kvvWO5HKp0DiFDgII78p4pFoTXUkva2rv
+    fWmZymQh8XlQ2dqP6sb3lRFs7ZwaxpOWvdCuvgSOC6iMTv/rHusOf4MHCXNP7U9KE1q7eeOkiOS5/MkFd1A4NyZ52yL6fdwyC/TZhyt5uic2EZTj55ql4j4n
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=nY5xWAMQJNdZdYkv0qEA:9 a=CjuIK1q_8ugA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751371AbeEVR63 (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 22 May 2018 13:58:29 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:54652 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751329AbeEVR62 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 22 May 2018 13:58:28 -0400
-X-Remote-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Remote-Spam-Level: 
-X-Remote-Spam-Status: No, score=-2.8 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_SIGNED,T_DKIM_INVALID autolearn=no autolearn_force=no version=3.4.0
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 74E4760314
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-From: Sinan Kaya <okaya@codeaurora.org>
-To: linux-pci@vger.kernel.org, timur@codeaurora.org
-Cc: ryan@finnie.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Sinan Kaya <okaya@codeaurora.org>, stable@vger.kernel.org,
+        id S1753517AbeEWCYf (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 22 May 2018 22:24:35 -0400
+Received: from bmailout3.hostsharing.net ([176.9.242.62]:57033 "EHLO
+        bmailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752658AbeEWCYe (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 22 May 2018 22:24:34 -0400
+Date: Wed, 23 May 2018 04:24:31 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Sinan Kaya <okaya@codeaurora.org>
+Cc: linux-pci@vger.kernel.org, timur@codeaurora.org, ryan@finnie.org,
+        linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org,
         Bjorn Helgaas <bhelgaas@google.com>,
         "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Frederick Lawler <fred@fredlawl.com>,
         Dongdong Liu <liudongdong3@huawei.com>,
         Gabriele Paoloni <gabriele.paoloni@huawei.com>,
         Keith Busch <keith.busch@intel.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] PCI/portdrv: do not disable device on remove()
-Date: Tue, 22 May 2018 13:58:00 -0400
-Message-Id: <1527011883-21320-1-git-send-email-okaya@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] PCI/portdrv: do not disable device on remove()
+Message-ID: <20180523022431.GA15069@wunner.de>
+References: <1527011883-21320-1-git-send-email-okaya@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527011883-21320-1-git-send-email-okaya@codeaurora.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-'Commit cc27b735ad3a ("PCI/portdrv: Turn off PCIe services during
-shutdown")' has been added to kernel to shutdown pending PCIe port
-service interrupts during reboot so that a newly started kexec kernel
-wouldn't observe pending interrupts.
+On Tue, May 22, 2018 at 01:58:00PM -0400, Sinan Kaya wrote:
+> --- a/drivers/pci/pcie/portdrv_core.c
+> +++ b/drivers/pci/pcie/portdrv_core.c
+> @@ -409,7 +409,6 @@ void pcie_port_device_remove(struct pci_dev *dev)
+>  {
+>  	device_for_each_child(&dev->dev, NULL, remove_iter);
+>  	pci_free_irq_vectors(dev);
+> -	pci_disable_device(dev);
+>  }
 
-pcie_port_device_remove() is disabling the root port and switches by
-calling pci_disable_device() after all PCIe service drivers are shutdown.
+Shutdown aside, pci_disable_device() is also not called in the ->remove
+path with this patch, right?  Seems wrong.  E.g. when unbinding the driver
+from the root port device, or when unplugging a port (happens all the time
+with Thunderbolt).
 
-pci_disable_device() has a much wider impact then port service itself and
-it prevents all inbound transactions to reach to the system and impacts
-the entire PCI traffic behind the bridge.
+Thanks,
 
-Issue is that pcie_port_device_remove() doesn't maintain any coordination
-with the rest of the PCI device drivers in the system before clearing the
-bus master bit.
-
-This has been found to cause crashes on HP DL360 Gen9 machines during
-reboot. Besides, kexec is already clearing the bus master bit in
-pci_device_shutdown() after all PCI drivers are removed.
-
-Just remove the extra clear here.
-
-Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=199779
-Fixes: cc27b735ad3a ("PCI/portdrv: Turn off PCIe services during shutdown")
-Cc: stable@vger.kernel.org
-Reported-by: Ryan Finnie <ryan@finnie.org>
----
- drivers/pci/pcie/portdrv_core.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/pci/pcie/portdrv_core.c b/drivers/pci/pcie/portdrv_core.c
-index c9c0663..d22a95d 100644
---- a/drivers/pci/pcie/portdrv_core.c
-+++ b/drivers/pci/pcie/portdrv_core.c
-@@ -409,7 +409,6 @@ void pcie_port_device_remove(struct pci_dev *dev)
- {
- 	device_for_each_child(&dev->dev, NULL, remove_iter);
- 	pci_free_irq_vectors(dev);
--	pci_disable_device(dev);
- }
- 
- /**
--- 
-2.7.4
+Lukas
