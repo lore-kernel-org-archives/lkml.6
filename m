@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3377482-1527036567-2-6912545684356149715
+X-Cyrus-Session-Id: sloti22d1t05-3451457-1527039808-2-16164545333048927889
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527036567; b=hqQH9GkqdqgGtzPHJhyx0cDStsE2ESZYajbbOSHHaCer1s7Sya
-    oDHPGzv1AfGGFpOAxeJDlnvkWTNH62cYlrhzVCSLq1PUqoGKlE8H0zuIDzeojwiY
-    41FewGjnXuvHrf8WPeLNqMmv4OXJDi4w2Xx9fw6dHWZYaLF5ucBzj9UeQYGK8GkN
-    zOnwYFnTGtdkdDYHH9/ou6EjK3FqT93BTf5KANiTBmuKm4i9sfUF+bj00fnYQ5I/
-    72lrh8tofkNuwyuTz5A7BW+pyzxvcbqsFHXXaFqLEW5F+iBV9g0H/uox7w5cmh64
-    oZnAXLygYF/flbmmd9pgDJ3ctNn+CIfCKz0A==
+    1527039808; b=X11Y8VCxvSbag1UPR0DQJheR1EZBYPb4G86Mpj8rFLs6/JrUTa
+    E/gVCMfqE2Hr1PZr+UA9MgppKSE5Drr7XNAvbHgtYegeDjAa/6JXz2WvtYSDHK9p
+    lXj0uFlzmQKnPUGlBFVZ7aNKxTRHl/sVy8lCI0Mm6JXlxzGrvuXFaND/s70u7O9g
+    IOb1K7JaZMK9rHVpDRB2QUWLgG58sxOiY9VEkeD20Unrw7W/vNxCCg3SLsT9Di3p
+    +6++BJmwcSReQ7+InilyUc/9/xK05SBWu8fdAVH//0yEHb8fZHwqSle/cGA6kfCB
+    N7l5A2NA21grDTjWOE7/IHW9lSfnwGZUKUfw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
     :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1527036567; bh=qDNR0Mx0X5JzwKZ5JrDtIuPqs/B70E
-    UaPhnQPrehn40=; b=R3BF+woyFoKA0vwM4e18XLwsD4qYSlCctZdYtMRQweiriG
-    gbzGeeHb1dY5TLDc1wLulNc5jFTPBP3KoClnrOIoXXxyH57x3BAyt64z4ByINDCn
-    mLoL7raEcwTPJ9TCvP2/E/e4ekLGvqmoc/h031hTufl+Nj9iYkmO/9BR/jtU289p
-    WtW48a8UtSQLDxo7P76IZ9AVeo9GVk5mXNbB+hcpzauMLl4egqA3+l5KAUBxv+xH
-    NaLvAFRLRO4Mbobm/3wT7ci242MY1fsU1LF+aEY5NIl69TbCJThfdQIgru46PkoP
-    Gs0KmJkfHPuzoV3t3OyQ9gMelOcgnNYsPtVf4OsQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527039808; bh=xmB6EufqYNSao4m1y438HhMxkHGHVG
+    Lfyhkh5+8VAaA=; b=Eb4WDDfF4TY+r1nL86QRKzaeI1A8GSjthfNci1Dnnv/Ov3
+    XzIDDWJMaq9DtWtLDwdlzvTE8eEP969/ZsoHQzes+fltUhSjgQ6aCUhzJRvyygOI
+    kYuWincJ412AlrQn3CsnUMRATcyyfXNSWEGOzSZ5hExum9O2BxZhbrXwFELvWqp8
+    pJYojKVfLp1bwvsgAebLJJZwP6lb+FAN/4H/lTR8E+gI7ofJGF7wzMN+G2fdQMYF
+    mKlwoDbOBZnL3dDEdxdtrxY/CPTnLIcRZ1B6LYln7RQMsquD0f/I2sxebDXs8sud
+    Zh99icvAh3Cd2UNmsI2iHR9blyFcILV2c2fHjWvw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=zeniv.linux.org.uk;
@@ -45,7 +45,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     header.result=warn header_org.domain=linux.org.uk
     header_org.result=pass header_is_org_domain=no;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none)
@@ -63,37 +63,41 @@ Authentication-Results: mx1.messagingengine.com;
       header_org.result=pass header_is_org_domain=no;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJR01bSrdjMBdNKvF1y0mfDwu8wkLMx6ex8Ql/a7c+d5UvvDYIAVMZyvWnIL22dymqkEkJREU4t2dNLeHb+ejsWFZzQexGIrs7Yvi38tPaQ2xmvM9mA5
-    2i86f+tXaI/3lYvMh33wh6lwzROvwdHLufYzUVNzmOtac3tUJWbFqUy4gaf/m/sJcsSHBCX14kgstYV94e8PptXa18HZVPrF9MBpL0SRHmaweWzREQcai8yY
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfBazlakiK4/Q418cN72IGO/yEN3SswodAf6cbTG1gSYX7m7UJZwiCLXfIhdgFV61pVM2viyZpZk9wjQ+attsw0Zin9MJcQJ8ANkS0ql2Q4WjDqT88Vfu
+    7OcibOn0lEIqkI+BFiW6GjEhJ9mSWEkStu1Bn0bnrf5E/caGvzYZ9iYiZ1/Ls+PO3NzWiBZUzO2EPkaegntLxv0TpJcDXpgXAe7MQbEh1T4InZ7sAMYDnLNU
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=47cuo1_IehaNXlfTa_IA:9 a=CjuIK1q_8ugA:10 a=x8gzFH9gYPwA:10
-    a=AjGcO6oz07-iQ99wixmX:22
+    a=VwQbUJbxAAAA:8 a=drOt6m5kAAAA:8 a=wUsz4rfA6hnfVHkDaTwA:9
+    a=jlvn0s9filvoresM:21 a=T4y-Y9CSUR4MnYRj:21 a=CjuIK1q_8ugA:10
+    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22 a=RMMjzBEyIzXRtoq5n5K6:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753512AbeEWAtH (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 22 May 2018 20:49:07 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:52978 "EHLO
+        id S1753609AbeEWBnZ (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 22 May 2018 21:43:25 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:53896 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752654AbeEWAtG (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Tue, 22 May 2018 20:49:06 -0400
-Date: Wed, 23 May 2018 01:49:04 +0100
+        with ESMTP id S1753545AbeEWBnY (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Tue, 22 May 2018 21:43:24 -0400
+Date: Wed, 23 May 2018 02:43:18 +0100
 From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Christoph Hellwig <hch@lst.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/31] aio: implement IOCB_CMD_POLL
-Message-ID: <20180523004904.GH30522@ZenIV.linux.org.uk>
+        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: YAaioRace (was Re: [PATCH 08/31] aio: implement IOCB_CMD_POLL)
+Message-ID: <20180523014318.GI30522@ZenIV.linux.org.uk>
 References: <20180522113108.25713-1-hch@lst.de>
  <20180522113108.25713-9-hch@lst.de>
  <20180522220524.GE30522@ZenIV.linux.org.uk>
  <20180523004530.GG30522@ZenIV.linux.org.uk>
+ <20180523004904.GH30522@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180523004530.GG30522@ZenIV.linux.org.uk>
+In-Reply-To: <20180523004904.GH30522@ZenIV.linux.org.uk>
 User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
@@ -101,34 +105,56 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, May 23, 2018 at 01:45:30AM +0100, Al Viro wrote:
+On Wed, May 23, 2018 at 01:49:04AM +0100, Al Viro wrote:
 
-> Oh, bugger...
+> > Looks like we want to call ->ki_cancel() *BEFORE* removing from the list,
+> > as well as doing fput() after aio_complete().  The same ordering, BTW, goes
+> > for aio_read() et.al.
+> > 
+> > Look:
+> > CPU1:	io_cancel() grabs ->ctx_lock, finds iocb and removes it from the list.
+> > CPU2:	aio_rw_complete() on that iocb.  Since the sucker is not in the list
+> > anymore, we do NOT spin on ->ctx_lock and proceed to free iocb
+> > CPU1:	pass freed iocb to ->ki_cancel().  BOOM.
 > 
-> wakeup
-> 	removed from queue
-> 	schedule __aio_poll_complete()
-> 
-> cancel
-> 	grab ctx->lock
-> 	remove from list
-> work
-> 	aio_complete()
-> 		check if it's in the list
-> 		it isn't, move on to free the sucker
-> cancel
-> 	call ->ki_cancel()
-> 	BOOM
-> 
-> Looks like we want to call ->ki_cancel() *BEFORE* removing from the list,
-> as well as doing fput() after aio_complete().  The same ordering, BTW, goes
-> for aio_read() et.al.
-> 
-> Look:
-> CPU1:	io_cancel() grabs ->ctx_lock, finds iocb and removes it from the list.
-> CPU2:	aio_rw_complete() on that iocb.  Since the sucker is not in the list
-> anymore, we do NOT spin on ->ctx_lock and proceed to free iocb
-> CPU1:	pass freed iocb to ->ki_cancel().  BOOM.
+> BTW, it seems that the mainline is vulnerable to this one.  I might be
+> missing something, but...
 
-BTW, it seems that the mainline is vulnerable to this one.  I might be
-missing something, but...
+It is, but with a different attack vector - io_cancel(2) won't do it (it
+does not remove from the list at all), but io_destroy(2) bloody well will.
+
+IMO, we need this in mainline; unless somebody has a problem with it, to
+#fixes it goes:
+
+fix io_destroy()/aio_complete() race
+
+If io_destroy() gets to cancelling everything that can be cancelled and
+gets to kiocb_cancel() calling the function driver has left in ->ki_cancel,
+it becomes vulnerable to a race with IO completion.  At that point req
+is already taken off the list and aio_complete() does *NOT* spin until
+we (in free_ioctx_users()) releases ->ctx_lock.  As the result, it proceeds
+to kiocb_free(), freing req just it gets passed to ->ki_cancel().
+
+Fix is simple - remove from the list after the call of kiocb_cancel().  All
+instances of ->ki_cancel() already have to cope with the being called with
+iocb still on list - that's what happens in io_cancel(2).
+
+Cc: stable@kernel.org
+Fixes: 0460fef2a921 "aio: use cancellation list lazily"
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+diff --git a/fs/aio.c b/fs/aio.c
+index 8061d9787e54..49f53516eef0 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -634,9 +634,8 @@ static void free_ioctx_users(struct percpu_ref *ref)
+ 	while (!list_empty(&ctx->active_reqs)) {
+ 		req = list_first_entry(&ctx->active_reqs,
+ 				       struct aio_kiocb, ki_list);
+-
+-		list_del_init(&req->ki_list);
+ 		kiocb_cancel(req);
++		list_del_init(&req->ki_list);
+ 	}
+ 
+ 	spin_unlock_irq(&ctx->ctx_lock);
