@@ -1,81 +1,82 @@
-Return-Path: <sakari.ailus@linux.intel.com>
-X-Google-Smtp-Source: AB8JxZpWbcFhVro4TpJ9thItQzncyPwWMS6AH7+uTMp0sDPuZ78gorQuZ0K6JiCADjjsffpaHpTQ
-ARC-Seal: i=1; a=rsa-sha256; t=1527067654; cv=none;
+Return-Path: <chunfeng.yun@mediatek.com>
+X-Google-Smtp-Source: AB8JxZq5vhdW+s5116L5TZVjvdlJkeN1aizsK17PezcdUtwEaZlBU8Najb38uBrxJYon/ZLP5yL5
+ARC-Seal: i=1; a=rsa-sha256; t=1527065638; cv=none;
         d=google.com; s=arc-20160816;
-        b=g/xCtWdGWLr0cZgtE/floIQYjX+1EuQ+hybgjtJ3QLElW+ql5O2Z+5s0eYS5XWRCJl
-         WMidTosHJxCy5zH7Eoi/sbwv/wKaw66aAEfGTigcqfcb0/A0N9fgI93PBeUOHacTKmkM
-         ZROwMuHLnxEFT9n3BA2KWv0A+86dXgkpJiebCU4QXXjXaJy41ClpAlvWyl98PngFeQTX
-         ZsO0OyZSUIW+hKsA/3BiQaNZB6gEX0G45Or1YG1bZn9pzT4vfS/yoz4DQGDvtLaxrj7y
-         vjp2VioEHtFiY4Md+Rz1/a64NvddG0AdNdnNCsgwrjnlvkfylC5x4teUOLbnZ5ZY60fJ
-         HeQA==
+        b=PO2MW1E8i4PeSOP9H2EGKQE2zgcrjHS3Q+6XMwNIvlFGqh2aA7NB+l8TM0R2RUSX2w
+         sB4oNVfiR9L6AzMXT1mPvcYSWeJZMfs+691nMvV8AylQc3eQz18VJajCEu9go8kVP67b
+         IVEe/kI4H6JrTVQjcWOm4n1hQ3gu2zafFGmO8LymETNVrYPwJDfv8oGhetlDMqXM2C3N
+         n+JFsBZugJQh+z0kPeA2atjE3I8/a3XsH79ErADYneMkyTH3RiwcIrNbEzqW9dAbCR6D
+         2bWERcjfy1DJoV7871nPqOdXoK0YESe8wNQtUA9h4ot0gxEv5M36jxAbmLvYPmj/qUDi
+         tqxQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=U1BR2bqS3ggZfr1fuJ0pgiRrOVxo3ugQfQVzJKxFEYE=;
-        b=CVM3BgzOF6XT/ot14PGoIW1lLW4yNx7l7LukbqM4TsJmEek+8QqMMg3Q8uNTj5bgyC
-         ncAVIyhwqMuGIVtzWFwC1dz+1uu6CHI30veJmlroJJ0UqwaAFUmd2R0agWg3ojfamLXg
-         8vN30xme/QHFOCEj/eROOvsnxII+A+wGSRvV32daVARqPamrsqBoNnr81rowTBQ56LrB
-         d/0j8qHTRBKyZmo4O9sXcdXQyg1mOc296p0WDG14rIEFGsYAywYSKV3+gEzu0uHvdF8D
-         6oc5gH4/JaBK+P/zM4gQNbJCRtYjTa1U8if7HaiOD3RO6y9aFhWi6LbyqS2FQo4Fu3va
-         ONwA==
+        h=mime-version:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=je/h++EzoZGjEdlRWpUHZ1KifGm9E3rPJOqOXRzYDvQ=;
+        b=jG4ihyhqPWOu1MxRjhrqcUE1V1NS0EzeGDOAiTy7XCbGRFEu6eIltB7UnwxvaLkXaO
+         6VjnU/Bu/ZIDpTMI0MhnXWAjKdgjgiTFrnMz2uvKpVWgyrksxVWaIuz0gkh/o12keRu9
+         aGggRSteM2SE1A6fqp4XmJOH8HJjXv+PmCGoBUlHRMuhM0PbKfgJffhxDtIPsYeisN19
+         FaNyn/7G4npO3o0HHS7FPE3eFKVBZAIVEYPzzEEPC/E/pcpMgLgBjqAmD55TL6aJnlko
+         xc44B7F2QyoNoXvEKzpwRFMPI6FF1Dl0e6v0vcKcnbqUZGMaSv1CnZYuuQvjenS2q6Vs
+         9wug==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of sakari.ailus@linux.intel.com designates 134.134.136.20 as permitted sender) smtp.mailfrom=sakari.ailus@linux.intel.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=intel.com
+       spf=pass (google.com: domain of chunfeng.yun@mediatek.com designates 1.203.163.78 as permitted sender) smtp.mailfrom=chunfeng.yun@mediatek.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of sakari.ailus@linux.intel.com designates 134.134.136.20 as permitted sender) smtp.mailfrom=sakari.ailus@linux.intel.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=intel.com
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,432,1520924400";
-   d="scan'208";a="57740904"
-Date: Wed, 23 May 2018 12:27:30 +0300
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>
-Cc: alan@linux.intel.com, mchehab@kernel.org, gregkh@linuxfoundation.org,
-	linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/6] Fix issues reported by static analysis tool.
-Message-ID: <20180523092730.va7ds7t6h3zhyz7r@paasikivi.fi.intel.com>
-References: <1527052896-30777-1-git-send-email-pankaj.laxminarayan.bharadiya@intel.com>
+       spf=pass (google.com: domain of chunfeng.yun@mediatek.com designates 1.203.163.78 as permitted sender) smtp.mailfrom=chunfeng.yun@mediatek.com
+X-UUID: e5cee852ca4543feb5db63c95b5b0af9-20180523
+From: Chunfeng Yun <chunfeng.yun@mediatek.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi
+	<felipe.balbi@linux.intel.com>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, Chunfeng Yun
+	<chunfeng.yun@mediatek.com>, <linux-usb@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
+Subject: [next, PATCH 1/6] usb: mtu3: re-enable controller to accept LPM request after LPM resume
+Date: Wed, 23 May 2018 16:53:15 +0800
+Message-ID: <1291b13a362eaa0cccd30cb8dd4f56d33e1d172d.1527065109.git.chunfeng.yun@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1527052896-30777-1-git-send-email-pankaj.laxminarayan.bharadiya@intel.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain
+X-MTK: N
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1601231384615667446?=
-X-GMAIL-MSGID: =?utf-8?q?1601246492970638976?=
+X-GMAIL-THRID: =?utf-8?q?1601244378966734632?=
+X-GMAIL-MSGID: =?utf-8?q?1601244378966734632?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Pankaj,
+After the controller receives a LPM request, it will reject the LPM
+request, and need software to re-enable it after LPM resume if the
+controller doesn't remote wakeup from L1 automatically
 
-On Wed, May 23, 2018 at 10:51:30AM +0530, Pankaj Bharadiya wrote:
-> This patch series fixes some of the issues reported by static analysis
-> tool.
-> 
-> Pankaj Bharadiya (6):
->   media: staging: atomisp: remove redundent check
->   media: staging: atomisp: Remove useless if statement
->   media: staging: atomisp: Remove useless "ifndef ISP2401"
->   media: staging: atomisp: Fix potential NULL pointer dereference
->   media: staging: atomisp: Fix potential NULL pointer dereference
->   media: staging: atomisp: Fix potential NULL pointer dereference
-> 
->  drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c   | 14 --------------
->  .../media/atomisp/pci/atomisp2/atomisp_compat_css20.c      |  2 --
->  drivers/staging/media/atomisp/pci/atomisp2/atomisp_csi2.c  |  8 --------
->  .../pci/atomisp2/css2400/camera/pipe/src/pipe_binarydesc.c |  3 ++-
->  .../staging/media/atomisp/pci/atomisp2/css2400/sh_css.c    |  7 +++++--
->  5 files changed, 7 insertions(+), 27 deletions(-)
-> 
+Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+---
+ drivers/usb/mtu3/mtu3_core.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-I'm sorry to tell you that the atomisp driver was removed from the staging
-tree some time ago.
-
+diff --git a/drivers/usb/mtu3/mtu3_core.c b/drivers/usb/mtu3/mtu3_core.c
+index b1b99a8..65ff53a 100644
+--- a/drivers/usb/mtu3/mtu3_core.c
++++ b/drivers/usb/mtu3/mtu3_core.c
+@@ -176,7 +176,7 @@ static void mtu3_intr_enable(struct mtu3 *mtu)
+ 	mtu3_writel(mbase, U3D_LV1IESR, value);
+ 
+ 	/* Enable U2 common USB interrupts */
+-	value = SUSPEND_INTR | RESUME_INTR | RESET_INTR;
++	value = SUSPEND_INTR | RESUME_INTR | RESET_INTR | LPM_RESUME_INTR;
+ 	mtu3_writel(mbase, U3D_COMMON_USB_INTR_ENABLE, value);
+ 
+ 	if (mtu->is_u3_ip) {
+@@ -692,6 +692,12 @@ static irqreturn_t mtu3_u2_common_isr(struct mtu3 *mtu)
+ 	if (u2comm & RESET_INTR)
+ 		mtu3_gadget_reset(mtu);
+ 
++	if (u2comm & LPM_RESUME_INTR) {
++		if (!(mtu3_readl(mbase, U3D_POWER_MANAGEMENT) & LPM_HRWE))
++			mtu3_setbits(mbase, U3D_USB20_MISC_CONTROL,
++				     LPM_U3_ACK_EN);
++	}
++
+ 	return IRQ_HANDLED;
+ }
+ 
 -- 
-Kind regards,
-
-Sakari Ailus
-sakari.ailus@linux.intel.com
+1.9.1
