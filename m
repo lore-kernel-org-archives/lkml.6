@@ -1,199 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754086AbeEWFmt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 01:42:49 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:49658 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754026AbeEWFmq (ORCPT
+        id S1754044AbeEWFoN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 01:44:13 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:42094 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753852AbeEWFoJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 01:42:46 -0400
-X-Google-Smtp-Source: AB8JxZrjFf1ybNHtVX5Br/RcWFtYHOmCaQnNHT3z6eFhy9Yl1QDac900rt+urHreIKJNDy6L0fbmsw==
-Content-Type: text/plain;
-        charset=us-ascii;
-        delsp=yes;
-        format=flowed
-Mime-Version: 1.0 (Mac OS X Mail 11.4 \(3445.8.2\))
-Subject: Re: [PATCH] media: uvcvideo: Support realtek's UVC 1.5 device
-From: Kai Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <2510852.fx2XduE8hM@avalon>
-Date: Wed, 23 May 2018 13:42:38 +0800
-Cc: ming_qian@realsil.com.cn, Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Ana Guerrero Lopez <ana.guerrero@collabora.com>
-Content-Transfer-Encoding: 7bit
-Message-Id: <C2D9C61E-F990-4C47-8E9E-18CA74C79FA2@canonical.com>
-References: <1525831988-32017-1-git-send-email-ming_qian@realsil.com.cn>
- <2510852.fx2XduE8hM@avalon>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-X-Mailer: Apple Mail (2.3445.8.2)
+        Wed, 23 May 2018 01:44:09 -0400
+X-Google-Smtp-Source: AB8JxZrWjTy8nouJbHRYsxQ+8zonqZ+wyvUimHwsxfujtwpRUVK9ZC/4xUr42ql/CntvP94kgrgxzA==
+Date: Wed, 23 May 2018 11:14:05 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Ilia Lin <ilialin@codeaurora.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] cpufreq: Add Kryo CPU scaling driver
+Message-ID: <20180523054405.edj4svjdf5picno2@vireshk-i7>
+References: <1526729701-8589-1-git-send-email-ilialin@codeaurora.org>
+ <1526988585-21678-1-git-send-email-ilialin@codeaurora.org>
+ <20180522130704.GA31065@e107155-lin>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180522130704.GA31065@e107155-lin>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 22-05-18, 14:07, Sudeep Holla wrote:
+> On Tue, May 22, 2018 at 02:29:45PM +0300, Ilia Lin wrote:
+> > In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
+> > the CPU frequency subset and voltage value of each OPP varies
+> > based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
+> > defines the voltage and frequency value based on the msm-id in SMEM
+> > and speedbin blown in the efuse combination.
+> > The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
+> > to provide the OPP framework with required information.
+> > This is used to determine the voltage and frequency value for each OPP of
+> > operating-points-v2 table when it is parsed by the OPP framework.
+> > 
+> > Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+> > Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> 
+> [...]
+> 
+> > +
+> > +	switch (msm8996_version) {
+> > +	case MSM8996_V3:
+> > +		versions = 1 << (unsigned int)(*speedbin);
+> > +		break;
+> > +	case MSM8996_SG:
+> > +		versions = 1 << ((unsigned int)(*speedbin) + 4);
+> > +		break;
+> > +	default:
+> > +		BUG();
+> > +		break;
+> > +	}
+> > +
+> > +	for_each_possible_cpu(cpu) {
+> > +		cpu_dev = get_cpu_device(cpu);
+> > +		if (NULL == cpu_dev) {
+> > +			ret = -ENODEV;
+> > +			goto free_opp;
+> > +		}
+> > +
+> > +		opp_tables[cpu] = dev_pm_opp_set_supported_hw(cpu_dev,
+> > +							      &versions, 1);
+> 
+> Will be not get NULL for all CPUs except 0 ?
 
-> On May 23, 2018, at 4:32 AM, Laurent Pinchart  
-> <laurent.pinchart@ideasonboard.com> wrote:
->
-> Hello,
->
-> Thank you for the patch.
->
-> On Wednesday, 9 May 2018 05:13:08 EEST ming_qian@realsil.com.cn wrote:
->> From: ming_qian <ming_qian@realsil.com.cn>
->>
->> The length of UVC 1.5 video control is 48, and it id 34 for UVC 1.1.
->> Change it to 48 for UVC 1.5 device,
->> and the UVC 1.5 device can be recognized.
->>
->> More changes to the driver are needed for full UVC 1.5 compatibility.
->> However, at least the UVC 1.5 Realtek RTS5847/RTS5852 cameras have
->> been reported to work well.
->
-> This patch is however not specific to Realtek devices, so I think we should
-> make the subject line more generic. It's fine mentioning in the commit  
-> message
-> itself that the Realtek RTS5847/RTS5852 cameras have been successfully  
-> tested.
->
->> Signed-off-by: ming_qian <ming_qian@realsil.com.cn>
->> ---
->>  drivers/media/usb/uvc/uvc_video.c | 4 ++++
->>  1 file changed, 4 insertions(+)
->>
->> diff --git a/drivers/media/usb/uvc/uvc_video.c
->> b/drivers/media/usb/uvc/uvc_video.c index aa0082f..32dfb32 100644
->> --- a/drivers/media/usb/uvc/uvc_video.c
->> +++ b/drivers/media/usb/uvc/uvc_video.c
->> @@ -171,6 +171,8 @@ static int uvc_get_video_ctrl(struct uvc_streaming
->> *stream, int ret;
->>
->>  	size = stream->dev->uvc_version >= 0x0110 ? 34 : 26;
->> +	if (stream->dev->uvc_version >= 0x0150)
->> +		size = 48;
->>  	if ((stream->dev->quirks & UVC_QUIRK_PROBE_DEF) &&
->>  			query == UVC_GET_DEF)
->>  		return -EIO;
->> @@ -259,6 +261,8 @@ static int uvc_set_video_ctrl(struct uvc_streaming
->> *stream, int ret;
->>
->>  	size = stream->dev->uvc_version >= 0x0110 ? 34 : 26;
->> +	if (stream->dev->uvc_version >= 0x0150)
->> +		size = 48;
->>  	data = kzalloc(size, GFP_KERNEL);
->>  	if (data == NULL)
->>  		return -ENOMEM;
->
-> Instead of duplicating the computation in both functions, I think we should
-> move the code to a helper function.
->
-> Furthermore there are equality checks further down both functions that  
-> compare
-> the size to 34, they should be updated to also support UVC 1.5.
->
-> I propose the following updated patch. If you're fine with it there's no  
-> need
-> to resubmit, I'll queue it for v4.19.
->
-> I have dropped the Reviewed-by and Tested-by tags as the patch has changed.
->
-> commit a9c002732695eab2096580a0d1a1687bc2f95928
-> Author: ming_qian <ming_qian@realsil.com.cn>
-> Date:   Wed May 9 10:13:08 2018 +0800
->
->     media: uvcvideo: Support UVC 1.5 video probe & commit controls
->
->     The length of UVC 1.5 video control is 48, and it is 34 for UVC 1.1.
->     Change it to 48 for UVC 1.5 device, and the UVC 1.5 device can be
->     recognized.
->
->     More changes to the driver are needed for full UVC 1.5 compatibility.
->     However, at least the UVC 1.5 Realtek RTS5847/RTS5852 cameras have been
->     reported to work well.
->
->     Cc: stable@vger.kernel.org
->     Signed-off-by: ming_qian <ming_qian@realsil.com.cn>
->     [Factor out code to helper function, update size checks]
->     Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+With my patches, we will get the OPP table again with refcount
+incremented. And on failures, we need to call put-supported-hw helper
+only for the CPUs for which it passed previously.
 
-I tested this new patch and it works well.
-
-Tested-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-
->
-> diff --git a/drivers/media/usb/uvc/uvc_video.c  
-> b/drivers/media/usb/uvc/uvc_video.c
-> index eb9e04a59427..285b0e813b9d 100644
-> --- a/drivers/media/usb/uvc/uvc_video.c
-> +++ b/drivers/media/usb/uvc/uvc_video.c
-> @@ -207,14 +207,27 @@ static void uvc_fixup_video_ctrl(struct  
-> uvc_streaming *stream,
->  	}
->  }
->
-> +static size_t uvc_video_ctrl_size(struct uvc_streaming *stream)
-> +{
-> +	/*
-> +	 * Return the size of the video probe and commit controls, which depends
-> +	 * on the protocol version.
-> +	 */
-> +	if (stream->dev->uvc_version < 0x0110)
-> +		return 26;
-> +	else if (stream->dev->uvc_version < 0x0150)
-> +		return 34;
-> +	else
-> +		return 48;
-> +}
-> +
->  static int uvc_get_video_ctrl(struct uvc_streaming *stream,
->  	struct uvc_streaming_control *ctrl, int probe, u8 query)
->  {
-> +	u16 size = uvc_video_ctrl_size(stream);
->  	u8 *data;
-> -	u16 size;
->  	int ret;
->
-> -	size = stream->dev->uvc_version >= 0x0110 ? 34 : 26;
->  	if ((stream->dev->quirks & UVC_QUIRK_PROBE_DEF) &&
->  			query == UVC_GET_DEF)
->  		return -EIO;
-> @@ -271,7 +284,7 @@ static int uvc_get_video_ctrl(struct uvc_streaming  
-> *stream,
->  	ctrl->dwMaxVideoFrameSize = get_unaligned_le32(&data[18]);
->  	ctrl->dwMaxPayloadTransferSize = get_unaligned_le32(&data[22]);
->
-> -	if (size == 34) {
-> +	if (size >= 34) {
->  		ctrl->dwClockFrequency = get_unaligned_le32(&data[26]);
->  		ctrl->bmFramingInfo = data[30];
->  		ctrl->bPreferedVersion = data[31];
-> @@ -300,11 +313,10 @@ static int uvc_get_video_ctrl(struct uvc_streaming  
-> *stream,
->  static int uvc_set_video_ctrl(struct uvc_streaming *stream,
->  	struct uvc_streaming_control *ctrl, int probe)
->  {
-> +	u16 size = uvc_video_ctrl_size(stream);
->  	u8 *data;
-> -	u16 size;
->  	int ret;
->
-> -	size = stream->dev->uvc_version >= 0x0110 ? 34 : 26;
->  	data = kzalloc(size, GFP_KERNEL);
->  	if (data == NULL)
->  		return -ENOMEM;
-> @@ -321,7 +333,7 @@ static int uvc_set_video_ctrl(struct uvc_streaming  
-> *stream,
->  	put_unaligned_le32(ctrl->dwMaxVideoFrameSize, &data[18]);
->  	put_unaligned_le32(ctrl->dwMaxPayloadTransferSize, &data[22]);
->
-> -	if (size == 34) {
-> +	if (size >= 34) {
->  		put_unaligned_le32(ctrl->dwClockFrequency, &data[26]);
->  		data[30] = ctrl->bmFramingInfo;
->  		data[31] = ctrl->bPreferedVersion;
->
-> -- 
-> Regards,
->
-> Laurent Pinchart
+-- 
+viresh
