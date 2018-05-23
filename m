@@ -1,73 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932449AbeEWKmx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 06:42:53 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:35961 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932394AbeEWKmu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 06:42:50 -0400
-Date: Wed, 23 May 2018 12:42:45 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Peter Rosin <peda@axentia.se>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Josh Wu <rainyfeeling@outlook.com>, linux-kernel@vger.kernel.org,
-        Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] mtd: nand: raw: atmel: add module param to avoid using
- dma
-Message-ID: <20180523124245.4ca332fd@bbrezillon>
-In-Reply-To: <498f4a40-0f4b-fb32-2d6c-032b5341f2b0@axentia.se>
-References: <20180329131054.22506-1-peda@axentia.se>
-        <20180329153322.5e2fc1e7@bbrezillon>
-        <ed87cf13-a69a-6115-f0a8-5f51c4957d1d@axentia.se>
-        <20180329154416.5c1a0013@bbrezillon>
-        <b740406a-e91c-67ad-24a3-cbdbe259d00d@axentia.se>
-        <20180402142249.7e076a64@bbrezillon>
-        <e0d9bd59-8031-e387-676e-dc5811170a0c@axentia.se>
-        <20180402212843.164d5d21@bbrezillon>
-        <20180402222020.1d344c14@bbrezillon>
-        <d7e6f78d-b57b-4d0f-c07c-ca6c1930cd51@axentia.se>
-        <20180403091813.5fb5c18c@bbrezillon>
-        <d0afd431-6e51-a9b7-c103-ecf1f6e07c2e@axentia.se>
-        <959d826d-1a98-ca22-acee-a4548427fcd3@microchip.com>
-        <498f4a40-0f4b-fb32-2d6c-032b5341f2b0@axentia.se>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S932502AbeEWKo0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 06:44:26 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:52924 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932282AbeEWKoW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 06:44:22 -0400
+X-Google-Smtp-Source: AB8JxZoqDnWiStWYSQsj5WQhoZj+PaUxtwAwwukOYzI7An8TwdnBt6A6Ygu/PWwXOLDq5KEGRLrk6Q==
+Subject: Re: [PATCH v1] cpufreq: tegra20: Fix imbalanced clock enable count
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180522211420.2006-1-digetx@gmail.com>
+ <20180523055817.subrv6oeckfecpcp@vireshk-i7>
+From: Dmitry Osipenko <digetx@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=digetx@gmail.com; prefer-encrypt=mutual; keydata=
+ xsBNBFpX5TwBCADQhg+lBnTunWSPbP5I+rM9q6EKPm5fu2RbqyVAh/W3fRvLyghdb58Yrmjm
+ KpDYUhBIZvAQoFLEL1IPAgJBtmPvemO1XUGPxfYNh/3BlcDFBAgERrI3BfA/6pk7SAFn8u84
+ p+J1TW4rrPYcusfs44abJrn8CH0GZKt2AZIsGbGQ79O2HHXKHr9V95ZEPWH5AR0UtL6wxg6o
+ O56UNG3rIzSL5getRDQW3yCtjcqM44mz6GPhSE2sxNgqureAbnzvr4/93ndOHtQUXPzzTrYB
+ z/WqLGhPdx5Ouzn0Q0kSVCQiqeExlcQ7i7aKRRrELz/5/IXbCo2O+53twlX8xOps9iMfABEB
+ AAHNIkRtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT7CwJQEEwEIAD4WIQSczHcO
+ 3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgIDAQIeAQIX
+ gAAKCRDTNNaPsNRzvFjTCACqAh1M9/YPq73/ai5h2ExDquTgJnjegL8KL2yHL3G+XINwzN5E
+ nPI7esoYm+zVWDJbv3UuRqylpookLNSRA01yyvkaMcipB/B128UnqmUiGRqezj9QE20yIauo
+ uHRuwHPE2q+UkfUhRX9iuOaEyQtZDiCa0myMjmRkJ+Z8ZetclEPG8dYZu47w04phuMlu1QAt
+ a0gkZOaMKvXgj21ushALS6nYnvm7HiIPQXfnEXThartatRvFdmbG4PCn0IoICkQBizwJtXrL
+ HEjELIFap0M8krVJlUoZTFaZnaZkGpUDWikeFtAuie2KuIxmVBYPM4X7pM3eP3AVvIPGS7EE
+ UUFuzsBNBFpX5TwBCADFNDou220thijaLLGaQsebWjzc/gPRxMixIpk856MRyRaQin+IbGD6
+ YskMb5ZSD3nS88LIKNfY4MMH0LwfYztI++ICG2vdFLkbBt78E+LqEa+kZ9072l4W5KO3mWQo
+ +jMfxXbpgGlc7iuEReDgl8iyZ27r51kSW665CYvvu2YJhLqgdj6QM1lN2D1UnhEhkkU+pRAj
+ 1rJVOxdfJaQNQS4+204p3TrURovzNGkN/brqakpNIcqGOAGQqb8F0tuwwuP7ERq/BzDNkbdr
+ qJOrVC/wkHRq1jfabQczWKf8MwYOvivR3HY8d3CpSQxmUXDtdOWfg0XGm1dxYnVfqPjuJaZt
+ ABEBAAHCwHwEGAEIACYWIQSczHcO3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbDAUJA8JnAAAK
+ CRDTNNaPsNRzvJzuB/9d+sxcwHbO8ZDcgaLX9N+bXFqN9fIRVmBUyWa+qqTSREA4uVAtYcRT
+ lfPE2OQ7aMFxaYPwo+/z5SLpu8HcEhN/FG9uIkfYwK0mdCO0vgvlfvBJm4VHe7C6vyAeEPJQ
+ DKbBvdgeqFqO+PsLkk2sawF/9sontMJ5iFfjNDj4UeAo4VsdlduTBZv5hHFvIbv/p7jKH6OT
+ 90FsgUSVbShh7SH5OzAcgqSy4kxuS1AHizWo6P3f9vei987LZWTyhuEuhJsOfivDsjKIq7qQ
+ c5eR+JJtyLEA0Jt4cQGhpzHtWB0yB3XxXzHVa4QUp00BNVWyiJ/t9JHT4S5mdyLfcKm7ddc9
+Message-ID: <68f62691-9108-9bee-a24d-5c978af8a5ab@gmail.com>
+Date: Wed, 23 May 2018 13:44:18 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180523055817.subrv6oeckfecpcp@vireshk-i7>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 22 May 2018 20:03:41 +0200
-Peter Rosin <peda@axentia.se> wrote:
-
-> On 2018-04-11 17:34, Nicolas Ferre wrote:
-> > On 11/04/2018 at 16:44, Peter Rosin wrote:  
-> >> Hi Nicolas,
-> >>
-> >> Boris asked for your input on this (the datasheet difference appears to
-> >> have no bearing on the issue) elsewhere in the tree of messages. It's
-> >> now been a week or so and I'm starting to wonder if you missed this
-> >> altogether or if you are simply out of office or something?  
-> > 
-> > Hi Peter,
-> > 
-> > I didn't dig into this issue with matrix datasheet reset values and your 
-> > findings below. I'll try to move forward with your detailed explanation 
-> > and with my contacts within the "product" team internally.  
+On 23.05.2018 08:58, Viresh Kumar wrote:
+> On 23-05-18, 00:14, Dmitry Osipenko wrote:
+>> Tegra20-cpufreq driver missed enabling the CPU clocks. This results in a
+>> clock-enable refcount disbalance on PLL_P <-> PLL_X reparent, causing
+>> PLL_X to get disabled while it shouldn't. Fix this by enabling the clocks
+>> on the driver probe.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>
+>> CPUFreq maintainers,
+>>
+>> Please take into account that this patch is made on top of my recent
+>> series of patches [0] "Clean up Tegra20 cpufreq driver" that was fully
+>> reviewed, but seems not applied yet. Let me know if you prefer to re-spin
+>> the [0], including this patch into the series.
+>>
+>> [0] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=45321
 > 
-> Hi again, just checking in to see if there is any progress? If not, maybe
-> it's time to just take the patch as-is, warts and imperfections included,
-> and even if we all hate it. But what to do...
+> This is already picked by Rafael and is sitting in pm/bleeding-edge
+> branch. Should get merged into linux-next in a day or two.
+> 
+>>  drivers/cpufreq/tegra20-cpufreq.c | 16 +++++++++++++++-
+>>  1 file changed, 15 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
+>> index 05f57dcd5215..ca5229265b60 100644
+>> --- a/drivers/cpufreq/tegra20-cpufreq.c
+>> +++ b/drivers/cpufreq/tegra20-cpufreq.c
+>> @@ -176,6 +176,14 @@ static int tegra20_cpufreq_probe(struct platform_device *pdev)
+>>  		goto put_pll_x;
+>>  	}
+>>  
+>> +	err = clk_prepare_enable(cpufreq->pll_x_clk);
+>> +	if (err)
+>> +		goto put_pll_p;
+>> +
+>> +	err = clk_prepare_enable(cpufreq->pll_p_clk);
+>> +	if (err)
+>> +		goto disable_pll_x;
+>> +
+>>  	cpufreq->dev = &pdev->dev;
+>>  	cpufreq->driver.get = cpufreq_generic_get;
+>>  	cpufreq->driver.attr = cpufreq_generic_attr;
+>> @@ -192,12 +200,16 @@ static int tegra20_cpufreq_probe(struct platform_device *pdev)
+>>  
+>>  	err = cpufreq_register_driver(&cpufreq->driver);
+>>  	if (err)
+>> -		goto put_pll_p;
+>> +		goto disable_pll_p;
+>>  
+>>  	platform_set_drvdata(pdev, cpufreq);
+>>  
+>>  	return 0;
+>>  
+>> +disable_pll_p:
+>> +	clk_disable_unprepare(cpufreq->pll_p_clk);
+>> +disable_pll_x:
+>> +	clk_disable_unprepare(cpufreq->pll_x_clk);
+>>  put_pll_p:
+>>  	clk_put(cpufreq->pll_p_clk);
+>>  put_pll_x:
+>> @@ -214,6 +226,8 @@ static int tegra20_cpufreq_remove(struct platform_device *pdev)
+>>  
+>>  	cpufreq_unregister_driver(&cpufreq->driver);
+>>  
+>> +	clk_disable_unprepare(cpufreq->pll_p_clk);
+>> +	clk_disable_unprepare(cpufreq->pll_x_clk);
+>>  	clk_put(cpufreq->pll_p_clk);
+>>  	clk_put(cpufreq->pll_x_clk);
+>>  	clk_put(cpufreq->cpu_clk);
+> 
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> 
 
-Well, it's not really that the fix is ugly, but I'm pretty sure it's
-actually not fixing the problem, just make it less likely to happen.
-And, as soon as you'll have more traffic going through the DRAM
-controller you'll experience the same problem again.
+Please hold on this patch, seems I interpreted the cpufreq driver logic
+incorrectly and it is probably fine as it is. I'll re-check later today.
