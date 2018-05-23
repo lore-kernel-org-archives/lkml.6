@@ -1,5 +1,5 @@
 Return-Path: <linux-security-module-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3293482-1527035143-2-3791241865242887981
+X-Cyrus-Session-Id: sloti22d1t05-3293482-1527035238-2-14354651422251424927
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-charsets: 
@@ -8,21 +8,22 @@ X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-security-module-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527035142; b=Gx2Gnaj6SISB3B4nNIx8cynDLNN2bT7Nw+wbUENS6sXLbyfLeO
-    T68k6Vis6uGmLPj9DVvTzh/2bGt8+Y8LYl3whwZfEaZyQ5F5DrdV9T9NYGiGbC1L
-    LpOZ+lRlvviBLnptA9F4v8Dc7QD5BzNFjZc3aS2UHWFvBVl3AGhQRjQ2oEjMX7mr
-    dvS/enb0KIuV8ETmd4Ab6Mc/hSBAj95Uc/xfmF3agI/+NiufYmj70+nxi7MvLCGc
-    I853avYcD3Swsc0J2rrPVQC7NpZ1UVQayOTHw/Acr51Tf0XM6IGzoUikkONoUssq
-    HvnIY7ImJ9C7o3E8Umafd79fYWwMb0aiDzDg==
+    1527035237; b=ZUu+3ZSxqwVNQ6kuQGWHYvKl4A9IAieiv8XHis3A1pyxu4Wo4O
+    n0/tnxHOqgroiYA/GRODkm56ixcWJNBs210r0Z1bSu8RtLr7u/zMM943K5KybSCK
+    joDI0Ye/+kygtlJJZJ+CdYxA1OomojJyfKBTVouw3uyb/fufhVN2Th67iB6nvoUx
+    io8JviD/SrXJRThduAI4gzksiAKBlVY25pOCQx721cW13ARFB/RvZHjzk+sQHbN1
+    5qMU2Rk157TYJwdqVhQplIoaMxaLurWckLJX7bg5OjAxxazW9+7rm9RXmnK8Jey5
+    nFuV3hmnh8pusnBB3I+mhBfHwEIRfw1X/FpQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=fm2; t=1527035142; bh=Zr8tob9WjQpv4ub+DZVhoMWd7osjYO
-    emJsgnYoVhIvY=; b=ndvtrI6JYx96lEcObreMxK9B0G8kcBJ7ko0/QV84Grt2BF
-    ln99CbWnzDBzo0phdmyUMZrpu+YpyeZYuscgoEG78W5vbH1RJ25XbyBNeZHchEmD
-    k6Tka1cax3FiijH90VenhREs8FwqcvFic+K4AmfXOe0Qu0UAEN7PpeWRqwqzLPVq
-    3Hv+mds3DcKP6gaEdfAFW4dhIyW0NYW0dk0wubAn7u7Z7NI3IwJY5hf+LJOhN1S+
-    uaUJSyUV//X+nl2wsn8VxKYKFmfw0/S1c0pMBh+R/ErYyFy/DgVmmDyR4mJH3B/P
-    pV2WzUYPi7ADpTu2i7LlrCfZ+TroVCzn5U5gaeRQ==
+    messagingengine.com; h=from:to:cc:subject:date:in-reply-to
+    :references:message-id:sender:list-id; s=fm2; t=1527035237; bh=P
+    UgX1fGby7/8mnALdul8EET86vGuzfx90mbHWm2PKxU=; b=GaJ757hNEvn2UM7Qf
+    P/f9grTRxmxYOg2jE+SZe7e3aBrMue8NjLdP5b1iSoQBFqcdSjtzTLDH1Jgckkl/
+    A804qZ+WNsgxh5xAB/LRiXVKW2j6ovzsifNE6hUPfkA2mfNSPZk0w4blT4R48kVJ
+    ATM0X7IbnEY5p9qX7Hif1oqegG9QJmGX5PTmDeTI5OdvHoP4nSGbPyNF/TB/5Dnf
+    sV6qN9wP+a5BX55Xcmt3VdRsePjO0cy/Z5NXWyXKCStmy2S0LVxfxeFjO/1WtFCU
+    fyYvLlFZwwI6cqQGHnEiz0/XwLtDW8lNiAeKBrsUiRaCUrbl0wpMS1W4E9eIsxje
+    8Y37A==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linux.ibm.com;
@@ -55,22 +56,23 @@ Authentication-Results: mx6.messagingengine.com;
       header_is_org_domain=no;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPt23C9XkcPhn2M4ZUgmR4MMQM4gt0KA9YsvfkzNbGM0kdZqbCTfgdJYeUMhe2sz/MwRA80YuMcXdMs4eD21zpI57M/6njTiTkSYl9Pqf5an4QCZCAsy
-    1DINzzjAnvgQvNy153UAF/j5FX16RNJiEvqCLw9JyzDRqtdNhe33CziLDmo9DA9AaLLX2DzlJ0kGrgghkM98dz5nopRGbGgiywmjBzgAU5B7ysR9+/VHYruB
-    TfNS9CSkiPWTV2YQGG0HLA==
+X-CM-Envelope: MS4wfCgJJ0Kpbe3ugvZhdLdkpuNDlqPF1jIR4E4qjDlnC0a24POgVDqysKPguQePEPoLZhs9pDWfILKuEHEr1LaIyyfF8z8lmCisZpTE9qHzobA/bTvoWED2
+    luIne80TzhjTUp6FnMzfiVx29a5WDBR7hsaaksGZv6zl0CgHf4UNJDxQyllLMMq78eSIiyjhC+PzF4iHnKnlwBXEKN+CfLmGQ1eOizp0m/4efIhuRdQ45ve+
+    8SfECOMQnd+2l44tjO1qTg==
 X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8
-    a=Di9E_7cMCeAdn5_19KcA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=VnNF1IyMAAAA:8
+    a=VwQbUJbxAAAA:8 a=dUYqpe9WOuBEtok2xBMA:9 a=kas67cv5UFq9e37m:21
+    a=-LfwMX1bhVgRieC4:21 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753511AbeEWAZk (ORCPT <rfc822;linux@kroah.com>);
-        Tue, 22 May 2018 20:25:40 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53942 "EHLO
+        id S1753856AbeEWA1N (ORCPT <rfc822;linux@kroah.com>);
+        Tue, 22 May 2018 20:27:13 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43140 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753484AbeEWAZj (ORCPT
+        by vger.kernel.org with ESMTP id S1753859AbeEWA1I (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 22 May 2018 20:25:39 -0400
+        Tue, 22 May 2018 20:27:08 -0400
 From: Thiago Jung Bauermann <bauerman@linux.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
@@ -87,23 +89,25 @@ Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
         "David S. Miller" <davem@davemloft.net>,
         "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
         Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Subject: [PATCH v7 00/14] Appended signatures support for IMA appraisal
-Date: Tue, 22 May 2018 21:12:39 -0300
+Subject: [PATCH v7 14/14] ima: Store the measurement again when appraising a modsig
+Date: Tue, 22 May 2018 21:12:53 -0300
 X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180523001253.15247-1-bauerman@linux.ibm.com>
+References: <20180523001253.15247-1-bauerman@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18052300-0020-0000-0000-00000DFD5274
+x-cbid: 18052300-8235-0000-0000-00000D8D5A92
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009068; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000261; SDB=6.01036241; UDB=6.00530093; IPR=6.00815369;
- MB=3.00021248; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-23 00:25:35
+ PH=3.00000004; SC=3.00000261; SDB=6.01036241; UDB=6.00530093; IPR=6.00815370;
+ MB=3.00021248; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-23 00:27:05
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052300-0021-0000-0000-00006182BD8F
-Message-Id: <20180523001253.15247-1-bauerman@linux.ibm.com>
+x-cbparentid: 18052300-8236-0000-0000-000041177066
+Message-Id: <20180523001253.15247-15-bauerman@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-22_09:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
  definitions=main-1805230002
 Sender: owner-linux-security-module@vger.kernel.org
@@ -111,201 +115,272 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hello,
+If the IMA template contains the 'sig' field, then the modsig should be
+added to the measurement list when the file is appraised, and that is what
+normally happens.
 
-The main difference in this version is the addition of the last patch, which
-ensures that there will always be a measurement entry containing the appended
-modsig if one was used to appraise the file. The patch description and comments
-in the code should explain in which circumstances the patch proved necessary.
+But If a measurement rule caused a file containing a modsig to be measured
+before a different rule causes it to be appraised, the resulting
+measurement entry will not contain the modsig because it is only fetched
+during appraisal. When the appraisal rule triggers, it won't store a new
+measurement containing the modsig because the file was already measured.
 
-Apart from that, there was some small cleaning up of the code, and merging and
-splitting of patches. The changelog below has the details.
+We need to detect that situation and store an additional measurement with
+the modsig. This is done by defining the appraise subaction flag
+IMA_READ_MEASURE and testing for it in process_measurement().
 
-These patches apply on top of today's linux-integrity/next-integrity.
+Suggested-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+---
+ security/integrity/ima/ima.h          |  1 +
+ security/integrity/ima/ima_api.c      |  8 ++++-
+ security/integrity/ima/ima_main.c     | 16 +++++++++-
+ security/integrity/ima/ima_policy.c   | 59 ++++++++++++++++++++++++++++++++---
+ security/integrity/ima/ima_template.c | 27 ++++++++++++++++
+ security/integrity/integrity.h        |  9 ++++--
+ 6 files changed, 110 insertions(+), 10 deletions(-)
 
-Original cover letter:
-
-On the OpenPOWER platform, secure boot and trusted boot are being
-implemented using IMA for taking measurements and verifying signatures.
-Since the kernel image on Power servers is an ELF binary, kernels are
-signed using the scripts/sign-file tool and thus use the same signature
-format as signed kernel modules.
-
-This patch series adds support in IMA for verifying those signatures.
-It adds flexibility to OpenPOWER secure boot, because it allows it to boot
-kernels with the signature appended to them as well as kernels where the
-signature is stored in the IMA extended attribute.
-
-Changes since v6:
-
-- Patch "PKCS#7: Introduce pkcs7_get_message_sig() and verify_pkcs7_message_sig()"
-  - Retitled to "PKCS#7: Refactor verify_pkcs7_signature() and
-    add pkcs7_get_message_sig()"
-  - Reworded description to clarify why the refactoring is needed.
-    The code is unchanged. (Suggested by Mimi Zohar)
-  - Added Mimi Zohar's Reviewed-by.
-
-- Patch "PKCS#7: Introduce pkcs7_get_digest()"
-  - Added Mimi Zohar's Reviewed-by.
-
-- Patch "integrity: Introduce integrity_keyring_from_id"
-  - Added Mimi Zohar's Signed-off-by.
-
-- Patch "integrity: Introduce asymmetric_sig_has_known_key()"
-  - Added Mimi Zohar's Signed-off-by.
-
-- Patch "integrity: Select CONFIG_KEYS instead of depending on it"
-  - Added Mimi Zohar's Signed-off-by.
-
-- Patch "ima: Introduce is_ima_sig()"
-  - Renamed function to is_signed() (suggested by Mimi Zohar).
-
-- Patch "ima: Add functions to read and verify a modsig signature"
-  - Changed stubs for the !CONFIG_IMA_APPRAISE_MODSIG to return -EOPNOTSUPP
-    instead of -ENOTSUPP, since the latter isn't defined in uapi headers.
-  - Moved functions to the patches which use them and dropped this patch
-    (suggested by Mimi Zohar).
-
-- Patch "ima: Implement support for module-style appended signatures"
-  - Prevent reading and writing of IMA_MODSIG xattr in ima_read_xattr()
-    and ima_inode_setxattr().
-  - Simplify code in process_measurement() which decides whether to try
-    reading a modsig (suggested by Mimi Zohar).
-  - Moved some functions from patch "ima: Add functions to read and verify
-    a modsig signature" into this patch.
-
-- Patch "ima: Add new "d-sig" template field"
-  - New patch containing code from patch "ima: Write modsig to the measurement list"
-    (Suggested by Mimi Zohar).
-
-- Patch "ima: Write modsig to the measurement list"
-  - Moved some functions from patch "ima: Add functions to read and verify
-    a modsig signature" into this patch.
-  - Moved code related to d-sig support to new patch.
-
-- Patch "ima: Write modsig to the measurement list"
-  - New patch.
-
-Changes since v5:
-- Patch "ima: Remove some superfluous parentheses"
-  - Dropped.
-
-- Patch "evm, ima: Remove superfluous parentheses"
-  - Dropped.
-
-- Patch "evm, ima: Remove more superfluous parentheses"
-  - Dropped.
-
-- Patch "ima: Don't pass xattr value to EVM xattr verification."
-  - Dropped.
-
-- Patch "ima: Store measurement after appraisal"
-  - Dropped.
-
-- Patch "MODSIGN: Export module signature definitions"
-  - Reduced changes to the code that was moved into validate_module_sig()
-    to the minimum necessary (suggested by Mimi Zohar).
-  - Added SPDX license identifier.
-
-- Patch "PKCS#7: Introduce pkcs7_get_message_sig() and verify_pkcs7_message_sig()"
-  - In the hypothetical case that there's more than one sinfo, changed
-    pkcs7_get_message_sig() to return NULL instead of the first sinfo's sig.
-  - Dropped Mimi's Reviewed-by because of the code change above.
-
-- Patch "PKCS#7: Introduce pkcs7_get_digest()"
-  - New patch.
-
-- Patch "integrity: Introduce integrity_keyring_from_id"
-  - Add stub in case CONFIG_INTEGRITY_SIGNATURE isn't set.
-
-- Patch "integrity: Introduce asymmetric_sig_has_known_key()"
-  - New patch.
-
-- Patch "ima: Introduce is_ima_sig"
-  - New patch, with code from "ima: Improvements in ima_appraise_measurement"
-
-- Patch "ima: Add modsig appraise_type option for module-style appended signatures"
-  - Changed appraise_type to accept "imasig|modsig" instead of
-    "modsig|imasig" to reflect the fact that now IMA only looks for
-    the modsig after failing to find a suitable imasig stored in the xattr.
-  - Added SPDX license identifier.
-
-- Patch "ima: Add functions to read and verify a modsig signature"
-  - Changed ima_read_modsig() to abort loading the modsig if it uses a key
-    which isn't known to IMA.
-  - Changed ima_get_modsig_hash() to use pkcs7_get_digest().
-
-- Patch "ima: Implement support for module-style appended signatures"
-  - Added ima_xattr_sig_known_key() auxiliary function.
-  - Call ima_read_modsig() directly from process_measurement() instead of
-    from ima_appraise_measurement(), and only if there's no xattr signature
-    or if the xattr signature uses a key which isn't known to IMA.
-  - hash_algo in process_measurement() is always obtained from the xattr
-    signature, never from the modsig.
-  - Changes to ima_appraise_measurement() are a lot simpler now, and don't
-    involve going back to the main switch statement a second time.
-  - Pass xattr_value to evm_verifyxattr() unless xattr_value is a modsig.
-
-- Patch "ima: Write modsig to the measurement list"
-  - Since now we determine whether we'll use an xattr sig or a modsig
-    at the time they are read, there's no need to store a measurement
-    again in the modsig case. Thus, this patch doesn't need to change
-    ima_store_measurement() nor process_measurement() anymore.
-  - Define new "d-sig" template field which holds the digest that is
-    expected to match the one contained in the modsig.
-  - Moved addition of ima_modsig_serialize_data() to patch "ima: Add
-    functions to read and verify a modsig signature".
-  - Increase MAX_TEMPLATE_NAME_LEN to 24.
-
-Thiago Jung Bauermann (14):
-  MODSIGN: Export module signature definitions
-  PKCS#7: Refactor verify_pkcs7_signature() and add
-    pkcs7_get_message_sig()
-  PKCS#7: Introduce pkcs7_get_digest()
-  integrity: Introduce struct evm_xattr
-  integrity: Introduce integrity_keyring_from_id()
-  integrity: Introduce asymmetric_sig_has_known_key()
-  integrity: Select CONFIG_KEYS instead of depending on it
-  ima: Introduce is_signed()
-  ima: Export func_tokens
-  ima: Add modsig appraise_type option for module-style appended
-    signatures
-  ima: Implement support for module-style appended signatures
-  ima: Add new "d-sig" template field
-  ima: Write modsig to the measurement list
-  ima: Store the measurement again when appraising a modsig
-
- Documentation/ABI/testing/ima_policy      |   6 +-
- Documentation/security/IMA-templates.rst  |   5 +
- certs/system_keyring.c                    |  61 ++++++---
- crypto/asymmetric_keys/pkcs7_parser.c     |  16 +++
- crypto/asymmetric_keys/pkcs7_verify.c     |  25 ++++
- include/crypto/pkcs7.h                    |   5 +
- include/linux/module.h                    |   3 -
- include/linux/module_signature.h          |  44 +++++++
- include/linux/verification.h              |  10 ++
- init/Kconfig                              |   6 +-
- kernel/Makefile                           |   2 +-
- kernel/module.c                           |   1 +
- kernel/module_signing.c                   |  77 +++++------
- security/integrity/Kconfig                |   2 +-
- security/integrity/digsig.c               |  28 +++-
- security/integrity/digsig_asymmetric.c    |  44 +++++--
- security/integrity/evm/evm_crypto.c       |   4 +-
- security/integrity/evm/evm_main.c         |  10 +-
- security/integrity/ima/Kconfig            |  13 ++
- security/integrity/ima/Makefile           |   1 +
- security/integrity/ima/ima.h              |  67 ++++++++++
- security/integrity/ima/ima_api.c          |   8 +-
- security/integrity/ima/ima_appraise.c     |  78 +++++++++--
- security/integrity/ima/ima_main.c         |  33 ++++-
- security/integrity/ima/ima_modsig.c       | 212 ++++++++++++++++++++++++++++++
- security/integrity/ima/ima_policy.c       |  81 ++++++++++--
- security/integrity/ima/ima_template.c     |  31 ++++-
- security/integrity/ima/ima_template_lib.c |  49 ++++++-
- security/integrity/ima/ima_template_lib.h |   2 +
- security/integrity/integrity.h            |  30 ++++-
- 30 files changed, 825 insertions(+), 129 deletions(-)
- create mode 100644 include/linux/module_signature.h
- create mode 100644 security/integrity/ima/ima_modsig.c
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 33120c10a173..081e2b87cf9d 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -147,6 +147,7 @@ int ima_init_crypto(void);
+ void ima_putc(struct seq_file *m, void *data, int datalen);
+ void ima_print_digest(struct seq_file *m, u8 *digest, u32 size);
+ struct ima_template_desc *ima_template_desc_current(void);
++bool ima_current_template_has_sig(void);
+ int ima_restore_measurement_entry(struct ima_template_entry *entry);
+ int ima_restore_measurement_list(loff_t bufsize, void *buf);
+ int ima_measurements_show(struct seq_file *m, void *v);
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index bf88236b7a0b..73f6d4df66a7 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -288,7 +288,13 @@ void ima_store_measurement(struct integrity_iint_cache *iint,
+ 					    xattr_len, NULL};
+ 	int violation = 0;
+ 
+-	if (iint->measured_pcrs & (0x1 << pcr))
++	/*
++	 * We still need to store the measurement in the case of MODSIG because
++	 * we only have its contents to put in the list at the time of
++	 * appraisal. See comment in store_measurement_again() for more details.
++	 */
++	if (iint->measured_pcrs & (0x1 << pcr) &&
++	    (!xattr_value || xattr_value->type != IMA_MODSIG))
+ 		return;
+ 
+ 	result = ima_alloc_init_template(&event_data, &entry);
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 9d32ce6c3df3..90e336a2b5c4 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -169,6 +169,20 @@ void ima_file_free(struct file *file)
+ 	ima_check_last_writer(iint, inode, file);
+ }
+ 
++/*
++ * A file measurement might already exist in the measurement list. Based on
++ * policy, include an additional file measurement containing the appended
++ * signature and file hash, without the appended signature (i.e., the 'd-sig'
++ * field).
++ */
++static bool store_measurement_again(struct integrity_iint_cache *iint,
++				    struct evm_ima_xattr_data *xattr_value)
++{
++	return iint->flags & IMA_READ_MEASURE && xattr_value &&
++		xattr_value->type == IMA_MODSIG &&
++		ima_current_template_has_sig();
++}
++
+ static int process_measurement(struct file *file, const struct cred *cred,
+ 			       u32 secid, char *buf, loff_t size, int mask,
+ 			       enum ima_hooks func, int opened)
+@@ -302,7 +316,7 @@ static int process_measurement(struct file *file, const struct cred *cred,
+ 	if (!pathbuf)	/* ima_rdwr_violation possibly pre-fetched */
+ 		pathname = ima_d_path(&file->f_path, &pathbuf, filename);
+ 
+-	if (action & IMA_MEASURE)
++	if (action & IMA_MEASURE || store_measurement_again(iint, xattr_value))
+ 		ima_store_measurement(iint, file, pathname,
+ 				      xattr_value, xattr_len, pcr);
+ 	if (rc == 0 && (action & IMA_APPRAISE_SUBMASK)) {
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 66d0d3bcf1b2..5ad5ced3b352 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -10,6 +10,9 @@
+  *	- initialize default measure policy rules
+  *
+  */
++
++#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++
+ #include <linux/module.h>
+ #include <linux/list.h>
+ #include <linux/fs.h>
+@@ -341,7 +344,8 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
+  * In addition to knowing that we need to appraise the file in general,
+  * we need to differentiate between calling hooks, for hook specific rules.
+  */
+-static int get_subaction(struct ima_rule_entry *rule, enum ima_hooks func)
++static int get_appraise_subaction(struct ima_rule_entry *rule,
++				  enum ima_hooks func)
+ {
+ 	if (!(rule->flags & IMA_FUNC))
+ 		return IMA_FILE_APPRAISE;
+@@ -362,6 +366,15 @@ static int get_subaction(struct ima_rule_entry *rule, enum ima_hooks func)
+ 	}
+ }
+ 
++static int get_measure_subaction(struct ima_rule_entry *rule,
++				 enum ima_hooks func)
++{
++	if (rule->flags & IMA_FUNC && ima_hook_supports_modsig(func))
++		return IMA_READ_MEASURE;
++	else
++		return 0;
++}
++
+ /**
+  * ima_match_policy - decision based on LSM and other conditions
+  * @inode: pointer to an inode for which the policy decision is being made
+@@ -398,11 +411,12 @@ int ima_match_policy(struct inode *inode, const struct cred *cred, u32 secid,
+ 
+ 		action |= entry->action & IMA_DO_MASK;
+ 		if (entry->action & IMA_APPRAISE) {
+-			action |= get_subaction(entry, func);
++			action |= get_appraise_subaction(entry, func);
+ 			action &= ~IMA_HASH;
+ 			if (ima_fail_unverifiable_sigs)
+ 				action |= IMA_FAIL_UNVERIFIABLE_SIGS;
+-		}
++		} else if (entry->action & IMA_MEASURE)
++			action |= get_measure_subaction(entry, func);
+ 
+ 		if (entry->action & IMA_DO_MASK)
+ 			actmask &= ~(entry->action | entry->action << 1);
+@@ -642,6 +656,40 @@ static void ima_log_string(struct audit_buffer *ab, char *key, char *value)
+ 	ima_log_string_op(ab, key, value, NULL);
+ }
+ 
++/*
++ * To validate the appended signature included in the measurement list requires
++ * the file hash, without the appended signature (i.e., the 'd-sig' field).
++ * Therefore, notify the user if they have the 'sig' field but not the 'd-sig'
++ * field in the template.
++ */
++static void check_current_template_modsig(void)
++{
++#define MSG "template with 'sig' field also needs 'd-sig' field when modsig is allowed\n"
++	struct ima_template_desc *template;
++	bool has_sig, has_dsig;
++	static bool checked;
++	int i;
++
++	/* We only need to notify the user once. */
++	if (checked)
++		return;
++
++	has_sig = has_dsig = false;
++	template = ima_template_desc_current();
++	for (i = 0; i < template->num_fields; i++) {
++		if (!strcmp(template->fields[i]->field_id, "sig"))
++			has_sig = true;
++		else if (!strcmp(template->fields[i]->field_id, "d-sig"))
++			has_dsig = true;
++	}
++
++	if (has_sig && !has_dsig)
++		pr_notice(MSG);
++
++	checked = true;
++#undef MSG
++}
++
+ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ {
+ 	struct audit_buffer *ab;
+@@ -920,10 +968,11 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 			if ((strcmp(args[0].from, "imasig")) == 0)
+ 				entry->flags |= IMA_DIGSIG_REQUIRED;
+ 			else if (ima_hook_supports_modsig(entry->func) &&
+-				 strcmp(args[0].from, "imasig|modsig") == 0)
++				 strcmp(args[0].from, "imasig|modsig") == 0) {
+ 				entry->flags |= IMA_DIGSIG_REQUIRED
+ 						| IMA_MODSIG_ALLOWED;
+-			else
++				check_current_template_modsig();
++			} else
+ 				result = -EINVAL;
+ 			break;
+ 		case Opt_permit_directio:
+diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
+index 36fc32f538b5..967c287dcdfb 100644
+--- a/security/integrity/ima/ima_template.c
++++ b/security/integrity/ima/ima_template.c
+@@ -230,6 +230,33 @@ struct ima_template_desc *ima_template_desc_current(void)
+ 	return ima_template;
+ }
+ 
++/*
++ * Tells whether the current template has fields which reference a file's
++ * signature.
++ */
++bool ima_current_template_has_sig(void)
++{
++	static int ima_template_has_sig = -1;
++
++	if (ima_template_has_sig < 0) {
++		struct ima_template_desc *template;
++		int i;
++
++		template = ima_template_desc_current();
++		for (i = 0; i < template->num_fields; i++)
++			if (!strcmp(template->fields[i]->field_id, "sig") ||
++			    !strcmp(template->fields[i]->field_id, "d-sig")) {
++				ima_template_has_sig = 1;
++				break;
++			}
++
++		if (ima_template_has_sig < 0)
++			ima_template_has_sig = 0;
++	}
++
++	return ima_template_has_sig;
++}
++
+ int __init ima_init_template(void)
+ {
+ 	struct ima_template_desc *template = ima_template_desc_current();
+diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+index b38339c02541..a85b83519fc8 100644
+--- a/security/integrity/integrity.h
++++ b/security/integrity/integrity.h
+@@ -38,12 +38,13 @@
+ #define IMA_MODSIG_ALLOWED	0x20000000
+ 
+ #define IMA_DO_MASK		(IMA_MEASURE | IMA_APPRAISE | IMA_AUDIT | \
+-				 IMA_HASH | IMA_APPRAISE_SUBMASK)
++				 IMA_HASH | IMA_APPRAISE_SUBMASK | \
++				 IMA_READ_MEASURE)
+ #define IMA_DONE_MASK		(IMA_MEASURED | IMA_APPRAISED | IMA_AUDITED | \
+ 				 IMA_HASHED | IMA_COLLECTED | \
+-				 IMA_APPRAISED_SUBMASK)
++				 IMA_APPRAISED_SUBMASK | IMA_READ_MEASURED)
+ 
+-/* iint subaction appraise cache flags */
++/* iint subaction appraise and measure cache flags */
+ #define IMA_FILE_APPRAISE	0x00001000
+ #define IMA_FILE_APPRAISED	0x00002000
+ #define IMA_MMAP_APPRAISE	0x00004000
+@@ -54,6 +55,8 @@
+ #define IMA_READ_APPRAISED	0x00080000
+ #define IMA_CREDS_APPRAISE	0x00100000
+ #define IMA_CREDS_APPRAISED	0x00200000
++#define IMA_READ_MEASURE	0x00400000
++#define IMA_READ_MEASURED	0x00800000
+ #define IMA_APPRAISE_SUBMASK	(IMA_FILE_APPRAISE | IMA_MMAP_APPRAISE | \
+ 				 IMA_BPRM_APPRAISE | IMA_READ_APPRAISE | \
+ 				 IMA_CREDS_APPRAISE)
 
