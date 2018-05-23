@@ -1,320 +1,247 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932451AbeEWKHu (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 06:07:50 -0400
-Received: from srv-hp10-72.netsons.net ([94.141.22.72]:50238 "EHLO
-        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932220AbeEWKFn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 06:05:43 -0400
-From: Luca Ceresoli <luca@lucaceresoli.net>
-To: linux-media@vger.kernel.org
-Cc: Sakari Ailus <sakari.ailus@iki.fi>,
-        Luca Ceresoli <luca@lucaceresoli.net>,
-        Leon Luo <leonl@leopardimaging.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: [PATCH v3 2/7] media: imx274: consolidate per-mode data in imx274_frmfmt
-Date: Wed, 23 May 2018 12:05:15 +0200
-Message-Id: <1527069921-21084-3-git-send-email-luca@lucaceresoli.net>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1527069921-21084-1-git-send-email-luca@lucaceresoli.net>
-References: <1527069921-21084-1-git-send-email-luca@lucaceresoli.net>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        id S932452AbeEWKIx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 06:08:53 -0400
+Received: from foss.arm.com ([217.140.101.70]:52350 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932220AbeEWKIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 06:08:51 -0400
+Subject: Re: [PATCH 05/14] arm64: Add 'ssbd' command-line option
+To: Marc Zyngier <marc.zyngier@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu
+Cc: Kees Cook <keescook@chromium.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Andy Lutomirski <luto@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <20180522150648.28297-1-marc.zyngier@arm.com>
+ <20180522150648.28297-6-marc.zyngier@arm.com>
+From: Julien Grall <julien.grall@arm.com>
+Message-ID: <74e7c9f0-5eb4-904c-a6d8-2972e10a5729@arm.com>
+Date: Wed, 23 May 2018 11:08:46 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180522150648.28297-6-marc.zyngier@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Data about the implemented readout modes is partially stored in
-imx274_formats[], the rest is scattered in several arrays. The latter
-are then accessed using the mode index, e.g.:
+Hi Marc,
 
-  min_frame_len[priv->mode_index]
+On 05/22/2018 04:06 PM, Marc Zyngier wrote:
+> On a system where the firmware implements ARCH_WORKAROUND_2,
+> it may be useful to either permanently enable or disable the
+> workaround for cases where the user decides that they'd rather
+> not get a trap overhead, and keep the mitigation permanently
+> on or off instead of switching it on exception entry/exit.
+> 
+> In any case, default to the mitigation being enabled.
+> 
+> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 
-Consolidate all these data in imx274_formats[], and store a pointer to
-the selected mode (i.e. imx274_formats[priv->mode_index]) in the main
-device struct. This way code to use these data becomes more readable,
-e.g.:
+Reviewed-by: Julien Grall <julien.grall@arm.com>
 
-  priv->mode->min_frame_len
+Cheers,
 
-This removes lots of scaffolding code and keeps data about each mode
-in a unique place.
+> ---
+>   Documentation/admin-guide/kernel-parameters.txt |  17 ++++
+>   arch/arm64/include/asm/cpufeature.h             |   6 ++
+>   arch/arm64/kernel/cpu_errata.c                  | 102 ++++++++++++++++++++----
+>   3 files changed, 109 insertions(+), 16 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index f2040d46f095..646e112c6f63 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -4092,6 +4092,23 @@
+>   			expediting.  Set to zero to disable automatic
+>   			expediting.
+>   
+> +	ssbd=		[ARM64,HW]
+> +			Speculative Store Bypass Disable control
+> +
+> +			On CPUs that are vulnerable to the Speculative
+> +			Store Bypass vulnerability and offer a
+> +			firmware based mitigation, this parameter
+> +			indicates how the mitigation should be used:
+> +
+> +			force-on:  Unconditionnaly enable mitigation for
+> +				   for both kernel and userspace
+> +			force-off: Unconditionnaly disable mitigation for
+> +				   for both kernel and userspace
+> +			kernel:    Always enable mitigation in the
+> +				   kernel, and offer a prctl interface
+> +				   to allow userspace to register its
+> +				   interest in being mitigated too.
+> +
+>   	stack_guard_gap=	[MM]
+>   			override the default stack gap protection. The value
+>   			is in page units and it defines how many pages prior
+> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
+> index 09b0f2a80c8f..9bc548e22784 100644
+> --- a/arch/arm64/include/asm/cpufeature.h
+> +++ b/arch/arm64/include/asm/cpufeature.h
+> @@ -537,6 +537,12 @@ static inline u64 read_zcr_features(void)
+>   	return zcr;
+>   }
+>   
+> +#define ARM64_SSBD_UNKNOWN		-1
+> +#define ARM64_SSBD_FORCE_DISABLE	0
+> +#define ARM64_SSBD_EL1_ENTRY		1
+> +#define ARM64_SSBD_FORCE_ENABLE		2
+> +#define ARM64_SSBD_MITIGATED		3
+> +
+>   #endif /* __ASSEMBLY__ */
+>   
+>   #endif
+> diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
+> index 7fd6d5b001f5..f1d4e75b0ddd 100644
+> --- a/arch/arm64/kernel/cpu_errata.c
+> +++ b/arch/arm64/kernel/cpu_errata.c
+> @@ -235,6 +235,38 @@ enable_smccc_arch_workaround_1(const struct arm64_cpu_capabilities *entry)
+>   #ifdef CONFIG_ARM64_SSBD
+>   DEFINE_PER_CPU_READ_MOSTLY(u64, arm64_ssbd_callback_required);
+>   
+> +int ssbd_state __read_mostly = ARM64_SSBD_EL1_ENTRY;
+> +
+> +static const struct ssbd_options {
+> +	const char	*str;
+> +	int		state;
+> +} ssbd_options[] = {
+> +	{ "force-on",	ARM64_SSBD_FORCE_ENABLE, },
+> +	{ "force-off",	ARM64_SSBD_FORCE_DISABLE, },
+> +	{ "kernel",	ARM64_SSBD_EL1_ENTRY, },
+> +};
+> +
+> +static int __init ssbd_cfg(char *buf)
+> +{
+> +	int i;
+> +
+> +	if (!buf || !buf[0])
+> +		return -EINVAL;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(ssbd_options); i++) {
+> +		int len = strlen(ssbd_options[i].str);
+> +
+> +		if (strncmp(buf, ssbd_options[i].str, len))
+> +			continue;
+> +
+> +		ssbd_state = ssbd_options[i].state;
+> +		return 0;
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+> +early_param("ssbd", ssbd_cfg);
+> +
+>   void __init arm64_update_smccc_conduit(struct alt_instr *alt,
+>   				       __le32 *origptr, __le32 *updptr,
+>   				       int nr_inst)
+> @@ -272,44 +304,82 @@ static bool has_ssbd_mitigation(const struct arm64_cpu_capabilities *entry,
+>   				    int scope)
+>   {
+>   	struct arm_smccc_res res;
+> -	bool supported = true;
+> +	bool required = true;
+> +	s32 val;
+>   
+>   	WARN_ON(scope != SCOPE_LOCAL_CPU || preemptible());
+>   
+> -	if (psci_ops.smccc_version == SMCCC_VERSION_1_0)
+> +	if (psci_ops.smccc_version == SMCCC_VERSION_1_0) {
+> +		ssbd_state = ARM64_SSBD_UNKNOWN;
+>   		return false;
+> +	}
+>   
+> -	/*
+> -	 * The probe function return value is either negative
+> -	 * (unsupported or mitigated), positive (unaffected), or zero
+> -	 * (requires mitigation). We only need to do anything in the
+> -	 * last case.
+> -	 */
+>   	switch (psci_ops.conduit) {
+>   	case PSCI_CONDUIT_HVC:
+>   		arm_smccc_1_1_hvc(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
+>   				  ARM_SMCCC_ARCH_WORKAROUND_2, &res);
+> -		if ((int)res.a0 != 0)
+> -			supported = false;
+>   		break;
+>   
+>   	case PSCI_CONDUIT_SMC:
+>   		arm_smccc_1_1_smc(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
+>   				  ARM_SMCCC_ARCH_WORKAROUND_2, &res);
+> -		if ((int)res.a0 != 0)
+> -			supported = false;
+>   		break;
+>   
+>   	default:
+> -		supported = false;
+> +		ssbd_state = ARM64_SSBD_UNKNOWN;
+> +		return false;
+>   	}
+>   
+> -	if (supported) {
+> -		__this_cpu_write(arm64_ssbd_callback_required, 1);
+> +	val = (s32)res.a0;
+> +
+> +	switch (val) {
+> +	case SMCCC_RET_NOT_SUPPORTED:
+> +		ssbd_state = ARM64_SSBD_UNKNOWN;
+> +		return false;
+> +
+> +	case SMCCC_RET_NOT_REQUIRED:
+> +		ssbd_state = ARM64_SSBD_MITIGATED;
+> +		return false;
+> +
+> +	case SMCCC_RET_SUCCESS:
+> +		required = true;
+> +		break;
+> +
+> +	case 1:	/* Mitigation not required on this CPU */
+> +		required = false;
+> +		break;
+> +
+> +	default:
+> +		WARN_ON(1);
+> +		return false;
+> +	}
+> +
+> +	switch (ssbd_state) {
+> +	case ARM64_SSBD_FORCE_DISABLE:
+> +		pr_info_once("%s disabled from command-line\n", entry->desc);
+> +		do_ssbd(false);
+> +		required = false;
+> +		break;
+> +
+> +	case ARM64_SSBD_EL1_ENTRY:
+> +		if (required) {
+> +			__this_cpu_write(arm64_ssbd_callback_required, 1);
+> +			do_ssbd(true);
+> +		}
+> +		break;
+> +
+> +	case ARM64_SSBD_FORCE_ENABLE:
+> +		pr_info_once("%s forced from command-line\n", entry->desc);
+>   		do_ssbd(true);
+> +		required = true;
+> +		break;
+> +
+> +	default:
+> +		WARN_ON(1);
+> +		break;
+>   	}
+>   
+> -	return supported;
+> +	return required;
+>   }
+>   #endif	/* CONFIG_ARM64_SSBD */
+>   
+> 
 
-Also remove a parameter to imx274_mode_regs() that is now unused.
-
-While this adds the mode pointer to the device struct, it does not
-remove the mode_index from it because mode_index is still used in two
-dev_dbg() calls.  This will be handled in a follow-up commit.
-
-Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
-
----
-Changed v2 -> v3: nothing
-
-Changed v1 -> v2:
- - add "media: " prefix to commit message
----
- drivers/media/i2c/imx274.c | 139 +++++++++++++++++++++------------------------
- 1 file changed, 66 insertions(+), 73 deletions(-)
-
-diff --git a/drivers/media/i2c/imx274.c b/drivers/media/i2c/imx274.c
-index 8a8a11b8d75d..2ec31ae4e60d 100644
---- a/drivers/media/i2c/imx274.c
-+++ b/drivers/media/i2c/imx274.c
-@@ -147,10 +147,28 @@ enum imx274_mode {
- };
- 
- /*
-- * imx274 format related structure
-+ * Parameters for each imx274 readout mode.
-+ *
-+ * These are the values to configure the sensor in one of the
-+ * implemented modes.
-+ *
-+ * @size: recommended recording pixels
-+ * @init_regs: registers to initialize the mode
-+ * @min_frame_len: Minimum frame length for each mode (see "Frame Rate
-+ *                 Adjustment (CSI-2)" in the datasheet)
-+ * @min_SHR: Minimum SHR register value (see "Shutter Setting (CSI-2)" in the
-+ *           datasheet)
-+ * @max_fps: Maximum frames per second
-+ * @nocpiop: Number of clocks per internal offset period (see "Integration Time
-+ *           in Each Readout Drive Mode (CSI-2)" in the datasheet)
-  */
- struct imx274_frmfmt {
- 	struct v4l2_frmsize_discrete size;
-+	const struct reg_8 *init_regs;
-+	int min_frame_len;
-+	int min_SHR;
-+	int max_fps;
-+	int nocpiop;
- };
- 
- /*
-@@ -476,58 +494,35 @@ static const struct reg_8 imx274_tp_regs[] = {
- 	{IMX274_TABLE_END, 0x00}
- };
- 
--static const struct reg_8 *mode_table[] = {
--	[IMX274_MODE_3840X2160]		= imx274_mode1_3840x2160_raw10,
--	[IMX274_MODE_1920X1080]		= imx274_mode3_1920x1080_raw10,
--	[IMX274_MODE_1280X720]		= imx274_mode5_1280x720_raw10,
--};
--
--/*
-- * imx274 format related structure
-- */
-+/* nocpiop happens to be the same number for the implemented modes */
- static const struct imx274_frmfmt imx274_formats[] = {
--	{ {3840, 2160} },
--	{ {1920, 1080} },
--	{ {1280,  720} },
--};
--
--/*
-- * minimal frame length for each mode
-- * refer to datasheet section "Frame Rate Adjustment (CSI-2)"
-- */
--static const int min_frame_len[] = {
--	4550, /* mode 1, 4K */
--	2310, /* mode 3, 1080p */
--	2310 /* mode 5, 720p */
--};
--
--/*
-- * minimal numbers of SHR register
-- * refer to datasheet table "Shutter Setting (CSI-2)"
-- */
--static const int min_SHR[] = {
--	12, /* mode 1, 4K */
--	8, /* mode 3, 1080p */
--	8 /* mode 5, 720p */
--};
--
--static const int max_frame_rate[] = {
--	60, /* mode 1 , 4K */
--	120, /* mode 3, 1080p */
--	120 /* mode 5, 720p */
--};
--
--/*
-- * Number of clocks per internal offset period
-- * a constant based on mode
-- * refer to section "Integration Time in Each Readout Drive Mode (CSI-2)"
-- * in the datasheet
-- * for the implemented 3 modes, it happens to be the same number
-- */
--static const int nocpiop[] = {
--	112, /* mode 1 , 4K */
--	112, /* mode 3, 1080p */
--	112 /* mode 5, 720p */
-+	{
-+		/* mode 1, 4K */
-+		.size = {3840, 2160},
-+		.init_regs = imx274_mode1_3840x2160_raw10,
-+		.min_frame_len = 4550,
-+		.min_SHR = 12,
-+		.max_fps = 60,
-+		.nocpiop = 112,
-+	},
-+	{
-+		/* mode 3, 1080p */
-+		.size = {1920, 1080},
-+		.init_regs = imx274_mode3_1920x1080_raw10,
-+		.min_frame_len = 2310,
-+		.min_SHR = 8,
-+		.max_fps = 120,
-+		.nocpiop = 112,
-+	},
-+	{
-+		/* mode 5, 720p */
-+		.size = {1280, 720},
-+		.init_regs = imx274_mode5_1280x720_raw10,
-+		.min_frame_len = 2310,
-+		.min_SHR = 8,
-+		.max_fps = 120,
-+		.nocpiop = 112,
-+	},
- };
- 
- /*
-@@ -557,6 +552,8 @@ struct imx274_ctrls {
-  * @regmap: Pointer to regmap structure
-  * @reset_gpio: Pointer to reset gpio
-  * @lock: Mutex structure
-+ * @mode: Parameters for the selected readout mode
-+ *        (points to imx274_formats[mode_index])
-  * @mode_index: Resolution mode index
-  */
- struct stimx274 {
-@@ -569,6 +566,7 @@ struct stimx274 {
- 	struct regmap *regmap;
- 	struct gpio_desc *reset_gpio;
- 	struct mutex lock; /* mutex lock for operations */
-+	const struct imx274_frmfmt *mode;
- 	u32 mode_index;
- };
- 
-@@ -704,18 +702,12 @@ static int imx274_write_table(struct stimx274 *priv, const struct reg_8 table[])
- }
- 
- /*
-- * imx274_mode_regs - Function for set mode registers per mode index
-+ * Set mode registers to start stream.
-  * @priv: Pointer to device structure
-- * @mode: Mode index value
-- *
-- * This is used to start steam per mode index.
-- * mode = 0, start stream for sensor Mode 1: 4K/raw10
-- * mode = 1, start stream for sensor Mode 3: 1080p/raw10
-- * mode = 2, start stream for sensor Mode 5: 720p/raw10
-  *
-  * Return: 0 on success, errors otherwise
-  */
--static int imx274_mode_regs(struct stimx274 *priv, int mode)
-+static int imx274_mode_regs(struct stimx274 *priv)
- {
- 	int err = 0;
- 
-@@ -727,7 +719,7 @@ static int imx274_mode_regs(struct stimx274 *priv, int mode)
- 	if (err)
- 		return err;
- 
--	err = imx274_write_table(priv, mode_table[mode]);
-+	err = imx274_write_table(priv, priv->mode->init_regs);
- 
- 	return err;
- }
-@@ -889,6 +881,7 @@ static int imx274_set_fmt(struct v4l2_subdev *sd,
- 	}
- 
- 	imx274->mode_index = index;
-+	imx274->mode = &imx274_formats[index];
- 
- 	if (fmt->width > IMX274_MAX_WIDTH)
- 		fmt->width = IMX274_MAX_WIDTH;
-@@ -1042,7 +1035,7 @@ static int imx274_s_stream(struct v4l2_subdev *sd, int on)
- 
- 	if (on) {
- 		/* load mode registers */
--		ret = imx274_mode_regs(imx274, imx274->mode_index);
-+		ret = imx274_mode_regs(imx274);
- 		if (ret)
- 			goto fail;
- 
-@@ -1146,14 +1139,14 @@ static int imx274_clamp_coarse_time(struct stimx274 *priv, u32 *val,
- 	if (err)
- 		return err;
- 
--	if (*frame_length < min_frame_len[priv->mode_index])
--		*frame_length = min_frame_len[priv->mode_index];
-+	if (*frame_length < priv->mode->min_frame_len)
-+		*frame_length =  priv->mode->min_frame_len;
- 
- 	*val = *frame_length - *val; /* convert to raw shr */
- 	if (*val > *frame_length - IMX274_SHR_LIMIT_CONST)
- 		*val = *frame_length - IMX274_SHR_LIMIT_CONST;
--	else if (*val < min_SHR[priv->mode_index])
--		*val = min_SHR[priv->mode_index];
-+	else if (*val < priv->mode->min_SHR)
-+		*val = priv->mode->min_SHR;
- 
- 	return 0;
- }
-@@ -1365,7 +1358,7 @@ static int imx274_set_exposure(struct stimx274 *priv, int val)
- 	}
- 
- 	coarse_time = (IMX274_PIXCLK_CONST1 / IMX274_PIXCLK_CONST2 * val
--			- nocpiop[priv->mode_index]) / hmax;
-+			- priv->mode->nocpiop) / hmax;
- 
- 	/* step 2: convert exposure_time into SHR value */
- 
-@@ -1375,7 +1368,7 @@ static int imx274_set_exposure(struct stimx274 *priv, int val)
- 		goto fail;
- 
- 	priv->ctrls.exposure->val =
--			(coarse_time * hmax + nocpiop[priv->mode_index])
-+			(coarse_time * hmax + priv->mode->nocpiop)
- 			/ (IMX274_PIXCLK_CONST1 / IMX274_PIXCLK_CONST2);
- 
- 	dev_dbg(&priv->client->dev,
-@@ -1529,10 +1522,9 @@ static int imx274_set_frame_interval(struct stimx274 *priv,
- 				/ frame_interval.numerator);
- 
- 	/* boundary check */
--	if (req_frame_rate > max_frame_rate[priv->mode_index]) {
-+	if (req_frame_rate > priv->mode->max_fps) {
- 		frame_interval.numerator = 1;
--		frame_interval.denominator =
--					max_frame_rate[priv->mode_index];
-+		frame_interval.denominator = priv->mode->max_fps;
- 	} else if (req_frame_rate < IMX274_MIN_FRAME_RATE) {
- 		frame_interval.numerator = 1;
- 		frame_interval.denominator = IMX274_MIN_FRAME_RATE;
-@@ -1634,8 +1626,9 @@ static int imx274_probe(struct i2c_client *client,
- 
- 	/* initialize format */
- 	imx274->mode_index = IMX274_MODE_3840X2160;
--	imx274->format.width = imx274_formats[0].size.width;
--	imx274->format.height = imx274_formats[0].size.height;
-+	imx274->mode = &imx274_formats[imx274->mode_index];
-+	imx274->format.width = imx274->mode->size.width;
-+	imx274->format.height = imx274->mode->size.height;
- 	imx274->format.field = V4L2_FIELD_NONE;
- 	imx274->format.code = MEDIA_BUS_FMT_SRGGB10_1X10;
- 	imx274->format.colorspace = V4L2_COLORSPACE_SRGB;
 -- 
-2.7.4
+Julien Grall
