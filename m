@@ -1,130 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933011AbeEWNcO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 09:32:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46310 "EHLO mail.kernel.org"
+        id S933061AbeEWNd1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 09:33:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46448 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932873AbeEWNcL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 09:32:11 -0400
-Date: Wed, 23 May 2018 19:02:06 +0530
-From: Vinod <vkoul@kernel.org>
-To: Robin Gong <yibin.gong@nxp.com>
-Cc: dan.j.williams@intel.com, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-imx@nxp.com
-Subject: Re: [PATCH v1] dmaengine: imx-sdma: add virt-dma support
-Message-ID: <20180523133206.GJ20991@vkoul-mobl>
-References: <1527003940-9473-1-git-send-email-yibin.gong@nxp.com>
+        id S932969AbeEWNdX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 09:33:23 -0400
+Date: Wed, 23 May 2018 08:33:21 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Logan Gunthorpe <logang@deltatee.com>
+Cc: Doug Meyer <dmeyer@gigaio.com>, kurt.schwemmer@microsemi.com,
+        linux-pci@vger.kernel.org, linux-ntb <linux-ntb@googlegroups.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Jon Mason <jdmason@kudzu.us>,
+        "Jiang, Dave" <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        Alex Williamson <alex.williamson@redhat.com>
+Subject: Re: [PATCH 2/2] NTB: PCI Quirk to Enable Switchtec NT Functionality
+ with IOMMU On
+Message-ID: <20180523133321.GA150632@bhelgaas-glaptop.roam.corp.google.com>
+References: <1526558413-23113-1-git-send-email-dmeyer@gigaio.com>
+ <1526558413-23113-3-git-send-email-dmeyer@gigaio.com>
+ <20180517134521.GC19955@bhelgaas-glaptop.roam.corp.google.com>
+ <9dd68ac0-5b9e-b257-49d2-20327c2ab282@deltatee.com>
+ <CA+GK6en+g+T9H0sOMdVXv-_aD3rRcuzZ1JdfK0moEoTuuJnrqQ@mail.gmail.com>
+ <20180522215126.GA22385@bhelgaas-glaptop.roam.corp.google.com>
+ <598f5880-22b2-bbb4-4a37-5a60bae2348b@deltatee.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1527003940-9473-1-git-send-email-yibin.gong@nxp.com>
+In-Reply-To: <598f5880-22b2-bbb4-4a37-5a60bae2348b@deltatee.com>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22-05-18, 23:45, Robin Gong wrote:
-> The legacy sdma driver has below limitations or drawbacks:
->   1. Hardcode the max BDs number as "PAGE_SIZE / sizeof(*)", and alloc
->      one page size for one channel regardless of only few BDs needed
->      most time. But in few cases, the max PAGE_SIZE maybe not enough.
->   2. One SDMA channel can't stop immediatley once channel disabled which
+On Tue, May 22, 2018 at 04:23:13PM -0600, Logan Gunthorpe wrote:
+> On 22/05/18 03:51 PM, Bjorn Helgaas wrote:
+> > I don't think the question of when the aliases need to be added is
+> > quite closed.  Logan said "it seems pci_add_dma_alias() must be called
+> > before the driver is initialized and therefore in a quirk", but that
+> > doesn't make clear *why* the alias needs to be added before the driver
+> > is initialized.  The alias shouldn't be needed until the device does a
+> > DMA, and it shouldn't do that until after the driver initializes.
+> 
+> No, Doug tried it in the driver first and it didn't work. The symbol is
+> also not exported which was probably done because it can't be used in
+> the driver.
+> 
+> > I suspect the reason the existing quirks are in drivers/pci/quirks.c
+> > is because the IOMMU driver is in the host OS, but the host may not
+> > have a driver for the device if the device is passed through to a
+> > guest OS.  In that case, the only way to add the alias is by using a
+> > quirk that is always built into the host OS.
+> 
+> Digging into the code a bit, it's not because it must be done by the
+> Host OS but because it must be done before the IOMMU groups are created.
+> The IOMMU code registers a bus_notifier and creates the groups based on
+> the dma_alias mask when it receives the BUS_NOTIFY_ADD_DEVICE event.
+> This event is notified in device_add() just before a call to
+> bus_probe_device()[1]. Therefore, if a driver attempts to use
+> pci_add_dma_alias() as part of it's probe routine, it will be too late
+> as the IOMMU has already setup the groups based on the original version
+> of the dma_alias_mask.
 
-typo immediatley
+This (and Alex's) analysis is very useful and I'd like to capture it
+somehow, perhaps by expanding the poor pci_add_dma_alias() function
+comment I added with f0af9593372a ("PCI: Add pci_add_dma_alias() to
+abstract implementation").
 
->      means SDMA interrupt may come in after this channel terminated.There
->      are some patches for this corner case such as commit "2746e2c389f9",
+The admonition to "call early" without any details about *how* early
+or *why* it needs to be called early is not really very useful.
 
-Please add patch title along with commit id in logs
+If we added your analysis, it would be a great help to anybody who
+reworks IOMMU groups in the future.
 
-> +struct sdma_desc {
-> +	struct virt_dma_desc	vd;
-> +	struct list_head	node;
-> +	unsigned int		num_bd;
-> +	dma_addr_t		bd_phys;
-> +	unsigned int		buf_tail;
-
-what are these two used for?
-
->  static irqreturn_t sdma_int_handler(int irq, void *dev_id)
-> @@ -785,13 +778,24 @@ static irqreturn_t sdma_int_handler(int irq, void *dev_id)
->  	while (stat) {
->  		int channel = fls(stat) - 1;
->  		struct sdma_channel *sdmac = &sdma->channel[channel];
-> -
-> -		if (sdmac->flags & IMX_DMA_SG_LOOP)
-> -			sdma_update_channel_loop(sdmac);
-> -		else
-> -			tasklet_schedule(&sdmac->tasklet);
-> +		struct sdma_desc *desc;
-> +
-> +		spin_lock(&sdmac->vc.lock);
-> +		desc = sdmac->desc;
-> +		if (desc) {
-> +			if (sdmac->flags & IMX_DMA_SG_LOOP) {
-> +				sdma_update_channel_loop(sdmac);
-
-I guess loop is for cyclic case, are you not invoking vchan_cyclic_callback()
-for that? I dont see this call in this patch although the driver supports
-cyclic mode.
-
-> +static struct sdma_desc *sdma_transfer_init(struct sdma_channel *sdmac,
-> +				enum dma_transfer_direction direction, u32 bds)
-> +{
-> +	struct sdma_desc *desc;
-> +
-> +	desc = kzalloc((sizeof(*desc)), GFP_KERNEL);
-
-this is called from _prep_ so we are in non slpeepy context and would need to
-use GFP_NOWAIT flag..
-
-> @@ -1432,26 +1497,74 @@ static enum dma_status sdma_tx_status(struct dma_chan *chan,
->  {
->  	struct sdma_channel *sdmac = to_sdma_chan(chan);
->  	u32 residue;
-> +	struct virt_dma_desc *vd;
-> +	struct sdma_desc *desc;
-> +	enum dma_status ret;
-> +	unsigned long flags;
->  
-> -	if (sdmac->flags & IMX_DMA_SG_LOOP)
-> -		residue = (sdmac->num_bd - sdmac->buf_ptail) *
-> +	ret = dma_cookie_status(chan, cookie, txstate);
-> +	if (ret == DMA_COMPLETE && txstate) {
-> +		residue = sdmac->chn_count - sdmac->chn_real_count;
-
-on DMA_COMPLETE reside is 0, so why this?
-
-> +		return ret;
-> +	}
-> +
-> +	spin_lock_irqsave(&sdmac->vc.lock, flags);
-> +	vd = vchan_find_desc(&sdmac->vc, cookie);
-> +	desc = to_sdma_desc(&vd->tx);
-> +	if (vd) {
-> +		if (sdmac->flags & IMX_DMA_SG_LOOP)
-> +			residue = (desc->num_bd - desc->buf_ptail) *
->  			   sdmac->period_len - sdmac->chn_real_count;
-
-you need to check which descriptor is the query for, current or queued.
-
-> +static void sdma_start_desc(struct sdma_channel *sdmac)
-> +{
-> +	struct virt_dma_desc *vd = vchan_next_desc(&sdmac->vc);
-> +	struct sdma_desc *desc;
-> +	struct sdma_engine *sdma = sdmac->sdma;
-> +	int channel = sdmac->channel;
-> +
-> +	if (!vd) {
-> +		sdmac->desc = NULL;
-> +		return;
-> +	}
-> +	sdmac->desc = desc = to_sdma_desc(&vd->tx);
-> +	/*
-> +	 * Do not delete the node in desc_issued list in cyclic mode, otherwise
-> +	 * the desc alloced will never be freed in vchan_dma_desc_free_list
-
-alloced .. you mean allocated?
-
--- 
-~Vinod
+> I suspect this is by design as the groups must be created before and any
+> dma_maps are done on the device and some drivers may create dma_maps
+> during probe.
+> 
+> Logan
+> 
+> [1]
+> https://elixir.bootlin.com/linux/v4.17-rc6/source/drivers/base/core.c#L1863
