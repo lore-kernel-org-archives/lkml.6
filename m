@@ -1,135 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934900AbeEWW2X (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 18:28:23 -0400
-Received: from gate.crashing.org ([63.228.1.57]:51422 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933083AbeEWW2U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 18:28:20 -0400
-Message-ID: <f77638ddef3af52dd71341083707c9e3745dd505.camel@kernel.crashing.org>
-Subject: Re: [RFC V2] virtio: Add platform specific DMA API translation for
- virito devices
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To: "Michael S. Tsirkin" <mst@redhat.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>
-Cc: virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
-        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
-        jasowang@redhat.com, mpe@ellerman.id.au, hch@infradead.org
-Date: Thu, 24 May 2018 08:27:04 +1000
-In-Reply-To: <20180523213703-mutt-send-email-mst@kernel.org>
-References: <20180522063317.20956-1-khandual@linux.vnet.ibm.com>
-         <20180523213703-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1 (3.28.1-2.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S934928AbeEWW3U (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 18:29:20 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:43075 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933083AbeEWW3T (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 18:29:19 -0400
+Date: Wed, 23 May 2018 15:29:15 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Ray Jui <ray.jui@broadcom.com>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>,
+        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com
+Subject: Re: [PATCH v2 2/6] Documentation: DT: Add optional 'timeout-sec'
+ property for sp805
+Message-ID: <20180523222915.GA16779@roeck-us.net>
+References: <1527107527-8093-1-git-send-email-ray.jui@broadcom.com>
+ <1527107527-8093-3-git-send-email-ray.jui@broadcom.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527107527-8093-3-git-send-email-ray.jui@broadcom.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Authenticated_sender: guenter@roeck-us.net
+X-OutGoing-Spam-Status: No, score=-1.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
+X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-05-23 at 21:50 +0300, Michael S. Tsirkin wrote:
-
-> I re-read that discussion and I'm still unclear on the
-> original question, since I got several apparently
-> conflicting answers.
+On Wed, May 23, 2018 at 01:32:03PM -0700, Ray Jui wrote:
+> Update the SP805 binding document to add optional 'timeout-sec'
+> devicetree property
 > 
-> I asked:
+> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+> ---
+>  Documentation/devicetree/bindings/watchdog/arm,sp805.txt | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> 	Why isn't setting VIRTIO_F_IOMMU_PLATFORM on the
-> 	hypervisor side sufficient?
+> diff --git a/Documentation/devicetree/bindings/watchdog/arm,sp805.txt b/Documentation/devicetree/bindings/watchdog/arm,sp805.txt
+> index de93a4d..9cd7470 100644
+> --- a/Documentation/devicetree/bindings/watchdog/arm,sp805.txt
+> +++ b/Documentation/devicetree/bindings/watchdog/arm,sp805.txt
+> @@ -18,6 +18,8 @@ Required properties:
+>  
+>  Optional properties:
+>  - interrupts : Should specify WDT interrupt number.
+> +timeout-sec : Should specify default WDT timeout in seconds. If unset, the
+> +              default timeout in the driver is 30 seconds
 
-I thought I had replied to this...
+That looks odd, with the changed indentation and the missing '-'
+in front of 'timeout-sec'.
 
-There are a couple of reasons:
-
-- First qemu doesn't know that the guest will switch to "secure mode"
-in advance. There is no difference between a normal and a secure
-partition until the partition does the magic UV call to "enter secure
-mode" and qemu doesn't see any of it. So who can set the flag here ?
-
-- Second, when using VIRTIO_F_IOMMU_PLATFORM, we also make qemu (or
-vhost) go through the emulated MMIO for every access to the guest,
-which adds additional overhead.
-
-Cheers,
-Ben.
-
-> 
-> 
-> >  arch/powerpc/include/asm/dma-mapping.h |  6 ++++++
-> >  arch/powerpc/platforms/pseries/iommu.c | 11 +++++++++++
-> >  drivers/virtio/virtio_ring.c           | 10 ++++++++++
-> >  3 files changed, 27 insertions(+)
-> > 
-> > diff --git a/arch/powerpc/include/asm/dma-mapping.h b/arch/powerpc/include/asm/dma-mapping.h
-> > index 8fa3945..056e578 100644
-> > --- a/arch/powerpc/include/asm/dma-mapping.h
-> > +++ b/arch/powerpc/include/asm/dma-mapping.h
-> > @@ -115,4 +115,10 @@ extern u64 __dma_get_required_mask(struct device *dev);
-> >  #define ARCH_HAS_DMA_MMAP_COHERENT
-> >  
-> >  #endif /* __KERNEL__ */
-> > +
-> > +#define platform_forces_virtio_dma platform_forces_virtio_dma
-> > +
-> > +struct virtio_device;
-> > +
-> > +extern bool platform_forces_virtio_dma(struct virtio_device *vdev);
-> >  #endif	/* _ASM_DMA_MAPPING_H */
-> > diff --git a/arch/powerpc/platforms/pseries/iommu.c b/arch/powerpc/platforms/pseries/iommu.c
-> > index 06f0296..a2ec15a 100644
-> > --- a/arch/powerpc/platforms/pseries/iommu.c
-> > +++ b/arch/powerpc/platforms/pseries/iommu.c
-> > @@ -38,6 +38,7 @@
-> >  #include <linux/of.h>
-> >  #include <linux/iommu.h>
-> >  #include <linux/rculist.h>
-> > +#include <linux/virtio.h>
-> >  #include <asm/io.h>
-> >  #include <asm/prom.h>
-> >  #include <asm/rtas.h>
-> > @@ -1396,3 +1397,13 @@ static int __init disable_multitce(char *str)
-> >  __setup("multitce=", disable_multitce);
-> >  
-> >  machine_subsys_initcall_sync(pseries, tce_iommu_bus_notifier_init);
-> > +
-> > +bool platform_forces_virtio_dma(struct virtio_device *vdev)
-> > +{
-> > +	/*
-> > +	 * On protected guest platforms, force virtio core to use DMA
-> > +	 * MAP API for all virtio devices. But there can also be some
-> > +	 * exceptions for individual devices like virtio balloon.
-> > +	 */
-> > +	return (of_find_compatible_node(NULL, NULL, "ibm,ultravisor") != NULL);
-> > +}
-> 
-> Isn't this kind of slow?  vring_use_dma_api is on
-> data path and supposed to be very fast.
-> 
-> > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> > index 21d464a..47ea6c3 100644
-> > --- a/drivers/virtio/virtio_ring.c
-> > +++ b/drivers/virtio/virtio_ring.c
-> > @@ -141,8 +141,18 @@ struct vring_virtqueue {
-> >   * unconditionally on data path.
-> >   */
-> >  
-> > +#ifndef platform_forces_virtio_dma
-> > +static inline bool platform_forces_virtio_dma(struct virtio_device *vdev)
-> > +{
-> > +	return false;
-> > +}
-> > +#endif
-> > +
-> >  static bool vring_use_dma_api(struct virtio_device *vdev)
-> >  {
-> > +	if (platform_forces_virtio_dma(vdev))
-> > +		return true;
-> > +
-> >  	if (!virtio_has_iommu_quirk(vdev))
-> >  		return true;
-> >  
-> > -- 
-> > 2.9.3
+Guenter
