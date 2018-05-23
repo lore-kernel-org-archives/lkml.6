@@ -1,156 +1,214 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754259AbeEWHBC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 03:01:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44782 "EHLO mail.kernel.org"
+        id S1754301AbeEWHBW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 03:01:22 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:50507 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754091AbeEWHA7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 03:00:59 -0400
-Date: Wed, 23 May 2018 10:00:55 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
-Cc: dledford@redhat.com, jgg@ziepe.ca, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, xavier.huwei@tom.com, lijun_nudt@163.com
-Subject: Re: [PATCH rdma-next 2/5] RDMA/hns: Modify uar allocation algorithm
- to avoid bitmap exhaust
-Message-ID: <20180523070055.GD5729@mtr-leonro.mtl.com>
-References: <1526544173-106587-1-git-send-email-xavier.huwei@huawei.com>
- <1526544173-106587-3-git-send-email-xavier.huwei@huawei.com>
- <20180523060515.GD2933@mtr-leonro.mtl.com>
- <5B050EFF.4040908@huawei.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ZwgA9U+XZDXt4+m+"
-Content-Disposition: inline
-In-Reply-To: <5B050EFF.4040908@huawei.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S1754011AbeEWHBV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 03:01:21 -0400
+Message-Id: <61ef5847cedae91eb5415f40fb4276585950cb43.1527058032.git.christophe.leroy@c-s.fr>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v8] powerpc/mm: Only read faulting instruction when necessary
+ in do_page_fault()
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date: Wed, 23 May 2018 09:01:19 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit a7a9dcd882a67 ("powerpc: Avoid taking a data miss on every
+userspace instruction miss") has shown that limiting the read of
+faulting instruction to likely cases improves performance.
 
---ZwgA9U+XZDXt4+m+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This patch goes further into this direction by limiting the read
+of the faulting instruction to the only cases where it is likely
+needed.
 
-On Wed, May 23, 2018 at 02:49:35PM +0800, Wei Hu (Xavier) wrote:
->
->
-> On 2018/5/23 14:05, Leon Romanovsky wrote:
-> > On Thu, May 17, 2018 at 04:02:50PM +0800, Wei Hu (Xavier) wrote:
-> >> This patch modified uar allocation algorithm in hns_roce_uar_alloc
-> >> function to avoid bitmap exhaust.
-> >>
-> >> Signed-off-by: Wei Hu (Xavier) <xavier.huwei@huawei.com>
-> >> ---
-> >>  drivers/infiniband/hw/hns/hns_roce_device.h |  1 +
-> >>  drivers/infiniband/hw/hns/hns_roce_pd.c     | 10 ++++++----
-> >>  2 files changed, 7 insertions(+), 4 deletions(-)
-> >>
-> >> diff --git a/drivers/infiniband/hw/hns/hns_roce_device.h b/drivers/infiniband/hw/hns/hns_roce_device.h
-> >> index 53c2f1b..412297d4 100644
-> >> --- a/drivers/infiniband/hw/hns/hns_roce_device.h
-> >> +++ b/drivers/infiniband/hw/hns/hns_roce_device.h
-> >> @@ -214,6 +214,7 @@ enum {
-> >>  struct hns_roce_uar {
-> >>  	u64		pfn;
-> >>  	unsigned long	index;
-> >> +	unsigned long	logic_idx;
-> >>  };
-> >>
-> >>  struct hns_roce_ucontext {
-> >> diff --git a/drivers/infiniband/hw/hns/hns_roce_pd.c b/drivers/infiniband/hw/hns/hns_roce_pd.c
-> >> index 4b41e04..b9f2c87 100644
-> >> --- a/drivers/infiniband/hw/hns/hns_roce_pd.c
-> >> +++ b/drivers/infiniband/hw/hns/hns_roce_pd.c
-> >> @@ -107,13 +107,15 @@ int hns_roce_uar_alloc(struct hns_roce_dev *hr_dev, struct hns_roce_uar *uar)
-> >>  	int ret = 0;
-> >>
-> >>  	/* Using bitmap to manager UAR index */
-> >> -	ret = hns_roce_bitmap_alloc(&hr_dev->uar_table.bitmap, &uar->index);
-> >> +	ret = hns_roce_bitmap_alloc(&hr_dev->uar_table.bitmap, &uar->logic_idx);
-> >>  	if (ret == -1)
-> >>  		return -ENOMEM;
-> >>
-> >> -	if (uar->index > 0)
-> >> -		uar->index = (uar->index - 1) %
-> >> +	if (uar->logic_idx > 0 && hr_dev->caps.phy_num_uars > 1)
-> >> +		uar->index = (uar->logic_idx - 1) %
-> >>  			     (hr_dev->caps.phy_num_uars - 1) + 1;
-> >> +	else
-> >> +		uar->index = 0;
-> >>
-> > Sorry, but maybe I didn't understand this change fully, but logic_idx is
-> > not initialized at all and one of two (needs to check your uar
-> > allocation): the logic_idx is always zero -> index will be zero too,
-> > or logic_idx is random variable -> index will be random too.
-> >
-> > What did you want to do?
-> >
-> Hi, Leon
->
->     The prototype of hns_roce_bitmap_alloc as belows:
->         int hns_roce_bitmap_alloc(struct hns_roce_bitmap *bitmap,
-> unsigned long *obj);
->     In this statement,  we evaluate uar->logic_idx.
->         ret = hns_roce_bitmap_alloc(&hr_dev->uar_table.bitmap,
-> &uar->logic_idx);
->
->     In hip06,  hr_dev->caps.phy_num_uars equals 8,
->         if (uar->logic_idx > 0)
->              uar-> index = 0;
->        else
->              uar-> index =(uar->logic_idx - 1) %
-> (hr_dev->caps.phy_num_uars - 1) + 1;
->     In hip08,  hr_dev->caps.phy_num_uars equals 1,  uar-> index = 0;
->
->    Regards
+On an MPC885, with the same benchmark app as in the commit referred
+above, we see a reduction of about 3900 dTLB misses (approx 3%):
 
-Where did you change/set logic_idx?
+Before the patch:
+ Performance counter stats for './fault 500' (10 runs):
 
-Thanks
+         683033312      cpu-cycles                                                    ( +-  0.03% )
+            134538      dTLB-load-misses                                              ( +-  0.03% )
+             46099      iTLB-load-misses                                              ( +-  0.02% )
+             19681      faults                                                        ( +-  0.02% )
 
+       5.389747878 seconds time elapsed                                          ( +-  0.06% )
 
-> Wei Hu
-> >>  	if (!dev_is_pci(hr_dev->dev)) {
-> >>  		res = platform_get_resource(hr_dev->pdev, IORESOURCE_MEM, 0);
-> >> @@ -132,7 +134,7 @@ int hns_roce_uar_alloc(struct hns_roce_dev *hr_dev, struct hns_roce_uar *uar)
-> >>
-> >>  void hns_roce_uar_free(struct hns_roce_dev *hr_dev, struct hns_roce_uar *uar)
-> >>  {
-> >> -	hns_roce_bitmap_free(&hr_dev->uar_table.bitmap, uar->index,
-> >> +	hns_roce_bitmap_free(&hr_dev->uar_table.bitmap, uar->logic_idx,
-> >>  			     BITMAP_NO_RR);
-> >>  }
-> >>
-> >> --
-> >> 1.9.1
-> >>
->
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+With the patch:
 
---ZwgA9U+XZDXt4+m+
-Content-Type: application/pgp-signature; name="signature.asc"
+ Performance counter stats for './fault 500' (10 runs):
 
------BEGIN PGP SIGNATURE-----
+         682112862      cpu-cycles                                                    ( +-  0.03% )
+            130619      dTLB-load-misses                                              ( +-  0.03% )
+             46073      iTLB-load-misses                                              ( +-  0.05% )
+             19681      faults                                                        ( +-  0.01% )
 
-iQIcBAEBAgAGBQJbBRGnAAoJEORje4g2clinoCQQALOZMjsG4VDXY8nh7+tjVajm
-MDAiisWUEqXlQ3xKPkMeBVdMPsutd99Yd/NcCH8SiUaNAmEDLInWn87pQ6j8o9ij
-01wuWhiRwQ09Bc+LTU3ssvNGxf+hsUPfYBY970T9amHu9zNEo9SJlZRwC4Y26kKG
-aQrIvGWD67NcFSYQ4QyjtBePWvIfJzmOt33DVCQX00+j34WgUaHNDZLSZNiyCK7s
-oTfY2N99C0oBhnbdWLvrW5aQvHbBMBzySDswe1TQORR5sW+keSWWLtoIXlVmxWhv
-jAOLRj2c+j6g8CRHFi11PcinvoybcHb2mWZAFdud+O3siehJF954qw/Os1sU4k6r
-iY2OaJ+Onll9v2ya1IntUj77a5Za5vuEl0Cs3GBPCcdhU1tZcf18jWztT0V7tYP0
-h6tj0CX5quInDk9pPTyzNQKllqzG+yeBbuWDRlC36o8w8TwbOXL2WQxX6Dsk4YkI
-YFGQnEnYPP2D+YeAsupej5L+mxVdQBuCkSc+7J7YMIYPUocw+0k/qLox2Y5ezv39
-ATLjvPqOx04WQlLooW5aDqGLK32ia/flXCOYQh8ZBMyEXu1fCGOOSwDIZ3WsN3r3
-QpNaZx/S+iCcOi2NkCN7nG/TdSy7nVzsGk/xpzcRF5BPtz3jgXNcLebF+Ajpaigr
-7+wOj3jgizpXg73FhtEu
-=3yqn
------END PGP SIGNATURE-----
+       5.381342641 seconds time elapsed                                          ( +-  0.07% )
 
---ZwgA9U+XZDXt4+m+--
+The proper work of the huge stack expansion was tested with the
+following app:
+
+int main(int argc, char **argv)
+{
+	char buf[1024 * 1025];
+
+	sprintf(buf, "Hello world !\n");
+	printf(buf);
+
+	exit(0);
+}
+
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ v8: Back to a single patch as it now makes no sense to split the first part in two. The third patch has no
+     dependencies with the ones before, so it will be resend independantly. As suggested by Nicholas, the
+     patch now does the get_user() stuff inside bad_stack_expansion(), that's a mid way between v5 and v7.
+
+ v7: Following comment from Nicholas on v6 on possibility of the page getting removed from the pagetables
+     between the fault and the read, I have reworked the patch in order to do the get_user() in
+     __do_page_fault() directly in order to reduce complexity compared to version v5
+
+ v6: Rebased on latest powerpc/merge branch ; Using __get_user_inatomic() instead of get_user() in order
+     to move it inside the semaphored area. That removes all the complexity of the patch.
+
+ v5: Reworked to fit after Benh do_fault improvement and rebased on top of powerpc/merge (65152902e43fef)
+
+ v4: Rebased on top of powerpc/next (f718d426d7e42e) and doing access_ok() verification before __get_user_xxx()
+
+ v3: Do a first try with pagefault disabled before releasing the semaphore
+
+ v2: Changes 'if (cond1) if (cond2)' by 'if (cond1 && cond2)'
+
+ arch/powerpc/mm/fault.c | 63 +++++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 45 insertions(+), 18 deletions(-)
+
+diff --git a/arch/powerpc/mm/fault.c b/arch/powerpc/mm/fault.c
+index 0c99f9b45e8f..7f9363879f4a 100644
+--- a/arch/powerpc/mm/fault.c
++++ b/arch/powerpc/mm/fault.c
+@@ -66,15 +66,11 @@ static inline bool notify_page_fault(struct pt_regs *regs)
+ }
+ 
+ /*
+- * Check whether the instruction at regs->nip is a store using
++ * Check whether the instruction inst is a store using
+  * an update addressing form which will update r1.
+  */
+-static bool store_updates_sp(struct pt_regs *regs)
++static bool store_updates_sp(unsigned int inst)
+ {
+-	unsigned int inst;
+-
+-	if (get_user(inst, (unsigned int __user *)regs->nip))
+-		return false;
+ 	/* check for 1 in the rA field */
+ 	if (((inst >> 16) & 0x1f) != 1)
+ 		return false;
+@@ -233,9 +229,10 @@ static bool bad_kernel_fault(bool is_exec, unsigned long error_code,
+ 	return is_exec || (address >= TASK_SIZE);
+ }
+ 
+-static bool bad_stack_expansion(struct pt_regs *regs, unsigned long address,
+-				struct vm_area_struct *vma,
+-				bool store_update_sp)
++/* Return value is true if bad (sem. released), false if good, -1 for retry */
++static int bad_stack_expansion(struct pt_regs *regs, unsigned long address,
++				struct vm_area_struct *vma, unsigned int flags,
++				bool is_retry)
+ {
+ 	/*
+ 	 * N.B. The POWER/Open ABI allows programs to access up to
+@@ -247,10 +244,15 @@ static bool bad_stack_expansion(struct pt_regs *regs, unsigned long address,
+ 	 * expand to 1MB without further checks.
+ 	 */
+ 	if (address + 0x100000 < vma->vm_end) {
++		struct mm_struct *mm = current->mm;
++		unsigned int __user *nip = (unsigned int __user *)regs->nip;
++		unsigned int inst;
+ 		/* get user regs even if this fault is in kernel mode */
+ 		struct pt_regs *uregs = current->thread.regs;
+-		if (uregs == NULL)
++		if (uregs == NULL) {
++			up_read(&mm->mmap_sem);
+ 			return true;
++		}
+ 
+ 		/*
+ 		 * A user-mode access to an address a long way below
+@@ -264,8 +266,30 @@ static bool bad_stack_expansion(struct pt_regs *regs, unsigned long address,
+ 		 * between the last mapped region and the stack will
+ 		 * expand the stack rather than segfaulting.
+ 		 */
+-		if (address + 2048 < uregs->gpr[1] && !store_update_sp)
+-			return true;
++		if (address + 2048 >= uregs->gpr[1])
++			return false;
++		if (is_retry)
++			return false;
++
++		if ((flags & FAULT_FLAG_WRITE) && (flags & FAULT_FLAG_USER) &&
++		    access_ok(VERIFY_READ, nip, sizeof(inst))) {
++			int res;
++
++			pagefault_disable();
++			res = __get_user_inatomic(inst, nip);
++			pagefault_enable();
++			if (res) {
++				up_read(&mm->mmap_sem);
++				res = __get_user(inst, nip);
++				if (!res && store_updates_sp(inst))
++					return -1;
++				return true;
++			}
++			if (store_updates_sp(inst))
++				return false;
++		}
++		up_read(&mm->mmap_sem);
++		return true;
+ 	}
+ 	return false;
+ }
+@@ -403,7 +427,8 @@ static int __do_page_fault(struct pt_regs *regs, unsigned long address,
+ 	int is_user = user_mode(regs);
+ 	int is_write = page_fault_is_write(error_code);
+ 	int fault, major = 0;
+-	bool store_update_sp = false;
++	bool is_retry = false;
++	int is_bad;
+ 
+ 	if (notify_page_fault(regs))
+ 		return 0;
+@@ -454,9 +479,6 @@ static int __do_page_fault(struct pt_regs *regs, unsigned long address,
+ 	 * can result in fault, which will cause a deadlock when called with
+ 	 * mmap_sem held
+ 	 */
+-	if (is_write && is_user)
+-		store_update_sp = store_updates_sp(regs);
+-
+ 	if (is_user)
+ 		flags |= FAULT_FLAG_USER;
+ 	if (is_write)
+@@ -503,8 +525,13 @@ static int __do_page_fault(struct pt_regs *regs, unsigned long address,
+ 		return bad_area(regs, address);
+ 
+ 	/* The stack is being expanded, check if it's valid */
+-	if (unlikely(bad_stack_expansion(regs, address, vma, store_update_sp)))
+-		return bad_area(regs, address);
++	is_bad = bad_stack_expansion(regs, address, vma, flags, is_retry);
++	if (unlikely(is_bad == -1)) {
++		is_retry = true;
++		goto retry;
++	}
++	if (unlikely(is_bad))
++		return bad_area_nosemaphore(regs, address);
+ 
+ 	/* Try to expand it */
+ 	if (unlikely(expand_stack(vma, address)))
+-- 
+2.13.3
