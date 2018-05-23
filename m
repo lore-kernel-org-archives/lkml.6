@@ -1,104 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934002AbeEWSkT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 14:40:19 -0400
-Received: from mout.web.de ([217.72.192.78]:44069 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933291AbeEWSkS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 14:40:18 -0400
-Subject: =?UTF-8?B?UmU6IFN1Z2dlc3Rpb246IOKAnnNwZWN0cmVfdjI9b2Zm4oCcIGFuZCA=?=
- =?UTF-8?Q?=e2=80=9enopti=e2=80=9c_per_default_in_=22Intel_Atom_N270=22_case?=
- =?UTF-8?Q?=3f?=
-To: linux-kernel@vger.kernel.org
-References: <72a7122d-0020-f307-a76d-bb80a2c19842@web.de>
- <20180523105302.GE15312@amd> <20180523170706.GA21118@probook>
-From: =?UTF-8?Q?Christian_Kr=c3=bcger?= <C.Krueger.B@web.de>
-Message-ID: <476a4c02-592f-ddf9-d550-c81be74ce931@web.de>
-Date: Wed, 23 May 2018 20:40:16 +0200
+        id S934028AbeEWSlG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 14:41:06 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:35365 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933886AbeEWSlC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 14:41:02 -0400
+X-Google-Smtp-Source: AB8JxZomtFtfMOwzkE9m4wnomjIaYOV+mm5PyeQsL7d3vuSRqN07nPK3xuYxmzcI/lApzyx/jhw7LQ==
+Subject: Re: [PATCH net-next v2 0/3] net: sfp: small improvements
+To: Antoine Tenart <antoine.tenart@bootlin.com>, davem@davemloft.net,
+        linux@armlinux.org.uk
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
+        gregory.clement@bootlin.com, miquel.raynal@bootlin.com,
+        nadavh@marvell.com, stefanc@marvell.com, ymarkman@marvell.com,
+        mw@semihalf.com
+References: <20180522101801.18947-1-antoine.tenart@bootlin.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+Message-ID: <decfdf6b-6047-4338-5b81-2b8ef9bc8e48@gmail.com>
+Date: Wed, 23 May 2018 11:40:50 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180523170706.GA21118@probook>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: de-LU
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:Ftk22eKySTAJLFYHAK+VD5MbMVjBNxNZu1pmcsikvkZF/iRcwbn
- 3APMCmVRtGSJE19N9LUCMR73wVBfAQb2bYqbrPsLfn0J1h4VGjXJj7wjXAMFgEDWP1sarW9
- VmDSZoxxK304/F422BsF/ttlVEIu20LS5vC8QCL03nZWjMxJT9uuQsTB71ewVoBJh1jRHdq
- 2VTYP/jeU/n/092mndvNQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:BfxKNHsfDhQ=:3WYoA+KHbt3P2Bfuv6oTnb
- BirJnaDIQE/gEdsf65zf5izC+vli9hSspOqQKm9PujywwkLzHXU5E77nHRCeHPse8Bs2ynij9
- DE/XBudYHN5D1mXs8DoOAdu2p4Qe14CLY4eelL7aKxrpmiTVoP1JFw6mTLu5jCcH/gx9HK1hB
- O1TpPErtgek+iZ0crtw5jsZMsU/fMwUuuiBsLpGYpm/CnqUiyQPm9ZzlhtHgrsREMY5oVIrDB
- tLT/zSoCgctLz5aNBWBylrKTybaRtLj6pPr1UNUs4fznkDXXaVjtewxH2pnks/qg+y9qQ0+sC
- Qjyo5XZ05u+X9cTFcyD3b4ApdrYf64NYSOI4Sdd6KK9aZJ/jEAjZ5BvouAm3k84Qjhj5/Ubju
- 6C3horHET+sEEUGnOqhIAzw8NaQbTYa1JQlcc66TRlbsnfSfFduttVAYm+OLF5oIDOi4FXuyv
- D0kOBZp9EKHyyXEY8xYQpThrj+/o/P8zH9KGfzF2hmF1g4u84oqkRkRFaV1KbR1R4ttD8idcy
- 0w6ThMeg/WmeH18WvmFGVFAgE+S/+T5wb6f85MZK0d6U2uHd4iGmM/NJbKhprS5mrkLHOcFyu
- juhCPHU4CBMUJLnQ0NpHIE1solCEuyF3DTUnsckbusvgBMZLgN4PW3HM0Io2UY8Nssn3l9X8K
- yv+Gw6x5n+EexI6W1cvn6j4R0EGu21CAxAO8wnk8gUDsFnarfj5UadInLDgAgRC4M/ijelk+G
- g867wxZYRo3U8MI2v95jkL45h8HEY2OuiO7kTmpQTcOvHac2XueL+MOsYqsNezIsOdd8DfPrw
- hpKgo8y
+In-Reply-To: <20180522101801.18947-1-antoine.tenart@bootlin.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 23.05.2018 um 19:07 schrieb Johannes Hirte:
-> On 2018 Mai 23, Pavel Machek wrote:
->> On Sat 2018-05-19 21:53:02, Christian Krüger wrote:
->>> Hi,
->>>
->>> Since the old "in-order-execution" Intel CPUs like the Intel Atom N270
->>> (known for being installed in many Netbooks and Nettops) are not sensitive
->>> for "Meltdown" & "Spectre" , wouldn't it be a good idea to exclude these
->>> anyway "weak" CPUs from the costly patches by default?
->>>
->>> Browsing the web, I can "feel the difference" if the matching kernel options
->>> are applied on such a device.
->>
->> Can you also measure the difference? Placebo effect is hard to avoid.
->>
->> But yes, we do not need to do workarounds on non-buggy machines...
->>
->> 								Pavel
+On 05/22/2018 03:17 AM, Antoine Tenart wrote:
+> Hi Russell, David,
 > 
-> On my Atom N270 there doesn't seem to be any workaround active with
-> kernel 4.14.42:
+> A small series of patches improving the SFP support by adding a warning
+> when no Tx disable pin is available, and making the i2c-bus property
+> mandatory.
 > 
-> localhost ~ # cat /sys/devices/system/cpu/vulnerabilities/*
-> Not affected
-> Not affected
-> Not affected
+> Thanks!
+> Antoine
+
+Antoine, can you please do CC the people who worked on that code before,
+arguably, send an update to MAINTAINERS file to create a specific
+section for PHYLINK.
+
+Thank you
+
 > 
-> Christian, did you verified the mitigations are active on your system?
-> What kernels are affected?
+> Since v1:
+>   - Removed the patch fixing the sfp driver when no i2c bus was described.
+>   - Made two new patches to make the i2c-bus property mandatory for sfp modules.
+> 
+> Since the phylink series:
+>   - s/-EOPNOTSUPP/-ENODEV/ in patch 1/2.
+>   - I added the acked-by tag in patch 2/2.
+> 
+> Antoine Tenart (3):
+>   net: phy: sfp: warn the user when no tx_disable pin is available
+>   net: phy: sfp: make the i2c-bus dt property mandatory
+>   Documentation/bindings: net: the sfp i2c-bus property is now mandatory
+> 
+>  .../devicetree/bindings/net/sff,sfp.txt       |  4 +-
+>  drivers/net/phy/sfp.c                         | 37 ++++++++++++-------
+>  2 files changed, 26 insertions(+), 15 deletions(-)
 > 
 
 
-$ uname -a
-Linux user-device 3.13.0-143-generic #192-Ubuntu SMP Tue Feb 27 10:46:44 
-UTC 2018 i686 i686 i686 GNU/Linux
-
-$ cat /sys/devices/system/cpu/vulnerabilities/*
-Vulnerable
-Mittigation: OSB (observable speculation barrier, Intel v6)
-Mittigation: Full generic repoline
-
-OK, so I've updated the OS on my (usually off-line) Netbook:
-
-$ uname -a
-Linux user-device 3.13.0-149-generic #199-Ubuntu SMP Thu May 17 10:12:57 
-UTC 2018 i686 i686 i686 GNU/Linux
-
-$ cat /sys/devices/system/cpu/vulnerabilities/*
-Not affected
-Not affected
-Not affected
-Not affected
-
-Conclusion:
-Don't bother others before not checking the latest version. (Actually 
-this is the first time it made a difference... ).
-
-Sorry for the noise and thanks for listening and all the great work!
-Christian
+-- 
+Florian
