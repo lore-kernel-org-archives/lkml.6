@@ -1,174 +1,157 @@
-Return-Path: <yehs2007@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1527093484; cv=none;
-        d=google.com; s=arc-20160816;
-        b=ZGlXeUOEqjJGcQwCme+BgayNYUnMkyAl0EEcYWP0sMi9BnGj3x4hcMWJ9hz2nN50Zg
-         wpUKihMhUsJ/CCZpu5HEz62aDLIjUrxuXy0CtdKaABpiB6fysPpo31GF0xLGmioq/vvl
-         VQxnFnMHnZs3/YuQQnomS03IGfFescCHWNx+nmbH4E1GALpbEY/fJBr8Cnorf7/1ftzh
-         97bT/uFZodr3LGCQVqwKCJ3e+hVyTkEUZ2tFEnq/G3VoeN85k20MJWt363HGZFUmmsSY
-         4sRRJmVhZIAjpkJ707fg7+sh0cUqQcJC/Yx/Uve1Z9XTs3f3W1uq+iFjcK/Ng1LoNytf
-         U9Ig==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=Yz2M4nFfcrvb0NcPST1MDnDeJx8G0pwYuNvt8bUceFc=;
-        b=DYThex/JpVC3x1CN2nIbaVds2kDc+zDuijPOplNuw3+vNVmetE+e68ZnXlCf741/jE
-         /BVwOWBYGpDeScbVPCc5qRmlxMRniydgvWHZ+p1KFD8/Rgov/cOZaKnCjXnWpX2xXZwX
-         GLW9iXoh8xhixZafG670l6lB6uXcNmFrYe1fOZ4ZvxS8ev9syobZXLhSm3xlnHg4Rgwd
-         DOJ536aug7BnIqZSy1iv3sBxFSZx1F37AhTpDiz8lwqZlkR+wlDR5/DnxOf2j7mQr1DL
-         c7yYw3GIivhXNVBGMP/ubg3djXZBYss3dkRilaiwT29zNTvHptRtQEj108uFOo0gOjVy
-         yLvA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=QDvjypDa;
-       spf=pass (google.com: domain of yehs2007@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=yehs2007@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=QDvjypDa;
-       spf=pass (google.com: domain of yehs2007@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=yehs2007@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AB8JxZq9bb+Woz7+oDZfuGU3q/1dmm6zavWxSVRvOXJowEfxyHKxqKpulBVAS0OzHuCDwDWIe9kaqA==
-From: Huaisheng Ye <yehs2007@gmail.com>
-To: akpm@linux-foundation.org,
-	linux-mm@kvack.org
-Cc: mhocko@suse.com,
-	willy@infradead.org,
-	hch@lst.de,
-	vbabka@suse.cz,
-	mgorman@techsingularity.net,
-	kstewart@linuxfoundation.org,
-	gregkh@linuxfoundation.org,
-	colyli@suse.de,
-	chengnt@lenovo.com,
-	hehy1@lenovo.com,
-	linux-kernel@vger.kernel.org,
-	iommu@lists.linux-foundation.org,
-	xen-devel@lists.xenproject.org,
-	linux-btrfs@vger.kernel.org,
-	Huaisheng Ye <yehs1@lenovo.com>
-Subject: [RFC PATCH v3 0/9] get rid of GFP_ZONE_TABLE/BAD
-Date: Thu, 24 May 2018 00:37:35 +0800
-Message-Id: <1527093455-3899-1-git-send-email-yehs2007@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3649678-1527052818-2-5713206701683047473
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: cc='utf-8', plain='utf-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1527052817; b=kODJBo+7mHln/Uq5q/NN0sanqonrYcJKm1s9LbgdMn9QYSoUiX
+    x2msWomn4IqjJRLKiCxMATKDPZR6pLw0IJYcWu+2RS3eSn/NIt7DpQV8JkA91QRl
+    Jgws2InR/OYuyCTDv5u6KPRGXv8fAjCEEkw17VvCFkGyNsxLm4yia4IXyDo8kw9Y
+    heCM38mI3VsXpWCTNLD+LSYhH+WEleBTGuyX2b+Xt3RMop5zyNJ+VzEi1wCQ8sWM
+    DYimk0NaBujEi2N+m1PM8l9vIZVp+TIOaBnkjHe2lMo5Pr1UXBse4io/QrVqPwzB
+    g8wtxGGr8EmQpvTuZZm7t+D6D96FPoJdPrsg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=subject:from:to:cc:date:message-id
+    :mime-version:content-type:content-transfer-encoding:sender
+    :list-id; s=fm2; t=1527052817; bh=lbR4RWuaMKWJyuKGi2OikpoyofrT4k
+    60M1yvkRS5qUw=; b=QEahj5Tm0YV8mvujY8rckwTzDPOo7ViS2yMz2kFF7fXteI
+    SI8F/gFu0QKCGdrpaXSud2McSNxkbF83yjJc/gYZZYenv48WaGuNZ+igaj54Riui
+    uw2dpQeTwreZvvWZ6+A9QIt5aLoT1uLMPpIm++2s58raKfoeCfl1k992sfmtJaYk
+    JTMuY/r04OmF5olV+40G+EPreAJv9L2cZPvPQZSnLpxSVLXOIF+bvj09kRMmFRto
+    CBxBA5UM0/hAbawdDU5GqmyWtJGz0sWDfYxRARFgG3ZN0CFxf1HpkJjbKOwZMfTW
+    NcsKPOtuIcUdW63yfXGCeP0eedMvM42vKksrm8eQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=intel.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=intel.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfEmfJ1se/fnM6ICnM6UiiFwd6vLCu5d6VdovmnxoDYhxdzbQiL0HqTS8KsyKprxP19cj9cOh4TaMNVXgpPH4mZrLJHCFoafkelNSywkba0l6StpnQ57Q
+    lCyV1Stj0LyTQ/L13CYAEGM9RSlWpXDLEuk1aIV1d2Sg+nfLgWwRZhODEN7WAZaPLlzXPex3tBxSQtoutPyF69mYnnShLANOduKdu/GbC38KeK8YHhGTNLmg
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=D19gQVrFAAAA:8 a=MgTO5YS3Dgot8pfIxtcA:9 a=QEXdDO2ut3YA:10
+    a=W4TVW4IDbPiebHqcZpNg:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751399AbeEWFUQ (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 23 May 2018 01:20:16 -0400
+Received: from mga09.intel.com ([134.134.136.24]:5068 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751300AbeEWFUP (ORCPT <rfc822;stable@vger.kernel.org>);
+        Wed, 23 May 2018 01:20:15 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,431,1520924400";
+   d="scan'208";a="51454456"
+Subject: [PATCH v2 0/7] mm: Rework hmm to use devm_memremap_pages
+From: Dan Williams <dan.j.williams@intel.com>
+To: akpm@linux-foundation.org
+Cc: stable@vger.kernel.org, Logan Gunthorpe <logang@deltatee.com>,
+        Christoph Hellwig <hch@lst.de>,
+        =?utf-8?b?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Date: Tue, 22 May 2018 22:10:17 -0700
+Message-ID: <152705221686.21414.771870778478134768.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1601273577670213359?=
-X-GMAIL-MSGID: =?utf-8?q?1601273577670213359?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Huaisheng Ye <yehs1@lenovo.com>
+Changes since v1: [1]
+* Kill support for mapping System RAM as a nop. No one uses this
+  functionality and it is broken relative to percpu_ref management.
 
-Changes since v2: [2]
-* According to Christoph's suggestion, rebase patches to current
-  mainline from v4.16.
+* Fix percpu_ref teardown. Given that devm_memremap_pages() has strict
+  assumptions about when the percpu_ref is killed, give it
+  responsibility to make the live-dead transition explicitly. (Logan)
 
-* Follow the advice of Matthew, create macros like GFP_NORMAL and
-  GFP_NORMAL_UNMOVABLE to clear bottom 3 and 4 bits of GFP bitmask.
+* Split the patch that adds HMM support to devm_memremap_pages() from
+  the patch that converts HMM to use devm_memremap_pages(). This caught
+  an incomplete conversion in v1. (Logan)
 
-* Delete some patches because of kernel updating.
+* Collect Christoph's reviewed-by.
 
-[2]: https://marc.info/?l=linux-mm&m=152691610014027&w=2
-
-Tested by Lenovo Thinksystem server.
-
-Initmem setup node 0 [mem 0x0000000000001000-0x000000043fffffff]
-[    0.000000] On node 0 totalpages: 4111666
-[    0.000000]   DMA zone: 64 pages used for memmap
-[    0.000000]   DMA zone: 23 pages reserved
-[    0.000000]   DMA zone: 3999 pages, LIFO batch:0
-[    0.000000] mminit::memmap_init Initialising map node 0 zone 0 pfns 1 -> 4096 
-[    0.000000]   DMA32 zone: 10935 pages used for memmap
-[    0.000000]   DMA32 zone: 699795 pages, LIFO batch:31
-[    0.000000] mminit::memmap_init Initialising map node 0 zone 1 pfns 4096 -> 1048576
-[    0.000000]   Normal zone: 53248 pages used for memmap
-[    0.000000]   Normal zone: 3407872 pages, LIFO batch:31
-[    0.000000] mminit::memmap_init Initialising map node 0 zone 2 pfns 1048576 -> 4456448
-[    0.000000] mminit::memmap_init Initialising map node 0 zone 3 pfns 1 -> 4456448
-[    0.000000] Initmem setup node 1 [mem 0x0000002380000000-0x000000277fffffff]
-[    0.000000] On node 1 totalpages: 4194304
-[    0.000000]   Normal zone: 65536 pages used for memmap
-[    0.000000]   Normal zone: 4194304 pages, LIFO batch:31
-[    0.000000] mminit::memmap_init Initialising map node 1 zone 2 pfns 37224448 -> 41418752
-[    0.000000] mminit::memmap_init Initialising map node 1 zone 3 pfns 37224448 -> 41418752
-...
-[    0.000000] mminit::zonelist general 0:DMA = 0:DMA
-[    0.000000] mminit::zonelist general 0:DMA32 = 0:DMA32 0:DMA
-[    0.000000] mminit::zonelist general 0:Normal = 0:Normal 0:DMA32 0:DMA 1:Normal
-[    0.000000] mminit::zonelist thisnode 0:DMA = 0:DMA
-[    0.000000] mminit::zonelist thisnode 0:DMA32 = 0:DMA32 0:DMA
-[    0.000000] mminit::zonelist thisnode 0:Normal = 0:Normal 0:DMA32 0:DMA
-[    0.000000] mminit::zonelist general 1:Normal = 1:Normal 0:Normal 0:DMA32 0:DMA
-[    0.000000] mminit::zonelist thisnode 1:Normal = 1:Normal
-[    0.000000] Built 2 zonelists, mobility grouping on.  Total pages: 8176164
-[    0.000000] Policy zone: Normal
-[    0.000000] Kernel command line: BOOT_IMAGE=/vmlinuz-4.17.0-rc6-gfp09+ 
-root=/dev/mapper/fedora-root ro rd.lvm.lv=fedora/root rd.lvm.lv=fedora/swap debug 
-LANG=en_US.UTF-8 mminit_loglevel=4 console=tty0 console=ttyS0,115200n8 memblock=debug
-earlyprintk=serial,0x3f8,115200
+[1]: https://lkml.org/lkml/2018/5/21/1109
 
 ---
 
-Replace GFP_ZONE_TABLE and GFP_ZONE_BAD with encoded zone number.
+Hi Andrew, here's v2 to replace the 5 currently in mm. The first and
+last patch did not change.
 
-Delete ___GFP_DMA, ___GFP_HIGHMEM and ___GFP_DMA32 from GFP bitmasks,
-the bottom three bits of GFP mask is reserved for storing encoded
-zone number.
+For maintainability, as ZONE_DEVICE continues to attract new users,
+it is useful to keep all users consolidated on devm_memremap_pages() as
+the interface for create "device pages".
 
-The encoding method is XOR. Get zone number from enum zone_type,
-then encode the number with ZONE_NORMAL by XOR operation.
-The goal is to make sure ZONE_NORMAL can be encoded to zero. So,
-the compatibility can be guaranteed, such as GFP_KERNEL and GFP_ATOMIC
-can be used as before.
+The devm_memremap_pages() implementation was recently reworked to make
+it more generic for arbitrary users, like the proposed peer-to-peer
+PCI-E enabling. HMM pre-dated this rework and opted to duplicate
+devm_memremap_pages() as hmm_devmem_pages_create().
 
-Reserve __GFP_MOVABLE in bit 3, so that it can continue to be used as
-a flag. Same as before, __GFP_MOVABLE respresents movable migrate type
-for ZONE_DMA, ZONE_DMA32, and ZONE_NORMAL. But when it is enabled with
-__GFP_HIGHMEM, ZONE_MOVABLE shall be returned instead of ZONE_HIGHMEM.
-__GFP_ZONE_MOVABLE is created to realize it.
+Rework HMM to be a consumer of devm_memremap_pages() directly and fix up
+the licensing on the exports given the deep dependencies on the mm.
 
-With this patch, just enabling __GFP_MOVABLE and __GFP_HIGHMEM is not
-enough to get ZONE_MOVABLE from gfp_zone. All callers should use
-GFP_HIGHUSER_MOVABLE or __GFP_ZONE_MOVABLE directly to achieve that.
-
-Decode zone number directly from bottom three bits of flags in gfp_zone.
-The theory of encoding and decoding is,
-        A ^ B ^ B = A
-
-Changes since v1:[1]
-
-* Create __GFP_ZONE_MOVABLE and modify GFP_HIGHUSER_MOVABLE to help
-  callers to get ZONE_MOVABLE. Try to create __GFP_ZONE_MASK to mask
-  lowest 3 bits of GFP bitmasks.
-
-* Modify some callers' gfp flag to update usage of address zone
-  modifiers.
-
-* Modify inline function gfp_zone to get better performance according
-  to Matthew's suggestion.
-
-[1]: https://marc.info/?l=linux-mm&m=152596791931266&w=2
+Patches based on v4.17-rc6 where there are no upstream consumers of the
+HMM functionality.
 
 ---
 
-Huaisheng Ye (9):
-  include/linux/gfp.h: get rid of GFP_ZONE_TABLE/BAD
-  include/linux/dma-mapping: update usage of zone modifiers
-  drivers/xen/swiotlb-xen: update usage of zone modifiers
-  fs/btrfs/extent_io: update usage of zone modifiers
-  drivers/block/zram/zram_drv: update usage of zone modifiers
-  mm/vmpressure: update usage of zone modifiers
-  mm/zsmalloc: update usage of zone modifiers
-  include/linux/highmem.h: update usage of movableflags
-  arch/x86/include/asm/page.h: update usage of movableflags
+Dan Williams (7):
+      mm, devm_memremap_pages: Mark devm_memremap_pages() EXPORT_SYMBOL_GPL
+      mm, devm_memremap_pages: Kill mapping "System RAM" support
+      mm, devm_memremap_pages: Fix shutdown handling
+      mm, devm_memremap_pages: Add MEMORY_DEVICE_PRIVATE support
+      mm, hmm: Use devm semantics for hmm_devmem_{add,remove}
+      mm, hmm: Replace hmm_devmem_pages_create() with devm_memremap_pages()
+      mm, hmm: Mark hmm_devmem_{add,add_resource} EXPORT_SYMBOL_GPL
 
- arch/x86/include/asm/page.h   |   3 +-
- drivers/block/zram/zram_drv.c |   6 +--
- drivers/xen/swiotlb-xen.c     |   2 +-
- fs/btrfs/extent_io.c          |   2 +-
- include/linux/dma-mapping.h   |   2 +-
- include/linux/gfp.h           | 107 ++++++++----------------------------------
- include/linux/highmem.h       |   4 +-
- mm/vmpressure.c               |   2 +-
- mm/zsmalloc.c                 |   4 +-
- 9 files changed, 32 insertions(+), 100 deletions(-)
 
--- 
-1.8.3.1
+ Documentation/vm/hmm.txt          |    1 
+ drivers/dax/pmem.c                |   10 -
+ drivers/nvdimm/pmem.c             |   18 +-
+ include/linux/hmm.h               |    4 
+ include/linux/memremap.h          |    7 +
+ kernel/memremap.c                 |   85 +++++++---
+ mm/hmm.c                          |  307 +++++--------------------------------
+ tools/testing/nvdimm/test/iomap.c |   21 ++-
+ 8 files changed, 130 insertions(+), 323 deletions(-)
