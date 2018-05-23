@@ -1,148 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932205AbeEWJM0 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 05:12:26 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:57416 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754395AbeEWJMY (ORCPT
+        id S932185AbeEWJNp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 05:13:45 -0400
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:38270 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754378AbeEWJNm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 05:12:24 -0400
-Date: Wed, 23 May 2018 11:12:20 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpio: dwapb: Rework support for 1 interrupt per port A
- GPIO
-Message-ID: <20180523091220.jfguqui75rup5qpl@verge.net.au>
-References: <1527065564-9127-1-git-send-email-phil.edworthy@renesas.com>
+        Wed, 23 May 2018 05:13:42 -0400
+X-Google-Smtp-Source: AB8JxZqBQJGni15xi3Svfyo2NScGQm5dbXfMEVGjkjHuz8trW8t0srOdFBAjlQuv2BgWL4sYCKFGXMf1qjaweENCFb0=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1527065564-9127-1-git-send-email-phil.edworthy@renesas.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <1526983321-41949-6-git-send-email-michel.pollet@bp.renesas.com>
+References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com> <1526983321-41949-6-git-send-email-michel.pollet@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 23 May 2018 11:13:40 +0200
+X-Google-Sender-Auth: tnoXl7BfXfx0cPvx8uyoh1x7IJ4
+Message-ID: <CAMuHMdWu69Mfn-JhBgvChZ3tvzUvCOeYKowzizQt3DcWJLeR0A@mail.gmail.com>
+Subject: Re: [PATCH v6 5/6] ARM: dts: Renesas RZN1D-DB Board base file
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 09:52:44AM +0100, Phil Edworthy wrote:
-> Treat DT and ACPI the same as much as possible. Note that we can't use
-> platform_get_irq() to get the DT interrupts as they are in the port
-> sub-node and hence do not have an associated platform device.
-> 
-> This also fixes a problem introduced with error checking when calling
-> platform_get_irq().
+Hi Michel,
 
-What is the problem? In general I think fixes should be in separate
-patches.
+On Tue, May 22, 2018 at 12:01 PM, Michel Pollet
+<michel.pollet@bp.renesas.com> wrote:
+> This adds a base device tree file for the RZN1-DB board, with only the
+> basic support allowing the system to boot to a prompt. Only one UART is
+> used, with only a single CPU running.
+>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 
-> 
-> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> ---
->  drivers/gpio/gpio-dwapb.c | 53 ++++++++++++++++++++---------------------------
->  1 file changed, 22 insertions(+), 31 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-> index 7dcd06b..15b4154 100644
-> --- a/drivers/gpio/gpio-dwapb.c
-> +++ b/drivers/gpio/gpio-dwapb.c
-> @@ -444,7 +444,7 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
->  		int i;
->  
->  		for (i = 0; i < pp->ngpio; i++) {
-> -			if (pp->irq[i])
-> +			if (pp->irq[i] >= 0)
->  				irq_set_chained_handler_and_data(pp->irq[i],
->  						dwapb_irq_handler, gpio);
->  		}
-> @@ -562,7 +562,7 @@ dwapb_gpio_get_pdata(struct device *dev)
->  	struct dwapb_platform_data *pdata;
->  	struct dwapb_port_property *pp;
->  	int nports;
-> -	int i;
-> +	int i, j;
->  
->  	nports = device_get_child_node_count(dev);
->  	if (nports == 0)
-> @@ -580,6 +580,8 @@ dwapb_gpio_get_pdata(struct device *dev)
->  
->  	i = 0;
->  	device_for_each_child_node(dev, fwnode)  {
-> +		struct device_node *np = NULL;
+Thanks for your patch!
+
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+> @@ -0,0 +1,29 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Device Tree Source for the RZN1D-DB Board
+> + *
+> + * Copyright (C) 2018 Renesas Electronics Europe Limited
+> + *
+> + */
 > +
->  		pp = &pdata->properties[i++];
->  		pp->fwnode = fwnode;
->  
-> @@ -599,46 +601,35 @@ dwapb_gpio_get_pdata(struct device *dev)
->  			pp->ngpio = 32;
->  		}
->  
-> +		pp->irq_shared	= false;
-> +		pp->gpio_base	= -1;
+> +/dts-v1/;
 > +
->  		/*
->  		 * Only port A can provide interrupts in all configurations of
->  		 * the IP.
->  		 */
-> -		if (dev->of_node && pp->idx == 0 &&
-> -			fwnode_property_read_bool(fwnode,
-> -						  "interrupt-controller")) {
-> -			struct device_node *np = to_of_node(fwnode);
-> -			unsigned int j;
-> -
-> -			/*
-> -			 * The IP has configuration options to allow a single
-> -			 * combined interrupt or one per gpio. If one per gpio,
-> -			 * some might not be used.
-> -			 */
-> -			for (j = 0; j < pp->ngpio; j++) {
-> -				int irq = of_irq_get(np, j);
-> -				if (irq < 0)
-> -					continue;
-> -
-> -				pp->irq[j] = irq;
-> -				pp->has_irq = true;
-> -			}
-> +		if (pp->idx != 0)
-> +			continue;
->  
-> -			if (!pp->has_irq)
-> -				dev_warn(dev, "no irq for port%d\n", pp->idx);
-> +		if (dev->of_node && fwnode_property_read_bool(fwnode,
-> +						  "interrupt-controller")) {
-> +			np = to_of_node(fwnode);
->  		}
->  
-> -		if (has_acpi_companion(dev) && pp->idx == 0) {
-> -			unsigned int j;
-> +		for (j = 0; j < pp->ngpio; j++) {
-> +			pp->irq[j] = -ENXIO;
->  
-> -			for (j = 0; j < pp->ngpio; j++) {
-> +			if (np)
-> +				pp->irq[j] = of_irq_get(np, j);
-> +			else if (has_acpi_companion(dev))
->  				pp->irq[j] = platform_get_irq(to_platform_device(dev), j);
-> -				if (pp->irq[j])
-> -					pp->has_irq = true;
-> -			}
+> +#include "r9a06g032.dtsi"
 > +
-> +			if (pp->irq[j] >= 0)
-> +				pp->has_irq = true;
->  		}
->  
-> -		pp->irq_shared	= false;
-> -		pp->gpio_base	= -1;
-> +		if (!pp->has_irq)
-> +			dev_warn(dev, "no irq for port%d\n", pp->idx);
->  	}
->  
->  	return pdata;
-> -- 
-> 2.7.4
-> 
+> +/ {
+> +       model = "RZN1D-DB Board";
+> +       compatible = "renesas,rzn1d400-db",
+> +                       "renesas,r9a06g032", "renesas,rzn1";
+
+Please drop the "renesas,rzn1".
+
+With the above fixed:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
