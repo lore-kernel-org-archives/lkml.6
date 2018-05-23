@@ -1,56 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754879AbeEWSXS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 14:23:18 -0400
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:33108 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754759AbeEWSXO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 14:23:14 -0400
-X-Google-Smtp-Source: AB8JxZpVkv++KmPLMwOiH/rkDSHLfjsXnAszYxx4TiiKBtTY73GCmwAJU3U7Q5qXAy8yQilCLpXitw==
-Date: Wed, 23 May 2018 13:23:11 -0500
-From: Rob Herring <robh@kernel.org>
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: maxime.ripard@bootlin.com, wens@csie.org, mark.rutland@arm.com,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 05/15] drm/sun4i: Add TCON TOP driver
-Message-ID: <20180523182311.GA8741@rob-hp-laptop>
-References: <20180519183127.2718-1-jernej.skrabec@siol.net>
- <20180519183127.2718-6-jernej.skrabec@siol.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180519183127.2718-6-jernej.skrabec@siol.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S933824AbeEWSYW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 14:24:22 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47892 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754802AbeEWSYQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 14:24:16 -0400
+From: David Hildenbrand <david@redhat.com>
+To: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
+        linux-acpi@vger.kernel.org
+Subject: [PATCH RFCv2 1/4] ACPI: NUMA: export pxm_to_node
+Date: Wed, 23 May 2018 20:24:01 +0200
+Message-Id: <20180523182404.11433-2-david@redhat.com>
+In-Reply-To: <20180523182404.11433-1-david@redhat.com>
+References: <20180523182404.11433-1-david@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 19, 2018 at 08:31:17PM +0200, Jernej Skrabec wrote:
-> As already described in DT binding, TCON TOP is responsible for
-> configuring display pipeline. In this initial driver focus is on HDMI
-> pipeline, so TVE and LCD configuration is not implemented.
-> 
-> Implemented features:
-> - HDMI source selection
-> - clock driver (TCON and DSI gating)
-> - connecting mixers and TCONS
-> 
-> Something similar also existed in previous SoCs, except that it was part
-> of first TCON.
-> 
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> ---
->  drivers/gpu/drm/sun4i/Makefile             |   3 +-
->  drivers/gpu/drm/sun4i/sun8i_tcon_top.c     | 256 +++++++++++++++++++++
->  drivers/gpu/drm/sun4i/sun8i_tcon_top.h     |  20 ++
->  include/dt-bindings/clock/sun8i-tcon-top.h |  11 +
+Will be needed by paravirtualized memory devices.
 
-This belongs with the binding doc patch.
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Len Brown <lenb@kernel.org>
+Cc: linux-acpi@vger.kernel.org
+Signed-off-by: David Hildenbrand <david@redhat.com>
+---
+ drivers/acpi/numa.c | 1 +
+ 1 file changed, 1 insertion(+)
 
->  4 files changed, 289 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/gpu/drm/sun4i/sun8i_tcon_top.c
->  create mode 100644 drivers/gpu/drm/sun4i/sun8i_tcon_top.h
->  create mode 100644 include/dt-bindings/clock/sun8i-tcon-top.h
+diff --git a/drivers/acpi/numa.c b/drivers/acpi/numa.c
+index 85167603b9c9..7ffee2959350 100644
+--- a/drivers/acpi/numa.c
++++ b/drivers/acpi/numa.c
+@@ -50,6 +50,7 @@ int pxm_to_node(int pxm)
+ 		return NUMA_NO_NODE;
+ 	return pxm_to_node_map[pxm];
+ }
++EXPORT_SYMBOL(pxm_to_node);
+ 
+ int node_to_pxm(int node)
+ {
+-- 
+2.17.0
