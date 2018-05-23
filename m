@@ -1,61 +1,173 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934994AbeEWUWT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 16:22:19 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:59108 "EHLO ale.deltatee.com"
+        id S935010AbeEWUW3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 16:22:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34540 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934972AbeEWUWN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 16:22:13 -0400
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Doug Meyer <dmeyer@gigaio.com>, kurt.schwemmer@microsemi.com,
-        linux-pci@vger.kernel.org, linux-ntb <linux-ntb@googlegroups.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Jon Mason <jdmason@kudzu.us>,
-        "Jiang, Dave" <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        Alex Williamson <alex.williamson@redhat.com>
-References: <1526558413-23113-1-git-send-email-dmeyer@gigaio.com>
- <1526558413-23113-3-git-send-email-dmeyer@gigaio.com>
- <20180517134521.GC19955@bhelgaas-glaptop.roam.corp.google.com>
- <9dd68ac0-5b9e-b257-49d2-20327c2ab282@deltatee.com>
- <CA+GK6en+g+T9H0sOMdVXv-_aD3rRcuzZ1JdfK0moEoTuuJnrqQ@mail.gmail.com>
- <20180522215126.GA22385@bhelgaas-glaptop.roam.corp.google.com>
- <598f5880-22b2-bbb4-4a37-5a60bae2348b@deltatee.com>
- <20180523133321.GA150632@bhelgaas-glaptop.roam.corp.google.com>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <55fd5f21-2e9c-19a9-117c-e368deaf939e@deltatee.com>
-Date: Wed, 23 May 2018 14:21:59 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180523133321.GA150632@bhelgaas-glaptop.roam.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: alex.williamson@redhat.com, linux-kernel@vger.kernel.org, allenbh@gmail.com, dave.jiang@intel.com, jdmason@kudzu.us, bhelgaas@google.com, linux-ntb@googlegroups.com, linux-pci@vger.kernel.org, kurt.schwemmer@microsemi.com, dmeyer@gigaio.com, helgaas@kernel.org
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH 2/2] NTB: PCI Quirk to Enable Switchtec NT Functionality
- with IOMMU On
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+        id S934849AbeEWUWW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 16:22:22 -0400
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Jiri Olsa <jolsa@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>, Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 16/18] perf kcore_copy: Get rid of kernel_map
+Date: Wed, 23 May 2018 17:21:04 -0300
+Message-Id: <20180523202106.17286-17-acme@kernel.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180523202106.17286-1-acme@kernel.org>
+References: <20180523202106.17286-1-acme@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Adrian Hunter <adrian.hunter@intel.com>
 
+In preparation to add more program headers, get rid of kernel_map and
+modules_map by moving ->kernel_map and ->modules_map to newly allocated
+entries in the ->phdrs list.
 
-On 23/05/18 07:33 AM, Bjorn Helgaas wrote:
-> This (and Alex's) analysis is very useful and I'd like to capture it
-> somehow, perhaps by expanding the poor pci_add_dma_alias() function
-> comment I added with f0af9593372a ("PCI: Add pci_add_dma_alias() to
-> abstract implementation").
-> 
-> The admonition to "call early" without any details about *how* early
-> or *why* it needs to be called early is not really very useful.
-> 
-> If we added your analysis, it would be a great help to anybody who
-> reworks IOMMU groups in the future.
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Joerg Roedel <joro@8bytes.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86@kernel.org
+Link: http://lkml.kernel.org/r/1526986485-6562-16-git-send-email-adrian.hunter@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/symbol-elf.c | 70 ++++++++++++++++++++++++++++++++------------
+ 1 file changed, 52 insertions(+), 18 deletions(-)
 
-Sure, I'll work up a patch and send it on shortly.
-
-Logan
+diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
+index 91b8cfb045ec..37d9324c277c 100644
+--- a/tools/perf/util/symbol-elf.c
++++ b/tools/perf/util/symbol-elf.c
+@@ -1400,14 +1400,47 @@ struct kcore_copy_info {
+ 	u64 first_module;
+ 	u64 last_module_symbol;
+ 	size_t phnum;
+-	struct phdr_data kernel_map;
+-	struct phdr_data modules_map;
+ 	struct list_head phdrs;
+ };
+ 
+ #define kcore_copy__for_each_phdr(k, p) \
+ 	list_for_each_entry((p), &(k)->phdrs, node)
+ 
++static struct phdr_data *phdr_data__new(u64 addr, u64 len, off_t offset)
++{
++	struct phdr_data *p = zalloc(sizeof(*p));
++
++	if (p) {
++		p->addr   = addr;
++		p->len    = len;
++		p->offset = offset;
++	}
++
++	return p;
++}
++
++static struct phdr_data *kcore_copy_info__addnew(struct kcore_copy_info *kci,
++						 u64 addr, u64 len,
++						 off_t offset)
++{
++	struct phdr_data *p = phdr_data__new(addr, len, offset);
++
++	if (p)
++		list_add_tail(&p->node, &kci->phdrs);
++
++	return p;
++}
++
++static void kcore_copy__free_phdrs(struct kcore_copy_info *kci)
++{
++	struct phdr_data *p, *tmp;
++
++	list_for_each_entry_safe(p, tmp, &kci->phdrs, node) {
++		list_del(&p->node);
++		free(p);
++	}
++}
++
+ static int kcore_copy__process_kallsyms(void *arg, const char *name, char type,
+ 					u64 start)
+ {
+@@ -1487,15 +1520,18 @@ static int kcore_copy__parse_modules(struct kcore_copy_info *kci,
+ 	return 0;
+ }
+ 
+-static void kcore_copy__map(struct phdr_data *p, u64 start, u64 end, u64 pgoff,
+-			    u64 s, u64 e)
++static int kcore_copy__map(struct kcore_copy_info *kci, u64 start, u64 end,
++			   u64 pgoff, u64 s, u64 e)
+ {
+-	if (p->addr || s < start || s >= end)
+-		return;
++	u64 len, offset;
++
++	if (s < start || s >= end)
++		return 0;
+ 
+-	p->addr = s;
+-	p->offset = (s - start) + pgoff;
+-	p->len = e < end ? e - s : end - s;
++	offset = (s - start) + pgoff;
++	len = e < end ? e - s : end - s;
++
++	return kcore_copy_info__addnew(kci, s, len, offset) ? 0 : -1;
+ }
+ 
+ static int kcore_copy__read_map(u64 start, u64 len, u64 pgoff, void *data)
+@@ -1503,11 +1539,12 @@ static int kcore_copy__read_map(u64 start, u64 len, u64 pgoff, void *data)
+ 	struct kcore_copy_info *kci = data;
+ 	u64 end = start + len;
+ 
+-	kcore_copy__map(&kci->kernel_map, start, end, pgoff, kci->stext,
+-			kci->etext);
++	if (kcore_copy__map(kci, start, end, pgoff, kci->stext, kci->etext))
++		return -1;
+ 
+-	kcore_copy__map(&kci->modules_map, start, end, pgoff, kci->first_module,
+-			kci->last_module_symbol);
++	if (kcore_copy__map(kci, start, end, pgoff, kci->first_module,
++			    kci->last_module_symbol))
++		return -1;
+ 
+ 	return 0;
+ }
+@@ -1517,11 +1554,6 @@ static int kcore_copy__read_maps(struct kcore_copy_info *kci, Elf *elf)
+ 	if (elf_read_maps(elf, true, kcore_copy__read_map, kci) < 0)
+ 		return -1;
+ 
+-	if (kci->kernel_map.len)
+-		list_add_tail(&kci->kernel_map.node, &kci->phdrs);
+-	if (kci->modules_map.len)
+-		list_add_tail(&kci->modules_map.node, &kci->phdrs);
+-
+ 	return 0;
+ }
+ 
+@@ -1773,6 +1805,8 @@ int kcore_copy(const char *from_dir, const char *to_dir)
+ 	if (err)
+ 		kcore_copy__unlink(to_dir, "kallsyms");
+ 
++	kcore_copy__free_phdrs(&kci);
++
+ 	return err;
+ }
+ 
+-- 
+2.14.3
