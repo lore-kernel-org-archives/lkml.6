@@ -1,62 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932995AbeEWNPv (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 09:15:51 -0400
-Received: from gum.cmpxchg.org ([85.214.110.215]:51818 "EHLO gum.cmpxchg.org"
+        id S933021AbeEWNQW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 09:16:22 -0400
+Received: from mga09.intel.com ([134.134.136.24]:27584 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932875AbeEWNPt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 09:15:49 -0400
-Date: Wed, 23 May 2018 09:17:47 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Vinayak Menon <vinmenon@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linuxfoundation.org>, Tejun Heo <tj@kernel.org>,
-        Balbir Singh <bsingharora@gmail.com>, Mike Galbraith <efault@gmx.de>,
-        Oliver Yang <yangoliver@me.com>, Shakeel Butt <shakeelb@google.com>,
-        xxx xxx <x.qendo@gmail.com>, Taras Kondratiuk <takondra@cisco.com>,
-        Daniel Walker <danielwa@cisco.com>,
-        Ruslan Ruslichenko <rruslich@cisco.com>, kernel-team@fb.com
-Subject: Re: [PATCH 6/7] psi: pressure stall information for CPU, memory, and
- IO
-Message-ID: <20180523131747.GA4086@cmpxchg.org>
-References: <20180507210135.1823-1-hannes@cmpxchg.org>
- <20180507210135.1823-7-hannes@cmpxchg.org>
- <87060553-2e09-2e2a-13a2-a91345d6df30@codeaurora.org>
+        id S932932AbeEWNQT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 09:16:19 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,433,1520924400";
+   d="scan'208";a="61043788"
+Date: Wed, 23 May 2018 16:16:16 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: "Winkler, Tomas" <tomas.winkler@intel.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] tpm: separate cmd_ready/go_idle from runtime_pm
+Message-ID: <20180523131616.GD363@linux.intel.com>
+References: <20180516194600.28189-1-tomas.winkler@intel.com>
+ <20180522091732.GA5228@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9D89D350@hasmsx109.ger.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87060553-2e09-2e2a-13a2-a91345d6df30@codeaurora.org>
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9D89D350@hasmsx109.ger.corp.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 09, 2018 at 04:33:24PM +0530, Vinayak Menon wrote:
-> On 5/8/2018 2:31 AM, Johannes Weiner wrote:
-> > +	/* Kick the stats aggregation worker if it's gone to sleep */
-> > +	if (!delayed_work_pending(&group->clock_work))
+On Tue, May 22, 2018 at 09:27:46AM +0000, Winkler, Tomas wrote:
+> > 
+> > On Wed, May 16, 2018 at 10:46:00PM +0300, Tomas Winkler wrote:
+> > > New wrappers are added tpm_cmd_ready() and tpm_go_idle() wrappers to
+> > > streamline tpm_try_transmit code. TPM_TRANSMIT_UNLOCKED flag is
+> > abused
+> > > to resolve tpm spaces recursive calls to tpm_transmit().
+> > 
+> > This looks good and all but I don't think we want to abuse anything in the
+> > driver code, do we?
 > 
-> This causes a crash when the work is scheduled before system_wq is up. In my case when the first
-> schedule was called from kthreadd. And I had to do this to make it work.
-> if (keventd_up() && !delayed_work_pending(&group->clock_work))
->
-> > +		schedule_delayed_work(&group->clock_work, MY_LOAD_FREQ);
+> It's not abuse just the flag UNLOCKED is not really named correctly 
+> I think this has to be backported so wanted to do less invasive change.
 
-I was trying to figure out how this is possible, and it didn't make
-sense because we do initialize the system_wq way before kthreadd.
+It should be renamed anyway and possible merge conflicts are not hard to
+sort out in this change. Can you rename it as SPACE?
 
-Did you by any chance backport this to a pre-4.10 kernel which does
-not have 3347fa092821 ("workqueue: make workqueue available early
-during boot") yet?
+Right, and even without rename this will probably cause merge conflicts
+at least in v4.4 an v4.9 since in-kernel RM landed in v4.12, so not much
+gain not do the rename :-)
 
-> > +void psi_task_change(struct task_struct *task, u64 now, int clear, int set)
-> > +{
-> > +	struct cgroup *cgroup, *parent;
-> 
-> unused variables
-
-They're used in the next patch, I'll fix that up.
-
-Thanks
+/Jarkko
