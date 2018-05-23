@@ -1,161 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932124AbeEWISa (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 04:18:30 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:44564 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932105AbeEWIS0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 04:18:26 -0400
-X-Google-Smtp-Source: AB8JxZpcbcWkziPIEFqfrq1tVAh5sq1T/LNDHHlDmBc8RpLuZu1N1Trs9sELytLcAFV0j62S94Oja9bwaIprenNFOp0=
+        id S932144AbeEWISh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 04:18:37 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:57345 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932105AbeEWISb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 04:18:31 -0400
+Date: Wed, 23 May 2018 10:18:30 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH v3] arm64: allwinner: a64: Add Amarula A64-Relic initial
+ support
+Message-ID: <20180523081830.4ly6sj34reabbttn@flea>
+References: <20180522132228.6564-1-jagan@amarulasolutions.com>
+ <20180522143044.pgwawojiwnk2lzxb@flea>
+ <CAMty3ZD3JT-ToGAUHN_uj7uVK-jkyAwfEdTBCmJSj34bACFpYQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180522220953.GB40506@joelaf.mtv.corp.google.com>
-References: <20180518185501.173552-1-joel@joelfernandes.org>
- <20180522103415.cuutobi5kbhj4gcw@vireshk-i7> <20180522220953.GB40506@joelaf.mtv.corp.google.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 23 May 2018 10:18:25 +0200
-X-Google-Sender-Auth: tJZLhCV7EO_18_UxPOSMGAvrM_M
-Message-ID: <CAJZ5v0gEop-1Xp81fTuNQ+cxPwfYx-_1MMLyJSR3piCT8ifhFg@mail.gmail.com>
-Subject: Re: [PATCH v2] schedutil: Allow cpufreq requests to be made even when
- kthread kicked
-To: Joel Fernandes <joel@joelfernandes.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-        "Joel Fernandes (Google.)" <joelaf@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>, Todd Kjos <tkjos@google.com>,
-        Claudio Scordino <claudio@evidence.eu.com>, kernel-team@android.com,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="mamnyo2i4rxbn4ji"
+Content-Disposition: inline
+In-Reply-To: <CAMty3ZD3JT-ToGAUHN_uj7uVK-jkyAwfEdTBCmJSj34bACFpYQ@mail.gmail.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 12:09 AM, Joel Fernandes <joel@joelfernandes.org> wrote:
-> On Tue, May 22, 2018 at 04:04:15PM +0530, Viresh Kumar wrote:
->> Okay, me and Rafael were discussing this patch, locking and races around this.
->>
->> On 18-05-18, 11:55, Joel Fernandes (Google.) wrote:
->> > diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
->> > index e13df951aca7..5c482ec38610 100644
->> > --- a/kernel/sched/cpufreq_schedutil.c
->> > +++ b/kernel/sched/cpufreq_schedutil.c
->> > @@ -92,9 +92,6 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
->> >         !cpufreq_can_do_remote_dvfs(sg_policy->policy))
->> >             return false;
->> >
->> > -   if (sg_policy->work_in_progress)
->> > -           return false;
->> > -
->> >     if (unlikely(sg_policy->need_freq_update)) {
->> >             sg_policy->need_freq_update = false;
->> >             /*
->> > @@ -128,7 +125,7 @@ static void sugov_update_commit(struct sugov_policy *sg_policy, u64 time,
->> >
->> >             policy->cur = next_freq;
->> >             trace_cpu_frequency(next_freq, smp_processor_id());
->> > -   } else {
->> > +   } else if (!sg_policy->work_in_progress) {
->> >             sg_policy->work_in_progress = true;
->> >             irq_work_queue(&sg_policy->irq_work);
->> >     }
->> > @@ -291,6 +288,13 @@ static void sugov_update_single(struct update_util_data *hook, u64 time,
->> >
->> >     ignore_dl_rate_limit(sg_cpu, sg_policy);
->> >
->> > +   /*
->> > +    * For slow-switch systems, single policy requests can't run at the
->> > +    * moment if update is in progress, unless we acquire update_lock.
->> > +    */
->> > +   if (sg_policy->work_in_progress)
->> > +           return;
->> > +
->> >     if (!sugov_should_update_freq(sg_policy, time))
->> >             return;
->> >
->> > @@ -382,13 +386,27 @@ sugov_update_shared(struct update_util_data *hook, u64 time, unsigned int flags)
->> >  static void sugov_work(struct kthread_work *work)
->> >  {
->> >     struct sugov_policy *sg_policy = container_of(work, struct sugov_policy, work);
->> > +   unsigned int freq;
->> > +   unsigned long flags;
->> > +
->> > +   /*
->> > +    * Hold sg_policy->update_lock shortly to handle the case where:
->> > +    * incase sg_policy->next_freq is read here, and then updated by
->> > +    * sugov_update_shared just before work_in_progress is set to false
->> > +    * here, we may miss queueing the new update.
->> > +    *
->> > +    * Note: If a work was queued after the update_lock is released,
->> > +    * sugov_work will just be called again by kthread_work code; and the
->> > +    * request will be proceed before the sugov thread sleeps.
->> > +    */
->> > +   raw_spin_lock_irqsave(&sg_policy->update_lock, flags);
->> > +   freq = sg_policy->next_freq;
->> > +   sg_policy->work_in_progress = false;
->> > +   raw_spin_unlock_irqrestore(&sg_policy->update_lock, flags);
->> >
->> >     mutex_lock(&sg_policy->work_lock);
->> > -   __cpufreq_driver_target(sg_policy->policy, sg_policy->next_freq,
->> > -                           CPUFREQ_RELATION_L);
->> > +   __cpufreq_driver_target(sg_policy->policy, freq, CPUFREQ_RELATION_L);
->> >     mutex_unlock(&sg_policy->work_lock);
->> > -
->> > -   sg_policy->work_in_progress = false;
->> >  }
->>
->> And I do see a race here for single policy systems doing slow switching.
->>
->> Kthread                                                 Sched update
->>
->> sugov_work()                                            sugov_update_single()
->>
->>         lock();
->>         // The CPU is free to rearrange below
->>         // two in any order, so it may clear
->>         // the flag first and then read next
->>         // freq. Lets assume it does.
->>         work_in_progress = false
->>
->>                                                         if (work_in_progress)
->>                                                                 return;
->>
->>                                                         sg_policy->next_freq = 0;
->>         freq = sg_policy->next_freq;
->>                                                         sg_policy->next_freq = real-next-freq;
->>         unlock();
->>
->
-> I agree with the race you describe for single policy slow-switch. Good find :)
->
-> The mainline sugov_work could also do such reordering in sugov_work, I think. Even
-> with the mutex_unlock in mainline's sugov_work, that work_in_progress write could
-> be reordered by the CPU to happen before the read of next_freq. AIUI,
-> mutex_unlock is expected to be only a release-barrier.
->
-> Although to be safe, I could just put an smp_mb() there. I believe with that,
-> no locking would be needed for such case.
 
-Yes, but leaving the work_in_progress check in sugov_update_single()
-means that the original problem is still there in the one-CPU policy
-case.  Namely, utilization updates coming in between setting
-work_in_progress in sugov_update_commit() and clearing it in
-sugov_work() will be discarded in the one-CPU policy case, but not in
-the shared policy case.
+--mamnyo2i4rxbn4ji
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> I'll send out a v3 with Acks for the original patch,
+On Wed, May 23, 2018 at 11:44:56AM +0530, Jagan Teki wrote:
+> On Tue, May 22, 2018 at 8:00 PM, Maxime Ripard
+> <maxime.ripard@bootlin.com> wrote:
+> > On Tue, May 22, 2018 at 06:52:28PM +0530, Jagan Teki wrote:
+> >> Amarula A64-Relic is Allwinner A64 based IoT device, which support
+> >> - Allwinner A64 Cortex-A53
+> >> - Mali-400MP2 GPU
+> >> - AXP803 PMIC
+> >> - 1GB DDR3 RAM
+> >> - 8GB eMMC
+> >> - AP6330 Wifi/BLE
+> >> - MIPI-DSI
+> >> - CSI: OV5640 sensor
+> >> - USB OTG
+> >
+> > You claim that this is doing OTG...
+> >
+> > [..]
+> >
+> >> +&usb_otg {
+> >> +     dr_mode =3D "peripheral";
+> >> +     status =3D "okay";
+> >> +};
+> >
+> > ... and yet you're setting it as peripheral...
+>=20
+> Though it claims OTG, board doesn't have any USB ports to operate(not
+> even Mini-AB) the only way to use the board as peripheral to transfer
+> images from host.
 
-OK
+I'm not sure what you mean here. If there's no USB connector, why do
+you even enable it?
 
-> and the send out the smp_mb() as a separate patch if that's Ok.
+maxime
 
-I would prefer to use a spinlock in the one-CPU policy non-fast-switch
-case and remove the work_in_progress check from sugov_update_single().
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-I can do a patch on top of yours for that.  In fact, I've done that already. :-)
+--mamnyo2i4rxbn4ji
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
-Rafael
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsFI9UACgkQ0rTAlCFN
+r3TRxQ//YUtgozefeDLqseqYu7KoRTtEqw4a0UiNTFtIg8LV3VRuBlycSyGvL3wH
+PS4Gv37Xy+P6ubDCb4wBMjuaOkB8Xt8Uu6yrWA2YXLsnOCCSI1VMSdp1uaCi83vu
+WhjhzOsxquVd+xSw5LkSR1cE2sfDFzQ1e10akQfzivzSYjar2xGUPnc2jCHgoc08
+xHSAkw8qVZ7skxbqg1b1zxfvgCkRN3bYA0Vt9Kuprb1JpBnRlh1kPzNK15r50oft
+BebQ/RRpTIixs1f5mBYZyn6QBIRWNI7jKKJLBL+TMqlFUI30qK19qheibgHkbmtd
+bPpakQrIpY2pjJEUsm2QNhABOnoIDN8iiV0+DKyWxbbmCt4ZZTBZcM6s2Hbr0t5M
+7CbBqkuyDqw4I1CzdgQtVuGQcAm7CjfUy9vGef3xbqQHZomlrWpTFVcwVpcqnuWu
+6eJ3SKiEMLXUh17PZyy1kk9+6v+McYaKNbDV9DUwJ1PtPD4Ya/A9IyRwunBzagU+
+inrsMLvwhlLNVvH0mcedAXwKfTcxc7x7VZ7rISr9TLcijkWpcduIAtiv28bnO/ih
+xQBLIyw8bJYtQ+PvbCuDKmGSLUPAa+rX+WuboSpv2RRZ5ZlTymSwQJVIwJ/MLogz
+7A45abThiHLYRiBecgVZS+w83AAqXZMUj7BPUl3aO50I9zgJ8eQ=
+=5v+K
+-----END PGP SIGNATURE-----
+
+--mamnyo2i4rxbn4ji--
