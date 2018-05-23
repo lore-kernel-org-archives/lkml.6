@@ -1,231 +1,205 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754023AbeEWFmA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 01:42:00 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:34153 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753967AbeEWFl6 (ORCPT
+        id S1754058AbeEWFmM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 01:42:12 -0400
+Received: from lgeamrelo11.lge.com ([156.147.23.51]:57175 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754026AbeEWFmH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 01:41:58 -0400
-X-Google-Smtp-Source: AB8JxZr61pYD8RypqbOpJwm3dVzk4G849X/q4zcNF4lFmiXpGnxVC3lnG1z91odvhTZFTXjTlTWqbg==
-Date: Wed, 23 May 2018 11:11:54 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: rjw@rjwysocki.net, edubezval@gmail.com, kevin.wangtao@linaro.org,
-        leo.yan@linaro.org, vincent.guittot@linaro.org,
-        linux-kernel@vger.kernel.org, javi.merino@kernel.org,
-        rui.zhang@intel.com, linux-pm@vger.kernel.org,
-        daniel.thompson@linaro.org
-Subject: Re: [PATCH V3] powercap/drivers/idle_injection: Add an idle
- injection framework
-Message-ID: <20180523054154.fvhnwgvq34ihivdj@vireshk-i7>
-References: <1526655056-24592-1-git-send-email-daniel.lezcano@linaro.org>
- <20180521103223.asejwsaf7pnrs777@vireshk-i7>
- <7ff0d7d4-be5e-2384-1201-df8616519892@linaro.org>
+        Wed, 23 May 2018 01:42:07 -0400
+X-Original-SENDERIP: 156.147.1.126
+X-Original-MAILFROM: namhyung@kernel.org
+X-Original-SENDERIP: 10.177.227.17
+X-Original-MAILFROM: namhyung@kernel.org
+Date: Wed, 23 May 2018 14:41:08 +0900
+From: Namhyung Kim <namhyung@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Clark Williams <williams@redhat.com>,
+        Karim Yaghmour <karim.yaghmour@opersys.com>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Yann Ylavic <ylavic.dev@gmail.com>, linux-rt-users@vger.kernel.org,
+        kernel-team@lge.com
+Subject: Re: [PATCH v3 00/14] tracing: Add triggers to trace_marker writes
+Message-ID: <20180523054108.GA2763@sejong>
+References: <20180516150012.135869655@goodmis.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <7ff0d7d4-be5e-2384-1201-df8616519892@linaro.org>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <20180516150012.135869655@goodmis.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22-05-18, 15:42, Daniel Lezcano wrote:
-> On 21/05/2018 12:32, Viresh Kumar wrote:
-> > On 18-05-18, 16:50, Daniel Lezcano wrote:
-> >> Initially, the cpu_cooling device for ARM was changed by adding a new
-> >> policy inserting idle cycles. The intel_powerclamp driver does a
-> >> similar action.
-> >>
-> >> Instead of implementing idle injections privately in the cpu_cooling
-> >> device, move the idle injection code in a dedicated framework and give
-> >> the opportunity to other frameworks to make use of it.
-> > 
-> > I thought you agreed to move above in the comments section ?
+Hi Steve,
+
+On Wed, May 16, 2018 at 11:00:12AM -0400, Steven Rostedt wrote:
+> A few people have asked for this in the past, and I finally got around
+> to implementing it. What this does is to allow writes into trace_marker
+> to initiate a trigger.
 > 
-> This is what I did. I just kept the relevant log here.
-
-The fact that you are stating that you tried to update the cooling
-device earlier looked like a bit of version history to me, not what
-this patch is doing.
-
-But its okay if you really want that to be preserved in git history :)
-
-> >> +static void idle_injection_fn(unsigned int cpu)
-> >> +{
-> >> +	struct idle_injection_device *ii_dev;
-> >> +	struct idle_injection_thread *iit;
-> >> +	int run_duration_ms, idle_duration_ms;
-> >> +
-> >> +	ii_dev = per_cpu(idle_injection_device, cpu);
-> >> +
-> >> +	iit = per_cpu_ptr(&idle_injection_thread, cpu);
-> >> +
-> >> +	/*
-> >> +	 * Boolean used by the smpboot mainloop and used as a flip-flop
-> >> +	 * in this function
-> >> +	 */
-> >> +	iit->should_run = 0;
-> >> +
-> >> +	atomic_inc(&ii_dev->count);
-> >> +
-> >> +	idle_duration_ms = atomic_read(&ii_dev->idle_duration_ms);
-> >> +
-> >> +	play_idle(idle_duration_ms);
-> >> +
-> >> +	/*
-> >> +	 * The last CPU waking up is in charge of setting the timer. If
-> >> +	 * the CPU is hotplugged, the timer will move to another CPU
-> >> +	 * (which may not belong to the same cluster) but that is not a
-> >> +	 * problem as the timer will be set again by another CPU
-> >> +	 * belonging to the cluster. This mechanism is self adaptive.
-> >> +	 */
-> >> +	if (!atomic_dec_and_test(&ii_dev->count))
-> >> +		return;
-> >> +
-> >> +	run_duration_ms = atomic_read(&ii_dev->run_duration_ms);
-> > 
-> > This reads as if it is okay to have run_duration_ms set as 0, so we
-> > run idle loop only once. Which is fine, but why do you mandate this to
-> > be non-zero in idle_injection_start() ?
+> The trace_marker event is described in:
 > 
-> It does not make sense to run this function with a run duration set to
-> zero because we will immediately go to idle again after exiting idle. So
-> the action is exiting. In this context we can't accept to start
-> injecting idle cycles.
-
-Right and that's why I said "Which is fine" in my comment above. My
-question was more on why we error out in idle_injection_start() if
-run_duration_ms is 0.
-
-Just for my understanding, is it a valid usecase where we want to run
-the idle loop only once ? i.e. set idle_duration_ms to a non-zero
-value but run_duration_ms to 0 ? In that case we shouldn't check for
-zero run_duration_ms in idle_injection_start().
-
-> >> +	if (!run_duration_ms)
-> >> +		return;
-> >> +
-> >> +	hrtimer_start(&ii_dev->timer, ms_to_ktime(run_duration_ms),
-> >> +		      HRTIMER_MODE_REL_PINNED);
-> >> +}
-> >> +
-> >> +/**
-> >> + * idle_injection_set_duration - idle and run duration helper
-> >> + * @run_duration_ms: an unsigned int giving the running time in milliseconds
-> >> + * @idle_duration_ms: an unsigned int giving the idle time in milliseconds
-> >> + */
-> >> +void idle_injection_set_duration(struct idle_injection_device *ii_dev,
-> >> +				 unsigned int run_duration_ms,
-> >> +				 unsigned int idle_duration_ms)
-> >> +{
-> >> +	atomic_set(&ii_dev->run_duration_ms, run_duration_ms);
-> >> +	atomic_set(&ii_dev->idle_duration_ms, idle_duration_ms);
-> > 
-> > You check for valid values of these in idle_injection_start() but not
-> > here, why ?
+>  tracefs/events/ftrace/print
 > 
-> By checking against a zero values in the start function is a way to make
-> sure we are not starting the idle injection with uninitialized values
-> and by setting the duration to zero is a way to stop the idle injection.
-
-Why do we need two ways of stopping the idle injection thread ? Why
-isn't just calling idle_injection_stop() the right thing to do in that
-case ?
-
-> >> +}
-> >> +
-> >> +/**
-> >> + * idle_injection_get_duration - idle and run duration helper
-> >> + * @run_duration_ms: a pointer to an unsigned int to store the running time
-> >> + * @idle_duration_ms: a pointer to an unsigned int to store the idle time
-> >> + */
-> >> +void idle_injection_get_duration(struct idle_injection_device *ii_dev,
-> >> +				 unsigned int *run_duration_ms,
-> >> +				 unsigned int *idle_duration_ms)
-> >> +{
-> >> +	*run_duration_ms = atomic_read(&ii_dev->run_duration_ms);
-> >> +	*idle_duration_ms = atomic_read(&ii_dev->idle_duration_ms);
-> >> +}
-> >> +
-> >> +/**
-> >> + * idle_injection_start - starts the idle injections
-> >> + * @ii_dev: a pointer to an idle_injection_device structure
-> >> + *
-> >> + * The function starts the idle injection cycles by first waking up
-> >> + * all the tasks the ii_dev is attached to and let them handle the
-> >> + * idle-run periods.
-> >> + *
-> >> + * Return: -EINVAL if the idle or the running durations are not set.
-> >> + */
-> >> +int idle_injection_start(struct idle_injection_device *ii_dev)
-> >> +{
-> >> +	if (!atomic_read(&ii_dev->idle_duration_ms))
-> >> +		return -EINVAL;
-> >> +
-> >> +	if (!atomic_read(&ii_dev->run_duration_ms))
-> >> +		return -EINVAL;
-> >> +
-
-So according to above comments from me, I am saying that this
-particular test isn't really required as we may want to run idle loop
-only once.
-
-> >> +	pr_debug("Starting injecting idle cycles on CPUs '%*pbl'\n",
-> >> +		 cpumask_pr_args(ii_dev->cpumask));
-> >> +
-> >> +	idle_injection_wakeup(ii_dev);
-> >> +
-> >> +	return 0;
-> >> +}
-> >> +
-> >> +/**
-> >> + * idle_injection_stop - stops the idle injections
-> >> + * @ii_dev: a pointer to an idle injection_device structure
-> >> + *
-> >> + * The function stops the idle injection by canceling the timer in
-> >> + * charge of waking up the tasks to inject idle and unset the idle and
-> >> + * running durations.
-> >> + */
-> >> +void idle_injection_stop(struct idle_injection_device *ii_dev)
-> >> +{
-> >> +	pr_debug("Stopping injecting idle cycles on CPUs '%*pbl'\n",
-> >> +		 cpumask_pr_args(ii_dev->cpumask));
-> >> +
-> >> +	hrtimer_cancel(&ii_dev->timer);
-> > 
-> > How are we sure that idle_injection_fn() isn't running at this point
-> > and it would start the timer cancelled here again ?
+> Thus the trigger file is added there:
 > 
-> Nothing will ensure that. We will have an extra idle injection in this
-> case. We can invert the set_duration(0,0) and the timer cancellation to
-> reduce to reduce the window.
-
-That's what I thought and so its racy. If someone calls
-idle_injection_unregister(), then we call this routine and then free
-the data structures while they are still getting used by the thread :(
-
-> >> +
-> >> +	idle_injection_set_duration(ii_dev, 0, 0);
-> > 
-> > And why exactly this this required ? Why shouldn't we allow this
-> > sequence to work:
-> > 
-> > idle_injection_set_duration()
-> > idle_injection_start()
-> > idle_injection_stop()
-> > idle_injection_start()
-> > idle_injection_stop()
-> > idle_injection_start()
-> > idle_injection_stop()
+>  tracefs/events/ftrace/print/trigger
 > 
-> Sorry, I don't get it.
+> As there's already a "hist" file there, everything appears to work
+> just like any other trigger to an event. See the last patch for
+> documentation on how to use the triggers to a trace_marker write.
 > 
-> Who will decide to start() and stop() ?
+> By the way, the patch:
+> 
+>   tracing: Prevent further users of zero size static arrays in trace events
+> 
+> May prevent your kernel from building if you include Xen. You will need
+> to add this patch to make it work (or include the git repo below).
+> 
+>  http://lkml.kernel.org/r/20180509144605.5a220327@gandalf.local.home
+> 
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
+> ftrace/core
+> 
+> Head SHA1: dded7b759602085b4bd2c5581f58f6b179912d89
+> 
+> 
+> Steven Rostedt (VMware) (14):
+>       tracing: Do not reference event data in post call triggers
+>       tracing: Add __find_event_file() to find event files without restrictions
+>       tracing: Have event_trace_init() called by trace_init_tracefs()
+>       tracing: Add brackets in ftrace event dynamic arrays
+>       tracing: Do not show filter file for ftrace internal events
+>       tracing: Add trigger file for trace_markers tracefs/ftrace/print
+>       tracing: Have zero size length in filter logic be full string
+>       tracing: Prevent further users of zero size static arrays in trace events
+>       tracing: Allow histogram triggers to access ftrace internal events
+>       tracing: Document trace_marker triggers
+>       ftrace/selftest: Have the reset_trigger code be a bit more careful
+>       ftrace/selftest: Fix reset_trigger() to handle triggers with filters
+>       tracing/selftest: Add selftests to test trace_marker histogram triggers
+>       tracing/selftest: Add test to test hist trigger between kernel event and trace_marker
+> 
+> ----
 
-Some confusion here about the usecase then. How do you see this stuff
-getting used and how users (cooling-driver ?) will use it ?
+For the series:
 
--- 
-viresh
+Reviewed-by: Namhyung Kim <namhyung@kernel.org>
+
+Thanks,
+Namhyung
+
+
+> Changes since v2:
+> 
+>  - typo fixes in documentation (Tom Zanussi)
+>  - Rename trigger-trace-marker{-hist} in selftest (Masami Hiramatsu)
+>  - Fix onmatch(sched.sched_waking) (Namhyung Kim)
+>  - Rename test to say trace_marker trigger from event trigger (Steven Rostedt)
+> 
+>  Diff from v2 below.
+> 
+>  Documentation/trace/events.rst                     |   6 +-
+>  Documentation/trace/ftrace.rst                     |   5 +
+>  Documentation/trace/histogram.txt                  | 546 ++++++++++++++++++++-
+>  include/linux/trace_events.h                       |   3 +-
+>  include/trace/trace_events.h                       |   1 +
+>  kernel/trace/trace.c                               |  19 +
+>  kernel/trace/trace.h                               |   9 +-
+>  kernel/trace/trace_entries.h                       |   6 +-
+>  kernel/trace/trace_events.c                        |  36 +-
+>  kernel/trace/trace_events_filter.c                 |  23 +-
+>  kernel/trace/trace_events_hist.c                   |   2 +-
+>  kernel/trace/trace_events_trigger.c                |   6 +-
+>  kernel/trace/trace_export.c                        |   9 +-
+>  tools/testing/selftests/ftrace/test.d/functions    |  23 +-
+>  .../test.d/trigger/trigger-trace-marker-hist.tc    |  49 ++
+>  .../trigger/trigger-trace-marker-synthetic.tc      |  88 ++++
+>  16 files changed, 790 insertions(+), 41 deletions(-)
+>  create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-hist.tc
+>  create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic.tc
+> 
+> 
+> diff --git a/Documentation/trace/histogram.txt b/Documentation/trace/histogram.txt
+> index 8c871f0c0e33..ae2d4f9d0a62 100644
+> --- a/Documentation/trace/histogram.txt
+> +++ b/Documentation/trace/histogram.txt
+> @@ -2005,7 +2005,7 @@ and after it wakes up, something like this:
+>  
+>  static void traceputs(char *str)
+>  {
+> -	/* tracemark_fd is the trace_marker file descripto */
+> +	/* tracemark_fd is the trace_marker file descriptor */
+>  	if (tracemark_fd < 0)
+>  		return;
+>  	/* write the tracemark message */
+> @@ -2048,7 +2048,7 @@ Now running cyclictest with:
+>  
+>  Note, the -b 1000 is used just to make --tracemark available.
+>  
+> -The we can see the histogram created by this with:
+> +Then we can see the histogram created by this with:
+>  
+>   # cat events/synthetic/latency/hist
+>  # event histogram
+> @@ -2360,7 +2360,7 @@ kernel with trace_marker.
+>  
+>  The difference this time is that instead of using the trace_marker to start
+>  the latency, the sched_waking event is used, matching the common_pid for the
+> -trace_marker write with the pid that is being worken by sched_waking.
+> +trace_marker write with the pid that is being woken by sched_waking.
+>  
+>  After running cyclictest again with the same parameters, we now have:
+>  
+> @@ -2535,5 +2535,5 @@ Totals:
+>      Dropped: 0
+>  
+>  This doesn't tell us any information about how late cyclictest may have
+> -worken up, but it does show us a nice histogram of how long it took from
+> -the time that cyclictest was worken to the time it made it into user space.
+> +woken up, but it does show us a nice histogram of how long it took from
+> +the time that cyclictest was woken to the time it made it into user space.
+> diff --git a/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker.tc b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-hist.tc
+> similarity index 93%
+> rename from tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker.tc
+> rename to tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-hist.tc
+> index 48e7ac1ccbc1..2acbfe2c0c0c 100644
+> --- a/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker.tc
+> +++ b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-hist.tc
+> @@ -1,6 +1,6 @@
+>  #!/bin/sh
+>  # SPDX-License-Identifier: GPL-2.0
+> -# description: event trigger - test histogram trigger
+> +# description: trace_marker trigger - test histogram trigger
+>  # flags: instance
+>  
+>  do_reset() {
+> diff --git a/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic.tc b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic.tc
+> index d8cfc36f228b..b06996ecd5e0 100644
+> --- a/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic.tc
+> +++ b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic.tc
+> @@ -1,6 +1,6 @@
+>  #!/bin/sh
+>  # SPDX-License-Identifier: GPL-2.0
+> -# description: event trigger - test histogram with synthetic event
+> +# description: trace_marker trigger - test histogram with synthetic event
+>  # flags:
+>  
+>  do_reset() {
+> @@ -72,7 +72,7 @@ echo "Test histogram kernel event to trace_marker latency histogram trigger"
+>  
+>  echo 'latency u64 lat' > synthetic_events
+>  echo 'hist:keys=pid:ts0=common_timestamp.usecs' > events/sched/sched_waking/trigger
+> -echo 'hist:keys=common_pid:lat=common_timestamp.usecs-$ts0:onmatch(ftrace.print).latency($lat)' > events/ftrace/print/trigger
+> +echo 'hist:keys=common_pid:lat=common_timestamp.usecs-$ts0:onmatch(sched.sched_waking).latency($lat)' > events/ftrace/print/trigger
+>  echo 'hist:keys=common_pid,lat:sort=lat' > events/synthetic/latency/trigger
+>  sleep 1
+>  echo "hello" > trace_marker
