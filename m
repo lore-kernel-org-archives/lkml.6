@@ -1,166 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933537AbeEWOq4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 10:46:56 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36361 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933149AbeEWOqu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 10:46:50 -0400
-Date: Wed, 23 May 2018 16:46:21 +0200
-From: Borislav Petkov <bp@suse.de>
-To: Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>
-Cc: x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>, Radim Krcmar <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH] Use 'imply' with SEV Kconfig CRYPTO dependencies
-Message-ID: <20180523144621.GB25143@pd.tnic>
-References: <1526915573-22917-1-git-send-email-Janakarajan.Natarajan@amd.com>
+        id S933497AbeEWOsR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 10:48:17 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39692 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933332AbeEWOsO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 10:48:14 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E4772601D4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
+Subject: Re: [RFC PATCH 5/5] remoteproc: qcom: Introduce Hexagon V5 based WCSS
+ driver
+To: Vinod <vkoul@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Sibi Sankar <sibis@codeaurora.org>,
+        Rohit kumar <rohitkr@codeaurora.org>,
+        Andy Gross <andy.gross@linaro.org>, linux-kernel@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <20180523052054.19025-1-bjorn.andersson@linaro.org>
+ <20180523052054.19025-6-bjorn.andersson@linaro.org>
+ <20180523060516.GD20991@vkoul-mobl> <20180523065815.GZ14924@minitux>
+ <20180523073723.GF20991@vkoul-mobl>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <fa0af8c1-f635-13e7-e600-4c1f91a48351@codeaurora.org>
+Date: Wed, 23 May 2018 20:18:08 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
+In-Reply-To: <20180523073723.GF20991@vkoul-mobl>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1526915573-22917-1-git-send-email-Janakarajan.Natarajan@amd.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ Tom and Brijesh.
+Hi Bjorn,
 
-On Mon, May 21, 2018 at 10:12:53AM -0500, Janakarajan Natarajan wrote:
-> Use Kconfig imply 'option' when specifying SEV CRYPTO dependencies.
+On 5/23/2018 1:07 PM, Vinod wrote:
+> On 22-05-18, 23:58, Bjorn Andersson wrote:
+>> On Tue 22 May 23:05 PDT 2018, Vinod wrote:
+>>
+>>> On 22-05-18, 22:20, Bjorn Andersson wrote:
+>>>
+>>>> +static int q6v5_wcss_reset(struct q6v5_wcss *wcss)
+>>>> +{
+>>>> +	int ret;
+>>>> +	u32 val;
+>>>> +	int i;
+>>>> +
+>>>> +	/* Assert resets, stop core */
+>>>> +	val = readl(wcss->reg_base + QDSP6SS_RESET_REG);
+>>>> +	val |= Q6SS_CORE_ARES | Q6SS_BUS_ARES_ENABLE | Q6SS_STOP_CORE;
+>>>> +	writel(val, wcss->reg_base + QDSP6SS_RESET_REG);
+>>>> +
+>>>> +	/* BHS require xo cbcr to be enabled */
+>>>> +	val = readl(wcss->reg_base + QDSP6SS_XO_CBCR);
+>>>> +	val |= 0x1;
+>>>> +	writel(val, wcss->reg_base + QDSP6SS_XO_CBCR);
+>>>
+>>> As commented on previous patch, it would help IMO to add a modify() wrapper
+>>> here which would perform read, modify and write.
+>>>
+>>
+>> Iirc the code ended up like this because a lot of these operations ended
+>> up being line wrapped and harder to read using some modify(reg, mask,
+>> val) helper. That said, the function isn't very pretty in it's current
+>> state either...
 > 
-> Example configuration:
-> .
-> .
-> CONFIG_CRYPTO_DEV_CCP=y
-> CONFIG_CRYPTO_DEV_CCP_DD=m
-> CONFIG_CRYPTO_DEV_SP_CCP=y
-> CONFIG_CRYPTO_DEV_CCP_CRYPTO=m
-> CONFIG_CRYPTO_DEV_SP_PSP=y
-> .
-> .
-> CONFIG_KVM_AMD=y
-> CONFIG_KVM_AMD_SEV=y
-> .
-> .
+> Agreed :) and i thought modify make help it make better
 > 
-> When the CRYPTO_DEV_SP_DD is m, KVM_AMD set to y produces compile time
-> errors.
+>> One of the parts of the RFC is that this sequence is a verbatim copy
+>> from the qcom_q6v5_pil.c driver for 8996, so if we find this duplication
+>> suitable I would prefer that we keep them the same.
+>>
+>>
+>> The alternative to duplicating this function is as Sricharan proposed to
+>> have the qcom_q6v5_pil.c be both a driver for both the single-stage
+>> remoteproc and the two-stage (load boot loader, then modem firmware).
+>>
+>>> Looking at the patch, few other comments would be applicable too, so would be
+>>> great if you/Sricharan can update this
+>>>
+>>
+>> I agree, the primary purpose of this patch was rather to get feedback on
+>> the structure of the drivers, I do expect this to take another round
+>> through the editor to get some polishing touches. Sorry if this wasn't
+>> clear from the description.
 > 
-> Since KVM_AMD_SEV depends on KVM_AMD and CRYPTO_DEV_CCP_DD, the
-> issue can be prevented by using 'imply' Kconfig option when specifying
-> the CRYPTO dependencies.
+> Since Sricharan replied to comments, I though they would be fixed. Yeah this is
+> fine from RFC..
 > 
-> Fixes: 505c9e94d832 ("KVM: x86: prefer "depends on" to "select" for SEV")
-> 
-> Signed-off-by: Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
-> ---
->  arch/x86/kvm/Kconfig | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
-> index 92fd433..d9b16b7 100644
-> --- a/arch/x86/kvm/Kconfig
-> +++ b/arch/x86/kvm/Kconfig
-> @@ -85,7 +85,9 @@ config KVM_AMD_SEV
->  	def_bool y
->  	bool "AMD Secure Encrypted Virtualization (SEV) support"
->  	depends on KVM_AMD && X86_64
-> -	depends on CRYPTO_DEV_CCP && CRYPTO_DEV_CCP_DD && CRYPTO_DEV_SP_PSP
-> +	imply CRYPTO_DEV_CCP
-> +	imply CRYPTO_DEV_CCP_DD
-> +	imply CRYPTO_DEV_SP_PSP
->  	---help---
->  	Provides support for launching Encrypted VMs on AMD processors.
 
-Well, this solves the build issue but I just created a config:
+ Thanks for this.
 
-$ grep -E "(KVM|PSP)" .config | grep -v '#'
-CONFIG_HAVE_KVM=y
-CONFIG_HAVE_KVM_IRQCHIP=y
-CONFIG_HAVE_KVM_IRQFD=y
-CONFIG_HAVE_KVM_IRQ_ROUTING=y
-CONFIG_HAVE_KVM_EVENTFD=y
-CONFIG_KVM_MMIO=y
-CONFIG_KVM_ASYNC_PF=y
-CONFIG_HAVE_KVM_MSI=y
-CONFIG_HAVE_KVM_CPU_RELAX_INTERCEPT=y
-CONFIG_KVM_VFIO=y
-CONFIG_KVM_GENERIC_DIRTYLOG_READ_PROTECT=y
-CONFIG_KVM_COMPAT=y
-CONFIG_HAVE_KVM_IRQ_BYPASS=y
-CONFIG_KVM=y
-CONFIG_KVM_AMD=m
+ Tested this on ipq8074 and wcss rproc is up with this.
 
-which builds but the PSP functionality is not there. And I don't think
-this is serving the user: she should be able to select what she wants
-and get the required functionality added and not have build errors with
-any possible configuration.
+ Tested-by: Sricharan R <sricharan@codeaurora.org>
 
-Now, looking at the security processor Kconfig stuff, it is somewhat
-confusing but maybe I didn't look at it long enough. A couple of points:
+ So regarding the cleanup, as i see, this consolidates the code much better.
 
-config CRYPTO_DEV_CCP_DD
-        tristate "Secure Processor device driver"
+ so about the point of avoiding duplication for soc specific functions like
+ qcv5_wcss_reset common between qcv5_wcss and qcv5_pil drivers as done in my
+ series, with a second thought that feels it might be difficult to maintain
+ in the longer run. Since the sequences are specific to each soc and for now
+ although some part of it is common, for a minor update in one soc, common
+ code needs to reworked every time and tested on all boards that share them.
 
-If this is going to be the top-level menu item for the SP, call that
+ So feels like having the duplication for hw init sequences is the cleaner way.
 
- CRYPTO_DEV_SP
+ Apart from that for other comments on the q6v5 wcss driver, i can address them
+ on this final patch that you have posted and same can be included in your
+ next version. Please let me know how you want to go about it.
 
-to mean, this is the security processor. CCP_DD is confusing because you
-have CRYPTO_DEV_SP_CCP which is the crypto coprocessor support.
-
-And "DD" for device driver is a pure tautology - most of the Kconfig
-items are device drivers :)
-
-Then,
-
- config KVM_AMD_SEV
-        def_bool y
-        bool "AMD Secure Encrypted Virtualization (SEV) support"
-        depends on KVM_AMD && X86_64
-        depends on CRYPTO_DEV_CCP && CRYPTO_DEV_CCP_DD && CRYPTO_DEV_SP_PSP
-
-that last line is pulling the required functionality for SEV but - and
-I *think* we have talked about this before - having a hierarchical
-dependency should make this a lot clearer and fix the build issues along
-the way.
-
-Because, IMHO, KVM_AMD_SEV should depend only on CRYPTO_DEV_SP_PSP -
-i.e., the PSP device because SEV needs the PSP, right?
-
-Now, the PSP device *itself* should depend on whatever it needs to
-function properly, CRYPTO_DEV_CCP_DD I guess.
-
-But SEV should not depend on CRYPTO_DEV_CCP - which is the top-level
-Kconfig item - that should be expressed implicitly through the
-dependency chain where PSP ends up depending on it.
-
-So that you have one-hop deps:
-
-KVM_SEV -> PSP -> CCP -> ...
-
-IOW, a config item, say PSP - if enabled - should make sure it
-selects/depends on everything it needs to function. The upper level
-item KVM_SEV - which selects/depends on that config item shouldn't
-be responsible for making sure the correct items for PSP's proper
-functioning are enabled - that's PSP's item's job.
-
-Makes sense?
-
-Maybe I'm missing something but applying this simple logic would prevent
-such Kconfig build issues and make the whole dependency chain almost
-trivial.
-
-Thx.
+Regards,
+ Sricharan
 
 -- 
-Regards/Gruss,
-    Boris.
-
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
--- 
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
