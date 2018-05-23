@@ -1,224 +1,205 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753817AbeEWA0r (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 22 May 2018 20:26:47 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39994 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753805AbeEWA0m (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 May 2018 20:26:42 -0400
-From: Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To: linux-integrity@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>, Jessica Yu <jeyu@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Subject: [PATCH v7 10/14] ima: Add modsig appraise_type option for module-style appended signatures
-Date: Tue, 22 May 2018 21:12:49 -0300
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180523001253.15247-1-bauerman@linux.ibm.com>
-References: <20180523001253.15247-1-bauerman@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18052300-0028-0000-0000-000009AB738B
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009068; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000261; SDB=6.01036241; UDB=6.00530093; IPR=6.00815370;
- MB=3.00021248; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-23 00:26:40
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052300-0029-0000-0000-00003AF3AF84
-Message-Id: <20180523001253.15247-11-bauerman@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-22_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805230002
+        id S1753907AbeEWA2B (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 22 May 2018 20:28:01 -0400
+Received: from mx.socionext.com ([202.248.49.38]:41428 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752681AbeEWA1z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 May 2018 20:27:55 -0400
+From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+To: Abylay Ospan <aospan@netup.ru>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
+Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Subject: [PATCH v3 1/2] media: helene: add I2C device probe function
+Date: Wed, 23 May 2018 09:27:49 +0900
+Message-Id: <20180523002750.27136-1-suzuki.katsuhiro@socionext.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce the modsig keyword to the IMA policy syntax to specify that
-a given hook should expect the file to have the IMA signature appended
-to it. Here is how it can be used in a rule:
+This patch adds I2C probe function to use dvb_module_probe()
+with this driver.
 
-appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig|modsig
+Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
 
-With this rule, IMA will accept either a signature stored in the extended
-attribute or an appended signature.
-
-For now, the rule above will behave exactly the same as if
-appraise_type=imasig was specified. The actual modsig implementation
-will be introduced separately.
-
-Suggested-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
 ---
- Documentation/ABI/testing/ima_policy |  6 +++++-
- security/integrity/ima/Kconfig       | 10 ++++++++++
- security/integrity/ima/Makefile      |  1 +
- security/integrity/ima/ima.h         |  9 +++++++++
- security/integrity/ima/ima_modsig.c  | 31 +++++++++++++++++++++++++++++++
- security/integrity/ima/ima_policy.c  | 12 ++++++++++--
- security/integrity/integrity.h       |  1 +
- 7 files changed, 67 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
-index 74c6702de74e..9d1dfd0a8891 100644
---- a/Documentation/ABI/testing/ima_policy
-+++ b/Documentation/ABI/testing/ima_policy
-@@ -37,7 +37,7 @@ Description:
- 			euid:= decimal value
- 			fowner:= decimal value
- 		lsm:  	are LSM specific
--		option:	appraise_type:= [imasig]
-+		option:	appraise_type:= [imasig] [imasig|modsig]
- 			pcr:= decimal value
+Changes since v2:
+  - Nothing
+
+Changes since v1:
+  - Add documents for dvb_frontend member of helene_config
+---
+ drivers/media/dvb-frontends/helene.c | 88 ++++++++++++++++++++++++++--
+ drivers/media/dvb-frontends/helene.h |  3 +
+ 2 files changed, 87 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/media/dvb-frontends/helene.c b/drivers/media/dvb-frontends/helene.c
+index a0d0b53c91d7..04033f0c278b 100644
+--- a/drivers/media/dvb-frontends/helene.c
++++ b/drivers/media/dvb-frontends/helene.c
+@@ -666,7 +666,7 @@ static int helene_set_params_s(struct dvb_frontend *fe)
+ 	return 0;
+ }
  
- 		default policy:
-@@ -103,3 +103,7 @@ Description:
+-static int helene_set_params(struct dvb_frontend *fe)
++static int helene_set_params_t(struct dvb_frontend *fe)
+ {
+ 	u8 data[MAX_WRITE_REGSIZE];
+ 	u32 frequency;
+@@ -835,6 +835,19 @@ static int helene_set_params(struct dvb_frontend *fe)
+ 	return 0;
+ }
  
- 			measure func=KEXEC_KERNEL_CHECK pcr=4
- 			measure func=KEXEC_INITRAMFS_CHECK pcr=5
-+
-+		Example of appraise rule allowing modsig appended signatures:
-+
-+			appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig|modsig
-diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-index 6a8f67714c83..ee278189e0bb 100644
---- a/security/integrity/ima/Kconfig
-+++ b/security/integrity/ima/Kconfig
-@@ -164,6 +164,16 @@ config IMA_APPRAISE_BOOTPARAM
- 	  This option enables the different "ima_appraise=" modes
- 	  (eg. fix, log) from the boot command line.
- 
-+config IMA_APPRAISE_MODSIG
-+	bool "Support module-style signatures for appraisal"
-+	depends on IMA_APPRAISE
-+	default n
-+	help
-+	   Adds support for signatures appended to files. The format of the
-+	   appended signature is the same used for signed kernel modules.
-+	   The modsig keyword can be used in the IMA policy to allow a hook
-+	   to accept such signatures.
-+
- config IMA_TRUSTED_KEYRING
- 	bool "Require all keys on the .ima keyring be signed (deprecated)"
- 	depends on IMA_APPRAISE && SYSTEM_TRUSTED_KEYRING
-diff --git a/security/integrity/ima/Makefile b/security/integrity/ima/Makefile
-index d921dc4f9eb0..31d57cdf2421 100644
---- a/security/integrity/ima/Makefile
-+++ b/security/integrity/ima/Makefile
-@@ -9,5 +9,6 @@ obj-$(CONFIG_IMA) += ima.o
- ima-y := ima_fs.o ima_queue.o ima_init.o ima_main.o ima_crypto.o ima_api.o \
- 	 ima_policy.o ima_template.o ima_template_lib.o
- ima-$(CONFIG_IMA_APPRAISE) += ima_appraise.o
-+ima-$(CONFIG_IMA_APPRAISE_MODSIG) += ima_modsig.o
- ima-$(CONFIG_HAVE_IMA_KEXEC) += ima_kexec.o
- obj-$(CONFIG_IMA_BLACKLIST_KEYRING) += ima_mok.o
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 567be3c6568c..01f379916583 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -298,6 +298,15 @@ static inline int ima_read_xattr(struct dentry *dentry,
- 
- #endif /* CONFIG_IMA_APPRAISE */
- 
-+#ifdef CONFIG_IMA_APPRAISE_MODSIG
-+bool ima_hook_supports_modsig(enum ima_hooks func);
-+#else
-+static inline bool ima_hook_supports_modsig(enum ima_hooks func)
++static int helene_set_params(struct dvb_frontend *fe)
 +{
-+	return false;
++	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
++
++	if (p->delivery_system == SYS_DVBT ||
++	    p->delivery_system == SYS_DVBT2 ||
++	    p->delivery_system == SYS_ISDBT ||
++	    p->delivery_system == SYS_DVBC_ANNEX_A)
++		return helene_set_params_t(fe);
++
++	return helene_set_params_s(fe);
 +}
-+#endif /* CONFIG_IMA_APPRAISE_MODSIG */
 +
- /* LSM based policy rules require audit */
- #ifdef CONFIG_IMA_LSM_RULES
+ static int helene_get_frequency(struct dvb_frontend *fe, u32 *frequency)
+ {
+ 	struct helene_priv *priv = fe->tuner_priv;
+@@ -843,7 +856,7 @@ static int helene_get_frequency(struct dvb_frontend *fe, u32 *frequency)
+ 	return 0;
+ }
  
-diff --git a/security/integrity/ima/ima_modsig.c b/security/integrity/ima/ima_modsig.c
-new file mode 100644
-index 000000000000..d8ea811b6f74
---- /dev/null
-+++ b/security/integrity/ima/ima_modsig.c
-@@ -0,0 +1,31 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * IMA support for appraising module-style appended signatures.
-+ *
-+ * Copyright (C) 2018  IBM Corporation
-+ *
-+ * Author:
-+ * Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-+ */
+-static const struct dvb_tuner_ops helene_tuner_ops = {
++static const struct dvb_tuner_ops helene_tuner_ops_t = {
+ 	.info = {
+ 		.name = "Sony HELENE Ter tuner",
+ 		.frequency_min = 1000000,
+@@ -853,7 +866,7 @@ static const struct dvb_tuner_ops helene_tuner_ops = {
+ 	.init = helene_init,
+ 	.release = helene_release,
+ 	.sleep = helene_sleep,
+-	.set_params = helene_set_params,
++	.set_params = helene_set_params_t,
+ 	.get_frequency = helene_get_frequency,
+ };
+ 
+@@ -871,6 +884,20 @@ static const struct dvb_tuner_ops helene_tuner_ops_s = {
+ 	.get_frequency = helene_get_frequency,
+ };
+ 
++static const struct dvb_tuner_ops helene_tuner_ops = {
++	.info = {
++		.name = "Sony HELENE Sat/Ter tuner",
++		.frequency_min = 500000,
++		.frequency_max = 1200000000,
++		.frequency_step = 1000,
++	},
++	.init = helene_init,
++	.release = helene_release,
++	.sleep = helene_sleep,
++	.set_params = helene_set_params,
++	.get_frequency = helene_get_frequency,
++};
 +
-+#include "ima.h"
-+
-+/**
-+ * ima_hook_supports_modsig - can the policy allow modsig for this hook?
-+ *
-+ * modsig is only supported by hooks using ima_post_read_file, because only they
-+ * preload the contents of the file in a buffer. FILE_CHECK does that in some
-+ * cases, but not when reached from vfs_open. POLICY_CHECK can support it, but
-+ * it's not useful in practice because it's a text file so deny.
-+ */
-+bool ima_hook_supports_modsig(enum ima_hooks func)
+ /* power-on tuner
+  * call once after reset
+  */
+@@ -1032,7 +1059,7 @@ struct dvb_frontend *helene_attach(struct dvb_frontend *fe,
+ 	if (fe->ops.i2c_gate_ctrl)
+ 		fe->ops.i2c_gate_ctrl(fe, 0);
+ 
+-	memcpy(&fe->ops.tuner_ops, &helene_tuner_ops,
++	memcpy(&fe->ops.tuner_ops, &helene_tuner_ops_t,
+ 			sizeof(struct dvb_tuner_ops));
+ 	fe->tuner_priv = priv;
+ 	dev_info(&priv->i2c->dev,
+@@ -1042,6 +1069,59 @@ struct dvb_frontend *helene_attach(struct dvb_frontend *fe,
+ }
+ EXPORT_SYMBOL(helene_attach);
+ 
++static int helene_probe(struct i2c_client *client,
++			const struct i2c_device_id *id)
 +{
-+	switch (func) {
-+	case FIRMWARE_CHECK:
-+	case KEXEC_KERNEL_CHECK:
-+	case KEXEC_INITRAMFS_CHECK:
-+		return true;
-+	default:
-+		return false;
-+	}
++	struct helene_config *config = client->dev.platform_data;
++	struct dvb_frontend *fe = config->fe;
++	struct device *dev = &client->dev;
++	struct helene_priv *priv;
++
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	priv->i2c_address = client->addr;
++	priv->i2c = client->adapter;
++	priv->set_tuner_data = config->set_tuner_priv;
++	priv->set_tuner = config->set_tuner_callback;
++	priv->xtal = config->xtal;
++
++	if (fe->ops.i2c_gate_ctrl)
++		fe->ops.i2c_gate_ctrl(fe, 1);
++
++	if (helene_x_pon(priv) != 0)
++		return -EINVAL;
++
++	if (fe->ops.i2c_gate_ctrl)
++		fe->ops.i2c_gate_ctrl(fe, 0);
++
++	memcpy(&fe->ops.tuner_ops, &helene_tuner_ops,
++	       sizeof(struct dvb_tuner_ops));
++	fe->tuner_priv = priv;
++	i2c_set_clientdata(client, priv);
++
++	dev_info(dev, "Sony HELENE attached on addr=%x at I2C adapter %p\n",
++		 priv->i2c_address, priv->i2c);
++
++	return 0;
 +}
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index d454949493c6..66d0d3bcf1b2 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -919,6 +919,10 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 			ima_log_string(ab, "appraise_type", args[0].from);
- 			if ((strcmp(args[0].from, "imasig")) == 0)
- 				entry->flags |= IMA_DIGSIG_REQUIRED;
-+			else if (ima_hook_supports_modsig(entry->func) &&
-+				 strcmp(args[0].from, "imasig|modsig") == 0)
-+				entry->flags |= IMA_DIGSIG_REQUIRED
-+						| IMA_MODSIG_ALLOWED;
- 			else
- 				result = -EINVAL;
- 			break;
-@@ -1211,8 +1215,12 @@ int ima_policy_show(struct seq_file *m, void *v)
- 			}
- 		}
- 	}
--	if (entry->flags & IMA_DIGSIG_REQUIRED)
--		seq_puts(m, "appraise_type=imasig ");
-+	if (entry->flags & IMA_DIGSIG_REQUIRED) {
-+		if (entry->flags & IMA_MODSIG_ALLOWED)
-+			seq_puts(m, "appraise_type=imasig|modsig ");
-+		else
-+			seq_puts(m, "appraise_type=imasig ");
-+	}
- 	if (entry->flags & IMA_PERMIT_DIRECTIO)
- 		seq_puts(m, "permit_directio ");
- 	rcu_read_unlock();
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index 7f80c3e44d51..05fdbf953f90 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -35,6 +35,7 @@
- #define IMA_NEW_FILE		0x04000000
- #define EVM_IMMUTABLE_DIGSIG	0x08000000
- #define IMA_FAIL_UNVERIFIABLE_SIGS	0x10000000
-+#define IMA_MODSIG_ALLOWED	0x20000000
++
++static const struct i2c_device_id helene_id[] = {
++	{ "helene", },
++	{}
++};
++MODULE_DEVICE_TABLE(i2c, helene_id);
++
++static struct i2c_driver helene_driver = {
++	.driver = {
++		.name = "helene",
++	},
++	.probe    = helene_probe,
++	.id_table = helene_id,
++};
++module_i2c_driver(helene_driver);
++
+ MODULE_DESCRIPTION("Sony HELENE Sat/Ter tuner driver");
+ MODULE_AUTHOR("Abylay Ospan <aospan@netup.ru>");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/media/dvb-frontends/helene.h b/drivers/media/dvb-frontends/helene.h
+index c9fc81c7e4e7..8562d01bc93e 100644
+--- a/drivers/media/dvb-frontends/helene.h
++++ b/drivers/media/dvb-frontends/helene.h
+@@ -39,6 +39,7 @@ enum helene_xtal {
+  * @set_tuner_callback:	Callback function that notifies the parent driver
+  *			which tuner is active now
+  * @xtal: Cristal frequency as described by &enum helene_xtal
++ * @fe: Frontend for which connects this tuner
+  */
+ struct helene_config {
+ 	u8	i2c_address;
+@@ -46,6 +47,8 @@ struct helene_config {
+ 	void	*set_tuner_priv;
+ 	int	(*set_tuner_callback)(void *, int);
+ 	enum helene_xtal xtal;
++
++	struct dvb_frontend *fe;
+ };
  
- #define IMA_DO_MASK		(IMA_MEASURE | IMA_APPRAISE | IMA_AUDIT | \
- 				 IMA_HASH | IMA_APPRAISE_SUBMASK)
+ #if IS_REACHABLE(CONFIG_DVB_HELENE)
+-- 
+2.17.0
