@@ -1,63 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933772AbeEWQ6K (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 12:58:10 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:53584 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933742AbeEWQ6C (ORCPT
+        id S933784AbeEWQ6i (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 12:58:38 -0400
+Received: from mail-yb0-f195.google.com ([209.85.213.195]:36042 "EHLO
+        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933476AbeEWQ6g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 12:58:02 -0400
-Subject: Re: [PATCH v7 0/7] KVM: x86: Allow Qemu/KVM to use PVH entry point
-To: Paolo Bonzini <pbonzini@redhat.com>, x86@kernel.org,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, jgross@suse.com, hpa@zytor.com, mingo@redhat.com,
-        tglx@linutronix.de
-Cc: boris.ostrovsky@oracle.com, bp@suse.de, dave.hansen@linux.intel.com,
-        davem@davemloft.net, gregkh@linuxfoundation.org, jpoimboe@redhat.com,
-        kirill.shutemov@linux.intel.com, luto@kernel.org, mchehab@kernel.org,
-        rdunlap@infradead.org, thomas.lendacky@amd.com, hch@infradead.org,
-        roger.pau@citrix.com, rkrcmar@redhat.com
-References: <1523920175-27287-1-git-send-email-maran.wilson@oracle.com>
- <505290b7-416f-cc97-35ff-e416ceb532c2@oracle.com>
- <911f4739-1a92-8ad3-4c0c-5541312c39fb@redhat.com>
-From: Maran Wilson <maran.wilson@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <798dbae2-89ae-5ce3-9054-34f0f9bf1996@oracle.com>
-Date: Wed, 23 May 2018 09:56:56 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 23 May 2018 12:58:36 -0400
+X-Google-Smtp-Source: AB8JxZqcY54ZarX3nQIQ0wB9IMiV+1Y21ar6S5E7wX5K0+Ck75i4vbxzrPfmrTlrEr8p5lCEP9cUIw==
+Date: Wed, 23 May 2018 11:58:34 -0500
+From: Rob Herring <robh@kernel.org>
+To: Saravana Kannan <skannan@codeaurora.org>
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rajendra Nayak <rjendra@codeaurora.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] PM / devfreq: Generic cpufreq governor
+Message-ID: <20180523165834.GA11016@rob-hp-laptop>
+References: <1526631889-5084-1-git-send-email-skannan@codeaurora.org>
+ <1526631889-5084-3-git-send-email-skannan@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <911f4739-1a92-8ad3-4c0c-5541312c39fb@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8902 signatures=668700
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=985
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805230165
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1526631889-5084-3-git-send-email-skannan@codeaurora.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/18/2018 4:31 AM, Paolo Bonzini wrote:
-> On 16/05/2018 22:27, Maran Wilson wrote:
->> Friendly ping. I am hopeful one of the x86 and/or KVM maintainers has a
->> few cycles to spare to look this over.
->>
->> And thanks to everyone who has helped thus far by providing valuable
->> feedback and reviewing.
->>
->>     https://lkml.org/lkml/2018/4/16/1002
-> KVM bits look fine.  This would be the right time to post the QEMU
-> patches...
+On Fri, May 18, 2018 at 01:24:48AM -0700, Saravana Kannan wrote:
+> This devfreq governor is a generic implementation that can scale any
+> devfreq device based on the current CPU frequency of all ONLINE CPUs. It
+> allows for specifying CPU freq to devfreq mapping for specific devices.
+> When such a mapping is not present, it defaults to scaling the device
+> frequency in proportion to the CPU frequency.
+> 
+> Change-Id: I7f786b9059435afe85b9ec8c504a4655731ee20e
 
-Thanks Paolo. Yes, we will have the Qemu patches out soon. It is being 
-actively worked. We have had one implementation in place, but decided to 
-re-implement things slightly based on some preliminary feedback before 
-sending it out to the wider community.
+drop this.
 
-Thanks,
--Maran
+> Signed-off-by: Saravana Kannan <skannan@codeaurora.org>
+> ---
+>  .../bindings/devfreq/devfreq-cpufreq.txt           |  53 ++
 
-> Paolo
+Please split bindings to separate patch.
+
+>  drivers/devfreq/Kconfig                            |   8 +
+>  drivers/devfreq/Makefile                           |   1 +
+>  drivers/devfreq/governor_cpufreq.c                 | 628 +++++++++++++++++++++
+>  4 files changed, 690 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/devfreq/devfreq-cpufreq.txt
+>  create mode 100644 drivers/devfreq/governor_cpufreq.c
+> 
+> diff --git a/Documentation/devicetree/bindings/devfreq/devfreq-cpufreq.txt b/Documentation/devicetree/bindings/devfreq/devfreq-cpufreq.txt
+> new file mode 100644
+> index 0000000..6537538
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/devfreq/devfreq-cpufreq.txt
+> @@ -0,0 +1,53 @@
+> +Devfreq CPUfreq governor
+> +
+> +devfreq-cpufreq is a parent device that contains one or more child devices.
+> +Each child device provides CPU frequency to device frequency mapping for a
+> +specific device. Examples of devices that could use this are: DDR, cache and
+> +CCI.
+> +
+> +Parent device name shall be "devfreq-cpufreq".
+
+I don't really understand any of this and how it relates to the other 
+QCom cpufreq and devfreq bindings. Seems like this all needs some 
+discussion amongst the PM folks first.
+
+Rob
