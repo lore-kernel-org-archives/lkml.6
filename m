@@ -1,10 +1,11 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-582301-1527103355-2-353777285606431923
+X-Cyrus-Session-Id: sloti22d1t05-604614-1527103287-2-4516459042886930503
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES roen, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
   MailFrom='org'
 X-Spam-charsets: 
@@ -12,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527103355; b=a5H4fbs/NsMNZRJylzuuJZson2egeSoX9Lpm1GQYfRpEncdn75
-    gaC2fzVYtdGIHWA+xWc88aRJdkIeaQCOGuvoDdxkB0AhgbZZeOK6TWus29l/a9v5
-    SqssFMdEeaChx6JTyzGputWBIb0lagoWxmUBgUi4AWV3Y1e3gVm67LxXZqMVuUvI
-    zjko/eeAq5WqPxB+ZQ5qWnX+2BUt1tUMtvunSRO9EEflqM5SfdypDFci452qSokh
-    tIvmvlaAYv+GeAihOkjXRk8J+SwCFrGQtHxEHo00OQ9rX0sr+KhK4l5Jj5eGspMG
-    Jaw3g1tiN6DUzJsWHgxOWzeah1E2fhWkktrw==
+    1527103286; b=jiBngPh1t6nkRYAgWIFElHiG922jvk9Sc04Vo7e4mKY3IxZH0v
+    xdYdPqze8buLfFc9yiKtoheV06SiLHrRRssgsggMh4/AbXkQLy1zkFJJPhsu6xgQ
+    yvZZTrHAJzeNi4Sjc1O/PeX3O8SMGYTs9gohMrxCrHf/PdcblllhDd+NObG1Nu62
+    Z4z3uYEpzvw+LamXvA76iP4duBeernqs8tu0Xkqg5NxbGSu0jMcTBL3gLwE72Xic
+    l998qItXRjiQ5fxl5+JYMHbtaoE6HzMSSR3yef/Uqbs0vhhdx90qh27dQa5FKgvq
+    +uQFy6q5WrZTIzrqK9XXf0JaZwF726jRW+8w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1527103355; bh=
-    u8SAPWy94mk5Fg4Ljjii8YZlrRVW7Db86+cDLYKl0DQ=; b=XFg82r4l472KY0kb
-    5zxNaVS3x/E73KlqVCQJMU+CzEddEjgq5JGZ8lrIH76r62Mq9QOhcdWnxx0qXv19
-    UsBHqO8hHVkLIENILcLolbY7dcfCZdfeIp+XYGKYAJBVmKXOCBAaA8W6EojlVUuJ
-    eoTd5Mq1Vk6vXUXCAu3HO1nkJtROKxFmtkOKGsXI49fZV+JdW+TYr3Eth11CRDsj
-    H+MuPcDsSOcBQqF+Dm/SaPuMFtS3WUm48+HA3tLFzPwd62nUDBxf4Zb+SHmJriVZ
-    nvSuHtGb6zpd1HFum49gPHesLUxPc2HT76jhab91WWFn4jTIRJyzJ26zqyLUzmgL
-    +XL55w==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=fm2; t=1527103286; bh=
+    RZebh14Nxj1OTkiJRsLKYf2pbv45iCPYG4H13ATN/xg=; b=mR2V+E3qp+n2uBPk
+    qV7U3WTqHs1V981DYeE0Hrn9VWM0kaSXJCoKs/vABtPEYhQY9X27q7SG2XDGI2MK
+    12xP9bNAKu9Ok95af2qvB6vmEDKbwsRukC0E4LqVyL/3WVMIe/z91P3dIBVVPm86
+    0j4dBzCMusnncV4xVCDeYhDXAbfUgOAEd0mvXibQ8kTVJvoTZPp0j1rf8pZ/50CL
+    cTJIS52qBGZ9Vbw3oS7SC+9CYLZyRO+wJsAFuEnOdYrNbiUu5dLtp/KfQJH+XT9s
+    M0azKeMjcimA/BxI/FTX7ZS+if+lMD6EOga0mbIRcQ9caS8cJNN2TuvgwLgfaXq5
+    A5SH7g==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=infradead.org header.i=@infradead.org header.b=iiJb7cqQ
+    header.d=infradead.org header.i=@infradead.org header.b=L6Fc5Oiz
     x-bits=2048 x-keytype=rsa x-algorithm=sha256
     x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -44,10 +45,10 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=infradead.org header.i=@infradead.org header.b=iiJb7cqQ
+      header.d=infradead.org header.i=@infradead.org header.b=L6Fc5Oiz
       x-bits=2048 x-keytype=rsa x-algorithm=sha256
       x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -62,28 +63,28 @@ Authentication-Results: mx1.messagingengine.com;
       header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNHseC3gABLeAskhIk0qpS8FXXyvyAoncMqlgE112kNC/VCqlEw3EWVlsvvPFajMVbOGZkmMqZHuz2ADItUzblw+rvOP7jzuMiwTs/a/6FV+WTnRvAn6
-    Z2VVf4joh9w4ofkInqXG7wKQ9aCEz8BnOjrf9h+Izn1KzYNW3eisgqsqwdr9oV+duAXRcpMX6a12Yf4ZBHdeooUp/7yi05lbtoTtPDVrJtU7Jx99xcBt4zSh
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfDCT9ZICbF2kcRiYZC4D+NAnOSMiNMeNbBltF2dyJ8G0A4BBdYC3VuC6wQtfqDC0FmVWYbC613kS5cwbI2oZ63EV+woaPXjG7sOQAsK/T9/WwYLaPfjk
+    BvEDpTbUBuo1i5KBvNyrdAaEybzP6qfx3p+MoPJVhwbI+081hlZSBlF1Bj8BDUid7Q1K1Ahy+HlPrs3CAJsTb/g2zDaIjKHlOWBBOXSHEZfIUQW+EBGH4VyL
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8
-    a=asEyZy900Z8-iek_oV0A:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=qBVkKzBwSuRwKVmLvv4A:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934373AbeEWTWF (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 23 May 2018 15:22:05 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41116 "EHLO
+        id S934481AbeEWTVY (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 23 May 2018 15:21:24 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40856 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934592AbeEWTWB (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Wed, 23 May 2018 15:22:01 -0400
+        with ESMTP id S934468AbeEWTVT (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Wed, 23 May 2018 15:21:19 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: viro@zeniv.linux.org.uk
 Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
         linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 32/33] timerfd: convert to ->poll_mask
-Date: Wed, 23 May 2018 21:20:21 +0200
-Message-Id: <20180523192022.1703-33-hch@lst.de>
+Subject: [PATCH 18/33] net/dccp: convert to ->poll_mask
+Date: Wed, 23 May 2018 21:20:07 +0200
+Message-Id: <20180523192022.1703-19-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180523192022.1703-1-hch@lst.de>
 References: <20180523192022.1703-1-hch@lst.de>
@@ -96,54 +97,87 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/timerfd.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ net/dccp/dccp.h  |  3 +--
+ net/dccp/ipv4.c  |  2 +-
+ net/dccp/ipv6.c  |  2 +-
+ net/dccp/proto.c | 13 ++-----------
+ 4 files changed, 5 insertions(+), 15 deletions(-)
 
-diff --git a/fs/timerfd.c b/fs/timerfd.c
-index cdad49da3ff7..d84a2bee4f82 100644
---- a/fs/timerfd.c
-+++ b/fs/timerfd.c
-@@ -226,21 +226,20 @@ static int timerfd_release(struct inode *inode, struct file *file)
- 	kfree_rcu(ctx, rcu);
- 	return 0;
- }
--
--static __poll_t timerfd_poll(struct file *file, poll_table *wait)
-+	
-+static struct wait_queue_head *timerfd_get_poll_head(struct file *file,
-+		__poll_t eventmask)
+diff --git a/net/dccp/dccp.h b/net/dccp/dccp.h
+index f91e3816806b..0ea2ee56ac1b 100644
+--- a/net/dccp/dccp.h
++++ b/net/dccp/dccp.h
+@@ -316,8 +316,7 @@ int dccp_recvmsg(struct sock *sk, struct msghdr *msg, size_t len, int nonblock,
+ 		 int flags, int *addr_len);
+ void dccp_shutdown(struct sock *sk, int how);
+ int inet_dccp_listen(struct socket *sock, int backlog);
+-__poll_t dccp_poll(struct file *file, struct socket *sock,
+-		       poll_table *wait);
++__poll_t dccp_poll_mask(struct socket *sock, __poll_t events);
+ int dccp_v4_connect(struct sock *sk, struct sockaddr *uaddr, int addr_len);
+ void dccp_req_err(struct sock *sk, u64 seq);
+ 
+diff --git a/net/dccp/ipv4.c b/net/dccp/ipv4.c
+index b08feb219b44..a9e478cd3787 100644
+--- a/net/dccp/ipv4.c
++++ b/net/dccp/ipv4.c
+@@ -984,7 +984,7 @@ static const struct proto_ops inet_dccp_ops = {
+ 	.accept		   = inet_accept,
+ 	.getname	   = inet_getname,
+ 	/* FIXME: work on tcp_poll to rename it to inet_csk_poll */
+-	.poll		   = dccp_poll,
++	.poll_mask	   = dccp_poll_mask,
+ 	.ioctl		   = inet_ioctl,
+ 	/* FIXME: work on inet_listen to rename it to sock_common_listen */
+ 	.listen		   = inet_dccp_listen,
+diff --git a/net/dccp/ipv6.c b/net/dccp/ipv6.c
+index 6344f1b18a6a..17fc4e0166ba 100644
+--- a/net/dccp/ipv6.c
++++ b/net/dccp/ipv6.c
+@@ -1070,7 +1070,7 @@ static const struct proto_ops inet6_dccp_ops = {
+ 	.socketpair	   = sock_no_socketpair,
+ 	.accept		   = inet_accept,
+ 	.getname	   = inet6_getname,
+-	.poll		   = dccp_poll,
++	.poll_mask	   = dccp_poll_mask,
+ 	.ioctl		   = inet6_ioctl,
+ 	.listen		   = inet_dccp_listen,
+ 	.shutdown	   = inet_shutdown,
+diff --git a/net/dccp/proto.c b/net/dccp/proto.c
+index 84cd4e3fd01b..88b668db244b 100644
+--- a/net/dccp/proto.c
++++ b/net/dccp/proto.c
+@@ -314,20 +314,11 @@ int dccp_disconnect(struct sock *sk, int flags)
+ 
+ EXPORT_SYMBOL_GPL(dccp_disconnect);
+ 
+-/*
+- *	Wait for a DCCP event.
+- *
+- *	Note that we don't need to lock the socket, as the upper poll layers
+- *	take care of normal races (between the test and the event) and we don't
+- *	go look at any of the socket buffers directly.
+- */
+-__poll_t dccp_poll(struct file *file, struct socket *sock,
+-		       poll_table *wait)
++__poll_t dccp_poll_mask(struct socket *sock, __poll_t events)
  {
- 	struct timerfd_ctx *ctx = file->private_data;
--	__poll_t events = 0;
--	unsigned long flags;
+ 	__poll_t mask;
+ 	struct sock *sk = sock->sk;
  
--	poll_wait(file, &ctx->wqh, wait);
-+	return &ctx->wqh;
-+}
+-	sock_poll_wait(file, sk_sleep(sk), wait);
+ 	if (sk->sk_state == DCCP_LISTEN)
+ 		return inet_csk_listen_poll(sk);
  
--	spin_lock_irqsave(&ctx->wqh.lock, flags);
--	if (ctx->ticks)
--		events |= EPOLLIN;
--	spin_unlock_irqrestore(&ctx->wqh.lock, flags);
-+static __poll_t timerfd_poll_mask(struct file *file, __poll_t eventmask)
-+{
-+	struct timerfd_ctx *ctx = file->private_data;
- 
--	return events;
-+	return ctx->ticks ? EPOLLIN : 0;
+@@ -369,7 +360,7 @@ __poll_t dccp_poll(struct file *file, struct socket *sock,
+ 	return mask;
  }
  
- static ssize_t timerfd_read(struct file *file, char __user *buf, size_t count,
-@@ -364,7 +363,8 @@ static long timerfd_ioctl(struct file *file, unsigned int cmd, unsigned long arg
+-EXPORT_SYMBOL_GPL(dccp_poll);
++EXPORT_SYMBOL_GPL(dccp_poll_mask);
  
- static const struct file_operations timerfd_fops = {
- 	.release	= timerfd_release,
--	.poll		= timerfd_poll,
-+	.get_poll_head	= timerfd_get_poll_head,
-+	.poll_mask	= timerfd_poll_mask,
- 	.read		= timerfd_read,
- 	.llseek		= noop_llseek,
- 	.show_fdinfo	= timerfd_show,
+ int dccp_ioctl(struct sock *sk, int cmd, unsigned long arg)
+ {
 -- 
 2.17.0
 
