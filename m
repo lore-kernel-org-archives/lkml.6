@@ -1,15 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933550AbeEWPhx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 11:37:53 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:33594 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932646AbeEWPhu (ORCPT
+        id S933594AbeEWPi1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 11:38:27 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:33970 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932646AbeEWPiX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 11:37:50 -0400
-X-Google-Smtp-Source: AB8JxZrUGidZFxwoIILFEASnm4GU+s+6z4vP1xVXf+P5gO8MYscePi3ThAXwtQ2gR6wGQXkimWNj8g==
-Subject: Re: [PATCH net-next v3 1/7] net: dsa: qca8k: Add QCA8334 binding
- documentation
+        Wed, 23 May 2018 11:38:23 -0400
+X-Google-Smtp-Source: AB8JxZpHT0JgG/6CRWh5FP1rmcQKJ0hmln8uYp8O/lQWZYmso3rqUcELEEt9Ha3npHNlmLfBUvp3AA==
+Subject: Re: [PATCH net-next v3 2/7] net: dsa: qca8k: Add support for QCA8334
+ switch
 To: =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <vokac.m@gmail.com>,
         netdev@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
@@ -17,7 +17,7 @@ Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         mark.rutland@arm.com, robh+dt@kernel.org, davem@davemloft.net,
         michal.vokac@ysoft.com
 References: <1527056424-14528-1-git-send-email-michal.vokac@ysoft.com>
- <1527056424-14528-2-git-send-email-michal.vokac@ysoft.com>
+ <1527056424-14528-3-git-send-email-michal.vokac@ysoft.com>
 From: Florian Fainelli <f.fainelli@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
@@ -53,12 +53,12 @@ Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
  y5arMQorqTFWlEOgRA8OP47L9knl9i4xuR0euV6DChDrguup2aJVU8JPBBgRAgAPAhsMBQJU
  X9LxBQkeXB3fAAoJEGFXmRW1Y3YOj4UAn3nrFLPZekMeqX5aD/aq/dsbXSfyAKC45Go0YyxV
  HGuUuzv+GKZ6nsysJw==
-Message-ID: <08b89ba8-abf9-7df3-7a59-dda0303d6854@gmail.com>
-Date: Wed, 23 May 2018 08:37:45 -0700
+Message-ID: <46324291-4e8d-93e8-ad47-a4a6bd4f33a3@gmail.com>
+Date: Wed, 23 May 2018 08:38:19 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <1527056424-14528-2-git-send-email-michal.vokac@ysoft.com>
+In-Reply-To: <1527056424-14528-3-git-send-email-michal.vokac@ysoft.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -71,11 +71,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On 05/22/2018 11:20 PM, Michal Vokáč wrote:
 > Add support for the four-port variant of the Qualcomm QCA833x switch.
 > 
-> The CPU port default link settings can be reconfigured using
-> a fixed-link sub-node.
-> 
 > Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
 > Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
 Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
