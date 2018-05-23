@@ -1,76 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932444AbeEWKjr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 06:39:47 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53082 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932180AbeEWKjn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 06:39:43 -0400
-Cc: Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH v10 1/2] cpufreq: Add Kryo CPU scaling driver
-To: Ilia Lin <ilialin@codeaurora.org>, vireshk@kernel.org, nm@ti.com,
-        sboyd@kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        rjw@rjwysocki.net, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1527068454-28921-1-git-send-email-ilialin@codeaurora.org>
- <1527068454-28921-2-git-send-email-ilialin@codeaurora.org>
-From: Sudeep Holla <sudeep.holla@arm.com>
-Organization: ARM
-Message-ID: <3f1ca60e-7aa8-fccc-ab1c-4b7c37731cce@arm.com>
-Date: Wed, 23 May 2018 11:39:37 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S932498AbeEWKkf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 06:40:35 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:37497 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932350AbeEWKkc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 06:40:32 -0400
+Date: Wed, 23 May 2018 12:40:29 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        linux-kernel@vger.kernel.org, jeffrey.t.kirsher@intel.com,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        gregkh@linuxfoundation.org, alexander.duyck@gmail.com,
+        tobin@apporbit.com
+Subject: Re: [PATCH v2 1/1] drivers core: multi-threading device shutdown
+Message-ID: <20180523104029.GC15312@amd>
+References: <20180505154040.28614-1-pasha.tatashin@oracle.com>
+ <20180505154040.28614-2-pasha.tatashin@oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <1527068454-28921-2-git-send-email-ilialin@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="+xNpyl7Qekk2NvDX"
+Content-Disposition: inline
+In-Reply-To: <20180505154040.28614-2-pasha.tatashin@oracle.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--+xNpyl7Qekk2NvDX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 23/05/18 10:40, Ilia Lin wrote:
-> In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
-> the CPU frequency subset and voltage value of each OPP varies
-> based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
-> defines the voltage and frequency value based on the msm-id in SMEM
-> and speedbin blown in the efuse combination.
-> The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
-> to provide the OPP framework with required information.
-> This is used to determine the voltage and frequency value for each OPP of
-> operating-points-v2 table when it is parsed by the OPP framework.
-> 
-> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+Hi!
 
-[...]
+> When system is rebooted, halted or kexeced device_shutdown() is
+> called.
+>=20
+> This function shuts down every single device by calling either:
+>=20
+> 	dev->bus->shutdown(dev)
+> 	dev->driver->shutdown(dev)
+=2E..
+> Finally, with ixgbe_shutdown() it takes 0.37 for each device, but that ti=
+me
+> is spread all over the place, with bigger offenders:
+>=20
+>     ixgbe_shutdown
+>       __ixgbe_shutdown
+>         ixgbe_close_suspend
+>           ixgbe_down
+>             ixgbe_init_hw_generic
+>               ixgbe_reset_hw_X540
+>                 msleep(100);                        0.104483472
+>                 ixgbe_get_san_mac_addr_generic      0.048414851
+>                 ixgbe_get_wwn_prefix_generic        0.048409893
+>               ixgbe_start_hw_X540
+>                 ixgbe_start_hw_generic
+>                   ixgbe_clear_hw_cntrs_generic      0.048581502
+>                   ixgbe_setup_fc_generic            0.024225800
 
-> +	pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
-> +	if (!IS_ERR(pdev))
-> +		return 0;
-> +
-> +	ret = PTR_ERR(pdev);
-> +	dev_err(cpu_dev, "Failed to register platform device\n");
-> +
-> +free_opp:
-> +	for_each_possible_cpu(cpu) {
-> +		if (IS_ERR_OR_NULL(opp_tables[cpu]))
-> +			break;
-> +		dev_pm_opp_put_supported_hw(opp_tables[cpu]);
-> +	}
-> +free_np:
-> +	of_node_put(np);
-> +
-> +	return ret;
-> +}
-> +late_initcall(qcom_cpufreq_kryo_driver_init);
+ixgbe is network card, right? So ... it does not have any persistent
+state and no moving parts, and there's no reason we could not "just
+power it down"?
+>  /*
 
-Any particular reason why this *has* to be late initcall ?
-Please change it to module_initcall otherwise.
-Also address the of_node comments from Viresh.
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-Otherwise, it looks good.
--- 
-Regards,
-Sudeep
+--+xNpyl7Qekk2NvDX
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlsFRR0ACgkQMOfwapXb+vLi5ACghu7XPMOFEDfbMhAS5WGr5bgI
+hfIAoKI3dPA3N005lBvY/4K3irEQODZ2
+=S3tw
+-----END PGP SIGNATURE-----
+
+--+xNpyl7Qekk2NvDX--
