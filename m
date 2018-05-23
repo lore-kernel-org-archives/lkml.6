@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-582301-1527103532-2-12498424493316293421
+X-Cyrus-Session-Id: sloti22d1t05-604614-1527103531-2-16928076136596832730
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527103531; b=fwxyyXOzZfKZ6PXrYZ+wZ5G56De4eAqXG3O4f/Y0p9j97EZzQQ
-    6z3CDisHCROP0aBSnTmZNWX9OW/KYJqzvWkDltfZ0h8JaV7MwQWyE15R2reDpzC3
-    kCQuvfUqTDb8JfIalajypi+JK6yP48JY/zLuj9t+uIXcNUShWqfHsi2lI+uV3c5d
-    EoXIe3/JwDMAwl8nJKBKk3JgA07o7EOEfqdnKMrfeKp7raplu1z7Rq4ezyzBc0+P
-    Iq+XPrikpQzpG3Sw/5O3ZPoijXw/4LiMc39rhP6JmslSzitxG7BRPzlJtjNyD6/7
-    ioQpn3OvFJPbl3qvl/wo5HP1XmZbRSCpG3kg==
+    1527103531; b=C81dHRRrnY5Q7+1+A23SpLBh2ywpGR4Gh8s84wVWtKakHilYm9
+    eXTHXPtB3JbPvv4f12mF2qBPy/vhoNqCFKu/7bgubi80bA1E5scgie6sstY2OZXK
+    QONetploRpWkRhGEF5bY0FiTLHOshaxoHni8M4Ahe4zkulwuhqC3AhNOVuJ33fU3
+    R44HeAY21yuyZBc+R69NfstCTYhLcIQpKK81Rtri+AP7shgl1DufPaUNP4Ptgd1v
+    87bDSYSX6Y7spDDhP5Jh2G+Urir280zLKIgiKBZLi5SaHs3FJZoAf4UECZKuC4hU
+    VorbpadDKpLYvpxh8wuWaHS0N//Nt7L7JSfA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:sender:list-id; s=fm2; t=1527103531; bh=
-    wBgMHnIzTinHJ7/71n1pkOZkev56TvpSxLS0UnCZQZg=; b=OhcV1HoiXJAphUHZ
-    hdk3LrTL6Jk7B5aDR5zzF0zyxgioj5QhMJKsvX0jxqkAGqdjwveXPnk+PKJpFQWZ
-    GM5+iqsGZ/QALTbGlXuPvl4qN7NqpuwzCe5+7G5q8R+RcB3ADo1CkRDddtRviayy
-    sB9qOpnya1IXROIgYnkcy2Gfjw7JEmaPmVst6lsWBExW04/FmyzyiEhsJaqi722n
-    GqHyXhHaLZoBVhoK0PvqbImQnlfpf9xpisd0J7YorZZK6sLORGLR8+VAuo3ztADp
-    aEDA2ovIiJ6jIKkuBqaMaXl0w6+KkcQyVh9mpziwxPsiYsbdlYARkGzNGktQ78yX
-    8MMUsA==
+    9qkiprRPqKz2BzRdBzJf6xhK154xCThJCrn8PtF/j/A=; b=GgB+OMFucMu3F4hC
+    IdpjbS++zxu6AFDHtqqlkPzEiQ68fB6Z+oNGNmyN64cEEFkKFGSIqFuFD8TCcMm5
+    NGYAzYCRME63YGCMmW8liQF1MVO+XLn4wqp6vReLNlt3UlTwtzut4OpsOt7UE/sv
+    1C69XbZcBLZdqxncccD6u9im9DOT5Jj8mIWmeZPJirzaEkpal220gOqz2XRGMpYL
+    VaVC4k9BcDkpu9idSrJs5R+RBgTHXHViSofPIWW3CnfLBOwyFeJ45DFOPaXy/QnZ
+    krdPNYzBlmy+qtmUrnTTclXn3psjfXOSF/l62vF2aoY9tJSaRzoFOMtlExVASVbD
+    XHlpHg==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=infradead.org header.i=@infradead.org header.b=H0sIRshF
+    header.d=infradead.org header.i=@infradead.org header.b=Z2tGtp1v
     x-bits=2048 x-keytype=rsa x-algorithm=sha256
     x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -48,7 +48,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
 Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=infradead.org header.i=@infradead.org header.b=H0sIRshF
+      header.d=infradead.org header.i=@infradead.org header.b=Z2tGtp1v
       x-bits=2048 x-keytype=rsa x-algorithm=sha256
       x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -64,27 +64,27 @@ Authentication-Results: mx5.messagingengine.com;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
 X-CM-Envelope: MS4wfHqpZyWkUQfDfWRSaKT5uoMO2RSm/GOwkvSpgiyu8JkkjVN5IoRpH1icfbetR16XtmRCMrMQzaoeHFXnrB+CoqSgA2EQBr4W738H1NVwYoSs1gVI5bxW
-    Y7jtA6nI7r9EKrssvdsbnmpnThuWiMq/E5v8qmRUT16qQd5QtNCutBQpJ9qnZjbgp7Mw9JB3NKoCO3W0ca3ofJJJJJBXi0ODEJkKrqJTcrOsim4udsoAO6S+
+    Y7jtA6nI7r9EKrssvdsbnmpnThuWiMq/E5v8qmRUT16qQd5QtNCutBQpRr8powzb4WJUVQC6V31GjyyXpOvU8vYW6UdpOJ6U2q+eXoZtS7BOlzd1SRpwAUgf
 X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8
-    a=2Ns_JZRm6thByNElF-kA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=JAGRcNAvqmLdBlwhYKUA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934591AbeEWTZY (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 23 May 2018 15:25:24 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40936 "EHLO
+        id S934247AbeEWTVm (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 23 May 2018 15:21:42 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40928 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934230AbeEWTVj (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Wed, 23 May 2018 15:21:39 -0400
+        with ESMTP id S934547AbeEWTVg (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Wed, 23 May 2018 15:21:36 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: viro@zeniv.linux.org.uk
 Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
         linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 25/33] net/nfc: convert to ->poll_mask
-Date: Wed, 23 May 2018 21:20:14 +0200
-Message-Id: <20180523192022.1703-26-hch@lst.de>
+Subject: [PATCH 24/33] net/caif: convert to ->poll_mask
+Date: Wed, 23 May 2018 21:20:13 +0200
+Message-Id: <20180523192022.1703-25-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180523192022.1703-1-hch@lst.de>
 References: <20180523192022.1703-1-hch@lst.de>
@@ -97,49 +97,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- net/nfc/llcp_sock.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ net/caif/caif_socket.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/net/nfc/llcp_sock.c b/net/nfc/llcp_sock.c
-index ea0c0c6f1874..ab5bb14b49af 100644
---- a/net/nfc/llcp_sock.c
-+++ b/net/nfc/llcp_sock.c
-@@ -548,16 +548,13 @@ static inline __poll_t llcp_accept_poll(struct sock *parent)
- 	return 0;
+diff --git a/net/caif/caif_socket.c b/net/caif/caif_socket.c
+index a6fb1b3bcad9..c7991867d622 100644
+--- a/net/caif/caif_socket.c
++++ b/net/caif/caif_socket.c
+@@ -934,15 +934,11 @@ static int caif_release(struct socket *sock)
  }
  
--static __poll_t llcp_sock_poll(struct file *file, struct socket *sock,
--				   poll_table *wait)
-+static __poll_t llcp_sock_poll_mask(struct socket *sock, __poll_t events)
+ /* Copied from af_unix.c:unix_poll(), added CAIF tx_flow handling */
+-static __poll_t caif_poll(struct file *file,
+-			      struct socket *sock, poll_table *wait)
++static __poll_t caif_poll_mask(struct socket *sock, __poll_t events)
  {
  	struct sock *sk = sock->sk;
- 	__poll_t mask = 0;
- 
- 	pr_debug("%p\n", sk);
- 
--	sock_poll_wait(file, sk_sleep(sk), wait);
+-	__poll_t mask;
+ 	struct caifsock *cf_sk = container_of(sk, struct caifsock, sk);
 -
- 	if (sk->sk_state == LLCP_LISTEN)
- 		return llcp_accept_poll(sk);
+-	sock_poll_wait(file, sk_sleep(sk), wait);
+-	mask = 0;
++	__poll_t mask = 0;
  
-@@ -899,7 +896,7 @@ static const struct proto_ops llcp_sock_ops = {
- 	.socketpair     = sock_no_socketpair,
- 	.accept         = llcp_sock_accept,
- 	.getname        = llcp_sock_getname,
--	.poll           = llcp_sock_poll,
-+	.poll_mask      = llcp_sock_poll_mask,
- 	.ioctl          = sock_no_ioctl,
- 	.listen         = llcp_sock_listen,
- 	.shutdown       = sock_no_shutdown,
-@@ -919,7 +916,7 @@ static const struct proto_ops llcp_rawsock_ops = {
- 	.socketpair     = sock_no_socketpair,
- 	.accept         = sock_no_accept,
- 	.getname        = llcp_sock_getname,
--	.poll           = llcp_sock_poll,
-+	.poll_mask      = llcp_sock_poll_mask,
- 	.ioctl          = sock_no_ioctl,
- 	.listen         = sock_no_listen,
- 	.shutdown       = sock_no_shutdown,
+ 	/* exceptional events? */
+ 	if (sk->sk_err)
+@@ -976,7 +972,7 @@ static const struct proto_ops caif_seqpacket_ops = {
+ 	.socketpair = sock_no_socketpair,
+ 	.accept = sock_no_accept,
+ 	.getname = sock_no_getname,
+-	.poll = caif_poll,
++	.poll_mask = caif_poll_mask,
+ 	.ioctl = sock_no_ioctl,
+ 	.listen = sock_no_listen,
+ 	.shutdown = sock_no_shutdown,
+@@ -997,7 +993,7 @@ static const struct proto_ops caif_stream_ops = {
+ 	.socketpair = sock_no_socketpair,
+ 	.accept = sock_no_accept,
+ 	.getname = sock_no_getname,
+-	.poll = caif_poll,
++	.poll_mask = caif_poll_mask,
+ 	.ioctl = sock_no_ioctl,
+ 	.listen = sock_no_listen,
+ 	.shutdown = sock_no_shutdown,
 -- 
 2.17.0
 
