@@ -1,88 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933241AbeEWNiE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 09:38:04 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55418 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933156AbeEWNg2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 09:36:28 -0400
-From: Mark Rutland <mark.rutland@arm.com>
-To: linux-kernel@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, Boqun Feng <boqun.feng@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 10/13] atomics/powerpc: define atomic64_fetch_add_unless()
-Date: Wed, 23 May 2018 14:35:30 +0100
-Message-Id: <20180523133533.1076-11-mark.rutland@arm.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180523133533.1076-1-mark.rutland@arm.com>
-References: <20180523133533.1076-1-mark.rutland@arm.com>
+        id S933258AbeEWNiL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 09:38:11 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:34476 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933156AbeEWNiF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 09:38:05 -0400
+X-Google-Smtp-Source: AB8JxZpPjfmZBvhl1pRArTiz6jaUv7ezgHF/FqJ64EzT88FmNiEv1uZ9adBB47IKELvNl4+I0j8uMFmWPftIge/pzaA=
+MIME-Version: 1.0
+In-Reply-To: <9cbf19b5765746b88af6dadc71b99d78@XCH-RTP-016.cisco.com>
+References: <1526731655-10087-1-git-send-email-jrosen@cisco.com>
+ <CAF=yD-+kjceErK=CApiu1oY9uTjVWG2qeX=NkGVYufVVC_L2PA@mail.gmail.com>
+ <CAF=yD-KvTyTibhqpKP79Obfk8KRVDLMyb6THNwNgrJzs47bAtQ@mail.gmail.com> <9cbf19b5765746b88af6dadc71b99d78@XCH-RTP-016.cisco.com>
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date: Wed, 23 May 2018 09:37:23 -0400
+Message-ID: <CAF=yD-LpGOTx_jrh10G59M4Y-vpdtx_q5SG1Hjc7452y9KUt4w@mail.gmail.com>
+Subject: Re: [PATCH v2] packet: track ring entry use using a shadow ring to
+ prevent RX ring overrun
+To: "Jon Rosen (jrosen)" <jrosen@cisco.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+        Willem de Bruijn <willemb@google.com>,
+        Eric Dumazet <edumazet@google.com>, Kees Cook <keescook@chromium.org>,
+        David Windsor <dwindsor@gmail.com>,
+        "Rosen, Rami" <rami.rosen@intel.com>,
+        "Reshetova, Elena" <elena.reshetova@intel.com>,
+        Mike Maloney <maloney@google.com>,
+        Benjamin Poirier <bpoirier@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As a step towards unifying the atomic/atomic64/atomic_long APIs, this
-patch converts the arch/powerpc implementation of atomic64_add_unless()
-into an implementation of atomic64_fetch_add_unless().
+On Wed, May 23, 2018 at 7:54 AM, Jon Rosen (jrosen) <jrosen@cisco.com> wrote:
+>> > For the ring, there is no requirement to allocate exactly the amount
+>> > specified by the user request. Safer than relying on shared memory
+>> > and simpler than the extra allocation in this patch would be to allocate
+>> > extra shadow memory at the end of the ring (and not mmap that).
+>> >
+>> > That still leaves an extra cold cacheline vs using tp_padding.
+>>
+>> Given my lack of experience and knowledge in writing kernel code
+>> it was easier for me to allocate the shadow ring as a separate
+>> structure.  Of course it's not about me and my skills so if it's
+>> more appropriate to allocate at the tail of the existing ring
+>> then certainly I can look at doing that.
+>
+> The memory for the ring is not one contiguous block, it's an array of
+> blocks of pages (or 'order' sized blocks of pages). I don't think
+> increasing the size of each of the blocks to provided storage would be
+> such a good idea as it will risk spilling over into the next order and
+> wasting lots of memory. I suspect it's also more complex than a single
+> shadow ring to do both the allocation and the access.
+>
+> It could be tacked onto the end of the pg_vec[] used to store the
+> pointers to the blocks. The challenge with that is that a pg_vec[] is
+> created for each of RX and TX rings so either it would have to
+> allocate unnecessary storage for TX or the caller will have to say if
+> extra space should be allocated or not.  E.g.:
+>
+> static struct pgv *alloc_pg_vec(struct tpacket_req *req, int order, int scratch, void **scratch_p)
+>
+> I'm not sure avoiding the extra allocation and moving it to the
+> pg_vec[] for the RX ring is going to get the simplification you were
+> hoping for.  Is there another way of storing the shadow ring which
+> I should consider?
 
-A wrapper in <linux/atomic.h> will build atomic_add_unless() atop of
-this, provided it is given a preprocessor definition.
+I did indeed mean attaching extra pages to pg_vec[]. It should be
+simpler than a separate structure, but I may be wrong.
 
-No functional change is intended as a result of this patch.
+Either way, I still would prefer to avoid the shadow buffer completely.
+It incurs complexity and cycle cost on all users because of only the
+rare (non-existent?) consumer that overwrites the padding bytes.
 
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
----
- arch/powerpc/include/asm/atomic.h | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+Perhaps we can use padding yet avoid deadlock by writing a
+timed value. The simplest would be jiffies >> N. Then only a
+process that writes this exact value would be subject to drops and
+then still only for a limited period.
 
-diff --git a/arch/powerpc/include/asm/atomic.h b/arch/powerpc/include/asm/atomic.h
-index b5646c079c16..233dbf31911c 100644
---- a/arch/powerpc/include/asm/atomic.h
-+++ b/arch/powerpc/include/asm/atomic.h
-@@ -525,7 +525,7 @@ static __inline__ long atomic64_dec_if_positive(atomic64_t *v)
- #define atomic64_xchg_relaxed(v, new) xchg_relaxed(&((v)->counter), (new))
- 
- /**
-- * atomic64_add_unless - add unless the number is a given value
-+ * atomic64_fetch_add_unless - add unless the number is a given value
-  * @v: pointer of type atomic64_t
-  * @a: the amount to add to v...
-  * @u: ...unless v is equal to u.
-@@ -533,13 +533,13 @@ static __inline__ long atomic64_dec_if_positive(atomic64_t *v)
-  * Atomically adds @a to @v, so long as it was not @u.
-  * Returns the old value of @v.
-  */
--static __inline__ int atomic64_add_unless(atomic64_t *v, long a, long u)
-+static __inline__ long atomic64_fetch_add_unless(atomic64_t *v, long a, long u)
- {
- 	long t;
- 
- 	__asm__ __volatile__ (
- 	PPC_ATOMIC_ENTRY_BARRIER
--"1:	ldarx	%0,0,%1		# atomic_fetch_add_unless\n\
-+"1:	ldarx	%0,0,%1		# atomic64_fetch_add_unless\n\
- 	cmpd	0,%0,%3 \n\
- 	beq	2f \n\
- 	add	%0,%2,%0 \n"
-@@ -552,8 +552,9 @@ static __inline__ int atomic64_add_unless(atomic64_t *v, long a, long u)
- 	: "r" (&v->counter), "r" (a), "r" (u)
- 	: "cc", "memory");
- 
--	return t != u;
-+	return t;
- }
-+#define atomic64_fetch_add_unless atomic64_fetch_add_unless
- 
- /**
-  * atomic_inc64_not_zero - increment unless the number is zero
--- 
-2.11.0
+Instead of depending on wall clock time, like jiffies, another option
+would be to keep a percpu array of values. Each cpu has a zero
+entry if it is not writing, nonzero if it is. If a writer encounters a
+number in padding that is > num_cpus, then the state is garbage
+from userspace. If <= num_cpus, it is adhered to only until that cpu
+clears its entry, which is guaranteed to happen eventually.
+
+Just a quick thought. This might not fly at all upon closer scrutiny.
