@@ -1,90 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934691AbeEWWGo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 18:06:44 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38030 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933791AbeEWWGj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 18:06:39 -0400
-Date: Wed, 23 May 2018 16:06:38 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Logan Gunthorpe <logang@deltatee.com>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-ntb@googlegroups.com, Bjorn Helgaas <bhelgaas@google.com>,
-        Doug Meyer <dmeyer@gigaio.com>
-Subject: Re: [PATCH] PCI: Expand documentation for pci_add_dma_alias()
-Message-ID: <20180523160638.03f6db90@w520.home>
-In-Reply-To: <20180523210738.2883-1-logang@deltatee.com>
-References: <20180523210738.2883-1-logang@deltatee.com>
+        id S934449AbeEWWId (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 18:08:33 -0400
+Received: from mail-pf0-f176.google.com ([209.85.192.176]:45119 "EHLO
+        mail-pf0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933791AbeEWWIb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 18:08:31 -0400
+X-Google-Smtp-Source: AB8JxZpyEpXqZvVGpn0lZzOGLIfULAdvDu7gDaPNIQhJnUYB81Dfa6Us1N57tYqyo0iIWCQOcfkWNqmniM1378P8HzE=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Nick Desaulniers <ndesaulniers@google.com>
+Date: Wed, 23 May 2018 15:08:19 -0700
+Message-ID: <CAKwvOd=jmi_7LvZbS0PA5-zt62m5ZFPUNG7JtMQVmerCR63ebQ@mail.gmail.com>
+Subject: [clang] stack protector and f1f029c7bf
+To: hpa@zytor.com
+Cc: Alistair Strachan <astrachan@google.com>,
+        Manoj Gupta <manojgupta@google.com>,
+        Matthias Kaehlcke <mka@google.com>,
+        Greg Hackmann <ghackmann@google.com>, sedat.dilek@gmail.com,
+        tstellar@redhat.com, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 23 May 2018 15:07:38 -0600
-Logan Gunthorpe <logang@deltatee.com> wrote:
+H. Peter,
 
-> Seeing there's been some confusion about the use of pci_add_dma_alias(),
-> expand the comment to describe why it must be called early and how
-> early it must be called.
-> 
-> Also, expand on the purpose of this function and common reasons it would
-> be used.
-> 
-> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Alex Williamson <alex.williamson@redhat.com>
-> Cc: Doug Meyer <dmeyer@gigaio.com>
-> ---
->  drivers/pci/pci.c | 15 +++++++++++++--
->  1 file changed, 13 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index dbfe7c4f3776..2a410745a95a 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -5395,8 +5395,19 @@ int pci_set_vga_state(struct pci_dev *dev, bool decode,
->   * @dev: the PCI device for which alias is added
->   * @devfn: alias slot and function
->   *
-> - * This helper encodes 8-bit devfn as bit number in dma_alias_mask.
-> - * It should be called early, preferably as PCI fixup header quirk.
-> + * This helper encodes an 8-bit devfn as a bit number in dma_alias_mask
-> + * which is used to program permissible BDF source addresses for
-> + * DMA requests in an IOMMU. This is useful for non-transparent bridges
-> + * which use BDFs that are not visible on the bus as proxies for devices
-> + * in another domain. It's also useful for grouping of multiple devices
-> + * that must be done without a host endpoint driver.
-> + *
-> + * This function must be called early, before the IOMMU creates
-> + * the groups for the device which happens with a BUS_NOTIFY_ADD_DEVICE
-> + * event. This occurs before the driver's probe function is called seeing
-> + * the groups must be ready before any DMA mappings for the device are created.
-> + * Therefore, this function cannot be called in a driver and, instead,
-> + * should be called as a PCI fixup header quirk.
->   */
->  void pci_add_dma_alias(struct pci_dev *dev, u8 devfn)
->  {
+It was reported [0] that compiling the Linux kernel with Clang +
+CC_STACKPROTECTOR_STRONG was causing a crash in native_save_fl(), due to
+how GCC does not emit a stack guard for static inline functions (see
+Alistair's excellent report in [1]) but Clang does.
 
-I might massage this a little further, something like:
+When working with the LLVM release maintainers, Tom had suggested [2]
+changing the inline assembly constraint in native_save_fl() from '=rm' to
+'=r', and Alistair had verified the disassembly:
 
-  This helper encodes an 8-bit devfn as a bit number in dma_alias_mask,
-  which is used to program permissible BDF source addresses for DMA
-  requests in the IOMMU.  These aliases factor into IOMMU group
-  creation and are useful for devices generating DMA requests beyond or
-  different from their logical bus devfn.  Examples include device
-  quirks where the device simply uses the wrong devfn, as well as
-  non-transparent bridges where the alias may be a proxy for devices in
-  another domain.
+(good) code generated w/o -fstack-protector-strong:
 
-  IOMMU group creation is performed during device discovery or
-  addition, prior to any potential DMA mapping and therefore prior to
-  driver probing, particularly for userspace assigned devices where
-  IOMMU group definition cannot be left as a userspace activity.  DMA
-  aliases should therefore be configured via quirks, such as the PCI
-  fixup header quirk.
+native_save_fl:
+          pushfq
+          popq    -8(%rsp)
+          movq    -8(%rsp), %rax
+          retq
 
+(good) code generated w/ =r input constraint:
+
+native_save_fl:
+          pushfq
+          popq    %rax
+          retq
+
+(bad) code generated with -fstack-protector-strong:
+
+native_save_fl:
+          subq    $24, %rsp
+          movq    %fs:40, %rax
+          movq    %rax, 16(%rsp)
+          pushfq
+          popq    8(%rsp)
+          movq    8(%rsp), %rax
+          movq    %fs:40, %rcx
+          cmpq    16(%rsp), %rcx
+          jne     .LBB0_2
+          addq    $24, %rsp
+          retq
+.LBB0_2:
+          callq   __stack_chk_fail
+
+It looks like the sugguestion is actually a revert of your commit:
+ab94fcf528d127fcb490175512a8910f37e5b346:
+x86: allow "=rm" in native_save_fl()
+
+It seemed like there was a question internally about why worry about pop
+adjusting the stack if the stack could be avoided altogether.
+
+I think Sedat can retest this, but I was curious as well about the commit
+message in ab94fcf528d: "[ Impact: performance ]", but Alistair's analysis
+of the disassembly seems to indicate there is no performance impact (in
+fact, looks better as there's one less mov).
+
+Is there a reason we should not revert ab94fcf528d12, or maybe a better
+approach?
+
+[0] https://lkml.org/lkml/2018/5/7/534
+[1] https://bugs.llvm.org/show_bug.cgi?id=37512#c15
+[2] https://bugs.llvm.org/show_bug.cgi?id=37512#c22
+-- 
 Thanks,
-Alex
+~Nick Desaulniers
