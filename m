@@ -1,114 +1,262 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932779AbeEWMTd (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 08:19:33 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:38666 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932080AbeEWMT2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 08:19:28 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6A6EA60314
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rplsssn@codeaurora.org
-Subject: Re: [PATCH v8 04/10] drivers: qcom: rpmh: add RPMH helper functions
-To: Doug Anderson <dianders@chromium.org>,
-        Lina Iyer <ilina@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>, msivasub@codeaurora.org,
-        mkshah@codeaurora.org, Bjorn Andersson <bjorn.andersson@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Evan Green <evgreen@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-References: <20180509170159.29682-1-ilina@codeaurora.org>
- <20180509170159.29682-5-ilina@codeaurora.org>
- <CAD=FV=VCAaGsRH1e46e+YSPJMYHgHGWf9TcH5UrcuJadQGsLtw@mail.gmail.com>
- <20180515174736.GB28489@codeaurora.org>
- <CAD=FV=W9ahLJNuJBmMgziabumkU9q_PS59Z822+tLBwRZU7euQ@mail.gmail.com>
-From: Raju P L S S S N <rplsssn@codeaurora.org>
-Message-ID: <e79895de-4c9e-942a-5f19-b8080fa9a935@codeaurora.org>
-Date: Wed, 23 May 2018 17:49:17 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S932069AbeEWMUC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 08:20:02 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60718 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932534AbeEWMRC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 08:17:02 -0400
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 3/8] afs: Rearrange fs/afs/proc.c to move the show routines
+ up
+From: David Howells <dhowells@redhat.com>
+To: viro@zeniv.linux.org.uk
+Cc: dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
+Date: Wed, 23 May 2018 13:17:00 +0100
+Message-ID: <152707782047.27887.15439187207028313024.stgit@warthog.procyon.org.uk>
+In-Reply-To: <152707780120.27887.10118775145086304138.stgit@warthog.procyon.org.uk>
+References: <152707780120.27887.10118775145086304138.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-In-Reply-To: <CAD=FV=W9ahLJNuJBmMgziabumkU9q_PS59Z822+tLBwRZU7euQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Rearrange fs/afs/proc.c to move the show routines up to the top of each
+block so the order is show, iteration, ops, file ops, fops.
 
-On 5/15/2018 11:52 PM, Doug Anderson wrote:
-> Hi,
-> 
-> On Tue, May 15, 2018 at 10:47 AM, Lina Iyer <ilina@codeaurora.org> wrote:
->> On Fri, May 11 2018 at 14:17 -0600, Doug Anderson wrote:
->>>
->>> Hi,
->>>
->>> On Wed, May 9, 2018 at 10:01 AM, Lina Iyer <ilina@codeaurora.org> wrote:
->>>>
->>>> +int rpmh_write(const struct device *dev, enum rpmh_state state,
->>>> +              const struct tcs_cmd *cmd, u32 n)
->>>> +{
->>>> +       DECLARE_COMPLETION_ONSTACK(compl);
->>>> +       DEFINE_RPMH_MSG_ONSTACK(dev, state, &compl, rpm_msg);
->>>> +       int ret;
->>>> +
->>>> +       if (!cmd || !n || n > MAX_RPMH_PAYLOAD)
->>>> +               return -EINVAL;
->>>> +
->>>> +       memcpy(rpm_msg.cmd, cmd, n * sizeof(*cmd));
->>>> +       rpm_msg.msg.num_cmds = n;
->>>> +
->>>> +       ret = __rpmh_write(dev, state, &rpm_msg);
->>>> +       if (ret)
->>>> +               return ret;
->>>> +
->>>> +       ret = wait_for_completion_timeout(&compl, RPMH_TIMEOUT_MS);
->>>
->>>
->>> IMO it's almost never a good idea to use wait_for_completion_timeout()
->>> together with a completion that's declared on the stack.  If you
->>> somehow insist that this is a good idea then I need to see incredibly
->>> clear and obvious code/comments that say why it's impossible that the
->>> process might somehow try to signal the completion _after_
->>> RPMH_TIMEOUT_MS has expired.
->>>
->>> Specifically if the timeout happens but the process could still signal
->>> a completion later then they will access random data on the stack of a
->>> function that has already returned.  This causes ridiculously
->>> difficult-to-debug crashes.
->>>
->>>
->>> NOTE: You've got timeout set to 10 seconds here.  Is that really even
->>> useful?  IMO just call wait_for_completion() without a timeout.  It's
->>> much better to have a nice clean hang than a random stack corruption.
->>>
->>>
->> The 10 sec timeout will guarantee that we will not get a response at all
->> anymore for the request. Usually requests can be considered failed if
->> there is no response in a few tens of microseconds. 10 sec is just an
->> arbitarily large number.
->>
->> The reason we use timeout is that once the timeout happens, we know we
->> have failed, we could trigger a watchdog or crash the system. This is
->> very important for our productization in debugging RPMH failures. A
->> hang would not always trigger a watchdog and the failure would be silent
->> and possibly fatal but hard to debug.
-> 
-> If you intend the system to crash when this timeout happens then IMHO
-> add a BUG_ON.  Then I won't worry about something coming around later
-> and clobbering the stack.
-> 
-> -Doug
-> 
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
 
-Sure. Will add BUG_ON in next patch.
+ fs/afs/proc.c |  150 +++++++++++++++++++++++++++++----------------------------
+ 1 file changed, 75 insertions(+), 75 deletions(-)
 
-Thanks,
-Raju.
+diff --git a/fs/afs/proc.c b/fs/afs/proc.c
+index 22ce99df3208..b20098b7b7ee 100644
+--- a/fs/afs/proc.c
++++ b/fs/afs/proc.c
+@@ -91,6 +91,25 @@ static const struct seq_operations afs_proc_sysname_ops = {
+ 	.show	= afs_proc_sysname_show,
+ };
+ 
++/*
++ * display a header line followed by a load of cell lines
++ */
++static int afs_proc_cells_show(struct seq_file *m, void *v)
++{
++	struct afs_cell *cell = list_entry(v, struct afs_cell, proc_link);
++	struct afs_net *net = afs_seq2net(m);
++
++	if (v == &net->proc_cells) {
++		/* display header on line 1 */
++		seq_puts(m, "USE NAME\n");
++		return 0;
++	}
++
++	/* display one cell per line on subsequent lines */
++	seq_printf(m, "%3u %s\n", atomic_read(&cell->usage), cell->name);
++	return 0;
++}
++
+ /*
+  * set up the iterator to start reading from the cells list and return the
+  * first item
+@@ -123,25 +142,6 @@ static void afs_proc_cells_stop(struct seq_file *m, void *v)
+ 	rcu_read_unlock();
+ }
+ 
+-/*
+- * display a header line followed by a load of cell lines
+- */
+-static int afs_proc_cells_show(struct seq_file *m, void *v)
+-{
+-	struct afs_cell *cell = list_entry(v, struct afs_cell, proc_link);
+-	struct afs_net *net = afs_seq2net(m);
+-
+-	if (v == &net->proc_cells) {
+-		/* display header on line 1 */
+-		seq_puts(m, "USE NAME\n");
+-		return 0;
+-	}
+-
+-	/* display one cell per line on subsequent lines */
+-	seq_printf(m, "%3u %s\n", atomic_read(&cell->usage), cell->name);
+-	return 0;
+-}
+-
+ /*
+  * handle writes to /proc/fs/afs/cells
+  * - to add cells: echo "add <cellname> <IP>[:<IP>][:<IP>]"
+@@ -319,6 +319,33 @@ static const struct file_operations afs_proc_rootcell_fops = {
+ 	.llseek		= no_llseek,
+ };
+ 
++static const char afs_vol_types[3][3] = {
++	[AFSVL_RWVOL]	= "RW",
++	[AFSVL_ROVOL]	= "RO",
++	[AFSVL_BACKVOL]	= "BK",
++};
++
++/*
++ * display a header line followed by a load of volume lines
++ */
++static int afs_proc_cell_volumes_show(struct seq_file *m, void *v)
++{
++	struct afs_cell *cell = PDE_DATA(file_inode(m->file));
++	struct afs_volume *vol = list_entry(v, struct afs_volume, proc_link);
++
++	/* Display header on line 1 */
++	if (v == &cell->proc_volumes) {
++		seq_puts(m, "USE VID      TY\n");
++		return 0;
++	}
++
++	seq_printf(m, "%3d %08x %s\n",
++		   atomic_read(&vol->usage), vol->vid,
++		   afs_vol_types[vol->type]);
++
++	return 0;
++}
++
+ /*
+  * set up the iterator to start reading from the cells list and return the
+  * first item
+@@ -357,30 +384,21 @@ static void afs_proc_cell_volumes_stop(struct seq_file *p, void *v)
+ 	read_unlock(&cell->proc_lock);
+ }
+ 
+-static const char afs_vol_types[3][3] = {
+-	[AFSVL_RWVOL]	= "RW",
+-	[AFSVL_ROVOL]	= "RO",
+-	[AFSVL_BACKVOL]	= "BK",
+-};
+-
+ /*
+  * display a header line followed by a load of volume lines
+  */
+-static int afs_proc_cell_volumes_show(struct seq_file *m, void *v)
++static int afs_proc_cell_vlservers_show(struct seq_file *m, void *v)
+ {
+-	struct afs_cell *cell = PDE_DATA(file_inode(m->file));
+-	struct afs_volume *vol = list_entry(v, struct afs_volume, proc_link);
++	struct sockaddr_rxrpc *addr = v;
+ 
+-	/* Display header on line 1 */
+-	if (v == &cell->proc_volumes) {
+-		seq_puts(m, "USE VID      TY\n");
++	/* display header on line 1 */
++	if (v == (void *)1) {
++		seq_puts(m, "ADDRESS\n");
+ 		return 0;
+ 	}
+ 
+-	seq_printf(m, "%3d %08x %s\n",
+-		   atomic_read(&vol->usage), vol->vid,
+-		   afs_vol_types[vol->type]);
+-
++	/* display one cell per line on subsequent lines */
++	seq_printf(m, "%pISp\n", &addr->transport);
+ 	return 0;
+ }
+ 
+@@ -442,18 +460,22 @@ static void afs_proc_cell_vlservers_stop(struct seq_file *p, void *v)
+ /*
+  * display a header line followed by a load of volume lines
+  */
+-static int afs_proc_cell_vlservers_show(struct seq_file *m, void *v)
++static int afs_proc_servers_show(struct seq_file *m, void *v)
+ {
+-	struct sockaddr_rxrpc *addr = v;
++	struct afs_server *server;
++	struct afs_addr_list *alist;
+ 
+-	/* display header on line 1 */
+-	if (v == (void *)1) {
+-		seq_puts(m, "ADDRESS\n");
++	if (v == SEQ_START_TOKEN) {
++		seq_puts(m, "UUID                                 USE ADDR\n");
+ 		return 0;
+ 	}
+ 
+-	/* display one cell per line on subsequent lines */
+-	seq_printf(m, "%pISp\n", &addr->transport);
++	server = list_entry(v, struct afs_server, proc_link);
++	alist = rcu_dereference(server->addresses);
++	seq_printf(m, "%pU %3d %pISp\n",
++		   &server->uuid,
++		   atomic_read(&server->usage),
++		   &alist->addrs[alist->index].transport);
+ 	return 0;
+ }
+ 
+@@ -489,28 +511,6 @@ static void afs_proc_servers_stop(struct seq_file *p, void *v)
+ 	rcu_read_unlock();
+ }
+ 
+-/*
+- * display a header line followed by a load of volume lines
+- */
+-static int afs_proc_servers_show(struct seq_file *m, void *v)
+-{
+-	struct afs_server *server;
+-	struct afs_addr_list *alist;
+-
+-	if (v == SEQ_START_TOKEN) {
+-		seq_puts(m, "UUID                                 USE ADDR\n");
+-		return 0;
+-	}
+-
+-	server = list_entry(v, struct afs_server, proc_link);
+-	alist = rcu_dereference(server->addresses);
+-	seq_printf(m, "%pU %3d %pISp\n",
+-		   &server->uuid,
+-		   atomic_read(&server->usage),
+-		   &alist->addrs[alist->index].transport);
+-	return 0;
+-}
+-
+ void afs_put_sysnames(struct afs_sysnames *sysnames)
+ {
+ 	int i;
+@@ -663,6 +663,17 @@ static int afs_proc_sysname_release(struct inode *inode, struct file *file)
+ 	return seq_release(inode, file);
+ }
+ 
++static int afs_proc_sysname_show(struct seq_file *m, void *v)
++{
++	struct afs_net *net = afs_seq2net(m);
++	struct afs_sysnames *sysnames = net->sysnames;
++	unsigned int i = (unsigned long)v - 1;
++
++	if (i < sysnames->nr)
++		seq_printf(m, "%s\n", sysnames->subs[i]);
++	return 0;
++}
++
+ static void *afs_proc_sysname_start(struct seq_file *m, loff_t *pos)
+ 	__acquires(&net->sysnames_lock)
+ {
+@@ -695,17 +706,6 @@ static void afs_proc_sysname_stop(struct seq_file *m, void *v)
+ 	read_unlock(&net->sysnames_lock);
+ }
+ 
+-static int afs_proc_sysname_show(struct seq_file *m, void *v)
+-{
+-	struct afs_net *net = afs_seq2net(m);
+-	struct afs_sysnames *sysnames = net->sysnames;
+-	unsigned int i = (unsigned long)v - 1;
+-
+-	if (i < sysnames->nr)
+-		seq_printf(m, "%s\n", sysnames->subs[i]);
+-	return 0;
+-}
+-
+ static const struct file_operations afs_proc_sysname_fops = {
+ 	.open		= afs_proc_sysname_open,
+ 	.read		= seq_read,
