@@ -1,78 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932486AbeEWKuj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 06:50:39 -0400
-Received: from foss.arm.com ([217.140.101.70]:53200 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932312AbeEWKuf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 06:50:35 -0400
-Date: Wed, 23 May 2018 11:51:02 +0100
-From: Will Deacon <will.deacon@arm.com>
-To: Laura Abbott <labbott@redhat.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        id S932518AbeEWKxC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 06:53:02 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53294 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932391AbeEWKxB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 06:53:01 -0400
+Subject: Re: [PATCH 08/14] arm64: ssbd: Disable mitigation on CPU resume if
+ required by user
+To: Marc Zyngier <marc.zyngier@arm.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>,
-        Peter Robinson <pbrobinson@gmail.com>
-Subject: Re: [PATCH] arm64: Make sure permission updates happen for pmd/pud
-Message-ID: <20180523105102.GB26965@arm.com>
-References: <20180522235049.23400-1-labbott@redhat.com>
+        kvmarm@lists.cs.columbia.edu
+Cc: Kees Cook <keescook@chromium.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <20180522150648.28297-1-marc.zyngier@arm.com>
+ <20180522150648.28297-9-marc.zyngier@arm.com>
+From: Julien Grall <julien.grall@arm.com>
+Message-ID: <7c3b914e-53d7-e600-2632-a05e1cb3e0cd@arm.com>
+Date: Wed, 23 May 2018 11:52:56 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180522235049.23400-1-labbott@redhat.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180522150648.28297-9-marc.zyngier@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laura,
+Hi,
 
-On Tue, May 22, 2018 at 04:50:49PM -0700, Laura Abbott wrote:
-> Commit 15122ee2c515 ("arm64: Enforce BBM for huge IO/VMAP mappings")
-> disallowed block mappings for ioremap since that code does not honor
-> break-before-make. The same APIs are also used for permission updating
-> though and the extra checks prevent the permission updates from happening,
-> even though this should be permitted. This results in read-only permissions
-> not being fully applied. Visibly, this can occasionaly be seen as a failure
-> on the built in rodata test when the test data ends up in a section or
-> as an odd RW gap on the page table dump. Fix this by keeping the check
-> for the top level p*d_set_huge APIs but using separate functions for the
-> update APIs.
+On 05/22/2018 04:06 PM, Marc Zyngier wrote:
+> On a system where firmware can dynamically change the state of the
+> mitigation, the CPU will always come up with the mitigation enabled,
+> including when coming back from suspend.
 > 
-> Reported-by: Peter Robinson <pbrobinson@gmail.com>
-> Fixes: 15122ee2c515 ("arm64: Enforce BBM for huge IO/VMAP mappings")
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
+> If the user has requested "no mitigation" via a command line option,
+> let's enforce it by calling into the firmware again to disable it.
+> 
+> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+
+Reviewed-by: Julien Grall <julien.grall@arm.com>
+
+Cheers,
+
 > ---
->  arch/arm64/mm/mmu.c | 28 ++++++++++++++++++++--------
->  1 file changed, 20 insertions(+), 8 deletions(-)
-
-Thanks for sending the fix. One thing below...
-
-> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-> index 2dbb2c9f1ec1..57517ad86910 100644
-> --- a/arch/arm64/mm/mmu.c
-> +++ b/arch/arm64/mm/mmu.c
-> @@ -66,6 +66,9 @@ static pte_t bm_pte[PTRS_PER_PTE] __page_aligned_bss;
->  static pmd_t bm_pmd[PTRS_PER_PMD] __page_aligned_bss __maybe_unused;
->  static pud_t bm_pud[PTRS_PER_PUD] __page_aligned_bss __maybe_unused;
->  
-> +static void __pmd_set_huge(pmd_t *pmdp, phys_addr_t phys, pgprot_t prot);
-> +static void __pud_set_huge(pud_t *pudp, phys_addr_t phys, pgprot_t prot);
+>   arch/arm64/include/asm/cpufeature.h | 6 ++++++
+>   arch/arm64/kernel/cpu_errata.c      | 8 ++++----
+>   arch/arm64/kernel/suspend.c         | 8 ++++++++
+>   3 files changed, 18 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
+> index 1bacdf57f0af..d9dcb683259e 100644
+> --- a/arch/arm64/include/asm/cpufeature.h
+> +++ b/arch/arm64/include/asm/cpufeature.h
+> @@ -553,6 +553,12 @@ static inline int arm64_get_ssbd_state(void)
+>   #endif
+>   }
+>   
+> +#ifdef CONFIG_ARM64_SSBD
+> +void arm64_set_ssbd_mitigation(bool state);
+> +#else
+> +static inline void arm64_set_ssbd_mitigation(bool state) {}
+> +#endif
 > +
->  pgprot_t phys_mem_access_prot(struct file *file, unsigned long pfn,
->  			      unsigned long size, pgprot_t vma_prot)
->  {
-> @@ -200,7 +203,7 @@ static void init_pmd(pud_t *pudp, unsigned long addr, unsigned long end,
->  		/* try section mapping first */
->  		if (((addr | next | phys) & ~SECTION_MASK) == 0 &&
->  		    (flags & NO_BLOCK_MAPPINGS) == 0) {
-> -			pmd_set_huge(pmdp, phys, prot);
-> +			__pmd_set_huge(pmdp, phys, prot);
+>   #endif /* __ASSEMBLY__ */
+>   
+>   #endif
+> diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
+> index 8f686f39b9c1..b4c12e9140f0 100644
+> --- a/arch/arm64/kernel/cpu_errata.c
+> +++ b/arch/arm64/kernel/cpu_errata.c
+> @@ -297,7 +297,7 @@ void __init arm64_enable_wa2_handling(struct alt_instr *alt,
+>   		*updptr = cpu_to_le32(aarch64_insn_gen_nop());
+>   }
+>   
+> -static void do_ssbd(bool state)
+> +void arm64_set_ssbd_mitigation(bool state)
+>   {
+>   	switch (psci_ops.conduit) {
+>   	case PSCI_CONDUIT_HVC:
+> @@ -371,20 +371,20 @@ static bool has_ssbd_mitigation(const struct arm64_cpu_capabilities *entry,
+>   	switch (ssbd_state) {
+>   	case ARM64_SSBD_FORCE_DISABLE:
+>   		pr_info_once("%s disabled from command-line\n", entry->desc);
+> -		do_ssbd(false);
+> +		arm64_set_ssbd_mitigation(false);
+>   		required = false;
+>   		break;
+>   
+>   	case ARM64_SSBD_EL1_ENTRY:
+>   		if (required) {
+>   			__this_cpu_write(arm64_ssbd_callback_required, 1);
+> -			do_ssbd(true);
+> +			arm64_set_ssbd_mitigation(true);
+>   		}
+>   		break;
+>   
+>   	case ARM64_SSBD_FORCE_ENABLE:
+>   		pr_info_once("%s forced from command-line\n", entry->desc);
+> -		do_ssbd(true);
+> +		arm64_set_ssbd_mitigation(true);
+>   		required = true;
+>   		break;
+>   
+> diff --git a/arch/arm64/kernel/suspend.c b/arch/arm64/kernel/suspend.c
+> index a307b9e13392..70c283368b64 100644
+> --- a/arch/arm64/kernel/suspend.c
+> +++ b/arch/arm64/kernel/suspend.c
+> @@ -62,6 +62,14 @@ void notrace __cpu_suspend_exit(void)
+>   	 */
+>   	if (hw_breakpoint_restore)
+>   		hw_breakpoint_restore(cpu);
+> +
+> +	/*
+> +	 * On resume, firmware implementing dynamic mitigation will
+> +	 * have turned the mitigation on. If the user has forcefully
+> +	 * disabled it, make sure their wishes are obeyed.
+> +	 */
+> +	if (arm64_get_ssbd_state() == ARM64_SSBD_FORCE_DISABLE)
+> +		arm64_set_ssbd_mitigation(false);
+>   }
+>   
+>   /*
+> 
 
-Given that there is ongoing work to fix the core ioremap code, it would
-be nice to avoid adding '__' versions if we can help it. Would it work
-if we replaced the pXd_present check with a call to pgattr_change_is_safe
-instead?
-
-Will
+-- 
+Julien Grall
