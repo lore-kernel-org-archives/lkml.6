@@ -1,179 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933947AbeEWR7H (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 13:59:07 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:35873 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933899AbeEWR6z (ORCPT
+        id S933961AbeEWR7P (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 13:59:15 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:36308 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933949AbeEWR7I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 13:58:55 -0400
-X-Google-Smtp-Source: AB8JxZomxsrEJinog35+5xAo3ZeUIpJNr3Xq4Si+cwbjBhi7QbK75AGd3dqLdO+Ysk/Lt5/jLRH0qQ==
-From: Rajat Jain <rajatja@google.com>
-To: Bjorn Helgaas <bhelgaas@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rajat Jain <rajatja@google.com>, Frederick Lawler <fred@fredlawl.com>,
-        Oza Pawandeep <poza@codeaurora.org>,
-        Keith Busch <keith.busch@intel.com>,
-        Gabriele Paoloni <gabriele.paoloni@huawei.com>,
-        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-        Thomas Tai <thomas.tai@oracle.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jes Sorensen <jsorensen@fb.com>,
-        Kyle McMartin <jkkm@fb.com>
-Cc: rajatxjain@gmail.com
-Subject: [PATCH v2 5/5] Documentation/ABI: Add details of PCI AER statistics
-Date: Wed, 23 May 2018 10:58:08 -0700
-Message-Id: <20180523175808.28030-6-rajatja@google.com>
-X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
-In-Reply-To: <20180523175808.28030-1-rajatja@google.com>
-References: <20180522222805.80314-1-rajatja@google.com>
- <20180523175808.28030-1-rajatja@google.com>
+        Wed, 23 May 2018 13:59:08 -0400
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Wed, 23 May 2018 10:59:07 -0700
+From: rishabhb@codeaurora.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm@lists.infradead.org, tsoni@codeaurora.org,
+        ckadabi@codeaurora.org, Evan Green <evgreen@chromium.org>,
+        Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v7 2/2] drivers: soc: Add LLCC driver
+In-Reply-To: <CAHp75Vd8HZU+BT38-OfXHiihv1yZG6YBeMWyfweBA+kAwk6HUw@mail.gmail.com>
+References: <1526492623-20527-1-git-send-email-rishabhb@codeaurora.org>
+ <1526492623-20527-3-git-send-email-rishabhb@codeaurora.org>
+ <CAHp75VdO7+u-PQ+RBH71sxHHG0WkAyEVxv0BNPaycbcRnrZang@mail.gmail.com>
+ <f1970a64be17267e0f044242dc0764d6@codeaurora.org>
+ <CAHp75Vd8HZU+BT38-OfXHiihv1yZG6YBeMWyfweBA+kAwk6HUw@mail.gmail.com>
+Message-ID: <e2fd7e4b452d955b766401fd871e93c4@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the PCI AER statistics details to
-Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
-and provide a pointer to it in
-Documentation/PCI/pcieaer-howto.txt
+On 2018-05-22 12:38, Andy Shevchenko wrote:
+> On Tue, May 22, 2018 at 9:33 PM,  <rishabhb@codeaurora.org> wrote:
+>> On 2018-05-18 14:01, Andy Shevchenko wrote:
+>>> On Wed, May 16, 2018 at 8:43 PM, Rishabh Bhatnagar
+>>> <rishabhb@codeaurora.org> wrote:
+> 
+>>>> +#define ACTIVATE                      0x1
+>>>> +#define DEACTIVATE                    0x2
+>>>> +#define ACT_CTRL_OPCODE_ACTIVATE      0x1
+>>>> +#define ACT_CTRL_OPCODE_DEACTIVATE    0x2
+>>>> +#define ACT_CTRL_ACT_TRIG             0x1
+>>> 
+>>> 
+>>> Are these bits? Perhaps BIT() ?
+>>> 
+>> isn't it just better to use fixed size as u suggest in the next 
+>> comment?
+> 
+> If the are bits, use BIT() macro.
+> 
+>>>> +struct llcc_slice_desc *llcc_slice_getd(u32 uid)
+>>>> +{
+>>>> +       const struct llcc_slice_config *cfg;
+>>>> +       struct llcc_slice_desc *desc;
+>>>> +       u32 sz, count = 0;
+>>>> +
+>>>> +       cfg = drv_data->cfg;
+>>>> +       sz = drv_data->cfg_size;
+>>>> +
+>>> 
+>>> 
+>>>> +       while (cfg && count < sz) {
+>>>> +               if (cfg->usecase_id == uid)
+>>>> +                       break;
+>>>> +               cfg++;
+>>>> +               count++;
+>>>> +       }
+>>>> +       if (cfg == NULL || count == sz)
+>>>> +               return ERR_PTR(-ENODEV);
+>>> 
+>>> 
+>>> if (!cfg)
+>>>           return ERR_PTR(-ENODEV);
+>>> 
+>>> while (cfg->... != uid) {
+>>>   cfg++;
+>>>   count++;
+>>> }
+>>> 
+>>> if (count == sz)
+>>>  return ...
+>>> 
+>>> Though I would rather put it to for () loop.
+>>> 
+>> In each while loop iteration the cfg pointer needs to be checked for
+>> NULL. What if the usecase id never matches the uid passed by client
+>> and we keep iterating. At some point it will crash.
+> 
+> do {
+>   if (!cfg || count == sz)
+>    return ...(-ENODEV);
+>  ...
+> } while (...);
+> 
+> Though, as I said for-loop will look slightly better I think.
+> 
+>>>> +       ret = llcc_update_act_ctrl(desc->slice_id, act_ctrl_val,
+>>>> +                                 DEACTIVATE);
+>>> 
+>>> 
+>>> Perhaps one line (~83 characters here is OK) ?
+>> 
+>> The checkpatch script complains about such lines.
+> 
+> So what if it just 3 characters out?
+> 
+Many upstream reviewers have objection to lines crossing over 80 
+characters
+I have gotten reviews to reduce the line length even if its like 81~82
+characters. Can we keep this as it is? I have addressed all other
+comments and will send out the next patch by today.
 
-Signed-off-by: Rajat Jain <rajatja@google.com>
----
-v2: Move the documentation to Documentation/ABI/
-
- .../testing/sysfs-bus-pci-devices-aer_stats   | 103 ++++++++++++++++++
- Documentation/PCI/pcieaer-howto.txt           |   5 +
- 2 files changed, 108 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
-
-diff --git a/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats b/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
-new file mode 100644
-index 000000000000..f55c389290ac
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
-@@ -0,0 +1,103 @@
-+==========================
-+PCIe Device AER statistics
-+==========================
-+These attributes show up under all the devices that are AER capable. These
-+statistical counters indicate the errors "as seen/reported by the device".
-+Note that this may mean that if an end point is causing problems, the AER
-+counters may increment at its link partner (e.g. root port) because the
-+errors will be "seen" / reported by the link partner and not the the
-+problematic end point itself (which may report all counters as 0 as it never
-+saw any problems).
-+
-+Where:		/sys/bus/pci/devices/<dev>/aer_stats/dev_total_cor_errs
-+Date:		May 2018
-+Kernel Version: 4.17.0
-+Contact:	linux-pci@vger.kernel.org, rajatja@google.com
-+Description:	Total number of correctable errors seen and reported by this
-+		PCI device using ERR_COR.
-+
-+Where:		/sys/bus/pci/devices/<dev>/aer_stats/dev_total_fatal_errs
-+Date:		May 2018
-+Kernel Version: 4.17.0
-+Contact:	linux-pci@vger.kernel.org, rajatja@google.com
-+Description:	Total number of uncorrectable fatal errors seen and reported
-+		by this PCI device using ERR_FATAL.
-+
-+Where:		/sys/bus/pci/devices/<dev>/aer_stats/dev_total_nonfatal_errs
-+Date:		May 2018
-+Kernel Version: 4.17.0
-+Contact:	linux-pci@vger.kernel.org, rajatja@google.com
-+Description:	Total number of uncorrectable non-fatal errors seen and reported
-+		by this PCI device using ERR_NONFATAL.
-+
-+Where:		/sys/bus/pci/devices/<dev>/aer_stats/dev_breakdown_correctable
-+Date:		May 2018
-+Kernel Version: 4.17.0
-+Contact:	linux-pci@vger.kernel.org, rajatja@google.com
-+Description:	Breakdown of of correctable errors seen and reported by this
-+		PCI device using ERR_COR. A sample result looks like this:
-+-----------------------------------------
-+Receiver Error = 0x174
-+Bad TLP = 0x19
-+Bad DLLP = 0x3
-+RELAY_NUM Rollover = 0x0
-+Replay Timer Timeout = 0x1
-+Advisory Non-Fatal = 0x0
-+Corrected Internal Error = 0x0
-+Header Log Overflow = 0x0
-+-----------------------------------------
-+
-+Where:		/sys/bus/pci/devices/<dev>/aer_stats/dev_breakdown_uncorrectable
-+Date:		May 2018
-+Kernel Version: 4.17.0
-+Contact:	linux-pci@vger.kernel.org, rajatja@google.com
-+Description:	Breakdown of of correctable errors seen and reported by this
-+		PCI device using ERR_FATAL or ERR_NONFATAL. A sample result
-+		looks like this:
-+-----------------------------------------
-+Undefined = 0x0
-+Data Link Protocol = 0x0
-+Surprise Down Error = 0x0
-+Poisoned TLP = 0x0
-+Flow Control Protocol = 0x0
-+Completion Timeout = 0x0
-+Completer Abort = 0x0
-+Unexpected Completion = 0x0
-+Receiver Overflow = 0x0
-+Malformed TLP = 0x0
-+ECRC = 0x0
-+Unsupported Request = 0x0
-+ACS Violation = 0x0
-+Uncorrectable Internal Error = 0x0
-+MC Blocked TLP = 0x0
-+AtomicOp Egress Blocked = 0x0
-+TLP Prefix Blocked Error = 0x0
-+-----------------------------------------
-+
-+============================
-+PCIe Rootport AER statistics
-+============================
-+These attributes showup under only the rootports that are AER capable. These
-+indicate the number of error messages as "reported to" the rootport. Please note
-+that the rootports also transmit (internally) the ERR_* messages for errors seen
-+by the internal rootport PCI device, so these counters includes them and are
-+thus cumulative of all the error messages on the PCI hierarchy originating
-+at that root port.
-+
-+Where:		/sys/bus/pci/devices/<dev>/aer_stats/rootport_total_cor_errs
-+Date:		May 2018
-+Kernel Version: 4.17.0
-+Contact:	linux-pci@vger.kernel.org, rajatja@google.com
-+Description:	Total number of ERR_COR messages reported to rootport.
-+
-+Where:		/sys/bus/pci/devices/<dev>/aer_stats/rootport_total_fatal_errs
-+Date:		May 2018
-+Kernel Version: 4.17.0
-+Contact:	linux-pci@vger.kernel.org, rajatja@google.com
-+Description:	Total number of ERR_FATAL messages reported to rootport.
-+
-+Where:	    /sys/bus/pci/devices/<dev>/aer_stats/rootport_total_nonfatal_errs
-+Date:		May 2018
-+Kernel Version: 4.17.0
-+Contact:	linux-pci@vger.kernel.org, rajatja@google.com
-+Description:	Total number of ERR_NONFATAL messages reported to rootport.
-diff --git a/Documentation/PCI/pcieaer-howto.txt b/Documentation/PCI/pcieaer-howto.txt
-index acd0dddd6bb8..91b6e677cb8c 100644
---- a/Documentation/PCI/pcieaer-howto.txt
-+++ b/Documentation/PCI/pcieaer-howto.txt
-@@ -73,6 +73,11 @@ In the example, 'Requester ID' means the ID of the device who sends
- the error message to root port. Pls. refer to pci express specs for
- other fields.
- 
-+2.4 AER Statistics / Counters
-+
-+When PCIe AER errors are captured, the counters / statistics are also exposed
-+in form of sysfs attributes which are documented at
-+Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
- 
- 3. Developer Guide
- 
--- 
-2.17.0.441.gb46fe60e1d-goog
+>>>> +       ret = llcc_update_act_ctrl(desc->slice_id, act_ctrl_val,
+>>>> +                                 ACTIVATE);
+> 
+>>> Ditto.
+> 
+>>>> +               attr1_cfg = bcast_off +
+>>>> +
+>>>> LLCC_TRP_ATTR1_CFGn(llcc_table[i].slice_id);
+>>>> +               attr0_cfg = bcast_off +
+>>>> +
+>>>> LLCC_TRP_ATTR0_CFGn(llcc_table[i].slice_id);
+> 
+>>> Ditto.
+> 
+>>>> +               attr1_val |= llcc_table[i].probe_target_ways <<
+>>>> +                               ATTR1_PROBE_TARGET_WAYS_SHIFT;
+>>>> +               attr1_val |= llcc_table[i].fixed_size <<
+>>>> +                               ATTR1_FIXED_SIZE_SHIFT;
+>>>> +               attr1_val |= llcc_table[i].priority <<
+>>>> ATTR1_PRIORITY_SHIFT;
+> 
+>>> foo |=
+>>>   bar << SHIFT;
+>>> 
+>>> would look slightly better.
+> 
+> Did you consider this option ?
