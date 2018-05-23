@@ -1,77 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933671AbeEWQtg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 12:49:36 -0400
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:39984 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932649AbeEWQte (ORCPT
+        id S933656AbeEWQxa (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 12:53:30 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:41436 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932649AbeEWQx1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 12:49:34 -0400
-X-Google-Smtp-Source: AB8JxZoX4Xfo5pcDiIXRVI1VZVryYQB0WoSjb5JRSw1BTPC2Y/5VrZ51FTm1xDiGCpXkZEcop4BJfw==
-Date: Wed, 23 May 2018 11:49:31 -0500
-From: Rob Herring <robh@kernel.org>
-To: Andrea Greco <andrea.greco.gapmilano@gmail.com>
-Cc: tobin@apporbit.com, Andrea Greco <a.greco@4sigma.it>,
-        Mark Rutland <mark.rutland@arm.com>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] arcnet: com20020: bindings for smsc com20020
-Message-ID: <20180523164931.GA3635@rob-hp-laptop>
-References: <20180517130628.2770-1-andrea.greco.gapmilano@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180517130628.2770-1-andrea.greco.gapmilano@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Wed, 23 May 2018 12:53:27 -0400
+X-Google-Smtp-Source: AB8JxZpj13wqRsyMH+SmKjhJaoyKt2wh+pV7hIhQASHBj0UMxJjoKADM3spL4Z4h2M0Se7WHghBDnw==
+From: Huaisheng Ye <yehs2007@gmail.com>
+To: akpm@linux-foundation.org, linux-mm@kvack.org
+Cc: mhocko@suse.com, willy@infradead.org, hch@lst.de, vbabka@suse.cz,
+        mgorman@techsingularity.net, kstewart@linuxfoundation.org,
+        gregkh@linuxfoundation.org, colyli@suse.de, chengnt@lenovo.com,
+        hehy1@lenovo.com, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, xen-devel@lists.xenproject.org,
+        linux-btrfs@vger.kernel.org, Huaisheng Ye <yehs1@lenovo.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>, Christoph Hellwig <hch@infradead.org>
+Subject: [RFC PATCH v3 3/9] drivers/xen/swiotlb-xen: update usage of zone modifiers
+Date: Thu, 24 May 2018 00:53:08 +0800
+Message-Id: <1527094388-4383-1-git-send-email-yehs2007@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 17, 2018 at 03:06:26PM +0200, Andrea Greco wrote:
-> From: Andrea Greco <a.greco@4sigma.it>
-> 
-> Add devicetree bindings for smsc com20020
-> 
-> Signed-off-by: Andrea Greco <a.greco@4sigma.it>
-> ---
->  .../devicetree/bindings/net/smsc-com20020.txt       | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/net/smsc-com20020.txt
+From: Huaisheng Ye <yehs1@lenovo.com>
 
-One typo, otherwise:
+Use __GFP_ZONE_MASK to replace (__GFP_DMA | __GFP_HIGHMEM).
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+In function xen_swiotlb_alloc_coherent, it is obvious that __GFP_DMA32
+is not the expecting zone type.
 
-> 
-> diff --git a/Documentation/devicetree/bindings/net/smsc-com20020.txt b/Documentation/devicetree/bindings/net/smsc-com20020.txt
-> new file mode 100644
-> index 000000000000..92360b054873
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/net/smsc-com20020.txt
-> @@ -0,0 +1,21 @@
-> +SMSC com20020 Arcnet network controller
-> +
-> +Required propelty:
+___GFP_DMA, ___GFP_HIGHMEM and ___GFP_DMA32 have been deleted from GFP
+bitmasks, the bottom three bits of GFP mask is reserved for storing
+encoded zone number.
+__GFP_DMA, __GFP_HIGHMEM and __GFP_DMA32 should not be operated with
+each others by OR.
 
-property
+Use GFP_NORMAL() to clear bottom 3 bits of GFP bitmaks.
 
-> +- timeout-ns: Arcnet bus timeout, Idle Time (328000 - 20500)
-> +- bus-speed-bps: Arcnet bus speed (10000000 - 156250)
-> +- smsc,xtal-mhz: External oscillator frequency
-> +- smsc,backplane-enabled: Controller use backplane mode
-> +- reset-gpios: Chip reset pin
-> +- interrupts: Should contain controller interrupt
-> +
-> +arcnet@28000000 {
-> +    compatible = "smsc,com20020";
-> +
-> +	timeout-ns = <20500>;
-> +	bus-speed-bps = <10000000>;
-> +	smsc,xtal-mhz = <20>;
-> +	smsc,backplane-enabled;
-> +
-> +	reset-gpios = <&gpio3 21 GPIO_ACTIVE_LOW>;
-> +	interrupts = <&gpio2 10 GPIO_ACTIVE_LOW>;
-> +};
-> -- 
-> 2.14.3
-> 
+Signed-off-by: Huaisheng Ye <yehs1@lenovo.com>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Christoph Hellwig <hch@infradead.org>
+---
+ drivers/xen/swiotlb-xen.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
+index e1c6089..3999959 100644
+--- a/drivers/xen/swiotlb-xen.c
++++ b/drivers/xen/swiotlb-xen.c
+@@ -301,7 +301,7 @@ int __ref xen_swiotlb_init(int verbose, bool early)
+ 	* machine physical layout.  We can't allocate highmem
+ 	* because we can't return a pointer to it.
+ 	*/
+-	flags &= ~(__GFP_DMA | __GFP_HIGHMEM);
++	flags = GFP_NORMAL(flags);
+ 
+ 	/* On ARM this function returns an ioremap'ped virtual address for
+ 	 * which virt_to_phys doesn't return the corresponding physical
+-- 
+1.8.3.1
