@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1691122-1527155020-2-5169026935303748449
+X-Cyrus-Session-Id: sloti22d1t05-1691124-1527155007-2-14006974153492429398
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527155020; b=VLsFxyTiVime8hEHnuyxhhz7eCAVGsy1JIS46roXTBBo8d4lEY
-    pOy8rKZKGqh9Kn082FdW/kOkRZd0Oq3R6ZcloC9rB8Amm//zphV8M9MtYoZuYuxp
-    z6/yrqNZZcvoyYV0OxDy0QEaQ1bO7Aj6Gdq+JKAh9w6e/ldBaLhdBTflsMQPwG7x
-    qFeibF3T3tQKMWtGnq08RPJAENUU5scVCDH0rxCrqGUR5nRgR4RAIYJaMgH9wYwD
-    QHadDhG2F8bInI7Ki2MZlNbO/10B3KjK3060Dkas6z1PDwRdpePexZBMVqggVHdW
-    MJIeqAN1uEKkAg0ZcWZyFZd8abxDqEASEYSw==
+    1527155005; b=NmzHFhAovTZZGWePLX0f/BRYR09N6A3GomGdN36ikB1zxVbqK2
+    Spxg8iOquqr7RrV9vRjQ4sVie5Z3vVhWt5tMuoqMn3cq/6xBA8d2EXc/2PuGf3zN
+    odSGnyiJN2xFVDsQrg+rGywNZ4czmWBCbqA4R9UjPTr3HCLuc1LrShCeJbcSs+l5
+    3tU7B/HS8st/HXMC9QRoMfaefZNZZZGHmqdVLACyCEjT5vXKtnjUgYd1LR6SuEj3
+    Fm7Ay9UUMea7r9Xm6VK8wa6AZhEWVHz/+LRT77FxeCV0snF3Z/KPymfr7OeCganL
+    lC0cmZ60FaR/I5xs6QwWfd8ZjQE1SYcWdWVw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527155020; bh=JVqHVSStl05rRMf4wy47ad6sqlqich
-    JCXdEePG8PY3w=; b=b5lLi2kF4RsI0CYRFRpSs6Wlj3zM3JJlotIEv7yB80FqF2
-    OB0i9K9P/gPKkB1SL/EY1BkCABEYypacuXC2c9EKy9B34Qn/PYgTlWTuNfm0vykx
-    VFpBLr8MLsZuqXu7zHCzNpO+wJkyr+k4pVLD9ZS4Os7gcraHh8+xZzQsXv9Jk/XW
-    TTrxDkJXz4wB2E0jjbAabQye4afWao82DKpUmztXpU7v+oPNpuv9LY9x4q+ch+eF
-    QxgnLGE2yK1FfvuNkSKl9/oOCEsob3a5VsSB/jYipfWUrijP/xnSF5ILXqJtEmzL
-    vkooXJ7YxqhmHET1Ho/+Hg9/3bW1/av0v4sTnlRQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527155005; bh=ciLdzL6YrlgR5ZWQTeZv2MY9k66qeK
+    CeFW/f0UzI9vI=; b=INNAEOPuCJuA/oGyMJtWb7Sp/mwhkGUl6ZCqI0Fkn4vWtP
+    1icpR1onkCTOHrsjTpP4/70ngnrc9M70Hg6C6RziArk+nJ8SQrw9X7KAJWg2A9dV
+    bmi53feS8+D/Q5jV2Su3rUJ77JdJKeIo3eqtlxbU55H1p+pviFGcK5FsBRsuLoN0
+    9ud9iV3pf9IHkSmqdFAjj5b2W9SCeJUNHEKpZDXr3RBBnoYzM9qEwsJ2oSoxNSlr
+    GBBl/5F1PY0ZbM+jwEhZ4qVIXhwLCYImXi3UB6seuT3ZCQHBzCCb8ga5g6cSXfNK
+    u94R6JbokNhHATwtODkoks0ALj+V8W6EGioF4IKw==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=Np8e6OdZ x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=VFip9uW+ x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=Np8e6OdZ x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=VFip9uW+ x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,32 +64,33 @@ Authentication-Results: mx5.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIenA+Cps+0ULJ9kjdJlD01r+fY9Klib4tUG/9vSI7hsFiVFC6SgKtjDHvfENb+Ms5zDlPiZ4WR+wpyWzAQHB3CoDlX75kXpI3FYkVAm40hxfghnmVxW
-    adweSetRKdf/mKvN9GO62+NBBWcGYiO7ZQkXuHi5LdmNMBf3cHBWSZDX/YS/Qykxj9977/TLvvss2pwcwnrcvXkKH8KlFD8CDZJEildDQjKwc58WKoJFr1QB
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfKS9LgOmP1kmdd6VvoLImwYAS4/CLfE6q+GWXHI4MSA518ma45z4JoqiWTuc45rOx8/vUYQEOE+TbuQaIpzbaEJZ3KEMiycR338LXZzH/Mm7cwbjI1rG
+    0Ip1yTT6luTDSXqUx/+DmDlurMWdJ55OFfIoIhMvN+51l3qBZ6SnYy3RhnLn0rWqeNrehXK4ehVzmrkMjMRisY/IWowRKLJSI63ohilLEuwRurCJIE14s/w2
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=7CQSdrXTAAAA:8 a=LpQP-O61AAAA:8 a=ag1SF4gXAAAA:8 a=QBHdfG-Sftq2nLuhOi0A:9
-    a=QEXdDO2ut3YA:10 a=a-qgeE7W1pNrGK8U0ZQC:22 a=pioyyrs4ZptJ924tMmac:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=pGLkceISAAAA:8 a=vmLDa1wCAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
+    a=e87FW0PGWPbJLDRRSGYA:9 a=QEXdDO2ut3YA:10 a=h8Bt5HTj68qkN2fS7gvA:22
+    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966217AbeEXJng (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:43:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54942 "EHLO mail.kernel.org"
+        id S966027AbeEXJnW (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:43:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54806 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966470AbeEXJnc (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:43:32 -0400
+        id S966470AbeEXJnU (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:43:20 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
-        ckadabi@codeaurora.org, Dave Martin <dave.martin@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4.4 23/92] arm64: Add work around for Arm Cortex-A55 Erratum 1024718
-Date: Thu, 24 May 2018 11:38:00 +0200
-Message-Id: <20180524093201.194544645@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Xin Long <lucien.xin@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 19/92] sctp: delay the authentication for the duplicated cookie-echo chunk
+Date: Thu, 24 May 2018 11:37:56 +0200
+Message-Id: <20180524093200.931521036@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093159.286472249@linuxfoundation.org>
 References: <20180524093159.286472249@linuxfoundation.org>
@@ -107,154 +108,247 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-commit ece1397cbc89c51914fae1aec729539cfd8bd62b upstream.
+[ Upstream commit 59d8d4434f429b4fa8a346fd889058bda427a837 ]
 
-Some variants of the Arm Cortex-55 cores (r0p0, r0p1, r1p0) suffer
-from an erratum 1024718, which causes incorrect updates when DBM/AP
-bits in a page table entry is modified without a break-before-make
-sequence. The work around is to skip enabling the hardware DBM feature
-on the affected cores. The hardware Access Flag management features
-is not affected. There are some other cores suffering from this
-errata, which could be added to the midr_list to trigger the work
-around.
+Now sctp only delays the authentication for the normal cookie-echo
+chunk by setting chunk->auth_chunk in sctp_endpoint_bh_rcv(). But
+for the duplicated one with auth, in sctp_assoc_bh_rcv(), it does
+authentication first based on the old asoc, which will definitely
+fail due to the different auth info in the old asoc.
 
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: ckadabi@codeaurora.org
-Reviewed-by: Dave Martin <dave.martin@arm.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+The duplicated cookie-echo chunk will create a new asoc with the
+auth info from this chunk, and the authentication should also be
+done with the new asoc's auth info for all of the collision 'A',
+'B' and 'D'. Otherwise, the duplicated cookie-echo chunk with auth
+will never pass the authentication and create the new connection.
+
+This issue exists since very beginning, and this fix is to make
+sctp_assoc_bh_rcv() follow the way sctp_endpoint_bh_rcv() does
+for the normal cookie-echo chunk to delay the authentication.
+
+While at it, remove the unused params from sctp_sf_authenticate()
+and define sctp_auth_chunk_verify() used for all the places that
+do the delayed authentication.
+
+v1->v2:
+  fix the typo in changelog as Marcelo noticed.
+
+Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/arm64/Kconfig                 |   14 ++++++++++++
- arch/arm64/include/asm/assembler.h |   40 +++++++++++++++++++++++++++++++++++++
- arch/arm64/include/asm/cputype.h   |   11 ++++++++++
- arch/arm64/mm/proc.S               |    5 ++++
- 4 files changed, 70 insertions(+)
+ net/sctp/associola.c    |   30 ++++++++++++++++
+ net/sctp/sm_statefuns.c |   87 ++++++++++++++++++++++++++----------------------
+ 2 files changed, 77 insertions(+), 40 deletions(-)
 
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -375,6 +375,20 @@ config ARM64_ERRATUM_843419
+--- a/net/sctp/associola.c
++++ b/net/sctp/associola.c
+@@ -1000,9 +1000,10 @@ static void sctp_assoc_bh_rcv(struct wor
+ 	struct sctp_endpoint *ep;
+ 	struct sctp_chunk *chunk;
+ 	struct sctp_inq *inqueue;
+-	int state;
+ 	sctp_subtype_t subtype;
++	int first_time = 1;	/* is this the first time through the loop */
+ 	int error = 0;
++	int state;
  
- 	  If unsure, say Y.
+ 	/* The association should be held so we should be safe. */
+ 	ep = asoc->ep;
+@@ -1013,6 +1014,30 @@ static void sctp_assoc_bh_rcv(struct wor
+ 		state = asoc->state;
+ 		subtype = SCTP_ST_CHUNK(chunk->chunk_hdr->type);
  
-+config ARM64_ERRATUM_1024718
-+	bool "Cortex-A55: 1024718: Update of DBM/AP bits without break before make might result in incorrect update"
-+	default y
-+	help
-+	  This option adds work around for Arm Cortex-A55 Erratum 1024718.
++		/* If the first chunk in the packet is AUTH, do special
++		 * processing specified in Section 6.3 of SCTP-AUTH spec
++		 */
++		if (first_time && subtype.chunk == SCTP_CID_AUTH) {
++			struct sctp_chunkhdr *next_hdr;
 +
-+	  Affected Cortex-A55 cores (r0p0, r0p1, r1p0) could cause incorrect
-+	  update of the hardware dirty bit when the DBM/AP bits are updated
-+	  without a break-before-make. The work around is to disable the usage
-+	  of hardware DBM locally on the affected cores. CPUs not affected by
-+	  erratum will continue to use the feature.
++			next_hdr = sctp_inq_peek(inqueue);
++			if (!next_hdr)
++				goto normal;
 +
-+	  If unsure, say Y.
++			/* If the next chunk is COOKIE-ECHO, skip the AUTH
++			 * chunk while saving a pointer to it so we can do
++			 * Authentication later (during cookie-echo
++			 * processing).
++			 */
++			if (next_hdr->type == SCTP_CID_COOKIE_ECHO) {
++				chunk->auth_chunk = skb_clone(chunk->skb,
++							      GFP_ATOMIC);
++				chunk->auth = 1;
++				continue;
++			}
++		}
 +
- config CAVIUM_ERRATUM_22375
- 	bool "Cavium erratum 22375, 24313"
- 	default y
---- a/arch/arm64/include/asm/assembler.h
-+++ b/arch/arm64/include/asm/assembler.h
-@@ -23,6 +23,7 @@
- #ifndef __ASM_ASSEMBLER_H
- #define __ASM_ASSEMBLER_H
- 
-+#include <asm/cputype.h>
- #include <asm/ptrace.h>
- #include <asm/thread_info.h>
- 
-@@ -224,4 +225,43 @@ lr	.req	x30		// link register
- 	movk	\reg, :abs_g0_nc:\val
- 	.endm
- 
-+/*
-+ * Check the MIDR_EL1 of the current CPU for a given model and a range of
-+ * variant/revision. See asm/cputype.h for the macros used below.
-+ *
-+ *	model:		MIDR_CPU_PART of CPU
-+ *	rv_min:		Minimum of MIDR_CPU_VAR_REV()
-+ *	rv_max:		Maximum of MIDR_CPU_VAR_REV()
-+ *	res:		Result register.
-+ *	tmp1, tmp2, tmp3: Temporary registers
-+ *
-+ * Corrupts: res, tmp1, tmp2, tmp3
-+ * Returns:  0, if the CPU id doesn't match. Non-zero otherwise
-+ */
-+	.macro	cpu_midr_match model, rv_min, rv_max, res, tmp1, tmp2, tmp3
-+	mrs		\res, midr_el1
-+	mov_q		\tmp1, (MIDR_REVISION_MASK | MIDR_VARIANT_MASK)
-+	mov_q		\tmp2, MIDR_CPU_PART_MASK
-+	and		\tmp3, \res, \tmp2	// Extract model
-+	and		\tmp1, \res, \tmp1	// rev & variant
-+	mov_q		\tmp2, \model
-+	cmp		\tmp3, \tmp2
-+	cset		\res, eq
-+	cbz		\res, .Ldone\@		// Model matches ?
++normal:
+ 		/* SCTP-AUTH, Section 6.3:
+ 		 *    The receiver has a list of chunk types which it expects
+ 		 *    to be received only after an AUTH-chunk.  This list has
+@@ -1051,6 +1076,9 @@ static void sctp_assoc_bh_rcv(struct wor
+ 		/* If there is an error on chunk, discard this packet. */
+ 		if (error && chunk)
+ 			chunk->pdiscard = 1;
 +
-+	.if (\rv_min != 0)			// Skip min check if rv_min == 0
-+	mov_q		\tmp3, \rv_min
-+	cmp		\tmp1, \tmp3
-+	cset		\res, ge
-+	.endif					// \rv_min != 0
-+	/* Skip rv_max check if rv_min == rv_max && rv_min != 0 */
-+	.if ((\rv_min != \rv_max) || \rv_min == 0)
-+	mov_q		\tmp2, \rv_max
-+	cmp		\tmp1, \tmp2
-+	cset		\tmp2, le
-+	and		\res, \res, \tmp2
-+	.endif
-+.Ldone\@:
-+	.endm
++		if (first_time)
++			first_time = 0;
+ 	}
+ 	sctp_association_put(asoc);
+ }
+--- a/net/sctp/sm_statefuns.c
++++ b/net/sctp/sm_statefuns.c
+@@ -144,10 +144,8 @@ static sctp_disposition_t sctp_sf_violat
+ 				     void *arg,
+ 				     sctp_cmd_seq_t *commands);
+ 
+-static sctp_ierror_t sctp_sf_authenticate(struct net *net,
+-				    const struct sctp_endpoint *ep,
++static sctp_ierror_t sctp_sf_authenticate(
+ 				    const struct sctp_association *asoc,
+-				    const sctp_subtype_t type,
+ 				    struct sctp_chunk *chunk);
+ 
+ static sctp_disposition_t __sctp_sf_do_9_1_abort(struct net *net,
+@@ -615,6 +613,38 @@ sctp_disposition_t sctp_sf_do_5_1C_ack(s
+ 	return SCTP_DISPOSITION_CONSUME;
+ }
+ 
++static bool sctp_auth_chunk_verify(struct net *net, struct sctp_chunk *chunk,
++				   const struct sctp_association *asoc)
++{
++	struct sctp_chunk auth;
 +
- #endif	/* __ASM_ASSEMBLER_H */
---- a/arch/arm64/include/asm/cputype.h
-+++ b/arch/arm64/include/asm/cputype.h
-@@ -57,6 +57,14 @@
- #define MIDR_IMPLEMENTOR(midr)	\
- 	(((midr) & MIDR_IMPLEMENTOR_MASK) >> MIDR_IMPLEMENTOR_SHIFT)
- 
-+#define MIDR_CPU_VAR_REV(var, rev) \
-+	(((var) << MIDR_VARIANT_SHIFT) | (rev))
++	if (!chunk->auth_chunk)
++		return true;
 +
-+#define MIDR_CPU_PART_MASK	  \
-+	(MIDR_IMPLEMENTOR_MASK	| \
-+	 MIDR_ARCHITECTURE_MASK | \
-+	 MIDR_PARTNUM_MASK)
++	/* SCTP-AUTH:  auth_chunk pointer is only set when the cookie-echo
++	 * is supposed to be authenticated and we have to do delayed
++	 * authentication.  We've just recreated the association using
++	 * the information in the cookie and now it's much easier to
++	 * do the authentication.
++	 */
 +
- #define MIDR_CPU_PART(imp, partnum) \
- 	(((imp)			<< MIDR_IMPLEMENTOR_SHIFT) | \
- 	(0xf			<< MIDR_ARCHITECTURE_SHIFT) | \
-@@ -70,11 +78,14 @@
- #define ARM_CPU_PART_FOUNDATION		0xD00
- #define ARM_CPU_PART_CORTEX_A57		0xD07
- #define ARM_CPU_PART_CORTEX_A53		0xD03
-+#define ARM_CPU_PART_CORTEX_A55		0xD05
- 
- #define APM_CPU_PART_POTENZA		0x000
- 
- #define CAVIUM_CPU_PART_THUNDERX	0x0A1
- 
-+#define MIDR_CORTEX_A55 MIDR_CPU_PART(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A55)
++	/* Make sure that we and the peer are AUTH capable */
++	if (!net->sctp.auth_enable || !asoc->peer.auth_capable)
++		return false;
 +
- #ifndef __ASSEMBLY__
- 
++	/* set-up our fake chunk so that we can process it */
++	auth.skb = chunk->auth_chunk;
++	auth.asoc = chunk->asoc;
++	auth.sctp_hdr = chunk->sctp_hdr;
++	auth.chunk_hdr = (struct sctp_chunkhdr *)
++				skb_push(chunk->auth_chunk,
++					 sizeof(struct sctp_chunkhdr));
++	skb_pull(chunk->auth_chunk, sizeof(struct sctp_chunkhdr));
++	auth.transport = chunk->transport;
++
++	return sctp_sf_authenticate(asoc, &auth) == SCTP_IERROR_NO_ERROR;
++}
++
  /*
---- a/arch/arm64/mm/proc.S
-+++ b/arch/arm64/mm/proc.S
-@@ -221,6 +221,11 @@ ENTRY(__cpu_setup)
- 	cbz	x9, 2f
- 	cmp	x9, #2
- 	b.lt	1f
-+#ifdef CONFIG_ARM64_ERRATUM_1024718
-+	/* Disable hardware DBM on Cortex-A55 r0p0, r0p1 & r1p0 */
-+	cpu_midr_match MIDR_CORTEX_A55, MIDR_CPU_VAR_REV(0, 0), MIDR_CPU_VAR_REV(1, 0), x1, x2, x3, x4
-+	cbnz	x1, 1f
-+#endif
- 	orr	x10, x10, #TCR_HD		// hardware Dirty flag update
- 1:	orr	x10, x10, #TCR_HA		// hardware Access flag update
- 2:
+  * Respond to a normal COOKIE ECHO chunk.
+  * We are the side that is being asked for an association.
+@@ -751,36 +781,9 @@ sctp_disposition_t sctp_sf_do_5_1D_ce(st
+ 	if (error)
+ 		goto nomem_init;
+ 
+-	/* SCTP-AUTH:  auth_chunk pointer is only set when the cookie-echo
+-	 * is supposed to be authenticated and we have to do delayed
+-	 * authentication.  We've just recreated the association using
+-	 * the information in the cookie and now it's much easier to
+-	 * do the authentication.
+-	 */
+-	if (chunk->auth_chunk) {
+-		struct sctp_chunk auth;
+-		sctp_ierror_t ret;
+-
+-		/* Make sure that we and the peer are AUTH capable */
+-		if (!net->sctp.auth_enable || !new_asoc->peer.auth_capable) {
+-			sctp_association_free(new_asoc);
+-			return sctp_sf_pdiscard(net, ep, asoc, type, arg, commands);
+-		}
+-
+-		/* set-up our fake chunk so that we can process it */
+-		auth.skb = chunk->auth_chunk;
+-		auth.asoc = chunk->asoc;
+-		auth.sctp_hdr = chunk->sctp_hdr;
+-		auth.chunk_hdr = (sctp_chunkhdr_t *)skb_push(chunk->auth_chunk,
+-					    sizeof(sctp_chunkhdr_t));
+-		skb_pull(chunk->auth_chunk, sizeof(sctp_chunkhdr_t));
+-		auth.transport = chunk->transport;
+-
+-		ret = sctp_sf_authenticate(net, ep, new_asoc, type, &auth);
+-		if (ret != SCTP_IERROR_NO_ERROR) {
+-			sctp_association_free(new_asoc);
+-			return sctp_sf_pdiscard(net, ep, asoc, type, arg, commands);
+-		}
++	if (!sctp_auth_chunk_verify(net, chunk, new_asoc)) {
++		sctp_association_free(new_asoc);
++		return sctp_sf_pdiscard(net, ep, asoc, type, arg, commands);
+ 	}
+ 
+ 	repl = sctp_make_cookie_ack(new_asoc, chunk);
+@@ -1717,13 +1720,15 @@ static sctp_disposition_t sctp_sf_do_dup
+ 			       GFP_ATOMIC))
+ 		goto nomem;
+ 
++	if (!sctp_auth_chunk_verify(net, chunk, new_asoc))
++		return SCTP_DISPOSITION_DISCARD;
++
+ 	/* Make sure no new addresses are being added during the
+ 	 * restart.  Though this is a pretty complicated attack
+ 	 * since you'd have to get inside the cookie.
+ 	 */
+-	if (!sctp_sf_check_restart_addrs(new_asoc, asoc, chunk, commands)) {
++	if (!sctp_sf_check_restart_addrs(new_asoc, asoc, chunk, commands))
+ 		return SCTP_DISPOSITION_CONSUME;
+-	}
+ 
+ 	/* If the endpoint is in the SHUTDOWN-ACK-SENT state and recognizes
+ 	 * the peer has restarted (Action A), it MUST NOT setup a new
+@@ -1828,6 +1833,9 @@ static sctp_disposition_t sctp_sf_do_dup
+ 			       GFP_ATOMIC))
+ 		goto nomem;
+ 
++	if (!sctp_auth_chunk_verify(net, chunk, new_asoc))
++		return SCTP_DISPOSITION_DISCARD;
++
+ 	/* Update the content of current association.  */
+ 	sctp_add_cmd_sf(commands, SCTP_CMD_UPDATE_ASSOC, SCTP_ASOC(new_asoc));
+ 	sctp_add_cmd_sf(commands, SCTP_CMD_NEW_STATE,
+@@ -1920,6 +1928,9 @@ static sctp_disposition_t sctp_sf_do_dup
+ 	 * a COOKIE ACK.
+ 	 */
+ 
++	if (!sctp_auth_chunk_verify(net, chunk, asoc))
++		return SCTP_DISPOSITION_DISCARD;
++
+ 	/* Don't accidentally move back into established state. */
+ 	if (asoc->state < SCTP_STATE_ESTABLISHED) {
+ 		sctp_add_cmd_sf(commands, SCTP_CMD_TIMER_STOP,
+@@ -3985,10 +3996,8 @@ gen_shutdown:
+  *
+  * The return value is the disposition of the chunk.
+  */
+-static sctp_ierror_t sctp_sf_authenticate(struct net *net,
+-				    const struct sctp_endpoint *ep,
++static sctp_ierror_t sctp_sf_authenticate(
+ 				    const struct sctp_association *asoc,
+-				    const sctp_subtype_t type,
+ 				    struct sctp_chunk *chunk)
+ {
+ 	struct sctp_authhdr *auth_hdr;
+@@ -4087,7 +4096,7 @@ sctp_disposition_t sctp_sf_eat_auth(stru
+ 						  commands);
+ 
+ 	auth_hdr = (struct sctp_authhdr *)chunk->skb->data;
+-	error = sctp_sf_authenticate(net, ep, asoc, type, chunk);
++	error = sctp_sf_authenticate(asoc, chunk);
+ 	switch (error) {
+ 	case SCTP_IERROR_AUTH_BAD_HMAC:
+ 		/* Generate the ERROR chunk and discard the rest
