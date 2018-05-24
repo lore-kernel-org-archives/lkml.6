@@ -1,11 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1862185-1527162596-2-8887903217315529431
+X-Cyrus-Session-Id: sloti22d1t05-1757396-1527157772-2-5039999421242121267
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES enfrda, BAYES_USED global,
-  SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -13,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527162596; b=DlG5Ws2Ogrjdwn0payTKzEChdRCjL1Ops666YSjw50zd97f44h
-    5U1pndHvhEPPRw0HNJYkaAF4P5N1CIUZQmSkB+j11Zm1+E5/IzJm7j51iqEG/64a
-    BnwYjUgtQK/Q/koCjdnMEterN6l/4K22GFfHJzTRcMkmocwSvQ9mXm0dtAHji/vH
-    yrCZWsM3ul2PUcb8soEZDhZodozUs9dNCq9ickip/UFP7d+lODB5OBfa69VzXCz8
-    Dn5qy9Gwl62NqLjUaJUfGZ/Twjkh9/WsqzfNlzjaP3qkDYYOahvg9CSfGE6jvuDC
-    OPgqCnUgOq4/q1woQ6fB75HKG6zO7Nxl9siw==
+    1527157771; b=HYql3OASGq5wv4LXc6g44ztOM5E6ZXXbqq5SQpaxDQN7QDtLE0
+    Thrk5hMmqpboUIkYFXI6REaPCU3PEabNqgWhsOgbs2JV+qiJiv7M0UmUtDeSIc1f
+    j6BdPV6txSwDYOzKiHPnXeZpX68IhP995Og4roGQqkLbtXb8ApKWVeYk7JgtLu2r
+    mbjwXhyjojXikTIKXlUmuQxAsAolh+qaRk+K6AriF/QalBvfWTV/vIG1MS0ll1OI
+    FkslnXbd4GL9tP3i9fV3eRKd33OIykw/EKvitAVIHzkaaxZC3ZmjzuztMAd2S8BK
+    ZMAQE9GXksYwjYxLQ6uZIuNybYu4tfryUOFA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527162596; bh=VXYRoc1g+ZZLw6KppkHPq6xlWaa2rb
-    IlHvOsb/yOi6w=; b=aRIdDCesIDTVkZhiZRaSNxmDFbix/cBlIVukMfi1lxZ2tK
-    dZB/xbfRHhrA+cabqvV8yJKDq483PzGmhmR9N954GDdTnlgzk7D9NhJK4ofpz7fS
-    LX/4Q7fLaW7/BsjdzXsgK8YTITNIRRn1ooUkP2iuxeEu429HcMAvFhkpufwUJQfa
-    8nCilvRW6XQ8mYFdiMkwCmWF2OjaPFNDy1NPLSAe9DtAKT/hXnJ6BopzT4m6n4Kn
-    GSvWkUMsbo5u1yR2T/mIDsF7xl2oGHDSC83z/Plf7wBoREZ+a88SkhKRIYCj9ku3
-    92V1784mC1dScTyBJ5uzQ2sGJuVbM2B1AsJDLRZw==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527157771; bh=YRjtHw/XfLADdKo2haoHdA/Z+ejsp7
+    HtjuBXNscbTtk=; b=HaIwSI1Ly8F9E7q5lIES18B/Wgg0WCVVrCLLm/6feundop
+    VGjrsT84NRzkRRoS6vf8dQsiX9FGHVaMbVYR3rJ+bQTxZEIfBOdKpmB8jWboOSc0
+    z9K6HA+H+hlSiuS6XFDqi9aHNG1A70NvAwZMhEsZFWSvTu+bm3V8GJ1R9WSbkoa8
+    lTMzEZo8WWh60+GFkLPBLMa84VjgfJII8zAwpP348xhjhArHHqfHve8sMZlrJu7S
+    NYlOt/Eb8kMlztrk1tvWUvMs+KPvFyrj/sNPwXdO8UuDVk19sY2D9BRjCqGRIauS
+    d+BwKQkJMrMORqnBsa8UshLjSfvolnqTvn9iu4Hg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=qWRDBE7y x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=aTWRClCp x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -46,10 +45,10 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=qWRDBE7y x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=aTWRClCp x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -65,29 +64,29 @@ Authentication-Results: mx6.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBBYZDd5yCwhpG4dEki48/dcRSBqOG6QcxCZ7RaZVWkr71ZLLtl6yTLn8AUJ0mO8qk8osfDcOZrcq3xoMRNxm0ksUbQCdMDn+kaMtTr71rfBEQpFjcdy
-    Kv58W3EjFMENHH5EZfu1apdoYO8LbW/ZO0p8DSubWcGpEUtjrALrAvgNq/PkFxT50SJFlEl7v9l6+IiKnB0PkfCOA0MFytNi21U5minGsYZ+mvfDxQfNx1rq
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfJZ/warhVNJVLGxICFz0vvRGlCSG/gBKd7pOFSMTTa+zSdWrcsdPNa5V9qvB0SvkrEah6w34PZc2O/NJsAUPqzxOA1ffsYpMEohaSiZ6sofrMGixwG5u
+    H8YcTQZUV6hCPMX6btu/Lo1Zf+JJXQktEBGCt9q+RWGEfkPzbe9KvoKU2n24VPrs0RIKfGW5vjjsdeY2LdPba+hMqPAJmRqyBVlMgUneAbuuQEELv3NJxl+q
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=ufqGcfKlqT5-bIr_u84A:9
-    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=drOt6m5kAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=EjguwmbYlFYO8CZdhywA:9
+    a=9J5xCQqC1gDBdZeM:21 a=jQnd7zGxx6MeHo1y:21 a=QEXdDO2ut3YA:10
+    a=RMMjzBEyIzXRtoq5n5K6:22 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966560AbeEXJrF (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:47:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59208 "EHLO mail.kernel.org"
+        id S1030981AbeEXK3Q (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 06:29:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40630 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967000AbeEXJrE (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:47:04 -0400
+        id S1032103AbeEXK3I (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 06:29:08 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Subject: [PATCH 4.4 78/92] s390/lib: use expoline for indirect branches
-Date: Thu, 24 May 2018 11:38:55 +0200
-Message-Id: <20180524093206.724794605@linuxfoundation.org>
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.4 75/92] ext2: fix a block leak
+Date: Thu, 24 May 2018 11:38:52 +0200
+Message-Id: <20180524093206.489170520@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093159.286472249@linuxfoundation.org>
 References: <20180524093159.286472249@linuxfoundation.org>
@@ -105,59 +104,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-[ Upstream commit 97489e0663fa700d6e7febddc43b58df98d7bcda ]
+commit 5aa1437d2d9a068c0334bd7c9dafa8ec4f97f13b upstream.
 
-The return from the memmove, memset, memcpy, __memset16, __memset32 and
-__memset64 functions are done with "br %r14". These are indirect branches
-as well and need to use execute trampolines for CONFIG_EXPOLINE=y.
+open file, unlink it, then use ioctl(2) to make it immutable or
+append only.  Now close it and watch the blocks *not* freed...
 
-Cc: stable@vger.kernel.org # 4.16
-Fixes: f19fbd5ed6 ("s390: introduce execute-trampolines for branches")
-Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Immutable/append-only checks belong in ->setattr().
+Note: the bug is old and backport to anything prior to 737f2e93b972
+("ext2: convert to use the new truncate convention") will need
+these checks lifted into ext2_setattr().
+
+Cc: stable@kernel.org
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/s390/lib/mem.S |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/arch/s390/lib/mem.S
-+++ b/arch/s390/lib/mem.S
-@@ -5,6 +5,9 @@
-  */
+---
+ fs/ext2/inode.c |   10 ----------
+ 1 file changed, 10 deletions(-)
+
+--- a/fs/ext2/inode.c
++++ b/fs/ext2/inode.c
+@@ -1175,21 +1175,11 @@ do_indirects:
  
- #include <linux/linkage.h>
-+#include <asm/nospec-insn.h>
-+
-+	GEN_BR_THUNK %r14
+ static void ext2_truncate_blocks(struct inode *inode, loff_t offset)
+ {
+-	/*
+-	 * XXX: it seems like a bug here that we don't allow
+-	 * IS_APPEND inode to have blocks-past-i_size trimmed off.
+-	 * review and fix this.
+-	 *
+-	 * Also would be nice to be able to handle IO errors and such,
+-	 * but that's probably too much to ask.
+-	 */
+ 	if (!(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode) ||
+ 	    S_ISLNK(inode->i_mode)))
+ 		return;
+ 	if (ext2_inode_is_fast_symlink(inode))
+ 		return;
+-	if (IS_APPEND(inode) || IS_IMMUTABLE(inode))
+-		return;
  
- /*
-  * memset implementation
-@@ -38,7 +41,7 @@ ENTRY(memset)
- .Lmemset_clear_rest:
- 	larl	%r3,.Lmemset_xc
- 	ex	%r4,0(%r3)
--	br	%r14
-+	BR_EX	%r14
- .Lmemset_fill:
- 	stc	%r3,0(%r2)
- 	cghi	%r4,1
-@@ -55,7 +58,7 @@ ENTRY(memset)
- .Lmemset_fill_rest:
- 	larl	%r3,.Lmemset_mvc
- 	ex	%r4,0(%r3)
--	br	%r14
-+	BR_EX	%r14
- .Lmemset_xc:
- 	xc	0(1,%r1),0(%r1)
- .Lmemset_mvc:
-@@ -77,7 +80,7 @@ ENTRY(memcpy)
- .Lmemcpy_rest:
- 	larl	%r5,.Lmemcpy_mvc
- 	ex	%r4,0(%r5)
--	br	%r14
-+	BR_EX	%r14
- .Lmemcpy_loop:
- 	mvc	0(256,%r1),0(%r3)
- 	la	%r1,256(%r1)
+ 	dax_sem_down_write(EXT2_I(inode));
+ 	__ext2_truncate_blocks(inode, offset);
