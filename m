@@ -1,39 +1,39 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZoJT96fW48JmvXxhmucXLXvUYT886C7syHwSYBe7VpG/7v85ImtsDd5B6GAZKwyz5SKN/D5
-ARC-Seal: i=1; a=rsa-sha256; t=1527156270; cv=none;
+X-Google-Smtp-Source: AB8JxZqYOVQ4XEhGByGfAJ0oCEnTt1P2QCWpsC0rMxcPyeRzaiyDdyHmi+29ids3H4T9RkRU1cBa
+ARC-Seal: i=1; a=rsa-sha256; t=1527156264; cv=none;
         d=google.com; s=arc-20160816;
-        b=J4eAMHYPqGlfnBvVk/PrTtyDZBhbhy9u+4fjsv3rP4P206+9oKnMfsB1okIsxlMLzZ
-         rS7rvbwH1Yjb2Rt0DQrytFqYYp9AqP6NkIYJkvkXOZcI4LmjCQfO7tkIcDQpB6OSDLWe
-         xZhyzfjpTtJYKRfrjUx+fyYHkP/zCQq72DsF+KDhIrgpgJS6vzwnF+x9nzFabWYzCLYU
-         6NH6453mMhNZUNAkIrxGvwNwhicD5rWcFou3P8i94z3wzoP9psNGtijpeje58VfWe8j2
-         6UwovI1Oj+0p4zAly/FD1JbXLPz9Ep0C9Gb9W8AxPxtU4owT9UptAw0buCXi4kOwKf/n
-         gw6Q==
+        b=TUzkjVRc279lp7lSIxNHrFzxMOdSra8KeT5Hxgltmawe52r6tac6Zv5yhIxnFScykn
+         W2+ySOncBgPXLeAa1wBiWldwqNOe3Lja8Ju+qdwwU+UR+5ZvAbJ1UQmTjGi4OVxsk9GW
+         7TZEDx0Pwt1mffiM1tlHepVZHzwkb1zUPItcMiuqaUmqCk37CKLE0lsrs9xV4uFoHPK8
+         321zdro56FbmOIOMnxI7X7TvbnpEZcrXvTIi5126FDimfWgPyZoxVZhHfMc5EvPUtYPS
+         +XZmv/HWKGVJufaY+u6rDzUZayBD9HF4HhvEtEuSZwARwog+xBfM7hD+JWfsXbd94UaG
+         r0mQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=ZJXV6cFI66zld1YvpxoTwgMS5FvcTWcU5znmCj8kWRI=;
-        b=Uv87IeQ1PgM5X57ebq+Ls24S1YwKHdjbKVEcIHChBFJlscuQxzOQEUKVbOUJhMfUao
-         iRkFFdn/eGI4l72iGrPcWSspgAsr9bmNg6QlC8Hvj+dtDhn1bq9dzk6C/sjd5pXazWkD
-         BEHPqi+OXxyhk3DEuZho3gl+QLBSM4/VzJDR9ui0sChharXaG8tsEywBbTfmXTCpcjxS
-         qt0njVHjI+YLXAro2DTLmPPKXwbCmSx9GM+50lBqj2B82kbtLE5karul94Ag9iwbccVc
-         0QcbLWoxc2Xi8xhQSPWDC9dt7yi/GwzUzn7JXz+zKu9A+ES/JqaV7GRYxf/pr6EJnWV3
-         np7g==
+        bh=tCDCpTjLyf62Bc7++RAlcwfoKzwh525oGyLfPL1b774=;
+        b=JZSU8pPD45Gnxa3vAi7yTwOhBSMbLw7yGYbLoAcivEtnfGAoZOKG1K4h8awZQ2tTFh
+         8MK/Fu+S9SYtwnfFgOdayjG5Hz82AP/vro7wZVYiPGvi1XMXm4npgVxohtfIbM2X0XIk
+         wKyy58tK2kCUrQ4wgGm79t0x+SvcaFyRB4l+3szpWcLQOK24INfQu7SdUQf1T2cw2iq7
+         jM5yNS//5n/J7QraB1iu0dgOrJK88hymylqs8SPheUEGInB6EAsV+mmabm/rPyxxCwLk
+         Ppw1yoHbJiIYpcejxYc+xt3Hu2jqQBMK4ZT/W9xS11np2g0h456Uc9DVEINJ15cNOV76
+         l8jQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=dJldi74D;
+       dkim=pass header.i=@kernel.org header.s=default header.b=vYuHWdfw;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=dJldi74D;
+       dkim=pass header.i=@kernel.org header.s=default header.b=vYuHWdfw;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Shawn Lin <shawn.lin@rock-chips.com>,
-	Heiko Stuebner <heiko@sntech.de>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Stephen Boyd <sboyd@kernel.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 125/161] clk: rockchip: Prevent calculating mmc phase if clock rate is zero
-Date: Thu, 24 May 2018 11:39:10 +0200
-Message-Id: <20180524093033.285232799@linuxfoundation.org>
+Subject: [PATCH 4.16 123/161] clk: hisilicon: mark wdt_mux_p[] as const
+Date: Thu, 24 May 2018 11:39:08 +0200
+Message-Id: <20180524093033.021891453@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601338506602768448?=
-X-GMAIL-MSGID: =?utf-8?q?1601339413220140392?=
+X-GMAIL-THRID: =?utf-8?q?1601338938407671650?=
+X-GMAIL-MSGID: =?utf-8?q?1601339407321637747?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,62 +52,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shawn Lin <shawn.lin@rock-chips.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 4bf59902b50012b1dddeeaa23b217d9c4956cdda ]
+[ Upstream commit df934cbcbff7afbc024bf05f02615917c61f6470 ]
 
-The MMC sample and drv clock for rockchip platforms are derived from
-the bus clock output to the MMC/SDIO card. So it should never happens
-that the clk rate is zero given it should inherits the clock rate from
-its parent. If something goes wrong and makes the clock rate to be zero,
-the calculation would be wrong but may still make the mmc tuning process
-work luckily. However it makes people harder to debug when the following
-data transfer is unstable.
+The symbol is in the __initconst section but not marked init, which
+caused a warning when building with LTO.
 
-Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+This makes it 'const' as was obviously intended.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: c80dfd9bf54e ("clk: hisilicon: add CRG driver for Hi3516CV300 SoC")
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/rockchip/clk-mmc-phase.c |   23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ drivers/clk/hisilicon/crg-hi3516cv300.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/clk/rockchip/clk-mmc-phase.c
-+++ b/drivers/clk/rockchip/clk-mmc-phase.c
-@@ -58,6 +58,12 @@ static int rockchip_mmc_get_phase(struct
- 	u16 degrees;
- 	u32 delay_num = 0;
+--- a/drivers/clk/hisilicon/crg-hi3516cv300.c
++++ b/drivers/clk/hisilicon/crg-hi3516cv300.c
+@@ -204,7 +204,7 @@ static const struct hisi_crg_funcs hi351
+ /* hi3516CV300 sysctrl CRG */
+ #define HI3516CV300_SYSCTRL_NR_CLKS 16
  
-+	/* See the comment for rockchip_mmc_set_phase below */
-+	if (!rate) {
-+		pr_err("%s: invalid clk rate\n", __func__);
-+		return -EINVAL;
-+	}
-+
- 	raw_value = readl(mmc_clock->reg) >> (mmc_clock->shift);
+-static const char *wdt_mux_p[] __initconst = { "3m", "apb" };
++static const char *const wdt_mux_p[] __initconst = { "3m", "apb" };
+ static u32 wdt_mux_table[] = {0, 1};
  
- 	degrees = (raw_value & ROCKCHIP_MMC_DEGREE_MASK) * 90;
-@@ -84,6 +90,23 @@ static int rockchip_mmc_set_phase(struct
- 	u32 raw_value;
- 	u32 delay;
- 
-+	/*
-+	 * The below calculation is based on the output clock from
-+	 * MMC host to the card, which expects the phase clock inherits
-+	 * the clock rate from its parent, namely the output clock
-+	 * provider of MMC host. However, things may go wrong if
-+	 * (1) It is orphan.
-+	 * (2) It is assigned to the wrong parent.
-+	 *
-+	 * This check help debug the case (1), which seems to be the
-+	 * most likely problem we often face and which makes it difficult
-+	 * for people to debug unstable mmc tuning results.
-+	 */
-+	if (!rate) {
-+		pr_err("%s: invalid clk rate\n", __func__);
-+		return -EINVAL;
-+	}
-+
- 	nineties = degrees / 90;
- 	remainder = (degrees % 90);
- 
+ static const struct hisi_mux_clock hi3516cv300_sysctrl_mux_clks[] = {
