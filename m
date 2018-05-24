@@ -1,158 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965017AbeEXHYh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 03:24:37 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:33806 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935628AbeEXHYe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 03:24:34 -0400
-X-Google-Smtp-Source: AB8JxZpdHRZoL8qxlZOCdpXF8HcrOn2hIczj05/v/RgPXtB6d8CAVwvmakio5qOP6CpO7I5QaZLXjJGhYCi/7fdyX7k=
+        id S965044AbeEXH0k (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 03:26:40 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35138 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S964789AbeEXH0j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 03:26:39 -0400
+Date: Thu, 24 May 2018 15:26:27 +0800
+From: Dave Young <dyoung@redhat.com>
+To: Petr Tesarik <ptesarik@suse.cz>
+Cc: dzickus@redhat.com, Neil Horman <nhorman@redhat.com>,
+        Tony Luck <tony.luck@intel.com>, bhe@redhat.com,
+        Michael Ellerman <mpe@ellerman.id.au>, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Hari Bathini <hbathini@linux.vnet.ibm.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>, Vivek Goyal <vgoyal@redhat.com>
+Subject: Re: [PATCH] kdump: add default crashkernel reserve kernel config
+ options
+Message-ID: <20180524072627.GA1940@dhcp-128-65.nay.redhat.com>
+References: <20180521025337.GA4627@dhcp-128-65.nay.redhat.com>
+ <20180521120215.117d963a7619eb0d1f54bced@linux-foundation.org>
+ <20180523070641.GA1689@dhcp-128-65.nay.redhat.com>
+ <877enucqr0.fsf@xmission.com>
+ <20180523222236.5a96732e@ezekiel.suse.cz>
+ <20180524014905.GB2031@dhcp-128-65.nay.redhat.com>
+ <20180524085708.31aa311d@ezekiel.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20180523232246.20445-1-qing.huang@oracle.com>
-References: <20180523232246.20445-1-qing.huang@oracle.com>
-From: Gi-Oh Kim <gi-oh.kim@profitbricks.com>
-Date: Thu, 24 May 2018 09:23:52 +0200
-Message-ID: <CAJX1YtakDhk49kwrpAz27rGppq1FxXTewYFWJ_u06saa54x2vA@mail.gmail.com>
-Subject: Re: [PATCH V4] mlx4_core: allocate ICM memory in page size chunks
-To: Qing Huang <qing.huang@oracle.com>
-Cc: Tariq Toukan <tariqt@mellanox.com>, davem@davemloft.net,
-        haakon.bugge@oracle.com, yanjun.zhu@oracle.com, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180524085708.31aa311d@ezekiel.suse.cz>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4O7PQCw001227
 
-On Thu, May 24, 2018 at 1:22 AM, Qing Huang <qing.huang@oracle.com> wrote:
-> When a system is under memory presure (high usage with fragments),
-> the original 256KB ICM chunk allocations will likely trigger kernel
-> memory management to enter slow path doing memory compact/migration
-> ops in order to complete high order memory allocations.
->
-> When that happens, user processes calling uverb APIs may get stuck
-> for more than 120s easily even though there are a lot of free pages
-> in smaller chunks available in the system.
->
-> Syslog:
-> ...
-> Dec 10 09:04:51 slcc03db02 kernel: [397078.572732] INFO: task
-> oracle_205573_e:205573 blocked for more than 120 seconds.
-> ...
->
-> With 4KB ICM chunk size on x86_64 arch, the above issue is fixed.
->
-> However in order to support smaller ICM chunk size, we need to fix
-> another issue in large size kcalloc allocations.
->
-> E.g.
-> Setting log_num_mtt=30 requires 1G mtt entries. With the 4KB ICM chunk
-> size, each ICM chunk can only hold 512 mtt entries (8 bytes for each mtt
-> entry). So we need a 16MB allocation for a table->icm pointer array to
-> hold 2M pointers which can easily cause kcalloc to fail.
->
-> The solution is to use kvzalloc to replace kcalloc which will fall back
-> to vmalloc automatically if kmalloc fails.
+On 05/24/18 at 08:57am, Petr Tesarik wrote:
+> On Thu, 24 May 2018 09:49:05 +0800
+> Dave Young <dyoung@redhat.com> wrote:
+> 
+> > Hi Petr,
+> > 
+> > On 05/23/18 at 10:22pm, Petr Tesarik wrote:
+> >[...]
+> > > In short, if one size fits none, what good is it to hardcode that "one
+> > > size" into the kernel image?  
+> > 
+> > I agreed with all the things that we can not know the exact memory
+> > requirement for 100% use cases.  But that does not means this is useless
+> > it is still useful for common use cases of no special and memory hog
+> > requirements as I mentioned in another reply it can simplify the kdump
+> > deployment for those people who do not need the special setup.
+> 
+> I still tend to disagree. This "common-case" reservation depends on
+> things that are defined by user space. It surely does not make it
+> easier to build a distribution kernel. Today, I get bug reports that
+> the number calculated and added to the boot loader configuration by the
+> installer is inaccurate. If I put a fixed number into a kernel config
+> option, I will start getting bugs that this number is incorrect (for
+> some systems).
 
+The value is a best effort, it will never be 100% correct.  We did not
+guarantee that.   The kernel config option value is just up to user.
+So I'm thinking it as a good to have benefit.
 
-Hi,
+> 
+> > For example, if this is a workstation I just want to break into a shell
+> > to collect some panic info, then I just need a very minimal initrd, then
+> > the Kconfig will work just fine.
+> 
+> What is "a very minimal initrd"? Last time I had to make a significant
+> adjustment to the estimation for openSUSE, this was caused by growing
+> user-space requirements (systemd in this case, but I don't want to
+> start flamewars on that topic, please).
 
-Could you please write why it first try to allocate the contiguous pages?
-I think it is necessary to comment why it uses kvzalloc instead of vzalloc.
+Still I think we have agreement and same feeling about the userspace
+memory requirement.   I think although it is hard, we have been still
+trying to shrink the initramfs memory use.
 
+Besides of distribution use,  why people can not use some minimal
+initrd?  For example only a basic shell and some necessary tools and
+basic storage eg. raw disks supported, and he/she can just collect the
+panic infomation by himself in a shell.
 
->
-> Signed-off-by: Qing Huang <qing.huang@oracle.com>
-> Acked-by: Daniel Jurgens <danielj@mellanox.com>
-> Reviewed-by: Zhu Yanjun <yanjun.zhu@oracle.com>
+> 
+> Anyway, if you want to improve the "common case", then look how IBM
+> tries to solve it for firmware-assisted dump (fadump) on powerpc:
+> 
+> https://patchwork.ozlabs.org/patch/905026/
+> 
+> The main idea is:
+> 
+> > Instead of setting aside a significant chunk of memory nobody can use,
+> > [...] reserve a significant chunk of memory that the kernel is prevented
+> > from using [...], but applications are free to use it.
+> 
+> That works great, because user space pages are filtered out in the
+> common case, so they can be used freely by the panic kernel.
 
-+Reviewed-by: Gioh Kim <gi-oh.kim@profitbricks.com>
+Good suggestion. I have been reading that posts already at the same time before I saw
+this reply from you :)
 
-> ---
-> v4: use kvzalloc instead of vzalloc
->     add one err condition check
->     don't include vmalloc.h any more
->
-> v3: use PAGE_SIZE instead of PAGE_SHIFT
->     add comma to the end of enum variables
->     include vmalloc.h header file to avoid build issues on Sparc
->
-> v2: adjusted chunk size to reflect different architectures
->
->  drivers/net/ethernet/mellanox/mlx4/icm.c | 16 +++++++++-------
->  1 file changed, 9 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/net/ethernet/mellanox/mlx4/icm.c b/drivers/net/ethernet/mellanox/mlx4/icm.c
-> index a822f7a..685337d 100644
-> --- a/drivers/net/ethernet/mellanox/mlx4/icm.c
-> +++ b/drivers/net/ethernet/mellanox/mlx4/icm.c
-> @@ -43,12 +43,12 @@
->  #include "fw.h"
->
->  /*
-> - * We allocate in as big chunks as we can, up to a maximum of 256 KB
-> - * per chunk.
-> + * We allocate in page size (default 4KB on many archs) chunks to avoid high
-> + * order memory allocations in fragmented/high usage memory situation.
->   */
->  enum {
-> -       MLX4_ICM_ALLOC_SIZE     = 1 << 18,
-> -       MLX4_TABLE_CHUNK_SIZE   = 1 << 18
-> +       MLX4_ICM_ALLOC_SIZE     = PAGE_SIZE,
-> +       MLX4_TABLE_CHUNK_SIZE   = PAGE_SIZE,
->  };
->
->  static void mlx4_free_icm_pages(struct mlx4_dev *dev, struct mlx4_icm_chunk *chunk)
-> @@ -398,9 +398,11 @@ int mlx4_init_icm_table(struct mlx4_dev *dev, struct mlx4_icm_table *table,
->         u64 size;
->
->         obj_per_chunk = MLX4_TABLE_CHUNK_SIZE / obj_size;
-> +       if (WARN_ON(!obj_per_chunk))
-> +               return -EINVAL;
->         num_icm = (nobj + obj_per_chunk - 1) / obj_per_chunk;
->
-> -       table->icm      = kcalloc(num_icm, sizeof(*table->icm), GFP_KERNEL);
-> +       table->icm      = kvzalloc(num_icm * sizeof(*table->icm), GFP_KERNEL);
->         if (!table->icm)
->                 return -ENOMEM;
->         table->virt     = virt;
-> @@ -446,7 +448,7 @@ int mlx4_init_icm_table(struct mlx4_dev *dev, struct mlx4_icm_table *table,
->                         mlx4_free_icm(dev, table->icm[i], use_coherent);
->                 }
->
-> -       kfree(table->icm);
-> +       kvfree(table->icm);
->
->         return -ENOMEM;
->  }
-> @@ -462,5 +464,5 @@ void mlx4_cleanup_icm_table(struct mlx4_dev *dev, struct mlx4_icm_table *table)
->                         mlx4_free_icm(dev, table->icm[i], table->coherent);
->                 }
->
-> -       kfree(table->icm);
-> +       kvfree(table->icm);
->  }
-> --
-> 2.9.3
->
+That could be a good idea and worth to discuss more.  I cced Hari
+already in the thread. Hari, is it possible for you to extend your
+idea to general use, ie. shared by both kdump and fadump?  Anyway I
+think that is another topic we can discuss separately.
 
+> 
+> Just my two cents,
+> Petr T
 
-
--- 
-GIOH KIM
-Linux Kernel Entwickler
-
-ProfitBricks GmbH
-Greifswalder Str. 207
-D - 10405 Berlin
-
-Tel:       +49 176 2697 8962
-Fax:      +49 30 577 008 299
-Email:    gi-oh.kim@profitbricks.com
-URL:      https://www.profitbricks.de
-
-Sitz der Gesellschaft: Berlin
-Registergericht: Amtsgericht Charlottenburg, HRB 125506 B
-Geschäftsführer: Achim Weiss, Matthias Steinberg, Christoph Steffens
+Thanks
+Dave
