@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1733193-1527156454-5-17591468739543887055
+X-Cyrus-Session-Id: sloti22d1t05-1733193-1527156427-2-6085164278440880963
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527156454; b=HrvGprlWZVSN+y3xQ/k6HlDQjHdwH+wuBKg8XFw9s7TsqBItBj
-    9/roFs0X3AO4L/4BsZ+9T8A55fgLzsB7Aef/L8Nvw4P6UbxDkLuWzMqShaRPHL+B
-    McK8S4Rp6C5pcLOpgZM8nt2Xq9OVYpdDTtJ3A2Zi7nJ4mtWiBcCGdomgMJf6S2mM
-    mht9Bo9MfHhokkSK65y0oamSRFwVY1oZtQsRuD2hxqSdD/+i8dNFNrqD4HMa9zEw
-    U8e007E7f3JGe0a8A362LcHoWgrafrn0cmLsAEJJ4eGzyL7nlERlm9uMXXmkHc2z
-    nzCKpkWdnpzq1TOwoXDM261Tgui69EKvMVQQ==
+    1527156426; b=ZHQE1cy7Vk4O0LRaxIVPrLpYgK8f91BZaBJr4BT2gxi5wIPeTF
+    /7eEKwvSaIoTOm7tM3AWfm4Z+MW16NcH97h+gNrJrZtjuC561um1TAzRPfxqgtKn
+    70jMXIPdbh9kaKbGdWCSABzInDhI8SgOcafb4ik1/Rte73RitdfZGgsKuoNpVVgB
+    S61OAppiXjnbZkZDbPY2tN0tcaj3Gd+Eqa8LCUCcNFVeAh5R+0OG7bMBSDlbK20R
+    lHv8c1/3rjvmsRA1tNPnYDsH1oiu1KANH6+vlt9hnK/ujczlF/91+anQ5myIXahR
+    l8TH1VWmnRNZN4ADyp0pkQvILw11rnocTeOA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527156454; bh=JVy8dUc2b+1lLlYCkF5m1jySzNlk3B
-    JynxVmPspa2Zg=; b=EyGYIeRAx4sE+A1yHF6fAxBzHHWDIVF9z+Z2l1rVBUcTaE
-    gxljxgUlmq6mQH2fp85l62qWnfskN0GSkuw4BT5S2WCTAsbSS7/bJPhv8Yb6Hoan
-    xwgR9MCuyvYnzOuO4RHMp1kmeQx0GI402qv7Fb3RsIFUtbqmdDEfPxY7wrHICB2i
-    2erkRCrsp0jxKacN/r3epavoIGNscoM908rV6xlu7gZJ+Zl0g7k1aX+/6U1Vs1Em
-    Kky7Ea7VWIL0mCvYg28nyPT/RJvvawlNqNcFsOErdPoS1GSmanP2i25xTgsOBnIl
-    cEvaR+1aqcezfCs4h2KjtQHiJ9ZjaFUI5M8/W2NQ==
+    :list-id; s=fm2; t=1527156426; bh=TdrnXz92aM6E5pJ6P94hk+8IfH4Hj0
+    2W5PP1Oyncm6s=; b=GZS2WcokJr86ZRbvrS+mjwFQuKwVQCzhID3AYGi6MsXTBB
+    q+oZxMU8k1H9m6OpdgTQ2mAaCCVhUbHO2ZjbKam59Ketq8rsKIkSuKNNcz8V9xAg
+    hwlrXP82hv8v+/hvCFc+s8bUjhAjTeZy2/BLkD5BueH643VnRVeb2LZZHjvmEe4a
+    ZuRo9Dx/DTVbshYe77zZceLhTl2puaJ8WwB0g7+otM8M8LdmqySkMvlO3pCugkoA
+    8GXJHTp08unbKctE4M3E6NCjemHw4U5+XxHEI9nhIfJXaqLvQdWb5Vyl6JbkkDPV
+    tpEfUF41XF8y58quH85Lg8cYQlW7MQWdkSfJzpiQ==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=HJffrwjB x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=Mspgdgh7 x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -48,7 +48,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
 Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=HJffrwjB x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=Mspgdgh7 x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,37 +64,29 @@ Authentication-Results: mx1.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDGxum6zyMEPx4fFuL0WvbPDVt77CKoWowRIAtDh4H/tsQvPqeWGUT0JDCL82OAka9UiKIJ8oj4g9651Tc5pZ2dEWpy2dOWSmrWNfYc+fDDPQaZwy4yu
-    ohBBEgXET/GV149x06Jx+gY9lbfWv8rdOdP0cOyxvsnsNhJtq1JDCuA0iWBgaRor6OfBywZEd16Cg05c/WE8iPb0+zeHSvWGminOOUzZ3RkTyDFzg8/oInuf
+X-CM-Envelope: MS4wfGPs42BxjB+uwoxKlwm/xAYAlRY75heOMy9xcWxf5W2b1hHP86YZfLGxqCtVGTaZ3cIMlJTmQXVHl6/nO+JuSZNmsVzKL6TC6915ZwtMr/W27dZ7nxDw
+    GSrXxpY/2BgIALb2YbkAkqcoUodsV4HGBmVDOxgFYsiJsbH8pUSKqOx6WczwGxOObTXZ4yIOL/lDJuymZSUb+JXGDufh6pRMHXJ1t8kqdzCYZikVsUNJRQro
 X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=c-n4J4-pAAAA:8 a=hD80L64hAAAA:8 a=AUd_NHdVAAAA:8
-    a=vQBBkBfzAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=JHlJ25WvbeUrrig5_RoA:9
-    a=9KwCxeNyUdE38rif:21 a=X_IaPXt8nTruHlu4:21 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=L0NDqeB7ZLmQzAogN4cw:22 a=NGXS0kB0m_rannUenejW:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=IpJZQVW2AAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=vLQbGN4KbvzYxg86oCQA:9
+    a=QEXdDO2ut3YA:10 a=IawgGOuG5U0WyFbmm1f5:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031277AbeEXKGZ (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 06:06:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55416 "EHLO mail.kernel.org"
+        id S1031500AbeEXKGv (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 06:06:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54170 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1031712AbeEXKGX (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 06:06:23 -0400
+        id S1031535AbeEXKEy (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 06:04:54 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-        Takao Orito <orito.takao@socionext.com>,
-        Fumihiro ATSUMI <atsumi@infinitegra.co.jp>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        stable@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 142/161] media: vb2: Fix videobuf2 to map correct area
-Date: Thu, 24 May 2018 11:39:27 +0200
-Message-Id: <20180524093035.382416519@linuxfoundation.org>
+Subject: [PATCH 4.16 133/161] clk: meson: axg: add the fractional part of the fixed_pll
+Date: Thu, 24 May 2018 11:39:18 +0200
+Message-Id: <20180524093034.278560986@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -112,38 +104,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Jerome Brunet <jbrunet@baylibre.com>
 
-[ Upstream commit d13a0139d7874a0577b5955d6eed895517d23b72 ]
+[ Upstream commit 6b71aceceb09918daf37a40a1221077599040be3 ]
 
-Fixes vb2_vmalloc_get_userptr() to ioremap correct area.
-Since the current code does ioremap the page address, if the offset > 0,
-it does not do ioremap the last page and results in kernel panic.
+The fixed_pll also has a fractional part. On axg s400 board, without
+this parameter, the calculated rate is off by ~8Mhz (0,4%). The fixed_pll
+being the root of the peripheral clock tree, this error is propagated to
+the rest of the clocks
 
-This fixes to pass the size + offset to ioremap so that ioremap
-can map correct area. Also, this uses __pfn_to_phys() to get the physical
-address of given PFN.
+Adding the definition of the parameter fixes the problem
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Reported-by: Takao Orito <orito.takao@socionext.com>
-Reported-by: Fumihiro ATSUMI <atsumi@infinitegra.co.jp>
-Reviewed-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Fixes: 78b4af312f91 ("clk: meson-axg: add clock controller drivers")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/common/videobuf2/videobuf2-vmalloc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/meson/axg.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/media/common/videobuf2/videobuf2-vmalloc.c
-+++ b/drivers/media/common/videobuf2/videobuf2-vmalloc.c
-@@ -106,7 +106,7 @@ static void *vb2_vmalloc_get_userptr(str
- 			if (nums[i-1] + 1 != nums[i])
- 				goto fail_map;
- 		buf->vaddr = (__force void *)
--				ioremap_nocache(nums[0] << PAGE_SHIFT, size);
-+			ioremap_nocache(__pfn_to_phys(nums[0]), size + offset);
- 	} else {
- 		buf->vaddr = vm_map_ram(frame_vector_pages(vec), n_pages, -1,
- 					PAGE_KERNEL);
+--- a/drivers/clk/meson/axg.c
++++ b/drivers/clk/meson/axg.c
+@@ -129,6 +129,11 @@ static struct meson_clk_pll axg_fixed_pl
+ 		.shift   = 16,
+ 		.width   = 2,
+ 	},
++	.frac = {
++		.reg_off = HHI_MPLL_CNTL2,
++		.shift   = 0,
++		.width   = 12,
++	},
+ 	.lock = &meson_clk_lock,
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "fixed_pll",
