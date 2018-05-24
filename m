@@ -1,52 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754898AbeEXF3v (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 01:29:51 -0400
-Received: from vps01.wiesinger.com ([46.36.37.179]:38280 "EHLO
-        vps01.wiesinger.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751158AbeEXF3u (ORCPT
+        id S1754931AbeEXFcv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 01:32:51 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:39340 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751158AbeEXFct (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 01:29:50 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 wiesinger.com w4O5TghU006276
-Subject: Re: B53 DSA switch problem on Banana Pi-R1 on Fedora 26
-To: Florian Fainelli <f.fainelli@gmail.com>, Andrew Lunn <andrew@lunn.ch>
-Cc: linux-kernel@vger.kernel.org
-References: <3bdb712d-38bd-e2ca-63cf-8406a7b5689d@wiesinger.com>
- <20180522201632.GB4396@lunn.ch>
- <59d6b55f-d50a-063c-90a9-31a758e01383@gmail.com>
- <fa5c2615-40b3-62bc-3dda-59f9ef574686@wiesinger.com>
- <76c3f5ec-0ab2-c06d-98e8-277284bb1a8e@gmail.com>
- <779f2be3-3e74-e650-5240-efaf1003d77c@wiesinger.com>
- <4f7c5173-019d-ba0e-70b3-addf64a6a9fa@gmail.com>
- <aba2788a-ba54-dbc8-dd60-e862ba31d66d@wiesinger.com>
- <53c9272a-0e1a-e8fb-a3e4-b4e23e77be10@gmail.com>
-From: Gerhard Wiesinger <lists@wiesinger.com>
-Message-ID: <ba1a6179-48ff-ca2b-bb3c-f99f8376df50@wiesinger.com>
-Date: Thu, 24 May 2018 07:29:42 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 24 May 2018 01:32:49 -0400
+X-Google-Smtp-Source: AB8JxZpaEybM37t399oL7G0fIhPDU/UzKvnQq2OQ8cJouRi5uu9vY/2RhXXVlCe9YeETREXeNzWBTw==
+Date: Thu, 24 May 2018 07:32:44 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Jin Yao <yao.jin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Joerg Roedel <joro@8bytes.org>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: Re: [GIT PULL 00/18] perf/core improvements
+Message-ID: <20180524053244.GA19588@gmail.com>
+References: <20180523202106.17286-1-acme@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <53c9272a-0e1a-e8fb-a3e4-b4e23e77be10@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180523202106.17286-1-acme@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After some analysis with Florian (thnx) we found out that the current 
-implementation is broken:
 
-https://patchwork.ozlabs.org/patch/836538/
-https://github.com/torvalds/linux/commit/c499696e7901bda18385ac723b7bd27c3a4af624#diff-a2b6f8d89e18de600e873ac3ac43fa1d
+* Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
 
-Florians comment:
+> Hi Ingo,
+> 
+> 	Please consider pulling,
+> 
+> - Arnaldo
+> 
+> Test results at the end of this message, as usual.
+> 
+> The following changes since commit 2996123e7e589d78e73cfeb7e7f14d49127eb1b0:
+> 
+>   Merge tag 'perf-core-for-mingo-4.18-20180519' of git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux into perf/core (2018-05-19 13:32:53 +0200)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git tags/perf-core-for-mingo-4.18-20180523
+> 
+> for you to fetch changes up to 22916fdb9c50e8fb303bdcedca88fd8798a85844:
+> 
+>   perf kcore_copy: Amend the offset of sections that remap kernel text (2018-05-23 10:26:44 -0300)
+> 
+> ----------------------------------------------------------------
+> perf/core improvements:
+> 
+> . Create extra kernel maps to help in decoding samples in x86 PTI entry
+>   trampolines (Adrian Hunter)
+> 
+> . Copy x86 PTI entry trampoline sections in the kcore copy used for
+>   annotation and intel_pt CPU traces decoding (Adrian Hunter)
+> 
+> - Support 'perf annotate --group' for non-explicit recorded event
+>   "groups", showing multiple columns, one for each event, just like
+>   when dealing with explicit event groups (those enclosed with {}) (Jin Yao)
+> 
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> 
+> ----------------------------------------------------------------
+> Adrian Hunter (14):
+>       perf machine: Add nr_cpus_avail()
+>       perf machine: Workaround missing maps for x86 PTI entry trampolines
+>       perf machine: Fix map_groups__split_kallsyms() for entry trampoline symbols
+>       perf machine: Allow for extra kernel maps
+>       perf machine: Create maps for x86 PTI entry trampolines
+>       perf machine: Synthesize and process mmap events for x86 PTI entry trampolines
+>       perf kcore_copy: Keep phdr data in a list
+>       perf kcore_copy: Keep a count of phdrs
+>       perf kcore_copy: Calculate offset from phnum
+>       perf kcore_copy: Layout sections
+>       perf kcore_copy: Iterate phdrs
+>       perf kcore_copy: Get rid of kernel_map
+>       perf kcore_copy: Copy x86 PTI entry trampoline sections
+>       perf kcore_copy: Amend the offset of sections that remap kernel text
+> 
+> Jin Yao (4):
+>       perf evlist: Introduce force_leader() method
+>       perf report: Use perf_evlist__force_leader to support '--group'
+>       perf annotate: Support '--group' option
+>       perf annotate: Show group event string for stdio
+> 
+>  tools/perf/arch/x86/util/Build     |   2 +
+>  tools/perf/arch/x86/util/event.c   |  76 +++++++++++++
+>  tools/perf/arch/x86/util/machine.c | 103 +++++++++++++++++
+>  tools/perf/builtin-annotate.c      |   7 ++
+>  tools/perf/builtin-report.c        |  13 +--
+>  tools/perf/util/annotate.c         |   6 +-
+>  tools/perf/util/env.c              |  13 +++
+>  tools/perf/util/env.h              |   1 +
+>  tools/perf/util/event.c            |  36 ++++--
+>  tools/perf/util/event.h            |   8 ++
+>  tools/perf/util/evlist.c           |  15 +++
+>  tools/perf/util/evlist.h           |   3 +
+>  tools/perf/util/machine.c          | 175 +++++++++++++++++++++++++++--
+>  tools/perf/util/machine.h          |  23 ++++
+>  tools/perf/util/map.c              |  22 +++-
+>  tools/perf/util/map.h              |  15 ++-
+>  tools/perf/util/symbol-elf.c       | 219 +++++++++++++++++++++++++++++++------
+>  tools/perf/util/symbol.c           |  49 +++++++--
+>  18 files changed, 711 insertions(+), 75 deletions(-)
+>  create mode 100644 tools/perf/arch/x86/util/event.c
+>  create mode 100644 tools/perf/arch/x86/util/machine.c
 
-c499696e7901bda18385ac723b7bd27c3a4af624 ("net: dsa: b53: Stop using
-dev->cpu_port incorrectly") since it would result in no longer setting
-the CPU port as tagged for a specific VLAN. Easiest way for you right
-now is to just revert it, but this needs some more thoughts for a proper
-upstream change. I will think about it some more.
+Pulled, thanks a lot Arnaldo!
 
-Ciao,
-Gerhard
+	Ingo
