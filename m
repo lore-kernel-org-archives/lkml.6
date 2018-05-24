@@ -1,131 +1,227 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S971517AbeEXUzf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 16:55:35 -0400
-Received: from mailout3.hostsharing.net ([176.9.242.54]:54097 "EHLO
-        mailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S969426AbeEXUzc (ORCPT
+        id S971526AbeEXU41 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 16:56:27 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:49546 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S969064AbeEXU4Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 16:55:32 -0400
-X-Mailbox-Line: From 8f770886632640321592873e4c902218d42c436b Mon Sep 17 00:00:00 2001
-Message-Id: <8f770886632640321592873e4c902218d42c436b.1527194314.git.lukas@wunner.de>
-From: Lukas Wunner <lukas@wunner.de>
-Date: Thu, 24 May 2018 22:45:30 +0200
-Subject: [PATCH] genirq: Synchronize only with single thread on free_irq()
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "Sebastian Andrzej Siewior" <bigeasy@linutronix.de>,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+        Thu, 24 May 2018 16:56:24 -0400
+Subject: Re: [PATCH -V2 -mm 1/4] mm, clear_huge_page: Move order algorithm
+ into a separate function
+To: "Huang, Ying" <ying.huang@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andi Kleen <andi.kleen@intel.com>, Jan Kara <jack@suse.cz>,
+        Michal Hocko <mhocko@suse.com>, Andrea Arcangeli <aarcange@redhat.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Hugh Dickins <hughd@google.com>, Minchan Kim <minchan@kernel.org>,
+        Shaohua Li <shli@fb.com>, Christopher Lameter <cl@linux.com>
+References: <20180524005851.4079-1-ying.huang@intel.com>
+ <20180524005851.4079-2-ying.huang@intel.com>
+From: Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <4569310c-ae07-2353-8276-f9cba3011ea5@oracle.com>
+Date: Thu, 24 May 2018 13:55:48 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
+MIME-Version: 1.0
+In-Reply-To: <20180524005851.4079-2-ying.huang@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8903 signatures=668700
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805240236
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When pciehp is converted to threaded IRQ handling, removal of unplugged
-devices below a PCIe hotplug port happens synchronously in the IRQ
-thread.  Removal of devices typically entails a call to free_irq() by
-their drivers.
+On 05/23/2018 05:58 PM, Huang, Ying wrote:
+> From: Huang Ying <ying.huang@intel.com>
+> 
+> In commit c79b57e462b5d ("mm: hugetlb: clear target sub-page last when
+> clearing huge page"), to keep the cache lines of the target subpage
+> hot, the order to clear the subpages in the huge page in
+> clear_huge_page() is changed to clearing the subpage which is furthest
+> from the target subpage firstly, and the target subpage last.  This
+> optimization could be applied to copying huge page too with the same
+> order algorithm.  To avoid code duplication and reduce maintenance
+> overhead, in this patch, the order algorithm is moved out of
+> clear_huge_page() into a separate function: process_huge_page().  So
+> that we can use it for copying huge page too.
+> 
+> This will change the direct calls to clear_user_highpage() into the
+> indirect calls.  But with the proper inline support of the compilers,
+> the indirect call will be optimized to be the direct call.  Our tests
+> show no performance change with the patch.
+> 
+> This patch is a code cleanup without functionality change.
+> 
+> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+> Suggested-by: Mike Kravetz <mike.kravetz@oracle.com>
 
-If those devices share their IRQ with the hotplug port, free_irq()
-deadlocks because it calls synchronize_irq() to wait for all hard IRQ
-handlers as well as all threads sharing the IRQ to finish.
+Thanks for doing this.
 
-Actually it's sufficient to wait only for the IRQ thread of the removed
-device, so call synchronize_hardirq() to wait for all hard IRQ handlers
-to finish, but no longer for any threads.  Compensate by rearranging the
-control flow in irq_wait_for_interrupt() such that the device's thread
-is allowed to run one last time after kthread_stop() has been called.
+The extra level of indirection does make this a bit more difficult to
+read.  However, I believe this is offset by the reuse of the algorithm
+in subsequent copy_huge_page support.
 
-Stack trace for posterity:
-    INFO: task irq/17-pciehp:94 blocked for more than 120 seconds.
-    schedule+0x28/0x80
-    synchronize_irq+0x6e/0xa0
-    __free_irq+0x15a/0x2b0
-    free_irq+0x33/0x70
-    pciehp_release_ctrl+0x98/0xb0
-    pcie_port_remove_service+0x2f/0x40
-    device_release_driver_internal+0x157/0x220
-    bus_remove_device+0xe2/0x150
-    device_del+0x124/0x340
-    device_unregister+0x16/0x60
-    remove_iter+0x1a/0x20
-    device_for_each_child+0x4b/0x90
-    pcie_port_device_remove+0x1e/0x30
-    pci_device_remove+0x36/0xb0
-    device_release_driver_internal+0x157/0x220
-    pci_stop_bus_device+0x7d/0xa0
-    pci_stop_bus_device+0x3d/0xa0
-    pci_stop_and_remove_bus_device+0xe/0x20
-    pciehp_unconfigure_device+0xb8/0x160
-    pciehp_disable_slot+0x84/0x130
-    pciehp_ist+0x158/0x190
-    irq_thread_fn+0x1b/0x50
-    irq_thread+0x143/0x1a0
-    kthread+0x111/0x130
+> Cc: Andi Kleen <andi.kleen@intel.com>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Andrea Arcangeli <aarcange@redhat.com>
+> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> Cc: Matthew Wilcox <mawilcox@microsoft.com>
+> Cc: Hugh Dickins <hughd@google.com>
+> Cc: Minchan Kim <minchan@kernel.org>
+> Cc: Shaohua Li <shli@fb.com>
+> Cc: Christopher Lameter <cl@linux.com>
+> ---
+>  mm/memory.c | 90 ++++++++++++++++++++++++++++++++++++++-----------------------
+>  1 file changed, 56 insertions(+), 34 deletions(-)
+> 
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 14578158ed20..b9f573a81bbd 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -4569,71 +4569,93 @@ EXPORT_SYMBOL(__might_fault);
+>  #endif
+>  
+>  #if defined(CONFIG_TRANSPARENT_HUGEPAGE) || defined(CONFIG_HUGETLBFS)
+> -static void clear_gigantic_page(struct page *page,
+> -				unsigned long addr,
+> -				unsigned int pages_per_huge_page)
+> -{
+> -	int i;
+> -	struct page *p = page;
+> -
+> -	might_sleep();
+> -	for (i = 0; i < pages_per_huge_page;
+> -	     i++, p = mem_map_next(p, page, i)) {
+> -		cond_resched();
+> -		clear_user_highpage(p, addr + i * PAGE_SIZE);
+> -	}
+> -}
+> -void clear_huge_page(struct page *page,
+> -		     unsigned long addr_hint, unsigned int pages_per_huge_page)
+> +/*
+> + * Process all subpages of the specified huge page with the specified
+> + * operation.  The target subpage will be processed last to keep its
+> + * cache lines hot.
+> + */
+> +static inline void process_huge_page(
+> +	unsigned long addr_hint, unsigned int pages_per_huge_page,
+> +	void (*process_subpage)(unsigned long addr, int idx, void *arg),
+> +	void *arg)
 
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
----
- kernel/irq/manage.c | 21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
+There could be a bit more information in the comment about the function.
+But it is not a requirement, unless patch needs to be redone for some
+other reason.
 
-diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index e3336d904f64..603d2672f942 100644
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -756,9 +756,19 @@ static irqreturn_t irq_forced_secondary_handler(int irq, void *dev_id)
- 
- static int irq_wait_for_interrupt(struct irqaction *action)
- {
--	set_current_state(TASK_INTERRUPTIBLE);
-+	for (;;) {
-+		set_current_state(TASK_INTERRUPTIBLE);
- 
--	while (!kthread_should_stop()) {
-+		if (kthread_should_stop()) {
-+			/* may need to run one last time. */
-+			if (test_and_clear_bit(IRQTF_RUNTHREAD,
-+					       &action->thread_flags)) {
-+				__set_current_state(TASK_RUNNING);
-+				return 0;
-+			}
-+			__set_current_state(TASK_RUNNING);
-+			return -1;
-+		}
- 
- 		if (test_and_clear_bit(IRQTF_RUNTHREAD,
- 				       &action->thread_flags)) {
-@@ -766,10 +776,7 @@ static int irq_wait_for_interrupt(struct irqaction *action)
- 			return 0;
- 		}
- 		schedule();
--		set_current_state(TASK_INTERRUPTIBLE);
- 	}
--	__set_current_state(TASK_RUNNING);
--	return -1;
- }
- 
- /*
-@@ -990,7 +997,7 @@ static int irq_thread(void *data)
- 	/*
- 	 * This is the regular exit path. __free_irq() is stopping the
- 	 * thread via kthread_stop() after calling
--	 * synchronize_irq(). So neither IRQTF_RUNTHREAD nor the
-+	 * synchronize_hardirq(). So neither IRQTF_RUNTHREAD nor the
- 	 * oneshot mask bit can be set. We cannot verify that as we
- 	 * cannot touch the oneshot mask at this point anymore as
- 	 * __setup_irq() might have given out currents thread_mask
-@@ -1595,7 +1602,7 @@ static struct irqaction *__free_irq(struct irq_desc *desc, void *dev_id)
- 	unregister_handler_proc(irq, action);
- 
- 	/* Make sure it's not being used on another CPU: */
--	synchronize_irq(irq);
-+	synchronize_hardirq(irq);
- 
- #ifdef CONFIG_DEBUG_SHIRQ
- 	/*
+Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
 -- 
-2.17.0
+Mike Kravetz
+
+>  {
+>  	int i, n, base, l;
+>  	unsigned long addr = addr_hint &
+>  		~(((unsigned long)pages_per_huge_page << PAGE_SHIFT) - 1);
+>  
+> -	if (unlikely(pages_per_huge_page > MAX_ORDER_NR_PAGES)) {
+> -		clear_gigantic_page(page, addr, pages_per_huge_page);
+> -		return;
+> -	}
+> -
+> -	/* Clear sub-page to access last to keep its cache lines hot */
+> +	/* Process target subpage last to keep its cache lines hot */
+>  	might_sleep();
+>  	n = (addr_hint - addr) / PAGE_SIZE;
+>  	if (2 * n <= pages_per_huge_page) {
+> -		/* If sub-page to access in first half of huge page */
+> +		/* If target subpage in first half of huge page */
+>  		base = 0;
+>  		l = n;
+> -		/* Clear sub-pages at the end of huge page */
+> +		/* Process subpages at the end of huge page */
+>  		for (i = pages_per_huge_page - 1; i >= 2 * n; i--) {
+>  			cond_resched();
+> -			clear_user_highpage(page + i, addr + i * PAGE_SIZE);
+> +			process_subpage(addr + i * PAGE_SIZE, i, arg);
+>  		}
+>  	} else {
+> -		/* If sub-page to access in second half of huge page */
+> +		/* If target subpage in second half of huge page */
+>  		base = pages_per_huge_page - 2 * (pages_per_huge_page - n);
+>  		l = pages_per_huge_page - n;
+> -		/* Clear sub-pages at the begin of huge page */
+> +		/* Process subpages at the begin of huge page */
+>  		for (i = 0; i < base; i++) {
+>  			cond_resched();
+> -			clear_user_highpage(page + i, addr + i * PAGE_SIZE);
+> +			process_subpage(addr + i * PAGE_SIZE, i, arg);
+>  		}
+>  	}
+>  	/*
+> -	 * Clear remaining sub-pages in left-right-left-right pattern
+> -	 * towards the sub-page to access
+> +	 * Process remaining subpages in left-right-left-right pattern
+> +	 * towards the target subpage
+>  	 */
+>  	for (i = 0; i < l; i++) {
+>  		int left_idx = base + i;
+>  		int right_idx = base + 2 * l - 1 - i;
+>  
+>  		cond_resched();
+> -		clear_user_highpage(page + left_idx,
+> -				    addr + left_idx * PAGE_SIZE);
+> +		process_subpage(addr + left_idx * PAGE_SIZE, left_idx, arg);
+>  		cond_resched();
+> -		clear_user_highpage(page + right_idx,
+> -				    addr + right_idx * PAGE_SIZE);
+> +		process_subpage(addr + right_idx * PAGE_SIZE, right_idx, arg);
+>  	}
+>  }
+>  
+> +static void clear_gigantic_page(struct page *page,
+> +				unsigned long addr,
+> +				unsigned int pages_per_huge_page)
+> +{
+> +	int i;
+> +	struct page *p = page;
+> +
+> +	might_sleep();
+> +	for (i = 0; i < pages_per_huge_page;
+> +	     i++, p = mem_map_next(p, page, i)) {
+> +		cond_resched();
+> +		clear_user_highpage(p, addr + i * PAGE_SIZE);
+> +	}
+> +}
+> +
+> +static void clear_subpage(unsigned long addr, int idx, void *arg)
+> +{
+> +	struct page *page = arg;
+> +
+> +	clear_user_highpage(page + idx, addr);
+> +}
+> +
+> +void clear_huge_page(struct page *page,
+> +		     unsigned long addr_hint, unsigned int pages_per_huge_page)
+> +{
+> +	unsigned long addr = addr_hint &
+> +		~(((unsigned long)pages_per_huge_page << PAGE_SHIFT) - 1);
+> +
+> +	if (unlikely(pages_per_huge_page > MAX_ORDER_NR_PAGES)) {
+> +		clear_gigantic_page(page, addr, pages_per_huge_page);
+> +		return;
+> +	}
+> +
+> +	process_huge_page(addr_hint, pages_per_huge_page, clear_subpage, page);
+> +}
+> +
+>  static void copy_user_gigantic_page(struct page *dst, struct page *src,
+>  				    unsigned long addr,
+>  				    struct vm_area_struct *vma,
+> 
