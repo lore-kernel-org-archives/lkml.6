@@ -1,31 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968807AbeEXLXJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 07:23:09 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:46288 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967840AbeEXLW6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 07:22:58 -0400
-X-Google-Smtp-Source: ADUXVKKtRJuMadDhwlGQyT68hnBdeJjos/J1Irow2alP5dGzhCq7OLnwz/ys2QvgBe6xnvbPMo2J3i6cZx6Yu4KWpdQ=
+        id S1033153AbeEXLXP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 07:23:15 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41598 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S967840AbeEXLXK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 07:23:10 -0400
+Date: Thu, 24 May 2018 12:23:06 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, Kees Cook <keescook@chromium.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Andy Lutomirski <luto@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 02/14] arm64: Call ARCH_WORKAROUND_2 on transitions
+ between EL0 and EL1
+Message-ID: <20180524112305.ld3jghzmb6a35h73@lakrids.cambridge.arm.com>
+References: <20180522150648.28297-1-marc.zyngier@arm.com>
+ <20180522150648.28297-3-marc.zyngier@arm.com>
+ <20180524110058.mrkwc3rx5l3v6wad@lakrids.cambridge.arm.com>
 MIME-Version: 1.0
-Reply-To: alhajimustaphaamidu@hotmail.com
-From: Alhaji Mustapha Amidu <tongongoldminc@gmail.com>
-Date: Thu, 24 May 2018 15:22:57 +0400
-Message-ID: <CALSjmWDomAgKtaxb64c967vbSkVqQcKoaYAHMEZyRLDzN9N-4A@mail.gmail.com>
-Subject: BUSINESS PARTNERSHIP.
-To: undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180524110058.mrkwc3rx5l3v6wad@lakrids.cambridge.arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-BUSINESS PARTNERSHIP.
-Hello, my name is Alhai Mustapha Amidu from Accra Ghana. I am
-interested to invest $4.7 Million Dollars in your country and i will
-need your assistance and co-operation to actualize it. If you are
-capable to handle the money and invest it in a profitable business
-that will benefit both of us, please confirm your interest
-immediately. So that i will give you more details and arrange for my
-representative to travel to your country for a face to face meeting
-with you. Thanks.
+On Thu, May 24, 2018 at 12:00:58PM +0100, Mark Rutland wrote:
+> On Tue, May 22, 2018 at 04:06:36PM +0100, Marc Zyngier wrote:
+> > In order for the kernel to protect itself, let's call the SSBD mitigation
+> > implemented by the higher exception level (either hypervisor or firmware)
+> > on each transition between userspace and kernel.
+> > 
+> > We must take the PSCI conduit into account in order to target the
+> > right exception level, hence the introduction of a runtime patching
+> > callback.
+> > 
+> > Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+> > ---
+> >  arch/arm64/kernel/cpu_errata.c | 18 ++++++++++++++++++
+> >  arch/arm64/kernel/entry.S      | 22 ++++++++++++++++++++++
+> >  include/linux/arm-smccc.h      |  5 +++++
+> >  3 files changed, 45 insertions(+)
+> > 
+> > diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
+> > index a900befadfe8..46b3aafb631a 100644
+> > --- a/arch/arm64/kernel/cpu_errata.c
+> > +++ b/arch/arm64/kernel/cpu_errata.c
+> > @@ -232,6 +232,24 @@ enable_smccc_arch_workaround_1(const struct arm64_cpu_capabilities *entry)
+> >  }
+> >  #endif	/* CONFIG_HARDEN_BRANCH_PREDICTOR */
+> >  
+> > +#ifdef CONFIG_ARM64_SSBD
+> > +void __init arm64_update_smccc_conduit(struct alt_instr *alt,
+> > +				       __le32 *origptr, __le32 *updptr,
+> > +				       int nr_inst)
+> > +{
+> > +	u32 insn;
+> > +
+> > +	BUG_ON(nr_inst != 1);
+> > +
+> > +	if (psci_ops.conduit == PSCI_CONDUIT_HVC)
+> > +		insn = aarch64_insn_get_hvc_value();
+> > +	else
+> > +		insn = aarch64_insn_get_smc_value();
+> 
+> Shouldn't this also handle the case where there is no conduit?
+
+Due to the config symbol not being defined yet, and various other fixups
+in later patches, this is actually benign.
+
+However, if you make this:
+
+	switch (psci_ops.conduit) {
+	case PSCI_CONDUIT_NONE:
+		return;
+	case PSCI_CONDUIT_HVC:
+		insn = aarch64_insn_get_hvc_value();
+		break;
+	case PSCI_CONDUIT_SMC:
+		insn = aarch64_insn_get_smc_value();
+		break;
+	}
+
+... then we won't even bother patching the nop in the default case
+regardless, which is nicer, IMO.
+
+With that:
+
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+
+Thanks,
+Mark.
+
+> 
+> See below comment in apply_ssbd for rationale.
+> 
+> > +
+> > +	*updptr = cpu_to_le32(insn);
+> > +}
+> > +#endif	/* CONFIG_ARM64_SSBD */
+> > +
+> >  #define CAP_MIDR_RANGE(model, v_min, r_min, v_max, r_max)	\
+> >  	.matches = is_affected_midr_range,			\
+> >  	.midr_range = MIDR_RANGE(model, v_min, r_min, v_max, r_max)
+> > diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
+> > index ec2ee720e33e..f33e6aed3037 100644
+> > --- a/arch/arm64/kernel/entry.S
+> > +++ b/arch/arm64/kernel/entry.S
+> > @@ -18,6 +18,7 @@
+> >   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+> >   */
+> >  
+> > +#include <linux/arm-smccc.h>
+> >  #include <linux/init.h>
+> >  #include <linux/linkage.h>
+> >  
+> > @@ -137,6 +138,18 @@ alternative_else_nop_endif
+> >  	add	\dst, \dst, #(\sym - .entry.tramp.text)
+> >  	.endm
+> >  
+> > +	// This macro corrupts x0-x3. It is the caller's duty
+> > +	// to save/restore them if required.
+> > +	.macro	apply_ssbd, state
+> > +#ifdef CONFIG_ARM64_SSBD
+> > +	mov	w0, #ARM_SMCCC_ARCH_WORKAROUND_2
+> > +	mov	w1, #\state
+> > +alternative_cb	arm64_update_smccc_conduit
+> > +	nop					// Patched to SMC/HVC #0
+> > +alternative_cb_end
+> > +#endif
+> > +	.endm
+> 
+> If my system doesn't have SMCCC1.1, or the FW doesn't have an
+> implementation of ARCH_WORKAROUND_2, does this stay as a NOP?
+> 
+> It looks like this would be patched to an SMC, which would be fatal on
+> systems without EL3 FW.
+> 
+> > +
+> >  	.macro	kernel_entry, el, regsize = 64
+> >  	.if	\regsize == 32
+> >  	mov	w0, w0				// zero upper 32 bits of x0
+> > @@ -163,6 +176,13 @@ alternative_else_nop_endif
+> >  	ldr	x19, [tsk, #TSK_TI_FLAGS]	// since we can unmask debug
+> >  	disable_step_tsk x19, x20		// exceptions when scheduling.
+> >  
+> > +	apply_ssbd 1
+> 
+> 
+> ... and thus kernel_entry would be fatal.
+> 
+> Thanks,
+> Mark.
