@@ -1,44 +1,38 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpbSII0IP2JJg3wl8HLCOi61jwgVdTcxYaGmdlBI3bwV0/TOD2vVjLf0KpU6uzuvFI9p7Ub
-ARC-Seal: i=1; a=rsa-sha256; t=1527156169; cv=none;
+X-Google-Smtp-Source: AB8JxZr0JSljlt3/3NyIIXp9xG4QnjsdHccUPxdSeYfsmNrZVHNIOgJ176TqINkkeTYSyp9C/0eo
+ARC-Seal: i=1; a=rsa-sha256; t=1527156166; cv=none;
         d=google.com; s=arc-20160816;
-        b=mrB5UctJb3DrfUbx4NP7oKpM5cpJYeOEJhwGSXq4D70GIYZTOJNp9BXHb6lcyGVGjK
-         c1hed6hmDymPsk+bS0TawNOOhDVKST79JvDXLBR4o7LuyUUhbLZtMmWhy3mL/0mEwD5y
-         K/UTgipvhH4l51VlBdNhhB6Kmx118yDMCM9Jxbhi7H8LYRL+QvAAG9ojKwbbUdh14HKM
-         SQzIuKL0CeFnYxIgI7sa5KCBhrytQXHNeCt4ZCf+HYbVOAJ2TuOP6F8gp353lUqenY6f
-         t9E7bfAEXu7/NiF9eebzNPM/RJKMfSeWX/+QDNHdVJtLhgY8rzTyss7AwpFtVa6YLDbK
-         9FDw==
+        b=HFwIR6AFnoZIxlhXjLgvyYjkqNliIr3JlriswTOR0BP0XOBkXzMzR1uYIzCg5Hh8ns
+         JbuVjjeDUHC8QShSifoftWXYaxqKsy5EjQWafuRcvjhZQlps5qNLGRvNHa2XKNn3Wq6Q
+         57bGTbGHm19zPNTMsWFdqqqXhYsNu/WihVP6fP6IPGS5psF33I1wTBm3xYIrAps0GxK7
+         tKb1GXNnYH3SNjw+pyFKtBPNIHEHzr+52MAQ4h9r0ewrGvsX595+cHnCC+Fj3B3oiBU2
+         FcLwDS+AqinPzby6I/fXpfvrY4K3Db4t2btr8r/+sTNutRaJr6//9mmTgcj1NhDIPeJw
+         6hUw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=carjZJkaWhlEN5gkxTkpJJ/CvIYqNQGP1cRFXeg/Foo=;
-        b=Geu2/dkHzeVqb9AacCW+DR5XtyNcZ+LlcdjkzWfFBn0jYzXa3XAN4fFmeE5cSqr410
-         beXXHaqn33yEnwcaTLzwP82daPoxI7eVCERy2jU+WQ3qwAVBqTQmz3IF1aQ6lzy18J94
-         nXsKWlILelHDK/lPnWX0ty2GLOTNm8twkD/V/whoVJl0tITLE3YHn1FMP3C+Li77LuW4
-         Gk5O4hnQAmqg2sM+QlJrLXzuBH/TWysbQkLI7IIKlFcpP4fjay4BvfL4xNqmg2SETVnz
-         f1ppKLvdfzUtiAhJasY2v3awchctIlllubQ195wqmxenZUnAQ0sKli8lszmtMWVtHDCM
-         ba1g==
+        bh=Y9cJAADyzhHXITBzM+Jts3OUezyd7Ifbysb90sYaOgY=;
+        b=X6WIBTcI2yAHq6oPsR9S+BSZvLFIbC63+OYFc5ZUnd4CPA44HOInILcfezHXPwEVFx
+         fa79Wy/To0yGkLZSBHS83buPt+bzIf/ZjzQSbWa97grqbg3tUrvELWOrEFLIn9En0rMc
+         Aht5TLIz0ITIgtVmETQ/208EF1HN/1O+QO5KZb1d9FRDGAefH/zWXQwzU38NWsYcxnk4
+         OK9OUoPhqhx+pr9gSgZ6oz4tQQpfxwFs+CAx+5kDAsitKkQzG+pWoZaUvQsiIUoOv6RV
+         tjurJOfJqZzaYQqWdiVyj4z3FVKYnXJYR4EG8HlH+6vT5h3jNPp42lvvDAYmFU84g4XT
+         Lvlg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=ZweO5Ou8;
+       dkim=pass header.i=@kernel.org header.s=default header.b=Nis+Oo83;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=ZweO5Ou8;
+       dkim=pass header.i=@kernel.org header.s=default header.b=Nis+Oo83;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	syzbot <syzbot+4f2e5f086147d543ab03@syzkaller.appspotmail.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	David Howells <dhowells@redhat.com>,
-	"Ernesto A. Fernandez" <ernesto.mnd.fernandez@gmail.com>,
-	Vyacheslav Dubeyko <slava@dubeyko.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.16 088/161] hfsplus: stop workqueue when fill_super() failed
-Date: Thu, 24 May 2018 11:38:33 +0200
-Message-Id: <20180524093028.992571455@linuxfoundation.org>
+	syzbot+230d9e642a85d3fec29c@syzkaller.appspotmail.com,
+	Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 4.16 087/161] cfg80211: limit wiphy names to 128 bytes
+Date: Thu, 24 May 2018 11:38:32 +0200
+Message-Id: <20180524093028.878554842@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -48,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601338024196822374?=
-X-GMAIL-MSGID: =?utf-8?q?1601339306973202630?=
+X-GMAIL-THRID: =?utf-8?q?1601338022330318261?=
+X-GMAIL-MSGID: =?utf-8?q?1601339304472752060?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -57,43 +51,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Johannes Berg <johannes.berg@intel.com>
 
-commit 66072c29328717072fd84aaff3e070e3f008ba77 upstream.
+commit a7cfebcb7594a24609268f91299ab85ba064bf82 upstream.
 
-syzbot is reporting ODEBUG messages at hfsplus_fill_super() [1].  This
-is because hfsplus_fill_super() forgot to call cancel_delayed_work_sync().
+There's currently no limit on wiphy names, other than netlink
+message size and memory limitations, but that causes issues when,
+for example, the wiphy name is used in a uevent, e.g. in rfkill
+where we use the same name for the rfkill instance, and then the
+buffer there is "only" 2k for the environment variables.
 
-As far as I can see, it is hfsplus_mark_mdb_dirty() from
-hfsplus_new_inode() in hfsplus_fill_super() that calls
-queue_delayed_work().  Therefore, I assume that hfsplus_new_inode() does
-not fail if queue_delayed_work() was called, and the out_put_hidden_dir
-label is the appropriate location to call cancel_delayed_work_sync().
+This was reported by syzkaller, which used a 4k name.
 
-[1] https://syzkaller.appspot.com/bug?id=a66f45e96fdbeb76b796bf46eb25ea878c42a6c9
+Limit the name to something reasonable, I randomly picked 128.
 
-Link: http://lkml.kernel.org/r/964a8b27-cd69-357c-fe78-76b066056201@I-love.SAKURA.ne.jp
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzbot+4f2e5f086147d543ab03@syzkaller.appspotmail.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Ernesto A. Fernandez <ernesto.mnd.fernandez@gmail.com>
-Cc: Vyacheslav Dubeyko <slava@dubeyko.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reported-by: syzbot+230d9e642a85d3fec29c@syzkaller.appspotmail.com
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/hfsplus/super.c |    1 +
- 1 file changed, 1 insertion(+)
+ include/uapi/linux/nl80211.h |    2 ++
+ net/wireless/core.c          |    3 +++
+ 2 files changed, 5 insertions(+)
 
---- a/fs/hfsplus/super.c
-+++ b/fs/hfsplus/super.c
-@@ -588,6 +588,7 @@ static int hfsplus_fill_super(struct sup
- 	return 0;
+--- a/include/uapi/linux/nl80211.h
++++ b/include/uapi/linux/nl80211.h
+@@ -2618,6 +2618,8 @@ enum nl80211_attrs {
+ #define NL80211_ATTR_KEYS NL80211_ATTR_KEYS
+ #define NL80211_ATTR_FEATURE_FLAGS NL80211_ATTR_FEATURE_FLAGS
  
- out_put_hidden_dir:
-+	cancel_delayed_work_sync(&sbi->sync_work);
- 	iput(sbi->hidden_dir);
- out_put_root:
- 	dput(sb->s_root);
++#define NL80211_WIPHY_NAME_MAXLEN		128
++
+ #define NL80211_MAX_SUPP_RATES			32
+ #define NL80211_MAX_SUPP_HT_RATES		77
+ #define NL80211_MAX_SUPP_REG_RULES		64
+--- a/net/wireless/core.c
++++ b/net/wireless/core.c
+@@ -95,6 +95,9 @@ static int cfg80211_dev_check_name(struc
+ 
+ 	ASSERT_RTNL();
+ 
++	if (strlen(newname) > NL80211_WIPHY_NAME_MAXLEN)
++		return -EINVAL;
++
+ 	/* prohibit calling the thing phy%d when %d is not its number */
+ 	sscanf(newname, PHY_NAME "%d%n", &wiphy_idx, &taken);
+ 	if (taken == strlen(newname) && wiphy_idx != rdev->wiphy_idx) {
