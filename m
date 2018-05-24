@@ -1,47 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935759AbeEXHgN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 03:36:13 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:43443 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935498AbeEXHgK (ORCPT
+        id S964833AbeEXHhc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 03:37:32 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:60410 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935498AbeEXHh2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 03:36:10 -0400
-X-Google-Smtp-Source: AB8JxZoBXtVz+QsCyYJW/6fWs81TINOU8yeCkZz0/7FtKe0xInzCpmVpmM0wmlvpJOTWgHYqTvbFSHGFiB1BoLh9Y7c=
+        Thu, 24 May 2018 03:37:28 -0400
+Date: Thu, 24 May 2018 00:36:54 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Kees Cook <keescook@chromium.org>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Tejun Heo <tj@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Manoj N. Kumar" <manoj@linux.vnet.ibm.com>,
+        "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>,
+        Uma Krishnan <ukrishn@linux.vnet.ibm.com>,
+        linux-block <linux-block@vger.kernel.org>, linux-ide@vger.kernel.org,
+        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/6] block: Create scsi_sense.h for SCSI and ATAPI
+Message-ID: <20180524073654.GA32083@infradead.org>
+References: <8d4af5c4-96fa-54ee-d5c1-b887b1de5a3c@kernel.dk>
+ <CAGXu5j+mgGZkTDS6EDRspJKKbU=vMT4ehv9T-SekPba=ESoGDg@mail.gmail.com>
+ <9A0BC289-4203-4C77-A012-AAB07F42061F@kernel.dk>
+ <CAGXu5jJsGWDsZNDJvUUqncSaAcvond_B_J7=BbvVW0X3r6Sxww@mail.gmail.com>
+ <aa150272-ffeb-fb8f-7303-0d9502cf9a71@kernel.dk>
+ <20180523142545.GA16248@infradead.org>
+ <24d36869-e037-042d-cb16-20a81b34eb76@kernel.dk>
+ <CAGXu5jJn=1Rz=D8VUwv_VoaGoLtaD=+tcPZxQxntweZoZwFa5Q@mail.gmail.com>
+ <yq1o9h684lh.fsf@oracle.com>
+ <CAGXu5jLzNNejH1MEH3ct0hSyOtG1zk8=gE4Qpd2yDvQTSahL+w@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <3898620ef606004aaddc332591ca467f56773029.1526835466.git.sean.wang@mediatek.com>
-References: <cover.1526835466.git.sean.wang@mediatek.com> <3898620ef606004aaddc332591ca467f56773029.1526835466.git.sean.wang@mediatek.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 24 May 2018 09:36:08 +0200
-Message-ID: <CACRpkdbKwck2E3v+vr3freG1L5kSnfRc8Gti7jYtkqcuemK-fQ@mail.gmail.com>
-Subject: Re: [PATCH v1 1/7] dt-bindings: pinctrl: add external interrupt
- support to MT7622 pinctrl
-To: Sean Wang <sean.wang@mediatek.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support"
-        <linux-mediatek@lists.infradead.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGXu5jLzNNejH1MEH3ct0hSyOtG1zk8=gE4Qpd2yDvQTSahL+w@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 20, 2018 at 7:01 PM,  <sean.wang@mediatek.com> wrote:
+On Wed, May 23, 2018 at 02:17:14PM -0700, Kees Cook wrote:
+> 
+> True, though I'm finding other robustness issues in the CDROM code.
+> They're probably all insane corner cases, but it seems like it'd be
+> nice to just fix them:
+> 
+> diff --git a/drivers/cdrom/cdrom.c b/drivers/cdrom/cdrom.c
+> index 3522d2cae1b6..7726c8618c30 100644
+> --- a/drivers/cdrom/cdrom.c
+> +++ b/drivers/cdrom/cdrom.c
+> @@ -2222,9 +2223,12 @@ static int cdrom_read_cdda_bpc(struct
+> cdrom_device_info *cdi, __u8 __user *ubuf,
+> 
+>                 blk_execute_rq(q, cdi->disk, rq, 0);
+>                 if (scsi_req(rq)->result) {
+> -                       struct request_sense *s = req->sense;
+> +                       struct scsi_sense_hdr sshdr;
+> +
+>                         ret = -EIO;
+> -                       cdi->last_sense = s->sense_key;
+> +                       scsi_normalize_sense(req->sense, req->sense_len,
+> +                                            &sshdr);
+> +                       cdi->last_sense = sshdr.sense_key;
+>                 }
+> 
+>                 if (blk_rq_unmap_user(bio))
 
-> From: Sean Wang <sean.wang@mediatek.com>
->
-> Extend the capability of MT7622 pinctrl with adding EINT so that each
-> GPIO can be used to notify CPU when a signal state is changing on the
-> line as an external interrupt.
->
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-
-Patch applied with Rob's review tag.
-
-Yours,
-Linus Walleij
+The proper fix here is to rewrite this function to use the the
+->generic_packet cdrom_device_ops method.  Is is the only caller
+going straight to the scsi passthrough requests, which is a layering
+violation.
