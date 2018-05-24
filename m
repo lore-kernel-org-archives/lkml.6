@@ -1,11 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1691122-1527154970-2-16713801359319117126
+X-Cyrus-Session-Id: sloti22d1t05-1691122-1527154951-2-11895137951864047394
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES endasv, BAYES_USED global,
-  SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -13,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527154970; b=Y389zDG8CetwrzNutA3Q22SXSG+RpP11Q3N0+/nmfkB7nAfMc9
-    gU1ruGpz8EXbAm4O/tdbKhpuPQKuwK73J1PhqIUHAuZSjFBycKlXG+iF8DOf8M45
-    q5rUSiqMAdhdSq0hG86rFKS8T6wnzeVhGHNTRffctR54kj1CH+vhEJLix4jDJmmg
-    Gu8TtVBFHoyv1kyn1U0+qDyDLheaCnc8VMHcuA9BuKh2Ts8UpFTdD267viBNrol5
-    Y7BIdaux070eixpiwFtaVSOOWHLFB+AiUDw+QkSFkhqks1tLJqQ3ohMgbr9d8vCK
-    Yc6H8Yrgp29wpLC4fhs+c8R/KaeXADw1dlfA==
+    1527154951; b=IqEn+ef8HorBD2R0Stfb6SgxuBgTRqpNlpCNHmx7fHZmvzvzjq
+    2Ybk1Bs+4M1IqkyXArPO9ARP8aXlUS35RsbRHy+B6SZ/3ELAgPTJ1anOA+X43dMb
+    ZiU0cVtaYVVK1xnADjmqHChDj8v6ZVY3+EWD/9HjdTBcHN3F6JXI8dqUNnIBTVgX
+    0VCM1Xu57xj+I3OFTHi9zZPDouW7qxZLmg5zxCfIM5lr1n/l1F0pFgthGbEClf0C
+    q2vvdNJ+5JYzk4d+BbARQG69LPSQsyBt4UbvjttNVE4CB4Ynx/YSNvRFNb5bb83G
+    0t7iLxVRsvTMvwOmo7uUGdJn/9wdBFedczNQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527154970; bh=gziWDr3OUZr0xaw4Xp+0YpleaUzRXS
-    etadjW4vRhTxg=; b=nSfai6mudv7S7wEMSySdBwxxF/G53FbhiD8B/ZQCmZTTdf
-    gFyHFSQBPII+JMLxAHsdFPvwAim4Pzy8m+3cPcM0yiIqO4tCFPkPwa2Tu53zjMP4
-    1qipNpF151VjGQoGINMUw3mNYmnz6oDsdeAeZtkwhvvIi9qxSSGYCx6uegWBI507
-    2Oj0Pn0KeogVnVjoWh6JgfOmrjEO/JhSoF2A+NCHfJnI2SKhRSdW2c9IH6cgVYQF
-    CbTIqGYuM+BZsOvQQNpzIpCTmllMjshHD7dhrD+FgwkidpWZkq9pEZChxddxV2rM
-    EhRj2DeDDO2vbOTUelv5SniDDVv/QDYzhzNlH5vw==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527154951; bh=CU0hqyJa0tAGIW4cMZW3znGhpD3KRl
+    e9XnaW354nQRo=; b=GLIzzVAaH+vtb7sSS8zFOBlK9jEYnuwl4NcNC/RuTMoQ+G
+    Ppmjb2xRB59zyCvh6DsRv8MY6aOLlF9PofTvgE3BBNJEnLjdApNazCzkrE+zuWOz
+    DQKnUrfjIdT+DEm+vA6RilVne9QHXmnX3PPnsqX9nT6kBlTpmvKpyGcn1FUa5RQV
+    oRq3GFIjaj5JYRvCvn7e4YWrnBbE/x3qqGs2oiPMv1v/LSiHUZ/lZXcAOpZDL4TM
+    EtiCjzfUrzIgzrSthNYCGkXuGqWv/+ojEGExilw7UIrdj1e4zay9FzkYJG+9Tfx6
+    qrgbmEec7goJbwZF5wKh/C/fJacz/NVGjqi6F0og==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=a0cG34i3 x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=g5myucmc x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,11 +44,11 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+    x-vs=clean score=-51 state=0
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=a0cG34i3 x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=g5myucmc x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -63,30 +62,42 @@ Authentication-Results: mx6.messagingengine.com;
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
       header.domain=linuxfoundation.org header.result=pass
       header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+    x-vs=clean score=-51 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPlxBCI6TMgt14J5ogxEA58UGMDaEV3DTwgER5VzBr9NkSRi21mbjbofBnc8R4G10O/bh7JfPKjQgfMLClOGyzKalnYL8lXlExbcv3WhG2/lS9w7PKmr
-    i5U/ZkfpuRGX6LNw4lw4P1o4WXZPF2ZMC7BtEdv6TMPZZsOMsAgU+KGDYYfaBJfI8Jb2jLaeQ1Lqo7uc6v11jCS1cFCio0uNqOrYcnjJ6o0rl+Ww2Pz428S/
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfGqkOLCPnemjVpiF+1qnIBiKy69OoC9aaRtJCFLHNEEbg/E37PvW9k0yXhEbj6Dew5UPqYBpxIVRajs1su4MfGipbtF1mzLEBgZ4QYPWspgAh5uVSH9L
+    I6xP1lCmE81UouLdTx1ndPO9YDHg8F/pfyJpFyBws/PflqyJazvB+2zbu0TQxhE/hBo8SvqYhKFtv8wdkL4xiJNbu352SnKPi0kYuJ5SJ5HNQL0sdmjRdHjm
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=hD80L64hAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=KslZaVS1h0vLkMwhe8wA:9
-    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=edf1wS77AAAA:8 a=VwQbUJbxAAAA:8 a=hSkVLCK3AAAA:8 a=drOt6m5kAAAA:8
+    a=20KFwNOVAAAA:8 a=pGLkceISAAAA:8 a=wCmvBT1CAAAA:8 a=Z4Rwk6OoAAAA:8
+    a=ag1SF4gXAAAA:8 a=1IQeFdjzDtnnfWY1XQAA:9 a=QEXdDO2ut3YA:10
+    a=DcSpbTIhAlouE1Uv7lRv:22 a=AjGcO6oz07-iQ99wixmX:22 a=cQPPKAXgyycSBL8etih5:22
+    a=RMMjzBEyIzXRtoq5n5K6:22 a=6z96SAwNL0f8klobD5od:22 a=HkZW87K1Qel5hWWM3VKY:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966148AbeEXJmp (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:42:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54282 "EHLO mail.kernel.org"
+        id S966346AbeEXJm3 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:42:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54056 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966374AbeEXJmj (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:42:39 -0400
+        id S966326AbeEXJm0 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:42:26 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH 3.18 23/45] usbip: usbip_host: refine probe and disconnect debug msgs to be useful
-Date: Thu, 24 May 2018 11:38:31 +0200
-Message-Id: <20180524093123.627328362@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        syzbot <syzbot+4f2e5f086147d543ab03@syzkaller.appspotmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        "Ernesto A. Fernandez" <ernesto.mnd.fernandez@gmail.com>,
+        Vyacheslav Dubeyko <slava@dubeyko.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 3.18 44/45] hfsplus: stop workqueue when fill_super() failed
+Date: Thu, 24 May 2018 11:38:52 +0200
+Message-Id: <20180524093126.635869942@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093120.599252450@linuxfoundation.org>
 References: <20180524093120.599252450@linuxfoundation.org>
@@ -104,38 +115,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shuah Khan <shuahkh@osg.samsung.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-commit 28b68acc4a88dcf91fd1dcf2577371dc9bf574cc upstream.
+commit 66072c29328717072fd84aaff3e070e3f008ba77 upstream.
 
-Refine probe and disconnect debug msgs to be useful and say what is
-in progress.
+syzbot is reporting ODEBUG messages at hfsplus_fill_super() [1].  This
+is because hfsplus_fill_super() forgot to call cancel_delayed_work_sync().
 
-Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
-Cc: stable <stable@vger.kernel.org>
+As far as I can see, it is hfsplus_mark_mdb_dirty() from
+hfsplus_new_inode() in hfsplus_fill_super() that calls
+queue_delayed_work().  Therefore, I assume that hfsplus_new_inode() does
+not fail if queue_delayed_work() was called, and the out_put_hidden_dir
+label is the appropriate location to call cancel_delayed_work_sync().
+
+[1] https://syzkaller.appspot.com/bug?id=a66f45e96fdbeb76b796bf46eb25ea878c42a6c9
+
+Link: http://lkml.kernel.org/r/964a8b27-cd69-357c-fe78-76b066056201@I-love.SAKURA.ne.jp
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: syzbot <syzbot+4f2e5f086147d543ab03@syzkaller.appspotmail.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Ernesto A. Fernandez <ernesto.mnd.fernandez@gmail.com>
+Cc: Vyacheslav Dubeyko <slava@dubeyko.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/usbip/stub_dev.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/hfsplus/super.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/usb/usbip/stub_dev.c
-+++ b/drivers/usb/usbip/stub_dev.c
-@@ -317,7 +317,7 @@ static int stub_probe(struct usb_device
- 	struct bus_id_priv *busid_priv;
- 	int rc;
+--- a/fs/hfsplus/super.c
++++ b/fs/hfsplus/super.c
+@@ -582,6 +582,7 @@ static int hfsplus_fill_super(struct sup
+ 	return 0;
  
--	dev_dbg(&udev->dev, "Enter\n");
-+	dev_dbg(&udev->dev, "Enter probe\n");
- 
- 	/* check we should claim or not by busid_table */
- 	busid_priv = get_busid_priv(udev_busid);
-@@ -415,7 +415,7 @@ static void stub_disconnect(struct usb_d
- 	struct bus_id_priv *busid_priv;
- 	int rc;
- 
--	dev_dbg(&udev->dev, "Enter\n");
-+	dev_dbg(&udev->dev, "Enter disconnect\n");
- 
- 	busid_priv = get_busid_priv(udev_busid);
- 	if (!busid_priv) {
+ out_put_hidden_dir:
++	cancel_delayed_work_sync(&sbi->sync_work);
+ 	iput(sbi->hidden_dir);
+ out_put_root:
+ 	dput(sb->s_root);
