@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1874556-1527163032-2-11022537055013972529
+X-Cyrus-Session-Id: sloti22d1t05-1874556-1527163014-2-9375911936153714342
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527163031; b=F1pgDFJyOqbYmnXMXQHPgycMq2Q/UzXPH5dxkrfY7bcWcgSp6w
-    zTYO5k6Lh+HLQ9maNFa+BrRjqEnjG127tDzrSf8TxRtCibtnpIaPa/p7FuQahOKn
-    Auyo4q6B8hXKdMmPQTu/AIz4pPDG1/9ch1BjnfJL1E2KIN3fHHuz3mSKCHopOm3e
-    Wzwafg+bzIElDJGFggKsJPoCa34jJoP6EHB0G0GYLRx1dyRVkASZnFBRdf0inCJw
-    ehM1qJ5EuTh8Z4IYG2dNd9+1bcDclBl7PP9STfS6C/o2asLpzSiKuEjtMdy0Txyt
-    jd9G+onn9W9BfmiZNVJ0WI7//DacStwgsjoA==
+    1527163013; b=I6ceFOK89sAJhVkSYvqj9NgV8h5umGZ9K75MD1jU4s/GEY0acg
+    DUY+0u+OuyoYsgLIkDrlVpFImfc7SExFR33mU3iSwAXb4G74cR3grzFsMLhunCm4
+    Bc+mOUTuSf4M5BXPb/klvBoj9M93QHOqbmKNgWppkG+p203mbWe+rOZPCd4Bo316
+    MAmzXdZJs1n0uvKK6FBZF+buWWFBiqOYPtwlL4ql5bL4NjwXeeCbc6i6gTt5tF7V
+    s46xMFORtabObylnn/o2PjB9KGF/+lIt5C8eqbonm7w1Uqstpi8KMB0idKWvVcnc
+    s+NG+J0jPbLjbfCdRWZSMmNpNHT7Rva/YcUA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527163031; bh=zJoZ3MZLVLIpMA+g4i2l76XhzwSwah
-    0D48+H2OiZF0M=; b=JYGn69vbeHSnTgr4lGyJDGBFqRUCFwPhHSP+yBbt/9DPqD
-    OUJEoquKNOly8Z3Rxj0CXf6axMUZpbLMXr5u/GHUj54pjtCBd0mkoEkacD3pjlpA
-    tdgAxRv5fOO8LFyvJFdS/gGewtsEAAZN6b7sIy5NA2XRTRmb0lv4ndHm4c21TcdZ
-    vZkztX3fuEl8f3aT8JEc1vOTzIx1eip61mUtQQDbiL7zBOCydl+qgYEB9HQvPNwf
-    BLYtWcqn2+xR8uS6Z/b2pI2LeAU5BWgSz5SQa2w9lZzA/2gjLJc9PNZDlLp4L4Bb
-    JuhpSX1MR8iIxl6v8XP4tg0b7WzKexVgwrpNRL5w==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527163013; bh=Wk+Jhwg//dMHFIzN6I397rHbq2eqow
+    oXbK6SwFrD5FE=; b=iatiuYoY9kc/JzW9yrwbvjkoQpJXRFyXxZpVjC1z0HuZCo
+    GjRt22y6+wxL6Rfx7l9+7lFbMK944p+2/TDVUCSkxu5DFAkccHDulDxpoXjGFkzT
+    ge8AWskrRRhOVwZog0/KxIUm9C4pCqam9Obc5wCr6RvV5eUNiYPyWh22DQda/Tf0
+    mLQOzj2axBQNZ8B6yOugbIRuI+Oc4xG7CnyU7ZTonK/wVhF75myxMggk/Bou05Gf
+    PrtTfZWf+KgmIf0WLXlzdgwLnnFgkl7x/ON1YrmYoWKtSTjvIuvT/OgHy6EFLr2n
+    wXjLXkuOZztSDL66Gs2sHHPuCKcwvHsAw/EUgdig==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=UYizxom0 x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=01Lfoi5H x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=UYizxom0 x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=01Lfoi5H x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,31 +64,32 @@ Authentication-Results: mx5.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFPGFlNRSK9GxbhOpfWJq/bnVgVHOxcDr+ApL3rZtFjeYwIgDnadu5+X9wXkb9a/Ao/R3MnZDgoyxyZjyvqtObTHlgfkvZlk3THFHi0hzxnMewplSN/T
-    qXIR8j1RgBPhdXiVYBnyKIcWdKvfewox9yN6t97cg1VYFxg28JPNNCrq6IEvAzlICvtef03SyGh6vJ/dBjt4iTO8IDTP1kDq3olYaD9x84c2hMETyABMCJl1
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfGji0O9xWUlsu3EMbAQRnzh8Lsw3WbrwAX80XCyqI1auCarEJvUlBcZhSWOGlXpndsy+j5fkIgFm80B3nEhJ2It554U8Ozx1167BwGYGJC6ggUGM/3Pj
+    HQSy/ay6OVRQRTXpIB1JD56JtWEoRxSuCLWZ4et3uWGXifIKQ6u/+1rfGLPQqqqcDwdmHtU9yf7tVpiYcFsLk/884O3I7m3/aQ56VF5bzFME5qppcDXrgUkc
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=1XWaLZrsAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=FDWzJhBSr47RAHrKXxYA:9
-    a=NEIUmRbUyShVYMNE:21 a=XfC4L9z_rsF2_Xuf:21 a=QEXdDO2ut3YA:10
-    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=SRrdq9N9AAAA:8 a=VwQbUJbxAAAA:8 a=iox4zFpeAAAA:8 a=ag1SF4gXAAAA:8
+    a=TU_DJ3MC0Tpo-rwQ4GkA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=WzC6qhA0u3u7Ye7llzcV:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966878AbeEXL4w (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 07:56:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56900 "EHLO mail.kernel.org"
+        id S966541AbeEXJpr (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:45:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56876 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966369AbeEXJpp (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:45:45 -0400
+        id S966818AbeEXJpn (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:45:43 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Willem de Bruijn <willemb@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 71/92] net: test tailroom before appending to linear skb
-Date: Thu, 24 May 2018 11:38:48 +0200
-Message-Id: <20180524093206.154970920@linuxfoundation.org>
+        stable@vger.kernel.org, Liu Bo <bo.liu@linux.alibaba.com>,
+        Filipe Manana <fdmanana@suse.com>, Qu Wenruo <wqu@suse.com>,
+        David Sterba <dsterba@suse.com>,
+        Nikolay Borisov <nborisov@suse.com>
+Subject: [PATCH 4.4 70/92] btrfs: fix reading stale metadata blocks after degraded raid1 mounts
+Date: Thu, 24 May 2018 11:38:47 +0200
+Message-Id: <20180524093206.062830692@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093159.286472249@linuxfoundation.org>
 References: <20180524093159.286472249@linuxfoundation.org>
@@ -106,52 +107,94 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Willem de Bruijn <willemb@google.com>
+From: Liu Bo <bo.liu@linux.alibaba.com>
 
-[ Upstream commit 113f99c3358564a0647d444c2ae34e8b1abfd5b9 ]
+commit 02a3307aa9c20b4f6626255b028f07f6cfa16feb upstream.
 
-Device features may change during transmission. In particular with
-corking, a device may toggle scatter-gather in between allocating
-and writing to an skb.
+If a btree block, aka. extent buffer, is not available in the extent
+buffer cache, it'll be read out from the disk instead, i.e.
 
-Do not unconditionally assume that !NETIF_F_SG at write time implies
-that the same held at alloc time and thus the skb has sufficient
-tailroom.
+btrfs_search_slot()
+  read_block_for_search()  # hold parent and its lock, go to read child
+    btrfs_release_path()
+    read_tree_block()  # read child
 
-This issue predates git history.
+Unfortunately, the parent lock got released before reading child, so
+commit 5bdd3536cbbe ("Btrfs: Fix block generation verification race") had
+used 0 as parent transid to read the child block.  It forces
+read_tree_block() not to check if parent transid is different with the
+generation id of the child that it reads out from disk.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Reported-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Willem de Bruijn <willemb@google.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+A simple PoC is included in btrfs/124,
+
+0. A two-disk raid1 btrfs,
+
+1. Right after mkfs.btrfs, block A is allocated to be device tree's root.
+
+2. Mount this filesystem and put it in use, after a while, device tree's
+   root got COW but block A hasn't been allocated/overwritten yet.
+
+3. Umount it and reload the btrfs module to remove both disks from the
+   global @fs_devices list.
+
+4. mount -odegraded dev1 and write some data, so now block A is allocated
+   to be a leaf in checksum tree.  Note that only dev1 has the latest
+   metadata of this filesystem.
+
+5. Umount it and mount it again normally (with both disks), since raid1
+   can pick up one disk by the writer task's pid, if btrfs_search_slot()
+   needs to read block A, dev2 which does NOT have the latest metadata
+   might be read for block A, then we got a stale block A.
+
+6. As parent transid is not checked, block A is marked as uptodate and
+   put into the extent buffer cache, so the future search won't bother
+   to read disk again, which means it'll make changes on this stale
+   one and make it dirty and flush it onto disk.
+
+To avoid the problem, parent transid needs to be passed to
+read_tree_block().
+
+In order to get a valid parent transid, we need to hold the parent's
+lock until finishing reading child.
+
+This patch needs to be slightly adapted for stable kernels, the
+&first_key parameter added to read_tree_block() is from 4.16+
+(581c1760415c4). The fix is to replace 0 by 'gen'.
+
+Fixes: 5bdd3536cbbe ("Btrfs: Fix block generation verification race")
+CC: stable@vger.kernel.org # 4.4+
+Signed-off-by: Liu Bo <bo.liu@linux.alibaba.com>
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
+Reviewed-by: Qu Wenruo <wqu@suse.com>
+[ update changelog ]
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Nikolay Borisov <nborisov@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv4/ip_output.c  |    3 ++-
- net/ipv6/ip6_output.c |    3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
 
---- a/net/ipv4/ip_output.c
-+++ b/net/ipv4/ip_output.c
-@@ -1062,7 +1062,8 @@ alloc_new_skb:
- 		if (copy > length)
- 			copy = length;
+---
+ fs/btrfs/ctree.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+--- a/fs/btrfs/ctree.c
++++ b/fs/btrfs/ctree.c
+@@ -2497,10 +2497,8 @@ read_block_for_search(struct btrfs_trans
+ 	if (p->reada)
+ 		reada_for_search(root, p, level, slot, key->objectid);
  
--		if (!(rt->dst.dev->features&NETIF_F_SG)) {
-+		if (!(rt->dst.dev->features&NETIF_F_SG) &&
-+		    skb_tailroom(skb) >= copy) {
- 			unsigned int off;
+-	btrfs_release_path(p);
+-
+ 	ret = -EAGAIN;
+-	tmp = read_tree_block(root, blocknr, 0);
++	tmp = read_tree_block(root, blocknr, gen);
+ 	if (!IS_ERR(tmp)) {
+ 		/*
+ 		 * If the read above didn't mark this buffer up to date,
+@@ -2512,6 +2510,8 @@ read_block_for_search(struct btrfs_trans
+ 			ret = -EIO;
+ 		free_extent_buffer(tmp);
+ 	}
++
++	btrfs_release_path(p);
+ 	return ret;
+ }
  
- 			off = skb->len;
---- a/net/ipv6/ip6_output.c
-+++ b/net/ipv6/ip6_output.c
-@@ -1529,7 +1529,8 @@ alloc_new_skb:
- 		if (copy > length)
- 			copy = length;
- 
--		if (!(rt->dst.dev->features&NETIF_F_SG)) {
-+		if (!(rt->dst.dev->features&NETIF_F_SG) &&
-+		    skb_tailroom(skb) >= copy) {
- 			unsigned int off;
- 
- 			off = skb->len;
