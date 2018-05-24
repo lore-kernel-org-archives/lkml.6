@@ -1,166 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034223AbeEXSUi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 14:20:38 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40492 "EHLO mx1.redhat.com"
+        id S1034267AbeEXSUw (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 14:20:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54474 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030202AbeEXSUh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 14:20:37 -0400
-Date: Thu, 24 May 2018 12:20:32 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-Cc: <eric.auger@redhat.com>, <pmorel@linux.vnet.ibm.com>,
-        <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <iommu@lists.linux-foundation.org>, <linuxarm@huawei.com>,
-        <john.garry@huawei.com>, <xuwei5@hisilicon.com>,
-        Joerg Roedel <joro@8bytes.org>
-Subject: Re: [PATCH v6 0/7] vfio/type1: Add support for valid iova list
- management
-Message-ID: <20180524122032.724676b9@w520.home>
-In-Reply-To: <20180418114045.7968-1-shameerali.kolothum.thodi@huawei.com>
-References: <20180418114045.7968-1-shameerali.kolothum.thodi@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1034251AbeEXSUo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 14:20:44 -0400
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        arm@kernel.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL 1/2] ARM: dts: exynos: Second round for v4.18
+Date: Thu, 24 May 2018 20:20:15 +0200
+Message-Id: <20180524182016.5866-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Cc +Joerg: AMD-Vi observation towards the end]
+Hi,
 
-On Wed, 18 Apr 2018 12:40:38 +0100
-Shameer Kolothum <shameerali.kolothum.thodi@huawei.com> wrote:
+On top of previous pull request.
 
-> This series introduces an iova list associated with a vfio 
-> iommu. The list is kept updated taking care of iommu apertures,
-> and reserved regions. Also this series adds checks for any conflict
-> with existing dma mappings whenever a new device group is attached to
-> the domain.
-> 
-> User-space can retrieve valid iova ranges using VFIO_IOMMU_GET_INFO
-> ioctl capability chains. Any dma map request outside the valid iova
-> range will be rejected.
+Best regards,
+Krzysztof
 
-Hi Shameer,
 
-I ran into two minor issues in testing this series, both related to
-mdev usage of type1.  First, in patch 5/7 when we try to validate a dma
-map request:
+The following changes since commit 83cb529b2ef4f3446e60e75522d76fdaaea4724c:
 
-> +static bool vfio_iommu_iova_dma_valid(struct vfio_iommu *iommu,
-> +				dma_addr_t start, dma_addr_t end)
-> +{
-> +	struct list_head *iova = &iommu->iova_list;
-> +	struct vfio_iova *node;
-> +
-> +	list_for_each_entry(node, iova, list) {
-> +		if ((start >= node->start) && (end <= node->end))
-> +			return true;
-> +	}
-> +
-> +	return false;
-> +}
+  ARM: dts: exynos: Update x and y properties for mms114 touchscreen (2018-05-13 15:15:49 +0200)
 
-A container with only an mdev device will have an empty list because it
-has not backing iommu to set ranges or reserved regions, so any dma map
-will fail.  I think this is resolved as follows:
+are available in the git repository at:
 
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -1100,7 +1100,7 @@ static bool vfio_iommu_iova_dma_valid(struct vfio_iommu *iommu,
-                        return true;
-        }
- 
--       return false;
-+       return list_empty(&iommu->iova_list);
- }
- 
-ie. return false only if there was anything to test against.
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-4.18-2
 
-The second issue is similar, patch 6/7 adds to VFIO_IOMMU_GET_INFO:
+for you to fetch changes up to 68605101460ea4c62a966b1ad3e8db90d8fbaa31:
 
-+		ret = vfio_iommu_iova_build_caps(iommu, &caps);
-+		if (ret)
-+			return ret;
+  ARM: dts: exynos: Add support for audio over HDMI for Odroid X/X2/U3 (2018-05-15 18:46:14 +0200)
 
-And build_caps has:
+----------------------------------------------------------------
+Samsung DTS ARM changes for v4.18, part 2
 
-+	list_for_each_entry(iova, &iommu->iova_list, list)
-+		iovas++;
-+
-+	if (!iovas) {
-+		ret = -EINVAL;
+1. Add support for audio over HDMI for Odroid X/X2/U3.
 
-Therefore if the iova list is empty, as for mdevs, the use can no
-longer even call VFIO_IOMMU_GET_INFO on the container, which is a
-regression.  Again, I think the fix is simple:
+----------------------------------------------------------------
+Sylwester Nawrocki (1):
+      ARM: dts: exynos: Add support for audio over HDMI for Odroid X/X2/U3
 
-@@ -2090,7 +2090,7 @@ static int vfio_iommu_iova_build_caps(struct vfio_iommu *iommu,
-                iovas++;
- 
-        if (!iovas) {
--               ret = -EINVAL;
-+               ret = 0;
-                goto out_unlock;
-        }
- 
-ie. build_caps needs to handle lack of an iova_list as a non-error.
-
-Also, I wrote a small unit test to validate the iova list for my
-systems[1].  With the above changes, my Intel test system gives expected
-results:
-
-# ./vfio-type1-iova-list /sys/bus/mdev/devices/c08db5ed-05d3-4b39-b150-438a18bc698f /sys/bus/pci/devices/0000:00:1b.0
----- Adding device: c08db5ed-05d3-4b39-b150-438a18bc698f ----
-Initial info struct size: 0x18
-No caps
----- Adding device: 0000:00:1b.0 ----
-Initial info struct size: 0x18
-Requested info struct size: 0x48
-New info struct size: 0x48
-argsz: 0x48, flags: 0x3, cap_offset: 0x18
-	00: 4800 0000 0300 0000 00f0 ffff ffff ffff
-	10: 1800 0000 0000 0000 0100 0100 0000 0000
-	20: 0200 0000 0000 0000 0000 0000 0000 0000
-	30: ffff dffe 0000 0000 0000 f0fe 0000 0000
-	40: ffff ffff ffff ff01 
-[cap id: 1, version: 1, next: 0x0]
-Found type1 iova range version: 1
-	00: 0000000000000000 - 00000000fedfffff
-	01: 00000000fef00000 - 01ffffffffffffff
-
-Adding an mdev device to the container results in no iova list, adding
-the physical device updates to the expected set with the MSI range
-excluded.
-
-I was a little surprised by an AMD system:
-
-# ./vfio-type1-iova-list /sys/bus/pci/devices/0000:01:00.0
----- Adding device: 0000:01:00.0 ----
-Initial info struct size: 0x18
-Requested info struct size: 0x58
-New info struct size: 0x58
-argsz: 0x58, flags: 0x3, cap_offset: 0x18
-	00: 5800 0000 0300 0000 00f0 ffff 7fff ffff
-	10: 1800 0000 0000 0000 0100 0100 0000 0000
-	20: 0300 0000 0000 0000 0000 0000 0000 0000
-	30: ffff dffe 0000 0000 0000 f0fe 0000 0000
-	40: ffff ffff fc00 0000 0000 0000 0001 0000
-	50: ffff ffff ffff ffff 
-[cap id: 1, version: 1, next: 0x0]
-Found type1 iova range version: 1
-	00: 0000000000000000 - 00000000fedfffff
-	01: 00000000fef00000 - 000000fcffffffff
-	02: 0000010000000000 - ffffffffffffffff
-
-The additional excluded range is the HyperTransport area (which for
-99.9+% of use cases isn't going to be a problem) is a rather surprising
-limit for the size of a VM we can use on AMD, just under 1TB.  I fully
-expect we'll see a bug report from that and we should be thinking about
-how to address it.  Otherwise, if the changes above look good to you
-I'll incorporate them into their respective patches and push to my next
-branch.  Thanks,
-
-Alex
-
-[1] https://gist.github.com/awilliam/25e39252ab28101a2d89ace1ff765fdd
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 33 +++++++++++++++----------
+ arch/arm/boot/dts/exynos4412-odroidu3.dts       |  6 ++---
+ arch/arm/boot/dts/exynos4412-odroidx.dts        |  6 ++---
+ 3 files changed, 26 insertions(+), 19 deletions(-)
