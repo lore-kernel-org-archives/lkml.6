@@ -1,39 +1,97 @@
-Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZoq2fNZgXqvoCC3N6/7+IUzdZQFt8Mgc/LATo1cHibESyR9O9knKpkwTKTYGDtgyFPGJcEa
-ARC-Seal: i=1; a=rsa-sha256; t=1527155974; cv=none;
-        d=google.com; s=arc-20160816;
-        b=W6t1dMHawE7O9sQEuwxeuPkNTlV8IXj8nEE93LnKhf9bZFrD/nQTo4+nhJX71+LPcP
-         W5vB9g6D4E0ZpYcbxFfXfNZXJODnSU7/hZJsiXwbGIDGiBugmSDpL0R1XpmEYwYgE0T0
-         xn5vKXr4Vb9K2Rrbz1JdzcZxKDM+doLZq7juB+mSKwl9weyJBom6DmyozgSWYv0EgCz4
-         UHcr9Uye2fpv/a5GMQrQdnmcBLIn0l9XIxKMSdGxGEmEac6ec2jJO02OH8LPAHUatM45
-         Fwee1RYpibhE7E6DLQ/vLsQ0mfQfDvrtM9WiEgADDmzJVPgjest0jjurqtYS/uXAKOlA
-         ttLA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=jo/ea8/VIw1lW96y/oQXdct0KHE6kWJlsIocgAXg5v4=;
-        b=qy+UUy4hgPd3L6AbV9YDvsdKJDmeHyhwqYyiZqyJB1YUrnxo6R9hJ04E65bMvld9Ou
-         hCwV2tZZn8rGchhUbENmh6Pz98H6xbfwGsVbAZ7CrtsIG8LPOL9mx9iMMLuhoLie9ftB
-         oCdnubuswOmiwJUOMBXu6ZwNWRUgocRc4nemWNl6LogMaVI8s9iczg33bojfmSsNIP19
-         NoKDKr/19dh5Xu9CDH+C+1dLa88o9o5VjJzR+dzOhbN2gs3inNCqMIlsTtJUk3UEV5Xg
-         li34jb72HwxlE2G9JK05+a7KPD5e7onrR6T40mJgygGaUi6kxAnlMnA99EpMsJEBW30m
-         qTJg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=kS2FxIl5;
-       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=kS2FxIl5;
-       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1733193-1527155959-2-10398620408355895840
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1527155958; b=dKEjQwxohayb+/PxnarP8IiOV0RwfqpOtui94t8d0w0OAuzZl4
+    D+1Cfgk6yusc4hykpdbfEHmnabexiSR4X4UdLpolJ0CFaDz1XIXjVzWoUgYdjyS9
+    QvsWviVe3GFCDE1Ahfy2RoO9KoCXX1HzWYFWMA+STjJA0mlFClDSXQEDCZq/EX01
+    eXoGDOIWxPD0Zd77AdH+twPekMkz8dMEJa2OHD3lBzzW5jO8iVwlblIuhL/HFGZP
+    iAm7ZKhkDgK+5DVOyDwGOtVUUF1/BODoVK1M2PWdLjsMmofsuhoqU6rytVFLhgIg
+    XaKvVna0QS/y2funehqmxyJSvQZ//Ql3lezA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1527155958; bh=HUQTy0TuvV/p6/CnWUXc5tN/ekxqDm
+    4VkHkWY5YcgS0=; b=ME7RcX9YpHIPkq0rDdYQitlZO538vVQAYv1sfGH6EsYCxs
+    FxqVpAF2kgWmOIjEfiLlxZMYVHd9/LOAf2i9Jc04b/wk9z6Ug6l+O3/F/uXHAxFK
+    CYWgAJRGCuJR535Ave/yozppF+WMld+jp8SRQSo8KmppXwmLNsk8IpGYZiFMBbUW
+    kf2aJkEJBdq/gpd3iuT9X9KpFBXJO9BE+OOBH8MMF6TSk0+lKRm3pQeot/24gLW7
+    mSPNeQ5fPCV800FG5erWGb9nSrFypv7ynHQf4MFDpkdJbkSe6FYbwV4w3JivtxUC
+    Wf77j2VQ6OZEbTvBOOhlhLTKwc0UM+9XA4xoz5UQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+    header.i=@kernel.org header.b=bepc+vkW x-bits=1024 x-keytype=rsa
+    x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+    header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=linuxfoundation.org header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+      header.i=@kernel.org header.b=bepc+vkW x-bits=1024 x-keytype=rsa
+      x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+      header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=linuxfoundation.org header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfA9R95OYxGZl5qR0bh3Eo11l3d4xHRYUFnz05f4fZcjq7D7ZcahviyEufG1Nc27chPOKrzkkUZ4KnZkEApSaKjj1P8NK+SwNhBDguP7Ht1EEBcE0Zsan
+    sDnsJIdvR/XysDuiR7DpKVDFxwLuRPSSU8Yvuik5dRxH1xQNiAgYpE6PT7l9o9k+jBwNy6pfcUyeFT4KDv0qOeEBOwJX2qHqHxdeOE1JOc8HZ+weGWY/PcG1
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=1XWaLZrsAAAA:8 a=4RBUngkUAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
+    a=jxzauDbPASHEnw4kFhcA:9 a=QEXdDO2ut3YA:10 a=_sbA2Q-Kp09kWB8D3iXc:22
+    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1030729AbeEXJ7M (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:59:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39870 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1030719AbeEXJ7J (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:59:09 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>,
-	Ganesh Goudar <ganeshgr@chelsio.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 019/161] cxgb4: fix offset in collecting TX rate limit info
-Date: Thu, 24 May 2018 11:37:24 +0200
-Message-Id: <20180524093020.661919414@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Yuchung Cheng <ycheng@google.com>,
+        Neal Cardwell <ncardwell@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 010/161] tcp: purge write queue in tcp_connect_init()
+Date: Thu, 24 May 2018 11:37:15 +0200
+Message-Id: <20180524093019.619210464@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -41,10 +99,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601339102854304738?=
-X-GMAIL-MSGID: =?utf-8?q?1601339102854304738?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,66 +109,86 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit d775f26b295a0a303f7a73d7da46e04296484fe7 ]
+[ Upstream commit 7f582b248d0a86bae5788c548d7bb5bca6f7691a ]
 
-Correct the indirect register offsets in collecting TX rate limit info
-in UP CIM logs.
+syzkaller found a reliable way to crash the host, hitting a BUG()
+in __tcp_retransmit_skb()
 
-Also, T5 doesn't support these indirect register offsets, so remove
-them from collection logic.
+Malicous MSG_FASTOPEN is the root cause. We need to purge write queue
+in tcp_connect_init() at the point we init snd_una/write_seq.
 
-Fixes: be6e36d916b1 ("cxgb4: collect TX rate limit info in UP CIM logs")
-Signed-off-by: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
-Signed-off-by: Ganesh Goudar <ganeshgr@chelsio.com>
+This patch also replaces the BUG() by a less intrusive WARN_ON_ONCE()
+
+kernel BUG at net/ipv4/tcp_output.c:2837!
+invalid opcode: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+   (ftrace buffer empty)
+Modules linked in:
+CPU: 0 PID: 5276 Comm: syz-executor0 Not tainted 4.17.0-rc3+ #51
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:__tcp_retransmit_skb+0x2992/0x2eb0 net/ipv4/tcp_output.c:2837
+RSP: 0000:ffff8801dae06ff8 EFLAGS: 00010206
+RAX: ffff8801b9fe61c0 RBX: 00000000ffc18a16 RCX: ffffffff864e1a49
+RDX: 0000000000000100 RSI: ffffffff864e2e12 RDI: 0000000000000005
+RBP: ffff8801dae073a0 R08: ffff8801b9fe61c0 R09: ffffed0039c40dd2
+R10: ffffed0039c40dd2 R11: ffff8801ce206e93 R12: 00000000421eeaad
+R13: ffff8801ce206d4e R14: ffff8801ce206cc0 R15: ffff8801cd4f4a80
+FS:  0000000000000000(0000) GS:ffff8801dae00000(0063) knlGS:00000000096bc900
+CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+CR2: 0000000020000000 CR3: 00000001c47b6000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <IRQ>
+ tcp_retransmit_skb+0x2e/0x250 net/ipv4/tcp_output.c:2923
+ tcp_retransmit_timer+0xc50/0x3060 net/ipv4/tcp_timer.c:488
+ tcp_write_timer_handler+0x339/0x960 net/ipv4/tcp_timer.c:573
+ tcp_write_timer+0x111/0x1d0 net/ipv4/tcp_timer.c:593
+ call_timer_fn+0x230/0x940 kernel/time/timer.c:1326
+ expire_timers kernel/time/timer.c:1363 [inline]
+ __run_timers+0x79e/0xc50 kernel/time/timer.c:1666
+ run_timer_softirq+0x4c/0x70 kernel/time/timer.c:1692
+ __do_softirq+0x2e0/0xaf5 kernel/softirq.c:285
+ invoke_softirq kernel/softirq.c:365 [inline]
+ irq_exit+0x1d1/0x200 kernel/softirq.c:405
+ exiting_irq arch/x86/include/asm/apic.h:525 [inline]
+ smp_apic_timer_interrupt+0x17e/0x710 arch/x86/kernel/apic/apic.c:1052
+ apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
+
+Fixes: cf60af03ca4e ("net-tcp: Fast Open client - sendmsg(MSG_FASTOPEN)")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Yuchung Cheng <ycheng@google.com>
+Cc: Neal Cardwell <ncardwell@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Acked-by: Neal Cardwell <ncardwell@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/chelsio/cxgb4/cudbg_entity.h |   28 +++++++---------------
- 1 file changed, 9 insertions(+), 19 deletions(-)
+ net/ipv4/tcp_output.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/chelsio/cxgb4/cudbg_entity.h
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cudbg_entity.h
-@@ -419,15 +419,15 @@ static const u32 t6_up_cim_reg_array[][I
- 	{0x7b50, 0x7b54, 0x280, 0x20, 0}, /* up_cim_280_to_2fc */
- 	{0x7b50, 0x7b54, 0x300, 0x20, 0}, /* up_cim_300_to_37c */
- 	{0x7b50, 0x7b54, 0x380, 0x14, 0}, /* up_cim_380_to_3cc */
--	{0x7b50, 0x7b54, 0x2900, 0x4, 0x4}, /* up_cim_2900_to_3d40 */
--	{0x7b50, 0x7b54, 0x2904, 0x4, 0x4}, /* up_cim_2904_to_3d44 */
--	{0x7b50, 0x7b54, 0x2908, 0x4, 0x4}, /* up_cim_2908_to_3d48 */
--	{0x7b50, 0x7b54, 0x2910, 0x4, 0x4}, /* up_cim_2910_to_3d4c */
--	{0x7b50, 0x7b54, 0x2914, 0x4, 0x4}, /* up_cim_2914_to_3d50 */
--	{0x7b50, 0x7b54, 0x2920, 0x10, 0x10}, /* up_cim_2920_to_2a10 */
--	{0x7b50, 0x7b54, 0x2924, 0x10, 0x10}, /* up_cim_2924_to_2a14 */
--	{0x7b50, 0x7b54, 0x2928, 0x10, 0x10}, /* up_cim_2928_to_2a18 */
--	{0x7b50, 0x7b54, 0x292c, 0x10, 0x10}, /* up_cim_292c_to_2a1c */
-+	{0x7b50, 0x7b54, 0x4900, 0x4, 0x4}, /* up_cim_4900_to_4c60 */
-+	{0x7b50, 0x7b54, 0x4904, 0x4, 0x4}, /* up_cim_4904_to_4c64 */
-+	{0x7b50, 0x7b54, 0x4908, 0x4, 0x4}, /* up_cim_4908_to_4c68 */
-+	{0x7b50, 0x7b54, 0x4910, 0x4, 0x4}, /* up_cim_4910_to_4c70 */
-+	{0x7b50, 0x7b54, 0x4914, 0x4, 0x4}, /* up_cim_4914_to_4c74 */
-+	{0x7b50, 0x7b54, 0x4920, 0x10, 0x10}, /* up_cim_4920_to_4a10 */
-+	{0x7b50, 0x7b54, 0x4924, 0x10, 0x10}, /* up_cim_4924_to_4a14 */
-+	{0x7b50, 0x7b54, 0x4928, 0x10, 0x10}, /* up_cim_4928_to_4a18 */
-+	{0x7b50, 0x7b54, 0x492c, 0x10, 0x10}, /* up_cim_492c_to_4a1c */
- };
+--- a/net/ipv4/tcp_output.c
++++ b/net/ipv4/tcp_output.c
+@@ -2860,8 +2860,10 @@ int __tcp_retransmit_skb(struct sock *sk
+ 		return -EBUSY;
  
- static const u32 t5_up_cim_reg_array[][IREG_NUM_ELEM + 1] = {
-@@ -444,16 +444,6 @@ static const u32 t5_up_cim_reg_array[][I
- 	{0x7b50, 0x7b54, 0x280, 0x20, 0}, /* up_cim_280_to_2fc */
- 	{0x7b50, 0x7b54, 0x300, 0x20, 0}, /* up_cim_300_to_37c */
- 	{0x7b50, 0x7b54, 0x380, 0x14, 0}, /* up_cim_380_to_3cc */
--	{0x7b50, 0x7b54, 0x2900, 0x4, 0x4}, /* up_cim_2900_to_3d40 */
--	{0x7b50, 0x7b54, 0x2904, 0x4, 0x4}, /* up_cim_2904_to_3d44 */
--	{0x7b50, 0x7b54, 0x2908, 0x4, 0x4}, /* up_cim_2908_to_3d48 */
--	{0x7b50, 0x7b54, 0x2910, 0x4, 0x4}, /* up_cim_2910_to_3d4c */
--	{0x7b50, 0x7b54, 0x2914, 0x4, 0x4}, /* up_cim_2914_to_3d50 */
--	{0x7b50, 0x7b54, 0x2918, 0x4, 0x4}, /* up_cim_2918_to_3d54 */
--	{0x7b50, 0x7b54, 0x291c, 0x4, 0x4}, /* up_cim_291c_to_3d58 */
--	{0x7b50, 0x7b54, 0x2924, 0x10, 0x10}, /* up_cim_2924_to_2914 */
--	{0x7b50, 0x7b54, 0x2928, 0x10, 0x10}, /* up_cim_2928_to_2a18 */
--	{0x7b50, 0x7b54, 0x292c, 0x10, 0x10}, /* up_cim_292c_to_2a1c */
- };
- 
- static const u32 t6_hma_ireg_array[][IREG_NUM_ELEM] = {
+ 	if (before(TCP_SKB_CB(skb)->seq, tp->snd_una)) {
+-		if (before(TCP_SKB_CB(skb)->end_seq, tp->snd_una))
+-			BUG();
++		if (unlikely(before(TCP_SKB_CB(skb)->end_seq, tp->snd_una))) {
++			WARN_ON_ONCE(1);
++			return -EINVAL;
++		}
+ 		if (tcp_trim_head(sk, skb, tp->snd_una - TCP_SKB_CB(skb)->seq))
+ 			return -ENOMEM;
+ 	}
+@@ -3369,6 +3371,7 @@ static void tcp_connect_init(struct sock
+ 	sock_reset_flag(sk, SOCK_DONE);
+ 	tp->snd_wnd = 0;
+ 	tcp_init_wl(tp, 0);
++	tcp_write_queue_purge(sk);
+ 	tp->snd_una = tp->write_seq;
+ 	tp->snd_sml = tp->write_seq;
+ 	tp->snd_up = tp->write_seq;
