@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1817771-1527160970-2-18256358335623187475
+X-Cyrus-Session-Id: sloti22d1t05-1835623-1527160939-2-11937942696611336939
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527160970; b=KPi/QHNXavXUN+APa3WM8mY654VBMdRkg6sTgikwn+wyQWqIqF
-    kLm+GpFrWkEc+uxV0zmGNlyBXLL1BOqc6vRgjp+UNcQw8HPpmy5gS1in/T8eOnNr
-    mtg6u5nmIMShfZv7TvpOrsgfUCJQl851suApFdcq+wJ5PsmEkgidi/a/+UpMLJt7
-    vQoKL432v6pnRFXb4aQ0htKLONrZ70G8gzLDF+0QYDcfLgxL2YQXMlCEsoNUvePH
-    tSVfG+13MzPa821LnaBz4zd+2yRZGEql8ql7dsUCaaRivCg2v6bcv8xrKxI2O4v0
-    NSlUAJ/Q8fTwdXyF4VXB/Qo7H31P27UyPJJA==
+    1527160937; b=NYYUZch9Yr6HYkrqiWdbXQMN9A0HKkWSmp9Pra3DRl4ZxjPdGJ
+    dvLSYr1ab3vR5TAfb0xBm9ZfTZXDluuHUY8hcx02vCO8FP7mFBRGXo37Kzo+cBb3
+    GvQGXl5JuKuMcA7m1RkFTKhzPKaVxTTT/MMfmV+tMUQkpzxTc8btvv1wT4w8HIgA
+    kB/Jx56leT7I2ivijY5JYzqE987bVZSyZDInATlVx+5gseFmB1T+O8nt6iN3aefM
+    G+xLGwWaAwDvV2m+2W3jEDiJ2LvstQucZCaRWgnrx5ooLU9YzSbVMzFioIxdFXZD
+    YMHYUmioymO/s0ocmI6cSg90Yp4Ot/LH6vQQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527160970; bh=MaOqdoCm4kl8XmopCInnqB9dgVN7/K
-    ggPRn8y1gqYc4=; b=lmXRPjeGqMiuuj53pgVuvnEqvVFfB3hmPXnGmLsKYpTC83
-    dWAhDEhnILxSEQ2plzxPYVOz3UcpyUfD39SmaoPCRyhSv5+aPlfkAdNLLK11ydXO
-    tIBaPrkImZedVZ+/IatYJRMe3VVu/HJ+hv8qA8//6OegcRtBF4ZdRPhV06NxWZ3T
-    Ew7XmW/7jy25gTRc5E00487EUZG27h92uJ1rcGrndyhBuFvRsO2UoB37wNv84eg0
-    zP8uC20905O/nabUp8JASc+OSUzuBTYWdtgyrk3M8Jf3xPWFJadOMA66NUbCIpn+
-    FvIrY+bwK5nwfkbnVrYDDwMVx8tVADGCrk7P4QEA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527160937; bh=7C4dklgNdCAxz6t6yOHkz3tFzb9lmA
+    deuXS0kODjLug=; b=dJj+DUgE/XuiN4v2CX5UZeOvGvYNPBfIVNKf0qNXHT3nwR
+    LJpL3ARWLU68+D6ChnlV4zZ6vbLRmbAmnSYQdSg7krr/8DchfKHXAXyAmVyipVAp
+    FdawlRE5Zct8iCrId8MYpAu9Gpf2m9UWBnFv592jBZCT8Ahdh1kNwoyANdzhouv0
+    mGKwY5B+kfYkCihyICToJfAawE6GPgN+rlRdd/x0b6J3/SeftABydN3wFS01UelX
+    TNf6G5mFioRDjyd++HPD+RG1tcTUVfFWoFlYVTd0WGmFf58scbYO9JXeiyzmNDlB
+    U01Qj+QRZ3sTVl0YtVUQd+Q8UtLU/oI/3jd7IKkg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=TovC5Hp6 x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=pBV1hEIA x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=TovC5Hp6 x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=pBV1hEIA x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,30 +64,30 @@ Authentication-Results: mx1.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFvZhZkrV9a2Cp/cMPGurSvqpaGT7R+gtKIjATy6q1Qsx/pIuA4cTUu48TlrfCheLS73v2pXTG6WWDRoI7Gw2lTn2CPG1O4bLsTod9CIpxNc3iZiK9GT
-    IHifNflekjkvjBxj40mvwsjWHegidaax+LooInnJLk19/R19xc1ljRPMbpNiZ6EQiLbuzttAjFwRnLZylfTBe6Pkt/02jfQU2WXWqTPRitVJv3XOU2DNTT38
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfPZB8E8jDRZwOKDuw63vR3FOFVD9jaAkluJZ5W9uH1NyHaAzmpP8i9dkq35HUrGq59jHVC5HZ3vQZdngb7L8DIy9E931on+ACiKQn7/OfHZmPg3NtmCG
+    b7KGrTGuOuw46CUPrfWFiwAXaVxCxgb5TldJWem8hA3+y6Fr1VRhpgnDQCpT795vvoEjgHaTitNuCbIeha18M/6e53igeNopmxKrLt1FcMlnpFTxOUuaz9uP
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
     a=jZVsG21pAAAA:8 a=yMhMjlubAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
-    a=DRX4gsuvdn39oF5zcG0A:9 a=QEXdDO2ut3YA:10 a=3Sh2lD0sZASs_lUdrUhf:22
+    a=IoLR7627HhPfafYgmrEA:9 a=QEXdDO2ut3YA:10 a=3Sh2lD0sZASs_lUdrUhf:22
     a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967845AbeEXLWX (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 07:22:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51312 "EHLO mail.kernel.org"
+        id S968798AbeEXLWI (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 07:22:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51534 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967840AbeEXJwT (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:52:19 -0400
+        id S967845AbeEXJwV (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:52:21 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Stephen Hemminger <sthemmin@microsoft.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 025/165] hv_netvsc: fix race in napi poll when rescheduling
-Date: Thu, 24 May 2018 11:37:11 +0200
-Message-Id: <20180524093622.999356098@linuxfoundation.org>
+Subject: [PATCH 4.14 026/165] hv_netvsc: defer queue selection to VF
+Date: Thu, 24 May 2018 11:37:12 +0200
+Message-Id: <20180524093623.038208030@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -107,32 +107,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Stephen Hemminger <stephen@networkplumber.org>
 
-[ Commit d64e38ae690e3337db0d38d9b149a193a1646c4b upstream. ]
+[ Commit b3bf5666a51068ad5ddd89a76ed877101ef3bc16 upstream. ]
 
-There is a race between napi_reschedule and re-enabling interrupts
-which could lead to missed host interrrupts.  This occurs when
-interrupts are re-enabled (hv_end_read) and vmbus irq callback
-(netvsc_channel_cb) has already scheduled NAPI.
+When VF is used for accelerated networking it will likely have
+more queues (and different policy) than the synthetic NIC.
+This patch defers the queue policy to the VF so that all the
+queues can be used. This impacts workloads like local generate UDP.
 
 Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/hyperv/netvsc.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/net/hyperv/netvsc_drv.c |   15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
---- a/drivers/net/hyperv/netvsc.c
-+++ b/drivers/net/hyperv/netvsc.c
-@@ -1205,9 +1205,10 @@ int netvsc_poll(struct napi_struct *napi
- 	if (send_recv_completions(ndev, net_device, nvchan) == 0 &&
- 	    work_done < budget &&
- 	    napi_complete_done(napi, work_done) &&
--	    hv_end_read(&channel->inbound)) {
-+	    hv_end_read(&channel->inbound) &&
-+	    napi_schedule_prep(napi)) {
- 		hv_begin_read(&channel->inbound);
--		napi_reschedule(napi);
-+		__napi_schedule(napi);
+--- a/drivers/net/hyperv/netvsc_drv.c
++++ b/drivers/net/hyperv/netvsc_drv.c
+@@ -283,8 +283,19 @@ static u16 netvsc_select_queue(struct ne
+ 	rcu_read_lock();
+ 	vf_netdev = rcu_dereference(ndc->vf_netdev);
+ 	if (vf_netdev) {
+-		txq = skb_rx_queue_recorded(skb) ? skb_get_rx_queue(skb) : 0;
+-		qdisc_skb_cb(skb)->slave_dev_queue_mapping = skb->queue_mapping;
++		const struct net_device_ops *vf_ops = vf_netdev->netdev_ops;
++
++		if (vf_ops->ndo_select_queue)
++			txq = vf_ops->ndo_select_queue(vf_netdev, skb,
++						       accel_priv, fallback);
++		else
++			txq = fallback(vf_netdev, skb);
++
++		/* Record the queue selected by VF so that it can be
++		 * used for common case where VF has more queues than
++		 * the synthetic device.
++		 */
++		qdisc_skb_cb(skb)->slave_dev_queue_mapping = txq;
+ 	} else {
+ 		txq = netvsc_pick_tx(ndev, skb);
  	}
- 
- 	/* Driver may overshoot since multiple packets per descriptor */
