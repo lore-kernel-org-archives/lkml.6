@@ -1,11 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1733193-1527155770-2-17856876320781311285
+X-Cyrus-Session-Id: sloti22d1t05-1732752-1527155769-2-272785780912668828
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES encada, BAYES_USED global,
-  SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -13,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527155769; b=Rz3XBG94zpVXAQ6HgOgEMl5UgbQB7f1jmMJixhsbAyMzckj23o
-    fCchBCZ/N2OMv5hwfglEMvKNtLmDSlEK/vLjfuF5H2Qa1A6Rgv86cqUUinxwwpsj
-    ETP3nmWbASBUeTBjdoAamdznUwA+f5cIz7AjvIEPxexnt16/lHYGEpCzQ3j8zdFy
-    5sNdek/Rw1wzzKEJjYSYPp4jxusqYqDKofK51PouNeylJ+3ojG6ZdXBUR5pC/Olf
-    zbEj7TmohEKDWBfMjphyH0ljqVY4wpEsMiRAa5ntsLgA52soTbNbJuIjYTzWOAEm
-    iQymYhafRTsYFftff5eT6ES/7qkBYKQYUJoA==
+    1527155769; b=dohgkYqi1JZOBCvfgjMfLSkkmyabMr6Uh3zD5GkdBmk6hTzuRD
+    GEzGlhKc1QZt/pmRauZTgG2xDiQ+LRozZEsCgaULDDq9r+3RHvObgANDHygNPxPm
+    JrsV9mxcrSWv+GQDGXxWsfsRwEm2lItCGpRP6iUAnDwqBGKhosUunYUjCEmkyaPI
+    +nMAfnGwyxWhbtUfDTBLmGaTggZUfAuqCGIJu5uTwDYnpUGMNFHwFZ8xkEpSagD4
+    JBdH0sWMrPHu5AlPO7kY6zla/ycp+AE1iYlwPvuBJ63vprvIRKMV8faXRPvVY71t
+    cSTiZk08YpxKXS41buCAge6FhTIWA0OaKh5w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527155769; bh=n0fiC40lBm80Av6AYCVdl3QUSJVZge
-    8PRzuM9PaeGF8=; b=QWFy3HIowGtW1OYrScQ36PhnVlobDgAdjjQATiQy0JFUZV
-    AFpI97Fw1jeuESFzbGUmRE4mz/W9hShV4M0hd7FszJOzGEClxVodSO1Se9DRIbxd
-    VGlCJX7yFhM8vaDyXmowXCU2Ym3X0tX9yhjyQnuv0pIVW8n76O2F/lrgHTO1j6WO
-    dlocZhHpljtZnvL+3VRmlL9XvqD0O9aaylDBgraPJCVFBOYu19Zn91BBG2K7unzX
-    K2NDblaSF6fVL+/StQtjgOx3BOEHpAiQHj4Y2Rpov3dexkmfhVtp+GNTC3urbTTU
-    5+yGmWvz81+lwCxRAI1PVSQy3LPtsEuUmbNYvtOw==
+    :list-id; s=fm2; t=1527155769; bh=bOWxQkWRi2jM4zY5ebfVfGZRVq0Y2j
+    /ITmoslkGvVpA=; b=RgkFTEVD4bio/bLHjMKG1t83ajaiUHVeu8CL20u4lrAOqe
+    E+/NnmAME25WPfSqsRRmUhs1UiGPQ0z+CGf23aRoF0pvI6BLoWyhWlMb7S7hm86j
+    T9v/jYP75CPpP7jK/ZKnCG79LWrwhPf9Ang683mZQGsZEC4ivLdYTigyHE6CG63X
+    E4mNzwANq81vYHT1Sw8mus7dkVwYrgyoocJgEd0YZR0J4w7c1eYo+MqGZLtHZlgK
+    sZo92h5hQKoSdL/B2hfpzh2iH1S+pZomrhAIptk9QOvVCgslNBCotZQdDq8AvhlY
+    fx+MXUI2K+pieR4ZzdwFsAlAiPjV8VciTf3QOOVg==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=LsjL344z x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=VJx6D7o9 x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -49,7 +48,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
 Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=LsjL344z x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=VJx6D7o9 x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -66,30 +65,30 @@ Authentication-Results: mx4.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 X-CM-Envelope: MS4wfI8MZndS5A+5D2iS1O/yLLJvlgF5FSD0kLItMaf6u1aCa7l52ioOdnOj9RyNnp/sEb31LKHp94H+D/OEPpJwMHU58zqTFhajUlkxMkdHr8hioetW9Fw8
-    /n1/KLuFkE9qbKkjKK0hnBxTWvl+1+kOkXoWVurw0fo6xe0FpTP04VAdo1RqbHpoFvJp8xsLSxp7ovxXEyZr7UvwhR2y7vSk2EbC2/YYjADOj6/jPmsTdBQl
+    /n1/KLuFkE9qbKkjKK0hnBxTWvl+1+kOkXoWVurw0fo6xe0FpTP04VAd3wjU7HJvsfhf+BNwdy+czM5o4B97sumP7vIDbyrs14gjmexpHK24M/ENWJVZrTes
 X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=yMhMjlubAAAA:8 a=yPCof4ZbAAAA:8 a=ag1SF4gXAAAA:8 a=vA3e__QJ6ZNYtID03woA:9
+    a=yPCof4ZbAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=P1VUzUOK4a2cKhXD81cA:9
     a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030235AbeEXJ4F (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:56:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35986 "EHLO mail.kernel.org"
+        id S1030225AbeEXJz4 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:55:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968415AbeEXJ4A (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:56:00 -0400
+        id S1030210AbeEXJzy (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:55:54 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Kelley <mikelley@microsoft.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 106/165] scsi: storvsc: Increase cmd_per_lun for higher speed devices
-Date: Thu, 24 May 2018 11:38:32 +0200
-Message-Id: <20180524093626.304795528@linuxfoundation.org>
+Subject: [PATCH 4.14 104/165] scsi: mptfusion: Add bounds check in mptctl_hp_targetinfo()
+Date: Thu, 24 May 2018 11:38:30 +0200
+Message-Id: <20180524093626.225525353@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -107,32 +106,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit cabe92a55e3a12005a4ac4d3954c9a174b0efe2a ]
+[ Upstream commit a7043e9529f3c367cc4d82997e00be034cbe57ca ]
 
-Increase cmd_per_lun to allow more I/Os in progress per device,
-particularly for NVMe's.  The Hyper-V host side can handle the higher
-count with no issues.
+My static checker complains about an out of bounds read:
 
-Signed-off-by: Michael Kelley <mikelley@microsoft.com>
-Reviewed-by: K. Y. Srinivasan <kys@microsoft.com>
-Acked-by: K. Y. Srinivasan <kys@microsoft.com>
+    drivers/message/fusion/mptctl.c:2786 mptctl_hp_targetinfo()
+    error: buffer overflow 'hd->sel_timeout' 255 <= u32max.
+
+It's true that we probably should have a bounds check here.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/storvsc_drv.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/message/fusion/mptctl.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/scsi/storvsc_drv.c
-+++ b/drivers/scsi/storvsc_drv.c
-@@ -1661,7 +1661,7 @@ static struct scsi_host_template scsi_dr
- 	.eh_timed_out =		storvsc_eh_timed_out,
- 	.slave_alloc =		storvsc_device_alloc,
- 	.slave_configure =	storvsc_device_configure,
--	.cmd_per_lun =		255,
-+	.cmd_per_lun =		2048,
- 	.this_id =		-1,
- 	.use_clustering =	ENABLE_CLUSTERING,
- 	/* Make sure we dont get a sg segment crosses a page boundary */
+--- a/drivers/message/fusion/mptctl.c
++++ b/drivers/message/fusion/mptctl.c
+@@ -2698,6 +2698,8 @@ mptctl_hp_targetinfo(unsigned long arg)
+ 				__FILE__, __LINE__, iocnum);
+ 		return -ENODEV;
+ 	}
++	if (karg.hdr.id >= MPT_MAX_FC_DEVICES)
++		return -EINVAL;
+ 	dctlprintk(ioc, printk(MYIOC_s_DEBUG_FMT "mptctl_hp_targetinfo called.\n",
+ 	    ioc->name));
+ 
