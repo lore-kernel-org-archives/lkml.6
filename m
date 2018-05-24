@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1874556-1527163227-2-11700187735179613043
+X-Cyrus-Session-Id: sloti22d1t05-1874556-1527163201-2-17380820556538479067
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527163226; b=LyrKLU9sJ00Hj2LDBrca7cgfF8R1IBomZ63RMUQucvvXr4X7P6
-    wsdPT5Qhksoqk9R6XI9u3vuCP2CM3Av5lAG8D1TMcf0pSa7dICR8x+JuGcTpZMJ3
-    GS/YoXBuEGTY0UI5jO6nNdHs0tHyhRCF/7OU6Js3/rHpVYwkRpQFN/nk5efhRHGk
-    uf8CWfARvOhhpOxdta29boULjk6O6DsyD0XWmpu5wq8oD4T1ulKqKYf+tzlzCeTt
-    ghOpfjQjP8ruKyx4iTtTVOm43wpbESYcJ0U8Ly1Y9ipjTcc3mdD2LVXz0L2dywTV
-    XESaU6Xbk7j4aU73sydqfzfnwj+8e5Enu7cA==
+    1527163201; b=gFA4N4CQF+t40Su0mnokFATidtfqQPJ80dGkBxKzzuG5jvgiD3
+    /3SRTzXgvT2mGCnW9eFr646OZ4XfGyjWGcYBBHJpZahgTyeqPS0ogjpM1udjlr0a
+    4Y9uuUBsdSBMHTds92FnXY5L64ig5wmMzY9chssoGf87iBe0o+wdKNbEKo4or0pZ
+    GI+tf1M7ouqdVA7m4e9Cke7sOwlL3+06VicXVJn49HhOQPK6XTdkVX1QeOp93ykZ
+    5JIPbtH9n4id1d9WTFOxAeEunre0EA1o08WnRsr/PSK8M2G6y3x8jzoOzPoEDvlV
+    cwn2g/Rof3VFHeQuetCbHDloX2gxacerMc9A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527163226; bh=ccGZlLFwAEZtGgdRKncP3JU7eAB2p3
-    tszQsrUB7u+2Q=; b=Zj9qio0fULqTN7JDeRwb7U+zTuJmmY4Zvn0y5jiGpmZDhW
-    CME9dwX2ywPK4I8dKy3jvviLOyqS1TTb52tVCUZyO8aCU43e8JNaDDE5ODxMU8RS
-    qmnh+IHO9YC0ps6bpcqpiVtNglgHW0Ta7lOQlmaGT4A8C7KXHEtfAMd0zcHHiMXi
-    ClbNclQ9Khsqvt1AUySQ8CRdQQt4GdscCz6DqsFlqU4nlphFZ706+0+achHECWyT
-    0PLx4jiMb0e7IqelVJqkZVdPhbVfn6AZ4vjZphkfLpv5vYgBxsC5pkJ+499HBi4j
-    0KA/JKfF4vveoIV20bVG5jXVIW1ddjU3+RApS+kA==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527163201; bh=W9AZ+AW2Fq5PJVQ5H+kCq8tzMudoa+
+    l/MrpZ5I8ADW4=; b=hHSkg7F4MAVlxKcwmKik9TOWvkz7AZPxP4bynMV15UTnWM
+    diijcuc837xapGNgnVic/A1Ta8686wrp0uLiFjVAC3M2q0TEUSqO7NL/1LEwk8FJ
+    3OtzQSyaVpZ/nOKNtN2VV4Pl4CxB1e3iNL+Eyy2RHfmTxQAzzbUJrYIOi1pfj4q0
+    p11HeSA2NwCFM9ecOfZnh2nGHtyxJN+MzQSELmXGJM/ROqpfNXiNX/0ZaP+5bMa4
+    z6FmyZn+7ghZRA8aMMHECMCpUgyaXR/+QUrsHo48OspwzqZJlDqlZxepf2IlpCNT
+    CrIF+PIPX7dpa7zccHS/xDkLz+qSc7Ke4YvNG0rQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=nAGz/hA1 x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=1gJzKkZn x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=nAGz/hA1 x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=1gJzKkZn x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,29 +64,30 @@ Authentication-Results: mx5.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfESqzpQo7KJTxrusRjQbohmJ0nLSpYcXsT8zzDY2PXqUjIKcJrKWL4QtG9XRZwNh2d2qQfOuLzP717UNqj8kLPLx3Gl/CxDKxficBM8WFcHmVgt54d/0
-    D9N/ZlJ6rQEzlJbP8OAkka5f+1avpdqnXmJmWjuYkIRZBKrGOW+21w7XLovpIajUAuD8MUTqZDV+ZAKxxi6/Hp5UZpCR/0xOJI+aExGhuo1t8l3iL2EQspFv
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfAjzNlTsEt9Ihe0thFzUViz1iFOtW8a+tIeFV++RBUS1NGFi3my6BMl1JFbz3+YG/2uc5jTPoNfeuRyBHFGccvYkzWDIcpOEqIzR09ZLmQxUAEnO6j5O
+    bFYzMblsL7ycz9nTJghPpq6zpZCWp/rIO/+6hE3+cdn8YjB3nk2FJxSQiZN8OHWEgAgXm/OisRpvisMSStXAJ+Cx/64/vSH2p0CwVhDZuEcJu/f35P/69fSt
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=qjy3gpqsaOfp75Jk0UoA:9
+    a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=LfR2_N8ysYQO3oEyUZ8A:9
     a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966792AbeEXMAL (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 08:00:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56330 "EHLO mail.kernel.org"
+        id S966990AbeEXL70 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 07:59:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56452 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966462AbeEXJpH (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:45:07 -0400
+        id S965783AbeEXJpQ (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:45:16 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
+        stable@vger.kernel.org,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
         Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.4 58/92] s390/qdio: fix access to uninitialized qdio_q fields
-Date: Thu, 24 May 2018 11:38:35 +0200
-Message-Id: <20180524093204.893790544@linuxfoundation.org>
+Subject: [PATCH 4.4 61/92] s390: remove indirect branch from do_softirq_own_stack
+Date: Thu, 24 May 2018 11:38:38 +0200
+Message-Id: <20180524093205.137407442@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093159.286472249@linuxfoundation.org>
 References: <20180524093159.286472249@linuxfoundation.org>
@@ -104,40 +105,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Julian Wiedmann <jwi@linux.ibm.com>
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-commit e521813468f786271a87e78e8644243bead48fad upstream.
+commit 9f18fff63cfd6f559daa1eaae60640372c65f84b upstream.
 
-Ever since CQ/QAOB support was added, calling qdio_free() straight after
-qdio_alloc() results in qdio_release_memory() accessing uninitialized
-memory (ie. q->u.out.use_cq and q->u.out.aobs). Followed by a
-kmem_cache_free() on the random AOB addresses.
+The inline assembly to call __do_softirq on the irq stack uses
+an indirect branch. This can be replaced with a normal relative
+branch.
 
-For older kernels that don't have 6e30c549f6ca, the same applies if
-qdio_establish() fails in the DEV_STATE_ONLINE check.
-
-While initializing q->u.out.use_cq would be enough to fix this
-particular bug, the more future-proof change is to just zero-alloc the
-whole struct.
-
-Fixes: 104ea556ee7f ("qdio: support asynchronous delivery of storage blocks")
-Cc: <stable@vger.kernel.org> #v3.2+
-Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
+Cc: stable@vger.kernel.org # 4.16
+Fixes: f19fbd5ed6 ("s390: introduce execute-trampolines for branches")
+Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
 Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/s390/cio/qdio_setup.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/s390/kernel/irq.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/drivers/s390/cio/qdio_setup.c
-+++ b/drivers/s390/cio/qdio_setup.c
-@@ -140,7 +140,7 @@ static int __qdio_allocate_qs(struct qdi
- 	int i;
- 
- 	for (i = 0; i < nr_queues; i++) {
--		q = kmem_cache_alloc(qdio_q_cache, GFP_KERNEL);
-+		q = kmem_cache_zalloc(qdio_q_cache, GFP_KERNEL);
- 		if (!q)
- 			return -ENOMEM;
- 
+--- a/arch/s390/kernel/irq.c
++++ b/arch/s390/kernel/irq.c
+@@ -173,10 +173,9 @@ void do_softirq_own_stack(void)
+ 		new -= STACK_FRAME_OVERHEAD;
+ 		((struct stack_frame *) new)->back_chain = old;
+ 		asm volatile("   la    15,0(%0)\n"
+-			     "   basr  14,%2\n"
++			     "   brasl 14,__do_softirq\n"
+ 			     "   la    15,0(%1)\n"
+-			     : : "a" (new), "a" (old),
+-			         "a" (__do_softirq)
++			     : : "a" (new), "a" (old)
+ 			     : "0", "1", "2", "3", "4", "5", "14",
+ 			       "cc", "memory" );
+ 	} else {
