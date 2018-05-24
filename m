@@ -1,93 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969035AbeEXTkL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 15:40:11 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:43835 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967508AbeEXTkI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 15:40:08 -0400
-X-Google-Smtp-Source: ADUXVKL1e441HqT13lfuJAyBQ38tebga3XQ0eoM0fy55AOT6/4fHmEIZMc589vVl7POkFZJQUIZ5HA==
-Subject: Re: [PATCH] block drivers/block: Use octal not symbolic permissions
-To: Joe Perches <joe@perches.com>, "Ed L. Cashin" <ed.cashin@acm.org>,
-        Philipp Reisner <philipp.reisner@linbit.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Jiri Kosina <jikos@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
-        linux-block@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
-        Sage Weil <sage@redhat.com>, Alex Elder <elder@kernel.org>,
-        Philip Kelleher <pjk1939@linux.vnet.ibm.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>
-Cc: linux-kernel@vger.kernel.org, drbd-dev@lists.linbit.com,
-        nbd@other.debian.org, ceph-devel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        xen-devel@lists.xenproject.org
-References: <5e97a292c1ba38a6b5a0caa271d85dc3de1b2aa7.1527105857.git.joe@perches.com>
- <6bf44255-145f-bf14-e254-860731ff9296@kernel.dk>
- <56ee8810463b6c537ca0c10c9f82e6d922acd1f1.camel@perches.com>
- <539cc400-28d7-66df-eb24-77fe95d617a2@kernel.dk>
- <e64c2846b1b9102a52eba7b242f746e7bfff1464.camel@perches.com>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <501407b0-ae9b-7943-0789-fb1c9959f7fe@kernel.dk>
-Date: Thu, 24 May 2018 13:40:04 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <e64c2846b1b9102a52eba7b242f746e7bfff1464.camel@perches.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S971091AbeEXTnC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 15:43:02 -0400
+Received: from gate.crashing.org ([63.228.1.57]:48710 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S967421AbeEXTnA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 15:43:00 -0400
+Date: Thu, 24 May 2018 14:42:06 -0500
+From: Segher Boessenkool <segher@kernel.crashing.org>
+To: Christophe LEROY <christophe.leroy@c-s.fr>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v3] powerpc: Implement csum_ipv6_magic in assembly
+Message-ID: <20180524194206.GD17342@gate.crashing.org>
+References: <20180522065701.9DE696CCB4@po14934vm.idsi0.si.c-s.fr> <20180523183447.GV17342@gate.crashing.org> <3848a4ad-2c0e-691f-e98f-347cfe3484e8@c-s.fr>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3848a4ad-2c0e-691f-e98f-347cfe3484e8@c-s.fr>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/24/18 7:01 AM, Joe Perches wrote:
-> On Thu, 2018-05-24 at 06:47 -0600, Jens Axboe wrote:
->> On 5/23/18 4:35 PM, Joe Perches wrote:
->>> On Wed, 2018-05-23 at 15:27 -0600, Jens Axboe wrote:
->>>> On 5/23/18 2:05 PM, Joe Perches wrote:
->>>>> Convert the S_<FOO> symbolic permissions to their octal equivalents as
->>>>> using octal and not symbolic permissions is preferred by many as more
->>>>> readable.
->>>>>
->>>>> see: https://lkml.org/lkml/2016/8/2/1945
->>>>>
->>>>> Done with automated conversion via:
->>>>> $ ./scripts/checkpatch.pl -f --types=SYMBOLIC_PERMS --fix-inplace <files...>
->>>>>
->>>>> Miscellanea:
->>>>>
->>>>> o Wrapped modified multi-line calls to a single line where appropriate
->>>>> o Realign modified multi-line calls to open parenthesis
->>>>
->>>> Honestly, I see this as pretty needless churn.
->>>
->>> btw:
->>>
->>> There is currently a mixture of symbolic and octal
->>> permissions uses in block and drivers/block
->>>
->>> ie: 94 octal and 146 symbolic uses.
->>>
->>> If this is applied, all would become octal.
->>
->> That does help justify the change. My main worry here is creating
->> unnecessary conflicts, which is always annoying. But it's even more
->> annoying when the change creating the conflict isn't really that
->> important at all. Case in point, the patch doesn't apply to the
->> for-4.18/block branch that it should go into...
+On Thu, May 24, 2018 at 08:20:16AM +0200, Christophe LEROY wrote:
+> Le 23/05/2018 à 20:34, Segher Boessenkool a écrit :
+> >On Tue, May 22, 2018 at 08:57:01AM +0200, Christophe Leroy wrote:
+> >>+_GLOBAL(csum_ipv6_magic)
+> >>+	lwz	r8, 0(r3)
+> >>+	lwz	r9, 4(r3)
+> >>+	lwz	r10, 8(r3)
+> >>+	lwz	r11, 12(r3)
+> >>+	addc	r0, r5, r6
+> >>+	adde	r0, r0, r7
+> >>+	adde	r0, r0, r8
+> >>+	adde	r0, r0, r9
+> >>+	adde	r0, r0, r10
+> >>+	adde	r0, r0, r11
+> >>+	lwz	r8, 0(r4)
+> >>+	lwz	r9, 4(r4)
+> >>+	lwz	r10, 8(r4)
+> >>+	lwz	r11, 12(r4)
+> >>+	adde	r0, r0, r8
+> >>+	adde	r0, r0, r9
+> >>+	adde	r0, r0, r10
+> >>+	adde	r0, r0, r11
+> >>+	addze	r0, r0
+> >>+	rotlwi	r3, r0, 16
+> >>+	add	r3, r0, r3
+> >>+	not	r3, r3
+> >>+	rlwinm	r3, r3, 16, 16, 31
+> >>+	blr
+> >>+EXPORT_SYMBOL(csum_ipv6_magic)
+> >
+> >Clustering the loads and carry insns together is pretty much the worst you
+> >can do on most 32-bit CPUs.
 > 
-> Done against most recent -next as it's basically impossible
-> to do anything against multiple private trees.
-> 
-> Also, the script that generated the patch is in the changelog
-> so it's simple to rerun.
+> Oh, really ? __csum_partial is written that way too.
 
-Alright, applied, thanks.
+I thought I told you about this before?  Maybe not.
 
--- 
-Jens Axboe
+> Right, now I tried interleaving the lwz and adde. I get no improvment at 
+> all on a 885, but I get a 15% improvment on a 8321.
+
+It won't likely help on single-issue cores (like the one 885 has), yes.
+
+
+Segher
