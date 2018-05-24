@@ -1,11 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1862185-1527162362-2-5523261707374931801
+X-Cyrus-Session-Id: sloti22d1t05-1862185-1527162333-2-17786240874692105676
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
-  SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -13,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527162361; b=ewwPNtpAnlTTQJtEUZjmC9n29h9lvNkZJO7Y7fQHPaFmM7gQ7s
-    sVkZm2oizxHGkJqccaYSW0AX0sbW9rU19xvyRTtn1hsW0tATo4YVrf9xQ+vFz5mb
-    Zr+dCVwF8/L4mYfa4lUOkouIzCzpn13VoYaYObYx0GgjXwfNcgoCrrt5cnSQtJQH
-    s+l/1eEa2Ibxacs7Rn0LV286bcXTvQlFkmzIgCa2+Cg4G/XPIiyzD687btKx2S40
-    zaPm6+XIfumO4n1cwseuZSmd1nW9PE4fCFEaRC+H9Ziw9KWdbKMvVKP+UFQbXLH1
-    8XTERzAkfZ3u8u2LEGbMQsfMtMaTglDqEX4A==
+    1527162332; b=MOZ3o02WFKcbWlRb5pPe1mZ/VkUwaSKLMmhAWJSzKpQAeq87z4
+    eRkkfaFXDtAolF9kTTbzbe+rAp6dnh4iK8nc1vaHKZKnNn/ti3JafnD+zvS3G6k4
+    2O6YpImzriPIxolbx3pVudQ/DVriLPBTb7EER6kvZUDCzGA5NTdhDpEidL3ilrxZ
+    oKRUHKUGbblawNxEFUd2GshhuTrkojz+3kdlzLWXWeZ8i2dlgvIIcnIOaIwLV/U8
+    Er6ixhKeLZuEsygq4lKXw412mGNZAN7eDhZszWrNEZj63VSQgsatBkjYRYlo/4mh
+    e7eZPzHPoeOUSfwezUH81ZWFEjsRPLT0Gfrg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527162361; bh=lja+tSGZoqdX2GJO9GWJuL0aven7mu
-    jiLy0YE4Xa0WA=; b=mF7VC2BNKXpkQDidlT++vYGbINboH5emmR2U3sMKiIdVMV
-    9tHB4govwDXGjjwDX4NLUwbnA2So1F6baTfJD7hTvtS7ravaUdQiafpNMNtR3CR/
-    m8uYZRhGsTQSVl176J1V1QTpK3LUXo5LcAsXpTvyXni5WWKjwaswuJ+ibXlV9Onw
-    DLgbpA5k5z762gFU4KmkiETiVomSOkqkrd34xqyAu3XuCStDuTYwHr3zP0uxvk4W
-    ICzDnnZTg08sHON9IdMVC7czL+BX/ZuamPe/a+DF+CGD1V0yfB26aFbVVtsHhTF7
-    i+OPNQ7PiRmD961RU/Rtex6YpC+RphthNcy0B/yA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527162332; bh=RDx3IwX/U7so677XeXbiUTCL5eYtpG
+    xRbjku6s5hNks=; b=ghh+Fr2l8QCOKPEOxXaCAoGseSypS7Uhve2/doWZMrKxuc
+    hDyZBLR+xtoXf1a5beIl0eMQ5q2gRJH2kN7p1T3H0ywAOHdJpMflWXKoE+7ZF9oA
+    3CBtonIwW0sg2lzvC2w9taKG41p1aRtfj0WOP1kNM8MtF1voAbtTdbJSsQ9w0Vvm
+    Fv9SagC+XCjvXGVN2/Y3TW01jAzeWto1Nu8wgcW0O6nQSZZwrV8ZEWIKnVNmwwLI
+    J7XvQ6kNYfayjWp99jBstceJTG0UEZnr+m7eObcDgvSDN0urP65IfaWx8YO3vWSx
+    5f8vT+5iV3OGlpFnXcs6hv6d8l4wt07HX9TaDtNg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=NTPJGFht x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=YdHXJ1fS x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -46,10 +45,10 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=NTPJGFht x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=YdHXJ1fS x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -65,30 +64,31 @@ Authentication-Results: mx4.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOhxKWJlMZisx4SBkMiElY0QR4fynWQWUnvT0qBKJpfan37E0qJaVpTCGVLJ3uU1KfUj+doTNj51pH1rRNx0PRZNOh+Dhd1AdDxSdmuTRWqRZ2X/ktS4
-    MpDwh9rXuLFyU0unuQA/Ou079w2Ux2i1t2sFXzBo8K681085/VAQWerpJmYbptR5B6oVfCIG9WLtsOvFpgh1VvtOcmiHwkHp1PSSJsYH9jHB0g6Jbe2hTlLu
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfGhva/CYxgmkZI9bqfX5D47Of6yIcVupyNQ2GDAzjMoaGmqkkAqZV2IsAhWSwJdenb1tr2xosZmgZHz2dSJtJYJULu2TuiLpA4TapOWivTIaYREfPwt7
+    9s/9bT6jrdwpytgMSTrVINlbmqBU6US+STfa/ZGVn09t3loHEmcZPeSO/VPT+jPIDGfyJnq6vfnHglPKtiLc/9pQZeHZE2qN8t030PzIN/WpFfeo/I5k60q+
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=eh1Yez-EAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=puV817wOSPHiP_ARZ7gA:9
-    a=QEXdDO2ut3YA:10 a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=eh1Yez-EAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=LoKIxZYthUmQywgMGB8A:9
+    a=-nxZm-dSdwmL_ur2:21 a=qVN8UthSnBHTMF7z:21 a=QEXdDO2ut3YA:10
+    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967199AbeEXLp6 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 07:45:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60912 "EHLO mail.kernel.org"
+        id S967156AbeEXJsA (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:48:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967131AbeEXJrz (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:47:55 -0400
+        id S967147AbeEXJr6 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:47:58 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Regis Duchesne <hpreg@vmware.com>,
         Ronak Doshi <doshir@vmware.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 06/96] vmxnet3: set the DMA mask before the first DMA map operation
-Date: Thu, 24 May 2018 11:37:49 +0200
-Message-Id: <20180524093606.001879358@linuxfoundation.org>
+Subject: [PATCH 4.9 07/96] vmxnet3: use DMA memory barriers where required
+Date: Thu, 24 May 2018 11:37:50 +0200
+Message-Id: <20180524093606.038682285@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093605.602125311@linuxfoundation.org>
 References: <20180524093605.602125311@linuxfoundation.org>
@@ -108,130 +108,69 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: "hpreg@vmware.com" <hpreg@vmware.com>
 
-[ Upstream commit 61aeecea40afb2b89933e27cd4adb10fc2e75cfd ]
+[ Upstream commit f3002c1374fb2367c9d8dbb28852791ef90d2bac ]
 
-The DMA mask must be set before, not after, the first DMA map operation, or
-the first DMA map operation could in theory fail on some systems.
+The gen bits must be read first from (resp. written last to) DMA memory.
+The proper way to enforce this on Linux is to call dma_rmb() (resp.
+dma_wmb()).
 
-Fixes: b0eb57cb97e78 ("VMXNET3: Add support for virtual IOMMU")
 Signed-off-by: Regis Duchesne <hpreg@vmware.com>
 Acked-by: Ronak Doshi <doshir@vmware.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/vmxnet3/vmxnet3_drv.c |   50 +++++++++++++++++++-------------------
- 1 file changed, 25 insertions(+), 25 deletions(-)
+ drivers/net/vmxnet3/vmxnet3_drv.c |   22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
 --- a/drivers/net/vmxnet3/vmxnet3_drv.c
 +++ b/drivers/net/vmxnet3/vmxnet3_drv.c
-@@ -2675,7 +2675,7 @@ vmxnet3_set_mac_addr(struct net_device *
- /* ==================== initialization and cleanup routines ============ */
+@@ -369,6 +369,11 @@ vmxnet3_tq_tx_complete(struct vmxnet3_tx
  
- static int
--vmxnet3_alloc_pci_resources(struct vmxnet3_adapter *adapter, bool *dma64)
-+vmxnet3_alloc_pci_resources(struct vmxnet3_adapter *adapter)
- {
- 	int err;
- 	unsigned long mmio_start, mmio_len;
-@@ -2687,30 +2687,12 @@ vmxnet3_alloc_pci_resources(struct vmxne
- 		return err;
- 	}
- 
--	if (pci_set_dma_mask(pdev, DMA_BIT_MASK(64)) == 0) {
--		if (pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64)) != 0) {
--			dev_err(&pdev->dev,
--				"pci_set_consistent_dma_mask failed\n");
--			err = -EIO;
--			goto err_set_mask;
--		}
--		*dma64 = true;
--	} else {
--		if (pci_set_dma_mask(pdev, DMA_BIT_MASK(32)) != 0) {
--			dev_err(&pdev->dev,
--				"pci_set_dma_mask failed\n");
--			err = -EIO;
--			goto err_set_mask;
--		}
--		*dma64 = false;
--	}
--
- 	err = pci_request_selected_regions(pdev, (1 << 2) - 1,
- 					   vmxnet3_driver_name);
- 	if (err) {
- 		dev_err(&pdev->dev,
- 			"Failed to request region for adapter: error %d\n", err);
--		goto err_set_mask;
-+		goto err_enable_device;
- 	}
- 
- 	pci_set_master(pdev);
-@@ -2738,7 +2720,7 @@ err_bar1:
- 	iounmap(adapter->hw_addr0);
- err_ioremap:
- 	pci_release_selected_regions(pdev, (1 << 2) - 1);
--err_set_mask:
-+err_enable_device:
- 	pci_disable_device(pdev);
- 	return err;
- }
-@@ -3246,7 +3228,7 @@ vmxnet3_probe_device(struct pci_dev *pde
- #endif
- 	};
- 	int err;
--	bool dma64 = false; /* stupid gcc */
-+	bool dma64;
- 	u32 ver;
- 	struct net_device *netdev;
- 	struct vmxnet3_adapter *adapter;
-@@ -3292,6 +3274,24 @@ vmxnet3_probe_device(struct pci_dev *pde
- 	adapter->rx_ring_size = VMXNET3_DEF_RX_RING_SIZE;
- 	adapter->rx_ring2_size = VMXNET3_DEF_RX_RING2_SIZE;
- 
-+	if (pci_set_dma_mask(pdev, DMA_BIT_MASK(64)) == 0) {
-+		if (pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64)) != 0) {
-+			dev_err(&pdev->dev,
-+				"pci_set_consistent_dma_mask failed\n");
-+			err = -EIO;
-+			goto err_set_mask;
-+		}
-+		dma64 = true;
-+	} else {
-+		if (pci_set_dma_mask(pdev, DMA_BIT_MASK(32)) != 0) {
-+			dev_err(&pdev->dev,
-+				"pci_set_dma_mask failed\n");
-+			err = -EIO;
-+			goto err_set_mask;
-+		}
-+		dma64 = false;
-+	}
+ 	gdesc = tq->comp_ring.base + tq->comp_ring.next2proc;
+ 	while (VMXNET3_TCD_GET_GEN(&gdesc->tcd) == tq->comp_ring.gen) {
++		/* Prevent any &gdesc->tcd field from being (speculatively)
++		 * read before (&gdesc->tcd)->gen is read.
++		 */
++		dma_rmb();
 +
- 	spin_lock_init(&adapter->cmd_lock);
- 	adapter->adapter_pa = dma_map_single(&adapter->pdev->dev, adapter,
- 					     sizeof(struct vmxnet3_adapter),
-@@ -3299,7 +3299,7 @@ vmxnet3_probe_device(struct pci_dev *pde
- 	if (dma_mapping_error(&adapter->pdev->dev, adapter->adapter_pa)) {
- 		dev_err(&pdev->dev, "Failed to map dma\n");
- 		err = -EFAULT;
--		goto err_dma_map;
-+		goto err_set_mask;
+ 		completed += vmxnet3_unmap_pkt(VMXNET3_TCD_GET_TXIDX(
+ 					       &gdesc->tcd), tq, adapter->pdev,
+ 					       adapter);
+@@ -1099,6 +1104,11 @@ vmxnet3_tq_xmit(struct sk_buff *skb, str
+ 		gdesc->txd.tci = skb_vlan_tag_get(skb);
  	}
- 	adapter->shared = dma_alloc_coherent(
- 				&adapter->pdev->dev,
-@@ -3350,7 +3350,7 @@ vmxnet3_probe_device(struct pci_dev *pde
- 	}
- #endif /* VMXNET3_RSS */
  
--	err = vmxnet3_alloc_pci_resources(adapter, &dma64);
-+	err = vmxnet3_alloc_pci_resources(adapter);
- 	if (err < 0)
- 		goto err_alloc_pci;
- 
-@@ -3492,7 +3492,7 @@ err_alloc_queue_desc:
- err_alloc_shared:
- 	dma_unmap_single(&adapter->pdev->dev, adapter->adapter_pa,
- 			 sizeof(struct vmxnet3_adapter), PCI_DMA_TODEVICE);
--err_dma_map:
-+err_set_mask:
- 	free_netdev(netdev);
- 	return err;
- }
++	/* Ensure that the write to (&gdesc->txd)->gen will be observed after
++	 * all other writes to &gdesc->txd.
++	 */
++	dma_wmb();
++
+ 	/* finally flips the GEN bit of the SOP desc. */
+ 	gdesc->dword[2] = cpu_to_le32(le32_to_cpu(gdesc->dword[2]) ^
+ 						  VMXNET3_TXD_GEN);
+@@ -1286,6 +1296,12 @@ vmxnet3_rq_rx_complete(struct vmxnet3_rx
+ 			 */
+ 			break;
+ 		}
++
++		/* Prevent any rcd field from being (speculatively) read before
++		 * rcd->gen is read.
++		 */
++		dma_rmb();
++
+ 		BUG_ON(rcd->rqID != rq->qid && rcd->rqID != rq->qid2 &&
+ 		       rcd->rqID != rq->dataRingQid);
+ 		idx = rcd->rxdIdx;
+@@ -1515,6 +1531,12 @@ rcd_done:
+ 		ring->next2comp = idx;
+ 		num_to_alloc = vmxnet3_cmd_ring_desc_avail(ring);
+ 		ring = rq->rx_ring + ring_idx;
++
++		/* Ensure that the writes to rxd->gen bits will be observed
++		 * after all other writes to rxd objects.
++		 */
++		dma_wmb();
++
+ 		while (num_to_alloc) {
+ 			vmxnet3_getRxDesc(rxd, &ring->base[ring->next2fill].rxd,
+ 					  &rxCmdDesc);
