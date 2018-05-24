@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1758260-1527157533-2-5371185082813084718
+X-Cyrus-Session-Id: sloti22d1t05-1758260-1527157529-2-5755075174967957161
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527157533; b=ULgUgssD80A+c7k5k7Uu9t1fHGIzV8gX3n6gAQp0e0wQSMQL29
-    eREImwb2+Co2KnX7eSp1BpHx4Om8g4FOlP8PCBuW3/Kx8q5Ds91R1PJggoubJM9X
-    DD5u5AEPeL2zml9KK/Skw4m4HHeun253rIUicaXlqcaM3PdzY2Lz1d4BU8WhYgHc
-    11/XF1YwFE9mLADrJhr6PxVrvZotYNcc4DRTbjiGDQJm755ekENdheS4agBAv0c+
-    kLtqXwsz5ZdYsLUtEt7LpNo31S46Yc4IT3KRNLjjmvlNhlf2Gx/fcec8NGeWQcMK
-    dWFYtqVyKsGdetMuXoti1ZP8MFBZnCplRI2w==
+    1527157528; b=U2KIXMm9+Wa24WOgWFuPC9iB/ngpX4LuNI1YKOWvz27zmnxrwt
+    Ngyb0EiVGDRJQJXeD8Bhp7vwA1EMEn1NtOsYxprInXZwlRzc1DJvYNRrKW3Ry/5n
+    zQvhXF9eFpMXvfr789/LYC1Xd+lWD9HvHHVi56pbrts4J7euNn1NHS6Zv6IAoz33
+    Em5W0vI8CFYHFdXtXG7oVkgdLmr6yyPMOduZXzoWodUHzQdoTjnuUbdeYsTfOQlZ
+    RgmIP5nzgVwosbdo5SYJYUVdX9BB2SzWeSzBiQJJzHSLJQkuQDFg1hr+JTSaVMLw
+    jtRtQ/s01s4RkEUP4iums6S7lcmFJWKPXbjA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527157533; bh=7TeQD9d/pUGRNy3NwTG6SsdG/w6N1S
-    FOTZlNfo5xqo8=; b=faI79aRA34WeFPju/yU1stdiYuC3HmnMY/xTGRBhYr6Kfu
-    Pb5n1QxmVqZ7WIhTt42g/QG6sdaE055/bRsgAobSRiv+AzVZYNOh31RaSj1HHY8v
-    eKal3fs+UC9t3c+doq4uf7H7/xHFqLA7GDGS+iv4J/d+/QoC3N8vzF+Xa2z/7Kqz
-    ZgmHWZgqJk0FOQ5L2XmoDbZjCNUH+3r2zIHo7xI3olMO8TOJxQLa3hKS+UyLVayf
-    Oi7SWbc65b3pxwMMVGiVKdJwHzqIE6ND3zpDBt6HZNNvwpWO1kntSlweo4gyKyMf
-    nit9zndZvE3Y1r7jw4cV453Yiy6KmtQ+UVlRjdSA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527157528; bh=tI7z1p9NOV2TlDccKzxU7iqL4K9TRM
+    mLRfgy62KGp2s=; b=kE6x8pxBt5GnQ9RN8SzzOzA8YGshyB5mrAR2wg7FTWh3CY
+    qqx4aeB5j9sl5SqECw9PeXhOBOUdU9Y2sZSLtcZPrUaWtUiolciWzrDt1NZZ3KZm
+    WEavptrHKoM1CZRwWSwAmpRdU+GAS8Mm0NA+riHIpD4kpz7d6V5va2EqUyyNNscQ
+    Lb10paoP9BGzSFqMc7ZuNEXhaixRD7qsWzSk8AIFQnLjv2Mca+AUEzEphIJKHszo
+    hzFR66NYCV4ynAz7l4H/2OWKZ5REfh3qPaxPJobu+ULtycTZT7JxMDWpkQBtzcnP
+    izWdNrGZ311klOwxLthib3ViIdf4w6blSg4DMjVg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=lQkETFa/ x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=Qh4mErtT x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=lQkETFa/ x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=Qh4mErtT x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,22 +64,22 @@ Authentication-Results: mx3.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfKmfd0cwnvquGaccZx1u0mDBjWyy5j4ju0mkgcaKiifWXHUp/kBuegFr+SS+kFK4aX+y84P2+YYclh2unWTIP0rUGHWZafpnpfX7RIXnCiH4OEBUx0ea
-    9TjEPQFMjuKUtGlZoBZ/W/2ZJSgc8RvVPg3vKUb8L6slA1qWp7e+C4NVd2DO6N/UD3gDm5HFTBzv2jH/jBXT0GiIhNu3CXhxgJUbEEkOxuB5Ty0XqZbuDNZ4
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfNTRnF/P2bbm7+UIwUBEAfkrTIjWOv5yLN3Mg0fYgoklXU58Z3+B5Y161xEC39p4gv2bON/578/4ijsQ0/dPFjxyGjh7mXaTs20yvonUXN1WFiUpcDZ/
+    b0DQZi3VnnrFWBFYyfWmXkkzlWIuvRn/zEWmEDgYcILTmlfxDoMPz4vdaHatjVTNm6j6zdWhGuUzmJLJWfi3Csl/2aRkoPatWRmZqmZe248fGveKn59GEK0o
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
     a=jIQo8A4GAAAA:8 a=QyXUC8HyAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=X51Z8Hf4FAapsldMHMkA:9 a=QEXdDO2ut3YA:10 a=Lf5xNeLK5dgiOs8hzIjU:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=X51Z8Hf4FAapsldMHMkA:9 a=0bXxn9q0MV6snEgNplNhOjQmxlI=:19 a=QEXdDO2ut3YA:10
+    a=Lf5xNeLK5dgiOs8hzIjU:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031051AbeEXKZb (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 06:25:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48360 "EHLO mail.kernel.org"
+        id S1030570AbeEXKCK (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 06:02:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48416 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1031049AbeEXKCF (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 06:02:05 -0400
+        id S1031058AbeEXKCI (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 06:02:08 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -88,9 +88,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Grigor Tovmasyan <tovmasya@synopsys.com>,
         Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 073/161] usb: dwc2: hcd: Fix host channel halt flow
-Date: Thu, 24 May 2018 11:38:18 +0200
-Message-Id: <20180524093027.283433163@linuxfoundation.org>
+Subject: [PATCH 4.16 074/161] usb: dwc2: host: Fix transaction errors in host mode
+Date: Thu, 24 May 2018 11:38:19 +0200
+Message-Id: <20180524093027.399079466@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -110,10 +110,16 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Minas Harutyunyan <hminas@synopsys.com>
 
-[ Upstream commit a82c7abdf8fc3b09c4a0ed2eee6d43ecef2ccdb0 ]
+[ Upstream commit 92a8dd26464e1f21f1d869ec53717bd2c1200d63 ]
 
-According databook in Buffer and External DMA mode
-non-split periodic channels can't be halted.
+Added missing GUSBCFG programming in host mode, which fixes
+transaction errors issue on HiKey and Altera Cyclone V boards.
+
+These field even if was programmed in device mode (in function
+dwc2_hsotg_core_init_disconnected()) will be resetting to POR values
+after core soft reset applied.
+So, each time when switching to host mode required to set this field
+to correct value.
 
 Acked-by: John Youn <johnyoun@synopsys.com>
 Signed-off-by: Minas Harutyunyan <hminas@synopsys.com>
@@ -122,33 +128,32 @@ Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/dwc2/hcd.c |   18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ drivers/usb/dwc2/hcd.c |   14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
 --- a/drivers/usb/dwc2/hcd.c
 +++ b/drivers/usb/dwc2/hcd.c
-@@ -989,6 +989,24 @@ void dwc2_hc_halt(struct dwc2_hsotg *hso
+@@ -2340,10 +2340,22 @@ static int dwc2_core_init(struct dwc2_hs
+  */
+ static void dwc2_core_host_init(struct dwc2_hsotg *hsotg)
+ {
+-	u32 hcfg, hfir, otgctl;
++	u32 hcfg, hfir, otgctl, usbcfg;
  
- 	if (dbg_hc(chan))
- 		dev_vdbg(hsotg->dev, "%s()\n", __func__);
-+
-+	/*
-+	 * In buffer DMA or external DMA mode channel can't be halted
-+	 * for non-split periodic channels. At the end of the next
-+	 * uframe/frame (in the worst case), the core generates a channel
-+	 * halted and disables the channel automatically.
+ 	dev_dbg(hsotg->dev, "%s(%p)\n", __func__, hsotg);
+ 
++	/* Set HS/FS Timeout Calibration to 7 (max available value).
++	 * The number of PHY clocks that the application programs in
++	 * this field is added to the high/full speed interpacket timeout
++	 * duration in the core to account for any additional delays
++	 * introduced by the PHY. This can be required, because the delay
++	 * introduced by the PHY in generating the linestate condition
++	 * can vary from one PHY to another.
 +	 */
-+	if ((hsotg->params.g_dma && !hsotg->params.g_dma_desc) ||
-+	    hsotg->hw_params.arch == GHWCFG2_EXT_DMA_ARCH) {
-+		if (!chan->do_split &&
-+		    (chan->ep_type == USB_ENDPOINT_XFER_ISOC ||
-+		     chan->ep_type == USB_ENDPOINT_XFER_INT)) {
-+			dev_err(hsotg->dev, "%s() Channel can't be halted\n",
-+				__func__);
-+			return;
-+		}
-+	}
++	usbcfg = dwc2_readl(hsotg->regs + GUSBCFG);
++	usbcfg |= GUSBCFG_TOUTCAL(7);
++	dwc2_writel(usbcfg, hsotg->regs + GUSBCFG);
 +
- 	if (halt_status == DWC2_HC_XFER_NO_HALT_STATUS)
- 		dev_err(hsotg->dev, "!!! halt_status = %d !!!\n", halt_status);
+ 	/* Restart the Phy Clock */
+ 	dwc2_writel(0, hsotg->regs + PCGCTL);
  
