@@ -1,89 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031711AbeEXRMe (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 13:12:34 -0400
-Received: from bh-25.webhostbox.net ([208.91.199.152]:34372 "EHLO
-        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031084AbeEXRMb (ORCPT
+        id S1034167AbeEXRWk (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 13:22:40 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:53690 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031084AbeEXRWg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 13:12:31 -0400
-Date: Thu, 24 May 2018 10:12:29 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Ray Jui <ray.jui@broadcom.com>
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>,
-        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com
-Subject: Re: [PATCH v3 2/6] Documentation: DT: Add optional 'timeout-sec'
- property for sp805
-Message-ID: <20180524171229.GC9499@roeck-us.net>
-References: <1527120924-12131-1-git-send-email-ray.jui@broadcom.com>
- <1527120924-12131-3-git-send-email-ray.jui@broadcom.com>
- <20180524161628.GA28425@roeck-us.net>
- <621dc488-2d8d-003b-9bd1-4de59e8d178b@broadcom.com>
+        Thu, 24 May 2018 13:22:36 -0400
+X-Google-Smtp-Source: AB8JxZoQ8ehFz1IfAanymEhTdFQb8BEkIKIwjm2wriUOfct+ZR/ErvfD6j3xHCMNAh/rablndXSzCw==
+Date: Thu, 24 May 2018 12:22:32 -0500
+From: Seth Forshee <seth.forshee@canonical.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Linux Containers <containers@lists.linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, "Serge E. Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian@brauner.io>, linux-kernel@vger.kernel.org
+Subject: Re: [REVIEW][PATCH 2/6] vfs: Allow userns root to call mknod on
+ owned filesystems.
+Message-ID: <20180524172232.GS3401@ubuntu-xps13>
+References: <87o9h6554f.fsf@xmission.com>
+ <20180523232538.4880-2-ebiederm@xmission.com>
+ <20180524135517.GQ3401@ubuntu-xps13>
+ <87y3g92dta.fsf@xmission.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <621dc488-2d8d-003b-9bd1-4de59e8d178b@broadcom.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Authenticated_sender: guenter@roeck-us.net
-X-OutGoing-Spam-Status: No, score=-1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
-X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+In-Reply-To: <87y3g92dta.fsf@xmission.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 09:42:20AM -0700, Ray Jui wrote:
+On Thu, May 24, 2018 at 11:55:45AM -0500, Eric W. Biederman wrote:
+> Seth Forshee <seth.forshee@canonical.com> writes:
 > 
-> 
-> On 5/24/2018 9:16 AM, Guenter Roeck wrote:
-> >On Wed, May 23, 2018 at 05:15:20PM -0700, Ray Jui wrote:
-> >>Update the SP805 binding document to add optional 'timeout-sec'
-> >>devicetree property
-> >>
-> >>Signed-off-by: Ray Jui <ray.jui@broadcom.com>
-> >>---
-> >>  Documentation/devicetree/bindings/watchdog/arm,sp805.txt | 2 ++
-> >>  1 file changed, 2 insertions(+)
-> >>
-> >>diff --git a/Documentation/devicetree/bindings/watchdog/arm,sp805.txt b/Documentation/devicetree/bindings/watchdog/arm,sp805.txt
-> >>index 0fa3629..1debea3 100644
-> >>--- a/Documentation/devicetree/bindings/watchdog/arm,sp805.txt
-> >>+++ b/Documentation/devicetree/bindings/watchdog/arm,sp805.txt
-> >>@@ -19,6 +19,8 @@ Required properties:
-> >>  Optional properties:
-> >>  - interrupts:  Should specify WDT interrupt number
-> >>+- timeout-sec: Should specify default WDT timeout in seconds. If unset, the
-> >>+               default timeout in the driver is 30 seconds
+> > On Wed, May 23, 2018 at 06:25:34PM -0500, Eric W. Biederman wrote:
+> >> These filesystems already always set SB_I_NODEV so mknod will not be
+> >> useful for gaining control of any devices no matter their permissions.
+> >> This will allow overlayfs and applications to fakeroot to use device
+> >> nodes to represent things on disk.
+> >> 
+> >> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 > >
-> >"... the default timeout is determined by the driver" might be better.
-> >If you want to mandate a default here (not sure if that is a good idea),
-> >I would suggest to use something like "should be 30 seconds".
+> > For a normal filesystem this does seem safe enough.
 > >
+> > However, I'd also like to see us allow unprivileged mounting for
+> > overlayfs, and there we need to worry about whether this would allow a
+> > mknod in an underlying filesystem which should not be allowed. That
+> > mknod will be subject to this same check in the underlying filesystem
+> > using the credentials of the user that mounted the overaly fs, which
+> > should be sufficient to ensure that the mknod is permitted.
 > 
-> Okay. This can be changed to:
-> 
-> - timeout-sec: Should specify default WDT timeout in seconds. If unset, the
-> default timeout is determined by the driver.
-> 
-> Please advise how to proceed with this patch series. Should I make the above
-> modification and send out v4?
+> Sufficient to ensure the mknod is not permitted on the underlying
+> filesystem.  I believe you mean.
 
-I would suggest to wait a day or two, then send out v4 if there are no further
-comments.
+Right, or in other words with the relaxed capability check a user still
+could not use an overlayfs mount in a user namespace to mknod in a
+filesystem when that user couldn't otherwise mknod in that filesystem.
+Sorry if I wasn't clear.
 
-Thanks,
-Guenter
+> 
+> > Thus this looks okay to me.
+> >
+> > Acked-by: Seth Forshee <seth.forshee@canonical.com>
+> 
+> Eric
+> 
