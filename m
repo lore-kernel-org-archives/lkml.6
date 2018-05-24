@@ -1,92 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033256AbeEXOWu (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 10:22:50 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38815 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030742AbeEXOWs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 10:22:48 -0400
-Date: Thu, 24 May 2018 16:22:42 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Alexander Potapenko <glider@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Balbir Singh <bsingharora@gmail.com>, Baoquan He <bhe@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Young <dyoung@redhat.com>, Dmitry Vyukov <dvyukov@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hari Bathini <hbathini@linux.vnet.ibm.com>,
-        Huang Ying <ying.huang@intel.com>, Hugh Dickins <hughd@google.com>,
-        Ingo Molnar <mingo@kernel.org>, Jaewon Kim <jaewon31.kim@samsung.com>,
-        Jan Kara <jack@suse.cz>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>, Juergen Gross <jgross@suse.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>, Mel Gorman <mgorman@suse.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Oscar Salvador <osalvador@techadventures.net>,
-        Paul Mackerras <paulus@samba.org>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Rashmica Gupta <rashmica.g@gmail.com>,
-        Reza Arbab <arbab@linux.vnet.ibm.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH v1 00/10] mm: online/offline 4MB chunks controlled by
- device driver
-Message-ID: <20180524142241.GJ20441@dhcp22.suse.cz>
-References: <20180523151151.6730-1-david@redhat.com>
- <20180524075327.GU20441@dhcp22.suse.cz>
- <14d79dad-ad47-f090-2ec0-c5daf87ac529@redhat.com>
- <20180524093121.GZ20441@dhcp22.suse.cz>
- <c0b8bbd5-6c01-f550-ae13-ef80b2255ea6@redhat.com>
- <20180524120341.GF20441@dhcp22.suse.cz>
- <1a03ac4e-9185-ce8e-a672-c747c3e40ff2@redhat.com>
+        id S1033261AbeEXOYi (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 10:24:38 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:50219 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030656AbeEXOYh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 10:24:37 -0400
+Date: Thu, 24 May 2018 16:24:26 +0200
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pavel Machek <pavel@ucw.cz>,
+        Len Brown <len.brown@intel.com>
+Subject: [PATCH RFC] suspend: Prevent might sleep splats
+Message-ID: <20180524142426.jeyszeqdrjvb3tob@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1a03ac4e-9185-ce8e-a672-c747c3e40ff2@redhat.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I will go over the rest of the email later I just wanted to make this
-point clear because I suspect we are talking past each other.
+From: Thomas Gleixner <tglx@linutronix.de>
 
-On Thu 24-05-18 16:04:38, David Hildenbrand wrote:
-[...]
-> The point I was making is: I cannot allocate 8MB/128MB using the buddy
-> allocator. All I want to do is manage the memory a virtio-mem device
-> provides as flexible as possible.
+timekeeping suspend/resume calls read_persistent_clock() which takes
+rtc_lock. That results in might sleep warnings because at that point
+we run with interrupts disabled.
 
-I didn't mean to use the page allocator to isolate pages from it. We do
-have other means. Have a look at the page isolation framework and have a
-look how the current memory hotplug (ab)uses it. In short you mark the
-desired physical memory range as isolated (nobody can allocate from it)
-and then simply remove it from the page allocator. And you are done with
-it. Your particular range is gone, nobody will ever use it. If you mark
-those struct pages reserved then pfn walkers should already ignore them.
-If you keep those pages with ref count 0 then even hotplug should work
-seemlessly (I would have to double check).
+We cannot convert rtc_lock to a raw spinlock as that would trigger
+other might sleep warnings.
 
-So all I am arguing is that whatever your driver wants to do can be
-handled without touching the hotplug code much. You would still need
-to add new ranges in the mem section units and manage on top of that.
-You need to do that anyway to keep track of what parts are in use or
-offlined anyway right? Now the mem sections. You have to do that anyway
-for memmaps. Our sparse memory model simply works in those units. Even
-if you make a part of that range unavailable then the section will still
-be there.
+As a workaround we disable the might sleep warnings by setting
+system_state to SYSTEM_SUSPEND before calling sysdev_suspend() and
+restoring it to SYSTEM_RUNNING afer sysdev_resume().
 
-Do I make at least some sense or I am completely missing your point?
--- 
-Michal Hocko
-SUSE Labs
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+ include/linux/kernel.h   |    1 +
+ kernel/power/hibernate.c |    7 +++++++
+ kernel/power/suspend.c   |    4 ++++
+ 3 files changed, 12 insertions(+)
+
+--- a/include/linux/kernel.h
++++ b/include/linux/kernel.h
+@@ -532,6 +532,7 @@ extern enum system_states {
+ 	SYSTEM_HALT,
+ 	SYSTEM_POWER_OFF,
+ 	SYSTEM_RESTART,
++	SYSTEM_SUSPEND,
+ } system_state;
+ 
+ #define TAINT_PROPRIETARY_MODULE	0
+--- a/kernel/power/hibernate.c
++++ b/kernel/power/hibernate.c
+@@ -287,6 +287,8 @@ static int create_image(int platform_mod
+ 
+ 	local_irq_disable();
+ 
++	system_state = SYSTEM_SUSPEND;
++
+ 	error = syscore_suspend();
+ 	if (error) {
+ 		pr_err("Some system devices failed to power down, aborting hibernation\n");
+@@ -317,6 +319,7 @@ static int create_image(int platform_mod
+ 	syscore_resume();
+ 
+  Enable_irqs:
++	system_state = SYSTEM_RUNNING;
+ 	local_irq_enable();
+ 
+  Enable_cpus:
+@@ -445,6 +448,7 @@ static int resume_target_kernel(bool pla
+ 		goto Enable_cpus;
+ 
+ 	local_irq_disable();
++	system_state = SYSTEM_SUSPEND;
+ 
+ 	error = syscore_suspend();
+ 	if (error)
+@@ -478,6 +482,7 @@ static int resume_target_kernel(bool pla
+ 	syscore_resume();
+ 
+  Enable_irqs:
++	system_state = SYSTEM_RUNNING;
+ 	local_irq_enable();
+ 
+  Enable_cpus:
+@@ -563,6 +568,7 @@ int hibernation_platform_enter(void)
+ 		goto Enable_cpus;
+ 
+ 	local_irq_disable();
++	system_state = SYSTEM_SUSPEND;
+ 	syscore_suspend();
+ 	if (pm_wakeup_pending()) {
+ 		error = -EAGAIN;
+@@ -575,6 +581,7 @@ int hibernation_platform_enter(void)
+ 
+  Power_up:
+ 	syscore_resume();
++	system_state = SYSTEM_RUNNING;
+ 	local_irq_enable();
+ 
+  Enable_cpus:
+--- a/kernel/power/suspend.c
++++ b/kernel/power/suspend.c
+@@ -428,6 +428,8 @@ static int suspend_enter(suspend_state_t
+ 	arch_suspend_disable_irqs();
+ 	BUG_ON(!irqs_disabled());
+ 
++	system_state = SYSTEM_SUSPEND;
++
+ 	error = syscore_suspend();
+ 	if (!error) {
+ 		*wakeup = pm_wakeup_pending();
+@@ -443,6 +445,8 @@ static int suspend_enter(suspend_state_t
+ 		syscore_resume();
+ 	}
+ 
++	system_state = SYSTEM_RUNNING;
++
+ 	arch_suspend_enable_irqs();
+ 	BUG_ON(irqs_disabled());
+ 
