@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1733193-1527155356-3-17263930381142994850
+X-Cyrus-Session-Id: sloti22d1t05-1691124-1527155268-2-13787124728202459349
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527155356; b=EBoOJwfDRqPTk5TEOrBhTnQUurprGctIolknesTqel2qlosszc
-    VpoijWYRQmOzMHkcKlyPmmvMh3Erwt8BbNZeSX76k9gBgbgAVhQoUFKiKJyzaWBE
-    7jcUCTQqRa41Hnv37XvmMhyn2Pv+wXMRYBkaWbJZHgTPak7REsQtkob2oLEgbqv6
-    aTEzvsdXBtaeDr6Wk6KnS2Me/tVY4WBWfpRxiBoF2DGqmi4a0jXb9pQMqkXSkbwy
-    A2dp4QF0nEjOwi1iS1LtLBNX8MLkwZvWilIR6l4JrMa3qe4YFOccxOxWY4dIopFr
-    FbwVlU4aKoxAg+pjlq67szofxRqoxtmDg7jA==
+    1527155267; b=bCjNi8T6ugS7Io4lrwqpuAOBIl4oMtW17JLJQM+c+PjxYelV5h
+    2kx+dWE5gI+HFD26uPkA8gIjafMyYOaK3jwm6D0sDdxNEu8d+miCbCgJhspghmmX
+    fz6YdGw5NAJuE6+oiXOEDkcPdR/xGeZmnzzK6JXN2BzqGOG3dLu0hqnEiCTyg4P6
+    xknYgmitEBvIoaYxP9S/0uLNLCKBu00fomuKUZlsEmKh3CGciD0U+lACiBESsWlo
+    frCxF2HbYyYs00/nX7a8NuwRo/aVy/huuHEjhUboiFwz1c1fWZ8PYbdxiR6p+m5j
+    R+UsaBIMOP8F2Zn0MxGeW9M4gh1IUhVV5/Nw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527155356; bh=CT0tinMCMnHAlpsUo9SjcWizbEklNs
-    FLyIRj/MRZc/0=; b=SoXCM7e1Jm3pYIpvvjL4JRE1mFhqqjnKHxx6cM8ARQhIwc
-    GHMAqpkw1kmBhu/8W4MTI3KZJKBH57FLCb3KFzuOK96K0HKxdMrIaSJsY+cQxdVP
-    ZoO/oTZsBPEimhw6MBdAqshQbjSgCBqIL5gQzbUyDvaOJ4vNi6VrqMUkS5h41BEK
-    dBwuYJ2bYuS7UGPCdEFMsBIl+RGKOuyFVpuzEf3fKjWH6SRyB2+rGH91Y9IvUGje
-    k5CjyFYIc3oEpHbkjr5rhXrilLw7bvYCrHZwbgGBqwYrdTyy7mD7bm81Es03rGus
-    jSWgQqYy0aJ0aOGtkJXPz2FTQMqZ126EU5uSA3dw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527155267; bh=7FeMTOkCB703Nfx6tQ6huhjSmJSWd4
+    BhcKPVO1IXlx8=; b=Behm3JlkEJvk24iI0OXmBZk0Dwo+Cv3UpbLQ07ak1+5e6R
+    3p5o33HMJvCU9LbSFYWHlkYIUMr1+KnsN9SC3WamZciEaMovkHFJUSBpZqnCMFeY
+    DBvzDmrzTO5TKRdGTXiVioIcLsvzs5Aus/tX8W30cUJleLifZCe7sD0KHBdhOLIP
+    emG701XTPJbQkt1C0RkpozWCTf+U2sOC9qBF067YS5HWWE/1Qt/6Et7BoOm6NZSK
+    NDiwFXdsMWxN919P6XXUMRyQgKfK5V1jWiVCmYJ53KAWylb6TYlHQ9bGaD7IN9dl
+    luPU2jyl/85xDChdgwP0f/DCe23X8A4eC2O43hrw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=cA/w39QI x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=N/GiUzre x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=cA/w39QI x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=N/GiUzre x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,34 +64,30 @@ Authentication-Results: mx4.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCMXfpW5OsdCJGHOWBADKRnsjxvMhLk3AaKVKSQUIBJmI6889ZGUNz2y6qNm70ne/ptsjM0zdqn+gJqXh95hRWiywa27ZLSCEx/K9fGmFSGijO1OUn1D
-    ch8uUNvgPw+4W4pdptKSrhjyF/XJlsomS3m0/37I1JSKO5KnYQSeQO3PLz4zizKYrZ+v/jzvJTQbeY9d/nsIKGD7JrxUj066E1bKityqD7F11xXDdNmc44bb
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfHY1j3NgnwCXe1OpfQHbt/7G6kxDk8Pgg+It+9d1rPSTNXSALlVxQUZLeDBlU0+pileTV42xIgSoQ3L10y2+IfNZ9ndkRHpH4GneJ04KOzpwazmByY1r
+    702QmaLDBlmDC2aWtugpJTyN+CgcAjelzwHf6dr7G3QNr02/Hrx51Z8LJV4imwa/zH7fGJLaDPe0KriZQKjFHtKMG93/ko61yy0VRZSPzo/XPPYMgVIhLe4G
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=LpQP-O61AAAA:8 a=yPCof4ZbAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=zobwxN-apzL_bq59u2oA:9 a=QEXdDO2ut3YA:10 a=pioyyrs4ZptJ924tMmac:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=QyXUC8HyAAAA:8 a=hSkVLCK3AAAA:8 a=ag1SF4gXAAAA:8 a=-O5xsKu7cXiJXXyVPtwA:9
+    a=QEXdDO2ut3YA:10 a=cQPPKAXgyycSBL8etih5:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967333AbeEXJtK (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:49:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36340 "EHLO mail.kernel.org"
+        id S967091AbeEXJro (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:47:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60456 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967316AbeEXJtG (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:49:06 -0400
+        id S967084AbeEXJrm (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:47:42 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Sujit Reddy Thumma <sthumma@codeaurora.org>,
-        Subhash Jadavani <subhashj@codeaurora.org>,
-        Asutosh Das <asutoshd@codeaurora.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 52/96] scsi: ufs: Enable quirk to ignore sending WRITE_SAME command
-Date: Thu, 24 May 2018 11:38:35 +0200
-Message-Id: <20180524093608.465897980@linuxfoundation.org>
+        syzbot+230d9e642a85d3fec29c@syzkaller.appspotmail.com,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 4.9 21/96] cfg80211: limit wiphy names to 128 bytes
+Date: Thu, 24 May 2018 11:38:04 +0200
+Message-Id: <20180524093606.821735070@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093605.602125311@linuxfoundation.org>
 References: <20180524093605.602125311@linuxfoundation.org>
@@ -109,33 +105,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sujit Reddy Thumma <sthumma@codeaurora.org>
+From: Johannes Berg <johannes.berg@intel.com>
 
-[ Upstream commit 84af7e8b895088d89f246d6b0f82717fafdebf61 ]
+commit a7cfebcb7594a24609268f91299ab85ba064bf82 upstream.
 
-WRITE_SAME command is not supported by UFS. Enable a quirk for the upper
-level drivers to not send WRITE SAME command.
+There's currently no limit on wiphy names, other than netlink
+message size and memory limitations, but that causes issues when,
+for example, the wiphy name is used in a uevent, e.g. in rfkill
+where we use the same name for the rfkill instance, and then the
+buffer there is "only" 2k for the environment variables.
 
-[mkp: botched patch, applied by hand]
+This was reported by syzkaller, which used a 4k name.
 
-Signed-off-by: Sujit Reddy Thumma <sthumma@codeaurora.org>
-Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
-Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Limit the name to something reasonable, I randomly picked 128.
+
+Reported-by: syzbot+230d9e642a85d3fec29c@syzkaller.appspotmail.com
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/scsi/ufs/ufshcd.c |    2 ++
- 1 file changed, 2 insertions(+)
 
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -3338,6 +3338,8 @@ static int ufshcd_slave_alloc(struct scs
- 	/* REPORT SUPPORTED OPERATION CODES is not supported */
- 	sdev->no_report_opcodes = 1;
+---
+ include/uapi/linux/nl80211.h |    2 ++
+ net/wireless/core.c          |    3 +++
+ 2 files changed, 5 insertions(+)
+
+--- a/include/uapi/linux/nl80211.h
++++ b/include/uapi/linux/nl80211.h
+@@ -2379,6 +2379,8 @@ enum nl80211_attrs {
+ #define NL80211_ATTR_KEYS NL80211_ATTR_KEYS
+ #define NL80211_ATTR_FEATURE_FLAGS NL80211_ATTR_FEATURE_FLAGS
  
-+	/* WRITE_SAME command is not supported */
-+	sdev->no_write_same = 1;
++#define NL80211_WIPHY_NAME_MAXLEN		128
++
+ #define NL80211_MAX_SUPP_RATES			32
+ #define NL80211_MAX_SUPP_HT_RATES		77
+ #define NL80211_MAX_SUPP_REG_RULES		64
+--- a/net/wireless/core.c
++++ b/net/wireless/core.c
+@@ -95,6 +95,9 @@ static int cfg80211_dev_check_name(struc
  
- 	ufshcd_set_queue_depth(sdev);
+ 	ASSERT_RTNL();
  
++	if (strlen(newname) > NL80211_WIPHY_NAME_MAXLEN)
++		return -EINVAL;
++
+ 	/* prohibit calling the thing phy%d when %d is not its number */
+ 	sscanf(newname, PHY_NAME "%d%n", &wiphy_idx, &taken);
+ 	if (taken == strlen(newname) && wiphy_idx != rdev->wiphy_idx) {
