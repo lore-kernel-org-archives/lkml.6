@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032759AbeEXK7c (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 06:59:32 -0400
-Received: from foss.arm.com ([217.140.101.70]:40932 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030295AbeEXK7T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 06:59:19 -0400
+        id S1032449AbeEXK72 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 06:59:28 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40958 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1030373AbeEXK7U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 06:59:20 -0400
 From: Will Deacon <will.deacon@arm.com>
 To: linux-kernel@vger.kernel.org
 Cc: peterz@infradead.org, mingo@kernel.org,
         linux-arm-kernel@lists.infradead.org, yamada.masahiro@socionext.com,
         Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 2/9] m68k: Don't use asm-generic/bitops/lock.h
-Date: Thu, 24 May 2018 11:59:39 +0100
-Message-Id: <1527159586-8578-3-git-send-email-will.deacon@arm.com>
+Subject: [PATCH 4/9] openrisc: Don't pull in all of linux/bitops.h in asm/cmpxchg.h
+Date: Thu, 24 May 2018 11:59:41 +0100
+Message-Id: <1527159586-8578-5-git-send-email-will.deacon@arm.com>
 X-Mailer: git-send-email 2.1.4
 In-Reply-To: <1527159586-8578-1-git-send-email-will.deacon@arm.com>
 References: <1527159586-8578-1-git-send-email-will.deacon@arm.com>
@@ -21,55 +21,31 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-asm-generic/bitops/lock.h is shortly going to be built on top of the
-atomic_long_* API, which introduces a nasty circular dependency for
-m68k where linux/atomic.h pulls in linux/bitops.h via:
+The openrisc implementation of asm/cmpxchg.h pulls in linux/bitops.h
+so that it can refer to BITS_PER_BYTE. It also transitively relies on
+this pulling in linux/compiler.h for READ_ONCE.
 
-	linux/atomic.h
-	asm/atomic.h
-	linux/irqflags.h
-	asm/irqflags.h
-	linux/preempt.h
-	asm/preempt.h
-	asm-generic/preempt.h
-	linux/thread_info.h
-	asm/thread_info.h
-	asm/page.h
-	asm-generic/getorder.h
-	linux/log2.h
-	linux/bitops.h
+Replace the #include with linux/bits.h and linux/compiler.h
 
-Since m68k isn't SMP and doesn't support ACQUIRE/RELEASE barriers, we
-can just define the lock bitops in terms of the atomic bitops in the
-asm/bitops.h header.
-
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 ---
- arch/m68k/include/asm/bitops.h | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ arch/openrisc/include/asm/cmpxchg.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/m68k/include/asm/bitops.h b/arch/m68k/include/asm/bitops.h
-index 93b47b1f6fb4..18193419f97d 100644
---- a/arch/m68k/include/asm/bitops.h
-+++ b/arch/m68k/include/asm/bitops.h
-@@ -515,12 +515,16 @@ static inline int __fls(int x)
+diff --git a/arch/openrisc/include/asm/cmpxchg.h b/arch/openrisc/include/asm/cmpxchg.h
+index d29f7db53906..f9cd43a39d72 100644
+--- a/arch/openrisc/include/asm/cmpxchg.h
++++ b/arch/openrisc/include/asm/cmpxchg.h
+@@ -16,8 +16,9 @@
+ #ifndef __ASM_OPENRISC_CMPXCHG_H
+ #define __ASM_OPENRISC_CMPXCHG_H
  
- #endif
++#include  <linux/bits.h>
++#include  <linux/compiler.h>
+ #include  <linux/types.h>
+-#include  <linux/bitops.h>
  
-+/* Simple test-and-set bit locks */
-+#define test_and_set_bit_lock	test_and_set_bit
-+#define clear_bit_unlock	clear_bit
-+#define __clear_bit_unlock	clear_bit_unlock
-+
- #include <asm-generic/bitops/ext2-atomic.h>
- #include <asm-generic/bitops/le.h>
- #include <asm-generic/bitops/fls64.h>
- #include <asm-generic/bitops/sched.h>
- #include <asm-generic/bitops/hweight.h>
--#include <asm-generic/bitops/lock.h>
- #endif /* __KERNEL__ */
+ #define __HAVE_ARCH_CMPXCHG 1
  
- #endif /* _M68K_BITOPS_H */
 -- 
 2.1.4
