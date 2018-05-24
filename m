@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1691124-1527155007-2-14006974153492429398
+X-Cyrus-Session-Id: sloti22d1t05-1691122-1527155000-2-10747665177850343559
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527155005; b=NmzHFhAovTZZGWePLX0f/BRYR09N6A3GomGdN36ikB1zxVbqK2
-    Spxg8iOquqr7RrV9vRjQ4sVie5Z3vVhWt5tMuoqMn3cq/6xBA8d2EXc/2PuGf3zN
-    odSGnyiJN2xFVDsQrg+rGywNZ4czmWBCbqA4R9UjPTr3HCLuc1LrShCeJbcSs+l5
-    3tU7B/HS8st/HXMC9QRoMfaefZNZZZGHmqdVLACyCEjT5vXKtnjUgYd1LR6SuEj3
-    Fm7Ay9UUMea7r9Xm6VK8wa6AZhEWVHz/+LRT77FxeCV0snF3Z/KPymfr7OeCganL
-    lC0cmZ60FaR/I5xs6QwWfd8ZjQE1SYcWdWVw==
+    1527154999; b=LXXw7A8ge5VYLP1AAXzLWuRCZ7UpRuHqMZbZgjl6dVT0sIsWc+
+    KuHgtBgNi7/HOLj53IGslQqktY7UdiAYS1iA2AW6FwTGSEJsQz1RSfunTkQfp3IA
+    cidPwM1ojhuFw9rhMAuEwYluENick+NWG+l9A1O4NLQcczZKhqAL2oXucbLpoAnd
+    Yt5B1QKAIPLhOWWiTq/FO5SFTlgmGR12dxDQvrbf4RFl2xpQdt5aza5FaDl7IYAG
+    a0ifejdARQQ3ZxEVbJawMpARLEs1QfD3xVUcx/4ucKye+MBruBB7OYhayDbwnNWi
+    mA4VcubmDfrp0x42VgiM3LYIVTdSo9AgFJIg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527155005; bh=ciLdzL6YrlgR5ZWQTeZv2MY9k66qeK
-    CeFW/f0UzI9vI=; b=INNAEOPuCJuA/oGyMJtWb7Sp/mwhkGUl6ZCqI0Fkn4vWtP
-    1icpR1onkCTOHrsjTpP4/70ngnrc9M70Hg6C6RziArk+nJ8SQrw9X7KAJWg2A9dV
-    bmi53feS8+D/Q5jV2Su3rUJ77JdJKeIo3eqtlxbU55H1p+pviFGcK5FsBRsuLoN0
-    9ud9iV3pf9IHkSmqdFAjj5b2W9SCeJUNHEKpZDXr3RBBnoYzM9qEwsJ2oSoxNSlr
-    GBBl/5F1PY0ZbM+jwEhZ4qVIXhwLCYImXi3UB6seuT3ZCQHBzCCb8ga5g6cSXfNK
-    u94R6JbokNhHATwtODkoks0ALj+V8W6EGioF4IKw==
+    :list-id; s=fm2; t=1527154999; bh=LPbuK20ES1PWwBWVpm+ZczrsjYs2C+
+    SdddvZ4xGG03Q=; b=XrVJS7GuLqIPCwHeDkzI1LU7ViJgqfiFTlPBJ+V9ZLQVjK
+    viOaDFQZDopLvfQ/trZFmTGhn/2uSG3SGQsKN4I8FRnUi84dSmBMnoIggH35WGP/
+    +tKJ7qfYYIovqsbvIcNWu5JCeGw7qEprHloKXwj9zhGdefsxaHMArPhzk5LVRNxx
+    emUVYKXYOVj7fBlXJ28f2ENSVpcJR0Xf6mH5AOZyL2VEaYwmL1J4MEVY3qzTsrnF
+    QLQ75aCgIf6rgd9nBfhvHnPaZK57HMDSgZUNxjdATO4AIcNZedTydH4/CVUVfEd0
+    MKs8q78BqHPQid9CyspEabkiGjWvdjXWtco8lp0w==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=VFip9uW+ x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=wUBXoNVA x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -48,7 +48,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
 Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=VFip9uW+ x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=wUBXoNVA x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,33 +64,30 @@ Authentication-Results: mx3.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfKS9LgOmP1kmdd6VvoLImwYAS4/CLfE6q+GWXHI4MSA518ma45z4JoqiWTuc45rOx8/vUYQEOE+TbuQaIpzbaEJZ3KEMiycR338LXZzH/Mm7cwbjI1rG
-    0Ip1yTT6luTDSXqUx/+DmDlurMWdJ55OFfIoIhMvN+51l3qBZ6SnYy3RhnLn0rWqeNrehXK4ehVzmrkMjMRisY/IWowRKLJSI63ohilLEuwRurCJIE14s/w2
+X-CM-Envelope: MS4wfMFSDnXkWDAgRmsj1ejXExV8V3rwgtEgC4ZV6iXZ4gTeC/QNREEKH3Xx+VxCmTF46RZ4iqJ/hikdkPrZ7WXo3gSQajX7dQ+5luzJx93UBJ5MxBuI9UOG
+    cpDrOx4no+YlNELgT+rcbm2HBXZwFPLsf3kh+Vq/ELr1ClnpxBPQp/3xt+4hiNn+kpC76rxVW46PUsZnD9icRQiPIYNNkAU6dcBBNXT+bZnhYMEWZS057yHw
 X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=pGLkceISAAAA:8 a=vmLDa1wCAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
-    a=e87FW0PGWPbJLDRRSGYA:9 a=QEXdDO2ut3YA:10 a=h8Bt5HTj68qkN2fS7gvA:22
+    a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=Udi51pQLigb7wLLcoy4A:9
+    a=leO6L6J5QhcLqcjX:21 a=DiLKg6yONuWM8hCT:21 a=QEXdDO2ut3YA:10
     a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966027AbeEXJnW (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:43:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54806 "EHLO mail.kernel.org"
+        id S966180AbeEXJnR (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:43:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54620 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966470AbeEXJnU (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:43:20 -0400
+        id S966432AbeEXJnH (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:43:07 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        Xin Long <lucien.xin@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
+        stable@vger.kernel.org, Rob Taglang <rob@taglang.io>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 19/92] sctp: delay the authentication for the duplicated cookie-echo chunk
-Date: Thu, 24 May 2018 11:37:56 +0200
-Message-Id: <20180524093200.931521036@linuxfoundation.org>
+Subject: [PATCH 4.4 06/92] net: ethernet: sun: niu set correct packet size in skb
+Date: Thu, 24 May 2018 11:37:43 +0200
+Message-Id: <20180524093159.859034674@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093159.286472249@linuxfoundation.org>
 References: <20180524093159.286472249@linuxfoundation.org>
@@ -108,247 +105,56 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Rob Taglang <rob@taglang.io>
 
-[ Upstream commit 59d8d4434f429b4fa8a346fd889058bda427a837 ]
+[ Upstream commit 14224923c3600bae2ac4dcae3bf0c3d4dc2812be ]
 
-Now sctp only delays the authentication for the normal cookie-echo
-chunk by setting chunk->auth_chunk in sctp_endpoint_bh_rcv(). But
-for the duplicated one with auth, in sctp_assoc_bh_rcv(), it does
-authentication first based on the old asoc, which will definitely
-fail due to the different auth info in the old asoc.
+Currently, skb->len and skb->data_len are set to the page size, not
+the packet size. This causes the frame check sequence to not be
+located at the "end" of the packet resulting in ethernet frame check
+errors. The driver does work currently, but stricter kernel facing
+networking solutions like OpenVSwitch will drop these packets as
+invalid.
 
-The duplicated cookie-echo chunk will create a new asoc with the
-auth info from this chunk, and the authentication should also be
-done with the new asoc's auth info for all of the collision 'A',
-'B' and 'D'. Otherwise, the duplicated cookie-echo chunk with auth
-will never pass the authentication and create the new connection.
+These changes set the packet size correctly so that these errors no
+longer occur. The length does not include the frame check sequence, so
+that subtraction was removed.
 
-This issue exists since very beginning, and this fix is to make
-sctp_assoc_bh_rcv() follow the way sctp_endpoint_bh_rcv() does
-for the normal cookie-echo chunk to delay the authentication.
+Tested on Oracle/SUN Multithreaded 10-Gigabit Ethernet Network
+Controller [108e:abcd] and validated in wireshark.
 
-While at it, remove the unused params from sctp_sf_authenticate()
-and define sctp_auth_chunk_verify() used for all the places that
-do the delayed authentication.
-
-v1->v2:
-  fix the typo in changelog as Marcelo noticed.
-
-Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Signed-off-by: Rob Taglang <rob@taglang.io>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sctp/associola.c    |   30 ++++++++++++++++
- net/sctp/sm_statefuns.c |   87 ++++++++++++++++++++++++++----------------------
- 2 files changed, 77 insertions(+), 40 deletions(-)
+ drivers/net/ethernet/sun/niu.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/net/sctp/associola.c
-+++ b/net/sctp/associola.c
-@@ -1000,9 +1000,10 @@ static void sctp_assoc_bh_rcv(struct wor
- 	struct sctp_endpoint *ep;
- 	struct sctp_chunk *chunk;
- 	struct sctp_inq *inqueue;
--	int state;
- 	sctp_subtype_t subtype;
-+	int first_time = 1;	/* is this the first time through the loop */
- 	int error = 0;
-+	int state;
+--- a/drivers/net/ethernet/sun/niu.c
++++ b/drivers/net/ethernet/sun/niu.c
+@@ -3442,7 +3442,7 @@ static int niu_process_rx_pkt(struct nap
  
- 	/* The association should be held so we should be safe. */
- 	ep = asoc->ep;
-@@ -1013,6 +1014,30 @@ static void sctp_assoc_bh_rcv(struct wor
- 		state = asoc->state;
- 		subtype = SCTP_ST_CHUNK(chunk->chunk_hdr->type);
+ 		len = (val & RCR_ENTRY_L2_LEN) >>
+ 			RCR_ENTRY_L2_LEN_SHIFT;
+-		len -= ETH_FCS_LEN;
++		append_size = len + ETH_HLEN + ETH_FCS_LEN;
  
-+		/* If the first chunk in the packet is AUTH, do special
-+		 * processing specified in Section 6.3 of SCTP-AUTH spec
-+		 */
-+		if (first_time && subtype.chunk == SCTP_CID_AUTH) {
-+			struct sctp_chunkhdr *next_hdr;
-+
-+			next_hdr = sctp_inq_peek(inqueue);
-+			if (!next_hdr)
-+				goto normal;
-+
-+			/* If the next chunk is COOKIE-ECHO, skip the AUTH
-+			 * chunk while saving a pointer to it so we can do
-+			 * Authentication later (during cookie-echo
-+			 * processing).
-+			 */
-+			if (next_hdr->type == SCTP_CID_COOKIE_ECHO) {
-+				chunk->auth_chunk = skb_clone(chunk->skb,
-+							      GFP_ATOMIC);
-+				chunk->auth = 1;
-+				continue;
-+			}
-+		}
-+
-+normal:
- 		/* SCTP-AUTH, Section 6.3:
- 		 *    The receiver has a list of chunk types which it expects
- 		 *    to be received only after an AUTH-chunk.  This list has
-@@ -1051,6 +1076,9 @@ static void sctp_assoc_bh_rcv(struct wor
- 		/* If there is an error on chunk, discard this packet. */
- 		if (error && chunk)
- 			chunk->pdiscard = 1;
-+
-+		if (first_time)
-+			first_time = 0;
- 	}
- 	sctp_association_put(asoc);
- }
---- a/net/sctp/sm_statefuns.c
-+++ b/net/sctp/sm_statefuns.c
-@@ -144,10 +144,8 @@ static sctp_disposition_t sctp_sf_violat
- 				     void *arg,
- 				     sctp_cmd_seq_t *commands);
+ 		addr = (val & RCR_ENTRY_PKT_BUF_ADDR) <<
+ 			RCR_ENTRY_PKT_BUF_ADDR_SHIFT;
+@@ -3452,7 +3452,6 @@ static int niu_process_rx_pkt(struct nap
+ 					 RCR_ENTRY_PKTBUFSZ_SHIFT];
  
--static sctp_ierror_t sctp_sf_authenticate(struct net *net,
--				    const struct sctp_endpoint *ep,
-+static sctp_ierror_t sctp_sf_authenticate(
- 				    const struct sctp_association *asoc,
--				    const sctp_subtype_t type,
- 				    struct sctp_chunk *chunk);
+ 		off = addr & ~PAGE_MASK;
+-		append_size = rcr_size;
+ 		if (num_rcr == 1) {
+ 			int ptype;
  
- static sctp_disposition_t __sctp_sf_do_9_1_abort(struct net *net,
-@@ -615,6 +613,38 @@ sctp_disposition_t sctp_sf_do_5_1C_ack(s
- 	return SCTP_DISPOSITION_CONSUME;
- }
+@@ -3465,7 +3464,7 @@ static int niu_process_rx_pkt(struct nap
+ 			else
+ 				skb_checksum_none_assert(skb);
+ 		} else if (!(val & RCR_ENTRY_MULTI))
+-			append_size = len - skb->len;
++			append_size = append_size - skb->len;
  
-+static bool sctp_auth_chunk_verify(struct net *net, struct sctp_chunk *chunk,
-+				   const struct sctp_association *asoc)
-+{
-+	struct sctp_chunk auth;
-+
-+	if (!chunk->auth_chunk)
-+		return true;
-+
-+	/* SCTP-AUTH:  auth_chunk pointer is only set when the cookie-echo
-+	 * is supposed to be authenticated and we have to do delayed
-+	 * authentication.  We've just recreated the association using
-+	 * the information in the cookie and now it's much easier to
-+	 * do the authentication.
-+	 */
-+
-+	/* Make sure that we and the peer are AUTH capable */
-+	if (!net->sctp.auth_enable || !asoc->peer.auth_capable)
-+		return false;
-+
-+	/* set-up our fake chunk so that we can process it */
-+	auth.skb = chunk->auth_chunk;
-+	auth.asoc = chunk->asoc;
-+	auth.sctp_hdr = chunk->sctp_hdr;
-+	auth.chunk_hdr = (struct sctp_chunkhdr *)
-+				skb_push(chunk->auth_chunk,
-+					 sizeof(struct sctp_chunkhdr));
-+	skb_pull(chunk->auth_chunk, sizeof(struct sctp_chunkhdr));
-+	auth.transport = chunk->transport;
-+
-+	return sctp_sf_authenticate(asoc, &auth) == SCTP_IERROR_NO_ERROR;
-+}
-+
- /*
-  * Respond to a normal COOKIE ECHO chunk.
-  * We are the side that is being asked for an association.
-@@ -751,36 +781,9 @@ sctp_disposition_t sctp_sf_do_5_1D_ce(st
- 	if (error)
- 		goto nomem_init;
- 
--	/* SCTP-AUTH:  auth_chunk pointer is only set when the cookie-echo
--	 * is supposed to be authenticated and we have to do delayed
--	 * authentication.  We've just recreated the association using
--	 * the information in the cookie and now it's much easier to
--	 * do the authentication.
--	 */
--	if (chunk->auth_chunk) {
--		struct sctp_chunk auth;
--		sctp_ierror_t ret;
--
--		/* Make sure that we and the peer are AUTH capable */
--		if (!net->sctp.auth_enable || !new_asoc->peer.auth_capable) {
--			sctp_association_free(new_asoc);
--			return sctp_sf_pdiscard(net, ep, asoc, type, arg, commands);
--		}
--
--		/* set-up our fake chunk so that we can process it */
--		auth.skb = chunk->auth_chunk;
--		auth.asoc = chunk->asoc;
--		auth.sctp_hdr = chunk->sctp_hdr;
--		auth.chunk_hdr = (sctp_chunkhdr_t *)skb_push(chunk->auth_chunk,
--					    sizeof(sctp_chunkhdr_t));
--		skb_pull(chunk->auth_chunk, sizeof(sctp_chunkhdr_t));
--		auth.transport = chunk->transport;
--
--		ret = sctp_sf_authenticate(net, ep, new_asoc, type, &auth);
--		if (ret != SCTP_IERROR_NO_ERROR) {
--			sctp_association_free(new_asoc);
--			return sctp_sf_pdiscard(net, ep, asoc, type, arg, commands);
--		}
-+	if (!sctp_auth_chunk_verify(net, chunk, new_asoc)) {
-+		sctp_association_free(new_asoc);
-+		return sctp_sf_pdiscard(net, ep, asoc, type, arg, commands);
- 	}
- 
- 	repl = sctp_make_cookie_ack(new_asoc, chunk);
-@@ -1717,13 +1720,15 @@ static sctp_disposition_t sctp_sf_do_dup
- 			       GFP_ATOMIC))
- 		goto nomem;
- 
-+	if (!sctp_auth_chunk_verify(net, chunk, new_asoc))
-+		return SCTP_DISPOSITION_DISCARD;
-+
- 	/* Make sure no new addresses are being added during the
- 	 * restart.  Though this is a pretty complicated attack
- 	 * since you'd have to get inside the cookie.
- 	 */
--	if (!sctp_sf_check_restart_addrs(new_asoc, asoc, chunk, commands)) {
-+	if (!sctp_sf_check_restart_addrs(new_asoc, asoc, chunk, commands))
- 		return SCTP_DISPOSITION_CONSUME;
--	}
- 
- 	/* If the endpoint is in the SHUTDOWN-ACK-SENT state and recognizes
- 	 * the peer has restarted (Action A), it MUST NOT setup a new
-@@ -1828,6 +1833,9 @@ static sctp_disposition_t sctp_sf_do_dup
- 			       GFP_ATOMIC))
- 		goto nomem;
- 
-+	if (!sctp_auth_chunk_verify(net, chunk, new_asoc))
-+		return SCTP_DISPOSITION_DISCARD;
-+
- 	/* Update the content of current association.  */
- 	sctp_add_cmd_sf(commands, SCTP_CMD_UPDATE_ASSOC, SCTP_ASOC(new_asoc));
- 	sctp_add_cmd_sf(commands, SCTP_CMD_NEW_STATE,
-@@ -1920,6 +1928,9 @@ static sctp_disposition_t sctp_sf_do_dup
- 	 * a COOKIE ACK.
- 	 */
- 
-+	if (!sctp_auth_chunk_verify(net, chunk, asoc))
-+		return SCTP_DISPOSITION_DISCARD;
-+
- 	/* Don't accidentally move back into established state. */
- 	if (asoc->state < SCTP_STATE_ESTABLISHED) {
- 		sctp_add_cmd_sf(commands, SCTP_CMD_TIMER_STOP,
-@@ -3985,10 +3996,8 @@ gen_shutdown:
-  *
-  * The return value is the disposition of the chunk.
-  */
--static sctp_ierror_t sctp_sf_authenticate(struct net *net,
--				    const struct sctp_endpoint *ep,
-+static sctp_ierror_t sctp_sf_authenticate(
- 				    const struct sctp_association *asoc,
--				    const sctp_subtype_t type,
- 				    struct sctp_chunk *chunk)
- {
- 	struct sctp_authhdr *auth_hdr;
-@@ -4087,7 +4096,7 @@ sctp_disposition_t sctp_sf_eat_auth(stru
- 						  commands);
- 
- 	auth_hdr = (struct sctp_authhdr *)chunk->skb->data;
--	error = sctp_sf_authenticate(net, ep, asoc, type, chunk);
-+	error = sctp_sf_authenticate(asoc, chunk);
- 	switch (error) {
- 	case SCTP_IERROR_AUTH_BAD_HMAC:
- 		/* Generate the ERROR chunk and discard the rest
+ 		niu_rx_skb_append(skb, page, off, append_size, rcr_size);
+ 		if ((page->index + rp->rbr_block_size) - rcr_size == addr) {
