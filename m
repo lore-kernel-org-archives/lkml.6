@@ -1,72 +1,260 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964835AbeEXGBU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 02:01:20 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:36881 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935515AbeEXGBS (ORCPT
+        id S1754966AbeEXGMD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 02:12:03 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:35410 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751158AbeEXGMA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 02:01:18 -0400
-X-Google-Smtp-Source: AB8JxZqY1JJJXfm9rwIHf5AKfbfX51/KRMTMk4EibJq0ZRv564c5DseB8fE9MsrV8saOs7hutszzLg==
-Date: Thu, 24 May 2018 09:01:14 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-        broonie@kernel.org, mazziesaccount@gmail.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-        heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH 9/9] regulator: bd71837: Build BD71837 regulator driver
-Message-ID: <20180524060114.GJ4249@localhost.localdomain>
+        Thu, 24 May 2018 02:12:00 -0400
+X-Google-Smtp-Source: AB8JxZoraM2Zvv0BYodL9wXS4DLlfwLZUFCNSUZazaKOgZjjOEBglJ7bvCE3Ta8BFjTTlp564+MV5Q==
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <20180515075859.17217-1-stanimir.varbanov@linaro.org> <20180515075859.17217-12-stanimir.varbanov@linaro.org>
+In-Reply-To: <20180515075859.17217-12-stanimir.varbanov@linaro.org>
+From: Tomasz Figa <tfiga@chromium.org>
+Date: Thu, 24 May 2018 15:11:46 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5BDZztVT5KT_HX8SfPuHRmXaEg2VGVCOabWqL7F9Qq6Ew@mail.gmail.com>
+Message-ID: <CAAFQd5BDZztVT5KT_HX8SfPuHRmXaEg2VGVCOabWqL7F9Qq6Ew@mail.gmail.com>
+Subject: Re: [PATCH v2 11/29] venus: venc,vdec: adds clocks needed for venus 4xx
+To: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>, vgarodia@codeaurora.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Configurations and Makefile for BD71837 regulator driver
+Hi Stanimir,
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- drivers/regulator/Kconfig  | 11 +++++++++++
- drivers/regulator/Makefile |  1 +
- 2 files changed, 12 insertions(+)
+On Tue, May 15, 2018 at 5:10 PM Stanimir Varbanov <
+stanimir.varbanov@linaro.org> wrote:
 
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index 097f61784a7d..139f4b53fea0 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -180,6 +180,17 @@ config REGULATOR_BCM590XX
- 	  BCM590xx PMUs. This will enable support for the software
- 	  controllable LDO/Switching regulators.
- 
-+config REGULATOR_BD71837
-+	tristate "ROHM BD71837 Power Regulator"
-+	depends on MFD_BD71837
-+	help
-+	  This driver supports voltage regulators on ROHM BD71837 PMIC.
-+	  This will enable support for the software controllable buck
-+	  and LDO regulators.
-+
-+	  This driver can also be built as a module. If so, the module
-+	  will be called bd71837-regulator.
-+
- config REGULATOR_BD9571MWV
- 	tristate "ROHM BD9571MWV Regulators"
- 	depends on MFD_BD9571MWV
-diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
-index 590674fbecd7..1b4d8ec416c2 100644
---- a/drivers/regulator/Makefile
-+++ b/drivers/regulator/Makefile
-@@ -27,6 +27,7 @@ obj-$(CONFIG_REGULATOR_AS3711) += as3711-regulator.o
- obj-$(CONFIG_REGULATOR_AS3722) += as3722-regulator.o
- obj-$(CONFIG_REGULATOR_AXP20X) += axp20x-regulator.o
- obj-$(CONFIG_REGULATOR_BCM590XX) += bcm590xx-regulator.o
-+obj-$(CONFIG_REGULATOR_BD71837) += bd71837-regulator.o
- obj-$(CONFIG_REGULATOR_BD9571MWV) += bd9571mwv-regulator.o
- obj-$(CONFIG_REGULATOR_DA903X)	+= da903x.o
- obj-$(CONFIG_REGULATOR_DA9052)	+= da9052-regulator.o
--- 
-2.14.3
+> This extends the clocks number to support suspend and resume
+> on Venus version 4xx.
+
+> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+> ---
+>   drivers/media/platform/qcom/venus/core.h |  4 +--
+>   drivers/media/platform/qcom/venus/vdec.c | 42
+++++++++++++++++++++++++++------
+>   drivers/media/platform/qcom/venus/venc.c | 42
+++++++++++++++++++++++++++------
+>   3 files changed, 72 insertions(+), 16 deletions(-)
+
+> diff --git a/drivers/media/platform/qcom/venus/core.h
+b/drivers/media/platform/qcom/venus/core.h
+> index 8d3e150800c9..b5b9a84e9155 100644
+> --- a/drivers/media/platform/qcom/venus/core.h
+> +++ b/drivers/media/platform/qcom/venus/core.h
+> @@ -92,8 +92,8 @@ struct venus_core {
+>          void __iomem *base;
+>          int irq;
+>          struct clk *clks[VIDC_CLKS_NUM_MAX];
+> -       struct clk *core0_clk;
+> -       struct clk *core1_clk;
+> +       struct clk *core0_clk, *core0_bus_clk;
+> +       struct clk *core1_clk, *core1_bus_clk;
+>          struct video_device *vdev_dec;
+>          struct video_device *vdev_enc;
+>          struct v4l2_device v4l2_dev;
+> diff --git a/drivers/media/platform/qcom/venus/vdec.c
+b/drivers/media/platform/qcom/venus/vdec.c
+> index 261a51adeef2..c45452634e7e 100644
+> --- a/drivers/media/platform/qcom/venus/vdec.c
+> +++ b/drivers/media/platform/qcom/venus/vdec.c
+> @@ -1081,12 +1081,18 @@ static int vdec_probe(struct platform_device
+*pdev)
+>          if (!core)
+>                  return -EPROBE_DEFER;
+
+> -       if (core->res->hfi_version == HFI_VERSION_3XX) {
+> +       if (IS_V3(core) || IS_V4(core)) {
+>                  core->core0_clk = devm_clk_get(dev, "core");
+>                  if (IS_ERR(core->core0_clk))
+>                          return PTR_ERR(core->core0_clk);
+>          }
+
+> +       if (IS_V4(core)) {
+> +               core->core0_bus_clk = devm_clk_get(dev, "bus");
+> +               if (IS_ERR(core->core0_bus_clk))
+> +                       return PTR_ERR(core->core0_bus_clk);
+> +       }
+> +
+
+Rather than doing this conditional dance, wouldn't it make more sense to
+just list all the clocks in variant data struct and use clk_bulk_get()?
+
+>          platform_set_drvdata(pdev, core);
+
+>          vdev = video_device_alloc();
+> @@ -1132,12 +1138,23 @@ static __maybe_unused int
+vdec_runtime_suspend(struct device *dev)
+>   {
+>          struct venus_core *core = dev_get_drvdata(dev);
+
+> -       if (core->res->hfi_version == HFI_VERSION_1XX)
+> +       if (IS_V1(core))
+>                  return 0;
+
+> -       writel(0, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
+> +       if (IS_V3(core))
+> +               writel(0, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
+> +       else if (IS_V4(core))
+> +               writel(0, core->base +
+WRAPPER_VCODEC0_MMCC_POWER_CONTROL);
+> +
+> +       if (IS_V4(core))
+> +               clk_disable_unprepare(core->core0_bus_clk);
+> +
+>          clk_disable_unprepare(core->core0_clk);
+> -       writel(1, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
+> +
+> +       if (IS_V3(core))
+> +               writel(1, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
+> +       else if (IS_V4(core))
+> +               writel(1, core->base +
+WRAPPER_VCODEC0_MMCC_POWER_CONTROL);
+
+Almost every step here differs between version. I'd suggest splitting this
+into separate functions for both versions.
+
+
+>          return 0;
+>   }
+> @@ -1147,12 +1164,23 @@ static __maybe_unused int
+vdec_runtime_resume(struct device *dev)
+>          struct venus_core *core = dev_get_drvdata(dev);
+>          int ret;
+
+> -       if (core->res->hfi_version == HFI_VERSION_1XX)
+> +       if (IS_V1(core))
+>                  return 0;
+
+> -       writel(0, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
+> +       if (IS_V3(core))
+> +               writel(0, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
+> +       else if (IS_V4(core))
+> +               writel(0, core->base +
+WRAPPER_VCODEC0_MMCC_POWER_CONTROL);
+> +
+>          ret = clk_prepare_enable(core->core0_clk);
+> -       writel(1, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
+> +
+> +       if (IS_V4(core))
+> +               ret |= clk_prepare_enable(core->core0_bus_clk);
+
+Please don't OR error codes. If both calls end up with different errors,
+the resulting value would be meaningless.
+
+> +
+> +       if (IS_V3(core))
+> +               writel(1, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
+> +       else if (IS_V4(core))
+> +               writel(1, core->base +
+WRAPPER_VCODEC0_MMCC_POWER_CONTROL);
+
+>          return ret;
+>   }
+
+Same for this function. I'd see separate function for each version.
+
+> diff --git a/drivers/media/platform/qcom/venus/venc.c
+b/drivers/media/platform/qcom/venus/venc.c
+> index 947001170a77..bc8c2e7a8d2c 100644
+> --- a/drivers/media/platform/qcom/venus/venc.c
+> +++ b/drivers/media/platform/qcom/venus/venc.c
+> @@ -1225,12 +1225,18 @@ static int venc_probe(struct platform_device
+*pdev)
+>          if (!core)
+>                  return -EPROBE_DEFER;
+
+> -       if (core->res->hfi_version == HFI_VERSION_3XX) {
+> +       if (IS_V3(core) || IS_V4(core)) {
+>                  core->core1_clk = devm_clk_get(dev, "core");
+>                  if (IS_ERR(core->core1_clk))
+>                          return PTR_ERR(core->core1_clk);
+>          }
+
+> +       if (IS_V4(core)) {
+> +               core->core1_bus_clk = devm_clk_get(dev, "bus");
+> +               if (IS_ERR(core->core1_bus_clk))
+> +                       return PTR_ERR(core->core1_bus_clk);
+> +       }
+> +
+
+Same as for corresponding function of vdec.
+
+>          platform_set_drvdata(pdev, core);
+
+>          vdev = video_device_alloc();
+> @@ -1276,12 +1282,23 @@ static __maybe_unused int
+venc_runtime_suspend(struct device *dev)
+>   {
+>          struct venus_core *core = dev_get_drvdata(dev);
+
+> -       if (core->res->hfi_version == HFI_VERSION_1XX)
+> +       if (IS_V1(core))
+>                  return 0;
+
+> -       writel(0, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
+> +       if (IS_V3(core))
+> +               writel(0, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
+> +       else if (IS_V4(core))
+> +               writel(0, core->base +
+WRAPPER_VCODEC1_MMCC_POWER_CONTROL);
+> +
+> +       if (IS_V4(core))
+> +               clk_disable_unprepare(core->core1_bus_clk);
+> +
+>          clk_disable_unprepare(core->core1_clk);
+> -       writel(1, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
+> +
+> +       if (IS_V3(core))
+> +               writel(1, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
+> +       else if (IS_V4(core))
+> +               writel(1, core->base +
+WRAPPER_VCODEC1_MMCC_POWER_CONTROL);
+
+>          return 0;
+>   }
+
+Same as for vdec.
+
+> @@ -1291,12 +1308,23 @@ static __maybe_unused int
+venc_runtime_resume(struct device *dev)
+>          struct venus_core *core = dev_get_drvdata(dev);
+>          int ret;
+
+> -       if (core->res->hfi_version == HFI_VERSION_1XX)
+> +       if (IS_V1(core))
+>                  return 0;
+
+> -       writel(0, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
+> +       if (IS_V3(core))
+> +               writel(0, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
+> +       else if (IS_V4(core))
+> +               writel(0, core->base +
+WRAPPER_VCODEC1_MMCC_POWER_CONTROL);
+> +
+>          ret = clk_prepare_enable(core->core1_clk);
+> -       writel(1, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
+> +
+> +       if (IS_V4(core))
+> +               ret |= clk_prepare_enable(core->core1_bus_clk);
+> +
+> +       if (IS_V3(core))
+> +               writel(1, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
+> +       else if (IS_V4(core))
+> +               writel(1, core->base +
+WRAPPER_VCODEC1_MMCC_POWER_CONTROL);
+
+>          return ret;
+>   }
+
+Same as for vdec.
+
+Best regards,
+Tomasz
