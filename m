@@ -1,5 +1,5 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1732752-1527156052-2-2471810636464637820
+X-Cyrus-Session-Id: sloti22d1t05-1732752-1527156050-2-12584688974717975102
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527156052; b=gGjZ6rqrKqVqLbZDsr/uX8XLLhKilYut+808yeGSOQk9AG37L1
-    mzMv9RomohHjz38EQrWbtmcl/PBaI8+PI9Lmx9+9LMTtxp3GaT6WWR9wHYex+HC+
-    ywCokqzuJ5z0fXJA3JFDw/jciVIgnWZi+CqUO0wvXmE12PIXMo7oM+J2gVyX3RjM
-    CvDipDfVbr0rsyHNkWGsLgN92vEMJVb3mO7vvXBN3c+pCplwjwF4C28UEcxFtVxH
-    4ksMBxjDd4SRbR82lXuZEKH/Yx5oqbwun8U4qPE4I5tGPAC91byxR6mux2YpWhzL
-    itUC3Jo/Ajrs+H9ydtotjhpjk1h3DtLqALtA==
+    1527156049; b=ass3es6M3HOxge8YD1iKXZ1IT0UKF98nULginfPNuLqUh5hgx6
+    ArYCxYfmF6+2n6dtSILK1lWdEijju9fNggwGkTUylGd0cI7UArzKVPSW1vt8u2WO
+    9V5nQ22ueuzHgH74wjkRSgkBPTWTotpAPXQ5FtRri/3RA6ghRvoVpw6xgYthTAHI
+    Of7j9mjzcYNj63xIBpZTg5RjIn5UzHis/BzRde+x0rvzCyZqcMlDb4g3SvIZaD9b
+    CPDzpbvuG+QDu4CXQuFkyeMNkJUgT742GXbUW6Qvyn0rftirpmbgEt2nGKc+m3V9
+    zadroZ9WAf1+OVLgGczZPz35FL2O71GnI6zA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type; s=fm2; t=
-    1527156052; bh=kg4v8WQ0Dtg4Mm6WpBvv8rVRtTqncdT6FG416/YN3O0=; b=G
-    csE/lhhJHb/DEVhXuRgruzU4d20E90yo6QnLDZHNVUyyRaGdEImlhKZ3Kpr+Lz4T
-    Jd5ISBqRoMw0vRpj6OHzgAQu+I8R0c3N8Wh2hgVay97ENXQdOoYh4VGg+o/h8GkI
-    kash9QsjmFr+CnzTgClk1FIeQtqCx8yI3awAqQ/4juZJl3+NNJetOrcg/bia3aFt
-    sWx+t61WscEG6dtj86HY9H6IGzhcYtJuc5lo6CyE1+5NHgMRUJPUUmBHWAmYC4+s
-    fHQFPUUK5+WiaKKEwvwzklC7hM8cLHVvqbcc2nPix8AqrKxiKi+L7rXi2akn9KCX
-    Mpc+93uN+qEEDVy4Um86A==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    1527156049; bh=KoVKndfSTZ5BljIyIq3co4a8lbiFBBaumbuKKpRMTO8=; b=O
+    TnYFZD8TpSx9EzB+qvMaZfD9FujGcQT1f3T4aWwnqeClTpGd5yEXfcYcIHdt920g
+    j49NJHVqnfAsLObeMwox/35wQjJ2ekcTdUeB+11Mqp9fLXxmK09vJ+LI3dOJEJBB
+    woamrHsG46POqWX27qSJSUTZ9NNVW7Xb0HBmwm0JZ8+DVTBDFRk5l3VjKHPiuNYM
+    8gPNrGLOl1Wu56uWdu0v2RXwA3zG9rLPQztpqeUM5U9CKrS0qFzOIgXAW8ZcSb4U
+    tGPJKXmxHLge1LX1gZMEMKRK3qBtypoDlFeQGG/zQ3FYVgo2ONYFWswkdof4dRPL
+    H3CY0ncdRbSkskmxaWNfg==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=PWa68u2D x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=0s6w8+UK x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=198.145.29.99 (mail.kernel.org);
@@ -46,10 +46,10 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
     bits=128/128;
     x-vs=clean score=0 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=PWa68u2D x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=0s6w8+UK x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=198.145.29.99 (mail.kernel.org);
@@ -66,11 +66,11 @@ Authentication-Results: mx6.messagingengine.com;
       bits=128/128;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfK6bh+cpWDLML0pKubdVXfDlMAPNMEuzI8dcW4uG01lWt6XdGJAIWqQPZK3RRQoo6lhpxnB7h1Po3fzJ957AVh9ZNhHon0Bnwtlh2p6m3BNVKIif19ZK
-    HQqjL4ros0ic8uMcqo7A63EbkrTTfbGsdnUpo/5H1z7vAZKVXQszeusxkQ45IY9RxsuWZsKNrwwuZ9pHCHxzTLJHpgysxVBIegEER7qqoh8sR9aDcCRLD9dy
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=czNdAM+YcK12vDHDihaDnQ==:117
+X-CM-Envelope: MS4wfHWYrt6wEq0ja+8IqUxsAdVz7GfoNvAABoQBvWNM0unVN4YjgAhvh4f1/s8jFecMxqgr87qzryRIwLcgzqk27dKknNIIDWyMBwlDYSY9PiqxEvey6Puf
+    npQltKyWKWhAIrgTQYKB8fmKKPzRW+fGHW9RPLfswvbXhH3LASRUdNeNb9YRE8XV4GwHhE6cjjaBXzg6LpfqZ+T/llRuDkKhhoA6DvxuLj0zR6EfSiBkpNeb
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=czNdAM+YcK12vDHDihaDnQ==:117
     a=czNdAM+YcK12vDHDihaDnQ==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=ag1SF4gXAAAA:8 a=Z4KKdM25U3oJDl1ujtkA:9 a=QEXdDO2ut3YA:10
+    a=ag1SF4gXAAAA:8 a=d0IehV0JNGKWzH5UNt0A:9 a=QEXdDO2ut3YA:10
     a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
@@ -80,9 +80,9 @@ To: linux-kernel@vger.kernel.org,
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.16 045/161] powerpc/64s: Wire up cpu_show_spectre_v2()
-Date: Thu, 24 May 2018 11:37:50 +0200
-Message-Id: <20180524093023.761898151@linuxfoundation.org>
+Subject: [PATCH 4.16 044/161] powerpc/64s: Wire up cpu_show_spectre_v1()
+Date: Thu, 24 May 2018 11:37:49 +0200
+Message-Id: <20180524093023.640028407@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -100,66 +100,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Michael Ellerman <mpe@ellerman.id.au>
 
-commit d6fbe1c55c55c6937cbea3531af7da84ab7473c3 upstream.
+commit 56986016cb8cd9050e601831fe89f332b4e3c46e upstream.
 
-Add a definition for cpu_show_spectre_v2() to override the generic
-version. This has several permuations, though in practice some may not
-occur we cater for any combination.
+Add a definition for cpu_show_spectre_v1() to override the generic
+version. Currently this just prints "Not affected" or "Vulnerable"
+based on the firmware flag.
 
-The most verbose is:
-
-  Mitigation: Indirect branch serialisation (kernel only), Indirect
-  branch cache disabled, ori31 speculation barrier enabled
-
-We don't treat the ori31 speculation barrier as a mitigation on its
-own, because it has to be *used* by code in order to be a mitigation
-and we don't know if userspace is doing that. So if that's all we see
-we say:
-
-  Vulnerable, ori31 speculation barrier enabled
+Although the kernel does have array_index_nospec() in a few places, we
+haven't yet audited all the powerpc code to see where it's necessary,
+so for now we don't list that as a mitigation.
 
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/kernel/security.c |   33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ arch/powerpc/kernel/security.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 --- a/arch/powerpc/kernel/security.c
 +++ b/arch/powerpc/kernel/security.c
-@@ -58,3 +58,36 @@ ssize_t cpu_show_spectre_v1(struct devic
+@@ -50,3 +50,11 @@ ssize_t cpu_show_meltdown(struct device
  
  	return sprintf(buf, "Vulnerable\n");
  }
 +
-+ssize_t cpu_show_spectre_v2(struct device *dev, struct device_attribute *attr, char *buf)
++ssize_t cpu_show_spectre_v1(struct device *dev, struct device_attribute *attr, char *buf)
 +{
-+	bool bcs, ccd, ori;
-+	struct seq_buf s;
++	if (!security_ftr_enabled(SEC_FTR_BNDS_CHK_SPEC_BAR))
++		return sprintf(buf, "Not affected\n");
 +
-+	seq_buf_init(&s, buf, PAGE_SIZE - 1);
-+
-+	bcs = security_ftr_enabled(SEC_FTR_BCCTRL_SERIALISED);
-+	ccd = security_ftr_enabled(SEC_FTR_COUNT_CACHE_DISABLED);
-+	ori = security_ftr_enabled(SEC_FTR_SPEC_BAR_ORI31);
-+
-+	if (bcs || ccd) {
-+		seq_buf_printf(&s, "Mitigation: ");
-+
-+		if (bcs)
-+			seq_buf_printf(&s, "Indirect branch serialisation (kernel only)");
-+
-+		if (bcs && ccd)
-+			seq_buf_printf(&s, ", ");
-+
-+		if (ccd)
-+			seq_buf_printf(&s, "Indirect branch cache disabled");
-+	} else
-+		seq_buf_printf(&s, "Vulnerable");
-+
-+	if (ori)
-+		seq_buf_printf(&s, ", ori31 speculation barrier enabled");
-+
-+	seq_buf_printf(&s, "\n");
-+
-+	return s.len;
++	return sprintf(buf, "Vulnerable\n");
 +}
