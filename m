@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1862185-1527162032-2-9522312539664208145
+X-Cyrus-Session-Id: sloti22d1t05-1862185-1527162022-2-11311219772179165670
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527162031; b=CoZh3A4nOkAQDdvomDuvzXntlweT310JnK2xM0eDJfOqggoOjA
-    FpsP1R177Evfhk5yeczO99sNigWNvkBsiMQF2QoARUUZa5t9p1AR7wtdErE34+9S
-    6ZeZ+pj3zEU04rgTTAZvJouatnn1hpsKgwg1kNj0gMxigArr9T8vVc02uQyIuUnW
-    mWoQHiMHLwwP63sRBVcVeE2qzyZeABm+rvn7S1EPhHMYfAQnawzvfsdveB0ZK3LL
-    D3h9i+oTKdkzQPps8AN5+udGMDNtsuyEfksyIygXa0gtE6wIYu4RN1BidJ38605I
-    YLVNgohVjZ5nkUwt53DEPcEEN8lN2yXTAjdw==
+    1527162021; b=TQDolqVCt+dHWTuLDY7mxb0I0vKkIscjuZHPopMc+XBoj+g8qK
+    Pqa+WojbHG1HL2ipcwZGY8A8zezhRHcl9WbZO+ViPpuOsUZl+GKEAzc0X2bjeRj5
+    QVKMIrum0mhD5hANQ8YWRJfS31BNY5lrLO4yLiHSxVYczRX55tpk3jRoMiT0Jd70
+    akVYC9KwJdwRi3XcH3ukujS15xQZP/3OMiZNOnNPLYVYMymbfo1kVTZTDSPu+Cs3
+    wJ5mm8RSTpw2RLPdwqGz3zteMdpacTMEtoQKxRGACrKCf2xVSdAIKejTCKhANZEM
+    4LNiaO0b1YqnjEfI2LVFAJ8Rqa2GRCHO4lSA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527162031; bh=zHo9V7tam3X+oPb47tCPhUb/tBQhmn
-    378JgCY5noqpQ=; b=EbzC3OUrLQxiWhlzM8/dTzC7PKONhdi1KbTOjmmrGPk5Fn
-    Tesqm3vzrI5UjuXUQFoHr37oTz5aheS4qtTPU6noz+d3agvcL6GBXtVmCQOTLmvI
-    R4A7RW56DYip4M4IghEsg+mdvrnVooAvL3r01TFItwKl+D+p6fSkRVAy3XTGmIgG
-    qn8EQM1VE/N5TMs29xRRklDzk+6iSbKIpasOjroZkZtNURlJqyQA1pwXaRMcXPZj
-    4XKuKVEOSr7yahyZiEEvK/AxvXrqa/xYAnWcZEZLnWfB8ob5UNxixQXgxbmXhMLJ
-    YOqXbzt39d9AB8RrjaEJ1HlE7t05fbxCOjr0EcPA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527162021; bh=OEPMPugtYxNBGAeWa+vo93MGGGGuPq
+    vBWBXCnWXp9oA=; b=hXrJ8S1KRCdNIwKK2osnh1LJTZAlSabstLIIdwyRTlSRqB
+    tX8uxRpdvfkRn+2e6TR7FjjHhREQ6dDdJbW/Ozp+U6smn33MEcDhhJPVfkdlennS
+    v83Ls6rkCU6ADmEa6Jzi7WlkHs3DVjd2D9a9l7IqR4YlvELjJ0Aa7tKxh4DoibLi
+    E4+tjmHKiLDOb3V6hwVjXZFb1JqIa9hwtExtAqyMfi6FCfbDywVgzCn1lfUBFUDR
+    ORSvzHlib96KXFlo9cQEBdb0YUoz9RmMxj7qbdjTC6RoVYdAloZBtIWieeo7lkI4
+    jdgeQSgaiLUNSYxL35zZY9Kp+vC7zM3pw2rB+BEA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=b7OH1gAi x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=We6fiAAG x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=b7OH1gAi x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=We6fiAAG x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,33 +64,31 @@ Authentication-Results: mx1.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFNs4oPFvoDbGQQRYKh9t/mF6t6bEptyRyFTiEns576kHwlbJDBz8Uroy4nnKaa0+hQKydMlC0WCarxraJDOKL+bWk/uNFE2QUYwRhKLf9v49b7boPP3
-    sVHvQ0eiAlT/s7m0mImICurkSvCa18IOAnHJ1Ax++DBBcSyTG8XWa1wsZTd5BCRYigwlFRl6StGaFVq1+Kqx96faZ+h3vDeUD+3fyfAl2k+VsFhWyP6mgpMw
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfKW0b1R6LuYrDxg/i43R1YJ/oHyc0kCNzeFbiqHJbBACS/TwK/C2cs5BgGpNPMSOGtrslfCuM73z6v5iHcFPMwp9UJFJZIfva8mZlamSboJn2mPjUWse
+    dZkoRzzQ1boGyBKtAjm1IMeQAeOoNYb1OBmbiLUhqcTL6XVYABHyv4iOXepMMwOX3afWplJxkczZJ0WhXHxPiwEn26k6eWN5BfP3H7iXk/bjRC6L4zdxvJTI
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=xq3W2uTSAAAA:8 a=vQBBkBfzAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=VwoBRhHq2TX8QzjGAlQA:9 a=qzdL_S3FjlUl77DU:21 a=DGC3x8MQNSjrJErm:21
-    a=QEXdDO2ut3YA:10 a=P5L7wpMTXyg1GfFA3Gwx:22 a=NGXS0kB0m_rannUenejW:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=iox4zFpeAAAA:8 a=JfrnYn6hAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=NWo6yD48tLJsfen1gqcA:9 a=QEXdDO2ut3YA:10 a=WzC6qhA0u3u7Ye7llzcV:22
+    a=1CNFftbPRP8L7MoqJWF3:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967273AbeEXJst (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:48:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34380 "EHLO mail.kernel.org"
+        id S967371AbeEXLkH (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 07:40:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35574 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966976AbeEXJsq (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:48:46 -0400
+        id S965895AbeEXJs6 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:48:58 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brad Love <brad@nextdimension.cc>,
-        Michael Ira Krufky <mkrufky@linuxtv.org>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        stable@vger.kernel.org, NeilBrown <neilb@suse.com>,
+        James Simmons <jsimmons@infradead.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 45/96] media: em28xx: USB bulk packet size fix
-Date: Thu, 24 May 2018 11:38:28 +0200
-Message-Id: <20180524093608.084797265@linuxfoundation.org>
+Subject: [PATCH 4.9 49/96] staging: lustre: lmv: correctly iput lmo_root
+Date: Thu, 24 May 2018 11:38:32 +0200
+Message-Id: <20180524093608.293560882@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093605.602125311@linuxfoundation.org>
 References: <20180524093605.602125311@linuxfoundation.org>
@@ -108,44 +106,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Brad Love <brad@nextdimension.cc>
+From: NeilBrown <neilb@suse.com>
 
-[ Upstream commit c7c7e8d7803406daa21e96d00c357de8b77b6764 ]
+[ Upstream commit 17556cdbe6ed70a6a20e597b228628f7f34387f8 ]
 
-Hauppauge em28xx bulk devices exhibit continuity errors and corrupted
-packets, when run in VMWare virtual machines. Unknown if other
-manufacturers bulk models exhibit the same issue. KVM/Qemu is unaffected.
+Commit 8f18c8a48b73 ("staging: lustre: lmv: separate master object
+with master stripe") changed how lmo_root inodes were managed,
+particularly when LMV_HASH_FLAG_MIGRATION is not set.
+Previously lsm_md_oinfo[0].lmo_root was always a borrowed
+inode reference and didn't need to by iput().
+Since the change, that special case only applies when
+LMV_HASH_FLAG_MIGRATION is set
 
-According to documentation the maximum packet multiplier for em28xx in bulk
-transfer mode is 256 * 188 bytes. This changes the size of bulk transfers
-to maximum supported value and have a bonus beneficial alignment.
+In the upstream (lustre-release) version of this patch [Commit
+60e07b972114 ("LU-4690 lod: separate master object with master
+stripe")] the for loop in the lmv_unpack_md() was changed to count
+from 0 and to ignore entry 0 if LMV_HASH_FLAG_MIGRATION is set.
+In the patch that got applied to Linux, that change was missing,
+so lsm_md_oinfo[0].lmo_root is never iput().
+This results in a "VFS: Busy inodes" warning at unmount.
 
-Before:
-
-After:
-
-This sets up USB to expect just as many bytes as the em28xx is set to emit.
-
-Successful usage under load afterwards natively and in both VMWare
-and KVM/Qemu virtual machines.
-
-Signed-off-by: Brad Love <brad@nextdimension.cc>
-Reviewed-by: Michael Ira Krufky <mkrufky@linuxtv.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Fixes: 8f18c8a48b73 ("staging: lustre: lmv: separate master object with master stripe")
+Signed-off-by: NeilBrown <neilb@suse.com>
+Reviewed-by: James Simmons <jsimmons@infradead.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/usb/em28xx/em28xx.h |    2 +-
+ drivers/staging/lustre/lustre/lmv/lmv_obd.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/media/usb/em28xx/em28xx.h
-+++ b/drivers/media/usb/em28xx/em28xx.h
-@@ -189,7 +189,7 @@
-    USB 2.0 spec says bulk packet size is always 512 bytes
-  */
- #define EM28XX_BULK_PACKET_MULTIPLIER 384
--#define EM28XX_DVB_BULK_PACKET_MULTIPLIER 384
-+#define EM28XX_DVB_BULK_PACKET_MULTIPLIER 94
+--- a/drivers/staging/lustre/lustre/lmv/lmv_obd.c
++++ b/drivers/staging/lustre/lustre/lmv/lmv_obd.c
+@@ -2928,7 +2928,7 @@ int lmv_unpack_md(struct obd_export *exp
+ 	if (lsm && !lmm) {
+ 		int i;
  
- #define EM28XX_INTERLACED_DEFAULT 1
- 
+-		for (i = 1; i < lsm->lsm_md_stripe_count; i++) {
++		for (i = 0; i < lsm->lsm_md_stripe_count; i++) {
+ 			/*
+ 			 * For migrating inode, the master stripe and master
+ 			 * object will be the same, so do not need iput, see
