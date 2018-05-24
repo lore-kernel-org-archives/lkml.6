@@ -1,11 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1817771-1527160729-2-17979655817158488420
+X-Cyrus-Session-Id: sloti22d1t05-1817771-1527160699-5-1342258650038327733
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
-  SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -13,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527160729; b=dxwwuoW67VcYfsUVtHELYKIjCTlo/9OQ+9BkoqkmeMALElNRCg
-    AnAKyyInqUZraeq1+w8LmZQuz8PRoK523itsN8OvImnPDHGQn0CsKdV/9moSM2Lm
-    4uUe0LETI0dUeYD1HyxfPAIYRMnqt7QGW/9oF/MNIBMqu46KxEVFNQVYI9d3oTg1
-    Ep4IT12AEbv8MiwIMM31tI/0mMQ0x3zfHae3J/EgDjmQUsUA/9mBxmfbf4OyjzG9
-    EEGXyXe5046NVF7KpqCSGaTIi6Fxp6RC3WHXghrExM6VoY2BIwDU/kwK0PfYAN/n
-    BkbwLJd9licbfqNs14rjqIfznPxncXFK+1kw==
+    1527160698; b=Ut9+ARrp2cGHHNgLboZaJzSfBwvDdQtIt8W7xE+ULES9uo2UGS
+    Ta27j5GWher39pun3IurbHwaWnCwomYuhCznqmgfaxU0MRmhxBmmPB/wWre4v/1N
+    28KDUzalTtyeXLNFzbA6I0dyXjjsGsEbQxUQQyeOGIL8ZeAQJ3Fq5/Q0SGPYLZeQ
+    +UVU8qwS7NOxsjAcp0oF4Ml9mbTcoelPR5BaB04dZPbfNA1yoTsAuyCkC1jnIXpe
+    eppJeQMm0cM3OIdTxN/vqvL52fCeUVrTi4PPtie+/jRUMwhbFuoXQORw8SdgAjYZ
+    bcFwXqFnqPWO93fLQvF1CIQSa5eWcKpkSsDg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527160729; bh=NDpzf0BAnD3qP3foWNB+2NKucBJHwA
-    m2mv6uxzTCHqI=; b=lEjBNrJ+nPoQsYp/UrFENQ4XUEQSbbzKTnOHKdBPTCaSUC
-    RVGiZqpm904iwS8nly1/ZU/21vlJy2Jh/CWNCs/Ckq7ldAPcoW1hmkbXO1roNHiv
-    eLdoBTI+ZKJhF8vL2/fUYEKCd5G6W170uAXWZuwRMAFc4Dw6kizxoSFSvFssqacR
-    AjarAT5314yaeRj0wuVoC7nXRSIgXzRGA6tgJh06OSXuHPkFK6f37NppGsXtn+EN
-    cZapy0rK8lmzE5CB+qPSB5GauFPqQ89hOq7wc7mYi5RFIK0CBCvbJygaIYl4N/B4
-    AcTmYYFK32jONGtSrSQPFxmit1KrejqQWel87vBQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527160698; bh=7bNEAih6Y5oA3SwpXzjnERLsYq5+RC
+    yoQ2QBj+GZGcU=; b=K9d59U4H9QZ06U4Q0okpXS0jalHrIb3eRQUT8ctbZ/TL3G
+    72KS2bDnsMu2ImvrBfLLUHJpQcz0ZO8oN0Drlelb2P4tgDdxDKOfo6J9D1VArtqq
+    PPFmxBlVTIblw67ZSLoRzIUCv5C8QzY3ZS8vQjVF47fYy0m/1YNItGAW1+KCEcWc
+    LncNwcSl8VxY7bTvJKfHJ9+3NiKGDyykgYztx5l+eW+tbr/mDk3KtebhhTFGIe9a
+    0girLJKsykd5S4GrHihXTt/kFun/XQVvywvTmFFMC/moSasgThJSCK8w9f0PBHQC
+    5pOzrBC0NkPFtublfUq91UUgiHSGHoHHvZSBLoRA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=ZQ3fKIqz x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=vfN0c9Xz x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -46,10 +45,10 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=ZQ3fKIqz x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=vfN0c9Xz x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -65,33 +64,31 @@ Authentication-Results: mx2.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGUWHYZJkMUpHkgQFWnxJuji2XyyiO52HQHWJwFUnblyvOadeaUV0Y8R33Jb5/sZ+g9OPzltV+hHYXnEGKpMZX1E1FujyXcm9PqohBxrUjWc6VgYhpKu
-    ysAnPvJOhNzvhxND65oYYXoxwP0p821CqmkbyV530jFD6d8tLySzj8V0KWtQeMvIorT1uBa5z4ogAC6to8Zs/W4/p5KGY7OpB1+5cO8nNxN0YoVXPYuy+4En
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfCmhVP9xvtth1F4RVI9nJ0GIsiqDYPV9dR/CiMhAS9BgN6OdJ4XxBPBSVr/89O4Ys0/38/V161tpEafDeW787HwJfMaZ89K51UKIHJe/ozDLTGFXQEK5
+    TdduOkr2cEaWLxmZG5uoQKElxAhK5SEvLl/U+4N1h/70N/yeeiOKdRNqwemUipQPALADG4cemzAENJIKwESQLU2sf69bWyH+nGBnzjlkvuHB6Te52UiVwJc0
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=1XWaLZrsAAAA:8 a=4RBUngkUAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
-    a=QqqX_mwiMbC-zsVjBVcA:9 a=4IWq6S5JtmjkCz9O:21 a=kHhCiEMo-YytB8L6:21
-    a=QEXdDO2ut3YA:10 a=_sbA2Q-Kp09kWB8D3iXc:22 a=y1Q9-5lHfBjTkpIzbSAN:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=eh1Yez-EAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=LoKIxZYthUmQywgMGB8A:9
+    a=PY7N7o555R9iwnc5:21 a=qVN8UthSnBHTMF7z:21 a=QEXdDO2ut3YA:10
+    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968632AbeEXLSf (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 07:18:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56438 "EHLO mail.kernel.org"
+        id S968051AbeEXLSP (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 07:18:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57710 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967980AbeEXJxF (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:53:05 -0400
+        id S967533AbeEXJxN (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:53:13 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Craig Gallek <kraig@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
+        stable@vger.kernel.org, Regis Duchesne <hpreg@vmware.com>,
+        Ronak Doshi <doshir@vmware.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 008/165] sock_diag: fix use-after-free read in __sk_free
-Date: Thu, 24 May 2018 11:36:54 +0200
-Message-Id: <20180524093622.311079881@linuxfoundation.org>
+Subject: [PATCH 4.14 011/165] vmxnet3: use DMA memory barriers where required
+Date: Thu, 24 May 2018 11:36:57 +0200
+Message-Id: <20180524093622.429612346@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -109,126 +106,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: "hpreg@vmware.com" <hpreg@vmware.com>
 
-[ Upstream commit 9709020c86f6bf8439ca3effc58cfca49a5de192 ]
+[ Upstream commit f3002c1374fb2367c9d8dbb28852791ef90d2bac ]
 
-We must not call sock_diag_has_destroy_listeners(sk) on a socket
-that has no reference on net structure.
+The gen bits must be read first from (resp. written last to) DMA memory.
+The proper way to enforce this on Linux is to call dma_rmb() (resp.
+dma_wmb()).
 
-BUG: KASAN: use-after-free in sock_diag_has_destroy_listeners include/linux/sock_diag.h:75 [inline]
-BUG: KASAN: use-after-free in __sk_free+0x329/0x340 net/core/sock.c:1609
-Read of size 8 at addr ffff88018a02e3a0 by task swapper/1/0
-
-CPU: 1 PID: 0 Comm: swapper/1 Not tainted 4.17.0-rc5+ #54
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x1b9/0x294 lib/dump_stack.c:113
- print_address_description+0x6c/0x20b mm/kasan/report.c:256
- kasan_report_error mm/kasan/report.c:354 [inline]
- kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
- __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
- sock_diag_has_destroy_listeners include/linux/sock_diag.h:75 [inline]
- __sk_free+0x329/0x340 net/core/sock.c:1609
- sk_free+0x42/0x50 net/core/sock.c:1623
- sock_put include/net/sock.h:1664 [inline]
- reqsk_free include/net/request_sock.h:116 [inline]
- reqsk_put include/net/request_sock.h:124 [inline]
- inet_csk_reqsk_queue_drop_and_put net/ipv4/inet_connection_sock.c:672 [inline]
- reqsk_timer_handler+0xe27/0x10e0 net/ipv4/inet_connection_sock.c:739
- call_timer_fn+0x230/0x940 kernel/time/timer.c:1326
- expire_timers kernel/time/timer.c:1363 [inline]
- __run_timers+0x79e/0xc50 kernel/time/timer.c:1666
- run_timer_softirq+0x4c/0x70 kernel/time/timer.c:1692
- __do_softirq+0x2e0/0xaf5 kernel/softirq.c:285
- invoke_softirq kernel/softirq.c:365 [inline]
- irq_exit+0x1d1/0x200 kernel/softirq.c:405
- exiting_irq arch/x86/include/asm/apic.h:525 [inline]
- smp_apic_timer_interrupt+0x17e/0x710 arch/x86/kernel/apic/apic.c:1052
- apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
- </IRQ>
-RIP: 0010:native_safe_halt+0x6/0x10 arch/x86/include/asm/irqflags.h:54
-RSP: 0018:ffff8801d9ae7c38 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff13
-RAX: dffffc0000000000 RBX: 1ffff1003b35cf8a RCX: 0000000000000000
-RDX: 1ffffffff11a30d0 RSI: 0000000000000001 RDI: ffffffff88d18680
-RBP: ffff8801d9ae7c38 R08: ffffed003b5e46c3 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000001
-R13: ffff8801d9ae7cf0 R14: ffffffff897bef20 R15: 0000000000000000
- arch_safe_halt arch/x86/include/asm/paravirt.h:94 [inline]
- default_idle+0xc2/0x440 arch/x86/kernel/process.c:354
- arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:345
- default_idle_call+0x6d/0x90 kernel/sched/idle.c:93
- cpuidle_idle_call kernel/sched/idle.c:153 [inline]
- do_idle+0x395/0x560 kernel/sched/idle.c:262
- cpu_startup_entry+0x104/0x120 kernel/sched/idle.c:368
- start_secondary+0x426/0x5b0 arch/x86/kernel/smpboot.c:269
- secondary_startup_64+0xa5/0xb0 arch/x86/kernel/head_64.S:242
-
-Allocated by task 4557:
- save_stack+0x43/0xd0 mm/kasan/kasan.c:448
- set_track mm/kasan/kasan.c:460 [inline]
- kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
- kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
- kmem_cache_alloc+0x12e/0x760 mm/slab.c:3554
- kmem_cache_zalloc include/linux/slab.h:691 [inline]
- net_alloc net/core/net_namespace.c:383 [inline]
- copy_net_ns+0x159/0x4c0 net/core/net_namespace.c:423
- create_new_namespaces+0x69d/0x8f0 kernel/nsproxy.c:107
- unshare_nsproxy_namespaces+0xc3/0x1f0 kernel/nsproxy.c:206
- ksys_unshare+0x708/0xf90 kernel/fork.c:2408
- __do_sys_unshare kernel/fork.c:2476 [inline]
- __se_sys_unshare kernel/fork.c:2474 [inline]
- __x64_sys_unshare+0x31/0x40 kernel/fork.c:2474
- do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 69:
- save_stack+0x43/0xd0 mm/kasan/kasan.c:448
- set_track mm/kasan/kasan.c:460 [inline]
- __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
- kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
- __cache_free mm/slab.c:3498 [inline]
- kmem_cache_free+0x86/0x2d0 mm/slab.c:3756
- net_free net/core/net_namespace.c:399 [inline]
- net_drop_ns.part.14+0x11a/0x130 net/core/net_namespace.c:406
- net_drop_ns net/core/net_namespace.c:405 [inline]
- cleanup_net+0x6a1/0xb20 net/core/net_namespace.c:541
- process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
- worker_thread+0x1cc/0x1440 kernel/workqueue.c:2279
- kthread+0x345/0x410 kernel/kthread.c:240
- ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
-
-The buggy address belongs to the object at ffff88018a02c140
- which belongs to the cache net_namespace of size 8832
-The buggy address is located 8800 bytes inside of
- 8832-byte region [ffff88018a02c140, ffff88018a02e3c0)
-The buggy address belongs to the page:
-page:ffffea0006280b00 count:1 mapcount:0 mapping:ffff88018a02c140 index:0x0 compound_mapcount: 0
-flags: 0x2fffc0000008100(slab|head)
-raw: 02fffc0000008100 ffff88018a02c140 0000000000000000 0000000100000001
-raw: ffffea00062a1320 ffffea0006268020 ffff8801d9bdde40 0000000000000000
-page dumped because: kasan: bad access detected
-
-Fixes: b922622ec6ef ("sock_diag: don't broadcast kernel sockets")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Craig Gallek <kraig@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Regis Duchesne <hpreg@vmware.com>
+Acked-by: Ronak Doshi <doshir@vmware.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/sock.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/vmxnet3/vmxnet3_drv.c |   22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
---- a/net/core/sock.c
-+++ b/net/core/sock.c
-@@ -1595,7 +1595,7 @@ void sk_destruct(struct sock *sk)
+--- a/drivers/net/vmxnet3/vmxnet3_drv.c
++++ b/drivers/net/vmxnet3/vmxnet3_drv.c
+@@ -369,6 +369,11 @@ vmxnet3_tq_tx_complete(struct vmxnet3_tx
  
- static void __sk_free(struct sock *sk)
- {
--	if (unlikely(sock_diag_has_destroy_listeners(sk) && sk->sk_net_refcnt))
-+	if (unlikely(sk->sk_net_refcnt && sock_diag_has_destroy_listeners(sk)))
- 		sock_diag_broadcast_destroy(sk);
- 	else
- 		sk_destruct(sk);
+ 	gdesc = tq->comp_ring.base + tq->comp_ring.next2proc;
+ 	while (VMXNET3_TCD_GET_GEN(&gdesc->tcd) == tq->comp_ring.gen) {
++		/* Prevent any &gdesc->tcd field from being (speculatively)
++		 * read before (&gdesc->tcd)->gen is read.
++		 */
++		dma_rmb();
++
+ 		completed += vmxnet3_unmap_pkt(VMXNET3_TCD_GET_TXIDX(
+ 					       &gdesc->tcd), tq, adapter->pdev,
+ 					       adapter);
+@@ -1099,6 +1104,11 @@ vmxnet3_tq_xmit(struct sk_buff *skb, str
+ 		gdesc->txd.tci = skb_vlan_tag_get(skb);
+ 	}
+ 
++	/* Ensure that the write to (&gdesc->txd)->gen will be observed after
++	 * all other writes to &gdesc->txd.
++	 */
++	dma_wmb();
++
+ 	/* finally flips the GEN bit of the SOP desc. */
+ 	gdesc->dword[2] = cpu_to_le32(le32_to_cpu(gdesc->dword[2]) ^
+ 						  VMXNET3_TXD_GEN);
+@@ -1286,6 +1296,12 @@ vmxnet3_rq_rx_complete(struct vmxnet3_rx
+ 			 */
+ 			break;
+ 		}
++
++		/* Prevent any rcd field from being (speculatively) read before
++		 * rcd->gen is read.
++		 */
++		dma_rmb();
++
+ 		BUG_ON(rcd->rqID != rq->qid && rcd->rqID != rq->qid2 &&
+ 		       rcd->rqID != rq->dataRingQid);
+ 		idx = rcd->rxdIdx;
+@@ -1515,6 +1531,12 @@ rcd_done:
+ 		ring->next2comp = idx;
+ 		num_to_alloc = vmxnet3_cmd_ring_desc_avail(ring);
+ 		ring = rq->rx_ring + ring_idx;
++
++		/* Ensure that the writes to rxd->gen bits will be observed
++		 * after all other writes to rxd objects.
++		 */
++		dma_wmb();
++
+ 		while (num_to_alloc) {
+ 			vmxnet3_getRxDesc(rxd, &ring->base[ring->next2fill].rxd,
+ 					  &rxCmdDesc);
