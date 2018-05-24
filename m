@@ -1,107 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969165AbeEXNgC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 09:36:02 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:51558 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965823AbeEXNf7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 09:35:59 -0400
+        id S969448AbeEXNgo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 09:36:44 -0400
+Received: from mga05.intel.com ([192.55.52.43]:49072 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965823AbeEXNgn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 09:36:43 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,436,1520924400";
+   d="scan'208";a="41881738"
+Date: Thu, 24 May 2018 07:38:59 -0600
+From: Keith Busch <keith.busch@linux.intel.com>
+To: Jianchao Wang <jianchao.w.wang@oracle.com>
+Cc: keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
+Subject: Re: [PATCH 2/2] nvme-pci: don't send delete cq command when allocate
+ sq return -EINTR
+Message-ID: <20180524133859.GH11037@localhost.localdomain>
+References: <1527155494-1891-1-git-send-email-jianchao.w.wang@oracle.com>
+ <1527155494-1891-2-git-send-email-jianchao.w.wang@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Thu, 24 May 2018 09:35:57 -0400
-From: okaya@codeaurora.org
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-pci@vger.kernel.org, timur@codeaurora.org, ryan@finnie.org,
-        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        stable@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Frederick Lawler <fred@fredlawl.com>,
-        Dongdong Liu <liudongdong3@huawei.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Don Brace <don.brace@microsemi.com>, esc.storagedev@microsemi.com,
-        linux-scsi@vger.kernel.org
-Subject: Re: [PATCH V2] PCI/portdrv: do not disable device on reboot/shutdown
-In-Reply-To: <20180524130727.GA85822@bhelgaas-glaptop.roam.corp.google.com>
-References: <1527043490-17268-1-git-send-email-okaya@codeaurora.org>
- <20180523213249.GD150632@bhelgaas-glaptop.roam.corp.google.com>
- <61f70fd6-52fd-da07-ce73-303f95132131@codeaurora.org>
- <82656e20-e821-1944-3399-1667ceb27719@codeaurora.org>
- <20180524130727.GA85822@bhelgaas-glaptop.roam.corp.google.com>
-Message-ID: <24846c30ceab15075205b34305b97ba8@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527155494-1891-2-git-send-email-jianchao.w.wang@oracle.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-24 09:07, Bjorn Helgaas wrote:
-> On Thu, May 24, 2018 at 07:43:05AM -0400, Sinan Kaya wrote:
->> On 5/23/2018 6:57 PM, Sinan Kaya wrote:
->> >> The crash seems to indicate that the hpsa device attempted a DMA after
->> >> we cleared the Root Port's PCI_COMMAND_MASTER, which means
->> >> hpsa_shutdown() didn't stop DMA from the device (it looks like *most*
->> >> shutdown methods don't disable device DMA, so it's in good company).
->> > All drivers are expected to shutdown DMA and interrupts in their shutdown()
->> > routines. They can skip removing threads, data structures etc. but DMA and
->> > interrupt disabling are required. This is the difference between shutdown()
->> > and remove() callbacks.
->> 
->> I found this note yesterday to see why we are not disabling the
->> devices in the PCI core itself.
->> 
->> pci_device_remove()
->> 
->> 	/*
->> 	 * We would love to complain here if pci_dev->is_enabled is set, that
->> 	 * the driver should have called pci_disable_device(), but the
->> 	 * unfortunate fact is there are too many odd BIOS and bridge setups
->> 	 * that don't like drivers doing that all of the time.
->> 	 * Oh well, we can dream of sane hardware when we sleep, no matter 
->> how
->> 	 * horrible the crap we have to deal with is when we are awake...
->> 	 */
->> 
->> Ryan, can you discard the previous patch and test this one instead?
->> remove() path in hpsa driver seems to call pci_disable_device() via
->> 
->> hpsa_remove_one()
->> 	hpsa_free_pci_init()
->> 
->> but nothing on the shutdown path.
->> 
->> diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
->> index 4ed3d26..3823f04 100644
->> --- a/drivers/scsi/hpsa.c
->> +++ b/drivers/scsi/hpsa.c
->> @@ -8651,6 +8651,7 @@ static void hpsa_shutdown(struct pci_dev *pdev)
->>         h->access.set_intr_mask(h, HPSA_INTR_OFF);
->>         hpsa_free_irqs(h);                      /* init_one 4 */
->>         hpsa_disable_interrupt_mode(h);         /* pci_init 2 */
->> +       pci_disable_device(h->pdev);
->>  }
-> 
-> I suspect this will make things "work" (if the device can't attempt
-> DMA, no Unsupported Request error will occur).
-> 
-> But I'm concerned that the reason for the DMA might that hpsa is
-> transferring buffers from system memory to the hpsa device, and if we
-> arbitrarily terminate those transfers with pci_disable_device(), we
-> may leave the hpsa device in an inconsistent state, e.g., with a dirty
-> filesystem.
-> 
-> But we really need guidance from an hpsa expert.  I don't know the
-> filesystem/SCSI/hpsa details.
+On Thu, May 24, 2018 at 05:51:34PM +0800, Jianchao Wang wrote:
+>  	result = adapter_alloc_sq(dev, qid, nvmeq);
+> -	if (result < 0)
+> +	/*
+> +	 * If return -EINTR, it means the allocate sq command times out and is completed
+> +	 * with NVME_REQ_CANCELLED. At the time, the controller has been disabled
+> +	 * and admin request queue has been quiesced. So don't try to send delete cq
+> +	 * command any more.
+> +	 */
+> +	if (result == -EINTR)
+> +		goto out;
+> +	else if (result < 0)
+>  		goto release_cq;
 
-Agreed,
-
-We can drop shutdown and use the remove callback. Remove is supposed to 
-do a safe cleanup.
-
-> 
-> Bjorn
+Since you're touching this part anyway, you'd really only want to goto
+the release_cq if result is > 0.
