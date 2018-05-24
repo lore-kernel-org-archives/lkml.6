@@ -1,108 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034713AbeEXWHJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 18:07:09 -0400
-Received: from gloria.sntech.de ([95.129.55.99]:43056 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966031AbeEXWHD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 18:07:03 -0400
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Ezequiel Garcia <ezequiel@collabora.com>
-Cc: Jeffy Chen <jeffy.chen@rock-chips.com>,
-        Enric =?ISO-8859-1?Q?Balletb=F2?=
-        <enric.balletbo@collabora.co.uk>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.co.uk>,
-        Robin Murphy <robin.murphy@arm.com>, jcliang@chromium.org,
-        xxm@rock-chips.com, tfiga@chromium.org,
-        linux-rockchip@lists.infradead.org, iommu@lists.linux-foundation.org,
-        Joerg Roedel <joro@8bytes.org>, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: [PATCH] drm/rockchip: vop: fix irq disabled after vop driver probed
-Date: Fri, 25 May 2018 00:06:39 +0200
-Message-ID: <25470133.K8n9sLBzRS@diego>
-In-Reply-To: <b8eb41e576c4007d40223699eb951db32916b86a.camel@collabora.com>
-References: <b8eb41e576c4007d40223699eb951db32916b86a.camel@collabora.com>
+        id S1034725AbeEXWI1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 18:08:27 -0400
+Received: from mail-ot0-f169.google.com ([74.125.82.169]:43870 "EHLO
+        mail-ot0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966031AbeEXWIZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 18:08:25 -0400
+X-Google-Smtp-Source: AB8JxZoDqJaiY50CLt7+86ue9pXJcIJF8PQq7v+8/co67XIBtlsBDMAnBuYRWXCIYhE/r55C30TszESo8bMyx5B+2qI=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180502151108.GA25970@taurus.defre.kleine-koenig.org>
+References: <20180502151108.GA25970@taurus.defre.kleine-koenig.org>
+From: Tomas Hlavacek <tomas.hlavacek@nic.cz>
+Date: Fri, 25 May 2018 00:08:23 +0200
+X-Google-Sender-Auth: pzUS5RofwgfTg9IgB-vvrHigzRU
+Message-ID: <CAEB7QLBcLnv4JYphjxqESqofTbGyVWOd6QYKzfvdEZyDXH9LLQ@mail.gmail.com>
+Subject: Re: led: hw-trigger, global brightness and multi-colored leds
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <uwe@kleine-koenig.org>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4OM8na2031016
 
-From: Sandy Huang <hjc@rock-chips.com>
+Hi!
 
-The vop irq is shared between vop and iommu and irq probing in the
-iommu driver moved to the probe function recently. This can in some
-cases lead to a stall if the irq is triggered while the vop driver
-still has it disabled.
+On Wed, May 2, 2018 at 5:11 PM, Uwe Kleine-König <uwe@kleine-koenig.org> wrote:
+> Hello,
+>
+> on the Turris Omnia[1] the LEDs are controllable via an i2c device.
+...
+> Now I wonder how to match these two features to the LED device model. Do
+> you have an idea?
 
-But there is no real need to disable the irq, as the vop can simply
-also track its enabled state and ignore irqs in that case.
+That is an interesting question - I was quite clueless about that two
+years ago - when I wrote the driver for Omnia LEDs
+(https://github.com/tmshlvck/omnia-linux/blob/omnia/drivers/leds/leds-omnia.c).
+I didn't even made an attempt to send it to upstream because it
+obviously does not fit to the LED device model.
 
-So remove the enable/disable handling and add appropriate condition
-to the irq handler.
+The fundamental problems were:
 
-Signed-off-by: Sandy Huang <hjc@rock-chips.com>
-[added an actual commit message]
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
-Hi Ezequiel,
+1) Sending commands over I2C to the MCU that drives LEDs is quite
+slow. Therefore the interface is optimized for doing incremental
+changes and batch changes. (Btw. the protocol description is here
+https://gitlab.labs.nic.cz/hw/omnia_hw_ctrl/blob/master/turris_omnia_i2c_desc.adoc
+).
 
-this patch came from a discussion I had with Rockchip people over the
-iommu changes and resulting issues back in april, but somehow was
-forgotten and not posted to the lists. Correcting that now.
+2) "native" or autonomous mode means that MCU that drives LEDs take
+independently wired (on/off) input from switch, PHY or PCI cards
+without any kernel interaction, but color settings and brightness for
+each individual LED are still active, just the on/off/blink trigger is
+autonomous.
 
-So removing the enable/disable voodoo on the shared interrupt is
-the preferred way.
+3) There is a global brightness (autonomous PWM control for cathode of
+all LEDs - the best method for LED dimming, running on few MHz).
 
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 13 ++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+4) Per-LED brightness works, however PWM is running on just few
+hundreds of kHz and when all LEDs are dimmed and you watch carefully,
+you can see intermittent flickering.
 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-index 510cdf0..61493d4 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-@@ -549,8 +549,6 @@ static int vop_enable(struct drm_crtc *crtc)
- 
- 	spin_unlock(&vop->reg_lock);
- 
--	enable_irq(vop->irq);
--
- 	drm_crtc_vblank_on(crtc);
- 
- 	return 0;
-@@ -596,8 +594,6 @@ static void vop_crtc_atomic_disable(struct drm_crtc *crtc,
- 
- 	vop_dsp_hold_valid_irq_disable(vop);
- 
--	disable_irq(vop->irq);
--
- 	vop->is_enabled = false;
- 
- 	/*
-@@ -1168,6 +1164,13 @@ static irqreturn_t vop_isr(int irq, void *data)
- 	int ret = IRQ_NONE;
- 
- 	/*
-+	 * since the irq is shared with iommu, iommu irq is enabled before vop
-+	 * enable, so before vop enable we do nothing.
-+	 */
-+	if (!vop->is_enabled)
-+		return IRQ_NONE;
-+
-+	/*
- 	 * interrupt register has interrupt status, enable and clear bits, we
- 	 * must hold irq_lock to avoid a race with enable/disable_vblank().
- 	*/
-@@ -1586,9 +1588,6 @@ static int vop_bind(struct device *dev, struct device *master, void *data)
- 	if (ret)
- 		goto err_disable_pm_runtime;
- 
--	/* IRQ is initially disabled; it gets enabled in power_on */
--	disable_irq(vop->irq);
--
- 	return 0;
- 
- err_disable_pm_runtime:
--- 
-2.7.4
+5) The abstraction in the protocol (mentioned in (1)) is actually
+counting 3 LEDs (separate RGB) as one arbitrary-color LED. The reason
+was to save bandwidth on I2C I guess, because color is expected to
+change less frequently than brightness.
+
+But I also have good news: The FW of the MCU is also OSS (see the repo
+in the link (1)). There is a method for flashing the MCU over I2C from
+Linux and there is JTAG connector for the MCU, in case un-bricking is
+needed. Therefore the LED protocol can be changed to be more sensible
+and/or it is even possible to emulate some existing HW LED driver chip
+in Omnia MCU and reuse OSS driver for that chip.
+
+Tomas
