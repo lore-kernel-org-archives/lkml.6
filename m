@@ -1,11 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1900785-1527164461-2-17993886837259552780
+X-Cyrus-Session-Id: sloti22d1t05-1900785-1527164456-2-15623088306341652425
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES ensk.us-asciiro, BAYES_USED global,
-  SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -13,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527164460; b=jwI5pIuUTEwSRYXPqGL9hZ/Eb/0k06b7lFmuawLKZ45ADdNlh4
-    DI1Kc9JbUu5HQ4uC+oGDCyFV0q7oNFg4fZca7I0gfy7ymLzWhur5GA2cKobCDj2S
-    LjPE8Oaf7QMhcUWBWCQYo9UWV0/gj/YxjdvOd8eHAEmJqNCNMhqrjm4jHild+SFS
-    yCmnLQ75NbRxqICfzLU9CBzueySj0a1JQ99HZ8O1WG8SGEooBFi4CPWBtRsaxYSf
-    4J+tdqRGQE146DYUBrU/sILdnfkv1bekczMrV4I4nMAngNpHOMXVZH5u6mlGqA58
-    36DnCTseFSins3a0u7fTjCbB1uoegY4j2arA==
+    1527164455; b=KDQ+p2s59hRlyBapta/5Q25YKUAYbH83wNChBEGPqC3rkO1ddg
+    fbiWcEKJruRqsdse51Dhh8S5LGSZ3JGdhlgX2bjkc82GJQCAz3Ha/zfM/fRKLzty
+    MpHd+IjjOyCh9RrkIi8X/NtwdEttPINWIK/hUy42y+LtlhE2d+If/I4o/UVieCAm
+    rhew/OrGHx0xblo4WMNqT/dIwGwhFw2tDK/pTLhqHPyfZazGwb32O2Ztx/XlSQLp
+    kJW27LI5RwfXOVO9thO+tjag3safOxjV0zyBsf3EUT3eJfGlWK7go6QJdBptakd6
+    fhUzsIblWoPv/KSlFfE8futZ68cDFI15m1qA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527164460; bh=cfzcMcILa3FzpV9088ZeDgvRVJNKpG
-    mKvNPgvB05JvU=; b=YL+7gmYfWsBHrQDFiCyh9RrpSUE8RZlSwrv7F4i5FmFxsh
-    MoWdmh3j4vmWnSBi9t3jGXYmqonHFgL6wIp8MLuV9szvwecaCWL+hb3xDUh7VNj6
-    yhiI6K4v1b2C9V1p9d+XMgPuSh0EsAW7DU0yl6ZbiUjtHV4JJFdkiaYBRn+u27Vr
-    zNp1fHjKUTjq2MM9AI+8oFr61cvIj8EZ56SqXChRlXnOJLzW/xq9JASplID5GgAS
-    xK/fRMeXGw+75LVkPWwdbJGBqxc4HiGZNKOIV/A7rJKuIhd5Z1BusGKfgXtWxq72
-    /VSAWx4LD+FvJbzBESJj/XSw++fRAbKmqh3AdRFA==
+    :list-id; s=fm2; t=1527164455; bh=ixZF+Sn9PONBXg+miumgkmAQE3cdbO
+    0HypHRF+cCeBo=; b=dLXAhdKtKMJ9TqAZh3SuJ7darp/ETsEssn2lc1AiuXlRu6
+    XOTWosKiBOeWDtod4QxS41nN4gk5VzWRJ0UsLPCJoAHiDzlp/CItd5A/WcOnVazN
+    l0/aJDLQR+6PoOjYXSc3gP2CtvuaB1+kCdLvjgLdGei0Y7C256cod8dUPBdKB4Va
+    8D7QMMM/zuHrNS/n0oOs1VmeB0vNxsgEe7bT2o38V/SyTqvEJcYcZitHJr0ognYM
+    YSUr/16cVykWDe8Mv+ulRSxdvlmMDgv14PbkDxMFRj9cuHw38M65Aeqad12Qbt6U
+    K44UKW7Lw2Zg+LZ8F6LgUlTKSbb0gYhCGAI8zBPA==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=GCBr7uUB x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=UP/B1Pgt x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -49,7 +48,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
 Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=GCBr7uUB x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=UP/B1Pgt x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -65,30 +64,30 @@ Authentication-Results: mx2.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNw3r4IfwAuDB3IxjtiStEgXish2HKNBPlLkt1TS13YAOUohsK8ZExDc/4rtkiVbXL8NcPNAM9nS4cgYHRFeJmlVWJ2EZQzsdLc7Ky0ncjM1VApIv5EU
-    ZzOrrzXBaxxvzMS0TaqluUVZibW8GclMTRtrSVnihbt2MNuwS+y/8N5cs4VEjaUMAI62/YGyDLPd4ULxiUfp9/AZXEbqdlKAHY+ot4O8bRriB5lESiYK5tbs
+X-CM-Envelope: MS4wfMpm3FLAGclbP4rkaaJkhtk/PQNuYpIBgvu56gCGgIrAeaNyW67mGOOLo1sSrAa+ANZnrxPZpDwQNXNylayiQ6hEfOYhooOfs9vKrvE3uB3XJkb294lR
+    nFgEJDcESirDIY8YYXZSizVb4r7ZYhKUhEmdxbBB25+jZkUA9g1E7yD/cqETfM9uYIDWHcGcfSyNQ+0wqCH0rKosTPAt/TG6QBxJnvRdkr+1cxR6HG/G+uL+
 X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=1XWaLZrsAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=2jGULyhPSjjowrF_JfMA:9
-    a=KvSRV-NKAmmTrv6V:21 a=79x0wBomllWRMlcT:21 a=QEXdDO2ut3YA:10
-    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=pGLkceISAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=VliqgAhr-v1-EyMVYEYA:9
+    a=QEXdDO2ut3YA:10 a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966117AbeEXJl1 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:41:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53300 "EHLO mail.kernel.org"
+        id S966219AbeEXMUh (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 08:20:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966192AbeEXJlZ (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:41:25 -0400
+        id S966198AbeEXJl2 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:41:28 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        stable@vger.kernel.org, Gopal RajagopalSai <gopalsr83@gmail.com>,
+        Lance Richardson <lance.richardson.net@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 08/45] net_sched: fq: take care of throttled flows before reuse
-Date: Thu, 24 May 2018 11:38:16 +0200
-Message-Id: <20180524093121.571707223@linuxfoundation.org>
+Subject: [PATCH 3.18 09/45] net: support compat 64-bit time in {s,g}etsockopt
+Date: Thu, 24 May 2018 11:38:17 +0200
+Message-Id: <20180524093121.701835354@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093120.599252450@linuxfoundation.org>
 References: <20180524093120.599252450@linuxfoundation.org>
@@ -106,94 +105,138 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Lance Richardson <lance.richardson.net@gmail.com>
 
-[ Upstream commit 7df40c2673a1307c3260aab6f9d4b9bf97ca8fd7 ]
+[ Upstream commit 988bf7243e03ef69238381594e0334a79cef74a6 ]
 
-Normally, a socket can not be freed/reused unless all its TX packets
-left qdisc and were TX-completed. However connect(AF_UNSPEC) allows
-this to happen.
+For the x32 ABI, struct timeval has two 64-bit fields. However
+the kernel currently interprets the user-space values used for
+the SO_RCVTIMEO and SO_SNDTIMEO socket options as having a pair
+of 32-bit fields.
 
-With commit fc59d5bdf1e3 ("pkt_sched: fq: clear time_next_packet for
-reused flows") we cleared f->time_next_packet but took no special
-action if the flow was still in the throttled rb-tree.
+When the seconds portion of the requested timeout is less than 2**32,
+the seconds portion of the effective timeout is correct but the
+microseconds portion is zero.  When the seconds portion of the
+requested timeout is zero and the microseconds portion is non-zero,
+the kernel interprets the timeout as zero (never timeout).
 
-Since f->time_next_packet is the key used in the rb-tree searches,
-blindly clearing it might break rb-tree integrity. We need to make
-sure the flow is no longer in the rb-tree to avoid this problem.
+Fix by using 64-bit time for SO_RCVTIMEO/SO_SNDTIMEO as required
+for the ABI.
 
-Fixes: fc59d5bdf1e3 ("pkt_sched: fq: clear time_next_packet for reused flows")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
+The code included below demonstrates the problem.
+
+Results before patch:
+    $ gcc -m64 -Wall -O2 -o socktmo socktmo.c && ./socktmo
+    recv time: 2.008181 seconds
+    send time: 2.015985 seconds
+
+    $ gcc -m32 -Wall -O2 -o socktmo socktmo.c && ./socktmo
+    recv time: 2.016763 seconds
+    send time: 2.016062 seconds
+
+    $ gcc -mx32 -Wall -O2 -o socktmo socktmo.c && ./socktmo
+    recv time: 1.007239 seconds
+    send time: 1.023890 seconds
+
+Results after patch:
+    $ gcc -m64 -O2 -Wall -o socktmo socktmo.c && ./socktmo
+    recv time: 2.010062 seconds
+    send time: 2.015836 seconds
+
+    $ gcc -m32 -O2 -Wall -o socktmo socktmo.c && ./socktmo
+    recv time: 2.013974 seconds
+    send time: 2.015981 seconds
+
+    $ gcc -mx32 -O2 -Wall -o socktmo socktmo.c && ./socktmo
+    recv time: 2.030257 seconds
+    send time: 2.013383 seconds
+
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <sys/socket.h>
+ #include <sys/types.h>
+ #include <sys/time.h>
+
+ void checkrc(char *str, int rc)
+ {
+         if (rc >= 0)
+                 return;
+
+         perror(str);
+         exit(1);
+ }
+
+ static char buf[1024];
+ int main(int argc, char **argv)
+ {
+         int rc;
+         int socks[2];
+         struct timeval tv;
+         struct timeval start, end, delta;
+
+         rc = socketpair(AF_UNIX, SOCK_STREAM, 0, socks);
+         checkrc("socketpair", rc);
+
+         /* set timeout to 1.999999 seconds */
+         tv.tv_sec = 1;
+         tv.tv_usec = 999999;
+         rc = setsockopt(socks[0], SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof tv);
+         rc = setsockopt(socks[0], SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof tv);
+         checkrc("setsockopt", rc);
+
+         /* measure actual receive timeout */
+         gettimeofday(&start, NULL);
+         rc = recv(socks[0], buf, sizeof buf, 0);
+         gettimeofday(&end, NULL);
+         timersub(&end, &start, &delta);
+
+         printf("recv time: %ld.%06ld seconds\n",
+                (long)delta.tv_sec, (long)delta.tv_usec);
+
+         /* fill send buffer */
+         do {
+                 rc = send(socks[0], buf, sizeof buf, 0);
+         } while (rc > 0);
+
+         /* measure actual send timeout */
+         gettimeofday(&start, NULL);
+         rc = send(socks[0], buf, sizeof buf, 0);
+         gettimeofday(&end, NULL);
+         timersub(&end, &start, &delta);
+
+         printf("send time: %ld.%06ld seconds\n",
+                (long)delta.tv_sec, (long)delta.tv_usec);
+         exit(0);
+ }
+
+Fixes: 515c7af85ed9 ("x32: Use compat shims for {g,s}etsockopt")
+Reported-by: Gopal RajagopalSai <gopalsr83@gmail.com>
+Signed-off-by: Lance Richardson <lance.richardson.net@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/sch_fq.c |   37 +++++++++++++++++++++++++------------
- 1 file changed, 25 insertions(+), 12 deletions(-)
+ net/compat.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/net/sched/sch_fq.c
-+++ b/net/sched/sch_fq.c
-@@ -124,6 +124,28 @@ static bool fq_flow_is_detached(const st
- 	return f->next == &detached;
- }
+--- a/net/compat.c
++++ b/net/compat.c
+@@ -387,7 +387,8 @@ static int compat_sock_setsockopt(struct
+ 	if (optname == SO_ATTACH_FILTER)
+ 		return do_set_attach_filter(sock, level, optname,
+ 					    optval, optlen);
+-	if (optname == SO_RCVTIMEO || optname == SO_SNDTIMEO)
++	if (!COMPAT_USE_64BIT_TIME &&
++	    (optname == SO_RCVTIMEO || optname == SO_SNDTIMEO))
+ 		return do_set_sock_timeout(sock, level, optname, optval, optlen);
  
-+static bool fq_flow_is_throttled(const struct fq_flow *f)
-+{
-+	return f->next == &throttled;
-+}
-+
-+static void fq_flow_add_tail(struct fq_flow_head *head, struct fq_flow *flow)
-+{
-+	if (head->first)
-+		head->last->next = flow;
-+	else
-+		head->first = flow;
-+	head->last = flow;
-+	flow->next = NULL;
-+}
-+
-+static void fq_flow_unset_throttled(struct fq_sched_data *q, struct fq_flow *f)
-+{
-+	rb_erase(&f->rate_node, &q->delayed);
-+	q->throttled_flows--;
-+	fq_flow_add_tail(&q->old_flows, f);
-+}
-+
- static void fq_flow_set_throttled(struct fq_sched_data *q, struct fq_flow *f)
+ 	return sock_setsockopt(sock, level, optname, optval, optlen);
+@@ -452,7 +453,8 @@ static int do_get_sock_timeout(struct so
+ static int compat_sock_getsockopt(struct socket *sock, int level, int optname,
+ 				char __user *optval, int __user *optlen)
  {
- 	struct rb_node **p = &q->delayed.rb_node, *parent = NULL;
-@@ -151,15 +173,6 @@ static void fq_flow_set_throttled(struct
- 
- static struct kmem_cache *fq_flow_cachep __read_mostly;
- 
--static void fq_flow_add_tail(struct fq_flow_head *head, struct fq_flow *flow)
--{
--	if (head->first)
--		head->last->next = flow;
--	else
--		head->first = flow;
--	head->last = flow;
--	flow->next = NULL;
--}
- 
- /* limit number of collected flows per round */
- #define FQ_GC_MAX 8
-@@ -251,6 +264,8 @@ static struct fq_flow *fq_classify(struc
- 				     f->socket_hash != sk->sk_hash)) {
- 				f->credit = q->initial_quantum;
- 				f->socket_hash = sk->sk_hash;
-+				if (fq_flow_is_throttled(f))
-+					fq_flow_unset_throttled(q, f);
- 				f->time_next_packet = 0ULL;
- 			}
- 			return f;
-@@ -405,9 +420,7 @@ static void fq_check_throttled(struct fq
- 			q->time_next_delayed_flow = f->time_next_packet;
- 			break;
- 		}
--		rb_erase(p, &q->delayed);
--		q->throttled_flows--;
--		fq_flow_add_tail(&q->old_flows, f);
-+		fq_flow_unset_throttled(q, f);
- 	}
+-	if (optname == SO_RCVTIMEO || optname == SO_SNDTIMEO)
++	if (!COMPAT_USE_64BIT_TIME &&
++	    (optname == SO_RCVTIMEO || optname == SO_SNDTIMEO))
+ 		return do_get_sock_timeout(sock, level, optname, optval, optlen);
+ 	return sock_getsockopt(sock, level, optname, optval, optlen);
  }
- 
