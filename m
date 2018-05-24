@@ -1,91 +1,37 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1732752-1527156085-2-12293833821262846329
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527156084; b=Y192aJw1YKqf9ljtvZs1srDGpVV7k0nDo/v6yjioD/UUHApHvE
-    9JGf0U1cPNB7o6v33QFV3UIP531qX+FbksKVapCgY4s/aCYYLmaJgf/XAudP9FEp
-    trx7108bX33QzmrglgZlHnOIgsD6CIbwl3LHePGN1IKOnKxH1hfsm96bROlUwNhV
-    trwve0dkGEykFGMiMAnDWgOBAKQL+Yau+vrqxSj1B/x/h5dTh/rjBQMUNPwTWVa9
-    2DzjaaZxlbFZEwXcYQjdRP5Dlvd7GiQnte8V72a+NtGYKEwZQ6a9QfyJWERQEJ3J
-    MMWi15FoY6cTxTpsk5YHs4TEcx0Ydz5A9OVw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527156084; bh=v2VpXqipmljw9ImwWyI/524zC+Dfoc
-    joi0lBhgs5cV8=; b=lNX4xyLQt5ZN2FCH4cQsTA9qtKqm8vb5Rs9UM7yzXokPM1
-    xAbfndri/W8Ydr0ey1ji0YKitInuJqaoixkz6N6D5+8zU89L0q0Vk1aEgObLtaSc
-    5ZVncjHiVkusaXC/J4ukn3LOPSyigiuUh5D8mcD5Bb+HsFDJwbmoQcDdfT8yhRMI
-    SXdAfhYRbuAOcmKdHbtMMCxubNVhXav7ARIEosxLYF6ATo3PpOC601uiE0x0psfi
-    9Y03WAN8y6iwqb1LeTObV5tDv4XfJPwpcblPXO8sg4lPwn8gFg75yZ3UmhqEyL0U
-    w459rTg1xA9x5bk8PJTi+S3EZjQGv/At3zhVtz2Q==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=GXXWLr8n x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linuxfoundation.org header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=GXXWLr8n x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linuxfoundation.org header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfM/NDn4rMfiLVEA887eiedOVl/1WxKKuBZPcIE3ztyfeKoYHQHDCKo3cOxEfW++JrM6U0X6BR458QEBxEmRm4guBnsNPTP8vhncKuKf7aa4ZUjIEPuMj
-    h2ZY2sgB3SgDN5KfZ4iwOzjPI3EJLRRy+VE4hwP4+FtsKZl5P0IWYzDgp3Wg3tZks6Y8/2YK0zufPa8UAN3hJHZzNIU3MlwXnKjF9Jj8WAhkhxi/VDq7CafJ
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VnNF1IyMAAAA:8 a=ag1SF4gXAAAA:8 a=ZorGynhXn63rTCUqaxEA:9 a=QEXdDO2ut3YA:10
-    a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030589AbeEXKBV (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 06:01:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46478 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030878AbeEXKBR (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 06:01:17 -0400
+Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZr/mPl4MkwdPfQUscqDn8V4GcPEWOS+8KMwM70mJ1Q7z8/7l0e4HKLF67m+CT3GsAcyEVup
+ARC-Seal: i=1; a=rsa-sha256; t=1527156080; cv=none;
+        d=google.com; s=arc-20160816;
+        b=WNYxT8LwcLo006wGX8gKCqJ73uNErol7Ojq4kcqFIUBBe4x6mQwXNK72ZJGoF3S/it
+         1jykVPi+9Jt0EdE8nbCPrvuYnl7rKrxtlLjQguujlgBqae9peOs6I86dc1w0g2sCYpP+
+         wcrmah1L8GHkiDODoFYbziLNoYnSfEq6fOG8+E4P4VG6VMBODTBDNF8vuBnLakmaB8lO
+         X3jz3be+o7O5jJiuWbootvFw+PLQjHvPWNfOwz5b4r8J2oB9D2eLVZ81PqUC5B5xKGIZ
+         wwEaHV9JRqU2/WKou/j5ogwiW9hZQia+fjJcT9bgak0FtyTAZmj6jp4GyJLMS6KMWrDx
+         k8lQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=ag7CwEJGAIJKLPZNmqvQoMd6jvUMFN1kVNSmyPWqHxc=;
+        b=SxI0dwnEvfvZc4fv2AmRAdAtxtx3vwQWhYOrylEIvWED8EcoYNb88pdVM5rB1sNBUO
+         tUmkRtIC7NL33RL7xN7hePQ67EKAZAEKk5x6pCd9slsHl3WOJ3uDF+of6Pdwwf3h2G9O
+         WxnY/orqcuuQJqAeaq1oszKz2uOBYcxpl/VtWhripwgirFdwzLKl4WgMqEXcr5t1hlmV
+         vcGlS7FxmJNtqvD/iwV3t5Es4ezF5UKvzHLqXFXmKJ9CdYp8TjIqQrjD015OXSa1o4va
+         qfxp+xFzpeu8AbaXhP04rMm5xcvS5tZRplUzHls9SuMuuvRz3jP/zxDdYqBBicu3n8hT
+         ZNOg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=2hz2PCDo;
+       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=2hz2PCDo;
+       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.16 054/161] s390: correct nospec auto detection init order
-Date: Thu, 24 May 2018 11:37:59 +0200
-Message-Id: <20180524093024.923002276@linuxfoundation.org>
+	Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 4.16 055/161] s390: correct module section names for expoline code revert
+Date: Thu, 24 May 2018 11:38:00 +0200
+Message-Id: <20180524093025.041710235@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -93,9 +39,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1601339214188556824?=
+X-GMAIL-MSGID: =?utf-8?q?1601339214188556824?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -105,79 +52,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-[ Upstream commit 6a3d1e81a434fc311f224b8be77258bafc18ccc6 ]
+[ Upstream commit 6cf09958f32b9667bb3ebadf74367c791112771b ]
 
-With CONFIG_EXPOLINE_AUTO=y the call of spectre_v2_auto_early() via
-early_initcall is done *after* the early_param functions. This
-overwrites any settings done with the nobp/no_spectre_v2/spectre_v2
-parameters. The code patching for the kernel is done after the
-evaluation of the early parameters but before the early_initcall
-is done. The end result is a kernel image that is patched correctly
-but the kernel modules are not.
+The main linker script vmlinux.lds.S for the kernel image merges
+the expoline code patch tables into two section ".nospec_call_table"
+and ".nospec_return_table". This is *not* done for the modules,
+there the sections retain their original names as generated by gcc:
+".s390_indirect_call", ".s390_return_mem" and ".s390_return_reg".
 
-Make sure that the nospec auto detection function is called before the
-early parameters are evaluated and before the code patching is done.
+The module_finalize code has to check for the compiler generated
+section names, otherwise no code patching is done. This slows down
+the module code in case of "spectre_v2=off".
 
-Fixes: 6e179d64126b ("s390: add automatic detection of the spectre defense")
+Cc: stable@vger.kernel.org # 4.16
+Fixes: f19fbd5ed6 ("s390: introduce execute-trampolines for branches")
 Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/include/asm/nospec-branch.h |    1 +
- arch/s390/kernel/nospec-branch.c      |    8 ++------
- arch/s390/kernel/setup.c              |    3 +++
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ arch/s390/kernel/module.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/s390/include/asm/nospec-branch.h
-+++ b/arch/s390/include/asm/nospec-branch.h
-@@ -9,6 +9,7 @@
- extern int nospec_disable;
+--- a/arch/s390/kernel/module.c
++++ b/arch/s390/kernel/module.c
+@@ -465,11 +465,11 @@ int module_finalize(const Elf_Ehdr *hdr,
+ 			apply_alternatives(aseg, aseg + s->sh_size);
  
- void nospec_init_branches(void);
-+void nospec_auto_detect(void);
- void nospec_revert(s32 *start, s32 *end);
+ 		if (IS_ENABLED(CONFIG_EXPOLINE) &&
+-		    (!strcmp(".nospec_call_table", secname)))
++		    (!strncmp(".s390_indirect", secname, 14)))
+ 			nospec_revert(aseg, aseg + s->sh_size);
  
- #endif /* __ASSEMBLY__ */
---- a/arch/s390/kernel/nospec-branch.c
-+++ b/arch/s390/kernel/nospec-branch.c
-@@ -72,7 +72,7 @@ static int __init nospectre_v2_setup_ear
- }
- early_param("nospectre_v2", nospectre_v2_setup_early);
+ 		if (IS_ENABLED(CONFIG_EXPOLINE) &&
+-		    (!strcmp(".nospec_return_table", secname)))
++		    (!strncmp(".s390_return", secname, 12)))
+ 			nospec_revert(aseg, aseg + s->sh_size);
+ 	}
  
--static int __init spectre_v2_auto_early(void)
-+void __init nospec_auto_detect(void)
- {
- 	if (IS_ENABLED(CC_USING_EXPOLINE)) {
- 		/*
-@@ -87,11 +87,7 @@ static int __init spectre_v2_auto_early(
- 	 * nobp setting decides what is done, this depends on the
- 	 * CONFIG_KERNEL_NP option and the nobp/nospec parameters.
- 	 */
--	return 0;
- }
--#ifdef CONFIG_EXPOLINE_AUTO
--early_initcall(spectre_v2_auto_early);
--#endif
- 
- static int __init spectre_v2_setup_early(char *str)
- {
-@@ -102,7 +98,7 @@ static int __init spectre_v2_setup_early
- 	if (str && !strncmp(str, "off", 3))
- 		nospec_disable = 1;
- 	if (str && !strncmp(str, "auto", 4))
--		spectre_v2_auto_early();
-+		nospec_auto_detect();
- 	return 0;
- }
- early_param("spectre_v2", spectre_v2_setup_early);
---- a/arch/s390/kernel/setup.c
-+++ b/arch/s390/kernel/setup.c
-@@ -893,6 +893,9 @@ void __init setup_arch(char **cmdline_p)
- 	init_mm.end_data = (unsigned long) &_edata;
- 	init_mm.brk = (unsigned long) &_end;
- 
-+	if (IS_ENABLED(CONFIG_EXPOLINE_AUTO))
-+		nospec_auto_detect();
-+
- 	parse_early_param();
- #ifdef CONFIG_CRASH_DUMP
- 	/* Deactivate elfcorehdr= kernel parameter */
