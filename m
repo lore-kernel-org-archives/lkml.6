@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1835623-1527161507-2-8869318669375003429
+X-Cyrus-Session-Id: sloti22d1t05-1835623-1527161504-2-1644093678057503348
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527161506; b=leSkYzJOanWw+YV15ffFyQ3kpYi/cdwAE0ts17PqzMQZe8O5ie
-    hKrpX+KCyR8FYWbc0n7+kyS7p16wV/FLDzyxzDiFJKg2/ZrQNgNDQSwbmyjwi7t4
-    NdESSzAodhPA3nUaxVzE4lB2Xfs+1aR0n6rcjLc+2l4F2Jk4QF+hpLQVU7a35TwB
-    Go39oSA9TN9Pec++SyQAsq8nidFM900d3xQlSllMgP66j4vCAy2YQFAVtjvdtwvZ
-    aHnCDq2RyjULZ1+g1xtCB25S6xNOsPf44ZeG3G/6/4uqfMVAa/lEDBFUZmMQ6vSA
-    jOMHFM5H1uw8EHiLDHB3gewvOBALrzo5eDDA==
+    1527161503; b=m9rX98vOXgZ8JLTq4gwZLlgccinghEDbsJ6EL8EjXCU+jM20h6
+    9A9O00MH/0OUzvpOVAYGx6GRmCedgDmlIR+c/TXsFGJuJ0pMtImWUIdrWuFVjFpx
+    CRm72FYs/XuQV7fnJnsjnvSNYH4nRzrKMgYyK00QqmQYQ4ge8jk6izoH6kFNOBrk
+    vd6XczoT5gHfBAjMuODs/Owke6VtqlLtFD5RneUo4QdCv/WAJzgltEch6cLokv1v
+    UJgC7m6YutV9WztxFTq5XEL4R6QTcxQUr5rWrYe14bmhwcSpDjrtSehvL6uzA5ec
+    kP/DCd1GBSE6PyYpa1YP8VQHk5gXxoTA6lVw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527161506; bh=YjqrNFeq2vlHkHOLKAKudokGT22WAH
-    rMLbUwwzu12rA=; b=Ed1WaeUTdS8cV3xSp0E7Ttzv/ffhZQv6Lv2/wZIZo5tocw
-    /xG0VARaruolLTaNSC4bIqfVKTLp2aO0TkHPnmHUphVDAbI6afXLAUdygWZ+5WJ7
-    FPiNiefpKT9JMi2AqVKXyvouxjSnbbGbYRarUgn5IgyP4dF+RjXgqAPOPP9ZajuH
-    7bxnyQeWvGz8u2lq5YG6AzOmG2Nj2sMP5zuqRwaWpXF258ff5AlIdYdq9wCM5Ne3
-    NzcXfwA4W4sO3MFDRK+uOcAPcyiCc044GbMBq6NlfTthjxSv6NIGLKDesW4t6+8O
-    dqsLG7fYwEKggCWfZHzG+4uwZ+kEzc7ShkTB7V1A==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527161503; bh=JyEHtIABPWjf5f9vtolMW4GbunwG2P
+    M1gi2LPv2kAdQ=; b=BIIMXkIcWTJmOt/d0RMvUYzQJVDT6NS1uzddvE1Ms/0F4l
+    FTNYYLcdyAAr8nBSbF9lVjHrBVGnw2FyOCEWZRafUVfDKyYm+d2y5RkPXV49xiAs
+    +Au+REPqaqlWou3LXGbukgZ+gNyjrtThkOZ+59RplNRNoF9ByuajVEdxSlO0y2rm
+    iebuJUc8dwaOLje7MmplXv5HGU4L27kpC6eliM3GtwMs+NHvLbfnD2JUdTF6oviw
+    ReGpH0lENbRak6rGqB2UFsomSK11rXEJ/8vo7uQ753Wyu+0PVxHhfmgVrclJYGFQ
+    HmVxBUfMiRs4xDJqgQmZYgLeJdklxRdVynxpSwUQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=jyVgl2xu x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=Zt6/xEbt x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=jyVgl2xu x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=Zt6/xEbt x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,30 +64,30 @@ Authentication-Results: mx4.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBT3qLZsIvv0yIZpL7L9Ally3tw6FEnltvMUc5KWxBByoFHgiTUH1XHHHMdlpUjeg0kdKVps2+ATtaHumeLmYI4S1GO5kvxK0DhV+tYqtHhnDe/dLWAi
-    qkxIH9Y/WWhAWhVr07sHDP6e0jgwva3fdYoDKoA893DqzctJa7X/JjARy+rE8LQHiCqn4EunhAPzX+uo4587IrNWbAO1IYcq9JTA2e32WSpG23PXSyGfvAE1
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfBzQj9E2gnw7B6RkERHSx/l/QW9wxztH+lt/bI+Kovp9E/ZmhJlRaXc+7Dcms7cPQYyQtp7PNJPjOKqBRVlhQsB90Nd+BmFgMEIAKEc40kBIFXRhAOdM
+    hY7nZW3qSbWWZCEtRubYhfSLGhthtPG6nYqu6Wunm6IwPfM8izEWknQWbh5e7mZKC2B0tBnGAAvS0gEvrXf/nEf9LtLxO6NuqTG+xiZsHhOECuhz1Td9sowH
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=ao7VijfDgrWXSWN4ZT4A:9 a=QEXdDO2ut3YA:10
+    a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=H2TRg8_dVisN_HRLu8kA:9 a=QEXdDO2ut3YA:10
     a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967268AbeEXJus (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:50:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42996 "EHLO mail.kernel.org"
+        id S967429AbeEXLb3 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 07:31:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967238AbeEXJuq (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:50:46 -0400
+        id S967129AbeEXJu5 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:50:57 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 88/96] serial: samsung: Fix out-of-bounds access through serial port index
-Date: Thu, 24 May 2018 11:39:11 +0200
-Message-Id: <20180524093610.647235627@linuxfoundation.org>
+Subject: [PATCH 4.9 91/96] serial: fsl_lpuart: Fix out-of-bounds access through DT alias
+Date: Thu, 24 May 2018 11:39:14 +0200
+Message-Id: <20180524093610.997169040@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093605.602125311@linuxfoundation.org>
 References: <20180524093605.602125311@linuxfoundation.org>
@@ -107,36 +107,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 49ee23b71877831ac087d6083f6f397dc19c9664 ]
+[ Upstream commit ffab87fdecc655cc676f8be8dd1a2c5e22bd6d47 ]
 
-The s3c24xx_serial_ports[] array is indexed using a value derived from
-the "serialN" alias in DT, or from an incrementing probe index, which
-may lead to an out-of-bounds access.
+The lpuart_ports[] array is indexed using a value derived from the
+"serialN" alias in DT, which may lead to an out-of-bounds access.
 
 Fix this by adding a range check.
 
-Note that the array size is defined by a Kconfig symbol
-(CONFIG_SERIAL_SAMSUNG_UARTS), so this can even be triggered using
-a legitimate DTB or legitimate board code.
-
-Fixes: 13a9f6c64fdc55eb ("serial: samsung: Consider DT alias when probing ports")
+Fixes: c9e2e946fb0ba5d2 ("tty: serial: add Freescale lpuart driver support")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/tty/serial/samsung.c |    4 ++++
+ drivers/tty/serial/fsl_lpuart.c |    4 ++++
  1 file changed, 4 insertions(+)
 
---- a/drivers/tty/serial/samsung.c
-+++ b/drivers/tty/serial/samsung.c
-@@ -1813,6 +1813,10 @@ static int s3c24xx_serial_probe(struct p
- 
- 	dbg("s3c24xx_serial_probe(%p) %d\n", pdev, index);
- 
-+	if (index >= ARRAY_SIZE(s3c24xx_serial_ports)) {
-+		dev_err(&pdev->dev, "serial%d out of range\n", index);
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -1902,6 +1902,10 @@ static int lpuart_probe(struct platform_
+ 		dev_err(&pdev->dev, "failed to get alias id, errno %d\n", ret);
+ 		return ret;
+ 	}
++	if (ret >= ARRAY_SIZE(lpuart_ports)) {
++		dev_err(&pdev->dev, "serial%d out of range\n", ret);
 +		return -EINVAL;
 +	}
- 	ourport = &s3c24xx_serial_ports[index];
+ 	sport->port.line = ret;
+ 	sport->lpuart32 = of_device_is_compatible(np, "fsl,ls1021a-lpuart");
  
- 	ourport->drv_data = s3c24xx_get_driver_data(pdev);
