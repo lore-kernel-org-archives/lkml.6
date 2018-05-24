@@ -1,97 +1,39 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1733193-1527156009-2-763786173583688981
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527156008; b=I/T/r6Nk0Z8E+uzeGHkLjz62US6s27gJglFMBx+Sf7Mnszseow
-    gvAh7i8rpNjAn3g3fpHXFqN3qTIsEpCM1EC75UyJi9zBk5kt+3kCP+yFmfgFBWxB
-    zlq9/GG1kq3mClKX/o2+WrWuZd4YKDYu8CuBhzEEZLPUwbr0ei2JayQUnq8XWKqh
-    zmsSKIdUXZx5RHv8f8S4hplzQvEMb702tVvQ2QW/PPEKhUOIAJ8l0wEGQrHkE2LS
-    fbOjJHnekSwUzX+RZxc18Rn+ZtTPyVThxRGFrea05UaCXK3Rmuuh3FuJNQkoFlj6
-    vmrJWYTHkenqA8hryTeGeMmJkv7mDj1WdX5w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527156008; bh=3RNmG1C2zUCxn2dwchoMnmYgBzJcv1
-    SK8IWpjZ+jAk4=; b=IvzNXWDeE3F029CuxoTwrR385Biuq7J07AWmOOwjuNe81k
-    fPmggiausdMXnV0C/qaku0Hi0LJaPuR60sVyR1NrlzO/bBCE6RFY/wMiJ2UlHlyr
-    kOFm7VFXL1f9FxbtVShjNXxovkJcBNlt1UzBRoSORAGGU4Op3CDdZXDzr7tqIzZD
-    q51zVaWYKuPwYrm4GBY5xq2+W2PfQr9gYqVBFLsTr3NHniOO3qF26vZB56McG8N8
-    L4QI2UWNdh8VttUeG9ujyzox3JptWdje1H6MOWb9HCVZDIfPzTwo8r2kRuCNFlgv
-    632d3OJNF0yxL/rPsZvDk93HRuUdk2WVtcwK1scQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=i0Dd5q6a x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linuxfoundation.org header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=i0Dd5q6a x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linuxfoundation.org header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfI2rZ9M8RLjBHh+4hUJ9kQuQMJuagiMBRal6v+Rol67b+Yi8TudPyMM7HpZgf6fykKv3b2/odFit6jTZ3XKvhV6ZIsdVGHrVt31LrZn5Nz/3CqhkS8Zz
-    RdxnDAq3M4q9UW5cfmWlNjaNOEZpDGmQ4wqfnE3PWM9xacEtHFf/07MfA9qHyqdAXKf7CeOCgeHSV5T69aYfzHi85DuMcZ9h4WiX5gTvUlcQ60QasOlzAUDV
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=1XWaLZrsAAAA:8 a=4RBUngkUAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
-    a=QqqX_mwiMbC-zsVjBVcA:9 a=mi2QHR2-GNvvMRTD:21 a=5kMDCHIITYUaIh1e:21
-    a=QEXdDO2ut3YA:10 a=_sbA2Q-Kp09kWB8D3iXc:22 a=y1Q9-5lHfBjTkpIzbSAN:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030825AbeEXKAE (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 06:00:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41570 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030905AbeEXKAC (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 06:00:02 -0400
+Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZoU3Alg9KqWxeCtkqGGKXbCzEeS38TLzHj5ZMshEJf7Kfi4+rFbwoGjgXdMeaC25Pke/wpa
+ARC-Seal: i=1; a=rsa-sha256; t=1527156008; cv=none;
+        d=google.com; s=arc-20160816;
+        b=Hqqw0IcvjAJ4mUfpe/jHOsPcwV0Y5fzDgwc5x40gQpQjoaTO9X0Fz63STXtmqc8RWI
+         iW+zxba1Jq8GzAxx3E0Bf4Dc0wIycBrZGldgo0kVmqhWT1SiJZxMVBVmjngFQ6+hpGm2
+         IH0fOcDav5V1biKN+KwixGTHx20MN2+HG0BwX4uzrpI6oWH7Swlv2nnLthu0nilz0feC
+         UoW3Pz456y0zih6qk0XAZYU4DAI/avNaakYCVgi153gHI2hqW6R4GEmQgcnS7LFUeAsy
+         nZDI/emn15qu4csogWAgJNcVH8MGWjlN+RzVHwWF9Kr4KBU2pRskyVgawduIcLf08DX9
+         ZXlA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=DHIDjDb4+Kdh20VSztjDVv7WVTNnLsU9tEzcleyZ98Y=;
+        b=DGgv9l2wk9Cjj6czmwdGNetlQb762dDj+0asibkqKYA7VZTT1igreqrOAVptpbzLoO
+         5terXtL5CHh1h/qTMqHchV1pchGfeMHN445BEXjLsOSyOiKjmHeuGZ54JQQxljSl33q3
+         QsWRvB6nsOEFeKSwsCAThHRb4O9KgDTNTdkvnV1tw/FbiSMcianCvBpUFHP+b2nniiN+
+         DOg48L6PQ6XMdHc2iUHyQczmUVoq86W4lJOhLEckeIrorlOtK36lrz80A/94ESYQgjgk
+         Ye63rRl2PCaQ54SR6VH1NBWI/1HpC8hPDVCCEO1IKyvTAM7A2DM2cH3UZNL3iOHGC566
+         Oovw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=PUbEqhDa;
+       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=PUbEqhDa;
+       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Craig Gallek <kraig@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 009/161] sock_diag: fix use-after-free read in __sk_free
-Date: Thu, 24 May 2018 11:37:14 +0200
-Message-Id: <20180524093019.510198141@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Petr Machata <petrm@mellanox.com>,
+	William Tu <u9012063@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 023/161] net: ip6_gre: Fix headroom request in ip6erspan_tunnel_xmit()
+Date: Thu, 24 May 2018 11:37:28 +0200
+Message-Id: <20180524093021.141910303@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -99,9 +41,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1601339138740230507?=
+X-GMAIL-MSGID: =?utf-8?q?1601339138740230507?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -109,126 +52,191 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Petr Machata <petrm@mellanox.com>
 
-[ Upstream commit 9709020c86f6bf8439ca3effc58cfca49a5de192 ]
+[ Upstream commit 5691484df961aff897d824bcc26cd1a2aa036b5b ]
 
-We must not call sock_diag_has_destroy_listeners(sk) on a socket
-that has no reference on net structure.
+dev->needed_headroom is not primed until ip6_tnl_xmit(), so it starts
+out zero. Thus the call to skb_cow_head() fails to actually make sure
+there's enough headroom to push the ERSPAN headers to. That can lead to
+the panic cited below. (Reproducer below that).
 
-BUG: KASAN: use-after-free in sock_diag_has_destroy_listeners include/linux/sock_diag.h:75 [inline]
-BUG: KASAN: use-after-free in __sk_free+0x329/0x340 net/core/sock.c:1609
-Read of size 8 at addr ffff88018a02e3a0 by task swapper/1/0
+Fix by requesting either needed_headroom if already primed, or just the
+bare minimum needed for the header otherwise.
 
-CPU: 1 PID: 0 Comm: swapper/1 Not tainted 4.17.0-rc5+ #54
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x1b9/0x294 lib/dump_stack.c:113
- print_address_description+0x6c/0x20b mm/kasan/report.c:256
- kasan_report_error mm/kasan/report.c:354 [inline]
- kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
- __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
- sock_diag_has_destroy_listeners include/linux/sock_diag.h:75 [inline]
- __sk_free+0x329/0x340 net/core/sock.c:1609
- sk_free+0x42/0x50 net/core/sock.c:1623
- sock_put include/net/sock.h:1664 [inline]
- reqsk_free include/net/request_sock.h:116 [inline]
- reqsk_put include/net/request_sock.h:124 [inline]
- inet_csk_reqsk_queue_drop_and_put net/ipv4/inet_connection_sock.c:672 [inline]
- reqsk_timer_handler+0xe27/0x10e0 net/ipv4/inet_connection_sock.c:739
- call_timer_fn+0x230/0x940 kernel/time/timer.c:1326
- expire_timers kernel/time/timer.c:1363 [inline]
- __run_timers+0x79e/0xc50 kernel/time/timer.c:1666
- run_timer_softirq+0x4c/0x70 kernel/time/timer.c:1692
- __do_softirq+0x2e0/0xaf5 kernel/softirq.c:285
- invoke_softirq kernel/softirq.c:365 [inline]
- irq_exit+0x1d1/0x200 kernel/softirq.c:405
- exiting_irq arch/x86/include/asm/apic.h:525 [inline]
- smp_apic_timer_interrupt+0x17e/0x710 arch/x86/kernel/apic/apic.c:1052
- apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
- </IRQ>
-RIP: 0010:native_safe_halt+0x6/0x10 arch/x86/include/asm/irqflags.h:54
-RSP: 0018:ffff8801d9ae7c38 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff13
-RAX: dffffc0000000000 RBX: 1ffff1003b35cf8a RCX: 0000000000000000
-RDX: 1ffffffff11a30d0 RSI: 0000000000000001 RDI: ffffffff88d18680
-RBP: ffff8801d9ae7c38 R08: ffffed003b5e46c3 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000001
-R13: ffff8801d9ae7cf0 R14: ffffffff897bef20 R15: 0000000000000000
- arch_safe_halt arch/x86/include/asm/paravirt.h:94 [inline]
- default_idle+0xc2/0x440 arch/x86/kernel/process.c:354
- arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:345
- default_idle_call+0x6d/0x90 kernel/sched/idle.c:93
- cpuidle_idle_call kernel/sched/idle.c:153 [inline]
- do_idle+0x395/0x560 kernel/sched/idle.c:262
- cpu_startup_entry+0x104/0x120 kernel/sched/idle.c:368
- start_secondary+0x426/0x5b0 arch/x86/kernel/smpboot.c:269
- secondary_startup_64+0xa5/0xb0 arch/x86/kernel/head_64.S:242
+[  190.703567] kernel BUG at net/core/skbuff.c:104!
+[  190.708384] invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+[  190.714007] Modules linked in: act_mirred cls_matchall ip6_gre ip6_tunnel tunnel6 gre sch_ingress vrf veth x86_pkg_temp_thermal mlx_platform nfsd e1000e leds_mlxcpld
+[  190.728975] CPU: 1 PID: 959 Comm: kworker/1:2 Not tainted 4.17.0-rc4-net_master-custom-139 #10
+[  190.737647] Hardware name: Mellanox Technologies Ltd. "MSN2410-CB2F"/"SA000874", BIOS 4.6.5 03/08/2016
+[  190.747006] Workqueue: ipv6_addrconf addrconf_dad_work
+[  190.752222] RIP: 0010:skb_panic+0xc3/0x100
+[  190.756358] RSP: 0018:ffff8801d54072f0 EFLAGS: 00010282
+[  190.761629] RAX: 0000000000000085 RBX: ffff8801c1a8ecc0 RCX: 0000000000000000
+[  190.768830] RDX: 0000000000000085 RSI: dffffc0000000000 RDI: ffffed003aa80e54
+[  190.776025] RBP: ffff8801bd1ec5a0 R08: ffffed003aabce19 R09: ffffed003aabce19
+[  190.783226] R10: 0000000000000001 R11: ffffed003aabce18 R12: ffff8801bf695dbe
+[  190.790418] R13: 0000000000000084 R14: 00000000000006c0 R15: ffff8801bf695dc8
+[  190.797621] FS:  0000000000000000(0000) GS:ffff8801d5400000(0000) knlGS:0000000000000000
+[  190.805786] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  190.811582] CR2: 000055fa929aced0 CR3: 0000000003228004 CR4: 00000000001606e0
+[  190.818790] Call Trace:
+[  190.821264]  <IRQ>
+[  190.823314]  ? ip6erspan_tunnel_xmit+0x5e4/0x1982 [ip6_gre]
+[  190.828940]  ? ip6erspan_tunnel_xmit+0x5e4/0x1982 [ip6_gre]
+[  190.834562]  skb_push+0x78/0x90
+[  190.837749]  ip6erspan_tunnel_xmit+0x5e4/0x1982 [ip6_gre]
+[  190.843219]  ? ip6gre_tunnel_ioctl+0xd90/0xd90 [ip6_gre]
+[  190.848577]  ? debug_check_no_locks_freed+0x210/0x210
+[  190.853679]  ? debug_check_no_locks_freed+0x210/0x210
+[  190.858783]  ? print_irqtrace_events+0x120/0x120
+[  190.863451]  ? sched_clock_cpu+0x18/0x210
+[  190.867496]  ? cyc2ns_read_end+0x10/0x10
+[  190.871474]  ? skb_network_protocol+0x76/0x200
+[  190.875977]  dev_hard_start_xmit+0x137/0x770
+[  190.880317]  ? do_raw_spin_trylock+0x6d/0xa0
+[  190.884624]  sch_direct_xmit+0x2ef/0x5d0
+[  190.888589]  ? pfifo_fast_dequeue+0x3fa/0x670
+[  190.892994]  ? pfifo_fast_change_tx_queue_len+0x810/0x810
+[  190.898455]  ? __lock_is_held+0xa0/0x160
+[  190.902422]  __qdisc_run+0x39e/0xfc0
+[  190.906041]  ? _raw_spin_unlock+0x29/0x40
+[  190.910090]  ? pfifo_fast_enqueue+0x24b/0x3e0
+[  190.914501]  ? sch_direct_xmit+0x5d0/0x5d0
+[  190.918658]  ? pfifo_fast_dequeue+0x670/0x670
+[  190.923047]  ? __dev_queue_xmit+0x172/0x1770
+[  190.927365]  ? preempt_count_sub+0xf/0xd0
+[  190.931421]  __dev_queue_xmit+0x410/0x1770
+[  190.935553]  ? ___slab_alloc+0x605/0x930
+[  190.939524]  ? print_irqtrace_events+0x120/0x120
+[  190.944186]  ? memcpy+0x34/0x50
+[  190.947364]  ? netdev_pick_tx+0x1c0/0x1c0
+[  190.951428]  ? __skb_clone+0x2fd/0x3d0
+[  190.955218]  ? __copy_skb_header+0x270/0x270
+[  190.959537]  ? rcu_read_lock_sched_held+0x93/0xa0
+[  190.964282]  ? kmem_cache_alloc+0x344/0x4d0
+[  190.968520]  ? cyc2ns_read_end+0x10/0x10
+[  190.972495]  ? skb_clone+0x123/0x230
+[  190.976112]  ? skb_split+0x820/0x820
+[  190.979747]  ? tcf_mirred+0x554/0x930 [act_mirred]
+[  190.984582]  tcf_mirred+0x554/0x930 [act_mirred]
+[  190.989252]  ? tcf_mirred_act_wants_ingress.part.2+0x10/0x10 [act_mirred]
+[  190.996109]  ? __lock_acquire+0x706/0x26e0
+[  191.000239]  ? sched_clock_cpu+0x18/0x210
+[  191.004294]  tcf_action_exec+0xcf/0x2a0
+[  191.008179]  tcf_classify+0xfa/0x340
+[  191.011794]  __netif_receive_skb_core+0x8e1/0x1c60
+[  191.016630]  ? debug_check_no_locks_freed+0x210/0x210
+[  191.021732]  ? nf_ingress+0x500/0x500
+[  191.025458]  ? process_backlog+0x347/0x4b0
+[  191.029619]  ? print_irqtrace_events+0x120/0x120
+[  191.034302]  ? lock_acquire+0xd8/0x320
+[  191.038089]  ? process_backlog+0x1b6/0x4b0
+[  191.042246]  ? process_backlog+0xc2/0x4b0
+[  191.046303]  process_backlog+0xc2/0x4b0
+[  191.050189]  net_rx_action+0x5cc/0x980
+[  191.053991]  ? napi_complete_done+0x2c0/0x2c0
+[  191.058386]  ? mark_lock+0x13d/0xb40
+[  191.062001]  ? clockevents_program_event+0x6b/0x1d0
+[  191.066922]  ? print_irqtrace_events+0x120/0x120
+[  191.071593]  ? __lock_is_held+0xa0/0x160
+[  191.075566]  __do_softirq+0x1d4/0x9d2
+[  191.079282]  ? ip6_finish_output2+0x524/0x1460
+[  191.083771]  do_softirq_own_stack+0x2a/0x40
+[  191.087994]  </IRQ>
+[  191.090130]  do_softirq.part.13+0x38/0x40
+[  191.094178]  __local_bh_enable_ip+0x135/0x190
+[  191.098591]  ip6_finish_output2+0x54d/0x1460
+[  191.102916]  ? ip6_forward_finish+0x2f0/0x2f0
+[  191.107314]  ? ip6_mtu+0x3c/0x2c0
+[  191.110674]  ? ip6_finish_output+0x2f8/0x650
+[  191.114992]  ? ip6_output+0x12a/0x500
+[  191.118696]  ip6_output+0x12a/0x500
+[  191.122223]  ? ip6_route_dev_notify+0x5b0/0x5b0
+[  191.126807]  ? ip6_finish_output+0x650/0x650
+[  191.131120]  ? ip6_fragment+0x1a60/0x1a60
+[  191.135182]  ? icmp6_dst_alloc+0x26e/0x470
+[  191.139317]  mld_sendpack+0x672/0x830
+[  191.143021]  ? igmp6_mcf_seq_next+0x2f0/0x2f0
+[  191.147429]  ? __local_bh_enable_ip+0x77/0x190
+[  191.151913]  ipv6_mc_dad_complete+0x47/0x90
+[  191.156144]  addrconf_dad_completed+0x561/0x720
+[  191.160731]  ? addrconf_rs_timer+0x3a0/0x3a0
+[  191.165036]  ? mark_held_locks+0xc9/0x140
+[  191.169095]  ? __local_bh_enable_ip+0x77/0x190
+[  191.173570]  ? addrconf_dad_work+0x50d/0xa20
+[  191.177886]  ? addrconf_dad_work+0x529/0xa20
+[  191.182194]  addrconf_dad_work+0x529/0xa20
+[  191.186342]  ? addrconf_dad_completed+0x720/0x720
+[  191.191088]  ? __lock_is_held+0xa0/0x160
+[  191.195059]  ? process_one_work+0x45d/0xe20
+[  191.199302]  ? process_one_work+0x51e/0xe20
+[  191.203531]  ? rcu_read_lock_sched_held+0x93/0xa0
+[  191.208279]  process_one_work+0x51e/0xe20
+[  191.212340]  ? pwq_dec_nr_in_flight+0x200/0x200
+[  191.216912]  ? get_lock_stats+0x4b/0xf0
+[  191.220788]  ? preempt_count_sub+0xf/0xd0
+[  191.224844]  ? worker_thread+0x219/0x860
+[  191.228823]  ? do_raw_spin_trylock+0x6d/0xa0
+[  191.233142]  worker_thread+0xeb/0x860
+[  191.236848]  ? process_one_work+0xe20/0xe20
+[  191.241095]  kthread+0x206/0x300
+[  191.244352]  ? process_one_work+0xe20/0xe20
+[  191.248587]  ? kthread_stop+0x570/0x570
+[  191.252459]  ret_from_fork+0x3a/0x50
+[  191.256082] Code: 14 3e ff 8b 4b 78 55 4d 89 f9 41 56 41 55 48 c7 c7 a0 cf db 82 41 54 44 8b 44 24 2c 48 8b 54 24 30 48 8b 74 24 20 e8 16 94 13 ff <0f> 0b 48 c7 c7 60 8e 1f 85 48 83 c4 20 e8 55 ef a6 ff 89 74 24
+[  191.275327] RIP: skb_panic+0xc3/0x100 RSP: ffff8801d54072f0
+[  191.281024] ---[ end trace 7ea51094e099e006 ]---
+[  191.285724] Kernel panic - not syncing: Fatal exception in interrupt
+[  191.292168] Kernel Offset: disabled
+[  191.295697] ---[ end Kernel panic - not syncing: Fatal exception in interrupt ]---
 
-Allocated by task 4557:
- save_stack+0x43/0xd0 mm/kasan/kasan.c:448
- set_track mm/kasan/kasan.c:460 [inline]
- kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
- kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
- kmem_cache_alloc+0x12e/0x760 mm/slab.c:3554
- kmem_cache_zalloc include/linux/slab.h:691 [inline]
- net_alloc net/core/net_namespace.c:383 [inline]
- copy_net_ns+0x159/0x4c0 net/core/net_namespace.c:423
- create_new_namespaces+0x69d/0x8f0 kernel/nsproxy.c:107
- unshare_nsproxy_namespaces+0xc3/0x1f0 kernel/nsproxy.c:206
- ksys_unshare+0x708/0xf90 kernel/fork.c:2408
- __do_sys_unshare kernel/fork.c:2476 [inline]
- __se_sys_unshare kernel/fork.c:2474 [inline]
- __x64_sys_unshare+0x31/0x40 kernel/fork.c:2474
- do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
+Reproducer:
 
-Freed by task 69:
- save_stack+0x43/0xd0 mm/kasan/kasan.c:448
- set_track mm/kasan/kasan.c:460 [inline]
- __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
- kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
- __cache_free mm/slab.c:3498 [inline]
- kmem_cache_free+0x86/0x2d0 mm/slab.c:3756
- net_free net/core/net_namespace.c:399 [inline]
- net_drop_ns.part.14+0x11a/0x130 net/core/net_namespace.c:406
- net_drop_ns net/core/net_namespace.c:405 [inline]
- cleanup_net+0x6a1/0xb20 net/core/net_namespace.c:541
- process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
- worker_thread+0x1cc/0x1440 kernel/workqueue.c:2279
- kthread+0x345/0x410 kernel/kthread.c:240
- ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+	ip link add h1 type veth peer name swp1
+	ip link add h3 type veth peer name swp3
 
-The buggy address belongs to the object at ffff88018a02c140
- which belongs to the cache net_namespace of size 8832
-The buggy address is located 8800 bytes inside of
- 8832-byte region [ffff88018a02c140, ffff88018a02e3c0)
-The buggy address belongs to the page:
-page:ffffea0006280b00 count:1 mapcount:0 mapping:ffff88018a02c140 index:0x0 compound_mapcount: 0
-flags: 0x2fffc0000008100(slab|head)
-raw: 02fffc0000008100 ffff88018a02c140 0000000000000000 0000000100000001
-raw: ffffea00062a1320 ffffea0006268020 ffff8801d9bdde40 0000000000000000
-page dumped because: kasan: bad access detected
+	ip link set dev h1 up
+	ip address add 192.0.2.1/28 dev h1
 
-Fixes: b922622ec6ef ("sock_diag: don't broadcast kernel sockets")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Craig Gallek <kraig@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
+	ip link add dev vh3 type vrf table 20
+	ip link set dev h3 master vh3
+	ip link set dev vh3 up
+	ip link set dev h3 up
+
+	ip link set dev swp3 up
+	ip address add dev swp3 2001:db8:2::1/64
+
+	ip link set dev swp1 up
+	tc qdisc add dev swp1 clsact
+
+	ip link add name gt6 type ip6erspan \
+		local 2001:db8:2::1 remote 2001:db8:2::2 oseq okey 123
+	ip link set dev gt6 up
+
+	sleep 1
+
+	tc filter add dev swp1 ingress pref 1000 matchall skip_hw \
+		action mirred egress mirror dev gt6
+	ping -I h1 192.0.2.2
+
+Fixes: e41c7c68ea77 ("ip6erspan: make sure enough headroom at xmit.")
+Signed-off-by: Petr Machata <petrm@mellanox.com>
+Acked-by: William Tu <u9012063@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/sock.c |    2 +-
+ net/ipv6/ip6_gre.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/core/sock.c
-+++ b/net/core/sock.c
-@@ -1603,7 +1603,7 @@ static void __sk_free(struct sock *sk)
- 	if (likely(sk->sk_net_refcnt))
- 		sock_inuse_add(sock_net(sk), -1);
+--- a/net/ipv6/ip6_gre.c
++++ b/net/ipv6/ip6_gre.c
+@@ -908,7 +908,7 @@ static netdev_tx_t ip6erspan_tunnel_xmit
+ 		truncate = true;
+ 	}
  
--	if (unlikely(sock_diag_has_destroy_listeners(sk) && sk->sk_net_refcnt))
-+	if (unlikely(sk->sk_net_refcnt && sock_diag_has_destroy_listeners(sk)))
- 		sock_diag_broadcast_destroy(sk);
- 	else
- 		sk_destruct(sk);
+-	if (skb_cow_head(skb, dev->needed_headroom))
++	if (skb_cow_head(skb, dev->needed_headroom ?: t->hlen))
+ 		goto tx_err;
+ 
+ 	t->parms.o_flags &= ~TUNNEL_KEY;
