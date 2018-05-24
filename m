@@ -1,85 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968231AbeEXLK7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 07:10:59 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58218 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1033076AbeEXLKt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 07:10:49 -0400
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: linux-integrity@vger.kernel.org
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Eric Biederman <ebiederm@xmission.com>, kexec@lists.infradead.org,
-        Andres Rodriguez <andresx7@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Luis R . Rodriguez" <mcgrof@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>, Stephen Boyd <sboyd@kernel.org>
-Subject: [RFC PATCH v3 7/7] ima: based on policy prevent loading firmware (pre-allocated buffer)
-Date: Thu, 24 May 2018 07:09:36 -0400
-X-Mailer: git-send-email 2.7.5
-In-Reply-To: <1527160176-29269-1-git-send-email-zohar@linux.vnet.ibm.com>
-References: <1527160176-29269-1-git-send-email-zohar@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18052411-0012-0000-0000-000005DA20F0
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052411-0013-0000-0000-000019576FA2
-Message-Id: <1527160176-29269-8-git-send-email-zohar@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-24_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805240132
+        id S1033003AbeEXLKK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 07:10:10 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36862 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1032891AbeEXLKH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 07:10:07 -0400
+Date: Thu, 24 May 2018 13:10:02 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>, peterz@infradead.org,
+        viro@zeniv.linux.org.uk, mingo@kernel.org, paulmck@linux.vnet.ibm.com,
+        keescook@chromium.org, riel@redhat.com, tglx@linutronix.de,
+        kirill.shutemov@linux.intel.com, marcos.souza.org@gmail.com,
+        hoeun.ryu@gmail.com, pasha.tatashin@oracle.com, gs051095@gmail.com,
+        dhowells@redhat.com, rppt@linux.vnet.ibm.com,
+        linux-kernel@vger.kernel.org, Balbir Singh <balbir@linux.vnet.ibm.com>,
+        Tejun Heo <tj@kernel.org>, Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [PATCH 0/2] mm->owner to mm->memcg fixes
+Message-ID: <20180524111002.GB20441@dhcp22.suse.cz>
+References: <20180504142056.GA26151@redhat.com>
+ <87r2mrh4is.fsf@xmission.com>
+ <20180504145435.GA26573@redhat.com>
+ <87y3gzfmjt.fsf@xmission.com>
+ <20180504162209.GB26573@redhat.com>
+ <871serfk77.fsf@xmission.com>
+ <87tvrncoyc.fsf_-_@xmission.com>
+ <20180510121418.GD5325@dhcp22.suse.cz>
+ <20180522125757.GL20020@dhcp22.suse.cz>
+ <87wovu889o.fsf@xmission.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87wovu889o.fsf@xmission.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Question: can the device access the pre-allocated buffer at any time?
-(Still waiting to hear from Qualcomm...)
+On Wed 23-05-18 14:46:43, Eric W. Biederman wrote:
+> Michal Hocko <mhocko@kernel.org> writes:
+> 
+> > On Thu 10-05-18 14:14:18, Michal Hocko wrote:
+> >> On Fri 04-05-18 12:26:03, Eric W. Biederman wrote:
+> >> > 
+> >> > Andrew can you pick up these two fixes as well.
+> >> > 
+> >> > These address the issues Michal Hocko and Oleg Nesterov noticed.
+> >> 
+> >> I completely got lost in this thread. There are way too many things
+> >> discussed at once. Could you repost the full series for a proper review
+> >> please?
+> >
+> > ping
+> 
+> Quick summary of where things stand.  (Just getting back from vacation
+> and catching up with things).
+> 
+> Andrew has picked up the best version of these patches and you can look
+> at his tree to find the current patches.
 
-By allowing devices to request firmware be loaded directly into a
-pre-allocated buffer, will this allow the device access to the firmware
-before the kernel has verified the firmware signature?
+I would really prefer and appreciate a repost with all the fixes folded
+in. Wrapping my head around -fix+ is not something I have time for.
 
-Is it dependent on the type of buffer allocated (eg. DMA)?  For example,
-qcom_mdt_load() -> qcom_scm_pas_init_image() -> dma_alloc_coherent().
+> Looking at my tree the issues that have been looked at above
+> the basic patch are:
+> !CONFIG_MMU support (code motion)
+> Races during exec.  (Roughly solved but I think we can do better by
+>                      expanding the scope of
+>                      cgroup_threadgroup_change_begin/end in exec and
+>                      just making exec atomic wrt to cgroup changes)
+> 
+> While I was on vacation you posted an old concern about a condtion
+> where get_mem_cgroup_from_mm was not guaranteed to complete, and how
+> that interacts with charge migration.
+> 
+> 
+> Looking at your description the concern is that cgroup_rmdir can succeed
+> when a cgroup has just an mm in it (and no tasks).  The result  is
+> that mem_cgroup_try_charge can loop indefinitely in that case.
 
-With an IMA policy requiring signed firmware, this patch would prevent
-loading firmware into a pre-allocated buffer.
+right
 
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Luis R. Rodriguez <mcgrof@suse.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Serge E. Hallyn <serge@hallyn.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
----
- security/integrity/ima/ima_main.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+> That is possible with two processes sharing the same mm, but living in
+> different memory cgroups.
 
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index dd1f263f950a..d114b7ad2c86 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -457,6 +457,12 @@ int ima_read_data(struct file *file, enum kernel_read_file_id read_id)
- 			pr_err("Prevent firmware sysfs fallback loading.\n");
- 			return -EACCES;	/* INTEGRITY_UNKNOWN */
- 		}
-+		break;
-+	case READING_FIRMWARE_PREALLOC_BUFFER:
-+		if (ima_appraise & IMA_APPRAISE_FIRMWARE) {
-+			pr_err("Prevent device from accessing firmware prior to verifying the firmware signature.\n");
-+			return -EACCES;
-+		}
- 	default:
- 		break;
- 	}
+right
+
+> That is a silly useless configuration but
+> something to support at least to the level of making certain kernel's
+> don't wedge when it happens by accident or maliciously.
+
+absolutely. Processes sharing the mm without being in the same thread
+group is something we should have never allowed IMHO. It just generates
+a lot of corner cases. I guess this is a relict from old threading
+models so here we are.
+
+> The suggestion of having cgroup_is_populated take this into account
+> seems like a good general solution but I don't think that is strictly
+> necessary.
+> 
+> In the spirit of let's make this work.  How about:
+
+Please, repost with the whole series. I really want to see the full
+picture.
+
+Thanks!
 -- 
-2.7.5
+Michal Hocko
+SUSE Labs
