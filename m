@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1874556-1527162801-2-15378850405583148029
+X-Cyrus-Session-Id: sloti22d1t05-1862185-1527162778-2-7651498922224468935
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527162800; b=fGQ/1Y3r0R5uPZPEFI98EGz9jWN6NAEedXW+S38cNkkrltxJVM
-    TPQMv5+qkv1Gv1qL8wulhDnWuBsv42pv8VMtOur1vFdX07s/XISxB5drv0CM4DcM
-    wPA3QKtGhKXPoceGK6hA84KFZVH5gY6Eb5gsKX8eEClV6zazDqmPqeSnFEWNyhVR
-    XWmJTvc5WIA1d3J/65+QjpHa+6DQRlzbL1rUKKHthj0VV9wdEocvQYGBgFFu9cxX
-    Qt4Tj21eHIqz4TYgqe6oYwyTp192VJQskrgq+RXwv1t+nmiDmLxtAqTTHypplc4G
-    eXzksyL6MCu6FjPdE7Ns65zt6TvTuR1Mbz4A==
+    1527162777; b=mw5iDIE7O++whZKwsqY1XCHj7b0yk7Gm5CCgX4bTe8dffz1eWX
+    bnzJIbG/g5Xk7XU0/OvkwNMn4otUPYas5GKrL4OlzLGb54whjTZPdwiWCuQ4G7Cm
+    pFqGZ8FbPKk3QRLIXQPwEtFM4EFP4LTAg/gATHhiOoSe79Jm8KRaW7eBrXDeLh/k
+    Q5HIVllTFvt4hZ2Tcrr5swaeGgJ2yVdigMESAoEFwDVjw9EoPX/cBdPnd69/iIGT
+    Rql6xMD+AmXSgMfspx8DF8cIQ7k5vtChYMl8ff2HYOzJqoadIRaBg4S6bDIErogK
+    BQLbPCgy+4d+zgnyXTZuEJ05zhRnK8duWO7Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527162800; bh=0CEpkwr/ppqVsY+hjirdD4rxdmSwxG
-    4TEh2lzVO6cEE=; b=Hds0JFcHJW5NQ3shYTlFJYa8OcioCCvpnttxPW11YNJJe2
-    DbBow/vCm9ktarJdYg2ssBYOpNBghuxmRnpQ9VKDjbPwgafDsH8HPUsG2xh8rpyE
-    ADujjOVQB+5JjYiXtyP89FqDXpJSIyyZ2ZepzVYT0mI84ZedYYGZ9aw8MPXCRFAV
-    4HtkIEi2fRiUTiMJ33JgQPGSnJ5N7iEqvtV6tucdVijgLj9iW2VfRnoG0K7HWDd4
-    LekO4zanzSBfW6N+IL6D+pR7CpqwFQBNUg+gVxjlo2ELuag9HrX4P38en67pcqRT
-    Vd8CEAsVhCfAGdKrlVXCLTaqCpY++SjF4cIFAbmA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527162777; bh=AQeioIyQs8LPTVxIuwVHgNxf0CyN2c
+    cBpVNviLIO1c4=; b=XwVRvn3xkey/XXiOZZTtCxI3b1uAG7nQn3Jl+vZrhjbcrO
+    LoH/YUaW178N+Vlt51injHVO2JqSKWCQ0pWXiAgRyQFORDIEUPWGCt/mX7aeVGIC
+    h0Biw/Izgaw7V2zFnLQhKsotDLgrq3I8whpdffiL0xnm5NPn3axDBEVNt2ZdOk6P
+    MdJEJQv47IacKlSj1VV5AGYrdSh8t9IoDkybUT8LmIsoFQsFfd8/vNSClhX28CAR
+    N+0g8pED9Q1P4gpYcUWXk0pW3IflQqQo/klVZvyw2yKeDYd3UVJviVlvHHhmtY8D
+    i2OWxAWIaKiRrVZ9Kat1YGDmb0wEU4qo+hxxgebA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=TFkXbuWp x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=1rku6pQD x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=TFkXbuWp x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=1rku6pQD x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,28 +64,30 @@ Authentication-Results: mx2.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLndq6Ki9v6jCyz5txlkj0cI6wSDr5Zc6KBHQHFAQmHXd9p0oQcvT4ZYE4JGSxcVLxe7xgggZPYkvqiY1GhSbRFqg3SGurSTKOmCmvBXgzuu1rmYyKI4
-    tMpJ5hUENGyNLgdostALCmx/Iz0301BmvdFPh/A17+Nyvj3tZ524AalvSZEGtKUBoYyr/sMuQTQR4386tJRRFarWv0QHfbm/4ef6s8F2833XXNNwNUJdEoQG
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfKYbZLk06LLEqI7YVEaqCvbGQw4LfL/6fcFusQnUN1ByxqQ9yX3ogtcL1ejzOhAJr9cX3FszZSbAHo7un6X6136Xj4VkcVnTOYwf/l0NGItKRviqWOla
+    7H7k3MLUkMC5XSlzeTln3XrYd/UV1XsR0WDoweYcws/rJ8jsLRSFFrpxKiPE5I9A6aHWIKlkcC0GrYzAv+/0/vD1QKacXiABW7cgXQn5Zv5c7R5gmz+ZK12T
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=HejVe6opIUS0hJEPyFcA:9
-    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=VnNF1IyMAAAA:8 a=ag1SF4gXAAAA:8 a=v0RnbwQso9w9YEYU3twA:9 a=QEXdDO2ut3YA:10
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967109AbeEXLxR (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 07:53:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57708 "EHLO mail.kernel.org"
+        id S966920AbeEXJq3 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:46:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57614 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966917AbeEXJq1 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:46:27 -0400
+        id S966482AbeEXJqY (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:46:24 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.4 79/92] s390/ftrace: use expoline for indirect branches
-Date: Thu, 24 May 2018 11:38:56 +0200
-Message-Id: <20180524093206.841974050@linuxfoundation.org>
+        stable@vger.kernel.org, Stewart Smith <stewart@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Mike Galbraith <mgalbraith@suse.de>
+Subject: [PATCH 4.4 42/92] powerpc/powernv: panic() on OPAL < V3
+Date: Thu, 24 May 2018 11:38:19 +0200
+Message-Id: <20180524093203.069363412@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093159.286472249@linuxfoundation.org>
 References: <20180524093159.286472249@linuxfoundation.org>
@@ -103,134 +105,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+From: Stewart Smith <stewart@linux.vnet.ibm.com>
 
-[ Upstream commit 23a4d7fd34856da8218c4cfc23dba7a6ec0a423a ]
+commit 786842b62f81f20d14894925e8c225328ee8144b upstream.
 
-The return from the ftrace_stub, _mcount, ftrace_caller and
-return_to_handler functions is done with "br %r14" and "br %r1".
-These are indirect branches as well and need to use execute
-trampolines for CONFIG_EXPOLINE=y.
+The OpenPower Abstraction Layer firmware went through a couple
+of iterations in the lab before being released. What we now know
+as OPAL advertises itself as OPALv3.
 
-The ftrace_caller function is a special case as it returns to the
-start of a function and may only use %r0 and %r1. For a pre z10
-machine the standard execute trampoline uses a LARL + EX to do
-this, but this requires *two* registers in the range %r1..%r15.
-To get around this the 'br %r1' located in the lowcore is used,
-then the EX instruction does not need an address register.
-But the lowcore trick may only be used for pre z14 machines,
-with noexec=on the mapping for the first page may not contain
-instructions. The solution for that is an ALTERNATIVE in the
-expoline THUNK generated by 'GEN_BR_THUNK %r1' to switch to
-EXRL, this relies on the fact that a machine that supports
-noexec=on has EXRL as well.
+OPALv2 and OPALv1 never made it outside the lab, and the possibility
+of anyone at all ever building a mainline kernel today and expecting
+it to boot on such hardware is zero.
 
-Cc: stable@vger.kernel.org # 4.16
-Fixes: f19fbd5ed6 ("s390: introduce execute-trampolines for branches")
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Signed-off-by: Stewart Smith <stewart@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Mike Galbraith <mgalbraith@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/s390/include/asm/nospec-insn.h |   11 +++++++++++
- arch/s390/kernel/asm-offsets.c      |    1 +
- arch/s390/kernel/mcount.S           |   14 +++++++++-----
- 3 files changed, 21 insertions(+), 5 deletions(-)
 
---- a/arch/s390/include/asm/nospec-insn.h
-+++ b/arch/s390/include/asm/nospec-insn.h
-@@ -2,6 +2,9 @@
- #ifndef _ASM_S390_NOSPEC_ASM_H
- #define _ASM_S390_NOSPEC_ASM_H
+---
+ arch/powerpc/platforms/powernv/opal.c |    5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+--- a/arch/powerpc/platforms/powernv/opal.c
++++ b/arch/powerpc/platforms/powernv/opal.c
+@@ -103,11 +103,8 @@ int __init early_init_dt_scan_opal(unsig
+ 		powerpc_firmware_features |= FW_FEATURE_OPALv2;
+ 		powerpc_firmware_features |= FW_FEATURE_OPALv3;
+ 		pr_info("OPAL V3 detected !\n");
+-	} else if (of_flat_dt_is_compatible(node, "ibm,opal-v2")) {
+-		powerpc_firmware_features |= FW_FEATURE_OPALv2;
+-		pr_info("OPAL V2 detected !\n");
+ 	} else {
+-		pr_info("OPAL V1 detected !\n");
++		panic("OPAL != V3 detected, no longer supported.\n");
+ 	}
  
-+#include <asm/alternative-asm.h>
-+#include <asm/asm-offsets.h>
-+
- #ifdef __ASSEMBLY__
- 
- #ifdef CONFIG_EXPOLINE
-@@ -76,13 +79,21 @@
- 	.endm
- 
- 	.macro __THUNK_EX_BR reg,ruse
-+	# Be very careful when adding instructions to this macro!
-+	# The ALTERNATIVE replacement code has a .+10 which targets
-+	# the "br \reg" after the code has been patched.
- #ifdef CONFIG_HAVE_MARCH_Z10_FEATURES
- 	exrl	0,555f
- 	j	.
- #else
-+	.ifc \reg,%r1
-+	ALTERNATIVE "ex %r0,_LC_BR_R1", ".insn ril,0xc60000000000,0,.+10", 35
-+	j	.
-+	.else
- 	larl	\ruse,555f
- 	ex	0,0(\ruse)
- 	j	.
-+	.endif
- #endif
- 555:	br	\reg
- 	.endm
---- a/arch/s390/kernel/asm-offsets.c
-+++ b/arch/s390/kernel/asm-offsets.c
-@@ -170,6 +170,7 @@ int main(void)
- 	OFFSET(__LC_MACHINE_FLAGS, _lowcore, machine_flags);
- 	OFFSET(__LC_GMAP, _lowcore, gmap);
- 	OFFSET(__LC_PASTE, _lowcore, paste);
-+	OFFSET(__LC_BR_R1, _lowcore, br_r1_trampoline);
- 	/* software defined ABI-relevant lowcore locations 0xe00 - 0xe20 */
- 	OFFSET(__LC_DUMP_REIPL, _lowcore, ipib);
- 	/* hardware defined lowcore locations 0x1000 - 0x18ff */
---- a/arch/s390/kernel/mcount.S
-+++ b/arch/s390/kernel/mcount.S
-@@ -8,12 +8,16 @@
- #include <linux/linkage.h>
- #include <asm/asm-offsets.h>
- #include <asm/ftrace.h>
-+#include <asm/nospec-insn.h>
- #include <asm/ptrace.h>
- 
-+	GEN_BR_THUNK %r1
-+	GEN_BR_THUNK %r14
-+
- 	.section .kprobes.text, "ax"
- 
- ENTRY(ftrace_stub)
--	br	%r14
-+	BR_EX	%r14
- 
- #define STACK_FRAME_SIZE  (STACK_FRAME_OVERHEAD + __PT_SIZE)
- #define STACK_PTREGS	  (STACK_FRAME_OVERHEAD)
-@@ -21,7 +25,7 @@ ENTRY(ftrace_stub)
- #define STACK_PTREGS_PSW  (STACK_PTREGS + __PT_PSW)
- 
- ENTRY(_mcount)
--	br	%r14
-+	BR_EX	%r14
- 
- ENTRY(ftrace_caller)
- 	.globl	ftrace_regs_caller
-@@ -49,7 +53,7 @@ ENTRY(ftrace_caller)
- #endif
- 	lgr	%r3,%r14
- 	la	%r5,STACK_PTREGS(%r15)
--	basr	%r14,%r1
-+	BASR_EX	%r14,%r1
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
- # The j instruction gets runtime patched to a nop instruction.
- # See ftrace_enable_ftrace_graph_caller.
-@@ -64,7 +68,7 @@ ftrace_graph_caller_end:
- #endif
- 	lg	%r1,(STACK_PTREGS_PSW+8)(%r15)
- 	lmg	%r2,%r15,(STACK_PTREGS_GPRS+2*8)(%r15)
--	br	%r1
-+	BR_EX	%r1
- 
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
- 
-@@ -77,6 +81,6 @@ ENTRY(return_to_handler)
- 	aghi	%r15,STACK_FRAME_OVERHEAD
- 	lgr	%r14,%r2
- 	lmg	%r2,%r5,32(%r15)
--	br	%r14
-+	BR_EX	%r14
- 
- #endif
+ 	/* Reinit all cores with the right endian */
