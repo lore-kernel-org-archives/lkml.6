@@ -1,28 +1,28 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqSvxpwyr8cZLTtXER+o7vOSJKy9lVX8ntO+mO7UKS+hQcdMWxN/LP1Q3nL2fOw0jHRhpcl
-ARC-Seal: i=1; a=rsa-sha256; t=1527155983; cv=none;
+X-Google-Smtp-Source: AB8JxZrUm+WD8xGsasTEnJO1YeWGT1oLr9qjg0+t1agKv7dQ8mi0PT2sXjd8p72OGOyHfChdess8
+ARC-Seal: i=1; a=rsa-sha256; t=1527155979; cv=none;
         d=google.com; s=arc-20160816;
-        b=mrRugDwgX7x+FquhQyTQfwAtPVHyEwUbTCCirNLoUDKr3pRli7x4xZsyGgMxt5tpVX
-         SagELkgiPZ5BL6CG+K5EQlwGb1WNtzsqw9/Jn8uokudQRyR6AFxd6MNjzV8t+WW1p0kz
-         79vxBNe08c4pKaeuKLhzHkvCGNQGa6XGmfh/dH+FIOliuwzxmLNwDOAgctG8r9LiwST5
-         jDgV8TR+QUDrAsckNR5CEPmed/B6tQP6A8Y/VFyojrdN8noQ+hMVMduDBoCnv0QZBCXI
-         JMyPGUgBVreQ4NFfxGLDEM+o+PqvUsjKuMhs6RoH0ioJtXymqPOzlbxWxhs7lDaVm/m5
-         O8hQ==
+        b=jkwvBXSziwDqBo1O52JNSuT/cIBsdjqIHZ8yRHbI69n/0IxX0JAlcyE/A9tusCtC9r
+         8sTqY+nMoGtnm8cC09qXxFGYtp7/WS5+s7DYM6KquTVM38qWQ/Fru7QBLEGTQ+Y5qTNH
+         gxjsCwbN7tB1jypLhQbMkc8fB+VwpAAvOnp8W/lwEHK3hJKQ6IW1W+3ddd/StivNAZ12
+         Pwun3LFCKVQGjdQKBR2PnX0AN2MFrdao7GGk7aXu/WI9UEfKiBrvmfMk4sTfJTxH8BIp
+         UQERPRscMhOZowqUBJXNf1Wf0nTL8qJZQ9qyoE3w0I97KhIvl/547gkIzT/QgMeNA5xF
+         PbeA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=M1UKdTDKG9u/DDxF2t6Ab9UFFHeB47OTMQ3JCdcA1xU=;
-        b=tfThThzmwRbJaqeoVDHV0MRE08B0kIBNR4oW80OSPnEWabTBows0VyMTPG7sWs/dsz
-         OlU18rIk4nrmZj4zrfGH7erA3GhFBKfA2IvjiCehGVy0fq6u96OdTg3Zpc0WbY3goEeM
-         IFo+m1hQ9OVwR3QLZK72vPlh8HIzyRiicKwe2CZVoOI99KwKcbIFXcFKI5tiGob4z4B1
-         UQ/qYLDquVh3xlh9fI43Z71yPRE/DJcB2EYQVyHD54b2AVzDXPxzxm9JmuPNKaQKk6LG
-         DMAN43lryi05lVcynQJxTuwnMxFfksHQtKDLMQGvxt72WFy7iEnIMLx7qOfvJzzoalv5
-         /0Tw==
+        bh=bjEqpNhxap4Hv+q/Nbfrs7WbvFtd8VQiKqdgwkQNW4w=;
+        b=uSvg0/oanzwMlbYRqC9OG9LVOZkQRrP5WFt7SBpbvMgyogCQwZlIbU6PIJOx2o/NnZ
+         5orR71QTgL+1PH2ckaQI07r5bE9Cv8SsgbHv5DKutVjz5n91zpFkD7MkYEazMrcTLDg9
+         GpfBFQ22+jirh9nO7UxyVHuDTn+yu7hDh09T46jZmFnBvXpPStvg4lFLUUNuJKOQLM1t
+         mssLPfxi1yQvp5jdEeoIiVymKgW7vXOLiCUws1irsigDydBNDqhVtiDJE120vAiQImXr
+         tYFRihemmGEauc1K2Cm5nhxk7DmBvpC12JO9U5UrcsP5vUToxVu6ELG3DBizNta8BL41
+         avVQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=IiUMOI/E;
+       dkim=pass header.i=@kernel.org header.s=default header.b=ZOBJO+M9;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=IiUMOI/E;
+       dkim=pass header.i=@kernel.org header.s=default header.b=ZOBJO+M9;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
@@ -31,9 +31,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Regis Duchesne <hpreg@vmware.com>,
 	Ronak Doshi <doshir@vmware.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 021/161] vmxnet3: use DMA memory barriers where required
-Date: Thu, 24 May 2018 11:37:26 +0200
-Message-Id: <20180524093020.868537445@linuxfoundation.org>
+Subject: [PATCH 4.16 020/161] vmxnet3: set the DMA mask before the first DMA map operation
+Date: Thu, 24 May 2018 11:37:25 +0200
+Message-Id: <20180524093020.751820220@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601338372705205544?=
-X-GMAIL-MSGID: =?utf-8?q?1601339112166893965?=
+X-GMAIL-THRID: =?utf-8?q?1601338369979831249?=
+X-GMAIL-MSGID: =?utf-8?q?1601339109096669287?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,87 +54,149 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: "hpreg@vmware.com" <hpreg@vmware.com>
 
-[ Upstream commit f3002c1374fb2367c9d8dbb28852791ef90d2bac ]
+[ Upstream commit 61aeecea40afb2b89933e27cd4adb10fc2e75cfd ]
 
-The gen bits must be read first from (resp. written last to) DMA memory.
-The proper way to enforce this on Linux is to call dma_rmb() (resp.
-dma_wmb()).
+The DMA mask must be set before, not after, the first DMA map operation, or
+the first DMA map operation could in theory fail on some systems.
 
+Fixes: b0eb57cb97e78 ("VMXNET3: Add support for virtual IOMMU")
 Signed-off-by: Regis Duchesne <hpreg@vmware.com>
 Acked-by: Ronak Doshi <doshir@vmware.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/vmxnet3/vmxnet3_drv.c |   22 ++++++++++++++++++++++
- drivers/net/vmxnet3/vmxnet3_int.h |    4 ++--
- 2 files changed, 24 insertions(+), 2 deletions(-)
+ drivers/net/vmxnet3/vmxnet3_drv.c |   50 +++++++++++++++++++-------------------
+ drivers/net/vmxnet3/vmxnet3_int.h |    8 +++---
+ 2 files changed, 30 insertions(+), 28 deletions(-)
 
 --- a/drivers/net/vmxnet3/vmxnet3_drv.c
 +++ b/drivers/net/vmxnet3/vmxnet3_drv.c
-@@ -369,6 +369,11 @@ vmxnet3_tq_tx_complete(struct vmxnet3_tx
+@@ -2688,7 +2688,7 @@ vmxnet3_set_mac_addr(struct net_device *
+ /* ==================== initialization and cleanup routines ============ */
  
- 	gdesc = tq->comp_ring.base + tq->comp_ring.next2proc;
- 	while (VMXNET3_TCD_GET_GEN(&gdesc->tcd) == tq->comp_ring.gen) {
-+		/* Prevent any &gdesc->tcd field from being (speculatively)
-+		 * read before (&gdesc->tcd)->gen is read.
-+		 */
-+		dma_rmb();
-+
- 		completed += vmxnet3_unmap_pkt(VMXNET3_TCD_GET_TXIDX(
- 					       &gdesc->tcd), tq, adapter->pdev,
- 					       adapter);
-@@ -1103,6 +1108,11 @@ vmxnet3_tq_xmit(struct sk_buff *skb, str
- 		gdesc->txd.tci = skb_vlan_tag_get(skb);
+ static int
+-vmxnet3_alloc_pci_resources(struct vmxnet3_adapter *adapter, bool *dma64)
++vmxnet3_alloc_pci_resources(struct vmxnet3_adapter *adapter)
+ {
+ 	int err;
+ 	unsigned long mmio_start, mmio_len;
+@@ -2700,30 +2700,12 @@ vmxnet3_alloc_pci_resources(struct vmxne
+ 		return err;
  	}
  
-+	/* Ensure that the write to (&gdesc->txd)->gen will be observed after
-+	 * all other writes to &gdesc->txd.
-+	 */
-+	dma_wmb();
+-	if (pci_set_dma_mask(pdev, DMA_BIT_MASK(64)) == 0) {
+-		if (pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64)) != 0) {
+-			dev_err(&pdev->dev,
+-				"pci_set_consistent_dma_mask failed\n");
+-			err = -EIO;
+-			goto err_set_mask;
+-		}
+-		*dma64 = true;
+-	} else {
+-		if (pci_set_dma_mask(pdev, DMA_BIT_MASK(32)) != 0) {
+-			dev_err(&pdev->dev,
+-				"pci_set_dma_mask failed\n");
+-			err = -EIO;
+-			goto err_set_mask;
+-		}
+-		*dma64 = false;
+-	}
+-
+ 	err = pci_request_selected_regions(pdev, (1 << 2) - 1,
+ 					   vmxnet3_driver_name);
+ 	if (err) {
+ 		dev_err(&pdev->dev,
+ 			"Failed to request region for adapter: error %d\n", err);
+-		goto err_set_mask;
++		goto err_enable_device;
+ 	}
+ 
+ 	pci_set_master(pdev);
+@@ -2751,7 +2733,7 @@ err_bar1:
+ 	iounmap(adapter->hw_addr0);
+ err_ioremap:
+ 	pci_release_selected_regions(pdev, (1 << 2) - 1);
+-err_set_mask:
++err_enable_device:
+ 	pci_disable_device(pdev);
+ 	return err;
+ }
+@@ -3254,7 +3236,7 @@ vmxnet3_probe_device(struct pci_dev *pde
+ #endif
+ 	};
+ 	int err;
+-	bool dma64 = false; /* stupid gcc */
++	bool dma64;
+ 	u32 ver;
+ 	struct net_device *netdev;
+ 	struct vmxnet3_adapter *adapter;
+@@ -3300,6 +3282,24 @@ vmxnet3_probe_device(struct pci_dev *pde
+ 	adapter->rx_ring_size = VMXNET3_DEF_RX_RING_SIZE;
+ 	adapter->rx_ring2_size = VMXNET3_DEF_RX_RING2_SIZE;
+ 
++	if (pci_set_dma_mask(pdev, DMA_BIT_MASK(64)) == 0) {
++		if (pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64)) != 0) {
++			dev_err(&pdev->dev,
++				"pci_set_consistent_dma_mask failed\n");
++			err = -EIO;
++			goto err_set_mask;
++		}
++		dma64 = true;
++	} else {
++		if (pci_set_dma_mask(pdev, DMA_BIT_MASK(32)) != 0) {
++			dev_err(&pdev->dev,
++				"pci_set_dma_mask failed\n");
++			err = -EIO;
++			goto err_set_mask;
++		}
++		dma64 = false;
++	}
 +
- 	/* finally flips the GEN bit of the SOP desc. */
- 	gdesc->dword[2] = cpu_to_le32(le32_to_cpu(gdesc->dword[2]) ^
- 						  VMXNET3_TXD_GEN);
-@@ -1298,6 +1308,12 @@ vmxnet3_rq_rx_complete(struct vmxnet3_rx
- 			 */
- 			break;
- 		}
-+
-+		/* Prevent any rcd field from being (speculatively) read before
-+		 * rcd->gen is read.
-+		 */
-+		dma_rmb();
-+
- 		BUG_ON(rcd->rqID != rq->qid && rcd->rqID != rq->qid2 &&
- 		       rcd->rqID != rq->dataRingQid);
- 		idx = rcd->rxdIdx;
-@@ -1528,6 +1544,12 @@ rcd_done:
- 		ring->next2comp = idx;
- 		num_to_alloc = vmxnet3_cmd_ring_desc_avail(ring);
- 		ring = rq->rx_ring + ring_idx;
-+
-+		/* Ensure that the writes to rxd->gen bits will be observed
-+		 * after all other writes to rxd objects.
-+		 */
-+		dma_wmb();
-+
- 		while (num_to_alloc) {
- 			vmxnet3_getRxDesc(rxd, &ring->base[ring->next2fill].rxd,
- 					  &rxCmdDesc);
+ 	spin_lock_init(&adapter->cmd_lock);
+ 	adapter->adapter_pa = dma_map_single(&adapter->pdev->dev, adapter,
+ 					     sizeof(struct vmxnet3_adapter),
+@@ -3307,7 +3307,7 @@ vmxnet3_probe_device(struct pci_dev *pde
+ 	if (dma_mapping_error(&adapter->pdev->dev, adapter->adapter_pa)) {
+ 		dev_err(&pdev->dev, "Failed to map dma\n");
+ 		err = -EFAULT;
+-		goto err_dma_map;
++		goto err_set_mask;
+ 	}
+ 	adapter->shared = dma_alloc_coherent(
+ 				&adapter->pdev->dev,
+@@ -3358,7 +3358,7 @@ vmxnet3_probe_device(struct pci_dev *pde
+ 	}
+ #endif /* VMXNET3_RSS */
+ 
+-	err = vmxnet3_alloc_pci_resources(adapter, &dma64);
++	err = vmxnet3_alloc_pci_resources(adapter);
+ 	if (err < 0)
+ 		goto err_alloc_pci;
+ 
+@@ -3504,7 +3504,7 @@ err_alloc_queue_desc:
+ err_alloc_shared:
+ 	dma_unmap_single(&adapter->pdev->dev, adapter->adapter_pa,
+ 			 sizeof(struct vmxnet3_adapter), PCI_DMA_TODEVICE);
+-err_dma_map:
++err_set_mask:
+ 	free_netdev(netdev);
+ 	return err;
+ }
 --- a/drivers/net/vmxnet3/vmxnet3_int.h
 +++ b/drivers/net/vmxnet3/vmxnet3_int.h
-@@ -69,12 +69,12 @@
+@@ -69,10 +69,12 @@
  /*
   * Version numbers
   */
--#define VMXNET3_DRIVER_VERSION_STRING   "1.4.15.0-k"
-+#define VMXNET3_DRIVER_VERSION_STRING   "1.4.16.0-k"
+-#define VMXNET3_DRIVER_VERSION_STRING   "1.4.14.0-k"
++#define VMXNET3_DRIVER_VERSION_STRING   "1.4.15.0-k"
  
- /* Each byte of this 32-bit integer encodes a version number in
-  * VMXNET3_DRIVER_VERSION_STRING.
-  */
--#define VMXNET3_DRIVER_VERSION_NUM      0x01040f00
-+#define VMXNET3_DRIVER_VERSION_NUM      0x01041000
+-/* a 32-bit int, each byte encode a verion number in VMXNET3_DRIVER_VERSION */
+-#define VMXNET3_DRIVER_VERSION_NUM      0x01040e00
++/* Each byte of this 32-bit integer encodes a version number in
++ * VMXNET3_DRIVER_VERSION_STRING.
++ */
++#define VMXNET3_DRIVER_VERSION_NUM      0x01040f00
  
  #if defined(CONFIG_PCI_MSI)
  	/* RSS only makes sense if MSI-X is supported. */
