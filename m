@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1835623-1527161666-2-10510082003063097737
+X-Cyrus-Session-Id: sloti22d1t05-1862185-1527161649-2-8014468242115365834
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527161666; b=OJzV5er8YVGlBbwfmrcyeC72b66FCb+BiaFmZWrgl1pOVIH4wA
-    D8zUIyO1jdIR5TU9YE1CDoIBiuDj0Bxv9LAJ+4xvMBmrA9lOp/e4ZY2dEcNDgpb1
-    Fa/lWYHY63Snl+e0M+kiurt+31Oj7ITZSMnQlyAEXI8UFrFy9207twD6h7xwrhji
-    nS3OLsw4R9xeRiKUCofDldNFoFj17MrrJy7SAevMvujm8/K7oLU9AJqmd7ZEnsag
-    4evMtH5HZFP+40IJMqieZNoRUITsyHp1GvSsocywp1Gzzillmwg9HUjV88w73iO2
-    yzAEXjOEhb5DOFfCfN2Xx1RACSnVQqEpEmkg==
+    1527161648; b=BQYQFEhWO8ModbWQhw/zoQcqMYldmIaxaKfsaSs9JB8Wkf5esN
+    uii91c9XDI6ney1zARdiU3Iua3eX1sEE7Kp4xKaNCk61mfvozYRajXGhqevTp4et
+    neQFoQtJKSaIOIwj8AaQQc83SjX329dVLOQwhQQKQE4JBMmAZcyy82GnxHAGsHJL
+    KpkR1Q4LGzthpLFmeNN5dY1XP3aDyywJHyzrQTinzBFrpFZyJHAAGOB+5diBYk/v
+    fzVLEZVHe6eE/amoNb/JT+oUe1Mv0fQTO784sZv7IxHHQ6ZtHPvA6aQNVhGugwKl
+    0qtGB1eGX6wca1fC4JcPJJ8gAXJcKj6bvi+Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527161666; bh=n7xn6EnmBoeGSEfED0ADGibdJJwnAh
-    L+NrH9k+E6vBU=; b=PUUcLKvVHCMRqgH3k08chHua0Im9kH/Wt51jDv48ky0aII
-    EVQhz3Vlvwy8xRn/QtUkx3QNen/369SIe0ex5OSV2580aI2zxwhWrX/3OaIzr37w
-    Fu126HTtFOYmNeNy0nPwuW3pwvmbH1vvnKDKkLYxxffE8L4RuqFybFnEB62QEJ0/
-    PncUtpfyr0RpaFEzqqPb6GCbdWdAWQbPDxiTOVy9yukuy8ey0bGn+c9N06cAZNsC
-    sUou8EwVyYMh6WNZYGHcArox/o6btPRiu6dznd5ay+OuW2IRaUJfNe+Dl76r4j38
-    ZxJ/jmYFePH1Exc5dmMgYv8wqAvxJuKa98QUkUJQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527161648; bh=TZdnj/OvxHmmXHN97kJZ5+ofVT0Bwu
+    +3iPbl6W3Er6A=; b=lf/5frf7SQqTmM/xXxhPOZIzypHcCpuFP2R6+7GiR5m4od
+    zKZ2WC3cohvlmsqOWWkmfJuaN7H5aWL0ICnTB5p4MqPuFxP9hj6v2YnYLgclVjL5
+    aquYpxz7V4CGaTxZK0BvXOgAxGQX92h4bzHPEpSporvwzTCVI3+tcPdnnaj1hXjd
+    5nd1M5J8VYviqtxnsBhwHQl0lxrmLIpgUOgdFdnZKUmPQrBCiHxCXSNv6fZ3jo/G
+    gAAyh6ENujkiyqJDFiOc0LuZXG39BMw/S0lNQfT3CLqKFNAuhX3C8THrMJly5rMA
+    v2x+UrShOkO2KsxmjWI20cqNk+O552JugehjyLZg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=savv3yKt x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=CO3RgCaq x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=savv3yKt x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=CO3RgCaq x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,32 +64,30 @@ Authentication-Results: mx6.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGe554d/Q304fSKcpM+YehLahMEOUQC2i62hKDRW4kSB0v4HPivNKnOnHkvuYd4psEJau02Zx289uXLKnVpbJAuLV2uL8QZqyz4nJehq86ghkgI7xyR+
-    YwWLCTIsTFThuVBSGRe2I0FiYGs37FG00j5Kamr5OjgRT7nDJhhV7ftKUCq3unUzAoDXgIIs1n5xlH5LLfVHMhImFVhYe0KINUwPniSCjBQh18lU+znXQFYt
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfBG9YyjSELtdTycPDwimZqzanpNCmJMMfdjhqAnUrvH7bspOx+6iOYTM9FvO0DdGR6vFR+KXHwvYk8gt8nvbf3VwL2Xdl/aUsK+0pMGuIa27Ub2K6W7y
+    B/aEpTal+14AZJXHbV80euINlh5OS/QrMScYYCFfnQ4T/3qGuV8nP9YoEGoOf2ZxwzMTSXggLBrPW0bz1+tla6k+hiRdF09SgR0HwAlBc5ypR5HYdmOtlyzb
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=hD80L64hAAAA:8 a=pGLkceISAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=-RuleGSg_AdYtJgukIIA:9 a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=vQBBkBfzAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=_xz4Wm3-hpxqGwqU2sUA:9
+    a=QEXdDO2ut3YA:10 a=NGXS0kB0m_rannUenejW:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967574AbeEXLeK (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 07:34:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41382 "EHLO mail.kernel.org"
+        id S967432AbeEXLdy (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 07:33:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41518 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967063AbeEXJuY (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:50:24 -0400
+        id S967574AbeEXJu1 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:50:27 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        stable@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 80/96] clk: samsung: exynos3250: Fix PLL rates
-Date: Thu, 24 May 2018 11:39:03 +0200
-Message-Id: <20180524093609.970587322@linuxfoundation.org>
+Subject: [PATCH 4.9 81/96] media: dmxdev: fix error code for invalid ioctls
+Date: Thu, 24 May 2018 11:39:04 +0200
+Message-Id: <20180524093610.026366349@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093605.602125311@linuxfoundation.org>
 References: <20180524093605.602125311@linuxfoundation.org>
@@ -107,53 +105,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andrzej Hajda <a.hajda@samsung.com>
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
-[ Upstream commit a8321e7887410a2b2e80ab89d1ef7b30562658ea ]
+[ Upstream commit a145f64c6107d3aa5a7cec9f8977d04ac2a896c9 ]
 
-Rates declared in PLL rate tables should match exactly rates calculated
-from PLL coefficients. If that is not the case, rate of the PLL's child clock
-might be set not as expected. For instance, if in the PLL rates table we have
-a 393216000 Hz entry and the real value as returned by the PLL's recalc_rate
-callback is 393216003, after setting PLL's clk rate to 393216000 clk_get_rate
-will return 393216003. If we now attempt to set rate of a PLL's child divider
-clock to 393216000/2 its rate will be 131072001, rather than 196608000.
-That is, the divider will be set to 3 instead of 2, because 393216003/2 is
-greater than 196608000.
+Returning -EINVAL when an ioctl is not implemented is a very
+bad idea, as it is hard to distinguish from other error
+contitions that an ioctl could lead. Replace it by its
+right error code: -ENOTTY.
 
-To fix this issue declared rates are changed to exactly match rates generated
-by the PLL, as calculated from the P, M, S, K coefficients.
-
-In this patch an erroneous P value for 74176002 output frequency is also
-corrected.
-
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/samsung/clk-exynos3250.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/dvb-core/dmxdev.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/clk/samsung/clk-exynos3250.c
-+++ b/drivers/clk/samsung/clk-exynos3250.c
-@@ -698,7 +698,7 @@ static const struct samsung_pll_rate_tab
- 	PLL_36XX_RATE(144000000,  96, 2, 3,     0),
- 	PLL_36XX_RATE( 96000000, 128, 2, 4,     0),
- 	PLL_36XX_RATE( 84000000, 112, 2, 4,     0),
--	PLL_36XX_RATE( 80000004, 106, 2, 4, 43691),
-+	PLL_36XX_RATE( 80000003, 106, 2, 4, 43691),
- 	PLL_36XX_RATE( 73728000,  98, 2, 4, 19923),
- 	PLL_36XX_RATE( 67737598, 270, 3, 5, 62285),
- 	PLL_36XX_RATE( 65535999, 174, 2, 5, 49982),
-@@ -734,7 +734,7 @@ static const struct samsung_pll_rate_tab
- 	PLL_36XX_RATE(148352005,  98, 2, 3, 59070),
- 	PLL_36XX_RATE(108000000, 144, 2, 4,     0),
- 	PLL_36XX_RATE( 74250000,  99, 2, 4,     0),
--	PLL_36XX_RATE( 74176002,  98, 3, 4, 59070),
-+	PLL_36XX_RATE( 74176002,  98, 2, 4, 59070),
- 	PLL_36XX_RATE( 54054000, 216, 3, 5, 14156),
- 	PLL_36XX_RATE( 54000000, 144, 2, 5,     0),
- 	{ /* sentinel */ }
+--- a/drivers/media/dvb-core/dmxdev.c
++++ b/drivers/media/dvb-core/dmxdev.c
+@@ -1071,7 +1071,7 @@ static int dvb_demux_do_ioctl(struct fil
+ 		break;
+ 
+ 	default:
+-		ret = -EINVAL;
++		ret = -ENOTTY;
+ 		break;
+ 	}
+ 	mutex_unlock(&dmxdev->mutex);
