@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1862185-1527162724-2-17560600228982696690
+X-Cyrus-Session-Id: sloti22d1t05-1874556-1527162711-2-12663997232181298856
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527162723; b=cSRkfcI2NcW3O1c6XEEC4XCSqJFCX/VIOEYSACORdPPXEtSwfI
-    uy2u4Ywq1RzHjMSAxPlujiVXoUVdWS4iEBzGP1e6vjLkDHkvBnsrg+nmXLAx3diu
-    dDNGxYloE/p/Jtti3HghIRLaT82pQb73IRUap5PQVbH0cb8s2Ppj8engJ6VpYBMy
-    7rvgonLYIaoolwemQH0ZapzRA/s9tHTk0BluSznkpcwSJonyw4btehF55EfLDcmO
-    g8OoPuyPEM+IZtIBvLGCAb+AycdYXY64X5V5/aTyjWn41aSPId3vWsW7jDlg/0Nw
-    sEkLkuqDP9dlroWipp4jezNTBvkxh7j7JIaA==
+    1527162710; b=dmKRJqHWXXtkDAsQrwTqIHuniwjuUoyHHaFRQe6ODUGu28VZIU
+    EJRwbfwrmL7ZsvWmivlOkpxL04b5NUi6+FE1NaUao5bRF2SCKCZg3zZSMxsGQ2uS
+    /mauNWERUrcauzwgBLZb6GhSe/IayxjmlVzaKhPZwOVh3I06j88VZxEegBW/lIAn
+    vsaMXvXe4ZXnl48jN6yJh3R5FtbP0Y6Phih6av1jtkdG11pv+DgrrEhTUx4hIW9y
+    D/GLGK7Spx2tZ5GttErlY/9/uTmCZ544OL0VZHmZ231TIO/DSPWHwzIwv64gFe/w
+    E6x9zWIwKUjdWYtAsBs1hMpa3nyuZxhFE5MQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527162723; bh=hjooRdtEZ74zPu1m0MeoVJhe8LAIK/
-    IwisLLazU3EVo=; b=VKWB7l9HgQ/rZGm7+/65oBaxpbPDSr0uX+jEUpkzr7QI24
-    n5cgASKnKGKapAblxMz3sFPw/d8nFVzvHmldIe2BZNaG7zcwRay8vA3YGG18iUmW
-    IFREP92+gSx6WeL4aWXdkH53+Zxht3PzJLUkwzUWKqnwa4VSK58mTVPu5iqHRQDq
-    xxIkv9c6/973TwWTmDJZciOhi0nXaTi5Ebdi8HVQVgtB1yIxJQ3oepVL7hTW9/by
-    WvOXscYA5XOZB/ZrsO5zMBDsLk8FisbsW0ZehE0IGPuboWftMMgw7cfBJgRN4+VR
-    JfbMwDw6b4oZcWigqWtZE8zE3dclGVRYZc9jZZ9Q==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527162710; bh=Xxhh5Z7hRYbs01dSaHxS7tsFZ7tvmm
+    inVqqFKCfkUnQ=; b=XilxoF/qSPuO6AXo+M9i2Wid8X0KDbVY5S8t+BPAykIe7A
+    jfAfkmwTqSoag81J8tVG8+gtPn8N37TmmupxLiLgvePUZmbDabZVzURs9rBzML0B
+    dgNiyGf3WevBRgVPbMeAE0xxHSJPG4SBjiV9vdakSUKYoiqQs5oG6EYYIazlI9hz
+    zDyrX9McXLIhYGyjgJF6KXMqaD1yNgznrH16yBzfWSHKvgpHJrr4eX9V62FPpNrP
+    MPqC1ZhWLgXi71FvRsdB0j3xNJ9fDOSxsWpH4Ak+/YIEPA3aUZ7QjmhXqj89VAm4
+    fiioymzYMdD4J63j3+Y3/KQUWJjPUJoL5xM2DFXw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=GJFwE99n x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=L98m3s8H x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -38,17 +38,17 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=none score=100;
+    x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
-    x-vs=clean score=-51 state=0
-Authentication-Results: mx4.messagingengine.com;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=GJFwE99n x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=L98m3s8H x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -56,48 +56,36 @@ Authentication-Results: mx4.messagingengine.com;
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=none score=100;
+    x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
       header.domain=linuxfoundation.org header.result=pass
       header_is_org_domain=yes;
-    x-vs=clean score=-51 state=0
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLUgzoDE9Ns++l/6uf5syO9ftjwO3+aWTfAfc0p566GzGqeauNW96570z/Oc+y4oUvcUAw4KR+duhYsQteTaprjUui0QGNhwTx3Zu3P9wSRnTRUaFUfe
-    TbG035qzZKujPvdCruGOPFA1/3BcB7B/fBDRP9AcMrYPk1M2BRjfcnp1Yd3cLzW3Cm/OZI35wbc70e0BsqqbK5bpuGYRPm2aocHwcuvfuwu7+duKOVvVs5mQ
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 p=wCmvBT1CAAAA:8
-    a=UK1r566ZdBxH71SXbqIOeA==:117 a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10
-    a=VUJBJC2UJ8kA:10 a=edf1wS77AAAA:8 a=VwQbUJbxAAAA:8 a=hSkVLCK3AAAA:8
-    a=drOt6m5kAAAA:8 a=20KFwNOVAAAA:8 a=pGLkceISAAAA:8 a=Z4Rwk6OoAAAA:8
-    a=ag1SF4gXAAAA:8 a=1IQeFdjzDtnnfWY1XQAA:9 a=QEXdDO2ut3YA:10
-    a=DcSpbTIhAlouE1Uv7lRv:22 a=AjGcO6oz07-iQ99wixmX:22 a=cQPPKAXgyycSBL8etih5:22
-    a=RMMjzBEyIzXRtoq5n5K6:22 a=6z96SAwNL0f8klobD5od:22 a=HkZW87K1Qel5hWWM3VKY:22
+X-CM-Envelope: MS4wfO6UrXiQljRSz4TR/dGWdIyvqfwUh5Z61mVgKANHK6V915tI3jaFYpmOJw9mxwxJJLlGhJg0yevBroJScuUoJQD0OG5caLleQtAjdqV+ydBAUTYyMFhY
+    b7fdIGyj5GMZaUAMyZuBTQhiGf3rwq8wLiXrf2S1UioCDRSD5TUrPhu5iqswDaWffHfUlbEUUpiMzXTIAMRNNH6in+tT1Tas6cnuWU9ZG9TlokZrYFBZRpq0
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=VnNF1IyMAAAA:8 a=ag1SF4gXAAAA:8 a=VIz4TFLUqtGzUdz3HiIA:9 a=QEXdDO2ut3YA:10
     a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 100
+X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966244AbeEXJqk (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:46:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58046 "EHLO mail.kernel.org"
+        id S969286AbeEXLvj (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 07:51:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58496 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966941AbeEXJqh (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:46:37 -0400
+        id S966958AbeEXJqr (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:46:47 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        syzbot <syzbot+4f2e5f086147d543ab03@syzkaller.appspotmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        "Ernesto A. Fernandez" <ernesto.mnd.fernandez@gmail.com>,
-        Vyacheslav Dubeyko <slava@dubeyko.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.4 91/92] hfsplus: stop workqueue when fill_super() failed
-Date: Thu, 24 May 2018 11:39:08 +0200
-Message-Id: <20180524093207.886343038@linuxfoundation.org>
+        Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 4.4 82/92] s390: extend expoline to BC instructions
+Date: Thu, 24 May 2018 11:38:59 +0200
+Message-Id: <20180524093207.128843941@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093159.286472249@linuxfoundation.org>
 References: <20180524093159.286472249@linuxfoundation.org>
@@ -115,43 +103,177 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-commit 66072c29328717072fd84aaff3e070e3f008ba77 upstream.
+[ Upstream commit 6deaa3bbca804b2a3627fd685f75de64da7be535 ]
 
-syzbot is reporting ODEBUG messages at hfsplus_fill_super() [1].  This
-is because hfsplus_fill_super() forgot to call cancel_delayed_work_sync().
+The BPF JIT uses a 'b <disp>(%r<x>)' instruction in the definition
+of the sk_load_word and sk_load_half functions.
 
-As far as I can see, it is hfsplus_mark_mdb_dirty() from
-hfsplus_new_inode() in hfsplus_fill_super() that calls
-queue_delayed_work().  Therefore, I assume that hfsplus_new_inode() does
-not fail if queue_delayed_work() was called, and the out_put_hidden_dir
-label is the appropriate location to call cancel_delayed_work_sync().
+Add support for branch-on-condition instructions contained in the
+thunk code of an expoline.
 
-[1] https://syzkaller.appspot.com/bug?id=a66f45e96fdbeb76b796bf46eb25ea878c42a6c9
-
-Link: http://lkml.kernel.org/r/964a8b27-cd69-357c-fe78-76b066056201@I-love.SAKURA.ne.jp
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzbot+4f2e5f086147d543ab03@syzkaller.appspotmail.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Ernesto A. Fernandez <ernesto.mnd.fernandez@gmail.com>
-Cc: Vyacheslav Dubeyko <slava@dubeyko.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/hfsplus/super.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/s390/include/asm/nospec-insn.h |   57 ++++++++++++++++++++++++++++++++++++
+ arch/s390/kernel/nospec-branch.c    |   25 ++++++++++++---
+ 2 files changed, 77 insertions(+), 5 deletions(-)
 
---- a/fs/hfsplus/super.c
-+++ b/fs/hfsplus/super.c
-@@ -585,6 +585,7 @@ static int hfsplus_fill_super(struct sup
- 	return 0;
+--- a/arch/s390/include/asm/nospec-insn.h
++++ b/arch/s390/include/asm/nospec-insn.h
+@@ -32,10 +32,18 @@
+ 	__THUNK_PROLOG_NAME __s390x_indirect_jump_r\r2\()use_r\r1
+ 	.endm
  
- out_put_hidden_dir:
-+	cancel_delayed_work_sync(&sbi->sync_work);
- 	iput(sbi->hidden_dir);
- out_put_root:
- 	dput(sb->s_root);
++	.macro __THUNK_PROLOG_BC d0,r1,r2
++	__THUNK_PROLOG_NAME __s390x_indirect_branch_\d0\()_\r2\()use_\r1
++	.endm
++
+ 	.macro __THUNK_BR r1,r2
+ 	jg	__s390x_indirect_jump_r\r2\()use_r\r1
+ 	.endm
+ 
++	.macro __THUNK_BC d0,r1,r2
++	jg	__s390x_indirect_branch_\d0\()_\r2\()use_\r1
++	.endm
++
+ 	.macro __THUNK_BRASL r1,r2,r3
+ 	brasl	\r1,__s390x_indirect_jump_r\r3\()use_r\r2
+ 	.endm
+@@ -78,6 +86,23 @@
+ 	.endif
+ 	.endm
+ 
++	.macro	__DECODE_DRR expand,disp,reg,ruse
++	.set __decode_fail,1
++	.irp r1,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
++	.ifc \reg,%r\r1
++	.irp r2,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
++	.ifc \ruse,%r\r2
++	\expand \disp,\r1,\r2
++	.set __decode_fail,0
++	.endif
++	.endr
++	.endif
++	.endr
++	.if __decode_fail == 1
++	.error "__DECODE_DRR failed"
++	.endif
++	.endm
++
+ 	.macro __THUNK_EX_BR reg,ruse
+ 	# Be very careful when adding instructions to this macro!
+ 	# The ALTERNATIVE replacement code has a .+10 which targets
+@@ -98,12 +123,30 @@
+ 555:	br	\reg
+ 	.endm
+ 
++	.macro __THUNK_EX_BC disp,reg,ruse
++#ifdef CONFIG_HAVE_MARCH_Z10_FEATURES
++	exrl	0,556f
++	j	.
++#else
++	larl	\ruse,556f
++	ex	0,0(\ruse)
++	j	.
++#endif
++556:	b	\disp(\reg)
++	.endm
++
+ 	.macro GEN_BR_THUNK reg,ruse=%r1
+ 	__DECODE_RR __THUNK_PROLOG_BR,\reg,\ruse
+ 	__THUNK_EX_BR \reg,\ruse
+ 	__THUNK_EPILOG
+ 	.endm
+ 
++	.macro GEN_B_THUNK disp,reg,ruse=%r1
++	__DECODE_DRR __THUNK_PROLOG_BC,\disp,\reg,\ruse
++	__THUNK_EX_BC \disp,\reg,\ruse
++	__THUNK_EPILOG
++	.endm
++
+ 	.macro BR_EX reg,ruse=%r1
+ 557:	__DECODE_RR __THUNK_BR,\reg,\ruse
+ 	.pushsection .s390_indirect_branches,"a",@progbits
+@@ -111,6 +154,13 @@
+ 	.popsection
+ 	.endm
+ 
++	 .macro B_EX disp,reg,ruse=%r1
++558:	__DECODE_DRR __THUNK_BC,\disp,\reg,\ruse
++	.pushsection .s390_indirect_branches,"a",@progbits
++	.long	558b-.
++	.popsection
++	.endm
++
+ 	.macro BASR_EX rsave,rtarget,ruse=%r1
+ 559:	__DECODE_RRR __THUNK_BRASL,\rsave,\rtarget,\ruse
+ 	.pushsection .s390_indirect_branches,"a",@progbits
+@@ -122,10 +172,17 @@
+ 	.macro GEN_BR_THUNK reg,ruse=%r1
+ 	.endm
+ 
++	.macro GEN_B_THUNK disp,reg,ruse=%r1
++	.endm
++
+ 	 .macro BR_EX reg,ruse=%r1
+ 	br	\reg
+ 	.endm
+ 
++	 .macro B_EX disp,reg,ruse=%r1
++	b	\disp(\reg)
++	.endm
++
+ 	.macro BASR_EX rsave,rtarget,ruse=%r1
+ 	basr	\rsave,\rtarget
+ 	.endm
+--- a/arch/s390/kernel/nospec-branch.c
++++ b/arch/s390/kernel/nospec-branch.c
+@@ -94,7 +94,6 @@ static void __init_or_module __nospec_re
+ 	s32 *epo;
+ 
+ 	/* Second part of the instruction replace is always a nop */
+-	memcpy(insnbuf + 2, (char[]) { 0x47, 0x00, 0x00, 0x00 }, 4);
+ 	for (epo = start; epo < end; epo++) {
+ 		instr = (u8 *) epo + *epo;
+ 		if (instr[0] == 0xc0 && (instr[1] & 0x0f) == 0x04)
+@@ -115,18 +114,34 @@ static void __init_or_module __nospec_re
+ 			br = thunk + (*(int *)(thunk + 2)) * 2;
+ 		else
+ 			continue;
+-		if (br[0] != 0x07 || (br[1] & 0xf0) != 0xf0)
++		/* Check for unconditional branch 0x07f? or 0x47f???? */
++		if ((br[0] & 0xbf) != 0x07 || (br[1] & 0xf0) != 0xf0)
+ 			continue;
++
++		memcpy(insnbuf + 2, (char[]) { 0x47, 0x00, 0x07, 0x00 }, 4);
+ 		switch (type) {
+ 		case BRCL_EXPOLINE:
+-			/* brcl to thunk, replace with br + nop */
+ 			insnbuf[0] = br[0];
+ 			insnbuf[1] = (instr[1] & 0xf0) | (br[1] & 0x0f);
++			if (br[0] == 0x47) {
++				/* brcl to b, replace with bc + nopr */
++				insnbuf[2] = br[2];
++				insnbuf[3] = br[3];
++			} else {
++				/* brcl to br, replace with bcr + nop */
++			}
+ 			break;
+ 		case BRASL_EXPOLINE:
+-			/* brasl to thunk, replace with basr + nop */
+-			insnbuf[0] = 0x0d;
+ 			insnbuf[1] = (instr[1] & 0xf0) | (br[1] & 0x0f);
++			if (br[0] == 0x47) {
++				/* brasl to b, replace with bas + nopr */
++				insnbuf[0] = 0x4d;
++				insnbuf[2] = br[2];
++				insnbuf[3] = br[3];
++			} else {
++				/* brasl to br, replace with basr + nop */
++				insnbuf[0] = 0x0d;
++			}
+ 			break;
+ 		}
+ 
