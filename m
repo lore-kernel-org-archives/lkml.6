@@ -1,39 +1,38 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrwnUTjpDnyF6av1CJCk7vBuiT2OiA7ouvEN+QpI87LMtKklHDuZLkdDgeDabtWx82fZJZq
-ARC-Seal: i=1; a=rsa-sha256; t=1527156345; cv=none;
+X-Google-Smtp-Source: AB8JxZq3w2Q8RK7UkwE7w7iPnHO2m8fE9lfndPWRtEkIdLlbBhq/+0YekyjA/ojSQZvHgIs4drUt
+ARC-Seal: i=1; a=rsa-sha256; t=1527156340; cv=none;
         d=google.com; s=arc-20160816;
-        b=eCWt4u3m1Ou9DqvprhWdYJE+kEoxaP5hClkVC75yxE1qWN22e+0f6FInTOboj9OTS/
-         qkRwbYGV9hXgzKU3c6GnaOhWzH5FT62wijExjOF+zmst8W8L4IybCudKrWX1+0TZiqIZ
-         HGLRkLZEzPS4CVFpWcHWomWQB4e44XF19p6nVtM1k6LBtODtlCBRAfifIFa498WY2Voa
-         Cur4X/kBU034BCrfDsiTL4SgByTs/37n9atWLZ5+rwZjJOj8D+xpDKaHj/pdzg2iWoYV
-         8DiK+f5SS3oW7xSfohUiWOtqaSmrcwvWSblZuCoxfrJOfI+qX6Q1jbpoYoqg33s6oXzY
-         1DCw==
+        b=z2fmcPzhbzWh626JE6dO2TWl7aLdH6VbKSaxaDhSx9ahHWpHPPpFQz6uo0R9IsZ/f6
+         Bw+RCrtHCkSG20YA+MYwOnSU7FQKk1cTUTYKLWfYs0/DlZ07Btf99PV6/0gPIjy4AcTt
+         owcZmbpPYCLK9XdNPoR6h14A/6JcCHVc8Lnw5eL9/r0Yw51uCLEDygHptNMukMsJTBoO
+         v+MEeRodkXu7qwDYhc4mQ5QEbBVim6q7A/UOBt0e6DMdBjuHTIl8tiKL+FPqmDTziIIh
+         6ISOn1jE6oPcoTnllBzxC/e2a7PeR6JeWp4dSjHvg4u9R00x5k8jDo1Mr0f5x3wCkAJ7
+         n3aA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=0BV3oyOIl1N8+4XsGuzcDWeOkJ5GAKtzxS46InID/sM=;
-        b=j3F0Cg+AOMsH+CEHlH86kxWlRAjlCY51/I4SCDFJwo30EdNQzCV8fEzceFyHEjJk0W
-         riTh0dXj2CAON5mBY+rwcnkAweYbxx5Ptd1+dqQR8qHBu1HZWh/aS6Jvjn4ztNLxhrH1
-         Gi1UU2drGg/2+LdStzklRc22BIeYqmDwVSOrrzsiXfFPMP8kLSly3h9961c29UJPFSkg
-         rEQoRMlBjcRRJxvgO0jWil9f5TCk3SKTwbRYPM6L+Av0n10BKeEFJ1j4+KTYQYjL22Tk
-         A34EDNLL+znHCwVIGXqydSVF0pMxTFqjLLnIth8dpO3c6vhi/4iNgb/Q1y7OPvGhDZta
-         gSJQ==
+        bh=9bFhn2TlvvHl/aJCfh++FU1z3162GBByFxzZZscQMSg=;
+        b=aIdbuQRj/SuQ3+aDBgLjwNBcS87QxgxcLQhr5+OcqVdK2hxTp/2Pe1fziU+39PBobO
+         tSKyuyeDSZRxje+hr4mFxS2aNHzTp96oFlZ2SAIcmOlJrI6jtZEs9a7jOfA/RWm9qnEY
+         3KMyqeDOhjHvuqjB8S6v1QmCxgcXhS4bDbbFekLdRLGp4/8pH0yeoykquGaVcnD0IdSZ
+         mxmmV7Rt0Ift4eXMREop0pZyNvqSZ3Wo7UWT/ToVmdWl1PTl/KgER5RZn422Q3oy2hw/
+         AxUt6faI6lN5KOnMaaTYpu5viKNthWE2JNFGtxiNIZr+iyId71TGtVSP7uq4WGYkogsg
+         hPag==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=nuF/NuJR;
+       dkim=pass header.i=@kernel.org header.s=default header.b=XRRu0cqJ;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=nuF/NuJR;
+       dkim=pass header.i=@kernel.org header.s=default header.b=XRRu0cqJ;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Brad Love <brad@nextdimension.cc>,
-	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 136/161] media: cx23885: Set subdev host data to clk_freq pointer
-Date: Thu, 24 May 2018 11:39:21 +0200
-Message-Id: <20180524093034.662367601@linuxfoundation.org>
+Subject: [PATCH 4.16 152/161] serial: arc_uart: Fix out-of-bounds access through DT alias
+Date: Thu, 24 May 2018 11:39:37 +0200
+Message-Id: <20180524093036.463094416@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601338503075069796?=
-X-GMAIL-MSGID: =?utf-8?q?1601339492613666352?=
+X-GMAIL-THRID: =?utf-8?q?1601338563820395981?=
+X-GMAIL-MSGID: =?utf-8?q?1601339487157088596?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,34 +51,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Brad Love <brad@nextdimension.cc>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 5ceade1d97fc6687e050c44c257382c192f56276 ]
+[ Upstream commit f9f5786987e81d166c60833edcb7d1836aa16944 ]
 
-Currently clk_freq is ignored entirely, because the cx235840 driver
-configures the xtal at the chip defaults. This is an issue if a
-board is produced with a non-default frequency crystal. If clk_freq
-is not zero the cx25840 will attempt to use the setting provided,
-or fall back to defaults otherwise.
+The arc_uart_ports[] array is indexed using a value derived from the
+"serialN" alias in DT, which may lead to an out-of-bounds access.
 
-Signed-off-by: Brad Love <brad@nextdimension.cc>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Fix this by adding a range check.
+
+Note that the array size is defined by a Kconfig symbol
+(CONFIG_SERIAL_ARC_NR_PORTS), so this can even be triggered using a
+legitimate DTB.
+
+Fixes: ea28fd56fcde69af ("serial/arc-uart: switch to devicetree based probing")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/pci/cx23885/cx23885-cards.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/tty/serial/arc_uart.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/media/pci/cx23885/cx23885-cards.c
-+++ b/drivers/media/pci/cx23885/cx23885-cards.c
-@@ -2286,6 +2286,10 @@ void cx23885_card_setup(struct cx23885_d
- 				&dev->i2c_bus[2].i2c_adap,
- 				"cx25840", 0x88 >> 1, NULL);
- 		if (dev->sd_cx25840) {
-+			/* set host data for clk_freq configuration */
-+			v4l2_set_subdev_hostdata(dev->sd_cx25840,
-+						&dev->clk_freq);
+--- a/drivers/tty/serial/arc_uart.c
++++ b/drivers/tty/serial/arc_uart.c
+@@ -593,6 +593,11 @@ static int arc_serial_probe(struct platf
+ 	if (dev_id < 0)
+ 		dev_id = 0;
+ 
++	if (dev_id >= ARRAY_SIZE(arc_uart_ports)) {
++		dev_err(&pdev->dev, "serial%d out of range\n", dev_id);
++		return -EINVAL;
++	}
 +
- 			dev->sd_cx25840->grp_id = CX23885_HW_AV_CORE;
- 			v4l2_subdev_call(dev->sd_cx25840, core, load_fw);
- 		}
+ 	uart = &arc_uart_ports[dev_id];
+ 	port = &uart->port;
+ 
