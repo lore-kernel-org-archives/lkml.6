@@ -1,107 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032303AbeEXKlc (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 06:41:32 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39624 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030678AbeEXJ6r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 05:58:47 -0400
-Subject: Re: [PATCH 04/14] arm64: Add ARCH_WORKAROUND_2 probing
-To: Marc Zyngier <marc.zyngier@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu
-Cc: Kees Cook <keescook@chromium.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Andy Lutomirski <luto@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <20180522150648.28297-1-marc.zyngier@arm.com>
- <20180522150648.28297-5-marc.zyngier@arm.com>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <6c3e7b31-0bb6-353b-1b82-7ebdf3be1323@arm.com>
-Date: Thu, 24 May 2018 10:58:43 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180522150648.28297-5-marc.zyngier@arm.com>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1032391AbeEXKol (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 06:44:41 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35242 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S968277AbeEXJ55 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 05:57:57 -0400
+From: Li Wang <liwang@redhat.com>
+To: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Seth Jennings <sjenning@redhat.com>,
+        Dan Streetman <ddstreet@ieee.org>,
+        Huang Ying <huang.ying.caritas@gmail.com>, Yu Zhao <yuzhao@google.com>
+Subject: [PATCH RFC] zswap: reject to compress/store page if zswap_max_pool_percent is 0
+Date: Thu, 24 May 2018 17:57:51 +0800
+Message-Id: <20180524095752.17770-1-liwang@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/05/18 16:06, Marc Zyngier wrote:
-> As for Spectre variant-2, we rely on SMCCC 1.1 to provide the
-> discovery mechanism for detecting the SSBD mitigation.
-> 
-> A new capability is also allocated for that purpose, and a
-> config option.
-> 
-> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+The '/sys/../zswap/stored_pages:' keep raising in zswap test with
+"zswap.max_pool_percent=0" parameter. But theoretically, it should
+not compress or store pages any more since there is no space for
+compressed pool.
 
+Reproduce steps:
 
-> +static bool has_ssbd_mitigation(const struct arm64_cpu_capabilities *entry,
-> +				    int scope)
-> +{
-> +	struct arm_smccc_res res;
-> +	bool supported = true;
-> +
-> +	WARN_ON(scope != SCOPE_LOCAL_CPU || preemptible());
-> +
-> +	if (psci_ops.smccc_version == SMCCC_VERSION_1_0)
-> +		return false;
-> +
-> +	/*
-> +	 * The probe function return value is either negative
-> +	 * (unsupported or mitigated), positive (unaffected), or zero
-> +	 * (requires mitigation). We only need to do anything in the
-> +	 * last case.
-> +	 */
-> +	switch (psci_ops.conduit) {
-> +	case PSCI_CONDUIT_HVC:
-> +		arm_smccc_1_1_hvc(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
-> +				  ARM_SMCCC_ARCH_WORKAROUND_2, &res);
-> +		if ((int)res.a0 != 0)
-> +			supported = false;
-> +		break;
-> +
-> +	case PSCI_CONDUIT_SMC:
-> +		arm_smccc_1_1_smc(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
-> +				  ARM_SMCCC_ARCH_WORKAROUND_2, &res);
-> +		if ((int)res.a0 != 0)
-> +			supported = false;
-> +		break;
-> +
-> +	default:
-> +		supported = false;
-> +	}
-> +
-> +	if (supported) {
-> +		__this_cpu_write(arm64_ssbd_callback_required, 1);
-> +		do_ssbd(true);
-> +	}
+  1. Boot kernel with "zswap.enabled=1 zswap.max_pool_percent=17"
+  2. Set the max_pool_percent to 0
+      # echo 0 > /sys/module/zswap/parameters/max_pool_percent
+     Confirm this parameter works fine
+      # cat /sys/kernel/debug/zswap/pool_total_size
+      0
+  3. Do memory stress test to see if some pages have been compressed
+      # stress --vm 1 --vm-bytes $mem_available"M" --timeout 60s
+     Watching the 'stored_pages' numbers increasing or not
 
+The root cause is:
 
-Marc,
+  When the zswap_max_pool_percent is set to 0 via kernel parameter, the zswap_is_full()
+  will always return true to shrink the pool size by zswap_shrink(). If the pool size
+  has been shrinked a little success, zswap will do compress/store pages again. Then we
+  get fails on that as above.
 
-As discussed, we have minor issue with the "corner case". If a CPU
-is hotplugged in which requires the mitigation, after the system has
-finalised the cap to "not available", the CPU could go ahead and
-do the "work around" as above, while not effectively doing anything
-about it at runtime for KVM guests (as thats the only place where
-we rely on the CAP being set).
+Signed-off-by: Li Wang <liwang@redhat.com>
+Cc: Seth Jennings <sjenning@redhat.com>
+Cc: Dan Streetman <ddstreet@ieee.org>
+Cc: Huang Ying <huang.ying.caritas@gmail.com>
+Cc: Yu Zhao <yuzhao@google.com>
+---
+ mm/zswap.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-But, yes this is real corner case. There is no easy way to solve it
-other than
-
-1) Allow late modifications to CPU hwcaps
-
-OR
-
-2) Penalise the fastpath to always check per-cpu setting.
-
-
-Regardless,
-
-Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+diff --git a/mm/zswap.c b/mm/zswap.c
+index 61a5c41..2b537bb 100644
+--- a/mm/zswap.c
++++ b/mm/zswap.c
+@@ -1007,6 +1007,11 @@ static int zswap_frontswap_store(unsigned type, pgoff_t offset,
+ 	u8 *src, *dst;
+ 	struct zswap_header zhdr = { .swpentry = swp_entry(type, offset) };
+ 
++	if (!zswap_max_pool_percent) {
++		ret = -ENOMEM;
++		goto reject;
++	}
++
+ 	/* THP isn't supported */
+ 	if (PageTransHuge(page)) {
+ 		ret = -EINVAL;
+-- 
+2.9.5
