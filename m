@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1900785-1527164608-2-10781460837121671861
+X-Cyrus-Session-Id: sloti22d1t05-1900785-1527164575-2-5784431841691209719
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527164607; b=RpMlpEpVNRWlcrnpDOCRfEV/LOm0pUXS6iUgtnyafuJHlm0ELx
-    Y+6foi5K/CQ+/9la29hmkTMZnUk/o4Hek7B3LV5hSUsFqXUm6PTOYfVSHaYSzeCa
-    FlweJRs8j9DvJv5fcUfKOk1o1K19wp4mXCn+tCyLgA2zwL5sg0J7ALOrPgpJhy65
-    SXaD0L1gfhUI+1BiOYdN2lnXlSdEu2bGrqlp8pO01G5KFKsgekf5BfbwZBVEXKFf
-    eYRR1aFT1GuaCFKC0rD8dWobYN2AclxQrz74mSySO39i1bs2QNghElyP9QkDfk0k
-    VMLz96Vz0d5HxpmBckjb4jXhJP6YERwIDNvg==
+    1527164575; b=BZ744W4qcpJ3dx2z/ELhdWt5GkIWehW5OR/1thuEnvtUdkdSgs
+    uhhZ+KQiKV3qSu8647gGtOIlNb03KaA0drrA4z06K4sdEDEfDNkiblIsw+tENYgj
+    uBu+k32jt87Dhi2TkTwZbvDs9Z4AckcA7XiXiLM1p3/4V5JPJz5x9h2iJqP9aHxM
+    W7gTw1JPbzo9YWoZPMr3RwHhWfOslJUeEy2rh2LE02CazwWmqmClyltR++KYuiI8
+    6m3rgm7S+MDvpoQNhrw1BxlXM906yWUoupPRKVlqZzIAMScyQcVu6dlBkbYkSN2M
+    E4mTP4Qr8n1Yxbymr+IIWIrPx6oySpKQaUrA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527164607; bh=tF4jM6f6D6WXlyIJTyI/DLVcFUIy/O
-    4MDnDeVQDCteM=; b=TKmFx1KvKoUtvIkTkkL1eOKRUbcfnqIpepI4KG14escIA5
-    CNC0JJQAul0XJtHt4fFWZVHLKS2tRDfTB73vNoUclMv1pcS/6kb+gIFMW47Dbu5M
-    i1UMGMsLYeL9O1qY9TWK9p+a2APx3Dx6MmFSK5XqjKxDYoVjEudFJ0xWG+VfhwW2
-    7zgCcW/Ar7RKcJs5JrjAsh34ez1AnXQSEu/k3CLN3etlBBQh0qdKJn+5I2cCoA9+
-    S+m2YiAo6FAiktYUFblliXaPXveuEIJ/gdYW6bTK1/H2F7HU6FGPJn41zH138AJL
-    Y47l1cnD3CSmvzQqv6jPVAait/HxgYaJr3NekqRQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527164575; bh=s9dhPjoaxlBstaxlaWlYFue00QdU/I
+    5W5oUS2i6vTs4=; b=OMI3q0xDJrKGfxGX4gpYAWb4QFnAj3Kz9LePC8qUPrGLMS
+    KhZXO6ThF+wT9k3p15lUHQI//8byKesDr7wH3TRFYoyLix1CciLXHrr4Z3ug8SBG
+    yair4TahGWJpWyk6S6GcA5tVTmm4KbFEJyV89VUC55ooL8l9ctwoKp3Jmu5Ps1YC
+    E8YSXxHJnAv3pywLl8LYyuuHqgCuFsrnJq8ntwABbLH2Musx1aQY5ygtaJfwdFIT
+    U+/iKIRH7HlHAD2zUo0RkB0bxegKYNytztBfKyanAl2nMQfmN7rHlQPlFANqc/8Q
+    srJXjnBZopUw6gEg9pcqkW3Il0jWzO8yWD4iwU5A==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=ZdH5B5c6 x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=UG+/ZxzN x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=ZdH5B5c6 x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=UG+/ZxzN x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,32 +64,30 @@ Authentication-Results: mx1.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfI/Q46qddVSZcF/8coylc/yU+GG2Yjf4C8KqgkSojmCBnEbnYODZJjajO40qFhTgXUJV7Z+Ki/1p6I74Z0UjLl8LfPcs7H8d9g7riDgtfvel1hZueE8I
-    k8r6jnW6N7PBiC541p/nNOSprcmyk7sQGlpaPPx62PbF6OIdk5xkue5uU4knYnwntRd6erQmafknkwREF9vCMxbtTdaQGUVcDkd9fwuUxZj83MkA3jWDje7h
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfOXVZzpYWpT3lptN7UveiJyZKrOLFjQ2MkHUWS8WpLyb6g490PWv3WLK4GWh/8fb1tpc0UoYLunquYm5skWcpiuPjog3Tgc3K4k5AKzBOPT8EoihXUVR
+    dBjrPZpzFxSpjq4z3AvFiD28qDLotmg4zKt2MC0CcBqg5lITC26y23dFP25wgDySL0mFkqjIAZ9seu0A44woKi/KvrJbET9E+8Fvs41AxM7Ja5/dHLrN36Z4
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=pGLkceISAAAA:8 a=vmLDa1wCAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
-    a=brYE-qls9YapW1p9bzMA:9 a=QEXdDO2ut3YA:10 a=h8Bt5HTj68qkN2fS7gvA:22
-    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=X7Ea-ya5AAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=-QkFZ1CkDEvVFEUcWrEA:9
+    a=QEXdDO2ut3YA:10 a=f3QdawHiMRSDlnPgGXNW:22 a=y1Q9-5lHfBjTkpIzbSAN:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966087AbeEXJk5 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:40:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52902 "EHLO mail.kernel.org"
+        id S966202AbeEXMWw (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 08:22:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52966 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965759AbeEXJkw (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:40:52 -0400
+        id S966097AbeEXJk6 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:40:58 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xin Long <lucien.xin@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        stable@vger.kernel.org, Debabrata Banerjee <dbanerje@akamai.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 11/45] sctp: use the old asoc when making the cookie-ack chunk in dupcook_d
-Date: Thu, 24 May 2018 11:38:19 +0200
-Message-Id: <20180524093121.914402632@linuxfoundation.org>
+Subject: [PATCH 3.18 13/45] bonding: do not allow rlb updates to invalid mac
+Date: Thu, 24 May 2018 11:38:21 +0200
+Message-Id: <20180524093122.144254083@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093120.599252450@linuxfoundation.org>
 References: <20180524093120.599252450@linuxfoundation.org>
@@ -107,38 +105,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Debabrata Banerjee <dbanerje@akamai.com>
 
-[ Upstream commit 46e16d4b956867013e0bbd7f2bad206f4aa55752 ]
+[ Upstream commit 4fa8667ca3989ce14cf66301fa251544fbddbdd0 ]
 
-When processing a duplicate cookie-echo chunk, for case 'D', sctp will
-not process the param from this chunk. It means old asoc has nothing
-to be updated, and the new temp asoc doesn't have the complete info.
+Make sure multicast, broadcast, and zero mac's cannot be the output of rlb
+updates, which should all be directed arps. Receive load balancing will be
+collapsed if any of these happen, as the switch will broadcast.
 
-So there's no reason to use the new asoc when creating the cookie-ack
-chunk. Otherwise, like when auth is enabled for cookie-ack, the chunk
-can not be set with auth, and it will definitely be dropped by peer.
-
-This issue is there since very beginning, and we fix it by using the
-old asoc instead.
-
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Neil Horman <nhorman@tuxdriver.com>
-Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Signed-off-by: Debabrata Banerjee <dbanerje@akamai.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sctp/sm_statefuns.c |    2 +-
+ drivers/net/bonding/bond_alb.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/sctp/sm_statefuns.c
-+++ b/net/sctp/sm_statefuns.c
-@@ -1959,7 +1959,7 @@ static sctp_disposition_t sctp_sf_do_dup
- 		}
- 	}
+--- a/drivers/net/bonding/bond_alb.c
++++ b/drivers/net/bonding/bond_alb.c
+@@ -453,7 +453,7 @@ static void rlb_update_client(struct rlb
+ {
+ 	int i;
  
--	repl = sctp_make_cookie_ack(new_asoc, chunk);
-+	repl = sctp_make_cookie_ack(asoc, chunk);
- 	if (!repl)
- 		goto nomem;
+-	if (!client_info->slave)
++	if (!client_info->slave || !is_valid_ether_addr(client_info->mac_dst))
+ 		return;
  
+ 	for (i = 0; i < RLB_ARP_BURST_SIZE; i++) {
