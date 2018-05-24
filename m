@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1835623-1527161869-2-5688895573847361900
+X-Cyrus-Session-Id: sloti22d1t05-1862185-1527161868-2-14279391802661018271
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527161869; b=A4OD7WmiFod3sctN0wrUMJ3Prov1dPbxMbyIJ+gKdOAp8in3Yi
-    vo/4QYbLkDHxG3IL3Ab/NKePFgy8blPm4qLNfbzHdAnuUVOX9o1HF1BvaZepgBY3
-    /PxY8f7xdNdS+xfR4oUcQoTK+l6tt1TyAXliIc3fGAj5L7kn8H6d6xKdBpCZ9Kof
-    Yqr2vnapNST0RGxbK2b7+STcdnJfj+r4dRoIEXFQuCIpeTlJhzoH5QsqOfeIyq6C
-    trZwExX9Y/U/YGSEyhZtNuC3vRBJpPR/74qcJF+RpAFRIcL/8W70Nj4S7kamrIYV
-    EBzu4V8dMfwi8Tdw6DK49y9OmwTvKCHUyMDQ==
+    1527161867; b=L5/zMjFSAHnzFvKXZj5wItpiZJTSYwiVHiQAShKbaMKiOhY2pP
+    ihEaQULUAN3a9OUVPa3hk5Oe2kaS9i+21cDURMg58uP2baFFDVQVo3k9A0FVS32b
+    2E2xX6BXGhFXmGgfMjysNGqppIVd3I/qkrHWKVcRUa5uEpAKVeaDcWIPcKbgU5Re
+    UFoV/H6j5iEW4EEewPqk3PCvfwCDXd4aeycVoghIk5uk5ODKN7zDb9KcR8VySeFv
+    V0YzKurXuERUIwiZoFvF7s+AJ/RlDuot5EEYnUhENI5uaUFVZulehGCvZq2py8y9
+    27qbVyk7zcOIHvNPLI7hc7ckfh57o9rOqD0w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527161869; bh=CVlyoyJYTevkSukK5ng0HcXpOHteRR
-    EbrfaA19CKk5c=; b=jaY+QFIbiYRfYQoo5HDUaGLP3mJB8DbRmylLNpX6aAVfDn
-    oIQLd19rOs7Dtay51W6RaevnK8frwfCLj3C2Pnz98RNQTb7vOz/lGYEOo634jiyA
-    SvYA+jXSljQBkgyvJSYWzETwq4MjrTvDctKwo03dMJSZFAUt03QuFNEWHNiN3xMo
-    +IhUxzQ2hcqdUCv8lAonuxclOnlkxxmaLp4loBYg5/lGHXQLmwl1s7gJJxppRhAr
-    yenMqM91cVguPwUSpOGxRYZ+2v5XV+FE8NkAO2f1KZ/JTcHTmsBn+URBOSseuWL2
-    4Ef0n0mkqS91Hom0h6B9tt2KmSSe4VZYMViD3a5A==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527161867; bh=xW0AZYo5g93NS8dimkiEgCa8+OQ8xL
+    ueQ2pEOapk6qc=; b=SFKlCRDHfuMwDFfcpwMYUjlL4yF440SHyOBHUX18NMpGce
+    E+/uitOfw8rrn2cRbLQ0Jmzv+Auou8r/fw3ZW39YLpSxn+Za4jKI+amxjU82GM7N
+    +I+MYex3kRyIV/RtykA/7kq4dy3pBZgA0vfVOMPOugUulbvVoF5TpicLZSzV8PIv
+    chY4B9XJrrtrZrW4S+jmyCLak1mTf2yuj2odMRNIJZlvEYac1ZLKFs3/1oeJNa6m
+    WM6lVqPanWMXdE9LJAV9g4HjZUw6Yz0FdtXjUG/aSY9FSEubBk0repLEH2eF96GD
+    rw8AOCQxPI9NJfAWWnkZ+a8WnpUU08afhYF15E9A==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=UvVbuzx4 x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=pUwm9Fwt x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=UvVbuzx4 x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=pUwm9Fwt x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,30 +64,31 @@ Authentication-Results: mx6.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEPdOvW0hNZSnlvccvVH0kdjCZ/S9O+aRhoJlMyFtYZyRwR6yFmK5Mz3OzZO1zUyaXj8Ads8BzK6b3afUJscj/g1TVhFTGVmVHsQikp5MI8w8P5HUgso
-    dezTQH/RNYPQQEpVqLoQjuqaYrDxGRkYHoMGJLgQ7D3lNAdQg9tIiwA5e7QHxtlvGbAzwdwp9WI7zI1wd3n4yHo+HSgfQy4c+v5OG+068jRm4MI/Wt9rOYxg
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfIRxCPeDdCLikwTfKJ+CwU0wcLvN4088XWCRK885WjB5rKxT1UUJBIFhdgt16/rRmyh7R0XsuIeL9scjJYEJiA97GbSYs9q8TCrRvk4PodUGicf9gFGD
+    hEudqdQ/lSOpG6sjadjIFjQvs61AegCLrTExGnIv7+AIqPTTY1alBzJT3lb+f3H2gQDXGpY5aDon7y+0a4R2F81RtgGEjr4Yn+y8jQzH4S0qWPTeqMkYw6vi
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=QyXUC8HyAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=9-t-i2tgmufFbw9nmLkA:9
-    a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=LpQP-O61AAAA:8 a=QyXUC8HyAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=WEBF5sqjXZMyK3CwXLsA:9 a=QEXdDO2ut3YA:10 a=pioyyrs4ZptJ924tMmac:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966550AbeEXLho (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 07:37:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38282 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967393AbeEXJtb (ORCPT <rfc822;stable@vger.kernel.org>);
+        id S967395AbeEXJtb (ORCPT <rfc822;greg@kroah.com>);
         Thu, 24 May 2018 05:49:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38094 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S967093AbeEXJt2 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:49:28 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
+        stable@vger.kernel.org, Manu Gautam <mgautam@codeaurora.org>,
         Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 28/96] usb: gadget: fsl_udc_core: fix ep valid checks
-Date: Thu, 24 May 2018 11:38:11 +0200
-Message-Id: <20180524093607.185179302@linuxfoundation.org>
+Subject: [PATCH 4.9 27/96] usb: gadget: core: Fix use-after-free of usb_request
+Date: Thu, 24 May 2018 11:38:10 +0200
+Message-Id: <20180524093607.124199786@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093605.602125311@linuxfoundation.org>
 References: <20180524093605.602125311@linuxfoundation.org>
@@ -105,45 +106,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Stefan Agner <stefan@agner.ch>
+From: Manu Gautam <mgautam@codeaurora.org>
 
-[ Upstream commit 20c63f4089cceab803438c383631963e34c4d8e5 ]
+[ Upstream commit e74bd4d358e5455233f1dcc3975425905b270b91 ]
 
-Clang reports the following warning:
-  drivers/usb/gadget/udc/fsl_udc_core.c:1312:10: warning: address of array
-  'ep->name' will always evaluate to 'true' [-Wpointer-bool-conversion]
-        if (ep->name)
-        ~~  ~~~~^~~~
+Driver is tracing usb_request after freeing it.
+Fix it by changing the order.
 
-It seems that the authors intention was to check if the ep has been
-configured through struct_ep_setup. Check whether struct usb_ep name
-pointer has been set instead.
-
-Signed-off-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
 Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/gadget/udc/fsl_udc_core.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/gadget/udc/core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/gadget/udc/fsl_udc_core.c
-+++ b/drivers/usb/gadget/udc/fsl_udc_core.c
-@@ -1310,7 +1310,7 @@ static void udc_reset_ep_queue(struct fs
+--- a/drivers/usb/gadget/udc/core.c
++++ b/drivers/usb/gadget/udc/core.c
+@@ -190,8 +190,8 @@ EXPORT_SYMBOL_GPL(usb_ep_alloc_request);
+ void usb_ep_free_request(struct usb_ep *ep,
+ 				       struct usb_request *req)
  {
- 	struct fsl_ep *ep = get_ep_by_pipe(udc, pipe);
- 
--	if (ep->name)
-+	if (ep->ep.name)
- 		nuke(ep, -ESHUTDOWN);
+-	ep->ops->free_request(ep, req);
+ 	trace_usb_ep_free_request(ep, req, 0);
++	ep->ops->free_request(ep, req);
  }
+ EXPORT_SYMBOL_GPL(usb_ep_free_request);
  
-@@ -1698,7 +1698,7 @@ static void dtd_complete_irq(struct fsl_
- 		curr_ep = get_ep_by_pipe(udc, i);
- 
- 		/* If the ep is configured */
--		if (curr_ep->name == NULL) {
-+		if (!curr_ep->ep.name) {
- 			WARNING("Invalid EP?");
- 			continue;
- 		}
