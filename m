@@ -1,40 +1,41 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqvRJxd3R3XtiydGCmTcRdtRg37NHWyC8b7Dv54DQrhK7AdeeRk6ge4F9ebaNPK2YGOhonm
-ARC-Seal: i=1; a=rsa-sha256; t=1527156297; cv=none;
+X-Google-Smtp-Source: AB8JxZoANnDq+F4gBWjBYR9BcmrEMRmwlrQ2wMrCAHKFYdpcFJ+C3GcYu9iJYqSdeucAVinjfVTG
+ARC-Seal: i=1; a=rsa-sha256; t=1527156289; cv=none;
         d=google.com; s=arc-20160816;
-        b=j3cerRgeEt7QMxoKozpW6SY9dP3X6jYXT8F8oEjZUVcv/tv897AVn1/MYCjeyHznBc
-         wJzsTFqZ1lyJ72HkZLIgPDg9SzI6H6u6FpraLnIVRz8jwfVXfz8sez7rxtn1+TXPZ8Ej
-         pL+3P4yXIf9dEA8fqcjuP5UENhsz7d5kwrLH4eGNkn/NYoVjjJ0RhQna2GRcPGw5wVDf
-         1yo8yPz1WepOSTK8wNRdosPcz/SCFOB0/Sd17bynTsPj0Wqzs2SjVgO4u1V+1mmKMpMe
-         8Edmcg6Ce5asjNiU/8MQee98gszO7cUw3UhbS/AsA0JDG9U7+x724YKbkkavElJCiUZ6
-         qKsg==
+        b=Uau2UEokUmwxNqZpLfR8v6gu0ZSZIak2fWifzyu9+nUTdflNRQaPfXiOaozUkDz4/e
+         Kn+kt2BlV+VEFgphrPaUf26mO9L2kbON/QWJcfXg2MhZ+11QexszoiOQld9SS9QTf+Z8
+         grpw9YJwUCoS2yCxoaAQ+kUSuK8+It/6oP5ouKb/kMOxtoGfPFkRAqr6wmjBz1nHPT6Z
+         95sgVPLl1ZFey6fMLXHpUybkSXQCN59Pmgh0/3XpJMqRoIUwJd1yOVFFWBXDZBMgmfi1
+         SjZ3pDftb5yGPZifulsrRzzVzEf7Bwu4+qdx7hmYLUz/43JiMvlN7QJ7v3c9Cf4SbXHk
+         tW+g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=CBWB/rqVhWjTJMIkFc/6SFsi8RZhNmupujmCiLqbkv8=;
-        b=veP0G6ybVWdSwpRl8luR2/gGexRRWDv9jeuDwRa4lqXR2Xi6oI27n+ELCDWFn0nLGd
-         rbPzxgR1uWAI3O0sykR4ynxvOenFnUmmeLid9WBAsg+AXwx4kBT3p8aUW51B/e/WVyBs
-         sQ9kH7FH6yNXv7Pm951daowjOf9ZAQktvIMDE1SlHoLjQjaeo6goHe49F5M59/fMxHSv
-         UXzXDSyNaPp6S44nuiWz68gqNZ3l+Il2bxWtlaQDx08ZrtAfwlQ7VlWcHEcB/5p5b2/A
-         x3R5KW1jhnCkE1DPmp834Ukq+ykPIdrwm9ESU4PmbG48F30cp70Mow311YEUBukuWmLs
-         9TMA==
+        bh=G2uMb5SPlffCGW/WZ6UwUUEgaQOvG8cHsdvYR5yTtn8=;
+        b=IX4UzwPo6JfYsz6Ui4X3UtvopPvsoEzADKlXEuwabMZuRrIYflzcnxnBbR5gIwQhGf
+         Cw5WM10zuco8GA5lWBaEYdaIY9cWtNFYE7LKVtxn3RBWBMtj6Lk1FJzhTRNB+95dygeO
+         e6n9eERiB6lQ9ajseO2DC3c1D7xfjWvHYvasUdAfEnGSM8Bf2SPNnV12xy/0CjJX7/e6
+         qlRFkg12FsLlahleUoyfHtJDBevOx5KRswc49uqz+yzNmKur1PEJi68DnynpDJ7Nvaon
+         qjeMckLD3OLxB2XVGWqfUXxCDBgtLSs7VdN5J07leEhz82NktqM/ukTday3NH+grw50A
+         CgbQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=E0T7Ja1f;
+       dkim=pass header.i=@kernel.org header.s=default header.b=vsWAEAFL;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=E0T7Ja1f;
+       dkim=pass header.i=@kernel.org header.s=default header.b=vsWAEAFL;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Gary R Hook <gary.hook@amd.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
+	Andrzej Hajda <a.hajda@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 100/161] crypto: ccp - dont disable interrupts while setting up debugfs
-Date: Thu, 24 May 2018 11:38:45 +0200
-Message-Id: <20180524093030.391952472@linuxfoundation.org>
+Subject: [PATCH 4.16 131/161] clk: samsung: exynos3250: Fix PLL rates
+Date: Thu, 24 May 2018 11:39:16 +0200
+Message-Id: <20180524093034.045796359@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -44,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601338837902762497?=
-X-GMAIL-MSGID: =?utf-8?q?1601339441509772512?=
+X-GMAIL-THRID: =?utf-8?q?1601338525735775270?=
+X-GMAIL-MSGID: =?utf-8?q?1601339433268235460?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,80 +54,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+From: Andrzej Hajda <a.hajda@samsung.com>
 
-[ Upstream commit 79eb382b5e06a6dca5806465d7195d686a463ab0 ]
+[ Upstream commit a8321e7887410a2b2e80ab89d1ef7b30562658ea ]
 
-I don't why we need take a single write lock and disable interrupts
-while setting up debugfs. This is what what happens when we try anyway:
+Rates declared in PLL rate tables should match exactly rates calculated
+from PLL coefficients. If that is not the case, rate of the PLL's child clock
+might be set not as expected. For instance, if in the PLL rates table we have
+a 393216000 Hz entry and the real value as returned by the PLL's recalc_rate
+callback is 393216003, after setting PLL's clk rate to 393216000 clk_get_rate
+will return 393216003. If we now attempt to set rate of a PLL's child divider
+clock to 393216000/2 its rate will be 131072001, rather than 196608000.
+That is, the divider will be set to 3 instead of 2, because 393216003/2 is
+greater than 196608000.
 
-|ccp 0000:03:00.2: enabling device (0000 -> 0002)
-|BUG: sleeping function called from invalid context at kernel/locking/rwsem.c:69
-|in_atomic(): 1, irqs_disabled(): 1, pid: 3, name: kworker/0:0
-|irq event stamp: 17150
-|hardirqs last  enabled at (17149): [<0000000097a18c49>] restore_regs_and_return_to_kernel+0x0/0x23
-|hardirqs last disabled at (17150): [<000000000773b3a9>] _raw_write_lock_irqsave+0x1b/0x50
-|softirqs last  enabled at (17148): [<0000000064d56155>] __do_softirq+0x3b8/0x4c1
-|softirqs last disabled at (17125): [<0000000092633c18>] irq_exit+0xb1/0xc0
-|CPU: 0 PID: 3 Comm: kworker/0:0 Not tainted 4.16.0-rc2+ #30
-|Workqueue: events work_for_cpu_fn
-|Call Trace:
-| dump_stack+0x7d/0xb6
-| ___might_sleep+0x1eb/0x250
-| down_write+0x17/0x60
-| start_creating+0x4c/0xe0
-| debugfs_create_dir+0x9/0x100
-| ccp5_debugfs_setup+0x191/0x1b0
-| ccp5_init+0x8a7/0x8c0
-| ccp_dev_init+0xb8/0xe0
-| sp_init+0x6c/0x90
-| sp_pci_probe+0x26e/0x590
-| local_pci_probe+0x3f/0x90
-| work_for_cpu_fn+0x11/0x20
-| process_one_work+0x1ff/0x650
-| worker_thread+0x1d4/0x3a0
-| kthread+0xfe/0x130
-| ret_from_fork+0x27/0x50
+To fix this issue declared rates are changed to exactly match rates generated
+by the PLL, as calculated from the P, M, S, K coefficients.
 
-If any locking is required, a simple mutex will do it.
+In this patch an erroneous P value for 74176002 output frequency is also
+corrected.
 
-Cc: Gary R Hook <gary.hook@amd.com>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Acked-by: Gary R Hook <gary.hook@amd.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/crypto/ccp/ccp-debugfs.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/clk/samsung/clk-exynos3250.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/crypto/ccp/ccp-debugfs.c
-+++ b/drivers/crypto/ccp/ccp-debugfs.c
-@@ -278,7 +278,7 @@ static const struct file_operations ccp_
- };
- 
- static struct dentry *ccp_debugfs_dir;
--static DEFINE_RWLOCK(ccp_debugfs_lock);
-+static DEFINE_MUTEX(ccp_debugfs_lock);
- 
- #define	MAX_NAME_LEN	20
- 
-@@ -290,16 +290,15 @@ void ccp5_debugfs_setup(struct ccp_devic
- 	struct dentry *debugfs_stats;
- 	struct dentry *debugfs_q_instance;
- 	struct dentry *debugfs_q_stats;
--	unsigned long flags;
- 	int i;
- 
- 	if (!debugfs_initialized())
- 		return;
- 
--	write_lock_irqsave(&ccp_debugfs_lock, flags);
-+	mutex_lock(&ccp_debugfs_lock);
- 	if (!ccp_debugfs_dir)
- 		ccp_debugfs_dir = debugfs_create_dir(KBUILD_MODNAME, NULL);
--	write_unlock_irqrestore(&ccp_debugfs_lock, flags);
-+	mutex_unlock(&ccp_debugfs_lock);
- 	if (!ccp_debugfs_dir)
- 		return;
- 
+--- a/drivers/clk/samsung/clk-exynos3250.c
++++ b/drivers/clk/samsung/clk-exynos3250.c
+@@ -698,7 +698,7 @@ static const struct samsung_pll_rate_tab
+ 	PLL_36XX_RATE(144000000,  96, 2, 3,     0),
+ 	PLL_36XX_RATE( 96000000, 128, 2, 4,     0),
+ 	PLL_36XX_RATE( 84000000, 112, 2, 4,     0),
+-	PLL_36XX_RATE( 80000004, 106, 2, 4, 43691),
++	PLL_36XX_RATE( 80000003, 106, 2, 4, 43691),
+ 	PLL_36XX_RATE( 73728000,  98, 2, 4, 19923),
+ 	PLL_36XX_RATE( 67737598, 270, 3, 5, 62285),
+ 	PLL_36XX_RATE( 65535999, 174, 2, 5, 49982),
+@@ -734,7 +734,7 @@ static const struct samsung_pll_rate_tab
+ 	PLL_36XX_RATE(148352005,  98, 2, 3, 59070),
+ 	PLL_36XX_RATE(108000000, 144, 2, 4,     0),
+ 	PLL_36XX_RATE( 74250000,  99, 2, 4,     0),
+-	PLL_36XX_RATE( 74176002,  98, 3, 4, 59070),
++	PLL_36XX_RATE( 74176002,  98, 2, 4, 59070),
+ 	PLL_36XX_RATE( 54054000, 216, 3, 5, 14156),
+ 	PLL_36XX_RATE( 54000000, 144, 2, 5,     0),
+ 	{ /* sentinel */ }
