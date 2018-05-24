@@ -1,92 +1,38 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1733193-1527155710-2-14653902135296229171
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527155708; b=h6f2y54Q+mBWs4IA0lwImC9XiO8NIRiu2G58Jiz/8Sn8JEfemj
-    ohz0FwFkfRElPOkh10+5/aJ+kHCZboxexdfUAe5+3iSPE9O20KGLFEyE/TIFRsk1
-    KRmwqwmbeUTB6nuJiDKdjnG77Pk7KukuMTHMPoIsXWtDKU0245T3T9Kewm1hUwFd
-    uIe22mXkuYED+arquH3x8xoWkhZXUrxQFzRoBJ+O1S+6N+LzYl/KxvMQ7t0w11YP
-    aWPzJlXrvpQ7ZMXyBfAP0a5+pBQhXLMdu/5TzNw4f+wF/pB90zSLWCf5YSb9dXta
-    udhoAlzDurpQ4Jop0yexGTM7TGQChN10NIhQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527155708; bh=gqSbt0WU/1EdKoD4zCDWujRWzxu1sn
-    NRlxm1cgvVCwQ=; b=RFLmKuVgtCPqeuxhLC7PoPQRGghZCLOaQ/xgnJazLA+XdR
-    ffSwqmW41AtMSJWWoojiCDtLhH7skTgrx4gZr4SOvpZYsFFaFGHA/rDaapdMOVgb
-    b98o4eRr6o0jjJx0IB2w7vj1qvDpziSxEa5lV2cE631T6ccBtNrP0+H+IaQRnOJ8
-    1gVzVtEONJEdDrZrqP5zbBUQBvLa1MWStEwBG82d7BQdNVmCEo6QtKyEbmfpBeG/
-    bv3AmOihyU7dxKcZbKwQhZDOhX3emEriRn4FivYNvOZaFFlDhl1nnM6rvzuhzQbm
-    hscfUg84Y+xCl1GghDWYw6MCYmIxv8MrC2/D+ImQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=bVN8tyxu x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linuxfoundation.org header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=bVN8tyxu x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linuxfoundation.org header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIgGGBKqrQaIVxyIedv+Vh2GaPsZD8k7Io7c+QQeaQVVoq3hDk+ghikGVN+JOlbrmj6uKsc7sibgNDeRFdlIhLUKwwd4kEZpqt2NU03j1SC9TINYX+nI
-    UUJfxoncbC4o4iXjflbUNS2AwfigKUSztcGr6lVkOSTo4+f/Pms4t7WRAGoXFrErWe6FRz+8Fw/du3I8cPEK/NTrRZ/yE577lnBmc9Uxl6TAJy8K3UuadEDu
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=6mtFN2R5rmpNZnjPMXoA:9
-    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968265AbeEXJzG (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:55:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35122 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968334AbeEXJy7 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:54:59 -0400
+Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZo+WoutVhAUnvYWRY/gu86ypE5wPKUyCepMKwohZAuI9X0zs66wOLIAS42rZC1LjJYcePeu
+ARC-Seal: i=1; a=rsa-sha256; t=1527155705; cv=none;
+        d=google.com; s=arc-20160816;
+        b=UBvz0AT1eBFOxpLL7LNbko9pveEnLRPJz8w7iOos2lh/jlctf4pqQnb+rKPOll5oF9
+         UHM4wSwfODnw39aTh+sAOg/G7y5NnoBjnqDwJa2cddIVZFMcRXlRPALUZ6UfnjaJbtSC
+         uGGu/uv7vteGI8LfswcwVBGnwHZ001jH9LpB6Hc4E6aq12cbKkso/D3bqkP+jn3pHf6c
+         4LzD9nsJbCZgoRSPD/AdkJZzkkFgJWYrLghLMe8qcynRbXIYqIGgp2xziCiIrWwo6mZJ
+         WbKIFuAszoK3EsEgZ4QrBGT1Q8ASB39FQo+2D2FdnOb19TkZTO4lDZIguUHupJeRjgnH
+         LOrw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=mn94+L5rvm8iZxVHVjm2yAKTGI2DrehWW5WsTaqOdm8=;
+        b=aH5aU+KZXmWHQ+AIys0nKKgh1ozqLZk88aCVhmtV9Rjn35DGrS0G/u841D8/x36yWS
+         N6VfRjXtDeJkU2ahvwguU9vn9pa8HiiLA7cWxsILiN9OnA8kDzjhKIgx97/PYsz3+8a9
+         /zPpRV91HqRMe0ZpOEoHOtC18gP7jgLyo9/B0NSBVaEh5foxY+ZEXWicreBpgASRPSx1
+         wtgV/6AZAEGYQ1pYS0LdAwLy6R/CqZzAOZYMmxLXAHyhtI9uXhv89tD6isI7OfGM6X6V
+         GOGwMT6+WanM2moEVjTH9AnGW9GCy1MaO3g+AkEz+BfQYJUKNI276phqOTuJuMZ4eO2V
+         lt7Q==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=rv89jNjC;
+       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=rv89jNjC;
+       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Subject: [PATCH 4.14 039/165] s390/crc32-vx: use expoline for indirect branches
-Date: Thu, 24 May 2018 11:37:25 +0200
-Message-Id: <20180524093623.559269891@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Ioana Radulescu <ruxandra.radulescu@nxp.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 087/165] staging: fsl-dpaa2/eth: Fix incorrect casts
+Date: Thu, 24 May 2018 11:38:13 +0200
+Message-Id: <20180524093625.550700720@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -94,9 +40,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1601338820614579952?=
+X-GMAIL-MSGID: =?utf-8?q?1601338820614579952?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -104,74 +51,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+From: Ioana Radulescu <ruxandra.radulescu@nxp.com>
 
-[ Upstream commit 467a3bf219cee12259182c5cb4821f88fd518a51 ]
+[ Upstream commit 75c583ab9709692a60871d4719006391cde8dc1d ]
 
-The return from the crc32_le_vgfm_16/crc32c_le_vgfm_16 and the
-crc32_be_vgfm_16 functions are done with "br %r14". These are indirect
-branches as well and need to use execute trampolines for CONFIG_EXPOLINE=y.
+The DPAA2 Ethernet driver incorrectly assumes virtual addresses
+are always 64b long, which causes compiler errors when building
+for a 32b platform.
 
-Cc: stable@vger.kernel.org # 4.16
-Fixes: f19fbd5ed6 ("s390: introduce execute-trampolines for branches")
-Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Fix this by using explicit casts to uintptr_t where necessary.
+
+Signed-off-by: Ioana Radulescu <ruxandra.radulescu@nxp.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/crypto/crc32be-vx.S |    5 ++++-
- arch/s390/crypto/crc32le-vx.S |    4 +++-
- 2 files changed, 7 insertions(+), 2 deletions(-)
+ drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/arch/s390/crypto/crc32be-vx.S
-+++ b/arch/s390/crypto/crc32be-vx.S
-@@ -13,6 +13,7 @@
-  */
+--- a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c
++++ b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c
+@@ -315,7 +315,7 @@ static int consume_frames(struct dpaa2_e
+ 		}
  
- #include <linux/linkage.h>
-+#include <asm/nospec-insn.h>
- #include <asm/vx-insn.h>
+ 		fd = dpaa2_dq_fd(dq);
+-		fq = (struct dpaa2_eth_fq *)dpaa2_dq_fqd_ctx(dq);
++		fq = (struct dpaa2_eth_fq *)(uintptr_t)dpaa2_dq_fqd_ctx(dq);
+ 		fq->stats.frames++;
  
- /* Vector register range containing CRC-32 constants */
-@@ -67,6 +68,8 @@
- 
- .previous
- 
-+	GEN_BR_THUNK %r14
-+
- .text
- /*
-  * The CRC-32 function(s) use these calling conventions:
-@@ -203,6 +206,6 @@ ENTRY(crc32_be_vgfm_16)
- 
- .Ldone:
- 	VLGVF	%r2,%v2,3
--	br	%r14
-+	BR_EX	%r14
- 
- .previous
---- a/arch/s390/crypto/crc32le-vx.S
-+++ b/arch/s390/crypto/crc32le-vx.S
-@@ -14,6 +14,7 @@
-  */
- 
- #include <linux/linkage.h>
-+#include <asm/nospec-insn.h>
- #include <asm/vx-insn.h>
- 
- /* Vector register range containing CRC-32 constants */
-@@ -76,6 +77,7 @@
- 
- .previous
- 
-+	GEN_BR_THUNK %r14
- 
- .text
- 
-@@ -264,6 +266,6 @@ crc32_le_vgfm_generic:
- 
- .Ldone:
- 	VLGVF	%r2,%v2,2
--	br	%r14
-+	BR_EX	%r14
- 
- .previous
+ 		fq->consume(priv, ch, fd, &ch->napi);
+@@ -1888,7 +1888,7 @@ static int setup_rx_flow(struct dpaa2_et
+ 	queue.destination.id = fq->channel->dpcon_id;
+ 	queue.destination.type = DPNI_DEST_DPCON;
+ 	queue.destination.priority = 1;
+-	queue.user_context = (u64)fq;
++	queue.user_context = (u64)(uintptr_t)fq;
+ 	err = dpni_set_queue(priv->mc_io, 0, priv->mc_token,
+ 			     DPNI_QUEUE_RX, 0, fq->flowid,
+ 			     DPNI_QUEUE_OPT_USER_CTX | DPNI_QUEUE_OPT_DEST,
+@@ -1940,7 +1940,7 @@ static int setup_tx_flow(struct dpaa2_et
+ 	queue.destination.id = fq->channel->dpcon_id;
+ 	queue.destination.type = DPNI_DEST_DPCON;
+ 	queue.destination.priority = 0;
+-	queue.user_context = (u64)fq;
++	queue.user_context = (u64)(uintptr_t)fq;
+ 	err = dpni_set_queue(priv->mc_io, 0, priv->mc_token,
+ 			     DPNI_QUEUE_TX_CONFIRM, 0, fq->flowid,
+ 			     DPNI_QUEUE_OPT_USER_CTX | DPNI_QUEUE_OPT_DEST,
