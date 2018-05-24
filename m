@@ -1,75 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968947AbeEXU0b (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 16:26:31 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:36505 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967470AbeEXU00 (ORCPT
+        id S968980AbeEXUaj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 16:30:39 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:56170 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967470AbeEXUaf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 16:26:26 -0400
-X-Google-Smtp-Source: AB8JxZrVEtmx2SUEeGSKM3wDhJR24AQR+6vdWaxVTaoc1rpc8wouMI+h52u73U4WjkLYYvCYVPmYVE56ZS6Y6d0eZSM=
+        Thu, 24 May 2018 16:30:35 -0400
+X-Google-Smtp-Source: AB8JxZoN3FqA4YdqWPdO6uZ8IcExl/1RgKao7Ja9i5c03JundmkI7TqicwAdjdsPMy4/AlN+zEwAGn7/5rdB7R5Ey90=
 MIME-Version: 1.0
-References: <CAKwvOd=jmi_7LvZbS0PA5-zt62m5ZFPUNG7JtMQVmerCR63ebQ@mail.gmail.com>
- <BDEF22F0-84A5-4A36-B153-13E6A4260922@zytor.com>
-In-Reply-To: <BDEF22F0-84A5-4A36-B153-13E6A4260922@zytor.com>
-From: Nick Desaulniers <ndesaulniers@google.com>
-Date: Thu, 24 May 2018 13:26:14 -0700
-Message-ID: <CAKwvOdnLt5qr_5ah86qdsocTxUbo_3X1y3PPRp1EZwt=__NxnA@mail.gmail.com>
-Subject: Re: [clang] stack protector and f1f029c7bf
-To: hpa@zytor.com
-Cc: Alistair Strachan <astrachan@google.com>,
-        Manoj Gupta <manojgupta@google.com>,
-        Matthias Kaehlcke <mka@google.com>,
-        Greg Hackmann <ghackmann@google.com>, sedat.dilek@gmail.com,
-        tstellar@redhat.com, LKML <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@google.com>
+In-Reply-To: <CAFqt6zb5j6QFM9ZHts15LUCkFRfPA_W11eSDs7wsWbKVJv4jPw@mail.gmail.com>
+References: <20180510134203.GA25166@jordon-HP-15-Notebook-PC> <CAFqt6zb5j6QFM9ZHts15LUCkFRfPA_W11eSDs7wsWbKVJv4jPw@mail.gmail.com>
+From: Souptick Joarder <jrdr.linux@gmail.com>
+Date: Fri, 25 May 2018 02:00:33 +0530
+Message-ID: <CAFqt6zZcax5H8rfumMCOA0amUC25dB-=EkNHb5rbLBsmK0Z5kQ@mail.gmail.com>
+Subject: Re: [PATCH] gpu: drm: drm_vm: Adding new typedef vm_fault_t
+To: daniel.vetter@intel.com, Gustavo Padovan <gustavo@padovan.org>,
+        Sean Paul <seanpaul@chromium.org>, airlied@linux.ie
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 11:59 AM <hpa@zytor.com> wrote:
-> Ok, this is the *second* thing about LLVM-originated bug reports that
-drives me batty. When you *do* identify a real problem, you propose a paper
-over and/or talk about it as an LLVM issue and don't consider the often far
-bigger picture.
+On Wed, May 16, 2018 at 10:09 AM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> On Thu, May 10, 2018 at 7:12 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+>> Use new return type vm_fault_t for fault handler. For
+>> now, this is just documenting that the function returns
+>> a VM_FAULT value rather than an errno. Once all instances
+>> are converted, vm_fault_t will become a distinct type.
+>>
+>> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
+>>
+>> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+>> Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+>> ---
+>>  drivers/gpu/drm/drm_vm.c | 10 +++++-----
+>>  1 file changed, 5 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/drm_vm.c b/drivers/gpu/drm/drm_vm.c
+>> index 2660543..c330104 100644
+>> --- a/drivers/gpu/drm/drm_vm.c
+>> +++ b/drivers/gpu/drm/drm_vm.c
+>> @@ -100,7 +100,7 @@ static pgprot_t drm_dma_prot(uint32_t map_type, struct vm_area_struct *vma)
+>>   * map, get the page, increment the use count and return it.
+>>   */
+>>  #if IS_ENABLED(CONFIG_AGP)
+>> -static int drm_vm_fault(struct vm_fault *vmf)
+>> +static vm_fault_t drm_vm_fault(struct vm_fault *vmf)
+>>  {
+>>         struct vm_area_struct *vma = vmf->vma;
+>>         struct drm_file *priv = vma->vm_file->private_data;
+>> @@ -173,7 +173,7 @@ static int drm_vm_fault(struct vm_fault *vmf)
+>>         return VM_FAULT_SIGBUS; /* Disallow mremap */
+>>  }
+>>  #else
+>> -static int drm_vm_fault(struct vm_fault *vmf)
+>> +static vm_fault_t drm_vm_fault(struct vm_fault *vmf)
+>>  {
+>>         return VM_FAULT_SIGBUS;
+>>  }
+>> @@ -189,7 +189,7 @@ static int drm_vm_fault(struct vm_fault *vmf)
+>>   * Get the mapping, find the real physical page to map, get the page, and
+>>   * return it.
+>>   */
+>> -static int drm_vm_shm_fault(struct vm_fault *vmf)
+>> +static vm_fault_t drm_vm_shm_fault(struct vm_fault *vmf)
+>>  {
+>>         struct vm_area_struct *vma = vmf->vma;
+>>         struct drm_local_map *map = vma->vm_private_data;
+>> @@ -291,7 +291,7 @@ static void drm_vm_shm_close(struct vm_area_struct *vma)
+>>   *
+>>   * Determine the page number from the page offset and get it from drm_device_dma::pagelist.
+>>   */
+>> -static int drm_vm_dma_fault(struct vm_fault *vmf)
+>> +static vm_fault_t drm_vm_dma_fault(struct vm_fault *vmf)
+>>  {
+>>         struct vm_area_struct *vma = vmf->vma;
+>>         struct drm_file *priv = vma->vm_file->private_data;
+>> @@ -326,7 +326,7 @@ static int drm_vm_dma_fault(struct vm_fault *vmf)
+>>   *
+>>   * Determine the map offset from the page offset and get it from drm_sg_mem::pagelist.
+>>   */
+>> -static int drm_vm_sg_fault(struct vm_fault *vmf)
+>> +static vm_fault_t drm_vm_sg_fault(struct vm_fault *vmf)
+>>  {
+>>         struct vm_area_struct *vma = vmf->vma;
+>>         struct drm_local_map *map = vma->vm_private_data;
+>> --
+>> 1.9.1
+>>
+>
+> Daniel, if no further comment, we would like to get this patch
+> in queue for 4.18.
 
-Considering the bigger picture is why we have this thread going.  You have
-much more context about the kernel than I or the llvm maintainers do.  We
-can't consider the bigger picture until we ask.
-
-> Issue 1: Fundamentally,
-
-Fundamentally, the Linux kernel should not rely on GCC's heuristics for
-adding or not adding a stack protector to functions with custom calling
-conventions that are not marked in any way to let the compiler know.
-
-Should GCC change their heuristic, deciding to insert stack guards for
-non-inlined but marked static inline functions for
--fstack-protector-strong, or the kernel decide to use
--fstack-protector-all, the paravirt code will break in the same way.
-
-> You are claiming it doesn't buy us anything, but you are only looking at
-the paravirt case which is kind of "special" (in the short bus kind of way),
-
-That's fair.  Is another possible solution to have paravirt maybe not use
-native_save_fl() then, but its own non-static-inline-without-m-constraint
-implementation?
-
-> Issue 2: ... The other option is to turn stack canary explicitly off for
-all such functions.
-
-We're looking to add the compiler attribute no_stack_protector.  It's added
-in mainline clang, the llvm bug cited earlier is about getting it
-backported into clang-6.0.1 release.  Sedat has tested/verified a set of
-patches to the kernel that use this new feature in:
-https://marc.info/?l=linux-kernel&m=152697630812366&w=2
-
-> Issue 3: Let's face it, reading and writing the flags should be builtins,
-exactly because it has to do stack operations, which really means the
-compiler should be involved.
-
-I'm happy to propose that as a feature request to llvm+gcc.
--- 
-Thanks,
-~Nick Desaulniers
+We would like to get this in queue for 4.18.
