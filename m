@@ -1,101 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967041AbeEXJrS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 05:47:18 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:39753 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967013AbeEXJrI (ORCPT
+        id S967703AbeEXJv1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 05:51:27 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:48766 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966279AbeEXJvM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 05:47:08 -0400
-Date: Thu, 24 May 2018 11:47:05 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Tony Lindgren <tony@atomide.com>
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>, sre@kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, khilman@kernel.org,
-        ivo.g.dimitrov.75@gmail.com, patrikbachan@gmail.com, serge@hallyn.com,
-        abcloriens@gmail.com, clayton@craftyguy.net, martijn@brixit.nl,
-        sakari.ailus@linux.intel.com,
-        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
-        Thorsten Leemhuis <regressions@leemhuis.info>
-Subject: Re: v4.17-rc1: regressions on N900, N950
-Message-ID: <20180524094705.GA16705@amd>
-References: <20180422074213.GA12428@amd>
- <20180423202940.ig6iud5lrbgnu35a@darkstar.musicnaut.iki.fi>
- <20180521213952.GA11596@amd>
- <20180522080250.4fzyvqrgw5oigexn@pali>
- <20180522194139.GB2299@darkstar.musicnaut.iki.fi>
- <20180522205824.GA24927@amd>
- <20180522215638.GC2299@darkstar.musicnaut.iki.fi>
- <20180523140615.GA27180@amd>
- <20180523201208.GA31731@amd>
- <20180523220456.GY98604@atomide.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="9amGYk9869ThD9tj"
-Content-Disposition: inline
-In-Reply-To: <20180523220456.GY98604@atomide.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Thu, 24 May 2018 05:51:12 -0400
+From: Jianchao Wang <jianchao.w.wang@oracle.com>
+To: keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me
+Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] nvme-pci: don't send delete cq command when allocate sq return -EINTR
+Date: Thu, 24 May 2018 17:51:34 +0800
+Message-Id: <1527155494-1891-2-git-send-email-jianchao.w.wang@oracle.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1527155494-1891-1-git-send-email-jianchao.w.wang@oracle.com>
+References: <1527155494-1891-1-git-send-email-jianchao.w.wang@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8902 signatures=668700
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805240119
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When allocate sq in nvme_create_queue return -EINTR, it means the
+allocate sq command times out and is completed with NVME_REQ_CANCELLED.
+At the moment, the controller has been disabled and admin request
+queue has been quiesced. Don't send delete cq command, otherwise,
+it will incur io hang.
 
---9amGYk9869ThD9tj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+---
+ drivers/nvme/host/pci.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-Hi!
-
-> > > So... I did some experiments on v4.16.
-> > >=20
-> > > Swapping tsc2005@0 and lcd: acx565akm@2 entries in the dts does break
-> > > stuff.
-> > >=20
-> > > I thought it might be due to vio regulator, but it does not appear
-> > > so... screen still works with tsc2005 driver disabled in .config. (so
-> > > there's noone to enable vio regulator).
-> >=20
-> > Deleting tsc2005@0 entry also breaks screen.
-> >=20
-> > Replacing tsc2005@0 entry with=20
-> >=20
-> >         foobar@0 {
-> > 	               compatible =3D "not really with anything";
-> >  		       spi-max-frequency =3D <6000000>;
-> >  		       reg =3D <0>;
-> >  };
-> >=20
-> > still results in working touchscreen, removing any of the three fields
-> > breaks it again.
->=20
-> I bisected one regression down, see "omapdrm regression in v4.17-rc serie=
-s"
-> not sure if it covers all the issues being discussed here though.
-
-Reverting 24aac6011f70 fixes screen on n900 in v4.17-rc for me. (But
-strange dependency on tsc2005@0 is still there).
-
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---9amGYk9869ThD9tj
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlsGihkACgkQMOfwapXb+vJ0rgCglJW7XtpGu4tG1Z6c0yqPXNAm
-Y0MAnj2+L76ZZfueUH00t5AKakHguU8Q
-=wIst
------END PGP SIGNATURE-----
-
---9amGYk9869ThD9tj--
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 70b79f2..4ce1c89 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -1478,7 +1478,15 @@ static int nvme_create_queue(struct nvme_queue *nvmeq, int qid)
+ 		goto out;
+ 
+ 	result = adapter_alloc_sq(dev, qid, nvmeq);
+-	if (result < 0)
++	/*
++	 * If return -EINTR, it means the allocate sq command times out and is completed
++	 * with NVME_REQ_CANCELLED. At the time, the controller has been disabled
++	 * and admin request queue has been quiesced. So don't try to send delete cq
++	 * command any more.
++	 */
++	if (result == -EINTR)
++		goto out;
++	else if (result < 0)
+ 		goto release_cq;
+ 
+ 	/*
+-- 
+2.7.4
