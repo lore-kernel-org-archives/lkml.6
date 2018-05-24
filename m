@@ -1,111 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935298AbeEXB10 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 21:27:26 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:35806 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935109AbeEXB1X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 21:27:23 -0400
-From: Jianchao Wang <jianchao.w.wang@oracle.com>
-To: keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me
-Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V3] nvme-rdma: stop queue first before free it in config admin queue
-Date: Thu, 24 May 2018 09:27:38 +0800
-Message-Id: <1527125258-15825-1-git-send-email-jianchao.w.wang@oracle.com>
-X-Mailer: git-send-email 2.7.4
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8902 signatures=668700
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805240014
+        id S935336AbeEXBgA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 21:36:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47666 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935109AbeEXBf5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 21:35:57 -0400
+Date: Wed, 23 May 2018 21:35:53 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Joel Fernandes <joel@joelfernandes.org>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Joel Fernandes <joelaf@google.com>, linux-kernel@vger.kernel.org,
+        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Boqun Feng <boqun.feng@gmail.com>, byungchul.park@lge.com,
+        kernel-team@android.com, Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH 1/4] rcu: Speed up calling of RCU tasks callbacks
+Message-ID: <20180523213553.7a0ffd6d@gandalf.local.home>
+In-Reply-To: <20180524005119.GA170821@joelaf.mtv.corp.google.com>
+References: <20180523063815.198302-1-joel@joelfernandes.org>
+        <20180523063815.198302-2-joel@joelfernandes.org>
+        <20180523155734.GK3803@linux.vnet.ibm.com>
+        <20180523124531.7b0e972a@gandalf.local.home>
+        <20180523170303.GR3803@linux.vnet.ibm.com>
+        <20180523151337.469bba34@gandalf.local.home>
+        <20180523200458.GD3803@linux.vnet.ibm.com>
+        <20180524005119.GA170821@joelaf.mtv.corp.google.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When any of cases after nvme_rdma_start_queue in
-nvme_rdma_configure_admin_queue fails, the ctrl->queues[0] will be
-freed but the NVME_RDMA_Q_LIVE is still set. If nvme_rdma_stop_queue
-is invoked, we will incur use-after-free which will cause memory
-corruption.
-BUG: KASAN: use-after-free in rdma_disconnect+0x1f/0xe0 [rdma_cm]
-Read of size 8 at addr ffff8801dc3969c0 by task kworker/u16:3/9304
+On Wed, 23 May 2018 17:51:19 -0700
+Joel Fernandes <joel@joelfernandes.org> wrote:
 
-CPU: 3 PID: 9304 Comm: kworker/u16:3 Kdump: loaded Tainted: G        W         4.17.0-rc3+ #20
-Workqueue: nvme-delete-wq nvme_delete_ctrl_work
-Call Trace:
- dump_stack+0x91/0xeb
- print_address_description+0x6b/0x290
- kasan_report+0x261/0x360
- rdma_disconnect+0x1f/0xe0 [rdma_cm]
- nvme_rdma_stop_queue+0x25/0x40 [nvme_rdma]
- nvme_rdma_shutdown_ctrl+0xf3/0x150 [nvme_rdma]
- nvme_delete_ctrl_work+0x98/0xe0
- process_one_work+0x3ca/0xaa0
- worker_thread+0x4e2/0x6c0
- kthread+0x18d/0x1e0
- ret_from_fork+0x24/0x30
+> Shouldn't this assignment be done outside the loop? I believe the variable
+> will be initialized on each iteration.
+> 
+> A program like this doesn't terminate:
+> 
+> #include<stdio.h>
+> 
+> int main() {
+> 	for (;;) {
+> 		int i = 10;
+> 		if (!(i--))
+> 			break;
+> 	}
+> 
+> 	return 0;
+> }
 
-To fix it, call nvme_rdma_stop_queue for all the failed cases after
-nvme_rdma_start_queue.
+Hey, it compiled, booted and tested. SHIP IT! ;-)
 
-Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
-Suggested-by: Sagi Grimberg <sagi@grimberg.me>
-Reviewed-by: Max Gurtovoy <maxg@mellanox.com>
----
+But yeah, a little egg on my face for that one. I blame it for the
+first code I wrote right off of coming back from vacation.
 
-V3:
-add Suggested-by Sagi
+> 
+> Otherwise looks good to me, I would initialize fract to 10 so its consistent
+> with "HZ/10" in other parts of the code but I'm ok with either number.
 
-V2:
-based on Sagi's suggestion, add out_stop_queue lable and invoke
-nvme_rdma_stop_queue in all the failed cases after nvme_rdma_start_queue
+I was thinking about that, but for some reason I thought 15. Not sure
+why. I'm fine with dropping it down to 10. I'll send out a more proper
+patch tomorrow.
 
+Thanks!
 
- drivers/nvme/host/rdma.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/nvme/host/rdma.c b/drivers/nvme/host/rdma.c
-index 1eb4438..2181299 100644
---- a/drivers/nvme/host/rdma.c
-+++ b/drivers/nvme/host/rdma.c
-@@ -778,7 +778,7 @@ static int nvme_rdma_configure_admin_queue(struct nvme_rdma_ctrl *ctrl,
- 	if (error) {
- 		dev_err(ctrl->ctrl.device,
- 			"prop_get NVME_REG_CAP failed\n");
--		goto out_cleanup_queue;
-+		goto out_stop_queue;
- 	}
- 
- 	ctrl->ctrl.sqsize =
-@@ -786,23 +786,25 @@ static int nvme_rdma_configure_admin_queue(struct nvme_rdma_ctrl *ctrl,
- 
- 	error = nvme_enable_ctrl(&ctrl->ctrl, ctrl->ctrl.cap);
- 	if (error)
--		goto out_cleanup_queue;
-+		goto out_stop_queue;
- 
- 	ctrl->ctrl.max_hw_sectors =
- 		(ctrl->max_fr_pages - 1) << (ilog2(SZ_4K) - 9);
- 
- 	error = nvme_init_identify(&ctrl->ctrl);
- 	if (error)
--		goto out_cleanup_queue;
-+		goto out_stop_queue;
- 
- 	error = nvme_rdma_alloc_qe(ctrl->queues[0].device->dev,
- 			&ctrl->async_event_sqe, sizeof(struct nvme_command),
- 			DMA_TO_DEVICE);
- 	if (error)
--		goto out_cleanup_queue;
-+		goto out_stop_queue;
- 
- 	return 0;
- 
-+out_stop_queue:
-+	nvme_rdma_stop_queue(&ctrl->queues[0]);
- out_cleanup_queue:
- 	if (new)
- 		blk_cleanup_queue(ctrl->ctrl.admin_q);
--- 
-2.7.4
+-- Steve
