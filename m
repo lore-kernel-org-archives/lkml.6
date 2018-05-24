@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1797295-1527159462-2-18151258717782525905
+X-Cyrus-Session-Id: sloti22d1t05-1797295-1527159435-2-2486622024012982475
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES enroca, BAYES_USED global,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527159461; b=mUVgMrrOiiKp5lpMFguMjfWjOA+nzewl4kXIXFPJpZbn30c/oL
-    kCUqB1+7oU3bZhebnh3VDwGi047ruP8bt47nVKR0jxuAyqkSGO0BMhUavWUmdwfg
-    ATqp0wZcJtn1VEWam7xnJRApI43lj9X8I+SsF2GTGcZ22fIyLLqTHcBsNsnEUcAv
-    2CblTAQngTUEN4xrUVamATWt8/VksNl7PKFnU8G9WOPyg9a9JPy6qUS5WFYwrQhG
-    k1XSyEwDWfMJihiqrRtemqV1U2gpcqrKUmnM7cMB19C1v3g2T5WnyJhAtOUu40ft
-    pHIhxZXk93eEcDOIbmyBRcpCtFEyaCTvuUKQ==
+    1527159434; b=fW/DPCkh+wtmwo0OAhZGlj9vP821jP61TGK7HA4fmBV4ikP+Nj
+    fuP8/pcv9JxfBZJaaNpzqIAZff1ZSF2faUMyegn1hAHimtKP/tcVyqJKmVDChB11
+    bHnTk0MI3bwtyPAh1cs+lWaJg2gVcubgwcChEdt7vb6REfJ9ALXm4Mzr0pIg6FXU
+    m8FaNUI/XCn6ijC6bYA57HIK9i0MwtEEwE5Em7h4KRufGwfGT/8trJmpSn+/hDc+
+    EJES2n28JM03mUbdrvtuMCN/Xj4Tb6g4ujMMOqick2ucpXTdxTK0u5Q8HKH4yM6L
+    0SyJLBLKiBv5Zj31uT+85N1KicA1FJPMjGVg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527159461; bh=lKANvCog72qIUIXDXFTzcd8ndQnJMa
-    m6X4RfaoDTbHA=; b=PY59P8uhIjb76xMt5pGphkoHjD61/xEqrwapWtGDclHPR8
-    GCJ2zpwCyM7JyxIjZp6ER+xzNE3fcEmqQzdb+PLsn+qRT30Nh2uos5weQugTUD+7
-    cX6g0FNodHVbgKp8Ocl0u8sU3cE4JEl96UydqJ1OpIhkCL95QuVJ2L20KdIYLvTa
-    i4uoyCBc+S2I3h/IF10XoXnqoWkdzGVxFR3JYRxEzwVl5WvTzNGeraEO0FIxeiux
-    akYe8SZ3rQvu6T/YJC8aRchjb+zkr4pZqb7oDdWHkqZ6/f71SF0gmcWYCZM9AZWs
-    /+hhYcERn7enwx2hfC1hj3xAYZv/KWNzdnM1uqJw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527159434; bh=c5AA2PI6zYK1jT0AZabUsCZvoPHO48
+    0/7iDTyweHNxU=; b=NDkLpjJ7Qx423cEgWobkUrR99ntD09UjRRUwCw44GUOSIt
+    iFPOAWL0uqyP9yyKsYyoxMhyoXtTuTscy0xWA8MHs80dfQSIti+abd18NLG/Gx87
+    6MAh9PV8DSlSL9MoDLqTC38em+DZA/HCBqRrlWpSG3IowyfhZMu3TrbqCzxf/GcU
+    82pYlQLhKAiqiZXYEFrhix/R1hGrPrG2WAf1n/fLzz+gJLOlixBdryYuRZvG+mH1
+    AAQxG3u70TVh7Qp1i6Me5n1IYHACXVyh2LQZzc03VgokP38GJHS8Pq6KMFj2riiA
+    ZJRLuQ61oFWR8CFHBADKQNEBTpx47Ut2dbywX+9Q==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=p4ZyZ5mz x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=N/VXf+Id x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -46,10 +46,10 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=p4ZyZ5mz x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=N/VXf+Id x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -65,34 +65,32 @@ Authentication-Results: mx1.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJIJ7ma9rAqSqEL4U/T6Km3Dx+bO0Z9dE+d0H2HAlKlDul7OswUbC0Un4CdWxKWTzSAZYDevXVw01Wl+na88jVH/dDcUplqjUMko+tO2daX8MWvpbbtr
-    +lUcia2t+IEldehxsQH3l1poYm+vPLjnY+efE4QlmXzB71XEHez8/V1m81cNxTcT6DmUJe4yQL5USGLUOdW+Ta8V3l/ZfYapu9eOwzMG/0h6yCV5x/Q5cUq9
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfNX6Ibg1S8c4x0CGZ/vaA61J5DZO3ezsNxYbFIF+Dgv/VNS07YTcVcfyELdNx5I0Q2BDhy4ii8W39agLnOkruAXK69HSN4L6Ia1ivLz/P+oGwyYgJsCg
+    zvf9B9hTXx5R8yJDZ/hLYJApM89Wz8/lEF0OioQunm5FMgZ9qYl9k34iAxN/Er/9dmSvpuYC89+U60Gd9cN0+brix+RjL/zb2dCSrE7ZA59nQ4dSJknuiBd9
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=zAyngx5bAAAA:8 a=20KFwNOVAAAA:8 a=yPCof4ZbAAAA:8 a=yMhMjlubAAAA:8
-    a=ag1SF4gXAAAA:8 a=CuLLJFOO9y4rdPHpTEYA:9 a=QEXdDO2ut3YA:10
-    a=4LA4qAFo6bo561LpWNDU:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=zAyngx5bAAAA:8 a=yPCof4ZbAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=zj8qez6UZ4e0oZhRU_AA:9 a=QEXdDO2ut3YA:10 a=4LA4qAFo6bo561LpWNDU:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030270AbeEXK5i (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 06:57:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36108 "EHLO mail.kernel.org"
+        id S1030284AbeEXJ4S (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:56:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36202 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030259AbeEXJ4L (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:56:11 -0400
+        id S1030277AbeEXJ4Q (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:56:16 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         Manish Rangankar <manish.rangankar@cavium.com>,
-        "Ewan D. Milne" <emilne@redhat.com>,
-        Tomas Henzl <thenzl@redhat.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 109/165] scsi: qla4xxx: skip error recovery in case of register disconnect.
-Date: Thu, 24 May 2018 11:38:35 +0200
-Message-Id: <20180524093626.428842355@linuxfoundation.org>
+Subject: [PATCH 4.14 111/165] scsi: qedi: Fix kernel crash during port toggle
+Date: Thu, 24 May 2018 11:38:37 +0200
+Message-Id: <20180524093626.511889842@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -112,134 +110,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Manish Rangankar <manish.rangankar@cavium.com>
 
-[ Upstream commit 1bc5ad3a6acdcf56f83272f2de1cd2389ea9e9e2 ]
+[ Upstream commit 967823d6c3980a30e214b92bfe6a101e7b46d025 ]
 
-A system crashes when continuously removing/re-adding the storage
-controller.
+BUG: unable to handle kernel NULL pointer dereference at 0000000000000100
+
+[  985.596918] IP: _raw_spin_lock_bh+0x17/0x30
+[  985.601581] PGD 0 P4D 0
+[  985.604405] Oops: 0002 [#1] SMP
+:
+[  985.704533] CPU: 16 PID: 1156 Comm: qedi_thread/16 Not tainted 4.16.0-rc2 #1
+[  985.712397] Hardware name: Dell Inc. PowerEdge R730/0599V5, BIOS 2.4.3 01/17/2017
+[  985.720747] RIP: 0010:_raw_spin_lock_bh+0x17/0x30
+[  985.725996] RSP: 0018:ffffa4b1c43d3e10 EFLAGS: 00010246
+[  985.731823] RAX: 0000000000000000 RBX: ffff94a31bd03000 RCX: 0000000000000000
+[  985.739783] RDX: 0000000000000001 RSI: ffff94a32fa16938 RDI: 0000000000000100
+[  985.747744] RBP: 0000000000000004 R08: 0000000000000000 R09: 0000000000000a33
+[  985.755703] R10: 0000000000000000 R11: ffffa4b1c43d3af0 R12: 0000000000000000
+[  985.763662] R13: ffff94a301f40818 R14: 0000000000000000 R15: 000000000000000c
+[  985.771622] FS:  0000000000000000(0000) GS:ffff94a32fa00000(0000) knlGS:0000000000000000
+[  985.780649] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  985.787057] CR2: 0000000000000100 CR3: 000000067a009006 CR4: 00000000001606e0
+[  985.795017] Call Trace:
+[  985.797747]  qedi_fp_process_cqes+0x258/0x980 [qedi]
+[  985.803294]  qedi_percpu_io_thread+0x10f/0x1b0 [qedi]
+[  985.808931]  kthread+0xf5/0x130
+[  985.812434]  ? qedi_free_uio+0xd0/0xd0 [qedi]
+[  985.817298]  ? kthread_bind+0x10/0x10
+[  985.821372]  ? do_syscall_64+0x6e/0x1a0
 
 Signed-off-by: Manish Rangankar <manish.rangankar@cavium.com>
-Reviewed-by: Ewan D. Milne <emilne@redhat.com>
-Reviewed-by: Tomas Henzl <thenzl@redhat.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/qla4xxx/ql4_def.h |    2 +
- drivers/scsi/qla4xxx/ql4_os.c  |   46 +++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 48 insertions(+)
+ drivers/scsi/qedi/qedi_fw.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/scsi/qla4xxx/ql4_def.h
-+++ b/drivers/scsi/qla4xxx/ql4_def.h
-@@ -168,6 +168,8 @@
- #define DEV_DB_NON_PERSISTENT	0
- #define DEV_DB_PERSISTENT	1
+--- a/drivers/scsi/qedi/qedi_fw.c
++++ b/drivers/scsi/qedi/qedi_fw.c
+@@ -769,6 +769,11 @@ static void qedi_process_cmd_cleanup_res
  
-+#define QL4_ISP_REG_DISCONNECT 0xffffffffU
-+
- #define COPY_ISID(dst_isid, src_isid) {			\
- 	int i, j;					\
- 	for (i = 0, j = ISID_SIZE - 1; i < ISID_SIZE;)	\
---- a/drivers/scsi/qla4xxx/ql4_os.c
-+++ b/drivers/scsi/qla4xxx/ql4_os.c
-@@ -262,6 +262,24 @@ static struct iscsi_transport qla4xxx_is
- 
- static struct scsi_transport_template *qla4xxx_scsi_transport;
- 
-+static int qla4xxx_isp_check_reg(struct scsi_qla_host *ha)
-+{
-+	u32 reg_val = 0;
-+	int rval = QLA_SUCCESS;
-+
-+	if (is_qla8022(ha))
-+		reg_val = readl(&ha->qla4_82xx_reg->host_status);
-+	else if (is_qla8032(ha) || is_qla8042(ha))
-+		reg_val = qla4_8xxx_rd_direct(ha, QLA8XXX_PEG_ALIVE_COUNTER);
-+	else
-+		reg_val = readw(&ha->reg->ctrl_status);
-+
-+	if (reg_val == QL4_ISP_REG_DISCONNECT)
-+		rval = QLA_ERROR;
-+
-+	return rval;
-+}
-+
- static int qla4xxx_send_ping(struct Scsi_Host *shost, uint32_t iface_num,
- 			     uint32_t iface_type, uint32_t payload_size,
- 			     uint32_t pid, struct sockaddr *dst_addr)
-@@ -9188,10 +9206,17 @@ static int qla4xxx_eh_abort(struct scsi_
- 	struct srb *srb = NULL;
- 	int ret = SUCCESS;
- 	int wait = 0;
-+	int rval;
- 
- 	ql4_printk(KERN_INFO, ha, "scsi%ld:%d:%llu: Abort command issued cmd=%p, cdb=0x%x\n",
- 		   ha->host_no, id, lun, cmd, cmd->cmnd[0]);
- 
-+	rval = qla4xxx_isp_check_reg(ha);
-+	if (rval != QLA_SUCCESS) {
-+		ql4_printk(KERN_INFO, ha, "PCI/Register disconnect, exiting.\n");
-+		return FAILED;
+ 	iscsi_cid = cqe->conn_id;
+ 	qedi_conn = qedi->cid_que.conn_cid_tbl[iscsi_cid];
++	if (!qedi_conn) {
++		QEDI_INFO(&qedi->dbg_ctx, QEDI_LOG_INFO,
++			  "icid not found 0x%x\n", cqe->conn_id);
++		return;
 +	}
-+
- 	spin_lock_irqsave(&ha->hardware_lock, flags);
- 	srb = (struct srb *) CMD_SP(cmd);
- 	if (!srb) {
-@@ -9243,6 +9268,7 @@ static int qla4xxx_eh_device_reset(struc
- 	struct scsi_qla_host *ha = to_qla_host(cmd->device->host);
- 	struct ddb_entry *ddb_entry = cmd->device->hostdata;
- 	int ret = FAILED, stat;
-+	int rval;
  
- 	if (!ddb_entry)
- 		return ret;
-@@ -9262,6 +9288,12 @@ static int qla4xxx_eh_device_reset(struc
- 		      cmd, jiffies, cmd->request->timeout / HZ,
- 		      ha->dpc_flags, cmd->result, cmd->allowed));
- 
-+	rval = qla4xxx_isp_check_reg(ha);
-+	if (rval != QLA_SUCCESS) {
-+		ql4_printk(KERN_INFO, ha, "PCI/Register disconnect, exiting.\n");
-+		return FAILED;
-+	}
-+
- 	/* FIXME: wait for hba to go online */
- 	stat = qla4xxx_reset_lun(ha, ddb_entry, cmd->device->lun);
- 	if (stat != QLA_SUCCESS) {
-@@ -9305,6 +9337,7 @@ static int qla4xxx_eh_target_reset(struc
- 	struct scsi_qla_host *ha = to_qla_host(cmd->device->host);
- 	struct ddb_entry *ddb_entry = cmd->device->hostdata;
- 	int stat, ret;
-+	int rval;
- 
- 	if (!ddb_entry)
- 		return FAILED;
-@@ -9322,6 +9355,12 @@ static int qla4xxx_eh_target_reset(struc
- 		      ha->host_no, cmd, jiffies, cmd->request->timeout / HZ,
- 		      ha->dpc_flags, cmd->result, cmd->allowed));
- 
-+	rval = qla4xxx_isp_check_reg(ha);
-+	if (rval != QLA_SUCCESS) {
-+		ql4_printk(KERN_INFO, ha, "PCI/Register disconnect, exiting.\n");
-+		return FAILED;
-+	}
-+
- 	stat = qla4xxx_reset_target(ha, ddb_entry);
- 	if (stat != QLA_SUCCESS) {
- 		starget_printk(KERN_INFO, scsi_target(cmd->device),
-@@ -9376,9 +9415,16 @@ static int qla4xxx_eh_host_reset(struct
- {
- 	int return_status = FAILED;
- 	struct scsi_qla_host *ha;
-+	int rval;
- 
- 	ha = to_qla_host(cmd->device->host);
- 
-+	rval = qla4xxx_isp_check_reg(ha);
-+	if (rval != QLA_SUCCESS) {
-+		ql4_printk(KERN_INFO, ha, "PCI/Register disconnect, exiting.\n");
-+		return FAILED;
-+	}
-+
- 	if ((is_qla8032(ha) || is_qla8042(ha)) && ql4xdontresethba)
- 		qla4_83xx_set_idc_dontreset(ha);
- 
+ 	/* Based on this itt get the corresponding qedi_cmd */
+ 	spin_lock_bh(&qedi_conn->tmf_work_lock);
