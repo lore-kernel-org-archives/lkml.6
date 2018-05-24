@@ -1,64 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S971421AbeEXURZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 16:17:25 -0400
-Received: from relay1.sgi.com ([192.48.180.66]:60396 "EHLO relay.sgi.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967867AbeEXURQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 16:17:16 -0400
-Message-Id: <20180524201711.854849120@stormcage.americas.sgi.com>
-References: <20180524201711.437084301@stormcage.americas.sgi.com>
-User-Agent: quilt/0.46-1
-Date: Thu, 24 May 2018 15:17:14 -0500
-From: <mike.travis@hpe.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: Dimitri Sivanich <dimitri.sivanich@hpe.com>,
-        Russ Anderson <russ.anderson@hpe.com>,
-        Andrew Banman <andrew.banman@hpe.com>, jgross@suse.com,
-        dan.j.williams@intel.com, mhocko@suse.com,
-        kirill.shutemov@linux.intel.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: [PATCH 3/3] x86/platform/UV: Add kernel parameter to set memory block size
-Content-Disposition: inline; filename=add-set_memory_block_size-param
+        id S971434AbeEXUR3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 16:17:29 -0400
+Received: from mail-wm0-f45.google.com ([74.125.82.45]:35592 "EHLO
+        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032503AbeEXURV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 16:17:21 -0400
+X-Google-Smtp-Source: AB8JxZoCOXHu9R+cooHZ5yPQ9BYCvu06pyVgTYdej/yk0cJKnbbrocqDUxMpW5rwCTqJQWRaDZ7PkTzh2368qecL5rQ=
+MIME-Version: 1.0
+In-Reply-To: <20180524193449.jql27apudwaevwpf@tarshish>
+References: <CA+Kvs9=mgW4Z=UcBZZLL82fJ=c--OXF3=B2Zbho+CfMTr8Wk-Q@mail.gmail.com>
+ <20180524193449.jql27apudwaevwpf@tarshish>
+From: Ramon Fried <ramon.fried@gmail.com>
+Date: Thu, 24 May 2018 23:17:19 +0300
+Message-ID: <CA+Kvs9=x4kxkj-amni+E_KVjH2qjq_mXU88Dr-x5NNyz64gfuA@mail.gmail.com>
+Subject: Re: uImage target support on arm64
+To: Baruch Siach <baruch@tkos.co.il>
+Cc: catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-arm-kernel@lists.infradead.org,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a kernel parameter that allows setting UV memory block size.  This
-is to provide an adjustment for new forms of PMEM and other DIMM memory
-that might require alignment restrictions other than scanning the global
-address table for the required minimum alignment.  The value set will be
-further adjusted by both the GAM range table scan as well as restrictions
-imposed by set_memory_block_size_order().
-
-Signed-off-by: Mike Travis <mike.travis@hpe.com>
-Reviewed-by: Andrew Banman <andrew.banman@hpe.com>
-Cc: stable@vger.kernel.org
----
- arch/x86/kernel/apic/x2apic_uv_x.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
-
---- linux.orig/arch/x86/kernel/apic/x2apic_uv_x.c
-+++ linux/arch/x86/kernel/apic/x2apic_uv_x.c
-@@ -396,6 +396,17 @@ EXPORT_SYMBOL(uv_hub_info_version);
- /* Default UV memory block size is 2GB */
- static unsigned long mem_block_size = (2UL << 30);
- 
-+/* Kernel parameter to specify UV mem block size */
-+static int parse_mem_block_size(char *ptr)
-+{
-+	unsigned long size = memparse(ptr, NULL);
-+
-+	/* Size will be rounded down by set_block_size() below */
-+	mem_block_size = size;
-+	return 0;
-+}
-+early_param("uv_memblksize", parse_mem_block_size);
-+
- static __init int adj_blksize(u32 lgre)
- {
- 	unsigned long base = (unsigned long)lgre << UV_GAM_RANGE_SHFT;
-
--- 
+On Thu, May 24, 2018 at 10:34 PM, Baruch Siach <baruch@tkos.co.il> wrote:
+> Hi Ramon,
+>
+> On Thu, May 24, 2018 at 10:05:15PM +0300, Ramon Fried wrote:
+>> I've noticed that it's not supported.
+>> Is it on purpose ?
+>
+> Yes. The 32bit load address in the uImage header in pretty limited when
+> applied to 64bit ARM64. Even for ARM zImage is the preferred kernel format for
+> quite some time now, since it allows flexible load address, as well as
+> multi-platform kernels.
+Hi Baruch.
+I though that in terms of U-boot, the new FIT image is the preferred
+kernel format.
+Thanks,
+Ramon.
+>
+>> If not I'll be happy to add support for: make uImage
+>> for arm64 targets.
+>
+> baruch
+>
+> --
+>      http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
+> =}------------------------------------------------ooO--U--Ooo------------{=
+>    - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
