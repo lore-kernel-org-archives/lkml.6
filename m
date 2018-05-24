@@ -1,82 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967059AbeEXMtb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 08:49:31 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:44979 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965230AbeEXMt0 (ORCPT
+        id S967183AbeEXMuR convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 08:50:17 -0400
+Received: from mail1.bemta26.messagelabs.com ([85.158.142.114]:50470 "EHLO
+        mail1.bemta26.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935296AbeEXMuL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 08:49:26 -0400
-X-Google-Smtp-Source: AB8JxZo0ffeU5b+PaIK/TQgjyWHIk7RSbf4kmoPgMdV2cXxh+iEgXKUdsxmdvljOAjTeAtVvcPiU7A==
-Subject: Re: [PATCH v1 2/2] cpufreq: tegra20: Use PLL_C as intermediate clock
- source
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180523160020.15291-1-digetx@gmail.com>
- <20180523160020.15291-2-digetx@gmail.com>
- <20180524100413.GL6835@tbergstrom-lnx.Nvidia.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=digetx@gmail.com; prefer-encrypt=mutual; keydata=
- xsBNBFpX5TwBCADQhg+lBnTunWSPbP5I+rM9q6EKPm5fu2RbqyVAh/W3fRvLyghdb58Yrmjm
- KpDYUhBIZvAQoFLEL1IPAgJBtmPvemO1XUGPxfYNh/3BlcDFBAgERrI3BfA/6pk7SAFn8u84
- p+J1TW4rrPYcusfs44abJrn8CH0GZKt2AZIsGbGQ79O2HHXKHr9V95ZEPWH5AR0UtL6wxg6o
- O56UNG3rIzSL5getRDQW3yCtjcqM44mz6GPhSE2sxNgqureAbnzvr4/93ndOHtQUXPzzTrYB
- z/WqLGhPdx5Ouzn0Q0kSVCQiqeExlcQ7i7aKRRrELz/5/IXbCo2O+53twlX8xOps9iMfABEB
- AAHNIkRtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT7CwJQEEwEIAD4WIQSczHcO
- 3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgIDAQIeAQIX
- gAAKCRDTNNaPsNRzvFjTCACqAh1M9/YPq73/ai5h2ExDquTgJnjegL8KL2yHL3G+XINwzN5E
- nPI7esoYm+zVWDJbv3UuRqylpookLNSRA01yyvkaMcipB/B128UnqmUiGRqezj9QE20yIauo
- uHRuwHPE2q+UkfUhRX9iuOaEyQtZDiCa0myMjmRkJ+Z8ZetclEPG8dYZu47w04phuMlu1QAt
- a0gkZOaMKvXgj21ushALS6nYnvm7HiIPQXfnEXThartatRvFdmbG4PCn0IoICkQBizwJtXrL
- HEjELIFap0M8krVJlUoZTFaZnaZkGpUDWikeFtAuie2KuIxmVBYPM4X7pM3eP3AVvIPGS7EE
- UUFuzsBNBFpX5TwBCADFNDou220thijaLLGaQsebWjzc/gPRxMixIpk856MRyRaQin+IbGD6
- YskMb5ZSD3nS88LIKNfY4MMH0LwfYztI++ICG2vdFLkbBt78E+LqEa+kZ9072l4W5KO3mWQo
- +jMfxXbpgGlc7iuEReDgl8iyZ27r51kSW665CYvvu2YJhLqgdj6QM1lN2D1UnhEhkkU+pRAj
- 1rJVOxdfJaQNQS4+204p3TrURovzNGkN/brqakpNIcqGOAGQqb8F0tuwwuP7ERq/BzDNkbdr
- qJOrVC/wkHRq1jfabQczWKf8MwYOvivR3HY8d3CpSQxmUXDtdOWfg0XGm1dxYnVfqPjuJaZt
- ABEBAAHCwHwEGAEIACYWIQSczHcO3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbDAUJA8JnAAAK
- CRDTNNaPsNRzvJzuB/9d+sxcwHbO8ZDcgaLX9N+bXFqN9fIRVmBUyWa+qqTSREA4uVAtYcRT
- lfPE2OQ7aMFxaYPwo+/z5SLpu8HcEhN/FG9uIkfYwK0mdCO0vgvlfvBJm4VHe7C6vyAeEPJQ
- DKbBvdgeqFqO+PsLkk2sawF/9sontMJ5iFfjNDj4UeAo4VsdlduTBZv5hHFvIbv/p7jKH6OT
- 90FsgUSVbShh7SH5OzAcgqSy4kxuS1AHizWo6P3f9vei987LZWTyhuEuhJsOfivDsjKIq7qQ
- c5eR+JJtyLEA0Jt4cQGhpzHtWB0yB3XxXzHVa4QUp00BNVWyiJ/t9JHT4S5mdyLfcKm7ddc9
-Message-ID: <e6ee8116-7f73-fa7a-3df4-b17ccd8dcb0e@gmail.com>
-Date: Thu, 24 May 2018 15:49:22 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180524100413.GL6835@tbergstrom-lnx.Nvidia.com>
-Content-Type: text/plain; charset=utf-8
+        Thu, 24 May 2018 08:50:11 -0400
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrDKsWRWlGSWpSXmKPExsUSt3OpsS7TVrZ
+  og5l7OSymPnzCZjF39iRGi/tfjzJaXN41h81i68t3TBYPV85hsTi65x6zRd85dwcOj4lndT12
+  zrrL7rFpVSebx51re9g8ni1cz+LxeZNcAFsUa2ZeUn5FAmvGnocbWQtuiVcsvJ7RwNgg0sXIx
+  SEksIxR4ujV+SxdjJwcbAKGEvPevGcEsUUE0iXeXVjACFLELHCWSeLyws3MIAlhAVuJ9ccWs0
+  IU2Uns3PIAyjaS2HD7MpjNIqAq0XDmDZDNwcErECDxrsEUxBQSqJL40wFWwSngLHG9rRdsFaO
+  ArMSXxtVg05kFxCVuPZnPBGJLCAhILNlznhnCFpV4+fgfK4StIHH/TTdU3F7i9b13LBC2vsSj
+  x48YIWxDiVXTDkDFzSU+nG2Hmq8jsWD3JzYIW1ti2cLXYHFeAUGJkzOfsExgFJ+F5IxZSFpmI
+  WmZhaRlASPLKkbzpKLM9IyS3MTMHF1DAwNdQ0NjXRNdM73EKt0kvdRS3eTUvJKiRKCcXmJ5sV
+  5xZW5yTopeXmrJJkZgrDMAwQ7GK2+TDzFKcjApifKGPWWOFuJLyk+pzEgszogvKs1JLT7EKMP
+  BoSTB6/MWKCdYlJqeWpGWmQNMOjBpCQ4eJRFeBpA0b3FBYm5xZjpE6hSjopQ4rxJIQgAkkVGa
+  B9cGS3SXGGWlhHkZgQ4R4ilILcrNLEGVf8UozsGoJMybADKFJzOvBG76K6DFTECLLy4HW1ySi
+  JCSamAM/t4ydQ3HhstzM67WHrj4/Vd6n+CVpkqnX/M+rfYXvr9j9a5FPhWB+h841i74b1UZ/O
+  6Hc9XqkmNF4vnX902dW7wvvSH3tb/YzNRCw+mLbeWfyh4//0lccnfx9Ql5h2Mni8/84n9pE7u
+  FZorrpr2f3/ZLrslckWNr19kY8fTMLxOh/Q7XsrdsUWIpzkg01GIuKk4EAK+vYjFvAwAA
+X-Env-Sender: stwiss.opensource@diasemi.com
+X-Msg-Ref: server-14.tower-239.messagelabs.com!1527166209!744531!1
+X-Originating-IP: [94.185.165.51]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.9.15; banners=-,-,-
+X-VirusChecked: Checked
+From: Steve Twiss <stwiss.opensource@diasemi.com>
+To: Marek Vasut <marek.vasut@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        "Wolfram Sang" <wsa+renesas@sang-engineering.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH 4/6] mfd: da9063: Disallow RTC on DA9063L
+Thread-Topic: [PATCH 4/6] mfd: da9063: Disallow RTC on DA9063L
+Thread-Index: AQHT8osyzhJTN0cRsUGP0zmiJT/5I6Q+zGHA
+Date: Thu, 24 May 2018 12:50:08 +0000
+Message-ID: <6ED8E3B22081A4459DAC7699F3695FB701941A488A@SW-EX-MBX02.diasemi.com>
+References: <20180523114230.10109-1-marek.vasut+renesas@gmail.com>
+ <20180523114230.10109-4-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20180523114230.10109-4-marek.vasut+renesas@gmail.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.20.35.206]
+x-kse-attachmentfiltering-interceptor-info: protection disabled
+x-kse-serverinfo: sw-ex-cashub02.diasemi.com, 9
+x-kse-antivirus-interceptor-info: scan successful
+x-kse-antivirus-info: Clean, bases: 24/05/2018 11:32:00
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24.05.2018 13:04, Peter De Schrijver wrote:
-> On Wed, May 23, 2018 at 07:00:20PM +0300, Dmitry Osipenko wrote:
->> PLL_C is running at 600MHz which is significantly higher than the 216MHz
->> of the PLL_P and it is known that PLL_C is always-ON because AHB BUS is
->> running on that PLL. Let's use PLL_C as intermediate clock source, making
->> CPU snappier a tad during of the frequency transition.
->>
-> 
-> pll_c isn't necessarily 600Mhz when used as a source for the second display
-> head.
+Thanks Marek,
 
-Hmm, indeed.
+On 23 May 2018 12:42 Marek Vasut wrote,
 
-Even if PLL_C rate will be adjusted, it will be higher than the PLL_P.. won't
-it? That's likely to be good enough.
+> To: linux-kernel@vger.kernel.org
+> Cc: Marek Vasut <marek.vasut+renesas@gmail.com>; Geert Uytterhoeven <geert+renesas@glider.be>; Lee Jones <lee.jones@linaro.org>; Mark Brown <broonie@kernel.org>; Steve Twiss <stwiss.opensource@diasemi.com>; Wolfram Sang <wsa+renesas@sang-engineering.com>; linux-renesas-soc@vger.kernel.org
+> Subject: [PATCH 4/6] mfd: da9063: Disallow RTC on DA9063L
+>
+> The DA9063L does not contain RTC block, unlike the full DA9063.
+> Do not allow binding RTC driver on this variant of the chip.
+>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
+>  drivers/mfd/da9063-core.c | 18 +++++++++++-------
+>  1 file changed, 11 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c index 7360b76b4f72..263c83006413 100644
+> --- a/drivers/mfd/da9063-core.c
+> +++ b/drivers/mfd/da9063-core.c
+> @@ -101,14 +101,14 @@ static const struct mfd_cell da9063_devs[] = {
+>  		.of_compatible = "dlg,da9063-onkey",
+>  	},
+>  	{
+> +		.name		= DA9063_DRVNAME_VIBRATION,
+> +	},
+> +	{	/* Only present on DA9063 , not on DA9063L */
+>  		.name		= DA9063_DRVNAME_RTC,
+>  		.num_resources	= ARRAY_SIZE(da9063_rtc_resources),
+>  		.resources	= da9063_rtc_resources,
+>  		.of_compatible	= "dlg,da9063-rtc",
+>  	},
+> -	{
+> -		.name		= DA9063_DRVNAME_VIBRATION,
+> -	},
+>  };
+>  
+>  static int da9063_clear_fault_log(struct da9063 *da9063) @@ -163,7 +163,7 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)  {
+>  	struct da9063_pdata *pdata = da9063->dev->platform_data;
+>  	int model, variant_id, variant_code;
+> -	int ret;
+> +	int da9063_devs_len, ret;
+>  
+>  	ret = da9063_clear_fault_log(da9063);
+>  	if (ret < 0)
+> @@ -225,9 +225,13 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
+>  
+>  	da9063->irq_base = regmap_irq_chip_get_base(da9063->regmap_irq);
+>  
+> -	ret = mfd_add_devices(da9063->dev, -1, da9063_devs,
+> -			      ARRAY_SIZE(da9063_devs), NULL, da9063->irq_base,
+> -			      NULL);
+> +	da9063_devs_len = ARRAY_SIZE(da9063_devs);
+> +	/* RTC, the last device in the list, is only present on DA9063 */
+> +	if (da9063->type == PMIC_TYPE_DA9063L)
+> +		da9063_devs_len -= 1;
+> +
+> +	ret = mfd_add_devices(da9063->dev, -1, da9063_devs, da9063_devs_len,
+> +			      NULL, da9063->irq_base, NULL);
+>  	if (ret)
+>  		dev_err(da9063->dev, "Cannot add MFD cells\n");
+>  
+> --
+> 2.16.2
 
-Do you know if any of the available CCLK parents has a glitch-less rate
-switching? I.e. CPU won't hang on the rate switch.
+MFD cells definitely has less impact than regmap_range and regmap_irq.
+I agree, there's no point in having a completely new 
+static const struct mfd_cell da9063l_devs[] = { ... }  for DA9063L
 
-There is other possible 600MHz source, the PLL_M. Can we use it? This one also
-may become dynamic if we'll consider implementing the memory scaling, but the
-memory frequency probably will fit the transition role pretty well.
+Acked-by: Steve Twiss <stwiss.opensource@diasemi.com>
+
+Regards,
+Steve
