@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1874556-1527162375-2-267210627996042576
+X-Cyrus-Session-Id: sloti22d1t05-1862185-1527162362-2-5523261707374931801
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527162375; b=FXtCfQEWEbcFSLCfsHflcKYyzf9SXZ/NKx2uT2hdJ+FKOnG0g/
-    Nk8r6TTc1VsGljHz6kqNHf0exndNaJudUHPCFKHzwHZjnr2F7WKsaTLuNwAFfgQw
-    29YF42AQcfP9IsCSj4G8pJpmXkCx1YVNzBzrh1lrK7NTWkWnwLM5awG3QcqlUiZX
-    RLkZpYUB8vXSb5YvvArmkFSyWcINUjdnlVqqmIEnV3DcrPv1PjSaw9YXSHgExUV8
-    fxBteeBZ6q7qTU/GR3unEZogpIH6z9KXpQWV/YM9s7VOFyC6T45MUhttGa7yGQYp
-    sADxPB9qGdIR09SDXtmBsqtM/toNzCq1RMJQ==
+    1527162361; b=ewwPNtpAnlTTQJtEUZjmC9n29h9lvNkZJO7Y7fQHPaFmM7gQ7s
+    sVkZm2oizxHGkJqccaYSW0AX0sbW9rU19xvyRTtn1hsW0tATo4YVrf9xQ+vFz5mb
+    Zr+dCVwF8/L4mYfa4lUOkouIzCzpn13VoYaYObYx0GgjXwfNcgoCrrt5cnSQtJQH
+    s+l/1eEa2Ibxacs7Rn0LV286bcXTvQlFkmzIgCa2+Cg4G/XPIiyzD687btKx2S40
+    zaPm6+XIfumO4n1cwseuZSmd1nW9PE4fCFEaRC+H9Ziw9KWdbKMvVKP+UFQbXLH1
+    8XTERzAkfZ3u8u2LEGbMQsfMtMaTglDqEX4A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527162375; bh=Ofxb74EuWpbeGjXf3ZxDGbwF+WLGAW
-    +wLYtUUgero4Y=; b=lEr56M3SFxw/Fg0BHWy6+V8OX1TPypJhgWZJLEmzYYADTU
-    64W+qbjWq6g0/JxeP41R6wemnXruQNCA+qATQD+SZ7DTo6xqQ1yOgORJfzCIXRnx
-    NsjaTxalftjpMqfNR4mnqdaQjsQ3K9JuP54wVG+opwf0H66EpReLCHJ+/ndDkqRq
-    pBd8ODHsOKqCgqdli9xGu8999tC1qsV3soXL876/vKIvlV+c02W261d1Ys9q20YN
-    bBdbG+6GdogYAY3efaJHCMylO3ahnnUqPSQM+Sj2nQiXkkfqkSj+/l4f6ew5fIqZ
-    PlXLT04IMSOMuYDUHftXkB0DEAbhVvKbcJSJZ0lg==
+    :list-id; s=fm2; t=1527162361; bh=lja+tSGZoqdX2GJO9GWJuL0aven7mu
+    jiLy0YE4Xa0WA=; b=mF7VC2BNKXpkQDidlT++vYGbINboH5emmR2U3sMKiIdVMV
+    9tHB4govwDXGjjwDX4NLUwbnA2So1F6baTfJD7hTvtS7ravaUdQiafpNMNtR3CR/
+    m8uYZRhGsTQSVl176J1V1QTpK3LUXo5LcAsXpTvyXni5WWKjwaswuJ+ibXlV9Onw
+    DLgbpA5k5z762gFU4KmkiETiVomSOkqkrd34xqyAu3XuCStDuTYwHr3zP0uxvk4W
+    ICzDnnZTg08sHON9IdMVC7czL+BX/ZuamPe/a+DF+CGD1V0yfB26aFbVVtsHhTF7
+    i+OPNQ7PiRmD961RU/Rtex6YpC+RphthNcy0B/yA==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=M2xc4gRx x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=NTPJGFht x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -49,7 +49,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
 Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=M2xc4gRx x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=NTPJGFht x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -65,33 +65,30 @@ Authentication-Results: mx4.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIYMnOMUDZlFBPY/MlMc6AUHAD4oRvhvdPnHmw2EQmkuxlgGVwX7jZk0s+5nJ4ciNDw3l6rmDvhwsaPaNYPgJ4bkaPx8+OjaBljkjriwofl0qfO4qMn1
-    xPoZwbt/aSS1PZ26nyiYSKyG4CLwVl9NYFVtlARzniaZ7EUW/baJ6EaT4jRNTBWBayGUNHPwX9FvHzH2k7h3iKRlIAO/xJfuQEr8vY3HxzNbaR4BOPwK/eJo
+X-CM-Envelope: MS4wfOhxKWJlMZisx4SBkMiElY0QR4fynWQWUnvT0qBKJpfan37E0qJaVpTCGVLJ3uU1KfUj+doTNj51pH1rRNx0PRZNOh+Dhd1AdDxSdmuTRWqRZ2X/ktS4
+    MpDwh9rXuLFyU0unuQA/Ou079w2Ux2i1t2sFXzBo8K681085/VAQWerpJmYbptR5B6oVfCIG9WLtsOvFpgh1VvtOcmiHwkHp1PSSJsYH9jHB0g6Jbe2hTlLu
 X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=1XWaLZrsAAAA:8 a=4RBUngkUAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
-    a=jxzauDbPASHEnw4kFhcA:9 a=QEXdDO2ut3YA:10 a=_sbA2Q-Kp09kWB8D3iXc:22
-    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=eh1Yez-EAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=puV817wOSPHiP_ARZ7gA:9
+    a=QEXdDO2ut3YA:10 a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966867AbeEXJry (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:47:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60822 "EHLO mail.kernel.org"
+        id S967199AbeEXLp6 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 07:45:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967125AbeEXJrw (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:47:52 -0400
+        id S967131AbeEXJrz (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:47:55 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Yuchung Cheng <ycheng@google.com>,
-        Neal Cardwell <ncardwell@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
+        stable@vger.kernel.org, Regis Duchesne <hpreg@vmware.com>,
+        Ronak Doshi <doshir@vmware.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 05/96] tcp: purge write queue in tcp_connect_init()
-Date: Thu, 24 May 2018 11:37:48 +0200
-Message-Id: <20180524093605.948487855@linuxfoundation.org>
+Subject: [PATCH 4.9 06/96] vmxnet3: set the DMA mask before the first DMA map operation
+Date: Thu, 24 May 2018 11:37:49 +0200
+Message-Id: <20180524093606.001879358@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093605.602125311@linuxfoundation.org>
 References: <20180524093605.602125311@linuxfoundation.org>
@@ -109,86 +106,132 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: "hpreg@vmware.com" <hpreg@vmware.com>
 
-[ Upstream commit 7f582b248d0a86bae5788c548d7bb5bca6f7691a ]
+[ Upstream commit 61aeecea40afb2b89933e27cd4adb10fc2e75cfd ]
 
-syzkaller found a reliable way to crash the host, hitting a BUG()
-in __tcp_retransmit_skb()
+The DMA mask must be set before, not after, the first DMA map operation, or
+the first DMA map operation could in theory fail on some systems.
 
-Malicous MSG_FASTOPEN is the root cause. We need to purge write queue
-in tcp_connect_init() at the point we init snd_una/write_seq.
-
-This patch also replaces the BUG() by a less intrusive WARN_ON_ONCE()
-
-kernel BUG at net/ipv4/tcp_output.c:2837!
-invalid opcode: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-   (ftrace buffer empty)
-Modules linked in:
-CPU: 0 PID: 5276 Comm: syz-executor0 Not tainted 4.17.0-rc3+ #51
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:__tcp_retransmit_skb+0x2992/0x2eb0 net/ipv4/tcp_output.c:2837
-RSP: 0000:ffff8801dae06ff8 EFLAGS: 00010206
-RAX: ffff8801b9fe61c0 RBX: 00000000ffc18a16 RCX: ffffffff864e1a49
-RDX: 0000000000000100 RSI: ffffffff864e2e12 RDI: 0000000000000005
-RBP: ffff8801dae073a0 R08: ffff8801b9fe61c0 R09: ffffed0039c40dd2
-R10: ffffed0039c40dd2 R11: ffff8801ce206e93 R12: 00000000421eeaad
-R13: ffff8801ce206d4e R14: ffff8801ce206cc0 R15: ffff8801cd4f4a80
-FS:  0000000000000000(0000) GS:ffff8801dae00000(0063) knlGS:00000000096bc900
-CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-CR2: 0000000020000000 CR3: 00000001c47b6000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- tcp_retransmit_skb+0x2e/0x250 net/ipv4/tcp_output.c:2923
- tcp_retransmit_timer+0xc50/0x3060 net/ipv4/tcp_timer.c:488
- tcp_write_timer_handler+0x339/0x960 net/ipv4/tcp_timer.c:573
- tcp_write_timer+0x111/0x1d0 net/ipv4/tcp_timer.c:593
- call_timer_fn+0x230/0x940 kernel/time/timer.c:1326
- expire_timers kernel/time/timer.c:1363 [inline]
- __run_timers+0x79e/0xc50 kernel/time/timer.c:1666
- run_timer_softirq+0x4c/0x70 kernel/time/timer.c:1692
- __do_softirq+0x2e0/0xaf5 kernel/softirq.c:285
- invoke_softirq kernel/softirq.c:365 [inline]
- irq_exit+0x1d1/0x200 kernel/softirq.c:405
- exiting_irq arch/x86/include/asm/apic.h:525 [inline]
- smp_apic_timer_interrupt+0x17e/0x710 arch/x86/kernel/apic/apic.c:1052
- apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
-
-Fixes: cf60af03ca4e ("net-tcp: Fast Open client - sendmsg(MSG_FASTOPEN)")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Yuchung Cheng <ycheng@google.com>
-Cc: Neal Cardwell <ncardwell@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Acked-by: Neal Cardwell <ncardwell@google.com>
+Fixes: b0eb57cb97e78 ("VMXNET3: Add support for virtual IOMMU")
+Signed-off-by: Regis Duchesne <hpreg@vmware.com>
+Acked-by: Ronak Doshi <doshir@vmware.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp_output.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/net/vmxnet3/vmxnet3_drv.c |   50 +++++++++++++++++++-------------------
+ 1 file changed, 25 insertions(+), 25 deletions(-)
 
---- a/net/ipv4/tcp_output.c
-+++ b/net/ipv4/tcp_output.c
-@@ -2691,8 +2691,10 @@ int __tcp_retransmit_skb(struct sock *sk
- 		return -EBUSY;
+--- a/drivers/net/vmxnet3/vmxnet3_drv.c
++++ b/drivers/net/vmxnet3/vmxnet3_drv.c
+@@ -2675,7 +2675,7 @@ vmxnet3_set_mac_addr(struct net_device *
+ /* ==================== initialization and cleanup routines ============ */
  
- 	if (before(TCP_SKB_CB(skb)->seq, tp->snd_una)) {
--		if (before(TCP_SKB_CB(skb)->end_seq, tp->snd_una))
--			BUG();
-+		if (unlikely(before(TCP_SKB_CB(skb)->end_seq, tp->snd_una))) {
-+			WARN_ON_ONCE(1);
-+			return -EINVAL;
-+		}
- 		if (tcp_trim_head(sk, skb, tp->snd_una - TCP_SKB_CB(skb)->seq))
- 			return -ENOMEM;
+ static int
+-vmxnet3_alloc_pci_resources(struct vmxnet3_adapter *adapter, bool *dma64)
++vmxnet3_alloc_pci_resources(struct vmxnet3_adapter *adapter)
+ {
+ 	int err;
+ 	unsigned long mmio_start, mmio_len;
+@@ -2687,30 +2687,12 @@ vmxnet3_alloc_pci_resources(struct vmxne
+ 		return err;
  	}
-@@ -3236,6 +3238,7 @@ static void tcp_connect_init(struct sock
- 	sock_reset_flag(sk, SOCK_DONE);
- 	tp->snd_wnd = 0;
- 	tcp_init_wl(tp, 0);
-+	tcp_write_queue_purge(sk);
- 	tp->snd_una = tp->write_seq;
- 	tp->snd_sml = tp->write_seq;
- 	tp->snd_up = tp->write_seq;
+ 
+-	if (pci_set_dma_mask(pdev, DMA_BIT_MASK(64)) == 0) {
+-		if (pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64)) != 0) {
+-			dev_err(&pdev->dev,
+-				"pci_set_consistent_dma_mask failed\n");
+-			err = -EIO;
+-			goto err_set_mask;
+-		}
+-		*dma64 = true;
+-	} else {
+-		if (pci_set_dma_mask(pdev, DMA_BIT_MASK(32)) != 0) {
+-			dev_err(&pdev->dev,
+-				"pci_set_dma_mask failed\n");
+-			err = -EIO;
+-			goto err_set_mask;
+-		}
+-		*dma64 = false;
+-	}
+-
+ 	err = pci_request_selected_regions(pdev, (1 << 2) - 1,
+ 					   vmxnet3_driver_name);
+ 	if (err) {
+ 		dev_err(&pdev->dev,
+ 			"Failed to request region for adapter: error %d\n", err);
+-		goto err_set_mask;
++		goto err_enable_device;
+ 	}
+ 
+ 	pci_set_master(pdev);
+@@ -2738,7 +2720,7 @@ err_bar1:
+ 	iounmap(adapter->hw_addr0);
+ err_ioremap:
+ 	pci_release_selected_regions(pdev, (1 << 2) - 1);
+-err_set_mask:
++err_enable_device:
+ 	pci_disable_device(pdev);
+ 	return err;
+ }
+@@ -3246,7 +3228,7 @@ vmxnet3_probe_device(struct pci_dev *pde
+ #endif
+ 	};
+ 	int err;
+-	bool dma64 = false; /* stupid gcc */
++	bool dma64;
+ 	u32 ver;
+ 	struct net_device *netdev;
+ 	struct vmxnet3_adapter *adapter;
+@@ -3292,6 +3274,24 @@ vmxnet3_probe_device(struct pci_dev *pde
+ 	adapter->rx_ring_size = VMXNET3_DEF_RX_RING_SIZE;
+ 	adapter->rx_ring2_size = VMXNET3_DEF_RX_RING2_SIZE;
+ 
++	if (pci_set_dma_mask(pdev, DMA_BIT_MASK(64)) == 0) {
++		if (pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64)) != 0) {
++			dev_err(&pdev->dev,
++				"pci_set_consistent_dma_mask failed\n");
++			err = -EIO;
++			goto err_set_mask;
++		}
++		dma64 = true;
++	} else {
++		if (pci_set_dma_mask(pdev, DMA_BIT_MASK(32)) != 0) {
++			dev_err(&pdev->dev,
++				"pci_set_dma_mask failed\n");
++			err = -EIO;
++			goto err_set_mask;
++		}
++		dma64 = false;
++	}
++
+ 	spin_lock_init(&adapter->cmd_lock);
+ 	adapter->adapter_pa = dma_map_single(&adapter->pdev->dev, adapter,
+ 					     sizeof(struct vmxnet3_adapter),
+@@ -3299,7 +3299,7 @@ vmxnet3_probe_device(struct pci_dev *pde
+ 	if (dma_mapping_error(&adapter->pdev->dev, adapter->adapter_pa)) {
+ 		dev_err(&pdev->dev, "Failed to map dma\n");
+ 		err = -EFAULT;
+-		goto err_dma_map;
++		goto err_set_mask;
+ 	}
+ 	adapter->shared = dma_alloc_coherent(
+ 				&adapter->pdev->dev,
+@@ -3350,7 +3350,7 @@ vmxnet3_probe_device(struct pci_dev *pde
+ 	}
+ #endif /* VMXNET3_RSS */
+ 
+-	err = vmxnet3_alloc_pci_resources(adapter, &dma64);
++	err = vmxnet3_alloc_pci_resources(adapter);
+ 	if (err < 0)
+ 		goto err_alloc_pci;
+ 
+@@ -3492,7 +3492,7 @@ err_alloc_queue_desc:
+ err_alloc_shared:
+ 	dma_unmap_single(&adapter->pdev->dev, adapter->adapter_pa,
+ 			 sizeof(struct vmxnet3_adapter), PCI_DMA_TODEVICE);
+-err_dma_map:
++err_set_mask:
+ 	free_netdev(netdev);
+ 	return err;
+ }
