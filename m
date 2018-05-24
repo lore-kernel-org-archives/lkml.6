@@ -1,10 +1,11 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1886372-1527164018-2-4570052519916530331
+X-Cyrus-Session-Id: sloti22d1t05-1886372-1527163978-2-10844424243704578230
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -12,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527164017; b=N6NKy2N7G7FLdv5M0td96lRy0FyouzbHZNafr0nhB08Nz8LnxK
-    k6BB6w9NJ8D47pGJejx1qg3f7TKD4Pe2R8JSwTnEOkRwafplUnvK9CslT+UY0Je9
-    fWioTtd9jabKoKdVB9ILCOvv8b7Xfoi7dKbqetqZhPz931csgHl+QUveS74UYocf
-    GvarZ9Yzbd0Ot54v7QtKk6Sv55XvQu7baTZhAg7zDTKECK1EWGQfL43fAtEzseHQ
-    W/EfeXtgwdRoOlBWe6dTJ3Hl5zEgufuvSRbd99/rQV+UAIlYtZVoiTSTgj/6KzX5
-    K1q+ArmWILGucBENmZMhx4NJuX63GlYpyMTg==
+    1527163977; b=QiO75rOuud29hriYkflyFnEpl9ZJgZFuBvCaFf4s9kb25cno/6
+    izuz0oFVULP1pzfN1Fd7jGNDel9GH5pbX/uNg2vW7D/2ps+MMjyN9m4+X2vk4tqv
+    3JAUI4KLkiQzJ2Ywsk84uLPzDev65VUsJ/a8LB3jLf+IMibbpmYscHQLcAdTGrFg
+    znzbESNj9GIYnhYNtCTnOTuMU3nKQmfCnh8KX8NBv8Gs6jcJFtZKCKSBfIRM5iQD
+    fg+rFsK16lvvzY5ziIOE8066xkiax1EA402abQZfXoONeKK+H2yxBV6pd19v+wG0
+    A7lXlrFwHnZqJ4oMfq9ObQSO7S1njfsc09SQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527164017; bh=QjfHbry9WxKo7ij3vYIwYatljxG6N6
-    7iotvtgTFwim0=; b=kzGhEo3ZSWJ3PoSAvPQrDtxOn9Lh6XEm/uSNQKG4B2bF2n
-    WSaGL7Z8vfjKk3amxhdEcgNAJh0+hsJBnKbu8qnrfYeXgnlxkJaS95jN2sl7tIxD
-    wv4IadhwD1UMBOUlC36zpeJvqDTzdE6APEMYg21AdWAPmOvUkKKkCQxD5HHclOl1
-    LBTkkrWV5cBjnJ4RS57spkUyxurpBAKuX3lr10r1Ueg6Tr5JeUrnDx17NjWXWKH5
-    dNi0QiXJDuTZN/b0/+bV5Qas3qzd4W7Auc3meHTO0sVgf/TgwiRiHcPFKC8agZsM
-    krOH7qE/nMjt3s4hzNBL/C3RqiYqnUJyG1336axw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527163977; bh=kq7DSAL813vpB18SHm0L/zMCIfQZB7
+    R7vnd5F/XDtAA=; b=W+Qx4ow/GyjERY5Jy7PRk5AtJRduuAoZYA7BT+st1Sz225
+    fxqRqKMpM260gNIYOa4phQ8/YaGMJ94gRn01IMMcCfDke/0ncmrNNQ8twJoxU3JP
+    Tip0lREPdd+8uw/p2cG9ZTpYD1hI+3JPw0tdHd2qDT1HAEEZQt9a6NSbXIYvjmKK
+    vMkmJ9wbprXqzIMg5Ro+SyGWC3KBoZIvlXF+WYkTbaSwvw101r4OWEzXZxaP9f81
+    PQRfnL814tiZuFXS6fnI3TaPota5X5msEOxDJY85bT2WleqZiG5fZP61jmwzZCqU
+    pLsk1+S98JTOlAnCxbP82/smOV98AJpR57x54XuA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=oA/A+AuS x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=Y7QVgXnD x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +46,10 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=oA/A+AuS x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=Y7QVgXnD x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,37 +65,31 @@ Authentication-Results: mx1.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLlEV09gIbX2Q7icTaYA8wzvXyqqzVYPQrSLtchTT0nGfMyIdWET/ojCeLdFjesFwxZUart7QYI1sd5UQWkoeyAO90weQ7u8xTe6knAwRwddMlMfLMWu
-    fUaoqum/Gi0YV0kEh9fdLcmTrwVpLPGngEDeto7Rxi73I6R/dlgYIybpQ74Nvq5ypi6cetkFXkqAmMoBOo4z1L73kvJmab+KikLmSsqfKJFM6YtZqTK0hGT/
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfIaBhYl3G028wq6ySP59BF/2mwVK/C+vqB23W7ScyAnNiHomFIA8jbfcuQxVGdK+cwTDKKaFW1Lrhs8ntw/Xk2N2F9Y6+N9foplHi3FdGCHKTSj38gSv
+    CvdYzY6OVZJWBRpASVDLIwdcFBsk0NPv7qD5HlUyBGyi0GT31ylRRFIyYjGZZdcGnHahSJJ94vW3vU1F563B8eHgWDPHtWZ6CEPB9A/yi1rQgEQgD0YHAb3Z
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=i0EeH86SAAAA:8 a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=1XWaLZrsAAAA:8
-    a=VnNF1IyMAAAA:8 a=QyXUC8HyAAAA:8 a=Z4Rwk6OoAAAA:8 a=ag1SF4gXAAAA:8
-    a=Vzieo5wEOH1YgFP_dogA:9 a=QEXdDO2ut3YA:10 a=8n0cvFGaGY4A:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=HkZW87K1Qel5hWWM3VKY:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=xjQjg--fAAAA:8 a=HH5vDtPzAAAA:8 a=pGLkceISAAAA:8 a=ag1SF4gXAAAA:8
+    a=HDZgohCq0teiLl5bA54A:9 a=7yXiT-G5OU7Rgjv_:21 a=jKwdX-kLtlCO2ZG6:21
+    a=QEXdDO2ut3YA:10 a=L4vkcYpMSA5nFlNZ2tk3:22 a=QM_-zKB-Ew0MsOlNKMB5:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966136AbeEXJmn (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:42:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54254 "EHLO mail.kernel.org"
+        id S966443AbeEXMMy (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 08:12:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54356 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966370AbeEXJmh (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:42:37 -0400
+        id S966387AbeEXJmr (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:42:47 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, zhongjiang <zhongjiang@huawei.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Xishi Qiu <qiuxishi@huawei.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 3.18 22/45] kernel/exit.c: avoid undefined behaviour when calling wait4()
-Date: Thu, 24 May 2018 11:38:30 +0200
-Message-Id: <20180524093123.476616286@linuxfoundation.org>
+        stable@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Valentina Manea <valentina.manea.m@gmail.com>
+Subject: [PATCH 3.18 26/45] usbip: fix error handling in stub_probe()
+Date: Thu, 24 May 2018 11:38:34 +0200
+Message-Id: <20180524093123.951287727@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093120.599252450@linuxfoundation.org>
 References: <20180524093120.599252450@linuxfoundation.org>
@@ -112,52 +107,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: zhongjiang <zhongjiang@huawei.com>
+From: Alexey Khoroshilov <khoroshilov@ispras.ru>
 
-commit dd83c161fbcc5d8be637ab159c0de015cbff5ba4 upstream.
+commit 3ff67445750a84de67faaf52c6e1895cb09f2c56 upstream.
 
-wait4(-2147483648, 0x20, 0, 0xdd0000) triggers:
-UBSAN: Undefined behaviour in kernel/exit.c:1651:9
+If usb_hub_claim_port() fails, no resources are deallocated and
+if stub_add_files() fails, port is not released.
 
-The related calltrace is as follows:
+The patch fixes these issues and rearranges error handling code.
 
-  negation of -2147483648 cannot be represented in type 'int':
-  CPU: 9 PID: 16482 Comm: zj Tainted: G    B          ---- -------   3.10.0-327.53.58.71.x86_64+ #66
-  Hardware name: Huawei Technologies Co., Ltd. Tecal RH2285          /BC11BTSA              , BIOS CTSAV036 04/27/2011
-  Call Trace:
-    dump_stack+0x19/0x1b
-    ubsan_epilogue+0xd/0x50
-    __ubsan_handle_negate_overflow+0x109/0x14e
-    SyS_wait4+0x1cb/0x1e0
-    system_call_fastpath+0x16/0x1b
+Found by Linux Driver Verification project (linuxtesting.org).
 
-Exclude the overflow to avoid the UBSAN warning.
-
-Link: http://lkml.kernel.org/r/1497264618-20212-1-git-send-email-zhongjiang@huawei.com
-Signed-off-by: zhongjiang <zhongjiang@huawei.com>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
-Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Xishi Qiu <qiuxishi@huawei.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Acked-by: Valentina Manea <valentina.manea.m@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/exit.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/usb/usbip/stub_dev.c |   26 +++++++++++++++-----------
+ 1 file changed, 15 insertions(+), 11 deletions(-)
 
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -1620,6 +1620,10 @@ SYSCALL_DEFINE4(wait4, pid_t, upid, int
- 			__WNOTHREAD|__WCLONE|__WALL))
- 		return -EINVAL;
+--- a/drivers/usb/usbip/stub_dev.c
++++ b/drivers/usb/usbip/stub_dev.c
+@@ -313,7 +313,6 @@ static int stub_probe(struct usb_device
+ {
+ 	struct stub_device *sdev = NULL;
+ 	const char *udev_busid = dev_name(&udev->dev);
+-	int err = 0;
+ 	struct bus_id_priv *busid_priv;
+ 	int rc;
  
-+	/* -INT_MIN is not defined */
-+	if (upid == INT_MIN)
-+		return -ESRCH;
+@@ -374,23 +373,28 @@ static int stub_probe(struct usb_device
+ 			(struct usb_dev_state *) udev);
+ 	if (rc) {
+ 		dev_dbg(&udev->dev, "unable to claim port\n");
+-		return rc;
++		goto err_port;
+ 	}
+ 
+-	err = stub_add_files(&udev->dev);
+-	if (err) {
++	rc = stub_add_files(&udev->dev);
++	if (rc) {
+ 		dev_err(&udev->dev, "stub_add_files for %s\n", udev_busid);
+-		dev_set_drvdata(&udev->dev, NULL);
+-		usb_put_dev(udev);
+-		kthread_stop_put(sdev->ud.eh);
+-
+-		busid_priv->sdev = NULL;
+-		stub_device_free(sdev);
+-		return err;
++		goto err_files;
+ 	}
+ 	busid_priv->status = STUB_BUSID_ALLOC;
+ 
+ 	return 0;
++err_files:
++	usb_hub_release_port(udev->parent, udev->portnum,
++			     (struct usb_dev_state *) udev);
++err_port:
++	dev_set_drvdata(&udev->dev, NULL);
++	usb_put_dev(udev);
++	kthread_stop_put(sdev->ud.eh);
 +
- 	if (upid == -1)
- 		type = PIDTYPE_MAX;
- 	else if (upid < 0) {
++	busid_priv->sdev = NULL;
++	stub_device_free(sdev);
++	return rc;
+ }
+ 
+ static void shutdown_busid(struct bus_id_priv *busid_priv)
