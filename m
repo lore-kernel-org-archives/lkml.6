@@ -1,37 +1,39 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZraK6C6rdFZ4AbZALpWx8TU0zIaQRzznfsLJbdjLBbN2hJDWY/K91S6NKmyNZ+wCxuo0HpQ
-ARC-Seal: i=1; a=rsa-sha256; t=1527156144; cv=none;
+X-Google-Smtp-Source: AB8JxZpNNPn0F/eh8SEp8PxnRsYYRjI5dQBRBIcllXlkJMpEp3S8jUCEE9e/XXh2BeSGkmZaEdmZ
+ARC-Seal: i=1; a=rsa-sha256; t=1527156141; cv=none;
         d=google.com; s=arc-20160816;
-        b=m5Y2h1+4+1QSST+Lhw+Mugw9nCE6MOwsFA03KdR3TKXngiy0c8WRuVa6gDjRhAmmgx
-         ml1afygC6cFst8eOJoIAAdEiHA28j5jOtpVtmSTpS8r66M1sENXA6lP5zLAb6yMPmihj
-         KZGEy7OMvBVr7yoE8bi9MGLdjLRMi56AN8ISgXoKYzSQT3hUzNLHoRcz4+ZLPPRz6Qgf
-         6BTjUNxiVVrD4JTN4iVPie/APC0CcYty2qYoNa3ZwG0ScnObf2znrvo+lkvJONBrsIQX
-         oI5xkuI14jUP1HOM9p4Uqk3uBtt9/dJZRe4SHNsKliJvSeDxllVzTZiP2zPfwNFDPw4d
-         XXUg==
+        b=Wd4TpyVE8oCKFHzJzzWEy+uxOgi0fhHsXzJNDXYhn0/WmcFNyo+Ccb9fttK9sr+8tW
+         GtGrikRQn5CB0dNOXkLBCD5fIoY7yth08goQVnFVs6l8F5jyCBY29n9jlOJ0+uk/FIDx
+         Lw0jHFSfZcdE4ftPbs3khsIPWz6j42Rj02JpUUWcvhzm04HbkgxUCGnk6tuGxBfrMxf1
+         ukPGEyXyGsM/OA3D2rf/6dJAp/yUw0xgPHvESVzOlMO+C6xuIU6Mz2W8cVtPrWLUgPuS
+         1FeGLrPHnKlTI+GYSTmSu3Z8V9IVf7DTUrOGtQZqzQ3FoHnB3mepaZFp1C8vXMORy4A1
+         175w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=fWa3jW3EMubhTAeT7p52050rVh1TkqCD4q1XHhNkbUY=;
-        b=OXZ5YJWeRy0ODQQU/WWlTd5gZlW5gf4ovDGT7AzSMagW5gzI3iIf0sZqof2jK4Rd/n
-         C+WTLFscE6MBwEtLTP2Y6VeYtPLh8sTeHDwBp+2soTQa0L69Qh2tHIL1z5I0AuH7R9nO
-         xbYTmnxD4qxS6IhOEMBxoI4jdTE70Bdz9cUi+gzQa3QnnkDmXSzAUiaLHiRog3hHUPrp
-         MIMHyYQMHbCYLAyiwNzMRuduV2isjKxFPBqChfyNVeI/05hhxhOIfAi6Q+6dUd+yhq56
-         vQIlYaP9JQrK9zIo5E235eGLue65wyTmTKxdrBDvl9F0oTJPD/umyFNWJNMKaKeYJ2qo
-         DQAA==
+        bh=bShh4rwbarsT/EqE7AUK/mbmrGARhkfoBxds4g3rXPQ=;
+        b=YZC3f43xBobqlF27l2LikxcvGTnauZcsv/sbONOfsG+aV1rbDadeDQbBR8DCAycimt
+         ldfjYJFLQTwCc1+YlDLqswtMYaPWVT3mhD0F+cpUVPemGGeup5m/6d+flIx3YFW61BMH
+         OG6+KZNul5YdEheFpFS8gUZGeDzH1auPZ6kfTBYeBJ+UUcAXsN8ZE1box5W37KzNH9dd
+         URwFmxTG6qh3UMA3pd9MHcTEIcWUGB7NocoJSDzxAvcsxTe0/MzYkxM/JiQ/hrFkQmts
+         KTN4vQHjrq2xqLjyzqec158vlxD+m2XKoo6iT5IOvtMmNsEOUiUgp4KDFkbefsNevPX9
+         gxig==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=lKeKBfGG;
+       dkim=pass header.i=@kernel.org header.s=default header.b=zO2ctOly;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=lKeKBfGG;
+       dkim=pass header.i=@kernel.org header.s=default header.b=zO2ctOly;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.16 062/161] s390: extend expoline to BC instructions
-Date: Thu, 24 May 2018 11:38:07 +0200
-Message-Id: <20180524093025.935305947@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Chris Dickens <christopher.a.dickens@gmail.com>,
+	Felipe Balbi <felipe.balbi@linux.intel.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.16 079/161] usb: gadget: composite: fix incorrect handling of OS desc requests
+Date: Thu, 24 May 2018 11:38:24 +0200
+Message-Id: <20180524093028.008516478@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -41,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601338299102356702?=
-X-GMAIL-MSGID: =?utf-8?q?1601339281296136795?=
+X-GMAIL-THRID: =?utf-8?q?1601338421384534300?=
+X-GMAIL-MSGID: =?utf-8?q?1601339278420354457?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,177 +52,156 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+From: Chris Dickens <christopher.a.dickens@gmail.com>
 
-[ Upstream commit 6deaa3bbca804b2a3627fd685f75de64da7be535 ]
+[ Upstream commit 5d6ae4f0da8a64a185074dabb1b2f8c148efa741 ]
 
-The BPF JIT uses a 'b <disp>(%r<x>)' instruction in the definition
-of the sk_load_word and sk_load_half functions.
+When handling an OS descriptor request, one of the first operations is
+to zero out the request buffer using the wLength from the setup packet.
+There is no bounds checking, so a wLength > 4096 would clobber memory
+adjacent to the request buffer. Fix this by taking the min of wLength
+and the request buffer length prior to the memset. While at it, define
+the buffer length in a header file so that magic numbers don't appear
+throughout the code.
 
-Add support for branch-on-condition instructions contained in the
-thunk code of an expoline.
+When returning data to the host, the data length should be the min of
+the wLength and the valid data we have to return. Currently we are
+returning wLength, thus requests for a wLength greater than the amount
+of data in the OS descriptor buffer would return invalid (albeit zero'd)
+data following the valid descriptor data. Fix this by counting the
+number of bytes when constructing the data and using this when
+determining the length of the request.
 
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Signed-off-by: Chris Dickens <christopher.a.dickens@gmail.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/include/asm/nospec-insn.h |   57 ++++++++++++++++++++++++++++++++++++
- arch/s390/kernel/nospec-branch.c    |   25 ++++++++++++---
- 2 files changed, 77 insertions(+), 5 deletions(-)
+ drivers/usb/gadget/composite.c |   40 +++++++++++++++++++---------------------
+ include/linux/usb/composite.h  |    3 +++
+ 2 files changed, 22 insertions(+), 21 deletions(-)
 
---- a/arch/s390/include/asm/nospec-insn.h
-+++ b/arch/s390/include/asm/nospec-insn.h
-@@ -35,10 +35,18 @@ _LC_BR_R1 = __LC_BR_R1
- 	__THUNK_PROLOG_NAME __s390x_indirect_jump_r\r2\()use_r\r1
- 	.endm
+--- a/drivers/usb/gadget/composite.c
++++ b/drivers/usb/gadget/composite.c
+@@ -1422,7 +1422,7 @@ static int count_ext_compat(struct usb_c
+ 	return res;
+ }
  
-+	.macro __THUNK_PROLOG_BC d0,r1,r2
-+	__THUNK_PROLOG_NAME __s390x_indirect_branch_\d0\()_\r2\()use_\r1
-+	.endm
-+
- 	.macro __THUNK_BR r1,r2
- 	jg	__s390x_indirect_jump_r\r2\()use_r\r1
- 	.endm
+-static void fill_ext_compat(struct usb_configuration *c, u8 *buf)
++static int fill_ext_compat(struct usb_configuration *c, u8 *buf)
+ {
+ 	int i, count;
  
-+	.macro __THUNK_BC d0,r1,r2
-+	jg	__s390x_indirect_branch_\d0\()_\r2\()use_\r1
-+	.endm
-+
- 	.macro __THUNK_BRASL r1,r2,r3
- 	brasl	\r1,__s390x_indirect_jump_r\r3\()use_r\r2
- 	.endm
-@@ -81,6 +89,23 @@ _LC_BR_R1 = __LC_BR_R1
- 	.endif
- 	.endm
- 
-+	.macro	__DECODE_DRR expand,disp,reg,ruse
-+	.set __decode_fail,1
-+	.irp r1,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
-+	.ifc \reg,%r\r1
-+	.irp r2,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
-+	.ifc \ruse,%r\r2
-+	\expand \disp,\r1,\r2
-+	.set __decode_fail,0
-+	.endif
-+	.endr
-+	.endif
-+	.endr
-+	.if __decode_fail == 1
-+	.error "__DECODE_DRR failed"
-+	.endif
-+	.endm
-+
- 	.macro __THUNK_EX_BR reg,ruse
- 	# Be very careful when adding instructions to this macro!
- 	# The ALTERNATIVE replacement code has a .+10 which targets
-@@ -101,12 +126,30 @@ _LC_BR_R1 = __LC_BR_R1
- 555:	br	\reg
- 	.endm
- 
-+	.macro __THUNK_EX_BC disp,reg,ruse
-+#ifdef CONFIG_HAVE_MARCH_Z10_FEATURES
-+	exrl	0,556f
-+	j	.
-+#else
-+	larl	\ruse,556f
-+	ex	0,0(\ruse)
-+	j	.
-+#endif
-+556:	b	\disp(\reg)
-+	.endm
-+
- 	.macro GEN_BR_THUNK reg,ruse=%r1
- 	__DECODE_RR __THUNK_PROLOG_BR,\reg,\ruse
- 	__THUNK_EX_BR \reg,\ruse
- 	__THUNK_EPILOG
- 	.endm
- 
-+	.macro GEN_B_THUNK disp,reg,ruse=%r1
-+	__DECODE_DRR __THUNK_PROLOG_BC,\disp,\reg,\ruse
-+	__THUNK_EX_BC \disp,\reg,\ruse
-+	__THUNK_EPILOG
-+	.endm
-+
- 	.macro BR_EX reg,ruse=%r1
- 557:	__DECODE_RR __THUNK_BR,\reg,\ruse
- 	.pushsection .s390_indirect_branches,"a",@progbits
-@@ -114,6 +157,13 @@ _LC_BR_R1 = __LC_BR_R1
- 	.popsection
- 	.endm
- 
-+	 .macro B_EX disp,reg,ruse=%r1
-+558:	__DECODE_DRR __THUNK_BC,\disp,\reg,\ruse
-+	.pushsection .s390_indirect_branches,"a",@progbits
-+	.long	558b-.
-+	.popsection
-+	.endm
-+
- 	.macro BASR_EX rsave,rtarget,ruse=%r1
- 559:	__DECODE_RRR __THUNK_BRASL,\rsave,\rtarget,\ruse
- 	.pushsection .s390_indirect_branches,"a",@progbits
-@@ -125,10 +175,17 @@ _LC_BR_R1 = __LC_BR_R1
- 	.macro GEN_BR_THUNK reg,ruse=%r1
- 	.endm
- 
-+	.macro GEN_B_THUNK disp,reg,ruse=%r1
-+	.endm
-+
- 	 .macro BR_EX reg,ruse=%r1
- 	br	\reg
- 	.endm
- 
-+	 .macro B_EX disp,reg,ruse=%r1
-+	b	\disp(\reg)
-+	.endm
-+
- 	.macro BASR_EX rsave,rtarget,ruse=%r1
- 	basr	\rsave,\rtarget
- 	.endm
---- a/arch/s390/kernel/nospec-branch.c
-+++ b/arch/s390/kernel/nospec-branch.c
-@@ -93,7 +93,6 @@ static void __init_or_module __nospec_re
- 	s32 *epo;
- 
- 	/* Second part of the instruction replace is always a nop */
--	memcpy(insnbuf + 2, (char[]) { 0x47, 0x00, 0x00, 0x00 }, 4);
- 	for (epo = start; epo < end; epo++) {
- 		instr = (u8 *) epo + *epo;
- 		if (instr[0] == 0xc0 && (instr[1] & 0x0f) == 0x04)
-@@ -114,18 +113,34 @@ static void __init_or_module __nospec_re
- 			br = thunk + (*(int *)(thunk + 2)) * 2;
- 		else
- 			continue;
--		if (br[0] != 0x07 || (br[1] & 0xf0) != 0xf0)
-+		/* Check for unconditional branch 0x07f? or 0x47f???? */
-+		if ((br[0] & 0xbf) != 0x07 || (br[1] & 0xf0) != 0xf0)
- 			continue;
-+
-+		memcpy(insnbuf + 2, (char[]) { 0x47, 0x00, 0x07, 0x00 }, 4);
- 		switch (type) {
- 		case BRCL_EXPOLINE:
--			/* brcl to thunk, replace with br + nop */
- 			insnbuf[0] = br[0];
- 			insnbuf[1] = (instr[1] & 0xf0) | (br[1] & 0x0f);
-+			if (br[0] == 0x47) {
-+				/* brcl to b, replace with bc + nopr */
-+				insnbuf[2] = br[2];
-+				insnbuf[3] = br[3];
-+			} else {
-+				/* brcl to br, replace with bcr + nop */
-+			}
- 			break;
- 		case BRASL_EXPOLINE:
--			/* brasl to thunk, replace with basr + nop */
--			insnbuf[0] = 0x0d;
- 			insnbuf[1] = (instr[1] & 0xf0) | (br[1] & 0x0f);
-+			if (br[0] == 0x47) {
-+				/* brasl to b, replace with bas + nopr */
-+				insnbuf[0] = 0x4d;
-+				insnbuf[2] = br[2];
-+				insnbuf[3] = br[3];
-+			} else {
-+				/* brasl to br, replace with basr + nop */
-+				insnbuf[0] = 0x0d;
-+			}
- 			break;
+@@ -1449,10 +1449,12 @@ static void fill_ext_compat(struct usb_c
+ 				buf += 23;
+ 			}
+ 			count += 24;
+-			if (count >= 4096)
+-				return;
++			if (count + 24 >= USB_COMP_EP0_OS_DESC_BUFSIZ)
++				return count;
  		}
+ 	}
++
++	return count;
+ }
+ 
+ static int count_ext_prop(struct usb_configuration *c, int interface)
+@@ -1497,25 +1499,20 @@ static int fill_ext_prop(struct usb_conf
+ 	struct usb_os_desc *d;
+ 	struct usb_os_desc_ext_prop *ext_prop;
+ 	int j, count, n, ret;
+-	u8 *start = buf;
+ 
+ 	f = c->interface[interface];
++	count = 10; /* header length */
+ 	for (j = 0; j < f->os_desc_n; ++j) {
+ 		if (interface != f->os_desc_table[j].if_id)
+ 			continue;
+ 		d = f->os_desc_table[j].os_desc;
+ 		if (d)
+ 			list_for_each_entry(ext_prop, &d->ext_prop, entry) {
+-				/* 4kB minus header length */
+-				n = buf - start;
+-				if (n >= 4086)
+-					return 0;
+-
+-				count = ext_prop->data_len +
++				n = ext_prop->data_len +
+ 					ext_prop->name_len + 14;
+-				if (count > 4086 - n)
+-					return -EINVAL;
+-				usb_ext_prop_put_size(buf, count);
++				if (count + n >= USB_COMP_EP0_OS_DESC_BUFSIZ)
++					return count;
++				usb_ext_prop_put_size(buf, n);
+ 				usb_ext_prop_put_type(buf, ext_prop->type);
+ 				ret = usb_ext_prop_put_name(buf, ext_prop->name,
+ 							    ext_prop->name_len);
+@@ -1541,11 +1538,12 @@ static int fill_ext_prop(struct usb_conf
+ 				default:
+ 					return -EINVAL;
+ 				}
+-				buf += count;
++				buf += n;
++				count += n;
+ 			}
+ 	}
+ 
+-	return 0;
++	return count;
+ }
+ 
+ /*
+@@ -1827,6 +1825,7 @@ unknown:
+ 			req->complete = composite_setup_complete;
+ 			buf = req->buf;
+ 			os_desc_cfg = cdev->os_desc_config;
++			w_length = min_t(u16, w_length, USB_COMP_EP0_OS_DESC_BUFSIZ);
+ 			memset(buf, 0, w_length);
+ 			buf[5] = 0x01;
+ 			switch (ctrl->bRequestType & USB_RECIP_MASK) {
+@@ -1850,8 +1849,8 @@ unknown:
+ 					count += 16; /* header */
+ 					put_unaligned_le32(count, buf);
+ 					buf += 16;
+-					fill_ext_compat(os_desc_cfg, buf);
+-					value = w_length;
++					value = fill_ext_compat(os_desc_cfg, buf);
++					value = min_t(u16, w_length, value);
+ 				}
+ 				break;
+ 			case USB_RECIP_INTERFACE:
+@@ -1880,8 +1879,7 @@ unknown:
+ 							      interface, buf);
+ 					if (value < 0)
+ 						return value;
+-
+-					value = w_length;
++					value = min_t(u16, w_length, value);
+ 				}
+ 				break;
+ 			}
+@@ -2156,8 +2154,8 @@ int composite_os_desc_req_prepare(struct
+ 		goto end;
+ 	}
+ 
+-	/* OS feature descriptor length <= 4kB */
+-	cdev->os_desc_req->buf = kmalloc(4096, GFP_KERNEL);
++	cdev->os_desc_req->buf = kmalloc(USB_COMP_EP0_OS_DESC_BUFSIZ,
++					 GFP_KERNEL);
+ 	if (!cdev->os_desc_req->buf) {
+ 		ret = -ENOMEM;
+ 		usb_ep_free_request(ep0, cdev->os_desc_req);
+--- a/include/linux/usb/composite.h
++++ b/include/linux/usb/composite.h
+@@ -54,6 +54,9 @@
+ /* big enough to hold our biggest descriptor */
+ #define USB_COMP_EP0_BUFSIZ	1024
+ 
++/* OS feature descriptor length <= 4kB */
++#define USB_COMP_EP0_OS_DESC_BUFSIZ	4096
++
+ #define USB_MS_TO_HS_INTERVAL(x)	(ilog2((x * 1000 / 125)) + 1)
+ struct usb_configuration;
  
