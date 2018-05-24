@@ -1,186 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935297AbeEXEqD (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 00:46:03 -0400
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:28395 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751591AbeEXEqB (ORCPT
+        id S1754869AbeEXFSX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 01:18:23 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:51536 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751896AbeEXFSU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 00:46:01 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w4O4juRA031682
-X-Nifty-SrcIP: [209.85.213.51]
-X-Google-Smtp-Source: AB8JxZr0i44hO5dOSbaTqTCNSxY4PASxkltT7+MVsLZ1L77xT4PdVw2eS4ic2Baf+uLC0nKen953lP7VSHjJ+65LIC0=
+        Thu, 24 May 2018 01:18:20 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 612A960213
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: cpufreq: Introduce QCOM CPUFREQ FW
+ bindings
+To: Rob Herring <robh@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-pm@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Amit Nischal <anischal@codeaurora.org>, devicetree@vger.kernel.org,
+        Saravana Kannan <skannan@codeaurora.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>
+References: <1526751291-17873-1-git-send-email-tdas@codeaurora.org>
+ <1526751291-17873-2-git-send-email-tdas@codeaurora.org>
+ <20180522193139.GA21623@rob-hp-laptop>
+ <20180523054846.zn7gftt6aqyibd26@vireshk-i7>
+ <CAL_JsqL7VdSjerOioc5cSOyKAAXJuVnPJqp_WbTtwr11UUxq=A@mail.gmail.com>
+From: Taniya Das <tdas@codeaurora.org>
+Message-ID: <cba1616d-ad12-599b-4351-3c7240de852a@codeaurora.org>
+Date: Thu, 24 May 2018 10:48:10 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <CAFkk2KT0PAS8=bqHeSux3XwUx4fwKKqQoJkGeXRo8DHtEQNrDQ@mail.gmail.com>
-References: <1526537830-22606-1-git-send-email-yamada.masahiro@socionext.com>
- <1526537830-22606-4-git-send-email-yamada.masahiro@socionext.com>
- <CAFkk2KQUps1rhjxdOVz5Mkt+p7VkHX+o5aHvP3u0Hka0_ULcow@mail.gmail.com>
- <CAK7LNARP2b=jN_ioj3dT=3yiSTv7Ezu-MSPuh0vO30irN5D1nA@mail.gmail.com> <CAFkk2KT0PAS8=bqHeSux3XwUx4fwKKqQoJkGeXRo8DHtEQNrDQ@mail.gmail.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Thu, 24 May 2018 13:45:15 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARMMWj+z_E7urs4kOFMC4+1NiCYt4ueB6gVFr86vgiVKg@mail.gmail.com>
-Message-ID: <CAK7LNARMMWj+z_E7urs4kOFMC4+1NiCYt4ueB6gVFr86vgiVKg@mail.gmail.com>
-Subject: Re: [PATCH v4 03/31] kconfig: reference environment variables
- directly and remove 'option env='
-To: Ulf Magnusson <ulfalizer@gmail.com>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nicholas Piggin <npiggin@gmail.com>, Kees Cook <keescook@chromium.org>,
-        Emese Revfy <re.emese@gmail.com>, X86 ML <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAL_JsqL7VdSjerOioc5cSOyKAAXJuVnPJqp_WbTtwr11UUxq=A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-05-21 20:06 GMT+09:00 Ulf Magnusson <ulfalizer@gmail.com>:
+Hello Rob, Viresh,
 
+Thank you for the comments. If I understand correctly, the device tree 
+nodes should look something like the below.
+
+Though I am not sure if any vendor name could be associated in the cpu 
+nodes.
+
+Please suggest if my understanding is wrong.
+
+cpu@0 {
+	qcom,freq-domain = <&freq_domain_table0>;
+	…
+};
+
+same follows for cpu 1/2/3
+
+cpu@400 {
+	qcom,freq-domain = <&freq_domain_table1>;
+	…
+};
+same follows for cpu 5/6/7
+
+freq_domain_table0 : freq_table {
+	reg = < >, < >, < > ;
+	reg-names = "perf_base", "lut_base", "en_base";
+};
+
+freq_domain_table1 : freq_table {
+	reg = < >, < >, < > ;
+	reg-names = "perf_base", "lut_base", "en_base";
+};
+
+
+
+On 5/23/2018 7:48 PM, Rob Herring wrote:
+> On Wed, May 23, 2018 at 12:48 AM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>> On 22-05-18, 14:31, Rob Herring wrote:
+>>> On Sat, May 19, 2018 at 11:04:50PM +0530, Taniya Das wrote:
+>>>> +           freq-domain-0 {
+>>>> +                   compatible = "cpufreq";
+>>>> +                   reg = <0x17d43920 0x4>,
+>>>> +                        <0x17d43110 0x500>,
+>>>> +                        <0x17d41000 0x4>;
+>>>> +                   reg-names = "perf_base", "lut_base", "en_base";
+>>>> +                   qcom,cpulist = <&CPU0 &CPU1 &CPU2 &CPU3>;
 >>
->> static char *__expand_string(const char **str, bool (*is_end)(const char *))
->> {
->>         const char *in, *prev_in, *p;
->>         char *new, *out;
->>         size_t outlen;
->>
->>         out = xmalloc(1);
->>         *out = 0;
->>
->>         p = in = *str;
->>
->>         while (1) {
->>                 if (*p == '$') {
->>                         prev_in = in;
->>                         in = p + 1;
->>                         new = expand_dollar(&in);
->>                         outlen = strlen(out) + (p - prev_in) + strlen(new) + 1;
->>                         out = xrealloc(out, outlen);
->>                         strncat(out, prev_in, p - prev_in);
->>                         strcat(out, new);
->>                         free(new);
->>                         p = in;
->>                         continue;
->>                 }
->>
->>                 if (is_end(p))
->>                         break;
->>
->>                 p++;
->>         }
->>
->>         outlen = strlen(out) + (p - in) + 1;
->>         out = xrealloc(out, outlen);
->>         strncat(out, in, p - in);
->>
->>         *str = p;
->>
->>         return out;
->> }
->>
->> static bool is_end_of_str(const char *s)
->> {
->>         return !*s;
->> }
->>
->> char *expand_string(const char *in)
->> {
->>         return __expand_string(&in, is_end_of_str);
->> }
->>
->> static bool is_end_of_token(const char *s)
->> {
->>         return !(isalnum(*s) || *s == '_' || *s == '-' || *s == '.' ||
->> *s == '/');
->> }
->>
->> char *expand_one_token(const char **str)
->> {
->>         return __expand_string(str, is_end_of_token);
->> }
->
-> Yep, something like that would be nicer I think.
->
-> This variant might work too (untested):
->
->   dollar_i = p;
->   p++;
->   expansion = expand_dollar(&p);
->
->   out = xrealloc(out, strlen(out) + (dollar_i - in)
->                       + strlen(expansion) + 1);
->   strncat(out, in, dollar_i - in);
->   strcat(out, expansion);
->   free(expansion);
->
->   in = p;
->
->   continue;
->
-> The p++ would disappear if expand_dollar() took a pointer to the '$'.
->
-
-
-I took the variable name "expansion" because
-it is more descriptive than "new".
-
-
-I rewrote like follows:
-
-
-static char *__expand_string(const char **str, bool (*is_end)(const char *))
-{
-        const char *in, *p;
-        char *expansion, *out;
-        size_t in_len, out_len;
-
-        out = xmalloc(1);
-        *out = 0;
-        out_len = 1;
-
-        p = in = *str;
-
-        while (1) {
-                if (*p == '$') {
-                        in_len = p - in;
-                        p++;
-                        expansion = expand_dollar(&p);
-                        out_len += in_len + strlen(expansion);
-                        out = xrealloc(out, out_len);
-                        strncat(out, in, in_len);
-                        strcat(out, expansion);
-                        free(expansion);
-                        in = p;
-                        continue;
-                }
-
-                if (is_end(p))
-                        break;
-
-                p++;
-        }
-
-        in_len = p - in;
-        out_len += in_len;
-        out = xrealloc(out, out_len);
-        strncat(out, in, in_len);
-
-        /* Advance 'str' to the end character */
-        *str = p;
-
-        return out;
-}
-
-
-
-I used "out_len" to remember the length of "out"
-instead of calculating strlen(out) every time.
-
-I do not need dollar_p.
-
-
-
+>> I was thinking, can't we add platform specific properties in the CPU
+>> nodes ? If yes, then we can point the phandle of fw node from the CPUs
+>> and this awkward list can go away.
+> 
+> Yes, that's fine. That would be more like OPP binding in that the CPU
+> points to the OPP table rather than the OPP pointing to the CPUs.
+> 
+> With that, you can get rid of the child nodes completely. Just make
+> the parent reg property N sets of 3 addresses for N domains.
+> 
+> Rob
+> 
 
 -- 
-Best Regards
-Masahiro Yamada
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
