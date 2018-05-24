@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1874556-1527162587-2-8815440078473752049
+X-Cyrus-Session-Id: sloti22d1t05-1874556-1527162564-2-10479082180239985962
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527162587; b=lMLOod2OaNVRh4JbLt9nEc6UjP1XRXWfeSJs8GT7UF/JX91u84
-    BqgHVyeDrtDOcNCWJlAv0jc0NjwTElssie65Zo8vlyRk2AXY5O/0YK/ZBe+9nMdt
-    XS7z1T0/mU6hGiwklfhH8marppbBcqdIQd/oQcCSWyK/4z6jirY4w1r0u/WWH3Us
-    aXqvXzvvL9iczuW06Xuk1ypi66G5mnLxfIqXnoqFfFbDuPode7+Jv63wAx9p8TND
-    Fyzu2r1yrz7fq22Hij/yt1p5R9Ceae2pGIJOq/3QM+AOHA0DfO6JTTYsJWlq1G8m
-    2Uq5LYHHkeOvQya30s06qjkYUMYHebhCJlyw==
+    1527162563; b=jxooQGjqi04yKJDSzes3jG8kWmM/cmC8n4Mi3eHGlXWDkpmBMg
+    tSftnTRLBadVG7oRuUMrSQouMTFfOPjV9szHIXHPCztvylz9OpG5ZDffH3Vodq/9
+    bRl+tIert2Qp873qPMVltwjq2nv277SGbh661WFITquCXJ0eW/7rfg+oQqjW8l6X
+    M6cwFGH9790oQ0PnbQ1V62zQyaHfqi/XCRV6ve6cGvma1/Vx+bbpqZCFR/s3uizm
+    6UO1OAEtWP9sUeinxBk3tBMpdg++p+GXiQ7K/jVyXcV1qwNpqzwl4dlW6LiKdK5b
+    BeLKwGNI9HLEuFoFfndQilZV6mA1GZOW9fYA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527162587; bh=SieXmFKD3FJU97Zpi/fSL2eE8HJAkJ
-    mw2cDnMscT6ko=; b=nsZ5tOoMX93N3cJsM43mCHhiYGevE9g2gULFLFUNVXhK7E
-    5Ne0dqg2R+fa3LYdMxWGdwArGH/OAdg372HcLWbSPi1qn/knzzl7vH3H/WrrIQui
-    AbmKC7hRxm6Ie0wEfywJrqBcVhHAe5C2giEP18NH2B7c75Zdq+/pT10q2O8UdxCC
-    lIWCX/L0pCB1IBhW8bU8X3/uIu+swU7TmXWlXP3SVnehtYU31r0HhzxwmiHHOonO
-    JBf/yeLrFMA1Ip+fxhQFYSuKy/QIATUFhjWWVLvQergAztXX9s1zBG+DGNH2Kqb8
-    wbAEuD8PxBDYGJfUXP5MEsGoxk/BHCyDd0wi/Vgg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527162563; bh=EQVJFzDxNd8MkCT3+rnyeqRVkJFR36
+    sSA5dN6Xxcm8s=; b=GK++4Da6KQ8MyCDupRpTua94Guqe/QIkG6IelD8zmAZais
+    T3yon+5LZfYBkvP8JbaBL/UISMRRQpzPAlKeXgJXYrqnKvMD+hWAQBC6ska9kn9A
+    ioHCFK4ahs52brjLO1BlwA8jFlcCfNB4tAs9fiFfmus7O7WTzjGNYT+t6veiyxFp
+    p2tH5nuM2pBRCVwCg8pRJ/NDPGlbAOME6N1OXvY1141rwYeq4q9wgZr1AJXS/oxU
+    Kz26H9sIn56wOPuJQDCbR2fBRZWwaX9FciAMGc/DrkvE3Z1Tx00q/LdP4hu1Ne7C
+    w5Q5oTWUrKWgG3P6jewbggXd4A5XQTPTF1AfK9IA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=DQwFM0q2 x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=yNp51Wjn x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=DQwFM0q2 x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=yNp51Wjn x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,36 +64,34 @@ Authentication-Results: mx3.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFgXAkMcJ8Y2M7DbyvZGvKhH16r0Md8agNf090X+ewjZlUsAwH8EfgDgbvvmg2iul2+imeosRitVCqVDNt6N3I2CuxEMgjCmNlYhfZs4ULtHAwGzGUrF
-    vUUZ7+a/szxDpKzxG2zQASEYFTuQD0qvptZGwg9p1ydu+3xW5bD3rh5w3az40BNGwICPeeBYMJsTILcbJwL7tX3uc4PV/82aDWH3LfDm8jX4u4lGFAGHWd4Z
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfJ57nti4bGiSK4J3r8db8ZP7MLGrgp+W21Ezgi8p4rEG7P0/FSllpA91zg+/hpCKhySWLEDYrLJMY/yP4TKKxxiC9PDfdX6sbf17wrkbajqwD7hlQEXG
+    2sO+zAWUyP06U4C5e8Rh6GFSKE3SZcEdpxnTrsMA38Zz9kb3uydvlYG5/LhutBvf+sg4re7CnGSW9Ute6NurgBIHbBn1otScGaVK++DgAJvLU9HVC6sJi8C7
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=1XWaLZrsAAAA:8 a=CbDCq_QkAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
-    a=-66xd70nerPzEY_yfasA:9 a=QEXdDO2ut3YA:10 a=1qrBK16LubpBFNPVNq2M:22
-    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=6mtFN2R5rmpNZnjPMXoA:9
+    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967073AbeEXLtV (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 07:49:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59306 "EHLO mail.kernel.org"
+        id S966805AbeEXLtU (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 07:49:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59508 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967008AbeEXJrG (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:47:06 -0400
+        id S966033AbeEXJrM (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:47:12 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tarick Bedeir <tarick@google.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 01/96] net/mlx4_core: Fix error handling in mlx4_init_port_info.
-Date: Thu, 24 May 2018 11:37:44 +0200
-Message-Id: <20180524093605.702786478@linuxfoundation.org>
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Subject: [PATCH 4.9 11/96] s390/crc32-vx: use expoline for indirect branches
+Date: Thu, 24 May 2018 11:37:54 +0200
+Message-Id: <20180524093606.229986742@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093605.602125311@linuxfoundation.org>
 References: <20180524093605.602125311@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: stable-owner@vger.kernel.org
@@ -106,46 +104,74 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tarick Bedeir <tarick@google.com>
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-[ Upstream commit 57f6f99fdad9984801cde05c1db68fe39b474a10 ]
+[ Upstream commit 467a3bf219cee12259182c5cb4821f88fd518a51 ]
 
-Avoid exiting the function with a lingering sysfs file (if the first
-call to device_create_file() fails while the second succeeds), and avoid
-calling devlink_port_unregister() twice.
+The return from the crc32_le_vgfm_16/crc32c_le_vgfm_16 and the
+crc32_be_vgfm_16 functions are done with "br %r14". These are indirect
+branches as well and need to use execute trampolines for CONFIG_EXPOLINE=y.
 
-In other words, either mlx4_init_port_info() succeeds and returns zero, or
-it fails, returns non-zero, and requires no cleanup.
-
-Fixes: 096335b3f983 ("mlx4_core: Allow dynamic MTU configuration for IB ports")
-Signed-off-by: Tarick Bedeir <tarick@google.com>
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
-Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: stable@vger.kernel.org # 4.16
+Fixes: f19fbd5ed6 ("s390: introduce execute-trampolines for branches")
+Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx4/main.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/s390/crypto/crc32be-vx.S |    5 ++++-
+ arch/s390/crypto/crc32le-vx.S |    4 +++-
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx4/main.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/main.c
-@@ -2983,6 +2983,7 @@ static int mlx4_init_port_info(struct ml
- 		mlx4_err(dev, "Failed to create file for port %d\n", port);
- 		devlink_port_unregister(&info->devlink_port);
- 		info->port = -1;
-+		return err;
- 	}
+--- a/arch/s390/crypto/crc32be-vx.S
++++ b/arch/s390/crypto/crc32be-vx.S
+@@ -12,6 +12,7 @@
+  */
  
- 	sprintf(info->dev_mtu_name, "mlx4_port%d_mtu", port);
-@@ -3004,9 +3005,10 @@ static int mlx4_init_port_info(struct ml
- 				   &info->port_attr);
- 		devlink_port_unregister(&info->devlink_port);
- 		info->port = -1;
-+		return err;
- 	}
+ #include <linux/linkage.h>
++#include <asm/nospec-insn.h>
+ #include <asm/vx-insn.h>
  
--	return err;
-+	return 0;
- }
+ /* Vector register range containing CRC-32 constants */
+@@ -66,6 +67,8 @@
  
- static void mlx4_cleanup_port_info(struct mlx4_port_info *info)
+ .previous
+ 
++	GEN_BR_THUNK %r14
++
+ .text
+ /*
+  * The CRC-32 function(s) use these calling conventions:
+@@ -202,6 +205,6 @@ ENTRY(crc32_be_vgfm_16)
+ 
+ .Ldone:
+ 	VLGVF	%r2,%v2,3
+-	br	%r14
++	BR_EX	%r14
+ 
+ .previous
+--- a/arch/s390/crypto/crc32le-vx.S
++++ b/arch/s390/crypto/crc32le-vx.S
+@@ -13,6 +13,7 @@
+  */
+ 
+ #include <linux/linkage.h>
++#include <asm/nospec-insn.h>
+ #include <asm/vx-insn.h>
+ 
+ /* Vector register range containing CRC-32 constants */
+@@ -75,6 +76,7 @@
+ 
+ .previous
+ 
++	GEN_BR_THUNK %r14
+ 
+ .text
+ 
+@@ -263,6 +265,6 @@ crc32_le_vgfm_generic:
+ 
+ .Ldone:
+ 	VLGVF	%r2,%v2,2
+-	br	%r14
++	BR_EX	%r14
+ 
+ .previous
