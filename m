@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1874556-1527162464-2-11952932774006058320
+X-Cyrus-Session-Id: sloti22d1t05-1862185-1527162457-2-4282438685959274259
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527162462; b=U+MadhteKnTiwTEQE0NAOoSn+lBAGkTnjY99DtCWw6lZsEGkvU
-    tLbS4TFLIS+zu8AsRQo98KPU26bH8UwSjABDXhXL7/6Esvxz4pLCdTa0X7HxKB9d
-    S2XUTz9lSduYOKkcemMUCW5NvGlOTdyETbXCGuuflUlGPfl4mr2ojWDZmVUdmAwl
-    5Fcv+tsckQeHLkpr1xJc5bjHaqHYKwgxb0WU+/uMuYHUsmEqIVDNqiaL/WCTfUqO
-    4UwFrywglV0rhxWewVpp+/q3h6dyaI9kthI+cDnQo5XCVpaCPCnR+7K8QBZZcitN
-    myqBrFTMkTmltHreJP2S5Jqawt9pmtYCKlAA==
+    1527162456; b=De3Bu8lTBITRTgDisMjNueouMxCZGsXo1rP4t4Byx8gjWFguYK
+    HkHHwIA1D9B17jvQ8bTJsLPsQdNTw0mIuJ1e8uJW+IBrhtWoLTOZt2/rSgu+Y8IF
+    f8cZtnmJ8KDBHknJhOtm85RMKbUsm7rEPzCK418ikpyBvtzNZQkqgeFWf2/zzPGP
+    z1yfBR1hhM+w/IM4z2it3BEHkvdmlxdu+p9CPURvNMFvMglhPJcstWHg+PaY+PG/
+    DOt+zapbKNYU4n56rasF9ksK4z7BiPwHbv1TQCaomp+4KiRiKbalQ/vffA2yWRYm
+    jkc49HjgZYtA1ZAA2KXuCpSuq2o7T46xGSqA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527162462; bh=NoWyhooVEuyy7Eg/qXzdmguFNIuksE
-    T5ve2s8UIvAiY=; b=LWvVnvShTHMA/GEp5Y6EojKm6vxu1lus5f4+zoW90qzEjj
-    wBZiB+igCD2nEafz1nKkOADcWDzO2YgmGlZE4WcJNNKtj4cWZfGG+SzeqFOStFxk
-    XCdnl4i1Henm2ibQqABNl3B1hhn0kA1FjVXc0+gKFGGTyqNcHfnzBTEIuKrBQ/25
-    EIFeYMBrSfK6lDQJzDoeM4G0ZXD/vKKebKmyDFL3UtSOPXLqcZ4bWag9+ZIvbCWr
-    7C4IeooEHsWJ1JNm0+zcLuhg2Diu1IJS8I0P45etaCYC3R/zNCHQ3Qp58RceFQhw
-    4NeVS3p7G8dBizlof3xTy1wTQjt/qV/4NDb1C0iw==
+    :list-id; s=fm2; t=1527162456; bh=KhPQwhqYwaZk3X1NM4oUhwBryPZXfG
+    LTbOcISV+5fJ0=; b=J1uiOF7dmtcJrmaBbJ/ebtecVZYwkzx0ZEXNWU40yUKDX3
+    fNCqev6fASqRM9ajLmpKaRp9s0+SVd1XsDTf/vj5VZcjpYn/734CW6nivOG9NOAE
+    qUQr+ezkJHco9MWOHIbBXKoD8MdHa4+aVhJA+7s9AFIVZm9Kcks25/lrn+qvibkW
+    yLHjGqbM8Z7Xb3H4Qe9/e8U748NGhxa5w6PzSUEvkEerwxpuGQr/Bjz5ldBRbVU7
+    ZD6DHCFCoinhHa1PNWKYPCNF5XP6rzRd2ep8HdVWo7oqmy25CUVqqjc5+mfWyeVz
+    tYMI6gNrv8klrhjmINqU12IfkvFDWlA2ru6j9khQ==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=nBl/f5NM x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=KC+QXYgx x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -48,7 +48,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
 Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=nBl/f5NM x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=KC+QXYgx x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,28 +64,35 @@ Authentication-Results: mx2.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJkxfSlkVCQkgpTNkOPs3tNJKZNaPmdr2MPyfgSo4kkvT0M46Kj0mfm9kiBAOxtc/GfeFrjG2rmqttiZI0CVFGehD3rMZOiKpa5TD3FK8sbOgnLjhnGo
-    DOM7c56rogpvoye7yMI3QtUCG1m32vsldoRZAufguNnY/LxVU+kZ3cY/3RP/yuRwWlw9d+ZJ6XPOvaihar27TkxkgICXjSh9nSjqFsE1fasK/7LoscdYzJTw
+X-CM-Envelope: MS4wfPRzT5HW+TWUohJthF+YJZ1lUjqgz4dbu5yD7tAraUZ6H+l58JPbiE+dB9VjRtfSl+r7kGYMRKFKLdS6/1lLc7tV8AbYrw7Zn5CSq5adjVhckixySQxF
+    zcxev0Z3HOZy6+Fyuk5mK/MOgI2N0LmK6kSUOD7IfN+ynuFrxJjaMaj0RjoUM1WbFLPvXMl32uZD6bKXEl+AME9CqMd0shfmB0BBnSMZVU+ywvMQ4Tj22K2+
 X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VnNF1IyMAAAA:8 a=ag1SF4gXAAAA:8 a=Pm0TWSEcVNfyUuo5djUA:9 a=QEXdDO2ut3YA:10
+    a=1XWaLZrsAAAA:8 a=hSkVLCK3AAAA:8 a=VwQbUJbxAAAA:8 a=NCkSHYsgAAAA:8
+    a=yPCof4ZbAAAA:8 a=ag1SF4gXAAAA:8 a=NiwbD6wQrM2umdzaVFgA:9 a=QEXdDO2ut3YA:10
+    a=cQPPKAXgyycSBL8etih5:22 a=AjGcO6oz07-iQ99wixmX:22 a=AnMw66Xr5OuzjdxB04dI:22
     a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967057AbeEXJr2 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:47:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59976 "EHLO mail.kernel.org"
+        id S966607AbeEXLrT (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 07:47:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60220 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967014AbeEXJrZ (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:47:25 -0400
+        id S966805AbeEXJre (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:47:34 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.9 16/96] s390: extend expoline to BC instructions
-Date: Thu, 24 May 2018 11:37:59 +0200
-Message-Id: <20180524093606.512757953@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+7d26fc1eea198488deab@syzkaller.appspotmail.com,
+        Alexander Potapenko <glider@google.com>,
+        Douglas Gilbert <dgilbert@interlog.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.9 19/96] scsi: sg: allocate with __GFP_ZERO in sg_build_indirect()
+Date: Thu, 24 May 2018 11:38:02 +0200
+Message-Id: <20180524093606.702135570@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093605.602125311@linuxfoundation.org>
 References: <20180524093605.602125311@linuxfoundation.org>
@@ -103,177 +110,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+From: Alexander Potapenko <glider@google.com>
 
-[ Upstream commit 6deaa3bbca804b2a3627fd685f75de64da7be535 ]
+commit a45b599ad808c3c982fdcdc12b0b8611c2f92824 upstream.
 
-The BPF JIT uses a 'b <disp>(%r<x>)' instruction in the definition
-of the sk_load_word and sk_load_half functions.
+This shall help avoid copying uninitialized memory to the userspace when
+calling ioctl(fd, SG_IO) with an empty command.
 
-Add support for branch-on-condition instructions contained in the
-thunk code of an expoline.
-
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Reported-by: syzbot+7d26fc1eea198488deab@syzkaller.appspotmail.com
+Cc: stable@vger.kernel.org
+Signed-off-by: Alexander Potapenko <glider@google.com>
+Acked-by: Douglas Gilbert <dgilbert@interlog.com>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/s390/include/asm/nospec-insn.h |   57 ++++++++++++++++++++++++++++++++++++
- arch/s390/kernel/nospec-branch.c    |   25 ++++++++++++---
- 2 files changed, 77 insertions(+), 5 deletions(-)
 
---- a/arch/s390/include/asm/nospec-insn.h
-+++ b/arch/s390/include/asm/nospec-insn.h
-@@ -34,10 +34,18 @@ _LC_BR_R1 = __LC_BR_R1
- 	__THUNK_PROLOG_NAME __s390x_indirect_jump_r\r2\()use_r\r1
- 	.endm
+---
+ drivers/scsi/sg.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/scsi/sg.c
++++ b/drivers/scsi/sg.c
+@@ -1893,7 +1893,7 @@ retry:
+ 		num = (rem_sz > scatter_elem_sz_prev) ?
+ 			scatter_elem_sz_prev : rem_sz;
  
-+	.macro __THUNK_PROLOG_BC d0,r1,r2
-+	__THUNK_PROLOG_NAME __s390x_indirect_branch_\d0\()_\r2\()use_\r1
-+	.endm
-+
- 	.macro __THUNK_BR r1,r2
- 	jg	__s390x_indirect_jump_r\r2\()use_r\r1
- 	.endm
- 
-+	.macro __THUNK_BC d0,r1,r2
-+	jg	__s390x_indirect_branch_\d0\()_\r2\()use_\r1
-+	.endm
-+
- 	.macro __THUNK_BRASL r1,r2,r3
- 	brasl	\r1,__s390x_indirect_jump_r\r3\()use_r\r2
- 	.endm
-@@ -80,6 +88,23 @@ _LC_BR_R1 = __LC_BR_R1
- 	.endif
- 	.endm
- 
-+	.macro	__DECODE_DRR expand,disp,reg,ruse
-+	.set __decode_fail,1
-+	.irp r1,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
-+	.ifc \reg,%r\r1
-+	.irp r2,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
-+	.ifc \ruse,%r\r2
-+	\expand \disp,\r1,\r2
-+	.set __decode_fail,0
-+	.endif
-+	.endr
-+	.endif
-+	.endr
-+	.if __decode_fail == 1
-+	.error "__DECODE_DRR failed"
-+	.endif
-+	.endm
-+
- 	.macro __THUNK_EX_BR reg,ruse
- 	# Be very careful when adding instructions to this macro!
- 	# The ALTERNATIVE replacement code has a .+10 which targets
-@@ -100,12 +125,30 @@ _LC_BR_R1 = __LC_BR_R1
- 555:	br	\reg
- 	.endm
- 
-+	.macro __THUNK_EX_BC disp,reg,ruse
-+#ifdef CONFIG_HAVE_MARCH_Z10_FEATURES
-+	exrl	0,556f
-+	j	.
-+#else
-+	larl	\ruse,556f
-+	ex	0,0(\ruse)
-+	j	.
-+#endif
-+556:	b	\disp(\reg)
-+	.endm
-+
- 	.macro GEN_BR_THUNK reg,ruse=%r1
- 	__DECODE_RR __THUNK_PROLOG_BR,\reg,\ruse
- 	__THUNK_EX_BR \reg,\ruse
- 	__THUNK_EPILOG
- 	.endm
- 
-+	.macro GEN_B_THUNK disp,reg,ruse=%r1
-+	__DECODE_DRR __THUNK_PROLOG_BC,\disp,\reg,\ruse
-+	__THUNK_EX_BC \disp,\reg,\ruse
-+	__THUNK_EPILOG
-+	.endm
-+
- 	.macro BR_EX reg,ruse=%r1
- 557:	__DECODE_RR __THUNK_BR,\reg,\ruse
- 	.pushsection .s390_indirect_branches,"a",@progbits
-@@ -113,6 +156,13 @@ _LC_BR_R1 = __LC_BR_R1
- 	.popsection
- 	.endm
- 
-+	 .macro B_EX disp,reg,ruse=%r1
-+558:	__DECODE_DRR __THUNK_BC,\disp,\reg,\ruse
-+	.pushsection .s390_indirect_branches,"a",@progbits
-+	.long	558b-.
-+	.popsection
-+	.endm
-+
- 	.macro BASR_EX rsave,rtarget,ruse=%r1
- 559:	__DECODE_RRR __THUNK_BRASL,\rsave,\rtarget,\ruse
- 	.pushsection .s390_indirect_branches,"a",@progbits
-@@ -124,10 +174,17 @@ _LC_BR_R1 = __LC_BR_R1
- 	.macro GEN_BR_THUNK reg,ruse=%r1
- 	.endm
- 
-+	.macro GEN_B_THUNK disp,reg,ruse=%r1
-+	.endm
-+
- 	 .macro BR_EX reg,ruse=%r1
- 	br	\reg
- 	.endm
- 
-+	 .macro B_EX disp,reg,ruse=%r1
-+	b	\disp(\reg)
-+	.endm
-+
- 	.macro BASR_EX rsave,rtarget,ruse=%r1
- 	basr	\rsave,\rtarget
- 	.endm
---- a/arch/s390/kernel/nospec-branch.c
-+++ b/arch/s390/kernel/nospec-branch.c
-@@ -94,7 +94,6 @@ static void __init_or_module __nospec_re
- 	s32 *epo;
- 
- 	/* Second part of the instruction replace is always a nop */
--	memcpy(insnbuf + 2, (char[]) { 0x47, 0x00, 0x00, 0x00 }, 4);
- 	for (epo = start; epo < end; epo++) {
- 		instr = (u8 *) epo + *epo;
- 		if (instr[0] == 0xc0 && (instr[1] & 0x0f) == 0x04)
-@@ -115,18 +114,34 @@ static void __init_or_module __nospec_re
- 			br = thunk + (*(int *)(thunk + 2)) * 2;
- 		else
- 			continue;
--		if (br[0] != 0x07 || (br[1] & 0xf0) != 0xf0)
-+		/* Check for unconditional branch 0x07f? or 0x47f???? */
-+		if ((br[0] & 0xbf) != 0x07 || (br[1] & 0xf0) != 0xf0)
- 			continue;
-+
-+		memcpy(insnbuf + 2, (char[]) { 0x47, 0x00, 0x07, 0x00 }, 4);
- 		switch (type) {
- 		case BRCL_EXPOLINE:
--			/* brcl to thunk, replace with br + nop */
- 			insnbuf[0] = br[0];
- 			insnbuf[1] = (instr[1] & 0xf0) | (br[1] & 0x0f);
-+			if (br[0] == 0x47) {
-+				/* brcl to b, replace with bc + nopr */
-+				insnbuf[2] = br[2];
-+				insnbuf[3] = br[3];
-+			} else {
-+				/* brcl to br, replace with bcr + nop */
-+			}
- 			break;
- 		case BRASL_EXPOLINE:
--			/* brasl to thunk, replace with basr + nop */
--			insnbuf[0] = 0x0d;
- 			insnbuf[1] = (instr[1] & 0xf0) | (br[1] & 0x0f);
-+			if (br[0] == 0x47) {
-+				/* brasl to b, replace with bas + nopr */
-+				insnbuf[0] = 0x4d;
-+				insnbuf[2] = br[2];
-+				insnbuf[3] = br[3];
-+			} else {
-+				/* brasl to br, replace with basr + nop */
-+				insnbuf[0] = 0x0d;
-+			}
- 			break;
- 		}
+-		schp->pages[k] = alloc_pages(gfp_mask, order);
++		schp->pages[k] = alloc_pages(gfp_mask | __GFP_ZERO, order);
+ 		if (!schp->pages[k])
+ 			goto out;
  
