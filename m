@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1900785-1527164041-2-14505864719073041760
+X-Cyrus-Session-Id: sloti22d1t05-1886372-1527164034-2-8474425676833887506
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527164040; b=gRS035p9iSUJ8w8ME/xfqBL5enUvQdq1v/yLDIqrAUsAdZ+hWS
-    RUOSTzCbHIvtwGU8QJF2IyoqbDqTpZxgnBrs+Yx10WsvHqFX0ec0QfwVKde8Fq7x
-    u8F+DWSyvJ80lxgIpuCvKgCq+Ysum5HsyKz9zLXHYcr1Zw1vWGZ0gVeY0k88C6/z
-    yaKCwSW5dIKZOwIeK4eyRJlAFgVg+e3Y2QhfpRNtjdKNtmoUhadRFBgkLXcW3DVo
-    Zth3sLn+ISTHwr+0VVMQOjfwPVf09CuD4Ghnh4us4LO3kRvW8GqIllWM7VffpnnH
-    ggyP2/jqEc7V6sYzilDe3Wa1ef+ONFCOONOw==
+    1527164034; b=Se/GnzWxRkgt3h/TYmhclLWQ7l3RSKFsby3ldm3gTGicOvI3WZ
+    tm+NStfMt3nyjwpxGj0epYAgE8P3Fdx7/Bu7+q5pNQB3sC3qfJ5XnJjf86Wx3UGU
+    IXS5KRY4923hfbE0ObmIAhkzH+lYZqVprT2xnwteMdZDhTJFYWC7XOZM0JKSRT0j
+    geOOtnj/JFgEdrK7CJemn1+wPxhMyFXnsEhKhdv33kmkd8OBcwjXIIg3JvkCUbLL
+    t+Gk+u4EBpSnXANlje4haKzbGyWkbtH4vqWMvQ5hQ+C/JaBiT/5v0T+PQabrnOWC
+    ET6Zp691RnGGVOhrFJyPDVW0vyZEW/ovQ7GQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527164040; bh=SGXg0co0H7QqggR687K0l5YC5l29kU
-    0c0kZPAkPU3cs=; b=egu05Nakm+P83CkdSe4ZvJ/1ywS7KWtKb/Bq/R3PszHYB+
-    6YmnJR1vBWz+M44R5WxgUV2EdbAxTai8xao3Yhii8AYexwTvnWjYwHdPTyk/hw/f
-    Wmrji1zF4AU5hyIdXwEgOdmi9EYa83w3SsTRRW6lVhgHds3vdOHT6MHZBLHJB4zh
-    8uRGKrJHwsf4zT8zd5q8rXcha3yaM7aRArdJ2nIX/8PkehvdYq2ndq8Rbo0ERqsc
-    RO7xZXZRmRmoEpj2p8PEunrS2AYzrOQMK19riY/34vHJ7qdFY3F6ncXLogpVCKCj
-    wS7cg1gQ9uxiMcBsY4xeGc8ZFlUEpth1HG4iGSzQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527164034; bh=X9xmIvPedLr5PaVdlOVW2IrBsbWaqx
+    nw+CVQ4+0aJ+0=; b=D1YJF/SxsfWLj/pq95gy47hHjvWgsHAJT1gdhpzg2zCSJm
+    HAVPgOzxQkRGg/D6hkXJNCfZ95cGLtpMZYx2KyXjIXHHhK4UVgDj2sgGYJYHlIAP
+    kHA/xlFi+ZUqBIe6D3FK5SsjTXiZqqLEOBDgYvKljYStKW56iauAgDxr9qF3ftqd
+    pan08x7NdZOtulJDhHdhumHLD15y7uzJ9diqCMJFHPiqu48k3CQ8Haym7Nc5KVC4
+    i5+By7LbU9NBnQXY/h45QP+0i3ye1TGJ7aEDfYTZUOekTetzQAcn8mJ2z7ulgueZ
+    m+OIS2uw7UmpVYN8cMttWc5F1sJCmJNIwGNWp3ew==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=ZJHjmeap x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=L98vx8og x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=ZJHjmeap x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=L98vx8og x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,38 +64,29 @@ Authentication-Results: mx1.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPb+wgjETKTPvVUdpARTtURtGgq/oyCCUTSfhN3gdlBI0xkrfhDjpXiZaN3izqJMXCuQIuZysTMxIpk2s+NNpZvME0SLKCUvT8B5nyJDrvbuFopmjdX/
-    2Hg2lPvPn34E8opWqvAgUKsr8OV32xxFxHf7fa9Sfc4QSmGZ7x46WkBBIr/yxafqDLfnOk21QUlDqnwCEekT8QPTKA6vj9rqUjToTAb5RV/J3sX60CNVToe8
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfJEESk4Z0HBzXw2y9JY0Vy2Lwqcx6EpNXsoHtBcRC8E3BThnuZa7QYBsBhd+CqIQuyqnxOu2Np2QgnijT+PxLDGyELs3IeQFngTp1VVAlzH/XED1If2w
+    zlsI2WNEA6epfMCdoSO3IIhp/eOSKRLKFVgiN8Nz1I4nfK+uhpdcf/ZQiGY4yCGjyZnASjE7VwBTVj7zCUEJ6J1JLQhLyChDe9VuBXSFhj8ToRmIE+p2x7Z9
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8 a=MYakio4dAAAA:8
-    a=FOH2dFAWAAAA:8 a=drOt6m5kAAAA:8 a=Z4Rwk6OoAAAA:8 a=ag1SF4gXAAAA:8
-    a=KIgr-69tmq1Z4tTJjfIA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
-    a=cei-m1nUyINrUup_78-m:22 a=i3VuKzQdj-NEYjvDI-p3:22 a=RMMjzBEyIzXRtoq5n5K6:22
-    a=HkZW87K1Qel5hWWM3VKY:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=4TZh19kg0DandrCSKIsA:9 a=QEXdDO2ut3YA:10
+    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966563AbeEXMN5 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 08:13:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54214 "EHLO mail.kernel.org"
+        id S966489AbeEXMNh (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 08:13:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966060AbeEXJme (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:42:34 -0400
+        id S966031AbeEXJmm (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:42:42 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Kerrisk <mtk.manpages@gmail.com>,
-        Vegard Nossum <vegard.nossum@oracle.com>,
-        Willy Tarreau <w@1wt.eu>, socketpair@gmail.com,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Jens Axboe <axboe@fb.com>, Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
-Subject: [PATCH 3.18 21/45] pipe: cap initial pipe capacity according to pipe-max-size limit
-Date: Thu, 24 May 2018 11:38:29 +0200
-Message-Id: <20180524093123.356107231@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
+Subject: [PATCH 3.18 24/45] usbip: usbip_host: delete device from busid_table after rebind
+Date: Thu, 24 May 2018 11:38:32 +0200
+Message-Id: <20180524093123.749172171@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093120.599252450@linuxfoundation.org>
 References: <20180524093120.599252450@linuxfoundation.org>
@@ -113,65 +104,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michael Kerrisk (man-pages) <mtk.manpages@gmail.com>
+From: Shuah Khan (Samsung OSG) <shuah@kernel.org>
 
-commit 086e774a57fba4695f14383c0818994c0b31da7c upstream.
+commit 1e180f167d4e413afccbbb4a421b48b2de832549 upstream.
 
-This is a patch that provides behavior that is more consistent, and
-probably less surprising to users. I consider the change optional, and
-welcome opinions about whether it should be applied.
+Device is left in the busid_table after unbind and rebind. Rebind
+initiates usb bus scan and the original driver claims the device.
+After rescan the device should be deleted from the busid_table as
+it no longer belongs to usbip_host.
 
-By default, pipes are created with a capacity of 64 kiB.  However,
-/proc/sys/fs/pipe-max-size may be set smaller than this value.  In this
-scenario, an unprivileged user could thus create a pipe whose initial
-capacity exceeds the limit. Therefore, it seems logical to cap the
-initial pipe capacity according to the value of pipe-max-size.
+Fix it to delete the device after device_attach() succeeds.
 
-The test program shown earlier in this patch series can be used to
-demonstrate the effect of the change brought about with this patch:
-
-    # cat /proc/sys/fs/pipe-max-size
-    1048576
-    # sudo -u mtk ./test_F_SETPIPE_SZ 1
-    Initial pipe capacity: 65536
-    # echo 10000 > /proc/sys/fs/pipe-max-size
-    # cat /proc/sys/fs/pipe-max-size
-    16384
-    # sudo -u mtk ./test_F_SETPIPE_SZ 1
-    Initial pipe capacity: 16384
-    # ./test_F_SETPIPE_SZ 1
-    Initial pipe capacity: 65536
-
-The last two executions of 'test_F_SETPIPE_SZ' show that pipe-max-size
-caps the initial allocation for a new pipe for unprivileged users, but
-not for privileged users.
-
-Link: http://lkml.kernel.org/r/31dc7064-2a17-9c5b-1df1-4e3012ee992c@gmail.com
-Signed-off-by: Michael Kerrisk <mtk.manpages@gmail.com>
-Reviewed-by: Vegard Nossum <vegard.nossum@oracle.com>
-Cc: Willy Tarreau <w@1wt.eu>
-Cc: <socketpair@gmail.com>
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: Jens Axboe <axboe@fb.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
+Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/pipe.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/usb/usbip/stub_main.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -618,6 +618,9 @@ struct pipe_inode_info *alloc_pipe_info(
- 		unsigned long pipe_bufs = PIPE_DEF_BUFFERS;
- 		struct user_struct *user = get_current_user();
+--- a/drivers/usb/usbip/stub_main.c
++++ b/drivers/usb/usbip/stub_main.c
+@@ -201,6 +201,9 @@ static ssize_t rebind_store(struct devic
+ 	if (!bid)
+ 		return -ENODEV;
  
-+		if (pipe_bufs * PAGE_SIZE > pipe_max_size && !capable(CAP_SYS_RESOURCE))
-+			pipe_bufs = pipe_max_size >> PAGE_SHIFT;
++	/* mark the device for deletion so probe ignores it during rescan */
++	bid->status = STUB_BUSID_OTHER;
 +
- 		if (!too_many_pipe_buffers_hard(user)) {
- 			if (too_many_pipe_buffers_soft(user))
- 				pipe_bufs = 1;
+ 	/* device_attach() callers should hold parent lock for USB */
+ 	if (bid->udev->dev.parent)
+ 		device_lock(bid->udev->dev.parent);
+@@ -212,6 +215,9 @@ static ssize_t rebind_store(struct devic
+ 		return ret;
+ 	}
+ 
++	/* delete device from busid_table */
++	del_match_busid((char *) buf);
++
+ 	return count;
+ }
+ 
