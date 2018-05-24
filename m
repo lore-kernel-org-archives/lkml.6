@@ -1,68 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967624AbeEXUII (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 16:08:08 -0400
-Received: from sauhun.de ([88.99.104.3]:48526 "EHLO pokefinder.org"
+        id S968113AbeEXUIT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 16:08:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40594 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967287AbeEXUIB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 16:08:01 -0400
-Date: Thu, 24 May 2018 22:07:59 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-i2c@vger.kernel.org
-Cc: Peter Rosin <peda@axentia.se>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] i2c: opal: don't check number of messages in the
- driver
-Message-ID: <20180524200759.bmcati5h3fzobtur@ninjato>
-References: <20180520065035.7920-1-wsa@the-dreams.de>
- <20180520065035.7920-3-wsa@the-dreams.de>
+        id S967287AbeEXUIR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 16:08:17 -0400
+Date: Thu, 24 May 2018 16:08:13 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: nixiaoming <nixiaoming@huawei.com>
+Cc: <ard.biesheuvel@linaro.org>, <akpm@linux-foundation.org>,
+        <yamada.masahiro@socionext.com>, <caoj.fnst@cn.fujitsu.com>,
+        <linux@roeck-us.net>, <peterz@infradead.org>, <jhogan@kernel.org>,
+        <linux-kernel@vger.kernel.org>, trivial@kernel.org
+Subject: Re: [PATCH] scripts: Fixed printf format mismatch
+Message-ID: <20180524160813.26dbf222@gandalf.local.home>
+In-Reply-To: <20180524031612.79723-1-nixiaoming@huawei.com>
+References: <20180524031612.79723-1-nixiaoming@huawei.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="z2owrkxff3iiku6g"
-Content-Disposition: inline
-In-Reply-To: <20180520065035.7920-3-wsa@the-dreams.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 24 May 2018 11:16:12 +0800
+nixiaoming <nixiaoming@huawei.com> wrote:
 
---z2owrkxff3iiku6g
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> scripts/kallsyms.c: function write_src:
+> "printf", the #1 format specifier "d" need arg type "int",
+> but the according arg "table_cnt" has type "unsigned int"
+> 
+> scripts/recordmcount.c: function do_file:
+> "fprintf", the #1 format specifier "d" need arg type "int",
+> but the according arg "(*w2)(ehdr->e_machine)" has type "unsigned int"
+> 
+> scripts/recordmcount.h: function find_secsym_ndx:
+> "fprintf", the #1 format specifier "d" need arg type "int",
+> but the according arg "txtndx" has type "unsigned int"
 
-On Sun, May 20, 2018 at 08:50:34AM +0200, Wolfram Sang wrote:
-> Since commit 1eace8344c02 ("i2c: add param sanity check to
-> i2c_transfer()") and b7f625840267 ("i2c: add quirk checks to core"), the
-> I2C core does this check now. We can remove it here.
->=20
-> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-Applied to for-next, thanks!
+-- Steve
 
-
---z2owrkxff3iiku6g
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIyBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlsHG58ACgkQFA3kzBSg
-KbakTw/43FO4Yi3zQylLuRTKH8S3IjK5+LMiYiMmYOe4MvFy4GEsjxyrCtA1xzIw
-KEZgbjc34sWfn6YmoFuDVSA8i2uZ+pXfW2vvEhxyYC121Lg+pjwxBRr41RbP05ZZ
-r4uyv6gmkwn3GF9qKDEuToWTIuUDRcm/Js6gKt+BThlnno7NIUfn4YDVUgHowyPH
-53e1A4aL4GxG0j2WU+97l2oMP8GoWeo9uc1WhA5LZy3R34UkUbErzswkQD+z/95/
-FC/TZ3JpIhalVS4LeHaEwmg8oCsCCmkujOCp2RJEUHzsZ99j+MqEDA+fwmO+nzLb
-f7cAjIjOCFOYN5MEIKobbjDoT3nkQZ3qSAo+sx9Li8ZiIFecW4WsQUypA0QX+I7p
-gBlMZodVnuETAMNHaChnnuEMIsAk5wwFxTGWTYUdCheExaQI93+n/PjkpPH2anw4
-2dThwuJqLjDXTgMq7cSbuinxwz6wBobn3gK9kZXU2LDZ7xCWVOe7KNyju6cSt+Qx
-UJe5E48gtHKv/oneKqNN9PFchN8T4y9x0ZXjhSHu9PJQ8MCz28TAFrDSJ0unXeCw
-4UxlR39/BrT242qG2Qfs5JvnQvVgsHL6lVYhmHWxIKhqYyfYV1mZmR+mx7+l3ZhR
-ZJRcIWgA/VHR73WZ3nLcFpus0vehNwWRbVMLFUt4buupvsUp0A==
-=jjt2
------END PGP SIGNATURE-----
-
---z2owrkxff3iiku6g--
+> 
+> Signed-off-by: nixiaoming <nixiaoming@huawei.com>
+> ---
+>  scripts/kallsyms.c     | 2 +-
+>  scripts/recordmcount.c | 2 +-
+>  scripts/recordmcount.h | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/scripts/kallsyms.c b/scripts/kallsyms.c
+> index 5abfbf1..e0c416a 100644
+> --- a/scripts/kallsyms.c
+> +++ b/scripts/kallsyms.c
+> @@ -424,7 +424,7 @@ static void write_src(void)
+>  	}
+>  
+>  	output_label("kallsyms_num_syms");
+> -	printf("\tPTR\t%d\n", table_cnt);
+> +	printf("\tPTR\t%u\n", table_cnt);
+>  	printf("\n");
+>  
+>  	/* table of offset markers, that give the offset in the compressed stream
+> diff --git a/scripts/recordmcount.c b/scripts/recordmcount.c
+> index 8c9691c..895c40e 100644
+> --- a/scripts/recordmcount.c
+> +++ b/scripts/recordmcount.c
+> @@ -500,7 +500,7 @@ do_file(char const *const fname)
+>  	gpfx = 0;
+>  	switch (w2(ehdr->e_machine)) {
+>  	default:
+> -		fprintf(stderr, "unrecognized e_machine %d %s\n",
+> +		fprintf(stderr, "unrecognized e_machine %u %s\n",
+>  			w2(ehdr->e_machine), fname);
+>  		fail_file();
+>  		break;
+> diff --git a/scripts/recordmcount.h b/scripts/recordmcount.h
+> index b9897e2..2e77937 100644
+> --- a/scripts/recordmcount.h
+> +++ b/scripts/recordmcount.h
+> @@ -441,7 +441,7 @@ static unsigned find_secsym_ndx(unsigned const txtndx,
+>  			return symp - sym0;
+>  		}
+>  	}
+> -	fprintf(stderr, "Cannot find symbol for section %d: %s.\n",
+> +	fprintf(stderr, "Cannot find symbol for section %u: %s.\n",
+>  		txtndx, txtname);
+>  	fail_file();
+>  }
