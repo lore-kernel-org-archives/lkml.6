@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1733193-1527156530-2-6279995353778000718
+X-Cyrus-Session-Id: sloti22d1t05-1733193-1527156525-2-16744515789971816760
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527156530; b=HljRBIRh5Pwj8p7ePzxfuhc1g2a+kbop+SJs5f9DHs5w9PALaJ
-    ASNYVhLKxq401jrF7gsfyQLb3YzhHsRzN80RbUeJrlEt0Wv2qnzLWyvs4YIzoEc7
-    TN6HpQdCXV4P2W+cEKqoKqHrcWdCXZGhh04LUygn7p2oQHqyNuA3cWsKKFDn+XXC
-    VJYaS9msJO6hR0SuruKEN4+dt/w+RLnpOc6axNLmoGO3fhAIy9w5tlU7J4IP/sjZ
-    qcaqJaSMyV++JAntBL+0Fgx0q2IUypfO7YGwmWmp5yG90x3fqYdwwWjvv3IJhZRm
-    ydshtYIxH77ybLsyJ/RmHhV5OY5DjGZaHi4g==
+    1527156525; b=YH9fhR8GPogjrPQmYD/E7Ug4sBC7GoEL0emKR5/m1rnWASdO2v
+    KnRcYcjffWZYOsv4AmQ5JORyk3z6R2Ff8G2h2EdVmNt20zCdfzxtdMIA5O81KgtG
+    sMGiP+AePHNpeO5GoHH+kvUkVm/hjKec6k5PcAtMZSdJ6KGLZBSnGTp8tmS+eXUj
+    R30kOHKhqhjkhhtAP2v3VFoTVZ9h0NqM2qKcP+mnqG5we0hIMK/NJm4THqqcD8IA
+    czGC50CL0kTe0toEMpnKYrcPIbJVTUGjxtt9+xvVTpMuo3sGt9bXB3POvxqhxEwG
+    cuk53gs4t/cNkNwriUFFRUQWSYGZLA7tbxnA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527156530; bh=3HL3LtE96D874W3dDHchKeyKRTdHGa
-    MZO79rJPL6S4E=; b=aosScbVVDu037c/5k1wu8jTrM93oOd+oPuRjKzKUHXUifW
-    UCazVgoRsfQ2R0f+imMK3aWlnfS/fPxWgudMFYcL1Aew/gjuOZIzjRLx1RNhj884
-    zbtBRV+2ZOhBjAwPWgOUvK+wSwS7AxCvQBYQz6f6WkN6uzOX524YfQMb51B8oP+O
-    yrDoPdx7zt1OUCpNh/beBFNlypnglLyxrVCxQi+ITRjE3fGXX9vWvQglacvY7NDZ
-    zkzwLvKvp7GuzrIZVvUZKpxwLgaqNhoSoltgXQdqzRG1Z+1ykDhFnTnWgMMOWqQg
-    +OWOprdBb/bgwr6EzGu0WUDpy7BfuOMTHvBUQ9Bw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527156525; bh=oRc0IIRgHHCAlEBJD1ai8pc+RdWGSf
+    Qnp3amYbopjww=; b=gzG/9XZlSvukQ1nevzPG4r7kvtfPXtAsGmTbDLfirmz0ON
+    Ge0omM5DPy6gOCW9ICEXzWCzFY42YXUTr3WLSgaKIvUjbjtDHfJgMnLVze7D4J+O
+    KujIxz1xwE+MtLQCj9rA6cxwTLsZ84zVADuCisXlHNpDOwL4qyUZgbwXi8wBrUlW
+    jt6vFFgGgs26g0M2f0agJ+f4K0Ae169xS5gkNgMAOGS88ky/Fg8UXSr1H7Ss6x8G
+    lts64KiVMOrOM6XnopxRxNJGmUOhmPFiT31sz2sGE4Vzsf/jWPPFluXAQvs+PqJv
+    5RuvCXLbjd+WvQVgLhcOrrP28w+G+R3KBvDMUBXQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=xNE1eSlX x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=yipjeYuc x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=xNE1eSlX x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=yipjeYuc x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,30 +64,30 @@ Authentication-Results: mx5.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBZz+1cwcmwHCtYRblXHlBfjIh1oKr7r3kmP6XzMutT6zTaRq54fNoaT5fInfdZXDoKUDVrfFS6zlHWYFFrdgMyuERxZdPfo7T6DWZavzuF2/YgJGZk4
-    QeLHsp106TdX2oJ6v7O6Ta+XHdwGkX1domDSs8zWLadZMmFSVhGWTR/Zc7huvw2YezJ1N8XaEZ22xDb7+k4ehLz0HxFWmZEiBXH0Akfb7bi7u48ASpylwXTd
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfH0qRWcALN+X7QMhnE9F7we6MzzOC1hZ3Fp7tf8AxPx13hnIm85OCAmnKlwNbegBYqc3ojNHqawvb/Skzh0rOAh/nOma+qx5wVxRLzmpkcUM8OPGqVRx
+    CvZQnKZr8TIPn1GnCR9hBmruAfIZhg/QXoOMlIfk26/PCCP15N27n00CaNLYQ2REalKcAEtPYfpvAlN0erc+X7uFEEXcH3m8QSKbBb5CsqAOmmhDzNxOJDSU
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=P-IC7800AAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=-1-aRErqP1VAc6yjLfcA:9
+    a=P-IC7800AAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=_reXzBdDsLP_B_R58xkA:9
     a=QEXdDO2ut3YA:10 a=d3PnA9EDa4IxuAV0gXij:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031665AbeEXKGD (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 06:06:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55030 "EHLO mail.kernel.org"
+        id S1031425AbeEXKI1 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 06:08:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55100 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030890AbeEXKF7 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 06:05:59 -0400
+        id S1031229AbeEXKGF (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 06:06:05 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 158/161] rtc: m41t80: fix race conditions
-Date: Thu, 24 May 2018 11:39:43 +0200
-Message-Id: <20180524093037.128894858@linuxfoundation.org>
+Subject: [PATCH 4.16 160/161] rtc: rp5c01: fix possible race condition
+Date: Thu, 24 May 2018 11:39:45 +0200
+Message-Id: <20180524093037.431976454@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -107,52 +107,10 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-[ Upstream commit 10d0c768cc6d581523d673b9d1b54213f8a5eb24 ]
+[ Upstream commit bcdd559268039d8340d38fa58668393596e29fdc ]
 
-The IRQ is requested before the struct rtc is allocated and registered, but
-this struct is used in the IRQ handler, leading to:
-
-Unable to handle kernel NULL pointer dereference at virtual address 0000017c
-pgd = a38a2f9b
-[0000017c] *pgd=00000000
-Internal error: Oops: 5 [#1] ARM
-Modules linked in:
-CPU: 0 PID: 613 Comm: irq/48-m41t80 Not tainted 4.16.0-rc1+ #42
-Hardware name: Atmel SAMA5
-PC is at mutex_lock+0x14/0x38
-LR is at m41t80_handle_irq+0x1c/0x9c
-pc : [<c06e864c>]    lr : [<c04b70f0>]    psr: 20000013
-sp : dec73f30  ip : 00000000  fp : dec56d98
-r10: df437cf0  r9 : c0a03008  r8 : c0145ffc
-r7 : df5c4300  r6 : dec568d0  r5 : df593000  r4 : 0000017c
-r3 : df592800  r2 : 60000013  r1 : df593000  r0 : 0000017c
-Flags: nzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
-Control: 10c53c7d  Table: 20004059  DAC: 00000051
-Process irq/48-m41t80 (pid: 613, stack limit = 0xb52d091e)
-Stack: (0xdec73f30 to 0xdec74000)
-3f20:                                     dec56840 df5c4300 00000001 df5c4300
-3f40: c0145ffc c0146018 dec56840 ffffe000 00000001 c0146290 dec567c0 00000000
-3f60: c0146084 ed7c9a62 c014615c dec56d80 dec567c0 00000000 dec72000 dec56840
-3f80: c014615c c012ffc0 dec72000 dec567c0 c012fe80 00000000 00000000 00000000
-3fa0: 00000000 00000000 00000000 c01010e8 00000000 00000000 00000000 00000000
-3fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-3fe0: 00000000 00000000 00000000 00000000 00000013 00000000 29282726 2d2c2b2a
-[<c06e864c>] (mutex_lock) from [<c04b70f0>] (m41t80_handle_irq+0x1c/0x9c)
-[<c04b70f0>] (m41t80_handle_irq) from [<c0146018>] (irq_thread_fn+0x1c/0x54)
-[<c0146018>] (irq_thread_fn) from [<c0146290>] (irq_thread+0x134/0x1c0)
-[<c0146290>] (irq_thread) from [<c012ffc0>] (kthread+0x140/0x148)
-[<c012ffc0>] (kthread) from [<c01010e8>] (ret_from_fork+0x14/0x2c)
-Exception stack(0xdec73fb0 to 0xdec73ff8)
-3fa0:                                     00000000 00000000 00000000 00000000
-3fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-3fe0: 00000000 00000000 00000000 00000000 00000013 00000000
-Code: e3c33d7f e3c3303f f5d0f000 e593300c (e1901f9f)
----[ end trace 22b027302eb7c604 ]---
-genirq: exiting task "irq/48-m41t80" (613) is an active IRQ thread (irq 48)
-
-Also, there is another possible race condition. The probe function is not
-allowed to fail after the RTC is registered because the following may
-happen:
+The probe function is not allowed to fail after registering the RTC because
+the following may happen:
 
 CPU0:                                CPU1:
 sys_load_module()
@@ -177,64 +135,41 @@ sys_load_module()
                                          /* dereferences already
                                             freed struct module* */
 
-Switch to devm_rtc_allocate_device/rtc_register_device to allocate the rtc
-before requesting the IRQ and register it as late as possible.
+Switch to devm_rtc_allocate_device/rtc_register_device to register the rtc
+as late as possible.
 
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/rtc/rtc-m41t80.c |   18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
+ drivers/rtc/rtc-rp5c01.c |   12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
---- a/drivers/rtc/rtc-m41t80.c
-+++ b/drivers/rtc/rtc-m41t80.c
-@@ -885,7 +885,6 @@ static int m41t80_probe(struct i2c_clien
- {
- 	struct i2c_adapter *adapter = to_i2c_adapter(client->dev.parent);
- 	int rc = 0;
--	struct rtc_device *rtc = NULL;
- 	struct rtc_time tm;
- 	struct m41t80_data *m41t80_data = NULL;
- 	bool wakeup_source = false;
-@@ -909,6 +908,10 @@ static int m41t80_probe(struct i2c_clien
- 		m41t80_data->features = id->driver_data;
- 	i2c_set_clientdata(client, m41t80_data);
+--- a/drivers/rtc/rtc-rp5c01.c
++++ b/drivers/rtc/rtc-rp5c01.c
+@@ -249,16 +249,24 @@ static int __init rp5c01_rtc_probe(struc
  
-+	m41t80_data->rtc =  devm_rtc_allocate_device(&client->dev);
-+	if (IS_ERR(m41t80_data->rtc))
-+		return PTR_ERR(m41t80_data->rtc);
+ 	platform_set_drvdata(dev, priv);
+ 
+-	rtc = devm_rtc_device_register(&dev->dev, "rtc-rp5c01", &rp5c01_rtc_ops,
+-				  THIS_MODULE);
++	rtc = devm_rtc_allocate_device(&dev->dev);
+ 	if (IS_ERR(rtc))
+ 		return PTR_ERR(rtc);
 +
- #ifdef CONFIG_OF
- 	wakeup_source = of_property_read_bool(client->dev.of_node,
- 					      "wakeup-source");
-@@ -932,15 +935,11 @@ static int m41t80_probe(struct i2c_clien
- 		device_init_wakeup(&client->dev, true);
- 	}
- 
--	rtc = devm_rtc_device_register(&client->dev, client->name,
--				       &m41t80_rtc_ops, THIS_MODULE);
--	if (IS_ERR(rtc))
--		return PTR_ERR(rtc);
-+	m41t80_data->rtc->ops = &m41t80_rtc_ops;
- 
--	m41t80_data->rtc = rtc;
- 	if (client->irq <= 0) {
- 		/* We cannot support UIE mode if we do not have an IRQ line */
--		rtc->uie_unsupported = 1;
-+		m41t80_data->rtc->uie_unsupported = 1;
- 	}
- 
- 	/* Make sure HT (Halt Update) bit is cleared */
-@@ -993,6 +992,11 @@ static int m41t80_probe(struct i2c_clien
- 	if (m41t80_data->features & M41T80_FEATURE_SQ)
- 		m41t80_sqw_register_clk(m41t80_data);
- #endif
++	rtc->ops = &rp5c01_rtc_ops;
 +
-+	rc = rtc_register_device(m41t80_data->rtc);
-+	if (rc)
-+		return rc;
+ 	priv->rtc = rtc;
+ 
+ 	error = sysfs_create_bin_file(&dev->dev.kobj, &priv->nvram_attr);
+ 	if (error)
+ 		return error;
+ 
++	error = rtc_register_device(rtc);
++	if (error) {
++		sysfs_remove_bin_file(&dev->dev.kobj, &priv->nvram_attr);
++		return error;
++	}
 +
  	return 0;
  }
