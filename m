@@ -1,53 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034601AbeEXTf1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 15:35:27 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:50230 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1034514AbeEXTfX (ORCPT
+        id S1034608AbeEXTia (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 15:38:30 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:37909 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S968846AbeEXTiW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 15:35:23 -0400
-Date: Thu, 24 May 2018 15:35:19 -0400 (EDT)
-Message-Id: <20180524.153519.452683890193996505.davem@davemloft.net>
-To: jasowang@redhat.com
-Cc: mst@redhat.com, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] vhost: synchronize IOTLB message with dev cleanup
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <1526990337-24892-1-git-send-email-jasowang@redhat.com>
-References: <1526990337-24892-1-git-send-email-jasowang@redhat.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Thu, 24 May 2018 15:38:22 -0400
+X-Google-Smtp-Source: AB8JxZo1eUgwifJmbPF3h36RBS2GYHZBY/fznHEYWQ8L1749QWGOIVPiL20qI4VnvF5bDUfn2go0oA==
+From: Marcus Folkesson <marcus.folkesson@gmail.com>
+To: "David S . Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-kernel@vger.kernel.org,
+        Marcus Folkesson <marcus.folkesson@gmail.com>
+Subject: [PATCH] MAINTAINERS: add PhoenixRC Flight Controller Adapter
+Date: Thu, 24 May 2018 21:37:36 +0200
+Message-Id: <20180524193736.7129-1-marcus.folkesson@gmail.com>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Wang <jasowang@redhat.com>
-Date: Tue, 22 May 2018 19:58:57 +0800
+Add MAINTAINERS entry for PhoenixRC Flight Controller Adapter
 
-> DaeRyong Jeong reports a race between vhost_dev_cleanup() and
-> vhost_process_iotlb_msg():
-> 
-> Thread interleaving:
-> CPU0 (vhost_process_iotlb_msg)			CPU1 (vhost_dev_cleanup)
-> (In the case of both VHOST_IOTLB_UPDATE and
-> VHOST_IOTLB_INVALIDATE)
-> =====						=====
-> 						vhost_umem_clean(dev->iotlb);
-> if (!dev->iotlb) {
-> 	        ret = -EFAULT;
-> 		        break;
-> }
-> 						dev->iotlb = NULL;
-> 
-> The reason is we don't synchronize between them, fixing by protecting
-> vhost_process_iotlb_msg() with dev mutex.
-> 
-> Reported-by: DaeRyong Jeong <threeearcat@gmail.com>
-> Fixes: 6b1e6cc7855b0 ("vhost: new device IOTLB API")
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
+Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+---
+ MAINTAINERS | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Michael, please review.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9051a9ca24a2..feb02e9568e6 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11117,6 +11117,12 @@ S:	Maintained
+ F:	include/linux/personality.h
+ F:	include/uapi/linux/personality.h
+ 
++PHOENIX RC FLIGHT CONTROLLER ADAPTER
++M	Marcus Folkesson <marcus.folkesson@gmail.com>
++S:	Maintained
++F:	Documentation/input/devices/pxrc.rst
++F:	drivers/input/joystick/pxrc.c
++
+ PHONET PROTOCOL
+ M:	Remi Denis-Courmont <courmisch@gmail.com>
+ S:	Supported
+-- 
+2.16.2
