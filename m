@@ -1,30 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935570AbeEXFlu (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 01:41:50 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:54341 "EHLO
+        id S1755087AbeEXFmW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 01:42:22 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:60081 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935396AbeEXFlq (ORCPT
+        with ESMTP id S1754937AbeEXFmT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 01:41:46 -0400
-Date: Wed, 23 May 2018 22:41:25 -0700
-From: tip-bot for Jin Yao <tipbot@zytor.com>
-Message-ID: <tip-787e4da9f95fd44376b3af6fa163ac0b3a48a1fc@git.kernel.org>
-Cc: acme@redhat.com, jolsa@kernel.org, mingo@kernel.org,
-        yao.jin@linux.intel.com, hpa@zytor.com,
-        alexander.shishkin@linux.intel.com, tglx@linutronix.de,
-        kan.liang@linux.intel.com, ak@linux.intel.com,
-        linux-kernel@vger.kernel.org, peterz@infradead.org
-Reply-To: linux-kernel@vger.kernel.org, peterz@infradead.org,
-        kan.liang@linux.intel.com, ak@linux.intel.com, jolsa@kernel.org,
-        acme@redhat.com, alexander.shishkin@linux.intel.com,
-        tglx@linutronix.de, mingo@kernel.org, yao.jin@linux.intel.com,
-        hpa@zytor.com
-In-Reply-To: <1526989115-14435-1-git-send-email-yao.jin@linux.intel.com>
-References: <1526989115-14435-1-git-send-email-yao.jin@linux.intel.com>
+        Thu, 24 May 2018 01:42:19 -0400
+Date: Wed, 23 May 2018 22:41:54 -0700
+From: tip-bot for Adrian Hunter <tipbot@zytor.com>
+Message-ID: <tip-f6838209484d5cfb368ca5c61d150cc4054eef59@git.kernel.org>
+Cc: dave.hansen@linux.intel.com, jolsa@redhat.com,
+        alexander.shishkin@linux.intel.com, hpa@zytor.com, luto@kernel.org,
+        joro@8bytes.org, mingo@kernel.org, tglx@linutronix.de,
+        ak@linux.intel.com, peterz@infradead.org, acme@redhat.com,
+        adrian.hunter@intel.com, linux-kernel@vger.kernel.org
+Reply-To: hpa@zytor.com, luto@kernel.org, joro@8bytes.org,
+        dave.hansen@linux.intel.com, jolsa@redhat.com,
+        alexander.shishkin@linux.intel.com, peterz@infradead.org,
+        acme@redhat.com, linux-kernel@vger.kernel.org, adrian.hunter@intel.com,
+        mingo@kernel.org, tglx@linutronix.de, ak@linux.intel.com
+In-Reply-To: <1526986485-6562-11-git-send-email-adrian.hunter@intel.com>
+References: <1526986485-6562-11-git-send-email-adrian.hunter@intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf annotate: Show group event string for stdio
-Git-Commit-ID: 787e4da9f95fd44376b3af6fa163ac0b3a48a1fc
+Subject: [tip:perf/core] perf kcore_copy: Keep phdr data in a list
+Git-Commit-ID: f6838209484d5cfb368ca5c61d150cc4054eef59
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -37,71 +37,78 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  787e4da9f95fd44376b3af6fa163ac0b3a48a1fc
-Gitweb:     https://git.kernel.org/tip/787e4da9f95fd44376b3af6fa163ac0b3a48a1fc
-Author:     Jin Yao <yao.jin@linux.intel.com>
-AuthorDate: Tue, 22 May 2018 19:38:35 +0800
+Commit-ID:  f6838209484d5cfb368ca5c61d150cc4054eef59
+Gitweb:     https://git.kernel.org/tip/f6838209484d5cfb368ca5c61d150cc4054eef59
+Author:     Adrian Hunter <adrian.hunter@intel.com>
+AuthorDate: Tue, 22 May 2018 13:54:38 +0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Wed, 23 May 2018 10:26:40 -0300
 
-perf annotate: Show group event string for stdio
+perf kcore_copy: Keep phdr data in a list
 
-When we enable the group, for tui/stdio2, the output first line includes
-the group event string. While for stdio, it will show only one event.
+Currently, kcore_copy makes 2 program headers, one for the kernel text
+(namely kernel_map) and one for the modules (namely modules_map). Now
+more program headers are needed, but treating each program header as a
+special case results in much more code.
 
-For example,
+Instead, in preparation to add more program headers, change to keep
+program header data (phdr_data) in a list.
 
-perf record -e cycles,branches ./div
-perf annotate --group --stdio
-
-    Percent |      Source code & Disassembly of div for cycles (44407 samples)
-    ......
-
-The first line doesn't include the event 'branches'.
-
-With this patch, it will show the correct group even string.
-
-perf annotate --group --stdio
-
-    Percent |      Source code & Disassembly of div for cycles, branches (44407 samples)
-    ......
-
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
-Suggested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Joerg Roedel <joro@8bytes.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1526989115-14435-1-git-send-email-yao.jin@linux.intel.com
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86@kernel.org
+Link: http://lkml.kernel.org/r/1526986485-6562-11-git-send-email-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/annotate.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ tools/perf/util/symbol-elf.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index 6612c7f90af4..71897689dacf 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -1965,6 +1965,7 @@ int symbol__annotate_printf(struct symbol *sym, struct map *map,
+diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
+index 48943b834f11..b13873a6f368 100644
+--- a/tools/perf/util/symbol-elf.c
++++ b/tools/perf/util/symbol-elf.c
+@@ -1388,6 +1388,7 @@ struct phdr_data {
+ 	off_t offset;
+ 	u64 addr;
  	u64 len;
- 	int width = symbol_conf.show_total_period ? 12 : 8;
- 	int graph_dotted_len;
-+	char buf[512];
++	struct list_head node;
+ };
  
- 	filename = strdup(dso->long_name);
- 	if (!filename)
-@@ -1977,8 +1978,11 @@ int symbol__annotate_printf(struct symbol *sym, struct map *map,
+ struct kcore_copy_info {
+@@ -1399,6 +1400,7 @@ struct kcore_copy_info {
+ 	u64 last_module_symbol;
+ 	struct phdr_data kernel_map;
+ 	struct phdr_data modules_map;
++	struct list_head phdrs;
+ };
  
- 	len = symbol__size(sym);
+ static int kcore_copy__process_kallsyms(void *arg, const char *name, char type,
+@@ -1510,6 +1512,11 @@ static int kcore_copy__read_maps(struct kcore_copy_info *kci, Elf *elf)
+ 	if (elf_read_maps(elf, true, kcore_copy__read_map, kci) < 0)
+ 		return -1;
  
--	if (perf_evsel__is_group_event(evsel))
-+	if (perf_evsel__is_group_event(evsel)) {
- 		width *= evsel->nr_members;
-+		perf_evsel__group_desc(evsel, buf, sizeof(buf));
-+		evsel_name = buf;
-+	}
++	if (kci->kernel_map.len)
++		list_add_tail(&kci->kernel_map.node, &kci->phdrs);
++	if (kci->modules_map.len)
++		list_add_tail(&kci->modules_map.node, &kci->phdrs);
++
+ 	return 0;
+ }
  
- 	graph_dotted_len = printf(" %-*.*s|	Source code & Disassembly of %s for %s (%" PRIu64 " samples)\n",
- 				  width, width, symbol_conf.show_total_period ? "Period" :
+@@ -1678,6 +1685,8 @@ int kcore_copy(const char *from_dir, const char *to_dir)
+ 	char kcore_filename[PATH_MAX];
+ 	char extract_filename[PATH_MAX];
+ 
++	INIT_LIST_HEAD(&kci.phdrs);
++
+ 	if (kcore_copy__copy_file(from_dir, to_dir, "kallsyms"))
+ 		return -1;
+ 
