@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1807417-1527159241-2-6089429754471454455
+X-Cyrus-Session-Id: sloti22d1t05-1807417-1527159237-2-9413510105005992089
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527159240; b=IBj+cRjVYHvDZUIO56QdjOXrj89Do0uIbGe3n9bidnUiJCHwa8
-    yUHqTUQK6DBJbK9M7/xQu/QI74LBZzfm5O2WJUtXn1Zoqo6coBCYLCkUzAKcUqZC
-    UYxt5akBxaPcArRaGk/py0a5cs8Rku/ELFQkUcqDy5lnQ3xsjDiFhsmP3oEjnvZF
-    Ws1WrcfgWLoVjwv0fIh4guIZDWfdKZNIRGiNMf8IsjFDvzbh/ZFt9DUvx1oMY1Lu
-    LHQfgRpH3Op4qkymV7S/tS6gTf2YOOLxqZOQpDGOukRcuJ2DQYJSxmuC7VNiqyMb
-    Vb0MV1W3H3QTibkOanqpsdldS0acZg0AWGHA==
+    1527159236; b=NXfZgsfPT0sP05wi3oVHotbRtOQc6fKJOfGjYU0dIcM9p0X1OV
+    R+rBwNm0kA8mcLhNmr75FalTTjrb7iQlUMK59nrw/XqE6vFXr3zMQnLd0eIFvDZd
+    yR9A90Zte02fJzXi88L7BstwXcnVzAqKzWLClF9vncef3Jipf3LX5Qj40R4fBihx
+    HfTz1NB7dlSHkzSjqRKkPB1y011VPzclLWcdn4WR9LkIpOekp0n7Fw0p/2a1AsNh
+    MJEclubwamWZuEpf+Vw8EfmhnEFk0cu7EPVEwul9utZ2u0pMwCrcee6Xt1vKvrgG
+    7iAqWVc1Dgmeyw6nHN/WtRWyJ2XeDb6brtXA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527159240; bh=cszFybg0gMg5ft7T9nFMqOOlzOdeLv
-    nYUndm2WVhSbA=; b=K2Ok9kso0nLc/dBNuA51VArY+HkfsX5NHY/i7YisobixHZ
-    3CbRn2CusykCER4/lmTv2Twv/yn2APbYQe7CJKycpOWsdt6qwm7RiaNoZXSv/Tx2
-    jMxT9Ltx2ROJ0eqckkKf+b6J7vvfmE5m0xQUOTnmtPXD9zL5OC4qW453ofG0lmDV
-    xMzaoba2jVt45aD6OXH1uNHXm9iTxbML7/6CV26W3TiV5fWHLdBUISket7eQaWj9
-    s7dYLJ9UARMelD6cfJld/aXjrE8n/iw4AAEzT9RvB6PHSdWXS7LmpdNHp14fXBxY
-    GnlmRGADgP/ojQbz7GqoqzeOPaBKYy5Tou64PnsA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527159236; bh=1+0+lcgk7m4NwPEZxmU1aqXFsayxGY
+    NoFU1mVk0QsJY=; b=DU+pNlTkdAfgmKKSS7uvkSzDAEKRlAmUg+ryxM0m3O832C
+    N40GcZbVOwE1uURYFJmWfp9DspWvo0HI99XZrPcXFS1kQyc1NukBk8iTJy5F+8Ld
+    3/PO1oQ2DGvm/re8qVEujLYn0BaswSzoC4jIKrl3k7PIFV3J9DwXSgvFAjgKSmba
+    iQU8ss0aPZOx5/0UcFM4It1MPfXAE9GJSkolDIny1iQsJ+yNqL2ZyHC3PD+M1XSL
+    07EMxMww7j31cmcRRVpN2e3N24f1hB94gGYfl+fQhh2FrNxIFdtMMoRbAC7L3eTP
+    GnkeW13tC6WGliq4ytQ+yV0rMcc/tORyv/q1F0cQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=0pyV51pk x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=EG9R4Xt/ x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=0pyV51pk x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=EG9R4Xt/ x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,30 +64,34 @@ Authentication-Results: mx3.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCrtroIbfvEc6KLd+KgTehGvvK84mBRWprWOPXI7dxwHvAT1lxHx9S4aYlH81NheLzWo4bVBx2eNkYa81IAvop0KwaczGldqeMvjfZAKY6nqu6Ywpo5b
-    PmogzjLI14oqoBVcKkCC99mqqFMU2qfisUfGP9EXKTHLwzZKLo/zzu7AGxBIywRLi7PMCU2cSg++GL5U8wEw2yvRhd3vj6CpAef1KvnaqM3jKlPaooglw58M
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfIvzTW0+LQYfN2G/8Z2D6amCc3wyjmidArZjkXh98neIuW5SWiNHMQVBrmW7/71w82Z/MPUB9lae0+giskwZMRvKWE/Huk5uWVULXYmoWPp4Lj+gVtfZ
+    AlsWJDQN2FgT/NwiFIW3X58FiSrq8KUA8ccErqf4+RRwgcELhFAPKi8ZzTZxFjwO2oBhGcNQ47ra+fMI/OOdaMD1soH6j4rsaP1nVbXQQiUt2R46bF0ZLr9b
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=s8YR1HE3AAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=gV9ZC5vI7Yc8r_rdcxcA:9
-    a=QEXdDO2ut3YA:10 a=jGH_LyMDp9YhSvY-UuyI:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=j-NXPswCAAAA:8 a=m8ToADvmAAAA:8 a=Ikd4Dj_1AAAA:8 a=yMhMjlubAAAA:8
+    a=ag1SF4gXAAAA:8 a=RNOMWXZoqlZzpp3PYiAA:9 a=RdPg5fLVvLDu0hiv:21
+    a=yYO6URiAGnNbBWEK:21 a=QEXdDO2ut3YA:10 a=UdV-L189IiqUQIgB40x4:22
+    a=kCrBFHLFDAq2jDEeoMj9:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030366AbeEXKx5 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 06:53:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36890 "EHLO mail.kernel.org"
+        id S1030384AbeEXJ5D (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:57:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36832 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030383AbeEXJ5C (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:57:02 -0400
+        id S1030366AbeEXJ5A (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:57:00 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shawn Lin <shawn.lin@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>,
+        stable@vger.kernel.org,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 130/165] clk: rockchip: Prevent calculating mmc phase if clock rate is zero
-Date: Thu, 24 May 2018 11:38:56 +0200
-Message-Id: <20180524093627.260856482@linuxfoundation.org>
+Subject: [PATCH 4.14 129/165] clk: tegra: Fix pll_u rate configuration
+Date: Thu, 24 May 2018 11:38:55 +0200
+Message-Id: <20180524093627.222721421@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -105,62 +109,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shawn Lin <shawn.lin@rock-chips.com>
+From: Marcel Ziswiler <marcel@ziswiler.com>
 
-[ Upstream commit 4bf59902b50012b1dddeeaa23b217d9c4956cdda ]
+[ Upstream commit c35b518f9ba06c9de79fb3ff62eed7462d804995 ]
 
-The MMC sample and drv clock for rockchip platforms are derived from
-the bus clock output to the MMC/SDIO card. So it should never happens
-that the clk rate is zero given it should inherits the clock rate from
-its parent. If something goes wrong and makes the clock rate to be zero,
-the calculation would be wrong but may still make the mmc tuning process
-work luckily. However it makes people harder to debug when the following
-data transfer is unstable.
+Turns out latest upstream U-Boot does not configure/enable pll_u which
+leaves it at some default rate of 500 kHz:
 
-Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+root@apalis-t30:~# cat /sys/kernel/debug/clk/clk_summary | grep pll_u
+       pll_u                  3        3        0      500000          0
+
+Of course this won't quite work leading to the following messages:
+
+[    6.559593] usb 2-1: new full-speed USB device number 2 using tegra-
+ehci
+[   11.759173] usb 2-1: device descriptor read/64, error -110
+[   27.119453] usb 2-1: device descriptor read/64, error -110
+[   27.389217] usb 2-1: new full-speed USB device number 3 using tegra-
+ehci
+[   32.559454] usb 2-1: device descriptor read/64, error -110
+[   47.929777] usb 2-1: device descriptor read/64, error -110
+[   48.049658] usb usb2-port1: attempt power cycle
+[   48.759475] usb 2-1: new full-speed USB device number 4 using tegra-
+ehci
+[   59.349457] usb 2-1: device not accepting address 4, error -110
+[   59.509449] usb 2-1: new full-speed USB device number 5 using tegra-
+ehci
+[   70.069457] usb 2-1: device not accepting address 5, error -110
+[   70.079721] usb usb2-port1: unable to enumerate USB device
+
+Fix this by actually allowing the rate also being set from within
+the Linux kernel.
+
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/rockchip/clk-mmc-phase.c |   23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ drivers/clk/tegra/clk-pll.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/clk/rockchip/clk-mmc-phase.c
-+++ b/drivers/clk/rockchip/clk-mmc-phase.c
-@@ -58,6 +58,12 @@ static int rockchip_mmc_get_phase(struct
- 	u16 degrees;
- 	u32 delay_num = 0;
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -1151,6 +1151,8 @@ static const struct clk_ops tegra_clk_pl
+ 	.enable = clk_pllu_enable,
+ 	.disable = clk_pll_disable,
+ 	.recalc_rate = clk_pll_recalc_rate,
++	.round_rate = clk_pll_round_rate,
++	.set_rate = clk_pll_set_rate,
+ };
  
-+	/* See the comment for rockchip_mmc_set_phase below */
-+	if (!rate) {
-+		pr_err("%s: invalid clk rate\n", __func__);
-+		return -EINVAL;
-+	}
-+
- 	raw_value = readl(mmc_clock->reg) >> (mmc_clock->shift);
- 
- 	degrees = (raw_value & ROCKCHIP_MMC_DEGREE_MASK) * 90;
-@@ -84,6 +90,23 @@ static int rockchip_mmc_set_phase(struct
- 	u32 raw_value;
- 	u32 delay;
- 
-+	/*
-+	 * The below calculation is based on the output clock from
-+	 * MMC host to the card, which expects the phase clock inherits
-+	 * the clock rate from its parent, namely the output clock
-+	 * provider of MMC host. However, things may go wrong if
-+	 * (1) It is orphan.
-+	 * (2) It is assigned to the wrong parent.
-+	 *
-+	 * This check help debug the case (1), which seems to be the
-+	 * most likely problem we often face and which makes it difficult
-+	 * for people to debug unstable mmc tuning results.
-+	 */
-+	if (!rate) {
-+		pr_err("%s: invalid clk rate\n", __func__);
-+		return -EINVAL;
-+	}
-+
- 	nineties = degrees / 90;
- 	remainder = (degrees % 90);
- 
+ static int _pll_fixed_mdiv(struct tegra_clk_pll_params *pll_params,
