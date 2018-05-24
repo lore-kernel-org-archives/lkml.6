@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1862185-1527162081-2-9411476308028444663
+X-Cyrus-Session-Id: sloti22d1t05-1862185-1527162036-2-3422021659569283562
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527162080; b=UYN7GpjexCBijfx6nFQQGZj1KV2cXh04EAtbLhewLU+Je9fzUy
-    sAdnaxsBiP9okvZ5FjAo810b7WVSPT9PCStpYnR5gIGGTCEi9gyfkJuIoFiWFoDm
-    zoXcCHc9LehE9XO0FvXshny/N01PaEI2S0NZJ8s5NdIdYTvjDr2M6DTPo2zKPK22
-    Hzt8M+f+XHAT1Ek/3P06NM70SlwdHkmZ5YPtDZdN0mElfvUbAWG80lPY3TAz3JM8
-    xO2wcE1bTg8fStCTuO7uL3HFp1GUhVQPcuJV5d3LnYYuJH8228gMRJGg1fNk4LRp
-    w3vS23mEq+4WOWNTgBgI0niUs5/oUMqj2PEA==
+    1527162035; b=Lc2jr6kIy5A0UESiPn0UEKQTj75feKVjhDADDvdr91+xMmx1id
+    +XKEw2LEJEC/2fH8kEfM8AQ9hHbdSX/Rwk2L9cjrwo0zq06j35fCwKEt23592AZn
+    vp5tc5OG4t52KcVxNDqPb7BKv5SPGVCo/20RBI/OSxsTTRg4H3a1J1Z0+uXeBOH6
+    EQRY1wZGeRutm/5/zZoxHTwgFqomv8fbAJ0zoOcxN7yMVeWCHV2BKm5AH+MPVsgM
+    NkseYIl9r1rDGShkuSW6Njd0aoBcKY0bnrk7xSANFd8buvfWS14SDe+p1LzpRETR
+    ogRwSfAEg0ThkJPXXZ9byGkfxrnBFMsUt32g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527162080; bh=iLVKCAAi+YoBI0J3R0ox/m4vM9qXOG
-    rXShkPFyIFqBI=; b=XLLbYFaAm7pWvsaysKUDGGc7QLXIeaGz0yzMVlaxzrM9DW
-    YYwWjtMvTdbtXYtUq5GVY+f8GN7+fCK5R6RD6B6fwG2fPNifUwF/KYz2xP3v5TjS
-    cX6+IkMWdiZbtPBDik4fIlF7V9nMxVR2n7ySGBsXLBYbNGHNnAfZsVkx8M/tVHtC
-    Te1XtN+oDVf7W3XVVXUBPQRWmxQGY38lZ0o/iV9O7j++7JkUzA87FnbEPwzQLprd
-    f/GYy0B8rmAOmhxqn0aenzx7GCLB2fWXas3q9f76ay2RmqEgBHIHAZHHwwVrSJ2H
-    avn5dmLD1T5379DhApNzRfRLrgbifdiv8nrsBXfg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527162035; bh=3WfwtDKk8vLEPO6bM8GgjcQh8++Maq
+    yY2GtumOMYxOU=; b=c/bZSdphMzqoROExDV3SVT3yFLt8eVCpZZixu9bKKG9zTS
+    pT0o+PBCDOQ+lk+sSydMq5t3CnA17ENBDdMdXvXUJIrq02nY964VJKutB/5IsBr3
+    nsqNZmZ7cTO6hpU4Mv5I/aR8kyhbrmH7evBdVSZvTnVry8on9wY7M/4M9H/2m8xO
+    0t0xeYYOesQRSAlZPafZW2naur3xBsLLG2fQgt0mIXO8GIYf9xq6u8X4dEJWN97n
+    fPSV7AQOGdUph0L3R6g1/lnUbPgRGjb510RrXFrdRHUyGqcgUwHDR4yKS8788C/C
+    iIdstQLYxV/OfeqYFwc72EdrHhwaOs+Wowh4Mvtg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=XCX/ofe0 x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=1bF+x08n x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=XCX/ofe0 x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=1bF+x08n x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,32 +64,32 @@ Authentication-Results: mx6.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfAUwBat2O9MnNMlATYQoyNrGetkjs94/PWrAsonvKHBv3Vek1/UPLadakYT+2ALicI1Q1r9IuFECTDPWk60Q9KFN1dyPVBlCDFK4JPJ5d7sMo81GdaoF
-    h/8VSR4BM5EKENoniHbxLtgz+EZawn9j95xdsBc+fIqsBga2YpaclmyzGbi4jSA5S1n9Sw8rco/EavpDOiQteI3Ce7EWnEXLJsH/wDhqc7zTsTlKt3Yu8wX9
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfMId0yI80RE7j0WaGrP9iqaGNJ7n/5B41J2dJHeLhZi40QO4ESMkfE+BiaC41kMA36uMOX+Ta/nueCfdz5wxZtCroYuC/L89JI5M+vHBIpJJyoZJ6RZi
+    WpxxlEGo4y7H/AAGau0Ic5QVxZaJ0jqd0Ze7BVxkcpOH/tpFSHx6E7xPlxCDILYAXwCOCBeGI+cwFkBFW3fv9Nc1VXC0c/E2pshZcx2fBg0DwrdIIwt+95wC
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=pGLkceISAAAA:8 a=QyXUC8HyAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=KtuSVvygwG24pxXr48oA:9 a=RvjDLRO5Ld9O7eUi:21 a=h_NTAUzmfRHWsXK-:21
-    a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=yQdBAQUQAAAA:8 a=pGLkceISAAAA:8 a=Dei6p5SHAAAA:8 a=yMhMjlubAAAA:8
+    a=ag1SF4gXAAAA:8 a=cC1Zfw63NZkZNGFym8gA:9 a=QEXdDO2ut3YA:10
+    a=SzazLyfi1tnkUD6oumHU:22 a=M-Yerj1wOn-OpK7r_3ei:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967337AbeEXLlH (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 07:41:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34246 "EHLO mail.kernel.org"
+        id S969150AbeEXLk2 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 07:40:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34720 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967258AbeEXJso (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:48:44 -0400
+        id S967272AbeEXJst (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:48:49 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Chris Dickens <christopher.a.dickens@gmail.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, Hon Weng Chong <honwchong@gmail.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        Marcel Holtmann <marcel@holtmann.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 44/96] usb: gadget: composite: fix incorrect handling of OS desc requests
-Date: Thu, 24 May 2018 11:38:27 +0200
-Message-Id: <20180524093608.034948643@linuxfoundation.org>
+Subject: [PATCH 4.9 46/96] Bluetooth: btusb: Add device ID for RTL8822BE
+Date: Thu, 24 May 2018 11:38:29 +0200
+Message-Id: <20180524093608.124458065@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093605.602125311@linuxfoundation.org>
 References: <20180524093605.602125311@linuxfoundation.org>
@@ -107,156 +107,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Chris Dickens <christopher.a.dickens@gmail.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
 
-[ Upstream commit 5d6ae4f0da8a64a185074dabb1b2f8c148efa741 ]
+[ Upstream commit fed03fe7e55b7dc16077f672bd9d7bbe92b3a691 ]
 
-When handling an OS descriptor request, one of the first operations is
-to zero out the request buffer using the wLength from the setup packet.
-There is no bounds checking, so a wLength > 4096 would clobber memory
-adjacent to the request buffer. Fix this by taking the min of wLength
-and the request buffer length prior to the memset. While at it, define
-the buffer length in a header file so that magic numbers don't appear
-throughout the code.
+The Asus Z370-I contains a Realtek RTL8822BE device with an associated
+BT chip using a USB ID of 0b05:185c. This device is added to the driver.
 
-When returning data to the host, the data length should be the min of
-the wLength and the valid data we have to return. Currently we are
-returning wLength, thus requests for a wLength greater than the amount
-of data in the OS descriptor buffer would return invalid (albeit zero'd)
-data following the valid descriptor data. Fix this by counting the
-number of bytes when constructing the data and using this when
-determining the length of the request.
-
-Signed-off-by: Chris Dickens <christopher.a.dickens@gmail.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Hon Weng Chong <honwchong@gmail.com>
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/gadget/composite.c |   40 +++++++++++++++++++---------------------
- include/linux/usb/composite.h  |    3 +++
- 2 files changed, 22 insertions(+), 21 deletions(-)
+ drivers/bluetooth/btusb.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/usb/gadget/composite.c
-+++ b/drivers/usb/gadget/composite.c
-@@ -1421,7 +1421,7 @@ static int count_ext_compat(struct usb_c
- 	return res;
- }
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -355,6 +355,9 @@ static const struct usb_device_id blackl
+ 	{ USB_DEVICE(0x13d3, 0x3461), .driver_info = BTUSB_REALTEK },
+ 	{ USB_DEVICE(0x13d3, 0x3462), .driver_info = BTUSB_REALTEK },
  
--static void fill_ext_compat(struct usb_configuration *c, u8 *buf)
-+static int fill_ext_compat(struct usb_configuration *c, u8 *buf)
- {
- 	int i, count;
- 
-@@ -1448,10 +1448,12 @@ static void fill_ext_compat(struct usb_c
- 				buf += 23;
- 			}
- 			count += 24;
--			if (count >= 4096)
--				return;
-+			if (count + 24 >= USB_COMP_EP0_OS_DESC_BUFSIZ)
-+				return count;
- 		}
- 	}
++	/* Additional Realtek 8822BE Bluetooth devices */
++	{ USB_DEVICE(0x0b05, 0x185c), .driver_info = BTUSB_REALTEK },
 +
-+	return count;
- }
- 
- static int count_ext_prop(struct usb_configuration *c, int interface)
-@@ -1496,25 +1498,20 @@ static int fill_ext_prop(struct usb_conf
- 	struct usb_os_desc *d;
- 	struct usb_os_desc_ext_prop *ext_prop;
- 	int j, count, n, ret;
--	u8 *start = buf;
- 
- 	f = c->interface[interface];
-+	count = 10; /* header length */
- 	for (j = 0; j < f->os_desc_n; ++j) {
- 		if (interface != f->os_desc_table[j].if_id)
- 			continue;
- 		d = f->os_desc_table[j].os_desc;
- 		if (d)
- 			list_for_each_entry(ext_prop, &d->ext_prop, entry) {
--				/* 4kB minus header length */
--				n = buf - start;
--				if (n >= 4086)
--					return 0;
--
--				count = ext_prop->data_len +
-+				n = ext_prop->data_len +
- 					ext_prop->name_len + 14;
--				if (count > 4086 - n)
--					return -EINVAL;
--				usb_ext_prop_put_size(buf, count);
-+				if (count + n >= USB_COMP_EP0_OS_DESC_BUFSIZ)
-+					return count;
-+				usb_ext_prop_put_size(buf, n);
- 				usb_ext_prop_put_type(buf, ext_prop->type);
- 				ret = usb_ext_prop_put_name(buf, ext_prop->name,
- 							    ext_prop->name_len);
-@@ -1540,11 +1537,12 @@ static int fill_ext_prop(struct usb_conf
- 				default:
- 					return -EINVAL;
- 				}
--				buf += count;
-+				buf += n;
-+				count += n;
- 			}
- 	}
- 
--	return 0;
-+	return count;
- }
- 
- /*
-@@ -1822,6 +1820,7 @@ unknown:
- 			req->complete = composite_setup_complete;
- 			buf = req->buf;
- 			os_desc_cfg = cdev->os_desc_config;
-+			w_length = min_t(u16, w_length, USB_COMP_EP0_OS_DESC_BUFSIZ);
- 			memset(buf, 0, w_length);
- 			buf[5] = 0x01;
- 			switch (ctrl->bRequestType & USB_RECIP_MASK) {
-@@ -1845,8 +1844,8 @@ unknown:
- 					count += 16; /* header */
- 					put_unaligned_le32(count, buf);
- 					buf += 16;
--					fill_ext_compat(os_desc_cfg, buf);
--					value = w_length;
-+					value = fill_ext_compat(os_desc_cfg, buf);
-+					value = min_t(u16, w_length, value);
- 				}
- 				break;
- 			case USB_RECIP_INTERFACE:
-@@ -1875,8 +1874,7 @@ unknown:
- 							      interface, buf);
- 					if (value < 0)
- 						return value;
--
--					value = w_length;
-+					value = min_t(u16, w_length, value);
- 				}
- 				break;
- 			}
-@@ -2151,8 +2149,8 @@ int composite_os_desc_req_prepare(struct
- 		goto end;
- 	}
- 
--	/* OS feature descriptor length <= 4kB */
--	cdev->os_desc_req->buf = kmalloc(4096, GFP_KERNEL);
-+	cdev->os_desc_req->buf = kmalloc(USB_COMP_EP0_OS_DESC_BUFSIZ,
-+					 GFP_KERNEL);
- 	if (!cdev->os_desc_req->buf) {
- 		ret = -ENOMEM;
- 		usb_ep_free_request(ep0, cdev->os_desc_req);
---- a/include/linux/usb/composite.h
-+++ b/include/linux/usb/composite.h
-@@ -53,6 +53,9 @@
- /* big enough to hold our biggest descriptor */
- #define USB_COMP_EP0_BUFSIZ	1024
- 
-+/* OS feature descriptor length <= 4kB */
-+#define USB_COMP_EP0_OS_DESC_BUFSIZ	4096
-+
- #define USB_MS_TO_HS_INTERVAL(x)	(ilog2((x * 1000 / 125)) + 1)
- struct usb_configuration;
+ 	/* Silicon Wave based devices */
+ 	{ USB_DEVICE(0x0c10, 0x0000), .driver_info = BTUSB_SWAVE },
  
