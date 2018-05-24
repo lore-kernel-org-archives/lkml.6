@@ -1,284 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033191AbeEXVW6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 17:22:58 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:39696 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966832AbeEXVW4 (ORCPT
+        id S1161299AbeEXVYE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 17:24:04 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:54086 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1033204AbeEXVYD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 17:22:56 -0400
-X-Google-Smtp-Source: AB8JxZrB5++EKsPkcrtTAvomCYp/jPFZDqxcGMr9UjYcnMB1/Lz0h/mskjpodYH9pty5HBY85gKcTQ==
-Date: Thu, 24 May 2018 14:22:53 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Michal Hocko <mhocko@suse.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-cc: Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: [rfc patch] mm, oom: fix unnecessary killing of additional
- processes
-Message-ID: <alpine.DEB.2.21.1805241422070.182300@chino.kir.corp.google.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 24 May 2018 17:24:03 -0400
+Date: Thu, 24 May 2018 17:23:55 -0400
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        xen-devel@lists.xenproject.org
+Cc: joe.jin@oracle.com
+Subject: [GIT PULL] (swiotlb) stable/for-linus-4.17
+Message-ID: <20180524212355.GB5947@char.us.oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="EeQfGwPcQSOJBaQU"
+Content-Disposition: inline
+User-Agent: Mutt/1.8.3 (2017-05-23)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8903 signatures=668700
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=885
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805240241
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The oom reaper ensures forward progress by setting MMF_OOM_SKIP itself if
-it cannot reap an mm.  This can happen for a variety of reasons,
-including:
 
- - the inability to grab mm->mmap_sem in a sufficient amount of time,
+--EeQfGwPcQSOJBaQU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
- - when the mm has blockable mmu notifiers that could cause the oom reaper
-   to stall indefinitely,
+Hey Linus,
 
-but we can also add a third when the oom reaper can "reap" an mm but doing
-so is unlikely to free any amount of memory:
+Please git pull the following branch in your tree:
 
- - when the mm's memory is fully mlocked.
+git pull git://git.kernel.org/pub/scm/linux/kernel/git/konrad/swiotlb.git stable/for-linus-4.17
 
-When all memory is mlocked, the oom reaper will not be able to free any
-substantial amount of memory.  It sets MMF_OOM_SKIP before the victim can
-unmap and free its memory in exit_mmap() and subsequent oom victims are
-chosen unnecessarily.  This is trivial to reproduce if all eligible
-processes on the system have mlocked their memory: the oom killer calls
-panic() even though forward progress can be made.
+There is one single fix in there - that is under Xen the DMA32 heap
+(in the hypervisor) would end up looking like swiss cheese. The reason
+being that for every coherent DMA allocation we didn't do the proper
+hypercall to tell Xen to return the page back to the DMA32 heap.
+End result was (eventually) no DMA32 space if say you say continously
+unloaded and loaded modules.
 
-This is the same issue where the exit path sets MMF_OOM_SKIP before
-unmapping memory and additional processes can be chosen unnecessarily
-because the oom killer is racing with exit_mmap().
+Thank you.
 
-We can't simply defer setting MMF_OOM_SKIP, however, because if there is
-a true oom livelock in progress, it never gets set and no additional
-killing is possible.
+ drivers/xen/swiotlb-xen.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-To fix this, this patch introduces a per-mm reaping timeout, initially set
-at 10s.  It requires that the oom reaper's list becomes a properly linked
-list so that other mm's may be reaped while waiting for an mm's timeout to
-expire.
+Joe Jin (1):
+      xen-swiotlb: fix the check condition for xen_swiotlb_free_coherent
 
-The exit path will now set MMF_OOM_SKIP only after all memory has been
-freed, so additional oom killing is justified, and rely on MMF_UNSTABLE to
-determine when it can race with the oom reaper.
 
-The oom reaper will now set MMF_OOM_SKIP only after the reap timeout has
-lapsed because it can no longer guarantee forward progress.
+--EeQfGwPcQSOJBaQU
+Content-Type: application/pgp-signature; name="signature.asc"
 
-The reaping timeout is intentionally set for a substantial amount of time
-since oom livelock is a very rare occurrence and it's better to optimize
-for preventing additional (unnecessary) oom killing than a scenario that
-is much more unlikely.
+-----BEGIN PGP SIGNATURE-----
 
-Signed-off-by: David Rientjes <rientjes@google.com>
----
- include/linux/mm_types.h |  4 ++
- include/linux/sched.h    |  2 +-
- mm/mmap.c                | 12 +++---
- mm/oom_kill.c            | 85 ++++++++++++++++++++++++++--------------
- 4 files changed, 66 insertions(+), 37 deletions(-)
+iQIcBAEBAgAGBQJbBy1rAAoJEFKlDoTx2wm/jnoP/jvxyAetAQzmicIdeHL0NlCa
+qEWM8CU8NmyCXjncJGNJ93ZWt1yZuVXayUwwwYDCCZ4UJ9jN6bGCRpaOiebSfS7A
+MDzjvbAtMOQh6eJQRM4ZMm1Pst7y91+3jdSwKr/+ULYrdODeGfPrNnYzu8S2S8k8
+lOgC85cdl7TKwc8aWZttJE85s8ozBgtjsDayvDOogmgPnUdAwPeamp3G2jnZSCVC
+EnB0/AIpbM59nZYZq6WUwOhW+j9g+uyiBVug+/AxMS+7S30KB/ES1k1xSsNM/Eop
+korh7VYAJe7RBHjKkHs7qwuVK/M3PaiDEw9TZ4MCkG+KlF6GCOVsSZ4OuSSvhIFc
+8YicBqr6GGbImw4g5RX4VK6TkPNm5YUxSs5rDuVldR2/bBX3GoOCqAyaBUzoafQu
+5ZAoMGoAILEdmG/yUtT3Nm+WZGUNV5VG1D2SIJRYf1K5hBmCBwN4/HRrl1mLUugh
+5aw1KpWke7k2YhymFVgup5ejjeoeLEkUQDHKMSYYZ8faTakm+2g62L5i+30FvBpx
+gwk1EVizvQYjvu7Ywg2KYcaNK1FCph4byIiuNPBj5KRFuS6PDdZGnFcUvejdOwAA
+T7EKkKPVLoQ08VLd1YD9SmU1pLyZ09DcnhLOI9mSzay/X4fLoFtCgW7ZLpj5vQ4F
+eKjCD1fAR322wDdA0vsi
+=Kiui
+-----END PGP SIGNATURE-----
 
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -462,6 +462,10 @@ struct mm_struct {
- #ifdef CONFIG_MMU_NOTIFIER
- 	struct mmu_notifier_mm *mmu_notifier_mm;
- #endif
-+#ifdef CONFIG_MMU
-+	/* When to give up on oom reaping this mm */
-+	unsigned long reap_timeout;
-+#endif
- #if defined(CONFIG_TRANSPARENT_HUGEPAGE) && !USE_SPLIT_PMD_PTLOCKS
- 	pgtable_t pmd_huge_pte; /* protected by page_table_lock */
- #endif
-diff --git a/include/linux/sched.h b/include/linux/sched.h
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1151,7 +1151,7 @@ struct task_struct {
- #endif
- 	int				pagefault_disabled;
- #ifdef CONFIG_MMU
--	struct task_struct		*oom_reaper_list;
-+	struct list_head		oom_reap_list;
- #endif
- #ifdef CONFIG_VMAP_STACK
- 	struct vm_struct		*stack_vm_area;
-diff --git a/mm/mmap.c b/mm/mmap.c
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -3059,11 +3059,10 @@ void exit_mmap(struct mm_struct *mm)
- 	if (unlikely(mm_is_oom_victim(mm))) {
- 		/*
- 		 * Manually reap the mm to free as much memory as possible.
--		 * Then, as the oom reaper does, set MMF_OOM_SKIP to disregard
--		 * this mm from further consideration.  Taking mm->mmap_sem for
--		 * write after setting MMF_OOM_SKIP will guarantee that the oom
--		 * reaper will not run on this mm again after mmap_sem is
--		 * dropped.
-+		 * Then, set MMF_UNSTABLE to avoid racing with the oom reaper.
-+		 * Taking mm->mmap_sem for write after setting MMF_UNSTABLE will
-+		 * guarantee that the oom reaper will not run on this mm again
-+		 * after mmap_sem is dropped.
- 		 *
- 		 * Nothing can be holding mm->mmap_sem here and the above call
- 		 * to mmu_notifier_release(mm) ensures mmu notifier callbacks in
-@@ -3077,7 +3076,7 @@ void exit_mmap(struct mm_struct *mm)
- 		__oom_reap_task_mm(mm);
- 		mutex_unlock(&oom_lock);
- 
--		set_bit(MMF_OOM_SKIP, &mm->flags);
-+		set_bit(MMF_UNSTABLE, &mm->flags);
- 		down_write(&mm->mmap_sem);
- 		up_write(&mm->mmap_sem);
- 	}
-@@ -3105,6 +3104,7 @@ void exit_mmap(struct mm_struct *mm)
- 	unmap_vmas(&tlb, vma, 0, -1);
- 	free_pgtables(&tlb, vma, FIRST_USER_ADDRESS, USER_PGTABLES_CEILING);
- 	tlb_finish_mmu(&tlb, 0, -1);
-+	set_bit(MMF_OOM_SKIP, &mm->flags);
- 
- 	/*
- 	 * Walk the list again, actually closing and freeing it,
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -476,7 +476,7 @@ bool process_shares_mm(struct task_struct *p, struct mm_struct *mm)
-  */
- static struct task_struct *oom_reaper_th;
- static DECLARE_WAIT_QUEUE_HEAD(oom_reaper_wait);
--static struct task_struct *oom_reaper_list;
-+static LIST_HEAD(oom_reaper_list);
- static DEFINE_SPINLOCK(oom_reaper_lock);
- 
- void __oom_reap_task_mm(struct mm_struct *mm)
-@@ -558,12 +558,12 @@ static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
- 	}
- 
- 	/*
--	 * MMF_OOM_SKIP is set by exit_mmap when the OOM reaper can't
--	 * work on the mm anymore. The check for MMF_OOM_SKIP must run
-+	 * MMF_UNSTABLE is set by exit_mmap when the OOM reaper can't
-+	 * work on the mm anymore. The check for MMF_UNSTABLE must run
- 	 * under mmap_sem for reading because it serializes against the
- 	 * down_write();up_write() cycle in exit_mmap().
- 	 */
--	if (test_bit(MMF_OOM_SKIP, &mm->flags)) {
-+	if (test_bit(MMF_UNSTABLE, &mm->flags)) {
- 		up_read(&mm->mmap_sem);
- 		trace_skip_task_reaping(tsk->pid);
- 		goto unlock_oom;
-@@ -589,31 +589,49 @@ static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
- #define MAX_OOM_REAP_RETRIES 10
- static void oom_reap_task(struct task_struct *tsk)
- {
--	int attempts = 0;
- 	struct mm_struct *mm = tsk->signal->oom_mm;
-+	bool ret = true;
- 
--	/* Retry the down_read_trylock(mmap_sem) a few times */
--	while (attempts++ < MAX_OOM_REAP_RETRIES && !oom_reap_task_mm(tsk, mm))
--		schedule_timeout_idle(HZ/10);
-+	/*
-+	 * If this mm has either been fully unmapped, or the oom reaper has
-+	 * given up on it, nothing left to do except drop the refcount.
-+	 */
-+	if (test_bit(MMF_OOM_SKIP, &mm->flags))
-+		goto drop;
- 
--	if (attempts <= MAX_OOM_REAP_RETRIES ||
--	    test_bit(MMF_OOM_SKIP, &mm->flags))
--		goto done;
-+	/*
-+	 * If this mm has already been reaped, doing so again will not likely
-+	 * free additional memory.
-+	 */
-+	if (!test_bit(MMF_UNSTABLE, &mm->flags))
-+		ret = oom_reap_task_mm(tsk, mm);
-+
-+	if (time_after(jiffies, mm->reap_timeout)) {
-+		if (!test_bit(MMF_OOM_SKIP, &mm->flags)) {
-+			pr_info("oom_reaper: unable to reap pid:%d (%s)\n",
-+				task_pid_nr(tsk), tsk->comm);
-+			debug_show_all_locks();
- 
--	pr_info("oom_reaper: unable to reap pid:%d (%s)\n",
--		task_pid_nr(tsk), tsk->comm);
--	debug_show_all_locks();
-+			/*
-+			 * Reaping has failed for the timeout period, so give up
-+			 * and allow additional processes to be oom killed.
-+			 */
-+			set_bit(MMF_OOM_SKIP, &mm->flags);
-+		}
-+		goto drop;
-+	}
- 
--done:
--	tsk->oom_reaper_list = NULL;
-+	if (!ret)
-+		schedule_timeout_idle(HZ/10);
- 
--	/*
--	 * Hide this mm from OOM killer because it has been either reaped or
--	 * somebody can't call up_write(mmap_sem).
--	 */
--	set_bit(MMF_OOM_SKIP, &mm->flags);
-+	/* Enqueue to be reaped again */
-+	spin_lock(&oom_reaper_lock);
-+	list_add(&tsk->oom_reap_list, &oom_reaper_list);
-+	spin_unlock(&oom_reaper_lock);
-+	return;
- 
--	/* Drop a reference taken by wake_oom_reaper */
-+drop:
-+	/* Drop the reference taken by wake_oom_reaper() */
- 	put_task_struct(tsk);
- }
- 
-@@ -622,11 +640,13 @@ static int oom_reaper(void *unused)
- 	while (true) {
- 		struct task_struct *tsk = NULL;
- 
--		wait_event_freezable(oom_reaper_wait, oom_reaper_list != NULL);
-+		wait_event_freezable(oom_reaper_wait,
-+				     !list_empty(&oom_reaper_list));
- 		spin_lock(&oom_reaper_lock);
--		if (oom_reaper_list != NULL) {
--			tsk = oom_reaper_list;
--			oom_reaper_list = tsk->oom_reaper_list;
-+		if (!list_empty(&oom_reaper_list)) {
-+			tsk = list_entry(&oom_reaper_list, struct task_struct,
-+					 oom_reap_list);
-+			list_del(&tsk->oom_reap_list);
- 		}
- 		spin_unlock(&oom_reaper_lock);
- 
-@@ -637,17 +657,22 @@ static int oom_reaper(void *unused)
- 	return 0;
- }
- 
-+/* How long to wait to oom reap an mm before selecting another process */
-+#define OOM_REAP_TIMEOUT_MSECS	(10 * 1000)
- static void wake_oom_reaper(struct task_struct *tsk)
- {
--	/* tsk is already queued? */
--	if (tsk == oom_reaper_list || tsk->oom_reaper_list)
-+	/*
-+	 * Set the reap timeout; if it's already set, the mm is enqueued and
-+	 * this tsk can be ignored.
-+	 */
-+	if (cmpxchg(&tsk->signal->oom_mm->reap_timeout, 0UL,
-+			jiffies + msecs_to_jiffies(OOM_REAP_TIMEOUT_MSECS)))
- 		return;
- 
- 	get_task_struct(tsk);
- 
- 	spin_lock(&oom_reaper_lock);
--	tsk->oom_reaper_list = oom_reaper_list;
--	oom_reaper_list = tsk;
-+	list_add(&tsk->oom_reap_list, &oom_reaper_list);
- 	spin_unlock(&oom_reaper_lock);
- 	trace_wake_reaper(tsk->pid);
- 	wake_up(&oom_reaper_wait);
+--EeQfGwPcQSOJBaQU--
