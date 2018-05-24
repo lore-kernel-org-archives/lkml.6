@@ -1,112 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030198AbeEXJ5g (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 05:57:36 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:50838 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030450AbeEXJ50 (ORCPT
+        id S1031503AbeEXKIt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 06:08:49 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39792 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031216AbeEXKIo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 05:57:26 -0400
-X-Google-Smtp-Source: AB8JxZoQSwdTU8yZFWW1MiSSvxoDn8N1LDP02Qe9xASBdj2DsO5sEGwKZcpqZkKhNTqxJvidTLo6eQ==
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: airlied@linux.ie, hans.verkuil@cisco.com, lee.jones@linaro.org,
-        olof@lixom.net, seanpaul@google.com
-Cc: Neil Armstrong <narmstrong@baylibre.com>, sadolfsson@google.com,
-        felixe@google.com, bleung@google.com, darekm@google.com,
-        marcheu@chromium.org, fparent@baylibre.com,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        eballetbo@gmail.com
-Subject: [PATCH v6 0/6] Add ChromeOS EC CEC Support
-Date: Thu, 24 May 2018 11:57:15 +0200
-Message-Id: <1527155841-28494-1-git-send-email-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 24 May 2018 06:08:44 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D1E0160213
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From: Kalle Valo <kvalo@codeaurora.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgens?= =?utf-8?Q?en?=
+        <toke@toke.dk>,
+        linux-wireless <linux-wireless@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the mac80211-next tree
+References: <20180509145624.643d2e56@canb.auug.org.au>
+        <87po221j08.fsf@purkki.adurom.net>
+        <CAK8P3a1tdhO6FX76vMXdpd6FxN87RjhLeKW4ws8GgOHqAwr4qA@mail.gmail.com>
+        <87muwpd76a.fsf@kamboji.qca.qualcomm.com>
+        <CAK8P3a3MMjg5oDVM_OAZ_nKeJ4zKK5PrDE+6UgQQfNxwEhRbMA@mail.gmail.com>
+Date: Thu, 24 May 2018 13:08:38 +0300
+In-Reply-To: <CAK8P3a3MMjg5oDVM_OAZ_nKeJ4zKK5PrDE+6UgQQfNxwEhRbMA@mail.gmail.com>
+        (Arnd Bergmann's message of "Thu, 24 May 2018 10:51:17 +0200")
+Message-ID: <87efi1cqmx.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi All,
+Arnd Bergmann <arnd@arndb.de> writes:
 
-The new Google "Fizz" Intel-based ChromeOS device is gaining CEC support
-through it's Embedded Controller, to enable the Linux CEC Core to communicate
-with it and get the CEC Physical Address from the correct HDMI Connector, the
-following must be added/changed:
-- Add the CEC sub-device registration in the ChromeOS EC MFD Driver
-- Add the CEC related commands and events definitions into the EC MFD driver
-- Add a way to get a CEC notifier with it's (optional) connector name
-- Add the CEC notifier to the i915 HDMI driver
-- Add the proper ChromeOS EC CEC Driver
+> On Thu, May 24, 2018 at 6:11 AM, Kalle Valo <kvalo@codeaurora.org> wrote:
+>> Arnd Bergmann <arnd@arndb.de> writes:
+>>> I also bisected this new warning to the same commit above:
+>>>
+>>> net/batman-adv/bat_v_elp.c: In function 'batadv_v_elp_get_throughput':
+>>> net/batman-adv/bat_v_elp.c:154:1: warning: the frame size of 1736
+>>> bytes is larger than 1024 bytes [-Wframe-larger-than=]
+>>
+>> This should fix it:
+>>
+>> 8689c051a201 cfg80211: dynamically allocate per-tid stats for station info
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/jberg/mac80211-next.git/commit/?id=8689c051a20195b228e19acb155c7d6e48a86753
+>
+> Thanks for the pointer, I'll just wait for that to make it into
+> linux-next (which hasn't been released in a few days now) then.
 
-The CEC notifier with the connector name is the tricky point, since even on
-Device-Tree platforms, there is no way to distinguish between multiple HDMI
-connectors from the same DRM driver. The solution I implemented is pretty
-simple and only adds an optional connector name to eventually distinguish
-an HDMI connector notifier from another if they share the same device.
-
-Feel free to comment this patchset !
-
-Changes since v5:
- - Small fixups on include/linux/mfd/cros_ec_commands.h
- - Fixed on cros-ec-cec driver accordingly
- - Added Reviewed-By tags
-
-Changes since v4:
- - Split patch 3 to move the mkbp event size change into a separate patch
-
-Changes since v3 (incorrectly reported as v2):
- - Renamed "Chrome OS" to "ChromeOS"
- - Updated cros_ec_commands.h new structs definitions to kernel doc format
- - Added Reviewed-By tags
-
-Changes since v2:
- - Add i915 port_identifier() and use this stable name as cec_notifier conn name
- - Fixed and cleaned up the CEC commands and events handling
- - Rebased the CEC sub-device registration on top of Enric's serie
- - Fixed comments typo on cec driver
- - Protected the DMI match only with PCI and DMI Kconfigs
-
-Changes since v1:
- - Added cec_notifier_put to intel_hdmi
- - Fixed all small reported issues on the EC CEC driver
- - Moved the cec_notifier_get out of the #if .. #else .. #endif
-
-Changes since RFC:
- - Moved CEC sub-device registration after CEC commands and events definitions patch
- - Removed get_notifier_get_byname
- - Added CEC_CORE select into i915 Kconfig
- - Removed CEC driver fallback if notifier is not configured on HW, added explicit warn
- - Fixed CEC core return type on error
- - Moved to cros-ec-cec media platform directory
- - Use bus_find_device() to find the pci i915 device instead of get_notifier_get_byname()
- - Fix Logical Address setup
- - Added comment about HW support
- - Removed memset of msg structures
-
-Neil Armstrong (6):
-  media: cec-notifier: Get notifier by device and connector name
-  drm/i915: hdmi: add CEC notifier to intel_hdmi
-  mfd: cros-ec: Increase maximum mkbp event size
-  mfd: cros-ec: Introduce CEC commands and events definitions.
-  mfd: cros_ec_dev: Add CEC sub-device registration
-  media: platform: Add ChromeOS EC CEC driver
-
- drivers/gpu/drm/i915/Kconfig                     |   1 +
- drivers/gpu/drm/i915/intel_display.h             |  20 ++
- drivers/gpu/drm/i915/intel_drv.h                 |   2 +
- drivers/gpu/drm/i915/intel_hdmi.c                |  13 +
- drivers/media/cec/cec-notifier.c                 |  11 +-
- drivers/media/platform/Kconfig                   |  11 +
- drivers/media/platform/Makefile                  |   2 +
- drivers/media/platform/cros-ec-cec/Makefile      |   1 +
- drivers/media/platform/cros-ec-cec/cros-ec-cec.c | 347 +++++++++++++++++++++++
- drivers/mfd/cros_ec_dev.c                        |  16 ++
- drivers/platform/chrome/cros_ec_proto.c          |  40 ++-
- include/linux/mfd/cros_ec.h                      |   2 +-
- include/linux/mfd/cros_ec_commands.h             | 100 +++++++
- include/media/cec-notifier.h                     |  27 +-
- 14 files changed, 577 insertions(+), 16 deletions(-)
- create mode 100644 drivers/media/platform/cros-ec-cec/Makefile
- create mode 100644 drivers/media/platform/cros-ec-cec/cros-ec-cec.c
+Yeah, Stephen announced that he won't be making linux-next builds this
+week. I think he will be back next week.
 
 -- 
-2.7.4
+Kalle Valo
