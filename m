@@ -1,37 +1,89 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZo1/AKTT0BSQH0RH2L/otjzrL+RgUmICi4XmfD3J3fyTj6QSe23wgwSSAro5PqfwblrwXu/
-ARC-Seal: i=1; a=rsa-sha256; t=1527156061; cv=none;
-        d=google.com; s=arc-20160816;
-        b=MyjWilRmhgXVnJDLfOjy33dBn8Z/qfb7tbw8VjA0cGPMv9sCs4rDRlNqxoPq6FrBnE
-         NMvS5vbefsFi1CGMCN3vzU/sr6KutxiNlDAu6nldRHnhKR6+TzTngxfqi8Ae+tc51Ktf
-         JHURqTLhnE9MVD2JX3yxHvhXXyVIt/nxqWTbYUwp6Wn8pf/NP3wr+1/XUX1mITaFRn7m
-         clSBUJE0rFWsNrIV7pgWL92eD6BYk9srjWNCLmls14MqO+OTvLyZ1kojOsrZC4HdK5oH
-         x61jsbfGrTOPXlcd99dMkUb2z8lbNkDuFplSB9A3/16EuTu0d4bpIzv8klDuE2CoF4LP
-         p/Lw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=NZItv4NQK09Zc+1uiP0zSaCDf5uRfp9jNgP/OGhiC4M=;
-        b=tRT61AhaNueKSh+DNAo+Po0aH6eSE0kAiPBI610WZOBTOCM0agPYc/yG4Yfxh1xE/0
-         hqw/HVn6U7CvsEN+xXh2iEbhlF2F8QEK6msXulzt2a15YQkMmUgh/wEnaArltstgaSXs
-         +5wYN5GjSLwlBHb6iFCe8C4d+3r+w+xq4WCsSzhiiSQhCULDJOEbDXgN3c1xhBID64lv
-         CybghWDdDxs3mVZrlX7EqjDrLyfBoBGbNDNZKBb54V2Yx2cGDzK/Maea+fVStht6V+sz
-         6jmzwTY681vwkav2ypZTtXdzi/xZRPif+eobgZHLQnRRWc81NrD/QYrFjPx/MzmyOPIQ
-         fJ7g==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=fdQjYXQl;
-       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=fdQjYXQl;
-       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
+X-Cyrus-Session-Id: sloti22d1t05-1732752-1527156058-2-11240389578138142374
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  SPF_PASS -0.001, LANGUAGES enro, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='198.145.29.99', Host='mail.kernel.org', Country='US', FromHeader='org',
+  MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1527156057; b=bigENgbUcoSQkNvW1PuKjSnvxnykl3Ii0FXglSXHb7QZVzRe0P
+    rQZJ8AADk5yf1E95jwou6iYxbOwPgOWgPuTHM5zRqrmGN1+arpW596l02WZQR0TL
+    kb9UAXBoxSVdm8vqcCnF1SmDHMhQ3bU8LqJFEgoFDi1aB3tlg5HFEUxGcyPEXVql
+    awg5O0+cH55wHDqWP8+WdWXQ5HkxzzFldh6wVkrfqLP4zm/7BrgzECJJnVMrEtth
+    Hu97EXC2XAaUoYtFebLe0qU0AYJK0FG1h3UA3G4bT+CuLN3yeCdydtzPahiPhzFX
+    JqJgoQktyBctfr9Ndc+NxbIRO2LfOLyvTO6g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type; s=fm2; t=
+    1527156057; bh=PiJ3d8GXdKbX0OD+IoFl7+TP5fF+feLGdMM9SNUDLEk=; b=b
+    K6rMwWGiH2bFANqLTTAKV8OIF8NTQ9x03+N7L59GotX013/Y9p3+dcqa7zKHLUbb
+    Hdd1F+DN2Ki8fzmK7i1Vvhure398MJdr+1xqAA0X3hrS9LK6NDJWI8kymbuAJq21
+    9Q+r6uY18TfW4v6NKU/mhAgXfnvEJOtpCz0CE3vkJCb4ZphD16YpIxr/TdS3QoAM
+    lPwgIVGUhSuJ+phYi6pK1Rl51G3w2jfJNOxxDc9EMeU/YHCU3EFAaEnPrbEttAVm
+    w8hi2FyAFtxDhOL35X/fE+chxbH9SsdEBIcMCohL8osFbE/gnRALAStQNDBtFXPX
+    x6k7ix9QNkG7Ve0oUn1QA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+    header.i=@kernel.org header.b=rpK7894z x-bits=1024 x-keytype=rsa
+    x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=198.145.29.99 (mail.kernel.org);
+    spf=pass
+    smtp.mailfrom="SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org"
+    smtp.helo=mail.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=mail.kernel.org x-ptr-lookup=mail.kernel.org;
+    x-return-mx=pass smtp.domain=kernel.org smtp.result=pass
+    smtp_is_org_domain=yes header.domain=linuxfoundation.org
+    header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
+    bits=128/128;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+      header.i=@kernel.org header.b=rpK7894z x-bits=1024 x-keytype=rsa
+      x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=198.145.29.99 (mail.kernel.org);
+    spf=pass
+      smtp.mailfrom="SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org"
+      smtp.helo=mail.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=mail.kernel.org x-ptr-lookup=mail.kernel.org;
+    x-return-mx=pass smtp.domain=kernel.org smtp.result=pass
+      smtp_is_org_domain=yes header.domain=linuxfoundation.org
+      header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
+      bits=128/128;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfFvJCauNX0OEOgo+fgvSrtSsS2YBLZpeZoMQQd0rHn6sKvGCC9HOIKhlPJ5yfDMCn/zeTN1+Y7re37wsdvHjHOwkmG359XyBZNivHb/QYEYcdF6HA3j2
+    X7ecunhq731F+gh7eAUM93Rp0A+ntSuYAfV2vq12xLV94o7ymtiEQwFZYpRiiwStnW3CtWZcdvNxvxcbpc6m/Sq6g5zrWdJMUN+KJJGXCexQ+87ji7KjpEJn
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=czNdAM+YcK12vDHDihaDnQ==:117
+    a=czNdAM+YcK12vDHDihaDnQ==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=VnNF1IyMAAAA:8 a=ag1SF4gXAAAA:8 a=a8smshC77bAp1VTUYNYA:9 a=QEXdDO2ut3YA:10
+    a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
+	greg@kroah.com
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.16 049/161] s390: move nobp parameter functions to nospec-branch.c
-Date: Thu, 24 May 2018 11:37:54 +0200
-Message-Id: <20180524093024.328567832@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.16 047/161] powerpc: Move default security feature flags
+Date: Thu, 24 May 2018 11:37:52 +0200
+Message-Id: <20180524093024.048578311@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -40,9 +92,6 @@ X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601339194308829906?=
-X-GMAIL-MSGID: =?utf-8?q?1601339194308829906?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,106 +99,51 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+From: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
 
-[ Upstream commit b2e2f43a01bace1a25bdbae04c9f9846882b727a ]
+commit e7347a86830f38dc3e40c8f7e28c04412b12a2e7 upstream.
 
-Keep the code for the nobp parameter handling with the code for
-expolines. Both are related to the spectre v2 mitigation.
+This moves the definition of the default security feature flags
+(i.e., enabled by default) closer to the security feature flags.
 
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+This can be used to restore current flags to the default flags.
+
+Signed-off-by: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/kernel/Makefile        |    4 ++--
- arch/s390/kernel/alternative.c   |   23 -----------------------
- arch/s390/kernel/nospec-branch.c |   27 +++++++++++++++++++++++++++
- 3 files changed, 29 insertions(+), 25 deletions(-)
+ arch/powerpc/include/asm/security_features.h |    8 ++++++++
+ arch/powerpc/kernel/security.c               |    7 +------
+ 2 files changed, 9 insertions(+), 6 deletions(-)
 
---- a/arch/s390/kernel/Makefile
-+++ b/arch/s390/kernel/Makefile
-@@ -61,11 +61,11 @@ obj-y	+= debug.o irq.o ipl.o dis.o diag.
- obj-y	+= sysinfo.o jump_label.o lgr.o os_info.o machine_kexec.o pgm_check.o
- obj-y	+= runtime_instr.o cache.o fpu.o dumpstack.o guarded_storage.o sthyi.o
- obj-y	+= entry.o reipl.o relocate_kernel.o kdebugfs.o alternative.o
-+obj-y	+= nospec-branch.o
+--- a/arch/powerpc/include/asm/security_features.h
++++ b/arch/powerpc/include/asm/security_features.h
+@@ -63,4 +63,12 @@ static inline bool security_ftr_enabled(
+ // Firmware configuration indicates user favours security over performance
+ #define SEC_FTR_FAVOUR_SECURITY		0x0000000000000200ull
  
- extra-y				+= head.o head64.o vmlinux.lds
++
++// Features enabled by default
++#define SEC_FTR_DEFAULT \
++	(SEC_FTR_L1D_FLUSH_HV | \
++	 SEC_FTR_L1D_FLUSH_PR | \
++	 SEC_FTR_BNDS_CHK_SPEC_BAR | \
++	 SEC_FTR_FAVOUR_SECURITY)
++
+ #endif /* _ASM_POWERPC_SECURITY_FEATURES_H */
+--- a/arch/powerpc/kernel/security.c
++++ b/arch/powerpc/kernel/security.c
+@@ -11,12 +11,7 @@
+ #include <asm/security_features.h>
  
--obj-$(CONFIG_EXPOLINE)		+= nospec-branch.o
--CFLAGS_REMOVE_expoline.o	+= $(CC_FLAGS_EXPOLINE)
-+CFLAGS_REMOVE_nospec-branch.o	+= $(CC_FLAGS_EXPOLINE)
  
- obj-$(CONFIG_MODULES)		+= module.o
- obj-$(CONFIG_SMP)		+= smp.o
---- a/arch/s390/kernel/alternative.c
-+++ b/arch/s390/kernel/alternative.c
-@@ -15,29 +15,6 @@ static int __init disable_alternative_in
- 
- early_param("noaltinstr", disable_alternative_instructions);
- 
--static int __init nobp_setup_early(char *str)
--{
--	bool enabled;
--	int rc;
+-unsigned long powerpc_security_features __read_mostly = \
+-	SEC_FTR_L1D_FLUSH_HV | \
+-	SEC_FTR_L1D_FLUSH_PR | \
+-	SEC_FTR_BNDS_CHK_SPEC_BAR | \
+-	SEC_FTR_FAVOUR_SECURITY;
 -
--	rc = kstrtobool(str, &enabled);
--	if (rc)
--		return rc;
--	if (enabled && test_facility(82))
--		__set_facility(82, S390_lowcore.alt_stfle_fac_list);
--	else
--		__clear_facility(82, S390_lowcore.alt_stfle_fac_list);
--	return 0;
--}
--early_param("nobp", nobp_setup_early);
--
--static int __init nospec_setup_early(char *str)
--{
--	__clear_facility(82, S390_lowcore.alt_stfle_fac_list);
--	return 0;
--}
--early_param("nospec", nospec_setup_early);
--
- struct brcl_insn {
- 	u16 opc;
- 	s32 disp;
---- a/arch/s390/kernel/nospec-branch.c
-+++ b/arch/s390/kernel/nospec-branch.c
-@@ -2,6 +2,31 @@
- #include <linux/module.h>
- #include <asm/nospec-branch.h>
++unsigned long powerpc_security_features __read_mostly = SEC_FTR_DEFAULT;
  
-+static int __init nobp_setup_early(char *str)
-+{
-+	bool enabled;
-+	int rc;
-+
-+	rc = kstrtobool(str, &enabled);
-+	if (rc)
-+		return rc;
-+	if (enabled && test_facility(82))
-+		__set_facility(82, S390_lowcore.alt_stfle_fac_list);
-+	else
-+		__clear_facility(82, S390_lowcore.alt_stfle_fac_list);
-+	return 0;
-+}
-+early_param("nobp", nobp_setup_early);
-+
-+static int __init nospec_setup_early(char *str)
-+{
-+	__clear_facility(82, S390_lowcore.alt_stfle_fac_list);
-+	return 0;
-+}
-+early_param("nospec", nospec_setup_early);
-+
-+#ifdef CONFIG_EXPOLINE
-+
- int nospec_call_disable = IS_ENABLED(CONFIG_EXPOLINE_OFF);
- int nospec_return_disable = !IS_ENABLED(CONFIG_EXPOLINE_FULL);
- 
-@@ -98,3 +123,5 @@ void __init nospec_init_branches(void)
- 	nospec_call_revert(__nospec_call_start, __nospec_call_end);
- 	nospec_return_revert(__nospec_return_start, __nospec_return_end);
- }
-+
-+#endif /* CONFIG_EXPOLINE */
+ ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr, char *buf)
+ {
