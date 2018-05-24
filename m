@@ -1,21 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968749AbeEXNNi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 09:13:38 -0400
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:20888 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935698AbeEXNNc (ORCPT
+        id S968974AbeEXNNq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 09:13:46 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:48356 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935698AbeEXNNj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 09:13:32 -0400
+        Thu, 24 May 2018 09:13:39 -0400
 From: Vitaly Andrianov <vitalya@ti.com>
 To: <ssantosh@kernel.org>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
         <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
 CC: <vitalya@ti.com>, <m-karicheri2@ti.com>
-Subject: [PATCH 0/3] Dts nodes for Keystone2 hw_rng driver
-Date: Thu, 24 May 2018 09:12:15 -0400
-Message-ID: <1527167538-29837-1-git-send-email-vitalya@ti.com>
+Subject: [PATCH 3/3] ARM: dts: k2e: add dts node for k2e hw_rng driver
+Date: Thu, 24 May 2018 09:12:18 -0400
+Message-ID: <1527167538-29837-4-git-send-email-vitalya@ti.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1527167538-29837-1-git-send-email-vitalya@ti.com>
+References: <1527167538-29837-1-git-send-email-vitalya@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
@@ -23,17 +25,41 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series adds dts nodes for Keystone2 hw_rng driver
+This patch adds dts node for k2e hw_random generator driver
 
-Vitaly Andrianov (3):
-  ARM: dts: k2hk: add dts node for k2hk hw_rng driver
-  ARM: dts: k2l: add dts node for k2l hw_rng driver
-  ARM: dts: k2e: add dts node for k2e hw_rng driver
+Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+---
+ arch/arm/boot/dts/keystone-k2e-netcp.dtsi | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
- arch/arm/boot/dts/keystone-k2e-netcp.dtsi  | 20 ++++++++++++++++++++
- arch/arm/boot/dts/keystone-k2hk-netcp.dtsi | 20 ++++++++++++++++++++
- arch/arm/boot/dts/keystone-k2l-netcp.dtsi  | 20 ++++++++++++++++++++
- 3 files changed, 60 insertions(+)
-
+diff --git a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
+index a17311c..1db17ec 100644
+--- a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
++++ b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
+@@ -225,3 +225,23 @@ netcp: netcp@24000000 {
+ 		};
+ 	};
+ };
++
++sa_subsys: subsys@24080000 {
++	#address-cells = <1>;
++	#size-cells = <1>;
++	compatible = "simple-bus";
++	ranges = <0 0x24080000 0x40000>;
++
++	sa_config: subsys@0 {
++		compatible = "syscon";
++		reg = <0x0 0x100>;
++	};
++
++	rng@24000 {
++		compatible = "ti,keystone-rng";
++		reg = <0x24000 0x1000>;
++		ti,syscon-sa-cfg = <&sa_config>;
++		clocks = <&clksa>;
++		clock-names = "fck";
++	};
++};
 -- 
 2.7.4
