@@ -1,10 +1,11 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1757396-1527157616-2-12551960402800686003
+X-Cyrus-Session-Id: sloti22d1t05-1758260-1527157616-2-13876281846579524336
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -12,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527157615; b=UzoelpXhO7IfucHuY61Xl2X4zMd/ipJrjbpc/NzVtoDe/g/Xis
-    EUZ64TQlpzQN1oaDVj4iTGiKrlO1/Bhmwdw3qy2UHy2eh0YiyEZP9uRUtmhOosmh
-    45efHbxfFR82/UuWHG/UnRdmKj9BVa319e+59vEQfh+WqKWFb7d/76clzfLzSIOw
-    1YxAbfSZC0waZxKR5XRUnSCLtEv2bH+ll5jM3Q9Mm9/LGIzS5wgeaHjdaLcBAI/O
-    ka1AkbSNc1X4LszsNy6Yb3oNsSJl9bF3cAzzmfhpDcI+DTD+e9uCcK47lWq2JB7I
-    JhmFXhNK/xxHCF3lhc34813cNBsUo8mZnp1g==
+    1527157615; b=FA5Evc1T3LGTQcHP+iB9XQS2XppcZcNbFG8J175Mh2V1vx1+/7
+    dKrFV/FQXVFnoqwe4g3IlBSNVaPOKrP08dwoSAPYWAXy4Q/ebq5KlEYKPHaIbnC5
+    abXa8JVP75QEyhXI1nLdQruwrt1E5piBzD5ii61rsM4N/s01URYyk7DCFgIsYDMW
+    a/iO3nWxdcwOU+8PL70U62WmlT6R2BKBkAdOyNFBKAqYv/runN1jIOpf4fHvEMRU
+    KIR9JTNwRwlvj7W8nechaEpRnKf6H9aE5nyFOvGRWV3DUGQpOYloc9rPv9J8zooM
+    myrS3Th1Sn03xdN3wYrXw5nLqNbu8oismyHA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527157615; bh=ZWqKNejgJb6VE/q6kJmBXihJjzbyuX
-    y8yc8NhxHqJGE=; b=iVoUaAzuLW/vrjSlAEyHzDb+BdvyZT+IESs/ZIOWurIM0j
-    SSBZ/1TEm9h/LfxK25ErKGZm3+U9dq64jpPmQC51FN00Sav7X0nsGEEskl/vgV8c
-    S5CvKU2vcB5+gaYcWJHde/t0M2mTqX23Esb++vQ1TmcTllBEpnP8s+wUVG+P6R6H
-    Z+Ch4bq5iIdfvruGwbapVqVY/14czAPPBkU9C992pq8jwtYgTEtLIvAPVl21JjhS
-    kgU9tWBFzaIqQ1f8Gj2sOx/fcnuPS2HjaLtUBOH4Mmll6wxDqPdvlx9cj4FCdUXk
-    WSJfsxHFQPcjLrDQk0l2GaAJpH+z1c8uEN3sIHgw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527157615; bh=o4ub6j85cDyM41mm2HjLmlS4cU05QO
+    0LCMbBr5sV0dM=; b=lxaYK7/VNCiVPqkBRl1XAyBjcEBHS9eY9tXygLDSL2ZRmZ
+    Wwh0wt98Cst7STUNqNtCGzUGp81cW6eOWWD9qJdbvaWfR7tJqHHorNCL854iEUEi
+    dhzmyn5/mDEr+QB4v44hCGhZXBL2Zu3MmqsSneQT9NrZdAQF88XCSNUopNA6oi5m
+    Tlrpl/LOpzUyO2eMwssDuBmjPAn/w28dA3MVUhuE8KN3inzAWon3nqQ782XOdcIk
+    O7uGIvAyO/RPbTQBwbQ1oBdv5MVawlsTBeNJBCGDvRxX4nh739ybxOrGjejWdJ+/
+    BAackkcsTLoMerof6dKjBDLT1Q52QoTwae1YJGHQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=v4nxg0kF x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=1JTF3+hR x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +46,10 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=v4nxg0kF x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=1JTF3+hR x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,31 +65,31 @@ Authentication-Results: mx5.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHpeDml5XH533EkV8z1E39wfs0agbuWpS1rIwPl1rk0EIB1RVibxLajYCs9vtVo0yNWxvHEybQtP+kPqcK5FbktIewjzUW8ZVruz08P6AzdcDcTrUNlE
-    7hHB623HQslAFMESBcxIP/Kus9KWSwok8ueALwtNRG1C9+aYo6Dn2f9F8GnMlcp9hGR+Gqtx7xh9x/Nnip1QMnBVRYSIn8/jtZc0Jr3KbyncLbYxJuzW5JAv
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfMHvOWpIu4EDqzA45rtpgdo8du4R+/dBVwrsnTUaFsVrYFc7Wuk+vAF9RIBzza0r5B2JBxeIeX880SvWsdJ5DLy/UXic0cR0DLD25QbR3NwD8l5tr4T5
+    a7oBCYQR+0MrcJRapl2M7jG/M+VyCIgrcwF60rvYG329q4y6nz3kXVpXuK+K5l/Cse3GfSaskZ4giLkhkB2qeR5fT362ohv6XxLHuSj6+4IDNiQ7iAL2y+jS
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=zAyngx5bAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=muyRz08OCrGZHOrQXZEA:9
-    a=QEXdDO2ut3YA:10 a=4LA4qAFo6bo561LpWNDU:22 a=y1Q9-5lHfBjTkpIzbSAN:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=CbDCq_QkAAAA:8 a=pGLkceISAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
+    a=PlS1MkiXnQEo6SutRHkA:9 a=QEXdDO2ut3YA:10 a=1qrBK16LubpBFNPVNq2M:22
+    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031013AbeEXK0x (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 06:26:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47738 "EHLO mail.kernel.org"
+        id S1030989AbeEXKBm (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 06:01:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47568 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030993AbeEXKBp (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 06:01:45 -0400
+        id S1030973AbeEXKBk (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 06:01:40 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ariel Elior <Ariel.Elior@cavium.com>,
-        Michal Kalderon <Michal.Kalderon@cavium.com>,
+        stable@vger.kernel.org, Petr Machata <petrm@mellanox.com>,
+        William Tu <u9012063@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 030/161] qed: LL2 flush isles when connection is closed
-Date: Thu, 24 May 2018 11:37:35 +0200
-Message-Id: <20180524093021.949524719@linuxfoundation.org>
+Subject: [PATCH 4.16 028/161] net: ip6_gre: Fix ip6erspan hlen calculation
+Date: Thu, 24 May 2018 11:37:33 +0200
+Message-Id: <20180524093021.685154993@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -106,61 +107,149 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michal Kalderon <Michal.Kalderon@cavium.com>
+From: Petr Machata <petrm@mellanox.com>
 
-[ Upstream commit f9bcd60274a565751abef622f9018badd01a17c8 ]
+[ Upstream commit 2d665034f239412927b1e71329f20f001c92da09 ]
 
-Driver should free all pending isles once it gets a FLUSH cqe from FW.
-Part of iSCSI out of order flow.
+Even though ip6erspan_tap_init() sets up hlen and tun_hlen according to
+what ERSPAN needs, it goes ahead to call ip6gre_tnl_link_config() which
+overwrites these settings with GRE-specific ones.
 
-Fixes: 1d6cff4fca4366 ("qed: Add iSCSI out of order packet handling")
-Signed-off-by: Ariel Elior <Ariel.Elior@cavium.com>
-Signed-off-by: Michal Kalderon <Michal.Kalderon@cavium.com>
+Similarly for changelink callbacks, which are handled by
+ip6gre_changelink() calls ip6gre_tnl_change() calls
+ip6gre_tnl_link_config() as well.
+
+The difference ends up being 12 vs. 20 bytes, and this is generally not
+a problem, because a 12-byte request likely ends up allocating more and
+the extra 8 bytes are thus available. However correct it is not.
+
+So replace the newlink and changelink callbacks with an ERSPAN-specific
+ones, reusing the newly-introduced _common() functions.
+
+Fixes: 5a963eb61b7c ("ip6_gre: Add ERSPAN native tunnel support")
+Signed-off-by: Petr Machata <petrm@mellanox.com>
+Acked-by: William Tu <u9012063@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_ll2.c |   26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ net/ipv6/ip6_gre.c |   74 ++++++++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 65 insertions(+), 9 deletions(-)
 
---- a/drivers/net/ethernet/qlogic/qed/qed_ll2.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
-@@ -601,6 +601,27 @@ static u8 qed_ll2_convert_rx_parse_to_tx
- 	return bd_flags;
- }
+--- a/net/ipv6/ip6_gre.c
++++ b/net/ipv6/ip6_gre.c
+@@ -81,6 +81,7 @@ static int ip6gre_tunnel_init(struct net
+ static void ip6gre_tunnel_setup(struct net_device *dev);
+ static void ip6gre_tunnel_link(struct ip6gre_net *ign, struct ip6_tnl *t);
+ static void ip6gre_tnl_link_config(struct ip6_tnl *t, int set_mtu);
++static void ip6erspan_tnl_link_config(struct ip6_tnl *t, int set_mtu);
  
-+static bool
-+qed_ll2_lb_rxq_handler_slowpath(struct qed_hwfn *p_hwfn,
-+				struct core_rx_slow_path_cqe *p_cqe)
+ /* Tunnel hash table */
+ 
+@@ -1746,6 +1747,19 @@ static const struct net_device_ops ip6gr
+ 	.ndo_get_iflink = ip6_tnl_get_iflink,
+ };
+ 
++static int ip6erspan_calc_hlen(struct ip6_tnl *tunnel)
 +{
-+	struct ooo_opaque *iscsi_ooo;
-+	u32 cid;
++	int t_hlen;
 +
-+	if (p_cqe->ramrod_cmd_id != CORE_RAMROD_RX_QUEUE_FLUSH)
-+		return false;
++	tunnel->tun_hlen = 8;
++	tunnel->hlen = tunnel->tun_hlen + tunnel->encap_hlen +
++		       erspan_hdr_len(tunnel->parms.erspan_ver);
 +
-+	iscsi_ooo = (struct ooo_opaque *)&p_cqe->opaque_data;
-+	if (iscsi_ooo->ooo_opcode != TCP_EVENT_DELETE_ISLES)
-+		return false;
-+
-+	/* Need to make a flush */
-+	cid = le32_to_cpu(iscsi_ooo->cid);
-+	qed_ooo_release_connection_isles(p_hwfn, p_hwfn->p_ooo_info, cid);
-+
-+	return true;
++	t_hlen = tunnel->hlen + sizeof(struct ipv6hdr);
++	tunnel->dev->hard_header_len = LL_MAX_HEADER + t_hlen;
++	return t_hlen;
 +}
 +
- static int qed_ll2_lb_rxq_handler(struct qed_hwfn *p_hwfn,
- 				  struct qed_ll2_info *p_ll2_conn)
+ static int ip6erspan_tap_init(struct net_device *dev)
  {
-@@ -627,6 +648,11 @@ static int qed_ll2_lb_rxq_handler(struct
- 		cq_old_idx = qed_chain_get_cons_idx(&p_rx->rcq_chain);
- 		cqe_type = cqe->rx_cqe_sp.type;
+ 	struct ip6_tnl *tunnel;
+@@ -1769,12 +1783,7 @@ static int ip6erspan_tap_init(struct net
+ 		return ret;
+ 	}
  
-+		if (cqe_type == CORE_RX_CQE_TYPE_SLOW_PATH)
-+			if (qed_ll2_lb_rxq_handler_slowpath(p_hwfn,
-+							    &cqe->rx_cqe_sp))
-+				continue;
+-	tunnel->tun_hlen = 8;
+-	tunnel->hlen = tunnel->tun_hlen + tunnel->encap_hlen +
+-		       erspan_hdr_len(tunnel->parms.erspan_ver);
+-	t_hlen = tunnel->hlen + sizeof(struct ipv6hdr);
+-
+-	dev->hard_header_len = LL_MAX_HEADER + t_hlen;
++	t_hlen = ip6erspan_calc_hlen(tunnel);
+ 	dev->mtu = ETH_DATA_LEN - t_hlen;
+ 	if (dev->type == ARPHRD_ETHER)
+ 		dev->mtu -= ETH_HLEN;
+@@ -1783,7 +1792,7 @@ static int ip6erspan_tap_init(struct net
+ 
+ 	dev->priv_flags |= IFF_LIVE_ADDR_CHANGE;
+ 	tunnel = netdev_priv(dev);
+-	ip6gre_tnl_link_config(tunnel, 1);
++	ip6erspan_tnl_link_config(tunnel, 1);
+ 
+ 	return 0;
+ }
+@@ -2108,6 +2117,53 @@ static void ip6erspan_tap_setup(struct n
+ 	netif_keep_dst(dev);
+ }
+ 
++static int ip6erspan_newlink(struct net *src_net, struct net_device *dev,
++			     struct nlattr *tb[], struct nlattr *data[],
++			     struct netlink_ext_ack *extack)
++{
++	int err = ip6gre_newlink_common(src_net, dev, tb, data, extack);
++	struct ip6_tnl *nt = netdev_priv(dev);
++	struct net *net = dev_net(dev);
 +
- 		if (cqe_type != CORE_RX_CQE_TYPE_REGULAR) {
- 			DP_NOTICE(p_hwfn,
- 				  "Got a non-regular LB LL2 completion [type 0x%02x]\n",
++	if (!err) {
++		ip6erspan_tnl_link_config(nt, !tb[IFLA_MTU]);
++		ip6gre_tunnel_link(net_generic(net, ip6gre_net_id), nt);
++	}
++	return err;
++}
++
++static void ip6erspan_tnl_link_config(struct ip6_tnl *t, int set_mtu)
++{
++	ip6gre_tnl_link_config_common(t);
++	ip6gre_tnl_link_config_route(t, set_mtu, ip6erspan_calc_hlen(t));
++}
++
++static int ip6erspan_tnl_change(struct ip6_tnl *t,
++				const struct __ip6_tnl_parm *p, int set_mtu)
++{
++	ip6gre_tnl_copy_tnl_parm(t, p);
++	ip6erspan_tnl_link_config(t, set_mtu);
++	return 0;
++}
++
++static int ip6erspan_changelink(struct net_device *dev, struct nlattr *tb[],
++				struct nlattr *data[],
++				struct netlink_ext_ack *extack)
++{
++	struct ip6gre_net *ign = net_generic(dev_net(dev), ip6gre_net_id);
++	struct __ip6_tnl_parm p;
++	struct ip6_tnl *t;
++
++	t = ip6gre_changelink_common(dev, tb, data, &p, extack);
++	if (IS_ERR(t))
++		return PTR_ERR(t);
++
++	ip6gre_tunnel_unlink(ign, t);
++	ip6erspan_tnl_change(t, &p, !tb[IFLA_MTU]);
++	ip6gre_tunnel_link(ign, t);
++	return 0;
++}
++
+ static struct rtnl_link_ops ip6gre_link_ops __read_mostly = {
+ 	.kind		= "ip6gre",
+ 	.maxtype	= IFLA_GRE_MAX,
+@@ -2144,8 +2200,8 @@ static struct rtnl_link_ops ip6erspan_ta
+ 	.priv_size	= sizeof(struct ip6_tnl),
+ 	.setup		= ip6erspan_tap_setup,
+ 	.validate	= ip6erspan_tap_validate,
+-	.newlink	= ip6gre_newlink,
+-	.changelink	= ip6gre_changelink,
++	.newlink	= ip6erspan_newlink,
++	.changelink	= ip6erspan_changelink,
+ 	.get_size	= ip6gre_get_size,
+ 	.fill_info	= ip6gre_fill_info,
+ 	.get_link_net	= ip6_tnl_get_link_net,
