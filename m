@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1732752-1527155915-2-353460761530339519
+X-Cyrus-Session-Id: sloti22d1t05-1733193-1527155907-2-11617842716975766234
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527155914; b=nCXicJtbGiMP/hCOd2F/270fAi4cTKYhnU7LqKgE9t0QJ1MjYK
-    PkVsY8n33JwhZm1nJUJPB7TeKzuCGm6lPN2cPyv7Y8oyBC5FhPqrDlPF0XRSXH4p
-    XxgQX8ZRKHM2knBhkk3oB5CQJLqBeWlzef5NI+jvTVPPkOnliuag/orR/w/kCPry
-    3FC/9PUyvUcHjgk296crzqre2gv4tsSrI4o/aIj0p3iU+Tbi0Nonm/sUrFojWg02
-    MWPLGfNu7r07ZfE/uYWMTOvkCVLtk8hP2HJQwCqMnaCSUi8ep8CTE1BxiImLJT3Q
-    9F5+jSEsye8XFujyJON0dgl6yMO30juaLM/A==
+    1527155907; b=M7i5+bFANZjF0vvdCD2dq+MR83ElbpeFQaNkwnFbLs7zfEFGlT
+    PfK8Lu2cim1tkqAu6TSWuw645z9KLVFSC3i4sSv/Bz6+jrs/n1KPHRa1UzB6F0Ac
+    9WSCb597geUA10k08m/ZV+Awgwp9a2x3+4C3dG+d/2tpkWJiq0nbtc9LR/W26vZi
+    WnswVOSn/nCXfCABQBI6uy9qW40Uh5ZFr+1twju5/4NqPX0S6j+7CWvHvfsbLGN2
+    sIt32lbGupSsG8lkMr2ALv/NnPi2fI7gg+3sI3v12TyRNGdXZdxoGEcfkNrrYSJO
+    8povcgBn+2k91G9wRQQXtehq5Kvkl2eNTqLg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527155914; bh=RXdlK55z/YpvHNIC1VAfFqByY2tjb6
-    5mPt/jYQxpHL4=; b=dkKz+Y+iatZwQxGzChHpOKaVp3LYGSswA/KtR1Ntqr/i8c
-    5maB6VyOR+c8hgvMwMasHTWS7st65mlwiVsQzWWHPX/qbowGLYC6jaUCRErNpOvI
-    dijsMnMq7C52v10Bbwnds6/z3xz6S8AU4QOfSOvpi2wqTFl/npGuXnGOXZZtZg72
-    veok9yljblFaSJQwvCP8ix20yLE+gPeEoXZ0wcTjrM59sH1WQ0lhaMKsDYs9kAnB
-    dbpLrDC+W94/2O7C3mxojViHnopODXbC/se5RGjnP7vBIA3L11Ew4ZPBwVVwROHz
-    1PwXKSB40+J/Avh5QSvzvBfo0pHqkq6uqmAeFJdA==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527155907; bh=JyJwox/fdV9F264BfhUzZIKr78Yfec
+    57U5toqMfE3D0=; b=J6eolAnLnwhwgPRhk8BprGEgfMjDLeuc1S/13hwNMm6ePV
+    iKM6Nti7YxzTQN/H7RE7NhIzr6I0av/9rhvleg3dxiWSFTDNl0WurzOmic6ZMm0i
+    z923PF84G8x223E36HOau/sOMoE7o9lSVSLyrWJuyOOGhceY/HH9ENaBr+eZOOF0
+    PNu4wsECffgHinYQQkN2lNaRkfeujpJZ5A6G9NGciM3m629Dlt3HoJu55E2KITm9
+    rtZZAeKs/PPElnpc/lvWwhWWGTWQIq0BJ3Y1duHhSkzab6wXuZ3PEncTJCb4+lks
+    tzz6EwlE/XAy+GQ3Bo4ojC//1gDebfXUUbOyubAw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=RaQQgiH/ x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=w1rwlG5d x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=RaQQgiH/ x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=w1rwlG5d x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,30 +64,32 @@ Authentication-Results: mx5.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPqEq3zEoh4tsFGalu9ULpVDT6D5IAIAT3iDsmZKxljtBZoeWlE7VsQInTT3M443tMMVb6n18WVCwcTZyz4aFJCIrdCzqxh6Dv7YEXOsMwtMdzNl23YS
-    6IoMRoYdiKZW4G0UjJQPm7B4yELyd8Jw2q+OAL+2V/iEXWNRqw2RRzDE86lQCRCPh6DhTe2kvKSttSZdWYJ7xfHkFKgvaLvdhoW56PSuIybrIOEGHjx7/lpW
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfAJJQgC0DYbN0LH+/bT6uswdz2d5etAuPpwfoJOPvMKeFgu+bYlWzHRen2YX+mdT0bgg42Dmz1CaMPkSN7RNQ/d1zcibHNr9xy6y0FUlXUvyLGLZN6gf
+    9tARRwLvFlEfTGe0J+F2ahdNHrpD7JRM2Ia3AXGE6JG6nxLF0Ph5cCweFEV2ERN7KH+EZtQM7tW2Dthc5I6tEh5o6QVDRZwNv3NHEJ8td52zIKVP7Hu361Wx
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=P-IC7800AAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=jMSxsYAmotoHhWNEieEA:9
-    a=QEXdDO2ut3YA:10 a=d3PnA9EDa4IxuAV0gXij:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=3uY1OGifAAAA:8 a=v3ZZPjhaAAAA:8 a=yPCof4ZbAAAA:8 a=yMhMjlubAAAA:8
+    a=ag1SF4gXAAAA:8 a=xxG_gJrs1X5CW_1k0CwA:9 a=QEXdDO2ut3YA:10
+    a=d_xNPB-V-J0lr6ltNwaW:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030617AbeEXJ6a (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:58:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38324 "EHLO mail.kernel.org"
+        id S1030600AbeEXJ6Y (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:58:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38120 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030612AbeEXJ61 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:58:27 -0400
+        id S1030590AbeEXJ6T (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:58:19 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        stable@vger.kernel.org, Li Ning <lining916740672@icloud.com>,
+        Jeremy Cline <jeremy@jcline.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 161/165] rtc: rk808: fix possible race condition
-Date: Thu, 24 May 2018 11:39:27 +0200
-Message-Id: <20180524093628.599295043@linuxfoundation.org>
+Subject: [PATCH 4.14 113/165] scsi: sd: Keep disk read-only when re-reading partition
+Date: Thu, 24 May 2018 11:38:39 +0200
+Message-Id: <20180524093626.593183238@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -105,75 +107,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+From: Jeremy Cline <jeremy@jcline.org>
 
-[ Upstream commit 201fac95e799c3d0304ec724d555e1251b9f6e84 ]
+[ Upstream commit 20bd1d026aacc5399464f8328f305985c493cde3 ]
 
-The probe function is not allowed to fail after registering the RTC because
-the following may happen:
+If the read-only flag is true on a SCSI disk, re-reading the partition
+table sets the flag back to false.
 
-CPU0:                                CPU1:
-sys_load_module()
- do_init_module()
-  do_one_initcall()
-   cmos_do_probe()
-    rtc_device_register()
-     __register_chrdev()
-     cdev->owner = struct module*
-                                     open("/dev/rtc0")
-    rtc_device_unregister()
-  module_put()
-  free_module()
-   module_free(mod->module_core)
-   /* struct module *module is now
-      freed */
-                                      chrdev_open()
-                                       spin_lock(cdev_lock)
-                                       cdev_get()
-                                        try_module_get()
-                                         module_is_live()
-                                         /* dereferences already
-                                            freed struct module* */
+To observe this bug, you can run:
 
-Switch to devm_rtc_allocate_device/rtc_register_device to register the rtc
-as late as possible.
+1. blockdev --setro /dev/sda
+2. blockdev --rereadpt /dev/sda
+3. blockdev --getro /dev/sda
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+This commit reads the disk's old state and combines it with the device
+disk-reported state rather than unconditionally marking it as RW.
+
+Reported-by: Li Ning <lining916740672@icloud.com>
+Signed-off-by: Jeremy Cline <jeremy@jcline.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/rtc/rtc-rk808.c |   14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/scsi/sd.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/rtc/rtc-rk808.c
-+++ b/drivers/rtc/rtc-rk808.c
-@@ -416,12 +416,11 @@ static int rk808_rtc_probe(struct platfo
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -2608,6 +2608,7 @@ sd_read_write_protect_flag(struct scsi_d
+ 	int res;
+ 	struct scsi_device *sdp = sdkp->device;
+ 	struct scsi_mode_data data;
++	int disk_ro = get_disk_ro(sdkp->disk);
+ 	int old_wp = sdkp->write_prot;
  
- 	device_init_wakeup(&pdev->dev, 1);
- 
--	rk808_rtc->rtc = devm_rtc_device_register(&pdev->dev, "rk808-rtc",
--						  &rk808_rtc_ops, THIS_MODULE);
--	if (IS_ERR(rk808_rtc->rtc)) {
--		ret = PTR_ERR(rk808_rtc->rtc);
--		return ret;
--	}
-+	rk808_rtc->rtc = devm_rtc_allocate_device(&pdev->dev);
-+	if (IS_ERR(rk808_rtc->rtc))
-+		return PTR_ERR(rk808_rtc->rtc);
-+
-+	rk808_rtc->rtc->ops = &rk808_rtc_ops;
- 
- 	rk808_rtc->irq = platform_get_irq(pdev, 0);
- 	if (rk808_rtc->irq < 0) {
-@@ -438,9 +437,10 @@ static int rk808_rtc_probe(struct platfo
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to request alarm IRQ %d: %d\n",
- 			rk808_rtc->irq, ret);
-+		return ret;
- 	}
- 
--	return ret;
-+	return rtc_register_device(rk808_rtc->rtc);
- }
- 
- static struct platform_driver rk808_rtc_driver = {
+ 	set_disk_ro(sdkp->disk, 0);
+@@ -2648,7 +2649,7 @@ sd_read_write_protect_flag(struct scsi_d
+ 			  "Test WP failed, assume Write Enabled\n");
+ 	} else {
+ 		sdkp->write_prot = ((data.device_specific & 0x80) != 0);
+-		set_disk_ro(sdkp->disk, sdkp->write_prot);
++		set_disk_ro(sdkp->disk, sdkp->write_prot || disk_ro);
+ 		if (sdkp->first_scan || old_wp != sdkp->write_prot) {
+ 			sd_printk(KERN_NOTICE, sdkp, "Write Protect is %s\n",
+ 				  sdkp->write_prot ? "on" : "off");
