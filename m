@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032108AbeEXRw3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 13:52:29 -0400
-Received: from mail-yw0-f193.google.com ([209.85.161.193]:45527 "EHLO
-        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031090AbeEXRuc (ORCPT
+        id S1032060AbeEXRwZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 13:52:25 -0400
+Received: from mail-yb0-f196.google.com ([209.85.213.196]:38181 "EHLO
+        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031168AbeEXRul (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 13:50:32 -0400
-X-Google-Smtp-Source: AB8JxZrZ41eIsbztBjdsY2RQepep8ldqIBSgjJxurE4ch/uJWZpIxU0ff8eIk3/uqiRfUdotjvfKww==
+        Thu, 24 May 2018 13:50:41 -0400
+X-Google-Smtp-Source: AB8JxZrc2TdvR9ECx8yPlMYRSrZ2R1CNZMNxvJELm4B8RdNwGEwyTxURdT1WzEja3oLaycG3VzW0zg==
 From: Rob Herring <robh@kernel.org>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -21,9 +21,9 @@ To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         boot-architecture@lists.linaro.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 1/8] driver core: make deferring probe after init optional
-Date: Thu, 24 May 2018 12:50:17 -0500
-Message-Id: <20180524175024.19874-2-robh@kernel.org>
+Subject: [PATCH v2 5/8] pinctrl: optionally stop deferring probe at end of initcalls
+Date: Thu, 24 May 2018 12:50:21 -0500
+Message-Id: <20180524175024.19874-6-robh@kernel.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524175024.19874-1-robh@kernel.org>
 References: <20180524175024.19874-1-robh@kernel.org>
@@ -31,77 +31,47 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Deferred probe will currently wait forever on dependent devices to probe,
-but sometimes a driver will never exist. It's also not always critical for
-a driver to exist. Platforms can rely on default configuration from the
-bootloader or reset defaults for things such as pinctrl and power domains.
-This is often the case with initial platform support until various drivers
-get enabled. There's at least 2 scenarios where deferred probe can render
-a platform broken. Both involve using a DT which has more devices and
-dependencies than the kernel supports. The 1st case is a driver may be
-disabled in the kernel config. The 2nd case is the kernel version may
-simply not have the dependent driver. This can happen if using a newer DT
-(provided by firmware perhaps) with a stable kernel version.
+If the pinctrl node in DT indicates that pin setup is optional and the
+defaults can be used with the 'pinctrl-use-default', then only defer probe
+until initcalls are done. This gives platforms the option to work without
+their pinctrl driver being enabled.
 
-Subsystems or drivers may opt-in to this behavior by calling
-driver_deferred_probe_check_init_done() instead of just returning
--EPROBE_DEFER. They may use additional information from DT or kernel's
-config to decide whether to continue to defer probe or not.
-
-Cc: Alexander Graf <agraf@suse.de>
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- drivers/base/dd.c      | 17 +++++++++++++++++
- include/linux/device.h |  2 ++
- 2 files changed, 19 insertions(+)
+ drivers/pinctrl/devicetree.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-index c9f54089429b..d6034718da6f 100644
---- a/drivers/base/dd.c
-+++ b/drivers/base/dd.c
-@@ -226,6 +226,16 @@ void device_unblock_probing(void)
- 	driver_deferred_probe_trigger();
- }
+diff --git a/drivers/pinctrl/devicetree.c b/drivers/pinctrl/devicetree.c
+index b601039d6c69..74a31074b406 100644
+--- a/drivers/pinctrl/devicetree.c
++++ b/drivers/pinctrl/devicetree.c
+@@ -110,17 +110,23 @@ static int dt_to_map_one_config(struct pinctrl *p,
+ 	int ret;
+ 	struct pinctrl_map *map;
+ 	unsigned num_maps;
++	bool pctl_optional = false;
  
-+int driver_deferred_probe_check_init_done(struct device *dev, bool optional)
-+{
-+	if (optional && initcalls_done) {
-+		dev_WARN(dev, "ignoring dependency for device, assuming no driver");
-+		return -ENODEV;
-+	}
+ 	/* Find the pin controller containing np_config */
+ 	np_pctldev = of_node_get(np_config);
+ 	for (;;) {
++		if (!pctl_optional)
++			pctl_optional = of_property_read_bool(np_pctldev, "pinctrl-use-default");
 +
-+	return -EPROBE_DEFER;
-+}
-+
- /**
-  * deferred_probe_initcall() - Enable probing of deferred devices
-  *
-@@ -240,6 +250,13 @@ static int deferred_probe_initcall(void)
- 	/* Sort as many dependencies as possible before exiting initcalls */
- 	flush_work(&deferred_probe_work);
- 	initcalls_done = true;
-+
-+	/*
-+	 * Trigger deferred probe again, this time we won't defer anything
-+	 * that is optional
-+	 */
-+	driver_deferred_probe_trigger();
-+	flush_work(&deferred_probe_work);
- 	return 0;
- }
- late_initcall(deferred_probe_initcall);
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 477956990f5e..f3dafd44c285 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -334,6 +334,8 @@ struct device *driver_find_device(struct device_driver *drv,
- 				  struct device *start, void *data,
- 				  int (*match)(struct device *dev, void *data));
- 
-+int driver_deferred_probe_check_init_done(struct device *dev, bool optional);
-+
- /**
-  * struct subsys_interface - interfaces to device functions
-  * @name:       name of the device function
+ 		np_pctldev = of_get_next_parent(np_pctldev);
+ 		if (!np_pctldev || of_node_is_root(np_pctldev)) {
+-			dev_info(p->dev, "could not find pctldev for node %pOF, deferring probe\n",
+-				np_config);
+ 			of_node_put(np_pctldev);
+-			/* OK let's just assume this will appear later then */
+-			return -EPROBE_DEFER;
++			ret = driver_deferred_probe_check_init_done(p->dev, pctl_optional);
++			if (ret == -EPROBE_DEFER)
++				/* OK let's just assume this will appear later then */
++				dev_info(p->dev, "could not find pctldev for node %pOF, deferring probe\n",
++					np_config);
++			return ret;
+ 		}
+ 		/* If we're creating a hog we can use the passed pctldev */
+ 		if (pctldev && (np_pctldev == p->dev->of_node))
 -- 
 2.17.0
