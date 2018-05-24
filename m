@@ -1,66 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965076AbeEXH42 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 03:56:28 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54788 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S935682AbeEXH40 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 03:56:26 -0400
-Date: Thu, 24 May 2018 15:56:15 +0800
-From: Dave Young <dyoung@redhat.com>
-To: Petr Tesarik <ptesarik@suse.cz>
-Cc: dzickus@redhat.com, Neil Horman <nhorman@redhat.com>,
-        Tony Luck <tony.luck@intel.com>, bhe@redhat.com,
-        Michael Ellerman <mpe@ellerman.id.au>, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Hari Bathini <hbathini@linux.vnet.ibm.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>, Vivek Goyal <vgoyal@redhat.com>
-Subject: Re: [PATCH] kdump: add default crashkernel reserve kernel config
- options
-Message-ID: <20180524075615.GC1940@dhcp-128-65.nay.redhat.com>
-References: <20180521025337.GA4627@dhcp-128-65.nay.redhat.com>
- <20180521120215.117d963a7619eb0d1f54bced@linux-foundation.org>
- <20180523070641.GA1689@dhcp-128-65.nay.redhat.com>
- <877enucqr0.fsf@xmission.com>
- <20180523222236.5a96732e@ezekiel.suse.cz>
- <20180524014905.GB2031@dhcp-128-65.nay.redhat.com>
- <20180524085708.31aa311d@ezekiel.suse.cz>
- <20180524072627.GA1940@dhcp-128-65.nay.redhat.com>
+        id S965126AbeEXH7Q (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 03:59:16 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:9531 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935508AbeEXH7N (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 03:59:13 -0400
+Subject: Re: omapdrm regression in v4.17-rc series
+To: Tony Lindgren <tony@atomide.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>
+CC: <ivo.g.dimitrov.75@gmail.com>, <abcloriens@gmail.com>,
+        <sre@kernel.org>, <martijn@brixit.nl>, <filip.matijevic.pz@gmail.com>,
+        Thorsten Leemhuis <regressions@leemhuis.info>, <clayton@craftyguy.net>,
+        <patrikbachan@gmail.com>, <serge@hallyn.com>,
+        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>
+References: <20180523220320.GX98604@atomide.com>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Message-ID: <2f803bfc-3ffe-332a-7b9a-d59a39db4630@ti.com>
+Date: Thu, 24 May 2018 10:58:25 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180524072627.GA1940@dhcp-128-65.nay.redhat.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180523220320.GX98604@atomide.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > > Instead of setting aside a significant chunk of memory nobody can use,
-> > > [...] reserve a significant chunk of memory that the kernel is prevented
-> > > from using [...], but applications are free to use it.
-> > 
-> > That works great, because user space pages are filtered out in the
-> > common case, so they can be used freely by the panic kernel.
-> 
-> Good suggestion. I have been reading that posts already at the same time before I saw
-> this reply from you :)
-> 
-> That could be a good idea and worth to discuss more.  I cced Hari
-> already in the thread. Hari, is it possible for you to extend your
-> idea to general use, ie. shared by both kdump and fadump?  Anyway I
-> think that is another topic we can discuss separately.
 
-BTW, I remember we had some Red hat internal discussion about CMA previously
-there is a problem, that is we have crashkernel=,high for reserving high
-memory and ,low for low memory, we were not sure if CMA can handle this
-case.
+On 24/05/18 01:03, Tony Lindgren wrote:
+> Hi all,
+> 
+> I bisected the n900 LCD issue to commit 24aac6011f70 ("drm: omapdrm:
+> sdi: Allocate the sdi private data structure dynamically"). Reverting
+> this patch makes LCD work for me again on n900.
+> 
+> Any ideas?
 
-Thanks
-Dave
-Thanks
-Dave
+This should help to get the SDI enabled.
+
+ Tomi
+
+>From 4e96e6c2dedf366e081331c3825ff6fa8aabd85c Mon Sep 17 00:00:00 2001
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Date: Thu, 24 May 2018 10:53:24 +0300
+Subject: [PATCH] drm/omap: fix NULL deref crash with SDI displays
+
+Fix a NULL deref bug introduced in commit 24aac6011f70 ("drm: omapdrm:
+sdi: Allocate the sdi private data structure dynamically").
+
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+---
+ drivers/gpu/drm/omapdrm/dss/sdi.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/omapdrm/dss/sdi.c b/drivers/gpu/drm/omapdrm/dss/sdi.c
+index 68a40ae26f5b..1e2c931f6acf 100644
+--- a/drivers/gpu/drm/omapdrm/dss/sdi.c
++++ b/drivers/gpu/drm/omapdrm/dss/sdi.c
+@@ -82,7 +82,7 @@ static int sdi_calc_clock_div(struct sdi_device *sdi, unsigned long pclk,
+ 			      struct dispc_clock_info *dispc_cinfo)
+ {
+ 	int i;
+-	struct sdi_clk_calc_ctx ctx = { .sdi = sdi };
++	struct sdi_clk_calc_ctx ctx;
+ 
+ 	/*
+ 	 * DSS fclk gives us very few possibilities, so finding a good pixel
+@@ -95,6 +95,9 @@ static int sdi_calc_clock_div(struct sdi_device *sdi, unsigned long pclk,
+ 		bool ok;
+ 
+ 		memset(&ctx, 0, sizeof(ctx));
++
++		ctx.sdi = sdi;
++
+ 		if (pclk > 1000 * i * i * i)
+ 			ctx.pck_min = max(pclk - 1000 * i * i * i, 0lu);
+ 		else
+
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
