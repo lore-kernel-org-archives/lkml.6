@@ -1,58 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965496AbeEXIxG convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 04:53:06 -0400
-Received: from smtp2.it.da.ut.ee ([193.40.5.67]:33760 "EHLO smtp2.it.da.ut.ee"
+        id S965512AbeEXIyH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 04:54:07 -0400
+Received: from mga04.intel.com ([192.55.52.120]:55786 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965007AbeEXIxE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 04:53:04 -0400
-Date: Thu, 24 May 2018 11:34:26 +0300 (EEST)
-From: Meelis Roos <mroos@linux.ee>
-To: Bjorn Helgaas <helgaas@kernel.org>
-cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>, sparclinux@vger.kernel.org
-Subject: Re: [PATCH v1 0/4] sparc/PCI: VGA resource and other fixes
-In-Reply-To: <20180522130217.GA161672@bhelgaas-glaptop.roam.corp.google.com>
-Message-ID: <alpine.LRH.2.21.1805241133450.13830@math.ut.ee>
-References: <152694888798.59585.8779818482732387864.stgit@bhelgaas-glaptop.roam.corp.google.com> <20180522130217.GA161672@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        id S965007AbeEXIyF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 04:54:05 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,436,1520924400";
+   d="scan'208";a="53464308"
+Date: Thu, 24 May 2018 16:53:36 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Steve French <stfrench@microsoft.com>
+Cc: kbuild-all@01.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org
+Subject: [cifs:for-next 16/19] fs/cifs/cifsfs.c:903:25: sparse: symbol
+ 'smb3_fs_type' was not declared. Should it be static?
+Message-ID: <201805241613.jA5dMoyL%fengguang.wu@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-7
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> [+cc sparclinux, sorry I missed this first time around]
-
-> >       sparc/PCI: Use dev_printk() when possible
-
-This patch causes compile errors for me:
-
-  CC      arch/sparc/kernel/pci.o
-In file included from ./include/linux/pci.h:31:0,
-                 from arch/sparc/kernel/pci.c:18:
-arch/sparc/kernel/pci.c: In function ¡pcibios_enable_device¢:
-arch/sparc/kernel/pci.c:754:53: error: ¡old_cmd¢ undeclared (first use in this function)
-   pci_info(dev, "enabling device (%04x -> %04x)\n", old_cmd, cmd);
-                                                     ^
-./include/linux/device.h:1384:58: note: in definition of macro ¡dev_info¢
- #define dev_info(dev, fmt, arg...) _dev_info(dev, fmt, ##arg)
-                                                          ^
-arch/sparc/kernel/pci.c:754:3: note: in expansion of macro ¡pci_info¢
-   pci_info(dev, "enabling device (%04x -> %04x)\n", old_cmd, cmd);
-   ^
-arch/sparc/kernel/pci.c:754:53: note: each undeclared identifier is reported only once for each function it appears in
-   pci_info(dev, "enabling device (%04x -> %04x)\n", old_cmd, cmd);
-                                                     ^
-./include/linux/device.h:1384:58: note: in definition of macro ¡dev_info¢
- #define dev_info(dev, fmt, arg...) _dev_info(dev, fmt, ##arg)
-                                                          ^
-arch/sparc/kernel/pci.c:754:3: note: in expansion of macro ¡pci_info¢
-   pci_info(dev, "enabling device (%04x -> %04x)\n", old_cmd, cmd);
-   ^
-scripts/Makefile.build:312: recipe for target 'arch/sparc/kernel/pci.o' failed
+tree:   git://git.samba.org/sfrench/cifs-2.6.git for-next
+head:   fd65f4d1d6b9daaf5265f965640b221701d088f8
+commit: 64a051adf5911e8a71a46413c60beaf17ce7143d [16/19] smb3: add module alias for smb3 to cifs.ko
+reproduce:
+        # apt-get install sparse
+        git checkout 64a051adf5911e8a71a46413c60beaf17ce7143d
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
 
 
--- 
-Meelis Roos (mroos@linux.ee)
+sparse warnings: (new ones prefixed by >>)
+
+   fs/cifs/cifsglob.h:1658:41: sparse: symbol 'cifs_tcp_ses_list' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1669:41: sparse: symbol 'cifs_tcp_ses_lock' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1681:28: sparse: symbol 'GlobalCurrentXid' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1682:28: sparse: symbol 'GlobalTotalActiveXid' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1683:28: sparse: symbol 'GlobalMaxActiveXid' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1684:26: sparse: symbol 'GlobalMid_Lock' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1689:24: sparse: symbol 'sesInfoAllocCount' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1690:24: sparse: symbol 'tconInfoAllocCount' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1691:24: sparse: symbol 'tcpSesAllocCount' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1692:24: sparse: symbol 'tcpSesReconnectCount' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1693:24: sparse: symbol 'tconInfoReconnectCount' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1696:24: sparse: symbol 'bufAllocCount' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1698:24: sparse: symbol 'totBufAllocCount' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1699:24: sparse: symbol 'totSmBufAllocCount' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1701:24: sparse: symbol 'smBufAllocCount' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1702:24: sparse: symbol 'midCount' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1705:20: sparse: symbol 'enable_oplocks' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1706:20: sparse: symbol 'lookupCacheEnabled' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1707:28: sparse: symbol 'global_secflags' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1709:28: sparse: symbol 'sign_CIFS_PDUs' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1710:20: sparse: symbol 'linuxExtEnabled' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1711:28: sparse: symbol 'CIFSMaxBufSize' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1712:28: sparse: symbol 'cifs_min_rcv' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1713:28: sparse: symbol 'cifs_min_small' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1714:28: sparse: symbol 'cifs_max_pending' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1717:30: sparse: symbol 'uidtree' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1718:30: sparse: symbol 'gidtree' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1719:26: sparse: symbol 'siduidlock' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1720:26: sparse: symbol 'sidgidlock' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1721:30: sparse: symbol 'siduidtree' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1722:30: sparse: symbol 'sidgidtree' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1723:26: sparse: symbol 'uidsidlock' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1724:26: sparse: symbol 'gidsidlock' was not declared. Should it be static?
+>> fs/cifs/cifsfs.c:903:25: sparse: symbol 'smb3_fs_type' was not declared. Should it be static?
+
+Please review and possibly fold the followup patch.
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
