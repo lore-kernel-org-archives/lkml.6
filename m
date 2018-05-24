@@ -1,112 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033751AbeEXQfO (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 12:35:14 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:40077 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031270AbeEXQfL (ORCPT
+        id S1161115AbeEXQh3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 12:37:29 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:51006 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031249AbeEXQh1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 12:35:11 -0400
-X-Google-Smtp-Source: AB8JxZrGBaYE814Fh4nybA5c5XTVqDbrfUZgWJosBnbrxfMEErBB801KDom2oZmRUYNeDxIptv3yHQ==
-Date: Thu, 24 May 2018 09:35:07 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Cc: Nick Dyer <nick@shmanahar.org>, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Ezequiel Garcia <ezequiel@collabora.com>,
-        kernel@collabora.com
-Subject: Re: [PATCHv2] Input: atmel_mxt_ts - fix reset-gpio for level based
- irqs
-Message-ID: <20180524163507.GB177107@dtor-ws>
-References: <20180420172408.26164-1-sebastian.reichel@collabora.co.uk>
- <20180423115844.26281-1-sebastian.reichel@collabora.co.uk>
+        Thu, 24 May 2018 12:37:27 -0400
+Subject: Re: [PATCH] doc: document scope NOFS, NOIO APIs
+To: Michal Hocko <mhocko@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, Michal Hocko <mhocko@suse.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        David Sterba <dsterba@suse.cz>
+References: <20180424183536.GF30619@thunk.org>
+ <20180524114341.1101-1-mhocko@kernel.org>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <6c9df175-df6c-2531-b90c-318e4fff72bb@infradead.org>
+Date: Thu, 24 May 2018 09:37:18 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180423115844.26281-1-sebastian.reichel@collabora.co.uk>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180524114341.1101-1-mhocko@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 01:58:44PM +0200, Sebastian Reichel wrote:
-> The current reset-gpio support triggers an interrupt storm on platforms
-> using the maxtouch with level based interrupt. The Motorola Droid 4,
-> which I used for some of the tests is not affected, since it uses a edge
-> based interrupt.
+On 05/24/2018 04:43 AM, Michal Hocko wrote:
+> From: Michal Hocko <mhocko@suse.com>
 > 
-> This change avoids the interrupt storm by enabling the device while its
-> interrupt is disabled. Afterwards we wait 100ms. This is important for
-> two reasons: The device is unresponsive for some time (~22ms for
-> mxt224E) and the CHG (interrupt) line is not working properly for 100ms.
-> We don't need to wait for any following interrupts, since the following
-> mxt_initialize() checks for bootloader mode anyways.
+> Although the api is documented in the source code Ted has pointed out
+> that there is no mention in the core-api Documentation and there are
+> people looking there to find answers how to use a specific API.
 > 
-> This fixes a boot issue on GE PPD (watchdog kills device due to
-> interrupt storm) and does not cause regression on Motorola Droid 4.
-> 
-> Fixes: f657b00df22e ("Input: atmel_mxt_ts - add support for reset line")
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-
-Applied, thank you.
-
+> Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
+> Cc: David Sterba <dsterba@suse.cz>
+> Requested-by: "Theodore Y. Ts'o" <tytso@mit.edu>
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
 > ---
-> Changes since PATCHv2:
->  * fix patch description
->  * use same timeout value for soft and gpio-reset
-> ---
->  drivers/input/touchscreen/atmel_mxt_ts.c | 18 +++++++-----------
->  1 file changed, 7 insertions(+), 11 deletions(-)
 > 
-> diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
-> index 5d9699fe1b55..f97fbb0af020 100644
-> --- a/drivers/input/touchscreen/atmel_mxt_ts.c
-> +++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-> @@ -194,6 +194,8 @@ enum t100_type {
->  
->  /* Delay times */
->  #define MXT_BACKUP_TIME		50	/* msec */
-> +#define MXT_RESET_GPIO_TIME	20	/* msec */
-> +#define MXT_RESET_INVALID_CHG	100	/* msec */
->  #define MXT_RESET_TIME		200	/* msec */
->  #define MXT_RESET_TIMEOUT	3000	/* msec */
->  #define MXT_CRC_TIMEOUT		1000	/* msec */
-> @@ -1206,7 +1208,7 @@ static int mxt_soft_reset(struct mxt_data *data)
->  		return ret;
->  
->  	/* Ignore CHG line for 100ms after reset */
-> -	msleep(100);
-> +	msleep(MXT_RESET_INVALID_CHG);
->  
->  	mxt_acquire_irq(data);
->  
-> @@ -3167,20 +3169,14 @@ static int mxt_probe(struct i2c_client *client, const struct i2c_device_id *id)
->  		return error;
->  	}
->  
-> +	disable_irq(client->irq);
+> Hi Johnatan,
+> Ted has proposed this at LSFMM and then we discussed that briefly on the
+> mailing list [1]. I received some useful feedback from Darrick and Dave
+> which has been (hopefully) integrated. Then the thing fall off my radar
+> rediscovering it now when doing some cleanup. Could you take the patch
+> please?
+> 
+> [1] http://lkml.kernel.org/r/20180424183536.GF30619@thunk.org
+>  .../core-api/gfp_mask-from-fs-io.rst          | 55 +++++++++++++++++++
+>  1 file changed, 55 insertions(+)
+>  create mode 100644 Documentation/core-api/gfp_mask-from-fs-io.rst
+> 
+> diff --git a/Documentation/core-api/gfp_mask-from-fs-io.rst b/Documentation/core-api/gfp_mask-from-fs-io.rst
+> new file mode 100644
+> index 000000000000..e8b2678e959b
+> --- /dev/null
+> +++ b/Documentation/core-api/gfp_mask-from-fs-io.rst
+> @@ -0,0 +1,55 @@
+> +=================================
+> +GFP masks used from FS/IO context
+> +=================================
 > +
->  	if (data->reset_gpio) {
-> -		data->in_bootloader = true;
-> -		msleep(MXT_RESET_TIME);
-> -		reinit_completion(&data->bl_completion);
-> +		msleep(MXT_RESET_GPIO_TIME);
->  		gpiod_set_value(data->reset_gpio, 1);
-> -		error = mxt_wait_for_completion(data, &data->bl_completion,
-> -						MXT_RESET_TIMEOUT);
-> -		if (error)
-> -			return error;
-> -		data->in_bootloader = false;
-> +		msleep(MXT_RESET_INVALID_CHG);
->  	}
->  
-> -	disable_irq(client->irq);
-> -
->  	error = mxt_initialize(data);
->  	if (error)
->  		return error;
-> -- 
-> 2.17.0
+> +:Date: Mapy, 2018
+> +:Author: Michal Hocko <mhocko@kernel.org>
+> +
+> +Introduction
+> +============
+> +
+> +Code paths in the filesystem and IO stacks must be careful when
+> +allocating memory to prevent recursion deadlocks caused by direct
+> +memory reclaim calling back into the FS or IO paths and blocking on
+> +already held resources (e.g. locks - most commonly those used for the
+> +transaction context).
+> +
+> +The traditional way to avoid this deadlock problem is to clear __GFP_FS
+> +resp. __GFP_IO (note the later implies clearing the first as well) in
+
+                            latter
+
+> +the gfp mask when calling an allocator. GFP_NOFS resp. GFP_NOIO can be
+> +used as shortcut. It turned out though that above approach has led to
+> +abuses when the restricted gfp mask is used "just in case" without a
+> +deeper consideration which leads to problems because an excessive use
+> +of GFP_NOFS/GFP_NOIO can lead to memory over-reclaim or other memory
+> +reclaim issues.
+> +
+> +New API
+> +========
+> +
+> +Since 4.12 we do have a generic scope API for both NOFS and NOIO context
+> +``memalloc_nofs_save``, ``memalloc_nofs_restore`` resp. ``memalloc_noio_save``,
+> +``memalloc_noio_restore`` which allow to mark a scope to be a critical
+> +section from the memory reclaim recursion into FS/IO POV. Any allocation
+
+s/POV/point of view/ or whatever it is.
+
+> +from that scope will inherently drop __GFP_FS resp. __GFP_IO from the given
+> +mask so no memory allocation can recurse back in the FS/IO.
+> +
+> +FS/IO code then simply calls the appropriate save function right at the
+> +layer where a lock taken from the reclaim context (e.g. shrinker) and
+> +the corresponding restore function when the lock is released. All that
+> +ideally along with an explanation what is the reclaim context for easier
+> +maintenance.
+> +
+> +What about __vmalloc(GFP_NOFS)
+> +==============================
+> +
+> +vmalloc doesn't support GFP_NOFS semantic because there are hardcoded
+> +GFP_KERNEL allocations deep inside the allocator which are quite non-trivial
+> +to fix up. That means that calling ``vmalloc`` with GFP_NOFS/GFP_NOIO is
+> +almost always a bug. The good news is that the NOFS/NOIO semantic can be
+> +achieved by the scope api.
+
+I would prefer s/api/API/ throughout.
+
+> +
+> +In the ideal world, upper layers should already mark dangerous contexts
+> +and so no special care is required and vmalloc should be called without
+> +any problems. Sometimes if the context is not really clear or there are
+> +layering violations then the recommended way around that is to wrap ``vmalloc``
+> +by the scope API with a comment explaining the problem.
 > 
+
 
 -- 
-Dmitry
+~Randy
