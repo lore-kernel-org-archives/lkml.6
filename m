@@ -1,80 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031669AbeEXOSx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 10:18:53 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40476 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030532AbeEXOSw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 10:18:52 -0400
-Date: Thu, 24 May 2018 15:18:42 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Guenter Roeck <groeck@google.com>
-Cc: Takashi Iwai <tiwai@suse.de>, Liam Girdwood <lgirdwood@gmail.com>,
-        alsa-devel@alsa-project.org, Guenter Roeck <groeck@chromium.org>,
-        "Patel, Chintan M" <chintan.m.patel@intel.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC/RFT PATCH] ASoC: topology: Improve backwards compatibility
- with v4 topology files
-Message-ID: <20180524141842.GW4828@sirena.org.uk>
-References: <20180522165842.233949-1-groeck@google.com>
- <s5hmuwqpjdd.wl-tiwai@suse.de>
- <20180523135609.GK4828@sirena.org.uk>
- <CABXOdTeCr-ExO9O3XAHK-DnNf5yLGO0TPkXgs60TB90jGNB2_Q@mail.gmail.com>
- <20180523155811.GO4828@sirena.org.uk>
- <CABXOdTePWquSQaFQsoNTrVNmYydZLqF534zeoTfz0RfLDHSseA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ItroYk2LVxvwOvi/"
-Content-Disposition: inline
-In-Reply-To: <CABXOdTePWquSQaFQsoNTrVNmYydZLqF534zeoTfz0RfLDHSseA@mail.gmail.com>
-X-Cookie: Excellent day to have a rotten day.
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S1031851AbeEXOTZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 10:19:25 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45574 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1030516AbeEXOTW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 10:19:22 -0400
+From: Gilad Ben-Yossef <gilad@benyossef.com>
+To: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc: Ofir Drang <ofir.drang@arm.com>, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-crypto@vger.kernel.org
+Subject: [PATCH v2 0/5] crypto: ccree: cleanup, fixes and R-Car enabling
+Date: Thu, 24 May 2018 15:19:05 +0100
+Message-Id: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The patch set enables the use of CryptoCell found in some Renesas R-Car
+Salvator-X boards and fixes some driver issues uncovered that prevented
+to work properly.
 
---ItroYk2LVxvwOvi/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Changes from v1:
+- Properly fix the bug that caused us to read a bad signature register
+  rather than dropping the check
+- Proper DT fields as indicated by Geert Uytterhoeven.
+- Better clock enabling as suggested by Geert Uytterhoeven.
 
-On Wed, May 23, 2018 at 09:17:23AM -0700, Guenter Roeck wrote:
-> On Wed, May 23, 2018 at 8:58 AM Mark Brown <broonie@kernel.org> wrote:
+Note! the last two patches in the set depend on the
+"clk: renesas: r8a7795: Add CR clock" patch from Geert Uytterhoeven.
 
-> > I'm saying we should move them there.  They're clearly part of the
-> > userspace ABI and therefore belong in uapi, it was a mistake to let them
-> > be elsewhere.
+Gilad Ben-Yossef (5):
+  crypto: ccree: correct host regs offset
+  crypto: ccree: better clock handling
+  crypto: ccree: silence debug prints
+  clk: renesas: r8a7795: add ccree clock bindings
+  arm64: dts: renesas: r8a7795: add ccree binding
 
-> They define a firmware file format. Not sure if I would call that userspace
-> ABI.
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi |  9 +++++++++
+ drivers/clk/renesas/r8a7795-cpg-mssr.c   |  1 +
+ drivers/crypto/ccree/cc_debugfs.c        |  7 +++++--
+ drivers/crypto/ccree/cc_driver.c         | 34 ++++++++++++++++++++++++++------
+ drivers/crypto/ccree/cc_driver.h         |  2 ++
+ drivers/crypto/ccree/cc_host_regs.h      |  6 ++++--
+ 6 files changed, 49 insertions(+), 10 deletions(-)
 
-It's a binary provided by userspace to the kernel, I'd say that's
-clearly an ABI.
-
-> I don't mind adding the structures to
-> sound/soc/intel/skylake/skl-tplg-interface.h,
-> but it seems a bit out of scope to tie this with moving the file to
-> include/uapi/sound.
-> I think that should be a separate discussion.
-
-Is there some reason not to just do it while we're looking at this?  I
-don't see why we wouldn't want to do this.
-
---ItroYk2LVxvwOvi/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsGycEACgkQJNaLcl1U
-h9AdLwf/QbknuFoYVCNkUSaND4yd83yRRB4Dk8wpC2M92DJnv1h1OoiUpHN6It9L
-h4Tq5K9sK7QzJUiQZ8RN1upzl8YWg/Ar0M/op6APK+vXBliyf24bJBxa1aFXYIJ7
-pUs4MAWX5eR3Xz5BbZXTjt4gX0E7/Ur6MWlUdfLjm44q40mGtRjKAySfquWOYZ4v
-U1p5Jr3LV9sUZRH/vKGyjWlgd/5bAvxAtRRZfqdFU99bhLhl/NilEbPSMVDjh2Gv
-vCMkJj7GvlFZ2hcuCUNt3hHGQ1jgMTF3Q6UyppfxoHLyeBX84abeWxrnu3QbXrpm
-vZY4UZuXuU6yF4kWzwVkaZ7iUD9J4Q==
-=ukzP
------END PGP SIGNATURE-----
-
---ItroYk2LVxvwOvi/--
+-- 
+2.7.4
