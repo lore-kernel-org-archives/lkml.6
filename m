@@ -1,107 +1,160 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935903AbeEXWtv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 18:49:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36546 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935803AbeEXWtt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 18:49:49 -0400
-Date: Thu, 24 May 2018 18:49:46 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Boqun Feng <boqun.feng@gmail.com>, byungchul.park@lge.com,
-        kernel-team@android.com, Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [PATCH v4] rcu: Speed up calling of RCU tasks callbacks
-Message-ID: <20180524184946.5fa82d19@gandalf.local.home>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S935929AbeEXW42 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 18:56:28 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:44252 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935647AbeEXW4Z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 18:56:25 -0400
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+Date: Fri, 25 May 2018 00:56:23 +0200
+From: Stefan Agner <stefan@agner.ch>
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: dwmw2@infradead.org, computersforpeace@gmail.com,
+        marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        thierry.reding@gmail.com, mturquette@baylibre.com, sboyd@kernel.org,
+        dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
+        marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com,
+        benjamin.lindqvist@endian.se, jonathanh@nvidia.com,
+        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com,
+        linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [RESEND PATCH 2/5] mtd: rawnand: add NVIDIA Tegra NAND Flash
+ controller driver
+In-Reply-To: <20180524144134.41a71063@bbrezillon>
+References: <cover.1526990589.git.stefan@agner.ch>
+ <86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
+ <20180523161810.0ed9fe80@bbrezillon>
+ <2d8107f0e6568512d691e9ea25a1e4e5@agner.ch>
+ <20180524105614.3c51736c@bbrezillon>
+ <7b3cc3991fb054130fd54c6fdfec5097@agner.ch>
+ <20180524142356.0fc68797@bbrezillon> <20180524144134.41a71063@bbrezillon>
+Message-ID: <78b7b43b4284e73cd6a3255e4e5075ed@agner.ch>
+User-Agent: Roundcube Webmail/1.3.4
+X-Spamd-Result: default: False [-3.10 / 15.00];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MID_RHS_MATCH_FROM(0.00)[];
+         RCPT_COUNT_TWELVE(0.00)[25];
+         TAGGED_RCPT(0.00)[dt];
+         MIME_GOOD(-0.10)[text/plain];
+         FROM_HAS_DN(0.00)[];
+         FROM_EQ_ENVFROM(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         TO_DN_SOME(0.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
+         RCVD_TLS_ALL(0.00)[];
+         BAYES_HAM(-3.00)[100.00%];
+         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 24.05.2018 14:41, Boris Brezillon wrote:
+> On Thu, 24 May 2018 14:23:56 +0200
+> Boris Brezillon <boris.brezillon@bootlin.com> wrote:
+> 
+>> On Thu, 24 May 2018 13:09:53 +0200
+>> Stefan Agner <stefan@agner.ch> wrote:
+>>
+>> > On 24.05.2018 10:56, Boris Brezillon wrote:
+>> > > On Thu, 24 May 2018 10:46:27 +0200
+>> > > Stefan Agner <stefan@agner.ch> wrote:
+>> > >
+>> > >> Hi Boris,
+>> > >>
+>> > >> Thanks for the initial review! One small question below:
+>> > >>
+>> > >> On 23.05.2018 16:18, Boris Brezillon wrote:
+>> > >> > Hi Stefan,
+>> > >> >
+>> > >> > On Tue, 22 May 2018 14:07:06 +0200
+>> > >> > Stefan Agner <stefan@agner.ch> wrote:
+>> > >> >> +
+>> > >> >> +struct tegra_nand {
+>> > >> >> +	void __iomem *regs;
+>> > >> >> +	struct clk *clk;
+>> > >> >> +	struct gpio_desc *wp_gpio;
+>> > >> >> +
+>> > >> >> +	struct nand_chip chip;
+>> > >> >> +	struct device *dev;
+>> > >> >> +
+>> > >> >> +	struct completion command_complete;
+>> > >> >> +	struct completion dma_complete;
+>> > >> >> +	bool last_read_error;
+>> > >> >> +
+>> > >> >> +	dma_addr_t data_dma;
+>> > >> >> +	void *data_buf;
+>> > >> >> +	dma_addr_t oob_dma;
+>> > >> >> +	void *oob_buf;
+>> > >> >> +
+>> > >> >> +	int cur_chip;
+>> > >> >> +};
+>> > >> >
+>> > >> > This struct should be split in 2 structures: one representing the NAND
+>> > >> > controller and one representing the NAND chip:
+>> > >> >
+>> > >> > struct tegra_nand_controller {
+>> > >> > 	struct nand_hw_control base;
+>> > >> > 	void __iomem *regs;
+>> > >> > 	struct clk *clk;
+>> > >> > 	struct device *dev;
+>> > >> > 	struct completion command_complete;
+>> > >> > 	struct completion dma_complete;
+>> > >> > 	bool last_read_error;
+>> > >> > 	int cur_chip;
+>> > >> > };
+>> > >> >
+>> > >> > struct tegra_nand {
+>> > >> > 	struct nand_chip base;
+>> > >> > 	dma_addr_t data_dma;
+>> > >> > 	void *data_buf;
+>> > >> > 	dma_addr_t oob_dma;
+>> > >> > 	void *oob_buf;
+>> > >> > };
+>> > >>
+>> > >> Is there a particular reason why you would leave DMA buffers in the chip
+>> > >> structure? It seems that is more a controller thing...
+>> > >
+>> > > The size of those buffers is likely to be device dependent, so if you
+>> > > have several NANDs connected to the controller, you'll either have to
+>> > > have one buffer at the controller level which is max(all-chip-buf-size)
+>> > > or a buffer per device.
+>> > >
+>> > > Also, do you really need these buffers? The core already provide some
+>> > > which are suitable for DMA (chip->oob_poi and chip->data_buf).
+>> > >
+>> >
+>> > Good question, I am not sure, that was existing code.
+>> >
+>> > Are you sure data_buf it is DMA capable?
+>> >
+>> > nand_scan_tail allocates with kmalloc:
+>> >
+>> > chip->data_buf = kmalloc(mtd->writesize + mtd->oobsize, GFP_KERNEL);
+>>
+>> Yes, kmalloc() allocates DMA-able buffers, so those are DMA-safe.
+> 
+> Hm, that's not exactly true. It depends on the dma_mask attached to the
+> device.
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+It seems to work (tm).
 
-Joel Fernandes found that the synchronize_rcu_tasks() was taking a
-significant amount of time. He demonstrated it with the following test:
+I am not sure how to deal with the OOB buffer. I now use the given
+pointer also for oob (offset writesize). I think mtk_nand does the same
+thing.
 
- # cd /sys/kernel/tracing
- # while [ 1 ]; do x=1; done &
- # echo '__schedule_bug:traceon' > set_ftrace_filter
- # time echo '!__schedule_bug:traceon' > set_ftrace_filter;
+dma_len = mtd->writesize + (oob_required ? mtd->oobsize : 0);        
+dma_addr = dma_map_single(ctrl->dev, buf, dma_len, DMA_FROM_DEVICE);
 
-real	0m1.064s
-user	0m0.000s
-sys	0m0.004s
+...
 
-Where it takes a little over a second to perform the synchronize,
-because there's a loop that waits 1 second at a time for tasks to get
-through their quiescent points when there's a task that must be waited
-for.
+Is there a test which allows to test my (read|write)_page implementation
+with oob_required set?
 
-After discussion we came up with a simple way to wait for holdouts but
-increase the time for each iteration of the loop but no more than a
-full second.
-
-With the new patch we have:
-
- # time echo '!__schedule_bug:traceon' > set_ftrace_filter;
-
-real	0m0.131s
-user	0m0.000s
-sys	0m0.004s
-
-Which drops it down to 13% of what the original wait time was.
-
-Link: http://lkml.kernel.org/r/20180523063815.198302-2-joel@joelfernandes.org
-Reported-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-Suggested-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
-diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
-index 68fa19a5e7bd..452e47841a86 100644
---- a/kernel/rcu/update.c
-+++ b/kernel/rcu/update.c
-@@ -715,6 +715,7 @@ static int __noreturn rcu_tasks_kthread(void *arg)
- 	struct rcu_head *list;
- 	struct rcu_head *next;
- 	LIST_HEAD(rcu_tasks_holdouts);
-+	int fract;
- 
- 	/* Run on housekeeping CPUs by default.  Sysadm can move if desired. */
- 	housekeeping_affine(current, HK_FLAG_RCU);
-@@ -796,13 +797,25 @@ static int __noreturn rcu_tasks_kthread(void *arg)
- 		 * holdouts.  When the list is empty, we are done.
- 		 */
- 		lastreport = jiffies;
--		while (!list_empty(&rcu_tasks_holdouts)) {
-+
-+		/* Start off with HZ/10 wait and slowly back off to 1 HZ wait*/
-+		fract = 10;
-+
-+		for (;;) {
- 			bool firstreport;
- 			bool needreport;
- 			int rtst;
- 			struct task_struct *t1;
- 
--			schedule_timeout_interruptible(HZ);
-+			if (list_empty(&rcu_tasks_holdouts))
-+				break;
-+
-+			/* Slowly back off waiting for holdouts */
-+			schedule_timeout_interruptible(HZ/fract);
-+
-+			if (fract > 1)
-+				fract--;
-+
- 			rtst = READ_ONCE(rcu_task_stall_timeout);
- 			needreport = rtst > 0 &&
- 				     time_after(jiffies, lastreport + rtst);
+--
+Stefan
