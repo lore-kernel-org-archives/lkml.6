@@ -1,51 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S971482AbeEXUwa (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 16:52:30 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:41721 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966499AbeEXUw2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 16:52:28 -0400
-X-Google-Smtp-Source: AB8JxZo6g1Br/54rvzbdl7CPthrIbw3a67ENXtPLNKeHc7HxAZR7wS32i1r8/SMYL9/oPCs+tAwJpdqOhW8m/w2lRwY=
+        id S971497AbeEXUwm (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 16:52:42 -0400
+Received: from ms.lwn.net ([45.79.88.28]:51920 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966499AbeEXUwk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 16:52:40 -0400
+Date: Thu, 24 May 2018 14:52:02 -0600
+From: Jonathan Corbet <corbet@lwn.net>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-mm@kvack.org>, Michal Hocko <mhocko@suse.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        David Sterba <dsterba@suse.cz>
+Subject: Re: [PATCH] doc: document scope NOFS, NOIO APIs
+Message-ID: <20180524145202.7d5a55c3@lwn.net>
+In-Reply-To: <20180524114341.1101-1-mhocko@kernel.org>
+References: <20180424183536.GF30619@thunk.org>
+        <20180524114341.1101-1-mhocko@kernel.org>
+Organization: LWN.net
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-References: <CAKwvOd=jmi_7LvZbS0PA5-zt62m5ZFPUNG7JtMQVmerCR63ebQ@mail.gmail.com>
- <BDEF22F0-84A5-4A36-B153-13E6A4260922@zytor.com> <CAKwvOdnLt5qr_5ah86qdsocTxUbo_3X1y3PPRp1EZwt=__NxnA@mail.gmail.com>
-In-Reply-To: <CAKwvOdnLt5qr_5ah86qdsocTxUbo_3X1y3PPRp1EZwt=__NxnA@mail.gmail.com>
-From: Nick Desaulniers <ndesaulniers@google.com>
-Date: Thu, 24 May 2018 13:52:16 -0700
-Message-ID: <CAKwvOdmQER7XtO_uygYDBxGgUr-EruGyjUq9DMbNwQFh11=9gg@mail.gmail.com>
-Subject: Re: [clang] stack protector and f1f029c7bf
-To: hpa@zytor.com
-Cc: Alistair Strachan <astrachan@google.com>,
-        Manoj Gupta <manojgupta@google.com>,
-        Matthias Kaehlcke <mka@google.com>,
-        Greg Hackmann <ghackmann@google.com>, sedat.dilek@gmail.com,
-        tstellar@redhat.com, LKML <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 1:26 PM Nick Desaulniers <ndesaulniers@google.com>
-wrote:
-> On Thu, May 24, 2018 at 11:59 AM <hpa@zytor.com> wrote:
-> > Issue 3: Let's face it, reading and writing the flags should be
-builtins,
-> exactly because it has to do stack operations, which really means the
-> compiler should be involved.
+On Thu, 24 May 2018 13:43:41 +0200
+Michal Hocko <mhocko@kernel.org> wrote:
 
-> I'm happy to propose that as a feature request to llvm+gcc.
+> From: Michal Hocko <mhocko@suse.com>
+> 
+> Although the api is documented in the source code Ted has pointed out
+> that there is no mention in the core-api Documentation and there are
+> people looking there to find answers how to use a specific API.
+> 
+> Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
+> Cc: David Sterba <dsterba@suse.cz>
+> Requested-by: "Theodore Y. Ts'o" <tytso@mit.edu>
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
+> ---
+> 
+> Hi Johnatan,
+> Ted has proposed this at LSFMM and then we discussed that briefly on the
+> mailing list [1]. I received some useful feedback from Darrick and Dave
+> which has been (hopefully) integrated. Then the thing fall off my radar
+> rediscovering it now when doing some cleanup. Could you take the patch
+> please?
+> 
+> [1] http://lkml.kernel.org/r/20180424183536.GF30619@thunk.org
+>  .../core-api/gfp_mask-from-fs-io.rst          | 55 +++++++++++++++++++
+>  1 file changed, 55 insertions(+)
+>  create mode 100644 Documentation/core-api/gfp_mask-from-fs-io.rst
 
-Oh, looks like both clang and gcc have:
-__builtin_ia32_readeflags_u64()
+So you create the rst file, but don't add it in index.rst; that means it
+won't be a part of the docs build and Sphinx will complain.
 
-https://godbolt.org/g/SwPjhq
+> diff --git a/Documentation/core-api/gfp_mask-from-fs-io.rst b/Documentation/core-api/gfp_mask-from-fs-io.rst
+> new file mode 100644
+> index 000000000000..e8b2678e959b
+> --- /dev/null
+> +++ b/Documentation/core-api/gfp_mask-from-fs-io.rst
+> @@ -0,0 +1,55 @@
+> +=================================
+> +GFP masks used from FS/IO context
+> +=================================
+> +
+> +:Date: Mapy, 2018
 
-Maybe native_save_fl() and native_restore_fl() should be replaced in the
-kernel with
-__builtin_ia32_readeflags_u64() and __builtin_ia32_writeeflags_u64()?
--- 
+Ah...the wonderful month of Mapy....:)
+
+> +:Author: Michal Hocko <mhocko@kernel.org>
+> +
+> +Introduction
+> +============
+> +
+> +Code paths in the filesystem and IO stacks must be careful when
+> +allocating memory to prevent recursion deadlocks caused by direct
+> +memory reclaim calling back into the FS or IO paths and blocking on
+> +already held resources (e.g. locks - most commonly those used for the
+> +transaction context).
+> +
+> +The traditional way to avoid this deadlock problem is to clear __GFP_FS
+> +resp. __GFP_IO (note the later implies clearing the first as well) in
+
+"resp." is indeed a bit terse.  Even spelled out as "respectively", though,
+I'm not sure what the word is intended to mean here.  Did you mean "or"?
+
+> +the gfp mask when calling an allocator. GFP_NOFS resp. GFP_NOIO can be
+
+Here too.
+
+> +used as shortcut. It turned out though that above approach has led to
+> +abuses when the restricted gfp mask is used "just in case" without a
+> +deeper consideration which leads to problems because an excessive use
+> +of GFP_NOFS/GFP_NOIO can lead to memory over-reclaim or other memory
+> +reclaim issues.
+> +
+> +New API
+> +========
+> +
+> +Since 4.12 we do have a generic scope API for both NOFS and NOIO context
+> +``memalloc_nofs_save``, ``memalloc_nofs_restore`` resp. ``memalloc_noio_save``,
+> +``memalloc_noio_restore`` which allow to mark a scope to be a critical
+> +section from the memory reclaim recursion into FS/IO POV. Any allocation
+
+"from a filesystem or I/O point of view" ?
+
+> +from that scope will inherently drop __GFP_FS resp. __GFP_IO from the given
+> +mask so no memory allocation can recurse back in the FS/IO.
+
+Wouldn't it be nice if those functions had kerneldoc comments that could be
+pulled in here! :)
+
+> +FS/IO code then simply calls the appropriate save function right at the
+> +layer where a lock taken from the reclaim context (e.g. shrinker) and
+
+where a lock *is* taken ?
+
+> +the corresponding restore function when the lock is released. All that
+> +ideally along with an explanation what is the reclaim context for easier
+> +maintenance.
+> +
+> +What about __vmalloc(GFP_NOFS)
+> +==============================
+> +
+> +vmalloc doesn't support GFP_NOFS semantic because there are hardcoded
+> +GFP_KERNEL allocations deep inside the allocator which are quite non-trivial
+> +to fix up. That means that calling ``vmalloc`` with GFP_NOFS/GFP_NOIO is
+> +almost always a bug. The good news is that the NOFS/NOIO semantic can be
+> +achieved by the scope api.
+
+Agree with others on "API"
+
+> +In the ideal world, upper layers should already mark dangerous contexts
+> +and so no special care is required and vmalloc should be called without
+> +any problems. Sometimes if the context is not really clear or there are
+> +layering violations then the recommended way around that is to wrap ``vmalloc``
+> +by the scope API with a comment explaining the problem.
+
 Thanks,
-~Nick Desaulniers
+
+jon
