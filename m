@@ -1,51 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964955AbeEXHMJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 03:12:09 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:58860 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935346AbeEXHMG (ORCPT
+        id S935649AbeEXHNj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 03:13:39 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:45395 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935444AbeEXHNe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 03:12:06 -0400
-Date: Thu, 24 May 2018 09:11:52 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Cong Wang <xiyou.wangcong@gmail.com>
-Cc: Ivan Babrou <ibobrik@gmail.com>, LKML <linux-kernel@vger.kernel.org>,
-        Paul Turner <pjt@google.com>, Mike Galbraith <efault@gmx.de>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH 3/3] sched/fair: add tracepoints for cfs throttle
-Message-ID: <20180524071152.GB12198@hirez.programming.kicks-ass.net>
-References: <20180522062017.5193-1-xiyou.wangcong@gmail.com>
- <20180522062017.5193-4-xiyou.wangcong@gmail.com>
- <CANWdNRCQCteO7L+Of7T2vWBW7GbMHyvyF5aSQMVYNGg_afxNhg@mail.gmail.com>
- <20180523090944.GV12217@hirez.programming.kicks-ass.net>
- <CAM_iQpUEvWrMPWQussA31kEAiutLR4WUVOtsohHm5hg4wt59Hw@mail.gmail.com>
+        Thu, 24 May 2018 03:13:34 -0400
+X-Google-Smtp-Source: AB8JxZqZbnvGU8++KaEbgSe3Zm601xtVO7xqontwEIUearpZIgTbGqLsRnIPL9WtP4zfB0PGSefkmohIg7zCffE9hsE=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAM_iQpUEvWrMPWQussA31kEAiutLR4WUVOtsohHm5hg4wt59Hw@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <28c374e6-b440-f785-b371-03fe15c8bc4b@st.com>
+References: <1523440025-18077-1-git-send-email-amelie.delaunay@st.com>
+ <1523440025-18077-2-git-send-email-amelie.delaunay@st.com>
+ <20180416181940.4b5z4svbde3ompij@rob-hp-laptop> <CACRpkdYOMjjYyWQz7PK34jqUK7z5-CmH1HY6un4k8nBn7Cq8ag@mail.gmail.com>
+ <55392fe7-20d2-9447-60f9-4bd226b60195@st.com> <CACRpkda2VGo0FOdR09tKiTpg66NgoWjubaHp_J3372y=a772Zg@mail.gmail.com>
+ <b9005dd8-8214-ceab-0f88-ff1a51b44e34@st.com> <20180517063640.GK5130@dell> <28c374e6-b440-f785-b371-03fe15c8bc4b@st.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 24 May 2018 09:13:32 +0200
+Message-ID: <CACRpkdbZ2Hr7cc5+dyPaL0CKYuy2-oosEr=UPo60+3beDCVi9A@mail.gmail.com>
+Subject: Re: [PATCH 1/5] dt-bindings: pinctrl: document the STMFX pinctrl bindings
+To: Amelie DELAUNAY <amelie.delaunay@st.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 09:40:47PM -0700, Cong Wang wrote:
-> On Wed, May 23, 2018 at 2:09 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+On Fri, May 18, 2018 at 9:29 AM, Amelie DELAUNAY <amelie.delaunay@st.com> wrote:
+> On 05/17/2018 08:36 AM, Lee Jones wrote:
+>> On Wed, 16 May 2018, Amelie DELAUNAY wrote:
+>>> On 05/16/2018 04:20 PM, Linus Walleij wrote:
+>>>> On Wed, May 9, 2018 at 9:56 AM, Amelie DELAUNAY <amelie.delaunay@st.com> wrote:
+>>>>
+>>>>> Indeed, stmfx has other functions than GPIO. But, after comments done
+>>>>> here: [1] and there: [2], it has been decided to move MFD parent/GPIO
+>>>>> child drivers into a single PINCTRL/GPIO driver because of the following
+>>>>> reasons:
+>>>>> - Other stmfx functions (IDD measurement and TouchScreen controller) are
+>>>>> not used on any of the boards using an stmfx and supported by Linux, so
+>>>>> no way to test these functions, and no need to maintain them while they
+>>>>> are not being used.
+>>>>> - But, in the case a new board will use more than GPIO function on
+>>>>> stmfx, the actual implementation allow to easily extract common init
+>>>>> part of stmfx and put it in an MFD driver.
+>>>>>
+>>>>> So I could remove gpio sub-node and put its contents in stmfx node and
+>>>>> keep single PINCTRL/GPIO driver for the time being.
+>>>>> Please advise,
+>>>>
+>>>> I would normally advice to use the right modeling from the start, create
+>>>> the MFD driver and spawn the devices from there. It is confusing
+>>>> if the layout of the driver(s) doesn't really match the layout of the
+>>>> hardware.
+>>>>
+>>>> I understand that it is a pain to write new MFD drivers to get your
+>>>> things going and it would be "nice to get this working really quick
+>>>> now" but in my experience it is better to do it right from the start.
+>>>>
+>>>
+>>> Hi Linus,
+>>>
+>>> Thanks for your advice. I understand the point.
+>>> So, the right modeling would be to:
+>>> - create an MFD driver with the common init part of stmfx
+>>> - remove all common init part of stmfx-pinctrl driver and keep only all
+>>> gpio/pinctrl functions.
+>>>
+>>> I will not develop the other stmfx functions (IDD measurement driver and
+>>> TouchScreen controller driver) because, as explained ealier, they are
+>>> not used on any of the boards using an stmfx and supported by Linux, so
+>>> no way to test these functions, and no need to maintain them while they
+>>> are not being used.
+>>>
+>>> Lee, are you OK with that ?
+>>
+>> I missed a lot of this conversation I think, but from what I've read,
+>> it sounds fine.
+>>
+>
+> I summarize the situation:
+> - I still don't have an official datasheet for STMFX device which could
+> justify the use of an MFD driver;
+> - the MFD driver will contain the STMFX chip initialization stuff such
+> as regmap initialization (regmap structure will be shared with the
+> child), chip initialization, global interrupt management;
+> - there will be only one child (GPIO/PINCTRL node) for the time being.
 
-> > Yeah, don't worry. I hate tracepoints, I regret the existing ones, no
-> > new ones will happen.
-> 
-> No matter you hate them or not, they are useful:
+But there will be more devices in it. And they will invariably be put
+to use later, and there will be new versions of the chip as well, and
+then you will be happy about doing the MFD core, which makes it
+easy to add new variants with different subdevices.
 
-No argument there.
+> So, is "MFD driver + GPIO/PINCTRL driver" the right modeling, and does
+> it still sound fine after this summary ? :)
 
-> Unlike in sched, tracepoints are welcome in networking:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/include/trace/events/tcp.h
+No I think it should use an MFD core.
 
-They are also absolutely disallowed in the vfs..
+Mainly because of device tree concerns.
 
-> I don't want to change your mind, just want to show the facts.
+The main reason is that the device tree bindings will be different if
+you add an MFD core later, the GPIO and pinctrl driver will
+move to a child node, making old device trees incompatible.
 
-The problem with tracepoints is that they can become ABI and you cannot
-change them without breaking tools. This is a crap situation and I'm fed
-up with it.
+We could have a single driver in GPIO+pin control if it is a child
+of an MFD node in the device tree, but it doesn't make much
+sense as the I2C device need to be probing to the MFD core.
+
+Yours,
+Linus Walleij
