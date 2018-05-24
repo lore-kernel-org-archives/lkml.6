@@ -1,37 +1,49 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqRTCsWEJXWP20Iw2mK/qQjySz4dTgx/aOGR9JR4tHyC3JfmueeWqxUlzY1DJ9aG1Nlw/Au
-ARC-Seal: i=1; a=rsa-sha256; t=1527156174; cv=none;
+X-Google-Smtp-Source: AB8JxZoZ7NvJiGkjWc/bF9r7ZqMNwLctbv8YWV3P1OA3YrbsW8+FWNQ4lMTfHMO8BvYVxayBMPDE
+ARC-Seal: i=1; a=rsa-sha256; t=1527156171; cv=none;
         d=google.com; s=arc-20160816;
-        b=uii5r2yUlSitEufKw//biVM/YVJxFzz9HnEvt4WBz9H0rHNV2cn+bPQTwlrvF06mdo
-         gSrzm/hqfbz3XKdy3bYszOw3F7oBJY44cH6fSDdHFChghRvmGydaSBPbosfDEbu1Ox1H
-         wObt/CG4s0I1r1KQ+D/kKhZUjRoFrjnJla2YPVq40XZC0gBxTIWm/VrdNlrWplcdRfij
-         mJ4Iy2dOrzncBMdUWNtFIPIigicFIORzv3LQe90XH/zoFmWTNg13IJ9yRCjsct9yo5GS
-         ZqwpaitY70RqJgZojlNmF606ekVG3mH26cdc/QkIaIUu3W9WfEYMJ9mitJJAHCpwGMA7
-         K8hw==
+        b=LZMaRD+Sb4aiy2n/gkrlxte8tzqXOreSagnVSqPj2krbvspoTgWUuWh9FNuUp6AFlo
+         xENPMLRetDeGXp8PR9z7wOxXm74Z5gvrArq+II0J0BxiOEqM5xDTIF1x6tV/YD46IQ7B
+         KM4g893HyU7t/d4VU8IX+/7KXHCWsgp3GMMmNXtnpLpBFqjPmoh4lbfEu88vYxOzn/Oq
+         bMZIRNWWaBZRx7f7w5Ec4hVvW3jbiUdbaviAMtCmje2NNob07/w/wmv46EDJHug9UCiI
+         cbU/ocJFxhSby9zpRL/mUG70WcL2WaXWgr8JHCF7DNBvowkTWOH9wAFB0WVG/Ot29AWx
+         KhbQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=D4CLhSdJGAM5IjHhie6AaXzVAha34+87mB3vBCt2q3s=;
-        b=sldmcoAEfO6JcVzVJfOM7fHbkgYmFkckWMcQqiASssgavB3rjnQuudxUZwbp0VCg3C
-         sdUlO6Cd6N9MCdguRuoqJg1dl4h1NbyGIthJmF8QHRMJC3xs8R7QE4hRFUSivUFwbo/m
-         7GPU5sbhdF2eyrzva0ps2+vr5+L8AyMZ/UgkHrE6h0wJKAj1NtH5wnNoRM3M2QVftcnT
-         fo2FA7YnAik8LhCnsWqJp8UhRqMAe7w3zl8IdRFKipFqegmxw8sLX+tGFlTcP/ec9W/R
-         MujJVsUL4mj2YqxB+QeiTBp77SXqV3CixPVKySFNyIOLKpAcsUaVYbu950sUY7yov/MS
-         r3eg==
+        bh=llO5OID4YoWV2mk4+fSKm0358uhiuBIluMvJldNyuUs=;
+        b=sq7bfFkLd1e5EUvN01z5/4/Y/TZwgFbKvtIam+AwdcleI+l8bIhhBNI4uPimQnM+Ye
+         Odw2YZ9suvudpXsDzYS5J+MtcuuhcGL7hX40rRxq6kMwvzOIwqVP6M6TM2f8e+bP6cg3
+         BlDTD0gON0q+0DChDaN9EvDxY9VwnPRHNExm0gSWmDmm8euQLDHzyL+/2dIIXEkbLXhR
+         z7aGaTBxOA+rsuu0BV3dpf8bel1LYhBpfqC3MNnTWWvMVCqu6/rhXQlm6L0i5/2yyo68
+         Lh2q49x3Yx+h4tUfRUYKh1cGlQROa5a9azy128NdXmRtOraPESU1rg0Lkr6Nn4AwwNSQ
+         yjBw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=AQblLiJF;
+       dkim=pass header.i=@kernel.org header.s=default header.b=BW50lwY3;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=AQblLiJF;
+       dkim=pass header.i=@kernel.org header.s=default header.b=BW50lwY3;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.16 063/161] s390: use expoline thunks in the BPF JIT
-Date: Thu, 24 May 2018 11:38:08 +0200
-Message-Id: <20180524093026.047619368@linuxfoundation.org>
+	stable@vger.kernel.org,
+	syzbot <syzbot+d96f60296ef613fe1d69@syzkaller.appspotmail.com>,
+	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Baoquan He <bhe@redhat.com>,
+	thomas.lendacky@amd.com,
+	prudo@linux.vnet.ibm.com,
+	Huang Ying <ying.huang@intel.com>,
+	syzkaller-bugs@googlegroups.com,
+	takahiro.akashi@linaro.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	akpm@linux-foundation.org,
+	dyoung@redhat.com,
+	kirill.shutemov@linux.intel.com
+Subject: [PATCH 4.16 089/161] x86/kexec: Avoid double free_page() upon do_kexec_load() failure
+Date: Thu, 24 May 2018 11:38:34 +0200
+Message-Id: <20180524093029.112448487@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -41,8 +53,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601338301933165174?=
-X-GMAIL-MSGID: =?utf-8?q?1601339312873833846?=
+X-GMAIL-THRID: =?utf-8?q?1601338027570262893?=
+X-GMAIL-MSGID: =?utf-8?q?1601339310317978726?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,188 +62,101 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-[ Upstream commit de5cb6eb514ebe241e3edeb290cb41deb380b81d ]
+commit a466ef76b815b86748d9870ef2a430af7b39c710 upstream.
 
-The BPF JIT need safe guarding against spectre v2 in the sk_load_xxx
-assembler stubs and the indirect branches generated by the JIT itself
-need to be converted to expolines.
+>From ff82bedd3e12f0d3353282054ae48c3bd8c72012 Mon Sep 17 00:00:00 2001
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date: Wed, 9 May 2018 12:12:39 +0900
+Subject: [PATCH 4.16 089/161] x86/kexec: Avoid double free_page() upon do_kexec_load() failure
 
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+syzbot is reporting crashes after memory allocation failure inside
+do_kexec_load() [1]. This is because free_transition_pgtable() is called
+by both init_transition_pgtable() and machine_kexec_cleanup() when memory
+allocation failed inside init_transition_pgtable().
+
+Regarding 32bit code, machine_kexec_free_page_tables() is called by both
+machine_kexec_alloc_page_tables() and machine_kexec_cleanup() when memory
+allocation failed inside machine_kexec_alloc_page_tables().
+
+Fix this by leaving the error handling to machine_kexec_cleanup()
+(and optionally setting NULL after free_page()).
+
+[1] https://syzkaller.appspot.com/bug?id=91e52396168cf2bdd572fe1e1bc0bc645c1c6b40
+
+Fixes: f5deb79679af6eb4 ("x86: kexec: Use one page table in x86_64 machine_kexec")
+Fixes: 92be3d6bdf2cb349 ("kexec/i386: allocate page table pages dynamically")
+Reported-by: syzbot <syzbot+d96f60296ef613fe1d69@syzkaller.appspotmail.com>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Baoquan He <bhe@redhat.com>
+Cc: thomas.lendacky@amd.com
+Cc: prudo@linux.vnet.ibm.com
+Cc: Huang Ying <ying.huang@intel.com>
+Cc: syzkaller-bugs@googlegroups.com
+Cc: takahiro.akashi@linaro.org
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: akpm@linux-foundation.org
+Cc: dyoung@redhat.com
+Cc: kirill.shutemov@linux.intel.com
+Link: https://lkml.kernel.org/r/201805091942.DGG12448.tMFVFSJFQOOLHO@I-love.SAKURA.ne.jp
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/s390/net/bpf_jit.S      |   16 ++++++----
- arch/s390/net/bpf_jit_comp.c |   63 +++++++++++++++++++++++++++++++++++++++++--
- 2 files changed, 71 insertions(+), 8 deletions(-)
 
---- a/arch/s390/net/bpf_jit.S
-+++ b/arch/s390/net/bpf_jit.S
-@@ -9,6 +9,7 @@
-  */
- 
- #include <linux/linkage.h>
-+#include <asm/nospec-insn.h>
- #include "bpf_jit.h"
- 
- /*
-@@ -54,7 +55,7 @@ ENTRY(sk_load_##NAME##_pos);						\
- 	clg	%r3,STK_OFF_HLEN(%r15);	/* Offset + SIZE > hlen? */	\
- 	jh	sk_load_##NAME##_slow;					\
- 	LOAD	%r14,-SIZE(%r3,%r12);	/* Get data from skb */		\
--	b	OFF_OK(%r6);		/* Return */			\
-+	B_EX	OFF_OK,%r6;		/* Return */			\
- 									\
- sk_load_##NAME##_slow:;							\
- 	lgr	%r2,%r7;		/* Arg1 = skb pointer */	\
-@@ -64,11 +65,14 @@ sk_load_##NAME##_slow:;							\
- 	brasl	%r14,skb_copy_bits;	/* Get data from skb */		\
- 	LOAD	%r14,STK_OFF_TMP(%r15);	/* Load from temp bufffer */	\
- 	ltgr	%r2,%r2;		/* Set cc to (%r2 != 0) */	\
--	br	%r6;			/* Return */
-+	BR_EX	%r6;			/* Return */
- 
- sk_load_common(word, 4, llgf)	/* r14 = *(u32 *) (skb->data+offset) */
- sk_load_common(half, 2, llgh)	/* r14 = *(u16 *) (skb->data+offset) */
- 
-+	GEN_BR_THUNK %r6
-+	GEN_B_THUNK OFF_OK,%r6
-+
- /*
-  * Load 1 byte from SKB (optimized version)
-  */
-@@ -80,7 +84,7 @@ ENTRY(sk_load_byte_pos)
- 	clg	%r3,STK_OFF_HLEN(%r15)	# Offset >= hlen?
- 	jnl	sk_load_byte_slow
- 	llgc	%r14,0(%r3,%r12)	# Get byte from skb
--	b	OFF_OK(%r6)		# Return OK
-+	B_EX	OFF_OK,%r6		# Return OK
- 
- sk_load_byte_slow:
- 	lgr	%r2,%r7			# Arg1 = skb pointer
-@@ -90,7 +94,7 @@ sk_load_byte_slow:
- 	brasl	%r14,skb_copy_bits	# Get data from skb
- 	llgc	%r14,STK_OFF_TMP(%r15)	# Load result from temp buffer
- 	ltgr	%r2,%r2			# Set cc to (%r2 != 0)
--	br	%r6			# Return cc
-+	BR_EX	%r6			# Return cc
- 
- #define sk_negative_common(NAME, SIZE, LOAD)				\
- sk_load_##NAME##_slow_neg:;						\
-@@ -104,7 +108,7 @@ sk_load_##NAME##_slow_neg:;						\
- 	jz	bpf_error;						\
- 	LOAD	%r14,0(%r2);		/* Get data from pointer */	\
- 	xr	%r3,%r3;		/* Set cc to zero */		\
--	br	%r6;			/* Return cc */
-+	BR_EX	%r6;			/* Return cc */
- 
- sk_negative_common(word, 4, llgf)
- sk_negative_common(half, 2, llgh)
-@@ -113,4 +117,4 @@ sk_negative_common(byte, 1, llgc)
- bpf_error:
- # force a return 0 from jit handler
- 	ltgr	%r15,%r15	# Set condition code
--	br	%r6
-+	BR_EX	%r6
---- a/arch/s390/net/bpf_jit_comp.c
-+++ b/arch/s390/net/bpf_jit_comp.c
-@@ -25,6 +25,8 @@
- #include <linux/bpf.h>
- #include <asm/cacheflush.h>
- #include <asm/dis.h>
-+#include <asm/facility.h>
-+#include <asm/nospec-branch.h>
- #include <asm/set_memory.h>
- #include "bpf_jit.h"
- 
-@@ -41,6 +43,8 @@ struct bpf_jit {
- 	int base_ip;		/* Base address for literal pool */
- 	int ret0_ip;		/* Address of return 0 */
- 	int exit_ip;		/* Address of exit */
-+	int r1_thunk_ip;	/* Address of expoline thunk for 'br %r1' */
-+	int r14_thunk_ip;	/* Address of expoline thunk for 'br %r14' */
- 	int tail_call_start;	/* Tail call start offset */
- 	int labels[1];		/* Labels for local jumps */
- };
-@@ -250,6 +254,19 @@ static inline void reg_set_seen(struct b
- 	REG_SET_SEEN(b2);					\
- })
- 
-+#define EMIT6_PCREL_RILB(op, b, target)				\
-+({								\
-+	int rel = (target - jit->prg) / 2;			\
-+	_EMIT6(op | reg_high(b) << 16 | rel >> 16, rel & 0xffff);	\
-+	REG_SET_SEEN(b);					\
-+})
-+
-+#define EMIT6_PCREL_RIL(op, target)				\
-+({								\
-+	int rel = (target - jit->prg) / 2;			\
-+	_EMIT6(op | rel >> 16, rel & 0xffff);			\
-+})
-+
- #define _EMIT6_IMM(op, imm)					\
- ({								\
- 	unsigned int __imm = (imm);				\
-@@ -469,8 +486,45 @@ static void bpf_jit_epilogue(struct bpf_
- 	EMIT4(0xb9040000, REG_2, BPF_REG_0);
- 	/* Restore registers */
- 	save_restore_regs(jit, REGS_RESTORE, stack_depth);
-+	if (IS_ENABLED(CC_USING_EXPOLINE) && !nospec_disable) {
-+		jit->r14_thunk_ip = jit->prg;
-+		/* Generate __s390_indirect_jump_r14 thunk */
-+		if (test_facility(35)) {
-+			/* exrl %r0,.+10 */
-+			EMIT6_PCREL_RIL(0xc6000000, jit->prg + 10);
-+		} else {
-+			/* larl %r1,.+14 */
-+			EMIT6_PCREL_RILB(0xc0000000, REG_1, jit->prg + 14);
-+			/* ex 0,0(%r1) */
-+			EMIT4_DISP(0x44000000, REG_0, REG_1, 0);
-+		}
-+		/* j . */
-+		EMIT4_PCREL(0xa7f40000, 0);
-+	}
- 	/* br %r14 */
- 	_EMIT2(0x07fe);
-+
-+	if (IS_ENABLED(CC_USING_EXPOLINE) && !nospec_disable &&
-+	    (jit->seen & SEEN_FUNC)) {
-+		jit->r1_thunk_ip = jit->prg;
-+		/* Generate __s390_indirect_jump_r1 thunk */
-+		if (test_facility(35)) {
-+			/* exrl %r0,.+10 */
-+			EMIT6_PCREL_RIL(0xc6000000, jit->prg + 10);
-+			/* j . */
-+			EMIT4_PCREL(0xa7f40000, 0);
-+			/* br %r1 */
-+			_EMIT2(0x07f1);
-+		} else {
-+			/* larl %r1,.+14 */
-+			EMIT6_PCREL_RILB(0xc0000000, REG_1, jit->prg + 14);
-+			/* ex 0,S390_lowcore.br_r1_tampoline */
-+			EMIT4_DISP(0x44000000, REG_0, REG_0,
-+				   offsetof(struct lowcore, br_r1_trampoline));
-+			/* j . */
-+			EMIT4_PCREL(0xa7f40000, 0);
-+		}
-+	}
+---
+ arch/x86/kernel/machine_kexec_32.c |    6 +++++-
+ arch/x86/kernel/machine_kexec_64.c |    5 ++++-
+ 2 files changed, 9 insertions(+), 2 deletions(-)
+
+--- a/arch/x86/kernel/machine_kexec_32.c
++++ b/arch/x86/kernel/machine_kexec_32.c
+@@ -57,12 +57,17 @@ static void load_segments(void)
+ static void machine_kexec_free_page_tables(struct kimage *image)
+ {
+ 	free_page((unsigned long)image->arch.pgd);
++	image->arch.pgd = NULL;
+ #ifdef CONFIG_X86_PAE
+ 	free_page((unsigned long)image->arch.pmd0);
++	image->arch.pmd0 = NULL;
+ 	free_page((unsigned long)image->arch.pmd1);
++	image->arch.pmd1 = NULL;
+ #endif
+ 	free_page((unsigned long)image->arch.pte0);
++	image->arch.pte0 = NULL;
+ 	free_page((unsigned long)image->arch.pte1);
++	image->arch.pte1 = NULL;
  }
  
- /*
-@@ -966,8 +1020,13 @@ static noinline int bpf_jit_insn(struct
- 		/* lg %w1,<d(imm)>(%l) */
- 		EMIT6_DISP_LH(0xe3000000, 0x0004, REG_W1, REG_0, REG_L,
- 			      EMIT_CONST_U64(func));
--		/* basr %r14,%w1 */
--		EMIT2(0x0d00, REG_14, REG_W1);
-+		if (IS_ENABLED(CC_USING_EXPOLINE) && !nospec_disable) {
-+			/* brasl %r14,__s390_indirect_jump_r1 */
-+			EMIT6_PCREL_RILB(0xc0050000, REG_14, jit->r1_thunk_ip);
-+		} else {
-+			/* basr %r14,%w1 */
-+			EMIT2(0x0d00, REG_14, REG_W1);
-+		}
- 		/* lgr %b0,%r2: load return value into %b0 */
- 		EMIT4(0xb9040000, BPF_REG_0, REG_2);
- 		if ((jit->seen & SEEN_SKB) &&
+ static int machine_kexec_alloc_page_tables(struct kimage *image)
+@@ -79,7 +84,6 @@ static int machine_kexec_alloc_page_tabl
+ 	    !image->arch.pmd0 || !image->arch.pmd1 ||
+ #endif
+ 	    !image->arch.pte0 || !image->arch.pte1) {
+-		machine_kexec_free_page_tables(image);
+ 		return -ENOMEM;
+ 	}
+ 	return 0;
+--- a/arch/x86/kernel/machine_kexec_64.c
++++ b/arch/x86/kernel/machine_kexec_64.c
+@@ -38,9 +38,13 @@ static struct kexec_file_ops *kexec_file
+ static void free_transition_pgtable(struct kimage *image)
+ {
+ 	free_page((unsigned long)image->arch.p4d);
++	image->arch.p4d = NULL;
+ 	free_page((unsigned long)image->arch.pud);
++	image->arch.pud = NULL;
+ 	free_page((unsigned long)image->arch.pmd);
++	image->arch.pmd = NULL;
+ 	free_page((unsigned long)image->arch.pte);
++	image->arch.pte = NULL;
+ }
+ 
+ static int init_transition_pgtable(struct kimage *image, pgd_t *pgd)
+@@ -90,7 +94,6 @@ static int init_transition_pgtable(struc
+ 	set_pte(pte, pfn_pte(paddr >> PAGE_SHIFT, PAGE_KERNEL_EXEC_NOENC));
+ 	return 0;
+ err:
+-	free_transition_pgtable(image);
+ 	return result;
+ }
+ 
