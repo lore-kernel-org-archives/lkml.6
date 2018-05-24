@@ -1,10 +1,11 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1874556-1527162920-2-11747060736035639402
+X-Cyrus-Session-Id: sloti22d1t05-1874556-1527162900-2-316654017337995701
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -12,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527162919; b=kYF/3y4UvM+kNxL91OiH7FnciBAwKWpbVztNvWwKwYQkUsgZlL
-    DJcL13P++EYVWbATUa7Ctjw3cn80B3jcdFbv/G8g+DnG7sQgU3C+9oDx/LztyQTy
-    ufY4xdyVsfMmvC4OrRcP7igLk/QN3AazhAqq+3WV5ehyZjFt77fVf+sUjf2JPf7f
-    vdUKv0zfsiWMgoGJaJHbXGfHnPcr9OvcSEipU03JaHobR49fQIHpkNoayR4Xgz1Z
-    DlhhWJTeZGO0pVSWncjF2RltpaJodN7vL5DWBKtIqfzQ5G/zFtbDtKp26U1QRqFL
-    06f28wtJeT+uor97OJj7Cdp9um74hAoeGhiA==
+    1527162900; b=Tr5cx8lpfXb+/aiBSz0sApwKMtsjzBuOuU5k7whaGpeNnNrDBY
+    O3AI2Ud1jCELGKV1jHilLsjulC8TEpAfYX6Y9M1zRBbutzpIMLvv84ca5M9vSrAy
+    Lzuhq4DwGWqFm6GEokA88WducH87jdFGx2hhSNAcLVwZ9md+ocJPmI4AY4/IlS0R
+    Xnd6Whpf+cjD5tjEXTrWyi1UPz8enSQtP2RNOhwWmUN1gus4qMNIdcGjcuKVKzjJ
+    wpu18SnLoBg1tCGb4wqbnDvJ8T/JpjJJUisJOzurEeSjOVlZQ0gl0ejPbqFB7g7+
+    FJwe/aBVIuhk0s07sHPhPwP2nH4zY5wQEirw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527162919; bh=gFsTtcJ5uvbsIQ9XE3L5c1HgVf27F2
-    AVT9hP1JOM4lg=; b=U3WXfURpiV58xTAmHqju7F1QPEBEcY8D+xUAaOtDV77SQf
-    SQCz5/EgItQbrZQ1xMcucKJ5vPU9wWxnDCagkGK5TbTzz59XGJuZtPkcJ7KR4GjI
-    Nr/pTiDHZcE/5XA5suQBYZ6Tv5af3/osXRmoBBf0a3pUdKf/d6rIYwIbq/ySu0en
-    vitVBrLYymT1+1KW+T3OeuzsSjlajeGiCQ2ugE5HwvwoMT+fG0OMURrCn2+bJxID
-    6z6QMmDf4HLXm05i2rlFbJJPUVvAeI67x2UjapXi5vPXrtXZ+E/NAh1xquHOdx4j
-    Q3GgqTI44fHDzplCWSsVvNmjcu3g9d3EkYr1ZubQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527162900; bh=TGCnyIIuavAb9ps5nojjjwJXrHgjAM
+    eEOMq0kHyZe34=; b=cMe8TiXg7BaqViBaFj0SXJfqAL2mNqqSmcltPijivpQM8J
+    vpYS3h04vfiXTLhK6Iys9m4bunsFeir0EK9kYCuW6kMZgzx5HGWm+m4doadKVuML
+    UujNXUhPoTKmEHvoOofd7IYqinE56lF6PiXz6xl8XdP5Wxda1WSE2K0GKFHvq9dq
+    CRpBDjlujfPHZYx8o0pNt+tMQ+0ZrN9rRqI6P0D2N5yR94/0RXLhiynCPbIGVrwU
+    8ZDe651dVaiIHHJnkdVrpJavgbIXKYzxYRlN9t1u43Vc5nEm7s3CwKBvWyY9RqeY
+    CbJz7SghEWWJ3LKh6maXsAjgS2MwVdo/0DIv+e4w==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=FdObbt/j x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=b4uQkTV1 x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +46,10 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=FdObbt/j x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=b4uQkTV1 x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,31 +65,34 @@ Authentication-Results: mx3.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMQxhXKfmY8M9KGgWNsqH7SAj6pF4SRH8uOpfMYwzzZn6okCtm0zSuYEw1ix2fMydF5JctQx5zOE7nHDt+doYeGyk/N2V/iXhUd1IJFseEV3auT+9qU6
-    v/UVxqsZa5gKZuy+qpf9MfzxJWvzKb3FaTwSVoiEdUU0Wapm56q0Xu3H5UxgUcoQE6iqibrznYGm+ekJZXmj40O0a+eMCfV5jFjA3x9r/OPTrYQb/pfpDVpZ
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfB0/o+y2CVC2CJV7QrVWf/F6rhGL22uRaZwa39djqgQ33p6dSLsAmTQZ2FFC5HnfP0qnULek/AWVg4kdwyywa7IbDTjgNWYJd5t0VjN4UjXDY6KKTlKV
+    /EwruzswFnFcJpP4UJFsJG80bc2yVlNkbCO+Z6T4/hMdyGcWN9h+9phqmSbTMcxyYRMyxKMumq/FvqQGefG2TquGV9mkKq8FBc/sLT/KyBbwnjbXisJEoYAo
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=wMNdZWldAAAA:8 a=ag1SF4gXAAAA:8 a=e6q0WhvrSwsW8V3Ope4A:9 a=QEXdDO2ut3YA:10
-    a=FUarYpL4UH3yWsho8X8J:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=R_Myd5XaAAAA:8 a=1XWaLZrsAAAA:8 a=Z4Rwk6OoAAAA:8 a=ag1SF4gXAAAA:8
+    a=FkEWdtnFNRhKQWAVMtIA:9 a=VGF_GfgXcI1qHwxY:21 a=TwB-6zxXnvLQiK8B:21
+    a=QEXdDO2ut3YA:10 a=L2g4Dz8VuBQ37YGmWQah:22 a=HkZW87K1Qel5hWWM3VKY:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966943AbeEXLzD (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 07:55:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57282 "EHLO mail.kernel.org"
+        id S966512AbeEXLyo (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 07:54:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57428 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966877AbeEXJqH (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:46:07 -0400
+        id S966621AbeEXJqQ (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:46:16 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Suchanek <msuchanek@suse.de>
-Subject: [PATCH 4.4 46/92] powerpc: Dont preempt_disable() in show_cpuinfo()
-Date: Thu, 24 May 2018 11:38:23 +0200
-Message-Id: <20180524093203.791914291@linuxfoundation.org>
+        stable@vger.kernel.org, Mel Gorman <mgorman@techsingularity.net>,
+        Jan Kara <jack@suse.cz>, Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mel Gorman <mgorman@suse.de>
+Subject: [PATCH 4.4 49/92] mm: filemap: remove redundant code in do_read_cache_page
+Date: Thu, 24 May 2018 11:38:26 +0200
+Message-Id: <20180524093204.194122705@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093159.286472249@linuxfoundation.org>
 References: <20180524093159.286472249@linuxfoundation.org>
@@ -106,49 +110,99 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+From: Mel Gorman <mgorman@techsingularity.net>
 
-commit 349524bc0da698ec77f2057cf4a4948eb6349265 upstream.
+commit 32b635298ff4e991d8d8f64dc23782b02eec29c3 upstream.
 
-This causes warnings from cpufreq mutex code. This is also rather
-unnecessary and ineffective. If we really want to prevent concurrent
-unplug, we could take the unplug read lock but I don't see this being
-critical.
+do_read_cache_page and __read_cache_page duplicate page filler code when
+filling the page for the first time.  This patch simply removes the
+duplicate logic.
 
-Fixes: cd77b5ce208c ("powerpc/powernv/cpufreq: Fix the frequency read by /proc/cpuinfo")
-Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Acked-by: Michal Suchanek <msuchanek@suse.de>
+Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Cc: Hugh Dickins <hughd@google.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Mel Gorman <mgorman@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kernel/setup-common.c |   11 -----------
- 1 file changed, 11 deletions(-)
+ mm/filemap.c |   43 ++++++++++++-------------------------------
+ 1 file changed, 12 insertions(+), 31 deletions(-)
 
---- a/arch/powerpc/kernel/setup-common.c
-+++ b/arch/powerpc/kernel/setup-common.c
-@@ -217,14 +217,6 @@ static int show_cpuinfo(struct seq_file
- 	unsigned short maj;
- 	unsigned short min;
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2215,7 +2215,7 @@ static struct page *wait_on_page_read(st
+ 	return page;
+ }
  
--	/* We only show online cpus: disable preempt (overzealous, I
--	 * knew) to prevent cpu going down. */
--	preempt_disable();
--	if (!cpu_online(cpu_id)) {
--		preempt_enable();
--		return 0;
+-static struct page *__read_cache_page(struct address_space *mapping,
++static struct page *do_read_cache_page(struct address_space *mapping,
+ 				pgoff_t index,
+ 				int (*filler)(void *, struct page *),
+ 				void *data,
+@@ -2237,31 +2237,19 @@ repeat:
+ 			/* Presumably ENOMEM for radix tree node */
+ 			return ERR_PTR(err);
+ 		}
++
++filler:
+ 		err = filler(data, page);
+ 		if (err < 0) {
+ 			page_cache_release(page);
+-			page = ERR_PTR(err);
+-		} else {
+-			page = wait_on_page_read(page);
++			return ERR_PTR(err);
+ 		}
 -	}
+-	return page;
+-}
 -
- #ifdef CONFIG_SMP
- 	pvr = per_cpu(cpu_pvr, cpu_id);
- #else
-@@ -329,9 +321,6 @@ static int show_cpuinfo(struct seq_file
- #ifdef CONFIG_SMP
- 	seq_printf(m, "\n");
- #endif
+-static struct page *do_read_cache_page(struct address_space *mapping,
+-				pgoff_t index,
+-				int (*filler)(void *, struct page *),
+-				void *data,
+-				gfp_t gfp)
+ 
+-{
+-	struct page *page;
+-	int err;
 -
--	preempt_enable();
--
- 	/* If this is the last cpu, print the summary */
- 	if (cpumask_next(cpu_id, cpu_online_mask) >= nr_cpu_ids)
- 		show_cpuinfo_summary(m);
+-retry:
+-	page = __read_cache_page(mapping, index, filler, data, gfp);
+-	if (IS_ERR(page))
+-		return page;
++		page = wait_on_page_read(page);
++		if (IS_ERR(page))
++			return page;
++		goto out;
++	}
+ 	if (PageUptodate(page))
+ 		goto out;
+ 
+@@ -2269,21 +2257,14 @@ retry:
+ 	if (!page->mapping) {
+ 		unlock_page(page);
+ 		page_cache_release(page);
+-		goto retry;
++		goto repeat;
+ 	}
+ 	if (PageUptodate(page)) {
+ 		unlock_page(page);
+ 		goto out;
+ 	}
+-	err = filler(data, page);
+-	if (err < 0) {
+-		page_cache_release(page);
+-		return ERR_PTR(err);
+-	} else {
+-		page = wait_on_page_read(page);
+-		if (IS_ERR(page))
+-			return page;
+-	}
++	goto filler;
++
+ out:
+ 	mark_page_accessed(page);
+ 	return page;
