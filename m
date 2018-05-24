@@ -1,63 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935305AbeEXAyx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 20:54:53 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:45157 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935109AbeEXAyw (ORCPT
+        id S935321AbeEXA4c (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 20:56:32 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:34528 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935196AbeEXA43 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 20:54:52 -0400
-X-Google-Smtp-Source: AB8JxZoFajONx86B80go5zDy7KsWMCc7XQ3nR8FaAjnYpoqouI3yzTUKhpUZwikLcWiVyZK4DTe1xA==
-Date: Wed, 23 May 2018 17:54:50 -0700
+        Wed, 23 May 2018 20:56:29 -0400
+X-Google-Smtp-Source: AB8JxZryEOri6LPIYBlN5vyaxYDW7UxJ/vfbKdvn/pueQD5H4f88CY3QYFQYSTz9GlI696QCWgkb4g==
+Date: Wed, 23 May 2018 17:56:27 -0700
 From: Joel Fernandes <joel@joelfernandes.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Joel Fernandes <joelaf@google.com>, linux-kernel@vger.kernel.org,
-        Boqun Feng <boqun.feng@gmail.com>, byungchul.park@lge.com,
-        Ingo Molnar <mingo@redhat.com>, Josh Triplett <josh@joshtriplett.org>,
-        kernel-team@android.com, Lai Jiangshan <jiangshanlai@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Peter Zilstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH 3/4] rcu: Use better variable names in funnel locking loop
-Message-ID: <20180524005450.GA171060@joelaf.mtv.corp.google.com>
-References: <20180523063815.198302-1-joel@joelfernandes.org>
- <20180523063815.198302-4-joel@joelfernandes.org>
- <20180523160617.GM3803@linux.vnet.ibm.com>
- <20180523192349.GA5845@linux.vnet.ibm.com>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>, claudio@evidence.eu.com,
+        Todd Kjos <tkjos@google.com>
+Subject: Re: [PATCH] cpufreq: schedutil: Avoid missing updates for one-CPU
+ policies
+Message-ID: <20180524005627.GB171060@joelaf.mtv.corp.google.com>
+References: <1672734.JYOlA1IWnU@aspire.rjw.lan>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180523192349.GA5845@linux.vnet.ibm.com>
+In-Reply-To: <1672734.JYOlA1IWnU@aspire.rjw.lan>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 12:23:49PM -0700, Paul E. McKenney wrote:
-> On Wed, May 23, 2018 at 09:06:17AM -0700, Paul E. McKenney wrote:
-> > On Tue, May 22, 2018 at 11:38:14PM -0700, Joel Fernandes wrote:
-> > > From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
-> > > 
-> > > The funnel locking loop in rcu_start_this_gp uses rcu_root as a
-> > > temporary variable while walking the combining tree. This causes a
-> > > tiresome exercise of a code reader reminding themselves that rcu_root
-> > > may not be root. Lets just call it rnp, and rename other variables as
-> > > well to be more appropriate.
-> > > 
-> > > Original patch: https://patchwork.kernel.org/patch/10396577/
-> > > 
-> > > Signed-off-by: Joel Fernandes <joel@joelfernandes.org>
-> > > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> > 
-> > I used to have double Signed-off-by back when I was seconded to Linaro.
-> > But I am guessing that you want the second and don't need the first
-> > one.  Unless you tell me otherwise, I will remove the first one on
-> > my next rebase.
-> > 
-> > Anyway, the new variable names are much more clear, good stuff,
-> > queued for further review and testing, thank you!
+On Wed, May 23, 2018 at 11:47:45AM +0200, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
-> And it looks to me like I should fold in the patchlet below to change to
-> rnp_start in a comment.  Please let me know if this would mess things up.
+> Commit 152db033d775 (schedutil: Allow cpufreq requests to be made
+> even when kthread kicked) made changes to prevent utilization updates
+> from being discarded during processing a previous request, but it
+> left a small window in which that still can happen in the one-CPU
+> policy case.  Namely, updates coming in after setting work_in_progress
+> in sugov_update_commit() and clearing it in sugov_work() will still
+> be dropped due to the work_in_progress check in sugov_update_single().
+> 
+> To close that window, rearrange the code so as to acquire the update
+> lock around the deferred update branch in sugov_update_single()
+> and drop the work_in_progress check from it.
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Yes, missed that. Sorry. It looks great, thanks!
+Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+
+thanks,
+
+ - Joel
+ 
