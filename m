@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1874556-1527163547-2-17243420069917944024
+X-Cyrus-Session-Id: sloti22d1t05-1886372-1527163539-2-13494176055884107290
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES enro, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527163546; b=ViDDDfc0qi0mmxCo/Ky8qr4wtOgPt82NSiLJdLS8i39PnyQkYr
-    1Rae8F9AtEt2CbBIzXZQbc+BemOKx+a8eWeKJLzGq3Gs9aN386DtEl846QMXG1qb
-    uHeIhmdInrHRRVk8zhT9xJJSPaE2/ZYi5pZiMVDSyom03uJdLY3tvFcG73WpF4Dq
-    5AplEjyl7G+H7WMxzzfl3BwKEBmQPCQhd4HxsOHfMNukOWILWjD15ePTYxiVsbhF
-    Z+t91IebIbQHq8BX3Gs4zt3QDN8R87yry8H+ifS1FTNW+mBonPitIxfMu6TbRSg+
-    FPmwKKYALhZUtiHqrJOfHcrH2QzzUhHL1EPQ==
+    1527163537; b=GpQ8A1c5kri/oBnI44pLAhCt8thnQbiq4X5IvOBejzvfMJfSKF
+    LufMJl43GeBlTVxk7GOwq7ti6mqsaHldQuk2njwG38jwN96UK8i3PjPFsBuJSfD0
+    4dU9LiAOnzcS+73Jb7WMUEsmi9uh/xYZdHq2ENbkO7gIuvhB8310Mr+MkGkzCFFR
+    Dza0mwfk982c7BMbQ6xqRE7XBPc7Yi4X6+9FEsUFlR57W74oce+3hRip66/M/6g5
+    wdLlkbz30wW2KLGIoxVIkyUpgiK+p0qDYYv8bFMfDOmHJRAUmCHllagWlJjTt11J
+    /J6k2PXwtADeMHhxoY/LySRidnoua0jIIjVw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527163546; bh=N3sDFki5M39jD8qam0YEDJ8oY92ri2
-    WrbwgWow1yh9w=; b=J+g+rpHWbJs7T6g5ee1MrvivyhX6/HzGVnPxQ4yGspReVz
-    uEFEFZTKdnY0lXqBTekCP9+6tZT0++m577sDC4nAWG7UGdj1K6tTXl7EW7Q3GWm3
-    xVXm2aPTApscDvao3HSQdh0lq+aa/Yv7Lolo9T1KgtHraK2BPO+iof/dEIrvzSd6
-    HQz9kGRrz6k9vsgFjD+zh5OjAYYuLmjoYH372WHCktVmpXgonOhsyeujLuSboQV3
-    DNgXhPChXCo+pTPc63noL61BVWo+eE+298mVo9HI+02mLXSVfIlzVwqPKbX+a28s
-    ePoVxr2vBP1lDiYW8E4rQhf6XA4rMw9Of8nQDmAA==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527163537; bh=UNoKujPongjZWUsteUjKl3CVx58WMf
+    iAM7Jc821e2Ek=; b=QvNePHWnRED4PZQjAhHGIrW1E9+UbEmmi5Z3NE80qoX993
+    Zz5SPfQCkfmhb80ZouCzCVpSF5FoflxMLpvAJcJh9P6AF9MWO0cENdaNBiklX6k8
+    GInVB0cm0mYHg36bloRPA71/JCL1+a53Jc2urWJQZ1Ougq5t+d6iHqhndLTeYy56
+    bC0Lxg9l9uOlIzUt9i5iSqWL9EynqOm/recOjzFsCBQ5NINrWs3MsOwM+zaSWcuF
+    pQjJWS9CTIycyKgpm4A4JxbYX9yrKEOAJPI5jJcrpcTvM/tuanCFaaiAx37vP2jK
+    8YEdxX4z4aVCZG6CQrCVLxNDfmseEHpdSOpV9gsQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=dVSM/HmS x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=sS5/pXtH x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=dVSM/HmS x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=sS5/pXtH x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,29 +64,30 @@ Authentication-Results: mx5.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfKkU1mviYrLGfnMMUmGkXOaQY503POW1mNewxq1/QCNjKqJRIAHWXXMCSqa8QZtm4/5Zb/5uNJOX5JycZQbNFjII+Y/5LG5mBBjZyjzvnmGe6T+hSlmb
-    hcg/zxUGKWo7p1ZvhuNqnlssxLyHyvoNeqAQh+F8Xv09J+XoK2afJnOE9TS4Xgmp4XFNqIIkAyH2UCNlquEIhcng7g1OJMhZLQULCTI+OcqBOdIE/AB5r8VF
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfB26GgpGYkmcF0n4o7Z7aaXzRpk8pDa4trLcXOhBPAc9h/ftFm5SmojdJn36plRULm0ZbfHnI9gdn2sAwoGeCaCqYo4iWwO8cMhtbR5EyTTuuXXICWFJ
+    WYQDC9qPwFS0CZGHIu3qWA3e3xeDxpqDArO2NFlooJC9Lq0cLcg2RusN4nsAQSfhD0CJBZwHJEHXN5lwLNMZlsduRYRwf4OUaoPh7MOmcv6Hb9B8SxRhiWso
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=qTCTqAxlTHOC2uTrnRkA:9 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=J2zoVyZDAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=ZwEik9AnzkoCkD7mK00A:9
+    a=QEXdDO2ut3YA:10 a=DvW0qZC7_2Hvvf243_-1:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966614AbeEXJoQ (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:44:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55606 "EHLO mail.kernel.org"
+        id S966619AbeEXMFU (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 08:05:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55634 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966176AbeEXJoP (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:44:15 -0400
+        id S966623AbeEXJoS (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:44:18 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
-Subject: [PATCH 4.4 37/92] usbip: usbip_host: fix bad unlock balance during stub_probe()
-Date: Thu, 24 May 2018 11:38:14 +0200
-Message-Id: <20180524093202.540404837@linuxfoundation.org>
+        stable@vger.kernel.org, Federico Cuello <fedux@fedux.com.ar>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.4 38/92] ALSA: usb: mixer: volume quirk for CM102-A+/102S+
+Date: Thu, 24 May 2018 11:38:15 +0200
+Message-Id: <20180524093202.638183551@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093159.286472249@linuxfoundation.org>
 References: <20180524093159.286472249@linuxfoundation.org>
@@ -104,52 +105,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+From: Federico Cuello <fedux@fedux.com.ar>
 
-commit c171654caa875919be3c533d3518da8be5be966e upstream.
+commit 21493316a3c4598f308d5a9fa31cc74639c4caff upstream.
 
-stub_probe() calls put_busid_priv() in an error path when device isn't
-found in the busid_table. Fix it by making put_busid_priv() safe to be
-called with null struct bus_id_priv pointer.
+Currently it's not possible to set volume lower than 26% (it just mutes).
 
-This problem happens when "usbip bind" is run without loading usbip_host
-driver and then running modprobe. The first failed bind attempt unbinds
-the device from the original driver and when usbip_host is modprobed,
-stub_probe() runs and doesn't find the device in its busid table and calls
-put_busid_priv(0 with null bus_id_priv pointer.
+Also fixes this warning:
 
-usbip-host 3-10.2: 3-10.2 is not in match_busid table...  skip!
+  Warning! Unlikely big volume range (=9472), cval->res is probably wrong.
+  [13] FU [PCM Playback Volume] ch = 2, val = -9473/-1/1
 
-[  367.359679] =====================================
-[  367.359681] WARNING: bad unlock balance detected!
-[  367.359683] 4.17.0-rc4+ #5 Not tainted
-[  367.359685] -------------------------------------
-[  367.359688] modprobe/2768 is trying to release lock (
-[  367.359689]
-==================================================================
-[  367.359696] BUG: KASAN: null-ptr-deref in print_unlock_imbalance_bug+0x99/0x110
-[  367.359699] Read of size 8 at addr 0000000000000058 by task modprobe/2768
+, and volume works fine for full range.
 
-[  367.359705] CPU: 4 PID: 2768 Comm: modprobe Not tainted 4.17.0-rc4+ #5
-
-Fixes: 22076557b07c ("usbip: usbip_host: fix NULL-ptr deref and use-after-free errors") in usb-linus
-Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
-Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Federico Cuello <fedux@fedux.com.ar>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/usbip/stub_main.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ sound/usb/mixer.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/usb/usbip/stub_main.c
-+++ b/drivers/usb/usbip/stub_main.c
-@@ -96,7 +96,8 @@ struct bus_id_priv *get_busid_priv(const
+--- a/sound/usb/mixer.c
++++ b/sound/usb/mixer.c
+@@ -904,6 +904,14 @@ static void volume_control_quirks(struct
+ 		}
+ 		break;
  
- void put_busid_priv(struct bus_id_priv *bid)
- {
--	spin_unlock(&bid->busid_lock);
-+	if (bid)
-+		spin_unlock(&bid->busid_lock);
- }
- 
- static int add_match_busid(char *busid)
++	case USB_ID(0x0d8c, 0x0103):
++		if (!strcmp(kctl->id.name, "PCM Playback Volume")) {
++			usb_audio_info(chip,
++				 "set volume quirk for CM102-A+/102S+\n");
++			cval->min = -256;
++		}
++		break;
++
+ 	case USB_ID(0x0471, 0x0101):
+ 	case USB_ID(0x0471, 0x0104):
+ 	case USB_ID(0x0471, 0x0105):
