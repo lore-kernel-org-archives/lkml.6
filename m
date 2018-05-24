@@ -1,43 +1,38 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965085AbeEXIXU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 04:23:20 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:53257 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935691AbeEXIXQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 04:23:16 -0400
-X-Google-Smtp-Source: AB8JxZorLgr8341pg1o4ZHVIwrVH0hIj5KpmZgMH/bu8KtkRXwSxhAW6D4Qf8HwalSS/Z7eYmlZjcy9KIcJ4aUGADxw=
+        id S935819AbeEXI1A (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 04:27:00 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37988 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935502AbeEXI04 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 04:26:56 -0400
+Date: Thu, 24 May 2018 09:26:47 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: linux-kernel@vger.kernel.org
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH 02/13] atomics/treewide: remove redundant
+ atomic_inc_not_zero() definitions
+Message-ID: <20180524082646.rvf3pi2htdeuwvel@salmiak>
+References: <20180523133533.1076-1-mark.rutland@arm.com>
+ <20180523133533.1076-3-mark.rutland@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180328175957.23904-1-labbott@redhat.com>
-References: <20180328175957.23904-1-labbott@redhat.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 24 May 2018 10:23:14 +0200
-Message-ID: <CACRpkdZWtdePWwGZ=1w_8CTz3STt+cVJv7hQAigYHFi1gm6fKA@mail.gmail.com>
-Subject: Re: [PATCH v3] gpio: Remove VLA from stmpe driver
-To: Laura Abbott <labbott@redhat.com>
-Cc: Kees Cook <keescook@chromium.org>,
-        Patrice Chotard <patrice.chotard@st.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        kernel-hardening@lists.openwall.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180523133533.1076-3-mark.rutland@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 28, 2018 at 7:59 PM, Laura Abbott <labbott@redhat.com> wrote:
+On Wed, May 23, 2018 at 02:35:22PM +0100, Mark Rutland wrote:
+> vWhen atomic_inc_not_zero(v) isn't defined, <linux/atomic.h> will define
+> it as falling back to atomic_add_unless((v), 1, 0), so there's no need
+> for arch code to do so.
 
-> The new challenge is to remove VLAs from the kernel
-> (see https://lkml.org/lkml/2018/3/7/621)
->
-> The number of GPIOs on the supported chips is fairly small
-> so stack allocate to a known upper bound and spit out a warning
-> if any new chips have more gpios.
->
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
+Typo: s/vWhen/When/
 
-Patch applied with the review tags!
+I've fixed that up in the git branch.
 
-Yours,
-Linus Walleij
+Mark.
