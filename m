@@ -1,38 +1,40 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZo+WoutVhAUnvYWRY/gu86ypE5wPKUyCepMKwohZAuI9X0zs66wOLIAS42rZC1LjJYcePeu
-ARC-Seal: i=1; a=rsa-sha256; t=1527155705; cv=none;
+X-Google-Smtp-Source: AB8JxZon8SEUBn5YQHQ5SZA4pkQqAK602zThoChKJYFILFRsoQJymiuF7GgJRi2CSoOLBbIrzpSX
+ARC-Seal: i=1; a=rsa-sha256; t=1527155702; cv=none;
         d=google.com; s=arc-20160816;
-        b=UBvz0AT1eBFOxpLL7LNbko9pveEnLRPJz8w7iOos2lh/jlctf4pqQnb+rKPOll5oF9
-         UHM4wSwfODnw39aTh+sAOg/G7y5NnoBjnqDwJa2cddIVZFMcRXlRPALUZ6UfnjaJbtSC
-         uGGu/uv7vteGI8LfswcwVBGnwHZ001jH9LpB6Hc4E6aq12cbKkso/D3bqkP+jn3pHf6c
-         4LzD9nsJbCZgoRSPD/AdkJZzkkFgJWYrLghLMe8qcynRbXIYqIGgp2xziCiIrWwo6mZJ
-         WbKIFuAszoK3EsEgZ4QrBGT1Q8ASB39FQo+2D2FdnOb19TkZTO4lDZIguUHupJeRjgnH
-         LOrw==
+        b=ghBVLj34+8uojcLbq9bSSbjoBfHRVFUBk5+2mO+/2yUAmvBBZyC6juY9Q5aRjdKfrE
+         HPgl7Dl6kBHY0wizYdiIhhxGNCRYqOBW/NBYU9ibt+5V28bQDCZJ2hNKNdXrHKZxKAEZ
+         b+Cf/uKOOCNz8M4dN1hKvL8v/nP9k7vlgGuI1NX9jYumhpo4hzNlZpUx2Rpd4FQdoq9b
+         eHUDNGhuAbR3isxNATVdlNRN36sitWzxssFmRep61TzFUao0ADDRC+uZcaTOF/d4r13N
+         ecYoPa+BeHzeNw91pDcitRXajPGHohDTs6O7RP7rVZ/97WCfg0eukPh/Fx0WehQ0xtbz
+         +1LA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=mn94+L5rvm8iZxVHVjm2yAKTGI2DrehWW5WsTaqOdm8=;
-        b=aH5aU+KZXmWHQ+AIys0nKKgh1ozqLZk88aCVhmtV9Rjn35DGrS0G/u841D8/x36yWS
-         N6VfRjXtDeJkU2ahvwguU9vn9pa8HiiLA7cWxsILiN9OnA8kDzjhKIgx97/PYsz3+8a9
-         /zPpRV91HqRMe0ZpOEoHOtC18gP7jgLyo9/B0NSBVaEh5foxY+ZEXWicreBpgASRPSx1
-         wtgV/6AZAEGYQ1pYS0LdAwLy6R/CqZzAOZYMmxLXAHyhtI9uXhv89tD6isI7OfGM6X6V
-         GOGwMT6+WanM2moEVjTH9AnGW9GCy1MaO3g+AkEz+BfQYJUKNI276phqOTuJuMZ4eO2V
-         lt7Q==
+        bh=qtTi/cOXB1dfrCz19bWBsUqJEx+RCFb2Mbo0EZ6Ga3E=;
+        b=z21+Hhye5yFQ0CLT5taDmfoQxSSQiq/ytCfd9scZ4/vLLF90xga/NNGGg8n8+KGVTR
+         St1Mg4B6ue6yMj/UEtlly4LRgK8LBaR0tTc4Hafcd264HuFwOats4RqPxWm9GXqoVsyJ
+         fI+Kssdx8XpEzTn1HoqIGyO+9S2PSPs1njyX+IUDPUJyqNtIqWZl8+SnkBgsG4Ju8Sg3
+         qqSh0FHYjrKnsIT5oZLHYpX4BPDxSRqsn5JBbN734P1PH7MApIIYVT8ARxcqleX2PYIc
+         rG5XttLy3HGy0fXudrlqSIMEFIiO8l5SjzkgAc+KWT+pGG4MN+CTiEhtZ4u17VayTQ0W
+         qmRQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=rv89jNjC;
+       dkim=pass header.i=@kernel.org header.s=default header.b=EEEW4oLN;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=rv89jNjC;
+       dkim=pass header.i=@kernel.org header.s=default header.b=EEEW4oLN;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ioana Radulescu <ruxandra.radulescu@nxp.com>,
+	Gianluigi Tiesi <sherpya@netfarm.it>,
+	Borissh1983 <borissh1983@gmail.com>,
+	Ben Hutchings <ben@decadent.org.uk>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 087/165] staging: fsl-dpaa2/eth: Fix incorrect casts
-Date: Thu, 24 May 2018 11:38:13 +0200
-Message-Id: <20180524093625.550700720@linuxfoundation.org>
+Subject: [PATCH 4.14 078/165] usbip: Correct maximum value of CONFIG_USBIP_VHCI_HC_PORTS
+Date: Thu, 24 May 2018 11:38:04 +0200
+Message-Id: <20180524093625.181741410@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -42,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601338820614579952?=
-X-GMAIL-MSGID: =?utf-8?q?1601338820614579952?=
+X-GMAIL-THRID: =?utf-8?q?1601338817880044548?=
+X-GMAIL-MSGID: =?utf-8?q?1601338817880044548?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,49 +53,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ioana Radulescu <ruxandra.radulescu@nxp.com>
+From: Ben Hutchings <ben@decadent.org.uk>
 
-[ Upstream commit 75c583ab9709692a60871d4719006391cde8dc1d ]
+[ Upstream commit 351a8d4837ae0d61744e64262c3a80ab92ff3e42 ]
 
-The DPAA2 Ethernet driver incorrectly assumes virtual addresses
-are always 64b long, which causes compiler errors when building
-for a 32b platform.
+Now that usbip supports USB3, the maximum number of ports allowed
+on a hub is 15 (USB_SS_MAXPORTS), not 31 (USB_MAXCHILDREN).
 
-Fix this by using explicit casts to uintptr_t where necessary.
-
-Signed-off-by: Ioana Radulescu <ruxandra.radulescu@nxp.com>
+Reported-by: Gianluigi Tiesi <sherpya@netfarm.it>
+Reported-by: Borissh1983 <borissh1983@gmail.com>
+References: https://bugs.debian.org/878866
+Fixes: 1c9de5bf4286 ("usbip: vhci-hcd: Add USB3 SuperSpeed support")
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/usb/usbip/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c
-+++ b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c
-@@ -315,7 +315,7 @@ static int consume_frames(struct dpaa2_e
- 		}
+--- a/drivers/usb/usbip/Kconfig
++++ b/drivers/usb/usbip/Kconfig
+@@ -27,7 +27,7 @@ config USBIP_VHCI_HCD
  
- 		fd = dpaa2_dq_fd(dq);
--		fq = (struct dpaa2_eth_fq *)dpaa2_dq_fqd_ctx(dq);
-+		fq = (struct dpaa2_eth_fq *)(uintptr_t)dpaa2_dq_fqd_ctx(dq);
- 		fq->stats.frames++;
- 
- 		fq->consume(priv, ch, fd, &ch->napi);
-@@ -1888,7 +1888,7 @@ static int setup_rx_flow(struct dpaa2_et
- 	queue.destination.id = fq->channel->dpcon_id;
- 	queue.destination.type = DPNI_DEST_DPCON;
- 	queue.destination.priority = 1;
--	queue.user_context = (u64)fq;
-+	queue.user_context = (u64)(uintptr_t)fq;
- 	err = dpni_set_queue(priv->mc_io, 0, priv->mc_token,
- 			     DPNI_QUEUE_RX, 0, fq->flowid,
- 			     DPNI_QUEUE_OPT_USER_CTX | DPNI_QUEUE_OPT_DEST,
-@@ -1940,7 +1940,7 @@ static int setup_tx_flow(struct dpaa2_et
- 	queue.destination.id = fq->channel->dpcon_id;
- 	queue.destination.type = DPNI_DEST_DPCON;
- 	queue.destination.priority = 0;
--	queue.user_context = (u64)fq;
-+	queue.user_context = (u64)(uintptr_t)fq;
- 	err = dpni_set_queue(priv->mc_io, 0, priv->mc_token,
- 			     DPNI_QUEUE_TX_CONFIRM, 0, fq->flowid,
- 			     DPNI_QUEUE_OPT_USER_CTX | DPNI_QUEUE_OPT_DEST,
+ config USBIP_VHCI_HC_PORTS
+ 	int "Number of ports per USB/IP virtual host controller"
+-	range 1 31
++	range 1 15
+ 	default 8
+ 	depends on USBIP_VHCI_HCD
+ 	---help---
