@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1835623-1527161171-2-16515785637718584879
+X-Cyrus-Session-Id: sloti22d1t05-1835623-1527161161-2-1437661403438468108
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527161170; b=bfQCGshO+FUTKKAmx0ARWk68koLg/1l/6AioWGGfqy/xFWbUMy
-    uBmLpW38unW3+UlldCExbHX8FR+Go3S5Og/qMyNeYBqR+wBRRnOvKoL6LkPup1+L
-    GlU0Y4Uwf1XS41Id0YOTzxg/CNM9IG07q6279Ow5+WkKvp8HfbZEIE/15AulLYWn
-    ddK8GD2GDFMY0pAxC8NN/1qWwDbpRnJRhGOCYpl6QpG4Y7v1K0M1eIIU/O2Tcd2M
-    aJNz/Y2tc192P8w84y5Qjpcd4CvJ3xGhOSDIWHDcSdzYfciVVN1TOnxtsR1R6nR4
-    Ot9JMGvTp5TEE6tSiIROAFNdeATx6yETGiTQ==
+    1527161161; b=HBx1cLoBbnmNWlFCEEUUYw0/WrZfSDHE0BQs6Qc21j1NDrFVvF
+    K0KZdLcKBxzt8wk6Io9rTx8tBh4QNoDZnj1L9KUPjNyvgCdEltu+hDIX71OaXvrE
+    ffvIJvQq/0iXo6ZVNdPQ49g/dyvyAKmAeGtbfHwIdluiL4avJKo5ZRjjjqPnxI14
+    rh+5q/fKYJIEhS0wn6mOiyDncnk6lLLUAHOtWKfY6pZY5BLpvqMhgFOg/5CrBtyj
+    uzD2697usF3xTsYysRhajQ25Wur0+o86IDiI1fugXYzTpRHfK0Xc9j8p7u6Da72q
+    NtW+cpTzzvvUXebeQ+DI+wV4v28jl4Y/VKqw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527161170; bh=wtrvhOKWlDCR43FwXlOy8WJivC8PZO
-    YM4Hgc7tQjoa0=; b=hm30oclJHUA7w7EntoQgdEjdJG+TkTDmGrtspZHikcKLgJ
-    6ivFhWhl7Gk7Kc71BFl4wycCqh3syBjz3RXJZVn5w3blqkm+SNsxhXclGmOFGY6D
-    ljKyew4uNjDTAn0eDQg/6P/T3m1OLPeINgQXX9jxS39hBNXJy1aVJwcuU0shV4wg
-    2BtTKPQZIEz2tnmX+lYJpbuDrbVuL+ky8XMYoN5K07PzI+d8xVuIVtP0HKNAHupr
-    85g1OQGTt+cWcHWhDcUfwZVep6nvBoL4Ob+era985oWHXkm3gA7n26f6zOUggdXI
-    OZlsgbNDpNktbHS6ZR1+PyWbRgzwPaKFNhsnoUmQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527161161; bh=HUrpVwFU8hcQq8LVi2tFU2SmTE3qiO
+    cpXuabwKznSMk=; b=ggW6qhAqkNEthHfnkujx0fcC5cu7q7P6y9rCFMAj3QOTV0
+    jkhxeU87VZJwPel8jaRNTBJmBXrU1wO9DrDkQS6uraWXSqhpOYm/KTBNieQssXi2
+    ldUUje6oy13ArTCMrAxqPvmB1iam7wroeud/RRG3JIjrDAMjZx92LHrH/2qHxeAu
+    zpJ7fTy7ArO7KHztMKlXU+r12FpVNPjp/lAV8Rm+U/RIp7UyaFf5o4Mf1XN4e0Qa
+    VeKxV3v1EINtIDet9eLwS0bZmAZzBKO8T+f/bL98bTwy+TC0qCEBni8WuosyLsrQ
+    +7+IVHj6xbbpwd1WPBxyupRfvlRfPWvxGTWfQqpQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=c9lhv2X9 x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=Fm+T9/Zj x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=c9lhv2X9 x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=Fm+T9/Zj x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,32 +64,31 @@ Authentication-Results: mx6.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLACAPoU1+wNHaJpPkbrgp1S0LpZXF+4PQVidOVN6jJE+EeG8qJJ0jsQluVehyrGElsd0BZO3UxGGmGcRec6meMYhYfVTrmpLJG0d2o50BE1CKMzKEJ2
-    pSSm5/IpX2GgRWH1ZAoHGL7ye8fDOQMSNxTl5sEJgQMlAgNKvDIePmVurN6aJe6HqkwWIh2aJbHyMWVpalsDlTAb5wkc12AhAWuYHyrOg5bY16t24uXL0Iks
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfFdnRH1a4sWkxNMrJzltC7TiQQfan3Ny3yS5I1bhgHXNLFLzahgUxERltjUThx2vz06sv0cjxv2TKgEC/1PLn7vlcuJbla7VcilIU0CHNyfVWWjcNX4i
+    y/rcT1hJudlrAPeZh0aNw4Lpxsrq5KJa6rCCju1rbZrWwOyBSMLQIzMsZoS51WG6+ECpkJLU0o3OsuRT/uvTb9nblaG+i8b3hSwDcsi6OuAT6njHM4RQloql
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=20KFwNOVAAAA:8 a=A7XncKjpAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
-    a=Wyb3ZWrwXr8amsfg3uAA:9 a=QEXdDO2ut3YA:10 a=R9rPLQDAdC6-Ub70kJmZ:22
+    a=yMhMjlubAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=9uM20D-oyJIafyQH7W4A:9
+    a=5bmV_-dyjCp7pJ2j:21 a=zkhDmyxGluZocyVr:21 a=QEXdDO2ut3YA:10
     a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967749AbeEXL0J (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 07:26:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47536 "EHLO mail.kernel.org"
+        id S967322AbeEXLZs (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 07:25:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967737AbeEXJvi (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:51:38 -0400
+        id S967749AbeEXJvl (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:51:41 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Roman Mashak <mrv@mojatatu.com>,
-        Davide Caratti <dcaratti@redhat.com>,
-        Jamal Hadi Salim <jhs@mojatatu.com>,
+        stable@vger.kernel.org, Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 003/165] net/sched: fix refcnt leak in the error path of tcf_vlan_init()
-Date: Thu, 24 May 2018 11:36:49 +0200
-Message-Id: <20180524093622.111576919@linuxfoundation.org>
+Subject: [PATCH 4.14 012/165] hv_netvsc: Fix the real number of queues of non-vRSS cases
+Date: Thu, 24 May 2018 11:36:58 +0200
+Message-Id: <20180524093622.471331648@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -107,32 +106,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Davide Caratti <dcaratti@redhat.com>
+From: Haiyang Zhang <haiyangz@microsoft.com>
 
-[ Upstream commit 5a4931ae0193f8a4a97e8260fd0df1d705d83299 ]
+[ Commit 6450f8f269a9271985e4a8c13920b7e4cf21c0f3 upstream. ]
 
-Similarly to what was done with commit a52956dfc503 ("net sched actions:
-fix refcnt leak in skbmod"), fix the error path of tcf_vlan_init() to avoid
-refcnt leaks when wrong value of TCA_VLAN_PUSH_VLAN_PROTOCOL is given.
+For older hosts without multi-channel (vRSS) support, and some error
+cases, we still need to set the real number of queues to one.
+This patch adds this missing setting.
 
-Fixes: 5026c9b1bafc ("net sched: vlan action fix late binding")
-CC: Roman Mashak <mrv@mojatatu.com>
-Signed-off-by: Davide Caratti <dcaratti@redhat.com>
-Acked-by: Jamal Hadi Salim <jhs@mojatatu.com>
+Fixes: 8195b1396ec8 ("hv_netvsc: fix deadlock on hotplug")
+Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
+Reviewed-by: Stephen Hemminger <sthemmin@microsoft.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/act_vlan.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/hyperv/netvsc_drv.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/net/sched/act_vlan.c
-+++ b/net/sched/act_vlan.c
-@@ -154,6 +154,8 @@ static int tcf_vlan_init(struct net *net
- 			case htons(ETH_P_8021AD):
- 				break;
- 			default:
-+				if (exists)
-+					tcf_idr_release(*a, bind);
- 				return -EPROTONOSUPPORT;
- 			}
- 		} else {
+--- a/drivers/net/hyperv/netvsc_drv.c
++++ b/drivers/net/hyperv/netvsc_drv.c
+@@ -1932,6 +1932,12 @@ static int netvsc_probe(struct hv_device
+ 	/* We always need headroom for rndis header */
+ 	net->needed_headroom = RNDIS_AND_PPI_SIZE;
+ 
++	/* Initialize the number of queues to be 1, we may change it if more
++	 * channels are offered later.
++	 */
++	netif_set_real_num_tx_queues(net, 1);
++	netif_set_real_num_rx_queues(net, 1);
++
+ 	/* Notify the netvsc driver of the new device */
+ 	memset(&device_info, 0, sizeof(device_info));
+ 	device_info.ring_size = ring_size;
