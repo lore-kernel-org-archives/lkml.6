@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1874556-1527162658-2-3960585057492125217
+X-Cyrus-Session-Id: sloti22d1t05-1874556-1527162655-2-690326901332113091
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527162658; b=F4G872B0gZ57ZRL6sVhmJdcwkrCqqbmvxvX1HxsP6LkyI9GH47
-    deN3SiGsYWtM2dlRzoQ6oSheNjDGoxdEfIciJZ7mMbgFIliJXyEzBDoUz3ghQcgx
-    hMpRmmcpNie5pLNXw5Gpr9Xv19Yy6xOXTEVpYJL+oz40+5Q+ciLxReYoaCzO7P/O
-    r7tkjVi8yzqkH5g4CoLjAXMq3f6Rs7XUAsPJfV5QyAUBHwjHCS2bFOHQOa51Y/gj
-    1xSnhjhc7Q2HeB4ig7guG1blo3dDnH/Rm4r9ehwojCEgUKoOh8X/TC35H6n+pUAd
-    IT0wdn9eQclHA1vbm/ivnmorrGDkAvwlIzJA==
+    1527162654; b=deRLDOf+7BRSENT6Xsx84EW2iJpqTuQOzSui5Wz7R2V1wpvqKo
+    TnPeAVaj6yMv2RIJZRnFdusR64jq9cbo/j77doLKkr+pDuIt/BMXLaukIrVNgULo
+    3aF2Cehk+hHbQaq6TgduYpbL94pLGUBKluRRnvwaCg7VaItk3XsaD17C6UtSTjK4
+    /vk8pKafRpyv8qi6IzGtVBh0sRk8a+mCvcW+IqZpOfSl5TPju1p5H2WM6gzp9qsY
+    nYaYLafULb/W7ZOVaKIV/16biwEFDdiGBsRsg0teOom+qIn0xVyA2NasyvMrs0Aj
+    r9HpIB/L4j+/uEvHaLqOwZ+y7bIazEe14GYQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527162658; bh=TBfFPo/m+lijF0+0GqEMNKKQEMKB1g
-    rWDGPxUcacoTk=; b=lsbeByb0oVRT1VVm1AL6FvPfuLmi5Zrp810J2vhVGA9q8A
-    AKjEDWDxr2nlgkjPChyMOjR/mp2CuG9CIeEQRR/mqqKmUWt4sm8ynT092PmqVnaG
-    JZxMknphSYO7iiezSdEtTds0GJ85UxYomvfqXXVrwZ6Qc+yOxLPExX4KWN7eCrDw
-    c9OQ5XPqRS/xPO90UBe/uJJJ41VNYgqNHgiFDDdKooF7V+Vtm2DmIu24MJbdrrfj
-    iwnt3CxXwNZ4l4AEVn9uYQORprh1N2qbqVLgvqyyb8482vSIo8QgLSqxxITVNJ82
-    t79fijR3w1L1LoGnQ4NyOh9CcLdfvYcRAZRgXnMQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527162654; bh=GT3LQBs7tEs4updRxqEivfimiTrXWW
+    8XBv0KfI8lAEg=; b=Rm+QlZjlXHNB/zieDbo472TbDiOOFKPZ0OINHAYBpKuA/X
+    Yt1M149yUu+j+Bh/pbx5dR+iLhCWIK8NlTgHnbW/a2Fd1LUfPjouA+F+8BxM/fiA
+    iA9aN8auh4GFhRzz4hvossviUiE9NotCCnbNkYtkIJOpXfKsQyh1+5+unsuWVjj6
+    M/lZQmtAnrK6lZNIY0GEzkZ4Y/dBmmGBr810k+XXC2SSuGqiVp78/a9c+HjHrsG5
+    RaXOZJg2cqgqd5EQi4IaTYH3JzKa0+aymaprrU/MBzpL/bmAie8+5wLrGBG4ifGU
+    SWva3WZdr3jnyMoXAlRzvhuEcR1hM7t4mXNS7gRQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=MtW9IV7n x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=OAfIsDJm x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -46,10 +46,10 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=MtW9IV7n x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=OAfIsDJm x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -65,29 +65,34 @@ Authentication-Results: mx4.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPQ1cjJ6pfKesQUFJ1sCiFVWIIRDf8Ob9gMLqiekNkTFJSzzrBhAl5fK/oYtVlFg3pHgoSvO22DbimVCGWmY78qCZW9HO28vbMYp0Q0qcni6x0pyFXko
-    iCygDQtNcnQXCAu8OSB4/AJmErg973+gAFwvFHTkhC0V9lGHkt2ENkREn/OU0U0uwIUyF+5Lz1akRh7MCdeZ6jRQtXOEaR+cNf8CKN2FeaokTbK0K49Pb9zl
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfLGm7pz+43+850h1EB2j8VcUvSH7umOI8suWGTNqCluuwbKXGttgSvD9R9wolUsMK/KSiknIzndbrzxtuwTcCeKohNaSs9mJCoMPozgul+QQjH7kenFC
+    So91o4nBlq2/UPkpLe5CW1/zzjZUWNyjusVwZryBvOXKGpYq503fcTF5giIwKDlvVDAGXOa2WF742QLa1rPfrkK1h4v2YMUjpbeD5OVWcVo17cTIu8AMCv8q
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VnNF1IyMAAAA:8 a=ag1SF4gXAAAA:8 a=ri-GQuXACv77juQeL10A:9
-    a=Jut7cI41H8T5KsYh:21 a=9yjvXDHs8Mt41E2s:21 a=QEXdDO2ut3YA:10
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=i0EeH86SAAAA:8 a=QyXUC8HyAAAA:8 a=yPCof4ZbAAAA:8 a=_jlGtV7tAAAA:8
+    a=ag1SF4gXAAAA:8 a=5VKkRt6m1sbennSuhUsA:9 a=QEXdDO2ut3YA:10
+    a=nlm17XC03S6CtCLSeiRr:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969340AbeEXLux (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 07:50:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58610 "EHLO mail.kernel.org"
+        id S967016AbeEXLuw (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 07:50:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966941AbeEXJqu (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:46:50 -0400
+        id S966974AbeEXJqx (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:46:53 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.4 83/92] s390: use expoline thunks in the BPF JIT
-Date: Thu, 24 May 2018 11:39:00 +0200
-Message-Id: <20180524093207.228733985@linuxfoundation.org>
+        stable@vger.kernel.org, Jason Yan <yanaijie@huawei.com>,
+        Xiaofei Tan <tanxiaofei@huawei.com>,
+        John Garry <john.garry@huawei.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 4.4 84/92] scsi: libsas: defer ata device eh commands to libata
+Date: Thu, 24 May 2018 11:39:01 +0200
+Message-Id: <20180524093207.321493337@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093159.286472249@linuxfoundation.org>
 References: <20180524093159.286472249@linuxfoundation.org>
@@ -105,188 +110,130 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+From: Jason Yan <yanaijie@huawei.com>
 
-[ Upstream commit de5cb6eb514ebe241e3edeb290cb41deb380b81d ]
+commit 318aaf34f1179b39fa9c30fa0f3288b645beee39 upstream.
 
-The BPF JIT need safe guarding against spectre v2 in the sk_load_xxx
-assembler stubs and the indirect branches generated by the JIT itself
-need to be converted to expolines.
+When ata device doing EH, some commands still attached with tasks are
+not passed to libata when abort failed or recover failed, so libata did
+not handle these commands. After these commands done, sas task is freed,
+but ata qc is not freed. This will cause ata qc leak and trigger a
+warning like below:
 
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+WARNING: CPU: 0 PID: 28512 at drivers/ata/libata-eh.c:4037
+ata_eh_finish+0xb4/0xcc
+CPU: 0 PID: 28512 Comm: kworker/u32:2 Tainted: G     W  OE 4.14.0#1
+......
+Call trace:
+[<ffff0000088b7bd0>] ata_eh_finish+0xb4/0xcc
+[<ffff0000088b8420>] ata_do_eh+0xc4/0xd8
+[<ffff0000088b8478>] ata_std_error_handler+0x44/0x8c
+[<ffff0000088b8068>] ata_scsi_port_error_handler+0x480/0x694
+[<ffff000008875fc4>] async_sas_ata_eh+0x4c/0x80
+[<ffff0000080f6be8>] async_run_entry_fn+0x4c/0x170
+[<ffff0000080ebd70>] process_one_work+0x144/0x390
+[<ffff0000080ec100>] worker_thread+0x144/0x418
+[<ffff0000080f2c98>] kthread+0x10c/0x138
+[<ffff0000080855dc>] ret_from_fork+0x10/0x18
+
+If ata qc leaked too many, ata tag allocation will fail and io blocked
+for ever.
+
+As suggested by Dan Williams, defer ata device commands to libata and
+merge sas_eh_finish_cmd() with sas_eh_defer_cmd(). libata will handle
+ata qcs correctly after this.
+
+Signed-off-by: Jason Yan <yanaijie@huawei.com>
+CC: Xiaofei Tan <tanxiaofei@huawei.com>
+CC: John Garry <john.garry@huawei.com>
+CC: Dan Williams <dan.j.williams@intel.com>
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Cc: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/s390/net/bpf_jit.S      |   16 ++++++----
- arch/s390/net/bpf_jit_comp.c |   63 +++++++++++++++++++++++++++++++++++++++++--
- 2 files changed, 71 insertions(+), 8 deletions(-)
 
---- a/arch/s390/net/bpf_jit.S
-+++ b/arch/s390/net/bpf_jit.S
-@@ -8,6 +8,7 @@
-  */
+---
+ drivers/scsi/libsas/sas_scsi_host.c |   33 +++++++++++++--------------------
+ 1 file changed, 13 insertions(+), 20 deletions(-)
+
+--- a/drivers/scsi/libsas/sas_scsi_host.c
++++ b/drivers/scsi/libsas/sas_scsi_host.c
+@@ -222,6 +222,7 @@ out_done:
+ static void sas_eh_finish_cmd(struct scsi_cmnd *cmd)
+ {
+ 	struct sas_ha_struct *sas_ha = SHOST_TO_SAS_HA(cmd->device->host);
++	struct domain_device *dev = cmd_to_domain_dev(cmd);
+ 	struct sas_task *task = TO_SAS_TASK(cmd);
  
- #include <linux/linkage.h>
-+#include <asm/nospec-insn.h>
- #include "bpf_jit.h"
+ 	/* At this point, we only get called following an actual abort
+@@ -230,6 +231,14 @@ static void sas_eh_finish_cmd(struct scs
+ 	 */
+ 	sas_end_task(cmd, task);
  
- /*
-@@ -53,7 +54,7 @@ ENTRY(sk_load_##NAME##_pos);						\
- 	clg	%r3,STK_OFF_HLEN(%r15);	/* Offset + SIZE > hlen? */	\
- 	jh	sk_load_##NAME##_slow;					\
- 	LOAD	%r14,-SIZE(%r3,%r12);	/* Get data from skb */		\
--	b	OFF_OK(%r6);		/* Return */			\
-+	B_EX	OFF_OK,%r6;		/* Return */			\
- 									\
- sk_load_##NAME##_slow:;							\
- 	lgr	%r2,%r7;		/* Arg1 = skb pointer */	\
-@@ -63,11 +64,14 @@ sk_load_##NAME##_slow:;							\
- 	brasl	%r14,skb_copy_bits;	/* Get data from skb */		\
- 	LOAD	%r14,STK_OFF_TMP(%r15);	/* Load from temp bufffer */	\
- 	ltgr	%r2,%r2;		/* Set cc to (%r2 != 0) */	\
--	br	%r6;			/* Return */
-+	BR_EX	%r6;			/* Return */
- 
- sk_load_common(word, 4, llgf)	/* r14 = *(u32 *) (skb->data+offset) */
- sk_load_common(half, 2, llgh)	/* r14 = *(u16 *) (skb->data+offset) */
- 
-+	GEN_BR_THUNK %r6
-+	GEN_B_THUNK OFF_OK,%r6
-+
- /*
-  * Load 1 byte from SKB (optimized version)
-  */
-@@ -79,7 +83,7 @@ ENTRY(sk_load_byte_pos)
- 	clg	%r3,STK_OFF_HLEN(%r15)	# Offset >= hlen?
- 	jnl	sk_load_byte_slow
- 	llgc	%r14,0(%r3,%r12)	# Get byte from skb
--	b	OFF_OK(%r6)		# Return OK
-+	B_EX	OFF_OK,%r6		# Return OK
- 
- sk_load_byte_slow:
- 	lgr	%r2,%r7			# Arg1 = skb pointer
-@@ -89,7 +93,7 @@ sk_load_byte_slow:
- 	brasl	%r14,skb_copy_bits	# Get data from skb
- 	llgc	%r14,STK_OFF_TMP(%r15)	# Load result from temp buffer
- 	ltgr	%r2,%r2			# Set cc to (%r2 != 0)
--	br	%r6			# Return cc
-+	BR_EX	%r6			# Return cc
- 
- #define sk_negative_common(NAME, SIZE, LOAD)				\
- sk_load_##NAME##_slow_neg:;						\
-@@ -103,7 +107,7 @@ sk_load_##NAME##_slow_neg:;						\
- 	jz	bpf_error;						\
- 	LOAD	%r14,0(%r2);		/* Get data from pointer */	\
- 	xr	%r3,%r3;		/* Set cc to zero */		\
--	br	%r6;			/* Return cc */
-+	BR_EX	%r6;			/* Return cc */
- 
- sk_negative_common(word, 4, llgf)
- sk_negative_common(half, 2, llgh)
-@@ -112,4 +116,4 @@ sk_negative_common(byte, 1, llgc)
- bpf_error:
- # force a return 0 from jit handler
- 	ltgr	%r15,%r15	# Set condition code
--	br	%r6
-+	BR_EX	%r6
---- a/arch/s390/net/bpf_jit_comp.c
-+++ b/arch/s390/net/bpf_jit_comp.c
-@@ -24,6 +24,8 @@
- #include <linux/bpf.h>
- #include <asm/cacheflush.h>
- #include <asm/dis.h>
-+#include <asm/facility.h>
-+#include <asm/nospec-branch.h>
- #include "bpf_jit.h"
- 
- int bpf_jit_enable __read_mostly;
-@@ -41,6 +43,8 @@ struct bpf_jit {
- 	int base_ip;		/* Base address for literal pool */
- 	int ret0_ip;		/* Address of return 0 */
- 	int exit_ip;		/* Address of exit */
-+	int r1_thunk_ip;	/* Address of expoline thunk for 'br %r1' */
-+	int r14_thunk_ip;	/* Address of expoline thunk for 'br %r14' */
- 	int tail_call_start;	/* Tail call start offset */
- 	int labels[1];		/* Labels for local jumps */
- };
-@@ -248,6 +252,19 @@ static inline void reg_set_seen(struct b
- 	REG_SET_SEEN(b2);					\
- })
- 
-+#define EMIT6_PCREL_RILB(op, b, target)				\
-+({								\
-+	int rel = (target - jit->prg) / 2;			\
-+	_EMIT6(op | reg_high(b) << 16 | rel >> 16, rel & 0xffff);	\
-+	REG_SET_SEEN(b);					\
-+})
-+
-+#define EMIT6_PCREL_RIL(op, target)				\
-+({								\
-+	int rel = (target - jit->prg) / 2;			\
-+	_EMIT6(op | rel >> 16, rel & 0xffff);			\
-+})
-+
- #define _EMIT6_IMM(op, imm)					\
- ({								\
- 	unsigned int __imm = (imm);				\
-@@ -475,8 +492,45 @@ static void bpf_jit_epilogue(struct bpf_
- 	EMIT4(0xb9040000, REG_2, BPF_REG_0);
- 	/* Restore registers */
- 	save_restore_regs(jit, REGS_RESTORE);
-+	if (IS_ENABLED(CC_USING_EXPOLINE) && !nospec_disable) {
-+		jit->r14_thunk_ip = jit->prg;
-+		/* Generate __s390_indirect_jump_r14 thunk */
-+		if (test_facility(35)) {
-+			/* exrl %r0,.+10 */
-+			EMIT6_PCREL_RIL(0xc6000000, jit->prg + 10);
-+		} else {
-+			/* larl %r1,.+14 */
-+			EMIT6_PCREL_RILB(0xc0000000, REG_1, jit->prg + 14);
-+			/* ex 0,0(%r1) */
-+			EMIT4_DISP(0x44000000, REG_0, REG_1, 0);
-+		}
-+		/* j . */
-+		EMIT4_PCREL(0xa7f40000, 0);
++	if (dev_is_sata(dev)) {
++		/* defer commands to libata so that libata EH can
++		 * handle ata qcs correctly
++		 */
++		list_move_tail(&cmd->eh_entry, &sas_ha->eh_ata_q);
++		return;
 +	}
- 	/* br %r14 */
- 	_EMIT2(0x07fe);
 +
-+	if (IS_ENABLED(CC_USING_EXPOLINE) && !nospec_disable &&
-+	    (jit->seen & SEEN_FUNC)) {
-+		jit->r1_thunk_ip = jit->prg;
-+		/* Generate __s390_indirect_jump_r1 thunk */
-+		if (test_facility(35)) {
-+			/* exrl %r0,.+10 */
-+			EMIT6_PCREL_RIL(0xc6000000, jit->prg + 10);
-+			/* j . */
-+			EMIT4_PCREL(0xa7f40000, 0);
-+			/* br %r1 */
-+			_EMIT2(0x07f1);
-+		} else {
-+			/* larl %r1,.+14 */
-+			EMIT6_PCREL_RILB(0xc0000000, REG_1, jit->prg + 14);
-+			/* ex 0,S390_lowcore.br_r1_tampoline */
-+			EMIT4_DISP(0x44000000, REG_0, REG_0,
-+				   offsetof(struct _lowcore, br_r1_trampoline));
-+			/* j . */
-+			EMIT4_PCREL(0xa7f40000, 0);
-+		}
-+	}
+ 	/* now finish the command and move it on to the error
+ 	 * handler done list, this also takes it off the
+ 	 * error handler pending list.
+@@ -237,22 +246,6 @@ static void sas_eh_finish_cmd(struct scs
+ 	scsi_eh_finish_cmd(cmd, &sas_ha->eh_done_q);
  }
  
- /*
-@@ -980,8 +1034,13 @@ static noinline int bpf_jit_insn(struct
- 		/* lg %w1,<d(imm)>(%l) */
- 		EMIT6_DISP_LH(0xe3000000, 0x0004, REG_W1, REG_0, REG_L,
- 			      EMIT_CONST_U64(func));
--		/* basr %r14,%w1 */
--		EMIT2(0x0d00, REG_14, REG_W1);
-+		if (IS_ENABLED(CC_USING_EXPOLINE) && !nospec_disable) {
-+			/* brasl %r14,__s390_indirect_jump_r1 */
-+			EMIT6_PCREL_RILB(0xc0050000, REG_14, jit->r1_thunk_ip);
-+		} else {
-+			/* basr %r14,%w1 */
-+			EMIT2(0x0d00, REG_14, REG_W1);
-+		}
- 		/* lgr %b0,%r2: load return value into %b0 */
- 		EMIT4(0xb9040000, BPF_REG_0, REG_2);
- 		if (bpf_helper_changes_skb_data((void *)func)) {
+-static void sas_eh_defer_cmd(struct scsi_cmnd *cmd)
+-{
+-	struct domain_device *dev = cmd_to_domain_dev(cmd);
+-	struct sas_ha_struct *ha = dev->port->ha;
+-	struct sas_task *task = TO_SAS_TASK(cmd);
+-
+-	if (!dev_is_sata(dev)) {
+-		sas_eh_finish_cmd(cmd);
+-		return;
+-	}
+-
+-	/* report the timeout to libata */
+-	sas_end_task(cmd, task);
+-	list_move_tail(&cmd->eh_entry, &ha->eh_ata_q);
+-}
+-
+ static void sas_scsi_clear_queue_lu(struct list_head *error_q, struct scsi_cmnd *my_cmd)
+ {
+ 	struct scsi_cmnd *cmd, *n;
+@@ -260,7 +253,7 @@ static void sas_scsi_clear_queue_lu(stru
+ 	list_for_each_entry_safe(cmd, n, error_q, eh_entry) {
+ 		if (cmd->device->sdev_target == my_cmd->device->sdev_target &&
+ 		    cmd->device->lun == my_cmd->device->lun)
+-			sas_eh_defer_cmd(cmd);
++			sas_eh_finish_cmd(cmd);
+ 	}
+ }
+ 
+@@ -622,12 +615,12 @@ static void sas_eh_handle_sas_errors(str
+ 		case TASK_IS_DONE:
+ 			SAS_DPRINTK("%s: task 0x%p is done\n", __func__,
+ 				    task);
+-			sas_eh_defer_cmd(cmd);
++			sas_eh_finish_cmd(cmd);
+ 			continue;
+ 		case TASK_IS_ABORTED:
+ 			SAS_DPRINTK("%s: task 0x%p is aborted\n",
+ 				    __func__, task);
+-			sas_eh_defer_cmd(cmd);
++			sas_eh_finish_cmd(cmd);
+ 			continue;
+ 		case TASK_IS_AT_LU:
+ 			SAS_DPRINTK("task 0x%p is at LU: lu recover\n", task);
+@@ -638,7 +631,7 @@ static void sas_eh_handle_sas_errors(str
+ 					    "recovered\n",
+ 					    SAS_ADDR(task->dev),
+ 					    cmd->device->lun);
+-				sas_eh_defer_cmd(cmd);
++				sas_eh_finish_cmd(cmd);
+ 				sas_scsi_clear_queue_lu(work_q, cmd);
+ 				goto Again;
+ 			}
