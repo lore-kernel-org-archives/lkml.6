@@ -1,93 +1,261 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968990AbeEXLb7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 07:31:59 -0400
-Received: from mail-he1eur01on0068.outbound.protection.outlook.com ([104.47.0.68]:15930
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S968901AbeEXLb4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 07:31:56 -0400
-From: Andy Duan <fugang.duan@nxp.com>
-To: YueHaibing <yuehaibing@huawei.com>,
-        "davem@davemloft.net" <davem@davemloft.net>
-CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH net-next] net: fec: remove stale comment
-Thread-Topic: [PATCH net-next] net: fec: remove stale comment
-Thread-Index: AQHT81I5OitL6XNSIEus7oysAX4eM6Q+vrhQ
-Date: Thu, 24 May 2018 11:31:53 +0000
-Message-ID: <AM4PR0401MB226080C07E16578298F1E4E5FF6A0@AM4PR0401MB2260.eurprd04.prod.outlook.com>
-References: <20180524112707.3580-1-yuehaibing@huawei.com>
-In-Reply-To: <20180524112707.3580-1-yuehaibing@huawei.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=fugang.duan@nxp.com;
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM4PR0401MB1730;7:iJOry3DFaQBYjRGm2X7akI1NpqyrNrDlfpSIhx7nM8j9Xt+v+mmTauWoo164PNx5wGp985CkyrKS/WMW6D1nS5HGInhjyaRjLT9LTKydAg8A4Lt6+LYajFCL/bwJNPPdoVMetMXP3bYOG5zhBPxWpb5wgcOQRM4HCB/I7pkl8gS9S5G61EJ2wwlLnxWfNdmUHdeY0bB8J+eYt/oeA/8NpucHuGDfO28yWOFinmQHwDQUiVKEgrmp/odVhR27h7go
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:AM4PR0401MB1730;
-x-ms-traffictypediagnostic: AM4PR0401MB1730:
-x-microsoft-antispam-prvs: <AM4PR0401MB173014FB079CABBD61E54A40FF6A0@AM4PR0401MB1730.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(50582790962513)(185117386973197);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231254)(944501410)(52105095)(93006095)(93001095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:AM4PR0401MB1730;BCL:0;PCL:0;RULEID:;SRVR:AM4PR0401MB1730;
-x-forefront-prvs: 0682FC00E8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(39380400002)(366004)(376002)(396003)(346002)(189003)(199004)(26005)(476003)(6436002)(11346002)(102836004)(186003)(66066001)(486006)(99286004)(97736004)(446003)(6116002)(3846002)(478600001)(68736007)(229853002)(316002)(2900100001)(575784001)(86362001)(7736002)(74316002)(5660300001)(305945005)(5250100002)(8676002)(14454004)(33656002)(2501003)(2906002)(9686003)(3660700001)(55016002)(105586002)(106356001)(3280700002)(53936002)(25786009)(76176011)(6506007)(7696005)(54906003)(4326008)(8936002)(81166006)(81156014)(110136005)(6246003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM4PR0401MB1730;H:AM4PR0401MB2260.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: boSnmvLvK8uzDlcVaNrs3XXqAVz4YjZkfd4ZrdgTVt/qLisgf1avUWeuOVqpz2pQ13Hty39FCRyxcZlqUc+CkO5rWCt597E6ZRLuO/KQ5v1VafQXtMvTGVn7C1TQ5JPth382SD/utPajeHAvjLaq4LNmQKe67eS+wBAD3GBzELIAAwQb9iQ897hPUdYj/bkq
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="gb2312"
-MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 47465410-f1d8-4fdc-1706-08d5c169f2fa
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 47465410-f1d8-4fdc-1706-08d5c169f2fa
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 May 2018 11:31:53.3902
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR0401MB1730
+        id S969027AbeEXLdZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 07:33:25 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:22794 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S967102AbeEXLdU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 07:33:20 -0400
+Message-Id: <7a756b816161007903ca8b28aec662de27135c55.1527161282.git.christophe.leroy@c-s.fr>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v4] powerpc: Implement csum_ipv6_magic in assembly
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, segher@kernel.crashing.org
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date: Thu, 24 May 2018 11:33:18 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4OBWJAK019987
 
-> From: YueHaibing <yuehaibing@huawei.com> Sent: 2018Äê5ÔÂ24ÈÕ 19:27
-> This comment is outdated as fec_ptp_ioctl has been replaced by
-> fec_ptp_set/fec_ptp_get since commit 1d5244d0e43b ("fec: Implement
-> the SIOCGHWTSTAMP ioctl")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+The generic csum_ipv6_magic() generates a pretty bad result
 
-Thanks.
-Acked-by: Fugang Duan <fugang.duan@nxp.com>
-> ---
->  drivers/net/ethernet/freescale/fec_ptp.c | 6 ------
->  1 file changed, 6 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/freescale/fec_ptp.c
-> b/drivers/net/ethernet/freescale/fec_ptp.c
-> index f814397..d438ef8 100644
-> --- a/drivers/net/ethernet/freescale/fec_ptp.c
-> +++ b/drivers/net/ethernet/freescale/fec_ptp.c
-> @@ -466,12 +466,6 @@ static int fec_ptp_enable(struct ptp_clock_info
-> *ptp,
->  	return -EOPNOTSUPP;
->  }
-> 
-> -/**
-> - * fec_ptp_hwtstamp_ioctl - control hardware time stamping
-> - * @ndev: pointer to net_device
-> - * @ifreq: ioctl data
-> - * @cmd: particular ioctl requested
-> - */
->  int fec_ptp_set(struct net_device *ndev, struct ifreq *ifr)  {
->  	struct fec_enet_private *fep = netdev_priv(ndev);
-> --
-> 2.7.0
-> 
+00000000 <csum_ipv6_magic>: (PPC32)
+   0:	81 23 00 00 	lwz     r9,0(r3)
+   4:	81 03 00 04 	lwz     r8,4(r3)
+   8:	7c e7 4a 14 	add     r7,r7,r9
+   c:	7d 29 38 10 	subfc   r9,r9,r7
+  10:	7d 4a 51 10 	subfe   r10,r10,r10
+  14:	7d 27 42 14 	add     r9,r7,r8
+  18:	7d 2a 48 50 	subf    r9,r10,r9
+  1c:	80 e3 00 08 	lwz     r7,8(r3)
+  20:	7d 08 48 10 	subfc   r8,r8,r9
+  24:	7d 4a 51 10 	subfe   r10,r10,r10
+  28:	7d 29 3a 14 	add     r9,r9,r7
+  2c:	81 03 00 0c 	lwz     r8,12(r3)
+  30:	7d 2a 48 50 	subf    r9,r10,r9
+  34:	7c e7 48 10 	subfc   r7,r7,r9
+  38:	7d 4a 51 10 	subfe   r10,r10,r10
+  3c:	7d 29 42 14 	add     r9,r9,r8
+  40:	7d 2a 48 50 	subf    r9,r10,r9
+  44:	80 e4 00 00 	lwz     r7,0(r4)
+  48:	7d 08 48 10 	subfc   r8,r8,r9
+  4c:	7d 4a 51 10 	subfe   r10,r10,r10
+  50:	7d 29 3a 14 	add     r9,r9,r7
+  54:	7d 2a 48 50 	subf    r9,r10,r9
+  58:	81 04 00 04 	lwz     r8,4(r4)
+  5c:	7c e7 48 10 	subfc   r7,r7,r9
+  60:	7d 4a 51 10 	subfe   r10,r10,r10
+  64:	7d 29 42 14 	add     r9,r9,r8
+  68:	7d 2a 48 50 	subf    r9,r10,r9
+  6c:	80 e4 00 08 	lwz     r7,8(r4)
+  70:	7d 08 48 10 	subfc   r8,r8,r9
+  74:	7d 4a 51 10 	subfe   r10,r10,r10
+  78:	7d 29 3a 14 	add     r9,r9,r7
+  7c:	7d 2a 48 50 	subf    r9,r10,r9
+  80:	81 04 00 0c 	lwz     r8,12(r4)
+  84:	7c e7 48 10 	subfc   r7,r7,r9
+  88:	7d 4a 51 10 	subfe   r10,r10,r10
+  8c:	7d 29 42 14 	add     r9,r9,r8
+  90:	7d 2a 48 50 	subf    r9,r10,r9
+  94:	7d 08 48 10 	subfc   r8,r8,r9
+  98:	7d 4a 51 10 	subfe   r10,r10,r10
+  9c:	7d 29 2a 14 	add     r9,r9,r5
+  a0:	7d 2a 48 50 	subf    r9,r10,r9
+  a4:	7c a5 48 10 	subfc   r5,r5,r9
+  a8:	7c 63 19 10 	subfe   r3,r3,r3
+  ac:	7d 29 32 14 	add     r9,r9,r6
+  b0:	7d 23 48 50 	subf    r9,r3,r9
+  b4:	7c c6 48 10 	subfc   r6,r6,r9
+  b8:	7c 63 19 10 	subfe   r3,r3,r3
+  bc:	7c 63 48 50 	subf    r3,r3,r9
+  c0:	54 6a 80 3e 	rotlwi  r10,r3,16
+  c4:	7c 63 52 14 	add     r3,r3,r10
+  c8:	7c 63 18 f8 	not     r3,r3
+  cc:	54 63 84 3e 	rlwinm  r3,r3,16,16,31
+  d0:	4e 80 00 20 	blr
+
+0000000000000000 <.csum_ipv6_magic>: (PPC64)
+   0:	81 23 00 00 	lwz     r9,0(r3)
+   4:	80 03 00 04 	lwz     r0,4(r3)
+   8:	81 63 00 08 	lwz     r11,8(r3)
+   c:	7c e7 4a 14 	add     r7,r7,r9
+  10:	7f 89 38 40 	cmplw   cr7,r9,r7
+  14:	7d 47 02 14 	add     r10,r7,r0
+  18:	7d 30 10 26 	mfocrf  r9,1
+  1c:	55 29 f7 fe 	rlwinm  r9,r9,30,31,31
+  20:	7d 4a 4a 14 	add     r10,r10,r9
+  24:	7f 80 50 40 	cmplw   cr7,r0,r10
+  28:	7d 2a 5a 14 	add     r9,r10,r11
+  2c:	80 03 00 0c 	lwz     r0,12(r3)
+  30:	81 44 00 00 	lwz     r10,0(r4)
+  34:	7d 10 10 26 	mfocrf  r8,1
+  38:	55 08 f7 fe 	rlwinm  r8,r8,30,31,31
+  3c:	7d 29 42 14 	add     r9,r9,r8
+  40:	81 04 00 04 	lwz     r8,4(r4)
+  44:	7f 8b 48 40 	cmplw   cr7,r11,r9
+  48:	7d 29 02 14 	add     r9,r9,r0
+  4c:	7d 70 10 26 	mfocrf  r11,1
+  50:	55 6b f7 fe 	rlwinm  r11,r11,30,31,31
+  54:	7d 29 5a 14 	add     r9,r9,r11
+  58:	7f 80 48 40 	cmplw   cr7,r0,r9
+  5c:	7d 29 52 14 	add     r9,r9,r10
+  60:	7c 10 10 26 	mfocrf  r0,1
+  64:	54 00 f7 fe 	rlwinm  r0,r0,30,31,31
+  68:	7d 69 02 14 	add     r11,r9,r0
+  6c:	7f 8a 58 40 	cmplw   cr7,r10,r11
+  70:	7c 0b 42 14 	add     r0,r11,r8
+  74:	81 44 00 08 	lwz     r10,8(r4)
+  78:	7c f0 10 26 	mfocrf  r7,1
+  7c:	54 e7 f7 fe 	rlwinm  r7,r7,30,31,31
+  80:	7c 00 3a 14 	add     r0,r0,r7
+  84:	7f 88 00 40 	cmplw   cr7,r8,r0
+  88:	7d 20 52 14 	add     r9,r0,r10
+  8c:	80 04 00 0c 	lwz     r0,12(r4)
+  90:	7d 70 10 26 	mfocrf  r11,1
+  94:	55 6b f7 fe 	rlwinm  r11,r11,30,31,31
+  98:	7d 29 5a 14 	add     r9,r9,r11
+  9c:	7f 8a 48 40 	cmplw   cr7,r10,r9
+  a0:	7d 29 02 14 	add     r9,r9,r0
+  a4:	7d 70 10 26 	mfocrf  r11,1
+  a8:	55 6b f7 fe 	rlwinm  r11,r11,30,31,31
+  ac:	7d 29 5a 14 	add     r9,r9,r11
+  b0:	7f 80 48 40 	cmplw   cr7,r0,r9
+  b4:	7d 29 2a 14 	add     r9,r9,r5
+  b8:	7c 10 10 26 	mfocrf  r0,1
+  bc:	54 00 f7 fe 	rlwinm  r0,r0,30,31,31
+  c0:	7d 29 02 14 	add     r9,r9,r0
+  c4:	7f 85 48 40 	cmplw   cr7,r5,r9
+  c8:	7c 09 32 14 	add     r0,r9,r6
+  cc:	7d 50 10 26 	mfocrf  r10,1
+  d0:	55 4a f7 fe 	rlwinm  r10,r10,30,31,31
+  d4:	7c 00 52 14 	add     r0,r0,r10
+  d8:	7f 80 30 40 	cmplw   cr7,r0,r6
+  dc:	7d 30 10 26 	mfocrf  r9,1
+  e0:	55 29 ef fe 	rlwinm  r9,r9,29,31,31
+  e4:	7c 09 02 14 	add     r0,r9,r0
+  e8:	54 03 80 3e 	rotlwi  r3,r0,16
+  ec:	7c 03 02 14 	add     r0,r3,r0
+  f0:	7c 03 00 f8 	not     r3,r0
+  f4:	78 63 84 22 	rldicl  r3,r3,48,48
+  f8:	4e 80 00 20 	blr
+
+This patch implements it in assembly for both PPC32 and PPC64
+
+Link: https://github.com/linuxppc/linux/issues/9
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ v4: Interleaved loads and adds in PPC32. No performance change on 8xx, 15% improvment on 83xx
+
+ v3: Add support for PPC64 (please review, especially whether instructions order in optimal)
+
+ v2: Fix number of args in final addze
+
+ arch/powerpc/include/asm/checksum.h |  6 ++++++
+ arch/powerpc/lib/checksum_32.S      | 33 +++++++++++++++++++++++++++++++++
+ arch/powerpc/lib/checksum_64.S      | 28 ++++++++++++++++++++++++++++
+ 3 files changed, 67 insertions(+)
+
+diff --git a/arch/powerpc/include/asm/checksum.h b/arch/powerpc/include/asm/checksum.h
+index 54065caa40b3..a78a57e5058d 100644
+--- a/arch/powerpc/include/asm/checksum.h
++++ b/arch/powerpc/include/asm/checksum.h
+@@ -13,6 +13,7 @@
+ #include <asm-generic/checksum.h>
+ #else
+ #include <linux/bitops.h>
++#include <linux/in6.h>
+ /*
+  * Computes the checksum of a memory block at src, length len,
+  * and adds in "sum" (32-bit), while copying the block to dst.
+@@ -211,6 +212,11 @@ static inline __sum16 ip_compute_csum(const void *buff, int len)
+ 	return csum_fold(csum_partial(buff, len, 0));
+ }
+ 
++#define _HAVE_ARCH_IPV6_CSUM
++__sum16 csum_ipv6_magic(const struct in6_addr *saddr,
++			const struct in6_addr *daddr,
++			__u32 len, __u8 proto, __wsum sum);
++
+ #endif
+ #endif /* __KERNEL__ */
+ #endif
+diff --git a/arch/powerpc/lib/checksum_32.S b/arch/powerpc/lib/checksum_32.S
+index 9a671c774b22..d2238ea82209 100644
+--- a/arch/powerpc/lib/checksum_32.S
++++ b/arch/powerpc/lib/checksum_32.S
+@@ -293,3 +293,36 @@ dst_error:
+ 	EX_TABLE(51b, dst_error);
+ 
+ EXPORT_SYMBOL(csum_partial_copy_generic)
++
++/*
++ * __sum16 csum_ipv6_magic(const struct in6_addr *saddr,
++ *			   const struct in6_addr *daddr,
++ *			   __u32 len, __u8 proto, __wsum sum)
++ */
++
++_GLOBAL(csum_ipv6_magic)
++	lwz	r8, 0(r3)
++	lwz	r9, 4(r3)
++	addc	r0, r7, r8
++	lwz	r10, 8(r3)
++	adde	r0, r0, r9
++	lwz	r11, 12(r3)
++	adde	r0, r0, r10
++	lwz	r8, 0(r4)
++	adde	r0, r0, r11
++	lwz	r9, 4(r4)
++	adde	r0, r0, r8
++	lwz	r10, 8(r4)
++	adde	r0, r0, r9
++	lwz	r11, 12(r4)
++	adde	r0, r0, r10
++	add	r5, r5, r6	/* assumption: len + proto doesn't carry */
++	adde	r0, r0, r11
++	adde	r0, r0, r5
++	addze	r0, r0
++	rotlwi	r3, r0, 16
++	add	r3, r0, r3
++	not	r3, r3
++	rlwinm	r3, r3, 16, 16, 31
++	blr
++EXPORT_SYMBOL(csum_ipv6_magic)
+diff --git a/arch/powerpc/lib/checksum_64.S b/arch/powerpc/lib/checksum_64.S
+index d7f1a966136e..bf0546e546fc 100644
+--- a/arch/powerpc/lib/checksum_64.S
++++ b/arch/powerpc/lib/checksum_64.S
+@@ -429,3 +429,31 @@ dstnr;	stb	r6,0(r4)
+ 	stw	r6,0(r8)
+ 	blr
+ EXPORT_SYMBOL(csum_partial_copy_generic)
++
++/*
++ * __sum16 csum_ipv6_magic(const struct in6_addr *saddr,
++ *			   const struct in6_addr *daddr,
++ *			   __u32 len, __u8 proto, __wsum sum)
++ */
++
++_GLOBAL(csum_ipv6_magic)
++	ld	r8, 0(r3)
++	ld	r9, 8(r3)
++	add	r5, r5, r6
++	addc	r0, r8, r9
++	ld	r10, 0(r4)
++	ld	r11, 8(r4)
++	adde	r0, r0, r10
++	add	r5, r5, r7
++	adde	r0, r0, r11
++	adde	r0, r0, r5
++	addze	r0, r0
++	rotldi  r3 ,r0, 32		/* fold two 32 bit halves together */
++	add	r3, r0, r3
++	srdi	r0, r3, 32
++	rotlwi	r3, r0, 16		/* fold two 16 bit halves together */
++	add	r3, r0, r3
++	not	r3, r3
++	rlwinm	r3, r3, 16, 16, 31
++	blr
++EXPORT_SYMBOL(csum_ipv6_magic)
+-- 
+2.13.3
