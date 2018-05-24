@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1691122-1527155000-2-10747665177850343559
+X-Cyrus-Session-Id: sloti22d1t05-1691124-1527154988-2-3651326879201847263
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527154999; b=LXXw7A8ge5VYLP1AAXzLWuRCZ7UpRuHqMZbZgjl6dVT0sIsWc+
-    KuHgtBgNi7/HOLj53IGslQqktY7UdiAYS1iA2AW6FwTGSEJsQz1RSfunTkQfp3IA
-    cidPwM1ojhuFw9rhMAuEwYluENick+NWG+l9A1O4NLQcczZKhqAL2oXucbLpoAnd
-    Yt5B1QKAIPLhOWWiTq/FO5SFTlgmGR12dxDQvrbf4RFl2xpQdt5aza5FaDl7IYAG
-    a0ifejdARQQ3ZxEVbJawMpARLEs1QfD3xVUcx/4ucKye+MBruBB7OYhayDbwnNWi
-    mA4VcubmDfrp0x42VgiM3LYIVTdSo9AgFJIg==
+    1527154988; b=ZmEmXiqeb49bQXfzE2hncFLYqqP7CRnqb+DgBfe1gnmOs44yl0
+    EdoaxShh1ecap0sVP3rKEYfK5uEVYkFQqm07tLv+rqmOe0IU28rFTKfZ3Vp3sKNX
+    CvjAMNMHtQT5+vlGOIG8oStHnzyZtovgdjTsVw2oWdMhQAdA6V49tfKN3mI0p6Ge
+    V/Y8AjWtBx0RaEiReYjoPicv8cSERdP5TfIKQJYUBf/f5DjZYd3zRkRIYDYa5USW
+    l2nrStjc4uLUnLLlnIVi/NcP5zCkF0qLL6C3vpZ1Iqqoc3+xUf5WKS/utpaDF6eL
+    7kh7jy2RlN9Tp8VD+FfcYb/llIvNiF6H2koQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527154999; bh=LPbuK20ES1PWwBWVpm+ZczrsjYs2C+
-    SdddvZ4xGG03Q=; b=XrVJS7GuLqIPCwHeDkzI1LU7ViJgqfiFTlPBJ+V9ZLQVjK
-    viOaDFQZDopLvfQ/trZFmTGhn/2uSG3SGQsKN4I8FRnUi84dSmBMnoIggH35WGP/
-    +tKJ7qfYYIovqsbvIcNWu5JCeGw7qEprHloKXwj9zhGdefsxaHMArPhzk5LVRNxx
-    emUVYKXYOVj7fBlXJ28f2ENSVpcJR0Xf6mH5AOZyL2VEaYwmL1J4MEVY3qzTsrnF
-    QLQ75aCgIf6rgd9nBfhvHnPaZK57HMDSgZUNxjdATO4AIcNZedTydH4/CVUVfEd0
-    MKs8q78BqHPQid9CyspEabkiGjWvdjXWtco8lp0w==
+    :list-id; s=fm2; t=1527154988; bh=lRHngEF289VHYGQBWUctdq1Vl4CKzk
+    vKksclNvCjlqg=; b=BPY1IY/77wvewUiHxwialrCw8d+zSVlt5zBkGFxGK6KjB4
+    65DX/RTAdpwJq5pDSd6j6+ecuJVcC0Au79nNGeGu/LrqhOEO7bAUOuikCcOAgjNx
+    W/yIYvOE0701qn0o29kOlOTB7YUM4Wd/CCzTzMal2PP1ehKMRor9SxjZMWIyU/r2
+    5gRu1JFtTEcQ+NFNBMyqgEO46rU4n6F1UHUyLv6SqHGjvFwh8ayqMR2pY4nUJ5HA
+    pbYoqBpjzn53p9Pcj5x72sZuIeq7ewU7q0wwurY8zHs4AxJT8MnhPdRZ2lDjrimp
+    il8d1cI6QvXLnF1J8mm/T0pFme/pnr8v6XPS4QEA==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=wUBXoNVA x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=sQavlRHJ x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -48,7 +48,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
 Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=wUBXoNVA x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=sQavlRHJ x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,30 +64,30 @@ Authentication-Results: mx3.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMFSDnXkWDAgRmsj1ejXExV8V3rwgtEgC4ZV6iXZ4gTeC/QNREEKH3Xx+VxCmTF46RZ4iqJ/hikdkPrZ7WXo3gSQajX7dQ+5luzJx93UBJ5MxBuI9UOG
-    cpDrOx4no+YlNELgT+rcbm2HBXZwFPLsf3kh+Vq/ELr1ClnpxBPQp/3xt+4hiNn+kpC76rxVW46PUsZnD9icRQiPIYNNkAU6dcBBNXT+bZnhYMEWZS057yHw
+X-CM-Envelope: MS4wfHS03IItV+tfhrZmqTdGOOCV5PoNQeiFvJTrEIGV85BHsL+l94EB09+TeVVUg8zymzmLV1kRkITu+azwOQR2TRhfgQM1ixvEL/Idre8egbnk38/w7o+N
+    hn8oVfrV64IsPhrhGICDGBuLrhCfJ+B1QNb1ZKgQ/BpL7ybhZDmtqWt5GB5AfIQce1Mq8SlWqezs0v/cYM7mzv5o+A1vYV2s+HkeVR18Z2vNG9HG6POAq3JO
 X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=Udi51pQLigb7wLLcoy4A:9
-    a=leO6L6J5QhcLqcjX:21 a=DiLKg6yONuWM8hCT:21 a=QEXdDO2ut3YA:10
-    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=FOH2dFAWAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=0ho8uy10ve2BAXLJD4AA:9
+    a=QEXdDO2ut3YA:10 a=i3VuKzQdj-NEYjvDI-p3:22 a=y1Q9-5lHfBjTkpIzbSAN:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966180AbeEXJnR (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:43:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54620 "EHLO mail.kernel.org"
+        id S966428AbeEXJnF (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:43:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54546 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966432AbeEXJnH (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:43:07 -0400
+        id S965972AbeEXJnB (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:43:01 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rob Taglang <rob@taglang.io>,
+        stable@vger.kernel.org, Andrey Ignatov <rdna@fb.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 06/92] net: ethernet: sun: niu set correct packet size in skb
-Date: Thu, 24 May 2018 11:37:43 +0200
-Message-Id: <20180524093159.859034674@linuxfoundation.org>
+Subject: [PATCH 4.4 04/92] ipv4: fix memory leaks in udp_sendmsg, ping_v4_sendmsg
+Date: Thu, 24 May 2018 11:37:41 +0200
+Message-Id: <20180524093159.669935648@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093159.286472249@linuxfoundation.org>
 References: <20180524093159.286472249@linuxfoundation.org>
@@ -105,56 +105,75 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Rob Taglang <rob@taglang.io>
+From: Andrey Ignatov <rdna@fb.com>
 
-[ Upstream commit 14224923c3600bae2ac4dcae3bf0c3d4dc2812be ]
+[ Upstream commit 1b97013bfb11d66f041de691de6f0fec748ce016 ]
 
-Currently, skb->len and skb->data_len are set to the page size, not
-the packet size. This causes the frame check sequence to not be
-located at the "end" of the packet resulting in ethernet frame check
-errors. The driver does work currently, but stricter kernel facing
-networking solutions like OpenVSwitch will drop these packets as
-invalid.
+Fix more memory leaks in ip_cmsg_send() callers. Part of them were fixed
+earlier in 919483096bfe.
 
-These changes set the packet size correctly so that these errors no
-longer occur. The length does not include the frame check sequence, so
-that subtraction was removed.
+* udp_sendmsg one was there since the beginning when linux sources were
+  first added to git;
+* ping_v4_sendmsg one was copy/pasted in c319b4d76b9e.
 
-Tested on Oracle/SUN Multithreaded 10-Gigabit Ethernet Network
-Controller [108e:abcd] and validated in wireshark.
+Whenever return happens in udp_sendmsg() or ping_v4_sendmsg() IP options
+have to be freed if they were allocated previously.
 
-Signed-off-by: Rob Taglang <rob@taglang.io>
+Add label so that future callers (if any) can use it instead of kfree()
+before return that is easy to forget.
+
+Fixes: c319b4d76b9e (net: ipv4: add IPPROTO_ICMP socket kind)
+Signed-off-by: Andrey Ignatov <rdna@fb.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/sun/niu.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ net/ipv4/ping.c |    7 +++++--
+ net/ipv4/udp.c  |    7 +++++--
+ 2 files changed, 10 insertions(+), 4 deletions(-)
 
---- a/drivers/net/ethernet/sun/niu.c
-+++ b/drivers/net/ethernet/sun/niu.c
-@@ -3442,7 +3442,7 @@ static int niu_process_rx_pkt(struct nap
+--- a/net/ipv4/ping.c
++++ b/net/ipv4/ping.c
+@@ -777,8 +777,10 @@ static int ping_v4_sendmsg(struct sock *
+ 	ipc.addr = faddr = daddr;
  
- 		len = (val & RCR_ENTRY_L2_LEN) >>
- 			RCR_ENTRY_L2_LEN_SHIFT;
--		len -= ETH_FCS_LEN;
-+		append_size = len + ETH_HLEN + ETH_FCS_LEN;
+ 	if (ipc.opt && ipc.opt->opt.srr) {
+-		if (!daddr)
+-			return -EINVAL;
++		if (!daddr) {
++			err = -EINVAL;
++			goto out_free;
++		}
+ 		faddr = ipc.opt->opt.faddr;
+ 	}
+ 	tos = get_rttos(&ipc, inet);
+@@ -843,6 +845,7 @@ back_from_confirm:
  
- 		addr = (val & RCR_ENTRY_PKT_BUF_ADDR) <<
- 			RCR_ENTRY_PKT_BUF_ADDR_SHIFT;
-@@ -3452,7 +3452,6 @@ static int niu_process_rx_pkt(struct nap
- 					 RCR_ENTRY_PKTBUFSZ_SHIFT];
+ out:
+ 	ip_rt_put(rt);
++out_free:
+ 	if (free)
+ 		kfree(ipc.opt);
+ 	if (!err) {
+--- a/net/ipv4/udp.c
++++ b/net/ipv4/udp.c
+@@ -991,8 +991,10 @@ int udp_sendmsg(struct sock *sk, struct
+ 	ipc.addr = faddr = daddr;
  
- 		off = addr & ~PAGE_MASK;
--		append_size = rcr_size;
- 		if (num_rcr == 1) {
- 			int ptype;
+ 	if (ipc.opt && ipc.opt->opt.srr) {
+-		if (!daddr)
+-			return -EINVAL;
++		if (!daddr) {
++			err = -EINVAL;
++			goto out_free;
++		}
+ 		faddr = ipc.opt->opt.faddr;
+ 		connected = 0;
+ 	}
+@@ -1105,6 +1107,7 @@ do_append_data:
  
-@@ -3465,7 +3464,7 @@ static int niu_process_rx_pkt(struct nap
- 			else
- 				skb_checksum_none_assert(skb);
- 		} else if (!(val & RCR_ENTRY_MULTI))
--			append_size = len - skb->len;
-+			append_size = append_size - skb->len;
- 
- 		niu_rx_skb_append(skb, page, off, append_size, rcr_size);
- 		if ((page->index + rp->rbr_block_size) - rcr_size == addr) {
+ out:
+ 	ip_rt_put(rt);
++out_free:
+ 	if (free)
+ 		kfree(ipc.opt);
+ 	if (!err)
