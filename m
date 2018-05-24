@@ -1,105 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966061AbeEXJhL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 05:37:11 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:41585 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965783AbeEXJhH (ORCPT
+        id S966077AbeEXJho (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 05:37:44 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:41777 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965783AbeEXJhl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 05:37:07 -0400
-X-Google-Smtp-Source: AB8JxZoSLQMtZHDpreqZJ3JpUSNbEezGxLcV2/vJ0iVSH/OTD3AZcdhQzjELdmSgSKe2RsYqBOsLkw==
-Subject: Re: [PATCH v2] mm/ksm: ignore STABLE_FLAG of rmap_item->address in
- rmap_walk_ksm
-To: Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: Andrea Arcangeli <aarcange@redhat.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, jia.he@hxt-semitech.com,
-        Hugh Dickins <hughd@google.com>
-References: <20180503124415.3f9d38aa@p-imbrenda.boeblingen.de.ibm.com>
- <1525403506-6750-1-git-send-email-hejianet@gmail.com>
- <20180509163101.02f23de1842a822c61fc68ff@linux-foundation.org>
- <2cd6b39b-1496-bbd5-9e31-5e3dcb31feda@arm.com>
- <6c417ab1-a808-72ea-9618-3d76ec203684@arm.com>
- <198fe48c-0d26-7dd1-89dc-415bd3c7ab41@gmail.com>
- <575857e6-c8ec-efa0-6434-b78a513aeaba@arm.com>
-From: Jia He <hejianet@gmail.com>
-Message-ID: <2c220e3d-8ff1-f9a9-9038-fff38952b8b1@gmail.com>
-Date: Thu, 24 May 2018 17:36:57 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 24 May 2018 05:37:41 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] cpufreq: tegra20: Fix imbalanced clock enable count
+Date: Thu, 24 May 2018 11:36:59 +0200
+Message-ID: <2304436.qRMBXhMGsN@aspire.rjw.lan>
+In-Reply-To: <db300fa3-ae83-059f-eae0-0808c3cb33fb@gmail.com>
+References: <20180522211420.2006-1-digetx@gmail.com> <20180523055817.subrv6oeckfecpcp@vireshk-i7> <db300fa3-ae83-059f-eae0-0808c3cb33fb@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <575857e6-c8ec-efa0-6434-b78a513aeaba@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wednesday, May 23, 2018 11:30:39 AM CEST Dmitry Osipenko wrote:
+> On 23.05.2018 08:58, Viresh Kumar wrote:
+> > On 23-05-18, 00:14, Dmitry Osipenko wrote:
+> >> Tegra20-cpufreq driver missed enabling the CPU clocks. This results in a
+> >> clock-enable refcount disbalance on PLL_P <-> PLL_X reparent, causing
+> >> PLL_X to get disabled while it shouldn't. Fix this by enabling the clocks
+> >> on the driver probe.
+> >>
+> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> >> ---
+> >>
+> >> CPUFreq maintainers,
+> >>
+> >> Please take into account that this patch is made on top of my recent
+> >> series of patches [0] "Clean up Tegra20 cpufreq driver" that was fully
+> >> reviewed, but seems not applied yet. Let me know if you prefer to re-spin
+> >> the [0], including this patch into the series.
+> >>
+> >> [0] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=45321
+> > 
+> > This is already picked by Rafael and is sitting in pm/bleeding-edge
+> > branch. Should get merged into linux-next in a day or two.
+> 
+> Neat, thank you for letting me know.
 
+It actually is there in my linux-next branch, but linux-next proper is not
+taking new material this week AFAICS.
 
-On 5/24/2018 5:01 PM, Suzuki K Poulose Wrote:
-> On 24/05/18 09:50, Jia He wrote:
->> Hi Suzuki
->>
->> On 5/24/2018 4:44 PM, Suzuki K Poulose Wrote:
->>> On 14/05/18 10:45, Suzuki K Poulose wrote:
->>>> On 10/05/18 00:31, Andrew Morton wrote:
->>>>> On Fri,  4 May 2018 11:11:46 +0800 Jia He <hejianet@gmail.com> wrote:
->>>>>
->>>>>> In our armv8a server(QDF2400), I noticed lots of WARN_ON caused by PAGE_SIZE
->>>>>> unaligned for rmap_item->address under memory pressure tests(start 20 guests
->>>>>> and run memhog in the host).
->>>>>>
->>>>>> ...
->>>>>>
->>>>>> In rmap_walk_ksm, the rmap_item->address might still have the STABLE_FLAG,
->>>>>> then the start and end in handle_hva_to_gpa might not be PAGE_SIZE aligned.
->>>>>> Thus it will cause exceptions in handle_hva_to_gpa on arm64.
->>>>>>
->>>>>> This patch fixes it by ignoring(not removing) the low bits of address when
->>>>>> doing rmap_walk_ksm.
->>>>>>
->>>>>> Signed-off-by: jia.he@hxt-semitech.com
->>>>>
->>>>> I assumed you wanted this patch to be committed as
->>>>> From:jia.he@hxt-semitech.com rather than From:hejianet@gmail.com, so I
->>>>> made that change.  Please let me know if this was inappropriate.
->>>>>
->>>>> You can do this yourself by adding an explicit From: line to the very
->>>>> start of the patch's email text.
->>>>>
->>>>> Also, a storm of WARN_ONs is pretty poor behaviour.  Is that the only
->>>>> misbehaviour which this bug causes?  Do you think the fix should be
->>>>> backported into earlier kernels?
->>>>>
->>>
->>>
->>> Jia, Andrew,
->>>
->>> What is the status of this patch ?
->>>
->>> Suzuki
->> I thought the patch is merged into mmotm tree.
->> http://www.ozlabs.org/~akpm/mmotm/series
->> But I don't know what is the next step.
-> 
-> Hi Jia,
-> 
-> Thanks for the update. I think that should eventually hit mainline. When it does,
-> please could you send the patch to stable kernel versions too ?
-> 
-> Usually having a "Cc: stable@kernel.vger.org" in the original patch (for
-> critical fixes) would have done the trick. But since we don't have it,
-> please send it following the stable kernel rules.
-> 
-> Cheers
-> Suzuki
-> 
-Ok,thanks for pointing
--- 
-Cheers,
-Jia
+You'll see this in linux-next on Monday, most probably.
