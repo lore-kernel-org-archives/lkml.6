@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1874556-1527163331-2-8666964808768788099
+X-Cyrus-Session-Id: sloti22d1t05-1886372-1527163328-2-10279353775472091790
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527163330; b=RQdU1D7IK65DOWz8pRlrA68JycWc+gfRO1A5v/ZPJ3TPeAsaAG
-    myXceIeJdFopw/gzYEY4g5xVW9RAKasFOhtbvLOQyqcXb43N8FX4onjSED4dAbek
-    XxgfLbMTAs0QCiwNGMaT/Puv1blkfaa5zvrawuRvYBWEU69SPztejCzLloJBFAHp
-    dIrFZsYibQzSLbu/QzsiHC/ifH5ICtJSYBdKdGtht5aD178azDkMNQ7Q/f86hNGY
-    tNoCO/ZM5Kxs4x72GDxpSx2U6aMr38UoRR8M59Rx9zqUG1HkSwdPdRl4P2dCBbc+
-    LQrX7aQ1ExgkGTLSg6qzAhtoNheZgJx8Hy2Q==
+    1527163325; b=hHmpiaQEC4DqU9SmpMMWTew6rTXQ8GGDsQuYfeBdUxrpOpTXNi
+    c3M0jZuj8WgbFrrdUprKcDYmr4DeZWyOgGZWcezK9KlRlacVJEzNFh7nnEArdRP9
+    wCjvi5PXGVjWB2XIzRxgC5KthT8CnvgMA1rkV333cPzKLz5R7lNXcAIACEI+jLBR
+    455vUelsbjT/k0biaCggDYFF+MDpMMcT6mCFxZ2VDWwVCgDTbDqP+Yw0ZqWi7fnt
+    uBh9KJr1Uz/yifqASFt/UkG4w4ona1o7t8AsuU3WtQ6WyXPqHkZ6SE3uiTBxIRqs
+    ro286v5wCcn2+YVfllYwatCStnqngB2BQj/g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527163330; bh=WrCrO6LpLPMKD+ZtlUiuKe/3MuHRLW
-    aHrp8DtDgcrM0=; b=VQWOOShLMsg5E630sDXoPPaeLlACewE8nBUMqRkqbPsjMe
-    3/jdnpqdEc3zTlhxxevOC/WHf6VcvQDfxSEU7EHY1jayBkfS6XlnyR/Z3PZQVwYy
-    pcm9USkyifltR/CFn13ckHp8Q/L3airUDJGBXzquFPxqV6tFqvtq3ZWNvs2E7o3b
-    edQpLO/gFQhbRK0AR/OnDM/Ds2BInckuz6OaFLWKbQecNxvCaY0H1nC+0juxSAne
-    9/3yv9Jn1lt/FcJApZuFkCiiYy8P0RFltZOjJyRY29AFKkvDWR9gt+3QAsrLiEgO
-    YaCyxSkeKKVe8T1KJYn2pT+uRzCkNLmaVV4FO/Og==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527163325; bh=kTNDxz74pGBjn+N8fQBHQgHhkSVvVu
+    zOb6LOzZ8LDAc=; b=VK+ezgkT4SxsZRzu7UoNvFpju77IeaJqkEh/2x19vadZgS
+    fYo5HYirRmA56PVf+lEf8wNJVEPVc669xiVjNRjAg7AyUblFOCNMs86jsOeSbBlD
+    ZLbhhgU03iwHJ4OWc5gANuhc6tIo0kSO4rvqPPYb1zSdld/ycd+Nsssz82rkBAEs
+    97M+GiEjYlOM7Tb3fW5id284SBuxdtAoF2wpNrkvSi4PiQZcmW1/U5+64ypIfS2V
+    Ibg9/01XHGKYe3Z9tTWTsCS6FCh9BYJZOmWJzkR3sUSpNpu6to2wFmPBZS+hX2Rp
+    Bmh/LVUK06faCBRDiQDyoHLnPZ1/IAaOxjVKEDSg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=ngfDPH8m x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=RTQ/l3iy x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=ngfDPH8m x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=RTQ/l3iy x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,30 +64,30 @@ Authentication-Results: mx2.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDu0LYUGQV3jngSBo0V2pnliX11sFCOKunoBIHYFiAZkQwruqOYWZ8HoHhvw/TPiv7O35R0ByPqsb0Wrwj/LhJPpfgq3mLKRCMeaTxTScAgkZxn3JpWJ
-    xT2LT6RPlOiAl+cSZTzcfe/+fFb29ksM3zS93JICydg7iwNCdT4qVwRRnixKTKumMtmK+6D7StHqyPjLpbfa4aekKaZtNm+FhuvkauFfkvbSybwM+i8kUs+k
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfIgEjuAucAU7YaeFJeW4OuPl6jx4vwJTzp4vs1mBjj0n4tlllrs/0ySNxm9Ia8hhG8x8C3vWr/MJzedcK/B34ZTSRnW9ZkklkGddnYaiNPrvMZVNGtlC
+    HOG6hS9pWW5RJU4ly2G4hmJjH4BOsyBHNnKPZ8CzuzG2MYFV4rM7/8pAt/2MR2K2uheWUn19HYeQZOj3Q8P+MDFu/7rutnkmd2DROo9f5cyvxoEOX7ZTaXU6
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=meVymXHHAAAA:8 a=VwQbUJbxAAAA:8 a=iox4zFpeAAAA:8 a=ag1SF4gXAAAA:8
-    a=XRH7TU2YvASs1ZvYd64A:9 a=QEXdDO2ut3YA:10 a=2JgSa4NbpEOStq-L5dxp:22
-    a=AjGcO6oz07-iQ99wixmX:22 a=WzC6qhA0u3u7Ye7llzcV:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=VnNF1IyMAAAA:8 a=ag1SF4gXAAAA:8 a=PoMdBBFvNJcjPcX58mEA:9 a=QEXdDO2ut3YA:10
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966744AbeEXMCE (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 08:02:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56108 "EHLO mail.kernel.org"
+        id S966423AbeEXJoz (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:44:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56032 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966367AbeEXJoy (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:44:54 -0400
+        id S966695AbeEXJot (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:44:49 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Juergen Gross <jgross@suse.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.4 53/92] tracing/x86/xen: Remove zero data size trace events trace_xen_mmu_flush_tlb{_all}
-Date: Thu, 24 May 2018 11:38:30 +0200
-Message-Id: <20180524093204.465524453@linuxfoundation.org>
+        stable@vger.kernel.org, Stewart Smith <stewart@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Mike Galbraith <mgalbraith@suse.de>
+Subject: [PATCH 4.4 43/92] powerpc/powernv: Remove OPALv2 firmware define and references
+Date: Thu, 24 May 2018 11:38:20 +0200
+Message-Id: <20180524093203.419078826@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093159.286472249@linuxfoundation.org>
 References: <20180524093159.286472249@linuxfoundation.org>
@@ -105,82 +105,107 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Stewart Smith <stewart@linux.vnet.ibm.com>
 
-commit 45dd9b0666a162f8e4be76096716670cf1741f0e upstream.
+commit 7261aafc095763b119136a562540dea7b1ccf657 upstream.
 
-Doing an audit of trace events, I discovered two trace events in the xen
-subsystem that use a hack to create zero data size trace events. This is not
-what trace events are for. Trace events add memory footprint overhead, and
-if all you need to do is see if a function is hit or not, simply make that
-function noinline and use function tracer filtering.
+OPALv2 only ever existed in the lab and didn't escape to the world.
+All OPAL systems in the wild are OPALv3.
 
-Worse yet, the hack used was:
+The probability of there being an OPALv2 system still powered on
+anywhere inside IBM is approximately zero, let alone anyone
+expecting to run mainline kernels.
 
- __array(char, x, 0)
+So, start to remove references to OPALv2.
 
-Which creates a static string of zero in length. There's assumptions about
-such constructs in ftrace that this is a dynamic string that is nul
-terminated. This is not the case with these tracepoints and can cause
-problems in various parts of ftrace.
-
-Nuke the trace events!
-
-Link: http://lkml.kernel.org/r/20180509144605.5a220327@gandalf.local.home
-
-Cc: stable@vger.kernel.org
-Fixes: 95a7d76897c1e ("xen/mmu: Use Xen specific TLB flush instead of the generic one.")
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Stewart Smith <stewart@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Mike Galbraith <mgalbraith@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/xen/mmu.c         |    4 ----
- include/trace/events/xen.h |   16 ----------------
- 2 files changed, 20 deletions(-)
+ arch/powerpc/include/asm/firmware.h    |    4 +---
+ arch/powerpc/platforms/powernv/opal.c  |    8 ++------
+ arch/powerpc/platforms/powernv/setup.c |    4 ----
+ arch/powerpc/platforms/powernv/smp.c   |    4 ++--
+ 4 files changed, 5 insertions(+), 15 deletions(-)
 
---- a/arch/x86/xen/mmu.c
-+++ b/arch/x86/xen/mmu.c
-@@ -1316,8 +1316,6 @@ void xen_flush_tlb_all(void)
- 	struct mmuext_op *op;
- 	struct multicall_space mcs;
+--- a/arch/powerpc/include/asm/firmware.h
++++ b/arch/powerpc/include/asm/firmware.h
+@@ -47,7 +47,6 @@
+ #define FW_FEATURE_VPHN		ASM_CONST(0x0000000004000000)
+ #define FW_FEATURE_XCMO		ASM_CONST(0x0000000008000000)
+ #define FW_FEATURE_OPAL		ASM_CONST(0x0000000010000000)
+-#define FW_FEATURE_OPALv2	ASM_CONST(0x0000000020000000)
+ #define FW_FEATURE_SET_MODE	ASM_CONST(0x0000000040000000)
+ #define FW_FEATURE_BEST_ENERGY	ASM_CONST(0x0000000080000000)
+ #define FW_FEATURE_TYPE1_AFFINITY ASM_CONST(0x0000000100000000)
+@@ -70,8 +69,7 @@ enum {
+ 		FW_FEATURE_SET_MODE | FW_FEATURE_BEST_ENERGY |
+ 		FW_FEATURE_TYPE1_AFFINITY | FW_FEATURE_PRRN,
+ 	FW_FEATURE_PSERIES_ALWAYS = 0,
+-	FW_FEATURE_POWERNV_POSSIBLE = FW_FEATURE_OPAL | FW_FEATURE_OPALv2 |
+-		FW_FEATURE_OPALv3,
++	FW_FEATURE_POWERNV_POSSIBLE = FW_FEATURE_OPAL | FW_FEATURE_OPALv3,
+ 	FW_FEATURE_POWERNV_ALWAYS = 0,
+ 	FW_FEATURE_PS3_POSSIBLE = FW_FEATURE_LPAR | FW_FEATURE_PS3_LV1,
+ 	FW_FEATURE_PS3_ALWAYS = FW_FEATURE_LPAR | FW_FEATURE_PS3_LV1,
+--- a/arch/powerpc/platforms/powernv/opal.c
++++ b/arch/powerpc/platforms/powernv/opal.c
+@@ -100,7 +100,6 @@ int __init early_init_dt_scan_opal(unsig
  
--	trace_xen_mmu_flush_tlb_all(0);
--
- 	preempt_disable();
+ 	powerpc_firmware_features |= FW_FEATURE_OPAL;
+ 	if (of_flat_dt_is_compatible(node, "ibm,opal-v3")) {
+-		powerpc_firmware_features |= FW_FEATURE_OPALv2;
+ 		powerpc_firmware_features |= FW_FEATURE_OPALv3;
+ 		pr_info("OPAL V3 detected !\n");
+ 	} else {
+@@ -349,7 +348,7 @@ int opal_put_chars(uint32_t vtermno, con
+ 	 * enough room and be done with it
+ 	 */
+ 	spin_lock_irqsave(&opal_write_lock, flags);
+-	if (firmware_has_feature(FW_FEATURE_OPALv2)) {
++	if (firmware_has_feature(FW_FEATURE_OPALv3)) {
+ 		rc = opal_console_write_buffer_space(vtermno, &olen);
+ 		len = be64_to_cpu(olen);
+ 		if (rc || len < total_len) {
+@@ -693,10 +692,7 @@ static int __init opal_init(void)
+ 	}
  
- 	mcs = xen_mc_entry(sizeof(*op));
-@@ -1335,8 +1333,6 @@ static void xen_flush_tlb(void)
- 	struct mmuext_op *op;
- 	struct multicall_space mcs;
+ 	/* Register OPAL consoles if any ports */
+-	if (firmware_has_feature(FW_FEATURE_OPALv2))
+-		consoles = of_find_node_by_path("/ibm,opal/consoles");
+-	else
+-		consoles = of_node_get(opal_node);
++	consoles = of_find_node_by_path("/ibm,opal/consoles");
+ 	if (consoles) {
+ 		for_each_child_of_node(consoles, np) {
+ 			if (strcmp(np->name, "serial"))
+--- a/arch/powerpc/platforms/powernv/setup.c
++++ b/arch/powerpc/platforms/powernv/setup.c
+@@ -142,10 +142,6 @@ static void pnv_show_cpuinfo(struct seq_
+ 	seq_printf(m, "machine\t\t: PowerNV %s\n", model);
+ 	if (firmware_has_feature(FW_FEATURE_OPALv3))
+ 		seq_printf(m, "firmware\t: OPAL v3\n");
+-	else if (firmware_has_feature(FW_FEATURE_OPALv2))
+-		seq_printf(m, "firmware\t: OPAL v2\n");
+-	else if (firmware_has_feature(FW_FEATURE_OPAL))
+-		seq_printf(m, "firmware\t: OPAL v1\n");
+ 	else
+ 		seq_printf(m, "firmware\t: BML\n");
+ 	of_node_put(root);
+--- a/arch/powerpc/platforms/powernv/smp.c
++++ b/arch/powerpc/platforms/powernv/smp.c
+@@ -65,10 +65,10 @@ static int pnv_smp_kick_cpu(int nr)
+ 	BUG_ON(nr < 0 || nr >= NR_CPUS);
  
--	trace_xen_mmu_flush_tlb(0);
--
- 	preempt_disable();
+ 	/*
+-	 * If we already started or OPALv2 is not supported, we just
++	 * If we already started or OPALv3 is not supported, we just
+ 	 * kick the CPU via the PACA
+ 	 */
+-	if (paca[nr].cpu_start || !firmware_has_feature(FW_FEATURE_OPALv2))
++	if (paca[nr].cpu_start || !firmware_has_feature(FW_FEATURE_OPALv3))
+ 		goto kick;
  
- 	mcs = xen_mc_entry(sizeof(*op));
---- a/include/trace/events/xen.h
-+++ b/include/trace/events/xen.h
-@@ -377,22 +377,6 @@ DECLARE_EVENT_CLASS(xen_mmu_pgd,
- DEFINE_XEN_MMU_PGD_EVENT(xen_mmu_pgd_pin);
- DEFINE_XEN_MMU_PGD_EVENT(xen_mmu_pgd_unpin);
- 
--TRACE_EVENT(xen_mmu_flush_tlb_all,
--	    TP_PROTO(int x),
--	    TP_ARGS(x),
--	    TP_STRUCT__entry(__array(char, x, 0)),
--	    TP_fast_assign((void)x),
--	    TP_printk("%s", "")
--	);
--
--TRACE_EVENT(xen_mmu_flush_tlb,
--	    TP_PROTO(int x),
--	    TP_ARGS(x),
--	    TP_STRUCT__entry(__array(char, x, 0)),
--	    TP_fast_assign((void)x),
--	    TP_printk("%s", "")
--	);
--
- TRACE_EVENT(xen_mmu_flush_tlb_single,
- 	    TP_PROTO(unsigned long addr),
- 	    TP_ARGS(addr),
+ 	/*
