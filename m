@@ -1,70 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969989AbeEXMTX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 08:19:23 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43148 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966242AbeEXMTS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 08:19:18 -0400
-Date: Thu, 24 May 2018 13:19:45 +0100
-From: Will Deacon <will.deacon@arm.com>
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, Kees Cook <keescook@chromium.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 09/14] arm64: ssbd: Introduce thread flag to control
- userspace mitigation
-Message-ID: <20180524121944.GC8689@arm.com>
-References: <20180522150648.28297-1-marc.zyngier@arm.com>
- <20180522150648.28297-10-marc.zyngier@arm.com>
- <20180524120121.pjdw7qaybcsbf4fl@lakrids.cambridge.arm.com>
- <833776ac-2b8c-b0f7-dcff-9c55afd67c65@arm.com>
+        id S970003AbeEXMTc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 08:19:32 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:36936 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S969756AbeEXMTW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 08:19:22 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <833776ac-2b8c-b0f7-dcff-9c55afd67c65@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date: Thu, 24 May 2018 14:19:18 +0200
+From: Stefan Agner <stefan@agner.ch>
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Benjamin Lindqvist <benjamin.lindqvist@endian.se>, dwmw2@infradead.org,
+        computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, thierry.reding@gmail.com,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        Lucas Stach <dev@lynxeye.de>, miquel.raynal@bootlin.com,
+        richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com,
+        jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+        Mirza Krak <mirza.krak@gmail.com>, linux-mtd@lists.infradead.org,
+        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [RESEND PATCH 2/5] mtd: rawnand: add NVIDIA Tegra NAND Flash
+ controller driver
+In-Reply-To: <20180524135335.6aa0b7a4@bbrezillon>
+References: <cover.1526990589.git.stefan@agner.ch>
+ <86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
+ <CAGefG55kvShaLhNYsFznbOq0_6RNbb+eJ47DLnnU9qRRpwu-iA@mail.gmail.com>
+ <d8d6cb9fcd8ce7ea5c13b227012de6d2@agner.ch>
+ <CAGefG56khQ2835c2QCteit7FuL_yG+APpj6-4vRRPxztFtkAMA@mail.gmail.com>
+ <20180524135335.6aa0b7a4@bbrezillon>
+Message-ID: <146a3abbbff4dcef30ad662a0fb85ff1@agner.ch>
+User-Agent: Roundcube Webmail/1.3.4
+X-Spamd-Result: default: False [-0.10 / 15.00];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MID_RHS_MATCH_FROM(0.00)[];
+         RCPT_COUNT_TWELVE(0.00)[25];
+         TAGGED_RCPT(0.00)[dt];
+         MIME_GOOD(-0.10)[text/plain];
+         FROM_HAS_DN(0.00)[];
+         FROM_EQ_ENVFROM(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         TO_DN_SOME(0.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         RCVD_TLS_ALL(0.00)[];
+         BAYES_HAM(-0.00)[15.53%];
+         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 01:16:38PM +0100, Marc Zyngier wrote:
-> On 24/05/18 13:01, Mark Rutland wrote:
-> > On Tue, May 22, 2018 at 04:06:43PM +0100, Marc Zyngier wrote:
-> >> In order to allow userspace to be mitigated on demand, let's
-> >> introduce a new thread flag that prevents the mitigation from
-> >> being turned off when exiting to userspace, and doesn't turn
-> >> it on on entry into the kernel (with the assumtion that the
-> > 
-> > Nit: s/assumtion/assumption/
-> > 
-> >> mitigation is always enabled in the kernel itself).
-> >>
-> >> This will be used by a prctl interface introduced in a later
-> >> patch.
-> >>
-> >> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-> > 
-> > On the assumption that this flag cannot be flipped while a task is in
-> > userspace:
+On 24.05.2018 13:53, Boris Brezillon wrote:
+> Hi Benjamin,
 > 
-> Well, that's the case unless you get into the seccomp thing, which does
-> change TIF_SSBD on all threads of the task, without taking it to the
-> kernel first. That nicely breaks the state machine, and you end-up
-> running non-mitigated in the kernel. Oops.
+> On Thu, 24 May 2018 13:30:14 +0200
+> Benjamin Lindqvist <benjamin.lindqvist@endian.se> wrote:
 > 
-> I have a couple of patches fixing that, using a second flag
-> (TIF_SSBD_PENDING) that gets turned into the real thing on exit to
-> userspace. It's pretty ugly though.
+>> Hi Stefan,
+>>
+>> It seems to me that a probe similar to what the BootROM does shouldn't
+>> be awfully complicated to implement - just cycle through the switch
+>> cases in case of an ECC error. But I guess that's more of an idea for
+>> further improvements rather than a comment to the patch set under
+>> review.
+> 
+> Nope, not really an option, because you're not guaranteed that the NAND
+> will be used as a boot media, and the first page or first set of pages
+> might just be erased.
+> 
 
-... which introduces the need for atomics on the entry path too :(
+Yeah I did not meant probing like the Boot ROM does.
 
-I would /much/ rather kill the seccomp implicit enabling of the mitigation,
-or at least have a way to opt-out per arch since it doesn't seem to be
-technically justified imo.
+What I meant was using only the ECC modes which are supported by the
+Boot ROM when the driver tries to choose a viable mode. So that would
+be:
+- RS t=4
+- BCH t=8
+- BCH t=16
 
-Will
+Maybe we could add a property to enable that behavior:
+
+tegra,use-bootable-ecc-only;
+
+>>
+>> However, I think that allowing for an override of the oobsize
+>> inference would be a good idea before merging, no? This could just be
+>> a trivial #ifdef (at least temporarily). If you agree but don't feel
+>> like doing it yourself, I'd be happy to pitch in. Let me know.
+> 
+> That's why we have nand-ecc-xxx properties in the DT.
+> 
+
+Yes, nand-ecc-strength is the first thing I plan to implement, that way
+strength can be defined in dt.
+
+--
+Stefan
