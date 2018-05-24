@@ -1,125 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965121AbeEXHj2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 03:39:28 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43972 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S935641AbeEXHj0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 03:39:26 -0400
-Date: Thu, 24 May 2018 15:39:15 +0800
-From: Dave Young <dyoung@redhat.com>
-To: Petr Tesarik <ptesarik@suse.cz>
-Cc: dzickus@redhat.com, Neil Horman <nhorman@redhat.com>,
-        Tony Luck <tony.luck@intel.com>, bhe@redhat.com,
-        Michael Ellerman <mpe@ellerman.id.au>, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Hari Bathini <hbathini@linux.vnet.ibm.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>, Vivek Goyal <vgoyal@redhat.com>
-Subject: Re: [PATCH] kdump: add default crashkernel reserve kernel config
- options
-Message-ID: <20180524073915.GB1940@dhcp-128-65.nay.redhat.com>
-References: <20180521025337.GA4627@dhcp-128-65.nay.redhat.com>
- <20180521120215.117d963a7619eb0d1f54bced@linux-foundation.org>
- <20180523070641.GA1689@dhcp-128-65.nay.redhat.com>
- <877enucqr0.fsf@xmission.com>
- <20180523222236.5a96732e@ezekiel.suse.cz>
- <20180524014905.GB2031@dhcp-128-65.nay.redhat.com>
- <20180524085708.31aa311d@ezekiel.suse.cz>
- <20180524072627.GA1940@dhcp-128-65.nay.redhat.com>
+        id S965138AbeEXHjw (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 03:39:52 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:39441 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965135AbeEXHjs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 03:39:48 -0400
+X-Google-Smtp-Source: AB8JxZoYexhLk0A8cPukXjErASLmwm1cz326J2rErOcKbvqLmnUf0zBUiUKybKS/cRw6n/V8KB/b4G4Zt2GN9baU7M8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180524072627.GA1940@dhcp-128-65.nay.redhat.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <39738efefe94e3a4fb7668a27dd73ae49695dc3b.1526835466.git.sean.wang@mediatek.com>
+References: <cover.1526835466.git.sean.wang@mediatek.com> <39738efefe94e3a4fb7668a27dd73ae49695dc3b.1526835466.git.sean.wang@mediatek.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 24 May 2018 09:39:47 +0200
+Message-ID: <CACRpkdYFZLCMJCZ0csV2cU3zGq4c7R2O0PSLk7XiZsj=cyAK7A@mail.gmail.com>
+Subject: Re: [PATCH v1 4/7] pinctrl: mediatek: use generic EINT register maps
+ for each SoC
+To: Sean Wang <sean.wang@mediatek.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support"
+        <linux-mediatek@lists.infradead.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/24/18 at 03:26pm, Dave Young wrote:
-> On 05/24/18 at 08:57am, Petr Tesarik wrote:
-> > On Thu, 24 May 2018 09:49:05 +0800
-> > Dave Young <dyoung@redhat.com> wrote:
-> > 
-> > > Hi Petr,
-> > > 
-> > > On 05/23/18 at 10:22pm, Petr Tesarik wrote:
-> > >[...]
-> > > > In short, if one size fits none, what good is it to hardcode that "one
-> > > > size" into the kernel image?  
-> > > 
-> > > I agreed with all the things that we can not know the exact memory
-> > > requirement for 100% use cases.  But that does not means this is useless
-> > > it is still useful for common use cases of no special and memory hog
-> > > requirements as I mentioned in another reply it can simplify the kdump
-> > > deployment for those people who do not need the special setup.
-> > 
-> > I still tend to disagree. This "common-case" reservation depends on
-> > things that are defined by user space. It surely does not make it
-> > easier to build a distribution kernel. Today, I get bug reports that
-> > the number calculated and added to the boot loader configuration by the
-> > installer is inaccurate. If I put a fixed number into a kernel config
-> > option, I will start getting bugs that this number is incorrect (for
-> > some systems).
-> 
-> The value is a best effort, it will never be 100% correct.  We did not
-> guarantee that.   The kernel config option value is just up to user.
-> So I'm thinking it as a good to have benefit.
+On Sun, May 20, 2018 at 7:01 PM,  <sean.wang@mediatek.com> wrote:
 
-I means this patch is not trying to force add a fixed value for crashkernel
-in kernel code. It provides another way one can use on kernel build time
-the value just works.
+> From: Sean Wang <sean.wang@mediatek.com>
+>
+> So far, EINT on each SoC all used exactly identical register map and thus
+> it's better that we apply generic register map already supported in EINT
+> library and stop copy-n-pasting the same data block and filling into its
+> platform data.
+>
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 
-> 
-> > 
-> > > For example, if this is a workstation I just want to break into a shell
-> > > to collect some panic info, then I just need a very minimal initrd, then
-> > > the Kconfig will work just fine.
-> > 
-> > What is "a very minimal initrd"? Last time I had to make a significant
-> > adjustment to the estimation for openSUSE, this was caused by growing
-> > user-space requirements (systemd in this case, but I don't want to
-> > start flamewars on that topic, please).
-> 
-> Still I think we have agreement and same feeling about the userspace
-> memory requirement.   I think although it is hard, we have been still
-> trying to shrink the initramfs memory use.
-> 
-> Besides of distribution use,  why people can not use some minimal
-> initrd?  For example only a basic shell and some necessary tools and
-> basic storage eg. raw disks supported, and he/she can just collect the
-> panic infomation by himself in a shell.
-> 
-> > 
-> > Anyway, if you want to improve the "common case", then look how IBM
-> > tries to solve it for firmware-assisted dump (fadump) on powerpc:
-> > 
-> > https://patchwork.ozlabs.org/patch/905026/
-> > 
-> > The main idea is:
-> > 
-> > > Instead of setting aside a significant chunk of memory nobody can use,
-> > > [...] reserve a significant chunk of memory that the kernel is prevented
-> > > from using [...], but applications are free to use it.
-> > 
-> > That works great, because user space pages are filtered out in the
-> > common case, so they can be used freely by the panic kernel.
-> 
-> Good suggestion. I have been reading that posts already at the same time before I saw
-> this reply from you :)
-> 
-> That could be a good idea and worth to discuss more.  I cced Hari
-> already in the thread. Hari, is it possible for you to extend your
-> idea to general use, ie. shared by both kdump and fadump?  Anyway I
-> think that is another topic we can discuss separately.
-> 
-> > 
-> > Just my two cents,
-> > Petr T
-> 
-> Thanks
-> Dave
+Patch applied.
+
+Yours,
+Linus Walleij
