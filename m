@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965636AbeEXIzY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 04:55:24 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:44763 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965604AbeEXIzN (ORCPT
+        id S965621AbeEXIzV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 04:55:21 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:36008 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965591AbeEXIzM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 04:55:13 -0400
-X-Google-Smtp-Source: AB8JxZrO5gyqJolhdVL79kWBzDwCDYyv3E5oafLv8zp/MoLKB3M7TOi5xlSF/WDXROHTFUyY6VhVVw==
+        Thu, 24 May 2018 04:55:12 -0400
+X-Google-Smtp-Source: AB8JxZqphwRuORkoNlrwhCD97oC/KOzT2aU/XJAOLjyv3cgtAA7u3s6BAWEzewxpb+Jjvn7TCHeKRg==
 From: Neil Armstrong <narmstrong@baylibre.com>
 To: airlied@linux.ie, hans.verkuil@cisco.com, lee.jones@linaro.org,
         olof@lixom.net, seanpaul@google.com
@@ -16,10 +16,10 @@ Cc: Neil Armstrong <narmstrong@baylibre.com>, sadolfsson@google.com,
         marcheu@chromium.org, fparent@baylibre.com,
         dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
         intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        eballetbo@gmail.com
-Subject: [PATCH v5 4/6] mfd: cros-ec: Introduce CEC commands and events definitions.
-Date: Thu, 24 May 2018 10:54:59 +0200
-Message-Id: <1527152101-17278-5-git-send-email-narmstrong@baylibre.com>
+        eballetbo@gmail.com, Stefan Adolfsson <sadolfsson@chromium.org>
+Subject: [PATCH v5 3/6] mfd: cros-ec: Increase maximum mkbp event size
+Date: Thu, 24 May 2018 10:54:58 +0200
+Message-Id: <1527152101-17278-4-git-send-email-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1527152101-17278-1-git-send-email-narmstrong@baylibre.com>
 References: <1527152101-17278-1-git-send-email-narmstrong@baylibre.com>
@@ -27,124 +27,132 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The EC can expose a CEC bus, this patch adds the CEC related definitions
-needed by the cros-ec-cec driver.
+Having a 16 byte mkbp event size makes it possible to send CEC
+messages from the EC to the AP directly inside the mkbp event
+instead of first doing a notification and then a read.
 
+Signed-off-by: Stefan Adolfsson <sadolfsson@chromium.org>
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
- include/linux/mfd/cros_ec_commands.h | 85 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 85 insertions(+)
+ drivers/platform/chrome/cros_ec_proto.c | 40 +++++++++++++++++++++++++--------
+ include/linux/mfd/cros_ec.h             |  2 +-
+ include/linux/mfd/cros_ec_commands.h    | 19 ++++++++++++++++
+ 3 files changed, 51 insertions(+), 10 deletions(-)
 
+diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
+index e7bbdf9..c4f6c44 100644
+--- a/drivers/platform/chrome/cros_ec_proto.c
++++ b/drivers/platform/chrome/cros_ec_proto.c
+@@ -504,10 +504,31 @@ int cros_ec_cmd_xfer_status(struct cros_ec_device *ec_dev,
+ }
+ EXPORT_SYMBOL(cros_ec_cmd_xfer_status);
+ 
++static int get_next_event_xfer(struct cros_ec_device *ec_dev,
++			       struct cros_ec_command *msg,
++			       int version, uint32_t size)
++{
++	int ret;
++
++	msg->version = version;
++	msg->command = EC_CMD_GET_NEXT_EVENT;
++	msg->insize = size;
++	msg->outsize = 0;
++
++	ret = cros_ec_cmd_xfer(ec_dev, msg);
++	if (ret > 0) {
++		ec_dev->event_size = ret - 1;
++		memcpy(&ec_dev->event_data, msg->data, ec_dev->event_size);
++	}
++
++	return ret;
++}
++
+ static int get_next_event(struct cros_ec_device *ec_dev)
+ {
+ 	u8 buffer[sizeof(struct cros_ec_command) + sizeof(ec_dev->event_data)];
+ 	struct cros_ec_command *msg = (struct cros_ec_command *)&buffer;
++	static int cmd_version = 1;
+ 	int ret;
+ 
+ 	if (ec_dev->suspended) {
+@@ -515,18 +536,19 @@ static int get_next_event(struct cros_ec_device *ec_dev)
+ 		return -EHOSTDOWN;
+ 	}
+ 
+-	msg->version = 0;
+-	msg->command = EC_CMD_GET_NEXT_EVENT;
+-	msg->insize = sizeof(ec_dev->event_data);
+-	msg->outsize = 0;
++	if (cmd_version == 1) {
++		ret = get_next_event_xfer(ec_dev, msg, cmd_version,
++				sizeof(struct ec_response_get_next_event_v1));
++		if (ret < 0 || msg->result != EC_RES_INVALID_VERSION)
++			return ret;
+ 
+-	ret = cros_ec_cmd_xfer(ec_dev, msg);
+-	if (ret > 0) {
+-		ec_dev->event_size = ret - 1;
+-		memcpy(&ec_dev->event_data, msg->data,
+-		       sizeof(ec_dev->event_data));
++		/* Fallback to version 0 for future send attempts */
++		cmd_version = 0;
+ 	}
+ 
++	ret = get_next_event_xfer(ec_dev, msg, cmd_version,
++				  sizeof(struct ec_response_get_next_event));
++
+ 	return ret;
+ }
+ 
+diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
+index f36125e..32caef3 100644
+--- a/include/linux/mfd/cros_ec.h
++++ b/include/linux/mfd/cros_ec.h
+@@ -147,7 +147,7 @@ struct cros_ec_device {
+ 	bool mkbp_event_supported;
+ 	struct blocking_notifier_head event_notifier;
+ 
+-	struct ec_response_get_next_event event_data;
++	struct ec_response_get_next_event_v1 event_data;
+ 	int event_size;
+ 	u32 host_event_wake_mask;
+ };
 diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
-index cc0768e..ea9646f 100644
+index f2edd99..cc0768e 100644
 --- a/include/linux/mfd/cros_ec_commands.h
 +++ b/include/linux/mfd/cros_ec_commands.h
-@@ -804,6 +804,8 @@ enum ec_feature_code {
- 	EC_FEATURE_MOTION_SENSE_FIFO = 24,
- 	/* EC has RTC feature that can be controlled by host commands */
- 	EC_FEATURE_RTC = 27,
-+	/* EC supports CEC commands */
-+	EC_FEATURE_CEC = 35,
- };
+@@ -2093,12 +2093,31 @@ union ec_response_get_next_data {
+ 	uint32_t   sysrq;
+ } __packed;
  
- #define EC_FEATURE_MASK_0(event_code) (1UL << (event_code % 32))
-@@ -2078,6 +2080,12 @@ enum ec_mkbp_event {
- 	/* EC sent a sysrq command */
- 	EC_MKBP_EVENT_SYSRQ = 6,
++union ec_response_get_next_data_v1 {
++	uint8_t   key_matrix[16];
++
++	/* Unaligned */
++	uint32_t  host_event;
++
++	uint32_t   buttons;
++	uint32_t   switches;
++	uint32_t   sysrq;
++	uint32_t   cec_events;
++	uint8_t    cec_message[16];
++} __packed;
++
+ struct ec_response_get_next_event {
+ 	uint8_t event_type;
+ 	/* Followed by event data if any */
+ 	union ec_response_get_next_data data;
+ } __packed;
  
-+	/* Notify the AP that something happened on CEC */
-+	EC_MKBP_CEC_EVENT = 8,
-+
-+	/* Send an incoming CEC message to the AP */
-+	EC_MKBP_EVENT_CEC_MESSAGE = 9,
-+
- 	/* Number of MKBP events */
- 	EC_MKBP_EVENT_COUNT,
- };
-@@ -2850,6 +2858,83 @@ struct ec_params_reboot_ec {
- 
- /*****************************************************************************/
- /*
-+ * HDMI CEC commands
-+ *
-+ * These commands are for sending and receiving message via HDMI CEC
-+ */
-+#define MAX_CEC_MSG_LEN 16
-+
-+/* CEC message from the AP to be written on the CEC bus */
-+#define EC_CMD_CEC_WRITE_MSG 0x00B8
-+
-+/**
-+ * struct ec_params_cec_write - Message to write to the CEC bus
-+ * @msg: message content to write to the CEC bus
-+ */
-+struct ec_params_cec_write {
-+	uint8_t msg[MAX_CEC_MSG_LEN];
++struct ec_response_get_next_event_v1 {
++	uint8_t event_type;
++	/* Followed by event data if any */
++	union ec_response_get_next_data_v1 data;
 +} __packed;
 +
-+/* Set various CEC parameters */
-+#define EC_CMD_CEC_SET 0x00BA
-+
-+/**
-+ * struct ec_params_cec_set - CEC parameters set
-+ * @cmd: parameter type, can be CEC_CMD_ENABLE or CEC_CMD_LOGICAL_ADDRESS
-+ * @enable: in case cmd is CEC_CMD_ENABLE, this field can be 0 to disable CEC
-+ * 	or 1 to enable CEC functionnality
-+ * @address: in case cmd is CEC_CMD_LOGICAL_ADDRESS, this field encodes the
-+ *	requested logical address between 0 and 15 or 0xff to unregister
-+ */
-+struct ec_params_cec_set {
-+	uint8_t cmd; /* enum cec_command */
-+	union {
-+		uint8_t enable;
-+		uint8_t address;
-+	};
-+} __packed;
-+
-+/* Read various CEC parameters */
-+#define EC_CMD_CEC_GET 0x00BB
-+
-+/**
-+ * struct ec_params_cec_get - CEC parameters get
-+ * @cmd: parameter type, can be CEC_CMD_ENABLE or CEC_CMD_LOGICAL_ADDRESS
-+ */
-+struct ec_params_cec_get {
-+	uint8_t cmd; /* enum cec_command */
-+} __packed;
-+
-+/**
-+ * struct ec_response_cec_get - CEC parameters get response
-+ * @enable: in case cmd was CEC_CMD_ENABLE, this field will 0 if CEC is
-+ * 	disabled or 1 if CEC functionnality is enabled
-+ * @address: in case cmd was CEC_CMD_LOGICAL_ADDRESS, this will encode the
-+ *	configured logical address between 0 and 15 or 0xff if unregistered
-+ */
-+struct ec_response_cec_get {
-+	union {
-+		uint8_t enable;
-+		uint8_t address;
-+	};
-+} __packed;
-+
-+/* CEC parameters command */
-+enum cec_command {
-+	/* CEC reading, writing and events enable */
-+	CEC_CMD_ENABLE,
-+	/* CEC logical address  */
-+	CEC_CMD_LOGICAL_ADDRESS,
-+};
-+
-+/* Events from CEC to AP */
-+enum mkbp_cec_event {
-+	EC_MKBP_CEC_SEND_OK			= BIT(0),
-+	EC_MKBP_CEC_SEND_FAILED			= BIT(1),
-+};
-+
-+/*****************************************************************************/
-+/*
-  * Special commands
-  *
-  * These do not follow the normal rules for commands.  See each command for
+ /* Bit indices for buttons and switches.*/
+ /* Buttons */
+ #define EC_MKBP_POWER_BUTTON	0
 -- 
 2.7.4
