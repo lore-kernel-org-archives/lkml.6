@@ -1,94 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967388AbeEXXe5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 19:34:57 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:38544 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965649AbeEXXey (ORCPT
+        id S968057AbeEXXfU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 19:35:20 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:34774 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965649AbeEXXfP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 19:34:54 -0400
-X-Google-Smtp-Source: AB8JxZoHTDq9hxxcfqEeHdDrTWRMhPxbGoa9t8zSJDqQjUnoaZPfzulBq+OzagsCcz0ZcDY3uJZ6yw==
-Date: Thu, 24 May 2018 16:34:51 -0700
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To: Jesper Dangaard Brouer <brouer@redhat.com>
-Cc: Eugene Syromiatnikov <esyr@redhat.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        Jiri Olsa <jolsa@kernel.org>
-Subject: Re: [PATCH bpf-next v2 0/3] bpf: add boot parameters for sysctl knobs
-Message-ID: <20180524233449.ga664pzexrkzepfv@ast-mbp>
-References: <20180523121806.GA27675@asgard.redhat.com>
- <20180523220244.a4u25kapqbjnmpr4@ast-mbp>
- <20180524094108.066d885a@redhat.com>
+        Thu, 24 May 2018 19:35:15 -0400
+X-Google-Smtp-Source: AB8JxZql7DHGfqPhGby9l2Ibwj+iXJbgb5eZETNGLLVgcCWdorBozuj6nHifXe3/IX0IeSCTxLPJRMy2e50OBAiP0KI=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180524094108.066d885a@redhat.com>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
+References: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
+Date: Thu, 24 May 2018 16:34:54 -0700
+Message-ID: <CAM_iQpXMbtUWsaGBrpJH08dM4p9oVwpMSGrev1PThbP5d23sdA@mail.gmail.com>
+Subject: Re: [PATCH 00/14] Modify action API for implementing lockless actions
+To: Vlad Buslov <vladbu@mellanox.com>
+Cc: Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Jamal Hadi Salim <jhs@mojatatu.com>, Jiri Pirko <jiri@resnulli.us>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Florian Westphal <fw@strlen.de>, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Eric Dumazet <edumazet@google.com>, Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        NetFilter <netfilter-devel@vger.kernel.org>, coreteam@netfilter.org,
+        kliteyn@mellanox.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 09:41:08AM +0200, Jesper Dangaard Brouer wrote:
-> On Wed, 23 May 2018 15:02:45 -0700
-> Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
-> 
-> > On Wed, May 23, 2018 at 02:18:19PM +0200, Eugene Syromiatnikov wrote:
-> > > Some BPF sysctl knobs affect the loading of BPF programs, and during
-> > > system boot/init stages these sysctls are not yet configured.
-> > > A concrete example is systemd, that has implemented loading of BPF
-> > > programs.
-> > > 
-> > > Thus, to allow controlling these setting at early boot, this patch set
-> > > adds the ability to change the default setting of these sysctl knobs
-> > > as well as option to override them via a boot-time kernel parameter
-> > > (in order to avoid rebuilding kernel each time a need of changing these
-> > > defaults arises).
-> > > 
-> > > The sysctl knobs in question are kernel.unprivileged_bpf_disable,
-> > > net.core.bpf_jit_harden, and net.core.bpf_jit_kallsyms.  
-> > 
-> > - systemd is root. today it only uses cgroup-bpf progs which require root,
-> >   so disabling unpriv during boot time makes no difference to systemd.
-> >   what is the actual reason to present time?
-> > 
-> > - say in the future systemd wants to use so_reuseport+bpf for faster
-> >   networking. With unpriv disable during boot, it will force systemd
-> >   to do such networking from root, which will lower its security barrier.
-> >   How that make sense?
-> > 
-> > - bpf_jit_kallsyms sysctl has immediate effect on loaded programs.
-> >   Flipping it during the boot or right after or any time after
-> >   is the same thing. Why add such boot flag then?
-> > 
-> > - jit_harden can be turned on by systemd. so turning it during the boot
-> >   will make systemd progs to be constant blinded.
-> >   Constant blinding protects kernel from unprivileged JIT spraying.
-> >   Are you worried that systemd will attack the kernel with JIT spraying?
-> 
-> 
-> I think you are missing that, we want the ability to change these
-> defaults in-order to avoid depending on /etc/sysctl.conf settings, and
-> that the these sysctl.conf setting happen too late.
+On Mon, May 14, 2018 at 7:27 AM, Vlad Buslov <vladbu@mellanox.com> wrote:
+> Currently, all netlink protocol handlers for updating rules, actions and
+> qdiscs are protected with single global rtnl lock which removes any
+> possibility for parallelism. This patch set is a first step to remove
+> rtnl lock dependency from TC rules update path. It updates act API to
+> use atomic operations, rcu and spinlocks for fine-grained locking. It
+> also extend API with functions that are needed to update existing
+> actions for parallel execution.
 
-What does it mean 'happens too late' ?
-Too late for what?
-sysctl.conf has plenty of system critical knobs like
-kernel.perf_event_paranoid, kernel.core_pattern, etc
-The behavior of the host is drastically different after sysctl config
-is applied.
+Can you give a summary here for what and how it is achieved?
 
-> For example with jit_harden, there will be a difference between the
-> loaded BPF program that got loaded at boot-time with systemd (no
-> constant blinding) and when someone reloads that systemd service after
-> /etc/sysctl.conf have been evaluated and setting bpf_jit_harden (now
-> slower due to constant blinding).   This is inconsistent behavior.
+You said this is the first step, what do you want to achieve in this
+very first step? And how do you achieve it? Do you break the RTNL
+lock down to, for a quick example, a per-device lock? Or perhaps you
+completely remove it because of what reason?
 
-net.core.bpf_jit_harden can be flipped back and forth at run-time,
-so bpf progs before and after will be either blinded or not.
-I don't see any inconsistency.
-In general I think bootparams should be used only for things
-like kpti=on/off that cannot be set by sysctl.
+I go through all the descriptions of your 14 patches (but not any code),
+I still have no clue how you successfully avoid RTNL. Please don't
+let me read into your code to understand that, there must be some
+high-level justification on how it works. Without it, I don't event want
+to read into the code.
+
+Thanks.
