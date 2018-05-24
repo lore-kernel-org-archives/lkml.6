@@ -1,88 +1,39 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1733193-1527156044-2-801607598551214002
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  SPF_PASS -0.001, LANGUAGES enro, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='198.145.29.99', Host='mail.kernel.org', Country='US', FromHeader='org',
-  MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527156043; b=A8W7scUuaCfpI46Koz7ZuBw+iEW0E/1viBl+orVaTJZGXs5+RU
-    +IsHU9dUANqPimNXgOB5tCB7lKCsbBOxx67eAyfDYgVhf+1lNxWjfbXNI+MzsRlu
-    Z8rNU0zHpGPXM/ZqxFKB4H2cVhd14yrVlMhjl7Dw8I6fwmIKXKN43dsjlT+HJzhL
-    CGPBubx7AfJE8bdMpWiRgK0EvAolUUxITfrTfV1bBZGkHAzVl/n7o3sg6f3css2Q
-    drYFAFTCu/C1nLpIcClRj/SFDux78IzpHbZP2y7NnEfEdVNM7YiQO0yylrPpsea7
-    fdsMIallb5jlsV15IaqaBx3Ax29gv/NNwPIw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type; s=fm2; t=
-    1527156043; bh=Ilkctlkw3EuLS9edG72OzQHlnuhuRIaeD+T9qOdGHFM=; b=T
-    Ci2BJ/97+7e7fqoZlTCFYLM0lZz0G6nzZgAvkkocoSqa90x0MKfyOqD0TXHABZPJ
-    mr0LpJ/jM0hHlWkeyAUcXVPygnWmVlMyncmz5p8eHDWomSpfmiNSCH2Cnng00gdY
-    PSrTGbX7P72II3/ddxXfg8p2MuWW7hPFxGYu0lDXmlo1kHOfXYUBUyCIQH4P60z3
-    qPipU9tTligUxwFrpFQVk90cApCfBOdWEycPQp7s4+03fPLcOUnno0qlv4GSLZEG
-    9Qpg7lAGhMChYm0VWSeEb9O9WeQqzOIbB/Zkad5i19iQ+IJveBG78GA+EHGoJ1n2
-    hnh6StMmrAIyvc4uCfG8g==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=gC9x7x59 x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=198.145.29.99 (mail.kernel.org);
-    spf=pass
-    smtp.mailfrom="SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org"
-    smtp.helo=mail.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=mail.kernel.org x-ptr-lookup=mail.kernel.org;
-    x-return-mx=pass smtp.domain=kernel.org smtp.result=pass
-    smtp_is_org_domain=yes header.domain=linuxfoundation.org
-    header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-    bits=128/128;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=gC9x7x59 x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=198.145.29.99 (mail.kernel.org);
-    spf=pass
-      smtp.mailfrom="SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org"
-      smtp.helo=mail.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=mail.kernel.org x-ptr-lookup=mail.kernel.org;
-    x-return-mx=pass smtp.domain=kernel.org smtp.result=pass
-      smtp_is_org_domain=yes header.domain=linuxfoundation.org
-      header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-      bits=128/128;
-    x-vs=clean score=0 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMP8ozITHj0je9T9YR5HxtIs/90Y+Exu+M4/AVXnYMxBu5Sai51tuKRlI8Jxg7bZPh1uCV7x6MP2IN19TavLFcNcdoOuMSth0W2yqaJK09nFGfClaZB2
-    MONLGIMXn5lrCVl5guFUuoNBYOyeBMHBiaaqcnPTi14nRb5i0+Nb3ETTgM4XAc4ximvHXCTPhfr/iGipKR2SCL1/Htq92wzPCpvBQbJh4lFCda2injMsv70e
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=czNdAM+YcK12vDHDihaDnQ==:117
-    a=czNdAM+YcK12vDHDihaDnQ==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=ag1SF4gXAAAA:8 a=QnBerKj8dotVBY-Hzz8A:9 a=QEXdDO2ut3YA:10
-    a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
+X-Google-Smtp-Source: AB8JxZomqwQkkVZ4T827baIZhlpv+19chdLVIV6Y01uu/5uPDBBB66b9yC+EBpn+piasDAh/nx7u
+ARC-Seal: i=1; a=rsa-sha256; t=1527156039; cv=none;
+        d=google.com; s=arc-20160816;
+        b=m+cSdsWd1gDzvZJOYgINCY+qhgZnRJzV6gELM3R7feoQoa9gWIqM36xeecC/GXwKTx
+         SPF7jD1+dQVCwkfqtwYFc2fvGyUX5zo/O3z3KF957HtZz/kgSpfLuyX8cYqmyDi13guj
+         FMGtav5XYEgndwXJsjSZq7fdxw2Jg0A8I6Tzk8jVudOnF3E+7lOhpUYwFWO9YPOeQ28L
+         ypZTyFQCNvZtUXCTk93a800w7EEwbKc95rO6XYZRtRuGRMQRmTkrbkXdvZiVAok05qOq
+         4300/AVJetmDelV2y4whw3b6meHRbCbqXKKqMOnXM06utTI7CWFifdQ9Ig22kP+rrbag
+         YpuQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=eODh6k1VEr0215hdFr5PiQ/ntByLEmkMxGDix9bUdtc=;
+        b=SR78AQEIXRTXLuU3kVXIsmJf+jhBjYw2fGz85w7fGmYhh7gdpbqow6HdlHW2xUMxzu
+         RLNpEp4zVd2RMWzQ7PhomhEokqceRwwFttMXzxuHeoJCYBy8hrunlbyLbRqtEtplwE7J
+         KmNtdecIlBrivQAdR09w+UA0L9livIUyCm2muDRPRFO/7FNdRyZ17Xua1JTX10zT2h3l
+         b1bQsIfsYcarzsxW4/PBPaeLylvijvRtzpe3L+NuBJ7rQhT0x/YgKddz8k+DiOizE8FI
+         vE5eLfMFsGPVb0EoDbgAkR+vcrMkmiMnYohofcTHmxxmtfcuzG1JkzWnBEnKQLCiM5LW
+         F+tQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=vWOYqPPe;
+       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=vWOYqPPe;
+       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-	greg@kroah.com
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.16 042/161] powerpc/powernv: Use the security flags in pnv_setup_rfi_flush()
-Date: Thu, 24 May 2018 11:37:47 +0200
-Message-Id: <20180524093023.407204916@linuxfoundation.org>
+	Petr Machata <petrm@mellanox.com>,
+	William Tu <u9012063@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 024/161] net: ip6_gre: Split up ip6gre_tnl_link_config()
+Date: Thu, 24 May 2018 11:37:29 +0200
+Message-Id: <20180524093021.241884033@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -91,6 +42,9 @@ X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1601339171209200855?=
+X-GMAIL-MSGID: =?utf-8?q?1601339171209200855?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -98,91 +52,96 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Petr Machata <petrm@mellanox.com>
 
-commit 37c0bdd00d3ae83369ab60a6712c28e11e6458d5 upstream.
+[ Upstream commit a483373ead61e6079bc8ebe27e2dfdb2e3c1559f ]
 
-Now that we have the security flags we can significantly simplify the
-code in pnv_setup_rfi_flush(), because we can use the flags instead of
-checking device tree properties and because the security flags have
-pessimistic defaults.
+The function ip6gre_tnl_link_config() is used for setting up
+configuration of both ip6gretap and ip6erspan tunnels. Split the
+function into the common part and the route-lookup part. The latter then
+takes the calculated header length as an argument. This split will allow
+the patches down the line to sneak in a custom header length computation
+for the ERSPAN tunnel.
 
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: 5a963eb61b7c ("ip6_gre: Add ERSPAN native tunnel support")
+Signed-off-by: Petr Machata <petrm@mellanox.com>
+Acked-by: William Tu <u9012063@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/platforms/powernv/setup.c |   41 ++++++++-------------------------
- 1 file changed, 10 insertions(+), 31 deletions(-)
+ net/ipv6/ip6_gre.c |   38 ++++++++++++++++++++++++++------------
+ 1 file changed, 26 insertions(+), 12 deletions(-)
 
---- a/arch/powerpc/platforms/powernv/setup.c
-+++ b/arch/powerpc/platforms/powernv/setup.c
-@@ -66,7 +66,7 @@ static void init_fw_feat_flags(struct de
- 	if (fw_feature_is("enabled", "fw-bcctrl-serialized", np))
- 		security_ftr_set(SEC_FTR_BCCTRL_SERIALISED);
- 
--	if (fw_feature_is("enabled", "inst-spec-barrier-ori31,31,0", np))
-+	if (fw_feature_is("enabled", "inst-l1d-flush-ori30,30,0", np))
- 		security_ftr_set(SEC_FTR_L1D_FLUSH_ORI30);
- 
- 	if (fw_feature_is("enabled", "inst-l1d-flush-trig2", np))
-@@ -99,11 +99,10 @@ static void pnv_setup_rfi_flush(void)
- {
- 	struct device_node *np, *fw_features;
- 	enum l1d_flush_type type;
--	int enable;
-+	bool enable;
- 
- 	/* Default to fallback in case fw-features are not available */
- 	type = L1D_FLUSH_FALLBACK;
--	enable = 1;
- 
- 	np = of_find_node_by_name(NULL, "ibm,opal");
- 	fw_features = of_get_child_by_name(np, "fw-features");
-@@ -111,40 +110,20 @@ static void pnv_setup_rfi_flush(void)
- 
- 	if (fw_features) {
- 		init_fw_feat_flags(fw_features);
-+		of_node_put(fw_features);
- 
--		np = of_get_child_by_name(fw_features, "inst-l1d-flush-trig2");
--		if (np && of_property_read_bool(np, "enabled"))
-+		if (security_ftr_enabled(SEC_FTR_L1D_FLUSH_TRIG2))
- 			type = L1D_FLUSH_MTTRIG;
- 
--		of_node_put(np);
--
--		np = of_get_child_by_name(fw_features, "inst-l1d-flush-ori30,30,0");
--		if (np && of_property_read_bool(np, "enabled"))
-+		if (security_ftr_enabled(SEC_FTR_L1D_FLUSH_ORI30))
- 			type = L1D_FLUSH_ORI;
--
--		of_node_put(np);
--
--		/* Enable unless firmware says NOT to */
--		enable = 2;
--		np = of_get_child_by_name(fw_features, "needs-l1d-flush-msr-hv-1-to-0");
--		if (np && of_property_read_bool(np, "disabled"))
--			enable--;
--
--		of_node_put(np);
--
--		np = of_get_child_by_name(fw_features, "needs-l1d-flush-msr-pr-0-to-1");
--		if (np && of_property_read_bool(np, "disabled"))
--			enable--;
--
--		np = of_get_child_by_name(fw_features, "speculation-policy-favor-security");
--		if (np && of_property_read_bool(np, "disabled"))
--			enable = 0;
--
--		of_node_put(np);
--		of_node_put(fw_features);
- 	}
- 
--	setup_rfi_flush(type, enable > 0);
-+	enable = security_ftr_enabled(SEC_FTR_FAVOUR_SECURITY) && \
-+		 (security_ftr_enabled(SEC_FTR_L1D_FLUSH_PR)   || \
-+		  security_ftr_enabled(SEC_FTR_L1D_FLUSH_HV));
-+
-+	setup_rfi_flush(type, enable);
+--- a/net/ipv6/ip6_gre.c
++++ b/net/ipv6/ip6_gre.c
+@@ -1019,12 +1019,11 @@ tx_err:
+ 	return NETDEV_TX_OK;
  }
  
- static void __init pnv_setup_arch(void)
+-static void ip6gre_tnl_link_config(struct ip6_tnl *t, int set_mtu)
++static void ip6gre_tnl_link_config_common(struct ip6_tnl *t)
+ {
+ 	struct net_device *dev = t->dev;
+ 	struct __ip6_tnl_parm *p = &t->parms;
+ 	struct flowi6 *fl6 = &t->fl.u.ip6;
+-	int t_hlen;
+ 
+ 	if (dev->type != ARPHRD_ETHER) {
+ 		memcpy(dev->dev_addr, &p->laddr, sizeof(struct in6_addr));
+@@ -1051,12 +1050,13 @@ static void ip6gre_tnl_link_config(struc
+ 		dev->flags |= IFF_POINTOPOINT;
+ 	else
+ 		dev->flags &= ~IFF_POINTOPOINT;
++}
+ 
+-	t->tun_hlen = gre_calc_hlen(t->parms.o_flags);
+-
+-	t->hlen = t->encap_hlen + t->tun_hlen;
+-
+-	t_hlen = t->hlen + sizeof(struct ipv6hdr);
++static void ip6gre_tnl_link_config_route(struct ip6_tnl *t, int set_mtu,
++					 int t_hlen)
++{
++	const struct __ip6_tnl_parm *p = &t->parms;
++	struct net_device *dev = t->dev;
+ 
+ 	if (p->flags & IP6_TNL_F_CAP_XMIT) {
+ 		int strict = (ipv6_addr_type(&p->raddr) &
+@@ -1088,6 +1088,24 @@ static void ip6gre_tnl_link_config(struc
+ 	}
+ }
+ 
++static int ip6gre_calc_hlen(struct ip6_tnl *tunnel)
++{
++	int t_hlen;
++
++	tunnel->tun_hlen = gre_calc_hlen(tunnel->parms.o_flags);
++	tunnel->hlen = tunnel->tun_hlen + tunnel->encap_hlen;
++
++	t_hlen = tunnel->hlen + sizeof(struct ipv6hdr);
++	tunnel->dev->hard_header_len = LL_MAX_HEADER + t_hlen;
++	return t_hlen;
++}
++
++static void ip6gre_tnl_link_config(struct ip6_tnl *t, int set_mtu)
++{
++	ip6gre_tnl_link_config_common(t);
++	ip6gre_tnl_link_config_route(t, set_mtu, ip6gre_calc_hlen(t));
++}
++
+ static int ip6gre_tnl_change(struct ip6_tnl *t,
+ 	const struct __ip6_tnl_parm *p, int set_mtu)
+ {
+@@ -1381,11 +1399,7 @@ static int ip6gre_tunnel_init_common(str
+ 		return ret;
+ 	}
+ 
+-	tunnel->tun_hlen = gre_calc_hlen(tunnel->parms.o_flags);
+-	tunnel->hlen = tunnel->tun_hlen + tunnel->encap_hlen;
+-	t_hlen = tunnel->hlen + sizeof(struct ipv6hdr);
+-
+-	dev->hard_header_len = LL_MAX_HEADER + t_hlen;
++	t_hlen = ip6gre_calc_hlen(tunnel);
+ 	dev->mtu = ETH_DATA_LEN - t_hlen;
+ 	if (dev->type == ARPHRD_ETHER)
+ 		dev->mtu -= ETH_HLEN;
