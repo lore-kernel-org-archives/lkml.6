@@ -1,167 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968765AbeEXLUn (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 07:20:43 -0400
-Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:60053 "EHLO
-        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S967868AbeEXLUi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 07:20:38 -0400
-Subject: Re: [PATCH v6 4/6] mfd: cros-ec: Introduce CEC commands and events
- definitions.
-To: Neil Armstrong <narmstrong@baylibre.com>, airlied@linux.ie,
-        hans.verkuil@cisco.com, lee.jones@linaro.org, olof@lixom.net,
-        seanpaul@google.com
-Cc: sadolfsson@google.com, felixe@google.com, bleung@google.com,
-        darekm@google.com, marcheu@chromium.org, fparent@baylibre.com,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        eballetbo@gmail.com
-References: <1527155841-28494-1-git-send-email-narmstrong@baylibre.com>
- <1527155841-28494-5-git-send-email-narmstrong@baylibre.com>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <6d8fc035-52d6-c5fd-3c2b-64bd9288e713@xs4all.nl>
-Date: Thu, 24 May 2018 13:20:35 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <1527155841-28494-5-git-send-email-narmstrong@baylibre.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfDSurql6kl3rd7EZuGQb79RphcMl6KpkB16C1CPbiO6HafX9Xnj9TrA9BWcY4XdhQgd69ctggAMJTtHBnNhlq7BJ6KwKPKsChMXsJE4E7wes9Z2r2/oW
- Dq/MHV392t+AYwHr+bUXd9enCO7C+qHkancHwNKsBcEEGdVatoMBh5YbNWKTlOCmw14ruEV9Enfifl/uhOYnkZICHzF/FW1anky+MysBi5rbulT0PFvEmxMH
- FCiibR4EQgosqyDQxRsk1UqLqtysN562d/+6N9UTaM1o3iZ8atjN2Lzu5xx7najhbUW4ouSD3lqA4x9rfYYQ9IEGbqN+py6OpF52Ra/vVJRN5Us5/PkTArUS
- /erAldzpKaGZbUHIUBhnmLO9qfVC9/7syqc103xDb+ocg4wk1kyGe0QOlK/NF0J+92404Mqzb1RT+bfDDj25F9RX+oo+eXAUJ8L+A18jet36j+Jm87mE4En6
- sJqHKPWHJWVEkPNX2cYnIZvGqXeOxNihCCU8eYFOVKVquRUhi14G54u4MVFl3MBjc7QaBJq1EMljZkD0bsUGkgc2/5hGHcjNSiz2g9Z8BTmOyWImoXO6tbuv
- kzbaF6j/D3aGhG9vdf7MIBqc/nze9tQGfqJzoDm9gEkoVpCATP/DefauBDPV6CrO7HGSKYlHg9hWZgIBJTAYcg5MeXyZn8QfWrKUJIT4UiT+0H84xR12PNT0
- 0EyUNmVJsunwOWjQCBIYN0bVBA6buBZZ5fXYKBLei6cXJBCN2FpiN0XTkbWoz8z40d++d9dkww2qbGFk1KpJA4RaAYwXBPNy0bvw4blj4ycCswbM8lRAH4l/
- 56BDVQEYhkCgz1GgxVM=
+        id S1033138AbeEXLWe (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 07:22:34 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:24289 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S967840AbeEXLW3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 07:22:29 -0400
+Message-Id: <484bcfaccc1ec3d91b74aeaaa26a0ae66fe0955a.1527160868.git.christophe.leroy@c-s.fr>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] powerpc/32: Optimise __csum_partial()
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, segher@kernel.crashing.org
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date: Thu, 24 May 2018 11:22:27 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/05/18 11:57, Neil Armstrong wrote:
-> The EC can expose a CEC bus, this patch adds the CEC related definitions
-> needed by the cros-ec-cec driver.
-> 
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Improve __csum_partial by interleaving loads and adds.
 
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+On a 8xx, it brings neither improvement nor degradation.
+On a 83xx, it brings a 25% improvement.
 
-Thanks!
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/lib/checksum_32.S | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-	Hans
-
-> ---
->  include/linux/mfd/cros_ec_commands.h | 81 ++++++++++++++++++++++++++++++++++++
->  1 file changed, 81 insertions(+)
-> 
-> diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
-> index cc0768e..fe33a81 100644
-> --- a/include/linux/mfd/cros_ec_commands.h
-> +++ b/include/linux/mfd/cros_ec_commands.h
-> @@ -804,6 +804,8 @@ enum ec_feature_code {
->  	EC_FEATURE_MOTION_SENSE_FIFO = 24,
->  	/* EC has RTC feature that can be controlled by host commands */
->  	EC_FEATURE_RTC = 27,
-> +	/* EC supports CEC commands */
-> +	EC_FEATURE_CEC = 35,
->  };
->  
->  #define EC_FEATURE_MASK_0(event_code) (1UL << (event_code % 32))
-> @@ -2078,6 +2080,12 @@ enum ec_mkbp_event {
->  	/* EC sent a sysrq command */
->  	EC_MKBP_EVENT_SYSRQ = 6,
->  
-> +	/* Notify the AP that something happened on CEC */
-> +	EC_MKBP_EVENT_CEC_EVENT = 8,
-> +
-> +	/* Send an incoming CEC message to the AP */
-> +	EC_MKBP_EVENT_CEC_MESSAGE = 9,
-> +
->  	/* Number of MKBP events */
->  	EC_MKBP_EVENT_COUNT,
->  };
-> @@ -2850,6 +2858,79 @@ struct ec_params_reboot_ec {
->  
->  /*****************************************************************************/
->  /*
-> + * HDMI CEC commands
-> + *
-> + * These commands are for sending and receiving message via HDMI CEC
-> + */
-> +#define EC_MAX_CEC_MSG_LEN 16
-> +
-> +/* CEC message from the AP to be written on the CEC bus */
-> +#define EC_CMD_CEC_WRITE_MSG 0x00B8
-> +
-> +/**
-> + * struct ec_params_cec_write - Message to write to the CEC bus
-> + * @msg: message content to write to the CEC bus
-> + */
-> +struct ec_params_cec_write {
-> +	uint8_t msg[EC_MAX_CEC_MSG_LEN];
-> +} __packed;
-> +
-> +/* Set various CEC parameters */
-> +#define EC_CMD_CEC_SET 0x00BA
-> +
-> +/**
-> + * struct ec_params_cec_set - CEC parameters set
-> + * @cmd: parameter type, can be CEC_CMD_ENABLE or CEC_CMD_LOGICAL_ADDRESS
-> + * @val: in case cmd is CEC_CMD_ENABLE, this field can be 0 to disable CEC
-> + *	or 1 to enable CEC functionnality, in case cmd is CEC_CMD_LOGICAL_ADDRESS,
-> + *	this field encodes the requested logical address between 0 and 15
-> + *	or 0xff to unregister
-> + */
-> +struct ec_params_cec_set {
-> +	uint8_t cmd; /* enum cec_command */
-> +	uint8_t val;
-> +} __packed;
-> +
-> +/* Read various CEC parameters */
-> +#define EC_CMD_CEC_GET 0x00BB
-> +
-> +/**
-> + * struct ec_params_cec_get - CEC parameters get
-> + * @cmd: parameter type, can be CEC_CMD_ENABLE or CEC_CMD_LOGICAL_ADDRESS
-> + */
-> +struct ec_params_cec_get {
-> +	uint8_t cmd; /* enum cec_command */
-> +} __packed;
-> +
-> +/**
-> + * struct ec_response_cec_get - CEC parameters get response
-> + * @val: in case cmd was CEC_CMD_ENABLE, this field will 0 if CEC is
-> + *	disabled or 1 if CEC functionnality is enabled,
-> + *	in case cmd was CEC_CMD_LOGICAL_ADDRESS, this will encode the
-> + *	configured logical address between 0 and 15 or 0xff if unregistered
-> + */
-> +struct ec_response_cec_get {
-> +	uint8_t val;
-> +} __packed;
-> +
-> +/* CEC parameters command */
-> +enum ec_cec_command {
-> +	/* CEC reading, writing and events enable */
-> +	CEC_CMD_ENABLE,
-> +	/* CEC logical address  */
-> +	CEC_CMD_LOGICAL_ADDRESS,
-> +};
-> +
-> +/* Events from CEC to AP */
-> +enum mkbp_cec_event {
-> +	/* Outgoing message was acknowledged by a follower */
-> +	EC_MKBP_CEC_SEND_OK			= BIT(0),
-> +	/* Outgoing message was not acknowledged */
-> +	EC_MKBP_CEC_SEND_FAILED			= BIT(1),
-> +};
-> +
-> +/*****************************************************************************/
-> +/*
->   * Special commands
->   *
->   * These do not follow the normal rules for commands.  See each command for
-> 
+diff --git a/arch/powerpc/lib/checksum_32.S b/arch/powerpc/lib/checksum_32.S
+index d2238ea82209..aa224069f93a 100644
+--- a/arch/powerpc/lib/checksum_32.S
++++ b/arch/powerpc/lib/checksum_32.S
+@@ -47,16 +47,25 @@ _GLOBAL(__csum_partial)
+ 	bdnz	2b
+ 21:	srwi.	r6,r4,4		/* # blocks of 4 words to do */
+ 	beq	3f
++	lwz	r0,4(r3)
+ 	mtctr	r6
+-22:	lwz	r0,4(r3)
+ 	lwz	r6,8(r3)
++	adde	r5,r5,r0
+ 	lwz	r7,12(r3)
++	adde	r5,r5,r6
+ 	lwzu	r8,16(r3)
++	adde	r5,r5,r7
++	bdz	23f
++22:	lwz	r0,4(r3)
++	adde	r5,r5,r8
++	lwz	r6,8(r3)
+ 	adde	r5,r5,r0
++	lwz	r7,12(r3)
+ 	adde	r5,r5,r6
++	lwzu	r8,16(r3)
+ 	adde	r5,r5,r7
+-	adde	r5,r5,r8
+ 	bdnz	22b
++23:	adde	r5,r5,r8
+ 3:	andi.	r0,r4,2
+ 	beq+	4f
+ 	lhz	r0,4(r3)
+-- 
+2.13.3
