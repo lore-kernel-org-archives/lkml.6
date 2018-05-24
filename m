@@ -1,39 +1,93 @@
-Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpNNPn0F/eh8SEp8PxnRsYYRjI5dQBRBIcllXlkJMpEp3S8jUCEE9e/XXh2BeSGkmZaEdmZ
-ARC-Seal: i=1; a=rsa-sha256; t=1527156141; cv=none;
-        d=google.com; s=arc-20160816;
-        b=Wd4TpyVE8oCKFHzJzzWEy+uxOgi0fhHsXzJNDXYhn0/WmcFNyo+Ccb9fttK9sr+8tW
-         GtGrikRQn5CB0dNOXkLBCD5fIoY7yth08goQVnFVs6l8F5jyCBY29n9jlOJ0+uk/FIDx
-         Lw0jHFSfZcdE4ftPbs3khsIPWz6j42Rj02JpUUWcvhzm04HbkgxUCGnk6tuGxBfrMxf1
-         ukPGEyXyGsM/OA3D2rf/6dJAp/yUw0xgPHvESVzOlMO+C6xuIU6Mz2W8cVtPrWLUgPuS
-         1FeGLrPHnKlTI+GYSTmSu3Z8V9IVf7DTUrOGtQZqzQ3FoHnB3mepaZFp1C8vXMORy4A1
-         175w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=bShh4rwbarsT/EqE7AUK/mbmrGARhkfoBxds4g3rXPQ=;
-        b=YZC3f43xBobqlF27l2LikxcvGTnauZcsv/sbONOfsG+aV1rbDadeDQbBR8DCAycimt
-         ldfjYJFLQTwCc1+YlDLqswtMYaPWVT3mhD0F+cpUVPemGGeup5m/6d+flIx3YFW61BMH
-         OG6+KZNul5YdEheFpFS8gUZGeDzH1auPZ6kfTBYeBJ+UUcAXsN8ZE1box5W37KzNH9dd
-         URwFmxTG6qh3UMA3pd9MHcTEIcWUGB7NocoJSDzxAvcsxTe0/MzYkxM/JiQ/hrFkQmts
-         KTN4vQHjrq2xqLjyzqec158vlxD+m2XKoo6iT5IOvtMmNsEOUiUgp4KDFkbefsNevPX9
-         gxig==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=zO2ctOly;
-       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=zO2ctOly;
-       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1732752-1527156141-2-9855131617843101075
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1527156141; b=MaDORr51tYzZF2LBQ+F+u8NciUB8Alu2AyE0s2LI2Sgstmptur
+    qDAqeOvPNEEIjn/eSMaIeH8MjcsNkRtZkdlAgDE5A3LWV31+wmY5kf8+u8LkwY4+
+    xkZYEMy9u6956PL5xYdIUVKNYhCIyAzBW5OkdjGHylWWH+DsakmkJx+8DQETUGGD
+    /MUVKoppCMx1teL2Uusl0pUxMA/xvILXKrh3BfpvzYPPdZ+XO6t7Sx0eEiuQ5myQ
+    R54Rhd2rHPiDAsd9kNYRPej8EFHOW+9piTd2ZlgZPidK39QXerWNM/AV6YXaojOs
+    8v2Skw+qE5V/7+tcG6xWNpSfaw67NCm7JR4g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1527156141; bh=OdR19075Aes9nO5CDpwg1SJI3/i6PY
+    Ov9ESHxNM6E2k=; b=ZgY3FQT59b2cDwXWxcFncy9gN5uGLwFPMWonCrA/u2Vb7j
+    2cSk/NRyla6jqxY4hABTnDUzMMpDNt3WP8rMrQjPt2t0G9jrVAAtGiY59iyXVXRt
+    1yzLApMYYnEuAUk+041dDtvDlCnefWF/lQ9SEF7Pc1Mm2KEl7G4YzL3l8V4QS4ia
+    iGEPYIzYace+gggRddfr0vJqy4rDi94F65spp69X1pveyFlw8/+Lm51n9bZftEEw
+    CCRbSQopETmh7SuoT0I83r2hFBXTWncURMF/uPA32eCHdeUcbh/4wMKfprrg9l9l
+    2vYZmI8y3xAICP6EFWz/t+Jd39Lryms9ABnhThHA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+    header.i=@kernel.org header.b=HNw7SHgp x-bits=1024 x-keytype=rsa
+    x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+    header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=linuxfoundation.org header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+      header.i=@kernel.org header.b=HNw7SHgp x-bits=1024 x-keytype=rsa
+      x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+      header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=linuxfoundation.org header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfLtZBR4nvB2ucVZ6kApmPhwYwymvw9jKTnbZHf8LOG8U8xB+pQoOf7+sVJqbUyJlJMpkdHtu/EvZeczXeqZ/Ue01UYKPjbGl1X+TmfGqXhgz5Jz5O3n9
+    76i349ABl/wRlhOPU8ftmnlCWA1dzD5sWnpdoy552ZNMY0AAR5uy3v8TMZQIBbbDYFIu7bwEJV5+1+lWuqNWDaKrxRug2DCOuEELHRjWNdOtd/m3oHbEXn77
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=QyXUC8HyAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=JX2Zv6e58hTcoUBVBSsA:9
+    a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1030703AbeEXKCR (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 06:02:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48532 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1031073AbeEXKCN (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 06:02:13 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Chris Dickens <christopher.a.dickens@gmail.com>,
-	Felipe Balbi <felipe.balbi@linux.intel.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 079/161] usb: gadget: composite: fix incorrect handling of OS desc requests
-Date: Thu, 24 May 2018 11:38:24 +0200
-Message-Id: <20180524093028.008516478@linuxfoundation.org>
+        stable@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.16 076/161] usb: gadget: ffs: Execute copy_to_user() with USER_DS set
+Date: Thu, 24 May 2018 11:38:21 +0200
+Message-Id: <20180524093027.645208181@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -41,10 +95,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601338421384534300?=
-X-GMAIL-MSGID: =?utf-8?q?1601339278420354457?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,156 +105,66 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Chris Dickens <christopher.a.dickens@gmail.com>
+From: Lars-Peter Clausen <lars@metafoo.de>
 
-[ Upstream commit 5d6ae4f0da8a64a185074dabb1b2f8c148efa741 ]
+[ Upstream commit 4058ebf33cb0be88ca516f968eda24ab7b6b93e4 ]
 
-When handling an OS descriptor request, one of the first operations is
-to zero out the request buffer using the wLength from the setup packet.
-There is no bounds checking, so a wLength > 4096 would clobber memory
-adjacent to the request buffer. Fix this by taking the min of wLength
-and the request buffer length prior to the memset. While at it, define
-the buffer length in a header file so that magic numbers don't appear
-throughout the code.
+When using a AIO read() operation on the function FS gadget driver a URB is
+submitted asynchronously and on URB completion the received data is copied
+to the userspace buffer associated with the read operation.
 
-When returning data to the host, the data length should be the min of
-the wLength and the valid data we have to return. Currently we are
-returning wLength, thus requests for a wLength greater than the amount
-of data in the OS descriptor buffer would return invalid (albeit zero'd)
-data following the valid descriptor data. Fix this by counting the
-number of bytes when constructing the data and using this when
-determining the length of the request.
+This is done from a kernel worker thread invoking copy_to_user() (through
+copy_to_iter()). And while the user space process memory is made available
+to the kernel thread using use_mm(), some architecture require in addition
+to this that the operation runs with USER_DS set. Otherwise the userspace
+memory access will fail.
 
-Signed-off-by: Chris Dickens <christopher.a.dickens@gmail.com>
+For example on ARM64 with Privileged Access Never (PAN) and User Access
+Override (UAO) enabled the following crash occurs.
+
+	Internal error: Accessing user space memory with fs=KERNEL_DS: 9600004f [#1] SMP
+	Modules linked in:
+	CPU: 2 PID: 1636 Comm: kworker/2:1 Not tainted 4.9.0-04081-g8ab2dfb-dirty #487
+	Hardware name: ZynqMP ZCU102 Rev1.0 (DT)
+	Workqueue: events ffs_user_copy_worker
+	task: ffffffc87afc8080 task.stack: ffffffc87a00c000
+	PC is at __arch_copy_to_user+0x190/0x220
+	LR is at copy_to_iter+0x78/0x3c8
+	[...]
+	[<ffffff800847b790>] __arch_copy_to_user+0x190/0x220
+	[<ffffff80086f25d8>] ffs_user_copy_worker+0x70/0x130
+	[<ffffff80080b8c64>] process_one_work+0x1dc/0x460
+	[<ffffff80080b8f38>] worker_thread+0x50/0x4b0
+	[<ffffff80080bf5a0>] kthread+0xd8/0xf0
+	[<ffffff8008083680>] ret_from_fork+0x10/0x50
+
+Address this by placing a set_fs(USER_DS) before of the copy operation
+and revert it again once the copy operation has finished.
+
+This patch is analogous to commit d7ffde35e31a ("vhost: use USER_DS in
+vhost_worker thread") which addresses the same underlying issue.
+
+Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
 Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/gadget/composite.c |   40 +++++++++++++++++++---------------------
- include/linux/usb/composite.h  |    3 +++
- 2 files changed, 22 insertions(+), 21 deletions(-)
+ drivers/usb/gadget/function/f_fs.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/usb/gadget/composite.c
-+++ b/drivers/usb/gadget/composite.c
-@@ -1422,7 +1422,7 @@ static int count_ext_compat(struct usb_c
- 	return res;
- }
+--- a/drivers/usb/gadget/function/f_fs.c
++++ b/drivers/usb/gadget/function/f_fs.c
+@@ -758,9 +758,13 @@ static void ffs_user_copy_worker(struct
+ 	bool kiocb_has_eventfd = io_data->kiocb->ki_flags & IOCB_EVENTFD;
  
--static void fill_ext_compat(struct usb_configuration *c, u8 *buf)
-+static int fill_ext_compat(struct usb_configuration *c, u8 *buf)
- {
- 	int i, count;
- 
-@@ -1449,10 +1449,12 @@ static void fill_ext_compat(struct usb_c
- 				buf += 23;
- 			}
- 			count += 24;
--			if (count >= 4096)
--				return;
-+			if (count + 24 >= USB_COMP_EP0_OS_DESC_BUFSIZ)
-+				return count;
- 		}
- 	}
+ 	if (io_data->read && ret > 0) {
++		mm_segment_t oldfs = get_fs();
 +
-+	return count;
- }
- 
- static int count_ext_prop(struct usb_configuration *c, int interface)
-@@ -1497,25 +1499,20 @@ static int fill_ext_prop(struct usb_conf
- 	struct usb_os_desc *d;
- 	struct usb_os_desc_ext_prop *ext_prop;
- 	int j, count, n, ret;
--	u8 *start = buf;
- 
- 	f = c->interface[interface];
-+	count = 10; /* header length */
- 	for (j = 0; j < f->os_desc_n; ++j) {
- 		if (interface != f->os_desc_table[j].if_id)
- 			continue;
- 		d = f->os_desc_table[j].os_desc;
- 		if (d)
- 			list_for_each_entry(ext_prop, &d->ext_prop, entry) {
--				/* 4kB minus header length */
--				n = buf - start;
--				if (n >= 4086)
--					return 0;
--
--				count = ext_prop->data_len +
-+				n = ext_prop->data_len +
- 					ext_prop->name_len + 14;
--				if (count > 4086 - n)
--					return -EINVAL;
--				usb_ext_prop_put_size(buf, count);
-+				if (count + n >= USB_COMP_EP0_OS_DESC_BUFSIZ)
-+					return count;
-+				usb_ext_prop_put_size(buf, n);
- 				usb_ext_prop_put_type(buf, ext_prop->type);
- 				ret = usb_ext_prop_put_name(buf, ext_prop->name,
- 							    ext_prop->name_len);
-@@ -1541,11 +1538,12 @@ static int fill_ext_prop(struct usb_conf
- 				default:
- 					return -EINVAL;
- 				}
--				buf += count;
-+				buf += n;
-+				count += n;
- 			}
++		set_fs(USER_DS);
+ 		use_mm(io_data->mm);
+ 		ret = ffs_copy_to_iter(io_data->buf, ret, &io_data->data);
+ 		unuse_mm(io_data->mm);
++		set_fs(oldfs);
  	}
  
--	return 0;
-+	return count;
- }
- 
- /*
-@@ -1827,6 +1825,7 @@ unknown:
- 			req->complete = composite_setup_complete;
- 			buf = req->buf;
- 			os_desc_cfg = cdev->os_desc_config;
-+			w_length = min_t(u16, w_length, USB_COMP_EP0_OS_DESC_BUFSIZ);
- 			memset(buf, 0, w_length);
- 			buf[5] = 0x01;
- 			switch (ctrl->bRequestType & USB_RECIP_MASK) {
-@@ -1850,8 +1849,8 @@ unknown:
- 					count += 16; /* header */
- 					put_unaligned_le32(count, buf);
- 					buf += 16;
--					fill_ext_compat(os_desc_cfg, buf);
--					value = w_length;
-+					value = fill_ext_compat(os_desc_cfg, buf);
-+					value = min_t(u16, w_length, value);
- 				}
- 				break;
- 			case USB_RECIP_INTERFACE:
-@@ -1880,8 +1879,7 @@ unknown:
- 							      interface, buf);
- 					if (value < 0)
- 						return value;
--
--					value = w_length;
-+					value = min_t(u16, w_length, value);
- 				}
- 				break;
- 			}
-@@ -2156,8 +2154,8 @@ int composite_os_desc_req_prepare(struct
- 		goto end;
- 	}
- 
--	/* OS feature descriptor length <= 4kB */
--	cdev->os_desc_req->buf = kmalloc(4096, GFP_KERNEL);
-+	cdev->os_desc_req->buf = kmalloc(USB_COMP_EP0_OS_DESC_BUFSIZ,
-+					 GFP_KERNEL);
- 	if (!cdev->os_desc_req->buf) {
- 		ret = -ENOMEM;
- 		usb_ep_free_request(ep0, cdev->os_desc_req);
---- a/include/linux/usb/composite.h
-+++ b/include/linux/usb/composite.h
-@@ -54,6 +54,9 @@
- /* big enough to hold our biggest descriptor */
- #define USB_COMP_EP0_BUFSIZ	1024
- 
-+/* OS feature descriptor length <= 4kB */
-+#define USB_COMP_EP0_OS_DESC_BUFSIZ	4096
-+
- #define USB_MS_TO_HS_INTERVAL(x)	(ilog2((x * 1000 / 125)) + 1)
- struct usb_configuration;
- 
+ 	io_data->kiocb->ki_complete(io_data->kiocb, ret, ret);
