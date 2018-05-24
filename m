@@ -1,365 +1,447 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032567AbeEXKsz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 06:48:55 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:41662 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030500AbeEXKrD (ORCPT
+        id S1032584AbeEXKt0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 06:49:26 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:36564 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030491AbeEXJ5g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 06:47:03 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 51C2C6047C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rplsssn@codeaurora.org
-From: Raju P L S S S N <rplsssn@codeaurora.org>
-To: andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
-Cc: rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
-        dianders@chromium.org, mka@chromium.org, rplsssn@codeaurora.org,
-        ilina@codeaurora.org
-Subject: [PATCH v9 04/10] drivers: qcom: rpmh: add RPMH helper functions
-Date: Thu, 24 May 2018 16:15:25 +0530
-Message-Id: <1527158731-17685-5-git-send-email-rplsssn@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1527158731-17685-1-git-send-email-rplsssn@codeaurora.org>
-References: <1527158731-17685-1-git-send-email-rplsssn@codeaurora.org>
+        Thu, 24 May 2018 05:57:36 -0400
+X-Google-Smtp-Source: AB8JxZocFtFVhvaYR7IPtYtWx8qJZTT1RJn/6COdblTcaTx/a/JNiYLx73Qb5EMlebgWwwNQ+l0S9A==
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: airlied@linux.ie, hans.verkuil@cisco.com, lee.jones@linaro.org,
+        olof@lixom.net, seanpaul@google.com
+Cc: Neil Armstrong <narmstrong@baylibre.com>, sadolfsson@google.com,
+        felixe@google.com, bleung@google.com, darekm@google.com,
+        marcheu@chromium.org, fparent@baylibre.com,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        eballetbo@gmail.com
+Subject: [PATCH v6 6/6] media: platform: Add ChromeOS EC CEC driver
+Date: Thu, 24 May 2018 11:57:21 +0200
+Message-Id: <1527155841-28494-7-git-send-email-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1527155841-28494-1-git-send-email-narmstrong@baylibre.com>
+References: <1527155841-28494-1-git-send-email-narmstrong@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lina Iyer <ilina@codeaurora.org>
+The ChromeOS Embedded Controller can expose a CEC bus, this patch add the
+driver for such feature of the Embedded Controller.
 
-Sending RPMH requests and waiting for response from the controller
-through a callback is common functionality across all platform drivers.
-To simplify drivers, add a library functions to create RPMH client and
-send resource state requests.
+This driver is part of the cros-ec MFD and will be add as a sub-device when
+the feature bit is exposed by the EC.
 
-rpmh_write() is a synchronous blocking call that can be used to send
-active state requests.
+The controller will only handle a single logical address and handles
+all the messages retries and will only expose Success or Error.
 
-Signed-off-by: Lina Iyer <ilina@codeaurora.org>
-Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+The controller will be tied to the HDMI CEC notifier by using the platform
+DMI Data and the i915 device name and connector name.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 ---
-Changes in v9:
-	- Remove EXPORT_SYMBOL
-	- add WARN_ON if response fails
+ drivers/media/platform/Kconfig                   |  11 +
+ drivers/media/platform/Makefile                  |   2 +
+ drivers/media/platform/cros-ec-cec/Makefile      |   1 +
+ drivers/media/platform/cros-ec-cec/cros-ec-cec.c | 347 +++++++++++++++++++++++
+ 4 files changed, 361 insertions(+)
+ create mode 100644 drivers/media/platform/cros-ec-cec/Makefile
+ create mode 100644 drivers/media/platform/cros-ec-cec/cros-ec-cec.c
 
-Changes in v7:
-	- Optimization and locking fixes
-
-Changes in v6:
-	- replace rpmh_client with device
-	- inline wait_for_tx_done()
-
-Changes in v4:
-	- use const struct tcs_cmd in API
-	- remove wait count from this patch
-	- changed -EFAULT to -EINVAL
----
- drivers/soc/qcom/Makefile        |   4 +-
- drivers/soc/qcom/rpmh-internal.h |   6 ++
- drivers/soc/qcom/rpmh-rsc.c      |   8 ++
- drivers/soc/qcom/rpmh.c          | 176 +++++++++++++++++++++++++++++++++++++++
- include/soc/qcom/rpmh.h          |  25 ++++++
- 5 files changed, 218 insertions(+), 1 deletion(-)
- create mode 100644 drivers/soc/qcom/rpmh.c
- create mode 100644 include/soc/qcom/rpmh.h
-
-diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
-index cb6300f..bb395c3 100644
---- a/drivers/soc/qcom/Makefile
-+++ b/drivers/soc/qcom/Makefile
-@@ -7,7 +7,9 @@ obj-$(CONFIG_QCOM_PM)	+=	spm.o
- obj-$(CONFIG_QCOM_QMI_HELPERS)	+= qmi_helpers.o
- qmi_helpers-y	+= qmi_encdec.o qmi_interface.o
- obj-$(CONFIG_QCOM_RMTFS_MEM)	+= rmtfs_mem.o
--obj-$(CONFIG_QCOM_RPMH)	+=	rpmh-rsc.o
-+obj-$(CONFIG_QCOM_RPMH)		+= qcom_rpmh.o
-+qcom_rpmh-y			+= rpmh-rsc.o
-+qcom_rpmh-y			+= rpmh.o
- obj-$(CONFIG_QCOM_SMD_RPM)	+= smd-rpm.o
- obj-$(CONFIG_QCOM_SMEM) +=	smem.o
- obj-$(CONFIG_QCOM_SMEM_STATE) += smem_state.o
-diff --git a/drivers/soc/qcom/rpmh-internal.h b/drivers/soc/qcom/rpmh-internal.h
-index cc29176..d9a2172 100644
---- a/drivers/soc/qcom/rpmh-internal.h
-+++ b/drivers/soc/qcom/rpmh-internal.h
-@@ -14,6 +14,7 @@
- #define MAX_CMDS_PER_TCS		16
- #define MAX_TCS_PER_TYPE		3
- #define MAX_TCS_NR			(MAX_TCS_PER_TYPE * TCS_TYPE_NR)
-+#define RPMH_MAX_CTRLR			2
+diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
+index c7a1cf8..bc37ecf 100644
+--- a/drivers/media/platform/Kconfig
++++ b/drivers/media/platform/Kconfig
+@@ -546,6 +546,17 @@ menuconfig CEC_PLATFORM_DRIVERS
  
- struct rsc_drv;
+ if CEC_PLATFORM_DRIVERS
  
-@@ -52,6 +53,7 @@ struct tcs_group {
-  * @tcs:        TCS groups
-  * @tcs_in_use: s/w state of the TCS
-  * @lock:       synchronize state of the controller
-+ * @list:       element in list of drv
-  */
- struct rsc_drv {
- 	const char *name;
-@@ -61,9 +63,13 @@ struct rsc_drv {
- 	struct tcs_group tcs[TCS_TYPE_NR];
- 	DECLARE_BITMAP(tcs_in_use, MAX_TCS_NR);
- 	spinlock_t lock;
-+	struct list_head list;
- };
- 
-+extern struct list_head rsc_drv_list;
- 
- int rpmh_rsc_send_data(struct rsc_drv *drv, const struct tcs_request *msg);
- 
-+void rpmh_tx_done(const struct tcs_request *msg, int r);
++config VIDEO_CROS_EC_CEC
++	tristate "ChromeOS EC CEC driver"
++	depends on MFD_CROS_EC || COMPILE_TEST
++	select CEC_CORE
++	select CEC_NOTIFIER
++	---help---
++	  If you say yes here you will get support for the
++	  ChromeOS Embedded Controller's CEC.
++	  The CEC bus is present in the HDMI connector and enables communication
++	  between compatible devices.
 +
- #endif /* __RPM_INTERNAL_H__ */
-diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
-index 664f89b..85ebd05 100644
---- a/drivers/soc/qcom/rpmh-rsc.c
-+++ b/drivers/soc/qcom/rpmh-rsc.c
-@@ -61,6 +61,8 @@
- #define CMD_STATUS_ISSUED		BIT(8)
- #define CMD_STATUS_COMPL		BIT(16)
+ config VIDEO_MESON_AO_CEC
+ 	tristate "Amlogic Meson AO CEC driver"
+ 	depends on ARCH_MESON || COMPILE_TEST
+diff --git a/drivers/media/platform/Makefile b/drivers/media/platform/Makefile
+index 932515d..830696f 100644
+--- a/drivers/media/platform/Makefile
++++ b/drivers/media/platform/Makefile
+@@ -92,3 +92,5 @@ obj-$(CONFIG_VIDEO_QCOM_CAMSS)		+= qcom/camss-8x16/
+ obj-$(CONFIG_VIDEO_QCOM_VENUS)		+= qcom/venus/
  
-+LIST_HEAD(rsc_drv_list);
+ obj-y					+= meson/
 +
- static u32 read_tcs_reg(struct rsc_drv *drv, int reg, int tcs_id, int cmd_id)
- {
- 	return readl_relaxed(drv->tcs_base + reg + RSC_DRV_TCS_OFFSET * tcs_id +
-@@ -176,6 +178,8 @@ static irqreturn_t tcs_tx_done(int irq, void *p)
- 		spin_lock(&drv->lock);
- 		clear_bit(i, drv->tcs_in_use);
- 		spin_unlock(&drv->lock);
-+		if (req)
-+			rpmh_tx_done(req, err);
- 	}
- 
- 	return IRQ_HANDLED;
-@@ -468,6 +472,10 @@ static int rpmh_rsc_probe(struct platform_device *pdev)
- 	/* Enable the active TCS to send requests immediately */
- 	write_tcs_reg(drv, RSC_DRV_IRQ_ENABLE, 0, drv->tcs[ACTIVE_TCS].mask);
- 
-+	INIT_LIST_HEAD(&drv->list);
-+	list_add(&drv->list, &rsc_drv_list);
-+	dev_set_drvdata(&pdev->dev, drv);
-+
- 	return devm_of_platform_populate(&pdev->dev);
- }
- 
-diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
++obj-y					+= cros-ec-cec/
+diff --git a/drivers/media/platform/cros-ec-cec/Makefile b/drivers/media/platform/cros-ec-cec/Makefile
 new file mode 100644
-index 0000000..c542c2c
+index 0000000..9ce97f9
 --- /dev/null
-+++ b/drivers/soc/qcom/rpmh.c
-@@ -0,0 +1,176 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/drivers/media/platform/cros-ec-cec/Makefile
+@@ -0,0 +1 @@
++obj-$(CONFIG_VIDEO_CROS_EC_CEC) += cros-ec-cec.o
+diff --git a/drivers/media/platform/cros-ec-cec/cros-ec-cec.c b/drivers/media/platform/cros-ec-cec/cros-ec-cec.c
+new file mode 100644
+index 0000000..7bc4d8a
+--- /dev/null
++++ b/drivers/media/platform/cros-ec-cec/cros-ec-cec.c
+@@ -0,0 +1,347 @@
++// SPDX-License-Identifier: GPL-2.0+
 +/*
-+ * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
++ * CEC driver for ChromeOS Embedded Controller
++ *
++ * Copyright (c) 2018 BayLibre, SAS
++ * Author: Neil Armstrong <narmstrong@baylibre.com>
 + */
 +
-+#include <linux/atomic.h>
-+#include <linux/bug.h>
-+#include <linux/interrupt.h>
-+#include <linux/jiffies.h>
 +#include <linux/kernel.h>
 +#include <linux/module.h>
-+#include <linux/of.h>
 +#include <linux/platform_device.h>
++#include <linux/dmi.h>
++#include <linux/pci.h>
++#include <linux/cec.h>
 +#include <linux/slab.h>
-+#include <linux/types.h>
-+#include <linux/wait.h>
++#include <linux/interrupt.h>
++#include <media/cec.h>
++#include <media/cec-notifier.h>
++#include <linux/mfd/cros_ec.h>
++#include <linux/mfd/cros_ec_commands.h>
 +
-+#include <soc/qcom/rpmh.h>
-+
-+#include "rpmh-internal.h"
-+
-+#define RPMH_TIMEOUT_MS			msecs_to_jiffies(10000)
-+
-+#define DEFINE_RPMH_MSG_ONSTACK(dev, s, q, name)	\
-+	struct rpmh_request name = {			\
-+		.msg = {				\
-+			.state = s,			\
-+			.cmds = name.cmd,		\
-+			.num_cmds = 0,			\
-+			.wait_for_compl = true,		\
-+		},					\
-+		.cmd = { { 0 } },			\
-+		.completion = q,			\
-+		.dev = dev,				\
-+	}
++#define DRV_NAME	"cros-ec-cec"
 +
 +/**
-+ * struct rpmh_request: the message to be sent to rpmh-rsc
++ * struct cros_ec_cec - Driver data for EC CEC
 + *
-+ * @msg: the request
-+ * @cmd: the payload that will be part of the @msg
-+ * @completion: triggered when request is done
-+ * @dev: the device making the request
-+ * @err: err return from the controller
++ * @cros_ec: Pointer to EC device
++ * @notifier: Notifier info for responding to EC events
++ * @adap: CEC adapter
++ * @notify: CEC notifier pointer
++ * @rx_msg: storage for a received message
 + */
-+struct rpmh_request {
-+	struct tcs_request msg;
-+	struct tcs_cmd cmd[MAX_RPMH_PAYLOAD];
-+	struct completion *completion;
-+	const struct device *dev;
-+	int err;
++struct cros_ec_cec {
++	struct cros_ec_device *cros_ec;
++	struct notifier_block notifier;
++	struct cec_adapter *adap;
++	struct cec_notifier *notify;
++	struct cec_msg rx_msg;
 +};
 +
-+/**
-+ * struct rpmh_ctrlr: our representation of the controller
-+ *
-+ * @drv: the controller instance
-+ */
-+struct rpmh_ctrlr {
-+	struct rsc_drv *drv;
-+};
-+
-+static struct rpmh_ctrlr rpmh_rsc[RPMH_MAX_CTRLR];
-+static DEFINE_SPINLOCK(rpmh_rsc_lock);
-+
-+static struct rpmh_ctrlr *get_rpmh_ctrlr(const struct device *dev)
++static void handle_cec_message(struct cros_ec_cec *cros_ec_cec)
 +{
-+	int i;
-+	struct rsc_drv *p, *drv = dev_get_drvdata(dev->parent);
-+	struct rpmh_ctrlr *ctrlr = ERR_PTR(-EINVAL);
-+	unsigned long flags;
++	struct cros_ec_device *cros_ec = cros_ec_cec->cros_ec;
++	uint8_t *cec_message = cros_ec->event_data.data.cec_message;
++	unsigned int len = cros_ec->event_size;
 +
-+	if (!drv)
-+		return ctrlr;
++	cros_ec_cec->rx_msg.len = len;
++	memcpy(cros_ec_cec->rx_msg.msg, cec_message, len);
 +
-+	for (i = 0; i < RPMH_MAX_CTRLR; i++) {
-+		if (rpmh_rsc[i].drv == drv) {
-+			ctrlr = &rpmh_rsc[i];
-+			return ctrlr;
-+		}
++	cec_received_msg(cros_ec_cec->adap, &cros_ec_cec->rx_msg);
++}
++
++static void handle_cec_event(struct cros_ec_cec *cros_ec_cec)
++{
++	struct cros_ec_device *cros_ec = cros_ec_cec->cros_ec;
++	uint32_t events = cros_ec->event_data.data.cec_events;
++
++	if (events & EC_MKBP_CEC_SEND_OK)
++		cec_transmit_attempt_done(cros_ec_cec->adap,
++					  CEC_TX_STATUS_OK);
++
++	/* FW takes care of all retries, tell core to avoid more retries */
++	if (events & EC_MKBP_CEC_SEND_FAILED)
++		cec_transmit_attempt_done(cros_ec_cec->adap,
++					  CEC_TX_STATUS_MAX_RETRIES |
++					  CEC_TX_STATUS_NACK);
++}
++
++static int cros_ec_cec_event(struct notifier_block *nb,
++			     unsigned long queued_during_suspend,
++			     void *_notify)
++{
++	struct cros_ec_cec *cros_ec_cec;
++	struct cros_ec_device *cros_ec;
++
++	cros_ec_cec = container_of(nb, struct cros_ec_cec, notifier);
++	cros_ec = cros_ec_cec->cros_ec;
++
++	if (cros_ec->event_data.event_type == EC_MKBP_EVENT_CEC_EVENT) {
++		handle_cec_event(cros_ec_cec);
++		return NOTIFY_OK;
 +	}
 +
-+	spin_lock_irqsave(&rpmh_rsc_lock, flags);
-+	list_for_each_entry(p, &rsc_drv_list, list) {
-+		if (drv == p) {
-+			for (i = 0; i < RPMH_MAX_CTRLR; i++) {
-+				if (!rpmh_rsc[i].drv)
-+					break;
-+			}
-+			if (i == RPMH_MAX_CTRLR) {
-+				ctrlr = ERR_PTR(-ENOMEM);
-+				break;
-+			}
-+			rpmh_rsc[i].drv = drv;
-+			ctrlr = &rpmh_rsc[i];
-+			break;
-+		}
++	if (cros_ec->event_data.event_type == EC_MKBP_EVENT_CEC_MESSAGE) {
++		handle_cec_message(cros_ec_cec);
++		return NOTIFY_OK;
 +	}
-+	spin_unlock_irqrestore(&rpmh_rsc_lock, flags);
 +
-+	return ctrlr;
++	return NOTIFY_DONE;
 +}
 +
-+void rpmh_tx_done(const struct tcs_request *msg, int r)
++static int cros_ec_cec_set_log_addr(struct cec_adapter *adap, u8 logical_addr)
 +{
-+	struct rpmh_request *rpm_msg = container_of(msg, struct rpmh_request,
-+						    msg);
-+	struct completion *compl = rpm_msg->completion;
-+
-+	rpm_msg->err = r;
-+
-+	if (r)
-+		dev_err(rpm_msg->dev, "RPMH TX fail in msg addr=%#x, err=%d\n",
-+			rpm_msg->msg.cmds[0].addr, r);
-+
-+	/* Signal the blocking thread we are done */
-+	if (compl)
-+		complete(compl);
-+}
-+
-+/**
-+ * __rpmh_write: send the RPMH request
-+ *
-+ * @dev: The device making the request
-+ * @state: Active/Sleep request type
-+ * @rpm_msg: The data that needs to be sent (cmds).
-+ */
-+static int __rpmh_write(const struct device *dev, enum rpmh_state state,
-+			struct rpmh_request *rpm_msg)
-+{
-+	struct rpmh_ctrlr *ctrlr = get_rpmh_ctrlr(dev);
-+
-+	if (IS_ERR(ctrlr))
-+		return PTR_ERR(ctrlr);
-+
-+	rpm_msg->msg.state = state;
-+
-+	if (state != RPMH_ACTIVE_ONLY_STATE)
-+		return -EINVAL;
-+
-+	WARN_ON(irqs_disabled());
-+
-+	return rpmh_rsc_send_data(ctrlr->drv, &rpm_msg->msg);
-+}
-+
-+/**
-+ * rpmh_write: Write a set of RPMH commands and block until response
-+ *
-+ * @rc: The RPMH handle got from rpmh_get_client
-+ * @state: Active/sleep set
-+ * @cmd: The payload data
-+ * @n: The number of elements in @cmd
-+ *
-+ * May sleep. Do not call from atomic contexts.
-+ */
-+int rpmh_write(const struct device *dev, enum rpmh_state state,
-+	       const struct tcs_cmd *cmd, u32 n)
-+{
-+	DECLARE_COMPLETION_ONSTACK(compl);
-+	DEFINE_RPMH_MSG_ONSTACK(dev, state, &compl, rpm_msg);
++	struct cros_ec_cec *cros_ec_cec = adap->priv;
++	struct cros_ec_device *cros_ec = cros_ec_cec->cros_ec;
++	struct {
++		struct cros_ec_command msg;
++		struct ec_params_cec_set data;
++	} __packed msg = {};
 +	int ret;
 +
-+	if (!cmd || !n || n > MAX_RPMH_PAYLOAD)
-+		return -EINVAL;
++	msg.msg.command = EC_CMD_CEC_SET;
++	msg.msg.outsize = sizeof(msg.data);
++	msg.data.cmd = CEC_CMD_LOGICAL_ADDRESS;
++	msg.data.val = logical_addr;
 +
-+	memcpy(rpm_msg.cmd, cmd, n * sizeof(*cmd));
-+	rpm_msg.msg.num_cmds = n;
-+
-+	ret = __rpmh_write(dev, state, &rpm_msg);
-+	if (ret)
++	ret = cros_ec_cmd_xfer_status(cros_ec, &msg.msg);
++	if (ret < 0) {
++		dev_err(cros_ec->dev,
++			"error setting CEC logical address on EC: %d\n", ret);
 +		return ret;
++	}
 +
-+	ret = wait_for_completion_timeout(&compl, RPMH_TIMEOUT_MS);
-+	WARN_ON(!ret);
-+	return (ret > 0) ? 0 : -ETIMEDOUT;
++	return 0;
 +}
-diff --git a/include/soc/qcom/rpmh.h b/include/soc/qcom/rpmh.h
-new file mode 100644
-index 0000000..c1d0f90
---- /dev/null
-+++ b/include/soc/qcom/rpmh.h
-@@ -0,0 +1,25 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
++
++static int cros_ec_cec_transmit(struct cec_adapter *adap, u8 attempts,
++				u32 signal_free_time, struct cec_msg *cec_msg)
++{
++	struct cros_ec_cec *cros_ec_cec = adap->priv;
++	struct cros_ec_device *cros_ec = cros_ec_cec->cros_ec;
++	struct {
++		struct cros_ec_command msg;
++		struct ec_params_cec_write data;
++	} __packed msg = {};
++	int ret;
++
++	msg.msg.command = EC_CMD_CEC_WRITE_MSG;
++	msg.msg.outsize = cec_msg->len;
++	memcpy(msg.data.msg, cec_msg->msg, cec_msg->len);
++
++	ret = cros_ec_cmd_xfer_status(cros_ec, &msg.msg);
++	if (ret < 0) {
++		dev_err(cros_ec->dev,
++			"error writing CEC msg on EC: %d\n", ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++static int cros_ec_cec_adap_enable(struct cec_adapter *adap, bool enable)
++{
++	struct cros_ec_cec *cros_ec_cec = adap->priv;
++	struct cros_ec_device *cros_ec = cros_ec_cec->cros_ec;
++	struct {
++		struct cros_ec_command msg;
++		struct ec_params_cec_set data;
++	} __packed msg = {};
++	int ret;
++
++	msg.msg.command = EC_CMD_CEC_SET;
++	msg.msg.outsize = sizeof(msg.data);
++	msg.data.cmd = CEC_CMD_ENABLE;
++	msg.data.val = enable;
++
++	ret = cros_ec_cmd_xfer_status(cros_ec, &msg.msg);
++	if (ret < 0) {
++		dev_err(cros_ec->dev,
++			"error %sabling CEC on EC: %d\n",
++			(enable ? "en" : "dis"), ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++static const struct cec_adap_ops cros_ec_cec_ops = {
++	.adap_enable = cros_ec_cec_adap_enable,
++	.adap_log_addr = cros_ec_cec_set_log_addr,
++	.adap_transmit = cros_ec_cec_transmit,
++};
++
++#ifdef CONFIG_PM_SLEEP
++static int cros_ec_cec_suspend(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct cros_ec_cec *cros_ec_cec = dev_get_drvdata(&pdev->dev);
++
++	if (device_may_wakeup(dev))
++		enable_irq_wake(cros_ec_cec->cros_ec->irq);
++
++	return 0;
++}
++
++static int cros_ec_cec_resume(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct cros_ec_cec *cros_ec_cec = dev_get_drvdata(&pdev->dev);
++
++	if (device_may_wakeup(dev))
++		disable_irq_wake(cros_ec_cec->cros_ec->irq);
++
++	return 0;
++}
++#endif
++
++static SIMPLE_DEV_PM_OPS(cros_ec_cec_pm_ops,
++	cros_ec_cec_suspend, cros_ec_cec_resume);
++
++#if IS_ENABLED(CONFIG_PCI) && IS_ENABLED(CONFIG_DMI)
++
 +/*
-+ * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
++ * The Firmware only handles a single CEC interface tied to a single HDMI
++ * connector we specify along with the DRM device name handling the HDMI output
 + */
 +
-+#ifndef __SOC_QCOM_RPMH_H__
-+#define __SOC_QCOM_RPMH_H__
++struct cec_dmi_match {
++	char *sys_vendor;
++	char *product_name;
++	char *devname;
++	char *conn;
++};
 +
-+#include <soc/qcom/tcs.h>
-+#include <linux/platform_device.h>
++static const struct cec_dmi_match cec_dmi_match_table[] = {
++	/* Google Fizz */
++	{ "Google", "Fizz", "0000:00:02.0", "Port B" },
++};
 +
++static int cros_ec_cec_get_notifier(struct device *dev,
++				    struct cec_notifier **notify)
++{
++	int i;
 +
-+#if IS_ENABLED(CONFIG_QCOM_RPMH)
-+int rpmh_write(const struct device *dev, enum rpmh_state state,
-+	       const struct tcs_cmd *cmd, u32 n);
++	for (i = 0 ; i < ARRAY_SIZE(cec_dmi_match_table) ; ++i) {
++		const struct cec_dmi_match *m = &cec_dmi_match_table[i];
++
++		if (dmi_match(DMI_SYS_VENDOR, m->sys_vendor) &&
++		    dmi_match(DMI_PRODUCT_NAME, m->product_name)) {
++			struct device *d;
++
++			/* Find the device, bail out if not yet registered */
++			d = bus_find_device_by_name(&pci_bus_type, NULL,
++						    m->devname);
++			if (!d)
++				return -EPROBE_DEFER;
++
++			*notify = cec_notifier_get_conn(d, m->conn);
++			return 0;
++		}
++	}
++
++	/* Hardware support must be added in the cec_dmi_match_table */
++	dev_warn(dev, "CEC notifier not configured for this hardware\n");
++
++	return -ENODEV;
++}
 +
 +#else
 +
-+static inline int rpmh_write(const struct device *dev, enum rpmh_state state,
-+			     const struct tcs_cmd *cmd, u32 n)
-+{ return -ENODEV; }
++static int cros_ec_cec_get_notifier(struct device *dev,
++				    struct cec_notifier **notify)
++{
++	return -ENODEV;
++}
 +
-+#endif /* CONFIG_QCOM_RPMH */
++#endif
 +
-+#endif /* __SOC_QCOM_RPMH_H__ */
++static int cros_ec_cec_probe(struct platform_device *pdev)
++{
++	struct cros_ec_dev *ec_dev = dev_get_drvdata(pdev->dev.parent);
++	struct cros_ec_device *cros_ec = ec_dev->ec_dev;
++	struct cros_ec_cec *cros_ec_cec;
++	int ret;
++
++	cros_ec_cec = devm_kzalloc(&pdev->dev, sizeof(*cros_ec_cec),
++				   GFP_KERNEL);
++	if (!cros_ec_cec)
++		return -ENOMEM;
++
++	platform_set_drvdata(pdev, cros_ec_cec);
++	cros_ec_cec->cros_ec = cros_ec;
++
++	ret = cros_ec_cec_get_notifier(&pdev->dev, &cros_ec_cec->notify);
++	if (ret)
++		return ret;
++
++	ret = device_init_wakeup(&pdev->dev, 1);
++	if (ret) {
++		dev_err(&pdev->dev, "failed to initialize wakeup\n");
++		return ret;
++	}
++
++	cros_ec_cec->adap = cec_allocate_adapter(&cros_ec_cec_ops, cros_ec_cec,
++						 DRV_NAME, CEC_CAP_DEFAULTS, 1);
++	if (IS_ERR(cros_ec_cec->adap))
++		return PTR_ERR(cros_ec_cec->adap);
++
++	/* Get CEC events from the EC. */
++	cros_ec_cec->notifier.notifier_call = cros_ec_cec_event;
++	ret = blocking_notifier_chain_register(&cros_ec->event_notifier,
++					       &cros_ec_cec->notifier);
++	if (ret) {
++		dev_err(&pdev->dev, "failed to register notifier\n");
++		cec_delete_adapter(cros_ec_cec->adap);
++		return ret;
++	}
++
++	ret = cec_register_adapter(cros_ec_cec->adap, &pdev->dev);
++	if (ret < 0) {
++		cec_delete_adapter(cros_ec_cec->adap);
++		return ret;
++	}
++
++	cec_register_cec_notifier(cros_ec_cec->adap, cros_ec_cec->notify);
++
++	return 0;
++}
++
++static int cros_ec_cec_remove(struct platform_device *pdev)
++{
++	struct cros_ec_cec *cros_ec_cec = platform_get_drvdata(pdev);
++	struct device *dev = &pdev->dev;
++	int ret;
++
++	ret = blocking_notifier_chain_unregister(
++			&cros_ec_cec->cros_ec->event_notifier,
++			&cros_ec_cec->notifier);
++
++	if (ret) {
++		dev_err(dev, "failed to unregister notifier\n");
++		return ret;
++	}
++
++	cec_unregister_adapter(cros_ec_cec->adap);
++
++	if (cros_ec_cec->notify)
++		cec_notifier_put(cros_ec_cec->notify);
++
++	return 0;
++}
++
++static struct platform_driver cros_ec_cec_driver = {
++	.probe = cros_ec_cec_probe,
++	.remove  = cros_ec_cec_remove,
++	.driver = {
++		.name = DRV_NAME,
++		.pm = &cros_ec_cec_pm_ops,
++	},
++};
++
++module_platform_driver(cros_ec_cec_driver);
++
++MODULE_DESCRIPTION("CEC driver for ChromeOS ECs");
++MODULE_AUTHOR("Neil Armstrong <narmstrong@baylibre.com>");
++MODULE_LICENSE("GPL");
++MODULE_ALIAS("platform:" DRV_NAME);
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,\na Linux Foundation Collaborative Project
+2.7.4
