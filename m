@@ -1,85 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967491AbeEXPlJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 11:41:09 -0400
-Received: from asavdk3.altibox.net ([109.247.116.14]:50174 "EHLO
-        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967064AbeEXPlG (ORCPT
+        id S967962AbeEXPmb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 11:42:31 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:48984 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967710AbeEXPmV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 11:41:06 -0400
-Date: Thu, 24 May 2018 17:41:01 +0200
-From: Sam Ravnborg <sam@ravnborg.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Ulf Magnusson <ulfalizer@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Michal Marek <michal.lkml@markovi.net>
-Subject: Re: [RFC PATCH 1/1] kconfig: drop localization support
-Message-ID: <20180524154101.GA12927@ravnborg.org>
-References: <20180522194928.GA29900@ravnborg.org>
- <CAK7LNAQUF6YbHRTJOtQ9F91M-iqF1U+PemDAbsdx3qzcqg4Ufw@mail.gmail.com>
- <CAK7LNAQWHeR71=H5Z94jAMjRjE-kmjFaPrQy6_cd5=G_WHEpUw@mail.gmail.com>
- <20180523044609.GA23800@ravnborg.org>
- <CAK7LNARata6s_Dm_ykVNX2o15psE0LyuFvXQFESa7=n58s+nxg@mail.gmail.com>
+        Thu, 24 May 2018 11:42:21 -0400
+Date: Thu, 24 May 2018 17:41:56 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Waiman Long <longman@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, Ingo Molnar <mingo@redhat.com>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
+        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>
+Subject: Re: [PATCH v8 2/6] cpuset: Add new v2 cpuset.sched.domain flag
+Message-ID: <20180524154156.GI12198@hirez.programming.kicks-ass.net>
+References: <1526590545-3350-1-git-send-email-longman@redhat.com>
+ <1526590545-3350-3-git-send-email-longman@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAK7LNARata6s_Dm_ykVNX2o15psE0LyuFvXQFESa7=n58s+nxg@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=dqr19Wo4 c=1 sm=1 tr=0
-        a=ddpE2eP9Sid01c7MzoqXPA==:117 a=ddpE2eP9Sid01c7MzoqXPA==:17
-        a=kj9zAlcOel0A:10 a=06aqjJ_2AAAA:8 a=pZinbwrU84Ecyjas8O4A:9
-        a=CjuIK1q_8ugA:10
+In-Reply-To: <1526590545-3350-3-git-send-email-longman@redhat.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Masahiro
+On Thu, May 17, 2018 at 04:55:41PM -0400, Waiman Long wrote:
+> A new cpuset.sched.domain boolean flag is added to cpuset v2. This new
+> flag indicates that the CPUs in the current cpuset should be treated
+> as a separate scheduling domain.
 
-> 
-> When I applied this, I added the following fix-up.
-> 
-> 
-> 
-> diff --git a/scripts/kconfig/.gitignore b/scripts/kconfig/.gitignore
-> index 54266f3..0aabc1d 100644
-> --- a/scripts/kconfig/.gitignore
-> +++ b/scripts/kconfig/.gitignore
-> @@ -2,7 +2,6 @@
->  # Generated files
->  #
->  *.moc
-> -*.mo
-> 
->  #
->  # configuration programs
-> 
-> 
-> 
-> 
-> .mo is no longer generated.
-> 
-> It was added by
-> commit c26dd719a5b9d94d12211f2d101bd7dffb7f9f1f
-> 
-> 
-> 
-> Please double-check if it is OK.
+The traditional name for this is a partition.
 
-I left it as I was not sure where the .mo extension came from.
-And trying out the different frontends did not generate
-any .mo files (I tried with a kernel before my patches).
+>                                  This new flag is owned by the parent
+> and will cause the CPUs in the cpuset to be removed from the effective
+> CPUs of its parent.
 
-So I assume the .mo extension was added because it is
-often seen in combination with .pot files,
-and not because the kernel actually generated such file.
+This is a significant departure from existing behaviour, but one I can
+appreciate. I don't immediately see something terribly wrong with it.
 
-See https://make.wordpress.org/polyglots/handbook/glossary/#mo-files
-for a short description of the .mo files.
+> This is implemented internally by adding a new isolated_cpus mask that
+> holds the CPUs belonging to child scheduling domain cpusets so that:
+> 
+> 	isolated_cpus | effective_cpus = cpus_allowed
+> 	isolated_cpus & effective_cpus = 0
+> 
+> This new flag can only be turned on in a cpuset if its parent is either
+> root or a scheduling domain itself with non-empty cpu list. The state
+> of this flag cannot be changed if the cpuset has children.
+> 
+> Signed-off-by: Waiman Long <longman@redhat.com>
+> ---
+>  Documentation/cgroup-v2.txt |  22 ++++
+>  kernel/cgroup/cpuset.c      | 237 +++++++++++++++++++++++++++++++++++++++++++-
+>  2 files changed, 256 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/cgroup-v2.txt b/Documentation/cgroup-v2.txt
+> index cf7bac6..54d9e22 100644
+> --- a/Documentation/cgroup-v2.txt
+> +++ b/Documentation/cgroup-v2.txt
+> @@ -1514,6 +1514,28 @@ Cpuset Interface Files
+>  	it is a subset of "cpuset.mems".  Its value will be affected
+>  	by memory nodes hotplug events.
+>  
+> +  cpuset.sched.domain
+> +	A read-write single value file which exists on non-root
+> +	cpuset-enabled cgroups.  It is a binary value flag that accepts
+> +	either "0" (off) or a non-zero value (on).
 
-In other words - the fixup is correct. Thanks!
+I would be conservative and only allow 0/1.
 
-	Sam
+>                                                  This flag is set
+> +	by the parent and is not delegatable.
+> +
+> +	If set, it indicates that the CPUs in the current cgroup will
+> +	be the root of a scheduling domain.  The root cgroup is always
+> +	a scheduling domain.  There are constraints on where this flag
+> +	can be set.  It can only be set in a cgroup if all the following
+> +	conditions are true.
+> +
+> +	1) The parent cgroup is also a scheduling domain with a non-empty
+> +	   cpu list.
+
+Ah, so initially I was confused by the requirement for root to have it
+always set, but you'll allow child domains to steal _all_ CPUs, such
+that root ends up with an empty effective set?
+
+What about the (kernel) threads that cannot be moved out of the root
+group?
+
+> +	2) The list of CPUs are exclusive, i.e. they are not shared by
+> +	   any of its siblings.
+
+Right.
+
+> +	3) There is no child cgroups with cpuset enabled.
+> +
+> +	Setting this flag will take the CPUs away from the effective
+> +	CPUs of the parent cgroup. Once it is set, this flag cannot be
+> +	cleared if there are any child cgroups with cpuset enabled.
+
+This I'm not clear on. Why?
