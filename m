@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1906373-1527164612-2-14660949439013179502
+X-Cyrus-Session-Id: sloti22d1t05-1900785-1527164608-2-10781460837121671861
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527164611; b=AkuPA2ud6zO6oFs64YYPA7WFsbuIZR2AfCMoodqXyHtkrlxDRu
-    QJsbpHx/XfLufuJ1nEZ1xCVigSXR+qX94j3ShSSiUGE972pU55mg347XDwh8iDf8
-    Ishur8Ac5+VVFFh5i9ImmtfFcCE+PGIxd+rf6hIsfJW44t6edcVlF0Da3ZU3W5FY
-    tqLu8eHhxjxvt3ccILxahm2CxSzTUNMgRGEs1o1fPrc9jJTl0q5VAtQlkU5MSiG+
-    CM5HTqb9mdwVO/LXduVuubXFbDOm3eNVsLYx3ESl2LBU+/WdOhfC7JX+oJZ+/IQR
-    BkDV5WGvmWvqNLsdnjRjsuOLisgTWG06bNFQ==
+    1527164607; b=RpMlpEpVNRWlcrnpDOCRfEV/LOm0pUXS6iUgtnyafuJHlm0ELx
+    Y+6foi5K/CQ+/9la29hmkTMZnUk/o4Hek7B3LV5hSUsFqXUm6PTOYfVSHaYSzeCa
+    FlweJRs8j9DvJv5fcUfKOk1o1K19wp4mXCn+tCyLgA2zwL5sg0J7ALOrPgpJhy65
+    SXaD0L1gfhUI+1BiOYdN2lnXlSdEu2bGrqlp8pO01G5KFKsgekf5BfbwZBVEXKFf
+    eYRR1aFT1GuaCFKC0rD8dWobYN2AclxQrz74mSySO39i1bs2QNghElyP9QkDfk0k
+    VMLz96Vz0d5HxpmBckjb4jXhJP6YERwIDNvg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527164611; bh=4I1uMbaGpvblguNvHsOe0TzDMuI7cN
-    AFRzoSqaHAGbs=; b=e3hj0bVPmy0aA02TyFCObSwwGW6ma7V8jzWQpIPkxbQH5K
-    s2xssBxc/vAMJfupUNBhQeIGe0W2zdtArEGP5tuPFYsAxkRZVjrfdvwShQG5GGWH
-    nkiu1puEzUOzudk0UOjDMkw8QSOUrJwb095SaVaVGG9VPgc9Q0viAsCTm6qiPP5u
-    R7uqYj/GwdgqAYgPba2Oi4cM8LuDUK3Iv9q0KHkwCPULlOPJEHXjmOP9DM/CvbKu
-    D7+myQklLF7gDBnpP5tMRJ5yOwBJV6fMnK/qMcH1qbyKJa1jCuBgofzdly8tsIiR
-    j5wHxU9w/wJ8HSsvlHiCH1wkWoEP3UZU9IRj8ynQ==
+    :list-id; s=fm2; t=1527164607; bh=tF4jM6f6D6WXlyIJTyI/DLVcFUIy/O
+    4MDnDeVQDCteM=; b=TKmFx1KvKoUtvIkTkkL1eOKRUbcfnqIpepI4KG14escIA5
+    CNC0JJQAul0XJtHt4fFWZVHLKS2tRDfTB73vNoUclMv1pcS/6kb+gIFMW47Dbu5M
+    i1UMGMsLYeL9O1qY9TWK9p+a2APx3Dx6MmFSK5XqjKxDYoVjEudFJ0xWG+VfhwW2
+    7zgCcW/Ar7RKcJs5JrjAsh34ez1AnXQSEu/k3CLN3etlBBQh0qdKJn+5I2cCoA9+
+    S+m2YiAo6FAiktYUFblliXaPXveuEIJ/gdYW6bTK1/H2F7HU6FGPJn41zH138AJL
+    Y47l1cnD3CSmvzQqv6jPVAait/HxgYaJr3NekqRQ==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=onRMZgUO x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=ZdH5B5c6 x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -48,7 +48,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
 Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=onRMZgUO x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=ZdH5B5c6 x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,32 +64,32 @@ Authentication-Results: mx1.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGOEbAR1TabMFOKtdz9aUy2o1uQBYBIgbKNfgE/O9Mmf09Ol1G/0Dxcwnky8w2s/lQTl/+N2FdGtRENkRznXZk7VT5T9Wcwn+7xpA1+seHJq89STb743
-    L2aEW7h4dkG6wPAgKvP+N8ZGP2+8PR4YA8zKhrhrn1ymIiDP0lsx2PsbSQUYOXGVjSu3bY1BBHqQ69XxbaEko4IXYWK5xC3lxMUTTp3DN9fs+wd7NbVKKKIN
+X-CM-Envelope: MS4wfI/Q46qddVSZcF/8coylc/yU+GG2Yjf4C8KqgkSojmCBnEbnYODZJjajO40qFhTgXUJV7Z+Ki/1p6I74Z0UjLl8LfPcs7H8d9g7riDgtfvel1hZueE8I
+    k8r6jnW6N7PBiC541p/nNOSprcmyk7sQGlpaPPx62PbF6OIdk5xkue5uU4knYnwntRd6erQmafknkwREF9vCMxbtTdaQGUVcDkd9fwuUxZj83MkA3jWDje7h
 X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=W4yg_sfPvy4A:10
-    a=VUJBJC2UJ8kA:10 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8 a=s47jRAohAAAA:8
-    a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=TDQuQJ2OXxYTQ_uShOsA:9 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=Kj7115exjCjJ0w_vcVhc:22 a=y1Q9-5lHfBjTkpIzbSAN:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=pGLkceISAAAA:8 a=vmLDa1wCAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
+    a=brYE-qls9YapW1p9bzMA:9 a=QEXdDO2ut3YA:10 a=h8Bt5HTj68qkN2fS7gvA:22
+    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965999AbeEXJkz (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:40:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52874 "EHLO mail.kernel.org"
+        id S966087AbeEXJk5 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:40:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966058AbeEXJku (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:40:50 -0400
+        id S965759AbeEXJkw (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:40:52 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Slava Kardakov <ojab@ojab.ru>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
+        stable@vger.kernel.org, Xin Long <lucien.xin@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 10/45] r8169: fix powering up RTL8168h
-Date: Thu, 24 May 2018 11:38:18 +0200
-Message-Id: <20180524093121.774651295@linuxfoundation.org>
+Subject: [PATCH 3.18 11/45] sctp: use the old asoc when making the cookie-ack chunk in dupcook_d
+Date: Thu, 24 May 2018 11:38:19 +0200
+Message-Id: <20180524093121.914402632@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093120.599252450@linuxfoundation.org>
 References: <20180524093120.599252450@linuxfoundation.org>
@@ -107,47 +107,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Heiner Kallweit <hkallweit1@gmail.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-[ Upstream commit 3148dedfe79e422f448a10250d3e2cdf8b7ee617 ]
+[ Upstream commit 46e16d4b956867013e0bbd7f2bad206f4aa55752 ]
 
-Since commit a92a08499b1f "r8169: improve runtime pm in general and
-suspend unused ports" interfaces w/o link are runtime-suspended after
-10s. On systems where drivers take longer to load this can lead to the
-situation that the interface is runtime-suspended already when it's
-initially brought up.
-This shouldn't be a problem because rtl_open() resumes MAC/PHY.
-However with at least one chip version the interface doesn't properly
-come up, as reported here:
-https://bugzilla.kernel.org/show_bug.cgi?id=199549
+When processing a duplicate cookie-echo chunk, for case 'D', sctp will
+not process the param from this chunk. It means old asoc has nothing
+to be updated, and the new temp asoc doesn't have the complete info.
 
-The vendor driver uses a delay to give certain chip versions some
-time to resume before starting the PHY configuration. So let's do
-the same. I don't know which chip versions may be affected,
-therefore apply this delay always.
+So there's no reason to use the new asoc when creating the cookie-ack
+chunk. Otherwise, like when auth is enabled for cookie-ack, the chunk
+can not be set with auth, and it will definitely be dropped by peer.
 
-This patch was reported to fix the issue for RTL8168h.
-I was able to reproduce the issue on an Asus H310I-Plus which also
-uses a RTL8168h. Also in my case the patch fixed the issue.
+This issue is there since very beginning, and we fix it by using the
+old asoc instead.
 
-Reported-by: Slava Kardakov <ojab@ojab.ru>
-Tested-by: Slava Kardakov <ojab@ojab.ru>
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/realtek/r8169.c |    3 +++
- 1 file changed, 3 insertions(+)
+ net/sctp/sm_statefuns.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/realtek/r8169.c
-+++ b/drivers/net/ethernet/realtek/r8169.c
-@@ -4764,6 +4764,9 @@ static void rtl_pll_power_down(struct rt
- static void rtl_pll_power_up(struct rtl8169_private *tp)
- {
- 	rtl_generic_op(tp, tp->pll_power_ops.up);
-+
-+	/* give MAC/PHY some time to resume */
-+	msleep(20);
- }
+--- a/net/sctp/sm_statefuns.c
++++ b/net/sctp/sm_statefuns.c
+@@ -1959,7 +1959,7 @@ static sctp_disposition_t sctp_sf_do_dup
+ 		}
+ 	}
  
- static void rtl_init_pll_power_ops(struct rtl8169_private *tp)
+-	repl = sctp_make_cookie_ack(new_asoc, chunk);
++	repl = sctp_make_cookie_ack(asoc, chunk);
+ 	if (!repl)
+ 		goto nomem;
+ 
