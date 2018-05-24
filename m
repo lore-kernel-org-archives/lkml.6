@@ -1,11 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1817771-1527160659-2-11688169400534159568
+X-Cyrus-Session-Id: sloti22d1t05-1817771-1527160641-2-13798981797361416960
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
-  SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES roen, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -13,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527160659; b=Mygwbm0aoF7pLDsN03U+Q+KiIZ3wlq31uMopEHvC0/0W0vCwL6
-    wu/LTNDroUiFMi9m0acpgP6lbfGqlXGgemz1ViE5fE57r3fNyA/PoWB8IlFT3nN6
-    GwcR6Wf2vXSrXA6zCsLqhaaiKAPs/Lb7lp1VOd9l6buktU58bJXcVTxXf4W9ZcLm
-    ikR1830DTxHUnJEmFXBhSjHnAM2WKlBC6XgTRxhJf0RYS9O+JgDrerRcvoMyFcYG
-    V/PanBRbHc22AoMn5HalFVRdb6rTUCXV9tYQMrxNN5AmPP3XeM4u6i5Kj4chhz19
-    uWBLm146VM/aPLDe0qfP+kSQjP0KnUFwycpg==
+    1527160640; b=XbZVP7ZIe6r+dNxstdd4+2WTEl2zRH5nUh3fPfk7HLzH2c8Qov
+    bJAWk/uW1N6Z1PhxHiPNlqP+6PO9DVbYp4CDX+YL4N3v0+pAWcl7cJ8JONNmFIf9
+    lFM8YoY4EU7k01cVh1nrmhlpi0rDfUyrsS82Xrohc2mgEBUa9JdUpv6mqDFDg5BH
+    vqiiER7aa/IkBptvj1ShA1Fa6bYU6X1wyzWa45KDGYyUbGVdfL3566IU+TziUb6t
+    mJv8jbGum+7Aw0N2IX/JtBr26lW7wIiDizYMz5Ije37NsJTSaLSrSl8V3P0u1IGw
+    ig6/6YfzqunmPfkkAX7Ryi9B9pRP2trXU75g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527160659; bh=PWFFlgr4aLPU7ZdR9bhUYlet+oBMoy
-    S3bUxsNlI8NFY=; b=eKnDK8uAEG5xFFkRSbwzHDh4BgV3suA+Qw1Rz7agApZ48e
-    ObBK2OBWGTCRtkK+y14EUmZmAePH16ZXsPixBHe1QMJ3DnslROGNe+yqzuHwBtrl
-    D/EflJkNyVIMxCiE4EeWtf6t/eQQ5bs2wV3vWiR7jXanxLbjMk6jtwpLhPb7OrDS
-    8AW95RieVsgSLb0qBJ7K3kma8wEIkZuMakmsLyLeNpPneWA0iA9nV2uu2JF3XtNm
-    jfn8a5BG/sw8bBtBD1X6mNZbbKTHPNUSpC4l5t6StQZuUrPPdgIllF4AEKp0bFfO
-    kqed0uW2k/cKHwqnh1WA6xwSzdkNmj5mSe89uWSA==
+    :list-id; s=fm2; t=1527160640; bh=R1FIvRD1FS0ZpMPZdEAW7s16gZ7rDM
+    pNw+vVZGX/Z28=; b=DKCGeQ01+IMLFCboOWCMfNJWCPYGcf13TlhyfDJmTsFqd5
+    RjXYLPpMRiZUjOqnPtqNt4ZApjilqniGWGbhrO6eAAVq+RR4oqvL3l2FrUlBPErg
+    OtJuD4WZgqUOOgvlA/ubgBxsB001sVp5VeyaaaCylV9aJjKvJCbrVUA2ynR+sfoS
+    gmaEudwuhaef2f7Fbjy4EcCqz5fWmQohW4VWOyN6EZsFGAGNFh9PsJ2OAgQS25+n
+    mW5QySIPM6y6eP0L01u4ITzONjT9Tu/Q50GTo+E4dK+UckI90a3yE0LmOIc+WOY1
+    6WiR6pA1cBRuzqO7d7MKDqwckWJ7L215sq7ztMzA==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=hIkoHJgg x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=tMCOdYvq x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -49,7 +48,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
 Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=hIkoHJgg x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=tMCOdYvq x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -65,30 +64,30 @@ Authentication-Results: mx4.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCQO9VhghVy34aqhUbGTdKaupg48fVUpPVdXo2EC8iU8IpjjlXhjosmysFm8cpDYB7aq887l4fx4tgd9JrGqrxZce52PRHoVRuKJ9ZnkLZo8oJ7jqiSa
-    Ugr7BQK5otd8oBH1WgMU7mjLjj8cRRaml+v2pyhwCBmuIM7zszARiRWI86giJYhybKcZNhRZrvYp8yY3A/0CVGsgpp4c5+svj8YZe+b4aqQH/2ZFRe+d72Xm
+X-CM-Envelope: MS4wfFL4ekFGD/LQqpPPFOt+7d56fXoB+7ZKiyJTKCFsHbaKUeLokLPN3wlEGAATkJPZ9pQo6j1+dQ5BNvpx/3eSc8C47mtATREqvyGFtrdxgyfp2kem7kzM
+    VGuRoF89YhZx559tadXQQUM0CaAQrNZNXe3eg9JDLa6MQxC2UY/BGjxxoDzjSOiQwz0lK+vWboADKUOEqisk/giH2tUmM4siM9+6cy1saLc5rnka44vRDrWa
 X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=eh1Yez-EAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=puV817wOSPHiP_ARZ7gA:9
-    a=QEXdDO2ut3YA:10 a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=FOH2dFAWAAAA:8 a=ag1SF4gXAAAA:8 a=cQAtWQUi6B-pYIo_kuwA:9
+    a=Ibcj2-IOhSrz7vQS:21 a=gaE_HL3gUnJGpc3D:21 a=QEXdDO2ut3YA:10
+    a=i3VuKzQdj-NEYjvDI-p3:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968011AbeEXJxQ (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:53:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57224 "EHLO mail.kernel.org"
+        id S968033AbeEXLRR (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 07:17:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58880 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967476AbeEXJxK (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:53:10 -0400
+        id S968026AbeEXJxV (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:53:21 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Regis Duchesne <hpreg@vmware.com>,
-        Ronak Doshi <doshir@vmware.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 010/165] vmxnet3: set the DMA mask before the first DMA map operation
-Date: Thu, 24 May 2018 11:36:56 +0200
-Message-Id: <20180524093622.386349307@linuxfoundation.org>
+        stable@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.14 049/165] loop: dont call into filesystem while holding lo_ctl_mutex
+Date: Thu, 24 May 2018 11:37:35 +0200
+Message-Id: <20180524093624.010834016@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -106,132 +105,105 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "hpreg@vmware.com" <hpreg@vmware.com>
+From: Omar Sandoval <osandov@fb.com>
 
-[ Upstream commit 61aeecea40afb2b89933e27cd4adb10fc2e75cfd ]
+commit 2d1d4c1e591fd40bd7dafd868a249d7d00e215d5 upstream.
 
-The DMA mask must be set before, not after, the first DMA map operation, or
-the first DMA map operation could in theory fail on some systems.
+We hit an issue where a loop device on NFS was stuck in
+loop_get_status() doing vfs_getattr() after the NFS server died, which
+caused a pile-up of uninterruptible processes waiting on lo_ctl_mutex.
+There's no reason to hold this lock while we wait on the filesystem;
+let's drop it so that other processes can do their thing. We need to
+grab a reference on lo_backing_file while we use it, and we can get rid
+of the check on lo_device, which has been unnecessary since commit
+a34c0ae9ebd6 ("[PATCH] loop: remove the bio remapping capability") in
+the linux-history tree.
 
-Fixes: b0eb57cb97e78 ("VMXNET3: Add support for virtual IOMMU")
-Signed-off-by: Regis Duchesne <hpreg@vmware.com>
-Acked-by: Ronak Doshi <doshir@vmware.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Omar Sandoval <osandov@fb.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/vmxnet3/vmxnet3_drv.c |   50 +++++++++++++++++++-------------------
- 1 file changed, 25 insertions(+), 25 deletions(-)
 
---- a/drivers/net/vmxnet3/vmxnet3_drv.c
-+++ b/drivers/net/vmxnet3/vmxnet3_drv.c
-@@ -2675,7 +2675,7 @@ vmxnet3_set_mac_addr(struct net_device *
- /* ==================== initialization and cleanup routines ============ */
- 
+---
+ drivers/block/loop.c |   38 ++++++++++++++++++++++++--------------
+ 1 file changed, 24 insertions(+), 14 deletions(-)
+
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -1166,21 +1166,17 @@ loop_set_status(struct loop_device *lo,
  static int
--vmxnet3_alloc_pci_resources(struct vmxnet3_adapter *adapter, bool *dma64)
-+vmxnet3_alloc_pci_resources(struct vmxnet3_adapter *adapter)
+ loop_get_status(struct loop_device *lo, struct loop_info64 *info)
  {
- 	int err;
- 	unsigned long mmio_start, mmio_len;
-@@ -2687,30 +2687,12 @@ vmxnet3_alloc_pci_resources(struct vmxne
- 		return err;
- 	}
+-	struct file *file = lo->lo_backing_file;
++	struct file *file;
+ 	struct kstat stat;
+-	int error;
++	int ret;
  
--	if (pci_set_dma_mask(pdev, DMA_BIT_MASK(64)) == 0) {
--		if (pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64)) != 0) {
--			dev_err(&pdev->dev,
--				"pci_set_consistent_dma_mask failed\n");
--			err = -EIO;
--			goto err_set_mask;
--		}
--		*dma64 = true;
--	} else {
--		if (pci_set_dma_mask(pdev, DMA_BIT_MASK(32)) != 0) {
--			dev_err(&pdev->dev,
--				"pci_set_dma_mask failed\n");
--			err = -EIO;
--			goto err_set_mask;
--		}
--		*dma64 = false;
--	}
--
- 	err = pci_request_selected_regions(pdev, (1 << 2) - 1,
- 					   vmxnet3_driver_name);
- 	if (err) {
- 		dev_err(&pdev->dev,
- 			"Failed to request region for adapter: error %d\n", err);
--		goto err_set_mask;
-+		goto err_enable_device;
- 	}
- 
- 	pci_set_master(pdev);
-@@ -2738,7 +2720,7 @@ err_bar1:
- 	iounmap(adapter->hw_addr0);
- err_ioremap:
- 	pci_release_selected_regions(pdev, (1 << 2) - 1);
--err_set_mask:
-+err_enable_device:
- 	pci_disable_device(pdev);
- 	return err;
- }
-@@ -3243,7 +3225,7 @@ vmxnet3_probe_device(struct pci_dev *pde
- #endif
- 	};
- 	int err;
--	bool dma64 = false; /* stupid gcc */
-+	bool dma64;
- 	u32 ver;
- 	struct net_device *netdev;
- 	struct vmxnet3_adapter *adapter;
-@@ -3289,6 +3271,24 @@ vmxnet3_probe_device(struct pci_dev *pde
- 	adapter->rx_ring_size = VMXNET3_DEF_RX_RING_SIZE;
- 	adapter->rx_ring2_size = VMXNET3_DEF_RX_RING2_SIZE;
- 
-+	if (pci_set_dma_mask(pdev, DMA_BIT_MASK(64)) == 0) {
-+		if (pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64)) != 0) {
-+			dev_err(&pdev->dev,
-+				"pci_set_consistent_dma_mask failed\n");
-+			err = -EIO;
-+			goto err_set_mask;
-+		}
-+		dma64 = true;
-+	} else {
-+		if (pci_set_dma_mask(pdev, DMA_BIT_MASK(32)) != 0) {
-+			dev_err(&pdev->dev,
-+				"pci_set_dma_mask failed\n");
-+			err = -EIO;
-+			goto err_set_mask;
-+		}
-+		dma64 = false;
+-	if (lo->lo_state != Lo_bound)
++	if (lo->lo_state != Lo_bound) {
++		mutex_unlock(&lo->lo_ctl_mutex);
+ 		return -ENXIO;
+-	error = vfs_getattr(&file->f_path, &stat,
+-			    STATX_INO, AT_STATX_SYNC_AS_STAT);
+-	if (error)
+-		return error;
 +	}
 +
- 	spin_lock_init(&adapter->cmd_lock);
- 	adapter->adapter_pa = dma_map_single(&adapter->pdev->dev, adapter,
- 					     sizeof(struct vmxnet3_adapter),
-@@ -3296,7 +3296,7 @@ vmxnet3_probe_device(struct pci_dev *pde
- 	if (dma_mapping_error(&adapter->pdev->dev, adapter->adapter_pa)) {
- 		dev_err(&pdev->dev, "Failed to map dma\n");
- 		err = -EFAULT;
--		goto err_dma_map;
-+		goto err_set_mask;
+ 	memset(info, 0, sizeof(*info));
+ 	info->lo_number = lo->lo_number;
+-	info->lo_device = huge_encode_dev(stat.dev);
+-	info->lo_inode = stat.ino;
+-	info->lo_rdevice = huge_encode_dev(lo->lo_device ? stat.rdev : stat.dev);
+ 	info->lo_offset = lo->lo_offset;
+ 	info->lo_sizelimit = lo->lo_sizelimit;
+ 	info->lo_flags = lo->lo_flags;
+@@ -1193,7 +1189,19 @@ loop_get_status(struct loop_device *lo,
+ 		memcpy(info->lo_encrypt_key, lo->lo_encrypt_key,
+ 		       lo->lo_encrypt_key_size);
  	}
- 	adapter->shared = dma_alloc_coherent(
- 				&adapter->pdev->dev,
-@@ -3347,7 +3347,7 @@ vmxnet3_probe_device(struct pci_dev *pde
- 	}
- #endif /* VMXNET3_RSS */
- 
--	err = vmxnet3_alloc_pci_resources(adapter, &dma64);
-+	err = vmxnet3_alloc_pci_resources(adapter);
- 	if (err < 0)
- 		goto err_alloc_pci;
- 
-@@ -3493,7 +3493,7 @@ err_alloc_queue_desc:
- err_alloc_shared:
- 	dma_unmap_single(&adapter->pdev->dev, adapter->adapter_pa,
- 			 sizeof(struct vmxnet3_adapter), PCI_DMA_TODEVICE);
--err_dma_map:
-+err_set_mask:
- 	free_netdev(netdev);
- 	return err;
+-	return 0;
++
++	/* Drop lo_ctl_mutex while we call into the filesystem. */
++	file = get_file(lo->lo_backing_file);
++	mutex_unlock(&lo->lo_ctl_mutex);
++	ret = vfs_getattr(&file->f_path, &stat, STATX_INO,
++			  AT_STATX_SYNC_AS_STAT);
++	if (!ret) {
++		info->lo_device = huge_encode_dev(stat.dev);
++		info->lo_inode = stat.ino;
++		info->lo_rdevice = huge_encode_dev(stat.rdev);
++	}
++	fput(file);
++	return ret;
  }
+ 
+ static void
+@@ -1373,7 +1381,8 @@ static int lo_ioctl(struct block_device
+ 		break;
+ 	case LOOP_GET_STATUS:
+ 		err = loop_get_status_old(lo, (struct loop_info __user *) arg);
+-		break;
++		/* loop_get_status() unlocks lo_ctl_mutex */
++		goto out_unlocked;
+ 	case LOOP_SET_STATUS64:
+ 		err = -EPERM;
+ 		if ((mode & FMODE_WRITE) || capable(CAP_SYS_ADMIN))
+@@ -1382,7 +1391,8 @@ static int lo_ioctl(struct block_device
+ 		break;
+ 	case LOOP_GET_STATUS64:
+ 		err = loop_get_status64(lo, (struct loop_info64 __user *) arg);
+-		break;
++		/* loop_get_status() unlocks lo_ctl_mutex */
++		goto out_unlocked;
+ 	case LOOP_SET_CAPACITY:
+ 		err = -EPERM;
+ 		if ((mode & FMODE_WRITE) || capable(CAP_SYS_ADMIN))
+@@ -1543,7 +1553,7 @@ static int lo_compat_ioctl(struct block_
+ 		mutex_lock(&lo->lo_ctl_mutex);
+ 		err = loop_get_status_compat(
+ 			lo, (struct compat_loop_info __user *) arg);
+-		mutex_unlock(&lo->lo_ctl_mutex);
++		/* loop_get_status() unlocks lo_ctl_mutex */
+ 		break;
+ 	case LOOP_SET_CAPACITY:
+ 	case LOOP_CLR_FD:
