@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1797295-1527158616-2-172667729543118695
+X-Cyrus-Session-Id: sloti22d1t05-1797295-1527158603-5-9951572255685421789
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527158615; b=GnQSqt7Nbt/0YQvlcvfeC7AiXMjvE3Ns8bMpzuGvS0onVi0xcp
-    wAYr4LzZ7Dv7L79hMMKFdPofua31CvucgmVABvlfLlVRT62358PRnbo+s+usGtwt
-    oQ45yGyMzadS/5BaPh9Sd44SujJcPRdGVPG944WHWcv9jNJYEl5cNwqt/nS2f1Wc
-    Eqi31SpXfbbN+L92DX/ZWeAlldp9076tM//fRJurTpPQrNwE7HLoXXcA1QGgKQjU
-    /LcMioX16FkUOz1srAhX2vM227X/PBtOxFGjIvrEtLZ1wT6HcsUPaZeQNAtkMllc
-    pmPxOwXw1bySsHn1G2zHbU+ktB8CKWCscTeA==
+    1527158602; b=R7EcaP/gj9FrvPLObWZNrjL+H7UsUdhTpeFo9OnHtWzNHvRhgf
+    jOzLFHN3Z6StOZI40S8tH+jIzemWC10qFewoV81zXOD2lIfAsfR/mHYPRKZz2KRL
+    r1ZLY4mst0UwuzxAFobFK8ltORWrVqVqgO2XGCL5iVdjaNyvU94FKlEEb/94T6lV
+    pFYUHYRfAAf12uVuFbJfb9W2Qm2M3PB4HSOfsKXkuQjsefXdHUEzyWNdugwT6kXW
+    yNAWhvfvaRRKYmO8kLnUpsdt0497O3MUIH8SgNMN6wf9S5G54+E+7XwCvw1oafDF
+    AtXq/4YAl3SkYsilsMyDQYtA7Sz5XUNqHGpQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527158615; bh=71ILKWYxp0MnjznnCNhqRSxMQRp5z4
-    7NVVPL7ZznuS8=; b=bslCwxZIFfNVz8TXYsPR+s/Cuf66ApUS0EIENIQhccAcVk
-    qoVmjPKFbHKRKk0eCaYGxMnfm3STSfzb0/mO9EqJMBPu1q/378kie9kW1ttT+em0
-    IUtMcW8ZdKBRDa7OHy72p4d/njGqRWWiK5QKFdqKvTPePcvPL+04dQ8zcKb2EtNl
-    6laTfHMn+gVJyg1z428Iw9hLMEu8RElXLnAsks8gWnxrCv4mH4sSjAsRg27d1G5L
-    a00iDLJ8HD4gRzl7TPV5nDSCAVH8QELPeLqohQTY3CnAeqvRjNS2IPyRI9jDyqPG
-    nc1+eVMrqiDPRWOE2zDBBYK5tV1G0b+8azDs5Nug==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527158602; bh=68Uo/tV3JVn6AWrQShUV2o5MIfYv5K
+    TEowk7aeNPzOc=; b=WtTc+zaYnk+rTgtHw6+TkUWKtUyU7MuPoNPzRcsLle2YfV
+    LZZcN3695mxNt+z299N2FtuPecqFsD3yAqbgWF4hh3+l2Y4ueOQdSUU0+nrb1EOM
+    RTNkag4jtQ98X5YdO8n3FjYFiB1ZmtRdmbWsZmVckeDWPwMZcT6s121ibJoxAe89
+    ufJwRVO4eSQAm/RP6IQT/EvTvwH3sVjliBtIa3ZPAohcM4cOwOPG64UA9UaCqKDw
+    cUs6zFPK1cEaESavoZtrLpw8fMP5Zwq00EGQgRqPr1xCUmsXOnGmhiyUC/jv2SIy
+    3PdTU5oDNTE4WTwbcu/hNgUYaswDnlqYWqP/Xa1g==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=tEG9Rkrf x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=145ze/hG x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=tEG9Rkrf x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=145ze/hG x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,34 +64,31 @@ Authentication-Results: mx4.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFEOJeyO+sjhZqUqLtMri5EBOEDYT1hl/+kNMC0TQ40uWvDboqTett8zpAFIlvfphIaXbZTzGLb+GdQ6S7AhK0IVgf37DC5+trAf1je7pefgOqiZTSB4
-    YzQqi2VdsL0v17qyCQRHiZM7usSWguFnkiJfW3EFgxW3y5sHH/YNf75vYGNjMcGcKaslssJ/qW+It9I0p9otxUNARNUW7LFzYVNp9Nplx9iUkL6skt3OCDko
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfKpJWHsU7HJRcCieDFF/YWgul6KIv/P38Og9dGFFdpt3UglkThi/p6s0k3KMkjKCtIv+TELdMgBSYhgkifxI4hUSA1k1wkz3XahLZXpdPy+1LfHuBLsK
+    2vTldWJn1oGxvsHSjvNpPpp4x8yBGiuQJ8GfGUDKkEtEi8PrjwS1rNr9PxNzC64A3u7/sEO0Gh4/UUHjRDlbgSO034izNQ0MI6oamA+J5EIdkXJ83nTwplR6
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=gvl4HP8tAAAA:8 a=VwQbUJbxAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=gHKpONVr7PSgpswXA0sA:9 a=g0HygFdazKld5Uvo:21 a=DdutMEGR732iBeq7:21
-    a=QEXdDO2ut3YA:10 a=tRkgsvjveJ3YVe9fnr1q:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=P-IC7800AAAA:8 a=NEAV23lmAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=iP_NRmkEyFTJfnVRG-QA:9 a=QEXdDO2ut3YA:10 a=d3PnA9EDa4IxuAV0gXij:22
     a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032346AbeEXKnW (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 06:43:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38050 "EHLO mail.kernel.org"
+        id S1030521AbeEXKnG (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 06:43:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38258 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030586AbeEXJ6Q (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:58:16 -0400
+        id S1030238AbeEXJ6Y (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:58:24 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sjoerd Simons <sjoerd.simons@collabora.co.uk>,
-        Ezequiel Garcia <ezequiel@collabora.co.uk>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 122/165] ASoC: rockchip: rk3288-hdmi-analog: Select needed codecs
-Date: Thu, 24 May 2018 11:38:48 +0200
-Message-Id: <20180524093626.942167592@linuxfoundation.org>
+Subject: [PATCH 4.14 160/165] rtc: hctosys: Ensure system time doesnt overflow time_t
+Date: Thu, 24 May 2018 11:39:26 +0200
+Message-Id: <20180524093628.562607570@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -109,31 +106,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ezequiel Garcia <ezequiel@collabora.co.uk>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-[ Upstream commit b1d0db067fbe2598d62b248beea5d705a0ea7642 ]
+[ Upstream commit b3a5ac42ab18b7d1a8f2f072ca0ee76a3b754a43 ]
 
-The driver does not select all the codec drivers that needs.
-Fix it by selecting the analog and HDMI codecs.
+On 32bit platforms, time_t is still a signed 32bit long. If it is
+overflowed, userspace and the kernel cant agree on the current system time.
+This causes multiple issues, in particular with systemd:
+https://github.com/systemd/systemd/issues/1143
 
-Cc: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Signed-off-by: Ezequiel Garcia <ezequiel@collabora.co.uk>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+A good workaround is to simply avoid using hctosys which is something I
+greatly encourage as the time is better set by userspace.
+
+However, many distribution enable it and use systemd which is rendering the
+system unusable in case the RTC holds a date after 2038 (and more so after
+2106). Many drivers have workaround for this case and they should be
+eliminated so there is only one place left to fix when userspace is able to
+cope with dates after the 31bit overflow.
+
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/soc/rockchip/Kconfig |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/rtc/hctosys.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/sound/soc/rockchip/Kconfig
-+++ b/sound/soc/rockchip/Kconfig
-@@ -56,6 +56,9 @@ config SND_SOC_RK3288_HDMI_ANALOG
- 	depends on SND_SOC_ROCKCHIP && I2C && GPIOLIB && CLKDEV_LOOKUP
- 	select SND_SOC_ROCKCHIP_I2S
- 	select SND_SOC_HDMI_CODEC
-+	select SND_SOC_ES8328_I2C
-+	select SND_SOC_ES8328_SPI if SPI_MASTER
-+	select DRM_DW_HDMI_I2S_AUDIO if DRM_DW_HDMI
- 	help
- 	  Say Y or M here if you want to add support for SoC audio on Rockchip
- 	  RK3288 boards using an analog output and the built-in HDMI audio.
+--- a/drivers/rtc/hctosys.c
++++ b/drivers/rtc/hctosys.c
+@@ -49,6 +49,11 @@ static int __init rtc_hctosys(void)
+ 
+ 	tv64.tv_sec = rtc_tm_to_time64(&tm);
+ 
++#if BITS_PER_LONG == 32
++	if (tv64.tv_sec > INT_MAX)
++		goto err_read;
++#endif
++
+ 	err = do_settimeofday64(&tv64);
+ 
+ 	dev_info(rtc->dev.parent,
