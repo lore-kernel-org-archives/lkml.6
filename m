@@ -1,95 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034070AbeEXRFH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 13:05:07 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:42313 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1034036AbeEXRFC (ORCPT
+        id S1034085AbeEXRFZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 13:05:25 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:44046 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1034052AbeEXRFW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 13:05:02 -0400
-X-Google-Smtp-Source: AB8JxZogCWkoMNVBuxxi260p4SgDe8Ln0jBCK1TZpgGqSuo+rft+ZQ8RxULB89OJQyLpk/vyUKRoGA==
-Date: Thu, 24 May 2018 10:04:59 -0700
-From: Moritz Fischer <mdf@kernel.org>
-To: richard.gong@linux.intel.com
-Cc: catalin.marinas@arm.com, will.deacon@arm.com, dinguyen@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, atull@kernel.org,
-        mdf@kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org,
-        corbet@lwn.net, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-fpga@vger.kernel.org, linux-doc@vger.kernel.org,
-        yves.vandervennet@linux.intel.com, richard.gong@intel.com
-Subject: Re: [PATCHv5 2/8] arm64: dts: stratix10: add stratix10 service
- driver binding to base dtsi
-Message-ID: <20180524170459.GB4051@archbook>
-References: <1527179600-26441-1-git-send-email-richard.gong@linux.intel.com>
- <1527179600-26441-3-git-send-email-richard.gong@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1527179600-26441-3-git-send-email-richard.gong@linux.intel.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Thu, 24 May 2018 13:05:22 -0400
+X-Google-Smtp-Source: AB8JxZravvXG1DH7izccJOilsuSAh1FrrxSLCRSmSZ2MGPqRx1Qc/cGfZctSKspvPYcbyYlbmp90Ow==
+From: Ivan Bornyakov <brnkv.i1@gmail.com>
+To: intel-linux-scu@intel.com
+Cc: artur.paszkiewicz@intel.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ivan Bornyakov <brnkv.i1@gmail.com>
+Subject: [PATCH] scsi: isci: fix memcmp casting
+Date: Thu, 24 May 2018 20:06:28 +0300
+Message-Id: <20180524170628.24204-1-brnkv.i1@gmail.com>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Richard,
+memcmp() returns int, but variable of type u8 is used to store it. When
+casting int to u8, one can lose significant bits and get 0 from non-0
+value returned by the memcmp().
 
-On Thu, May 24, 2018 at 11:33:14AM -0500, richard.gong@linux.intel.com wrote:
-> From: Richard Gong <richard.gong@intel.com>
-> 
-> Add Intel Stratix10 service layer to the device tree
-> 
-> Signed-off-by: Richard Gong <richard.gong@intel.com>
-> Signed-off-by: Alan Tull <atull@kernel.org>
-Acked-by: Moritz Fischer <mdf@kernel.org>
-> ---
-> v2: Change to put service layer driver node under the firmware node
->     Change compatible to "intel, stratix10-svc"
-> v3: No change
-> v4: s/service driver/stratix10 service driver/ in subject line
-> v5: No change
-> ---
->  arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-> index d8c94d5..c257287 100644
-> --- a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-> +++ b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-> @@ -24,6 +24,19 @@
->  	#address-cells = <2>;
->  	#size-cells = <2>;
->  
-> +	reserved-memory {
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges;
-> +
-> +		service_reserved: svcbuffer@0 {
-> +			compatible = "shared-dma-pool";
-> +			reg = <0x0 0x0 0x0 0x1000000>;
-> +			alignment = <0x1000>;
-> +			no-map;
-> +		};
-> +	};
-> +
->  	cpus {
->  		#address-cells = <1>;
->  		#size-cells = <0>;
-> @@ -487,5 +500,13 @@
->  
->  			status = "disabled";
->  		};
-> +
-> +		firmware {
-> +			svc {
-> +				compatible = "intel,stratix10-svc";
-> +				method = "smc";
-> +				memory-region = <&service_reserved>;
-> +			};
-> +		};
->  	};
->  };
-> -- 
-> 2.7.4
-> 
+Signed-off-by: Ivan Bornyakov <brnkv.i1@gmail.com>
+---
+ drivers/scsi/isci/host.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/scsi/isci/host.c b/drivers/scsi/isci/host.c
+index 1ee3868ade07..dd5f41e86639 100644
+--- a/drivers/scsi/isci/host.c
++++ b/drivers/scsi/isci/host.c
+@@ -1786,7 +1786,7 @@ static void power_control_timeout(struct timer_list *t)
+ 				 * them out of await_sas_power state.
+ 				 */
+ 				if (requester != NULL && requester != iphy) {
+-					u8 other = memcmp(requester->frame_rcvd.iaf.sas_addr,
++					int other = memcmp(requester->frame_rcvd.iaf.sas_addr,
+ 							  iphy->frame_rcvd.iaf.sas_addr,
+ 							  sizeof(requester->frame_rcvd.iaf.sas_addr));
+ 
+@@ -1840,7 +1840,7 @@ void sci_controller_power_control_queue_insert(struct isci_host *ihost,
+ 		struct isci_phy *current_phy;
+ 
+ 		for (i = 0; i < SCI_MAX_PHYS; i++) {
+-			u8 other;
++			int other;
+ 			current_phy = &ihost->phys[i];
+ 
+ 			other = memcmp(current_phy->frame_rcvd.iaf.sas_addr,
+-- 
+2.16.1
