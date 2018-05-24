@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1797295-1527159128-2-4674845673561863344
+X-Cyrus-Session-Id: sloti22d1t05-1807417-1527159121-2-17424451869306406328
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527159127; b=XFBeMgqKu15KskKoQ57OTqJZDkib8W+qUe8m85KZtfH/4rHNl6
-    GQeHOm8h9kCQFmxaLeNXhCOMx694I4Od3rbKdKi0gGfOH4e4nR/L397R7Rqi9mUD
-    ztbT2P0y3RHs5bVyKjR7nB33dwKgBTVJ6k9ZlxyUzX/Q+VJv/OhQw8oV4XTO0e5B
-    ZVM4BAaVqJMqzSnNHK+I4LX8jqvrERHUzXFoYwM3YpfNdRRZyaZJlIuFvUijAHTv
-    82F7HlyjrH6eUNk+E4iV4yYBMKPNsk5SGHpL8IhkDBt31Meccu2ZIlj8IgaX069m
-    bSv1nC8q3Sk6BhuhPSbjQeD9Botz3nKl4fWw==
+    1527159121; b=PRfWrTwaN9hECOqqutAAk3sdWTdC4VXlcaIcjpthDOTu20W8dM
+    njLNtHaGol+ioN8ANjjGNg7I9mJvpsWdE3duzxW+TixoxjeAG5WKsY17vlaSE8J+
+    H2sP9ljUexbcYdxe+vnCjifmUkgcO5g9W6Z2enapvtyYhDpd8iOtQM508y56wnlY
+    Kt/LLJma2caHGJy/+rP9Oxc8N32HC639Sp9HbIlU8ypNrNAd7XYE8HcyduIOFF9A
+    LYWaLCw4IH1qtbAE6zNMbueIVUmhB+SoIS2nnLHuIklQup7jegISj+cBagNmUNXS
+    447Ws/X0IxYovdv3FrK+MLPoGzRK2KdZksOA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527159127; bh=Eh0USibBIKdkWPpZ0xm5yrEvVlUCgC
-    +o/GCatG3kB44=; b=euqPMOIuR9Wds9HZmyD/CrXzg7eLMemJwbOWTa0LH1QEqB
-    72Yn88Ai2tZxnMeS+X7AJQDnDOQVtAr/F12PyAESfNxt9/0jn1RD7x3hs6SjAkRw
-    vhAJsXJKmnvacK0fdAMUjx7dArk1jqfwEP/tZJi96KlIHL9pW+I9R1l9NnlDtpNZ
-    6Mc701rheRynKwY3H5Kxei5wF88aKtDaS7PiHWtMWHopvHqhDKxV2XYt0GYi8fQJ
-    kNOuHjUVjQ8xcPI8oVLsOqdVnptngUoj37CxeU4UmSOKL28enY2OpaicGyQwE6Xe
-    BsW76m3/zPnpL71bICGq+v3G9v/PpASGim2TXQ7A==
+    :list-id; s=fm2; t=1527159121; bh=cxvyDde8uihV4X3d0Natd7ndjKxvme
+    vBjlGRMSDqbtQ=; b=j5CdCsza1t1ndiv/ggkMOL+YE4rQuWljdHGwBfwMcnyZL+
+    UeNWPUvtiqHC7h2gappvMz2ganvcIfLBSqkk0nQOAjmIzeAg94hpwRrLjcbj4EWR
+    QIXCba2JfKDelikvORMSaqQ9vkav2hF1ardKbqdQcRaOKexFkS1rltGRZ7FFjRIS
+    xO2iauuYnIn4w7Y+YX6Z3EU+/BZLCNvkgc9ZhIK/JQ1RuliNgXkV2KzAC2LWOMJe
+    z6rZyrwP/rb8ppAMNIHMMM0FspOMfAvrM7LtoOqQllfhGgxKiTwKRxc5pk4jTSsi
+    97Yn3Vuni/Yg45QsnFDf4b5Z/fg2+LoFIa5gOEKg==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=HWf19hko x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=n2tFI5q+ x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -48,7 +48,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
 Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=HWf19hko x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=n2tFI5q+ x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,32 +64,30 @@ Authentication-Results: mx2.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFEuw7bPyevSQIsOOM8xE12lkHiNIjMB6TP/PcBZLTHuNfsJf5Ib7etOJLBOCl1YVu9cV3TJUQFv8ccYo7tsFcQhQ9bwnWs58VEt266yW+kuzFhsmoWc
-    S3Ro6jR8NAh8MFE6dipCdNAupNBonZcGPOp63Qzq2RCKdtmkLr1MaKIVxASyCFPyp51u5u8qMuQADWU+MoluMZBlQ5f4czzbCxBgzfiBkdHszrDxKEv6CGHw
+X-CM-Envelope: MS4wfLbV+Ns4zAVeCkMO3aoHB17g0TuyfEgk7Z+qTyT+MXB4BMSCjdU81KdRYx3IdmRhq9ZjNqau0Tk0Oa1ksF3Y14iRKwi8bwth1dyDT6TN18DtSzY2KSQp
+    xGknF1CX3pCIvUx0aGMiETu7u6NIJVGvkkooj25XMPDs/uxSpRRaGN91eWs8YRGAcluKkpfTamL64SRD1Sl3PP805tsoxLOrefQDm7bxhFWLLmFuGxxOuwEG
 X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=hD80L64hAAAA:8 a=pGLkceISAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=-RuleGSg_AdYtJgukIIA:9 a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=vQBBkBfzAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=qKmdj21Zsmxc0eqd690A:9
+    a=QEXdDO2ut3YA:10 a=NGXS0kB0m_rannUenejW:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030448AbeEXJ5Z (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:57:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37216 "EHLO mail.kernel.org"
+        id S1032619AbeEXKt7 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 06:49:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37410 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030447AbeEXJ5V (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:57:21 -0400
+        id S1030487AbeEXJ5f (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:57:35 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        stable@vger.kernel.org, Brad Love <brad@nextdimension.cc>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 136/165] clk: samsung: exynos3250: Fix PLL rates
-Date: Thu, 24 May 2018 11:39:02 +0200
-Message-Id: <20180524093627.572716541@linuxfoundation.org>
+Subject: [PATCH 4.14 141/165] media: cx23885: Set subdev host data to clk_freq pointer
+Date: Thu, 24 May 2018 11:39:07 +0200
+Message-Id: <20180524093627.782272390@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -107,53 +105,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andrzej Hajda <a.hajda@samsung.com>
+From: Brad Love <brad@nextdimension.cc>
 
-[ Upstream commit a8321e7887410a2b2e80ab89d1ef7b30562658ea ]
+[ Upstream commit 5ceade1d97fc6687e050c44c257382c192f56276 ]
 
-Rates declared in PLL rate tables should match exactly rates calculated
-from PLL coefficients. If that is not the case, rate of the PLL's child clock
-might be set not as expected. For instance, if in the PLL rates table we have
-a 393216000 Hz entry and the real value as returned by the PLL's recalc_rate
-callback is 393216003, after setting PLL's clk rate to 393216000 clk_get_rate
-will return 393216003. If we now attempt to set rate of a PLL's child divider
-clock to 393216000/2 its rate will be 131072001, rather than 196608000.
-That is, the divider will be set to 3 instead of 2, because 393216003/2 is
-greater than 196608000.
+Currently clk_freq is ignored entirely, because the cx235840 driver
+configures the xtal at the chip defaults. This is an issue if a
+board is produced with a non-default frequency crystal. If clk_freq
+is not zero the cx25840 will attempt to use the setting provided,
+or fall back to defaults otherwise.
 
-To fix this issue declared rates are changed to exactly match rates generated
-by the PLL, as calculated from the P, M, S, K coefficients.
-
-In this patch an erroneous P value for 74176002 output frequency is also
-corrected.
-
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Brad Love <brad@nextdimension.cc>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/samsung/clk-exynos3250.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/pci/cx23885/cx23885-cards.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/clk/samsung/clk-exynos3250.c
-+++ b/drivers/clk/samsung/clk-exynos3250.c
-@@ -698,7 +698,7 @@ static const struct samsung_pll_rate_tab
- 	PLL_36XX_RATE(144000000,  96, 2, 3,     0),
- 	PLL_36XX_RATE( 96000000, 128, 2, 4,     0),
- 	PLL_36XX_RATE( 84000000, 112, 2, 4,     0),
--	PLL_36XX_RATE( 80000004, 106, 2, 4, 43691),
-+	PLL_36XX_RATE( 80000003, 106, 2, 4, 43691),
- 	PLL_36XX_RATE( 73728000,  98, 2, 4, 19923),
- 	PLL_36XX_RATE( 67737598, 270, 3, 5, 62285),
- 	PLL_36XX_RATE( 65535999, 174, 2, 5, 49982),
-@@ -734,7 +734,7 @@ static const struct samsung_pll_rate_tab
- 	PLL_36XX_RATE(148352005,  98, 2, 3, 59070),
- 	PLL_36XX_RATE(108000000, 144, 2, 4,     0),
- 	PLL_36XX_RATE( 74250000,  99, 2, 4,     0),
--	PLL_36XX_RATE( 74176002,  98, 3, 4, 59070),
-+	PLL_36XX_RATE( 74176002,  98, 2, 4, 59070),
- 	PLL_36XX_RATE( 54054000, 216, 3, 5, 14156),
- 	PLL_36XX_RATE( 54000000, 144, 2, 5,     0),
- 	{ /* sentinel */ }
+--- a/drivers/media/pci/cx23885/cx23885-cards.c
++++ b/drivers/media/pci/cx23885/cx23885-cards.c
+@@ -2286,6 +2286,10 @@ void cx23885_card_setup(struct cx23885_d
+ 				&dev->i2c_bus[2].i2c_adap,
+ 				"cx25840", 0x88 >> 1, NULL);
+ 		if (dev->sd_cx25840) {
++			/* set host data for clk_freq configuration */
++			v4l2_set_subdev_hostdata(dev->sd_cx25840,
++						&dev->clk_freq);
++
+ 			dev->sd_cx25840->grp_id = CX23885_HW_AV_CORE;
+ 			v4l2_subdev_call(dev->sd_cx25840, core, load_fw);
+ 		}
