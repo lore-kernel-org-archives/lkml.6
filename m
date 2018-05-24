@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1862185-1527161756-2-1977602904106293843
+X-Cyrus-Session-Id: sloti22d1t05-1862185-1527161751-2-16053132122379004337
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527161755; b=SKQFqoau1BhsDTv6R0Un97JnIh7J60FnoyixcMn74kAhuP+LIZ
-    lWfWqEcpfdOfKJuXUkAwkaT5Dz/T28M7uc4E0tc+9aLQeoznpFxlJAZ7LrSzN9u7
-    TcSyvx8GrT8LPavwkrXPVGKmKHWy6BDhwqJ9nATX2pmye/FluzdqShrWjes6cKMh
-    TywcWddX5Jewx3Uf47kdIAJRrB3z2Tl5du0aXxhxsl/S77Xc4jJY34pbnkW6FMch
-    Pk3QZbJ9giLOgvtk5WBgLJ2IrF7Kd8sAz512JiVl5R212lPrqN8KFtk6zZj5rFyc
-    JN1UtuJRf43VgvCrJ29J6/a0CJ0NEI56OWOQ==
+    1527161750; b=UXoD2cQYBHT0a8DLOaupE84aNj9VxGSDd2gS5ZhpscknXBnTBs
+    4eYcNKFijb2v+3tyHHXObW37lD2GGxVmKX62Lac7f6neEzzchCz8vzUJf8WdT+Dm
+    e1dhwGW1YTcv+qQ903lBCRGrAwkYOTga5UpWn1VythB5a4TGoz/hh0SN9W9dUDRS
+    G9aIw9A64vIfzS9PbFhddgbIiDkfLhURGoa/yAt77WIZyw2KMca1SM+SZ86JvMu/
+    V8F9EK4WaSDzlGnn43m08ZMgL4773p59ITfwKt/nbZ2nus4YLpNXdyrctDhuPNjJ
+    EPLXTS/XVvcIuo/TqxqG5hSfYkwbXOt2b05Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527161755; bh=1sGIykLM9AzyP/9HBtSlkZ7xtNgQ3Q
-    caNKhOBRs/pC4=; b=LL3aEQD6Txb8Mo/xLcpcnuVgUGkkkWdYX9XLrtUeps7sWq
-    ftMrJREyumaH0ofsYd3wR9dhKuo7SFdbkkifJnNBlOAuIbNJzsRjgoTQZgjDGyW/
-    C5RbjccyKmUAsKSRNEdD38yS00/uz1U3N7+2DYkJSn7YtXJh6wk526Y32p99VS+C
-    Fa43qU2rkxiq/TuQNXMDFKgzSHC8kuQGe1bsxhoj6aXhqVqHRt4vKZg0OLNhdkaG
-    td7q1Rng5os53h020hv9iXMvkgoGfqeuU6QIRLFcUka5B7c/ZOhWLLDu9bhF7wrO
-    9onG/ML7Z2NmH0ZAHIJQxJQtHI1/WRBT85pB0LPA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527161750; bh=8s6Cn8z8oYwjyun+DK03PPxDb2ugbH
+    uep6sV3XsZcK0=; b=VXIiB2xmZz4FrfblK3fVdstoCZTbHw4A4Jrdq+VDCedzQb
+    tBcTc6WQ+nVareAU3Xko4hGMhPrAu1il8cYz0oHQOvCTT9bYvcicYllDr3l8uZgr
+    xeZOzUElIOvvHdsKnEe8pvbg3kKimHDoR1zB4eizMjGsOOlI5L50tvs/HtZLBjq/
+    KgIsAqvptiKuU6JIb3FJiuUwDkY7THVF14eQgWFSlzUkZH14fRYAakpF78hxA8bP
+    hDYutyf01HxRB17x8WKkw5gxJdQtRYqRlcGxKFgNA+FhDmmrVOATOxcr3l19mhaD
+    8d8fKCPT8IUeXbCvLOP2TfUD6SIcZzufZg2FCt1A==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=Rx4KQdxF x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=FppUGY+q x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=Rx4KQdxF x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=FppUGY+q x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,33 +64,30 @@ Authentication-Results: mx2.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLVvCP4cLMxNEQHaOuPZ9za5aZc5mDrTuLloU8/OdaBnSAJ77djjrfZu2LXVe4YZw5d+YScwZE5vdDQ7tKWKoe+sQ7hFEv7Ye+6oyX/d85Qt/W61Og7y
-    NQnBBsk0rcuU9AfKNSxCdDYUV2ItU7rTcZzNTsmgX6Mx600vhZB+VIMOs7HWcFGGuNcLeVN4tDR2A+lEIuVG/Rxg2b03ME4lQfVBQEBxBMyk4fzkUWt+9aQt
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfE27/F/1GE1y7V99S5XTCENBkrPCrDDpUG2zj03h9P7yYLaxXcxR0ZYbTU61rSGp4SAIE0E8bcB9v97mLgy0hLNZQJCIV729jlAmbjzimvm7CoJkme91
+    yG9asnWY2IvWQCN1TTUNeIAkIxd7k04LDvp/lxRO717+k8EcIGac8s+y+cepAjkMu1BqbTKwaiSWST49BFAG90SJWqyQVfHBx8ea2vWgI85G/9ffjpsmEGid
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=hD80L64hAAAA:8 a=VwQbUJbxAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=WinGGc6PCWDRWg6FmoYA:9 a=7Zwj6sZBwVKJAoWSPKxL6X1jA+E=:19 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=s8YR1HE3AAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=0ZnexwqNl6dV5F-YGXAA:9
+    a=QEXdDO2ut3YA:10 a=jGH_LyMDp9YhSvY-UuyI:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967513AbeEXJuA (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:50:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39506 "EHLO mail.kernel.org"
+        id S967035AbeEXJuC (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:50:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39678 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967462AbeEXJtx (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:49:53 -0400
+        id S967486AbeEXJty (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:49:54 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Shawn Lin <shawn.lin@rock-chips.com>,
+        Heiko Stuebner <heiko@sntech.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 69/96] ASoC: samsung: i2s: Ensure the RCLK rate is properly determined
-Date: Thu, 24 May 2018 11:38:52 +0200
-Message-Id: <20180524093609.372400913@linuxfoundation.org>
+Subject: [PATCH 4.9 70/96] clk: rockchip: Fix wrong parent for SDMMC phase clock for rk3228
+Date: Thu, 24 May 2018 11:38:53 +0200
+Message-Id: <20180524093609.422539428@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093605.602125311@linuxfoundation.org>
 References: <20180524093605.602125311@linuxfoundation.org>
@@ -108,51 +105,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
 
-[ Upstream commit 647d04f8e07afc7c3b7a42b3ee01a8b28db29631 ]
+[ Upstream commit 4b0556a441dd37e598887215bc89b49a6ef525b3 ]
 
-If the RCLK mux clock configuration is specified in DT and no set_sysclk()
-callback is used in the sound card driver the sclk_srcrate field will remain
-set to 0, leading to an incorrect PSR divider setting.
-To fix this the frequency value is retrieved from the CLK_I2S_RCLK_SRC clock,
-so the actual RCLK mux selection is taken into account.
+commit c420c1e4db22 ("clk: rockchip: Prevent calculating mmc phase
+if clock rate is zero") catches one gremlin again for clk-rk3228.c
+that the parent of SDMMC phase clock should be sclk_sdmmc0, but not
+sclk_sdmmc. However, the naming of the sdmmc clocks varies in the
+manual with the card clock having the 0 while the hclk is named
+without appended 0. So standardize one one format to prevent
+confusion, as there also is only one (non-sdio) mmc controller on
+the soc.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/soc/samsung/i2s.c |   13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ drivers/clk/rockchip/clk-rk3228.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -642,8 +642,12 @@ static int i2s_set_fmt(struct snd_soc_da
- 		tmp |= mod_slave;
- 		break;
- 	case SND_SOC_DAIFMT_CBS_CFS:
--		/* Set default source clock in Master mode */
--		if (i2s->rclk_srcrate == 0)
-+		/*
-+		 * Set default source clock in Master mode, only when the
-+		 * CLK_I2S_RCLK_SRC clock is not exposed so we ensure any
-+		 * clock configuration assigned in DT is not overwritten.
-+		 */
-+		if (i2s->rclk_srcrate == 0 && i2s->clk_data.clks == NULL)
- 			i2s_set_sysclk(dai, SAMSUNG_I2S_RCLKSRC_0,
- 							0, SND_SOC_CLOCK_IN);
- 		break;
-@@ -858,6 +862,11 @@ static int config_setup(struct i2s_dai *
- 		return 0;
+--- a/drivers/clk/rockchip/clk-rk3228.c
++++ b/drivers/clk/rockchip/clk-rk3228.c
+@@ -369,7 +369,7 @@ static struct rockchip_clk_branch rk3228
+ 			RK2928_CLKSEL_CON(23), 5, 2, MFLAGS, 0, 6, DFLAGS,
+ 			RK2928_CLKGATE_CON(2), 15, GFLAGS),
  
- 	if (!(i2s->quirks & QUIRK_NO_MUXPSR)) {
-+		struct clk *rclksrc = i2s->clk_table[CLK_I2S_RCLK_SRC];
-+
-+		if (i2s->rclk_srcrate == 0 && rclksrc && !IS_ERR(rclksrc))
-+			i2s->rclk_srcrate = clk_get_rate(rclksrc);
-+
- 		psr = i2s->rclk_srcrate / i2s->frmclk / rfs;
- 		writel(((psr - 1) << 8) | PSR_PSREN, i2s->addr + I2SPSR);
- 		dev_dbg(&i2s->pdev->dev,
+-	COMPOSITE(SCLK_SDMMC, "sclk_sdmmc0", mux_mmc_src_p, 0,
++	COMPOSITE(SCLK_SDMMC, "sclk_sdmmc", mux_mmc_src_p, 0,
+ 			RK2928_CLKSEL_CON(11), 8, 2, MFLAGS, 0, 8, DFLAGS,
+ 			RK2928_CLKGATE_CON(2), 11, GFLAGS),
+ 
