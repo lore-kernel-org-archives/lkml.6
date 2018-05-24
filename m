@@ -1,186 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034655AbeEXV0l (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 17:26:41 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:54430 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033204AbeEXV0j (ORCPT
+        id S1161311AbeEXV1X (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 17:27:23 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:46495 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1033204AbeEXV1V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 17:26:39 -0400
-Subject: Re: [PATCH -V2 -mm 2/4] mm, huge page: Copy target sub-page last when
- copy huge page
-To: "Huang, Ying" <ying.huang@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andi Kleen <andi.kleen@intel.com>, Jan Kara <jack@suse.cz>,
-        Michal Hocko <mhocko@suse.com>, Andrea Arcangeli <aarcange@redhat.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Hugh Dickins <hughd@google.com>, Minchan Kim <minchan@kernel.org>,
-        Shaohua Li <shli@fb.com>, Christopher Lameter <cl@linux.com>
-References: <20180524005851.4079-1-ying.huang@intel.com>
- <20180524005851.4079-3-ying.huang@intel.com>
-From: Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <bc8d72c1-b3c5-d9b2-f617-e7036628054a@oracle.com>
-Date: Thu, 24 May 2018 14:25:03 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Thu, 24 May 2018 17:27:21 -0400
+X-Google-Smtp-Source: AB8JxZo0UA+S8vAFGwVZWOpnm8Y7OZcyXb1VC+rzVZVizW4GSAHuVwPS/8uZY5crk8ipr7cXHEt0tQSNowOZVzDp7pM=
 MIME-Version: 1.0
-In-Reply-To: <20180524005851.4079-3-ying.huang@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8903 signatures=668700
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805240241
+References: <CAKwvOd=jmi_7LvZbS0PA5-zt62m5ZFPUNG7JtMQVmerCR63ebQ@mail.gmail.com>
+ <BDEF22F0-84A5-4A36-B153-13E6A4260922@zytor.com> <CAKwvOdnLt5qr_5ah86qdsocTxUbo_3X1y3PPRp1EZwt=__NxnA@mail.gmail.com>
+ <CAKwvOdmQER7XtO_uygYDBxGgUr-EruGyjUq9DMbNwQFh11=9gg@mail.gmail.com> <CAKwvOdkd480hmHduDHnV2ekoAm_dyPnApU9jc7TARyD072KOGA@mail.gmail.com>
+In-Reply-To: <CAKwvOdkd480hmHduDHnV2ekoAm_dyPnApU9jc7TARyD072KOGA@mail.gmail.com>
+From: Nick Desaulniers <ndesaulniers@google.com>
+Date: Thu, 24 May 2018 14:27:08 -0700
+Message-ID: <CAKwvOdnKo4k_Q7dRF0vSq7FuwiDsy3hdx9kPvrgMrb5pV_nS2Q@mail.gmail.com>
+Subject: Re: [clang] stack protector and f1f029c7bf
+To: hpa@zytor.com
+Cc: Alistair Strachan <astrachan@google.com>,
+        Manoj Gupta <manojgupta@google.com>,
+        Matthias Kaehlcke <mka@google.com>,
+        Greg Hackmann <ghackmann@google.com>, sedat.dilek@gmail.com,
+        tstellar@redhat.com, LKML <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/23/2018 05:58 PM, Huang, Ying wrote:
-> From: Huang Ying <ying.huang@intel.com>
-> 
-> Huge page helps to reduce TLB miss rate, but it has higher cache
-> footprint, sometimes this may cause some issue.  For example, when
-> copying huge page on x86_64 platform, the cache footprint is 4M.  But
-> on a Xeon E5 v3 2699 CPU, there are 18 cores, 36 threads, and only 45M
-> LLC (last level cache).  That is, in average, there are 2.5M LLC for
-> each core and 1.25M LLC for each thread.
-> 
-> If the cache contention is heavy when copying the huge page, and we
-> copy the huge page from the begin to the end, it is possible that the
-> begin of huge page is evicted from the cache after we finishing
-> copying the end of the huge page.  And it is possible for the
-> application to access the begin of the huge page after copying the
-> huge page.
-> 
-> In commit c79b57e462b5d ("mm: hugetlb: clear target sub-page last when
-> clearing huge page"), to keep the cache lines of the target subpage
-> hot, the order to clear the subpages in the huge page in
-> clear_huge_page() is changed to clearing the subpage which is furthest
-> from the target subpage firstly, and the target subpage last.  The
-> similar order changing helps huge page copying too.  That is
-> implemented in this patch.  Because we have put the order algorithm
-> into a separate function, the implementation is quite simple.
-> 
-> The patch is a generic optimization which should benefit quite some
-> workloads, not for a specific use case.  To demonstrate the performance
-> benefit of the patch, we tested it with vm-scalability run on
-> transparent huge page.
-> 
-> With this patch, the throughput increases ~16.6% in vm-scalability
-> anon-cow-seq test case with 36 processes on a 2 socket Xeon E5 v3 2699
-> system (36 cores, 72 threads).  The test case set
-> /sys/kernel/mm/transparent_hugepage/enabled to be always, mmap() a big
-> anonymous memory area and populate it, then forked 36 child processes,
-> each writes to the anonymous memory area from the begin to the end, so
-> cause copy on write.  For each child process, other child processes
-> could be seen as other workloads which generate heavy cache pressure.
-> At the same time, the IPC (instruction per cycle) increased from 0.63
-> to 0.78, and the time spent in user space is reduced ~7.2%.
-> 
-> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+On Thu, May 24, 2018 at 2:12 PM Nick Desaulniers <ndesaulniers@google.com>
+wrote:
+> On Thu, May 24, 2018 at 1:52 PM Nick Desaulniers <ndesaulniers@google.com>
+> wrote:
+> > On Thu, May 24, 2018 at 1:26 PM Nick Desaulniers <
+ndesaulniers@google.com>
+> > wrote:
+> > > On Thu, May 24, 2018 at 11:59 AM <hpa@zytor.com> wrote:
+> > > > Issue 3: Let's face it, reading and writing the flags should be
+> > builtins,
+> > > exactly because it has to do stack operations, which really means the
+> > > compiler should be involved.
 
-Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
+> > > I'm happy to propose that as a feature request to llvm+gcc.
+
+> > Oh, looks like both clang and gcc have:
+> > __builtin_ia32_readeflags_u64()
+
+> > https://godbolt.org/g/SwPjhq
+
+> > Maybe native_save_fl() and native_restore_fl() should be replaced in the
+> > kernel with
+> > __builtin_ia32_readeflags_u64() and __builtin_ia32_writeeflags_u64()?
+> > --
+> > Thanks,
+> > ~Nick Desaulniers
+
+> Looks like those builtins got added to GCC around the 4.9 timeframe:
+> https://godbolt.org/g/9VS2E9
+
+> Problematically, it seems that GCC does not have __has_builtin to do
+> feature detection:
+
+https://clang.llvm.org/docs/LanguageExtensions.html#feature-checking-macros
+> https://godbolt.org/g/oku8ux
+
+Is there a more canonical way the kernel does feature detection that looks
+better than:
+
+diff --git a/arch/x86/include/asm/irqflags.h
+b/arch/x86/include/asm/irqflags.h
+index 89f08955fff7..90974b5d023c 100644
+--- a/arch/x86/include/asm/irqflags.h
++++ b/arch/x86/include/asm/irqflags.h
+@@ -13,6 +13,8 @@
+   * Interrupt control:
+   */
+
++#ifdef GCC_VERSION
++#if GCC_VERSION < 40900
+  static inline unsigned long native_save_fl(void)
+  {
+         unsigned long flags;
+@@ -38,6 +40,17 @@ static inline void native_restore_fl(unsigned long flags)
+                      :"g" (flags)
+                      :"memory", "cc");
+  }
++#else
++static inline unsigned long native_save_fl(void)
++{
++       return __builtin_ia32_readeflags_u64();
++}
++static inline void native_restore_fl(unsigned long flags)
++{
++       __builtin_ia32_writeeflags_u64(flags);
++}
++#endif
++
+
+  static inline void native_irq_disable(void)
+  {
+
 -- 
-Mike Kravetz
-
-> Cc: Andi Kleen <andi.kleen@intel.com>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Andrea Arcangeli <aarcange@redhat.com>
-> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-> Cc: Matthew Wilcox <mawilcox@microsoft.com>
-> Cc: Hugh Dickins <hughd@google.com>
-> Cc: Minchan Kim <minchan@kernel.org>
-> Cc: Shaohua Li <shli@fb.com>
-> Cc: Christopher Lameter <cl@linux.com>
-> Cc: Mike Kravetz <mike.kravetz@oracle.com>
-> ---
->  include/linux/mm.h |  3 ++-
->  mm/huge_memory.c   |  3 ++-
->  mm/memory.c        | 30 +++++++++++++++++++++++-------
->  3 files changed, 27 insertions(+), 9 deletions(-)
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 7cdd8b7f62e5..d227aadaa964 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -2734,7 +2734,8 @@ extern void clear_huge_page(struct page *page,
->  			    unsigned long addr_hint,
->  			    unsigned int pages_per_huge_page);
->  extern void copy_user_huge_page(struct page *dst, struct page *src,
-> -				unsigned long addr, struct vm_area_struct *vma,
-> +				unsigned long addr_hint,
-> +				struct vm_area_struct *vma,
->  				unsigned int pages_per_huge_page);
->  extern long copy_huge_page_from_user(struct page *dst_page,
->  				const void __user *usr_src,
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index e9177363fe2e..1b7fd9bda1dc 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -1328,7 +1328,8 @@ int do_huge_pmd_wp_page(struct vm_fault *vmf, pmd_t orig_pmd)
->  	if (!page)
->  		clear_huge_page(new_page, vmf->address, HPAGE_PMD_NR);
->  	else
-> -		copy_user_huge_page(new_page, page, haddr, vma, HPAGE_PMD_NR);
-> +		copy_user_huge_page(new_page, page, vmf->address,
-> +				    vma, HPAGE_PMD_NR);
->  	__SetPageUptodate(new_page);
->  
->  	mmun_start = haddr;
-> diff --git a/mm/memory.c b/mm/memory.c
-> index b9f573a81bbd..5d432f833d19 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -4675,11 +4675,31 @@ static void copy_user_gigantic_page(struct page *dst, struct page *src,
->  	}
->  }
->  
-> +struct copy_subpage_arg {
-> +	struct page *dst;
-> +	struct page *src;
-> +	struct vm_area_struct *vma;
-> +};
-> +
-> +static void copy_subpage(unsigned long addr, int idx, void *arg)
-> +{
-> +	struct copy_subpage_arg *copy_arg = arg;
-> +
-> +	copy_user_highpage(copy_arg->dst + idx, copy_arg->src + idx,
-> +			   addr, copy_arg->vma);
-> +}
-> +
->  void copy_user_huge_page(struct page *dst, struct page *src,
-> -			 unsigned long addr, struct vm_area_struct *vma,
-> +			 unsigned long addr_hint, struct vm_area_struct *vma,
->  			 unsigned int pages_per_huge_page)
->  {
-> -	int i;
-> +	unsigned long addr = addr_hint &
-> +		~(((unsigned long)pages_per_huge_page << PAGE_SHIFT) - 1);
-> +	struct copy_subpage_arg arg = {
-> +		.dst = dst,
-> +		.src = src,
-> +		.vma = vma,
-> +	};
->  
->  	if (unlikely(pages_per_huge_page > MAX_ORDER_NR_PAGES)) {
->  		copy_user_gigantic_page(dst, src, addr, vma,
-> @@ -4687,11 +4707,7 @@ void copy_user_huge_page(struct page *dst, struct page *src,
->  		return;
->  	}
->  
-> -	might_sleep();
-> -	for (i = 0; i < pages_per_huge_page; i++) {
-> -		cond_resched();
-> -		copy_user_highpage(dst + i, src + i, addr + i*PAGE_SIZE, vma);
-> -	}
-> +	process_huge_page(addr_hint, pages_per_huge_page, copy_subpage, &arg);
->  }
->  
->  long copy_huge_page_from_user(struct page *dst_page,
-> 
+Thanks,
+~Nick Desaulniers
