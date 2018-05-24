@@ -1,5 +1,5 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1733193-1527156055-2-11088420372787854582
+X-Cyrus-Session-Id: sloti22d1t05-1732752-1527156052-2-2471810636464637820
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527156055; b=iyiA90kx/L1cPYVFbCHiumqLzjd+F/Rq2bGwA7r7tpKhAosG/6
-    vrx3sYgEo0Kw/Oat0uKjaoXZRh1jyQ/8GNmyLUqdpaPUN27zc3xutG8T6FnWLhkJ
-    qxzK4QjLd/UHd+SOGbg75ThHQLbgdTNWLKItzMAVJ/+lQJd60fROx//Q+44jViDH
-    m7Wny+Tj1p2MFVgHy0THDlz6hz0jSomz6iB1KCLVh8RKH11l/YUQ/rFM5vmnetIJ
-    0JyesbK2G6SQYYVjfk78z1hm2+ilQgDow2Cv6cMPBYP8Sr3FoWzDQ+pFEGByO6FF
-    EREEHq7ArIzbyQWzgM89tt5ix8yjoG1WswrQ==
+    1527156052; b=gGjZ6rqrKqVqLbZDsr/uX8XLLhKilYut+808yeGSOQk9AG37L1
+    mzMv9RomohHjz38EQrWbtmcl/PBaI8+PI9Lmx9+9LMTtxp3GaT6WWR9wHYex+HC+
+    ywCokqzuJ5z0fXJA3JFDw/jciVIgnWZi+CqUO0wvXmE12PIXMo7oM+J2gVyX3RjM
+    CvDipDfVbr0rsyHNkWGsLgN92vEMJVb3mO7vvXBN3c+pCplwjwF4C28UEcxFtVxH
+    4ksMBxjDd4SRbR82lXuZEKH/Yx5oqbwun8U4qPE4I5tGPAC91byxR6mux2YpWhzL
+    itUC3Jo/Ajrs+H9ydtotjhpjk1h3DtLqALtA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type; s=fm2; t=
-    1527156055; bh=LgWC/EUY+tAtYToAhkKKlIzupRkMHBvpsnmvIpTqKAs=; b=X
-    AKUFxCPnmPO4d6KqN2KKItN0rwKbMkaXCSZO9u5+YTtQ1xDkU37/7Nxn/wSfR5l9
-    ZhbUMWDlT3OIiNbshG4E/oMn0DkG4OXx58bb6dZTv0RLHUT8NOZttp8ODBzGlp9T
-    IZRu6XZHw1J9CxeCjNb804tzL/qABDludaxe0vdBxgBKUd/gAgD42qqeXhuqttnz
-    9GRoF6ZDduzotvRw2iaxLDBYEdYNyXH9EJ5prZ83xRqBMiwnLScGAS+6NfUWwgWZ
-    JL4uaVEKPCcl/ctOCVMbyvZcZpyvxUq1Hl+AeIsiG1wUHJUp/kR9dd4jwCqn/Ub/
-    lvGDHJZBTwfyYXiKv5SVQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    1527156052; bh=kg4v8WQ0Dtg4Mm6WpBvv8rVRtTqncdT6FG416/YN3O0=; b=G
+    csE/lhhJHb/DEVhXuRgruzU4d20E90yo6QnLDZHNVUyyRaGdEImlhKZ3Kpr+Lz4T
+    Jd5ISBqRoMw0vRpj6OHzgAQu+I8R0c3N8Wh2hgVay97ENXQdOoYh4VGg+o/h8GkI
+    kash9QsjmFr+CnzTgClk1FIeQtqCx8yI3awAqQ/4juZJl3+NNJetOrcg/bia3aFt
+    sWx+t61WscEG6dtj86HY9H6IGzhcYtJuc5lo6CyE1+5NHgMRUJPUUmBHWAmYC4+s
+    fHQFPUUK5+WiaKKEwvwzklC7hM8cLHVvqbcc2nPix8AqrKxiKi+L7rXi2akn9KCX
+    Mpc+93uN+qEEDVy4Um86A==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=uz9gzxe7 x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=PWa68u2D x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=198.145.29.99 (mail.kernel.org);
@@ -45,11 +45,11 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
     bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=uz9gzxe7 x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=PWa68u2D x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=198.145.29.99 (mail.kernel.org);
@@ -64,13 +64,13 @@ Authentication-Results: mx1.messagingengine.com;
       header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
       bits=128/128;
-    x-vs=clean score=-100 state=0
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfG00oqskNboD5Cg9MKVBa5pa1QYADHFJ4pV4IBTcLnEIAEtwKJnY4fK0Oh+RBkDqU1ayG6fYAd6vutaArTJiMUYrv7n2sih8Zl+udB1sHS9U/h2R5v/G
-    C5+M0SZLjUN+q9ad/WsiGkHzkGsQD5EAPyWZeZ9CsG7+aWAmDyX6rJGN/3/H3DL49kGp8j0VIoNio8afgbuyRk/f1lYV01TbGEsATkvhHzWFs1shscacvKu7
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=czNdAM+YcK12vDHDihaDnQ==:117
+X-CM-Envelope: MS4wfK6bh+cpWDLML0pKubdVXfDlMAPNMEuzI8dcW4uG01lWt6XdGJAIWqQPZK3RRQoo6lhpxnB7h1Po3fzJ957AVh9ZNhHon0Bnwtlh2p6m3BNVKIif19ZK
+    HQqjL4ros0ic8uMcqo7A63EbkrTTfbGsdnUpo/5H1z7vAZKVXQszeusxkQ45IY9RxsuWZsKNrwwuZ9pHCHxzTLJHpgysxVBIegEER7qqoh8sR9aDcCRLD9dy
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=czNdAM+YcK12vDHDihaDnQ==:117
     a=czNdAM+YcK12vDHDihaDnQ==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VnNF1IyMAAAA:8 a=ag1SF4gXAAAA:8 a=J8Gn88GXWbtqjP03ZV8A:9 a=QEXdDO2ut3YA:10
+    a=ag1SF4gXAAAA:8 a=Z4KKdM25U3oJDl1ujtkA:9 a=QEXdDO2ut3YA:10
     a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
@@ -79,11 +79,10 @@ To: linux-kernel@vger.kernel.org,
 	greg@kroah.com
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>,
 	Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.16 046/161] powerpc/pseries: Fix clearing of security feature flags
-Date: Thu, 24 May 2018 11:37:51 +0200
-Message-Id: <20180524093023.906068189@linuxfoundation.org>
+Subject: [PATCH 4.16 045/161] powerpc/64s: Wire up cpu_show_spectre_v2()
+Date: Thu, 24 May 2018 11:37:50 +0200
+Message-Id: <20180524093023.761898151@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -99,76 +98,68 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-commit 0f9bdfe3c77091e8704d2e510eb7c2c2c6cde524 upstream.
+commit d6fbe1c55c55c6937cbea3531af7da84ab7473c3 upstream.
 
-The H_CPU_BEHAV_* flags should be checked for in the 'behaviour' field
-of 'struct h_cpu_char_result' -- 'character' is for H_CPU_CHAR_*
-flags.
+Add a definition for cpu_show_spectre_v2() to override the generic
+version. This has several permuations, though in practice some may not
+occur we cater for any combination.
 
-Found by playing around with QEMU's implementation of the hypercall:
+The most verbose is:
 
-  H_CPU_CHAR=0xf000000000000000
-  H_CPU_BEHAV=0x0000000000000000
+  Mitigation: Indirect branch serialisation (kernel only), Indirect
+  branch cache disabled, ori31 speculation barrier enabled
 
-  This clears H_CPU_BEHAV_FAVOUR_SECURITY and H_CPU_BEHAV_L1D_FLUSH_PR
-  so pseries_setup_rfi_flush() disables 'rfi_flush'; and it also
-  clears H_CPU_CHAR_L1D_THREAD_PRIV flag. So there is no RFI flush
-  mitigation at all for cpu_show_meltdown() to report; but currently
-  it does:
+We don't treat the ori31 speculation barrier as a mitigation on its
+own, because it has to be *used* by code in order to be a mitigation
+and we don't know if userspace is doing that. So if that's all we see
+we say:
 
-  Original kernel:
+  Vulnerable, ori31 speculation barrier enabled
 
-    # cat /sys/devices/system/cpu/vulnerabilities/meltdown
-    Mitigation: RFI Flush
-
-  Patched kernel:
-
-    # cat /sys/devices/system/cpu/vulnerabilities/meltdown
-    Not affected
-
-  H_CPU_CHAR=0x0000000000000000
-  H_CPU_BEHAV=0xf000000000000000
-
-  This sets H_CPU_BEHAV_BNDS_CHK_SPEC_BAR so cpu_show_spectre_v1() should
-  report vulnerable; but currently it doesn't:
-
-  Original kernel:
-
-    # cat /sys/devices/system/cpu/vulnerabilities/spectre_v1
-    Not affected
-
-  Patched kernel:
-
-    # cat /sys/devices/system/cpu/vulnerabilities/spectre_v1
-    Vulnerable
-
-Brown-paper-bag-by: Michael Ellerman <mpe@ellerman.id.au>
-Fixes: f636c14790ea ("powerpc/pseries: Set or clear security feature flags")
-Signed-off-by: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/platforms/pseries/setup.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/powerpc/kernel/security.c |   33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
---- a/arch/powerpc/platforms/pseries/setup.c
-+++ b/arch/powerpc/platforms/pseries/setup.c
-@@ -484,13 +484,13 @@ static void init_cpu_char_feature_flags(
- 	 * The features below are enabled by default, so we instead look to see
- 	 * if firmware has *disabled* them, and clear them if so.
- 	 */
--	if (!(result->character & H_CPU_BEHAV_FAVOUR_SECURITY))
-+	if (!(result->behaviour & H_CPU_BEHAV_FAVOUR_SECURITY))
- 		security_ftr_clear(SEC_FTR_FAVOUR_SECURITY);
+--- a/arch/powerpc/kernel/security.c
++++ b/arch/powerpc/kernel/security.c
+@@ -58,3 +58,36 @@ ssize_t cpu_show_spectre_v1(struct devic
  
--	if (!(result->character & H_CPU_BEHAV_L1D_FLUSH_PR))
-+	if (!(result->behaviour & H_CPU_BEHAV_L1D_FLUSH_PR))
- 		security_ftr_clear(SEC_FTR_L1D_FLUSH_PR);
- 
--	if (!(result->character & H_CPU_BEHAV_BNDS_CHK_SPEC_BAR))
-+	if (!(result->behaviour & H_CPU_BEHAV_BNDS_CHK_SPEC_BAR))
- 		security_ftr_clear(SEC_FTR_BNDS_CHK_SPEC_BAR);
+ 	return sprintf(buf, "Vulnerable\n");
  }
- 
++
++ssize_t cpu_show_spectre_v2(struct device *dev, struct device_attribute *attr, char *buf)
++{
++	bool bcs, ccd, ori;
++	struct seq_buf s;
++
++	seq_buf_init(&s, buf, PAGE_SIZE - 1);
++
++	bcs = security_ftr_enabled(SEC_FTR_BCCTRL_SERIALISED);
++	ccd = security_ftr_enabled(SEC_FTR_COUNT_CACHE_DISABLED);
++	ori = security_ftr_enabled(SEC_FTR_SPEC_BAR_ORI31);
++
++	if (bcs || ccd) {
++		seq_buf_printf(&s, "Mitigation: ");
++
++		if (bcs)
++			seq_buf_printf(&s, "Indirect branch serialisation (kernel only)");
++
++		if (bcs && ccd)
++			seq_buf_printf(&s, ", ");
++
++		if (ccd)
++			seq_buf_printf(&s, "Indirect branch cache disabled");
++	} else
++		seq_buf_printf(&s, "Vulnerable");
++
++	if (ori)
++		seq_buf_printf(&s, ", ori31 speculation barrier enabled");
++
++	seq_buf_printf(&s, "\n");
++
++	return s.len;
++}
