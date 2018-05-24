@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1835623-1527161504-2-1644093678057503348
+X-Cyrus-Session-Id: sloti22d1t05-1835623-1527161486-2-6225890116162442939
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527161503; b=m9rX98vOXgZ8JLTq4gwZLlgccinghEDbsJ6EL8EjXCU+jM20h6
-    9A9O00MH/0OUzvpOVAYGx6GRmCedgDmlIR+c/TXsFGJuJ0pMtImWUIdrWuFVjFpx
-    CRm72FYs/XuQV7fnJnsjnvSNYH4nRzrKMgYyK00QqmQYQ4ge8jk6izoH6kFNOBrk
-    vd6XczoT5gHfBAjMuODs/Owke6VtqlLtFD5RneUo4QdCv/WAJzgltEch6cLokv1v
-    UJgC7m6YutV9WztxFTq5XEL4R6QTcxQUr5rWrYe14bmhwcSpDjrtSehvL6uzA5ec
-    kP/DCd1GBSE6PyYpa1YP8VQHk5gXxoTA6lVw==
+    1527161485; b=TNNhoPLO7OPPJseTI5V4+IgjITz4veTIbNojfdi+v9ryPh7L+a
+    SVcNouWobt+9rMSQLzcFnk1Ll12xQzl7BKnssZAQHj47UEDKo6rFfUcMavZVOoBA
+    XqEheAvUtbuJZqNBi7d2ueSxoq+b2dPexkNwaa7114tD3tsE0kMOgfIiZWh+9OvI
+    J77N3BzUZYtKg/YyiWaLmTuiMrRNzuQ4HlsLhUuPs1riPSavBOHLeKtP+rPV2Y1G
+    Zg9GfB9xSd0D3zlb9qCwfECVtCw1QvN+/xWRbBu50zPhHek+045OclNI8cNoSW9w
+    xqIRC1Ocr7Pcz4sEo5E1MsvYlr7GYz2HRLMg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527161503; bh=JyEHtIABPWjf5f9vtolMW4GbunwG2P
-    M1gi2LPv2kAdQ=; b=BIIMXkIcWTJmOt/d0RMvUYzQJVDT6NS1uzddvE1Ms/0F4l
-    FTNYYLcdyAAr8nBSbF9lVjHrBVGnw2FyOCEWZRafUVfDKyYm+d2y5RkPXV49xiAs
-    +Au+REPqaqlWou3LXGbukgZ+gNyjrtThkOZ+59RplNRNoF9ByuajVEdxSlO0y2rm
-    iebuJUc8dwaOLje7MmplXv5HGU4L27kpC6eliM3GtwMs+NHvLbfnD2JUdTF6oviw
-    ReGpH0lENbRak6rGqB2UFsomSK11rXEJ/8vo7uQ753Wyu+0PVxHhfmgVrclJYGFQ
-    HmVxBUfMiRs4xDJqgQmZYgLeJdklxRdVynxpSwUQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527161485; bh=m+UuS2BuThKBQR+w6aoTQi6LlhB7gk
+    /5umBKg5mOISs=; b=i520m9R1T2S+4nKOhXSJUcY9aAhPAl4fKqNlJuRpmXLxqs
+    3wAT7YlIyh2qOy8yEEZSBBksnEc2LQnJkqjAGDgOcTPGwSAQQJg2fj9fmj8m4WnH
+    FFOPH3guZAqRpIvdrcNNv7g8cPALV8BPqEjGu+4I929ZRauEu9EEc4237si9g4K+
+    OWc7E79sXFVKGoSQ+UQohmJ3phqf+jVBfFA5miopHqCyqKVP3z3CKrEyCbVXU75F
+    xuLXi0+FL2K/UODP6UlKj1dWT1+0zqQMOnTACXPGRmuw+M0wCYfbm0CBxqKCXXHk
+    7FCt1am+rGO/+u5L7Joti2tz/EZefOkPiOjWRqcQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=Zt6/xEbt x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=ntvgTjaQ x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=Zt6/xEbt x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=ntvgTjaQ x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,30 +64,30 @@ Authentication-Results: mx3.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBzQj9E2gnw7B6RkERHSx/l/QW9wxztH+lt/bI+Kovp9E/ZmhJlRaXc+7Dcms7cPQYyQtp7PNJPjOKqBRVlhQsB90Nd+BmFgMEIAKEc40kBIFXRhAOdM
-    hY7nZW3qSbWWZCEtRubYhfSLGhthtPG6nYqu6Wunm6IwPfM8izEWknQWbh5e7mZKC2B0tBnGAAvS0gEvrXf/nEf9LtLxO6NuqTG+xiZsHhOECuhz1Td9sowH
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfOd9gp8sX58zATF1Stn/3TOa47ccZ9Gw2t/AZSDuh7ljzPwbU+b0TX2EsycZQPwzLO+cyRuGJOorAZrHWpG31DW0lBE/0Ovv0i0K0mwf3Yymnpb0baXu
+    b2zLCTWqAEABCETiEkvgXIGxb3QjVHgdj7aib0sUYwbbEc9Y6Ou3bToInC+XxZT24jv77//u5KEq9H2J9nxmI5P1rf0wJMETJOG5wptr3s4d7dx3tf6O8RHg
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=H2TRg8_dVisN_HRLu8kA:9 a=QEXdDO2ut3YA:10
+    a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=_klxHFPmXKVOew1bc_0A:9 a=QEXdDO2ut3YA:10
     a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967429AbeEXLb3 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 07:31:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43934 "EHLO mail.kernel.org"
+        id S967284AbeEXJu6 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:50:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43420 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967129AbeEXJu5 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:50:57 -0400
+        id S967636AbeEXJuw (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:50:52 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 91/96] serial: fsl_lpuart: Fix out-of-bounds access through DT alias
-Date: Thu, 24 May 2018 11:39:14 +0200
-Message-Id: <20180524093610.997169040@linuxfoundation.org>
+Subject: [PATCH 4.9 89/96] serial: mxs-auart: Fix out-of-bounds access through serial port index
+Date: Thu, 24 May 2018 11:39:12 +0200
+Message-Id: <20180524093610.701261507@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093605.602125311@linuxfoundation.org>
 References: <20180524093605.602125311@linuxfoundation.org>
@@ -107,31 +107,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit ffab87fdecc655cc676f8be8dd1a2c5e22bd6d47 ]
+[ Upstream commit dd345a31bfdec350d2593e6de5964e55c7f19c76 ]
 
-The lpuart_ports[] array is indexed using a value derived from the
-"serialN" alias in DT, which may lead to an out-of-bounds access.
+The auart_port[] array is indexed using a value derived from the
+"serialN" alias in DT, or from platform data, which may lead to an
+out-of-bounds access.
 
 Fix this by adding a range check.
 
-Fixes: c9e2e946fb0ba5d2 ("tty: serial: add Freescale lpuart driver support")
+Fixes: 1ea6607d4cdc9179 ("serial: mxs-auart: Allow device tree probing")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/tty/serial/fsl_lpuart.c |    4 ++++
+ drivers/tty/serial/mxs-auart.c |    4 ++++
  1 file changed, 4 insertions(+)
 
---- a/drivers/tty/serial/fsl_lpuart.c
-+++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -1902,6 +1902,10 @@ static int lpuart_probe(struct platform_
- 		dev_err(&pdev->dev, "failed to get alias id, errno %d\n", ret);
+--- a/drivers/tty/serial/mxs-auart.c
++++ b/drivers/tty/serial/mxs-auart.c
+@@ -1664,6 +1664,10 @@ static int mxs_auart_probe(struct platfo
+ 		s->port.line = pdev->id < 0 ? 0 : pdev->id;
+ 	else if (ret < 0)
  		return ret;
- 	}
-+	if (ret >= ARRAY_SIZE(lpuart_ports)) {
-+		dev_err(&pdev->dev, "serial%d out of range\n", ret);
++	if (s->port.line >= ARRAY_SIZE(auart_port)) {
++		dev_err(&pdev->dev, "serial%d out of range\n", s->port.line);
 +		return -EINVAL;
 +	}
- 	sport->port.line = ret;
- 	sport->lpuart32 = of_device_is_compatible(np, "fsl,ls1021a-lpuart");
  
+ 	if (of_id) {
+ 		pdev->id_entry = of_id->data;
