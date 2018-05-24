@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1874556-1527162436-2-13617733697645207403
+X-Cyrus-Session-Id: sloti22d1t05-1874556-1527162427-2-15236575703408732617
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527162435; b=mzO1s8taFCoQnv+VJik1m4qb1VX8edSDRB3MupNIp0fY9/uPH+
-    aStp4JjZ+bOtjzGfN/jzgS0AnauDPeAqiwnkmagK68ofhk9nlXv9R15XpXjB7CpO
-    +944ZsijbwUAP8JdNoQfS357x3c4LDc6rvZbYuRTkT3Vk7LZXhUwD6V4iMhrLnVt
-    YqdKMdsngrl1HQsIVy2UB3KpnGLONVL3IdVQa53+RpHT6ZIcwev2auSoyNmMf/AV
-    d5jSiDvoYRv/8u/3ouQS2o5TxZxmQX45fcOvVRr5j/FzegxguNBIF7Ha+2Wp/jpI
-    wZayjdf3H+ZHtZOveYBfHDrjphTURob9ifyw==
+    1527162427; b=W9GF92pvTc6GN2BIaOx8+SCyuhxSA3yBsNt7NHov33i3k7i6+j
+    i8AC8yiHM9bfXRQgrfzrQHz9rt95OXhqovfF8gNx2YlPEPoFDAekM4lb5V2VPnA5
+    cCMkq0h/hFmtEYlLM3tEVSELI3aigaF2fF09qyhH3BQxT4WRO603SAdkbErrUflF
+    ChqBP+bRWxnPj9e2uGyC1WdXZHWl3Uhqxt/q7ckmuaAHG84/fgmw0iOSmv8XYKKK
+    SaV05vodyJRfB7PHtPUywr83eLy6wQ48gTvUzaIL3AO/49oC3cbQ8PiYS+r0nVEk
+    bjJTm8boZh7t8dyqPijlAiG+uHUYk171oYrw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527162435; bh=I6hQhum/IBIxi/qb0AEkDDLdkhyuih
-    fozc6dkDrvKEE=; b=lSLj7df1aLGaiamvpUoPlMevDhUb6dbSX/2KlAVsZWA4dG
-    4X96dUHfsHh+837kyBabS/qfjgVjWuziz0bxGOi1cRJWh3JhSo02DyBkpFG4EN4V
-    irJcIvVAsuFRXT9PAqH4JzdUilpUn+zZIZjkW3lpkhLGmuDzYyH3E/qvio2xH6S9
-    PlXmU/cgJ75XvQ2CVe7/4wlYhb03RTHzA6CCFc4eTHWRoe4v9Ac6uwmcjAeeBJmi
-    mCrOoblCA9nHPkoMb0E5nKeJYPWwF6ti5jhnPhznTRbpOQIqiAGsJxsuR8HmU9W6
-    Ydcmrot/c0BUEMkQ/tkUAsjULoX9QAZl0n6zLAnQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527162427; bh=/rzKjus/UHgGlhqsvwEsYTH8OZ8oxG
+    G8H/a48SsTRYI=; b=TQ8Xd1+E9DZTOQuifvG9EtK6EYSgpuYZS6FYJsypTqkZOD
+    wAryR/ORsndXyAo54nHjIoO8IhdwrCo1qHaCFIuvEOlLY+NsNw3PwtbSmvE6t1WD
+    3epW/uy+ke9ODQSqXEtexd4I5zocPDmeYG66PHaLD2h0B50Rfbkq+AROBlRUjQ2n
+    Gh9uScXZRRVeRV3lOVTJvOc+UlRK4WrKsMmvPhryDiEZyryiOxBDj8wtxTqMJ8Lr
+    U9Lw8QgexlRdMjVfgSgqXumarvDtoWV39CXeX0Ar6fjoF6SBOdgp4NoJnRcVyRYU
+    jeN48/s/tT1NPER30TqrOlUqBASdtJyaUnSfN13Q==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=GBUfDmTT x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=OGYPtfZ8 x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=GBUfDmTT x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=OGYPtfZ8 x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,31 +64,33 @@ Authentication-Results: mx4.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNblrxvDWgidotOwKY++uonxwciHSZTQrsZa03jW7yNXZ3Gnxbe35XKtW8xfImS6gllKZrgt5gAbuk2c578OFxhCJC9jhwf6/+3pjbrdHsNzPHga1wgh
-    BtcOkUsBNNMldP8MMVtQKaB6uKYBre3UzGZqMlF4URJf57GvV4EfPfHyPt+goq5L5T/uaH8oE9pJLxfEMJupIj7Z/If6gv7Rpd8iE8m/twIFx7v4JzwINWWP
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfCO/yT36/yPlk1UknzmCNeHy57QQke1UvxiHs8zxgwFXatGUcwdX3WnLbahdadeBwCe+3zizSw61bgk8refGpDqdrH5ImEc3+EkHhJ+TM3ued6ouoRtO
+    y1RRyqoM4FvkuAoEEM1azyw6gcRif7oGBdPkKP57dtRx/an9tZ6pT52xqpgW9uje7K+Z92MmDpr3zDLsXkhSJv0OdeQ7dKcwlf3p2Z7GKO1UO32OSCe4CMK/
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=1XWaLZrsAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=FDWzJhBSr47RAHrKXxYA:9
-    a=GK8ETA8MtlhfSFtA:21 a=XfC4L9z_rsF2_Xuf:21 a=QEXdDO2ut3YA:10
-    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8 a=ag1SF4gXAAAA:8
+    a=uMzUHNzdoPdU1YanuOsA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967075AbeEXJri (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:47:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60318 "EHLO mail.kernel.org"
+        id S967088AbeEXJrm (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:47:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60382 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967068AbeEXJrg (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:47:36 -0400
+        id S967080AbeEXJrj (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:47:39 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Willem de Bruijn <willemb@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 02/96] net: test tailroom before appending to linear skb
-Date: Thu, 24 May 2018 11:37:45 +0200
-Message-Id: <20180524093605.765130252@linuxfoundation.org>
+        stable@vger.kernel.org, Sebastian Ott <sebott@linux.ibm.com>,
+        Jens Remus <jremus@linux.ibm.com>,
+        Benjamin Block <bblock@linux.vnet.ibm.com>,
+        Steffen Maier <maier@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.9 20/96] scsi: zfcp: fix infinite iteration on ERP ready list
+Date: Thu, 24 May 2018 11:38:03 +0200
+Message-Id: <20180524093606.774957762@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093605.602125311@linuxfoundation.org>
 References: <20180524093605.602125311@linuxfoundation.org>
@@ -106,52 +108,180 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Willem de Bruijn <willemb@google.com>
+From: Jens Remus <jremus@linux.ibm.com>
 
-[ Upstream commit 113f99c3358564a0647d444c2ae34e8b1abfd5b9 ]
+commit fa89adba1941e4f3b213399b81732a5c12fd9131 upstream.
 
-Device features may change during transmission. In particular with
-corking, a device may toggle scatter-gather in between allocating
-and writing to an skb.
+zfcp_erp_adapter_reopen() schedules blocking of all of the adapter's
+rports via zfcp_scsi_schedule_rports_block() and enqueues a reopen
+adapter ERP action via zfcp_erp_action_enqueue(). Both are separately
+processed asynchronously and concurrently.
 
-Do not unconditionally assume that !NETIF_F_SG at write time implies
-that the same held at alloc time and thus the skb has sufficient
-tailroom.
+Blocking of rports is done in a kworker by zfcp_scsi_rport_work(). It
+calls zfcp_scsi_rport_block(), which then traces a DBF REC "scpdely" via
+zfcp_dbf_rec_trig().  zfcp_dbf_rec_trig() acquires the DBF REC spin lock
+and then iterates with list_for_each() over the adapter's ERP ready list
+without holding the ERP lock. This opens a race window in which the
+current list entry can be moved to another list, causing list_for_each()
+to iterate forever on the wrong list, as the erp_ready_head is never
+encountered as terminal condition.
 
-This issue predates git history.
+Meanwhile the ERP action can be processed in the ERP thread by
+zfcp_erp_thread(). It calls zfcp_erp_strategy(), which acquires the ERP
+lock and then calls zfcp_erp_action_to_running() to move the ERP action
+from the ready to the running list.  zfcp_erp_action_to_running() can
+move the ERP action using list_move() just during the aforementioned
+race window. It then traces a REC RUN "erator1" via zfcp_dbf_rec_run().
+zfcp_dbf_rec_run() tries to acquire the DBF REC spin lock. If this is
+held by the infinitely looping kworker, it effectively spins forever.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Reported-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Willem de Bruijn <willemb@google.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Example Sequence Diagram:
+
+Process                ERP Thread             rport_work
+-------------------    -------------------    -------------------
+zfcp_erp_adapter_reopen()
+zfcp_erp_adapter_block()
+zfcp_scsi_schedule_rports_block()
+lock ERP                                      zfcp_scsi_rport_work()
+zfcp_erp_action_enqueue(ZFCP_ERP_ACTION_REOPEN_ADAPTER)
+list_add_tail() on ready                      !(rport_task==RPORT_ADD)
+wake_up() ERP thread                          zfcp_scsi_rport_block()
+zfcp_dbf_rec_trig()    zfcp_erp_strategy()    zfcp_dbf_rec_trig()
+unlock ERP                                    lock DBF REC
+zfcp_erp_wait()        lock ERP
+|                      zfcp_erp_action_to_running()
+|                                             list_for_each() ready
+|                      list_move()              current entry
+|                        ready to running
+|                      zfcp_dbf_rec_run()       endless loop over running
+|                      zfcp_dbf_rec_run_lvl()
+|                      lock DBF REC spins forever
+
+Any adapter recovery can trigger this, such as setting the device offline
+or reboot.
+
+V4.9 commit 4eeaa4f3f1d6 ("zfcp: close window with unblocked rport
+during rport gone") introduced additional tracing of (un)blocking of
+rports. It missed that the adapter->erp_lock must be held when calling
+zfcp_dbf_rec_trig().
+
+This fix uses the approach formerly introduced by commit aa0fec62391c
+("[SCSI] zfcp: Fix sparse warning by providing new entry in dbf") that got
+later removed by commit ae0904f60fab ("[SCSI] zfcp: Redesign of the debug
+tracing for recovery actions.").
+
+Introduce zfcp_dbf_rec_trig_lock(), a wrapper for zfcp_dbf_rec_trig() that
+acquires and releases the adapter->erp_lock for read.
+
+Reported-by: Sebastian Ott <sebott@linux.ibm.com>
+Signed-off-by: Jens Remus <jremus@linux.ibm.com>
+Fixes: 4eeaa4f3f1d6 ("zfcp: close window with unblocked rport during rport gone")
+Cc: <stable@vger.kernel.org> # 2.6.32+
+Reviewed-by: Benjamin Block <bblock@linux.vnet.ibm.com>
+Signed-off-by: Steffen Maier <maier@linux.ibm.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv4/ip_output.c  |    3 ++-
- net/ipv6/ip6_output.c |    3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
 
---- a/net/ipv4/ip_output.c
-+++ b/net/ipv4/ip_output.c
-@@ -1076,7 +1076,8 @@ alloc_new_skb:
- 		if (copy > length)
- 			copy = length;
+---
+ drivers/s390/scsi/zfcp_dbf.c  |   23 ++++++++++++++++++++++-
+ drivers/s390/scsi/zfcp_ext.h  |    5 ++++-
+ drivers/s390/scsi/zfcp_scsi.c |   14 +++++++-------
+ 3 files changed, 33 insertions(+), 9 deletions(-)
+
+--- a/drivers/s390/scsi/zfcp_dbf.c
++++ b/drivers/s390/scsi/zfcp_dbf.c
+@@ -3,7 +3,7 @@
+  *
+  * Debug traces for zfcp.
+  *
+- * Copyright IBM Corp. 2002, 2017
++ * Copyright IBM Corp. 2002, 2018
+  */
  
--		if (!(rt->dst.dev->features&NETIF_F_SG)) {
-+		if (!(rt->dst.dev->features&NETIF_F_SG) &&
-+		    skb_tailroom(skb) >= copy) {
- 			unsigned int off;
+ #define KMSG_COMPONENT "zfcp"
+@@ -287,6 +287,27 @@ void zfcp_dbf_rec_trig(char *tag, struct
+ 	spin_unlock_irqrestore(&dbf->rec_lock, flags);
+ }
  
- 			off = skb->len;
---- a/net/ipv6/ip6_output.c
-+++ b/net/ipv6/ip6_output.c
-@@ -1545,7 +1545,8 @@ alloc_new_skb:
- 		if (copy > length)
- 			copy = length;
++/**
++ * zfcp_dbf_rec_trig_lock - trace event related to triggered recovery with lock
++ * @tag: identifier for event
++ * @adapter: adapter on which the erp_action should run
++ * @port: remote port involved in the erp_action
++ * @sdev: scsi device involved in the erp_action
++ * @want: wanted erp_action
++ * @need: required erp_action
++ *
++ * The adapter->erp_lock must not be held.
++ */
++void zfcp_dbf_rec_trig_lock(char *tag, struct zfcp_adapter *adapter,
++			    struct zfcp_port *port, struct scsi_device *sdev,
++			    u8 want, u8 need)
++{
++	unsigned long flags;
++
++	read_lock_irqsave(&adapter->erp_lock, flags);
++	zfcp_dbf_rec_trig(tag, adapter, port, sdev, want, need);
++	read_unlock_irqrestore(&adapter->erp_lock, flags);
++}
  
--		if (!(rt->dst.dev->features&NETIF_F_SG)) {
-+		if (!(rt->dst.dev->features&NETIF_F_SG) &&
-+		    skb_tailroom(skb) >= copy) {
- 			unsigned int off;
+ /**
+  * zfcp_dbf_rec_run_lvl - trace event related to running recovery
+--- a/drivers/s390/scsi/zfcp_ext.h
++++ b/drivers/s390/scsi/zfcp_ext.h
+@@ -3,7 +3,7 @@
+  *
+  * External function declarations.
+  *
+- * Copyright IBM Corp. 2002, 2016
++ * Copyright IBM Corp. 2002, 2018
+  */
  
- 			off = skb->len;
+ #ifndef ZFCP_EXT_H
+@@ -34,6 +34,9 @@ extern int zfcp_dbf_adapter_register(str
+ extern void zfcp_dbf_adapter_unregister(struct zfcp_adapter *);
+ extern void zfcp_dbf_rec_trig(char *, struct zfcp_adapter *,
+ 			      struct zfcp_port *, struct scsi_device *, u8, u8);
++extern void zfcp_dbf_rec_trig_lock(char *tag, struct zfcp_adapter *adapter,
++				   struct zfcp_port *port,
++				   struct scsi_device *sdev, u8 want, u8 need);
+ extern void zfcp_dbf_rec_run(char *, struct zfcp_erp_action *);
+ extern void zfcp_dbf_rec_run_lvl(int level, char *tag,
+ 				 struct zfcp_erp_action *erp);
+--- a/drivers/s390/scsi/zfcp_scsi.c
++++ b/drivers/s390/scsi/zfcp_scsi.c
+@@ -3,7 +3,7 @@
+  *
+  * Interface to Linux SCSI midlayer.
+  *
+- * Copyright IBM Corp. 2002, 2017
++ * Copyright IBM Corp. 2002, 2018
+  */
+ 
+ #define KMSG_COMPONENT "zfcp"
+@@ -616,9 +616,9 @@ static void zfcp_scsi_rport_register(str
+ 	ids.port_id = port->d_id;
+ 	ids.roles = FC_RPORT_ROLE_FCP_TARGET;
+ 
+-	zfcp_dbf_rec_trig("scpaddy", port->adapter, port, NULL,
+-			  ZFCP_PSEUDO_ERP_ACTION_RPORT_ADD,
+-			  ZFCP_PSEUDO_ERP_ACTION_RPORT_ADD);
++	zfcp_dbf_rec_trig_lock("scpaddy", port->adapter, port, NULL,
++			       ZFCP_PSEUDO_ERP_ACTION_RPORT_ADD,
++			       ZFCP_PSEUDO_ERP_ACTION_RPORT_ADD);
+ 	rport = fc_remote_port_add(port->adapter->scsi_host, 0, &ids);
+ 	if (!rport) {
+ 		dev_err(&port->adapter->ccw_device->dev,
+@@ -640,9 +640,9 @@ static void zfcp_scsi_rport_block(struct
+ 	struct fc_rport *rport = port->rport;
+ 
+ 	if (rport) {
+-		zfcp_dbf_rec_trig("scpdely", port->adapter, port, NULL,
+-				  ZFCP_PSEUDO_ERP_ACTION_RPORT_DEL,
+-				  ZFCP_PSEUDO_ERP_ACTION_RPORT_DEL);
++		zfcp_dbf_rec_trig_lock("scpdely", port->adapter, port, NULL,
++				       ZFCP_PSEUDO_ERP_ACTION_RPORT_DEL,
++				       ZFCP_PSEUDO_ERP_ACTION_RPORT_DEL);
+ 		fc_remote_port_delete(rport);
+ 		port->rport = NULL;
+ 	}
