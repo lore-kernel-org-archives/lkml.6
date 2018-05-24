@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1733193-1527156350-2-9756209959790665051
+X-Cyrus-Session-Id: sloti22d1t05-1733193-1527156349-2-4570198488051568750
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527156349; b=LVT1gA7orgWuGSPU2kKT97RkhaJMyGVpKLxTB5fMt+4O4M1JqS
-    yfZKdcvL9qbz+BnFEr3t7wFDFGFT4InVMLG7WPXBO5Z6cTCv+SvY0IY7XGmjBt9h
-    afmWl+6TlNiFbb+3BbcHw25FESmSr1xPz0wliUU4v9i+0dCFeeFLRVDLPKNLtpRH
-    0BH4ZsEb/WWijWuaU71I8sMVU233DorrWqRX0k/FF7SmBNhO9Gqqrr3eVlM1Dccy
-    maXHtjNR1aq+xUv+TIift7sntiWgYmMEkYuzkrkEOw0YApOWwb2Yiu2TAAv9pSys
-    gqaU0BTTjURcagEBhj3aHbkJEhm/oK7dzijQ==
+    1527156348; b=IqyVGzJRnDdYZuj/ADQ+ywkq892HA6fkGwGkoinRUZ6s7YImEw
+    E/0b3mQbiVdwQNrLSjZP6XD2Z9gxMWsOalYLFYTjPyuxFcF/zSayQvDu+r+Ut6Vq
+    HPD90vrkWkQxczfJFd4vB1wg4fGc0w5UobhQ6g+9b0itmfr5MZTPQQgXg3Gs+ZIS
+    R9Mp8YSJBKPN+U3/sqGt/S1P+uqRst9ZwG6dH8BvrMTZ98/cLo/swf657AihqpHO
+    0+EQsUKhJBTbwsej9C4oRPOcdXAiGPTvy3DbCwATWRxH1WdApi4bAQd71xepZfZs
+    etf5rYgRg7yFeJh8CRNrazARuGqqJvuLdJsA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527156349; bh=Leiu5Ll9C8+uhf7pR1VoQHXL5m/9ml
-    Gj6qBdhJEvps4=; b=gFeFNiRVKYiG/kbGb7drnX/9l8nh7mQSPt5p5JKAurEDGb
-    6fPsbeGi7dvPev8iPQVpfSkM/jnakvv/kqAE0MTaqoUbzhyGJijzZEcmyeMEuUKF
-    il3OiVHop92IH3t0W6FO0IaaU+iXyhdvFbS4Qbyknla3a6JRE5TrhHYTpMgqSrLX
-    w1DbnOnrlHOsu19DeDbnm3JeONETAsDwlEsbzwdbWDblnL0d3+WwjSfzKYdgGFdn
-    4KVkhguxjXrKMCx3pgQLAPhc/Q9Xmi71xT/p8TAB80cl+vxDCWwucagn0+CbVf6S
-    LsEyovZjW/wwmZBVXNWKYRGmd0gtl1D0eNoAGk8w==
+    :list-id; s=fm2; t=1527156348; bh=zWzLfT54AEQrB4r2ZLxouDCie7JntE
+    Wrw5KbV51aii8=; b=GO/Drnfaw0YK7lLBsqM3QGWNCeLO7ayWw8l1oY4NGtvwfV
+    guiAyk5hScdhEUuPN7WdLMgzKapXMQPoXOIgkAKaxM5i0Al+DcBBXIp85NzZA0yB
+    HGTvBfSyS4Gh/Cghq9qn9irMqVPkB3R95z45mGnwfcMQdjBOFM7EaZOyKhvUdS04
+    m7ni0uJpB5uCsJg4/BA6DVrJDEbObltYMmrEa6u/ufifbzIrsT1Bc7VNx8YIIAZu
+    xIp6GfXW+hzxF2Xu87GstOyVki2ov3ZnB8OhYS04X5lAlSMZvG6ObzIZi7dbywju
+    fbAJyx92KVLfW7cdVXM8urUndC6UbIbSCLE0dzPw==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=HCfRq5aF x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=ykX7RU9m x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -48,7 +48,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
 Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=HCfRq5aF x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=ykX7RU9m x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,30 +64,29 @@ Authentication-Results: mx2.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDKO2VMxLCcHznUd6pzyP6vtxDJwWMFPrTGAaGLAA2xCTZSHWD3Tl/K3FA47w2GheG7eBkTdcVgqi0HW3+7i2sIT9InTivxB2cvpyWl2Trp66eFm5xud
-    +L6yoVkSDJAMOnQfx1D/IzL92SiG0My2+O8+3cEs9coRwIRYAc9fVLVw2kPvyTn7m3tF76GBk9eHhxvEMiZPZeUJV7UEXoqUfRVgisk1/k11RtUcHya4cjUL
+X-CM-Envelope: MS4wfMJo6LlJRdFaKU9Grufx/shfcmhMwHJGABp9txHgIf+OIPDZNZJId3vQ3bMMZnsqWaTielOmA9CRq5TR++4z94mK2kZIU20x5aB0I0CenBrmuralSSBL
+    gOPkTp//FkI8+Ra1arYcPMGZ5mx0ZTg/LoioesfKxRwNIHqG2ANB3VupZv18yXiZq4yOkpragQwQJnhaSnPcXAuKT4IFqHEG3uSMNhTJ4rpbfdxMsZ4aV3L5
 X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=T0JhKGde1cndCqfcSzYA:9 a=QEXdDO2ut3YA:10
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=sozttTNsAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=detmJ2bfGwl12fOR2OwA:9
+    a=QEXdDO2ut3YA:10 a=aeg5Gbbo78KNqacMgKqU:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031622AbeEXKFr (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 06:05:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54734 "EHLO mail.kernel.org"
+        id S1031315AbeEXKFp (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 06:05:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54824 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030890AbeEXKFi (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 06:05:38 -0400
+        id S1031229AbeEXKFn (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 06:05:43 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        stable@vger.kernel.org, Vignesh R <vigneshr@ti.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 151/161] serial: fsl_lpuart: Fix out-of-bounds access through DT alias
-Date: Thu, 24 May 2018 11:39:36 +0200
-Message-Id: <20180524093036.371928666@linuxfoundation.org>
+Subject: [PATCH 4.16 153/161] serial: 8250: Dont service RX FIFO if interrupts are disabled
+Date: Thu, 24 May 2018 11:39:38 +0200
+Message-Id: <20180524093036.547964383@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -105,33 +104,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Vignesh R <vigneshr@ti.com>
 
-[ Upstream commit ffab87fdecc655cc676f8be8dd1a2c5e22bd6d47 ]
+[ Upstream commit 2e9fe539108320820016f78ca7704a7342788380 ]
 
-The lpuart_ports[] array is indexed using a value derived from the
-"serialN" alias in DT, which may lead to an out-of-bounds access.
+Currently, data in RX FIFO is read based on UART_LSR register state even
+if RDI and RLSI interrupts are disabled in UART_IER register.
+This is because when IRQ handler is called due to TX FIFO empty event,
+RX FIFO is serviced based on UART_LSR register status instead of
+UART_IIR status. This defeats the purpose of disabling UART RX
+FIFO interrupts during throttling(see, omap_8250_throttle()) as IRQ
+handler continues to drain UART RX FIFO resulting in overflow of buffer
+at tty layer.
+Fix this by making sure that driver drains UART RX FIFO only when
+UART_IIR_RDI is set along with UART_LSR_BI or UART_LSR_DR bits.
 
-Fix this by adding a range check.
-
-Fixes: c9e2e946fb0ba5d2 ("tty: serial: add Freescale lpuart driver support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Vignesh R <vigneshr@ti.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/tty/serial/fsl_lpuart.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/tty/serial/8250/8250_port.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/tty/serial/fsl_lpuart.c
-+++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -2145,6 +2145,10 @@ static int lpuart_probe(struct platform_
- 		dev_err(&pdev->dev, "failed to get alias id, errno %d\n", ret);
- 		return ret;
+--- a/drivers/tty/serial/8250/8250_port.c
++++ b/drivers/tty/serial/8250/8250_port.c
+@@ -1867,7 +1867,8 @@ int serial8250_handle_irq(struct uart_po
+ 
+ 	status = serial_port_in(port, UART_LSR);
+ 
+-	if (status & (UART_LSR_DR | UART_LSR_BI)) {
++	if (status & (UART_LSR_DR | UART_LSR_BI) &&
++	    iir & UART_IIR_RDI) {
+ 		if (!up->dma || handle_rx_dma(up, iir))
+ 			status = serial8250_rx_chars(up, status);
  	}
-+	if (ret >= ARRAY_SIZE(lpuart_ports)) {
-+		dev_err(&pdev->dev, "serial%d out of range\n", ret);
-+		return -EINVAL;
-+	}
- 	sport->port.line = ret;
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	sport->port.membase = devm_ioremap_resource(&pdev->dev, res);
