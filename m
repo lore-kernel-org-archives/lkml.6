@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1817771-1527160636-2-16394870431560497176
+X-Cyrus-Session-Id: sloti22d1t05-1817771-1527160609-2-2247429729675603632
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES daensv, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527160636; b=GOFWsPEF+8hMtHSuoV50c/fGKnr8mMzhHtX2MaFHaELJT8cbxP
-    CHr+C6Swcqb5ndvos5BpHPgrRX+T6x6Y0gFPUd/RjJMPnajoXmS2t+8qIE8V77Zt
-    8en9MPBOswcp99oUeVaAgnECmd00xYozR5jfgQ4kFZrzm1CHdKC2VwdffxSbx6AH
-    7JxdS1xrlqhcaB1GvoqYLtF6aPp15COWteLSFAzGQyi6vdR3giph+QOaMcPWCiVm
-    kIVfUG7KDBcWn/gNttPz3uHW3XQ24cz8MXOvg09FNmFW5rNLxqLb9Sp8NKK1qabq
-    V5fnPtf0u4NlTT5EbkUxyeCUe2tB0v1BzsbA==
+    1527160608; b=eYLDfYtAgQEWTr1tFz5bWxVCCu335Q40XhLqlf2nWPqLT8pYG7
+    AR88qFMJwkyNjeAx+ssBh8Wer1IMW9G8FkNy8WzHU1SL2w95IPzRvf5wcJ8UK0Hl
+    wOAgA55CGgfVgArZv0Tb6R9DY+kstxSzPQnrCneyrJ35ghBO+3CeCdFjolvYYr/U
+    2CH57rnwfU8PFYw+GGoyw+icmtu5UQcopKvRr0qgk33QcGrc7k0O18eOLVs/DWbP
+    MNn+cTlpkNdA0Ere1APvu0eIBnBDIMNY1GaBXJRZGDlywmFww4BoPwKSZI7t9wjo
+    HjgOjz3XWPb6ndUmRLwK3+EwvndO1rvXekmQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527160636; bh=nBCmF9qP4XR6Z5QJnKJLMEc+uckV2y
-    6LAdkZBRuSWck=; b=a7jqzxhZFXQsfVG9To2Fg7jm8TO6gQ+G9q/CpCG3/3ZnKA
-    lVhcY6RwyKridtO+gVKI+d+3sYGK+GNtq8JD64S3ZR7+3a8n0cDr9cGfYUpnzF4N
-    zEUiIh4MnA5vWpPA9PYv8mc6OfeApOjMMPEfKmN/Ml8layT86QwgoZAleEjx2kMo
-    Y2KGgMwwhKp6iUsndPcIZGdGtOBMhdWHltUoJ1R1rTMnnX+ttEFaof++eDym9qa7
-    dXA97is6W2GaoAJ7kKKxoHPNsWRyBZ/BhWIhk65pQJAh1+VTdnbb6m+34juRQGby
-    x6d3hnKmo0L6Ke66Nx65VDVwlp4hPX1Bm0Q1quxA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527160608; bh=DaM3Zb8mlTt1S+URjBDVF+OYNS2PaJ
+    Ixkau20JpjYcs=; b=I3mssLPOvQ0gmn0SNfILnyjY4k3OzOPUzQxG0VNUJOqs/D
+    3Z2FdxW1l+B6Pj0sbxzX/KCHWZ9BXQtrFgnYcuDM/VQq/xqecl8lSO15RmOEsgeU
+    WELOek7lCv/QhFU/QqNgtJ43svcrA0uwhURWp9Ib9w6SRKgv5ehKYHu28rNbeIAy
+    S7dmkA92L150A8Za0vLwDbqbwQjRDLoyflTQTn2WuJKn6w1vQIvyMGjRLsxrmss8
+    Pp0NAUKdWHn2EvFXwC/0kdz9H1t9dH0+8Rq0fa5fndgXztYw6z0D3BpwMSuj00dZ
+    Wfv4br/ubztu5UwTkj7vTgbCC0Chdh9VDS5f+ptg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=J0+5t4IJ x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=CXtfKLAO x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,11 +45,11 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+    x-vs=clean score=-51 state=0
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=J0+5t4IJ x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=CXtfKLAO x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -63,33 +63,43 @@ Authentication-Results: mx3.messagingengine.com;
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
       header.domain=linuxfoundation.org header.result=pass
       header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+    x-vs=clean score=-51 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFyvXVmlCXYBQ4P/d33S3VDg6zPZrTovGk9ZTZr3s6y3fsdr0VXd61iGtqK9Y+H++XjKJ3Y6ELiPHkNX2dK0Ae0ysl81pBEgUQOqheiDmyE5EX6BxHR/
-    HOv2+DyF/gkfXc3j/yLx2si6WEaCbJg9wqgmQyFdxX07kpI+o4uhJtIhcDCvzy45wh3VbU73oY1BdclZaqNtflBhaWX9nMeHcCjiNFLFAQqce04iAvIQV0nR
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfG4A9kOm6S+X7a2j/WkEZ7VJi+MvwVfsgHZlBYcpf870v1bgs5KLYunfMw/eFuR3QuxkY75YBxzB9eNWHik7OD79MC6WopMMY718AjTeibkH5DfCjQZI
+    AGZo7LX72bnDJd7MGs9JASN5fg8Wlj375K0YORVDCsTtF72fgdGv7UUUhE1TWXrnBgaL85pmBFjsch7PenB7iagvQnJMJRdOKkOYK14jCjPp4CSPyJ4pMSel
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=FOH2dFAWAAAA:8 a=hSkVLCK3AAAA:8 a=ag1SF4gXAAAA:8 a=U9OhtlYdyY8-YEg-ErkA:9
-    a=QEXdDO2ut3YA:10 a=i3VuKzQdj-NEYjvDI-p3:22 a=cQPPKAXgyycSBL8etih5:22
+    a=edf1wS77AAAA:8 a=hSkVLCK3AAAA:8 a=20KFwNOVAAAA:8 a=zd2uoN0lAAAA:8
+    a=VnNF1IyMAAAA:8 a=QyXUC8HyAAAA:8 a=4RBUngkUAAAA:8 a=KKAkSRfTAAAA:8
+    a=oGMlB6cnAAAA:8 a=Z4Rwk6OoAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8
+    a=4nylR2gx3NDDJxsWytsA:9 a=QEXdDO2ut3YA:10 a=DcSpbTIhAlouE1Uv7lRv:22
+    a=cQPPKAXgyycSBL8etih5:22 a=_sbA2Q-Kp09kWB8D3iXc:22 a=cvBusfyB2V15izCimMoJ:22
+    a=NdAtdrkLVvyUPsUoGJp4:22 a=HkZW87K1Qel5hWWM3VKY:22 a=AjGcO6oz07-iQ99wixmX:22
     a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968029AbeEXLQr (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 07:16:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59194 "EHLO mail.kernel.org"
+        id S967476AbeEXLQc (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 07:16:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59956 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968033AbeEXJxY (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:53:24 -0400
+        id S968042AbeEXJxc (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:53:32 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+31e8daa8b3fc129e75f2@syzkaller.appspotmail.com,
-        Omar Sandoval <osandov@fb.com>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.14 050/165] loop: fix LOOP_GET_STATUS lock imbalance
-Date: Thu, 24 May 2018 11:37:36 +0200
-Message-Id: <20180524093624.053521515@linuxfoundation.org>
+        syzbot <syzbot+d96f60296ef613fe1d69@syzkaller.appspotmail.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Baoquan He <bhe@redhat.com>, thomas.lendacky@amd.com,
+        prudo@linux.vnet.ibm.com, Huang Ying <ying.huang@intel.com>,
+        syzkaller-bugs@googlegroups.com, takahiro.akashi@linaro.org,
+        "H. Peter Anvin" <hpa@zytor.com>, akpm@linux-foundation.org,
+        dyoung@redhat.com, kirill.shutemov@linux.intel.com
+Subject: [PATCH 4.14 053/165] x86/kexec: Avoid double free_page() upon do_kexec_load() failure
+Date: Thu, 24 May 2018 11:37:39 +0200
+Message-Id: <20180524093624.166953658@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -107,82 +117,101 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Omar Sandoval <osandov@fb.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-commit bdac616db9bbadb90b7d6a406144571015e138f7 upstream.
+commit a466ef76b815b86748d9870ef2a430af7b39c710 upstream.
 
-Commit 2d1d4c1e591f made loop_get_status() drop lo_ctx_mutex before
-returning, but the loop_get_status_old(), loop_get_status64(), and
-loop_get_status_compat() wrappers don't call loop_get_status() if the
-passed argument is NULL. The callers expect that the lock is dropped, so
-make sure we drop it in that case, too.
+>From ff82bedd3e12f0d3353282054ae48c3bd8c72012 Mon Sep 17 00:00:00 2001
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date: Wed, 9 May 2018 12:12:39 +0900
+Subject: [PATCH 4.14 053/165] x86/kexec: Avoid double free_page() upon do_kexec_load() failure
 
-Reported-by: syzbot+31e8daa8b3fc129e75f2@syzkaller.appspotmail.com
-Fixes: 2d1d4c1e591f ("loop: don't call into filesystem while holding lo_ctl_mutex")
-Signed-off-by: Omar Sandoval <osandov@fb.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+syzbot is reporting crashes after memory allocation failure inside
+do_kexec_load() [1]. This is because free_transition_pgtable() is called
+by both init_transition_pgtable() and machine_kexec_cleanup() when memory
+allocation failed inside init_transition_pgtable().
+
+Regarding 32bit code, machine_kexec_free_page_tables() is called by both
+machine_kexec_alloc_page_tables() and machine_kexec_cleanup() when memory
+allocation failed inside machine_kexec_alloc_page_tables().
+
+Fix this by leaving the error handling to machine_kexec_cleanup()
+(and optionally setting NULL after free_page()).
+
+[1] https://syzkaller.appspot.com/bug?id=91e52396168cf2bdd572fe1e1bc0bc645c1c6b40
+
+Fixes: f5deb79679af6eb4 ("x86: kexec: Use one page table in x86_64 machine_kexec")
+Fixes: 92be3d6bdf2cb349 ("kexec/i386: allocate page table pages dynamically")
+Reported-by: syzbot <syzbot+d96f60296ef613fe1d69@syzkaller.appspotmail.com>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Baoquan He <bhe@redhat.com>
+Cc: thomas.lendacky@amd.com
+Cc: prudo@linux.vnet.ibm.com
+Cc: Huang Ying <ying.huang@intel.com>
+Cc: syzkaller-bugs@googlegroups.com
+Cc: takahiro.akashi@linaro.org
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: akpm@linux-foundation.org
+Cc: dyoung@redhat.com
+Cc: kirill.shutemov@linux.intel.com
+Link: https://lkml.kernel.org/r/201805091942.DGG12448.tMFVFSJFQOOLHO@I-love.SAKURA.ne.jp
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/block/loop.c |   33 ++++++++++++++++++---------------
- 1 file changed, 18 insertions(+), 15 deletions(-)
+ arch/x86/kernel/machine_kexec_32.c |    6 +++++-
+ arch/x86/kernel/machine_kexec_64.c |    5 ++++-
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -1282,12 +1282,13 @@ static int
- loop_get_status_old(struct loop_device *lo, struct loop_info __user *arg) {
- 	struct loop_info info;
- 	struct loop_info64 info64;
--	int err = 0;
-+	int err;
- 
--	if (!arg)
--		err = -EINVAL;
--	if (!err)
--		err = loop_get_status(lo, &info64);
-+	if (!arg) {
-+		mutex_unlock(&lo->lo_ctl_mutex);
-+		return -EINVAL;
-+	}
-+	err = loop_get_status(lo, &info64);
- 	if (!err)
- 		err = loop_info64_to_old(&info64, &info);
- 	if (!err && copy_to_user(arg, &info, sizeof(info)))
-@@ -1299,12 +1300,13 @@ loop_get_status_old(struct loop_device *
- static int
- loop_get_status64(struct loop_device *lo, struct loop_info64 __user *arg) {
- 	struct loop_info64 info64;
--	int err = 0;
-+	int err;
- 
--	if (!arg)
--		err = -EINVAL;
--	if (!err)
--		err = loop_get_status(lo, &info64);
-+	if (!arg) {
-+		mutex_unlock(&lo->lo_ctl_mutex);
-+		return -EINVAL;
-+	}
-+	err = loop_get_status(lo, &info64);
- 	if (!err && copy_to_user(arg, &info64, sizeof(info64)))
- 		err = -EFAULT;
- 
-@@ -1525,12 +1527,13 @@ loop_get_status_compat(struct loop_devic
- 		       struct compat_loop_info __user *arg)
+--- a/arch/x86/kernel/machine_kexec_32.c
++++ b/arch/x86/kernel/machine_kexec_32.c
+@@ -57,12 +57,17 @@ static void load_segments(void)
+ static void machine_kexec_free_page_tables(struct kimage *image)
  {
- 	struct loop_info64 info64;
--	int err = 0;
-+	int err;
+ 	free_page((unsigned long)image->arch.pgd);
++	image->arch.pgd = NULL;
+ #ifdef CONFIG_X86_PAE
+ 	free_page((unsigned long)image->arch.pmd0);
++	image->arch.pmd0 = NULL;
+ 	free_page((unsigned long)image->arch.pmd1);
++	image->arch.pmd1 = NULL;
+ #endif
+ 	free_page((unsigned long)image->arch.pte0);
++	image->arch.pte0 = NULL;
+ 	free_page((unsigned long)image->arch.pte1);
++	image->arch.pte1 = NULL;
+ }
  
--	if (!arg)
--		err = -EINVAL;
--	if (!err)
--		err = loop_get_status(lo, &info64);
-+	if (!arg) {
-+		mutex_unlock(&lo->lo_ctl_mutex);
-+		return -EINVAL;
-+	}
-+	err = loop_get_status(lo, &info64);
- 	if (!err)
- 		err = loop_info64_to_compat(&info64, arg);
- 	return err;
+ static int machine_kexec_alloc_page_tables(struct kimage *image)
+@@ -79,7 +84,6 @@ static int machine_kexec_alloc_page_tabl
+ 	    !image->arch.pmd0 || !image->arch.pmd1 ||
+ #endif
+ 	    !image->arch.pte0 || !image->arch.pte1) {
+-		machine_kexec_free_page_tables(image);
+ 		return -ENOMEM;
+ 	}
+ 	return 0;
+--- a/arch/x86/kernel/machine_kexec_64.c
++++ b/arch/x86/kernel/machine_kexec_64.c
+@@ -38,9 +38,13 @@ static struct kexec_file_ops *kexec_file
+ static void free_transition_pgtable(struct kimage *image)
+ {
+ 	free_page((unsigned long)image->arch.p4d);
++	image->arch.p4d = NULL;
+ 	free_page((unsigned long)image->arch.pud);
++	image->arch.pud = NULL;
+ 	free_page((unsigned long)image->arch.pmd);
++	image->arch.pmd = NULL;
+ 	free_page((unsigned long)image->arch.pte);
++	image->arch.pte = NULL;
+ }
+ 
+ static int init_transition_pgtable(struct kimage *image, pgd_t *pgd)
+@@ -90,7 +94,6 @@ static int init_transition_pgtable(struc
+ 	set_pte(pte, pfn_pte(paddr >> PAGE_SHIFT, PAGE_KERNEL_EXEC_NOENC));
+ 	return 0;
+ err:
+-	free_transition_pgtable(image);
+ 	return result;
+ }
+ 
