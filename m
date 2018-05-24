@@ -1,93 +1,44 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1691124-1527155211-2-14234624281888492490
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527155210; b=chLFjNxTNrlnbeI10PXziNp2qjit1iBXMPfUL8xWpDjPFn8Z0e
-    P8QQCe3F03xuX2vWS+YB+TbZHWmtF4cYrtrpgaPdq6xEPbAQU7o2Ljlz18FcY8jb
-    adTeOWTPntNpOMBjqdbQeV0bELNhmaTPp0T5YfR33K2wAPwqbzXh+p/NsCP9ENxq
-    qVuhtQUcZHfgQIprnvc2ja9K81Rpb8MzLxt82vzdTqSLJxU15ZfJ2KLPD7FBdaAF
-    7IFDxosfnfPFMTZzRQOeBreLJ3e5Q2OD/E1Tasf1fDa5ibez8kWWcwmeOZ3oHfFD
-    Z0mfaqxwAuOh1HYuTJKL94cDwTMiWzu5kWYQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527155210; bh=Nq3tZDaueWqTuwuKS93yQ99nnRDPHQ
-    yPZMIEf9coJjA=; b=FxxGfpx88ZNa2ussgITac6E4OwXsBRb3gjVoA2Wj/0XZT6
-    ++y9gJU1jhkaGEXQoYTaqyZ7s7h/myhgRTQsevo6oDvhEgWxBL1Dux/6l8LIgrKN
-    pBx7IxdsxJZNLK5c2xY016JMCtZWOX2naeYnY3CJC2mZEjCWgERF6wge5ksAT4yv
-    cxZa3slyP6H/gCZhmFPHEeuVhZLEWEiLICHIUiSxKc8FxLbCoPFL2Zcchu8EYShH
-    ncKMcEsZ3b3lmoftfR5Hkoc0PxaTYcqN1lG1PL4E3SMO4BGm05LjxcqG/pbheZk/
-    y+H8jkDP+U0mGpwNd9KLHhjLVXzyyvxg/8ZXUkYA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=BWeSOYJl x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linuxfoundation.org header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=BWeSOYJl x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linuxfoundation.org header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMGv3KuKVDk0oQlB/4nIHX60yZq+Nf8UoA6Eud4dAZ8k4gp/Yh2LHRqLrtqQ5ZqKQnwbgFhRiCerYi8Xr4I4qNGiXXWPI/vPtA421zerBgkfOxCj/5PZ
-    V55dwsEMo0FiE9h0wx0mKZqBJ1CGOH5U37HNGeyXnyZsyZcEHKBvUhbkfzeYavpfCDS617h873I3eQ8CJU4b0ALVKkylyUaZznF3tZ4zsRvmXbr/U6O3LLEu
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=aaA79tPBc2EpFUhZeY0A:9
-    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966956AbeEXJqr (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:46:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58264 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966941AbeEXJqm (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:46:42 -0400
+Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZrhuOXTwlGOWcyzDz9Fl61tWvUZbPPZyp2AFlTrxiVOJs8KmjWdeRQq+zAkygSTa7pnObOb
+ARC-Seal: i=1; a=rsa-sha256; t=1527155170; cv=none;
+        d=google.com; s=arc-20160816;
+        b=qKYDjAZAwA17VeKSpU0uQyTewMhdw8n1Es+9AJaH7hKAEUE15HGsjnRL9SWMhpc8WW
+         5iFhznXrgsRf00YgHCV2kdr5dC0eQ3lrvFUh7RMgaVePSw8bUlwlHY0a/+7EQsCIgzxJ
+         89M5NR/FTZ2LgoF2uHuASn8hf19GcdUUFLaRzQ9aZZBHcAO8UoCFmOOtemjnA/clZ46u
+         WYf3ftDhLpdpW/xrzENYR4cfn7t0hc+bdzXH5DUJvUP0Z3JqhneNfSwHFhyFW3daqbkE
+         /bFKn4t/2yO2E6+/ZeQrYzlVan9wZNnnJGfd1CZ6UKLbFzj+TZAW3SO2bDgFiJk4z0wU
+         6JPQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=/2976aUSLYb9y5lxnzmVFGf44r/utXaelQAbD9fLk+E=;
+        b=RS6fUSaLpVf5IgL8QfbDY1TzMEGvvB1P7LH3Gxiq+lyAaGEluGluWza8SUEEcR0U4R
+         TZCxA433s8kdeKXMl9ZEwd7eu52TrsnJwhn74APThPrt6AdpG1l6n7On05oFXNu6V2YV
+         0H5R8hd8U00pHo32AIIrAiOK2h7ppSd9GIe0k3GqK8pjXQXlYFvjJrTzsdIRkfwZa6LI
+         X2XVMJrxrqWCc1MvQlNwH/rDXdVgxkoM/GJGbGvBPQkv8wC2x0xK6pMzMQyZsWE9wagJ
+         SHtndklocoJgjzb2dwi9QP57AOQUypeVLeF+e2pecqO2xtnYdyT14eSKUKXocp2ZANxe
+         zGZA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=fhv0wY1L;
+       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=fhv0wY1L;
+       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Subject: [PATCH 4.4 80/92] s390/kernel: use expoline for indirect branches
-Date: Thu, 24 May 2018 11:38:57 +0200
-Message-Id: <20180524093206.932186509@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Vladimir Davydov <vdavydov@virtuozzo.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@suse.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Mel Gorman <mgorman@techsingularity.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Mel Gorman <mgorman@suse.de>
+Subject: [PATCH 4.4 47/92] vmscan: do not force-scan file lru if its absolute size is small
+Date: Thu, 24 May 2018 11:38:24 +0200
+Message-Id: <20180524093203.997483717@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093159.286472249@linuxfoundation.org>
 References: <20180524093159.286472249@linuxfoundation.org>
@@ -95,9 +46,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1601338259899789374?=
+X-GMAIL-MSGID: =?utf-8?q?1601338259899789374?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -105,159 +57,61 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+From: Vladimir Davydov <vdavydov@virtuozzo.com>
 
-[ Upstream commit c50c84c3ac4d5db683904bdb3257798b6ef980ae ]
+commit 316bda0e6cc5f36f94b4af8bded16d642c90ad75 upstream.
 
-The assember code in arch/s390/kernel uses a few more indirect branches
-which need to be done with execute trampolines for CONFIG_EXPOLINE=y.
+We assume there is enough inactive page cache if the size of inactive
+file lru is greater than the size of active file lru, in which case we
+force-scan file lru ignoring anonymous pages.  While this logic works
+fine when there are plenty of page cache pages, it fails if the size of
+file lru is small (several MB): in this case (lru_size >> prio) will be
+0 for normal scan priorities, as a result, if inactive file lru happens
+to be larger than active file lru, anonymous pages of a cgroup will
+never get evicted unless the system experiences severe memory pressure,
+even if there are gigabytes of unused anonymous memory there, which is
+unfair in respect to other cgroups, whose workloads might be page cache
+oriented.
 
-Cc: stable@vger.kernel.org # 4.16
-Fixes: f19fbd5ed6 ("s390: introduce execute-trampolines for branches")
-Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+This patch attempts to fix this by elaborating the "enough inactive page
+cache" check: it makes it not only check that inactive lru size > active
+lru size, but also that we will scan something from the cgroup at the
+current scan priority.  If these conditions do not hold, we proceed to
+SCAN_FRACT as usual.
+
+Signed-off-by: Vladimir Davydov <vdavydov@virtuozzo.com>
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Mel Gorman <mgorman@techsingularity.net>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Mel Gorman <mgorman@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/s390/kernel/base.S   |   24 ++++++++++++++----------
- arch/s390/kernel/reipl.S  |    5 ++++-
- arch/s390/kernel/swsusp.S |   10 ++++++----
- 3 files changed, 24 insertions(+), 15 deletions(-)
 
---- a/arch/s390/kernel/base.S
-+++ b/arch/s390/kernel/base.S
-@@ -8,18 +8,22 @@
+---
+ mm/vmscan.c |   12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -2057,10 +2057,16 @@ static void get_scan_count(struct lruvec
+ 	}
  
- #include <linux/linkage.h>
- #include <asm/asm-offsets.h>
-+#include <asm/nospec-insn.h>
- #include <asm/ptrace.h>
- #include <asm/sigp.h>
- 
-+	GEN_BR_THUNK %r9
-+	GEN_BR_THUNK %r14
-+
- ENTRY(s390_base_mcck_handler)
- 	basr	%r13,0
- 0:	lg	%r15,__LC_PANIC_STACK	# load panic stack
- 	aghi	%r15,-STACK_FRAME_OVERHEAD
- 	larl	%r1,s390_base_mcck_handler_fn
--	lg	%r1,0(%r1)
--	ltgr	%r1,%r1
-+	lg	%r9,0(%r1)
-+	ltgr	%r9,%r9
- 	jz	1f
--	basr	%r14,%r1
-+	BASR_EX	%r14,%r9
- 1:	la	%r1,4095
- 	lmg	%r0,%r15,__LC_GPREGS_SAVE_AREA-4095(%r1)
- 	lpswe	__LC_MCK_OLD_PSW
-@@ -36,10 +40,10 @@ ENTRY(s390_base_ext_handler)
- 	basr	%r13,0
- 0:	aghi	%r15,-STACK_FRAME_OVERHEAD
- 	larl	%r1,s390_base_ext_handler_fn
--	lg	%r1,0(%r1)
--	ltgr	%r1,%r1
-+	lg	%r9,0(%r1)
-+	ltgr	%r9,%r9
- 	jz	1f
--	basr	%r14,%r1
-+	BASR_EX	%r14,%r9
- 1:	lmg	%r0,%r15,__LC_SAVE_AREA_ASYNC
- 	ni	__LC_EXT_OLD_PSW+1,0xfd	# clear wait state bit
- 	lpswe	__LC_EXT_OLD_PSW
-@@ -56,10 +60,10 @@ ENTRY(s390_base_pgm_handler)
- 	basr	%r13,0
- 0:	aghi	%r15,-STACK_FRAME_OVERHEAD
- 	larl	%r1,s390_base_pgm_handler_fn
--	lg	%r1,0(%r1)
--	ltgr	%r1,%r1
-+	lg	%r9,0(%r1)
-+	ltgr	%r9,%r9
- 	jz	1f
--	basr	%r14,%r1
-+	BASR_EX	%r14,%r9
- 	lmg	%r0,%r15,__LC_SAVE_AREA_SYNC
- 	lpswe	__LC_PGM_OLD_PSW
- 1:	lpswe	disabled_wait_psw-0b(%r13)
-@@ -116,7 +120,7 @@ ENTRY(diag308_reset)
- 	larl	%r4,.Lcontinue_psw	# Restore PSW flags
- 	lpswe	0(%r4)
- .Lcontinue:
--	br	%r14
-+	BR_EX	%r14
- .align 16
- .Lrestart_psw:
- 	.long	0x00080000,0x80000000 + .Lrestart_part2
---- a/arch/s390/kernel/reipl.S
-+++ b/arch/s390/kernel/reipl.S
-@@ -6,8 +6,11 @@
- 
- #include <linux/linkage.h>
- #include <asm/asm-offsets.h>
-+#include <asm/nospec-insn.h>
- #include <asm/sigp.h>
- 
-+	GEN_BR_THUNK %r14
-+
- #
- # store_status
- #
-@@ -62,7 +65,7 @@ ENTRY(store_status)
- 	st	%r3,__LC_PSW_SAVE_AREA-SAVE_AREA_BASE + 4(%r1)
- 	larl	%r2,store_status
- 	stg	%r2,__LC_PSW_SAVE_AREA-SAVE_AREA_BASE + 8(%r1)
--	br	%r14
-+	BR_EX	%r14
- 
- 	.section .bss
- 	.align	8
---- a/arch/s390/kernel/swsusp.S
-+++ b/arch/s390/kernel/swsusp.S
-@@ -12,6 +12,7 @@
- #include <asm/ptrace.h>
- #include <asm/thread_info.h>
- #include <asm/asm-offsets.h>
-+#include <asm/nospec-insn.h>
- #include <asm/sigp.h>
- 
- /*
-@@ -23,6 +24,8 @@
-  * (see below) in the resume process.
-  * This function runs with disabled interrupts.
-  */
-+	GEN_BR_THUNK %r14
-+
- 	.section .text
- ENTRY(swsusp_arch_suspend)
- 	stmg	%r6,%r15,__SF_GPRS(%r15)
-@@ -102,7 +105,7 @@ ENTRY(swsusp_arch_suspend)
- 	spx	0x318(%r1)
- 	lmg	%r6,%r15,STACK_FRAME_OVERHEAD + __SF_GPRS(%r15)
- 	lghi	%r2,0
--	br	%r14
-+	BR_EX	%r14
- 
- /*
-  * Restore saved memory image to correct place and restore register context.
-@@ -196,11 +199,10 @@ pgm_check_entry:
- 	larl	%r15,init_thread_union
- 	ahi	%r15,1<<(PAGE_SHIFT+THREAD_ORDER)
- 	larl	%r2,.Lpanic_string
--	larl	%r3,_sclp_print_early
- 	lghi	%r1,0
- 	sam31
- 	sigp	%r1,%r0,SIGP_SET_ARCHITECTURE
--	basr	%r14,%r3
-+	brasl	%r14,_sclp_print_early
- 	larl	%r3,.Ldisabled_wait_31
- 	lpsw	0(%r3)
- 4:
-@@ -266,7 +268,7 @@ restore_registers:
- 	/* Return 0 */
- 	lmg	%r6,%r15,STACK_FRAME_OVERHEAD + __SF_GPRS(%r15)
- 	lghi	%r2,0
--	br	%r14
-+	BR_EX	%r14
- 
- 	.section .data..nosave,"aw",@progbits
- 	.align	8
+ 	/*
+-	 * There is enough inactive page cache, do not reclaim
+-	 * anything from the anonymous working set right now.
++	 * If there is enough inactive page cache, i.e. if the size of the
++	 * inactive list is greater than that of the active list *and* the
++	 * inactive list actually has some pages to scan on this priority, we
++	 * do not reclaim anything from the anonymous working set right now.
++	 * Without the second condition we could end up never scanning an
++	 * lruvec even if it has plenty of old anonymous pages unless the
++	 * system is under heavy pressure.
+ 	 */
+-	if (!inactive_file_is_low(lruvec)) {
++	if (!inactive_file_is_low(lruvec) &&
++	    get_lru_size(lruvec, LRU_INACTIVE_FILE) >> sc->priority) {
+ 		scan_balance = SCAN_FILE;
+ 		goto out;
+ 	}
