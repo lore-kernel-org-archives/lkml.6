@@ -1,69 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965574AbeEXIsG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 04:48:06 -0400
-Received: from mail-wr0-f170.google.com ([209.85.128.170]:34609 "EHLO
-        mail-wr0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965114AbeEXIr5 (ORCPT
+        id S965585AbeEXIsW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 04:48:22 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:50646 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965559AbeEXIsA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 04:47:57 -0400
-X-Google-Smtp-Source: AB8JxZrcyzGQnnnUX8/NUaTxyWyJ3v8O6EkUqJzEVYHKtsSFKsvfyfW7mM9ZlebNdwRU4uWGQH4GuQ==
-Subject: Re: [RFD] Add debugfs for cpuidle ?
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM mailing list <linux-pm@vger.kernel.org>
-References: <516d8599-8038-7b47-a3f5-640bf13856c2@linaro.org>
- <2682482.uFPN0cxrGI@aspire.rjw.lan>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <bcdbf067-4213-18ed-6d30-dc0dd2376c02@linaro.org>
-Date: Thu, 24 May 2018 10:47:54 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 24 May 2018 04:48:00 -0400
+X-Google-Smtp-Source: AB8JxZqkHVGomVZcy19kUOlACPzd2f8la+luxdhsXpeqEueXHndQXOPp74mOVpQCWJNvNTnIccYx3uNnqNIrawlHf7k=
 MIME-Version: 1.0
-In-Reply-To: <2682482.uFPN0cxrGI@aspire.rjw.lan>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <2044895.BqI5yRtle6@diego>
+References: <1526614328-6869-1-git-send-email-djw@t-chip.com.cn>
+ <1685755.J6GI985WX3@diego> <CACRpkdYCdNZ=ASw1uz4zKXC4AMd1EGbvG_G5K5cwSpH5eGPgKA@mail.gmail.com>
+ <2044895.BqI5yRtle6@diego>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 24 May 2018 10:47:59 +0200
+Message-ID: <CACRpkdYrHyGmMOi-qNTRxC=TR1wMnM30PxdHfNAApmZ0ucnjJg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/5] gpio: syscon: Add gpio-syscon for rockchip
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc: Rob Herring <robh@kernel.org>, Levin Du <djw@t-chip.com.cn>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Wayne Chou <zxf@t-chip.com.cn>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4O8mTW9008794
 
-On 24/05/2018 10:28, Rafael J. Wysocki wrote:
-> On Thursday, May 24, 2018 10:14:31 AM CEST Daniel Lezcano wrote:
->> 
->> Hi all,
-> 
-> Hi,
-> 
->> would it be interesting to add debugfs metrics for cpuidle in order
->> to read some statistics from there and investigate the behavior ?
-> 
-> What exactly would you like to see in there?
+On Thu, May 24, 2018 at 10:35 AM, Heiko Stübner <heiko@sntech.de> wrote:
+> Am Donnerstag, 24. Mai 2018, 10:28:44 CEST schrieb Linus Walleij:
+>> On Wed, May 23, 2018 at 5:12 PM, Heiko Stübner <heiko@sntech.de> wrote:
+>> > So the gpio controller should definitly also be a subnode.
+>> >
+>> > The gpio in question is called "mute", so I'd think the gpio-syscon driver
+>> > should just define a "rockchip,rk3328-gpio-mute" compatible and contain
+>> > all the register voodoo in the driver itself and not define it in the dt.
+>> >
+>> > So it should probably look like
+>> >
+>> > grf: syscon at ff100000 {
+>> >
+>> >         compatible = "rockchip,rk3328-grf", "syscon", "simple-mfd";
+>> >
+>> >         [all the other syscon sub-devices]
+>> >
+>> >         gpio_mute: gpio-mute {
+>> >
+>> >                 compatible = "rockchip,rk3328-gpio-mute";
+>> >                 gpio-controller;
+>> >                 #gpio-cells = <2>;
+>> >
+>> >         };
+>>
+>> I'm sceptic.
+>>
+>> That doesn't sound like "general purpose input output" at all.
+>>
+>> It sounds like special purpose, for a mute button.
+>>
+>> Does it use IRQ? I would recommend implementing
+>> drivers/input/keyboard/syscon-keys.c in the same vein
+>> as drivers/leds/leds-syscon.c so you can avoid indirection
+>> through GPIO for no good reason at all.
+>
+> To quote Levin from the other mail:
+> --------
+> The "mute" pin is a output only GPIO, which is already supported by
+> setting flags in the gpio-syscon
+>   driver. And yes, this pin has a defined function, but can also be used
+> for general purpose operation.
+> --------
+>
+> So to summarize, the documentation calls it "mute", but it is usable as
+> a general pin, which is the reason Levin is working on it - because on his
+> board this pin is used to switch between two voltages (aka a gpio-regulator)
+> for the sdmmc controller [3.3V + 1.8V].
 
-It could be interesting to have statistics on a per cpu and global basis
-for:
+OK then, I was wrong! :)
 
-- prediction accuracy:
+Go ahead with this, sorry for the fuzz.
 
-/sys/kernel/debug/cpuidle/prediction/[good|over|under]
-/sys/kernel/debug/cpuidle/cpu*/state*/prediction/[good|over|under]
-
- - exit latency
-
-In addition, it is often the case the idle states values are dropped
-randomly, it is interesting to see the average exit latency for the
-states. That could give also an indication the cluster idle state success.
-
-/sys/kernel/debug/cpuidle/state*/latency/[min|max|avg|stddev]
-/sys/kernel/debug/cpuidle/cpu*/state*/prediction/[min|max|avg|stddev]
-
-And perhaps more information like the tick stopped stat ?
-
-
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Yours,
+Linus Walleij
