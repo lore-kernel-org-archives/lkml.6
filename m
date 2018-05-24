@@ -1,71 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935562AbeEXB4I (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 21:56:08 -0400
-Received: from ozlabs.org ([203.11.71.1]:37561 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935218AbeEXB4F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 21:56:05 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Frederic Weisbecker <frederic@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Joel Fernandes <joel.opensrc@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Chris Zankel <chris@zankel.net>, Paul Mackerras <paulus@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>, Rich Felker <dalias@libc.org>,
-        Ingo Molnar <mingo@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>
-Subject: Re: [PATCH 01/12] perf/breakpoint: Split attribute parse and commit
-In-Reply-To: <1526697950-7091-2-git-send-email-frederic@kernel.org>
-References: <1526697950-7091-1-git-send-email-frederic@kernel.org> <1526697950-7091-2-git-send-email-frederic@kernel.org>
-Date: Thu, 24 May 2018 11:56:01 +1000
-Message-ID: <87h8mxstou.fsf@concordia.ellerman.id.au>
+        id S935595AbeEXB4o (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 21:56:44 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:27746 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935372AbeEXB4k (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 21:56:40 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w4O1uEJ6023159
+X-Nifty-SrcIP: [209.85.217.177]
+X-Google-Smtp-Source: AB8JxZrN/TXLJgVQeTH1BYwM18oSMh0N/oV4cqcoAHwgyi2rAO+L3ENRnxY/DEmpBK++hsoAj3lSUJ0WKf+RafUTw/s=
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180523001939.9431-3-labbott@redhat.com>
+References: <20180523001939.9431-1-labbott@redhat.com> <20180523001939.9431-3-labbott@redhat.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Thu, 24 May 2018 10:55:33 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATRqL8JcnED8L1b6XZbVYVp0j34=XFf=yKCHpSa2d8qKQ@mail.gmail.com>
+Message-ID: <CAK7LNATRqL8JcnED8L1b6XZbVYVp0j34=XFf=yKCHpSa2d8qKQ@mail.gmail.com>
+Subject: Re: [PATCHv3 2/2] x86/vdso: Add build salt to the vDSO
+To: Laura Abbott <labbott@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>,
+        Mark Wielaard <mjw@fedoraproject.org>,
+        "H . J . Lu" <hjl.tools@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        X86 ML <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nick Clifton <nickc@redhat.com>, Cary Coutant <ccoutant@gmail.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Frederic Weisbecker <frederic@kernel.org> writes:
+2018-05-23 9:19 GMT+09:00 Laura Abbott <labbott@redhat.com>:
+>
+> The vDSO is linked separately from the kernel and modules. Ensure it picks
+> up the comment section, if available.
+>
+> Signed-off-by: Laura Abbott <labbott@redhat.com>
+> ---
+> v3: Invoke the generated linker script. The ".." nightmare is pretty
+> ugly but I didn't see an easier way to pick up the generated file.
+> That was actually part of my motivation for using an #include since
+> paths for those are standardized.
 
-> diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
-> index 6e28d28..51320c2 100644
-> --- a/kernel/events/hw_breakpoint.c
-> +++ b/kernel/events/hw_breakpoint.c
-> @@ -424,19 +443,22 @@ static int validate_hw_breakpoint(struct perf_event *bp)
->  
->  int register_perf_hw_breakpoint(struct perf_event *bp)
->  {
-> -	int ret;
-> +	struct arch_hw_breakpoint hw;
-> +	int err;
->  
-> -	ret = reserve_bp_slot(bp);
-> -	if (ret)
-> -		return ret;
-> +	err = reserve_bp_slot(bp);
-> +	if (err)
-> +		return err;
->  
-> -	ret = validate_hw_breakpoint(bp);
-> -
-> -	/* if arch_validate_hwbkpt_settings() fails then release bp slot */
-> -	if (ret)
-> +	err = hw_breakpoint_parse(bp, &bp->attr, &hw);
 
-Is there a good reason we pass bp and bp->attr? (I assume so)
+Maybe, you found a different approach.
 
-That added to the confusion in the existing code I think.
+FWIW,
 
-cheers
+If you use the linker script approach, you could simply use
+
+scripts/build-salt.lds
+
+  instead of
+
+$(obj)/../../../../scripts/build-salt.lds
+
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
