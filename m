@@ -1,63 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965633AbeEXJBF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 05:01:05 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:36596 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965332AbeEXJBD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 05:01:03 -0400
-X-Google-Smtp-Source: AB8JxZrfDlaOs1irFjz5u820D1ttLj1zpVXTwDTIEHRy7/wW4X75CTVSZSqIrlP3W169PTdtMZZnLmum3oui2PPdr+Y=
+        id S965697AbeEXJBM (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 05:01:12 -0400
+Received: from foss.arm.com ([217.140.101.70]:38608 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965332AbeEXJBI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 05:01:08 -0400
+Subject: Re: [PATCH v2] mm/ksm: ignore STABLE_FLAG of rmap_item->address in
+ rmap_walk_ksm
+To: Jia He <hejianet@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Andrea Arcangeli <aarcange@redhat.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>,
+        Arvind Yadav <arvind.yadav.cs@gmail.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, jia.he@hxt-semitech.com,
+        Hugh Dickins <hughd@google.com>
+References: <20180503124415.3f9d38aa@p-imbrenda.boeblingen.de.ibm.com>
+ <1525403506-6750-1-git-send-email-hejianet@gmail.com>
+ <20180509163101.02f23de1842a822c61fc68ff@linux-foundation.org>
+ <2cd6b39b-1496-bbd5-9e31-5e3dcb31feda@arm.com>
+ <6c417ab1-a808-72ea-9618-3d76ec203684@arm.com>
+ <198fe48c-0d26-7dd1-89dc-415bd3c7ab41@gmail.com>
+From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <575857e6-c8ec-efa0-6434-b78a513aeaba@arm.com>
+Date: Thu, 24 May 2018 10:01:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <9cf4c5f3-f1ee-67c2-967e-07aa568685c4@redhat.com>
-References: <20180523182404.11433-1-david@redhat.com> <20180523182404.11433-2-david@redhat.com>
- <CAJZ5v0jar8TqC5MGRPcAVZfM3LmmoSV3fT3Sgok=r6D9cDG0+w@mail.gmail.com>
- <5342a59c-4ca1-2cf5-a1d4-07a6d6f03587@redhat.com> <CAJZ5v0grgYRi24oyFP0xcjip5Z5apLE5ozn8znahdtkqKvD_MA@mail.gmail.com>
- <9cf4c5f3-f1ee-67c2-967e-07aa568685c4@redhat.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 24 May 2018 11:01:02 +0200
-X-Google-Sender-Auth: hRKFsGGxsoNwuKgEdssYQQVxbk0
-Message-ID: <CAJZ5v0ionYbXse8++6c80FXajVKYLSYD7hC5RntygKJ9+PQpYg@mail.gmail.com>
-Subject: Re: [PATCH RFCv2 1/4] ACPI: NUMA: export pxm_to_node
-To: David Hildenbrand <david@redhat.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <198fe48c-0d26-7dd1-89dc-415bd3c7ab41@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 10:54 AM, David Hildenbrand <david@redhat.com> wrote:
-> On 24.05.2018 10:47, Rafael J. Wysocki wrote:
->> On Thu, May 24, 2018 at 10:33 AM, David Hildenbrand <david@redhat.com> wrote:
->>> On 24.05.2018 10:12, Rafael J. Wysocki wrote:
->>>> On Wed, May 23, 2018 at 8:24 PM, David Hildenbrand <david@redhat.com> wrote:
->>>>> Will be needed by paravirtualized memory devices.
+On 24/05/18 09:50, Jia He wrote:
+> Hi Suzuki
+> 
+> On 5/24/2018 4:44 PM, Suzuki K Poulose Wrote:
+>> On 14/05/18 10:45, Suzuki K Poulose wrote:
+>>> On 10/05/18 00:31, Andrew Morton wrote:
+>>>> On Fri,  4 May 2018 11:11:46 +0800 Jia He <hejianet@gmail.com> wrote:
 >>>>
->>>> That's a little information.
+>>>>> In our armv8a server(QDF2400), I noticed lots of WARN_ON caused by PAGE_SIZE
+>>>>> unaligned for rmap_item->address under memory pressure tests(start 20 guests
+>>>>> and run memhog in the host).
+>>>>>
+>>>>> ...
+>>>>>
+>>>>> In rmap_walk_ksm, the rmap_item->address might still have the STABLE_FLAG,
+>>>>> then the start and end in handle_hva_to_gpa might not be PAGE_SIZE aligned.
+>>>>> Thus it will cause exceptions in handle_hva_to_gpa on arm64.
+>>>>>
+>>>>> This patch fixes it by ignoring(not removing) the low bits of address when
+>>>>> doing rmap_walk_ksm.
+>>>>>
+>>>>> Signed-off-by: jia.he@hxt-semitech.com
 >>>>
->>>> It would be good to see the entire series at least.
->>>
->>> It's part of this series (guess you only received the cover letter and
->>> this patch). Here a link to the patch using it:
->>>
->>> https://lkml.org/lkml/2018/5/23/803
+>>>> I assumed you wanted this patch to be committed as
+>>>> From:jia.he@hxt-semitech.com rather than From:hejianet@gmail.com, so I
+>>>> made that change.  Please let me know if this was inappropriate.
+>>>>
+>>>> You can do this yourself by adding an explicit From: line to the very
+>>>> start of the patch's email text.
+>>>>
+>>>> Also, a storm of WARN_ONs is pretty poor behaviour.  Is that the only
+>>>> misbehaviour which this bug causes?  Do you think the fix should be
+>>>> backported into earlier kernels?
+>>>>
 >>
->> OK, thanks!
 >>
->> It looks like you have a reason to use it in there, but please note
->> that CONFIG_ACPI_NUMA depends on CONFIG_NUMA, so you don't need to use
->> the latter directly in the #ifdef.  Also wouldn't IS_ENABLED() work
->> there?
->
-> Thanks for the tip on CONFIG_ACPI_NUMA. Wouldn't IS_ENABLED() require to
-> have a dummy implementation of pxm_to_node() in case drivers/acpi/numa.c
-> is not compiled?
+>> Jia, Andrew,
+>>
+>> What is the status of this patch ?
+>>
+>> Suzuki
+> I thought the patch is merged into mmotm tree.
+> http://www.ozlabs.org/~akpm/mmotm/series
+> But I don't know what is the next step.
 
-Yes, it would.
+Hi Jia,
 
-But since you want export it, you can very well add one, can't you?
-I'd even say that it would be prudent to do so.
+Thanks for the update. I think that should eventually hit mainline. When it does,
+please could you send the patch to stable kernel versions too ?
+
+Usually having a "Cc: stable@kernel.vger.org" in the original patch (for
+critical fixes) would have done the trick. But since we don't have it,
+please send it following the stable kernel rules.
+
+Cheers
+Suzuki
