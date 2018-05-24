@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1733193-1527155907-2-11617842716975766234
+X-Cyrus-Session-Id: sloti22d1t05-1733193-1527155885-2-2462748073497519101
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527155907; b=M7i5+bFANZjF0vvdCD2dq+MR83ElbpeFQaNkwnFbLs7zfEFGlT
-    PfK8Lu2cim1tkqAu6TSWuw645z9KLVFSC3i4sSv/Bz6+jrs/n1KPHRa1UzB6F0Ac
-    9WSCb597geUA10k08m/ZV+Awgwp9a2x3+4C3dG+d/2tpkWJiq0nbtc9LR/W26vZi
-    WnswVOSn/nCXfCABQBI6uy9qW40Uh5ZFr+1twju5/4NqPX0S6j+7CWvHvfsbLGN2
-    sIt32lbGupSsG8lkMr2ALv/NnPi2fI7gg+3sI3v12TyRNGdXZdxoGEcfkNrrYSJO
-    8povcgBn+2k91G9wRQQXtehq5Kvkl2eNTqLg==
+    1527155884; b=ScCKEKVDGNkRFQwAg5jnOtolKfHJ9jSjEuHJ94i7GO1fPDnOtV
+    RRaMn50cdbN2ehKyIL+OyJxzROpFEYxYNkPsv6v9p50HFbQOcve5MT12oYtMoXHZ
+    8rgcrnFuMiqDHDADj/PhEhGYznXxHv7PVD9c03I/clRpUvmpyn103qthgXooBnpU
+    cQnH3SZS7uJRvLjb2rVhuGqrVMO6voivBvM+j9x9XS5SD8d0ofbbHmisjCzk8ShN
+    B331VCAG9OEiXAc21CPWwIvLEnGei0Lgq8o7JxCzxNhcZFL9lTxxcLjRVPHx9Ac+
+    ccNUWQ6kW1RbI/A3FAAu5kH6POpLRdAdC1Ug==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527155907; bh=JyJwox/fdV9F264BfhUzZIKr78Yfec
-    57U5toqMfE3D0=; b=J6eolAnLnwhwgPRhk8BprGEgfMjDLeuc1S/13hwNMm6ePV
-    iKM6Nti7YxzTQN/H7RE7NhIzr6I0av/9rhvleg3dxiWSFTDNl0WurzOmic6ZMm0i
-    z923PF84G8x223E36HOau/sOMoE7o9lSVSLyrWJuyOOGhceY/HH9ENaBr+eZOOF0
-    PNu4wsECffgHinYQQkN2lNaRkfeujpJZ5A6G9NGciM3m629Dlt3HoJu55E2KITm9
-    rtZZAeKs/PPElnpc/lvWwhWWGTWQIq0BJ3Y1duHhSkzab6wXuZ3PEncTJCb4+lks
-    tzz6EwlE/XAy+GQ3Bo4ojC//1gDebfXUUbOyubAw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527155884; bh=Coq6HrASfMDbFG1ZdB/bL78IV+1IcB
+    SYHQwLg+AO2Kg=; b=C6P9cVoBLrTWVTbgsVNqg7ff54b9ou3aAUZCxz86OTWr48
+    j/2j0Orl3YOs+Dz9DmchFq4WKf+QwhoM4Xsg3xjQIVgmrvLEFWDjhEWAzPUU3KWo
+    Q7OxiRXeEaAAqH2fuv0Y3GLYaHM/Iu29Ae4IVb507mXU+0WfsTw2wo3hNiK5T9ka
+    GAuP15o3+anX1NQBQCYLBDpXoJXoVBNQfAcgyv1Pjb+0sR6MRfQEuxzu2k9PQb95
+    IvwEyLfKpY5Of9cEvuL/b5xNuFVuiex7BI0HHuBEpG7d28Avo8tNlz28M9xO/BVm
+    99RQFijc/Ncy5NdaT8muozOwT4NmvRnyoOt1DRdQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=w1rwlG5d x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=nktLfzvn x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=w1rwlG5d x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=nktLfzvn x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,32 +64,34 @@ Authentication-Results: mx4.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfAJJQgC0DYbN0LH+/bT6uswdz2d5etAuPpwfoJOPvMKeFgu+bYlWzHRen2YX+mdT0bgg42Dmz1CaMPkSN7RNQ/d1zcibHNr9xy6y0FUlXUvyLGLZN6gf
-    9tARRwLvFlEfTGe0J+F2ahdNHrpD7JRM2Ia3AXGE6JG6nxLF0Ph5cCweFEV2ERN7KH+EZtQM7tW2Dthc5I6tEh5o6QVDRZwNv3NHEJ8td52zIKVP7Hu361Wx
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfJkbDntCm5k9lzlhppi1bKrOiekvO9z5GUwwUH+y7FoptFFcd9pWNExC679JAbLjXKvRBCjrp8+apKgFPXkMhoO5uN1j10wG3wwOs049qHU7RlDTYJLu
+    WkbogFBBwC8UP2mTR2Kbc01KWqVBfzT4ICZhxIz7Od2UKg+XdZo0cuYgYjD+5TunO/P+NjvFHdsO8rJUaNLbPbawu1V+3h/q3QUhcWQUFX2GFySSReYRs10m
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=3uY1OGifAAAA:8 a=v3ZZPjhaAAAA:8 a=yPCof4ZbAAAA:8 a=yMhMjlubAAAA:8
-    a=ag1SF4gXAAAA:8 a=xxG_gJrs1X5CW_1k0CwA:9 a=QEXdDO2ut3YA:10
-    a=d_xNPB-V-J0lr6ltNwaW:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=P1BnusSwAAAA:8 a=vQBBkBfzAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=Vm4PyTQkU4XbjhRmH8IA:9 a=ImxaVKh6NTYabYR_:21 a=7i-VzYy7KgjUr4U4:21
+    a=QEXdDO2ut3YA:10 a=D0XLA9XvdZm18NrgonBM:22 a=NGXS0kB0m_rannUenejW:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030600AbeEXJ6Y (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:58:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38120 "EHLO mail.kernel.org"
+        id S1030527AbeEXJ5z (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:57:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37594 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030590AbeEXJ6T (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:58:19 -0400
+        id S1030526AbeEXJ5t (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:57:49 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Li Ning <lining916740672@icloud.com>,
-        Jeremy Cline <jeremy@jcline.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 113/165] scsi: sd: Keep disk read-only when re-reading partition
-Date: Thu, 24 May 2018 11:38:39 +0200
-Message-Id: <20180524093626.593183238@linuxfoundation.org>
+Subject: [PATCH 4.14 145/165] media: v4l: vsp1: Fix display stalls when requesting too many inputs
+Date: Thu, 24 May 2018 11:39:11 +0200
+Message-Id: <20180524093627.941751796@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -107,47 +109,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jeremy Cline <jeremy@jcline.org>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-[ Upstream commit 20bd1d026aacc5399464f8328f305985c493cde3 ]
+[ Upstream commit 5e3e4cb5e24b92773b194aa90066170b12133bc6 ]
 
-If the read-only flag is true on a SCSI disk, re-reading the partition
-table sets the flag back to false.
+Make sure we don't accept more inputs than the hardware can handle. This
+is a temporary fix to avoid display stall, we need to instead allocate
+the BRU or BRS to display pipelines dynamically based on the number of
+planes they each use.
 
-To observe this bug, you can run:
-
-1. blockdev --setro /dev/sda
-2. blockdev --rereadpt /dev/sda
-3. blockdev --getro /dev/sda
-
-This commit reads the disk's old state and combines it with the device
-disk-reported state rather than unconditionally marking it as RW.
-
-Reported-by: Li Ning <lining916740672@icloud.com>
-Signed-off-by: Jeremy Cline <jeremy@jcline.org>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/sd.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/media/platform/vsp1/vsp1_drm.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -2608,6 +2608,7 @@ sd_read_write_protect_flag(struct scsi_d
- 	int res;
- 	struct scsi_device *sdp = sdkp->device;
- 	struct scsi_mode_data data;
-+	int disk_ro = get_disk_ro(sdkp->disk);
- 	int old_wp = sdkp->write_prot;
+--- a/drivers/media/platform/vsp1/vsp1_drm.c
++++ b/drivers/media/platform/vsp1/vsp1_drm.c
+@@ -504,6 +504,15 @@ void vsp1_du_atomic_flush(struct device
+ 		struct vsp1_rwpf *rpf = vsp1->rpf[i];
+ 		unsigned int j;
  
- 	set_disk_ro(sdkp->disk, 0);
-@@ -2648,7 +2649,7 @@ sd_read_write_protect_flag(struct scsi_d
- 			  "Test WP failed, assume Write Enabled\n");
- 	} else {
- 		sdkp->write_prot = ((data.device_specific & 0x80) != 0);
--		set_disk_ro(sdkp->disk, sdkp->write_prot);
-+		set_disk_ro(sdkp->disk, sdkp->write_prot || disk_ro);
- 		if (sdkp->first_scan || old_wp != sdkp->write_prot) {
- 			sd_printk(KERN_NOTICE, sdkp, "Write Protect is %s\n",
- 				  sdkp->write_prot ? "on" : "off");
++		/*
++		 * Make sure we don't accept more inputs than the hardware can
++		 * handle. This is a temporary fix to avoid display stall, we
++		 * need to instead allocate the BRU or BRS to display pipelines
++		 * dynamically based on the number of planes they each use.
++		 */
++		if (pipe->num_inputs >= pipe->bru->source_pad)
++			pipe->inputs[i] = NULL;
++
+ 		if (!pipe->inputs[i])
+ 			continue;
+ 
