@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1862185-1527161777-2-8887292772176169738
+X-Cyrus-Session-Id: sloti22d1t05-1862185-1527161771-2-17851013296524152702
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527161776; b=YN3qZGC9nJdymRaEjZTD9EtB7co8CZwBrYm7qh6KxxkGpVhBwq
-    aIRzZbiVwpWhO2bi+otI2VO3odvkz4BQKXg66GxrbMRxdC1iNKUJdhsACPdw4vGT
-    RbDi0OtbXLBlXwCHPb3b+7kpVAvkt8R22+iFd4PRZONt3YQT+SPFPQWG42SQMkRp
-    tbLlH64qpb0cis27ll/laCwR155pLbR2uL1Eu78zLLU2n0KwuCtW/dOX7OZ74UO1
-    XwmbYuhwiABDZadyma44ajt8TFwIWkqDdpz0GmbuveVSVT5nmmrwpgUcjVsccXQh
-    VyGsxDZoFxoyGXKq2ud+YSOQP9grOGtxQDvQ==
+    1527161770; b=klPAQb1N7Z9+K5ta6G2/q+C5yY6VcCIAoHnxS8hERV7mDNWAUQ
+    A7Bj9wn3QHLTSFbLJRVw/PkHzcWyjm7teXiZMW0y4++UXVlmK7wzHlJMnhwa2Obu
+    A6ksXjkt73cVLc5pUdyQFt4pNs5zMIs+sklpj+0CvN+FfW0ctRu7ZChfwroXypmc
+    XUKrwkWzQL/Dci9gWntn5TkV0pL0XUrGYMNx9e9HnS5Nyn+agSs7ZyIUTaYvyIUu
+    3uFfnS6aG19ofyYrp3nQ5kqcid0dwBFMVDnhuQhztEnGYbBId5GCHEdKnWSOQAXu
+    JRAAfqBU27J6ur9SfqzDcswdByF4FP5EEkNg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527161776; bh=/pP7Crt3JE0sQ5sb7YzULT0Y/+Ug/D
-    eLsyUATcf8pOw=; b=KoHanGNGaroWVcXcjX+H5YcCw11gLVFgEccVvBZT1oBjOo
-    JQvSfRNEao0u5yuWtwns0qXpuDJ92EY+Yw2z/uXmeGFlWzxtXfyF4rVvGYHljequ
-    QRABBnJ4+5yx5eg/mdEmk1eiAf4GAq/HAXv14ypoQ96voWFdY3CHtUhz3Y6yjrv4
-    RLN/9gzOEAqmHwlqZXi/gnCnXAytQ+vMNRqXB+C6xIzhp0C/YkBqDAYeeo4QS0xX
-    OWeK314TwVUa3dew5yXU+Zb7A9EIiWQp0ryw2ZSDjJuIotviXQkqWHu29PV69cCx
-    2PXDasByI9rD7Mz2JkksW77m2yfYLYhj3qF+Zceg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527161770; bh=HCUMxLnUgbPLN2Oe4ynvwpr4oiZA5G
+    3rR3k9/kcczWg=; b=VxyxRqxIdGQl5+CZtBo4c/g7+dPwOM9LVBHAKaeXOnS/A3
+    HgVieCNKvANIRNm3/uND+O6fql90pbGSipPTiMyfgxRZ+IxZmafBsLzYwuTz5GI2
+    rwISV3sUxQG6T6Opq9r5JhNofw6VwZUiFVCQbMiQjoYPryM0PWpSPYSwWiSuzHx9
+    6Dg4oMDDs6RhGrObQaocl4uTVITWA1svaT20SrvujG+aoczxy8iXU0ITTA4p9KhO
+    dagdYdpSc9KDvmsixOOiBN3XPLL69zcw8hg68oex4uvZftcjDG9HTcfe1vddhSt5
+    E1/mAd4KOVmJxmIbRxlOZZUt63QDBpmrhD2V0fsQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=m8YqvnT7 x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=BRrXvavM x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=m8YqvnT7 x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=BRrXvavM x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,36 +64,34 @@ Authentication-Results: mx1.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNNlQc/NwPMBGe0o6Dp6KjL8ZSCIAYiiHBzNbDMtIx5OJuXZwS1znA9gmnlZ1nFxpYZZSVfUwyZpWF16dwPh4cqYtPP0FMKME9+ICM6NVz/aoyMZUP7/
-    5hgku5UHOiqGoAfa6Ft2jIaUN2bvEVFk6Wi80r549Sv5rWaEOAlbM+2Aon5TNaYGC+m2ktUELgpn6QIXuApQYhDldZtRkoT5Le26cZuiQakCCEyBy9MeC31w
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfAk5FDnH67JOaUGCI2k9xMd2M2V/zXNCnBI78QwPw8NyXI/571gAtUJU3PVH7DOkSR5HMJOGZPg8LzTWYyHGr5rqyzn+1QhNZINrsKKJBK2fqQliCZnz
+    43FAvtwaVlsYxSKDZNP0IWJ4rdf22ogmRNaitBX0rXsAC7vC/JJS2YZx/kVcjc7VRzVlbhok8n/ZFk4M75q8iEXKqvezanIkJYP8xBl6GVle0bnn/6meX3YV
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=Q-fNiiVtAAAA:8 a=iox4zFpeAAAA:8 a=yPCof4ZbAAAA:8 a=yMhMjlubAAAA:8
-    a=ag1SF4gXAAAA:8 a=fJIh7McZu9Cm0UNqPSsA:9 a=QEXdDO2ut3YA:10
-    a=Fp8MccfUoT0GBdDC_Lng:22 a=WzC6qhA0u3u7Ye7llzcV:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=j-NXPswCAAAA:8 a=m8ToADvmAAAA:8 a=Ikd4Dj_1AAAA:8 a=yMhMjlubAAAA:8
+    a=ag1SF4gXAAAA:8 a=RNOMWXZoqlZzpp3PYiAA:9 a=Zx_TZvY_GsnQrxeT:21
+    a=yYO6URiAGnNbBWEK:21 a=QEXdDO2ut3YA:10 a=UdV-L189IiqUQIgB40x4:22
+    a=kCrBFHLFDAq2jDEeoMj9:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967502AbeEXJt6 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:49:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39254 "EHLO mail.kernel.org"
+        id S969054AbeEXLfz (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 07:35:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40048 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967432AbeEXJts (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:49:48 -0400
+        id S967508AbeEXJuA (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:50:00 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
-        Suganath Prabu Subramani
-        <suganath-prabu.subramani@broadcom.com>,
-        Sreekanth Reddy <Sreekanth.Reddy@broadcom.com>,
-        Hannes Reinecke <hare@suse.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 60/96] scsi: mpt3sas: Do not mark fw_event workqueue as WQ_MEM_RECLAIM
-Date: Thu, 24 May 2018 11:38:43 +0200
-Message-Id: <20180524093608.904820655@linuxfoundation.org>
+Subject: [PATCH 4.9 72/96] clk: tegra: Fix pll_u rate configuration
+Date: Thu, 24 May 2018 11:38:55 +0200
+Message-Id: <20180524093609.518663249@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093605.602125311@linuxfoundation.org>
 References: <20180524093605.602125311@linuxfoundation.org>
@@ -111,34 +109,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hannes Reinecke <hare@suse.de>
+From: Marcel Ziswiler <marcel@ziswiler.com>
 
-[ Upstream commit 864449eea7c600596e305ffdc4a6a846414b222c ]
+[ Upstream commit c35b518f9ba06c9de79fb3ff62eed7462d804995 ]
 
-The firmware event workqueue should not be marked as WQ_MEM_RECLAIM
-as it's doesn't need to make forward progress under memory pressure.
-In the current state it will result in a deadlock if the device had been
-forcefully removed.
+Turns out latest upstream U-Boot does not configure/enable pll_u which
+leaves it at some default rate of 500 kHz:
 
-Cc: Sreekanth Reddy <sreekanth.reddy@broadcom.com>
-Cc: Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>
-Acked-by: Sreekanth Reddy <Sreekanth.Reddy@broadcom.com>
-Signed-off-by: Hannes Reinecke <hare@suse.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+root@apalis-t30:~# cat /sys/kernel/debug/clk/clk_summary | grep pll_u
+       pll_u                  3        3        0      500000          0
+
+Of course this won't quite work leading to the following messages:
+
+[    6.559593] usb 2-1: new full-speed USB device number 2 using tegra-
+ehci
+[   11.759173] usb 2-1: device descriptor read/64, error -110
+[   27.119453] usb 2-1: device descriptor read/64, error -110
+[   27.389217] usb 2-1: new full-speed USB device number 3 using tegra-
+ehci
+[   32.559454] usb 2-1: device descriptor read/64, error -110
+[   47.929777] usb 2-1: device descriptor read/64, error -110
+[   48.049658] usb usb2-port1: attempt power cycle
+[   48.759475] usb 2-1: new full-speed USB device number 4 using tegra-
+ehci
+[   59.349457] usb 2-1: device not accepting address 4, error -110
+[   59.509449] usb 2-1: new full-speed USB device number 5 using tegra-
+ehci
+[   70.069457] usb 2-1: device not accepting address 5, error -110
+[   70.079721] usb usb2-port1: unable to enumerate USB device
+
+Fix this by actually allowing the rate also being set from within
+the Linux kernel.
+
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/mpt3sas/mpt3sas_scsih.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/tegra/clk-pll.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-@@ -8853,7 +8853,7 @@ _scsih_probe(struct pci_dev *pdev, const
- 	snprintf(ioc->firmware_event_name, sizeof(ioc->firmware_event_name),
- 	    "fw_event_%s%d", ioc->driver_name, ioc->id);
- 	ioc->firmware_event_thread = alloc_ordered_workqueue(
--	    ioc->firmware_event_name, WQ_MEM_RECLAIM);
-+	    ioc->firmware_event_name, 0);
- 	if (!ioc->firmware_event_thread) {
- 		pr_err(MPT3SAS_FMT "failure at %s:%d/%s()!\n",
- 		    ioc->name, __FILE__, __LINE__, __func__);
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -1145,6 +1145,8 @@ static const struct clk_ops tegra_clk_pl
+ 	.enable = clk_pllu_enable,
+ 	.disable = clk_pll_disable,
+ 	.recalc_rate = clk_pll_recalc_rate,
++	.round_rate = clk_pll_round_rate,
++	.set_rate = clk_pll_set_rate,
+ };
+ 
+ static int _pll_fixed_mdiv(struct tegra_clk_pll_params *pll_params,
