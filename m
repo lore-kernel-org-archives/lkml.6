@@ -1,38 +1,39 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqShcCS/k30U89x3NrVoKc2RiSysfCVuY4MFV9oCevi6X5e2yGFi0MVBgLYPe06rKejn+kp
-ARC-Seal: i=1; a=rsa-sha256; t=1527155658; cv=none;
+X-Google-Smtp-Source: AB8JxZqY+TpRj1QGK5dP05rVh6DAa83LlywYGplp2g8AEPaHEUWsefwfCwx/dh3oeHEFQu7Geqzo
+ARC-Seal: i=1; a=rsa-sha256; t=1527155655; cv=none;
         d=google.com; s=arc-20160816;
-        b=UOhs8A31/uwb9jOij37QzWqUFujR6QJLVjIi3NHmRdCKYRlfL0RBhGieU2Bcx5ulEJ
-         wvkJ6u7gpW1eYeADpu+YSagAFRaONuR1Ysx3M+OpugLI5K0vwbj9mnibPN5hbwA5efud
-         OIn+y0Q3ibSaZuqwcYlobipDyFl+y85hsulhPDRV/XQ80gi2Hr+qIC/P2YJNtF8w6kY3
-         xMkZizMmyAn8L6D2bJlN+h3fHLf8bAzfc6rhA1hUqULCRGQR4WfnlzbfvDRxHUo1gUVf
-         lfCENK1TgbSgA3r8RQUMT2Jx5U8ybBia0Hd5ViiTwgqqjqIXwicMUnv0AzfS1HMZxqHO
-         WzJw==
+        b=YHpjLhRiLPEuJ/p5/and3rDZlFLgUO+dQDCwjOgSLyzVPkP4MigHHfjpBQ/MkvIbGi
+         ug3hjeoxiD4xrXZwc0ClvvojeBJpjp6BfVWDKYHMqAotI5xbpJipTbk8CYxM6KOUbidz
+         IAPvlIOncvTk4DvLsY9dhdDkYsPPQYZB17wpgxz+C4jfOYIA5TzK+6aAeD6vnFX1yLo9
+         bXtLvTvZuLnvsctT5WaZ4Eln2KbJFTER4ZKDE5qtNACeO/BZ6a7rXZarvKg9gmBPo2fY
+         EnYFpF5E0674908YQBfVarVbBCAwvh/dkdlalxQZCd0yvR+WsMnlP7IUXR94GJIUEh1f
+         RwVg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=lOU9wVjLWX4wn7ZCE60AG3qxz1kgPT4dG8rRSXL40RM=;
-        b=Rxh9gJG3HtLnhEyp8TOxU+i803Lw+y65MKM+fEKaHq/8vMUVTHColh05dqmVGK98kN
-         wK71ZZTuIrMoa6AL82qWp8FYxXSRH+TLxxPyK1rrvjen3/T8e6/MJCGV9mCgvWDfM/kC
-         PWkJGr/J6qU9U+KzhrPoJQjCyR+EZ3qOcvugb5uqPQUPLC1/a3MVFTCQHL7FMHBXJWMl
-         26noS8W3yNbGmIo8uG1+CNpa93fSmBhM2ugrOSGKlc7nOvhlBEjDVOTFG3b8ukrBfveg
-         fJETlwHrjnXmwuUrdJRqXiqCNhq5zxnyZ23gJffDEVFInYxIbfNYKRVfTL3aDxQhBkWK
-         YjKg==
+        bh=Ld10qYlCFtGmpkT6/SSWkh+5mzrkGggZBqmNuwRg9bc=;
+        b=uuIkYyIHYJn85qmQ8fKqiSApx8cMkFhb3e1td2eZUEiKh55X0c7jI57q4smkD3IrR2
+         kCgy7R3w9Vq9At5aweukAE9B3aaw9RtrjtR9dOst8Y5a6EKJRLwpPBtX19C4KR81ghrr
+         7i9WFhsHK9H0xYEcuYWbbYDkt3WlBdOh51zpnYMo7BTs02sWvie4dScQFrYvJfAltjGO
+         eVQwMSkbwKbN2ei6Z8tOORpjvFDTb9grMmPPe0IHnVTkq6QCLvCdwR6MbmPp5rVqRjP3
+         3lL4oQSXHW3TK6JmhC2FPFGlgW+kDMgjsB97PxMLOvRJwOrws36lCx57QRyxOE+O7xU6
+         C1xQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=VzlGI9AM;
+       dkim=pass header.i=@kernel.org header.s=default header.b=EF+Hu+k+;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=VzlGI9AM;
+       dkim=pass header.i=@kernel.org header.s=default header.b=EF+Hu+k+;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Martin Schwidefsky <schwidefsky@de.ibm.com>,
-	Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Subject: [PATCH 4.14 042/165] s390/kernel: use expoline for indirect branches
-Date: Thu, 24 May 2018 11:37:28 +0200
-Message-Id: <20180524093623.711906740@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Nobutaka Okabe <nob77413@gmail.com>,
+	Takashi Iwai <tiwai@suse.de>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 068/165] ALSA: usb-audio: Add native DSD support for Luxman DA-06
+Date: Thu, 24 May 2018 11:37:54 +0200
+Message-Id: <20180524093624.773796914@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -42,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601338293579326089?=
-X-GMAIL-MSGID: =?utf-8?q?1601338771851732440?=
+X-GMAIL-THRID: =?utf-8?q?1601338392140395852?=
+X-GMAIL-MSGID: =?utf-8?q?1601338768332237979?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,162 +52,129 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+From: Nobutaka Okabe <nob77413@gmail.com>
 
-[ Upstream commit c50c84c3ac4d5db683904bdb3257798b6ef980ae ]
+[ Upstream commit 71426535f49fe6034d0e0db77608b91a0c1a022d ]
 
-The assember code in arch/s390/kernel uses a few more indirect branches
-which need to be done with execute trampolines for CONFIG_EXPOLINE=y.
+Add native DSD support quirk for Luxman DA-06 DAC, by adding the
+PID/VID 1852:5065.
 
-Cc: stable@vger.kernel.org # 4.16
-Fixes: f19fbd5ed6 ("s390: introduce execute-trampolines for branches")
-Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Rename "is_marantz_denon_dac()" function to "is_itf_usb_dsd_2alts_dac()"
+to cover broader device family sharing the same USB audio
+implementation(*).
+For the same reason, rename "is_teac_dsd_dac()" function to
+"is_itf_usb_dsd_3alts_dac()".
+
+(*)
+These devices have the same USB controller "ITF-USB DSD", supplied by
+INTERFACE Co., Ltd.
+"ITF-USB DSD" USB controller has two patterns,
+
+Pattern 1. (2 altsets version)
+- Altset 0: for control
+- Altset 1: for stream (S32)
+- Altset 2: for stream (S32, DSD_U32)
+
+Pattern 2. (3 altsets version)
+- Altset 0: for control
+- Altset 1: for stream (S16)
+- Altset 2: for stream (S32)
+- Altset 3: for stream (S32, DSD_U32)
+
+"is_itf_usb_dsd_2alts_dac()" returns true, if the DAC has "Pattern 1"
+USB controller, and "is_itf_usb_dsd_3alts_dac()" returns true, if
+"Pattern2".
+
+Signed-off-by: Nobutaka Okabe <nob77413@gmail.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/kernel/base.S   |   24 ++++++++++++++----------
- arch/s390/kernel/reipl.S  |    7 +++++--
- arch/s390/kernel/swsusp.S |   10 ++++++----
- 3 files changed, 25 insertions(+), 16 deletions(-)
+ sound/usb/quirks.c |   29 ++++++++++++++++-------------
+ 1 file changed, 16 insertions(+), 13 deletions(-)
 
---- a/arch/s390/kernel/base.S
-+++ b/arch/s390/kernel/base.S
-@@ -9,18 +9,22 @@
+--- a/sound/usb/quirks.c
++++ b/sound/usb/quirks.c
+@@ -1155,24 +1155,27 @@ bool snd_usb_get_sample_rate_quirk(struc
+ 	return false;
+ }
  
- #include <linux/linkage.h>
- #include <asm/asm-offsets.h>
-+#include <asm/nospec-insn.h>
- #include <asm/ptrace.h>
- #include <asm/sigp.h>
- 
-+	GEN_BR_THUNK %r9
-+	GEN_BR_THUNK %r14
-+
- ENTRY(s390_base_mcck_handler)
- 	basr	%r13,0
- 0:	lg	%r15,__LC_PANIC_STACK	# load panic stack
- 	aghi	%r15,-STACK_FRAME_OVERHEAD
- 	larl	%r1,s390_base_mcck_handler_fn
--	lg	%r1,0(%r1)
--	ltgr	%r1,%r1
-+	lg	%r9,0(%r1)
-+	ltgr	%r9,%r9
- 	jz	1f
--	basr	%r14,%r1
-+	BASR_EX	%r14,%r9
- 1:	la	%r1,4095
- 	lmg	%r0,%r15,__LC_GPREGS_SAVE_AREA-4095(%r1)
- 	lpswe	__LC_MCK_OLD_PSW
-@@ -37,10 +41,10 @@ ENTRY(s390_base_ext_handler)
- 	basr	%r13,0
- 0:	aghi	%r15,-STACK_FRAME_OVERHEAD
- 	larl	%r1,s390_base_ext_handler_fn
--	lg	%r1,0(%r1)
--	ltgr	%r1,%r1
-+	lg	%r9,0(%r1)
-+	ltgr	%r9,%r9
- 	jz	1f
--	basr	%r14,%r1
-+	BASR_EX	%r14,%r9
- 1:	lmg	%r0,%r15,__LC_SAVE_AREA_ASYNC
- 	ni	__LC_EXT_OLD_PSW+1,0xfd	# clear wait state bit
- 	lpswe	__LC_EXT_OLD_PSW
-@@ -57,10 +61,10 @@ ENTRY(s390_base_pgm_handler)
- 	basr	%r13,0
- 0:	aghi	%r15,-STACK_FRAME_OVERHEAD
- 	larl	%r1,s390_base_pgm_handler_fn
--	lg	%r1,0(%r1)
--	ltgr	%r1,%r1
-+	lg	%r9,0(%r1)
-+	ltgr	%r9,%r9
- 	jz	1f
--	basr	%r14,%r1
-+	BASR_EX	%r14,%r9
- 	lmg	%r0,%r15,__LC_SAVE_AREA_SYNC
- 	lpswe	__LC_PGM_OLD_PSW
- 1:	lpswe	disabled_wait_psw-0b(%r13)
-@@ -117,7 +121,7 @@ ENTRY(diag308_reset)
- 	larl	%r4,.Lcontinue_psw	# Restore PSW flags
- 	lpswe	0(%r4)
- .Lcontinue:
--	br	%r14
-+	BR_EX	%r14
- .align 16
- .Lrestart_psw:
- 	.long	0x00080000,0x80000000 + .Lrestart_part2
---- a/arch/s390/kernel/reipl.S
-+++ b/arch/s390/kernel/reipl.S
-@@ -7,8 +7,11 @@
- 
- #include <linux/linkage.h>
- #include <asm/asm-offsets.h>
-+#include <asm/nospec-insn.h>
- #include <asm/sigp.h>
- 
-+	GEN_BR_THUNK %r9
-+
- #
- # Issue "store status" for the current CPU to its prefix page
- # and call passed function afterwards
-@@ -67,9 +70,9 @@ ENTRY(store_status)
- 	st	%r4,0(%r1)
- 	st	%r5,4(%r1)
- 	stg	%r2,8(%r1)
--	lgr	%r1,%r2
-+	lgr	%r9,%r2
- 	lgr	%r2,%r3
--	br	%r1
-+	BR_EX	%r9
- 
- 	.section .bss
- 	.align	8
---- a/arch/s390/kernel/swsusp.S
-+++ b/arch/s390/kernel/swsusp.S
-@@ -13,6 +13,7 @@
- #include <asm/ptrace.h>
- #include <asm/thread_info.h>
- #include <asm/asm-offsets.h>
-+#include <asm/nospec-insn.h>
- #include <asm/sigp.h>
- 
- /*
-@@ -24,6 +25,8 @@
-  * (see below) in the resume process.
-  * This function runs with disabled interrupts.
+-/* Marantz/Denon USB DACs need a vendor cmd to switch
++/* ITF-USB DSD based DACs need a vendor cmd to switch
+  * between PCM and native DSD mode
++ * (2 altsets version)
   */
-+	GEN_BR_THUNK %r14
-+
- 	.section .text
- ENTRY(swsusp_arch_suspend)
- 	stmg	%r6,%r15,__SF_GPRS(%r15)
-@@ -103,7 +106,7 @@ ENTRY(swsusp_arch_suspend)
- 	spx	0x318(%r1)
- 	lmg	%r6,%r15,STACK_FRAME_OVERHEAD + __SF_GPRS(%r15)
- 	lghi	%r2,0
--	br	%r14
-+	BR_EX	%r14
+-static bool is_marantz_denon_dac(unsigned int id)
++static bool is_itf_usb_dsd_2alts_dac(unsigned int id)
+ {
+ 	switch (id) {
+ 	case USB_ID(0x154e, 0x1003): /* Denon DA-300USB */
+ 	case USB_ID(0x154e, 0x3005): /* Marantz HD-DAC1 */
+ 	case USB_ID(0x154e, 0x3006): /* Marantz SA-14S1 */
++	case USB_ID(0x1852, 0x5065): /* Luxman DA-06 */
+ 		return true;
+ 	}
+ 	return false;
+ }
  
- /*
-  * Restore saved memory image to correct place and restore register context.
-@@ -197,11 +200,10 @@ pgm_check_entry:
- 	larl	%r15,init_thread_union
- 	ahi	%r15,1<<(PAGE_SHIFT+THREAD_SIZE_ORDER)
- 	larl	%r2,.Lpanic_string
--	larl	%r3,sclp_early_printk
- 	lghi	%r1,0
- 	sam31
- 	sigp	%r1,%r0,SIGP_SET_ARCHITECTURE
--	basr	%r14,%r3
-+	brasl	%r14,sclp_early_printk
- 	larl	%r3,.Ldisabled_wait_31
- 	lpsw	0(%r3)
- 4:
-@@ -267,7 +269,7 @@ restore_registers:
- 	/* Return 0 */
- 	lmg	%r6,%r15,STACK_FRAME_OVERHEAD + __SF_GPRS(%r15)
- 	lghi	%r2,0
--	br	%r14
-+	BR_EX	%r14
+-/* TEAC UD-501/UD-503/NT-503 USB DACs need a vendor cmd to switch
+- * between PCM/DOP and native DSD mode
++/* ITF-USB DSD based DACs need a vendor cmd to switch
++ * between PCM and native DSD mode
++ * (3 altsets version)
+  */
+-static bool is_teac_dsd_dac(unsigned int id)
++static bool is_itf_usb_dsd_3alts_dac(unsigned int id)
+ {
+ 	switch (id) {
+ 	case USB_ID(0x0644, 0x8043): /* TEAC UD-501/UD-503/NT-503 */
+@@ -1189,7 +1192,7 @@ int snd_usb_select_mode_quirk(struct snd
+ 	struct usb_device *dev = subs->dev;
+ 	int err;
  
- 	.section .data..nosave,"aw",@progbits
- 	.align	8
+-	if (is_marantz_denon_dac(subs->stream->chip->usb_id)) {
++	if (is_itf_usb_dsd_2alts_dac(subs->stream->chip->usb_id)) {
+ 		/* First switch to alt set 0, otherwise the mode switch cmd
+ 		 * will not be accepted by the DAC
+ 		 */
+@@ -1210,7 +1213,7 @@ int snd_usb_select_mode_quirk(struct snd
+ 			break;
+ 		}
+ 		mdelay(20);
+-	} else if (is_teac_dsd_dac(subs->stream->chip->usb_id)) {
++	} else if (is_itf_usb_dsd_3alts_dac(subs->stream->chip->usb_id)) {
+ 		/* Vendor mode switch cmd is required. */
+ 		switch (fmt->altsetting) {
+ 		case 3: /* DSD mode (DSD_U32) requested */
+@@ -1306,10 +1309,10 @@ void snd_usb_ctl_msg_quirk(struct usb_de
+ 	    (requesttype & USB_TYPE_MASK) == USB_TYPE_CLASS)
+ 		mdelay(20);
+ 
+-	/* Marantz/Denon devices with USB DAC functionality need a delay
++	/* ITF-USB DSD based DACs functionality need a delay
+ 	 * after each class compliant request
+ 	 */
+-	if (is_marantz_denon_dac(chip->usb_id)
++	if (is_itf_usb_dsd_2alts_dac(chip->usb_id)
+ 	    && (requesttype & USB_TYPE_MASK) == USB_TYPE_CLASS)
+ 		mdelay(20);
+ 
+@@ -1396,14 +1399,14 @@ u64 snd_usb_interface_dsd_format_quirks(
+ 		break;
+ 	}
+ 
+-	/* Denon/Marantz devices with USB DAC functionality */
+-	if (is_marantz_denon_dac(chip->usb_id)) {
++	/* ITF-USB DSD based DACs (2 altsets version) */
++	if (is_itf_usb_dsd_2alts_dac(chip->usb_id)) {
+ 		if (fp->altsetting == 2)
+ 			return SNDRV_PCM_FMTBIT_DSD_U32_BE;
+ 	}
+ 
+-	/* TEAC devices with USB DAC functionality */
+-	if (is_teac_dsd_dac(chip->usb_id)) {
++	/* ITF-USB DSD based DACs (3 altsets version) */
++	if (is_itf_usb_dsd_3alts_dac(chip->usb_id)) {
+ 		if (fp->altsetting == 3)
+ 			return SNDRV_PCM_FMTBIT_DSD_U32_BE;
+ 	}
