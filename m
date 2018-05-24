@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1733193-1527156427-2-6085164278440880963
+X-Cyrus-Session-Id: sloti22d1t05-1732752-1527156395-2-14675378161470084242
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527156426; b=ZHQE1cy7Vk4O0LRaxIVPrLpYgK8f91BZaBJr4BT2gxi5wIPeTF
-    /7eEKwvSaIoTOm7tM3AWfm4Z+MW16NcH97h+gNrJrZtjuC561um1TAzRPfxqgtKn
-    70jMXIPdbh9kaKbGdWCSABzInDhI8SgOcafb4ik1/Rte73RitdfZGgsKuoNpVVgB
-    S61OAppiXjnbZkZDbPY2tN0tcaj3Gd+Eqa8LCUCcNFVeAh5R+0OG7bMBSDlbK20R
-    lHv8c1/3rjvmsRA1tNPnYDsH1oiu1KANH6+vlt9hnK/ujczlF/91+anQ5myIXahR
-    l8TH1VWmnRNZN4ADyp0pkQvILw11rnocTeOA==
+    1527156394; b=e8Hh3h/3oBsT6rSpRz6udIswMQWfxW8BOCE6Jrn0DpUSY7NAj0
+    FTp2YccminTXtVfSoDbxrsElLynH7vOgK8W7NlBvO1DACBeRTXSWU7Bg1rc5BUDH
+    RKEM1BTmyy0YHQgvWuxrAnK92QanXp2U8RyMDRE+hvua4IkVBcPipXsungtNA7H+
+    IGydcHQhrwyhzQ/aqXQDLmwceybYvWDXc6mHI4RyQeLYym3WkeuOMBFof9dm+G25
+    qzNd7U8CaOi5EFtbSy1iEeeaFMl0bj7ZdiT/eUHqxizRt7ahOnZF6lG1MWHzb7K6
+    NPg2LIJEtEKXPCZu7lcZfqkWLDkQhdxuLz1w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527156426; bh=TdrnXz92aM6E5pJ6P94hk+8IfH4Hj0
-    2W5PP1Oyncm6s=; b=GZS2WcokJr86ZRbvrS+mjwFQuKwVQCzhID3AYGi6MsXTBB
-    q+oZxMU8k1H9m6OpdgTQ2mAaCCVhUbHO2ZjbKam59Ketq8rsKIkSuKNNcz8V9xAg
-    hwlrXP82hv8v+/hvCFc+s8bUjhAjTeZy2/BLkD5BueH643VnRVeb2LZZHjvmEe4a
-    ZuRo9Dx/DTVbshYe77zZceLhTl2puaJ8WwB0g7+otM8M8LdmqySkMvlO3pCugkoA
-    8GXJHTp08unbKctE4M3E6NCjemHw4U5+XxHEI9nhIfJXaqLvQdWb5Vyl6JbkkDPV
-    tpEfUF41XF8y58quH85Lg8cYQlW7MQWdkSfJzpiQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527156394; bh=dIT1LI0FnG8jeZ0km509YJpcqHM0tt
+    441VGrvVQkIGI=; b=EsZK+fK9Jf2qLjrK17ajjCXwwHbpmI5wVQiAKg+AO36oEZ
+    hjhzSVZRtwaU3rWvp6XTYukIpgVNaxIhbRE65Sp8OQGcjW2mLkHIybHQ1R2JFt+F
+    HQjWWuiAEbPGb8p0SE1Yj8vlQoz5RV9X58Y6VrUPKQTrwg0oFjDXCbCZ3YUFJlhR
+    JiEkky8xL4JmPANwl3bR0lxKPmemhFnJWs1yQ7iukWRUV8xND09Nt4zgukqhXCU8
+    wa3J5KtaujuAHc6jpG/T+Y8RLIW69VAgwTGooAslFM+QdfPw194yH2EU74C/ZdV8
+    R/5KD8dDgK1q4k5w+aeuY/eDz+4Gvy65yPzCwoEA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=Mspgdgh7 x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=U+RQT1hY x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=Mspgdgh7 x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=U+RQT1hY x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,29 +64,34 @@ Authentication-Results: mx1.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGPs42BxjB+uwoxKlwm/xAYAlRY75heOMy9xcWxf5W2b1hHP86YZfLGxqCtVGTaZ3cIMlJTmQXVHl6/nO+JuSZNmsVzKL6TC6915ZwtMr/W27dZ7nxDw
-    GSrXxpY/2BgIALb2YbkAkqcoUodsV4HGBmVDOxgFYsiJsbH8pUSKqOx6WczwGxOObTXZ4yIOL/lDJuymZSUb+JXGDufh6pRMHXJ1t8kqdzCYZikVsUNJRQro
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfGEF3YKxRM3PDxQIrfYHIzNqzAQdiiQD3Byv8/fjcPFWudzoE5v4HmxxGZJ09p+Z4a62xKYQ1Tv7jxF7f09K4MFNUqq4wNz+/TmXWJ6TB3mHPq3F2GAH
+    fFU/Cx8F7ZqVCftmBcsWAnXwHKy3mkT0P3Wm6qRQuL3E0EppTCgNAJfvRdaUom0FU1VGde+1sVUF8dBRQo9msP6LODVyRL3p8hkATU9LbiD+7W6hD/I7G2fj
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=IpJZQVW2AAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=vLQbGN4KbvzYxg86oCQA:9
-    a=QEXdDO2ut3YA:10 a=IawgGOuG5U0WyFbmm1f5:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=pGLkceISAAAA:8 a=vQBBkBfzAAAA:8 a=KKAkSRfTAAAA:8 a=QyXUC8HyAAAA:8
+    a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=pwKNJtFcxakrAafEM-oA:9 a=QEXdDO2ut3YA:10
+    a=NGXS0kB0m_rannUenejW:22 a=cvBusfyB2V15izCimMoJ:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031500AbeEXKGv (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 06:06:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54170 "EHLO mail.kernel.org"
+        id S1031695AbeEXKGb (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 06:06:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1031535AbeEXKEy (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 06:04:54 -0400
+        id S1031724AbeEXKG3 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 06:06:29 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>,
+        stable@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 133/161] clk: meson: axg: add the fractional part of the fixed_pll
-Date: Thu, 24 May 2018 11:39:18 +0200
-Message-Id: <20180524093034.278560986@linuxfoundation.org>
+Subject: [PATCH 4.16 134/161] media: ov5645: add missing of_node_put() in error path
+Date: Thu, 24 May 2018 11:39:19 +0200
+Message-Id: <20180524093034.408896200@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -104,36 +109,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jerome Brunet <jbrunet@baylibre.com>
+From: Akinobu Mita <akinobu.mita@gmail.com>
 
-[ Upstream commit 6b71aceceb09918daf37a40a1221077599040be3 ]
+[ Upstream commit 06fe932307d58108a11c3e603517dd2a73a57b80 ]
 
-The fixed_pll also has a fractional part. On axg s400 board, without
-this parameter, the calculated rate is off by ~8Mhz (0,4%). The fixed_pll
-being the root of the peripheral clock tree, this error is propagated to
-the rest of the clocks
+The device node obtained with of_graph_get_next_endpoint() should be
+released by calling of_node_put().  But it was not released when
+v4l2_fwnode_endpoint_parse() failed.
 
-Adding the definition of the parameter fixes the problem
+This change moves the of_node_put() call before the error check and
+fixes the issue.
 
-Fixes: 78b4af312f91 ("clk: meson-axg: add clock controller drivers")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
+Acked-by: Todor Tomov <todor.tomov@linaro.org>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/meson/axg.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/media/i2c/ov5645.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/clk/meson/axg.c
-+++ b/drivers/clk/meson/axg.c
-@@ -129,6 +129,11 @@ static struct meson_clk_pll axg_fixed_pl
- 		.shift   = 16,
- 		.width   = 2,
- 	},
-+	.frac = {
-+		.reg_off = HHI_MPLL_CNTL2,
-+		.shift   = 0,
-+		.width   = 12,
-+	},
- 	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "fixed_pll",
+--- a/drivers/media/i2c/ov5645.c
++++ b/drivers/media/i2c/ov5645.c
+@@ -1131,13 +1131,14 @@ static int ov5645_probe(struct i2c_clien
+ 
+ 	ret = v4l2_fwnode_endpoint_parse(of_fwnode_handle(endpoint),
+ 					 &ov5645->ep);
++
++	of_node_put(endpoint);
++
+ 	if (ret < 0) {
+ 		dev_err(dev, "parsing endpoint node failed\n");
+ 		return ret;
+ 	}
+ 
+-	of_node_put(endpoint);
+-
+ 	if (ov5645->ep.bus_type != V4L2_MBUS_CSI2) {
+ 		dev_err(dev, "invalid bus type, must be CSI2\n");
+ 		return -EINVAL;
