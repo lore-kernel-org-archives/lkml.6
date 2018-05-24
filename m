@@ -1,51 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754862AbeEXFYB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 01:24:01 -0400
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:58115 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751385AbeEXFX6 (ORCPT
+        id S1754898AbeEXF3v (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 01:29:51 -0400
+Received: from vps01.wiesinger.com ([46.36.37.179]:38280 "EHLO
+        vps01.wiesinger.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751158AbeEXF3u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 01:23:58 -0400
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-To: sboyd@kernel.org, linux-clk@vger.kernel.org
-Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: mvebu: use correct bit for 98DX3236 NAND
-Date: Thu, 24 May 2018 17:23:41 +1200
-Message-Id: <20180524052341.12422-1-chris.packham@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.17.0
+        Thu, 24 May 2018 01:29:50 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 wiesinger.com w4O5TghU006276
+Subject: Re: B53 DSA switch problem on Banana Pi-R1 on Fedora 26
+To: Florian Fainelli <f.fainelli@gmail.com>, Andrew Lunn <andrew@lunn.ch>
+Cc: linux-kernel@vger.kernel.org
+References: <3bdb712d-38bd-e2ca-63cf-8406a7b5689d@wiesinger.com>
+ <20180522201632.GB4396@lunn.ch>
+ <59d6b55f-d50a-063c-90a9-31a758e01383@gmail.com>
+ <fa5c2615-40b3-62bc-3dda-59f9ef574686@wiesinger.com>
+ <76c3f5ec-0ab2-c06d-98e8-277284bb1a8e@gmail.com>
+ <779f2be3-3e74-e650-5240-efaf1003d77c@wiesinger.com>
+ <4f7c5173-019d-ba0e-70b3-addf64a6a9fa@gmail.com>
+ <aba2788a-ba54-dbc8-dd60-e862ba31d66d@wiesinger.com>
+ <53c9272a-0e1a-e8fb-a3e4-b4e23e77be10@gmail.com>
+From: Gerhard Wiesinger <lists@wiesinger.com>
+Message-ID: <ba1a6179-48ff-ca2b-bb3c-f99f8376df50@wiesinger.com>
+Date: Thu, 24 May 2018 07:29:42 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <53c9272a-0e1a-e8fb-a3e4-b4e23e77be10@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The correct fieldbit value for the NAND PLL reload trigger is 27.
+After some analysis with Florian (thnx) we found out that the current 
+implementation is broken:
 
-Fixes: commit e120c17a70e5 ("clk: mvebu: support for 98DX3236 SoC")
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
----
-I can't remember where the value of 26 came from. Looking at the lsp source I
-have from Marvell it's always been 27, so I suspect I just messed up when
-porting. The only documentation I have is that register field is bits 21:27
-without adding any detail as to which clock trees correspond to the individual
-bits so I'm not sure which clock tree was being triggered.
+https://patchwork.ozlabs.org/patch/836538/
+https://github.com/torvalds/linux/commit/c499696e7901bda18385ac723b7bd27c3a4af624#diff-a2b6f8d89e18de600e873ac3ac43fa1d
 
- drivers/clk/mvebu/clk-corediv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Florians comment:
 
-diff --git a/drivers/clk/mvebu/clk-corediv.c b/drivers/clk/mvebu/clk-corediv.c
-index 8491979f4096..68f05c53d40e 100644
---- a/drivers/clk/mvebu/clk-corediv.c
-+++ b/drivers/clk/mvebu/clk-corediv.c
-@@ -72,7 +72,7 @@ static const struct clk_corediv_desc mvebu_corediv_desc[] = {
- };
- 
- static const struct clk_corediv_desc mv98dx3236_corediv_desc[] = {
--	{ .mask = 0x0f, .offset = 6, .fieldbit = 26 }, /* NAND clock */
-+	{ .mask = 0x0f, .offset = 6, .fieldbit = 27 }, /* NAND clock */
- };
- 
- #define to_corediv_clk(p) container_of(p, struct clk_corediv, hw)
--- 
-2.17.0
+c499696e7901bda18385ac723b7bd27c3a4af624 ("net: dsa: b53: Stop using
+dev->cpu_port incorrectly") since it would result in no longer setting
+the CPU port as tagged for a specific VLAN. Easiest way for you right
+now is to just revert it, but this needs some more thoughts for a proper
+upstream change. I will think about it some more.
+
+Ciao,
+Gerhard
