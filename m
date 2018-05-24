@@ -1,116 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965070AbeEXHJj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 03:09:39 -0400
-Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:29465 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755084AbeEXHHb (ORCPT
+        id S964955AbeEXHMJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 03:12:09 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:58860 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935346AbeEXHMG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 03:07:31 -0400
-X-ME-Helo: belgarion.home
-X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
-X-ME-Date: Thu, 24 May 2018 09:07:29 +0200
-X-ME-IP: 90.55.202.35
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Ezequiel Garcia <ezequiel.garcia@free-electrons.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-ide@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: [PATCH v2 03/13] mmc: pxamci: remove the dmaengine compat need
-Date: Thu, 24 May 2018 09:06:53 +0200
-Message-Id: <20180524070703.11901-4-robert.jarzmik@free.fr>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180524070703.11901-1-robert.jarzmik@free.fr>
-References: <20180524070703.11901-1-robert.jarzmik@free.fr>
+        Thu, 24 May 2018 03:12:06 -0400
+Date: Thu, 24 May 2018 09:11:52 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Cong Wang <xiyou.wangcong@gmail.com>
+Cc: Ivan Babrou <ibobrik@gmail.com>, LKML <linux-kernel@vger.kernel.org>,
+        Paul Turner <pjt@google.com>, Mike Galbraith <efault@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH 3/3] sched/fair: add tracepoints for cfs throttle
+Message-ID: <20180524071152.GB12198@hirez.programming.kicks-ass.net>
+References: <20180522062017.5193-1-xiyou.wangcong@gmail.com>
+ <20180522062017.5193-4-xiyou.wangcong@gmail.com>
+ <CANWdNRCQCteO7L+Of7T2vWBW7GbMHyvyF5aSQMVYNGg_afxNhg@mail.gmail.com>
+ <20180523090944.GV12217@hirez.programming.kicks-ass.net>
+ <CAM_iQpUEvWrMPWQussA31kEAiutLR4WUVOtsohHm5hg4wt59Hw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAM_iQpUEvWrMPWQussA31kEAiutLR4WUVOtsohHm5hg4wt59Hw@mail.gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As the pxa architecture switched towards the dmaengine slave map, the
-old compatibility mechanism to acquire the dma requestor line number and
-priority are not needed anymore.
+On Wed, May 23, 2018 at 09:40:47PM -0700, Cong Wang wrote:
+> On Wed, May 23, 2018 at 2:09 AM, Peter Zijlstra <peterz@infradead.org> wrote:
 
-This patch simplifies the dma resource acquisition, using the more
-generic function dma_request_slave_channel().
+> > Yeah, don't worry. I hate tracepoints, I regret the existing ones, no
+> > new ones will happen.
+> 
+> No matter you hate them or not, they are useful:
 
-Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
-Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
----
- drivers/mmc/host/pxamci.c | 29 +++--------------------------
- 1 file changed, 3 insertions(+), 26 deletions(-)
+No argument there.
 
-diff --git a/drivers/mmc/host/pxamci.c b/drivers/mmc/host/pxamci.c
-index c763b404510f..6c94474e36f4 100644
---- a/drivers/mmc/host/pxamci.c
-+++ b/drivers/mmc/host/pxamci.c
-@@ -24,7 +24,6 @@
- #include <linux/interrupt.h>
- #include <linux/dmaengine.h>
- #include <linux/dma-mapping.h>
--#include <linux/dma/pxa-dma.h>
- #include <linux/clk.h>
- #include <linux/err.h>
- #include <linux/mmc/host.h>
-@@ -637,10 +636,8 @@ static int pxamci_probe(struct platform_device *pdev)
- {
- 	struct mmc_host *mmc;
- 	struct pxamci_host *host = NULL;
--	struct resource *r, *dmarx, *dmatx;
--	struct pxad_param param_rx, param_tx;
-+	struct resource *r;
- 	int ret, irq, gpio_cd = -1, gpio_ro = -1, gpio_power = -1;
--	dma_cap_mask_t mask;
- 
- 	ret = pxamci_of_init(pdev);
- 	if (ret)
-@@ -739,34 +736,14 @@ static int pxamci_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, mmc);
- 
--	if (!pdev->dev.of_node) {
--		dmarx = platform_get_resource(pdev, IORESOURCE_DMA, 0);
--		dmatx = platform_get_resource(pdev, IORESOURCE_DMA, 1);
--		if (!dmarx || !dmatx) {
--			ret = -ENXIO;
--			goto out;
--		}
--		param_rx.prio = PXAD_PRIO_LOWEST;
--		param_rx.drcmr = dmarx->start;
--		param_tx.prio = PXAD_PRIO_LOWEST;
--		param_tx.drcmr = dmatx->start;
--	}
--
--	dma_cap_zero(mask);
--	dma_cap_set(DMA_SLAVE, mask);
--
--	host->dma_chan_rx =
--		dma_request_slave_channel_compat(mask, pxad_filter_fn,
--						 &param_rx, &pdev->dev, "rx");
-+	host->dma_chan_rx = dma_request_slave_channel(&pdev->dev, "rx");
- 	if (host->dma_chan_rx == NULL) {
- 		dev_err(&pdev->dev, "unable to request rx dma channel\n");
- 		ret = -ENODEV;
- 		goto out;
- 	}
- 
--	host->dma_chan_tx =
--		dma_request_slave_channel_compat(mask, pxad_filter_fn,
--						 &param_tx,  &pdev->dev, "tx");
-+	host->dma_chan_tx = dma_request_slave_channel(&pdev->dev, "tx");
- 	if (host->dma_chan_tx == NULL) {
- 		dev_err(&pdev->dev, "unable to request tx dma channel\n");
- 		ret = -ENODEV;
--- 
-2.11.0
+> Unlike in sched, tracepoints are welcome in networking:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/include/trace/events/tcp.h
+
+They are also absolutely disallowed in the vfs..
+
+> I don't want to change your mind, just want to show the facts.
+
+The problem with tracepoints is that they can become ABI and you cannot
+change them without breaking tools. This is a crap situation and I'm fed
+up with it.
