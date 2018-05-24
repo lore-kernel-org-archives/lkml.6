@@ -1,55 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965364AbeEXHwc (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 03:52:32 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:52884 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965223AbeEXHuh (ORCPT
+        id S965374AbeEXHwt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 03:52:49 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:2687 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S935815AbeEXHuf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 03:50:37 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 35D0560C65
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
-From: Ilia Lin <ilialin@codeaurora.org>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-        mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org,
-        will.deacon@arm.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        vireshk@kernel.org, ilialin@codeaurora.org
-Subject: [PATCH v12 3/8] clk: Use devm_ in the register fixed factor clock
-Date: Thu, 24 May 2018 10:50:13 +0300
-Message-Id: <1527148218-16540-4-git-send-email-ilialin@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1527148218-16540-1-git-send-email-ilialin@codeaurora.org>
-References: <1527148218-16540-1-git-send-email-ilialin@codeaurora.org>
+        Thu, 24 May 2018 03:50:35 -0400
+X-UUID: 2eef606bf14a40d5b88d3bb3ee29872b-20180524
+Message-ID: <1527148230.11810.3.camel@mtksdaap41>
+Subject: Re: [PATCH v2 2/4] drm/mediatek: Add support for mediatek SOC MT2712
+From: Stu Hsieh <stu.hsieh@mediatek.com>
+To: CK Hu <ck.hu@mediatek.com>
+CC: Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>
+Date: Thu, 24 May 2018 15:50:30 +0800
+In-Reply-To: <1527125197.6406.10.camel@mtksdaap41>
+References: <20180523022517.12103-1-stu.hsieh@mediatek.com>
+         <20180523022517.12103-3-stu.hsieh@mediatek.com>
+         <1527053036.10410.18.camel@mtksdaap41>
+         <1527067696.19074.28.camel@mtksdaap41>
+         <1527125197.6406.10.camel@mtksdaap41>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use devm_clk_hw_register instead of clk_hw_register
-to simplify the usage of this API. This way drivers that call
-the clk_hw_register_fixed_factor won't need to maintain
-a data structure for further cleanup.
+Hi CK,
 
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
----
- drivers/clk/clk-fixed-factor.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, 2018-05-24 at 09:26 +0800, CK Hu wrote:
+> Hi, Stu:
+> 
+> On Wed, 2018-05-23 at 17:28 +0800, Stu Hsieh wrote:
+> > On Wed, 2018-05-23 at 13:23 +0800, CK Hu wrote:
+> > > Hi, Stu:
+> > > 
+> > > I've some inline comment.
+> > > 
+> > > On Wed, 2018-05-23 at 10:25 +0800, Stu Hsieh wrote:
+> > > > This patch add support for the Mediatek MT2712 DISP subsystem.
+> > > > There are two OVL engine and three disp output in MT2712.
+> > > > 
+> > > > Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
+> > > > ---
+> > > >  drivers/gpu/drm/mediatek/mtk_drm_ddp.c      | 50 +++++++++++++++++++++++++++--
+> > > >  drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c |  8 +++--
+> > > >  drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h |  7 ++--
+> > > >  drivers/gpu/drm/mediatek/mtk_drm_drv.c      | 47 +++++++++++++++++++++++++--
+> > > >  drivers/gpu/drm/mediatek/mtk_drm_drv.h      |  7 ++--
+> > > >  5 files changed, 108 insertions(+), 11 deletions(-)
+> > > > 
+> > > > +#define MT2712_MUTEX_MOD_DISP_AAL0		BIT(20)
+> > > > +#define MT2712_MUTEX_MOD_DISP_UFOE		BIT(22)
+> > > > +#define MT2712_MUTEX_MOD_DISP_PWM0		BIT(23)
+> > > > +#define MT2712_MUTEX_MOD_DISP_PWM1		BIT(24)
+> > > > +#define MT2712_MUTEX_MOD_DISP_PWM2		BIT(10)
+> > > > +#define MT2712_MUTEX_MOD_DISP_OD0		BIT(25)
+> > > > +/* modules more than 32, add BIT(31) when using DISP_REG_MUTEX_MOD2 bit */
+> > > > +#define MT2712_MUTEX_MOD2_DISP_AAL1		(BIT(1) | BIT(31))
+> > > 
+> > > I think a better definition is
+> > > 
+> > > #define MT2712_MUTEX_MOD2_DISP_AAL1		BIT(33)
+> > > 
+> > > when you need to access this register,
+> > > 
+> > > if (ddp->mutex_mod[id] < BIT(32)) {
+> > > 	offset = DISP_REG_MUTEX_MOD(mutex->id);
+> > > 	reg = readl_relaxed(ddp->regs + offset);
+> > > 	reg |= ddp->mutex_mod[id];
+> > > 	writel_relaxed(reg, ddp->regs + offset);
+> > > } else {
+> > > 	offset = DISP_REG_MUTEX_MOD2(mutex->id);
+> > > 	reg = readl_relaxed(ddp->regs + offset);
+> > > 	reg |= (ddp->mutex_mod[id] >> 32);
+> > > 	writel_relaxed(reg, ddp->regs + offset);
+> > > }
+> > > 
+> > > because DISP_REG_MUTEX_MOD BIT(31) could be used for some module.
+> > 
+> > This modification is workable, but result some build warning like
+> > following:
+> > 1. #define BIT(nr)   (1UL << (nr)) in include/linux/bitops.h
+> > 2. [DDP_COMPONENT_AAL1] = MT2712_MUTEX_MOD2_DISP_AAL1,
+> >    => we need to modify the definition about "static const unsigned int
+> > mt2712_mutex_mod"
+> > 
+> 
+> Currently, mutex_mod is a bitwise definition. I think it could be
+> changed to index definition such as
+> 
+> 
+> #define MT2712_MUTEX_MOD_DISP_PWM2		10
+> #define MT2712_MUTEX_MOD_DISP_OD0		25
+> #define MT2712_MUTEX_MOD2_DISP_AAL1		33
+> 
+> when you need to access this register,
+> 
+> if (ddp->mutex_mod[id] < 32) {
+> 	offset = DISP_REG_MUTEX_MOD(mutex->id);
+> 	reg = readl_relaxed(ddp->regs + offset);
+> 	reg |= 1 << ddp->mutex_mod[id];
+> 	writel_relaxed(reg, ddp->regs + offset);
+> } else {
+> 	offset = DISP_REG_MUTEX_MOD2(mutex->id);
+> 	reg = readl_relaxed(ddp->regs + offset);
+> 	reg |= 1 << (ddp->mutex_mod[id] - 32);
+> 	writel_relaxed(reg, ddp->regs + offset);
+> }
+> 
+> Regards,
+> CK
+ok, these modification has no build warning.
+I would also change the definition about 2701 and 8173 from bitwise to
+index.
 
-diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
-index a5d402d..8e39bda 100644
---- a/drivers/clk/clk-fixed-factor.c
-+++ b/drivers/clk/clk-fixed-factor.c
-@@ -94,7 +94,7 @@ struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
- 	init.num_parents = 1;
- 
- 	hw = &fix->hw;
--	ret = clk_hw_register(dev, hw);
-+	ret = devm_clk_hw_register(dev, hw);
- 	if (ret) {
- 		kfree(fix);
- 		hw = ERR_PTR(ret);
--- 
-1.9.1
+> 
+> > > > +#define MT2712_MUTEX_MOD2_DISP_OD1		(BIT(2) | BIT(31))
+> > > > +
+> > > >  #define MT2701_MUTEX_MOD_DISP_OVL		BIT(3)
+> > > >  #define MT2701_MUTEX_MOD_DISP_WDMA		BIT(6)
+> > > >  #define MT2701_MUTEX_MOD_DISP_COLOR		BIT(7)
+> > > > @@ -74,6 +96,7 @@
+> > > >  
+> > > >  
+> > > 
+> > > 
+> > 
+> > 
+> 
+> 
