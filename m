@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1874556-1527162885-2-14645102518361823815
+X-Cyrus-Session-Id: sloti22d1t05-1874556-1527162833-2-14773609156136737496
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527162884; b=MK7AY2Ac7xdJ0CkjwVp0DJeYJeYXtMYc+o05rqXk28EAfU88j5
-    vyywD+INbEAIYVuu8mBwEDmmJBj/DkdAQUV88u+T48Q0GzDjzgZRCuB2KfM9N5CJ
-    5bV2WW5z2BTHwK10hYDoLBILS8RaXMcOuj+2tEDFcHYImvg2jupeL+INmoaviP4q
-    o1g0lck2VkS31ONsNi3ZTXmFSlG/8BPT9rxX4jAoDHXBetg5f5oDzFtLj0z134vp
-    g/JNdmohKjxtOZ/sKC3urF6a7B7J1LcTxOHGqPwI+TsT2/5NZBuW1v/iUS6xfM2l
-    1SR85Gk63j0xVUQOp+HlrwZoy+tDSOgDNdhw==
+    1527162833; b=ju4IivdPdPP5V5FLW+MxX5XFYve4/blgZDU2dHS1SzTJ/Zve86
+    5ZgflkpnBnDN3ei3d2Nhhe2K1zb5Y0XK3iThCG0hYL6WTLzWKPS+XkBYObQ2YQuE
+    pMhCwuj380gNQZRY6jzcutlCegACKPqR8fA+9GynYb7NuhIM2Wt7QSAPO7zO53Ua
+    UPqkM98zrDNaH78BBcxZ7fJmIfOoDmxkVg2uYb8628k3epuOttACs5PUPdMWdbdb
+    RqjspddJuM5b3b+dqLPR+o3s/f2MwLwvd67B+t9O4dnUGsIVUQjfi7ur6dG8zpdu
+    GUM+REphMEz9U0MN5czSK2QFWKkED8pXh8WA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527162884; bh=YKAIRIgSvCHo6vQsBrZbIPMDAgvmzH
-    RfEtc48nADraY=; b=JKmkIM6osrYFt2XvUYQ+U4v1qBF9boLUca3pIst8fAutNh
-    8iQnIeBc+mXB3jtUKr4LH9UQsE9j0+3GEMHsJmXcDhKsqoTMPNHjEOXZLiDgtXx6
-    SHiOOnUgVA3d8C+4RzwfaWxDVy8JjYKqykJB6y2LmgVQwdbmyYNhtQtjyrHy6ACP
-    6VkwuvVIlJl+2dwdOoXDKD9ywqh0jDMzDg69BpIOPzrVtsMH+RUmR/h9+BHvFgee
-    3ImhOn74RdhAcua+gMbdh0Q+bg47E4by9RIseWHOTmeRmW+ELzTh9Zk9JyrM1kBS
-    3aIk58dBEdcByiwhoJGwRx2wVXJ5xfYRSgBwNppw==
+    :list-id; s=fm2; t=1527162833; bh=LJvEztUub5WfoG15eQ3fdL+9Ny/kIx
+    ItWy3FncFsPJU=; b=etuYv/5Wfx2fEJmK16uCPlhT49xcdwexn89oAJbCvffZfv
+    SdaoWaG2I5rv6uuyxVMetJpbaJmuMeAB2JB0oh3Fe7vwueSVXTsPSgpd8dbpX3kj
+    0KRo7blLoSBlorY01iWE6X4ME1UjMVpl5da9jJqIv+a/ic39SZWNNDXa0L/Avmr1
+    PUUpPZEQU0DEftQWvNAIJrXjCwBK63O2RqsoZI2EQdsiMSMs6AnDKHATjA5IchgK
+    RTNZHnDTJc/PQbWXdIXDQNlMa3DaL2xkynmA+2mXRTuIO2+FjbkIpE/RPDFZwqgv
+    xEDo0DAyQqDRgetjxsylmt3rSyZ6U0GqD7ycdD4g==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=1hlUX+AH x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=ZCoPQRXw x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -48,7 +48,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
 Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=1hlUX+AH x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=ZCoPQRXw x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,34 +64,39 @@ Authentication-Results: mx2.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMdfxfHlZMNAgu9fC47VAc7RWgRajtpUGLRoJGqk9p28WYEvbeVGVxnA5KB8Ss2pZdGqktdrFMaRetX8aRYkEADhhgoLw6oAowVSuqFqswA90bluOORs
-    GM+ZX3bkozRorgQsjCGbE8Ikju4Gurz7zeun8bw84OUbayaMgkxfLOZG5RQ+OWaY5OD931EtnDoWfnMzzPFgOV+es4505gDz7kCkWXuTRYnlXpqcE3VKvOvL
+X-CM-Envelope: MS4wfJSI/Exgm8n4DuWWtS3NHva34oLZQvgmVbHGcN7b0oXN85GkqhYiKamfnbYCitdJqfoZ7z5Mnit+8zz2djchrW5i5lHKzuTkvrnAoV+qFVGcqZUawsQG
+    LajPSlb6VV1GJk72l8TTHgsq+BJ9mxKddfIipr+M1Aekdl8jU+W6muhDFhh1LgqSZbHa2Tas/eQX564qmL61VSJz5BpTqJDiWR14C6xoBy4wN/Cfjt2wPxNn
 X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=ufHFDILaAAAA:8 a=20KFwNOVAAAA:8 a=iox4zFpeAAAA:8 a=Z4Rwk6OoAAAA:8
-    a=ag1SF4gXAAAA:8 a=0b4zmqLCo3EYSYeUVQgA:9 a=uRHH206AopR-r5Jb:21
-    a=D-ciIsrcjdA_RX7d:21 a=QEXdDO2ut3YA:10 a=ZmIg1sZ3JBWsdXgziEIF:22
-    a=WzC6qhA0u3u7Ye7llzcV:22 a=HkZW87K1Qel5hWWM3VKY:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=MvuuwTCpAAAA:8 a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=e-Ovw6bNAAAA:8
+    a=Z4Rwk6OoAAAA:8 a=ag1SF4gXAAAA:8 a=WYz05adAXObAxls0UmMA:9 a=QEXdDO2ut3YA:10
+    a=fwJGlFohZkAA:10 a=dVHiktpip_riXrfdqayU:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=nOxMtLUM5ck9Hn2diPJ4:22 a=HkZW87K1Qel5hWWM3VKY:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966118AbeEXJqR (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:46:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57392 "EHLO mail.kernel.org"
+        id S966904AbeEXLxf (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 07:53:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57540 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966482AbeEXJqN (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:46:13 -0400
+        id S966903AbeEXJqV (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:46:21 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
-        Rik van Riel <riel@redhat.com>, Mel Gorman <mgorman@suse.de>,
-        Michal Hocko <mhocko@suse.com>,
+        stable@vger.kernel.org, Waiman Long <Waiman.Long@hpe.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Stas Sergeev <stsp@list.ru>,
+        Scott J Norton <scott.norton@hpe.com>,
+        Douglas Hatch <doug.hatch@hpe.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.4 48/92] proc: meminfo: estimate available memory more conservatively
-Date: Thu, 24 May 2018 11:38:25 +0200
-Message-Id: <20180524093204.135765542@linuxfoundation.org>
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mel Gorman <mgorman@suse.de>
+Subject: [PATCH 4.4 51/92] signals: avoid unnecessary taking of sighand->siglock
+Date: Thu, 24 May 2018 11:38:28 +0200
+Message-Id: <20180524093204.323977661@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093159.286472249@linuxfoundation.org>
 References: <20180524093159.286472249@linuxfoundation.org>
@@ -109,47 +114,100 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Johannes Weiner <hannes@cmpxchg.org>
+From: Waiman Long <Waiman.Long@hpe.com>
 
-commit 84ad5802a33a4964a49b8f7d24d80a214a096b19 upstream.
+commit c7be96af89d4b53211862d8599b2430e8900ed92 upstream.
 
-The MemAvailable item in /proc/meminfo is to give users a hint of how
-much memory is allocatable without causing swapping, so it excludes the
-zones' low watermarks as unavailable to userspace.
+When running certain database workload on a high-end system with many
+CPUs, it was found that spinlock contention in the sigprocmask syscalls
+became a significant portion of the overall CPU cycles as shown below.
 
-However, for a userspace allocation, kswapd will actually reclaim until
-the free pages hit a combination of the high watermark and the page
-allocator's lowmem protection that keeps a certain amount of DMA and
-DMA32 memory from userspace as well.
+  9.30%  9.30%  905387  dataserver  /proc/kcore 0x7fff8163f4d2
+  [k] _raw_spin_lock_irq
+            |
+            ---_raw_spin_lock_irq
+               |
+               |--99.34%-- __set_current_blocked
+               |          sigprocmask
+               |          sys_rt_sigprocmask
+               |          system_call_fastpath
+               |          |
+               |          |--50.63%-- __swapcontext
+               |          |          |
+               |          |          |--99.91%-- upsleepgeneric
+               |          |
+               |          |--49.36%-- __setcontext
+               |          |          ktskRun
 
-Subtract the full amount we know to be unavailable to userspace from the
-number of free pages when calculating MemAvailable.
+Looking further into the swapcontext function in glibc, it was found that
+the function always call sigprocmask() without checking if there are
+changes in the signal mask.
 
-Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Rik van Riel <riel@redhat.com>
-Cc: Mel Gorman <mgorman@suse.de>
-Acked-by: Michal Hocko <mhocko@suse.com>
+A check was added to the __set_current_blocked() function to avoid taking
+the sighand->siglock spinlock if there is no change in the signal mask.
+This will prevent unneeded spinlock contention when many threads are
+trying to call sigprocmask().
+
+With this patch applied, the spinlock contention in sigprocmask() was
+gone.
+
+Link: http://lkml.kernel.org/r/1474979209-11867-1-git-send-email-Waiman.Long@hpe.com
+Signed-off-by: Waiman Long <Waiman.Long@hpe.com>
+Acked-by: Oleg Nesterov <oleg@redhat.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Stas Sergeev <stsp@list.ru>
+Cc: Scott J Norton <scott.norton@hpe.com>
+Cc: Douglas Hatch <doug.hatch@hpe.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Mel Gorman <mgorman@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/proc/meminfo.c |    5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ include/linux/signal.h |   17 +++++++++++++++++
+ kernel/signal.c        |    7 +++++++
+ 2 files changed, 24 insertions(+)
 
---- a/fs/proc/meminfo.c
-+++ b/fs/proc/meminfo.c
-@@ -57,11 +57,8 @@ static int meminfo_proc_show(struct seq_
- 	/*
- 	 * Estimate the amount of memory available for userspace allocations,
- 	 * without causing swapping.
--	 *
--	 * Free memory cannot be taken below the low watermark, before the
--	 * system starts swapping.
- 	 */
--	available = i.freeram - wmark_low;
-+	available = i.freeram - totalreserve_pages;
+--- a/include/linux/signal.h
++++ b/include/linux/signal.h
+@@ -97,6 +97,23 @@ static inline int sigisemptyset(sigset_t
+ 	}
+ }
  
- 	/*
- 	 * Not all the page cache can be freed, otherwise the system will
++static inline int sigequalsets(const sigset_t *set1, const sigset_t *set2)
++{
++	switch (_NSIG_WORDS) {
++	case 4:
++		return	(set1->sig[3] == set2->sig[3]) &&
++			(set1->sig[2] == set2->sig[2]) &&
++			(set1->sig[1] == set2->sig[1]) &&
++			(set1->sig[0] == set2->sig[0]);
++	case 2:
++		return	(set1->sig[1] == set2->sig[1]) &&
++			(set1->sig[0] == set2->sig[0]);
++	case 1:
++		return	set1->sig[0] == set2->sig[0];
++	}
++	return 0;
++}
++
+ #define sigmask(sig)	(1UL << ((sig) - 1))
+ 
+ #ifndef __HAVE_ARCH_SIG_SETOPS
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -2495,6 +2495,13 @@ void __set_current_blocked(const sigset_
+ {
+ 	struct task_struct *tsk = current;
+ 
++	/*
++	 * In case the signal mask hasn't changed, there is nothing we need
++	 * to do. The current->blocked shouldn't be modified by other task.
++	 */
++	if (sigequalsets(&tsk->blocked, newset))
++		return;
++
+ 	spin_lock_irq(&tsk->sighand->siglock);
+ 	__set_task_blocked(tsk, newset);
+ 	spin_unlock_irq(&tsk->sighand->siglock);
