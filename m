@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1874556-1527163635-2-11858368687296895375
+X-Cyrus-Session-Id: sloti22d1t05-1874556-1527163622-2-10550793824449596895
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527163635; b=aszLb1lflJjrXEXSJyHNBV9UUEuhiUnFamu7rxTusCD4PxPkBC
-    D7bO407bW/zzNKnMD6JP6Zqzcg1VyLHq3E47hc4ufMZkuu8RT+Bkui0EzGcmocif
-    TSeRFyiVJEq7GWCPV+HVX98DgitPWtZrZTBOOG+rWYJ5w8M+4rOR3xwsMHRq45wg
-    0GCYaG1glvHgcjcgqt2eCijpP14IjbPs+188PnN1oAFQPPe4OYUtWCEoox3MwNbh
-    16TIbaehrArlp+/nfDgVDPN3KDGyv6o5qVFI+Fk5OGavHsFX4czVafi1L8vdbVbp
-    U2Y3io2ZKLm8YSRDRo5qPse6c1NGBzvMf/IA==
+    1527163621; b=I8HOV12yterKevIcXK5D5DFgu7UVwLqZE5rKcS4ZzGR9Xmkz3+
+    NNm+nMGyJy6rzNtfhpOF+kR34T3fYjzGzneYyO1HAzCMWgy+TJQZ2IoU8lMBvRrW
+    kWldHU7CntzKG0mTVVeZuEHkrFmcZkVw224J1/aJ/5WGDhCmOoRZySuP3f1myx0W
+    yWfq2O1nN1XpbaHmVuuG95/3ttMY81DWeXHB/40u+nCP9JKSvhMYrsqf216QLwHA
+    8wPHq2KgNzDu34acaLKJIq10w+TIdlmAhe0r9EyuyJrIayVjDkHsR1JEvIM6VrKy
+    wlyfr9+kpaK3sNWqkatIbCRV8E+yRM8yf4xQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527163635; bh=bEGuFokpmJkJPl6a1bWCWwIkDA5CmU
-    3KknEPf5Qnrno=; b=N2bbAgo5P0WBZs6Vp6R8/Z9Uxl38a47NcL3O+WjnoS+s1s
-    T0KhRfeFZRbKmJY1fcEKL4ocVUsad51gd/EH2evqlpTidXMNcANgNyckxVa7lDUn
-    aEi1A6MPTdGRNM3wTTYmwLCd5rHSB4mb8J8A/CeA6K9cClwVBJkGYVJyhOZEN7DY
-    wO5dDr+YECE1ewYtRDBK/K1VqDdRmsmHGZ3QFkDpiuQ5vYYybBbSq/de112xNUju
-    ZmyjJGtzO16jg2WZ1pqHJl1ZKGrLNRQQMJehx7x4Q9uZ9d0X6j5OUzvWsLlsiklm
-    ymxkw5pPTp3Vm0A6T6kIrx4nVIgLI7bY/IE0FWSA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527163621; bh=SoTpalWWio3yWzx9QuRiqJ20rTXX7S
+    hQh1S7NX7qfmg=; b=AHK9DQJSmC+WhOy2xM49xtmbhnBB3IPfDRkJwh+pzNhFJ+
+    ISOa3xA/8AKaeGldUneTcQRBxZodE8N+SjngXRmqpGCe2Qhpb9IO84emJ98pY8ha
+    Dvgh/aqkuRn+bRbRClw1Jh8/D+b6YVQc1shgC8eEz3qw5Um/Dbe9R2iMtIkVkKCe
+    l3bKuOebOxgVhE4DN4aVnzpmskR98R4b+CiVnTED3W39kKmJERtWFa77p2n0sDYc
+    mJVk7Utolq4T2b2k8rWlnXoitWWBPVDW9sr41NISxlPZx2bz/8KWVvXQVeQFYds4
+    sMCrdSSBJss8gEWQ5Pq7bnEkMCrlJi/nYbgN2CdQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=TmjPQCh+ x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=ROy5MLc0 x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=TmjPQCh+ x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=ROy5MLc0 x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,33 +64,37 @@ Authentication-Results: mx4.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfObZBfTODTcFC1ZPjbJFAE4z++VEHSuY7KgVHzuhvobsaCaLl3fF+4YlrvVrF+w7rYyFIMc1YRAeCiyJq0UQxq2nPzYOzpsB0XVGQbRnyhMSeDHermQH
-    hh3KZXalGX+/IN+v1a3NQAdLy+8Z+5prcYn+7wLv1x1SZDoF4zzwJqAO8W3dIkm4VlTWXU+YnG5QF8RcYA8gzehjiSZ/Zmjq8lDZh5vqwPNHQ5ZxIWZjImoX
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfN771fWK+xcBCGdZUWgLRZEJPNtuR0pnqN1U74nxYpGaXPC3DUXk9UQwHaIDJdsY77FaYBfUXrwmyBHfnTa2y378Nn2gJ2cF2KE/vKbk0OKBjgp+l66T
+    rTg/U+PDyIz+t6vQt1lW+dqFOKJ7CyDsyJgWo8vt7BMO4zdt8f1/hfIby1A22fCcnNoe0orPkMw2eREwMgMZNsbVPCjT0b708737XuPzeoSp7ya1c6DEJKMX
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=20KFwNOVAAAA:8 a=JfrnYn6hAAAA:8 a=Z4Rwk6OoAAAA:8 a=ag1SF4gXAAAA:8
-    a=MDz0VIy7dXfzDBeg1A4A:9 a=QEXdDO2ut3YA:10 a=1CNFftbPRP8L7MoqJWF3:22
-    a=HkZW87K1Qel5hWWM3VKY:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=i0EeH86SAAAA:8 a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=1XWaLZrsAAAA:8
+    a=VnNF1IyMAAAA:8 a=QyXUC8HyAAAA:8 a=Z4Rwk6OoAAAA:8 a=ag1SF4gXAAAA:8
+    a=Vzieo5wEOH1YgFP_dogA:9 a=QEXdDO2ut3YA:10 a=8n0cvFGaGY4A:10
+    a=AjGcO6oz07-iQ99wixmX:22 a=HkZW87K1Qel5hWWM3VKY:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969557AbeEXMHC (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 08:07:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55294 "EHLO mail.kernel.org"
+        id S966347AbeEXMGn (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 08:06:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55344 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966170AbeEXJn4 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:43:56 -0400
+        id S966562AbeEXJn7 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:43:59 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
+        stable@vger.kernel.org, zhongjiang <zhongjiang@huawei.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Xishi Qiu <qiuxishi@huawei.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.4 31/92] futex: futex_wake_op, fix sign_extend32 sign bits
-Date: Thu, 24 May 2018 11:38:08 +0200
-Message-Id: <20180524093201.896882019@linuxfoundation.org>
+Subject: [PATCH 4.4 32/92] kernel/exit.c: avoid undefined behaviour when calling wait4()
+Date: Thu, 24 May 2018 11:38:09 +0200
+Message-Id: <20180524093202.008627270@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093159.286472249@linuxfoundation.org>
 References: <20180524093159.286472249@linuxfoundation.org>
@@ -108,39 +112,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jiri Slaby <jslaby@suse.cz>
+From: zhongjiang <zhongjiang@huawei.com>
 
-commit d70ef22892ed6c066e51e118b225923c9b74af34 upstream.
+commit dd83c161fbcc5d8be637ab159c0de015cbff5ba4 upstream.
 
-sign_extend32 counts the sign bit parameter from 0, not from 1.  So we
-have to use "11" for 12th bit, not "12".
+wait4(-2147483648, 0x20, 0, 0xdd0000) triggers:
+UBSAN: Undefined behaviour in kernel/exit.c:1651:9
 
-This mistake means we have not allowed negative op and cmp args since
-commit 30d6e0a4190d ("futex: Remove duplicated code and fix undefined
-behaviour") till now.
+The related calltrace is as follows:
 
-Fixes: 30d6e0a4190d ("futex: Remove duplicated code and fix undefined behaviour")
-Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Darren Hart <dvhart@infradead.org>
+  negation of -2147483648 cannot be represented in type 'int':
+  CPU: 9 PID: 16482 Comm: zj Tainted: G    B          ---- -------   3.10.0-327.53.58.71.x86_64+ #66
+  Hardware name: Huawei Technologies Co., Ltd. Tecal RH2285          /BC11BTSA              , BIOS CTSAV036 04/27/2011
+  Call Trace:
+    dump_stack+0x19/0x1b
+    ubsan_epilogue+0xd/0x50
+    __ubsan_handle_negate_overflow+0x109/0x14e
+    SyS_wait4+0x1cb/0x1e0
+    system_call_fastpath+0x16/0x1b
+
+Exclude the overflow to avoid the UBSAN warning.
+
+Link: http://lkml.kernel.org/r/1497264618-20212-1-git-send-email-zhongjiang@huawei.com
+Signed-off-by: zhongjiang <zhongjiang@huawei.com>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
+Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Xishi Qiu <qiuxishi@huawei.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/futex.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/exit.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/kernel/futex.c
-+++ b/kernel/futex.c
-@@ -1457,8 +1457,8 @@ static int futex_atomic_op_inuser(unsign
- {
- 	unsigned int op =	  (encoded_op & 0x70000000) >> 28;
- 	unsigned int cmp =	  (encoded_op & 0x0f000000) >> 24;
--	int oparg = sign_extend32((encoded_op & 0x00fff000) >> 12, 12);
--	int cmparg = sign_extend32(encoded_op & 0x00000fff, 12);
-+	int oparg = sign_extend32((encoded_op & 0x00fff000) >> 12, 11);
-+	int cmparg = sign_extend32(encoded_op & 0x00000fff, 11);
- 	int oldval, ret;
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -1608,6 +1608,10 @@ SYSCALL_DEFINE4(wait4, pid_t, upid, int
+ 			__WNOTHREAD|__WCLONE|__WALL))
+ 		return -EINVAL;
  
- 	if (encoded_op & (FUTEX_OP_OPARG_SHIFT << 28)) {
++	/* -INT_MIN is not defined */
++	if (upid == INT_MIN)
++		return -ESRCH;
++
+ 	if (upid == -1)
+ 		type = PIDTYPE_MAX;
+ 	else if (upid < 0) {
