@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1862185-1527161771-2-17851013296524152702
+X-Cyrus-Session-Id: sloti22d1t05-1862185-1527161756-2-1977602904106293843
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527161770; b=klPAQb1N7Z9+K5ta6G2/q+C5yY6VcCIAoHnxS8hERV7mDNWAUQ
-    A7Bj9wn3QHLTSFbLJRVw/PkHzcWyjm7teXiZMW0y4++UXVlmK7wzHlJMnhwa2Obu
-    A6ksXjkt73cVLc5pUdyQFt4pNs5zMIs+sklpj+0CvN+FfW0ctRu7ZChfwroXypmc
-    XUKrwkWzQL/Dci9gWntn5TkV0pL0XUrGYMNx9e9HnS5Nyn+agSs7ZyIUTaYvyIUu
-    3uFfnS6aG19ofyYrp3nQ5kqcid0dwBFMVDnhuQhztEnGYbBId5GCHEdKnWSOQAXu
-    JRAAfqBU27J6ur9SfqzDcswdByF4FP5EEkNg==
+    1527161755; b=SKQFqoau1BhsDTv6R0Un97JnIh7J60FnoyixcMn74kAhuP+LIZ
+    lWfWqEcpfdOfKJuXUkAwkaT5Dz/T28M7uc4E0tc+9aLQeoznpFxlJAZ7LrSzN9u7
+    TcSyvx8GrT8LPavwkrXPVGKmKHWy6BDhwqJ9nATX2pmye/FluzdqShrWjes6cKMh
+    TywcWddX5Jewx3Uf47kdIAJRrB3z2Tl5du0aXxhxsl/S77Xc4jJY34pbnkW6FMch
+    Pk3QZbJ9giLOgvtk5WBgLJ2IrF7Kd8sAz512JiVl5R212lPrqN8KFtk6zZj5rFyc
+    JN1UtuJRf43VgvCrJ29J6/a0CJ0NEI56OWOQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527161770; bh=HCUMxLnUgbPLN2Oe4ynvwpr4oiZA5G
-    3rR3k9/kcczWg=; b=VxyxRqxIdGQl5+CZtBo4c/g7+dPwOM9LVBHAKaeXOnS/A3
-    HgVieCNKvANIRNm3/uND+O6fql90pbGSipPTiMyfgxRZ+IxZmafBsLzYwuTz5GI2
-    rwISV3sUxQG6T6Opq9r5JhNofw6VwZUiFVCQbMiQjoYPryM0PWpSPYSwWiSuzHx9
-    6Dg4oMDDs6RhGrObQaocl4uTVITWA1svaT20SrvujG+aoczxy8iXU0ITTA4p9KhO
-    dagdYdpSc9KDvmsixOOiBN3XPLL69zcw8hg68oex4uvZftcjDG9HTcfe1vddhSt5
-    E1/mAd4KOVmJxmIbRxlOZZUt63QDBpmrhD2V0fsQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527161755; bh=1sGIykLM9AzyP/9HBtSlkZ7xtNgQ3Q
+    caNKhOBRs/pC4=; b=LL3aEQD6Txb8Mo/xLcpcnuVgUGkkkWdYX9XLrtUeps7sWq
+    ftMrJREyumaH0ofsYd3wR9dhKuo7SFdbkkifJnNBlOAuIbNJzsRjgoTQZgjDGyW/
+    C5RbjccyKmUAsKSRNEdD38yS00/uz1U3N7+2DYkJSn7YtXJh6wk526Y32p99VS+C
+    Fa43qU2rkxiq/TuQNXMDFKgzSHC8kuQGe1bsxhoj6aXhqVqHRt4vKZg0OLNhdkaG
+    td7q1Rng5os53h020hv9iXMvkgoGfqeuU6QIRLFcUka5B7c/ZOhWLLDu9bhF7wrO
+    9onG/ML7Z2NmH0ZAHIJQxJQtHI1/WRBT85pB0LPA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=BRrXvavM x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=Rx4KQdxF x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=BRrXvavM x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=Rx4KQdxF x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,34 +64,33 @@ Authentication-Results: mx4.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfAk5FDnH67JOaUGCI2k9xMd2M2V/zXNCnBI78QwPw8NyXI/571gAtUJU3PVH7DOkSR5HMJOGZPg8LzTWYyHGr5rqyzn+1QhNZINrsKKJBK2fqQliCZnz
-    43FAvtwaVlsYxSKDZNP0IWJ4rdf22ogmRNaitBX0rXsAC7vC/JJS2YZx/kVcjc7VRzVlbhok8n/ZFk4M75q8iEXKqvezanIkJYP8xBl6GVle0bnn/6meX3YV
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfLVvCP4cLMxNEQHaOuPZ9za5aZc5mDrTuLloU8/OdaBnSAJ77djjrfZu2LXVe4YZw5d+YScwZE5vdDQ7tKWKoe+sQ7hFEv7Ye+6oyX/d85Qt/W61Og7y
+    NQnBBsk0rcuU9AfKNSxCdDYUV2ItU7rTcZzNTsmgX6Mx600vhZB+VIMOs7HWcFGGuNcLeVN4tDR2A+lEIuVG/Rxg2b03ME4lQfVBQEBxBMyk4fzkUWt+9aQt
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=j-NXPswCAAAA:8 a=m8ToADvmAAAA:8 a=Ikd4Dj_1AAAA:8 a=yMhMjlubAAAA:8
-    a=ag1SF4gXAAAA:8 a=RNOMWXZoqlZzpp3PYiAA:9 a=Zx_TZvY_GsnQrxeT:21
-    a=yYO6URiAGnNbBWEK:21 a=QEXdDO2ut3YA:10 a=UdV-L189IiqUQIgB40x4:22
-    a=kCrBFHLFDAq2jDEeoMj9:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=hD80L64hAAAA:8 a=VwQbUJbxAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=WinGGc6PCWDRWg6FmoYA:9 a=7Zwj6sZBwVKJAoWSPKxL6X1jA+E=:19 a=QEXdDO2ut3YA:10
+    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969054AbeEXLfz (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 07:35:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40048 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967508AbeEXJuA (ORCPT <rfc822;stable@vger.kernel.org>);
+        id S967513AbeEXJuA (ORCPT <rfc822;greg@kroah.com>);
         Thu, 24 May 2018 05:50:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39506 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S967462AbeEXJtx (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:49:53 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 72/96] clk: tegra: Fix pll_u rate configuration
-Date: Thu, 24 May 2018 11:38:55 +0200
-Message-Id: <20180524093609.518663249@linuxfoundation.org>
+Subject: [PATCH 4.9 69/96] ASoC: samsung: i2s: Ensure the RCLK rate is properly determined
+Date: Thu, 24 May 2018 11:38:52 +0200
+Message-Id: <20180524093609.372400913@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093605.602125311@linuxfoundation.org>
 References: <20180524093605.602125311@linuxfoundation.org>
@@ -109,55 +108,51 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Marcel Ziswiler <marcel@ziswiler.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-[ Upstream commit c35b518f9ba06c9de79fb3ff62eed7462d804995 ]
+[ Upstream commit 647d04f8e07afc7c3b7a42b3ee01a8b28db29631 ]
 
-Turns out latest upstream U-Boot does not configure/enable pll_u which
-leaves it at some default rate of 500 kHz:
+If the RCLK mux clock configuration is specified in DT and no set_sysclk()
+callback is used in the sound card driver the sclk_srcrate field will remain
+set to 0, leading to an incorrect PSR divider setting.
+To fix this the frequency value is retrieved from the CLK_I2S_RCLK_SRC clock,
+so the actual RCLK mux selection is taken into account.
 
-root@apalis-t30:~# cat /sys/kernel/debug/clk/clk_summary | grep pll_u
-       pll_u                  3        3        0      500000          0
-
-Of course this won't quite work leading to the following messages:
-
-[    6.559593] usb 2-1: new full-speed USB device number 2 using tegra-
-ehci
-[   11.759173] usb 2-1: device descriptor read/64, error -110
-[   27.119453] usb 2-1: device descriptor read/64, error -110
-[   27.389217] usb 2-1: new full-speed USB device number 3 using tegra-
-ehci
-[   32.559454] usb 2-1: device descriptor read/64, error -110
-[   47.929777] usb 2-1: device descriptor read/64, error -110
-[   48.049658] usb usb2-port1: attempt power cycle
-[   48.759475] usb 2-1: new full-speed USB device number 4 using tegra-
-ehci
-[   59.349457] usb 2-1: device not accepting address 4, error -110
-[   59.509449] usb 2-1: new full-speed USB device number 5 using tegra-
-ehci
-[   70.069457] usb 2-1: device not accepting address 5, error -110
-[   70.079721] usb usb2-port1: unable to enumerate USB device
-
-Fix this by actually allowing the rate also being set from within
-the Linux kernel.
-
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/tegra/clk-pll.c |    2 ++
- 1 file changed, 2 insertions(+)
+ sound/soc/samsung/i2s.c |   13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -1145,6 +1145,8 @@ static const struct clk_ops tegra_clk_pl
- 	.enable = clk_pllu_enable,
- 	.disable = clk_pll_disable,
- 	.recalc_rate = clk_pll_recalc_rate,
-+	.round_rate = clk_pll_round_rate,
-+	.set_rate = clk_pll_set_rate,
- };
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -642,8 +642,12 @@ static int i2s_set_fmt(struct snd_soc_da
+ 		tmp |= mod_slave;
+ 		break;
+ 	case SND_SOC_DAIFMT_CBS_CFS:
+-		/* Set default source clock in Master mode */
+-		if (i2s->rclk_srcrate == 0)
++		/*
++		 * Set default source clock in Master mode, only when the
++		 * CLK_I2S_RCLK_SRC clock is not exposed so we ensure any
++		 * clock configuration assigned in DT is not overwritten.
++		 */
++		if (i2s->rclk_srcrate == 0 && i2s->clk_data.clks == NULL)
+ 			i2s_set_sysclk(dai, SAMSUNG_I2S_RCLKSRC_0,
+ 							0, SND_SOC_CLOCK_IN);
+ 		break;
+@@ -858,6 +862,11 @@ static int config_setup(struct i2s_dai *
+ 		return 0;
  
- static int _pll_fixed_mdiv(struct tegra_clk_pll_params *pll_params,
+ 	if (!(i2s->quirks & QUIRK_NO_MUXPSR)) {
++		struct clk *rclksrc = i2s->clk_table[CLK_I2S_RCLK_SRC];
++
++		if (i2s->rclk_srcrate == 0 && rclksrc && !IS_ERR(rclksrc))
++			i2s->rclk_srcrate = clk_get_rate(rclksrc);
++
+ 		psr = i2s->rclk_srcrate / i2s->frmclk / rfs;
+ 		writel(((psr - 1) << 8) | PSR_PSREN, i2s->addr + I2SPSR);
+ 		dev_dbg(&i2s->pdev->dev,
