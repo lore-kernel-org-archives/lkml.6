@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935462AbeEXBWn (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 21:22:43 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:39950 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935404AbeEXBWc (ORCPT
+        id S935487AbeEXBXN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 21:23:13 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:39214 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935449AbeEXBWj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 21:22:32 -0400
-X-Google-Smtp-Source: AB8JxZpbMIe0TDdlLMp9zj33/Rg67eeLhPnxsGMhDCCaeuQUreI1PD4EViOA6bJuz4m+AmlR2EOUlQ==
+        Wed, 23 May 2018 21:22:39 -0400
+X-Google-Smtp-Source: AB8JxZoY0Oru1F+jjo9Prnmrtw9Csm7iqgJfsz+U1o3wCJDkU247KkC34Io7sRhNOsrxLcSe0lPreQ==
 From: Joel Fernandes <joelaf@google.com>
 X-Google-Original-From: Joel Fernandes <joel@joelfernandes.org>
 To: linux-kernel@vger.kernel.org
@@ -25,9 +25,9 @@ Cc: kernel-team@android.com,
         Steven Rostedt <rostedt@goodmis.org>,
         Thomas Glexiner <tglx@linutronix.de>, Todd Kjos <tkjos@google.com>,
         Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: [PATCH v7 3/8] srcu: Add notrace variant of srcu_dereference
-Date: Wed, 23 May 2018 18:21:52 -0700
-Message-Id: <20180524012157.181277-4-joel@joelfernandes.org>
+Subject: [PATCH v7 8/8] kselftests: Add tests for the preemptoff and irqsoff tracers
+Date: Wed, 23 May 2018 18:21:57 -0700
+Message-Id: <20180524012157.181277-9-joel@joelfernandes.org>
 X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
 In-Reply-To: <20180524012157.181277-1-joel@joelfernandes.org>
 References: <20180524012157.181277-1-joel@joelfernandes.org>
@@ -37,40 +37,107 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
 
-In the last patch in this series, we are making lockdep register hooks
-onto the irq_{disable,enable} tracepoints. These tracepoints use the
-_rcuidle tracepoint variant. In this series we switch the _rcuidle
-tracepoint callers to use SRCU instead of sched-RCU. Inorder to
-dereference the pointer to the probe functions, we could call
-srcu_dereference, however this API will call back into lockdep to check
-if the lock is held *before* the lockdep probe hooks have a chance to
-run and annotate the IRQ enabled/disabled state.
+Here we add unit tests for the preemptoff and irqsoff tracer by using a
+kernel module introduced previously to trigger atomic sections in the
+kernel.
 
-For this reason we need a notrace variant of srcu_dereference since
-otherwise we get lockdep splats. This patch adds the needed
-srcu_dereference_notrace variant.
-
-Reviewed-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 ---
- include/linux/srcu.h | 5 +++++
- 1 file changed, 5 insertions(+)
+ tools/testing/selftests/ftrace/config         |  3 +
+ .../test.d/preemptirq/irqsoff_tracer.tc       | 74 +++++++++++++++++++
+ 2 files changed, 77 insertions(+)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/preemptirq/irqsoff_tracer.tc
 
-diff --git a/include/linux/srcu.h b/include/linux/srcu.h
-index 2ec618979b20..a1c4947be877 100644
---- a/include/linux/srcu.h
-+++ b/include/linux/srcu.h
-@@ -135,6 +135,11 @@ static inline int srcu_read_lock_held(const struct srcu_struct *sp)
-  */
- #define srcu_dereference(p, sp) srcu_dereference_check((p), (sp), 0)
- 
-+/**
-+ * srcu_dereference_notrace - no tracing and no lockdep calls from here
-+ */
-+#define srcu_dereference_notrace(p, sp) srcu_dereference_check((p), (sp), 1)
+diff --git a/tools/testing/selftests/ftrace/config b/tools/testing/selftests/ftrace/config
+index b01924c71c09..29588b328345 100644
+--- a/tools/testing/selftests/ftrace/config
++++ b/tools/testing/selftests/ftrace/config
+@@ -4,3 +4,6 @@ CONFIG_FUNCTION_PROFILER=y
+ CONFIG_TRACER_SNAPSHOT=y
+ CONFIG_STACK_TRACER=y
+ CONFIG_HIST_TRIGGERS=y
++CONFIG_PREEMPT_TRACER=y
++CONFIG_IRQSOFF_TRACER=y
++CONFIG_TEST_ATOMIC_SECTIONS=m
+diff --git a/tools/testing/selftests/ftrace/test.d/preemptirq/irqsoff_tracer.tc b/tools/testing/selftests/ftrace/test.d/preemptirq/irqsoff_tracer.tc
+new file mode 100644
+index 000000000000..1764ff22c02b
+--- /dev/null
++++ b/tools/testing/selftests/ftrace/test.d/preemptirq/irqsoff_tracer.tc
+@@ -0,0 +1,74 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++# description: test for the preemptirqsoff tracer
 +
- /**
-  * srcu_read_lock - register a new reader for an SRCU-protected structure.
-  * @sp: srcu_struct in which to register the new reader.
++MOD=test_atomic_sections
++
++fail() {
++    reset_tracer
++    rmmod $MOD || true
++    exit_fail
++}
++
++unsup() { #msg
++    reset_tracer
++    rmmod $MOD || true
++    echo $1
++    exit_unsupported
++}
++
++modprobe $MOD || unsup "$MOD module not available"
++rmmod $MOD
++
++grep -q "preemptoff" available_tracers || unsup "preemptoff tracer not enabled"
++grep -q "irqsoff" available_tracers || unsup "irqsoff tracer not enabled"
++
++reset_tracer
++
++# Simulate preemptoff section for half a second couple of times
++echo preemptoff > current_tracer
++sleep 1
++modprobe test_atomic_sections atomic_mode=preempt atomic_time=500000 || fail
++rmmod test_atomic_sections || fail
++modprobe test_atomic_sections atomic_mode=preempt atomic_time=500000 || fail
++rmmod test_atomic_sections || fail
++modprobe test_atomic_sections atomic_mode=preempt atomic_time=500000 || fail
++rmmod test_atomic_sections || fail
++
++cat trace
++
++# Confirm which tracer
++grep -q "tracer: preemptoff" trace || fail
++
++# Check the end of the section
++egrep -q "5.....us : <stack trace>" trace || fail
++
++# Check for 500ms of latency
++egrep -q "latency: 5..... us" trace || fail
++
++reset_tracer
++
++# Simulate irqsoff section for half a second couple of times
++echo irqsoff > current_tracer
++sleep 1
++modprobe test_atomic_sections atomic_mode=irq atomic_time=500000 || fail
++rmmod test_atomic_sections || fail
++modprobe test_atomic_sections atomic_mode=irq atomic_time=500000 || fail
++rmmod test_atomic_sections || fail
++modprobe test_atomic_sections atomic_mode=irq atomic_time=500000 || fail
++rmmod test_atomic_sections || fail
++
++cat trace
++
++# Confirm which tracer
++grep -q "tracer: irqsoff" trace || fail
++
++# Check the end of the section
++egrep -q "5.....us : <stack trace>" trace || fail
++
++# Check for 500ms of latency
++egrep -q "latency: 5..... us" trace || fail
++
++reset_tracer
++exit 0
++
 -- 
 2.17.0.441.gb46fe60e1d-goog
