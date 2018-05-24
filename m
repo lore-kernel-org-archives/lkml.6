@@ -1,75 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S970334AbeEXOFK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 10:05:10 -0400
-Received: from zimbra.alphalink.fr ([217.15.80.77]:44468 "EHLO
-        zimbra.alphalink.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S970312AbeEXOE6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 10:04:58 -0400
-Date: Thu, 24 May 2018 16:04:49 +0200
-From: Guillaume Nault <g.nault@alphalink.fr>
-To: Eric Biggers <ebiggers3@gmail.com>
-Cc: linux-ppp@vger.kernel.org, Paul Mackerras <paulus@samba.org>,
-        netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        Eric Biggers <ebiggers@google.com>
-Subject: Re: [PATCH v2] ppp: remove the PPPIOCDETACH ioctl
-Message-ID: <20180524140449.GA1389@alphalink.fr>
-References: <20180523035952.25768-1-ebiggers3@gmail.com>
- <20180523213738.146911-1-ebiggers3@gmail.com>
+        id S970340AbeEXOIK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 10:08:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38518 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966751AbeEXOII (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 10:08:08 -0400
+Date: Thu, 24 May 2018 16:07:50 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Steffen Maier <maier@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
+        stable@vger.kernel.org, Doug Gilbert <dgilbert@interlog.com>,
+        Hannes Reinecke <hare@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: Re: [PATCH 4.14 110/165] scsi: core: return BLK_STS_OK for DID_OK in
+ __scsi_error_from_host_byte()
+Message-ID: <20180524140750.GA19550@kroah.com>
+References: <20180524093621.979359379@linuxfoundation.org>
+ <20180524093626.469402002@linuxfoundation.org>
+ <fdd36949-3a0c-0b7d-1946-34fd253569c5@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180523213738.146911-1-ebiggers3@gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <fdd36949-3a0c-0b7d-1946-34fd253569c5@linux.ibm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 02:37:38PM -0700, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
+On Thu, May 24, 2018 at 02:19:29PM +0200, Steffen Maier wrote:
+> Hopefully I haven't missed it in the stable queue, but do we need the
+> following on top (effectively not applying e39a97353e53)?:
 > 
-> The PPPIOCDETACH ioctl effectively tries to "close" the given ppp file
-> before f_count has reached 0, which is fundamentally a bad idea.  It
-> does check 'f_count < 2', which excludes concurrent operations on the
-> file since they would only be possible with a shared fd table, in which
-> case each fdget() would take a file reference.  However, it fails to
-> account for the fact that even with 'f_count == 1' the file can still be
-> linked into epoll instances.  As reported by syzbot, this can trivially
-> be used to cause a use-after-free.
+> commit cbe095e2b584623b882ebaf6c18e0b9077baa3f7
+> Author: Bart Van Assche <bart.vanassche@wdc.com>
+> Date:   Thu Apr 5 10:32:59 2018 -0700
 > 
-> Yet, the only known user of PPPIOCDETACH is pppd versions older than
-> ppp-2.4.2, which was released almost 15 years ago (November 2003).
-> Also, PPPIOCDETACH apparently stopped working reliably at around the
-> same time, when the f_count check was added to the kernel, e.g. see
-> https://lkml.org/lkml/2002/12/31/83.  Also, the current 'f_count < 2'
-> check makes PPPIOCDETACH only work in single-threaded applications; it
-> always fails if called from a multithreaded application.
+>     Revert "scsi: core: return BLK_STS_OK for DID_OK in
+> __scsi_error_from_host_byte()"
 > 
-> All pppd versions released in the last 15 years just close() the file
-> descriptor instead.
+>     The description of commit e39a97353e53 is wrong: it mentions that commit
+>     2a842acab109 introduced a bug in __scsi_error_from_host_byte() although
+> that
+>     commit did not change the behavior of that function.  Additionally,
+> commit
+>     e39a97353e53 introduced a bug: it causes commands that fail with
+>     hostbyte=DID_OK and driverbyte=DRIVER_SENSE to be completed with
+>     BLK_STS_OK. Hence revert that commit.
 > 
-> Therefore, instead of hacking around this bug by exporting epoll
-> internals to modules, and probably missing other related bugs, just
-> remove the PPPIOCDETACH ioctl and see if anyone actually notices.  Leave
-> a stub in place that prints a one-time warning and returns EINVAL.
-> 
-> Reported-by: syzbot+16363c99d4134717c05b@syzkaller.appspotmail.com
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> ---
-> 
-> v2: leave a stub in place, rather than removing the ioctl completely.
-> 
-Thanks a lot for your help on this matter.
+>     Fixes: e39a97353e53 ("scsi: core: return BLK_STS_OK for DID_OK in
+> __scsi_error_from_host_byte()")
+>     Reported-by: Damien Le Moal <damien.lemoal@wdc.com>
+>     Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
+>     Cc: Hannes Reinecke <hare@suse.com>
+>     Cc: Douglas Gilbert <dgilbert@interlog.com>
+>     Cc: Damien Le Moal <damien.lemoal@wdc.com>
+>     Cc: Christoph Hellwig <hch@lst.de>
+>     Cc: Lee Duncan <lduncan@suse.com>
+>     Cc: stable@vger.kernel.org
+>     Reviewed-by: Christoph Hellwig <hch@lst.de>
+>     Reviewed-by: Hannes Reinecke <hare@suse.com>
+>     Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 
-BTW, netdev has its own rules wrt. stable backports. You didn't need to
-CC: stable@. David handles -stable submissions himself.
-Using a 'PATCH net' subject prefix would have made it clear that this
-patch was fixing some released code and should be considered for -stable
-backport.
+Oops, yeah, I'll go drop this one from the queue, we shouldn't take it
+at all, as that's easier than applying it and then reverting it again.
 
-Reviewed-by: Guillaume Nault <g.nault@alphalink.fr>
-Tested-by: Guillaume Nault <g.nault@alphalink.fr>
+Thanks for letting me know.
+
+greg k-h
