@@ -1,94 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966114AbeEXJgn (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 05:36:43 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:6350 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965783AbeEXJgl (ORCPT
+        id S966061AbeEXJhL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 05:37:11 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:41585 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965783AbeEXJhH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 05:36:41 -0400
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 24 May 2018 02:36:43 -0700
-Subject: Re: [PATCH 8/9] PM / Domains: Add support for multi PM domains per
- device to genpd
-To: Ulf Hansson <ulf.hansson@linaro.org>
-CC: Rajendra Nayak <rnayak@codeaurora.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>, <linux-tegra@vger.kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-References: <1526639490-12167-1-git-send-email-ulf.hansson@linaro.org>
- <1526639490-12167-9-git-send-email-ulf.hansson@linaro.org>
- <f5589b88-acf8-b491-df79-e359e596c8d0@nvidia.com>
- <CAPDyKFr_7hbs-MC1jQn5uAgSnb1UGufXZdEmUqNTM63KemTe1g@mail.gmail.com>
- <5a79d3a2-d090-645b-da69-524b7e7a4d90@nvidia.com>
- <51f7de26-579a-8b9e-4e79-f4eee923ab38@codeaurora.org>
- <CAPDyKFo_69kSS6UzdsJeyeiiED=S=chsdkP+R43qMHDEbZ8n_A@mail.gmail.com>
- <3838f17a-2ac8-bf3f-f0b1-f69bbe17629c@nvidia.com>
- <CAPDyKFo8e5FMrxF2ggxVZ+HQjw4s1Wtx-tMf5ka67knJpZMQcA@mail.gmail.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <1687797a-93f1-7e5c-6060-01c12c070964@nvidia.com>
-Date: Thu, 24 May 2018 10:36:34 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 24 May 2018 05:37:07 -0400
+X-Google-Smtp-Source: AB8JxZoSLQMtZHDpreqZJ3JpUSNbEezGxLcV2/vJ0iVSH/OTD3AZcdhQzjELdmSgSKe2RsYqBOsLkw==
+Subject: Re: [PATCH v2] mm/ksm: ignore STABLE_FLAG of rmap_item->address in
+ rmap_walk_ksm
+To: Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc: Andrea Arcangeli <aarcange@redhat.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>,
+        Arvind Yadav <arvind.yadav.cs@gmail.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, jia.he@hxt-semitech.com,
+        Hugh Dickins <hughd@google.com>
+References: <20180503124415.3f9d38aa@p-imbrenda.boeblingen.de.ibm.com>
+ <1525403506-6750-1-git-send-email-hejianet@gmail.com>
+ <20180509163101.02f23de1842a822c61fc68ff@linux-foundation.org>
+ <2cd6b39b-1496-bbd5-9e31-5e3dcb31feda@arm.com>
+ <6c417ab1-a808-72ea-9618-3d76ec203684@arm.com>
+ <198fe48c-0d26-7dd1-89dc-415bd3c7ab41@gmail.com>
+ <575857e6-c8ec-efa0-6434-b78a513aeaba@arm.com>
+From: Jia He <hejianet@gmail.com>
+Message-ID: <2c220e3d-8ff1-f9a9-9038-fff38952b8b1@gmail.com>
+Date: Thu, 24 May 2018 17:36:57 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFo8e5FMrxF2ggxVZ+HQjw4s1Wtx-tMf5ka67knJpZMQcA@mail.gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL102.nvidia.com (172.18.146.10)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <575857e6-c8ec-efa0-6434-b78a513aeaba@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 24/05/18 08:04, Ulf Hansson wrote:
 
-...
-
->> Any reason why we could not add a 'boolean' argument to the API to indicate
->> whether the new device should be linked? I think that I prefer the API
->> handles it, but I can see there could be instances where drivers may wish to
->> handle it themselves.
+On 5/24/2018 5:01 PM, Suzuki K Poulose Wrote:
+> On 24/05/18 09:50, Jia He wrote:
+>> Hi Suzuki
+>>
+>> On 5/24/2018 4:44 PM, Suzuki K Poulose Wrote:
+>>> On 14/05/18 10:45, Suzuki K Poulose wrote:
+>>>> On 10/05/18 00:31, Andrew Morton wrote:
+>>>>> On Fri,  4 May 2018 11:11:46 +0800 Jia He <hejianet@gmail.com> wrote:
+>>>>>
+>>>>>> In our armv8a server(QDF2400), I noticed lots of WARN_ON caused by PAGE_SIZE
+>>>>>> unaligned for rmap_item->address under memory pressure tests(start 20 guests
+>>>>>> and run memhog in the host).
+>>>>>>
+>>>>>> ...
+>>>>>>
+>>>>>> In rmap_walk_ksm, the rmap_item->address might still have the STABLE_FLAG,
+>>>>>> then the start and end in handle_hva_to_gpa might not be PAGE_SIZE aligned.
+>>>>>> Thus it will cause exceptions in handle_hva_to_gpa on arm64.
+>>>>>>
+>>>>>> This patch fixes it by ignoring(not removing) the low bits of address when
+>>>>>> doing rmap_walk_ksm.
+>>>>>>
+>>>>>> Signed-off-by: jia.he@hxt-semitech.com
+>>>>>
+>>>>> I assumed you wanted this patch to be committed as
+>>>>> From:jia.he@hxt-semitech.com rather than From:hejianet@gmail.com, so I
+>>>>> made that change.  Please let me know if this was inappropriate.
+>>>>>
+>>>>> You can do this yourself by adding an explicit From: line to the very
+>>>>> start of the patch's email text.
+>>>>>
+>>>>> Also, a storm of WARN_ONs is pretty poor behaviour.  Is that the only
+>>>>> misbehaviour which this bug causes?  Do you think the fix should be
+>>>>> backported into earlier kernels?
+>>>>>
+>>>
+>>>
+>>> Jia, Andrew,
+>>>
+>>> What is the status of this patch ?
+>>>
+>>> Suzuki
+>> I thought the patch is merged into mmotm tree.
+>> http://www.ozlabs.org/~akpm/mmotm/series
+>> But I don't know what is the next step.
 > 
-> Coming back to this question. Both Tegra XUSB and Qcom Camera use
-> case, would benefit from doing the linking themselves, as it needs
-> different PM domains to be powered on depending on the current use
-> case - as to avoid wasting power.
+> Hi Jia,
 > 
-> However, I can understand that you prefer some simplicity over
-> optimizations, as you told us. Then, does it mean that you are
-> insisting on extending the APIs with a boolean for linking, or are you
-> fine with the driver to call device_link_add()?
-
-I am fine with the driver calling device_link_add(), but I just wonder 
-if we will find a several drivers doing this and then we will end up 
-doing this later anyway.
-
-The current API is called ...
-
-* genpd_dev_pm_attach_by_id() - Attach a device to one of its PM domain.
-* @dev: Device to attach.
-* @index: The index of the PM domain.
-
-This naming and description is a bit misleading, because really it is 
-not attaching the device that is passed, but creating a new device to 
-attach a PM domain to. So we should consider renaming and changing the 
-description and indicate that users need to link the device.
-
-Finally, how is a PM domain attached via calling 
-genpd_dev_pm_attach_by_id() detached?
-
-Cheers
-Jon
-
+> Thanks for the update. I think that should eventually hit mainline. When it does,
+> please could you send the patch to stable kernel versions too ?
+> 
+> Usually having a "Cc: stable@kernel.vger.org" in the original patch (for
+> critical fixes) would have done the trick. But since we don't have it,
+> please send it following the stable kernel rules.
+> 
+> Cheers
+> Suzuki
+> 
+Ok,thanks for pointing
 -- 
-nvpublic
+Cheers,
+Jia
