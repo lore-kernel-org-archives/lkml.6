@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1817771-1527159819-2-13814704203329648886
+X-Cyrus-Session-Id: sloti22d1t05-1807417-1527159559-2-15873230851428943982
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527159818; b=AfMkhyQg6l+JevTfpOpWMYkuXgVh+MFNQAq6Ll7JpD4L4LNnXW
-    kDZeSxIo+6y6ONz96IKQwUPwx+1e/SRjwoeoAg4TR/0fSrUSjGLwzqTPuw6dUZRZ
-    /a/lC6HFV04gOapM29xx55uLTph8LBzVPL73Mmzfo50J3hKqlDDRw9fN8L6VyIyx
-    WYw1miY+nhO6xp9UD92CMvl+GBsfQk8rKGi/js4AVjBkaxY+Ouf7eneAE1YLuGGu
-    cg+TbIVqNfkhOSO2vtR05mC6t59iG1Y3Yr5IT0bthdZNtGTRhUhiMMG3C1tJ74ra
-    tYEOqGEYHlsAdDF2lwG6ArcfzEyTMx6Ykfuw==
+    1527159558; b=g7iD6FzHsk2KywPuM2xxY3x/eDQ8o6ObFwa3LIRLbmYlD0Z+KI
+    MRD72HMaJCK+w+/67wpZdSOB+DiGWMflJkbUoq2OSBYiOx/LPfhIMjeb1y4OSjbx
+    6ZG7jXz7N40UKNXPcpXyljY2H4JcWpZrn5my5pBivR+ZMwCt6DOeHGjt3IOUC1d0
+    Z0h98Sdtw2fYIINMdfsPu/9m5NTl8XIadReUdYhaYn7P2vu//SQ2DNV3o/CMUTha
+    hYeu2nVGbhVCV8TyJCL+vCiNQneWPG+qO/Q2r2VlytflSXKs4rchu+26rGmua33T
+    krE8/9WQLgUyStF1ppmp1JY3n8Gn9KW6S0rw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527159818; bh=nbWVlEK305dyQKLH2eFoeiM524bMRs
-    3buYF0GfBrSsg=; b=XsJkQx6XMMn3VuJqtteRHPFNBx9dDAwDXXFYr9t4ebVnGE
-    9YBzZfAKfkBCyDTVTbHz1FJUhC7HLrq6WTlZYNLGtrD1crXaHMegh8sRuxNULqyE
-    YYcRrCk+gePdDSUQd/X3aUZKpwbKxeWA4tRJCen1hwPiBZAgdy1bCjBsQcJ1Enoc
-    A3W3jzl1hMVhPh8+73M5Qs+02NElAb0q5hOmQTHhd4xzwQ8IoJYuCDHocIiLfUvr
-    N62DO60K4xobsI4I5wp8jii6jCDI56NxQCJ8hprMlTYdJaXYJ5JULwlIxyTlS95V
-    U/42CfCXY5Ywyl4JoYUUlxZ1A5AmzNLYqZgw4Ivg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527159558; bh=Ee9F1UHysyujhfydPmrj2qvTMMLKcu
+    xbHBOMvdHsXFY=; b=RrgpNzq343lFcc/tWSEseWWA5oxaeq2vDHiZt3mi+pztrA
+    VYdyQs1xQAVSISlZG6JWhspCtMHJFFH/MvVqJ9DYrmdvlwhw9gbCB+2mPRHpmSiY
+    bUkgFGg+MysVmIgubeTbJoGEV6a5vA6l1b4PqrRzJaewo6HkP1nWoBfqLgGGGo4q
+    iVbv/d91MtmTSqi2hzBjyazvX870gc3vrPYPwWPSUyrbftW7fDSKXJRCK77wFQHz
+    3aJr/UbE8VyrEpw90kFcFWuzIdO2TeXJqL3B9Eh1hoCCF8fRSJNDWoyUzaNwkNIb
+    bCgYs1wXoEj/moz0lSyTL3KHHuXH162KCNNniQ2w==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=h8S6oCk9 x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=YUBj9Sjh x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=h8S6oCk9 x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=YUBj9Sjh x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,33 +64,34 @@ Authentication-Results: mx2.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDsmfwbO0BDZ5H3l6111xGnMAXrEdWPH5cF8aWvoUTIgfJ3y02X5T63Sbs60+MSz8dIccf5FtEhe4VE7Xo7/E2clPCeODsALeueBVGg6cBLjvIh2cskU
-    7EO2A9DhuOUWEekYLPqRRVsDwVY5fHiMBykPHl7W+Q0SWvO60ayRwJ7oTn7CkAPL1dlBqNM5H45pBoK/zk5+b7wsZPHP29/GwWJ7B1dzgxgkZVcJ8lvAM4Er
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfMlZ4cZYX1nnzm0mCZ519ke117rZXGNfq8WX90HOf3tw7SGIVKLwxA6AdCcU9lq7pk2g/o1uR9cIUJuXqmDNw8qpaTYvnqYRrtFKmgXYRQ5jofx8W35+
+    EfrnPMZhV0y160bVA/XE6CrUOA0nkCECd+XlWkaGlifMjWYwD+Nxcr5Bb2y6f3OzBqNuYYzAa4cQ9uxwlarG+0qvc78+Nu4apUiDMcntZAtN98ICiTq3XzsK
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=20KFwNOVAAAA:8 a=Q-fNiiVtAAAA:8 a=yPCof4ZbAAAA:8 a=yMhMjlubAAAA:8
-    a=ag1SF4gXAAAA:8 a=9rkjPaNG2vjWt7Z3QpwA:9 a=QEXdDO2ut3YA:10
-    a=Fp8MccfUoT0GBdDC_Lng:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=LpQP-O61AAAA:8 a=yPCof4ZbAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=zobwxN-apzL_bq59u2oA:9 a=QEXdDO2ut3YA:10 a=pioyyrs4ZptJ924tMmac:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968397AbeEXJzn (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:55:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35734 "EHLO mail.kernel.org"
+        id S1030226AbeEXK7D (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 06:59:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35808 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967993AbeEXJzk (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:55:40 -0400
+        id S967917AbeEXJzq (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:55:46 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tomas Henzl <thenzl@redhat.com>,
-        Suganath Prabu Subramani
-        <suganath-prabu.subramani@broadcom.com>,
+        stable@vger.kernel.org,
+        Sujit Reddy Thumma <sthumma@codeaurora.org>,
+        Subhash Jadavani <subhashj@codeaurora.org>,
+        Asutosh Das <asutoshd@codeaurora.org>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 099/165] scsi: mpt3sas: fix an out of bound write
-Date: Thu, 24 May 2018 11:38:25 +0200
-Message-Id: <20180524093626.022594428@linuxfoundation.org>
+Subject: [PATCH 4.14 101/165] scsi: ufs: Enable quirk to ignore sending WRITE_SAME command
+Date: Thu, 24 May 2018 11:38:27 +0200
+Message-Id: <20180524093626.102227414@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -108,40 +109,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tomas Henzl <thenzl@redhat.com>
+From: Sujit Reddy Thumma <sthumma@codeaurora.org>
 
-[ Upstream commit 4a8842de8db4953fdda7866626b78b12fb8adb97 ]
+[ Upstream commit 84af7e8b895088d89f246d6b0f82717fafdebf61 ]
 
-cpu_msix_table is allocated to store online cpus, but pci_irq_get_affinity
-may return cpu_possible_mask which is then used to access cpu_msix_table.
-That causes bad user experience.  Fix limits access to only online cpus,
-I've also added an additional test to protect from an unlikely change in
-cpu_online_mask.
+WRITE_SAME command is not supported by UFS. Enable a quirk for the upper
+level drivers to not send WRITE SAME command.
 
-[mkp: checkpatch]
+[mkp: botched patch, applied by hand]
 
-Fixes: 1d55abc0e98a ("scsi: mpt3sas: switch to pci_alloc_irq_vectors")
-Signed-off-by: Tomas Henzl <thenzl@redhat.com>
-Acked-by: Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>
+Signed-off-by: Sujit Reddy Thumma <sthumma@codeaurora.org>
+Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/mpt3sas/mpt3sas_base.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/scsi/ufs/ufshcd.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/scsi/mpt3sas/mpt3sas_base.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
-@@ -1921,8 +1921,11 @@ _base_assign_reply_queues(struct MPT3SAS
- 				continue;
- 			}
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -4347,6 +4347,8 @@ static int ufshcd_slave_alloc(struct scs
+ 	/* REPORT SUPPORTED OPERATION CODES is not supported */
+ 	sdev->no_report_opcodes = 1;
  
--			for_each_cpu(cpu, mask)
-+			for_each_cpu_and(cpu, mask, cpu_online_mask) {
-+				if (cpu >= ioc->cpu_msix_table_sz)
-+					break;
- 				ioc->cpu_msix_table[cpu] = reply_q->msix_index;
-+			}
- 		}
- 		return;
- 	}
++	/* WRITE_SAME command is not supported */
++	sdev->no_write_same = 1;
+ 
+ 	ufshcd_set_queue_depth(sdev);
+ 
