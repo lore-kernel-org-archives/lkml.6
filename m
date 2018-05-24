@@ -1,311 +1,242 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969802AbeEXMNS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 08:13:18 -0400
-Received: from mga18.intel.com ([134.134.136.126]:44289 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966400AbeEXMNL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 08:13:11 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,436,1520924400";
-   d="scan'208";a="57211334"
-Subject: Re: [PATCH 1/1] mmc: sdhci-pci-dwc-mshc: synopsys dwc mshc support
-To: Prabu Thangamuthu <Prabu.T@synopsys.com>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
-Cc: Manjunath M Bettegowda <Manjunath.MB@synopsys.com>
-References: <705D14B1C7978B40A723277C067CEDE2010A9B43CC@IN01WEMBXB.internal.synopsys.com>
- <abe62da4-3ef9-5660-94e1-a3f919df06cd@intel.com>
- <705D14B1C7978B40A723277C067CEDE2010A9B5491@IN01WEMBXB.internal.synopsys.com>
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <1f766ad9-481e-89cc-c0be-d9aea05e890b@intel.com>
-Date: Thu, 24 May 2018 15:11:55 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S969875AbeEXMPT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 08:15:19 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42938 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966330AbeEXMPM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 08:15:12 -0400
+Date: Thu, 24 May 2018 13:15:07 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>, Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christoffer Dall <christoffer.dall@arm.com>
+Subject: Re: [PATCH 12/14] arm64: KVM: Add ARCH_WORKAROUND_2 support for
+ guests
+Message-ID: <20180524121507.kocupewjagu7c4lw@lakrids.cambridge.arm.com>
+References: <20180522150648.28297-1-marc.zyngier@arm.com>
+ <20180522150648.28297-13-marc.zyngier@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <705D14B1C7978B40A723277C067CEDE2010A9B5491@IN01WEMBXB.internal.synopsys.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180522150648.28297-13-marc.zyngier@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/05/18 14:28, Prabu Thangamuthu wrote:
-> Hi Adrian,
+On Tue, May 22, 2018 at 04:06:46PM +0100, Marc Zyngier wrote:
+> In order to offer ARCH_WORKAROUND_2 support to guests, we need
+> a bit of infrastructure.
 > 
-> On 5/24/2018 2:06 PM, Adrian Hunter wrote:
->> Hi
->>
->> This patch is mangled.
-> We will check it.
->>
->> On 22/05/18 09:42, Prabu Thangamuthu wrote:
->>> To enable Synopsys DWC MSHC controller on HPAS-DX platform connected using
->>> PCIe interface. As Clock generation logic is implemented in MMCM module of
->>> HAPS-DX platform, we have separate functions to control the MMCM to
->>> generate required clocks with respect to speed mode. Also we have platform
->>> specific set_power function to support different VDD of eMMC devices.
->>>
->>> Signed-off-by: Prabu Thangamuthu <prabu.t@synopsys.com>
->>> ---
->>>  MAINTAINERS                           |   7 ++
->>>  drivers/mmc/host/Makefile             |   3 +-
->>>  drivers/mmc/host/sdhci-pci-core.c     |   1 +
->>>  drivers/mmc/host/sdhci-pci-dwc-mshc.c | 146
->>> ++++++++++++++++++++++++++++++++++
->>>  drivers/mmc/host/sdhci-pci-dwc-mshc.h |  37 +++++++++
->>>  drivers/mmc/host/sdhci-pci.h          |   3 +
->>>  6 files changed, 196 insertions(+), 1 deletion(-)
->>>  create mode 100644 drivers/mmc/host/sdhci-pci-dwc-mshc.c
->>>  create mode 100644 drivers/mmc/host/sdhci-pci-dwc-mshc.h
->>>
->>> diff --git a/MAINTAINERS b/MAINTAINERS
->>> index 9051a9c..f1749c4 100644
->>> --- a/MAINTAINERS
->>> +++ b/MAINTAINERS
->>> @@ -12643,6 +12643,13 @@ S:    Maintained
->>>  F:    drivers/mmc/host/sdhci*
->>>  F:    include/linux/mmc/sdhci*
->>>  
->>> +SYNOPSYS SDHCI COMPLIANT DWC MSHC DRIVER
->>> +M:    Prabu Thangamuthu <prabu.t@synopsys.com>
->>> +M:    Manjunath M B <manjumb@synopsys.com>
->>> +L:    linux-mmc@vger.kernel.org
->>> +S:    Maintained
->>> +F:    drivers/mmc/host/sdhci-pci-dwc-mshc*
->>> +
->>>  SECURE DIGITAL HOST CONTROLLER INTERFACE (SDHCI) SAMSUNG DRIVER
->>>  M:    Ben Dooks <ben-linux@fluff.org>
->>>  M:    Jaehoon Chung <jh80.chung@samsung.com>
->>> diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
->>> index 6aead24..6c0d3fb 100644
->>> --- a/drivers/mmc/host/Makefile
->>> +++ b/drivers/mmc/host/Makefile
->>> @@ -11,7 +11,8 @@ obj-$(CONFIG_MMC_MXC)        += mxcmmc.o
->>>  obj-$(CONFIG_MMC_MXS)        += mxs-mmc.o
->>>  obj-$(CONFIG_MMC_SDHCI)        += sdhci.o
->>>  obj-$(CONFIG_MMC_SDHCI_PCI)    += sdhci-pci.o
->>> -sdhci-pci-y            += sdhci-pci-core.o sdhci-pci-o2micro.o
->>> sdhci-pci-arasan.o
->>> +sdhci-pci-y            += sdhci-pci-core.o sdhci-pci-o2micro.o
->>> sdhci-pci-arasan.o \
->>> +                   sdhci-pci-dwc-mshc.o
->>>  obj-$(subst m,y,$(CONFIG_MMC_SDHCI_PCI))    += sdhci-pci-data.o
->>>  obj-$(CONFIG_MMC_SDHCI_ACPI)    += sdhci-acpi.o
->>>  obj-$(CONFIG_MMC_SDHCI_PXAV3)    += sdhci-pxav3.o
->>> diff --git a/drivers/mmc/host/sdhci-pci-core.c
->>> b/drivers/mmc/host/sdhci-pci-core.c
->>> index 77dd352..96b6963 100644
->>> --- a/drivers/mmc/host/sdhci-pci-core.c
->>> +++ b/drivers/mmc/host/sdhci-pci-core.c
->>> @@ -1511,6 +1511,7 @@ static int amd_probe(struct sdhci_pci_chip *chip)
->>>      SDHCI_PCI_DEVICE(O2, SEABIRD0, o2),
->>>      SDHCI_PCI_DEVICE(O2, SEABIRD1, o2),
->>>      SDHCI_PCI_DEVICE(ARASAN, PHY_EMMC, arasan),
->>> +    SDHCI_PCI_DEVICE(SYNOPSYS, DWC_MSHC,  snps),
->>>      SDHCI_PCI_DEVICE_CLASS(AMD, SYSTEM_SDHCI, PCI_CLASS_MASK, amd),
->>>      /* Generic SD host controller */
->>>      {PCI_DEVICE_CLASS(SYSTEM_SDHCI, PCI_CLASS_MASK)},
->>> diff --git a/drivers/mmc/host/sdhci-pci-dwc-mshc.c
->>> b/drivers/mmc/host/sdhci-pci-dwc-mshc.c
->>> new file mode 100644
->>> index 0000000..bca3db4
->>> --- /dev/null
->>> +++ b/drivers/mmc/host/sdhci-pci-dwc-mshc.c
->>> @@ -0,0 +1,146 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +/*
->>> + * SDHCI driver for Synopsys DWC_MSHC controller
->>> + *
->>> + * Copyright (C) 2018 Synopsys, Inc. (www.synopsys.com)
->>> + *
->>> + * Authors:
->>> + *    Prabu Thangamuthu <prabu.t@synopsys.com>
->>> + *    Manjunath M B <manjumb@synopsys.com>
->>> + *
->>> + */
->>> +
->>> +#include <linux/pci.h>
->>> +#include <linux/delay.h>
->>> +#include <linux/module.h>
->>> +#include <linux/moduleparam.h>
->>> +
->>> +#include "sdhci.h"
->>> +#include "sdhci-pci.h"
->>> +#include "sdhci-pci-dwc-mshc.h"
->>> +
->>> +/* Default emmc vdd is set to 3.3V */
->>> +static unsigned int emmc_vdd = SDHC_EMMC_VDD_330V;
->>> +module_param(emmc_vdd, int, 0444);
->> Why a module parameter?
-> Our platform has slots for eMMC devices which can supports both 1.8 V
-> and 3.3 V
-> operating modes. We want this module parameter to control the operating
-> voltage
-> of eMMC devices.
-
-So why not use firmware device properties?
-
->>> +
->>> +static void sdhci_snps_set_clock(struct sdhci_host *host, unsigned int
->>> clock)
->>> +{
->>> +    u16 clk = 0;
->>> +    u32 reg = 0;
->>> +    u32 vendor_ptr = 0;
->>> +
->>> +    vendor_ptr = sdhci_readw(host, SDHCI_VENDOR_PTR_R);
->>> +
->>> +    /* Disable Software managed rx tuning */
->>> +    reg = sdhci_readl(host, (SDHC_AT_CTRL_R + vendor_ptr));
->>> +    reg &= ~SDHC_SW_TUNE_EN;
->>> +    sdhci_writel(host, reg, (SDHC_AT_CTRL_R + vendor_ptr));
->>> +
->>> +    if (clock <= 52000000) {
->>> +        sdhci_set_clock(host, clock);
->>> +    } else {
->>> +        /* Assert reset to MMCM */
->>> +        reg = sdhci_readl(host, (SDHC_GPIO_OUT + vendor_ptr));
->>> +        reg |= SDHC_CCLK_MMCM_RST;
->>> +        sdhci_writel(host, reg, (SDHC_GPIO_OUT + vendor_ptr));
->>> +
->>> +        /* Configure MMCM*/
->> Space between MMCM and *
-> Okay.
->>
->>> +        sdhci_writel(host, DIV_REG_100_MHZ, SDHC_MMCM_DIV_REG);
->>> +        sdhci_writel(host, CLKFBOUT_100_MHZ,
->>> +                SDHC_MMCM_CLKFBOUT);
->>> +
->>> +        /* De-assert reset to MMCM*/
->> Space between MMCM and *
-> Okay.
->>
->>
->>> +        reg = sdhci_readl(host, (SDHC_GPIO_OUT + vendor_ptr));
->>> +        reg &= ~SDHC_CCLK_MMCM_RST;
->>> +        sdhci_writel(host, reg, (SDHC_GPIO_OUT + vendor_ptr));
->>> +
->>> +        /* Enable clock */
->>> +        clk = SDHCI_PROG_CLOCK_MODE | SDHCI_CLOCK_INT_EN |
->>> +            SDHCI_CLOCK_CARD_EN;
->>> +        sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
->>> +    }
->>> +}
->>> +
->>> +static void sdhci_snps_set_power(struct sdhci_host *host, unsigned char
->>> mode,
->>> +             unsigned short vdd)
->>> +{
->>> +    u8 pwr = 0;
->>> +    u16 ctrl;
->>> +
->>> +    if (mode != MMC_POWER_OFF) {
->>> +        switch (1 << vdd) {
->>> +        case MMC_VDD_165_195:
->>> +            pwr = SDHCI_POWER_180;
->>> +            break;
->>> +        case MMC_VDD_29_30:
->>> +        case MMC_VDD_30_31:
->>> +            pwr = SDHCI_POWER_300;
->>> +            break;
->>> +        case MMC_VDD_32_33:
->>> +        case MMC_VDD_33_34:
->>> +            pwr = SDHCI_POWER_330;
->>> +            break;
->>> +        default:
->>> +            WARN(1, "%s: Invalid vdd %#x\n",
->>> +                 mmc_hostname(host->mmc), vdd);
->>> +            break;
->>> +        }
->>> +    }
->>> +
->>> +    if (host->pwr == pwr)
->>> +        return;
->>> +
->>> +    host->pwr = pwr;
->>> +
->>> +    if (pwr == 0) {
->>> +        sdhci_writeb(host, 0, SDHCI_POWER_CONTROL);
->>> +    } else {
->>> +        sdhci_writeb(host, 0, SDHCI_POWER_CONTROL);
->>> +
->>> +        /*
->>> +         * Enable it for eMMC phy cfg1 test with 1.8V mode
->>> +         */
->>> +        if (emmc_vdd == SDHC_EMMC_VDD_180V) {
->>> +            pwr = SDHCI_POWER_180;
->>> +            sdhci_writeb(host, pwr, SDHCI_POWER_CONTROL);
->>> +
->>> +            ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
->>> +            /*
->>> +             * Enable 1.8V Signal Enable in the Host Control2
->>> +             * register
->>> +             */
->>> +            ctrl |= SDHCI_CTRL_VDD_180;
->>> +            sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
->>> +        }
->>> +        pwr |= SDHCI_POWER_ON;
->>> +
->>> +        sdhci_writeb(host, pwr, SDHCI_POWER_CONTROL);
->>> +    }
->>> +}
->>> +
->>> +static int sdhci_snps_pci_probe_slot(struct sdhci_pci_slot *slot)
->>> +{
->>> +    struct sdhci_host *host = slot->host;
->>> +
->>> +    host->caps = sdhci_readl(host, SDHCI_CAPABILITIES);
->>> +    host->caps1 = sdhci_readl(host, SDHCI_CAPABILITIES_1);
->> Why read caps here?
-> We had it for logging purpose. we will remove it.
-
-To prevent 3.0V or 3.3V clear the corresponding capabilities bits.  There
-are DT bindings for overriding the capabilities.
-
-To use only 1.8V signaling clear SDHCI_SIGNALING_330 from host->flags.
-
-Then you shouldn't need sdhci_snps_set_power().
-
->>
->>> +
->>> +    return 0;
->>> +}
->>> +
->>> +/* Synopsys DWC MSHC Controller based on SDHCI-PCI */
->>> +static const struct sdhci_ops sdhci_snps_ops = {
->>> +    .set_clock    = sdhci_snps_set_clock,
->>> +    .set_power    = sdhci_snps_set_power,
->>> +    .enable_dma    = sdhci_pci_enable_dma,
->>> +    .set_bus_width    = sdhci_set_bus_width,
->>> +    .reset        = sdhci_reset,
->>> +    .set_uhs_signaling = sdhci_set_uhs_signaling,
->>> +};
->>> +
->>> +const struct sdhci_pci_fixes sdhci_snps = {
->>> +    .probe_slot    = sdhci_snps_pci_probe_slot,
->>> +    .ops        = &sdhci_snps_ops,
->>> +};
->>> +
->>> +MODULE_PARM_DESC(emmc_vdd, "VDD to configure eMMC device supply voltage");
->>> diff --git a/drivers/mmc/host/sdhci-pci-dwc-mshc.h
->>> b/drivers/mmc/host/sdhci-pci-dwc-mshc.h
->>> new file mode 100644
->>> index 0000000..352bbfd
->>> --- /dev/null
->>> +++ b/drivers/mmc/host/sdhci-pci-dwc-mshc.h
->> Please put the definitions into sdhci-pci-dwc-mshc.c and then this file is
->> not needed.
-> Okay.
+> Let's add a flag indicating whether or not the guest uses
+> SSBD mitigation. Depending on the state of this flag, allow
+> KVM to disable ARCH_WORKAROUND_2 before entering the guest,
+> and enable it when exiting it.
 > 
-> Thanks for review comments.
+> Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
+> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+
+Mark.
+
+> ---
+>  arch/arm/include/asm/kvm_mmu.h    |  5 +++++
+>  arch/arm64/include/asm/kvm_asm.h  |  3 +++
+>  arch/arm64/include/asm/kvm_host.h |  3 +++
+>  arch/arm64/include/asm/kvm_mmu.h  | 24 ++++++++++++++++++++++
+>  arch/arm64/kvm/hyp/switch.c       | 42 +++++++++++++++++++++++++++++++++++++++
+>  virt/kvm/arm/arm.c                |  4 ++++
+>  6 files changed, 81 insertions(+)
 > 
-> Regards,
-> Prabu.
+> diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
+> index 707a1f06dc5d..b0c17d88ed40 100644
+> --- a/arch/arm/include/asm/kvm_mmu.h
+> +++ b/arch/arm/include/asm/kvm_mmu.h
+> @@ -319,6 +319,11 @@ static inline int kvm_map_vectors(void)
+>  	return 0;
+>  }
+>  
+> +static inline int hyp_map_aux_data(void)
+> +{
+> +	return 0;
+> +}
+> +
+>  #define kvm_phys_to_vttbr(addr)		(addr)
+>  
+>  #endif	/* !__ASSEMBLY__ */
+> diff --git a/arch/arm64/include/asm/kvm_asm.h b/arch/arm64/include/asm/kvm_asm.h
+> index fefd8cf42c35..d4fbb1356c4c 100644
+> --- a/arch/arm64/include/asm/kvm_asm.h
+> +++ b/arch/arm64/include/asm/kvm_asm.h
+> @@ -33,6 +33,9 @@
+>  #define KVM_ARM64_DEBUG_DIRTY_SHIFT	0
+>  #define KVM_ARM64_DEBUG_DIRTY		(1 << KVM_ARM64_DEBUG_DIRTY_SHIFT)
+>  
+> +#define	VCPU_WORKAROUND_2_FLAG_SHIFT	0
+> +#define	VCPU_WORKAROUND_2_FLAG		(_AC(1, UL) << VCPU_WORKAROUND_2_FLAG_SHIFT)
+> +
+>  /* Translate a kernel address of @sym into its equivalent linear mapping */
+>  #define kvm_ksym_ref(sym)						\
+>  	({								\
+> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+> index 469de8acd06f..9bef3f69bdcd 100644
+> --- a/arch/arm64/include/asm/kvm_host.h
+> +++ b/arch/arm64/include/asm/kvm_host.h
+> @@ -216,6 +216,9 @@ struct kvm_vcpu_arch {
+>  	/* Exception Information */
+>  	struct kvm_vcpu_fault_info fault;
+>  
+> +	/* State of various workarounds, see kvm_asm.h for bit assignment */
+> +	u64 workaround_flags;
+> +
+>  	/* Guest debug state */
+>  	u64 debug_flags;
+>  
+> diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
+> index 082110993647..eb7a5c2a2bfb 100644
+> --- a/arch/arm64/include/asm/kvm_mmu.h
+> +++ b/arch/arm64/include/asm/kvm_mmu.h
+> @@ -457,6 +457,30 @@ static inline int kvm_map_vectors(void)
+>  }
+>  #endif
+>  
+> +#ifdef CONFIG_ARM64_SSBD
+> +DECLARE_PER_CPU_READ_MOSTLY(u64, arm64_ssbd_callback_required);
+> +
+> +static inline int hyp_map_aux_data(void)
+> +{
+> +	int cpu, err;
+> +
+> +	for_each_possible_cpu(cpu) {
+> +		u64 *ptr;
+> +
+> +		ptr = per_cpu_ptr(&arm64_ssbd_callback_required, cpu);
+> +		err = create_hyp_mappings(ptr, ptr + 1, PAGE_HYP);
+> +		if (err)
+> +			return err;
+> +	}
+> +	return 0;
+> +}
+> +#else
+> +static inline int hyp_map_aux_data(void)
+> +{
+> +	return 0;
+> +}
+> +#endif
+> +
+>  #define kvm_phys_to_vttbr(addr)		phys_to_ttbr(addr)
+>  
+>  #endif /* __ASSEMBLY__ */
+> diff --git a/arch/arm64/kvm/hyp/switch.c b/arch/arm64/kvm/hyp/switch.c
+> index d9645236e474..c50cedc447f1 100644
+> --- a/arch/arm64/kvm/hyp/switch.c
+> +++ b/arch/arm64/kvm/hyp/switch.c
+> @@ -15,6 +15,7 @@
+>   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+>   */
+>  
+> +#include <linux/arm-smccc.h>
+>  #include <linux/types.h>
+>  #include <linux/jump_label.h>
+>  #include <uapi/linux/psci.h>
+> @@ -389,6 +390,39 @@ static bool __hyp_text fixup_guest_exit(struct kvm_vcpu *vcpu, u64 *exit_code)
+>  	return false;
+>  }
+>  
+> +static inline bool __hyp_text __needs_ssbd_off(struct kvm_vcpu *vcpu)
+> +{
+> +	if (!cpus_have_const_cap(ARM64_SSBD))
+> +		return false;
+> +
+> +	return !(vcpu->arch.workaround_flags & VCPU_WORKAROUND_2_FLAG);
+> +}
+> +
+> +static void __hyp_text __set_guest_arch_workaround_state(struct kvm_vcpu *vcpu)
+> +{
+> +#ifdef CONFIG_ARM64_SSBD
+> +	/*
+> +	 * The host runs with the workaround always present. If the
+> +	 * guest wants it disabled, so be it...
+> +	 */
+> +	if (__needs_ssbd_off(vcpu) &&
+> +	    __hyp_this_cpu_read(arm64_ssbd_callback_required))
+> +		arm_smccc_1_1_smc(ARM_SMCCC_ARCH_WORKAROUND_2, 0, NULL);
+> +#endif
+> +}
+> +
+> +static void __hyp_text __set_host_arch_workaround_state(struct kvm_vcpu *vcpu)
+> +{
+> +#ifdef CONFIG_ARM64_SSBD
+> +	/*
+> +	 * If the guest has disabled the workaround, bring it back on.
+> +	 */
+> +	if (__needs_ssbd_off(vcpu) &&
+> +	    __hyp_this_cpu_read(arm64_ssbd_callback_required))
+> +		arm_smccc_1_1_smc(ARM_SMCCC_ARCH_WORKAROUND_2, 1, NULL);
+> +#endif
+> +}
+> +
+>  /* Switch to the guest for VHE systems running in EL2 */
+>  int kvm_vcpu_run_vhe(struct kvm_vcpu *vcpu)
+>  {
+> @@ -409,6 +443,8 @@ int kvm_vcpu_run_vhe(struct kvm_vcpu *vcpu)
+>  	sysreg_restore_guest_state_vhe(guest_ctxt);
+>  	__debug_switch_to_guest(vcpu);
+>  
+> +	__set_guest_arch_workaround_state(vcpu);
+> +
+>  	do {
+>  		/* Jump in the fire! */
+>  		exit_code = __guest_enter(vcpu, host_ctxt);
+> @@ -416,6 +452,8 @@ int kvm_vcpu_run_vhe(struct kvm_vcpu *vcpu)
+>  		/* And we're baaack! */
+>  	} while (fixup_guest_exit(vcpu, &exit_code));
+>  
+> +	__set_host_arch_workaround_state(vcpu);
+> +
+>  	fp_enabled = fpsimd_enabled_vhe();
+>  
+>  	sysreg_save_guest_state_vhe(guest_ctxt);
+> @@ -465,6 +503,8 @@ int __hyp_text __kvm_vcpu_run_nvhe(struct kvm_vcpu *vcpu)
+>  	__sysreg_restore_state_nvhe(guest_ctxt);
+>  	__debug_switch_to_guest(vcpu);
+>  
+> +	__set_guest_arch_workaround_state(vcpu);
+> +
+>  	do {
+>  		/* Jump in the fire! */
+>  		exit_code = __guest_enter(vcpu, host_ctxt);
+> @@ -472,6 +512,8 @@ int __hyp_text __kvm_vcpu_run_nvhe(struct kvm_vcpu *vcpu)
+>  		/* And we're baaack! */
+>  	} while (fixup_guest_exit(vcpu, &exit_code));
+>  
+> +	__set_host_arch_workaround_state(vcpu);
+> +
+>  	fp_enabled = __fpsimd_enabled_nvhe();
+>  
+>  	__sysreg_save_state_nvhe(guest_ctxt);
+> diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
+> index a4c1b76240df..2d9b4795edb2 100644
+> --- a/virt/kvm/arm/arm.c
+> +++ b/virt/kvm/arm/arm.c
+> @@ -1490,6 +1490,10 @@ static int init_hyp_mode(void)
+>  		}
+>  	}
+>  
+> +	err = hyp_map_aux_data();
+> +	if (err)
+> +		kvm_err("Cannot map host auxilary data: %d\n", err);
+> +
+>  	return 0;
+>  
+>  out_err:
+> -- 
+> 2.14.2
 > 
