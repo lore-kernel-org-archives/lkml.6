@@ -1,109 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935576AbeEXBuS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 21:50:18 -0400
-Received: from ozlabs.org ([203.11.71.1]:32915 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935218AbeEXBuR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 21:50:17 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, Boqun Feng <boqun.feng@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
-Subject: Re: [PATCH 10/13] atomics/powerpc: define atomic64_fetch_add_unless()
-In-Reply-To: <20180523133533.1076-11-mark.rutland@arm.com>
-References: <20180523133533.1076-1-mark.rutland@arm.com> <20180523133533.1076-11-mark.rutland@arm.com>
-Date: Thu, 24 May 2018 11:50:15 +1000
-Message-ID: <87lgc9styg.fsf@concordia.ellerman.id.au>
+        id S935602AbeEXBut (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 21:50:49 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:57554 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935218AbeEXBuo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 21:50:44 -0400
+Subject: Re: BUG: scsi/qla2xxx: BUG_ON(blk_queued_rq(req) is triggered in
+ blk_finish_request
+To: qla2xxx-upstream@qlogic.com, himanshu.madhani@cavium.com,
+        jthumshirn@suse.de
+Cc: linux-scsi@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Junxiao Bi <junxiao.bi@oracle.com>
+References: <5eb1eeaa-b148-7b90-eee4-e365ead49a5b@oracle.com>
+From: "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <8c7b011e-1379-c151-a187-94d8e0697fd9@oracle.com>
+Date: Thu, 24 May 2018 09:50:35 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <5eb1eeaa-b148-7b90-eee4-e365ead49a5b@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8902 signatures=668700
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=915
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805240019
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mark,
+Would anyone please take a look at this ?
 
-Mark Rutland <mark.rutland@arm.com> writes:
-> As a step towards unifying the atomic/atomic64/atomic_long APIs, this
-> patch converts the arch/powerpc implementation of atomic64_add_unless()
-> into an implementation of atomic64_fetch_add_unless().
->
-> A wrapper in <linux/atomic.h> will build atomic_add_unless() atop of
-> this, provided it is given a preprocessor definition.
->
-> No functional change is intended as a result of this patch.
->
-> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Cc: Paul Mackerras <paulus@samba.org>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> ---
->  arch/powerpc/include/asm/atomic.h | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/powerpc/include/asm/atomic.h b/arch/powerpc/include/asm/atomic.h
-> index b5646c079c16..233dbf31911c 100644
-> --- a/arch/powerpc/include/asm/atomic.h
-> +++ b/arch/powerpc/include/asm/atomic.h
-> @@ -525,7 +525,7 @@ static __inline__ long atomic64_dec_if_positive(atomic64_t *v)
->  #define atomic64_xchg_relaxed(v, new) xchg_relaxed(&((v)->counter), (new))
->  
->  /**
-> - * atomic64_add_unless - add unless the number is a given value
-> + * atomic64_fetch_add_unless - add unless the number is a given value
->   * @v: pointer of type atomic64_t
->   * @a: the amount to add to v...
->   * @u: ...unless v is equal to u.
-> @@ -533,13 +533,13 @@ static __inline__ long atomic64_dec_if_positive(atomic64_t *v)
->   * Atomically adds @a to @v, so long as it was not @u.
->   * Returns the old value of @v.
+Thanks in advance
+Jianchao
 
-Comment was wrong, but is right now. Win.
-
->   */
-> -static __inline__ int atomic64_add_unless(atomic64_t *v, long a, long u)
-> +static __inline__ long atomic64_fetch_add_unless(atomic64_t *v, long a, long u)
->  {
->  	long t;
->  
->  	__asm__ __volatile__ (
->  	PPC_ATOMIC_ENTRY_BARRIER
-> -"1:	ldarx	%0,0,%1		# atomic_fetch_add_unless\n\
-> +"1:	ldarx	%0,0,%1		# atomic64_fetch_add_unless\n\
->  	cmpd	0,%0,%3 \n\
->  	beq	2f \n\
->  	add	%0,%2,%0 \n"
-
-We overwrite t here with the new value ...
-
-> @@ -552,8 +552,9 @@ static __inline__ int atomic64_add_unless(atomic64_t *v, long a, long u)
-
-But then in the context above here we do:
-
-"	subf	%0,%2,%0 \n\
-
-Which puts the old value back into t.
-
->  	: "r" (&v->counter), "r" (a), "r" (u)
->  	: "cc", "memory");
->  
-> -	return t != u;
-> +	return t;
-
-ie. this is correct.
-
-I'm not sure why we wrote it that way, to add and then subtract, but
-that's not your problem.
-
-So LGTM.
-
-Acked-by: Michael Ellerman <mpe@ellerman.id.au>
-
-cheers
+On 05/23/2018 11:55 AM, jianchao.wang wrote:
+> 
+> 
+> Hi all
+> 
+> Our customer met a panic triggered by BUG_ON in blk_finish_request.
+>>From the dmesg log, the BUG_ON was triggered after command abort occurred many times.
+> There is a race condition in the following scenario.
+> 
+> cpu A                                   cpu B
+> kworker                                 interrupt
+>                                                  
+> scmd_eh_abort_handler()                               
+>   -> scsi_try_to_abort_cmd()
+>     -> qla2xxx_eh_abort()                        
+>       -> qla2x00_eh_wait_on_command()   qla2x00_status_entry()   
+>                                           -> qla2x00_sp_compl()
+>                                             -> qla2x00_sp_free_dma()
+>   -> scsi_queue_insert()                          
+>     -> __scsi_queue_insert()                         
+>       -> blk_requeue_request()
+>         -> blk_clear_rq_complete()
+>                                             -> scsi_done
+>                                               -> blk_complete_request
+>                                                 -> blk_mark_rq_complete       
+>           -> elv_requeue_request()              -> __blk_complete_request()
+>             -> __elv_add_request()
+>             // req will be queued here                                                         
+>                                                     BLK_SOFTIRQ
+>                                                     scsi_softirq_done()
+>                                                       -> scsi_finish_command()
+>                                                         -> scsi_io_completion()
+>                                                           -> scsi_end_request()
+>                                                             -> blk_finish_request()  // BUG_ON(blk_queued_rq(req)) !!!
+> 
+> The issue will not be triggered most of time, because the request is marked as complete by timeout path.
+> So the scsi_done from qla2x00_sp_compl does nothing.
+> But as the scenario above, if the complete state has been cleaned by blk_requeue_request, we will get
+> the request both requeued and completed, and then BUG_ON(blk_queued_rq(req)) in blk_finish_request comes up.
+> 
+> Is there any solution for this in qla2xxx driver side ?
+> 
+> Thanks
+> Jianchao
+> 
+> 
