@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1807417-1527159237-2-9413510105005992089
+X-Cyrus-Session-Id: sloti22d1t05-1797295-1527159216-2-15228971475123067454
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527159236; b=NXfZgsfPT0sP05wi3oVHotbRtOQc6fKJOfGjYU0dIcM9p0X1OV
-    R+rBwNm0kA8mcLhNmr75FalTTjrb7iQlUMK59nrw/XqE6vFXr3zMQnLd0eIFvDZd
-    yR9A90Zte02fJzXi88L7BstwXcnVzAqKzWLClF9vncef3Jipf3LX5Qj40R4fBihx
-    HfTz1NB7dlSHkzSjqRKkPB1y011VPzclLWcdn4WR9LkIpOekp0n7Fw0p/2a1AsNh
-    MJEclubwamWZuEpf+Vw8EfmhnEFk0cu7EPVEwul9utZ2u0pMwCrcee6Xt1vKvrgG
-    7iAqWVc1Dgmeyw6nHN/WtRWyJ2XeDb6brtXA==
+    1527159215; b=S/SeGPfbWxnV6UpMeBSO+uZZKvTUhmMjcwz1nBl5l/xTJrXxsY
+    qqPavODieNy3verIPOWTlu8zhztO31LKKRE4fV0p9Xz6WppiyWJVi7zaNsh1lDhK
+    x1Vlndl7vIwSbdj0HRi295O4epS8mGHc/Z8BoB2UgvkBl6jnf9k4GWNz4LOurlCo
+    P2Qc1UjvvX/aWzyIp+JZc35Zfz5nsdssMjlUpM3i6dDK5nA/YspmkJvtBhGeDkGm
+    plxbaWp6zfYxH6xDLiaKs9Xq8TTcgk7DcO1PtLKSlwlotVZRHf0c6L7qEz+VO73e
+    +UjaDkofcxhpqJTrbZXhox2WTpdUjwBSrNPw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527159236; bh=1+0+lcgk7m4NwPEZxmU1aqXFsayxGY
-    NoFU1mVk0QsJY=; b=DU+pNlTkdAfgmKKSS7uvkSzDAEKRlAmUg+ryxM0m3O832C
-    N40GcZbVOwE1uURYFJmWfp9DspWvo0HI99XZrPcXFS1kQyc1NukBk8iTJy5F+8Ld
-    3/PO1oQ2DGvm/re8qVEujLYn0BaswSzoC4jIKrl3k7PIFV3J9DwXSgvFAjgKSmba
-    iQU8ss0aPZOx5/0UcFM4It1MPfXAE9GJSkolDIny1iQsJ+yNqL2ZyHC3PD+M1XSL
-    07EMxMww7j31cmcRRVpN2e3N24f1hB94gGYfl+fQhh2FrNxIFdtMMoRbAC7L3eTP
-    GnkeW13tC6WGliq4ytQ+yV0rMcc/tORyv/q1F0cQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527159215; bh=qeDW8EWkSQDVK7Cyh4/J9At2sWJ4Y0
+    O0gF1gPOin2IY=; b=XCM1ppYApME8/Ie9oHVSkugqh0L7EhFfJ8uWxqIcAM0RIr
+    kPJROPPVRWhzuQUX+r+k/F3OSasLHoajcoYfM4D0twS/ybUItSeixiQxLTJYM325
+    dhtfoN9Q8jG126SCR/193t0yzUh0sugJFAisVhcj3PWjmGwd3Kz8X8BiIacumLuI
+    h8vnCr7vLka4D8k4enAhIGvaqbc0S2xcZEAL/yM43LHiI8AdhKvRGJJJKOW5FuUr
+    QUofdm3c6bmWS1gGpbMUc+6ClsmzLTxp0XInrNVPPXB9ZLdjBZSoCdqbdNm1xoDS
+    di0BzRO4JCtwLz8ouU9/IF8oCVOxm0WWZEBTbtgg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=EG9R4Xt/ x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=eSLEOGdP x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=EG9R4Xt/ x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=eSLEOGdP x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,34 +64,32 @@ Authentication-Results: mx6.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIvzTW0+LQYfN2G/8Z2D6amCc3wyjmidArZjkXh98neIuW5SWiNHMQVBrmW7/71w82Z/MPUB9lae0+giskwZMRvKWE/Huk5uWVULXYmoWPp4Lj+gVtfZ
-    AlsWJDQN2FgT/NwiFIW3X58FiSrq8KUA8ccErqf4+RRwgcELhFAPKi8ZzTZxFjwO2oBhGcNQ47ra+fMI/OOdaMD1soH6j4rsaP1nVbXQQiUt2R46bF0ZLr9b
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfLsTF07eEDeniPZxFzLYwsTBMUtPJnf85sCFHcYEBScta6ih+pCkgbiOpg41ZxdjiZAaUKHEcSLNX8FUUKtF1X0BESGe8U+LRnO4QoOb7G4JR19zoaE1
+    RMS2XUN4SVJrJeYSsrjPz5+RgVeHiFV+Cv9mnKg+TtApgXWE4CmIR6NENC9BUq0K0aUfYSTf2ld3k+Dkf7zMAJY4cybJxJazaJq+xgnLJD4AnFn4a7iXVfFg
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=j-NXPswCAAAA:8 a=m8ToADvmAAAA:8 a=Ikd4Dj_1AAAA:8 a=yMhMjlubAAAA:8
-    a=ag1SF4gXAAAA:8 a=RNOMWXZoqlZzpp3PYiAA:9 a=RdPg5fLVvLDu0hiv:21
-    a=yYO6URiAGnNbBWEK:21 a=QEXdDO2ut3YA:10 a=UdV-L189IiqUQIgB40x4:22
-    a=kCrBFHLFDAq2jDEeoMj9:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=hD80L64hAAAA:8 a=pGLkceISAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=38Mx9yBTMS289Mm5uicA:9 a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030384AbeEXJ5D (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:57:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36832 "EHLO mail.kernel.org"
+        id S1032233AbeEXKxd (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 06:53:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36970 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030366AbeEXJ5A (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:57:00 -0400
+        id S1030402AbeEXJ5I (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:57:08 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>,
+        stable@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 129/165] clk: tegra: Fix pll_u rate configuration
-Date: Thu, 24 May 2018 11:38:55 +0200
-Message-Id: <20180524093627.222721421@linuxfoundation.org>
+Subject: [PATCH 4.14 132/165] clk: samsung: exynos7: Fix PLL rates
+Date: Thu, 24 May 2018 11:38:58 +0200
+Message-Id: <20180524093627.340243027@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -109,55 +107,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Marcel Ziswiler <marcel@ziswiler.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
 
-[ Upstream commit c35b518f9ba06c9de79fb3ff62eed7462d804995 ]
+[ Upstream commit 7e4db0c2836e892766565965207eee051c8037b9 ]
 
-Turns out latest upstream U-Boot does not configure/enable pll_u which
-leaves it at some default rate of 500 kHz:
+Rates declared in PLL rate tables should match exactly rates calculated from
+the PLL coefficients. If that is not the case, rate of the PLL's child clock
+might be set not as expected. For instance, if in the PLL rates table we have
+a 393216000 Hz entry and the real value as returned by the PLL's recalc_rate
+callback is 393216003, after setting PLL's clk rate to 393216000 clk_get_rate
+will return 393216003. If we now attempt to set rate of a PLL's child divider
+clock to 393216000/2 its rate will be 131072001, rather than 196608000.
+That is, the divider will be set to 3 instead of 2, because 393216003/2 is
+greater than 196608000.
 
-root@apalis-t30:~# cat /sys/kernel/debug/clk/clk_summary | grep pll_u
-       pll_u                  3        3        0      500000          0
+To fix this issue declared rates are changed to exactly match rates generated
+by the PLL, as calculated from the P, M, S, K coefficients.
 
-Of course this won't quite work leading to the following messages:
-
-[    6.559593] usb 2-1: new full-speed USB device number 2 using tegra-
-ehci
-[   11.759173] usb 2-1: device descriptor read/64, error -110
-[   27.119453] usb 2-1: device descriptor read/64, error -110
-[   27.389217] usb 2-1: new full-speed USB device number 3 using tegra-
-ehci
-[   32.559454] usb 2-1: device descriptor read/64, error -110
-[   47.929777] usb 2-1: device descriptor read/64, error -110
-[   48.049658] usb usb2-port1: attempt power cycle
-[   48.759475] usb 2-1: new full-speed USB device number 4 using tegra-
-ehci
-[   59.349457] usb 2-1: device not accepting address 4, error -110
-[   59.509449] usb 2-1: new full-speed USB device number 5 using tegra-
-ehci
-[   70.069457] usb 2-1: device not accepting address 5, error -110
-[   70.079721] usb usb2-port1: unable to enumerate USB device
-
-Fix this by actually allowing the rate also being set from within
-the Linux kernel.
-
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/tegra/clk-pll.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/samsung/clk-exynos7.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -1151,6 +1151,8 @@ static const struct clk_ops tegra_clk_pl
- 	.enable = clk_pllu_enable,
- 	.disable = clk_pll_disable,
- 	.recalc_rate = clk_pll_recalc_rate,
-+	.round_rate = clk_pll_round_rate,
-+	.set_rate = clk_pll_set_rate,
+--- a/drivers/clk/samsung/clk-exynos7.c
++++ b/drivers/clk/samsung/clk-exynos7.c
+@@ -140,7 +140,7 @@ static const struct samsung_div_clock to
  };
  
- static int _pll_fixed_mdiv(struct tegra_clk_pll_params *pll_params,
+ static const struct samsung_pll_rate_table pll1460x_24mhz_tbl[] __initconst = {
+-	PLL_36XX_RATE(491520000, 20, 1, 0, 31457),
++	PLL_36XX_RATE(491519897, 20, 1, 0, 31457),
+ 	{},
+ };
+ 
