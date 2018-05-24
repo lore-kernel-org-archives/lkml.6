@@ -1,94 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S970113AbeEXMXw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 08:23:52 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43394 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965995AbeEXMXr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 08:23:47 -0400
-Date: Thu, 24 May 2018 13:24:14 +0100
-From: Will Deacon <will.deacon@arm.com>
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>, Kees Cook <keescook@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christoffer Dall <christoffer.dall@arm.com>
-Subject: Re: [PATCH 10/14] arm64: ssbd: Add prctl interface for per-thread
- mitigation
-Message-ID: <20180524122413.GD8689@arm.com>
-References: <20180522150648.28297-1-marc.zyngier@arm.com>
- <20180522150648.28297-11-marc.zyngier@arm.com>
+        id S970125AbeEXMYF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 08:24:05 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:56377 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965995AbeEXMYC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 08:24:02 -0400
+Date: Thu, 24 May 2018 14:23:56 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Stefan Agner <stefan@agner.ch>
+Cc: dwmw2@infradead.org, computersforpeace@gmail.com,
+        marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        thierry.reding@gmail.com, mturquette@baylibre.com, sboyd@kernel.org,
+        dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
+        marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com,
+        benjamin.lindqvist@endian.se, jonathanh@nvidia.com,
+        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com,
+        linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [RESEND PATCH 2/5] mtd: rawnand: add NVIDIA Tegra NAND Flash
+ controller driver
+Message-ID: <20180524142356.0fc68797@bbrezillon>
+In-Reply-To: <7b3cc3991fb054130fd54c6fdfec5097@agner.ch>
+References: <cover.1526990589.git.stefan@agner.ch>
+        <86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
+        <20180523161810.0ed9fe80@bbrezillon>
+        <2d8107f0e6568512d691e9ea25a1e4e5@agner.ch>
+        <20180524105614.3c51736c@bbrezillon>
+        <7b3cc3991fb054130fd54c6fdfec5097@agner.ch>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180522150648.28297-11-marc.zyngier@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 04:06:44PM +0100, Marc Zyngier wrote:
-> If running on a system that performs dynamic SSBD mitigation, allow
-> userspace to request the mitigation for itself. This is implemented
-> as a prctl call, allowing the mitigation to be enabled or disabled at
-> will for this particular thread.
-> 
-> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-> ---
->  arch/arm64/kernel/Makefile |   1 +
->  arch/arm64/kernel/ssbd.c   | 107 +++++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 108 insertions(+)
->  create mode 100644 arch/arm64/kernel/ssbd.c
-> 
-> diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
-> index bf825f38d206..0025f8691046 100644
-> --- a/arch/arm64/kernel/Makefile
-> +++ b/arch/arm64/kernel/Makefile
-> @@ -54,6 +54,7 @@ arm64-obj-$(CONFIG_ARM64_RELOC_TEST)	+= arm64-reloc-test.o
->  arm64-reloc-test-y := reloc_test_core.o reloc_test_syms.o
->  arm64-obj-$(CONFIG_CRASH_DUMP)		+= crash_dump.o
->  arm64-obj-$(CONFIG_ARM_SDE_INTERFACE)	+= sdei.o
-> +arm64-obj-$(CONFIG_ARM64_SSBD)		+= ssbd.o
->  
->  obj-y					+= $(arm64-obj-y) vdso/ probes/
->  obj-m					+= $(arm64-obj-m)
-> diff --git a/arch/arm64/kernel/ssbd.c b/arch/arm64/kernel/ssbd.c
-> new file mode 100644
-> index 000000000000..34e3c430176b
-> --- /dev/null
-> +++ b/arch/arm64/kernel/ssbd.c
-> @@ -0,0 +1,107 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2018 ARM Ltd, All Rights Reserved.
-> + */
-> +
-> +#include <linux/sched.h>
-> +#include <linux/thread_info.h>
-> +
-> +#include <asm/cpufeature.h>
-> +
-> +/*
-> + * prctl interface for SSBD
-> + * FIXME: Drop the below ifdefery once the common interface has been merged.
-> + */
-> +#ifdef PR_SPEC_STORE_BYPASS
-> +static int ssbd_prctl_set(struct task_struct *task, unsigned long ctrl)
-> +{
-> +	int state = arm64_get_ssbd_state();
-> +
-> +	/* Unsupported or already mitigated */
-> +	if (state == ARM64_SSBD_UNKNOWN)
-> +		return -EINVAL;
-> +	if (state == ARM64_SSBD_MITIGATED)
-> +		return -EPERM;
+On Thu, 24 May 2018 13:09:53 +0200
+Stefan Agner <stefan@agner.ch> wrote:
 
-I'm not sure this is the best thing to do. If the firmware says that the
-CPU is mitigated, we should probably return 0 for PR_SPEC_DISABLE but
--EPERM for PR_SPEC_ENABLE (i.e. the part that doesn't work is disabling
-the mitigation).
+> On 24.05.2018 10:56, Boris Brezillon wrote:
+> > On Thu, 24 May 2018 10:46:27 +0200
+> > Stefan Agner <stefan@agner.ch> wrote:
+> >   
+> >> Hi Boris,
+> >>
+> >> Thanks for the initial review! One small question below:
+> >>
+> >> On 23.05.2018 16:18, Boris Brezillon wrote:  
+> >> > Hi Stefan,
+> >> >
+> >> > On Tue, 22 May 2018 14:07:06 +0200
+> >> > Stefan Agner <stefan@agner.ch> wrote:  
+> >> >> +
+> >> >> +struct tegra_nand {
+> >> >> +	void __iomem *regs;
+> >> >> +	struct clk *clk;
+> >> >> +	struct gpio_desc *wp_gpio;
+> >> >> +
+> >> >> +	struct nand_chip chip;
+> >> >> +	struct device *dev;
+> >> >> +
+> >> >> +	struct completion command_complete;
+> >> >> +	struct completion dma_complete;
+> >> >> +	bool last_read_error;
+> >> >> +
+> >> >> +	dma_addr_t data_dma;
+> >> >> +	void *data_buf;
+> >> >> +	dma_addr_t oob_dma;
+> >> >> +	void *oob_buf;
+> >> >> +
+> >> >> +	int cur_chip;
+> >> >> +};  
+> >> >
+> >> > This struct should be split in 2 structures: one representing the NAND
+> >> > controller and one representing the NAND chip:
+> >> >
+> >> > struct tegra_nand_controller {
+> >> > 	struct nand_hw_control base;
+> >> > 	void __iomem *regs;
+> >> > 	struct clk *clk;
+> >> > 	struct device *dev;
+> >> > 	struct completion command_complete;
+> >> > 	struct completion dma_complete;
+> >> > 	bool last_read_error;
+> >> > 	int cur_chip;
+> >> > };
+> >> >
+> >> > struct tegra_nand {
+> >> > 	struct nand_chip base;
+> >> > 	dma_addr_t data_dma;
+> >> > 	void *data_buf;
+> >> > 	dma_addr_t oob_dma;
+> >> > 	void *oob_buf;
+> >> > };  
+> >>
+> >> Is there a particular reason why you would leave DMA buffers in the chip
+> >> structure? It seems that is more a controller thing...  
+> > 
+> > The size of those buffers is likely to be device dependent, so if you
+> > have several NANDs connected to the controller, you'll either have to
+> > have one buffer at the controller level which is max(all-chip-buf-size)
+> > or a buffer per device.
+> > 
+> > Also, do you really need these buffers? The core already provide some
+> > which are suitable for DMA (chip->oob_poi and chip->data_buf).
+> >   
+> 
+> Good question, I am not sure, that was existing code.
+> 
+> Are you sure data_buf it is DMA capable?
+> 
+> nand_scan_tail allocates with kmalloc:
+> 
+> chip->data_buf = kmalloc(mtd->writesize + mtd->oobsize, GFP_KERNEL);
 
-Will
+Yes, kmalloc() allocates DMA-able buffers, so those are DMA-safe.
