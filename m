@@ -1,40 +1,41 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrRBgoJV+pLbj3hZAApN0ZgC7CxlNeOez9CgXLc4J7TDwo4n9QliQyMfMDIB6jRfIitgcAv
-ARC-Seal: i=1; a=rsa-sha256; t=1527156247; cv=none;
+X-Google-Smtp-Source: AB8JxZqNSoMDM8dPlihk7iqNeNvfTuFSk7ky5x9WdPSJuLMxi/EOT50JLSYIt3KwU/hNiz4h0rWN
+ARC-Seal: i=1; a=rsa-sha256; t=1527156245; cv=none;
         d=google.com; s=arc-20160816;
-        b=hj/VWSRpLWiQXC70l8Vy/XYyKoHFpVYN7GbYdTdeZ2cENBdcFrUcZValEc3iEKL7dZ
-         fJy/BN+431/vwu5P8uhykDJMd2sO2pxOkzfGQiRPCicKyMOcSNtJhnXBzTUVgJ6OIPCF
-         XBzqPvUwQ4fXO7ISc0b2VnFvG7vqXpexIqgQNTAiRAaedHoL8YxkdshzV78PvjRaswBY
-         R3ODiVKHBUbrZi1HXh6fh/a1FvRqELM0ategmIXnSLLZqmVx0nx/kLiVWkRJJKYvB7jy
-         b7TFH2UjVhcc4IUf3oK3x+zUfYua8vX6ViJartQq0LvobQSEV+NlxIaxYMy+7FMJlBQy
-         nN9A==
+        b=QYZhjNAecTL4BombbcpCiKvpPZc2SdrTyvz2OL/23cLR5ilqSIBz9NhPcZ2tepwbmR
+         m5iUlSBYXAGjm4qJiBFr5fLzmvHnKZxq530AAhgy53NshfldpTUCPR3ulMQ4/OMwRZEB
+         kMv0NEyNp/bzmnwtS3kRzX0ttfkgxxFKotFxguXvPa63PzUK33iqc9Vy6MU0imp/5I6s
+         OIqIe2UVqJGtaSvWgx2vR7LskaLX0tE0PHe8J4LdRbsqlcDxM6umlxV1JWP3uDM3Feqj
+         vquwcFo/0rObdnZ2UVrFV+/jMehFdNgWCTCIf8xTnj01/bqejffmgRqAqFIVDdHPRz5H
+         DIcA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=OtYE7whmw25CB2wwgcRTNNuX1XORYl92iUfojxTykNc=;
-        b=zEXIzCFA4a/6rFfdKUxSaAUrqh3n0cwlJ/gDkZ/jdqDFhG/NIPPOqM89ZfrKK8RRjt
-         XRi7LK5+zcJOm9YISFrRo5iy9B0NhWFNauz8gsnulf1YcNIWXJSiezgYHGbBIxsgkk6p
-         opF38KskHyLS0GAmZMcr9azaXsx8SEqUXdkBrvQlAY56pbMIJw4IPiEQwhzh1JNJpSWI
-         RRsbw9giuQ+2qomKURpEJ1HyxK0bgKH8wK/F8lJ7LtqWRAydSFiSNfmQ8rt8ACWfYN6U
-         2WKEdxz/HnWgAtzzLYTGHV1HNzCvLFlfWAAXbSfpCoNAJan2bm4GOO2M6Qvg4vBTywiP
-         6BxA==
+        bh=TskIUPYwtRdriD8ODD4LNzq0VdRDeXxMS7hcvWBxkDo=;
+        b=nYxe1LTbjdCIzwne3Hh6+YukhQhl2kmt6KGEqCuVEeskS5QStyvF+QY9IEGRdJHVDj
+         hkExangs2laASqEpRL7Po2SGuAOwKoRXNe681+enIb8qnxUzEfhPhWO3CdL4MRCxvhS/
+         vttNbwkiyapSSSg5Rkw7UlsYe5V7D0pOnrzCMZSvzJK3PHVdLALeahjwaBLTFUhs46RB
+         1ZPeWdiWAR39qNpuduBK8+8MAjP6Sal9EpaWIfnJw5WPt2bJru5LR74j/q7PeCFUmpIl
+         r2OqdbWs5JAQJK9iw3kOkncFvyDXrucL8EFSDf8P5uQlKqutP0A2uzzHzhCGQKZ4HoOm
+         3CEQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=Y4bLeSgy;
+       dkim=pass header.i=@kernel.org header.s=default header.b=D6hgJNIG;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=Y4bLeSgy;
+       dkim=pass header.i=@kernel.org header.s=default header.b=D6hgJNIG;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Sjoerd Simons <sjoerd.simons@collabora.co.uk>,
-	Ezequiel Garcia <ezequiel@collabora.co.uk>,
-	Mark Brown <broonie@kernel.org>,
+	Dick Kennedy <dick.kennedy@broadcom.com>,
+	James Smart <james.smart@broadcom.com>,
+	Hannes Reinecke <hare@suse.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 117/161] ASoC: rockchip: rk3288-hdmi-analog: Select needed codecs
-Date: Thu, 24 May 2018 11:39:02 +0200
-Message-Id: <20180524093032.349169931@linuxfoundation.org>
+Subject: [PATCH 4.16 116/161] scsi: lpfc: Fix frequency of Release WQE CQEs
+Date: Thu, 24 May 2018 11:39:01 +0200
+Message-Id: <20180524093032.229085394@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -44,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601339021586590897?=
-X-GMAIL-MSGID: =?utf-8?q?1601339389566083445?=
+X-GMAIL-THRID: =?utf-8?q?1601338586393623526?=
+X-GMAIL-MSGID: =?utf-8?q?1601339387061419487?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,31 +54,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ezequiel Garcia <ezequiel@collabora.co.uk>
+From: James Smart <jsmart2021@gmail.com>
 
-[ Upstream commit b1d0db067fbe2598d62b248beea5d705a0ea7642 ]
+[ Upstream commit 04673e38f56b30cd39b1fa0f386137d818b17781 ]
 
-The driver does not select all the codec drivers that needs.
-Fix it by selecting the analog and HDMI codecs.
+The driver controls when the hardware sends completions that communicate
+consumption of elements from the WQ. This is done by setting a WQEC bit
+on a WQE.
 
-Cc: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Signed-off-by: Ezequiel Garcia <ezequiel@collabora.co.uk>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+The current driver sets it on every Nth WQE posting. However, the driver
+isn't clearing the bit if the WQE is reused. Thus, if the queue depth
+isn't evenly divisible by N, with enough time, it can be set on every
+element, creating a lot of overhead and risking CQ full conditions.
+
+Correct by clearing the bit when not setting it on an Nth element.
+
+Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
+Signed-off-by: James Smart <james.smart@broadcom.com>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/soc/rockchip/Kconfig |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/scsi/lpfc/lpfc_sli.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/sound/soc/rockchip/Kconfig
-+++ b/sound/soc/rockchip/Kconfig
-@@ -56,6 +56,9 @@ config SND_SOC_RK3288_HDMI_ANALOG
- 	depends on SND_SOC_ROCKCHIP && I2C && GPIOLIB && CLKDEV_LOOKUP
- 	select SND_SOC_ROCKCHIP_I2S
- 	select SND_SOC_HDMI_CODEC
-+	select SND_SOC_ES8328_I2C
-+	select SND_SOC_ES8328_SPI if SPI_MASTER
-+	select DRM_DW_HDMI_I2S_AUDIO if DRM_DW_HDMI
- 	help
- 	  Say Y or M here if you want to add support for SoC audio on Rockchip
- 	  RK3288 boards using an analog output and the built-in HDMI audio.
+--- a/drivers/scsi/lpfc/lpfc_sli.c
++++ b/drivers/scsi/lpfc/lpfc_sli.c
+@@ -129,6 +129,8 @@ lpfc_sli4_wq_put(struct lpfc_queue *q, u
+ 	/* set consumption flag every once in a while */
+ 	if (!((q->host_index + 1) % q->entry_repost))
+ 		bf_set(wqe_wqec, &wqe->generic.wqe_com, 1);
++	else
++		bf_set(wqe_wqec, &wqe->generic.wqe_com, 0);
+ 	if (q->phba->sli3_options & LPFC_SLI4_PHWQ_ENABLED)
+ 		bf_set(wqe_wqid, &wqe->generic.wqe_com, q->queue_id);
+ 	lpfc_sli_pcimem_bcopy(wqe, temp_wqe, q->entry_size);
