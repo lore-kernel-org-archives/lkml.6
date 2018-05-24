@@ -1,102 +1,166 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032554AbeEXSUK convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 14:20:10 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:60321 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030261AbeEXSUI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 14:20:08 -0400
-Date: Thu, 24 May 2018 11:19:55 -0700
-User-Agent: K-9 Mail for Android
-In-Reply-To: <CAKwvOd=jmi_7LvZbS0PA5-zt62m5ZFPUNG7JtMQVmerCR63ebQ@mail.gmail.com>
-References: <CAKwvOd=jmi_7LvZbS0PA5-zt62m5ZFPUNG7JtMQVmerCR63ebQ@mail.gmail.com>
+        id S1034223AbeEXSUi (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 14:20:38 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:40492 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1030202AbeEXSUh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 14:20:37 -0400
+Date: Thu, 24 May 2018 12:20:32 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+Cc: <eric.auger@redhat.com>, <pmorel@linux.vnet.ibm.com>,
+        <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <iommu@lists.linux-foundation.org>, <linuxarm@huawei.com>,
+        <john.garry@huawei.com>, <xuwei5@hisilicon.com>,
+        Joerg Roedel <joro@8bytes.org>
+Subject: Re: [PATCH v6 0/7] vfio/type1: Add support for valid iova list
+ management
+Message-ID: <20180524122032.724676b9@w520.home>
+In-Reply-To: <20180418114045.7968-1-shameerali.kolothum.thodi@huawei.com>
+References: <20180418114045.7968-1-shameerali.kolothum.thodi@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [clang] stack protector and f1f029c7bf
-To: Nick Desaulniers <ndesaulniers@google.com>
-CC: Alistair Strachan <astrachan@google.com>,
-        Manoj Gupta <manojgupta@google.com>,
-        Matthias Kaehlcke <mka@google.com>,
-        Greg Hackmann <ghackmann@google.com>, sedat.dilek@gmail.com,
-        tstellar@redhat.com, LKML <linux-kernel@vger.kernel.org>
-From: hpa@zytor.com
-Message-ID: <57C635C3-716C-4FC3-90C7-E394AA7242BA@zytor.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On May 23, 2018 3:08:19 PM PDT, Nick Desaulniers <ndesaulniers@google.com> wrote:
->H. Peter,
->
->It was reported [0] that compiling the Linux kernel with Clang +
->CC_STACKPROTECTOR_STRONG was causing a crash in native_save_fl(), due
->to
->how GCC does not emit a stack guard for static inline functions (see
->Alistair's excellent report in [1]) but Clang does.
->
->When working with the LLVM release maintainers, Tom had suggested [2]
->changing the inline assembly constraint in native_save_fl() from '=rm'
->to
->'=r', and Alistair had verified the disassembly:
->
->(good) code generated w/o -fstack-protector-strong:
->
->native_save_fl:
->          pushfq
->          popq    -8(%rsp)
->          movq    -8(%rsp), %rax
->          retq
->
->(good) code generated w/ =r input constraint:
->
->native_save_fl:
->          pushfq
->          popq    %rax
->          retq
->
->(bad) code generated with -fstack-protector-strong:
->
->native_save_fl:
->          subq    $24, %rsp
->          movq    %fs:40, %rax
->          movq    %rax, 16(%rsp)
->          pushfq
->          popq    8(%rsp)
->          movq    8(%rsp), %rax
->          movq    %fs:40, %rcx
->          cmpq    16(%rsp), %rcx
->          jne     .LBB0_2
->          addq    $24, %rsp
->          retq
->.LBB0_2:
->          callq   __stack_chk_fail
->
->It looks like the sugguestion is actually a revert of your commit:
->ab94fcf528d127fcb490175512a8910f37e5b346:
->x86: allow "=rm" in native_save_fl()
->
->It seemed like there was a question internally about why worry about
->pop
->adjusting the stack if the stack could be avoided altogether.
->
->I think Sedat can retest this, but I was curious as well about the
->commit
->message in ab94fcf528d: "[ Impact: performance ]", but Alistair's
->analysis
->of the disassembly seems to indicate there is no performance impact (in
->fact, looks better as there's one less mov).
->
->Is there a reason we should not revert ab94fcf528d12, or maybe a better
->approach?
->
->[0] https://lkml.org/lkml/2018/5/7/534
->[1] https://bugs.llvm.org/show_bug.cgi?id=37512#c15
->[2] https://bugs.llvm.org/show_bug.cgi?id=37512#c22
+[Cc +Joerg: AMD-Vi observation towards the end]
 
-A stack canary on an *inlined* function? That's bound to break things elsewhere too sooner or later.
+On Wed, 18 Apr 2018 12:40:38 +0100
+Shameer Kolothum <shameerali.kolothum.thodi@huawei.com> wrote:
 
-It feels like *once again* clang is asking for the Linux kernel to change to paper over technical or compatibility problems in clang/LLVM. This is not exactly helping the feeling that we should just rip out any and all clang hacks and call it a loss.
--- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity.
+> This series introduces an iova list associated with a vfio 
+> iommu. The list is kept updated taking care of iommu apertures,
+> and reserved regions. Also this series adds checks for any conflict
+> with existing dma mappings whenever a new device group is attached to
+> the domain.
+> 
+> User-space can retrieve valid iova ranges using VFIO_IOMMU_GET_INFO
+> ioctl capability chains. Any dma map request outside the valid iova
+> range will be rejected.
+
+Hi Shameer,
+
+I ran into two minor issues in testing this series, both related to
+mdev usage of type1.  First, in patch 5/7 when we try to validate a dma
+map request:
+
+> +static bool vfio_iommu_iova_dma_valid(struct vfio_iommu *iommu,
+> +				dma_addr_t start, dma_addr_t end)
+> +{
+> +	struct list_head *iova = &iommu->iova_list;
+> +	struct vfio_iova *node;
+> +
+> +	list_for_each_entry(node, iova, list) {
+> +		if ((start >= node->start) && (end <= node->end))
+> +			return true;
+> +	}
+> +
+> +	return false;
+> +}
+
+A container with only an mdev device will have an empty list because it
+has not backing iommu to set ranges or reserved regions, so any dma map
+will fail.  I think this is resolved as follows:
+
+--- a/drivers/vfio/vfio_iommu_type1.c
++++ b/drivers/vfio/vfio_iommu_type1.c
+@@ -1100,7 +1100,7 @@ static bool vfio_iommu_iova_dma_valid(struct vfio_iommu *iommu,
+                        return true;
+        }
+ 
+-       return false;
++       return list_empty(&iommu->iova_list);
+ }
+ 
+ie. return false only if there was anything to test against.
+
+The second issue is similar, patch 6/7 adds to VFIO_IOMMU_GET_INFO:
+
++		ret = vfio_iommu_iova_build_caps(iommu, &caps);
++		if (ret)
++			return ret;
+
+And build_caps has:
+
++	list_for_each_entry(iova, &iommu->iova_list, list)
++		iovas++;
++
++	if (!iovas) {
++		ret = -EINVAL;
+
+Therefore if the iova list is empty, as for mdevs, the use can no
+longer even call VFIO_IOMMU_GET_INFO on the container, which is a
+regression.  Again, I think the fix is simple:
+
+@@ -2090,7 +2090,7 @@ static int vfio_iommu_iova_build_caps(struct vfio_iommu *iommu,
+                iovas++;
+ 
+        if (!iovas) {
+-               ret = -EINVAL;
++               ret = 0;
+                goto out_unlock;
+        }
+ 
+ie. build_caps needs to handle lack of an iova_list as a non-error.
+
+Also, I wrote a small unit test to validate the iova list for my
+systems[1].  With the above changes, my Intel test system gives expected
+results:
+
+# ./vfio-type1-iova-list /sys/bus/mdev/devices/c08db5ed-05d3-4b39-b150-438a18bc698f /sys/bus/pci/devices/0000:00:1b.0
+---- Adding device: c08db5ed-05d3-4b39-b150-438a18bc698f ----
+Initial info struct size: 0x18
+No caps
+---- Adding device: 0000:00:1b.0 ----
+Initial info struct size: 0x18
+Requested info struct size: 0x48
+New info struct size: 0x48
+argsz: 0x48, flags: 0x3, cap_offset: 0x18
+	00: 4800 0000 0300 0000 00f0 ffff ffff ffff
+	10: 1800 0000 0000 0000 0100 0100 0000 0000
+	20: 0200 0000 0000 0000 0000 0000 0000 0000
+	30: ffff dffe 0000 0000 0000 f0fe 0000 0000
+	40: ffff ffff ffff ff01 
+[cap id: 1, version: 1, next: 0x0]
+Found type1 iova range version: 1
+	00: 0000000000000000 - 00000000fedfffff
+	01: 00000000fef00000 - 01ffffffffffffff
+
+Adding an mdev device to the container results in no iova list, adding
+the physical device updates to the expected set with the MSI range
+excluded.
+
+I was a little surprised by an AMD system:
+
+# ./vfio-type1-iova-list /sys/bus/pci/devices/0000:01:00.0
+---- Adding device: 0000:01:00.0 ----
+Initial info struct size: 0x18
+Requested info struct size: 0x58
+New info struct size: 0x58
+argsz: 0x58, flags: 0x3, cap_offset: 0x18
+	00: 5800 0000 0300 0000 00f0 ffff 7fff ffff
+	10: 1800 0000 0000 0000 0100 0100 0000 0000
+	20: 0300 0000 0000 0000 0000 0000 0000 0000
+	30: ffff dffe 0000 0000 0000 f0fe 0000 0000
+	40: ffff ffff fc00 0000 0000 0000 0001 0000
+	50: ffff ffff ffff ffff 
+[cap id: 1, version: 1, next: 0x0]
+Found type1 iova range version: 1
+	00: 0000000000000000 - 00000000fedfffff
+	01: 00000000fef00000 - 000000fcffffffff
+	02: 0000010000000000 - ffffffffffffffff
+
+The additional excluded range is the HyperTransport area (which for
+99.9+% of use cases isn't going to be a problem) is a rather surprising
+limit for the size of a VM we can use on AMD, just under 1TB.  I fully
+expect we'll see a bug report from that and we should be thinking about
+how to address it.  Otherwise, if the changes above look good to you
+I'll incorporate them into their respective patches and push to my next
+branch.  Thanks,
+
+Alex
+
+[1] https://gist.github.com/awilliam/25e39252ab28101a2d89ace1ff765fdd
