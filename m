@@ -1,192 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969956AbeEXMSn convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 08:18:43 -0400
-Received: from gloria.sntech.de ([95.129.55.99]:34536 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S969905AbeEXMSj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 08:18:39 -0400
-From: Heiko Stuebner <heiko@sntech.de>
-To: Levin Du <djw@t-chip.com.cn>
-Cc: Rob Herring <robh@kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Wayne Chou <zxf@t-chip.com.cn>, devicetree@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 2/5] gpio: syscon: Add gpio-syscon for rockchip
-Date: Thu, 24 May 2018 14:18:24 +0200
-Message-ID: <2373122.g04ZbCo5Dh@phil>
-In-Reply-To: <860b225a-94e0-c3cb-94c2-5e354e0ccb1f@t-chip.com.cn>
-References: <1526614328-6869-1-git-send-email-djw@t-chip.com.cn> <CAL_Jsq+VBspzCaLD2Wy=fyC-S+LKGZbVsB+b+Etkx91ioXOCuQ@mail.gmail.com> <860b225a-94e0-c3cb-94c2-5e354e0ccb1f@t-chip.com.cn>
+        id S969971AbeEXMS4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 08:18:56 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:50605 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S969905AbeEXMSq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 08:18:46 -0400
+X-Google-Smtp-Source: AB8JxZp9ZI1u8fWU4TCBCUgh301vWyFYmaVH1bACY8p5Gs2dAee70b4lz+LjxN4sRwHanKfRqwrBnw==
+Subject: Re: [PATCH v1] cpufreq: tegra20: Fix imbalanced clock enable count
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180522211420.2006-1-digetx@gmail.com>
+ <20180523055817.subrv6oeckfecpcp@vireshk-i7>
+ <db300fa3-ae83-059f-eae0-0808c3cb33fb@gmail.com>
+ <2304436.qRMBXhMGsN@aspire.rjw.lan>
+From: Dmitry Osipenko <digetx@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=digetx@gmail.com; prefer-encrypt=mutual; keydata=
+ xsBNBFpX5TwBCADQhg+lBnTunWSPbP5I+rM9q6EKPm5fu2RbqyVAh/W3fRvLyghdb58Yrmjm
+ KpDYUhBIZvAQoFLEL1IPAgJBtmPvemO1XUGPxfYNh/3BlcDFBAgERrI3BfA/6pk7SAFn8u84
+ p+J1TW4rrPYcusfs44abJrn8CH0GZKt2AZIsGbGQ79O2HHXKHr9V95ZEPWH5AR0UtL6wxg6o
+ O56UNG3rIzSL5getRDQW3yCtjcqM44mz6GPhSE2sxNgqureAbnzvr4/93ndOHtQUXPzzTrYB
+ z/WqLGhPdx5Ouzn0Q0kSVCQiqeExlcQ7i7aKRRrELz/5/IXbCo2O+53twlX8xOps9iMfABEB
+ AAHNIkRtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT7CwJQEEwEIAD4WIQSczHcO
+ 3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgIDAQIeAQIX
+ gAAKCRDTNNaPsNRzvFjTCACqAh1M9/YPq73/ai5h2ExDquTgJnjegL8KL2yHL3G+XINwzN5E
+ nPI7esoYm+zVWDJbv3UuRqylpookLNSRA01yyvkaMcipB/B128UnqmUiGRqezj9QE20yIauo
+ uHRuwHPE2q+UkfUhRX9iuOaEyQtZDiCa0myMjmRkJ+Z8ZetclEPG8dYZu47w04phuMlu1QAt
+ a0gkZOaMKvXgj21ushALS6nYnvm7HiIPQXfnEXThartatRvFdmbG4PCn0IoICkQBizwJtXrL
+ HEjELIFap0M8krVJlUoZTFaZnaZkGpUDWikeFtAuie2KuIxmVBYPM4X7pM3eP3AVvIPGS7EE
+ UUFuzsBNBFpX5TwBCADFNDou220thijaLLGaQsebWjzc/gPRxMixIpk856MRyRaQin+IbGD6
+ YskMb5ZSD3nS88LIKNfY4MMH0LwfYztI++ICG2vdFLkbBt78E+LqEa+kZ9072l4W5KO3mWQo
+ +jMfxXbpgGlc7iuEReDgl8iyZ27r51kSW665CYvvu2YJhLqgdj6QM1lN2D1UnhEhkkU+pRAj
+ 1rJVOxdfJaQNQS4+204p3TrURovzNGkN/brqakpNIcqGOAGQqb8F0tuwwuP7ERq/BzDNkbdr
+ qJOrVC/wkHRq1jfabQczWKf8MwYOvivR3HY8d3CpSQxmUXDtdOWfg0XGm1dxYnVfqPjuJaZt
+ ABEBAAHCwHwEGAEIACYWIQSczHcO3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbDAUJA8JnAAAK
+ CRDTNNaPsNRzvJzuB/9d+sxcwHbO8ZDcgaLX9N+bXFqN9fIRVmBUyWa+qqTSREA4uVAtYcRT
+ lfPE2OQ7aMFxaYPwo+/z5SLpu8HcEhN/FG9uIkfYwK0mdCO0vgvlfvBJm4VHe7C6vyAeEPJQ
+ DKbBvdgeqFqO+PsLkk2sawF/9sontMJ5iFfjNDj4UeAo4VsdlduTBZv5hHFvIbv/p7jKH6OT
+ 90FsgUSVbShh7SH5OzAcgqSy4kxuS1AHizWo6P3f9vei987LZWTyhuEuhJsOfivDsjKIq7qQ
+ c5eR+JJtyLEA0Jt4cQGhpzHtWB0yB3XxXzHVa4QUp00BNVWyiJ/t9JHT4S5mdyLfcKm7ddc9
+Message-ID: <3276b3e4-08c1-51d0-0aef-e349c3a77f07@gmail.com>
+Date: Thu, 24 May 2018 15:18:42 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+In-Reply-To: <2304436.qRMBXhMGsN@aspire.rjw.lan>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Levin,
-
-Am Donnerstag, 24. Mai 2018, 03:59:36 CEST schrieb Levin Du:
-> Hi all, I'd like to quote reply of Robin Murphy at
->   http://lists.infradead.org/pipermail/linux-rockchip/2018-May/020619.html
+On 24.05.2018 12:36, Rafael J. Wysocki wrote:
+> On Wednesday, May 23, 2018 11:30:39 AM CEST Dmitry Osipenko wrote:
+>> On 23.05.2018 08:58, Viresh Kumar wrote:
+>>> On 23-05-18, 00:14, Dmitry Osipenko wrote:
+>>>> Tegra20-cpufreq driver missed enabling the CPU clocks. This results in a
+>>>> clock-enable refcount disbalance on PLL_P <-> PLL_X reparent, causing
+>>>> PLL_X to get disabled while it shouldn't. Fix this by enabling the clocks
+>>>> on the driver probe.
+>>>>
+>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>> ---
+>>>>
+>>>> CPUFreq maintainers,
+>>>>
+>>>> Please take into account that this patch is made on top of my recent
+>>>> series of patches [0] "Clean up Tegra20 cpufreq driver" that was fully
+>>>> reviewed, but seems not applied yet. Let me know if you prefer to re-spin
+>>>> the [0], including this patch into the series.
+>>>>
+>>>> [0] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=45321
+>>>
+>>> This is already picked by Rafael and is sitting in pm/bleeding-edge
+>>> branch. Should get merged into linux-next in a day or two.
+>>
+>> Neat, thank you for letting me know.
 > 
-> >
-> > I would suggest s/pin number/bit number in the associated GRF register/
-> > here. At least in this RK3328 case there's only one pin, which isn't
-> > numbered, and if you naively considered it pin 0 of this 'bank' you'd
-> > already have the wrong number. Since we're dealing with the "random
-> > SoC-specific controls" region of the GRF as opposed to the
-> > relatively-consistent and organised pinmux parts, I don't think we
-> > should rely on any assumptions about how things are laid out.
-> >
-> > I was initially going to suggest a more specific compatible string as
-> > well, but on reflection I think the generic "rockchip,gpio-syscon" for
-> > basic "flip this single GRF bit" functionality actually is the right way
-> > to go. In the specific RK3328 GPIO_MUTE case, there look to be 4 bits in
-> > total related to this pin - the enable, value, and some pull controls
-> > (which I assume apply when the output is disabled) - if at some point in
-> > future we *did* want to start explicitly controlling the rest of them
-> > too, then would be a good time to define a separate
-> > "rockchip,rk3328-gpio-mute" binding (and probably a dedicated driver)
-> > for that specialised functionality, independently of this basic one.
+> It actually is there in my linux-next branch, but linux-next proper is not
+> taking new material this week AFAICS.
+
+I've found it in yours git repo, thank you.
+
+> You'll see this in linux-next on Monday, most probably.
 > 
-> 
-> Shall we go the generic "rockchip,gpio-syscon" way, or the specific
->   "rockchip,rk3328-gpio-mute" way? I prefer the former one.
-> 
-> The property of "gpio,syscon-dev" in gpio-syscon driver should be 
-> documented.
-> Since the gpio controller is defined in the dtsi file, which inevitably 
-> contains voodoo
-> register addresses. But at the board level dts file, there won't be more 
-> register
-> addresses.
 
-Past experience shows that the GRF is not really suitable for
-generalization, as it's more of a dumping ground where chip designers
-can put everything that's left over. This is especially true for
-GRF_SOC_CONx registers, that really only contain pretty random bits.
-
-So personally, I'd really prefer soc-specific compatibles as everywhere
-else, instead of trying to push stuff into the devicetree that won't hold
-up on future socs.
-
-
-> On 2018-05-24 3:53 AM, Rob Herring wrote:
-> > On Wed, May 23, 2018 at 10:12 AM, Heiko Stübner <heiko@sntech.de> wrote:
-> >> Hi Rob, Levin,
-> >>
-> >> sorry for being late to the party.
-> >>
-> >> Am Mittwoch, 23. Mai 2018, 16:43:07 CEST schrieb Rob Herring:
-> >>> On Tue, May 22, 2018 at 9:02 PM, Levin Du <djw@t-chip.com.cn> wrote:
-> >>>> On 2018-05-23 2:02 AM, Rob Herring wrote:
-> >>>>> On Fri, May 18, 2018 at 11:52:05AM +0800, djw@t-chip.com.cn wrote:
-> >>>>>> From: Levin Du <djw@t-chip.com.cn>
-> >>>>>>
-> >>>>>> Some GPIOs sit in the GRF_SOC_CON registers of Rockchip SoCs,
-> >>>>>> which do not belong to the general pinctrl.
-> >>>>>>
-> >>>>>> Adding gpio-syscon support makes controlling regulator or
-> >>>>>> LED using these special pins very easy by reusing existing
-> >>>>>> drivers, such as gpio-regulator and led-gpio.
-> >>>>>>
-> >>>>>> Signed-off-by: Levin Du <djw@t-chip.com.cn>
-> >>>>>>
-> >>>>>> ---
-> >>>>>>
-> >>>>>> Changes in v2:
-> >>>>>> - Rename gpio_syscon10 to gpio_mute in doc
-> >>>>>>
-> >>>>>> Changes in v1:
-> >>>>>> - Refactured for general gpio-syscon usage for Rockchip SoCs.
-> >>>>>> - Add doc rockchip,gpio-syscon.txt
-> >>>>>>
-> >>>>>>    .../bindings/gpio/rockchip,gpio-syscon.txt         | 41
-> >>>>>>
-> >>>>>> ++++++++++++++++++++++
-> >>>>>>
-> >>>>>>    drivers/gpio/gpio-syscon.c                         | 30
-> >>>>>>
-> >>>>>> ++++++++++++++++
-> >>>>>>
-> >>>>>>    2 files changed, 71 insertions(+)
-> >>>>>>    create mode 100644
-> >>>>>>
-> >>>>>> Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
-> >>>>>>
-> >>>>>> diff --git
-> >>>>>> a/Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
-> >>>>>> b/Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
-> >>>>>> new file mode 100644
-> >>>>>> index 0000000..b1b2a67
-> >>>>>> --- /dev/null
-> >>>>>> +++ b/Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
-> >>>>>> @@ -0,0 +1,41 @@
-> >>>>>> +* Rockchip GPIO support for GRF_SOC_CON registers
-> >>>>>> +
-> >>>>>> +Required properties:
-> >>>>>> +- compatible: Should contain "rockchip,gpio-syscon".
-> >>>>>> +- gpio-controller: Marks the device node as a gpio controller.
-> >>>>>> +- #gpio-cells: Should be two. The first cell is the pin number and
-> >>>>>> +  the second cell is used to specify the gpio polarity:
-> >>>>>> +    0 = Active high,
-> >>>>>> +    1 = Active low.
-> >>>>> There's no need for this child node. Just make the parent node a gpio
-> >>>>> controller.
-> >>>>>
-> >>>>> Rob
-> >>>> Hi Rob, it is not clear to me. Do you suggest that the grf node should be
-> >>>> a
-> >>>> gpio controller,
-> >>>> like below?
-> >>>>
-> >>>> +    grf: syscon at ff100000 {
-> >>>> +        compatible = "rockchip,gpio-syscon", "rockchip,rk3328-grf",
-> >>>> "syscon", "simple-mfd";
-> >>> Yes, but drop "rockchip,gpio-syscon" and "simple-mfd".
-> >> I would disagree quite a bit here. The grf are the "general register files",
-> >> a bunch of registers used for quite a lot of things, and so it seems
-> >> among other users, also a gpio-controller for some more random pins
-> >> not controlled through the regular gpio controllers.
-> >>
-> >> For a more fully stocked grf, please see
-> >> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm/boot/dts/rk3288.dtsi#n855
-> >> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/rockchip/rk3399.dtsi#n1338
-> >>
-> >> So the gpio controller should definitly also be a subnode.
-> > Sigh, yes, if there are a bunch of functions needing subnodes like the
-> > above, then yes that makes sense. But that's not what has been
-> > presented. Please make some attempt at defining *all* the functions.
-> > An actual binding would be nice, but I'll settle for just a list of
-> > things. The list should have functions that have DT dependencies (like
-> > clocks for phys in the above) because until you do, you don't need
-> > child nodes.
-> 
-> In rk3328.dtsi file, there are lots of line "rockchip,grf = <&grf>;" in 
-> various nodes,
-> such as tsadc,  cru, gmac2io, gmac2phy, and also pinctrl, which are not 
-> sub nodes of
-> `grf`, but for reference only. The gpio-syscon node should also have 
-> similar behavior.
->   They are not strongly coupled. The gpio-syscon node should be defined 
-> outside of the
-> `grf` node.
-
-Not necessarily.
-
-I.e. things like the tsadc, cru etc have their own register space and only
-some minor additional bits inside the GRF.
-
-Other things like some phys and your mute-gpio are _fully embedded_ inside
-the GRF and thus become child devices. This describes the hardware layout
-way better, helps unclutter the devicetree and also shows this distinction
-between "additional bits" and "embedded" clearly.
-
-
-Heiko
+Yes, I noticed that linux-next stopped updating for awhile.
