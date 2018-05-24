@@ -1,11 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1835623-1527161794-2-16265153503906548119
+X-Cyrus-Session-Id: sloti22d1t05-1835623-1527161793-2-6875154842891852642
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES daensv, BAYES_USED global,
-  SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -13,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527161794; b=HsKNAj27+g2zrhQ7w4o+z589+cxzzy8lt0+iI4082NcPkC+LXX
-    lv8vdst+acxMEfYVstQPpSLefsOJh4Iev9tX9GHuIa2FfT8vpBpKPRyZ5SQRaO+m
-    Sm0g1jY342SOP4zuTJ5Ppp+t/2GKxxqmBKeHs5eo6ZtgsfAU0XGyUMrckVsI0hS9
-    KlPBm5kRLN7NnUjzhU3EvP1SinqY2uksJ/7e4U0f1Kf2qzAICscpul7+79zJ4J49
-    +aJwlFZvjucSwVkQGGw9KBKYBIfti74B9u1/oit+ddCQ4Jh8Mk/5yB0Kax0G79+F
-    nCzcXDhqXNkZnn+cU6jzoJKvtdO7aFDY5HAw==
+    1527161793; b=fGIxjfvGQEqNNEEIoM79JKlWLNtBvBZ52JYQKHaTT4BjCmU+9O
+    QTW9T1WTrK5rxC6hsYWG63Us7m35Okbv017fbzawyvaN6qBkr+tAqJQ922hsk4kP
+    Jx7KByP+RkZXTY1qbSUDk4UPr09go7451kGbPqEWZZISO+jFAI64T9OBzeNfbT64
+    fh21gecEixQwI8BtfjcOs3Gp7TMn5EDzeGDNeuUaMKpGXhwB7N463B07YShNhq/C
+    xcJaIFpQR7o6UXNlMwIau1rSnd2nA6AoxhS5fm/D1bJYezlRQZzxyCbScqY2r5B9
+    oeikFtySIbWUsqxLCtJXP9yhd937SDXT9C8g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527161794; bh=IHvJncXlpHQh7fyWqMWcSqTpj49oSp
-    aSN0++dgkFzGU=; b=C8ayH6MCVwC1x2CQH0j/r/6osV1sgqRDgfeKNOfCxIQG+C
-    kvb7qonF24CrRzIbLfenBEmDiUl5O+EJdxvWGr+KjeRxeQUMnq0MU8FxrQZFiU6X
-    L0khWVx5npeGZhjOVUpi8BRvAhhwLt8y+EaxW+vlN7W/xuByRvP0R0FcUaYpJqtE
-    0yRit6DOF2N8PDOflDl2XbOBraQ6mkJZC2T//GwxholNkdaKCH8uZFv7PepC5p3p
-    MEgnT/BTJ4PF2TH4TRuzfgaWBEmq0+oIwbbvLZVke1+PRteulDlcH+woW2YM7Mg7
-    K662b3t4k8jnz9B4eLzH/iBbE8VrxaeVC4XPA5pw==
+    :list-id; s=fm2; t=1527161793; bh=ouUZAIpDvODIzU0YdoEYXuce6g6wgQ
+    QHIDrv8qzjalI=; b=AEp6QlJ7vhNqEpEU/3m/Hqv25kR78tdqEc/QrnvRDw8IF4
+    rH+VHgleJ19rSBDdnW7B/bn2/vxmxuHVRjSIpB/LS1voeCcx8K9/xFfECAyKi8up
+    ew6N2ikR9UBAbn3BRh4ehmUBlytlcmKzLqq2rbr2Oale1nEFpmHEy4AK7m6jO0Vy
+    xYltKfKUHyz9xdktJsac8pEA9NDi6e1YqZekbDWQ9rOUFACykQgtjyVgZ80QI9Jk
+    XTsKqM1zdEUSfhh3z3Gnoez7s1qcU9/30xlEXXbnIV03Zzo7YuKUzVni72gVafdI
+    5iGcAyi5X7vqx1jDjVRiEbK58sOyHuJbQA6WlLPQ==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=CiiLwp8S x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=JOIlXFaM x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -49,7 +48,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
 Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=CiiLwp8S x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=JOIlXFaM x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -66,31 +65,32 @@ Authentication-Results: mx3.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 X-CM-Envelope: MS4wfJI+uPCbmnYQi75cyL0BNpK87bAX8SCuiwTrXCSe5zhYtFKkiBEI6Oi/F8tD9E2pawJIY38ImPKFIq/NsbNwrWJYLS/mhPt8in+MVu/8BRPxOijS3Tt8
-    FbeyVOdKyoy2BhnlocCdMeFPO0ZqQ2NXHKBT1AJnXi9XnSuzoy0LIjGYG+hUJOFwkwr1wPk5Aduu2dnyNuZ9fa5XsbbojmrQWLrACTu4l5xs9M2igHaZ19LT
+    FbeyVOdKyoy2BhnlocCdMeFPO0ZqQ2NXHKBT1AJnXi9XnSuzoy0LIjGYtSzJwT0TEvZIzk9IPjzQKSrA4NRAaZPJcAk/m2DRXk2soRVimitEt/SG0Z33KZvs
 X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=7ZN4cI0QAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=ebhwineD2bcmPdRjz5UA:9 a=QEXdDO2ut3YA:10 a=Dl0WHwQvj8hGZljrFLtM:22
-    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=s8YR1HE3AAAA:8 a=IpJZQVW2AAAA:8 a=VwQbUJbxAAAA:8 a=yMhMjlubAAAA:8
+    a=ag1SF4gXAAAA:8 a=yARby3lnm6p1CmaUAsUA:9 a=QEXdDO2ut3YA:10
+    a=jGH_LyMDp9YhSvY-UuyI:22 a=IawgGOuG5U0WyFbmm1f5:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967118AbeEXJtq (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:49:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38906 "EHLO mail.kernel.org"
+        id S967562AbeEXLgR (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 07:36:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967432AbeEXJtm (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:49:42 -0400
+        id S967500AbeEXJt5 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:49:57 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Torsten Hilbrich <torsten.hilbrich@secunet.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Shawn Lin <shawn.lin@rock-chips.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 32/96] net/usb/qmi_wwan.c: Add USB id for lt4120 modem
-Date: Thu, 24 May 2018 11:38:15 +0200
-Message-Id: <20180524093607.385121858@linuxfoundation.org>
+Subject: [PATCH 4.9 71/96] clk: Dont show the incorrect clock phase
+Date: Thu, 24 May 2018 11:38:54 +0200
+Message-Id: <20180524093609.470469718@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093605.602125311@linuxfoundation.org>
 References: <20180524093605.602125311@linuxfoundation.org>
@@ -108,27 +108,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Torsten Hilbrich <torsten.hilbrich@secunet.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
 
-[ Upstream commit f3d801baf118c9d452ee7c278df16880c892e669 ]
+[ Upstream commit 1f9c63e8de3d7b377c9d74e4a17524cfb60e6384 ]
 
-This is needed to support the modem found in HP EliteBook 820 G3.
+It's found that the clock phase output from clk_summary is
+wrong compared to the actual phase reading from the register.
 
-Signed-off-by: Torsten Hilbrich <torsten.hilbrich@secunet.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+cat /sys/kernel/debug/clk/clk_summary | grep sdio_sample
+sdio_sample     0        1        0 50000000          0 -22
+
+It exposes an issue that clk core, clk_core_get_phase, always
+returns the cached core->phase which should be either updated
+by calling clk_set_phase or directly from the first place the
+clk was registered.
+
+When registering the clk, the core->phase geting from ->get_phase()
+may return negative value indicating error. This is quite common
+since the clk's phase may be highly related to its parent chain,
+but it was temporarily orphan when registered, since its parent
+chains hadn't be ready at that time, so the clk drivers decide to
+return error in this case. However, if no clk_set_phase is called or
+maybe the ->set_phase() isn't even implemented, the core->phase would
+never be updated. This is wrong, and we should try to update it when
+all its parent chains are settled down, like the way of updating clock
+rate for that. But it's not deserved to complicate the code now and
+just update it anyway when calling clk_core_get_phase, which would be
+much simple and enough.
+
+Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+Acked-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/usb/qmi_wwan.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/clk.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/net/usb/qmi_wwan.c
-+++ b/drivers/net/usb/qmi_wwan.c
-@@ -942,6 +942,7 @@ static const struct usb_device_id produc
- 	{QMI_FIXED_INTF(0x413c, 0x81b6, 8)},	/* Dell Wireless 5811e */
- 	{QMI_FIXED_INTF(0x413c, 0x81b6, 10)},	/* Dell Wireless 5811e */
- 	{QMI_FIXED_INTF(0x03f0, 0x4e1d, 8)},	/* HP lt4111 LTE/EV-DO/HSPA+ Gobi 4G Module */
-+	{QMI_FIXED_INTF(0x03f0, 0x9d1d, 1)},	/* HP lt4120 Snapdragon X5 LTE */
- 	{QMI_FIXED_INTF(0x22de, 0x9061, 3)},	/* WeTelecom WPD-600N */
- 	{QMI_FIXED_INTF(0x1e0e, 0x9001, 5)},	/* SIMCom 7230E */
- 	{QMI_QUIRK_SET_DTR(0x2c7c, 0x0125, 4)},	/* Quectel EC25, EC20 R2.0  Mini PCIe */
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1929,6 +1929,9 @@ static int clk_core_get_phase(struct clk
+ 	int ret;
+ 
+ 	clk_prepare_lock();
++	/* Always try to update cached phase if possible */
++	if (core->ops->get_phase)
++		core->phase = core->ops->get_phase(core->hw);
+ 	ret = core->phase;
+ 	clk_prepare_unlock();
+ 
