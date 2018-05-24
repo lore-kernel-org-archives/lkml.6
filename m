@@ -1,37 +1,93 @@
-Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrXpe2t9q61/KYuH31NcqTGP7jFlF2XdxNQxYChXdaWbM0gsCCE07xXyrEz6h2UXQO7iHcz
-ARC-Seal: i=1; a=rsa-sha256; t=1527157754; cv=none;
-        d=google.com; s=arc-20160816;
-        b=Z66Rj9L1f1HHI4dJnvnh3yD1wvSmO2wPnx1UMBVDT2+257JiB4CaPnsALAoT4A8oGg
-         H8SAt/oill5ICwvssP/BiUlguFJLObSUae6m2G6YYHCdJlq4xVgVWqayE1FbUJ8Bz6/H
-         9pkOg4sIOldPmo/6B4UQS5HxfwC2baxxlhSolTXumfeeKySrJU+Vln6BO3fLCC9bVQY2
-         AZ0VKVZuL9unpZUiPhCtD5+zuVKg0r/qoVf76u1alwwejz5mXtHwVzcy6E/kKSA+Aa37
-         ODVucXdzqTYNLx6TryDVDKOLFrj3CINFKqcqUX6dLrEdaIPKPufu3cYnYcJ3YK7luINe
-         PBjQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=HGeW5hPNPp4dBzJ0NeAMAkyaIkRma5dTtDTfOyHichY=;
-        b=J0U3FDmoKl0PjFnXtLx0NUJivw8Z/1LSF7ZUk9SLl9LguaRwEoKThGho1fxgCq9Zdb
-         XbTZnS6gmGaoJpUvWkShBg+pIbuMv7xd73GpZJmTWGjlG+IMKhDeTjD1jjVdw2X2SMwf
-         d+DhQcldZu7ZZXfgl0T8AHihFFC3yyub38BnC5xBeXSxIh0krJ8mVGrWv5EBUgci7O+A
-         6k5BpYR7QHzmoo0Jvpqng4C6ETbw2xcm+xGhaiR06XAP+tcL97NF6sd2mAFGD4hkhztv
-         pPfV6ySa9jihSG7nCs5M/NnFdO10uEIfmdiX7MHYQ7gbdSxhuj3Kj2I994wc6nTUJuLL
-         sKvg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=B0YPBiya;
-       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=B0YPBiya;
-       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1733193-1527155941-2-868085619557951533
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1527155941; b=i1hfJwN7CVQyW+yXw0Hnbi93EqdGfM1wZkhdx1mzcY/oYTF0Dj
+    n2+xn8KwYQedoYOvDyuvFvaZz8ejgFiHgicjZ1aWNlE2Znsyt5cXgp5JRtZ67HSt
+    Tz71FdJ9fXzuvMyuyUh4n6wqlz3IXnj5yYuHXvEdLe8TOFO6X6yT0avk+L2R+T7T
+    21wxgSbzcOGGDHxEMtppUiGZetWWHq+QdU1GcHJG3mnXqDIPTRlpfA5kk7/RlkM+
+    DmjA2+ykJ2ugWQTEoJZGS6HfPxOFcyYg64XkB/S4aa7594T2e0/e3tVADwlDkTBW
+    K8r6yWeC536A2JINtvqaE5C6/1P3P3bz6L2Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1527155941; bh=snNWrHMJUdMG6lnNA0R9NC808IQ75k
+    YMNGvYxJWerNU=; b=L5VRo6LDGJQwlwommCv+TVM1H1e4cnsoVQbBpRdg3Q/A/R
+    4mCPTuMv06pgLY6ItCSdzuPSaGW9FIMrjEW3+5NPSkbxnJFCCNj4jNgMBe3YXF9R
+    bkVQ4ka3ZbbnY2enIjPnNPedLjbdms+369bfzl8sd5KZ5MY6eevUaiL0s3yRkpMw
+    qkb9popZWv8zxzydWFZYvpsfP7U75WiHvXq0mTEAF4OMD2R7VKX0sqbK/HL3gQ9t
+    EDaLLo7+iLpu47d6KoXv6dJgJXoQvFdX+dNeI9iredUiTTXEDbSex9adXeBmgSQq
+    s+uHlijEp+TAMStZ7hhlF+nLz3uE3BTYQW6jWjgQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+    header.i=@kernel.org header.b=B98z3hoy x-bits=1024 x-keytype=rsa
+    x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+    header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=linuxfoundation.org header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+      header.i=@kernel.org header.b=B98z3hoy x-bits=1024 x-keytype=rsa
+      x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+      header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=linuxfoundation.org header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfPeMPrw9oHWA79oHt7gi75z66QFbBM/GDDY1D06RDw7AkCCoOBL5AhPdyr78wifQNx5BKEpakzGewOjtGiZLQRPMFsN8W/cMd1VUkgRqXJ34gT/fRjOv
+    IDwU8LIWpKaBYrmAu5m+jzCPHdOko7o5Xx1NuW5MeMDYgzkTVXaTp6i2R+jmi+YdTodGrBlq7V7PApC6E3+XTgLwMwPiE0GhM+pYXmlUKiV+ezYb9uh1g3Bv
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=H14h7lNoW1mxTpCc5fkA:9 a=QEXdDO2ut3YA:10
+    a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1030700AbeEXJ65 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:58:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39190 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1030662AbeEXJ6w (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:58:52 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 4.14 036/165] ext2: fix a block leak
-Date: Thu, 24 May 2018 11:37:22 +0200
-Message-Id: <20180524093623.432369640@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 156/165] serial: arc_uart: Fix out-of-bounds access through DT alias
+Date: Thu, 24 May 2018 11:39:22 +0200
+Message-Id: <20180524093628.387579696@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -39,10 +95,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601340960342171264?=
-X-GMAIL-MSGID: =?utf-8?q?1601340969313582732?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,47 +105,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit 5aa1437d2d9a068c0334bd7c9dafa8ec4f97f13b upstream.
+[ Upstream commit f9f5786987e81d166c60833edcb7d1836aa16944 ]
 
-open file, unlink it, then use ioctl(2) to make it immutable or
-append only.  Now close it and watch the blocks *not* freed...
+The arc_uart_ports[] array is indexed using a value derived from the
+"serialN" alias in DT, which may lead to an out-of-bounds access.
 
-Immutable/append-only checks belong in ->setattr().
-Note: the bug is old and backport to anything prior to 737f2e93b972
-("ext2: convert to use the new truncate convention") will need
-these checks lifted into ext2_setattr().
+Fix this by adding a range check.
 
-Cc: stable@kernel.org
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Note that the array size is defined by a Kconfig symbol
+(CONFIG_SERIAL_ARC_NR_PORTS), so this can even be triggered using a
+legitimate DTB.
+
+Fixes: ea28fd56fcde69af ("serial/arc-uart: switch to devicetree based probing")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/ext2/inode.c |   10 ----------
- 1 file changed, 10 deletions(-)
+ drivers/tty/serial/arc_uart.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/fs/ext2/inode.c
-+++ b/fs/ext2/inode.c
-@@ -1261,21 +1261,11 @@ do_indirects:
+--- a/drivers/tty/serial/arc_uart.c
++++ b/drivers/tty/serial/arc_uart.c
+@@ -596,6 +596,11 @@ static int arc_serial_probe(struct platf
+ 	if (dev_id < 0)
+ 		dev_id = 0;
  
- static void ext2_truncate_blocks(struct inode *inode, loff_t offset)
- {
--	/*
--	 * XXX: it seems like a bug here that we don't allow
--	 * IS_APPEND inode to have blocks-past-i_size trimmed off.
--	 * review and fix this.
--	 *
--	 * Also would be nice to be able to handle IO errors and such,
--	 * but that's probably too much to ask.
--	 */
- 	if (!(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode) ||
- 	    S_ISLNK(inode->i_mode)))
- 		return;
- 	if (ext2_inode_is_fast_symlink(inode))
- 		return;
--	if (IS_APPEND(inode) || IS_IMMUTABLE(inode))
--		return;
++	if (dev_id >= ARRAY_SIZE(arc_uart_ports)) {
++		dev_err(&pdev->dev, "serial%d out of range\n", dev_id);
++		return -EINVAL;
++	}
++
+ 	uart = &arc_uart_ports[dev_id];
+ 	port = &uart->port;
  
- 	dax_sem_down_write(EXT2_I(inode));
- 	__ext2_truncate_blocks(inode, offset);
