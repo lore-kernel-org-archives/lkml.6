@@ -1,15 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965015AbeEXHPj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 03:15:39 -0400
-Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:28468 "EHLO
+        id S965091AbeEXHQU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 03:16:20 -0400
+Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:60581 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965017AbeEXHPK (ORCPT
+        with ESMTP id S935679AbeEXHPH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 03:15:10 -0400
+        Thu, 24 May 2018 03:15:07 -0400
 X-ME-Helo: belgarion.home
 X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
-X-ME-Date: Thu, 24 May 2018 09:07:39 +0200
+X-ME-Date: Thu, 24 May 2018 09:07:33 +0200
 X-ME-IP: 90.55.202.35
 From: Robert Jarzmik <robert.jarzmik@free.fr>
 To: Daniel Mack <daniel@zonque.org>,
@@ -28,9 +28,9 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
         linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
         alsa-devel@alsa-project.org
-Subject: [PATCH v2 09/13] ata: pata_pxa: remove the dmaengine compat need
-Date: Thu, 24 May 2018 09:06:59 +0200
-Message-Id: <20180524070703.11901-10-robert.jarzmik@free.fr>
+Subject: [PATCH v2 06/13] net: smc911x: remove the dmaengine compat need
+Date: Thu, 24 May 2018 09:06:56 +0200
+Message-Id: <20180524070703.11901-7-robert.jarzmik@free.fr>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180524070703.11901-1-robert.jarzmik@free.fr>
 References: <20180524070703.11901-1-robert.jarzmik@free.fr>
@@ -46,52 +46,50 @@ This patch simplifies the dma resource acquisition, using the more
 generic function dma_request_slave_channel().
 
 Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
-Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- drivers/ata/pata_pxa.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
+ drivers/net/ethernet/smsc/smc911x.c | 16 ++--------------
+ 1 file changed, 2 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/ata/pata_pxa.c b/drivers/ata/pata_pxa.c
-index f6c46e9a4dc0..e8b6a2e464c9 100644
---- a/drivers/ata/pata_pxa.c
-+++ b/drivers/ata/pata_pxa.c
-@@ -25,7 +25,6 @@
- #include <linux/libata.h>
- #include <linux/platform_device.h>
+diff --git a/drivers/net/ethernet/smsc/smc911x.c b/drivers/net/ethernet/smsc/smc911x.c
+index 05157442a980..4c3713bd5caa 100644
+--- a/drivers/net/ethernet/smsc/smc911x.c
++++ b/drivers/net/ethernet/smsc/smc911x.c
+@@ -74,7 +74,6 @@ static const char version[] =
+ #include <linux/skbuff.h>
+ 
  #include <linux/dmaengine.h>
 -#include <linux/dma/pxa-dma.h>
- #include <linux/gpio.h>
- #include <linux/slab.h>
- #include <linux/completion.h>
-@@ -180,8 +179,6 @@ static int pxa_ata_probe(struct platform_device *pdev)
- 	struct resource *irq_res;
- 	struct pata_pxa_pdata *pdata = dev_get_platdata(&pdev->dev);
+ 
+ #include <asm/io.h>
+ 
+@@ -1794,8 +1793,6 @@ static int smc911x_probe(struct net_device *dev)
+ 	unsigned long irq_flags;
+ #ifdef SMC_USE_DMA
  	struct dma_slave_config	config;
 -	dma_cap_mask_t mask;
 -	struct pxad_param param;
- 	int ret = 0;
+ #endif
  
- 	/*
-@@ -278,10 +275,6 @@ static int pxa_ata_probe(struct platform_device *pdev)
+ 	DBG(SMC_DEBUG_FUNC, dev, "--> %s\n", __func__);
+@@ -1969,17 +1966,8 @@ static int smc911x_probe(struct net_device *dev)
  
- 	ap->private_data = data;
+ #ifdef SMC_USE_DMA
  
 -	dma_cap_zero(mask);
 -	dma_cap_set(DMA_SLAVE, mask);
 -	param.prio = PXAD_PRIO_LOWEST;
--	param.drcmr = pdata->dma_dreq;
- 	memset(&config, 0, sizeof(config));
- 	config.src_addr_width = DMA_SLAVE_BUSWIDTH_2_BYTES;
- 	config.dst_addr_width = DMA_SLAVE_BUSWIDTH_2_BYTES;
-@@ -294,8 +287,7 @@ static int pxa_ata_probe(struct platform_device *pdev)
- 	 * Request the DMA channel
- 	 */
- 	data->dma_chan =
+-	param.drcmr = -1UL;
+-
+-	lp->rxdma =
 -		dma_request_slave_channel_compat(mask, pxad_filter_fn,
--						 &param, &pdev->dev, "data");
-+		dma_request_slave_channel(&pdev->dev, "data");
- 	if (!data->dma_chan)
- 		return -EBUSY;
- 	ret = dmaengine_slave_config(data->dma_chan, &config);
+-						 &param, &dev->dev, "rx");
+-	lp->txdma =
+-		dma_request_slave_channel_compat(mask, pxad_filter_fn,
+-						 &param, &dev->dev, "tx");
++	lp->rxdma = dma_request_slave_channel(&dev->dev, "rx");
++	lp->txdma = dma_request_slave_channel(&dev->dev, "tx");
+ 	lp->rxdma_active = 0;
+ 	lp->txdma_active = 0;
+ 
 -- 
 2.11.0
