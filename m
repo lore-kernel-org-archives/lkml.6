@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1906373-1527164570-2-6196099247156430261
+X-Cyrus-Session-Id: sloti22d1t05-1900785-1527164551-2-6507292964968214679
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527164569; b=KNU3iuNI7xQGnf3GTHbwaAnzdm5/mcAVuVW6/cJ8CNNiqTi36b
-    ddEc/gHDLeIORL0SdUBLHUE06gJSqgVOXPxIrkoIIpuRJ4xTHM/vtZbwHnejzCnY
-    5tdfwHcT48TBYPz2/Lsc0POh4HzRbKvMQK5kNiPQ+dvacvnkCDTNM6sZLU4aN4Vh
-    QK/in7S5tvzmC632pqAy8zp7//wKG/lJmvHxtgv1HSQPxKVj4TX6a0TiLV3u9Vpz
-    p2HQkOg1oj2Vg6vAEVuZ7pK0X1AZxV5KRSGVW27Jh1e1LUX4M92be6Mdn1ZFSVPO
-    MuF/awFJLjAgsjxiI2SbzE+w7hrt6NX9EA/A==
+    1527164551; b=LI5ZecZMNh7tshfm7wdeCrq8erYUK2qgMGaIyBSUEzJqtM+KHz
+    FEwG3HmoCDdiNPr13zIkOrdsm3aIRTr7o/tXMn14tMZzabYVFLQCQJiAolcw1pRs
+    IRWLS4e+/N8vpxr9MYwEKcBJAjF6RkrPGTXuQLZCOk1zZQNtwuhdvbcJv+ZRaDPy
+    nBGnC10dY8gGOKKPAO8KX1uOENfXJ+43jca3pCEcM2voymJR5X/P2LrxHGUz0AIF
+    O0s17JF4XLwPeyq63DmVvrRWu2CLxCkfbpUsFKKEd6DbZNdmUL1kdgdhMDfLWiwF
+    0gTVPWNGM/yGj4kifvsFn9ktZZ+dIH9leRWA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527164569; bh=1E92izhlUyYce+jmo38t88o3AnF9Go
-    jg9980ow33g+c=; b=HgQ3sRjVq/MZE3VEiAtwz8vc1Q4L6e10iZdT3F3FGyG999
-    9BsU9QhWG5exphTjbLvlhwpkItLQbKBm4D2uIF9K9pvmi5kdjKd5oy+03kS4Nvj+
-    MouaEq5i0KgCdrGIaifsJBy0wZAct/bc5HYe+M3sqr8kAiuSeQZX6Dqmu6LU7+zc
-    O4q3IL3QXmoeAfNi5npuFwEqi+vfObzWZSxa88i5kU/b020N5pHIxh0abUp1D1EW
-    2iWL1P3LMmzSP58fvEKqotXTupIOnlRKoT99HUuNAjYH6DMzEfdXCgl9AjxDW8Rc
-    Kz8RX60IcMMm1ZCzkRWscu7RAPwtPzF8dFCfmsyg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527164551; bh=ZB5d1X5TZmWa93JoxpxHCkqCx2KeDv
+    rf7LP23u2EV8k=; b=LWMqEEcJK03BIAVsPJHH1YHZC3OsyD1QuAuC0Wh/FreKKO
+    /98xmS4muf9OBX9cGpJIUrS5OTXAulUgXMhmSVifMk5d16KeIQ4IZF7MaHefjMTd
+    ZJUdnhfkZRxuZK+et8r0sPxbhzsIzUNYPeOWQa6Wxcbvio+KBMZHj+tmOmlW9AhC
+    Pi+enZguyInaHZ5V7hD4oTrOe+oXr+2cblp1hK4ae6D3rUm3hvwQzNUSy2sl2EU4
+    hg36feEXbUrlLPaWnWFeiqBbw9cv4X04wdvdkLSQhV5zDYedPxNGchib/nXJoPqX
+    /HWRT+dEjghoH3sNdVe9OM2C3SDi+GtaFZQN4/TA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=FtZJw1bX x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=ORs1SiDE x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=FtZJw1bX x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=ORs1SiDE x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,33 +64,32 @@ Authentication-Results: mx6.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPfcpFUg5lVUH75FMHF5xW+ddeXdMDPUyp50jR56CcRaRHIN83r3kjU+p0xcC8WcTSDhp7LInYjXLburCu51hllwgzaI+4oMI5gpjuL9Xi0lUFqycFxe
-    C76bBDGulbuDFp6BNQi6sG4/UOYA3WvkSJXjhTYwlNgkT8L8IQOIFo3EdTkz3sC08zXelsMemg7ojTAuII2dSyTwqUiHTKpdyyzoW2wh9qzDCe/CynrZ1hNL
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfCDSxec5ff7qUEkXLP6VyPMS+o6C5ZFKRtFsJw9VFdBW+Q18A68DeJawbDeuGXOysAmzFBa0bHWY7xR4yPAa981BNXJgsGZDCEeqqGIArUHxY2Ssp36u
+    b0BJsm8VfwpAYy9rpKATrCAzlUq8u2YhS6Nba/B/Tg6Lzu8In5K+LXuM257yG+7xgBqydZNjE6Go1KV26cErZHTPZgfHKePmC6L4xNi2+fvpxmsETnNNEI5P
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=1XWaLZrsAAAA:8 a=4RBUngkUAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
-    a=2wpadlajvgCyii3yq2kA:9 a=QEXdDO2ut3YA:10 a=_sbA2Q-Kp09kWB8D3iXc:22
+    a=pGLkceISAAAA:8 a=vmLDa1wCAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
+    a=L1WlcYRJYCfth8W4ZAIA:9 a=QEXdDO2ut3YA:10 a=h8Bt5HTj68qkN2fS7gvA:22
     a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966143AbeEXMWa (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 08:22:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52996 "EHLO mail.kernel.org"
+        id S966141AbeEXJlF (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:41:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53038 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966131AbeEXJlB (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:41:01 -0400
+        id S965759AbeEXJlD (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:41:03 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
-        Yuchung Cheng <ycheng@google.com>,
-        Neal Cardwell <ncardwell@google.com>,
-        Eric Dumazet <edumazet@google.com>,
+        stable@vger.kernel.org, Xin Long <lucien.xin@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 14/45] tcp: ignore Fast Open on repair mode
-Date: Thu, 24 May 2018 11:38:22 +0200
-Message-Id: <20180524093122.253202366@linuxfoundation.org>
+Subject: [PATCH 3.18 15/45] sctp: fix the issue that the cookie-ack with auth cant get processed
+Date: Thu, 24 May 2018 11:38:23 +0200
+Message-Id: <20180524093122.388660006@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093120.599252450@linuxfoundation.org>
 References: <20180524093120.599252450@linuxfoundation.org>
@@ -108,43 +107,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Yuchung Cheng <ycheng@google.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-[ Upstream commit 16ae6aa1705299789f71fdea59bfb119c1fbd9c0 ]
+[ Upstream commit ce402f044e4e432c296f90eaabb8dbe8f3624391 ]
 
-The TCP repair sequence of operation is to first set the socket in
-repair mode, then inject the TCP stats into the socket with repair
-socket options, then call connect() to re-activate the socket. The
-connect syscall simply returns and set state to ESTABLISHED
-mode. As a result Fast Open is meaningless for TCP repair.
+When auth is enabled for cookie-ack chunk, in sctp_inq_pop, sctp
+processes auth chunk first, then continues to the next chunk in
+this packet if chunk_end + chunk_hdr size < skb_tail_pointer().
+Otherwise, it will go to the next packet or discard this chunk.
 
-However allowing sendto() system call with MSG_FASTOPEN flag half-way
-during the repair operation could unexpectedly cause data to be
-sent, before the operation finishes changing the internal TCP stats
-(e.g. MSS).  This in turn triggers TCP warnings on inconsistent
-packet accounting.
+However, it missed the fact that cookie-ack chunk's size is equal
+to chunk_hdr size, which couldn't match that check, and thus this
+chunk would not get processed.
 
-The fix is to simply disallow Fast Open operation once the socket
-is in the repair mode.
+This patch fixes it by changing the check to chunk_end + chunk_hdr
+size <= skb_tail_pointer().
 
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: Yuchung Cheng <ycheng@google.com>
-Reviewed-by: Neal Cardwell <ncardwell@google.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+Fixes: 26b87c788100 ("net: sctp: fix remote memory pressure from excessive queueing")
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp.c |    2 +-
+ net/sctp/inqueue.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -1105,7 +1105,7 @@ int tcp_sendmsg(struct kiocb *iocb, stru
- 	lock_sock(sk);
+--- a/net/sctp/inqueue.c
++++ b/net/sctp/inqueue.c
+@@ -178,7 +178,7 @@ struct sctp_chunk *sctp_inq_pop(struct s
+ 	skb_pull(chunk->skb, sizeof(sctp_chunkhdr_t));
+ 	chunk->subh.v = NULL; /* Subheader is no longer valid.  */
  
- 	flags = msg->msg_flags;
--	if (flags & MSG_FASTOPEN) {
-+	if ((flags & MSG_FASTOPEN) && !tp->repair) {
- 		err = tcp_sendmsg_fastopen(sk, msg, &copied_syn, size);
- 		if (err == -EINPROGRESS && copied_syn > 0)
- 			goto out;
+-	if (chunk->chunk_end + sizeof(sctp_chunkhdr_t) <
++	if (chunk->chunk_end + sizeof(sctp_chunkhdr_t) <=
+ 	    skb_tail_pointer(chunk->skb)) {
+ 		/* This is not a singleton */
+ 		chunk->singleton = 0;
