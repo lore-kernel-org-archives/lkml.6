@@ -1,95 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033491AbeEXQHm (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 12:07:42 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:19515 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030546AbeEXQHh (ORCPT
+        id S1033497AbeEXQLc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 12:11:32 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:46259 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030730AbeEXQLa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 12:07:37 -0400
-Date: Thu, 24 May 2018 11:06:58 -0500
-From: Benoit Parrot <bparrot@ti.com>
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-CC: Tony Lindgren <tony@atomide.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>, <ivo.g.dimitrov.75@gmail.com>,
-        <abcloriens@gmail.com>, <sre@kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <martijn@brixit.nl>, <filip.matijevic.pz@gmail.com>,
-        Thorsten Leemhuis <regressions@leemhuis.info>, <clayton@craftyguy.net>,
-        <linux-omap@vger.kernel.org>, <patrikbachan@gmail.com>,
-        <serge@hallyn.com>
-Subject: Re: omapdrm regression in v4.17-rc series
-Message-ID: <20180524160658.GA31901@ti.com>
-References: <20180523220320.GX98604@atomide.com>
- <2f803bfc-3ffe-332a-7b9a-d59a39db4630@ti.com>
+        Thu, 24 May 2018 12:11:30 -0400
+X-Google-Smtp-Source: AB8JxZpzjeM/GTG72yqR+oAE4zrCEfp31bDOQBvePLyG6NXn5yXAnCjsIpZT/w43NJOMdkh+NleROw==
+Subject: Re: [PATCH] scripts/dtc: Fixed format mismatch in fprintf
+To: nixiaoming <nixiaoming@huawei.com>, robh+dt@kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180524025018.73187-1-nixiaoming@huawei.com>
+From: Frank Rowand <frowand.list@gmail.com>
+Message-ID: <6e8298cb-795d-f786-0fbd-c77835f3ab91@gmail.com>
+Date: Thu, 24 May 2018 09:11:28 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <2f803bfc-3ffe-332a-7b9a-d59a39db4630@ti.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20180524025018.73187-1-nixiaoming@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reviewed-by: Benoit Parrot <bparrot@ti.com>
-
-Tomi Valkeinen <tomi.valkeinen@ti.com> wrote on Thu [2018-May-24 10:58:25 +0300]:
+On 05/23/18 19:50, nixiaoming wrote:
+> format specifier "d" need arg type "int" , but the according arg
+> "fdt32_to_cpu(xxx)" has type "unsigned int"
 > 
-> On 24/05/18 01:03, Tony Lindgren wrote:
-> > Hi all,
-> > 
-> > I bisected the n900 LCD issue to commit 24aac6011f70 ("drm: omapdrm:
-> > sdi: Allocate the sdi private data structure dynamically"). Reverting
-> > this patch makes LCD work for me again on n900.
-> > 
-> > Any ideas?
-> 
-> This should help to get the SDI enabled.
-> 
->  Tomi
-> 
-> From 4e96e6c2dedf366e081331c3825ff6fa8aabd85c Mon Sep 17 00:00:00 2001
-> From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-> Date: Thu, 24 May 2018 10:53:24 +0300
-> Subject: [PATCH] drm/omap: fix NULL deref crash with SDI displays
-> 
-> Fix a NULL deref bug introduced in commit 24aac6011f70 ("drm: omapdrm:
-> sdi: Allocate the sdi private data structure dynamically").
-> 
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> Signed-off-by: nixiaoming <nixiaoming@huawei.com>
 > ---
->  drivers/gpu/drm/omapdrm/dss/sdi.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
+>  scripts/dtc/fdtdump.c  | 6 +++---
+>  scripts/dtc/flattree.c | 2 +-
+>  2 files changed, 4 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/omapdrm/dss/sdi.c b/drivers/gpu/drm/omapdrm/dss/sdi.c
-> index 68a40ae26f5b..1e2c931f6acf 100644
-> --- a/drivers/gpu/drm/omapdrm/dss/sdi.c
-> +++ b/drivers/gpu/drm/omapdrm/dss/sdi.c
-> @@ -82,7 +82,7 @@ static int sdi_calc_clock_div(struct sdi_device *sdi, unsigned long pclk,
->  			      struct dispc_clock_info *dispc_cinfo)
->  {
->  	int i;
-> -	struct sdi_clk_calc_ctx ctx = { .sdi = sdi };
-> +	struct sdi_clk_calc_ctx ctx;
+> diff --git a/scripts/dtc/fdtdump.c b/scripts/dtc/fdtdump.c
+> index 7d460a5..851bb6f 100644
+> --- a/scripts/dtc/fdtdump.c
+> +++ b/scripts/dtc/fdtdump.c
+> @@ -66,12 +66,12 @@ static void dump_blob(void *blob)
 >  
->  	/*
->  	 * DSS fclk gives us very few possibilities, so finding a good pixel
-> @@ -95,6 +95,9 @@ static int sdi_calc_clock_div(struct sdi_device *sdi, unsigned long pclk,
->  		bool ok;
->  
->  		memset(&ctx, 0, sizeof(ctx));
-> +
-> +		ctx.sdi = sdi;
-> +
->  		if (pclk > 1000 * i * i * i)
->  			ctx.pck_min = max(pclk - 1000 * i * i * i, 0lu);
->  		else
+>  	printf("/dts-v1/;\n");
+>  	printf("// magic:\t\t0x%x\n", fdt32_to_cpu(bph->magic));
+> -	printf("// totalsize:\t\t0x%x (%d)\n", totalsize, totalsize);
+> +	printf("// totalsize:\t\t0x%x (%u)\n", totalsize, totalsize);
+>  	printf("// off_dt_struct:\t0x%x\n", off_dt);
+>  	printf("// off_dt_strings:\t0x%x\n", off_str);
+>  	printf("// off_mem_rsvmap:\t0x%x\n", off_mem_rsvmap);
+> -	printf("// version:\t\t%d\n", version);
+> -	printf("// last_comp_version:\t%d\n",
+> +	printf("// version:\t\t%u\n", version);
+> +	printf("// last_comp_version:\t%u\n",
+>  	       fdt32_to_cpu(bph->last_comp_version));
+>  	if (version >= 2)
+>  		printf("// boot_cpuid_phys:\t0x%x\n",
+> diff --git a/scripts/dtc/flattree.c b/scripts/dtc/flattree.c
+> index 8d268fb..28da281 100644
+> --- a/scripts/dtc/flattree.c
+> +++ b/scripts/dtc/flattree.c
+> @@ -393,7 +393,7 @@ void dt_to_blob(FILE *f, struct dt_info *dti, int version)
+>  			padlen = 0;
+>  			if (quiet < 1)
+>  				fprintf(stderr,
+> -					"Warning: blob size %d >= minimum size %d\n",
+> +					"Warning: blob size %u >= minimum size %d\n",
+>  					fdt32_to_cpu(fdt.totalsize), minsize);
+>  		}
+>  	}
 > 
-> -- 
-> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+
+We import this file from the upstream dtc project.  Please send patches
+for this file to:
+
+   David Gibson <david@gibson.dropbear.id.au>
+   devicetree-compiler@vger.kernel.org
+
+Thanks,
+
+Frank
