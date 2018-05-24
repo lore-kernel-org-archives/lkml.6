@@ -1,199 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964794AbeEXF73 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 01:59:29 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:36537 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935584AbeEXF7Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S964778AbeEXF7Y (ORCPT <rfc822;w@1wt.eu>);
         Thu, 24 May 2018 01:59:24 -0400
-X-Google-Smtp-Source: AB8JxZr6gkfPusi0IufE+ITtO+AweU1uKJtO+HNYsKZrgPkvQm/y+iWwhKixUbmg8UAhy353wv9fmg==
-Date: Thu, 24 May 2018 08:59:19 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-        broonie@kernel.org, mazziesaccount@gmail.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-        heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH 6/9] clk: bd71837: Add driver for BD71837 PMIC clock
-Message-ID: <20180524055919.GG4249@localhost.localdomain>
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56996 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S935530AbeEXF7T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 01:59:19 -0400
+Subject: Re: [PATCH v1 10/10] mm/memory_hotplug: allow online/offline memory
+ by a kernel module
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <20180523151151.6730-1-david@redhat.com>
+ <20180523151151.6730-11-david@redhat.com>
+ <20180523195119.GA20852@infradead.org>
+From: David Hildenbrand <david@redhat.com>
+Organization: Red Hat GmbH
+Message-ID: <73b34d6e-9726-e0a5-0418-65ef13f87198@redhat.com>
+Date: Thu, 24 May 2018 07:59:15 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180523195119.GA20852@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support BD71837 gateable 32768 Hz clock.
+On 23.05.2018 21:51, Christoph Hellwig wrote:
+> On Wed, May 23, 2018 at 05:11:51PM +0200, David Hildenbrand wrote:
+>> Kernel modules that want to control how/when memory is onlined/offlined
+>> need a proper interface to these functions. Also, for adding memory
+>> properly, memory_block_size_bytes is required.
+> 
+> Which module?  Please send it along with the enabling code.
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- drivers/clk/clk-bd71837.c | 155 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 155 insertions(+)
- create mode 100644 drivers/clk/clk-bd71837.c
+Hi,
 
-diff --git a/drivers/clk/clk-bd71837.c b/drivers/clk/clk-bd71837.c
-new file mode 100644
-index 000000000000..8519badb8fc0
---- /dev/null
-+++ b/drivers/clk/clk-bd71837.c
-@@ -0,0 +1,155 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (C) 2018 ROHM Semiconductors */
-+/*
-+ * bd71837.c  --  ROHM BD71837MWV clock driver
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/init.h>
-+#include <linux/err.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <linux/mfd/bd71837.h>
-+#include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
-+
-+static int bd71837_clk_enable(struct clk_hw *hw);
-+static void bd71837_clk_disable(struct clk_hw *hw);
-+static int bd71837_clk_is_enabled(struct clk_hw *hw);
-+
-+struct bd71837_clk {
-+	struct clk_hw hw;
-+	uint8_t reg;
-+	uint8_t mask;
-+	unsigned long rate;
-+	struct platform_device *pdev;
-+	struct bd71837 *mfd;
-+};
-+
-+static unsigned long bd71837_clk_recalc_rate(struct clk_hw *hw,
-+					     unsigned long parent_rate);
-+
-+static const struct clk_ops bd71837_clk_ops = {
-+	.recalc_rate = &bd71837_clk_recalc_rate,
-+	.prepare = &bd71837_clk_enable,
-+	.unprepare = &bd71837_clk_disable,
-+	.is_prepared = &bd71837_clk_is_enabled,
-+};
-+
-+static int bd71837_clk_set(struct clk_hw *hw, int status)
-+{
-+	struct bd71837_clk *c = container_of(hw, struct bd71837_clk, hw);
-+
-+	return bd71837_update_bits(c->mfd, c->reg, c->mask, status);
-+}
-+
-+static void bd71837_clk_disable(struct clk_hw *hw)
-+{
-+	int rv;
-+	struct bd71837_clk *c = container_of(hw, struct bd71837_clk, hw);
-+
-+	rv = bd71837_clk_set(hw, 0);
-+	if (rv)
-+		dev_err(&c->pdev->dev, "Failed to disable 32K clk (%d)\n", rv);
-+}
-+
-+static int bd71837_clk_enable(struct clk_hw *hw)
-+{
-+	return bd71837_clk_set(hw, 1);
-+}
-+
-+static int bd71837_clk_is_enabled(struct clk_hw *hw)
-+{
-+	struct bd71837_clk *c = container_of(hw, struct bd71837_clk, hw);
-+
-+	return c->mask & bd71837_reg_read(c->mfd, c->reg);
-+
-+}
-+
-+static unsigned long bd71837_clk_recalc_rate(struct clk_hw *hw,
-+					     unsigned long parent_rate)
-+{
-+	struct bd71837_clk *c = container_of(hw, struct bd71837_clk, hw);
-+
-+	return c->rate;
-+}
-+
-+static int bd71837_clk_probe(struct platform_device *pdev)
-+{
-+	struct bd71837_clk *c;
-+	int rval = -ENOMEM;
-+	struct bd71837 *mfd = dev_get_drvdata(pdev->dev.parent);
-+	const char *errstr = "memory allocation for bd71837 data failed";
-+	struct clk_init_data init = {
-+		.name = "bd71837-32k-out",
-+		.ops = &bd71837_clk_ops,
-+	};
-+
-+	c = kzalloc(sizeof(struct bd71837_clk), GFP_KERNEL);
-+	if (!c)
-+		goto err_out;
-+
-+	c->reg = BD71837_REG_OUT32K;
-+	c->mask = BD71837_OUT32K_EN;
-+	c->rate = BD71837_CLK_RATE;
-+	c->mfd = mfd;
-+	c->pdev = pdev;
-+
-+	if (pdev->dev.of_node)
-+		of_property_read_string_index(pdev->dev.of_node,
-+					      "clock-output-names", 0,
-+					      &init.name);
-+
-+	c->hw.init = &init;
-+
-+	errstr = "failed to register 32K clk";
-+	rval = clk_hw_register(&pdev->dev, &c->hw);
-+	if (rval)
-+		goto err_free;
-+
-+	errstr = "failed to register clkdev for bd71837";
-+	rval = clk_hw_register_clkdev(&c->hw, init.name, NULL);
-+	if (rval)
-+		goto err_unregister;
-+
-+	platform_set_drvdata(pdev, c);
-+	dev_dbg(&pdev->dev, "bd71837_clk successfully probed\n");
-+
-+	return 0;
-+
-+err_unregister:
-+	clk_hw_unregister(&c->hw);
-+err_free:
-+	kfree(c);
-+err_out:
-+	dev_err(&pdev->dev, "%s\n", errstr);
-+	return rval;
-+}
-+
-+static int bd71837_clk_remove(struct platform_device *pdev)
-+{
-+	struct bd71837_clk *c = platform_get_drvdata(pdev);
-+
-+	if (c) {
-+		clk_hw_unregister(&c->hw);
-+		kfree(c);
-+		platform_set_drvdata(pdev, NULL);
-+	}
-+	return 0;
-+}
-+
-+static struct platform_driver bd71837_clk = {
-+	.driver = {
-+		   .name = "bd71837-clk",
-+		   .owner = THIS_MODULE,
-+		   },
-+	.probe = bd71837_clk_probe,
-+	.remove = bd71837_clk_remove,
-+};
-+
-+module_platform_driver(bd71837_clk);
-+
-+MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
-+MODULE_DESCRIPTION("BD71837 chip clk driver");
-+MODULE_LICENSE("GPL");
+as indicated in the cover letter, it is called "virtio-mem".
+I sent it yesterday as a separate series (RFC).
+
+Cover letter: https://lkml.org/lkml/2018/5/23/800
+Relevant patch: https://lkml.org/lkml/2018/5/23/803
+
+> 
+>> --- a/drivers/base/memory.c
+>> +++ b/drivers/base/memory.c
+>> @@ -88,6 +88,7 @@ unsigned long __weak memory_block_size_bytes(void)
+>>  {
+>>  	return MIN_MEMORY_BLOCK_SIZE;
+>>  }
+>> +EXPORT_SYMBOL(memory_block_size_bytes);
+> 
+>> +EXPORT_SYMBOL(mem_hotplug_begin);
+> 
+>> +EXPORT_SYMBOL(mem_hotplug_done);
+> 
+> EXPORT_SYMBOL_GPL for any deep down VM internals, please.
+> 
+
+I continued using what was being used for symbols in this file. If there
+are not other opinions, I'll switch to EXPORT_SYMBOL_GPL. Thanks!
+
 -- 
-2.14.3
+
+Thanks,
+
+David / dhildenb
