@@ -1,92 +1,38 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1733193-1527156088-2-8229449664367348831
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527156087; b=K8pn/beDe+d7vpqwFAKNytEIRpWDeWI0FNwmUeISaa4DlG9vc9
-    P/ftSW269D/BjJcQbt3xSTzBsvX5BDveF5HJijVwkv0ZdjOuhTvZHvvaJ9aCe6g1
-    T3n1MxcPHfh4QtjTyzIpc/l/hhvgIAuVM31U321E9HqcXWoMGx7HZnD6z1mPwqbs
-    9zEUtvlgcGpRm5/EE4SpsCBjRZmUI1Dcm/KLvFzjFBA/6YvTxqqUXPPRMO0z4u2B
-    8hzODqAn8YQNSot/n+SQecmcCsndNpQuBuSwJ+kE5hKOCpBCTi5lTUbt7y1kAMBd
-    4cRBxDR3e0zqvuqg39Zu2Zz3sYq3UVfsZ+XA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527156087; bh=+8h0pJyfOcNu0c7EUYVaD3kQbr0DDi
-    1goqc3O/MWTco=; b=WGPnb7DrkleFZZ5DZniaV0eZXi7aHRYnUQepRw1dEn1wVo
-    iyD01jUg+qdsLeKLl0kLMSVdHoLMI+LRaM1wm68zudCOhckQVG3OCc3bdZfuDzld
-    YFns0BPOXiZHXtc84t8clAeQkJ9dthORK33Hp/DZh5gfDSwcm92vICBzybYbR05x
-    MINEE4dJwTtxvY2qByZIfaNEYgB0haHLUyamQ8nOrD0vaHR9w4ofB8E0KHlhVSJY
-    3IxHkgQzm2U3BRiXoWguu22zJmSTLNVnBjZ9b7LHTcKFMFzoxraXMwVZMEggWRnz
-    cGsH2/08UiiuJzEEd+ibI7mYd5ysOjk5wFrufdfA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=pa6mCjQu x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linuxfoundation.org header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=pa6mCjQu x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linuxfoundation.org header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGZpPjvAkvJa8xyre9uoKs8pm6VHfHucMMS8/YElSl1w60McmfKoQqsTxO/qQZn3L69gLtA8pyb/M/RzJoYKwoKxGxs4uV4HkG1Xbn/O+MfJSOkpzhp5
-    bxslijXgm2HfzDgq2BWxMBNzSJ5AoQiUwV0ahRiFvFrxGAZ55FyYN/bKVmeJjZ/b8qrGjivbSwLeFLxbHgOCadbu7xnAEHO+QBTyi+LpehTjDgZDRxU8erf4
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=Foja8bTIQcL4VymNn7gA:9
-    a=T8BJy9_SnQgndeXM:21 a=fD6RHIK62AzMX82m:21 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030930AbeEXKBZ (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 06:01:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46802 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030927AbeEXKBX (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 06:01:23 -0400
+Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZpYxREHi+HJoIVWzT8Cn80G8VVP7S5hEErmBgef31Njw6H9CNvmo9DQEAXQSZpj08wa49nc
+ARC-Seal: i=1; a=rsa-sha256; t=1527156086; cv=none;
+        d=google.com; s=arc-20160816;
+        b=tF1N8tbdbVAN6/7s9SZeEFvzLqlylTOKrH50u+FSgI3BHCRpS0quvzueRALHSSetxJ
+         02wnZgG6KgFxhC1lNUHPXaty7HL2EHv8zSqTkc4ZjWyPdYZ1AlAExyKkBStqXJSzjWxH
+         geHo3xC5c0KV8cTOSKXdhHRu89LQzblayR5ZC5wDHQ3N+SBSCTn8dmzTNKAT6GMTwoP5
+         nKzzVhBHmlntWnPmTzwd4PpCTM10fRNeXZIP3QZ1JKfidmVOL3l/pGar1OGMI2d6rR1K
+         kgDE71AB0wuxaUYRcyT1o/Kk18oqli7bhlKXAjIFWUoz5eYtR7TzHB7LK3YAqCCfwr2Q
+         3aUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=lRPzuruBtHIG74HH5PbqRrU3h6xSioYday6O6A7XQ3o=;
+        b=WlW/QGhd5LB25P+EZgQ0LcOAW/09e/5QL1AcCr5x8+cYU3UeDb94NMuHhoP1UTwa1R
+         swY6Jt85svVGC0tENKP8ZPa+b/MBX1ZpayDJT49P6dSdHS/RT16xyaZ7jQ1xh3N3sZTP
+         fpubLMblMBhSVXx+iraHyanMfiyLuqWm8Q1sw8X0qUSF8XUttYnTL38R90dkVMEYCbp4
+         BEniiw0vkvW+D1zDlZ79nvrswjdfb/9Kw0unyHFXYS6pz6e/X96/dzaNYTMTYNFfn+Sz
+         rEYYFY2QOt6psaGOBDieOyd+6Jx/r93tKIwhaoyPuo0FN/oBOf7dNlNAGBTlfV/zjqVx
+         C2Fg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=YnyVLPLP;
+       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=YnyVLPLP;
+       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.16 056/161] s390: move expoline assembler macros to a header
-Date: Thu, 24 May 2018 11:38:01 +0200
-Message-Id: <20180524093025.191893427@linuxfoundation.org>
+	Martin Schwidefsky <schwidefsky@de.ibm.com>,
+	Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Subject: [PATCH 4.16 057/161] s390/crc32-vx: use expoline for indirect branches
+Date: Thu, 24 May 2018 11:38:02 +0200
+Message-Id: <20180524093025.325713440@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -94,9 +40,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1601338325235326048?=
+X-GMAIL-MSGID: =?utf-8?q?1601339220201584633?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -106,405 +53,72 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-[ Upstream commit 6dd85fbb87d1d6b87a3b1f02ca28d7b2abd2e7ba ]
+[ Upstream commit 467a3bf219cee12259182c5cb4821f88fd518a51 ]
 
-To be able to use the expoline branches in different assembler
-files move the associated macros from entry.S to a new header
-nospec-insn.h.
-
-While we are at it make the macros a bit nicer to use.
+The return from the crc32_le_vgfm_16/crc32c_le_vgfm_16 and the
+crc32_be_vgfm_16 functions are done with "br %r14". These are indirect
+branches as well and need to use execute trampolines for CONFIG_EXPOLINE=y.
 
 Cc: stable@vger.kernel.org # 4.16
 Fixes: f19fbd5ed6 ("s390: introduce execute-trampolines for branches")
+Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
 Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/include/asm/nospec-insn.h |  127 ++++++++++++++++++++++++++++++++++++
- arch/s390/kernel/entry.S            |  105 ++++++-----------------------
- 2 files changed, 151 insertions(+), 81 deletions(-)
- create mode 100644 arch/s390/include/asm/nospec-insn.h
+ arch/s390/crypto/crc32be-vx.S |    5 ++++-
+ arch/s390/crypto/crc32le-vx.S |    4 +++-
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
---- /dev/null
-+++ b/arch/s390/include/asm/nospec-insn.h
-@@ -0,0 +1,127 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_S390_NOSPEC_ASM_H
-+#define _ASM_S390_NOSPEC_ASM_H
-+
-+#include <asm/dwarf.h>
-+
-+#ifdef __ASSEMBLY__
-+
-+#ifdef CONFIG_EXPOLINE
-+
-+/*
-+ * The expoline macros are used to create thunks in the same format
-+ * as gcc generates them. The 'comdat' section flag makes sure that
-+ * the various thunks are merged into a single copy.
-+ */
-+	.macro __THUNK_PROLOG_NAME name
-+	.pushsection .text.\name,"axG",@progbits,\name,comdat
-+	.globl \name
-+	.hidden \name
-+	.type \name,@function
-+\name:
-+	CFI_STARTPROC
-+	.endm
-+
-+	.macro __THUNK_EPILOG
-+	CFI_ENDPROC
-+	.popsection
-+	.endm
-+
-+	.macro __THUNK_PROLOG_BR r1,r2
-+	__THUNK_PROLOG_NAME __s390x_indirect_jump_r\r2\()use_r\r1
-+	.endm
-+
-+	.macro __THUNK_BR r1,r2
-+	jg	__s390x_indirect_jump_r\r2\()use_r\r1
-+	.endm
-+
-+	.macro __THUNK_BRASL r1,r2,r3
-+	brasl	\r1,__s390x_indirect_jump_r\r3\()use_r\r2
-+	.endm
-+
-+	.macro	__DECODE_RR expand,reg,ruse
-+	.set __decode_fail,1
-+	.irp r1,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
-+	.ifc \reg,%r\r1
-+	.irp r2,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
-+	.ifc \ruse,%r\r2
-+	\expand \r1,\r2
-+	.set __decode_fail,0
-+	.endif
-+	.endr
-+	.endif
-+	.endr
-+	.if __decode_fail == 1
-+	.error "__DECODE_RR failed"
-+	.endif
-+	.endm
-+
-+	.macro	__DECODE_RRR expand,rsave,rtarget,ruse
-+	.set __decode_fail,1
-+	.irp r1,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
-+	.ifc \rsave,%r\r1
-+	.irp r2,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
-+	.ifc \rtarget,%r\r2
-+	.irp r3,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
-+	.ifc \ruse,%r\r3
-+	\expand \r1,\r2,\r3
-+	.set __decode_fail,0
-+	.endif
-+	.endr
-+	.endif
-+	.endr
-+	.endif
-+	.endr
-+	.if __decode_fail == 1
-+	.error "__DECODE_RRR failed"
-+	.endif
-+	.endm
-+
-+	.macro __THUNK_EX_BR reg,ruse
-+#ifdef CONFIG_HAVE_MARCH_Z10_FEATURES
-+	exrl	0,555f
-+	j	.
-+#else
-+	larl	\ruse,555f
-+	ex	0,0(\ruse)
-+	j	.
-+#endif
-+555:	br	\reg
-+	.endm
-+
-+	.macro GEN_BR_THUNK reg,ruse=%r1
-+	__DECODE_RR __THUNK_PROLOG_BR,\reg,\ruse
-+	__THUNK_EX_BR \reg,\ruse
-+	__THUNK_EPILOG
-+	.endm
-+
-+	.macro BR_EX reg,ruse=%r1
-+557:	__DECODE_RR __THUNK_BR,\reg,\ruse
-+	.pushsection .s390_indirect_branches,"a",@progbits
-+	.long	557b-.
-+	.popsection
-+	.endm
-+
-+	.macro BASR_EX rsave,rtarget,ruse=%r1
-+559:	__DECODE_RRR __THUNK_BRASL,\rsave,\rtarget,\ruse
-+	.pushsection .s390_indirect_branches,"a",@progbits
-+	.long	559b-.
-+	.popsection
-+	.endm
-+
-+#else
-+	.macro GEN_BR_THUNK reg,ruse=%r1
-+	.endm
-+
-+	 .macro BR_EX reg,ruse=%r1
-+	br	\reg
-+	.endm
-+
-+	.macro BASR_EX rsave,rtarget,ruse=%r1
-+	basr	\rsave,\rtarget
-+	.endm
-+#endif
-+
-+#endif /* __ASSEMBLY__ */
-+
-+#endif /* _ASM_S390_NOSPEC_ASM_H */
---- a/arch/s390/kernel/entry.S
-+++ b/arch/s390/kernel/entry.S
-@@ -27,6 +27,7 @@
- #include <asm/setup.h>
- #include <asm/nmi.h>
- #include <asm/export.h>
+--- a/arch/s390/crypto/crc32be-vx.S
++++ b/arch/s390/crypto/crc32be-vx.S
+@@ -13,6 +13,7 @@
+  */
+ 
+ #include <linux/linkage.h>
 +#include <asm/nospec-insn.h>
+ #include <asm/vx-insn.h>
  
- __PT_R0      =	__PT_GPRS
- __PT_R1      =	__PT_GPRS + 8
-@@ -223,67 +224,9 @@ _PIF_WORK	= (_PIF_PER_TRAP | _PIF_SYSCAL
- 	.popsection
- 	.endm
+ /* Vector register range containing CRC-32 constants */
+@@ -67,6 +68,8 @@
  
--#ifdef CONFIG_EXPOLINE
--
--	.macro GEN_BR_THUNK name,reg,tmp
--	.section .text.\name,"axG",@progbits,\name,comdat
--	.globl \name
--	.hidden \name
--	.type \name,@function
--\name:
--	CFI_STARTPROC
--#ifdef CONFIG_HAVE_MARCH_Z10_FEATURES
--	exrl	0,0f
--#else
--	larl	\tmp,0f
--	ex	0,0(\tmp)
--#endif
--	j	.
--0:	br	\reg
--	CFI_ENDPROC
--	.endm
--
--	GEN_BR_THUNK __s390x_indirect_jump_r1use_r9,%r9,%r1
--	GEN_BR_THUNK __s390x_indirect_jump_r1use_r14,%r14,%r1
--	GEN_BR_THUNK __s390x_indirect_jump_r11use_r14,%r14,%r11
--
--	.macro BASR_R14_R9
--0:	brasl	%r14,__s390x_indirect_jump_r1use_r9
--	.pushsection .s390_indirect_branches,"a",@progbits
--	.long	0b-.
--	.popsection
--	.endm
--
--	.macro BR_R1USE_R14
--0:	jg	__s390x_indirect_jump_r1use_r14
--	.pushsection .s390_indirect_branches,"a",@progbits
--	.long	0b-.
--	.popsection
--	.endm
--
--	.macro BR_R11USE_R14
--0:	jg	__s390x_indirect_jump_r11use_r14
--	.pushsection .s390_indirect_branches,"a",@progbits
--	.long	0b-.
--	.popsection
--	.endm
--
--#else	/* CONFIG_EXPOLINE */
--
--	.macro BASR_R14_R9
--	basr	%r14,%r9
--	.endm
--
--	.macro BR_R1USE_R14
--	br	%r14
--	.endm
--
--	.macro BR_R11USE_R14
--	br	%r14
--	.endm
--
--#endif /* CONFIG_EXPOLINE */
--
-+	GEN_BR_THUNK %r9
+ .previous
+ 
 +	GEN_BR_THUNK %r14
-+	GEN_BR_THUNK %r14,%r11
- 
- 	.section .kprobes.text, "ax"
- .Ldummy:
-@@ -300,7 +243,7 @@ _PIF_WORK	= (_PIF_PER_TRAP | _PIF_SYSCAL
- ENTRY(__bpon)
- 	.globl __bpon
- 	BPON
--	BR_R1USE_R14
-+	BR_EX	%r14
- 
++
+ .text
  /*
-  * Scheduler resume function, called by switch_to
-@@ -326,7 +269,7 @@ ENTRY(__switch_to)
- 	TSTMSK	__LC_MACHINE_FLAGS,MACHINE_FLAG_LPP
- 	jz	0f
- 	.insn	s,0xb2800000,__LC_LPP		# set program parameter
--0:	BR_R1USE_R14
-+0:	BR_EX	%r14
+  * The CRC-32 function(s) use these calling conventions:
+@@ -203,6 +206,6 @@ ENTRY(crc32_be_vgfm_16)
  
- .L__critical_start:
- 
-@@ -393,7 +336,7 @@ sie_exit:
- 	xgr	%r5,%r5
- 	lmg	%r6,%r14,__SF_GPRS(%r15)	# restore kernel registers
- 	lg	%r2,__SF_EMPTY+16(%r15)		# return exit reason code
--	BR_R1USE_R14
+ .Ldone:
+ 	VLGVF	%r2,%v2,3
+-	br	%r14
 +	BR_EX	%r14
- .Lsie_fault:
- 	lghi	%r14,-EFAULT
- 	stg	%r14,__SF_EMPTY+16(%r15)	# set exit reason code
-@@ -452,7 +395,7 @@ ENTRY(system_call)
- 	lgf	%r9,0(%r8,%r10)			# get system call add.
- 	TSTMSK	__TI_flags(%r12),_TIF_TRACE
- 	jnz	.Lsysc_tracesys
--	BASR_R14_R9				# call sys_xxxx
-+	BASR_EX	%r14,%r9			# call sys_xxxx
- 	stg	%r2,__PT_R2(%r11)		# store return value
  
- .Lsysc_return:
-@@ -637,7 +580,7 @@ ENTRY(system_call)
- 	lmg	%r3,%r7,__PT_R3(%r11)
- 	stg	%r7,STACK_FRAME_OVERHEAD(%r15)
- 	lg	%r2,__PT_ORIG_GPR2(%r11)
--	BASR_R14_R9			# call sys_xxx
-+	BASR_EX	%r14,%r9		# call sys_xxx
- 	stg	%r2,__PT_R2(%r11)	# store return value
- .Lsysc_tracenogo:
- 	TSTMSK	__TI_flags(%r12),_TIF_TRACE
-@@ -661,7 +604,7 @@ ENTRY(ret_from_fork)
- 	lmg	%r9,%r10,__PT_R9(%r11)	# load gprs
- ENTRY(kernel_thread_starter)
- 	la	%r2,0(%r10)
--	BASR_R14_R9
-+	BASR_EX	%r14,%r9
- 	j	.Lsysc_tracenogo
+ .previous
+--- a/arch/s390/crypto/crc32le-vx.S
++++ b/arch/s390/crypto/crc32le-vx.S
+@@ -14,6 +14,7 @@
+  */
  
- /*
-@@ -743,7 +686,7 @@ ENTRY(pgm_check_handler)
- 	je	.Lpgm_return
- 	lgf	%r9,0(%r10,%r1)		# load address of handler routine
- 	lgr	%r2,%r11		# pass pointer to pt_regs
--	BASR_R14_R9			# branch to interrupt-handler
-+	BASR_EX	%r14,%r9		# branch to interrupt-handler
- .Lpgm_return:
- 	LOCKDEP_SYS_EXIT
- 	tm	__PT_PSW+1(%r11),0x01	# returning to user ?
-@@ -1061,7 +1004,7 @@ ENTRY(psw_idle)
- 	stpt	__TIMER_IDLE_ENTER(%r2)
- .Lpsw_idle_lpsw:
- 	lpswe	__SF_EMPTY(%r15)
--	BR_R1USE_R14
+ #include <linux/linkage.h>
++#include <asm/nospec-insn.h>
+ #include <asm/vx-insn.h>
+ 
+ /* Vector register range containing CRC-32 constants */
+@@ -76,6 +77,7 @@
+ 
+ .previous
+ 
++	GEN_BR_THUNK %r14
+ 
+ .text
+ 
+@@ -264,6 +266,6 @@ crc32_le_vgfm_generic:
+ 
+ .Ldone:
+ 	VLGVF	%r2,%v2,2
+-	br	%r14
 +	BR_EX	%r14
- .Lpsw_idle_end:
  
- /*
-@@ -1103,7 +1046,7 @@ ENTRY(save_fpu_regs)
- .Lsave_fpu_regs_done:
- 	oi	__LC_CPU_FLAGS+7,_CIF_FPU
- .Lsave_fpu_regs_exit:
--	BR_R1USE_R14
-+	BR_EX	%r14
- .Lsave_fpu_regs_end:
- EXPORT_SYMBOL(save_fpu_regs)
- 
-@@ -1149,7 +1092,7 @@ load_fpu_regs:
- .Lload_fpu_regs_done:
- 	ni	__LC_CPU_FLAGS+7,255-_CIF_FPU
- .Lload_fpu_regs_exit:
--	BR_R1USE_R14
-+	BR_EX	%r14
- .Lload_fpu_regs_end:
- 
- .L__critical_end:
-@@ -1366,7 +1309,7 @@ cleanup_critical:
- 	jl	0f
- 	clg	%r9,BASED(.Lcleanup_table+104)	# .Lload_fpu_regs_end
- 	jl	.Lcleanup_load_fpu_regs
--0:	BR_R11USE_R14
-+0:	BR_EX	%r14
- 
- 	.align	8
- .Lcleanup_table:
-@@ -1402,7 +1345,7 @@ cleanup_critical:
- 	ni	__SIE_PROG0C+3(%r9),0xfe	# no longer in SIE
- 	lctlg	%c1,%c1,__LC_USER_ASCE		# load primary asce
- 	larl	%r9,sie_exit			# skip forward to sie_exit
--	BR_R11USE_R14
-+	BR_EX	%r14
- #endif
- 
- .Lcleanup_system_call:
-@@ -1456,7 +1399,7 @@ cleanup_critical:
- 	stg	%r15,56(%r11)		# r15 stack pointer
- 	# set new psw address and exit
- 	larl	%r9,.Lsysc_do_svc
--	BR_R11USE_R14
-+	BR_EX	%r14,%r11
- .Lcleanup_system_call_insn:
- 	.quad	system_call
- 	.quad	.Lsysc_stmg
-@@ -1468,7 +1411,7 @@ cleanup_critical:
- 
- .Lcleanup_sysc_tif:
- 	larl	%r9,.Lsysc_tif
--	BR_R11USE_R14
-+	BR_EX	%r14,%r11
- 
- .Lcleanup_sysc_restore:
- 	# check if stpt has been executed
-@@ -1485,14 +1428,14 @@ cleanup_critical:
- 	mvc	0(64,%r11),__PT_R8(%r9)
- 	lmg	%r0,%r7,__PT_R0(%r9)
- 1:	lmg	%r8,%r9,__LC_RETURN_PSW
--	BR_R11USE_R14
-+	BR_EX	%r14,%r11
- .Lcleanup_sysc_restore_insn:
- 	.quad	.Lsysc_exit_timer
- 	.quad	.Lsysc_done - 4
- 
- .Lcleanup_io_tif:
- 	larl	%r9,.Lio_tif
--	BR_R11USE_R14
-+	BR_EX	%r14,%r11
- 
- .Lcleanup_io_restore:
- 	# check if stpt has been executed
-@@ -1506,7 +1449,7 @@ cleanup_critical:
- 	mvc	0(64,%r11),__PT_R8(%r9)
- 	lmg	%r0,%r7,__PT_R0(%r9)
- 1:	lmg	%r8,%r9,__LC_RETURN_PSW
--	BR_R11USE_R14
-+	BR_EX	%r14,%r11
- .Lcleanup_io_restore_insn:
- 	.quad	.Lio_exit_timer
- 	.quad	.Lio_done - 4
-@@ -1559,17 +1502,17 @@ cleanup_critical:
- 	# prepare return psw
- 	nihh	%r8,0xfcfd		# clear irq & wait state bits
- 	lg	%r9,48(%r11)		# return from psw_idle
--	BR_R11USE_R14
-+	BR_EX	%r14,%r11
- .Lcleanup_idle_insn:
- 	.quad	.Lpsw_idle_lpsw
- 
- .Lcleanup_save_fpu_regs:
- 	larl	%r9,save_fpu_regs
--	BR_R11USE_R14
-+	BR_EX	%r14,%r11
- 
- .Lcleanup_load_fpu_regs:
- 	larl	%r9,load_fpu_regs
--	BR_R11USE_R14
-+	BR_EX	%r14,%r11
- 
- /*
-  * Integer constants
+ .previous
