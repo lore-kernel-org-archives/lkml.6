@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1797295-1527159354-2-15640331650151652521
+X-Cyrus-Session-Id: sloti22d1t05-1807417-1527159332-2-1128214732299251840
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527159354; b=Cz1Wx1Gbjq7XYQUYlVYyIL6X/+f786RmWLJLRWHxOcxNl2I+TD
-    u1RkI6/cbuRDHLDwTq3A/GgnnoQGaowAlAb6dgcr7Wh/nm7dANtnRf5t4e18IRy4
-    UO3RH4ViZfdDPtH6TtJ2Hp15FCghNLEBNLXPFUg6FKcL/T+gWTYjhhHItxW28PSA
-    NwEga83Kp2wcIFqDSfAzL0XiYah+Q4dgL6NvOG8r2pZ2rviGZ+U+Hm+1aE+mr9oM
-    HcGTiZGa5wG1SdJMcSr28TFiVvin1Mwn9P2c3tvNj0zRMzQMyRBEOzvLOMuUOyGF
-    669HEPJU9aAf74W7H8Yp0T3N20dC4m6uVK6A==
+    1527159331; b=aXlavtsWyCTzgYk4G1S98rAkBna/p9eLeK7hTpF5qYbR0hQwq8
+    VqnmSsPycMfP4PftxWZpcxdnprcTMoC4/l9wm5WKmjx+bPPPzkQXzunRQr5Ewmmq
+    q484HjoAg/Cv9fL4QDCV3dNKbOtcH4AzflYXwd4b25x/7Ep57IgfAODlTGo0knj7
+    UDeixLoC8Kym+UYxzrvkW2no9cU0MAMxT9bTNGUteXY8xUImvQM0jXtxXhSxVi1U
+    +omS5qQc3wEKvTmkGK969ZJg10Bz4odtC10LIOmUUn+p8Fcidj8K8ZWOiRMSq2QJ
+    AVLNxrXzusPlcYQuQYdv5pJlSMrVTsGypaSg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527159354; bh=MBrwpTyzXemIviL2VHOgEwFiTL5xq8
-    YiOiEWde1ybWI=; b=cdeVNhoRFbG0gnNkbbSvyFPsSXNFF2bXHFo8j65t5ehxPT
-    Ajz67aUgTctV+nWwQlqd78oUHKI8M+s+EgJ+ofeYL9TLclc8CPrD+SNmp/A43Te8
-    9iVYya3/cAtEn9S0Neye9jlcBNQuIlG4eDQcoyd967SzIbEK9Pjzj7NzfYNT08xg
-    mFzw+K2l5cicgBzGhlzo6BHWl9Vjy/3EI9HOh2yL7ptGUsqXF1zErSs5WhgH0TpB
-    FBOz3xt2QLL4rc21ntmJDNz7t/VpJTn5AdkPJlfE8kKSjjMiH9GAFXEtJCOWRIxA
-    isMB531JrCjVaOnBvqT4WsPvLe1wg4F10FhWBUag==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527159331; bh=v1Wapt3mgRCQfKYM8ayl9Oxvr8kygt
+    hz8egbXPI0cF0=; b=IuKBRCmrnwuLQ9KWXlrV9zXzSeUm+RSaSUj391B/zWqYWl
+    L++XvKVVuKVp8a7w8BiuTNzAud4Ncl2AE/jwM75Y+vZz9p/gypr5l73Kl0Itbovg
+    NbwvA8ahiJTXN9HFZszHoRUlKmAgcSGb53lZiP7CvMHGp45Asn1gh848zVWgeyCP
+    uaMf3MBD5dOaGG6xrR0YBwhbeQH7hqdlSb5suHJ5yyLZozdYICysncsnleVmHfgk
+    PPGcY02jokB1oXMh1o1dKwy8Xudh0Zx0GEsvWczVI54ppgbe5h4HX8TLHwSTiVCB
+    bjQbI+Zo1rcQrl+9zVoZdyvm3VuSMQpQpyMiHViw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=E6+nVaTL x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=IHhQOFfw x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=E6+nVaTL x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=IHhQOFfw x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,29 +64,30 @@ Authentication-Results: mx3.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJddbqGye5oW8psLwZdo/YwTBqFL8G5R3GBU8AEaFsuwPyiS8nyzB65mvkm22/rQI6X09Fgj6xP1LtOitYwM3u+OpGMpzri6DClGUzLCiJfNg4552jGx
-    A6GSMV/8AvKRBfXPcd6PAFPrQuU865aqU/blrf+wtYHFEsVM3SVEe0CulylW11iRtT2JzsJ3CbXei4ymsmcaXJGXf9oUKnyzQJKnVV2Re2fw8EnYhrZM+5gO
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfJXxG0xznFP7iSUwI2bkahz0uy2hx1bMxVUs6FQ4rZ4uRRmqSbKx0AZGHrXCZX6EI0SOdXo59po23UlAQBtjQVsDWU5QBvZA2wPMhsDoFpAr4XMnPYpb
+    HNOB++AxiBHTazSsJv2miaYJvBZ0/IchQyU84NEOSAkR5GVCcgR0Wn8UWfShWNHJ3gbL1TXwmvb987aNnmgK/dtRjr6VmKEtoJq4EAlA3qZnbW+hRyRN9eiz
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=iox4zFpeAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=MGvQ25dQLus8sB2lK0gA:9
-    a=QEXdDO2ut3YA:10 a=WzC6qhA0u3u7Ye7llzcV:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=QyXUC8HyAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=JX2Zv6e58hTcoUBVBSsA:9
+    a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032683AbeEXKzd (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 06:55:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36442 "EHLO mail.kernel.org"
+        id S1030431AbeEXKzS (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 06:55:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36496 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030314AbeEXJ4f (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:56:35 -0400
+        id S967802AbeEXJ4i (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:56:38 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, NeilBrown <neilb@suse.com>,
+        stable@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 086/165] staging: lustre: fix bug in osc_enter_cache_try
-Date: Thu, 24 May 2018 11:38:12 +0200
-Message-Id: <20180524093625.495660379@linuxfoundation.org>
+Subject: [PATCH 4.14 077/165] usb: gadget: ffs: Execute copy_to_user() with USER_DS set
+Date: Thu, 24 May 2018 11:38:03 +0200
+Message-Id: <20180524093625.143647534@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -104,53 +105,66 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: NeilBrown <neilb@suse.com>
+From: Lars-Peter Clausen <lars@metafoo.de>
 
-[ Upstream commit 2fab9faf9b27298c4536c1c1b14072ab18b8f80b ]
+[ Upstream commit 4058ebf33cb0be88ca516f968eda24ab7b6b93e4 ]
 
-The lustre-release patch commit bdc5bb52c554 ("LU-4933 osc:
-Automatically increase the max_dirty_mb") changed
+When using a AIO read() operation on the function FS gadget driver a URB is
+submitted asynchronously and on URB completion the received data is copied
+to the userspace buffer associated with the read operation.
 
--       if (cli->cl_dirty + PAGE_CACHE_SIZE <= cli->cl_dirty_max &&
-+       if (cli->cl_dirty_pages < cli->cl_dirty_max_pages &&
+This is done from a kernel worker thread invoking copy_to_user() (through
+copy_to_iter()). And while the user space process memory is made available
+to the kernel thread using use_mm(), some architecture require in addition
+to this that the operation runs with USER_DS set. Otherwise the userspace
+memory access will fail.
 
-When this patch landed in Linux a couple of years later, it landed as
+For example on ARM64 with Privileged Access Never (PAN) and User Access
+Override (UAO) enabled the following crash occurs.
 
--       if (cli->cl_dirty + PAGE_SIZE <= cli->cl_dirty_max &&
-+       if (cli->cl_dirty_pages <= cli->cl_dirty_max_pages &&
+	Internal error: Accessing user space memory with fs=KERNEL_DS: 9600004f [#1] SMP
+	Modules linked in:
+	CPU: 2 PID: 1636 Comm: kworker/2:1 Not tainted 4.9.0-04081-g8ab2dfb-dirty #487
+	Hardware name: ZynqMP ZCU102 Rev1.0 (DT)
+	Workqueue: events ffs_user_copy_worker
+	task: ffffffc87afc8080 task.stack: ffffffc87a00c000
+	PC is at __arch_copy_to_user+0x190/0x220
+	LR is at copy_to_iter+0x78/0x3c8
+	[...]
+	[<ffffff800847b790>] __arch_copy_to_user+0x190/0x220
+	[<ffffff80086f25d8>] ffs_user_copy_worker+0x70/0x130
+	[<ffffff80080b8c64>] process_one_work+0x1dc/0x460
+	[<ffffff80080b8f38>] worker_thread+0x50/0x4b0
+	[<ffffff80080bf5a0>] kthread+0xd8/0xf0
+	[<ffffff8008083680>] ret_from_fork+0x10/0x50
 
-which is clearly different ('<=' vs '<'), and allows cl_dirty_pages to
-increase beyond cl_dirty_max_pages - which causes a latter assertion
-to fails.
+Address this by placing a set_fs(USER_DS) before of the copy operation
+and revert it again once the copy operation has finished.
 
-Fixes: 3147b268400a ("staging: lustre: osc: Automatically increase the max_dirty_mb")
-Signed-off-by: NeilBrown <neilb@suse.com>
+This patch is analogous to commit d7ffde35e31a ("vhost: use USER_DS in
+vhost_worker thread") which addresses the same underlying issue.
+
+Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/staging/lustre/lustre/include/obd.h   |    2 +-
- drivers/staging/lustre/lustre/osc/osc_cache.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/gadget/function/f_fs.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/staging/lustre/lustre/include/obd.h
-+++ b/drivers/staging/lustre/lustre/include/obd.h
-@@ -190,7 +190,7 @@ struct client_obd {
- 	struct sptlrpc_flavor    cl_flvr_mgc;   /* fixed flavor of mgc->mgs */
+--- a/drivers/usb/gadget/function/f_fs.c
++++ b/drivers/usb/gadget/function/f_fs.c
+@@ -759,9 +759,13 @@ static void ffs_user_copy_worker(struct
+ 	bool kiocb_has_eventfd = io_data->kiocb->ki_flags & IOCB_EVENTFD;
  
- 	/* the grant values are protected by loi_list_lock below */
--	unsigned long		 cl_dirty_pages;	/* all _dirty_ in pahges */
-+	unsigned long		 cl_dirty_pages;	/* all _dirty_ in pages */
- 	unsigned long		 cl_dirty_max_pages;	/* allowed w/o rpc */
- 	unsigned long		 cl_dirty_transit;	/* dirty synchronous */
- 	unsigned long		 cl_avail_grant;	/* bytes of credit for ost */
---- a/drivers/staging/lustre/lustre/osc/osc_cache.c
-+++ b/drivers/staging/lustre/lustre/osc/osc_cache.c
-@@ -1528,7 +1528,7 @@ static int osc_enter_cache_try(struct cl
- 	if (rc < 0)
- 		return 0;
+ 	if (io_data->read && ret > 0) {
++		mm_segment_t oldfs = get_fs();
++
++		set_fs(USER_DS);
+ 		use_mm(io_data->mm);
+ 		ret = ffs_copy_to_iter(io_data->buf, ret, &io_data->data);
+ 		unuse_mm(io_data->mm);
++		set_fs(oldfs);
+ 	}
  
--	if (cli->cl_dirty_pages <= cli->cl_dirty_max_pages &&
-+	if (cli->cl_dirty_pages < cli->cl_dirty_max_pages &&
- 	    atomic_long_read(&obd_dirty_pages) + 1 <= obd_max_dirty_pages) {
- 		osc_consume_write_grant(cli, &oap->oap_brw_page);
- 		if (transient) {
+ 	io_data->kiocb->ki_complete(io_data->kiocb, ret, ret);
