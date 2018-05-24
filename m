@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1835623-1527161317-2-6906885752579790797
+X-Cyrus-Session-Id: sloti22d1t05-1835623-1527161287-2-3412610717116990003
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527161317; b=j8EaA9cOen7HvUiT/N7JcYGm6HbE/4XzJObZTKaS42NeatSzaQ
-    4pX7X7HHAL+r4s83fRkg1ISzFGRGoA9qB1KVPHjUfMH/6TIft3O38r9gaWbEq6Yo
-    MNTjjPJhsxsKav8cD2v9T7VnY08HdOkLjLLwjjdKEazpLvzdLG4B2B6yea2vjcaY
-    PG3GRuVoazCxfxVeI74+ov0aovbr552x6NNijmImOK/wvAINeRO6U5EQgzno1DAJ
-    WKj7VVIEgKpHnMH11SZQUbIEj/amuYcMhB9aEcP0nm2U66hc+Kni6Dwh/shcyTAZ
-    c0R1mO2gj0J08f6CRtgEBqrHq2qwvFtrloXA==
+    1527161287; b=hZ5CGMmc0iumNEQKq9MvyABEnsEXw2+1ydPLOje8NsTdqBSmL2
+    eA7kRSS/U6SHi3LSuZ6lIO0WydJn7UpIoi8vxkQtrwqwEI/ng2oLoP4n+ogjNdCX
+    Or9ZveAICJuc88HC2dwCqHMcTp5x1XyxytGN4zTEzrKGZBtCZ6Lc3p8s0M2sGzQp
+    IMSqo83p5YUkkiuiUk8r8Cinb9CItBBkZuzCFYiib6rNvRroVNITQPIzfkQg661q
+    Tq3ov5PAlzqDKZfmkMHxActVDFajxmBo/6GhvUZf1UjBQsa+d2BYCPxR+aA/BelK
+    5Wx7nHmQdz+3Cng9/3+tt6dMk0PtQq15PUyQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527161317; bh=mfn15vjQEjiPE2SmYHBwwYexrSV0sW
-    Qf3jOsRnf/W+4=; b=IhjZqbqwnsXbZ4c5lbmhv+aZO3R+IqFKJEHl5FwuaFRZX9
-    pFKU63gcbx3blSv5TMZvs14NUkUT8Tejfiz86MBCylSoxzEiBk8Kv5eQCxwXYRSu
-    DZNRaQ4Fwlz+5Xeg5C7+wg2wCT8xoj65EerghUfMZmQhkh2jqHk7HYM76U/Y1mwu
-    br+5Fth4cC2MyUIra5ghqDkVSDPFuJ+uQsn7YSlQQ/5CZCrqc8WHUv6UFsWBtNiR
-    oOIWSVCyfAwe/yFemv2Z/9wfNZV6UkxeVtRJ3NKgchMddBfLGtA1n0XtP55UonSG
-    R1FHe/E7WMs5D7e34q3Ezt9FWh36k/URAP7G7+IA==
+    :list-id; s=fm2; t=1527161287; bh=XIeyi1lFw1C1f2MbnLPCqi/82IDgrf
+    jKQJ7xBiw3Uq0=; b=ggIODH2VpcK5En37N4PRbReQb32hCpVPks8IyQVSS5bA3Q
+    Rkv1iLGrymEl4QyKX+ibXFo0+c0dxerp6N9ImgNFGrRJs0s8cpi7RfassKK+8Alr
+    PcnFWFP6iYhXXISyAOXZADsJP8lZHD5R9/Hz1XnSPiMgb4yQC337ycLFs29dUC7s
+    w+UViVl9TZ6pTdQ0WmNvShgIn5k5QRxXXK0jbzPms0P7FZ7tT2FwdqIO3ULZdTq9
+    qWcjUhEWM5bXRVdMAeSXZG+nAURTT44G6x73jbw3On0UfRDM/FCP7S/RnQI8KzFo
+    NJbQCHHd5tT9/EvDmZpgKLSxot56M1/FniZ211SQ==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=XmFpLPdc x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=sv86i0X3 x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -48,7 +48,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
 Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=XmFpLPdc x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=sv86i0X3 x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,33 +64,31 @@ Authentication-Results: mx2.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFcmaz5J/KbbauF2fJH+8tOj/1eKi98PKur0Vx0wxyl0U9wtXIb74lkENOJ21E0Wy6Dbl3vQyjCJmCRVtcYQqKDHDf3PSgRtE4VcynngTReu/8d3eYJc
-    UTeZ2TlqAi7iCPxXqbEiaC6SKGavn8LDxlhbookzjCHyfVNcB+18ONvDhO1jmLeqXTwkOaQW6gsFZjn8U22Ys03nUC5Rpnk1Hv0qs8kYZF+TfUABhCeVICj+
+X-CM-Envelope: MS4wfCqOofh75mSs0u7G2D/bPH6BRPbyDuh3Ei44GOT5by5CL5T2naz4k5b/5vBoIk0hRGZwBaFCE5oAXl3k3IviKiDeMC7+M3YC3DlH1BM+j3DnKda4Bjx2
+    hrs5yHFCj5/EPq+dPBeMKXg41FWvrQAwUpeoSSTRc1DmyZ/ovMStW0/ZnfSygUoNpqzfuwTlD/J8qR62tYote3AllBbmAFWR4gdOk36Sk5eeQJdpYC+n91hP
 X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=pGLkceISAAAA:8 a=Q-fNiiVtAAAA:8 a=iox4zFpeAAAA:8 a=yPCof4ZbAAAA:8
-    a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=WIANZK8Gtf-dEdyjr7cA:9 a=QEXdDO2ut3YA:10
-    a=Fp8MccfUoT0GBdDC_Lng:22 a=WzC6qhA0u3u7Ye7llzcV:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=TCZwIYwWp4WjhJQ2Fw4A:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967691AbeEXJvY (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:51:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46422 "EHLO mail.kernel.org"
+        id S968890AbeEXL2D (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 07:28:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46692 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967687AbeEXJvV (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:51:21 -0400
+        id S967383AbeEXJvY (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:51:24 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
-        James Smart <james.smart@broadcom.com>,
-        Hannes Reinecke <hare@suse.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 66/96] scsi: lpfc: Fix frequency of Release WQE CQEs
-Date: Thu, 24 May 2018 11:38:49 +0200
-Message-Id: <20180524093609.230100675@linuxfoundation.org>
+Subject: [PATCH 4.9 67/96] ASoC: au1x: Fix timeout tests in au1xac97c_ac97_read()
+Date: Thu, 24 May 2018 11:38:50 +0200
+Message-Id: <20180524093609.279067444@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093605.602125311@linuxfoundation.org>
 References: <20180524093605.602125311@linuxfoundation.org>
@@ -108,39 +106,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: James Smart <jsmart2021@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 04673e38f56b30cd39b1fa0f386137d818b17781 ]
+[ Upstream commit 123af9043e93cb6f235207d260d50f832cdb5439 ]
 
-The driver controls when the hardware sends completions that communicate
-consumption of elements from the WQ. This is done by setting a WQEC bit
-on a WQE.
+The loop timeout doesn't work because it's a post op and ends with "tmo"
+set to -1.  I changed it from a post-op to a pre-op and I changed the
+initial the starting value from 5 to 6 so we still iterate 5 times.  I
+left the other as it was because it's a large number.
 
-The current driver sets it on every Nth WQE posting. However, the driver
-isn't clearing the bit if the WQE is reused. Thus, if the queue depth
-isn't evenly divisible by N, with enough time, it can be set on every
-element, creating a lot of overhead and risking CQ full conditions.
-
-Correct by clearing the bit when not setting it on an Nth element.
-
-Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
-Signed-off-by: James Smart <james.smart@broadcom.com>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: b3c70c9ea62a ("ASoC: Alchemy AC97C/I2SC audio support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/lpfc/lpfc_sli.c |    2 ++
- 1 file changed, 2 insertions(+)
+ sound/soc/au1x/ac97c.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/scsi/lpfc/lpfc_sli.c
-+++ b/drivers/scsi/lpfc/lpfc_sli.c
-@@ -116,6 +116,8 @@ lpfc_sli4_wq_put(struct lpfc_queue *q, u
- 	/* set consumption flag every once in a while */
- 	if (!((q->host_index + 1) % q->entry_repost))
- 		bf_set(wqe_wqec, &wqe->generic.wqe_com, 1);
-+	else
-+		bf_set(wqe_wqec, &wqe->generic.wqe_com, 0);
- 	if (q->phba->sli3_options & LPFC_SLI4_PHWQ_ENABLED)
- 		bf_set(wqe_wqid, &wqe->generic.wqe_com, q->queue_id);
- 	lpfc_sli_pcimem_bcopy(wqe, temp_wqe, q->entry_size);
+--- a/sound/soc/au1x/ac97c.c
++++ b/sound/soc/au1x/ac97c.c
+@@ -91,8 +91,8 @@ static unsigned short au1xac97c_ac97_rea
+ 	do {
+ 		mutex_lock(&ctx->lock);
+ 
+-		tmo = 5;
+-		while ((RD(ctx, AC97_STATUS) & STAT_CP) && tmo--)
++		tmo = 6;
++		while ((RD(ctx, AC97_STATUS) & STAT_CP) && --tmo)
+ 			udelay(21);	/* wait an ac97 frame time */
+ 		if (!tmo) {
+ 			pr_debug("ac97rd timeout #1\n");
+@@ -105,7 +105,7 @@ static unsigned short au1xac97c_ac97_rea
+ 		 * poll, Forrest, poll...
+ 		 */
+ 		tmo = 0x10000;
+-		while ((RD(ctx, AC97_STATUS) & STAT_CP) && tmo--)
++		while ((RD(ctx, AC97_STATUS) & STAT_CP) && --tmo)
+ 			asm volatile ("nop");
+ 		data = RD(ctx, AC97_CMDRESP);
+ 
