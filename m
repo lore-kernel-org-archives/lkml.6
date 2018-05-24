@@ -1,47 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161512AbeEXVnv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 17:43:51 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:51656 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966099AbeEXVnr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 17:43:47 -0400
-X-Google-Smtp-Source: AB8JxZpXh/C2P1WWka4OENeflq+MzwoXqcpkJ44MMO7nsdhT59aF2CqWZU17DBBQesLos9nQCVY4Dg==
-Date: Thu, 24 May 2018 15:43:42 -0600
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
-Cc: dledford@redhat.com, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 rdma-next 0/4] Misc update for hns driver
-Message-ID: <20180524214342.GA13272@ziepe.ca>
-References: <1527070590-94399-1-git-send-email-xavier.huwei@huawei.com>
+        id S971673AbeEXVr4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 17:47:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49924 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966099AbeEXVrz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 17:47:55 -0400
+Date: Thu, 24 May 2018 17:47:52 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Joel Fernandes <joelaf@google.com>, linux-kernel@vger.kernel.org,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Boqun Feng <boqun.feng@gmail.com>, byungchul.park@lge.com,
+        kernel-team@android.com, Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH 1/4] rcu: Speed up calling of RCU tasks callbacks
+Message-ID: <20180524174752.0928d562@gandalf.local.home>
+In-Reply-To: <20180523200458.GD3803@linux.vnet.ibm.com>
+References: <20180523063815.198302-1-joel@joelfernandes.org>
+        <20180523063815.198302-2-joel@joelfernandes.org>
+        <20180523155734.GK3803@linux.vnet.ibm.com>
+        <20180523124531.7b0e972a@gandalf.local.home>
+        <20180523170303.GR3803@linux.vnet.ibm.com>
+        <20180523151337.469bba34@gandalf.local.home>
+        <20180523200458.GD3803@linux.vnet.ibm.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1527070590-94399-1-git-send-email-xavier.huwei@huawei.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 06:16:26PM +0800, Wei Hu (Xavier) wrote:
-> This patchset included fixing bug, some optimization, reset
-> process for hns driver.
+On Wed, 23 May 2018 13:04:58 -0700
+"Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+
+> Looks plausible to me!
 > 
-> v1->v2: 1.pull the patch out of the series. The name of the patch is 
-> 	  RDMA/hns: Implement the disassociate_ucontext API.
-> 	2.Modify the fixes statement according to Leon's comment.
-> 	3.Address the Jason's comment in reset relevant patch.
-> 
-> Wei Hu (Xavier) (4):
->   RDMA/hns: Modify uar allocation algorithm to avoid bitmap exhaust
->   RDMA/hns: Increase checking CMQ status timeout value
 
-I took these two to for-next , the others have to respun.
+BTW looking at the code:
 
->   RDMA/hns: Add reset process for RoCE in hip08
->   RDMA/hns: Fix the illegal memory operation when cross page
+> 		/* Invoke the callbacks. */
+> 		while (list) {
+> 			next = list->next;
+> 			local_bh_disable();
+> 			list->func(list);
+> 			local_bh_enable();
+> 			list = next;
+> 			cond_resched();
+> 		}
+> 		schedule_timeout_uninterruptible(HZ/10);
 
-Thanks,
-Jason
+What's the purpose of this final sleep?
+
+-- Steve
+
+> 	}
+> }
